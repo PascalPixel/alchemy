@@ -277,14 +277,14 @@ void BattleEffect_RunTargetMotes(struct BattleEffectArgument *effect,
       draw[1] = gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE];
       EFFECT_VIEW_FROM_CAMERA(camera);
       SET_VECTOR(point, object->x, 160 << 13, object->z);
-      SceneTransform_ApplyPosition(point);
+      Transform_ApplyPosition(point);
       // Turn the group about the vertical axis, and for Taint's smokes and
       // Heartrender about the horizontal one too; mote i joins i frames after
       // the target's turn starts and takes a new image every 4 frames.
       if (frame > member * 8) {
-        SceneTransform_ApplyYaw(frame << 9);
+        Transform_ApplyYaw(frame << 9);
         if (mode <= TARGET_MOTES_PINK_SMOKE || mode == TARGET_MOTES_HEARTRENDER)
-          SceneTransform_ApplyPitch(frame << 9);
+          Transform_ApplyPitch(frame << 9);
         for (i = 0; i != count; i++) {
           struct EffectStep *mote = &PARTICLES[member * TARGET_MOTES_SLOTS + i];
           s32 distance;
@@ -441,7 +441,7 @@ void BattleEffect_RunSleep(struct BattleEffectArgument *effect) {
           GetBattleObjectSlotFar(work->effect->actors[targetIndex])->object;
       EFFECT_VIEW_FROM_CAMERA(camera);
       SET_VECTOR(anchor, target->x, 160 << 14, target->z);
-      SceneTransform_ApplyPosition(anchor);
+      Transform_ApplyPosition(anchor);
       if (frame == targetIndex * 16 + 64)
         ObjectGroup_UpdateMembers(work->effect->actors[targetIndex], 0,
                                   POSE_DAMAGE, -1, 0);

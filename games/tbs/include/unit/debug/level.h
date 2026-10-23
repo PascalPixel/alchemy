@@ -4,12 +4,12 @@
 #include "types.h"
 #include "map_tables.h"
 
-u8 *ItemLevel_GetEntrances(void);
-s32 SceneData_ReturnZero(void);
-u8 *ItemLevel_GetExits(void);
-u8 *ItemLevel_GetPlacements(void);
+u8 *ItemLevel_GetWarpDests(void);
+s32 MapData_ReturnZero(void);
+u8 *ItemLevel_GetWarps(void);
+u8 *ItemLevel_GetObjectEventTemplates(void);
 u8 *ItemLevel_GetEvents(void);
-s32 FieldScene_RunEntrySetup(void);
+s32 Map_RunLevelRoomSetup(void);
 extern char gItemLevelLvLabel[4];
 extern char gItemLevelItemPrompt[12];
 extern char gItemLevelItemHelp[24];
@@ -19,9 +19,9 @@ extern char gItemLevelPsyHelp[12];
 extern char gItemLevelGlyphsUpper[28];
 extern char gItemLevelGlyphsLower[28];
 extern char gItemLevelGlyphsMarks[12];
-extern struct SceneEntrance gItemLevelEntrances[];
-extern u32 gItemLevelExits[];
-extern struct ScenePlacement gItemLevelPlacements[];
-extern struct SceneEvent gItemLevelEvents[];
+extern struct MapWarpDest gItemLevelWarpDests[];
+extern u32 gItemLevelWarps[];
+extern struct ObjectEventTemplate gItemLevelObjectEventTemplates[];
+extern struct MapEvent gItemLevelEvents[];
 
 #endif

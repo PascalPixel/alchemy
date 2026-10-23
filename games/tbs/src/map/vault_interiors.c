@@ -1,34 +1,36 @@
 /// @file
-/// Vault (SceneId_VaultInteriors): the insides of the town's houses, shops and
+/// Vault (MapId_VaultInteriors): the insides of the town's houses, shops and
 /// inn, and the inn's loft, while Hammet's Shaman's Rod is missing and just
 /// after it is found. Every room is on one map, each an entrance with a camera
 /// box of its own, and Vault's doors (vault.c) lead to the entrances named for
 /// them: the gem owner's house, the child's house, the inn and its guests' room
 /// upstairs, the item shop, the weapon and armor shop, the mayor's house and a
 /// room with a crate, behind which a way climbs to the inn's loft. The loft has
-/// placements and events of its own (VaultInteriors_GetPlacements and
+/// placements and events of its own (VaultInteriors_GetObjectEventTemplates and
 /// _GetEvents), and FLAG_VAULT_THIEVES_JAILED chooses the other rooms' tables.
 ///
 /// The story flags drive the rooms in order:
-/// - At the mayor's, talking to Ivan plays Event_MeetIvan: he reads Isaac's
+/// - At the mayor's, talking to Ivan plays EventScript_MeetIvan: he reads
+/// Isaac's
 ///   mind (FLAG_VAULT_MET_IVAN), asks for help with the rod, and on a yes
 ///   joins the party (VaultInteriors_IvanJoinsRodSearch,
 ///   FLAG_VAULT_IVAN_JOINED_ROD_SEARCH).
 /// - In the inn's guests' room the two suspects run from Ivan
-///   (Event_ApproachSuspects), and stepping out the party plans to corner one
-///   (Event_DiscussSuspiciousGuests). The chase (Event_StartCorneringSuspects)
-///   moves Ivan and the suspects along a network of stops
-///   (gVaultInteriors_Stops); once one has been blocked for half a second,
-///   VaultInteriors_UpdateActorStops raises VAULT_INTERIORS_LEADER_CORNERED,
-///   _THIEF_CORNERED or _BOTH_CORNERED, and Ivan reads the cornered suspect's
-///   mind (Event_ReadCorneredSuspectsMinds, FLAG_VAULT_SUSPECTS_MIND_READ).
+///   (EventScript_ApproachSuspects), and stepping out the party plans to corner
+///   one (EventScript_DiscussSuspiciousGuests). The chase
+///   (EventScript_StartCorneringSuspects) moves Ivan and the suspects along a
+///   network of stops (gVaultInteriors_Stops); once one has been blocked for
+///   half a second, VaultInteriors_UpdateObjectEventStops raises
+///   VAULT_INTERIORS_LEADER_CORNERED, _THIEF_CORNERED or _BOTH_CORNERED, and
+///   Ivan reads the cornered suspect's mind
+///   (EventScript_ReadCorneredSuspectsMinds, FLAG_VAULT_SUSPECTS_MIND_READ).
 ///   Meanwhile the menus answer with Garet's refusal (FLAG_MENUS_RAISE_EVENT).
 /// - In the room with the crate, Move pushes the crate aside
-///   (Event_CheckCrateMoved, FLAG_VAULT_CRATE_MOVED), and the way behind it
-///   climbs to the loft (Event_ClimbToLoft). Freeing the villager tied up there
-///   brings out the three thieves, who attack
-///   (Event_FreeRooferAndConfrontThieves, FLAG_VAULT_THIEVES_ATTACKED). A loss
-///   returns to VAULT_INTERIORS_LOFT_AFTER_LOSING_TO_THIEVES and the party
+///   (EventScript_CheckCrateMoved, FLAG_VAULT_CRATE_MOVED), and the way behind
+///   it climbs to the loft (EventScript_ClimbToLoft). Freeing the villager tied
+///   up there brings out the three thieves, who attack
+///   (EventScript_FreeRooferAndConfrontThieves, FLAG_VAULT_THIEVES_ATTACKED). A
+///   loss returns to VAULT_INTERIORS_LOFT_AFTER_LOSING_TO_THIEVES and the party
 ///   comes to in the Vault Sanctum (VaultInteriors_LoseToThieves); coming back
 ///   up replays the challenge (VaultInteriors_ConfrontThievesAgain). A win
 ///   returns to VAULT_INTERIORS_LOFT_AFTER_THIEVES_DEFEATED
@@ -47,11 +49,11 @@
 /// be read. The cells the events answer are enum VaultInteriorsCell
 /// (vault_interiors.h).
 ///
-/// Event_ApproachSuspects plays once: it copies
+/// EventScript_ApproachSuspects plays once: it copies
 /// VAULT_INTERIORS_CELL_GUESTS_ROOM_DOOR cells over the guests' room's
-/// VAULT_INTERIORS_CELL_GUESTS_ROOM cells, Event_DiscussSuspiciousGuests makes
-/// them VAULT_INTERIORS_CELL_CORNERING_START, and every later arrival with
-/// FLAG_VAULT_SUSPECTS_APPROACHED set rewrites them again (render probe
+/// VAULT_INTERIORS_CELL_GUESTS_ROOM cells, EventScript_DiscussSuspiciousGuests
+/// makes them VAULT_INTERIORS_CELL_CORNERING_START, and every later arrival
+/// with FLAG_VAULT_SUSPECTS_APPROACHED set rewrites them again (render probe
 /// vault-interiors: the room has no GUESTS_ROOM cell once the flag is set).
 ///
 /// Open questions: none.
@@ -98,9 +100,9 @@
 #include "audio_engine_symbols.h"
 
 #if TBS_PATCH_3
-#define VAULT_INTERIORS_ENTRY_ACTOR_Z PIXELS(451)
+#define VAULT_INTERIORS_ENTRY_OBJ_EVENT_Z PIXELS(451)
 #else
-#define VAULT_INTERIORS_ENTRY_ACTOR_Z PIXELS(464)
+#define VAULT_INTERIORS_ENTRY_OBJ_EVENT_Z PIXELS(464)
 #endif
 
 /// A cornering lasts half a second before the chase raises an event.
@@ -115,85 +117,85 @@ enum VaultInteriorsRaisedEvent {
 };
 
 /// The townspeople, named by what they say, numbering
-/// gVaultInteriors_Placements' rows from ACTOR_FIRST_PLACED; Garet's and Ivan's
-/// rows take their own slots.
+/// gVaultInteriors_ObjectEventTemplates' rows from LOCALID_FIRST_PLACED;
+/// Garet's and Ivan's rows take their own slots.
 enum {
   /// A young man, to whose house a sparkling rock was blown from the volcano.
   /// ★ Named from the game: "I kept worrying that they would take my gem."
   /// (MsgVaultICanSleepWellNowThat)
-  ACTOR_GEM_OWNER = 8,
+  LOCALID_GEM_OWNER = 8,
   /// A woman with fair hair.
   /// ★ Named from the game: "My husband says my cat ate the treasure"
   /// (MsgVaultMyHusbandSaysMyCatAte)
-  ACTOR_GEM_OWNERS_WIFE = 9,
+  LOCALID_GEM_OWNERS_WIFE = 9,
   /// A burly grey-haired man who distrusts the man next door. "My neighbor
   /// creeps me out."
   /// ★ Named from the game: "Maybe my neighbor is the thief..."
   /// (MsgVaultHeyMaybeMyNeighborIsThe)
-  ACTOR_VILLAGER_SUSPECTING_THE_NEIGHBOR = 10,
+  LOCALID_VILLAGER_SUSPECTING_THE_NEIGHBOR = 10,
   /// A small boy who asks about travel.
   /// ★ Named from the game: "Hey, mister! Is it fun to see strange new places?"
   /// (MsgVaultMisterFunSeeStrangeNew)
-  ACTOR_BOY_ASKING_ABOUT_TRAVEL = 11,
+  LOCALID_BOY_ASKING_ABOUT_TRAVEL = 11,
   /// An old man with a cane who wonders what was stolen.
   /// ★ Named from the game: "Is it just me, or am I missing something?"
   /// (MsgVaultJustMeOrAmMissing)
-  ACTOR_GRANDPA = 12,
+  LOCALID_GRANDPA = 12,
   /// An old woman, who says Grandpa keeps wondering if anything was stolen.
   /// ★ Named from the game: "You never bought me anything worth stealing!"
   /// (MsgVaultYouNeverBoughtMeAnythingWorth)
-  ACTOR_GRANDPAS_WIFE = 13,
+  LOCALID_GRANDPAS_WIFE = 13,
   /// A small boy. "I could help Ivan if I were just a little older."
   /// ★ Named from the game: "if I were just a little older."
   /// (MsgVaultICouldHelpIvanIfI)
-  ACTOR_BOY_WISHING_TO_BE_OLDER = 14,
+  LOCALID_BOY_WISHING_TO_BE_OLDER = 14,
   /// A little girl who tells the party Ivan's secret once it helps him.
   /// ★ Named from the game: "I'll tell you a secret..."
   /// (MsgVaultSinceYoureHelpingIvanIllTell)
-  ACTOR_GIRL_TELLING_A_SECRET = 15,
+  LOCALID_GIRL_TELLING_A_SECRET = 15,
   /// Ivan's host, an old man with white hair.
   /// ★ Named from the game: "My husband, the mayor, can't believe anyone from
   /// Vault could be the thief." (MsgVaultMyHusbandTheMayorCantBelieve)
-  ACTOR_MAYOR = 16,
+  LOCALID_MAYOR = 16,
   /// A woman in a green dress.
   /// ★ Named from the game: "My husband, the mayor, can't believe anyone from
   /// Vault could be the thief." (MsgVaultMyHusbandTheMayorCantBelieve)
-  ACTOR_MAYORS_WIFE = 17,
+  LOCALID_MAYORS_WIFE = 17,
   /// The girl at the inn, as the Bone's description calls her, a young woman
   /// with fair hair. "I have a lot
   /// of leftover bones from dinner."
   /// ★ Named from the game: "A bone from the girl at the inn"
   /// (MsgItemPlainName)
-  ACTOR_GIRL_AT_THE_INN = 18,
+  LOCALID_GIRL_AT_THE_INN = 18,
   /// ★ Named from the game: "I'm sorry I've only got these cheap weapons to
   /// sell right now." (MsgVaultAllOurBestWeaponsWereStolen)
-  ACTOR_WEAPON_MERCHANT = 19,
+  LOCALID_WEAPON_MERCHANT = 19,
   /// ★ Named from the game: "I wonder if they left us alone because we don't
   /// carry any valuable armor?" (MsgVaultIWonderIfTheyLeftUs)
-  ACTOR_ARMOR_MERCHANT = 20,
+  LOCALID_ARMOR_MERCHANT = 20,
   /// ★ Named from what the player sees: the shopkeeper behind a counter of
   /// jars and sacks (its render)
-  ACTOR_ITEM_MERCHANT = 21,
+  LOCALID_ITEM_MERCHANT = 21,
   /// A burly grey-haired man who works at the inn.
   /// ★ Named from the game: "The guests upstairs weren't in their room during
   /// the eruption." (MsgVaultTheGuestsUpstairsWerentInTheir)
-  ACTOR_INN_STAFF = 22,
+  LOCALID_INN_STAFF = 22,
   /// A woman in an apron behind the inn's counter.
   /// ★ Named from the game: "Everyone thinks our guests are the thieves"
   /// (MsgVaultEveryoneThinksOurGuestsThieves)
-  ACTOR_INNKEEPER = 23,
+  LOCALID_INNKEEPER = 23,
   /// The two guests at the inn the town suspects: the thieves' leader and one
   /// of his men.
   /// ★ Named from the game: "Everyone thinks our guests are the thieves"
   /// (MsgVaultEveryoneThinksOurGuestsThieves)
-  ACTOR_SUSPECTED_LEADER = 24,
+  LOCALID_SUSPECTED_LEADER = 24,
   /// ★ Named from the game: "You're a terrible person if you start accusing
   /// people for no good reason." (MsgVaultWeHaventDoneAnythingYoureA)
-  ACTOR_SUSPECTED_THIEF = 25,
+  LOCALID_SUSPECTED_THIEF = 25,
   /// Pushed aside to open a passage.
   /// ★ Named from what the player sees: a large wooden crate in the room below
   /// the loft (its render)
-  ACTOR_CRATE = 26
+  LOCALID_CRATE = 26
 };
 
 /// Place flags of Vault's group (0x300 to 0x3ff, kept while the party stays in
@@ -206,63 +208,64 @@ enum {
 };
 
 // Scene flags here:
-// - FLAG_SCENE_TEMP_50: at the inn once the thieves are jailed, the leader
+// - FLAG_MAP_TEMP_50: at the inn once the thieves are jailed, the leader
 //   stands beside the Bone on the floor (Vault_UpdateBoneProximityFlag); in
 //   the guests' room, set while the party corners the suspects, when talking
 //   to Ivan or the suspects does nothing.
 
 /// The inn's loft (VAULT_INTERIORS_LOFT_FROM_CRATE_ROOM and the two after the
 /// battle), where the thieves hid the stolen goods, numbering
-/// gVaultInteriors_LoftPlacements' rows from ACTOR_FIRST_PLACED.
+/// gVaultInteriors_LoftObjectEventTemplates' rows from LOCALID_FIRST_PLACED.
 enum {
-  /// vault.c's ACTOR_YOUNG_MAN_FIXING_THE_ROOF, tied up while fixing the roof.
+  /// vault.c's LOCALID_YOUNG_MAN_FIXING_THE_ROOF, tied up while fixing the
+  /// roof.
   /// ★ Named from the game: "When I came to, I was all tied up."
   /// (MsgVaultVaultCutFree)
-  ACTOR_TIED_UP_VILLAGER = 8,
+  LOCALID_TIED_UP_VILLAGER = 8,
   /// ★ Named from the game: "Mayor... Isn't that your family's urn?"
   /// (MsgVaultYouIsaacRightWontForget)
-  ACTOR_LOFT_MAYOR = 9,
+  LOCALID_LOFT_MAYOR = 9,
   /// Speaks first and bargains for all three ("See, we're not so bad. How
   /// about it? Will you let us go?").
   /// ★ Named from the game: "Looks like we've been found out!"
   /// (MsgVaultVaultCutFree)
-  ACTOR_THIEF_LEADER = 10,
+  LOCALID_THIEF_LEADER = 10,
   /// ★ Named from the game: "These are the thieves, Mayor..."
   /// (MsgVaultSeeThatsHappened)
-  ACTOR_FIRST_THIEF = 11,
+  LOCALID_FIRST_THIEF = 11,
   /// ★ Named from the game: "These are the thieves, Mayor..."
   /// (MsgVaultSeeThatsHappened)
-  ACTOR_SECOND_THIEF = 12,
+  LOCALID_SECOND_THIEF = 12,
   /// A strongman who comes up with the mayor and helps tie the thieves up.
   /// ★ Named from the game: "What should we do with them?"
   /// (MsgVaultSeeThatsHappened)
-  ACTOR_LOFT_ESCORT = 13,
+  LOCALID_LOFT_ESCORT = 13,
   /// A strongman who comes up with the mayor and opens the chests.
   /// ★ Named from the game: "Mayor, we found another chest over here"
   /// (MsgVaultYouIsaacRightWontForget)
-  ACTOR_STRONGMAN_OPENING_THE_CHESTS = 14,
+  LOCALID_STRONGMAN_OPENING_THE_CHESTS = 14,
   /// ★ Named from the game: "but the chest was empty."
   /// (MsgVaultButChestWasEmpty)
-  ACTOR_FIRST_CHEST = 15,
+  LOCALID_FIRST_CHEST = 15,
   /// ★ Named from the game: "but the chest was empty."
   /// (MsgVaultButChestWasEmpty)
-  ACTOR_SECOND_CHEST = 16,
+  LOCALID_SECOND_CHEST = 16,
   /// ★ Named from the game: "but the chest was empty."
   /// (MsgVaultButChestWasEmpty)
-  ACTOR_THIRD_CHEST = 17,
+  LOCALID_THIRD_CHEST = 17,
   /// Rises from the first chest.
   /// ★ Named from the game: "Found the mayor's precious urn."
   /// (MsgVaultYouIsaacRightWontForget)
-  ACTOR_FOUND_URN = 18,
+  LOCALID_FOUND_URN = 18,
   /// Rises from the second chest, stolen from the Sanctum.
   /// ★ Named from the game: "Found a gold statue."
   /// (MsgVaultYouIsaacRightWontForget)
-  ACTOR_FOUND_STATUE = 19
+  LOCALID_FOUND_STATUE = 19
 };
 
 static void VaultInteriors_IvanJoinsRodSearch(void);
 static void VaultInteriors_DiscussMindReading(void);
-static void VaultInteriors_AdvanceSuspectRoute(s32 actor, s32 expected,
+static void VaultInteriors_AdvanceSuspectRoute(s32 objectEvent, s32 expected,
                                                s32 next, const s32 *actions);
 static void VaultInteriors_FaceSuspectsTowardLeader(void);
 static void VaultInteriors_LoseToThieves(void);
@@ -270,48 +273,49 @@ static void VaultInteriors_ConfrontThievesAgain(void);
 static void VaultInteriors_DefeatThieves(void);
 static void VaultInteriors_ReturnStolenGoods(void);
 static void VaultInteriors_OpenWindowTransition(void);
-static void VaultInteriors_ShowMessageAndWait(s32 actorId, s32 waitFrames);
-static void VaultInteriors_FaceActorAndWait(s32 actorId, s32 targetId,
-                                            s32 waitFrames);
+static void VaultInteriors_ShowMessageAndWait(s32 objectEventId,
+                                              s32 waitFrames);
+static void VaultInteriors_FaceObjectEventAndWait(s32 objectEventId,
+                                                  s32 targetId, s32 waitFrames);
 static void VaultInteriors_FaceEachOtherAndWait(s32 firstId, s32 secondId,
                                                 s32 waitFrames);
-static void VaultInteriors_PlayAnimationAndWait(s32 actorId, s32 animation,
-                                                s32 waitFrames);
+static void VaultInteriors_PlayAnimationAndWait(s32 objectEventId,
+                                                s32 animation, s32 waitFrames);
 static void VaultInteriors_StartMindRead(s32 casterId, s32 targetId);
 static void VaultInteriors_EndMindRead(void);
-static void VaultInteriors_UpdateActorStops(void);
-static void VaultInteriors_StartActorStops(void);
+static void VaultInteriors_UpdateObjectEventStops(void);
+static void VaultInteriors_StartObjectEventStops(void);
 
-const struct SceneEntrance *Scene_GetEntrances(void) {
-  return gVaultInteriors_Entrances;
+const struct MapWarpDest *Map_GetWarpDests(void) {
+  return gVaultInteriors_WarpDests;
 }
 
 /// Returns the one exit region: the box around (648, 416) in the room with the
 /// crate, which takes VAULT_INTERIORS_TO_VAULT_WEST back out to Vault.
-const struct SceneRegion *Scene_GetRegions(void) {
+const struct MapWarpRegion *Map_GetWarpRegions(void) {
   return gVaultInteriors_Regions;
 }
 
-const u32 *Scene_GetExits(void) { return gVaultInteriors_Exits; }
+const u32 *Map_GetWarps(void) { return gVaultInteriors_Warps; }
 
 /// Places the townspeople, or, for the inn's loft
 /// (VAULT_INTERIORS_LOFT_FROM_CRATE_ROOM and the two after the battle), the
 /// tied-up villager, the mayor, the thieves, their chests and the found
 /// treasures.
-const struct ScenePlacement *Scene_GetPlacements(void) {
-  struct ScenePlacement *table;
+const struct ObjectEventTemplate *Map_GetObjectEventTemplates(void) {
+  struct ObjectEventTemplate *table;
 
-  switch (gGameState.entrance) {
+  switch (gGameState.warpDest) {
   case VAULT_INTERIORS_LOFT_FROM_CRATE_ROOM:
   case VAULT_INTERIORS_LOFT_AFTER_LOSING_TO_THIEVES:
   case VAULT_INTERIORS_LOFT_AFTER_THIEVES_DEFEATED:
-    table = gVaultInteriors_LoftPlacements;
+    table = gVaultInteriors_LoftObjectEventTemplates;
     break;
   default:
-    table = gVaultInteriors_Placements;
+    table = gVaultInteriors_ObjectEventTemplates;
     break;
   }
-  FieldScene_PrepareActors(table);
+  Map_PrepareObjectEvents(table);
   return table;
 }
 
@@ -320,32 +324,33 @@ const struct ScenePlacement *Scene_GetPlacements(void) {
 /// returns 1 when it jumped. Only the editions before the first patch have it;
 /// the patched ones look ahead instead (Engine_LeaderCheckAhead).
 static s32 VaultInteriors_TryJumpTo(struct FieldPosition *position) {
-  struct FieldActor *leader;
+  struct ObjectEvent *leader;
   u8 *flags;
   u8 savedMotionFlags;
 
-  leader = Object_GetById(ACTOR_PARTY_LEADER);
+  leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   flags = &leader->motionFlags;
   savedMotionFlags = *flags;
   if (FieldObject_CheckMovementCollision(leader, position) == 0) {
-    Engine_EventStart();
-    Object_SetMode(leader, 6);
+    Engine_ScriptStart();
+    ObjectEvent_SetMode(leader, 6);
     Engine_TaskWait(6);
     Engine_AudioPlayCue(SE_JUMP);
-    Object_SetMode(leader, 7);
+    ObjectEvent_SetMode(leader, 7);
     leader->speed = PIXELS(3);
     leader->acceleration = PIXELS(2);
     leader->velocityY = PIXELS(4);
     *flags &= 0x7e;
-    Engine_ActorSetSpriteFlags(leader, 0);
-    Engine_ActorMoveToAndWait(
-        ACTOR_PARTY_LEADER, ((union FieldCoordinate *)&position->x)->part.pixel,
+    Engine_ObjectEventSetSpriteFlags(leader, 0);
+    Engine_ObjectEventMoveToAndWait(
+        LOCALID_PARTY_LEADER,
+        ((union FieldCoordinate *)&position->x)->part.pixel,
         ((union FieldCoordinate *)&position->z)->part.pixel);
-    Object_SetMode(leader, 6);
-    Engine_ActorSetSpriteFlags(leader, SPRITE_FLAG_SHADOW);
+    ObjectEvent_SetMode(leader, 6);
+    Engine_ObjectEventSetSpriteFlags(leader, SPRITE_FLAG_SHADOW);
     Engine_TaskWait(6);
     *flags = savedMotionFlags;
-    Engine_EventEnd();
+    Engine_ScriptEnd();
     return 1;
   }
   return 0;
@@ -358,45 +363,47 @@ static s32 VaultInteriors_TryJumpTo(struct FieldPosition *position) {
 /// Reached by walking onto VAULT_INTERIORS_CELL_ROOF_GAP. Then copies the cell
 /// (41, 85) or (43, 85) over the gap's cell (42, 85), whichever side the leader
 /// faced.
-static void Event_JumpAcrossRoofGap(void) {
+static void EventScript_JumpAcrossRoofGap(void) {
   s32 x;
   s32 z;
 #if !TBS_PATCH_1
   struct FieldPosition target;
   struct FieldPosition *position;
-  struct FieldActor *leader;
+  struct ObjectEvent *leader;
 #endif
 
-  if (Object_GetById(ACTOR_PARTY_LEADER)->facing >= 0xa000 &&
-      Object_GetById(ACTOR_PARTY_LEADER)->facing <= 0xe000) {
+  if (ObjectEvent_GetById(LOCALID_PARTY_LEADER)->facing >= 0xa000 &&
+      ObjectEvent_GetById(LOCALID_PARTY_LEADER)->facing <= 0xe000) {
 #if TBS_PATCH_1
     Engine_LeaderCheckAhead();
 #else
-    leader = Object_GetById(ACTOR_PARTY_LEADER);
+    leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
     position = &target;
     SET_POSITION(position, leader->x.fixed,
-                 Object_GetById(ACTOR_PARTY_LEADER)->y.fixed,
-                 Object_GetById(ACTOR_PARTY_LEADER)->z.fixed - PIXELS(30));
+                 ObjectEvent_GetById(LOCALID_PARTY_LEADER)->y.fixed,
+                 ObjectEvent_GetById(LOCALID_PARTY_LEADER)->z.fixed -
+                     PIXELS(30));
     VaultInteriors_TryJumpTo(position);
 #endif
     x = 42;
     z = 85;
-    Map_CopyCellAttributes(41, 85, 1, 1, x, z);
-  } else if (Object_GetById(ACTOR_PARTY_LEADER)->facing >= 0x2000 &&
-             Object_GetById(ACTOR_PARTY_LEADER)->facing <= 0x6000) {
+    MapGrid_CopyCellAttributes(41, 85, 1, 1, x, z);
+  } else if (ObjectEvent_GetById(LOCALID_PARTY_LEADER)->facing >= 0x2000 &&
+             ObjectEvent_GetById(LOCALID_PARTY_LEADER)->facing <= 0x6000) {
 #if TBS_PATCH_1
     Engine_LeaderCheckAhead();
 #else
-    leader = Object_GetById(ACTOR_PARTY_LEADER);
+    leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
     position = &target;
     SET_POSITION(position, leader->x.fixed,
-                 Object_GetById(ACTOR_PARTY_LEADER)->y.fixed,
-                 Object_GetById(ACTOR_PARTY_LEADER)->z.fixed + PIXELS(30));
+                 ObjectEvent_GetById(LOCALID_PARTY_LEADER)->y.fixed,
+                 ObjectEvent_GetById(LOCALID_PARTY_LEADER)->z.fixed +
+                     PIXELS(30));
     VaultInteriors_TryJumpTo(position);
 #endif
     x = 42;
     z = 85;
-    Map_CopyCellAttributes(43, 85, 1, 1, x, z);
+    MapGrid_CopyCellAttributes(43, 85, 1, 1, x, z);
   }
 }
 
@@ -404,87 +411,87 @@ static void Event_JumpAcrossRoofGap(void) {
 /// This is in Vault's room with the crate: when Move has pushed the crate to
 /// column 42, the passage behind it opens.
 ///
-/// Reached by Move on the crate (ACTOR_CRATE) until FLAG_VAULT_CRATE_MOVED is
+/// Reached by Move on the crate (LOCALID_CRATE) until FLAG_VAULT_CRATE_MOVED is
 /// set; sets it when the crate has reached column 42.
-static void Event_CheckCrateMoved(void) {
-  struct FieldActor *crate;
+static void EventScript_CheckCrateMoved(void) {
+  struct ObjectEvent *crate;
 
-  Engine_EventStart();
-  crate = Object_GetById(ACTOR_CRATE);
+  Engine_ScriptStart();
+  crate = ObjectEvent_GetById(LOCALID_CRATE);
   if ((crate->x.fixed >> 20) == 42) {
-    Map_CopyCellAttributes(101, 24, 3, 4, 41, 24);
+    MapGrid_CopyCellAttributes(101, 24, 3, 4, 41, 24);
     Engine_GameFlagSet(FLAG_VAULT_CRATE_MOVED);
   }
-  Engine_EventEnd();
+  Engine_ScriptEnd();
 }
 
 /// In Vault's weapon and armor shop, across the counter the weapon shop opens;
 /// otherwise the merchant lost expensive goods too, or found the stolen
 /// weapons rusted in the cemetery.
 ///
-/// Reached by talking to the weapon merchant (ACTOR_WEAPON_MERCHANT), before
+/// Reached by talking to the weapon merchant (LOCALID_WEAPON_MERCHANT), before
 /// and after the thieves are jailed (FLAG_VAULT_THIEVES_JAILED picks the line).
 /// The armor merchant, the inn and the item shop below work the same way: the
 /// counter is between them when the leader faces north (0xa001 to 0xdfff).
-static void Event_TalkToWeaponMerchant(void) {
-  s32 leaderFacing = Object_GetById(ACTOR_PARTY_LEADER)->facing;
+static void EventScript_TalkToWeaponMerchant(void) {
+  s32 leaderFacing = ObjectEvent_GetById(LOCALID_PARTY_LEADER)->facing;
 
-  Engine_EventStart();
+  Engine_ScriptStart();
   if (leaderFacing >= 0xa001 && leaderFacing <= 0xdfff) {
-    Engine_ShopOpen(4, ACTOR_WEAPON_MERCHANT);
+    Engine_ShopOpen(4, LOCALID_WEAPON_MERCHANT);
   } else {
     if (Engine_GameFlagIsSet(FLAG_VAULT_THIEVES_JAILED) == 0) {
-      Engine_EventSetMessage(MsgVaultMasterHammetIsntOnlyOne);
+      Engine_ScriptSetMessage(MsgVaultMasterHammetIsntOnlyOne);
     } else {
-      Engine_EventSetMessage(MsgVaultWeFoundOurStolenWeapons);
+      Engine_ScriptSetMessage(MsgVaultWeFoundOurStolenWeapons);
     }
-    Engine_EventShowMessage(ACTOR_WEAPON_MERCHANT, 0);
+    Engine_ScriptShowMessage(LOCALID_WEAPON_MERCHANT, 0);
   }
-  Engine_EventEnd();
+  Engine_ScriptEnd();
 }
 
 /// In Vault's weapon and armor shop, across the counter the armor shop opens;
 /// otherwise the merchant wants the thieves to pay, or advises preparing for
 /// the cave in the Goma Range.
 ///
-/// Reached by talking to the armor merchant (ACTOR_ARMOR_MERCHANT).
-static void Event_TalkToArmorMerchant(void) {
-  s32 leaderFacing = Object_GetById(ACTOR_PARTY_LEADER)->facing;
+/// Reached by talking to the armor merchant (LOCALID_ARMOR_MERCHANT).
+static void EventScript_TalkToArmorMerchant(void) {
+  s32 leaderFacing = ObjectEvent_GetById(LOCALID_PARTY_LEADER)->facing;
 
-  Engine_EventStart();
+  Engine_ScriptStart();
   if (leaderFacing >= 0xa001 && leaderFacing <= 0xdfff) {
-    Engine_ShopOpen(5, ACTOR_ARMOR_MERCHANT);
+    Engine_ShopOpen(5, LOCALID_ARMOR_MERCHANT);
   } else {
     if (Engine_GameFlagIsSet(FLAG_VAULT_THIEVES_JAILED) == 0) {
-      Engine_EventSetMessage(MsgVaultThievesDidntHitOurHouse);
+      Engine_ScriptSetMessage(MsgVaultThievesDidntHitOurHouse);
     } else {
-      Engine_EventSetMessage(MsgVaultIfYoureGonnaHeadInto);
+      Engine_ScriptSetMessage(MsgVaultIfYoureGonnaHeadInto);
     }
-    Engine_EventShowMessage(ACTOR_ARMOR_MERCHANT, 0);
+    Engine_ScriptShowMessage(LOCALID_ARMOR_MERCHANT, 0);
   }
-  Engine_EventEnd();
+  Engine_ScriptEnd();
 }
 
 /// At Vault's inn, across the counter the inn opens; otherwise the innkeeper
 /// defends the guests everyone suspects, or learns the goods were hidden in
 /// his loft.
 ///
-/// Reached by talking to the innkeeper (ACTOR_INNKEEPER).
-static void Event_TalkToInnkeeper(void) {
-  s32 leaderFacing = Object_GetById(ACTOR_PARTY_LEADER)->facing;
+/// Reached by talking to the innkeeper (LOCALID_INNKEEPER).
+static void EventScript_TalkToInnkeeper(void) {
+  s32 leaderFacing = ObjectEvent_GetById(LOCALID_PARTY_LEADER)->facing;
 
-  Engine_EventStart();
+  Engine_ScriptStart();
   if (leaderFacing >= 0xa001 && leaderFacing <= 0xdfff) {
-    Engine_InnOpen(1, ACTOR_INNKEEPER);
+    Engine_InnOpen(1, LOCALID_INNKEEPER);
   } else {
     if (Engine_GameFlagIsSet(FLAG_VAULT_THIEVES_JAILED) == 0) {
-      Engine_EventSetMessage(MsgVaultEveryoneThinksOurGuestsThieves);
+      Engine_ScriptSetMessage(MsgVaultEveryoneThinksOurGuestsThieves);
     } else {
-      Engine_EventSetMessage(MsgVaultTheyHidThoseStolenGoods);
+      Engine_ScriptSetMessage(MsgVaultTheyHidThoseStolenGoods);
     }
-    Engine_EventShowMessage(ACTOR_INNKEEPER, 0);
+    Engine_ScriptShowMessage(LOCALID_INNKEEPER, 0);
   }
-  Engine_EventEnd();
+  Engine_ScriptEnd();
 }
 
 #include "common/vault_bone.h"
@@ -494,40 +501,40 @@ static void Event_TalkToInnkeeper(void) {
 ///
 /// Reached through FIELD_EVENT_MENUS_RAISED, which the engine raises in place
 /// of a menu or a shortcut while FLAG_MENUS_RAISE_EVENT is set.
-static void Event_GaretRefusesToLeave(void) {
+static void EventScript_GaretRefusesToLeave(void) {
 #if TBS_PATCH_1
   Leader_StopMoving();
 #endif
-  Engine_EventSetMessage(MsgVaultWeDontHaveTimeFor);
-  Engine_EventShowMessage(GARET, 0);
+  Engine_ScriptSetMessage(MsgVaultWeDontHaveTimeFor);
+  Engine_ScriptShowMessage(GARET, 0);
 }
 
 /// At Vault's inn, Isaac checks the barrel but doesn't find anything.
 ///
 /// Reached by searching VAULT_INTERIORS_CELL_INN_BARREL before the thieves are
 /// jailed; after, the same spot holds the Bone (Vault_FindBone).
-static void Event_SearchEmptyBarrel(void) {
-  Engine_EventStart();
+static void EventScript_SearchEmptyBarrel(void) {
+  Engine_ScriptStart();
   Engine_MessageShowCentered(MsgVaultIsaacCheckedBarrel, 1);
   Engine_MessageShowCentered(MsgVaultButDidntFindAnything, 1);
-  Engine_EventEnd();
+  Engine_ScriptEnd();
 }
 
 /// In the inn's loft in Vault, Isaac checks the chest, but it is empty.
 ///
-/// Reached by talking to one of the loft's three chests (ACTOR_FIRST_CHEST to
-/// ACTOR_THIRD_CHEST).
-static void Event_SearchEmptyChest(void) {
-  Engine_EventStart();
+/// Reached by talking to one of the loft's three chests (LOCALID_FIRST_CHEST to
+/// LOCALID_THIRD_CHEST).
+static void EventScript_SearchEmptyChest(void) {
+  Engine_ScriptStart();
   Engine_MessageShowCentered(MsgVaultIsaacCheckedChest, 1);
   Engine_MessageShowCentered(MsgVaultButChestWasEmpty, 1);
-  Engine_EventEnd();
+  Engine_ScriptEnd();
 }
 
 /// Returns the loft's events for the loft's three entrances, else the houses'
 /// events, which change once FLAG_VAULT_THIEVES_JAILED is set.
-const struct SceneEvent *Scene_GetEvents(void) {
-  switch (gGameState.entrance) {
+const struct MapEvent *Map_GetEvents(void) {
+  switch (gGameState.warpDest) {
   case VAULT_INTERIORS_LOFT_FROM_CRATE_ROOM:
   case VAULT_INTERIORS_LOFT_AFTER_LOSING_TO_THIEVES:
   case VAULT_INTERIORS_LOFT_AFTER_THIEVES_DEFEATED:
@@ -541,9 +548,9 @@ const struct SceneEvent *Scene_GetEvents(void) {
 
 /// Stands the speaker, faces the leader, and shows the selected message.
 static void VaultInteriors_StandAndShowMessage(s32 x) {
-  Engine_ActorSetAnimation(x, ANIMATION_STAND);
+  Engine_ObjectEventSetAnimation(x, ANIMATION_STAND);
   VaultInteriors_FaceEachOtherAndWait(x, 0, 2);
-  Engine_EventShowMessage(x, 0);
+  Engine_ScriptShowMessage(x, 0);
 }
 
 #include "common/vault_talk.h"
@@ -551,75 +558,76 @@ static void VaultInteriors_StandAndShowMessage(s32 x) {
 /// Faces the leader and selects the next reply when the answer is no.
 static void VaultInteriors_AskYesNoAndShowReply(s32 x) {
   VaultInteriors_FaceEachOtherAndWait(x, 0, 2);
-  Engine_EventOpenMessage(x, 0);
-  if (Engine_EventChooseYesNo(0, 0) != 0) {
+  Engine_ScriptOpenMessage(x, 0);
+  if (Engine_ScriptChooseYesNo(0, 0) != 0) {
     gEventWork->message++;
   }
-  Engine_EventShowMessage(x, 0);
+  Engine_ScriptShowMessage(x, 0);
 }
 
 /// In a house of Vault, the small boy asks about travel.
 /// "Hey, mister! Is it fun to see strange new places?"
 ///
-/// Reached by talking to the boy (ACTOR_BOY_ASKING_ABOUT_TRAVEL) before the
+/// Reached by talking to the boy (LOCALID_BOY_ASKING_ABOUT_TRAVEL) before the
 /// thieves are jailed.
-static void Event_BoyAsksAboutTravel(void) {
-  Engine_EventStart();
-  Engine_EventSetMessage(MsgVaultMisterFunSeeStrangeNew);
-  Engine_ActorSetAnimation(ACTOR_BOY_ASKING_ABOUT_TRAVEL, ANIMATION_STAND);
-  VaultInteriors_AskYesNoAndShowReply(ACTOR_BOY_ASKING_ABOUT_TRAVEL);
-  Engine_EventEnd();
+static void EventScript_BoyAsksAboutTravel(void) {
+  Engine_ScriptStart();
+  Engine_ScriptSetMessage(MsgVaultMisterFunSeeStrangeNew);
+  Engine_ObjectEventSetAnimation(LOCALID_BOY_ASKING_ABOUT_TRAVEL,
+                                 ANIMATION_STAND);
+  VaultInteriors_AskYesNoAndShowReply(LOCALID_BOY_ASKING_ABOUT_TRAVEL);
+  Engine_ScriptEnd();
 }
 
 /// At the mayor's in Vault, a little girl offers to tell Ivan's secret.
 /// "Ivan has great powers. Wouldn't you like to know what they are?"
 ///
-/// Reached by talking to ACTOR_GIRL_TELLING_A_SECRET until
+/// Reached by talking to LOCALID_GIRL_TELLING_A_SECRET until
 /// FLAG_VAULT_IVAN_JOINED_ROD_SEARCH is set; then the row after it tells the
 /// secret: Ivan can talk with animals.
-static void Event_OfferIvansSecret(void) {
-  Engine_EventStart();
-  Engine_EventSetMessage(MsgVaultIvanHasGreatPowersWouldnt);
-  VaultInteriors_AskYesNoAndShowReply(ACTOR_GIRL_TELLING_A_SECRET);
-  Actor_FaceDirection(ACTOR_GIRL_TELLING_A_SECRET, FACING_WEST, 0);
-  Engine_EventEnd();
+static void EventScript_OfferIvansSecret(void) {
+  Engine_ScriptStart();
+  Engine_ScriptSetMessage(MsgVaultIvanHasGreatPowersWouldnt);
+  VaultInteriors_AskYesNoAndShowReply(LOCALID_GIRL_TELLING_A_SECRET);
+  ObjectEvent_FaceDirection(LOCALID_GIRL_TELLING_A_SECRET, FACING_WEST, 0);
+  Engine_ScriptEnd();
 }
 
 /// In Vault's item shop, across the counter the shop opens; otherwise a
 /// greeting, or, after the thieves are jailed, the bridge is out.
 /// "Did you just arrive in town today?"
 ///
-/// Reached by talking to the item merchant (ACTOR_ITEM_MERCHANT).
-static void Event_TalkToItemMerchant(void) {
-  s32 leaderFacing = Object_GetById(ACTOR_PARTY_LEADER)->facing;
+/// Reached by talking to the item merchant (LOCALID_ITEM_MERCHANT).
+static void EventScript_TalkToItemMerchant(void) {
+  s32 leaderFacing = ObjectEvent_GetById(LOCALID_PARTY_LEADER)->facing;
 
-  Engine_EventStart();
+  Engine_ScriptStart();
   if (leaderFacing >= 0xa001 && leaderFacing <= 0xdfff) {
-    Engine_ShopOpen(6, ACTOR_ITEM_MERCHANT);
+    Engine_ShopOpen(6, LOCALID_ITEM_MERCHANT);
   } else if (Engine_GameFlagIsSet(FLAG_VAULT_THIEVES_JAILED) == 0) {
-    Engine_EventSetMessage(MsgVaultDidJustArriveInTown);
-    VaultInteriors_AskYesNoAndShowReply(ACTOR_ITEM_MERCHANT);
+    Engine_ScriptSetMessage(MsgVaultDidJustArriveInTown);
+    VaultInteriors_AskYesNoAndShowReply(LOCALID_ITEM_MERCHANT);
   } else {
-    Engine_EventSetMessage(MsgVaultWithBridgeOutWillQuite);
-    Engine_EventShowMessage(ACTOR_ITEM_MERCHANT, 0);
+    Engine_ScriptSetMessage(MsgVaultWithBridgeOutWillQuite);
+    Engine_ScriptShowMessage(LOCALID_ITEM_MERCHANT, 0);
   }
-  Engine_EventEnd();
+  Engine_ScriptEnd();
 }
 
 /// The wife of the man with the sparkling rock talks about their rocks.
 /// She wishes their rocks were gems, or, after the thieves are jailed, is glad
 /// they were caught before stealing the gem.
 ///
-/// Reached by talking to the gem owner's wife (ACTOR_GEM_OWNERS_WIFE).
-static void Event_TalkAboutRocks(void) {
-  Engine_EventStart();
+/// Reached by talking to the gem owner's wife (LOCALID_GEM_OWNERS_WIFE).
+static void EventScript_TalkAboutRocks(void) {
+  Engine_ScriptStart();
   if (Engine_GameFlagIsSet(FLAG_VAULT_THIEVES_JAILED) == 0) {
-    Engine_EventSetMessage(MsgVaultIfOnlyTheseRocksWere);
+    Engine_ScriptSetMessage(MsgVaultIfOnlyTheseRocksWere);
   } else {
-    Engine_EventSetMessage(MsgVaultThankGoodnessThoseThievesWere);
+    Engine_ScriptSetMessage(MsgVaultThankGoodnessThoseThievesWere);
   }
-  VaultInteriors_StandAndShowMessage(ACTOR_GEM_OWNERS_WIFE);
-  Engine_EventEnd();
+  VaultInteriors_StandAndShowMessage(LOCALID_GEM_OWNERS_WIFE);
+  Engine_ScriptEnd();
 }
 
 /// Grandpa in the item shop talks about missing things.
@@ -627,55 +635,55 @@ static void Event_TalkAboutRocks(void) {
 /// the loft and more in the cemetery.
 /// "Is it just me, or am I missing something?"
 ///
-/// Reached by talking to Grandpa (ACTOR_GRANDPA).
-static void Event_TalkAboutMissingThings(void) {
-  Engine_EventStart();
+/// Reached by talking to Grandpa (LOCALID_GRANDPA).
+static void EventScript_TalkAboutMissingThings(void) {
+  Engine_ScriptStart();
   if (Engine_GameFlagIsSet(FLAG_VAULT_THIEVES_JAILED) != 0) {
-    Engine_EventSetMessage(MsgVaultThievesHidStolenTreasureIn);
+    Engine_ScriptSetMessage(MsgVaultThievesHidStolenTreasureIn);
   } else {
-    Engine_EventSetMessage(MsgVaultJustMeOrAmMissing);
+    Engine_ScriptSetMessage(MsgVaultJustMeOrAmMissing);
   }
-  VaultInteriors_StandAndShowMessage(ACTOR_GRANDPA);
-  Engine_EventEnd();
+  VaultInteriors_StandAndShowMessage(LOCALID_GRANDPA);
+  Engine_ScriptEnd();
 }
 
 /// At his house in Vault, the mayor asks for someone to help Ivan; once the
 /// party has agreed, he thanks them the first time and asks them to look after
 /// Ivan after that.
 ///
-/// Reached by talking to the mayor (ACTOR_MAYOR) before the thieves are jailed.
-/// Sets FLAG_VAULT_MAYOR_THANKED_PARTY with the thanks.
-static void Event_MayorAsksHelpForIvan(void) {
+/// Reached by talking to the mayor (LOCALID_MAYOR) before the thieves are
+/// jailed. Sets FLAG_VAULT_MAYOR_THANKED_PARTY with the thanks.
+static void EventScript_MayorAsksHelpForIvan(void) {
   s32 thankedForHelpingFlag;
   thankedForHelpingFlag = FLAG_VAULT_MAYOR_THANKED_PARTY;
-  Engine_EventStart();
+  Engine_ScriptStart();
   if (Engine_GameFlagIsSet(FLAG_VAULT_IVAN_JOINED_ROD_SEARCH) != 0) {
     if (Engine_GameFlagIsSet(thankedForHelpingFlag) == 0) {
-      Engine_EventSetMessage(MsgVaultYoureGoingHelpIvan);
-      VaultInteriors_StandAndShowMessage(ACTOR_MAYOR);
-      Engine_EventWait(10);
-      VaultInteriors_PlayAnimationAndWait(ACTOR_MAYOR, ANIMATION_NOD, 20);
+      Engine_ScriptSetMessage(MsgVaultYoureGoingHelpIvan);
+      VaultInteriors_StandAndShowMessage(LOCALID_MAYOR);
+      Engine_ScriptWait(10);
+      VaultInteriors_PlayAnimationAndWait(LOCALID_MAYOR, ANIMATION_NOD, 20);
       Engine_GameFlagSet(thankedForHelpingFlag);
     } else {
-      Engine_EventSetMessage(MsgVaultPleaseLookAfterIvan);
+      Engine_ScriptSetMessage(MsgVaultPleaseLookAfterIvan);
     }
   } else {
-    Engine_EventSetMessage(MsgVaultCouldSomeonePleaseHelpIvan);
+    Engine_ScriptSetMessage(MsgVaultCouldSomeonePleaseHelpIvan);
   }
-  VaultInteriors_StandAndShowMessage(ACTOR_MAYOR);
-  Engine_EventEnd();
+  VaultInteriors_StandAndShowMessage(LOCALID_MAYOR);
+  Engine_ScriptEnd();
 }
 
 /// At Vault's inn, the girl at the inn says the three strangers have fooled
 /// the innkeeper and his wife.
 ///
-/// Reached by talking to the girl at the inn (ACTOR_GIRL_AT_THE_INN) before the
-/// thieves are jailed.
-static void Event_WarnAboutThreeStrangers(void) {
-  Engine_EventStart();
-  Engine_EventSetMessage(MsgVaultThoseThreeStrangersSureHave);
-  VaultInteriors_StandAndShowMessage(ACTOR_GIRL_AT_THE_INN);
-  Engine_EventEnd();
+/// Reached by talking to the girl at the inn (LOCALID_GIRL_AT_THE_INN) before
+/// the thieves are jailed.
+static void EventScript_WarnAboutThreeStrangers(void) {
+  Engine_ScriptStart();
+  Engine_ScriptSetMessage(MsgVaultThoseThreeStrangersSureHave);
+  VaultInteriors_StandAndShowMessage(LOCALID_GIRL_AT_THE_INN);
+  Engine_ScriptEnd();
 }
 
 /// The suspected leader cries out and runs to his next spot.
@@ -683,32 +691,32 @@ static void Event_WarnAboutThreeStrangers(void) {
 /// faces and where he is on his route.
 /// "Ow! Stop it!"
 ///
-/// Reached by Mind Read on him (ACTOR_SUSPECTED_LEADER), and by talking to him
-/// once FLAG_VAULT_SUSPECTS_MIND_READ is set (before, he only says Ivan creeps
-/// him out); neither while the party corners him. His timer holds his place on
-/// the six-step route, wrapping from 5 to 0.
-static void Event_SuspectedLeaderDodges(void) {
-  struct FieldActor *suspect;
+/// Reached by Mind Read on him (LOCALID_SUSPECTED_LEADER), and by talking to
+/// him once FLAG_VAULT_SUSPECTS_MIND_READ is set (before, he only says Ivan
+/// creeps him out); neither while the party corners him. His timer holds his
+/// place on the six-step route, wrapping from 5 to 0.
+static void EventScript_SuspectedLeaderDodges(void) {
+  struct ObjectEvent *suspect;
   s16 *routeState;
   s32 routeIndex;
   s32 nextRoute;
 
-  suspect = Object_GetById(ACTOR_SUSPECTED_LEADER);
-  Engine_EventStart();
-  Engine_ActorRunRepeatedMotion(ACTOR_SUSPECTED_LEADER, 2);
-  Engine_EventSetMessage(MsgVaultOwStop);
-  Engine_EventShowMessage(ACTOR_SUSPECTED_LEADER, 0);
-  Engine_ActorSetSpeed(ACTOR_SUSPECTED_LEADER, PIXELS(4), PIXELS(2));
+  suspect = ObjectEvent_GetById(LOCALID_SUSPECTED_LEADER);
+  Engine_ScriptStart();
+  Engine_ObjectEventRunRepeatedMotion(LOCALID_SUSPECTED_LEADER, 2);
+  Engine_ScriptSetMessage(MsgVaultOwStop);
+  Engine_ScriptShowMessage(LOCALID_SUSPECTED_LEADER, 0);
+  Engine_ObjectEventSetSpeed(LOCALID_SUSPECTED_LEADER, PIXELS(4), PIXELS(2));
   if ((u32)((suspect->facing & 0xf000) - 0x5000) <= 0x6000) {
     routeState = (s16 *)&suspect->timer;
     routeIndex = *routeState;
     if (routeIndex <= 2) {
-      Actor_SetActionScript(ACTOR_SUSPECTED_LEADER,
-                            gVaultInteriors_StepActions[routeIndex]);
+      ObjectEvent_SetActionScript(LOCALID_SUSPECTED_LEADER,
+                                  gVaultInteriors_StepActions[routeIndex]);
       *(u16 *)routeState = *(u16 *)routeState + 1;
     } else {
-      Actor_SetActionScript(ACTOR_SUSPECTED_LEADER,
-                            gVaultInteriors_IdleActions[routeIndex]);
+      ObjectEvent_SetActionScript(LOCALID_SUSPECTED_LEADER,
+                                  gVaultInteriors_IdleActions[routeIndex]);
       nextRoute = *(u16 *)routeState - 1;
       *(u16 *)routeState = nextRoute;
     }
@@ -716,12 +724,12 @@ static void Event_SuspectedLeaderDodges(void) {
     routeState = (s16 *)&suspect->timer;
     routeIndex = *routeState;
     if (routeIndex > 2) {
-      Actor_SetActionScript(ACTOR_SUSPECTED_LEADER,
-                            gVaultInteriors_StepActions[routeIndex]);
+      ObjectEvent_SetActionScript(LOCALID_SUSPECTED_LEADER,
+                                  gVaultInteriors_StepActions[routeIndex]);
       *(u16 *)routeState = *(u16 *)routeState + 1;
     } else {
-      Actor_SetActionScript(ACTOR_SUSPECTED_LEADER,
-                            gVaultInteriors_IdleActions[routeIndex]);
+      ObjectEvent_SetActionScript(LOCALID_SUSPECTED_LEADER,
+                                  gVaultInteriors_IdleActions[routeIndex]);
       nextRoute = *(u16 *)routeState - 1;
       *(u16 *)routeState = nextRoute;
     }
@@ -734,72 +742,78 @@ static void Event_SuspectedLeaderDodges(void) {
     nextRoute = 5;
     *(u16 *)routeState = nextRoute;
   }
-  Object_RefreshSelectorById(ACTOR_SUSPECTED_LEADER);
-  Engine_EventEnd();
+  ObjectEvent_RefreshSelectorById(LOCALID_SUSPECTED_LEADER);
+  Engine_ScriptEnd();
 }
 
 /// Selects a response script and advances the second suspect's route state.
 static inline void
-VaultInteriors_ApplySecondSuspectRoute(struct FieldActor *actor, s32 scriptRow,
-                                       s32 routePair, u16 routeDelta) {
-  Actor_SetActionScript(
-      ACTOR_SUSPECTED_THIEF,
-      gVaultInteriors_ResponseScripts[scriptRow * 4 + actor->timer]);
-  actor->timer = actor->timer - routePair * 2 + routeDelta;
+VaultInteriors_ApplySecondSuspectRoute(struct ObjectEvent *objectEvent,
+                                       s32 scriptRow, s32 routePair,
+                                       u16 routeDelta) {
+  ObjectEvent_SetActionScript(
+      LOCALID_SUSPECTED_THIEF,
+      gVaultInteriors_ResponseScripts[scriptRow * 4 + objectEvent->timer]);
+  objectEvent->timer = objectEvent->timer - routePair * 2 + routeDelta;
 }
 
 /// In the guests' room at Vault's inn, the suspected thief cries out and runs
 /// to his next spot. "No! Leave me alone!"
 ///
-/// Reached as Event_SuspectedLeaderDodges is, on ACTOR_SUSPECTED_THIEF. His
-/// timer holds his place on his route (4 at its start).
-static void Event_SuspectedThiefDodges(void) {
-  struct FieldActor *actor;
+/// Reached as EventScript_SuspectedLeaderDodges is, on LOCALID_SUSPECTED_THIEF.
+/// His timer holds his place on his route (4 at its start).
+static void EventScript_SuspectedThiefDodges(void) {
+  struct ObjectEvent *objectEvent;
   u32 facing;
   s32 routePair;
 
-  actor = Object_GetById(ACTOR_SUSPECTED_THIEF);
-  facing = actor->facing & 0xf000;
-  routePair = actor->timer >> 1;
-  Engine_EventStart();
-  Engine_ActorRunRepeatedMotion(ACTOR_SUSPECTED_THIEF, 2);
-  Engine_EventSetMessage(MsgVaultNoLeaveAlone);
-  Engine_EventShowMessage(ACTOR_SUSPECTED_THIEF, 0);
-  Engine_ActorSetSpeed(ACTOR_SUSPECTED_THIEF, PIXELS(7) / 2, PIXELS(7) / 4);
-  switch (actor->timer) {
+  objectEvent = ObjectEvent_GetById(LOCALID_SUSPECTED_THIEF);
+  facing = objectEvent->facing & 0xf000;
+  routePair = objectEvent->timer >> 1;
+  Engine_ScriptStart();
+  Engine_ObjectEventRunRepeatedMotion(LOCALID_SUSPECTED_THIEF, 2);
+  Engine_ScriptSetMessage(MsgVaultNoLeaveAlone);
+  Engine_ScriptShowMessage(LOCALID_SUSPECTED_THIEF, 0);
+  Engine_ObjectEventSetSpeed(LOCALID_SUSPECTED_THIEF, PIXELS(7) / 2,
+                             PIXELS(7) / 4);
+  switch (objectEvent->timer) {
   case 4:
     if (facing > 0x2000 && facing < 0xa000) {
-      Actor_SetActionScript(ACTOR_SUSPECTED_THIEF,
-                            gVaultInteriors_SuspectAlongToSouthEastCorner);
-      actor->timer = 2;
+      ObjectEvent_SetActionScript(
+          LOCALID_SUSPECTED_THIEF,
+          gVaultInteriors_SuspectAlongToSouthEastCorner);
+      objectEvent->timer = 2;
     } else {
-      Actor_SetActionScript(ACTOR_SUSPECTED_THIEF,
-                            gVaultInteriors_SuspectAlongToSouthWestCorner);
-      actor->timer = 3;
+      ObjectEvent_SetActionScript(
+          LOCALID_SUSPECTED_THIEF,
+          gVaultInteriors_SuspectAlongToSouthWestCorner);
+      objectEvent->timer = 3;
     }
     break;
   case 0:
   case 2:
     if (facing > 0x2000 && facing < 0xa000) {
-      VaultInteriors_ApplySecondSuspectRoute(actor, routePair, routePair, 1);
+      VaultInteriors_ApplySecondSuspectRoute(objectEvent, routePair, routePair,
+                                             1);
     } else {
-      VaultInteriors_ApplySecondSuspectRoute(actor, routePair ^ 1, routePair,
-                                             -1);
+      VaultInteriors_ApplySecondSuspectRoute(objectEvent, routePair ^ 1,
+                                             routePair, -1);
     }
     break;
   case 1:
   case 3:
     if (facing > 0x6000 && facing < 0xe000) {
-      VaultInteriors_ApplySecondSuspectRoute(actor, routePair, routePair, 1);
+      VaultInteriors_ApplySecondSuspectRoute(objectEvent, routePair, routePair,
+                                             1);
     } else {
-      VaultInteriors_ApplySecondSuspectRoute(actor, routePair ^ 1, routePair,
-                                             -1);
+      VaultInteriors_ApplySecondSuspectRoute(objectEvent, routePair ^ 1,
+                                             routePair, -1);
     }
     break;
   }
-  actor->timer &= 3;
-  Object_RefreshSelectorById(ACTOR_SUSPECTED_THIEF);
-  Engine_EventEnd();
+  objectEvent->timer &= 3;
+  ObjectEvent_RefreshSelectorById(LOCALID_SUSPECTED_THIEF);
+  Engine_ScriptEnd();
 }
 
 /// The villager suspecting the neighbor asks whether the thieves came from
@@ -808,31 +822,31 @@ static void Event_SuspectedThiefDodges(void) {
 /// come from Lunpa?"
 ///
 /// Reached by talking to the villager suspecting the neighbor
-/// (ACTOR_VILLAGER_SUSPECTING_THE_NEIGHBOR) after the thieves are jailed; the
-/// boy and ACTOR_BOY_WISHING_TO_BE_OLDER below are reached the same way.
-static void Event_AskWhetherThievesCameFromLunpa(void) {
-  Engine_EventStart();
-  Engine_EventSetMessage(MsgVaultDidThoseThievesComeFrom);
-  VaultInteriors_AskYesNoAndShowReply(ACTOR_VILLAGER_SUSPECTING_THE_NEIGHBOR);
-  Engine_EventEnd();
+/// (LOCALID_VILLAGER_SUSPECTING_THE_NEIGHBOR) after the thieves are jailed; the
+/// boy and LOCALID_BOY_WISHING_TO_BE_OLDER below are reached the same way.
+static void EventScript_AskWhetherThievesCameFromLunpa(void) {
+  Engine_ScriptStart();
+  Engine_ScriptSetMessage(MsgVaultDidThoseThievesComeFrom);
+  VaultInteriors_AskYesNoAndShowReply(LOCALID_VILLAGER_SUSPECTING_THE_NEIGHBOR);
+  Engine_ScriptEnd();
 }
 
 /// The boy says Father worries about the prisoners from Lunpa.
 /// He's in a house of Vault, and says it after the thieves are jailed.
-static void Event_BoyWorriesAboutFather(void) {
-  Engine_EventStart();
-  Engine_EventSetMessage(MsgVaultMyFatherWorriedAboutThose);
-  VaultInteriors_StandAndShowMessage(ACTOR_BOY_ASKING_ABOUT_TRAVEL);
-  Engine_EventEnd();
+static void EventScript_BoyWorriesAboutFather(void) {
+  Engine_ScriptStart();
+  Engine_ScriptSetMessage(MsgVaultMyFatherWorriedAboutThose);
+  VaultInteriors_StandAndShowMessage(LOCALID_BOY_ASKING_ABOUT_TRAVEL);
+  Engine_ScriptEnd();
 }
 
 /// At the mayor's in Vault after the thieves are jailed, a villager asks about
 /// defeating them. "I heard you defeated those thieves!"
-static void Event_AskAboutDefeatingThieves(void) {
-  Engine_EventStart();
-  Engine_EventSetMessage(MsgVaultHeardDefeatedThoseThieves);
-  VaultInteriors_AskYesNoAndShowReply(ACTOR_BOY_WISHING_TO_BE_OLDER);
-  Engine_EventEnd();
+static void EventScript_AskAboutDefeatingThieves(void) {
+  Engine_ScriptStart();
+  Engine_ScriptSetMessage(MsgVaultHeardDefeatedThoseThieves);
+  VaultInteriors_AskYesNoAndShowReply(LOCALID_BOY_WISHING_TO_BE_OLDER);
+  Engine_ScriptEnd();
 }
 
 /// The mayor thanks Isaac and gives the promised Water of Life.
@@ -840,71 +854,72 @@ static void Event_AskAboutDefeatingThieves(void) {
 /// is room; then he asks whether the party is heading beyond the Goma Range,
 /// and points them to the cave on the way to Bilibin.
 ///
-/// Reached by talking to the mayor (ACTOR_MAYOR) after the thieves are jailed.
-/// Gives the Water of Life and sets FLAG_VAULT_WATER_OF_LIFE_RECEIVED, once;
-/// with a full bag he says to come back for it.
-static void Event_MayorGivesWaterOfLife(void) {
-  Engine_EventStart();
+/// Reached by talking to the mayor (LOCALID_MAYOR) after the thieves are
+/// jailed. Gives the Water of Life and sets FLAG_VAULT_WATER_OF_LIFE_RECEIVED,
+/// once; with a full bag he says to come back for it.
+static void EventScript_MayorGivesWaterOfLife(void) {
+  Engine_ScriptStart();
   if (GameFlag_IsSet(FLAG_VAULT_WATER_OF_LIFE_RECEIVED) == 0) {
-    Engine_EventSetMessage(MsgVaultYouWereSuchGreatHelp);
-    VaultInteriors_ShowMessageAndWait(ACTOR_MAYOR, 20);
-    VaultInteriors_PlayAnimationAndWait(ACTOR_MAYOR, ANIMATION_NOD, 20);
-    VaultInteriors_ShowMessageAndWait(ACTOR_MAYOR, 30);
-    Actor_FaceDirection(ACTOR_MAYOR, FACING_EAST, 0);
-    Engine_EventWait(30);
-    Engine_ActorRunRepeatedMotion(ACTOR_MAYOR, 2);
-    Engine_EventWait(30);
-    VaultInteriors_FaceEachOtherAndWait(ACTOR_PARTY_LEADER, ACTOR_MAYOR, 20);
-    VaultInteriors_PlayAnimationAndWait(ACTOR_MAYOR, ANIMATION_NOD, 20);
+    Engine_ScriptSetMessage(MsgVaultYouWereSuchGreatHelp);
+    VaultInteriors_ShowMessageAndWait(LOCALID_MAYOR, 20);
+    VaultInteriors_PlayAnimationAndWait(LOCALID_MAYOR, ANIMATION_NOD, 20);
+    VaultInteriors_ShowMessageAndWait(LOCALID_MAYOR, 30);
+    ObjectEvent_FaceDirection(LOCALID_MAYOR, FACING_EAST, 0);
+    Engine_ScriptWait(30);
+    Engine_ObjectEventRunRepeatedMotion(LOCALID_MAYOR, 2);
+    Engine_ScriptWait(30);
+    VaultInteriors_FaceEachOtherAndWait(LOCALID_PARTY_LEADER, LOCALID_MAYOR,
+                                        20);
+    VaultInteriors_PlayAnimationAndWait(LOCALID_MAYOR, ANIMATION_NOD, 20);
     gEventWork->message++;
     if (PartyInventory_HasSpace() == 0) {
-      Engine_EventSetMessage(MsgVaultYouWereSuchGreatHelp + 3);
-      VaultInteriors_ShowMessageAndWait(ACTOR_MAYOR, 20);
-      Engine_EventEnd();
+      Engine_ScriptSetMessage(MsgVaultYouWereSuchGreatHelp + 3);
+      VaultInteriors_ShowMessageAndWait(LOCALID_MAYOR, 20);
+      Engine_ScriptEnd();
       return;
     }
     GameFlag_Set(FLAG_VAULT_WATER_OF_LIFE_RECEIVED);
     Engine_PartyGiveItem(ITEM_WATER_OF_LIFE, 0);
   }
-  Engine_EventSetMessage(MsgVaultHeadingOutBeyondGomaRange);
-  Event_OpenMessage(ACTOR_MAYOR, 0);
-  Engine_EventWait(20);
-  if (Engine_EventChooseYesNo(0, 0) != 0) {
+  Engine_ScriptSetMessage(MsgVaultHeadingOutBeyondGomaRange);
+  Script_OpenMessage(LOCALID_MAYOR, 0);
+  Engine_ScriptWait(20);
+  if (Engine_ScriptChooseYesNo(0, 0) != 0) {
     gEventWork->message++;
   }
-  Event_ShowMessage(ACTOR_MAYOR, 0);
-  Engine_EventEnd();
+  Script_ShowMessage(LOCALID_MAYOR, 0);
+  Engine_ScriptEnd();
 }
 
 /// At Vault's inn after the thieves are jailed, the girl at the inn offers
 /// leftover bones from dinner; a yes gets a Bone if there is room, a no a nod.
 ///
-/// Reached by talking to the girl at the inn (ACTOR_GIRL_AT_THE_INN) after the
-/// thieves are jailed, while the leader is not beside the Bone on the floor
-/// (FLAG_SCENE_TEMP_50 clear). Gives a Bone and sets FLAG_VAULT_BONE_RECEIVED.
-static void Event_OfferBones(void) {
-  Engine_EventStart();
-  VaultInteriors_FaceEachOtherAndWait(ACTOR_GIRL_AT_THE_INN, ACTOR_PARTY_LEADER,
-                                      2);
+/// Reached by talking to the girl at the inn (LOCALID_GIRL_AT_THE_INN) after
+/// the thieves are jailed, while the leader is not beside the Bone on the floor
+/// (FLAG_MAP_TEMP_50 clear). Gives a Bone and sets FLAG_VAULT_BONE_RECEIVED.
+static void EventScript_OfferBones(void) {
+  Engine_ScriptStart();
+  VaultInteriors_FaceEachOtherAndWait(LOCALID_GIRL_AT_THE_INN,
+                                      LOCALID_PARTY_LEADER, 2);
   if (GameFlag_IsSet(FLAG_VAULT_BONE_RECEIVED) == 0) {
-    Engine_EventSetMessage(MsgVaultHaveLotLeftoverBonesFrom);
-    Event_OpenMessage(ACTOR_GIRL_AT_THE_INN, 0);
+    Engine_ScriptSetMessage(MsgVaultHaveLotLeftoverBonesFrom);
+    Script_OpenMessage(LOCALID_GIRL_AT_THE_INN, 0);
   } else {
-    Engine_EventSetMessage(MsgVaultWantMoreBones);
-    Event_OpenMessage(ACTOR_GIRL_AT_THE_INN, 0);
+    Engine_ScriptSetMessage(MsgVaultWantMoreBones);
+    Script_OpenMessage(LOCALID_GIRL_AT_THE_INN, 0);
   }
-  if (Engine_EventChooseYesNo(0, 0) == 0) {
-    Engine_EventWait(20);
-    Event_ShowMessage(ACTOR_GIRL_AT_THE_INN, 0);
-    Engine_EventWait(20);
-    Engine_ActorRunRepeatedMotion(ACTOR_GIRL_AT_THE_INN, 2);
-    Engine_EventWait(20);
+  if (Engine_ScriptChooseYesNo(0, 0) == 0) {
+    Engine_ScriptWait(20);
+    Script_ShowMessage(LOCALID_GIRL_AT_THE_INN, 0);
+    Engine_ScriptWait(20);
+    Engine_ObjectEventRunRepeatedMotion(LOCALID_GIRL_AT_THE_INN, 2);
+    Engine_ScriptWait(20);
     if (PartyInventory_HasSpace() == 0) {
-      Engine_ActorSetAnimationAndWait(ACTOR_GIRL_AT_THE_INN,
-                                      ANIMATION_SHAKE_HEAD);
-      Engine_EventWait(20);
-      Engine_EventSetMessage(MsgVaultWowHaveManyThingsArent);
-      Event_ShowMessage(ACTOR_GIRL_AT_THE_INN, 0);
+      Engine_ObjectEventSetAnimationAndWait(LOCALID_GIRL_AT_THE_INN,
+                                            ANIMATION_SHAKE_HEAD);
+      Engine_ScriptWait(20);
+      Engine_ScriptSetMessage(MsgVaultWowHaveManyThingsArent);
+      Script_ShowMessage(LOCALID_GIRL_AT_THE_INN, 0);
     } else {
       Engine_ItemShowFound(ITEM_BONE, 3);
       Engine_PartyGiveItem(ITEM_BONE, 0);
@@ -912,86 +927,87 @@ static void Event_OfferBones(void) {
     }
   } else {
     gEventWork->message++;
-    Engine_EventWait(20);
-    Engine_ActorSetAnimationAndWait(ACTOR_GIRL_AT_THE_INN, ANIMATION_NOD);
-    Engine_EventWait(20);
-    Event_ShowMessage(ACTOR_GIRL_AT_THE_INN, 0);
+    Engine_ScriptWait(20);
+    Engine_ObjectEventSetAnimationAndWait(LOCALID_GIRL_AT_THE_INN,
+                                          ANIMATION_NOD);
+    Engine_ScriptWait(20);
+    Script_ShowMessage(LOCALID_GIRL_AT_THE_INN, 0);
   }
-  Actor_FaceDirection(ACTOR_GIRL_AT_THE_INN, FACING_SOUTH, 0);
-  Engine_EventEnd();
+  ObjectEvent_FaceDirection(LOCALID_GIRL_AT_THE_INN, FACING_SOUTH, 0);
+  Engine_ScriptEnd();
 }
 
 /// In a house of Vault, Mind Read on the wife of the man with the sparkling
 /// rock: let me see that rock, or maybe it is worthless.
 ///
-/// Reached by Mind Read on the gem owner's wife (ACTOR_GEM_OWNERS_WIFE); the
+/// Reached by Mind Read on the gem owner's wife (LOCALID_GEM_OWNERS_WIFE); the
 /// Mind Read events below are reached the same way on the actor each names,
 /// before and after the thieves are jailed (FLAG_VAULT_THIEVES_JAILED picks the
 /// thought).
-static void Event_ReadMindOnRock(void) {
-  Engine_EventStart();
+static void EventScript_ReadMindOnRock(void) {
+  Engine_ScriptStart();
   if (Engine_GameFlagIsSet(FLAG_VAULT_THIEVES_JAILED) == 0) {
-    Engine_EventSetMessage(MsgVaultOkMisterLetMeSee);
+    Engine_ScriptSetMessage(MsgVaultOkMisterLetMeSee);
   } else {
-    Engine_EventSetMessage(MsgVaultIfRockWorthlessMaybeThats);
+    Engine_ScriptSetMessage(MsgVaultIfRockWorthlessMaybeThats);
   }
-  Vault_ShowThought(ACTOR_GEM_OWNERS_WIFE);
-  Engine_EventEnd();
+  Vault_ShowThought(LOCALID_GEM_OWNERS_WIFE);
+  Engine_ScriptEnd();
 }
 
 /// In a house of Vault, Mind Read on the boy: what is the outside world
 /// like, or Father looks sad.
-static void Event_ReadBoysMind(void) {
-  Engine_EventStart();
+static void EventScript_ReadBoysMind(void) {
+  Engine_ScriptStart();
   if (Engine_GameFlagIsSet(FLAG_VAULT_THIEVES_JAILED) == 0) {
-    Engine_EventSetMessage(MsgVaultWonderOutsideWorldLike);
+    Engine_ScriptSetMessage(MsgVaultWonderOutsideWorldLike);
   } else {
-    Engine_EventSetMessage(MsgVaultFatherLooksSadWorryingLike);
+    Engine_ScriptSetMessage(MsgVaultFatherLooksSadWorryingLike);
   }
-  Vault_ShowThought(ACTOR_BOY_ASKING_ABOUT_TRAVEL);
-  Engine_EventEnd();
+  Vault_ShowThought(LOCALID_BOY_ASKING_ABOUT_TRAVEL);
+  Engine_ScriptEnd();
 }
 
 /// In Vault's item shop, Mind Read on Grandpa: could they be thieves? Who can
 /// be trusted? Or nothing in the house was worth stealing.
-static void Event_ReadMindOnThieves(void) {
-  Engine_EventStart();
+static void EventScript_ReadMindOnThieves(void) {
+  Engine_ScriptStart();
   if (Engine_GameFlagIsSet(FLAG_VAULT_THIEVES_JAILED) == 0) {
-    Engine_EventSetMessage(MsgVaultCouldTheyThievesGoodDont);
+    Engine_ScriptSetMessage(MsgVaultCouldTheyThievesGoodDont);
   } else {
-    Engine_EventSetMessage(MsgVaultGuessNothingInOurHouse);
+    Engine_ScriptSetMessage(MsgVaultGuessNothingInOurHouse);
   }
-  Vault_ShowThought(ACTOR_GRANDPA);
-  Engine_EventEnd();
+  Vault_ShowThought(LOCALID_GRANDPA);
+  Engine_ScriptEnd();
 }
 
 /// At the mayor's in Vault, Mind Read on the mayor: a laugh, or the cave in
 /// the Goma Range is dangerous, but the party will be okay. "That tickles..."
-static void Event_ReadMayorMind(void) {
-  Engine_EventStart();
+static void EventScript_ReadMayorMind(void) {
+  Engine_ScriptStart();
   if (Engine_GameFlagIsSet(FLAG_VAULT_THIEVES_JAILED) == 0) {
-    Engine_EventSetMessage(MsgVaultTicklesBeingTickledByBoy);
+    Engine_ScriptSetMessage(MsgVaultTicklesBeingTickledByBoy);
   } else {
-    Engine_EventSetMessage(MsgVaultCaveInGomaRangeDangerous);
+    Engine_ScriptSetMessage(MsgVaultCaveInGomaRangeDangerous);
   }
-  Vault_ShowThought(ACTOR_MAYOR);
-  Engine_EventEnd();
+  Vault_ShowThought(LOCALID_MAYOR);
+  Engine_ScriptEnd();
 }
 
 /// At Vault's inn, Mind Read on the girl at the inn: the master and his wife
 /// are blinded by money; after the thieves are jailed, hungry while cooking,
 /// or, once a Bone was given, wondering about calcium.
-static void Event_ReadBoneGiverMind(void) {
-  Engine_EventStart();
+static void EventScript_ReadBoneGiverMind(void) {
+  Engine_ScriptStart();
   if (Engine_GameFlagIsSet(FLAG_VAULT_THIEVES_JAILED) == 0) {
-    Engine_EventSetMessage(MsgVaultMasterHisWifeBlindedBy);
+    Engine_ScriptSetMessage(MsgVaultMasterHisWifeBlindedBy);
   } else if (Engine_GameFlagIsSet(FLAG_VAULT_BONE_RECEIVED) == 0) {
-    Engine_EventSetMessage(MsgVaultGeeAlwaysGetHungryWhen);
+    Engine_ScriptSetMessage(MsgVaultGeeAlwaysGetHungryWhen);
   } else {
-    Engine_EventSetMessage(MsgVaultHeReallyLikesBonesWonder);
+    Engine_ScriptSetMessage(MsgVaultHeReallyLikesBonesWonder);
   }
-  Vault_ShowThought(ACTOR_GIRL_AT_THE_INN);
-  Engine_EventEnd();
+  Vault_ShowThought(LOCALID_GIRL_AT_THE_INN);
+  Engine_ScriptEnd();
 }
 
 /// At the mayor's in Vault, talking to Ivan: the first time, he reads Isaac's
@@ -1002,518 +1018,541 @@ static void Event_ReadBoneGiverMind(void) {
 /// while the party corners the suspects. Sets FLAG_VAULT_MET_IVAN the first
 /// time, and on a yes plays VaultInteriors_IvanJoinsRodSearch, sets
 /// FLAG_VAULT_IVAN_JOINED_ROD_SEARCH and has Ivan walk into the leader.
-static void Event_MeetIvan(void) {
+static void EventScript_MeetIvan(void) {
 
-  struct FieldActor *actor;
+  struct ObjectEvent *objectEvent;
 
-  Engine_EventStart();
-  Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(4) / 5, PIXELS(2) / 5);
-  Actor_SetSpeed(GARET, PIXELS(4) / 5, PIXELS(2) / 5);
-  Actor_SetSpeed(IVAN, PIXELS(4) / 5, PIXELS(2) / 5);
+  Engine_ScriptStart();
+  ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(4) / 5, PIXELS(2) / 5);
+  ObjectEvent_SetSpeed(GARET, PIXELS(4) / 5, PIXELS(2) / 5);
+  ObjectEvent_SetSpeed(IVAN, PIXELS(4) / 5, PIXELS(2) / 5);
   // Isaac steps up in front of Ivan and Garet comes out beside him.
-  Event_PlayCue(MUS_SILENCE);
-  Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 384, 408);
-  Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
-  Actor_SetPosition(GARET, PIXELS(384), PIXELS(408));
-  Actor_WalkToAndWait(GARET, 368, 408);
-  Actor_FaceDirection(GARET, FACING_NORTH + FACING_STEP, 20);
+  Script_PlayCue(MUS_SILENCE);
+  ObjectEvent_WalkToAndWait(LOCALID_PARTY_LEADER, 384, 408);
+  ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_NORTH, 0);
+  ObjectEvent_SetPosition(GARET, PIXELS(384), PIXELS(408));
+  ObjectEvent_WalkToAndWait(GARET, 368, 408);
+  ObjectEvent_FaceDirection(GARET, FACING_NORTH + FACING_STEP, 20);
   // Introduce Ivan's ability only on the first meeting.
   if (GameFlag_IsSet(FLAG_VAULT_MET_IVAN) == 0) {
     GameFlag_Set(FLAG_VAULT_MET_IVAN);
     // Ivan reads Isaac's mind and admits his strange powers.
-    VaultInteriors_StartMindRead(IVAN, ACTOR_PARTY_LEADER);
-    Engine_EventWait(40);
+    VaultInteriors_StartMindRead(IVAN, LOCALID_PARTY_LEADER);
+    Engine_ScriptWait(40);
     VaultInteriors_EndMindRead();
-    Engine_EventSetMessage(MsgVaultDoPossessStrangePowers);
-    Event_PlayCue(MUS_060);
-    Engine_EventWait(30);
+    Engine_ScriptSetMessage(MsgVaultDoPossessStrangePowers);
+    Script_PlayCue(MUS_060);
+    Engine_ScriptWait(30);
     VaultInteriors_PlayAnimationAndWait(IVAN, ANIMATION_NOD, 30);
     VaultInteriors_ShowMessageAndWait(IVAN, 30);
     // The two start; he reads again: "You have them, too, don't you?"
-    Engine_ActorStartRepeatedMotion(ACTOR_PARTY_LEADER, 1);
-    Engine_ActorRunRepeatedMotion(GARET, 1);
-    Engine_EventWait(20);
-    VaultInteriors_StartMindRead(IVAN, ACTOR_PARTY_LEADER);
-    Engine_EventWait(40);
+    Engine_ObjectEventStartRepeatedMotion(LOCALID_PARTY_LEADER, 1);
+    Engine_ObjectEventRunRepeatedMotion(GARET, 1);
+    Engine_ScriptWait(20);
+    VaultInteriors_StartMindRead(IVAN, LOCALID_PARTY_LEADER);
+    Engine_ScriptWait(40);
     VaultInteriors_EndMindRead();
     VaultInteriors_ShowMessageAndWait(IVAN, 30);
-    VaultInteriors_FaceEachOtherAndWait(ACTOR_PARTY_LEADER, GARET, 50);
-    Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
-    Actor_FaceDirection(GARET, FACING_NORTH + FACING_STEP, 0);
-    Engine_EventWait(20);
+    VaultInteriors_FaceEachOtherAndWait(LOCALID_PARTY_LEADER, GARET, 50);
+    ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_NORTH, 0);
+    ObjectEvent_FaceDirection(GARET, FACING_NORTH + FACING_STEP, 0);
+    Engine_ScriptWait(20);
     // A third reading: his power is called Psynergy; then they have so much
     // in common he can trust them.
-    VaultInteriors_StartMindRead(IVAN, ACTOR_PARTY_LEADER);
-    Engine_EventWait(40);
+    VaultInteriors_StartMindRead(IVAN, LOCALID_PARTY_LEADER);
+    Engine_ScriptWait(40);
     VaultInteriors_EndMindRead();
-    Engine_ActorRunRepeatedMotion(IVAN, 1);
+    Engine_ObjectEventRunRepeatedMotion(IVAN, 1);
     VaultInteriors_ShowMessageAndWait(IVAN, 50);
-    Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIMATION_NOD);
+    Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIMATION_NOD);
     VaultInteriors_PlayAnimationAndWait(GARET, ANIMATION_NOD, 20);
     VaultInteriors_PlayAnimationAndWait(IVAN, ANIMATION_NOD, 20);
     VaultInteriors_ShowMessageAndWait(IVAN, 40);
     // He walks off a step, turns back and tells of Hammet's stolen rod.
-    Engine_ActorRunRepeatedMotion(IVAN, 1);
-    Engine_EventWait(30);
-    Actor_FaceDirection(IVAN, FACING_NORTH, 0);
-    Engine_EventWait(30);
-    Actor_WalkToAndWait(IVAN, 376, 376);
-    Engine_EventWait(40);
-    VaultInteriors_FaceEachOtherAndWait(ACTOR_PARTY_LEADER, GARET, 50);
-    Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
-    Actor_FaceDirection(GARET, FACING_NORTH + FACING_STEP, 0);
-    Engine_ActorRunRepeatedMotion(IVAN, 1);
-    Engine_EventWait(50);
+    Engine_ObjectEventRunRepeatedMotion(IVAN, 1);
+    Engine_ScriptWait(30);
+    ObjectEvent_FaceDirection(IVAN, FACING_NORTH, 0);
+    Engine_ScriptWait(30);
+    ObjectEvent_WalkToAndWait(IVAN, 376, 376);
+    Engine_ScriptWait(40);
+    VaultInteriors_FaceEachOtherAndWait(LOCALID_PARTY_LEADER, GARET, 50);
+    ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_NORTH, 0);
+    ObjectEvent_FaceDirection(GARET, FACING_NORTH + FACING_STEP, 0);
+    Engine_ObjectEventRunRepeatedMotion(IVAN, 1);
+    Engine_ScriptWait(50);
     VaultInteriors_PlayAnimationAndWait(IVAN, ANIMATION_NOD, 30);
-    Actor_FaceDirection(IVAN, FACING_SOUTH, 0);
-    Engine_EventWait(10);
-    Event_ShowMessage(IVAN, 0);
+    ObjectEvent_FaceDirection(IVAN, FACING_SOUTH, 0);
+    Engine_ScriptWait(10);
+    Script_ShowMessage(IVAN, 0);
     // "Would you please help me get my master's rod back?"
-    Event_OpenMessage(IVAN, 0);
+    Script_OpenMessage(IVAN, 0);
   } else {
     // Asked again: "Would you really? Would you help me find the rod?"
-    Event_PlayCue(MUS_060);
-    Engine_EventSetMessage(MsgVaultWouldReallyWouldHelpMe);
-    Event_OpenMessage(IVAN, 0);
+    Script_PlayCue(MUS_060);
+    Engine_ScriptSetMessage(MsgVaultWouldReallyWouldHelpMe);
+    Script_OpenMessage(IVAN, 0);
   }
   // Accepting the search lets Ivan merge into the leader's position; a no gets
   // his apology for asking.
-  if (Engine_EventChooseYesNo(0, 0) == 0) {
+  if (Engine_ScriptChooseYesNo(0, 0) == 0) {
     VaultInteriors_IvanJoinsRodSearch();
     GameFlag_Set(FLAG_VAULT_IVAN_JOINED_ROD_SEARCH);
-    Engine_ActorSetAnimation(IVAN, ANIMATION_WALK);
-    actor = Object_GetById(ACTOR_PARTY_LEADER);
-    if (actor != 0) {
-      Actor_SetDestination(IVAN, actor->x.part.pixel, actor->z.part.pixel);
+    Engine_ObjectEventSetAnimation(IVAN, ANIMATION_WALK);
+    objectEvent = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
+    if (objectEvent != 0) {
+      ObjectEvent_SetDestination(IVAN, objectEvent->x.part.pixel,
+                                 objectEvent->z.part.pixel);
     }
-    Engine_ActorWaitForMove(IVAN);
-    Actor_SetPosition(IVAN, 0, 0);
+    Engine_ObjectEventWaitForMove(IVAN);
+    ObjectEvent_SetPosition(IVAN, 0, 0);
   } else {
-    Event_ShowMessage(IVAN, 0);
+    Script_ShowMessage(IVAN, 0);
   }
   // Garet walks back into the leader and the earlier music returns.
-  Engine_ActorSetAnimation(GARET, ANIMATION_WALK);
-  actor = Object_GetById(ACTOR_PARTY_LEADER);
-  if (actor != 0) {
-    Actor_SetDestination(GARET, actor->x.part.pixel, actor->z.part.pixel);
+  Engine_ObjectEventSetAnimation(GARET, ANIMATION_WALK);
+  objectEvent = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
+  if (objectEvent != 0) {
+    ObjectEvent_SetDestination(GARET, objectEvent->x.part.pixel,
+                               objectEvent->z.part.pixel);
   }
-  Engine_ActorWaitForMove(GARET);
-  Actor_SetPosition(GARET, 0, 0);
+  Engine_ObjectEventWaitForMove(GARET);
+  ObjectEvent_SetPosition(GARET, 0, 0);
   Audio_PlayCueFromEventWork();
-  Engine_EventEnd();
+  Engine_ScriptEnd();
 }
 
 /// Ivan thanks them, they exchange names, and he shows Isaac and Garet Mind
 /// Read; he joins the party.
 ///
-/// Called by Event_MeetIvan when the party agrees to help. Adds Ivan to the
-/// party ("Ivan joined your party!").
+/// Called by EventScript_MeetIvan when the party agrees to help. Adds Ivan to
+/// the party ("Ivan joined your party!").
 static void VaultInteriors_IvanJoinsRodSearch(void) {
   s32 message;
 
   // Ivan jumps for joy: "Thank you. With your help, I believe we can recover
   // the rod." Then he asks their names.
-  Engine_EventWait(20);
-  Object_GetById(IVAN)->paused = 0;
-  Engine_ActorJump(IVAN, 4, 0);
-  Engine_EventWait(40);
+  Engine_ScriptWait(20);
+  ObjectEvent_GetById(IVAN)->paused = 0;
+  Engine_ObjectEventJump(IVAN, 4, 0);
+  Engine_ScriptWait(40);
   message = MsgVaultThankHelpBelieve;
-  Engine_EventSetMessage(message);
-  Engine_EventWait(20);
+  Engine_ScriptSetMessage(message);
+  Engine_ScriptWait(20);
   VaultInteriors_ShowMessageAndWait(IVAN, 20);
-  Actor_ShowEmote(IVAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
-  Engine_EventWait(50);
+  ObjectEvent_ShowEmote(IVAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
+  Engine_ScriptWait(50);
   VaultInteriors_ShowMessageAndWait(IVAN, 30);
   // He reads their names from Isaac's mind; Isaac backs away from him.
-  Actor_WalkToAndWait(IVAN, 376, 392);
-  VaultInteriors_StartMindRead(IVAN, ACTOR_PARTY_LEADER);
-  Engine_EventWait(40);
+  ObjectEvent_WalkToAndWait(IVAN, 376, 392);
+  VaultInteriors_StartMindRead(IVAN, LOCALID_PARTY_LEADER);
+  Engine_ScriptWait(40);
   VaultInteriors_EndMindRead();
-  Engine_ActorRunRepeatedMotion(ACTOR_PARTY_LEADER, 1);
-  Object_GetById(ACTOR_PARTY_LEADER)->steeringFlags &= ~ACTOR_FACES_MOTION;
-  Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 384, 424);
-  Engine_EventWait(1);
-  Object_GetById(ACTOR_PARTY_LEADER)->steeringFlags |= ACTOR_FACES_MOTION;
-  Engine_EventWait(30);
-  Engine_EventShowMessage(IVAN, 0);
+  Engine_ObjectEventRunRepeatedMotion(LOCALID_PARTY_LEADER, 1);
+  ObjectEvent_GetById(LOCALID_PARTY_LEADER)->steeringFlags &=
+      ~OBJ_EVENT_FACES_MOTION;
+  ObjectEvent_WalkToAndWait(LOCALID_PARTY_LEADER, 384, 424);
+  Engine_ScriptWait(1);
+  ObjectEvent_GetById(LOCALID_PARTY_LEADER)->steeringFlags |=
+      OBJ_EVENT_FACES_MOTION;
+  Engine_ScriptWait(30);
+  Engine_ScriptShowMessage(IVAN, 0);
   // Demonstrate Mind Read and let Garet and Isaac react to Ivan's explanation.
-  Actor_SetAttachedEffect(ACTOR_PARTY_LEADER,
-                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-  Actor_SetAttachedEffect(GARET,
-                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-  Engine_EventWait(60);
-  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIMATION_NOD);
+  ObjectEvent_SetAttachedEffect(LOCALID_PARTY_LEADER, ATTACHED_EFFECT_IN_FRONT |
+                                                          ATTACHED_EFFECT_ONCE);
+  ObjectEvent_SetAttachedEffect(GARET, ATTACHED_EFFECT_IN_FRONT |
+                                           ATTACHED_EFFECT_ONCE);
+  Engine_ScriptWait(60);
+  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIMATION_NOD);
   VaultInteriors_PlayAnimationAndWait(GARET, ANIMATION_NOD, 30);
-  Actor_ShowEmote(IVAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
-  Engine_EventWait(60);
-  Engine_ActorRunRepeatedMotion(IVAN, 1);
-  Engine_EventWait(10);
+  ObjectEvent_ShowEmote(IVAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
+  Engine_ScriptWait(60);
+  Engine_ObjectEventRunRepeatedMotion(IVAN, 1);
+  Engine_ScriptWait(10);
   VaultInteriors_PlayAnimationAndWait(IVAN, ANIMATION_NOD, 20);
-  Engine_EventShowMessage(IVAN, 0);
-  Engine_ActorRunRepeatedMotion(GARET, 2);
-  Engine_EventWait(10);
-  VaultInteriors_FaceActorAndWait(GARET, ACTOR_PARTY_LEADER, 30);
-  Engine_ActorRunRepeatedMotion(ACTOR_PARTY_LEADER, 2);
-  Engine_EventWait(10);
-  VaultInteriors_FaceActorAndWait(ACTOR_PARTY_LEADER, GARET, 40);
-  Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
-  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
-  Engine_EventWait(60);
+  Engine_ScriptShowMessage(IVAN, 0);
+  Engine_ObjectEventRunRepeatedMotion(GARET, 2);
+  Engine_ScriptWait(10);
+  VaultInteriors_FaceObjectEventAndWait(GARET, LOCALID_PARTY_LEADER, 30);
+  Engine_ObjectEventRunRepeatedMotion(LOCALID_PARTY_LEADER, 2);
+  Engine_ScriptWait(10);
+  VaultInteriors_FaceObjectEventAndWait(LOCALID_PARTY_LEADER, GARET, 40);
+  ObjectEvent_ShowEmote(LOCALID_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
+  ObjectEvent_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
+  Engine_ScriptWait(60);
   // "Is my Mind Read so frightening?": either answer goes on the same way.
-  Actor_ShowEmote(IVAN, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
-  Engine_EventWait(60);
-  Engine_EventOpenMessage(IVAN, 0);
-  Engine_ActorFaceActor(ACTOR_PARTY_LEADER, IVAN, 0);
-  Engine_ActorFaceActor(GARET, IVAN, 0);
-  Engine_EventChooseYesNo(0, 0);
-  Engine_EventWait(30);
+  ObjectEvent_ShowEmote(IVAN, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
+  Engine_ScriptWait(60);
+  Engine_ScriptOpenMessage(IVAN, 0);
+  Engine_ObjectEventFaceObjectEvent(LOCALID_PARTY_LEADER, IVAN, 0);
+  Engine_ObjectEventFaceObjectEvent(GARET, IVAN, 0);
+  Engine_ScriptChooseYesNo(0, 0);
+  Engine_ScriptWait(30);
   // Ivan and Isaac clasp hands, and Garet cries out that his mind is read.
   VaultInteriors_PlayAnimationAndWait(IVAN, ANIMATION_NOD, 10);
-  Actor_WalkToAndWait(IVAN, 384, 408);
-  Engine_EventWait(10);
+  ObjectEvent_WalkToAndWait(IVAN, 384, 408);
+  Engine_ScriptWait(10);
   Engine_MessageShowCentered(message + 5, 1);
-  Engine_EventSetMessage(message + 6);
-  Engine_ActorFaceEachOther(IVAN, GARET, 0);
-  VaultInteriors_FaceActorAndWait(ACTOR_PARTY_LEADER, GARET, 20);
-  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
-  Engine_EventWait(60);
-  Engine_ActorRunRepeatedMotion(GARET, 1);
-  Object_GetById(GARET)->steeringFlags &= ~ACTOR_FACES_MOTION;
-  Actor_WalkToAndWait(GARET, 352, 408);
-  Engine_EventWait(1);
-  Object_GetById(GARET)->steeringFlags |= ACTOR_FACES_MOTION;
-  Engine_EventWait(10);
+  Engine_ScriptSetMessage(message + 6);
+  Engine_ObjectEventFaceEachOther(IVAN, GARET, 0);
+  VaultInteriors_FaceObjectEventAndWait(LOCALID_PARTY_LEADER, GARET, 20);
+  ObjectEvent_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
+  Engine_ScriptWait(60);
+  Engine_ObjectEventRunRepeatedMotion(GARET, 1);
+  ObjectEvent_GetById(GARET)->steeringFlags &= ~OBJ_EVENT_FACES_MOTION;
+  ObjectEvent_WalkToAndWait(GARET, 352, 408);
+  Engine_ScriptWait(1);
+  ObjectEvent_GetById(GARET)->steeringFlags |= OBJ_EVENT_FACES_MOTION;
+  Engine_ScriptWait(10);
   // Garet backs off; Ivan asks whether Isaac could read Garet's mind, and the
   // two read it together. "Just as I thought."
-  Actor_WalkTo(IVAN, 368, 408);
-  Engine_EventWait(20);
-  Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 368, 424);
-  Engine_ActorFaceActor(ACTOR_PARTY_LEADER, GARET, 0);
-  Engine_ActorWaitForMove(IVAN);
+  ObjectEvent_WalkTo(IVAN, 368, 408);
+  Engine_ScriptWait(20);
+  ObjectEvent_WalkToAndWait(LOCALID_PARTY_LEADER, 368, 424);
+  Engine_ObjectEventFaceObjectEvent(LOCALID_PARTY_LEADER, GARET, 0);
+  Engine_ObjectEventWaitForMove(IVAN);
   VaultInteriors_StartMindRead(IVAN, GARET);
   VaultInteriors_PlayAnimationAndWait(GARET, ANIMATION_SHAKE_HEAD, 10);
-  Engine_EventShowMessage(GARET, 0);
+  Engine_ScriptShowMessage(GARET, 0);
   VaultInteriors_EndMindRead();
-  VaultInteriors_FaceEachOtherAndWait(IVAN, ACTOR_PARTY_LEADER, 30);
-  Engine_EventShowMessage(IVAN, 0);
-  Engine_ActorRunRepeatedMotion(ACTOR_PARTY_LEADER, 1);
-  Engine_EventWait(30);
-  VaultInteriors_PlayAnimationAndWait(ACTOR_PARTY_LEADER, ANIMATION_NOD, 30);
+  VaultInteriors_FaceEachOtherAndWait(IVAN, LOCALID_PARTY_LEADER, 30);
+  Engine_ScriptShowMessage(IVAN, 0);
+  Engine_ObjectEventRunRepeatedMotion(LOCALID_PARTY_LEADER, 1);
+  Engine_ScriptWait(30);
+  VaultInteriors_PlayAnimationAndWait(LOCALID_PARTY_LEADER, ANIMATION_NOD, 30);
   VaultInteriors_PlayAnimationAndWait(IVAN, ANIMATION_NOD, 10);
-  Engine_EventShowMessage(IVAN, 0);
-  Engine_ActorRunRepeatedMotion(GARET, 2);
-  Engine_ActorFaceActor(GARET, ACTOR_PARTY_LEADER, 0);
-  Engine_EventShowMessage(GARET, 0);
-  Engine_ActorFaceActor(ACTOR_PARTY_LEADER, GARET, 0);
-  VaultInteriors_PlayAnimationAndWait(ACTOR_PARTY_LEADER, ANIMATION_NOD, 40);
-  Engine_ActorFaceActor(ACTOR_PARTY_LEADER, IVAN, 0);
-  VaultInteriors_FaceActorAndWait(GARET, IVAN, 30);
-  Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
-  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
-  Engine_EventWait(60);
+  Engine_ScriptShowMessage(IVAN, 0);
+  Engine_ObjectEventRunRepeatedMotion(GARET, 2);
+  Engine_ObjectEventFaceObjectEvent(GARET, LOCALID_PARTY_LEADER, 0);
+  Engine_ScriptShowMessage(GARET, 0);
+  Engine_ObjectEventFaceObjectEvent(LOCALID_PARTY_LEADER, GARET, 0);
+  VaultInteriors_PlayAnimationAndWait(LOCALID_PARTY_LEADER, ANIMATION_NOD, 40);
+  Engine_ObjectEventFaceObjectEvent(LOCALID_PARTY_LEADER, IVAN, 0);
+  VaultInteriors_FaceObjectEventAndWait(GARET, IVAN, 30);
+  ObjectEvent_ShowEmote(LOCALID_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_QUESTION,
+                        0);
+  ObjectEvent_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
+  Engine_ScriptWait(60);
   // Sharing their Psynergy let Isaac read minds too; Garet protests that it
   // isn't fair, and Ivan agrees it is one-way.
   VaultInteriors_PlayAnimationAndWait(IVAN, ANIMATION_NOD, 20);
-  Engine_EventShowMessage(IVAN, 0);
-  Engine_ActorShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 0);
-  Engine_EventWait(60);
-  VaultInteriors_FaceActorAndWait(GARET, ACTOR_PARTY_LEADER, 10);
-  Engine_EventShowMessage(GARET, 0);
-  Engine_ActorShowEmote(IVAN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
-  Engine_EventWait(60);
-  Engine_EventShowMessage(IVAN, 0);
-  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
-  Engine_EventWait(60);
+  Engine_ScriptShowMessage(IVAN, 0);
+  Engine_ObjectEventShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 0);
+  Engine_ScriptWait(60);
+  VaultInteriors_FaceObjectEventAndWait(GARET, LOCALID_PARTY_LEADER, 10);
+  Engine_ScriptShowMessage(GARET, 0);
+  Engine_ObjectEventShowEmote(IVAN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+  Engine_ScriptWait(60);
+  Engine_ScriptShowMessage(IVAN, 0);
+  ObjectEvent_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
+  Engine_ScriptWait(60);
   // Ivan and Garet clasp hands, and Garet reads Isaac's mind.
   Engine_MessageShowCentered(message + 13, 1);
-  Engine_EventSetMessage(message + 14);
-  Engine_ActorFaceEachOther(IVAN, ACTOR_PARTY_LEADER, 0);
-  Engine_ActorFaceActor(GARET, ACTOR_PARTY_LEADER, 0);
-  Engine_ActorShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
-  Engine_EventWait(60);
-  VaultInteriors_StartMindRead(IVAN, ACTOR_PARTY_LEADER);
+  Engine_ScriptSetMessage(message + 14);
+  Engine_ObjectEventFaceEachOther(IVAN, LOCALID_PARTY_LEADER, 0);
+  Engine_ObjectEventFaceObjectEvent(GARET, LOCALID_PARTY_LEADER, 0);
+  Engine_ObjectEventShowEmote(LOCALID_PARTY_LEADER,
+                              EMOTE_IN_FRONT | EMOTE_WINCE, 0);
+  Engine_ScriptWait(60);
+  VaultInteriors_StartMindRead(IVAN, LOCALID_PARTY_LEADER);
   Ui_SetBank15PaletteAndClearRenderMode();
   VaultInteriors_ShowMessageAndWait(GARET, 30);
   VaultInteriors_EndMindRead();
-  Engine_ActorFaceEachOther(IVAN, GARET, 0);
+  Engine_ObjectEventFaceEachOther(IVAN, GARET, 0);
   VaultInteriors_PlayAnimationAndWait(IVAN, ANIMATION_NOD, 10);
   VaultInteriors_ShowMessageAndWait(IVAN, 20);
-  Engine_ActorFaceEachOther(IVAN, ACTOR_PARTY_LEADER, 0);
-  VaultInteriors_PlayAnimationAndWait(ACTOR_PARTY_LEADER, ANIMATION_NOD, 20);
-  Engine_ActorRunRepeatedMotion(GARET, 1);
-  Engine_EventWait(20);
+  Engine_ObjectEventFaceEachOther(IVAN, LOCALID_PARTY_LEADER, 0);
+  VaultInteriors_PlayAnimationAndWait(LOCALID_PARTY_LEADER, ANIMATION_NOD, 20);
+  Engine_ObjectEventRunRepeatedMotion(GARET, 1);
+  Engine_ScriptWait(20);
   // "Let's use Mind Read to find the thieves!" Garet worries people will
   // notice.
   VaultInteriors_PlayAnimationAndWait(GARET, ANIMATION_SHAKE_HEAD, 10);
   VaultInteriors_ShowMessageAndWait(GARET, 30);
-  Engine_ActorFaceActor(IVAN, GARET, 0);
-  Actor_ShowEmote(IVAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
-  Engine_EventWait(30);
-  VaultInteriors_FaceEachOtherAndWait(ACTOR_PARTY_LEADER, GARET, 10);
-  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIMATION_NOD);
+  Engine_ObjectEventFaceObjectEvent(IVAN, GARET, 0);
+  ObjectEvent_ShowEmote(IVAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
+  Engine_ScriptWait(30);
+  VaultInteriors_FaceEachOtherAndWait(LOCALID_PARTY_LEADER, GARET, 10);
+  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIMATION_NOD);
   VaultInteriors_PlayAnimationAndWait(GARET, ANIMATION_NOD, 30);
-  Engine_ActorFaceActor(ACTOR_PARTY_LEADER, IVAN, 0);
-  Engine_ActorFaceActor(GARET, IVAN, 0);
-  Engine_ActorFaceActor(IVAN, ACTOR_PARTY_LEADER, 0);
+  Engine_ObjectEventFaceObjectEvent(LOCALID_PARTY_LEADER, IVAN, 0);
+  Engine_ObjectEventFaceObjectEvent(GARET, IVAN, 0);
+  Engine_ObjectEventFaceObjectEvent(IVAN, LOCALID_PARTY_LEADER, 0);
   // Only Adepts can tell when Ivan uses Psynergy; ordinary people see
   // nothing, and he promises not to read their minds again.
-  Engine_ActorShowEmote(IVAN, EMOTE_IN_FRONT | EMOTE_LIGHT_BULB, 0);
-  Engine_EventWait(60);
+  Engine_ObjectEventShowEmote(IVAN, EMOTE_IN_FRONT | EMOTE_LIGHT_BULB, 0);
+  Engine_ScriptWait(60);
   VaultInteriors_ShowMessageAndWait(IVAN, 10);
-  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIMATION_NOD);
+  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIMATION_NOD);
   VaultInteriors_PlayAnimationAndWait(GARET, ANIMATION_NOD, 20);
   VaultInteriors_PlayAnimationAndWait(IVAN, ANIMATION_SHAKE_HEAD, 20);
   VaultInteriors_ShowMessageAndWait(IVAN, 20);
-  Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
-  Engine_ActorShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
-  Engine_EventWait(60);
+  ObjectEvent_ShowEmote(LOCALID_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_QUESTION,
+                        0);
+  Engine_ObjectEventShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
+  Engine_ScriptWait(60);
   VaultInteriors_PlayAnimationAndWait(IVAN, ANIMATION_NOD, 10);
   VaultInteriors_ShowMessageAndWait(IVAN, 30);
-  Engine_ActorShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
-  Engine_EventWait(60);
+  Engine_ObjectEventShowEmote(LOCALID_PARTY_LEADER,
+                              EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
+  Engine_ScriptWait(60);
   VaultInteriors_PlayAnimationAndWait(IVAN, ANIMATION_SHAKE_HEAD, 10);
   VaultInteriors_ShowMessageAndWait(IVAN, 30);
   VaultInteriors_PlayAnimationAndWait(IVAN, ANIMATION_NOD, 10);
-  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIMATION_NOD);
+  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIMATION_NOD);
   VaultInteriors_PlayAnimationAndWait(GARET, ANIMATION_NOD, 20);
   // "Ivan joined your party!", then he will read the townspeople's minds.
-  Event_PrepareObjectAndApplyValue(IVAN, 1);
-  Engine_EventSetMessage(message + 22);
-  Engine_ActorRunRepeatedMotion(IVAN, 1);
-  Engine_EventShowMessage(IVAN, 0);
+  FieldScript_PrepareObjectAndApplyValue(IVAN, 1);
+  Engine_ScriptSetMessage(message + 22);
+  Engine_ObjectEventRunRepeatedMotion(IVAN, 1);
+  Engine_ScriptShowMessage(IVAN, 0);
 }
 
 /// In the inn's loft in Vault, Isaac cuts the tied-up villager free; the three
 /// thieves arrive, tell of Hammet in Lunpa and of Dodonpa, ask to be let go,
 /// and attack.
 ///
-/// Reached by talking to the tied-up villager (ACTOR_TIED_UP_VILLAGER) in the
+/// Reached by talking to the tied-up villager (LOCALID_TIED_UP_VILLAGER) in the
 /// loft; the loft's setup replays the thieves' part through
 /// VaultInteriors_ConfrontThievesAgain once FLAG_VAULT_THIEVES_ATTACKED is
 /// set. Sets that flag and starts the battle (encounter 12, 5): a win returns
 /// to VAULT_INTERIORS_LOFT_AFTER_THIEVES_DEFEATED, a loss to
 /// VAULT_INTERIORS_LOFT_AFTER_LOSING_TO_THIEVES.
-static void Event_FreeRooferAndConfrontThieves(void) {
+static void EventScript_FreeRooferAndConfrontThieves(void) {
   s32 base;
 
-  Engine_EventStart();
-  Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(4) / 5, PIXELS(2) / 5);
-  Actor_SetSpeed(GARET, PIXELS(4) / 5, PIXELS(2) / 5);
-  Actor_SetSpeed(IVAN, PIXELS(4) / 5, PIXELS(2) / 5);
+  Engine_ScriptStart();
+  ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(4) / 5, PIXELS(2) / 5);
+  ObjectEvent_SetSpeed(GARET, PIXELS(4) / 5, PIXELS(2) / 5);
+  ObjectEvent_SetSpeed(IVAN, PIXELS(4) / 5, PIXELS(2) / 5);
   // Isaac cuts the tied-up villager free from the ropes; he gets up and nods.
-  Engine_ActorRunRepeatedMotion(ACTOR_PARTY_LEADER, 3);
-  Engine_EventWait(20);
+  Engine_ObjectEventRunRepeatedMotion(LOCALID_PARTY_LEADER, 3);
+  Engine_ScriptWait(20);
   base = MsgVaultVaultCutFree;
   Engine_MessageShowCentered(base, 1);
   base++;
-  Engine_EventSetMessage(base);
-  Engine_EventWait(30);
-  Engine_ActorSetAnimation(ACTOR_TIED_UP_VILLAGER, ANIMATION_STAND);
-  Engine_EventWait(60);
-  VaultInteriors_PlayAnimationAndWait(ACTOR_TIED_UP_VILLAGER, ANIMATION_NOD,
+  Engine_ScriptSetMessage(base);
+  Engine_ScriptWait(30);
+  Engine_ObjectEventSetAnimation(LOCALID_TIED_UP_VILLAGER, ANIMATION_STAND);
+  Engine_ScriptWait(60);
+  VaultInteriors_PlayAnimationAndWait(LOCALID_TIED_UP_VILLAGER, ANIMATION_NOD,
                                       40);
   // Garet and Ivan come out of the leader around the tied-up villager.
-  Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 792, 440);
-  VaultInteriors_FaceActorAndWait(ACTOR_PARTY_LEADER, ACTOR_TIED_UP_VILLAGER,
-                                  20);
-  Actor_SetPosition(GARET, PIXELS(792), PIXELS(440));
-  Actor_SetPosition(IVAN, PIXELS(792), PIXELS(440));
-  Actor_WalkTo(GARET, 808, 432);
-  Actor_WalkTo(IVAN, 792, 456);
-  Engine_ActorWaitForMove(GARET);
-  Engine_ActorFaceActor(GARET, ACTOR_TIED_UP_VILLAGER, 0);
-  Engine_ActorWaitForMove(IVAN);
-  VaultInteriors_FaceActorAndWait(IVAN, ACTOR_TIED_UP_VILLAGER, 60);
+  ObjectEvent_WalkToAndWait(LOCALID_PARTY_LEADER, 792, 440);
+  VaultInteriors_FaceObjectEventAndWait(LOCALID_PARTY_LEADER,
+                                        LOCALID_TIED_UP_VILLAGER, 20);
+  ObjectEvent_SetPosition(GARET, PIXELS(792), PIXELS(440));
+  ObjectEvent_SetPosition(IVAN, PIXELS(792), PIXELS(440));
+  ObjectEvent_WalkTo(GARET, 808, 432);
+  ObjectEvent_WalkTo(IVAN, 792, 456);
+  Engine_ObjectEventWaitForMove(GARET);
+  Engine_ObjectEventFaceObjectEvent(GARET, LOCALID_TIED_UP_VILLAGER, 0);
+  Engine_ObjectEventWaitForMove(IVAN);
+  VaultInteriors_FaceObjectEventAndWait(IVAN, LOCALID_TIED_UP_VILLAGER, 60);
   // The tied-up villager tells how he came up to fix the roof, was whacked from
   // behind and woke up tied.
-  Actor_ShowEmote(ACTOR_TIED_UP_VILLAGER, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
-  Engine_EventWait(60);
-  VaultInteriors_ShowMessageAndWait(ACTOR_TIED_UP_VILLAGER, 20);
-  Engine_ActorSetAnimation(IVAN, ANIMATION_NOD);
+  ObjectEvent_ShowEmote(LOCALID_TIED_UP_VILLAGER, EMOTE_IN_FRONT | EMOTE_WINCE,
+                        0);
+  Engine_ScriptWait(60);
+  VaultInteriors_ShowMessageAndWait(LOCALID_TIED_UP_VILLAGER, 20);
+  Engine_ObjectEventSetAnimation(IVAN, ANIMATION_NOD);
   VaultInteriors_PlayAnimationAndWait(GARET, ANIMATION_NOD, 30);
-  Engine_ActorRunRepeatedMotion(ACTOR_TIED_UP_VILLAGER, 2);
-  Engine_EventWait(20);
-  VaultInteriors_ShowMessageAndWait(ACTOR_TIED_UP_VILLAGER, 20);
-  Actor_ShowEmote(IVAN, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
-  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
-  Engine_EventWait(60);
-  Actor_FaceDirection(ACTOR_TIED_UP_VILLAGER, FACING_SOUTHEAST + FACING_STEP,
-                      0);
-  Engine_EventWait(10);
-  VaultInteriors_ShowMessageAndWait(ACTOR_TIED_UP_VILLAGER, 30);
+  Engine_ObjectEventRunRepeatedMotion(LOCALID_TIED_UP_VILLAGER, 2);
+  Engine_ScriptWait(20);
+  VaultInteriors_ShowMessageAndWait(LOCALID_TIED_UP_VILLAGER, 20);
+  ObjectEvent_ShowEmote(IVAN, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
+  ObjectEvent_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
+  Engine_ScriptWait(60);
+  ObjectEvent_FaceDirection(LOCALID_TIED_UP_VILLAGER,
+                            FACING_SOUTHEAST + FACING_STEP, 0);
+  Engine_ScriptWait(10);
+  VaultInteriors_ShowMessageAndWait(LOCALID_TIED_UP_VILLAGER, 30);
   // He looks around at chests he doesn't remember; Ivan guesses the stolen
   // goods are in them.
-  Actor_FaceDirection(ACTOR_TIED_UP_VILLAGER, FACING_NORTH + FACING_STEP, 0);
-  Engine_EventWait(30);
-  Actor_ShowEmote(ACTOR_TIED_UP_VILLAGER, EMOTE_IN_FRONT | EMOTE_EXCLAMATION,
-                  0);
-  Engine_EventWait(60);
-  Actor_FaceDirection(ACTOR_TIED_UP_VILLAGER, FACING_NORTHWEST + FACING_STEP,
-                      0);
-  Engine_EventWait(40);
-  Actor_FaceDirection(ACTOR_TIED_UP_VILLAGER, FACING_NORTH + FACING_STEP, 0);
-  Engine_EventWait(40);
-  VaultInteriors_FaceActorAndWait(ACTOR_TIED_UP_VILLAGER, ACTOR_PARTY_LEADER,
-                                  20);
-  VaultInteriors_PlayAnimationAndWait(ACTOR_TIED_UP_VILLAGER,
+  ObjectEvent_FaceDirection(LOCALID_TIED_UP_VILLAGER,
+                            FACING_NORTH + FACING_STEP, 0);
+  Engine_ScriptWait(30);
+  ObjectEvent_ShowEmote(LOCALID_TIED_UP_VILLAGER,
+                        EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+  Engine_ScriptWait(60);
+  ObjectEvent_FaceDirection(LOCALID_TIED_UP_VILLAGER,
+                            FACING_NORTHWEST + FACING_STEP, 0);
+  Engine_ScriptWait(40);
+  ObjectEvent_FaceDirection(LOCALID_TIED_UP_VILLAGER,
+                            FACING_NORTH + FACING_STEP, 0);
+  Engine_ScriptWait(40);
+  VaultInteriors_FaceObjectEventAndWait(LOCALID_TIED_UP_VILLAGER,
+                                        LOCALID_PARTY_LEADER, 20);
+  VaultInteriors_PlayAnimationAndWait(LOCALID_TIED_UP_VILLAGER,
                                       ANIMATION_SHAKE_HEAD, 30);
-  VaultInteriors_ShowMessageAndWait(ACTOR_TIED_UP_VILLAGER, 20);
-  Engine_ActorRunRepeatedMotion(IVAN, 1);
+  VaultInteriors_ShowMessageAndWait(LOCALID_TIED_UP_VILLAGER, 20);
+  Engine_ObjectEventRunRepeatedMotion(IVAN, 1);
   VaultInteriors_ShowMessageAndWait(IVAN, 40);
   // The thieves' leader appears at the ladder to MUS_061: "Looks like we've
   // been found out!" Everyone turns.
-  Actor_SetPosition(ACTOR_THIEF_LEADER, PIXELS(744), PIXELS(408));
+  ObjectEvent_SetPosition(LOCALID_THIEF_LEADER, PIXELS(744), PIXELS(408));
   Engine_AudioPlayCue(MUS_061);
-  VaultInteriors_ShowMessageAndWait(ACTOR_THIEF_LEADER, 20);
-  Engine_ActorStartRepeatedMotion(ACTOR_PARTY_LEADER, 1);
-  Engine_ActorStartRepeatedMotion(GARET, 1);
-  Engine_ActorStartRepeatedMotion(IVAN, 1);
-  Engine_ActorRunRepeatedMotion(ACTOR_TIED_UP_VILLAGER, 1);
-  Engine_EventWait(30);
-  Engine_ActorFaceActor(ACTOR_PARTY_LEADER, ACTOR_THIEF_LEADER, 0);
-  Engine_ActorFaceActor(GARET, ACTOR_THIEF_LEADER, 0);
-  Engine_ActorFaceActor(IVAN, ACTOR_THIEF_LEADER, 0);
-  VaultInteriors_FaceActorAndWait(ACTOR_TIED_UP_VILLAGER, ACTOR_THIEF_LEADER,
-                                  40);
+  VaultInteriors_ShowMessageAndWait(LOCALID_THIEF_LEADER, 20);
+  Engine_ObjectEventStartRepeatedMotion(LOCALID_PARTY_LEADER, 1);
+  Engine_ObjectEventStartRepeatedMotion(GARET, 1);
+  Engine_ObjectEventStartRepeatedMotion(IVAN, 1);
+  Engine_ObjectEventRunRepeatedMotion(LOCALID_TIED_UP_VILLAGER, 1);
+  Engine_ScriptWait(30);
+  Engine_ObjectEventFaceObjectEvent(LOCALID_PARTY_LEADER, LOCALID_THIEF_LEADER,
+                                    0);
+  Engine_ObjectEventFaceObjectEvent(GARET, LOCALID_THIEF_LEADER, 0);
+  Engine_ObjectEventFaceObjectEvent(IVAN, LOCALID_THIEF_LEADER, 0);
+  VaultInteriors_FaceObjectEventAndWait(LOCALID_TIED_UP_VILLAGER,
+                                        LOCALID_THIEF_LEADER, 40);
   // He walks up and his two men run in behind him.
-  Actor_SetSpeed(ACTOR_THIEF_LEADER, PIXELS(4) / 5, PIXELS(2) / 5);
-  Actor_SetSpeed(ACTOR_FIRST_THIEF, PIXELS(3) / 2, PIXELS(3) / 4);
-  Actor_SetSpeed(ACTOR_SECOND_THIEF, PIXELS(3) / 2, PIXELS(3) / 4);
-  Actor_SetPosition(ACTOR_FIRST_THIEF, PIXELS(744), PIXELS(408));
-  Actor_SetPosition(ACTOR_SECOND_THIEF, PIXELS(744), PIXELS(408));
-  Actor_WalkToAndWait(ACTOR_THIEF_LEADER, 792, 416);
-  Actor_FaceDirection(ACTOR_THIEF_LEADER, FACING_SOUTHEAST + FACING_STEP, 0);
-  Engine_EventWait(70);
-  Engine_ActorFaceActor(ACTOR_PARTY_LEADER, ACTOR_THIEF_LEADER, 0);
-  Actor_FaceActor(GARET, ACTOR_THIEF_LEADER, 0);
-  Engine_ActorFaceActor(IVAN, ACTOR_THIEF_LEADER, 0);
-  Engine_ActorFaceActor(ACTOR_TIED_UP_VILLAGER, ACTOR_THIEF_LEADER, 0);
-  Actor_SetActionScript(ACTOR_FIRST_THIEF,
-                        gVaultInteriors_FirstThiefEntryScript);
-  Engine_EventWait(40);
-  Actor_SetActionScript(ACTOR_SECOND_THIEF,
-                        gVaultInteriors_SecondThiefEntryScript);
-  Object_RefreshSelectorById(ACTOR_SECOND_THIEF);
-  Actor_FaceDirection(ACTOR_FIRST_THIEF, FACING_SOUTHEAST, 0);
-  Actor_FaceDirection(ACTOR_SECOND_THIEF, FACING_SOUTHEAST, 0);
-  Engine_EventWait(40);
+  ObjectEvent_SetSpeed(LOCALID_THIEF_LEADER, PIXELS(4) / 5, PIXELS(2) / 5);
+  ObjectEvent_SetSpeed(LOCALID_FIRST_THIEF, PIXELS(3) / 2, PIXELS(3) / 4);
+  ObjectEvent_SetSpeed(LOCALID_SECOND_THIEF, PIXELS(3) / 2, PIXELS(3) / 4);
+  ObjectEvent_SetPosition(LOCALID_FIRST_THIEF, PIXELS(744), PIXELS(408));
+  ObjectEvent_SetPosition(LOCALID_SECOND_THIEF, PIXELS(744), PIXELS(408));
+  ObjectEvent_WalkToAndWait(LOCALID_THIEF_LEADER, 792, 416);
+  ObjectEvent_FaceDirection(LOCALID_THIEF_LEADER,
+                            FACING_SOUTHEAST + FACING_STEP, 0);
+  Engine_ScriptWait(70);
+  Engine_ObjectEventFaceObjectEvent(LOCALID_PARTY_LEADER, LOCALID_THIEF_LEADER,
+                                    0);
+  ObjectEvent_FaceObjectEvent(GARET, LOCALID_THIEF_LEADER, 0);
+  Engine_ObjectEventFaceObjectEvent(IVAN, LOCALID_THIEF_LEADER, 0);
+  Engine_ObjectEventFaceObjectEvent(LOCALID_TIED_UP_VILLAGER,
+                                    LOCALID_THIEF_LEADER, 0);
+  ObjectEvent_SetActionScript(LOCALID_FIRST_THIEF,
+                              gVaultInteriors_FirstThiefEntryScript);
+  Engine_ScriptWait(40);
+  ObjectEvent_SetActionScript(LOCALID_SECOND_THIEF,
+                              gVaultInteriors_SecondThiefEntryScript);
+  ObjectEvent_RefreshSelectorById(LOCALID_SECOND_THIEF);
+  ObjectEvent_FaceDirection(LOCALID_FIRST_THIEF, FACING_SOUTHEAST, 0);
+  ObjectEvent_FaceDirection(LOCALID_SECOND_THIEF, FACING_SOUTHEAST, 0);
+  Engine_ScriptWait(40);
   // The three taunt Hammet's whelp and say Hammet was caught by worse thieves
   // after fleeing to Lunpa.
-  VaultInteriors_PlayAnimationAndWait(ACTOR_THIEF_LEADER, ANIMATION_SHAKE_HEAD,
-                                      20);
-  VaultInteriors_ShowMessageAndWait(ACTOR_THIEF_LEADER, 20);
-  Engine_ActorRunRepeatedMotion(ACTOR_FIRST_THIEF, 1);
-  Engine_EventWait(10);
-  VaultInteriors_ShowMessageAndWait(ACTOR_FIRST_THIEF, 20);
-  Engine_ActorRunRepeatedMotion(ACTOR_SECOND_THIEF, 1);
-  Engine_EventWait(10);
-  VaultInteriors_ShowMessageAndWait(ACTOR_SECOND_THIEF, 40);
-  Actor_ShowEmote(IVAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
-  Engine_EventWait(60);
-  VaultInteriors_PlayAnimationAndWait(ACTOR_THIEF_LEADER, ANIMATION_SHAKE_HEAD,
-                                      20);
-  VaultInteriors_ShowMessageAndWait(ACTOR_THIEF_LEADER, 20);
-  Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
-  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
-  Engine_EventWait(60);
+  VaultInteriors_PlayAnimationAndWait(LOCALID_THIEF_LEADER,
+                                      ANIMATION_SHAKE_HEAD, 20);
+  VaultInteriors_ShowMessageAndWait(LOCALID_THIEF_LEADER, 20);
+  Engine_ObjectEventRunRepeatedMotion(LOCALID_FIRST_THIEF, 1);
+  Engine_ScriptWait(10);
+  VaultInteriors_ShowMessageAndWait(LOCALID_FIRST_THIEF, 20);
+  Engine_ObjectEventRunRepeatedMotion(LOCALID_SECOND_THIEF, 1);
+  Engine_ScriptWait(10);
+  VaultInteriors_ShowMessageAndWait(LOCALID_SECOND_THIEF, 40);
+  ObjectEvent_ShowEmote(IVAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
+  Engine_ScriptWait(60);
+  VaultInteriors_PlayAnimationAndWait(LOCALID_THIEF_LEADER,
+                                      ANIMATION_SHAKE_HEAD, 20);
+  VaultInteriors_ShowMessageAndWait(LOCALID_THIEF_LEADER, 20);
+  ObjectEvent_ShowEmote(LOCALID_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_QUESTION,
+                        0);
+  ObjectEvent_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
+  Engine_ScriptWait(60);
   // The tied-up villager is alarmed at the name Lunpa; Garet asks what kind of
   // place it is, and the tied-up villager and the thieves tell of Lunpa, Donpa
   // and Dodonpa.
-  Actor_ShowEmote(ACTOR_TIED_UP_VILLAGER, EMOTE_IN_FRONT | EMOTE_EXCLAMATION,
-                  0);
-  Engine_EventWait(40);
-  Engine_ActorRunRepeatedMotion(ACTOR_TIED_UP_VILLAGER, 2);
-  Engine_EventWait(20);
-  VaultInteriors_ShowMessageAndWait(ACTOR_TIED_UP_VILLAGER, 20);
-  Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_TIED_UP_VILLAGER, 0);
-  Engine_ActorFaceActor(GARET, ACTOR_TIED_UP_VILLAGER, 0);
-  VaultInteriors_FaceActorAndWait(IVAN, ACTOR_TIED_UP_VILLAGER, 20);
-  VaultInteriors_PlayAnimationAndWait(ACTOR_TIED_UP_VILLAGER,
+  ObjectEvent_ShowEmote(LOCALID_TIED_UP_VILLAGER,
+                        EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+  Engine_ScriptWait(40);
+  Engine_ObjectEventRunRepeatedMotion(LOCALID_TIED_UP_VILLAGER, 2);
+  Engine_ScriptWait(20);
+  VaultInteriors_ShowMessageAndWait(LOCALID_TIED_UP_VILLAGER, 20);
+  ObjectEvent_FaceObjectEvent(LOCALID_PARTY_LEADER, LOCALID_TIED_UP_VILLAGER,
+                              0);
+  Engine_ObjectEventFaceObjectEvent(GARET, LOCALID_TIED_UP_VILLAGER, 0);
+  VaultInteriors_FaceObjectEventAndWait(IVAN, LOCALID_TIED_UP_VILLAGER, 20);
+  VaultInteriors_PlayAnimationAndWait(LOCALID_TIED_UP_VILLAGER,
                                       ANIMATION_SHAKE_HEAD, 30);
-  VaultInteriors_ShowMessageAndWait(ACTOR_TIED_UP_VILLAGER, 20);
-  Engine_ActorRunRepeatedMotion(IVAN, 2);
-  Engine_EventWait(20);
-  Engine_ActorFaceActor(ACTOR_PARTY_LEADER, IVAN, 0);
-  VaultInteriors_FaceActorAndWait(GARET, IVAN, 30);
+  VaultInteriors_ShowMessageAndWait(LOCALID_TIED_UP_VILLAGER, 20);
+  Engine_ObjectEventRunRepeatedMotion(IVAN, 2);
+  Engine_ScriptWait(20);
+  Engine_ObjectEventFaceObjectEvent(LOCALID_PARTY_LEADER, IVAN, 0);
+  VaultInteriors_FaceObjectEventAndWait(GARET, IVAN, 30);
   VaultInteriors_ShowMessageAndWait(GARET, 20);
-  Actor_ShowEmote(ACTOR_TIED_UP_VILLAGER, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
-  Engine_EventWait(60);
-  VaultInteriors_ShowMessageAndWait(ACTOR_TIED_UP_VILLAGER, 20);
-  Engine_ActorRunRepeatedMotion(ACTOR_THIEF_LEADER, 1);
-  Engine_EventWait(10);
-  VaultInteriors_ShowMessageAndWait(ACTOR_THIEF_LEADER, 20);
-  Engine_ActorFaceActor(ACTOR_PARTY_LEADER, ACTOR_THIEF_LEADER, 0);
-  Actor_FaceActor(GARET, ACTOR_THIEF_LEADER, 0);
-  VaultInteriors_FaceActorAndWait(IVAN, ACTOR_THIEF_LEADER, 20);
-  VaultInteriors_PlayAnimationAndWait(ACTOR_FIRST_THIEF, ANIMATION_NOD, 20);
-  VaultInteriors_ShowMessageAndWait(ACTOR_FIRST_THIEF, 20);
-  VaultInteriors_PlayAnimationAndWait(ACTOR_SECOND_THIEF, ANIMATION_SHAKE_HEAD,
-                                      20);
-  VaultInteriors_ShowMessageAndWait(ACTOR_SECOND_THIEF, 20);
-  Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
-  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
-  Actor_ShowEmote(IVAN, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
-  Engine_EventWait(60);
+  ObjectEvent_ShowEmote(LOCALID_TIED_UP_VILLAGER, EMOTE_IN_FRONT | EMOTE_WINCE,
+                        0);
+  Engine_ScriptWait(60);
+  VaultInteriors_ShowMessageAndWait(LOCALID_TIED_UP_VILLAGER, 20);
+  Engine_ObjectEventRunRepeatedMotion(LOCALID_THIEF_LEADER, 1);
+  Engine_ScriptWait(10);
+  VaultInteriors_ShowMessageAndWait(LOCALID_THIEF_LEADER, 20);
+  Engine_ObjectEventFaceObjectEvent(LOCALID_PARTY_LEADER, LOCALID_THIEF_LEADER,
+                                    0);
+  ObjectEvent_FaceObjectEvent(GARET, LOCALID_THIEF_LEADER, 0);
+  VaultInteriors_FaceObjectEventAndWait(IVAN, LOCALID_THIEF_LEADER, 20);
+  VaultInteriors_PlayAnimationAndWait(LOCALID_FIRST_THIEF, ANIMATION_NOD, 20);
+  VaultInteriors_ShowMessageAndWait(LOCALID_FIRST_THIEF, 20);
+  VaultInteriors_PlayAnimationAndWait(LOCALID_SECOND_THIEF,
+                                      ANIMATION_SHAKE_HEAD, 20);
+  VaultInteriors_ShowMessageAndWait(LOCALID_SECOND_THIEF, 20);
+  ObjectEvent_ShowEmote(LOCALID_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
+  ObjectEvent_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
+  ObjectEvent_ShowEmote(IVAN, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
+  Engine_ScriptWait(60);
   // "See, we're not so bad. How about it? Will you let us go?" Yes: if they
   // return the goods and repent? No: even returning everything is a crime?
-  VaultInteriors_PlayAnimationAndWait(ACTOR_THIEF_LEADER, ANIMATION_NOD, 20);
-  Engine_EventOpenMessage(ACTOR_THIEF_LEADER, 0);
-  Engine_EventWait(50);
-  Engine_ActorFaceActor(IVAN, ACTOR_PARTY_LEADER, 0);
-  VaultInteriors_FaceActorAndWait(GARET, ACTOR_PARTY_LEADER, 30);
-  if (Engine_EventChooseYesNo(0, 0) == 0) {
-    Engine_EventWait(40);
-    Engine_ActorFaceActor(GARET, ACTOR_THIEF_LEADER, 0);
-    Actor_FaceActor(IVAN, ACTOR_THIEF_LEADER, 0);
-    Engine_ActorRunRepeatedMotion(ACTOR_THIEF_LEADER, 2);
-    Engine_EventWait(20);
-    Engine_EventShowMessage(ACTOR_THIEF_LEADER, 0);
+  VaultInteriors_PlayAnimationAndWait(LOCALID_THIEF_LEADER, ANIMATION_NOD, 20);
+  Engine_ScriptOpenMessage(LOCALID_THIEF_LEADER, 0);
+  Engine_ScriptWait(50);
+  Engine_ObjectEventFaceObjectEvent(IVAN, LOCALID_PARTY_LEADER, 0);
+  VaultInteriors_FaceObjectEventAndWait(GARET, LOCALID_PARTY_LEADER, 30);
+  if (Engine_ScriptChooseYesNo(0, 0) == 0) {
+    Engine_ScriptWait(40);
+    Engine_ObjectEventFaceObjectEvent(GARET, LOCALID_THIEF_LEADER, 0);
+    ObjectEvent_FaceObjectEvent(IVAN, LOCALID_THIEF_LEADER, 0);
+    Engine_ObjectEventRunRepeatedMotion(LOCALID_THIEF_LEADER, 2);
+    Engine_ScriptWait(20);
+    Engine_ScriptShowMessage(LOCALID_THIEF_LEADER, 0);
   } else {
-    Engine_EventWait(40);
-    Engine_ActorFaceActor(GARET, ACTOR_THIEF_LEADER, 0);
-    Engine_ActorFaceActor(IVAN, ACTOR_THIEF_LEADER, 0);
+    Engine_ScriptWait(40);
+    Engine_ObjectEventFaceObjectEvent(GARET, LOCALID_THIEF_LEADER, 0);
+    Engine_ObjectEventFaceObjectEvent(IVAN, LOCALID_THIEF_LEADER, 0);
     base = MsgVaultVaultThievesCaught;
-    Engine_EventSetMessage(base);
-    Engine_ActorRunRepeatedMotion(ACTOR_THIEF_LEADER, 2);
-    Engine_EventWait(20);
-    Engine_EventShowMessage(ACTOR_THIEF_LEADER, 0);
+    Engine_ScriptSetMessage(base);
+    Engine_ObjectEventRunRepeatedMotion(LOCALID_THIEF_LEADER, 2);
+    Engine_ScriptWait(20);
+    Engine_ScriptShowMessage(LOCALID_THIEF_LEADER, 0);
     // Both answers go on with the same refusal.
     base -= 3;
-    Engine_EventSetMessage(base);
+    Engine_ScriptSetMessage(base);
   }
   // "We stole this stuff fair and square!" They agree to keep the party quiet,
   // and the leader cries "Get 'em!!!"
-  Actor_ShowEmote(ACTOR_FIRST_THIEF, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 0);
-  Engine_EventWait(60);
-  VaultInteriors_ShowMessageAndWait(ACTOR_FIRST_THIEF, 20);
-  VaultInteriors_PlayAnimationAndWait(ACTOR_SECOND_THIEF, ANIMATION_SHAKE_HEAD,
-                                      20);
-  VaultInteriors_ShowMessageAndWait(ACTOR_SECOND_THIEF, 30);
-  VaultInteriors_FaceEachOtherAndWait(ACTOR_THIEF_LEADER, ACTOR_FIRST_THIEF,
+  ObjectEvent_ShowEmote(LOCALID_FIRST_THIEF, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN,
+                        0);
+  Engine_ScriptWait(60);
+  VaultInteriors_ShowMessageAndWait(LOCALID_FIRST_THIEF, 20);
+  VaultInteriors_PlayAnimationAndWait(LOCALID_SECOND_THIEF,
+                                      ANIMATION_SHAKE_HEAD, 20);
+  VaultInteriors_ShowMessageAndWait(LOCALID_SECOND_THIEF, 30);
+  VaultInteriors_FaceEachOtherAndWait(LOCALID_THIEF_LEADER, LOCALID_FIRST_THIEF,
                                       30);
-  Engine_ActorSetAnimation(ACTOR_THIEF_LEADER, ANIMATION_NOD);
-  VaultInteriors_PlayAnimationAndWait(ACTOR_FIRST_THIEF, ANIMATION_NOD, 30);
-  VaultInteriors_FaceEachOtherAndWait(ACTOR_THIEF_LEADER, ACTOR_SECOND_THIEF,
-                                      30);
-  Engine_ActorSetAnimation(ACTOR_THIEF_LEADER, ANIMATION_NOD);
-  VaultInteriors_PlayAnimationAndWait(ACTOR_SECOND_THIEF, ANIMATION_NOD, 40);
-  Actor_FaceDirection(ACTOR_THIEF_LEADER, FACING_SOUTHEAST + FACING_STEP, 0);
-  Actor_FaceDirection(ACTOR_FIRST_THIEF, FACING_SOUTHEAST + FACING_STEP, 0);
-  Actor_FaceDirection(ACTOR_SECOND_THIEF, FACING_SOUTHEAST + FACING_STEP, 0);
-  Engine_EventWait(20);
-  VaultInteriors_PlayAnimationAndWait(ACTOR_THIEF_LEADER, ANIMATION_SHAKE_HEAD,
-                                      20);
-  Engine_EventShowMessage(ACTOR_THIEF_LEADER, 0);
+  Engine_ObjectEventSetAnimation(LOCALID_THIEF_LEADER, ANIMATION_NOD);
+  VaultInteriors_PlayAnimationAndWait(LOCALID_FIRST_THIEF, ANIMATION_NOD, 30);
+  VaultInteriors_FaceEachOtherAndWait(LOCALID_THIEF_LEADER,
+                                      LOCALID_SECOND_THIEF, 30);
+  Engine_ObjectEventSetAnimation(LOCALID_THIEF_LEADER, ANIMATION_NOD);
+  VaultInteriors_PlayAnimationAndWait(LOCALID_SECOND_THIEF, ANIMATION_NOD, 40);
+  ObjectEvent_FaceDirection(LOCALID_THIEF_LEADER,
+                            FACING_SOUTHEAST + FACING_STEP, 0);
+  ObjectEvent_FaceDirection(LOCALID_FIRST_THIEF, FACING_SOUTHEAST + FACING_STEP,
+                            0);
+  ObjectEvent_FaceDirection(LOCALID_SECOND_THIEF,
+                            FACING_SOUTHEAST + FACING_STEP, 0);
+  Engine_ScriptWait(20);
+  VaultInteriors_PlayAnimationAndWait(LOCALID_THIEF_LEADER,
+                                      ANIMATION_SHAKE_HEAD, 20);
+  Engine_ScriptShowMessage(LOCALID_THIEF_LEADER, 0);
   // Preserve the return destinations before requesting the thieves' encounter.
   GameFlag_Set(FLAG_VAULT_THIEVES_ATTACKED);
   gEventWork->startTransition =
-      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_BARS);
-  base = (s32)&SceneId_VaultInteriors;
-  Event_SetNextDestination(base, 17);
-  Event_SetDefeatDestination(base, 16);
-  Battle_SetStart(BATTLE_START_SCENE);
+      MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_BARS);
+  base = (s32)&MapId_VaultInteriors;
+  FieldScript_SetNextDestination(base, 17);
+  FieldScript_SetDefeatDestination(base, 16);
+  Battle_SetStart(BATTLE_START_SCRIPTED);
   Field_RequestBattleFromEncounterTable(ENCOUNTER_ZONE_SCRIPTED_VALE_VAULT, 5);
-  Engine_EventEnd();
+  Engine_ScriptEnd();
 }
 
 /// At Vault's inn, the party leaves the guests' room for the floor below
@@ -1522,9 +1561,9 @@ static void Event_FreeRooferAndConfrontThieves(void) {
 /// Reached by stepping on VAULT_INTERIORS_CELL_GUESTS_ROOM_STAIRS before the
 /// thieves are jailed (after, the same cell is a plain exit); takes
 /// VAULT_INTERIORS_INN_UPSTAIRS_TO_INN.
-static void Event_LeaveGuestsRoom(void) {
+static void EventScript_LeaveGuestsRoom(void) {
   Engine_AudioPlayCue(SE_MAP_EXIT);
-  Engine_EventRequestExit(VAULT_INTERIORS_INN_UPSTAIRS_TO_INN);
+  Engine_ScriptRequestWarp(VAULT_INTERIORS_INN_UPSTAIRS_TO_INN);
 }
 
 /// In Vault's room with the crate, the party climbs up into the inn's loft by
@@ -1532,12 +1571,12 @@ static void Event_LeaveGuestsRoom(void) {
 ///
 /// Reached by stepping on VAULT_INTERIORS_CELL_LOFT_CLIMB; takes
 /// VAULT_INTERIORS_CRATE_ROOM_TO_LOFT.
-static void Event_ClimbToLoft(void) {
-  Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1) / 2, PIXELS(1) / 4);
-  Actor_WalkTo(ACTOR_PARTY_LEADER, 728, 408);
+static void EventScript_ClimbToLoft(void) {
+  ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(1) / 2, PIXELS(1) / 4);
+  ObjectEvent_WalkTo(LOCALID_PARTY_LEADER, 728, 408);
   gEventWork->transitionFrames = 16;
-  Event_PlayCue(SE_MAP_EXIT);
-  Engine_EventRequestExit(VAULT_INTERIORS_CRATE_ROOM_TO_LOFT);
+  Script_PlayCue(SE_MAP_EXIT);
+  Engine_ScriptRequestWarp(VAULT_INTERIORS_CRATE_ROOM_TO_LOFT);
 }
 
 /// Leaving the inn's loft, the party hears the tied-up villager groan.
@@ -1546,18 +1585,18 @@ static void Event_ClimbToLoft(void) {
 ///
 /// Reached by stepping on VAULT_INTERIORS_CELL_LOFT_DESCENT; takes
 /// VAULT_INTERIORS_LOFT_TO_CRATE_ROOM back down.
-static void Event_LeaveLoft(void) {
-  Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1) / 2, PIXELS(1) / 4);
-  Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 744, 408);
+static void EventScript_LeaveLoft(void) {
+  ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(1) / 2, PIXELS(1) / 4);
+  ObjectEvent_WalkToAndWait(LOCALID_PARTY_LEADER, 744, 408);
   if (GameFlag_IsSet(FLAG_VAULT_THIEVES_ATTACKED) == 0) {
-    Engine_EventStart();
-    Engine_EventSetMessage(MsgVaultUhnnUhnn);
-    Event_ShowMessage(ACTOR_TIED_UP_VILLAGER, 0);
-    Engine_EventEnd();
+    Engine_ScriptStart();
+    Engine_ScriptSetMessage(MsgVaultUhnnUhnn);
+    Script_ShowMessage(LOCALID_TIED_UP_VILLAGER, 0);
+    Engine_ScriptEnd();
   }
   gEventWork->transitionFrames = 16;
   Engine_AudioPlayCue(SE_MAP_EXIT);
-  Engine_EventRequestExit(VAULT_INTERIORS_LOFT_TO_CRATE_ROOM);
+  Engine_ScriptRequestWarp(VAULT_INTERIORS_LOFT_TO_CRATE_ROOM);
 }
 
 /// In the guests' room at Vault's inn, the two suspects spot "that weird kid"
@@ -1569,54 +1608,55 @@ static void Event_LeaveLoft(void) {
 /// routes and the callback that keeps them facing the leader.
 /// It plays once: it copies VAULT_INTERIORS_CELL_GUESTS_ROOM_DOOR cells over
 /// the cells that reach it.
-static void Event_ApproachSuspects(void) {
+static void EventScript_ApproachSuspects(void) {
 
-  struct FieldActor *suspectedLeader;
-  struct FieldActor *suspectedThief;
+  struct ObjectEvent *suspectedLeader;
+  struct ObjectEvent *suspectedThief;
 
-  suspectedLeader = Object_GetById(ACTOR_SUSPECTED_LEADER);
-  suspectedThief = Object_GetById(ACTOR_SUSPECTED_THIEF);
-  Engine_EventStart();
-  Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(4) / 5, PIXELS(2) / 5);
-  Actor_SetSpeed(GARET, PIXELS(4) / 5, PIXELS(2) / 5);
-  Actor_SetSpeed(IVAN, PIXELS(4) / 5, PIXELS(2) / 5);
+  suspectedLeader = ObjectEvent_GetById(LOCALID_SUSPECTED_LEADER);
+  suspectedThief = ObjectEvent_GetById(LOCALID_SUSPECTED_THIEF);
+  Engine_ScriptStart();
+  ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(4) / 5, PIXELS(2) / 5);
+  ObjectEvent_SetSpeed(GARET, PIXELS(4) / 5, PIXELS(2) / 5);
+  ObjectEvent_SetSpeed(IVAN, PIXELS(4) / 5, PIXELS(2) / 5);
   // Isaac walks in; the two start and spot Ivan with him: "It looks like that
   // weird kid is with them!"
-  Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 232, 696);
-  Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 200, 696);
-  Engine_EventWait(10);
-  Actor_ShowEmote(ACTOR_SUSPECTED_THIEF, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
-  Actor_ShowEmote(ACTOR_SUSPECTED_LEADER, EMOTE_IN_FRONT | EMOTE_EXCLAMATION,
-                  0);
-  Engine_EventWait(60);
-  VaultInteriors_FaceActorAndWait(ACTOR_SUSPECTED_THIEF, ACTOR_PARTY_LEADER,
-                                  10);
-  Engine_ActorRunRepeatedMotion(ACTOR_SUSPECTED_LEADER, 2);
-  Engine_EventWait(20);
-  Engine_EventSetMessage(MsgVaultWant);
-  VaultInteriors_ShowMessageAndWait(ACTOR_SUSPECTED_LEADER, 20);
-  Actor_SetAttachedEffect(ACTOR_SUSPECTED_THIEF,
-                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-  Engine_EventWait(60);
-  VaultInteriors_ShowMessageAndWait(ACTOR_SUSPECTED_THIEF, 20);
-  Engine_ActorRunRepeatedMotion(ACTOR_SUSPECTED_LEADER, 1);
-  VaultInteriors_ShowMessageAndWait(ACTOR_SUSPECTED_LEADER, 30);
+  ObjectEvent_WalkToAndWait(LOCALID_PARTY_LEADER, 232, 696);
+  ObjectEvent_WalkToAndWait(LOCALID_PARTY_LEADER, 200, 696);
+  Engine_ScriptWait(10);
+  ObjectEvent_ShowEmote(LOCALID_SUSPECTED_THIEF,
+                        EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+  ObjectEvent_ShowEmote(LOCALID_SUSPECTED_LEADER,
+                        EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+  Engine_ScriptWait(60);
+  VaultInteriors_FaceObjectEventAndWait(LOCALID_SUSPECTED_THIEF,
+                                        LOCALID_PARTY_LEADER, 10);
+  Engine_ObjectEventRunRepeatedMotion(LOCALID_SUSPECTED_LEADER, 2);
+  Engine_ScriptWait(20);
+  Engine_ScriptSetMessage(MsgVaultWant);
+  VaultInteriors_ShowMessageAndWait(LOCALID_SUSPECTED_LEADER, 20);
+  ObjectEvent_SetAttachedEffect(
+      LOCALID_SUSPECTED_THIEF, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+  Engine_ScriptWait(60);
+  VaultInteriors_ShowMessageAndWait(LOCALID_SUSPECTED_THIEF, 20);
+  Engine_ObjectEventRunRepeatedMotion(LOCALID_SUSPECTED_LEADER, 1);
+  VaultInteriors_ShowMessageAndWait(LOCALID_SUSPECTED_LEADER, 30);
   // "Don't let him near me!" They run off to their routes' first spots.
-  Actor_SetSpeed(ACTOR_SUSPECTED_LEADER, PIXELS(4), PIXELS(2));
-  Actor_SetSpeed(ACTOR_SUSPECTED_THIEF, PIXELS(7) / 2, PIXELS(7) / 4);
-  Actor_SetActionScript(ACTOR_SUSPECTED_THIEF,
-                        gVaultInteriors_SuspectToSouthWestCorner);
-  Actor_SetActionScript(ACTOR_SUSPECTED_LEADER,
-                        gVaultInteriors_SuspectRoundToWestBedHead);
-  Object_RefreshSelectorById(ACTOR_SUSPECTED_LEADER);
-  Map_CopyCellAttributes(14, 45, 3, 1, 14, 44);
+  ObjectEvent_SetSpeed(LOCALID_SUSPECTED_LEADER, PIXELS(4), PIXELS(2));
+  ObjectEvent_SetSpeed(LOCALID_SUSPECTED_THIEF, PIXELS(7) / 2, PIXELS(7) / 4);
+  ObjectEvent_SetActionScript(LOCALID_SUSPECTED_THIEF,
+                              gVaultInteriors_SuspectToSouthWestCorner);
+  ObjectEvent_SetActionScript(LOCALID_SUSPECTED_LEADER,
+                              gVaultInteriors_SuspectRoundToWestBedHead);
+  ObjectEvent_RefreshSelectorById(LOCALID_SUSPECTED_LEADER);
+  MapGrid_CopyCellAttributes(14, 45, 3, 1, 14, 44);
   GameFlag_Set(FLAG_VAULT_SUSPECTS_APPROACHED);
   GameFlag_Set(FLAG_SUSPECTS_FLEEING);
   FieldScheduler_AddCallback(VaultInteriors_FaceSuspectsTowardLeader,
-                             TASK_PRIORITY_SCENE);
+                             TASK_PRIORITY_MAP);
   suspectedLeader->timer = 1;
   suspectedThief->timer = 3;
-  Engine_EventEnd();
+  Engine_ScriptEnd();
 }
 
 /// Stepping out of the guests' room at Vault's inn, the party talks it over:
@@ -1626,95 +1666,95 @@ static void Event_ApproachSuspects(void) {
 /// Reached by stepping on VAULT_INTERIORS_CELL_GUESTS_ROOM_DOOR while
 /// FLAG_SUSPECTS_FLEEING is set. Clears it and stops the facing callback; the
 /// suspects go back to their places.
-static void Event_DiscussSuspiciousGuests(void) {
-  struct FieldActor *suspectedLeader;
-  struct FieldActor *suspectedThief;
+static void EventScript_DiscussSuspiciousGuests(void) {
+  struct ObjectEvent *suspectedLeader;
+  struct ObjectEvent *suspectedThief;
   s32 base;
 
-  suspectedLeader = Object_GetById(ACTOR_SUSPECTED_LEADER);
-  suspectedThief = Object_GetById(ACTOR_SUSPECTED_THIEF);
-  Engine_EventStart();
+  suspectedLeader = ObjectEvent_GetById(LOCALID_SUSPECTED_LEADER);
+  suspectedThief = ObjectEvent_GetById(LOCALID_SUSPECTED_THIEF);
+  Engine_ScriptStart();
   Scheduler_RemoveCallback(VaultInteriors_FaceSuspectsTowardLeader);
   GameFlag_Clear(FLAG_SUSPECTS_FLEEING);
   if (suspectedLeader->timer <= 3) {
-    Actor_SetActionScript(ACTOR_SUSPECTED_LEADER,
-                          gVaultInteriors_SuspectRoundToWestBedFoot);
+    ObjectEvent_SetActionScript(LOCALID_SUSPECTED_LEADER,
+                                gVaultInteriors_SuspectRoundToWestBedFoot);
   } else {
-    Actor_SetActionScript(ACTOR_SUSPECTED_LEADER,
-                          gVaultInteriors_SuspectToWestBedFoot);
+    ObjectEvent_SetActionScript(LOCALID_SUSPECTED_LEADER,
+                                gVaultInteriors_SuspectToWestBedFoot);
   }
   if (suspectedThief->timer <= 2) {
-    Actor_SetActionScript(ACTOR_SUSPECTED_THIEF,
-                          gVaultInteriors_SuspectAcrossToWestOfBeds);
+    ObjectEvent_SetActionScript(LOCALID_SUSPECTED_THIEF,
+                                gVaultInteriors_SuspectAcrossToWestOfBeds);
   } else {
-    Actor_SetActionScript(ACTOR_SUSPECTED_THIEF,
-                          gVaultInteriors_SuspectToWestBedFoot);
+    ObjectEvent_SetActionScript(LOCALID_SUSPECTED_THIEF,
+                                gVaultInteriors_SuspectToWestBedFoot);
   }
-  Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(4) / 5, PIXELS(2) / 5);
-  Actor_SetSpeed(GARET, PIXELS(4) / 5, PIXELS(2) / 5);
-  Actor_SetSpeed(IVAN, PIXELS(4) / 5, PIXELS(2) / 5);
+  ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(4) / 5, PIXELS(2) / 5);
+  ObjectEvent_SetSpeed(GARET, PIXELS(4) / 5, PIXELS(2) / 5);
+  ObjectEvent_SetSpeed(IVAN, PIXELS(4) / 5, PIXELS(2) / 5);
   // Outside the room, Garet and Ivan step out of the leader.
-  Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 248, 728);
-  Actor_SetPosition(IVAN, PIXELS(248), PIXELS(728));
-  Actor_SetPosition(GARET, PIXELS(248), PIXELS(728));
-  Actor_WalkTo(IVAN, 264, 744);
-  Actor_WalkToAndWait(GARET, 232, 744);
-  Engine_ActorWaitForMove(IVAN);
-  Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 0);
-  Actor_FaceActor(GARET, ACTOR_PARTY_LEADER, 0);
-  VaultInteriors_FaceActorAndWait(IVAN, ACTOR_PARTY_LEADER, 30);
+  ObjectEvent_WalkToAndWait(LOCALID_PARTY_LEADER, 248, 728);
+  ObjectEvent_SetPosition(IVAN, PIXELS(248), PIXELS(728));
+  ObjectEvent_SetPosition(GARET, PIXELS(248), PIXELS(728));
+  ObjectEvent_WalkTo(IVAN, 264, 744);
+  ObjectEvent_WalkToAndWait(GARET, 232, 744);
+  Engine_ObjectEventWaitForMove(IVAN);
+  ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_SOUTH, 0);
+  ObjectEvent_FaceObjectEvent(GARET, LOCALID_PARTY_LEADER, 0);
+  VaultInteriors_FaceObjectEventAndWait(IVAN, LOCALID_PARTY_LEADER, 30);
   // Ivan: they're acting suspicious.
-  Engine_ActorRunRepeatedMotion(IVAN, 1);
+  Engine_ObjectEventRunRepeatedMotion(IVAN, 1);
   base = MsgVaultTheyreActingSuspiciousSomethingsNot;
-  Engine_EventSetMessage(base);
-  Event_ShowMessage(IVAN, 0);
-  Actor_FaceActor(ACTOR_PARTY_LEADER, IVAN, 0);
-  VaultInteriors_FaceActorAndWait(GARET, IVAN, 20);
-  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIMATION_NOD);
+  Engine_ScriptSetMessage(base);
+  Script_ShowMessage(IVAN, 0);
+  ObjectEvent_FaceObjectEvent(LOCALID_PARTY_LEADER, IVAN, 0);
+  VaultInteriors_FaceObjectEventAndWait(GARET, IVAN, 20);
+  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIMATION_NOD);
   VaultInteriors_PlayAnimationAndWait(GARET, ANIMATION_NOD, 20);
-  VaultInteriors_FaceEachOtherAndWait(ACTOR_PARTY_LEADER, GARET, 10);
+  VaultInteriors_FaceEachOtherAndWait(LOCALID_PARTY_LEADER, GARET, 10);
   // Garet: "But you can't use Mind Read if they keep running away, can you?"
   // Yes: Ivan asks how he can catch them; no: there must be a way.
-  Event_OpenMessage(GARET, 0);
-  if (Engine_EventChooseYesNo(0, 0) != 0) {
+  Script_OpenMessage(GARET, 0);
+  if (Engine_ScriptChooseYesNo(0, 0) != 0) {
     gEventWork->message++;
   }
   VaultInteriors_ShowMessageAndWait(GARET, 30);
   // Garet's plan: the three of them surround one of the two.
-  Engine_EventSetMessage((base + 4));
-  Actor_FaceActor(ACTOR_PARTY_LEADER, IVAN, 0);
-  VaultInteriors_FaceActorAndWait(GARET, IVAN, 50);
-  Actor_ShowEmote(IVAN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
-  Engine_EventWait(60);
-  VaultInteriors_FaceEachOtherAndWait(ACTOR_PARTY_LEADER, GARET, 50);
-  Actor_FaceActor(ACTOR_PARTY_LEADER, IVAN, 0);
-  VaultInteriors_FaceActorAndWait(GARET, IVAN, 30);
+  Engine_ScriptSetMessage((base + 4));
+  ObjectEvent_FaceObjectEvent(LOCALID_PARTY_LEADER, IVAN, 0);
+  VaultInteriors_FaceObjectEventAndWait(GARET, IVAN, 50);
+  ObjectEvent_ShowEmote(IVAN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+  Engine_ScriptWait(60);
+  VaultInteriors_FaceEachOtherAndWait(LOCALID_PARTY_LEADER, GARET, 50);
+  ObjectEvent_FaceObjectEvent(LOCALID_PARTY_LEADER, IVAN, 0);
+  VaultInteriors_FaceObjectEventAndWait(GARET, IVAN, 30);
   VaultInteriors_PlayAnimationAndWait(IVAN, ANIMATION_NOD, 10);
   VaultInteriors_ShowMessageAndWait(IVAN, 20);
-  Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
-  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
-  Engine_EventWait(60);
+  ObjectEvent_ShowEmote(LOCALID_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
+  ObjectEvent_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
+  Engine_ScriptWait(60);
   VaultInteriors_PlayAnimationAndWait(IVAN, ANIMATION_NOD, 20);
   VaultInteriors_ShowMessageAndWait(IVAN, 30);
   // "Isaac, you take the lead." The two walk back into him, and the suspects
   // are put back at their table.
-  Engine_EventSetMessage(MsgVaultIsaacTakeLead);
-  Event_ShowMessage(GARET, 0);
-  Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 0);
-  Engine_EventWait(40);
-  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIMATION_NOD);
-  Engine_ActorSetAnimation(GARET, ANIMATION_NOD);
+  Engine_ScriptSetMessage(MsgVaultIsaacTakeLead);
+  Script_ShowMessage(GARET, 0);
+  ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_SOUTH, 0);
+  Engine_ScriptWait(40);
+  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIMATION_NOD);
+  Engine_ObjectEventSetAnimation(GARET, ANIMATION_NOD);
   VaultInteriors_PlayAnimationAndWait(IVAN, ANIMATION_NOD, 50);
-  Actor_WalkTo(IVAN, 248, 728);
-  Actor_WalkToAndWait(GARET, 248, 728);
-  Actor_SetPosition(GARET, 0, 0);
-  Actor_SetPosition(IVAN, 0, 0);
-  Actor_SetPosition(ACTOR_SUSPECTED_LEADER, PIXELS(104), PIXELS(696));
-  Actor_SetPosition(ACTOR_SUSPECTED_THIEF, PIXELS(120), PIXELS(696));
-  Actor_FaceDirection(ACTOR_SUSPECTED_LEADER, FACING_EAST, 0);
-  Actor_FaceDirection(ACTOR_SUSPECTED_THIEF, FACING_WEST, 0);
-  Map_CopyCellAttributes(14, 50, 3, 1, 14, 44);
-  Engine_EventEnd();
+  ObjectEvent_WalkTo(IVAN, 248, 728);
+  ObjectEvent_WalkToAndWait(GARET, 248, 728);
+  ObjectEvent_SetPosition(GARET, 0, 0);
+  ObjectEvent_SetPosition(IVAN, 0, 0);
+  ObjectEvent_SetPosition(LOCALID_SUSPECTED_LEADER, PIXELS(104), PIXELS(696));
+  ObjectEvent_SetPosition(LOCALID_SUSPECTED_THIEF, PIXELS(120), PIXELS(696));
+  ObjectEvent_FaceDirection(LOCALID_SUSPECTED_LEADER, FACING_EAST, 0);
+  ObjectEvent_FaceDirection(LOCALID_SUSPECTED_THIEF, FACING_WEST, 0);
+  MapGrid_CopyCellAttributes(14, 50, 3, 1, 14, 44);
+  Engine_ScriptEnd();
 }
 
 /// In the guests' room at Vault's inn, the party sets out to corner the two
@@ -1722,68 +1762,70 @@ static void Event_DiscussSuspiciousGuests(void) {
 ///
 /// Reached by stepping on VAULT_INTERIORS_CELL_CORNERING_START while
 /// FLAG_VAULT_SUSPECTS_APPROACHED is set. Sets FLAG_MENUS_RAISE_EVENT, so the
-/// menus answer with Garet's refusal, and FLAG_SCENE_TEMP_50, so talking to
+/// menus answer with Garet's refusal, and FLAG_MAP_TEMP_50, so talking to
 /// Ivan or the suspects does nothing; then starts the chase
-/// (VaultInteriors_StartActorStops).
-static void Event_StartCorneringSuspects(void) {
+/// (VaultInteriors_StartObjectEventStops).
+static void EventScript_StartCorneringSuspects(void) {
   Engine_GameFlagSet(FLAG_MENUS_RAISE_EVENT);
-  Engine_GameFlagSet(FLAG_SCENE_TEMP_50);
-  VaultInteriors_StartActorStops();
+  Engine_GameFlagSet(FLAG_MAP_TEMP_50);
+  VaultInteriors_StartObjectEventStops();
 }
 
 /// Has the suspects react to the party's return and resets their route states.
 /// "Hey, they're back!"
 ///
-/// Called by VaultInteriors_StartActorStops.
+/// Called by VaultInteriors_StartObjectEventStops.
 static void VaultInteriors_ResetSuspectRoutes(void) {
-  Engine_EventWait(30);
-  Engine_ActorRunRepeatedMotion(ACTOR_SUSPECTED_LEADER, 1);
-  Engine_EventWait(20);
-  Engine_EventSetMessage(MsgVaultTheyreBack);
-  VaultInteriors_ShowMessageAndWait(ACTOR_SUSPECTED_LEADER, 20);
-  Actor_FaceDirection(ACTOR_SUSPECTED_THIEF, FACING_EAST, 20);
-  Actor_SetAttachedEffect(ACTOR_SUSPECTED_THIEF,
-                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-  Engine_ActorRunRepeatedMotion(ACTOR_SUSPECTED_THIEF, 2);
-  VaultInteriors_ShowMessageAndWait(ACTOR_SUSPECTED_THIEF, 20);
-  Engine_ActorSetAnimationAndWait(ACTOR_SUSPECTED_LEADER, ANIMATION_SHAKE_HEAD);
-  Engine_EventWait(20);
-  VaultInteriors_ShowMessageAndWait(ACTOR_SUSPECTED_LEADER, 20);
-  Actor_SetSpeed(ACTOR_SUSPECTED_LEADER, PIXELS(4), PIXELS(2));
-  Actor_SetSpeed(ACTOR_SUSPECTED_THIEF, PIXELS(7) / 2, PIXELS(7) / 4);
-  Actor_SetActionScript(ACTOR_SUSPECTED_THIEF,
-                        gVaultInteriors_SuspectToSouthWestCorner);
-  Actor_SetActionScript(ACTOR_SUSPECTED_LEADER,
-                        gVaultInteriors_SuspectRoundToWestBedHead);
-  Object_RefreshSelectorById(ACTOR_SUSPECTED_LEADER);
+  Engine_ScriptWait(30);
+  Engine_ObjectEventRunRepeatedMotion(LOCALID_SUSPECTED_LEADER, 1);
+  Engine_ScriptWait(20);
+  Engine_ScriptSetMessage(MsgVaultTheyreBack);
+  VaultInteriors_ShowMessageAndWait(LOCALID_SUSPECTED_LEADER, 20);
+  ObjectEvent_FaceDirection(LOCALID_SUSPECTED_THIEF, FACING_EAST, 20);
+  ObjectEvent_SetAttachedEffect(
+      LOCALID_SUSPECTED_THIEF, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+  Engine_ObjectEventRunRepeatedMotion(LOCALID_SUSPECTED_THIEF, 2);
+  VaultInteriors_ShowMessageAndWait(LOCALID_SUSPECTED_THIEF, 20);
+  Engine_ObjectEventSetAnimationAndWait(LOCALID_SUSPECTED_LEADER,
+                                        ANIMATION_SHAKE_HEAD);
+  Engine_ScriptWait(20);
+  VaultInteriors_ShowMessageAndWait(LOCALID_SUSPECTED_LEADER, 20);
+  ObjectEvent_SetSpeed(LOCALID_SUSPECTED_LEADER, PIXELS(4), PIXELS(2));
+  ObjectEvent_SetSpeed(LOCALID_SUSPECTED_THIEF, PIXELS(7) / 2, PIXELS(7) / 4);
+  ObjectEvent_SetActionScript(LOCALID_SUSPECTED_THIEF,
+                              gVaultInteriors_SuspectToSouthWestCorner);
+  ObjectEvent_SetActionScript(LOCALID_SUSPECTED_LEADER,
+                              gVaultInteriors_SuspectRoundToWestBedHead);
+  ObjectEvent_RefreshSelectorById(LOCALID_SUSPECTED_LEADER);
   {
-    struct FieldActor *suspect = Object_GetById(ACTOR_SUSPECTED_LEADER);
+    struct ObjectEvent *suspect = ObjectEvent_GetById(LOCALID_SUSPECTED_LEADER);
     u16 routeIndex = 1;
 
     suspect->timer = routeIndex;
   }
   {
-    struct FieldActor *suspect = Object_GetById(ACTOR_SUSPECTED_THIEF);
+    struct ObjectEvent *suspect = ObjectEvent_GetById(LOCALID_SUSPECTED_THIEF);
     u16 routeIndex = 3;
 
     suspect->timer = routeIndex;
   }
-  Map_CopyCellAttributes(14, 48, 4, 1, 14, 44);
+  MapGrid_CopyCellAttributes(14, 48, 4, 1, 14, 44);
 }
 
 /// Sets the three party images to the priority used during the mind-reading
 /// scene.
 static inline void VaultInteriors_SetPartyImagePriority(void) {
   {
-    struct AnimationObject *sprite = Object_GetById(ACTOR_PARTY_LEADER)->sprite;
+    struct AnimationObject *sprite =
+        ObjectEvent_GetById(LOCALID_PARTY_LEADER)->sprite;
     sprite->image.priority = 1;
   }
   {
-    struct AnimationObject *sprite = Object_GetById(GARET)->sprite;
+    struct AnimationObject *sprite = ObjectEvent_GetById(GARET)->sprite;
     sprite->image.priority = 1;
   }
   {
-    struct AnimationObject *sprite = Object_GetById(IVAN)->sprite;
+    struct AnimationObject *sprite = ObjectEvent_GetById(IVAN)->sprite;
     sprite->image.priority = 1;
   }
 }
@@ -1793,213 +1835,217 @@ static inline void VaultInteriors_SetPartyImagePriority(void) {
 /// Ivan!"
 ///
 /// Reached through raised events 201 to 203, which
-/// VaultInteriors_UpdateActorStops raises after thirty frames with at least
-/// one suspect blocked: 201 the leader, 202 the thief, 203 both. Stops the
-/// chase, clears FLAG_MENUS_RAISE_EVENT and FLAG_SCENE_TEMP_50, plays the
+/// VaultInteriors_UpdateObjectEventStops raises after thirty frames with at
+/// least one suspect blocked: 201 the leader, 202 the thief, 203 both. Stops
+/// the chase, clears FLAG_MENUS_RAISE_EVENT and FLAG_MAP_TEMP_50, plays the
 /// party's talk (VaultInteriors_DiscussMindReading) and sets
 /// FLAG_VAULT_SUSPECTS_MIND_READ.
-static void Event_ReadCorneredSuspectsMinds(void) {
-  s32 actor;
+static void EventScript_ReadCorneredSuspectsMinds(void) {
+  s32 objectEvent;
   struct EventWork *work;
 
   work = gEventWork;
-  Engine_EventStart();
-  Scheduler_RemoveCallback(VaultInteriors_UpdateActorStops);
+  Engine_ScriptStart();
+  Scheduler_RemoveCallback(VaultInteriors_UpdateObjectEventStops);
   GameFlag_Clear(FLAG_MENUS_RAISE_EVENT);
-  GameFlag_Clear(FLAG_SCENE_TEMP_50);
-  Engine_ActorSetAnimation(ACTOR_SUSPECTED_LEADER, ANIMATION_STAND);
-  Engine_ActorSetAnimation(ACTOR_SUSPECTED_THIEF, ANIMATION_STAND);
-  Engine_ActorSetAnimation(IVAN, ANIMATION_STAND);
-  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIMATION_STAND);
-  Engine_ActorSetAnimation(GARET, ANIMATION_STAND);
-  Actor_FaceActor(GARET, IVAN, 0);
-  Engine_ActorFaceEachOther(ACTOR_PARTY_LEADER, IVAN, 0);
-  Actor_FaceActor(ACTOR_SUSPECTED_LEADER, IVAN, 0);
-  Actor_FaceActor(ACTOR_SUSPECTED_THIEF, IVAN, 0);
-  Engine_EventWait(10);
-  actor = ACTOR_SUSPECTED_LEADER;
+  GameFlag_Clear(FLAG_MAP_TEMP_50);
+  Engine_ObjectEventSetAnimation(LOCALID_SUSPECTED_LEADER, ANIMATION_STAND);
+  Engine_ObjectEventSetAnimation(LOCALID_SUSPECTED_THIEF, ANIMATION_STAND);
+  Engine_ObjectEventSetAnimation(IVAN, ANIMATION_STAND);
+  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIMATION_STAND);
+  Engine_ObjectEventSetAnimation(GARET, ANIMATION_STAND);
+  ObjectEvent_FaceObjectEvent(GARET, IVAN, 0);
+  Engine_ObjectEventFaceEachOther(LOCALID_PARTY_LEADER, IVAN, 0);
+  ObjectEvent_FaceObjectEvent(LOCALID_SUSPECTED_LEADER, IVAN, 0);
+  ObjectEvent_FaceObjectEvent(LOCALID_SUSPECTED_THIEF, IVAN, 0);
+  Engine_ScriptWait(10);
+  objectEvent = LOCALID_SUSPECTED_LEADER;
   // The event identifies the suspects blocked on the last frame of the wait.
   switch (work->raisedTrigger) {
   case VAULT_INTERIORS_THIEF_CORNERED:
   case VAULT_INTERIORS_BOTH_CORNERED:
-    Engine_EventSetMessage(MsgVaultImSurrounded);
-    Actor_SetAttachedEffect(ACTOR_SUSPECTED_THIEF,
-                            ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-    Engine_ActorRunRepeatedMotion(ACTOR_SUSPECTED_THIEF, 2);
-    VaultInteriors_ShowMessageAndWait(ACTOR_SUSPECTED_THIEF, 20);
+    Engine_ScriptSetMessage(MsgVaultImSurrounded);
+    ObjectEvent_SetAttachedEffect(LOCALID_SUSPECTED_THIEF,
+                                  ATTACHED_EFFECT_IN_FRONT |
+                                      ATTACHED_EFFECT_ONCE);
+    Engine_ObjectEventRunRepeatedMotion(LOCALID_SUSPECTED_THIEF, 2);
+    VaultInteriors_ShowMessageAndWait(LOCALID_SUSPECTED_THIEF, 20);
     if (work->raisedTrigger == VAULT_INTERIORS_THIEF_CORNERED) {
-      actor = ACTOR_SUSPECTED_THIEF;
+      objectEvent = LOCALID_SUSPECTED_THIEF;
       break;
     }
     // When both are cornered, the leader's reaction follows the thief's.
     // fall through
   case VAULT_INTERIORS_LEADER_CORNERED:
-    Engine_EventSetMessage(MsgVaultTheresNowhereRun);
-    Actor_SetAttachedEffect(ACTOR_SUSPECTED_LEADER,
-                            ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-    Engine_ActorRunRepeatedMotion(ACTOR_SUSPECTED_LEADER, 2);
-    actor = ACTOR_SUSPECTED_LEADER;
-    VaultInteriors_ShowMessageAndWait(ACTOR_SUSPECTED_LEADER, 20);
+    Engine_ScriptSetMessage(MsgVaultTheresNowhereRun);
+    ObjectEvent_SetAttachedEffect(LOCALID_SUSPECTED_LEADER,
+                                  ATTACHED_EFFECT_IN_FRONT |
+                                      ATTACHED_EFFECT_ONCE);
+    Engine_ObjectEventRunRepeatedMotion(LOCALID_SUSPECTED_LEADER, 2);
+    objectEvent = LOCALID_SUSPECTED_LEADER;
+    VaultInteriors_ShowMessageAndWait(LOCALID_SUSPECTED_LEADER, 20);
     break;
   }
-  Engine_ActorSetAnimation(IVAN, ANIMATION_STAND);
-  Actor_FaceActor(IVAN, actor, 0);
-  Actor_FaceActor(GARET, IVAN, 0);
-  Engine_ActorRunRepeatedMotion(GARET, 2);
-  Engine_EventWait(20);
+  Engine_ObjectEventSetAnimation(IVAN, ANIMATION_STAND);
+  ObjectEvent_FaceObjectEvent(IVAN, objectEvent, 0);
+  ObjectEvent_FaceObjectEvent(GARET, IVAN, 0);
+  Engine_ObjectEventRunRepeatedMotion(GARET, 2);
+  Engine_ScriptWait(20);
   // "Now, Ivan!" "A-All right!" Ivan reads the cornered one's mind while the
   // two wonder what he is doing.
-  Engine_EventSetMessage(MsgVaultNowIvan);
+  Engine_ScriptSetMessage(MsgVaultNowIvan);
   VaultInteriors_ShowMessageAndWait(GARET, 20);
-  Engine_ActorRunRepeatedMotion(IVAN, 2);
-  Engine_EventWait(20);
+  Engine_ObjectEventRunRepeatedMotion(IVAN, 2);
+  Engine_ScriptWait(20);
   VaultInteriors_ShowMessageAndWait(IVAN, 20);
-  VaultInteriors_StartMindRead(IVAN, actor);
+  VaultInteriors_StartMindRead(IVAN, objectEvent);
   Ui_SetBank15PaletteAndClearRenderMode();
-  Engine_EventWait(60);
-  Engine_ActorRunRepeatedMotion(ACTOR_SUSPECTED_LEADER, 2);
-  VaultInteriors_ShowMessageAndWait(ACTOR_SUSPECTED_LEADER, 20);
-  Engine_ActorRunRepeatedMotion(ACTOR_SUSPECTED_THIEF, 2);
-  VaultInteriors_ShowMessageAndWait(ACTOR_SUSPECTED_THIEF, 20);
+  Engine_ScriptWait(60);
+  Engine_ObjectEventRunRepeatedMotion(LOCALID_SUSPECTED_LEADER, 2);
+  VaultInteriors_ShowMessageAndWait(LOCALID_SUSPECTED_LEADER, 20);
+  Engine_ObjectEventRunRepeatedMotion(LOCALID_SUSPECTED_THIEF, 2);
+  VaultInteriors_ShowMessageAndWait(LOCALID_SUSPECTED_THIEF, 20);
   // "Are you done, Ivan?" He nods, and the window closes.
-  Actor_ShowEmote(IVAN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 60);
+  ObjectEvent_ShowEmote(IVAN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 60);
   VaultInteriors_EndMindRead();
-  Engine_ActorStartRepeatedMotion(GARET, 2);
-  Engine_ActorRunRepeatedMotion(ACTOR_PARTY_LEADER, 2);
-  Engine_EventWait(20);
+  Engine_ObjectEventStartRepeatedMotion(GARET, 2);
+  Engine_ObjectEventRunRepeatedMotion(LOCALID_PARTY_LEADER, 2);
+  Engine_ScriptWait(20);
   VaultInteriors_ShowMessageAndWait(GARET, 20);
-  Actor_FaceActor(IVAN, GARET, 0);
-  Engine_EventWait(20);
-  Engine_ActorSetAnimationAndWait(IVAN, ANIMATION_NOD);
-  Engine_EventWait(40);
+  ObjectEvent_FaceObjectEvent(IVAN, GARET, 0);
+  Engine_ScriptWait(20);
+  Engine_ObjectEventSetAnimationAndWait(IVAN, ANIMATION_NOD);
+  Engine_ScriptWait(40);
   VaultInteriors_SetPartyImagePriority();
   gEventWork->transitionFrames = 24;
   gEventWork->startTransition =
-      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_SHAPE);
-  Engine_EventCloseScreen();
-  Engine_EventWaitForScreen();
+      MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_SHAPE);
+  Engine_ScriptCloseScreen();
+  Engine_ScriptWaitForScreen();
   // Move the discussion away from the suspects while the screen is closed.
   VaultInteriors_DiscussMindReading();
   // The suspects stay at their table, turned toward the leader from now on.
-  Map_CopyCellAttributes(14, 45, 3, 1, 14, 44);
+  MapGrid_CopyCellAttributes(14, 45, 3, 1, 14, 44);
   GameFlag_Set(FLAG_VAULT_SUSPECTS_MIND_READ);
   {
-    struct FieldActor *suspect = Object_GetById(ACTOR_SUSPECTED_LEADER);
+    struct ObjectEvent *suspect = ObjectEvent_GetById(LOCALID_SUSPECTED_LEADER);
     s32 routeIndex = 5;
 
     suspect->timer = routeIndex;
   }
   {
-    struct FieldActor *suspect = Object_GetById(ACTOR_SUSPECTED_THIEF);
+    struct ObjectEvent *suspect = ObjectEvent_GetById(LOCALID_SUSPECTED_THIEF);
     s32 routeIndex = 4;
 
     suspect->timer = routeIndex;
   }
   FieldScheduler_AddCallback(VaultInteriors_FaceSuspectsTowardLeader,
-                             TASK_PRIORITY_SCENE);
+                             TASK_PRIORITY_MAP);
   gEventWork->startTransition =
-      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
-  Engine_EventEnd();
+      MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
+  Engine_ScriptEnd();
 }
 
 /// Shows the party's branching conversation about what Ivan learned: the
 /// stolen goods are hidden in the inn, which they must search.
 ///
-/// Called by Event_ReadCorneredSuspectsMinds while the screen is closed; sets
-/// the party outside the room and opens the screen on them.
+/// Called by EventScript_ReadCorneredSuspectsMinds while the screen is closed;
+/// sets the party outside the room and opens the screen on them.
 static void VaultInteriors_DiscussMindReading(void) {
   s32 persistedWithQuestions;
 
   // Move the party outside the room and the suspects back to their table.
   Audio_PlayCueFromEventWork();
-  Engine_ActorSetSpritePriority(ACTOR_PARTY_LEADER, 1);
+  Engine_ObjectEventSetSpritePriority(LOCALID_PARTY_LEADER, 1);
   {
-    struct FieldActor *leader = Object_GetById(ACTOR_PARTY_LEADER);
+    struct ObjectEvent *leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
 
-    leader->priorityFlags = ACTOR_PRIORITY_AUTOMATIC | leader->priorityFlags;
+    leader->priorityFlags =
+        OBJ_EVENT_PRIORITY_AUTOMATIC | leader->priorityFlags;
   }
-  FieldMap_SetViewBounds(PIXELS(32), PIXELS(576), PIXELS(400), PIXELS(936));
-  Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(4) / 5, PIXELS(2) / 5);
-  Actor_SetSpeed(GARET, PIXELS(4) / 5, PIXELS(2) / 5);
-  Actor_SetSpeed(IVAN, PIXELS(4) / 5, PIXELS(2) / 5);
-  Actor_SetPosition(ACTOR_PARTY_LEADER, PIXELS(248), PIXELS(728));
-  Actor_SetPosition(IVAN, PIXELS(264), PIXELS(744));
-  Engine_ActorSetPosition(GARET, PIXELS(232), PIXELS(744));
+  Field_SetViewBounds(PIXELS(32), PIXELS(576), PIXELS(400), PIXELS(936));
+  ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(4) / 5, PIXELS(2) / 5);
+  ObjectEvent_SetSpeed(GARET, PIXELS(4) / 5, PIXELS(2) / 5);
+  ObjectEvent_SetSpeed(IVAN, PIXELS(4) / 5, PIXELS(2) / 5);
+  ObjectEvent_SetPosition(LOCALID_PARTY_LEADER, PIXELS(248), PIXELS(728));
+  ObjectEvent_SetPosition(IVAN, PIXELS(264), PIXELS(744));
+  Engine_ObjectEventSetPosition(GARET, PIXELS(232), PIXELS(744));
   VaultInteriors_SetPartyImagePriority();
-  Engine_ActorFaceEachOther(ACTOR_PARTY_LEADER, IVAN, 0);
-  VaultInteriors_FaceActorAndWait(GARET, IVAN, 30);
-  Actor_SetPosition(ACTOR_SUSPECTED_LEADER, PIXELS(104), PIXELS(696));
-  Actor_SetPosition(ACTOR_SUSPECTED_THIEF, PIXELS(120), PIXELS(696));
-  Engine_ActorFaceEachOther(ACTOR_SUSPECTED_LEADER, ACTOR_SUSPECTED_THIEF, 0);
-  Engine_CameraFollowActor(ACTOR_PARTY_LEADER, 0);
+  Engine_ObjectEventFaceEachOther(LOCALID_PARTY_LEADER, IVAN, 0);
+  VaultInteriors_FaceObjectEventAndWait(GARET, IVAN, 30);
+  ObjectEvent_SetPosition(LOCALID_SUSPECTED_LEADER, PIXELS(104), PIXELS(696));
+  ObjectEvent_SetPosition(LOCALID_SUSPECTED_THIEF, PIXELS(120), PIXELS(696));
+  Engine_ObjectEventFaceEachOther(LOCALID_SUSPECTED_LEADER,
+                                  LOCALID_SUSPECTED_THIEF, 0);
+  Engine_CameraFollowObjectEvent(LOCALID_PARTY_LEADER, 0);
   Engine_CameraWaitForMove();
-  Engine_MapRedraw();
-  Engine_EventWait(30);
+  Engine_MapGridRedraw();
+  Engine_ScriptWait(30);
   {
     struct EventWork *work = gEventWork;
 
     work->transitionFrames = 24;
     work->startTransition =
-        SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_SHAPE);
+        MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_SHAPE);
   }
-  Engine_EventOpenScreen();
-  Engine_EventWaitForScreen();
-  Engine_EventWait(40);
+  Engine_ScriptOpenScreen();
+  Engine_ScriptWaitForScreen();
+  Engine_ScriptWait(40);
   // "What did you learn, Ivan?" It is them: they hid the stolen goods
   // somewhere in this inn, but won't let him near again.
-  Engine_ActorRunRepeatedMotion(GARET, 1);
-  Engine_EventWait(10);
-  Engine_EventSetMessage(MsgVaultLearn);
+  Engine_ObjectEventRunRepeatedMotion(GARET, 1);
+  Engine_ScriptWait(10);
+  Engine_ScriptSetMessage(MsgVaultLearn);
   VaultInteriors_ShowMessageAndWait(GARET, 20);
   VaultInteriors_PlayAnimationAndWait(IVAN, ANIMATION_NOD, 20);
   VaultInteriors_ShowMessageAndWait(IVAN, 20);
-  VaultInteriors_FaceEachOtherAndWait(ACTOR_PARTY_LEADER, GARET, 50);
-  Engine_ActorFaceActor(ACTOR_PARTY_LEADER, IVAN, 0);
-  VaultInteriors_FaceActorAndWait(GARET, IVAN, 20);
+  VaultInteriors_FaceEachOtherAndWait(LOCALID_PARTY_LEADER, GARET, 50);
+  Engine_ObjectEventFaceObjectEvent(LOCALID_PARTY_LEADER, IVAN, 0);
+  VaultInteriors_FaceObjectEventAndWait(GARET, IVAN, 20);
   VaultInteriors_PlayAnimationAndWait(IVAN, ANIMATION_SHAKE_HEAD, 20);
-  Engine_EventShowMessage(IVAN, 0);
-  Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
-  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
-  Engine_EventWait(60);
+  Engine_ScriptShowMessage(IVAN, 0);
+  ObjectEvent_ShowEmote(LOCALID_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
+  ObjectEvent_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
+  Engine_ScriptWait(60);
   VaultInteriors_PlayAnimationAndWait(IVAN, ANIMATION_NOD, 20);
   VaultInteriors_ShowMessageAndWait(IVAN, 30);
-  Engine_ActorRunRepeatedMotion(GARET, 1);
-  Engine_EventWait(20);
-  VaultInteriors_FaceEachOtherAndWait(ACTOR_PARTY_LEADER, GARET, 20);
+  Engine_ObjectEventRunRepeatedMotion(GARET, 1);
+  Engine_ScriptWait(20);
+  VaultInteriors_FaceEachOtherAndWait(LOCALID_PARTY_LEADER, GARET, 20);
   // Garet: they have to search the inn. Each no leads to another plea, from
   // Garet and then Ivan; three noes and Garet vouches for Isaac's sense of
   // duty, while any yes gets "Leave it to us!"
-  Engine_EventOpenMessage(GARET, 0);
+  Engine_ScriptOpenMessage(GARET, 0);
   persistedWithQuestions = 0;
-  if (Engine_EventChooseYesNo(0, 0) != 0) {
-    Engine_EventWait(20);
-    Engine_ActorStartRepeatedMotion(IVAN, 2);
+  if (Engine_ScriptChooseYesNo(0, 0) != 0) {
+    Engine_ScriptWait(20);
+    Engine_ObjectEventStartRepeatedMotion(IVAN, 2);
     VaultInteriors_PlayAnimationAndWait(GARET, ANIMATION_SHAKE_HEAD, 30);
-    Engine_EventOpenMessage(GARET, 0);
+    Engine_ScriptOpenMessage(GARET, 0);
     persistedWithQuestions = 0;
-    if (Engine_EventChooseYesNo(0, 0) != 0) {
-      Engine_EventWait(20);
-      Engine_ActorShowEmote(IVAN, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
-      Engine_EventWait(60);
-      Engine_ActorRunRepeatedMotion(IVAN, 2);
-      VaultInteriors_FaceEachOtherAndWait(ACTOR_PARTY_LEADER, IVAN, 20);
-      Engine_EventOpenMessage(IVAN, 0);
+    if (Engine_ScriptChooseYesNo(0, 0) != 0) {
+      Engine_ScriptWait(20);
+      Engine_ObjectEventShowEmote(IVAN, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
+      Engine_ScriptWait(60);
+      Engine_ObjectEventRunRepeatedMotion(IVAN, 2);
+      VaultInteriors_FaceEachOtherAndWait(LOCALID_PARTY_LEADER, IVAN, 20);
+      Engine_ScriptOpenMessage(IVAN, 0);
       persistedWithQuestions = 0;
-      if (Engine_EventChooseYesNo(2, 0) != 0) {
-        Engine_EventWait(20);
-        Engine_ActorShowEmote(IVAN, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
-        Engine_EventWait(60);
+      if (Engine_ScriptChooseYesNo(2, 0) != 0) {
+        Engine_ScriptWait(20);
+        Engine_ObjectEventShowEmote(IVAN, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
+        Engine_ScriptWait(60);
         VaultInteriors_ShowMessageAndWait(IVAN, 20);
-        VaultInteriors_FaceActorAndWait(GARET, IVAN, 10);
-        Engine_ActorRunRepeatedMotion(GARET, 1);
-        Engine_EventWait(10);
+        VaultInteriors_FaceObjectEventAndWait(GARET, IVAN, 10);
+        Engine_ObjectEventRunRepeatedMotion(GARET, 1);
+        Engine_ScriptWait(10);
         VaultInteriors_ShowMessageAndWait(GARET, 10);
-        VaultInteriors_FaceActorAndWait(IVAN, GARET, 20);
-        Engine_ActorShowEmote(IVAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
-        Engine_EventWait(60);
+        VaultInteriors_FaceObjectEventAndWait(IVAN, GARET, 20);
+        Engine_ObjectEventShowEmote(IVAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
+        Engine_ScriptWait(60);
         VaultInteriors_PlayAnimationAndWait(IVAN, ANIMATION_SHAKE_HEAD, 20);
         VaultInteriors_ShowMessageAndWait(GARET, 10);
-        VaultInteriors_FaceEachOtherAndWait(GARET, ACTOR_PARTY_LEADER, 20);
+        VaultInteriors_FaceEachOtherAndWait(GARET, LOCALID_PARTY_LEADER, 20);
         VaultInteriors_PlayAnimationAndWait(GARET, ANIMATION_NOD, 20);
         persistedWithQuestions = 1;
         VaultInteriors_ShowMessageAndWait(GARET, 20);
@@ -2007,25 +2053,26 @@ static void VaultInteriors_DiscussMindReading(void) {
     }
   }
   if (persistedWithQuestions == 0) {
-    Engine_EventSetMessage(MsgVaultLeave);
+    Engine_ScriptSetMessage(MsgVaultLeave);
     VaultInteriors_ShowMessageAndWait(GARET, 20);
-    VaultInteriors_FaceEachOtherAndWait(GARET, ACTOR_PARTY_LEADER, 20);
+    VaultInteriors_FaceEachOtherAndWait(GARET, LOCALID_PARTY_LEADER, 20);
     VaultInteriors_ShowMessageAndWait(GARET, 20);
   }
   // "Let's go, Ivan." Garet and Ivan walk back into the leader.
-  Engine_ActorShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
-  Engine_EventWait(60);
-  Engine_ActorRunRepeatedMotion(GARET, 1);
+  Engine_ObjectEventShowEmote(LOCALID_PARTY_LEADER,
+                              EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
+  Engine_ScriptWait(60);
+  Engine_ObjectEventRunRepeatedMotion(GARET, 1);
   VaultInteriors_ShowMessageAndWait(GARET, 10);
   VaultInteriors_PlayAnimationAndWait(GARET, ANIMATION_NOD, 10);
-  Engine_ActorFaceEachOther(GARET, IVAN, 0);
-  VaultInteriors_FaceEachOtherAndWait(ACTOR_PARTY_LEADER, IVAN, 10);
-  Engine_EventShowMessage(GARET, 0);
+  Engine_ObjectEventFaceEachOther(GARET, IVAN, 0);
+  VaultInteriors_FaceEachOtherAndWait(LOCALID_PARTY_LEADER, IVAN, 10);
+  Engine_ScriptShowMessage(GARET, 0);
   VaultInteriors_PlayAnimationAndWait(IVAN, ANIMATION_NOD, 10);
-  Actor_WalkTo(IVAN, 248, 728);
-  Actor_WalkToAndWait(GARET, 248, 728);
-  Engine_ActorSetPosition(GARET, 0, 0);
-  Engine_ActorSetPosition(IVAN, 0, 0);
+  ObjectEvent_WalkTo(IVAN, 248, 728);
+  ObjectEvent_WalkToAndWait(GARET, 248, 728);
+  Engine_ObjectEventSetPosition(GARET, 0, 0);
+  Engine_ObjectEventSetPosition(IVAN, 0, 0);
 }
 
 /// The fleeing suspects move on to their next spots.
@@ -2035,80 +2082,84 @@ static void VaultInteriors_DiscussMindReading(void) {
 ///
 /// Reached by stepping on one of them while FLAG_SUSPECTS_FLEEING is
 /// set.
-static void Event_AdvanceSuspectRoutes(void) {
+static void EventScript_AdvanceSuspectRoutes(void) {
   switch (gEventWork->touchedTrigger) {
   case VAULT_INTERIORS_CELL_FIRST_SUSPECT_ROUTE:
-    VaultInteriors_AdvanceSuspectRoute(ACTOR_SUSPECTED_LEADER, 1, 2,
+    VaultInteriors_AdvanceSuspectRoute(LOCALID_SUSPECTED_LEADER, 1, 2,
                                        gVaultInteriors_SuspectToMiddleBedHead);
     VaultInteriors_AdvanceSuspectRoute(
-        ACTOR_SUSPECTED_THIEF, 3, 4,
+        LOCALID_SUSPECTED_THIEF, 3, 4,
         gVaultInteriors_SuspectAlongToSouthEastCorner);
     break;
   case VAULT_INTERIORS_CELL_FIRST_SUSPECT_ROUTE + 1:
     VaultInteriors_AdvanceSuspectRoute(
-        ACTOR_SUSPECTED_LEADER, 1, 4,
+        LOCALID_SUSPECTED_LEADER, 1, 4,
         gVaultInteriors_SuspectRoundToWestBedFoot);
-    VaultInteriors_AdvanceSuspectRoute(ACTOR_SUSPECTED_LEADER, 2, 3,
+    VaultInteriors_AdvanceSuspectRoute(LOCALID_SUSPECTED_LEADER, 2, 3,
                                        gVaultInteriors_SuspectToEastBedHead);
     VaultInteriors_AdvanceSuspectRoute(
-        ACTOR_SUSPECTED_THIEF, 1, 3, gVaultInteriors_SuspectToSouthWestCorner);
+        LOCALID_SUSPECTED_THIEF, 1, 3,
+        gVaultInteriors_SuspectToSouthWestCorner);
     break;
   case VAULT_INTERIORS_CELL_FIRST_SUSPECT_ROUTE + 2:
-    VaultInteriors_AdvanceSuspectRoute(ACTOR_SUSPECTED_LEADER, 2, 1,
+    VaultInteriors_AdvanceSuspectRoute(LOCALID_SUSPECTED_LEADER, 2, 1,
                                        gVaultInteriors_SuspectToWestBedHead);
     VaultInteriors_AdvanceSuspectRoute(
-        ACTOR_SUSPECTED_LEADER, 3, 6,
+        LOCALID_SUSPECTED_LEADER, 3, 6,
         gVaultInteriors_SuspectRoundToEastBedFoot);
     VaultInteriors_AdvanceSuspectRoute(
-        ACTOR_SUSPECTED_THIEF, 2, 4, gVaultInteriors_SuspectToSouthEastCorner);
+        LOCALID_SUSPECTED_THIEF, 2, 4,
+        gVaultInteriors_SuspectToSouthEastCorner);
     break;
   case VAULT_INTERIORS_CELL_FIRST_SUSPECT_ROUTE + 3:
-    VaultInteriors_AdvanceSuspectRoute(ACTOR_SUSPECTED_LEADER, 3, 2,
+    VaultInteriors_AdvanceSuspectRoute(LOCALID_SUSPECTED_LEADER, 3, 2,
                                        gVaultInteriors_SuspectToMiddleBedHead);
     VaultInteriors_AdvanceSuspectRoute(
-        ACTOR_SUSPECTED_THIEF, 4, 3,
+        LOCALID_SUSPECTED_THIEF, 4, 3,
         gVaultInteriors_SuspectAlongToSouthWestCorner);
     break;
   case VAULT_INTERIORS_CELL_FIRST_SUSPECT_ROUTE + 4:
-    VaultInteriors_AdvanceSuspectRoute(ACTOR_SUSPECTED_LEADER, 4, 5,
+    VaultInteriors_AdvanceSuspectRoute(LOCALID_SUSPECTED_LEADER, 4, 5,
                                        gVaultInteriors_SuspectToMiddleBedFoot);
     VaultInteriors_AdvanceSuspectRoute(
-        ACTOR_SUSPECTED_THIEF, 1, 2, gVaultInteriors_SuspectAcrossToEastOfBeds);
+        LOCALID_SUSPECTED_THIEF, 1, 2,
+        gVaultInteriors_SuspectAcrossToEastOfBeds);
     break;
   case VAULT_INTERIORS_CELL_FIRST_SUSPECT_ROUTE + 5:
     VaultInteriors_AdvanceSuspectRoute(
-        ACTOR_SUSPECTED_LEADER, 4, 1,
+        LOCALID_SUSPECTED_LEADER, 4, 1,
         gVaultInteriors_SuspectRoundToWestBedHead);
-    VaultInteriors_AdvanceSuspectRoute(ACTOR_SUSPECTED_LEADER, 5, 6,
+    VaultInteriors_AdvanceSuspectRoute(LOCALID_SUSPECTED_LEADER, 5, 6,
                                        gVaultInteriors_SuspectToEastBedFoot);
-    VaultInteriors_AdvanceSuspectRoute(ACTOR_SUSPECTED_THIEF, 3, 1,
+    VaultInteriors_AdvanceSuspectRoute(LOCALID_SUSPECTED_THIEF, 3, 1,
                                        gVaultInteriors_SuspectToWestOfBeds);
     break;
   case VAULT_INTERIORS_CELL_FIRST_SUSPECT_ROUTE + 6:
-    VaultInteriors_AdvanceSuspectRoute(ACTOR_SUSPECTED_LEADER, 5, 4,
+    VaultInteriors_AdvanceSuspectRoute(LOCALID_SUSPECTED_LEADER, 5, 4,
                                        gVaultInteriors_SuspectToWestBedFoot);
     VaultInteriors_AdvanceSuspectRoute(
-        ACTOR_SUSPECTED_LEADER, 6, 3,
+        LOCALID_SUSPECTED_LEADER, 6, 3,
         gVaultInteriors_SuspectRoundToEastBedHead);
-    VaultInteriors_AdvanceSuspectRoute(ACTOR_SUSPECTED_THIEF, 4, 2,
+    VaultInteriors_AdvanceSuspectRoute(LOCALID_SUSPECTED_THIEF, 4, 2,
                                        gVaultInteriors_SuspectToEastOfBeds);
     break;
   case VAULT_INTERIORS_CELL_LAST_SUSPECT_ROUTE:
-    VaultInteriors_AdvanceSuspectRoute(ACTOR_SUSPECTED_LEADER, 6, 5,
+    VaultInteriors_AdvanceSuspectRoute(LOCALID_SUSPECTED_LEADER, 6, 5,
                                        gVaultInteriors_SuspectToMiddleBedFoot);
     VaultInteriors_AdvanceSuspectRoute(
-        ACTOR_SUSPECTED_THIEF, 2, 1, gVaultInteriors_SuspectAcrossToWestOfBeds);
+        LOCALID_SUSPECTED_THIEF, 2, 1,
+        gVaultInteriors_SuspectAcrossToWestOfBeds);
     break;
   }
 }
 
 /// Installs a route script only when the suspect is in its expected state.
-static void VaultInteriors_AdvanceSuspectRoute(s32 actor, s32 expected,
+static void VaultInteriors_AdvanceSuspectRoute(s32 objectEvent, s32 expected,
                                                s32 next, const s32 *actions) {
-  struct FieldActor *suspect = Object_GetById(actor);
+  struct ObjectEvent *suspect = ObjectEvent_GetById(objectEvent);
 
   if (suspect->timer == expected) {
-    Actor_SetActionScript(actor, actions);
+    ObjectEvent_SetActionScript(objectEvent, actions);
     suspect->timer = next;
   }
 }
@@ -2126,33 +2177,33 @@ static void VaultInteriors_AdvanceSuspectRoute(s32 actor, s32 expected,
 /// VAULT_INTERIORS_TO_SANCTUM; after a won one (17) sets
 /// FLAG_VAULT_THIEVES_JAILED through VaultInteriors_ReturnStolenGoods, which
 /// also removes Ivan from the party.
-s32 Scene_Initialize(void) {
+s32 Map_Initialize(void) {
   gEventWork->startTransition =
-      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
-  switch (gGameState.entrance) {
+      MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
+  switch (gGameState.warpDest) {
   case VAULT_INTERIORS_FROM_VAULT_EAST_SOUTHEAST: {
     s32 zero = 0;
 
     // The gem owner's house: he stands on the floor.
-    Object_GetById(ACTOR_GEM_OWNER)->motionFlags = zero;
-    Object_GetById(ACTOR_GEM_OWNER)->y.fixed = zero;
-    Object_GetById(ACTOR_GEM_OWNER)->terrainHeight = zero;
+    ObjectEvent_GetById(LOCALID_GEM_OWNER)->motionFlags = zero;
+    ObjectEvent_GetById(LOCALID_GEM_OWNER)->y.fixed = zero;
+    ObjectEvent_GetById(LOCALID_GEM_OWNER)->terrainHeight = zero;
   } break;
   case VAULT_INTERIORS_FROM_VAULT_NORTHWEST:
     // The mayor's house: Ivan waits a step back once met and is gone once he
     // has joined; after the thieves are jailed, the mayor stands by the door.
     if (Engine_GameFlagIsSet(FLAG_VAULT_MET_IVAN) != 0) {
-      Actor_SetPosition(IVAN, PIXELS(376), PIXELS(376));
-      Actor_FaceDirection(IVAN, FACING_SOUTH, 0);
+      ObjectEvent_SetPosition(IVAN, PIXELS(376), PIXELS(376));
+      ObjectEvent_FaceDirection(IVAN, FACING_SOUTH, 0);
     }
     if (Engine_GameFlagIsSet(FLAG_VAULT_IVAN_JOINED_ROD_SEARCH) != 0) {
-      Engine_ActorSetPosition(IVAN, 0, 0);
+      Engine_ObjectEventSetPosition(IVAN, 0, 0);
     }
     if (Engine_GameFlagIsSet(FLAG_VAULT_THIEVES_JAILED) != 0) {
-      Actor_SetPosition(ACTOR_MAYOR, PIXELS(536),
-                        VAULT_INTERIORS_ENTRY_ACTOR_Z);
-      Actor_SetBuiltinAction(ACTOR_MAYOR, ACTOR_ACTION_IDLE);
-      Actor_FaceDirection(ACTOR_MAYOR, FACING_SOUTH + FACING_STEP, 0);
+      ObjectEvent_SetPosition(LOCALID_MAYOR, PIXELS(536),
+                              VAULT_INTERIORS_ENTRY_OBJ_EVENT_Z);
+      ObjectEvent_SetBuiltinAction(LOCALID_MAYOR, OBJ_EVENT_ACTION_IDLE);
+      ObjectEvent_FaceDirection(LOCALID_MAYOR, FACING_SOUTH + FACING_STEP, 0);
     }
     break;
   case VAULT_INTERIORS_FROM_VAULT_SOUTHWEST:
@@ -2161,13 +2212,15 @@ s32 Scene_Initialize(void) {
     // the girl at the inn; after the mind reading and before that, she is
     // out.
     if (Engine_GameFlagIsSet(FLAG_VAULT_THIEVES_JAILED) != 0) {
-      Actor_SetPosition(ACTOR_GIRL_AT_THE_INN, PIXELS(568), PIXELS(648));
-      Actor_SetBuiltinAction(ACTOR_GIRL_AT_THE_INN, ACTOR_ACTION_IDLE);
-      Actor_FaceDirection(ACTOR_GIRL_AT_THE_INN, FACING_SOUTH, 0);
+      ObjectEvent_SetPosition(LOCALID_GIRL_AT_THE_INN, PIXELS(568),
+                              PIXELS(648));
+      ObjectEvent_SetBuiltinAction(LOCALID_GIRL_AT_THE_INN,
+                                   OBJ_EVENT_ACTION_IDLE);
+      ObjectEvent_FaceDirection(LOCALID_GIRL_AT_THE_INN, FACING_SOUTH, 0);
       Vault_PlaceItemIcon(ITEM_BONE, PIXELS(568), PIXELS(16), PIXELS(672));
-      Task_AddCallback(Vault_UpdateBoneProximityFlag, TASK_PRIORITY_SCENE);
+      Task_AddCallback(Vault_UpdateBoneProximityFlag, TASK_PRIORITY_MAP);
     } else if (Engine_GameFlagIsSet(FLAG_VAULT_SUSPECTS_MIND_READ) != 0) {
-      Engine_ActorSetPosition(ACTOR_GIRL_AT_THE_INN, 0, 0);
+      Engine_ObjectEventSetPosition(LOCALID_GIRL_AT_THE_INN, 0, 0);
     }
     break;
   case VAULT_INTERIORS_INN_UPSTAIRS_FROM_INN:
@@ -2177,96 +2230,100 @@ s32 Scene_Initialize(void) {
         Engine_GameFlagIsSet(FLAG_VAULT_SUSPECTS_APPROACHED) != 0 &&
         Engine_GameFlagIsSet(FLAG_VAULT_SUSPECTS_MIND_READ) == 0 &&
         Engine_GameFlagIsSet(FLAG_SUSPECTS_FLEEING) != 0) {
-      Map_CopyCellAttributes(14, 45, 3, 1, 14, 44);
+      MapGrid_CopyCellAttributes(14, 45, 3, 1, 14, 44);
       Task_AddCallback(VaultInteriors_FaceSuspectsTowardLeader,
-                       TASK_PRIORITY_SCENE);
+                       TASK_PRIORITY_MAP);
       break;
     }
     if (Engine_GameFlagIsSet(FLAG_VAULT_IVAN_JOINED_ROD_SEARCH) != 0) {
-      Actor_SetPosition(ACTOR_SUSPECTED_THIEF, PIXELS(120), PIXELS(696));
-      Actor_FaceDirection(ACTOR_SUSPECTED_THIEF, FACING_WEST, 0);
+      ObjectEvent_SetPosition(LOCALID_SUSPECTED_THIEF, PIXELS(120),
+                              PIXELS(696));
+      ObjectEvent_FaceDirection(LOCALID_SUSPECTED_THIEF, FACING_WEST, 0);
     }
     // Once approached, the room's doorway collision changes; after the mind
     // reading the suspects sit turned toward the leader.
     if (Engine_GameFlagIsSet(FLAG_VAULT_SUSPECTS_APPROACHED) != 0) {
-      Map_CopyCellAttributes(14, 45, 3, 1, 14, 44);
+      MapGrid_CopyCellAttributes(14, 45, 3, 1, 14, 44);
       if (Engine_GameFlagIsSet(FLAG_VAULT_SUSPECTS_MIND_READ) == 0) {
-        Map_CopyCellAttributes(14, 50, 3, 1, 14, 44);
+        MapGrid_CopyCellAttributes(14, 50, 3, 1, 14, 44);
         break;
       }
-      Object_GetById(ACTOR_SUSPECTED_LEADER)->timer = 5;
-      Object_GetById(ACTOR_SUSPECTED_THIEF)->timer = 4;
+      ObjectEvent_GetById(LOCALID_SUSPECTED_LEADER)->timer = 5;
+      ObjectEvent_GetById(LOCALID_SUSPECTED_THIEF)->timer = 4;
       FieldScheduler_AddCallback(VaultInteriors_FaceSuspectsTowardLeader,
-                                 TASK_PRIORITY_SCENE);
+                                 TASK_PRIORITY_MAP);
     }
     break;
   case VAULT_INTERIORS_FROM_VAULT_WEST:
   case VAULT_INTERIORS_CRATE_ROOM_FROM_LOFT:
     // The room with the crate: the crate keeps its place once moved, and the
     // passage behind it stays open.
-    Engine_EventWait(2);
-    Map_CopyCellsTo(54, 2, 35, 20, 2, 10);
-    Map_CopyCellsTo(54, 2, 95, 20, 2, 10);
-    Map_CopyCellsTo(54, 2, 35, 80, 2, 10);
-    Map_CopyCellsTo(54, 2, 46, 21, 4, 8);
-    Map_CopyCellsTo(54, 2, 46, 81, 4, 8);
-    Object_GetById(ACTOR_CRATE)->collisionFlags |= 4;
-    Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_CRATE), 0);
+    Engine_ScriptWait(2);
+    MapGrid_CopyCellsTo(54, 2, 35, 20, 2, 10);
+    MapGrid_CopyCellsTo(54, 2, 95, 20, 2, 10);
+    MapGrid_CopyCellsTo(54, 2, 35, 80, 2, 10);
+    MapGrid_CopyCellsTo(54, 2, 46, 21, 4, 8);
+    MapGrid_CopyCellsTo(54, 2, 46, 81, 4, 8);
+    ObjectEvent_GetById(LOCALID_CRATE)->collisionFlags |= 4;
+    Engine_ObjectEventSetSpriteFlags(ObjectEvent_GetById(LOCALID_CRATE), 0);
     if (Engine_GameFlagIsSet(FLAG_VAULT_CRATE_MOVED) != 0) {
-      Actor_SetPosition(ACTOR_CRATE, PIXELS(676), PIXELS(411));
-      Map_CopyCellAttributes(101, 24, 3, 4, 41, 24);
+      ObjectEvent_SetPosition(LOCALID_CRATE, PIXELS(676), PIXELS(411));
+      MapGrid_CopyCellAttributes(101, 24, 3, 4, 41, 24);
     }
     break;
   case VAULT_INTERIORS_LOFT_FROM_CRATE_ROOM:
-    Engine_EventWait(2);
-    Map_CopyCellsTo(54, 2, 44, 21, 2, 8);
-    Map_CopyCellsTo(54, 2, 44, 81, 2, 8);
-    Engine_EventStart();
+    Engine_ScriptWait(2);
+    MapGrid_CopyCellsTo(54, 2, 44, 21, 2, 8);
+    MapGrid_CopyCellsTo(54, 2, 44, 81, 2, 8);
+    Engine_ScriptStart();
     // The loft: emptied chests after the thieves are jailed; else the tied-up
     // villager lies tied, groaning to AUDIO_CUE_FADE_BGM, or the thieves wait
     // for a rematch.
     if (Engine_GameFlagIsSet(FLAG_VAULT_THIEVES_JAILED) != 0) {
-      Engine_ActorSetAnimation(ACTOR_FIRST_CHEST, ANIMATION_WALK);
-      Engine_ActorSetAnimation(ACTOR_SECOND_CHEST, ANIMATION_WALK);
-      Engine_EventWait(1);
-      Engine_ActorSetAnimation(ACTOR_THIRD_CHEST, ANIMATION_WALK);
+      Engine_ObjectEventSetAnimation(LOCALID_FIRST_CHEST, ANIMATION_WALK);
+      Engine_ObjectEventSetAnimation(LOCALID_SECOND_CHEST, ANIMATION_WALK);
+      Engine_ScriptWait(1);
+      Engine_ObjectEventSetAnimation(LOCALID_THIRD_CHEST, ANIMATION_WALK);
       break;
     }
-    Engine_ActorSetPosition(ACTOR_TIED_UP_VILLAGER, PIXELS(824), PIXELS(456));
+    Engine_ObjectEventSetPosition(LOCALID_TIED_UP_VILLAGER, PIXELS(824),
+                                  PIXELS(456));
     if (Engine_GameFlagIsSet(FLAG_VAULT_THIEVES_ATTACKED) != 0) {
       VaultInteriors_ConfrontThievesAgain();
-      Engine_EventEnd();
+      Engine_ScriptEnd();
       break;
     }
-    Engine_ActorSetAnimation(ACTOR_TIED_UP_VILLAGER, 7);
+    Engine_ObjectEventSetAnimation(LOCALID_TIED_UP_VILLAGER, 7);
     VaultInteriors_OpenWindowTransition();
     Engine_AudioPlayCue(AUDIO_CUE_FADE_BGM);
-    Engine_EventSetMessage(MsgVaultUhnnUhnn);
-    VaultInteriors_ShowMessageAndWait(ACTOR_TIED_UP_VILLAGER, 10);
-    Engine_EventEnd();
+    Engine_ScriptSetMessage(MsgVaultUhnnUhnn);
+    VaultInteriors_ShowMessageAndWait(LOCALID_TIED_UP_VILLAGER, 10);
+    Engine_ScriptEnd();
     break;
   case VAULT_INTERIORS_LOFT_AFTER_LOSING_TO_THIEVES:
     // Lost to the thieves: they gloat, and the party wakes up elsewhere.
-    Map_CopyCells(54, 2, 2, 8, 44, 21);
-    Map_CopyCells(54, 2, 2, 8, 44, 81);
-    Engine_ActorSetPosition(ACTOR_TIED_UP_VILLAGER, PIXELS(824), PIXELS(456));
+    MapGrid_CopyCells(54, 2, 2, 8, 44, 21);
+    MapGrid_CopyCells(54, 2, 2, 8, 44, 81);
+    Engine_ObjectEventSetPosition(LOCALID_TIED_UP_VILLAGER, PIXELS(824),
+                                  PIXELS(456));
     VaultInteriors_LoseToThieves();
-    Engine_EventRequestExit(VAULT_INTERIORS_TO_SANCTUM);
+    Engine_ScriptRequestWarp(VAULT_INTERIORS_TO_SANCTUM);
     break;
   case VAULT_INTERIORS_LOFT_AFTER_THIEVES_DEFEATED:
     // Won: the thieves are caught and the stolen goods handed back.
-    Map_CopyCells(54, 2, 2, 8, 44, 21);
-    Map_CopyCells(54, 2, 2, 8, 44, 81);
+    MapGrid_CopyCells(54, 2, 2, 8, 44, 21);
+    MapGrid_CopyCells(54, 2, 2, 8, 44, 81);
     if (Engine_GameFlagIsSet(FLAG_KEEP_PARTY_POSITION) == 0) {
-      Actor_SetPosition(ACTOR_TIED_UP_VILLAGER, PIXELS(824), PIXELS(456));
+      ObjectEvent_SetPosition(LOCALID_TIED_UP_VILLAGER, PIXELS(824),
+                              PIXELS(456));
       VaultInteriors_DefeatThieves();
       VaultInteriors_ReturnStolenGoods();
       break;
     }
-    Engine_ActorSetAnimation(ACTOR_FIRST_CHEST, ANIMATION_WALK);
-    Engine_ActorSetAnimation(ACTOR_SECOND_CHEST, ANIMATION_WALK);
-    Engine_EventWait(1);
-    Engine_ActorSetAnimation(ACTOR_THIRD_CHEST, ANIMATION_WALK);
+    Engine_ObjectEventSetAnimation(LOCALID_FIRST_CHEST, ANIMATION_WALK);
+    Engine_ObjectEventSetAnimation(LOCALID_SECOND_CHEST, ANIMATION_WALK);
+    Engine_ScriptWait(1);
+    Engine_ObjectEventSetAnimation(LOCALID_THIRD_CHEST, ANIMATION_WALK);
     break;
   }
   return 0;
@@ -2274,12 +2331,12 @@ s32 Scene_Initialize(void) {
 
 /// Keeps both suspects facing the leader while they evade the party.
 ///
-/// Run each frame as a scene callback, from Event_ApproachSuspects until
-/// Event_DiscussSuspiciousGuests, and again once their minds are read.
+/// Run each frame as a scene callback, from EventScript_ApproachSuspects until
+/// EventScript_DiscussSuspiciousGuests, and again once their minds are read.
 static void VaultInteriors_FaceSuspectsTowardLeader(void) {
-  struct FieldActor *origin = Object_GetById(ACTOR_PARTY_LEADER);
-  struct FieldActor *first = Object_GetById(ACTOR_SUSPECTED_LEADER);
-  struct FieldActor *second = Object_GetById(ACTOR_SUSPECTED_THIEF);
+  struct ObjectEvent *origin = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
+  struct ObjectEvent *first = ObjectEvent_GetById(LOCALID_SUSPECTED_LEADER);
+  struct ObjectEvent *second = ObjectEvent_GetById(LOCALID_SUSPECTED_THIEF);
 
   first->facing = ArcTan2(origin->z.fixed - first->z.fixed,
                           origin->x.fixed - first->x.fixed);
@@ -2290,128 +2347,139 @@ static void VaultInteriors_FaceSuspectsTowardLeader(void) {
 /// Shows the thieves' reaction after the party loses their battle: the party
 /// lies beaten, and the thieves hold it and the tied-up villager as hostages.
 ///
-/// Called by Scene_Initialize at VAULT_INTERIORS_LOFT_AFTER_LOSING_TO_THIEVES,
+/// Called by Map_Initialize at VAULT_INTERIORS_LOFT_AFTER_LOSING_TO_THIEVES,
 /// the battle's defeat destination; the scene then takes
-/// VAULT_INTERIORS_TO_SANCTUM to the Vault Sanctum (SceneId_Sanctum,
+/// VAULT_INTERIORS_TO_SANCTUM to the Vault Sanctum (MapId_Sanctum,
 /// SANCTUM_FROM_VAULT_INTERIORS).
 static void VaultInteriors_LoseToThieves(void) {
-  struct FieldActor *actor;
+  struct ObjectEvent *objectEvent;
   s32 priorityFlags;
 
   // The party lies on the floor (animation 19) before the three thieves.
-  Engine_EventStart();
-  Actor_SetPosition(ACTOR_THIEF_LEADER, PIXELS(792), PIXELS(416));
-  Actor_SetPosition(ACTOR_FIRST_THIEF, PIXELS(800), PIXELS(400));
-  Actor_SetPosition(ACTOR_SECOND_THIEF, PIXELS(776), PIXELS(416));
-  Actor_FaceDirection(ACTOR_THIEF_LEADER, FACING_SOUTHEAST + FACING_STEP, 0);
-  Actor_FaceDirection(ACTOR_FIRST_THIEF, FACING_SOUTHEAST + FACING_STEP, 0);
-  Actor_FaceDirection(ACTOR_SECOND_THIEF, FACING_SOUTHEAST + FACING_STEP, 0);
-  Actor_SetSpeed(ACTOR_FIRST_THIEF, PIXELS(4) / 5, PIXELS(2) / 5);
-  Actor_SetSpeed(ACTOR_SECOND_THIEF, PIXELS(4) / 5, PIXELS(2) / 5);
-  Actor_SetPosition(ACTOR_PARTY_LEADER, PIXELS(784), PIXELS(448));
-  Actor_SetPosition(GARET, PIXELS(808), PIXELS(432));
-  Actor_SetPosition(IVAN, PIXELS(776), PIXELS(432));
-  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 19);
-  Engine_ActorSetAnimation(GARET, 19);
-  Engine_ActorSetAnimation(IVAN, 19);
-  priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
-  Object_GetById(ACTOR_PARTY_LEADER)->priorityFlags = priorityFlags;
-  Object_GetById(GARET)->priorityFlags = priorityFlags;
-  Object_GetById(IVAN)->priorityFlags = priorityFlags;
-  actor = Object_GetById(ACTOR_PARTY_LEADER);
-  Engine_ActorSetSpriteFlags(actor, 0);
-  actor = Object_GetById(IVAN);
-  Engine_ActorSetSpriteFlags(actor, 0);
-  actor = Object_GetById(GARET);
-  Engine_ActorSetSpriteFlags(actor, 0);
-  Actor_FaceDirection(ACTOR_TIED_UP_VILLAGER, FACING_NORTHWEST + FACING_STEP,
-                      0);
+  Engine_ScriptStart();
+  ObjectEvent_SetPosition(LOCALID_THIEF_LEADER, PIXELS(792), PIXELS(416));
+  ObjectEvent_SetPosition(LOCALID_FIRST_THIEF, PIXELS(800), PIXELS(400));
+  ObjectEvent_SetPosition(LOCALID_SECOND_THIEF, PIXELS(776), PIXELS(416));
+  ObjectEvent_FaceDirection(LOCALID_THIEF_LEADER,
+                            FACING_SOUTHEAST + FACING_STEP, 0);
+  ObjectEvent_FaceDirection(LOCALID_FIRST_THIEF, FACING_SOUTHEAST + FACING_STEP,
+                            0);
+  ObjectEvent_FaceDirection(LOCALID_SECOND_THIEF,
+                            FACING_SOUTHEAST + FACING_STEP, 0);
+  ObjectEvent_SetSpeed(LOCALID_FIRST_THIEF, PIXELS(4) / 5, PIXELS(2) / 5);
+  ObjectEvent_SetSpeed(LOCALID_SECOND_THIEF, PIXELS(4) / 5, PIXELS(2) / 5);
+  ObjectEvent_SetPosition(LOCALID_PARTY_LEADER, PIXELS(784), PIXELS(448));
+  ObjectEvent_SetPosition(GARET, PIXELS(808), PIXELS(432));
+  ObjectEvent_SetPosition(IVAN, PIXELS(776), PIXELS(432));
+  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, 19);
+  Engine_ObjectEventSetAnimation(GARET, 19);
+  Engine_ObjectEventSetAnimation(IVAN, 19);
+  priorityFlags = OBJ_EVENT_PRIORITY_UNDERFOOT;
+  ObjectEvent_GetById(LOCALID_PARTY_LEADER)->priorityFlags = priorityFlags;
+  ObjectEvent_GetById(GARET)->priorityFlags = priorityFlags;
+  ObjectEvent_GetById(IVAN)->priorityFlags = priorityFlags;
+  objectEvent = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
+  Engine_ObjectEventSetSpriteFlags(objectEvent, 0);
+  objectEvent = ObjectEvent_GetById(IVAN);
+  Engine_ObjectEventSetSpriteFlags(objectEvent, 0);
+  objectEvent = ObjectEvent_GetById(GARET);
+  Engine_ObjectEventSetSpriteFlags(objectEvent, 0);
+  ObjectEvent_FaceDirection(LOCALID_TIED_UP_VILLAGER,
+                            FACING_NORTHWEST + FACING_STEP, 0);
   gEventWork->startTransition =
-      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
-  Engine_CameraFollowActor(ACTOR_PARTY_LEADER, 0);
+      MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
+  Engine_CameraFollowObjectEvent(LOCALID_PARTY_LEADER, 0);
   Engine_CameraWaitForMove();
-  Engine_MapRedraw();
+  Engine_MapGridRedraw();
   VaultInteriors_OpenWindowTransition();
-  Engine_EventWait(60);
+  Engine_ScriptWait(60);
   // "These kids are nothing to worry about." The tied-up villager groans.
-  VaultInteriors_PlayAnimationAndWait(ACTOR_THIEF_LEADER, ANIMATION_NOD, 20);
-  Engine_EventSetMessage(MsgVaultTheseKidsNothingWorryAbout);
-  VaultInteriors_ShowMessageAndWait(ACTOR_THIEF_LEADER, 30);
-  VaultInteriors_ShowMessageAndWait(ACTOR_TIED_UP_VILLAGER, 30);
+  VaultInteriors_PlayAnimationAndWait(LOCALID_THIEF_LEADER, ANIMATION_NOD, 20);
+  Engine_ScriptSetMessage(MsgVaultTheseKidsNothingWorryAbout);
+  VaultInteriors_ShowMessageAndWait(LOCALID_THIEF_LEADER, 30);
+  VaultInteriors_ShowMessageAndWait(LOCALID_TIED_UP_VILLAGER, 30);
   // The two men step to the tied-up villager: he stays as their hostage.
-  Actor_WalkTo(ACTOR_FIRST_THIEF, 808, 456);
-  Actor_WalkTo(ACTOR_SECOND_THIEF, 792, 456);
-  Engine_ActorWaitForMove(ACTOR_SECOND_THIEF);
-  Actor_FaceDirection(ACTOR_SECOND_THIEF, FACING_EAST, 0);
-  Engine_ActorWaitForMove(ACTOR_FIRST_THIEF);
-  Actor_FaceDirection(ACTOR_FIRST_THIEF, FACING_EAST, 0);
-  Engine_EventWait(30);
-  VaultInteriors_PlayAnimationAndWait(ACTOR_FIRST_THIEF, ANIMATION_NOD, 20);
-  VaultInteriors_ShowMessageAndWait(ACTOR_FIRST_THIEF, 20);
-  VaultInteriors_FaceActorAndWait(ACTOR_SECOND_THIEF, ACTOR_PARTY_LEADER, 30);
-  VaultInteriors_ShowMessageAndWait(ACTOR_SECOND_THIEF, 60);
-  Engine_EventEnd();
+  ObjectEvent_WalkTo(LOCALID_FIRST_THIEF, 808, 456);
+  ObjectEvent_WalkTo(LOCALID_SECOND_THIEF, 792, 456);
+  Engine_ObjectEventWaitForMove(LOCALID_SECOND_THIEF);
+  ObjectEvent_FaceDirection(LOCALID_SECOND_THIEF, FACING_EAST, 0);
+  Engine_ObjectEventWaitForMove(LOCALID_FIRST_THIEF);
+  ObjectEvent_FaceDirection(LOCALID_FIRST_THIEF, FACING_EAST, 0);
+  Engine_ScriptWait(30);
+  VaultInteriors_PlayAnimationAndWait(LOCALID_FIRST_THIEF, ANIMATION_NOD, 20);
+  VaultInteriors_ShowMessageAndWait(LOCALID_FIRST_THIEF, 20);
+  VaultInteriors_FaceObjectEventAndWait(LOCALID_SECOND_THIEF,
+                                        LOCALID_PARTY_LEADER, 30);
+  VaultInteriors_ShowMessageAndWait(LOCALID_SECOND_THIEF, 60);
+  Engine_ScriptEnd();
 }
 
 /// Arranges the loft confrontation and restarts the thieves' battle. "They
 /// won't go away, will they? They're back!"
 ///
-/// Called by Scene_Initialize at VAULT_INTERIORS_LOFT_FROM_CRATE_ROOM once
+/// Called by Map_Initialize at VAULT_INTERIORS_LOFT_FROM_CRATE_ROOM once
 /// FLAG_VAULT_THIEVES_ATTACKED is set. Starts the same battle as
-/// Event_FreeRooferAndConfrontThieves.
+/// EventScript_FreeRooferAndConfrontThieves.
 static void VaultInteriors_ConfrontThievesAgain(void) {
 
   // The thieves stand over the tied-up villager as the party comes up.
-  Actor_SetPosition(ACTOR_THIEF_LEADER, PIXELS(792), PIXELS(416));
-  Actor_SetPosition(ACTOR_FIRST_THIEF, PIXELS(800), PIXELS(400));
-  Actor_SetPosition(ACTOR_SECOND_THIEF, PIXELS(776), PIXELS(416));
-  Actor_FaceDirection(ACTOR_THIEF_LEADER, FACING_SOUTHEAST + FACING_STEP, 0);
-  Actor_FaceDirection(ACTOR_FIRST_THIEF, FACING_SOUTHEAST + FACING_STEP, 0);
-  Actor_FaceDirection(ACTOR_SECOND_THIEF, FACING_SOUTHEAST + FACING_STEP, 0);
-  Actor_SetPosition(ACTOR_PARTY_LEADER, PIXELS(792), PIXELS(440));
-  Actor_SetPosition(GARET, PIXELS(808), PIXELS(432));
-  Actor_SetPosition(IVAN, PIXELS(792), PIXELS(456));
-  Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
-  Actor_FaceDirection(GARET, FACING_NORTHWEST + FACING_STEP, 0);
-  Actor_FaceDirection(IVAN, FACING_NORTHWEST + FACING_STEP, 0);
-  Actor_FaceActor(ACTOR_TIED_UP_VILLAGER, ACTOR_THIEF_LEADER, 0);
+  ObjectEvent_SetPosition(LOCALID_THIEF_LEADER, PIXELS(792), PIXELS(416));
+  ObjectEvent_SetPosition(LOCALID_FIRST_THIEF, PIXELS(800), PIXELS(400));
+  ObjectEvent_SetPosition(LOCALID_SECOND_THIEF, PIXELS(776), PIXELS(416));
+  ObjectEvent_FaceDirection(LOCALID_THIEF_LEADER,
+                            FACING_SOUTHEAST + FACING_STEP, 0);
+  ObjectEvent_FaceDirection(LOCALID_FIRST_THIEF, FACING_SOUTHEAST + FACING_STEP,
+                            0);
+  ObjectEvent_FaceDirection(LOCALID_SECOND_THIEF,
+                            FACING_SOUTHEAST + FACING_STEP, 0);
+  ObjectEvent_SetPosition(LOCALID_PARTY_LEADER, PIXELS(792), PIXELS(440));
+  ObjectEvent_SetPosition(GARET, PIXELS(808), PIXELS(432));
+  ObjectEvent_SetPosition(IVAN, PIXELS(792), PIXELS(456));
+  ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_NORTH, 0);
+  ObjectEvent_FaceDirection(GARET, FACING_NORTHWEST + FACING_STEP, 0);
+  ObjectEvent_FaceDirection(IVAN, FACING_NORTHWEST + FACING_STEP, 0);
+  ObjectEvent_FaceObjectEvent(LOCALID_TIED_UP_VILLAGER, LOCALID_THIEF_LEADER,
+                              0);
   gEventWork->startTransition =
-      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
-  Engine_CameraFollowActor(ACTOR_PARTY_LEADER, 0);
+      MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
+  Engine_CameraFollowObjectEvent(LOCALID_PARTY_LEADER, 0);
   Engine_CameraWaitForMove();
-  Engine_MapRedraw();
+  Engine_MapGridRedraw();
   Engine_TaskWait(1);
   gEventWork->transitionFrames = 32;
   VaultInteriors_OpenWindowTransition();
-  Engine_EventWait(60);
-  Engine_EventSetMessage(MsgVaultWontGoAway);
-  Engine_ActorRunRepeatedMotion(ACTOR_FIRST_THIEF, 1);
-  Engine_EventWait(20);
-  VaultInteriors_ShowMessageAndWait(ACTOR_FIRST_THIEF, 30);
-  Engine_ActorRunRepeatedMotion(ACTOR_SECOND_THIEF, 1);
-  Engine_EventWait(20);
-  Event_ShowMessage(ACTOR_SECOND_THIEF, 0);
-  VaultInteriors_FaceEachOtherAndWait(ACTOR_THIEF_LEADER, ACTOR_FIRST_THIEF,
+  Engine_ScriptWait(60);
+  Engine_ScriptSetMessage(MsgVaultWontGoAway);
+  Engine_ObjectEventRunRepeatedMotion(LOCALID_FIRST_THIEF, 1);
+  Engine_ScriptWait(20);
+  VaultInteriors_ShowMessageAndWait(LOCALID_FIRST_THIEF, 30);
+  Engine_ObjectEventRunRepeatedMotion(LOCALID_SECOND_THIEF, 1);
+  Engine_ScriptWait(20);
+  Script_ShowMessage(LOCALID_SECOND_THIEF, 0);
+  VaultInteriors_FaceEachOtherAndWait(LOCALID_THIEF_LEADER, LOCALID_FIRST_THIEF,
                                       30);
-  Engine_ActorSetAnimation(ACTOR_THIEF_LEADER, ANIMATION_NOD);
-  VaultInteriors_PlayAnimationAndWait(ACTOR_FIRST_THIEF, ANIMATION_NOD, 30);
-  VaultInteriors_FaceEachOtherAndWait(ACTOR_THIEF_LEADER, ACTOR_SECOND_THIEF,
-                                      30);
-  Engine_ActorSetAnimation(ACTOR_THIEF_LEADER, ANIMATION_NOD);
-  VaultInteriors_PlayAnimationAndWait(ACTOR_SECOND_THIEF, ANIMATION_NOD, 40);
-  Actor_FaceDirection(ACTOR_THIEF_LEADER, FACING_SOUTHEAST + FACING_STEP, 0);
-  Actor_FaceDirection(ACTOR_FIRST_THIEF, FACING_SOUTHEAST + FACING_STEP, 0);
-  Actor_FaceDirection(ACTOR_SECOND_THIEF, FACING_SOUTHEAST + FACING_STEP, 0);
-  Engine_EventWait(20);
+  Engine_ObjectEventSetAnimation(LOCALID_THIEF_LEADER, ANIMATION_NOD);
+  VaultInteriors_PlayAnimationAndWait(LOCALID_FIRST_THIEF, ANIMATION_NOD, 30);
+  VaultInteriors_FaceEachOtherAndWait(LOCALID_THIEF_LEADER,
+                                      LOCALID_SECOND_THIEF, 30);
+  Engine_ObjectEventSetAnimation(LOCALID_THIEF_LEADER, ANIMATION_NOD);
+  VaultInteriors_PlayAnimationAndWait(LOCALID_SECOND_THIEF, ANIMATION_NOD, 40);
+  ObjectEvent_FaceDirection(LOCALID_THIEF_LEADER,
+                            FACING_SOUTHEAST + FACING_STEP, 0);
+  ObjectEvent_FaceDirection(LOCALID_FIRST_THIEF, FACING_SOUTHEAST + FACING_STEP,
+                            0);
+  ObjectEvent_FaceDirection(LOCALID_SECOND_THIEF,
+                            FACING_SOUTHEAST + FACING_STEP, 0);
+  Engine_ScriptWait(20);
   // "We'll make you sorry you were ever born! Get 'em!!" and the battle.
-  VaultInteriors_PlayAnimationAndWait(ACTOR_THIEF_LEADER, ANIMATION_SHAKE_HEAD,
-                                      20);
-  Event_ShowMessage(ACTOR_THIEF_LEADER, 0);
+  VaultInteriors_PlayAnimationAndWait(LOCALID_THIEF_LEADER,
+                                      ANIMATION_SHAKE_HEAD, 20);
+  Script_ShowMessage(LOCALID_THIEF_LEADER, 0);
   gEventWork->startTransition =
-      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_BARS);
-  Event_SetNextDestination((s32)&SceneId_VaultInteriors, 17);
-  Event_SetDefeatDestination((s32)&SceneId_VaultInteriors, 16);
-  Battle_SetStart(BATTLE_START_SCENE);
+      MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_BARS);
+  FieldScript_SetNextDestination((s32)&MapId_VaultInteriors, 17);
+  FieldScript_SetDefeatDestination((s32)&MapId_VaultInteriors, 16);
+  Battle_SetStart(BATTLE_START_SCRIPTED);
   Field_RequestBattleFromEncounterTable(ENCOUNTER_ZONE_SCRIPTED_VALE_VAULT, 5);
 }
 
@@ -2425,257 +2493,264 @@ static s32 VaultInteriors_GetIvanVenusDjinnCount(void) {
 
 /// Stages the defeated thieves and gathers the townspeople in the loft.
 ///
-/// Called by Scene_Initialize at VAULT_INTERIORS_LOFT_AFTER_THIEVES_DEFEATED,
+/// Called by Map_Initialize at VAULT_INTERIORS_LOFT_AFTER_THIEVES_DEFEATED,
 /// the battle's victory destination, unless the party is only coming back to
 /// where it was; then VaultInteriors_ReturnStolenGoods follows.
 static void VaultInteriors_DefeatThieves(void) {
-  struct FieldActor *actor;
+  struct ObjectEvent *objectEvent;
   struct EventWork *work;
   const s32 *actions;
   struct AnimationObject *thirdThiefSprite;
 
-  actor = Object_GetById(ACTOR_SECOND_THIEF);
-  thirdThiefSprite = actor->sprite;
+  objectEvent = ObjectEvent_GetById(LOCALID_SECOND_THIEF);
+  thirdThiefSprite = objectEvent->sprite;
   // The beaten thieves lie heaving (animation 9 and the action table's
   // squash) before the party.
-  Engine_EventStart();
-  Actor_SetPosition(ACTOR_THIEF_LEADER, PIXELS(792), PIXELS(416));
-  Actor_SetPosition(ACTOR_FIRST_THIEF, PIXELS(800), PIXELS(400));
-  Actor_SetPosition(ACTOR_SECOND_THIEF, PIXELS(776), PIXELS(392));
-  actor = Object_GetById(ACTOR_THIEF_LEADER);
-  Engine_ActorSetSpriteFlags(actor, 0);
-  actor = Object_GetById(ACTOR_FIRST_THIEF);
-  Engine_ActorSetSpriteFlags(actor, 0);
-  actor = Object_GetById(ACTOR_SECOND_THIEF);
-  Engine_ActorSetSpriteFlags(actor, 0);
-  Engine_ActorSetAnimation(ACTOR_THIEF_LEADER, 9);
-  Engine_ActorSetAnimation(ACTOR_FIRST_THIEF, 9);
-  Engine_ActorSetAnimation(ACTOR_SECOND_THIEF, 9);
-  Object_GetById(ACTOR_SECOND_THIEF)->priorityFlags &= 254;
+  Engine_ScriptStart();
+  ObjectEvent_SetPosition(LOCALID_THIEF_LEADER, PIXELS(792), PIXELS(416));
+  ObjectEvent_SetPosition(LOCALID_FIRST_THIEF, PIXELS(800), PIXELS(400));
+  ObjectEvent_SetPosition(LOCALID_SECOND_THIEF, PIXELS(776), PIXELS(392));
+  objectEvent = ObjectEvent_GetById(LOCALID_THIEF_LEADER);
+  Engine_ObjectEventSetSpriteFlags(objectEvent, 0);
+  objectEvent = ObjectEvent_GetById(LOCALID_FIRST_THIEF);
+  Engine_ObjectEventSetSpriteFlags(objectEvent, 0);
+  objectEvent = ObjectEvent_GetById(LOCALID_SECOND_THIEF);
+  Engine_ObjectEventSetSpriteFlags(objectEvent, 0);
+  Engine_ObjectEventSetAnimation(LOCALID_THIEF_LEADER, 9);
+  Engine_ObjectEventSetAnimation(LOCALID_FIRST_THIEF, 9);
+  Engine_ObjectEventSetAnimation(LOCALID_SECOND_THIEF, 9);
+  ObjectEvent_GetById(LOCALID_SECOND_THIEF)->priorityFlags &= 254;
   thirdThiefSprite->image.priority = 3;
   actions = gVaultInteriors_ActionTable;
-  Actor_SetActionScript(ACTOR_THIEF_LEADER, actions);
-  Actor_SetPosition(ACTOR_PARTY_LEADER, PIXELS(792), PIXELS(440));
-  Actor_SetPosition(GARET, PIXELS(808), PIXELS(432));
-  Actor_SetPosition(IVAN, PIXELS(776), PIXELS(440));
-  Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
-  Actor_FaceDirection(GARET, FACING_NORTHWEST + FACING_STEP, 0);
-  Actor_FaceDirection(IVAN, FACING_NORTHWEST + FACING_STEP, 0);
-  Actor_SetSpeed(ACTOR_TIED_UP_VILLAGER, PIXELS(4) / 5, PIXELS(2) / 5);
-  Actor_FaceDirection(ACTOR_TIED_UP_VILLAGER, FACING_NORTHWEST + FACING_STEP,
-                      0);
+  ObjectEvent_SetActionScript(LOCALID_THIEF_LEADER, actions);
+  ObjectEvent_SetPosition(LOCALID_PARTY_LEADER, PIXELS(792), PIXELS(440));
+  ObjectEvent_SetPosition(GARET, PIXELS(808), PIXELS(432));
+  ObjectEvent_SetPosition(IVAN, PIXELS(776), PIXELS(440));
+  ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_NORTH, 0);
+  ObjectEvent_FaceDirection(GARET, FACING_NORTHWEST + FACING_STEP, 0);
+  ObjectEvent_FaceDirection(IVAN, FACING_NORTHWEST + FACING_STEP, 0);
+  ObjectEvent_SetSpeed(LOCALID_TIED_UP_VILLAGER, PIXELS(4) / 5, PIXELS(2) / 5);
+  ObjectEvent_FaceDirection(LOCALID_TIED_UP_VILLAGER,
+                            FACING_NORTHWEST + FACING_STEP, 0);
   gEventWork->startTransition =
-      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
-  Engine_CameraFollowActor(ACTOR_PARTY_LEADER, 0);
+      MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
+  Engine_CameraFollowObjectEvent(LOCALID_PARTY_LEADER, 0);
   Engine_CameraWaitForMove();
-  Engine_MapRedraw();
+  Engine_MapGridRedraw();
   VaultInteriors_OpenWindowTransition();
-  Actor_SetActionScript(ACTOR_FIRST_THIEF, actions);
-  Engine_EventWait(30);
-  Actor_SetActionScript(ACTOR_SECOND_THIEF, actions);
-  Engine_EventWait(30);
+  ObjectEvent_SetActionScript(LOCALID_FIRST_THIEF, actions);
+  Engine_ScriptWait(30);
+  ObjectEvent_SetActionScript(LOCALID_SECOND_THIEF, actions);
+  Engine_ScriptWait(30);
   // "They... They got us..." The tied-up villager thought they were goners; he
   // slips past Garet, cheers the win and runs for the mayor.
-  Engine_EventSetMessage(MsgVaultTheyTheyGotUs);
-  VaultInteriors_ShowMessageAndWait(ACTOR_THIEF_LEADER, 20);
-  Actor_ShowEmote(ACTOR_TIED_UP_VILLAGER, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
-  Engine_EventWait(60);
-  VaultInteriors_ShowMessageAndWait(ACTOR_TIED_UP_VILLAGER, 20);
-  Actor_WalkToAndWait(ACTOR_TIED_UP_VILLAGER, 808, 456);
-  Actor_SetSpeed(GARET, PIXELS(4) / 5, PIXELS(2) / 5);
-  Actor_WalkToAndWait(GARET, 792, 432);
-  Actor_FaceDirection(GARET, FACING_EAST, 0);
-  Actor_WalkToAndWait(ACTOR_TIED_UP_VILLAGER, 808, 408);
-  Actor_FaceDirection(ACTOR_TIED_UP_VILLAGER, FACING_WEST, 0);
-  Actor_WalkToAndWait(GARET, 808, 432);
-  Actor_FaceDirection(GARET, FACING_NORTH, 0);
-  Engine_EventWait(20);
-  VaultInteriors_PlayAnimationAndWait(ACTOR_TIED_UP_VILLAGER, ANIMATION_NOD,
+  Engine_ScriptSetMessage(MsgVaultTheyTheyGotUs);
+  VaultInteriors_ShowMessageAndWait(LOCALID_THIEF_LEADER, 20);
+  ObjectEvent_ShowEmote(LOCALID_TIED_UP_VILLAGER, EMOTE_IN_FRONT | EMOTE_WINCE,
+                        0);
+  Engine_ScriptWait(60);
+  VaultInteriors_ShowMessageAndWait(LOCALID_TIED_UP_VILLAGER, 20);
+  ObjectEvent_WalkToAndWait(LOCALID_TIED_UP_VILLAGER, 808, 456);
+  ObjectEvent_SetSpeed(GARET, PIXELS(4) / 5, PIXELS(2) / 5);
+  ObjectEvent_WalkToAndWait(GARET, 792, 432);
+  ObjectEvent_FaceDirection(GARET, FACING_EAST, 0);
+  ObjectEvent_WalkToAndWait(LOCALID_TIED_UP_VILLAGER, 808, 408);
+  ObjectEvent_FaceDirection(LOCALID_TIED_UP_VILLAGER, FACING_WEST, 0);
+  ObjectEvent_WalkToAndWait(GARET, 808, 432);
+  ObjectEvent_FaceDirection(GARET, FACING_NORTH, 0);
+  Engine_ScriptWait(20);
+  VaultInteriors_PlayAnimationAndWait(LOCALID_TIED_UP_VILLAGER, ANIMATION_NOD,
                                       20);
-  VaultInteriors_ShowMessageAndWait(ACTOR_TIED_UP_VILLAGER, 20);
-  Actor_WalkToAndWait(ACTOR_TIED_UP_VILLAGER, 768, 408);
-  Engine_EventWait(20);
-  Actor_FaceActor(ACTOR_TIED_UP_VILLAGER, ACTOR_PARTY_LEADER, 0);
-  Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_TIED_UP_VILLAGER, 0);
-  Actor_FaceActor(GARET, ACTOR_TIED_UP_VILLAGER, 0);
-  VaultInteriors_FaceActorAndWait(IVAN, ACTOR_TIED_UP_VILLAGER, 40);
-  VaultInteriors_ShowMessageAndWait(ACTOR_TIED_UP_VILLAGER, 30);
-  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIMATION_NOD);
-  Engine_ActorSetAnimation(GARET, ANIMATION_NOD);
+  VaultInteriors_ShowMessageAndWait(LOCALID_TIED_UP_VILLAGER, 20);
+  ObjectEvent_WalkToAndWait(LOCALID_TIED_UP_VILLAGER, 768, 408);
+  Engine_ScriptWait(20);
+  ObjectEvent_FaceObjectEvent(LOCALID_TIED_UP_VILLAGER, LOCALID_PARTY_LEADER,
+                              0);
+  ObjectEvent_FaceObjectEvent(LOCALID_PARTY_LEADER, LOCALID_TIED_UP_VILLAGER,
+                              0);
+  ObjectEvent_FaceObjectEvent(GARET, LOCALID_TIED_UP_VILLAGER, 0);
+  VaultInteriors_FaceObjectEventAndWait(IVAN, LOCALID_TIED_UP_VILLAGER, 40);
+  VaultInteriors_ShowMessageAndWait(LOCALID_TIED_UP_VILLAGER, 30);
+  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIMATION_NOD);
+  Engine_ObjectEventSetAnimation(GARET, ANIMATION_NOD);
   VaultInteriors_PlayAnimationAndWait(IVAN, ANIMATION_NOD, 20);
-  Actor_WalkToAndWait(ACTOR_TIED_UP_VILLAGER, 744, 408);
-  Engine_EventWait(50);
+  ObjectEvent_WalkToAndWait(LOCALID_TIED_UP_VILLAGER, 744, 408);
+  Engine_ScriptWait(50);
   // The thieves grumble; Garet: stealing is wrong, evil never prevails.
-  Engine_ActorRunRepeatedMotion(ACTOR_FIRST_THIEF, 2);
-  VaultInteriors_ShowMessageAndWait(ACTOR_FIRST_THIEF, 20);
-  Actor_SetActionScript(ACTOR_FIRST_THIEF, actions);
-  Engine_ActorRunRepeatedMotion(GARET, 1);
-  Engine_EventWait(20);
-  Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_FIRST_THIEF, 0);
-  Actor_FaceActor(GARET, ACTOR_FIRST_THIEF, 0);
-  VaultInteriors_FaceActorAndWait(IVAN, ACTOR_FIRST_THIEF, 20);
+  Engine_ObjectEventRunRepeatedMotion(LOCALID_FIRST_THIEF, 2);
+  VaultInteriors_ShowMessageAndWait(LOCALID_FIRST_THIEF, 20);
+  ObjectEvent_SetActionScript(LOCALID_FIRST_THIEF, actions);
+  Engine_ObjectEventRunRepeatedMotion(GARET, 1);
+  Engine_ScriptWait(20);
+  ObjectEvent_FaceObjectEvent(LOCALID_PARTY_LEADER, LOCALID_FIRST_THIEF, 0);
+  ObjectEvent_FaceObjectEvent(GARET, LOCALID_FIRST_THIEF, 0);
+  VaultInteriors_FaceObjectEventAndWait(IVAN, LOCALID_FIRST_THIEF, 20);
   VaultInteriors_ShowMessageAndWait(GARET, 20);
-  Engine_ActorRunRepeatedMotion(ACTOR_SECOND_THIEF, 2);
-  VaultInteriors_ShowMessageAndWait(ACTOR_SECOND_THIEF, 30);
-  Actor_SetActionScript(ACTOR_SECOND_THIEF, actions);
-  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 0);
-  Engine_EventWait(60);
+  Engine_ObjectEventRunRepeatedMotion(LOCALID_SECOND_THIEF, 2);
+  VaultInteriors_ShowMessageAndWait(LOCALID_SECOND_THIEF, 30);
+  ObjectEvent_SetActionScript(LOCALID_SECOND_THIEF, actions);
+  ObjectEvent_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 0);
+  Engine_ScriptWait(60);
   VaultInteriors_ShowMessageAndWait(GARET, 30);
   // Ivan will take the rod to Hammet in Lunpa, and asks what the two will do:
   // go after Saturos and the others.
-  VaultInteriors_FaceActorAndWait(IVAN, ACTOR_PARTY_LEADER, 30);
-  VaultInteriors_FaceActorAndWait(ACTOR_PARTY_LEADER, IVAN, 30);
+  VaultInteriors_FaceObjectEventAndWait(IVAN, LOCALID_PARTY_LEADER, 30);
+  VaultInteriors_FaceObjectEventAndWait(LOCALID_PARTY_LEADER, IVAN, 30);
   VaultInteriors_PlayAnimationAndWait(IVAN, ANIMATION_NOD, 20);
   VaultInteriors_ShowMessageAndWait(IVAN, 20);
-  VaultInteriors_FaceActorAndWait(GARET, IVAN, 30);
-  VaultInteriors_PlayAnimationAndWait(ACTOR_PARTY_LEADER, ANIMATION_NOD, 30);
+  VaultInteriors_FaceObjectEventAndWait(GARET, IVAN, 30);
+  VaultInteriors_PlayAnimationAndWait(LOCALID_PARTY_LEADER, ANIMATION_NOD, 30);
   VaultInteriors_ShowMessageAndWait(IVAN, 20);
-  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
-  Engine_EventWait(60);
+  ObjectEvent_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+  Engine_ScriptWait(60);
   VaultInteriors_ShowMessageAndWait(GARET, 30);
-  Actor_ShowEmote(IVAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
-  Engine_EventWait(60);
-  VaultInteriors_FaceEachOtherAndWait(ACTOR_PARTY_LEADER, GARET, 20);
-  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIMATION_NOD);
+  ObjectEvent_ShowEmote(IVAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
+  Engine_ScriptWait(60);
+  VaultInteriors_FaceEachOtherAndWait(LOCALID_PARTY_LEADER, GARET, 20);
+  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIMATION_NOD);
   VaultInteriors_PlayAnimationAndWait(GARET, ANIMATION_NOD, 20);
   // Ivan reads Isaac's mind. Garet: "Shouldn't we stop him?" Yes: too late,
   // he's done. No: "If you say so."
-  VaultInteriors_StartMindRead(IVAN, ACTOR_PARTY_LEADER);
+  VaultInteriors_StartMindRead(IVAN, LOCALID_PARTY_LEADER);
   Ui_SetBank15PaletteAndClearRenderMode();
-  Actor_FaceActor(ACTOR_PARTY_LEADER, IVAN, 0);
-  VaultInteriors_FaceActorAndWait(GARET, IVAN, 10);
-  Engine_ActorStartRepeatedMotion(ACTOR_PARTY_LEADER, 1);
-  Engine_ActorRunRepeatedMotion(GARET, 1);
-  Engine_EventWait(20);
-  Actor_SetAttachedEffect(GARET,
-                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-  Engine_EventWait(60);
-  VaultInteriors_FaceActorAndWait(ACTOR_PARTY_LEADER, GARET, 10);
-  Event_OpenMessage(GARET, 0);
-  if (Engine_EventChooseYesNo(0, 0) == 0) {
-    Engine_EventWait(20);
-    Actor_FaceActor(ACTOR_PARTY_LEADER, IVAN, 0);
-    VaultInteriors_FaceActorAndWait(GARET, IVAN, 20);
+  ObjectEvent_FaceObjectEvent(LOCALID_PARTY_LEADER, IVAN, 0);
+  VaultInteriors_FaceObjectEventAndWait(GARET, IVAN, 10);
+  Engine_ObjectEventStartRepeatedMotion(LOCALID_PARTY_LEADER, 1);
+  Engine_ObjectEventRunRepeatedMotion(GARET, 1);
+  Engine_ScriptWait(20);
+  ObjectEvent_SetAttachedEffect(GARET, ATTACHED_EFFECT_IN_FRONT |
+                                           ATTACHED_EFFECT_ONCE);
+  Engine_ScriptWait(60);
+  VaultInteriors_FaceObjectEventAndWait(LOCALID_PARTY_LEADER, GARET, 10);
+  Script_OpenMessage(GARET, 0);
+  if (Engine_ScriptChooseYesNo(0, 0) == 0) {
+    Engine_ScriptWait(20);
+    ObjectEvent_FaceObjectEvent(LOCALID_PARTY_LEADER, IVAN, 0);
+    VaultInteriors_FaceObjectEventAndWait(GARET, IVAN, 20);
     VaultInteriors_EndMindRead();
-    Engine_ActorStartRepeatedMotion(ACTOR_PARTY_LEADER, 1);
-    Engine_ActorRunRepeatedMotion(GARET, 1);
-    Engine_EventWait(20);
+    Engine_ObjectEventStartRepeatedMotion(LOCALID_PARTY_LEADER, 1);
+    Engine_ObjectEventRunRepeatedMotion(GARET, 1);
+    Engine_ScriptWait(20);
     VaultInteriors_ShowMessageAndWait(GARET, 20);
   } else {
     gEventWork->message++;
-    Actor_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
-    Engine_EventWait(60);
+    ObjectEvent_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
+    Engine_ScriptWait(60);
     VaultInteriors_ShowMessageAndWait(GARET, 20);
-    Actor_FaceActor(ACTOR_PARTY_LEADER, IVAN, 0);
-    VaultInteriors_FaceActorAndWait(GARET, IVAN, 20);
+    ObjectEvent_FaceObjectEvent(LOCALID_PARTY_LEADER, IVAN, 0);
+    VaultInteriors_FaceObjectEventAndWait(GARET, IVAN, 20);
     VaultInteriors_EndMindRead();
-    Engine_ActorStartRepeatedMotion(ACTOR_PARTY_LEADER, 1);
-    Engine_ActorRunRepeatedMotion(GARET, 1);
-    Engine_EventWait(20);
+    Engine_ObjectEventStartRepeatedMotion(LOCALID_PARTY_LEADER, 1);
+    Engine_ObjectEventRunRepeatedMotion(GARET, 1);
+    Engine_ScriptWait(20);
   }
   // "I see... So that's what happened..." The tied-up villager comes back with
   // the mayor and two townsmen.
-  Actor_ShowEmote(IVAN, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
-  Engine_EventWait(60);
+  ObjectEvent_ShowEmote(IVAN, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
+  Engine_ScriptWait(60);
   VaultInteriors_PlayAnimationAndWait(IVAN, ANIMATION_SHAKE_HEAD, 20);
-  Engine_EventSetMessage(MsgVaultSeeThatsHappened);
+  Engine_ScriptSetMessage(MsgVaultSeeThatsHappened);
   VaultInteriors_ShowMessageAndWait(IVAN, 20);
-  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIMATION_NOD);
+  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIMATION_NOD);
   VaultInteriors_PlayAnimationAndWait(GARET, ANIMATION_NOD, 40);
-  Actor_WalkToAndWait(ACTOR_TIED_UP_VILLAGER, 808, 408);
-  Actor_FaceDirection(ACTOR_TIED_UP_VILLAGER, FACING_WEST, 0);
-  Engine_EventWait(30);
-  Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_TIED_UP_VILLAGER, 0);
-  Actor_FaceActor(GARET, ACTOR_TIED_UP_VILLAGER, 0);
-  VaultInteriors_FaceActorAndWait(IVAN, ACTOR_TIED_UP_VILLAGER, 20);
-  Engine_ActorRunRepeatedMotion(ACTOR_TIED_UP_VILLAGER, 1);
-  Engine_EventWait(20);
-  VaultInteriors_ShowMessageAndWait(ACTOR_TIED_UP_VILLAGER, 20);
-  Actor_SetSpeed(ACTOR_LOFT_MAYOR, PIXELS(4) / 5, PIXELS(2) / 5);
-  Actor_SetSpeed(ACTOR_LOFT_ESCORT, PIXELS(4) / 5, PIXELS(2) / 5);
-  Actor_SetSpeed(ACTOR_STRONGMAN_OPENING_THE_CHESTS, PIXELS(4) / 5,
-                 PIXELS(2) / 5);
-  Actor_SetPosition(ACTOR_LOFT_MAYOR, PIXELS(744), PIXELS(408));
-  Actor_WalkToAndWait(ACTOR_LOFT_MAYOR, 768, 408);
-  VaultInteriors_FaceActorAndWait(ACTOR_LOFT_MAYOR, ACTOR_THIEF_LEADER, 30);
-  Actor_SetPosition(ACTOR_LOFT_ESCORT, PIXELS(744), PIXELS(408));
-  Actor_WalkToAndWait(ACTOR_LOFT_ESCORT, 768, 408);
-  Actor_SetPosition(ACTOR_STRONGMAN_OPENING_THE_CHESTS, PIXELS(744),
-                    PIXELS(408));
-  Actor_WalkTo(ACTOR_STRONGMAN_OPENING_THE_CHESTS, 784, 400);
-  Actor_WalkToAndWait(ACTOR_LOFT_ESCORT, 776, 424);
-  Engine_ActorWaitForMove(ACTOR_STRONGMAN_OPENING_THE_CHESTS);
-  Actor_FaceActor(ACTOR_LOFT_ESCORT, ACTOR_THIEF_LEADER, 0);
-  VaultInteriors_FaceActorAndWait(ACTOR_STRONGMAN_OPENING_THE_CHESTS,
-                                  ACTOR_THIEF_LEADER, 20);
-  Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_LOFT_MAYOR, 0);
-  Actor_FaceActor(GARET, ACTOR_LOFT_MAYOR, 0);
-  VaultInteriors_FaceActorAndWait(IVAN, ACTOR_LOFT_MAYOR, 20);
+  ObjectEvent_WalkToAndWait(LOCALID_TIED_UP_VILLAGER, 808, 408);
+  ObjectEvent_FaceDirection(LOCALID_TIED_UP_VILLAGER, FACING_WEST, 0);
+  Engine_ScriptWait(30);
+  ObjectEvent_FaceObjectEvent(LOCALID_PARTY_LEADER, LOCALID_TIED_UP_VILLAGER,
+                              0);
+  ObjectEvent_FaceObjectEvent(GARET, LOCALID_TIED_UP_VILLAGER, 0);
+  VaultInteriors_FaceObjectEventAndWait(IVAN, LOCALID_TIED_UP_VILLAGER, 20);
+  Engine_ObjectEventRunRepeatedMotion(LOCALID_TIED_UP_VILLAGER, 1);
+  Engine_ScriptWait(20);
+  VaultInteriors_ShowMessageAndWait(LOCALID_TIED_UP_VILLAGER, 20);
+  ObjectEvent_SetSpeed(LOCALID_LOFT_MAYOR, PIXELS(4) / 5, PIXELS(2) / 5);
+  ObjectEvent_SetSpeed(LOCALID_LOFT_ESCORT, PIXELS(4) / 5, PIXELS(2) / 5);
+  ObjectEvent_SetSpeed(LOCALID_STRONGMAN_OPENING_THE_CHESTS, PIXELS(4) / 5,
+                       PIXELS(2) / 5);
+  ObjectEvent_SetPosition(LOCALID_LOFT_MAYOR, PIXELS(744), PIXELS(408));
+  ObjectEvent_WalkToAndWait(LOCALID_LOFT_MAYOR, 768, 408);
+  VaultInteriors_FaceObjectEventAndWait(LOCALID_LOFT_MAYOR,
+                                        LOCALID_THIEF_LEADER, 30);
+  ObjectEvent_SetPosition(LOCALID_LOFT_ESCORT, PIXELS(744), PIXELS(408));
+  ObjectEvent_WalkToAndWait(LOCALID_LOFT_ESCORT, 768, 408);
+  ObjectEvent_SetPosition(LOCALID_STRONGMAN_OPENING_THE_CHESTS, PIXELS(744),
+                          PIXELS(408));
+  ObjectEvent_WalkTo(LOCALID_STRONGMAN_OPENING_THE_CHESTS, 784, 400);
+  ObjectEvent_WalkToAndWait(LOCALID_LOFT_ESCORT, 776, 424);
+  Engine_ObjectEventWaitForMove(LOCALID_STRONGMAN_OPENING_THE_CHESTS);
+  ObjectEvent_FaceObjectEvent(LOCALID_LOFT_ESCORT, LOCALID_THIEF_LEADER, 0);
+  VaultInteriors_FaceObjectEventAndWait(LOCALID_STRONGMAN_OPENING_THE_CHESTS,
+                                        LOCALID_THIEF_LEADER, 20);
+  ObjectEvent_FaceObjectEvent(LOCALID_PARTY_LEADER, LOCALID_LOFT_MAYOR, 0);
+  ObjectEvent_FaceObjectEvent(GARET, LOCALID_LOFT_MAYOR, 0);
+  VaultInteriors_FaceObjectEventAndWait(IVAN, LOCALID_LOFT_MAYOR, 20);
   // The mayor scolds them for stealing in a disaster; the thieves talk back.
-  VaultInteriors_PlayAnimationAndWait(ACTOR_LOFT_MAYOR, ANIMATION_SHAKE_HEAD,
+  VaultInteriors_PlayAnimationAndWait(LOCALID_LOFT_MAYOR, ANIMATION_SHAKE_HEAD,
                                       20);
-  VaultInteriors_ShowMessageAndWait(ACTOR_LOFT_MAYOR, 20);
-  VaultInteriors_ShowMessageAndWait(ACTOR_FIRST_THIEF, 20);
-  VaultInteriors_ShowMessageAndWait(ACTOR_SECOND_THIEF, 30);
+  VaultInteriors_ShowMessageAndWait(LOCALID_LOFT_MAYOR, 20);
+  VaultInteriors_ShowMessageAndWait(LOCALID_FIRST_THIEF, 20);
+  VaultInteriors_ShowMessageAndWait(LOCALID_SECOND_THIEF, 30);
   // "What should we do with them?" Locked up for a long, long time; the two
   // townsmen rouse the thieves to tie them up.
-  VaultInteriors_FaceEachOtherAndWait(ACTOR_LOFT_MAYOR, ACTOR_LOFT_ESCORT, 20);
-  Engine_ActorRunRepeatedMotion(ACTOR_LOFT_ESCORT, 1);
-  Engine_EventWait(20);
-  VaultInteriors_ShowMessageAndWait(ACTOR_LOFT_ESCORT, 20);
-  VaultInteriors_PlayAnimationAndWait(ACTOR_LOFT_MAYOR, ANIMATION_NOD, 30);
-  VaultInteriors_FaceEachOtherAndWait(ACTOR_LOFT_MAYOR,
-                                      ACTOR_STRONGMAN_OPENING_THE_CHESTS, 20);
-  VaultInteriors_PlayAnimationAndWait(ACTOR_LOFT_MAYOR, ANIMATION_NOD, 30);
-  VaultInteriors_FaceActorAndWait(ACTOR_LOFT_MAYOR, ACTOR_THIEF_LEADER, 20);
-  VaultInteriors_ShowMessageAndWait(ACTOR_LOFT_MAYOR, 20);
-  Engine_ActorSetAnimation(ACTOR_LOFT_ESCORT, ANIMATION_NOD);
-  VaultInteriors_PlayAnimationAndWait(ACTOR_STRONGMAN_OPENING_THE_CHESTS,
-                                      ANIMATION_NOD, 20);
-  VaultInteriors_FaceEachOtherAndWait(ACTOR_LOFT_ESCORT,
-                                      ACTOR_STRONGMAN_OPENING_THE_CHESTS, 20);
-  Engine_ActorSetAnimation(ACTOR_LOFT_ESCORT, ANIMATION_NOD);
-  VaultInteriors_PlayAnimationAndWait(ACTOR_STRONGMAN_OPENING_THE_CHESTS,
-                                      ANIMATION_NOD, 20);
-  Actor_WalkTo(ACTOR_STRONGMAN_OPENING_THE_CHESTS, 792, 392);
-  Actor_WalkToAndWait(ACTOR_LOFT_ESCORT, 784, 400);
-  Actor_FaceActor(ACTOR_LOFT_ESCORT, ACTOR_SECOND_THIEF, 0);
-  Engine_ActorWaitForMove(ACTOR_STRONGMAN_OPENING_THE_CHESTS);
-  VaultInteriors_FaceActorAndWait(ACTOR_STRONGMAN_OPENING_THE_CHESTS,
-                                  ACTOR_FIRST_THIEF, 20);
-  Engine_ActorRunRepeatedMotion(ACTOR_LOFT_ESCORT, 1);
-  Engine_EventWait(20);
-  VaultInteriors_ShowMessageAndWait(ACTOR_LOFT_ESCORT, 20);
-  VaultInteriors_PlayAnimationAndWait(ACTOR_STRONGMAN_OPENING_THE_CHESTS,
-                                      ANIMATION_SHAKE_HEAD, 20);
-  VaultInteriors_ShowMessageAndWait(ACTOR_STRONGMAN_OPENING_THE_CHESTS, 30);
-  VaultInteriors_FaceEachOtherAndWait(ACTOR_LOFT_ESCORT, ACTOR_PARTY_LEADER,
+  VaultInteriors_FaceEachOtherAndWait(LOCALID_LOFT_MAYOR, LOCALID_LOFT_ESCORT,
                                       20);
-  VaultInteriors_ShowMessageAndWait(ACTOR_LOFT_ESCORT, 20);
-  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIMATION_NOD);
-  Engine_ActorSetAnimation(GARET, ANIMATION_NOD);
+  Engine_ObjectEventRunRepeatedMotion(LOCALID_LOFT_ESCORT, 1);
+  Engine_ScriptWait(20);
+  VaultInteriors_ShowMessageAndWait(LOCALID_LOFT_ESCORT, 20);
+  VaultInteriors_PlayAnimationAndWait(LOCALID_LOFT_MAYOR, ANIMATION_NOD, 30);
+  VaultInteriors_FaceEachOtherAndWait(LOCALID_LOFT_MAYOR,
+                                      LOCALID_STRONGMAN_OPENING_THE_CHESTS, 20);
+  VaultInteriors_PlayAnimationAndWait(LOCALID_LOFT_MAYOR, ANIMATION_NOD, 30);
+  VaultInteriors_FaceObjectEventAndWait(LOCALID_LOFT_MAYOR,
+                                        LOCALID_THIEF_LEADER, 20);
+  VaultInteriors_ShowMessageAndWait(LOCALID_LOFT_MAYOR, 20);
+  Engine_ObjectEventSetAnimation(LOCALID_LOFT_ESCORT, ANIMATION_NOD);
+  VaultInteriors_PlayAnimationAndWait(LOCALID_STRONGMAN_OPENING_THE_CHESTS,
+                                      ANIMATION_NOD, 20);
+  VaultInteriors_FaceEachOtherAndWait(LOCALID_LOFT_ESCORT,
+                                      LOCALID_STRONGMAN_OPENING_THE_CHESTS, 20);
+  Engine_ObjectEventSetAnimation(LOCALID_LOFT_ESCORT, ANIMATION_NOD);
+  VaultInteriors_PlayAnimationAndWait(LOCALID_STRONGMAN_OPENING_THE_CHESTS,
+                                      ANIMATION_NOD, 20);
+  ObjectEvent_WalkTo(LOCALID_STRONGMAN_OPENING_THE_CHESTS, 792, 392);
+  ObjectEvent_WalkToAndWait(LOCALID_LOFT_ESCORT, 784, 400);
+  ObjectEvent_FaceObjectEvent(LOCALID_LOFT_ESCORT, LOCALID_SECOND_THIEF, 0);
+  Engine_ObjectEventWaitForMove(LOCALID_STRONGMAN_OPENING_THE_CHESTS);
+  VaultInteriors_FaceObjectEventAndWait(LOCALID_STRONGMAN_OPENING_THE_CHESTS,
+                                        LOCALID_FIRST_THIEF, 20);
+  Engine_ObjectEventRunRepeatedMotion(LOCALID_LOFT_ESCORT, 1);
+  Engine_ScriptWait(20);
+  VaultInteriors_ShowMessageAndWait(LOCALID_LOFT_ESCORT, 20);
+  VaultInteriors_PlayAnimationAndWait(LOCALID_STRONGMAN_OPENING_THE_CHESTS,
+                                      ANIMATION_SHAKE_HEAD, 20);
+  VaultInteriors_ShowMessageAndWait(LOCALID_STRONGMAN_OPENING_THE_CHESTS, 30);
+  VaultInteriors_FaceEachOtherAndWait(LOCALID_LOFT_ESCORT, LOCALID_PARTY_LEADER,
+                                      20);
+  VaultInteriors_ShowMessageAndWait(LOCALID_LOFT_ESCORT, 20);
+  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIMATION_NOD);
+  Engine_ObjectEventSetAnimation(GARET, ANIMATION_NOD);
   VaultInteriors_PlayAnimationAndWait(IVAN, ANIMATION_NOD, 50);
   // The window closes while the thieves are tied up.
   work = gEventWork;
   work->transitionFrames = 30;
   work->startTransition =
-      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_SHAPE);
-  Engine_EventCloseScreen();
-  Engine_EventWaitForScreen();
-  Engine_EventWait(60);
-  Engine_EventEnd();
+      MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_SHAPE);
+  Engine_ScriptCloseScreen();
+  Engine_ScriptWaitForScreen();
+  Engine_ScriptWait(60);
+  Engine_ScriptEnd();
 }
 
 /// Returns the stolen goods and rod, thanks the party, and clears the loft.
 ///
-/// Called by Scene_Initialize after VaultInteriors_DefeatThieves. Sets
+/// Called by Map_Initialize after VaultInteriors_DefeatThieves. Sets
 /// FLAG_VAULT_THIEVES_JAILED; the thieves are led away, the mayor's urn and
 /// the Sanctum's gold statue come out of the chests, Ivan takes the Shaman's
 /// Rod, gives back any Venus Djinn and leaves the party, and every actor of
 /// the loft is cleared away.
 static void VaultInteriors_ReturnStolenGoods(void) {
-  struct FieldActor *temporaryActor;
-  struct FieldActor *actor;
+  struct ObjectEvent *temporaryObjectEvent;
+  struct ObjectEvent *objectEvent;
   s32 aftermath;
   s32 rod;
   struct EventWork *work;
@@ -2684,477 +2759,498 @@ static void VaultInteriors_ReturnStolenGoods(void) {
   GameFlag_Set(FLAG_VAULT_THIEVES_JAILED);
   // With the screen still closed, the chests go back along the wall and the
   // thieves stand tied before the mayor.
-  Engine_EventStart();
+  Engine_ScriptStart();
   {
-    struct FieldActor *actor = Object_GetById(ACTOR_SECOND_THIEF);
+    struct ObjectEvent *objectEvent = ObjectEvent_GetById(LOCALID_SECOND_THIEF);
 
-    actor->priorityFlags = ACTOR_PRIORITY_AUTOMATIC | actor->priorityFlags;
+    objectEvent->priorityFlags =
+        OBJ_EVENT_PRIORITY_AUTOMATIC | objectEvent->priorityFlags;
   }
-  Actor_MoveToAndWait(ACTOR_FIRST_CHEST, 872, 425);
-  Actor_MoveToAndWait(ACTOR_SECOND_CHEST, 872, 409);
-  Actor_MoveToAndWait(ACTOR_THIRD_CHEST, 872, 377);
-  Actor_SetPosition(ACTOR_FIRST_THIEF, PIXELS(776), PIXELS(392));
-  Actor_SetPosition(ACTOR_THIEF_LEADER, PIXELS(792), PIXELS(392));
-  Actor_SetPosition(ACTOR_SECOND_THIEF, PIXELS(808), PIXELS(392));
-  Engine_ActorSetAnimation(ACTOR_THIEF_LEADER, 5);
-  Engine_ActorSetAnimation(ACTOR_FIRST_THIEF, 5);
-  Engine_ActorSetAnimation(ACTOR_SECOND_THIEF, 5);
-  Actor_FaceActor(ACTOR_FIRST_THIEF, ACTOR_PARTY_LEADER, 0);
-  Actor_FaceActor(ACTOR_THIEF_LEADER, ACTOR_PARTY_LEADER, 0);
-  Actor_FaceActor(ACTOR_SECOND_THIEF, ACTOR_PARTY_LEADER, 0);
-  actor = Object_GetById(ACTOR_THIEF_LEADER);
-  Engine_ActorSetSpriteFlags(actor, SPRITE_FLAG_SHADOW);
-  actor = Object_GetById(ACTOR_FIRST_THIEF);
-  Engine_ActorSetSpriteFlags(actor, SPRITE_FLAG_SHADOW);
-  actor = Object_GetById(ACTOR_SECOND_THIEF);
-  Engine_ActorSetSpriteFlags(actor, SPRITE_FLAG_SHADOW);
-  Actor_SetPosition(ACTOR_LOFT_ESCORT, PIXELS(768), PIXELS(408));
-  Actor_SetPosition(ACTOR_STRONGMAN_OPENING_THE_CHESTS, PIXELS(768),
-                    PIXELS(424));
-  Actor_MoveToAndWait(ACTOR_LOFT_MAYOR, 784, 424);
-  Actor_SetPosition(ACTOR_TIED_UP_VILLAGER, PIXELS(808), PIXELS(408));
-  Actor_FaceActor(ACTOR_LOFT_ESCORT, ACTOR_LOFT_MAYOR, 0);
-  Actor_FaceActor(ACTOR_TIED_UP_VILLAGER, ACTOR_LOFT_MAYOR, 0);
-  Actor_FaceActor(ACTOR_STRONGMAN_OPENING_THE_CHESTS, ACTOR_THIEF_LEADER, 0);
-  Actor_FaceActor(ACTOR_LOFT_MAYOR, ACTOR_THIEF_LEADER, 0);
-  Actor_SetPosition(ACTOR_PARTY_LEADER, PIXELS(792), PIXELS(440));
-  Actor_SetPosition(GARET, PIXELS(808), PIXELS(440));
-  Actor_SetPosition(IVAN, PIXELS(776), PIXELS(440));
-  Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_THIEF_LEADER, 0);
-  Actor_FaceActor(GARET, ACTOR_THIEF_LEADER, 0);
-  Actor_FaceActor(IVAN, ACTOR_THIEF_LEADER, 0);
+  ObjectEvent_MoveToAndWait(LOCALID_FIRST_CHEST, 872, 425);
+  ObjectEvent_MoveToAndWait(LOCALID_SECOND_CHEST, 872, 409);
+  ObjectEvent_MoveToAndWait(LOCALID_THIRD_CHEST, 872, 377);
+  ObjectEvent_SetPosition(LOCALID_FIRST_THIEF, PIXELS(776), PIXELS(392));
+  ObjectEvent_SetPosition(LOCALID_THIEF_LEADER, PIXELS(792), PIXELS(392));
+  ObjectEvent_SetPosition(LOCALID_SECOND_THIEF, PIXELS(808), PIXELS(392));
+  Engine_ObjectEventSetAnimation(LOCALID_THIEF_LEADER, 5);
+  Engine_ObjectEventSetAnimation(LOCALID_FIRST_THIEF, 5);
+  Engine_ObjectEventSetAnimation(LOCALID_SECOND_THIEF, 5);
+  ObjectEvent_FaceObjectEvent(LOCALID_FIRST_THIEF, LOCALID_PARTY_LEADER, 0);
+  ObjectEvent_FaceObjectEvent(LOCALID_THIEF_LEADER, LOCALID_PARTY_LEADER, 0);
+  ObjectEvent_FaceObjectEvent(LOCALID_SECOND_THIEF, LOCALID_PARTY_LEADER, 0);
+  objectEvent = ObjectEvent_GetById(LOCALID_THIEF_LEADER);
+  Engine_ObjectEventSetSpriteFlags(objectEvent, SPRITE_FLAG_SHADOW);
+  objectEvent = ObjectEvent_GetById(LOCALID_FIRST_THIEF);
+  Engine_ObjectEventSetSpriteFlags(objectEvent, SPRITE_FLAG_SHADOW);
+  objectEvent = ObjectEvent_GetById(LOCALID_SECOND_THIEF);
+  Engine_ObjectEventSetSpriteFlags(objectEvent, SPRITE_FLAG_SHADOW);
+  ObjectEvent_SetPosition(LOCALID_LOFT_ESCORT, PIXELS(768), PIXELS(408));
+  ObjectEvent_SetPosition(LOCALID_STRONGMAN_OPENING_THE_CHESTS, PIXELS(768),
+                          PIXELS(424));
+  ObjectEvent_MoveToAndWait(LOCALID_LOFT_MAYOR, 784, 424);
+  ObjectEvent_SetPosition(LOCALID_TIED_UP_VILLAGER, PIXELS(808), PIXELS(408));
+  ObjectEvent_FaceObjectEvent(LOCALID_LOFT_ESCORT, LOCALID_LOFT_MAYOR, 0);
+  ObjectEvent_FaceObjectEvent(LOCALID_TIED_UP_VILLAGER, LOCALID_LOFT_MAYOR, 0);
+  ObjectEvent_FaceObjectEvent(LOCALID_STRONGMAN_OPENING_THE_CHESTS,
+                              LOCALID_THIEF_LEADER, 0);
+  ObjectEvent_FaceObjectEvent(LOCALID_LOFT_MAYOR, LOCALID_THIEF_LEADER, 0);
+  ObjectEvent_SetPosition(LOCALID_PARTY_LEADER, PIXELS(792), PIXELS(440));
+  ObjectEvent_SetPosition(GARET, PIXELS(808), PIXELS(440));
+  ObjectEvent_SetPosition(IVAN, PIXELS(776), PIXELS(440));
+  ObjectEvent_FaceObjectEvent(LOCALID_PARTY_LEADER, LOCALID_THIEF_LEADER, 0);
+  ObjectEvent_FaceObjectEvent(GARET, LOCALID_THIEF_LEADER, 0);
+  ObjectEvent_FaceObjectEvent(IVAN, LOCALID_THIEF_LEADER, 0);
   gEventWork->transitionFrames = 30;
   gEventWork->startTransition =
-      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_SHAPE);
-  Engine_EventOpenScreen();
-  Engine_EventWaitForScreen();
-  Engine_EventWait(40);
+      MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_SHAPE);
+  Engine_ScriptOpenScreen();
+  Engine_ScriptWaitForScreen();
+  Engine_ScriptWait(40);
   // "Isaac, right? I won't forget this!" "Take them away!"
-  Engine_ActorRunRepeatedMotion(ACTOR_THIEF_LEADER, 2);
+  Engine_ObjectEventRunRepeatedMotion(LOCALID_THIEF_LEADER, 2);
   aftermath = MsgVaultYouIsaacRightWontForget;
-  Engine_EventSetMessage(aftermath);
-  VaultInteriors_ShowMessageAndWait(ACTOR_THIEF_LEADER, 20);
-  Engine_ActorRunRepeatedMotion(ACTOR_LOFT_MAYOR, 1);
-  Engine_EventWait(20);
-  VaultInteriors_PlayAnimationAndWait(ACTOR_LOFT_MAYOR, ANIMATION_SHAKE_HEAD,
+  Engine_ScriptSetMessage(aftermath);
+  VaultInteriors_ShowMessageAndWait(LOCALID_THIEF_LEADER, 20);
+  Engine_ObjectEventRunRepeatedMotion(LOCALID_LOFT_MAYOR, 1);
+  Engine_ScriptWait(20);
+  VaultInteriors_PlayAnimationAndWait(LOCALID_LOFT_MAYOR, ANIMATION_SHAKE_HEAD,
                                       20);
-  VaultInteriors_ShowMessageAndWait(ACTOR_LOFT_MAYOR, 20);
-  Engine_ActorSetAnimation(ACTOR_LOFT_ESCORT, ANIMATION_NOD);
-  VaultInteriors_PlayAnimationAndWait(ACTOR_TIED_UP_VILLAGER, ANIMATION_NOD,
+  VaultInteriors_ShowMessageAndWait(LOCALID_LOFT_MAYOR, 20);
+  Engine_ObjectEventSetAnimation(LOCALID_LOFT_ESCORT, ANIMATION_NOD);
+  VaultInteriors_PlayAnimationAndWait(LOCALID_TIED_UP_VILLAGER, ANIMATION_NOD,
                                       20);
-  Engine_ActorStartRepeatedMotion(ACTOR_FIRST_THIEF, 2);
-  Engine_ActorStartRepeatedMotion(ACTOR_SECOND_THIEF, 2);
-  Engine_EventWait(60);
+  Engine_ObjectEventStartRepeatedMotion(LOCALID_FIRST_THIEF, 2);
+  Engine_ObjectEventStartRepeatedMotion(LOCALID_SECOND_THIEF, 2);
+  Engine_ScriptWait(60);
   // The escort leads the three thieves down the ladder, the tied-up villager
   // after them.
-  Actor_SetSpeed(ACTOR_LOFT_ESCORT, PIXELS(4) / 5, PIXELS(2) / 5);
-  Actor_WalkTo(ACTOR_LOFT_ESCORT, 746, 408);
-  Actor_FaceDirection(ACTOR_LOFT_MAYOR, FACING_NORTHWEST + FACING_STEP, 0);
-  Actor_FaceDirection(ACTOR_STRONGMAN_OPENING_THE_CHESTS,
-                      FACING_NORTHWEST + FACING_STEP, 0);
-  Actor_SetActionScript(ACTOR_FIRST_THIEF, gVaultInteriors_VaultScriptB);
-  Engine_EventWait(20);
-  Actor_SetActionScript(ACTOR_THIEF_LEADER, gVaultInteriors_VaultScriptB);
-  Engine_EventWait(15);
-  Actor_SetActionScript(ACTOR_SECOND_THIEF, gVaultInteriors_VaultScriptB);
-  Engine_EventWait(35);
-  Actor_SetActionScript(ACTOR_TIED_UP_VILLAGER, gVaultInteriors_VaultScriptA);
-  Engine_EventWait(20);
-  Engine_ActorWaitForMove(ACTOR_LOFT_ESCORT);
-  Actor_SetPosition(ACTOR_LOFT_ESCORT, 0, 0);
-  Engine_EventWait(40);
+  ObjectEvent_SetSpeed(LOCALID_LOFT_ESCORT, PIXELS(4) / 5, PIXELS(2) / 5);
+  ObjectEvent_WalkTo(LOCALID_LOFT_ESCORT, 746, 408);
+  ObjectEvent_FaceDirection(LOCALID_LOFT_MAYOR, FACING_NORTHWEST + FACING_STEP,
+                            0);
+  ObjectEvent_FaceDirection(LOCALID_STRONGMAN_OPENING_THE_CHESTS,
+                            FACING_NORTHWEST + FACING_STEP, 0);
+  ObjectEvent_SetActionScript(LOCALID_FIRST_THIEF,
+                              gVaultInteriors_VaultScriptB);
+  Engine_ScriptWait(20);
+  ObjectEvent_SetActionScript(LOCALID_THIEF_LEADER,
+                              gVaultInteriors_VaultScriptB);
+  Engine_ScriptWait(15);
+  ObjectEvent_SetActionScript(LOCALID_SECOND_THIEF,
+                              gVaultInteriors_VaultScriptB);
+  Engine_ScriptWait(35);
+  ObjectEvent_SetActionScript(LOCALID_TIED_UP_VILLAGER,
+                              gVaultInteriors_VaultScriptA);
+  Engine_ScriptWait(20);
+  Engine_ObjectEventWaitForMove(LOCALID_LOFT_ESCORT);
+  ObjectEvent_SetPosition(LOCALID_LOFT_ESCORT, 0, 0);
+  Engine_ScriptWait(40);
   // The mayor and the villager opening the chests thank the party.
-  Actor_SetSpeed(ACTOR_LOFT_MAYOR, PIXELS(4) / 5, PIXELS(2) / 5);
-  Actor_SetSpeed(ACTOR_STRONGMAN_OPENING_THE_CHESTS, PIXELS(4) / 5,
-                 PIXELS(2) / 5);
-  Actor_WalkToAndWait(ACTOR_LOFT_MAYOR, 784, 408);
-  Actor_FaceActor(ACTOR_LOFT_MAYOR, ACTOR_PARTY_LEADER, 0);
-  Actor_WalkToAndWait(ACTOR_STRONGMAN_OPENING_THE_CHESTS, 768, 408);
-  VaultInteriors_FaceActorAndWait(ACTOR_STRONGMAN_OPENING_THE_CHESTS,
-                                  ACTOR_PARTY_LEADER, 20);
-  VaultInteriors_PlayAnimationAndWait(ACTOR_LOFT_MAYOR, ANIMATION_NOD, 20);
-  VaultInteriors_ShowMessageAndWait(ACTOR_LOFT_MAYOR, 20);
-  VaultInteriors_PlayAnimationAndWait(ACTOR_STRONGMAN_OPENING_THE_CHESTS,
+  ObjectEvent_SetSpeed(LOCALID_LOFT_MAYOR, PIXELS(4) / 5, PIXELS(2) / 5);
+  ObjectEvent_SetSpeed(LOCALID_STRONGMAN_OPENING_THE_CHESTS, PIXELS(4) / 5,
+                       PIXELS(2) / 5);
+  ObjectEvent_WalkToAndWait(LOCALID_LOFT_MAYOR, 784, 408);
+  ObjectEvent_FaceObjectEvent(LOCALID_LOFT_MAYOR, LOCALID_PARTY_LEADER, 0);
+  ObjectEvent_WalkToAndWait(LOCALID_STRONGMAN_OPENING_THE_CHESTS, 768, 408);
+  VaultInteriors_FaceObjectEventAndWait(LOCALID_STRONGMAN_OPENING_THE_CHESTS,
+                                        LOCALID_PARTY_LEADER, 20);
+  VaultInteriors_PlayAnimationAndWait(LOCALID_LOFT_MAYOR, ANIMATION_NOD, 20);
+  VaultInteriors_ShowMessageAndWait(LOCALID_LOFT_MAYOR, 20);
+  VaultInteriors_PlayAnimationAndWait(LOCALID_STRONGMAN_OPENING_THE_CHESTS,
                                       ANIMATION_NOD, 20);
-  Actor_FaceDirection(ACTOR_STRONGMAN_OPENING_THE_CHESTS, FACING_SOUTHEAST, 10);
-  VaultInteriors_ShowMessageAndWait(ACTOR_STRONGMAN_OPENING_THE_CHESTS, 20);
-  VaultInteriors_FaceEachOtherAndWait(ACTOR_PARTY_LEADER, GARET, 50);
-  VaultInteriors_FaceEachOtherAndWait(ACTOR_PARTY_LEADER, IVAN, 50);
-  Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_LOFT_MAYOR, 0);
-  Actor_FaceActor(GARET, ACTOR_LOFT_MAYOR, 0);
-  VaultInteriors_FaceActorAndWait(IVAN, ACTOR_LOFT_MAYOR, 20);
-  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIMATION_NOD);
-  Engine_ActorSetAnimation(GARET, ANIMATION_NOD);
+  ObjectEvent_FaceDirection(LOCALID_STRONGMAN_OPENING_THE_CHESTS,
+                            FACING_SOUTHEAST, 10);
+  VaultInteriors_ShowMessageAndWait(LOCALID_STRONGMAN_OPENING_THE_CHESTS, 20);
+  VaultInteriors_FaceEachOtherAndWait(LOCALID_PARTY_LEADER, GARET, 50);
+  VaultInteriors_FaceEachOtherAndWait(LOCALID_PARTY_LEADER, IVAN, 50);
+  ObjectEvent_FaceObjectEvent(LOCALID_PARTY_LEADER, LOCALID_LOFT_MAYOR, 0);
+  ObjectEvent_FaceObjectEvent(GARET, LOCALID_LOFT_MAYOR, 0);
+  VaultInteriors_FaceObjectEventAndWait(IVAN, LOCALID_LOFT_MAYOR, 20);
+  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIMATION_NOD);
+  Engine_ObjectEventSetAnimation(GARET, ANIMATION_NOD);
   VaultInteriors_PlayAnimationAndWait(IVAN, ANIMATION_NOD, 50);
   // "Let's take a look at what they stole." The two go round to the chests.
-  Engine_ActorFaceEachOther(ACTOR_LOFT_MAYOR,
-                            ACTOR_STRONGMAN_OPENING_THE_CHESTS, 0);
-  VaultInteriors_PlayAnimationAndWait(ACTOR_LOFT_MAYOR, ANIMATION_NOD, 20);
-  VaultInteriors_ShowMessageAndWait(ACTOR_LOFT_MAYOR, 20);
-  Actor_SetActionScript(ACTOR_STRONGMAN_OPENING_THE_CHESTS,
-                        gVaultInteriors_VaultScriptC);
-  Engine_EventWait(50);
-  Actor_SetActionScript(ACTOR_LOFT_MAYOR, gVaultInteriors_VaultScriptD);
-  Actor_SetSpeed(GARET, PIXELS(4) / 5, PIXELS(2) / 5);
-  Actor_SetSpeed(IVAN, PIXELS(4) / 5, PIXELS(2) / 5);
-  Actor_WalkToAndWait(GARET, 792, 456);
-  Actor_FaceDirection(GARET, FACING_NORTH + FACING_STEP, 0);
-  Engine_EventWait(30);
-  Actor_WalkToAndWait(IVAN, 792, 408);
-  Actor_FaceDirection(IVAN, FACING_EAST, 0);
-  Actor_WalkToAndWait(GARET, 808, 456);
-  Actor_FaceDirection(GARET, FACING_NORTH + FACING_STEP, 0);
-  Engine_EventWait(100);
-  VaultInteriors_FaceActorAndWait(ACTOR_STRONGMAN_OPENING_THE_CHESTS,
-                                  ACTOR_LOFT_MAYOR, 60);
-  VaultInteriors_FaceActorAndWait(ACTOR_LOFT_MAYOR,
-                                  ACTOR_STRONGMAN_OPENING_THE_CHESTS, 40);
-  VaultInteriors_PlayAnimationAndWait(ACTOR_LOFT_MAYOR, ANIMATION_NOD, 40);
-  Actor_FaceDirection(ACTOR_LOFT_MAYOR, FACING_EAST, 0);
-  Engine_EventWait(20);
+  Engine_ObjectEventFaceEachOther(LOCALID_LOFT_MAYOR,
+                                  LOCALID_STRONGMAN_OPENING_THE_CHESTS, 0);
+  VaultInteriors_PlayAnimationAndWait(LOCALID_LOFT_MAYOR, ANIMATION_NOD, 20);
+  VaultInteriors_ShowMessageAndWait(LOCALID_LOFT_MAYOR, 20);
+  ObjectEvent_SetActionScript(LOCALID_STRONGMAN_OPENING_THE_CHESTS,
+                              gVaultInteriors_VaultScriptC);
+  Engine_ScriptWait(50);
+  ObjectEvent_SetActionScript(LOCALID_LOFT_MAYOR, gVaultInteriors_VaultScriptD);
+  ObjectEvent_SetSpeed(GARET, PIXELS(4) / 5, PIXELS(2) / 5);
+  ObjectEvent_SetSpeed(IVAN, PIXELS(4) / 5, PIXELS(2) / 5);
+  ObjectEvent_WalkToAndWait(GARET, 792, 456);
+  ObjectEvent_FaceDirection(GARET, FACING_NORTH + FACING_STEP, 0);
+  Engine_ScriptWait(30);
+  ObjectEvent_WalkToAndWait(IVAN, 792, 408);
+  ObjectEvent_FaceDirection(IVAN, FACING_EAST, 0);
+  ObjectEvent_WalkToAndWait(GARET, 808, 456);
+  ObjectEvent_FaceDirection(GARET, FACING_NORTH + FACING_STEP, 0);
+  Engine_ScriptWait(100);
+  VaultInteriors_FaceObjectEventAndWait(LOCALID_STRONGMAN_OPENING_THE_CHESTS,
+                                        LOCALID_LOFT_MAYOR, 60);
+  VaultInteriors_FaceObjectEventAndWait(
+      LOCALID_LOFT_MAYOR, LOCALID_STRONGMAN_OPENING_THE_CHESTS, 40);
+  VaultInteriors_PlayAnimationAndWait(LOCALID_LOFT_MAYOR, ANIMATION_NOD, 40);
+  ObjectEvent_FaceDirection(LOCALID_LOFT_MAYOR, FACING_EAST, 0);
+  Engine_ScriptWait(20);
   // The mayor opens the first chest and his urn rises out of it.
-  Engine_ActorRunRepeatedMotion(ACTOR_LOFT_MAYOR, 2);
-  Event_PlayCue(SE_124);
-  Engine_ActorSetAnimation(ACTOR_FIRST_CHEST, ANIMATION_SHAKE_HEAD);
-  Actor_SetPosition(ACTOR_FOUND_URN, PIXELS(872), PIXELS(424));
-  Engine_ActorSetSpritePriority(ACTOR_FOUND_URN, 1);
-  Actor_SetSpeed(ACTOR_FOUND_URN, PIXELS(4) / 5, PIXELS(2) / 5);
-  Actor_SetDestinationOffset(ACTOR_FOUND_URN, 0, -8);
-  Engine_ActorWaitForMove(ACTOR_FOUND_URN);
-  Engine_ActorRunRepeatedMotion(ACTOR_FOUND_URN, 2);
-  Engine_EventWait(60);
+  Engine_ObjectEventRunRepeatedMotion(LOCALID_LOFT_MAYOR, 2);
+  Script_PlayCue(SE_124);
+  Engine_ObjectEventSetAnimation(LOCALID_FIRST_CHEST, ANIMATION_SHAKE_HEAD);
+  ObjectEvent_SetPosition(LOCALID_FOUND_URN, PIXELS(872), PIXELS(424));
+  Engine_ObjectEventSetSpritePriority(LOCALID_FOUND_URN, 1);
+  ObjectEvent_SetSpeed(LOCALID_FOUND_URN, PIXELS(4) / 5, PIXELS(2) / 5);
+  ObjectEvent_SetDestinationOffset(LOCALID_FOUND_URN, 0, -8);
+  Engine_ObjectEventWaitForMove(LOCALID_FOUND_URN);
+  Engine_ObjectEventRunRepeatedMotion(LOCALID_FOUND_URN, 2);
+  Engine_ScriptWait(60);
   Engine_MessageShowCentered((aftermath + 5), 1);
-  Engine_ActorSetAnimation(ACTOR_FIRST_CHEST, ANIMATION_WALK);
-  Actor_SetPosition(ACTOR_FOUND_URN, 0, 0);
+  Engine_ObjectEventSetAnimation(LOCALID_FIRST_CHEST, ANIMATION_WALK);
+  ObjectEvent_SetPosition(LOCALID_FOUND_URN, 0, 0);
   gEventWork->message++;
-  Engine_ActorRunRepeatedMotion(ACTOR_STRONGMAN_OPENING_THE_CHESTS, 1);
-  VaultInteriors_ShowMessageAndWait(ACTOR_STRONGMAN_OPENING_THE_CHESTS, 20);
-  VaultInteriors_FaceEachOtherAndWait(ACTOR_PARTY_LEADER, GARET, 40);
-  VaultInteriors_FaceActorAndWait(ACTOR_LOFT_MAYOR,
-                                  ACTOR_STRONGMAN_OPENING_THE_CHESTS, 20);
-  VaultInteriors_PlayAnimationAndWait(ACTOR_LOFT_MAYOR, ANIMATION_NOD, 20);
-  VaultInteriors_ShowMessageAndWait(ACTOR_LOFT_MAYOR, 30);
-  Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_STRONGMAN_OPENING_THE_CHESTS, 0);
-  VaultInteriors_FaceActorAndWait(GARET, ACTOR_STRONGMAN_OPENING_THE_CHESTS,
-                                  40);
-  Actor_FaceDirection(ACTOR_STRONGMAN_OPENING_THE_CHESTS, FACING_EAST, 0);
-  Engine_EventWait(40);
+  Engine_ObjectEventRunRepeatedMotion(LOCALID_STRONGMAN_OPENING_THE_CHESTS, 1);
+  VaultInteriors_ShowMessageAndWait(LOCALID_STRONGMAN_OPENING_THE_CHESTS, 20);
+  VaultInteriors_FaceEachOtherAndWait(LOCALID_PARTY_LEADER, GARET, 40);
+  VaultInteriors_FaceObjectEventAndWait(
+      LOCALID_LOFT_MAYOR, LOCALID_STRONGMAN_OPENING_THE_CHESTS, 20);
+  VaultInteriors_PlayAnimationAndWait(LOCALID_LOFT_MAYOR, ANIMATION_NOD, 20);
+  VaultInteriors_ShowMessageAndWait(LOCALID_LOFT_MAYOR, 30);
+  ObjectEvent_FaceObjectEvent(LOCALID_PARTY_LEADER,
+                              LOCALID_STRONGMAN_OPENING_THE_CHESTS, 0);
+  VaultInteriors_FaceObjectEventAndWait(
+      GARET, LOCALID_STRONGMAN_OPENING_THE_CHESTS, 40);
+  ObjectEvent_FaceDirection(LOCALID_STRONGMAN_OPENING_THE_CHESTS, FACING_EAST,
+                            0);
+  Engine_ScriptWait(40);
   // The villager opening the chests opens the second: the gold statue stolen
   // from the Sanctum.
-  Engine_ActorRunRepeatedMotion(ACTOR_STRONGMAN_OPENING_THE_CHESTS, 2);
-  Event_PlayCue(SE_124);
-  Engine_ActorSetAnimation(ACTOR_SECOND_CHEST, ANIMATION_SHAKE_HEAD);
-  Object_GetById(ACTOR_FOUND_STATUE)->motionFlags = 0;
-  Engine_ActorSetSpritePriority(ACTOR_FOUND_STATUE, 1);
-  Actor_SetPosition(ACTOR_FOUND_STATUE, PIXELS(872), PIXELS(408));
-  Actor_SetSpeed(ACTOR_FOUND_STATUE, PIXELS(4) / 5, PIXELS(2) / 5);
-  Actor_SetDestinationOffset(ACTOR_FOUND_STATUE, 0, -8);
-  Engine_ActorWaitForMove(ACTOR_FOUND_STATUE);
-  Engine_ActorRunRepeatedMotion(ACTOR_FOUND_STATUE, 2);
-  Engine_EventWait(60);
+  Engine_ObjectEventRunRepeatedMotion(LOCALID_STRONGMAN_OPENING_THE_CHESTS, 2);
+  Script_PlayCue(SE_124);
+  Engine_ObjectEventSetAnimation(LOCALID_SECOND_CHEST, ANIMATION_SHAKE_HEAD);
+  ObjectEvent_GetById(LOCALID_FOUND_STATUE)->motionFlags = 0;
+  Engine_ObjectEventSetSpritePriority(LOCALID_FOUND_STATUE, 1);
+  ObjectEvent_SetPosition(LOCALID_FOUND_STATUE, PIXELS(872), PIXELS(408));
+  ObjectEvent_SetSpeed(LOCALID_FOUND_STATUE, PIXELS(4) / 5, PIXELS(2) / 5);
+  ObjectEvent_SetDestinationOffset(LOCALID_FOUND_STATUE, 0, -8);
+  Engine_ObjectEventWaitForMove(LOCALID_FOUND_STATUE);
+  Engine_ObjectEventRunRepeatedMotion(LOCALID_FOUND_STATUE, 2);
+  Engine_ScriptWait(60);
   Engine_MessageShowCentered((aftermath + 8), 1);
-  Engine_ActorSetAnimation(ACTOR_SECOND_CHEST, ANIMATION_WALK);
-  Actor_SetPosition(ACTOR_FOUND_STATUE, 0, 0);
+  Engine_ObjectEventSetAnimation(LOCALID_SECOND_CHEST, ANIMATION_WALK);
+  ObjectEvent_SetPosition(LOCALID_FOUND_STATUE, 0, 0);
   gEventWork->message++;
-  Actor_ShowEmote(ACTOR_LOFT_MAYOR, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
-  Engine_EventWait(60);
-  VaultInteriors_ShowMessageAndWait(ACTOR_LOFT_MAYOR, 20);
-  Engine_ActorStartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
-  Engine_ActorStartRepeatedMotion(GARET, 2);
-  Engine_ActorRunRepeatedMotion(IVAN, 2);
-  Engine_EventWait(20);
-  VaultInteriors_PlayAnimationAndWait(ACTOR_STRONGMAN_OPENING_THE_CHESTS,
+  ObjectEvent_ShowEmote(LOCALID_LOFT_MAYOR, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
+  Engine_ScriptWait(60);
+  VaultInteriors_ShowMessageAndWait(LOCALID_LOFT_MAYOR, 20);
+  Engine_ObjectEventStartRepeatedMotion(LOCALID_PARTY_LEADER, 2);
+  Engine_ObjectEventStartRepeatedMotion(GARET, 2);
+  Engine_ObjectEventRunRepeatedMotion(IVAN, 2);
+  Engine_ScriptWait(20);
+  VaultInteriors_PlayAnimationAndWait(LOCALID_STRONGMAN_OPENING_THE_CHESTS,
                                       ANIMATION_NOD, 50);
-  VaultInteriors_FaceActorAndWait(ACTOR_LOFT_MAYOR, ACTOR_PARTY_LEADER, 20);
-  VaultInteriors_ShowMessageAndWait(ACTOR_LOFT_MAYOR, 30);
+  VaultInteriors_FaceObjectEventAndWait(LOCALID_LOFT_MAYOR,
+                                        LOCALID_PARTY_LEADER, 20);
+  VaultInteriors_ShowMessageAndWait(LOCALID_LOFT_MAYOR, 30);
   // The villager opening the chests finds another chest; the mayor asks whether
   // it is what Ivan was looking for, and he can return to Master Hammet.
-  Actor_FaceDirection(ACTOR_STRONGMAN_OPENING_THE_CHESTS,
-                      FACING_NORTH + FACING_STEP, 0);
-  Engine_EventWait(30);
-  Actor_ShowEmote(ACTOR_STRONGMAN_OPENING_THE_CHESTS,
-                  EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
-  Engine_EventWait(60);
-  Actor_WalkToAndWait(ACTOR_STRONGMAN_OPENING_THE_CHESTS, 856, 376);
-  Engine_EventWait(20);
-  VaultInteriors_FaceActorAndWait(ACTOR_STRONGMAN_OPENING_THE_CHESTS,
-                                  ACTOR_LOFT_MAYOR, 20);
-  VaultInteriors_ShowMessageAndWait(ACTOR_STRONGMAN_OPENING_THE_CHESTS, 20);
-  Actor_FaceActor(ACTOR_LOFT_MAYOR, ACTOR_STRONGMAN_OPENING_THE_CHESTS, 0);
-  Actor_ShowEmote(IVAN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
-  Engine_EventWait(60);
-  VaultInteriors_FaceActorAndWait(IVAN, ACTOR_STRONGMAN_OPENING_THE_CHESTS, 30);
-  VaultInteriors_FaceActorAndWait(ACTOR_LOFT_MAYOR, IVAN, 20);
-  VaultInteriors_PlayAnimationAndWait(ACTOR_LOFT_MAYOR, ANIMATION_NOD, 20);
-  Event_ShowMessage(ACTOR_LOFT_MAYOR, 0);
-  Actor_FaceDirection(ACTOR_STRONGMAN_OPENING_THE_CHESTS,
-                      FACING_SOUTH + FACING_STEP, 0);
-  Engine_EventWait(30);
-  VaultInteriors_FaceActorAndWait(IVAN, ACTOR_LOFT_MAYOR, 20);
+  ObjectEvent_FaceDirection(LOCALID_STRONGMAN_OPENING_THE_CHESTS,
+                            FACING_NORTH + FACING_STEP, 0);
+  Engine_ScriptWait(30);
+  ObjectEvent_ShowEmote(LOCALID_STRONGMAN_OPENING_THE_CHESTS,
+                        EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+  Engine_ScriptWait(60);
+  ObjectEvent_WalkToAndWait(LOCALID_STRONGMAN_OPENING_THE_CHESTS, 856, 376);
+  Engine_ScriptWait(20);
+  VaultInteriors_FaceObjectEventAndWait(LOCALID_STRONGMAN_OPENING_THE_CHESTS,
+                                        LOCALID_LOFT_MAYOR, 20);
+  VaultInteriors_ShowMessageAndWait(LOCALID_STRONGMAN_OPENING_THE_CHESTS, 20);
+  ObjectEvent_FaceObjectEvent(LOCALID_LOFT_MAYOR,
+                              LOCALID_STRONGMAN_OPENING_THE_CHESTS, 0);
+  ObjectEvent_ShowEmote(IVAN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+  Engine_ScriptWait(60);
+  VaultInteriors_FaceObjectEventAndWait(
+      IVAN, LOCALID_STRONGMAN_OPENING_THE_CHESTS, 30);
+  VaultInteriors_FaceObjectEventAndWait(LOCALID_LOFT_MAYOR, IVAN, 20);
+  VaultInteriors_PlayAnimationAndWait(LOCALID_LOFT_MAYOR, ANIMATION_NOD, 20);
+  Script_ShowMessage(LOCALID_LOFT_MAYOR, 0);
+  ObjectEvent_FaceDirection(LOCALID_STRONGMAN_OPENING_THE_CHESTS,
+                            FACING_SOUTH + FACING_STEP, 0);
+  Engine_ScriptWait(30);
+  VaultInteriors_FaceObjectEventAndWait(IVAN, LOCALID_LOFT_MAYOR, 20);
   VaultInteriors_PlayAnimationAndWait(IVAN, ANIMATION_NOD, 20);
-  VaultInteriors_ShowMessageAndWait(ACTOR_LOFT_MAYOR, 20);
-  Engine_ActorFaceEachOther(ACTOR_PARTY_LEADER, IVAN, 0);
-  VaultInteriors_FaceActorAndWait(GARET, IVAN, 20);
-  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIMATION_NOD);
+  VaultInteriors_ShowMessageAndWait(LOCALID_LOFT_MAYOR, 20);
+  Engine_ObjectEventFaceEachOther(LOCALID_PARTY_LEADER, IVAN, 0);
+  VaultInteriors_FaceObjectEventAndWait(GARET, IVAN, 20);
+  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIMATION_NOD);
   VaultInteriors_PlayAnimationAndWait(GARET, ANIMATION_NOD, 40);
   VaultInteriors_PlayAnimationAndWait(IVAN, ANIMATION_NOD, 30);
   // Hammet was seen heading toward Lunpa: Dodonpa must have kidnapped him.
-  Engine_ActorRunRepeatedMotion(ACTOR_LOFT_MAYOR, 1);
-  Engine_EventWait(20);
-  VaultInteriors_PlayAnimationAndWait(ACTOR_LOFT_MAYOR, ANIMATION_SHAKE_HEAD,
+  Engine_ObjectEventRunRepeatedMotion(LOCALID_LOFT_MAYOR, 1);
+  Engine_ScriptWait(20);
+  VaultInteriors_PlayAnimationAndWait(LOCALID_LOFT_MAYOR, ANIMATION_SHAKE_HEAD,
                                       20);
-  VaultInteriors_ShowMessageAndWait(ACTOR_LOFT_MAYOR, 20);
-  Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_LOFT_MAYOR, 0);
-  Actor_FaceActor(GARET, ACTOR_LOFT_MAYOR, 0);
-  VaultInteriors_FaceActorAndWait(IVAN, ACTOR_LOFT_MAYOR, 20);
-  Engine_ActorStartRepeatedMotion(ACTOR_PARTY_LEADER, 1);
-  Engine_ActorStartRepeatedMotion(GARET, 1);
-  Actor_ShowEmote(IVAN, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
-  Engine_EventWait(60);
+  VaultInteriors_ShowMessageAndWait(LOCALID_LOFT_MAYOR, 20);
+  ObjectEvent_FaceObjectEvent(LOCALID_PARTY_LEADER, LOCALID_LOFT_MAYOR, 0);
+  ObjectEvent_FaceObjectEvent(GARET, LOCALID_LOFT_MAYOR, 0);
+  VaultInteriors_FaceObjectEventAndWait(IVAN, LOCALID_LOFT_MAYOR, 20);
+  Engine_ObjectEventStartRepeatedMotion(LOCALID_PARTY_LEADER, 1);
+  Engine_ObjectEventStartRepeatedMotion(GARET, 1);
+  ObjectEvent_ShowEmote(IVAN, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
+  Engine_ScriptWait(60);
   VaultInteriors_ShowMessageAndWait(IVAN, 40);
-  VaultInteriors_PlayAnimationAndWait(ACTOR_LOFT_MAYOR, ANIMATION_NOD, 20);
-  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIMATION_SHAKE_HEAD);
-  Engine_ActorSetAnimationAndWait(GARET, ANIMATION_SHAKE_HEAD);
-  Engine_ActorRunRepeatedMotion(IVAN, 3);
-  Engine_EventWait(30);
-  VaultInteriors_PlayAnimationAndWait(ACTOR_LOFT_MAYOR, ANIMATION_SHAKE_HEAD,
+  VaultInteriors_PlayAnimationAndWait(LOCALID_LOFT_MAYOR, ANIMATION_NOD, 20);
+  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIMATION_SHAKE_HEAD);
+  Engine_ObjectEventSetAnimationAndWait(GARET, ANIMATION_SHAKE_HEAD);
+  Engine_ObjectEventRunRepeatedMotion(IVAN, 3);
+  Engine_ScriptWait(30);
+  VaultInteriors_PlayAnimationAndWait(LOCALID_LOFT_MAYOR, ANIMATION_SHAKE_HEAD,
                                       20);
-  VaultInteriors_ShowMessageAndWait(ACTOR_LOFT_MAYOR, 20);
-  VaultInteriors_FaceEachOtherAndWait(ACTOR_PARTY_LEADER, GARET, 20);
+  VaultInteriors_ShowMessageAndWait(LOCALID_LOFT_MAYOR, 20);
+  VaultInteriors_FaceEachOtherAndWait(LOCALID_PARTY_LEADER, GARET, 20);
   // Ivan rushes forward: what will happen to Hammet? The mayor calms him:
   // Dodonpa wants a ransom, so Hammet is safe for now.
-  Engine_ActorRunRepeatedMotion(IVAN, 2);
+  Engine_ObjectEventRunRepeatedMotion(IVAN, 2);
   VaultInteriors_PlayAnimationAndWait(IVAN, ANIMATION_SHAKE_HEAD, 30);
-  Actor_SetSpeed(IVAN, PIXELS(3) / 2, PIXELS(3) / 4);
-  Actor_WalkToAndWait(IVAN, 800, 408);
-  Engine_ActorRunRepeatedMotion(IVAN, 2);
-  Event_ShowMessage(IVAN, 0);
-  Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_LOFT_MAYOR, 0);
-  VaultInteriors_FaceActorAndWait(GARET, ACTOR_LOFT_MAYOR, 30);
-  VaultInteriors_PlayAnimationAndWait(ACTOR_LOFT_MAYOR, ANIMATION_SHAKE_HEAD,
+  ObjectEvent_SetSpeed(IVAN, PIXELS(3) / 2, PIXELS(3) / 4);
+  ObjectEvent_WalkToAndWait(IVAN, 800, 408);
+  Engine_ObjectEventRunRepeatedMotion(IVAN, 2);
+  Script_ShowMessage(IVAN, 0);
+  ObjectEvent_FaceObjectEvent(LOCALID_PARTY_LEADER, LOCALID_LOFT_MAYOR, 0);
+  VaultInteriors_FaceObjectEventAndWait(GARET, LOCALID_LOFT_MAYOR, 30);
+  VaultInteriors_PlayAnimationAndWait(LOCALID_LOFT_MAYOR, ANIMATION_SHAKE_HEAD,
                                       20);
-  VaultInteriors_ShowMessageAndWait(ACTOR_LOFT_MAYOR, 20);
-  Actor_SetAttachedEffect(ACTOR_PARTY_LEADER,
-                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-  Actor_SetAttachedEffect(GARET,
-                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-  Actor_SetAttachedEffect(IVAN,
-                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-  Engine_EventWait(60);
+  VaultInteriors_ShowMessageAndWait(LOCALID_LOFT_MAYOR, 20);
+  ObjectEvent_SetAttachedEffect(LOCALID_PARTY_LEADER, ATTACHED_EFFECT_IN_FRONT |
+                                                          ATTACHED_EFFECT_ONCE);
+  ObjectEvent_SetAttachedEffect(GARET, ATTACHED_EFFECT_IN_FRONT |
+                                           ATTACHED_EFFECT_ONCE);
+  ObjectEvent_SetAttachedEffect(IVAN, ATTACHED_EFFECT_IN_FRONT |
+                                          ATTACHED_EFFECT_ONCE);
+  Engine_ScriptWait(60);
   VaultInteriors_ShowMessageAndWait(IVAN, 20);
-  Engine_ActorRunRepeatedMotion(ACTOR_LOFT_MAYOR, 1);
-  Engine_EventWait(20);
-  VaultInteriors_ShowMessageAndWait(ACTOR_LOFT_MAYOR, 20);
-  Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
-  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
-  Actor_ShowEmote(IVAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
-  Engine_EventWait(60);
-  VaultInteriors_PlayAnimationAndWait(ACTOR_LOFT_MAYOR, ANIMATION_SHAKE_HEAD,
+  Engine_ObjectEventRunRepeatedMotion(LOCALID_LOFT_MAYOR, 1);
+  Engine_ScriptWait(20);
+  VaultInteriors_ShowMessageAndWait(LOCALID_LOFT_MAYOR, 20);
+  ObjectEvent_ShowEmote(LOCALID_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_QUESTION,
+                        0);
+  ObjectEvent_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
+  ObjectEvent_ShowEmote(IVAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
+  Engine_ScriptWait(60);
+  VaultInteriors_PlayAnimationAndWait(LOCALID_LOFT_MAYOR, ANIMATION_SHAKE_HEAD,
                                       20);
-  VaultInteriors_ShowMessageAndWait(ACTOR_LOFT_MAYOR, 20);
-  Engine_ActorStartRepeatedMotion(ACTOR_PARTY_LEADER, 1);
-  Engine_ActorStartRepeatedMotion(GARET, 1);
-  Engine_ActorRunRepeatedMotion(IVAN, 1);
-  Engine_EventWait(20);
-  VaultInteriors_PlayAnimationAndWait(ACTOR_LOFT_MAYOR, ANIMATION_NOD, 20);
-  VaultInteriors_ShowMessageAndWait(ACTOR_LOFT_MAYOR, 40);
+  VaultInteriors_ShowMessageAndWait(LOCALID_LOFT_MAYOR, 20);
+  Engine_ObjectEventStartRepeatedMotion(LOCALID_PARTY_LEADER, 1);
+  Engine_ObjectEventStartRepeatedMotion(GARET, 1);
+  Engine_ObjectEventRunRepeatedMotion(IVAN, 1);
+  Engine_ScriptWait(20);
+  VaultInteriors_PlayAnimationAndWait(LOCALID_LOFT_MAYOR, ANIMATION_NOD, 20);
+  VaultInteriors_ShowMessageAndWait(LOCALID_LOFT_MAYOR, 40);
   // The mayor asks the two their names, thanks them, and asks them to come
   // see him before they leave town.
-  Actor_ShowEmote(IVAN, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
-  Engine_EventWait(60);
-  Actor_WalkToAndWait(ACTOR_LOFT_MAYOR, 840, 424);
-  VaultInteriors_FaceEachOtherAndWait(ACTOR_LOFT_MAYOR, ACTOR_PARTY_LEADER, 20);
-  VaultInteriors_ShowMessageAndWait(ACTOR_LOFT_MAYOR, 20);
-  VaultInteriors_PlayAnimationAndWait(ACTOR_PARTY_LEADER, ANIMATION_NOD, 20);
-  Actor_FaceDirection(ACTOR_LOFT_MAYOR, FACING_SOUTH + FACING_STEP, 0);
-  Engine_EventWait(20);
-  VaultInteriors_ShowMessageAndWait(ACTOR_LOFT_MAYOR, 20);
-  Engine_ActorRunRepeatedMotion(GARET, 1);
-  Engine_EventWait(20);
+  ObjectEvent_ShowEmote(IVAN, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
+  Engine_ScriptWait(60);
+  ObjectEvent_WalkToAndWait(LOCALID_LOFT_MAYOR, 840, 424);
+  VaultInteriors_FaceEachOtherAndWait(LOCALID_LOFT_MAYOR, LOCALID_PARTY_LEADER,
+                                      20);
+  VaultInteriors_ShowMessageAndWait(LOCALID_LOFT_MAYOR, 20);
+  VaultInteriors_PlayAnimationAndWait(LOCALID_PARTY_LEADER, ANIMATION_NOD, 20);
+  ObjectEvent_FaceDirection(LOCALID_LOFT_MAYOR, FACING_SOUTH + FACING_STEP, 0);
+  Engine_ScriptWait(20);
+  VaultInteriors_ShowMessageAndWait(LOCALID_LOFT_MAYOR, 20);
+  Engine_ObjectEventRunRepeatedMotion(GARET, 1);
+  Engine_ScriptWait(20);
   VaultInteriors_ShowMessageAndWait(GARET, 20);
-  VaultInteriors_PlayAnimationAndWait(ACTOR_LOFT_MAYOR, ANIMATION_NOD, 20);
-  VaultInteriors_ShowMessageAndWait(ACTOR_LOFT_MAYOR, 30);
-  VaultInteriors_FaceEachOtherAndWait(ACTOR_LOFT_MAYOR,
-                                      ACTOR_STRONGMAN_OPENING_THE_CHESTS, 20);
-  VaultInteriors_ShowMessageAndWait(ACTOR_LOFT_MAYOR, 20);
+  VaultInteriors_PlayAnimationAndWait(LOCALID_LOFT_MAYOR, ANIMATION_NOD, 20);
+  VaultInteriors_ShowMessageAndWait(LOCALID_LOFT_MAYOR, 30);
+  VaultInteriors_FaceEachOtherAndWait(LOCALID_LOFT_MAYOR,
+                                      LOCALID_STRONGMAN_OPENING_THE_CHESTS, 20);
+  VaultInteriors_ShowMessageAndWait(LOCALID_LOFT_MAYOR, 20);
   // The mayor and the villager opening the chests leave down the ladder.
-  Actor_WalkToAndWait(ACTOR_STRONGMAN_OPENING_THE_CHESTS, 856, 408);
-  Actor_SetActionScript(ACTOR_LOFT_MAYOR, gVaultInteriors_VaultScriptE);
-  Actor_SetActionScript(ACTOR_STRONGMAN_OPENING_THE_CHESTS,
-                        gVaultInteriors_VaultScriptE);
-  Actor_WalkTo(GARET, 792, 456);
-  Actor_SetSpeed(IVAN, PIXELS(4) / 5, PIXELS(2) / 5);
-  Actor_WalkTo(IVAN, 776, 432);
-  Engine_ActorWaitForMove(GARET);
-  Actor_FaceDirection(GARET, FACING_NORTH + FACING_STEP, 0);
-  Engine_ActorWaitForMove(IVAN);
-  Actor_FaceDirection(IVAN, FACING_NORTH + FACING_STEP, 0);
-  Object_RefreshSelectorById(ACTOR_LOFT_MAYOR);
-  Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_LOFT_MAYOR, 0);
-  temporaryActor = Object_GetById(ACTOR_STRONGMAN_OPENING_THE_CHESTS);
+  ObjectEvent_WalkToAndWait(LOCALID_STRONGMAN_OPENING_THE_CHESTS, 856, 408);
+  ObjectEvent_SetActionScript(LOCALID_LOFT_MAYOR, gVaultInteriors_VaultScriptE);
+  ObjectEvent_SetActionScript(LOCALID_STRONGMAN_OPENING_THE_CHESTS,
+                              gVaultInteriors_VaultScriptE);
+  ObjectEvent_WalkTo(GARET, 792, 456);
+  ObjectEvent_SetSpeed(IVAN, PIXELS(4) / 5, PIXELS(2) / 5);
+  ObjectEvent_WalkTo(IVAN, 776, 432);
+  Engine_ObjectEventWaitForMove(GARET);
+  ObjectEvent_FaceDirection(GARET, FACING_NORTH + FACING_STEP, 0);
+  Engine_ObjectEventWaitForMove(IVAN);
+  ObjectEvent_FaceDirection(IVAN, FACING_NORTH + FACING_STEP, 0);
+  ObjectEvent_RefreshSelectorById(LOCALID_LOFT_MAYOR);
+  ObjectEvent_FaceObjectEvent(LOCALID_PARTY_LEADER, LOCALID_LOFT_MAYOR, 0);
+  temporaryObjectEvent =
+      ObjectEvent_GetById(LOCALID_STRONGMAN_OPENING_THE_CHESTS);
   {
-    u8 *pauseFlag = &temporaryActor->paused;
+    u8 *pauseFlag = &temporaryObjectEvent->paused;
     u8 paused = 1;
 
     *pauseFlag = paused;
   }
-  temporaryActor->targetX = ACTOR_NO_TARGET;
-  temporaryActor->targetY = ACTOR_NO_TARGET;
-  temporaryActor->targetZ = ACTOR_NO_TARGET;
-  Actor_ShowEmote(ACTOR_LOFT_MAYOR, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
-  Engine_ActorSetAnimation(ACTOR_STRONGMAN_OPENING_THE_CHESTS, ANIMATION_STAND);
-  Engine_EventWait(50);
-  Actor_FaceActor(ACTOR_LOFT_MAYOR, ACTOR_PARTY_LEADER, 0);
-  Actor_WalkToAndWait(GARET, 808, 440);
-  Actor_FaceDirection(GARET, FACING_NORTHWEST + FACING_STEP, 0);
-  Engine_EventWait(20);
-  VaultInteriors_ShowMessageAndWait(ACTOR_LOFT_MAYOR, 20);
-  VaultInteriors_FaceEachOtherAndWait(ACTOR_PARTY_LEADER, GARET, 50);
-  Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_LOFT_MAYOR, 0);
-  VaultInteriors_FaceActorAndWait(GARET, ACTOR_LOFT_MAYOR, 20);
-  VaultInteriors_PlayAnimationAndWait(ACTOR_LOFT_MAYOR, ANIMATION_NOD, 20);
-  Actor_WalkTo(ACTOR_LOFT_MAYOR, 744, 408);
-  Actor_WalkTo(ACTOR_STRONGMAN_OPENING_THE_CHESTS, 744, 408);
-  Engine_ActorWaitForMove(ACTOR_LOFT_MAYOR);
-  Engine_ActorWaitForMove(ACTOR_STRONGMAN_OPENING_THE_CHESTS);
-  Engine_EventWait(30);
+  temporaryObjectEvent->targetX = OBJ_EVENT_NO_TARGET;
+  temporaryObjectEvent->targetY = OBJ_EVENT_NO_TARGET;
+  temporaryObjectEvent->targetZ = OBJ_EVENT_NO_TARGET;
+  ObjectEvent_ShowEmote(LOCALID_LOFT_MAYOR, EMOTE_IN_FRONT | EMOTE_EXCLAMATION,
+                        0);
+  Engine_ObjectEventSetAnimation(LOCALID_STRONGMAN_OPENING_THE_CHESTS,
+                                 ANIMATION_STAND);
+  Engine_ScriptWait(50);
+  ObjectEvent_FaceObjectEvent(LOCALID_LOFT_MAYOR, LOCALID_PARTY_LEADER, 0);
+  ObjectEvent_WalkToAndWait(GARET, 808, 440);
+  ObjectEvent_FaceDirection(GARET, FACING_NORTHWEST + FACING_STEP, 0);
+  Engine_ScriptWait(20);
+  VaultInteriors_ShowMessageAndWait(LOCALID_LOFT_MAYOR, 20);
+  VaultInteriors_FaceEachOtherAndWait(LOCALID_PARTY_LEADER, GARET, 50);
+  ObjectEvent_FaceObjectEvent(LOCALID_PARTY_LEADER, LOCALID_LOFT_MAYOR, 0);
+  VaultInteriors_FaceObjectEventAndWait(GARET, LOCALID_LOFT_MAYOR, 20);
+  VaultInteriors_PlayAnimationAndWait(LOCALID_LOFT_MAYOR, ANIMATION_NOD, 20);
+  ObjectEvent_WalkTo(LOCALID_LOFT_MAYOR, 744, 408);
+  ObjectEvent_WalkTo(LOCALID_STRONGMAN_OPENING_THE_CHESTS, 744, 408);
+  Engine_ObjectEventWaitForMove(LOCALID_LOFT_MAYOR);
+  Engine_ObjectEventWaitForMove(LOCALID_STRONGMAN_OPENING_THE_CHESTS);
+  Engine_ScriptWait(30);
   // Alone, Garet tries to cheer Ivan up; Ivan only wants to rescue Hammet,
   // but has seen the two's mission in their minds and won't ask their help.
-  Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 792, 408);
-  VaultInteriors_FaceEachOtherAndWait(ACTOR_PARTY_LEADER, GARET, 30);
-  Actor_ShowEmote(IVAN, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
-  Engine_EventWait(50);
-  Actor_FaceActor(ACTOR_PARTY_LEADER, IVAN, 0);
-  VaultInteriors_FaceActorAndWait(GARET, IVAN, 20);
-  Engine_ActorRunRepeatedMotion(GARET, 1);
-  Engine_EventWait(20);
+  ObjectEvent_WalkToAndWait(LOCALID_PARTY_LEADER, 792, 408);
+  VaultInteriors_FaceEachOtherAndWait(LOCALID_PARTY_LEADER, GARET, 30);
+  ObjectEvent_ShowEmote(IVAN, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
+  Engine_ScriptWait(50);
+  ObjectEvent_FaceObjectEvent(LOCALID_PARTY_LEADER, IVAN, 0);
+  VaultInteriors_FaceObjectEventAndWait(GARET, IVAN, 20);
+  Engine_ObjectEventRunRepeatedMotion(GARET, 1);
+  Engine_ScriptWait(20);
   VaultInteriors_ShowMessageAndWait(GARET, 40);
   VaultInteriors_PlayAnimationAndWait(IVAN, ANIMATION_NOD, 30);
-  VaultInteriors_FaceEachOtherAndWait(ACTOR_PARTY_LEADER, GARET, 40);
-  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIMATION_SHAKE_HEAD);
+  VaultInteriors_FaceEachOtherAndWait(LOCALID_PARTY_LEADER, GARET, 40);
+  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIMATION_SHAKE_HEAD);
   VaultInteriors_PlayAnimationAndWait(GARET, ANIMATION_SHAKE_HEAD, 30);
-  Actor_FaceActor(ACTOR_PARTY_LEADER, IVAN, 0);
-  VaultInteriors_FaceActorAndWait(GARET, IVAN, 20);
-  Engine_ActorRunRepeatedMotion(GARET, 1);
-  Engine_EventWait(20);
+  ObjectEvent_FaceObjectEvent(LOCALID_PARTY_LEADER, IVAN, 0);
+  VaultInteriors_FaceObjectEventAndWait(GARET, IVAN, 20);
+  Engine_ObjectEventRunRepeatedMotion(GARET, 1);
+  Engine_ScriptWait(20);
   VaultInteriors_ShowMessageAndWait(GARET, 40);
-  Engine_ActorRunRepeatedMotion(IVAN, 2);
-  Engine_EventWait(20);
+  Engine_ObjectEventRunRepeatedMotion(IVAN, 2);
+  Engine_ScriptWait(20);
   VaultInteriors_ShowMessageAndWait(IVAN, 20);
-  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIMATION_NOD);
+  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIMATION_NOD);
   VaultInteriors_PlayAnimationAndWait(GARET, ANIMATION_NOD, 20);
   VaultInteriors_PlayAnimationAndWait(IVAN, ANIMATION_SHAKE_HEAD, 20);
   VaultInteriors_ShowMessageAndWait(IVAN, 20);
-  Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
-  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
-  Engine_EventWait(60);
+  ObjectEvent_ShowEmote(LOCALID_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_QUESTION,
+                        0);
+  ObjectEvent_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
+  Engine_ScriptWait(60);
   VaultInteriors_PlayAnimationAndWait(IVAN, ANIMATION_NOD, 20);
   VaultInteriors_ShowMessageAndWait(IVAN, 20);
-  Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
-  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
-  Engine_EventWait(60);
+  ObjectEvent_ShowEmote(LOCALID_PARTY_LEADER,
+                        EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+  ObjectEvent_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+  Engine_ScriptWait(60);
   VaultInteriors_PlayAnimationAndWait(IVAN, ANIMATION_NOD, 20);
   VaultInteriors_ShowMessageAndWait(IVAN, 20);
-  Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
-  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
-  Engine_EventWait(60);
+  ObjectEvent_ShowEmote(LOCALID_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
+  ObjectEvent_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
+  Engine_ScriptWait(60);
   VaultInteriors_PlayAnimationAndWait(IVAN, ANIMATION_SHAKE_HEAD, 20);
   VaultInteriors_ShowMessageAndWait(IVAN, 20);
   VaultInteriors_PlayAnimationAndWait(GARET, ANIMATION_NOD, 20);
   VaultInteriors_ShowMessageAndWait(GARET, 30);
   // "Then, I suppose this is good-bye." A no has Garet say Isaac would help,
   // and Ivan decline.
-  Event_OpenMessage(IVAN, 0);
-  if (Engine_EventChooseYesNo(0, 0) != 0) {
-    Engine_EventWait(20);
-    Engine_ActorRunRepeatedMotion(GARET, 1);
-    Engine_EventWait(20);
+  Script_OpenMessage(IVAN, 0);
+  if (Engine_ScriptChooseYesNo(0, 0) != 0) {
+    Engine_ScriptWait(20);
+    Engine_ObjectEventRunRepeatedMotion(GARET, 1);
+    Engine_ScriptWait(20);
     VaultInteriors_ShowMessageAndWait(GARET, 20);
     VaultInteriors_PlayAnimationAndWait(IVAN, ANIMATION_SHAKE_HEAD, 20);
     VaultInteriors_ShowMessageAndWait(IVAN, 20);
   }
   // Ivan walks round to the third chest and takes the Shaman's Rod from it.
   VaultInteriors_PlayAnimationAndWait(IVAN, ANIMATION_NOD, 30);
-  Actor_WalkToAndWait(IVAN, 800, 456);
-  Actor_FaceActor(ACTOR_PARTY_LEADER, IVAN, 0);
-  Actor_FaceActor(GARET, IVAN, 0);
-  Actor_WalkToAndWait(IVAN, 856, 456);
-  Actor_FaceActor(ACTOR_PARTY_LEADER, IVAN, 0);
-  Actor_FaceActor(GARET, IVAN, 0);
-  Actor_WalkToAndWait(IVAN, 856, 376);
-  Actor_FaceActor(ACTOR_PARTY_LEADER, IVAN, 0);
-  Actor_FaceActor(GARET, IVAN, 0);
-  Actor_FaceDirection(IVAN, FACING_EAST, 0);
-  Engine_EventWait(20);
-  Engine_ActorRunRepeatedMotion(IVAN, 2);
-  temporaryActor =
-      (struct FieldActor *)FieldEffect_PlayCueAndStartEmitterOnTarget(
-          IVAN, ACTOR_THIRD_CHEST, ITEM_SHAMANS_ROD);
-  Engine_EventWait(60);
+  ObjectEvent_WalkToAndWait(IVAN, 800, 456);
+  ObjectEvent_FaceObjectEvent(LOCALID_PARTY_LEADER, IVAN, 0);
+  ObjectEvent_FaceObjectEvent(GARET, IVAN, 0);
+  ObjectEvent_WalkToAndWait(IVAN, 856, 456);
+  ObjectEvent_FaceObjectEvent(LOCALID_PARTY_LEADER, IVAN, 0);
+  ObjectEvent_FaceObjectEvent(GARET, IVAN, 0);
+  ObjectEvent_WalkToAndWait(IVAN, 856, 376);
+  ObjectEvent_FaceObjectEvent(LOCALID_PARTY_LEADER, IVAN, 0);
+  ObjectEvent_FaceObjectEvent(GARET, IVAN, 0);
+  ObjectEvent_FaceDirection(IVAN, FACING_EAST, 0);
+  Engine_ScriptWait(20);
+  Engine_ObjectEventRunRepeatedMotion(IVAN, 2);
+  temporaryObjectEvent =
+      (struct ObjectEvent *)FieldEffect_PlayCueAndStartEmitterOnTarget(
+          IVAN, LOCALID_THIRD_CHEST, ITEM_SHAMANS_ROD);
+  Engine_ScriptWait(60);
   rod = MsgVaultIvanGotShamansRod;
   Engine_MessageShowCentered(rod, 1);
-  Engine_ObjectDispatchRelease(temporaryActor);
-  Engine_ActorSetAnimation(ACTOR_THIRD_CHEST, ANIMATION_WALK);
-  Engine_EventWait(20);
+  Engine_ObjectDispatchRelease(temporaryObjectEvent);
+  Engine_ObjectEventSetAnimation(LOCALID_THIRD_CHEST, ANIMATION_WALK);
+  Engine_ScriptWait(20);
   VaultInteriors_PlayAnimationAndWait(IVAN, ANIMATION_NOD, 20);
-  Actor_WalkToAndWait(IVAN, 856, 456);
-  Actor_FaceActor(ACTOR_PARTY_LEADER, IVAN, 0);
-  Actor_FaceActor(GARET, IVAN, 0);
-  Actor_WalkToAndWait(IVAN, 800, 456);
-  Actor_FaceActor(ACTOR_PARTY_LEADER, IVAN, 0);
-  Actor_FaceActor(GARET, IVAN, 0);
-  Actor_WalkToAndWait(IVAN, 776, 424);
-  Engine_ActorFaceEachOther(ACTOR_PARTY_LEADER, IVAN, 0);
-  VaultInteriors_FaceActorAndWait(GARET, IVAN, 30);
+  ObjectEvent_WalkToAndWait(IVAN, 856, 456);
+  ObjectEvent_FaceObjectEvent(LOCALID_PARTY_LEADER, IVAN, 0);
+  ObjectEvent_FaceObjectEvent(GARET, IVAN, 0);
+  ObjectEvent_WalkToAndWait(IVAN, 800, 456);
+  ObjectEvent_FaceObjectEvent(LOCALID_PARTY_LEADER, IVAN, 0);
+  ObjectEvent_FaceObjectEvent(GARET, IVAN, 0);
+  ObjectEvent_WalkToAndWait(IVAN, 776, 424);
+  Engine_ObjectEventFaceEachOther(LOCALID_PARTY_LEADER, IVAN, 0);
+  VaultInteriors_FaceObjectEventAndWait(GARET, IVAN, 30);
   // He thanks the town, hands back any Venus Djinni and leaves the party.
   VaultInteriors_PlayAnimationAndWait(IVAN, ANIMATION_NOD, 20);
-  Engine_EventSetMessage((rod + 1));
+  Engine_ScriptSetMessage((rod + 1));
   VaultInteriors_ShowMessageAndWait(IVAN, 20);
-  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIMATION_NOD);
+  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIMATION_NOD);
   {
     u16 *slot = &work->message;
     s32 saved = (s16)*slot;
 
     if (VaultInteriors_GetIvanVenusDjinnCount() != 0) {
-      Engine_EventSetMessage(MsgVaultWaitDontWantTakeYour);
-      Event_ShowMessage(IVAN, 0);
+      Engine_ScriptSetMessage(MsgVaultWaitDontWantTakeYour);
+      Script_ShowMessage(IVAN, 0);
       Vault_ReturnIsaacsDjinni();
     }
     Party_RemoveOwnerRestored(IVAN);
     *slot = saved;
   }
   VaultInteriors_PlayAnimationAndWait(GARET, ANIMATION_NOD, 50);
-  Actor_WalkToAndWait(IVAN, 776, 408);
-  Actor_FaceActor(ACTOR_PARTY_LEADER, IVAN, 0);
-  Actor_FaceActor(GARET, IVAN, 0);
+  ObjectEvent_WalkToAndWait(IVAN, 776, 408);
+  ObjectEvent_FaceObjectEvent(LOCALID_PARTY_LEADER, IVAN, 0);
+  ObjectEvent_FaceObjectEvent(GARET, IVAN, 0);
   // Ivan goes down the ladder; Garet: they'd better get moving too.
-  Actor_WalkToAndWait(IVAN, 744, 408);
-  Engine_EventWait(40);
-  VaultInteriors_FaceEachOtherAndWait(ACTOR_PARTY_LEADER, GARET, 20);
-  Engine_ActorRunRepeatedMotion(GARET, 1);
-  Engine_EventWait(20);
+  ObjectEvent_WalkToAndWait(IVAN, 744, 408);
+  Engine_ScriptWait(40);
+  VaultInteriors_FaceEachOtherAndWait(LOCALID_PARTY_LEADER, GARET, 20);
+  Engine_ObjectEventRunRepeatedMotion(GARET, 1);
+  Engine_ScriptWait(20);
   VaultInteriors_ShowMessageAndWait(GARET, 20);
-  VaultInteriors_PlayAnimationAndWait(ACTOR_PARTY_LEADER, ANIMATION_NOD, 20);
-  Engine_ActorSetAnimation(GARET, ANIMATION_WALK);
-  actor = Object_GetById(ACTOR_PARTY_LEADER);
-  if (actor != NULL) {
-    Actor_SetDestination(GARET, actor->x.part.pixel, actor->z.part.pixel);
+  VaultInteriors_PlayAnimationAndWait(LOCALID_PARTY_LEADER, ANIMATION_NOD, 20);
+  Engine_ObjectEventSetAnimation(GARET, ANIMATION_WALK);
+  objectEvent = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
+  if (objectEvent != NULL) {
+    ObjectEvent_SetDestination(GARET, objectEvent->x.part.pixel,
+                               objectEvent->z.part.pixel);
   }
-  Engine_ActorWaitForMove(GARET);
-  Actor_SetPosition(GARET, 0, 0);
-  Engine_EventWait(30);
+  Engine_ObjectEventWaitForMove(GARET);
+  ObjectEvent_SetPosition(GARET, 0, 0);
+  Engine_ScriptWait(30);
   // Clear the loft of everyone the cutscene used.
-  Actor_SetPosition(ACTOR_TIED_UP_VILLAGER, 0, 0);
-  Actor_SetPosition(ACTOR_LOFT_MAYOR, 0, 0);
-  Actor_SetPosition(ACTOR_LOFT_ESCORT, 0, 0);
-  Actor_SetPosition(ACTOR_STRONGMAN_OPENING_THE_CHESTS, 0, 0);
-  Actor_SetPosition(ACTOR_THIEF_LEADER, 0, 0);
-  Actor_SetPosition(ACTOR_FIRST_THIEF, 0, 0);
-  Actor_SetPosition(ACTOR_SECOND_THIEF, 0, 0);
-  Actor_SetPosition(IVAN, 0, 0);
+  ObjectEvent_SetPosition(LOCALID_TIED_UP_VILLAGER, 0, 0);
+  ObjectEvent_SetPosition(LOCALID_LOFT_MAYOR, 0, 0);
+  ObjectEvent_SetPosition(LOCALID_LOFT_ESCORT, 0, 0);
+  ObjectEvent_SetPosition(LOCALID_STRONGMAN_OPENING_THE_CHESTS, 0, 0);
+  ObjectEvent_SetPosition(LOCALID_THIEF_LEADER, 0, 0);
+  ObjectEvent_SetPosition(LOCALID_FIRST_THIEF, 0, 0);
+  ObjectEvent_SetPosition(LOCALID_SECOND_THIEF, 0, 0);
+  ObjectEvent_SetPosition(IVAN, 0, 0);
   gEventWork->startTransition =
-      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
-  Engine_EventEnd();
+      MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
+  Engine_ScriptEnd();
 }
 
 /// Opens the window transition and waits one frame after it finishes.
@@ -3163,35 +3259,37 @@ static void VaultInteriors_OpenWindowTransition(void) {
 
   state = gEventWork;
   state->startTransition =
-      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
-  Engine_EventOpenScreen();
-  Engine_EventWaitForScreen();
-  Engine_EventWait(1);
+      MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
+  Engine_ScriptOpenScreen();
+  Engine_ScriptWaitForScreen();
+  Engine_ScriptWait(1);
 }
 
-static void VaultInteriors_ShowMessageAndWait(s32 actorId, s32 waitFrames) {
-  Engine_EventShowMessage(actorId, 0);
-  Engine_EventWait(waitFrames);
+static void VaultInteriors_ShowMessageAndWait(s32 objectEventId,
+                                              s32 waitFrames) {
+  Engine_ScriptShowMessage(objectEventId, 0);
+  Engine_ScriptWait(waitFrames);
 }
 
-static void VaultInteriors_FaceActorAndWait(s32 actorId, s32 targetId,
-                                            s32 waitFrames) {
-  Engine_ActorFaceActor(actorId, targetId, 0);
-  Engine_EventWait(waitFrames);
+static void VaultInteriors_FaceObjectEventAndWait(s32 objectEventId,
+                                                  s32 targetId,
+                                                  s32 waitFrames) {
+  Engine_ObjectEventFaceObjectEvent(objectEventId, targetId, 0);
+  Engine_ScriptWait(waitFrames);
 }
 
 static void VaultInteriors_FaceEachOtherAndWait(s32 firstId, s32 secondId,
                                                 s32 waitFrames) {
-  Engine_ActorFaceEachOther(firstId, secondId, 0);
-  Engine_EventWait(waitFrames);
+  Engine_ObjectEventFaceEachOther(firstId, secondId, 0);
+  Engine_ScriptWait(waitFrames);
 }
 
 /// Waits for the animation to change before the following pause.
-static void VaultInteriors_PlayAnimationAndWait(s32 actorId, s32 animation,
-                                                s32 waitFrames) {
-  Engine_ActorSetAnimation(actorId, animation, waitFrames);
-  ObjectMotion_WaitForAnimationChange(actorId);
-  Engine_EventWait(waitFrames);
+static void VaultInteriors_PlayAnimationAndWait(s32 objectEventId,
+                                                s32 animation, s32 waitFrames) {
+  Engine_ObjectEventSetAnimation(objectEventId, animation, waitFrames);
+  ObjectMotion_WaitForAnimationChange(objectEventId);
+  Engine_ScriptWait(waitFrames);
 }
 
 /// Begins Mind Read, chooses its target, and shows its opening effect.
@@ -3277,17 +3375,17 @@ VaultInteriors_SnapToNearestStop(struct VaultInteriorsStop *node,
 
 /// Checks whether an actor's destination or current position lies within eight
 /// pixels.
-static s32 VaultInteriors_IsActorWithinEightPixels(s32 x, s32 z, s32 id) {
-  struct FieldActor *actor = Engine_ActorLookup(id);
-  s32 targetX = actor->targetX;
+static s32 VaultInteriors_IsObjectEventWithinEightPixels(s32 x, s32 z, s32 id) {
+  struct ObjectEvent *objectEvent = Engine_ObjectEventLookup(id);
+  s32 targetX = objectEvent->targetX;
   s32 targetZ;
 
-  if (targetX == ACTOR_NO_TARGET) {
-    targetX = actor->x.fixed;
+  if (targetX == OBJ_EVENT_NO_TARGET) {
+    targetX = objectEvent->x.fixed;
   }
-  targetZ = actor->targetZ;
-  if (targetZ == ACTOR_NO_TARGET) {
-    targetZ = actor->z.fixed;
+  targetZ = objectEvent->targetZ;
+  if (targetZ == OBJ_EVENT_NO_TARGET) {
+    targetZ = objectEvent->z.fixed;
   }
 
   targetX = (targetX - x) >> 16;
@@ -3299,17 +3397,18 @@ static s32 VaultInteriors_IsActorWithinEightPixels(s32 x, s32 z, s32 id) {
 
 /// Checks whether an actor's destination or current position lies within
 /// sixteen pixels.
-static s32 VaultInteriors_IsActorWithinSixteenPixels(s32 x, s32 z, s32 id) {
-  struct FieldActor *actor = Engine_ActorLookup(id);
+static s32 VaultInteriors_IsObjectEventWithinSixteenPixels(s32 x, s32 z,
+                                                           s32 id) {
+  struct ObjectEvent *objectEvent = Engine_ObjectEventLookup(id);
   s32 ax;
   s32 az;
 
-  ax = actor->targetX;
-  if (ax == ACTOR_NO_TARGET)
-    ax = actor->x.fixed;
-  az = actor->targetZ;
-  if (az == ACTOR_NO_TARGET)
-    az = actor->z.fixed;
+  ax = objectEvent->targetX;
+  if (ax == OBJ_EVENT_NO_TARGET)
+    ax = objectEvent->x.fixed;
+  az = objectEvent->targetZ;
+  if (az == OBJ_EVENT_NO_TARGET)
+    az = objectEvent->z.fixed;
   ax = (ax - x) >> 16;
   az = (az - z) >> 16;
   if (ax * ax + az * az <= 0x100)
@@ -3329,35 +3428,37 @@ static s32 VaultInteriors_CheckStopOccupancy(struct VaultInteriorsStop *stop) {
   }
   x = (stop->gridX << 19) + PIXELS(72);
   z = (stop->gridZ << 19) + PIXELS(632);
-  if (VaultInteriors_IsActorWithinSixteenPixels(x, z, ACTOR_PARTY_LEADER) !=
-          0 ||
-      VaultInteriors_IsActorWithinEightPixels(x, z, IVAN) != 0 ||
-      VaultInteriors_IsActorWithinEightPixels(x, z, ACTOR_SUSPECTED_LEADER) !=
-          0 ||
-      VaultInteriors_IsActorWithinEightPixels(x, z, ACTOR_SUSPECTED_THIEF) !=
-          0) {
+  if (VaultInteriors_IsObjectEventWithinSixteenPixels(
+          x, z, LOCALID_PARTY_LEADER) != 0 ||
+      VaultInteriors_IsObjectEventWithinEightPixels(x, z, IVAN) != 0 ||
+      VaultInteriors_IsObjectEventWithinEightPixels(
+          x, z, LOCALID_SUSPECTED_LEADER) != 0 ||
+      VaultInteriors_IsObjectEventWithinEightPixels(
+          x, z, LOCALID_SUSPECTED_THIEF) != 0) {
     return -1;
   }
   return 0;
 }
 
 /// Sets the actor's destination to the route stop's cell center.
-static void VaultInteriors_MoveActorToStop(struct FieldActor *actor,
-                                           struct VaultInteriorsStop *stop) {
-  Engine_ObjectSetPosition(actor, (stop->gridX << 19) + PIXELS(72), 0,
+static void
+VaultInteriors_MoveObjectEventToStop(struct ObjectEvent *objectEvent,
+                                     struct VaultInteriorsStop *stop) {
+  Engine_ObjectSetPosition(objectEvent, (stop->gridX << 19) + PIXELS(72), 0,
                            (stop->gridZ << 19) + PIXELS(632));
 }
 
 /// Steers Ivan and both suspects through the graph and detects a sustained
 /// cornering.
 ///
-/// Run each frame as a scene callback from VaultInteriors_StartActorStops
-/// until Event_ReadCorneredSuspectsMinds removes it. Raises event 200 plus the
-/// blocked suspects (1 the leader, 2 the thief) after thirty frames with at
-/// least one suspect blocked; a frame when both can move restarts the wait.
-static void VaultInteriors_UpdateActorStops(void) {
-  struct FieldActor *leader;
-  struct FieldActor *actor;
+/// Run each frame as a scene callback from VaultInteriors_StartObjectEventStops
+/// until EventScript_ReadCorneredSuspectsMinds removes it. Raises event 200
+/// plus the blocked suspects (1 the leader, 2 the thief) after thirty frames
+/// with at least one suspect blocked; a frame when both can move restarts the
+/// wait.
+static void VaultInteriors_UpdateObjectEventStops(void) {
+  struct ObjectEvent *leader;
+  struct ObjectEvent *objectEvent;
   struct EventWork *work;
   struct VaultInteriorsStop *entry;
   struct VaultInteriorsStop *destination;
@@ -3368,14 +3469,14 @@ static void VaultInteriors_UpdateActorStops(void) {
   s16 facing;
   s16 facingDifference;
 
-  leader = Engine_ActorLookup(ACTOR_PARTY_LEADER);
+  leader = Engine_ObjectEventLookup(LOCALID_PARTY_LEADER);
   blocked = 0;
   work = gEventWork;
-  actor = Engine_ActorLookup(IVAN);
-  entry = VaultInteriors_FindStopAtPosition(&actor->x.fixed);
-  if (entry != NULL && actor->targetX == ACTOR_NO_TARGET) {
-    dx = actor->x.fixed - leader->x.fixed;
-    dz = actor->z.fixed - leader->z.fixed;
+  objectEvent = Engine_ObjectEventLookup(IVAN);
+  entry = VaultInteriors_FindStopAtPosition(&objectEvent->x.fixed);
+  if (entry != NULL && objectEvent->targetX == OBJ_EVENT_NO_TARGET) {
+    dx = objectEvent->x.fixed - leader->x.fixed;
+    dz = objectEvent->z.fixed - leader->z.fixed;
     facing = leader->facing;
     angle = ArcTan2(dz, dx);
     dx >>= 16;
@@ -3392,70 +3493,70 @@ static void VaultInteriors_UpdateActorStops(void) {
 #else
     } else {
 #endif
-      facing = actor->facing;
+      facing = objectEvent->facing;
     }
     destination = VaultInteriors_SnapToNearestStop(entry, &facing);
     if (VaultInteriors_CheckStopOccupancy(destination) == 0) {
-      VaultInteriors_MoveActorToStop(actor, destination);
-      Object_SetMode(actor, 2);
+      VaultInteriors_MoveObjectEventToStop(objectEvent, destination);
+      ObjectEvent_SetMode(objectEvent, 2);
     } else {
-      Object_SetMode(actor, 1);
+      ObjectEvent_SetMode(objectEvent, 1);
     }
   }
 
   // Each suspect tries a random turn, then reverses when that route is
   // occupied.
-  actor = Engine_ActorLookup(ACTOR_SUSPECTED_LEADER);
-  entry = VaultInteriors_FindStopAtPosition(&actor->x.fixed);
-  if (entry != NULL && actor->targetX == ACTOR_NO_TARGET) {
+  objectEvent = Engine_ObjectEventLookup(LOCALID_SUSPECTED_LEADER);
+  entry = VaultInteriors_FindStopAtPosition(&objectEvent->x.fixed);
+  if (entry != NULL && objectEvent->targetX == OBJ_EVENT_NO_TARGET) {
     u32 turn = (u32)Engine_RandomNext() * 2 >> 16;
     s32 currentFacing;
 
     turn *= 0x60000000;
-    currentFacing = actor->facing;
+    currentFacing = objectEvent->facing;
     facing = ((turn - 0x30000000) >> 16) + currentFacing;
     destination = VaultInteriors_SnapToNearestStop(entry, &facing);
     if (VaultInteriors_CheckStopOccupancy(destination) != 0) {
-      facing = actor->facing + 0x8000;
+      facing = objectEvent->facing + 0x8000;
       destination = VaultInteriors_SnapToNearestStop(entry, &facing);
       if (VaultInteriors_CheckStopOccupancy(destination) == 0) {
-        Engine_ActorSetAttachedEffect(ACTOR_SUSPECTED_LEADER,
-                                      ATTACHED_EFFECT_ONCE);
+        Engine_ObjectEventSetAttachedEffect(LOCALID_SUSPECTED_LEADER,
+                                            ATTACHED_EFFECT_ONCE);
         goto move_first;
       }
-      Object_SetMode(actor, 4);
+      ObjectEvent_SetMode(objectEvent, 4);
       blocked = 1;
     } else {
     move_first:
-      VaultInteriors_MoveActorToStop(actor, destination);
-      Object_SetMode(actor, 2);
+      VaultInteriors_MoveObjectEventToStop(objectEvent, destination);
+      ObjectEvent_SetMode(objectEvent, 2);
     }
   }
 
-  actor = Engine_ActorLookup(ACTOR_SUSPECTED_THIEF);
-  entry = VaultInteriors_FindStopAtPosition(&actor->x.fixed);
-  if (entry != NULL && actor->targetX == ACTOR_NO_TARGET) {
+  objectEvent = Engine_ObjectEventLookup(LOCALID_SUSPECTED_THIEF);
+  entry = VaultInteriors_FindStopAtPosition(&objectEvent->x.fixed);
+  if (entry != NULL && objectEvent->targetX == OBJ_EVENT_NO_TARGET) {
     u32 turn = (u32)Engine_RandomNext() * 3 >> 16;
     s32 currentFacing;
 
     turn *= 0x30000000;
-    currentFacing = actor->facing;
+    currentFacing = objectEvent->facing;
     facing = ((turn - 0x30000000) >> 16) + currentFacing;
     destination = VaultInteriors_SnapToNearestStop(entry, &facing);
     if (VaultInteriors_CheckStopOccupancy(destination) != 0) {
-      facing = actor->facing + 0x8000;
+      facing = objectEvent->facing + 0x8000;
       destination = VaultInteriors_SnapToNearestStop(entry, &facing);
       if (VaultInteriors_CheckStopOccupancy(destination) == 0) {
-        Engine_ActorSetAttachedEffect(ACTOR_SUSPECTED_THIEF,
-                                      ATTACHED_EFFECT_ONCE);
+        Engine_ObjectEventSetAttachedEffect(LOCALID_SUSPECTED_THIEF,
+                                            ATTACHED_EFFECT_ONCE);
         goto move_second;
       }
-      Object_SetMode(actor, 4);
+      ObjectEvent_SetMode(objectEvent, 4);
       blocked += 2;
     } else {
     move_second:
-      VaultInteriors_MoveActorToStop(actor, destination);
-      Object_SetMode(actor, 2);
+      VaultInteriors_MoveObjectEventToStop(objectEvent, destination);
+      ObjectEvent_SetMode(objectEvent, 2);
     }
   }
   // A failed route choice alone is not enough to end the chase.
@@ -3469,38 +3570,39 @@ static void VaultInteriors_UpdateActorStops(void) {
 
 /// Arranges the chase, constrains its camera, and starts the route callback.
 ///
-/// Called by Event_StartCorneringSuspects. Starts
-/// VaultInteriors_UpdateActorStops and the chase music, MUS_009.
-static void VaultInteriors_StartActorStops(void) {
-  Engine_EventStart();
+/// Called by EventScript_StartCorneringSuspects. Starts
+/// VaultInteriors_UpdateObjectEventStops and the chase music, MUS_009.
+static void VaultInteriors_StartObjectEventStops(void) {
+  Engine_ScriptStart();
   Camera_MoveTo(PIXELS(168), -1, PIXELS(656), 1);
-  Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(4) / 5, PIXELS(2) / 5);
-  Actor_SetSpeed(GARET, PIXELS(4) / 5, PIXELS(2) / 5);
-  Actor_SetSpeed(IVAN, PIXELS(4) / 5, PIXELS(2) / 5);
-  Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 248, 696);
-  Actor_SetPosition(GARET, PIXELS(248), PIXELS(696));
-  Actor_SetPosition(IVAN, PIXELS(248), PIXELS(696));
-  Actor_WalkTo(ACTOR_PARTY_LEADER, 200, 696);
-  Actor_WalkTo(GARET, 248, 712);
-  Actor_WalkToAndWait(IVAN, 232, 696);
-  Engine_ActorWaitForMove(GARET);
-  Actor_FaceDirection(GARET, FACING_NORTH, 0);
-  Actor_FaceDirection(IVAN, FACING_WEST, 0);
-  Engine_ActorWaitForMove(ACTOR_PARTY_LEADER);
-  Engine_ActorSetAnimation(GARET, 12);
+  ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(4) / 5, PIXELS(2) / 5);
+  ObjectEvent_SetSpeed(GARET, PIXELS(4) / 5, PIXELS(2) / 5);
+  ObjectEvent_SetSpeed(IVAN, PIXELS(4) / 5, PIXELS(2) / 5);
+  ObjectEvent_WalkToAndWait(LOCALID_PARTY_LEADER, 248, 696);
+  ObjectEvent_SetPosition(GARET, PIXELS(248), PIXELS(696));
+  ObjectEvent_SetPosition(IVAN, PIXELS(248), PIXELS(696));
+  ObjectEvent_WalkTo(LOCALID_PARTY_LEADER, 200, 696);
+  ObjectEvent_WalkTo(GARET, 248, 712);
+  ObjectEvent_WalkToAndWait(IVAN, 232, 696);
+  Engine_ObjectEventWaitForMove(GARET);
+  ObjectEvent_FaceDirection(GARET, FACING_NORTH, 0);
+  ObjectEvent_FaceDirection(IVAN, FACING_WEST, 0);
+  Engine_ObjectEventWaitForMove(LOCALID_PARTY_LEADER);
+  Engine_ObjectEventSetAnimation(GARET, 12);
   VaultInteriors_ResetSuspectRoutes();
-  FieldMap_SetViewBounds(PIXELS(48), PIXELS(576), PIXELS(288), PIXELS(736));
-  Actor_SetSpeed(GARET, PIXELS(1), PIXELS(1) / 2);
-  Actor_SetSpeed(IVAN, PIXELS(3) / 4, PIXELS(3) / 8);
-  Actor_SetSpeed(ACTOR_SUSPECTED_LEADER, PIXELS(1), PIXELS(6) / 5);
-  Actor_SetSpeed(ACTOR_SUSPECTED_THIEF, PIXELS(3) / 2, PIXELS(3) / 2);
+  Field_SetViewBounds(PIXELS(48), PIXELS(576), PIXELS(288), PIXELS(736));
+  ObjectEvent_SetSpeed(GARET, PIXELS(1), PIXELS(1) / 2);
+  ObjectEvent_SetSpeed(IVAN, PIXELS(3) / 4, PIXELS(3) / 8);
+  ObjectEvent_SetSpeed(LOCALID_SUSPECTED_LEADER, PIXELS(1), PIXELS(6) / 5);
+  ObjectEvent_SetSpeed(LOCALID_SUSPECTED_THIEF, PIXELS(3) / 2, PIXELS(3) / 2);
   gVaultInteriors_StopTimer = 0;
-  FieldScheduler_AddOrUpdateCallback(VaultInteriors_UpdateActorStops, 0xc94);
+  FieldScheduler_AddOrUpdateCallback(VaultInteriors_UpdateObjectEventStops,
+                                     0xc94);
   // Flag 0x1ff holds nothing: no table, script or function sets or reads it,
   // and render probe flag-reads sees no read of it, so clearing it changes
   // nothing.
   GameFlag_Clear(0x1ff);
-  Engine_EventEnd();
+  Engine_ScriptEnd();
   Engine_AudioPlayCue(MUS_009);
 }
 
@@ -3718,7 +3820,7 @@ s32 gVaultInteriors_VaultScriptE[] = {
 // south corners (render map-12 with the spots drawn on it). A Round run goes
 // about the end of the outer bed, an Across run over the beds' row, an Along
 // run past the feet of the beds. The suspects' timers number the spots
-// (Event_AdvanceSuspectRoutes): the leader's 1 to 3 the heads and 4 to 6 the
+// (EventScript_AdvanceSuspectRoutes): the leader's 1 to 3 the heads and 4 to 6 the
 // feet, west to east; the thief's 1 and 2 beside the west and east beds, 3
 // and 4 the south-west and south-east corners.
 s32 gVaultInteriors_SuspectToWestBedHead[] = {
@@ -3889,8 +3991,8 @@ s32 gVaultInteriors_SuspectAlongToSouthEastCorner[] = {
     SC_END,
 };
 
-struct SceneEntrance gVaultInteriors_Entrances[] = {
-    { ENTRANCE_DEFAULT, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
+struct MapWarpDest gVaultInteriors_WarpDests[] = {
+    { WARP_DEST_DEFAULT, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
     { VAULT_INTERIORS_FROM_VAULT_EAST_SOUTHEAST, CONDITION_ALWAYS, 192, 0, 220, FACING_NORTH, 0, 32, 0, 272, 240, 0 },
     { VAULT_INTERIORS_FROM_VAULT_SOUTHEAST, CONDITION_ALWAYS, 432, 0, 254, FACING_NORTH, 0, 288, 0, 528, 272, 0 },
     { VAULT_INTERIORS_FROM_VAULT_SOUTHWEST, CONDITION_ALWAYS, 720, 0, 782, FACING_NORTH, 0, 432, 576, 800, 800, 0 },
@@ -3904,254 +4006,254 @@ struct SceneEntrance gVaultInteriors_Entrances[] = {
     { VAULT_INTERIORS_LOFT_FROM_CRATE_ROOM, CONDITION_ALWAYS, 768, 0, 408, FACING_EAST, 0, 712, 288, 952, 496, 0 },
     { VAULT_INTERIORS_LOFT_AFTER_LOSING_TO_THIEVES, CONDITION_ALWAYS, 792, 0, 432, FACING_NORTH, 0, 712, 288, 952, 496, 0 },
     { VAULT_INTERIORS_LOFT_AFTER_THIEVES_DEFEATED, CONDITION_ALWAYS, 792, 0, 432, FACING_NORTH, 0, 712, 288, 952, 496, 0 },
-    { SCENE_TABLE_END },
+    { MAP_TABLE_END },
 };
 
-struct SceneRegion gVaultInteriors_Regions[] = {
+struct MapWarpRegion gVaultInteriors_Regions[] = {
     {639, 33, 407, 657, 51, 425, CONDITION_ALWAYS, VAULT_INTERIORS_TO_VAULT_WEST},
-    {SCENE_TABLE_END},
+    {MAP_TABLE_END},
 };
 
-u32 gVaultInteriors_Exits[] = {
-    SCENE_EXITS(VaultInteriors),
-    SCENE_EXIT(VAULT_INTERIORS_TO_VAULT_EAST_SOUTHEAST, Vault, VAULT_FROM_VAULT_INTERIORS_EAST_SOUTHEAST),
-    SCENE_EXIT(VAULT_INTERIORS_TO_VAULT_SOUTHEAST, Vault, VAULT_FROM_VAULT_INTERIORS_SOUTHEAST),
-    SCENE_EXIT(VAULT_INTERIORS_TO_VAULT_SOUTHWEST, Vault, VAULT_FROM_VAULT_INTERIORS_SOUTHWEST),
-    SCENE_EXIT(VAULT_INTERIORS_TO_VAULT_EAST, Vault, VAULT_FROM_VAULT_INTERIORS_EAST),
-    SCENE_EXIT(VAULT_INTERIORS_TO_VAULT_NORTH_NORTHEAST, Vault, VAULT_FROM_VAULT_INTERIORS_NORTH_NORTHEAST),
-    SCENE_EXIT(VAULT_INTERIORS_TO_VAULT_NORTHWEST, Vault, VAULT_FROM_VAULT_INTERIORS_NORTHWEST),
-    SCENE_EXIT(VAULT_INTERIORS_INN_UPSTAIRS_TO_INN, VaultInteriors, VAULT_INTERIORS_INN_FROM_INN_UPSTAIRS),
-    SCENE_EXIT(VAULT_INTERIORS_INN_TO_INN_UPSTAIRS, VaultInteriors, VAULT_INTERIORS_INN_UPSTAIRS_FROM_INN),
-    SCENE_EXIT(VAULT_INTERIORS_TO_VAULT_WEST, Vault, VAULT_FROM_VAULT_INTERIORS_WEST),
-    SCENE_EXIT(VAULT_INTERIORS_LOFT_TO_CRATE_ROOM, VaultInteriors, VAULT_INTERIORS_CRATE_ROOM_FROM_LOFT),
-    SCENE_EXIT(VAULT_INTERIORS_CRATE_ROOM_TO_LOFT, VaultInteriors, VAULT_INTERIORS_LOFT_FROM_CRATE_ROOM),
-    SCENE_EXIT(VAULT_INTERIORS_TO_SANCTUM, Sanctum, SANCTUM_FROM_VAULT_INTERIORS),
-    SCENE_EXITS_END,
+u32 gVaultInteriors_Warps[] = {
+    MAP_WARPS(VaultInteriors),
+    MAP_WARP(VAULT_INTERIORS_TO_VAULT_EAST_SOUTHEAST, Vault, VAULT_FROM_VAULT_INTERIORS_EAST_SOUTHEAST),
+    MAP_WARP(VAULT_INTERIORS_TO_VAULT_SOUTHEAST, Vault, VAULT_FROM_VAULT_INTERIORS_SOUTHEAST),
+    MAP_WARP(VAULT_INTERIORS_TO_VAULT_SOUTHWEST, Vault, VAULT_FROM_VAULT_INTERIORS_SOUTHWEST),
+    MAP_WARP(VAULT_INTERIORS_TO_VAULT_EAST, Vault, VAULT_FROM_VAULT_INTERIORS_EAST),
+    MAP_WARP(VAULT_INTERIORS_TO_VAULT_NORTH_NORTHEAST, Vault, VAULT_FROM_VAULT_INTERIORS_NORTH_NORTHEAST),
+    MAP_WARP(VAULT_INTERIORS_TO_VAULT_NORTHWEST, Vault, VAULT_FROM_VAULT_INTERIORS_NORTHWEST),
+    MAP_WARP(VAULT_INTERIORS_INN_UPSTAIRS_TO_INN, VaultInteriors, VAULT_INTERIORS_INN_FROM_INN_UPSTAIRS),
+    MAP_WARP(VAULT_INTERIORS_INN_TO_INN_UPSTAIRS, VaultInteriors, VAULT_INTERIORS_INN_UPSTAIRS_FROM_INN),
+    MAP_WARP(VAULT_INTERIORS_TO_VAULT_WEST, Vault, VAULT_FROM_VAULT_INTERIORS_WEST),
+    MAP_WARP(VAULT_INTERIORS_LOFT_TO_CRATE_ROOM, VaultInteriors, VAULT_INTERIORS_CRATE_ROOM_FROM_LOFT),
+    MAP_WARP(VAULT_INTERIORS_CRATE_ROOM_TO_LOFT, VaultInteriors, VAULT_INTERIORS_LOFT_FROM_CRATE_ROOM),
+    MAP_WARP(VAULT_INTERIORS_TO_SANCTUM, Sanctum, SANCTUM_FROM_VAULT_INTERIORS),
+    MAP_WARPS_END,
 };
 
-struct ScenePlacement gVaultInteriors_Placements[] = {
-    { GARET, CONDITION_ALWAYS, ACTOR_STAND,
+struct ObjectEventTemplate gVaultInteriors_ObjectEventTemplates[] = {
+    { GARET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(8), 0, PIXELS(8), FACING_NORTH, TALK_FACE_PARTY, 0 },
-    { IVAN, CONDITION_ALWAYS, ACTOR_STAND,
+    { IVAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(376), 0, PIXELS(392), FACING_SOUTH, TALK_FACE_PARTY, 0 },
-    { SPRITE_YOUNG_MAN_WITH_BROWN_HAIR, 0x0, ACTOR_STAND,
+    { SPRITE_YOUNG_MAN_WITH_BROWN_HAIR, 0x0, MOVEMENT_TYPE_STAND,
         PIXELS(160), 0, PIXELS(136), FACING_SOUTHEAST + FACING_STEP, TALK_FACE_PARTY_AND_BACK, 0 },
     { SPRITE_WOMAN_WITH_FAIR_HAIR, 0x0, 3,
         PIXELS(152), 0, PIXELS(72), FACING_WEST, TALK_FACE_PARTY, 0 },
-    { SPRITE_BURLY_MAN_WITH_GREY_HAIR, 0x0, ACTOR_STAND,
+    { SPRITE_BURLY_MAN_WITH_GREY_HAIR, 0x0, MOVEMENT_TYPE_STAND,
         PIXELS(456), 0, PIXELS(184), FACING_EAST, TALK_FACE_PARTY, 0 },
-    { SPRITE_BOY_WITH_FAIR_HAIR, 0x0, ACTOR_WANDER,
+    { SPRITE_BOY_WITH_FAIR_HAIR, 0x0, MOVEMENT_TYPE_WANDER,
         PIXELS(368), 0, PIXELS(120), FACING_SOUTH, TALK_FACE_PARTY, 0 },
-    { SPRITE_OLD_MAN_WITH_CANE, 0x0, ACTOR_WANDER,
+    { SPRITE_OLD_MAN_WITH_CANE, 0x0, MOVEMENT_TYPE_WANDER,
         PIXELS(744), 0, PIXELS(200), FACING_SOUTH, TALK_FACE_PARTY, 0 },
-    { SPRITE_OLD_WOMAN, 0x0, ACTOR_STAND,
+    { SPRITE_OLD_WOMAN, 0x0, MOVEMENT_TYPE_STAND,
         PIXELS(752), 0, PIXELS(128), FACING_SOUTH, TALK_FACE_PARTY, 0 },
-    { SPRITE_BOY_WITH_FAIR_HAIR, 0x0, ACTOR_STAND,
+    { SPRITE_BOY_WITH_FAIR_HAIR, 0x0, MOVEMENT_TYPE_STAND,
         PIXELS(496), 0, PIXELS(416), FACING_EAST, TALK_FACE_PARTY_AND_BACK, 0 },
-    { SPRITE_GIRL_WITH_PIGTAILS, 0x0, ACTOR_STAND,
+    { SPRITE_GIRL_WITH_PIGTAILS, 0x0, MOVEMENT_TYPE_STAND,
         PIXELS(512), 0, PIXELS(416), FACING_WEST, TALK_FACE_PARTY_AND_BACK, 0 },
-    { SPRITE_OLD_MAN_WITH_WHITE_HAIR, 0x0, ACTOR_STAND,
+    { SPRITE_OLD_MAN_WITH_WHITE_HAIR, 0x0, MOVEMENT_TYPE_STAND,
         PIXELS(536), 0, PIXELS(451), FACING_SOUTH, TALK_FACE_PARTY, 0 },
-    { SPRITE_WOMAN_IN_GREEN_DRESS, 0x0, ACTOR_STAND,
+    { SPRITE_WOMAN_IN_GREEN_DRESS, 0x0, MOVEMENT_TYPE_STAND,
         PIXELS(416), 0, PIXELS(464), FACING_NORTH, TALK_FACE_PARTY, 0 },
-    { SPRITE_WOMAN_WITH_FAIR_HAIR, 0x0, ACTOR_WANDER,
+    { SPRITE_WOMAN_WITH_FAIR_HAIR, 0x0, MOVEMENT_TYPE_WANDER,
         PIXELS(536), 0, PIXELS(672), FACING_NORTH, TALK_FACE_PARTY, 0 },
-    { SPRITE_BALD_MAN_IN_RED, 0x0, ACTOR_STAND,
+    { SPRITE_BALD_MAN_IN_RED, 0x0, MOVEMENT_TYPE_STAND,
         PIXELS(200), 0, PIXELS(392), FACING_SOUTH, TALK_FACE_PARTY_AND_BACK, 0 },
-    { SPRITE_YOUNG_MAN_IN_GREEN, 0x0, ACTOR_STAND,
+    { SPRITE_YOUNG_MAN_IN_GREEN, 0x0, MOVEMENT_TYPE_STAND,
         PIXELS(88), 0, PIXELS(392), FACING_SOUTH, TALK_FACE_PARTY_AND_BACK, 0 },
-    { SPRITE_WOMAN_WITH_PONYTAIL, 0x0, ACTOR_STAND,
+    { SPRITE_WOMAN_WITH_PONYTAIL, 0x0, MOVEMENT_TYPE_STAND,
         PIXELS(632), 0, PIXELS(136), FACING_SOUTH, 3, 0 },
-    { SPRITE_BURLY_MAN_WITH_GREY_HAIR, 0x0, ACTOR_STAND,
+    { SPRITE_BURLY_MAN_WITH_GREY_HAIR, 0x0, MOVEMENT_TYPE_STAND,
         PIXELS(664), 0, PIXELS(632), FACING_WEST, TALK_FACE_PARTY_AND_BACK, 0 },
-    { SPRITE_WOMAN_IN_PINK_APRON, 0x0, ACTOR_STAND,
+    { SPRITE_WOMAN_IN_PINK_APRON, 0x0, MOVEMENT_TYPE_STAND,
         PIXELS(696), 0, PIXELS(696), FACING_SOUTH, TALK_FACE_PARTY_AND_BACK, 0 },
-    { SPRITE_MAN_WITH_LONG_DARK_HAIR, FLAG_VAULT_THIEVES_ATTACKED, ACTOR_STAND,
+    { SPRITE_MAN_WITH_LONG_DARK_HAIR, FLAG_VAULT_THIEVES_ATTACKED, MOVEMENT_TYPE_STAND,
         PIXELS(104), 0, PIXELS(696), FACING_EAST, 3, 0 },
-    { SPRITE_PERSON_IN_PURPLE, FLAG_VAULT_THIEVES_ATTACKED, ACTOR_STAND,
+    { SPRITE_PERSON_IN_PURPLE, FLAG_VAULT_THIEVES_ATTACKED, MOVEMENT_TYPE_STAND,
         PIXELS(200), 0, PIXELS(680), FACING_SOUTH, TALK_FACE_PARTY, 0 },
-    { 0xdf, 0x0, ACTOR_STAND,
+    { 0xdf, 0x0, MOVEMENT_TYPE_STAND,
         PIXELS(692), 0, PIXELS(411), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { SCENE_TABLE_END },
+    { MAP_TABLE_END },
 };
 
-struct ScenePlacement gVaultInteriors_LoftPlacements[] = {
-    { GARET, CONDITION_ALWAYS, ACTOR_STAND,
+struct ObjectEventTemplate gVaultInteriors_LoftObjectEventTemplates[] = {
+    { GARET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(8), 0, PIXELS(8), FACING_NORTH, TALK_FACE_PARTY, 0 },
-    { IVAN, CONDITION_ALWAYS, ACTOR_STAND,
+    { IVAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(376), 0, PIXELS(392), FACING_SOUTH + FACING_STEP, TALK_FACE_PARTY, 0 },
-    { SPRITE_YOUNG_MAN_WITH_BROWN_HAIR, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_YOUNG_MAN_WITH_BROWN_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(160), 0, PIXELS(136), FACING_NORTHWEST + FACING_STEP, TALK_FACE_PARTY_AND_BACK, 0 },
-    { SPRITE_OLD_MAN_WITH_WHITE_HAIR, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_OLD_MAN_WITH_WHITE_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(504), 0, PIXELS(456), FACING_SOUTH, TALK_FACE_PARTY, 0 },
-    { SPRITE_MAN_WITH_LONG_DARK_HAIR, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_MAN_WITH_LONG_DARK_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(104), 0, PIXELS(696), FACING_EAST, 3, 0 },
-    { SPRITE_PERSON_IN_PURPLE, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_PERSON_IN_PURPLE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(200), 0, PIXELS(680), FACING_SOUTH, TALK_FACE_PARTY, 0 },
-    { SPRITE_PERSON_IN_PURPLE, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_PERSON_IN_PURPLE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(8), 0, PIXELS(8), FACING_SOUTH, TALK_FACE_PARTY, 0 },
-    { SPRITE_STRONGMAN, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_STRONGMAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(8), 0, PIXELS(8), FACING_SOUTH, TALK_FACE_PARTY, 0 },
-    { SPRITE_STRONGMAN, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_STRONGMAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(8), 0, PIXELS(8), FACING_SOUTH, TALK_FACE_PARTY, 0 },
-    { SPRITE_CHEST, 0x0, ACTOR_STAND,
+    { SPRITE_CHEST, 0x0, MOVEMENT_TYPE_STAND,
         PIXELS(872), 0, PIXELS(424), FACING_SOUTH, TALK_FACE_PARTY, 0 },
-    { SPRITE_CHEST, 0x0, ACTOR_STAND,
+    { SPRITE_CHEST, 0x0, MOVEMENT_TYPE_STAND,
         PIXELS(872), 0, PIXELS(408), FACING_SOUTH, TALK_FACE_PARTY, 0 },
-    { SPRITE_CHEST, 0x0, ACTOR_STAND,
+    { SPRITE_CHEST, 0x0, MOVEMENT_TYPE_STAND,
         PIXELS(872), 0, PIXELS(376), FACING_SOUTH, TALK_FACE_PARTY, 0 },
     { 0xfb, CONDITION_ALWAYS, 7,
         PIXELS(8), 0, PIXELS(8), FACING_SOUTH, TALK_FACE_PARTY, 0 },
     { 0xdd, CONDITION_ALWAYS, 7,
         PIXELS(8), 0, PIXELS(8), FACING_SOUTH, TALK_FACE_PARTY, 0 },
-    { SCENE_TABLE_END },
+    { MAP_TABLE_END },
 };
 
-struct SceneEvent gVaultInteriors_Events[] = {
-    { EVENT_EXIT, 1, CONDITION_ALWAYS, VAULT_INTERIORS_TO_VAULT_EAST_SOUTHEAST },
-    { EVENT_EXIT, 2, CONDITION_ALWAYS, VAULT_INTERIORS_TO_VAULT_SOUTHEAST },
-    { EVENT_EXIT, 3, CONDITION_ALWAYS, VAULT_INTERIORS_TO_VAULT_SOUTHWEST },
-    { EVENT_EXIT, 4, CONDITION_ALWAYS, VAULT_INTERIORS_TO_VAULT_EAST },
-    { EVENT_EXIT, 5, CONDITION_ALWAYS, VAULT_INTERIORS_TO_VAULT_NORTH_NORTHEAST },
-    { EVENT_EXIT, 6, CONDITION_ALWAYS, VAULT_INTERIORS_TO_VAULT_NORTHWEST },
-    { EVENT_TOUCH, VAULT_INTERIORS_CELL_GUESTS_ROOM_STAIRS, CONDITION_ALWAYS, EVENT_SCRIPT(Event_LeaveGuestsRoom) },
-    { EVENT_EXIT, 8, CONDITION_ALWAYS, VAULT_INTERIORS_INN_TO_INN_UPSTAIRS },
-    { EVENT_TOUCH, VAULT_INTERIORS_CELL_GUESTS_ROOM, IF_FLAG_SET(FLAG_VAULT_IVAN_JOINED_ROD_SEARCH), EVENT_SCRIPT(Event_ApproachSuspects) },
-    { EVENT_TOUCH, VAULT_INTERIORS_CELL_FIRST_SUSPECT_ROUTE, IF_FLAG_SET(FLAG_SUSPECTS_FLEEING), EVENT_SCRIPT(Event_AdvanceSuspectRoutes) },
-    { EVENT_TOUCH, VAULT_INTERIORS_CELL_FIRST_SUSPECT_ROUTE + 1, IF_FLAG_SET(FLAG_SUSPECTS_FLEEING), EVENT_SCRIPT(Event_AdvanceSuspectRoutes) },
-    { EVENT_TOUCH, VAULT_INTERIORS_CELL_FIRST_SUSPECT_ROUTE + 2, IF_FLAG_SET(FLAG_SUSPECTS_FLEEING), EVENT_SCRIPT(Event_AdvanceSuspectRoutes) },
-    { EVENT_TOUCH, VAULT_INTERIORS_CELL_FIRST_SUSPECT_ROUTE + 3, IF_FLAG_SET(FLAG_SUSPECTS_FLEEING), EVENT_SCRIPT(Event_AdvanceSuspectRoutes) },
-    { EVENT_TOUCH, VAULT_INTERIORS_CELL_FIRST_SUSPECT_ROUTE + 4, IF_FLAG_SET(FLAG_SUSPECTS_FLEEING), EVENT_SCRIPT(Event_AdvanceSuspectRoutes) },
-    { EVENT_TOUCH, VAULT_INTERIORS_CELL_FIRST_SUSPECT_ROUTE + 5, IF_FLAG_SET(FLAG_SUSPECTS_FLEEING), EVENT_SCRIPT(Event_AdvanceSuspectRoutes) },
-    { EVENT_TOUCH, VAULT_INTERIORS_CELL_FIRST_SUSPECT_ROUTE + 6, IF_FLAG_SET(FLAG_SUSPECTS_FLEEING), EVENT_SCRIPT(Event_AdvanceSuspectRoutes) },
-    { EVENT_TOUCH, VAULT_INTERIORS_CELL_LAST_SUSPECT_ROUTE, IF_FLAG_SET(FLAG_SUSPECTS_FLEEING), EVENT_SCRIPT(Event_AdvanceSuspectRoutes) },
-    { EVENT_TOUCH, VAULT_INTERIORS_CELL_GUESTS_ROOM_DOOR, IF_FLAG_SET(FLAG_SUSPECTS_FLEEING), EVENT_SCRIPT(Event_DiscussSuspiciousGuests) },
-    { EVENT_TOUCH, VAULT_INTERIORS_CELL_CORNERING_START, IF_FLAG_SET(FLAG_VAULT_SUSPECTS_APPROACHED), EVENT_SCRIPT(Event_StartCorneringSuspects) },
-    { EVENT_RAISED, VAULT_INTERIORS_LEADER_CORNERED, CONDITION_ALWAYS, EVENT_SCRIPT(Event_ReadCorneredSuspectsMinds) },
-    { EVENT_RAISED, VAULT_INTERIORS_THIEF_CORNERED, CONDITION_ALWAYS, EVENT_SCRIPT(Event_ReadCorneredSuspectsMinds) },
-    { EVENT_RAISED, VAULT_INTERIORS_BOTH_CORNERED, CONDITION_ALWAYS, EVENT_SCRIPT(Event_ReadCorneredSuspectsMinds) },
-    { EVENT_RAISED, FIELD_EVENT_MENUS_RAISED, CONDITION_ALWAYS, EVENT_SCRIPT(Event_GaretRefusesToLeave) },
-    { EVENT_TOUCH, VAULT_INTERIORS_CELL_LOFT_CLIMB, CONDITION_ALWAYS, EVENT_SCRIPT(Event_ClimbToLoft) },
-    { TOUCH_WALKING, VAULT_INTERIORS_CELL_ROOF_GAP, CONDITION_ALWAYS, EVENT_SCRIPT(Event_JumpAcrossRoofGap) },
-    { EVENT_TALK, IVAN, IF_FLAG_SET(FLAG_SCENE_TEMP_50), 0 },
-    { EVENT_TALK, IVAN, CONDITION_ALWAYS, EVENT_SCRIPT(Event_MeetIvan) },
-    { EVENT_TALK, ACTOR_GEM_OWNER, CONDITION_ALWAYS, MSGNO(MsgVaultThisRockWasBlownHereAll) },
-    { EVENT_TALK, ACTOR_GEM_OWNERS_WIFE, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkAboutRocks) },
-    { EVENT_TALK, ACTOR_VILLAGER_SUSPECTING_THE_NEIGHBOR, CONDITION_ALWAYS, MSGNO(MsgVaultMyNeighborCreepsMeOutHe) },
-    { EVENT_TALK, ACTOR_BOY_ASKING_ABOUT_TRAVEL, CONDITION_ALWAYS, EVENT_SCRIPT(Event_BoyAsksAboutTravel) },
-    { EVENT_TALK, ACTOR_GRANDPA, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkAboutMissingThings) },
-    { EVENT_TALK, ACTOR_GRANDPAS_WIFE, CONDITION_ALWAYS, MSGNO(MsgVaultEverSinceTheEruptionGrandpaKeeps) },
-    { EVENT_TALK, ACTOR_BOY_WISHING_TO_BE_OLDER, FLAG_VAULT_IVAN_JOINED_ROD_SEARCH, MSGNO(MsgVaultICouldHelpIvanIfI) },
-    { EVENT_TALK, ACTOR_BOY_WISHING_TO_BE_OLDER, CONDITION_ALWAYS, MSGNO(MsgVaultYoureHelpingIvanYouDontLook) },
-    { EVENT_TALK, ACTOR_GIRL_TELLING_A_SECRET, FLAG_VAULT_IVAN_JOINED_ROD_SEARCH, EVENT_SCRIPT(Event_OfferIvansSecret) },
-    { EVENT_TALK, ACTOR_GIRL_TELLING_A_SECRET, CONDITION_ALWAYS, MSGNO(MsgVaultSinceYoureHelpingIvanIllTell) },
-    { EVENT_TALK, ACTOR_MAYOR, CONDITION_ALWAYS, EVENT_SCRIPT(Event_MayorAsksHelpForIvan) },
-    { EVENT_TALK, ACTOR_MAYORS_WIFE, FLAG_VAULT_IVAN_JOINED_ROD_SEARCH, MSGNO(MsgVaultMyHusbandTheMayorCantBelieve) },
-    { EVENT_TALK, ACTOR_MAYORS_WIFE, CONDITION_ALWAYS, MSGNO(MsgVaultReallyYoureGoingToHelpIvan) },
-    { EVENT_TALK, ACTOR_GIRL_AT_THE_INN, CONDITION_ALWAYS, EVENT_SCRIPT(Event_WarnAboutThreeStrangers) },
-    { EVENT_TALK, ACTOR_WEAPON_MERCHANT, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkToWeaponMerchant) },
-    { EVENT_TALK, ACTOR_ARMOR_MERCHANT, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkToArmorMerchant) },
-    { EVENT_TALK, ACTOR_ITEM_MERCHANT, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkToItemMerchant) },
-    { EVENT_TALK, ACTOR_INN_STAFF, CONDITION_ALWAYS, MSGNO(MsgVaultTheGuestsUpstairsWerentInTheir) },
-    { EVENT_TALK, ACTOR_INNKEEPER, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkToInnkeeper) },
-    { EVENT_TALK, ACTOR_SUSPECTED_LEADER, IF_FLAG_SET(FLAG_SCENE_TEMP_50), 0 },
-    { EVENT_TALK, ACTOR_SUSPECTED_THIEF, IF_FLAG_SET(FLAG_SCENE_TEMP_50), 0 },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SUSPECTED_LEADER, IF_FLAG_SET(FLAG_SCENE_TEMP_50), 0 },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SUSPECTED_THIEF, IF_FLAG_SET(FLAG_SCENE_TEMP_50), 0 },
-    { EVENT_TALK, ACTOR_SUSPECTED_LEADER, FLAG_VAULT_SUSPECTS_MIND_READ, MSGNO(MsgVaultThatKidIvanHeCreepsMe) },
-    { EVENT_TALK, ACTOR_SUSPECTED_THIEF, FLAG_VAULT_SUSPECTS_MIND_READ, MSGNO(MsgVaultWeHaventDoneAnythingYoureA) },
-    { EVENT_TALK, ACTOR_SUSPECTED_LEADER, CONDITION_ALWAYS, EVENT_SCRIPT(Event_SuspectedLeaderDodges) },
-    { EVENT_TALK, ACTOR_SUSPECTED_THIEF, CONDITION_ALWAYS, EVENT_SCRIPT(Event_SuspectedThiefDodges) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_GEM_OWNER, CONDITION_ALWAYS, MSGNO(MsgVaultTheOtherSparklingRocksAllCrumbled) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_GEM_OWNERS_WIFE, CONDITION_ALWAYS, EVENT_SCRIPT(Event_ReadMindOnRock) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_SUSPECTING_THE_NEIGHBOR, CONDITION_ALWAYS, MSGNO(MsgVaultHeyMaybeMyNeighborIsThe) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_BOY_ASKING_ABOUT_TRAVEL, CONDITION_ALWAYS, EVENT_SCRIPT(Event_ReadBoysMind) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_GRANDPA, CONDITION_ALWAYS, EVENT_SCRIPT(Event_ReadMindOnThieves) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_GRANDPAS_WIFE, CONDITION_ALWAYS, MSGNO(MsgVaultYouNeverBoughtMeAnythingWorth) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_BOY_WISHING_TO_BE_OLDER, CONDITION_ALWAYS, MSGNO(MsgVaultTheseGuysLookReliableIGuess) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_GIRL_TELLING_A_SECRET, CONDITION_ALWAYS, MSGNO(MsgVaultIWonderWhatSortOfThing) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MAYOR, CONDITION_ALWAYS, EVENT_SCRIPT(Event_ReadMayorMind) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MAYORS_WIFE, CONDITION_ALWAYS, MSGNO(MsgVaultMaybeTheyllFindOurStolenFamily) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_GIRL_AT_THE_INN, CONDITION_ALWAYS, EVENT_SCRIPT(Event_ReadBoneGiverMind) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WEAPON_MERCHANT, CONDITION_ALWAYS, MSGNO(MsgVaultAllOurBestWeaponsWereStolen) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_ARMOR_MERCHANT, CONDITION_ALWAYS, MSGNO(MsgVaultIWonderIfTheyLeftUs) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_ITEM_MERCHANT, CONDITION_ALWAYS, MSGNO(MsgVaultHahhWereSureToSeeA) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_INN_STAFF, CONDITION_ALWAYS, MSGNO(MsgVaultItWouldBeAwfulIfOur) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_INNKEEPER, CONDITION_ALWAYS, MSGNO(MsgVaultThatVolcanoCostUsALot) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 0x400 | ACTOR_SUSPECTED_LEADER, CONDITION_ALWAYS, EVENT_SCRIPT(Event_SuspectedLeaderDodges) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 0x400 | ACTOR_SUSPECTED_THIEF, CONDITION_ALWAYS, EVENT_SCRIPT(Event_SuspectedThiefDodges) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_CRATE, FLAG_VAULT_CRATE_MOVED, EVENT_SCRIPT(Event_CheckCrateMoved) },
-    { SEARCH(SEARCH_UNNAMED), VAULT_INTERIORS_CELL_INN_BARREL, CONDITION_ALWAYS, EVENT_SCRIPT(Event_SearchEmptyBarrel) },
-    { SEARCH(SEARCH_JAR), VAULT_INTERIORS_CELL_JAR, FLAG_VAULT_INTERIORS_JAR_COINS, FIND_COINS(7) },
-    { SEARCH(SEARCH_BARREL), VAULT_INTERIORS_CELL_FIRST_BARREL, FLAG_VAULT_INTERIORS_BARREL_COINS, FIND_COINS(4) },
-    { SEARCH(SEARCH_BARREL), VAULT_INTERIORS_CELL_SECOND_BARREL, FLAG_VAULT_INTERIORS_BARREL_SLEEP_BOMB, FIND_ITEM(ITEM_SLEEP_BOMB) },
-    { SEARCH(SEARCH_WOODEN_BOX), VAULT_INTERIORS_CELL_WOODEN_BOX, FLAG_VAULT_INTERIORS_BOX_MINT, FIND_ITEM(ITEM_MINT) },
-    { SEARCH(SEARCH_BOOKCASE) | EVENT_TOUCH_FACING | FACING_NORTH, VAULT_INTERIORS_CELL_HISTORY_BOOKCASE, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgVaultTheresABookEntitledHistoryOf)) },
-    { SEARCH(SEARCH_BOOKCASE), VAULT_INTERIORS_CELL_GEMS_BOOKCASE, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgVaultTheresABookEntitledGemsOf)) },
-    { SCENE_EVENTS_END },
+struct MapEvent gVaultInteriors_Events[] = {
+    { MAP_EVENT_WARP, 1, CONDITION_ALWAYS, VAULT_INTERIORS_TO_VAULT_EAST_SOUTHEAST },
+    { MAP_EVENT_WARP, 2, CONDITION_ALWAYS, VAULT_INTERIORS_TO_VAULT_SOUTHEAST },
+    { MAP_EVENT_WARP, 3, CONDITION_ALWAYS, VAULT_INTERIORS_TO_VAULT_SOUTHWEST },
+    { MAP_EVENT_WARP, 4, CONDITION_ALWAYS, VAULT_INTERIORS_TO_VAULT_EAST },
+    { MAP_EVENT_WARP, 5, CONDITION_ALWAYS, VAULT_INTERIORS_TO_VAULT_NORTH_NORTHEAST },
+    { MAP_EVENT_WARP, 6, CONDITION_ALWAYS, VAULT_INTERIORS_TO_VAULT_NORTHWEST },
+    { MAP_EVENT_COORD, VAULT_INTERIORS_CELL_GUESTS_ROOM_STAIRS, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_LeaveGuestsRoom) },
+    { MAP_EVENT_WARP, 8, CONDITION_ALWAYS, VAULT_INTERIORS_INN_TO_INN_UPSTAIRS },
+    { MAP_EVENT_COORD, VAULT_INTERIORS_CELL_GUESTS_ROOM, IF_FLAG_SET(FLAG_VAULT_IVAN_JOINED_ROD_SEARCH), EVENT_SCRIPT(EventScript_ApproachSuspects) },
+    { MAP_EVENT_COORD, VAULT_INTERIORS_CELL_FIRST_SUSPECT_ROUTE, IF_FLAG_SET(FLAG_SUSPECTS_FLEEING), EVENT_SCRIPT(EventScript_AdvanceSuspectRoutes) },
+    { MAP_EVENT_COORD, VAULT_INTERIORS_CELL_FIRST_SUSPECT_ROUTE + 1, IF_FLAG_SET(FLAG_SUSPECTS_FLEEING), EVENT_SCRIPT(EventScript_AdvanceSuspectRoutes) },
+    { MAP_EVENT_COORD, VAULT_INTERIORS_CELL_FIRST_SUSPECT_ROUTE + 2, IF_FLAG_SET(FLAG_SUSPECTS_FLEEING), EVENT_SCRIPT(EventScript_AdvanceSuspectRoutes) },
+    { MAP_EVENT_COORD, VAULT_INTERIORS_CELL_FIRST_SUSPECT_ROUTE + 3, IF_FLAG_SET(FLAG_SUSPECTS_FLEEING), EVENT_SCRIPT(EventScript_AdvanceSuspectRoutes) },
+    { MAP_EVENT_COORD, VAULT_INTERIORS_CELL_FIRST_SUSPECT_ROUTE + 4, IF_FLAG_SET(FLAG_SUSPECTS_FLEEING), EVENT_SCRIPT(EventScript_AdvanceSuspectRoutes) },
+    { MAP_EVENT_COORD, VAULT_INTERIORS_CELL_FIRST_SUSPECT_ROUTE + 5, IF_FLAG_SET(FLAG_SUSPECTS_FLEEING), EVENT_SCRIPT(EventScript_AdvanceSuspectRoutes) },
+    { MAP_EVENT_COORD, VAULT_INTERIORS_CELL_FIRST_SUSPECT_ROUTE + 6, IF_FLAG_SET(FLAG_SUSPECTS_FLEEING), EVENT_SCRIPT(EventScript_AdvanceSuspectRoutes) },
+    { MAP_EVENT_COORD, VAULT_INTERIORS_CELL_LAST_SUSPECT_ROUTE, IF_FLAG_SET(FLAG_SUSPECTS_FLEEING), EVENT_SCRIPT(EventScript_AdvanceSuspectRoutes) },
+    { MAP_EVENT_COORD, VAULT_INTERIORS_CELL_GUESTS_ROOM_DOOR, IF_FLAG_SET(FLAG_SUSPECTS_FLEEING), EVENT_SCRIPT(EventScript_DiscussSuspiciousGuests) },
+    { MAP_EVENT_COORD, VAULT_INTERIORS_CELL_CORNERING_START, IF_FLAG_SET(FLAG_VAULT_SUSPECTS_APPROACHED), EVENT_SCRIPT(EventScript_StartCorneringSuspects) },
+    { MAP_EVENT_RAISED, VAULT_INTERIORS_LEADER_CORNERED, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_ReadCorneredSuspectsMinds) },
+    { MAP_EVENT_RAISED, VAULT_INTERIORS_THIEF_CORNERED, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_ReadCorneredSuspectsMinds) },
+    { MAP_EVENT_RAISED, VAULT_INTERIORS_BOTH_CORNERED, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_ReadCorneredSuspectsMinds) },
+    { MAP_EVENT_RAISED, FIELD_EVENT_MENUS_RAISED, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_GaretRefusesToLeave) },
+    { MAP_EVENT_COORD, VAULT_INTERIORS_CELL_LOFT_CLIMB, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_ClimbToLoft) },
+    { COORD_EVENT_WALKING, VAULT_INTERIORS_CELL_ROOF_GAP, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_JumpAcrossRoofGap) },
+    { MAP_EVENT_TALK, IVAN, IF_FLAG_SET(FLAG_MAP_TEMP_50), 0 },
+    { MAP_EVENT_TALK, IVAN, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_MeetIvan) },
+    { MAP_EVENT_TALK, LOCALID_GEM_OWNER, CONDITION_ALWAYS, MSGNO(MsgVaultThisRockWasBlownHereAll) },
+    { MAP_EVENT_TALK, LOCALID_GEM_OWNERS_WIFE, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkAboutRocks) },
+    { MAP_EVENT_TALK, LOCALID_VILLAGER_SUSPECTING_THE_NEIGHBOR, CONDITION_ALWAYS, MSGNO(MsgVaultMyNeighborCreepsMeOutHe) },
+    { MAP_EVENT_TALK, LOCALID_BOY_ASKING_ABOUT_TRAVEL, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_BoyAsksAboutTravel) },
+    { MAP_EVENT_TALK, LOCALID_GRANDPA, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkAboutMissingThings) },
+    { MAP_EVENT_TALK, LOCALID_GRANDPAS_WIFE, CONDITION_ALWAYS, MSGNO(MsgVaultEverSinceTheEruptionGrandpaKeeps) },
+    { MAP_EVENT_TALK, LOCALID_BOY_WISHING_TO_BE_OLDER, FLAG_VAULT_IVAN_JOINED_ROD_SEARCH, MSGNO(MsgVaultICouldHelpIvanIfI) },
+    { MAP_EVENT_TALK, LOCALID_BOY_WISHING_TO_BE_OLDER, CONDITION_ALWAYS, MSGNO(MsgVaultYoureHelpingIvanYouDontLook) },
+    { MAP_EVENT_TALK, LOCALID_GIRL_TELLING_A_SECRET, FLAG_VAULT_IVAN_JOINED_ROD_SEARCH, EVENT_SCRIPT(EventScript_OfferIvansSecret) },
+    { MAP_EVENT_TALK, LOCALID_GIRL_TELLING_A_SECRET, CONDITION_ALWAYS, MSGNO(MsgVaultSinceYoureHelpingIvanIllTell) },
+    { MAP_EVENT_TALK, LOCALID_MAYOR, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_MayorAsksHelpForIvan) },
+    { MAP_EVENT_TALK, LOCALID_MAYORS_WIFE, FLAG_VAULT_IVAN_JOINED_ROD_SEARCH, MSGNO(MsgVaultMyHusbandTheMayorCantBelieve) },
+    { MAP_EVENT_TALK, LOCALID_MAYORS_WIFE, CONDITION_ALWAYS, MSGNO(MsgVaultReallyYoureGoingToHelpIvan) },
+    { MAP_EVENT_TALK, LOCALID_GIRL_AT_THE_INN, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_WarnAboutThreeStrangers) },
+    { MAP_EVENT_TALK, LOCALID_WEAPON_MERCHANT, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkToWeaponMerchant) },
+    { MAP_EVENT_TALK, LOCALID_ARMOR_MERCHANT, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkToArmorMerchant) },
+    { MAP_EVENT_TALK, LOCALID_ITEM_MERCHANT, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkToItemMerchant) },
+    { MAP_EVENT_TALK, LOCALID_INN_STAFF, CONDITION_ALWAYS, MSGNO(MsgVaultTheGuestsUpstairsWerentInTheir) },
+    { MAP_EVENT_TALK, LOCALID_INNKEEPER, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkToInnkeeper) },
+    { MAP_EVENT_TALK, LOCALID_SUSPECTED_LEADER, IF_FLAG_SET(FLAG_MAP_TEMP_50), 0 },
+    { MAP_EVENT_TALK, LOCALID_SUSPECTED_THIEF, IF_FLAG_SET(FLAG_MAP_TEMP_50), 0 },
+    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_SUSPECTED_LEADER, IF_FLAG_SET(FLAG_MAP_TEMP_50), 0 },
+    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_SUSPECTED_THIEF, IF_FLAG_SET(FLAG_MAP_TEMP_50), 0 },
+    { MAP_EVENT_TALK, LOCALID_SUSPECTED_LEADER, FLAG_VAULT_SUSPECTS_MIND_READ, MSGNO(MsgVaultThatKidIvanHeCreepsMe) },
+    { MAP_EVENT_TALK, LOCALID_SUSPECTED_THIEF, FLAG_VAULT_SUSPECTS_MIND_READ, MSGNO(MsgVaultWeHaventDoneAnythingYoureA) },
+    { MAP_EVENT_TALK, LOCALID_SUSPECTED_LEADER, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_SuspectedLeaderDodges) },
+    { MAP_EVENT_TALK, LOCALID_SUSPECTED_THIEF, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_SuspectedThiefDodges) },
+    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_GEM_OWNER, CONDITION_ALWAYS, MSGNO(MsgVaultTheOtherSparklingRocksAllCrumbled) },
+    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_GEM_OWNERS_WIFE, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_ReadMindOnRock) },
+    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_VILLAGER_SUSPECTING_THE_NEIGHBOR, CONDITION_ALWAYS, MSGNO(MsgVaultHeyMaybeMyNeighborIsThe) },
+    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_BOY_ASKING_ABOUT_TRAVEL, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_ReadBoysMind) },
+    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_GRANDPA, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_ReadMindOnThieves) },
+    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_GRANDPAS_WIFE, CONDITION_ALWAYS, MSGNO(MsgVaultYouNeverBoughtMeAnythingWorth) },
+    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_BOY_WISHING_TO_BE_OLDER, CONDITION_ALWAYS, MSGNO(MsgVaultTheseGuysLookReliableIGuess) },
+    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_GIRL_TELLING_A_SECRET, CONDITION_ALWAYS, MSGNO(MsgVaultIWonderWhatSortOfThing) },
+    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_MAYOR, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_ReadMayorMind) },
+    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_MAYORS_WIFE, CONDITION_ALWAYS, MSGNO(MsgVaultMaybeTheyllFindOurStolenFamily) },
+    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_GIRL_AT_THE_INN, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_ReadBoneGiverMind) },
+    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_WEAPON_MERCHANT, CONDITION_ALWAYS, MSGNO(MsgVaultAllOurBestWeaponsWereStolen) },
+    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_ARMOR_MERCHANT, CONDITION_ALWAYS, MSGNO(MsgVaultIWonderIfTheyLeftUs) },
+    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_ITEM_MERCHANT, CONDITION_ALWAYS, MSGNO(MsgVaultHahhWereSureToSeeA) },
+    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_INN_STAFF, CONDITION_ALWAYS, MSGNO(MsgVaultItWouldBeAwfulIfOur) },
+    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_INNKEEPER, CONDITION_ALWAYS, MSGNO(MsgVaultThatVolcanoCostUsALot) },
+    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), 0x400 | LOCALID_SUSPECTED_LEADER, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_SuspectedLeaderDodges) },
+    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), 0x400 | LOCALID_SUSPECTED_THIEF, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_SuspectedThiefDodges) },
+    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MOVE), LOCALID_CRATE, FLAG_VAULT_CRATE_MOVED, EVENT_SCRIPT(EventScript_CheckCrateMoved) },
+    { BG_EVENT(BG_EVENT_UNNAMED), VAULT_INTERIORS_CELL_INN_BARREL, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_SearchEmptyBarrel) },
+    { BG_EVENT(BG_EVENT_JAR), VAULT_INTERIORS_CELL_JAR, FLAG_VAULT_INTERIORS_JAR_COINS, FIND_COINS(7) },
+    { BG_EVENT(BG_EVENT_BARREL), VAULT_INTERIORS_CELL_FIRST_BARREL, FLAG_VAULT_INTERIORS_BARREL_COINS, FIND_COINS(4) },
+    { BG_EVENT(BG_EVENT_BARREL), VAULT_INTERIORS_CELL_SECOND_BARREL, FLAG_VAULT_INTERIORS_BARREL_SLEEP_BOMB, FIND_ITEM(ITEM_SLEEP_BOMB) },
+    { BG_EVENT(BG_EVENT_WOODEN_BOX), VAULT_INTERIORS_CELL_WOODEN_BOX, FLAG_VAULT_INTERIORS_BOX_MINT, FIND_ITEM(ITEM_MINT) },
+    { BG_EVENT(BG_EVENT_BOOKCASE) | MAP_EVENT_FLAG_FACING | FACING_NORTH, VAULT_INTERIORS_CELL_HISTORY_BOOKCASE, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgVaultTheresABookEntitledHistoryOf)) },
+    { BG_EVENT(BG_EVENT_BOOKCASE), VAULT_INTERIORS_CELL_GEMS_BOOKCASE, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgVaultTheresABookEntitledGemsOf)) },
+    { MAP_EVENTS_END },
 };
 
-struct SceneEvent gVaultInteriors_LoftEvents[] = {
-    { EVENT_TOUCH, VAULT_INTERIORS_CELL_LOFT_DESCENT, CONDITION_ALWAYS, EVENT_SCRIPT(Event_LeaveLoft) },
-    { EVENT_TALK, ACTOR_TIED_UP_VILLAGER, CONDITION_ALWAYS, EVENT_SCRIPT(Event_FreeRooferAndConfrontThieves) },
-    { EVENT_TALK, ACTOR_FIRST_CHEST, CONDITION_ALWAYS, EVENT_SCRIPT(Event_SearchEmptyChest) },
-    { EVENT_TALK, ACTOR_SECOND_CHEST, CONDITION_ALWAYS, EVENT_SCRIPT(Event_SearchEmptyChest) },
-    { EVENT_TALK, ACTOR_THIRD_CHEST, CONDITION_ALWAYS, EVENT_SCRIPT(Event_SearchEmptyChest) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_TIED_UP_VILLAGER, CONDITION_ALWAYS, MSGNO(MsgVaultAhhHelpMe) },
-    { SCENE_EVENTS_END },
+struct MapEvent gVaultInteriors_LoftEvents[] = {
+    { MAP_EVENT_COORD, VAULT_INTERIORS_CELL_LOFT_DESCENT, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_LeaveLoft) },
+    { MAP_EVENT_TALK, LOCALID_TIED_UP_VILLAGER, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_FreeRooferAndConfrontThieves) },
+    { MAP_EVENT_TALK, LOCALID_FIRST_CHEST, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_SearchEmptyChest) },
+    { MAP_EVENT_TALK, LOCALID_SECOND_CHEST, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_SearchEmptyChest) },
+    { MAP_EVENT_TALK, LOCALID_THIRD_CHEST, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_SearchEmptyChest) },
+    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_TIED_UP_VILLAGER, CONDITION_ALWAYS, MSGNO(MsgVaultAhhHelpMe) },
+    { MAP_EVENTS_END },
 };
 
-struct SceneEvent gVaultInteriors_EventsAfterThieves[] = {
-    { SEARCH(SEARCH_UNNAMED), VAULT_INTERIORS_CELL_INN_BARREL, CONDITION_ALWAYS, EVENT_SCRIPT(Vault_FindBone) },
-    { EVENT_EXIT, 1, CONDITION_ALWAYS, VAULT_INTERIORS_TO_VAULT_EAST_SOUTHEAST },
-    { EVENT_EXIT, 2, CONDITION_ALWAYS, VAULT_INTERIORS_TO_VAULT_SOUTHEAST },
-    { EVENT_EXIT, 3, CONDITION_ALWAYS, VAULT_INTERIORS_TO_VAULT_SOUTHWEST },
-    { EVENT_EXIT, 4, CONDITION_ALWAYS, VAULT_INTERIORS_TO_VAULT_EAST },
-    { EVENT_EXIT, 5, CONDITION_ALWAYS, VAULT_INTERIORS_TO_VAULT_NORTH_NORTHEAST },
-    { EVENT_EXIT, 6, CONDITION_ALWAYS, VAULT_INTERIORS_TO_VAULT_NORTHWEST },
-    { EVENT_EXIT, 7, CONDITION_ALWAYS, VAULT_INTERIORS_INN_UPSTAIRS_TO_INN },
-    { EVENT_EXIT, 8, CONDITION_ALWAYS, VAULT_INTERIORS_INN_TO_INN_UPSTAIRS },
-    { EVENT_TOUCH, VAULT_INTERIORS_CELL_LOFT_CLIMB, CONDITION_ALWAYS, EVENT_SCRIPT(Event_ClimbToLoft) },
-    { EVENT_TOUCH, VAULT_INTERIORS_CELL_LOFT_DESCENT, CONDITION_ALWAYS, EVENT_SCRIPT(Event_LeaveLoft) },
-    { EVENT_TALK, ACTOR_GEM_OWNER, CONDITION_ALWAYS, MSGNO(MsgVaultICanSleepWellNowThat) },
-    { EVENT_TALK, ACTOR_GEM_OWNERS_WIFE, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkAboutRocks) },
-    { EVENT_TALK, ACTOR_VILLAGER_SUSPECTING_THE_NEIGHBOR, CONDITION_ALWAYS, EVENT_SCRIPT(Event_AskWhetherThievesCameFromLunpa) },
-    { EVENT_TALK, ACTOR_BOY_ASKING_ABOUT_TRAVEL, CONDITION_ALWAYS, EVENT_SCRIPT(Event_BoyWorriesAboutFather) },
-    { EVENT_TALK, ACTOR_GRANDPA, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkAboutMissingThings) },
-    { EVENT_TALK, ACTOR_GRANDPAS_WIFE, CONDITION_ALWAYS, MSGNO(MsgVaultJustAsIThoughtNothingWas) },
-    { EVENT_TALK, ACTOR_BOY_WISHING_TO_BE_OLDER, CONDITION_ALWAYS, EVENT_SCRIPT(Event_AskAboutDefeatingThieves) },
-    { EVENT_TALK, ACTOR_GIRL_TELLING_A_SECRET, CONDITION_ALWAYS, MSGNO(MsgVaultIvanLearnedALotByTalking) },
-    { EVENT_TALK, ACTOR_MAYOR, CONDITION_ALWAYS, EVENT_SCRIPT(Event_MayorGivesWaterOfLife) },
-    { EVENT_TALK, ACTOR_MAYORS_WIFE, CONDITION_ALWAYS, MSGNO(MsgVaultYoureThePersonWhoGotOur) },
-    { EVENT_TALK, ACTOR_GIRL_AT_THE_INN, FLAG_SCENE_TEMP_50, EVENT_SCRIPT(Event_OfferBones) },
-    { EVENT_TALK, ACTOR_WEAPON_MERCHANT, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkToWeaponMerchant) },
-    { EVENT_TALK, ACTOR_ARMOR_MERCHANT, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkToArmorMerchant) },
-    { EVENT_TALK, ACTOR_ITEM_MERCHANT, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkToItemMerchant) },
-    { EVENT_TALK, ACTOR_INN_STAFF, CONDITION_ALWAYS, MSGNO(MsgVaultImShockedThoseGuestsOfOurs) },
-    { EVENT_TALK, ACTOR_INNKEEPER, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkToInnkeeper) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_GEM_OWNER, CONDITION_ALWAYS, MSGNO(MsgVaultEverybodysAfterMyRockTheyWant) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_GEM_OWNERS_WIFE, CONDITION_ALWAYS, EVENT_SCRIPT(Event_ReadMindOnRock) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_SUSPECTING_THE_NEIGHBOR, CONDITION_ALWAYS, MSGNO(MsgVaultTheReasonLunpaTurnedBadIs) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_BOY_ASKING_ABOUT_TRAVEL, CONDITION_ALWAYS, EVENT_SCRIPT(Event_ReadBoysMind) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_GRANDPA, CONDITION_ALWAYS, EVENT_SCRIPT(Event_ReadMindOnThieves) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_GRANDPAS_WIFE, CONDITION_ALWAYS, MSGNO(MsgVaultIWishIHadSomethingWorth) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_BOY_WISHING_TO_BE_OLDER, CONDITION_ALWAYS, MSGNO(MsgVaultWhenIGrowUpIWant) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_GIRL_TELLING_A_SECRET, CONDITION_ALWAYS, MSGNO(MsgVaultIWishIHadWingsLike) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MAYOR, CONDITION_ALWAYS, EVENT_SCRIPT(Event_ReadMayorMind) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MAYORS_WIFE, CONDITION_ALWAYS, MSGNO(MsgVaultImSoRelievedNowThatWe) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_GIRL_AT_THE_INN, CONDITION_ALWAYS, EVENT_SCRIPT(Event_ReadBoneGiverMind) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WEAPON_MERCHANT, CONDITION_ALWAYS, MSGNO(MsgVaultMyWeaponsWereFoundInThe) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_ARMOR_MERCHANT, CONDITION_ALWAYS, MSGNO(MsgVaultItMustBeSnowingUpIn) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_ITEM_MERCHANT, CONDITION_ALWAYS, MSGNO(MsgVaultWhyAreThesePeopleSoAnxious) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_INN_STAFF, CONDITION_ALWAYS, MSGNO(MsgVaultWhoCouldHaveKnownTheyWere) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_INNKEEPER, CONDITION_ALWAYS, MSGNO(MsgVaultOfCourseIAlwaysSuspectedThey) },
-    { SEARCH(SEARCH_JAR), VAULT_INTERIORS_CELL_JAR, FLAG_VAULT_INTERIORS_JAR_COINS, FIND_COINS(7) },
-    { SEARCH(SEARCH_BARREL), VAULT_INTERIORS_CELL_FIRST_BARREL, FLAG_VAULT_INTERIORS_BARREL_COINS, FIND_COINS(4) },
-    { SEARCH(SEARCH_BARREL), VAULT_INTERIORS_CELL_SECOND_BARREL, FLAG_VAULT_INTERIORS_BARREL_SLEEP_BOMB, FIND_ITEM(ITEM_SLEEP_BOMB) },
-    { SEARCH(SEARCH_WOODEN_BOX), VAULT_INTERIORS_CELL_WOODEN_BOX, FLAG_VAULT_INTERIORS_BOX_MINT, FIND_ITEM(ITEM_MINT) },
-    { SEARCH(SEARCH_BOOKCASE) | EVENT_TOUCH_FACING | FACING_NORTH, VAULT_INTERIORS_CELL_HISTORY_BOOKCASE, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgVaultTheresABookEntitledHistoryOf)) },
-    { SEARCH(SEARCH_BOOKCASE), VAULT_INTERIORS_CELL_GEMS_BOOKCASE, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgVaultTheresABookEntitledGemsOf)) },
-    { SCENE_EVENTS_END },
+struct MapEvent gVaultInteriors_EventsAfterThieves[] = {
+    { BG_EVENT(BG_EVENT_UNNAMED), VAULT_INTERIORS_CELL_INN_BARREL, CONDITION_ALWAYS, EVENT_SCRIPT(Vault_FindBone) },
+    { MAP_EVENT_WARP, 1, CONDITION_ALWAYS, VAULT_INTERIORS_TO_VAULT_EAST_SOUTHEAST },
+    { MAP_EVENT_WARP, 2, CONDITION_ALWAYS, VAULT_INTERIORS_TO_VAULT_SOUTHEAST },
+    { MAP_EVENT_WARP, 3, CONDITION_ALWAYS, VAULT_INTERIORS_TO_VAULT_SOUTHWEST },
+    { MAP_EVENT_WARP, 4, CONDITION_ALWAYS, VAULT_INTERIORS_TO_VAULT_EAST },
+    { MAP_EVENT_WARP, 5, CONDITION_ALWAYS, VAULT_INTERIORS_TO_VAULT_NORTH_NORTHEAST },
+    { MAP_EVENT_WARP, 6, CONDITION_ALWAYS, VAULT_INTERIORS_TO_VAULT_NORTHWEST },
+    { MAP_EVENT_WARP, 7, CONDITION_ALWAYS, VAULT_INTERIORS_INN_UPSTAIRS_TO_INN },
+    { MAP_EVENT_WARP, 8, CONDITION_ALWAYS, VAULT_INTERIORS_INN_TO_INN_UPSTAIRS },
+    { MAP_EVENT_COORD, VAULT_INTERIORS_CELL_LOFT_CLIMB, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_ClimbToLoft) },
+    { MAP_EVENT_COORD, VAULT_INTERIORS_CELL_LOFT_DESCENT, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_LeaveLoft) },
+    { MAP_EVENT_TALK, LOCALID_GEM_OWNER, CONDITION_ALWAYS, MSGNO(MsgVaultICanSleepWellNowThat) },
+    { MAP_EVENT_TALK, LOCALID_GEM_OWNERS_WIFE, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkAboutRocks) },
+    { MAP_EVENT_TALK, LOCALID_VILLAGER_SUSPECTING_THE_NEIGHBOR, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_AskWhetherThievesCameFromLunpa) },
+    { MAP_EVENT_TALK, LOCALID_BOY_ASKING_ABOUT_TRAVEL, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_BoyWorriesAboutFather) },
+    { MAP_EVENT_TALK, LOCALID_GRANDPA, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkAboutMissingThings) },
+    { MAP_EVENT_TALK, LOCALID_GRANDPAS_WIFE, CONDITION_ALWAYS, MSGNO(MsgVaultJustAsIThoughtNothingWas) },
+    { MAP_EVENT_TALK, LOCALID_BOY_WISHING_TO_BE_OLDER, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_AskAboutDefeatingThieves) },
+    { MAP_EVENT_TALK, LOCALID_GIRL_TELLING_A_SECRET, CONDITION_ALWAYS, MSGNO(MsgVaultIvanLearnedALotByTalking) },
+    { MAP_EVENT_TALK, LOCALID_MAYOR, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_MayorGivesWaterOfLife) },
+    { MAP_EVENT_TALK, LOCALID_MAYORS_WIFE, CONDITION_ALWAYS, MSGNO(MsgVaultYoureThePersonWhoGotOur) },
+    { MAP_EVENT_TALK, LOCALID_GIRL_AT_THE_INN, FLAG_MAP_TEMP_50, EVENT_SCRIPT(EventScript_OfferBones) },
+    { MAP_EVENT_TALK, LOCALID_WEAPON_MERCHANT, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkToWeaponMerchant) },
+    { MAP_EVENT_TALK, LOCALID_ARMOR_MERCHANT, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkToArmorMerchant) },
+    { MAP_EVENT_TALK, LOCALID_ITEM_MERCHANT, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkToItemMerchant) },
+    { MAP_EVENT_TALK, LOCALID_INN_STAFF, CONDITION_ALWAYS, MSGNO(MsgVaultImShockedThoseGuestsOfOurs) },
+    { MAP_EVENT_TALK, LOCALID_INNKEEPER, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkToInnkeeper) },
+    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_GEM_OWNER, CONDITION_ALWAYS, MSGNO(MsgVaultEverybodysAfterMyRockTheyWant) },
+    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_GEM_OWNERS_WIFE, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_ReadMindOnRock) },
+    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_VILLAGER_SUSPECTING_THE_NEIGHBOR, CONDITION_ALWAYS, MSGNO(MsgVaultTheReasonLunpaTurnedBadIs) },
+    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_BOY_ASKING_ABOUT_TRAVEL, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_ReadBoysMind) },
+    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_GRANDPA, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_ReadMindOnThieves) },
+    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_GRANDPAS_WIFE, CONDITION_ALWAYS, MSGNO(MsgVaultIWishIHadSomethingWorth) },
+    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_BOY_WISHING_TO_BE_OLDER, CONDITION_ALWAYS, MSGNO(MsgVaultWhenIGrowUpIWant) },
+    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_GIRL_TELLING_A_SECRET, CONDITION_ALWAYS, MSGNO(MsgVaultIWishIHadWingsLike) },
+    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_MAYOR, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_ReadMayorMind) },
+    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_MAYORS_WIFE, CONDITION_ALWAYS, MSGNO(MsgVaultImSoRelievedNowThatWe) },
+    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_GIRL_AT_THE_INN, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_ReadBoneGiverMind) },
+    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_WEAPON_MERCHANT, CONDITION_ALWAYS, MSGNO(MsgVaultMyWeaponsWereFoundInThe) },
+    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_ARMOR_MERCHANT, CONDITION_ALWAYS, MSGNO(MsgVaultItMustBeSnowingUpIn) },
+    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_ITEM_MERCHANT, CONDITION_ALWAYS, MSGNO(MsgVaultWhyAreThesePeopleSoAnxious) },
+    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_INN_STAFF, CONDITION_ALWAYS, MSGNO(MsgVaultWhoCouldHaveKnownTheyWere) },
+    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_INNKEEPER, CONDITION_ALWAYS, MSGNO(MsgVaultOfCourseIAlwaysSuspectedThey) },
+    { BG_EVENT(BG_EVENT_JAR), VAULT_INTERIORS_CELL_JAR, FLAG_VAULT_INTERIORS_JAR_COINS, FIND_COINS(7) },
+    { BG_EVENT(BG_EVENT_BARREL), VAULT_INTERIORS_CELL_FIRST_BARREL, FLAG_VAULT_INTERIORS_BARREL_COINS, FIND_COINS(4) },
+    { BG_EVENT(BG_EVENT_BARREL), VAULT_INTERIORS_CELL_SECOND_BARREL, FLAG_VAULT_INTERIORS_BARREL_SLEEP_BOMB, FIND_ITEM(ITEM_SLEEP_BOMB) },
+    { BG_EVENT(BG_EVENT_WOODEN_BOX), VAULT_INTERIORS_CELL_WOODEN_BOX, FLAG_VAULT_INTERIORS_BOX_MINT, FIND_ITEM(ITEM_MINT) },
+    { BG_EVENT(BG_EVENT_BOOKCASE) | MAP_EVENT_FLAG_FACING | FACING_NORTH, VAULT_INTERIORS_CELL_HISTORY_BOOKCASE, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgVaultTheresABookEntitledHistoryOf)) },
+    { BG_EVENT(BG_EVENT_BOOKCASE), VAULT_INTERIORS_CELL_GEMS_BOOKCASE, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgVaultTheresABookEntitledGemsOf)) },
+    { MAP_EVENTS_END },
 };
 // clang-format on
 

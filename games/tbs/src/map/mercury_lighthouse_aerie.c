@@ -1,5 +1,5 @@
 /// @file
-/// Lighthouse Aerie (SceneId_MercuryLighthouseAerie), the top of
+/// Lighthouse Aerie (MapId_MercuryLighthouseAerie), the top of
 /// Mercury Lighthouse, where its beacon burns. Isaac and Garet, with Ivan and
 /// Mia, have climbed the lighthouse after Saturos and Menardi, who hold Jenna
 /// and Kraden and carry the Elemental Stars; they come too late to stop the
@@ -32,7 +32,7 @@
 ///   from one to the next (cell codes 10 and 11;
 ///   places/mercury-lighthouse-aerie/events/MercuryLighthouseAerie_StepOntoPlatform.gif);
 ///   the lift leads down to
-///   Mercury Lighthouse's SceneId_MercuryLighthouseExterior
+///   Mercury Lighthouse's MapId_MercuryLighthouseExterior
 ///   (mercury_lighthouse.c), arriving at
 ///   MERCURY_LIGHTHOUSE_EXTERIOR_FROM_MERCURY_LIGHTHOUSE_AERIE by the Fountain
 ///   of Healing: cell code 6 calls it up, cell code 12 rides it down
@@ -49,7 +49,7 @@
 /// down. Jenna, Kraden, Felix and Menardi are placed only on the first arrival:
 /// every other entrance sets FLAG_HOSTAGES_GONE before the placements are read.
 ///
-/// Unused: SceneId_UnusedMercuryLighthouseAerieCopy, which the area
+/// Unused: MapId_UnusedMercuryLighthouseAerieCopy, which the area
 /// names call Mercury Lighthouse and the debug scene list labels `MTO07NG`,
 /// loads this overlay and the same map. The setup does nothing for it, and no
 /// exit, table or code leads there; only the debug scene selector, which
@@ -102,43 +102,43 @@
 /// ("Jenna, please... Just do as she says"), Saturos (Menardi: "Oh,
 /// Saturos..."), Menardi (Saturos: "Menardi... Wait!") and Alex (Mia:
 /// "Alex!"). Saturos is fought as ENCOUNTER_ZONE_SCRIPTED_TRET_MERCURY, slot 2.
-enum MercuryLighthouseAerieActor {
+enum MercuryLighthouseAerieLocalId {
   /// Flickers between two sizes and sheds sparks while in view
   /// (MercuryLighthouseAerie_FlickerBeacon).
   /// ★ Named from what the player sees: the swirling blue ball of light the
   /// lit beacon shows, spr_244.png (its render)
-  ACTOR_BEACON = ACTOR_FIRST_PLACED,
+  LOCALID_BEACON = LOCALID_FIRST_PLACED,
   /// A statue, drawn as the lighthouse's statues all are, standing on
   /// the lift; it rides up and down with it.
   /// ★ Named from the game: "checked the stone statue..." (MsgCheckedGround)
-  ACTOR_LIFT_STATUE,
+  LOCALID_LIFT_STATUE,
   /// Four more statues flank the beacon, two on each side of it;
-  /// the two east of it, ACTOR_FIRST_BEACON_STATUE + 2 and + 3, are drawn
+  /// the two east of it, LOCALID_FIRST_BEACON_STATUE + 2 and + 3, are drawn
   /// mirrored.
   /// ★ Named from the game: "checked the stone statue..." (MsgCheckedGround)
-  ACTOR_FIRST_BEACON_STATUE,
+  LOCALID_FIRST_BEACON_STATUE,
   /// Six of them.
   /// ★ Named from what the player sees: round white platforms at the foot of
   /// the aerie's side ledges (its render)
-  ACTOR_FIRST_PLATFORM = ACTOR_FIRST_PLACED + 6,
+  LOCALID_FIRST_PLATFORM = LOCALID_FIRST_PLACED + 6,
   /// The two platforms that stand on the lift and go up and down with it.
   /// ★ Named from what the player sees: round white platforms below the lift's
   /// statue (its render)
-  ACTOR_FIRST_LIFT_PLATFORM = ACTOR_FIRST_PLATFORM + 3,
+  LOCALID_FIRST_LIFT_PLATFORM = LOCALID_FIRST_PLATFORM + 3,
   /// ★ Named from what the player sees: round white platforms below the lift's
   /// statue (its render)
-  ACTOR_SECOND_LIFT_PLATFORM,
+  LOCALID_SECOND_LIFT_PLATFORM,
   /// ★ Named from the game: "Kraden!" (MsgMercuryLighthouseAlreadyLit)
-  ACTOR_KRADEN = ACTOR_FIRST_PLACED + 12,
+  LOCALID_KRADEN = LOCALID_FIRST_PLACED + 12,
   /// ★ Named from the game: "Felix" (MsgCharacterName)
-  ACTOR_FELIX,
+  LOCALID_FELIX,
   /// ★ Named from the game: "Oh, Saturos..." (MsgMercuryLighthouseAlreadyLit)
-  ACTOR_SATUROS,
+  LOCALID_SATUROS,
   /// ★ Named from the game: "Menardi... Wait!"
   /// (MsgMercuryLighthouseAlreadyLit)
-  ACTOR_MENARDI,
+  LOCALID_MENARDI,
   /// ★ Named from the game: "Alex!" (MsgMercuryGot)
-  ACTOR_ALEX
+  LOCALID_ALEX
 };
 
 /// Scene flags, kept while the party stays on the aerie.
@@ -146,20 +146,20 @@ enum {
   /// The leader stands on a platform, which has dipped under the weight.
   /// ★ Named from what the player sees: the round platforms floating in the
   /// sky beside the aerie, which bob under the leader (its render)
-  FLAG_ON_PLATFORM = FLAG_SCENE_TEMP_50,
+  FLAG_ON_PLATFORM = FLAG_MAP_TEMP_50,
   /// ★ Named from what the player sees: the lift rising to the aerie with a
   /// statue on it (its render)
-  FLAG_LIFT_UP = FLAG_SCENE_TEMP_51,
+  FLAG_LIFT_UP = FLAG_MAP_TEMP_51,
   /// Set on every arrival but the first: Jenna, Kraden, Felix and Menardi
   /// are placed only before it.
   /// ★ Named from the game: "leave our hostages"
   /// (MsgMercuryLighthouseAlreadyLit)
-  FLAG_HOSTAGES_GONE = FLAG_SCENE_TEMP_53
+  FLAG_HOSTAGES_GONE = FLAG_MAP_TEMP_53
 };
 
 enum {
   /// ★ Named from the game: "a Psynergy Stone" (MsgGotPsynergyStone)
-  FLAG_PSYNERGY_STONE = FLAG_PLACE_TEMP_50
+  FLAG_PSYNERGY_STONE = FLAG_MAPSEC_TEMP_50
 };
 
 static void MercuryLighthouseAerie_PartyArrives(void);
@@ -178,30 +178,33 @@ static void MercuryLighthouseAerie_FlickerBeacon(void);
 #include "common/effect_spawn.h"
 #include "objcmd.h"
 
-const struct SceneEntrance *MercuryLighthouseAerie_GetEntrances(void) {
-  return gMercuryLighthouseAerieEntrances;
+const struct MapWarpDest *MercuryLighthouseAerie_GetWarpDests(void) {
+  return gMercuryLighthouseAerieWarpDests;
 }
 
-const struct SceneRegion *MercuryLighthouseAerie_GetRegions(void) { return 0; }
+const struct MapWarpRegion *MercuryLighthouseAerie_GetRegions(void) {
+  return 0;
+}
 
-/// Returns the one exit: the lift down to SceneId_MercuryLighthouseExterior's
+/// Returns the one exit: the lift down to MapId_MercuryLighthouseExterior's
 /// MERCURY_LIGHTHOUSE_EXTERIOR_FROM_MERCURY_LIGHTHOUSE_AERIE, by the Fountain
 /// of Healing.
-const u32 *MercuryLighthouseAerie_GetExits(void) {
-  return gMercuryLighthouseAerieExits;
+const u32 *MercuryLighthouseAerie_GetWarps(void) {
+  return gMercuryLighthouseAerieWarps;
 }
 
 /// Returns the actors; only the first arrival
 /// (MERCURY_LIGHTHOUSE_AERIE_AFTER_BEACON_LIT) places Jenna, Kraden, Felix
 /// and Menardi.
-const struct ScenePlacement *MercuryLighthouseAerie_GetPlacements(void) {
-  if (gGameState.entrance != MERCURY_LIGHTHOUSE_AERIE_AFTER_BEACON_LIT) {
+const struct ObjectEventTemplate *
+MercuryLighthouseAerie_GetObjectEventTemplates(void) {
+  if (gGameState.warpDest != MERCURY_LIGHTHOUSE_AERIE_AFTER_BEACON_LIT) {
     Engine_GameFlagSet(FLAG_HOSTAGES_GONE);
   }
-  return gMercuryLighthouseAeriePlacements;
+  return gMercuryLighthouseAerieObjectEventTemplates;
 }
 
-const struct SceneEvent *MercuryLighthouseAerie_GetEvents(void) {
+const struct MapEvent *MercuryLighthouseAerie_GetEvents(void) {
   return gMercuryLighthouseAerieEvents;
 }
 
@@ -215,75 +218,77 @@ const struct SceneEvent *MercuryLighthouseAerie_GetEvents(void) {
 /// up.
 s32 MercuryLighthouseAerie_Initialize(void) {
   u32 i;
-  s32 actor;
-  struct FieldActor *obj;
+  s32 objectEvent;
+  struct ObjectEvent *obj;
 
   Engine_GameFlagSet(FLAG_MERCURY_LIGHTHOUSE_LIT);
   gEventWork->startTransition =
-      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
-  if (gGameState.scene == (s32)&SceneId_MercuryLighthouseAerie) {
+      MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
+  if (gGameState.mapId == (s32)&MapId_MercuryLighthouseAerie) {
     Engine_GameFlagSet(FLAG_RETREAT_BLOCKED);
     FieldScheduler_AddCallback(MercuryLighthouseAerie_FlickerBeacon,
-                               TASK_PRIORITY_SCENE);
-    Engine_ActorSetSpritePriority(ACTOR_PARTY_LEADER, 1);
-    Engine_ActorSetSpritePriority(GARET, 1);
-    Engine_ActorSetSpritePriority(IVAN, 1);
-    Engine_ActorSetSpritePriority(MIA, 1);
-    Engine_ActorSetSpritePriority(JENNA, 1);
-    Engine_ActorSetSpritePriority(ACTOR_KRADEN, 1);
-    Engine_ActorSetSpritePriority(ACTOR_FELIX, 1);
-    Engine_ActorSetSpritePriority(ACTOR_SATUROS, 1);
-    Engine_ActorSetSpritePriority(ACTOR_MENARDI, 1);
-    Engine_ActorSetSpritePriority(ACTOR_ALEX, 1);
-    Engine_ActorSetSpritePriority(ACTOR_BEACON, 1);
-    Engine_ActorSetSpritePriority(ACTOR_LIFT_STATUE, 1);
-    Engine_ActorSetSpritePriority(ACTOR_FIRST_BEACON_STATUE, 1);
-    Engine_ActorSetSpritePriority(ACTOR_FIRST_BEACON_STATUE + 1, 1);
-    Engine_ActorSetSpritePriority(ACTOR_FIRST_BEACON_STATUE + 2, 1);
-    Engine_ActorSetSpritePriority(ACTOR_FIRST_BEACON_STATUE + 3, 1);
-    for (i = ACTOR_FIRST_PLATFORM; i < ACTOR_FIRST_PLATFORM + 6; i++) {
-      Engine_ActorSetSpritePriority(i, 1);
-      Object_GetById(i)->motionFlags = 4;
-      Object_GetById(i)->priorityFlags |= 2;
-      Object_GetById(i)->y.fixed = -(PIXELS(50) + PIXELS(1) / 2);
+                               TASK_PRIORITY_MAP);
+    Engine_ObjectEventSetSpritePriority(LOCALID_PARTY_LEADER, 1);
+    Engine_ObjectEventSetSpritePriority(GARET, 1);
+    Engine_ObjectEventSetSpritePriority(IVAN, 1);
+    Engine_ObjectEventSetSpritePriority(MIA, 1);
+    Engine_ObjectEventSetSpritePriority(JENNA, 1);
+    Engine_ObjectEventSetSpritePriority(LOCALID_KRADEN, 1);
+    Engine_ObjectEventSetSpritePriority(LOCALID_FELIX, 1);
+    Engine_ObjectEventSetSpritePriority(LOCALID_SATUROS, 1);
+    Engine_ObjectEventSetSpritePriority(LOCALID_MENARDI, 1);
+    Engine_ObjectEventSetSpritePriority(LOCALID_ALEX, 1);
+    Engine_ObjectEventSetSpritePriority(LOCALID_BEACON, 1);
+    Engine_ObjectEventSetSpritePriority(LOCALID_LIFT_STATUE, 1);
+    Engine_ObjectEventSetSpritePriority(LOCALID_FIRST_BEACON_STATUE, 1);
+    Engine_ObjectEventSetSpritePriority(LOCALID_FIRST_BEACON_STATUE + 1, 1);
+    Engine_ObjectEventSetSpritePriority(LOCALID_FIRST_BEACON_STATUE + 2, 1);
+    Engine_ObjectEventSetSpritePriority(LOCALID_FIRST_BEACON_STATUE + 3, 1);
+    for (i = LOCALID_FIRST_PLATFORM; i < LOCALID_FIRST_PLATFORM + 6; i++) {
+      Engine_ObjectEventSetSpritePriority(i, 1);
+      ObjectEvent_GetById(i)->motionFlags = 4;
+      ObjectEvent_GetById(i)->priorityFlags |= 2;
+      ObjectEvent_GetById(i)->y.fixed = -(PIXELS(50) + PIXELS(1) / 2);
     }
     if (Engine_GameFlagIsSet(FLAG_KEEP_PARTY_POSITION) &&
-        (actor = SceneActor_FindNearestFloatingPlatform()) != 0 &&
-        (obj = Object_GetById(actor)) != NULL) {
+        (objectEvent = MapObjectEvent_FindNearestFloatingPlatform()) != 0 &&
+        (obj = ObjectEvent_GetById(objectEvent)) != NULL) {
       obj->motionFlags = 0;
     }
-    Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_LIFT_STATUE), 0);
-    Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_FIRST_BEACON_STATUE), 0);
-    Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_FIRST_BEACON_STATUE + 1),
-                               0);
-    Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_FIRST_BEACON_STATUE + 2),
-                               0);
-    Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_FIRST_BEACON_STATUE + 3),
-                               0);
-    Object_GetById(ACTOR_FIRST_BEACON_STATUE + 2)->scaleX = -Q16_ONE;
-    Object_GetById(ACTOR_FIRST_BEACON_STATUE + 3)->scaleX = -Q16_ONE;
-    if (gGameState.entrance == MERCURY_LIGHTHOUSE_AERIE_AFTER_BEACON_LIT) {
+    Engine_ObjectEventSetSpriteFlags(ObjectEvent_GetById(LOCALID_LIFT_STATUE),
+                                     0);
+    Engine_ObjectEventSetSpriteFlags(
+        ObjectEvent_GetById(LOCALID_FIRST_BEACON_STATUE), 0);
+    Engine_ObjectEventSetSpriteFlags(
+        ObjectEvent_GetById(LOCALID_FIRST_BEACON_STATUE + 1), 0);
+    Engine_ObjectEventSetSpriteFlags(
+        ObjectEvent_GetById(LOCALID_FIRST_BEACON_STATUE + 2), 0);
+    Engine_ObjectEventSetSpriteFlags(
+        ObjectEvent_GetById(LOCALID_FIRST_BEACON_STATUE + 3), 0);
+    ObjectEvent_GetById(LOCALID_FIRST_BEACON_STATUE + 2)->scaleX = -Q16_ONE;
+    ObjectEvent_GetById(LOCALID_FIRST_BEACON_STATUE + 3)->scaleX = -Q16_ONE;
+    if (gGameState.warpDest == MERCURY_LIGHTHOUSE_AERIE_AFTER_BEACON_LIT) {
       if (!Engine_GameFlagIsSet(FLAG_KEEP_PARTY_POSITION)) {
         MercuryLighthouseAerie_PartyArrives();
       }
-    } else if (gGameState.entrance ==
+    } else if (gGameState.warpDest ==
                MERCURY_LIGHTHOUSE_AERIE_AFTER_SATUROS_BATTLE) {
       if (!Engine_GameFlagIsSet(FLAG_LIFT_UP)) {
         {
-          struct MapLayerScroll *lift =
-              &((struct MapScrollWork *)gMapWork[0])->layers[2];
+          struct MapGridLayerScroll *lift =
+              &((struct MapGridScrollWork *)gMapGridWork[0])->layers[2];
 
           lift->offsetY = PIXELS(1024);
         }
-        Engine_MapRedraw();
+        Engine_MapGridRedraw();
         Engine_TaskWait(1);
-        Map_CopyCellsTo(4, 70, 4, 74, 5, 4);
-        Engine_ActorSetPosition(ACTOR_LIFT_STATUE, 0, 0);
+        MapGrid_CopyCellsTo(4, 70, 4, 74, 5, 4);
+        Engine_ObjectEventSetPosition(LOCALID_LIFT_STATUE, 0, 0);
         if (!Engine_GameFlagIsSet(FLAG_KEEP_PARTY_POSITION)) {
           MercuryLighthouseAerie_AlexAppears();
         }
       }
-    } else if (gGameState.entrance ==
+    } else if (gGameState.warpDest ==
                MERCURY_LIGHTHOUSE_AERIE_FROM_MERCURY_LIGHTHOUSE_EXTERIOR) {
       Engine_GameFlagSet(FLAG_LIFT_UP);
     }
@@ -296,98 +301,105 @@ s32 MercuryLighthouseAerie_Initialize(void) {
 /// the aerie shakes, the camera pans across and in a flash the party stands at
 /// the top. Isaac shakes his head and the others gather on him.
 static void MercuryLighthouseAerie_PartyArrives(void) {
-  struct FieldActor *leader;
+  struct ObjectEvent *leader;
 
-  Engine_EventStart();
+  Engine_ScriptStart();
   Party_RestorePpOfLitElements();
-  Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_PARTY_LEADER), 0);
-  Engine_ActorSetSpriteFlags(Object_GetById(GARET), 0);
-  Engine_ActorSetSpriteFlags(Object_GetById(IVAN), 0);
-  Engine_ActorSetSpriteFlags(Object_GetById(MIA), 0);
+  Engine_ObjectEventSetSpriteFlags(ObjectEvent_GetById(LOCALID_PARTY_LEADER),
+                                   0);
+  Engine_ObjectEventSetSpriteFlags(ObjectEvent_GetById(GARET), 0);
+  Engine_ObjectEventSetSpriteFlags(ObjectEvent_GetById(IVAN), 0);
+  Engine_ObjectEventSetSpriteFlags(ObjectEvent_GetById(MIA), 0);
   Camera_MoveTo(PIXELS(304), -1, PIXELS(120), 0);
   Engine_TaskWait(1);
-  Engine_MapRedraw();
+  Engine_MapGridRedraw();
   Engine_TaskWait(1);
-  Event_PlayCue(SE_141);
-  Map_SetShake(PIXELS(5), PIXELS(5), Q16_ONE);
-  Event_PlayCue(AUDIO_CUE_FADE_SLOT3);
-  Map_SetShake(-1, -1, 9 * Q16_ONE / 10);
-  gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
-  Engine_EventOpenScreen();
-  Engine_EventWaitForScreen();
-  Engine_MapRenderWaitForValues();
-  Engine_EventWait(30);
-  Engine_EventGetViewCenter()->motionFlags = 0;
+  Script_PlayCue(SE_141);
+  MapGrid_SetShake(PIXELS(5), PIXELS(5), Q16_ONE);
+  Script_PlayCue(AUDIO_CUE_FADE_SLOT3);
+  MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
+  gEventWork->startTransition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+  Engine_ScriptOpenScreen();
+  Engine_ScriptWaitForScreen();
+  Engine_MapGridRenderWaitForValues();
+  Engine_ScriptWait(30);
+  Engine_ScriptGetViewCenter()->motionFlags = 0;
   Camera_SetSpeed(PIXELS(4) / 5, PIXELS(1) / 10);
   Camera_MoveTo(PIXELS(512), -PIXELS(24), PIXELS(160), 1);
   Engine_CameraWaitForMove();
   ColorBuffer_ApplySource(PALETTE_TRANSFORM_PLAIN, 0);
   ColorBuffer_ApplyTarget(PALETTE_TRANSFORM_PALE, 0);
   Engine_ColorBufferInterpolate(50);
-  Engine_EventWait(50);
+  Engine_ScriptWait(50);
   ColorBuffer_ApplyTarget(RGB(31, 31, 31), 0);
   Engine_ColorBufferInterpolate(30);
-  Engine_EventWait(30);
-  Actor_SetPosition(ACTOR_PARTY_LEADER, PIXELS(504), PIXELS(168));
-  Actor_SetPosition(GARET, PIXELS(528), PIXELS(144));
-  Actor_SetPosition(IVAN, PIXELS(488), PIXELS(144));
-  Actor_SetPosition(MIA, PIXELS(512), PIXELS(152));
-  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 19);
-  Engine_ActorSetAnimation(GARET, 19);
-  Engine_ActorSetAnimation(IVAN, 19);
-  Engine_ActorSetAnimation(MIA, 19);
-  Engine_EventWait(10);
+  Engine_ScriptWait(30);
+  ObjectEvent_SetPosition(LOCALID_PARTY_LEADER, PIXELS(504), PIXELS(168));
+  ObjectEvent_SetPosition(GARET, PIXELS(528), PIXELS(144));
+  ObjectEvent_SetPosition(IVAN, PIXELS(488), PIXELS(144));
+  ObjectEvent_SetPosition(MIA, PIXELS(512), PIXELS(152));
+  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, 19);
+  Engine_ObjectEventSetAnimation(GARET, 19);
+  Engine_ObjectEventSetAnimation(IVAN, 19);
+  Engine_ObjectEventSetAnimation(MIA, 19);
+  Engine_ScriptWait(10);
   ColorBuffer_ApplyTarget(PALETTE_TRANSFORM_PLAIN, 0);
   Engine_ColorBufferInterpolate(30);
-  Engine_EventWait(30);
-  Engine_EventWait(80);
-  Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_PARTY_LEADER),
-                             SPRITE_FLAG_SHADOW);
-  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIMATION_STAND);
-  Engine_EventWait(30);
-  Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, ANIMATION_SHAKE_HEAD);
-  Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 20);
-  Engine_ActorStartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
-  Engine_EventWait(60);
-  Engine_ActorSetSpriteFlags(Object_GetById(GARET), SPRITE_FLAG_SHADOW);
-  Engine_ActorSetAnimation(GARET, ANIMATION_STAND);
-  Engine_EventWait(20);
-  Actor_FaceDirection(GARET, FACING_SOUTHEAST, 0);
-  Engine_EventWait(20);
-  Actor_FaceDirection(GARET, FACING_SOUTHWEST, 0);
-  Engine_EventWait(20);
-  Actor_FaceDirection(GARET, FACING_EAST, 0);
-  Engine_ActorSetSpriteFlags(Object_GetById(IVAN), SPRITE_FLAG_SHADOW);
-  Engine_ActorSetAnimation(IVAN, ANIMATION_STAND);
-  Actor_FaceDirection(GARET, FACING_SOUTHWEST, 0);
-  Engine_EventWait(40);
-  Engine_ActorSetSpriteFlags(Object_GetById(MIA), SPRITE_FLAG_SHADOW);
-  Engine_ActorSetAnimation(MIA, ANIMATION_STAND);
-  Engine_EventWait(20);
-  Engine_ActorSetAnimationAndWait(MIA, ANIMATION_NOD);
-  Engine_EventWait(20);
-  Actor_SetSpeed(GARET, PIXELS(4) / 5, PIXELS(2) / 5);
-  Actor_SetSpeed(IVAN, PIXELS(4) / 5, PIXELS(2) / 5);
-  Actor_SetSpeed(MIA, PIXELS(4) / 5, PIXELS(2) / 5);
-  Engine_ActorSetAnimation(GARET, ANIMATION_WALK);
-  Engine_ActorSetAnimation(IVAN, ANIMATION_WALK);
-  Engine_ActorSetAnimation(MIA, ANIMATION_WALK);
-  leader = Object_GetById(ACTOR_PARTY_LEADER);
+  Engine_ScriptWait(30);
+  Engine_ScriptWait(80);
+  Engine_ObjectEventSetSpriteFlags(ObjectEvent_GetById(LOCALID_PARTY_LEADER),
+                                   SPRITE_FLAG_SHADOW);
+  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIMATION_STAND);
+  Engine_ScriptWait(30);
+  Engine_ObjectEventSetAnimationAndWait(LOCALID_PARTY_LEADER,
+                                        ANIMATION_SHAKE_HEAD);
+  ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_NORTH, 20);
+  Engine_ObjectEventStartRepeatedMotion(LOCALID_PARTY_LEADER, 2);
+  Engine_ScriptWait(60);
+  Engine_ObjectEventSetSpriteFlags(ObjectEvent_GetById(GARET),
+                                   SPRITE_FLAG_SHADOW);
+  Engine_ObjectEventSetAnimation(GARET, ANIMATION_STAND);
+  Engine_ScriptWait(20);
+  ObjectEvent_FaceDirection(GARET, FACING_SOUTHEAST, 0);
+  Engine_ScriptWait(20);
+  ObjectEvent_FaceDirection(GARET, FACING_SOUTHWEST, 0);
+  Engine_ScriptWait(20);
+  ObjectEvent_FaceDirection(GARET, FACING_EAST, 0);
+  Engine_ObjectEventSetSpriteFlags(ObjectEvent_GetById(IVAN),
+                                   SPRITE_FLAG_SHADOW);
+  Engine_ObjectEventSetAnimation(IVAN, ANIMATION_STAND);
+  ObjectEvent_FaceDirection(GARET, FACING_SOUTHWEST, 0);
+  Engine_ScriptWait(40);
+  Engine_ObjectEventSetSpriteFlags(ObjectEvent_GetById(MIA),
+                                   SPRITE_FLAG_SHADOW);
+  Engine_ObjectEventSetAnimation(MIA, ANIMATION_STAND);
+  Engine_ScriptWait(20);
+  Engine_ObjectEventSetAnimationAndWait(MIA, ANIMATION_NOD);
+  Engine_ScriptWait(20);
+  ObjectEvent_SetSpeed(GARET, PIXELS(4) / 5, PIXELS(2) / 5);
+  ObjectEvent_SetSpeed(IVAN, PIXELS(4) / 5, PIXELS(2) / 5);
+  ObjectEvent_SetSpeed(MIA, PIXELS(4) / 5, PIXELS(2) / 5);
+  Engine_ObjectEventSetAnimation(GARET, ANIMATION_WALK);
+  Engine_ObjectEventSetAnimation(IVAN, ANIMATION_WALK);
+  Engine_ObjectEventSetAnimation(MIA, ANIMATION_WALK);
+  leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   if (leader != 0)
-    Actor_SetDestination(GARET, leader->x.part.pixel, leader->z.part.pixel);
-  leader = Object_GetById(ACTOR_PARTY_LEADER);
+    ObjectEvent_SetDestination(GARET, leader->x.part.pixel,
+                               leader->z.part.pixel);
+  leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   if (leader != 0)
-    Actor_SetDestination(IVAN, leader->x.part.pixel, leader->z.part.pixel);
-  leader = Object_GetById(ACTOR_PARTY_LEADER);
+    ObjectEvent_SetDestination(IVAN, leader->x.part.pixel,
+                               leader->z.part.pixel);
+  leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   if (leader != 0)
-    Actor_SetDestination(MIA, leader->x.part.pixel, leader->z.part.pixel);
-  Engine_ActorWaitForMove(MIA);
-  Actor_SetPosition(MIA, 0, 0);
-  Engine_ActorWaitForMove(IVAN);
-  Actor_SetPosition(IVAN, 0, 0);
-  Engine_ActorWaitForMove(GARET);
-  Actor_SetPosition(GARET, 0, 0);
-  Engine_EventEnd();
+    ObjectEvent_SetDestination(MIA, leader->x.part.pixel, leader->z.part.pixel);
+  Engine_ObjectEventWaitForMove(MIA);
+  ObjectEvent_SetPosition(MIA, 0, 0);
+  Engine_ObjectEventWaitForMove(IVAN);
+  ObjectEvent_SetPosition(IVAN, 0, 0);
+  Engine_ObjectEventWaitForMove(GARET);
+  ObjectEvent_SetPosition(GARET, 0, 0);
+  Engine_ScriptEnd();
 }
 
 #include "common/object_distance.h"
@@ -396,86 +408,88 @@ static void MercuryLighthouseAerie_PartyArrives(void) {
 /// Lighthouse Aerie: walking into cell code 10 or 11. If nothing is in the way
 /// the leader jumps two cells ahead, off any platform and onto the next.
 static void MercuryLighthouseAerie_JumpToPlatform(void) {
-  struct FieldActor *actor;
+  struct ObjectEvent *objectEvent;
   struct FieldPosition position;
   s32 angle;
   u8 flags;
 
-  actor = Object_GetById(ACTOR_PARTY_LEADER);
-  angle = (actor->facing + 0x1000) & 0xe000;
-  flags = actor->motionFlags;
-  SET_POSITION(&position, (actor->x.fixed & 0xfff00000) + PIXELS(8),
-               actor->y.fixed, (actor->z.fixed & 0xfff00000) + PIXELS(8));
+  objectEvent = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
+  angle = (objectEvent->facing + 0x1000) & 0xe000;
+  flags = objectEvent->motionFlags;
+  SET_POSITION(&position, (objectEvent->x.fixed & 0xfff00000) + PIXELS(8),
+               objectEvent->y.fixed,
+               (objectEvent->z.fixed & 0xfff00000) + PIXELS(8));
   Vector_AddPolarOffset(PIXELS(32), angle, &position);
-  if (FieldObject_CheckMovementCollision(actor, &position) == 0) {
+  if (FieldObject_CheckMovementCollision(objectEvent, &position) == 0) {
     Engine_GameFlagClear(FLAG_ON_PLATFORM);
     MercuryLighthouseAerie_SettlePlatforms();
-    Object_SetMode(actor, 6);
+    ObjectEvent_SetMode(objectEvent, 6);
     Engine_TaskWait(6);
     Engine_AudioPlayCue(SE_JUMP);
-    Object_SetMode(actor, 7);
-    actor->speed = PIXELS(3);
-    actor->acceleration = PIXELS(2);
-    actor->velocityY = PIXELS(4);
-    actor->motionFlags &= 0x7e;
-    Engine_ActorSetSpriteFlags(actor, 0);
-    Engine_ActorMoveToAndWait(ACTOR_PARTY_LEADER, position.x >> 16,
-                              position.z >> 16);
-    Object_SetMode(actor, 6);
-    Engine_ActorSetSpriteFlags(actor, SPRITE_FLAG_SHADOW);
-    actor->motionFlags = flags;
+    ObjectEvent_SetMode(objectEvent, 7);
+    objectEvent->speed = PIXELS(3);
+    objectEvent->acceleration = PIXELS(2);
+    objectEvent->velocityY = PIXELS(4);
+    objectEvent->motionFlags &= 0x7e;
+    Engine_ObjectEventSetSpriteFlags(objectEvent, 0);
+    Engine_ObjectEventMoveToAndWait(LOCALID_PARTY_LEADER, position.x >> 16,
+                                    position.z >> 16);
+    ObjectEvent_SetMode(objectEvent, 6);
+    Engine_ObjectEventSetSpriteFlags(objectEvent, SPRITE_FLAG_SHADOW);
+    objectEvent->motionFlags = flags;
   }
 }
 
 /// Lighthouse Aerie: touching cell code 10 when not already on a platform.
 /// The platform underfoot dips with the leader and bobs back up.
 static void MercuryLighthouseAerie_StepOntoPlatform(void) {
-  struct FieldActor *leader;
-  struct FieldActor *actor;
+  struct ObjectEvent *leader;
+  struct ObjectEvent *objectEvent;
   s32 id;
 
-  leader = Object_GetById(ACTOR_PARTY_LEADER);
-  Engine_EventStart();
-  id = SceneActor_FindNearestFloatingPlatform();
+  leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
+  Engine_ScriptStart();
+  id = MapObjectEvent_FindNearestFloatingPlatform();
   gMercuryLighthouseAerie_PlatformUnderfoot = id;
   if (id != 0) {
     Engine_GameFlagSet(FLAG_ON_PLATFORM);
-    actor = Object_GetById(gMercuryLighthouseAerie_PlatformUnderfoot);
-    actor->motionFlags = 0;
+    objectEvent =
+        ObjectEvent_GetById(gMercuryLighthouseAerie_PlatformUnderfoot);
+    objectEvent->motionFlags = 0;
     leader->motionFlags &= 0xfe;
-    actor->y.fixed -= PIXELS(3);
+    objectEvent->y.fixed -= PIXELS(3);
     leader->y.fixed -= PIXELS(3);
     leader->terrainHeight -= PIXELS(3);
     Engine_TaskWait(2);
-    actor->y.fixed -= PIXELS(2);
+    objectEvent->y.fixed -= PIXELS(2);
     leader->y.fixed -= PIXELS(2);
     leader->terrainHeight -= PIXELS(2);
     Engine_TaskWait(10);
-    actor->y.fixed += PIXELS(2);
+    objectEvent->y.fixed += PIXELS(2);
     leader->y.fixed += PIXELS(2);
     leader->terrainHeight += PIXELS(2);
     Engine_TaskWait(4);
-    actor->y.fixed += PIXELS(2);
+    objectEvent->y.fixed += PIXELS(2);
     leader->y.fixed += PIXELS(2);
     leader->terrainHeight += PIXELS(2);
     Engine_TaskWait(4);
-    actor->y.fixed += PIXELS(1);
+    objectEvent->y.fixed += PIXELS(1);
     leader->y.fixed += PIXELS(1);
     leader->terrainHeight += PIXELS(1);
   }
-  Engine_EventEnd();
+  Engine_ScriptEnd();
 }
 
 /// Lighthouse Aerie: touching cell code 11, off the platforms. The leader walks
 /// normally again and the platforms stop following.
 static void MercuryLighthouseAerie_SettlePlatforms(void) {
-  Object_GetById(ACTOR_PARTY_LEADER)->motionFlags = 3;
-  Object_GetById(ACTOR_FIRST_PLATFORM)->motionFlags = 4;
-  Object_GetById(ACTOR_FIRST_PLATFORM + 1)->motionFlags = 4;
-  Object_GetById(ACTOR_FIRST_PLATFORM + 2)->motionFlags = 4;
-  Object_GetById(ACTOR_FIRST_LIFT_PLATFORM)->motionFlags = 4;
-  Object_GetById(ACTOR_SECOND_LIFT_PLATFORM)->motionFlags = 4;
-  Object_GetById(ACTOR_FIRST_PLATFORM + 5)->motionFlags = 4;
+  ObjectEvent_GetById(LOCALID_PARTY_LEADER)->motionFlags = 3;
+  ObjectEvent_GetById(LOCALID_FIRST_PLATFORM)->motionFlags = 4;
+  ObjectEvent_GetById(LOCALID_FIRST_PLATFORM + 1)->motionFlags = 4;
+  ObjectEvent_GetById(LOCALID_FIRST_PLATFORM + 2)->motionFlags = 4;
+  ObjectEvent_GetById(LOCALID_FIRST_LIFT_PLATFORM)->motionFlags = 4;
+  ObjectEvent_GetById(LOCALID_SECOND_LIFT_PLATFORM)->motionFlags = 4;
+  ObjectEvent_GetById(LOCALID_FIRST_PLATFORM + 5)->motionFlags = 4;
 }
 
 /// Lighthouse Aerie: touching cell code 5 before the confrontation. Garet sees
@@ -485,435 +499,442 @@ static void MercuryLighthouseAerie_SettlePlatforms(void) {
 /// Felix for the next lighthouse, and Saturos fights alone
 /// (ENCOUNTER_ZONE_SCRIPTED_TRET_MERCURY, slot 2).
 static void MercuryLighthouseAerie_ConfrontSaturos(void) {
-  struct FieldActor *actor;
+  struct ObjectEvent *objectEvent;
 
-  Engine_EventStart();
-  Actor_Get(ACTOR_FIRST_LIFT_PLATFORM)->motionFlags &= 0xfa;
-  Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(4) / 5, PIXELS(2) / 5);
-  Actor_SetSpeed(GARET, PIXELS(4) / 5, PIXELS(2) / 5);
-  Actor_SetSpeed(IVAN, PIXELS(4) / 5, PIXELS(2) / 5);
-  Actor_SetSpeed(MIA, PIXELS(4) / 5, PIXELS(2) / 5);
-  actor = Actor_Get(ACTOR_PARTY_LEADER);
-  if (actor != 0) {
-    Actor_SetPosition(GARET, actor->x.fixed, actor->z.fixed);
+  Engine_ScriptStart();
+  ObjectEvent_Get(LOCALID_FIRST_LIFT_PLATFORM)->motionFlags &= 0xfa;
+  ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(4) / 5, PIXELS(2) / 5);
+  ObjectEvent_SetSpeed(GARET, PIXELS(4) / 5, PIXELS(2) / 5);
+  ObjectEvent_SetSpeed(IVAN, PIXELS(4) / 5, PIXELS(2) / 5);
+  ObjectEvent_SetSpeed(MIA, PIXELS(4) / 5, PIXELS(2) / 5);
+  objectEvent = ObjectEvent_Get(LOCALID_PARTY_LEADER);
+  if (objectEvent != 0) {
+    ObjectEvent_SetPosition(GARET, objectEvent->x.fixed, objectEvent->z.fixed);
   }
-  actor = Actor_Get(ACTOR_PARTY_LEADER);
-  if (actor != 0) {
-    Actor_SetPosition(IVAN, actor->x.fixed, actor->z.fixed);
+  objectEvent = ObjectEvent_Get(LOCALID_PARTY_LEADER);
+  if (objectEvent != 0) {
+    ObjectEvent_SetPosition(IVAN, objectEvent->x.fixed, objectEvent->z.fixed);
   }
-  actor = Actor_Get(ACTOR_PARTY_LEADER);
-  if (actor != 0) {
-    Actor_SetPosition(MIA, actor->x.fixed, actor->z.fixed);
+  objectEvent = ObjectEvent_Get(LOCALID_PARTY_LEADER);
+  if (objectEvent != 0) {
+    ObjectEvent_SetPosition(MIA, objectEvent->x.fixed, objectEvent->z.fixed);
   }
   Engine_TaskWait(1);
-  Actor_WalkTo(ACTOR_PARTY_LEADER, 344, 232);
-  Actor_WalkTo(GARET, 328, 232);
-  Actor_WalkTo(IVAN, 344, 248);
-  Actor_WalkTo(MIA, 328, 248);
-  Engine_ActorWaitForMove(ACTOR_PARTY_LEADER);
-  Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTHWEST, 0);
-  Engine_ActorWaitForMove(GARET);
-  Actor_FaceDirection(GARET, FACING_NORTH, 0);
-  Engine_ActorWaitForMove(IVAN);
-  Actor_FaceDirection(IVAN, FACING_NORTHWEST, 0);
-  Engine_ActorWaitForMove(MIA);
-  Actor_FaceDirection(MIA, FACING_NORTH, 0);
-  Engine_EventWait(50);
-  Engine_ActorRunRepeatedMotion(GARET, 2);
-  Engine_EventWait(20);
+  ObjectEvent_WalkTo(LOCALID_PARTY_LEADER, 344, 232);
+  ObjectEvent_WalkTo(GARET, 328, 232);
+  ObjectEvent_WalkTo(IVAN, 344, 248);
+  ObjectEvent_WalkTo(MIA, 328, 248);
+  Engine_ObjectEventWaitForMove(LOCALID_PARTY_LEADER);
+  ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_NORTHWEST, 0);
+  Engine_ObjectEventWaitForMove(GARET);
+  ObjectEvent_FaceDirection(GARET, FACING_NORTH, 0);
+  Engine_ObjectEventWaitForMove(IVAN);
+  ObjectEvent_FaceDirection(IVAN, FACING_NORTHWEST, 0);
+  Engine_ObjectEventWaitForMove(MIA);
+  ObjectEvent_FaceDirection(MIA, FACING_NORTH, 0);
+  Engine_ScriptWait(50);
+  Engine_ObjectEventRunRepeatedMotion(GARET, 2);
+  Engine_ScriptWait(20);
   Camera_SetSpeed(PIXELS(3) / 2, PIXELS(3) / 16);
   Camera_MoveTo(PIXELS(328), PIXELS(40), PIXELS(176), 1);
-  Engine_EventGetViewCenter()->motionFlags = 0;
-  Actor_SetSpeed(GARET, PIXELS(3) / 2, PIXELS(3) / 4);
-  Actor_WalkToAndWait(GARET, 328, 216);
+  Engine_ScriptGetViewCenter()->motionFlags = 0;
+  ObjectEvent_SetSpeed(GARET, PIXELS(3) / 2, PIXELS(3) / 4);
+  ObjectEvent_WalkToAndWait(GARET, 328, 216);
   Engine_CameraWaitForMove();
-  Actor_SetSpeed(GARET, PIXELS(4) / 5, PIXELS(2) / 5);
-  Engine_EventWait(60);
+  ObjectEvent_SetSpeed(GARET, PIXELS(4) / 5, PIXELS(2) / 5);
+  Engine_ScriptWait(60);
   Camera_MoveTo(PIXELS(344), PIXELS(24), PIXELS(232), 1);
-  Actor_FaceDirection(GARET, FACING_SOUTHEAST, 20);
+  ObjectEvent_FaceDirection(GARET, FACING_SOUTHEAST, 20);
   Engine_CameraWaitForMove();
-  Engine_ActorSetAnimationAndWait(GARET, ANIMATION_SHAKE_HEAD);
-  Engine_EventSetMessage(MsgMercuryLighthouseAlreadyLit);
-  Event_ShowMessageAndWait(GARET, 0, 20);
-  Actor_SetAttachedEffect(MIA, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-  Engine_EventWait(60);
-  Actor_SetSpeed(MIA, PIXELS(3) / 2, PIXELS(3) / 4);
-  Actor_WalkToAndWait(MIA, 328, 232);
-  Engine_EventWait(10);
-  Event_ShowMessageAndWait(MIA, 0, 20);
-  Engine_ActorSetAnimationAndWait(MIA, ANIMATION_SHAKE_HEAD);
-  Engine_EventWait(20);
-  Event_ShowMessageAndWait(MIA, 0, 30);
-  Engine_ActorFaceEachOther(IVAN, ACTOR_PARTY_LEADER, 0);
-  Engine_EventWait(60);
-  Actor_WalkToAndWait(IVAN, 336, 248);
-  Actor_FaceDirection(IVAN, FACING_NORTHWEST, 0);
-  Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_WEST, 0);
-  Engine_EventWait(30);
-  Event_ShowMessageAndWait(IVAN, 0, 20);
-  Actor_FaceDirection(MIA, FACING_EAST, 30);
-  Engine_EventOpenMessage(MIA, 0);
-  if (Engine_EventChooseYesNo(0, 0) == 0) {
-    Engine_EventWait(20);
-    Actor_ShowEmote(MIA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 60);
-    Actor_FaceDirection(GARET, FACING_SOUTH, 10);
-    Engine_ActorSetAnimationAndWait(GARET, ANIMATION_NOD);
-    Event_ShowMessageAndWait(GARET, 0, 20);
-    Actor_FaceDirection(MIA, FACING_NORTH, 0);
-    Engine_ActorSetAnimationAndWait(GARET, ANIMATION_SHAKE_HEAD);
-    Engine_EventWait(20);
-    Event_ShowMessageAndWait(GARET, 0, 20);
+  Engine_ObjectEventSetAnimationAndWait(GARET, ANIMATION_SHAKE_HEAD);
+  Engine_ScriptSetMessage(MsgMercuryLighthouseAlreadyLit);
+  Script_ShowMessageAndWait(GARET, 0, 20);
+  ObjectEvent_SetAttachedEffect(MIA, ATTACHED_EFFECT_IN_FRONT |
+                                         ATTACHED_EFFECT_ONCE);
+  Engine_ScriptWait(60);
+  ObjectEvent_SetSpeed(MIA, PIXELS(3) / 2, PIXELS(3) / 4);
+  ObjectEvent_WalkToAndWait(MIA, 328, 232);
+  Engine_ScriptWait(10);
+  Script_ShowMessageAndWait(MIA, 0, 20);
+  Engine_ObjectEventSetAnimationAndWait(MIA, ANIMATION_SHAKE_HEAD);
+  Engine_ScriptWait(20);
+  Script_ShowMessageAndWait(MIA, 0, 30);
+  Engine_ObjectEventFaceEachOther(IVAN, LOCALID_PARTY_LEADER, 0);
+  Engine_ScriptWait(60);
+  ObjectEvent_WalkToAndWait(IVAN, 336, 248);
+  ObjectEvent_FaceDirection(IVAN, FACING_NORTHWEST, 0);
+  ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_WEST, 0);
+  Engine_ScriptWait(30);
+  Script_ShowMessageAndWait(IVAN, 0, 20);
+  ObjectEvent_FaceDirection(MIA, FACING_EAST, 30);
+  Engine_ScriptOpenMessage(MIA, 0);
+  if (Engine_ScriptChooseYesNo(0, 0) == 0) {
+    Engine_ScriptWait(20);
+    ObjectEvent_ShowEmote(MIA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 60);
+    ObjectEvent_FaceDirection(GARET, FACING_SOUTH, 10);
+    Engine_ObjectEventSetAnimationAndWait(GARET, ANIMATION_NOD);
+    Script_ShowMessageAndWait(GARET, 0, 20);
+    ObjectEvent_FaceDirection(MIA, FACING_NORTH, 0);
+    Engine_ObjectEventSetAnimationAndWait(GARET, ANIMATION_SHAKE_HEAD);
+    Engine_ScriptWait(20);
+    Script_ShowMessageAndWait(GARET, 0, 20);
     gEventWork->message += 2;
   } else {
     gEventWork->message += 2;
-    Engine_EventWait(20);
-    Actor_ShowEmote(MIA, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
-    Actor_FaceDirection(GARET, FACING_SOUTH, 10);
-    Engine_ActorSetAnimationAndWait(GARET, ANIMATION_SHAKE_HEAD);
-    Event_ShowMessageAndWait(GARET, 0, 20);
-    Actor_FaceDirection(MIA, FACING_NORTH, 0);
-    Engine_ActorRunRepeatedMotion(GARET, 2);
-    Engine_EventWait(20);
-    Event_ShowMessageAndWait(GARET, 0, 20);
+    Engine_ScriptWait(20);
+    ObjectEvent_ShowEmote(MIA, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
+    ObjectEvent_FaceDirection(GARET, FACING_SOUTH, 10);
+    Engine_ObjectEventSetAnimationAndWait(GARET, ANIMATION_SHAKE_HEAD);
+    Script_ShowMessageAndWait(GARET, 0, 20);
+    ObjectEvent_FaceDirection(MIA, FACING_NORTH, 0);
+    Engine_ObjectEventRunRepeatedMotion(GARET, 2);
+    Engine_ScriptWait(20);
+    Script_ShowMessageAndWait(GARET, 0, 20);
   }
-  Actor_ShowEmote(MIA, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
-  Event_ShowMessageAndWait(MIA, 0, 20);
-  Engine_ActorFaceEachOther(ACTOR_PARTY_LEADER, GARET, 0);
-  Engine_EventWait(60);
-  Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_WEST, 0);
-  Actor_FaceDirection(GARET, FACING_SOUTH, 20);
-  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIMATION_NOD);
-  Engine_ActorSetAnimationAndWait(GARET, ANIMATION_NOD);
-  Engine_EventWait(20);
-  Event_ShowMessageAndWait(GARET, 0, 20);
-  Engine_ActorRunRepeatedMotion(MIA, 2);
-  Event_ShowMessageAndWait(MIA, 0, 20);
-  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIMATION_NOD);
-  Engine_ActorSetAnimation(GARET, ANIMATION_NOD);
-  Engine_ActorSetAnimationAndWait(IVAN, ANIMATION_NOD);
-  Engine_EventWait(20);
-  Engine_ActorSetAnimationAndWait(MIA, ANIMATION_SHAKE_HEAD);
-  Engine_EventWait(10);
-  Actor_FaceDirection(MIA, FACING_EAST, 10);
-  Engine_ActorSetAnimation(MIA, 0x10);
-  Event_ShowMessageAndWait(MIA, 0, 60);
+  ObjectEvent_ShowEmote(MIA, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
+  Script_ShowMessageAndWait(MIA, 0, 20);
+  Engine_ObjectEventFaceEachOther(LOCALID_PARTY_LEADER, GARET, 0);
+  Engine_ScriptWait(60);
+  ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_WEST, 0);
+  ObjectEvent_FaceDirection(GARET, FACING_SOUTH, 20);
+  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIMATION_NOD);
+  Engine_ObjectEventSetAnimationAndWait(GARET, ANIMATION_NOD);
+  Engine_ScriptWait(20);
+  Script_ShowMessageAndWait(GARET, 0, 20);
+  Engine_ObjectEventRunRepeatedMotion(MIA, 2);
+  Script_ShowMessageAndWait(MIA, 0, 20);
+  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIMATION_NOD);
+  Engine_ObjectEventSetAnimation(GARET, ANIMATION_NOD);
+  Engine_ObjectEventSetAnimationAndWait(IVAN, ANIMATION_NOD);
+  Engine_ScriptWait(20);
+  Engine_ObjectEventSetAnimationAndWait(MIA, ANIMATION_SHAKE_HEAD);
+  Engine_ScriptWait(10);
+  ObjectEvent_FaceDirection(MIA, FACING_EAST, 10);
+  Engine_ObjectEventSetAnimation(MIA, 0x10);
+  Script_ShowMessageAndWait(MIA, 0, 60);
   // Jenna calls out: "Isaac! Garet!"
-  Event_PlayCue(AUDIO_CUE_FADE_BGM);
-  Actor_SetPosition(JENNA, PIXELS(216), PIXELS(200));
-  Event_ShowMessageAndWait(JENNA, 0, 20);
-  Actor_SetPosition(JENNA, PIXELS(120), PIXELS(160));
-  Actor_FaceDirection(JENNA, FACING_EAST, 0);
-  Engine_ActorSetAnimation(MIA, ANIMATION_STAND);
-  Engine_ActorStartRepeatedMotion(ACTOR_PARTY_LEADER, 1);
-  Engine_ActorRunRepeatedMotion(GARET, 1);
-  Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_EAST, 10);
-  Actor_FaceDirection(GARET, FACING_NORTHEAST, 20);
-  Actor_FaceDirection(IVAN, FACING_NORTHWEST, 10);
-  Actor_FaceDirection(MIA, FACING_WEST, 20);
-  Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTHWEST, 5);
-  Actor_FaceDirection(GARET, FACING_NORTH, 10);
-  Actor_FaceDirection(IVAN, FACING_WEST, 5);
-  Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_WEST, 5);
-  Engine_ActorStartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
-  Actor_FaceDirection(GARET, FACING_WEST, 10);
-  Engine_ActorRunRepeatedMotion(GARET, 2);
-  Engine_EventWait(20);
+  Script_PlayCue(AUDIO_CUE_FADE_BGM);
+  ObjectEvent_SetPosition(JENNA, PIXELS(216), PIXELS(200));
+  Script_ShowMessageAndWait(JENNA, 0, 20);
+  ObjectEvent_SetPosition(JENNA, PIXELS(120), PIXELS(160));
+  ObjectEvent_FaceDirection(JENNA, FACING_EAST, 0);
+  Engine_ObjectEventSetAnimation(MIA, ANIMATION_STAND);
+  Engine_ObjectEventStartRepeatedMotion(LOCALID_PARTY_LEADER, 1);
+  Engine_ObjectEventRunRepeatedMotion(GARET, 1);
+  ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_EAST, 10);
+  ObjectEvent_FaceDirection(GARET, FACING_NORTHEAST, 20);
+  ObjectEvent_FaceDirection(IVAN, FACING_NORTHWEST, 10);
+  ObjectEvent_FaceDirection(MIA, FACING_WEST, 20);
+  ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_NORTHWEST, 5);
+  ObjectEvent_FaceDirection(GARET, FACING_NORTH, 10);
+  ObjectEvent_FaceDirection(IVAN, FACING_WEST, 5);
+  ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_WEST, 5);
+  Engine_ObjectEventStartRepeatedMotion(LOCALID_PARTY_LEADER, 2);
+  ObjectEvent_FaceDirection(GARET, FACING_WEST, 10);
+  Engine_ObjectEventRunRepeatedMotion(GARET, 2);
+  Engine_ScriptWait(20);
   Camera_SetSpeed(PIXELS(3), PIXELS(3) / 8);
   Camera_MoveTo(PIXELS(120), -PIXELS(24), PIXELS(168), 1);
   Engine_CameraWaitForMove();
-  Engine_EventWait(40);
-  Engine_ActorRunRepeatedMotion(ACTOR_FELIX, 1);
-  Engine_EventWait(20);
-  Event_PlayCue(MUS_061);
-  Event_ShowMessageAndWait(ACTOR_FELIX, 0, 20);
-  Engine_ActorRunRepeatedMotion(ACTOR_MENARDI, 1);
-  Engine_EventWait(20);
-  Event_ShowMessageAndWait(ACTOR_MENARDI, 0, 20);
-  Actor_FaceDirection(ACTOR_MENARDI, FACING_NORTH, 60);
-  Actor_FaceDirection(ACTOR_MENARDI, FACING_EAST, 20);
-  Event_ShowMessageAndWait(ACTOR_MENARDI, 0, 20);
-  Actor_SetPosition(GARET, PIXELS(264), PIXELS(288));
-  Event_ShowMessageAndWait(GARET, 0, 20);
-  Actor_SetPosition(GARET, PIXELS(328), PIXELS(216));
-  Engine_ActorSetAnimationAndWait(ACTOR_MENARDI, 4);
-  Engine_EventWait(20);
-  Event_ShowMessageAndWait(ACTOR_MENARDI, 0, 20);
-  Engine_ActorSetAnimationAndWait(ACTOR_MENARDI, 3);
-  Engine_EventWait(20);
-  Event_ShowMessageAndWait(ACTOR_MENARDI, 0, 20);
-  Actor_FaceDirection(ACTOR_MENARDI, FACING_NORTHWEST, 10);
-  Actor_FaceDirection(ACTOR_FELIX, FACING_SOUTHEAST, 10);
-  Engine_ActorRunRepeatedMotion(ACTOR_FELIX, 1);
-  Engine_EventWait(20);
-  Actor_FaceDirection(JENNA, FACING_WEST, 0);
-  Actor_FaceDirection(ACTOR_KRADEN, FACING_WEST, 30);
-  Actor_FaceDirection(ACTOR_FELIX, FACING_EAST, 30);
-  Engine_ActorRunRepeatedMotion(JENNA, 2);
-  Engine_ActorSetAnimationAndWait(ACTOR_FELIX, 4);
-  Engine_EventWait(20);
-  Actor_FaceDirection(ACTOR_FELIX, FACING_SOUTHEAST, 10);
-  Engine_ActorSetAnimationAndWait(ACTOR_FELIX, 3);
-  Engine_EventWait(20);
-  Engine_ActorSetAnimationAndWait(ACTOR_MENARDI, 3);
-  Actor_SetSpeed(ACTOR_FELIX, PIXELS(4) / 5, PIXELS(2) / 5);
-  Actor_WalkToAndWait(ACTOR_FELIX, 104, 168);
-  Engine_EventWait(20);
-  Actor_FaceDirection(ACTOR_MENARDI, FACING_EAST, 20);
-  Actor_FaceDirection(ACTOR_KRADEN, FACING_EAST, 10);
-  Actor_ShowEmote(JENNA, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
-  Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_WINCE, 70);
-  Actor_SetPosition(ACTOR_SATUROS, PIXELS(264), PIXELS(288));
-  Event_ShowMessageAndWait(ACTOR_SATUROS, 0, 20);
-  Actor_SetPosition(ACTOR_SATUROS, PIXELS(296), PIXELS(120));
-  Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTHWEST, 0);
-  Actor_FaceDirection(GARET, FACING_NORTH, 0);
-  Actor_FaceDirection(IVAN, FACING_NORTH, 0);
-  Actor_FaceDirection(MIA, FACING_NORTH, 0);
-  Actor_FaceDirection(JENNA, FACING_EAST, 0);
-  Actor_FaceDirection(ACTOR_KRADEN, FACING_EAST, 0);
+  Engine_ScriptWait(40);
+  Engine_ObjectEventRunRepeatedMotion(LOCALID_FELIX, 1);
+  Engine_ScriptWait(20);
+  Script_PlayCue(MUS_061);
+  Script_ShowMessageAndWait(LOCALID_FELIX, 0, 20);
+  Engine_ObjectEventRunRepeatedMotion(LOCALID_MENARDI, 1);
+  Engine_ScriptWait(20);
+  Script_ShowMessageAndWait(LOCALID_MENARDI, 0, 20);
+  ObjectEvent_FaceDirection(LOCALID_MENARDI, FACING_NORTH, 60);
+  ObjectEvent_FaceDirection(LOCALID_MENARDI, FACING_EAST, 20);
+  Script_ShowMessageAndWait(LOCALID_MENARDI, 0, 20);
+  ObjectEvent_SetPosition(GARET, PIXELS(264), PIXELS(288));
+  Script_ShowMessageAndWait(GARET, 0, 20);
+  ObjectEvent_SetPosition(GARET, PIXELS(328), PIXELS(216));
+  Engine_ObjectEventSetAnimationAndWait(LOCALID_MENARDI, 4);
+  Engine_ScriptWait(20);
+  Script_ShowMessageAndWait(LOCALID_MENARDI, 0, 20);
+  Engine_ObjectEventSetAnimationAndWait(LOCALID_MENARDI, 3);
+  Engine_ScriptWait(20);
+  Script_ShowMessageAndWait(LOCALID_MENARDI, 0, 20);
+  ObjectEvent_FaceDirection(LOCALID_MENARDI, FACING_NORTHWEST, 10);
+  ObjectEvent_FaceDirection(LOCALID_FELIX, FACING_SOUTHEAST, 10);
+  Engine_ObjectEventRunRepeatedMotion(LOCALID_FELIX, 1);
+  Engine_ScriptWait(20);
+  ObjectEvent_FaceDirection(JENNA, FACING_WEST, 0);
+  ObjectEvent_FaceDirection(LOCALID_KRADEN, FACING_WEST, 30);
+  ObjectEvent_FaceDirection(LOCALID_FELIX, FACING_EAST, 30);
+  Engine_ObjectEventRunRepeatedMotion(JENNA, 2);
+  Engine_ObjectEventSetAnimationAndWait(LOCALID_FELIX, 4);
+  Engine_ScriptWait(20);
+  ObjectEvent_FaceDirection(LOCALID_FELIX, FACING_SOUTHEAST, 10);
+  Engine_ObjectEventSetAnimationAndWait(LOCALID_FELIX, 3);
+  Engine_ScriptWait(20);
+  Engine_ObjectEventSetAnimationAndWait(LOCALID_MENARDI, 3);
+  ObjectEvent_SetSpeed(LOCALID_FELIX, PIXELS(4) / 5, PIXELS(2) / 5);
+  ObjectEvent_WalkToAndWait(LOCALID_FELIX, 104, 168);
+  Engine_ScriptWait(20);
+  ObjectEvent_FaceDirection(LOCALID_MENARDI, FACING_EAST, 20);
+  ObjectEvent_FaceDirection(LOCALID_KRADEN, FACING_EAST, 10);
+  ObjectEvent_ShowEmote(JENNA, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
+  ObjectEvent_ShowEmote(LOCALID_KRADEN, EMOTE_IN_FRONT | EMOTE_WINCE, 70);
+  ObjectEvent_SetPosition(LOCALID_SATUROS, PIXELS(264), PIXELS(288));
+  Script_ShowMessageAndWait(LOCALID_SATUROS, 0, 20);
+  ObjectEvent_SetPosition(LOCALID_SATUROS, PIXELS(296), PIXELS(120));
+  ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_NORTHWEST, 0);
+  ObjectEvent_FaceDirection(GARET, FACING_NORTH, 0);
+  ObjectEvent_FaceDirection(IVAN, FACING_NORTH, 0);
+  ObjectEvent_FaceDirection(MIA, FACING_NORTH, 0);
+  ObjectEvent_FaceDirection(JENNA, FACING_EAST, 0);
+  ObjectEvent_FaceDirection(LOCALID_KRADEN, FACING_EAST, 0);
   Camera_SetSpeed(PIXELS(3) / 2, PIXELS(3) / 16);
   Camera_MoveTo(PIXELS(232), PIXELS(40), PIXELS(152), 1);
-  Actor_SetSpeed(ACTOR_SATUROS, PIXELS(4) / 5, PIXELS(2) / 5);
-  Actor_WalkToAndWait(ACTOR_SATUROS, 272, 128);
-  Actor_WalkToAndWait(ACTOR_SATUROS, 264, 152);
-  Actor_WalkToAndWait(ACTOR_SATUROS, 280, 168);
+  ObjectEvent_SetSpeed(LOCALID_SATUROS, PIXELS(4) / 5, PIXELS(2) / 5);
+  ObjectEvent_WalkToAndWait(LOCALID_SATUROS, 272, 128);
+  ObjectEvent_WalkToAndWait(LOCALID_SATUROS, 264, 152);
+  ObjectEvent_WalkToAndWait(LOCALID_SATUROS, 280, 168);
   Engine_CameraWaitForMove();
-  Actor_FaceDirection(ACTOR_SATUROS, FACING_SOUTH + FACING_STEP, 20);
-  Engine_EventWait(20);
-  Event_ShowMessage(ACTOR_MENARDI, 0);
-  Engine_EventWait(20);
-  Engine_ActorSetAnimationAndWait(ACTOR_SATUROS, 3);
-  Engine_EventWait(20);
-  Event_ShowMessage(ACTOR_SATUROS, 0);
+  ObjectEvent_FaceDirection(LOCALID_SATUROS, FACING_SOUTH + FACING_STEP, 20);
+  Engine_ScriptWait(20);
+  Script_ShowMessage(LOCALID_MENARDI, 0);
+  Engine_ScriptWait(20);
+  Engine_ObjectEventSetAnimationAndWait(LOCALID_SATUROS, 3);
+  Engine_ScriptWait(20);
+  Script_ShowMessage(LOCALID_SATUROS, 0);
   Camera_MoveTo(PIXELS(296), PIXELS(40), PIXELS(216), 1);
-  Actor_WalkToAndWait(ACTOR_SATUROS, 304, 176);
-  Actor_FaceDirection(ACTOR_SATUROS, FACING_SOUTHEAST, 0);
+  ObjectEvent_WalkToAndWait(LOCALID_SATUROS, 304, 176);
+  ObjectEvent_FaceDirection(LOCALID_SATUROS, FACING_SOUTHEAST, 0);
   Engine_CameraWaitForMove();
-  Engine_EventWait(20);
-  Engine_ActorStartRepeatedMotion(ACTOR_PARTY_LEADER, 1);
-  Engine_ActorStartRepeatedMotion(GARET, 1);
-  Engine_ActorStartRepeatedMotion(IVAN, 1);
-  Engine_ActorRunRepeatedMotion(MIA, 1);
-  Engine_EventWait(20);
-  Engine_EventWait(20);
-  Engine_ActorSetAnimationAndWait(ACTOR_SATUROS, 3);
-  Engine_EventWait(20);
-  Event_ShowMessage(ACTOR_SATUROS, 0);
-  Engine_EventWait(10);
-  Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_SCOWL, 0);
-  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_SCOWL, 0);
-  Actor_ShowEmote(MIA, EMOTE_IN_FRONT | EMOTE_SCOWL, 0);
-  Actor_ShowEmote(IVAN, EMOTE_IN_FRONT | EMOTE_SCOWL, 70);
-  Engine_ActorRunRepeatedMotion(ACTOR_SATUROS, 1);
-  Engine_EventWait(30);
-  Event_ShowMessage(ACTOR_SATUROS, 0);
-  Engine_EventWait(10);
-  Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
-  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
-  Actor_ShowEmote(IVAN, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
-  Actor_ShowEmote(MIA, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 70);
-  Engine_ActorSetAnimationAndWait(ACTOR_SATUROS, 3);
-  Engine_EventWait(20);
-  Event_ShowMessage(ACTOR_SATUROS, 0);
-  Engine_EventWait(20);
-  Event_ShowMessage(ACTOR_MENARDI, 0);
-  Engine_EventWait(10);
-  Actor_FaceDirection(ACTOR_SATUROS, FACING_SOUTH + FACING_STEP, 0);
-  Engine_EventWait(40);
-  Event_ShowMessage(ACTOR_SATUROS, 0);
-  Engine_EventWait(30);
-  Event_ShowMessage(ACTOR_MENARDI, 0);
-  Engine_EventWait(10);
-  Actor_FaceDirection(ACTOR_SATUROS, FACING_SOUTHEAST + FACING_STEP, 0);
-  Engine_EventWait(30);
-  Event_ShowMessage(ACTOR_SATUROS, 0);
-  Engine_EventWait(20);
-  Actor_Get(GARET)->steeringFlags &= ~ACTOR_FACES_MOTION;
-  Actor_WalkTo(GARET, 328, 224);
-  Actor_WalkTo(ACTOR_PARTY_LEADER, 344, 224);
-  Actor_WalkTo(IVAN, 344, 232);
-  Engine_ActorWaitForMove(GARET);
-  Actor_Get(GARET)->steeringFlags |= ACTOR_FACES_MOTION;
-  Actor_FaceDirection(GARET, FACING_NORTH, 0);
-  Engine_ActorWaitForMove(ACTOR_PARTY_LEADER);
-  Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTHWEST, 0);
-  Engine_ActorWaitForMove(IVAN);
-  Actor_FaceDirection(IVAN, FACING_NORTH, 0);
-  Engine_EventWait(30);
-  Actor_SetPosition(ACTOR_MENARDI, PIXELS(168), PIXELS(200));
-  Event_ShowMessageAndWait(ACTOR_MENARDI, 0, 20);
-  Actor_SetPosition(ACTOR_MENARDI, PIXELS(104), PIXELS(200));
-  Engine_ActorRunRepeatedMotion(ACTOR_SATUROS, 1);
-  Engine_EventWait(20);
-  Event_ShowMessageAndWait(ACTOR_SATUROS, 0, 20);
+  Engine_ScriptWait(20);
+  Engine_ObjectEventStartRepeatedMotion(LOCALID_PARTY_LEADER, 1);
+  Engine_ObjectEventStartRepeatedMotion(GARET, 1);
+  Engine_ObjectEventStartRepeatedMotion(IVAN, 1);
+  Engine_ObjectEventRunRepeatedMotion(MIA, 1);
+  Engine_ScriptWait(20);
+  Engine_ScriptWait(20);
+  Engine_ObjectEventSetAnimationAndWait(LOCALID_SATUROS, 3);
+  Engine_ScriptWait(20);
+  Script_ShowMessage(LOCALID_SATUROS, 0);
+  Engine_ScriptWait(10);
+  ObjectEvent_ShowEmote(LOCALID_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_SCOWL, 0);
+  ObjectEvent_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_SCOWL, 0);
+  ObjectEvent_ShowEmote(MIA, EMOTE_IN_FRONT | EMOTE_SCOWL, 0);
+  ObjectEvent_ShowEmote(IVAN, EMOTE_IN_FRONT | EMOTE_SCOWL, 70);
+  Engine_ObjectEventRunRepeatedMotion(LOCALID_SATUROS, 1);
+  Engine_ScriptWait(30);
+  Script_ShowMessage(LOCALID_SATUROS, 0);
+  Engine_ScriptWait(10);
+  ObjectEvent_ShowEmote(LOCALID_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_ELLIPSIS,
+                        0);
+  ObjectEvent_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
+  ObjectEvent_ShowEmote(IVAN, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
+  ObjectEvent_ShowEmote(MIA, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 70);
+  Engine_ObjectEventSetAnimationAndWait(LOCALID_SATUROS, 3);
+  Engine_ScriptWait(20);
+  Script_ShowMessage(LOCALID_SATUROS, 0);
+  Engine_ScriptWait(20);
+  Script_ShowMessage(LOCALID_MENARDI, 0);
+  Engine_ScriptWait(10);
+  ObjectEvent_FaceDirection(LOCALID_SATUROS, FACING_SOUTH + FACING_STEP, 0);
+  Engine_ScriptWait(40);
+  Script_ShowMessage(LOCALID_SATUROS, 0);
+  Engine_ScriptWait(30);
+  Script_ShowMessage(LOCALID_MENARDI, 0);
+  Engine_ScriptWait(10);
+  ObjectEvent_FaceDirection(LOCALID_SATUROS, FACING_SOUTHEAST + FACING_STEP, 0);
+  Engine_ScriptWait(30);
+  Script_ShowMessage(LOCALID_SATUROS, 0);
+  Engine_ScriptWait(20);
+  ObjectEvent_Get(GARET)->steeringFlags &= ~OBJ_EVENT_FACES_MOTION;
+  ObjectEvent_WalkTo(GARET, 328, 224);
+  ObjectEvent_WalkTo(LOCALID_PARTY_LEADER, 344, 224);
+  ObjectEvent_WalkTo(IVAN, 344, 232);
+  Engine_ObjectEventWaitForMove(GARET);
+  ObjectEvent_Get(GARET)->steeringFlags |= OBJ_EVENT_FACES_MOTION;
+  ObjectEvent_FaceDirection(GARET, FACING_NORTH, 0);
+  Engine_ObjectEventWaitForMove(LOCALID_PARTY_LEADER);
+  ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_NORTHWEST, 0);
+  Engine_ObjectEventWaitForMove(IVAN);
+  ObjectEvent_FaceDirection(IVAN, FACING_NORTH, 0);
+  Engine_ScriptWait(30);
+  ObjectEvent_SetPosition(LOCALID_MENARDI, PIXELS(168), PIXELS(200));
+  Script_ShowMessageAndWait(LOCALID_MENARDI, 0, 20);
+  ObjectEvent_SetPosition(LOCALID_MENARDI, PIXELS(104), PIXELS(200));
+  Engine_ObjectEventRunRepeatedMotion(LOCALID_SATUROS, 1);
+  Engine_ScriptWait(20);
+  Script_ShowMessageAndWait(LOCALID_SATUROS, 0, 20);
   Camera_SetSpeed(PIXELS(3), PIXELS(3) / 8);
   Camera_MoveTo(PIXELS(120), -PIXELS(24), PIXELS(168), 1);
   Engine_CameraWaitForMove();
-  Engine_ActorSetAnimationAndWait(ACTOR_MENARDI, 3);
-  Engine_EventWait(10);
-  Actor_FaceDirection(ACTOR_MENARDI, FACING_NORTH + FACING_STEP, 20);
-  Engine_ActorSetAnimationAndWait(ACTOR_MENARDI, 3);
-  Engine_EventWait(20);
-  Event_ShowMessageAndWait(ACTOR_MENARDI, 0, 20);
-  Actor_FaceDirection(JENNA, FACING_SOUTH + FACING_STEP, 0);
-  Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTHEAST + FACING_STEP, 70);
-  Engine_ActorFaceEachOther(JENNA, ACTOR_KRADEN, 0);
-  Engine_EventWait(50);
-  Actor_FaceDirection(JENNA, FACING_SOUTH + FACING_STEP, 0);
-  Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTHEAST + FACING_STEP, 20);
-  Engine_ActorSetAnimationAndWait(JENNA, 4);
-  Engine_EventWait(20);
-  Actor_ShowEmote(ACTOR_MENARDI, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 60);
-  Event_ShowMessageAndWait(ACTOR_MENARDI, 0, 20);
-  Actor_ShowEmote(JENNA, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
-  Actor_FaceDirection(ACTOR_FELIX, FACING_NORTH + FACING_STEP, 20);
-  Engine_ActorRunRepeatedMotion(ACTOR_FELIX, 1);
-  Engine_ActorSetAnimationAndWait(ACTOR_MENARDI, 3);
-  Engine_EventWait(20);
-  Event_ShowMessageAndWait(ACTOR_MENARDI, 0, 20);
-  Engine_ActorSetAnimationAndWait(ACTOR_MENARDI, 4);
-  Engine_EventWait(20);
-  Event_ShowMessageAndWait(ACTOR_MENARDI, 0, 20);
-  Actor_SetAttachedEffect(ACTOR_FELIX,
-                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-  Engine_EventWait(60);
-  Engine_ActorSetAnimationAndWait(ACTOR_FELIX, 4);
-  Engine_EventWait(20);
-  Event_ShowMessageAndWait(ACTOR_FELIX, 0, 20);
-  Actor_SetAttachedEffect(JENNA,
-                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-  Engine_EventWait(60);
-  Event_ShowMessageAndWait(JENNA, 0, 40);
-  Engine_ActorSetAnimationAndWait(ACTOR_FELIX, 3);
-  Engine_EventWait(60);
-  Actor_FaceDirection(JENNA, FACING_NORTHWEST, 10);
-  Engine_ActorSetAnimationAndWait(ACTOR_KRADEN, 3);
-  Engine_EventWait(20);
-  Event_ShowMessageAndWait(ACTOR_KRADEN, 0, 30);
-  Actor_SetSpeed(JENNA, PIXELS(7) / 10, PIXELS(7) / 20);
-  Actor_SetSpeed(ACTOR_KRADEN, PIXELS(7) / 10, PIXELS(7) / 20);
-  Actor_WalkTo(JENNA, 128, 144);
-  Actor_WalkToAndWait(ACTOR_KRADEN, 120, 136);
-  Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTH + FACING_STEP, 0);
-  Engine_ActorWaitForMove(JENNA);
-  Actor_FaceDirection(JENNA, FACING_EAST, 20);
-  Actor_FaceDirection(ACTOR_FELIX, FACING_SOUTHEAST + FACING_STEP, 20);
-  Object_GetById(ACTOR_FELIX)->steeringFlags &= ~ACTOR_FACES_MOTION;
-  Actor_WalkToAndWait(ACTOR_FELIX, 88, 152);
-  Actor_Get(ACTOR_FELIX)->steeringFlags |= ACTOR_FACES_MOTION;
-  Actor_FaceDirection(ACTOR_MENARDI, FACING_NORTHWEST + FACING_STEP, 20);
-  Engine_ActorSetAnimation(ACTOR_MENARDI, 3);
-  Engine_ActorSetAnimationAndWait(ACTOR_FELIX, 3);
-  Engine_EventWait(40);
-  Actor_SetSpeed(ACTOR_MENARDI, PIXELS(3), PIXELS(2));
-  Actor_Get(ACTOR_MENARDI)->velocityY = PIXELS(4);
-  Event_PlayCue(SE_JUMP);
-  Actor_Get(ACTOR_MENARDI)->motionFlags &= 0x7e;
-  Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_MENARDI), 0);
-  Object_GetById(ACTOR_FIRST_LIFT_PLATFORM)->motionFlags = 4;
-  Engine_ActorMoveToAndWait(ACTOR_MENARDI, 104, 168);
-  Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_MENARDI), SPRITE_FLAG_SHADOW);
-  Actor_Get(ACTOR_MENARDI)->motionFlags = 3;
-  Actor_FaceDirection(ACTOR_MENARDI, FACING_EAST, 30);
-  Actor_FaceDirection(ACTOR_FELIX, FACING_EAST, 10);
-  Event_ShowMessageAndWait(ACTOR_FELIX, 0, 20);
-  Engine_ActorRunRepeatedMotion(JENNA, 2);
-  Engine_ActorSetAnimationAndWait(JENNA, 4);
-  Engine_EventWait(20);
-  Event_ShowMessageAndWait(JENNA, 0, 20);
-  Event_ShowMessageAndWait(ACTOR_MENARDI, 0, 20);
-  Engine_ActorSetSpritePriority(ACTOR_FIRST_LIFT_PLATFORM, 0);
-  Engine_ActorSetSpritePriority(ACTOR_SECOND_LIFT_PLATFORM, 0);
+  Engine_ObjectEventSetAnimationAndWait(LOCALID_MENARDI, 3);
+  Engine_ScriptWait(10);
+  ObjectEvent_FaceDirection(LOCALID_MENARDI, FACING_NORTH + FACING_STEP, 20);
+  Engine_ObjectEventSetAnimationAndWait(LOCALID_MENARDI, 3);
+  Engine_ScriptWait(20);
+  Script_ShowMessageAndWait(LOCALID_MENARDI, 0, 20);
+  ObjectEvent_FaceDirection(JENNA, FACING_SOUTH + FACING_STEP, 0);
+  ObjectEvent_FaceDirection(LOCALID_KRADEN, FACING_SOUTHEAST + FACING_STEP, 70);
+  Engine_ObjectEventFaceEachOther(JENNA, LOCALID_KRADEN, 0);
+  Engine_ScriptWait(50);
+  ObjectEvent_FaceDirection(JENNA, FACING_SOUTH + FACING_STEP, 0);
+  ObjectEvent_FaceDirection(LOCALID_KRADEN, FACING_SOUTHEAST + FACING_STEP, 20);
+  Engine_ObjectEventSetAnimationAndWait(JENNA, 4);
+  Engine_ScriptWait(20);
+  ObjectEvent_ShowEmote(LOCALID_MENARDI, EMOTE_IN_FRONT | EMOTE_EXCLAMATION,
+                        60);
+  Script_ShowMessageAndWait(LOCALID_MENARDI, 0, 20);
+  ObjectEvent_ShowEmote(JENNA, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
+  ObjectEvent_FaceDirection(LOCALID_FELIX, FACING_NORTH + FACING_STEP, 20);
+  Engine_ObjectEventRunRepeatedMotion(LOCALID_FELIX, 1);
+  Engine_ObjectEventSetAnimationAndWait(LOCALID_MENARDI, 3);
+  Engine_ScriptWait(20);
+  Script_ShowMessageAndWait(LOCALID_MENARDI, 0, 20);
+  Engine_ObjectEventSetAnimationAndWait(LOCALID_MENARDI, 4);
+  Engine_ScriptWait(20);
+  Script_ShowMessageAndWait(LOCALID_MENARDI, 0, 20);
+  ObjectEvent_SetAttachedEffect(LOCALID_FELIX, ATTACHED_EFFECT_IN_FRONT |
+                                                   ATTACHED_EFFECT_ONCE);
+  Engine_ScriptWait(60);
+  Engine_ObjectEventSetAnimationAndWait(LOCALID_FELIX, 4);
+  Engine_ScriptWait(20);
+  Script_ShowMessageAndWait(LOCALID_FELIX, 0, 20);
+  ObjectEvent_SetAttachedEffect(JENNA, ATTACHED_EFFECT_IN_FRONT |
+                                           ATTACHED_EFFECT_ONCE);
+  Engine_ScriptWait(60);
+  Script_ShowMessageAndWait(JENNA, 0, 40);
+  Engine_ObjectEventSetAnimationAndWait(LOCALID_FELIX, 3);
+  Engine_ScriptWait(60);
+  ObjectEvent_FaceDirection(JENNA, FACING_NORTHWEST, 10);
+  Engine_ObjectEventSetAnimationAndWait(LOCALID_KRADEN, 3);
+  Engine_ScriptWait(20);
+  Script_ShowMessageAndWait(LOCALID_KRADEN, 0, 30);
+  ObjectEvent_SetSpeed(JENNA, PIXELS(7) / 10, PIXELS(7) / 20);
+  ObjectEvent_SetSpeed(LOCALID_KRADEN, PIXELS(7) / 10, PIXELS(7) / 20);
+  ObjectEvent_WalkTo(JENNA, 128, 144);
+  ObjectEvent_WalkToAndWait(LOCALID_KRADEN, 120, 136);
+  ObjectEvent_FaceDirection(LOCALID_KRADEN, FACING_SOUTH + FACING_STEP, 0);
+  Engine_ObjectEventWaitForMove(JENNA);
+  ObjectEvent_FaceDirection(JENNA, FACING_EAST, 20);
+  ObjectEvent_FaceDirection(LOCALID_FELIX, FACING_SOUTHEAST + FACING_STEP, 20);
+  ObjectEvent_GetById(LOCALID_FELIX)->steeringFlags &= ~OBJ_EVENT_FACES_MOTION;
+  ObjectEvent_WalkToAndWait(LOCALID_FELIX, 88, 152);
+  ObjectEvent_Get(LOCALID_FELIX)->steeringFlags |= OBJ_EVENT_FACES_MOTION;
+  ObjectEvent_FaceDirection(LOCALID_MENARDI, FACING_NORTHWEST + FACING_STEP,
+                            20);
+  Engine_ObjectEventSetAnimation(LOCALID_MENARDI, 3);
+  Engine_ObjectEventSetAnimationAndWait(LOCALID_FELIX, 3);
+  Engine_ScriptWait(40);
+  ObjectEvent_SetSpeed(LOCALID_MENARDI, PIXELS(3), PIXELS(2));
+  ObjectEvent_Get(LOCALID_MENARDI)->velocityY = PIXELS(4);
+  Script_PlayCue(SE_JUMP);
+  ObjectEvent_Get(LOCALID_MENARDI)->motionFlags &= 0x7e;
+  Engine_ObjectEventSetSpriteFlags(ObjectEvent_GetById(LOCALID_MENARDI), 0);
+  ObjectEvent_GetById(LOCALID_FIRST_LIFT_PLATFORM)->motionFlags = 4;
+  Engine_ObjectEventMoveToAndWait(LOCALID_MENARDI, 104, 168);
+  Engine_ObjectEventSetSpriteFlags(ObjectEvent_GetById(LOCALID_MENARDI),
+                                   SPRITE_FLAG_SHADOW);
+  ObjectEvent_Get(LOCALID_MENARDI)->motionFlags = 3;
+  ObjectEvent_FaceDirection(LOCALID_MENARDI, FACING_EAST, 30);
+  ObjectEvent_FaceDirection(LOCALID_FELIX, FACING_EAST, 10);
+  Script_ShowMessageAndWait(LOCALID_FELIX, 0, 20);
+  Engine_ObjectEventRunRepeatedMotion(JENNA, 2);
+  Engine_ObjectEventSetAnimationAndWait(JENNA, 4);
+  Engine_ScriptWait(20);
+  Script_ShowMessageAndWait(JENNA, 0, 20);
+  Script_ShowMessageAndWait(LOCALID_MENARDI, 0, 20);
+  Engine_ObjectEventSetSpritePriority(LOCALID_FIRST_LIFT_PLATFORM, 0);
+  Engine_ObjectEventSetSpritePriority(LOCALID_SECOND_LIFT_PLATFORM, 0);
   MercuryLighthouseAerie_LowerLift();
-  Engine_ActorSetSpritePriority(ACTOR_FIRST_LIFT_PLATFORM, 1);
-  Engine_ActorSetSpritePriority(ACTOR_SECOND_LIFT_PLATFORM, 1);
-  Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTHWEST, 0);
-  Actor_FaceDirection(GARET, FACING_SOUTHWEST, 0);
-  Actor_FaceDirection(IVAN, FACING_SOUTHWEST, 0);
-  Actor_FaceDirection(MIA, FACING_SOUTHWEST, 0);
+  Engine_ObjectEventSetSpritePriority(LOCALID_FIRST_LIFT_PLATFORM, 1);
+  Engine_ObjectEventSetSpritePriority(LOCALID_SECOND_LIFT_PLATFORM, 1);
+  ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_SOUTHWEST, 0);
+  ObjectEvent_FaceDirection(GARET, FACING_SOUTHWEST, 0);
+  ObjectEvent_FaceDirection(IVAN, FACING_SOUTHWEST, 0);
+  ObjectEvent_FaceDirection(MIA, FACING_SOUTHWEST, 0);
   Camera_MoveTo(PIXELS(304), PIXELS(32), PIXELS(216), 1);
   Engine_CameraWaitForMove();
-  Actor_SetPosition(ACTOR_KRADEN, PIXELS(272), PIXELS(280));
-  Event_ShowMessageAndWait(ACTOR_KRADEN, 0, 20);
-  Actor_SetPosition(ACTOR_KRADEN, 0, 0);
-  Engine_ActorRunRepeatedMotion(GARET, 1);
-  Engine_EventWait(20);
-  Event_ShowMessageAndWait(GARET, 0, 20);
-  Actor_SetSpeed(GARET, PIXELS(3) / 2, PIXELS(3) / 4);
-  Actor_WalkToAndWait(GARET, 312, 216);
-  Actor_FaceDirection(GARET, FACING_SOUTHWEST, 10);
-  Event_ShowMessageAndWait(ACTOR_SATUROS, 0, 20);
-  Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTHWEST, 0);
-  Actor_FaceDirection(GARET, FACING_NORTH, 0);
-  Actor_FaceDirection(IVAN, FACING_NORTH, 0);
-  Actor_FaceDirection(MIA, FACING_NORTH, 0);
-  Actor_WalkToAndWait(ACTOR_SATUROS, 312, 184);
-  Actor_FaceDirection(ACTOR_SATUROS, FACING_SOUTHEAST + FACING_STEP, 20);
-  Event_ShowMessageAndWait(MIA, 0, 20);
-  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 60);
-  Actor_SetSpeed(GARET, PIXELS(2), PIXELS(1));
-  Actor_Get(GARET)->steeringFlags &= ~ACTOR_FACES_MOTION;
-  Actor_WalkToAndWait(GARET, 328, 224);
-  Engine_EventWait(1);
-  Actor_Get(GARET)->steeringFlags |= ACTOR_FACES_MOTION;
-  Engine_ActorStartRepeatedMotion(ACTOR_PARTY_LEADER, 1);
-  Engine_ActorStartRepeatedMotion(GARET, 1);
-  Engine_ActorStartRepeatedMotion(IVAN, 1);
-  Engine_ActorRunRepeatedMotion(MIA, 1);
-  Engine_EventWait(20);
-  Engine_ActorRunRepeatedMotion(ACTOR_SATUROS, 1);
-  Engine_EventWait(10);
-  Event_ShowMessageAndWait(ACTOR_SATUROS, 0, 20);
-  Engine_ActorRunRepeatedMotion(GARET, 2);
-  Engine_EventWait(10);
-  Engine_ActorSetAnimationAndWait(GARET, ANIMATION_SHAKE_HEAD);
-  Engine_EventWait(10);
-  Event_ShowMessageAndWait(GARET, 0, 20);
-  Engine_ActorRunRepeatedMotion(IVAN, 1);
-  Engine_EventWait(10);
-  Engine_ActorSetAnimationAndWait(IVAN, ANIMATION_NOD);
-  Engine_EventWait(20);
-  Event_ShowMessageAndWait(IVAN, 0, 20);
-  Actor_ShowEmote(ACTOR_SATUROS, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
-  Engine_EventOpenMessage(ACTOR_SATUROS, 0);
-  if (Engine_EventChooseYesNo(0, 0) == 0) {
-    Engine_EventWait(20);
-    Engine_ActorSetAnimationAndWait(ACTOR_SATUROS, 4);
-    Engine_EventWait(20);
-    Event_ShowMessageAndWait(ACTOR_SATUROS, 0, 20);
+  ObjectEvent_SetPosition(LOCALID_KRADEN, PIXELS(272), PIXELS(280));
+  Script_ShowMessageAndWait(LOCALID_KRADEN, 0, 20);
+  ObjectEvent_SetPosition(LOCALID_KRADEN, 0, 0);
+  Engine_ObjectEventRunRepeatedMotion(GARET, 1);
+  Engine_ScriptWait(20);
+  Script_ShowMessageAndWait(GARET, 0, 20);
+  ObjectEvent_SetSpeed(GARET, PIXELS(3) / 2, PIXELS(3) / 4);
+  ObjectEvent_WalkToAndWait(GARET, 312, 216);
+  ObjectEvent_FaceDirection(GARET, FACING_SOUTHWEST, 10);
+  Script_ShowMessageAndWait(LOCALID_SATUROS, 0, 20);
+  ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_NORTHWEST, 0);
+  ObjectEvent_FaceDirection(GARET, FACING_NORTH, 0);
+  ObjectEvent_FaceDirection(IVAN, FACING_NORTH, 0);
+  ObjectEvent_FaceDirection(MIA, FACING_NORTH, 0);
+  ObjectEvent_WalkToAndWait(LOCALID_SATUROS, 312, 184);
+  ObjectEvent_FaceDirection(LOCALID_SATUROS, FACING_SOUTHEAST + FACING_STEP,
+                            20);
+  Script_ShowMessageAndWait(MIA, 0, 20);
+  ObjectEvent_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 60);
+  ObjectEvent_SetSpeed(GARET, PIXELS(2), PIXELS(1));
+  ObjectEvent_Get(GARET)->steeringFlags &= ~OBJ_EVENT_FACES_MOTION;
+  ObjectEvent_WalkToAndWait(GARET, 328, 224);
+  Engine_ScriptWait(1);
+  ObjectEvent_Get(GARET)->steeringFlags |= OBJ_EVENT_FACES_MOTION;
+  Engine_ObjectEventStartRepeatedMotion(LOCALID_PARTY_LEADER, 1);
+  Engine_ObjectEventStartRepeatedMotion(GARET, 1);
+  Engine_ObjectEventStartRepeatedMotion(IVAN, 1);
+  Engine_ObjectEventRunRepeatedMotion(MIA, 1);
+  Engine_ScriptWait(20);
+  Engine_ObjectEventRunRepeatedMotion(LOCALID_SATUROS, 1);
+  Engine_ScriptWait(10);
+  Script_ShowMessageAndWait(LOCALID_SATUROS, 0, 20);
+  Engine_ObjectEventRunRepeatedMotion(GARET, 2);
+  Engine_ScriptWait(10);
+  Engine_ObjectEventSetAnimationAndWait(GARET, ANIMATION_SHAKE_HEAD);
+  Engine_ScriptWait(10);
+  Script_ShowMessageAndWait(GARET, 0, 20);
+  Engine_ObjectEventRunRepeatedMotion(IVAN, 1);
+  Engine_ScriptWait(10);
+  Engine_ObjectEventSetAnimationAndWait(IVAN, ANIMATION_NOD);
+  Engine_ScriptWait(20);
+  Script_ShowMessageAndWait(IVAN, 0, 20);
+  ObjectEvent_ShowEmote(LOCALID_SATUROS, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
+  Engine_ScriptOpenMessage(LOCALID_SATUROS, 0);
+  if (Engine_ScriptChooseYesNo(0, 0) == 0) {
+    Engine_ScriptWait(20);
+    Engine_ObjectEventSetAnimationAndWait(LOCALID_SATUROS, 4);
+    Engine_ScriptWait(20);
+    Script_ShowMessageAndWait(LOCALID_SATUROS, 0, 20);
     gEventWork->message++;
   } else {
-    Engine_EventWait(20);
-    Engine_ActorSetAnimationAndWait(ACTOR_SATUROS, 4);
-    Engine_EventWait(20);
+    Engine_ScriptWait(20);
+    Engine_ObjectEventSetAnimationAndWait(LOCALID_SATUROS, 4);
+    Engine_ScriptWait(20);
     gEventWork->message++;
-    Event_ShowMessageAndWait(ACTOR_SATUROS, 0, 20);
+    Script_ShowMessageAndWait(LOCALID_SATUROS, 0, 20);
   }
-  Engine_ActorRunRepeatedMotion(ACTOR_SATUROS, 2);
-  Engine_EventWait(20);
-  Event_ShowMessageAndWait(ACTOR_SATUROS, 0, 20);
-  Actor_WalkToAndWait(ACTOR_SATUROS, 328, 200);
-  Engine_ActorRunRepeatedMotion(ACTOR_SATUROS, 2);
-  Actor_FaceDirection(ACTOR_SATUROS, FACING_NORTHWEST + FACING_STEP, 20);
-  Actor_Get(ACTOR_SATUROS)->steeringFlags &= ~ACTOR_FACES_MOTION;
-  Actor_WalkToAndWait(ACTOR_SATUROS, 336, 208);
-  Engine_EventWait(1);
-  Object_GetById(ACTOR_SATUROS)->steeringFlags |= ACTOR_FACES_MOTION;
-  Actor_ShowEmote(ACTOR_SATUROS, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
-  Actor_ShowEmote(MIA, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
-  Event_ShowMessageAndWait(MIA, 0, 20);
-  Event_ShowMessageAndWait(ACTOR_SATUROS, 0, 20);
-  Actor_FaceDirection(ACTOR_SATUROS, FACING_SOUTH + FACING_STEP, 20);
-  Engine_ActorRunRepeatedMotion(ACTOR_SATUROS, 2);
-  Engine_EventWait(20);
-  Event_ShowMessageAndWait(ACTOR_SATUROS, 0, 20);
-  Actor_WalkToAndWait(ACTOR_SATUROS, 336, 216);
-  Event_SetNextDestination((s32)&SceneId_MercuryLighthouseAerie, 2);
-  Battle_SetStart(BATTLE_START_SCENE);
+  Engine_ObjectEventRunRepeatedMotion(LOCALID_SATUROS, 2);
+  Engine_ScriptWait(20);
+  Script_ShowMessageAndWait(LOCALID_SATUROS, 0, 20);
+  ObjectEvent_WalkToAndWait(LOCALID_SATUROS, 328, 200);
+  Engine_ObjectEventRunRepeatedMotion(LOCALID_SATUROS, 2);
+  ObjectEvent_FaceDirection(LOCALID_SATUROS, FACING_NORTHWEST + FACING_STEP,
+                            20);
+  ObjectEvent_Get(LOCALID_SATUROS)->steeringFlags &= ~OBJ_EVENT_FACES_MOTION;
+  ObjectEvent_WalkToAndWait(LOCALID_SATUROS, 336, 208);
+  Engine_ScriptWait(1);
+  ObjectEvent_GetById(LOCALID_SATUROS)->steeringFlags |= OBJ_EVENT_FACES_MOTION;
+  ObjectEvent_ShowEmote(LOCALID_SATUROS, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
+  ObjectEvent_ShowEmote(MIA, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
+  Script_ShowMessageAndWait(MIA, 0, 20);
+  Script_ShowMessageAndWait(LOCALID_SATUROS, 0, 20);
+  ObjectEvent_FaceDirection(LOCALID_SATUROS, FACING_SOUTH + FACING_STEP, 20);
+  Engine_ObjectEventRunRepeatedMotion(LOCALID_SATUROS, 2);
+  Engine_ScriptWait(20);
+  Script_ShowMessageAndWait(LOCALID_SATUROS, 0, 20);
+  ObjectEvent_WalkToAndWait(LOCALID_SATUROS, 336, 216);
+  FieldScript_SetNextDestination((s32)&MapId_MercuryLighthouseAerie, 2);
+  Battle_SetStart(BATTLE_START_SCRIPTED);
   // Saturos: ENCOUNTER_ZONE_SCRIPTED_TRET_MERCURY, slot 2.
   Field_RequestBattleFromEncounterTable(ENCOUNTER_ZONE_SCRIPTED_TRET_MERCURY,
                                         2);
-  Engine_EventEnd();
+  Engine_ScriptEnd();
 }
 
 /// Lighthouse Aerie, at MERCURY_LIGHTHOUSE_AERIE_AFTER_SATUROS_BATTLE, back
@@ -925,614 +946,617 @@ static void MercuryLighthouseAerie_ConfrontSaturos(void) {
 /// FLAG_SATUROS_BEATEN_AT_MERCURY.
 static void MercuryLighthouseAerie_AlexAppears(void) {
 
-  Engine_EventStart();
-  Actor_Get(ACTOR_LIFT_STATUE)->motionFlags = 0;
-  Actor_SetPosition(ACTOR_PARTY_LEADER, PIXELS(344), PIXELS(224));
-  Actor_SetPosition(GARET, PIXELS(328), PIXELS(224));
-  Actor_SetPosition(IVAN, PIXELS(344), PIXELS(232));
-  Actor_SetPosition(MIA, PIXELS(328), PIXELS(232));
-  Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTHWEST, 0);
-  Actor_FaceDirection(GARET, FACING_NORTH, 0);
-  Actor_FaceDirection(IVAN, FACING_NORTH, 0);
-  Actor_FaceDirection(MIA, FACING_NORTH, 0);
-  Actor_SetPosition(ACTOR_SATUROS, PIXELS(336), PIXELS(176));
-  Engine_ActorSetAnimation(ACTOR_SATUROS, 9);
-  Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_SATUROS), 0);
+  Engine_ScriptStart();
+  ObjectEvent_Get(LOCALID_LIFT_STATUE)->motionFlags = 0;
+  ObjectEvent_SetPosition(LOCALID_PARTY_LEADER, PIXELS(344), PIXELS(224));
+  ObjectEvent_SetPosition(GARET, PIXELS(328), PIXELS(224));
+  ObjectEvent_SetPosition(IVAN, PIXELS(344), PIXELS(232));
+  ObjectEvent_SetPosition(MIA, PIXELS(328), PIXELS(232));
+  ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_NORTHWEST, 0);
+  ObjectEvent_FaceDirection(GARET, FACING_NORTH, 0);
+  ObjectEvent_FaceDirection(IVAN, FACING_NORTH, 0);
+  ObjectEvent_FaceDirection(MIA, FACING_NORTH, 0);
+  ObjectEvent_SetPosition(LOCALID_SATUROS, PIXELS(336), PIXELS(176));
+  Engine_ObjectEventSetAnimation(LOCALID_SATUROS, 9);
+  Engine_ObjectEventSetSpriteFlags(ObjectEvent_GetById(LOCALID_SATUROS), 0);
   Camera_MoveTo(PIXELS(336), -1, PIXELS(208), 0);
   Engine_TaskWait(1);
-  Engine_MapRedraw();
+  Engine_MapGridRedraw();
   Engine_TaskWait(1);
 
-  gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
-  Engine_EventOpenScreen();
-  Engine_EventWaitForScreen();
-  Engine_EventWait(60);
-  Engine_ActorRunRepeatedMotion(GARET, 2);
-  Engine_EventWait(20);
-  Actor_FaceDirection(GARET, FACING_EAST, 20);
-  Engine_EventSetMessage(MsgMercuryGot);
-  Event_ShowMessageAndWait(GARET, 0, 20);
-  Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_WEST, 20);
-  Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, ANIMATION_NOD);
-  Engine_EventWait(20);
-  Engine_ActorRunRepeatedMotion(ACTOR_SATUROS, 2);
-  Engine_EventWait(20);
-  Event_ShowMessageAndWait(ACTOR_SATUROS, 0, 20);
-  Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
-  Actor_FaceDirection(GARET, FACING_NORTH, 20);
-  Actor_ShowEmote(IVAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
-  Event_ShowMessageAndWait(IVAN, 0, 20);
-  Engine_ActorRunRepeatedMotion(ACTOR_SATUROS, 2);
-  Engine_EventWait(20);
-  Event_ShowMessageAndWait(ACTOR_SATUROS, 0, 30);
-  Actor_SetPosition(ACTOR_ALEX, PIXELS(312), PIXELS(112));
-  Event_PlayCue(SE_STOP_SLOT3);
-  Event_ShowMessageAndWait(ACTOR_ALEX, 0, 20);
-  Actor_ShowEmote(MIA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 60);
-  Event_ShowMessageAndWait(MIA, 0, 30);
-  Event_PlayCue(MUS_029);
+  gEventWork->startTransition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+  Engine_ScriptOpenScreen();
+  Engine_ScriptWaitForScreen();
+  Engine_ScriptWait(60);
+  Engine_ObjectEventRunRepeatedMotion(GARET, 2);
+  Engine_ScriptWait(20);
+  ObjectEvent_FaceDirection(GARET, FACING_EAST, 20);
+  Engine_ScriptSetMessage(MsgMercuryGot);
+  Script_ShowMessageAndWait(GARET, 0, 20);
+  ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_WEST, 20);
+  Engine_ObjectEventSetAnimationAndWait(LOCALID_PARTY_LEADER, ANIMATION_NOD);
+  Engine_ScriptWait(20);
+  Engine_ObjectEventRunRepeatedMotion(LOCALID_SATUROS, 2);
+  Engine_ScriptWait(20);
+  Script_ShowMessageAndWait(LOCALID_SATUROS, 0, 20);
+  ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_NORTH, 0);
+  ObjectEvent_FaceDirection(GARET, FACING_NORTH, 20);
+  ObjectEvent_ShowEmote(IVAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
+  Script_ShowMessageAndWait(IVAN, 0, 20);
+  Engine_ObjectEventRunRepeatedMotion(LOCALID_SATUROS, 2);
+  Engine_ScriptWait(20);
+  Script_ShowMessageAndWait(LOCALID_SATUROS, 0, 30);
+  ObjectEvent_SetPosition(LOCALID_ALEX, PIXELS(312), PIXELS(112));
+  Script_PlayCue(SE_STOP_SLOT3);
+  Script_ShowMessageAndWait(LOCALID_ALEX, 0, 20);
+  ObjectEvent_ShowEmote(MIA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 60);
+  Script_ShowMessageAndWait(MIA, 0, 30);
+  Script_PlayCue(MUS_029);
   Camera_SetSpeed(PIXELS(4) / 5, PIXELS(1) / 10);
-  Engine_EventGetViewCenter()->motionFlags = 0;
+  Engine_ScriptGetViewCenter()->motionFlags = 0;
   Camera_MoveTo(PIXELS(336), -1, PIXELS(168), 1);
-  Engine_EventWait(20);
-  Actor_SetSpeed(ACTOR_ALEX, PIXELS(4) / 5, PIXELS(2) / 5);
-  Actor_WalkToAndWait(ACTOR_ALEX, 344, 136);
-  Actor_FaceDirection(ACTOR_ALEX, FACING_SOUTH + FACING_STEP, 20);
+  Engine_ScriptWait(20);
+  ObjectEvent_SetSpeed(LOCALID_ALEX, PIXELS(4) / 5, PIXELS(2) / 5);
+  ObjectEvent_WalkToAndWait(LOCALID_ALEX, 344, 136);
+  ObjectEvent_FaceDirection(LOCALID_ALEX, FACING_SOUTH + FACING_STEP, 20);
   Engine_CameraWaitForMove();
-  Event_ShowMessageAndWait(MIA, 0, 30);
+  Script_ShowMessageAndWait(MIA, 0, 30);
   Camera_MoveTo(PIXELS(336), -1, PIXELS(184), 1);
-  Actor_WalkToAndWait(ACTOR_ALEX, 344, 160);
-  Actor_WalkToAndWait(ACTOR_ALEX, 328, 168);
-  Actor_WalkToAndWait(ACTOR_ALEX, 312, 176);
-  Actor_FaceDirection(ACTOR_ALEX, FACING_SOUTHEAST + FACING_STEP, 20);
+  ObjectEvent_WalkToAndWait(LOCALID_ALEX, 344, 160);
+  ObjectEvent_WalkToAndWait(LOCALID_ALEX, 328, 168);
+  ObjectEvent_WalkToAndWait(LOCALID_ALEX, 312, 176);
+  ObjectEvent_FaceDirection(LOCALID_ALEX, FACING_SOUTHEAST + FACING_STEP, 20);
   Engine_CameraWaitForMove();
-  Engine_ActorSetAnimationAndWait(ACTOR_ALEX, 3);
-  Engine_EventWait(20);
-  Event_ShowMessageAndWait(ACTOR_ALEX, 0, 20);
-  Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTHWEST, 0);
-  Actor_FaceDirection(GARET, FACING_SOUTH, 0);
-  Actor_FaceDirection(IVAN, FACING_WEST, 20);
-  Engine_ActorRunRepeatedMotion(MIA, 2);
-  Engine_EventWait(20);
-  Event_ShowMessageAndWait(MIA, 0, 20);
-  Engine_ActorSetAnimationAndWait(ACTOR_ALEX, 4);
-  Engine_EventWait(20);
-  Event_ShowMessageAndWait(ACTOR_ALEX, 0, 20);
-  Actor_FaceDirection(GARET, FACING_SOUTHEAST, 0);
-  Actor_FaceDirection(IVAN, FACING_NORTHWEST, 0);
-  Actor_FaceDirection(MIA, FACING_NORTHEAST, 60);
-  Actor_FaceDirection(ACTOR_ALEX, FACING_NORTHWEST + FACING_STEP, 20);
-  Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTHWEST, 0);
-  Actor_FaceDirection(GARET, FACING_NORTH, 0);
-  Actor_FaceDirection(IVAN, FACING_NORTHWEST, 0);
-  Actor_FaceDirection(MIA, FACING_NORTH, 20);
-  Event_ShowMessageAndWait(ACTOR_ALEX, 0, 20);
-  Engine_ActorSetAnimationAndWait(MIA, ANIMATION_SHAKE_HEAD);
-  Engine_EventWait(20);
-  Event_ShowMessageAndWait(MIA, 0, 20);
-  Engine_ActorStartRepeatedMotion(ACTOR_ALEX, 2);
-  Actor_ShowEmote(ACTOR_ALEX, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 60);
-  Actor_FaceDirection(ACTOR_ALEX, FACING_SOUTHEAST + FACING_STEP, 20);
-  Event_ShowMessageAndWait(ACTOR_ALEX, 0, 20);
-  Actor_ShowEmote(MIA, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
-  Engine_ActorSetAnimationAndWait(ACTOR_ALEX, 4);
-  Engine_EventWait(20);
-  Event_ShowMessageAndWait(ACTOR_ALEX, 0, 20);
-  Engine_ActorRunRepeatedMotion(MIA, 2);
-  Engine_EventWait(20);
-  Event_ShowMessageAndWait(MIA, 0, 20);
-  Engine_ActorSetAnimationAndWait(ACTOR_ALEX, 3);
-  Engine_EventWait(20);
-  Event_ShowMessageAndWait(ACTOR_ALEX, 0, 20);
-  Engine_ActorRunRepeatedMotion(MIA, 1);
-  Engine_EventWait(20);
-  Event_ShowMessageAndWait(MIA, 0, 20);
-  Actor_WalkToAndWait(ACTOR_ALEX, 312, 184);
-  Actor_FaceDirection(ACTOR_ALEX, FACING_SOUTHEAST + FACING_STEP, 20);
-  Event_ShowMessageAndWait(ACTOR_ALEX, 0, 20);
-  Engine_ActorRunRepeatedMotion(GARET, 2);
-  Engine_EventWait(10);
-  Actor_FaceDirection(GARET, FACING_EAST, 20);
-  Engine_EventOpenMessage(GARET, 0);
-  if (Engine_EventChooseYesNo(0, 0) == 0) {
-    Engine_ActorRunRepeatedMotion(GARET, 2);
-    Event_ShowMessageAndWait(GARET, 0, 20);
+  Engine_ObjectEventSetAnimationAndWait(LOCALID_ALEX, 3);
+  Engine_ScriptWait(20);
+  Script_ShowMessageAndWait(LOCALID_ALEX, 0, 20);
+  ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_SOUTHWEST, 0);
+  ObjectEvent_FaceDirection(GARET, FACING_SOUTH, 0);
+  ObjectEvent_FaceDirection(IVAN, FACING_WEST, 20);
+  Engine_ObjectEventRunRepeatedMotion(MIA, 2);
+  Engine_ScriptWait(20);
+  Script_ShowMessageAndWait(MIA, 0, 20);
+  Engine_ObjectEventSetAnimationAndWait(LOCALID_ALEX, 4);
+  Engine_ScriptWait(20);
+  Script_ShowMessageAndWait(LOCALID_ALEX, 0, 20);
+  ObjectEvent_FaceDirection(GARET, FACING_SOUTHEAST, 0);
+  ObjectEvent_FaceDirection(IVAN, FACING_NORTHWEST, 0);
+  ObjectEvent_FaceDirection(MIA, FACING_NORTHEAST, 60);
+  ObjectEvent_FaceDirection(LOCALID_ALEX, FACING_NORTHWEST + FACING_STEP, 20);
+  ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_NORTHWEST, 0);
+  ObjectEvent_FaceDirection(GARET, FACING_NORTH, 0);
+  ObjectEvent_FaceDirection(IVAN, FACING_NORTHWEST, 0);
+  ObjectEvent_FaceDirection(MIA, FACING_NORTH, 20);
+  Script_ShowMessageAndWait(LOCALID_ALEX, 0, 20);
+  Engine_ObjectEventSetAnimationAndWait(MIA, ANIMATION_SHAKE_HEAD);
+  Engine_ScriptWait(20);
+  Script_ShowMessageAndWait(MIA, 0, 20);
+  Engine_ObjectEventStartRepeatedMotion(LOCALID_ALEX, 2);
+  ObjectEvent_ShowEmote(LOCALID_ALEX, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 60);
+  ObjectEvent_FaceDirection(LOCALID_ALEX, FACING_SOUTHEAST + FACING_STEP, 20);
+  Script_ShowMessageAndWait(LOCALID_ALEX, 0, 20);
+  ObjectEvent_ShowEmote(MIA, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
+  Engine_ObjectEventSetAnimationAndWait(LOCALID_ALEX, 4);
+  Engine_ScriptWait(20);
+  Script_ShowMessageAndWait(LOCALID_ALEX, 0, 20);
+  Engine_ObjectEventRunRepeatedMotion(MIA, 2);
+  Engine_ScriptWait(20);
+  Script_ShowMessageAndWait(MIA, 0, 20);
+  Engine_ObjectEventSetAnimationAndWait(LOCALID_ALEX, 3);
+  Engine_ScriptWait(20);
+  Script_ShowMessageAndWait(LOCALID_ALEX, 0, 20);
+  Engine_ObjectEventRunRepeatedMotion(MIA, 1);
+  Engine_ScriptWait(20);
+  Script_ShowMessageAndWait(MIA, 0, 20);
+  ObjectEvent_WalkToAndWait(LOCALID_ALEX, 312, 184);
+  ObjectEvent_FaceDirection(LOCALID_ALEX, FACING_SOUTHEAST + FACING_STEP, 20);
+  Script_ShowMessageAndWait(LOCALID_ALEX, 0, 20);
+  Engine_ObjectEventRunRepeatedMotion(GARET, 2);
+  Engine_ScriptWait(10);
+  ObjectEvent_FaceDirection(GARET, FACING_EAST, 20);
+  Engine_ScriptOpenMessage(GARET, 0);
+  if (Engine_ScriptChooseYesNo(0, 0) == 0) {
+    Engine_ObjectEventRunRepeatedMotion(GARET, 2);
+    Script_ShowMessageAndWait(GARET, 0, 20);
     gEventWork->message++;
   } else {
     gEventWork->message++;
-    Engine_ActorRunRepeatedMotion(GARET, 1);
-    Event_ShowMessageAndWait(GARET, 0, 20);
+    Engine_ObjectEventRunRepeatedMotion(GARET, 1);
+    Script_ShowMessageAndWait(GARET, 0, 20);
   }
-  Event_ShowMessageAndWait(IVAN, 0, 20);
-  Actor_FaceDirection(GARET, FACING_NORTH, 20);
-  Engine_ActorSetAnimationAndWait(ACTOR_ALEX, 3);
-  Engine_EventWait(20);
-  Event_ShowMessageAndWait(ACTOR_ALEX, 0, 20);
-  Actor_FaceDirection(ACTOR_ALEX, FACING_NORTH + FACING_STEP, 20);
-  Event_ShowMessageAndWait(ACTOR_ALEX, 0, 20);
-  Actor_FaceDirection(ACTOR_ALEX, FACING_SOUTHEAST + FACING_STEP, 20);
-  Engine_ActorSetAnimationAndWait(ACTOR_ALEX, 4);
-  Engine_EventWait(20);
-  Event_ShowMessageAndWait(ACTOR_ALEX, 0, 20);
-  Actor_ShowEmote(MIA, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
-  Event_ShowMessageAndWait(MIA, 0, 20);
-  Engine_ActorSetAnimationAndWait(ACTOR_ALEX, 4);
-  Engine_EventWait(20);
-  Event_ShowMessageAndWait(ACTOR_ALEX, 0, 20);
-  Actor_FaceDirection(ACTOR_ALEX, FACING_NORTHWEST + FACING_STEP, 20);
-  Event_ShowMessageAndWait(ACTOR_ALEX, 0, 20);
-  Engine_EventWait(10);
-  Engine_ActorRunRepeatedMotion(ACTOR_ALEX, 2);
-  Engine_EventWait(30);
-  Event_ShowMessage(ACTOR_ALEX, 0);
-  Engine_EventWait(10);
-  Engine_ActorRunRepeatedMotion(GARET, 2);
-  Engine_EventWait(30);
-  Event_ShowMessage(GARET, 0);
-  Engine_EventWait(10);
-  Actor_FaceDirection(ACTOR_ALEX, FACING_SOUTHEAST, 0);
-  Engine_EventWait(30);
-  Engine_ActorSetAnimationAndWait(ACTOR_ALEX, 4);
-  Engine_EventWait(20);
-  Event_ShowMessage(ACTOR_ALEX, 0);
-  Engine_EventWait(20);
-  Engine_ActorRunRepeatedMotion(ACTOR_ALEX, 2);
-  Engine_EventWait(30);
-  Event_ShowMessage(ACTOR_ALEX, 0);
-  Engine_EventWait(10);
-  Actor_ShowEmote(IVAN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 60);
-  Event_ShowMessage(IVAN, 0);
-  Engine_EventWait(10);
-  Engine_ActorSetAnimationAndWait(ACTOR_ALEX, 3);
-  Engine_EventWait(30);
-  Event_ShowMessage(ACTOR_ALEX, 0);
-  Engine_EventWait(20);
-  Engine_ActorRunRepeatedMotion(ACTOR_ALEX, 2);
-  Engine_EventWait(30);
-  Event_ShowMessage(ACTOR_ALEX, 0);
-  Engine_EventWait(10);
-  Actor_FaceDirection(ACTOR_ALEX, FACING_EAST + FACING_STEP, 0);
-  Engine_EventWait(30);
-  Actor_ShowEmote(ACTOR_ALEX, EMOTE_IN_FRONT | EMOTE_SMILE, 60);
-  Engine_EventWait(10);
-  Engine_ActorRunRepeatedMotion(ACTOR_SATUROS, 2);
-  Engine_EventWait(30);
-  Engine_ActorSetAnimation(ACTOR_SATUROS, 8);
-  Engine_EventWait(45);
-  Engine_ActorSetAnimation(ACTOR_SATUROS, 1);
-  Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_SATUROS), SPRITE_FLAG_SHADOW);
-  Engine_EventWait(40);
-  Actor_ShowEmote(IVAN, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
-  Event_ShowMessage(IVAN, 0);
-  Engine_EventWait(10);
-  Actor_FaceDirection(ACTOR_SATUROS, FACING_SOUTHEAST, 0);
-  Engine_EventWait(20);
-  Engine_ActorSetAnimationAndWait(ACTOR_SATUROS, 4);
-  Engine_EventWait(30);
-  Event_ShowMessage(ACTOR_SATUROS, 0);
-  Engine_EventWait(20);
-  Actor_FaceDirection(ACTOR_ALEX, FACING_SOUTHEAST, 0);
-  Engine_EventWait(30);
-  Event_ShowMessage(ACTOR_ALEX, 0);
-  Engine_EventWait(10);
-  Engine_ActorRunRepeatedMotion(MIA, 2);
-  Engine_EventWait(30);
-  Event_ShowMessage(MIA, 0);
-  Engine_EventWait(10);
-  Engine_ActorFaceEachOther(ACTOR_ALEX, ACTOR_SATUROS, 0);
-  Engine_EventWait(35);
-  Engine_ActorSetAnimationAndWait(ACTOR_SATUROS, 3);
-  Engine_EventWait(30);
-  Engine_ActorSetAnimationAndWait(ACTOR_ALEX, 3);
-  Engine_EventWait(20);
-  Actor_WalkToAndWait(ACTOR_ALEX, 328, 176);
-  Actor_FaceDirection(ACTOR_ALEX, FACING_SOUTHEAST + FACING_STEP, 20);
-  Engine_ActorSetAnimation(ACTOR_ALEX, 5);
-  Engine_ActorSetAnimation(ACTOR_SATUROS, 7);
-  Engine_EventWait(20);
-  Engine_ActorRunRepeatedMotion(GARET, 1);
-  Engine_EventWait(20);
-  Event_ShowMessage(GARET, 0);
-  Engine_EventWait(10);
-  Actor_ShowEmote(ACTOR_ALEX, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
-  Engine_EventOpenMessage(ACTOR_ALEX, 0);
-  Engine_EventWait(30);
-  Engine_ActorStartRepeatedMotion(GARET, 2);
-  Engine_ActorStartRepeatedMotion(IVAN, 2);
-  Engine_ActorRunRepeatedMotion(MIA, 2);
-  Actor_FaceDirection(GARET, FACING_EAST, 0);
-  Actor_FaceDirection(IVAN, FACING_NORTH, 0);
-  Actor_FaceDirection(MIA, FACING_NORTHEAST, 0);
-  Engine_EventWait(20);
-  if (Engine_EventChooseYesNo(0, 0) == 0) {
-    Engine_EventWait(30);
-    Event_ShowMessage(ACTOR_ALEX, 0);
+  Script_ShowMessageAndWait(IVAN, 0, 20);
+  ObjectEvent_FaceDirection(GARET, FACING_NORTH, 20);
+  Engine_ObjectEventSetAnimationAndWait(LOCALID_ALEX, 3);
+  Engine_ScriptWait(20);
+  Script_ShowMessageAndWait(LOCALID_ALEX, 0, 20);
+  ObjectEvent_FaceDirection(LOCALID_ALEX, FACING_NORTH + FACING_STEP, 20);
+  Script_ShowMessageAndWait(LOCALID_ALEX, 0, 20);
+  ObjectEvent_FaceDirection(LOCALID_ALEX, FACING_SOUTHEAST + FACING_STEP, 20);
+  Engine_ObjectEventSetAnimationAndWait(LOCALID_ALEX, 4);
+  Engine_ScriptWait(20);
+  Script_ShowMessageAndWait(LOCALID_ALEX, 0, 20);
+  ObjectEvent_ShowEmote(MIA, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
+  Script_ShowMessageAndWait(MIA, 0, 20);
+  Engine_ObjectEventSetAnimationAndWait(LOCALID_ALEX, 4);
+  Engine_ScriptWait(20);
+  Script_ShowMessageAndWait(LOCALID_ALEX, 0, 20);
+  ObjectEvent_FaceDirection(LOCALID_ALEX, FACING_NORTHWEST + FACING_STEP, 20);
+  Script_ShowMessageAndWait(LOCALID_ALEX, 0, 20);
+  Engine_ScriptWait(10);
+  Engine_ObjectEventRunRepeatedMotion(LOCALID_ALEX, 2);
+  Engine_ScriptWait(30);
+  Script_ShowMessage(LOCALID_ALEX, 0);
+  Engine_ScriptWait(10);
+  Engine_ObjectEventRunRepeatedMotion(GARET, 2);
+  Engine_ScriptWait(30);
+  Script_ShowMessage(GARET, 0);
+  Engine_ScriptWait(10);
+  ObjectEvent_FaceDirection(LOCALID_ALEX, FACING_SOUTHEAST, 0);
+  Engine_ScriptWait(30);
+  Engine_ObjectEventSetAnimationAndWait(LOCALID_ALEX, 4);
+  Engine_ScriptWait(20);
+  Script_ShowMessage(LOCALID_ALEX, 0);
+  Engine_ScriptWait(20);
+  Engine_ObjectEventRunRepeatedMotion(LOCALID_ALEX, 2);
+  Engine_ScriptWait(30);
+  Script_ShowMessage(LOCALID_ALEX, 0);
+  Engine_ScriptWait(10);
+  ObjectEvent_ShowEmote(IVAN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 60);
+  Script_ShowMessage(IVAN, 0);
+  Engine_ScriptWait(10);
+  Engine_ObjectEventSetAnimationAndWait(LOCALID_ALEX, 3);
+  Engine_ScriptWait(30);
+  Script_ShowMessage(LOCALID_ALEX, 0);
+  Engine_ScriptWait(20);
+  Engine_ObjectEventRunRepeatedMotion(LOCALID_ALEX, 2);
+  Engine_ScriptWait(30);
+  Script_ShowMessage(LOCALID_ALEX, 0);
+  Engine_ScriptWait(10);
+  ObjectEvent_FaceDirection(LOCALID_ALEX, FACING_EAST + FACING_STEP, 0);
+  Engine_ScriptWait(30);
+  ObjectEvent_ShowEmote(LOCALID_ALEX, EMOTE_IN_FRONT | EMOTE_SMILE, 60);
+  Engine_ScriptWait(10);
+  Engine_ObjectEventRunRepeatedMotion(LOCALID_SATUROS, 2);
+  Engine_ScriptWait(30);
+  Engine_ObjectEventSetAnimation(LOCALID_SATUROS, 8);
+  Engine_ScriptWait(45);
+  Engine_ObjectEventSetAnimation(LOCALID_SATUROS, 1);
+  Engine_ObjectEventSetSpriteFlags(ObjectEvent_GetById(LOCALID_SATUROS),
+                                   SPRITE_FLAG_SHADOW);
+  Engine_ScriptWait(40);
+  ObjectEvent_ShowEmote(IVAN, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
+  Script_ShowMessage(IVAN, 0);
+  Engine_ScriptWait(10);
+  ObjectEvent_FaceDirection(LOCALID_SATUROS, FACING_SOUTHEAST, 0);
+  Engine_ScriptWait(20);
+  Engine_ObjectEventSetAnimationAndWait(LOCALID_SATUROS, 4);
+  Engine_ScriptWait(30);
+  Script_ShowMessage(LOCALID_SATUROS, 0);
+  Engine_ScriptWait(20);
+  ObjectEvent_FaceDirection(LOCALID_ALEX, FACING_SOUTHEAST, 0);
+  Engine_ScriptWait(30);
+  Script_ShowMessage(LOCALID_ALEX, 0);
+  Engine_ScriptWait(10);
+  Engine_ObjectEventRunRepeatedMotion(MIA, 2);
+  Engine_ScriptWait(30);
+  Script_ShowMessage(MIA, 0);
+  Engine_ScriptWait(10);
+  Engine_ObjectEventFaceEachOther(LOCALID_ALEX, LOCALID_SATUROS, 0);
+  Engine_ScriptWait(35);
+  Engine_ObjectEventSetAnimationAndWait(LOCALID_SATUROS, 3);
+  Engine_ScriptWait(30);
+  Engine_ObjectEventSetAnimationAndWait(LOCALID_ALEX, 3);
+  Engine_ScriptWait(20);
+  ObjectEvent_WalkToAndWait(LOCALID_ALEX, 328, 176);
+  ObjectEvent_FaceDirection(LOCALID_ALEX, FACING_SOUTHEAST + FACING_STEP, 20);
+  Engine_ObjectEventSetAnimation(LOCALID_ALEX, 5);
+  Engine_ObjectEventSetAnimation(LOCALID_SATUROS, 7);
+  Engine_ScriptWait(20);
+  Engine_ObjectEventRunRepeatedMotion(GARET, 1);
+  Engine_ScriptWait(20);
+  Script_ShowMessage(GARET, 0);
+  Engine_ScriptWait(10);
+  ObjectEvent_ShowEmote(LOCALID_ALEX, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
+  Engine_ScriptOpenMessage(LOCALID_ALEX, 0);
+  Engine_ScriptWait(30);
+  Engine_ObjectEventStartRepeatedMotion(GARET, 2);
+  Engine_ObjectEventStartRepeatedMotion(IVAN, 2);
+  Engine_ObjectEventRunRepeatedMotion(MIA, 2);
+  ObjectEvent_FaceDirection(GARET, FACING_EAST, 0);
+  ObjectEvent_FaceDirection(IVAN, FACING_NORTH, 0);
+  ObjectEvent_FaceDirection(MIA, FACING_NORTHEAST, 0);
+  Engine_ScriptWait(20);
+  if (Engine_ScriptChooseYesNo(0, 0) == 0) {
+    Engine_ScriptWait(30);
+    Script_ShowMessage(LOCALID_ALEX, 0);
     gEventWork->message++;
   } else {
-    Engine_EventWait(30);
+    Engine_ScriptWait(30);
 
     gEventWork->message++;
-    Event_ShowMessage(ACTOR_ALEX, 0);
+    Script_ShowMessage(LOCALID_ALEX, 0);
   }
-  Engine_EventWait(20);
-  Engine_ActorSetAnimationAndWait(ACTOR_ALEX, 4);
-  Engine_EventWait(20);
-  Actor_FaceDirection(GARET, FACING_NORTH, 0);
-  Actor_FaceDirection(IVAN, FACING_NORTHWEST, 0);
-  Actor_FaceDirection(MIA, FACING_NORTH, 0);
-  Engine_EventWait(20);
-  Event_ShowMessage(ACTOR_ALEX, 0);
-  Engine_ActorRunRepeatedMotion(ACTOR_SATUROS, 1);
-  Engine_EventWait(20);
-  Event_ShowMessageAndWait(ACTOR_SATUROS, 0, 20);
+  Engine_ScriptWait(20);
+  Engine_ObjectEventSetAnimationAndWait(LOCALID_ALEX, 4);
+  Engine_ScriptWait(20);
+  ObjectEvent_FaceDirection(GARET, FACING_NORTH, 0);
+  ObjectEvent_FaceDirection(IVAN, FACING_NORTHWEST, 0);
+  ObjectEvent_FaceDirection(MIA, FACING_NORTH, 0);
+  Engine_ScriptWait(20);
+  Script_ShowMessage(LOCALID_ALEX, 0);
+  Engine_ObjectEventRunRepeatedMotion(LOCALID_SATUROS, 1);
+  Engine_ScriptWait(20);
+  Script_ShowMessageAndWait(LOCALID_SATUROS, 0, 20);
   MercuryLighthouseAerie_SaturosAndAlexWarpOut();
-  Engine_EventWait(20);
-  Engine_ActorStartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
-  Engine_ActorStartRepeatedMotion(GARET, 2);
-  Engine_ActorStartRepeatedMotion(IVAN, 2);
-  Engine_ActorRunRepeatedMotion(MIA, 2);
-  Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_EAST, 5);
-  Actor_FaceDirection(GARET, FACING_NORTHEAST, 5);
-  Actor_FaceDirection(IVAN, FACING_NORTHWEST, 5);
-  Actor_FaceDirection(MIA, FACING_WEST, 5);
-  Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTHEAST, 5);
-  Actor_FaceDirection(GARET, FACING_NORTHWEST, 5);
-  Actor_FaceDirection(IVAN, FACING_WEST, 5);
-  Actor_FaceDirection(MIA, FACING_EAST, 5);
-  Engine_EventGetViewCenter()->motionFlags = 0;
+  Engine_ScriptWait(20);
+  Engine_ObjectEventStartRepeatedMotion(LOCALID_PARTY_LEADER, 2);
+  Engine_ObjectEventStartRepeatedMotion(GARET, 2);
+  Engine_ObjectEventStartRepeatedMotion(IVAN, 2);
+  Engine_ObjectEventRunRepeatedMotion(MIA, 2);
+  ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_EAST, 5);
+  ObjectEvent_FaceDirection(GARET, FACING_NORTHEAST, 5);
+  ObjectEvent_FaceDirection(IVAN, FACING_NORTHWEST, 5);
+  ObjectEvent_FaceDirection(MIA, FACING_WEST, 5);
+  ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_NORTHEAST, 5);
+  ObjectEvent_FaceDirection(GARET, FACING_NORTHWEST, 5);
+  ObjectEvent_FaceDirection(IVAN, FACING_WEST, 5);
+  ObjectEvent_FaceDirection(MIA, FACING_EAST, 5);
+  Engine_ScriptGetViewCenter()->motionFlags = 0;
   Camera_MoveTo(PIXELS(280), -1, PIXELS(232), 1);
   Engine_CameraWaitForMove();
-  Actor_SetChildValue(ACTOR_SATUROS, 0xF);
-  Actor_SetChildValue(ACTOR_ALEX, 0xF);
-  Actor_SetPosition(ACTOR_SATUROS, PIXELS(240), PIXELS(208));
-  Actor_SetPosition(ACTOR_ALEX, PIXELS(232), PIXELS(208));
-  Actor_FaceDirection(ACTOR_SATUROS, FACING_SOUTH + FACING_STEP, 0);
-  Actor_FaceDirection(ACTOR_ALEX, FACING_SOUTHEAST + FACING_STEP, 0);
+  ObjectEvent_SetChildValue(LOCALID_SATUROS, 0xF);
+  ObjectEvent_SetChildValue(LOCALID_ALEX, 0xF);
+  ObjectEvent_SetPosition(LOCALID_SATUROS, PIXELS(240), PIXELS(208));
+  ObjectEvent_SetPosition(LOCALID_ALEX, PIXELS(232), PIXELS(208));
+  ObjectEvent_FaceDirection(LOCALID_SATUROS, FACING_SOUTH + FACING_STEP, 0);
+  ObjectEvent_FaceDirection(LOCALID_ALEX, FACING_SOUTHEAST + FACING_STEP, 0);
   MercuryLighthouseAerie_SaturosAndAlexWarpIn();
-  Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_WEST, 10);
-  Actor_FaceDirection(GARET, FACING_WEST, 15);
-  Actor_FaceDirection(IVAN, FACING_WEST, 0);
-  Actor_FaceDirection(MIA, FACING_WEST, 20);
-  Actor_WalkTo(ACTOR_PARTY_LEADER, 328, 208);
-  Actor_WalkTo(IVAN, 336, 224);
-  Actor_WalkToAndWait(GARET, 312, 216);
-  Actor_FaceDirection(GARET, FACING_WEST, 0);
-  Engine_ActorWaitForMove(IVAN);
-  Actor_FaceDirection(IVAN, FACING_WEST, 0);
-  Engine_ActorWaitForMove(ACTOR_PARTY_LEADER);
-  Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_WEST, 30);
-  Event_ShowMessageAndWait(GARET, 0, 20);
-  Engine_ActorRunRepeatedMotion(MIA, 2);
-  Engine_EventWait(20);
-  Event_ShowMessageAndWait(MIA, 0, 20);
-  Actor_FaceDirection(GARET, FACING_SOUTH + FACING_STEP, 20);
-  Event_ShowMessageAndWait(GARET, 0, 20);
-  Actor_FaceDirection(GARET, FACING_WEST, 20);
-  Engine_ActorRunRepeatedMotion(IVAN, 1);
-  Actor_FaceDirection(IVAN, FACING_SOUTHWEST, 20);
-  Event_ShowMessageAndWait(IVAN, 0, 20);
-  Engine_ActorSetAnimationAndWait(MIA, ANIMATION_SHAKE_HEAD);
-  Engine_EventWait(20);
-  Event_ShowMessageAndWait(MIA, 0, 20);
-  Actor_FaceDirection(IVAN, FACING_WEST, 20);
-  Event_ShowMessageAndWait(ACTOR_ALEX, 0, 20);
+  ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_WEST, 10);
+  ObjectEvent_FaceDirection(GARET, FACING_WEST, 15);
+  ObjectEvent_FaceDirection(IVAN, FACING_WEST, 0);
+  ObjectEvent_FaceDirection(MIA, FACING_WEST, 20);
+  ObjectEvent_WalkTo(LOCALID_PARTY_LEADER, 328, 208);
+  ObjectEvent_WalkTo(IVAN, 336, 224);
+  ObjectEvent_WalkToAndWait(GARET, 312, 216);
+  ObjectEvent_FaceDirection(GARET, FACING_WEST, 0);
+  Engine_ObjectEventWaitForMove(IVAN);
+  ObjectEvent_FaceDirection(IVAN, FACING_WEST, 0);
+  Engine_ObjectEventWaitForMove(LOCALID_PARTY_LEADER);
+  ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_WEST, 30);
+  Script_ShowMessageAndWait(GARET, 0, 20);
+  Engine_ObjectEventRunRepeatedMotion(MIA, 2);
+  Engine_ScriptWait(20);
+  Script_ShowMessageAndWait(MIA, 0, 20);
+  ObjectEvent_FaceDirection(GARET, FACING_SOUTH + FACING_STEP, 20);
+  Script_ShowMessageAndWait(GARET, 0, 20);
+  ObjectEvent_FaceDirection(GARET, FACING_WEST, 20);
+  Engine_ObjectEventRunRepeatedMotion(IVAN, 1);
+  ObjectEvent_FaceDirection(IVAN, FACING_SOUTHWEST, 20);
+  Script_ShowMessageAndWait(IVAN, 0, 20);
+  Engine_ObjectEventSetAnimationAndWait(MIA, ANIMATION_SHAKE_HEAD);
+  Engine_ScriptWait(20);
+  Script_ShowMessageAndWait(MIA, 0, 20);
+  ObjectEvent_FaceDirection(IVAN, FACING_WEST, 20);
+  Script_ShowMessageAndWait(LOCALID_ALEX, 0, 20);
   Camera_SetSpeed(PIXELS(3), PIXELS(3) / 8);
   {
-    struct MapLayerScroll *lift;
+    struct MapGridLayerScroll *lift;
     void **cells;
     Camera_MoveTo(PIXELS(152), -1, PIXELS(216), 1);
-    lift = &((struct MapScrollWork *)gMapWork[0])->layers[2];
+    lift = &((struct MapGridScrollWork *)gMapGridWork[0])->layers[2];
     lift->offsetY = PIXELS(896);
-    cells = gMapWork;
-    Engine_MapRedraw();
+    cells = gMapGridWork;
+    Engine_MapGridRedraw();
     Engine_TaskWait(1);
-    Actor_Get(ACTOR_LIFT_STATUE)->motionFlags = 0;
-    Actor_SetPosition(ACTOR_LIFT_STATUE, PIXELS(104), PIXELS(264));
-    Actor_Get(ACTOR_LIFT_STATUE)->y.fixed = -PIXELS(32);
-    Object_GetById(ACTOR_LIFT_STATUE)->targetY = -PIXELS(32);
-    Map_CopyCellsTo(0x1D, 0x4A, 4, 0x4A, 5, 4);
-    Engine_ActorSetSpritePriority(ACTOR_FIRST_LIFT_PLATFORM, 0);
-    Engine_ActorSetSpritePriority(ACTOR_SECOND_LIFT_PLATFORM, 0);
+    ObjectEvent_Get(LOCALID_LIFT_STATUE)->motionFlags = 0;
+    ObjectEvent_SetPosition(LOCALID_LIFT_STATUE, PIXELS(104), PIXELS(264));
+    ObjectEvent_Get(LOCALID_LIFT_STATUE)->y.fixed = -PIXELS(32);
+    ObjectEvent_GetById(LOCALID_LIFT_STATUE)->targetY = -PIXELS(32);
+    MapGrid_CopyCellsTo(0x1D, 0x4A, 4, 0x4A, 5, 4);
+    Engine_ObjectEventSetSpritePriority(LOCALID_FIRST_LIFT_PLATFORM, 0);
+    Engine_ObjectEventSetSpritePriority(LOCALID_SECOND_LIFT_PLATFORM, 0);
     MercuryLighthouseAerie_RaiseLift();
-    Engine_ActorSetSpritePriority(ACTOR_FIRST_LIFT_PLATFORM, 1);
-    Engine_ActorSetSpritePriority(ACTOR_SECOND_LIFT_PLATFORM, 1);
+    Engine_ObjectEventSetSpritePriority(LOCALID_FIRST_LIFT_PLATFORM, 1);
+    Engine_ObjectEventSetSpritePriority(LOCALID_SECOND_LIFT_PLATFORM, 1);
     Engine_CameraWaitForMove();
-    Engine_EventWait(30);
-    Actor_FaceDirection(ACTOR_ALEX, FACING_WEST, 20);
-    Event_ShowMessageAndWait(ACTOR_ALEX, 0, 20);
+    Engine_ScriptWait(30);
+    ObjectEvent_FaceDirection(LOCALID_ALEX, FACING_WEST, 20);
+    Script_ShowMessageAndWait(LOCALID_ALEX, 0, 20);
     Camera_MoveTo(PIXELS(280), -1, PIXELS(216), 1);
     Engine_CameraWaitForMove();
-    Actor_FaceDirection(ACTOR_ALEX, FACING_SOUTHEAST + FACING_STEP, 20);
-    Engine_ActorSetAnimation(ACTOR_ALEX, 5);
-    Event_ShowMessageAndWait(ACTOR_ALEX, 0, 20);
-    Engine_ActorRunRepeatedMotion(IVAN, 2);
-    Engine_EventWait(20);
-    Actor_FaceDirection(IVAN, FACING_NORTHWEST, 20);
-    Event_ShowMessageAndWait(IVAN, 0, 20);
-    Engine_ActorRunRepeatedMotion(GARET, 1);
-    Engine_EventWait(20);
-    Event_ShowMessageAndWait(GARET, 0, 20);
-    Actor_ShowEmote(ACTOR_ALEX, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
-    Engine_EventOpenMessage(ACTOR_ALEX, 0);
-    if (Engine_EventChooseYesNo(0, 0) == 0) {
-      Engine_EventWait(20);
-      Engine_ActorRunRepeatedMotion(ACTOR_SATUROS, 2);
-      Engine_EventWait(20);
-      Event_ShowMessageAndWait(ACTOR_SATUROS, 0, 20);
+    ObjectEvent_FaceDirection(LOCALID_ALEX, FACING_SOUTHEAST + FACING_STEP, 20);
+    Engine_ObjectEventSetAnimation(LOCALID_ALEX, 5);
+    Script_ShowMessageAndWait(LOCALID_ALEX, 0, 20);
+    Engine_ObjectEventRunRepeatedMotion(IVAN, 2);
+    Engine_ScriptWait(20);
+    ObjectEvent_FaceDirection(IVAN, FACING_NORTHWEST, 20);
+    Script_ShowMessageAndWait(IVAN, 0, 20);
+    Engine_ObjectEventRunRepeatedMotion(GARET, 1);
+    Engine_ScriptWait(20);
+    Script_ShowMessageAndWait(GARET, 0, 20);
+    ObjectEvent_ShowEmote(LOCALID_ALEX, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
+    Engine_ScriptOpenMessage(LOCALID_ALEX, 0);
+    if (Engine_ScriptChooseYesNo(0, 0) == 0) {
+      Engine_ScriptWait(20);
+      Engine_ObjectEventRunRepeatedMotion(LOCALID_SATUROS, 2);
+      Engine_ScriptWait(20);
+      Script_ShowMessageAndWait(LOCALID_SATUROS, 0, 20);
       ((struct EventWork *)cells[19])->message++;
     } else {
       ((struct EventWork *)cells[19])->message++;
-      Engine_EventWait(20);
-      Event_ShowMessageAndWait(ACTOR_SATUROS, 0, 20);
+      Engine_ScriptWait(20);
+      Script_ShowMessageAndWait(LOCALID_SATUROS, 0, 20);
     }
   }
-  Engine_ActorRunRepeatedMotion(ACTOR_ALEX, 2);
-  Engine_EventWait(20);
-  Event_ShowMessageAndWait(ACTOR_ALEX, 0, 20);
-  Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
-  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
-  Actor_ShowEmote(IVAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
-  Actor_ShowEmote(MIA, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
-  Engine_EventOpenMessage(ACTOR_ALEX, 0);
-  if (Engine_EventChooseYesNo(0, 0) == 0) {
-    Engine_EventWait(20);
-    Engine_ActorRunRepeatedMotion(ACTOR_ALEX, 2);
-    Engine_EventWait(20);
-    Event_ShowMessageAndWait(ACTOR_ALEX, 0, 20);
+  Engine_ObjectEventRunRepeatedMotion(LOCALID_ALEX, 2);
+  Engine_ScriptWait(20);
+  Script_ShowMessageAndWait(LOCALID_ALEX, 0, 20);
+  ObjectEvent_ShowEmote(LOCALID_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_QUESTION,
+                        0);
+  ObjectEvent_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
+  ObjectEvent_ShowEmote(IVAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
+  ObjectEvent_ShowEmote(MIA, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
+  Engine_ScriptOpenMessage(LOCALID_ALEX, 0);
+  if (Engine_ScriptChooseYesNo(0, 0) == 0) {
+    Engine_ScriptWait(20);
+    Engine_ObjectEventRunRepeatedMotion(LOCALID_ALEX, 2);
+    Engine_ScriptWait(20);
+    Script_ShowMessageAndWait(LOCALID_ALEX, 0, 20);
     gEventWork->message++;
   } else {
     gEventWork->message++;
-    Engine_EventWait(20);
-    Engine_ActorRunRepeatedMotion(ACTOR_ALEX, 1);
-    Engine_EventWait(20);
-    Event_ShowMessageAndWait(ACTOR_ALEX, 0, 20);
+    Engine_ScriptWait(20);
+    Engine_ObjectEventRunRepeatedMotion(LOCALID_ALEX, 1);
+    Engine_ScriptWait(20);
+    Script_ShowMessageAndWait(LOCALID_ALEX, 0, 20);
   }
-  Engine_EventWait(20);
+  Engine_ScriptWait(20);
   MercuryLighthouseAerie_SaturosAndAlexWarpOut();
-  Engine_EventWait(20);
+  Engine_ScriptWait(20);
   Camera_MoveTo(PIXELS(128), -1, PIXELS(200), 1);
   Engine_CameraWaitForMove();
-  Engine_ActorSetAnimation(ACTOR_SATUROS, 1);
-  Engine_ActorSetAnimation(ACTOR_ALEX, 1);
-  Actor_SetChildValue(ACTOR_SATUROS, 0xF);
-  Actor_SetChildValue(ACTOR_ALEX, 0xF);
-  Actor_SetPosition(ACTOR_SATUROS, PIXELS(120), PIXELS(152));
-  Actor_SetPosition(ACTOR_ALEX, PIXELS(112), PIXELS(160));
-  Actor_FaceDirection(ACTOR_SATUROS, FACING_SOUTH + FACING_STEP, 0);
-  Actor_FaceDirection(ACTOR_ALEX, FACING_SOUTHEAST + FACING_STEP, 0);
+  Engine_ObjectEventSetAnimation(LOCALID_SATUROS, 1);
+  Engine_ObjectEventSetAnimation(LOCALID_ALEX, 1);
+  ObjectEvent_SetChildValue(LOCALID_SATUROS, 0xF);
+  ObjectEvent_SetChildValue(LOCALID_ALEX, 0xF);
+  ObjectEvent_SetPosition(LOCALID_SATUROS, PIXELS(120), PIXELS(152));
+  ObjectEvent_SetPosition(LOCALID_ALEX, PIXELS(112), PIXELS(160));
+  ObjectEvent_FaceDirection(LOCALID_SATUROS, FACING_SOUTH + FACING_STEP, 0);
+  ObjectEvent_FaceDirection(LOCALID_ALEX, FACING_SOUTHEAST + FACING_STEP, 0);
   MercuryLighthouseAerie_SaturosAndAlexWarpIn();
-  Engine_EventWait(30);
-  Actor_FaceDirection(ACTOR_ALEX, FACING_EAST, 20);
-  Engine_EventOpenMessage(ACTOR_ALEX, 0);
-  if (Engine_EventChooseYesNo(0, 0) == 0) {
-    Engine_ActorSetAnimationAndWait(ACTOR_ALEX, 3);
-    Engine_EventWait(20);
-    Event_ShowMessageAndWait(ACTOR_ALEX, 0, 20);
+  Engine_ScriptWait(30);
+  ObjectEvent_FaceDirection(LOCALID_ALEX, FACING_EAST, 20);
+  Engine_ScriptOpenMessage(LOCALID_ALEX, 0);
+  if (Engine_ScriptChooseYesNo(0, 0) == 0) {
+    Engine_ObjectEventSetAnimationAndWait(LOCALID_ALEX, 3);
+    Engine_ScriptWait(20);
+    Script_ShowMessageAndWait(LOCALID_ALEX, 0, 20);
     gEventWork->message++;
   } else {
     gEventWork->message++;
-    Engine_ActorSetAnimationAndWait(ACTOR_ALEX, 4);
-    Engine_EventWait(20);
-    Event_ShowMessageAndWait(ACTOR_ALEX, 0, 20);
+    Engine_ObjectEventSetAnimationAndWait(LOCALID_ALEX, 4);
+    Engine_ScriptWait(20);
+    Script_ShowMessageAndWait(LOCALID_ALEX, 0, 20);
   }
-  Event_ShowMessageAndWait(ACTOR_ALEX, 0, 20);
-  Engine_ActorRunRepeatedMotion(ACTOR_SATUROS, 1);
-  Engine_EventWait(20);
-  Actor_FaceDirection(ACTOR_SATUROS, FACING_EAST, 20);
-  Event_ShowMessageAndWait(ACTOR_SATUROS, 0, 20);
-  Engine_EventWait(20);
-  Actor_FaceDirection(ACTOR_ALEX, FACING_EAST, 20);
-  Engine_ActorSetSpritePriority(ACTOR_FIRST_LIFT_PLATFORM, 0);
-  Engine_ActorSetSpritePriority(ACTOR_SECOND_LIFT_PLATFORM, 0);
+  Script_ShowMessageAndWait(LOCALID_ALEX, 0, 20);
+  Engine_ObjectEventRunRepeatedMotion(LOCALID_SATUROS, 1);
+  Engine_ScriptWait(20);
+  ObjectEvent_FaceDirection(LOCALID_SATUROS, FACING_EAST, 20);
+  Script_ShowMessageAndWait(LOCALID_SATUROS, 0, 20);
+  Engine_ScriptWait(20);
+  ObjectEvent_FaceDirection(LOCALID_ALEX, FACING_EAST, 20);
+  Engine_ObjectEventSetSpritePriority(LOCALID_FIRST_LIFT_PLATFORM, 0);
+  Engine_ObjectEventSetSpritePriority(LOCALID_SECOND_LIFT_PLATFORM, 0);
   MercuryLighthouseAerie_LowerLift();
-  Engine_ActorSetSpritePriority(ACTOR_FIRST_LIFT_PLATFORM, 1);
-  Engine_ActorSetSpritePriority(ACTOR_SECOND_LIFT_PLATFORM, 1);
-  Event_PlayCue(AUDIO_CUE_FADE_BGM);
+  Engine_ObjectEventSetSpritePriority(LOCALID_FIRST_LIFT_PLATFORM, 1);
+  Engine_ObjectEventSetSpritePriority(LOCALID_SECOND_LIFT_PLATFORM, 1);
+  Script_PlayCue(AUDIO_CUE_FADE_BGM);
   Camera_MoveTo(PIXELS(336), -1, PIXELS(216), 1);
   Engine_CameraWaitForMove();
-  Engine_ActorSetAnimationAndWait(IVAN, ANIMATION_SHAKE_HEAD);
-  Engine_EventWait(20);
+  Engine_ObjectEventSetAnimationAndWait(IVAN, ANIMATION_SHAKE_HEAD);
+  Engine_ScriptWait(20);
   Audio_PlayCueFromEventWork();
-  Event_ShowMessageAndWait(IVAN, 0, 20);
-  Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 0);
-  Actor_FaceDirection(GARET, FACING_SOUTHEAST + FACING_STEP, 22);
-  Engine_ActorRunRepeatedMotion(GARET, 2);
-  Engine_EventWait(10);
-  Event_ShowMessageAndWait(GARET, 0, 20);
-  Actor_ShowEmote(MIA, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
-  Event_ShowMessageAndWait(MIA, 0, 20);
-  Actor_FaceDirection(MIA, FACING_NORTHWEST, 20);
-  Event_ShowMessageAndWait(MIA, 0, 20);
-  Actor_FaceDirection(MIA, FACING_WEST, 20);
-  Engine_ActorSetAnimation(MIA, 0x10);
-  Actor_Get(MIA)->scaleX = -Q16_ONE;
-  Engine_EventWait(20);
-  Event_ShowMessageAndWait(MIA, 0, 40);
-  Engine_ActorRunRepeatedMotion(IVAN, 2);
-  Engine_EventWait(20);
-  Actor_FaceDirection(IVAN, FACING_NORTHWEST, 20);
-  Engine_ActorSetAnimationAndWait(IVAN, ANIMATION_SHAKE_HEAD);
-  Engine_EventWait(20);
-  Engine_EventOpenMessage(IVAN, 0);
-  Engine_ActorSetAnimation(MIA, ANIMATION_STAND);
-  Actor_Get(MIA)->scaleX = Q16_ONE;
-  Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 0);
-  Actor_FaceDirection(GARET, FACING_NORTHEAST, 0);
-  Actor_FaceDirection(MIA, FACING_NORTH, 20);
-  if (Engine_EventChooseYesNo(0, 0) == 0) {
-    Engine_ActorSetAnimationAndWait(IVAN, ANIMATION_NOD);
-    Engine_EventWait(20);
-    Event_ShowMessageAndWait(IVAN, 0, 20);
+  Script_ShowMessageAndWait(IVAN, 0, 20);
+  ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_SOUTH, 0);
+  ObjectEvent_FaceDirection(GARET, FACING_SOUTHEAST + FACING_STEP, 22);
+  Engine_ObjectEventRunRepeatedMotion(GARET, 2);
+  Engine_ScriptWait(10);
+  Script_ShowMessageAndWait(GARET, 0, 20);
+  ObjectEvent_ShowEmote(MIA, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
+  Script_ShowMessageAndWait(MIA, 0, 20);
+  ObjectEvent_FaceDirection(MIA, FACING_NORTHWEST, 20);
+  Script_ShowMessageAndWait(MIA, 0, 20);
+  ObjectEvent_FaceDirection(MIA, FACING_WEST, 20);
+  Engine_ObjectEventSetAnimation(MIA, 0x10);
+  ObjectEvent_Get(MIA)->scaleX = -Q16_ONE;
+  Engine_ScriptWait(20);
+  Script_ShowMessageAndWait(MIA, 0, 40);
+  Engine_ObjectEventRunRepeatedMotion(IVAN, 2);
+  Engine_ScriptWait(20);
+  ObjectEvent_FaceDirection(IVAN, FACING_NORTHWEST, 20);
+  Engine_ObjectEventSetAnimationAndWait(IVAN, ANIMATION_SHAKE_HEAD);
+  Engine_ScriptWait(20);
+  Engine_ScriptOpenMessage(IVAN, 0);
+  Engine_ObjectEventSetAnimation(MIA, ANIMATION_STAND);
+  ObjectEvent_Get(MIA)->scaleX = Q16_ONE;
+  ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_SOUTH, 0);
+  ObjectEvent_FaceDirection(GARET, FACING_NORTHEAST, 0);
+  ObjectEvent_FaceDirection(MIA, FACING_NORTH, 20);
+  if (Engine_ScriptChooseYesNo(0, 0) == 0) {
+    Engine_ObjectEventSetAnimationAndWait(IVAN, ANIMATION_NOD);
+    Engine_ScriptWait(20);
+    Script_ShowMessageAndWait(IVAN, 0, 20);
     gEventWork->message++;
   } else {
     gEventWork->message++;
-    Engine_ActorRunRepeatedMotion(IVAN, 2);
-    Engine_EventWait(20);
-    Event_ShowMessageAndWait(IVAN, 0, 20);
+    Engine_ObjectEventRunRepeatedMotion(IVAN, 2);
+    Engine_ScriptWait(20);
+    Script_ShowMessageAndWait(IVAN, 0, 20);
   }
-  Actor_FaceDirection(IVAN, FACING_SOUTHWEST, 20);
-  Engine_ActorSetAnimationAndWait(IVAN, ANIMATION_NOD);
-  Engine_EventWait(20);
-  Event_ShowMessageAndWait(IVAN, 0, 20);
-  Actor_FaceDirection(MIA, FACING_NORTHEAST, 30);
-  Actor_FaceDirection(GARET, FACING_SOUTHEAST, 20);
-  Engine_ActorRunRepeatedMotion(GARET, 1);
-  Engine_EventWait(10);
-  Event_ShowMessageAndWait(GARET, 0, 20);
-  Actor_FaceDirection(MIA, FACING_NORTHWEST, 20);
-  Engine_ActorSetAnimationAndWait(MIA, ANIMATION_NOD);
-  Engine_EventWait(20);
-  Event_ShowMessageAndWait(MIA, 0, 20);
-  Engine_ActorRunRepeatedMotion(MIA, 1);
-  Event_ShowMessageAndWait(MIA, 0, 20);
-  Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
-  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
-  Actor_ShowEmote(IVAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
-  Actor_SetSpeed(MIA, PIXELS(4) / 5, PIXELS(2) / 5);
-  Actor_SetSpeed(GARET, PIXELS(4) / 5, PIXELS(2) / 5);
-  Actor_WalkToAndWait(MIA, 328, 216);
-  Actor_FaceDirection(IVAN, FACING_NORTHWEST, 0);
-  Actor_Get(GARET)->steeringFlags &= ~ACTOR_FACES_MOTION;
-  Actor_WalkTo(GARET, 312, 200);
-  Actor_WalkTo(MIA, 280, 216);
-  Engine_ActorWaitForMove(GARET);
-  Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTHWEST, 0);
-  Actor_FaceDirection(GARET, FACING_SOUTHWEST, 0);
-  Engine_ActorWaitForMove(MIA);
-  Engine_ActorRunRepeatedMotion(MIA, 2);
-  Engine_EventWait(30);
-  Actor_FaceDirection(MIA, FACING_EAST, 20);
-  Event_ShowMessageAndWait(MIA, 0, 20);
-  Engine_ActorRunRepeatedMotion(GARET, 1);
-  Engine_EventWait(20);
-  Event_ShowMessageAndWait(GARET, 0, 20);
-  Engine_ActorSetAnimationAndWait(MIA, ANIMATION_NOD);
-  Engine_ActorStartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
-  Engine_ActorStartRepeatedMotion(IVAN, 2);
-  Engine_ActorStartRepeatedMotion(GARET, 2);
-  Actor_SetAttachedEffect(ACTOR_PARTY_LEADER,
-                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-  Actor_SetAttachedEffect(GARET,
-                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-  Actor_SetAttachedEffect(IVAN,
-                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-  Engine_EventWait(60);
-  Event_ShowMessageAndWait(IVAN, 0, 20);
-  Engine_ActorSetAnimationAndWait(MIA, ANIMATION_SHAKE_HEAD);
-  Engine_EventWait(20);
-  Event_ShowMessageAndWait(MIA, 0, 20);
-  Actor_FaceDirection(MIA, FACING_NORTHEAST, 20);
-  Event_ShowMessageAndWait(MIA, 0, 20);
-  Actor_FaceDirection(MIA, FACING_EAST, 20);
-  Engine_ActorSetAnimationAndWait(MIA, ANIMATION_SHAKE_HEAD);
-  Engine_EventWait(20);
-  Event_ShowMessageAndWait(MIA, 0, 30);
-  Actor_FaceDirection(GARET, FACING_SOUTHEAST, 0);
-  Actor_FaceDirection(IVAN, FACING_NORTHWEST, 20);
-  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIMATION_NOD);
-  Engine_ActorSetAnimation(GARET, ANIMATION_NOD);
-  Engine_ActorSetAnimationAndWait(IVAN, ANIMATION_NOD);
-  Engine_EventWait(30);
-  Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTHWEST, 0);
-  Actor_FaceDirection(GARET, FACING_SOUTHWEST, 0);
-  Actor_FaceDirection(IVAN, FACING_SOUTHWEST, 40);
-  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIMATION_NOD);
-  Engine_ActorSetAnimation(GARET, ANIMATION_NOD);
-  Engine_ActorSetAnimationAndWait(IVAN, ANIMATION_NOD);
-  Engine_EventWait(20);
-  Engine_ActorSetAnimationAndWait(MIA, ANIMATION_NOD);
-  Engine_EventWait(20);
-  Event_ShowMessageAndWait(MIA, 0, 20);
-  Actor_WalkTo(ACTOR_PARTY_LEADER, 312, 216);
-  Actor_WalkTo(GARET, 312, 216);
-  Actor_WalkTo(IVAN, 312, 216);
-  Actor_WalkTo(MIA, 312, 216);
-  Engine_ActorWaitForMove(ACTOR_PARTY_LEADER);
-  Engine_ActorWaitForMove(GARET);
-  Actor_SetPosition(GARET, 0, 0);
-  Engine_ActorWaitForMove(IVAN);
-  Actor_SetPosition(IVAN, 0, 0);
-  Engine_ActorWaitForMove(MIA);
-  Actor_SetPosition(MIA, 0, 0);
+  ObjectEvent_FaceDirection(IVAN, FACING_SOUTHWEST, 20);
+  Engine_ObjectEventSetAnimationAndWait(IVAN, ANIMATION_NOD);
+  Engine_ScriptWait(20);
+  Script_ShowMessageAndWait(IVAN, 0, 20);
+  ObjectEvent_FaceDirection(MIA, FACING_NORTHEAST, 30);
+  ObjectEvent_FaceDirection(GARET, FACING_SOUTHEAST, 20);
+  Engine_ObjectEventRunRepeatedMotion(GARET, 1);
+  Engine_ScriptWait(10);
+  Script_ShowMessageAndWait(GARET, 0, 20);
+  ObjectEvent_FaceDirection(MIA, FACING_NORTHWEST, 20);
+  Engine_ObjectEventSetAnimationAndWait(MIA, ANIMATION_NOD);
+  Engine_ScriptWait(20);
+  Script_ShowMessageAndWait(MIA, 0, 20);
+  Engine_ObjectEventRunRepeatedMotion(MIA, 1);
+  Script_ShowMessageAndWait(MIA, 0, 20);
+  ObjectEvent_ShowEmote(LOCALID_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_QUESTION,
+                        0);
+  ObjectEvent_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
+  ObjectEvent_ShowEmote(IVAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
+  ObjectEvent_SetSpeed(MIA, PIXELS(4) / 5, PIXELS(2) / 5);
+  ObjectEvent_SetSpeed(GARET, PIXELS(4) / 5, PIXELS(2) / 5);
+  ObjectEvent_WalkToAndWait(MIA, 328, 216);
+  ObjectEvent_FaceDirection(IVAN, FACING_NORTHWEST, 0);
+  ObjectEvent_Get(GARET)->steeringFlags &= ~OBJ_EVENT_FACES_MOTION;
+  ObjectEvent_WalkTo(GARET, 312, 200);
+  ObjectEvent_WalkTo(MIA, 280, 216);
+  Engine_ObjectEventWaitForMove(GARET);
+  ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_SOUTHWEST, 0);
+  ObjectEvent_FaceDirection(GARET, FACING_SOUTHWEST, 0);
+  Engine_ObjectEventWaitForMove(MIA);
+  Engine_ObjectEventRunRepeatedMotion(MIA, 2);
+  Engine_ScriptWait(30);
+  ObjectEvent_FaceDirection(MIA, FACING_EAST, 20);
+  Script_ShowMessageAndWait(MIA, 0, 20);
+  Engine_ObjectEventRunRepeatedMotion(GARET, 1);
+  Engine_ScriptWait(20);
+  Script_ShowMessageAndWait(GARET, 0, 20);
+  Engine_ObjectEventSetAnimationAndWait(MIA, ANIMATION_NOD);
+  Engine_ObjectEventStartRepeatedMotion(LOCALID_PARTY_LEADER, 2);
+  Engine_ObjectEventStartRepeatedMotion(IVAN, 2);
+  Engine_ObjectEventStartRepeatedMotion(GARET, 2);
+  ObjectEvent_SetAttachedEffect(LOCALID_PARTY_LEADER, ATTACHED_EFFECT_IN_FRONT |
+                                                          ATTACHED_EFFECT_ONCE);
+  ObjectEvent_SetAttachedEffect(GARET, ATTACHED_EFFECT_IN_FRONT |
+                                           ATTACHED_EFFECT_ONCE);
+  ObjectEvent_SetAttachedEffect(IVAN, ATTACHED_EFFECT_IN_FRONT |
+                                          ATTACHED_EFFECT_ONCE);
+  Engine_ScriptWait(60);
+  Script_ShowMessageAndWait(IVAN, 0, 20);
+  Engine_ObjectEventSetAnimationAndWait(MIA, ANIMATION_SHAKE_HEAD);
+  Engine_ScriptWait(20);
+  Script_ShowMessageAndWait(MIA, 0, 20);
+  ObjectEvent_FaceDirection(MIA, FACING_NORTHEAST, 20);
+  Script_ShowMessageAndWait(MIA, 0, 20);
+  ObjectEvent_FaceDirection(MIA, FACING_EAST, 20);
+  Engine_ObjectEventSetAnimationAndWait(MIA, ANIMATION_SHAKE_HEAD);
+  Engine_ScriptWait(20);
+  Script_ShowMessageAndWait(MIA, 0, 30);
+  ObjectEvent_FaceDirection(GARET, FACING_SOUTHEAST, 0);
+  ObjectEvent_FaceDirection(IVAN, FACING_NORTHWEST, 20);
+  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIMATION_NOD);
+  Engine_ObjectEventSetAnimation(GARET, ANIMATION_NOD);
+  Engine_ObjectEventSetAnimationAndWait(IVAN, ANIMATION_NOD);
+  Engine_ScriptWait(30);
+  ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_SOUTHWEST, 0);
+  ObjectEvent_FaceDirection(GARET, FACING_SOUTHWEST, 0);
+  ObjectEvent_FaceDirection(IVAN, FACING_SOUTHWEST, 40);
+  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIMATION_NOD);
+  Engine_ObjectEventSetAnimation(GARET, ANIMATION_NOD);
+  Engine_ObjectEventSetAnimationAndWait(IVAN, ANIMATION_NOD);
+  Engine_ScriptWait(20);
+  Engine_ObjectEventSetAnimationAndWait(MIA, ANIMATION_NOD);
+  Engine_ScriptWait(20);
+  Script_ShowMessageAndWait(MIA, 0, 20);
+  ObjectEvent_WalkTo(LOCALID_PARTY_LEADER, 312, 216);
+  ObjectEvent_WalkTo(GARET, 312, 216);
+  ObjectEvent_WalkTo(IVAN, 312, 216);
+  ObjectEvent_WalkTo(MIA, 312, 216);
+  Engine_ObjectEventWaitForMove(LOCALID_PARTY_LEADER);
+  Engine_ObjectEventWaitForMove(GARET);
+  ObjectEvent_SetPosition(GARET, 0, 0);
+  Engine_ObjectEventWaitForMove(IVAN);
+  ObjectEvent_SetPosition(IVAN, 0, 0);
+  Engine_ObjectEventWaitForMove(MIA);
+  ObjectEvent_SetPosition(MIA, 0, 0);
   {
-    struct MapLayerScroll *lift =
-        &((struct MapScrollWork *)gMapWork[0])->layers[2];
+    struct MapGridLayerScroll *lift =
+        &((struct MapGridScrollWork *)gMapGridWork[0])->layers[2];
 
     lift->offsetY = PIXELS(1024);
   }
-  Engine_MapRedraw();
+  Engine_MapGridRedraw();
   Engine_TaskWait(1);
-  Map_CopyCellsTo(4, 0x46, 4, 0x4A, 5, 4);
+  MapGrid_CopyCellsTo(4, 0x46, 4, 0x4A, 5, 4);
   GameFlag_Set(FLAG_MERCURY_AERIE_ALEX_APPEARED);
   GameFlag_Set(FLAG_SATUROS_BEATEN_AT_MERCURY);
-  Engine_EventEnd();
+  Engine_ScriptEnd();
 }
 
 /// Lighthouse Aerie: touching cell code 6 while the lift is down. The camera
 /// watches it rise with its statue.
 static void MercuryLighthouseAerie_CallLift(void) {
-  struct MapLayerScroll *lift;
+  struct MapGridLayerScroll *lift;
 
-  lift = &((struct MapScrollWork *)gMapWork[0])->layers[2];
-  Engine_EventStart();
+  lift = &((struct MapGridScrollWork *)gMapGridWork[0])->layers[2];
+  Engine_ScriptStart();
   lift->offsetY = PIXELS(896);
-  Engine_MapRedraw();
+  Engine_MapGridRedraw();
   Engine_TaskWait(1);
-  Object_GetById(ACTOR_LIFT_STATUE)->motionFlags = 0;
-  Engine_ActorSetPosition(ACTOR_LIFT_STATUE, PIXELS(104), PIXELS(264));
-  Object_GetById(ACTOR_LIFT_STATUE)->y.fixed = -PIXELS(32);
-  Object_GetById(ACTOR_LIFT_STATUE)->targetY = -PIXELS(32);
-  Engine_EventGetViewCenter()->motionFlags = 0;
+  ObjectEvent_GetById(LOCALID_LIFT_STATUE)->motionFlags = 0;
+  Engine_ObjectEventSetPosition(LOCALID_LIFT_STATUE, PIXELS(104), PIXELS(264));
+  ObjectEvent_GetById(LOCALID_LIFT_STATUE)->y.fixed = -PIXELS(32);
+  ObjectEvent_GetById(LOCALID_LIFT_STATUE)->targetY = -PIXELS(32);
+  Engine_ScriptGetViewCenter()->motionFlags = 0;
   Engine_CameraSetSpeed(PIXELS(4) / 5, PIXELS(1) / 10);
   Engine_CameraMoveTo(PIXELS(128), -1, PIXELS(184), 1);
   Engine_CameraWaitForMove();
-  Engine_EventWait(30);
-  Map_CopyCellsTo(29, 74, 4, 74, 5, 4);
-  Engine_ActorSetSpritePriority(ACTOR_FIRST_LIFT_PLATFORM, 0);
-  Engine_ActorSetSpritePriority(ACTOR_SECOND_LIFT_PLATFORM, 0);
+  Engine_ScriptWait(30);
+  MapGrid_CopyCellsTo(29, 74, 4, 74, 5, 4);
+  Engine_ObjectEventSetSpritePriority(LOCALID_FIRST_LIFT_PLATFORM, 0);
+  Engine_ObjectEventSetSpritePriority(LOCALID_SECOND_LIFT_PLATFORM, 0);
   MercuryLighthouseAerie_RaiseLift();
-  Engine_ActorSetSpritePriority(ACTOR_FIRST_LIFT_PLATFORM, 1);
-  Engine_ActorSetSpritePriority(ACTOR_SECOND_LIFT_PLATFORM, 1);
-  Engine_EventWait(20);
+  Engine_ObjectEventSetSpritePriority(LOCALID_FIRST_LIFT_PLATFORM, 1);
+  Engine_ObjectEventSetSpritePriority(LOCALID_SECOND_LIFT_PLATFORM, 1);
+  Engine_ScriptWait(20);
   Engine_GameFlagSet(FLAG_LIFT_UP);
-  Engine_EventEnd();
+  Engine_ScriptEnd();
 }
 
 /// Lighthouse Aerie: touching cell code 12. The leader steps onto the lift and
-/// rides it down to SceneId_MercuryLighthouseExterior, arriving at
+/// rides it down to MapId_MercuryLighthouseExterior, arriving at
 /// MERCURY_LIGHTHOUSE_EXTERIOR_FROM_MERCURY_LIGHTHOUSE_AERIE by the Fountain of
 /// Healing.
 static void MercuryLighthouseAerie_RideLiftDown(void) {
-  Engine_EventStart();
-  Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(1) / 2, PIXELS(1) / 4);
-  Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 104, 152);
-  Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 60);
-  Engine_ActorSetSpritePriority(ACTOR_FIRST_LIFT_PLATFORM, 0);
-  Engine_ActorSetSpritePriority(ACTOR_SECOND_LIFT_PLATFORM, 0);
+  Engine_ScriptStart();
+  ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(1) / 2, PIXELS(1) / 4);
+  ObjectEvent_WalkToAndWait(LOCALID_PARTY_LEADER, 104, 152);
+  ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_SOUTH, 60);
+  Engine_ObjectEventSetSpritePriority(LOCALID_FIRST_LIFT_PLATFORM, 0);
+  Engine_ObjectEventSetSpritePriority(LOCALID_SECOND_LIFT_PLATFORM, 0);
   MercuryLighthouseAerie_LowerLift();
   Camera_MoveTo(-1, -1, -1, 0);
-  Engine_EventRequestExit(
+  Engine_ScriptRequestWarp(
       MERCURY_LIGHTHOUSE_AERIE_TO_MERCURY_LIGHTHOUSE_EXTERIOR);
-  Engine_EventEnd();
+  Engine_ScriptEnd();
 }
 
 /// Saturos and Alex warp out in a column of sparkles and vanish.
 static void MercuryLighthouseAerie_SaturosAndAlexWarpOut(void) {
   struct EffectOptions optionsStorage;
   struct EffectOptions *options;
-  struct FieldActor *left;
-  struct FieldActor *right;
+  struct ObjectEvent *left;
+  struct ObjectEvent *right;
   u32 i;
   s32 x;
   s32 r;
 
-  left = Object_GetById(ACTOR_SATUROS);
-  right = Object_GetById(ACTOR_ALEX);
+  left = ObjectEvent_GetById(LOCALID_SATUROS);
+  right = ObjectEvent_GetById(LOCALID_ALEX);
   Engine_AudioPlayCue(SE_190);
-  Actor_SetChildValue(ACTOR_SATUROS, 0x100);
-  Engine_ActorSetChildValue(ACTOR_ALEX, 0x100);
-  Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_SATUROS), 0);
-  Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_ALEX), 0);
+  ObjectEvent_SetChildValue(LOCALID_SATUROS, 0x100);
+  Engine_ObjectEventSetChildValue(LOCALID_ALEX, 0x100);
+  Engine_ObjectEventSetSpriteFlags(ObjectEvent_GetById(LOCALID_SATUROS), 0);
+  Engine_ObjectEventSetSpriteFlags(ObjectEvent_GetById(LOCALID_ALEX), 0);
   options = &optionsStorage;
   options->priority = 1;
   options->palette = 5;
@@ -1540,7 +1564,7 @@ static void MercuryLighthouseAerie_SaturosAndAlexWarpOut(void) {
   options->startScaleX = 2 * Q16_ONE / 5;
   options->startScaleY = 3 * Q16_ONE;
   for (i = 0; i <= 31; i++) {
-    Engine_EventWait(1);
+    Engine_ScriptWait(1);
     if (i & 1) {
       r = ((((u32)Engine_RandomNext() * 24) >> 16) << 16);
       x = left->x.fixed;
@@ -1569,25 +1593,25 @@ static void MercuryLighthouseAerie_SaturosAndAlexWarpOut(void) {
                         options);
     }
   }
-  Engine_ActorSetPosition(ACTOR_SATUROS, 0, 0);
-  Engine_ActorSetPosition(ACTOR_ALEX, 0, 0);
+  Engine_ObjectEventSetPosition(LOCALID_SATUROS, 0, 0);
+  Engine_ObjectEventSetPosition(LOCALID_ALEX, 0, 0);
 }
 
 /// Saturos and Alex warp in where they have been placed.
 static void MercuryLighthouseAerie_SaturosAndAlexWarpIn(void) {
   struct EffectOptions optionsStorage;
   struct EffectOptions *options;
-  struct FieldActor *left;
-  struct FieldActor *right;
+  struct ObjectEvent *left;
+  struct ObjectEvent *right;
   u32 i;
   s32 x;
   s32 r;
 
-  left = Object_GetById(ACTOR_SATUROS);
-  right = Object_GetById(ACTOR_ALEX);
+  left = ObjectEvent_GetById(LOCALID_SATUROS);
+  right = ObjectEvent_GetById(LOCALID_ALEX);
   Engine_AudioPlayCue(SE_190);
-  Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_SATUROS), 0);
-  Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_ALEX), 0);
+  Engine_ObjectEventSetSpriteFlags(ObjectEvent_GetById(LOCALID_SATUROS), 0);
+  Engine_ObjectEventSetSpriteFlags(ObjectEvent_GetById(LOCALID_ALEX), 0);
   options = &optionsStorage;
   options->priority = 1;
   options->palette = 5;
@@ -1595,7 +1619,7 @@ static void MercuryLighthouseAerie_SaturosAndAlexWarpIn(void) {
   options->startScaleX = 2 * Q16_ONE / 5;
   options->startScaleY = 3 * Q16_ONE;
   for (i = 0; i <= 31; i++) {
-    Engine_EventWait(1);
+    Engine_ScriptWait(1);
     if (i & 1) {
       r = ((((u32)Engine_RandomNext() * 24) >> 16) << 16);
       x = left->x.fixed;
@@ -1624,14 +1648,16 @@ static void MercuryLighthouseAerie_SaturosAndAlexWarpIn(void) {
                         options);
     }
     if (i == 20) {
-      Actor_SetChildValue(ACTOR_SATUROS, 0x100);
-      Engine_ActorSetChildValue(ACTOR_ALEX, 0x100);
+      ObjectEvent_SetChildValue(LOCALID_SATUROS, 0x100);
+      Engine_ObjectEventSetChildValue(LOCALID_ALEX, 0x100);
     }
   }
-  Engine_ActorSetChildValue(ACTOR_SATUROS, 0);
-  Engine_ActorSetChildValue(ACTOR_ALEX, 0);
-  Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_SATUROS), SPRITE_FLAG_SHADOW);
-  Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_ALEX), SPRITE_FLAG_SHADOW);
+  Engine_ObjectEventSetChildValue(LOCALID_SATUROS, 0);
+  Engine_ObjectEventSetChildValue(LOCALID_ALEX, 0);
+  Engine_ObjectEventSetSpriteFlags(ObjectEvent_GetById(LOCALID_SATUROS),
+                                   SPRITE_FLAG_SHADOW);
+  Engine_ObjectEventSetSpriteFlags(ObjectEvent_GetById(LOCALID_ALEX),
+                                   SPRITE_FLAG_SHADOW);
 }
 
 /// MercuryLighthouseAerie_LowerLift passes its lift as a third
@@ -1642,13 +1668,14 @@ static void MercuryLighthouseAerie_FindLiftRiders(s32 *out, s32 y) {
 
   work = (struct FieldWork *)gEventWork;
   y = 64 - (y >> 20);
-  for (slot = 0; slot < sizeof(work->actors) / sizeof(work->actors[0]);
+  for (slot = 0;
+       slot < sizeof(work->objectEvents) / sizeof(work->objectEvents[0]);
        slot++) {
-    struct FieldActor *actor = work->actors[slot];
+    struct ObjectEvent *objectEvent = work->objectEvents[slot];
 
-    if (actor != 0) {
-      s32 cell = actor->x.fixed >> 20;
-      s32 row = actor->z.fixed >> 20;
+    if (objectEvent != 0) {
+      s32 cell = objectEvent->x.fixed >> 20;
+      s32 row = objectEvent->z.fixed >> 20;
 
       if (cell >= 4 && cell <= 8 && y + 8 <= row && row < y + 11)
         *out++ = slot;
@@ -1659,14 +1686,14 @@ static void MercuryLighthouseAerie_FindLiftRiders(s32 *out, s32 y) {
 /// The lift sinks with everything standing on it, speeding up.
 static void MercuryLighthouseAerie_LowerLift(void) {
   s32 ids[5];
-  struct MapLayerScroll *lift;
+  struct MapGridLayerScroll *lift;
   u32 i;
   u32 j;
   u32 n;
   s32 speed;
-  struct FieldActor *actor;
+  struct ObjectEvent *objectEvent;
 
-  lift = &((struct MapScrollWork *)gMapWork[0])->layers[2];
+  lift = &((struct MapGridScrollWork *)gMapGridWork[0])->layers[2];
   speed = 0x1999;
   n = 0;
   for (i = 0; i <= 4; i++)
@@ -1676,16 +1703,16 @@ static void MercuryLighthouseAerie_LowerLift(void) {
   for (i = 0; i <= 4; i++) {
     if (ids[i] == 66)
       break;
-    Object_GetById(ids[i])->motionFlags = 0;
+    ObjectEvent_GetById(ids[i])->motionFlags = 0;
     n++;
   }
   Engine_AudioPlayCue(SE_LIFT);
   for (i = 0; i <= 227; i++) {
     lift->offsetY -= speed;
     for (j = 0; j < n; j++) {
-      Object_GetById(ids[j])->z.fixed += speed;
-      actor = Object_GetById(ids[j]);
-      actor->targetZ = Object_GetById(ids[j])->z.fixed;
+      ObjectEvent_GetById(ids[j])->z.fixed += speed;
+      objectEvent = ObjectEvent_GetById(ids[j]);
+      objectEvent->targetZ = ObjectEvent_GetById(ids[j])->z.fixed;
     }
     if ((i & 3) == 3)
       speed += 0x1999;
@@ -1694,20 +1721,20 @@ static void MercuryLighthouseAerie_LowerLift(void) {
     Engine_TaskWait(1);
   }
   for (i = 0; i < n; i++)
-    Object_GetById(ids[i])->motionFlags = 0;
+    ObjectEvent_GetById(ids[i])->motionFlags = 0;
 }
 
 /// The lift rises with everything standing on it, slowing at the top.
 static void MercuryLighthouseAerie_RaiseLift(void) {
   s32 ids[5];
-  struct MapLayerScroll *lift;
+  struct MapGridLayerScroll *lift;
   u32 i;
   u32 j;
   u32 n;
   s32 speed;
-  struct FieldActor *actor;
+  struct ObjectEvent *objectEvent;
 
-  lift = &((struct MapScrollWork *)gMapWork[0])->layers[2];
+  lift = &((struct MapGridScrollWork *)gMapGridWork[0])->layers[2];
   speed = 0x18000;
   n = 0;
   for (i = 0; i <= 4; i++)
@@ -1716,16 +1743,16 @@ static void MercuryLighthouseAerie_RaiseLift(void) {
   for (i = 0; i <= 4; i++) {
     if (ids[i] == 66)
       break;
-    Object_GetById(ids[i])->motionFlags = 0;
+    ObjectEvent_GetById(ids[i])->motionFlags = 0;
     n++;
   }
   Engine_AudioPlayCue(SE_LIFT);
   for (i = 0; i <= 85; i++) {
     lift->offsetY += speed;
     for (j = 0; j < n; j++) {
-      Object_GetById(ids[j])->z.fixed -= speed;
-      actor = Object_GetById(ids[j]);
-      actor->targetZ = Object_GetById(ids[j])->z.fixed;
+      ObjectEvent_GetById(ids[j])->z.fixed -= speed;
+      objectEvent = ObjectEvent_GetById(ids[j]);
+      objectEvent->targetZ = ObjectEvent_GetById(ids[j])->z.fixed;
     }
     if ((i & 3) == 3 && i > 75)
       speed += -0x3333;
@@ -1734,7 +1761,7 @@ static void MercuryLighthouseAerie_RaiseLift(void) {
     Engine_TaskWait(1);
   }
   lift->offsetY = PIXELS(1024);
-  Engine_MapRedraw();
+  Engine_MapGridRedraw();
   Engine_TaskWait(2);
 }
 
@@ -1744,7 +1771,7 @@ static void MercuryLighthouseAerie_RaiseLift(void) {
 /// ride it down without it (MercuryLighthouseAerie_AlexAppears).
 UNUSED static void MercuryLighthouseAerie_UnusedAlexCastsPly(void) {
   Engine_PsynergyStart(ABILITY_PLY, 1);
-  Engine_PsynergySetTarget(ACTOR_ALEX, ACTOR_LIFT_STATUE);
+  Engine_PsynergySetTarget(LOCALID_ALEX, LOCALID_LIFT_STATUE);
   Engine_PsynergyRaiseHands();
   Engine_PsynergyPlayEffect(1);
   Engine_PsynergyLowerHands();
@@ -1756,8 +1783,8 @@ UNUSED static void MercuryLighthouseAerie_UnusedAlexCastsPly(void) {
 /// holds the swing's radius in pixels, less 28.
 static void
 MercuryLighthouseAerie_UpdateBeaconSpark(union FieldObject *fieldObject) {
-  struct FieldActor *spark = &fieldObject->actor;
-  struct FieldActor *beacon;
+  struct ObjectEvent *spark = &fieldObject->objectEvent;
+  struct ObjectEvent *beacon;
   u16 angle;
 
   beacon = spark->linkedObject;
@@ -1774,31 +1801,31 @@ MercuryLighthouseAerie_UpdateBeaconSpark(union FieldObject *fieldObject) {
 /// between two sizes, and every 16 frames it throws off a spark that swings
 /// round it.
 static void MercuryLighthouseAerie_FlickerBeacon(void) {
-  struct FieldActor *beacon;
-  struct FieldActor *spark;
+  struct ObjectEvent *beacon;
+  struct ObjectEvent *spark;
   struct AnimationObject *sprite;
-  struct MapScrollWork *map;
+  struct MapGridScrollWork *grid;
   s32 height;
   s32 scale;
   s32 tick;
   u32 angle;
 
-  beacon = Object_GetById(ACTOR_BEACON);
-  map = gMapWork[0];
+  beacon = ObjectEvent_GetById(LOCALID_BEACON);
+  grid = gMapGridWork[0];
   height = ((u32)(Engine_RandomNext() * 48) >> 16) << 16;
-  if (((union FieldCoordinate *)&map->viewY)->part.pixel <= 129) {
+  if (((union FieldCoordinate *)&grid->viewY)->part.pixel <= 129) {
     if (gFrameCount & 1) {
-      Engine_ActorSetPosition(ACTOR_BEACON, PIXELS(304), PIXELS(144));
+      Engine_ObjectEventSetPosition(LOCALID_BEACON, PIXELS(304), PIXELS(144));
       scale = Q16_ONE;
-      Object_GetById(ACTOR_BEACON)->scaleX = scale;
+      ObjectEvent_GetById(LOCALID_BEACON)->scaleX = scale;
     } else {
-      Engine_ActorSetPosition(ACTOR_BEACON, PIXELS(304), PIXELS(151));
+      Engine_ObjectEventSetPosition(LOCALID_BEACON, PIXELS(304), PIXELS(151));
       scale = 13 * Q16_ONE / 10;
-      Object_GetById(ACTOR_BEACON)->scaleX = scale;
+      ObjectEvent_GetById(LOCALID_BEACON)->scaleX = scale;
     }
-    Object_GetById(ACTOR_BEACON)->scaleY = scale;
+    ObjectEvent_GetById(LOCALID_BEACON)->scaleY = scale;
   } else {
-    Actor_SetPosition(ACTOR_BEACON, PIXELS(8), PIXELS(8));
+    ObjectEvent_SetPosition(LOCALID_BEACON, PIXELS(8), PIXELS(8));
   }
   if (beacon == NULL) {
     return;
@@ -1807,8 +1834,9 @@ static void MercuryLighthouseAerie_FlickerBeacon(void) {
   if (tick != 0) {
     return;
   }
-  spark = Object_Create(SPRITE_PARTICLE, beacon->x.fixed + PIXELS(8),
-                        beacon->y.fixed + height + PIXELS(8), beacon->z.fixed);
+  spark =
+      ObjectEvent_Create(SPRITE_PARTICLE, beacon->x.fixed + PIXELS(8),
+                         beacon->y.fixed + height + PIXELS(8), beacon->z.fixed);
   height = height / PIXELS(6);
   height <<= 16;
   if (spark == NULL) {
@@ -1849,8 +1877,8 @@ const s32 *gEffectScripts[] = {
     gEffectScript2,
 };
 
-struct SceneEntrance gMercuryLighthouseAerieEntrances[] = {
-    {ENTRANCE_DEFAULT, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1,
+struct MapWarpDest gMercuryLighthouseAerieWarpDests[] = {
+    {WARP_DEST_DEFAULT, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1,
      -1, -1, 0},
     {MERCURY_LIGHTHOUSE_AERIE_AFTER_BEACON_LIT, CONDITION_ALWAYS, 8, 0, 8,
      FACING_SOUTH, 0, 0, 0, 608, 424, 0},
@@ -1859,82 +1887,82 @@ struct SceneEntrance gMercuryLighthouseAerieEntrances[] = {
     {MERCURY_LIGHTHOUSE_AERIE_FROM_MERCURY_LIGHTHOUSE_EXTERIOR,
      CONDITION_ALWAYS, 504, 0, 152, FACING_SOUTH, 0, 0, 0, 608, 424, 0},
     {51, CONDITION_ALWAYS, 504, 0, 168, FACING_SOUTH, 0, 0, 0, 608, 424, 0},
-    {SCENE_TABLE_END},
+    {MAP_TABLE_END},
 };
 
-u32 gMercuryLighthouseAerieExits[] = {
-    SCENE_EXITS(MercuryLighthouseAerie),
-    SCENE_EXIT(MERCURY_LIGHTHOUSE_AERIE_TO_MERCURY_LIGHTHOUSE_EXTERIOR,
-               MercuryLighthouseExterior,
-               MERCURY_LIGHTHOUSE_EXTERIOR_FROM_MERCURY_LIGHTHOUSE_AERIE),
-    SCENE_EXITS_END,
+u32 gMercuryLighthouseAerieWarps[] = {
+    MAP_WARPS(MercuryLighthouseAerie),
+    MAP_WARP(MERCURY_LIGHTHOUSE_AERIE_TO_MERCURY_LIGHTHOUSE_EXTERIOR,
+             MercuryLighthouseExterior,
+             MERCURY_LIGHTHOUSE_EXTERIOR_FROM_MERCURY_LIGHTHOUSE_AERIE),
+    MAP_WARPS_END,
 };
 
 // clang-format off
-struct ScenePlacement gMercuryLighthouseAeriePlacements[] = {
-    { GARET, CONDITION_ALWAYS, ACTOR_STAND,
+struct ObjectEventTemplate gMercuryLighthouseAerieObjectEventTemplates[] = {
+    { GARET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(8), 0, PIXELS(8), FACING_SOUTHWEST, TALK_KEEP_FACING, 0 },
-    { IVAN, CONDITION_ALWAYS, ACTOR_STAND,
+    { IVAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(8), 0, PIXELS(8), FACING_SOUTHEAST, TALK_KEEP_FACING, 0 },
-    { MIA, CONDITION_ALWAYS, ACTOR_STAND,
+    { MIA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(8), 0, PIXELS(8), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { JENNA, FLAG_HOSTAGES_GONE, ACTOR_STAND,
+    { JENNA, FLAG_HOSTAGES_GONE, MOVEMENT_TYPE_STAND,
         PIXELS(120), 0, PIXELS(160), FACING_EAST, TALK_KEEP_FACING, 0 },
-    { SPRITE_BLUE_ORB, CONDITION_ALWAYS, ACTOR_RESET_ACTION,
+    { SPRITE_BLUE_ORB, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
         PIXELS(304), PIXELS(40), PIXELS(144), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { SPRITE_BLUE_STATUE, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_BLUE_STATUE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(104), 0, PIXELS(136), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { SPRITE_BLUE_STATUE, CONDITION_ALWAYS, ACTOR_STAND,
-        PIXELS(248), 0, PIXELS(136), FACING_SOUTH, TALK_KEEP_FACING, PLACEMENT_SHARE_PREVIOUS_SPRITE },
-    { SPRITE_BLUE_STATUE, CONDITION_ALWAYS, ACTOR_STAND,
-        PIXELS(280), 0, PIXELS(104), FACING_SOUTH, TALK_KEEP_FACING, PLACEMENT_SHARE_PREVIOUS_SPRITE },
-    { SPRITE_BLUE_STATUE, CONDITION_ALWAYS, ACTOR_STAND,
-        PIXELS(328), 0, PIXELS(104), FACING_SOUTH, TALK_KEEP_FACING, PLACEMENT_SHARE_PREVIOUS_SPRITE },
-    { SPRITE_BLUE_STATUE, CONDITION_ALWAYS, ACTOR_STAND,
-        PIXELS(360), 0, PIXELS(136), FACING_SOUTH, TALK_KEEP_FACING, PLACEMENT_SHARE_PREVIOUS_SPRITE },
-    { SPRITE_FLOATING_PLATFORM, CONDITION_ALWAYS, ACTOR_RESET_ACTION,
+    { SPRITE_BLUE_STATUE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
+        PIXELS(248), 0, PIXELS(136), FACING_SOUTH, TALK_KEEP_FACING, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+    { SPRITE_BLUE_STATUE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
+        PIXELS(280), 0, PIXELS(104), FACING_SOUTH, TALK_KEEP_FACING, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+    { SPRITE_BLUE_STATUE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
+        PIXELS(328), 0, PIXELS(104), FACING_SOUTH, TALK_KEEP_FACING, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+    { SPRITE_BLUE_STATUE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
+        PIXELS(360), 0, PIXELS(136), FACING_SOUTH, TALK_KEEP_FACING, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+    { SPRITE_FLOATING_PLATFORM, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
         PIXELS(440), 0, PIXELS(200), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { SPRITE_FLOATING_PLATFORM, CONDITION_ALWAYS, ACTOR_RESET_ACTION,
-        PIXELS(472), 0, PIXELS(200), FACING_SOUTH, TALK_KEEP_FACING, PLACEMENT_SHARE_PREVIOUS_SPRITE },
-    { SPRITE_FLOATING_PLATFORM, CONDITION_ALWAYS, ACTOR_RESET_ACTION,
-        PIXELS(504), 0, PIXELS(200), FACING_SOUTH, TALK_KEEP_FACING, PLACEMENT_SHARE_PREVIOUS_SPRITE },
-    { SPRITE_FLOATING_PLATFORM, CONDITION_ALWAYS, ACTOR_RESET_ACTION,
-        PIXELS(104), 0, PIXELS(200), FACING_SOUTH, TALK_KEEP_FACING, PLACEMENT_SHARE_PREVIOUS_SPRITE },
-    { SPRITE_FLOATING_PLATFORM, CONDITION_ALWAYS, ACTOR_RESET_ACTION,
-        PIXELS(136), 0, PIXELS(200), FACING_SOUTH, TALK_KEEP_FACING, PLACEMENT_SHARE_PREVIOUS_SPRITE },
-    { SPRITE_FLOATING_PLATFORM, CONDITION_ALWAYS, ACTOR_RESET_ACTION,
-        PIXELS(168), 0, PIXELS(200), FACING_SOUTH, TALK_KEEP_FACING, PLACEMENT_SHARE_PREVIOUS_SPRITE },
-    { SPRITE_KRADEN, FLAG_HOSTAGES_GONE, ACTOR_STAND,
+    { SPRITE_FLOATING_PLATFORM, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
+        PIXELS(472), 0, PIXELS(200), FACING_SOUTH, TALK_KEEP_FACING, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+    { SPRITE_FLOATING_PLATFORM, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
+        PIXELS(504), 0, PIXELS(200), FACING_SOUTH, TALK_KEEP_FACING, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+    { SPRITE_FLOATING_PLATFORM, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
+        PIXELS(104), 0, PIXELS(200), FACING_SOUTH, TALK_KEEP_FACING, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+    { SPRITE_FLOATING_PLATFORM, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
+        PIXELS(136), 0, PIXELS(200), FACING_SOUTH, TALK_KEEP_FACING, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+    { SPRITE_FLOATING_PLATFORM, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
+        PIXELS(168), 0, PIXELS(200), FACING_SOUTH, TALK_KEEP_FACING, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+    { SPRITE_KRADEN, FLAG_HOSTAGES_GONE, MOVEMENT_TYPE_STAND,
         PIXELS(104), 0, PIXELS(152), FACING_EAST, TALK_KEEP_FACING, 0 },
-    { SPRITE_FELIX, FLAG_HOSTAGES_GONE, ACTOR_STAND,
+    { SPRITE_FELIX, FLAG_HOSTAGES_GONE, MOVEMENT_TYPE_STAND,
         PIXELS(88), 0, PIXELS(160), FACING_EAST, TALK_KEEP_FACING, 0 },
-    { SPRITE_SATUROS, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_SATUROS, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(8), 0, PIXELS(8), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { SPRITE_MENARDI, FLAG_HOSTAGES_GONE, ACTOR_STAND,
+    { SPRITE_MENARDI, FLAG_HOSTAGES_GONE, MOVEMENT_TYPE_STAND,
         PIXELS(104), 0, PIXELS(200), FACING_EAST, TALK_KEEP_FACING, 0 },
-    { SPRITE_ALEX, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_ALEX, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(8), 0, PIXELS(8), FACING_EAST, TALK_KEEP_FACING, 0 },
-    { SCENE_TABLE_END },
+    { MAP_TABLE_END },
 };
 // clang-format on
 
-struct SceneEvent gMercuryLighthouseAerieEvents[] = {
-    {EVENT_TOUCH, 5, FLAG_MERCURY_AERIE_ALEX_APPEARED,
+struct MapEvent gMercuryLighthouseAerieEvents[] = {
+    {MAP_EVENT_COORD, 5, FLAG_MERCURY_AERIE_ALEX_APPEARED,
      EVENT_SCRIPT(MercuryLighthouseAerie_ConfrontSaturos)},
-    {EVENT_TOUCH, 6, FLAG_LIFT_UP,
+    {MAP_EVENT_COORD, 6, FLAG_LIFT_UP,
      EVENT_SCRIPT(MercuryLighthouseAerie_CallLift)},
-    {TOUCH_WALKING, 11, CONDITION_ALWAYS,
+    {COORD_EVENT_WALKING, 11, CONDITION_ALWAYS,
      EVENT_SCRIPT(MercuryLighthouseAerie_JumpToPlatform)},
-    {EVENT_TOUCH, 11, CONDITION_ALWAYS,
+    {MAP_EVENT_COORD, 11, CONDITION_ALWAYS,
      EVENT_SCRIPT(MercuryLighthouseAerie_SettlePlatforms)},
-    {TOUCH_WALKING, 10, CONDITION_ALWAYS,
+    {COORD_EVENT_WALKING, 10, CONDITION_ALWAYS,
      EVENT_SCRIPT(MercuryLighthouseAerie_JumpToPlatform)},
-    {EVENT_TOUCH, 10, FLAG_ON_PLATFORM,
+    {MAP_EVENT_COORD, 10, FLAG_ON_PLATFORM,
      EVENT_SCRIPT(MercuryLighthouseAerie_StepOntoPlatform)},
-    {SEARCH(SEARCH_UNNAMED), 100, FLAG_PSYNERGY_STONE, FIND_PSYNERGY_STONE},
-    {EVENT_TOUCH, 12, CONDITION_ALWAYS,
+    {BG_EVENT(BG_EVENT_UNNAMED), 100, FLAG_PSYNERGY_STONE, FIND_PSYNERGY_STONE},
+    {MAP_EVENT_COORD, 12, CONDITION_ALWAYS,
      EVENT_SCRIPT(MercuryLighthouseAerie_RideLiftDown)},
-    {SCENE_EVENTS_END},
+    {MAP_EVENTS_END},
 };
 
 s32 gMercuryLighthouseAerie_PlatformUnderfoot = 0;

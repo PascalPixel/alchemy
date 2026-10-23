@@ -54,14 +54,14 @@ A random battle is handled as a way out of the scene. The game remembers
 where everyone stood, loads the battle as if it were the next scene, and
 afterwards loads the field scene again with everyone put back.
 
-In the code, `Field_RunScene` ([`object/run_scene.c`](../object/object/run_map.c))
+In the code, `Field_RunMap` ([`object/run_scene.c`](../object/object/run_map.c))
 runs one scene. Its inner loop is the walk: it waits a frame and calls
 `Field_ProcessStep`, which checks the ground under the leader, until
 `Field_CountRequests` finds a request. The leader's control script reads the
 buttons through `Field_CheckConfiguredKeys`. The requests are fields of
 `struct FieldWork`; [Running a place](../object/README.md#the-scene-loop-handles-requests-not-events)
 lists all twelve in the order they are handled and goes through each one. An
-exit is `Field_RunScene`'s result, which `Game_Run` passes to `Scene_TakeExit`
+exit is `Field_RunMap`'s result, which `Game_Run` passes to `Map_TakeWarp`
 to load the next scene.
 
 ## Everything that moves runs a script
@@ -109,7 +109,7 @@ until one yields. A command word is an index into
 A word above 63 is not a command, and the update steps over it. That is what
 lets a label sit in the list: `SC_LABEL(n)` is a word with its top bit set and
 n in bits 16 up. A jump's target, `SC_TO(n)`, is the same word with bit 30
-also set. `Script_FindLabel` clears bit 30 and searches the first 1,024 words
+also set. `ActionScript_FindLabel` clears bit 30 and searches the first 1,024 words
 for the result, so it finds the label rather than the jump's own target, and
 the script continues after the label. A label it cannot find, and `SC_TOP`
 (0), restart the script.
@@ -326,29 +326,29 @@ that gives the height of every point in it. An object's `terrainId` names the
 map layer whose ground it follows. Code that asks about the ground at a point
 reads the cell there in that layer and looks up its shape: the low four bits
 of the shape's first byte pick one of `TERRAIN_KIND_COUNT` (16) functions in
-`gMap_TerrainHeightFunctions`, which works the height out from the shape's
-three height samples (`Map_GetTerrainHeight`). Walls and heights can
+`gMapGrid_TerrainHeightFunctions`, which works the height out from the shape's
+three height samples (`MapGrid_GetTerrainHeight`). Walls and heights can
 therefore differ from one layer to the next.
 
-`Map_CheckObjectStep` (`field/terrain.c`) decides each test: `MAP_STEP_WALL`
-for a cell marked `MAP_CELL_WALL`, `MAP_STEP_TOO_HIGH` for ground more than 8
-pixels above the object's, `MAP_STEP_TOO_LOW` for ground more than 12 pixels
-below, and `MAP_STEP_OPEN` otherwise. On the world map,
+`MapGrid_CheckObjectStep` (`field/terrain.c`) decides each test: `MAPGRID_STEP_WALL`
+for a cell marked `MB_WALL`, `MAPGRID_STEP_TOO_HIGH` for ground more than 8
+pixels above the object's, `MAPGRID_STEP_TOO_LOW` for ground more than 12 pixels
+below, and `MAPGRID_STEP_OPEN` otherwise. On the world map,
 `CheckWorldMapWalkable` asks `GetWorldMapCollision` instead, which reads a
 4-bit collision value from the world map's upper collision layer where it
 has one, else the lower.
 
-The height functions are `gMap_TerrainHeightFunctions` (`curve_data.c`); the
+The height functions are `gMapGrid_TerrainHeightFunctions` (`curve_data.c`); the
 cells and their shapes are the map's, as [Maps](../layout/README.md#cells)
 describes.
 
 | Name | Value | Meaning |
 | --- | --- | --- |
 | `TERRAIN_KIND_COUNT` | 16 | ground height functions a shape can pick |
-| `MAP_STEP_TOO_LOW` | -1 | the ground there is more than 12 pixels lower |
-| `MAP_STEP_OPEN` | 0 | the object can step there |
-| `MAP_STEP_TOO_HIGH` | 1 | the ground there is more than 8 pixels higher |
-| `MAP_STEP_WALL` | 2 | the cell there is a wall (`MAP_CELL_WALL`) |
+| `MAPGRID_STEP_TOO_LOW` | -1 | the ground there is more than 12 pixels lower |
+| `MAPGRID_STEP_OPEN` | 0 | the object can step there |
+| `MAPGRID_STEP_TOO_HIGH` | 1 | the ground there is more than 8 pixels higher |
+| `MAPGRID_STEP_WALL` | 2 | the cell there is a wall (`MB_WALL`) |
 
 ## Towns and dungeons on screen
 
@@ -363,11 +363,11 @@ The ground is at the back, then a middle layer, and in front an overhead
 layer of roofs and treetops. On most maps the characters are drawn between
 the middle and overhead layers, which is how Isaac can walk behind a roof.
 
-`Map_LoadLayeredScene` loads a map from its row of `gMap_LayeredScenes`;
+`MapGrid_LoadLayout` loads a map from its row of `gLayouts`;
 [Maps](../layout/README.md) describes the data and where each part is decoded.
 The console has four background layers, and the three map layers are drawn on
-three of them: `MAP_LAYER_GROUND` on `BG3`, `MAP_LAYER_MIDDLE` on `BG2` and
-`MAP_LAYER_OVERHEAD` on `BG1`. `BG0` is left for the windows, where messages
+three of them: `MAPGRID_LAYER_GROUND` on `BG3`, `MAPGRID_LAYER_MIDDLE` on `BG2` and
+`MAPGRID_LAYER_OVERHEAD` on `BG1`. `BG0` is left for the windows, where messages
 and menus are drawn.
 
 Which layer is in front comes from the console's priorities, not from code.
@@ -383,7 +383,7 @@ their ground.
 
 Each layer scrolls by its own parallax and drift from the header, so a layer
 can move at its own rate as the view moves or drift while it stands still.
-`Map_UpdateLayerScroll` redraws the rows and columns of the BG maps that come
+`MapGrid_UpdateLayerScroll` redraws the rows and columns of the BG maps that come
 into view from the cells and their blocks.
 
 Three timed effects run as tasks while a map is shown
@@ -394,13 +394,13 @@ map; [Maps](../layout/README.md#tile-animation-and-blend-scripts) gives their
 format. Only `PaletteQueue_Start` schedules palette cycles, and nothing calls
 it, so no palette cycle runs in the game.
 
-The maps are the rows of `gMap_LayeredScenes` (`layered.tsv`).
+The maps are the rows of `gLayouts` (`layered.tsv`).
 
 | Name | Value | Background | Meaning |
 | --- | --- | --- | --- |
-| `MAP_LAYER_GROUND` | 0 | `BG3` | the ground, at the back |
-| `MAP_LAYER_MIDDLE` | 1 | `BG2` | walls and edges, under the actors |
-| `MAP_LAYER_OVERHEAD` | 2 | `BG1` | roofs and tree tops, over the actors |
+| `MAPGRID_LAYER_GROUND` | 0 | `BG3` | the ground, at the back |
+| `MAPGRID_LAYER_MIDDLE` | 1 | `BG2` | walls and edges, under the actors |
+| `MAPGRID_LAYER_OVERHEAD` | 2 | `BG1` | roofs and tree tops, over the actors |
 
 ## The world map in perspective
 
@@ -426,7 +426,7 @@ ground distance, or zeros for a line above the horizon. It runs when the world
 map is set up and again only if the camera's pitch changes, which nothing in
 the game does, and at that one pitch every line meets the ground. Each frame
 `Transform_UpdateVertices`, an ARM routine run from RAM (ARM code is the processor's full 32-bit instructions, the fastest form when run from RAM, as [Routines run from RAM](#routines-run-from-ram) explains), turns them into a
-page of values for the console. `MapAnimation_ApplyAffineFrame` sets the first
+page of values for the console. `WorldMap_ApplyAffineFrame` sets the first
 line's values and starts a DMA, a copy the console makes by itself, that runs
 in each HBlank, the pause after a line is drawn, to feed the next line its
 own. There are two pages, and alternate frames use them. When the player
@@ -434,7 +434,7 @@ holds L to zoom out, the lines spread so far apart that some rows of the
 ground are never drawn.
 
 The ground is unpacked a square at a time around the party
-(`Map_UpdateCurrentTileBlock`), and `Map_PreloadCurrentTileBlock` loads at
+(`WorldMap_UpdateCurrentTileBlock`), and `WorldMap_PreloadCurrentTileBlock` loads at
 most one missing square a frame as the party walks. `WorldMap_LoadGraphics`
 chooses between the two graphics sets of `gWorldMap_GraphicsResources` by the
 32-pixel region under the point it is given: the second set where it is
@@ -444,7 +444,7 @@ When a menu or event starts, `WorldMap_StartStillView` draws the current
 frame into ordinary 256-colour tiles on `BG1` with `TileMap_DrawRows`, an ARM
 routine run from RAM (through `TileMap_DrawRowsFromRam`), and switches the
 display to `DISPCNT_MODE_0`, in which no background is scaled.
-`Map_LoadAreaGraphics` reloads the area's palette and tiles afterwards and
+`WorldMap_LoadAreaGraphics` reloads the area's palette and tiles afterwards and
 returns to the moving view.
 
 The world map's graphics sets are `gWorldMap_GraphicsResources`
@@ -465,7 +465,7 @@ through a struct of its own: `ObjectRuntime` (`include/object_runtime.h`),
 `ScriptOperands` (`include/field/action_script.h`), `ScriptMotionObject`
 (`include/script_motion.h`), `ScriptObjectRuntime`
 (`include/field/script_object_runtime.h`), `ScriptObjectEntry`
-(`include/script_object_entry.h`) and `FieldActor` (`include/object_event.h`).
+(`include/script_object_entry.h`) and `ObjectEvent` (`include/object_event.h`).
 Other folders add more, such as the battle's `MotionObject` and the field
 effects' `FieldEffect`. Each view was written from the code that reads it and
 names only what that code uses: `ScriptInterpreter` is 100 bytes, since no
@@ -473,7 +473,7 @@ command reads the last 12.
 
 The views agree on the layout (the script first, then position, velocity and
 target) and differ in names and types where their readers differ. The wait is
-unsigned in `ObjectRuntime` and `FieldActor` and signed in
+unsigned in `ObjectRuntime` and `ObjectEvent` and signed in
 `ScriptMotionObject`; the routine run each frame at offset 0x6c is `hook` to
 the scripts, `update` to scenes and `unk6c` to `ObjectRuntime`. Even
 `gObjectSlots` is declared as an `ObjectRuntime *` in `include/field/field.h`
@@ -486,7 +486,7 @@ same 112 bytes.
 
 ### Scripts without addresses
 
-A jump stores a label number, not an offset, and `Script_FindLabel` searches
+A jump stores a label number, not an offset, and `ActionScript_FindLabel` searches
 for it each time. A script is therefore a plain array of words that C
 initializers can write, with no assembler to fix up its branches, at the cost
 of a linear search on every jump and the 1,024-word reach.
@@ -495,7 +495,7 @@ of a linear search on every jump and the 1,024-word reach.
 
 The work done per scanline or per pixel is ARM code copied into RAM before it
 runs: `Transform_UpdateVertices`, `TileMap_DrawRows`, the sprite frame
-decoder (`Render_DecodeFrame`) and `Tile_ConvertMap`. The cartridge's bus is
+decoder (`Render_DecodeFrame`) and `Tile_ConvertMapGrid`. The cartridge's bus is
 16 bits wide, so 32-bit ARM instructions run slowly from ROM, and the rest of
 the game is Thumb. `Object_UpdateAll` is an ARM copy of the object update for
 the first eight objects, written for the same treatment, but nothing runs it.
@@ -510,8 +510,8 @@ so it could not stand in for the Thumb update.
 object system, loads the map and the overlay, places the actors and handles
 requests; the engine supplies the objects, scripts and ground checks it
 uses. Overlays reach the engine through their import tables
-(`src/scene/import/`): nine import `Map_GetTerrainHeight` and six
-`SetMapCellCollision`, with which a scene rewrites a cell's collision code.
+(`src/scene/import/`): nine import `MapGrid_GetTerrainHeight` and six
+`MapGrid_SetMetatileBehaviorAt`, with which a scene rewrites a cell's collision code.
 The battle uses the object system in `MODE_BATTLE` for its own sprites. The
 Lost Age's field code is described by [its own
 guide](../../../tla/src/field/README.md), as differences from this one.
@@ -536,13 +536,13 @@ guide](../../../tla/src/field/README.md), as differences from this one.
 | `vertices.c` | `Transform_UpdateVertices`, the ARM routine that turns the world map's scanline table into `BG2`'s affine values |
 | `object_script.c`, `operand.c` | the scripts the engine starts by itself, `gScriptObject_CommandTable`, and the handlers of the work values |
 | `facing.c` | the facing tables and the small tables the parts read: the order a sprite's tiles dissolve in, the fixed camera's matrix, the wave a floating object bobs on, the idle script, the direction pad's headings, the footprint and dust scripts, and the world map camera's lean for each pad direction |
-| `curve_data.c`, `mapdata.c` | the ground height tables, `gMap_TerrainHeightFunctions`, the world map's terrain behaviour table, and two tables nothing reads (`gWorldMap_DirectionOffsets`, `gWorldMap_UnitScale`) |
+| `curve_data.c`, `mapdata.c` | the ground height tables, `gMapGrid_TerrainHeightFunctions`, the world map's terrain behaviour table, and two tables nothing reads (`gWorldMap_DirectionOffsets`, `gWorldMap_UnitScale`) |
 | `world_map_resources.c` | `gWorldMap_GraphicsResources`, the world map's two graphics sets |
 | `griddata.c` | the scale the debug sprite viewer draws at |
 | `lucky_dice.c` | the Lucky Dice minigame, with its camera defaults and 8.8 fixed-point helpers |
-| `layered.tsv` | `gMap_LayeredScenes`: each layered map's header, palette, three tile sheets and layer data, as resource numbers counted from `ResourceId_Map001` |
+| `layered.tsv` | `gLayouts`: each layered map's header, palette, three tile sheets and layer data, as resource numbers counted from `ResourceId_Layout001` |
 | `remap0.tsv` to `remap3.tsv` | `gRuntime_ByteRemapTable`, four 256-byte colour remap tables |
-| `scenes.s` | `gField_SceneTable`: each scene's overlay, place group, variant (town or field) and map; each row also defines the scene's `SceneId_` |
+| `scenes.s` | `gField_MapTable`: each scene's overlay, place group, variant (town or field) and map; each row also defines the scene's `MapId_` |
 | `common/effect/` | the ground particle and sparkle pictures of the field's weather, which [`scripts.s`](../object/scripts.s) places |
 
 The headers are in `games/tbs/include/unit/field/`, one for each C file but
@@ -575,11 +575,11 @@ on its own.
   `FACING_SOUTH` a quarter turn).
 
 In the code, `object` and `interpreter` are the object a command runs on,
-`sprite` and `layer` a sprite and one of its layers, `work` or `mapWork` the
-map work (`gMapWork[0]`), and `perspective` the world map's.
+`sprite` and `layer` a sprite and one of its layers, `work` or `gridWork` the
+map work (`gMapGridWork[0]`), and `perspective` the world map's.
 
 Because the parts compile as one file, a part's own types, macros and static
-helpers carry its family's name (`ObjectCamera`, `LayeredScene`, `WorldMap`),
+helpers carry its family's name (`ObjectCamera`, `Layout`, `WorldMap`),
 and a part undefines its macros at its end.
 [Matching](../MATCHING.md) lists the sites that keep an unusual spelling.
 
@@ -590,11 +590,11 @@ and a part undefines its macros at its end.
 | `Sprite_`, `Render_` | drawing sprites |
 | `Animation_`, `AnimationObject_`, `ResourceMetadata_`, `ResourceObject_`, `ResourceSlot_` | sprites, their layers and the resource slots they draw from |
 | `ObjectSystem_`, `ObjectDispatch_`, `FieldObject_`, `Object_` | keeping and moving objects |
-| `Script_` | object script commands |
+| `ActionScript_` | object script commands |
 | `Field_` | the configured keys |
-| `Map_`, `TileMap_` | layered maps, their cells and the BG maps built from them |
+| `MapGrid_`, `TileMap_` | layered maps, their cells and the BG maps built from them |
 | `WorldMap_` | the world map |
-| `GetWorldMap`, `CheckWorldMap` | the ground under a point on the world map; `GetMapCellCollision`, `SetMapCellCollision` and `CheckMapPositionCellOccupied` ask the same of a layered map |
+| `GetWorldMap`, `CheckWorldMap` | the ground under a point on the world map; `MapGrid_GetMetatileBehaviorAt`, `MapGrid_SetMetatileBehaviorAt` and `MapGrid_IsWallAt` ask the same of a layered map |
 | `MapAnimation_`, `DisplayBlend_`, `PaletteQueue_` | tile animation, the blend script and palette cycles |
 | `Curve_` | ground height functions |
 | `Ui_` | the debug sprite viewer |

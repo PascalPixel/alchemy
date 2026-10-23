@@ -15,19 +15,19 @@ void Djinn_RunMarsJoinEffect(s32 djinniId) {
   struct EffectVector position;
   s32 scale;
   s32 remaining;
-  struct FieldActor *djinni;
-  struct FieldEffectScene *scene;
-  struct FieldActor *leader;
+  struct ObjectEvent *djinni;
+  struct FieldEffectWork *effectWork;
+  struct ObjectEvent *leader;
   struct EffectSlot *effect;
   s8 *slotState;
 
-  djinni = Object_GetById(djinniId);
-  leader = Object_GetById(gGameState.selectedActor);
+  djinni = ObjectEvent_GetById(djinniId);
+  leader = ObjectEvent_GetById(gGameState.selectedObjectEvent);
   if (djinni == NULL)
     return;
 
   FieldEffect_InitializeSlots();
-  scene = gEffectWork;
+  effectWork = gEffectWork;
   // Tint the screen red: PALETTE_TRANSFORM_TINT | RGB(16, 4, 4), the form
   // mercury.c spells out for its blue.
   Shop_SaveAndTintFieldPaletteFar(0x201090);
@@ -58,7 +58,7 @@ void Djinn_RunMarsJoinEffect(s32 djinniId) {
   Camera_WorldToScreen(&position);
 
   // One spark a frame into each of the 24 effect slots.
-  effect = scene->effects;
+  effect = effectWork->effects;
   remaining = 23;
   do {
     EffectSlot_Initialize(effect, SPRITE_PARTICLE, position.x, position.z);
@@ -75,10 +75,10 @@ void Djinn_RunMarsJoinEffect(s32 djinniId) {
   } while (remaining >= 0);
 
   WaitFrames(60);
-  ObjectMotion_ArmCallback(gGameState.selectedActor, 0x4000, 0);
+  ObjectMotion_ArmCallback(gGameState.selectedObjectEvent, 0x4000, 0);
   WaitFrames(20);
-  ObjectDispatch_SelectAnimationFar(Object_GetById(gGameState.selectedActor),
-                                    28);
+  ObjectDispatch_SelectAnimationFar(
+      ObjectEvent_GetById(gGameState.selectedObjectEvent), 28);
 
   // Every spark still in use stops its fountain. The cursor walks
   // the slots' state bytes; a slot's active flag is 5 bytes after its state.
@@ -87,7 +87,7 @@ void Djinn_RunMarsJoinEffect(s32 djinniId) {
 
     WaitFrames(20);
     nextState = MARS_SPARK_STOPPING;
-    slotState = &scene->effects[0].state;
+    slotState = &effectWork->effects[0].state;
     remaining = 23;
     do {
       if (slotState[5] != 0)
@@ -108,9 +108,9 @@ void Djinn_RunMarsJoinEffect(s32 djinniId) {
   {
     s32 nextState;
 
-    slotState = (s8 *)scene;
+    slotState = (s8 *)effectWork;
     nextState = MARS_SPARK_LEAVING;
-    slotState += offsetof(struct FieldEffectScene, effects) +
+    slotState += offsetof(struct FieldEffectWork, effects) +
                  offsetof(struct EffectSlot, state);
     remaining = 23;
     do {
@@ -151,8 +151,8 @@ void FieldEffect_UpdateDescendingOrbitObject(union FieldObject *fieldObject) {
   s16 frames;
   s32 y;
 
-  leader =
-      (struct DescendingOrbitObject *)Object_GetById(gGameState.selectedActor);
+  leader = (struct DescendingOrbitObject *)ObjectEvent_GetById(
+      gGameState.selectedObjectEvent);
   timer = mote->timer - 1;
   mote->timer = timer;
   frames = mote->timer;
@@ -180,7 +180,8 @@ void FieldEffect_UpdateRadialSpread(struct EffectSlot *effect) {
   s32 state;
   u32 random;
 
-  source = (struct ObjectRuntime *)Object_GetById(gGameState.selectedActor);
+  source = (struct ObjectRuntime *)ObjectEvent_GetById(
+      gGameState.selectedObjectEvent);
   state = effect->state;
 
   if (state == VENUS_PARTICLE_AIM) {

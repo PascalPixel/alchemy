@@ -56,7 +56,7 @@ void Transform_Pop(void) {
 }
 
 /// Resets gTransform to identity. Reached through the far-call table.
-void SceneTransform_ResetMatrix(void) {
+void Transform_ResetMatrix(void) {
   CAMELOT_ASM("the fixed-register identity store of transform.h")
   Transform_ResetCurrent();
 }
@@ -64,7 +64,7 @@ void SceneTransform_ResetMatrix(void) {
 /// Rotates gTransform by angles[0], angles[1] and angles[2] about the X, Y and
 /// Z axes, in that order, with one combined matrix. Reached through the
 /// far-call table.
-void SceneTransform_ApplyRotation(s32 *angles) {
+void Transform_ApplyRotation(s32 *angles) {
   s32 sinX, cosX, sinY, cosY, sinZ, cosZ;
   s32 matrix[12];
 
@@ -95,7 +95,7 @@ void SceneTransform_ApplyRotation(s32 *angles) {
 
 /// Rotates gTransform about the X axis by `angle`. Called by the battle and
 /// field cameras.
-void SceneTransform_ApplyPitch(s32 angle) {
+void Transform_ApplyPitch(s32 angle) {
   s32 matrix[12];
   s32 sine = Trig_Sin(angle);
   s32 cosine = Trig_Cos(angle);
@@ -111,7 +111,7 @@ void SceneTransform_ApplyPitch(s32 angle) {
 
 /// Rotates gTransform about the Y axis by `angle`. Called by the battle and
 /// field cameras.
-void SceneTransform_ApplyYaw(s32 angle) {
+void Transform_ApplyYaw(s32 angle) {
   s32 matrix[12];
   s32 sine = Trig_Sin(angle);
   s32 cosine = Trig_Cos(angle);
@@ -127,7 +127,7 @@ void SceneTransform_ApplyYaw(s32 angle) {
 
 /// Rotates gTransform about the Z axis by `angle`. Called by battle effects
 /// that spin their picture.
-void SceneTransform_ApplyRoll(s32 angle) {
+void Transform_ApplyRoll(s32 angle) {
   s32 matrix[12];
   s32 sine = Trig_Sin(angle);
   s32 cosine = Trig_Cos(angle);
@@ -143,7 +143,7 @@ void SceneTransform_ApplyRoll(s32 angle) {
 
 /// Translates gTransform by `position` (x, y, z in 16.16). Called by the
 /// battle and field cameras and effects.
-void SceneTransform_ApplyPosition(const s32 *position) {
+void Transform_ApplyPosition(const s32 *position) {
   s32 matrix[12];
 
   CAMELOT_ASM("the fixed-register identity store of transform.h")
@@ -156,7 +156,7 @@ void SceneTransform_ApplyPosition(const s32 *position) {
 
 /// Scales gTransform by `scale` (x, y, z factors in 16.16). Called by a few
 /// battle effects (Bind, Astral Blast, Thor).
-void SceneTransform_ApplyScale(const s32 *scale) {
+void Transform_ApplyScale(const s32 *scale) {
   s32 matrix[12];
 
   CAMELOT_ASM("the fixed-register identity store of transform.h")
@@ -169,7 +169,7 @@ void SceneTransform_ApplyScale(const s32 *scale) {
 
 /// Rotates gTransform by `angles` and translates it by `position` in one
 /// matrix. Reached through the far-call table.
-void SceneTransform_ApplyRotationTranslation(s32 *angles, s32 *position) {
+void Transform_ApplyRotationTranslation(s32 *angles, s32 *position) {
   s32 sinX, cosX, sinY, cosY, sinZ, cosZ;
   s32 matrix[12];
 
@@ -200,8 +200,7 @@ void SceneTransform_ApplyRotationTranslation(s32 *angles, s32 *position) {
 
 /// Rotates by `angles`, scales each rotation row by `scale` and translates by
 /// `position`, in one matrix.
-void SceneTransform_ApplyScaledRotation(s32 *angles, s32 *position,
-                                        s32 *scale) {
+void Transform_ApplyScaledRotation(s32 *angles, s32 *position, s32 *scale) {
   s32 sinX, cosX, sinY, cosY, sinZ, cosZ;
   s32 axisScale;
   s32 matrix[12];

@@ -1,5 +1,5 @@
-#ifndef ALCHEMY_FIELD_SCRIPT_H
-#define ALCHEMY_FIELD_SCRIPT_H
+#ifndef ALCHEMY_FIELD_ACTION_SCRIPT_H
+#define ALCHEMY_FIELD_ACTION_SCRIPT_H
 
 /// @file
 /// The field object script interpreter and the operands its commands read.
@@ -17,7 +17,7 @@ struct ScriptInterpreter {
   const s32 *script;  ///< the running script; SC_END sets gScript_MainScript
   s16 cursor;         ///< the word index of the next command in script
   u8 padding06[0x4e]; ///< the object's own fields; not read by the commands
-  /// FieldActor's spriteStorageKind: SC_B54_ON sets 1, one sprite drawn, and
+  /// ObjectEvent's spriteStorageKind: SC_B54_ON sets 1, one sprite drawn, and
   /// SC_B54_OFF sets 0, which hides the object's sprites.
   u8 spriteStorageKind;
   u8 padding55[2];    ///< the object's own fields; not read by the commands
@@ -25,7 +25,7 @@ struct ScriptInterpreter {
   u8 padding58[5];    ///< the object's own fields; not read by the commands
   u8 repeatCount;     ///< SC_LOOP's count of jumps so far
   /// Frames left of SC_WAIT (n - 1 when it starts); the update loops count
-  /// it down, and Script_FindLabel clears it.
+  /// it down, and ActionScript_FindLabel clears it.
   s16 wait;
   /// Frames in a row a solid object has refused the object's move
   /// (ScriptMotionObject.refused); SC_SYNC stops waiting after 60 and clears
@@ -70,10 +70,10 @@ struct ScriptOperands {
   u32 gravity;       ///< SW_GRAVITY
   /// Work value 0x17: the word FieldObject_Create zeroes and only scene code
   /// reads.
-  u32 sceneWord;
+  u32 mapWord;
   u32 sprite;           ///< work value 0x18: the sprite, or its list of four
   u8 spriteStorageKind; ///< work value 0x19: 0 hidden, 1 one, 2 a group
-  u8 motionFlags;       ///< SW_MOTION, ActorMotionFlag bits
+  u8 motionFlags;       ///< SW_MOTION, ObjectEventMotionFlag bits
   u8 arrivalAxis;       ///< SW_ARRIVAL
   u8 conditionResult;   ///< SW_RESULT, the last test; every compare sets it
   u8 snapToTarget;      ///< SW_SNAP
@@ -85,8 +85,8 @@ struct ScriptOperands {
   u16 wait;             ///< SW_WAIT, compared as signed
   u8 refused;           ///< ScriptInterpreter.refused; no work value
   u8 frozen;            ///< ScriptMotionObject.frozen; no work value
-  u8 sceneByte62;       ///< work value 0x27, kept by scene code
-  u8 sceneByte63;       ///< work value 0x28, kept by scene code
+  u8 mapByte62;         ///< work value 0x27, kept by scene code
+  u8 mapByte63;         ///< work value 0x28, kept by scene code
   s16 actionParameter;  ///< work value 0x23, what its action script reads
   s16 footprintSide;    ///< work value 0x24, or scene scratch
   u32 linkedObject;     ///< work value 0x25, the object it follows or faces
@@ -97,7 +97,7 @@ STATIC_ASSERT(offsetof(struct ScriptOperands, scriptAddress) == 0x00);
 STATIC_ASSERT(offsetof(struct ScriptOperands, cursor) == 0x04);
 STATIC_ASSERT(offsetof(struct ScriptOperands, facing) == 0x06);
 STATIC_ASSERT(offsetof(struct ScriptOperands, radius) == 0x20);
-STATIC_ASSERT(offsetof(struct ScriptOperands, sceneWord) == 0x4c);
+STATIC_ASSERT(offsetof(struct ScriptOperands, mapWord) == 0x4c);
 STATIC_ASSERT(offsetof(struct ScriptOperands, spriteStorageKind) == 0x54);
 STATIC_ASSERT(offsetof(struct ScriptOperands, repeatCount) == 0x5d);
 STATIC_ASSERT(offsetof(struct ScriptOperands, refused) == 0x60);

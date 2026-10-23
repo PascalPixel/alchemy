@@ -48,12 +48,12 @@
 	.set import.Party_StartChildhood, 1
 	.set import.Runtime_GetBuildStampTime, 1
 	.set import.InventorySnapshot_Restore, 1
-	.set import.Engine_EventWait, 1
-	.set import.Object_GetById, 1
-	.set import.Event_SetDestination, 1
-	.set import.Engine_EventOpenScreen, 1
-	.set import.Engine_EventCloseScreen, 1
-	.set import.Engine_EventWaitForScreen, 1
+	.set import.Engine_ScriptWait, 1
+	.set import.ObjectEvent_GetById, 1
+	.set import.FieldScript_SetDestination, 1
+	.set import.Engine_ScriptOpenScreen, 1
+	.set import.Engine_ScriptCloseScreen, 1
+	.set import.Engine_ScriptWaitForScreen, 1
 	.set import.Menu_AskYesNo, 1
 	.set import.Engine_AudioPlayCue, 1
 	.include "games/tbs/src/system/overlay.inc"

@@ -140,7 +140,7 @@ void BattleEffect_RunGrowingColumns(struct BattleEffectArgument *effect,
 
   // Mark the dust free (variant -1): 1024 records, though only the first 512
   // are used.
-  variantCursor = Ram_MapCellBuffer + offsetof(struct EffectStep, variant);
+  variantCursor = Ram_MapGridCellBuffer + offsetof(struct EffectStep, variant);
   i = 0;
   do {
     i++;

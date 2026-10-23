@@ -1,8 +1,8 @@
-#ifndef ALCHEMY_FX_SCENE_H
-#define ALCHEMY_FX_SCENE_H
+#ifndef ALCHEMY_FX_WORK_H
+#define ALCHEMY_FX_WORK_H
 
 /// @file
-/// FieldEffectScene, the work of a field Psynergy effect scene, and its arc
+/// FieldEffectWork, the work of a field Psynergy effect scene, and its arc
 /// objects.
 
 #include "types.h"
@@ -22,8 +22,8 @@ struct ArcEffectObject {
   u8 unk54[0x10];                  ///< not named through this view
   s16 phase;                       ///< 1 spins the caster 0xc00 a frame
   s16 step;                        ///< frames since the arcs started
-  /// FieldActor.linkedObject; no code reads it through this view.
-  struct FieldActor *linkedObject;
+  /// ObjectEvent.linkedObject; no code reads it through this view.
+  struct ObjectEvent *linkedObject;
   void (*callback)(union FieldObject *fieldObject); ///< run each frame
 };
 
@@ -33,7 +33,7 @@ struct ArcEffectObject {
 /// allocated: FieldEffect_LoadActionEffectResources takes it for a Psynergy or
 /// item use, and FieldEffect_InitializeSlots for the Djinn joining effects and
 /// Altmiller Cave's scene. The effect's end releases it.
-struct FieldEffectScene {
+struct FieldEffectWork {
   s32 angle;          ///< 1/65536 turns
   s32 x;              ///< 16.16 fixed-point pixels
   s32 y;              ///< 16.16 fixed-point pixels
@@ -82,15 +82,15 @@ struct FieldEffectScene {
   u8 unk71d[3];    ///< not named by TBS code
 };
 
-STATIC_ASSERT(sizeof(struct FieldEffectScene) == 0x720);
-STATIC_ASSERT(offsetof(struct FieldEffectScene, mainObject) == 0x10);
-STATIC_ASSERT(offsetof(struct FieldEffectScene, action) == 0x1c);
-STATIC_ASSERT(offsetof(struct FieldEffectScene, savedCallback) == 0x38);
-STATIC_ASSERT(offsetof(struct FieldEffectScene, tileSlot) == 0x46);
-STATIC_ASSERT(offsetof(struct FieldEffectScene, savedShakeX) == 0x4c);
-STATIC_ASSERT(offsetof(struct FieldEffectScene, effects) == 0x58);
-STATIC_ASSERT(offsetof(struct FieldEffectScene, arcTileSlot) == 0x71a);
-STATIC_ASSERT(offsetof(struct FieldEffectScene, messageMode) == 0x71c);
+STATIC_ASSERT(sizeof(struct FieldEffectWork) == 0x720);
+STATIC_ASSERT(offsetof(struct FieldEffectWork, mainObject) == 0x10);
+STATIC_ASSERT(offsetof(struct FieldEffectWork, action) == 0x1c);
+STATIC_ASSERT(offsetof(struct FieldEffectWork, savedCallback) == 0x38);
+STATIC_ASSERT(offsetof(struct FieldEffectWork, tileSlot) == 0x46);
+STATIC_ASSERT(offsetof(struct FieldEffectWork, savedShakeX) == 0x4c);
+STATIC_ASSERT(offsetof(struct FieldEffectWork, effects) == 0x58);
+STATIC_ASSERT(offsetof(struct FieldEffectWork, arcTileSlot) == 0x71a);
+STATIC_ASSERT(offsetof(struct FieldEffectWork, messageMode) == 0x71c);
 
 /// Returns the value step tenths of the way from `from` to `to`; the Psynergy
 /// effects that use it step from 0 to 10, one a frame.

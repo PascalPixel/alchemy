@@ -6,7 +6,7 @@
 
 /// The sparks, in PARTICLES after the dust.
 #define TITAN_BLADE_SWORD_SPARKS                                               \
-  ((struct EffectStep *)(Ram_MapCellBuffer +                                   \
+  ((struct EffectStep *)(Ram_MapGridCellBuffer +                               \
                          TITAN_BLADE_DUST * sizeof(struct EffectStep)))
 
 #define TITAN_BLADE_FRAMES 102

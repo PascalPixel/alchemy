@@ -1,6 +1,6 @@
 # What did the game leave unused?
 
-![`Event_UnusedGaretJoinsIsaac` played out in Vale on the stormy night, although the game never reaches it: Garet runs up through the rain, pants `*Hah* *Hah*`, asks `Are you trapped, too?` and says `You came just in time... We can go together.`](https://alchemy.pascalpixel.com/places/vale-storm/events/Event_UnusedGaretJoinsIsaac.gif)
+![`EventScript_UnusedGaretJoinsIsaac` played out in Vale on the stormy night, although the game never reaches it: Garet runs up through the rain, pants `*Hah* *Hah*`, asks `Are you trapped, too?` and says `You came just in time... We can go together.`](https://alchemy.pascalpixel.com/places/vale-storm/events/Event_UnusedGaretJoinsIsaac.gif)
 
 The cartridge holds scenes, events and lines of dialogue that no player ever
 sees: an earlier version of Garet joining Isaac on the stormy night, a cook's
@@ -18,10 +18,10 @@ in three ways:
   player would have seen.
 - Where it holds something the player would have seen (an event, a scene, its
   scripts and tables), its name carries `Unused` after its family prefix, as in
-  `Event_UnusedGaretJoinsIsaac`. A helper or an empty function keeps its name,
+  `EventScript_UnusedGaretJoinsIsaac`. A helper or an empty function keeps its name,
   since `UNUSED` already says nothing calls it.
 
-A function can be unused without being `UNUSED`: `Event_UnusedGaretJoinsIsaac`
+A function can be unused without being `UNUSED`: `EventScript_UnusedGaretJoinsIsaac`
 is named by a row of its scene's event table, so the linker sees a reference,
 but that row can never be selected. Code that only the debug menus reach is
 not unused; its comment says the debug menus reach it, and its name is left
@@ -38,15 +38,15 @@ fits answers, a named search answers with its first row whatever its
 condition, and a spot the party can reach only by crossing other spots finds
 their events already run.
 
-`Scene_FindEvent` ([events.c](src/object/object/events.c)) walks the table from
+`Map_FindEvent` ([events.c](src/object/object/events.c)) walks the table from
 the top and returns the first row whose kind, target and condition fit. A later
 row for the same actor or cell runs only where every earlier row's condition
 fails, so a row behind one with no condition is never returned. The walk stops
 at the table's end marker, and rows after it are never read.
 
 A search on a named spot (a chest, a jar, an oven, everything but
-`SEARCH_UNNAMED`) is returned whatever its condition, unless its result is a
-mimic battle; `Event_SearchIgnoresCondition` decides this. `Field_SearchTile`
+`BG_EVENT_UNNAMED`) is returned whatever its condition, unless its result is a
+mimic battle; `Map_BgEventIgnoresCondition` decides this. `Field_SearchTile`
 tests the condition afterwards, so that an opened chest still reports that it
 is empty. The consequence is that a named spot with two rows under the same
 trigger always answers with the first.
@@ -72,10 +72,10 @@ earlier row with an equal or weaker condition always answers first.
 its upstairs room with two talk rows in
 [vault_interiors_revisit.c](src/map/vault_interiors_revisit.c). The first
 shows `MsgVaultWeDontGetALotOf` under `CONDITION_ALWAYS`. The second runs
-`Event_UnusedOfferLeftoverBones`, which would have shown
+`EventScript_UnusedOfferLeftoverBones`, which would have shown
 `I did some cooking, so now I've got all these useless bones.` and
 `...You want some?`, and gives nothing. The girl at the inn has her own
-`Event_OfferBones`, which does run.
+`EventScript_OfferBones`, which does run.
 
 **Ovens with an item.** In [imil.c](src/map/imil.c),
 [kalay_interiors.c](src/map/kalay_interiors.c) and
@@ -100,17 +100,17 @@ by Altin ([sanctum.c](src/map/sanctum.c)).
 
 **Crossbone Isle's blue doors.** In
 [crossbone_isle_keys.c](src/map/crossbone_isle_keys.c), cell codes 53 and 54
-(the third and fourth blue doors) each have a plain `EVENT_TOUCH` row, then a
-`TOUCH_WALKING_INTO(FACING_SOUTH)` row running `Event_UnusedCheckLeaderAhead`.
+(the third and fourth blue doors) each have a plain `MAP_EVENT_COORD` row, then a
+`COORD_EVENT_WALKING_INTO(FACING_SOUTH)` row running `EventScript_UnusedCheckLeaderAhead`.
 The plain row has no push or facing requirement, so it always matches first.
-Its events, `Event_OpenThirdBlueDoor` and `Event_OpenFourthBlueDoor`, look
+Its events, `EventScript_OpenThirdBlueDoor` and `EventScript_OpenFourthBlueDoor`, look
 ahead themselves once the leader has pressed south against the door, so the
 player sees the same result either way.
 
 ## Rows after the end marker
 
 [altin_peak.c](src/map/altin_peak.c)'s `gAltinPeak_SecondWaterBeastEvents`
-has two rows after its `SCENE_EVENTS_END`, followed by a second end marker: a
+has two rows after its `MAP_EVENTS_END`, followed by a second end marker: a
 second copy of the `ALTIN_PEAK_SECOND_WATER_BEAST_CHEST_ROOM_TO_LAKE` exit, and
 a chest on code 100 holding a Herb under flag `0xf05`. Code 100 is also the
 cell of the room's Cookie chest, which is above the end marker and is the one
@@ -124,10 +124,10 @@ left to do.
 
 ![An event its own question ends. On the stormy night in Vale, every way to a third spot crosses two others first. On the first, Isaac hears Garet struggling with his things. On the second, Garet calls after him and joins the party, and the game notes that he has joined. The third spot holds an older version of Garet joining, which first asks whether Garet has joined. By the time the leader can stand there the answer is always yes, so the event ends at once, and its lines, among them "Are you trapped, too?", are never shown.](https://alchemy.pascalpixel.com/illustrations/front/unused-garet.svg)
 
-`Event_UnusedGaretJoinsIsaac` in [vale_storm.c](src/map/vale_storm.c) is an
+`EventScript_UnusedGaretJoinsIsaac` in [vale_storm.c](src/map/vale_storm.c) is an
 earlier version of Garet joining Isaac on the stormy night. Its row answers cell
 code 32. Every route to that cell crosses code 30
-(`Event_HearGaretStruggling`) and code 31 (`Event_GaretCallsAfterIsaac`), so
+(`EventScript_HearGaretStruggling`) and code 31 (`EventScript_GaretCallsAfterIsaac`), so
 Garet has always joined by the time the leader stands on it, and joining sets
 `FLAG_VALE_STORM_GARET_JOINED`. The event's first test is that flag, so it
 ends at once.
@@ -149,17 +149,17 @@ so its name carries `Unused`. In story order:
   function and nothing else takes the exit. It leads to
   `VALE_INTERIORS_SHOPS_FROM_VALE_WEST`, the same entrance as the house's two
   doors that are used.
-- `Event_UnusedRoofMended` ([vale.c](src/map/vale.c)) is another version of
-  `Event_RoofMended`, the end of the morning the story begins. It shows the
+- `EventScript_UnusedRoofMended` ([vale.c](src/map/vale.c)) is another version of
+  `EventScript_RoofMended`, the end of the morning the story begins. It shows the
   same messages, `Good job, Garet.` and `I was devastated when Kyle died...`
   among them, with its own camera moves and map cells.
-- `Event_UnusedWaterBurstsByTheRiver` ([vale.c](src/map/vale.c)) runs in
+- `EventScript_UnusedWaterBurstsByTheRiver` ([vale.c](src/map/vale.c)) runs in
   Vale after Kalay. It shakes the map and has water grow up three times
-  (`gVale_UnusedWaterGrows`) north of `ACTOR_STRONGMAN_REMEMBERING_FELIX`,
+  (`gVale_UnusedWaterGrows`) north of `LOCALID_STRONGMAN_REMEMBERING_FELIX`,
   who then shows `MsgValeIUsedToPlayHere`
   (`I still remember when Felix and I used to play here...*Sniff*`) and a
-  second line, and the event sets `FLAG_PLACE_TEMP_05`. The three water actors
-  from `ACTOR_FIRST_WATER` are placed in Vale's actor table and nothing else
+  second line, and the event sets `FLAG_MAPSEC_TEMP_05`. The three water actors
+  from `LOCALID_FIRST_WATER` are placed in Vale's actor table and nothing else
   shows them. His talk and Mind Read rows show the same two lines.
 - `SolSanctumStatue_UnusedMoveNorthwestStatue`
   ([sol_sanctum_statue.c](src/map/sol_sanctum_statue.c)) slides the
@@ -199,7 +199,7 @@ tables: `gSolSanctumEruption_UnusedStarCells` and
 
 ## A scene nothing leads to
 
-`SceneId_UnusedMercuryLighthouseAerieCopy` loads the overlay and map of
+`MapId_UnusedMercuryLighthouseAerieCopy` loads the overlay and map of
 Mercury Lighthouse's aerie
 ([mercury_lighthouse_aerie.c](src/map/mercury_lighthouse_aerie.c)), and the area names call it Mercury Lighthouse. The overlay's setup does
 nothing for it, and no exit, table or code leads there; only the debug scene

@@ -25,7 +25,7 @@ struct BattleAct *BattleAction_GetDirect(s32 actionId) {
 
 /// Returns 1 when `actionId` is in the unit's action list. Called by the
 /// events that check whether a member knows a Psynergy
-/// (Event_ValidatePackedId).
+/// (FieldScript_ValidatePackedId).
 s32 Unit_KnowsAction(s32 owner, s32 actionId) {
   struct BattleUnit *unit = Unit_Get(owner);
   struct OwnerActionSlot *entry;

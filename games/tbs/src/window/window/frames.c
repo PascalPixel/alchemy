@@ -496,7 +496,7 @@ struct UiWindow *UiText_OpenMessageWindow(s32 message, s32 x, s32 y,
 void UiText_ShowPositionedMessageAndWait(s32 message, s32 flags) {
   struct UiRenderWork *state = UI_WORK;
   s32 zoom;
-  s32 actorPosition[2] = {0, 0};
+  s32 objectEventPosition[2] = {0, 0};
   s32 height;
   s32 width;
   s32 y;
@@ -522,16 +522,17 @@ void UiText_ShowPositionedMessageAndWait(s32 message, s32 flags) {
   } else if (flags & 0x40) {
     y += 12;
   } else {
-    s32 actorTileY;
+    s32 objectEventTileY;
 
     // The character's screen y in pixels, as a tile row. In the lower half
     // the window's top goes 5 rows above it; otherwise 4 rows below.
-    Object_GetScreenPositionFar(gGameState.selectedActor, actorPosition);
-    actorTileY = actorPosition[1] >> 3;
-    if (actorTileY > 9) {
-      y = actorTileY - 5;
+    ObjectEvent_GetScreenPositionFar(gGameState.selectedObjectEvent,
+                                     objectEventPosition);
+    objectEventTileY = objectEventPosition[1] >> 3;
+    if (objectEventTileY > 9) {
+      y = objectEventTileY - 5;
     } else {
-      y = actorTileY + 4;
+      y = objectEventTileY + 4;
     }
   }
 

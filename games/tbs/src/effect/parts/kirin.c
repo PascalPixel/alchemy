@@ -12,7 +12,7 @@
 /// then sweeps across the targets, each throwing a burst of motes as the row
 /// passes it.
 ///
-/// Abilities: Kirin (SCENE_EFFECT_KIRIN).
+/// Abilities: Kirin (SUMMON_EFFECT_KIRIN).
 ///
 /// The scene runs in two stages. In the sweep (120 frames; A or B ends it
 /// after frame 16), KIRIN_OBJECTS objects ride in on a sine wave while the
@@ -22,9 +22,9 @@
 /// reaction, and the fire sheet slides off behind it. The battle shows the
 /// damage at the end.
 ///
-/// Reached through BattleEffect_RunSceneEffect, whose sheet slot holds the mote
-/// sheet here. The sweep projects with gProjection.centerY at 240 and holds
-/// BG1's scroll from the battle camera; the rise gives BG1's x back and
+/// Reached through BattleEffect_RunSummonEffect, whose sheet slot holds the
+/// mote sheet here. The sweep projects with gProjection.centerY at 240 and
+/// holds BG1's scroll from the battle camera; the rise gives BG1's x back and
 /// BattleEffect_SetupBlendedDisplay puts the centre back at 120, which the
 /// rise's Camera_ApplyShake then moves while the screen shakes. The nine
 /// objects are released before the scene returns.

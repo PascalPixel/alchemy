@@ -23,9 +23,9 @@ void FieldEffect_RunCatchOnTarget(s32 unused) { FieldEffect_RunCatch(); }
 /// FieldEffect_Run and FieldEffect_RunCatchOnTarget. Moves the effect scene's
 /// child to (-9, -9) when there is one, and releases object 215 at the end.
 void FieldEffect_RunCatch(void) {
-  struct FieldEffectScene *scene = gEffectWork;
-  struct MotionObject *actor = scene->mainObject;
-  struct MotionObject *child = scene->child;
+  struct FieldEffectWork *effectWork = gEffectWork;
+  struct MotionObject *objectEvent = effectWork->mainObject;
+  struct MotionObject *child = effectWork->child;
   struct MotionObject *object;
   struct FixedPointPosition spawn;
   struct FixedPointPosition origin;
@@ -34,28 +34,28 @@ void FieldEffect_RunCatch(void) {
   s32 i;
   s32 steps = 11;
 
-  origin.x = actor->x;
-  origin.y = actor->y + (16 << 16);
-  origin.z = actor->z;
-  if (scene->enabled) {
-    target.x = actor->x;
-    target.y = actor->y + (32 << 16);
-    target.z = actor->z;
-    Vector_AddPolarOffset(32 << 16, scene->angle, &target.x);
+  origin.x = objectEvent->x;
+  origin.y = objectEvent->y + (16 << 16);
+  origin.z = objectEvent->z;
+  if (effectWork->enabled) {
+    target.x = objectEvent->x;
+    target.y = objectEvent->y + (32 << 16);
+    target.z = objectEvent->z;
+    Vector_AddPolarOffset(32 << 16, effectWork->angle, &target.x);
   } else {
-    target.x = scene->x;
-    target.y = scene->y + (32 << 16);
-    target.z = scene->z;
+    target.x = effectWork->x;
+    target.y = effectWork->y + (32 << 16);
+    target.z = effectWork->z;
   }
-  spawn.x = scene->x;
-  spawn.y = scene->y + (32 << 16);
-  spawn.z = scene->z;
+  spawn.x = effectWork->x;
+  spawn.y = effectWork->y + (32 << 16);
+  spawn.z = effectWork->z;
   object = (struct MotionObject *)Object_Spawn(215, spawn.x, spawn.y, spawn.z);
   if (object == 0)
     return;
   FieldEffect_FadeToEffectColor();
   AudioCommand_PlayFar(SE_ITEM_BREAK);
-  object->angle = actor->angle;
+  object->angle = objectEvent->angle;
   object->speedLimit = 0x14ccc;
   object->motionFlags = 0;
   ObjectDispatch_SelectAnimationFar(object, 5);

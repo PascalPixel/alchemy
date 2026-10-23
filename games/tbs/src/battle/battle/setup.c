@@ -69,9 +69,9 @@ void BattlePresentation_UpdateCamera(void) {
   }
 
   Render_ResetTransformState();
-  SceneTransform_ApplyPosition(focus);
-  SceneTransform_ApplyYaw((s16)camera->yaw);
-  SceneTransform_ApplyPitch((s16)camera->pitch);
+  Transform_ApplyPosition(focus);
+  Transform_ApplyYaw((s16)camera->yaw);
+  Transform_ApplyPitch((s16)camera->pitch);
 
   // The eye sits distance behind the focus, along the turned view.
   eyeOffset.x = 0;

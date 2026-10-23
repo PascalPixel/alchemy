@@ -12,14 +12,14 @@
 /// (BATTLE_EFFECT_GUST_310).
 void BattleEffect_RunGust(struct BattleEffectArgument *effect) {
   if (effect->variant == EFFECT_VARIANT_BASIC) {
-    BattleEffect_RunBurstScene(effect, BURST_SCENE_GUST);
+    BattleEffect_RunBurstSequence(effect, BURST_SEQUENCE_GUST);
     return;
   }
   if (effect->variant == EFFECT_VARIANT_STRONGER) {
-    BattleEffect_RunBurstScene(effect, BURST_SCENE_GUST_DOUBLE);
+    BattleEffect_RunBurstSequence(effect, BURST_SEQUENCE_GUST_DOUBLE);
     return;
   }
-  BattleEffect_RunBurstScene(effect, BURST_SCENE_GUST_TRIPLE);
+  BattleEffect_RunBurstSequence(effect, BURST_SEQUENCE_GUST_TRIPLE);
 }
 
 /// The user strikes the first target five times.
@@ -27,7 +27,7 @@ void BattleEffect_RunGust(struct BattleEffectArgument *effect) {
 /// Abilities: Bear Claw (BATTLE_EFFECT_BEAR_CLAW); Counterstrike
 /// (BATTLE_EFFECT_BEAR_CLAW_342).
 void BattleEffect_RunBearClaw(struct BattleEffectArgument *effect) {
-  BattleEffect_RunBurstScene(effect, BURST_SCENE_BEAR_CLAW);
+  BattleEffect_RunBurstSequence(effect, BURST_SEQUENCE_BEAR_CLAW);
 }
 
 /// Ransack plays the same five strikes as Bear Claw.
@@ -35,21 +35,21 @@ void BattleEffect_RunBearClaw(struct BattleEffectArgument *effect) {
 /// Abilities: Ransack (BATTLE_EFFECT_RANSACK); Mad Dash
 /// (BATTLE_EFFECT_RANSACK_343).
 void BattleEffect_RunRansack(struct BattleEffectArgument *effect) {
-  BattleEffect_RunBurstScene(effect, BURST_SCENE_BEAR_CLAW);
+  BattleEffect_RunBurstSequence(effect, BURST_SEQUENCE_BEAR_CLAW);
 }
 
 /// Seven strikes land on the first target in the lime palette.
 ///
 /// Abilities: Bacteria Rush (BATTLE_EFFECT_BACTERIA_RUSH).
 void BattleEffect_RunBacteriaRush(struct BattleEffectArgument *effect) {
-  BattleEffect_RunBurstScene(effect, BURST_SCENE_BACTERIA_RUSH);
+  BattleEffect_RunBurstSequence(effect, BURST_SEQUENCE_BACTERIA_RUSH);
 }
 
 /// Nine strikes land on the first target in the blue palette.
 ///
 /// Abilities: Freebite Rush (BATTLE_EFFECT_FREEBITE_RUSH).
 void BattleEffect_RunFreebiteRush(struct BattleEffectArgument *effect) {
-  BattleEffect_RunBurstScene(effect, BURST_SCENE_FREEBITE_RUSH);
+  BattleEffect_RunBurstSequence(effect, BURST_SEQUENCE_FREEBITE_RUSH);
 }
 
 /// One, two or three strikes land on the first target as the variant grows
@@ -59,35 +59,35 @@ void BattleEffect_RunFreebiteRush(struct BattleEffectArgument *effect) {
 /// (BATTLE_EFFECT_FLYING_ATTACK_329).
 void BattleEffect_RunFlyingAttack(struct BattleEffectArgument *effect) {
   if (effect->variant == EFFECT_VARIANT_BASIC) {
-    BattleEffect_RunBurstScene(effect, BURST_SCENE_FLYING_ATTACK);
+    BattleEffect_RunBurstSequence(effect, BURST_SEQUENCE_FLYING_ATTACK);
     return;
   }
   if (effect->variant == EFFECT_VARIANT_STRONGER) {
-    BattleEffect_RunBurstScene(effect, BURST_SCENE_FLYING_ATTACK_DOUBLE);
+    BattleEffect_RunBurstSequence(effect, BURST_SEQUENCE_FLYING_ATTACK_DOUBLE);
     return;
   }
-  BattleEffect_RunBurstScene(effect, BURST_SCENE_FLYING_ATTACK_TRIPLE);
+  BattleEffect_RunBurstSequence(effect, BURST_SEQUENCE_FLYING_ATTACK_TRIPLE);
 }
 
-/// The bytes of a gBurstScene_Records row, one row a mode.
+/// The bytes of a gBurstSequence_Records row, one row a mode.
 enum BurstField {
-  BURST_SCENE_ARC_SHEET, ///< the arcs (enum BurstSceneArcs)
-  BURST_SCENE_PALETTE,   ///< whose palette (enum BurstScenePalette)
-  BURST_SCENE_STRIKES,   ///< the strikes
-  BURST_SCENE_MOTES,     ///< motes thrown by each strike, at most the 32 of
-                         ///< its run of PARTICLES
-  BURST_SCENE_INTERVAL,  ///< frames between strikes
-  BURST_SCENE_FRAMES,    ///< frames in the whole effect
-  BURST_SCENE_FLASH      ///< 1 fills the canvas with level 47 on each hit
+  BURST_SEQUENCE_ARC_SHEET, ///< the arcs (enum BurstSequenceArcs)
+  BURST_SEQUENCE_PALETTE,   ///< whose palette (enum BurstSequencePalette)
+  BURST_SEQUENCE_STRIKES,   ///< the strikes
+  BURST_SEQUENCE_MOTES,     ///< motes thrown by each strike, at most the 32 of
+                            ///< its run of PARTICLES
+  BURST_SEQUENCE_INTERVAL,  ///< frames between strikes
+  BURST_SEQUENCE_FRAMES,    ///< frames in the whole effect
+  BURST_SEQUENCE_FLASH      ///< 1 fills the canvas with level 47 on each hit
 };
 
 /// The flash pictures, packed to half width after the arcs.
-#define BURST_SCENE_FLASH_CELLS 0x5100
+#define BURST_SEQUENCE_FLASH_CELLS 0x5100
 /// The wave pictures, in the map buffer past the motes.
-#define BURST_SCENE_WAVE_CELLS (Ram_MapCellBuffer + 0x5e00)
+#define BURST_SEQUENCE_WAVE_CELLS (Ram_MapGridCellBuffer + 0x5e00)
 
 /// The user closes on the first target and strikes it again and again; each
-/// strike shows an arc (or, with BURST_SCENE_ARCS_AND_WAVES, a wave for the
+/// strike shows an arc (or, with BURST_SEQUENCE_ARCS_AND_WAVES, a wave for the
 /// third and fourth of every four), flashes and throws motes. A
 /// strike lands 2 frames after it starts: an odd one jolts the target, and
 /// the last knocks it back, shakes the screen for longer (8 frames against
@@ -104,8 +104,9 @@ enum BurstField {
 /// effect: the user and the targets; prelude 1 first brings in a Jupiter
 ///         Djinni over the user, the 84-frame entrance
 ///         (DJINNI_ENTRANCE_LONG).
-/// mode: the row of gBurstScene_Records (enum BurstSceneMode).
-void BattleEffect_RunBurstScene(struct BattleEffectArgument *effect, s32 mode) {
+/// mode: the row of gBurstSequence_Records (enum BurstSequenceMode).
+void BattleEffect_RunBurstSequence(struct BattleEffectArgument *effect,
+                                   s32 mode) {
   struct EffectPosition actorPos;
   struct EffectPosition targetPos;
   struct EffectPosition screen;
@@ -139,35 +140,35 @@ void BattleEffect_RunBurstScene(struct BattleEffectArgument *effect, s32 mode) {
 
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sprites, 0, 0);
 
-  // Pack the flash (40x288) to half width at BURST_SCENE_FLASH_CELLS, as the
+  // Pack the flash (40x288) to half width at BURST_SEQUENCE_FLASH_CELLS, as the
   // canvas is shown at double width.
   Resource_LoadAndDecompress((s32)&ResourceId_YellowOrbSheet, work->sheet, 1,
                              0);
   for (row = 0; row != 288; row++) {
     for (col = 0; col != 40; col++) {
       s32 src = row * 40 + col;
-      s32 dst = row * 20 + col / 2 + BURST_SCENE_FLASH_CELLS;
+      s32 dst = row * 20 + col / 2 + BURST_SEQUENCE_FLASH_CELLS;
 
       work->sheet[dst] = work->sheet[src];
     }
   }
-  if (gBurstScene_Records[mode][BURST_SCENE_ARC_SHEET] ==
-      BURST_SCENE_ARCS_AND_WAVES)
+  if (gBurstSequence_Records[mode][BURST_SEQUENCE_ARC_SHEET] ==
+      BURST_SEQUENCE_ARCS_AND_WAVES)
     Resource_LoadAndDecompress((s32)&ResourceId_BlueArcSheetA, work->sheet, 1,
                                1);
   else
     Resource_LoadAndDecompress((s32)&ResourceId_BlueArcSheetB, work->sheet, 1,
                                1);
-  Resource_LoadAndDecompress((s32)&ResourceId_WaveSheet, BURST_SCENE_WAVE_CELLS,
-                             1, 0);
-  switch (gBurstScene_Records[mode][BURST_SCENE_PALETTE]) {
-  case BURST_SCENE_PALETTE_MARS_DJINNI:
+  Resource_LoadAndDecompress((s32)&ResourceId_WaveSheet,
+                             BURST_SEQUENCE_WAVE_CELLS, 1, 0);
+  switch (gBurstSequence_Records[mode][BURST_SEQUENCE_PALETTE]) {
+  case BURST_SEQUENCE_PALETTE_MARS_DJINNI:
     paletteId = (s32)&ResourceId_MarsDjinnSheet;
     break;
-  case BURST_SCENE_PALETTE_LIME:
+  case BURST_SEQUENCE_PALETTE_LIME:
     paletteId = (s32)&ResourceId_LimePalette;
     break;
-  case BURST_SCENE_PALETTE_BLUE_ARC:
+  case BURST_SEQUENCE_PALETTE_BLUE_ARC:
     paletteId = (s32)&ResourceId_BlueArcSheetB;
     break;
   default:
@@ -184,7 +185,7 @@ void BattleEffect_RunBurstScene(struct BattleEffectArgument *effect, s32 mode) {
 
   // Motes wait 25 pixels above the target, set to fly towards the middle
   // of the field at up to 16 pixels a frame. Strike i releases PARTICLES
-  // i * 32 onwards, as many as its row's BURST_SCENE_MOTES.
+  // i * 32 onwards, as many as its row's BURST_SEQUENCE_MOTES.
   target = GetBattleObjectSlotFar(work->effect->actors[0])->object;
   for (i = 0; i != 768; i++) {
     struct EffectStep *mote = &PARTICLES[i];
@@ -203,9 +204,9 @@ void BattleEffect_RunBurstScene(struct BattleEffectArgument *effect, s32 mode) {
   // Each frame draws the strikes in progress, then the motes. Strike i
   // starts on frame i * interval: its arc or wave plays for 6 frames, it
   // hits on its third frame, and its flash plays for the 12 after that.
-  for (frame = 0; frame != gBurstScene_Records[mode][BURST_SCENE_FRAMES];
+  for (frame = 0; frame != gBurstSequence_Records[mode][BURST_SEQUENCE_FRAMES];
        frame++) {
-    s32 bursts = gBurstScene_Records[mode][BURST_SCENE_STRIKES];
+    s32 bursts = gBurstSequence_Records[mode][BURST_SEQUENCE_STRIKES];
 
     EffectPosition_ProjectScaledBattler(work->effect->actor, &actorPos);
     actorPos.x /= 2;
@@ -225,13 +226,14 @@ void BattleEffect_RunBurstScene(struct BattleEffectArgument *effect, s32 mode) {
     draw[0] = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER];
     draw[1] = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE];
     for (i = 0; i != bursts; i++) {
-      s32 start = i * gBurstScene_Records[mode][BURST_SCENE_INTERVAL];
+      s32 start = i * gBurstSequence_Records[mode][BURST_SEQUENCE_INTERVAL];
 
       if (frame >= start && frame < start + 6) {
         s32 step = frame - start;
 
-        if ((i & 3) <= 1 || gBurstScene_Records[mode][BURST_SCENE_ARC_SHEET] ==
-                                BURST_SCENE_ARCS) {
+        if ((i & 3) <= 1 ||
+            gBurstSequence_Records[mode][BURST_SEQUENCE_ARC_SHEET] ==
+                BURST_SEQUENCE_ARCS) {
           // The arc: six 48x72 frames.
           if (work->effect->side == 0)
             draw[i & 1](canvas, work->sheet + step * (48 * 72),
@@ -242,17 +244,17 @@ void BattleEffect_RunBurstScene(struct BattleEffectArgument *effect, s32 mode) {
         } else {
           // The wave: six 48x16 frames.
           if (work->effect->side == 0)
-            draw[i & 1](canvas, BURST_SCENE_WAVE_CELLS + step * (48 * 16),
+            draw[i & 1](canvas, BURST_SEQUENCE_WAVE_CELLS + step * (48 * 16),
                         targetPos.x / 2 - 16, actorPos.y - 8, 48, 16);
           else
-            draw[i & 1](canvas, BURST_SCENE_WAVE_CELLS + step * (48 * 16),
+            draw[i & 1](canvas, BURST_SEQUENCE_WAVE_CELLS + step * (48 * 16),
                         targetPos.x / 2 - 32, actorPos.y - 8, 48, 16);
         }
       }
       if (frame == start + 2) {
         // The hit; the last strike ends the attack.
         // A flash row fills the canvas with level 47.
-        if (gBurstScene_Records[mode][BURST_SCENE_FLASH] == 1)
+        if (gBurstSequence_Records[mode][BURST_SEQUENCE_FLASH] == 1)
           Iwram_FillWords(canvas, CANVAS_BYTES, 0x2f2f2f2f);
         ObjectGroup_UpdateMembers(work->effect->actors[0], SPRITE_COLOR_WHITE,
                                   POSE_DAMAGE, 0, 4);
@@ -268,14 +270,15 @@ void BattleEffect_RunBurstScene(struct BattleEffectArgument *effect, s32 mode) {
           work->shakeFrames = 4;
           AudioCommand_PlayFar(SE_HEAVY_IMPACT);
         }
-        for (j = 0; j != gBurstScene_Records[mode][BURST_SCENE_MOTES]; j++)
+        for (j = 0; j != gBurstSequence_Records[mode][BURST_SEQUENCE_MOTES];
+             j++)
           PARTICLES[i * 32 + j].variant = (Random16() & 7) + 15;
       }
       // The flash: six 20x48 frames, 2 frames each.
       if (frame >= start + 2 && frame < start + 14)
         draw[0](canvas,
                 work->sheet + ((frame - start - 2) / 2) * (20 * 48) +
-                    BURST_SCENE_FLASH_CELLS,
+                    BURST_SEQUENCE_FLASH_CELLS,
                 targetPos.x / 2 - 10, targetPos.y - 24, 20, 48);
     }
     EFFECT_RELEASE_BLITTERS();
@@ -318,5 +321,5 @@ void BattleEffect_RunBurstScene(struct BattleEffectArgument *effect, s32 mode) {
   BattleEffect_EndCanvasLayer();
 }
 
-#undef BURST_SCENE_FLASH_CELLS
-#undef BURST_SCENE_WAVE_CELLS
+#undef BURST_SEQUENCE_FLASH_CELLS
+#undef BURST_SEQUENCE_WAVE_CELLS

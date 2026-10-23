@@ -13,8 +13,8 @@
 /// wave.
 static void
 FieldEffect_AnimateVerticalPositive(union FieldObject *fieldObject) {
-  struct FieldActor *self = &fieldObject->actor;
-  struct FieldActor *anchor;
+  struct ObjectEvent *self = &fieldObject->objectEvent;
+  struct ObjectEvent *anchor;
   s32 frame;
   s32 amplitude;
 
@@ -38,8 +38,8 @@ FieldEffect_AnimateVerticalPositive(union FieldObject *fieldObject) {
 /// Mirrors the rising particle vertically and passes behind the linked actor.
 static void
 FieldEffect_AnimateVerticalNegative(union FieldObject *fieldObject) {
-  struct FieldActor *self = &fieldObject->actor;
-  struct FieldActor *anchor;
+  struct ObjectEvent *self = &fieldObject->objectEvent;
+  struct ObjectEvent *anchor;
   s32 frame;
   s32 amplitude;
 

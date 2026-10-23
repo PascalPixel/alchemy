@@ -9,7 +9,7 @@
 /// starts and 0 as it ends.
 void ObjectDispatch_ApplyValueToKind200Children(s32 value) {
   struct ObjectRuntime *object = gObjectSlots;
-  s32 remainingActors = 63;
+  s32 remainingObjectEvents = 63;
 
   do {
     if (object->script != NULL) {
@@ -25,9 +25,9 @@ void ObjectDispatch_ApplyValueToKind200Children(s32 value) {
         }
       }
     }
-    remainingActors--;
+    remainingObjectEvents--;
     object++;
-  } while (remainingActors >= 0);
+  } while (remainingObjectEvents >= 0);
 }
 
 /// Scheduler callback of the timed effect (FIELD_KIND_REVEAL): asks for it to
@@ -35,16 +35,16 @@ void ObjectDispatch_ApplyValueToKind200Children(s32 value) {
 /// The centre and the time are in the event work from 0xcb8 on
 /// (FieldEffect_RunReveal). The time counts only while effectTimerRunning is
 /// set, so menus and other effects pause it. It asks every frame until
-/// ResetSceneTransitionEffect removes it.
+/// FieldEffect_EndReveal removes it.
 void FieldEffect_WatchLeaderDistance(void) {
   struct FieldWork *work;
-  struct ObjectRuntime *actor;
+  struct ObjectRuntime *objectEvent;
   s16 *timer;
   s32 distanceX;
   s32 distanceZ;
 
   work = (struct FieldWork *)gEventWork;
-  actor = ObjectTable_Get(gGameState.selectedActor);
+  objectEvent = ObjectTable_Get(gGameState.selectedObjectEvent);
   if (work->effectTimerRunning != 0) {
     timer = &work->revealFrames;
     if (*timer != 0)
@@ -54,8 +54,9 @@ void FieldEffect_WatchLeaderDistance(void) {
   // On screen pixels (y is z less the height). x is scaled by 0xd105 (about
   // 0.82) for the comparison, so the edge is an ellipse 60 pixels up and
   // down from the centre and about 73 to either side.
-  distanceX = Iwram_MulQ16(work->revealCenterX - actor->x / 0x10000, 0xd105);
-  distanceZ = work->revealCenterY - (actor->z - actor->y) / 0x10000;
+  distanceX =
+      Iwram_MulQ16(work->revealCenterX - objectEvent->x / 0x10000, 0xd105);
+  distanceZ = work->revealCenterY - (objectEvent->z - objectEvent->y) / 0x10000;
   if (distanceX * distanceX + distanceZ * distanceZ >= 3600 ||
       work->revealFrames == 0) {
     // Raise Reveal as a Psynergy request that pays no PP (ACT_PACKED 0x2000
@@ -75,12 +76,12 @@ void FieldEffect_WatchLeaderDistance(void) {
 /// The transition is WINDOW_TRANSITION_RIPPLE, a wobbling circle round the
 /// leader stepped over 19 frames, and the BG colours turn grey. Reveal lasts
 /// 600 frames of its own time, or until the leader leaves its circle
-/// (FieldEffect_WatchLeaderDistance), and ResetSceneTransitionEffect ends it.
+/// (FieldEffect_WatchLeaderDistance), and FieldEffect_EndReveal ends it.
 /// Called by FieldEffect_Run and FieldEffect_DispatchRequestKind.
 void FieldEffect_RunReveal(void) {
   struct FieldWork *work;
   struct DisplayTransitionState *state;
-  struct FieldActor *target;
+  struct ObjectEvent *target;
   s32 eventTarget;
   void *event;
   s32 frame;
@@ -89,7 +90,7 @@ void FieldEffect_RunReveal(void) {
   ObjectDispatch_ApplyValueToKind200Children(6);
   DisplayTransition_InitializeBattleEffectState(8);
   state = WORK_SLOT(HEAP_SLOT_TRANSITION);
-  target = ObjectTable_Get(gGameState.selectedActor);
+  target = ObjectTable_Get(gGameState.selectedObjectEvent);
   state->centreX = target->x.fixed;
   state->centreY = target->z.fixed - target->y.fixed;
   // From the plain colours (PALETTE_TRANSFORM_PLAIN, 0x10000) the BG half
@@ -105,7 +106,7 @@ void FieldEffect_RunReveal(void) {
   event = FieldEffect_FindMatchingEvent(PSYNERGY_EV(PSYNERGY_PHASE_EFFECT_ACTS),
                                         FIELD_KIND_REVEAL, &eventTarget);
   if (event != NULL)
-    Field_RunEventAction(event, gGameState.selectedActor, eventTarget);
+    Field_RunEventAction(event, gGameState.selectedObjectEvent, eventTarget);
   AudioCommand_PlayFar(SE_131);
 
   // Record the centre (in pixels) and the time in the event work, and put
@@ -129,17 +130,17 @@ void FieldEffect_RunReveal(void) {
 /// from black over 30 frames and runs the scene's PSYNERGY_PHASE_EFFECT_ENDS
 /// event. Unless a scene set childOption, the window transition is then reset
 /// at once (no next mode, one frame). Called as Reveal ends
-/// (FieldEvent_RunTypeHandler) and before Mind Read starts its own colours.
-void ResetSceneTransitionEffect(void) {
+/// (FieldScript_RunTypeHandler) and before Mind Read starts its own colours.
+void FieldEffect_EndReveal(void) {
 #ifdef UBFIX
-  struct FieldEffectScene *work = gEffectWork;
+  struct FieldEffectWork *work = gEffectWork;
   struct DisplayTransitionState *scene = gDisplayTransition;
   struct FieldWork *state = (struct FieldWork *)gEventWork;
 #else
   // Named slots avoid stepping outside gEffectWork. They add 8 bytes to this
   // function in the forced native EN build (0xe8 -> 0xf0).
-  struct FieldEffectScene **cell = &gEffectWork;
-  struct FieldEffectScene *work = *cell;
+  struct FieldEffectWork **cell = &gEffectWork;
+  struct FieldEffectWork *work = *cell;
   struct DisplayTransitionState *scene =
       *(struct DisplayTransitionState **)((u8 *)cell - 0x64);
   struct FieldWork *state = *(struct FieldWork **)((u8 *)cell - 0x74);
@@ -149,7 +150,7 @@ void ResetSceneTransitionEffect(void) {
   void *event;
 
   if (state->revealActive != 0) {
-    AudioCommand_PlayFar(SE_SCENE_TRANSITION);
+    AudioCommand_PlayFar(SE_MAP_TRANSITION);
     Scheduler_RemoveCallback(FieldEffect_WatchLeaderDistance);
 
     zero = 0;
@@ -168,7 +169,7 @@ void ResetSceneTransitionEffect(void) {
         FieldEffect_FindMatchingEvent(PSYNERGY_EV(PSYNERGY_PHASE_EFFECT_ENDS),
                                       FIELD_KIND_REVEAL, &eventTarget);
     if (event != NULL)
-      Field_RunEventAction(event, gGameState.selectedActor, eventTarget);
+      Field_RunEventAction(event, gGameState.selectedObjectEvent, eventTarget);
 
     if (work->childOption == 0) {
       scene->nextMode = 0;

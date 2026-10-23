@@ -1,7 +1,7 @@
 /// @file
 /// Altin, the mining village north of the Alpine Crossing, in two scenes that
-/// share this overlay and the area name Altin: SceneId_Altin, the village
-/// outdoors, and SceneId_AltinInteriors, inside its houses, shops and inn.
+/// share this overlay and the area name Altin: MapId_Altin, the village
+/// outdoors, and MapId_AltinInteriors, inside its houses, shops and inn.
 /// The getters pick each scene's tables by gGameState.scene, both share one
 /// exit table, and a third, empty set of tables serves any other scene.
 ///
@@ -9,7 +9,7 @@
 /// area names call Altin Peak (altin_peak.c), and two things in Altin's code
 /// follow the party's work down there. The water drops in three stages with the
 /// three drains it opens by beating the mine's water beasts
-/// (FLAG_ALTIN_MINE_FIRST_DRAIN to _THIRD_DRAIN): Scene_Initialize turns them
+/// (FLAG_ALTIN_MINE_FIRST_DRAIN to _THIRD_DRAIN): Map_Initialize turns them
 /// into three scene flags, the water dropped once, twice, or drained (the
 /// second and third drains both), and Village_ApplyWaterLevel copies the map
 /// block for that level over the village, with its collision, and leaves out
@@ -79,75 +79,76 @@
 #define ALTIN_COOK_LAST_POT_X 380
 #endif
 
-#define SCENE_ALTIN_VILLAGE ((s32)&SceneId_Altin)
-#define SCENE_ALTIN_HOUSES ((s32)&SceneId_AltinInteriors)
+#define MAP_ALTIN_VILLAGE ((s32)&MapId_Altin)
+#define MAP_ALTIN_HOUSES ((s32)&MapId_AltinInteriors)
 
-/// The village's actors, numbering the rows of gAltinVillage_Placements.
-/// The people without a scene of their own are named by their sprite and by
-/// what they say before the hydros statues are beaten.
-enum AltinVillageActor {
+/// The village's actors, numbering the rows of
+/// gAltinVillage_ObjectEventTemplates. The people without a scene of their own
+/// are named by their sprite and by what they say before the hydros statues are
+/// beaten.
+enum AltinVillageLocalId {
   /// A bald, bare-chested strong man (SPRITE_BALD_MUSCULAR_MAN);
   /// Village_AskAboutFirstVisit.
   /// ★ Named from the game: "Is this your first time to visit Altin?"
   /// (MsgAltinYourFirstTimeVisitAltin)
-  ACTOR_GREETING_STRONG_MAN = ACTOR_FIRST_PLACED,
+  LOCALID_GREETING_STRONG_MAN = LOCALID_FIRST_PLACED,
   /// A stocky strong man flexing his arms (SPRITE_STRONGMAN);
   /// Village_AskAboutHydros.
   /// ★ Named from the game: "How can those creatures spit up so much water?"
   /// (MsgAltinHowCanThoseCreaturesSpitUp)
-  ACTOR_CURIOUS_STRONG_MAN,
+  LOCALID_CURIOUS_STRONG_MAN,
   /// A woman with fair hair in a white apron (SPRITE_WOMAN_WITH_FAIR_HAIR).
   /// ★ Named from the game: "My house is totally coated in monster spit."
   /// (MsgAltinHowHorribleMyHouseIsTotally)
-  ACTOR_WOMAN_COATED_HOUSE,
+  LOCALID_WOMAN_COATED_HOUSE,
   /// A burly grey-haired man (SPRITE_BURLY_MAN_WITH_GREY_HAIR), who wanders.
   /// ★ Named from the game: "Even the mine is submerged."
   /// (MsgAltinEvenTheMineIsSubmergedNo)
-  ACTOR_MAN_SUBMERGED_MINE,
+  LOCALID_MAN_SUBMERGED_MINE,
   /// A bent old man with a cane (SPRITE_OLD_MAN_WITH_CANE).
   /// ★ Named from the game: "If we could just destroy the monsters"
   /// (MsgAltinIfWeCouldJustDestroyThe)
-  ACTOR_OLD_MAN_DESTROY_MONSTERS,
+  LOCALID_OLD_MAN_DESTROY_MONSTERS,
   /// A woman in a green dress (SPRITE_WOMAN_IN_GREEN_DRESS).
   /// ★ Named from the game: "Altin always used to run short on water."
   /// (MsgAltinAltinAlwaysUsedToRunShort)
-  ACTOR_WOMAN_WATER_LUCK,
+  LOCALID_WOMAN_WATER_LUCK,
   /// An old woman with white hair (SPRITE_OLD_WOMAN);
   /// Village_TalkToThirstyOldWoman.
   /// ★ Named from the game: "We can't drink the water the monsters spew!"
   /// (MsgAltinWeCantDrinkWaterMonsters)
-  ACTOR_THIRSTY_OLD_WOMAN,
+  LOCALID_THIRSTY_OLD_WOMAN,
   /// The three who come back as the water recedes, one with each drop
   /// (Village_ApplyWaterLevel): this man with brown hair
   /// (SPRITE_YOUNG_MAN_WITH_BROWN_HAIR), then a strong man and an old man.
   /// ★ Named from the game: "The waters around here have subsided..."
   /// (MsgAltinTheWatersAroundHereHaveSubsided)
-  ACTOR_MAN_WATERS_SUBSIDED,
+  LOCALID_MAN_WATERS_SUBSIDED,
   /// A bald, bare-chested strong man (SPRITE_BALD_MUSCULAR_MAN).
   /// ★ Named from the game: "The water beasts looked exactly like Altin's
   /// guardian statues..." (MsgAltinTheWaterBeastsLookedExactlyLike)
-  ACTOR_STRONG_MAN_GUARDIAN_STATUES,
+  LOCALID_STRONG_MAN_GUARDIAN_STATUES,
   /// A bent old man with a cane (SPRITE_OLD_MAN_WITH_CANE), who wanders.
   /// ★ Named from the game: "The waters have flushed out tons of rock from the
   /// mine." (MsgAltinTheWatersHaveFlushedOutTons)
-  ACTOR_OLD_MAN_ROCK_FLUSHED_OUT,
+  LOCALID_OLD_MAN_ROCK_FLUSHED_OUT,
   /// The beast spitting water at the houses until FLAG_ALTIN_WATER_BEAST_LEFT.
   /// ★ Named from the game: "Are you the ones who defeated the water beasts?"
   /// (MsgAltinOnesWhoDefeatedWaterBeasts)
-  ACTOR_WATER_BEAST,
+  LOCALID_WATER_BEAST,
   /// SPRITE_STONE_STATUE, which Move pushes to column 22
   /// (Village_CheckPillarMoved).
   /// ★ Named from what the player sees: a grey stone statue on a pedestal
   /// above the north path (its render)
-  ACTOR_STONE_STATUE,
+  LOCALID_STONE_STATUE,
   /// The armor and item merchants, waiting outside while their shops are
   /// under water.
   /// ★ Named from the game: "My store is submerged... I want to sell armor,
   /// but there's no way." (MsgAltinMyStoreSubmergedWantSell)
-  ACTOR_FLOODED_ARMOR_MERCHANT,
+  LOCALID_FLOODED_ARMOR_MERCHANT,
   /// ★ Named from the game: "Oh, no! What will I do if all my merchandise is
   /// soaked?" (MsgAltinWillDoIfMyMerchandise)
-  ACTOR_FLOODED_ITEM_MERCHANT,
+  LOCALID_FLOODED_ITEM_MERCHANT,
   /// Three crates placed with SPRITE_CRATE, which Village_ApplyWaterLevel hides
   /// (SPRITE_COLOR_HIDDEN) but leaves solid, as placed actors are: invisible
   /// blocks at the top of the ladder on the east cliff and, two of them, on
@@ -155,93 +156,93 @@ enum AltinVillageActor {
   /// with them drawn).
   /// ★ Named from the game: "Strange... I don't remember all these crates being
   /// up here before!" (MsgVaultVaultCutFree)
-  ACTOR_FIRST_CRATE,
+  LOCALID_FIRST_CRATE,
   /// ★ Named from the game: "Strange... I don't remember all these crates being
   /// up here before!" (MsgVaultVaultCutFree)
-  ACTOR_SECOND_CRATE,
+  LOCALID_SECOND_CRATE,
   /// ★ Named from the game: "Strange... I don't remember all these crates being
   /// up here before!" (MsgVaultVaultCutFree)
-  ACTOR_THIRD_CRATE
+  LOCALID_THIRD_CRATE
 };
 
-/// The houses' actors, numbering the rows of gAltinHouses_Placements, named as
-/// the village's are.
-enum AltinHouseActor {
+/// The houses' actors, numbering the rows of gAltinHouses_ObjectEventTemplates,
+/// named as the village's are.
+enum AltinHouseLocalId {
   /// The family sheltering in the inn's Room One until the first drop: this
   /// man with brown hair (SPRITE_YOUNG_MAN_WITH_BROWN_HAIR) and a woman with
   /// fair
   /// hair.
   /// ★ Named from the game: "The guests in Room One moved back home when the
   /// waters receded." (MsgAltinTheGuestsInRoomOneMoved)
-  ACTOR_ROOM_ONE_GUEST = ACTOR_FIRST_PLACED,
+  LOCALID_ROOM_ONE_GUEST = LOCALID_FIRST_PLACED,
   /// A woman with fair hair in a white apron (SPRITE_WOMAN_WITH_FAIR_HAIR).
   /// ★ Named from the game: "The guests in Room One moved back home when the
   /// waters receded." (MsgAltinTheGuestsInRoomOneMoved)
-  ACTOR_ROOM_ONE_SECOND_GUEST,
+  LOCALID_ROOM_ONE_SECOND_GUEST,
   /// The family in Room Two, until the second drop: this bent old man with a
   /// cane (SPRITE_OLD_MAN_WITH_CANE) and an old woman.
   /// ★ Named from the game: "The guests in Room Two also went home after the
   /// waters receded." (MsgAltinTheGuestsInRoomTwoAlso)
-  ACTOR_ROOM_TWO_GUEST,
+  LOCALID_ROOM_TWO_GUEST,
   /// An old woman with white hair (SPRITE_OLD_WOMAN).
   /// ★ Named from the game: "The guests in Room Two also went home after the
   /// waters receded." (MsgAltinTheGuestsInRoomTwoAlso)
-  ACTOR_ROOM_TWO_SECOND_GUEST,
+  LOCALID_ROOM_TWO_SECOND_GUEST,
   /// A man with brown hair (SPRITE_YOUNG_MAN_WITH_BROWN_HAIR). He and
-  /// ACTOR_WOMAN_NO_PLACE_LIKE_HOME are the kissing girl's "Mom and Pop", who
+  /// LOCALID_WOMAN_NO_PLACE_LIKE_HOME are the kissing girl's "Mom and Pop", who
   /// have been acting weird since the ruins were found: his thoughts won't
   /// give up a spot at the end of the mine's easternmost passage, and hers say
   /// "My husband's sense for finding treasure has never failed."
   /// ★ Named from the game: "I didn't want to leave my hometown..."
   /// (MsgAltinIDidntWantToLeaveMy)
-  ACTOR_MAN_BACK_IN_HIS_HOMETOWN,
+  LOCALID_MAN_BACK_IN_HIS_HOMETOWN,
   /// A woman with fair hair in a white apron (SPRITE_WOMAN_WITH_FAIR_HAIR).
   /// ★ Named from the game: "There's no place like home."
   /// (MsgAltinIHeardSomeoneKilledTheWater)
-  ACTOR_WOMAN_NO_PLACE_LIKE_HOME,
+  LOCALID_WOMAN_NO_PLACE_LIKE_HOME,
   /// A little girl with orange pigtails (SPRITE_GIRL_WITH_PIGTAILS);
   /// Houses_AskAboutMonsters.
   /// ★ Named from the game: "Here, let me thank you with...a kiss!"
   /// (MsgAltinDefeatedThoseMonstersDidnt)
-  ACTOR_KISSING_GIRL,
+  LOCALID_KISSING_GIRL,
   /// ★ Named from the game: "Cripes... Is this how my weapon shop ends?"
   /// (MsgAltinCripesIsThisHowMyWeapon)
-  ACTOR_WEAPON_MERCHANT,
+  LOCALID_WEAPON_MERCHANT,
   /// ★ Named from the game: "Oh, no! What will I do if all my merchandise is
   /// soaked?" (MsgAltinWillDoIfMyMerchandise)
-  ACTOR_ITEM_MERCHANT,
+  LOCALID_ITEM_MERCHANT,
   /// ★ Named from the game: "It's great that I can sell armor out of my shop
   /// again." (MsgAltinItsGreatCanSellArmor)
-  ACTOR_ARMOR_MERCHANT,
+  LOCALID_ARMOR_MERCHANT,
   /// Opens the inn (Houses_TalkToInnkeeper).
   /// ★ Named from the game: "Innkeeper" (MsgDebugGlyphName)
-  ACTOR_INNKEEPER,
+  LOCALID_INNKEEPER,
   /// A woman with red-brown hair in a white apron (SPRITE_WOMAN_IN_PINK_APRON).
   /// ★ Named from the game: "return Altin to its former glory."
   /// (MsgAltinIdGiveAnythingForSomeoneTo)
-  ACTOR_WOMAN_FORMER_GLORY,
+  LOCALID_WOMAN_FORMER_GLORY,
   /// ★ Named from the game: "I came from Xian. I cook good food."
   /// (MsgAltinICameFromXianICook)
-  ACTOR_COOK,
+  LOCALID_COOK,
   /// A man with brown hair (SPRITE_YOUNG_MAN_WITH_BROWN_HAIR) in the inn,
   /// telling
   /// of its guests going home as the water drops.
   /// ★ Named from the game: "None of us can go home until the water
   /// subsides." (MsgAltinNoneOfUsCanGoHome)
-  ACTOR_MAN_WAITING_TO_GO_HOME
+  LOCALID_MAN_WAITING_TO_GO_HOME
 };
 
 /// The village's water level, set on entry from the mine's drain flags.
 enum {
   /// ★ Named from the game: "The guests in Room One moved back home when the
   /// waters receded." (MsgAltinTheGuestsInRoomOneMoved)
-  FLAG_WATER_DROPPED_ONCE = FLAG_SCENE_TEMP_40,
+  FLAG_WATER_DROPPED_ONCE = FLAG_MAP_TEMP_40,
   /// ★ Named from the game: "The guests in Room Two also went home after the
   /// waters receded." (MsgAltinTheGuestsInRoomTwoAlso)
-  FLAG_WATER_DROPPED_TWICE = FLAG_SCENE_TEMP_41,
+  FLAG_WATER_DROPPED_TWICE = FLAG_MAP_TEMP_41,
   /// ★ Named from the game: "Thank goodness the water has receded."
   /// (MsgAltinThankGoodnessWaterHasReceded)
-  FLAG_WATER_DRAINED = FLAG_SCENE_TEMP_42
+  FLAG_WATER_DRAINED = FLAG_MAP_TEMP_42
 };
 
 enum { SHOP_ALTIN_WEAPONS = 19, SHOP_ALTIN_ARMOR = 20, SHOP_ALTIN_ITEMS = 21 };
@@ -287,57 +288,61 @@ static void Village_ApplyWaterLevel(void);
 static void Houses_PlaceSheltering(void);
 static void Beast_SpawnSpray(void);
 
-const struct SceneEntrance *Scene_GetEntrances(void) {
-  s16 scene = gGameState.scene;
+const struct MapWarpDest *Map_GetWarpDests(void) {
+  s16 mapId = gGameState.mapId;
 
-  if (scene == SCENE_ALTIN_VILLAGE) {
-    return gAltinVillage_Entrances;
+  if (mapId == MAP_ALTIN_VILLAGE) {
+    return gAltinVillage_WarpDests;
   }
-  if (scene == SCENE_ALTIN_HOUSES) {
-    return gAltinHouses_Entrances;
+  if (mapId == MAP_ALTIN_HOUSES) {
+    return gAltinHouses_WarpDests;
   }
-  return gAltinOther_Entrances;
+  return gAltinOther_WarpDests;
 }
 
-const struct SceneRegion *Scene_GetRegions(void) { return 0; }
+const struct MapWarpRegion *Map_GetWarpRegions(void) { return 0; }
 
 /// Both scenes share one exit table.
-const u32 *Scene_GetExits(void) { return gAltin_Exits; }
+const u32 *Map_GetWarps(void) { return gAltin_Warps; }
 
 /// Some villagers only turn back after talking once the flood is over or
 /// their family has gone home.
-const struct ScenePlacement *Scene_GetPlacements(void) {
-  s32 scene = gGameState.scene;
-  if (scene == SCENE_ALTIN_VILLAGE) {
+const struct ObjectEventTemplate *Map_GetObjectEventTemplates(void) {
+  s32 mapId = gGameState.mapId;
+  if (mapId == MAP_ALTIN_VILLAGE) {
     if (Engine_GameFlagIsSet(FLAG_HYDROS_STATUES_DEFEATED)) {
-      gAltinVillage_Placements[ACTOR_WOMAN_WATER_LUCK - ACTOR_FIRST_PLACED]
+      gAltinVillage_ObjectEventTemplates[LOCALID_WOMAN_WATER_LUCK -
+                                         LOCALID_FIRST_PLACED]
           .talkFacing = TALK_FACE_PARTY;
-      gAltinVillage_Placements[ACTOR_THIRSTY_OLD_WOMAN - ACTOR_FIRST_PLACED]
+      gAltinVillage_ObjectEventTemplates[LOCALID_THIRSTY_OLD_WOMAN -
+                                         LOCALID_FIRST_PLACED]
           .talkFacing = TALK_FACE_PARTY;
     }
-    return gAltinVillage_Placements;
+    return gAltinVillage_ObjectEventTemplates;
   }
-  if (scene == SCENE_ALTIN_HOUSES) {
+  if (mapId == MAP_ALTIN_HOUSES) {
     if (Engine_GameFlagIsSet(FLAG_ALTIN_MINE_FIRST_DRAIN))
-      gAltinHouses_Placements[ACTOR_ROOM_ONE_SECOND_GUEST - ACTOR_FIRST_PLACED]
+      gAltinHouses_ObjectEventTemplates[LOCALID_ROOM_ONE_SECOND_GUEST -
+                                        LOCALID_FIRST_PLACED]
           .talkFacing = TALK_FACE_PARTY_AND_BACK;
     if (Engine_GameFlagIsSet(FLAG_ALTIN_MINE_SECOND_DRAIN) ||
         Engine_GameFlagIsSet(FLAG_ALTIN_MINE_THIRD_DRAIN))
-      gAltinHouses_Placements[ACTOR_ROOM_TWO_SECOND_GUEST - ACTOR_FIRST_PLACED]
+      gAltinHouses_ObjectEventTemplates[LOCALID_ROOM_TWO_SECOND_GUEST -
+                                        LOCALID_FIRST_PLACED]
           .talkFacing = TALK_FACE_PARTY_AND_BACK;
-    FieldScene_PrepareActors(gAltinHouses_Placements);
-    return gAltinHouses_Placements;
+    Map_PrepareObjectEvents(gAltinHouses_ObjectEventTemplates);
+    return gAltinHouses_ObjectEventTemplates;
   }
-  return gAltinOther_Placements;
+  return gAltinOther_ObjectEventTemplates;
 }
 
-const struct SceneEvent *Scene_GetEvents(void) {
-  s16 scene = gGameState.scene;
+const struct MapEvent *Map_GetEvents(void) {
+  s16 mapId = gGameState.mapId;
 
-  if (scene == SCENE_ALTIN_VILLAGE) {
+  if (mapId == MAP_ALTIN_VILLAGE) {
     return gAltinVillage_Events;
   }
-  if (scene == SCENE_ALTIN_HOUSES) {
+  if (mapId == MAP_ALTIN_HOUSES) {
     return gAltinHouses_Events;
   }
   return gAltinOther_Events;
@@ -347,28 +352,28 @@ const struct SceneEvent *Scene_GetEvents(void) {
 /// Altin's village before the hydros statues are beaten; either way, he says
 /// the flood has changed Altin.
 static void Village_AskAboutFirstVisit(void) {
-  Engine_EventStart();
-  Engine_EventSetMessage(MsgAltinYourFirstTimeVisitAltin);
+  Engine_ScriptStart();
+  Engine_ScriptSetMessage(MsgAltinYourFirstTimeVisitAltin);
 
-  Engine_EventOpenMessage(ACTOR_GREETING_STRONG_MAN, 0);
+  Engine_ScriptOpenMessage(LOCALID_GREETING_STRONG_MAN, 0);
 
-  if (Engine_EventChooseYesNo(0, 0) == 1) {
-    Engine_EventShowMessage(ACTOR_GREETING_STRONG_MAN, 0);
+  if (Engine_ScriptChooseYesNo(0, 0) == 1) {
+    Engine_ScriptShowMessage(LOCALID_GREETING_STRONG_MAN, 0);
   } else {
-    Event_SkipMessages(1);
-    Engine_EventAskYesNo(ACTOR_GREETING_STRONG_MAN, 0);
+    Script_SkipMessages(1);
+    Engine_ScriptAskYesNo(LOCALID_GREETING_STRONG_MAN, 0);
   }
 
-  Engine_EventEnd();
+  Engine_ScriptEnd();
 }
 
 /// A strong man asks whether the slain hydros creatures gushed water. He's in
 /// Altin's village once the hydros statues are beaten.
 static void Village_AskAboutHydros(void) {
-  Engine_EventStart();
-  Engine_EventSetMessage(MsgAltinDidSeeWaterGushingOut);
-  Engine_EventAskYesNo(ACTOR_CURIOUS_STRONG_MAN, 0);
-  Engine_EventEnd();
+  Engine_ScriptStart();
+  Engine_ScriptSetMessage(MsgAltinDidSeeWaterGushingOut);
+  Engine_ScriptAskYesNo(LOCALID_CURIOUS_STRONG_MAN, 0);
+  Engine_ScriptEnd();
 }
 
 /// An old woman in Altin's village. While the beasts live, she complains that
@@ -377,52 +382,53 @@ static void Village_AskAboutHydros(void) {
 /// rebuilding.
 static void Village_TalkToThirstyOldWoman(void) {
 
-  struct FieldActor *beast;
-  struct FieldActor *leader;
+  struct ObjectEvent *beast;
+  struct ObjectEvent *leader;
 
-  Engine_EventStart();
+  Engine_ScriptStart();
   if (GameFlag_IsSet(FLAG_HYDROS_STATUES_DEFEATED) != 0) {
-    Engine_EventSetMessage(MsgAltinOnesWhoDefeatedWaterBeasts);
-    Event_AskYesNo(ACTOR_THIRSTY_OLD_WOMAN, 0);
+    Engine_ScriptSetMessage(MsgAltinOnesWhoDefeatedWaterBeasts);
+    Script_AskYesNo(LOCALID_THIRSTY_OLD_WOMAN, 0);
   } else {
-    Engine_ActorSetAnimation(ACTOR_THIRSTY_OLD_WOMAN, ANIMATION_SHAKE_HEAD);
-    Engine_EventSetMessage(MsgAltinWeCantDrinkWaterMonsters);
-    Event_ShowMessageAndWait(ACTOR_THIRSTY_OLD_WOMAN, 0, 10);
+    Engine_ObjectEventSetAnimation(LOCALID_THIRSTY_OLD_WOMAN,
+                                   ANIMATION_SHAKE_HEAD);
+    Engine_ScriptSetMessage(MsgAltinWeCantDrinkWaterMonsters);
+    Script_ShowMessageAndWait(LOCALID_THIRSTY_OLD_WOMAN, 0, 10);
     if (GameFlag_IsSet(FLAG_ALTIN_WATER_BEAST_LEFT) == 0) {
-      beast = Object_GetById(ACTOR_WATER_BEAST);
+      beast = ObjectEvent_GetById(LOCALID_WATER_BEAST);
 
-      Camera_GetEventObject()->motionFlags = 0;
+      Camera_GetScriptObject()->motionFlags = 0;
       Camera_SetSpeed(0x10000, 0x2000);
       Camera_MoveTo(beast->x.fixed, beast->y.fixed, beast->z.fixed, 1);
       // BUG: FACING_SOUTH's value is passed as an actor number. No actor has
       // it, so the leader does not turn south toward the beast.
 #ifdef BUGFIX
-      Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 0);
+      ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_SOUTH, 0);
 #else
-      Actor_FaceActor(ACTOR_PARTY_LEADER, 0x4000, 0);
+      ObjectEvent_FaceObjectEvent(LOCALID_PARTY_LEADER, 0x4000, 0);
 #endif
-      Actor_FaceDirection(ACTOR_THIRSTY_OLD_WOMAN, FACING_SOUTH - FACING_STEP,
-                          0);
+      ObjectEvent_FaceDirection(LOCALID_THIRSTY_OLD_WOMAN,
+                                FACING_SOUTH - FACING_STEP, 0);
       Engine_CameraWaitForMove();
-      Engine_EventWait(120);
-      leader = Object_GetById(ACTOR_PARTY_LEADER);
+      Engine_ScriptWait(120);
+      leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
       Camera_MoveTo(leader->x.fixed, leader->y.fixed, leader->z.fixed, 1);
       Engine_CameraWaitForMove();
     }
-    Engine_ActorSetAnimationAndWait(ACTOR_THIRSTY_OLD_WOMAN,
-                                    ANIMATION_SHAKE_HEAD);
+    Engine_ObjectEventSetAnimationAndWait(LOCALID_THIRSTY_OLD_WOMAN,
+                                          ANIMATION_SHAKE_HEAD);
   }
-  Engine_EventEnd();
+  Engine_ScriptEnd();
 }
 
 /// An old man asks whether the party really found ruins deep in the mine. He's
 /// in Altin's village once the hydros statues are beaten.
 static void Village_AskAboutRuins(void) {
 
-  Engine_EventStart();
-  Engine_EventSetMessage(MsgAltinTrueFoundAncientRuinsIn);
-  Engine_EventAskYesNo(ACTOR_OLD_MAN_ROCK_FLUSHED_OUT, 0);
-  Engine_EventEnd();
+  Engine_ScriptStart();
+  Engine_ScriptSetMessage(MsgAltinTrueFoundAncientRuinsIn);
+  Engine_ScriptAskYesNo(LOCALID_OLD_MAN_ROCK_FLUSHED_OUT, 0);
+  Engine_ScriptEnd();
 }
 
 /// A woman asks whether the party is who the girl from Xian was looking for.
@@ -430,10 +436,10 @@ static void Village_AskAboutRuins(void) {
 /// Altin once the hydros statues are beaten.
 static void Houses_AskAboutXianGirl(void) {
 
-  Engine_EventStart();
-  Engine_EventSetMessage(MsgAltinGirlFromXianWasAsking);
-  Engine_EventAskYesNo(ACTOR_ROOM_ONE_SECOND_GUEST, 0);
-  Engine_EventEnd();
+  Engine_ScriptStart();
+  Engine_ScriptSetMessage(MsgAltinGirlFromXianWasAsking);
+  Engine_ScriptAskYesNo(LOCALID_ROOM_ONE_SECOND_GUEST, 0);
+  Engine_ScriptEnd();
 }
 
 /// An old man points the party to the bottom of the mine. He's from the family
@@ -441,10 +447,10 @@ static void Houses_AskAboutXianGirl(void) {
 /// statues are beaten, he asks whether the party seeks the way west.
 static void Houses_AskAboutWayWest(void) {
 
-  Engine_EventStart();
-  Engine_EventSetMessage(MsgAltinTryingFindYourWayWest);
-  Engine_EventAskYesNo(ACTOR_ROOM_TWO_GUEST, 0);
-  Engine_EventEnd();
+  Engine_ScriptStart();
+  Engine_ScriptSetMessage(MsgAltinTryingFindYourWayWest);
+  Engine_ScriptAskYesNo(LOCALID_ROOM_TWO_GUEST, 0);
+  Engine_ScriptEnd();
 }
 
 /// A little girl thanks the leader with a kiss. She's back home inside Altin
@@ -452,26 +458,26 @@ static void Houses_AskAboutWayWest(void) {
 /// the monsters; she gives the kiss either way.
 static void Houses_AskAboutMonsters(void) {
 
-  Engine_EventStart();
-  Engine_EventSetMessage(MsgAltinDefeatedThoseMonstersDidnt);
-  Engine_EventAskYesNo(ACTOR_KISSING_GIRL, 0);
-  Engine_EventEnd();
+  Engine_ScriptStart();
+  Engine_ScriptSetMessage(MsgAltinDefeatedThoseMonstersDidnt);
+  Engine_ScriptAskYesNo(LOCALID_KISSING_GIRL, 0);
+  Engine_ScriptEnd();
 }
 
 /// A man at the inn asks whether the remaining beasts are deep below. He's
 /// staying at Altin's inn once the hydros statues are beaten.
 static void Houses_AskAboutMineBeasts(void) {
 
-  Engine_EventStart();
-  Engine_EventSetMessage(MsgAltinThereFewBeastsInMine);
-  Engine_EventAskYesNo(ACTOR_MAN_WAITING_TO_GO_HOME, 0);
-  Engine_EventEnd();
+  Engine_ScriptStart();
+  Engine_ScriptSetMessage(MsgAltinThereFewBeastsInMine);
+  Engine_ScriptAskYesNo(LOCALID_MAN_WAITING_TO_GO_HOME, 0);
+  Engine_ScriptEnd();
 }
 
 /// Returns whether the party leader faces north, toward a shop counter: its
 /// facing lies strictly between northwest and northeast, measured in 16 bits.
 static s32 Leader_FacesCounter(void) {
-  struct FieldActor *leader = Object_GetById(ACTOR_PARTY_LEADER);
+  struct ObjectEvent *leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
 
   if (ALTIN_FACES_COUNTER(leader->facing)) {
     return 1;
@@ -485,26 +491,26 @@ static s32 Leader_FacesCounter(void) {
 static void Houses_TalkToWeaponMerchant(void) {
 
   if (Engine_GameFlagIsSet(FLAG_WATER_DRAINED) == 0) {
-    Engine_EventStart();
-    Engine_EventSetMessage(MsgAltinDoWantWeapons);
+    Engine_ScriptStart();
+    Engine_ScriptSetMessage(MsgAltinDoWantWeapons);
 
-    Engine_EventAskYesNo(ACTOR_WEAPON_MERCHANT, 0);
-    Engine_EventEnd();
+    Engine_ScriptAskYesNo(LOCALID_WEAPON_MERCHANT, 0);
+    Engine_ScriptEnd();
     return;
   }
 
   if (Leader_FacesCounter() != 0) {
-    Engine_ShopOpen(SHOP_ALTIN_WEAPONS, ACTOR_WEAPON_MERCHANT);
+    Engine_ShopOpen(SHOP_ALTIN_WEAPONS, LOCALID_WEAPON_MERCHANT);
     return;
   }
 
-  Engine_EventStart();
-  Engine_EventSetMessage(MsgAltinThankGoodnessWaterHasReceded);
+  Engine_ScriptStart();
+  Engine_ScriptSetMessage(MsgAltinThankGoodnessWaterHasReceded);
   if (Engine_GameFlagIsSet(FLAG_HYDROS_STATUES_DEFEATED) != 0) {
-    Engine_EventSetMessage(MsgAltinYoullHaveFindPassageIn);
+    Engine_ScriptSetMessage(MsgAltinYoullHaveFindPassageIn);
   }
-  Engine_EventShowMessage(ACTOR_WEAPON_MERCHANT, 0);
-  Engine_EventEnd();
+  Engine_ScriptShowMessage(LOCALID_WEAPON_MERCHANT, 0);
+  Engine_ScriptEnd();
 }
 
 /// Altin's armor merchant, in either scene: outside, while his shop is under
@@ -513,84 +519,84 @@ static void Houses_TalkToWeaponMerchant(void) {
 static void Altin_TalkToArmorMerchant(void) {
 
   if (Engine_GameFlagIsSet(FLAG_WATER_DROPPED_TWICE) == 0) {
-    Engine_EventStart();
-    Engine_EventSetMessage(MsgAltinMyStoreSubmergedWantSell);
-    Engine_EventShowMessage(ACTOR_FLOODED_ARMOR_MERCHANT, 0);
-    Engine_EventEnd();
+    Engine_ScriptStart();
+    Engine_ScriptSetMessage(MsgAltinMyStoreSubmergedWantSell);
+    Engine_ScriptShowMessage(LOCALID_FLOODED_ARMOR_MERCHANT, 0);
+    Engine_ScriptEnd();
     return;
   }
 
   if (Leader_FacesCounter() != 0) {
-    Engine_ShopOpen(SHOP_ALTIN_ARMOR, ACTOR_ARMOR_MERCHANT);
+    Engine_ShopOpen(SHOP_ALTIN_ARMOR, LOCALID_ARMOR_MERCHANT);
     return;
   }
 
-  Engine_EventStart();
-  Engine_EventSetMessage(MsgAltinItsGreatCanSellArmor);
+  Engine_ScriptStart();
+  Engine_ScriptSetMessage(MsgAltinItsGreatCanSellArmor);
   if (Engine_GameFlagIsSet(FLAG_HYDROS_STATUES_DEFEATED) != 0) {
-    Engine_EventSetMessage(MsgAltinHowAboutArentImpressedBy);
+    Engine_ScriptSetMessage(MsgAltinHowAboutArentImpressedBy);
   }
-  Engine_EventShowMessage(ACTOR_ARMOR_MERCHANT, 0);
-  Engine_EventEnd();
+  Engine_ScriptShowMessage(LOCALID_ARMOR_MERCHANT, 0);
+  Engine_ScriptEnd();
 }
 
 /// Altin's item merchant, the same way: she reopens after the first drop.
 static void Altin_TalkToItemMerchant(void) {
   if (Engine_GameFlagIsSet(FLAG_WATER_DROPPED_ONCE) == 0) {
-    Engine_EventStart();
-    Engine_EventSetMessage(MsgAltinWillDoIfMyMerchandise);
-    Engine_EventShowMessage(ACTOR_FLOODED_ITEM_MERCHANT, 0);
-    Engine_EventEnd();
+    Engine_ScriptStart();
+    Engine_ScriptSetMessage(MsgAltinWillDoIfMyMerchandise);
+    Engine_ScriptShowMessage(LOCALID_FLOODED_ITEM_MERCHANT, 0);
+    Engine_ScriptEnd();
     return;
   }
 
   if (Leader_FacesCounter() != 0) {
-    Engine_ShopOpen(SHOP_ALTIN_ITEMS, ACTOR_ITEM_MERCHANT);
+    Engine_ShopOpen(SHOP_ALTIN_ITEMS, LOCALID_ITEM_MERCHANT);
     return;
   }
 
-  Engine_EventStart();
-  Engine_EventSetMessage(MsgAltinNoneMyGoodsWereDamaged);
+  Engine_ScriptStart();
+  Engine_ScriptSetMessage(MsgAltinNoneMyGoodsWereDamaged);
   if (Engine_GameFlagIsSet(FLAG_HYDROS_STATUES_DEFEATED) != 0) {
-    Engine_EventSetMessage(MsgAltinGirlFromXianBoughtLot);
+    Engine_ScriptSetMessage(MsgAltinGirlFromXianBoughtLot);
   }
-  Engine_EventShowMessage(ACTOR_ITEM_MERCHANT, 0);
-  Engine_EventEnd();
+  Engine_ScriptShowMessage(LOCALID_ITEM_MERCHANT, 0);
+  Engine_ScriptEnd();
 }
 
 /// Altin's innkeeper opens the inn when spoken to across the counter. Spoken to
 /// otherwise, the innkeeper talks about the flood or, once it is over, the
 /// temple west of the mine.
 static void Houses_TalkToInnkeeper(void) {
-  struct FieldActor *leader;
+  struct ObjectEvent *leader;
 
-  leader = Object_GetById(ACTOR_PARTY_LEADER);
+  leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
 
   if (ALTIN_FACES_COUNTER(leader->facing)) {
-    Engine_InnOpen(ALTIN_INN, ACTOR_INNKEEPER);
+    Engine_InnOpen(ALTIN_INN, LOCALID_INNKEEPER);
     return;
   }
 
-  Engine_EventStart();
+  Engine_ScriptStart();
 
   if (Engine_GameFlagIsSet(FLAG_HYDROS_STATUES_DEFEATED) != 0) {
-    Engine_EventSetMessage(MsgAltinThereSmallTempleWestAltin);
-    Engine_EventShowMessage(ACTOR_INNKEEPER, 0);
+    Engine_ScriptSetMessage(MsgAltinThereSmallTempleWestAltin);
+    Engine_ScriptShowMessage(LOCALID_INNKEEPER, 0);
   } else {
-    Engine_EventSetMessage(MsgAltinWeGotLittleDampBut);
-    Engine_EventAskYesNo(ACTOR_INNKEEPER, 0);
+    Engine_ScriptSetMessage(MsgAltinWeGotLittleDampBut);
+    Engine_ScriptAskYesNo(LOCALID_INNKEEPER, 0);
   }
 
-  Engine_EventEnd();
+  Engine_ScriptEnd();
 }
 
 /// Walking north into one of the doors of Altin's village: everyone stops, the
 /// door opens and the party leader walks in. The Sanctum's wide door is redrawn
 /// in two halves by hand; the others play their opening pictures.
 static void Village_EnterDoor(void) {
-  u32 actorId;
+  u32 objectEventId;
   struct EventWork *work;
-  struct FieldActor *actor;
+  struct ObjectEvent *objectEvent;
   s32 doorIndex;
   u8 *doorBytes;
   s32 doorByteOffset;
@@ -600,11 +606,12 @@ static void Village_EnterDoor(void) {
   s32 rightColumn;
 
   work = gEventWork;
-  Engine_EventStart();
-  for (actorId = ACTOR_FIRST_PLACED; actorId <= ACTOR_LAST_SLOT; actorId++) {
-    actor = Object_GetById(actorId);
-    if (actor != 0) {
-      actor->motionFlags = 0;
+  Engine_ScriptStart();
+  for (objectEventId = LOCALID_FIRST_PLACED; objectEventId <= LOCALID_LAST_SLOT;
+       objectEventId++) {
+    objectEvent = ObjectEvent_GetById(objectEventId);
+    if (objectEvent != 0) {
+      objectEvent->motionFlags = 0;
     }
   }
 
@@ -619,47 +626,47 @@ static void Village_EnterDoor(void) {
   row = *(s16 *)(doorBytes + coordinatesByteOffset + 2);
   if (doorIndex == DOOR_SANCTUM) {
     // The Sanctum's door slides open with SE_188, as Bilibin's does.
-    Event_PlayCue(SE_188);
-    Map_CopyCellsTo(42, 33, column, row, 2, 2);
+    Script_PlayCue(SE_188);
+    MapGrid_CopyCellsTo(42, 33, column, row, 2, 2);
     rightColumn = column + 2;
-    Map_CopyCellsTo(42, 35, rightColumn, row, 2, 2);
-    Engine_EventWait(4);
-    Map_CopyCellsTo(40, 33, column, row, 2, 2);
-    Map_CopyCellsTo(40, 35, rightColumn, row, 2, 2);
-    Engine_EventWait(4);
+    MapGrid_CopyCellsTo(42, 35, rightColumn, row, 2, 2);
+    Engine_ScriptWait(4);
+    MapGrid_CopyCellsTo(40, 33, column, row, 2, 2);
+    MapGrid_CopyCellsTo(40, 35, rightColumn, row, 2, 2);
+    Engine_ScriptWait(4);
   } else {
-    Event_PlayCue(SE_DOOR_OPEN);
+    Script_PlayCue(SE_DOOR_OPEN);
     // The north door's row in gAltinVillage_Doors plays its opening at
     // (39, 17), outside the village's camera box; its house stands at
     // (8, 17), above where the party comes back out
     // (ALTIN_FROM_ALTIN_INTERIORS_NORTH), so that doorway is drawn open here
     // (a render with this copy made on entry shows the open doorway).
     if (doorIndex == ALTIN_TO_ALTIN_INTERIORS_NORTH - FIRST_DOOR_TRIGGER) {
-      Map_CopyCellsTo(33, 42, 8, 17, 1, 2);
+      MapGrid_CopyCellsTo(33, 42, 8, 17, 1, 2);
     }
-    Map_AnimateCells(gAltinVillage_Doors[doorIndex].steps, column, row);
+    MapGrid_AnimateCells(gAltinVillage_Doors[doorIndex].steps, column, row);
   }
 
   // Walk the leader through.
-  Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x8000, 0x4000);
-  gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
-  Object_GetById(ACTOR_PARTY_LEADER)->motionFlags = 0;
-  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIMATION_WALK);
+  ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, 0x8000, 0x4000);
+  gEventWork->startTransition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+  ObjectEvent_GetById(LOCALID_PARTY_LEADER)->motionFlags = 0;
+  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIMATION_WALK);
   if (doorIndex == DOOR_STRAIGHT_IN) {
-    Actor_CenterAndWalk(ACTOR_PARTY_LEADER, 2, 0);
+    ObjectEvent_CenterAndWalk(LOCALID_PARTY_LEADER, 2, 0);
   } else {
     if (doorIndex != DOOR_SANCTUM) {
-      Actor_CenterAndWalk(ACTOR_PARTY_LEADER, 2, -4);
+      ObjectEvent_CenterAndWalk(LOCALID_PARTY_LEADER, 2, -4);
     } else {
-      Engine_ActorSetSpritePriority(ACTOR_PARTY_LEADER, 2);
-      Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, 0, -4);
+      Engine_ObjectEventSetSpritePriority(LOCALID_PARTY_LEADER, 2);
+      ObjectEvent_SetDestinationOffset(LOCALID_PARTY_LEADER, 0, -4);
     }
   }
-  Engine_EventWait(10);
-  Engine_EventRequestExit(work->touchedTrigger);
-  Engine_EventCloseScreen();
-  Engine_EventWaitForScreen();
-  Engine_EventEnd();
+  Engine_ScriptWait(10);
+  Engine_ScriptRequestWarp(work->touchedTrigger);
+  Engine_ScriptCloseScreen();
+  Engine_ScriptWaitForScreen();
+  Engine_ScriptEnd();
 }
 
 /// Walking north into one of the doorways of Altin's village that lead into
@@ -668,21 +675,21 @@ static void Village_WalkThroughDoorway(void) {
   struct EventWork *work;
 
   work = gEventWork;
-  Engine_EventStart();
-  Object_GetById(ACTOR_PARTY_LEADER)->motionFlags = 0;
-  Event_PlayCue(SE_MAP_EXIT);
-  Actor_CenterAndWalk(ACTOR_PARTY_LEADER, 2, -16);
-  Engine_EventRequestExit(work->touchedTrigger);
-  Engine_EventCloseScreen();
-  Engine_EventWaitForScreen();
-  Engine_EventEnd();
+  Engine_ScriptStart();
+  ObjectEvent_GetById(LOCALID_PARTY_LEADER)->motionFlags = 0;
+  Script_PlayCue(SE_MAP_EXIT);
+  ObjectEvent_CenterAndWalk(LOCALID_PARTY_LEADER, 2, -16);
+  Engine_ScriptRequestWarp(work->touchedTrigger);
+  Engine_ScriptCloseScreen();
+  Engine_ScriptWaitForScreen();
+  Engine_ScriptEnd();
 }
 
 /// Update callback of the hopping water beast in Altin's village: once a
 /// second it leaps up, falls back with a splash that shakes the screen
 /// briefly, and stands while on the ground.
 static void Beast_Hop(union FieldObject *fieldObject) {
-  struct FieldActor *beast = &fieldObject->actor;
+  struct ObjectEvent *beast = &fieldObject->objectEvent;
   s16 *shakeFrames = (s16 *)&beast->work;
 
   // While this hook owns the beast, timer is its hop phase, work counts down
@@ -690,17 +697,17 @@ static void Beast_Hop(union FieldObject *fieldObject) {
   // Read work through its corresponding signed type for the countdown test.
   if (*shakeFrames != 0) {
     if (--*shakeFrames == 1)
-      Map_SetShake(-1, -1, 0xe666);
+      MapGrid_SetShake(-1, -1, 0xe666);
   }
   if (beast->velocityY == 0) {
-    Object_SetMode(beast, 1);
+    ObjectEvent_SetMode(beast, 1);
     beast->y.fixed += -0x18000;
     if (beast->y.fixed < beast->terrainHeight) {
       if (fieldObject->effect.countdown != 0) {
-        Event_PlayCue(SE_SPLASH);
+        Script_PlayCue(SE_SPLASH);
         fieldObject->effect.countdown = 0;
         beast->work = 4;
-        Map_SetShake(0, 0x10000, 0x10000);
+        MapGrid_SetShake(0, 0x10000, 0x10000);
       }
       beast->y.fixed = beast->terrainHeight;
     }
@@ -709,9 +716,9 @@ static void Beast_Hop(union FieldObject *fieldObject) {
     beast->paused = 0;
   }
   if (beast->timer == 0) {
-    Event_PlayCue(SE_JUMP);
+    Script_PlayCue(SE_JUMP);
     fieldObject->effect.countdown = 1;
-    Object_SetMode(beast, 2);
+    ObjectEvent_SetMode(beast, 2);
     beast->velocityY = 0x30000;
   }
   if (++beast->timer == WATER_BEAST_HOP_PERIOD)
@@ -720,29 +727,29 @@ static void Beast_Hop(union FieldObject *fieldObject) {
 
 /// The water beast hops away across the flood and dives in with a splash.
 static void Beast_HopAway(void) {
-  struct FieldActor *beast;
+  struct ObjectEvent *beast;
 
-  beast = Object_GetById(ACTOR_WATER_BEAST);
+  beast = ObjectEvent_GetById(LOCALID_WATER_BEAST);
   beast->timer = 0;
   beast->work = 0;
   beast->gravity = 0x6666;
   beast->update = Beast_Hop;
-  Actor_SetSpeed(ACTOR_WATER_BEAST, 0x13333, 0x9999);
-  Actor_MoveToAndWait(ACTOR_WATER_BEAST, 28, 460);
-  Actor_MoveToAndWait(ACTOR_WATER_BEAST, 24, 448);
-  Event_PlayCue(SE_SPLASH);
-  Engine_ActorDestroy(ACTOR_WATER_BEAST);
-  Map_SetShake(0, 0x10000, 0x10000);
-  Engine_EventWait(4);
-  Map_SetShake(-1, -1, 0xe666);
-  Engine_EventWait(40);
-  Engine_ActorSetAnimation(ACTOR_WATER_BEAST, ANIMATION_STAND);
+  ObjectEvent_SetSpeed(LOCALID_WATER_BEAST, 0x13333, 0x9999);
+  ObjectEvent_MoveToAndWait(LOCALID_WATER_BEAST, 28, 460);
+  ObjectEvent_MoveToAndWait(LOCALID_WATER_BEAST, 24, 448);
+  Script_PlayCue(SE_SPLASH);
+  Engine_ObjectEventDestroy(LOCALID_WATER_BEAST);
+  MapGrid_SetShake(0, 0x10000, 0x10000);
+  Engine_ScriptWait(4);
+  MapGrid_SetShake(-1, -1, 0xe666);
+  Engine_ScriptWait(40);
+  Engine_ObjectEventSetAnimation(LOCALID_WATER_BEAST, ANIMATION_STAND);
 }
 
 /// After Move: remembers whether the pillar now stands in map column 22, the
 /// spot it is pushed to.
 static void Village_CheckPillarMoved(void) {
-  struct FieldActor *pillar = Object_GetById(ACTOR_STONE_STATUE);
+  struct ObjectEvent *pillar = ObjectEvent_GetById(LOCALID_STONE_STATUE);
 
   if ((pillar->x.fixed >> 20) == 22) {
     Engine_GameFlagSet(FLAG_ALTIN_PILLAR_MOVED);
@@ -753,8 +760,8 @@ static void Village_CheckPillarMoved(void) {
 
 /// Sets up the scene being entered, at the village's water level. It works out
 /// the water level from the mine's drain flags first. Returns 0.
-s32 Scene_Initialize(void) {
-  s16 scene;
+s32 Map_Initialize(void) {
+  s16 mapId;
 
   if (Engine_GameFlagIsSet(FLAG_ALTIN_MINE_FIRST_DRAIN) != 0) {
     Engine_GameFlagSet(FLAG_WATER_DROPPED_ONCE);
@@ -770,10 +777,10 @@ s32 Scene_Initialize(void) {
     Engine_GameFlagSet(FLAG_WATER_DRAINED);
   }
 
-  scene = gGameState.scene;
-  if (scene == SCENE_ALTIN_VILLAGE) {
+  mapId = gGameState.mapId;
+  if (mapId == MAP_ALTIN_VILLAGE) {
     Village_ApplyWaterLevel();
-  } else if (scene == SCENE_ALTIN_HOUSES) {
+  } else if (mapId == MAP_ALTIN_HOUSES) {
     Houses_PlaceSheltering();
   }
 
@@ -785,70 +792,78 @@ s32 Scene_Initialize(void) {
 /// merchants present at that level, the water beast with its spray while it
 /// remains, and the pushed pillar. Then redraws the map around the leader.
 static void Village_ApplyWaterLevel(void) {
-  struct FieldActor *leader;
+  struct ObjectEvent *leader;
 
-  leader = Object_GetById(ACTOR_PARTY_LEADER);
+  leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   // Select the water-level map and remove villagers whose areas are flooded.
   if (GameFlag_IsSet(FLAG_WATER_DRAINED) != 0) {
-    Map_CopyCellsTo(64, 32, 0, 32, 32, 32);
-    Map_CopyCellAttributes(64, 32, 32, 32, 0, 0);
-    Engine_ActorDestroy(ACTOR_FLOODED_ARMOR_MERCHANT);
-    Engine_ActorDestroy(ACTOR_FLOODED_ITEM_MERCHANT);
+    MapGrid_CopyCellsTo(64, 32, 0, 32, 32, 32);
+    MapGrid_CopyCellAttributes(64, 32, 32, 32, 0, 0);
+    Engine_ObjectEventDestroy(LOCALID_FLOODED_ARMOR_MERCHANT);
+    Engine_ObjectEventDestroy(LOCALID_FLOODED_ITEM_MERCHANT);
   } else if (GameFlag_IsSet(FLAG_WATER_DROPPED_TWICE) != 0) {
-    Map_CopyCellsTo(64, 0, 0, 32, 32, 32);
-    Map_CopyCellAttributes(64, 0, 32, 32, 0, 0);
-    Engine_ActorDestroy(ACTOR_OLD_MAN_ROCK_FLUSHED_OUT);
-    Engine_ActorDestroy(ACTOR_FLOODED_ARMOR_MERCHANT);
-    Engine_ActorDestroy(ACTOR_FLOODED_ITEM_MERCHANT);
+    MapGrid_CopyCellsTo(64, 0, 0, 32, 32, 32);
+    MapGrid_CopyCellAttributes(64, 0, 32, 32, 0, 0);
+    Engine_ObjectEventDestroy(LOCALID_OLD_MAN_ROCK_FLUSHED_OUT);
+    Engine_ObjectEventDestroy(LOCALID_FLOODED_ARMOR_MERCHANT);
+    Engine_ObjectEventDestroy(LOCALID_FLOODED_ITEM_MERCHANT);
   } else if (GameFlag_IsSet(FLAG_WATER_DROPPED_ONCE) != 0) {
-    Map_CopyCellsTo(0, 64, 0, 32, 32, 32);
-    Map_CopyCellAttributes(0, 64, 32, 32, 0, 0);
-    Engine_ActorDestroy(ACTOR_STRONG_MAN_GUARDIAN_STATUES);
-    Engine_ActorDestroy(ACTOR_OLD_MAN_ROCK_FLUSHED_OUT);
-    Engine_ActorDestroy(ACTOR_FLOODED_ITEM_MERCHANT);
+    MapGrid_CopyCellsTo(0, 64, 0, 32, 32, 32);
+    MapGrid_CopyCellAttributes(0, 64, 32, 32, 0, 0);
+    Engine_ObjectEventDestroy(LOCALID_STRONG_MAN_GUARDIAN_STATUES);
+    Engine_ObjectEventDestroy(LOCALID_OLD_MAN_ROCK_FLUSHED_OUT);
+    Engine_ObjectEventDestroy(LOCALID_FLOODED_ITEM_MERCHANT);
   } else {
-    Map_CopyCellAttributes(0, 32, 32, 32, 0, 0);
-    Engine_ActorDestroy(ACTOR_MAN_WATERS_SUBSIDED);
-    Engine_ActorDestroy(ACTOR_STRONG_MAN_GUARDIAN_STATUES);
-    Engine_ActorDestroy(ACTOR_OLD_MAN_ROCK_FLUSHED_OUT);
+    MapGrid_CopyCellAttributes(0, 32, 32, 32, 0, 0);
+    Engine_ObjectEventDestroy(LOCALID_MAN_WATERS_SUBSIDED);
+    Engine_ObjectEventDestroy(LOCALID_STRONG_MAN_GUARDIAN_STATUES);
+    Engine_ObjectEventDestroy(LOCALID_OLD_MAN_ROCK_FLUSHED_OUT);
   }
   // Restore the remaining beast spitting water, with its sound (SE_170) and
   // its spray.
   if (GameFlag_IsSet(FLAG_ALTIN_WATER_BEAST_LEFT) != 0) {
-    Engine_ActorDestroy(ACTOR_WATER_BEAST);
+    Engine_ObjectEventDestroy(LOCALID_WATER_BEAST);
   } else {
     FieldEffect_SetQueuedSoundAndPlay(SE_170);
-    Actor_SetChildValue(ACTOR_WATER_BEAST, SPRITE_COLOR_RBG);
-    Engine_ActorSetAnimation(ACTOR_WATER_BEAST, WATER_BEAST_ANIMATION_SPIT);
-    FieldScheduler_AddCallback(Beast_SpawnSpray, TASK_PRIORITY_SCENE);
+    ObjectEvent_SetChildValue(LOCALID_WATER_BEAST, SPRITE_COLOR_RBG);
+    Engine_ObjectEventSetAnimation(LOCALID_WATER_BEAST,
+                                   WATER_BEAST_ANIMATION_SPIT);
+    FieldScheduler_AddCallback(Beast_SpawnSpray, TASK_PRIORITY_MAP);
   }
-  if (gGameState.entrance == ALTIN_FROM_SANCTUM) {
+  if (gGameState.warpDest == ALTIN_FROM_SANCTUM) {
     GameFlag_Clear(FLAG_SHOW_LOCATION_NAME);
   }
-  Map_CopyCellAttributes(0, 33, 4, 3, 20, 41);
+  MapGrid_CopyCellAttributes(0, 33, 4, 3, 20, 41);
   if (GameFlag_IsSet(FLAG_ALTIN_PILLAR_MOVED) != 0) {
-    Actor_SetPosition(ACTOR_STONE_STATUE, PIXELS(360), PIXELS(168));
+    ObjectEvent_SetPosition(LOCALID_STONE_STATUE, PIXELS(360), PIXELS(168));
   }
-  Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_STONE_STATUE), 0);
+  Engine_ObjectEventSetSpriteFlags(ObjectEvent_GetById(LOCALID_STONE_STATUE),
+                                   0);
   // Hide the three crates, which stay solid, and draw them under the actors.
-  Actor_SetChildValue(ACTOR_FIRST_CRATE, SPRITE_COLOR_HIDDEN);
-  Engine_ActorSetChildValue(ACTOR_SECOND_CRATE, SPRITE_COLOR_HIDDEN);
-  Actor_SetChildValue(ACTOR_THIRD_CRATE, SPRITE_COLOR_HIDDEN);
-  Object_GetById(ACTOR_FIRST_CRATE)->collisionFlags |= ACTOR_NOT_TARGETED;
-  Object_GetById(ACTOR_SECOND_CRATE)->collisionFlags |= ACTOR_NOT_TARGETED;
-  Object_GetById(ACTOR_THIRD_CRATE)->collisionFlags |= ACTOR_NOT_TARGETED;
-  Object_GetById(ACTOR_FIRST_CRATE)->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
-  Object_GetById(ACTOR_SECOND_CRATE)->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
-  Object_GetById(ACTOR_THIRD_CRATE)->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
-  Engine_ActorSetSpritePriority(ACTOR_FIRST_CRATE, 1);
-  Engine_ActorSetSpritePriority(ACTOR_SECOND_CRATE, 1);
-  Engine_ActorSetSpritePriority(ACTOR_THIRD_CRATE, 1);
+  ObjectEvent_SetChildValue(LOCALID_FIRST_CRATE, SPRITE_COLOR_HIDDEN);
+  Engine_ObjectEventSetChildValue(LOCALID_SECOND_CRATE, SPRITE_COLOR_HIDDEN);
+  ObjectEvent_SetChildValue(LOCALID_THIRD_CRATE, SPRITE_COLOR_HIDDEN);
+  ObjectEvent_GetById(LOCALID_FIRST_CRATE)->collisionFlags |=
+      OBJ_EVENT_NOT_TARGETED;
+  ObjectEvent_GetById(LOCALID_SECOND_CRATE)->collisionFlags |=
+      OBJ_EVENT_NOT_TARGETED;
+  ObjectEvent_GetById(LOCALID_THIRD_CRATE)->collisionFlags |=
+      OBJ_EVENT_NOT_TARGETED;
+  ObjectEvent_GetById(LOCALID_FIRST_CRATE)->priorityFlags |=
+      OBJ_EVENT_PRIORITY_UNDERFOOT;
+  ObjectEvent_GetById(LOCALID_SECOND_CRATE)->priorityFlags |=
+      OBJ_EVENT_PRIORITY_UNDERFOOT;
+  ObjectEvent_GetById(LOCALID_THIRD_CRATE)->priorityFlags |=
+      OBJ_EVENT_PRIORITY_UNDERFOOT;
+  Engine_ObjectEventSetSpritePriority(LOCALID_FIRST_CRATE, 1);
+  Engine_ObjectEventSetSpritePriority(LOCALID_SECOND_CRATE, 1);
+  Engine_ObjectEventSetSpritePriority(LOCALID_THIRD_CRATE, 1);
   // Redraw at the leader after the map and object state are ready.
   Engine_TaskWait(1);
-  Engine_EventStart();
+  Engine_ScriptStart();
   Camera_MoveTo(leader->x.fixed, leader->y.fixed, leader->z.fixed, 0);
-  Engine_MapRedraw();
-  Engine_EventEnd();
+  Engine_MapGridRedraw();
+  Engine_ScriptEnd();
   Engine_TaskWait(1);
 }
 
@@ -856,44 +871,48 @@ static void Village_ApplyWaterLevel(void) {
 /// sheltering in the inn's rooms, the weapon merchant waiting there until the
 /// water drains, and the shopkeepers kept from wandering.
 static void Houses_PlaceSheltering(void) {
-  struct FieldActor *actor;
+  struct ObjectEvent *objectEvent;
 
   if (GameFlag_IsSet(FLAG_WATER_DROPPED_ONCE) == 0) {
-    Actor_SetPosition(ACTOR_ROOM_ONE_GUEST, PIXELS(808), PIXELS(727));
-    Object_GetById(ACTOR_ROOM_ONE_GUEST)->facing = FACING_SOUTH - FACING_STEP;
-    Actor_SetPosition(ACTOR_ROOM_ONE_SECOND_GUEST, PIXELS(794), PIXELS(825));
+    ObjectEvent_SetPosition(LOCALID_ROOM_ONE_GUEST, PIXELS(808), PIXELS(727));
+    ObjectEvent_GetById(LOCALID_ROOM_ONE_GUEST)->facing =
+        FACING_SOUTH - FACING_STEP;
+    ObjectEvent_SetPosition(LOCALID_ROOM_ONE_SECOND_GUEST, PIXELS(794),
+                            PIXELS(825));
   }
   if (GameFlag_IsSet(FLAG_WATER_DROPPED_TWICE) == 0) {
-    Actor_SetPosition(ACTOR_ROOM_TWO_GUEST, PIXELS(560), PIXELS(710));
-    Object_GetById(ACTOR_ROOM_TWO_GUEST)->facing = FACING_EAST + FACING_STEP;
-    Actor_SetPosition(ACTOR_ROOM_TWO_SECOND_GUEST, PIXELS(576), PIXELS(710));
+    ObjectEvent_SetPosition(LOCALID_ROOM_TWO_GUEST, PIXELS(560), PIXELS(710));
+    ObjectEvent_GetById(LOCALID_ROOM_TWO_GUEST)->facing =
+        FACING_EAST + FACING_STEP;
+    ObjectEvent_SetPosition(LOCALID_ROOM_TWO_SECOND_GUEST, PIXELS(576),
+                            PIXELS(710));
   }
   if (GameFlag_IsSet(FLAG_WATER_DRAINED) == 0) {
-    Actor_SetPosition(ACTOR_WEAPON_MERCHANT, PIXELS(295), PIXELS(744));
-    Object_GetById(ACTOR_WEAPON_MERCHANT)->facing =
+    ObjectEvent_SetPosition(LOCALID_WEAPON_MERCHANT, PIXELS(295), PIXELS(744));
+    ObjectEvent_GetById(LOCALID_WEAPON_MERCHANT)->facing =
         FACING_NORTHWEST + FACING_STEP;
   } else {
-    actor = Object_GetById(ACTOR_WEAPON_MERCHANT);
-    actor->collisionFlags |= ACTOR_NEAR_TALK;
+    objectEvent = ObjectEvent_GetById(LOCALID_WEAPON_MERCHANT);
+    objectEvent->collisionFlags |= OBJ_EVENT_NEAR_TALK;
   }
-  actor = Object_GetById(ACTOR_ARMOR_MERCHANT);
-  if (actor != 0) {
-    actor->collisionFlags |= ACTOR_NEAR_TALK;
+  objectEvent = ObjectEvent_GetById(LOCALID_ARMOR_MERCHANT);
+  if (objectEvent != 0) {
+    objectEvent->collisionFlags |= OBJ_EVENT_NEAR_TALK;
   }
-  actor = Object_GetById(ACTOR_ITEM_MERCHANT);
-  if (actor != 0) {
-    actor->collisionFlags |= ACTOR_NEAR_TALK;
+  objectEvent = ObjectEvent_GetById(LOCALID_ITEM_MERCHANT);
+  if (objectEvent != 0) {
+    objectEvent->collisionFlags |= OBJ_EVENT_NEAR_TALK;
   }
 }
 
 /// Gives a new spray particle its look: SPRITE_DUST_PUFF standing still, drawn
 /// with its red and blue swapped so the dust is water, on sprite priority 1
 /// and at 0.3 scale. Spray_Drift turns some white as they fade.
-static void Spray_Initialize(struct FieldActor *spray) {
+static void Spray_Initialize(struct ObjectEvent *spray) {
   spray->motionFlags = 0;
   spray->sprite->image.priority = 1;
   ObjectGroup_SetChildValue(spray, SPRITE_COLOR_BGR);
-  Engine_ActorSetSpriteFlags(spray, 0);
+  Engine_ObjectEventSetSpriteFlags(spray, 0);
   spray->scaleX = WATER_SPRAY_START_SCALE;
   spray->scaleY = WATER_SPRAY_START_SCALE;
 }
@@ -902,7 +921,7 @@ static void Spray_Initialize(struct FieldActor *spray) {
 /// wobble, then curls upward and flattens as its movement timer runs down.
 /// The separate lifetime releases it after 20 updates.
 static void Spray_Drift(union FieldObject *fieldObject) {
-  struct FieldActor *spray = &fieldObject->actor;
+  struct ObjectEvent *spray = &fieldObject->objectEvent;
   spray->x.fixed += WATER_SPRAY_LATERAL_STEP(
       spray->timer, (s16)((s32)(((u32)Engine_RandomNext() * 2) >> 16) - 1));
   if (spray->timer <= 3) {
@@ -931,15 +950,15 @@ static void Spray_Drift(union FieldObject *fieldObject) {
 static void Beast_SpawnSpray(void) {
   union FieldObject *spray;
   if ((gFrameCount & 3) == 0) {
-    spray = ((union FieldObject *)Object_Create(SPRITE_DUST_PUFF, PIXELS(64), 0,
-                                                PIXELS(400)));
+    spray = ((union FieldObject *)ObjectEvent_Create(
+        SPRITE_DUST_PUFF, PIXELS(64), 0, PIXELS(400)));
     if (spray != 0) {
-      spray->actor.timer = WATER_SPRAY_LIFETIME;
-      spray->actor.work = 0;
+      spray->objectEvent.timer = WATER_SPRAY_LIFETIME;
+      spray->objectEvent.work = 0;
       spray->effect.countdown = WATER_SPRAY_LIFETIME;
-      Spray_Initialize(&spray->actor);
-      spray->actor.update = Spray_Drift;
-      Object_SetMode(&spray->actor, 1);
+      Spray_Initialize(&spray->objectEvent);
+      spray->objectEvent.update = Spray_Drift;
+      ObjectEvent_SetMode(&spray->objectEvent, 1);
     }
   }
 }
@@ -947,31 +966,33 @@ static void Beast_SpawnSpray(void) {
 /// Stepping near the water beast in Altin's village: the camera pans to it, it
 /// stops spitting, turns to the party, cries out and hops away into the flood.
 static void Village_ScareOffBeast(void) {
-  Engine_EventStart();
+  Engine_ScriptStart();
   Camera_SetSpeed(0x6666, 0xccc);
   Camera_MoveTo(PIXELS(63), -1, PIXELS(450), 1);
   Engine_CameraWaitForMove();
-  Engine_EventWait(30);
-  Engine_ActorSetAnimation(ACTOR_WATER_BEAST, ANIMATION_STAND);
+  Engine_ScriptWait(30);
+  Engine_ObjectEventSetAnimation(LOCALID_WATER_BEAST, ANIMATION_STAND);
   // The spitting stops: its sound and its spray end.
   FieldEffect_SetQueuedSoundAndPlay(-1);
   Engine_TaskRemoveCallback(Beast_SpawnSpray);
-  Engine_EventWait(20);
-  Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_WATER_BEAST, 0);
-  Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 0);
-  Actor_FaceDirection(ACTOR_WATER_BEAST, FACING_EAST, 20);
-  Actor_FaceDirection(ACTOR_WATER_BEAST, FACING_NORTH + FACING_STEP, 40);
-  Event_PlayCue(SE_147);
-  Engine_ActorRunRepeatedMotion(ACTOR_WATER_BEAST, 2);
-  Engine_EventWait(20);
-  Actor_FaceDirection(ACTOR_WATER_BEAST, FACING_NORTHWEST + FACING_STEP, 40);
+  Engine_ScriptWait(20);
+  ObjectEvent_FaceObjectEvent(LOCALID_PARTY_LEADER, LOCALID_WATER_BEAST, 0);
+  ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_SOUTH, 0);
+  ObjectEvent_FaceDirection(LOCALID_WATER_BEAST, FACING_EAST, 20);
+  ObjectEvent_FaceDirection(LOCALID_WATER_BEAST, FACING_NORTH + FACING_STEP,
+                            40);
+  Script_PlayCue(SE_147);
+  Engine_ObjectEventRunRepeatedMotion(LOCALID_WATER_BEAST, 2);
+  Engine_ScriptWait(20);
+  ObjectEvent_FaceDirection(LOCALID_WATER_BEAST, FACING_NORTHWEST + FACING_STEP,
+                            40);
   Beast_HopAway();
-  Engine_CameraFollowActor(ACTOR_PARTY_LEADER, 1);
+  Engine_CameraFollowObjectEvent(LOCALID_PARTY_LEADER, 1);
   Engine_CameraWaitForMove();
-  Engine_ActorSetAnimationAndWait(ACTOR_THIRSTY_OLD_WOMAN,
-                                  ANIMATION_SHAKE_HEAD);
+  Engine_ObjectEventSetAnimationAndWait(LOCALID_THIRSTY_OLD_WOMAN,
+                                        ANIMATION_SHAKE_HEAD);
   GameFlag_Set(FLAG_ALTIN_WATER_BEAST_LEFT);
-  Engine_EventEnd();
+  Engine_ScriptEnd();
 }
 
 /// The cook from Xian paces between his pots, nodding over each.
@@ -1009,12 +1030,12 @@ s32 gAltinHouses_CookScript[] = {
     SC_LOOP(SC_FOREVER, SC_TO(1)),
 };
 
-struct SceneEntrance gAltinOther_Entrances[] = {
+struct MapWarpDest gAltinOther_WarpDests[] = {
     {0, CONDITION_ALWAYS, 380, 0, 433, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {SCENE_TABLE_END},
+    {MAP_TABLE_END},
 };
 
-struct SceneEntrance gAltinVillage_Entrances[] = {
+struct MapWarpDest gAltinVillage_WarpDests[] = {
     {0, CONDITION_ALWAYS, 380, 0, 433, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {ALTIN_FROM_WORLD_MAP, CONDITION_ALWAYS, 488, 0, 184, FACING_WEST, 0, -1,
      -1, -1, -1, 0},
@@ -1042,10 +1063,10 @@ struct SceneEntrance gAltinVillage_Entrances[] = {
      FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {ALTIN_FROM_ALTIN_PEAK_SPRITZ, CONDITION_ALWAYS, 343, 0, 177, FACING_SOUTH,
      0, -1, -1, -1, -1, 0},
-    {SCENE_TABLE_END},
+    {MAP_TABLE_END},
 };
 
-struct SceneEntrance gAltinHouses_Entrances[] = {
+struct MapWarpDest gAltinHouses_WarpDests[] = {
     {0, CONDITION_ALWAYS, 200, 0, 200, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {ALTIN_INTERIORS_FROM_ALTIN_NORTHWEST, CONDITION_ALWAYS, 159, 0, 258,
      FACING_NORTH, 0, 25, 16, 255, 300, 0},
@@ -1065,331 +1086,336 @@ struct SceneEntrance gAltinHouses_Entrances[] = {
      FACING_SOUTH, 0, 16, 638, 432, 912, 0},
     {ALTIN_FROM_ALTIN_INTERIORS_WEST, CONDITION_ALWAYS, 690, 0, 732,
      FACING_SOUTH, 0, 480, 626, 896, 882, 0},
-    {SCENE_TABLE_END},
+    {MAP_TABLE_END},
 };
 
-u32 gAltin_Exits[] = {
-    SCENE_EXITS(Altin),
-    SCENE_EXIT(ALTIN_TO_WORLD_MAP, WorldMap, WORLD_MAP_FROM_ALTIN),
-    SCENE_EXIT(ALTIN_TO_ALTIN_INTERIORS_SOUTHWEST, AltinInteriors,
-               ALTIN_INTERIORS_FROM_ALTIN_SOUTHWEST),
-    SCENE_EXIT(ALTIN_TO_SANCTUM, Sanctum, SANCTUM_FROM_ALTIN),
-    SCENE_EXIT(ALTIN_TO_ALTIN_INTERIORS_NORTHWEST, AltinInteriors,
-               ALTIN_INTERIORS_FROM_ALTIN_NORTHWEST),
-    SCENE_EXIT(ALTIN_TO_ALTIN_INTERIORS_NORTH, AltinInteriors,
-               ALTIN_INTERIORS_FROM_ALTIN_NORTH),
-    SCENE_EXIT(ALTIN_TO_ALTIN_INTERIORS_NORTHEAST, AltinInteriors,
-               ALTIN_INTERIORS_FROM_ALTIN_NORTHEAST),
-    SCENE_EXIT(ALTIN_TO_ALTIN_INTERIORS_SOUTHEAST, AltinInteriors,
-               ALTIN_INTERIORS_FROM_ALTIN_SOUTHEAST),
-    SCENE_EXIT(ALTIN_TO_ALTIN_INTERIORS_EAST, AltinInteriors,
-               ALTIN_INTERIORS_FROM_ALTIN_EAST),
-    SCENE_EXIT(ALTIN_TO_ALTIN_INTERIORS_WEST, AltinInteriors,
-               ALTIN_INTERIORS_FROM_ALTIN_WEST),
-    SCENE_EXIT(ALTIN_TO_ALTIN_PEAK_FIRST_WATER_BEAST, AltinPeakFirstWaterBeast,
-               ALTIN_PEAK_FIRST_WATER_BEAST_FROM_ALTIN),
-    SCENE_EXIT(ALTIN_TO_ALTIN_PEAK_SOUTH_ENTRANCE, AltinPeakSouthEntrance,
-               ALTIN_PEAK_SOUTH_ENTRANCE_FROM_ALTIN),
-    SCENE_EXIT(ALTIN_TO_ALTIN_PEAK_JUNCTION, AltinPeakJunction,
-               ALTIN_PEAK_JUNCTION_FROM_ALTIN),
-    SCENE_EXIT(ALTIN_TO_ALTIN_PEAK_SPRITZ, AltinPeakSpritz,
-               ALTIN_PEAK_SPRITZ_FROM_ALTIN),
-    SCENE_EXITS(AltinInteriors),
-    SCENE_EXIT(ALTIN_INTERIORS_TO_ALTIN_NORTHWEST, Altin,
-               ALTIN_FROM_ALTIN_INTERIORS_NORTHWEST),
-    SCENE_EXIT(ALTIN_INTERIORS_TO_ALTIN_NORTH, Altin,
-               ALTIN_FROM_ALTIN_INTERIORS_NORTH),
-    SCENE_EXIT(ALTIN_INTERIORS_TO_ALTIN_NORTHEAST, Altin,
-               ALTIN_FROM_ALTIN_INTERIORS_NORTHEAST),
-    SCENE_EXIT(ALTIN_INTERIORS_TO_ALTIN_WEST, Altin,
-               ALTIN_FROM_ALTIN_INTERIORS_WEST),
-    SCENE_EXIT(ALTIN_INTERIORS_TO_ALTIN_SOUTHEAST, Altin,
-               ALTIN_FROM_ALTIN_INTERIORS_SOUTHEAST),
-    SCENE_EXIT(ALTIN_INTERIORS_TO_ALTIN_EAST, Altin,
-               ALTIN_FROM_ALTIN_INTERIORS_EAST),
-    SCENE_EXIT(ALTIN_INTERIORS_TO_ALTIN_SOUTHWEST, Altin,
-               ALTIN_FROM_ALTIN_INTERIORS_SOUTHWEST),
-    SCENE_EXIT(ALTIN_INTERIORS_INN_TO_INN_UPSTAIRS, AltinInteriors,
-               ALTIN_INTERIORS_INN_UPSTAIRS_FROM_INN),
-    SCENE_EXIT(ALTIN_INTERIORS_INN_UPSTAIRS_TO_INN, AltinInteriors,
-               ALTIN_INTERIORS_INN_FROM_INN_UPSTAIRS),
-    SCENE_EXITS_END,
+u32 gAltin_Warps[] = {
+    MAP_WARPS(Altin),
+    MAP_WARP(ALTIN_TO_WORLD_MAP, WorldMap, WORLD_MAP_FROM_ALTIN),
+    MAP_WARP(ALTIN_TO_ALTIN_INTERIORS_SOUTHWEST, AltinInteriors,
+             ALTIN_INTERIORS_FROM_ALTIN_SOUTHWEST),
+    MAP_WARP(ALTIN_TO_SANCTUM, Sanctum, SANCTUM_FROM_ALTIN),
+    MAP_WARP(ALTIN_TO_ALTIN_INTERIORS_NORTHWEST, AltinInteriors,
+             ALTIN_INTERIORS_FROM_ALTIN_NORTHWEST),
+    MAP_WARP(ALTIN_TO_ALTIN_INTERIORS_NORTH, AltinInteriors,
+             ALTIN_INTERIORS_FROM_ALTIN_NORTH),
+    MAP_WARP(ALTIN_TO_ALTIN_INTERIORS_NORTHEAST, AltinInteriors,
+             ALTIN_INTERIORS_FROM_ALTIN_NORTHEAST),
+    MAP_WARP(ALTIN_TO_ALTIN_INTERIORS_SOUTHEAST, AltinInteriors,
+             ALTIN_INTERIORS_FROM_ALTIN_SOUTHEAST),
+    MAP_WARP(ALTIN_TO_ALTIN_INTERIORS_EAST, AltinInteriors,
+             ALTIN_INTERIORS_FROM_ALTIN_EAST),
+    MAP_WARP(ALTIN_TO_ALTIN_INTERIORS_WEST, AltinInteriors,
+             ALTIN_INTERIORS_FROM_ALTIN_WEST),
+    MAP_WARP(ALTIN_TO_ALTIN_PEAK_FIRST_WATER_BEAST, AltinPeakFirstWaterBeast,
+             ALTIN_PEAK_FIRST_WATER_BEAST_FROM_ALTIN),
+    MAP_WARP(ALTIN_TO_ALTIN_PEAK_SOUTH_ENTRANCE, AltinPeakSouthEntrance,
+             ALTIN_PEAK_SOUTH_ENTRANCE_FROM_ALTIN),
+    MAP_WARP(ALTIN_TO_ALTIN_PEAK_JUNCTION, AltinPeakJunction,
+             ALTIN_PEAK_JUNCTION_FROM_ALTIN),
+    MAP_WARP(ALTIN_TO_ALTIN_PEAK_SPRITZ, AltinPeakSpritz,
+             ALTIN_PEAK_SPRITZ_FROM_ALTIN),
+    MAP_WARPS(AltinInteriors),
+    MAP_WARP(ALTIN_INTERIORS_TO_ALTIN_NORTHWEST, Altin,
+             ALTIN_FROM_ALTIN_INTERIORS_NORTHWEST),
+    MAP_WARP(ALTIN_INTERIORS_TO_ALTIN_NORTH, Altin,
+             ALTIN_FROM_ALTIN_INTERIORS_NORTH),
+    MAP_WARP(ALTIN_INTERIORS_TO_ALTIN_NORTHEAST, Altin,
+             ALTIN_FROM_ALTIN_INTERIORS_NORTHEAST),
+    MAP_WARP(ALTIN_INTERIORS_TO_ALTIN_WEST, Altin,
+             ALTIN_FROM_ALTIN_INTERIORS_WEST),
+    MAP_WARP(ALTIN_INTERIORS_TO_ALTIN_SOUTHEAST, Altin,
+             ALTIN_FROM_ALTIN_INTERIORS_SOUTHEAST),
+    MAP_WARP(ALTIN_INTERIORS_TO_ALTIN_EAST, Altin,
+             ALTIN_FROM_ALTIN_INTERIORS_EAST),
+    MAP_WARP(ALTIN_INTERIORS_TO_ALTIN_SOUTHWEST, Altin,
+             ALTIN_FROM_ALTIN_INTERIORS_SOUTHWEST),
+    MAP_WARP(ALTIN_INTERIORS_INN_TO_INN_UPSTAIRS, AltinInteriors,
+             ALTIN_INTERIORS_INN_UPSTAIRS_FROM_INN),
+    MAP_WARP(ALTIN_INTERIORS_INN_UPSTAIRS_TO_INN, AltinInteriors,
+             ALTIN_INTERIORS_INN_FROM_INN_UPSTAIRS),
+    MAP_WARPS_END,
 };
 
-struct ScenePlacement gAltinOther_Placements[] = {
-    {SCENE_TABLE_END},
+struct ObjectEventTemplate gAltinOther_ObjectEventTemplates[] = {
+    {MAP_TABLE_END},
 };
 
-struct ScenePlacement gAltinVillage_Placements[] = {
-    {SPRITE_BALD_MUSCULAR_MAN, CONDITION_ALWAYS, ACTOR_STAND, PIXELS(440), 0,
-     PIXELS(200), FACING_SOUTH + FACING_STEP, TALK_FACE_PARTY_AND_BACK, 0},
-    {SPRITE_STRONGMAN, CONDITION_ALWAYS, ACTOR_STAND, PIXELS(408), 0,
+struct ObjectEventTemplate gAltinVillage_ObjectEventTemplates[] = {
+    {SPRITE_BALD_MUSCULAR_MAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
+     PIXELS(440), 0, PIXELS(200), FACING_SOUTH + FACING_STEP,
+     TALK_FACE_PARTY_AND_BACK, 0},
+    {SPRITE_STRONGMAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, PIXELS(408), 0,
      PIXELS(216), FACING_SOUTH + FACING_STEP, TALK_FACE_PARTY, 0},
-    {SPRITE_WOMAN_WITH_FAIR_HAIR, CONDITION_ALWAYS, ACTOR_STAND, PIXELS(310), 0,
-     PIXELS(217), FACING_SOUTH + FACING_STEP, TALK_FACE_PARTY, 0},
-    {SPRITE_BURLY_MAN_WITH_GREY_HAIR, CONDITION_ALWAYS, ACTOR_WANDER,
+    {SPRITE_WOMAN_WITH_FAIR_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
+     PIXELS(310), 0, PIXELS(217), FACING_SOUTH + FACING_STEP, TALK_FACE_PARTY,
+     0},
+    {SPRITE_BURLY_MAN_WITH_GREY_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER,
      PIXELS(246), 0, PIXELS(186), FACING_SOUTH + FACING_STEP, TALK_FACE_PARTY,
      0},
-    {SPRITE_OLD_MAN_WITH_CANE, CONDITION_ALWAYS, ACTOR_WANDER_NEAR, PIXELS(58),
-     0, PIXELS(206), FACING_EAST + FACING_STEP, TALK_FACE_PARTY, 0},
-    {SPRITE_WOMAN_IN_GREEN_DRESS, CONDITION_ALWAYS, ACTOR_STAND, PIXELS(104), 0,
-     PIXELS(286), FACING_EAST + FACING_STEP, TALK_FACE_PARTY_AND_BACK, 0},
-    {SPRITE_OLD_WOMAN, CONDITION_ALWAYS, ACTOR_STAND, PIXELS(41), 0,
+    {SPRITE_OLD_MAN_WITH_CANE, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER_NEAR,
+     PIXELS(58), 0, PIXELS(206), FACING_EAST + FACING_STEP, TALK_FACE_PARTY, 0},
+    {SPRITE_WOMAN_IN_GREEN_DRESS, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
+     PIXELS(104), 0, PIXELS(286), FACING_EAST + FACING_STEP,
+     TALK_FACE_PARTY_AND_BACK, 0},
+    {SPRITE_OLD_WOMAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, PIXELS(41), 0,
      PIXELS(441), FACING_SOUTHEAST + FACING_STEP, TALK_FACE_PARTY_AND_BACK, 0},
-    {SPRITE_YOUNG_MAN_WITH_BROWN_HAIR, CONDITION_ALWAYS, ACTOR_STAND,
+    {SPRITE_YOUNG_MAN_WITH_BROWN_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
      PIXELS(176), 0, PIXELS(296), FACING_SOUTHEAST + FACING_STEP,
      TALK_FACE_PARTY, 0},
-    {SPRITE_BALD_MUSCULAR_MAN, CONDITION_ALWAYS, ACTOR_STAND, PIXELS(136), 0,
-     PIXELS(461), FACING_EAST + FACING_STEP, TALK_FACE_PARTY, 0},
-    {SPRITE_OLD_MAN_WITH_CANE, CONDITION_ALWAYS, ACTOR_WANDER, PIXELS(350), 0,
-     PIXELS(286), FACING_NORTH, TALK_FACE_PARTY, 0},
-    {SPRITE_WATER_BEAST, CONDITION_ALWAYS, ACTOR_STAND, PIXELS(60), 0,
+    {SPRITE_BALD_MUSCULAR_MAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
+     PIXELS(136), 0, PIXELS(461), FACING_EAST + FACING_STEP, TALK_FACE_PARTY,
+     0},
+    {SPRITE_OLD_MAN_WITH_CANE, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER,
+     PIXELS(350), 0, PIXELS(286), FACING_NORTH, TALK_FACE_PARTY, 0},
+    {SPRITE_WATER_BEAST, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, PIXELS(60), 0,
      PIXELS(474), FACING_SOUTHEAST, TALK_FACE_PARTY, 0},
-    {SPRITE_STONE_STATUE, CONDITION_ALWAYS, ACTOR_STAND, PIXELS(344), 0,
+    {SPRITE_STONE_STATUE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, PIXELS(344), 0,
      PIXELS(168), FACING_SOUTH, TALK_FACE_PARTY, 0},
-    {SPRITE_YOUNG_MAN_IN_GREEN, CONDITION_ALWAYS, ACTOR_STAND, PIXELS(88), 0,
-     PIXELS(397), FACING_EAST + FACING_STEP, TALK_FACE_PARTY, 0},
-    {SPRITE_WOMAN_WITH_PONYTAIL, CONDITION_ALWAYS, ACTOR_STAND, PIXELS(422), 0,
-     PIXELS(208), FACING_EAST + FACING_STEP, TALK_FACE_PARTY, 0},
-    {SPRITE_CRATE, CONDITION_ALWAYS, ACTOR_RESET_ACTION, PIXELS(452), 0,
+    {SPRITE_YOUNG_MAN_IN_GREEN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
+     PIXELS(88), 0, PIXELS(397), FACING_EAST + FACING_STEP, TALK_FACE_PARTY, 0},
+    {SPRITE_WOMAN_WITH_PONYTAIL, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
+     PIXELS(422), 0, PIXELS(208), FACING_EAST + FACING_STEP, TALK_FACE_PARTY,
+     0},
+    {SPRITE_CRATE, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION, PIXELS(452), 0,
      PIXELS(216), FACING_SOUTH, TALK_KEEP_FACING, 0},
-    {SPRITE_CRATE, CONDITION_ALWAYS, ACTOR_RESET_ACTION, PIXELS(332), 0,
+    {SPRITE_CRATE, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION, PIXELS(332), 0,
      PIXELS(360), FACING_SOUTH, TALK_KEEP_FACING,
-     PLACEMENT_SHARE_PREVIOUS_SPRITE},
-    {SPRITE_CRATE, CONDITION_ALWAYS, ACTOR_RESET_ACTION, PIXELS(332), 0,
+     OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE},
+    {SPRITE_CRATE, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION, PIXELS(332), 0,
      PIXELS(396), FACING_SOUTH, TALK_KEEP_FACING,
-     PLACEMENT_SHARE_PREVIOUS_SPRITE},
-    {SCENE_TABLE_END},
+     OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE},
+    {MAP_TABLE_END},
 };
 
 // clang-format off
-struct ScenePlacement gAltinHouses_Placements[] = {
-    {SPRITE_YOUNG_MAN_WITH_BROWN_HAIR, CONDITION_ALWAYS, ACTOR_STAND, PIXELS(104), 0, PIXELS(120), FACING_EAST + FACING_STEP,
+struct ObjectEventTemplate gAltinHouses_ObjectEventTemplates[] = {
+    {SPRITE_YOUNG_MAN_WITH_BROWN_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, PIXELS(104), 0, PIXELS(120), FACING_EAST + FACING_STEP,
         TALK_FACE_PARTY, 0},
-    {SPRITE_WOMAN_WITH_FAIR_HAIR, CONDITION_ALWAYS, ACTOR_STAND, PIXELS(105), 0, PIXELS(233), FACING_SOUTH + FACING_STEP,
+    {SPRITE_WOMAN_WITH_FAIR_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, PIXELS(105), 0, PIXELS(233), FACING_SOUTH + FACING_STEP,
         TALK_FACE_PARTY, 0},
-    {SPRITE_OLD_MAN_WITH_CANE, CONDITION_ALWAYS, ACTOR_STAND, PIXELS(456), 0, PIXELS(182), FACING_WEST + FACING_STEP, TALK_FACE_PARTY_THEN_WATCH,
+    {SPRITE_OLD_MAN_WITH_CANE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, PIXELS(456), 0, PIXELS(182), FACING_WEST + FACING_STEP, TALK_FACE_PARTY_THEN_WATCH,
         0},
-    {SPRITE_OLD_WOMAN, CONDITION_ALWAYS, ACTOR_STAND, PIXELS(376), 0, PIXELS(120),
+    {SPRITE_OLD_WOMAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, PIXELS(376), 0, PIXELS(120),
         FACING_SOUTHWEST + FACING_STEP, TALK_FACE_PARTY, 0},
-    {SPRITE_YOUNG_MAN_WITH_BROWN_HAIR, 0x0, ACTOR_STAND, PIXELS(690), 0, PIXELS(128), FACING_SOUTHWEST + FACING_STEP,
+    {SPRITE_YOUNG_MAN_WITH_BROWN_HAIR, 0x0, MOVEMENT_TYPE_STAND, PIXELS(690), 0, PIXELS(128), FACING_SOUTHWEST + FACING_STEP,
         TALK_FACE_PARTY_AND_BACK, 0},
-    {SPRITE_WOMAN_WITH_FAIR_HAIR, 0x0, ACTOR_STAND, PIXELS(669), 0, PIXELS(128), FACING_EAST + FACING_STEP,
+    {SPRITE_WOMAN_WITH_FAIR_HAIR, 0x0, MOVEMENT_TYPE_STAND, PIXELS(669), 0, PIXELS(128), FACING_EAST + FACING_STEP,
         TALK_FACE_PARTY_AND_BACK, 0},
-    {SPRITE_GIRL_WITH_PIGTAILS, 0x0, ACTOR_STAND, PIXELS(604), 0, PIXELS(145), FACING_SOUTHEAST + FACING_STEP, TALK_FACE_PARTY_THEN_WATCH, 0},
-    {SPRITE_BALD_MAN_IN_RED, CONDITION_ALWAYS, ACTOR_STAND, PIXELS(263), 0, PIXELS(436), FACING_SOUTH + FACING_STEP,
+    {SPRITE_GIRL_WITH_PIGTAILS, 0x0, MOVEMENT_TYPE_STAND, PIXELS(604), 0, PIXELS(145), FACING_SOUTHEAST + FACING_STEP, TALK_FACE_PARTY_THEN_WATCH, 0},
+    {SPRITE_BALD_MAN_IN_RED, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, PIXELS(263), 0, PIXELS(436), FACING_SOUTH + FACING_STEP,
         TALK_FACE_PARTY, 0},
-    {SPRITE_WOMAN_WITH_PONYTAIL, 0x0, ACTOR_STAND, PIXELS(520), 0, PIXELS(454), FACING_SOUTH + FACING_STEP,
+    {SPRITE_WOMAN_WITH_PONYTAIL, 0x0, MOVEMENT_TYPE_STAND, PIXELS(520), 0, PIXELS(454), FACING_SOUTH + FACING_STEP,
         TALK_FACE_PARTY, 0},
-    {SPRITE_YOUNG_MAN_IN_GREEN, 0x0, ACTOR_STAND, PIXELS(743), 0, PIXELS(454), FACING_SOUTHEAST + FACING_STEP,
+    {SPRITE_YOUNG_MAN_IN_GREEN, 0x0, MOVEMENT_TYPE_STAND, PIXELS(743), 0, PIXELS(454), FACING_SOUTHEAST + FACING_STEP,
         TALK_FACE_PARTY, 0},
-    {SPRITE_MAN_WITH_DARK_HAIR, 0x0, ACTOR_STAND, PIXELS(103), 0, PIXELS(744), FACING_SOUTHEAST + FACING_STEP,
+    {SPRITE_MAN_WITH_DARK_HAIR, 0x0, MOVEMENT_TYPE_STAND, PIXELS(103), 0, PIXELS(744), FACING_SOUTHEAST + FACING_STEP,
         TALK_FACE_PARTY, 0},
-    {SPRITE_WOMAN_IN_PINK_APRON, 0x0, ACTOR_WANDER_NEAR, PIXELS(228), 0, PIXELS(756), FACING_SOUTHWEST + FACING_STEP, TALK_FACE_PARTY, 0},
+    {SPRITE_WOMAN_IN_PINK_APRON, 0x0, MOVEMENT_TYPE_WANDER_NEAR, PIXELS(228), 0, PIXELS(756), FACING_SOUTHWEST + FACING_STEP, TALK_FACE_PARTY, 0},
     {SPRITE_COOK, 0x0, (s32)gAltinHouses_CookScript, PIXELS(350), 0, PIXELS(746),
         FACING_SOUTHWEST + FACING_STEP, TALK_FACE_PARTY, 0},
-    {SPRITE_YOUNG_MAN_WITH_BROWN_HAIR, 0x0, ACTOR_STAND, PIXELS(646), 0, PIXELS(734), FACING_SOUTHEAST + FACING_STEP,
+    {SPRITE_YOUNG_MAN_WITH_BROWN_HAIR, 0x0, MOVEMENT_TYPE_STAND, PIXELS(646), 0, PIXELS(734), FACING_SOUTHEAST + FACING_STEP,
         TALK_FACE_PARTY, 0},
-    {SCENE_TABLE_END},
+    {MAP_TABLE_END},
 };
 
-struct SceneEvent gAltinOther_Events[] = {
-    {SCENE_EVENTS_END},
+struct MapEvent gAltinOther_Events[] = {
+    {MAP_EVENTS_END},
 };
 
-struct SceneEvent gAltinVillage_Events[] = {
-    {TOUCH_FACING(FACING_NORTH), 10, CONDITION_ALWAYS, EVENT_SCRIPT(Village_WalkThroughDoorway)},
-    {TOUCH_FACING(FACING_NORTH), 11, CONDITION_ALWAYS, EVENT_SCRIPT(Village_WalkThroughDoorway)},
-    {TOUCH_FACING(FACING_NORTH), 12, CONDITION_ALWAYS, EVENT_SCRIPT(Village_WalkThroughDoorway)},
-    {EVENT_EXIT, 13, CONDITION_ALWAYS, ALTIN_TO_ALTIN_PEAK_SPRITZ},
-    {EVENT_EXIT, 1, CONDITION_ALWAYS, ALTIN_TO_WORLD_MAP},
-    {TOUCH_WALKING_INTO(FACING_NORTH), 2, CONDITION_ALWAYS,
+struct MapEvent gAltinVillage_Events[] = {
+    {COORD_EVENT_FACING(FACING_NORTH), 10, CONDITION_ALWAYS, EVENT_SCRIPT(Village_WalkThroughDoorway)},
+    {COORD_EVENT_FACING(FACING_NORTH), 11, CONDITION_ALWAYS, EVENT_SCRIPT(Village_WalkThroughDoorway)},
+    {COORD_EVENT_FACING(FACING_NORTH), 12, CONDITION_ALWAYS, EVENT_SCRIPT(Village_WalkThroughDoorway)},
+    {MAP_EVENT_WARP, 13, CONDITION_ALWAYS, ALTIN_TO_ALTIN_PEAK_SPRITZ},
+    {MAP_EVENT_WARP, 1, CONDITION_ALWAYS, ALTIN_TO_WORLD_MAP},
+    {COORD_EVENT_WALKING_INTO(FACING_NORTH), 2, CONDITION_ALWAYS,
         EVENT_SCRIPT(Village_EnterDoor)},
-    {TOUCH_WALKING_INTO(FACING_NORTH), 3, CONDITION_ALWAYS,
+    {COORD_EVENT_WALKING_INTO(FACING_NORTH), 3, CONDITION_ALWAYS,
         EVENT_SCRIPT(Village_EnterDoor)},
-    {TOUCH_WALKING_INTO(FACING_NORTH), 4, CONDITION_ALWAYS,
+    {COORD_EVENT_WALKING_INTO(FACING_NORTH), 4, CONDITION_ALWAYS,
         EVENT_SCRIPT(Village_EnterDoor)},
-    {TOUCH_WALKING_INTO(FACING_NORTH), 5, CONDITION_ALWAYS,
+    {COORD_EVENT_WALKING_INTO(FACING_NORTH), 5, CONDITION_ALWAYS,
         EVENT_SCRIPT(Village_EnterDoor)},
-    {TOUCH_WALKING_INTO(FACING_NORTH), 6, CONDITION_ALWAYS,
+    {COORD_EVENT_WALKING_INTO(FACING_NORTH), 6, CONDITION_ALWAYS,
         EVENT_SCRIPT(Village_EnterDoor)},
-    {TOUCH_WALKING_INTO(FACING_NORTH), 7, CONDITION_ALWAYS,
+    {COORD_EVENT_WALKING_INTO(FACING_NORTH), 7, CONDITION_ALWAYS,
         EVENT_SCRIPT(Village_EnterDoor)},
-    {TOUCH_WALKING_INTO(FACING_NORTH), 8, CONDITION_ALWAYS,
+    {COORD_EVENT_WALKING_INTO(FACING_NORTH), 8, CONDITION_ALWAYS,
         EVENT_SCRIPT(Village_EnterDoor)},
-    {TOUCH_WALKING_INTO(FACING_NORTH), 9, CONDITION_ALWAYS,
+    {COORD_EVENT_WALKING_INTO(FACING_NORTH), 9, CONDITION_ALWAYS,
         EVENT_SCRIPT(Village_EnterDoor)},
-    {EVENT_TALK, ACTOR_GREETING_STRONG_MAN, FLAG_HYDROS_STATUES_DEFEATED, EVENT_SCRIPT(Village_AskAboutFirstVisit)},
-    {EVENT_TALK, ACTOR_GREETING_STRONG_MAN, CONDITION_ALWAYS, MSGNO(MsgAltinThankYouSoMuchForDefeating)},
-    {EVENT_TALK, ACTOR_CURIOUS_STRONG_MAN, FLAG_HYDROS_STATUES_DEFEATED, MSGNO(MsgAltinHowCanThoseCreaturesSpitUp)},
-    {EVENT_TALK, ACTOR_CURIOUS_STRONG_MAN, CONDITION_ALWAYS, EVENT_SCRIPT(Village_AskAboutHydros)},
-    {EVENT_TALK, ACTOR_WOMAN_COATED_HOUSE, FLAG_HYDROS_STATUES_DEFEATED, MSGNO(MsgAltinHowHorribleMyHouseIsTotally)},
-    {EVENT_TALK, ACTOR_WOMAN_COATED_HOUSE, CONDITION_ALWAYS, MSGNO(MsgAltinOnceTheMineOpensAgainWell)},
-    {EVENT_TALK, ACTOR_MAN_SUBMERGED_MINE, FLAG_HYDROS_STATUES_DEFEATED, MSGNO(MsgAltinEvenTheMineIsSubmergedNo)},
-    {EVENT_TALK, ACTOR_MAN_SUBMERGED_MINE, CONDITION_ALWAYS, MSGNO(MsgAltinTheyAlreadyStartedMiningTheUpper)},
-    {EVENT_TALK, ACTOR_OLD_MAN_DESTROY_MONSTERS, FLAG_HYDROS_STATUES_DEFEATED, MSGNO(MsgAltinIfWeCouldJustDestroyThe)},
-    {EVENT_TALK, ACTOR_OLD_MAN_DESTROY_MONSTERS, CONDITION_ALWAYS, MSGNO(MsgAltinTheWaterDrainedOutOfThe)},
-    {EVENT_TALK, ACTOR_WOMAN_WATER_LUCK, FLAG_HYDROS_STATUES_DEFEATED, MSGNO(MsgAltinAltinAlwaysUsedToRunShort)},
-    {EVENT_TALK, ACTOR_WOMAN_WATER_LUCK, CONDITION_ALWAYS, MSGNO(MsgAltinThankGoodnessTheVillageIsFree)},
-    {EVENT_TALK, ACTOR_THIRSTY_OLD_WOMAN, CONDITION_ALWAYS, EVENT_SCRIPT(Village_TalkToThirstyOldWoman)},
-    {EVENT_TALK, ACTOR_MAN_WATERS_SUBSIDED, FLAG_HYDROS_STATUES_DEFEATED, MSGNO(MsgAltinTheWatersAroundHereHaveSubsided)},
-    {EVENT_TALK, ACTOR_MAN_WATERS_SUBSIDED, CONDITION_ALWAYS, MSGNO(MsgAltinTheVillageWentRightBackTo)},
-    {EVENT_TALK, ACTOR_STRONG_MAN_GUARDIAN_STATUES, FLAG_HYDROS_STATUES_DEFEATED, MSGNO(MsgAltinTheWaterBeastsLookedExactlyLike)},
-    {EVENT_TALK, ACTOR_STRONG_MAN_GUARDIAN_STATUES, CONDITION_ALWAYS, MSGNO(MsgAltinSoThoseHydrosCreaturesReallyWere)},
-    {EVENT_TALK, ACTOR_OLD_MAN_ROCK_FLUSHED_OUT, FLAG_HYDROS_STATUES_DEFEATED, MSGNO(MsgAltinTheWatersHaveFlushedOutTons)},
-    {EVENT_TALK, ACTOR_OLD_MAN_ROCK_FLUSHED_OUT, CONDITION_ALWAYS, EVENT_SCRIPT(Village_AskAboutRuins)},
-    {EVENT_TALK, ACTOR_FLOODED_ARMOR_MERCHANT, CONDITION_ALWAYS, EVENT_SCRIPT(Altin_TalkToArmorMerchant)},
-    {EVENT_TALK, ACTOR_FLOODED_ITEM_MERCHANT, CONDITION_ALWAYS, EVENT_SCRIPT(Altin_TalkToItemMerchant)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_GREETING_STRONG_MAN, FLAG_HYDROS_STATUES_DEFEATED, MSGNO(MsgAltinYouCameToAltinAtA)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_GREETING_STRONG_MAN, CONDITION_ALWAYS,
+    {MAP_EVENT_TALK, LOCALID_GREETING_STRONG_MAN, FLAG_HYDROS_STATUES_DEFEATED, EVENT_SCRIPT(Village_AskAboutFirstVisit)},
+    {MAP_EVENT_TALK, LOCALID_GREETING_STRONG_MAN, CONDITION_ALWAYS, MSGNO(MsgAltinThankYouSoMuchForDefeating)},
+    {MAP_EVENT_TALK, LOCALID_CURIOUS_STRONG_MAN, FLAG_HYDROS_STATUES_DEFEATED, MSGNO(MsgAltinHowCanThoseCreaturesSpitUp)},
+    {MAP_EVENT_TALK, LOCALID_CURIOUS_STRONG_MAN, CONDITION_ALWAYS, EVENT_SCRIPT(Village_AskAboutHydros)},
+    {MAP_EVENT_TALK, LOCALID_WOMAN_COATED_HOUSE, FLAG_HYDROS_STATUES_DEFEATED, MSGNO(MsgAltinHowHorribleMyHouseIsTotally)},
+    {MAP_EVENT_TALK, LOCALID_WOMAN_COATED_HOUSE, CONDITION_ALWAYS, MSGNO(MsgAltinOnceTheMineOpensAgainWell)},
+    {MAP_EVENT_TALK, LOCALID_MAN_SUBMERGED_MINE, FLAG_HYDROS_STATUES_DEFEATED, MSGNO(MsgAltinEvenTheMineIsSubmergedNo)},
+    {MAP_EVENT_TALK, LOCALID_MAN_SUBMERGED_MINE, CONDITION_ALWAYS, MSGNO(MsgAltinTheyAlreadyStartedMiningTheUpper)},
+    {MAP_EVENT_TALK, LOCALID_OLD_MAN_DESTROY_MONSTERS, FLAG_HYDROS_STATUES_DEFEATED, MSGNO(MsgAltinIfWeCouldJustDestroyThe)},
+    {MAP_EVENT_TALK, LOCALID_OLD_MAN_DESTROY_MONSTERS, CONDITION_ALWAYS, MSGNO(MsgAltinTheWaterDrainedOutOfThe)},
+    {MAP_EVENT_TALK, LOCALID_WOMAN_WATER_LUCK, FLAG_HYDROS_STATUES_DEFEATED, MSGNO(MsgAltinAltinAlwaysUsedToRunShort)},
+    {MAP_EVENT_TALK, LOCALID_WOMAN_WATER_LUCK, CONDITION_ALWAYS, MSGNO(MsgAltinThankGoodnessTheVillageIsFree)},
+    {MAP_EVENT_TALK, LOCALID_THIRSTY_OLD_WOMAN, CONDITION_ALWAYS, EVENT_SCRIPT(Village_TalkToThirstyOldWoman)},
+    {MAP_EVENT_TALK, LOCALID_MAN_WATERS_SUBSIDED, FLAG_HYDROS_STATUES_DEFEATED, MSGNO(MsgAltinTheWatersAroundHereHaveSubsided)},
+    {MAP_EVENT_TALK, LOCALID_MAN_WATERS_SUBSIDED, CONDITION_ALWAYS, MSGNO(MsgAltinTheVillageWentRightBackTo)},
+    {MAP_EVENT_TALK, LOCALID_STRONG_MAN_GUARDIAN_STATUES, FLAG_HYDROS_STATUES_DEFEATED, MSGNO(MsgAltinTheWaterBeastsLookedExactlyLike)},
+    {MAP_EVENT_TALK, LOCALID_STRONG_MAN_GUARDIAN_STATUES, CONDITION_ALWAYS, MSGNO(MsgAltinSoThoseHydrosCreaturesReallyWere)},
+    {MAP_EVENT_TALK, LOCALID_OLD_MAN_ROCK_FLUSHED_OUT, FLAG_HYDROS_STATUES_DEFEATED, MSGNO(MsgAltinTheWatersHaveFlushedOutTons)},
+    {MAP_EVENT_TALK, LOCALID_OLD_MAN_ROCK_FLUSHED_OUT, CONDITION_ALWAYS, EVENT_SCRIPT(Village_AskAboutRuins)},
+    {MAP_EVENT_TALK, LOCALID_FLOODED_ARMOR_MERCHANT, CONDITION_ALWAYS, EVENT_SCRIPT(Altin_TalkToArmorMerchant)},
+    {MAP_EVENT_TALK, LOCALID_FLOODED_ITEM_MERCHANT, CONDITION_ALWAYS, EVENT_SCRIPT(Altin_TalkToItemMerchant)},
+    {PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_GREETING_STRONG_MAN, FLAG_HYDROS_STATUES_DEFEATED, MSGNO(MsgAltinYouCameToAltinAtA)},
+    {PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_GREETING_STRONG_MAN, CONDITION_ALWAYS,
         MSGNO(MsgAltinWeCanGoBackToWork)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_CURIOUS_STRONG_MAN, FLAG_HYDROS_STATUES_DEFEATED,
+    {PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_CURIOUS_STRONG_MAN, FLAG_HYDROS_STATUES_DEFEATED,
         MSGNO(MsgAltinItsAlmostLikeTheyreTurningThe)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_CURIOUS_STRONG_MAN, CONDITION_ALWAYS,
+    {PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_CURIOUS_STRONG_MAN, CONDITION_ALWAYS,
         MSGNO(MsgAltinIWasAfraidMoreWaterWould)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WOMAN_COATED_HOUSE, FLAG_HYDROS_STATUES_DEFEATED, MSGNO(MsgAltinImGladISavedMyVery)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WOMAN_COATED_HOUSE, CONDITION_ALWAYS,
+    {PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_WOMAN_COATED_HOUSE, FLAG_HYDROS_STATUES_DEFEATED, MSGNO(MsgAltinImGladISavedMyVery)},
+    {PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_WOMAN_COATED_HOUSE, CONDITION_ALWAYS,
         MSGNO(MsgAltinIHopeAltinMineWillThrive)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MAN_SUBMERGED_MINE, FLAG_HYDROS_STATUES_DEFEATED,
+    {PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_MAN_SUBMERGED_MINE, FLAG_HYDROS_STATUES_DEFEATED,
         MSGNO(MsgAltinEvenTheToughestOfMinersCant)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MAN_SUBMERGED_MINE, CONDITION_ALWAYS,
+    {PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_MAN_SUBMERGED_MINE, CONDITION_ALWAYS,
         MSGNO(MsgAltinTheWaterSeepedIntoTheMine)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_OLD_MAN_DESTROY_MONSTERS, FLAG_HYDROS_STATUES_DEFEATED,
+    {PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_OLD_MAN_DESTROY_MONSTERS, FLAG_HYDROS_STATUES_DEFEATED,
         MSGNO(MsgAltinIfTheWaterBeastsContinueTo)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_OLD_MAN_DESTROY_MONSTERS, CONDITION_ALWAYS,
+    {PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_OLD_MAN_DESTROY_MONSTERS, CONDITION_ALWAYS,
         MSGNO(MsgAltinItsSoHumidInsideThatCave)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WOMAN_WATER_LUCK, FLAG_HYDROS_STATUES_DEFEATED, MSGNO(MsgAltinWaterIsNiceButNotWhen)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WOMAN_WATER_LUCK, CONDITION_ALWAYS,
+    {PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_WOMAN_WATER_LUCK, FLAG_HYDROS_STATUES_DEFEATED, MSGNO(MsgAltinWaterIsNiceButNotWhen)},
+    {PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_WOMAN_WATER_LUCK, CONDITION_ALWAYS,
         MSGNO(MsgAltinThatStrangeChamberInTheMines)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_THIRSTY_OLD_WOMAN, FLAG_HYDROS_STATUES_DEFEATED,
+    {PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_THIRSTY_OLD_WOMAN, FLAG_HYDROS_STATUES_DEFEATED,
         MSGNO(MsgAltinUghTheMonstersSpewedOutAll)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_THIRSTY_OLD_WOMAN, CONDITION_ALWAYS,
+    {PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_THIRSTY_OLD_WOMAN, CONDITION_ALWAYS,
         MSGNO(MsgAltinYouFoughtPrettyWellDespiteAll)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MAN_WATERS_SUBSIDED, FLAG_HYDROS_STATUES_DEFEATED, MSGNO(MsgAltinAsTheMonstersGoAwayThe)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MAN_WATERS_SUBSIDED, CONDITION_ALWAYS,
+    {PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_MAN_WATERS_SUBSIDED, FLAG_HYDROS_STATUES_DEFEATED, MSGNO(MsgAltinAsTheMonstersGoAwayThe)},
+    {PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_MAN_WATERS_SUBSIDED, CONDITION_ALWAYS,
         MSGNO(MsgAltinThatMineIsFullOfHoles)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_STRONG_MAN_GUARDIAN_STATUES, FLAG_HYDROS_STATUES_DEFEATED, MSGNO(MsgAltinComeToThinkOfItIt)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_STRONG_MAN_GUARDIAN_STATUES, CONDITION_ALWAYS,
+    {PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_STRONG_MAN_GUARDIAN_STATUES, FLAG_HYDROS_STATUES_DEFEATED, MSGNO(MsgAltinComeToThinkOfItIt)},
+    {PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_STRONG_MAN_GUARDIAN_STATUES, CONDITION_ALWAYS,
         MSGNO(MsgAltinTheOldGuardianStatuesAlwaysCreeped)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_OLD_MAN_ROCK_FLUSHED_OUT, FLAG_HYDROS_STATUES_DEFEATED,
+    {PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_OLD_MAN_ROCK_FLUSHED_OUT, FLAG_HYDROS_STATUES_DEFEATED,
         MSGNO(MsgAltinItllBeBetterThanDiggingUp)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_OLD_MAN_ROCK_FLUSHED_OUT, CONDITION_ALWAYS,
+    {PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_OLD_MAN_ROCK_FLUSHED_OUT, CONDITION_ALWAYS,
         MSGNO(MsgAltinIUsedToFindAllSorts)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_FLOODED_ARMOR_MERCHANT, CONDITION_ALWAYS,
+    {PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_FLOODED_ARMOR_MERCHANT, CONDITION_ALWAYS,
         MSGNO(MsgAltinAllMyArmorInventoryIsRusting)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_FLOODED_ITEM_MERCHANT, CONDITION_ALWAYS,
+    {PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_FLOODED_ITEM_MERCHANT, CONDITION_ALWAYS,
         MSGNO(MsgAltinIfMyGoodsAreWetIll)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_STONE_STATUE, CONDITION_ALWAYS, EVENT_SCRIPT(Village_CheckPillarMoved)},
-    {EVENT_TOUCH, TRIGGER_NEAR_BEAST, FLAG_ALTIN_WATER_BEAST_LEFT, EVENT_SCRIPT(Village_ScareOffBeast)},
-    {SCENE_EVENTS_END},
+    {PSYNERGY_ON_OBJ_EVENT(ABILITY_MOVE), LOCALID_STONE_STATUE, CONDITION_ALWAYS, EVENT_SCRIPT(Village_CheckPillarMoved)},
+    {MAP_EVENT_COORD, TRIGGER_NEAR_BEAST, FLAG_ALTIN_WATER_BEAST_LEFT, EVENT_SCRIPT(Village_ScareOffBeast)},
+    {MAP_EVENTS_END},
 };
 
-struct SceneEvent gAltinHouses_Events[] = {
-    {EVENT_EXIT, 1, CONDITION_ALWAYS, ALTIN_INTERIORS_TO_ALTIN_NORTHWEST},
-    {EVENT_EXIT, 2, CONDITION_ALWAYS, ALTIN_INTERIORS_TO_ALTIN_NORTH},
-    {EVENT_EXIT, 3, CONDITION_ALWAYS, ALTIN_INTERIORS_TO_ALTIN_NORTHEAST},
-    {EVENT_EXIT, 4, CONDITION_ALWAYS, ALTIN_INTERIORS_TO_ALTIN_WEST},
-    {EVENT_EXIT, 5, CONDITION_ALWAYS, ALTIN_INTERIORS_TO_ALTIN_SOUTHEAST},
-    {EVENT_EXIT, 6, CONDITION_ALWAYS, ALTIN_INTERIORS_TO_ALTIN_EAST},
-    {EVENT_EXIT, 7, CONDITION_ALWAYS, ALTIN_INTERIORS_TO_ALTIN_SOUTHWEST},
-    {EVENT_EXIT, 8, CONDITION_ALWAYS, ALTIN_INTERIORS_INN_TO_INN_UPSTAIRS},
-    {EVENT_EXIT, 9, CONDITION_ALWAYS, ALTIN_INTERIORS_INN_UPSTAIRS_TO_INN},
-    {EVENT_TALK, ACTOR_ROOM_ONE_GUEST, FLAG_WATER_DROPPED_ONCE, MSGNO(MsgAltinNoMatterWhatHappensIdNever)},
-    {EVENT_TALK, ACTOR_ROOM_ONE_GUEST, FLAG_HYDROS_STATUES_DEFEATED, MSGNO(MsgAltinOhNoTheWholeHouseIs)},
-    {EVENT_TALK, ACTOR_ROOM_ONE_GUEST, CONDITION_ALWAYS, MSGNO(MsgAltinIHearThatSilkRoadIs)},
-    {EVENT_TALK, ACTOR_ROOM_ONE_SECOND_GUEST, FLAG_WATER_DROPPED_ONCE, MSGNO(MsgAltinOfCourseOurHouseWillBe)},
-    {EVENT_TALK, ACTOR_ROOM_ONE_SECOND_GUEST, FLAG_HYDROS_STATUES_DEFEATED, MSGNO(MsgAltinIfTheMonsterThatDidThis)},
-    {EVENT_TALK, ACTOR_ROOM_ONE_SECOND_GUEST, CONDITION_ALWAYS, EVENT_SCRIPT(Houses_AskAboutXianGirl)},
-    {EVENT_TALK, ACTOR_ROOM_TWO_GUEST, FLAG_WATER_DROPPED_TWICE, MSGNO(MsgAltinNotManyPeopleComeUpSilk)},
-    {EVENT_TALK, ACTOR_ROOM_TWO_GUEST, FLAG_HYDROS_STATUES_DEFEATED, EVENT_SCRIPT(Houses_AskAboutWayWest)},
-    {EVENT_TALK, ACTOR_ROOM_TWO_GUEST, CONDITION_ALWAYS, MSGNO(MsgAltinAncientRuinsAndTreasureDefinitelyGo)},
-    {EVENT_TALK, ACTOR_ROOM_TWO_SECOND_GUEST, FLAG_WATER_DROPPED_TWICE, MSGNO(MsgAltinItsBeenALongTimeSince)},
-    {EVENT_TALK, ACTOR_ROOM_TWO_SECOND_GUEST, FLAG_HYDROS_STATUES_DEFEATED, MSGNO(MsgAltinDontBeTooHarshOnThose)},
-    {EVENT_TALK, ACTOR_ROOM_TWO_SECOND_GUEST, CONDITION_ALWAYS, MSGNO(MsgAltinIfOnlyTheyHadLeftA)},
-    {EVENT_TALK, ACTOR_MAN_BACK_IN_HIS_HOMETOWN, FLAG_HYDROS_STATUES_DEFEATED, MSGNO(MsgAltinIDidntWantToLeaveMy)},
-    {EVENT_TALK, ACTOR_MAN_BACK_IN_HIS_HOMETOWN, CONDITION_ALWAYS, MSGNO(MsgAltinReallyAncientRuinsAtTheBottom)},
-    {EVENT_TALK, ACTOR_WOMAN_NO_PLACE_LIKE_HOME, FLAG_HYDROS_STATUES_DEFEATED, MSGNO(MsgAltinIHeardSomeoneKilledTheWater)},
-    {EVENT_TALK, ACTOR_WOMAN_NO_PLACE_LIKE_HOME, CONDITION_ALWAYS, MSGNO(MsgAltinThereProbablyIsntMuchTreasureIn)},
-    {EVENT_TALK, ACTOR_KISSING_GIRL, FLAG_HYDROS_STATUES_DEFEATED, EVENT_SCRIPT(Houses_AskAboutMonsters)},
-    {EVENT_TALK, ACTOR_KISSING_GIRL, CONDITION_ALWAYS, MSGNO(MsgAltinSomethingsWrongWithMomAndPop)},
-    {EVENT_TALK, ACTOR_WEAPON_MERCHANT, CONDITION_ALWAYS, EVENT_SCRIPT(Houses_TalkToWeaponMerchant)},
-    {EVENT_TALK, ACTOR_ARMOR_MERCHANT, CONDITION_ALWAYS, EVENT_SCRIPT(Altin_TalkToArmorMerchant)},
-    {EVENT_TALK, ACTOR_ITEM_MERCHANT, CONDITION_ALWAYS, EVENT_SCRIPT(Altin_TalkToItemMerchant)},
-    {EVENT_TALK, ACTOR_INNKEEPER, CONDITION_ALWAYS, EVENT_SCRIPT(Houses_TalkToInnkeeper)},
-    {EVENT_TALK, ACTOR_WOMAN_FORMER_GLORY, FLAG_HYDROS_STATUES_DEFEATED, MSGNO(MsgAltinIdGiveAnythingForSomeoneTo)},
-    {EVENT_TALK, ACTOR_WOMAN_FORMER_GLORY, CONDITION_ALWAYS, MSGNO(MsgAltinThereIsAnEndlessDesertWest)},
-    {EVENT_TALK, ACTOR_COOK, FLAG_HYDROS_STATUES_DEFEATED, MSGNO(MsgAltinICameFromXianICook)},
-    {EVENT_TALK, ACTOR_COOK, CONDITION_ALWAYS, MSGNO(MsgAltinWestOfTheMountainsIsVery)},
-    {EVENT_TALK, ACTOR_MAN_WAITING_TO_GO_HOME, FLAG_WATER_DROPPED_ONCE, MSGNO(MsgAltinNoneOfUsCanGoHome)},
-    {EVENT_TALK, ACTOR_MAN_WAITING_TO_GO_HOME, FLAG_WATER_DROPPED_TWICE, MSGNO(MsgAltinTheGuestsInRoomOneMoved)},
-    {EVENT_TALK, ACTOR_MAN_WAITING_TO_GO_HOME, FLAG_HYDROS_STATUES_DEFEATED, MSGNO(MsgAltinTheGuestsInRoomTwoAlso)},
-    {EVENT_TALK, ACTOR_MAN_WAITING_TO_GO_HOME, CONDITION_ALWAYS, EVENT_SCRIPT(Houses_AskAboutMineBeasts)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_ROOM_ONE_GUEST, FLAG_WATER_DROPPED_ONCE,
+struct MapEvent gAltinHouses_Events[] = {
+    {MAP_EVENT_WARP, 1, CONDITION_ALWAYS, ALTIN_INTERIORS_TO_ALTIN_NORTHWEST},
+    {MAP_EVENT_WARP, 2, CONDITION_ALWAYS, ALTIN_INTERIORS_TO_ALTIN_NORTH},
+    {MAP_EVENT_WARP, 3, CONDITION_ALWAYS, ALTIN_INTERIORS_TO_ALTIN_NORTHEAST},
+    {MAP_EVENT_WARP, 4, CONDITION_ALWAYS, ALTIN_INTERIORS_TO_ALTIN_WEST},
+    {MAP_EVENT_WARP, 5, CONDITION_ALWAYS, ALTIN_INTERIORS_TO_ALTIN_SOUTHEAST},
+    {MAP_EVENT_WARP, 6, CONDITION_ALWAYS, ALTIN_INTERIORS_TO_ALTIN_EAST},
+    {MAP_EVENT_WARP, 7, CONDITION_ALWAYS, ALTIN_INTERIORS_TO_ALTIN_SOUTHWEST},
+    {MAP_EVENT_WARP, 8, CONDITION_ALWAYS, ALTIN_INTERIORS_INN_TO_INN_UPSTAIRS},
+    {MAP_EVENT_WARP, 9, CONDITION_ALWAYS, ALTIN_INTERIORS_INN_UPSTAIRS_TO_INN},
+    {MAP_EVENT_TALK, LOCALID_ROOM_ONE_GUEST, FLAG_WATER_DROPPED_ONCE, MSGNO(MsgAltinNoMatterWhatHappensIdNever)},
+    {MAP_EVENT_TALK, LOCALID_ROOM_ONE_GUEST, FLAG_HYDROS_STATUES_DEFEATED, MSGNO(MsgAltinOhNoTheWholeHouseIs)},
+    {MAP_EVENT_TALK, LOCALID_ROOM_ONE_GUEST, CONDITION_ALWAYS, MSGNO(MsgAltinIHearThatSilkRoadIs)},
+    {MAP_EVENT_TALK, LOCALID_ROOM_ONE_SECOND_GUEST, FLAG_WATER_DROPPED_ONCE, MSGNO(MsgAltinOfCourseOurHouseWillBe)},
+    {MAP_EVENT_TALK, LOCALID_ROOM_ONE_SECOND_GUEST, FLAG_HYDROS_STATUES_DEFEATED, MSGNO(MsgAltinIfTheMonsterThatDidThis)},
+    {MAP_EVENT_TALK, LOCALID_ROOM_ONE_SECOND_GUEST, CONDITION_ALWAYS, EVENT_SCRIPT(Houses_AskAboutXianGirl)},
+    {MAP_EVENT_TALK, LOCALID_ROOM_TWO_GUEST, FLAG_WATER_DROPPED_TWICE, MSGNO(MsgAltinNotManyPeopleComeUpSilk)},
+    {MAP_EVENT_TALK, LOCALID_ROOM_TWO_GUEST, FLAG_HYDROS_STATUES_DEFEATED, EVENT_SCRIPT(Houses_AskAboutWayWest)},
+    {MAP_EVENT_TALK, LOCALID_ROOM_TWO_GUEST, CONDITION_ALWAYS, MSGNO(MsgAltinAncientRuinsAndTreasureDefinitelyGo)},
+    {MAP_EVENT_TALK, LOCALID_ROOM_TWO_SECOND_GUEST, FLAG_WATER_DROPPED_TWICE, MSGNO(MsgAltinItsBeenALongTimeSince)},
+    {MAP_EVENT_TALK, LOCALID_ROOM_TWO_SECOND_GUEST, FLAG_HYDROS_STATUES_DEFEATED, MSGNO(MsgAltinDontBeTooHarshOnThose)},
+    {MAP_EVENT_TALK, LOCALID_ROOM_TWO_SECOND_GUEST, CONDITION_ALWAYS, MSGNO(MsgAltinIfOnlyTheyHadLeftA)},
+    {MAP_EVENT_TALK, LOCALID_MAN_BACK_IN_HIS_HOMETOWN, FLAG_HYDROS_STATUES_DEFEATED, MSGNO(MsgAltinIDidntWantToLeaveMy)},
+    {MAP_EVENT_TALK, LOCALID_MAN_BACK_IN_HIS_HOMETOWN, CONDITION_ALWAYS, MSGNO(MsgAltinReallyAncientRuinsAtTheBottom)},
+    {MAP_EVENT_TALK, LOCALID_WOMAN_NO_PLACE_LIKE_HOME, FLAG_HYDROS_STATUES_DEFEATED, MSGNO(MsgAltinIHeardSomeoneKilledTheWater)},
+    {MAP_EVENT_TALK, LOCALID_WOMAN_NO_PLACE_LIKE_HOME, CONDITION_ALWAYS, MSGNO(MsgAltinThereProbablyIsntMuchTreasureIn)},
+    {MAP_EVENT_TALK, LOCALID_KISSING_GIRL, FLAG_HYDROS_STATUES_DEFEATED, EVENT_SCRIPT(Houses_AskAboutMonsters)},
+    {MAP_EVENT_TALK, LOCALID_KISSING_GIRL, CONDITION_ALWAYS, MSGNO(MsgAltinSomethingsWrongWithMomAndPop)},
+    {MAP_EVENT_TALK, LOCALID_WEAPON_MERCHANT, CONDITION_ALWAYS, EVENT_SCRIPT(Houses_TalkToWeaponMerchant)},
+    {MAP_EVENT_TALK, LOCALID_ARMOR_MERCHANT, CONDITION_ALWAYS, EVENT_SCRIPT(Altin_TalkToArmorMerchant)},
+    {MAP_EVENT_TALK, LOCALID_ITEM_MERCHANT, CONDITION_ALWAYS, EVENT_SCRIPT(Altin_TalkToItemMerchant)},
+    {MAP_EVENT_TALK, LOCALID_INNKEEPER, CONDITION_ALWAYS, EVENT_SCRIPT(Houses_TalkToInnkeeper)},
+    {MAP_EVENT_TALK, LOCALID_WOMAN_FORMER_GLORY, FLAG_HYDROS_STATUES_DEFEATED, MSGNO(MsgAltinIdGiveAnythingForSomeoneTo)},
+    {MAP_EVENT_TALK, LOCALID_WOMAN_FORMER_GLORY, CONDITION_ALWAYS, MSGNO(MsgAltinThereIsAnEndlessDesertWest)},
+    {MAP_EVENT_TALK, LOCALID_COOK, FLAG_HYDROS_STATUES_DEFEATED, MSGNO(MsgAltinICameFromXianICook)},
+    {MAP_EVENT_TALK, LOCALID_COOK, CONDITION_ALWAYS, MSGNO(MsgAltinWestOfTheMountainsIsVery)},
+    {MAP_EVENT_TALK, LOCALID_MAN_WAITING_TO_GO_HOME, FLAG_WATER_DROPPED_ONCE, MSGNO(MsgAltinNoneOfUsCanGoHome)},
+    {MAP_EVENT_TALK, LOCALID_MAN_WAITING_TO_GO_HOME, FLAG_WATER_DROPPED_TWICE, MSGNO(MsgAltinTheGuestsInRoomOneMoved)},
+    {MAP_EVENT_TALK, LOCALID_MAN_WAITING_TO_GO_HOME, FLAG_HYDROS_STATUES_DEFEATED, MSGNO(MsgAltinTheGuestsInRoomTwoAlso)},
+    {MAP_EVENT_TALK, LOCALID_MAN_WAITING_TO_GO_HOME, CONDITION_ALWAYS, EVENT_SCRIPT(Houses_AskAboutMineBeasts)},
+    {PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_ROOM_ONE_GUEST, FLAG_WATER_DROPPED_ONCE,
         MSGNO(MsgAltinLeavingAltinForTolbiWellThats)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_ROOM_ONE_GUEST, FLAG_HYDROS_STATUES_DEFEATED, MSGNO(MsgAltinItsGoingToTakeALot)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_ROOM_ONE_GUEST, CONDITION_ALWAYS,
+    {PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_ROOM_ONE_GUEST, FLAG_HYDROS_STATUES_DEFEATED, MSGNO(MsgAltinItsGoingToTakeALot)},
+    {PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_ROOM_ONE_GUEST, CONDITION_ALWAYS,
         MSGNO(MsgAltinTheMerchantsMustBeHavingA)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_ROOM_ONE_SECOND_GUEST, FLAG_WATER_DROPPED_ONCE, MSGNO(MsgAltinNowIFinallyHaveAnExcuse)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_ROOM_ONE_SECOND_GUEST, FLAG_HYDROS_STATUES_DEFEATED, MSGNO(MsgAltinOneBlowsNotEnoughJabJab)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_ROOM_ONE_SECOND_GUEST, CONDITION_ALWAYS,
+    {PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_ROOM_ONE_SECOND_GUEST, FLAG_WATER_DROPPED_ONCE, MSGNO(MsgAltinNowIFinallyHaveAnExcuse)},
+    {PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_ROOM_ONE_SECOND_GUEST, FLAG_HYDROS_STATUES_DEFEATED, MSGNO(MsgAltinOneBlowsNotEnoughJabJab)},
+    {PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_ROOM_ONE_SECOND_GUEST, CONDITION_ALWAYS,
         MSGNO(MsgAltinIWonderWhatBusinessThatGirl)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_ROOM_TWO_GUEST, FLAG_WATER_DROPPED_TWICE, MSGNO(MsgAltinOfCourseYouCantGoWest)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_ROOM_TWO_GUEST, FLAG_HYDROS_STATUES_DEFEATED,
+    {PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_ROOM_TWO_GUEST, FLAG_WATER_DROPPED_TWICE, MSGNO(MsgAltinOfCourseYouCantGoWest)},
+    {PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_ROOM_TWO_GUEST, FLAG_HYDROS_STATUES_DEFEATED,
         MSGNO(MsgAltinIThoughtTheVillageWasDone)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_ROOM_TWO_GUEST, CONDITION_ALWAYS,
+    {PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_ROOM_TWO_GUEST, CONDITION_ALWAYS,
         MSGNO(MsgAltinTheySayYouCanStillFind)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_ROOM_TWO_SECOND_GUEST, FLAG_WATER_DROPPED_TWICE,
+    {PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_ROOM_TWO_SECOND_GUEST, FLAG_WATER_DROPPED_TWICE,
         MSGNO(MsgAltinIHateSittingAroundLikeThis)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_ROOM_TWO_SECOND_GUEST, FLAG_HYDROS_STATUES_DEFEATED, MSGNO(MsgAltinImJustGladToGetMy)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_ROOM_TWO_SECOND_GUEST, CONDITION_ALWAYS,
+    {PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_ROOM_TWO_SECOND_GUEST, FLAG_HYDROS_STATUES_DEFEATED, MSGNO(MsgAltinImJustGladToGetMy)},
+    {PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_ROOM_TWO_SECOND_GUEST, CONDITION_ALWAYS,
         MSGNO(MsgAltinHowCanITrulyBeHappy)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MAN_BACK_IN_HIS_HOMETOWN, FLAG_HYDROS_STATUES_DEFEATED, MSGNO(MsgAltinTheBottomOfTheMineThe)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MAN_BACK_IN_HIS_HOMETOWN, CONDITION_ALWAYS,
+    {PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_MAN_BACK_IN_HIS_HOMETOWN, FLAG_HYDROS_STATUES_DEFEATED, MSGNO(MsgAltinTheBottomOfTheMineThe)},
+    {PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_MAN_BACK_IN_HIS_HOMETOWN, CONDITION_ALWAYS,
         MSGNO(MsgAltinCripesAncientRuinsDownInThe)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WOMAN_NO_PLACE_LIKE_HOME, FLAG_HYDROS_STATUES_DEFEATED,
+    {PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_WOMAN_NO_PLACE_LIKE_HOME, FLAG_HYDROS_STATUES_DEFEATED,
         MSGNO(MsgAltinMyHusbandsSenseForFindingTreasure)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WOMAN_NO_PLACE_LIKE_HOME, CONDITION_ALWAYS,
+    {PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_WOMAN_NO_PLACE_LIKE_HOME, CONDITION_ALWAYS,
         MSGNO(MsgAltinIHadNoIdeaThereWere)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_KISSING_GIRL, FLAG_HYDROS_STATUES_DEFEATED,
+    {PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_KISSING_GIRL, FLAG_HYDROS_STATUES_DEFEATED,
         MSGNO(MsgAltinMomAndPopKnowSomethingAbout)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_KISSING_GIRL, CONDITION_ALWAYS,
+    {PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_KISSING_GIRL, CONDITION_ALWAYS,
         MSGNO(MsgAltinIWonderIfMomAndPop)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WEAPON_MERCHANT, FLAG_WATER_DRAINED, MSGNO(MsgAltinCripesIsThisHowMyWeapon)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WEAPON_MERCHANT, FLAG_HYDROS_STATUES_DEFEATED, MSGNO(MsgAltinOnlyAMerchantKnowsTheJoy)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WEAPON_MERCHANT, CONDITION_ALWAYS,
+    {PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_WEAPON_MERCHANT, FLAG_WATER_DRAINED, MSGNO(MsgAltinCripesIsThisHowMyWeapon)},
+    {PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_WEAPON_MERCHANT, FLAG_HYDROS_STATUES_DEFEATED, MSGNO(MsgAltinOnlyAMerchantKnowsTheJoy)},
+    {PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_WEAPON_MERCHANT, CONDITION_ALWAYS,
         MSGNO(MsgAltinIveHeardOfAPassageIn)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_ARMOR_MERCHANT, FLAG_HYDROS_STATUES_DEFEATED, MSGNO(MsgAltinWeDriedOffAllThatArmor)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_ARMOR_MERCHANT, CONDITION_ALWAYS,
+    {PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_ARMOR_MERCHANT, FLAG_HYDROS_STATUES_DEFEATED, MSGNO(MsgAltinWeDriedOffAllThatArmor)},
+    {PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_ARMOR_MERCHANT, CONDITION_ALWAYS,
         MSGNO(MsgAltinWellIfYouAreImpressedThen)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_ITEM_MERCHANT, FLAG_HYDROS_STATUES_DEFEATED, MSGNO(MsgAltinAFewThingsGotDampBut)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_ITEM_MERCHANT, CONDITION_ALWAYS,
+    {PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_ITEM_MERCHANT, FLAG_HYDROS_STATUES_DEFEATED, MSGNO(MsgAltinAFewThingsGotDampBut)},
+    {PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_ITEM_MERCHANT, CONDITION_ALWAYS,
         MSGNO(MsgAltinTheGirlFromXianBoughtAll)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_INNKEEPER, FLAG_HYDROS_STATUES_DEFEATED,
+    {PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_INNKEEPER, FLAG_HYDROS_STATUES_DEFEATED,
         MSGNO(MsgAltinWellComeThroughThisAllRight)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_INNKEEPER, CONDITION_ALWAYS,
+    {PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_INNKEEPER, CONDITION_ALWAYS,
         MSGNO(MsgAltinIThinkThatTempleWasCalled)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WOMAN_FORMER_GLORY, FLAG_HYDROS_STATUES_DEFEATED, MSGNO(MsgAltinIKnowTheyDontLookSo)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WOMAN_FORMER_GLORY, CONDITION_ALWAYS,
+    {PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_WOMAN_FORMER_GLORY, FLAG_HYDROS_STATUES_DEFEATED, MSGNO(MsgAltinIKnowTheyDontLookSo)},
+    {PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_WOMAN_FORMER_GLORY, CONDITION_ALWAYS,
         MSGNO(MsgAltinYouWontBeAbleToGo)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_COOK, FLAG_HYDROS_STATUES_DEFEATED, MSGNO(MsgAltinIBecameACookAfterI)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_COOK, CONDITION_ALWAYS,
+    {PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_COOK, FLAG_HYDROS_STATUES_DEFEATED, MSGNO(MsgAltinIBecameACookAfterI)},
+    {PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_COOK, CONDITION_ALWAYS,
         MSGNO(MsgAltinNoOneCanGoWestOf)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MAN_WAITING_TO_GO_HOME, FLAG_WATER_DROPPED_ONCE, MSGNO(MsgAltinMostOfTheVillageIsStill)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MAN_WAITING_TO_GO_HOME, FLAG_HYDROS_STATUES_DEFEATED, MSGNO(MsgAltinItLooksLikeTheWaterHas)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MAN_WAITING_TO_GO_HOME, CONDITION_ALWAYS,
+    {PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_MAN_WAITING_TO_GO_HOME, FLAG_WATER_DROPPED_ONCE, MSGNO(MsgAltinMostOfTheVillageIsStill)},
+    {PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_MAN_WAITING_TO_GO_HOME, FLAG_HYDROS_STATUES_DEFEATED, MSGNO(MsgAltinItLooksLikeTheWaterHas)},
+    {PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_MAN_WAITING_TO_GO_HOME, CONDITION_ALWAYS,
         MSGNO(MsgAltinItWillTakeSomeTimeBefore)},
-    {SEARCH(SEARCH_BARREL), 100, FLAG_ALTIN_NUT, FIND_ITEM(ITEM_NUT)},
-    {SEARCH(SEARCH_BARREL), 101, FLAG_ALTIN_COINS, FIND_COINS(9)},
-    {SEARCH(SEARCH_BED), 102, FLAG_ALTIN_SLEEP_BOMB, FIND_ITEM(ITEM_SLEEP_BOMB)},
-    {SEARCH(SEARCH_OVEN), 200, CONDITION_ALWAYS,
+    {BG_EVENT(BG_EVENT_BARREL), 100, FLAG_ALTIN_NUT, FIND_ITEM(ITEM_NUT)},
+    {BG_EVENT(BG_EVENT_BARREL), 101, FLAG_ALTIN_COINS, FIND_COINS(9)},
+    {BG_EVENT(BG_EVENT_BED), 102, FLAG_ALTIN_SLEEP_BOMB, FIND_ITEM(ITEM_SLEEP_BOMB)},
+    {BG_EVENT(BG_EVENT_OVEN), 200, CONDITION_ALWAYS,
         FIND_MESSAGE(MSGNO(MsgAltinThePotsAndPansAreRusted))},
-    {SEARCH(SEARCH_OVEN), 201, CONDITION_ALWAYS,
+    {BG_EVENT(BG_EVENT_OVEN), 201, CONDITION_ALWAYS,
         FIND_MESSAGE(MSGNO(MsgAltinHeIsMakingRoastBeefEven))},
-    {SEARCH(SEARCH_OVEN), 202, CONDITION_ALWAYS,
+    {BG_EVENT(BG_EVENT_OVEN), 202, CONDITION_ALWAYS,
         FIND_MESSAGE(MSGNO(MsgAltinHeIsMakingShrimpInA))},
-    {SEARCH(SEARCH_BOOKCASE), 203, CONDITION_ALWAYS,
+    {BG_EVENT(BG_EVENT_BOOKCASE), 203, CONDITION_ALWAYS,
         FIND_MESSAGE(MSGNO(MsgAltinThereIsABookTitledAltin))},
-    {SCENE_EVENTS_END},
+    {MAP_EVENTS_END},
 };
 // clang-format on
 
@@ -1397,51 +1423,51 @@ struct SceneEvent gAltinHouses_Events[] = {
 /// Sanctum's door (the second) is wider, and Village_EnterDoor redraws it by
 /// hand instead.
 u16 gAltinVillage_SanctumDoorCells[] = {
-    MAP_CELL_STEP(42, 33, 2, 2, 0),
-    MAP_CELL_STEP(42, 35, 2, 2, 5),
-    MAP_CELL_STEP(40, 33, 2, 2, 0),
-    MAP_CELL_STEP(40, 35, 2, 2, 5),
-    MAP_CELL_STEPS_END,
+    MAPGRID_ANIM_STEP(42, 33, 2, 2, 0),
+    MAPGRID_ANIM_STEP(42, 35, 2, 2, 5),
+    MAPGRID_ANIM_STEP(40, 33, 2, 2, 0),
+    MAPGRID_ANIM_STEP(40, 35, 2, 2, 5),
+    MAPGRID_ANIM_STEPS_END,
 };
 
 u16 gAltinVillage_SouthwestDoorCells[] = {
-    MAP_CELL_STEP(35, 48, 2, 2, 5),
-    MAP_CELL_STEP(33, 48, 2, 2, 5),
-    MAP_CELL_STEPS_END,
+    MAPGRID_ANIM_STEP(35, 48, 2, 2, 5),
+    MAPGRID_ANIM_STEP(33, 48, 2, 2, 5),
+    MAPGRID_ANIM_STEPS_END,
 };
 
 u16 gAltinVillage_SoutheastDoorCells[] = {
-    MAP_CELL_STEP(35, 35, 2, 2, 5),
-    MAP_CELL_STEP(33, 35, 2, 2, 5),
-    MAP_CELL_STEPS_END,
+    MAPGRID_ANIM_STEP(35, 35, 2, 2, 5),
+    MAPGRID_ANIM_STEP(33, 35, 2, 2, 5),
+    MAPGRID_ANIM_STEPS_END,
 };
 
 u16 gAltinVillage_EastDoorCells[] = {
-    MAP_CELL_STEP(35, 46, 2, 2, 5),
-    MAP_CELL_STEP(33, 46, 2, 2, 5),
-    MAP_CELL_STEPS_END,
+    MAPGRID_ANIM_STEP(35, 46, 2, 2, 5),
+    MAPGRID_ANIM_STEP(33, 46, 2, 2, 5),
+    MAPGRID_ANIM_STEPS_END,
 };
 
 u16 gAltinVillage_NorthwestDoorCells[] = {
-    MAP_CELL_STEP(35, 50, 2, 2, 5),
-    MAP_CELL_STEP(33, 50, 2, 2, 5),
-    MAP_CELL_STEPS_END,
+    MAPGRID_ANIM_STEP(35, 50, 2, 2, 5),
+    MAPGRID_ANIM_STEP(33, 50, 2, 2, 5),
+    MAPGRID_ANIM_STEPS_END,
 };
 
 u16 gAltinVillage_NorthAndWestDoorCells[] = {
-    MAP_CELL_STEP(35, 33, 2, 2, 5),
-    MAP_CELL_STEP(33, 33, 2, 2, 5),
-    MAP_CELL_STEPS_END,
+    MAPGRID_ANIM_STEP(35, 33, 2, 2, 5),
+    MAPGRID_ANIM_STEP(33, 33, 2, 2, 5),
+    MAPGRID_ANIM_STEPS_END,
 };
 
 u16 gAltinVillage_NortheastDoorCells[] = {
-    MAP_CELL_STEP(35, 52, 2, 2, 5),
-    MAP_CELL_STEP(33, 52, 2, 2, 5),
-    MAP_CELL_STEPS_END,
+    MAPGRID_ANIM_STEP(35, 52, 2, 2, 5),
+    MAPGRID_ANIM_STEP(33, 52, 2, 2, 5),
+    MAPGRID_ANIM_STEPS_END,
 };
 
 /// Each door trigger's opening picture and cell, from trigger 2.
-struct MapCellAnimation gAltinVillage_Doors[] = {
+struct MapGridCellAnimation gAltinVillage_Doors[] = {
     {gAltinVillage_SouthwestDoorCells, 41, 5},
     {gAltinVillage_SanctumDoorCells, 51, 6},
     {gAltinVillage_NorthwestDoorCells, 57, 17},

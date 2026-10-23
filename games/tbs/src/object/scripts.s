@@ -7,10 +7,10 @@ Object_CameraFollowScript:
 	.global gObject_IdleScript
 gObject_IdleScript:
 	.4byte 16
-@ The party leader's placement table (struct ScenePlacement): {sprite,
+@ The party leader's placement table (struct ObjectEventTemplate): {sprite,
 @ condition, behavior, x, y, z, facing, talk facing, flags}
-	.global gField_DefaultPlacements
-gField_DefaultPlacements:
+	.global gField_DefaultObjectEventTemplates
+gField_DefaultObjectEventTemplates:
 	.2byte 0, -1
 	.4byte gObject_IdleScript, 300 << 16, 0, 300 << 16
 	.2byte 0x5bb0
@@ -338,8 +338,8 @@ gFieldEffect_UntargetedObjectScript:
 gEffectScripts:
 	.4byte gFieldEffect_ShortEffectScript, gFieldEffect_MediumEffectScript, gFieldEffect_LongEffectScript
 @ {tile << 16 | flag, place name}
-	.global gWorldMap_PlaceMarkers
-gWorldMap_PlaceMarkers:
+	.global gWorldMap_MapSecMarkers
+gWorldMap_MapSecMarkers:
 	.4byte 0x10183, 3
 	.4byte 0x10185, 20
 	.4byte 0x10199, 75

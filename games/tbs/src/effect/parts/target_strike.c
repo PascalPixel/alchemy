@@ -10,7 +10,8 @@
 /// The strike sparks, 512 of them, from PARTICLES[512] (0x3800 bytes in);
 /// the motes use PARTICLES 0 to 127. Only the first 128 sparks are drawn,
 /// though a heavy hit lights all 512.
-#define TARGET_STRIKE_SPARKS ((struct EffectStep *)(Ram_MapCellBuffer + 0x3800))
+#define TARGET_STRIKE_SPARKS                                                   \
+  ((struct EffectStep *)(Ram_MapGridCellBuffer + 0x3800))
 
 /// The smoke pictures in the sheet: six 24x48 puffs.
 #define TARGET_STRIKE_SMOKE_CELLS 0x3200

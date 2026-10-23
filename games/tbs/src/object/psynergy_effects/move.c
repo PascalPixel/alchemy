@@ -16,8 +16,8 @@ s32 Input_GetDpadAngle(u32 unused) {
 /// toward the object it is linked to, at most 1/16 turn a frame, and sheds a
 /// particle (SPRITE_SPARKLE) round it.
 void FieldEffect_UpdateItemBreakFragment(union FieldObject *fieldObject) {
-  struct FieldActor *source = (struct FieldActor *)fieldObject;
-  struct FieldActor *target;
+  struct ObjectEvent *source = (struct ObjectEvent *)fieldObject;
+  struct ObjectEvent *target;
   struct EffectVector position;
   struct ItemBreakFragmentObject *fragment;
   s32 turn;
@@ -36,7 +36,7 @@ void FieldEffect_UpdateItemBreakFragment(union FieldObject *fieldObject) {
         turn = -0x1000;
       source->facing += turn;
     }
-    // ACTOR_FACES_MOTION off: its motion must not undo the turn.
+    // OBJ_EVENT_FACES_MOTION off: its motion must not undo the turn.
     source->steeringFlags = 0;
   }
 
@@ -68,11 +68,11 @@ void FieldEffect_UpdateItemBreakFragment(union FieldObject *fieldObject) {
 void FieldEffect_SteerPushedTarget(s32 targetId) {
   struct EffectVector position;
   struct EffectVector beyond;
-  struct FieldEffectScene *work;
-  struct FieldActor *user;
-  struct FieldActor *target;
-  struct FieldActor *pusher;
-  struct FieldActor *hit;
+  struct FieldEffectWork *work;
+  struct ObjectEvent *user;
+  struct ObjectEvent *target;
+  struct ObjectEvent *pusher;
+  struct ObjectEvent *hit;
   s32 x;
   s32 z;
   s32 angle;
@@ -116,7 +116,7 @@ void FieldEffect_SteerPushedTarget(s32 targetId) {
   // its ground from the overhead layer.
   pusher->speed = 4 << 16;
   pusher->acceleration = 0x8000;
-  pusher->motionFlags = ACTOR_FLOATS;
+  pusher->motionFlags = OBJ_EVENT_FLOATS;
   target->update = ObjectGroup_ApplyRandomChildValues;
   target->speed = 0x6666;
   target->acceleration = 0x3333;
@@ -162,14 +162,14 @@ void FieldEffect_SteerPushedTarget(s32 targetId) {
     Vector_AddPolarOffset(32 << 16, direction, &beyond);
     // A wall (2) or ground more than 8 pixels higher (1) stops the push;
     // level ground or a drop does not.
-    if (Map_CheckObjectStepFar((struct ObjectRuntime *)target,
-                               (struct FieldPosition *)&position) > 0) {
+    if (MapGrid_CheckObjectStepFar((struct ObjectRuntime *)target,
+                                   (struct FieldPosition *)&position) > 0) {
       ObjectDispatch_SelectAnimationFar(pusher, 4);
       if ((gFrameCount & 15) == 0)
         AudioCommand_PlayFar(SE_MENU_ERROR);
       continue;
     }
-    hit = (struct FieldActor *)ScriptObject_FindOverlappingEntryFar(
+    hit = (struct ObjectEvent *)ScriptObject_FindOverlappingEntryFar(
         (struct ScriptObjectEntry *)target, (s32 *)candidate);
     if (hit != NULL) {
       if (hit != user) {
@@ -194,8 +194,8 @@ void FieldEffect_SteerPushedTarget(s32 targetId) {
       if (cellX == (beyond.x & MOVE_CELL_MASK) &&
           cellZ == (beyond.z & MOVE_CELL_MASK)) {
         // The caster can be pushed only onto flat ground.
-        if (Map_GetCellAttributeLowNibbleFar(user->terrainId, beyond.x,
-                                             beyond.z) != TERRAIN_FLAT) {
+        if (MapGrid_GetCellAttributeLowNibbleFar(user->terrainId, beyond.x,
+                                                 beyond.z) != TERRAIN_FLAT) {
           ObjectDispatch_SelectAnimationFar(pusher, 4);
           if ((gFrameCount & 15) == 0)
             AudioCommand_PlayFar(SE_MENU_ERROR);
@@ -227,7 +227,7 @@ void FieldEffect_SteerPushedTarget(s32 targetId) {
     Object_SetMoveTargetFar((struct ObjectRuntime *)pusher, position.x,
                             position.y + (16 << 16), position.z);
     if (moved == 1) {
-      Object_GetById(work->firstObjectId)->steeringFlags &= 0xfe;
+      ObjectEvent_GetById(work->firstObjectId)->steeringFlags &= 0xfe;
       user->speed = 0x3333;
       user->acceleration = 0x3333;
       Object_SetMoveTargetFar((struct ObjectRuntime *)user, beyond.x, beyond.y,
@@ -250,7 +250,7 @@ void FieldEffect_SteerPushedTarget(s32 targetId) {
   target->update = work->savedCallback;
   FieldEffect_StopCasterHook();
   if (moved == 1)
-    (Object_GetById(work->firstObjectId))->steeringFlags |= 1;
+    (ObjectEvent_GetById(work->firstObjectId))->steeringFlags |= 1;
   FieldEffect_FadeFromEffectColor();
   UpdateRisingParticleBurst(pusher);
 }
@@ -312,11 +312,11 @@ next_state:
 /// Abilities: Move (FIELD_KIND_MOVE).
 void FieldEffect_RunMove(void) {
   UNUSED s32 work[3];
-  struct FieldEffectScene *scene;
+  struct FieldEffectWork *effectWork;
   void *object;
 
-  scene = gEffectWork;
-  object = scene->mainObject;
+  effectWork = gEffectWork;
+  object = effectWork->mainObject;
 
   /* FAKEMATCH(one-pass): the call in a do { } while (0), which keeps the
    * mainObject load below the frame's sub sp; as a plain call, 2 of 24

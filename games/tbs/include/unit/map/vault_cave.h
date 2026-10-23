@@ -1,39 +1,39 @@
-#ifndef ALCHEMY_UNIT_SCENE_VAULT_CAVE_H
-#define ALCHEMY_UNIT_SCENE_VAULT_CAVE_H
+#ifndef ALCHEMY_UNIT_MAP_VAULT_CAVE_H
+#define ALCHEMY_UNIT_MAP_VAULT_CAVE_H
 
 #include "types.h"
 #include "map_tables.h"
 #include "field_runtime.h"
 
-struct SceneEntrance;
-struct SceneEvent;
-struct ScenePlacement;
+struct MapWarpDest;
+struct MapEvent;
+struct ObjectEventTemplate;
 
-const struct SceneEntrance *Scene_GetEntrances(void);
-const struct SceneRegion *Scene_GetRegions(void);
-const u32 *Scene_GetExits(void);
-const struct ScenePlacement *Scene_GetPlacements(void);
-const struct SceneEvent *Scene_GetEvents(void);
-s32 Scene_Initialize(void);
+const struct MapWarpDest *Map_GetWarpDests(void);
+const struct MapWarpRegion *Map_GetWarpRegions(void);
+const u32 *Map_GetWarps(void);
+const struct ObjectEventTemplate *Map_GetObjectEventTemplates(void);
+const struct MapEvent *Map_GetEvents(void);
+s32 Map_Initialize(void);
 extern const s16 gVaultCave_DirectionSteps[];
 extern const s32 gVaultCave_PuffScript[];
-extern struct SceneEntrance gVaultCave_FallbackEntrances[];
-extern struct SceneEntrance gVaultCavePassage_Entrances[];
-extern struct SceneEntrance gVaultCaveVambrace_Entrances[];
-extern struct SceneEntrance gVaultCaveMouth_Entrances[];
-extern struct SceneRegion gVaultCave_Regions[];
-extern u32 gVaultCave_FallbackExits[];
-extern u32 gVaultCavePassage_Exits[];
-extern u32 gVaultCaveVambrace_Exits[];
-extern u32 gVaultCaveMouth_Exits[];
-extern struct ScenePlacement gVaultCave_FallbackPlacements[];
-extern struct ScenePlacement gVaultCavePassage_Placements[];
-extern struct ScenePlacement gVaultCaveVambrace_Placements[];
-extern struct ScenePlacement gVaultCaveMouth_Placements[];
-extern struct SceneEvent gVaultCave_FallbackEvents[];
-extern struct SceneEvent gVaultCavePassage_Events[];
-extern struct SceneEvent gVaultCaveVambrace_Events[];
-extern struct SceneEvent gVaultCaveMouth_Events[];
+extern struct MapWarpDest gVaultCave_FallbackWarpDests[];
+extern struct MapWarpDest gVaultCavePassage_WarpDests[];
+extern struct MapWarpDest gVaultCaveVambrace_WarpDests[];
+extern struct MapWarpDest gVaultCaveMouth_WarpDests[];
+extern struct MapWarpRegion gVaultCave_Regions[];
+extern u32 gVaultCave_FallbackWarps[];
+extern u32 gVaultCavePassage_Warps[];
+extern u32 gVaultCaveVambrace_Warps[];
+extern u32 gVaultCaveMouth_Warps[];
+extern struct ObjectEventTemplate gVaultCave_FallbackObjectEventTemplates[];
+extern struct ObjectEventTemplate gVaultCavePassage_ObjectEventTemplates[];
+extern struct ObjectEventTemplate gVaultCaveVambrace_ObjectEventTemplates[];
+extern struct ObjectEventTemplate gVaultCaveMouth_ObjectEventTemplates[];
+extern struct MapEvent gVaultCave_FallbackEvents[];
+extern struct MapEvent gVaultCavePassage_Events[];
+extern struct MapEvent gVaultCaveVambrace_Events[];
+extern struct MapEvent gVaultCaveMouth_Events[];
 extern u32 gVaultCave_ScheduleFrames[];
 extern s32 gVaultCave_ScheduleTimer;
 extern s32 gVaultCave_ScheduleIndex;

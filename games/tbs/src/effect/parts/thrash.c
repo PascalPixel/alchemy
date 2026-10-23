@@ -5,7 +5,7 @@
 #include "../effect_internal.h"
 
 /// One 120x120 picture of a flashing strike; two fill work->imageStorage and
-/// two more Ram_MapCellBuffer.
+/// two more Ram_MapGridCellBuffer.
 #define FLASHING_STRIKE_PICTURE_BYTES (120 * 120)
 
 /// The flashing strike's modes (BattleEffect_RunFlashingStrike): which two
@@ -75,7 +75,7 @@ void BattleEffect_RunVorpalSlash(struct BattleEffectArgument *effect) {
 /// shakes. 21 frames.
 ///
 /// Opens and closes the canvas layer; the pictures take work->imageStorage
-/// and the start of Ram_MapCellBuffer.
+/// and the start of Ram_MapGridCellBuffer.
 ///
 /// mode: picks the pictures (enum FlashingStrikeMode); Quick Strike also
 ///       makes the step a hop.
@@ -94,22 +94,22 @@ void BattleEffect_RunFlashingStrike(struct BattleEffectArgument *effect,
   REG_BLDCNT = 0;
 
   // Each resource holds two pictures: the first fills work->imageStorage, up
-  // to the particles, and the second the start of Ram_MapCellBuffer.
+  // to the particles, and the second the start of Ram_MapGridCellBuffer.
   if (mode == FLASHING_STRIKE_UNUSED) {
     Resource_LoadAndDecompress((s32)&ResourceId_RevealMaskE, work->imageStorage,
                                1, 0);
-    Resource_LoadAndDecompress((s32)&ResourceId_RevealMaskF, Ram_MapCellBuffer,
-                               1, 1);
+    Resource_LoadAndDecompress((s32)&ResourceId_RevealMaskF,
+                               Ram_MapGridCellBuffer, 1, 1);
   } else if (mode == FLASHING_STRIKE_QUICK_STRIKE) {
     Resource_LoadAndDecompress((s32)&ResourceId_RevealMaskC, work->imageStorage,
                                1, 0);
-    Resource_LoadAndDecompress((s32)&ResourceId_RevealMaskD, Ram_MapCellBuffer,
-                               1, 1);
+    Resource_LoadAndDecompress((s32)&ResourceId_RevealMaskD,
+                               Ram_MapGridCellBuffer, 1, 1);
   } else {
     Resource_LoadAndDecompress((s32)&ResourceId_RevealMaskA, work->imageStorage,
                                1, 0);
-    Resource_LoadAndDecompress((s32)&ResourceId_RevealMaskB, Ram_MapCellBuffer,
-                               1, 1);
+    Resource_LoadAndDecompress((s32)&ResourceId_RevealMaskB,
+                               Ram_MapGridCellBuffer, 1, 1);
   }
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0);
 
@@ -136,10 +136,10 @@ void BattleEffect_RunFlashingStrike(struct BattleEffectArgument *effect,
       draw[0](canvas, work->imageStorage + FLASHING_STRIKE_PICTURE_BYTES, 0, 0,
               120, 120);
     else if (frame <= 11)
-      draw[0](canvas, Ram_MapCellBuffer, 0, 0, 120, 120);
+      draw[0](canvas, Ram_MapGridCellBuffer, 0, 0, 120, 120);
     else if (frame <= 15)
-      draw[0](canvas, Ram_MapCellBuffer + FLASHING_STRIKE_PICTURE_BYTES, 0, 0,
-              120, 120);
+      draw[0](canvas, Ram_MapGridCellBuffer + FLASHING_STRIKE_PICTURE_BYTES, 0,
+              0, 120, 120);
     if (frame >= 16 && frame <= 19)
       Iwram_FillWords(canvas, CANVAS_BYTES, 0x3f3f3f3f);
     if (frame == 18)

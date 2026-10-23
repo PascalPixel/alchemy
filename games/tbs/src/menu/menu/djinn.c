@@ -138,7 +138,7 @@ s32 DjinnMenu_Run(void) {
   UiWindow_EraseBorderRectFar(0, 0, 30, 20);
   MemFree(menu->backdrop);
   Runtime_ReleaseHeapBlock(HEAP_SLOT_MENU);
-  Event_ClearInvalidPackedValuesFar();
+  FieldScript_ClearInvalidPackedValuesFar();
   gGameState.messageSpeed = savedMessageSpeed;
   return 1;
 }

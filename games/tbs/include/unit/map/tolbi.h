@@ -1,26 +1,26 @@
-#ifndef ALCHEMY_UNIT_SCENE_TOLBI_H
-#define ALCHEMY_UNIT_SCENE_TOLBI_H
+#ifndef ALCHEMY_UNIT_MAP_TOLBI_H
+#define ALCHEMY_UNIT_MAP_TOLBI_H
 
 #include "types.h"
 #include "script_layer.h"
 #include "map_tables.h"
 
-const struct SceneEntrance *Tolbi_GetEntrances(void);
-const struct SceneRegion *Tolbi_GetRegions(void);
-const u32 *Tolbi_GetExits(void);
-const struct ScenePlacement *Tolbi_GetPlacements(void);
-const struct SceneEvent *Tolbi_SelectEvents(void);
+const struct MapWarpDest *Tolbi_GetWarpDests(void);
+const struct MapWarpRegion *Tolbi_GetRegions(void);
+const u32 *Tolbi_GetWarps(void);
+const struct ObjectEventTemplate *Tolbi_GetObjectEventTemplates(void);
+const struct MapEvent *Tolbi_SelectEvents(void);
 s32 Tolbi_ApplyEntryState(s32 unused);
-extern s32 gTolbiMirroredActor[];
+extern s32 gTolbiMirroredObjectEvent[];
 extern s32 gTolbiOlderBrotherRun[];
 extern s32 gTolbiYoungerSisterRun[];
-extern struct SceneEntrance gTolbiEntrances[];
-extern u32 gTolbiExits[];
-extern struct ScenePlacement gTolbiPlacements[];
-extern struct SceneEvent gTolbiEventsFestival[];
-extern struct SceneEvent gTolbiEventsFinalsDay[];
-extern struct SceneEvent gTolbiEventsAfterColosso[];
+extern struct MapWarpDest gTolbiWarpDests[];
+extern u32 gTolbiWarps[];
+extern struct ObjectEventTemplate gTolbiObjectEventTemplates[];
+extern struct MapEvent gTolbiEventsFestival[];
+extern struct MapEvent gTolbiEventsFinalsDay[];
+extern struct MapEvent gTolbiEventsAfterColosso[];
 extern u16 gTolbiDoorOpening[];
-extern struct MapCellAnimation gTolbiDoors[];
+extern struct MapGridCellAnimation gTolbiDoors[];
 
 #endif

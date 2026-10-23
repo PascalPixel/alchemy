@@ -2,36 +2,37 @@
 /// Scene events, field Psynergy, objects and effect lifecycles.
 
 /// Runs the field scene the party entered by entrance until it leaves, and
-/// returns the exit kind for Scene_TakeExit, or EXIT_NONE when gGameState
+/// returns the exit kind for Map_TakeWarp, or WARP_NONE when gGameState
 /// already holds the next scene.
-s32 Field_RunSceneFar(s32 entrance);
+s32 Field_RunMapFar(s32 warpDest);
 /// The game's main loop, which never returns; mode, an enum GameRunMode,
 /// picks the first scene. System_Initialize starts it at power-on with
 /// GAME_RUN_TITLE, and Game_Restart starts it again.
 void Game_RunFar(s32 mode);
 /// Waits the given number of frames, unless debug fast forward is on.
-void FieldEvent_WaitFramesFar(s32 frames);
+void FieldScript_WaitFramesFar(s32 frames);
 /// Opens an event: closes any timed notice, stops the leader and resets the
 /// message and timing state.
-void FieldEvent_StartFar(void);
+void FieldScript_StartFar(void);
 /// Closes an event: gives the camera back to the leader and refreshes
 /// FLAG_LURE_CAP.
-void FieldEvent_EndFar(void);
+void FieldScript_EndFar(void);
 /// Spawns the actors of a placement table after the last actor in use, so a
 /// ship scene can bring people in mid-scene.
-void Event_CallWithLastActiveObjectIdFar(struct ScenePlacement *table);
+void FieldScript_CallWithLastActiveObjectIdFar(
+    struct ObjectEventTemplate *table);
 /// Gives each unconditional placement a condition that shows it only while it
 /// lies inside the map's view bounds.
-void Scene_AssignViewFlagsFar(struct ScenePlacement *entry);
+void Map_AssignViewFlagsFar(struct ObjectEventTemplate *entry);
 /// Replaces the scene's event table, the one the field checks as the leader
 /// moves.
-void Event_SetSceneEventsFar(const struct SceneEvent *events);
+void FieldScript_SetMapEventsFar(const struct MapEvent *events);
 /// Adds a character to the party; a nonzero value also shows
 /// `<name> joined your party.`
-void Event_PrepareObjectAndApplyValueFar(s32 event_id, s32 value);
+void FieldScript_PrepareObjectAndApplyValueFar(s32 event_id, s32 value);
 /// Adds two characters to the party and announces them in one message, as
 /// Vale's scene script does.
-void Event_PrepareTwoObjectsAndApplyFar(s32 first, s32 second);
+void FieldScript_PrepareTwoObjectsAndApplyFar(s32 first, s32 second);
 /// Takes a character out of the party with HP and PP restored and poison
 /// cured; if nobody left standing has HP, the leader keeps 1.
 void Party_RemoveOwnerRestoredFar(s32 owner);
@@ -41,29 +42,30 @@ void Party_RemoveOwnerRestoredFar(s32 owner);
 s32 PartyInventory_GiveItemFar(s32 item, s32 unused);
 /// Asks yes or no once the message on screen is read, with the speaker
 /// nodding at yes and shaking its head at no. Returns 0 for yes, 1 for no.
-s32 Event_AskYesNoWithActorAnimationFar(s32 actor, s32 force_bottom);
+s32 FieldScript_AskYesNoWithObjectEventAnimationFar(s32 objectEvent,
+                                                    s32 force_bottom);
 /// Teaches a character a Psynergy ability with its jingle and
 /// `<unit> learned <ability>.`
 void Party_LearnAbilityFar(s32 unit, s32 ability);
 /// Returns the actor with this id, or NULL; the form of ObjectTable_Get the
 /// other banks call.
-struct FieldActor *Object_GetByIdFar(s32 objectId);
+struct ObjectEvent *ObjectEvent_GetByIdFar(s32 objectId);
 /// Releases an actor and empties its slot in the field work's actor table.
 void ObjectTable_DestroyByIdFar(s32 index);
 /// Sets an actor's top speed and acceleration, in 16.16 pixels per frame.
 void ObjectMotion_SetSpeedParametersFar(u32 objectId, s32 speedLimit,
                                         s32 acceleration);
 /// Starts a built-in action or a supplied script on an actor and makes it
-/// face the way it moves (ACTOR_FACES_MOTION).
+/// face the way it moves (OBJ_EVENT_FACES_MOTION).
 void ObjectMotion_EnableActionAndSetCallbackFar(u32 objectId, s32 action);
 /// Waits, for at most 300 frames, until an actor's script reaches its end.
-void Object_RefreshSelectorByIdFar(u32 objectId);
+void ObjectEvent_RefreshSelectorByIdFar(u32 objectId);
 /// Stops an actor's action and puts it back on the idle script under event
 /// control.
 void ObjectMotion_EnableActionAndResetMotionFar(u32 objectId);
 /// Starts an action or script on an actor, then waits up to 300 frames for it
 /// to finish.
-void Object_SetActionCallbackAndRefreshByIdFar(u32 objectId, s32 action);
+void ObjectEvent_SetActionCallbackAndRefreshByIdFar(u32 objectId, s32 action);
 /// Sends an actor toward (x, z), in pixels, keeping its current animation and
 /// unpausing it.
 void ObjectMotion_ResetAndSetPositionFar(u32 objectId, s32 x, s32 z);
@@ -89,10 +91,10 @@ void ObjectMotion_CommitCurrentPositionAndActivateFar(u32 objectId);
 void ObjectMotion_SetHorizontalPositionWithTerrainFar(u32 objectId, s32 x,
                                                       s32 z);
 /// Sets an actor's animation: 1 stands, 2 walks, 3 nods, 4 shakes the head.
-void Object_SetModeByIdFar(u32 objectId, s32 action);
+void ObjectEvent_SetModeByIdFar(u32 objectId, s32 action);
 /// Sets the animation timer steps of each of an actor's sprites, as the Tolbi
 /// ship and Lamakan Desert scenes do.
-void Object_SetActionByIdFar(u32 objectId, s32 action);
+void ObjectEvent_SetActionByIdFar(u32 objectId, s32 action);
 /// Plays an actor's animation and waits for it to end.
 void Motion_SetModeAndWaitAnimationFar(u32 objectId, s32 action);
 /// Waits, at most 90 frames, for an animated actor's animation to change.
@@ -108,51 +110,51 @@ void Motion_SetVarCbAndRefreshFar(u32 objectId, s32 variant);
 /// Makes an actor hop down off the ledge in front of it and land 16 pixels
 /// south, playing the queued sound as it lands. The field runs it for the
 /// leader at a ledge, and seven scenes import it.
-void Actor_JumpDownLedgeFar(s32 sequence_arg, s32 mode_or_frame,
-                            s32 optional_action);
+void ObjectEvent_JumpDownLedgeFar(s32 sequence_arg, s32 mode_or_frame,
+                                  s32 optional_action);
 /// Turns the first actor at once to face the second, then waits wait frames.
 void ObjectMotion_SetAngleTowardFar(s32 firstId, s32 second_id, s32 wait);
 /// Turns two actors toward each other, then waits wait frames; talking to
 /// someone turns the leader and them this way.
-void Object_LinkPairFar(s32 firstId, s32 second_id, s32 wait);
+void ObjectEvent_LinkPairFar(s32 firstId, s32 second_id, s32 wait);
 /// Gives every sprite part of an actor a param, or with bit 8 set makes the
 /// actor blink until another param is given.
 void ObjectGroup_ConfigureChildValueFar(s32 objectId, s32 value);
 /// Sets the param byte of every animated part of an actor's sprite; scenes
 /// flash an actor by alternating 0 and 15.
-void ObjectGroup_SetChildValueFar(struct FieldActor *actor, s32 value);
+void ObjectGroup_SetChildValueFar(struct ObjectEvent *objectEvent, s32 value);
 /// Links an actor to a target and starts a script on it; unless
-/// ACTOR_LINK_KEEP_MOTION is set it trails 40 pixels behind, fast enough to
+/// OBJ_EVENT_LINK_KEEP_MOTION is set it trails 40 pixels behind, fast enough to
 /// keep up and unable to block the target.
-void Object_SetTargetAndCallbackFar(u32 objectId, s32 targetId,
-                                    const void *callback);
+void ObjectEvent_SetTargetAndCallbackFar(u32 objectId, s32 targetId,
+                                         const void *callback);
 /// Sets the number of the event's next message.
-void Event_SetMessageIdFar(s32 value);
+void FieldScript_SetMessageIdFar(s32 value);
 /// Opens the event's current message in a speech window beside the speaker,
 /// with its portrait, and moves on to the next message. Returns the window
 /// once its text is typed out; the caller waits for it to be read.
 struct UiWindow *UiText_OpenMessageAtObjectFar(s32 arg, s32 unused);
 /// Shows the current message at an actor and waits until it has been read
 /// and its window has closed.
-void FieldEvent_ShowMessageAndWaitFar(s32 action, s32 flag);
+void FieldScript_ShowMessageAndWaitFar(s32 action, s32 flag);
 /// Shows a message, then waits the given number of frames.
-void FieldEvent_ShowMessageThenWaitFar(s32 first, s32 second, s32 value);
+void FieldScript_ShowMessageThenWaitFar(s32 first, s32 second, s32 value);
 /// Asks a question at an actor and shows the reply for yes or for no; the
 /// script carries on past both replies. Returns 0 for yes, 1 for no.
-s32 FieldEvent_AskYesNoAndShowResponseFar(s32 objectId, s32 actionId);
+s32 FieldScript_AskYesNoAndShowResponseFar(s32 objectId, s32 actionId);
 /// Turns an actor toward an angle, 65536 to a full turn, then waits wait
 /// frames.
 void ObjectMotion_ArmCallbackFar(s32 objectId, s32 angle, s32 wait);
 /// Two actors speak at once, each message and portrait at its own tile
 /// position; waits for A, B, L or R, then closes both.
-void FieldEvent_ShowTwoMessagesAndWaitFar(s32 first, s32 first_x, s32 first_y,
-                                          s32 first_arg, s32 first_extra,
-                                          s32 second, s32 second_x,
-                                          s32 second_y, s32 second_arg,
-                                          s32 second_extra);
+void FieldScript_ShowTwoMessagesAndWaitFar(s32 first, s32 first_x, s32 first_y,
+                                           s32 first_arg, s32 first_extra,
+                                           s32 second, s32 second_x,
+                                           s32 second_y, s32 second_arg,
+                                           s32 second_extra);
 /// Gives the messages that follow the voice of an actor's sprite, at the
 /// rate the message speed option picks; the top bit alone silences them.
-void Ui_SetMessageVoiceFromActorFar(s32 arg0);
+void Ui_SetMessageVoiceFromObjectEventFar(s32 arg0);
 /// Fixes the priority of an actor's sprite so it no longer follows its depth.
 void ObjectMotion_SetActionVariantFar(s32 objectId, s32 priority);
 /// Shows an emote bubble over an actor, then waits wait frames; the bubble
@@ -166,7 +168,7 @@ void FieldEffect_ConfigureLinkedObjectFar(s32 id, s32 flags);
 void ObjectVisual_CopyAttributesFar(u32 targetId, u32 sourceId);
 /// Makes the camera follow an actor; unless flag is set it jumps there at
 /// once and the map is redrawn around it.
-void Camera_FollowActorFar(s32 id, s32 flag);
+void Camera_FollowObjectEventFar(s32 id, s32 flag);
 /// Sets the camera's top speed and acceleration, in 16.16 pixels per frame.
 void Camera_SetSpeedParametersFar(s32 first, s32 second);
 /// Sends the camera to a point (-1 keeps an axis), kept inside the map so the
@@ -176,17 +178,17 @@ void Camera_MoveWithinMapBoundsFar(s32 requested_x, s32 requested_y,
 /// Waits, at most 600 frames, for the camera to arrive, then 2 frames more.
 void Camera_WaitForArrivalFar(void);
 /// Moves the camera to an actor's position, kept inside the map.
-void Object_PlaceCurrentWithinCameraBoundsFar(s32 arg0, s32 arg1);
+void ObjectEvent_PlaceCurrentWithinCameraBoundsFar(s32 arg0, s32 arg1);
 /// Returns the camera object, the event's view centre.
-struct FieldActor *Camera_GetEventObjectFar(void);
+struct ObjectEvent *Camera_GetScriptObjectFar(void);
 /// Sets the map rectangle the camera keeps the screen inside.
-void Map_SetViewBoundsFar(s32 minX, s32 minY, s32 maxX, s32 maxY);
+void MapGrid_SetViewBoundsFar(s32 minX, s32 minY, s32 maxX, s32 maxY);
 /// Makes the event leave for an entrance of a scene; the title, lobby and
 /// debug menus use it as well as a few scenes.
-void Event_SetDestinationFar(s32 first, s32 second);
+void FieldScript_SetDestinationFar(s32 first, s32 second);
 /// Raises the field's exit request; 999 leaves for the scene and entrance in
 /// gGameState.
-void Event_SetExitRequestFar(u16 value);
+void FieldScript_SetWarpRequestFar(u16 value);
 /// Sets up a battle with one enemy group of an encounter table, which starts
 /// once the event that asked for it has returned.
 void Field_RequestBattleFromEncounterTableFar(s32 zone_no, s32 slot_no);
@@ -194,20 +196,20 @@ void Field_RequestBattleFromEncounterTableFar(s32 zone_no, s32 slot_no);
 /// DJINN_NO_HOP is set; on re-entering the scene the Djinni joins or hides.
 void Field_RequestDjinnBattleFar(s32 flag, s32 no);
 /// Sets the scene and entrance the field goes to next.
-void Event_SetNextDestinationFar(s32 first, s32 second);
+void FieldScript_SetNextDestinationFar(s32 first, s32 second);
 /// Sets where the party wakes up after losing a battle, ahead of a scripted
 /// fight.
-void Event_SetDefeatDestinationFar(s32 first, s32 second);
-/// Sets the destination and raises EXIT_NONE, so the scene loop leaves on its
+void FieldScript_SetDefeatDestinationFar(s32 first, s32 second);
+/// Sets the destination and raises WARP_NONE, so the scene loop leaves on its
 /// next pass; only Tolbi's spring uses it.
-void Event_RequestDestinationFar(u16 first, u16 second);
+void FieldScript_RequestDestinationFar(u16 first, u16 second);
 /// Writes an actor's screen position in pixels, y at the top of its sprite.
 /// Returns 0, or -1 when there is no such actor.
-s32 Object_GetScreenPositionFar(s32 objectId, s32 *position);
+s32 ObjectEvent_GetScreenPositionFar(s32 objectId, s32 *position);
 /// Returns the collision code of the searchable cell 16 pixels ahead of the
 /// leader, or 0 when there is nothing to search; the field menu's search
 /// entry asks it.
-s32 Object_GetTriggerTileAheadOfCurrentFar(void);
+s32 ObjectEvent_GetTriggerTileAheadOfCurrentFar(void);
 /// Returns the sprite a character is drawn with, which depends on
 /// FLAG_CHILDHOOD and FLAG_ISAAC_WEARS_TUNIC.
 s32 Party_RemapCharacterIdByFlagsFar(s32 arg0);
@@ -251,11 +253,11 @@ void ColorBuffer_SetSourceFar(s32 mode, s32 half);
 /// frames.
 void ColorBuffer_StartInterpolationFar(s32 frames);
 /// Starts the event's screen transition.
-void Event_StartScreenTransitionFar(void);
+void FieldScript_StartScreenTransitionFar(void);
 /// Finishes the event's screen transition.
-void Event_FinishScreenTransitionFar(void);
+void FieldScript_FinishScreenTransitionFar(void);
 /// Waits for as long as the screen transition runs.
-void Event_WaitTransitionFramesFar(void);
+void FieldScript_WaitTransitionFramesFar(void);
 /// Starts a wave in each axis of the background's scroll, changed line by
 /// line in the horizontal blank; Lamakan Desert starts it everywhere but its
 /// cave.
@@ -276,15 +278,15 @@ void ItemDisplay_ShowPictureFar(void *object, s32 flags);
 void FieldEffect_StartEffectObject22Far(s32 value, s32 flags);
 /// Moves a marker's actor to (x, z) on the ground, in 16.16 pixels; -1 keeps
 /// the centre of its cell on that axis.
-void Marker_SetActorPositionFar(s32 id, s32 x, s32 y);
+void Marker_SetObjectEventPositionFar(s32 id, s32 x, s32 y);
 /// Moves a leader standing within 16 pixels of a marker cell's centre 20
 /// pixels away from it.
 void Marker_MoveLeaderAwayFar(void);
 /// On the world map, freezes the perspective view and the camera while an
 /// event or menu runs; elsewhere it does nothing.
-void WorldMap_StartEventFar(void);
-/// Undoes WorldMap_StartEvent, reloading the area's graphics.
-void WorldMap_EndEventFar(void);
+void WorldMap_StartScriptFar(void);
+/// Undoes WorldMap_StartScript, reloading the area's graphics.
+void WorldMap_EndScriptFar(void);
 /// Returns the actor in a slot, or NULL; scene overlays look actors up
 /// through it.
 void *ObjectTable_GetFar(u32 index);
@@ -312,9 +314,9 @@ void EventObject_InitializeFar(void);
 void Field_EndBusyAndRevealFar(void);
 /// Starts Mind Read's wave of shifting colour, with x the caster and y the
 /// target.
-void RunSceneTransitionEffectFar(s32 x, s32 y);
+void FieldEffect_StartMindReadWaveFar(s32 x, s32 y);
 /// Ends Mind Read's wave, restoring the caster's colours and the palettes.
-void FieldEffect_FinishSceneAndReleaseHeapBlockFar(void);
+void FieldEffect_FinishWaveAndReleaseHeapBlockFar(void);
 /// Stops BG0's scanline scroll and restores BG palette 15.
 void Ui_SetBank15PaletteAndClearRenderModeFar(void);
 /// Returns whether the scene has a Psynergy event of this group for what the
@@ -331,7 +333,7 @@ Sprite_ShareVramCacheFar(struct AnimationObject *sourceSprite,
                          struct AnimationObject *sharedSprite);
 /// Returns the battle backdrop chosen for the current scene, which the
 /// battle setup reads.
-s16 Event_GetSpecialValueFar(void);
+s16 FieldScript_GetSpecialValueFar(void);
 /// Gives each party member PP; 999 restores it all, as a Psynergy Stone does.
 void Party_AddPpFar(s32 amount, s32 unused);
 /// Asks yes or no at the top of the screen, or the bottom when value is set.
@@ -368,7 +370,7 @@ void Camera_WorldToScreenFar(struct EffectVector *position);
 /// with the Speech option off.
 s32 FieldEffect_GetResourceIdFar(u32 id);
 /// Clears each button shortcut whose Psynergy the party can no longer cast.
-void Event_ClearInvalidPackedValuesFar(void);
+void FieldScript_ClearInvalidPackedValuesFar(void);
 /// Allocates and clears the effect slots and starts their update; the Djinn
 /// joining effects and Altmiller Cave use them.
 void FieldEffect_InitializeSlotsFar(void);
@@ -385,7 +387,8 @@ void ObjectMotion_OffsetPositionAndResetFar(u32 objectId, s32 x_offset,
 void ObjectMotion_CommitPositionAndActivateFar(u32 objectId, s32 x_offset,
                                                s32 z_offset);
 /// Makes an actor follow another through the linked action script.
-void Object_LinkObjectAndSetCallbackFar(u32 objectId, u32 linked_object_id);
+void ObjectEvent_LinkObjectAndSetCallbackFar(u32 objectId,
+                                             u32 linked_object_id);
 /// Pauses an object, keeping its update and pose in gGameState for later;
 /// Halt and the Colosso operators use it.
 void FieldEffect_PauseObjectFar(s32 id);
@@ -398,11 +401,11 @@ void ObjectTable_RestoreFar(void);
 /// Starts a zoom to a 16.16 factor over the given frames, on the world map.
 void FieldEffect_ScheduleRatioTransitionFar(s32 zoom, s32 frames);
 /// Waits, at most 300 frames, for the world map's zoom to end.
-void Event_WaitForZoomTransitionFar(void);
+void FieldScript_WaitForZoomTransitionFar(void);
 /// Returns the area name of a scene and entrance, an offset from
 /// MsgDebugEntryName, or 0 when no rule matches.
-s32 Scene_GetAreaNameIndexFar(s32 scene, s32 entrance);
-/// Starts an actor's action script: an enum ActorBehavior, or the script
+s32 MapSec_GetNameIndexFar(s32 mapId, s32 warpDest);
+/// Starts an actor's action script: an enum MovementType, or the script
 /// itself.
 void ObjectMotion_SetActionCallbackFar(struct ObjectRuntime *object, s32 kind);
 /// Plays SE_298 and then sound_id (AUDIO_CUE_FADE_SLOT3 for -1), and remembers

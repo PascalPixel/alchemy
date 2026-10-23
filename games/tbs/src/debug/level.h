@@ -9,14 +9,14 @@
 extern struct EventWork *gEventWork;
 #include "global_cells.h"
 
-void Engine_ActorSetAnimation();
-void Engine_ActorShowEmote();
-void Engine_EventStart(void);
-void Engine_EventEnd(void);
-void Engine_ActorSetPosition(u32 actor, s32 x, s32 z);
-void Engine_EventSetMessage();
-void Engine_EventShowMessage();
-void Engine_EventRequestExit();
+void Engine_ObjectEventSetAnimation();
+void Engine_ObjectEventShowEmote();
+void Engine_ScriptStart(void);
+void Engine_ScriptEnd(void);
+void Engine_ObjectEventSetPosition(u32 objectEvent, s32 x, s32 z);
+void Engine_ScriptSetMessage();
+void Engine_ScriptShowMessage();
+void Engine_ScriptRequestWarp();
 void Engine_AudioPlayCue();
 void Engine_TaskWait();
 

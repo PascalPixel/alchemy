@@ -1,14 +1,14 @@
 /// @file
-/// Tret Tree (SceneId_TretTreeBranch), the second of Tret Tree's two scenes:
+/// Tret Tree (MapId_TretTreeBranch), the second of Tret Tree's two scenes:
 /// out on Tret's branches, under open sky
 /// (places/tret-tree-branch/map-0.png), between the rooms of
-/// SceneId_TretTreeInteriors (tret_tree_interiors.c), where the story is told.
+/// MapId_TretTreeInteriors (tret_tree_interiors.c), where the story is told.
 /// This scene has no story event and tests no story flag.
 ///
 /// Its eight exits (TRET_TREE_BRANCH_TO_TRET_TREE_INTERIORS_SOUTH_SOUTHWEST and
-/// the seven after it) lead back into SceneId_TretTreeInteriors; walking into
-/// one for two frames (EVENT_TOUCH_QUICK) plays the exit sound and leaves at
-/// once, the touch cells having the exits' own numbers. Touch cells 10 to 15
+/// the seven after it) lead back into MapId_TretTreeInteriors; walking into
+/// one for two frames (COORD_EVENT_FLAG_QUICK) plays the exit sound and leaves
+/// at once, the touch cells having the exits' own numbers. Touch cells 10 to 15
 /// lie in pairs at the top and bottom of the vines that hang from one branch
 /// to the one below (cells (7, 12) and (8, 17), (37, 11) and (36, 16), (41, 20)
 /// and (40, 26) in map_047's grid_collision.tsv): each moves the leader and the
@@ -69,7 +69,7 @@
 /// placement is gone once its flag (FLAG_DJINNI_0 + DJINNI_BREEZE) is set.
 enum {
   /// ★ Named from the game: "Breeze" (MsgDjinnName)
-  ACTOR_BREEZE = ACTOR_FIRST_PLACED
+  LOCALID_BREEZE = LOCALID_FIRST_PLACED
 };
 
 /// Starts the scanline-dependent BG3 scroll callbacks.
@@ -83,20 +83,20 @@ static u16 sHofsBeforeSplit;
 
 /// Talking to Breeze in Tret Tree: the Djinni hops and the battle with it
 /// starts.
-static void Event_TalkToBreeze(void) {
-  Field_RequestDjinnBattle(ACTOR_BREEZE, DJINNI_BREEZE);
+static void EventScript_TalkToBreeze(void) {
+  Field_RequestDjinnBattle(LOCALID_BREEZE, DJINNI_BREEZE);
 }
 
-const struct SceneEntrance *TretTreeBranch_GetEntrances(void) {
-  return gTretTreeBranch_Entrances;
+const struct MapWarpDest *TretTreeBranch_GetWarpDests(void) {
+  return gTretTreeBranch_WarpDests;
 }
 
-const struct SceneRegion *TretTreeBranch_GetRegions(void) { return NULL; }
+const struct MapWarpRegion *TretTreeBranch_GetRegions(void) { return NULL; }
 
-const u32 *TretTreeBranch_GetExits(void) { return gTretTreeBranch_Exits; }
+const u32 *TretTreeBranch_GetWarps(void) { return gTretTreeBranch_Warps; }
 
-const struct ScenePlacement *TretTreeBranch_GetPlacements(void) {
-  return gTretTreeBranch_Placements;
+const struct ObjectEventTemplate *TretTreeBranch_GetObjectEventTemplates(void) {
+  return gTretTreeBranch_ObjectEventTemplates;
 }
 
 /// Moves the leader and camera by signed 16-pixel cell offsets, placing each
@@ -104,82 +104,82 @@ const struct ScenePlacement *TretTreeBranch_GetPlacements(void) {
 static void TretTreeBranch_ShiftLeaderAndCameraByCells(s32 cellOffsetX,
                                                        s32 cellOffsetZ) {
   struct EventWork *state = gEventWork;
-  struct FieldActor *actor;
+  struct ObjectEvent *objectEvent;
   s32 offsetX = cellOffsetX;
   s32 offsetZ = cellOffsetZ;
   s32 terrainHeight;
 
-  actor = Object_GetById(gGameState.selectedActor);
+  objectEvent = ObjectEvent_GetById(gGameState.selectedObjectEvent);
   // Multiplication keeps negative cell offsets defined; every caller is within
   // six cells, so the fixed-point result fits in s32.
   offsetX *= PIXELS(16);
   offsetZ *= PIXELS(16);
 
   // Shift the selected actor before the separate camera object.
-  if (actor != 0) {
-    actor->x.fixed += offsetX;
-    actor->z.fixed += offsetZ;
-    terrainHeight =
-        Map_GetTerrainHeight(actor->terrainId, actor->x.fixed, actor->z.fixed);
-    actor->y.fixed = terrainHeight;
-    actor->terrainHeight = terrainHeight;
+  if (objectEvent != 0) {
+    objectEvent->x.fixed += offsetX;
+    objectEvent->z.fixed += offsetZ;
+    terrainHeight = MapGrid_GetTerrainHeight(
+        objectEvent->terrainId, objectEvent->x.fixed, objectEvent->z.fixed);
+    objectEvent->y.fixed = terrainHeight;
+    objectEvent->terrainHeight = terrainHeight;
   }
 
-  actor = state->viewCenter;
-  if (actor != 0) {
-    actor->x.fixed += offsetX;
-    actor->z.fixed += offsetZ;
-    terrainHeight =
-        Map_GetTerrainHeight(actor->terrainId, actor->x.fixed, actor->z.fixed);
-    actor->y.fixed = terrainHeight;
-    actor->terrainHeight = terrainHeight;
+  objectEvent = state->viewCenter;
+  if (objectEvent != 0) {
+    objectEvent->x.fixed += offsetX;
+    objectEvent->z.fixed += offsetZ;
+    terrainHeight = MapGrid_GetTerrainHeight(
+        objectEvent->terrainId, objectEvent->x.fixed, objectEvent->z.fixed);
+    objectEvent->y.fixed = terrainHeight;
+    objectEvent->terrainHeight = terrainHeight;
   }
 }
 
 /// Touch cell 10 in Tret Tree: the leader and camera move 80 pixels south at
 /// once.
-static void Event_ShiftSouthFiveCells(void) {
+static void EventScript_ShiftSouthFiveCells(void) {
   TretTreeBranch_ShiftLeaderAndCameraByCells(0, 5);
 }
 
 /// Touch cell 11 in Tret Tree: the leader and camera move 80 pixels north at
 /// once.
-static void Event_ShiftNorthFiveCells(void) {
+static void EventScript_ShiftNorthFiveCells(void) {
   TretTreeBranch_ShiftLeaderAndCameraByCells(0, -5);
 }
 
 /// Touch cell 12 in Tret Tree: the same 80-pixel move south as cell 10.
-static void Event_ShiftSouthFiveCellsSecond(void) {
+static void EventScript_ShiftSouthFiveCellsSecond(void) {
   TretTreeBranch_ShiftLeaderAndCameraByCells(0, 5);
 }
 
 /// Touch cell 13 in Tret Tree: the same 80-pixel move north as cell 11.
-static void Event_ShiftNorthFiveCellsSecond(void) {
+static void EventScript_ShiftNorthFiveCellsSecond(void) {
   TretTreeBranch_ShiftLeaderAndCameraByCells(0, -5);
 }
 
 /// Touch cell 14 in Tret Tree: the leader and camera move 96 pixels south at
 /// once.
-static void Event_ShiftSouthSixCells(void) {
+static void EventScript_ShiftSouthSixCells(void) {
   TretTreeBranch_ShiftLeaderAndCameraByCells(0, 6);
 }
 
 /// Touch cell 15 in Tret Tree: the leader and camera move 96 pixels north at
 /// once.
-static void Event_ShiftNorthSixCells(void) {
+static void EventScript_ShiftNorthSixCells(void) {
   TretTreeBranch_ShiftLeaderAndCameraByCells(0, -6);
 }
 
 /// Walking into one of the eight exits in Tret Tree, whose touch cells have the
 /// exits' own numbers: the exit sound plays and the party leaves by the exit
-/// touched, into Tret Tree's other scene (SceneId_TretTreeInteriors).
-static void Event_TakeTouchedExit(void) {
+/// touched, into Tret Tree's other scene (MapId_TretTreeInteriors).
+static void EventScript_TakeTouchedWarp(void) {
   struct EventWork *state = gEventWork;
-  s16 *touchedExit;
+  s16 *touchedWarp;
 
   SE(SE_MAP_EXIT);
-  touchedExit = &state->touchedTrigger;
-  Engine_EventRequestExit(*touchedExit);
+  touchedWarp = &state->touchedTrigger;
+  Engine_ScriptRequestWarp(*touchedWarp);
 }
 
 /// Selects the same mask and window parameters for Reveal and scene entry.
@@ -192,7 +192,7 @@ TretTreeBranch_SetRevealWindow(struct DisplayTransitionState *state) {
 
 /// Casting Reveal in Tret Tree: the window transition and BG1's blend over the
 /// rest of the screen are set again, as when the scene opened.
-static void Event_CastReveal(void) {
+static void EventScript_CastReveal(void) {
   struct DisplayTransitionState *state;
 
   DisplayTransition_InitializeBattleEffectState(9);
@@ -205,7 +205,7 @@ static void Event_CastReveal(void) {
 }
 
 /// Returns the scene's exit, touch, talk and Reveal events.
-const struct SceneEvent *TretTreeBranch_GetEvents(void) {
+const struct MapEvent *TretTreeBranch_GetEvents(void) {
   return gTretTreeBranch_Events;
 }
 
@@ -236,7 +236,7 @@ s32 TretTreeBranch_Initialize(void) {
 #endif
   struct DisplayTransitionState *state;
 
-  gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+  gEventWork->startTransition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
 
   DisplayTransition_InitializeBattleEffectState(9);
 
@@ -273,8 +273,9 @@ static void TretTreeBranch_ApplyBg3ScrollAtScanline(void) {
 /// Updates the split from the first map layer's pixel position. Before the
 /// split, scroll subtracts one pixel for every four elapsed frames.
 static void TretTreeBranch_UpdateBg3ScrollSplit(void) {
-  struct MapLayerScroll *layer =
-      &((struct MapScrollWork *)gMapWork[0])->layers[MAP_LAYER_GROUND];
+  struct MapGridLayerScroll *layer =
+      &((struct MapGridScrollWork *)gMapGridWork[0])
+           ->layers[MAPGRID_LAYER_GROUND];
   s32 horizontalOffset;
 
   sSplitLine = 192 - (s16)(layer->y >> 16);
@@ -287,11 +288,11 @@ static void TretTreeBranch_UpdateBg3ScrollSplit(void) {
 static void TretTreeBranch_StartBg3Split(void) {
   Runtime_SetIrqHandler(IRQ_HBLANK, 0, TretTreeBranch_ApplyBg3ScrollAtScanline);
   FieldScheduler_AddCallback(TretTreeBranch_UpdateBg3ScrollSplit,
-                             TASK_PRIORITY_SCENE);
+                             TASK_PRIORITY_MAP);
 }
 
-struct SceneEntrance gTretTreeBranch_Entrances[] = {
-    {ENTRANCE_DEFAULT, CONDITION_ALWAYS, 100, 0, 100, FACING_SOUTH, 0, -1, -1,
+struct MapWarpDest gTretTreeBranch_WarpDests[] = {
+    {WARP_DEST_DEFAULT, CONDITION_ALWAYS, 100, 0, 100, FACING_SOUTH, 0, -1, -1,
      -1, -1, 0},
     {TRET_TREE_BRANCH_FROM_TRET_TREE_INTERIORS_SOUTH_SOUTHWEST,
      CONDITION_ALWAYS, 328, 0, 424, FACING_WEST, 0, -1, -1, -1, -1, 0},
@@ -309,82 +310,84 @@ struct SceneEntrance gTretTreeBranch_Entrances[] = {
      CONDITION_ALWAYS, 328, 0, 152, FACING_WEST, 0, -1, -1, -1, -1, 0},
     {TRET_TREE_BRANCH_FROM_TRET_TREE_INTERIORS_NORTH_NORTHEAST,
      CONDITION_ALWAYS, 424, 0, 136, FACING_EAST, 0, -1, -1, -1, -1, 0},
-    {SCENE_TABLE_END},
+    {MAP_TABLE_END},
 };
 
-u32 gTretTreeBranch_Exits[] = {
-    SCENE_EXITS(TretTreeBranch),
-    SCENE_EXIT(TRET_TREE_BRANCH_TO_TRET_TREE_INTERIORS_SOUTH_SOUTHWEST,
-               TretTreeInteriors,
-               TRET_TREE_INTERIORS_FROM_TRET_TREE_BRANCH_SOUTH_SOUTHWEST),
-    SCENE_EXIT(TRET_TREE_BRANCH_TO_TRET_TREE_INTERIORS_SOUTH_SOUTHEAST,
-               TretTreeInteriors,
-               TRET_TREE_INTERIORS_FROM_TRET_TREE_BRANCH_SOUTH_SOUTHEAST),
-    SCENE_EXIT(TRET_TREE_BRANCH_TO_TRET_TREE_INTERIORS_SOUTH, TretTreeInteriors,
-               TRET_TREE_INTERIORS_FROM_TRET_TREE_BRANCH_SOUTH),
-    SCENE_EXIT(TRET_TREE_BRANCH_TO_TRET_TREE_INTERIORS_SOUTHEAST,
-               TretTreeInteriors,
-               TRET_TREE_INTERIORS_FROM_TRET_TREE_BRANCH_SOUTHEAST),
-    SCENE_EXIT(TRET_TREE_BRANCH_TO_TRET_TREE_INTERIORS_NORTH, TretTreeInteriors,
-               TRET_TREE_INTERIORS_FROM_TRET_TREE_BRANCH_NORTH),
-    SCENE_EXIT(TRET_TREE_BRANCH_TO_TRET_TREE_INTERIORS_NORTHWEST,
-               TretTreeInteriors,
-               TRET_TREE_INTERIORS_FROM_TRET_TREE_BRANCH_NORTHWEST),
-    SCENE_EXIT(TRET_TREE_BRANCH_TO_TRET_TREE_INTERIORS_NORTH_NORTHWEST,
-               TretTreeInteriors,
-               TRET_TREE_INTERIORS_FROM_TRET_TREE_BRANCH_NORTH_NORTHWEST),
-    SCENE_EXIT(TRET_TREE_BRANCH_TO_TRET_TREE_INTERIORS_NORTH_NORTHEAST,
-               TretTreeInteriors,
-               TRET_TREE_INTERIORS_FROM_TRET_TREE_BRANCH_NORTH_NORTHEAST),
-    SCENE_EXITS_END,
+u32 gTretTreeBranch_Warps[] = {
+    MAP_WARPS(TretTreeBranch),
+    MAP_WARP(TRET_TREE_BRANCH_TO_TRET_TREE_INTERIORS_SOUTH_SOUTHWEST,
+             TretTreeInteriors,
+             TRET_TREE_INTERIORS_FROM_TRET_TREE_BRANCH_SOUTH_SOUTHWEST),
+    MAP_WARP(TRET_TREE_BRANCH_TO_TRET_TREE_INTERIORS_SOUTH_SOUTHEAST,
+             TretTreeInteriors,
+             TRET_TREE_INTERIORS_FROM_TRET_TREE_BRANCH_SOUTH_SOUTHEAST),
+    MAP_WARP(TRET_TREE_BRANCH_TO_TRET_TREE_INTERIORS_SOUTH, TretTreeInteriors,
+             TRET_TREE_INTERIORS_FROM_TRET_TREE_BRANCH_SOUTH),
+    MAP_WARP(TRET_TREE_BRANCH_TO_TRET_TREE_INTERIORS_SOUTHEAST,
+             TretTreeInteriors,
+             TRET_TREE_INTERIORS_FROM_TRET_TREE_BRANCH_SOUTHEAST),
+    MAP_WARP(TRET_TREE_BRANCH_TO_TRET_TREE_INTERIORS_NORTH, TretTreeInteriors,
+             TRET_TREE_INTERIORS_FROM_TRET_TREE_BRANCH_NORTH),
+    MAP_WARP(TRET_TREE_BRANCH_TO_TRET_TREE_INTERIORS_NORTHWEST,
+             TretTreeInteriors,
+             TRET_TREE_INTERIORS_FROM_TRET_TREE_BRANCH_NORTHWEST),
+    MAP_WARP(TRET_TREE_BRANCH_TO_TRET_TREE_INTERIORS_NORTH_NORTHWEST,
+             TretTreeInteriors,
+             TRET_TREE_INTERIORS_FROM_TRET_TREE_BRANCH_NORTH_NORTHWEST),
+    MAP_WARP(TRET_TREE_BRANCH_TO_TRET_TREE_INTERIORS_NORTH_NORTHEAST,
+             TretTreeInteriors,
+             TRET_TREE_INTERIORS_FROM_TRET_TREE_BRANCH_NORTH_NORTHEAST),
+    MAP_WARPS_END,
 };
 
 // clang-format off
-struct ScenePlacement gTretTreeBranch_Placements[] = {
-    { JUPITER_DJINNI, FLAG_DJINNI_0 + DJINNI_BREEZE, ACTOR_STAND,
+struct ObjectEventTemplate gTretTreeBranch_ObjectEventTemplates[] = {
+    { JUPITER_DJINNI, FLAG_DJINNI_0 + DJINNI_BREEZE, MOVEMENT_TYPE_STAND,
         PIXELS(648), 0, PIXELS(88), FACING_WEST, TALK_FACE_PARTY, 0 },
-    { SCENE_TABLE_END },
+    { MAP_TABLE_END },
 };
 // clang-format on
 
-struct SceneEvent gTretTreeBranch_Events[] = {
-    {TOUCH_WALKING | EVENT_TOUCH_QUICK, 1, CONDITION_ALWAYS,
-     EVENT_SCRIPT(Event_TakeTouchedExit)},
-    {TOUCH_WALKING | EVENT_TOUCH_QUICK, 2, CONDITION_ALWAYS,
-     EVENT_SCRIPT(Event_TakeTouchedExit)},
-    {TOUCH_WALKING | EVENT_TOUCH_QUICK, 3, CONDITION_ALWAYS,
-     EVENT_SCRIPT(Event_TakeTouchedExit)},
-    {TOUCH_WALKING | EVENT_TOUCH_QUICK, 4, CONDITION_ALWAYS,
-     EVENT_SCRIPT(Event_TakeTouchedExit)},
-    {TOUCH_WALKING | EVENT_TOUCH_QUICK, 5, CONDITION_ALWAYS,
-     EVENT_SCRIPT(Event_TakeTouchedExit)},
-    {TOUCH_WALKING | EVENT_TOUCH_QUICK, 6, CONDITION_ALWAYS,
-     EVENT_SCRIPT(Event_TakeTouchedExit)},
-    {TOUCH_WALKING | EVENT_TOUCH_QUICK, 7, CONDITION_ALWAYS,
-     EVENT_SCRIPT(Event_TakeTouchedExit)},
-    {TOUCH_WALKING | EVENT_TOUCH_QUICK, 8, CONDITION_ALWAYS,
-     EVENT_SCRIPT(Event_TakeTouchedExit)},
-    {EVENT_TOUCH, 10, CONDITION_ALWAYS,
-     EVENT_SCRIPT(Event_ShiftSouthFiveCells)},
-    {EVENT_TOUCH, 11, CONDITION_ALWAYS,
-     EVENT_SCRIPT(Event_ShiftNorthFiveCells)},
-    {EVENT_TOUCH, 12, CONDITION_ALWAYS,
-     EVENT_SCRIPT(Event_ShiftSouthFiveCellsSecond)},
-    {EVENT_TOUCH, 13, CONDITION_ALWAYS,
-     EVENT_SCRIPT(Event_ShiftNorthFiveCellsSecond)},
-    {EVENT_TOUCH, 14, CONDITION_ALWAYS, EVENT_SCRIPT(Event_ShiftSouthSixCells)},
-    {EVENT_TOUCH, 15, CONDITION_ALWAYS, EVENT_SCRIPT(Event_ShiftNorthSixCells)},
-    {EVENT_TALK, ACTOR_BREEZE, CONDITION_ALWAYS,
-     EVENT_SCRIPT(Event_TalkToBreeze)},
+struct MapEvent gTretTreeBranch_Events[] = {
+    {COORD_EVENT_WALKING | COORD_EVENT_FLAG_QUICK, 1, CONDITION_ALWAYS,
+     EVENT_SCRIPT(EventScript_TakeTouchedWarp)},
+    {COORD_EVENT_WALKING | COORD_EVENT_FLAG_QUICK, 2, CONDITION_ALWAYS,
+     EVENT_SCRIPT(EventScript_TakeTouchedWarp)},
+    {COORD_EVENT_WALKING | COORD_EVENT_FLAG_QUICK, 3, CONDITION_ALWAYS,
+     EVENT_SCRIPT(EventScript_TakeTouchedWarp)},
+    {COORD_EVENT_WALKING | COORD_EVENT_FLAG_QUICK, 4, CONDITION_ALWAYS,
+     EVENT_SCRIPT(EventScript_TakeTouchedWarp)},
+    {COORD_EVENT_WALKING | COORD_EVENT_FLAG_QUICK, 5, CONDITION_ALWAYS,
+     EVENT_SCRIPT(EventScript_TakeTouchedWarp)},
+    {COORD_EVENT_WALKING | COORD_EVENT_FLAG_QUICK, 6, CONDITION_ALWAYS,
+     EVENT_SCRIPT(EventScript_TakeTouchedWarp)},
+    {COORD_EVENT_WALKING | COORD_EVENT_FLAG_QUICK, 7, CONDITION_ALWAYS,
+     EVENT_SCRIPT(EventScript_TakeTouchedWarp)},
+    {COORD_EVENT_WALKING | COORD_EVENT_FLAG_QUICK, 8, CONDITION_ALWAYS,
+     EVENT_SCRIPT(EventScript_TakeTouchedWarp)},
+    {MAP_EVENT_COORD, 10, CONDITION_ALWAYS,
+     EVENT_SCRIPT(EventScript_ShiftSouthFiveCells)},
+    {MAP_EVENT_COORD, 11, CONDITION_ALWAYS,
+     EVENT_SCRIPT(EventScript_ShiftNorthFiveCells)},
+    {MAP_EVENT_COORD, 12, CONDITION_ALWAYS,
+     EVENT_SCRIPT(EventScript_ShiftSouthFiveCellsSecond)},
+    {MAP_EVENT_COORD, 13, CONDITION_ALWAYS,
+     EVENT_SCRIPT(EventScript_ShiftNorthFiveCellsSecond)},
+    {MAP_EVENT_COORD, 14, CONDITION_ALWAYS,
+     EVENT_SCRIPT(EventScript_ShiftSouthSixCells)},
+    {MAP_EVENT_COORD, 15, CONDITION_ALWAYS,
+     EVENT_SCRIPT(EventScript_ShiftNorthSixCells)},
+    {MAP_EVENT_TALK, LOCALID_BREEZE, CONDITION_ALWAYS,
+     EVENT_SCRIPT(EventScript_TalkToBreeze)},
     {PSYNERGY_IN_AREA(ABILITY_REVEAL, PSYNERGY_PHASE_AFTER_END), 0,
-     CONDITION_ALWAYS, EVENT_SCRIPT(Event_CastReveal)},
-    {SCENE_EVENTS_END},
+     CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_CastReveal)},
+    {MAP_EVENTS_END},
 };
 
 /// Unused: the two steps of a door opening, as Vale's doors have them
 /// (gValeStorm_SanctumDoorOpens); nothing on the branch plays them.
 u16 gTretTreeBranch_UnusedCellSteps[] = {
-    MAP_CELL_STEP(0, 96, 2, 2, 2),
-    MAP_CELL_STEP(2, 96, 2, 2, 2),
-    MAP_CELL_STEPS_END,
+    MAPGRID_ANIM_STEP(0, 96, 2, 2, 2),
+    MAPGRID_ANIM_STEP(2, 96, 2, 2, 2),
+    MAPGRID_ANIM_STEPS_END,
 };

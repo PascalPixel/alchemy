@@ -661,7 +661,7 @@ void Camera_InitializeDefaultTransform(void) {
   struct FixedPointPosition eyeOffset;
 
   // Yaw 0x3000 (in 1/65536 turns), pitch 0xfe00, and 510 pixels away
-  // (0x1fe0000 in 16.16), the distance BattlePresentation_SetupTransitionScene
+  // (0x1fe0000 in 16.16), the distance BattlePresentation_SetupTransitionView
   // uses.
   camera->yaw = 192 << 6;
   camera->pitch = 254 << 8;
@@ -671,9 +671,9 @@ void Camera_InitializeDefaultTransform(void) {
   camera->unk18 = 0;
 
   Render_ResetTransformState();
-  SceneTransform_ApplyPosition(&camera->focus[0]);
-  SceneTransform_ApplyYaw((s16)camera->yaw);
-  SceneTransform_ApplyPitch((s16)camera->pitch);
+  Transform_ApplyPosition(&camera->focus[0]);
+  Transform_ApplyYaw((s16)camera->yaw);
+  Transform_ApplyPitch((s16)camera->pitch);
 
   eyeOffset.x = 0;
   eyeOffset.y = 0;

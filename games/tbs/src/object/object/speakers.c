@@ -41,7 +41,7 @@ s32 FieldEffect_GetAnimationValue(s32 id) {
 /// sounds, 0x100 plus its definition's value, or 0 for none (value 0xff) or
 /// with the Speech option off (gGameState.speech). UiText_OpenMessageWindowFar
 /// takes it in the high half of its last argument and
-/// Ui_SetMessageVoiceFromActor as the window's speakerVoiceSound
+/// Ui_SetMessageVoiceFromObjectEvent as the window's speakerVoiceSound
 /// (psynergy_effects/messages.c); the shops ask it for their keepers.
 s32 FieldEffect_GetResourceId(u32 id) {
   u8 portraitId;
@@ -54,8 +54,8 @@ s32 FieldEffect_GetResourceId(u32 id) {
 }
 
 /// Returns the definition flags of actor id's sprite, which choose its line
-/// when it has nothing to say: Scene_TalkToActor picks a Halted actor's pair
-/// of lines with them, and Halt cast with no scene event (FieldEffect_Run)
+/// when it has nothing to say: Map_TalkToObjectEvent picks a Halted actor's
+/// pair of lines with them, and Halt cast with no scene event (FieldEffect_Run)
 /// stops nothing when the nearest actor's flags are 0xff
 /// (FieldEffect_FilterObjectIdByFlags).
 s32 FieldEffect_GetFlags(s32 id) {

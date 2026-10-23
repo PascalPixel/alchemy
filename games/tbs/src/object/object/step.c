@@ -17,7 +17,7 @@ struct StepOwner {
 
 /// Clears the field's twelve pending requests (see struct FieldWork).
 ///
-/// Called by Field_RunScene while it sets a scene up.
+/// Called by Field_RunMap while it sets a scene up.
 void Field_ClearRequests(void) {
   s16 noRequest;
   struct FieldWork *work;
@@ -25,7 +25,7 @@ void Field_ClearRequests(void) {
   work = (struct FieldWork *)gEventWork;
   work->action = noRequest;
   work->pushTile = 0;
-  work->exit = 0;
+  work->warp = 0;
   work->menu = 0;
   work->examine = 0;
   work->start = 0;
@@ -40,7 +40,7 @@ void Field_ClearRequests(void) {
 /// Returns the sum of the field's twelve pending requests (counting the actor
 /// event request twice): non-zero while any request is pending.
 ///
-/// Field_RunScene tests it to stop walking and to leave its request loop.
+/// Field_RunMap tests it to stop walking and to leave its request loop.
 s32 Field_CountRequests(void) {
   struct FieldWork *work = (struct FieldWork *)gEventWork;
 
@@ -51,11 +51,11 @@ s32 Field_CountRequests(void) {
   // request breaks the tie, by which time a later cell's code may have
   // replaced the action. BUGFIX tests each request instead.
 #ifdef BUGFIX
-  return work->action | work->pushTile | work->exit | work->menu |
+  return work->action | work->pushTile | work->warp | work->menu |
          work->examine | work->start | (s16)work->talk | work->tile |
          work->battle | work->psynergy | work->item | work->event;
 #else
-  return work->action + work->pushTile + work->exit + work->menu +
+  return work->action + work->pushTile + work->warp + work->menu +
          work->examine + work->start + (s16)work->talk + work->tile +
          (s16)work->talk + work->battle + work->psynergy + work->item +
          work->event;
@@ -70,16 +70,17 @@ s32 Field_CountRequests(void) {
 s32 Field_GetCollisionAheadOfLeader(void) {
   struct FieldWork *work;
   struct ObjectRuntime *leader;
-  struct MapState *mapState;
+  struct MapGridState *gridState;
   union PolarOffsetPosition position;
   u8 *tile;
   s32 fixedX;
   s32 fixedZ;
 
   work = WORK_SLOT(HEAP_SLOT_EVENT);
-  leader = (struct ObjectRuntime *)work->actors[gGameState.selectedActor];
+  leader = (struct ObjectRuntime *)
+               work->objectEvents[gGameState.selectedObjectEvent];
 
-  mapState = WORK_SLOT(HEAP_SLOT_MAP);
+  gridState = WORK_SLOT(HEAP_SLOT_MAP_GRID);
 
   if (leader == 0)
     return 0;
@@ -105,10 +106,10 @@ s32 Field_GetCollisionAheadOfLeader(void) {
       fixedZ += 0x1fffff;
     tileY = (fixedZ >> 21) & 31;
 
-    tile = (u8 *)gMapBlocks + ((tileX + (tileY << 5)) << 2);
+    tile = (u8 *)gMetatiles + ((tileX + (tileY << 5)) << 2);
   } else {
     // Map cells are 16 pixels square, 128 to a row.
-    tile = (u8 *)mapState->layers[MAP_LAYER_GROUND].cells;
+    tile = (u8 *)gridState->layers[MAPGRID_LAYER_GROUND].cells;
 
     fixedX = position.vector.x;
     if (fixedX < 0)
@@ -129,16 +130,16 @@ s32 Field_GetCollisionAheadOfLeader(void) {
 
 /// Takes the exit of the first of the scene's exit regions that contains the
 /// position (x, y, z), in 16.16 pixels, and whose condition holds: records the
-/// region's exit value for Field_RunScene, plays the exit sound and starts
+/// region's exit value for Field_RunMap, plays the exit sound and starts
 /// leaving the scene. A region's bounds are whole pixels, its maxima
 /// exclusive; a table whose first minX is -1, or no table, has no exits.
 ///
 /// Called by Field_ProcessStep when the leader steps on a cell with a non-zero
 /// collision code. Sets work->exit and stops the leader.
-void Field_CheckExitRegions(s32 positionX, s32 positionY, s32 positionZ) {
+void Field_CheckWarpRegions(s32 positionX, s32 positionY, s32 positionZ) {
   // A do/while or while scan changes register allocation (51 text bytes in
   // tbs-en); keep the sentinel backedge until that form matches.
-  s32 exitValue;
+  s32 warpValue;
   struct FieldWork *work;
   s32 fixedZ;
   s32 fixedY;
@@ -150,7 +151,7 @@ void Field_CheckExitRegions(s32 positionX, s32 positionY, s32 positionZ) {
   s32 maxZ;
   s16 maxX;
   s16 minX;
-  const struct SceneRegion *region;
+  const struct MapWarpRegion *region;
 
   fixedX = positionX;
   fixedY = positionY;
@@ -165,12 +166,12 @@ void Field_CheckExitRegions(s32 positionX, s32 positionY, s32 positionZ) {
     maxY = region->maxY;
     maxZ = region->maxZ;
     condition = region->condition;
-    exitValue = region->value;
+    warpValue = region->value;
     if (GameFlag_IsConditionActive(condition) != 0 &&
         fixedY >= REGION_FIXED(minY) && fixedY < REGION_FIXED(maxY) &&
         fixedX >= REGION_FIXED(minX) && fixedX < REGION_FIXED(maxX) &&
         fixedZ >= REGION_FIXED(minZ) && fixedZ < REGION_FIXED(maxZ)) {
-      work->exit = exitValue;
+      work->warp = warpValue;
       AudioCommand_PlayFar(SE_MAP_EXIT);
       Leader_StopMoving();
       return;
@@ -189,7 +190,7 @@ void Field_CheckExitRegions(s32 positionX, s32 positionY, s32 positionZ) {
 /// and hazardous ground, and wears Avoid off. When this hurts the party, the
 /// leader flinches and characters who fall are listed in the field work.
 ///
-/// Called by Field_RunScene each frame while the party walks (in debug mode,
+/// Called by Field_RunMap each frame while the party walks (in debug mode,
 /// FLAG_DEBUG_STEPS_OFF skips it), so the counts below advance
 /// per frame. Sets work->action, input, battle, command and event
 /// (-1 when someone fell), work->currentTile and previousTile, walkingDistance,
@@ -199,11 +200,12 @@ void Field_ProcessStep(s32 layer, s32 x, s32 y, s32 z) {
    * set keeps the load order and the 44-byte frame; as struct BattleUnit, 2
    * of 472 instructions differ in tbs-en. */
   struct FieldWork *work = WORK_SLOT(HEAP_SLOT_EVENT);
-  struct MapState *mapState = WORK_SLOT(HEAP_SLOT_MAP);
-  s32 leaderId = gGameState.selectedActor;
-  struct ObjectRuntime *leader = (struct ObjectRuntime *)work->actors[leaderId];
+  struct MapGridState *gridState = WORK_SLOT(HEAP_SLOT_MAP_GRID);
+  s32 leaderId = gGameState.selectedObjectEvent;
+  struct ObjectRuntime *leader =
+      (struct ObjectRuntime *)work->objectEvents[leaderId];
   s16 previousHp[8];
-  struct MapCell *tile;
+  struct MapGridCell *tile;
 #ifdef UBFIX
   // The defined form reads the struct BattleUnit Unit_GetFar returns, rather
   // than through the unrelated struct StepOwner; it compiles to the same size
@@ -232,13 +234,13 @@ void Field_ProcessStep(s32 layer, s32 x, s32 y, s32 z) {
     previousHp[i] = Unit_GetFar(gGameState.activeOwners[i])->hp;
 
   if (work->mode == MODE_WORLD_MAP) {
-    tile = &((struct MapCell *)Ram_MapBlocks)[((x / 0x200000) & 31) +
-                                              (((z / 0x200000) & 31) << 5)];
+    tile = &((struct MapGridCell *)Ram_Metatiles)[((x / 0x200000) & 31) +
+                                                  (((z / 0x200000) & 31) << 5)];
   } else {
-    if ((u32)layer <= MAP_LAYER_OVERHEAD)
-      tile = mapState->layers[layer].cells;
+    if ((u32)layer <= MAPGRID_LAYER_OVERHEAD)
+      tile = gridState->layers[layer].cells;
     else
-      tile = (struct MapCell *)gMapCellBuffer;
+      tile = (struct MapGridCell *)gMapGridCellBuffer;
     tile = &tile[(x / 0x100000) + ((z / 0x100000) << 7)];
   }
   event = tile->collisionCode;
@@ -247,15 +249,15 @@ void Field_ProcessStep(s32 layer, s32 x, s32 y, s32 z) {
   // Exit regions are checked on any marked cell; the code then picks the
   // request it raises.
   if (event != 0)
-    Field_CheckExitRegions(x, y, z);
-  if (event >= MAP_CELL_EVENT_FIRST && event <= MAP_CELL_EVENT_LAST)
+    Field_CheckWarpRegions(x, y, z);
+  if (event >= MB_EVENT_FIRST && event <= MB_EVENT_LAST)
     work->action = event;
-  if (event >= MAP_CELL_LEDGE && event <= MAP_CELL_JUMP_FORWARD)
+  if (event >= MB_LEDGE && event <= MB_JUMP_FORWARD)
     work->pushTile = event;
 
   // Only while walking (not climbing) towards a target.
   if (gGameState.movementMode == LEADER_MOVEMENT_WALK && leader != NULL &&
-      leader->targetX != ACTOR_NO_TARGET) {
+      leader->targetX != OBJ_EVENT_NO_TARGET) {
     // Encounters: the zone comes from the world map terrain, or from the
     // ground the leader stands on. FLAG_LURE_CAP doubles the speed the roll
     // counts.
@@ -265,12 +267,12 @@ void Field_ProcessStep(s32 layer, s32 x, s32 y, s32 z) {
     if (work->mode == MODE_WORLD_MAP) {
       fullEncounterRate = 1;
       work->battle = Encounter_RollWorldMap((s32)&leader->x, encounterSpeed);
-    } else if (event == MAP_CELL_ENCOUNTER_GROUND_1 ||
-               event == MAP_CELL_ENCOUNTER_GROUND_2) {
+    } else if (event == MB_ENCOUNTER_GROUND_1 ||
+               event == MB_ENCOUNTER_GROUND_2) {
       fullEncounterRate =
-          work->encounterGroups[event - (MAP_CELL_ENCOUNTER_GROUND_1 - 1)];
-      work->battle = Encounter_RollTerrain(
-          event - (MAP_CELL_ENCOUNTER_GROUND_1 - 1), encounterSpeed);
+          work->encounterGroups[event - (MB_ENCOUNTER_GROUND_1 - 1)];
+      work->battle = Encounter_RollTerrain(event - (MB_ENCOUNTER_GROUND_1 - 1),
+                                           encounterSpeed);
     } else {
       fullEncounterRate = work->encounterGroups[0];
       work->battle = Encounter_RollTerrain(0, encounterSpeed);
@@ -290,7 +292,7 @@ void Field_ProcessStep(s32 layer, s32 x, s32 y, s32 z) {
       Party_AddPp(amount, 0);
       if (DjinnRecovery_TickFar())
         AudioCommand_PlayFar(SE_DJINNI_SET);
-      Event_ClearInvalidPackedValues();
+      FieldScript_ClearInvalidPackedValues();
       partyHurt = Party_ApplyPoisonDamage();
     }
 
@@ -299,16 +301,15 @@ void Field_ProcessStep(s32 layer, s32 x, s32 y, s32 z) {
     // the count follows the distance walked there (the Lamakan Desert's
     // limit is 600).
     if (gGameState.hazardMode == HAZARD_COUNT_ON_CELLS &&
-        event == MAP_CELL_HAZARD) {
-      if (work->previousTile->collisionCode == MAP_CELL_HAZARD)
+        event == MB_DESERT_SAND) {
+      if (work->previousTile->collisionCode == MB_DESERT_SAND)
         gGameState.hazardSteps += leader->speedLimit / 0x10000;
       else
         gGameState.hazardSteps = gGameState.hazardLimit / 2;
     }
 
     // Avoid wears off with distance, outside towns.
-    if (gGameState.avoidDistance != 0 &&
-        gGameState.sceneVariant != SCENE_VARIANT_TOWN) {
+    if (gGameState.avoidDistance != 0 && gGameState.mapType != MAP_TYPE_TOWN) {
       gGameState.avoidDistance -= leader->speedLimit;
       if (gGameState.avoidDistance <= 0) {
         gGameState.avoidDistance = 1;
@@ -345,7 +346,7 @@ void Field_ProcessStep(s32 layer, s32 x, s32 y, s32 z) {
   // The leader flinches (velocityY, a hop of 4 pixels a frame) and shows a
   // one-off SPRITE_ATTACHED_EFFECT; each character whose HP reached 0 on this
   // step is listed, loses its poison and raises event -1, which
-  // Field_RunScene handles.
+  // Field_RunMap handles.
   if (partyHurt) {
     work->fallenCount = 0;
     work->survivorCount = 0;
@@ -481,14 +482,14 @@ s32 Party_ApplyPoisonDamage(void) {
 /// in progress, pauses camera movement and freezes the perspective view as a
 /// still picture. Elsewhere it does nothing.
 ///
-/// Called by Field_RunScene around the handling of most requests, by the
+/// Called by Field_RunMap around the handling of most requests, by the
 /// Djinni effect and by the world map scene; each call is paired with
-/// WorldMap_EndEvent. Changes the display transition state in
+/// WorldMap_EndScript. Changes the display transition state in
 /// HEAP_SLOT_TRANSITION only when it is running. Both allocations return the
 /// slot's block when it has one; with that slot free, the
 /// world map takes a new, uncleared block there, kept until the scene ends,
 /// whose step is then leftover memory.
-void WorldMap_StartEvent(void) {
+void WorldMap_StartScript(void) {
   struct FieldWork *work;
   struct DisplayTransitionState *state;
 
@@ -506,14 +507,14 @@ void WorldMap_StartEvent(void) {
   }
 }
 
-/// Ends what WorldMap_StartEvent started: on the world map, reloads
+/// Ends what WorldMap_StartScript started: on the world map, reloads
 /// the area's graphics and sets the camera's movement state back to 0.
-void WorldMap_EndEvent(void) {
+void WorldMap_EndScript(void) {
   struct FieldWork *work;
 
   work = Runtime_AllocateBlock(HEAP_SLOT_EVENT, sizeof(*work));
   if (work->mode == MODE_WORLD_MAP) {
-    Map_LoadAreaGraphicsFar();
+    WorldMap_LoadAreaGraphicsFar();
     work->camera->movementState = 0;
   }
 }

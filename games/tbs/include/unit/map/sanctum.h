@@ -1,36 +1,36 @@
-#ifndef ALCHEMY_UNIT_SCENE_SANCTUM_H
-#define ALCHEMY_UNIT_SCENE_SANCTUM_H
+#ifndef ALCHEMY_UNIT_MAP_SANCTUM_H
+#define ALCHEMY_UNIT_MAP_SANCTUM_H
 
 #include "types.h"
 #include "map_tables.h"
 
-const struct SceneEntrance *Sanctum_GetEntrances(void);
-const struct SceneRegion *Sanctum_GetRegions(void);
-const u32 *Sanctum_GetExits(void);
-const struct ScenePlacement *Sanctum_GetPlacements(void);
-const struct SceneEvent *Sanctum_GetEvents(void);
+const struct MapWarpDest *Sanctum_GetWarpDests(void);
+const struct MapWarpRegion *Sanctum_GetRegions(void);
+const u32 *Sanctum_GetWarps(void);
+const struct ObjectEventTemplate *Sanctum_GetObjectEventTemplates(void);
+const struct MapEvent *Sanctum_GetEvents(void);
 s32 Sanctum_Initialize(void);
 extern u32 gSanctum_LeaderCircleScript[];
 extern u32 gSanctum_GaretCircleScript[];
 extern s32 gSanctum_ItemIconGrowScript[];
 extern s32 gSanctum_ItemIconEndScript[];
-extern struct SceneEntrance gSanctum_Entrances[];
-extern u32 gSanctum_Exits[];
-extern struct ScenePlacement gSanctum_NoPlacements[];
-extern struct ScenePlacement gSanctum_ValePlacements[];
-extern struct ScenePlacement gSanctum_IvanPlacement[];
-extern struct ScenePlacement gSanctum_VaultBilibinPlacements[];
-extern struct ScenePlacement gSanctum_QuestPlacements[];
-extern struct ScenePlacement gSanctum_AltinXianPlacements[];
-extern struct SceneEvent gSanctum_ValeEvents[];
-extern struct SceneEvent gSanctum_VaultEvents[];
-extern struct SceneEvent gSanctum_VaultRevisitEvents[];
-extern struct SceneEvent gSanctum_QuestEvents[];
-extern struct SceneEvent gSanctum_ValeEventsAfterLeaving[];
-extern struct SceneEvent gSanctum_ValeEventsAfterKalay[];
-extern struct SceneEvent gSanctum_AltinEvents[];
-extern struct SceneEvent gSanctum_BilibinEvents[];
-extern struct SceneEvent gSanctum_XianEvents[];
+extern struct MapWarpDest gSanctum_WarpDests[];
+extern u32 gSanctum_Warps[];
+extern struct ObjectEventTemplate gSanctum_NoObjectEventTemplates[];
+extern struct ObjectEventTemplate gSanctum_ValeObjectEventTemplates[];
+extern struct ObjectEventTemplate gSanctum_IvanObjectEventTemplate[];
+extern struct ObjectEventTemplate gSanctum_VaultBilibinObjectEventTemplates[];
+extern struct ObjectEventTemplate gSanctum_QuestObjectEventTemplates[];
+extern struct ObjectEventTemplate gSanctum_AltinXianObjectEventTemplates[];
+extern struct MapEvent gSanctum_ValeEvents[];
+extern struct MapEvent gSanctum_VaultEvents[];
+extern struct MapEvent gSanctum_VaultRevisitEvents[];
+extern struct MapEvent gSanctum_QuestEvents[];
+extern struct MapEvent gSanctum_ValeEventsAfterLeaving[];
+extern struct MapEvent gSanctum_ValeEventsAfterKalay[];
+extern struct MapEvent gSanctum_AltinEvents[];
+extern struct MapEvent gSanctum_BilibinEvents[];
+extern struct MapEvent gSanctum_XianEvents[];
 extern s32 gSanctum_CursorBob[];
 extern s32 gSanctum_OwnerEffectScript[];
 extern s32 gSanctum_SparkEndScript[];

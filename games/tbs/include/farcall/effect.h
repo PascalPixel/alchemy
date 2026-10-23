@@ -10,7 +10,7 @@ s32 BattleEffect_BuildBlitterFar(s32 slot, s32 width_shift, s32 height_shift,
 void BattleEffect_DispatchByIdRangeFar(struct BattleEffectArgument *effect);
 /// Runs one of the large effects, the summons' scenes, with its sheet, work and
 /// canvas taken for it and freed after.
-void BattleEffect_RunSceneEffectFar(struct BattleEffectArgument *effect);
+void BattleEffect_RunSummonEffectFar(struct BattleEffectArgument *effect);
 /// Runs an ordinary effect, the gBattleEffect_EffectHandlers entry for its
 /// kind, with its sheet, work and canvas taken for it and freed after.
 void BattleEffect_RunTableEffectFar(struct BattleEffectArgument *effect);

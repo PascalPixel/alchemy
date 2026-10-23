@@ -4,8 +4,8 @@
 
 #include "../psynergy_effects_internal.h"
 
-/// A FieldActor as Douse's orb and drops use it; the notes give the
-/// FieldActor fields at the same offsets.
+/// A ObjectEvent as Douse's orb and drops use it; the notes give the
+/// ObjectEvent fields at the same offsets.
 struct Effect05Object {
   u8 reserved00[8];
   s32 x, y, z;  ///< 16.16 fixed-point pixels
@@ -27,8 +27,8 @@ struct Effect05Object {
   void (*callback)(union FieldObject *fieldObject); ///< per-frame update
 };
 
-/// The effect scene (struct FieldEffectScene, gEffectWork) as Douse reads it;
-/// the notes give the FieldEffectScene fields at the same offsets.
+/// The effect scene (struct FieldEffectWork, gEffectWork) as Douse reads it;
+/// the notes give the FieldEffectWork fields at the same offsets.
 struct Effect05State {
   s32 angle;             ///< 1/65536 turns: the way the caster faces
   s32 x, y, z;           ///< the ground under the orb's destination
@@ -145,7 +145,7 @@ void FieldEffect_RunDouse(void) {
     work->z = target->position.z;
     Vector_AddPolarOffset(16 << 16, work->angle,
                           (struct EffectVector *)&work->x);
-    work->y = Map_GetTerrainHeightFar(0, work->x, work->z);
+    work->y = MapGrid_GetTerrainHeightFar(0, work->x, work->z);
   }
   from = &start;
   SET_POSITION(from, target->position.x, target->position.y + (16 << 16),

@@ -5,13 +5,13 @@
 #include "../field_internal.h"
 
 /// One step of dissolving a sprite pixel by pixel. In each 8x8 tile (256
-/// colours) one pixel is cleared, in gMap_TileDissolveOrder's order; each
+/// colours) one pixel is cleared, in gSpriteDissolve_PixelOrder's order; each
 /// tile runs one step ahead of the last, and only tiles whose step is 64-127
 /// clear a pixel. obj is the sprite (struct AnimationObject), pos the step
 /// (0-127). Writes the sprite's tiles in OBJ VRAM. Called by the two
 /// functions below and, as render_animated_tile_frameFar, by the battle's
 /// playback (battle/battle/playback.c).
-void Map_RenderAnimatedTileFrame(u8 *obj, u32 pos) {
+void SpriteDissolve_Step(u8 *obj, u32 pos) {
   u16 *tile;
   s32 tileCount;
   u32 i;
@@ -28,7 +28,7 @@ void Map_RenderAnimatedTileFrame(u8 *obj, u32 pos) {
   i = 0;
 
   if (i < tileCount) {
-    order = gMap_TileDissolveOrder;
+    order = gSpriteDissolve_PixelOrder;
     highMask = 0xff00;
     indexMask = 0x3f;
     offsetMask = 0x3e;
@@ -62,27 +62,27 @@ void Map_RenderAnimatedTileFrame(u8 *obj, u32 pos) {
 }
 
 /// Dissolves a sprite pixel by pixel, four steps a frame, over 32 frames.
-/// Called through Map_RenderAnimatedTileFramesForObjectFar by the auto
+/// Called through SpriteDissolve_RunFar by the auto
 /// battle (battle/battle/auto_battle.c).
-void Map_RenderAnimatedTileFramesForObject(u8 *sprite) {
+void SpriteDissolve_Run(u8 *sprite) {
   u32 step;
 
   step = 0;
   // Finish all four dissolve steps before waiting for the next video frame.
   do {
-    Map_RenderAnimatedTileFrame(sprite, step);
-    Map_RenderAnimatedTileFrame(sprite, step + 1);
-    Map_RenderAnimatedTileFrame(sprite, step + 2);
-    Map_RenderAnimatedTileFrame(sprite, step + 3);
+    SpriteDissolve_Step(sprite, step);
+    SpriteDissolve_Step(sprite, step + 1);
+    SpriteDissolve_Step(sprite, step + 2);
+    SpriteDissolve_Step(sprite, step + 3);
     step += 4;
     WaitFrames(1);
   } while (step <= 127);
 }
 
 /// Dissolves count sprites together, pixel by pixel, over 32 frames.
-/// Called through Map_RenderAllAnimatedTileFramesFar by the battle's staging
+/// Called through SpriteDissolve_RunManyFar by the battle's staging
 /// (battle/battle/staging.c), after the unit is taken off its lists.
-void Map_RenderAllAnimatedTileFrames(u8 **sprites, s32 count) {
+void SpriteDissolve_RunMany(u8 **sprites, s32 count) {
   u8 **firstSprite;
   u8 **spriteCursor;
   s32 spritesRemaining;
@@ -101,11 +101,11 @@ void Map_RenderAllAnimatedTileFrames(u8 **sprites, s32 count) {
       fourthDissolveStep = step + 3;
       spritesRemaining = count;
       do {
-        Map_RenderAnimatedTileFrame(*spriteCursor, step);
-        Map_RenderAnimatedTileFrame(*spriteCursor, secondDissolveStep);
-        Map_RenderAnimatedTileFrame(*spriteCursor, thirdDissolveStep);
+        SpriteDissolve_Step(*spriteCursor, step);
+        SpriteDissolve_Step(*spriteCursor, secondDissolveStep);
+        SpriteDissolve_Step(*spriteCursor, thirdDissolveStep);
         spritesRemaining -= 1;
-        Map_RenderAnimatedTileFrame(*spriteCursor++, fourthDissolveStep);
+        SpriteDissolve_Step(*spriteCursor++, fourthDissolveStep);
       } while (spritesRemaining != 0);
     }
     WaitFrames(1U);
@@ -120,11 +120,11 @@ void Map_RenderAllAnimatedTileFrames(u8 **sprites, s32 count) {
 /// which the camera takes off z when it draws the sprite and its shadow. No
 /// code names it: its veneer in the field far-call table
 /// (system/far_call/FIELD.S) is unnamed.
-s32 Map_GetScreenRelativePosition(struct ObjectRuntime *object,
-                                  s32 *screenPosition) {
-  struct MapScrollWork *map = gMapWork[0];
+s32 MapGrid_GetScreenRelativePosition(struct ObjectRuntime *object,
+                                      s32 *screenPosition) {
+  struct MapGridScrollWork *grid = gMapGridWork[0];
 #ifndef UBFIX
-  s32 *viewCoordinates = &map->viewX;
+  s32 *viewCoordinates = &grid->viewX;
 #endif
   s32 viewX;
   s32 viewZ;
@@ -134,8 +134,8 @@ s32 Map_GetScreenRelativePosition(struct ObjectRuntime *object,
   // UB: viewY is a separate member, not a second element of viewX.
   // Direct member loads change the EN save set and load order (96 bytes each).
 #ifdef UBFIX
-  viewX = map->viewX & 0xffff0000;
-  viewZ = map->viewY & 0xffff0000;
+  viewX = grid->viewX & 0xffff0000;
+  viewZ = grid->viewY & 0xffff0000;
 #else
   viewX = viewCoordinates[0] & 0xffff0000;
   viewZ = viewCoordinates[1] & 0xffff0000;
@@ -159,7 +159,7 @@ s32 Map_GetScreenRelativePosition(struct ObjectRuntime *object,
 /// Object_UpdateAllMotion, which runs no scripts; MODE_WORLD_MAP and
 /// MODE_BATTLE use the fixed camera. Both blocks are heap slots, so a later
 /// call gets the same ones back. No code releases HEAP_SLOT_OBJECT_POOL or
-/// HEAP_SLOT_MENU_CONTROL by name, but Field_RunScene takes HEAP_SLOT_EVENT
+/// HEAP_SLOT_MENU_CONTROL by name, but Field_RunMap takes HEAP_SLOT_EVENT
 /// from EWRAM before them, so its release of that slot as it returns frees
 /// their memory too; Runtime_InitializeHeap clears the slots at the next
 /// scene change.
@@ -225,7 +225,7 @@ void *ObjectDispatch_FindFreeObject(void) {
 
 /// Releases an object's sprites and zeroes it, freeing it.
 /// Clearing the script lets ObjectDispatch_FindFreeObject hand the object out
-/// again. Reached through SC_FREE (Script_FreeObject) and, as
+/// again. Reached through SC_FREE (ActionScript_FreeObject) and, as
 /// ObjectDispatch_ReleaseFar, from the battle, the Psynergy effects and the
 /// field scene's objects.
 void ObjectDispatch_Release(struct DispatchObject *object) {
@@ -264,7 +264,7 @@ void ObjectDispatch_Release(struct DispatchObject *object) {
 struct ObjectRuntime *FieldObject_Create(s32 encodedSprite, s32 x, s32 y,
                                          s32 z) {
   struct ObjectRuntime *object;
-  struct FieldActor *actor;
+  struct ObjectEvent *objectEvent;
   struct ScriptMotionObject *motion;
   struct ScriptObjectRuntime *scripted;
   struct AnimationObject *sprite;
@@ -277,15 +277,16 @@ struct ObjectRuntime *FieldObject_Create(s32 encodedSprite, s32 x, s32 y,
   encodedSprite &= 0xfff;
   object = ObjectDispatch_FindFreeObject();
   if (object != NULL) {
-    actor = (struct FieldActor *)object;
-    actor->radius = 16;
+    objectEvent = (struct ObjectEvent *)object;
+    objectEvent->radius = 16;
     switch (spriteStorageKind) {
     case OBJECT_CREATE_ONE_SPRITE:
       sprite = ResourceObject_Create(encodedSprite);
       if (sprite != NULL) {
         object->animationKind = OBJECT_SPRITE_ONE;
         object->animation = sprite;
-        actor->radius = Resource_GetMetadataRecordFar(encodedSprite)->boxY >> 1;
+        objectEvent->radius =
+            Resource_GetMetadataRecordFar(encodedSprite)->boxY >> 1;
       } else {
         object->animationKind = OBJECT_SPRITE_NONE;
       }
@@ -302,7 +303,8 @@ struct ObjectRuntime *FieldObject_Create(s32 encodedSprite, s32 x, s32 y,
       Dma_Fill32(0, spriteSlots, 0x10);
       sprite = ResourceObject_Create(encodedSprite);
       if (sprite != NULL) {
-        actor->radius = Resource_GetMetadataRecordFar(encodedSprite)->boxY >> 1;
+        objectEvent->radius =
+            Resource_GetMetadataRecordFar(encodedSprite)->boxY >> 1;
         *spriteSlots++ = sprite;
       }
       sprite = ResourceObject_Create(encodedSprite + 1);
@@ -322,15 +324,15 @@ struct ObjectRuntime *FieldObject_Create(s32 encodedSprite, s32 x, s32 y,
     object->script = (s32 *)gObjectDispatch_DefaultScript;
     object->speedLimit = 0x20000;
     object->step = 0;
-    actor->scaleX = 0x10000;
-    actor->scaleY = 0x10000;
+    objectEvent->scaleX = 0x10000;
+    objectEvent->scaleY = 0x10000;
     object->acceleration = 0x10000;
-    object->flags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
+    object->flags = OBJ_EVENT_FOLLOWS_TERRAIN | OBJ_EVENT_FALLS;
     motion->gravity = 0x10000;
     motion->vertical.bounce = 0x4000;
     object->collisionFlags = 0;
-    object->actionFlags = ACTOR_FACES_MOTION;
-    actor->riseBaseY = 0;
+    object->actionFlags = OBJ_EVENT_FACES_MOTION;
+    objectEvent->riseBaseY = 0;
     object->angle = 0x4000;
     // Its home position, in pixels.
     scripted->homeX = x / 65536;

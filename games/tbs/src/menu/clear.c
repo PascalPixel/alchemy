@@ -140,14 +140,16 @@ static u16 Clear_CalculatePasswordCrc16(u32 byteCount, u8 *data);
 
 /// The file select overlay's scene tables, for the scene loader: one entrance,
 /// the exit, and no placements or events.
-u8 *Clear_GetEntrances(void) { return (u8 *)gClear_Entrances; }
+u8 *Clear_GetWarpDests(void) { return (u8 *)gClear_WarpDests; }
 
 /// The regions entry: the file select screen has no exit boxes.
-s32 SceneData_ReturnZero(void) { return 0; }
+s32 MapData_ReturnZero(void) { return 0; }
 
-u8 *Clear_GetExits(void) { return (u8 *)gClear_Exits; }
+u8 *Clear_GetWarps(void) { return (u8 *)gClear_Warps; }
 
-u8 *Clear_GetPlacements(void) { return (u8 *)gClear_Placements; }
+u8 *Clear_GetObjectEventTemplates(void) {
+  return (u8 *)gClear_ObjectEventTemplates;
+}
 
 u8 *Clear_GetEvents(void) { return (u8 *)gClear_Events; }
 
@@ -172,8 +174,8 @@ static void Clear_LoadBackground(void) {
   Dma_Set(resource, (void *)BG_PLTT, (DMA_ENABLE | DMA_32BIT) << 16 | 0x70,
           REG_DMA3);
   resource += 0x1c0;
-  FieldResource_DecodeType01(resource, Ram_MapCellBuffer);
-  Dma_Set((void *)Ram_MapCellBuffer, LOGO_TILES,
+  FieldResource_DecodeType01(resource, Ram_MapGridCellBuffer);
+  Dma_Set((void *)Ram_MapGridCellBuffer, LOGO_TILES,
           (DMA_ENABLE | DMA_32BIT) << 16 | 0x2580, REG_DMA3);
   // Build the visible 30-column logo map, padding to the 32-cell screen stride.
   tilemap = LOGO_MAP;
@@ -191,12 +193,12 @@ static void Clear_LoadBackground(void) {
     scroll++;
   }
   Dma_Set(gBgScroll, REG_BG0HOFS, (DMA_ENABLE | DMA_32BIT) << 16 | 4, REG_DMA3);
-  ((struct MapScrollWork *)gMapWork[0])->flags =
+  ((struct MapGridScrollWork *)gMapGridWork[0])->flags =
       DISPCNT_BG2_ON | DISPCNT_OBJ_ON;
   {
-    struct FieldActor *leader;
+    struct ObjectEvent *leader;
 
-    leader = Object_GetById(gGameState.selectedActor);
+    leader = ObjectEvent_GetById(gGameState.selectedObjectEvent);
     leader->motionFlags = 0;
   }
 }
@@ -368,23 +370,23 @@ static void Clear_NameEntryCharacter(s32 cell, u8 *text) {
 /// Retreat (FLAG_RETREAT_BLOCKED), except in scenes of variant 2, which block
 /// it by themselves, and on the world map.
 static s32 Clear_GetSaveRecoveryBlockMask(void) {
-  s32 sceneDifference;
+  s32 mapDifference;
 
   if (Engine_GameFlagIsSet(FLAG_RETREAT_BLOCKED) == 0) {
     return 0;
   }
-  if (gGameState.sceneVariant == SCENE_VARIANT_TOWN) {
+  if (gGameState.mapType == MAP_TYPE_TOWN) {
     return 0;
   }
   // -1 unless the scene is the world map: -d | d has its top bit set for any
   // d but 0.
-  sceneDifference = gGameState.scene ^ (s32)&SceneId_WorldMap;
-  return -((u32)(-sceneDifference | sceneDifference) >> 31);
+  mapDifference = gGameState.mapId ^ (s32)&MapId_WorldMap;
+  return -((u32)(-mapDifference | mapDifference) >> 31);
 }
 
 /// A view of the scene state that names its copy of the play time, checked
 /// against the loaded game's.
-struct SaveMenuSceneState {
+struct SaveMenuMapLocalState {
   u8 unk000[0x100]; ///< not read here
   /// The play time in frames, which SaveState_BuildSummaryHeader copies here
   /// when saving.
@@ -445,11 +447,11 @@ s32 SaveMenu_Run(void) {
   Clear_LoadBackground();
   FieldScheduler_AddCallback(Clear_CheckButtonCodes, 0xc80);
   gEventWork->startTransition = blendStarted;
-  Engine_EventOpenScreen();
-  Engine_EventWaitForScreen();
+  Engine_ScriptOpenScreen();
+  Engine_ScriptWaitForScreen();
   // Entrance 2, after the credits (Title_Run): save the cleared game, then
   // the world map's entrance 72. Cancelling the file choice asks again.
-  if (gGameState.entrance == 2) {
+  if (gGameState.warpDest == 2) {
   L_ask:
     UiText_ShowPositionedMessageAndWait(MsgSaveAdventureQuestion, 5);
     v7 = Menu_AskYesNo(1);
@@ -464,11 +466,11 @@ s32 SaveMenu_Run(void) {
         goto L_ask;
       }
     }
-    Engine_EventWait(60);
-    Engine_EventCloseScreen();
+    Engine_ScriptWait(60);
+    Engine_ScriptCloseScreen();
     Engine_AudioPlayCue(AUDIO_CUE_FADE_BGM);
-    Engine_EventWait(0x12c);
-    Event_SetDestination((s32)&SceneId_WorldMap, WORLD_MAP_FROM_CLEAR);
+    Engine_ScriptWait(0x12c);
+    FieldScript_SetDestination((s32)&MapId_WorldMap, WORLD_MAP_FROM_CLEAR);
     return 0;
   }
   gSleepDisabled = blendStarted;
@@ -533,13 +535,13 @@ menu_top:;
       }
     }
     Party_StartChildhood();
-    gGameState.scene = (s32)&SceneId_ValeInteriorsInn;
-    gGameState.entrance = 20;
+    gGameState.mapId = (s32)&MapId_ValeInteriorsInn;
+    gGameState.warpDest = 20;
     goto leave;
   }
   // Continue a file where it was saved, except: a file from another build of
   // the game, or one loaded with L and Start held, restarts at its last
-  // Sanctum (savedScene); a file whose two play times differ is reported
+  // Sanctum (savedMap); a file whose two play times differ is reported
   // corrupted, with the offer to restart there. Flags 0x13e and 0x13f mark
   // the two chosen restarts. XXX: their reader is unknown; it would test them
   // by number in a scene's event table or script, or read flag byte 39 whole.
@@ -554,20 +556,20 @@ menu_top:;
     state = &gGameState;
     PaletteGlow_Update(state->paletteGlow[0], state->paletteGlow[1]);
     if (state->buildStamp != Runtime_GetBuildStampTime()) {
-      state->scene = state->savedScene;
-      state->entrance = state->savedEntrance;
+      state->mapId = state->savedMap;
+      state->warpDest = state->savedWarpDest;
       GameFlag_ClearBit(FLAG_KEEP_PARTY_POSITION);
     } else if ((gKeysHeld & (KEY_L | KEY_START)) == (KEY_L | KEY_START)) {
       if (Clear_GetSaveRecoveryBlockMask() != 0) {
         UiText_ShowPositionedMessageAndWait(MsgSaveRecoveryFailed, 9);
         goto menu_top;
       }
-      state->scene = state->savedScene;
-      state->entrance = state->savedEntrance;
+      state->mapId = state->savedMap;
+      state->warpDest = state->savedWarpDest;
       GameFlag_ClearBit(FLAG_KEEP_PARTY_POSITION);
       Engine_GameFlagSet(0x13e);
     } else if (state->playTime !=
-               ((struct SaveMenuSceneState *)gSceneState)->word100) {
+               ((struct SaveMenuMapLocalState *)gMapLocalState)->word100) {
       UiText_ShowPositionedMessageAndWait(MsgSaveDataCorrupted, 9);
       UiText_ShowPositionedMessageAndWait(MsgSaveDataCorrupted + 1, 13);
       if (Menu_RunConfirmSelection(1, 0, 0, CONFIRM_YES) != CONFIRM_YES) {
@@ -582,8 +584,8 @@ menu_top:;
         UiText_ShowPositionedMessageAndWait(MsgSaveDataCorrupted + 2, 9);
         goto menu_top;
       }
-      state->scene = state->savedScene;
-      state->entrance = state->savedEntrance;
+      state->mapId = state->savedMap;
+      state->warpDest = state->savedWarpDest;
       GameFlag_ClearBit(FLAG_KEEP_PARTY_POSITION);
       Engine_GameFlagSet(0x13f);
     }
@@ -606,7 +608,7 @@ menu_top:;
     if (v6 == -1) {
       goto menu_top;
     }
-    gGameState.selectedActor = 0;
+    gGameState.selectedObjectEvent = 0;
     if (GameFlag_IsSet(FLAG_COLOSSO_HOLDS_EQUIPMENT) != 0) {
       InventorySnapshot_Restore();
       Party_RemoveActiveOwner(0);
@@ -623,7 +625,7 @@ menu_top:;
     GameFlag_ClearBit(FLAG_MENU_OPEN);
     Engine_GameFlagSet(FLAG_IN_BATTLE_ARENA);
     gSleepDisabled = 1;
-    Event_SetDestination((s32)&SceneId_LinkLobby, LINK_LOBBY_FROM_CLEAR);
+    FieldScript_SetDestination((s32)&MapId_LinkLobby, LINK_LOBBY_FROM_CLEAR);
     goto leave;
   } else {
     if (v6 != 5) {
@@ -926,12 +928,12 @@ menu_top:;
     goto menu_top;
   }
 leave:;
-  gEventWork->requestedExit = 0x3e7;
-  Engine_EventWait(30);
+  gEventWork->requestedWarp = 0x3e7;
+  Engine_ScriptWait(30);
   Engine_AudioPlayCue(AUDIO_CUE_FADE_BGM);
-  Engine_EventCloseScreen();
-  Engine_EventWaitForScreen();
-  Engine_EventWait(60);
+  Engine_ScriptCloseScreen();
+  Engine_ScriptWaitForScreen();
+  Engine_ScriptWait(60);
   return 0;
 }
 
@@ -1339,21 +1341,21 @@ static u16 Clear_CalculatePasswordCrc16(u32 byteCount, u8 *data) {
   return ~crc;
 }
 
-struct SceneEntrance gClear_Entrances[] = {
+struct MapWarpDest gClear_WarpDests[] = {
     {0, CONDITION_ALWAYS, 0, 0, 0, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {SCENE_TABLE_END},
+    {MAP_TABLE_END},
 };
 
-u32 gClear_Exits[] = {
-    SCENE_EXITS_END,
+u32 gClear_Warps[] = {
+    MAP_WARPS_END,
 };
 
-struct ScenePlacement gClear_Placements[] = {
-    {SCENE_TABLE_END},
+struct ObjectEventTemplate gClear_ObjectEventTemplates[] = {
+    {MAP_TABLE_END},
 };
 
-struct SceneEvent gClear_Events[] = {
-    {SCENE_EVENTS_END},
+struct MapEvent gClear_Events[] = {
+    {MAP_EVENTS_END},
 };
 
 /// Frames since Clear_UpdateBlend began; the blend level is half of it.

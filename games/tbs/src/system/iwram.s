@@ -190,11 +190,11 @@ gObjectSlots:
 	.global gMenuCtrlWork
 gMenuCtrlWork:
 	.space 0x00000004
-	.global gMapAnimationPages
-gMapAnimationPages:
+	.global gTileAnimationPages
+gTileAnimationPages:
 	.space 0x00000004
-	.global gMapWork
-gMapWork:
+	.global gMapGridWork
+gMapGridWork:
 	.space 0x00000004
 	.global gBattleWork
 gBattleWork:
@@ -246,8 +246,8 @@ gPaletteBufferWork:
 	.global gHBlankScrollWork
 gHBlankScrollWork:
 	.space 0x00000008
-	.global gActorEffectWork
-gActorEffectWork:
+	.global gObjectEventEffectWork
+gObjectEventEffectWork:
 	.space 0x00000004
 	.global gBattleDisplayWork
 gBattleDisplayWork:

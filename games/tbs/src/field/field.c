@@ -19,10 +19,11 @@
 ///                   Object_SetMoveTarget
 ///   Object scripts  script_commands.c (the SC_ commands of objcmd.h);
 ///                   player_control.c: FieldObject_UpdatePlayerControl
-///   Maps            map_layers.c: Map_LoadLayeredScene,
-///                   Map_UpdateLayerScroll; world_map.c:
-///                   Map_InitializePerspectiveScene, WorldMap_UpdateView
-///   Ground          terrain.c: Map_GetTerrainHeight, Map_CheckObjectStep,
+///   Maps            map_layers.c: MapGrid_LoadLayout,
+///                   MapGrid_UpdateLayerScroll; world_map.c:
+///                   WorldMap_InitializePerspective, WorldMap_UpdateView
+///   Ground          terrain.c: MapGrid_GetTerrainHeight,
+///   MapGrid_CheckObjectStep,
 ///                   GetWorldMapCollision
 
 #include "field_internal.h"

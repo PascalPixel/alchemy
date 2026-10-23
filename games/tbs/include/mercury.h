@@ -2,10 +2,10 @@
 #define ALCHEMY_MERCURY_H
 
 /// @file
-/// Includes field_event.h with FIELD_STAGED_ACTOR_IMPORTS defined, so a scene
-/// gets the staged-actor imports.
+/// Includes field_event.h with FIELD_STAGED_OBJ_EVENT_IMPORTS defined, so a
+/// scene gets the staged-actor imports.
 
-#define FIELD_STAGED_ACTOR_IMPORTS
+#define FIELD_STAGED_OBJ_EVENT_IMPORTS
 #include "script_layer.h"
 
 #endif

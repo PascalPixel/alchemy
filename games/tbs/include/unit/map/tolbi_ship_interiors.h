@@ -1,16 +1,17 @@
-#ifndef ALCHEMY_UNIT_SCENE_TOLBI_SHIP_INTERIORS_H
-#define ALCHEMY_UNIT_SCENE_TOLBI_SHIP_INTERIORS_H
+#ifndef ALCHEMY_UNIT_MAP_TOLBI_SHIP_INTERIORS_H
+#define ALCHEMY_UNIT_MAP_TOLBI_SHIP_INTERIORS_H
 
 #include "types.h"
 #include "map_tables.h"
 
-struct FieldActor;
+struct ObjectEvent;
 
-const struct SceneEntrance *TolbiShipInteriors_SelectEntrances(void);
-const struct SceneRegion *TolbiShipInteriors_GetRegions(void);
-const u32 *TolbiShipInteriors_GetExits(void);
-const struct ScenePlacement *TolbiShipInteriors_SelectPlacements(void);
-const struct SceneEvent *TolbiShipInteriors_SelectEvents(void);
+const struct MapWarpDest *TolbiShipInteriors_SelectWarpDests(void);
+const struct MapWarpRegion *TolbiShipInteriors_GetRegions(void);
+const u32 *TolbiShipInteriors_GetWarps(void);
+const struct ObjectEventTemplate *
+TolbiShipInteriors_SelectObjectEventTemplates(void);
+const struct MapEvent *TolbiShipInteriors_SelectEvents(void);
 s32 TolbiShipInteriors_ApplyEntryState(void);
 extern s32 gTolbiShipInteriors_TurnSteps[];
 extern s32 gTolbiShipInteriors_LeaveHold[];
@@ -25,34 +26,41 @@ extern s32 gTolbiShipInteriors_LeaveByStairs[];
 extern s32 gTolbiShipInteriors_StepIntoAisle[];
 extern s32 gTolbiShipInteriors_LookAroundScript[];
 extern s32 gTolbiShipInteriors_LieFlatScript[];
-extern struct FieldActor *gTolbiShipInteriors_AnchorObject;
-extern struct SceneEntrance gTolbiShipInteriors_EntrancesOther[];
-extern struct SceneEntrance gTolbiShipInteriors_Entrances[];
-extern u32 gTolbiShipInteriors_Exits[];
-extern struct ScenePlacement gTolbiShipInteriors_PlacementsNone[];
-extern struct ScenePlacement gTolbiShipInteriors_CaptainsQuartersPlacements[];
-extern struct ScenePlacement
-    gTolbiShipInteriors_CaptainsQuartersPlacementsWarriors[];
-extern struct ScenePlacement
-    gTolbiShipInteriors_CaptainsQuartersPlacementsArrived[];
-extern struct ScenePlacement gTolbiShipInteriors_HoldPlacementsEmpty[];
-extern struct ScenePlacement gTolbiShipInteriors_HoldPlacements[];
-extern struct ScenePlacement gTolbiShipInteriors_HoldPlacementsAtSea[];
-extern struct ScenePlacement gTolbiShipInteriors_RowingDeckPlacements[];
-extern struct ScenePlacement gTolbiShipInteriors_PartyFollowerPlacements[];
-extern struct ScenePlacement gTolbiShipInteriors_FirstAttackMonsters[];
-extern struct ScenePlacement gTolbiShipInteriors_SecondAttackMonsters[];
-extern struct ScenePlacement gTolbiShipInteriors_ThirdAttackMonsters[];
-extern struct SceneEvent gTolbiShipInteriors_EventsOther[];
-extern struct SceneEvent gTolbiShipInteriors_HoldEvents[];
-extern struct SceneEvent gTolbiShipInteriors_HoldEventsChoosingRowers[];
-extern struct SceneEvent gTolbiShipInteriors_HoldEventsAtIsland[];
-extern struct SceneEvent gTolbiShipInteriors_CaptainsQuartersEvents[];
-extern struct SceneEvent gTolbiShipInteriors_CaptainsQuartersEventsAtIsland[];
-extern struct SceneEvent gTolbiShipInteriors_CaptainsQuartersEventsArrived[];
-extern struct SceneEvent gTolbiShipInteriors_RowingDeckEvents[];
-extern struct SceneEvent gTolbiShipInteriors_RowingDeckEventsMonstersAboard[];
-extern struct SceneEvent gTolbiShipInteriors_RowingDeckEventsKrakenAboard[];
-extern struct SceneEvent gTolbiShipInteriors_RowingDeckEventsArrived[];
+extern struct ObjectEvent *gTolbiShipInteriors_AnchorObject;
+extern struct MapWarpDest gTolbiShipInteriors_WarpDestsOther[];
+extern struct MapWarpDest gTolbiShipInteriors_WarpDests[];
+extern u32 gTolbiShipInteriors_Warps[];
+extern struct ObjectEventTemplate
+    gTolbiShipInteriors_ObjectEventTemplatesNone[];
+extern struct ObjectEventTemplate
+    gTolbiShipInteriors_CaptainsQuartersObjectEventTemplates[];
+extern struct ObjectEventTemplate
+    gTolbiShipInteriors_CaptainsQuartersObjectEventTemplatesWarriors[];
+extern struct ObjectEventTemplate
+    gTolbiShipInteriors_CaptainsQuartersObjectEventTemplatesArrived[];
+extern struct ObjectEventTemplate
+    gTolbiShipInteriors_HoldObjectEventTemplatesEmpty[];
+extern struct ObjectEventTemplate
+    gTolbiShipInteriors_HoldObjectEventTemplates[];
+extern struct ObjectEventTemplate
+    gTolbiShipInteriors_HoldObjectEventTemplatesAtSea[];
+extern struct ObjectEventTemplate
+    gTolbiShipInteriors_RowingDeckObjectEventTemplates[];
+extern struct ObjectEventTemplate
+    gTolbiShipInteriors_PartyFollowerObjectEventTemplates[];
+extern struct ObjectEventTemplate gTolbiShipInteriors_FirstAttackMonsters[];
+extern struct ObjectEventTemplate gTolbiShipInteriors_SecondAttackMonsters[];
+extern struct ObjectEventTemplate gTolbiShipInteriors_ThirdAttackMonsters[];
+extern struct MapEvent gTolbiShipInteriors_EventsOther[];
+extern struct MapEvent gTolbiShipInteriors_HoldEvents[];
+extern struct MapEvent gTolbiShipInteriors_HoldEventsChoosingRowers[];
+extern struct MapEvent gTolbiShipInteriors_HoldEventsAtIsland[];
+extern struct MapEvent gTolbiShipInteriors_CaptainsQuartersEvents[];
+extern struct MapEvent gTolbiShipInteriors_CaptainsQuartersEventsAtIsland[];
+extern struct MapEvent gTolbiShipInteriors_CaptainsQuartersEventsArrived[];
+extern struct MapEvent gTolbiShipInteriors_RowingDeckEvents[];
+extern struct MapEvent gTolbiShipInteriors_RowingDeckEventsMonstersAboard[];
+extern struct MapEvent gTolbiShipInteriors_RowingDeckEventsKrakenAboard[];
+extern struct MapEvent gTolbiShipInteriors_RowingDeckEventsArrived[];
 
 #endif

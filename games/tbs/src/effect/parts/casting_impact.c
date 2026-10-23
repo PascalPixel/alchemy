@@ -50,7 +50,7 @@ void BattleEffect_StepPaletteToResource(s32 resourceId) {
 static inline void CastingImpact_LoadResource(const void *id, void *dest,
                                               s32 skip, s32 copy) {
   /* FAKEMATCH(wrapper): the orb's load through this helper, so the packing
-   * loads Ram_MapCellBuffer again; as a direct call in
+   * loads Ram_MapGridCellBuffer again; as a direct call in
    * BattleEffect_RunCastingImpact, 75 of 3070 instructions differ in tbs-en. */
   Resource_LoadAndDecompress((s32)id, dest, skip, copy);
 }
@@ -132,9 +132,10 @@ static inline void CastingImpact_EndPrelude(struct BattleEffectWork *work,
 ///
 /// The trailing comments give each impact's own animation, drawn over the
 /// target after the orb and sparks. Most animations use the 64 particles at
-/// Ram_MapCellBuffer + 0x4000, which start at the target; their pictures are in
-/// Ram_MapCellBuffer. "Smoke" is puffs of smoke rising from the target; "hands
-/// off" impacts stop after gathering and hand the canvas to another effect.
+/// Ram_MapGridCellBuffer + 0x4000, which start at the target; their pictures
+/// are in Ram_MapGridCellBuffer. "Smoke" is puffs of smoke rising from the
+/// target; "hands off" impacts stop after gathering and hand the canvas to
+/// another effect.
 enum CastingImpact {
   CASTING_IMPACT_IMPACT_BANE = 0,      ///< smoke
   CASTING_IMPACT_IMPACT_SMOG,          ///< smoke
@@ -178,13 +179,13 @@ enum CastingImpact {
 
 /// The impact orb, 20x48 pictures packed at half width.
 #define CASTING_IMPACT_ORB_CELLS 0x5100
-/// The Djinni's 20x40 picture, in Ram_MapCellBuffer after the impact's own.
+/// The Djinni's 20x40 picture, in Ram_MapGridCellBuffer after the impact's own.
 #define CASTING_IMPACT_DJINNI_CELLS 0x3c56
 #define CASTING_IMPACT_GATHER_FRAMES 32 ///< frames the sparks gather
 #define CASTING_IMPACT_SPARKS 64        ///< sparks in work->particles
-/// The impact pictures' particles, in Ram_MapCellBuffer after the Djinni.
+/// The impact pictures' particles, in Ram_MapGridCellBuffer after the Djinni.
 #define CASTING_IMPACT_IMPACT_PARTICLES                                        \
-  ((struct EffectStep *)(Ram_MapCellBuffer + 0x4000))
+  ((struct EffectStep *)(Ram_MapGridCellBuffer + 0x4000))
 #define CASTING_IMPACT_IMPACT_PARTICLE_COUNT 64
 
 /// gCastingImpact_ImageX has seven pictures for each side.
@@ -300,63 +301,63 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *effect,
   // Setup: the pictures.
   //   work->sheet: six 48x72 frames over the caster
   //   work->sheet + CASTING_IMPACT_ORB_CELLS: the impact orb
-  //   Ram_MapCellBuffer: the impact's own pictures
-  //   Ram_MapCellBuffer + CASTING_IMPACT_DJINNI_CELLS: the element's Djinni
+  //   Ram_MapGridCellBuffer: the impact's own pictures
+  //   Ram_MapGridCellBuffer + CASTING_IMPACT_DJINNI_CELLS: the element's Djinni
   // The orb is decoded into the map buffer first and packed from there,
   // before the impact's own pictures replace it.
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sprites, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_FireStreakSheet, work, 1, 0);
-  CastingImpact_LoadResource(&ResourceId_YellowOrbSheet, Ram_MapCellBuffer, 1,
-                             0);
+  CastingImpact_LoadResource(&ResourceId_YellowOrbSheet, Ram_MapGridCellBuffer,
+                             1, 0);
   /* FAKEMATCH(temporary): the orb's dimensions named, which orders the
    * packing's argument setup; as literal 40 and 288, 2 of 3070 instructions
    * differ in tbs-en. */
   {
     s32 width = 40;
     s32 height = 288;
-    CastingImpact_PackRows(Ram_MapCellBuffer,
+    CastingImpact_PackRows(Ram_MapGridCellBuffer,
                            work->sheet + CASTING_IMPACT_ORB_CELLS, width,
                            height);
   }
   if (mode == CASTING_IMPACT_IMPACT_SCORCH ||
       mode == CASTING_IMPACT_IMPACT_BARRAGE) {
     Resource_LoadAndDecompress((s32)&ResourceId_FlashBurstSheet,
-                               Ram_MapCellBuffer, 1, 0);
+                               Ram_MapGridCellBuffer, 1, 0);
   } else if (mode == CASTING_IMPACT_IMPACT_BAD_OMEN) {
-    Resource_LoadAndDecompress((s32)&ResourceId_SkullSheet, Ram_MapCellBuffer,
-                               1, 0);
+    Resource_LoadAndDecompress((s32)&ResourceId_SkullSheet,
+                               Ram_MapGridCellBuffer, 1, 0);
   } else if (mode == CASTING_IMPACT_IMPACT_SQUALL ||
              mode == CASTING_IMPACT_IMPACT_STUN_VOLTAGE) {
-    Resource_LoadAndDecompress((s32)&ResourceId_TornadoSheet, Ram_MapCellBuffer,
-                               1, 0);
+    Resource_LoadAndDecompress((s32)&ResourceId_TornadoSheet,
+                               Ram_MapGridCellBuffer, 1, 0);
     Resource_LoadAndDecompress((s32)&ResourceId_LightningBoltSheet,
-                               Ram_MapCellBuffer + 0xc56, 1, 0);
+                               Ram_MapGridCellBuffer + 0xc56, 1, 0);
   } else if (mode == CASTING_IMPACT_IMPACT_PSYPHON_SEAL) {
-    Resource_LoadAndDecompress((s32)&ResourceId_RuneSheet, Ram_MapCellBuffer, 1,
-                               1);
+    Resource_LoadAndDecompress((s32)&ResourceId_RuneSheet,
+                               Ram_MapGridCellBuffer, 1, 1);
   } else if (mode == CASTING_IMPACT_IMPACT_TERRA_STRIKE) {
     Resource_LoadAndDecompress((s32)&ResourceId_RockSpireSheet,
-                               Ram_MapCellBuffer, 1, 1);
+                               Ram_MapGridCellBuffer, 1, 1);
   } else if (mode == CASTING_IMPACT_IMPACT_AQUA_SOCK) {
     Resource_LoadAndDecompress((s32)&ResourceId_BlueFlameSheet,
-                               Ram_MapCellBuffer, 1, 0);
+                               Ram_MapGridCellBuffer, 1, 0);
   } else if (mode == CASTING_IMPACT_IMPACT_CYCLONE_SLASH) {
-    Resource_LoadAndDecompress((s32)&ResourceId_TornadoSheet, Ram_MapCellBuffer,
-                               1, 0);
+    Resource_LoadAndDecompress((s32)&ResourceId_TornadoSheet,
+                               Ram_MapGridCellBuffer, 1, 0);
   } else if (mode == CASTING_IMPACT_IMPACT_FROST_BITE) {
-    Resource_LoadAndDecompress((s32)&ResourceId_IceChipSheet, Ram_MapCellBuffer,
-                               1, 0);
+    Resource_LoadAndDecompress((s32)&ResourceId_IceChipSheet,
+                               Ram_MapGridCellBuffer, 1, 0);
   } else if (mode == CASTING_IMPACT_IMPACT_BROIL) {
     Resource_LoadAndDecompress((s32)&ResourceId_EmberStreakSheet,
-                               Ram_MapCellBuffer, 1, 0);
+                               Ram_MapGridCellBuffer, 1, 0);
   } else if (mode == CASTING_IMPACT_IMPACT_FORCIBLE_ARM ||
              mode == CASTING_IMPACT_IMPACT_TRUNCHEON_FIST) {
-    Resource_LoadAndDecompress((s32)&ResourceId_FlameSheetA, Ram_MapCellBuffer,
-                               1, 0);
+    Resource_LoadAndDecompress((s32)&ResourceId_FlameSheetA,
+                               Ram_MapGridCellBuffer, 1, 0);
   } else if (mode != CASTING_IMPACT_IMPACT_MORTAL_DANGER &&
              mode != CASTING_IMPACT_IMPACT_ASURA) {
-    Resource_LoadAndDecompress((s32)&ResourceId_SmokeSheet, Ram_MapCellBuffer,
-                               1, 0);
+    Resource_LoadAndDecompress((s32)&ResourceId_SmokeSheet,
+                               Ram_MapGridCellBuffer, 1, 0);
   }
   // The Djinni of the impact's element.
   switch (mode) {
@@ -370,9 +371,9 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *effect,
   case CASTING_IMPACT_IMPACT_BAD_OMEN:
   case CASTING_IMPACT_IMPACT_LIFE_NOURISH:
   case CASTING_IMPACT_IMPACT_FORCIBLE_ARM:
-    Resource_LoadAndDecompress((s32)&ResourceId_VenusDjinnSmallSheet,
-                               Ram_MapCellBuffer + CASTING_IMPACT_DJINNI_CELLS,
-                               1, 1);
+    Resource_LoadAndDecompress(
+        (s32)&ResourceId_VenusDjinnSmallSheet,
+        Ram_MapGridCellBuffer + CASTING_IMPACT_DJINNI_CELLS, 1, 1);
     break;
   case CASTING_IMPACT_IMPACT_MIST:
   case CASTING_IMPACT_IMPACT_AQUA_SOCK:
@@ -381,9 +382,9 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *effect,
   case CASTING_IMPACT_IMPACT_UNUSED_GATHERING:
   case CASTING_IMPACT_IMPACT_LIFE_LEECH:
   case CASTING_IMPACT_IMPACT_PSY_LEECH:
-    Resource_LoadAndDecompress((s32)&ResourceId_MercuryDjinnSmallSheet,
-                               Ram_MapCellBuffer + CASTING_IMPACT_DJINNI_CELLS,
-                               1, 1);
+    Resource_LoadAndDecompress(
+        (s32)&ResourceId_MercuryDjinnSmallSheet,
+        Ram_MapGridCellBuffer + CASTING_IMPACT_DJINNI_CELLS, 1, 1);
     break;
   case CASTING_IMPACT_IMPACT_FEVER:
   case CASTING_IMPACT_IMPACT_SCORCH:
@@ -395,9 +396,9 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *effect,
   case CASTING_IMPACT_IMPACT_ACID_BATH:
   case CASTING_IMPACT_IMPACT_TRUNCHEON_FIST:
   case CASTING_IMPACT_IMPACT_SEVERE_BLOW:
-    Resource_LoadAndDecompress((s32)&ResourceId_MarsDjinnSmallSheet,
-                               Ram_MapCellBuffer + CASTING_IMPACT_DJINNI_CELLS,
-                               1, 1);
+    Resource_LoadAndDecompress(
+        (s32)&ResourceId_MarsDjinnSmallSheet,
+        Ram_MapGridCellBuffer + CASTING_IMPACT_DJINNI_CELLS, 1, 1);
     break;
   case CASTING_IMPACT_IMPACT_SMOG:
   case CASTING_IMPACT_IMPACT_SQUALL:
@@ -408,14 +409,14 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *effect,
   case CASTING_IMPACT_IMPACT_CYCLONE_SLASH:
   case CASTING_IMPACT_IMPACT_PSYPHON_SEAL:
   case CASTING_IMPACT_IMPACT_ASURA:
-    Resource_LoadAndDecompress((s32)&ResourceId_JupiterDjinnSmallSheet,
-                               Ram_MapCellBuffer + CASTING_IMPACT_DJINNI_CELLS,
-                               1, 1);
+    Resource_LoadAndDecompress(
+        (s32)&ResourceId_JupiterDjinnSmallSheet,
+        Ram_MapGridCellBuffer + CASTING_IMPACT_DJINNI_CELLS, 1, 1);
     break;
   case 100:
-    Resource_LoadAndDecompress((s32)&ResourceId_MercuryDjinnSmallSheet,
-                               Ram_MapCellBuffer + CASTING_IMPACT_DJINNI_CELLS,
-                               1, 1);
+    Resource_LoadAndDecompress(
+        (s32)&ResourceId_MercuryDjinnSmallSheet,
+        Ram_MapGridCellBuffer + CASTING_IMPACT_DJINNI_CELLS, 1, 1);
     break;
   }
   // Trails: each transfer keeps 3/4 of every canvas level for Bad Omen,
@@ -484,9 +485,9 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *effect,
           {
             s32 size = 5;
             Render_ResetTransformState();
-            SceneTransform_ApplyRoll(step->velocityZ);
-            SceneTransform_ApplyPitch(step->velocityX);
-            SceneTransform_ApplyYaw(step->velocityY);
+            Transform_ApplyRoll(step->velocityZ);
+            Transform_ApplyPitch(step->velocityX);
+            Transform_ApplyYaw(step->velocityY);
             EffectPosition_ProjectPoint(step, &sparkScreen);
             sparkScreen.x = sparkScreen.x / 2 + casterScreen->x;
             // Djinni kinds circle the caster's chest; the rest circle lower,
@@ -516,7 +517,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *effect,
         EffectPosition_ProjectPoint(&djinnPos, &sparkScreen);
         sparkScreen.x /= 2;
         djinnX = sparkScreen.x;
-        blitters[0](canvas, Ram_MapCellBuffer + CASTING_IMPACT_DJINNI_CELLS,
+        blitters[0](canvas, Ram_MapGridCellBuffer + CASTING_IMPACT_DJINNI_CELLS,
                     djinnX - 10, sparkScreen.y - 4, 20, 40);
       }
     }
@@ -644,14 +645,14 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *effect,
   if (mode == CASTING_IMPACT_IMPACT_MORTAL_DANGER) {
     Resource_LoadAndDecompress((s32)&ResourceId_CounterRevealSheet, work, 1, 1);
     Resource_LoadAndDecompress((s32)&ResourceId_RedCrescentSheetA,
-                               Ram_MapCellBuffer, 1, 0);
+                               Ram_MapGridCellBuffer, 1, 0);
     REG_BLDALPHA = BLEND_ALPHA(16, 14);
   }
   if (mode == CASTING_IMPACT_IMPACT_ASURA) {
     Resource_LoadAndDecompress((s32)&ResourceId_BlueBeastSheet,
                                work->imageStorage, 1, 1);
     Resource_LoadAndDecompress((s32)&ResourceId_RedCrescentSheetB,
-                               Ram_MapCellBuffer, 1, 0);
+                               Ram_MapGridCellBuffer, 1, 0);
     REG_BLDALPHA = BLEND_ALPHA(16, 14);
   }
   // The 64 particles of the impact's own animation start at the target, 20
@@ -932,7 +933,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *effect,
         do {
           blitters[0](canvas,
                       ((phase / 2) & 3) * LIGHTNING_BOLT_CELL_BYTES +
-                          (Ram_MapCellBuffer + 0xc56),
+                          (Ram_MapGridCellBuffer + 0xc56),
                       targetScreen->x / 2 - 8, 0, 24, 104);
           i++;
           phase += 3;
@@ -961,7 +962,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *effect,
                                   EFFECT_CLIP_BOUNDS,
                               COMPOSITE_MAX);
           ((DrawRectangle *)gWorkSlot)[HEAP_SLOT_BLITTER_ALTERNATE](
-              canvas, Ram_MapCellBuffer + gBattleEffect_GlintCells[image],
+              canvas, Ram_MapGridCellBuffer + gBattleEffect_GlintCells[image],
               imageX, imageY + 56, gBattleEffect_GlintCellWidths[image],
               gBattleEffect_GlintCellHeights[image]);
           Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
@@ -1003,12 +1004,12 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *effect,
         top = columnY - 104;
         width = 17;
         tileHeight = 104;
-        CastingImpact_DrawImage(canvas, Ram_MapCellBuffer, columnX, top, width,
-                                tileHeight, draw);
-        CastingImpact_DrawScrolledImage(canvas, Ram_MapCellBuffer, columnX,
+        CastingImpact_DrawImage(canvas, Ram_MapGridCellBuffer, columnX, top,
+                                width, tileHeight, draw);
+        CastingImpact_DrawScrolledImage(canvas, Ram_MapGridCellBuffer, columnX,
                                         columnY, width, tileHeight, scroll,
                                         draw);
-        (*draw)(canvas, Ram_MapCellBuffer + (17 * 104), originX - width,
+        (*draw)(canvas, Ram_MapGridCellBuffer + (17 * 104), originX - width,
                 fall + 47, width * 2, 65);
         Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
         if (frame == 8) {
@@ -1043,13 +1044,14 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *effect,
         EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER_ALTERNATE, EFFECT_CLIP_BOUNDS,
                             COMPOSITE_MAX);
         slotDraw = (DrawRectangle *)gWorkSlot;
-        CastingImpact_DrawImage(canvas, Ram_MapCellBuffer, pairX - 24, 48, 24,
-                                height, slotDraw + HEAP_SLOT_BLITTER_ALTERNATE);
+        CastingImpact_DrawImage(canvas, Ram_MapGridCellBuffer, pairX - 24, 48,
+                                24, height,
+                                slotDraw + HEAP_SLOT_BLITTER_ALTERNATE);
         Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
         EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER_ALTERNATE,
                             EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
                             COMPOSITE_MAX);
-        CastingImpact_DrawImage(canvas, Ram_MapCellBuffer, pairX, 48, 24,
+        CastingImpact_DrawImage(canvas, Ram_MapGridCellBuffer, pairX, 48, 24,
                                 height, slotDraw + HEAP_SLOT_BLITTER_ALTERNATE);
         Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
       }
@@ -1067,12 +1069,13 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *effect,
         stripX = targetScreen->x / 2 - 20;
         image = frame / 2 % 3;
         cellOffset = image * 2560;
-        blitters[0](canvas, Ram_MapCellBuffer + 0xc56 + cellOffset, stripX, 16,
-                    40, 32);
-        blitters[0](canvas, image * (40 * 32) + (Ram_MapCellBuffer + 0x2a56),
+        blitters[0](canvas, Ram_MapGridCellBuffer + 0xc56 + cellOffset, stripX,
+                    16, 40, 32);
+        blitters[0](canvas,
+                    image * (40 * 32) + (Ram_MapGridCellBuffer + 0x2a56),
                     stripX, 48, 40, 32);
-        blitters[0](canvas, cellOffset + (Ram_MapCellBuffer + 0x1156), stripX,
-                    80, 40, 32);
+        blitters[0](canvas, cellOffset + (Ram_MapGridCellBuffer + 0x1156),
+                    stripX, 80, 40, 32);
       }
     } else if (mode == CASTING_IMPACT_IMPACT_SCORCH ||
                mode == CASTING_IMPACT_IMPACT_BARRAGE) {
@@ -1086,7 +1089,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *effect,
             s32 image = age / 2;
             EffectPosition_ProjectPoint(step, &projected);
             projected.x /= 2;
-            blitters[0](canvas, Ram_MapCellBuffer + (image << 11),
+            blitters[0](canvas, Ram_MapGridCellBuffer + (image << 11),
                         projected.x - 16, projected.y - 32, 32, 64);
             EffectStep_AdvanceWithGravity3D(step, 60, 0x1000);
             step->variant++;
@@ -1133,23 +1136,23 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *effect,
         }
         if (frame == 8 || frame == 9) {
           CastingImpact_DrawCroppedImage(
-              canvas, Ram_MapCellBuffer,
+              canvas, Ram_MapGridCellBuffer,
               CASTING_IMPACT_IMAGE_X(work->effect->side, 3),
               imageY + gCastingImpact_ImageY[3], 128, &blitters[0]);
         }
         if (frame == 10 || frame == 11) {
-          blitters[0](canvas, Ram_MapCellBuffer + (128 * 91),
+          blitters[0](canvas, Ram_MapGridCellBuffer + (128 * 91),
                       CASTING_IMPACT_IMAGE_X(work->effect->side, 4),
                       imageY + gCastingImpact_ImageY[4], 128, 59);
         }
         if (frame == 12 || frame == 13) {
-          blitters[0](canvas, Ram_MapCellBuffer + (128 * 91 + 128 * 59),
+          blitters[0](canvas, Ram_MapGridCellBuffer + (128 * 91 + 128 * 59),
                       CASTING_IMPACT_IMAGE_X(work->effect->side, 5),
                       imageY + gCastingImpact_ImageY[5], 122, 29);
         }
         if (frame == 14 || frame == 15) {
           blitters[0](canvas,
-                      Ram_MapCellBuffer + (128 * 91 + 128 * 59 + 122 * 29),
+                      Ram_MapGridCellBuffer + (128 * 91 + 128 * 59 + 122 * 29),
                       CASTING_IMPACT_IMAGE_X(work->effect->side, 6),
                       imageY + gCastingImpact_ImageY[6], 76, 25);
         }
@@ -1198,20 +1201,21 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *effect,
           blitters[0](canvas, work->imageStorage + 0x3e80, 0, 16, 128, 91);
         }
         if (frame == 8 || frame == 9) {
-          CastingImpact_DrawCroppedImage(canvas, Ram_MapCellBuffer, 0, 16, 128,
-                                         &blitters[0]);
+          CastingImpact_DrawCroppedImage(canvas, Ram_MapGridCellBuffer, 0, 16,
+                                         128, &blitters[0]);
         }
         if (frame == 10 || frame == 11) {
-          blitters[0](canvas, Ram_MapCellBuffer + (128 * 91), 0, 16, 128, 59);
+          blitters[0](canvas, Ram_MapGridCellBuffer + (128 * 91), 0, 16, 128,
+                      59);
         }
         if (frame == 12 || frame == 13) {
-          blitters[0](canvas, Ram_MapCellBuffer + (128 * 91 + 128 * 59), 0, 16,
-                      128, 29);
+          blitters[0](canvas, Ram_MapGridCellBuffer + (128 * 91 + 128 * 59), 0,
+                      16, 128, 29);
         }
         if (frame == 14 || frame == 15) {
           blitters[0](canvas,
-                      Ram_MapCellBuffer + (128 * 91 + 128 * 59 + 128 * 29), 0,
-                      16, 128, 26);
+                      Ram_MapGridCellBuffer + (128 * 91 + 128 * 59 + 128 * 29),
+                      0, 16, 128, 26);
         }
       }
     } else if (mode == CASTING_IMPACT_IMPACT_BROIL) {
@@ -1236,7 +1240,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *effect,
               mirrored = 1;
           }
           blitters[mirrored](
-              canvas, Ram_MapCellBuffer + gBattleEffect_PuffArcCells[image],
+              canvas, Ram_MapGridCellBuffer + gBattleEffect_PuffArcCells[image],
               imageX, gBattleEffect_PuffArcCellBiasY[image] + 48,
               gBattleEffect_PuffArcCellWidths[image],
               gBattleEffect_PuffArcCellHeights[image]);
@@ -1270,14 +1274,15 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *effect,
           if (step->x >= 0 && frame >= i / 2) {
             s32 image = i & 3;
             Render_ResetTransformState();
-            SceneTransform_ApplyPitch(step->velocityX);
-            SceneTransform_ApplyYaw(step->velocityY);
+            Transform_ApplyPitch(step->velocityX);
+            Transform_ApplyYaw(step->velocityY);
             EffectPosition_ProjectPoint(step, &projected);
             origin = (struct EffectPosition *)((u8 *)targetScreen + bias);
             projected.x = projected.x / 2 + origin->x / 2;
             projected.y += origin->y + 32;
             blitters[1](canvas,
-                        Ram_MapCellBuffer + gCastingImpact_IceChipCells[image],
+                        Ram_MapGridCellBuffer +
+                            gCastingImpact_IceChipCells[image],
                         projected.x - 4, projected.y - 4, 8, 8);
             step->x -= 6;
             if (step->x < 0 && ((i & 7) == 0 || i == 63)) {
@@ -1301,8 +1306,8 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *effect,
         if (height > 96) {
           height = 96;
         }
-        CastingImpact_DrawImage(canvas, Ram_MapCellBuffer, 48, 104 - height, 32,
-                                height, &blitters[0]);
+        CastingImpact_DrawImage(canvas, Ram_MapGridCellBuffer, 48, 104 - height,
+                                32, height, &blitters[0]);
       }
     } else if (mode == CASTING_IMPACT_IMPACT_FORCIBLE_ARM ||
                mode == CASTING_IMPACT_IMPACT_TRUNCHEON_FIST) {
@@ -1328,7 +1333,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *effect,
           imageX -= offset * 2;
           imageY = targetScreen->y - offset * 4 + 24;
         }
-        CastingImpact_DrawTallImage(canvas, Ram_MapCellBuffer, imageX - 16,
+        CastingImpact_DrawTallImage(canvas, Ram_MapGridCellBuffer, imageX - 16,
                                     imageY - 32, 32, &blitters[1]);
       }
     } else if (mode == CASTING_IMPACT_IMPACT_BAD_OMEN) {
@@ -1343,7 +1348,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *effect,
           s32 image = i % 3;
           EffectPosition_ProjectPoint(step, &projected);
           projected.x /= 2;
-          blitters[i & 1](canvas, Ram_MapCellBuffer + image * (24 * 24),
+          blitters[i & 1](canvas, Ram_MapGridCellBuffer + image * (24 * 24),
                           projected.x - 12, projected.y - 12, 24, 24);
           EffectStep_AdvanceWithGravity3D(step, 60, 1 << ((i & 3) + 11));
           step->variant++;
@@ -1360,7 +1365,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *effect,
             s32 image = age / 4;
             EffectPosition_ProjectPoint(step, &projected);
             projected.x /= 2;
-            blitters[i & 1](canvas, Ram_MapCellBuffer + image * (24 * 48),
+            blitters[i & 1](canvas, Ram_MapGridCellBuffer + image * (24 * 48),
                             projected.x - 12, projected.y - 24, 24, 48);
             if (mode == CASTING_IMPACT_IMPACT_ACID_BATH)
               EffectStep_AdvanceWithGravity3D(step, 60, 0x400);
@@ -1377,7 +1382,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *effect,
         EffectPosition_ProjectPoint(position, &projected);
         projected.x /= 2;
         djinnX = projected.x;
-        drawPair[1](canvas, Ram_MapCellBuffer + CASTING_IMPACT_DJINNI_CELLS,
+        drawPair[1](canvas, Ram_MapGridCellBuffer + CASTING_IMPACT_DJINNI_CELLS,
                     djinnX - 10, projected.y - 4, 20, 40);
         position->x += motion->x;
         position->y += motion->y;

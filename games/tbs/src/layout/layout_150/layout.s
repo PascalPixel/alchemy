@@ -1,30 +1,30 @@
 	.include "games/tbs/src/layout/layout.inc"
 	.section .rodata
-	.global Field_Map150
-Field_Map150:
-	map_header 0, 0, 48, 48, 2, 1, 3, 1, 1, 2, 0, 0
-	map_layer 0, 0, 16, 16, 0, 0, 0xff, 0xff
-	map_layer 128, 0, 16, 16, 0, 0, 0xff, 0xff
-	map_layer 0, 128, 16, 16, 0, 0, 0xff, 0xff
-	map_block Field_Map150, .LField_Map150_METATILES
-	map_block Field_Map150, .LField_Map150_SHAPES
-	map_block Field_Map150, .LField_Map150_GRID
-	map_block Field_Map150, .LField_Map150_ANIMATION
-	map_block Field_Map150
-	map_block Field_Map150, .LField_Map150_MARKERS
-.LField_Map150_METATILES:
+	.global Field_Layout150
+Field_Layout150:
+	layout_header 0, 0, 48, 48, 2, 1, 3, 1, 1, 2, 0, 0
+	layout_layer 0, 0, 16, 16, 0, 0, 0xff, 0xff
+	layout_layer 128, 0, 16, 16, 0, 0, 0xff, 0xff
+	layout_layer 0, 128, 16, 16, 0, 0, 0xff, 0xff
+	layout_offset Field_Layout150, .LField_Layout150_METATILES
+	layout_offset Field_Layout150, .LField_Layout150_SHAPES
+	layout_offset Field_Layout150, .LField_Layout150_GRID
+	layout_offset Field_Layout150, .LField_Layout150_ANIMATION
+	layout_offset Field_Layout150
+	layout_offset Field_Layout150, .LField_Layout150_MARKERS
+.LField_Layout150_METATILES:
 	.incbin "games/tbs/src/layout/layout_150/metatiles.delta1.lz"
 	.balign 4, 0
-.LField_Map150_SHAPES:
+.LField_Layout150_SHAPES:
 	.incbin "games/tbs/src/layout/layout_150/shapes.table.lz"
 	.balign 4, 0
-.LField_Map150_GRID:
+.LField_Layout150_GRID:
 	.incbin "games/tbs/src/layout/layout_150/grid.parts.lz"
 	.balign 4, 0
-.LField_Map150_ANIMATION:
+.LField_Layout150_ANIMATION:
 	.incbin "games/tbs/src/layout/layout_150/animation.script.lz"
 	.balign 4, 0
-.LField_Map150_MARKERS:
+.LField_Layout150_MARKERS:
 	.incbin "games/tbs/src/layout/layout_150/markers.table"
 	.global Tileset_Set64Palette
 Tileset_Set64Palette:
@@ -33,12 +33,12 @@ Tileset_Set64Palette:
 Tileset_Set64TilesA:
 	.incbin "games/tbs/src/graphics/tileset/set_64/tiles_a.4bpp.mtf"
 	.ifdef TBS_EDITION_JA
-	.byte 0xd8	@ PACKER: left in the buffer by Field_Map148+0x2617
+	.byte 0xd8	@ PACKER: left in the buffer by Field_Layout148+0x2617
 	.else
 	.ifdef TBS_EDITION_DE
-	.byte 0xd8	@ PACKER: left in the buffer by Field_Map148+0x2617
+	.byte 0xd8	@ PACKER: left in the buffer by Field_Layout148+0x2617
 	.else
-	.byte 0x80	@ PACKER: left in the buffer by Field_Map148+0x2617
+	.byte 0x80	@ PACKER: left in the buffer by Field_Layout148+0x2617
 	.endif
 	.endif
 	.global Tileset_Set64TilesB

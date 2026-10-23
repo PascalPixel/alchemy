@@ -8,29 +8,30 @@
 /// pixels and lies ahead of it, within a sixteenth of a turn either side of its
 /// heading; force stops it regardless. Returns 1 when it stopped. A target out
 /// of range sets it walking again.
-s32 Vault_StopIfFacingNear(struct FieldActor *actor, struct FieldActor *target,
-                           s32 range, s32 force) {
+s32 Vault_StopIfFacingNear(struct ObjectEvent *objectEvent,
+                           struct ObjectEvent *target, s32 range, s32 force) {
   s32 result = 0;
   const u8 *targetPosition =
-      (const u8 *)target + offsetof(struct FieldActor, x);
-  const u8 *actorPosition = (const u8 *)actor + offsetof(struct FieldActor, x);
-  if (FixedPoint_Distance(targetPosition, actorPosition) < range ||
+      (const u8 *)target + offsetof(struct ObjectEvent, x);
+  const u8 *objectEventPosition =
+      (const u8 *)objectEvent + offsetof(struct ObjectEvent, x);
+  if (FixedPoint_Distance(targetPosition, objectEventPosition) < range ||
       force != 0) {
-    u32 angle = (u16)ArcTan2(target->z.fixed - actor->z.fixed,
+    u32 angle = (u16)ArcTan2(target->z.fixed - objectEvent->z.fixed,
                              *(const s32 *)targetPosition -
-                                 *(const s32 *)actorPosition);
+                                 *(const s32 *)objectEventPosition);
     u32 left = (angle - FACING_STEP) & 0xf000;
     u32 right = (angle + FACING_STEP) & 0xf000;
     u32 forward = angle & 0xf000;
-    u32 facing = actor->facing & 0xf000;
+    u32 facing = objectEvent->facing & 0xf000;
     if (forward == facing || right == facing || left == facing || force != 0) {
-      actor->paused = 1;
-      Object_SetMode(actor, ANIMATION_STAND);
+      objectEvent->paused = 1;
+      ObjectEvent_SetMode(objectEvent, ANIMATION_STAND);
       result = 1;
     }
   } else {
-    actor->paused = 0;
-    Object_SetMode(actor, ANIMATION_WALK);
+    objectEvent->paused = 0;
+    ObjectEvent_SetMode(objectEvent, ANIMATION_WALK);
   }
   return result;
 }

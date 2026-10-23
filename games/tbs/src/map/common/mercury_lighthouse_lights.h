@@ -27,10 +27,10 @@
 /// lights over the leader and the light under them in the pool are made again.
 void MercuryLighthouse_RestoreLights(s32 region,
                                      struct MercuryLighthouseLights *st) {
-  struct FieldActor *actor;
-  struct FieldActor *obj;
+  struct ObjectEvent *objectEvent;
+  struct ObjectEvent *obj;
   struct AnimationObject *animation;
-  struct MapCell *cell;
+  struct MapGridCell *cell;
   s32 z;
   s32 flag;
 
@@ -42,17 +42,18 @@ void MercuryLighthouse_RestoreLights(s32 region,
     st->terrainCode = region;
     return;
   }
-  actor = Engine_ActorLookup(gGameState.selectedActor);
-  z = actor->z.fixed;
-  cell = (struct MapCell *)Ram_MapCellBuffer + ((z / 0x100000) << 7) +
-         actor->x.fixed / 0x100000;
+  objectEvent = Engine_ObjectEventLookup(gGameState.selectedObjectEvent);
+  z = objectEvent->z.fixed;
+  cell = (struct MapGridCell *)Ram_MapGridCellBuffer + ((z / 0x100000) << 7) +
+         objectEvent->x.fixed / 0x100000;
   if (st->levels != 0 && st->pillar != 0) {
-    obj = Engine_ObjectCreate(26, actor->x.fixed, actor->y.fixed + 0x180000, z);
+    obj = Engine_ObjectCreate(26, objectEvent->x.fixed,
+                              objectEvent->y.fixed + 0x180000, z);
     if (obj != 0) {
-      obj->terrainHeight = actor->terrainHeight;
+      obj->terrainHeight = objectEvent->terrainHeight;
       animation = obj->sprite;
       Engine_ObjectSetScript(obj, gMercuryLighthouse_PillarScript);
-      obj->linkedObject = actor;
+      obj->linkedObject = objectEvent;
       obj->motionFlags = 4;
       obj->y.fixed += -0x8000;
       if (animation != 0) {
@@ -66,11 +67,11 @@ void MercuryLighthouse_RestoreLights(s32 region,
     st->pillar = 0;
   }
   if (cell->collisionCode == region && st->stepEffect != 0) {
-    obj =
-        Engine_ObjectCreate(26, actor->x.fixed, actor->y.fixed, actor->z.fixed);
+    obj = Engine_ObjectCreate(26, objectEvent->x.fixed, objectEvent->y.fixed,
+                              objectEvent->z.fixed);
     if (obj == 0)
       return;
-    obj->terrainHeight = actor->terrainHeight;
+    obj->terrainHeight = objectEvent->terrainHeight;
     animation = obj->sprite;
     Engine_ObjectSetScript(obj, gMercuryLighthouse_RampScript);
     obj->motionFlags = 0;

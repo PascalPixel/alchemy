@@ -72,7 +72,7 @@ void ObjectSystem_UpdateCamera(void) {
    * in tbs-en. */
   UNUSED struct ObjectCameraPoint unusedPoints[3];
   s32 objectIndex;
-  struct MapScrollWork *map;
+  struct MapGridScrollWork *grid;
   s32 viewX;
   s32 viewZ;
   struct ObjectSystemWork *system;
@@ -91,19 +91,19 @@ void ObjectSystem_UpdateCamera(void) {
   struct SpritePlacement drawPosition;
   u32 layerPlusOne;
 
-  // MapScrollWork owns all three layer cell pointers at their 0x30-byte stride.
-  // UB: map and system work are separate globals, beyond gObjectSlots.
+  // MapGridScrollWork owns all three layer cell pointers at their 0x30-byte
+  // stride. UB: map and system work are separate globals, beyond gObjectSlots.
   // Reading their named slots adds eight bytes in the forced EN build.
 #ifdef UBFIX
-  map = gMapWork[0];
+  grid = gMapGridWork[0];
 #else
-  map = *(struct MapScrollWork **)(((u8 *)&gObjectSlots) + 12);
+  grid = *(struct MapGridScrollWork **)(((u8 *)&gObjectSlots) + 12);
 #endif
 #ifdef UBFIX
-  viewX = map->viewX & 0xffff0000;
-  viewZ = map->viewY & 0xffff0000;
+  viewX = grid->viewX & 0xffff0000;
+  viewZ = grid->viewY & 0xffff0000;
 #else
-  viewCoordinates = &map->viewX;
+  viewCoordinates = &grid->viewX;
   viewX = viewCoordinates[0] & 0xffff0000;
   viewZ = viewCoordinates[1] & 0xffff0000;
 #endif
@@ -149,9 +149,9 @@ void ObjectSystem_UpdateCamera(void) {
           screenTop < 0xe00000) {
         // The cell under the object: x and z >> 20 are 16-pixel cells, and a
         // row holds 128 of them.
-        tile = &((struct ObjectCameraTile *)map->layers[object->layer]
+        tile = &((struct ObjectCameraTile *)grid->layers[object->layer]
                      .cells)[(object->x >> 20) + ((object->z >> 20) << 7)];
-        if (object->flags & ACTOR_PRIORITY_AUTOMATIC) {
+        if (object->flags & OBJ_EVENT_PRIORITY_AUTOMATIC) {
           priority = tile->priority;
           if (priority != 0) {
             sprite->image.priority = priority;
@@ -167,15 +167,15 @@ void ObjectSystem_UpdateCamera(void) {
         drawPosition.height = object->y;
         drawPosition.y = dz;
         drawPosition.groundHeight = object->height;
-        // ACTOR_PRIORITY_UNDERFOOT and bit 2 move the point 320 pixels up or
-        // down the map with its height and ground height, so the sprite and
+        // OBJ_EVENT_PRIORITY_UNDERFOOT and bit 2 move the point 320 pixels up
+        // or down the map with its height and ground height, so the sprite and
         // shadow stay where they are on screen; only the draw slot changes,
         // which Render_ApplyProjectedPlacement takes from the point's y
-        // before its height is taken off. ACTOR_PRIORITY_UNDERFOOT, which
+        // before its height is taken off. OBJ_EVENT_PRIORITY_UNDERFOOT, which
         // footprints take, moves the slot 160 back, and an object at most 220
         // pixels up crosses that function's 100-pixel line into its lowest
         // slot; bit 2 moves it 160 on.
-        if (object->flags & ACTOR_PRIORITY_UNDERFOOT) {
+        if (object->flags & OBJ_EVENT_PRIORITY_UNDERFOOT) {
           drawPosition.height += 0xfec00000; // -320 pixels
           drawPosition.y += 0xfec00000;
           drawPosition.groundHeight += 0xfec00000;

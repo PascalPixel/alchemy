@@ -15,7 +15,7 @@ union FieldObject;
 /// An effect object that moves and draws one sprite: its position, scale,
 /// velocity and target, and its per-frame update.
 /// It is one of the object slots Object_CreateFar hands out, the same object
-/// FieldActor and ScriptMotionObject describe; the notes name their fields at
+/// ObjectEvent and ScriptMotionObject describe; the notes name their fields at
 /// the same offsets.
 struct MotionObject {
   u8 unk00[0x06]; ///< ScriptMotionObject's script and scriptCursor
@@ -23,11 +23,11 @@ struct MotionObject {
   s32 x;          ///< 16.16 fixed-point pixels
   s32 y;          ///< 16.16 fixed-point pixels
   s32 z;          ///< 16.16 fixed-point pixels
-  u8 unk14[0x04]; ///< FieldActor's terrainHeight, the ground's y
+  u8 unk14[0x04]; ///< ObjectEvent's terrainHeight, the ground's y
   s32 scaleX;     ///< 16.16 fixed point, 0x10000 full size
   s32 scaleY;     ///< 16.16 fixed point, 0x10000 full size
-  u16 height;     ///< half the sprite's box height; FieldActor's radius
-  u8 unk22[0x02]; ///< FieldActor's terrainId and priorityFlags
+  u16 height;     ///< half the sprite's box height; ObjectEvent's radius
+  u8 unk22[0x02]; ///< ObjectEvent's terrainId and priorityFlags
   s32 velocityX;  ///< 16.16 fixed-point pixels per frame
   s32 velocityY;  ///< 16.16 fixed-point pixels per frame
   s32 velocityZ;  ///< 16.16 fixed-point pixels per frame
@@ -46,7 +46,7 @@ struct MotionObject {
   /// motionFlags bit 1, in 16.16 fixed-point pixels per frame; with bit 2, it
   /// also scales the float.
   s32 verticalMotionStrength;
-  u8 unk4c[0x04]; ///< FieldActor's riseBaseY
+  u8 unk4c[0x04]; ///< ObjectEvent's riseBaseY
   void *records;  ///< one sprite, or a table of up to four (recordStorageKind)
   /// bits: 3..0 RECORDS_NONE, RECORDS_SINGLE or RECORDS_TABLE
   u8 recordStorageKind;
@@ -55,9 +55,9 @@ struct MotionObject {
   u8 motionFlags;
   u8 unk56[0x02];    ///< ScriptMotionObject's arrivalAxis and unk57
   u8 snapToTarget;   ///< nonzero: lands exactly on the target, else brakes in
-  u8 unk59;          ///< FieldActor's collisionFlags; battle units set 3
+  u8 unk59;          ///< ObjectEvent's collisionFlags; battle units set 3
   u8 autoFaceMotion; ///< bit 0 turns the object to face where it moves
-  /// FieldActor's paused, timer, linkedObject and the bytes between; not
+  /// ObjectEvent's paused, timer, linkedObject and the bytes between; not
   /// named by TBS code through this view.
   u8 unk5b[0x11];
   void (*update)(union FieldObject *fieldObject); ///< run first each frame

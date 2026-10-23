@@ -14,7 +14,7 @@ void FieldEffect_BlinkAvoidCaster(void) {
   struct AnimationEntry *entry;
   s32 phase;
 
-  caster = ObjectTable_Get(gGameState.selectedActor);
+  caster = ObjectTable_Get(gGameState.selectedObjectEvent);
   rec = caster->records;
   entry = rec->entries[0];
   phase = gFrameCount % 5;
@@ -41,12 +41,12 @@ void FieldEffect_UpdatePairedArcSpawner(union FieldObject *fieldObject) {
   phase = caster->phase;
   elapsedFrames = caster->step++;
 
-  // SceneId_Clear is the world map's map (Field_RunScene).
-  if (gGameState.map == (s32)&SceneId_Clear) {
+  // MapId_Clear is the world map's map (Field_RunMap).
+  if (gGameState.layoutId == (s32)&MapId_Clear) {
     if (elapsedFrames % 7 == 0)
-      FieldEffect_SpawnDescendingArcParticles((struct FieldActor *)caster);
+      FieldEffect_SpawnDescendingArcParticles((struct ObjectEvent *)caster);
   } else if (elapsedFrames % 5 == 0) {
-    FieldEffect_SpawnDescendingArcParticles((struct FieldActor *)caster);
+    FieldEffect_SpawnDescendingArcParticles((struct ObjectEvent *)caster);
   }
 
   if (phase == 1)
@@ -56,10 +56,10 @@ void FieldEffect_UpdatePairedArcSpawner(union FieldObject *fieldObject) {
 /// Avoid (or the Sacred Feather) has worn off, and the game says so.
 /// "Avoid's effects wore off." (or "Sacred Feather's ...").
 ///
-/// Clears gGameState.avoidDistance. Reached through FieldEvent_RunTypeHandler
+/// Clears gGameState.avoidDistance. Reached through FieldScript_RunTypeHandler
 /// when the Psynergy request the leader's steps raise as Avoid runs out
 /// (object/step.c) is handled.
-void FieldEvent_ShowStatusMessage(void) {
+void FieldScript_ShowStatusMessage(void) {
   gGameState.avoidDistance = 0;
   if (gGameState.avoidByItem == 0) {
     UiWork_PushValueSlotFar(ABILITY_AVOID, 4);
@@ -87,7 +87,7 @@ void FieldEvent_ShowStatusMessage(void) {
 /// gGameState.avoidDistance and avoidByItem; the leader's steps count the
 /// distance down by their speed (object/step.c), 2,400 pixels in all.
 void FieldEffect_RunAvoid(void) {
-  struct FieldEffectScene *scene;
+  struct FieldEffectWork *effectWork;
   struct ArcEffectObject *object;
   struct AnimationObject *group;
   struct AnimationEntry *entry;
@@ -95,14 +95,14 @@ void FieldEffect_RunAvoid(void) {
   s32 slot;
   s32 count;
 
-  scene = gEffectWork;
-  object = scene->mainObject;
+  effectWork = gEffectWork;
+  object = effectWork->mainObject;
   group = object->records;
   entry = group->entries[0];
   angle = object->angle;
   slot = Resource_FindFreeEntry();
   {
-    s16 *tileSlot = &scene->arcTileSlot;
+    s16 *tileSlot = &effectWork->arcTileSlot;
     s32 zero = 0;
 
     // The arcs' tiles (256 bytes) stay loaded until the effect's end; the
@@ -147,6 +147,6 @@ void FieldEffect_RunAvoid(void) {
                                           SPRITE_FLAG_SHADOW);
   Animation_ApplyChildValuesFar((struct DispatchObject *)object,
                                 SPRITE_COLOR_NORMAL);
-  Resource_ResetEntry(scene->arcTileSlot);
+  Resource_ResetEntry(effectWork->arcTileSlot);
   UiText_ShowPositionedMessageAndWaitFar(MsgMonstersAttackLess, 1);
 }

@@ -9,9 +9,9 @@
 
 /// Terrain height functions, by enum TerrainKind, called with (the remaining
 /// samples, x within the cell, y within the cell). Each reads only the
-/// arguments it needs. Read by Map_GetTerrainHeight and Map_CheckObjectStep
-/// (terrain.c).
-const TerrainHeightFn gMap_TerrainHeightFunctions[TERRAIN_KIND_COUNT] = {
+/// arguments it needs. Read by MapGrid_GetTerrainHeight and
+/// MapGrid_CheckObjectStep (terrain.c).
+const TerrainHeightFn gMapGrid_TerrainHeightFunctions[TERRAIN_KIND_COUNT] = {
     [TERRAIN_FLAT] = Curve_GetFirstSampleA,
     [TERRAIN_SLOPE_X] = Curve_LerpTwoSamples,
     [TERRAIN_SLOPE_Y] = Curve_LerpTwoSamplesB,

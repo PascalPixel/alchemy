@@ -10,7 +10,7 @@
 #include "map_tables.h"
 #include "item_ids.h"
 
-extern struct SceneEvent gVale_EventsAfterKalay[];
+extern struct MapEvent gVale_EventsAfterKalay[];
 extern s32 gVale_JennaWalksToTheHouse[];
 
 #include "global_cells.h"

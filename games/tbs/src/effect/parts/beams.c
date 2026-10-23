@@ -134,8 +134,8 @@ void BattleEffect_RunBeamSequence(struct BattleEffectArgument *effect) {
         colors, Resource_GetTableEntry((s32)&ResourceId_CrescentSheet), 128);
   WaitFrames(1);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesD, sheet, 0, 0);
-  Resource_LoadAndDecompress((s32)&ResourceId_YellowOrbSheet, Ram_MapCellBuffer,
-                             1, 0);
+  Resource_LoadAndDecompress((s32)&ResourceId_YellowOrbSheet,
+                             Ram_MapGridCellBuffer, 1, 0);
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, 50);
   REG_BG1CNT = BGCNT_PRIORITY(1) | BGCNT_CHAR_BASE(0) | BGCNT_256_COLORS |
                BGCNT_SCREEN_BASE(31);
@@ -234,7 +234,7 @@ void BattleEffect_RunBeamSequence(struct BattleEffectArgument *effect) {
     // Frames 4 to 15: the yellow orb flashes over the target, six 40x48
     // cells, two frames each.
     if (frame >= 4 && frame <= 15)
-      draw[0](canvas, Ram_MapCellBuffer + (frame - 4) / 2 * (40 * 48),
+      draw[0](canvas, Ram_MapGridCellBuffer + (frame - 4) / 2 * (40 * 48),
               anchor.x - 16, anchor.y - 24, 40, 48);
     EFFECT_VIEW_FROM_CAMERA(camera);
     // From frame 4 the sparks fly. Only the first 32 move: each is drawn
@@ -279,12 +279,12 @@ void BattleEffect_RunBeamSequence(struct BattleEffectArgument *effect) {
 /// kind of a critical hit; so the gathering always plays. Shows the canvas on
 /// BG1, keeps the battle's transition centred between the user and the first
 /// target while it loads, scrolls BG1 through gBgScroll[1] and uses
-/// work->particles 0 to 63, work->imageStorage, Ram_MapCellBuffer and both
+/// work->particles 0 to 63, work->imageStorage, Ram_MapGridCellBuffer and both
 /// blitter slots. While the motes gather it adds Palette_StepFadeTransfer and
 /// stops the user's motion, and restores both after. At the end it removes
 /// the transfer callback, frees the blitters, sets gBgScroll[1].y back to 32,
 /// steps the background palette level from 6 back to 0 and hides BG1 again.
-void BattleEffect_RunRingAndSparkScene(struct BattleEffectArgument *effect) {
+void BattleEffect_RunRingAndSparkSequence(struct BattleEffectArgument *effect) {
   struct EffectPosition screenPosition;
   struct EffectPosition anchor;
   struct EffectPosition point;
@@ -358,8 +358,8 @@ void BattleEffect_RunRingAndSparkScene(struct BattleEffectArgument *effect) {
   BattlePresentation_SetupTransitionAtPairMidpointFar(
       work->effect->actor, work->effect->firstTarget, 130);
   WaitFrames(1);
-  Resource_LoadAndDecompress((s32)&ResourceId_CrescentSheet, Ram_MapCellBuffer,
-                             1, 1);
+  Resource_LoadAndDecompress((s32)&ResourceId_CrescentSheet,
+                             Ram_MapGridCellBuffer, 1, 1);
   if (work->effect->actor > 7)
     Iwram_CopyWords(
         colors, Resource_GetTableEntry((s32)&ResourceId_MarsDjinnSmallSheet),
@@ -417,9 +417,9 @@ void BattleEffect_RunRingAndSparkScene(struct BattleEffectArgument *effect) {
           s32 size = (i & 1) + 5;
 
           Render_ResetTransformState();
-          SceneTransform_ApplyRoll(mote->velocityZ);
-          SceneTransform_ApplyPitch(mote->velocityX);
-          SceneTransform_ApplyYaw(mote->velocityY);
+          Transform_ApplyRoll(mote->velocityZ);
+          Transform_ApplyPitch(mote->velocityX);
+          Transform_ApplyYaw(mote->velocityY);
           EffectPosition_ProjectPoint(&mote->x, &point);
           point.x += 64;
           point.y = point.y + screenPosition.y + 24;
@@ -489,9 +489,9 @@ void BattleEffect_RunRingAndSparkScene(struct BattleEffectArgument *effect) {
     else if (frame <= 3)
       draw[0](canvas, work->imageStorage + (120 * 120), 0, 0, 120, 120);
     else if (frame <= 5)
-      draw[0](canvas, Ram_MapCellBuffer, 0, 0, 120, 120);
+      draw[0](canvas, Ram_MapGridCellBuffer, 0, 0, 120, 120);
     else if (frame <= 7)
-      draw[0](canvas, Ram_MapCellBuffer + (120 * 120), 0, 0, 120, 120);
+      draw[0](canvas, Ram_MapGridCellBuffer + (120 * 120), 0, 0, 120, 120);
     EFFECT_VIEW_FROM_CAMERA(camera);
     // From frame 4 the sparks fly, as in the beam sequence: only the first
     // 32 move, each drawn and moved twice a frame.

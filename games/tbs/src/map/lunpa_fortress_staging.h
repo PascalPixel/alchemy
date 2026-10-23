@@ -10,6 +10,8 @@
 #include "object_runtime.h"
 #include "object_event.h"
 
-static __inline__ void SetSceneValue(s16 *field, s32 value) { *field = value; }
+static __inline__ void SetFieldWorkValue(s16 *field, s32 value) {
+  *field = value;
+}
 
 #endif

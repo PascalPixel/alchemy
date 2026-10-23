@@ -5,7 +5,7 @@
 #include "../field_internal.h"
 
 /// SC_BASE: restarts the script at the next word, and returns 1 to run on.
-s32 Script_SetBase(struct ScriptInterpreter *interpreter) {
+s32 ActionScript_SetBase(struct ScriptInterpreter *interpreter) {
   s32 zero;
 
   // The word after the command becomes the script's start.
@@ -17,7 +17,7 @@ s32 Script_SetBase(struct ScriptInterpreter *interpreter) {
 
 /// SC_B54_OFF: clears spriteStorageKind, hiding the sprites, and moves on to
 /// the next command.
-s32 Script_ClearByte54(struct ScriptInterpreter *interpreter) {
+s32 ActionScript_ClearByte54(struct ScriptInterpreter *interpreter) {
   interpreter->spriteStorageKind = OBJECT_SPRITE_NONE;
   interpreter->cursor++;
   return 1;
@@ -25,7 +25,7 @@ s32 Script_ClearByte54(struct ScriptInterpreter *interpreter) {
 
 /// SC_B54_ON: sets spriteStorageKind to OBJECT_SPRITE_ONE, one sprite drawn,
 /// and moves on to the next command.
-s32 Script_SetByte54(struct ScriptInterpreter *interpreter) {
+s32 ActionScript_SetByte54(struct ScriptInterpreter *interpreter) {
   interpreter->spriteStorageKind = OBJECT_SPRITE_ONE;
   interpreter->cursor++;
   return 1;
@@ -49,7 +49,7 @@ void FieldObject_WaitForMove(void *fieldObject) {
 /// Returns 1 when the object has no movement target: none of its target
 /// coordinates set, or for an object moved by the ground (any motion flag)
 /// neither its target x nor z. Called by FieldObject_WaitForMove and SC_SYNC
-/// (Script_WaitForArrival).
+/// (ActionScript_WaitForArrival).
 s32 Object_IsTargetUnset(struct ObjectRuntime *object) {
   s32 first;
   s32 second;
@@ -265,11 +265,11 @@ void Object_UpdateAllThumb(void) {
         // pixels above the ground. Unless bit 4 is set, a climb or drop also
         // slows it, by three times the change (at most half its
         // acceleration).
-        if ((object->motionFlags & ACTOR_FOLLOWS_TERRAIN) != 0) {
+        if ((object->motionFlags & OBJ_EVENT_FOLLOWS_TERRAIN) != 0) {
           velocityX = x + object->velocityX;
           velocityZ = z + object->velocityZ;
           ground =
-              Map_GetTerrainHeight(object->terrainId, velocityX, velocityZ);
+              MapGrid_GetTerrainHeight(object->terrainId, velocityX, velocityZ);
           velocityY = ground - object->terrainHeight;
           if (ground - y > -0x40000)
             y += velocityY;
@@ -280,7 +280,7 @@ void Object_UpdateAllThumb(void) {
             velocityY = maxTerrainChange;
           velocityY *= 3;
           if (velocityY != 0 &&
-              (object->motionFlags & ACTOR_KEEPS_SPEED_ON_SLOPES) == 0) {
+              (object->motionFlags & OBJ_EVENT_KEEPS_SPEED_ON_SLOPES) == 0) {
             dx = object->velocityX;
             dy = object->velocityY;
             dz = object->velocityZ;
@@ -299,7 +299,7 @@ void Object_UpdateAllThumb(void) {
         }
 
         // Gravity, and a bounce that loses energy on landing.
-        if ((object->motionFlags & ACTOR_FALLS) != 0) {
+        if ((object->motionFlags & OBJ_EVENT_FALLS) != 0) {
           ground = object->terrainHeight;
           if (y > ground) {
             object->velocityY -= object->gravity;
@@ -314,15 +314,15 @@ void Object_UpdateAllThumb(void) {
           }
         }
 
-        // Float: bob up and down on a triangle wave (ACTOR_FLOATS_HIGH makes it
-        // bigger). The phase runs over 64 frames, each table entry held for
-        // two. The first 32 frames' velocities sum to 128 * gravity / 64, so
-        // the object rises and falls by about 2 * gravity pixels, or 8 *
-        // gravity with ACTOR_FLOATS_HIGH (2 and 8 pixels at the default gravity
-        // of 1.0).
-        if ((object->motionFlags & ACTOR_FLOATS) != 0) {
+        // Float: bob up and down on a triangle wave (OBJ_EVENT_FLOATS_HIGH
+        // makes it bigger). The phase runs over 64 frames, each table entry
+        // held for two. The first 32 frames' velocities sum to 128 * gravity /
+        // 64, so the object rises and falls by about 2 * gravity pixels, or 8 *
+        // gravity with OBJ_EVENT_FLOATS_HIGH (2 and 8 pixels at the default
+        // gravity of 1.0).
+        if ((object->motionFlags & OBJ_EVENT_FLOATS) != 0) {
           phase = (object->vertical.phase & 0x3f);
-          if ((object->motionFlags & ACTOR_FLOATS_HIGH) != 0)
+          if ((object->motionFlags & OBJ_EVENT_FLOATS_HIGH) != 0)
             object->velocityY =
                 gScriptObject_CycleTable[phase >> 1] * object->gravity / 16;
           else
@@ -337,10 +337,11 @@ void Object_UpdateAllThumb(void) {
     y += object->velocityY;
     z += object->velocityZ;
 
-    // An object with ACTOR_BLOCKED_BY_SOLID does not move into an ACTOR_SOLID
-    // one; count the refusals. A refused object keeps last frame's position and
-    // skips arrival and turning; SC_SYNC stops waiting for it after 60.
-    if ((object->collisionFlags & ACTOR_BLOCKED_BY_SOLID) != 0) {
+    // An object with OBJ_EVENT_BLOCKED_BY_SOLID does not move into an
+    // OBJ_EVENT_SOLID one; count the refusals. A refused object keeps last
+    // frame's position and skips arrival and turning; SC_SYNC stops waiting for
+    // it after 60.
+    if ((object->collisionFlags & OBJ_EVENT_BLOCKED_BY_SOLID) != 0) {
       SET_VECTOR(pos, x, y, z);
       if (ScriptObject_CheckOverlap((struct ScriptObjectEntry *)object, pos) !=
           0) {
@@ -613,7 +614,7 @@ void Object_UpdateAllMotion(void) {
         }
       }
       // Gravity, and a bounce that loses energy on landing.
-      if (object->motionFlags & ACTOR_FALLS) {
+      if (object->motionFlags & OBJ_EVENT_FALLS) {
         if (y > object->terrainHeight) {
           object->velocityY -= object->gravity;
         } else if (object->velocityY < 0) {

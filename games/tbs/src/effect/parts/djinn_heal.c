@@ -84,7 +84,7 @@ UNUSED void BattleEffect_RunDjinnHeal(struct BattleEffectArgument *effect) {
       position[1] += delta[1];
       position[2] += delta[2];
     }
-    SceneTransform_ApplyPosition(position);
+    Transform_ApplyPosition(position);
     // The user glows white for the first 24 frames.
     if (frame == 0)
       ObjectGroup_UpdateMembers(work->effect->actor, SPRITE_COLOR_WHITE, -1, -1,
@@ -103,17 +103,17 @@ UNUSED void BattleEffect_RunDjinnHeal(struct BattleEffectArgument *effect) {
         Transform_Push();
         switch (i & 3) {
         case SPIN_YAW:
-          SceneTransform_ApplyYaw(frame * (i * 32 + 256));
+          Transform_ApplyYaw(frame * (i * 32 + 256));
           break;
         case SPIN_PITCH:
-          SceneTransform_ApplyPitch(-frame * (i * 32 + 256));
+          Transform_ApplyPitch(-frame * (i * 32 + 256));
           break;
         case SPIN_ROLL:
-          SceneTransform_ApplyRoll(-frame * (i * 32 + 256));
+          Transform_ApplyRoll(-frame * (i * 32 + 256));
           break;
         case SPIN_PITCH_AND_ROLL:
-          SceneTransform_ApplyPitch(-frame * (i * 32 + 256));
-          SceneTransform_ApplyRoll(-frame * (i * 32 + 256));
+          Transform_ApplyPitch(-frame * (i * 32 + 256));
+          Transform_ApplyRoll(-frame * (i * 32 + 256));
           break;
         }
         EffectPosition_ProjectPoint(spark, &screen);
@@ -173,7 +173,7 @@ UNUSED void BattleEffect_RunDjinnHeal(struct BattleEffectArgument *effect) {
       s32 start = member * 8;
       EFFECT_VIEW_FROM_CAMERA(camera);
       SET_VECTOR(position, object->x, 160 << 14, object->z);
-      SceneTransform_ApplyPosition(position);
+      Transform_ApplyPosition(position);
       // 30 frames into its turn the target hears the recovery sound, and
       // it glows from 40 to 64; its 64 sparkles spiral in, sparkle i from
       // frame i / 2 + 1 of the turn, centred 40 pixels above it. The view
@@ -187,7 +187,7 @@ UNUSED void BattleEffect_RunDjinnHeal(struct BattleEffectArgument *effect) {
       if (frame == start + 64)
         ObjectGroup_UpdateMembers(work->effect->actors[member], 0, -1, -1, 0);
       if (frame > start) {
-        SceneTransform_ApplyYaw((frame - start) << 9);
+        Transform_ApplyYaw((frame - start) << 9);
         for (i = 0; i != 64; i++) {
           struct EffectStep *spark = &PARTICLES[member * 64 + i];
 

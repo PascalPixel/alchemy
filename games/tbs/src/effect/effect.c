@@ -18,7 +18,7 @@
 /// keep to match. The shared machinery is in these parts:
 ///
 ///   Entry points    dispatch.c: BattleEffect_RunTableEffect,
-///                   BattleEffect_RunSceneEffect; positions.c:
+///                   BattleEffect_RunSummonEffect; positions.c:
 ///                   BattleEffect_DispatchByIdRange
 ///   Canvas          canvas.c: BattleEffect_StartCanvasLayer,
 ///                   BattleEffect_EndCanvasLayer, BattleEffect_WipeCanvas,
@@ -35,8 +35,8 @@
 /// canvas (HEAP_SLOT_BATTLE_CANVAS): each of the three entry points allocates
 /// them before the handler runs and releases them after it returns, so a
 /// handler removes every callback that reads them before it returns. The two
-/// blitter slots and gMapCellBuffer (PARTICLES) belong to the handler for as
-/// long as it runs; it frees the blitters itself before it returns.
+/// blitter slots and gMapGridCellBuffer (PARTICLES) belong to the handler for
+/// as long as it runs; it frees the blitters itself before it returns.
 ///
 /// README.md in this folder explains the ideas: how a move picks its effect,
 /// the frame loop, the canvas, particles, blitters and pictures.

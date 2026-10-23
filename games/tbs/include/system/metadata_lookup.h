@@ -22,10 +22,10 @@ struct AnimationMetadata {
   s8 adjustX; ///< pixels
   s8 adjustY; ///< pixels
   /// Pixels from the object's position up to the top of its sprite
-  /// (Object_GetScreenPosition).
+  /// (ObjectEvent_GetScreenPosition).
   u8 boxX;
   /// Pixels; half of it is a battle unit's MotionObject.height, and can be a
-  /// field object's radius (FieldActor.radius).
+  /// field object's radius (ObjectEvent.radius).
   u8 boxY;
   u8 frameCodec; ///< AnimationEntry.mode: 1 type-01, 3 LZ, anything else raw
   /// The frame pointers; null takes them from the resource slot holding the

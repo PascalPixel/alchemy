@@ -5,8 +5,8 @@
 #include "../object_internal.h"
 
 #ifndef UBFIX
-/// The map work in HEAP_SLOT_MAP, seen as the halfwords of its view position:
-/// the high halves are the view's x and z in whole pixels.
+/// The map work in HEAP_SLOT_MAP_GRID, seen as the halfwords of its view
+/// position: the high halves are the view's x and z in whole pixels.
 struct FadeView {
   u8 unk00[228];
   s16 camera[4];
@@ -22,19 +22,19 @@ struct FadeView {
 void FadeOverlay_DrawMarks(void) {
   struct FadeOverlayWork *work = WORK_SLOT(HEAP_SLOT_FADE_OVERLAY);
 #ifdef UBFIX
-  struct MapScrollWork *map = WORK_SLOT(HEAP_SLOT_MAP);
-  s32 cameraX = map->viewX >> 16;
-  s32 cameraZ = map->viewY >> 16;
+  struct MapGridScrollWork *grid = WORK_SLOT(HEAP_SLOT_MAP_GRID);
+  s32 cameraX = grid->viewX >> 16;
+  s32 cameraZ = grid->viewY >> 16;
 #else
   // UB: the legacy halfword overlay aliases the map's s32 coordinates.
   // Named-member high halves keep 0x1da bytes but change load scheduling
   // from .text+0x6cce in English; the actor's named fields match plainly.
-  s16 *camera = ((struct FadeView *)WORK_SLOT(HEAP_SLOT_MAP))->camera;
+  s16 *camera = ((struct FadeView *)WORK_SLOT(HEAP_SLOT_MAP_GRID))->camera;
   s32 cameraX = camera[1];
   s32 cameraZ = camera[3];
 #endif
   struct AnimationSpritePart *mark = work->marks;
-  struct FieldActor *actor = work->actor;
+  struct ObjectEvent *objectEvent = work->objectEvent;
   s32 x;
   s32 z;
   s32 terrainFloor;
@@ -48,12 +48,12 @@ void FadeOverlay_DrawMarks(void) {
    * tbs-en. */
   UNUSED s16 unused[2];
 
-  if (actor == 0)
+  if (objectEvent == 0)
     return;
-  x = actor->x.fixed;
-  z = actor->z.fixed;
-  terrainFloor = actor->terrainHeight >> 16;
-  terrainLayer = actor->terrainId;
+  x = objectEvent->x.fixed;
+  z = objectEvent->z.fixed;
+  terrainFloor = objectEvent->terrainHeight >> 16;
+  terrainLayer = objectEvent->terrainId;
   // The first tile of the solid block FieldEffect_StartFadeOverlay loaded (VRAM
   // cache block 94; tiles are 32 bytes).
   tile = gVramBlockCache[94].offset >> 5;
@@ -61,9 +61,9 @@ void FadeOverlay_DrawMarks(void) {
   // cells (16 and 32 pixels) south, the further one counting 16 pixels lower,
   // and the higher of the two is used.
   x -= 0x80000;
-  height = Map_GetTerrainHeightFar(terrainLayer, x, z + 0x100000) >> 16;
+  height = MapGrid_GetTerrainHeightFar(terrainLayer, x, z + 0x100000) >> 16;
   secondHeight =
-      (Map_GetTerrainHeightFar(terrainLayer, x, z + 0x200000) >> 16) - 16;
+      (MapGrid_GetTerrainHeightFar(terrainLayer, x, z + 0x200000) >> 16) - 16;
   if (secondHeight > height)
     height = secondHeight;
   if (height > 0 && height > terrainFloor) {
@@ -84,10 +84,10 @@ void FadeOverlay_DrawMarks(void) {
   }
   // The right cell, 8 pixels right of the actor, read the same way.
   x += 0x100000;
-  height = Map_GetTerrainHeightFar(terrainLayer, x, z + 0x100000) >> 16;
+  height = MapGrid_GetTerrainHeightFar(terrainLayer, x, z + 0x100000) >> 16;
   mark = &work->marks[1];
   secondHeight =
-      (Map_GetTerrainHeightFar(terrainLayer, x, z + 0x200000) >> 16) - 16;
+      (MapGrid_GetTerrainHeightFar(terrainLayer, x, z + 0x200000) >> 16) - 16;
   if (secondHeight > height)
     height = secondHeight;
   if (height > 0 && height > terrainFloor) {
@@ -133,8 +133,8 @@ void FieldEffect_StartFadeOverlay(void *object) {
   Io_Write16(31, &REG_BLDY);
   Dma_Fill32Cell(fill, 0, work, sizeof(*work));
   if (object == NULL)
-    object = ObjectTable_Get(gGameState.selectedActor);
-  work->actor = object;
+    object = ObjectTable_Get(gGameState.selectedObjectEvent);
+  work->objectEvent = object;
 }
 
 /// Stops drawing the fade overlay, keeping its work. Reached only through a

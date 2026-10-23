@@ -25,29 +25,29 @@
 	.set import.Unit_LevelUpTo, 1
 	.set import.PartyInventory_HasSpace, 1
 	.ifdef TBS_EDITION_JA
-	.set import.Engine_EventStart, 1
+	.set import.Engine_ScriptStart, 1
 	.endif
 	.ifdef TBS_EDITION_JA
-	.set import.Engine_EventEnd, 1
+	.set import.Engine_ScriptEnd, 1
 	.endif
-	.set import.Object_GetById, 1
+	.set import.ObjectEvent_GetById, 1
 	.ifdef TBS_EDITION_JA
-	.set import.Engine_ActorSetPosition, 1
+	.set import.Engine_ObjectEventSetPosition, 1
 	.endif
-	.set import.Engine_ActorSetAnimation, 1
+	.set import.Engine_ObjectEventSetAnimation, 1
 	.ifdef TBS_EDITION_JA
 	.set import.ObjectMotion_WaitForAnimationChange, 1
 	.endif
 	.ifndef TBS_EDITION_JA
-	.set import.Engine_EventSetMessage, 1
+	.set import.Engine_ScriptSetMessage, 1
 	.endif
 	.ifndef TBS_EDITION_JA
-	.set import.Engine_EventShowMessage, 1
+	.set import.Engine_ScriptShowMessage, 1
 	.endif
 	.ifndef TBS_EDITION_JA
-	.set import.Engine_ActorShowEmote, 1
+	.set import.Engine_ObjectEventShowEmote, 1
 	.endif
-	.set import.Engine_EventRequestExit, 1
+	.set import.Engine_ScriptRequestWarp, 1
 	.set import.Engine_DebugDrawItemDetails, 1
 	.set import.Engine_AudioPlayCue, 1
 	.include "games/tbs/src/system/overlay.inc"

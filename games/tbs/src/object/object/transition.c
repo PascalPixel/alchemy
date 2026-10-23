@@ -75,7 +75,7 @@ void DisplayTransition_UpdateScanlineTable(void) {
   struct DisplayTransitionState *state;
   struct TransitionSpan *span;
   struct TransitionShape *shape;
-  struct MapScrollWork *map;
+  struct MapGridScrollWork *grid;
   u16 *scanlineData;
 #ifndef UBFIX
   // UB: viewX is a scalar, so indexing its address cannot reach viewY.
@@ -105,13 +105,13 @@ void DisplayTransition_UpdateScanlineTable(void) {
   u32 leftEdge;
   s32 oppositeEdges;
 
-  map = gMapWork[0];
+  grid = gMapGridWork[0];
 #ifdef UBFIX
   state = gDisplayTransition;
 #else
-  // UB: this indexes past gMapWork into the separate transition-work cell.
+  // UB: this indexes past gMapGridWork into the separate transition-work cell.
   // The named cell grows 0x90c to 0x910 native bytes in English.
-  state = gMapWork[23];
+  state = gMapGridWork[23];
 #endif
 
   // Finish or advance the timed phase before generating the hidden page.
@@ -151,11 +151,11 @@ void DisplayTransition_UpdateScanlineTable(void) {
   }
 
   // Build the page not shown. Its line pairs start as the open UI windows'
-  // edges (UiWindow_FillFromSceneFar; with no UI work, 0xe0e0 over the first
-  // 80 lines only, as its XXX notes); each mode below then writes window 0's
-  // edge of every pair and leaves window 1's.
+  // edges (UiWindow_FillScanlineSpansFar; with no UI work, 0xe0e0 over the
+  // first 80 lines only, as its XXX notes); each mode below then writes window
+  // 0's edge of every pair and leaves window 1's.
   scanlineData = state->pages[1 ^ state->page];
-  UiWindow_FillFromSceneFar(scanlineData + 2);
+  UiWindow_FillScanlineSpansFar(scanlineData + 2);
 
   // Each mode writes WININ and WINOUT first. 0x7f7f shows every layer inside
   // both windows and 1 only background 0 outside them; a mode swaps the two
@@ -331,15 +331,15 @@ void DisplayTransition_UpdateScanlineTable(void) {
     s32 ax;
 
 #ifdef UBFIX
-    ax = map->viewX & 0xffff0000;
-    cameraY = map->viewY & 0xffff0000;
+    ax = grid->viewX & 0xffff0000;
+    cameraY = grid->viewY & 0xffff0000;
 #else
-    viewInverse = &map->viewX;
+    viewInverse = &grid->viewX;
     ax = viewInverse[0] & 0xffff0000;
     cameraY = viewInverse[1] & 0xffff0000;
 #endif
     // Centred on the leader's place on screen, 16 pixels above its feet.
-    object = ObjectTable_Get(gGameState.selectedActor);
+    object = ObjectTable_Get(gGameState.selectedObjectEvent);
     centerX = (object->x - ax) / 0x10000;
     centerY = ((object->z - object->y) - cameraY) / 0x10000 - 16;
     // The frame counter is read here, where WINDOW_TRANSITION_RIPPLE forms
@@ -388,10 +388,10 @@ void DisplayTransition_UpdateScanlineTable(void) {
   }
   case WINDOW_TRANSITION_RIPPLE:
 #ifdef UBFIX
-    cameraX = map->viewX & 0xffff0000;
-    cameraY8 = map->viewY & 0xffff0000;
+    cameraX = grid->viewX & 0xffff0000;
+    cameraY8 = grid->viewY & 0xffff0000;
 #else
-    viewRipple = &map->viewX;
+    viewRipple = &grid->viewX;
     cameraX = viewRipple[0] & 0xffff0000;
     cameraY8 = viewRipple[1] & 0xffff0000;
 #endif
@@ -449,14 +449,14 @@ void DisplayTransition_UpdateScanlineTable(void) {
     s32 ax;
 
 #ifdef UBFIX
-    ax = map->viewX & 0xffff0000;
-    cameraY = map->viewY & 0xffff0000;
+    ax = grid->viewX & 0xffff0000;
+    cameraY = grid->viewY & 0xffff0000;
 #else
-    viewLeader = &map->viewX;
+    viewLeader = &grid->viewX;
     ax = viewLeader[0] & 0xffff0000;
     cameraY = viewLeader[1] & 0xffff0000;
 #endif
-    object = ObjectTable_Get(gGameState.selectedActor);
+    object = ObjectTable_Get(gGameState.selectedObjectEvent);
     centerX = (object->x - ax) / 0x10000;
     centerY = ((object->z - object->y) - cameraY) / 0x10000 - 16;
     // As in WINDOW_TRANSITION_LEADER_INVERSE, the frame counter is read and
@@ -499,14 +499,14 @@ void DisplayTransition_UpdateScanlineTable(void) {
     s32 ax;
 
 #ifdef UBFIX
-    ax = map->viewX & 0xffff0000;
-    cameraY = map->viewY & 0xffff0000;
+    ax = grid->viewX & 0xffff0000;
+    cameraY = grid->viewY & 0xffff0000;
 #else
-    viewInverse7 = &map->viewX;
+    viewInverse7 = &grid->viewX;
     ax = viewInverse7[0] & 0xffff0000;
     cameraY = viewInverse7[1] & 0xffff0000;
 #endif
-    object = ObjectTable_Get(gGameState.selectedActor);
+    object = ObjectTable_Get(gGameState.selectedObjectEvent);
     centerX = (object->x - ax) / 0x10000;
     // Centred 8 pixels above the leader's feet, not 16 as in
     // WINDOW_TRANSITION_LEADER.
@@ -598,14 +598,14 @@ struct DisplayTransitionState *DisplayTransition_AllocateAndClearState(void) {
 }
 
 /// Fades the screen in over frames frames. mode's high byte is its enum
-/// SceneTransitionStyle: from black, from the backdrop colour, a window
+/// MapTransitionStyle: from black, from the backdrop colour, a window
 /// transition (its low byte an enum WindowTransitionMode), a dissolve (3) or
 /// opening from the centre line (4, which a non-zero low byte makes flicker).
 /// It returns after one frame while the fade runs on: a caller that must wait
-/// for it, as Field_RunScene does, waits itself.
+/// for it, as Field_RunMap does, waits itself.
 ///
-/// Called by Field_RunScene to fade a scene in with work->transition and
-/// work->transitionFrames, and by Event_StartScreenTransition for scene
+/// Called by Field_RunMap to fade a scene in with work->transition and
+/// work->transitionFrames, and by FieldScript_StartScreenTransition for scene
 /// scripts. Every style but the fades adds a scheduler callback (and the
 /// centre line the HBlank handler, IRQ 1) that runs the transition; every kind
 /// ORs the map's display bits into DISPCNT through the I/O write queue.
@@ -615,7 +615,7 @@ void DisplayTransition_Start(s32 mode, s32 frames) {
   s32 transitionKind;
 
   transitionKind = (mode >> 8) & 0xff;
-  display = gMapWork[0];
+  display = gMapGridWork[0];
   variant = mode & 0xff;
   switch (transitionKind) {
   case TRANSITION_FADE:
@@ -670,7 +670,7 @@ void DisplayTransition_Start(s32 mode, s32 frames) {
   case TRANSITION_CENTRE_LINE: {
     struct DisplayTransitionState *state;
 
-    display = gMapWork[0];
+    display = gMapGridWork[0];
     state = DisplayTransition_AllocateAndClearState();
     display->firstLine = 80;
     display->secondLine = 80;
@@ -700,12 +700,12 @@ void DisplayTransition_Start(s32 mode, s32 frames) {
 /// Fades the screen out over frames frames, as DisplayTransition_Start fades
 /// it in.
 ///
-/// Called by Field_RunScene as a scene ends, by Field_StartEncounterTransition
+/// Called by Field_RunMap as a scene ends, by Field_StartEncounterTransition
 /// before a battle (the flickering centre line, and the
 /// WINDOW_TRANSITION_LEADER_INVERSE window), and by
-/// Event_FinishScreenTransition for scene scripts. The window and dissolve
-/// kinds run from value 32 to 64, the centre line from 0 to 80. Like
-/// DisplayTransition_Start it does not wait for the fade: Field_RunScene waits
+/// FieldScript_FinishScreenTransition for scene scripts. The window and
+/// dissolve kinds run from value 32 to 64, the centre line from 0 to 80. Like
+/// DisplayTransition_Start it does not wait for the fade: Field_RunMap waits
 /// transitionFrames after it.
 void DisplayTransition_Finish(s32 mode, s32 frames) {
   s32 variant;
@@ -783,7 +783,7 @@ void DisplayTransition_Finish(s32 mode, s32 frames) {
 void DisplayState_ClearFlags(s32 clearBg3, s32 clearBg2, s32 clearBg1) {
   struct DisplayTransitionWindow *state;
 
-  state = gMapWork[0];
+  state = gMapGridWork[0];
   if (state != NULL) {
     if (clearBg1 != 0) {
       state->dispcnt &= 0xFDFF;
@@ -806,7 +806,7 @@ void DisplayState_ClearFlags(s32 clearBg3, s32 clearBg2, s32 clearBg1) {
 void DisplayTransition_Update(void) {
   struct DisplayTransitionFrame *state = *Ram_DisplayWork;
   struct DisplayTransitionWindow *display =
-      *(struct DisplayTransitionWindow **)Ram_MapWork;
+      *(struct DisplayTransitionWindow **)Ram_MapGridWork;
   s8 *duration = &state->duration;
   u32 edgeDistance;
 
@@ -846,7 +846,7 @@ void DisplayTransition_Update(void) {
 void DisplayTransition_UpdateFromCentre(void) {
   struct DisplayTransitionFrame *state = *Ram_DisplayWork;
   struct DisplayTransitionWindow *window =
-      *(struct DisplayTransitionWindow **)Ram_MapWork;
+      *(struct DisplayTransitionWindow **)Ram_MapGridWork;
   s8 *duration = &state->duration;
   u16 edgeDistance;
 
@@ -906,7 +906,7 @@ void DisplayTransition_UpdateScanline(void) {
   struct DisplayTransitionWindow *state;
 
   scanline = REG_VCOUNT;
-  state = gMapWork[0];
+  state = gMapGridWork[0];
 
   // Keep the same VCount sample across phase changes. A for/switch retry loop
   // shrinks the English function from 0xd2 to 0xba bytes.

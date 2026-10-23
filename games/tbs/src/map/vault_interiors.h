@@ -1,9 +1,9 @@
-#ifndef ALCHEMY_SCENE_VAULT_INTERIORS_H
-#define ALCHEMY_SCENE_VAULT_INTERIORS_H
+#ifndef ALCHEMY_MAP_VAULT_INTERIORS_H
+#define ALCHEMY_MAP_VAULT_INTERIORS_H
 
 /// @file
 /// The collision codes of the map of Vault's houses, shops and inn, which
-/// SceneId_VaultInteriors (vault_interiors.c) and SceneId_VaultInteriorsRevisit
+/// MapId_VaultInteriors (vault_interiors.c) and MapId_VaultInteriorsRevisit
 /// (vault_interiors_revisit.c) both answer.
 
 /// The cells the interiors' touch and search events answer; the exits have

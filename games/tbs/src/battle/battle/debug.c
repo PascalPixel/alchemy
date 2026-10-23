@@ -308,8 +308,8 @@ restart:
         WaitFrames(1);
       }
       // A fights: Down still held makes it a link battle. The battle's
-      // background comes from gGameState.special (Event_GetSpecialValueFar
-      // in Battle_RunEncounter).
+      // background comes from gGameState.special
+      // (FieldScript_GetSpecialValueFar in Battle_RunEncounter).
       if (gKeysHeld & KEY_DOWN)
         GameFlag_SetBitFar(FLAG_LINK_BATTLE);
       Unit_CalculateFar(0);

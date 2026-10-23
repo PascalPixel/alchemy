@@ -1,5 +1,5 @@
-#ifndef ALCHEMY_PALETTE_SCENE_H
-#define ALCHEMY_PALETTE_SCENE_H
+#ifndef ALCHEMY_PALETTE_MAP_H
+#define ALCHEMY_PALETTE_MAP_H
 
 #include "types.h"
 

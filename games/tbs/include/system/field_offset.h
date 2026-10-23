@@ -1,5 +1,5 @@
-#ifndef ALCHEMY_SCENE_H
-#define ALCHEMY_SCENE_H
+#ifndef ALCHEMY_FIELD_OFFSET_H
+#define ALCHEMY_FIELD_OFFSET_H
 
 /// @file
 /// FIELD_AT_OFFSET and two placeholder views, Ent and Cam; no code in the tree

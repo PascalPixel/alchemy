@@ -15,28 +15,28 @@
 /// actor slot; the Djinni's object and its afterimages are released here.
 /// Uses all 24 effect slots (FieldEffect_InitializeSlots).
 void FieldEffect_RunMercuryDjinnCapture(s32 djinniId) {
-  struct FieldActor *djinni;
-  struct FieldActor *copy;
-  struct FieldActor *previous;
+  struct ObjectEvent *djinni;
+  struct ObjectEvent *copy;
+  struct ObjectEvent *previous;
   struct AnimationObject *resource;
-  struct FieldEffectScene *scene;
-  struct FieldActor **cursor;
-  struct FieldActor **list;
+  struct FieldEffectWork *effectWork;
+  struct ObjectEvent **cursor;
+  struct ObjectEvent **list;
   struct EffectSlot *effect;
   s8 *slotState;
   s32 kind;
   s32 remaining;
   s32 resourceId;
-  struct FieldActor *copies[MERCURY_AFTERIMAGE_MAX];
+  struct ObjectEvent *copies[MERCURY_AFTERIMAGE_MAX];
   struct EffectVector position;
 
-  djinni = Object_GetById(djinniId);
+  djinni = ObjectEvent_GetById(djinniId);
   if (djinni == NULL)
     return;
 
   // Tint the screen blue (red 4, green 4, blue 16).
   FieldEffect_InitializeSlots();
-  scene = gEffectWork;
+  effectWork = gEffectWork;
   Shop_SaveAndTintFieldPaletteFar(PALETTE_TRANSFORM_TINT | RGB(4, 4, 16));
   WaitFrames(30);
   // Unpause the Djinni, so its script and motion run.
@@ -64,7 +64,7 @@ void FieldEffect_RunMercuryDjinnCapture(s32 djinniId) {
   previous = djinni;
   cursor = copies;
   for (remaining = MERCURY_AFTERIMAGE_MAX - 1; remaining >= 0; remaining--) {
-    copy = (struct FieldActor *)Object_CreateFar(
+    copy = (struct ObjectEvent *)Object_CreateFar(
         kind, djinni->x.fixed, djinni->y.fixed, djinni->z.fixed);
     *cursor++ = copy;
     if (copy != NULL) {
@@ -102,10 +102,10 @@ void FieldEffect_RunMercuryDjinnCapture(s32 djinniId) {
   if (resourceId != 96)
     Resource_ResetEntry(resourceId);
   WaitFrames(10);
-  ObjectMotion_ArmCallback(gGameState.selectedActor, 0x4000, 0);
+  ObjectMotion_ArmCallback(gGameState.selectedObjectEvent, 0x4000, 0);
   WaitFrames(20);
-  ObjectDispatch_SelectAnimationFar(Object_GetById(gGameState.selectedActor),
-                                    28);
+  ObjectDispatch_SelectAnimationFar(
+      ObjectEvent_GetById(gGameState.selectedObjectEvent), 28);
   WaitFrames(20);
 
   // The droplets (object 240), one a frame, from where the Djinni was on
@@ -115,7 +115,7 @@ void FieldEffect_RunMercuryDjinnCapture(s32 djinniId) {
   position.z = djinni->z.fixed;
   Camera_WorldToScreen(&position);
 
-  effect = scene->effects;
+  effect = effectWork->effects;
   remaining = MERCURY_PARTICLE_MAX - 1;
   do {
     EffectSlot_Initialize(effect, 240, position.x, position.z);
@@ -136,8 +136,8 @@ void FieldEffect_RunMercuryDjinnCapture(s32 djinniId) {
     s32 nextState;
 
     nextState = MERCURY_DROPLET_LAST_FALL;
-    slotState = (s8 *)scene;
-    slotState += offsetof(struct FieldEffectScene, effects) +
+    slotState = (s8 *)effectWork;
+    slotState += offsetof(struct FieldEffectWork, effects) +
                  offsetof(struct EffectSlot, state);
     remaining = MERCURY_PARTICLE_MAX - 1;
     do {

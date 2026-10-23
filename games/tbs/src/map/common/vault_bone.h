@@ -8,19 +8,19 @@
 
 /// Searching VAULT_INTERIORS_CELL_INN_BARREL beside the girl at the inn takes a
 /// Bone after the thieves are jailed. The floor Bone remains, so the party can
-/// take more. With no room for it, ACTOR_GIRL_AT_THE_INN (as both scenes name
+/// take more. With no room for it, LOCALID_GIRL_AT_THE_INN (as both scenes name
 /// her) shakes their head: "Aren't you a greedy lad!"
 static void Vault_FindBone(void) {
-  Engine_EventStart();
+  Engine_ScriptStart();
   if (PartyInventory_HasSpace() == 0) {
-    Engine_ActorSetAnimationAndWait(ACTOR_GIRL_AT_THE_INN,
-                                    ANIMATION_SHAKE_HEAD);
-    Engine_EventWait(20);
-    Engine_EventSetMessage(MsgVaultWowHaveManyThingsArent);
-    Engine_EventShowMessage(ACTOR_GIRL_AT_THE_INN, 0);
+    Engine_ObjectEventSetAnimationAndWait(LOCALID_GIRL_AT_THE_INN,
+                                          ANIMATION_SHAKE_HEAD);
+    Engine_ScriptWait(20);
+    Engine_ScriptSetMessage(MsgVaultWowHaveManyThingsArent);
+    Engine_ScriptShowMessage(LOCALID_GIRL_AT_THE_INN, 0);
   } else {
     Engine_ItemShowFound(ITEM_BONE, 3);
     Engine_PartyGiveItem(ITEM_BONE, 0);
   }
-  Engine_EventEnd();
+  Engine_ScriptEnd();
 }

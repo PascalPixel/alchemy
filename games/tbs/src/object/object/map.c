@@ -6,71 +6,71 @@
 
 // The scene overlay's exit table: a header word holding a scene id, then that
 // scene's exits, one packed word each (and a flag word after it when
-// EXIT_HAS_FLAG is set). Scene id EXIT_TABLE_END ends the exits of a scene and
-// the whole table. SCENE_EXIT and SCENE_EXIT_IF (field_scene.h) give an exit
+// WARP_HAS_FLAG is set). Scene id WARP_TABLE_END ends the exits of a scene and
+// the whole table. MAP_WARP and MAP_WARP_IF (field_scene.h) give an exit
 // word's bits.
-#define EXIT_SCENE_MASK 0xfff
-#define EXIT_ENTRANCE(word) (((word) & 0xff000) >> 12)
-#define EXIT_KIND(word) (((word) & 0x0ff00000) >> 20)
-#define EXIT_HAS_FLAG 0x10000000
-#define EXIT_TABLE_END 0x1ff
-#define EXIT_KIND_ANY 0xff
+#define WARP_MAP_MASK 0xfff
+#define WARP_DEST(word) (((word) & 0xff000) >> 12)
+#define WARP_ID(word) (((word) & 0x0ff00000) >> 20)
+#define WARP_HAS_FLAG 0x10000000
+#define WARP_TABLE_END 0x1ff
+#define WARP_ID_ANY 0xff
 
 /// Chooses the scene and entrance to go to when the party leaves the current
-/// scene. exitKind is the kind of exit Field_RunScene ended on; the scene's
+/// scene. warpId is the kind of exit Field_RunMap ended on; the scene's
 /// exit table gives the first exit of that kind (or of any kind) whose flag, if
 /// it has one, is not set. An exit of kind 0 or the end of the scene's exits
 /// falls back to the scene of its first exit, at entrance 0. Called by
-/// Game_Run with Field_RunScene's result; sets gGameState.scene and
-/// .entrance, and leaves them alone for EXIT_NONE, whose destination is set
+/// Game_Run with Field_RunMap's result; sets gGameState.scene and
+/// .entrance, and leaves them alone for WARP_NONE, whose destination is set
 /// already, or for a scene with no header in the table.
-void Scene_TakeExit(s32 exitKind) {
-  s16 currentScene;
-  const u32 *exitTable;
-  const u32 *firstExit;
+void Map_TakeWarp(s32 warpId) {
+  s16 currentMap;
+  const u32 *warpTable;
+  const u32 *firstWarp;
   u32 word;
-  s32 scene;
-  s32 nextScene;
-  s32 nextEntrance;
-  s32 entrance;
+  s32 mapId;
+  s32 nextMap;
+  s32 nextWarpDest;
+  s32 warpDest;
   s32 kind;
   s32 flag;
 
-  currentScene = gGameState.scene;
-  exitTable = gOverlayArea.exits();
-  nextScene = EXIT_NONE;
-  nextEntrance = 0;
-  if (exitKind == EXIT_NONE)
+  currentMap = gGameState.mapId;
+  warpTable = gOverlayArea.warps();
+  nextMap = WARP_NONE;
+  nextWarpDest = 0;
+  if (warpId == WARP_NONE)
     return;
 
   for (;;) {
     // Find the header of the current scene: exit words have high bits set.
-    scene = *exitTable++;
-    if (scene & ~EXIT_SCENE_MASK)
+    mapId = *warpTable++;
+    if (mapId & ~WARP_MAP_MASK)
       continue;
-    scene &= EXIT_SCENE_MASK;
-    if (scene == EXIT_TABLE_END)
+    mapId &= WARP_MAP_MASK;
+    if (mapId == WARP_TABLE_END)
       break;
-    if (scene != currentScene)
+    if (mapId != currentMap)
       continue;
 
-    firstExit = exitTable;
+    firstWarp = warpTable;
     for (;;) {
-      word = *exitTable++;
-      scene = word & EXIT_SCENE_MASK;
-      entrance = EXIT_ENTRANCE(word);
-      kind = EXIT_KIND(word);
-      flag = word & EXIT_HAS_FLAG;
+      word = *warpTable++;
+      mapId = word & WARP_MAP_MASK;
+      warpDest = WARP_DEST(word);
+      kind = WARP_ID(word);
+      flag = word & WARP_HAS_FLAG;
       if (flag)
-        flag = *exitTable++;
-      if (scene == EXIT_TABLE_END || kind == 0) {
-        nextScene = *firstExit & 0x1ff; // only 9 bits, unlike EXIT_SCENE_MASK
+        flag = *warpTable++;
+      if (mapId == WARP_TABLE_END || kind == 0) {
+        nextMap = *firstWarp & 0x1ff; // only 9 bits, unlike WARP_MAP_MASK
         break;
       }
-      if (kind == EXIT_KIND_ANY || kind == exitKind) {
+      if (kind == WARP_ID_ANY || kind == warpId) {
         if (flag == 0 || GameFlag_TestFar(flag) == 0) {
-          nextScene = scene;
-          nextEntrance = entrance;
+          nextMap = mapId;
+          nextWarpDest = warpDest;
           break;
         }
       }
@@ -79,9 +79,9 @@ void Scene_TakeExit(s32 exitKind) {
   }
 
   // Commit the chosen exit only after a matching scene header was found.
-  if (nextScene != EXIT_NONE) {
-    gGameState.scene = nextScene;
-    gGameState.entrance = nextEntrance;
+  if (nextMap != WARP_NONE) {
+    gGameState.mapId = nextMap;
+    gGameState.warpDest = nextWarpDest;
   }
 }
 
@@ -93,18 +93,18 @@ void Scene_TakeExit(s32 exitKind) {
 /// Any other result goes to the next scene the event set, or to the default
 /// scene (the field scene the battle or minigame was started from) with the
 /// party keeping its position (FLAG_KEEP_PARTY_POSITION). Called by
-/// Game_Run after each scene from SCENE_BLANK on; stores result in
-/// gGameState.sceneChangeReason and sets gGameState.scene and .entrance.
-void Scene_ReturnFromBattle(s32 result) {
+/// Game_Run after each scene from MAP_BLANK on; stores result in
+/// gGameState.mapChangeReason and sets gGameState.scene and .entrance.
+void Map_ReturnFromBattle(s32 result) {
   struct BattleUnit *unit;
   s32 i;
-  s32 scene;
-  s32 entrance;
+  s32 mapId;
+  s32 warpDest;
 
-  gGameState.sceneChangeReason = result;
+  gGameState.mapChangeReason = result;
   if (result == -1) {
     // Revive the leader before choosing the defeat return point.
-    unit = Unit_GetFar(gGameState.selectedActor);
+    unit = Unit_GetFar(gGameState.selectedObjectEvent);
     if (unit->hp == 0) {
       unit->hp = 1;
       Unit_UpdateGauges(unit);
@@ -117,37 +117,37 @@ void Scene_ReturnFromBattle(s32 result) {
         Unit_UpdateGauges(unit);
       }
     }
-    scene = gGameState.defeatScene;
-    entrance = gGameState.defeatEntrance;
-    if (scene == -1 && entrance == -1) {
-      gGameState.scene = gGameState.savedScene;
-      gGameState.entrance = gGameState.savedEntrance;
+    mapId = gGameState.defeatMap;
+    warpDest = gGameState.defeatWarpDest;
+    if (mapId == -1 && warpDest == -1) {
+      gGameState.mapId = gGameState.savedMap;
+      gGameState.warpDest = gGameState.savedWarpDest;
     } else {
-      if (scene != -1)
-        gGameState.scene = scene;
+      if (mapId != -1)
+        gGameState.mapId = mapId;
       else
-        gGameState.scene = gGameState.defaultScene;
-      if (entrance != -1)
-        gGameState.entrance = entrance;
+        gGameState.mapId = gGameState.defaultMap;
+      if (warpDest != -1)
+        gGameState.warpDest = warpDest;
       else
-        gGameState.entrance = gGameState.defaultEntrance;
+        gGameState.warpDest = gGameState.defaultWarpDest;
     }
   } else {
     // An explicit event destination overrides the scene's default return.
-    scene = gGameState.nextScene;
-    entrance = gGameState.nextEntrance;
-    if (scene != -1 || entrance != -1) {
-      if (scene != -1)
-        gGameState.scene = scene;
+    mapId = gGameState.nextMap;
+    warpDest = gGameState.nextWarpDest;
+    if (mapId != -1 || warpDest != -1) {
+      if (mapId != -1)
+        gGameState.mapId = mapId;
       else
-        gGameState.scene = gGameState.defaultScene;
-      if (entrance != -1)
-        gGameState.entrance = entrance;
+        gGameState.mapId = gGameState.defaultMap;
+      if (warpDest != -1)
+        gGameState.warpDest = warpDest;
       else
-        gGameState.entrance = gGameState.defaultEntrance;
+        gGameState.warpDest = gGameState.defaultWarpDest;
     } else {
-      gGameState.scene = gGameState.defaultScene;
-      gGameState.entrance = gGameState.defaultEntrance;
+      gGameState.mapId = gGameState.defaultMap;
+      gGameState.warpDest = gGameState.defaultWarpDest;
       GameFlag_SetBitFar(FLAG_KEEP_PARTY_POSITION);
     }
   }
@@ -155,9 +155,9 @@ void Scene_ReturnFromBattle(s32 result) {
 
 /// Returns the group scene belongs to. The scenes of one place share a group,
 /// which selects their music, area name and the flags kept while inside it.
-/// Called by Scene_ResolveInteractionResult.
-s32 FieldEffect_GetResourceGroup(s32 scene) {
-  return gField_SceneTable[scene].group;
+/// Called by Map_ResolveInteractionResult.
+s32 FieldEffect_GetResourceGroup(s32 mapId) {
+  return gField_MapTable[mapId].group;
 }
 
 /// The last two 16-colour background palettes, which the minigame runners save
@@ -170,8 +170,8 @@ enum {
 
 /// Runs the Lucky Dice minigame, preserving BG palettes 14 and 15 in a 64-byte
 /// MemAlloc copy freed afterwards. Returns the minigame's result, 0, for
-/// Scene_ReturnFromBattle.
-static __inline__ s32 RunLuckyDice(s32 entrance) {
+/// Map_ReturnFromBattle.
+static __inline__ s32 RunLuckyDice(s32 warpDest) {
   void *palette = (void *)&BG_PLTT_COLOR(MINIGAME_PALETTE_FIRST, 0);
   void *saved = MemAlloc(MINIGAME_PALETTE_BYTES);
   s32 result;
@@ -179,7 +179,7 @@ static __inline__ s32 RunLuckyDice(s32 entrance) {
   Dma_Set(palette, saved,
           (DMA_ENABLE | DMA_32BIT) << 16 | (MINIGAME_PALETTE_BYTES / 4),
           REG_DMA3);
-  result = Runtime_BlankDisplayAndRunFar(entrance);
+  result = Runtime_BlankDisplayAndRunFar(warpDest);
   Dma_Set(saved, palette,
           (DMA_ENABLE | DMA_32BIT) << 16 | (MINIGAME_PALETTE_BYTES / 4),
           REG_DMA3);
@@ -189,7 +189,7 @@ static __inline__ s32 RunLuckyDice(s32 entrance) {
 
 /// Runs the slot machine (Lucky Wheels), preserving BG palettes 14 and 15 as
 /// RunLuckyDice does. Returns ReelGame_Start's result, 0.
-static __inline__ s32 RunReelGame(s32 entrance) {
+static __inline__ s32 RunReelGame(s32 warpDest) {
   void *palette = (void *)&BG_PLTT_COLOR(MINIGAME_PALETTE_FIRST, 0);
   void *saved = MemAlloc(MINIGAME_PALETTE_BYTES);
   s32 result;
@@ -197,7 +197,7 @@ static __inline__ s32 RunReelGame(s32 entrance) {
   Dma_Set(palette, saved,
           (DMA_ENABLE | DMA_32BIT) << 16 | (MINIGAME_PALETTE_BYTES / 4),
           REG_DMA3);
-  result = ReelGame_StartFar(entrance);
+  result = ReelGame_StartFar(warpDest);
   Dma_Set(saved, palette,
           (DMA_ENABLE | DMA_32BIT) << 16 | (MINIGAME_PALETTE_BYTES / 4),
           REG_DMA3);
@@ -212,22 +212,22 @@ static __inline__ s32 RunReelGame(s32 entrance) {
 /// party takes an exit. Called with GAME_RUN_TITLE through Game_RunFar by
 /// System_Initialize at power-on and by Game_Restart.
 void Game_Run(s32 mode) {
-  const struct SceneRecord *table;
-  const struct SceneRecord *record;
-  s32 entrance;
+  const struct MapRecord *table;
+  const struct MapRecord *record;
+  s32 warpDest;
 
-  table = gField_SceneTable;
+  table = gField_MapTable;
   // Choose the first scene before initializing the per-scene runtime.
   if (gDebugMode && mode == GAME_RUN_DEBUG_VALE) {
-    gGameState.scene = (s32)&SceneId_ValeGate;
-    gGameState.entrance = mode;
+    gGameState.mapId = (s32)&MapId_ValeGate;
+    gGameState.warpDest = mode;
   } else if (gDebugMode && mode == GAME_RUN_DEBUG_CLEAR) {
-    gGameState.scene = (s32)&SceneId_Clear;
-    gGameState.entrance = CLEAR_FROM_SANCTUM;
+    gGameState.mapId = (s32)&MapId_Clear;
+    gGameState.warpDest = CLEAR_FROM_SANCTUM;
   } else {
     GameState_InitializeDefaultsFar();
-    gGameState.scene = (s32)&SceneId_Title;
-    gGameState.entrance = TITLE_AFTER_RUN;
+    gGameState.mapId = (s32)&MapId_Title;
+    gGameState.warpDest = TITLE_AFTER_RUN;
   }
   // The window colours from the options: hue, then brightness.
   PaletteGlow_UpdateFar(gGameState.paletteGlow[0], gGameState.paletteGlow[1]);
@@ -235,14 +235,14 @@ void Game_Run(s32 mode) {
   Scheduler_ResetTaskTable();
   Scheduler_ResetTaskTable();
   for (;;) {
-    // FLAG_SKIP_SCENE_CHANGE_SOUND skips SE_STOP_SLOT3 for one scene
+    // FLAG_SKIP_MAP_CHANGE_SOUND skips SE_STOP_SLOT3 for one scene
     // change, then clears itself.
-    if (GameFlag_TestFar(FLAG_SKIP_SCENE_CHANGE_SOUND))
-      GameFlag_ClearBitFar(FLAG_SKIP_SCENE_CHANGE_SOUND);
+    if (GameFlag_TestFar(FLAG_SKIP_MAP_CHANGE_SOUND))
+      GameFlag_ClearBitFar(FLAG_SKIP_MAP_CHANGE_SOUND);
     else
       AudioCommand_PlayFar(SE_STOP_SLOT3);
-    record = &table[gGameState.scene];
-    entrance = gGameState.entrance;
+    record = &table[gGameState.mapId];
+    warpDest = gGameState.warpDest;
 
     // Stop DMA 0, which a scene may have left running for an HBlank effect.
     {
@@ -262,29 +262,29 @@ void Game_Run(s32 mode) {
     VramCache_Reset();
     // A battle or minigame returns a result, not an exit: the return scene is
     // chosen from the game state, and no overlay is loaded.
-    if (gGameState.scene >= SCENE_BLANK) {
-      switch (gGameState.scene) {
-      case SCENE_BATTLE:
-        entrance = Battle_RunEncounterFar(entrance);
+    if (gGameState.mapId >= MAP_BLANK) {
+      switch (gGameState.mapId) {
+      case MAP_BATTLE:
+        warpDest = Battle_RunEncounterFar(warpDest);
         break;
-      case SCENE_LUCKY_DICE:
-        entrance = RunLuckyDice(entrance);
+      case MAP_LUCKY_DICE:
+        warpDest = RunLuckyDice(warpDest);
         break;
-      case SCENE_REEL_GAME:
-        entrance = RunReelGame(entrance);
+      case MAP_REEL_GAME:
+        warpDest = RunReelGame(warpDest);
         break;
-      case SCENE_BLANK:
-        entrance = 0;
+      case MAP_BLANK:
+        warpDest = 0;
         break;
       }
-      Scene_ReturnFromBattle(entrance);
+      Map_ReturnFromBattle(warpDest);
       continue;
     }
 
     // A field scene: set its flags and music, load its code and run it.
-    Scene_ResetFlagsOnEnter(gGameState.scene,
-                            GameFlag_TestFar(FLAG_KEEP_PARTY_POSITION));
-    Scene_ResolveInteractionResult();
+    Map_ResetFlagsOnEnter(gGameState.mapId,
+                          GameFlag_TestFar(FLAG_KEEP_PARTY_POSITION));
+    Map_ResolveInteractionResult();
     if (!GameFlag_TestFar(FLAG_KEEP_PARTY_POSITION)) {
       // Either flag keeps the music that is playing: FLAG_KEEP_MUSIC for this
       // one change, FLAG_KEEP_MUSIC_HELD for as long as it stays set.
@@ -301,42 +301,42 @@ void Game_Run(s32 mode) {
     } else {
       Audio_PlayCueFromEventWork();
     }
-    gGameState.map = record->mapIndex;
-    Scene_LoadOverlay(0);
-    Scene_TakeExit(Field_RunScene(entrance));
+    gGameState.layoutId = record->layoutIndex;
+    Map_LoadOverlay(0);
+    Map_TakeWarp(Field_RunMap(warpDest));
   }
 }
 
 /// Loads the current scene's overlay code (its resource) into gOverlayArea.
-/// Called by Game_Run before Field_RunScene.
-void Scene_LoadOverlay(s32 unused) {
-  const struct SceneRecord *table;
+/// Called by Game_Run before Field_RunMap.
+void Map_LoadOverlay(s32 unused) {
+  const struct MapRecord *table;
 
-  table = gField_SceneTable;
-  Resource_LoadCode(table[gGameState.scene].resourceId, &gOverlayArea);
+  table = gField_MapTable;
+  Resource_LoadCode(table[gGameState.mapId].resourceId, &gOverlayArea);
 }
 
-#define SCENE_RECORD(id) (&gField_SceneTable[id])
+#define MAP_RECORD(id) (&gField_MapTable[id])
 
 /// Updates the flags and state that last for one scene or one group of scenes,
 /// on entering the current scene. Unless keep is set (the party returns to
 /// where it was, as after a battle), the flags of the last scene are cleared,
 /// and on entering a new group so are the group's flags and step counters, the
 /// location name is shown and the entrance becomes the point Retreat returns
-/// to. Then the group's visited flag (FLAG_PLACE_VISITED) is set. Called by
+/// to. Then the group's visited flag (FLAG_MAPSEC_VISITED) is set. Called by
 /// Game_Run before each field scene, with keep from
-/// FLAG_KEEP_PARTY_POSITION; sets gGameState.sceneGroup and .sceneVariant.
-void Scene_ResetFlagsOnEnter(s32 unused, s32 keep) {
-  s32 group = SCENE_RECORD(gGameState.scene)->group;
+/// FLAG_KEEP_PARTY_POSITION; sets gGameState.mapSec and .mapType.
+void Map_ResetFlagsOnEnter(s32 unused, s32 keep) {
+  s32 group = MAP_RECORD(gGameState.mapId)->group;
   s32 flag;
 
   if (keep == 0) {
     // Local puzzle flags expire on every normal scene entrance.
-    for (flag = FLAG_SCENE_FIRST; flag <= FLAG_SCENE_LAST; flag++)
+    for (flag = FLAG_MAP_TEMP_FIRST; flag <= FLAG_MAP_TEMP_LAST; flag++)
       GameFlag_ClearBitFar(flag);
-    if (group != gGameState.sceneGroup) {
+    if (group != gGameState.mapSec) {
       // Group state and Retreat's destination survive moves within a place.
-      for (flag = FLAG_PLACE_FIRST; flag <= FLAG_PLACE_LAST; flag++)
+      for (flag = FLAG_MAPSEC_TEMP_FIRST; flag <= FLAG_MAPSEC_TEMP_LAST; flag++)
         GameFlag_ClearBitFar(flag);
       GameFlag_SetBitFar(FLAG_SHOW_LOCATION_NAME);
       gGameState.encounterSteps = 0;
@@ -345,8 +345,8 @@ void Scene_ResetFlagsOnEnter(s32 unused, s32 keep) {
       GameFlag_ClearBitFar(FLAG_MERCURY_LIGHTHOUSE_LIT);
       GameFlag_ClearBitFar(FLAG_MARS_LIGHTHOUSE_LIT);
       GameFlag_ClearBitFar(FLAG_JUPITER_LIGHTHOUSE_LIT);
-      gGameState.retreatScene = gGameState.scene;
-      gGameState.retreatEntrance = gGameState.entrance;
+      gGameState.retreatMap = gGameState.mapId;
+      gGameState.retreatWarpDest = gGameState.warpDest;
     }
     // The Djinn's hiding flags last for one scene, even within a group, and
     // so do the 16 after them to 0xdf, which nothing else uses.
@@ -354,30 +354,30 @@ void Scene_ResetFlagsOnEnter(s32 unused, s32 keep) {
       GameFlag_ClearBitFar(flag);
     GameFlag_ClearBitFar(FLAG_LINK_BATTLE);
     GameFlag_ClearBitFar(FLAG_RETREAT_BLOCKED);
-    // FLAG_NO_ENCOUNTERS_IN_PLACE stops random battles
+    // FLAG_NO_ENCOUNTERS_IN_MAPSEC stops random battles
     // (Encounter_SelectEnemyGroup).
-    GameFlag_ClearBitFar(FLAG_NO_ENCOUNTERS_IN_PLACE);
+    GameFlag_ClearBitFar(FLAG_NO_ENCOUNTERS_IN_MAPSEC);
     GameFlag_ClearBitFar(FLAG_IN_TOWN);
-    GameFlag_ClearBitFar(FLAG_NOT_ON_MAP);
+    GameFlag_ClearBitFar(FLAG_NOT_ON_WORLD_MAP);
     gGameState.returnCue = -1;
   }
-  gGameState.sceneGroup = group;
-  GameFlag_SetBitFar(FLAG_PLACE_VISITED(group & 0x7f));
-  gGameState.sceneVariant = SCENE_RECORD(gGameState.scene)->variant;
-  if (gGameState.sceneVariant == SCENE_VARIANT_TOWN)
+  gGameState.mapSec = group;
+  GameFlag_SetBitFar(FLAG_MAPSEC_VISITED(group & 0x7f));
+  gGameState.mapType = MAP_RECORD(gGameState.mapId)->variant;
+  if (gGameState.mapType == MAP_TYPE_TOWN)
     GameFlag_SetBitFar(FLAG_IN_TOWN);
   GameFlag_RefreshLureCapFar();
 }
 
 /// Starts the current scene's field music, chosen by
-/// Scene_ResolveInteractionResult. Called by Game_Run, and by
+/// Map_ResolveInteractionResult. Called by Game_Run, and by
 /// 34 scene overlays through Audio_PlayCueFromEventWorkFar.
 void Audio_PlayCueFromEventWork(void) { AudioCommand_PlayFar(gGameState.cue); }
 
-#undef EXIT_SCENE_MASK
-#undef EXIT_ENTRANCE
-#undef EXIT_KIND
-#undef EXIT_HAS_FLAG
-#undef EXIT_TABLE_END
-#undef EXIT_KIND_ANY
-#undef SCENE_RECORD
+#undef WARP_MAP_MASK
+#undef WARP_DEST
+#undef WARP_ID
+#undef WARP_HAS_FLAG
+#undef WARP_TABLE_END
+#undef WARP_ID_ANY
+#undef MAP_RECORD

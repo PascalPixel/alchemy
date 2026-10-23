@@ -6,7 +6,7 @@
 
 enum {
   /// The sprite copies and their ring positions; a facing kind places 4, 6, 8
-  /// or 10 of them (Map_BuildProbeRing).
+  /// or 10 of them (SpriteViewer_BuildProbeRing).
   UI_SPRITE_VIEWER_COPY_COUNT = 10,
   UI_SPRITE_VIEWER_SPRITE_LIMIT = 512,    ///< sprite ids 0 to 511 are offered
   UI_SPRITE_VIEWER_ANIMATION_LIMIT = 100, ///< animations 0 to 99
@@ -83,7 +83,8 @@ void Ui_RunIconMonitor(void) {
                                UI_SPRITE_VIEWER_COPY_COUNT * sizeof(*ring));
   gDecodeFillByte = 3;
 
-  // Only the ring's first word is cleared; Map_BuildProbeRing fills it.
+  // Only the ring's first word is cleared; SpriteViewer_BuildProbeRing fills
+  // it.
   Dma_Fill32Cell(fillWord, 0, ring, 4);
   Dma_Fill32Cell(fillWord, 0, layers, sizeof(layers));
 
@@ -116,7 +117,7 @@ restart:
   // With no map loaded, the map cell buffer holds layer 0's frames; a
   // two-part sprite (ANIMATION_FACING_TWO_PART) puts its second part in the
   // actor sprite buffer, as resource slot 1.
-  ResourceSlot_Load(0, (u32 *)Ram_MapCellBuffer, layers[0].spriteId, 0);
+  ResourceSlot_Load(0, (u32 *)Ram_MapGridCellBuffer, layers[0].spriteId, 0);
   spriteMetadata = Resource_GetMetadataRecordFar(layers[0].spriteId);
   if (spriteMetadata->drawKind == ANIMATION_FACING_TWO_PART) {
     ResourceSlot_Load(1, (u32 *)Ram_ActorSpriteSlots, layers[0].spriteId + 1,
@@ -160,7 +161,7 @@ restart:
   // The copies are drawn each frame by the task below, from the ring's
   // positions.
 
-  Map_BuildProbeRing(x, y, ring);
+  SpriteViewer_BuildProbeRing(x, y, ring);
   // Order 3200 (0xc80), where the field camera runs.
   Scheduler_AddOrUpdateCallback(Battle_PlaceActorsByFormationKind, 3200);
 
@@ -186,7 +187,7 @@ next:
       if ((*heldKeys & KEY_DOWN) != 0) {
         y++;
       }
-      Map_BuildProbeRing(x, y, ring);
+      SpriteViewer_BuildProbeRing(x, y, ring);
     } else {
       (void)gKeysRepeat;
       if ((*repeatedKeys & KEY_UP) != 0) {
@@ -418,8 +419,8 @@ s32 Ui_FindNextSpriteWithImage(s32 spriteId, s32 direction) {
 /// pairs for ANIMATION_FACING_TWO_PART), 56 pixels out (40 for a two-part
 /// sprite). B held turns the ring. Called by Ui_RunIconMonitor when it starts
 /// and while Start moves the ring.
-void Map_BuildProbeRing(s32 centerX, s32 centerY,
-                        struct SpritePlacement *positions) {
+void SpriteViewer_BuildProbeRing(s32 centerX, s32 centerY,
+                                 struct SpritePlacement *positions) {
   struct SpritePlacement *pairedPositions;
   s32 angle;
   s32 facingIndex;
@@ -658,7 +659,7 @@ void Battle_PlaceActorsByFormationKind(void) {
     pairedFacingStep = 0x8000;
     count = 4;
     break;
-  // The eighth-turn start matches Map_BuildProbeRing's default ring.
+  // The eighth-turn start matches SpriteViewer_BuildProbeRing's default ring.
   default:
     angle = 0x2000;
     step = 0x4000;

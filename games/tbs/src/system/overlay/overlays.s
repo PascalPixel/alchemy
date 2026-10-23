@@ -8,13 +8,13 @@
 Resource_Overlay36F:
 	.incbin "overlays/resource_36f.lz"
 	.ifdef TBS_EDITION_JA
-	.byte 0xa0, 0x4f	@ PACKER: left in the buffer by Field_Map171+0x45e
+	.byte 0xa0, 0x4f	@ PACKER: left in the buffer by Field_Layout171+0x45e
 	.endif
 	.ifdef TBS_EDITION_EN
-	.byte 0xa0, 0x4f	@ PACKER: left in the buffer by Field_Map171+0x45e
+	.byte 0xa0, 0x4f	@ PACKER: left in the buffer by Field_Layout171+0x45e
 	.endif
 	.ifdef TBS_EDITION_DE
-	.byte 0x31, 0x32, 0x24	@ PACKER: left in the buffer by Field_Map171+0x46d
+	.byte 0x31, 0x32, 0x24	@ PACKER: left in the buffer by Field_Layout171+0x46d
 	.endif
 	.balign 4, 0
 

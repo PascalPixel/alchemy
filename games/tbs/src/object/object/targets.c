@@ -30,14 +30,14 @@ s32 Field_GetPsynergyTargetRange(s32 kind) {
 /// 0x2fff (about 67 degrees) of the direction it faces. Actors with collision
 /// flag 8 are skipped, and those with flag 4 count as 10/13 as far, so they
 /// can be talked to from up to 41 pixels.
-/// Called with the leader by Field_RunScene for the A button, and by the item
+/// Called with the leader by Field_RunMap for the A button, and by the item
 /// code (items.c) to find whom an item is used on.
 s32 Field_FindNearbyTalkTarget(s32 id) {
   struct ObjectRuntime *source;
   struct ObjectRuntime *candidate;
-  s32 nearestActor;
+  s32 nearestObjectEvent;
   s32 nearestDistance;
-  s32 actorIndex;
+  s32 objectEventIndex;
   s32 dx;
   s32 dy;
   s32 dz;
@@ -48,15 +48,16 @@ s32 Field_FindNearbyTalkTarget(s32 id) {
   s32 distance;
   s32 angle;
 
-  nearestActor = -1;
+  nearestObjectEvent = -1;
   nearestDistance = 32;
   source = ObjectTable_Get(id);
   if (source != 0) {
-    for (actorIndex = 0; actorIndex <= OBJECT_LAST; actorIndex++) {
-      if (actorIndex == id)
+    for (objectEventIndex = 0; objectEventIndex <= OBJECT_LAST;
+         objectEventIndex++) {
+      if (objectEventIndex == id)
         continue;
 
-      candidate = ObjectTable_Get(actorIndex);
+      candidate = ObjectTable_Get(objectEventIndex);
       if (candidate == 0 || (candidate->collisionFlags & 8) != 0)
         continue;
 
@@ -96,11 +97,11 @@ s32 Field_FindNearbyTalkTarget(s32 id) {
           continue;
       }
 
-      nearestActor = actorIndex;
+      nearestObjectEvent = objectEventIndex;
       nearestDistance = distance;
     }
   }
-  return nearestActor;
+  return nearestObjectEvent;
 }
 
 /// Returns the actor nearest in front of actor id that a field Psynergy of the
@@ -112,10 +113,10 @@ s32 Field_FindNearbyTalkTarget(s32 id) {
 s32 Field_FindNearbyPsynergyTarget(s32 id, s32 kind) {
   struct ObjectRuntime *source;
   struct ObjectRuntime *candidate;
-  s32 nearestActor;
+  s32 nearestObjectEvent;
   s32 nearestDistance;
   s32 facingQuadrant;
-  s32 actorIndex;
+  s32 objectEventIndex;
   s32 heightLimit;
   s32 dx;
   s32 dz;
@@ -124,19 +125,20 @@ s32 Field_FindNearbyPsynergyTarget(s32 id, s32 kind) {
   s32 angle;
   s32 coneHalfAngle;
 
-  nearestActor = -1;
+  nearestObjectEvent = -1;
   nearestDistance = Field_GetPsynergyTargetRange(kind);
   source = (struct ObjectRuntime *)ObjectTable_Get(id);
   if (source == 0)
-    return nearestActor;
+    return nearestObjectEvent;
 
   // The facing rounded to the nearest of the four quarter turns.
   facingQuadrant = (source->angle + 0x2000) & 0xc000;
-  for (actorIndex = 0; actorIndex <= OBJECT_LAST; actorIndex++) {
-    if (actorIndex == id)
+  for (objectEventIndex = 0; objectEventIndex <= OBJECT_LAST;
+       objectEventIndex++) {
+    if (objectEventIndex == id)
       continue;
 
-    candidate = (struct ObjectRuntime *)ObjectTable_Get(actorIndex);
+    candidate = (struct ObjectRuntime *)ObjectTable_Get(objectEventIndex);
     if (candidate == 0 || (candidate->collisionFlags & 8) != 0)
       continue;
 
@@ -194,11 +196,11 @@ s32 Field_FindNearbyPsynergyTarget(s32 id, s32 kind) {
         continue;
     }
 
-    nearestActor = actorIndex;
+    nearestObjectEvent = objectEventIndex;
     nearestDistance = distance;
   }
 
-  return nearestActor;
+  return nearestObjectEvent;
 }
 
 /// If actor target exists, plays SE_124, gives it animation 4 and, 12 frames
@@ -206,18 +208,18 @@ s32 Field_FindNearbyPsynergyTarget(s32 id, s32 kind) {
 /// encoded actor pointer, or 0 when the target or picture is absent. Called by
 /// two scene overlays: McCoy's palace, when a reward chest opens, and Vault's
 /// interiors, when Ivan finds the Shaman's Rod.
-s32 FieldEffect_PlayCueAndStartEmitterOnTarget(s32 actor, s32 target,
+s32 FieldEffect_PlayCueAndStartEmitterOnTarget(s32 objectEvent, s32 target,
                                                s32 itemId) {
-  void *targetActor;
+  void *targetObjectEvent;
   s32 emitter;
 
-  targetActor = Object_GetById(target);
+  targetObjectEvent = ObjectEvent_GetById(target);
   emitter = 0;
-  if (targetActor != 0) {
+  if (targetObjectEvent != 0) {
     AudioCommand_PlayFar(SE_124);
-    ObjectDispatch_SelectAnimationFar(targetActor, 4);
+    ObjectDispatch_SelectAnimationFar(targetObjectEvent, 4);
     WaitFrames(12);
-    emitter = (s32)FieldEffect_StartRandomParticleEmitter(actor, itemId);
+    emitter = (s32)FieldEffect_StartRandomParticleEmitter(objectEvent, itemId);
   }
   return emitter;
 }
@@ -258,9 +260,9 @@ void Animation_ApplyChildPalette(struct MotionObject *object, s32 palette) {
 }
 
 /// Clears the field's busy flag and, while Reveal is active, ends it: Reveal
-/// used with ACT_PACKED runs its ending events. Called by FieldEvent_Start when
-/// an event starts while the field is busy, by Field_RunScene before the pause
-/// menu, and by 30 scene overlays.
+/// used with ACT_PACKED runs its ending events. Called by FieldScript_Start
+/// when an event starts while the field is busy, by Field_RunMap before the
+/// pause menu, and by 30 scene overlays.
 void Field_EndBusyAndReveal(void) {
   struct FieldWork *work = (struct FieldWork *)gEventWork;
 

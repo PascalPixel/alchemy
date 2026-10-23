@@ -152,7 +152,7 @@ of the round into one the enemies began.
 | `BATTLE_ENCOUNTER_ENEMIES_FIRST` | 2 | the enemies strike first |
 | `BATTLE_START_NORMAL` | 0 | a random encounter: the first-strike rolls are made |
 | `BATTLE_START_NO_ESCAPE` | 2 | a battle the party cannot run from, such as a Mimic's |
-| `BATTLE_START_SCENE` | 3 | a battle a scene starts; the command menu refuses to run |
+| `BATTLE_START_SCRIPTED` | 3 | a battle a scene starts; the command menu refuses to run |
 | `BATTLE_START_LINK` | 4 | a link battle |
 | `BATTLE_START_DEBUG` | 5 | the debug battle menu's battle; the party may run |
 
@@ -300,7 +300,7 @@ The plan records how its action is staged, from `actflags.tsv` and
 `actflags.tsv` gives the plan's presentation flags: the effect kind in the
 low twelve bits (`STAGING_KIND_MASK`), its variant above them, and the bits
 that choose the effect's entry point (`STAGING_BY_ID_RANGE`,
-`STAGING_SCENE`). [Battle effects](../effect/README.md) explains the effect
+`STAGING_SUMMON`). [Battle effects](../effect/README.md) explains the effect
 kinds and their variants.
 
 The outcome comes from `actstat.tsv` where its row is not 0. Otherwise an
@@ -338,7 +338,7 @@ own, chosen by ability id in `BattleCommand_BuildPlan`.
 | `STAGING_KIND_MASK` | `0xfff` | the effect kind |
 | `STAGING_VARIANT_MASK` | `0x3000` | the effect's variant, from bit 12 (`STAGING_VARIANT_SHIFT`) |
 | `STAGING_BY_ID_RANGE` | `0x4000` | the effect is chosen by ability id range |
-| `STAGING_SCENE` | `0x8000` | the effect is a scene seen from the actor |
+| `STAGING_SUMMON` | `0x8000` | the effect is a scene seen from the actor |
 
 ## How an ability resolves
 

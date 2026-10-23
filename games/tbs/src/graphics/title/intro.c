@@ -198,17 +198,17 @@ void Title_LoadIntroBackgrounds(void) {
   Dma_Set(resourceData, (void *)OBJ_PLTT, DMA_COPY_WORDS(0x80), REG_DMA3);
   OBJ_PLTT[0] = 0;
   resourceData += 0x200;
-  Resource_DecodeByteLz(resourceData, Ram_MapCellBuffer);
-  Dma_Set(Ram_MapCellBuffer, (void *)OBJ_VRAM0, DMA_ENABLE << 16 | 0xf00,
+  Resource_DecodeByteLz(resourceData, Ram_MapGridCellBuffer);
+  Dma_Set(Ram_MapGridCellBuffer, (void *)OBJ_VRAM0, DMA_ENABLE << 16 | 0xf00,
           REG_DMA3);
   resourceData = Resource_GetTableEntry((s32)&ResourceId_IntroGraphicsC);
   Dma_Set(resourceData, (void *)BG_PLTT, DMA_COPY_WORDS(0x80), REG_DMA3);
   BG_PLTT[0] = 0;
   resourceData += 0x200;
-  Resource_DecodeByteLz(resourceData, Ram_MapCellBuffer);
-  Dma_Set(Ram_MapCellBuffer + 0x2940, BG_CHAR_BLOCK(0),
+  Resource_DecodeByteLz(resourceData, Ram_MapGridCellBuffer);
+  Dma_Set(Ram_MapGridCellBuffer + 0x2940, BG_CHAR_BLOCK(0),
           DMA_ENABLE << 16 | 0x2760, REG_DMA3);
-  Dma_Set(Ram_MapCellBuffer + 0xa140, (void *)0x06004ec0,
+  Dma_Set(Ram_MapGridCellBuffer + 0xa140, (void *)0x06004ec0,
           DMA_ENABLE << 16 | 0x4ec0, REG_DMA3);
 
   blankTile = 0x1ff;
@@ -364,7 +364,7 @@ s32 Title_ShowIntro(s32 prompt) {
         gBgScroll[1].y--;
         y = gBgScroll[1].y;
         if ((y & 7) == 0) {
-          Dma_Set(Ram_MapCellBuffer + 0x2580 - work->backRows * 960,
+          Dma_Set(Ram_MapGridCellBuffer + 0x2580 - work->backRows * 960,
                   (u8 *)0x06004b00 - work->backRows * 960,
                   DMA_ENABLE << 16 | 0x1e0, REG_DMA3);
           work->backRows++;
@@ -378,7 +378,7 @@ s32 Title_ShowIntro(s32 prompt) {
         y = gBgScroll[2].y;
         if ((y & 7) == 0) {
           if (work->frontRows * 8 <= 24) {
-            Dma_Set(Ram_MapCellBuffer + 0x99c0 - work->frontRows * 1920,
+            Dma_Set(Ram_MapGridCellBuffer + 0x99c0 - work->frontRows * 1920,
                     (u8 *)0x0600e4c0 - work->frontRows * 1920,
                     DMA_ENABLE << 16 | 0x3c0, REG_DMA3);
           } else {
@@ -420,9 +420,9 @@ s32 Title_ShowIntro(s32 prompt) {
       Dma_Set(resourceData, (void *)BG_PLTT, DMA_COPY_WORDS(0x78), REG_DMA3);
       BG_PLTT[0] = 0;
       resourceData += 0x200;
-      Resource_DecodeByteLz(resourceData, Ram_MapCellBuffer);
-      Dma_Set(Ram_MapCellBuffer, BG_CHAR_BLOCK(1), DMA_ENABLE << 16 | 0x4b00,
-              REG_DMA3);
+      Resource_DecodeByteLz(resourceData, Ram_MapGridCellBuffer);
+      Dma_Set(Ram_MapGridCellBuffer, BG_CHAR_BLOCK(1),
+              DMA_ENABLE << 16 | 0x4b00, REG_DMA3);
       tilemap = (u16 *)BG_SCREEN_BLOCK(6);
       tile = 0x100;
       i = 0;
@@ -548,8 +548,8 @@ s32 Title_ShowSplashScreen(s32 mode) {
   // The resource begins with 224 colours; its packed tiles follow them.
   resourceData = Resource_GetTableEntry(resourceId);
   Dma_Set(resourceData, (void *)BG_PLTT, DMA_COPY_WORDS(0x70), REG_DMA3);
-  Resource_DecodeType01(resourceData + 448, Ram_MapCellBuffer);
-  Dma_Set(Ram_MapCellBuffer, BG_CHAR_BLOCK(1), DMA_COPY_WORDS(0x2580),
+  Resource_DecodeType01(resourceData + 448, Ram_MapGridCellBuffer);
+  Dma_Set(Ram_MapGridCellBuffer, BG_CHAR_BLOCK(1), DMA_COPY_WORDS(0x2580),
           REG_DMA3);
   // Pad the 30-tile picture to the hardware map's 32-tile row width.
   tileIndex = 256;
@@ -635,7 +635,7 @@ s32 Title_ShowAnimatedSplash(void) {
   /* FAKEMATCH(temporary): workIndex carries the decode destination before it
    * counts; as resourceData set before the decode, 13 of 119 instructions
    * differ in tbs-en. */
-  workIndex = (u32)Ram_MapCellBuffer;
+  workIndex = (u32)Ram_MapGridCellBuffer;
   Resource_DecodeType01(Resource_GetTableEntry(resourceId), (u8 *)workIndex);
   // The decoded resource: 224 colours, the map, the still tiles, then four
   // animation frames of 0x400 bytes each.

@@ -9,9 +9,9 @@
 
 struct DisplayTransitionState;
 
-/// The work slots from HEAP_SLOT_MAP on: gMapWork[0] is the map's work
-/// (struct MapScrollWork, or the world map's struct PerspectiveWork).
-extern void *gMapWork[];
+/// The work slots from HEAP_SLOT_MAP_GRID on: gMapGridWork[0] is the map's work
+/// (struct MapGridScrollWork, or the world map's struct PerspectiveWork).
+extern void *gMapGridWork[];
 /// The menu work, heap slot HEAP_SLOT_MENU: each menu screen and the shop
 /// read it through their own struct while they are open.
 extern void *gMenuWork;
@@ -30,7 +30,7 @@ extern void *gEffectWork;
 /// The map's cells at 0x02010000, 128 by 128 words: 64 KB, so while a map is
 /// loaded they run on through gActorSpriteSlots and gDecodeBuffer. Battle
 /// effects reuse the memory as a particle array.
-extern struct EffectStep gMapCellBuffer[];
+extern struct EffectStep gMapGridCellBuffer[];
 /// 16 KB of EWRAM at 0x0201c000. The map's cells fill it while a map is
 /// loaded, and the world map's still view keeps a copy of 8 KB of char block
 /// 1's tiles in it (WorldMap_StartStillView).

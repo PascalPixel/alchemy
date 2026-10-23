@@ -1,9 +1,9 @@
-#ifndef ALCHEMY_SCENE_VAULT_H
-#define ALCHEMY_SCENE_VAULT_H
+#ifndef ALCHEMY_MAP_VAULT_H
+#define ALCHEMY_MAP_VAULT_H
 
 /// @file
-/// The collision codes of Vault's map, which SceneId_Vault (vault.c) and
-/// SceneId_VaultRevisit (vault_revisit.c) both draw and answer.
+/// The collision codes of Vault's map, which MapId_Vault (vault.c) and
+/// MapId_VaultRevisit (vault_revisit.c) both draw and answer.
 
 /// The cells Vault's touch and search events answer; the exits have codes of
 /// their own.

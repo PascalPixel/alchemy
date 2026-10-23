@@ -1,25 +1,25 @@
-#ifndef ALCHEMY_UNIT_SCENE_LUNPA_SUHALLA_H
-#define ALCHEMY_UNIT_SCENE_LUNPA_SUHALLA_H
+#ifndef ALCHEMY_UNIT_MAP_LUNPA_SUHALLA_H
+#define ALCHEMY_UNIT_MAP_LUNPA_SUHALLA_H
 
 #include "types.h"
 #include "map_tables.h"
 
-struct SceneEntrance;
-struct SceneEvent;
-struct ScenePlacement;
-struct SceneRegion;
+struct MapWarpDest;
+struct MapEvent;
+struct ObjectEventTemplate;
+struct MapWarpRegion;
 
-extern const struct SceneEntrance gInteriorEntrances[];
-extern const u32 gInteriorExits[];
-extern const struct ScenePlacement gInteriorPlacements[];
-extern const struct SceneEvent gInteriorSealedEvents[];
-extern const struct SceneEvent gInteriorReopenedEvents[];
-extern const struct SceneEvent gGateToSuhallaEvents[];
-const struct SceneEntrance *Scene_GetEntrances(void);
-const struct SceneRegion *Scene_GetRegions(void);
-const u32 *Scene_GetExits(void);
-const struct ScenePlacement *Scene_GetPlacements(void);
-const struct SceneEvent *Scene_GetEvents(void);
-s32 Scene_Initialize(void);
+extern const struct MapWarpDest gInteriorWarpDests[];
+extern const u32 gInteriorWarps[];
+extern const struct ObjectEventTemplate gInteriorObjectEventTemplates[];
+extern const struct MapEvent gInteriorSealedEvents[];
+extern const struct MapEvent gInteriorReopenedEvents[];
+extern const struct MapEvent gGateToSuhallaEvents[];
+const struct MapWarpDest *Map_GetWarpDests(void);
+const struct MapWarpRegion *Map_GetWarpRegions(void);
+const u32 *Map_GetWarps(void);
+const struct ObjectEventTemplate *Map_GetObjectEventTemplates(void);
+const struct MapEvent *Map_GetEvents(void);
+s32 Map_Initialize(void);
 
 #endif

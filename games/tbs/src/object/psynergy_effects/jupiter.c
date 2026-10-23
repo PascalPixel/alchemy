@@ -14,16 +14,16 @@
 void Djinn_RunJupiterJoinEffect(s32 djinniId) {
   struct EffectVector position;
   struct MotionObject *djinni;
-  struct FieldEffectScene *scene;
+  struct FieldEffectWork *effectWork;
   struct EffectSlot *effect;
   s32 scale;
   s32 remainingParticles;
 
-  djinni = (struct MotionObject *)Object_GetById(djinniId);
+  djinni = (struct MotionObject *)ObjectEvent_GetById(djinniId);
   if (djinni == NULL)
     return;
   FieldEffect_InitializeSlots();
-  scene = gEffectWork;
+  effectWork = gEffectWork;
   // Tint the screen yellow: PALETTE_TRANSFORM_TINT | RGB(12, 12, 4).
   Shop_SaveAndTintFieldPaletteFar(0x20118c);
   AudioCommand_PlayFar(SE_173);
@@ -48,7 +48,7 @@ void Djinn_RunJupiterJoinEffect(s32 djinniId) {
   Camera_WorldToScreen(&position);
   ObjectDispatch_ReleaseFar((struct DispatchObject *)djinni);
   AudioCommand_PlayFar(SE_164);
-  effect = scene->effects;
+  effect = effectWork->effects;
   remainingParticles = 23;
   // One a frame, each with a random sprite param of 0 to 6.
   do {
@@ -67,10 +67,10 @@ void Djinn_RunJupiterJoinEffect(s32 djinniId) {
 
   // The leader turns to face south (0x4000) and plays animation 28.
   WaitFrames(60);
-  ObjectMotion_ArmCallback(gGameState.selectedActor, 0x4000, 0);
+  ObjectMotion_ArmCallback(gGameState.selectedObjectEvent, 0x4000, 0);
   WaitFrames(20);
-  ObjectDispatch_SelectAnimationFar(Object_GetById(gGameState.selectedActor),
-                                    28);
+  ObjectDispatch_SelectAnimationFar(
+      ObjectEvent_GetById(gGameState.selectedObjectEvent), 28);
   WaitFrames(40);
   AudioCommand_PlayFar(SE_164);
   WaitFrames(100);
@@ -101,7 +101,7 @@ void FieldEffect_SetObjectAlternatingWords(union FieldObject *fieldObject) {
 
 /// Per-frame update: spins an object ever faster, from 1/16 turn a frame up to
 /// just over 1/8 (0x2040), 0x50 more each frame for 52 frames. The caller
-/// zeroes the frame count first (FieldActor.timer), as the Mars Djinni's
+/// zeroes the frame count first (ObjectEvent.timer), as the Mars Djinni's
 /// joining does.
 void FieldEffect_AdvanceAngleWithRamp(union FieldObject *fieldObject) {
   void *obj = (void *)fieldObject;
@@ -129,7 +129,7 @@ void FieldEffect_UpdatePhasedRadialParticle(struct EffectSlot *effect) {
   struct EffectVector position;
   s32 state;
 
-  owner = (struct Object *)Object_GetById(gGameState.selectedActor);
+  owner = (struct Object *)ObjectEvent_GetById(gGameState.selectedObjectEvent);
   state = effect->state;
 
   if (state == MARS_SPARK_AIM) {

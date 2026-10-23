@@ -3,54 +3,54 @@
 	.set import.Engine_TaskWait, 1
 	.set import.Scheduler_AddOrUpdateCallback, 1
 	.set import.Engine_RandomNext, 1
-	.set import.Object_SetMode, 1
-	.set import.Engine_MapRedraw, 1
+	.set import.ObjectEvent_SetMode, 1
+	.set import.Engine_MapGridRedraw, 1
 	.set import.Engine_ObjectSetPosition, 1
 	.set import.FieldObject_WaitForMove, 1
-	.set import.Engine_MapCopyCellsTo, 1
-	.set import.Engine_MapCopyCellAttributes, 1
+	.set import.Engine_MapGridCopyCellsTo, 1
+	.set import.Engine_MapGridCopyCellAttributes, 1
 	.set import.Object_CheckMovementCollision, 1
-	.set import.Engine_ActorSetSpriteFlags, 1
+	.set import.Engine_ObjectEventSetSpriteFlags, 1
 	.set import.Engine_WorkSetValuesIfNonNegative, 1
 	.set import.Engine_MessageShowCentered, 1
 	.set import.Engine_GameFlagIsSet, 1
 	.set import.Engine_GameFlagSet, 1
 	.set import.Engine_GameFlagClear, 1
-	.set import.Engine_EventWait, 1
-	.set import.Engine_EventStart, 1
-	.set import.Engine_EventEnd, 1
-	.set import.FieldScene_PrepareActors, 1
-	.set import.Engine_EventChooseYesNo, 1
-	.set import.Object_GetById, 1
-	.set import.Engine_ActorSetSpeed, 1
-	.set import.Engine_ActorSetDestination, 1
-	.set import.Engine_ActorWalkToAndWait, 1
-	.set import.Engine_ActorSetDestinationOffset, 1
-	.set import.Engine_ActorWaitForMove, 1
-	.set import.Engine_ActorSetPosition, 1
-	.set import.Engine_ActorSetAnimation, 1
-	.set import.Engine_ActorSetAnimationAndWait, 1
-	.set import.Engine_ActorJump, 1
-	.set import.Engine_ActorStartRepeatedMotion, 1
-	.set import.Engine_ActorRunRepeatedMotion, 1
-	.set import.Engine_ActorFaceEachOther, 1
-	.set import.Engine_EventSetMessage, 1
-	.set import.Engine_EventOpenMessage, 1
-	.set import.Engine_EventShowMessage, 1
-	.set import.Engine_EventShowMessageAndWait, 1
-	.set import.Engine_EventAskYesNo, 1
-	.set import.Engine_ActorFaceDirection, 1
-	.set import.Engine_ActorSetSpritePriority, 1
-	.set import.Engine_ActorShowEmote, 1
-	.set import.Engine_ActorSetAttachedEffect, 1
+	.set import.Engine_ScriptWait, 1
+	.set import.Engine_ScriptStart, 1
+	.set import.Engine_ScriptEnd, 1
+	.set import.Map_PrepareObjectEvents, 1
+	.set import.Engine_ScriptChooseYesNo, 1
+	.set import.ObjectEvent_GetById, 1
+	.set import.Engine_ObjectEventSetSpeed, 1
+	.set import.Engine_ObjectEventSetDestination, 1
+	.set import.Engine_ObjectEventWalkToAndWait, 1
+	.set import.Engine_ObjectEventSetDestinationOffset, 1
+	.set import.Engine_ObjectEventWaitForMove, 1
+	.set import.Engine_ObjectEventSetPosition, 1
+	.set import.Engine_ObjectEventSetAnimation, 1
+	.set import.Engine_ObjectEventSetAnimationAndWait, 1
+	.set import.Engine_ObjectEventJump, 1
+	.set import.Engine_ObjectEventStartRepeatedMotion, 1
+	.set import.Engine_ObjectEventRunRepeatedMotion, 1
+	.set import.Engine_ObjectEventFaceEachOther, 1
+	.set import.Engine_ScriptSetMessage, 1
+	.set import.Engine_ScriptOpenMessage, 1
+	.set import.Engine_ScriptShowMessage, 1
+	.set import.Engine_ScriptShowMessageAndWait, 1
+	.set import.Engine_ScriptAskYesNo, 1
+	.set import.Engine_ObjectEventFaceDirection, 1
+	.set import.Engine_ObjectEventSetSpritePriority, 1
+	.set import.Engine_ObjectEventShowEmote, 1
+	.set import.Engine_ObjectEventSetAttachedEffect, 1
 	.set import.Engine_CameraSetSpeed, 1
 	.set import.Engine_CameraMoveTo, 1
 	.set import.Engine_CameraWaitForMove, 1
-	.set import.Engine_EventRequestExit, 1
-	.set import.InitializeSceneRecordBuffer, 1
-	.set import.Engine_EventOpenScreen, 1
-	.set import.Engine_EventCloseScreen, 1
-	.set import.Engine_EventWaitForScreen, 1
+	.set import.Engine_ScriptRequestWarp, 1
+	.set import.InitializeSparkleRecordBuffer, 1
+	.set import.Engine_ScriptOpenScreen, 1
+	.set import.Engine_ScriptCloseScreen, 1
+	.set import.Engine_ScriptWaitForScreen, 1
 	.set import.Field_EndBusyAndReveal, 1
 	.set import.FieldEffect_SetQueuedSoundAndPlay, 1
 	.set import.Engine_AudioPlayCue, 1

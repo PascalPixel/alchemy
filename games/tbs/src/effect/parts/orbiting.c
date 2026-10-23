@@ -53,7 +53,7 @@ UNUSED void BattleEffect_RunSwirlingStars(struct BattleEffectArgument *effect) {
 
     camera = gCameraWork;
     EFFECT_VIEW_FROM_CAMERA(camera);
-    SceneTransform_ApplyPosition(center);
+    Transform_ApplyPosition(center);
     star = PARTICLES;
     // Star i appears after frame i / 4; variant stays 0, so none is retired.
     for (i = 0; i != SWIRLING_STARS_COUNT; i++, star++) {
@@ -65,17 +65,17 @@ UNUSED void BattleEffect_RunSwirlingStars(struct BattleEffectArgument *effect) {
         Transform_Push();
         switch (i & 3) {
         case SPIN_YAW:
-          SceneTransform_ApplyYaw(frame * (i + 32) * 8);
+          Transform_ApplyYaw(frame * (i + 32) * 8);
           break;
         case SPIN_PITCH:
-          SceneTransform_ApplyPitch(-frame * (i + 32) * 8);
+          Transform_ApplyPitch(-frame * (i + 32) * 8);
           break;
         case SPIN_ROLL:
-          SceneTransform_ApplyRoll(-frame * (i + 32) * 8);
+          Transform_ApplyRoll(-frame * (i + 32) * 8);
           break;
         case SPIN_PITCH_AND_ROLL:
-          SceneTransform_ApplyPitch(-frame * (i + 32) * 8);
-          SceneTransform_ApplyRoll(-frame * (i + 32) * 8);
+          Transform_ApplyPitch(-frame * (i + 32) * 8);
+          Transform_ApplyRoll(-frame * (i + 32) * 8);
           break;
         }
         EffectPosition_ProjectPoint(star, &screen);
@@ -298,7 +298,7 @@ UNUSED void BattleEffect_RunTargetBursts(struct BattleEffectArgument *effect) {
       EFFECT_VIEW_FROM_CAMERA(camera);
       // Centred 20 pixels above the target's feet.
       SET_VECTOR(point, effect->x, 160 << 13, effect->z);
-      SceneTransform_ApplyPosition(point);
+      Transform_ApplyPosition(point);
       if (frame >= member * 8 && frame < member * 8 + 40) {
         struct EffectStep *puff;
 

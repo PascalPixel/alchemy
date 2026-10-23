@@ -101,7 +101,7 @@ s32 PartyInventory_HasSpace(void) {
   s32 ownerIndex;
   s16 *ownerCursor;
 
-  if (Inventory_Count(gGameState.selectedActor) != INVENTORY_SLOTS)
+  if (Inventory_Count(gGameState.selectedObjectEvent) != INVENTORY_SLOTS)
     return 1;
   ownerCount = Party_ListActiveOwners(owners);
   ownerCursor = owners;
@@ -233,8 +233,8 @@ s32 PartyInventory_FindOwner(s32 itemId) {
   s16 *ownerCursor;
   s16 owner;
 
-  if (Inventory_Find(gGameState.selectedActor, itemId) != -1)
-    return gGameState.selectedActor;
+  if (Inventory_Find(gGameState.selectedObjectEvent, itemId) != -1)
+    return gGameState.selectedObjectEvent;
   ownerCount = Party_ListActiveOwners(owners);
   ownerCursor = owners;
   ownerIndex = 0;
@@ -380,7 +380,7 @@ s32 Inventory_Discard(s32 owner, s32 slot) {
 
   if (removalResult != INVENTORY_REMOVE_EMPTY_SLOT) {
     Item_AdjustCounter(item, 1);
-    Event_ClearInvalidPackedValuesFar();
+    FieldScript_ClearInvalidPackedValuesFar();
   }
   return removalResult;
 }

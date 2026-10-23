@@ -367,7 +367,7 @@ void ColorBuffer_Build(u32 mode, u16 *src, u16 *dst, s32 half) {
 
 /// Sets up the colour buffer (gPaletteBufferWork) from the BG and OBJ palettes
 /// and starts updating the palettes from it each frame. Called by
-/// Field_RunScene on scene load.
+/// Field_RunMap on scene load.
 void ColorBuffer_Initialize(void) {
   struct ColorBuffer *work;
 

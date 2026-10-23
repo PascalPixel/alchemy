@@ -5,11 +5,11 @@
 #include "../object_internal.h"
 
 /// A field scene's encounter zones (gBattle_LocationRules, location_rules.s),
-/// ended by scene -1. Encounter_SelectSceneZones takes the first rule that
+/// ended by scene -1. Encounter_SelectMapZones takes the first rule that
 /// matches the scene and entrance and is not turned off.
 struct BattleLocationRule {
-  s16 scene;                 ///< -1 ends the table
-  s16 entrance;              ///< -1 for any entrance
+  s16 mapId;                 ///< -1 ends the table
+  s16 warpDest;              ///< -1 for any entrance
   s16 flag : 15;             ///< -1, or a flag that turns the rule off once set
   s16 firstZoneOnGround : 1; ///< the first zone is for ground 0, not 1
   /// The first of up to seven consecutive zones, rows of encounter.tsv; 0 for
@@ -56,13 +56,13 @@ struct EncounterZone {
 /// has encounters. Also resets the random bias and the battle threshold (the
 /// count itself, gGameState.encounterSteps, is reset only when a random battle
 /// starts or a new scene group is entered) and chooses the battle backdrop.
-/// Called by Field_RunScene on scene load, with useRules 0 on the world map and
+/// Called by Field_RunMap on scene load, with useRules 0 on the world map and
 /// 1 in a field scene; writes work->encounterGroups, encounterBias and
 /// encounterThreshold, and gGameState.special.
-void Encounter_SelectSceneZones(s32 useRules) {
+void Encounter_SelectMapZones(s32 useRules) {
   struct FieldWork *work;
-  s32 scene;
-  s32 entrance;
+  s32 mapId;
+  s32 warpDest;
   u8 *groundZones;
   const struct BattleLocationRule *rule;
   s32 zone;
@@ -70,16 +70,16 @@ void Encounter_SelectSceneZones(s32 useRules) {
   u32 i;
 
   work = (struct FieldWork *)gEventWork;
-  scene = gGameState.scene;
-  entrance = gGameState.entrance;
+  mapId = gGameState.mapId;
+  warpDest = gGameState.warpDest;
   groundZones = work->encounterGroups;
   rule = gBattle_LocationRules;
   zone = 0;
   firstZoneOnGround = 0;
   if (useRules != 0) {
-    while (rule->scene != -1) {
-      if (rule->scene == scene &&
-          (rule->entrance == -1 || rule->entrance == entrance)) {
+    while (rule->mapId != -1) {
+      if (rule->mapId == mapId &&
+          (rule->warpDest == -1 || rule->warpDest == warpDest)) {
         if (rule->flag == -1 || GameFlag_TestFar(rule->flag) == 0) {
           zone = rule->firstZone;
           firstZoneOnGround = rule->firstZoneOnGround;
@@ -105,7 +105,7 @@ void Encounter_SelectSceneZones(s32 useRules) {
   // 16 in 16.16: Encounter_SelectEnemyGroup starts a battle once
   // gGameState.encounterSteps reaches it.
   work->encounterThreshold = 16 * Q16_ONE;
-  Battle_SelectSceneBackdrop();
+  Battle_SelectMapBackdrop();
 }
 
 /// Returns the world map encounter zone for the terrain at pos (0 for none),
@@ -135,8 +135,8 @@ s32 Encounter_ResolveWorldMapZoneAndBackdrop(void *pos) {
 /// Advances the encounter counter for zone and returns the enemy group to
 /// fight (a row of formatn.tsv), or 0 for no battle. steps (16.16) scales how
 /// far the counter moves; a battle starts once it reaches encounterThreshold.
-/// FLAG_NO_ENCOUNTERS, FLAG_NO_ENCOUNTERS_IN_PLACE and gGameState.cloaked
-/// (Cloak) prevent battles. FLAG_NO_ENCOUNTERS_IN_PLACE is set by Venus
+/// FLAG_NO_ENCOUNTERS, FLAG_NO_ENCOUNTERS_IN_MAPSEC and gGameState.cloaked
+/// (Cloak) prevent battles. FLAG_NO_ENCOUNTERS_IN_MAPSEC is set by Venus
 /// Lighthouse while its Reveal path is shown (English and later editions), by
 /// Mercury Lighthouse while the leader carries the pillar's lights and by the
 /// world map's debug entrance 99, and cleared by every entry that does not keep
@@ -144,7 +144,7 @@ s32 Encounter_ResolveWorldMapZoneAndBackdrop(void *pos) {
 /// checks and the counting and draws a group at once. Called by
 /// Encounter_RollTerrain and Encounter_RollWorldMap; adds to
 /// gGameState.encounterSteps, sets or clears work->encounterBias, and on a
-/// battle sets gGameState.sceneCue.
+/// battle sets gGameState.battleCue.
 s32 Encounter_SelectEnemyGroup(s32 zone, s32 steps) {
   struct FieldWork *work;
   struct EncounterZone *entry;
@@ -166,7 +166,7 @@ s32 Encounter_SelectEnemyGroup(s32 zone, s32 steps) {
 #endif
   if (GameFlag_TestFar(FLAG_IGNORE_ENCOUNTER_CHECKS) == 0) {
     if (GameFlag_TestFar(FLAG_NO_ENCOUNTERS) != 0 ||
-        GameFlag_TestFar(FLAG_NO_ENCOUNTERS_IN_PLACE) != 0)
+        GameFlag_TestFar(FLAG_NO_ENCOUNTERS_IN_MAPSEC) != 0)
       return 0;
     if (zone == 0)
       return 0;
@@ -178,7 +178,7 @@ s32 Encounter_SelectEnemyGroup(s32 zone, s32 steps) {
       return 0;
     // Flag 5 is FLAG_IN_PARTY(JENNA): with Jenna in the party, there are no
     // encounters while she has more than 130 experience points. She is in
-    // the party only from Vale (Event_RoofMended, map/vale.c) to the Sol
+    // the party only from Vale (EventScript_RoofMended, map/vale.c) to the Sol
     // Sanctum's eruption, starting at level 1 with none, so this ends random
     // battles in the Sol Sanctum once she nears level 4 (158). XXX: likely a
     // cap on training before the journey, because it can act nowhere else.
@@ -210,7 +210,7 @@ s32 Encounter_SelectEnemyGroup(s32 zone, s32 steps) {
     }
     // The rate and the bias divide the step, so a higher rate (a party above
     // the zone's level) means smaller steps and fewer battles. The counter is
-    // not cleared here: Field_RunScene clears it when it starts the battle.
+    // not cleared here: Field_RunMap clears it when it starts the battle.
     step =
         Iwram_RatioMulQ14((rate << 20) + ((rate << 4) - 16) * bias, 0x100000);
     total = gGameState.encounterSteps += Iwram_MulQ16(step, steps);
@@ -245,7 +245,7 @@ s32 Encounter_SelectEnemyGroup(s32 zone, s32 steps) {
 
 /// Rolls a random battle on the encounter zone of the ground underfoot.
 /// terrain: the ground, an index into work->encounterGroups: 0 for ordinary
-/// ground, 1 and 2 for MAP_CELL_ENCOUNTER_GROUND_1 and _2 cells.
+/// ground, 1 and 2 for MB_ENCOUNTER_GROUND_1 and _2 cells.
 /// steps: the step weight, passed on to Encounter_SelectEnemyGroup.
 /// Returns the enemy group to fight, or 0 for no battle.
 /// Called by Field_ProcessStep in a field scene, which stores the result in
@@ -288,34 +288,34 @@ s16 Encounter_GetDjinnEnemyGroup(s32 djinni) {
 #endif
 }
 
-/// A rule choosing a scene's field music (gScene_InteractionRuleTable,
+/// A rule choosing a scene's field music (gMap_InteractionRuleTable,
 /// scene_rules.s), ended by id -1.
-struct SceneInteractionEntry {
+struct MapInteractionEntry {
   s16 id;            ///< a scene, or a scene group
-  s16 entrance : 15; ///< -1 for any entrance
-  u16 idIsScene : 1; ///< 1 when id is a scene, 0 when it is a group
+  s16 warpDest : 15; ///< -1 for any entrance
+  u16 idIsMap : 1;   ///< 1 when id is a scene, 0 when it is a group
   s16 flag;          ///< -1, or a flag that must be set
   s16 music;         ///< the song (songs.h's MUS_ numbers)
 };
 
-extern const struct SceneInteractionEntry gScene_InteractionRuleTable[];
+extern const struct MapInteractionEntry gMap_InteractionRuleTable[];
 
 /// Chooses the current scene's field music (gGameState.cue) from the first rule
 /// matching the scene or its group and the entrance; AUDIO_CUE_KEEP_BGM when
 /// none does. Called by Game_Run on entering each field scene, before
 /// Audio_PlayCueFromEventWork plays it.
-void Scene_ResolveInteractionResult(void) {
+void Map_ResolveInteractionResult(void) {
   s16 music = AUDIO_CUE_KEEP_BGM;
-  s16 scene = gGameState.scene;
-  s16 entrance = gGameState.entrance;
-  s16 group = gGameState.sceneGroup;
-  const struct SceneInteractionEntry *rule = gScene_InteractionRuleTable;
+  s16 mapId = gGameState.mapId;
+  s16 warpDest = gGameState.warpDest;
+  s16 group = gGameState.mapSec;
+  const struct MapInteractionEntry *rule = gMap_InteractionRuleTable;
 
   for (; rule->id != -1; rule++) {
-    if (rule->idIsScene) {
-      if (rule->id != scene)
+    if (rule->idIsMap) {
+      if (rule->id != mapId)
         continue;
-      if (rule->entrance != -1 && rule->entrance != entrance)
+      if (rule->warpDest != -1 && rule->warpDest != warpDest)
         continue;
       if (rule->flag != -1 && GameFlag_TestFar(rule->flag) == 0)
         continue;
@@ -324,7 +324,7 @@ void Scene_ResolveInteractionResult(void) {
     }
     if (rule->id != group)
       continue;
-    if (rule->entrance != -1 && rule->entrance != entrance)
+    if (rule->warpDest != -1 && rule->warpDest != warpDest)
       continue;
     if (rule->flag != -1 && GameFlag_TestFar(rule->flag) == 0)
       continue;
@@ -335,42 +335,42 @@ void Scene_ResolveInteractionResult(void) {
   gGameState.cue = music;
 }
 
-/// A rule naming the place a scene is in (gScene_AreaNameRules, scene_rules.s),
+/// A rule naming the place a scene is in (gMapSec_NameRules, scene_rules.s),
 /// ended by id -1.
-struct SceneAreaNameRule {
-  s16 id;             ///< a scene, or a scene group
-  s16 entrance : 15;  ///< -1 for any entrance
-  u16 useSceneId : 1; ///< 1 when id is a scene, 0 when it is a group
+struct MapSecNameRule {
+  s16 id;            ///< a scene, or a scene group
+  s16 warpDest : 15; ///< -1 for any entrance
+  u16 useMapId : 1;  ///< 1 when id is a scene, 0 when it is a group
   /// The place name, as an offset that most readers add to MsgDebugEntryName.
   /// 0 is the title screen's name (group 0's rule), which a scene no rule
   /// matches also gets.
   s32 areaNameIndex;
 };
 
-extern const struct SceneAreaNameRule gScene_AreaNameRules[];
+extern const struct MapSecNameRule gMapSec_NameRules[];
 
 /// Returns the place name of scene and entrance, from the first rule matching
 /// the scene or its group; 0, the title screen's name, when none does. No
 /// reader treats 0 apart. Called by the save, debug and
-/// location windows through Scene_GetAreaNameIndexFar, and by
-/// Map_UpdateWorldMapMarkers; most add it to MsgDebugEntryName for the
+/// location windows through MapSec_GetNameIndexFar, and by
+/// WorldMap_UpdateMarkers; most add it to MsgDebugEntryName for the
 /// message. The save stores it as its area (save_state.h).
-s32 Scene_GetAreaNameIndex(s32 scene, s32 entrance) {
-  const struct SceneAreaNameRule *rule = gScene_AreaNameRules;
+s32 MapSec_GetNameIndex(s32 mapId, s32 warpDest) {
+  const struct MapSecNameRule *rule = gMapSec_NameRules;
   s32 name = 0;
-  s32 group = FieldEffect_GetResourceGroup(scene);
+  s32 group = FieldEffect_GetResourceGroup(mapId);
 
   while (rule->id != -1) {
-    if (rule->useSceneId) {
-      if (rule->id == scene) {
-        if (rule->entrance == -1 || rule->entrance == entrance) {
+    if (rule->useMapId) {
+      if (rule->id == mapId) {
+        if (rule->warpDest == -1 || rule->warpDest == warpDest) {
           name = rule->areaNameIndex;
           break;
         }
       }
     } else {
       if (rule->id == group) {
-        if (rule->entrance == -1 || rule->entrance == entrance) {
+        if (rule->warpDest == -1 || rule->warpDest == warpDest) {
           name = rule->areaNameIndex;
           break;
         }
@@ -381,20 +381,20 @@ s32 Scene_GetAreaNameIndex(s32 scene, s32 entrance) {
   return name;
 }
 
-/// Sets the scene the party returns to after a defeat (gGameState.savedScene
-/// and savedEntrance), from the first rule of gParty_PairResolveRules that
+/// Sets the scene the party returns to after a defeat (gGameState.savedMap
+/// and savedWarpDest), from the first rule of gParty_PairResolveRules that
 /// matches the current scene and entrance: {scene, entrance (-1 for any),
 /// return scene, return entrance}, ended by scene -1. Without a match the
-/// return point stays as it was. Called by Field_RunScene on scene load.
-void Scene_SetDefeatReturnPoint(void) {
-  s16 scene = gGameState.scene;
-  s16 entrance = gGameState.entrance;
+/// return point stays as it was. Called by Field_RunMap on scene load.
+void Map_SetDefeatReturnPoint(void) {
+  s16 mapId = gGameState.mapId;
+  s16 warpDest = gGameState.warpDest;
   const s16 *rule = gParty_PairResolveRules;
 
   while (rule[0] != -1) {
-    if (rule[0] == scene && (rule[1] == -1 || rule[1] == entrance)) {
-      gGameState.savedScene = rule[2];
-      gGameState.savedEntrance = rule[3];
+    if (rule[0] == mapId && (rule[1] == -1 || rule[1] == warpDest)) {
+      gGameState.savedMap = rule[2];
+      gGameState.savedWarpDest = rule[3];
       return;
     }
     rule += 4;
@@ -402,18 +402,18 @@ void Scene_SetDefeatReturnPoint(void) {
 }
 
 /// Returns the battle backdrop chosen for the current scene. The battle setup
-/// (battle/encounter.c) reads it through Event_GetSpecialValueFar as the
+/// (battle/encounter.c) reads it through FieldScript_GetSpecialValueFar as the
 /// battle's background.
-s16 Event_GetSpecialValue(void) { return gGameState.special; }
+s16 FieldScript_GetSpecialValue(void) { return gGameState.special; }
 
-/// Chooses the battle backdrop for the current scene. gBattle_BackdropScenes
+/// Chooses the battle backdrop for the current scene. gBattle_BackdropMaps
 /// lists each backdrop (a word with bit 31 set) followed by the scenes that
 /// use it, ended by 0; a scene takes the backdrop listed last before it, and a
 /// scene not listed takes the last backdrop. Called by
-/// Encounter_SelectSceneZones; sets gGameState.special.
-void Battle_SelectSceneBackdrop(void) {
-  s32 target = gGameState.scene;
-  s32 *table = gBattle_BackdropScenes;
+/// Encounter_SelectMapZones; sets gGameState.special.
+void Battle_SelectMapBackdrop(void) {
+  s32 target = gGameState.mapId;
+  s32 *table = gBattle_BackdropMaps;
   s32 entry = *table++;
   // The first scene_rules.s word is a backdrop marker. It cannot match the
   // halfword scene id, so the loop sets this before testing any scene.
@@ -462,7 +462,7 @@ void Battle_SelectTerrainBackdrop(s32 behavior) {
   gGameState.special = backdrop;
 }
 
-/// Chooses the battle music for slot of zone (gGameState.sceneCue).
+/// Chooses the battle music for slot of zone (gGameState.battleCue).
 /// gEncounter_BattleMusic lists each song (with bit 15 set) followed by the
 /// (zone << 4) + slot keys that use it, ended by 0; a key takes the song listed
 /// last before it. Link battles always use AUDIO_CUE_KEEP_BGM. Called by
@@ -491,5 +491,5 @@ void FieldEffect_SelectBattleCue(s32 zone, s32 slot) {
         music = value & 0xfff;
     }
   }
-  gGameState.sceneCue = music;
+  gGameState.battleCue = music;
 }

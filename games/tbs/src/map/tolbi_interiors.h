@@ -8,17 +8,17 @@
 #include "flags.h"
 
 /// The placed actors, numbering the rows of the placement table from
-/// ACTOR_FIRST_PLACED. Both tables hold the same people in the same order up
+/// LOCALID_FIRST_PLACED. Both tables hold the same people in the same order up
 /// to the healer, except that after Colosso
-/// (gTolbiInteriorsPlacementsAfterColosso) two others stand in the rows of
-/// TOLBI_INTERIORS_SLEEPLESS_GUEST and TOLBI_INTERIORS_CROWD_SICK_GUEST, and
-/// six more rows follow the healer.
-enum TolbiInteriorsActor {
+/// (gTolbiInteriorsObjectEventTemplatesAfterColosso) two others stand in the
+/// rows of TOLBI_INTERIORS_SLEEPLESS_GUEST and
+/// TOLBI_INTERIORS_CROWD_SICK_GUEST, and six more rows follow the healer.
+enum TolbiInteriorsLocalId {
   /// A young man with brown hair (SPRITE_YOUNG_MAN_WITH_BROWN_HAIR) who runs a
   /// makeshift inn during the festival.
   /// ★ Named from the game: "I just line up some beds, and presto! I'm an
   /// innkeeper!" (MsgTolbiInteriorsTolbiIsPackedWithTouristsDuring)
-  TOLBI_INTERIORS_MAKESHIFT_INNKEEPER = ACTOR_FIRST_PLACED,
+  TOLBI_INTERIORS_MAKESHIFT_INNKEEPER = LOCALID_FIRST_PLACED,
   /// A woman with fair hair (SPRITE_WOMAN_WITH_FAIR_HAIR) who offers a stay.
   /// ★ Named from the game: "Do you want to stay with us?" (MsgTolbiWantStay)
   TOLBI_INTERIORS_HOST,
@@ -134,7 +134,7 @@ enum TolbiInteriorsActor {
 };
 
 /// Map objects the party can search.
-enum TolbiInteriorsMapObject {
+enum TolbiInteriorsMarker {
   /// The inn's sign.
   /// ★ Named from the game: "checked the sign."
   /// (MsgTolbiInteriorsIsaacCheckedTheSignInnFull)

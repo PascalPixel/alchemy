@@ -37,17 +37,17 @@ STATIC_ASSERT(sizeof(struct ColossoRaceWork) == 0x7170);
 /// frame the opponent steps to the next point (mirrored across the finish when
 /// asked), turning by at most a sixteenth of a turn, and stands once still for
 /// three frames. At the path's end the opponent walks to the finish, beside the
-/// first finisher's item actor or the second's, and sets FLAG_SCENE_TEMP_11 (a
+/// first finisher's item actor or the second's, and sets FLAG_MAP_TEMP_11 (a
 /// racer has finished). PATH_RECORDER_RECORD records the actor's own path
 /// instead, up to 0x383e halfwords, then plays it back with the opponent.
 static void Colosso_UpdatePathOpponent(void) {
   struct ColossoRaceWork *work = (struct ColossoRaceWork *)gColossoWork;
-  struct PathRecorder *rec = (struct PathRecorder *)gSceneState;
-  struct FieldActor *obj;
+  struct PathRecorder *rec = (struct PathRecorder *)gMapLocalState;
+  struct ObjectEvent *obj;
   s32 x, z, d;
-  u16 *itemActor;
+  u16 *itemObjectEvent;
 
-  obj = Object_GetById(rec->actor);
+  obj = ObjectEvent_GetById(rec->objectEvent);
   if (obj == NULL) {
     return;
   }
@@ -57,24 +57,24 @@ static void Colosso_UpdatePathOpponent(void) {
     if (x == 0 && z == 0) {
       s32 fz;
       rec->mode = PATH_RECORDER_FINISHED;
-      Object_SetMode(obj, 1);
+      ObjectEvent_SetMode(obj, 1);
       if (work->gauge.finishX < obj->x.fixed) {
         x = work->gauge.finishX + 0xc0000;
       } else {
         x = work->gauge.finishX - 0xc0000;
       }
-      if (Engine_GameFlagIsSet(FLAG_SCENE_TEMP_11)) {
+      if (Engine_GameFlagIsSet(FLAG_MAP_TEMP_11)) {
         fz = work->gauge.finishZ + 0x100000;
-        itemActor = &work->gauge.finishItemActorB;
+        itemObjectEvent = &work->gauge.finishItemObjectEventB;
       } else {
         fz = work->gauge.finishZ - 0x100000;
-        itemActor = &work->gauge.finishItemActorA;
+        itemObjectEvent = &work->gauge.finishItemObjectEventA;
       }
-      obj->timer = *itemActor;
+      obj->timer = *itemObjectEvent;
       obj->acceleration = 0x4000;
       obj->speed = 0x10000;
       Engine_ObjectSetPosition(obj, x, 0, fz);
-      Engine_GameFlagSet(FLAG_SCENE_TEMP_11);
+      Engine_GameFlagSet(FLAG_MAP_TEMP_11);
       Engine_ObjectSetScript(obj, gColosso_OpponentFinishScript);
       return;
     }
@@ -102,9 +102,9 @@ static void Colosso_UpdatePathOpponent(void) {
       rec->still++;
     }
     if (rec->still > 2) {
-      Object_SetMode(obj, 1);
+      ObjectEvent_SetMode(obj, 1);
     } else {
-      Object_SetMode(obj, 5);
+      ObjectEvent_SetMode(obj, 5);
     }
   } else if (rec->mode == PATH_RECORDER_RECORD) {
     x = obj->x.part.pixel;
@@ -114,7 +114,7 @@ static void Colosso_UpdatePathOpponent(void) {
     if ((s16)rec->pathIndex == 0x383e) {
       work->path[(s16)rec->pathIndex++] = 0;
       work->path[(s16)rec->pathIndex] = 0;
-      rec->actor = work->gauge.opponentActor;
+      rec->objectEvent = work->gauge.opponentObjectEvent;
       rec->pathIndex = 0;
       rec->mode = PATH_RECORDER_PLAY;
     }
@@ -139,7 +139,7 @@ static void Colosso_DrawGauge(void) {
   s32 x;
   s32 width;
   u8 *buf;
-  struct FieldActor *actor;
+  struct ObjectEvent *objectEvent;
   u32 shape;
 
   tile = gVramBlockCache[gauge->vramBlock].offset >> 5;
@@ -213,10 +213,11 @@ static void Colosso_DrawGauge(void) {
 
   if ((gFrameCount & 15) > 4) {
     shape = 0x40000000;
-    actor = Engine_ActorLookup(gauge->opponentActor);
-    if (actor != 0) {
-      x = ((actor->x.fixed - gauge->finishX) / 0xe0000) + 112;
-      y = ((actor->z.fixed - gauge->finishZ) / 0xe0000) + gauge->level * 6 - 4;
+    objectEvent = Engine_ObjectEventLookup(gauge->opponentObjectEvent);
+    if (objectEvent != 0) {
+      x = ((objectEvent->x.fixed - gauge->finishX) / 0xe0000) + 112;
+      y = ((objectEvent->z.fixed - gauge->finishZ) / 0xe0000) +
+          gauge->level * 6 - 4;
       y &= 255;
       *dst++ = 0;
       y |= x << 16;
@@ -225,10 +226,11 @@ static void Colosso_DrawGauge(void) {
       *dst++ = (tile + 12) | 0xe400;
       Runtime_PushSlotEntry(entry++, 255);
     }
-    actor = Engine_ActorLookup(gauge->playerActor);
-    if (actor != 0) {
-      x = ((actor->x.fixed - gauge->finishX) / 0xe0000) + 112;
-      y = ((actor->z.fixed - gauge->finishZ) / 0xe0000) + gauge->level * 6 - 4;
+    objectEvent = Engine_ObjectEventLookup(gauge->playerObjectEvent);
+    if (objectEvent != 0) {
+      x = ((objectEvent->x.fixed - gauge->finishX) / 0xe0000) + 112;
+      y = ((objectEvent->z.fixed - gauge->finishZ) / 0xe0000) +
+          gauge->level * 6 - 4;
       y &= 255;
       *dst++ = 0;
       y |= x << 16;

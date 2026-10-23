@@ -7,8 +7,8 @@
 /// An object script call, each frame: when the actor's countdown (work) runs
 /// out, it turns by a random amount up to half a turn and waits a random 0 to
 /// 79 frames.
-static s32 Scene_LookAboutRandomly(struct ScriptInterpreter *interpreter) {
-  struct FieldActor *obj = (struct FieldActor *)interpreter;
+static s32 Map_LookAboutRandomly(struct ScriptInterpreter *interpreter) {
+  struct ObjectEvent *obj = (struct ObjectEvent *)interpreter;
   s32 cnt = obj->work;
   s32 loaded = (s16)obj->work;
   s32 amount;

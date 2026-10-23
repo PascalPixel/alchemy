@@ -47,17 +47,19 @@
 static void Title_RevealScreen(s32 unused);
 static void Title_LoadBackground(void);
 
-/// The title overlay's scene tables, which Field_RunScene reads through
+/// The title overlay's scene tables, which Field_RunMap reads through
 /// entry/title.s: one entrance row, the exit, and no placements or events.
-u8 *Title_GetEntrances(void) { return (u8 *)gTitleEntrances; }
+u8 *Title_GetWarpDests(void) { return (u8 *)gTitleWarpDests; }
 
 /// The regions entry: the title has no exit boxes.
-s32 SceneData_ReturnZero(void) { return 0; }
+s32 MapData_ReturnZero(void) { return 0; }
 
-u8 *Title_GetExits(void) { return (u8 *)gTitleExits; }
+u8 *Title_GetWarps(void) { return (u8 *)gTitleWarps; }
 
 /// The title overlay has no placed field actors.
-u8 *Title_GetPlacements(void) { return (u8 *)gTitlePlacements; }
+u8 *Title_GetObjectEventTemplates(void) {
+  return (u8 *)gTitleObjectEventTemplates;
+}
 
 /// The title overlay has no field events.
 u8 *Title_GetEvents(void) { return (u8 *)gTitleEvents; }
@@ -80,8 +82,8 @@ s32 Title_Run(void) {
 
   // After 120 frames, the logo waits up to 3600 frames (a minute) for a key
   // press.
-  if (gGameState.entrance == 10) {
-    Object_GetById(gGameState.selectedActor)->motionFlags = 0;
+  if (gGameState.warpDest == 10) {
+    ObjectEvent_GetById(gGameState.selectedObjectEvent)->motionFlags = 0;
     Engine_AudioPlayCue(MUS_ENDING_LOGO);
     Title_RevealScreen(0);
     Engine_TaskWait(120);
@@ -93,10 +95,10 @@ s32 Title_Run(void) {
           break;
       } while (gKeysPressed == 0);
     }
-    Event_SetDestination((s32)&SceneId_Title, TITLE_AFTER_RUN);
+    FieldScript_SetDestination((s32)&MapId_Title, TITLE_AFTER_RUN);
     return 0;
   }
-  if (gGameState.entrance == 9) {
+  if (gGameState.warpDest == 9) {
     Engine_AudioPlayCue(MUS_ENDING);
     // The credits: DisplayScroll_RunSlideshow, through the scroll far-call
     // table.
@@ -104,9 +106,9 @@ s32 Title_Run(void) {
     Engine_AudioPlayCue(AUDIO_CUE_FADE_BGM);
     Fade_ToBlack(60);
     Fade_Wait();
-    Engine_EventWait(240);
+    Engine_ScriptWait(240);
     Engine_AudioPlayCue(MUS_SILENCE);
-    Event_SetDestination((s32)&SceneId_Clear, CLEAR_FROM_TITLE);
+    FieldScript_SetDestination((s32)&MapId_Clear, CLEAR_FROM_TITLE);
     return 0;
   }
   // The stub does nothing with its argument (runtime/runtime/system.c).
@@ -114,7 +116,7 @@ s32 Title_Run(void) {
   // argument names that bank and the logo and intro calls below go through
   // it.
   RuntimeDispatch_NoOpHook((s32)&ResourceId_PaletteFarCalls);
-  if (gGameState.entrance == 2) {
+  if (gGameState.warpDest == 2) {
     for (;;) {
       Engine_AudioPlayCue(MUS_SILENCE);
       // The Nintendo logo, then the Camelot logo (Title_ShowAnimatedSplash).
@@ -142,19 +144,19 @@ s32 Title_Run(void) {
       }
       break;
     }
-    Event_SetDestination((s32)&SceneId_Clear, CLEAR_FROM_SANCTUM);
+    FieldScript_SetDestination((s32)&MapId_Clear, CLEAR_FROM_SANCTUM);
   } else {
     // The intro without its prompt holds the title five seconds.
     Engine_AudioPlayCue(MUS_TITLE_AFTER_PROLOGUE);
     PaletteFar_Entry00(0);
     Party_EndChildhood();
-    Event_SetDestination((s32)&SceneId_Vale, VALE_FROM_TITLE);
+    FieldScript_SetDestination((s32)&MapId_Vale, VALE_FROM_TITLE);
     Engine_AudioPlayCue(AUDIO_CUE_FADE_BGM);
   }
   Engine_AudioPlayCue(AUDIO_CUE_FADE_BGM);
   Fade_ToBlack(30);
   Fade_Wait();
-  Engine_EventWait(60);
+  Engine_ScriptWait(60);
   Engine_AudioPlayCue(MUS_SILENCE);
   return 0;
 }
@@ -293,7 +295,7 @@ static void Title_RevealScreen(s32 unused) {
 
   // Load while dark, then let the sprite callback reveal the lettering.
   Title_LoadBackground();
-  Engine_EventWait(30);
+  Engine_ScriptWait(30);
   gTitleRevealFrame = 0;
   Title_LoadSprites(0);
   FieldScheduler_AddCallback(Title_UpdateSpriteReveal, 0xc80);
@@ -312,7 +314,7 @@ static void Title_RevealScreen(s32 unused) {
                       0x20000);
   IO_WRITE_QUEUE_PUSH((u32)&REG_BLDY, 16, 0x20000);
   IO_WRITE_QUEUE_PUSH((u32)&REG_BLDALPHA, BLEND_ALPHA(16, 16), 0x20000);
-  Engine_EventWait(120);
+  Engine_ScriptWait(120);
   // Lift the darkening in 17 steps of three frames, down to BLDY 0.
   for (brightnessStep = 0; brightnessStep <= 16; brightnessStep++) {
     IO_WRITE_QUEUE_PUSH((u32)&REG_BLDY, 16 - brightnessStep, 0x20000);
@@ -322,14 +324,14 @@ static void Title_RevealScreen(s32 unused) {
   // follows.
   gEventWork->startTransition = 0;
   gEventWork->transitionFrames = 1;
-  Engine_EventOpenScreen();
-  Engine_EventWaitForScreen();
+  Engine_ScriptOpenScreen();
+  Engine_ScriptWaitForScreen();
   gEventWork->transitionFrames = 60;
 }
 
 /// Loads the Golden Sun logo onto BG2 (title.h's LOGO_ layout) with the
 /// screen faded to black: its 224-colour palette, its 600 256-colour tiles,
-/// decoded through Ram_MapCellBuffer, and a map that numbers them row by
+/// decoded through Ram_MapGridCellBuffer, and a map that numbers them row by
 /// row. Zeroes the four backgrounds' scroll and leaves the map work showing
 /// only BG2 and the sprites. Clear_LoadBackground (clear.c) is its twin.
 static void Title_LoadBackground(void) {
@@ -351,8 +353,8 @@ static void Title_LoadBackground(void) {
   Dma_Set(encodedGraphics, (void *)BG_PLTT,
           (DMA_ENABLE | DMA_32BIT) << 16 | 0x70, REG_DMA3);
   encodedGraphics += 0x1c0;
-  FieldResource_DecodeType01(encodedGraphics, Ram_MapCellBuffer);
-  Dma_Set((void *)Ram_MapCellBuffer, LOGO_TILES,
+  FieldResource_DecodeType01(encodedGraphics, Ram_MapGridCellBuffer);
+  Dma_Set((void *)Ram_MapGridCellBuffer, LOGO_TILES,
           (DMA_ENABLE | DMA_32BIT) << 16 | 0x2580, REG_DMA3);
   // Fill the visible 30 columns and pad each 32-entry tilemap row.
   tilemap = LOGO_MAP;
@@ -371,25 +373,25 @@ static void Title_LoadBackground(void) {
     bgScroll++;
   }
   Dma_Set(gBgScroll, REG_BG0HOFS, (DMA_ENABLE | DMA_32BIT) << 16 | 4, REG_DMA3);
-  ((struct MapScrollWork *)gMapWork[0])->flags =
+  ((struct MapGridScrollWork *)gMapGridWork[0])->flags =
       DISPCNT_BG2_ON | DISPCNT_OBJ_ON;
 }
 
-struct SceneEntrance gTitleEntrances[] = {
+struct MapWarpDest gTitleWarpDests[] = {
     {0, CONDITION_ALWAYS, 0, 0, 0, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {SCENE_TABLE_END},
+    {MAP_TABLE_END},
 };
 
-u32 gTitleExits[] = {
-    SCENE_EXITS_END,
+u32 gTitleWarps[] = {
+    MAP_WARPS_END,
 };
 
-struct ScenePlacement gTitlePlacements[] = {
-    {SCENE_TABLE_END},
+struct ObjectEventTemplate gTitleObjectEventTemplates[] = {
+    {MAP_TABLE_END},
 };
 
-struct SceneEvent gTitleEvents[] = {
-    {SCENE_EVENTS_END},
+struct MapEvent gTitleEvents[] = {
+    {MAP_EVENTS_END},
 };
 
 /// The VRAM cache entry holding the lettering's tiles; -1 until

@@ -8,7 +8,7 @@
 ///
 /// It is a habit of the whole game written once: a layer, not a
 /// compiler-steering device (AGENTS.md S2). An overlay writes
-/// `FieldScheduler_AddCallback(callback, TASK_PRIORITY_SCENE)` and the inline
+/// `FieldScheduler_AddCallback(callback, TASK_PRIORITY_MAP)` and the inline
 /// calls Scheduler_AddOrUpdateCallback, which resolves to the overlay's import
 /// stub. Main-image code calls the routines as ordinary functions; only the
 /// shared map/common/scroll_initialize_hblank_dma.h, which
@@ -26,11 +26,11 @@
 #include "unit/game/game.h"
 #include "unit/import.h"
 
-struct FieldActor;
+struct ObjectEvent;
 struct FieldPosition;
 struct MenuSprite;
 
-/// Schedules `callback` under the task key `priority` (TASK_PRIORITY_SCENE
+/// Schedules `callback` under the task key `priority` (TASK_PRIORITY_MAP
 /// runs it every frame in the main loop pass), or gives the task already
 /// running it that key. Returns the slot it wrote, which the sort in the same
 /// call may already have moved, or -1 when all 20 task slots are taken. The
@@ -56,19 +56,20 @@ static inline void FieldUi_AdjustValueWithoutLimit(s32 message, u16 *buffer) {
   Ui_AdjustValueWithoutLimit(message, buffer);
 }
 
-static inline void FieldMap_SetViewBounds(s32 minX, s32 minY, s32 maxX,
-                                          s32 maxY) {
-  Map_SetViewBounds(minX, minY, maxX, maxY);
+static inline void Field_SetViewBounds(s32 minX, s32 minY, s32 maxX, s32 maxY) {
+  MapGrid_SetViewBounds(minX, minY, maxX, maxY);
 }
 
-static inline void FieldActor_JumpDownLedge(s32 actor, s32 mode, s32 action) {
-  Actor_JumpDownLedge(actor, mode, action);
+static inline void FieldObjectEvent_JumpDownLedge(s32 objectEvent, s32 mode,
+                                                  s32 action) {
+  ObjectEvent_JumpDownLedge(objectEvent, mode, action);
 }
 
 static inline s32
-FieldObject_CheckMovementCollision(struct FieldActor *actor,
+FieldObject_CheckMovementCollision(struct ObjectEvent *objectEvent,
                                    struct FieldPosition *position) {
-  return Object_CheckMovementCollision((struct ObjectRuntime *)actor, position);
+  return Object_CheckMovementCollision((struct ObjectRuntime *)objectEvent,
+                                       position);
 }
 
 static inline s32 FieldGameFlag_GetByte(s32 flag) {

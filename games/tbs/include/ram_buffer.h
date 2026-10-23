@@ -7,10 +7,12 @@
 #include "types.h"
 #include "version.h"
 
-#define Ram_MapCellBuffer FIXED_ADDRESS((u8 *), 0x02010000, gMapCellBuffer)
+#define Ram_MapGridCellBuffer                                                  \
+  FIXED_ADDRESS((u8 *), 0x02010000, gMapGridCellBuffer)
 #define Ram_DecodeBuffer FIXED_ADDRESS((u8 *), 0x0201c000, gDecodeBuffer)
-#define Ram_MapBlocks FIXED_ADDRESS((u8 *), 0x02020000, gMapBlocks)
-#define Ram_MapCollision FIXED_ADDRESS((u8 *), 0x0202c000, gMapCollision)
+#define Ram_Metatiles FIXED_ADDRESS((u8 *), 0x02020000, gMetatiles)
+#define Ram_MapGridCollision                                                   \
+  FIXED_ADDRESS((u8 *), 0x0202c000, gMapGridCollision)
 #define Ram_BgTileBuffer FIXED_ADDRESS((u8 *), 0x02038000, gBgTileBuffer)
 
 #define Ram_ActorSpriteSlots                                                   \
@@ -44,14 +46,14 @@
 
 // Work pointers in the gWorkSlot table. Their users include heap_state.h, which
 // the sound library's include path cannot reach.
-#define Ram_MapWork ((void **)&gWorkSlot[HEAP_SLOT_MAP])
+#define Ram_MapGridWork ((void **)&gWorkSlot[HEAP_SLOT_MAP_GRID])
 #define Ram_CameraWork ((void **)&gWorkSlot[HEAP_SLOT_CAMERA])
 #define Ram_EventWork ((void **)&gWorkSlot[HEAP_SLOT_EVENT])
 #define Ram_DisplayWork ((void **)&gWorkSlot[HEAP_SLOT_TRANSITION])
-#define Ram_ActorEffectWork ((void **)&gWorkSlot[HEAP_SLOT_FADE_OVERLAY])
+#define Ram_ObjectEventEffectWork ((void **)&gWorkSlot[HEAP_SLOT_FADE_OVERLAY])
 #define Ram_Disp ((void **)&gWorkSlot[HEAP_SLOT_BATTLE_ENTRY_TIMER])
 #define Ram_EffectWork ((void **)&gWorkSlot[HEAP_SLOT_EFFECT])
 
-#define Ram_SceneMapStateOffset FIXED_OFFSET(0xc, gFieldBlendWork, gEventWork)
+#define Ram_FieldBlendWorkOffset FIXED_OFFSET(0xc, gFieldBlendWork, gEventWork)
 
 #endif

@@ -72,10 +72,10 @@ void BattleEffect_RunGaia(struct BattleEffectArgument *effect) {
   }
   REG_BG2X = gGaia_Bg2Shifts[work->effect->side][work->effect->variant] << 8;
 
-  // Decode the EarthWall sheet into Ram_MapCellBuffer, and load the orange
+  // Decode the EarthWall sheet into Ram_MapGridCellBuffer, and load the orange
   // palette with background colours 1 to 63 each 8 steps darker a channel.
-  Resource_LoadAndDecompress((s32)&ResourceId_EarthWallSheet, Ram_MapCellBuffer,
-                             1, 0);
+  Resource_LoadAndDecompress((s32)&ResourceId_EarthWallSheet,
+                             Ram_MapGridCellBuffer, 1, 0);
   Iwram_CopyWords(palette,
                   Resource_GetTableEntry((s32)&ResourceId_OrangePaletteA), 128);
   color = (u16 *)&BG_PLTT[1];
@@ -105,7 +105,7 @@ void BattleEffect_RunGaia(struct BattleEffectArgument *effect) {
   //   the top of the wall (GAIA_WALL_TOP_CELLS): 48x32 stretched to 48x96;
   //   the foot of the wall (GAIA_WALL_FOOT_CELLS): 48x21;
   //   the swelling ground: three frames.
-  src = Ram_MapCellBuffer;
+  src = Ram_MapGridCellBuffer;
   sheetIndex = 0;
   for (j = 0; j != 9; j++) {
     for (i = 0; i != 32; i++) {

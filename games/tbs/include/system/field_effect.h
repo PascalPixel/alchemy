@@ -11,39 +11,40 @@
 /// A field effect: a small object on the field that moves at its velocity and
 /// grows and spins at its rates, run by its script and update hook.
 struct FieldEffect {
-  /// FieldActor's script pointer, cursor and facing; not named by this view.
+  /// ObjectEvent's script pointer, cursor and facing; not named by this view.
   u8 unk00[8];
   s32 x;       ///< 16.16 fixed-point pixels
   s32 y;       ///< 16.16 fixed-point pixels
   s32 z;       ///< 16.16 fixed-point pixels
-  u8 unk14[4]; ///< FieldActor's terrainHeight; not named by this view
+  u8 unk14[4]; ///< ObjectEvent's terrainHeight; not named by this view
   s32 scaleX;  ///< 16.16 fixed point, 0x10000 full size
   s32 scaleY;  ///< 16.16 fixed point, 0x10000 full size
-  u8 unk20[3]; ///< FieldActor's radius and terrainId; not named by this view
-  /// ActorPriorityFlag bits: the spawner clears ACTOR_PRIORITY_AUTOMATIC when
-  /// EFFECT_USE_PRIORITY sets the sprite's priority.
+  u8 unk20[3]; ///< ObjectEvent's radius and terrainId; not named by this view
+  /// ObjectEventPriorityFlag bits: the spawner clears
+  /// OBJ_EVENT_PRIORITY_AUTOMATIC when EFFECT_USE_PRIORITY sets the sprite's
+  /// priority.
   u8 priorityFlags;
-  /// FieldActor's velocityX to velocityZ; effects move by velocity instead.
+  /// ObjectEvent's velocityX to velocityZ; effects move by velocity instead.
   u8 unk24[0x0c];
   /// Added to scaleX each frame by the update hooks, in 16.16 fixed point a
   /// frame; zeroed by the spawner.
   s32 scaleRateX;
   s32 scaleRateY; ///< as scaleRateX, for scaleY
-  u8 unk38[0x0c]; ///< FieldActor's targetX to targetZ; not named by this view
+  u8 unk38[0x0c]; ///< ObjectEvent's targetX to targetZ; not named by this view
   /// Added to x, y and z each frame by the update hooks, in 16.16 fixed-point
-  /// pixels per frame; FieldActor's bounce, gravity and riseBaseY.
+  /// pixels per frame; ObjectEvent's bounce, gravity and riseBaseY.
   struct Vector3 velocity;
   struct AnimationObject *sprite; ///< the sprite spin turns
-  u8 unk54;          ///< FieldActor's spriteStorageKind; not named by this view
-  u8 motionFlags;    ///< ActorMotionFlag bits; zeroed by the spawner
-  u8 unk56[3];       ///< FieldActor's unk56; not named by this view
-  u8 collisionFlags; ///< FieldActor's collisionFlags; not named by this view
-  /// FieldActor's steeringFlags to riseEnabled; not named by this view.
+  u8 unk54;       ///< ObjectEvent's spriteStorageKind; not named by this view
+  u8 motionFlags; ///< ObjectEventMotionFlag bits; zeroed by the spawner
+  u8 unk56[3];    ///< ObjectEvent's unk56; not named by this view
+  u8 collisionFlags; ///< ObjectEvent's collisionFlags; not named by this view
+  /// ObjectEvent's steeringFlags to riseEnabled; not named by this view.
   u8 unk5a[0x0a];
   /// Added to the sprite's rotation each frame by the update hooks, in
   /// 1/65536 turns per frame; Imil's rising effects keep a drift here instead.
   u16 spin;
-  u8 unk66[2]; ///< FieldActor's work; not named by this view
+  u8 unk66[2]; ///< ObjectEvent's work; not named by this view
   /// Frames until a scene's update hook releases the effect: 20 for Altin
   /// Peak's spray, 60 for Imil's rising effects.
   s32 countdown;
@@ -61,7 +62,7 @@ STATIC_ASSERT(offsetof(struct FieldEffect, update) == 0x6c);
 
 /// An object on the field, read as an actor or as an effect.
 union FieldObject {
-  struct FieldActor actor;
+  struct ObjectEvent objectEvent;
   struct FieldEffect effect;
 };
 

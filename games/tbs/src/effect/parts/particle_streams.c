@@ -57,9 +57,9 @@ void BattleEffect_ArmPaletteHBlankDma(void) {
 /// A formation rises out of a dissolving starfield and bursts into embers and
 /// flashes, with one spawned object rising.
 ///
-/// Abilities: Meteor (SCENE_EFFECT_METEOR).
+/// Abilities: Meteor (SUMMON_EFFECT_METEOR).
 ///
-/// BattleEffect_RunSceneEffect also plays it for a scene effect of 0, which no
+/// BattleEffect_RunSummonEffect also plays it for a scene effect of 0, which no
 /// row selects.
 void BattleEffect_RunMeteor(struct BattleEffectArgument *effect) {
   BattleEffect_RunParticleStreams(effect, PARTICLE_STREAMS_METEOR);
@@ -95,7 +95,7 @@ void BattleEffect_RunOuterSpace(struct BattleEffectArgument *effect) {
 /// (0 to 63), in whole pixels.
 ///
 /// Called by BattleEffect_RunMeteor and BattleEffect_RunOuterSpace.
-/// The rise shows Ram_MapCellBuffer on BG1 through
+/// The rise shows Ram_MapGridCellBuffer on BG1 through
 /// BattleEffect_FlushPendingGraphicsTransfer, scrolls BG2 with
 /// BattleEffect_AdvanceBg2OnInterval and colours the backdrop with
 /// BattleEffect_ArmPaletteHBlankDma, and removes all three after; it sets the
@@ -225,8 +225,9 @@ void BattleEffect_RunParticleStreams(struct BattleEffectArgument *effect,
   // The map picture, 32x16 tiles of 8x8 pixels (256x128, 0x2000 words), all
   // colour 1; its first 0x7800 bytes, 256x120 pixels, are what BG1 shows.
   fill = 0x01010101;
-  Dma_Set((void *)&fill, Ram_MapCellBuffer, DMA_FILL_WORDS(0x2000), REG_DMA3);
-  Iwram_CopyWords((void *)BG_CHAR_BLOCK(2), Ram_MapCellBuffer, 0x7800);
+  Dma_Set((void *)&fill, Ram_MapGridCellBuffer, DMA_FILL_WORDS(0x2000),
+          REG_DMA3);
+  Iwram_CopyWords((void *)BG_CHAR_BLOCK(2), Ram_MapGridCellBuffer, 0x7800);
   WaitFrames(1);
   REG_BLDCNT = 0;
   REG_BG2PA = Q_8_8(1);
@@ -290,8 +291,8 @@ void BattleEffect_RunParticleStreams(struct BattleEffectArgument *effect,
           // canvas, but 32 tiles a row.
           if (y >= 0)
             if (y <= 127)
-              Ram_MapCellBuffer[((y / 8 * 32 + x / 8) * 8 + (y & 7)) * 8 +
-                                (x & 7)] = 0;
+              Ram_MapGridCellBuffer[((y / 8 * 32 + x / 8) * 8 + (y & 7)) * 8 +
+                                    (x & 7)] = 0;
         }
       }
       EFFECT_PRESENT_FRAME(work);
@@ -453,9 +454,9 @@ void BattleEffect_RunParticleStreams(struct BattleEffectArgument *effect,
       point.y = 0;
       point.depth = 0x2000000;
       Render_ResetTransformState();
-      SceneTransform_ApplyPosition(EffectPosition_Coordinates(&point));
-      SceneTransform_ApplyRoll(0x800);
-      SceneTransform_ApplyYaw(frame << 8);
+      Transform_ApplyPosition(EffectPosition_Coordinates(&point));
+      Transform_ApplyRoll(0x800);
+      Transform_ApplyYaw(frame << 8);
       for (i = 0; i != 7; i++) {
         SET_VECTOR(vector, (gParticleStreams_OrbitPoints[i][0] / 2) << 16,
                    (gParticleStreams_OrbitPoints[i][1] + frame) << 16,
@@ -463,7 +464,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectArgument *effect,
         EffectPosition_ProjectPoint(vector, screenPosition = &spot);
         screenPosition->x = Q_16_16_TO_INT(screenPosition->x) + 128;
         screenPosition->y = Q_16_16_TO_INT(screenPosition->y) + 60;
-        draw(Ram_MapCellBuffer, work->sheet + 0x1f40, screenPosition->x - 4,
+        draw(Ram_MapGridCellBuffer, work->sheet + 0x1f40, screenPosition->x - 4,
              screenPosition->y - 4, 8, 8);
       }
       if (direction == 1)
@@ -477,7 +478,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectArgument *effect,
         s32 drop = gParticleStreams_DropPoints[i][1] + y;
 
         if (drop <= 93)
-          draw(Ram_MapCellBuffer, work->sheet + 0x1c80,
+          draw(Ram_MapGridCellBuffer, work->sheet + 0x1c80,
                gParticleStreams_DropPoints[i][0] + x - 12, drop - 12, 24, 24);
         else if (drop <= 95)
           ParticleStreams_SpawnFlame(
@@ -490,7 +491,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectArgument *effect,
         // the sheet, one a frame, moving 5 pixels up and 1.25 against the
         // stream each frame, then frees its slot.
         if (mote->variant >= 0) {
-          draw(Ram_MapCellBuffer, work->sheet + (mote->variant << 10),
+          draw(Ram_MapGridCellBuffer, work->sheet + (mote->variant << 10),
                Q_16_16_TO_INT(mote->x) - 16, Q_16_16_TO_INT(mote->y) - 16, 32,
                32);
           mote->x -= direction * 0x14000;

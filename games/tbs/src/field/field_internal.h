@@ -117,12 +117,12 @@ enum {
 
 /// How a layered map's block data is packed: the method byte
 /// TileMap_DecodeStagedBuffer reads before the halfwords.
-enum MapBlockPacking {
-  MAP_BLOCKS_RAW = 0, ///< copied as it is
+enum MetatilePacking {
+  METATILE_PACKING_RAW = 0, ///< copied as it is
   /// All the high bytes, then all the low bytes; each value is XORed with
   /// the one before.
-  MAP_BLOCKS_SPLIT_DELTA = 1,
-  MAP_BLOCKS_DELTA = 2 ///< each value is XORed with the one before
+  METATILE_PACKING_SPLIT_DELTA = 1,
+  METATILE_PACKING_DELTA = 2 ///< each value is XORed with the one before
 };
 
 /// A movement target coordinate that is not set.

@@ -1,20 +1,21 @@
-#ifndef ALCHEMY_UNIT_SCENE_SOL_SANCTUM_PSYNERGY_STONE_H
-#define ALCHEMY_UNIT_SCENE_SOL_SANCTUM_PSYNERGY_STONE_H
+#ifndef ALCHEMY_UNIT_MAP_SOL_SANCTUM_PSYNERGY_STONE_H
+#define ALCHEMY_UNIT_MAP_SOL_SANCTUM_PSYNERGY_STONE_H
 
 #include "types.h"
 #include "map_tables.h"
 
-struct SceneRegion;
+struct MapWarpRegion;
 
-const struct SceneEntrance *Scene_GetEntrances(void);
-const struct SceneRegion *Scene_GetRegions(void);
-const u32 *Scene_GetExits(void);
-const struct ScenePlacement *Scene_GetPlacements(void);
-const struct SceneEvent *Scene_GetEvents(void);
-s32 Scene_Initialize(void);
-extern struct SceneEntrance gSolSanctumPsynergyStoneEntrances[];
-extern u32 gSolSanctumPsynergyStoneExits[];
-extern struct ScenePlacement gSolSanctumPsynergyStonePlacements[];
-extern struct SceneEvent gSolSanctumPsynergyStoneEvents[];
+const struct MapWarpDest *Map_GetWarpDests(void);
+const struct MapWarpRegion *Map_GetWarpRegions(void);
+const u32 *Map_GetWarps(void);
+const struct ObjectEventTemplate *Map_GetObjectEventTemplates(void);
+const struct MapEvent *Map_GetEvents(void);
+s32 Map_Initialize(void);
+extern struct MapWarpDest gSolSanctumPsynergyStoneWarpDests[];
+extern u32 gSolSanctumPsynergyStoneWarps[];
+extern struct ObjectEventTemplate
+    gSolSanctumPsynergyStoneObjectEventTemplates[];
+extern struct MapEvent gSolSanctumPsynergyStoneEvents[];
 
 #endif

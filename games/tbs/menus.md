@@ -219,7 +219,7 @@ therefore decided by the scene, not the menu ([Scenes](src/map/README.md)).
 
 The Psynergy screen writes the field's Psynergy request (`psynergyRequest` in
 the event work, `owner << 10 | Psynergy`), and the Item screen writes the item
-request (`struct ItemPickerResult`) the same way. `Field_RunScene` hands the
+request (`struct ItemPickerResult`) the same way. `Field_RunMap` hands the
 Psynergy request to `Field_UsePsynergy`, which plays the effect between the
 scene's Psynergy events (`PSYNERGY_PHASE_BEFORE_CAST` and
 `PSYNERGY_PHASE_AFTER_CAST`).

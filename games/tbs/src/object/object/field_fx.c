@@ -46,7 +46,8 @@ STATIC_ASSERT(offsetof(struct EffectObject, updateHook) == 0x6c);
 /// it stood, and loses its move target. Only the first marker it stands on
 /// moves it. Called by two scene overlays (Suhalla Desert, Lamakan Desert).
 void Marker_MoveLeaderAway(void) {
-  struct ObjectRuntime *leader = ObjectTable_Get(gGameState.selectedActor);
+  struct ObjectRuntime *leader =
+      ObjectTable_Get(gGameState.selectedObjectEvent);
   struct MarkerSlot *marker = ((struct FieldWork *)gEventWork)->markers;
   s32 markerIndex = 0;
   s32 x;
@@ -71,9 +72,9 @@ void Marker_MoveLeaderAway(void) {
         leader->z = cellZ + (8 << 16);
         Vector_AddPolarOffset(20 << 16, (u16)ArcTan2(dz, dx),
                               (struct EffectVector *)&leader->x);
-        leader->targetX = ACTOR_NO_TARGET;
-        leader->targetY = ACTOR_NO_TARGET;
-        leader->targetZ = ACTOR_NO_TARGET;
+        leader->targetX = OBJ_EVENT_NO_TARGET;
+        leader->targetY = OBJ_EVENT_NO_TARGET;
+        leader->targetZ = OBJ_EVENT_NO_TARGET;
         return;
       }
       markerIndex++;
@@ -109,8 +110,8 @@ void ItemDisplay_EmitSparkles(union FieldObject *fieldObject) {
   u32 randomRadius;
 
   // Once the picture's rise has all but stopped (under 1/256 pixel a frame),
-  // clearing its motion flags (ACTOR_FALLS and ACTOR_FOLLOWS_TERRAIN) ends
-  // gravity, so it hangs at the top of its rise.
+  // clearing its motion flags (OBJ_EVENT_FALLS and OBJ_EVENT_FOLLOWS_TERRAIN)
+  // ends gravity, so it hangs at the top of its rise.
   if (emitter->velocityY >= -255 && emitter->velocityY <= 255)
     emitter->flags = 0;
 
@@ -138,24 +139,24 @@ void ItemDisplay_EmitSparkles(union FieldObject *fieldObject) {
 /// VRAM. The caller owns the picture: Field_SearchTile releases it once the
 /// find is told. Called by Field_SearchTile for coins and items found, and by
 /// FieldEffect_PlayCueAndStartEmitterOnTarget.
-struct EffectObject *FieldEffect_StartRandomParticleEmitter(s32 actor,
+struct EffectObject *FieldEffect_StartRandomParticleEmitter(s32 objectEvent,
                                                             s32 item) {
   struct EffectObject *picture;
 
   s32 work = (s32)gEventWork;
-  u32 actorOffset = (actor * 4) + 0x14; // EventWork's actors[actor]
+  u32 objectEventOffset = (objectEvent * 4) + 0x14; // EventWork's actors[actor]
 
-  s32 srcZ = (s32)*(struct FieldActor **)(work + actorOffset);
+  s32 srcZ = (s32)*(struct ObjectEvent **)(work + objectEventOffset);
   union PolarOffsetPosition picturePosition;
   s32 pictureX;
 
   if (srcZ == 0)
     return 0;
 
-  picturePosition.vector.x = ((struct FieldActor *)srcZ)->x.fixed;
-  picturePosition.vector.y = ((struct FieldActor *)srcZ)->y.fixed;
-  picturePosition.vector.z = ((struct FieldActor *)srcZ)->z.fixed;
-  Vector_AddPolarOffset(16 << 16, ((struct FieldActor *)srcZ)->facing,
+  picturePosition.vector.x = ((struct ObjectEvent *)srcZ)->x.fixed;
+  picturePosition.vector.y = ((struct ObjectEvent *)srcZ)->y.fixed;
+  picturePosition.vector.z = ((struct ObjectEvent *)srcZ)->z.fixed;
+  Vector_AddPolarOffset(16 << 16, ((struct ObjectEvent *)srcZ)->facing,
                         picturePosition.coordinates);
   pictureX = (picturePosition.vector.x & 0xfff00000) + (8 << 16);
   // srcZ now holds the cell's z.
@@ -237,7 +238,7 @@ void ItemDisplay_RaiseAboveLeader(struct ObjectRuntime *object) {
   if (object == 0)
     return;
 
-  leader = ObjectTable_Get(gGameState.selectedActor);
+  leader = ObjectTable_Get(gGameState.selectedObjectEvent);
   // Up to 2 pixels a frame, gaining 1 a frame, in free flight: no motion
   // flags, so no gravity and no terrain.
   object->acceleration = 1 << 16;
@@ -260,7 +261,7 @@ void ItemDisplay_ShowPicture(void *object, s32 flags) {
   void *leader;
 
   if (object != NULL) {
-    leader = ObjectTable_Get(gGameState.selectedActor);
+    leader = ObjectTable_Get(gGameState.selectedObjectEvent);
     if (flags & 1) {
       ObjectDispatch_SetSingleChildFlagsFar(object, 0);
       ObjectDispatch_InitializeFar(object, gFieldEffect_ParticleEmitterScript);
@@ -288,7 +289,7 @@ void ItemDisplay_ShowPicture(void *object, s32 flags) {
 /// block 17, taken for the icon, is not released (the scene change's heap
 /// reset frees it).
 void FieldEffect_StartEffectObject22(s32 item, s32 flags) {
-  struct FieldActor *leader = ObjectTable_Get(gGameState.selectedActor);
+  struct ObjectEvent *leader = ObjectTable_Get(gGameState.selectedObjectEvent);
   void *iconBuffer = Runtime_AllocateHeapBlock(HEAP_SLOT_GLYPH_TRANSFER, 0x608);
   struct EffectObject *object = (struct EffectObject *)Object_CreateFar(
       22, leader->x.fixed, leader->y.fixed + (36 << 16), leader->z.fixed);
@@ -336,16 +337,16 @@ void FieldEffect_StartEffectObject22(s32 item, s32 flags) {
 void FieldEffect_ClearRandomParticles(void) {
   if (((struct FieldWork *)gEventWork)->revealActive != 0) {
     struct EffectObject *effect = EFFECT_OBJECT_POOL;
-    s32 remainingActors = EFFECT_OBJECT_COUNT - 1;
+    s32 remainingObjectEvents = EFFECT_OBJECT_COUNT - 1;
 
     do {
       if (effect->scriptWord != 0) {
         if (effect->scriptWord == (s32)gFieldEffect_ParticleScript)
           ObjectDispatch_ReleaseFar((struct DispatchObject *)effect);
       }
-      remainingActors--;
+      remainingObjectEvents--;
       effect++;
-    } while (remainingActors >= 0);
+    } while (remainingObjectEvents >= 0);
   }
 }
 
@@ -355,7 +356,7 @@ void FieldEffect_ClearRandomParticles(void) {
 /// pixels of it. Installed as the marker's updateHook by
 /// FieldEffect_SpawnNearbyMarkers.
 void RevealMarker_EmitSparkles(union FieldObject *fieldObject) {
-  const struct FieldActor *source = (const struct FieldActor *)fieldObject;
+  const struct ObjectEvent *source = (const struct ObjectEvent *)fieldObject;
   union PolarOffsetPosition position;
   struct ObjectRuntime *object;
   u32 randomRadius;
@@ -395,14 +396,14 @@ s32 Field_IsRevealActive(struct ScriptInterpreter *interpreter) {
 
 /// Reveal: marks with sparkles the hidden things within 8 cells left or right
 /// and 5 up or down of the leader: map places 100 to 239 with no marker actor,
-/// whose search event (EVENT_SEARCH) gives an item, coins, a Psynergy Stone
+/// whose search event (MAP_EVENT_BG) gives an item, coins, a Psynergy Stone
 /// or a mimic and whose flag is not yet set. Each mark is an object of sprite
 /// 22 running gFieldEffect_MarkerParticleScript. Called by Reveal's effect
 /// (psynergy_effects/reveal.c).
 void FieldEffect_SpawnNearbyMarkers(void) {
   u8 *markerData;
-  struct ObjectRuntime *actor;
-  const struct SceneEvent *entry;
+  struct ObjectRuntime *objectEvent;
+  const struct MapEvent *entry;
   s32 leaderColumn;
   s32 leaderRow;
   s32 column;
@@ -410,16 +411,16 @@ void FieldEffect_SpawnNearbyMarkers(void) {
   s32 id;
 
   // The map's places: (column, row, id) triples, ended by 0xff, 0xff; the
-  // same list as MarkerMap's markers in markers.c.
-  markerData = *(u8 **)(((u8 *)gMapWork[0]) + 16);
-  actor = ObjectTable_Get(gGameState.selectedActor);
-  leaderColumn = actor->x >> 20;
-  leaderRow = actor->z >> 20;
+  // same list as MapGridMarkers's markers in markers.c.
+  markerData = *(u8 **)(((u8 *)gMapGridWork[0]) + 16);
+  objectEvent = ObjectTable_Get(gGameState.selectedObjectEvent);
+  leaderColumn = objectEvent->x >> 20;
+  leaderRow = objectEvent->z >> 20;
   if (markerData != 0) {
     while (column = *markerData++, row = *markerData++,
            column != 0xff || row != 0xff) {
       id = *markerData++;
-      if (Marker_GetActor(id) != NULL)
+      if (Marker_GetObjectEvent(id) != NULL)
         continue;
       if (id < 100 || id > 239)
         continue;
@@ -437,7 +438,7 @@ void FieldEffect_SpawnNearbyMarkers(void) {
       if (entry->control == (u32)-1)
         continue;
       do {
-        if (entry->trigger == id && (entry->control & 15) == EVENT_SEARCH) {
+        if (entry->trigger == id && (entry->control & 15) == MAP_EVENT_BG) {
           switch (entry->value & 0xfff00000) {
           case 0:
           case FIND_ITEM(0):
@@ -449,14 +450,15 @@ void FieldEffect_SpawnNearbyMarkers(void) {
               /* FAKEMATCH(temporary): the spawned marker reuses actor, so the
                * one pseudo keeps ObjectTable_Get's result in r5; as a variable
                * of its own, 9 of 163 instructions differ in tbs-en. */
-              actor = (struct ObjectRuntime *)Object_CreateFar(
+              objectEvent = (struct ObjectRuntime *)Object_CreateFar(
                   22, (column << 20) + (8 << 16), 0, (row << 20) + (8 << 16));
-              if (actor != 0) {
-                ObjectDispatch_InitializeFar((struct DispatchObject *)actor,
-                                             gFieldEffect_MarkerParticleScript);
+              if (objectEvent != 0) {
+                ObjectDispatch_InitializeFar(
+                    (struct DispatchObject *)objectEvent,
+                    gFieldEffect_MarkerParticleScript);
                 ObjectDispatch_SetSingleChildFlagsFar(
-                    (struct DispatchObject *)actor, 0);
-                ((struct EffectObject *)actor)->updateHook =
+                    (struct DispatchObject *)objectEvent, 0);
+                ((struct EffectObject *)objectEvent)->updateHook =
                     RevealMarker_EmitSparkles;
               }
             }

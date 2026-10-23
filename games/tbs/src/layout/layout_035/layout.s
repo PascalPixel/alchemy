@@ -1,96 +1,96 @@
 	.include "games/tbs/src/layout/layout.inc"
 	.section .rodata
-	.global Field_Map035
-Field_Map035:
+	.global Field_Layout035
+Field_Layout035:
 	.ifdef TBS_EDITION_ES
-	map_header 0, 0, 64, 48, 3, 2, 1, 0, 2, 2, 0, 0
-	map_layer 0, 0, 16, 16, 0, 0, 0xff, 0xff
-	map_layer 64, 0, 16, 16, 0, 0, 0xff, 0xff
-	map_layer 0, 48, 16, 16, 0, 0, 0xff, 0xff
-	map_block Field_Map035, .LField_Map035_METATILES
-	map_block Field_Map035, .LField_Map035_SHAPES
-	map_block Field_Map035, .LField_Map035_GRID
-	map_block Field_Map035
-	map_block Field_Map035
-	map_block Field_Map035, .LField_Map035_MARKERS
-.LField_Map035_METATILES:
+	layout_header 0, 0, 64, 48, 3, 2, 1, 0, 2, 2, 0, 0
+	layout_layer 0, 0, 16, 16, 0, 0, 0xff, 0xff
+	layout_layer 64, 0, 16, 16, 0, 0, 0xff, 0xff
+	layout_layer 0, 48, 16, 16, 0, 0, 0xff, 0xff
+	layout_offset Field_Layout035, .LField_Layout035_METATILES
+	layout_offset Field_Layout035, .LField_Layout035_SHAPES
+	layout_offset Field_Layout035, .LField_Layout035_GRID
+	layout_offset Field_Layout035
+	layout_offset Field_Layout035
+	layout_offset Field_Layout035, .LField_Layout035_MARKERS
+.LField_Layout035_METATILES:
 	.incbin "games/tbs/src/layout/layout_035/metatiles_es.delta1.lz"
 	.balign 4, 0
-.LField_Map035_SHAPES:
+.LField_Layout035_SHAPES:
 	.incbin "games/tbs/src/layout/layout_035/shapes.table.lz"
 	.balign 4, 0
-.LField_Map035_GRID:
+.LField_Layout035_GRID:
 	.incbin "games/tbs/src/layout/layout_035/grid_es.parts.lz"
 	.balign 4, 0
-.LField_Map035_MARKERS:
+.LField_Layout035_MARKERS:
 	.incbin "games/tbs/src/layout/layout_000/markers.table"
 	.else
 	.ifdef TBS_EDITION_FR
-	map_header 0, 0, 64, 48, 3, 2, 1, 0, 2, 2, 0, 0
-	map_layer 0, 0, 16, 16, 0, 0, 0xff, 0xff
-	map_layer 64, 0, 16, 16, 0, 0, 0xff, 0xff
-	map_layer 0, 48, 16, 16, 0, 0, 0xff, 0xff
-	map_block Field_Map035, .LField_Map035_METATILES
-	map_block Field_Map035, .LField_Map035_SHAPES
-	map_block Field_Map035, .LField_Map035_GRID
-	map_block Field_Map035
-	map_block Field_Map035
-	map_block Field_Map035, .LField_Map035_MARKERS
-.LField_Map035_METATILES:
+	layout_header 0, 0, 64, 48, 3, 2, 1, 0, 2, 2, 0, 0
+	layout_layer 0, 0, 16, 16, 0, 0, 0xff, 0xff
+	layout_layer 64, 0, 16, 16, 0, 0, 0xff, 0xff
+	layout_layer 0, 48, 16, 16, 0, 0, 0xff, 0xff
+	layout_offset Field_Layout035, .LField_Layout035_METATILES
+	layout_offset Field_Layout035, .LField_Layout035_SHAPES
+	layout_offset Field_Layout035, .LField_Layout035_GRID
+	layout_offset Field_Layout035
+	layout_offset Field_Layout035
+	layout_offset Field_Layout035, .LField_Layout035_MARKERS
+.LField_Layout035_METATILES:
 	.incbin "games/tbs/src/layout/layout_035/metatiles_es.delta1.lz"
 	.balign 4, 0
-.LField_Map035_SHAPES:
+.LField_Layout035_SHAPES:
 	.incbin "games/tbs/src/layout/layout_035/shapes.table.lz"
 	.balign 4, 0
-.LField_Map035_GRID:
+.LField_Layout035_GRID:
 	.incbin "games/tbs/src/layout/layout_035/grid_es.parts.lz"
 	.balign 4, 0
-.LField_Map035_MARKERS:
+.LField_Layout035_MARKERS:
 	.incbin "games/tbs/src/layout/layout_000/markers.table"
 	.else
 	.ifdef TBS_EDITION_IT
-	map_header 0, 0, 64, 48, 3, 2, 1, 0, 2, 2, 0, 0
-	map_layer 0, 0, 16, 16, 0, 0, 0xff, 0xff
-	map_layer 64, 0, 16, 16, 0, 0, 0xff, 0xff
-	map_layer 0, 48, 16, 16, 0, 0, 0xff, 0xff
-	map_block Field_Map035, .LField_Map035_METATILES
-	map_block Field_Map035, .LField_Map035_SHAPES
-	map_block Field_Map035, .LField_Map035_GRID
-	map_block Field_Map035
-	map_block Field_Map035
-	map_block Field_Map035, .LField_Map035_MARKERS
-.LField_Map035_METATILES:
+	layout_header 0, 0, 64, 48, 3, 2, 1, 0, 2, 2, 0, 0
+	layout_layer 0, 0, 16, 16, 0, 0, 0xff, 0xff
+	layout_layer 64, 0, 16, 16, 0, 0, 0xff, 0xff
+	layout_layer 0, 48, 16, 16, 0, 0, 0xff, 0xff
+	layout_offset Field_Layout035, .LField_Layout035_METATILES
+	layout_offset Field_Layout035, .LField_Layout035_SHAPES
+	layout_offset Field_Layout035, .LField_Layout035_GRID
+	layout_offset Field_Layout035
+	layout_offset Field_Layout035
+	layout_offset Field_Layout035, .LField_Layout035_MARKERS
+.LField_Layout035_METATILES:
 	.incbin "games/tbs/src/layout/layout_035/metatiles_es.delta1.lz"
 	.balign 4, 0
-.LField_Map035_SHAPES:
+.LField_Layout035_SHAPES:
 	.incbin "games/tbs/src/layout/layout_035/shapes.table.lz"
 	.balign 4, 0
-.LField_Map035_GRID:
+.LField_Layout035_GRID:
 	.incbin "games/tbs/src/layout/layout_035/grid_es.parts.lz"
 	.balign 4, 0
-.LField_Map035_MARKERS:
+.LField_Layout035_MARKERS:
 	.incbin "games/tbs/src/layout/layout_000/markers.table"
 	.else
-	map_header 0, 0, 64, 48, 3, 2, 1, 0, 2, 2, 0, 0
-	map_layer 0, 0, 16, 16, 0, 0, 0xff, 0xff
-	map_layer 64, 0, 16, 16, 0, 0, 0xff, 0xff
-	map_layer 0, 48, 16, 16, 0, 0, 0xff, 0xff
-	map_block Field_Map035, .LField_Map035_METATILES
-	map_block Field_Map035, .LField_Map035_SHAPES
-	map_block Field_Map035, .LField_Map035_GRID
-	map_block Field_Map035
-	map_block Field_Map035
-	map_block Field_Map035, .LField_Map035_MARKERS
-.LField_Map035_METATILES:
+	layout_header 0, 0, 64, 48, 3, 2, 1, 0, 2, 2, 0, 0
+	layout_layer 0, 0, 16, 16, 0, 0, 0xff, 0xff
+	layout_layer 64, 0, 16, 16, 0, 0, 0xff, 0xff
+	layout_layer 0, 48, 16, 16, 0, 0, 0xff, 0xff
+	layout_offset Field_Layout035, .LField_Layout035_METATILES
+	layout_offset Field_Layout035, .LField_Layout035_SHAPES
+	layout_offset Field_Layout035, .LField_Layout035_GRID
+	layout_offset Field_Layout035
+	layout_offset Field_Layout035
+	layout_offset Field_Layout035, .LField_Layout035_MARKERS
+.LField_Layout035_METATILES:
 	.incbin "games/tbs/src/layout/layout_035/metatiles.delta1.lz"
 	.balign 4, 0
-.LField_Map035_SHAPES:
+.LField_Layout035_SHAPES:
 	.incbin "games/tbs/src/layout/layout_035/shapes.table.lz"
 	.balign 4, 0
-.LField_Map035_GRID:
+.LField_Layout035_GRID:
 	.incbin "games/tbs/src/layout/layout_035/grid.parts.lz"
 	.balign 4, 0
-.LField_Map035_MARKERS:
+.LField_Layout035_MARKERS:
 	.incbin "games/tbs/src/layout/layout_000/markers.table"
 	.endif
 	.endif
@@ -99,7 +99,7 @@ Field_Map035:
 	.global Tileset_Set27Palette
 Tileset_Set27Palette:
 	.incbin "games/tbs/src/graphics/tileset/set_27/palette.gbapal.lz"
-	.byte 0x8c, 0xda, 0xd6	@ PACKER: left in the buffer by Field_Map035+0x1a9
+	.byte 0x8c, 0xda, 0xd6	@ PACKER: left in the buffer by Field_Layout035+0x1a9
 	.global Tileset_Set27TilesA
 Tileset_Set27TilesA:
 	.incbin "games/tbs/src/graphics/tileset/set_27/tiles_a.4bpp.mtf"

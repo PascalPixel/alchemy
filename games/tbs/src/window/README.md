@@ -202,7 +202,7 @@ stored one above its value.
 | `MESSAGE_LINE_SPACING` | 10 | `TEXT_LINE_SPACING`, with its operand |
 | `MESSAGE_LOCALIZED_WORD` | 13 | German: a counted noun; Italian: a gender ending; Spanish and French: the plural suffix |
 | `MESSAGE_WINDOW_EFFECT` | 15 | `TEXT_WINDOW_STATE`, with its operand: the window effect to run |
-| `MESSAGE_PROTAGONIST_NAME` | 16 | the name of the unit `gGameState.selectedActor` names |
+| `MESSAGE_PROTAGONIST_NAME` | 16 | the name of the unit `gGameState.selectedObjectEvent` names |
 | `TEXT_WORK_BLOCK` | 50 | the heap slot the tree walker is copied into |
 
 ## The decoded-text ring
@@ -361,7 +361,7 @@ top of the screen for a moment.
 ![The party arriving in Bilibin: a small window with the town's name appears at once, centred across the screen and in its top half, with no zoom. It stays for 90 frames, a second and a half, counting down by one each frame, and closes when the count reaches zero. The name comes from the table of area names.](https://alchemy.pascalpixel.com/illustrations/window/area-name.svg)
 
 `UiTimedNotice_Create` shows the area's name, from
-`Scene_GetAreaNameIndexFar`, drawn as tiles in a window centred across the
+`MapSec_GetNameIndexFar`, drawn as tiles in a window centred across the
 screen and in its top 10 rows, opened with `UI_WINDOW_INSTANT`. It keeps the
 window and a countdown of `UI_AREA_NOTICE_FRAMES` (90) in the event work, and
 `UiTimedNotice_Tick`, a main-loop task, closes it when the countdown ends.

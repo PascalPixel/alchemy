@@ -76,9 +76,9 @@ void BattleEffect_RunHeadbutt(struct BattleEffectArgument *effect) {
 ///
 /// Called by the four wrappers above. work->particles holds the sparks, each
 /// variant its frames left; the six packed ring pictures go to
-/// Ram_MapCellBuffer. Moves the user with BattleEffect_SetApproachMotion and
-/// does not bring it back. Copies the mode's palette over the first 128 bytes
-/// of BG palette RAM, sets work->shakeFrames on the strike.
+/// Ram_MapGridCellBuffer. Moves the user with BattleEffect_SetApproachMotion
+/// and does not bring it back. Copies the mode's palette over the first 128
+/// bytes of BG palette RAM, sets work->shakeFrames on the strike.
 ///
 /// effect: the user and the targets.
 /// mode: the sparks' palette (enum RushingStrikeMode).
@@ -105,9 +105,9 @@ void BattleEffect_RunRushingStrike(struct BattleEffectArgument *effect,
   u8 *cells;
 
   /* FAKEMATCH(temporary): cells names the buffer, whose address then loads
-   * after the row count; as Ram_MapCellBuffer at both uses, 1 of 382
+   * after the row count; as Ram_MapGridCellBuffer at both uses, 1 of 382
    * instructions differ in tbs-en. */
-  cells = Ram_MapCellBuffer;
+  cells = Ram_MapGridCellBuffer;
   EFFECT_GET_SLOTS(slots, cursor, work, canvas);
   camera = EFFECT_SLOT(slots, HEAP_SLOT_CAMERA);
   sheet = EFFECT_SLOT(slots, HEAP_SLOT_BATTLE_SHEET);

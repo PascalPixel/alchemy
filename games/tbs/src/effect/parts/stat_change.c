@@ -266,7 +266,7 @@ void BattleEffect_RunStatBoost(struct BattleEffectArgument *effect, u32 mode) {
       EFFECT_VIEW_FROM_CAMERA(camera);
       // Centre on two thirds of the target's height.
       SET_VECTOR(point, object->x, height, object->z);
-      SceneTransform_ApplyPosition(point);
+      Transform_ApplyPosition(point);
       if (frame == member * 8 + 48)
         ObjectGroup_UpdateMembers(work->effect->actors[member],
                                   SPRITE_COLOR_WHITE, -1, member, 16);
@@ -283,13 +283,13 @@ void BattleEffect_RunStatBoost(struct BattleEffectArgument *effect, u32 mode) {
                             COMPOSITE_ADDITIVE);
         draw[1] = gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE];
         if (mode == STAT_BOOST_IMPACT) {
-          SceneTransform_ApplyPitch(-frame << 10);
+          Transform_ApplyPitch(-frame << 10);
         } else if (mode == STAT_BOOST_GUARD) {
         } else if (mode == STAT_BOOST_WARD) {
-          SceneTransform_ApplyYaw(frame << 10);
+          Transform_ApplyYaw(frame << 10);
         } else {
-          SceneTransform_ApplyYaw(frame << 10);
-          SceneTransform_ApplyRoll(frame << 10);
+          Transform_ApplyYaw(frame << 10);
+          Transform_ApplyRoll(frame << 10);
         }
         for (i = 0; i != STAT_BOOST_DRAWN; i++) {
           struct EffectStep *flare = &PARTICLES[member * STAT_BOOST_SLOTS + i];
@@ -558,7 +558,7 @@ void BattleEffect_RunStatReduction(struct BattleEffectArgument *effect,
         // from the camera twice.
         SET_VECTOR(point, object->x, 160 << 13, object->z);
         EFFECT_VIEW_FROM_CAMERA(camera);
-        SceneTransform_ApplyPosition(point);
+        Transform_ApplyPosition(point);
         SET_VECTOR(origin, 0, 0, 0);
         EffectPosition_ProjectPoint(origin, &screen);
         x = screen.x + xOffset;

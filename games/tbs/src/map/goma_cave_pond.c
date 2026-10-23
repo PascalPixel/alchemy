@@ -1,5 +1,5 @@
 /// @file
-/// Goma Cave (SceneId_GomaCavePond), the room below the room of two pillars
+/// Goma Cave (MapId_GomaCavePond), the room below the room of two pillars
 /// and a stump, in the cave in the Goma Range that the mayor of Vault tells the
 /// party to pass through on the way to Bilibin.
 ///
@@ -12,7 +12,7 @@
 /// (STUMP_ANIMATION_SINK), drawn underfoot with no collision flags. The five by
 /// five cells around it, open water in the room's render
 /// (places/goma-cave-pond/map-1.png), are replaced by a copy that adds
-/// MAP_CELL_JUMP_FORWARD cells, so the leader can jump across the water by
+/// MB_JUMP_FORWARD cells, so the leader can jump across the water by
 /// way of it.
 /// The flag is a place flag, so the stump is back up in the room above once
 /// the party leaves Goma Cave's four scenes.
@@ -41,7 +41,7 @@
 #include "flags.h"
 #include "script.h"
 
-// Place flags: Scene_ResetFlagsOnEnter clears 0x300 to 0x3ff when the party
+// Place flags: Map_ResetFlagsOnEnter clears 0x300 to 0x3ff when the party
 // enters another place group, and other places use the numbers for their own.
 
 /// The stump has been pushed over into the room below (goma_cave_pillar.c).
@@ -50,50 +50,51 @@
 #define FLAG_GOMA_CAVE_STUMP_FELL 0x300
 
 /// The room's one placed actor.
-enum GomaCavePondActor {
+enum GomaCavePondLocalId {
   /// The stump the party pushes over in the room above, lying in this room.
   /// ★ Named from the game: "It's no use. Our Psynergy isn't strong enough to
   /// free that stump." (MsgGomaNoUsePsynergy)
-  ACTOR_FALLEN_STUMP = ACTOR_FIRST_PLACED
+  LOCALID_FALLEN_STUMP = LOCALID_FIRST_PLACED
 };
 
-const struct SceneEntrance *Scene_GetEntrances(void) {
-  return gGomaCavePondEntrances;
+const struct MapWarpDest *Map_GetWarpDests(void) {
+  return gGomaCavePondWarpDests;
 }
 
-const struct SceneRegion *Scene_GetRegions(void) { return NULL; }
+const struct MapWarpRegion *Map_GetWarpRegions(void) { return NULL; }
 
-const u32 *Scene_GetExits(void) { return gGomaCavePondExits; }
+const u32 *Map_GetWarps(void) { return gGomaCavePondWarps; }
 
-const struct ScenePlacement *Scene_GetPlacements(void) {
-  return gGomaCavePondPlacements;
+const struct ObjectEventTemplate *Map_GetObjectEventTemplates(void) {
+  return gGomaCavePondObjectEventTemplates;
 }
 
-const struct SceneEvent *Scene_GetEvents(void) { return gGomaCavePondEvents; }
+const struct MapEvent *Map_GetEvents(void) { return gGomaCavePondEvents; }
 
 /// Sets up the room as the party enters. Once the stump in the room above has
 /// been pushed over, it lies here underfoot, and the cells it covers change.
-s32 Scene_Initialize(void) {
+s32 Map_Initialize(void) {
   struct EventWork *work;
 
   work = gEventWork;
   work->startTransition =
-      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
+      MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   work->transitionFrames = 24;
   if (Engine_GameFlagIsSet(FLAG_GOMA_CAVE_STUMP_FELL) != 0) {
-    OBJECT_POSITION_SET(ACTOR_FALLEN_STUMP, 216, 136);
-    OBJECT_MODE(ACTOR_FALLEN_STUMP, STUMP_ANIMATION_SINK);
-    Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_FALLEN_STUMP), 0);
-    Object_GetById(ACTOR_FALLEN_STUMP)->priorityFlags =
-        ACTOR_PRIORITY_UNDERFOOT;
-    Object_GetById(ACTOR_FALLEN_STUMP)->collisionFlags = 0;
-    Map_CopyCellAttributes(11, 36, 5, 5, 11, 6);
+    OBJECT_POSITION_SET(LOCALID_FALLEN_STUMP, 216, 136);
+    OBJECT_MODE(LOCALID_FALLEN_STUMP, STUMP_ANIMATION_SINK);
+    Engine_ObjectEventSetSpriteFlags(ObjectEvent_GetById(LOCALID_FALLEN_STUMP),
+                                     0);
+    ObjectEvent_GetById(LOCALID_FALLEN_STUMP)->priorityFlags =
+        OBJ_EVENT_PRIORITY_UNDERFOOT;
+    ObjectEvent_GetById(LOCALID_FALLEN_STUMP)->collisionFlags = 0;
+    MapGrid_CopyCellAttributes(11, 36, 5, 5, 11, 6);
   }
   return 0;
 }
 
-struct SceneEntrance gGomaCavePondEntrances[] = {
-    {ENTRANCE_DEFAULT, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1,
+struct MapWarpDest gGomaCavePondWarpDests[] = {
+    {WARP_DEST_DEFAULT, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1,
      -1, -1, 0},
     {GOMA_CAVE_POND_FROM_GOMA_CAVE_PILLAR_WEST, CONDITION_ALWAYS, 120, 0, 88,
      FACING_SOUTH, 0, 24, 8, 504, 424, 0},
@@ -101,34 +102,34 @@ struct SceneEntrance gGomaCavePondEntrances[] = {
      FACING_SOUTH, 0, 24, 8, 504, 424, 0},
     {GOMA_CAVE_POND_FROM_GOMA_CAVE_PILLAR_EAST, CONDITION_ALWAYS, 408, 0, 136,
      FACING_SOUTH, 0, 24, 8, 504, 424, 0},
-    {SCENE_TABLE_END},
+    {MAP_TABLE_END},
 };
 
-u32 gGomaCavePondExits[] = {
-    SCENE_EXITS(GomaCavePond),
-    SCENE_EXIT(GOMA_CAVE_POND_TO_GOMA_CAVE_PILLAR_WEST, GomaCavePillar,
-               GOMA_CAVE_PILLAR_FROM_GOMA_CAVE_POND_WEST),
-    SCENE_EXIT(GOMA_CAVE_POND_TO_GOMA_CAVE_PILLAR_SOUTH, GomaCavePillar,
-               GOMA_CAVE_PILLAR_FROM_GOMA_CAVE_POND_SOUTH),
-    SCENE_EXIT(GOMA_CAVE_POND_TO_GOMA_CAVE_PILLAR_EAST, GomaCavePillar,
-               GOMA_CAVE_PILLAR_FROM_GOMA_CAVE_POND_EAST),
-    SCENE_EXITS_END,
+u32 gGomaCavePondWarps[] = {
+    MAP_WARPS(GomaCavePond),
+    MAP_WARP(GOMA_CAVE_POND_TO_GOMA_CAVE_PILLAR_WEST, GomaCavePillar,
+             GOMA_CAVE_PILLAR_FROM_GOMA_CAVE_POND_WEST),
+    MAP_WARP(GOMA_CAVE_POND_TO_GOMA_CAVE_PILLAR_SOUTH, GomaCavePillar,
+             GOMA_CAVE_PILLAR_FROM_GOMA_CAVE_POND_SOUTH),
+    MAP_WARP(GOMA_CAVE_POND_TO_GOMA_CAVE_PILLAR_EAST, GomaCavePillar,
+             GOMA_CAVE_PILLAR_FROM_GOMA_CAVE_POND_EAST),
+    MAP_WARPS_END,
 };
 
 // clang-format off
-struct ScenePlacement gGomaCavePondPlacements[] = {
-    { SPRITE_STUMP, CONDITION_ALWAYS, ACTOR_STAND,
+struct ObjectEventTemplate gGomaCavePondObjectEventTemplates[] = {
+    { SPRITE_STUMP, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(8), 0, PIXELS(8), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { SCENE_TABLE_END },
+    { MAP_TABLE_END },
 };
 // clang-format on
 
-struct SceneEvent gGomaCavePondEvents[] = {
-    {EVENT_EXIT | EXIT_STYLE_ANIMATED, 5, CONDITION_ALWAYS,
+struct MapEvent gGomaCavePondEvents[] = {
+    {MAP_EVENT_WARP | WARP_STYLE_ANIMATED, 5, CONDITION_ALWAYS,
      GOMA_CAVE_POND_TO_GOMA_CAVE_PILLAR_WEST},
-    {EVENT_EXIT | EXIT_STYLE_ANIMATED, 6, CONDITION_ALWAYS,
+    {MAP_EVENT_WARP | WARP_STYLE_ANIMATED, 6, CONDITION_ALWAYS,
      GOMA_CAVE_POND_TO_GOMA_CAVE_PILLAR_SOUTH},
-    {EVENT_EXIT | EXIT_STYLE_ANIMATED, 7, CONDITION_ALWAYS,
+    {MAP_EVENT_WARP | WARP_STYLE_ANIMATED, 7, CONDITION_ALWAYS,
      GOMA_CAVE_POND_TO_GOMA_CAVE_PILLAR_EAST},
-    {SCENE_EVENTS_END},
+    {MAP_EVENTS_END},
 };

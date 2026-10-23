@@ -451,7 +451,7 @@ void Unit_Calculate(s32 owner) {
 
 /// Sets FLAG_LURE_CAP when any party member has the Lure Cap (the one item
 /// with ITEM_EFFECT_LURE) equipped, and clears it otherwise. Called on entering
-/// a scene (Scene_ResetFlagsOnEnter, Field_RunScene) and at the end of a field
+/// a scene (Map_ResetFlagsOnEnter, Field_RunMap) and at the end of a field
 /// event, so the encounter rate follows the cap.
 void GameFlag_RefreshLureCap(void) {
   s32 partySize;
@@ -532,11 +532,12 @@ u32 Runtime_GetBuildStampTime(void) {
   return (u16)result;
 }
 
-/// A view of EWRAM from gSceneState on, which GameState_InitializeDefaults
-/// writes one byte through. gSceneState's 0x78 bytes and gInventorySnapshot's
-/// 0x8c come first, so unk104 is the first byte of gObjectSnapshots.
-struct SceneStateTail {
-  u8 unk000[0x100]; ///< gSceneState, then most of gInventorySnapshot
+/// A view of EWRAM from gMapLocalState on, which GameState_InitializeDefaults
+/// writes one byte through. gMapLocalState's 0x78 bytes and
+/// gInventorySnapshot's 0x8c come first, so unk104 is the first byte of
+/// gObjectSnapshots.
+struct MapLocalStateTail {
+  u8 unk000[0x100]; ///< gMapLocalState, then most of gInventorySnapshot
   /// gInventorySnapshot's last word, past the 65 halfwords the snapshot
   /// uses; nothing reads or writes it through this view.
   u32 playTime;
@@ -556,20 +557,20 @@ void GameState_InitializeDefaults(void) {
 
   // Clear the state header, scene work, flags and save metadata in DMA order:
   // 0xb0 words are gGameState up to the characters (owners, which
-  // Party_InitializeCharacters sets up); 0x3e1 words run from gSceneState
+  // Party_InitializeCharacters sets up); 0x3e1 words run from gMapLocalState
   // through gInventorySnapshot and gObjectSnapshots; 0x80 words are all 4096
   // flags.
   zero = 0;
   START_DMA(&zero, &gGameState,
             (DMA_ENABLE | DMA_32BIT | DMA_SRC_FIXED) << 16 | 0xb0);
   zero = 0;
-  START_DMA(&zero, gSceneState,
+  START_DMA(&zero, gMapLocalState,
             (DMA_ENABLE | DMA_32BIT | DMA_SRC_FIXED) << 16 | 0x3e1);
   WAIT_DMA();
   zero = 0;
   START_DMA(&zero, gGameFlagBytes,
             (DMA_ENABLE | DMA_32BIT | DMA_SRC_FIXED) << 16 | 0x80);
-  ((struct SceneStateTail *)gSceneState)->unk104 = 0xff;
+  ((struct MapLocalStateTail *)gMapLocalState)->unk104 = 0xff;
   zero = 0;
   START_DMA(&zero, gSaveStamp + 0x1c,
             (DMA_ENABLE | DMA_32BIT | DMA_SRC_FIXED) << 16 | 0x298);
@@ -584,7 +585,7 @@ void GameState_InitializeDefaults(void) {
   gGameState.dashKeys = KEY_B;
   gGameState.firstShortcut = 0;
   gGameState.secondShortcut = 0;
-  gGameState.selectedActor = 0;
+  gGameState.selectedObjectEvent = 0;
   Party_AddActiveOwner(0);
   gGameState.coins = 0;
   gGameState.messageSpeed = 1;

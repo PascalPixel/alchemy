@@ -1,10 +1,10 @@
 /// @file The wharf at the edge of Lalivero where Babi's ship lies sunk, the
-/// game's last scene: SceneId_LemurianShip, with the area name Lemurian ship.
+/// game's last scene: MapId_LemurianShip, with the area name Lemurian ship.
 /// It is entered from Faran's house (lalivero_interiors.c) once Iodem has given
 /// the party the Black Orb, and stepping back on cell code 1
-/// (Event_LeaveTheShip) returns there.
+/// (EventScript_LeaveTheShip) returns there.
 ///
-/// LemurianShip_SetupScene sinks the ship's two map layers 90 pixels, puts the
+/// LemurianShip_SetupMap sinks the ship's two map layers 90 pixels, puts the
 /// two pieces of the gangway and the party at sprite priority 1, and starts the
 /// water's ripple (Ripple_Start), an HBlank DMA of per-line scroll offsets for
 /// BG3 that Reveal stops while it shows the scene. Arriving by
@@ -12,13 +12,13 @@
 /// first gives the leader the Black Orb.
 ///
 /// Using the Black Orb at the water's edge (cell code 10) plays
-/// Event_RaiseTheShip: the orb glows, spray rises and the ship comes up out of
-/// the water 90 pixels. It adds Ship_UpdateSwell and ShipGlow_CyclePalette,
-/// which run to the end of the game, and then LemurianShip_SetSail plays the
-/// departure: three yes-or-no questions each choose one of two replies, the
-/// party boards, the ship sails east as the curtains close (Curtain_Start), and
-/// the game goes to the clear screen by the title's TITLE_FROM_LEMURIAN_SHIP,
-/// keeping the music (FLAG_KEEP_MUSIC).
+/// EventScript_RaiseTheShip: the orb glows, spray rises and the ship comes up
+/// out of the water 90 pixels. It adds Ship_UpdateSwell and
+/// ShipGlow_CyclePalette, which run to the end of the game, and then
+/// LemurianShip_SetSail plays the departure: three yes-or-no questions each
+/// choose one of two replies, the party boards, the ship sails east as the
+/// curtains close (Curtain_Start), and the game goes to the clear screen by the
+/// title's TITLE_FROM_LEMURIAN_SHIP, keeping the music (FLAG_KEEP_MUSIC).
 ///
 /// Open questions: none.
 
@@ -81,7 +81,7 @@ static void Curtain_Start(void);
 
 enum {
   GANGWAY_NORTH =
-      ACTOR_FIRST_PLACED, ///< the gangway, in two pieces (SPRITE_GANGWAY)
+      LOCALID_FIRST_PLACED, ///< the gangway, in two pieces (SPRITE_GANGWAY)
   GANGWAY_SOUTH
 };
 
@@ -90,40 +90,41 @@ enum {
 #define SHIP_NOT_ON_DECK (-0x10000)
 
 /// The sprite of a gangway piece or a party actor.
-// ACTOR_SPRITE reads actor->sprite through an s32, so each store reloads it as
-// the native does; read as the field, the two stores share one load.
-// UB: the s32 read aliases the pointer field. UBFIX reads the field itself.
+// OBJ_EVENT_SPRITE reads actor->sprite through an s32, so each store reloads it
+// as the native does; read as the field, the two stores share one load. UB: the
+// s32 read aliases the pointer field. UBFIX reads the field itself.
 #ifdef UBFIX
-#define ACTOR_SPRITE(actor) ((actor)->sprite)
+#define OBJ_EVENT_SPRITE(objectEvent) ((objectEvent)->sprite)
 #else
-#define ACTOR_SPRITE(actor) ((struct AnimationObject *)*(s32 *)&(actor)->sprite)
+#define OBJ_EVENT_SPRITE(objectEvent)                                          \
+  ((struct AnimationObject *)*(s32 *)&(objectEvent)->sprite)
 #endif
 /// The sprite priority of an actor's picture and of its shadow.
-#define SET_IMAGE_PRIORITY(actor, level)                                       \
-  ((void)(ACTOR_SPRITE(actor)->image.priority = (level)))
-#define SET_SHADOW_PRIORITY(actor, level)                                      \
-  ((void)(ACTOR_SPRITE(actor)->shadow.priority = (level)))
+#define SET_IMAGE_PRIORITY(objectEvent, level)                                 \
+  ((void)(OBJ_EVENT_SPRITE(objectEvent)->image.priority = (level)))
+#define SET_SHADOW_PRIORITY(objectEvent, level)                                \
+  ((void)(OBJ_EVENT_SPRITE(objectEvent)->shadow.priority = (level)))
 
 s32 Math_DivideUnsigned();
 
-const struct SceneEntrance *LemurianShip_GetEntrances(void) {
-  return gLemurianShipEntrances;
+const struct MapWarpDest *LemurianShip_GetWarpDests(void) {
+  return gLemurianShipWarpDests;
 }
 
-const struct SceneRegion *LemurianShip_GetRegions(void) { return NULL; }
+const struct MapWarpRegion *LemurianShip_GetRegions(void) { return NULL; }
 
-const u32 *LemurianShip_GetExits(void) { return gLemurianShipExits; }
+const u32 *LemurianShip_GetWarps(void) { return gLemurianShipWarps; }
 
 /// The gangway's two pieces; the party's own actors fill the first three rows.
-const struct ScenePlacement *LemurianShip_GetPlacements(void) {
-  return gLemurianShipPlacements;
+const struct ObjectEventTemplate *LemurianShip_GetObjectEventTemplates(void) {
+  return gLemurianShipObjectEventTemplates;
 }
 
 /// Lemurian ship, the way back to Lalivero: leaves and clears the backdrop
 /// colour. Reached by stepping on cell code 1 (gLemurianShipEvents); takes
 /// LEMURIAN_SHIP_TO_LALIVERO_FARANS_HOUSE.
-static void Event_LeaveTheShip(void) {
-  Engine_EventRequestExit(gEventWork->touchedTrigger);
+static void EventScript_LeaveTheShip(void) {
+  Engine_ScriptRequestWarp(gEventWork->touchedTrigger);
   Io_Write16(0, &PLTT_BACKDROP);
 }
 
@@ -133,20 +134,20 @@ static void Event_LeaveTheShip(void) {
 static void Ripple_StopForReveal(void) { Ripple_Stop(); }
 
 /// Starts the two-axis ripple with its original frequencies and amplitudes.
-/// Called by LemurianShip_SetupScene, and reached by Reveal as the spell ends.
+/// Called by LemurianShip_SetupMap, and reached by Reveal as the spell ends.
 static void Ripple_Start(void) {
   DisplayScroll_InitializeHBlankDma(0, 0x40000, 0x10000, 0x2000, 0x10000,
                                     0x8000, 0x4000);
 }
 
 /// The exit, Reveal and the Black Orb at the water's edge (cell code 10).
-const struct SceneEvent *LemurianShip_GetEvents(void) {
+const struct MapEvent *LemurianShip_GetEvents(void) {
   return gLemurianShipEvents;
 }
 
 /// Slides a window of six colours along gShipGlowPalettes into palette 7's
 /// colours 4 to 9, one step every 6 frames, so the ship's glow ripples.
-/// Run each frame once Event_RaiseTheShip has brought the ship up.
+/// Run each frame once EventScript_RaiseTheShip has brought the ship up.
 static void ShipGlow_CyclePalette(void) {
   u16 *frame;
   s32 paletteIndex;
@@ -165,7 +166,7 @@ static void ShipGlow_CyclePalette(void) {
 /// gSprayFallScript, which frees it.
 /// The update hook Ship_UpdateSwell gives each drop it creates.
 static void Spray_Update(union FieldObject *fieldObject) {
-  struct FieldActor *drop = (struct FieldActor *)fieldObject;
+  struct ObjectEvent *drop = (struct ObjectEvent *)fieldObject;
 
   if (drop->timer != 0) {
     s32 drift;
@@ -177,14 +178,15 @@ static void Spray_Update(union FieldObject *fieldObject) {
     drop->y.fixed += 0xcccc;
   } else if ((s16)drop->work != 0) {
     drop->work = 0;
-    Object_SetMode(drop, 1);
+    ObjectEvent_SetMode(drop, 1);
     drop->wait = 20;
     Engine_ObjectSetScript(drop, gSprayFallScript);
   }
 }
 
 /// Every 40 frames, the Black Orb's glow fades a step, down to 4.
-/// Run each frame while the ship rises; Event_RaiseTheShip adds and removes it.
+/// Run each frame while the ship rises; EventScript_RaiseTheShip adds and
+/// removes it.
 static void OrbGlow_Fade(void) {
   s32 frame = gOrbGlowFadeFrames + 1;
 
@@ -200,8 +202,9 @@ static void OrbGlow_Fade(void) {
 /// The Black Orb's glow pulses in the blend, the ship (the hull on BG2, the
 /// deck on BG1) and everyone on deck bob with the swell, and spray rises from
 /// the water in a screen-sized box (240 by 160) at the view.
-/// Run each frame from Event_RaiseTheShip to the end of the game; each part
-/// runs while its flag (gOrbGlowActive, gSwellActive, gSprayActive) is set.
+/// Run each frame from EventScript_RaiseTheShip to the end of the game; each
+/// part runs while its flag (gOrbGlowActive, gSwellActive, gSprayActive) is
+/// set.
 static void Ship_UpdateSwell(void) {
   /* FAKEMATCH(volatile): blend kept at sp+18 and loaded again with ldrh for
    * the register write; as a plain u16, 5 of 225 instructions differ in
@@ -209,12 +212,12 @@ static void Ship_UpdateSwell(void) {
   volatile u16 blend;
   struct FixedPointPosition place;
   struct FixedPointPosition *position;
-  struct MapScrollWork *map;
-  struct FieldActor *actor;
+  struct MapGridScrollWork *grid;
+  struct ObjectEvent *objectEvent;
   s32 swell;
   s32 x, z;
 
-  map = gMapWork[0];
+  grid = gMapGridWork[0];
   if (gOrbGlowActive != 0) {
     swell = Iwram_MulQ16(Engine_MathSin(gOrbGlowPhase << 9), 3);
     blend = gOrbGlowStrength + ((swell + 8) << 8);
@@ -223,37 +226,37 @@ static void Ship_UpdateSwell(void) {
   }
   if (gSwellActive != 0) {
     swell = Iwram_MulQ16(Engine_MathSin(gSwellPhase << 9), 2) << 16;
-    map->layers[MAP_LAYER_MIDDLE].offsetY = gShipHullY + swell;
-    map->layers[MAP_LAYER_OVERHEAD].offsetY = gShipDeckY + swell;
+    grid->layers[MAPGRID_LAYER_MIDDLE].offsetY = gShipHullY + swell;
+    grid->layers[MAPGRID_LAYER_OVERHEAD].offsetY = gShipDeckY + swell;
     if (gLeaderDeckY != SHIP_NOT_ON_DECK) {
-      actor = Object_GetById(ACTOR_PARTY_LEADER);
-      actor->y.fixed = gLeaderDeckY + swell;
-      actor->terrainHeight = gLeaderDeckY + swell;
-      actor->motionFlags = 0;
+      objectEvent = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
+      objectEvent->y.fixed = gLeaderDeckY + swell;
+      objectEvent->terrainHeight = gLeaderDeckY + swell;
+      objectEvent->motionFlags = 0;
     }
     if (gGaretDeckY != SHIP_NOT_ON_DECK) {
-      actor = Object_GetById(GARET);
-      actor->y.fixed = gGaretDeckY + swell;
-      actor->terrainHeight = gLeaderDeckY + swell;
-      actor->motionFlags = 0;
+      objectEvent = ObjectEvent_GetById(GARET);
+      objectEvent->y.fixed = gGaretDeckY + swell;
+      objectEvent->terrainHeight = gLeaderDeckY + swell;
+      objectEvent->motionFlags = 0;
     }
     if (gMiaDeckY != SHIP_NOT_ON_DECK) {
-      actor = Object_GetById(MIA);
-      actor->y.fixed = gMiaDeckY + swell;
-      actor->terrainHeight = gLeaderDeckY + swell;
-      actor->motionFlags = 0;
+      objectEvent = ObjectEvent_GetById(MIA);
+      objectEvent->y.fixed = gMiaDeckY + swell;
+      objectEvent->terrainHeight = gLeaderDeckY + swell;
+      objectEvent->motionFlags = 0;
     }
     if (gIvanDeckY != SHIP_NOT_ON_DECK) {
-      actor = Object_GetById(IVAN);
-      actor->y.fixed = gIvanDeckY + swell;
-      actor->terrainHeight = gLeaderDeckY + swell;
-      actor->motionFlags = 0;
+      objectEvent = ObjectEvent_GetById(IVAN);
+      objectEvent->y.fixed = gIvanDeckY + swell;
+      objectEvent->terrainHeight = gLeaderDeckY + swell;
+      objectEvent->motionFlags = 0;
     }
     gSwellPhase++;
   }
   if (gSprayActive != 0 && (gFrameCount & 1) != 0) {
-    x = map->viewX & -0x10000;
-    z = map->viewY & -0x10000;
+    x = grid->viewX & -0x10000;
+    z = grid->viewY & -0x10000;
     x += Random_Next() * 240;
     position = &place;
     position->x = x;
@@ -261,17 +264,17 @@ static void Ship_UpdateSwell(void) {
     z += Random_Next() * 160;
     z += 0x1e0000;
     position->z = z;
-    actor =
-        Object_Create(SPRITE_WATER_DROP, position->x, position->y, position->z);
-    if (actor != 0) {
-      actor->update = Spray_Update;
-      actor->timer = 60;
-      actor->work = 1;
-      actor->motionFlags = 0;
-      actor->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
-      actor->sprite->image.priority = 2;
-      Engine_ActorSetSpriteFlags(actor, OBJECT_BLEND_NORMAL);
-      Object_SetMode(actor, 0);
+    objectEvent = ObjectEvent_Create(SPRITE_WATER_DROP, position->x,
+                                     position->y, position->z);
+    if (objectEvent != 0) {
+      objectEvent->update = Spray_Update;
+      objectEvent->timer = 60;
+      objectEvent->work = 1;
+      objectEvent->motionFlags = 0;
+      objectEvent->priorityFlags = OBJ_EVENT_PRIORITY_UNDERFOOT;
+      objectEvent->sprite->image.priority = 2;
+      Engine_ObjectEventSetSpriteFlags(objectEvent, OBJECT_BLEND_NORMAL);
+      ObjectEvent_SetMode(objectEvent, 0);
     }
   }
 }
@@ -282,288 +285,289 @@ static void Ship_UpdateSwell(void) {
 /// boarding scripts call their own copies below.
 static s32 Leader_StepOnDeck(struct ScriptInterpreter *interpreter) {
   s32 *deckY;
-  struct FieldActor *actor;
+  struct ObjectEvent *objectEvent;
 
   deckY = &gLeaderDeckY;
-  actor = Object_GetById(ACTOR_PARTY_LEADER);
-  *deckY = actor->y.fixed;
+  objectEvent = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
+  *deckY = objectEvent->y.fixed;
   return 0;
 }
 
 /// Remembers Garet's boarding height for the swell callback.
 static s32 Garet_StepOnDeck(struct ScriptInterpreter *interpreter) {
   s32 *deckY;
-  struct FieldActor *actor;
+  struct ObjectEvent *objectEvent;
 
   deckY = &gGaretDeckY;
-  actor = Object_GetById(GARET);
-  *deckY = actor->y.fixed;
+  objectEvent = ObjectEvent_GetById(GARET);
+  *deckY = objectEvent->y.fixed;
   return 0;
 }
 
 /// Remembers Mia's boarding height for the swell callback.
 static s32 Mia_StepOnDeck(struct ScriptInterpreter *interpreter) {
   s32 *deckY;
-  struct FieldActor *actor;
+  struct ObjectEvent *objectEvent;
 
   deckY = &gMiaDeckY;
-  actor = Object_GetById(MIA);
-  *deckY = actor->y.fixed;
+  objectEvent = ObjectEvent_GetById(MIA);
+  *deckY = objectEvent->y.fixed;
   return 0;
 }
 
 /// Remembers Ivan's boarding height for the swell callback.
 static s32 Ivan_StepOnDeck(struct ScriptInterpreter *interpreter) {
   s32 *deckY;
-  struct FieldActor *actor;
+  struct ObjectEvent *objectEvent;
 
   deckY = &gIvanDeckY;
-  actor = Object_GetById(IVAN);
-  *deckY = actor->y.fixed;
+  objectEvent = ObjectEvent_GetById(IVAN);
+  *deckY = objectEvent->y.fixed;
   return 0;
 }
 
 /// Lemurian ship, the departure: the others step out and talk over the journey
 /// while three questions shape their replies, everyone boards, and the ship
 /// sails east as the curtains close and the game goes to the clear screen.
-/// Called by Event_RaiseTheShip once the ship has risen. Sets FLAG_KEEP_MUSIC
-/// and sends the party to the clear screen (SceneId_Title,
+/// Called by EventScript_RaiseTheShip once the ship has risen. Sets
+/// FLAG_KEEP_MUSIC and sends the party to the clear screen (MapId_Title,
 /// TITLE_FROM_LEMURIAN_SHIP).
 static void LemurianShip_SetSail(void) {
-  struct MapScrollWork *map;
-  struct FieldActor *ship;
+  struct MapGridScrollWork *grid;
+  struct ObjectEvent *ship;
   struct EventWork *work;
 
-  Engine_EventStart();
+  Engine_ScriptStart();
   Camera_MoveTo(-1, -1, -1, 0);
-  Map_CopyCellAttributes(18, 0, 3, 1, 18, 12);
+  MapGrid_CopyCellAttributes(18, 0, 3, 1, 18, 12);
   // Garet, Mia and Ivan step out around the leader. Garet: "It looks like
   // it's finally time to leave Gondowan." Ivan and Mia say how much has
   // happened.
-  Engine_EventSetMessage(MsgFieldLooksLikeFinally);
+  Engine_ScriptSetMessage(MsgFieldLooksLikeFinally);
   FieldMotion_LaunchFromFocusedObject(GARET, -10, 16, FACING_NORTH);
   FieldMotion_LaunchFromFocusedObject(MIA, 0, 24, FACING_NORTH);
   Motion_LaunchFromFocusedObject(IVAN, 10, 16, FACING_NORTH);
-  Engine_ActorWaitForMove(GARET);
-  Engine_EventWait(50);
-  Engine_ActorRunRepeatedMotion(GARET, 2);
-  Engine_EventWait(20);
-  Engine_EventShowMessage(GARET, 0);
-  Engine_EventWait(10);
-  Engine_ActorSetAnimationAndWait(IVAN, ANIMATION_NOD);
-  Engine_EventWait(20);
-  Engine_EventShowMessage(IVAN, 0);
-  Engine_EventWait(10);
-  Actor_FaceDirection(MIA, FACING_SOUTH, 0);
-  Engine_EventWait(40);
-  Engine_EventShowMessage(MIA, 0);
-  Engine_EventWait(10);
-  Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 0);
-  Actor_FaceDirection(GARET, FACING_SOUTH, 0);
-  Engine_ActorFaceDirection(IVAN, FACING_SOUTH, 0);
-  Engine_EventWait(60);
-  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIMATION_NOD);
-  Engine_ActorSetAnimation(GARET, ANIMATION_NOD);
-  Engine_ActorSetAnimationAndWait(IVAN, ANIMATION_NOD);
-  Engine_EventWait(60);
+  Engine_ObjectEventWaitForMove(GARET);
+  Engine_ScriptWait(50);
+  Engine_ObjectEventRunRepeatedMotion(GARET, 2);
+  Engine_ScriptWait(20);
+  Engine_ScriptShowMessage(GARET, 0);
+  Engine_ScriptWait(10);
+  Engine_ObjectEventSetAnimationAndWait(IVAN, ANIMATION_NOD);
+  Engine_ScriptWait(20);
+  Engine_ScriptShowMessage(IVAN, 0);
+  Engine_ScriptWait(10);
+  ObjectEvent_FaceDirection(MIA, FACING_SOUTH, 0);
+  Engine_ScriptWait(40);
+  Engine_ScriptShowMessage(MIA, 0);
+  Engine_ScriptWait(10);
+  ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_SOUTH, 0);
+  ObjectEvent_FaceDirection(GARET, FACING_SOUTH, 0);
+  Engine_ObjectEventFaceDirection(IVAN, FACING_SOUTH, 0);
+  Engine_ScriptWait(60);
+  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIMATION_NOD);
+  Engine_ObjectEventSetAnimation(GARET, ANIMATION_NOD);
+  Engine_ObjectEventSetAnimationAndWait(IVAN, ANIMATION_NOD);
+  Engine_ScriptWait(60);
   // The first question, Garet's: will the journey be over once they find
   // Jenna? The answer picks which of his two replies he says.
-  Engine_ActorRunRepeatedMotion(GARET, 2);
-  Engine_EventWait(30);
-  Engine_ActorFaceDirection(GARET, FACING_NORTHEAST, 0);
-  Engine_EventWait(20);
+  Engine_ObjectEventRunRepeatedMotion(GARET, 2);
+  Engine_ScriptWait(30);
+  Engine_ObjectEventFaceDirection(GARET, FACING_NORTHEAST, 0);
+  Engine_ScriptWait(20);
   UiText_OpenMessageAtObject(1, 0);
-  if (Engine_EventChooseYesNo(ACTOR_PARTY_LEADER, 0) == 0) {
-    Engine_EventWait(30);
-    Actor_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 50);
-    Engine_EventShowMessage(GARET, 0);
+  if (Engine_ScriptChooseYesNo(LOCALID_PARTY_LEADER, 0) == 0) {
+    Engine_ScriptWait(30);
+    ObjectEvent_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 50);
+    Engine_ScriptShowMessage(GARET, 0);
     gEventWork->message++;
   } else {
-    Engine_EventWait(30);
-    Actor_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 50);
+    Engine_ScriptWait(30);
+    ObjectEvent_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 50);
     gEventWork->message++;
-    Engine_EventShowMessage(GARET, 0);
+    Engine_ScriptShowMessage(GARET, 0);
   }
-  Engine_EventWait(10);
+  Engine_ScriptWait(10);
   // Ivan and Mia remind Garet of their promise to Babi, and Lemuria comes up.
-  Engine_ActorFaceDirection(IVAN, FACING_WEST, 0);
-  Engine_EventWait(30);
-  Actor_ShowEmote(IVAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 50);
-  Engine_EventShowMessage(IVAN, 0);
-  Engine_EventWait(10);
-  Engine_ActorFaceDirection(GARET, FACING_EAST, 0);
-  Engine_EventWait(30);
-  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
-  Engine_ActorRunRepeatedMotion(MIA, 2);
-  Engine_EventWait(30);
-  Engine_ActorFaceDirection(MIA, FACING_NORTHWEST, 0);
-  Engine_EventWait(30);
-  Engine_EventShowMessage(MIA, 0);
-  Engine_EventWait(10);
-  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 50);
-  Engine_EventShowMessage(GARET, 0);
-  Engine_EventWait(10);
-  Engine_ActorRunRepeatedMotion(IVAN, 2);
-  Engine_EventWait(20);
-  Engine_EventShowMessage(IVAN, 0);
-  Engine_EventWait(10);
-  Engine_ActorFaceDirection(MIA, FACING_NORTH, 0);
-  Engine_EventWait(20);
-  Engine_ActorSetAnimationAndWait(MIA, ANIMATION_SHAKE_HEAD);
-  Engine_EventWait(20);
+  Engine_ObjectEventFaceDirection(IVAN, FACING_WEST, 0);
+  Engine_ScriptWait(30);
+  ObjectEvent_ShowEmote(IVAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 50);
+  Engine_ScriptShowMessage(IVAN, 0);
+  Engine_ScriptWait(10);
+  Engine_ObjectEventFaceDirection(GARET, FACING_EAST, 0);
+  Engine_ScriptWait(30);
+  ObjectEvent_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
+  Engine_ObjectEventRunRepeatedMotion(MIA, 2);
+  Engine_ScriptWait(30);
+  Engine_ObjectEventFaceDirection(MIA, FACING_NORTHWEST, 0);
+  Engine_ScriptWait(30);
+  Engine_ScriptShowMessage(MIA, 0);
+  Engine_ScriptWait(10);
+  ObjectEvent_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 50);
+  Engine_ScriptShowMessage(GARET, 0);
+  Engine_ScriptWait(10);
+  Engine_ObjectEventRunRepeatedMotion(IVAN, 2);
+  Engine_ScriptWait(20);
+  Engine_ScriptShowMessage(IVAN, 0);
+  Engine_ScriptWait(10);
+  Engine_ObjectEventFaceDirection(MIA, FACING_NORTH, 0);
+  Engine_ScriptWait(20);
+  Engine_ObjectEventSetAnimationAndWait(MIA, ANIMATION_SHAKE_HEAD);
+  Engine_ScriptWait(20);
   // The second question, Mia's: must they find Jenna before going to
   // Lemuria? Garet answers either way.
   UiText_OpenMessageAtObject(3, 0);
-  if (Engine_EventChooseYesNo(ACTOR_PARTY_LEADER, 0) == 0) {
-    Engine_EventWait(20);
-    Engine_ActorRunRepeatedMotion(GARET, 2);
-    Engine_EventWait(20);
-    Engine_ActorFaceDirection(GARET, FACING_NORTHEAST, 0);
-    Engine_EventWait(20);
-    Engine_EventShowMessage(GARET, 0);
+  if (Engine_ScriptChooseYesNo(LOCALID_PARTY_LEADER, 0) == 0) {
+    Engine_ScriptWait(20);
+    Engine_ObjectEventRunRepeatedMotion(GARET, 2);
+    Engine_ScriptWait(20);
+    Engine_ObjectEventFaceDirection(GARET, FACING_NORTHEAST, 0);
+    Engine_ScriptWait(20);
+    Engine_ScriptShowMessage(GARET, 0);
     gEventWork->message++;
   } else {
-    Engine_EventWait(20);
-    Engine_ActorRunRepeatedMotion(GARET, 2);
-    Engine_EventWait(20);
-    Engine_ActorFaceDirection(GARET, FACING_NORTHEAST, 0);
-    Engine_EventWait(20);
+    Engine_ScriptWait(20);
+    Engine_ObjectEventRunRepeatedMotion(GARET, 2);
+    Engine_ScriptWait(20);
+    Engine_ObjectEventFaceDirection(GARET, FACING_NORTHEAST, 0);
+    Engine_ScriptWait(20);
     gEventWork->message++;
-    Engine_EventShowMessage(GARET, 0);
+    Engine_ScriptShowMessage(GARET, 0);
   }
-  Engine_EventWait(10);
+  Engine_ScriptWait(10);
   // Ivan: their first time on the ocean; Garet: the ocean Kraden wanted
   // him to see.
-  Engine_ActorShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_WINCE, 50);
-  Engine_EventWait(10);
-  Actor_FaceDirection(IVAN, FACING_NORTHWEST, 0);
-  Engine_EventWait(20);
-  Engine_ActorSetAnimationAndWait(IVAN, ANIMATION_NOD);
-  Engine_EventWait(20);
-  Engine_EventShowMessage(IVAN, 0);
-  Engine_EventWait(20);
-  Engine_EventShowMessage(GARET, 0);
-  Engine_EventWait(20);
-  Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, ANIMATION_NOD);
-  Engine_EventWait(30);
-  Engine_EventWait(10);
-  Engine_ActorSetAnimationAndWait(MIA, ANIMATION_NOD);
-  Engine_EventWait(20);
+  Engine_ObjectEventShowEmote(LOCALID_PARTY_LEADER,
+                              EMOTE_IN_FRONT | EMOTE_WINCE, 50);
+  Engine_ScriptWait(10);
+  ObjectEvent_FaceDirection(IVAN, FACING_NORTHWEST, 0);
+  Engine_ScriptWait(20);
+  Engine_ObjectEventSetAnimationAndWait(IVAN, ANIMATION_NOD);
+  Engine_ScriptWait(20);
+  Engine_ScriptShowMessage(IVAN, 0);
+  Engine_ScriptWait(20);
+  Engine_ScriptShowMessage(GARET, 0);
+  Engine_ScriptWait(20);
+  Engine_ObjectEventSetAnimationAndWait(LOCALID_PARTY_LEADER, ANIMATION_NOD);
+  Engine_ScriptWait(30);
+  Engine_ScriptWait(10);
+  Engine_ObjectEventSetAnimationAndWait(MIA, ANIMATION_NOD);
+  Engine_ScriptWait(20);
   // The third question, Mia's: the seas are rough; will they be all right?
   UiText_OpenMessageAtObject(3, 0);
-  Actor_FaceDirection(GARET, FACING_NORTHEAST, 0);
-  Actor_FaceDirection(MIA, FACING_NORTH, 0);
-  Engine_ActorFaceDirection(IVAN, FACING_NORTHWEST, 0);
-  Engine_EventWait(20);
-  if (Engine_EventChooseYesNo(ACTOR_PARTY_LEADER, 0) == 0) {
-    Engine_EventWait(30);
-    Engine_ActorSetAnimationAndWait(MIA, ANIMATION_NOD);
-    Engine_EventWait(20);
-    Engine_EventShowMessage(MIA, 0);
+  ObjectEvent_FaceDirection(GARET, FACING_NORTHEAST, 0);
+  ObjectEvent_FaceDirection(MIA, FACING_NORTH, 0);
+  Engine_ObjectEventFaceDirection(IVAN, FACING_NORTHWEST, 0);
+  Engine_ScriptWait(20);
+  if (Engine_ScriptChooseYesNo(LOCALID_PARTY_LEADER, 0) == 0) {
+    Engine_ScriptWait(30);
+    Engine_ObjectEventSetAnimationAndWait(MIA, ANIMATION_NOD);
+    Engine_ScriptWait(20);
+    Engine_ScriptShowMessage(MIA, 0);
     gEventWork->message++;
   } else {
-    Engine_EventWait(30);
-    Engine_ActorSetAnimationAndWait(MIA, ANIMATION_NOD);
-    Engine_EventWait(20);
+    Engine_ScriptWait(30);
+    Engine_ObjectEventSetAnimationAndWait(MIA, ANIMATION_NOD);
+    Engine_ScriptWait(20);
     gEventWork->message++;
-    Engine_EventShowMessage(MIA, 0);
+    Engine_ScriptShowMessage(MIA, 0);
   }
-  Engine_EventWait(10);
+  Engine_ScriptWait(10);
   // Garet: "Well... Shall we, then?" Ivan: "To sea..." Mia: Jenna is waiting
   // for them. The departure theme starts.
-  Actor_FaceDirection(GARET, FACING_NORTH, 0);
-  Engine_EventWait(30);
-  Engine_EventShowMessage(GARET, 0);
-  Engine_EventWait(10);
-  Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
-  Engine_EventWait(30);
-  Engine_EventWait(10);
-  Actor_FaceDirection(IVAN, FACING_NORTH, 0);
-  Engine_EventWait(30);
-  Engine_ActorSetAnimationAndWait(IVAN, ANIMATION_NOD);
-  Engine_EventWait(20);
-  Engine_EventShowMessage(IVAN, 0);
-  Engine_EventWait(10);
-  Engine_ActorSetAnimationAndWait(MIA, ANIMATION_NOD);
-  Engine_EventWait(20);
-  Engine_EventShowMessage(MIA, 0);
+  ObjectEvent_FaceDirection(GARET, FACING_NORTH, 0);
+  Engine_ScriptWait(30);
+  Engine_ScriptShowMessage(GARET, 0);
+  Engine_ScriptWait(10);
+  ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_NORTH, 0);
+  Engine_ScriptWait(30);
+  Engine_ScriptWait(10);
+  ObjectEvent_FaceDirection(IVAN, FACING_NORTH, 0);
+  Engine_ScriptWait(30);
+  Engine_ObjectEventSetAnimationAndWait(IVAN, ANIMATION_NOD);
+  Engine_ScriptWait(20);
+  Engine_ScriptShowMessage(IVAN, 0);
+  Engine_ScriptWait(10);
+  Engine_ObjectEventSetAnimationAndWait(MIA, ANIMATION_NOD);
+  Engine_ScriptWait(20);
+  Engine_ScriptShowMessage(MIA, 0);
   Engine_AudioPlayCue(AUDIO_CUE_FADE_BGM);
-  Engine_EventWait(10);
-  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIMATION_NOD);
-  Engine_ActorSetAnimation(GARET, ANIMATION_NOD);
-  Engine_ActorSetAnimationAndWait(IVAN, ANIMATION_NOD);
-  Engine_EventWait(40);
+  Engine_ScriptWait(10);
+  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIMATION_NOD);
+  Engine_ObjectEventSetAnimation(GARET, ANIMATION_NOD);
+  Engine_ObjectEventSetAnimationAndWait(IVAN, ANIMATION_NOD);
+  Engine_ScriptWait(40);
   // Everyone boards by their own scripts, hopping up onto the deck (SE_153
   // each); the camera follows up to the ship.
-  Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x13333, 0x9999);
-  Actor_SetSpeed(GARET, 0x13333, 0x9999);
-  Actor_SetSpeed(IVAN, 0x13333, 0x9999);
-  Actor_SetSpeed(MIA, 0x13333, 0x9999);
-  Actor_SetActionScript(ACTOR_PARTY_LEADER, gLeaderBoardsShip);
-  Engine_EventWait(50);
+  ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, 0x13333, 0x9999);
+  ObjectEvent_SetSpeed(GARET, 0x13333, 0x9999);
+  ObjectEvent_SetSpeed(IVAN, 0x13333, 0x9999);
+  ObjectEvent_SetSpeed(MIA, 0x13333, 0x9999);
+  ObjectEvent_SetActionScript(LOCALID_PARTY_LEADER, gLeaderBoardsShip);
+  Engine_ScriptWait(50);
   Camera_MoveTo(PIXELS(264), -1, PIXELS(200), 1);
-  Actor_SetActionScript(GARET, gGaretBoardsShip);
-  Engine_EventWait(50);
-  Actor_SetActionScript(IVAN, gIvanBoardsShip);
-  Object_RefreshSelectorById(2);
-  Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 0);
-  Actor_FaceDirection(GARET, FACING_SOUTH, 0);
-  Actor_FaceDirection(IVAN, FACING_SOUTH, 0);
+  ObjectEvent_SetActionScript(GARET, gGaretBoardsShip);
+  Engine_ScriptWait(50);
+  ObjectEvent_SetActionScript(IVAN, gIvanBoardsShip);
+  ObjectEvent_RefreshSelectorById(2);
+  ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_SOUTH, 0);
+  ObjectEvent_FaceDirection(GARET, FACING_SOUTH, 0);
+  ObjectEvent_FaceDirection(IVAN, FACING_SOUTH, 0);
   // Mia, last, looks back at the shore before she boards.
   FieldObjectMotion_CommitPositionAndActivate(3, 0, -32);
-  Engine_EventWait(30);
-  Engine_ActorFaceDirection(MIA, FACING_SOUTH, 0);
-  Engine_EventWait(60);
-  Actor_FaceDirection(MIA, FACING_WEST, 0);
-  Engine_EventWait(20);
-  Actor_SetActionScript(MIA, gMiaBoardsShip);
-  Object_RefreshSelectorById(3);
-  Engine_ActorFaceDirection(MIA, FACING_NORTH, 0);
-  Engine_EventWait(20);
+  Engine_ScriptWait(30);
+  Engine_ObjectEventFaceDirection(MIA, FACING_SOUTH, 0);
+  Engine_ScriptWait(60);
+  ObjectEvent_FaceDirection(MIA, FACING_WEST, 0);
+  Engine_ScriptWait(20);
+  ObjectEvent_SetActionScript(MIA, gMiaBoardsShip);
+  ObjectEvent_RefreshSelectorById(3);
+  Engine_ObjectEventFaceDirection(MIA, FACING_NORTH, 0);
+  Engine_ScriptWait(20);
   // On deck, all four turn west together and nod.
   Camera_MoveTo(PIXELS(216), -1, PIXELS(168), 1);
   Engine_CameraWaitForMove();
-  Engine_EventWait(20);
-  Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_WEST, 0);
-  Actor_FaceDirection(GARET, FACING_WEST, 0);
-  Actor_FaceDirection(IVAN, FACING_WEST, 0);
-  Engine_ActorFaceDirection(MIA, FACING_WEST, 0);
-  Engine_EventWait(40);
-  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIMATION_NOD);
-  Engine_ActorSetAnimation(GARET, ANIMATION_NOD);
-  Engine_ActorSetAnimation(MIA, ANIMATION_NOD);
-  Engine_ActorSetAnimationAndWait(IVAN, ANIMATION_NOD);
-  Engine_EventWait(30);
+  Engine_ScriptWait(20);
+  ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_WEST, 0);
+  ObjectEvent_FaceDirection(GARET, FACING_WEST, 0);
+  ObjectEvent_FaceDirection(IVAN, FACING_WEST, 0);
+  Engine_ObjectEventFaceDirection(MIA, FACING_WEST, 0);
+  Engine_ScriptWait(40);
+  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIMATION_NOD);
+  Engine_ObjectEventSetAnimation(GARET, ANIMATION_NOD);
+  Engine_ObjectEventSetAnimation(MIA, ANIMATION_NOD);
+  Engine_ObjectEventSetAnimationAndWait(IVAN, ANIMATION_NOD);
+  Engine_ScriptWait(30);
   // The ship sails east and the curtains close: the sea's layer scrolls
   // faster while the gangway's north piece moves off with the ship, and the
   // camera follows.
   Engine_AudioPlayCue(MUS_ENDING);
   MusicCommand_SetPitchAndUpdateFrequency(240);
   Curtain_Start();
-  Engine_EventWait(LEMURIAN_SHIP_DEPARTURE_DELAY_FRAMES);
-  map = gMapWork[0];
-  ship = Object_GetById(GANGWAY_NORTH);
+  Engine_ScriptWait(LEMURIAN_SHIP_DEPARTURE_DELAY_FRAMES);
+  grid = gMapGridWork[0];
+  ship = ObjectEvent_GetById(GANGWAY_NORTH);
   ship->acceleration = 131;
   ship->speed = 0x20000;
-  map->layers[MAP_LAYER_GROUND].speedX = -0x3000;
+  grid->layers[MAPGRID_LAYER_GROUND].speedX = -0x3000;
   ObjectMotion_CommitPositionAndActivate(GANGWAY_NORTH, 60, 0);
-  map->layers[MAP_LAYER_GROUND].speedX = -0x6000;
+  grid->layers[MAPGRID_LAYER_GROUND].speedX = -0x6000;
   ObjectMotion_CommitPositionAndActivate(GANGWAY_NORTH, 60, 0);
-  Engine_EventWait(80);
-  Engine_EventWait(100);
+  Engine_ScriptWait(80);
+  Engine_ScriptWait(100);
   Engine_CameraSetSpeed(0x23333, 0x28f);
   Engine_CameraMoveTo(PIXELS(808), -1, PIXELS(168), 1);
-  Engine_EventWait(300);
+  Engine_ScriptWait(300);
   // Fade out to the clear screen.
-  work = gMapWork[19];
-  work->startTransition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+  work = gMapGridWork[19];
+  work->startTransition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   Io_Write16(0, &PLTT_BACKDROP);
   work->transitionFrames = 96;
-  Engine_EventCloseScreen();
-  Engine_EventWaitForScreen();
-  Engine_EventWait(30);
+  Engine_ScriptCloseScreen();
+  Engine_ScriptWaitForScreen();
+  Engine_ScriptWait(30);
   Engine_GameFlagSet(FLAG_KEEP_MUSIC);
-  Event_SetDestination((s32)&SceneId_Title, TITLE_FROM_LEMURIAN_SHIP);
+  FieldScript_SetDestination((s32)&MapId_Title, TITLE_FROM_LEMURIAN_SHIP);
 }
 
 /// The water's ripple, this scene's view of the HBlank scroll work
@@ -593,8 +597,8 @@ static __inline__ s32 Wave_Offset(s32 angle, s32 amplitude, u16 base) {
 /// Reached by using the Black Orb at the water's edge (cell code 10). Adds
 /// the swell and glow callbacks, which run to the end of the game, and calls
 /// LemurianShip_SetSail.
-static void Event_RaiseTheShip(void) {
-  struct MapScrollWork *map;
+static void EventScript_RaiseTheShip(void) {
+  struct MapGridScrollWork *grid;
   s32 i;
   s32 flash;
   s32 white;
@@ -605,18 +609,18 @@ static void Event_RaiseTheShip(void) {
    * tbs-en. */
   volatile u16 cnt;
 
-  map = gMapWork[0];
+  grid = gMapGridWork[0];
 
-  Event_Start();
+  Script_Start();
   Field_EndBusyAndReveal();
   // The leader steps to the water's edge; the backdrop brightens 16 steps.
-  Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 312, 232);
-  Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
-  Event_Wait(40);
-  Event_PlayCue(SE_140);
+  ObjectEvent_WalkToAndWait(LOCALID_PARTY_LEADER, 312, 232);
+  ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_NORTH, 0);
+  Script_Wait(40);
+  Script_PlayCue(SE_140);
   for (i = 0; i <= 15; i++) {
     Io_Write16(RGB(0, i, i * 2), &PLTT_BACKDROP);
-    Event_Wait(10);
+    Script_Wait(10);
   }
   {
     u16 color = RGB(0, 16, 31);
@@ -627,34 +631,34 @@ static void Event_RaiseTheShip(void) {
     u16 bright = BLEND_ALPHA(16, 16);
 
     for (flash = 0; flash < 3; flash++) {
-      Event_PlayCue(SE_212);
+      Script_PlayCue(SE_212);
       REG_BLDALPHA = bright;
-      Event_Wait(3);
+      Script_Wait(3);
       Io_Write16(BLEND_ALPHA(16, 8), &REG_BLDALPHA);
-      Event_Wait(65);
+      Script_Wait(65);
     }
   }
   // The orb's glow and the spray begin, and the water lightens in three
   // steps.
   gOrbGlowActive = 1;
   gOrbGlowPhase = 0;
-  FieldScheduler_AddCallback(Ship_UpdateSwell, TASK_PRIORITY_SCENE);
+  FieldScheduler_AddCallback(Ship_UpdateSwell, TASK_PRIORITY_MAP);
   gSprayActive = 1;
-  Event_Wait(20);
-  Event_PlayCue(SE_163);
-  Map_SetShake(0x10000, 0x10000, 0x10000);
-  Event_Wait(60);
+  Script_Wait(20);
+  Script_PlayCue(SE_163);
+  MapGrid_SetShake(0x10000, 0x10000, 0x10000);
+  Script_Wait(60);
   gSprayActive = 1;
-  Map_SetShake(0x20000, 0x20000, 0x10000);
-  Event_Wait(60);
-  Map_SetShake(0x30000, 0x30000, 0x10000);
+  MapGrid_SetShake(0x20000, 0x20000, 0x10000);
+  Script_Wait(60);
+  MapGrid_SetShake(0x30000, 0x30000, 0x10000);
   gOrbGlowFadeFrames = 0;
-  FieldScheduler_AddCallback(OrbGlow_Fade, TASK_PRIORITY_SCENE);
+  FieldScheduler_AddCallback(OrbGlow_Fade, TASK_PRIORITY_MAP);
   // The ship rises 90 pixels, 0.2 pixels a frame.
   risen = 0;
   do {
-    map->layers[MAP_LAYER_MIDDLE].offsetY += 0x3333;
-    map->layers[MAP_LAYER_OVERHEAD].offsetY += 0x3333;
+    grid->layers[MAPGRID_LAYER_MIDDLE].offsetY += 0x3333;
+    grid->layers[MAPGRID_LAYER_OVERHEAD].offsetY += 0x3333;
     risen += 0x3333;
     Task_Wait(1);
   } while (risen < PIXELS(90));
@@ -664,29 +668,29 @@ static void Event_RaiseTheShip(void) {
   REG_BG2CNT = cnt = (REG_BG2CNT & ~BGCNT_PRIORITY(3)) | BGCNT_PRIORITY(3);
   REG_BG1CNT = cnt = (REG_BG1CNT & ~BGCNT_PRIORITY(3)) | BGCNT_PRIORITY(2);
   gOrbGlowActive = 0;
-  Event_PlayCue(SE_STOP_SLOT3);
+  Script_PlayCue(SE_STOP_SLOT3);
   Task_Wait(1);
   // A flash of white; the swell starts as it clears.
-  Event_PlayCue(SE_145);
+  Script_PlayCue(SE_145);
   Io_Write16(BLDCNT_TGT1_ALL | BLDCNT_EFFECT_LIGHTEN, &REG_BLDCNT);
   for (white = 0; white <= 16; white++) {
     REG_BLDY = white;
-    Event_Wait(1);
+    Script_Wait(1);
   }
-  Event_Wait(40);
-  Map_SetShake(-1, -1, 0xe666);
-  gShipHullY = map->layers[MAP_LAYER_MIDDLE].offsetY;
-  gShipDeckY = map->layers[MAP_LAYER_OVERHEAD].offsetY;
+  Script_Wait(40);
+  MapGrid_SetShake(-1, -1, 0xe666);
+  gShipHullY = grid->layers[MAPGRID_LAYER_MIDDLE].offsetY;
+  gShipDeckY = grid->layers[MAPGRID_LAYER_OVERHEAD].offsetY;
   gSwellActive = 1;
   for (dark = 16; dark >= 0; dark--) {
     REG_BLDY = dark;
-    Event_Wait(8);
+    Script_Wait(8);
   }
-  FieldScheduler_AddCallback(ShipGlow_CyclePalette, TASK_PRIORITY_SCENE);
-  Event_PlayCue(MUS_PUZZLE_SOLVED);
+  FieldScheduler_AddCallback(ShipGlow_CyclePalette, TASK_PRIORITY_MAP);
+  Script_PlayCue(MUS_PUZZLE_SOLVED);
   AudioCommand_WaitForStateByteClear();
-  Event_Wait(20);
-  Event_End();
+  Script_Wait(20);
+  Script_End();
   LemurianShip_SetSail();
 }
 
@@ -694,55 +698,57 @@ static void Event_RaiseTheShip(void) {
 /// the party at sprite priority 1 over the layers' new priorities, and the
 /// ripple running. Arriving by LEMURIAN_SHIP_WITH_BLACK_ORB first gives the
 /// leader the Black Orb.
-s32 LemurianShip_SetupScene(void) {
-  struct MapScrollWork *map;
+s32 LemurianShip_SetupMap(void) {
+  struct MapGridScrollWork *grid;
   /* FAKEMATCH(volatile): each step stored at sp+2 with strh; as a plain u16, 2
    * of 165 instructions differ in tbs-en. */
   volatile u16 cnt;
 
-  map = gMapWork[0];
-  if (gGameState.entrance == LEMURIAN_SHIP_WITH_BLACK_ORB) {
-    Inventory_AddItem(ACTOR_PARTY_LEADER, ITEM_BLACK_ORB);
+  grid = gMapGridWork[0];
+  if (gGameState.warpDest == LEMURIAN_SHIP_WITH_BLACK_ORB) {
+    Inventory_AddItem(LOCALID_PARTY_LEADER, ITEM_BLACK_ORB);
   }
-  ((struct EventWork *)gMapWork[19])->startTransition =
-      SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
-  Object_GetById(GANGWAY_NORTH)->collisionFlags = 0;
-  Object_GetById(GANGWAY_NORTH)->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
-  Object_GetById(GANGWAY_SOUTH)->collisionFlags = 0;
-  Object_GetById(GANGWAY_SOUTH)->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
+  ((struct EventWork *)gMapGridWork[19])->startTransition =
+      MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+  ObjectEvent_GetById(GANGWAY_NORTH)->collisionFlags = 0;
+  ObjectEvent_GetById(GANGWAY_NORTH)->priorityFlags =
+      OBJ_EVENT_PRIORITY_UNDERFOOT;
+  ObjectEvent_GetById(GANGWAY_SOUTH)->collisionFlags = 0;
+  ObjectEvent_GetById(GANGWAY_SOUTH)->priorityFlags =
+      OBJ_EVENT_PRIORITY_UNDERFOOT;
   {
-    struct FieldActor *actor = Object_GetById(GANGWAY_NORTH);
+    struct ObjectEvent *objectEvent = ObjectEvent_GetById(GANGWAY_NORTH);
 
-    SET_IMAGE_PRIORITY(actor, 1);
-  }
-  {
-    struct FieldActor *actor = Object_GetById(GANGWAY_SOUTH);
-
-    SET_IMAGE_PRIORITY(actor, 1);
+    SET_IMAGE_PRIORITY(objectEvent, 1);
   }
   {
-    struct FieldActor *actor = Object_GetById(ACTOR_PARTY_LEADER);
+    struct ObjectEvent *objectEvent = ObjectEvent_GetById(GANGWAY_SOUTH);
 
-    SET_IMAGE_PRIORITY(actor, 1);
-    SET_SHADOW_PRIORITY(actor, 1);
+    SET_IMAGE_PRIORITY(objectEvent, 1);
   }
   {
-    struct FieldActor *actor = Object_GetById(GARET);
+    struct ObjectEvent *objectEvent = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
 
-    SET_IMAGE_PRIORITY(actor, 1);
-    SET_SHADOW_PRIORITY(actor, 1);
+    SET_IMAGE_PRIORITY(objectEvent, 1);
+    SET_SHADOW_PRIORITY(objectEvent, 1);
   }
   {
-    struct FieldActor *actor = Object_GetById(IVAN);
+    struct ObjectEvent *objectEvent = ObjectEvent_GetById(GARET);
 
-    SET_IMAGE_PRIORITY(actor, 1);
-    SET_SHADOW_PRIORITY(actor, 1);
+    SET_IMAGE_PRIORITY(objectEvent, 1);
+    SET_SHADOW_PRIORITY(objectEvent, 1);
   }
   {
-    struct FieldActor *actor = Object_GetById(MIA);
+    struct ObjectEvent *objectEvent = ObjectEvent_GetById(IVAN);
 
-    SET_IMAGE_PRIORITY(actor, 1);
-    SET_SHADOW_PRIORITY(actor, 1);
+    SET_IMAGE_PRIORITY(objectEvent, 1);
+    SET_SHADOW_PRIORITY(objectEvent, 1);
+  }
+  {
+    struct ObjectEvent *objectEvent = ObjectEvent_GetById(MIA);
+
+    SET_IMAGE_PRIORITY(objectEvent, 1);
+    SET_SHADOW_PRIORITY(objectEvent, 1);
   }
   REG_BG3CNT = cnt = (REG_BG3CNT & ~BGCNT_PRIORITY(3)) | BGCNT_PRIORITY(2);
   REG_BG2CNT = cnt = (REG_BG2CNT & ~BGCNT_PRIORITY(3)) | BGCNT_PRIORITY(3);
@@ -752,13 +758,13 @@ s32 LemurianShip_SetupScene(void) {
              &REG_BLDCNT);
   Io_Write16(BLEND_ALPHA(16, 8), &REG_BLDALPHA);
   {
-    struct MapLayerScroll *layer = map->layers + 1;
+    struct MapGridLayerScroll *layer = grid->layers + 1;
 
     layer->offsetY += -PIXELS(90);
-    layer = map->layers + 2;
+    layer = grid->layers + 2;
     layer->offsetY += -PIXELS(90);
   }
-  Engine_MapRedraw();
+  Engine_MapGridRedraw();
   Ripple_Start();
   return 0;
 }
@@ -911,7 +917,7 @@ static void Curtain_Start(void) {
   Engine_VramLoad(sCurtainVramSlot, 0x100, tiles);
 
   sCurtainGap = 0x30;
-  FieldScheduler_AddCallback(Curtain_Close, TASK_PRIORITY_SCENE);
+  FieldScheduler_AddCallback(Curtain_Close, TASK_PRIORITY_MAP);
 }
 
 /// The ship's glow: ShipGlow_CyclePalette shows six of these colours at a
@@ -963,44 +969,45 @@ s16 gRippleSine[256] = {
 };
 // clang-format on
 
-struct SceneEntrance gLemurianShipEntrances[] = {
-    {ENTRANCE_DEFAULT, CONDITION_ALWAYS, 408, 0, 200, FACING_NORTH, 0, -1, -1,
+struct MapWarpDest gLemurianShipWarpDests[] = {
+    {WARP_DEST_DEFAULT, CONDITION_ALWAYS, 408, 0, 200, FACING_NORTH, 0, -1, -1,
      -1, -1, 0},
     {LEMURIAN_SHIP_FROM_LALIVERO_FARANS_HOUSE, CONDITION_ALWAYS, 312, 0, 296,
      FACING_NORTH, 0, -1, -1, -1, 328, 0},
-    {SCENE_TABLE_END},
+    {MAP_TABLE_END},
 };
 
-u32 gLemurianShipExits[] = {
-    SCENE_EXITS(LemurianShip),
-    SCENE_EXIT(LEMURIAN_SHIP_TO_LALIVERO_FARANS_HOUSE, LaliveroFaransHouse,
-               LALIVERO_FARANS_HOUSE_FROM_LEMURIAN_SHIP),
-    SCENE_EXITS_END,
+u32 gLemurianShipWarps[] = {
+    MAP_WARPS(LemurianShip),
+    MAP_WARP(LEMURIAN_SHIP_TO_LALIVERO_FARANS_HOUSE, LaliveroFaransHouse,
+             LALIVERO_FARANS_HOUSE_FROM_LEMURIAN_SHIP),
+    MAP_WARPS_END,
 };
 
-struct ScenePlacement gLemurianShipPlacements[] = {
-    {GARET, CONDITION_ALWAYS, ACTOR_STAND, 0, 0, 0, FACING_EAST,
+struct ObjectEventTemplate gLemurianShipObjectEventTemplates[] = {
+    {GARET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_EAST,
      TALK_FACE_PARTY, 0},
-    {IVAN, CONDITION_ALWAYS, ACTOR_STAND, 0, 0, 0, FACING_EAST, TALK_FACE_PARTY,
-     0},
-    {MIA, CONDITION_ALWAYS, ACTOR_STAND, 0, 0, 0, FACING_EAST, TALK_FACE_PARTY,
-     0},
-    {SPRITE_GANGWAY, CONDITION_ALWAYS, ACTOR_STAND, PIXELS(312), 0, PIXELS(248),
-     FACING_SOUTH, TALK_KEEP_FACING, 0},
-    {SPRITE_GANGWAY, CONDITION_ALWAYS, ACTOR_STAND, PIXELS(312), 0, PIXELS(312),
-     FACING_SOUTH, TALK_KEEP_FACING, 0},
-    {SCENE_TABLE_END},
+    {IVAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_EAST,
+     TALK_FACE_PARTY, 0},
+    {MIA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_EAST,
+     TALK_FACE_PARTY, 0},
+    {SPRITE_GANGWAY, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, PIXELS(312), 0,
+     PIXELS(248), FACING_SOUTH, TALK_KEEP_FACING, 0},
+    {SPRITE_GANGWAY, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, PIXELS(312), 0,
+     PIXELS(312), FACING_SOUTH, TALK_KEEP_FACING, 0},
+    {MAP_TABLE_END},
 };
 
-struct SceneEvent gLemurianShipEvents[] = {
-    {EVENT_TOUCH, 1, CONDITION_ALWAYS, EVENT_SCRIPT(Event_LeaveTheShip)},
+struct MapEvent gLemurianShipEvents[] = {
+    {MAP_EVENT_COORD, 1, CONDITION_ALWAYS,
+     EVENT_SCRIPT(EventScript_LeaveTheShip)},
     {PSYNERGY_IN_AREA(ABILITY_REVEAL, PSYNERGY_PHASE_EFFECT_ACTS), 0,
      CONDITION_ALWAYS, EVENT_SCRIPT(Ripple_StopForReveal)},
     {PSYNERGY_IN_AREA(ABILITY_REVEAL, PSYNERGY_PHASE_EFFECT_ENDS), 0,
      CONDITION_ALWAYS, EVENT_SCRIPT(Ripple_Start)},
     {USE_ITEM(ITEM_BLACK_ORB), 10, CONDITION_ALWAYS,
-     EVENT_SCRIPT(Event_RaiseTheShip)},
-    {SCENE_EVENTS_END},
+     EVENT_SCRIPT(EventScript_RaiseTheShip)},
+    {MAP_EVENTS_END},
 };
 
 s32 gOrbGlowActive = 0;

@@ -11,8 +11,8 @@ void FieldEffect_RunForceOnTarget(s32 unused) { FieldEffect_RunForce(); }
 
 /// Writes the position 16 pixels above the actor.
 static __inline__ void
-FieldEffect_GetPositionAboveActor(struct FieldActor *obj,
-                                  struct EffectVector *pos) {
+FieldEffect_GetPositionAboveObjectEvent(struct ObjectEvent *obj,
+                                        struct EffectVector *pos) {
   SET_POSITION(pos, obj->x.fixed, obj->y.fixed + ABOVE, obj->z.fixed);
 }
 
@@ -26,14 +26,14 @@ FieldEffect_GetPositionAboveActor(struct FieldActor *obj,
 /// (gFieldEffect_HeavyImpactScript, SpawnHeavyImpactEffect). Called by
 /// FieldEffect_Run, and through FieldEffect_RunForceOnTarget.
 void FieldEffect_RunForce(void) {
-  struct FieldActor *target;
+  struct ObjectEvent *target;
   s32 eventTarget;
-  struct FieldActor *copies[4];
+  struct ObjectEvent *copies[4];
   struct EffectVector pos;
-  struct FieldActor *projectile;
-  struct FieldActor *copy;
-  struct FieldActor *caster;
-  struct FieldEffectScene *scene;
+  struct ObjectEvent *projectile;
+  struct ObjectEvent *copy;
+  struct ObjectEvent *caster;
+  struct FieldEffectWork *effectWork;
   struct EffectSlot *effect;
   struct AnimationObject *sharedAnimation;
   void *event;
@@ -41,16 +41,16 @@ void FieldEffect_RunForce(void) {
   s32 i;
   u8 resourceSlot;
 
-  scene = gEffectWork;
-  target = scene->child;
+  effectWork = gEffectWork;
+  target = effectWork->child;
   FieldEffect_FadeToEffectColor();
   AudioCommand_PlayFar(SE_130);
-  effect = scene->effects;
+  effect = effectWork->effects;
 
   // 12 flashes burst from over the caster's head, one every 2 frames.
   for (i = 0; i <= 11; i++) {
-    caster = scene->mainObject;
-    FieldEffect_GetPositionAboveActor(caster, &pos);
+    caster = effectWork->mainObject;
+    FieldEffect_GetPositionAboveObjectEvent(caster, &pos);
     Camera_WorldToScreen(&pos);
     EffectSlot_Initialize(effect, SPRITE_PARTICLE, pos.x, pos.z);
     EffectSlot_SetCallback(effect, FieldEffect_UpdateRadialBurst);
@@ -65,19 +65,19 @@ void FieldEffect_RunForce(void) {
 
   // The shot: 8 pixels in front of the caster, growing from 0.25 to full
   // size by 0x500 a frame (39 frames).
-  caster = scene->mainObject;
+  caster = effectWork->mainObject;
   pos.x = caster->x.fixed;
   pos.y = caster->y.fixed + ABOVE;
   pos.z = caster->z.fixed;
-  Vector_AddPolarOffset(8 << 16, scene->angle, &pos);
-  projectile = (struct FieldActor *)Object_Spawn(0xd7, pos.x, pos.y, pos.z);
+  Vector_AddPolarOffset(8 << 16, effectWork->angle, &pos);
+  projectile = (struct ObjectEvent *)Object_Spawn(0xd7, pos.x, pos.y, pos.z);
   if (projectile == NULL) {
     FieldEffect_FadeFromEffectColor();
     return;
   }
   projectile->scaleY = 0x4000;
   projectile->scaleX = 0x4000;
-  projectile->facing = scene->angle;
+  projectile->facing = effectWork->angle;
   projectile->speed = 4 << 16;
   projectile->acceleration = 4 << 16;
   projectile->motionFlags = 0;
@@ -99,12 +99,12 @@ void FieldEffect_RunForce(void) {
   // Three afterimages, sharing one set of graphics.
   sharedAnimation = NULL;
   for (i = 2; i >= 0; i--) {
-    copy = copies[i] = (struct FieldActor *)Object_Spawn(
+    copy = copies[i] = (struct ObjectEvent *)Object_Spawn(
         0xd7, projectile->x.fixed, projectile->y.fixed, projectile->z.fixed);
     if (copy != NULL) {
       copy->scaleY = 0xf000;
       copy->scaleX = 0xf000;
-      copy->facing = scene->angle;
+      copy->facing = effectWork->angle;
       copy->speed = 4 << 16;
       copy->acceleration = 4 << 16;
       copy->motionFlags = 0;
@@ -123,16 +123,16 @@ void FieldEffect_RunForce(void) {
   // (gFieldEffect_BurstParticleObjectScript + 4 is
   // gFieldEffect_HeavyImpactScript); each afterimage follows 3 frames apart and
   // is freed on arrival.
-  if (scene->enabled != 0) {
-    caster = scene->mainObject;
+  if (effectWork->enabled != 0) {
+    caster = effectWork->mainObject;
     pos.x = caster->x.fixed;
     pos.y = caster->y.fixed + ABOVE;
     pos.z = caster->z.fixed;
-    Vector_AddPolarOffset(56 << 16, scene->angle, &pos);
+    Vector_AddPolarOffset(56 << 16, effectWork->angle, &pos);
   } else {
-    pos.x = scene->x;
-    pos.y = scene->y + ABOVE;
-    pos.z = scene->z;
+    pos.x = effectWork->x;
+    pos.y = effectWork->y + ABOVE;
+    pos.z = effectWork->z;
   }
   Object_SetMoveTargetFar((struct ObjectRuntime *)projectile, pos.x, pos.y,
                           pos.z);
@@ -156,18 +156,19 @@ void FieldEffect_RunForce(void) {
     WaitFrames(1);
 
   // Push what was hit 16 pixels, at 1 pixel a frame, if nothing is in the
-  // way: the ground there must be within a step (Map_CheckObjectStep 0) and
+  // way: the ground there must be within a step (MapGrid_CheckObjectStep 0) and
   // free of objects. It hops (8 pixels a frame) with childOption; a scene's
   // childMode leaves it be.
-  if (target != NULL && scene->childMode == 0) {
-    if (scene->childOption != 0)
+  if (target != NULL && effectWork->childMode == 0) {
+    if (effectWork->childOption != 0)
       target->velocityY = 8 << 16;
     pos.x = target->x.fixed;
     pos.y = target->y.fixed;
     pos.z = target->z.fixed;
-    Vector_AddPolarOffset(16 << 16, scene->angle, &pos);
-    if (Map_CheckObjectStepFar((struct ObjectRuntime *)target,
-                               (struct FieldPosition *)&pos) == MAP_STEP_OPEN &&
+    Vector_AddPolarOffset(16 << 16, effectWork->angle, &pos);
+    if (MapGrid_CheckObjectStepFar((struct ObjectRuntime *)target,
+                                   (struct FieldPosition *)&pos) ==
+            MAPGRID_STEP_OPEN &&
         ScriptObject_CheckOverlapFar((struct ScriptObjectEntry *)target,
                                      (s32 *)&pos) == 0) {
       target->acceleration = 1 << 16;
@@ -181,7 +182,7 @@ void FieldEffect_RunForce(void) {
   event = FieldEffect_FindMatchingEvent(PSYNERGY_EV(PSYNERGY_PHASE_EFFECT_ACTS),
                                         FIELD_KIND_FORCE, &eventTarget);
   if (event != NULL)
-    Field_RunEventAction(event, gGameState.selectedActor, eventTarget);
+    Field_RunEventAction(event, gGameState.selectedObjectEvent, eventTarget);
   WaitFrames(10);
   FieldEffect_FadeFromEffectColor();
   WaitFrames(20);

@@ -13,8 +13,8 @@
 /// Vale runs them with the lightning while FLAG_VALE_STORM is set
 /// (vale_gate.c).
 void FieldEffect_UpdateGroundParticles(void) {
-  struct MapScrollWork *view = gMapWork[0];
-  struct GroundParticleWork *work = gMapWork[21];
+  struct MapGridScrollWork *view = gMapGridWork[0];
+  struct GroundParticleWork *work = gMapGridWork[21];
   s32 *camera = &view->viewX;
   s32 cameraX = camera[0];
   s32 cameraZ = camera[1];
@@ -50,13 +50,14 @@ void FieldEffect_UpdateGroundParticles(void) {
       s32 *leader = view->origin;
 
       // A new spot up to 128 pixels either way of the leader. The height
-      // call passes pixels where Map_GetTerrainHeight takes 16.16, as in
+      // call passes pixels where MapGrid_GetTerrainHeight takes 16.16, as in
       // ObjectMotion_SetHorizontalPositionWithTerrain (see the XXX there).
       x = leader[0] + (Random16() << 8) - 0x800000;
       y = leader[2] + (Random16() << 8) - 0x800000;
       particle->positionX = x;
       particle->positionZ = y;
-      particle->positionY = Map_GetTerrainHeightFar(0, x >> 16, y >> 16) << 16;
+      particle->positionY = MapGrid_GetTerrainHeightFar(0, x >> 16, y >> 16)
+                            << 16;
       particle->timer = 16;
     }
   }
@@ -131,7 +132,7 @@ void FieldEffect_StartGroundParticles(void) {
    * instructions differ in tbs-en. */
   work = Runtime_AllocateBlock(HEAP_SLOT_GROUND_PARTICLES,
                                sizeof(struct GroundParticleWork));
-  leader = ((struct MapScrollWork *)gMapWork[0])->origin;
+  leader = ((struct MapGridScrollWork *)gMapGridWork[0])->origin;
   FieldEffect_SetQueuedSoundAndPlay(SE_170);
   words = 0;
   particle = work->particles;
@@ -154,7 +155,8 @@ void FieldEffect_StartGroundParticles(void) {
     z = leader[2];
     particle->positionX = x;
     particle->positionZ = z;
-    particle->positionY = Map_GetTerrainHeightFar(0, x >> 16, z >> 16) << 16;
+    particle->positionY = MapGrid_GetTerrainHeightFar(0, x >> 16, z >> 16)
+                          << 16;
     particle->timer = (i & 15) + 1;
     particle++;
   }
@@ -180,7 +182,7 @@ union DustWord {
 /// (FieldMotes_Start has only its overlay veneer).
 void FieldMotes_Update(void) {
   struct GroundParticleWork *work = WORK_SLOT(HEAP_SLOT_GROUND_PARTICLES);
-  struct MapScrollWork *map = WORK_SLOT(HEAP_SLOT_MAP);
+  struct MapGridScrollWork *grid = WORK_SLOT(HEAP_SLOT_MAP_GRID);
   u32 spawned = 0;
   u32 i;
   struct GroundParticle *mote = work->particles;
@@ -190,7 +192,7 @@ void FieldMotes_Update(void) {
     s32 y;
 
     if (--mote->timer != 0xffff) {
-      s32 *camera = &map->viewX;
+      s32 *camera = &grid->viewX;
       s32 cameraX = camera[0];
       s32 cameraZ = camera[1];
       u16 age = mote->timer;
@@ -231,13 +233,13 @@ void FieldMotes_Update(void) {
       }
     }
     if (spawned < 8 && mote->timer == 0) {
-      s32 *leader = map->origin;
+      s32 *leader = grid->origin;
 
       x = leader[0] + (Random16() << 8) - 0x800000;
       y = leader[2] + (Random16() << 8) - 0x800000;
       mote->positionZ = y;
       mote->positionX = x;
-      mote->positionY = Map_GetTerrainHeightFar(0, x >> 16, y >> 16) << 16;
+      mote->positionY = MapGrid_GetTerrainHeightFar(0, x >> 16, y >> 16) << 16;
       mote->timer = 120;
       mote->delay = 0;
       spawned++;
@@ -268,7 +270,7 @@ void FieldMotes_Start(void) {
   work->tileBase = VramCache_Load(work->entry, 0x300, tiles);
   Runtime_ReleaseHeapBlock(HEAP_SLOT_TILE_SCRATCH);
   for (i = 0; i < FIELD_WEATHER_PARTICLE_COUNT; i++) {
-    s32 *pos = ((struct MapScrollWork *)gMapWork[0])->origin;
+    s32 *pos = ((struct MapGridScrollWork *)gMapGridWork[0])->origin;
     /* FAKEMATCH(temporary): one integer cursor for the attribute stores and
      * the height's x keeps the stores in r1; as an s32 * cursor and an x of
      * its own, 16 of 83 instructions differ in tbs-en. */
@@ -283,7 +285,8 @@ void FieldMotes_Start(void) {
     z = pos[2];
     mote->positionX = (s32)p;
     mote->positionZ = z;
-    mote->positionY = Map_GetTerrainHeightFar(0, (s32)p >> 16, z >> 16) << 16;
+    mote->positionY = MapGrid_GetTerrainHeightFar(0, (s32)p >> 16, z >> 16)
+                      << 16;
     mote->timer = (i & 15) + 1;
     mote++;
   }
@@ -304,7 +307,7 @@ void FieldEffect_UpdateSparkles(void) {
   struct GroundParticleWork *work;
   u32 spawned;
   u32 i;
-  struct MapScrollWork *map;
+  struct MapGridScrollWork *grid;
   s32 *camera;
   s32 spawnX;
   s32 spawnZ;
@@ -323,8 +326,8 @@ void FieldEffect_UpdateSparkles(void) {
 
   work = WORK_SLOT(HEAP_SLOT_GROUND_PARTICLES);
   spawned = 0;
-  map = WORK_SLOT(HEAP_SLOT_MAP);
-  camera = &map->viewX;
+  grid = WORK_SLOT(HEAP_SLOT_MAP_GRID);
+  camera = &grid->viewX;
   spawnX = 0;
   spawnZ = 0;
   i = 0;
@@ -371,12 +374,12 @@ void FieldEffect_UpdateSparkles(void) {
         // The rest of a burst, on the first sparkle's spot. The height is
         // read at sx >> 16 and sy >> 16, the last live sparkle's screen
         // point shifted down 16 bits (0, or -1 off the left or top), where
-        // Map_GetTerrainHeight takes 16.16 pixels; the burst's first sparkle
-        // reads it the same way (see the XXX in
+        // MapGrid_GetTerrainHeight takes 16.16 pixels; the burst's first
+        // sparkle reads it the same way (see the XXX in
         // ObjectMotion_SetHorizontalPositionWithTerrain).
         sparkle->positionX = spawnX;
         sparkle->positionZ = spawnZ;
-        sparkle->positionY = Map_GetTerrainHeightFar(0, sx >> 16, sy >> 16)
+        sparkle->positionY = MapGrid_GetTerrainHeightFar(0, sx >> 16, sy >> 16)
                              << 16;
         sparkle->timer = 62 - delay;
         sparkle->delay = 0;
@@ -384,12 +387,12 @@ void FieldEffect_UpdateSparkles(void) {
         delay += 4;
       } else if ((Random16() & 255) == 0) {
         // A burst starts at a random spot.
-        leader = map->origin;
+        leader = grid->origin;
         spawnX = leader[0] + (Random16() << 8) - 0x800000;
         spawnZ = leader[2] + (Random16() << 8) - 0x800000;
         sparkle->positionX = spawnX;
         sparkle->positionZ = spawnZ;
-        sparkle->positionY = Map_GetTerrainHeightFar(0, sx >> 16, sy >> 16)
+        sparkle->positionY = MapGrid_GetTerrainHeightFar(0, sx >> 16, sy >> 16)
                              << 16;
         sparkle->timer = 30;
         sparkle->delay = delay;
@@ -426,7 +429,7 @@ void FieldEffect_InitializeSparkles(void) {
   i = 0;
   clear = 0;
   do {
-    struct MapScrollWork *view = gMapWork[0];
+    struct MapGridScrollWork *view = gMapGridWork[0];
     s32 *leader;
     /* FAKEMATCH(temporary): one integer cursor for the stores and the x keeps
      * the leader in r2; as a u32 * cursor and an x of its own, 14 of 74
@@ -445,8 +448,8 @@ void FieldEffect_InitializeSparkles(void) {
     z = leader[2];
     sparkle->positionX = clear;
     sparkle->positionZ = clear;
-    sparkle->positionY = Map_GetTerrainHeightFar(0, (s32)attr >> 16, z >> 16)
-                         << 16;
+    sparkle->positionY =
+        MapGrid_GetTerrainHeightFar(0, (s32)attr >> 16, z >> 16) << 16;
     sparkle->timer = (i & 15) + 1;
     i++;
     sparkle++;

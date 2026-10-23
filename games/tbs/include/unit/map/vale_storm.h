@@ -1,14 +1,14 @@
-#ifndef ALCHEMY_UNIT_SCENE_VALE_STORM_H
-#define ALCHEMY_UNIT_SCENE_VALE_STORM_H
+#ifndef ALCHEMY_UNIT_MAP_VALE_STORM_H
+#define ALCHEMY_UNIT_MAP_VALE_STORM_H
 
 #include "types.h"
 #include "map_tables.h"
 
-const struct SceneEntrance *ValeStorm_GetEntrances(void);
-const struct SceneRegion *ValeStorm_GetRegions(void);
-const u32 *ValeStorm_GetExits(void);
-const struct ScenePlacement *ValeStorm_GetPlacements(void);
-const struct SceneEvent *ValeStorm_GetEvents(void);
+const struct MapWarpDest *ValeStorm_GetWarpDests(void);
+const struct MapWarpRegion *ValeStorm_GetRegions(void);
+const u32 *ValeStorm_GetWarps(void);
+const struct ObjectEventTemplate *ValeStorm_GetObjectEventTemplates(void);
+const struct MapEvent *ValeStorm_GetEvents(void);
 s32 ValeStorm_Initialize(void);
 extern u8 gValeStorm_FrameModes[];
 extern s32 gValeStorm_ShovingManScript[];
@@ -33,11 +33,11 @@ extern s32 gValeStorm_GaretGatherPath[];
 extern s32 gValeStorm_LookAroundScript[];
 extern s32 gValeStorm_SquashAndStretchScript[];
 extern s32 gValeStorm_BoulderRollsDownriver[];
-extern struct SceneEntrance gValeStorm_Entrances[];
-extern u32 gValeStorm_Exits[];
-extern struct ScenePlacement gValeStorm_Placements[];
-extern struct ScenePlacement gValeStorm_BoulderWatchers[];
-extern struct SceneEvent gValeStorm_Events[];
+extern struct MapWarpDest gValeStorm_WarpDests[];
+extern u32 gValeStorm_Warps[];
+extern struct ObjectEventTemplate gValeStorm_ObjectEventTemplates[];
+extern struct ObjectEventTemplate gValeStorm_BoulderWatchers[];
+extern struct MapEvent gValeStorm_Events[];
 extern u16 gValeStorm_SanctumDoorOpens[];
 extern u16 gValeStorm_IsaacsDoorOpens[];
 extern u16 gValeStorm_GrandparentsDoorOpens[];

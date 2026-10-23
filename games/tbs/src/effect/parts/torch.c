@@ -19,7 +19,8 @@
 ///
 /// Opens the canvas layer for the entrance and closes it at the end. Writes
 /// background colours 1 to 63 and keeps their working copy in the first 128
-/// bytes of Ram_MapCellBuffer; schedules and removes the HBlank DMA callback.
+/// bytes of Ram_MapGridCellBuffer; schedules and removes the HBlank DMA
+/// callback.
 void BattleEffect_RunTorch(struct BattleEffectArgument *effect) {
   void **slots;
   struct BattleEffectWork *work;
@@ -86,8 +87,8 @@ void BattleEffect_RunTorch(struct BattleEffectArgument *effect) {
   // Colours 1 to 63: a fiery ramp that brightens to colour 32 and darkens
   // again, red first, then green and blue (t is the distance from either
   // end), written to the background palette and to a copy in
-  // Ram_MapCellBuffer that the frame loop rotates.
-  pal = (u16 *)Ram_MapCellBuffer;
+  // Ram_MapGridCellBuffer that the frame loop rotates.
+  pal = (u16 *)Ram_MapGridCellBuffer;
   for (i = 1; i != 64; i++) {
     if (i > 31)
       t = 64 - i;

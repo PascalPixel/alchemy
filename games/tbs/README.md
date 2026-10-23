@@ -27,7 +27,7 @@ often the place the battle started from, with everyone where they stood.
 
 `Game_Run`, in [object/scene.c](src/object/object/map.c), is this loop of
 scenes, and it never returns. `System_Initialize` calls it at power-on
-with `GAME_RUN_TITLE`, which makes the title (`SceneId_Title`) the first
+with `GAME_RUN_TITLE`, which makes the title (`MapId_Title`) the first
 scene; the debug start modes begin at Vale's gate or the clear screen
 instead, and only while `gDebugMode` is set. The current scene and the
 entrance the party arrives by are `gGameState.scene` and
@@ -48,24 +48,24 @@ Each pass of the loop first clears away what the last scene left running:
 
 Then it does one of two things:
 
-- A field scene has its flags updated (`Scene_ResetFlagsOnEnter`), its music
+- A field scene has its flags updated (`Map_ResetFlagsOnEnter`), its music
   started unless `FLAG_KEEP_MUSIC` or `FLAG_KEEP_MUSIC_HELD` keeps what is
-  playing, and its overlay unpacked (`Scene_LoadOverlay`). `Field_RunScene`
+  playing, and its overlay unpacked (`Map_LoadOverlay`). `Field_RunMap`
   runs it until the party takes an exit and returns the exit's kind, and
-  `Scene_TakeExit` turns that into the next scene and entrance.
-- A battle or a minigame is a scene number from `SCENE_BLANK` up
-  (`SCENE_BATTLE`, `SCENE_LUCKY_DICE`, `SCENE_REEL_GAME`), with no row in the
+  `Map_TakeWarp` turns that into the next scene and entrance.
+- A battle or a minigame is a scene number from `MAP_BLANK` up
+  (`MAP_BATTLE`, `MAP_LUCKY_DICE`, `MAP_REEL_GAME`), with no row in the
   scene table and no overlay, since its code is in the main image. It returns
-  a result rather than an exit, and `Scene_ReturnFromBattle` picks the scene
+  a result rather than an exit, and `Map_ReturnFromBattle` picks the scene
   to go back to: the defeat point after a defeat, the destination an event
   set, or else the field scene the battle started from, with
   `FLAG_KEEP_PARTY_POSITION` set so that the party and the actors come back
   where they were.
 
 A random battle is therefore an exit like any other: the field scene sets
-the next scene to `SCENE_BATTLE` and leaves, and the loop loads it again
+the next scene to `MAP_BATTLE` and leaves, and the loop loads it again
 afterwards. [Running a place](src/object/README.md) follows a field scene
-from `Field_RunScene` to its exit, including how a battle is chosen from the
+from `Field_RunMap` to its exit, including how a battle is chosen from the
 encounter zones in `encounter.tsv`.
 
 The tables on this page give each value as an ordinary number, with the
@@ -74,12 +74,12 @@ hexadecimal form the source writes it in beside it.
 | Name | Value | Meaning |
 | --- | --- | --- |
 | `GAME_RUN_TITLE` | 0 | start at the title, with a fresh game state |
-| `GAME_RUN_DEBUG_VALE` | 1 | in debug mode, start at `SceneId_ValeGate` |
+| `GAME_RUN_DEBUG_VALE` | 1 | in debug mode, start at `MapId_ValeGate` |
 | `GAME_RUN_DEBUG_CLEAR` | 2 | in debug mode, start at the clear screen |
-| `SCENE_BLANK` | 507 (`0x1fb`) | the first scene number with no row in the scene table, whose rows are 0 to 200 |
-| `SCENE_REEL_GAME` | 508 (`0x1fc`) | Lucky Wheels at Tolbi's spring |
-| `SCENE_LUCKY_DICE` | 509 (`0x1fd`) | Lucky Dice at Tolbi's spring |
-| `SCENE_BATTLE` | 510 (`0x1fe`) | a battle |
+| `MAP_BLANK` | 507 (`0x1fb`) | the first scene number with no row in the scene table, whose rows are 0 to 200 |
+| `MAP_REEL_GAME` | 508 (`0x1fc`) | Lucky Wheels at Tolbi's spring |
+| `MAP_LUCKY_DICE` | 509 (`0x1fd`) | Lucky Dice at Tolbi's spring |
+| `MAP_BATTLE` | 510 (`0x1fe`) | a battle |
 
 ## Scenes and overlays
 
@@ -95,7 +95,7 @@ an overlay: a packed piece of code that `Resource_LoadCode` unpacks into
 256 KB in all), when the scene loads, over the one before.
 
 The field engine knows a scene only through six entry points, short jumps
-at the start of its overlay (`struct SceneEntries`): its initialization, and the functions
+at the start of its overlay (`struct MapEntries`): its initialization, and the functions
 that return its entrances, exits, placements, events and exit regions. They
 are functions rather than pointers to tables so that a scene can return a
 different table as the story moves on. Each overlay also ends in an import
@@ -125,25 +125,25 @@ the party stays inside. The two are chosen separately: the Bilibin
 Barricade runs on Bilibin's code but is a place of its own, and Bilibin's
 houses have their own code but are part of Bilibin.
 
-The scene table, `gField_SceneTable` in [field/maps.s](src/field/maps.s),
-has a row for each of the 201 scenes, `struct SceneRecord`: the overlay's
+The scene table, `gField_MapTable` in [field/maps.s](src/field/maps.s),
+has a row for each of the 201 scenes, `struct MapRecord`: the overlay's
 resource, the group, the variant and the map. Each row also defines the
-scene's id, `SceneId_<Place>`, as the row's position, so code names a scene
+scene's id, `MapId_<Place>`, as the row's position, so code names a scene
 by a symbol the linker resolves rather than by a number. The 201 scenes
 share 96 overlays and 71 groups. Vale is eight scenes in one group, and the
 World Map is a group of one.
 
-The variant marks towns. A `SCENE_VARIANT_TOWN` scene, a town or one of its
+The variant marks towns. A `MAP_TYPE_TOWN` scene, a town or one of its
 interiors, restores no PP, recovers no Djinn and does no poison damage as
 the party walks, Retreat is blocked there and Avoid doesn't wear off.
 
 | Name | Value | Meaning |
 | --- | --- | --- |
-| scenes | 201 | rows of `gField_SceneTable` |
+| scenes | 201 | rows of `gField_MapTable` |
 | overlays | 96 | the scenes' code, some shared by several scenes |
 | groups | 71 | places: their music, area name and kept flags |
-| `SCENE_VARIANT_FIELD` | 1 | every other scene: dungeons, the world map |
-| `SCENE_VARIANT_TOWN` | 2 | a town or one of its interiors |
+| `MAP_TYPE_FIELD` | 1 | every other scene: dungeons, the world map |
+| `MAP_TYPE_TOWN` | 2 | a town or one of its interiors |
 
 ## Entrances and exits
 
@@ -158,12 +158,12 @@ scene's entrances are named by where the party arrives from
 (`VALE_GATE_FROM_SANCTUM`) and its exits by where they lead
 (`VALE_GATE_TO_WORLD_MAP`), and a door is named the same from both sides.
 
-An exit row, `SCENE_EXIT(exit, scene, entrance)`, maps an exit kind to a
-scene and an entrance. `Scene_TakeExit` looks up the current scene's rows in
+An exit row, `MAP_WARP(exit, scene, entrance)`, maps an exit kind to a
+scene and an entrance. `Map_TakeWarp` looks up the current scene's rows in
 the overlay's exit table and takes the first one whose kind matches; a row
-written `SCENE_EXIT_IF` is taken only while its flag is clear, and the
+written `MAP_WARP_IF` is taken only while its flag is clear, and the
 search otherwise goes on to the next row. Sol Sanctum's entrance
-(`gSolSanctumEntrance_Exits`) has three rows for `SOL_ENTRANCE_TO_VALE`,
+(`gSolSanctumEntrance_Warps`) has three rows for `SOL_ENTRANCE_TO_VALE`,
 with `FLAG_SOL_SANCTUM_ERUPTED`, then `FLAG_VALE_PARTY_LEFT`, then no flag.
 The entrance then decides where the party appears, and a scene's
 initialization often tests it as well, to play the part of a sequence that
@@ -186,17 +186,17 @@ at a multiple of 8 can also be read and written as a byte, which is how
 counters live among the flags.
 
 The two ranges cleared for the scene code mean a scene never has to undo
-what it changed. `Scene_ResetFlagsOnEnter` clears the scene's own flags
-(`FLAG_SCENE_FIRST` to `FLAG_SCENE_LAST`) on every ordinary entrance, and the
-place's flags (`FLAG_PLACE_FIRST` to `FLAG_PLACE_LAST`) when the party enters
+what it changed. `Map_ResetFlagsOnEnter` clears the scene's own flags
+(`FLAG_MAP_TEMP_FIRST` to `FLAG_MAP_TEMP_LAST`) on every ordinary entrance, and the
+place's flags (`FLAG_MAPSEC_TEMP_FIRST` to `FLAG_MAPSEC_TEMP_LAST`) when the party enters
 another group. `FLAG_KEEP_PARTY_POSITION` keeps both ranges, which is what
 lets a scene come back from a battle unchanged. Entering a group also sets
-its `FLAG_PLACE_VISITED` flag, which puts the place's marker on the world
+its `FLAG_MAPSEC_VISITED` flag, which puts the place's marker on the world
 map screen.
 
 A scene reads the story flags in three places. Its entry functions choose
 which table to return; its event, placement and exit rows each carry a
-condition, and `Scene_FindEvent` runs the first event row whose kind,
+condition, and `Map_FindEvent` runs the first event row whose kind,
 trigger and condition fit; and its initialization restores what the flags
 say has already happened. Because rows and flags interact this way, some
 code can never run, and its comment opens with `Unused:` and says why.
@@ -208,9 +208,9 @@ code can never run, and its comment opens with `Unused:` and says why.
 | `FLAG_KEEP_PARTY_POSITION` | 265 (`0x109`) | keeps both cleared ranges, and the party where it was |
 | `FLAG_KEEP_MUSIC` | 282 (`0x11a`) | keeps the music for one scene change |
 | `FLAG_KEEP_MUSIC_HELD` | 283 (`0x11b`) | keeps the music for as long as it is set |
-| `FLAG_PLACE_VISITED(group)` | 384 (`0x180`) + group | the place's marker on the world map screen |
-| `FLAG_SCENE_FIRST` to `FLAG_SCENE_LAST` | 512 to 767 (`0x200` to `0x2ff`) | the scene's 256 flags, cleared on every ordinary entrance |
-| `FLAG_PLACE_FIRST` to `FLAG_PLACE_LAST` | 768 to 1,023 (`0x300` to `0x3ff`) | the place's 256 flags, cleared on entering another group |
+| `FLAG_MAPSEC_VISITED(group)` | 384 (`0x180`) + group | the place's marker on the world map screen |
+| `FLAG_MAP_TEMP_FIRST` to `FLAG_MAP_TEMP_LAST` | 512 to 767 (`0x200` to `0x2ff`) | the scene's 256 flags, cleared on every ordinary entrance |
+| `FLAG_MAPSEC_TEMP_FIRST` to `FLAG_MAPSEC_TEMP_LAST` | 768 to 1,023 (`0x300` to `0x3ff`) | the place's 256 flags, cleared on entering another group |
 
 [Game rules](src/game/README.md#the-game-flags) gives the layout and the
 calls.
@@ -271,7 +271,7 @@ The World Map, [world_map.c](src/map/world_map.c), is a scene like the
 others but drawn in perspective, on the two background layers the hardware
 can scale and rotate. The world is stored as a grid of squares, 512 pixels
 on a side, and only the 2 by 2 squares around the party are unpacked at a
-time; `Map_UpdateCurrentTileBlock` unpacks them into both layers. The
+time; `WorldMap_UpdateCurrentTileBlock` unpacks them into both layers. The
 picture below was made by moving that point across the whole map and laying
 each square out flat, one pixel for each pixel of the
 map, so it also shows the squares the map's data leaves blank.

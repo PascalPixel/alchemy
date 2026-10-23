@@ -9,18 +9,18 @@
 	.set import.Engine_HeapAllocate, 1
 	.set import.Engine_HeapRelease, 1
 	.set import.Engine_VramLoad, 1
-	.set import.Object_SetMode, 1
+	.set import.ObjectEvent_SetMode, 1
 	.set import.ObjectDispatch_SetAnimationSpeed, 1
 	.set import.Engine_ObjectSetScript, 1
 	.set import.Engine_ObjectCreate, 1
 	.set import.Engine_ObjectDispatchRelease, 1
 	.set import.Engine_ObjectSetPosition, 1
 	.set import.FieldObject_WaitForMove, 1
-	.set import.Engine_MapCopyCellsTo, 1
-	.set import.Map_GetTerrainHeight, 1
-	.set import.GetMapCellCollision, 1
-	.set import.Engine_MapCopyCellAttributes, 1
-	.set import.Engine_ActorSetSpriteFlags, 1
+	.set import.Engine_MapGridCopyCellsTo, 1
+	.set import.MapGrid_GetTerrainHeight, 1
+	.set import.MapGrid_GetMetatileBehaviorAt, 1
+	.set import.Engine_MapGridCopyCellAttributes, 1
+	.set import.Engine_ObjectEventSetSpriteFlags, 1
 	.set import.Engine_MessageShowCentered, 1
 	.set import.Engine_ItemLoadIcon, 1
 	.set import.PartyInventory_FindOwner, 1
@@ -28,29 +28,29 @@
 	.set import.Engine_GameFlagSet, 1
 	.set import.Engine_GameFlagClear, 1
 	.set import.PartyInventory_Discard, 1
-	.set import.Engine_EventStart, 1
-	.set import.Engine_EventEnd, 1
+	.set import.Engine_ScriptStart, 1
+	.set import.Engine_ScriptEnd, 1
 	.set import.Engine_PartyGiveItem, 1
-	.set import.Object_GetById, 1
-	.set import.Engine_ActorSetSpeed, 1
-	.set import.Engine_ActorMoveToAndWait, 1
-	.set import.Engine_ActorSetDestinationOffset, 1
-	.set import.Engine_ActorWaitForMove, 1
-	.set import.Engine_ActorSetAnimation, 1
-	.set import.Engine_ActorJump, 1
-	.set import.Engine_ActorSetChildValue, 1
+	.set import.ObjectEvent_GetById, 1
+	.set import.Engine_ObjectEventSetSpeed, 1
+	.set import.Engine_ObjectEventMoveToAndWait, 1
+	.set import.Engine_ObjectEventSetDestinationOffset, 1
+	.set import.Engine_ObjectEventWaitForMove, 1
+	.set import.Engine_ObjectEventSetAnimation, 1
+	.set import.Engine_ObjectEventJump, 1
+	.set import.Engine_ObjectEventSetChildValue, 1
 	.set import.ObjectGroup_SetChildValue, 1
-	.set import.Engine_ActorSetSpritePriority, 1
-	.set import.Engine_EventRequestExit, 1
+	.set import.Engine_ObjectEventSetSpritePriority, 1
+	.set import.Engine_ScriptRequestWarp, 1
 	.set import.Field_RequestDjinnBattle, 1
 	.set import.Engine_ColorBufferApplyTarget, 1
 	.set import.Engine_ColorBufferApplySource, 1
 	.set import.Engine_ColorBufferInterpolate, 1
-	.set import.Engine_EventOpenScreen, 1
-	.set import.Engine_EventCloseScreen, 1
-	.set import.Engine_EventWaitForScreen, 1
+	.set import.Engine_ScriptOpenScreen, 1
+	.set import.Engine_ScriptCloseScreen, 1
+	.set import.Engine_ScriptWaitForScreen, 1
 	.set import.Engine_ItemShowPicture, 1
-	.set import.Engine_ActorLookup, 1
+	.set import.Engine_ObjectEventLookup, 1
 	.set import.FieldEffect_StartFadeOverlay, 1
 	.set import.Field_EndBusyAndReveal, 1
 	.set import.Audio_PlayCueFromEventWork, 1

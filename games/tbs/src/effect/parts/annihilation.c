@@ -18,10 +18,10 @@
 ///   8          the target is struck; the canvas is filled
 ///   16 to 47   a fire burst grows over the target in three steps
 ///
-/// work->particles 0 to 63 hold the shards and Ram_MapCellBuffer the burst's
-/// pictures. Each drawing builds the blitters it needs and frees them the same
-/// frame; the effect ends with the transfer callback removed and the canvas
-/// layer closed.
+/// work->particles 0 to 63 hold the shards and Ram_MapGridCellBuffer the
+/// burst's pictures. Each drawing builds the blitters it needs and frees them
+/// the same frame; the effect ends with the transfer callback removed and the
+/// canvas layer closed.
 ///
 /// effect: the user and the target; a nonzero variant gives the burst its
 /// second picture and a sound.
@@ -48,7 +48,7 @@ void BattleEffect_RunAnnihilation(struct BattleEffectArgument *effect) {
   EFFECT_GET_WORK_AND_CANVAS(cursor, work, canvas);
   particleSheet = EFFECT_SLOT(slots, HEAP_SLOT_BATTLE_SHEET);
   camera = EFFECT_SLOT(slots, HEAP_SLOT_CAMERA);
-  burstPixels = Ram_MapCellBuffer;
+  burstPixels = Ram_MapGridCellBuffer;
   work->effect = effect;
   BattleEffect_StartCanvasLayer(0);
   Resource_LoadAndDecompress((s32)&ResourceId_FireStreakSheet, work->sheet, 1,
@@ -125,7 +125,7 @@ void BattleEffect_RunAnnihilation(struct BattleEffectArgument *effect) {
         strip = 0;
       else
         strip = 3 * (40 * 80);
-      blitters[0](canvas, Ram_MapCellBuffer + strip + step * (40 * 80),
+      blitters[0](canvas, Ram_MapGridCellBuffer + strip + step * (40 * 80),
                   origin.x / 2 - 20, origin.y - 48, 40, 80);
       // A busy delay before the blitter is freed (BattleEffect_CallDoNothing).
       // XXX: why it waits, as nothing here depends on the time; the Lost

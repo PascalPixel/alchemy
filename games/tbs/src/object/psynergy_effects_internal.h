@@ -106,24 +106,24 @@
 /// with DJINN_NO_HOP (0x800) beside it.
 #define DJINNI_EVENT_0 300
 
-/// A FieldActor seen with its position as one vector, to pass it whole. The
-/// gaps are FieldActor fields this view does not use.
+/// A ObjectEvent seen with its position as one vector, to pass it whole. The
+/// gaps are ObjectEvent fields this view does not use.
 struct Object {
   u8 pad0[6];
-  u16 angle;                    ///< FieldActor.facing, 1/65536 turns
+  u16 angle;                    ///< ObjectEvent.facing, 1/65536 turns
   struct EffectVector position; ///< 16.16 fixed-point pixels
   u8 pad1[14];
-  u8 kind; ///< FieldActor.terrainId; not read through this view
+  u8 kind; ///< ObjectEvent.terrainId; not read through this view
   u8 pad2[0x2d];
-  struct AnimationObject *sprite; ///< FieldActor.sprite
+  struct AnimationObject *sprite; ///< ObjectEvent.sprite
 };
 
 /// Per-frame update of an afterimage: closes half the distance to the object
 /// it is linked to, on all three axes.
 static inline void
 FieldEffect_MoveAfterimageHalfway(union FieldObject *fieldObject) {
-  struct FieldActor *afterimage = (struct FieldActor *)fieldObject;
-  struct FieldActor *target = afterimage->linkedObject;
+  struct ObjectEvent *afterimage = (struct ObjectEvent *)fieldObject;
+  struct ObjectEvent *target = afterimage->linkedObject;
 
   afterimage->x.fixed += (target->x.fixed - afterimage->x.fixed) / 2;
   afterimage->y.fixed += (target->y.fixed - afterimage->y.fixed) / 2;
@@ -133,11 +133,11 @@ FieldEffect_MoveAfterimageHalfway(union FieldObject *fieldObject) {
 /// Runs the update of each of the 24 effect slots. The scheduler callbacks
 /// FieldEffect_UpdateAllEffectSlots (setup.c) and FieldEffect_UpdateAllSlots
 /// (djinni.c) run it once a frame.
-static __inline__ void FieldEffect_UpdateSceneSlots(void) {
+static __inline__ void FieldEffect_UpdateEffectSlots(void) {
   struct EffectSlot *effect;
   s32 remainingSlots;
 
-  effect = ((struct FieldEffectScene *)gEffectWork)->effects;
+  effect = ((struct FieldEffectWork *)gEffectWork)->effects;
   remainingSlots = PSYNERGY_EFFECT_SLOT_COUNT - 1;
   do {
     remainingSlots -= 1;
@@ -146,8 +146,8 @@ static __inline__ void FieldEffect_UpdateSceneSlots(void) {
   } while (remainingSlots >= 0);
 }
 
-/// A FieldActor seen with the halfword at 0x64 unsigned and the one at 0x66
-/// signed, as the bytes read them (FieldActor's own types change the code).
+/// A ObjectEvent seen with the halfword at 0x64 unsigned and the one at 0x66
+/// signed, as the bytes read them (ObjectEvent's own types change the code).
 /// A Venus Djinni's falling motes (FieldEffect_UpdateDescendingOrbitObject).
 struct DescendingOrbitObject {
   u8 unk00[8];
@@ -155,12 +155,12 @@ struct DescendingOrbitObject {
   s32 y; ///< 16.16 fixed-point pixels
   s32 z; ///< 16.16 fixed-point pixels
   u8 unk14[80];
-  u16 timer; ///< FieldActor.timer: frames left of the spiral, 100 at the start
-  s16 angle; ///< FieldActor.work: its start on the circle, 1/65536 turns
+  u16 timer; ///< ObjectEvent.timer: frames left of the spiral, 100 at the start
+  s16 angle; ///< ObjectEvent.work: its start on the circle, 1/65536 turns
 };
 
-/// A FieldActor as the Venus Djinni's joining uses the Djinni, the leader and
-/// its motes and sparks; the notes give the FieldActor fields at the same
+/// A ObjectEvent as the Venus Djinni's joining uses the Djinni, the leader and
+/// its motes and sparks; the notes give the ObjectEvent fields at the same
 /// offsets, some under other names.
 struct CaptureObject {
   u8 unk00[8];
@@ -184,7 +184,7 @@ struct CaptureObject {
   u8 unk60[4];
   u16 timer; ///< as DescendingOrbitObject.timer
   u16 angle; ///< work: as DescendingOrbitObject.angle
-  struct FieldActor *linkedObject;
+  struct ObjectEvent *linkedObject;
   void (*callback)(union FieldObject *fieldObject); ///< update: run each frame
 };
 
@@ -221,8 +221,8 @@ struct WaveEffectSprite {
   u8 palette; ///< flags, despite the name: 0 drops shadow and outline
 };
 
-/// A FieldActor as the particles Move's hand and Carry shed use it; the notes
-/// give the FieldActor fields at the same offsets.
+/// A ObjectEvent as the particles Move's hand and Carry shed use it; the notes
+/// give the ObjectEvent fields at the same offsets.
 struct ItemBreakFragmentObject {
   u8 reserved00[72];
   s32 gravity; ///< 16.16 fixed-point pixels per frame, each frame
@@ -240,7 +240,7 @@ static inline void FieldEffect_InitializeFallingFragment(
   // Spawn and choose its position at the call site: combining the spawn here
   // moves the kind load after the coordinate loads in the native English build.
   if (fragment != NULL) {
-    fragment->motionFlags = ACTOR_FALLS;
+    fragment->motionFlags = OBJ_EVENT_FALLS;
     fragment->gravity = 0x1999;
     ObjectDispatch_SelectAnimationFar(fragment, 0);
     fragment->lifetime = 12;
@@ -258,7 +258,7 @@ static inline void FieldEffect_InitializeFallingFragment(
 /// pixels. Carry's and Lift's no-target effects are made with it.
 #define DEFINE_ITEM_BREAK_EFFECT(name, spawn)                                  \
   void name(void) {                                                            \
-    struct FieldEffectScene *work;                                             \
+    struct FieldEffectWork *work;                                              \
     struct MotionObject *obj;                                                  \
     struct MotionObject *pair[2];                                              \
     struct ScatterPosition pos;                                                \
@@ -310,8 +310,8 @@ static inline void FieldEffect_InitializeFallingFragment(
 
 #define ABOVE (16 << 16) ///< 16 pixels up
 
-/// A FieldActor as Ply's spark emitter and its sparks use it (ply.c); the
-/// notes give the FieldActor fields at the same offsets.
+/// A ObjectEvent as Ply's spark emitter and its sparks use it (ply.c); the
+/// notes give the ObjectEvent fields at the same offsets.
 struct SparkObject {
   u8 unk00[8];
   s32 x; ///< 16.16 fixed-point pixels
@@ -321,11 +321,11 @@ struct SparkObject {
   s32 scaleX;
   s32 scaleY;
   u8 unk20[24];
-  s32 anchorX; ///< centre of the sway (FieldActor's targetX)
+  s32 anchorX; ///< centre of the sway (ObjectEvent's targetX)
   u8 unk3c[12];
-  s32 gravity; ///< as in FieldActor
+  s32 gravity; ///< as in ObjectEvent
   u8 unk4c[9];
-  u8 motionFlags; ///< as in FieldActor
+  u8 motionFlags; ///< as in ObjectEvent
   u8 unk56[8];
   u16 lifetime; ///< wait: frames its script waits before freeing it
   u8 unk60[4];

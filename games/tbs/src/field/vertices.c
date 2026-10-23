@@ -84,7 +84,7 @@ struct BgAffine {
 /// ground terms, whose rotation terms stay cached while the yaw
 /// (gScanlineAngle) is unchanged; affine receives each line's parameters
 /// twice, for BG2 and then BG3, as the HBlank DMA writes both. Copied to RAM
-/// (heap slot 46) by Map_InitializePerspectiveScene, which runs it once, and
+/// (heap slot 46) by WorldMap_InitializePerspective, which runs it once, and
 /// run from there each frame by WorldMap_UpdateView into the affine page of
 /// the frame's parity. Writes gScanlineAngle when the yaw changes.
 void Transform_UpdateVertices(struct Position *eye, struct Position *target,

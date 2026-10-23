@@ -45,17 +45,17 @@ FarCall_RuntimeTable:
 	export Ui_LoadWindowGraphicsFar, Ui_LoadWindowGraphics
 	overlay_veneer Palette_LoadBasicSpriteColors
 	overlay_veneer Render_ResetTransformState
-	overlay_veneer SceneTransform_ResetMatrix
+	overlay_veneer Transform_ResetMatrix
 	overlay_veneer Transform_Push
 	overlay_veneer Transform_Pop
-	overlay_veneer SceneTransform_ApplyRotation
-	overlay_veneer SceneTransform_ApplyPitch
-	overlay_veneer SceneTransform_ApplyYaw
-	overlay_veneer SceneTransform_ApplyRoll
-	overlay_veneer SceneTransform_ApplyPosition
-	overlay_veneer SceneTransform_ApplyScale
-	overlay_veneer SceneTransform_ApplyRotationTranslation
-	overlay_veneer SceneTransform_ApplyScaledRotation
+	overlay_veneer Transform_ApplyRotation
+	overlay_veneer Transform_ApplyPitch
+	overlay_veneer Transform_ApplyYaw
+	overlay_veneer Transform_ApplyRoll
+	overlay_veneer Transform_ApplyPosition
+	overlay_veneer Transform_ApplyScale
+	overlay_veneer Transform_ApplyRotationTranslation
+	overlay_veneer Transform_ApplyScaledRotation
 	overlay_veneer Transform_SetLookAt
 	overlay_veneer Render_ProjectPoint
 	overlay_veneer Projection_SetFieldOfView

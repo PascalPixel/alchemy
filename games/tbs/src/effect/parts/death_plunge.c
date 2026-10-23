@@ -518,9 +518,9 @@ void BattleEffect_RunElementPillar(struct BattleEffectArgument *effect) {
 }
 
 /// Sets the pixel at (x, y) of the 256x120 8bpp tile picture in
-/// Ram_MapCellBuffer (32 tiles across) to colour 2.
+/// Ram_MapGridCellBuffer (32 tiles across) to colour 2.
 #define SHATTERING_OPENING_PLOT_PIXEL(x, y)                                    \
-  (*(Ram_MapCellBuffer + ((x) & 7) + (x) / 8 * 64 + ((y) & 7) * 8 +            \
+  (*(Ram_MapGridCellBuffer + ((x) & 7) + (x) / 8 * 64 + ((y) & 7) * 8 +        \
      (y) / 8 * 2048) = 2)
 
 /// Plots the four corners (x1 or x2, y1 or y2): one point of the circle
@@ -547,11 +547,11 @@ void BattleEffect_RunElementPillar(struct BattleEffectArgument *effect) {
 /// BattlePresentation_RunEntryTransition, as a battle opens. Allocates and
 /// frees its own work, canvas and sheet slots; sets up BG2 as the canvas
 /// itself, as BattleEffect_StartCanvasLayer would; draws the disc in
-/// Ram_MapCellBuffer and copies it over 0x7800 bytes of BG character block 2;
-/// writes background colours 1 to 63 and palettes 6 to 13; reloads the battle
-/// backdrop on BG1 on frame 5, and on its way out restores gBgScroll[1], starts
-/// the battle's palette fade to BATTLE_BACKGROUND_PLANE and queues a DISPCNT
-/// without BG1.
+/// Ram_MapGridCellBuffer and copies it over 0x7800 bytes of BG character block
+/// 2; writes background colours 1 to 63 and palettes 6 to 13; reloads the
+/// battle backdrop on BG1 on frame 5, and on its way out restores gBgScroll[1],
+/// starts the battle's palette fade to BATTLE_BACKGROUND_PLANE and queues a
+/// DISPCNT without BG1.
 ///
 /// effect : only effect->actors[0], the unit that flashes, is read.
 void BattleEffect_RunShatteringOpening(struct BattleEffectArgument *effect) {
@@ -608,7 +608,7 @@ void BattleEffect_RunShatteringOpening(struct BattleEffectArgument *effect) {
                BGCNT_SCREEN_BASE(7);
   // Aim the camera at the field's centre at 100% zoom, lining the backdrop's
   // perspective plane up with it.
-  BattlePresentation_SetupTransitionSceneFar(0, 0, 0, 100);
+  BattlePresentation_SetupTransitionViewFar(0, 0, 0, 100);
   view->secondMode = BATTLE_BACKGROUND_NONE;
   EFFECT_SET_CANVAS_AFFINE();
   EFFECT_SET_BATTLE_WINDOWS();
@@ -666,12 +666,12 @@ void BattleEffect_RunShatteringOpening(struct BattleEffectArgument *effect) {
     piece++;
   }
 
-  // The disc's mask in Ram_MapCellBuffer starts as colour 1 everywhere (the
+  // The disc's mask in Ram_MapGridCellBuffer starts as colour 1 everywhere (the
   // copy of the screen into it is overwritten at once), and background
   // palettes 6 to 13 turn white. BG1's scroll is saved and the battle's
   // background view marked busy while the backdrop is replaced.
-  Iwram_CopyWords(Ram_MapCellBuffer, (void *)BG_CHAR_BLOCK(2), 0x7800);
-  Iwram_FillWords(Ram_MapCellBuffer, 0x7800, 0x01010101);
+  Iwram_CopyWords(Ram_MapGridCellBuffer, (void *)BG_CHAR_BLOCK(2), 0x7800);
+  Iwram_FillWords(Ram_MapGridCellBuffer, 0x7800, 0x01010101);
   view->busy = 1;
   work->savedBg1X = gBgScroll[1].x;
   work->savedBg1Y = gBgScroll[1].y;
@@ -812,7 +812,7 @@ void BattleEffect_RunShatteringOpening(struct BattleEffectArgument *effect) {
           octantY++;
         }
       }
-      Iwram_CopyWords((void *)BG_CHAR_BLOCK(2), Ram_MapCellBuffer, 0x7800);
+      Iwram_CopyWords((void *)BG_CHAR_BLOCK(2), Ram_MapGridCellBuffer, 0x7800);
     }
 
     // Draw the pieces up to frame 50; they start to fly and fall on frame
@@ -1075,7 +1075,7 @@ void BattleEffect_RunElementBurst(struct BattleEffectArgument *effect) {
 /// Runs each frame as a scheduler callback added by
 /// BattleEffect_StartElementStreaks and removed by
 /// BattleEffect_EndElementStreaks. Counts work->frame, keeps the streaks in
-/// Ram_MapCellBuffer, draws into the canvas through
+/// Ram_MapGridCellBuffer, draws into the canvas through
 /// BattleEffect_DrawClippedCanvasLine, resets the render transform and sets
 /// work->transferPending.
 void BattleEffect_DrawStreaks(void) {
@@ -1090,7 +1090,7 @@ void BattleEffect_DrawStreaks(void) {
   frame = (work->frame)++;
   if (frame == 0) {
     for (i = 0; i != 256; i++) {
-      struct Streak *seed = &((struct Streak *)Ram_MapCellBuffer)[i];
+      struct Streak *seed = &((struct Streak *)Ram_MapGridCellBuffer)[i];
       s32 r = Random16() & 15;
 
       seed->head = r + 48;
@@ -1104,14 +1104,14 @@ void BattleEffect_DrawStreaks(void) {
   point.z = 0;
   i = 0;
   for (; i != 64; i++) {
-    streak = &((struct Streak *)Ram_MapCellBuffer)[i];
+    streak = &((struct Streak *)Ram_MapGridCellBuffer)[i];
     if (frame > i / 4 && streak->head > 0) {
       s32 fade;
 
       Render_ResetTransformState();
-      SceneTransform_ApplyRoll(streak->roll);
-      SceneTransform_ApplyPitch(streak->pitch);
-      SceneTransform_ApplyYaw(streak->yaw);
+      Transform_ApplyRoll(streak->roll);
+      Transform_ApplyPitch(streak->pitch);
+      Transform_ApplyYaw(streak->yaw);
       point.x = streak->head;
       EffectPosition_ProjectPoint(&point, &head);
       head.x += 64;

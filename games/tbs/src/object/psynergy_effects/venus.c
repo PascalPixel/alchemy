@@ -15,25 +15,26 @@
 void FieldEffect_RunVenusDjinnCapture(s32 djinniId) {
   struct CaptureObject *leader;
   struct CaptureObject *djinni;
-  struct FieldEffectScene *scene;
+  struct FieldEffectWork *effectWork;
   struct EffectSlot *effect;
   s8 *slotState;
   s32 remaining;
   s32 scale;
   struct EffectVector position;
 
-  leader = (struct CaptureObject *)Object_GetById(gGameState.selectedActor);
-  djinni = (struct CaptureObject *)Object_GetById(djinniId);
+  leader = (struct CaptureObject *)ObjectEvent_GetById(
+      gGameState.selectedObjectEvent);
+  djinni = (struct CaptureObject *)ObjectEvent_GetById(djinniId);
   if (djinni == NULL)
     return;
 
   FieldEffect_InitializeSlots();
-  scene = gEffectWork;
+  effectWork = gEffectWork;
   // Tint the screen green: PALETTE_TRANSFORM_TINT | RGB(4, 16, 4), the form
   // mercury.c spells out for its blue.
   Shop_SaveAndTintFieldPaletteFar(0x201204);
   WaitFrames(30);
-  // Unpause the Djinni (CaptureObject.visible is FieldActor.paused).
+  // Unpause the Djinni (CaptureObject.visible is ObjectEvent.paused).
   djinni->visible = 0;
   AudioCommand_PlayFar(SE_JUMP);
   ObjectMotion_Launch(djinniId, 4, 15);
@@ -45,17 +46,17 @@ void FieldEffect_RunVenusDjinnCapture(s32 djinniId) {
   AudioCommand_PlayFar(SE_HIGH_JUMP);
   ObjectMotion_Launch(djinniId, 8, 22);
   AudioCommand_PlayFar(SE_140);
-  Map_SetScreenShakeFar(0x14ccc, 0x14ccc, 0x10000);
+  MapGrid_SetScreenShakeFar(0x14ccc, 0x14ccc, 0x10000);
   djinni->callback = FieldEffect_ShrinkObjectAndDestroyFast;
   ObjectDispatch_SelectAnimationFar(djinni, 3);
   // The leader turns to face the camera (angle 0x4000).
   WaitFrames(90);
-  ObjectMotion_ArmCallback(gGameState.selectedActor, 0x4000, 0);
+  ObjectMotion_ArmCallback(gGameState.selectedObjectEvent, 0x4000, 0);
   WaitFrames(20);
-  ObjectDispatch_SelectAnimationFar(Object_GetById(gGameState.selectedActor),
-                                    28);
+  ObjectDispatch_SelectAnimationFar(
+      ObjectEvent_GetById(gGameState.selectedObjectEvent), 28);
   WaitFrames(30);
-  Map_SetScreenShakeFar(0x19999, 0x19999, 0x10000);
+  MapGrid_SetScreenShakeFar(0x19999, 0x19999, 0x10000);
 
   position.x = djinni->x;
   position.y = djinni->y;
@@ -63,7 +64,7 @@ void FieldEffect_RunVenusDjinnCapture(s32 djinniId) {
   Camera_WorldToScreen(&position);
 
   // One rising particle a frame into each of the 24 effect slots.
-  effect = scene->effects;
+  effect = effectWork->effects;
   remaining = 23;
   do {
     EffectSlot_Initialize(effect, SPRITE_PARTICLE, position.x, position.z);
@@ -86,8 +87,8 @@ void FieldEffect_RunVenusDjinnCapture(s32 djinniId) {
     s32 nextState;
 
     nextState = VENUS_PARTICLE_LAST_RISE;
-    slotState = (s8 *)scene;
-    slotState += offsetof(struct FieldEffectScene, effects) +
+    slotState = (s8 *)effectWork;
+    slotState += offsetof(struct FieldEffectWork, effects) +
                  offsetof(struct EffectSlot, state);
     remaining = 23;
     do {
@@ -100,7 +101,7 @@ void FieldEffect_RunVenusDjinnCapture(s32 djinniId) {
 
   // A shake of 1/65536 pixel: in effect the shake stops.
   WaitFrames(20);
-  Map_SetScreenShakeFar(1, 1, 1);
+  MapGrid_SetScreenShakeFar(1, 1, 1);
   WaitFrames(30);
 
   // 24 motes, evenly spread round a circle, 120 pixels above the leader.
@@ -133,7 +134,7 @@ void FieldEffect_RunVenusDjinnCapture(s32 djinniId) {
   position.z = leader->z;
   // 8 sparks from 18 pixels above the leader, each thrown 32 pixels in a
   // random direction at 1.4 to 2.4 pixels a frame and 5 up (gravity is
-  // FieldActor.velocityY), falling, and freed after 8 frames; stop at the
+  // ObjectEvent.velocityY), falling, and freed after 8 frames; stop at the
   // first that cannot be spawned.
   for (remaining = 0; remaining <= 7; remaining++) {
     djinni = (struct CaptureObject *)Object_Spawn(SPRITE_PARTICLE, position.x,
@@ -173,7 +174,8 @@ void FieldEffect_UpdateRandomTargetParticle(struct EffectSlot *effect) {
   s8 *statePointer;
   s32 state;
 
-  source = (struct ObjectRuntime *)Object_GetById(gGameState.selectedActor);
+  source = (struct ObjectRuntime *)ObjectEvent_GetById(
+      gGameState.selectedObjectEvent);
   statePointer = &effect->state;
   state = *statePointer;
 

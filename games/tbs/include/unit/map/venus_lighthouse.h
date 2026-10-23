@@ -1,24 +1,24 @@
-#ifndef ALCHEMY_UNIT_SCENE_VENUS_LIGHTHOUSE_H
-#define ALCHEMY_UNIT_SCENE_VENUS_LIGHTHOUSE_H
+#ifndef ALCHEMY_UNIT_MAP_VENUS_LIGHTHOUSE_H
+#define ALCHEMY_UNIT_MAP_VENUS_LIGHTHOUSE_H
 
 #include "types.h"
 #include "field.h"
 #include "map_tables.h"
 
-struct SceneEntrance;
-struct SceneEvent;
-struct ScenePlacement;
+struct MapWarpDest;
+struct MapEvent;
+struct ObjectEventTemplate;
 
-const struct SceneEntrance *VenusLighthouse_GetEntrances(void);
-const struct SceneRegion *VenusLighthouse_GetRegions(void);
-const u32 *VenusLighthouse_GetExits(void);
-const struct ScenePlacement *VenusLighthouse_GetPlacements(void);
-const struct SceneEvent *VenusLighthouse_GetEvents(void);
+const struct MapWarpDest *VenusLighthouse_GetWarpDests(void);
+const struct MapWarpRegion *VenusLighthouse_GetRegions(void);
+const u32 *VenusLighthouse_GetWarps(void);
+const struct ObjectEventTemplate *VenusLighthouse_GetObjectEventTemplates(void);
+const struct MapEvent *VenusLighthouse_GetEvents(void);
 s32 VenusLighthouse_Initialize(void);
 extern s32 gEffectScript0[];
 extern s32 gEffectScript1[];
 extern s32 gEffectScript2[];
-extern u32 gStagedActor_DirectionSteps[];
+extern u32 gStagedObjectEvent_DirectionSteps[];
 extern struct SwitchCell gVenusThirdFloorSockets[];
 extern u32 gVenusBalancePlatformHeights[];
 extern struct SwitchCell gVenusFourthFloorSockets[];
@@ -66,26 +66,31 @@ extern s32 gVenusFourthFloorLightNorthwestToGate[];
 extern u16 gVenusSecondFloorGateCells[];
 extern u16 gVenusThirdFloorGateCells[];
 extern u16 gVenusFourthFloorGateCells[];
-extern struct SceneEntrance gVenusLighthouseEntryEntrances[];
-extern struct SceneEntrance gVenusLighthouseEntrancesOther[];
-extern struct SceneEntrance gVenusLighthouseFirstFloorEntrances[];
-extern struct SceneEntrance gVenusLighthouseSecondFloorEntrances[];
-extern struct SceneEntrance gVenusLighthouseThirdFloorEntrances[];
-extern struct SceneEntrance gVenusLighthouseFourthFloorEntrances[];
-extern u32 gVenusLighthouseExits[];
-extern struct ScenePlacement gVenusLighthousePlacementsOther[];
-extern struct ScenePlacement gVenusLighthouseEntryPlacements[];
-extern struct ScenePlacement gVenusLighthouseGroundFloorPlacements[];
-extern struct ScenePlacement gVenusLighthouseFirstFloorPlacements[];
-extern struct ScenePlacement gVenusLighthouseSecondFloorPlacements[];
-extern struct ScenePlacement gVenusLighthouseThirdFloorPlacements[];
-extern struct ScenePlacement gVenusLighthouseFourthFloorPlacements[];
-extern struct SceneEvent gVenusLighthouseEntryEvents[];
-extern struct SceneEvent gVenusLighthouseGroundFloorEvents[];
-extern struct SceneEvent gVenusLighthouseFirstFloorEvents[];
-extern struct SceneEvent gVenusLighthouseSecondFloorEvents[];
-extern struct SceneEvent gVenusLighthouseThirdFloorEvents[];
-extern struct SceneEvent gVenusLighthouseFourthFloorEvents[];
+extern struct MapWarpDest gVenusLighthouseEntryWarpDests[];
+extern struct MapWarpDest gVenusLighthouseWarpDestsOther[];
+extern struct MapWarpDest gVenusLighthouseFirstFloorWarpDests[];
+extern struct MapWarpDest gVenusLighthouseSecondFloorWarpDests[];
+extern struct MapWarpDest gVenusLighthouseThirdFloorWarpDests[];
+extern struct MapWarpDest gVenusLighthouseFourthFloorWarpDests[];
+extern u32 gVenusLighthouseWarps[];
+extern struct ObjectEventTemplate gVenusLighthouseObjectEventTemplatesOther[];
+extern struct ObjectEventTemplate gVenusLighthouseEntryObjectEventTemplates[];
+extern struct ObjectEventTemplate
+    gVenusLighthouseGroundFloorObjectEventTemplates[];
+extern struct ObjectEventTemplate
+    gVenusLighthouseFirstFloorObjectEventTemplates[];
+extern struct ObjectEventTemplate
+    gVenusLighthouseSecondFloorObjectEventTemplates[];
+extern struct ObjectEventTemplate
+    gVenusLighthouseThirdFloorObjectEventTemplates[];
+extern struct ObjectEventTemplate
+    gVenusLighthouseFourthFloorObjectEventTemplates[];
+extern struct MapEvent gVenusLighthouseEntryEvents[];
+extern struct MapEvent gVenusLighthouseGroundFloorEvents[];
+extern struct MapEvent gVenusLighthouseFirstFloorEvents[];
+extern struct MapEvent gVenusLighthouseSecondFloorEvents[];
+extern struct MapEvent gVenusLighthouseThirdFloorEvents[];
+extern struct MapEvent gVenusLighthouseFourthFloorEvents[];
 extern const u8 *gVenusThirdFloorSocketTracks[];
 extern s32 *gVenusThirdFloorNorthwestPaths[];
 extern s32 *gVenusThirdFloorNortheastPaths[];

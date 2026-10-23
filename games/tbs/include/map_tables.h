@@ -1,5 +1,5 @@
-#ifndef ALCHEMY_FIELD_SCENE_H
-#define ALCHEMY_FIELD_SCENE_H
+#ifndef ALCHEMY_MAP_TABLES_H
+#define ALCHEMY_MAP_TABLES_H
 
 /// @file
 /// The scene table formats: entrances, exits, placements and events, and the
@@ -33,14 +33,14 @@ enum { FACING_STEP = 0x1000 };
    FACING_NORTHEAST - FACING_NORTHWEST - 2)
 
 /// In the first column of a scene table, ends the table.
-enum { SCENE_TABLE_END = -1 };
+enum { MAP_TABLE_END = -1 };
 
 /// A table row's condition: CONDITION_ALWAYS, a flag number that must be
 /// clear, or IF_FLAG_SET of a flag that must be set
 /// (GameFlag_IsConditionActive).
 enum {
   CONDITION_ALWAYS = -1,
-  /// A placement's condition that Scene_AssignViewFlags replaces with whether
+  /// A placement's condition that Map_AssignViewFlags replaces with whether
   /// the actor lies within the map's view bounds, in the scenes that call it,
   /// so only the room entered is populated.
   CONDITION_IN_VIEW = 0,
@@ -54,14 +54,14 @@ enum {
 /// scenes then place their later actors and lines, the Sanctum takes another
 /// event table and Healer line, and the Sol Sanctum approach moves its sentry,
 /// changes cell collision and stops sending its way down to
-/// SceneId_ValeEruption.
+/// MapId_ValeEruption.
 /// ★ Named from its area name: Vale
 enum { FLAG_VALE_PARTY_LEFT = 0x815 };
 
 /// A scene entrance: where and facing which way the party arrives, and the
 /// camera's bounds there (-1 for none).
-struct SceneEntrance {
-  s16 entrance;     ///< the entrance number the game state names; -1 ends
+struct MapWarpDest {
+  s16 warpDest;     ///< the entrance number the game state names; -1 ends
   s16 requiredFlag; ///< a flag that must be set, or -1 for none
   s16 x;            ///< pixels
   s16 y;            ///< pixels
@@ -75,47 +75,47 @@ struct SceneEntrance {
   s16 unused2;      ///< 0 in every table; not read
 };
 
-STATIC_ASSERT(sizeof(struct SceneEntrance) == 24);
-STATIC_ASSERT(offsetof(struct SceneEntrance, cameraLeft) == 14);
+STATIC_ASSERT(sizeof(struct MapWarpDest) == 24);
+STATIC_ASSERT(offsetof(struct MapWarpDest, cameraLeft) == 14);
 
 /// An exit table's header word: the scene whose exits follow, named by its
-/// place (`SCENE_EXITS(Bilibin)`). The table is read by Scene_TakeExit as the
+/// place (`MAP_WARPS(Bilibin)`). The table is read by Map_TakeWarp as the
 /// scene ends, with the exit kind it ended on.
-#define SCENE_EXITS(scene) ((u32)&SceneId_##scene)
+#define MAP_WARPS(map) ((u32)&MapId_##map)
 /// One exit: exit kind `exit` leads to `entrance` of the place `scene`, both
 /// named in scene_links.h. Kind 0xff matches any exit; kind 0 or the next
 /// header sends the party to the first exit's scene. The fields are added
-/// rather than ORed so the scene can be its SceneId_ symbol, which the linker
+/// rather than ORed so the scene can be its MapId_ symbol, which the linker
 /// fills in; they never overlap. bits: 27..20 exit kind | 19..12 entrance |
 /// 11..0 scene
-#define SCENE_EXIT(exit, scene, entrance)                                      \
-  (((u32)(exit) << 20) + ((u32)(entrance) << 12) + (u32)&SceneId_##scene)
+#define MAP_WARP(warp, map, warpDest)                                          \
+  (((u32)(warp) << 20) + ((u32)(warpDest) << 12) + (u32)&MapId_##map)
 /// An exit with a flag word after it (bit 28). Despite the name, the exit is
 /// taken only while `flag` is clear; when it is set, the search goes on to
 /// the next exit.
-#define SCENE_EXIT_IF(exit, scene, entrance, flag)                             \
-  (SCENE_EXIT(exit, scene, entrance) + 0x10000000), (u32)(flag)
+#define MAP_WARP_IF(warp, map, warpDest, flag)                                 \
+  (MAP_WARP(warp, map, warpDest) + 0x10000000), (u32)(flag)
 /// The last header word: it ends the last scene's exits and the table.
-#define SCENE_EXITS_END 0x1ff
+#define MAP_WARPS_END 0x1ff
 
 /// Scene numbers above the field scenes: what runs instead of a scene
-/// (Scene_Run). They have no row in gField_SceneTable.
+/// (Map_Run). They have no row in gField_MapTable.
 enum {
   /// Runs nothing and returns 0; no ☀️ code sends the party there.
-  SCENE_BLANK = 0x1fb,
-  SCENE_REEL_GAME = 0x1fc,  ///< Lucky Wheels at Tolbi's spring (colorfx.c)
-  SCENE_LUCKY_DICE = 0x1fd, ///< Lucky Dice at Tolbi's spring (lucky_dice.c)
+  MAP_BLANK = 0x1fb,
+  MAP_REEL_GAME = 0x1fc,  ///< Lucky Wheels at Tolbi's spring (colorfx.c)
+  MAP_LUCKY_DICE = 0x1fd, ///< Lucky Dice at Tolbi's spring (lucky_dice.c)
   /// A battle; the entrance is the enemy group, and the result -1 a defeat.
-  SCENE_BATTLE = 0x1fe
+  MAP_BATTLE = 0x1fe
 };
 
 /// An exit into a battle: exit kind `exit` fights enemy group `group`.
-#define SCENE_EXIT_TO_BATTLE(exit, group)                                      \
-  (((u32)(exit) << 20) + ((u32)(group) << 12) + SCENE_BATTLE)
+#define MAP_WARP_TO_BATTLE(warp, group)                                        \
+  (((u32)(warp) << 20) + ((u32)(group) << 12) + MAP_BATTLE)
 
 /// An actor a scene places: its sprite, the condition for placing it, how it
 /// behaves, where it stands and which way it faces, and how it turns to talk.
-struct ScenePlacement {
+struct ObjectEventTemplate {
   /// The actor's sprite; 0 to 7 are the party's characters, each in its own
   /// actor slot, and -1 ends the table.
   s16 sprite;
@@ -124,36 +124,38 @@ struct ScenePlacement {
   /// flag clear: the Djinni stays hidden until the scene is entered normally
   /// again.
   s16 condition;
-  /// A built-in action (enum ActorBehavior) or an action script, for
+  /// A built-in action (enum MovementType) or an action script, for
   /// ObjectMotion_SetActionCallback.
   s32 behavior;
   s32 x;         ///< 16.16 fixed-point pixels
   s32 y;         ///< 16.16 fixed-point pixels
   s32 z;         ///< 16.16 fixed-point pixels
   u16 facing;    ///< 1/65536 turns (enum Facing)
-  u8 talkFacing; ///< enum ActorTalkFacing; 3 follows the leader afterwards
-  u8 flags;      ///< PLACEMENT_SHARE_PREVIOUS_SPRITE
+  u8 talkFacing; ///< enum ObjectEventTalkFacing; 3 follows the leader
+                 ///< afterwards
+  u8 flags;      ///< OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE
 };
 
-STATIC_ASSERT(sizeof(struct ScenePlacement) == 24);
-STATIC_ASSERT(offsetof(struct ScenePlacement, talkFacing) == 22);
+STATIC_ASSERT(sizeof(struct ObjectEventTemplate) == 24);
+STATIC_ASSERT(offsetof(struct ObjectEventTemplate, talkFacing) == 22);
 
 /// The built-in actions a placement's behavior can name, which
 /// ObjectMotion_SetActionCallback turns into scripts.
-enum ActorBehavior {
-  ACTOR_STAND = 1, ///< its script only ends
+enum MovementType {
+  MOVEMENT_TYPE_STAND = 1, ///< its script only ends
   /// Wanders about where it stands (SC_WANDER_HOME), within 16 pixels.
-  ACTOR_WANDER = 2,
-  ACTOR_WANDER_NEAR = 3,   ///< as ACTOR_WANDER, within 8 pixels
-  ACTOR_WANDER_CLOSE = 4,  ///< within 6 pixels, at its own speed
-  ACTOR_FOLLOW_LINKED = 5, ///< moves toward the linked object
-  ACTOR_FACE_LEADER = 6,   ///< links to the leader and turns toward it
-  ACTOR_RESET_ACTION = 7   ///< gObjectMotion_ResetActionScript
+  MOVEMENT_TYPE_WANDER = 2,
+  MOVEMENT_TYPE_WANDER_NEAR = 3,   ///< as MOVEMENT_TYPE_WANDER, within 8 pixels
+  MOVEMENT_TYPE_WANDER_CLOSE = 4,  ///< within 6 pixels, at its own speed
+  MOVEMENT_TYPE_FOLLOW_LINKED = 5, ///< moves toward the linked object
+  MOVEMENT_TYPE_FACE_LEADER = 6,   ///< links to the leader and turns toward it
+  MOVEMENT_TYPE_RESET_ACTION = 7   ///< gObjectMotion_ResetActionScript
 };
 
-/// How a placed actor turns when the leader talks to it (Scene_TalkToActor).
-/// With all but TALK_KEEP_FACING the leader stops and the two are linked.
-enum ActorTalkFacing {
+/// How a placed actor turns when the leader talks to it
+/// (Map_TalkToObjectEvent). With all but TALK_KEEP_FACING the leader stops and
+/// the two are linked.
+enum ObjectEventTalkFacing {
   TALK_FACE_PARTY = 0,
   /// Faces the party, then turns back to its old heading.
   TALK_FACE_PARTY_AND_BACK = 1,
@@ -163,16 +165,16 @@ enum ActorTalkFacing {
   TALK_FACE_PARTY_THEN_WATCH = 3
 };
 
-/// ScenePlacement.flags: the actor takes the previous actor's sprite
+/// ObjectEventTemplate.flags: the actor takes the previous actor's sprite
 /// resource instead of loading its own, when both are single sprites.
-#define PLACEMENT_SHARE_PREVIOUS_SPRITE 0x01
+#define OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE 0x01
 
 /// Actor ids: 0 to 7 the party's characters, the placed actors from 8.
-enum ActorSlot {
-  ACTOR_PARTY_LEADER = 0,
-  ACTOR_FIRST_PLACED = 8,
+enum LocalId {
+  LOCALID_PARTY_LEADER = 0,
+  LOCALID_FIRST_PLACED = 8,
   /// The last of the 66 actor slots, as scenes loop over every placed actor.
-  ACTOR_LAST_SLOT = 65
+  LOCALID_LAST_SLOT = 65
 };
 
 /// Whole pixels as 16.16 fixed point.
@@ -180,8 +182,8 @@ enum ActorSlot {
 
 /// A scene event: its kind and detail, the trigger it answers, its condition
 /// and its value (a message or an event script).
-struct SceneEvent {
-  /// The kind and its detail, read by Scene_FindEvent and the item, Psynergy
+struct MapEvent {
+  /// The kind and its detail, read by Map_FindEvent and the item, Psynergy
   /// and search lookups; -1 ends the table. The detail bits depend on the kind.
   /// bits: 30..28 Psynergy phase | 15..12 touch facing | 15..8 item or ability
   /// | 11 short push | 10 facing | 9 walking | 8..4 search target
@@ -198,41 +200,42 @@ struct SceneEvent {
   u32 value;
 };
 
-STATIC_ASSERT(sizeof(struct SceneEvent) == 12);
+STATIC_ASSERT(sizeof(struct MapEvent) == 12);
 
-/// SceneEvent.trigger bit 10: a Psynergy event runs in place of the
+/// MapEvent.trigger bit 10: a Psynergy event runs in place of the
 /// Psynergy's effect, as Mind Read on someone who notices it does, and a
 /// search shows no checking message.
-#define EVENT_TRIGGER_OWN_EFFECT 0x400
+#define MAP_EVENT_TRIGGER_OWN_EFFECT 0x400
 
-/// SceneEvent.control's low four bits: what the event answers.
-enum SceneEventKind {
-  EVENT_TALK = 0, ///< the A button on an actor; trigger is its id
+/// MapEvent.control's low four bits: what the event answers.
+enum MapEventKind {
+  MAP_EVENT_TALK = 0, ///< the A button on an actor; trigger is its id
   /// Stepping onto a cell whose collision code is the trigger, when no touch
   /// event answers it; value is the exit kind.
-  EVENT_EXIT = 1,
-  EVENT_TOUCH = 2,  ///< stepping onto or pushing against a collision code
-  EVENT_SEARCH = 3, ///< the A button on what is ahead, when it is no actor
-  EVENT_ITEM = 4,   ///< an item used on a cell or an actor
-  EVENT_PSYNERGY = 5,
-  EVENT_RAISED = 6, ///< raised by code through FieldWork.event
-  /// Talking to an actor Halt has stopped (Scene_FindActorTalkEvent).
-  EVENT_TALK_HALTED = 7
+  MAP_EVENT_WARP = 1,
+  MAP_EVENT_COORD = 2, ///< stepping onto or pushing against a collision code
+  MAP_EVENT_BG = 3,    ///< the A button on what is ahead, when it is no actor
+  MAP_EVENT_ITEM = 4,  ///< an item used on a cell or an actor
+  MAP_EVENT_PSYNERGY = 5,
+  MAP_EVENT_RAISED = 6, ///< raised by code through FieldWork.event
+  /// Talking to an actor Halt has stopped (Map_FindObjectEventTalkEvent).
+  MAP_EVENT_TALK_HALTED = 7
 };
 
 /// An exit event's control bits 5..4: how the leader leaves
-/// (Scene_RunTouchOrExit). XXX: what leaving animations 26 and 25 and arrivals
-/// 24 and 23 show; recordings of an exit of each style would settle it.
-enum ExitStyle {
-  EXIT_STYLE_NORMAL = 0x00, ///< with SE_MAP_EXIT
-  EXIT_STYLE_SILENT = 0x10,
+/// (Map_RunCoordEventOrWarp). XXX: what leaving animations 26 and 25 and
+/// arrivals 24 and 23 show; recordings of an exit of each style would settle
+/// it.
+enum WarpStyle {
+  WARP_STYLE_NORMAL = 0x00, ///< with SE_MAP_EXIT
+  WARP_STYLE_SILENT = 0x10,
   /// With SE_STAIRS_UP and ANIMATION_LEADER_LEAVE; the next scene plays
-  /// ANIMATION_LEADER_ARRIVE (FLAG_EXIT_ARRIVAL_PENDING).
-  EXIT_STYLE_ANIMATED = 0x20,
+  /// ANIMATION_LEADER_ARRIVE (FLAG_WARP_ARRIVAL_PENDING).
+  WARP_STYLE_ANIMATED = 0x20,
   /// With SE_STAIRS_DOWN and ANIMATION_LEADER_LEAVE_ALTERNATE; the next scene
-  /// plays ANIMATION_LEADER_ARRIVE_ALTERNATE (FLAG_EXIT_ARRIVAL_ALTERNATE).
-  EXIT_STYLE_ANIMATED_ALTERNATE = 0x30,
-  EXIT_STYLE_MASK = 0x30
+  /// plays ANIMATION_LEADER_ARRIVE_ALTERNATE (FLAG_WARP_ARRIVAL_ALTERNATE).
+  WARP_STYLE_ANIMATED_ALTERNATE = 0x30,
+  WARP_STYLE_MASK = 0x30
 };
 
 /// The raised event the menus and shortcut keys raise instead of opening
@@ -241,22 +244,24 @@ enum ExitStyle {
 #define FIELD_EVENT_MENUS_RAISED 250
 
 /// A touch event that needs the leader to have pushed against it for more
-/// than 12 frames, or 2 with EVENT_TOUCH_QUICK.
-#define EVENT_TOUCH_WALKING 0x200
-/// With EVENT_TOUCH_WALKING, 2 frames of pushing are enough.
-#define EVENT_TOUCH_QUICK 0x800
+/// than 12 frames, or 2 with COORD_EVENT_FLAG_QUICK.
+#define COORD_EVENT_FLAG_WALKING 0x200
+/// With COORD_EVENT_FLAG_WALKING, 2 frames of pushing are enough.
+#define COORD_EVENT_FLAG_QUICK 0x800
 /// A touch event that needs the leader to face within an eighth of a turn of
-/// the heading in control bits 15..12 (Scene_FindEvent).
-#define EVENT_TOUCH_FACING 0x400
-#define TOUCH_WALKING (EVENT_TOUCH | EVENT_TOUCH_WALKING)
+/// the heading in control bits 15..12 (Map_FindEvent).
+#define MAP_EVENT_FLAG_FACING 0x400
+#define COORD_EVENT_WALKING (MAP_EVENT_COORD | COORD_EVENT_FLAG_WALKING)
 /// facing is an enum Facing; only its top four bits are compared.
-#define TOUCH_FACING(facing) (EVENT_TOUCH | EVENT_TOUCH_FACING | (facing))
-#define TOUCH_WALKING_INTO(facing)                                             \
-  (EVENT_TOUCH | EVENT_TOUCH_WALKING | EVENT_TOUCH_FACING | (facing))
+#define COORD_EVENT_FACING(facing)                                             \
+  (MAP_EVENT_COORD | MAP_EVENT_FLAG_FACING | (facing))
+#define COORD_EVENT_WALKING_INTO(facing)                                       \
+  (MAP_EVENT_COORD | COORD_EVENT_FLAG_WALKING | MAP_EVENT_FLAG_FACING |        \
+   (facing))
 
 /// When a Psynergy event runs around its effect, control bits 30..28.
 enum PsynergyPhase {
-  /// After the effect (Field_UsePsynergy), PSYNERGY_ON_ACTOR's phase. With
+  /// After the effect (Field_UsePsynergy), PSYNERGY_ON_OBJ_EVENT's phase. With
   /// PSYNERGY_SCRIPT_PLAYS_EFFECT the event plays the effect itself.
   PSYNERGY_PHASE_AFTER_CAST = 0,
   PSYNERGY_PHASE_BEFORE_CAST = 1, ///< once the PP is paid, before the effect
@@ -265,7 +270,7 @@ enum PsynergyPhase {
   /// runs it for a use with ACT_PACKED, as Cloak fades or Reveal runs out.
   PSYNERGY_PHASE_AFTER_END = 2,
   PSYNERGY_PHASE_BEFORE_END = 3, ///< as PSYNERGY_PHASE_AFTER_END, before it
-  /// As Reveal's colours come back (ResetSceneTransitionEffect): the scenes
+  /// As Reveal's colours come back (FieldEffect_EndReveal): the scenes
   /// hide again what Reveal showed.
   PSYNERGY_PHASE_EFFECT_ENDS = 4,
   /// Run by the effect itself as it acts (force.c, frost.c and reveal.c): as
@@ -275,15 +280,16 @@ enum PsynergyPhase {
   PSYNERGY_PHASE_ANY = 7 ///< FieldEffect_FindMatchingEvent matches every phase
 };
 
-/// The control word of a Psynergy event (EVENT_PSYNERGY) in the given phase, as
-/// FieldEffect_FindMatchingEvent compares it (bits 30..28 phase | 3..0 kind).
-#define PSYNERGY_EV(phase) ((phase) << 28 | EVENT_PSYNERGY)
+/// The control word of a Psynergy event (MAP_EVENT_PSYNERGY) in the given
+/// phase, as FieldEffect_FindMatchingEvent compares it (bits 30..28 phase
+/// | 3..0 kind).
+#define PSYNERGY_EV(phase) ((phase) << 28 | MAP_EVENT_PSYNERGY)
 #define PSYNERGY_EV_ANY PSYNERGY_EV(PSYNERGY_PHASE_ANY)
 
 /// A Psynergy event on the actor the leader faces.
-#define EVENT_PSYNERGY_ON_ACTOR 0x10
-#define PSYNERGY_ON_ACTOR(ability)                                             \
-  (EVENT_PSYNERGY | EVENT_PSYNERGY_ON_ACTOR | (ability) << 8)
+#define MAP_EVENT_PSYNERGY_ON_OBJ_EVENT 0x10
+#define PSYNERGY_ON_OBJ_EVENT(ability)                                         \
+  (MAP_EVENT_PSYNERGY | MAP_EVENT_PSYNERGY_ON_OBJ_EVENT | (ability) << 8)
 /// Bits of an after-cast Psynergy event's target word, beside the actor's
 /// number.
 enum PsynergyEventTarget {
@@ -293,61 +299,63 @@ enum PsynergyEventTarget {
 };
 /// A Psynergy event on an actor at one phase of the cast, as PSYNERGY_IN_AREA
 /// is for an area.
-#define PSYNERGY_PHASE_ON_ACTOR(ability, phase)                                \
-  ((u32)(phase) << 28 | PSYNERGY_ON_ACTOR(ability))
+#define PSYNERGY_PHASE_ON_OBJ_EVENT(ability, phase)                            \
+  ((u32)(phase) << 28 | PSYNERGY_ON_OBJ_EVENT(ability))
 
 /// A Psynergy event for any target, not a particular actor or cell.
-#define EVENT_PSYNERGY_IN_AREA 0x80
+#define MAP_EVENT_PSYNERGY_IN_AREA 0x80
 #define PSYNERGY_IN_AREA(ability, phase)                                       \
-  ((u32)(phase) << 28 | (ability) << 8 | EVENT_PSYNERGY_IN_AREA |              \
-   EVENT_PSYNERGY)
+  ((u32)(phase) << 28 | (ability) << 8 | MAP_EVENT_PSYNERGY_IN_AREA |          \
+   MAP_EVENT_PSYNERGY)
 
 // Using an item (one byte) on a tile code, or on an actor, as
 // Field_FindItemEvent reads them.
-#define EVENT_ITEM_ON_ACTOR 0x10
-#define USE_ITEM(item) (EVENT_ITEM | (item) << 8)
-#define USE_ITEM_ON_ACTOR(item) (EVENT_ITEM | EVENT_ITEM_ON_ACTOR | (item) << 8)
+#define MAP_EVENT_ITEM_ON_OBJ_EVENT 0x10
+#define USE_ITEM(item) (MAP_EVENT_ITEM | (item) << 8)
+#define USE_ITEM_ON_OBJ_EVENT(item)                                            \
+  (MAP_EVENT_ITEM | MAP_EVENT_ITEM_ON_OBJ_EVENT | (item) << 8)
 
-#define SEARCH(target) (EVENT_SEARCH | (target) << 4)
+#define BG_EVENT(target) (MAP_EVENT_BG | (target) << 4)
 /// A search made while facing the given way, as a counter is searched across.
-#define SEARCH_FACING(facing) (EVENT_SEARCH | EVENT_TOUCH_FACING | (facing))
+#define BG_EVENT_FACING(facing)                                                \
+  (MAP_EVENT_BG | MAP_EVENT_FLAG_FACING | (facing))
 
-/// What a search event is on, SEARCH()'s control bits 8..4. Target n shows
+/// What a search event is on, BG_EVENT()'s control bits 8..4. Target n shows
 /// message MsgTileChecked + n as the leader checks it, unless the trigger has
 /// bit 10; target 0 shows nothing.
-enum SearchTarget {
-  SEARCH_UNNAMED = 0,
-  SEARCH_CHEST = 1,
-  SEARCH_JAR,
-  SEARCH_BARREL,
-  SEARCH_WALL,
-  SEARCH_GROUND,
-  SEARCH_ROCK,
-  SEARCH_HOLE,
-  SEARCH_GRAVE,
-  SEARCH_TREE,
-  SEARCH_UNDERBRUSH,
-  SEARCH_DOOR,
-  SEARCH_CHIMNEY,
-  SEARCH_WOODEN_BOX,
-  SEARCH_BED,
-  SEARCH_BOOKCASE,
-  SEARCH_STONE_COFFIN,
-  SEARCH_FIREPLACE,
-  SEARCH_WATER,
-  SEARCH_STONE_PILLAR,
-  SEARCH_STALACTITE,
-  SEARCH_BOARDS,
-  SEARCH_FOUNTAIN,
-  SEARCH_OVEN,
-  SEARCH_TABLE,
-  SEARCH_STONE_STATUE,
-  SEARCH_STONE_TABLET,
-  SEARCH_SHELF,
-  SEARCH_WARDROBE,
-  SEARCH_FIREWOOD,
-  SEARCH_BOOKS,
-  SEARCH_WELL
+enum BgEventTarget {
+  BG_EVENT_UNNAMED = 0,
+  BG_EVENT_CHEST = 1,
+  BG_EVENT_JAR,
+  BG_EVENT_BARREL,
+  BG_EVENT_WALL,
+  BG_EVENT_GROUND,
+  BG_EVENT_ROCK,
+  BG_EVENT_HOLE,
+  BG_EVENT_GRAVE,
+  BG_EVENT_TREE,
+  BG_EVENT_UNDERBRUSH,
+  BG_EVENT_DOOR,
+  BG_EVENT_CHIMNEY,
+  BG_EVENT_WOODEN_BOX,
+  BG_EVENT_BED,
+  BG_EVENT_BOOKCASE,
+  BG_EVENT_STONE_COFFIN,
+  BG_EVENT_FIREPLACE,
+  BG_EVENT_WATER,
+  BG_EVENT_STONE_PILLAR,
+  BG_EVENT_STALACTITE,
+  BG_EVENT_BOARDS,
+  BG_EVENT_FOUNTAIN,
+  BG_EVENT_OVEN,
+  BG_EVENT_TABLE,
+  BG_EVENT_STONE_STATUE,
+  BG_EVENT_STONE_TABLET,
+  BG_EVENT_SHELF,
+  BG_EVENT_WARDROBE,
+  BG_EVENT_FIREWOOD,
+  BG_EVENT_BOOKS,
+  BG_EVENT_WELL
 };
 
 /// What a search finds, a search event's value: a function when bits 27..24
@@ -361,11 +369,11 @@ enum SearchTarget {
 /// ENCOUNTER_ZONE_MIMIC.
 #define FIND_MIMIC 0x00500000
 
-/// An event function as a SceneEvent value; its address is above 0x10000, so
+/// An event function as a MapEvent value; its address is above 0x10000, so
 /// it is never taken for a message.
 #define EVENT_SCRIPT(script) ((u32)(script))
-#define SCENE_EVENTS_END 0xffffffff ///< ends an event table
+#define MAP_EVENTS_END 0xffffffff ///< ends an event table
 
-struct SceneRegion;
+struct MapWarpRegion;
 
 #endif

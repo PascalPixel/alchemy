@@ -28,7 +28,7 @@ void Graphics_SetBg2AffineScaleHalf(void) { REG_BG2PA = Q_8_8(0.5); }
 /// gathers a ring of flares into a burst of light, then five blue flame columns
 /// drop onto the targets, throwing sparks.
 ///
-/// Abilities: Neptune (SCENE_EFFECT_NEPTUNE).
+/// Abilities: Neptune (SUMMON_EFFECT_NEPTUNE).
 ///
 /// The scene runs in two stages. The first (244 frames; A or B ends it after
 /// frame 16) places NEPTUNE_OBJECTS objects at one and a half times their
@@ -40,10 +40,10 @@ void Graphics_SetBg2AffineScaleHalf(void) { REG_BG2PA = Q_8_8(0.5); }
 /// reaches the ground (NEPTUNE_FLAME_GROUND). The battle shows the damage on
 /// its frame 96.
 ///
-/// Reached through BattleEffect_RunSceneEffect, whose sheet slot holds the mote
-/// sheet here. The first stage projects with gProjection.centerY at 240 and
-/// holds BG1's scroll from the battle camera; the second gives BG1's x back,
-/// removes the scale callback and interrupt, and
+/// Reached through BattleEffect_RunSummonEffect, whose sheet slot holds the
+/// mote sheet here. The first stage projects with gProjection.centerY at 240
+/// and holds BG1's scroll from the battle camera; the second gives BG1's x
+/// back, removes the scale callback and interrupt, and
 /// BattleEffect_SetupBlendedDisplay puts the centre back at 120, which its
 /// Camera_ApplyShake then moves while the screen shakes. The formation's
 /// objects are released before the scene returns.
@@ -195,9 +195,9 @@ void BattleEffect_RunNeptune(struct BattleEffectArgument *effect) {
     // growing step, ragged by 128 random offsets: frame 1 starts the
     // callback that builds the edge table each frame, frame 15 stops it.
     if (frame >= 0 && frame < 16) {
-      u16 *phase = (u16 *)Ram_MapCellBuffer;
+      u16 *phase = (u16 *)Ram_MapGridCellBuffer;
       if (frame == 1) {
-        u8 *noise = Ram_MapCellBuffer + 2;
+        u8 *noise = Ram_MapGridCellBuffer + 2;
         s32 k;
         for (k = 0; k != 128; k++) {
           noise[k] = Random16() & 63;

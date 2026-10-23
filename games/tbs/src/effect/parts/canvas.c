@@ -151,7 +151,7 @@ void BattleEffect_ProcessPendingGraphicsTransfer(void) {
 }
 
 /// Copies a full-screen picture to VRAM once the effect has finished drawing
-/// a frame: the 0x7800 bytes of Ram_MapCellBuffer into BG character block 2
+/// a frame: the 0x7800 bytes of Ram_MapGridCellBuffer into BG character block 2
 /// (0x06008000), the way transferMode says (every mode but
 /// CANVAS_COPY_AND_BRIGHTEN).
 ///
@@ -169,7 +169,7 @@ void BattleEffect_FlushPendingGraphicsTransfer(void) {
 
   slots = gWorkSlot + HEAP_SLOT_BATTLE_EFFECT;
   work = slots[0];
-  source = Ram_MapCellBuffer;
+  source = Ram_MapGridCellBuffer;
   if (work->transferPending != 1)
     return;
 
@@ -240,7 +240,7 @@ void Display_ApplyBg2Reference(void) {
 ///
 /// Runs each frame as a scheduler callback added by
 /// BattleEffect_StartCanvasLayer and BattleEffect_OpenCanvasLayer, and by
-/// BattleEffect_RunRingAndSparkScene; BattleEffect_EndCanvasLayer and
+/// BattleEffect_RunRingAndSparkSequence; BattleEffect_EndCanvasLayer and
 /// BattleEffect_EndElementStreaks remove it. It does nothing until the effect
 /// sets work->fadeFrames, which it counts down while counting
 /// work->fadeStep up.
@@ -357,7 +357,7 @@ void BattleEffect_StartCanvasLayer(s32 bgControl) {
                           DISPCNT_BG1_ON | DISPCNT_OBJ_ON | DISPCNT_WIN0_ON |
                           DISPCNT_WIN1_ON,
                       0x20000);
-  BattlePresentation_SetupTransitionSceneFar(0, 0, 0, 100);
+  BattlePresentation_SetupTransitionViewFar(0, 0, 0, 100);
   display->secondMode = BATTLE_BACKGROUND_NONE;
   WaitFrames(1);
   // Show it: 14/16 of the canvas over all below, inside both windows.
@@ -432,7 +432,7 @@ void BattleEffect_OpenCanvasLayer(s32 bgControl) {
                       DISPCNT_MODE_1 | DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON |
                           DISPCNT_BG1_ON | DISPCNT_OBJ_ON,
                       0x20000);
-  BattlePresentation_SetupTransitionSceneFar(0, 0, 0, 100);
+  BattlePresentation_SetupTransitionViewFar(0, 0, 0, 100);
   display->secondMode = BATTLE_BACKGROUND_NONE;
   WaitFrames(1);
 
@@ -538,10 +538,11 @@ void BattleEffect_EndCanvasLayer(void) {
 
 /// Hides BG1 and the windows and starts bringing the backdrop's palette back.
 ///
-/// Called by BattleEffect_RunBeamSequence and BattleEffect_RunRingAndSparkScene
-/// (beams.c). Sets the background view's secondMode to BATTLE_BACKGROUND_FLAT,
-/// queues DISPCNT for two frames later, starts the battle's palette fade to
-/// BATTLE_BACKGROUND_PLANE and waits two frames.
+/// Called by BattleEffect_RunBeamSequence and
+/// BattleEffect_RunRingAndSparkSequence (beams.c). Sets the background view's
+/// secondMode to BATTLE_BACKGROUND_FLAT, queues DISPCNT for two frames later,
+/// starts the battle's palette fade to BATTLE_BACKGROUND_PLANE and waits two
+/// frames.
 void BattleEffect_HideBg1AndRestoreBackdrop(void) {
   struct BattleWork *battle;
   s32 *flag;
@@ -565,16 +566,16 @@ void BattleEffect_HideBg1AndRestoreBackdrop(void) {
 /// (tiles 0x100 onwards, which at 64 bytes a tile start at character block
 /// 1, where the canvas lives), with blank tile 0xff to the right, blended over
 /// the rest inside the effect windows. Also clears the canvas. The
-/// full-screen Ram_MapCellBuffer effects use
+/// full-screen Ram_MapGridCellBuffer effects use
 /// BattleEffect_FlushPendingGraphicsTransfer instead.
 ///
-/// Called by BattleEffect_RunBeamSequence and BattleEffect_RunRingAndSparkScene
-/// (beams.c). Clears work->actorTimers, starts the battle's palette fade to
-/// BATTLE_BACKGROUND_PLANE, clears tile 0xff of character block 0 and writes
-/// BG1's map in screen block 31; writes DISPCNT, BG1CNT, BLDCNT, BLDALPHA, the
-/// windows, WININ and WINOUT directly; sets gBgScroll[1].y to 32 and the
-/// background view's secondMode to BATTLE_BACKGROUND_NONE; clears the canvas
-/// and character block 1.
+/// Called by BattleEffect_RunBeamSequence and
+/// BattleEffect_RunRingAndSparkSequence (beams.c). Clears work->actorTimers,
+/// starts the battle's palette fade to BATTLE_BACKGROUND_PLANE, clears tile
+/// 0xff of character block 0 and writes BG1's map in screen block 31; writes
+/// DISPCNT, BG1CNT, BLDCNT, BLDALPHA, the windows, WININ and WINOUT directly;
+/// sets gBgScroll[1].y to 32 and the background view's secondMode to
+/// BATTLE_BACKGROUND_NONE; clears the canvas and character block 1.
 void BattleEffect_SetupCanvasTileMap(void) {
   // UB: indexing past gBattleWork reaches the work slots after it.
 #ifdef UBFIX

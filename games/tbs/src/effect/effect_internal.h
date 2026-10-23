@@ -252,10 +252,10 @@ static inline void Dma_Stop(volatile u16 *channel) {
 /// the element streaks take.
 #define EFFECT_PLAYBACK_ORDER 0xc80
 
-/// Ram_MapCellBuffer as the unused Graphics_ConvertBackgroundToBlueRamp
+/// Ram_MapGridCellBuffer as the unused Graphics_ConvertBackgroundToBlueRamp
 /// (bind.c) uses it: a working copy of the backdrop's picture, the 0x7800
 /// bytes of BG character block 2.
-#define BLUE_RAMP_PIXELS Ram_MapCellBuffer
+#define BLUE_RAMP_PIXELS Ram_MapGridCellBuffer
 
 /// Caps a colour level at cap, and at 0 from below. Fades draw from darker
 /// copies of a picture built before the first frame, copy i capped at

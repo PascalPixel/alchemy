@@ -17,7 +17,7 @@ struct BattleUnit;
 struct DispatchObject;
 struct EffectSlot;
 struct ObjectRuntime;
-struct SceneAreaNameRule;
+struct MapSecNameRule;
 
 /// Battlefield (x, y) pixel pairs by place: 0 to 3 the party's column at x 80,
 /// 32 pixels apart, and 5 to 10 a column at x -80, 20 apart (battle_data.s).
@@ -51,7 +51,7 @@ struct DescendingOrbitObject;
 struct EffectDescriptor;
 struct EffectSlot;
 struct EnemyDefinition;
-struct FieldActor;
+struct ObjectEvent;
 struct FxObject;
 struct SpriteScale;
 struct ItemBreakFragmentSource;
@@ -61,7 +61,7 @@ struct ObjectRuntime;
 struct OrbitEffect;
 struct PolarOffsetOutput;
 struct RockWallHeights;
-struct SceneInteractionEntry;
+struct MapInteractionEntry;
 struct ScriptObjectEntry;
 struct BattleSource;
 struct SparkObject;
@@ -186,7 +186,7 @@ extern struct BattlePresentationTransition *gTransitionWork;
 extern const u8 gObjectMotion_LinkedActionScript[];
 /// Where the party returns after a defeat: {scene, entrance (-1 any), return
 /// scene, return entrance} rows, ended by scene -1
-/// (Scene_SetDefeatReturnPoint).
+/// (Map_SetDefeatReturnPoint).
 extern const s16 gParty_PairResolveRules[];
 /// Isaac's weapon sprite by weapon kind (BattleUnit_LookupWeaponValueByClass).
 extern u16 gBattleUnit_WeaponAnimationsIsaac[];
@@ -195,19 +195,19 @@ extern u16 gBattleUnit_WeaponAnimationsIsaac[];
 extern u16 gBattleFormation_LevelMatchedEnemies[];
 /// Battle backdrops by scene: a backdrop word (bit 31 set, resource id below)
 /// and then its scenes, ended by 0; a scene not listed takes the last backdrop
-/// (Battle_SelectSceneBackdrop).
-extern s32 gBattle_BackdropScenes[];
+/// (Battle_SelectMapBackdrop).
+extern s32 gBattle_BackdropMaps[];
 /// The template BattleEffect_BuildBlitter walks word by word to write a blitter
 /// (battle_effect_composite.s); none of it runs where it is.
 extern const u32 BattleEffect_Composite[];
 /// The message voice's rate by message speed option: 1, 3, then 10
-/// (Ui_SetMessageVoiceFromActor).
+/// (Ui_SetMessageVoiceFromObjectEvent).
 extern u8 gUi_RenderResultValues[];
 extern const u16 gWorldMap_CursorDirectionAngles[];
 extern const u8 gWorldMap_MarkerBlendCycle[];
 /// The world map's place markers, {tile << 16 | flag, place} for each place
 /// actor from 11, ended by -1; a zero row reserves an actor with no marker.
-extern const s32 gWorldMap_PlaceMarkers[];
+extern const s32 gWorldMap_MapSecMarkers[];
 u32 __udivsi3(u32 numerator, u32 denominator);
 #ifndef OWN__call_via_r0
 void _call_via_r0(u32 routine);

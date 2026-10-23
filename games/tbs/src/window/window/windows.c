@@ -64,7 +64,7 @@ void RenderOutput_InitializeFreeList(void) {
 /// Sets up the window system for the field (and the other screens outside
 /// battle): allocates and clears the work block, blanks the tilemap, frees
 /// every render output and starts the two per-frame callbacks, the tilemap
-/// upload and the window update. Reached from Field_RunScene
+/// upload and the window update. Reached from Field_RunMap
 /// (object/object/run_map.c), the debug message viewer
 /// (DebugBattle_ViewMessages), Lucky Dice and the reel game (ReelGame_Run).
 /// The work block (heap slot HEAP_SLOT_WINDOW) lives until the slot is next

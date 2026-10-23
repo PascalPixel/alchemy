@@ -8,39 +8,39 @@
 /// for a party character (0 to 7) the row with its sprite, and for a placed
 /// actor (8 on) the row it was created from, counting the placed rows in order.
 ///
-/// Called by Scene_TalkToActor for the talk facing, and by the field Psynergy
-/// effects that read an actor's placement (Mind Read, the Djinni effect, the
-/// event messages and the view).
-struct ScenePlacement *Scene_FindActorPlacement(s32 id) {
-  struct ScenePlacement *placement;
+/// Called by Map_TalkToObjectEvent for the talk facing, and by the field
+/// Psynergy effects that read an actor's placement (Mind Read, the Djinni
+/// effect, the event messages and the view).
+struct ObjectEventTemplate *Map_FindObjectEventTemplate(s32 id) {
+  struct ObjectEventTemplate *template;
   s32 tableIndex;
-  s32 placedActor = ACTOR_FIRST_PLACED;
+  s32 placedObjectEvent = LOCALID_FIRST_PLACED;
 
   for (tableIndex = 0; tableIndex < 4; tableIndex++) {
-    placement = ((struct FieldWork *)gEventWork)->tables[tableIndex];
-    if (placement == NULL)
+    template = ((struct FieldWork *)gEventWork)->tables[tableIndex];
+    if (template == NULL)
       continue;
     if (id <= 7) {
-      for (; (s16)placement->sprite != -1; placement++) {
-        if ((s16)placement->sprite == id) {
+      for (; (s16)template->sprite != -1; template++) {
+        if ((s16)template->sprite == id) {
 #ifdef UBFIX
-          return placement;
+          return template;
 #else
           goto found;
 #endif
         }
       }
     } else {
-      for (; (s16)placement->sprite != -1; placement++) {
-        if ((s16)placement->sprite > 7) {
-          if (placedActor == id) {
+      for (; (s16)template->sprite != -1; template++) {
+        if ((s16)template->sprite > 7) {
+          if (placedObjectEvent == id) {
 #ifdef UBFIX
-            return placement;
+            return template;
 #else
             goto found;
 #endif
           }
-          placedActor++;
+          placedObjectEvent++;
         }
       }
     }
@@ -50,9 +50,9 @@ struct ScenePlacement *Scene_FindActorPlacement(s32 id) {
 #else
 found:
   // BUG: a missing actor leaves entry NULL if the final table is absent.
-  if ((s16)placement->sprite == -1)
+  if ((s16)template->sprite == -1)
     return NULL;
-  return placement;
+  return template;
 #endif
 }
 
@@ -61,8 +61,9 @@ found:
 /// The flag is the low 12 bits, since GameFlag_Test ignores bit 12.
 ///
 /// Used for every condition column of a scene's tables: events
-/// (Scene_FindEvent, Field_SearchTile), placements (Event_SpawnObjectTable),
-/// exit regions (Field_CheckExitRegions) and item events.
+/// (Map_FindEvent, Field_SearchTile), placements
+/// (FieldScript_SpawnObjectTable), exit regions (Field_CheckWarpRegions) and
+/// item events.
 s32 GameFlag_IsConditionActive(s32 condition) {
   s32 flagSet;
 
@@ -76,24 +77,24 @@ s32 GameFlag_IsConditionActive(s32 condition) {
   return flagSet == 0;
 }
 
-/// Returns 1 for a search event (EVENT_SEARCH) that holds whatever its
+/// Returns 1 for a search event (MAP_EVENT_BG) that holds whatever its
 /// condition: one with more flags than its kind, unless its result is a mimic
 /// battle (type 0x005 in its top 12 bits).
 ///
-/// Called by Scene_FindEvent. Field_SearchTile tests such an event's condition
+/// Called by Map_FindEvent. Field_SearchTile tests such an event's condition
 /// itself (a chest's flag is set once it is opened), so the event is found
 /// either way and the leader still checks the spot; a mimic is found only
 /// while its condition holds.
-u32 Event_SearchIgnoresCondition(s32 flags, s32 result) {
+u32 Map_BgEventIgnoresCondition(s32 flags, s32 result) {
   u32 mimicDifference;
   s32 searchFlags;
   u32 ignoresCondition;
 
-  if ((flags & 0xf) != EVENT_SEARCH)
+  if ((flags & 0xf) != MAP_EVENT_BG)
     return 0;
   searchFlags = flags & 0x1ff;
   ignoresCondition = 0;
-  if (searchFlags != EVENT_SEARCH) {
+  if (searchFlags != MAP_EVENT_BG) {
     mimicDifference = (result & 0xfff00000) ^ FIND_MIMIC;
     ignoresCondition = mimicDifference | (0U - mimicDifference);
     // 1 when mimicDifference is not 0.
@@ -103,51 +104,53 @@ u32 Event_SearchIgnoresCondition(s32 flags, s32 result) {
 }
 
 /// Returns the first of the scene's events of kind for target whose condition
-/// holds, or NULL. EVENT_TOUCH_WALKING also needs the leader to have pushed
-/// against it for more than 12 frames (2 with control bit 11);
-/// EVENT_TOUCH_FACING needs the leader to face within an eighth of a turn of
+/// holds, or NULL. COORD_EVENT_FLAG_WALKING also needs the leader to have
+/// pushed against it for more than 12 frames (2 with control bit 11);
+/// MAP_EVENT_FLAG_FACING needs the leader to face within an eighth of a turn of
 /// the direction in the top four bits.
 ///
 /// Called by every lookup of a scene's events in this part and by
-/// Object_GetTriggerTileAheadOfCurrent. Changes nothing.
-struct EffectDescriptor *Scene_FindEvent(s32 kind, s32 target) {
+/// ObjectEvent_GetTriggerTileAheadOfCurrent. Changes nothing.
+struct EffectDescriptor *Map_FindEvent(s32 kind, s32 target) {
   struct FieldWork *work = (struct FieldWork *)gEventWork;
   struct EffectDescriptor *event = (struct EffectDescriptor *)work->events;
   s32 flags;
   u32 facing =
-      ((struct FieldActor *)ObjectTable_Get(gGameState.selectedActor))->facing;
+      ((struct ObjectEvent *)ObjectTable_Get(gGameState.selectedObjectEvent))
+          ->facing;
 
   flags = event->flags;
   // Preserve the full control word: direction and push-delay bits refine kind.
   while (flags != -1) {
     if ((flags & 0xf) == kind && event->value == target &&
-        (Event_SearchIgnoresCondition(flags, event->result) != 0 ||
+        (Map_BgEventIgnoresCondition(flags, event->result) != 0 ||
          (GameFlag_IsConditionActive(event->condition) != 0 &&
           (flags = event->flags, 1)))) {
       s32 matches = 0;
       s32 minimumPushFrames = 12;
       s32 touchRequirements;
 
-      if ((flags & EVENT_TOUCH_QUICK) != 0)
+      if ((flags & COORD_EVENT_FLAG_QUICK) != 0)
         minimumPushFrames = 2;
-      touchRequirements = flags & (EVENT_TOUCH_WALKING | EVENT_TOUCH_FACING);
+      touchRequirements =
+          flags & (COORD_EVENT_FLAG_WALKING | MAP_EVENT_FLAG_FACING);
 
       switch (touchRequirements) {
       case 0:
         matches = 1;
         break;
-      case EVENT_TOUCH_WALKING:
+      case COORD_EVENT_FLAG_WALKING:
         if (work->blockedSteps > minimumPushFrames) {
           matches = 1;
         }
         break;
-      case EVENT_TOUCH_FACING:
+      case MAP_EVENT_FLAG_FACING:
         // Bits 15 to 12 are a facing in sixteenths of a turn; the leader's
         // facing must be within 0x1fff (an eighth of a turn) of it.
         flags &= 0xf000;
         matches = (u16)((flags - facing) + 0x1fff) <= 0x3ffe;
         break;
-      case EVENT_TOUCH_WALKING | EVENT_TOUCH_FACING:
+      case COORD_EVENT_FLAG_WALKING | MAP_EVENT_FLAG_FACING:
         if (work->blockedSteps > minimumPushFrames) {
           flags &= 0xf000;
           matches = (u16)((flags - facing) + 0x1fff) <= 0x3ffe;
@@ -170,19 +173,20 @@ struct EffectDescriptor *Scene_FindEvent(s32 kind, s32 target) {
 UNUSED void Runtime_CallWorkBlockEntry(void) { gOverlayArea.initialize(); }
 
 /// Returns the talk event of actor id, or 0: for the actor stopped with Halt
-/// (gGameState.pausedObject), its EVENT_TALK_HALTED event if it has one, the
-/// event for talking to it while it is stopped (Crossbone Isle's Bane has one).
+/// (gGameState.pausedObject), its MAP_EVENT_TALK_HALTED event if it has one,
+/// the event for talking to it while it is stopped (Crossbone Isle's Bane has
+/// one).
 ///
-/// Called by Field_RunScene for the A button, to choose between talking and
+/// Called by Field_RunMap for the A button, to choose between talking and
 /// searching, and by the field Psynergy dispatch, which Halts only an actor
 /// with a talk event; both test the result only for non-zero.
-s32 Scene_FindActorTalkEvent(s32 id) {
-  struct EffectDescriptor *talkEvent = Scene_FindEvent(EVENT_TALK, id);
-  s32 pausedActor = gGameState.pausedObject;
+s32 Map_FindObjectEventTalkEvent(s32 id) {
+  struct EffectDescriptor *talkEvent = Map_FindEvent(MAP_EVENT_TALK, id);
+  s32 pausedObjectEvent = gGameState.pausedObject;
 
-  if (pausedActor == id) {
+  if (pausedObjectEvent == id) {
     struct EffectDescriptor *pausedEvent =
-        Scene_FindEvent(EVENT_TALK_HALTED, pausedActor);
+        Map_FindEvent(MAP_EVENT_TALK_HALTED, pausedObjectEvent);
 
     if (pausedEvent != 0) {
       return (s32)pausedEvent;
@@ -193,29 +197,30 @@ s32 Scene_FindActorTalkEvent(s32 id) {
 
 /// Talks to actor id: shows its event's message or calls its event function,
 /// with the actor stopped and turned as its placement says. For the actor
-/// stopped with Halt, its EVENT_TALK_HALTED event comes first; without one, a
-/// talk event that is a function gives one of two lines at random instead, from
-/// MsgPonderEllipsis on (dots spoken with pauses). Returns 0 when an event ran,
-/// -1 when there was none or such a line stood in for it; Field_RunScene
+/// stopped with Halt, its MAP_EVENT_TALK_HALTED event comes first; without one,
+/// a talk event that is a function gives one of two lines at random instead,
+/// from MsgPonderEllipsis on (dots spoken with pauses). Returns 0 when an event
+/// ran, -1 when there was none or such a line stood in for it; Field_RunMap
 /// ignores the result.
 ///
-/// Called by Field_RunScene for its talk request (work->talk). Resumes
+/// Called by Field_RunMap for its talk request (work->talk). Resumes
 /// the stopped actor and sets gGameState.pausedObject back to -1 afterwards.
-s32 Scene_TalkToActor(s32 id) {
-  struct ScenePlacement *placement = Scene_FindActorPlacement(id);
+s32 Map_TalkToObjectEvent(s32 id) {
+  struct ObjectEventTemplate *template = Map_FindObjectEventTemplate(id);
   s32 result = -1;
-  struct ObjectRuntime *actor = (struct ObjectRuntime *)Object_GetById(id);
+  struct ObjectRuntime *objectEvent =
+      (struct ObjectRuntime *)ObjectEvent_GetById(id);
   struct EffectDescriptor *event;
-  s32 actorPaused = 0;
+  s32 objectEventPaused = 0;
   u32 savedAngle;
   u32 talkFacing;
   s32 usePausedDialogue = 0;
 
   if (gGameState.pausedObject == id) {
-    actorPaused = 1;
-    event = Scene_FindEvent(7, id);
+    objectEventPaused = 1;
+    event = Map_FindEvent(7, id);
     if (event == 0) {
-      event = Scene_FindEvent(EVENT_TALK, id);
+      event = Map_FindEvent(MAP_EVENT_TALK, id);
       usePausedDialogue = 1;
       if (event == 0) {
         return -1;
@@ -227,100 +232,104 @@ s32 Scene_TalkToActor(s32 id) {
         u32 random = Random16();
         s32 message =
             MsgPonderEllipsis + definitionFlags * 2 + (random * 2 >> 16);
-        FieldEvent_Start();
-        Event_SetMessageId(message);
-        FieldEvent_ShowMessageAndWait(id, 0);
-        FieldEvent_End();
+        FieldScript_Start();
+        FieldScript_SetMessageId(message);
+        FieldScript_ShowMessageAndWait(id, 0);
+        FieldScript_End();
         goto finish;
       }
     }
   } else {
-    event = Scene_FindEvent(EVENT_TALK, id);
+    event = Map_FindEvent(MAP_EVENT_TALK, id);
   }
 
   if (event != 0 && event->result != 0) {
-    if (!actorPaused) {
+    if (!objectEventPaused) {
       // Stop the actor; with talk facing 0, 1 or 3, also stop the leader and
       // link the two.
-      u8 *movementState = &actor->movementState;
+      u8 *movementState = &objectEvent->movementState;
 
       *movementState = 1;
-      ObjectDispatch_SetAnimationSpeedFar((struct DispatchObject *)actor, 0);
-      savedAngle = actor->angle;
-      talkFacing = (u8)placement->talkFacing << 24;
+      ObjectDispatch_SetAnimationSpeedFar((struct DispatchObject *)objectEvent,
+                                          0);
+      savedAngle = objectEvent->angle;
+      talkFacing = (u8)template->talkFacing << 24;
       if (talkFacing <= (1 << 24) || talkFacing == (3 << 24)) {
         struct ObjectRuntime *leader =
-            (struct ObjectRuntime *)Object_GetById(gGameState.selectedActor);
+            (struct ObjectRuntime *)ObjectEvent_GetById(
+                gGameState.selectedObjectEvent);
 
         leader->targetX = leader->x;
         leader->targetY = leader->y;
         leader->targetZ = leader->z;
         SET_VELOCITY(leader, 0, 0, 0);
-        Object_LinkPair(id, gGameState.selectedActor, 0);
+        ObjectEvent_LinkPair(id, gGameState.selectedObjectEvent, 0);
       }
     }
     // A result below 0x10000 is a message; above, a function to call.
     if (event->result < 0x10000) {
       UiWork_SetBusyFlagsFar(usePausedDialogue);
-      FieldEvent_Start();
-      Event_SetMessageId(event->result);
-      FieldEvent_ShowMessageAndWait(id, 0);
-      FieldEvent_End();
+      FieldScript_Start();
+      FieldScript_SetMessageId(event->result);
+      FieldScript_ShowMessageAndWait(id, 0);
+      FieldScript_End();
     } else {
       Leader_StopMoving();
       ((void (*)(s32))event->result)(id);
     }
-    if (!actorPaused) {
+    if (!objectEventPaused) {
       // An actor left idle (script command 16) goes back to what its talk
       // facing says: following the leader (3) or its old angle (1).
-      if (actor->script[actor->step] == 16) {
-        if ((s8)placement->talkFacing == 3) {
-          actor->linkedObject =
-              (struct ObjectRuntime *)Object_GetById(gGameState.selectedActor);
-          actor->actionFlags |= 1;
-          ObjectMotion_SetActionCallback(actor,
+      if (objectEvent->script[objectEvent->step] == 16) {
+        if ((s8)template->talkFacing == 3) {
+          objectEvent->linkedObject =
+              (struct ObjectRuntime *)ObjectEvent_GetById(
+                  gGameState.selectedObjectEvent);
+          objectEvent->actionFlags |= 1;
+          ObjectMotion_SetActionCallback(objectEvent,
                                          (s32)gObjectMotion_LinkedActionScript);
-        } else if ((s8)placement->talkFacing == 1) {
-          actor->action = savedAngle;
+        } else if ((s8)template->talkFacing == 1) {
+          objectEvent->action = savedAngle;
           ObjectDispatch_InitializeFar(
-              (struct DispatchObject *)actor,
+              (struct DispatchObject *)objectEvent,
               (const s32 *)gObjectMotion_StepAngleScript);
         }
       }
-      actor->movementState = 0;
-      ObjectDispatch_SetAnimationSpeedFar((struct DispatchObject *)actor, 16);
+      objectEvent->movementState = 0;
+      ObjectDispatch_SetAnimationSpeedFar((struct DispatchObject *)objectEvent,
+                                          16);
     }
     result = 0;
   }
 finish:
   // Both a normal event and the paused actor's fallback line release the pause.
-  if (actorPaused) {
+  if (objectEventPaused) {
     FieldEffect_ResumeObject(gGameState.pausedObject);
     gGameState.pausedObject = -1;
   }
   return result;
 }
 
-/// Runs the scene's raised event (EVENT_RAISED) for value: its message or its
-/// function. Returns 0 when an event ran, -1 when there was none.
+/// Runs the scene's raised event (MAP_EVENT_RAISED) for value: its message or
+/// its function. Returns 0 when an event ran, -1 when there was none.
 ///
-/// Called by Field_RunScene for a positive event request (work->event).
-s32 Scene_RunRaisedEvent(s32 value) {
+/// Called by Field_RunMap for a positive event request (work->event).
+s32 Map_RunRaisedEvent(s32 value) {
   s32 result;
   s32 handled;
   struct EffectDescriptor *event;
 
-  event = Scene_FindEvent(EVENT_RAISED, value);
+  event = Map_FindEvent(MAP_EVENT_RAISED, value);
   handled = -1;
   if (event != NULL) {
     result = event->result;
     if (result != 0) {
       if (result < 0x10000) {
-        FieldEvent_Start();
-        Event_SetMessageId(event->result);
-        FieldEvent_ShowMessageAndWait(-1, 0);
+        FieldScript_Start();
+        FieldScript_SetMessageId(event->result);
+        FieldScript_ShowMessageAndWait(-1, 0);
         handled = 0;
-        FieldEvent_End();
+        FieldScript_End();
       } else {
         ((void (*)(s32))result)(value);
         handled = 0;
@@ -330,90 +339,91 @@ s32 Scene_RunRaisedEvent(s32 value) {
   return handled;
 }
 
-/// Runs the touch event (EVENT_TOUCH) of what the leader touched, or else
-/// takes its exit (EVENT_EXIT): plays the exit's sound (and effect) and records
-/// where it leads. Returns 0 when something ran, -1 when there was nothing.
+/// Runs the touch event (MAP_EVENT_COORD) of what the leader touched, or else
+/// takes its exit (MAP_EVENT_WARP): plays the exit's sound (and effect) and
+/// records where it leads. Returns 0 when something ran, -1 when there was
+/// nothing.
 ///
-/// Called by Field_RunScene for its step request (work->action), which
-/// Field_ProcessStep raises for MAP_CELL_EVENT_FIRST to MAP_CELL_EVENT_LAST.
+/// Called by Field_RunMap for its step request (work->action), which
+/// Field_ProcessStep raises for MB_EVENT_FIRST to MB_EVENT_LAST.
 /// Sets work->exit for an exit, and clears work->blockedSteps after a touch
 /// that needs pushing.
-s32 Scene_RunTouchOrExit(s32 value) {
+s32 Map_RunCoordEventOrWarp(s32 value) {
   struct EffectDescriptor *touch;
-  struct EffectDescriptor *exit;
-  s32 exitKind;
+  struct EffectDescriptor *warp;
+  s32 warpId;
   s32 handled;
   struct FieldWork *work;
 
-  touch = Scene_FindEvent(EVENT_TOUCH, value);
+  touch = Map_FindEvent(MAP_EVENT_COORD, value);
   handled = -1;
   work = (struct FieldWork *)gEventWork;
   if ((touch != 0) && (touch->result != 0)) {
-    if (touch->flags & EVENT_TOUCH_WALKING) {
+    if (touch->flags & COORD_EVENT_FLAG_WALKING) {
       work->blockedSteps = 0;
     }
     if (touch->result < 0x10000) {
-      FieldEvent_Start();
-      Event_SetMessageId(touch->result);
-      FieldEvent_ShowMessageAndWait(-1, 0);
+      FieldScript_Start();
+      FieldScript_SetMessageId(touch->result);
+      FieldScript_ShowMessageAndWait(-1, 0);
       handled = 0;
-      FieldEvent_End();
+      FieldScript_End();
     } else {
       ((void (*)(s32))touch->result)(value);
       handled = 0;
     }
   } else {
-    exit = Scene_FindEvent(EVENT_EXIT, value);
-    if (exit != 0) {
-      // An enum ExitStyle chooses how the leader leaves; the animated styles'
+    warp = Map_FindEvent(MAP_EVENT_WARP, value);
+    if (warp != 0) {
+      // An enum WarpStyle chooses how the leader leaves; the animated styles'
       // flags make the next scene play the matching arrival.
-      exitKind = exit->flags & EXIT_STYLE_MASK;
-      switch (exitKind) {
-      case EXIT_STYLE_NORMAL:
+      warpId = warp->flags & WARP_STYLE_MASK;
+      switch (warpId) {
+      case WARP_STYLE_NORMAL:
         AudioCommand_PlayFar(SE_MAP_EXIT);
         break;
-      case EXIT_STYLE_ANIMATED:
+      case WARP_STYLE_ANIMATED:
         AudioCommand_PlayFar(SE_STAIRS_UP);
         ObjectEffect_StartContextEffect26();
         break;
-      case EXIT_STYLE_ANIMATED_ALTERNATE:
+      case WARP_STYLE_ANIMATED_ALTERNATE:
         AudioCommand_PlayFar(SE_STAIRS_DOWN);
         ObjectEffect_StartContextEffect25();
         break;
       }
-      work->exit = exit->result;
+      work->warp = warp->result;
       handled = 0;
     }
   }
   return handled;
 }
 
-/// Runs the event of a tile the leader pushes against (MAP_CELL_LEDGE to
-/// MAP_CELL_JUMP_FORWARD, and MAP_CELL_JUMP_FORWARD_UNREACHED), once it has
+/// Runs the event of a tile the leader pushes against (MB_LEDGE to
+/// MB_JUMP_FORWARD, and MB_JUMP_FORWARD_UNREACHED), once it has
 /// pushed for more than 12 frames; the count then restarts.
 ///
-/// Called by Field_RunScene for its push request (work->pushTile), which
-/// Field_ProcessStep raises for MAP_CELL_LEDGE to MAP_CELL_JUMP_FORWARD.
+/// Called by Field_RunMap for its push request (work->pushTile), which
+/// Field_ProcessStep raises for MB_LEDGE to MB_JUMP_FORWARD.
 /// Clears work->blockedSteps when it acts.
 s32 Field_RunPushTileEvent(s32 collisionCode) {
   struct FieldWork *work = (struct FieldWork *)gEventWork;
-  s32 leader = gGameState.selectedActor;
+  s32 leader = gGameState.selectedObjectEvent;
 
   switch (collisionCode) {
-  case MAP_CELL_LEDGE:
+  case MB_LEDGE:
     if (work->blockedSteps > 12 && (gKeysHeld & KEY_DOWN)) {
-      Actor_JumpDownLedge(leader, 6, 0);
+      ObjectEvent_JumpDownLedge(leader, 6, 0);
       work->blockedSteps = 0;
     }
     break;
-  case MAP_CELL_JUMP_FORWARD_UNREACHED:
-  case MAP_CELL_JUMP_FORWARD:
+  case MB_JUMP_FORWARD_UNREACHED:
+  case MB_JUMP_FORWARD:
     if (work->blockedSteps > 12) {
       Field_TryJumpForward();
       work->blockedSteps = 0;
     }
     break;
-  case MAP_CELL_CLIMB:
+  case MB_CLIMB:
     if (work->blockedSteps > 12) {
       if (gKeysHeld & KEY_DOWN) {
         Field_ClimbDown();
@@ -428,16 +438,16 @@ s32 Field_RunPushTileEvent(s32 collisionCode) {
 }
 
 /// Searches the tile ahead with the given collision code. The fixed search
-/// spots, MAP_CELL_JAR to MAP_CELL_WELL, show their two messages. Otherwise the
+/// spots, MB_JAR to MB_WELL, show their two messages. Otherwise the
 /// scene's search event for the tile runs: a function, a message, or a chest
 /// holding a Psynergy Stone, a mimic, coins or an item; with no event, "checked
 /// the ground" and "found nothing".
 ///
-/// Called by Field_RunScene for its search request (work->tile). Opening a
+/// Called by Field_RunMap for its search request (work->tile). Opening a
 /// chest sets its condition flag, and it may raise a mimic battle
 /// (work->battle), give coins or an item, or restore all PP.
 s32 Field_SearchTile(s32 tile) {
-  const struct SceneEvent *event;
+  const struct MapEvent *event;
   s32 leader;
   u32 messageOffset;
   s16 condition;
@@ -445,22 +455,22 @@ s32 Field_SearchTile(s32 tile) {
   s32 rewardType;
   s32 canOpen;
 
-  leader = gGameState.selectedActor;
+  leader = gGameState.selectedObjectEvent;
   // Each fixed spot has its own pair of lines, chosen through
   // gField_TileMessageOffsets; the unsigned compare also rejects codes below
-  // MAP_CELL_JAR.
-  messageOffset = tile - MAP_CELL_JAR;
-  if (messageOffset <= MAP_CELL_WELL - MAP_CELL_JAR) {
+  // MB_JAR.
+  messageOffset = tile - MB_JAR;
+  if (messageOffset <= MB_WELL - MB_JAR) {
     Leader_StopMoving();
     tile = gField_TileMessageOffsets[messageOffset];
     UiText_ShowPositionedMessageAndWaitFar(MsgTileChecked + tile, 1);
     UiText_ShowPositionedMessageAndWaitFar(MsgTileResult + tile, 1);
   } else {
-    event = (const struct SceneEvent *)Scene_FindEvent(EVENT_SEARCH, tile);
+    event = (const struct MapEvent *)Map_FindEvent(MAP_EVENT_BG, tile);
     if (event != NULL) {
       s32 flags = event->control;
 
-      // Bits 8 to 4, the search target (enum SearchTarget), choose what the
+      // Bits 8 to 4, the search target (enum BgEventTarget), choose what the
       // leader checks ("checked the chest...") unless trigger bit 10 says the
       // event has its own message; if the event leaves FLAG_NOTHING_HAPPENS
       // set, the matching result line follows ("but the chest was empty.").
@@ -483,7 +493,7 @@ s32 Field_SearchTile(s32 tile) {
         if ((searchResult & 0x0f000000) != 0) {
           // A function.
           if (GameFlag_IsConditionActive(condition) != 0)
-            ((void (*)(s32))event->value)(gGameState.selectedActor);
+            ((void (*)(s32))event->value)(gGameState.selectedObjectEvent);
           if (GameFlag_TestFar(FLAG_NOTHING_HAPPENS) != 0)
             UiText_ShowPositionedMessageAndWaitFar(
                 MsgTileResult + messageOffset, 1);
@@ -496,7 +506,7 @@ s32 Field_SearchTile(s32 tile) {
         }
       } else {
         // A chest; its condition flag is set once it has been opened.
-        FieldEvent_Start();
+        FieldScript_Start();
         if (GameFlag_IsConditionActive(condition) != 0) {
           // Bit 16 of the value marks a chest the party's own characters
           // cannot open ("Can't open it").
@@ -505,18 +515,18 @@ s32 Field_SearchTile(s32 tile) {
           if ((searchResult & 0xf0000) == 0x10000 && leader <= 7)
             canOpen = 0;
           if (canOpen != 0) {
-            // A SEARCH(SEARCH_CHEST) event is a chest the map shows as a
+            // A BG_EVENT(BG_EVENT_CHEST) event is a chest the map shows as a
             // marker.
-            if ((event->control & 0x1ff) == SEARCH(SEARCH_CHEST))
+            if ((event->control & 0x1ff) == BG_EVENT(BG_EVENT_CHEST))
               Marker_OpenChest(tile);
             rewardType = event->value & 0xfff00000;
             if (rewardType == FIND_PSYNERGY_STONE) {
               // A Psynergy Stone: restores all PP.
               void *object;
 
-              if ((event->control & 0x1ff) == SEARCH(SEARCH_CHEST))
+              if ((event->control & 0x1ff) == BG_EVENT(BG_EVENT_CHEST))
                 Marker_ShowOpened(tile);
-              object = Marker_GetActor(tile);
+              object = Marker_GetObjectEvent(tile);
               ItemDisplay_RaiseAboveLeader(object);
               AudioCommand_PlayFar(MUS_TREASURE_FOUND);
               UiWork_PushValueSlotFar((u16)event->value, 5);
@@ -529,7 +539,7 @@ s32 Field_SearchTile(s32 tile) {
               PartyStatus_CloseFar();
               ObjectDispatch_SelectAnimationFar(object, 2);
               AudioCommand_PlayFar(SE_246);
-              FieldEvent_WaitFrames(30);
+              FieldScript_WaitFrames(30);
               UiText_ShowPositionedMessageAndWaitFar(MsgGotPsynergyStone + 2,
                                                      1);
               Marker_Hide(tile);
@@ -539,33 +549,33 @@ s32 Field_SearchTile(s32 tile) {
               // A mimic: a battle with its slot of ENCOUNTER_ZONE_MIMIC.
               struct FieldWork *work = (struct FieldWork *)gEventWork;
 
-              if ((event->control & 0x1ff) == SEARCH(SEARCH_CHEST))
+              if ((event->control & 0x1ff) == BG_EVENT(BG_EVENT_CHEST))
                 Marker_LaunchMimic(tile);
               // The chest's flag (with 0x1000) waits in pendingDjinnEvent,
-              // which Field_RunScene resolves when the scene is entered again
+              // which Field_RunMap resolves when the scene is entered again
               // after the battle.
               if (condition != -1) {
                 condition = gGameState.pendingDjinnEvent = condition | 0x1000;
               }
               // BATTLE_START_NO_ESCAPE (battle/battle/round.c): no first strike
               // or surprise, and every attempt to run fails; the command menu
-              // still offers it, refusing outright only for BATTLE_START_SCENE
-              // and BATTLE_START_LINK.
+              // still offers it, refusing outright only for
+              // BATTLE_START_SCRIPTED and BATTLE_START_LINK.
               work->battle = Encounter_GetEnemyGroupAtSlot(ENCOUNTER_ZONE_MIMIC,
                                                            (u16)event->value);
               Battle_SetStart(BATTLE_START_NO_ESCAPE);
               FieldEffect_SelectBattleCue(ENCOUNTER_ZONE_MIMIC,
                                           (u16)event->value);
-              AudioCommand_PlayFar(gGameState.sceneCue);
+              AudioCommand_PlayFar(gGameState.battleCue);
               UiText_ShowPositionedMessageAndWaitFar(MsgChestWasMimic, 1);
             } else if (rewardType == FIND_COINS(0)) {
               // Coins.
               void *object;
 
               object = FieldEffect_StartRandomParticleEmitter(
-                  gGameState.selectedActor, 0);
+                  gGameState.selectedObjectEvent, 0);
               WaitFrames(30);
-              if ((event->control & 0x1ff) == SEARCH(SEARCH_CHEST))
+              if ((event->control & 0x1ff) == BG_EVENT(BG_EVENT_CHEST))
                 Marker_ShowOpened(tile);
               ItemDisplay_RaiseAboveLeader(object);
               AudioCommand_PlayFar(MUS_TREASURE_FOUND);
@@ -581,7 +591,7 @@ s32 Field_SearchTile(s32 tile) {
               s32 recipient;
 
               object = FieldEffect_StartRandomParticleEmitter(
-                  gGameState.selectedActor, event->value & 0xfff);
+                  gGameState.selectedObjectEvent, event->value & 0xfff);
               WaitFrames(30);
               recipient = PartyInventory_AddFar((u16)event->value);
               // messageOffset is reused here as the item id's 0xffff mask.
@@ -591,15 +601,15 @@ s32 Field_SearchTile(s32 tile) {
                 UiText_ShowPositionedMessageAndWaitFar(MsgFoundItem, 1);
                 UiText_ShowPositionedMessageAndWaitFar(MsgFoundItem + 4, 1);
                 Object_DestroyIfPresent(object);
-                if ((event->control & 0x1ff) == SEARCH(SEARCH_CHEST))
+                if ((event->control & 0x1ff) == BG_EVENT(BG_EVENT_CHEST))
                   Marker_CloseChest(tile);
               } else {
-                if ((event->control & 0x1ff) == SEARCH(SEARCH_CHEST))
+                if ((event->control & 0x1ff) == BG_EVENT(BG_EVENT_CHEST))
                   Marker_ShowOpened(tile);
                 ItemDisplay_RaiseAboveLeader(object);
                 AudioCommand_PlayFar(MUS_TREASURE_FOUND);
                 UiWork_PushValueSlotFar(event->value & messageOffset, 2);
-                if (recipient == gGameState.selectedActor) {
+                if (recipient == gGameState.selectedObjectEvent) {
                   UiText_ShowPositionedMessageAndWaitFar(MsgColossoIsaacGotItem,
                                                          3);
                 } else {
@@ -620,7 +630,7 @@ s32 Field_SearchTile(s32 tile) {
           UiText_ShowPositionedMessageAndWaitFar(MsgTileResult + messageOffset,
                                                  1);
         }
-        FieldEvent_End();
+        FieldScript_End();
         FieldEffect_PlayQueuedSound();
       }
     } else {

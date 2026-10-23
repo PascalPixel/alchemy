@@ -3,19 +3,20 @@
 #include "map_grid.h"
 #include "io_reg.h"
 
-// Crossbone Isle Cave (SceneId_CrossboneIsleSteppingStones to
-// SceneId_CrossboneIsleDragonStatue) and Kolima Forest
-// (SceneId_KolimaForestFloodgate): drawing a stretch of
+// Crossbone Isle Cave (MapId_CrossboneIsleSteppingStones to
+// MapId_CrossboneIsleDragonStatue) and Kolima Forest
+// (MapId_KolimaForestFloodgate): drawing a stretch of
 // the map, in one of the states kept elsewhere in it (such as the water raised
 // or not), straight into the background's tile map.
 
 /// Draws the width by height cells at cell (x, y) of the map into screen block
 /// 5 from cell (destinationX, destinationY), wrapped to 16 by 16 cells, in band
 /// plane (16 cell rows each): each cell is its block's tiles from
-/// Ram_MapBlocks.
-static void Map_DrawCellPanel(s32 x, s32 y, s32 width, s32 height, s32 plane,
-                              s32 destinationX, s32 destinationY) {
-  u32 *cell = (u32 *)Ram_MapCellBuffer + (y * 128 + x);
+/// Ram_Metatiles.
+static void MapGrid_DrawCellPanel(s32 x, s32 y, s32 width, s32 height,
+                                  s32 plane, s32 destinationX,
+                                  s32 destinationY) {
+  u32 *cell = (u32 *)Ram_MapGridCellBuffer + (y * 128 + x);
   s32 row;
   s32 col;
   s32 end;
@@ -31,9 +32,9 @@ static void Map_DrawCellPanel(s32 x, s32 y, s32 width, s32 height, s32 plane,
         u32 *dst;
 
         dst = (u32 *)BG_SCREEN_BLOCK(5) + index;
-        src = (u32 *)(Ram_MapBlocks + offset);
+        src = (u32 *)(Ram_Metatiles + offset);
         *dst = *src;
-        src = (u32 *)(Ram_MapBlocks + 4 + offset);
+        src = (u32 *)(Ram_Metatiles + 4 + offset);
         dst = (u32 *)(BG_SCREEN_BLOCK(5) + 64) + index;
         *dst = *src;
 

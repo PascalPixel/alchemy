@@ -34,7 +34,7 @@ void BattleEffect_RunSpinningBeat(struct BattleEffectArgument *effect) {
 /// tail sheet. The swipe lands on frame 8.
 ///
 /// Called by BattleEffect_RunPoisonBeat and BattleEffect_RunSpinningBeat.
-/// Decodes the tail sheet into Ram_MapCellBuffer, moves BG2X so the swipe
+/// Decodes the tail sheet into Ram_MapGridCellBuffer, moves BG2X so the swipe
 /// crosses the target, and sets work->shakeFrames on the hit; Poison Beat loads
 /// its lime colours over the first 64 of the background palette, and the battle
 /// shows its damage at once as the target recoils; in Spinning Beat the
@@ -73,7 +73,7 @@ void BattleEffect_RunSwirlSwipe(struct BattleEffectArgument *effect, s32 mode) {
   Resource_LoadAndDecompress((s32)&ResourceId_MagentaSwirlSheet, work->sheet, 1,
                              1);
   Resource_LoadAndDecompress((s32)&ResourceId_MagentaTailSheet,
-                             Ram_MapCellBuffer, 1, 0);
+                             Ram_MapGridCellBuffer, 1, 0);
   if (mode == SWIRL_SWIPE_POISON_BEAT) {
     void *palette = Resource_GetTableEntry((s32)&ResourceId_LimePalette);
     Iwram_CopyWords((void *)BG_PLTT, palette, 128);
@@ -102,7 +102,7 @@ void BattleEffect_RunSwirlSwipe(struct BattleEffectArgument *effect, s32 mode) {
                 gSpiderWeb_CellBiasY[cell] + 32, gSpiderWeb_CellWidths[cell],
                 gSpiderWeb_CellHeights[cell]);
       else
-        draw[0](canvas, Ram_MapCellBuffer + gSpiderWeb_Cells[cell],
+        draw[0](canvas, Ram_MapGridCellBuffer + gSpiderWeb_Cells[cell],
                 gSpiderWeb_CellX[cell + work->effect->side * 6],
                 gSpiderWeb_CellBiasY[cell] + 32, gSpiderWeb_CellWidths[cell],
                 gSpiderWeb_CellHeights[cell]);

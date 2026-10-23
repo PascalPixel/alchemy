@@ -13,7 +13,7 @@
 #include "map_grid_scroll.h"
 #include "songs.h"
 
-// Kolima and Kolima Forest (SceneId_Kolima and SceneId_KolimaForestEntrance):
+// Kolima and Kolima Forest (MapId_Kolima and MapId_KolimaForestEntrance):
 // the sparkling dust that falls over the party when Tret's curse strikes
 // ("Watch out! It's happening again!").
 
@@ -26,7 +26,7 @@ u32 gFallingEffectState __attribute__((section(".bss")));
 /// the map view follows, with SE_246 every 64 frames. gFallingEffectState, an
 /// enum KolimaCurseDustState, shapes the fall.
 void Kolima_UpdateCurseDust(void) {
-  struct FieldActor *object = NULL;
+  struct ObjectEvent *object = NULL;
   s32 *origin;
   struct AnimationObject *sprite;
   s32 x, z;
@@ -55,7 +55,7 @@ void Kolima_UpdateCurseDust(void) {
   }
   if ((gFrameCount & 7) == 0 &&
       (object = Engine_ObjectCreate(SPRITE_SPARKLE, 0, 0, 0)) != 0) {
-    origin = ((struct MapScrollWork *)gMapWork[0])->origin;
+    origin = ((struct MapGridScrollWork *)gMapGridWork[0])->origin;
     if ((gFrameCount & 63) == 0)
       Engine_AudioPlayCue(SE_246);
     if (gFallingEffectState != KOLIMA_DUST_CENTRED)
@@ -73,9 +73,9 @@ void Kolima_UpdateCurseDust(void) {
     object->x.fixed = x;
     object->z.fixed = z;
     sprite->flags = 0;
-    object->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
+    object->priorityFlags &= ~OBJ_EVENT_PRIORITY_AUTOMATIC;
     sprite->image.priority = 1;
-    Object_SetMode(object, 1);
+    ObjectEvent_SetMode(object, 1);
     Engine_ObjectSetScript(object, gFallingEffectScript);
   }
 }

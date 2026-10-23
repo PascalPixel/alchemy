@@ -39,53 +39,53 @@ struct FieldEffectObject;
 struct EffectPosition;
 struct EffectStep;
 struct FacingObject;
-struct FieldActor;
+struct ObjectEvent;
 struct FieldPosition;
 struct MercuryLighthouseLights;
-struct MapActor;
-struct MapCell;
+struct MapObjectEvent;
+struct MapGridCell;
 struct MenuSprite;
 struct ModeRecord;
 struct MotionObject;
 struct ObjectRuntime;
 struct FieldRecord;
-struct SceneEntrance;
-struct SceneEntry;
-struct SceneEvent;
-struct FieldSceneObject;
-struct ScenePlacement;
-struct SceneRegion;
+struct MapWarpDest;
+struct MapEntry;
+struct MapEvent;
+struct MapObject;
+struct ObjectEventTemplate;
+struct MapWarpRegion;
 struct SparkleFrame;
 struct Swirl;
 struct TileRun2;
 struct V;
 union FieldObject;
 
-/// An actor seen only as its priority flags at 0x23 (enum ActorPriorityFlag).
-/// No code in the tree uses it.
+/// An actor seen only as its priority flags at 0x23 (enum
+/// ObjectEventPriorityFlag). No code in the tree uses it.
 struct Flags35 {
   u8 pad[35];
   u8 flags;
 };
 /// An actor seen only as the coordinate at 0x08. No code in the tree uses it.
-struct OverlayActorPosition {
+struct OverlayObjectEventPosition {
   u8 pad00[8];
   s32 depthFixed; ///< 16.16 fixed-point pixels
 };
-/// An actor seen only as its priority flags at 0x23 (enum ActorPriorityFlag).
-/// No code in the tree uses it.
-struct OverlayActorState {
+/// An actor seen only as its priority flags at 0x23 (enum
+/// ObjectEventPriorityFlag). No code in the tree uses it.
+struct OverlayObjectEventState {
   u8 pad00[35];
   u8 flags;
 };
-/// The Colosso opponent's path player, at the start of gSceneState: the path in
-/// ColossoRaceWork is played back or recorded by Colosso_UpdatePathOpponent.
+/// The Colosso opponent's path player, at the start of gMapLocalState: the path
+/// in ColossoRaceWork is played back or recorded by Colosso_UpdatePathOpponent.
 struct PathRecorder {
-  s16 mode;      ///< 1 plays the path, 2 records it, 9 finished
-  s16 mirror;    ///< nonzero mirrors the path across the finish
-  s16 actor;     ///< the actor id moved along the path
-  u16 pathIndex; ///< the next halfword of ColossoRaceWork.path, x then z
-  /// Frames the actor has not moved; from 3 it stands (Object_SetMode 1).
+  s16 mode;        ///< 1 plays the path, 2 records it, 9 finished
+  s16 mirror;      ///< nonzero mirrors the path across the finish
+  s16 objectEvent; ///< the actor id moved along the path
+  u16 pathIndex;   ///< the next halfword of ColossoRaceWork.path, x then z
+  /// Frames the actor has not moved; from 3 it stands (ObjectEvent_SetMode 1).
   s16 still;
 };
 /// A placeholder layout no code in the tree uses.
@@ -137,13 +137,13 @@ extern const u8 gField_TileMessageOffsets[];
 extern const u8 gFieldEffect_MoteTiles[];
 extern s32 gFourObjectMotion_ResourceIds[];
 extern s32 gTolbiShipInteriors_ShakeTimer;
-/// The bend's water level in gSceneState's second halfword: 1 high (the logs
+/// The bend's water level in gMapLocalState's second halfword: 1 high (the logs
 /// float), 0 low; the floodgate switch flips it.
 extern s16 *gKolimaForestFloodgateLayout;
 struct FloodgateLog;
-/// The bend's logs in gSceneState from byte 4, so they survive a battle.
+/// The bend's logs in gMapLocalState from byte 4, so they survive a battle.
 extern struct FloodgateLog *gKolimaForestFloodgateRecords;
-/// The short log's place in gSceneState's first halfword: 1 west, 0 east.
+/// The short log's place in gMapLocalState's first halfword: 1 west, 0 east.
 extern u16 *gKolimaForestFloodgateReturned;
 #ifndef OWN_gObjectSlots
 /// Work slot 5: the 64 field objects, 0x70 bytes each.
@@ -174,7 +174,7 @@ extern u32 gKolimaForestFloodgate_ShakeChance;
 extern u32 gKolimaForestFloodgate_ShakeScroll[];
 /// The healthy colours: the first 448 colours (896 bytes) of the colour
 /// buffer, kept by KolimaPalette_SaveFirst; the array is 1792 bytes.
-/// SceneId_KolimaForestGlade and SceneId_KolimaForestCliff each define one.
+/// MapId_KolimaForestGlade and MapId_KolimaForestCliff each define one.
 extern u8 gKolimaPalette_First[];
 /// The cursed colours, kept by KolimaPalette_SaveSecond.
 extern u8 gKolimaPalette_Second[];
@@ -264,8 +264,8 @@ extern u8 Render_DecodeFrame[];
 /// The statue scene's three scrolling strips, packed (Resource_DecodeByteLz).
 extern u8 gSolSanctumStatue_SpriteRowsGraphics[];
 /// The six large things' sprite animations, which pick their footprints in
-/// gStagedActor_FootprintBounds; each scene with them defines its own.
-extern u32 gStagedActor_FootprintKinds[];
+/// gStagedObjectEvent_FootprintBounds; each scene with them defines its own.
+extern u32 gStagedObjectEvent_FootprintKinds[];
 /// The tilemap row drawer, run from a copy in HEAP_SLOT_TEMP_RENDERER.
 extern const u8 TileMap_DrawRows[];
 /// The size of TileMap_DrawRows (decode.s).
@@ -276,13 +276,13 @@ extern u8 Transform_UpdateVerticesSize;
 extern const s32 gWorldMap_FootprintActions[6];
 extern const s16 gWorldMap_KeyHeadings[16];
 s32 CalculateFacingAngle(s32, s32);
-void Engine_ActorFollow(s32 actor, s32 leader);
-void Engine_EventClearInvalidPackedValues(void);
+void Engine_ObjectEventFollow(s32 objectEvent, s32 leader);
+void Engine_ScriptClearInvalidPackedValues(void);
 s32 Engine_PartyRemoveItem(s32 item);
-s32 FarCall_BlankLoadTable(s32 entrance);
-s32 FarCall_BlankRunTable(s32 entrance);
-#ifndef OWN_FieldScene_PrepareActors
-void FieldScene_PrepareActors(struct ScenePlacement *entry);
+s32 FarCall_BlankLoadTable(s32 warpDest);
+s32 FarCall_BlankRunTable(s32 warpDest);
+#ifndef OWN_Map_PrepareObjectEvents
+void Map_PrepareObjectEvents(struct ObjectEventTemplate *entry);
 #endif
 #ifndef OWN_GameFlag_IsSet
 s32 GameFlag_IsSet(s32 flag);
@@ -292,8 +292,8 @@ s32 Math_Atan2(s32 dy, s32 dx);
 #ifndef OWN_Object_Destroy
 void Object_Destroy(struct DispatchObject *work);
 #endif
-void ScenePlacement_ClipToView(struct ScenePlacement *placements);
-void SceneTable_Prepare(struct ScenePlacement *placements);
+void ObjectEventTemplate_ClipToView(struct ObjectEventTemplate *templates);
+void MapTable_Prepare(struct ObjectEventTemplate *templates);
 
 // The field effects' scripts and tables (object/fxdata.c, scripts.s and
 // arcspark.s).

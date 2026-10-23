@@ -28,7 +28,7 @@ struct RenderOutput *CreateSideObject(s32 character, s32 unused, s32 side,
 void Ui_LoadCharacterEntryForSlot(u32 side, s32 character, s32 unused);
 void RenderOutput_SetAnimation(struct RenderOutput *out, s32 mode);
 void RenderOutput_SetInvertedSentinel(void *output, s32 priority);
-void UiWindow_FillFromScene(void *spans);
+void UiWindow_FillScanlineSpans(void *spans);
 void UiWindow_FillScreenBlockRect(s32 unused0, s32 unused1, u32 width,
                                   u32 height, s32 value);
 
@@ -233,7 +233,7 @@ s32 Menu_RunConfirmSelection(s32 low, s32 message, s32 w, s32 selection);
 s32 Menu_RunConfirmSelectionAt(s32 x, s32 y, s32 selection);
 s32 Menu_SelectCoinsOrMedals(s32 selection);
 
-void DebugMenu_ScheduleSceneSelector(void);
+void DebugMenu_ScheduleMapSelector(void);
 void Menu_DrawSelectionRow(struct UiWindow *work, s32 first, const s16 *second);
 #ifdef UBFIX
 void Menu_RunSelection(void);

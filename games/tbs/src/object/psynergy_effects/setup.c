@@ -5,7 +5,7 @@
 #include "../psynergy_effects_internal.h"
 
 /// Scheduler callback: updates the 24 effect slots.
-void FieldEffect_UpdateAllEffectSlots(void) { FieldEffect_UpdateSceneSlots(); }
+void FieldEffect_UpdateAllEffectSlots(void) { FieldEffect_UpdateEffectSlots(); }
 
 /// Prepares the work of the Psynergy effect for ability (HEAP_SLOT_EFFECT) and
 /// loads its spark tiles. Called again while an effect resolves, it only
@@ -20,8 +20,8 @@ void FieldEffect_UpdateAllEffectSlots(void) { FieldEffect_UpdateSceneSlots(); }
 /// names one.
 void FieldEffect_LoadActionEffectResources(s32 abilityId, s32 mode) {
   struct FieldWork *ev = *(gWorkSlot + HEAP_SLOT_EVENT);
-  struct MapScrollWork *map = *(gWorkSlot + 8);
-  struct FieldEffectScene *work;
+  struct MapGridScrollWork *grid = *(gWorkSlot + 8);
+  struct FieldEffectWork *work;
   s32 running;
 
   running = ev->resolvingAction;
@@ -43,14 +43,14 @@ void FieldEffect_LoadActionEffectResources(s32 abilityId, s32 mode) {
   work->active = 1;
   work->messageMode = 1;
   // Keep the map's shake and its decay, to restore after the effect.
-  work->savedShakeX = map->shakeX;
-  work->savedShakeY = map->shakeY;
-  work->savedShakeDecay = map->shakeDecay;
-  if (gGameState.map == (s32)&SceneId_MercuryLighthouseEntrance)
+  work->savedShakeX = grid->shakeX;
+  work->savedShakeY = grid->shakeY;
+  work->savedShakeDecay = grid->shakeDecay;
+  if (gGameState.layoutId == (s32)&MapId_MercuryLighthouseEntrance)
     work->lit = 1;
-  if (gGameState.map == (s32)&SceneId_MercuryLighthouseMiddle)
+  if (gGameState.layoutId == (s32)&MapId_MercuryLighthouseMiddle)
     work->lit = 1;
-  FieldEffect_SetupObjectPair(gGameState.selectedActor, -1);
+  FieldEffect_SetupObjectPair(gGameState.selectedObjectEvent, -1);
   // Every effect but Reveal's own pauses Reveal's countdown (running is 0
   // here) until FieldEffect_End lets it run again.
   if (work->fieldKind != FIELD_KIND_REVEAL)
@@ -70,7 +70,7 @@ void FieldEffect_SetupObjectPair(s32 userId, s32 targetId) {
   struct ScriptMotionObject *user;
   struct ScriptMotionObject *target;
   s32 dir;
-  struct FieldEffectScene *work;
+  struct FieldEffectWork *work;
 
   work = gEffectWork;
   work->firstObjectId = userId;
@@ -106,7 +106,7 @@ void FieldEffect_SetupObjectPair(s32 userId, s32 targetId) {
 /// Stops the caster's per-frame hook and restores its colours (sprite param
 /// 0), then waits a frame.
 void FieldEffect_StopCasterHook(void) {
-  struct FieldEffectScene *work = gEffectWork;
+  struct FieldEffectWork *work = gEffectWork;
   struct ScriptMotionObject *user = work->mainObject;
 
   user->hook = NULL;
@@ -124,30 +124,30 @@ void FieldEffect_StopCasterHook(void) {
 /// effect's work.
 void FieldEffect_End(void) {
 #ifndef UBFIX
-  struct FieldEffectScene **sceneCell;
+  struct FieldEffectWork **effectWorkCell;
 #endif
-  struct FieldEffectScene *scene;
+  struct FieldEffectWork *effectWork;
   struct FieldWork *runtime;
-  struct MapScrollWork *map;
-  struct EffectSlot *sceneObject;
+  struct MapGridScrollWork *grid;
+  struct EffectSlot *effectSlot;
   s32 remaining;
 
 #ifdef UBFIX
-  scene = gEffectWork;
+  effectWork = gEffectWork;
   runtime = (struct FieldWork *)gEventWork;
-  map = gMapWork[0];
+  grid = gMapGridWork[0];
 #else
   // Indexing beyond the scalar global is undefined in C. Named slots add
   // 8 bytes to this function in the forced native EN build (0xf8 -> 0x100).
-  sceneCell = (struct FieldEffectScene **)&gEffectWork;
-  scene = *sceneCell;
-  runtime = *(struct FieldWork **)((u8 *)sceneCell - 116);
-  map = *(struct MapScrollWork **)((u8 *)sceneCell - 192);
+  effectWorkCell = (struct FieldEffectWork **)&gEffectWork;
+  effectWork = *effectWorkCell;
+  runtime = *(struct FieldWork **)((u8 *)effectWorkCell - 116);
+  grid = *(struct MapGridScrollWork **)((u8 *)effectWorkCell - 192);
 #endif
   for (remaining = 0; remaining < 24; remaining++) {
-    sceneObject = &scene->effects[remaining];
-    if (sceneObject->active != 0)
-      FieldEffect_ClearOwnedSlot(sceneObject);
+    effectSlot = &effectWork->effects[remaining];
+    if (effectSlot->active != 0)
+      FieldEffect_ClearOwnedSlot(effectSlot);
   }
 
   // While Field_UsePsynergy resolves an effect (resolvingAction), a cleanup
@@ -184,11 +184,11 @@ void FieldEffect_End(void) {
 
     runtime->castStarted = 0;
     Scheduler_RemoveCallback(FieldEffect_UpdateAllEffectSlots);
-    Resource_ResetEntry((s16)scene->tileSlot);
-    map->shakeX = scene->savedShakeX;
-    map->shakeY = scene->savedShakeY;
-    map->shakeDecay = scene->savedShakeDecay;
-    if (scene->fieldKind != FIELD_KIND_REVEAL)
+    Resource_ResetEntry((s16)effectWork->tileSlot);
+    grid->shakeX = effectWork->savedShakeX;
+    grid->shakeY = effectWork->savedShakeY;
+    grid->shakeDecay = effectWork->savedShakeDecay;
+    if (effectWork->fieldKind != FIELD_KIND_REVEAL)
       runtime->effectTimerRunning = 1;
     FieldEffect_PlayQueuedSound();
     Runtime_ReleaseHeapBlock(HEAP_SLOT_EFFECT);
@@ -206,40 +206,40 @@ void FieldEffect_End(void) {
 void EventObject_Initialize(void) {
   s32 ability;
   s32 announcedAbility;
-  struct FieldActor *caster;
-  struct FieldEffectScene *scene;
+  struct ObjectEvent *caster;
+  struct FieldEffectWork *effectWork;
   void *renderState;
 
-  scene = *(void **)Ram_EffectWork;
+  effectWork = *(void **)Ram_EffectWork;
   renderState = *(void **)Ram_EventWork;
-  caster = scene->mainObject;
-  ability = (s16)scene->action;
+  caster = effectWork->mainObject;
+  ability = (s16)effectWork->action;
   announcedAbility = ability;
   ObjectDispatch_SelectAnimationFar(caster, 0x14);
   caster->targetX = caster->x.fixed;
   caster->targetY = caster->y.fixed;
   caster->targetZ = caster->z.fixed;
   SET_VELOCITY(caster, 0, 0, 0);
-  if (scene->visible != 0) {
+  if (effectWork->visible != 0) {
     AudioCommand_PlayFar(SE_212);
     caster->update = FieldEffect_FlickerObjectAndTick;
   }
-  if (scene->active != 0) {
+  if (effectWork->active != 0) {
     ObjectGroup_SetActionForOthers((struct ObjectRuntime *)caster, 1, 0);
     UiWork_PushValueSlotFar(announcedAbility, 4);
     // The mode branches currently show the same message. Merging them shrinks
     // the native English function by 32 bytes, so keep this existing form.
-    if ((s8)scene->mode != 0) {
+    if ((s8)effectWork->mode != 0) {
       UiText_ShowPositionedMessageAndWaitFar(MsgAbilityAnnounce,
-                                             scene->messageMode);
+                                             effectWork->messageMode);
     } else {
       UiText_ShowPositionedMessageAndWaitFar(MsgAbilityAnnounce,
-                                             scene->messageMode);
+                                             effectWork->messageMode);
     }
     ObjectGroup_SetActionForOthers((struct ObjectRuntime *)caster, 0, 0x10);
   }
   if (GameFlag_TestFar(0x140) != 0) {
-    if (scene->visible != 0) {
+    if (effectWork->visible != 0) {
       caster->update = FieldEffect_CycleObjectValueByCounter;
     }
     ObjectDispatch_SelectAnimationFar(caster, 0x15);
@@ -335,13 +335,13 @@ void Camera_WorldToScreen(struct EffectVector *position) {
     position->y = 0;
   } else {
 #ifdef UBFIX
-    struct MapScrollWork *state = gMapWork[0];
+    struct MapGridScrollWork *state = gMapGridWork[0];
 #else
     // The named map slot avoids stepping outside gEventWork. In forced native
     // EN it replaces the address copy/subtract with a separate literal load
     // and changes register allocation; the extent remains 0x68 bytes.
-    struct MapScrollWork *state =
-        *(struct MapScrollWork **)((u8 *)eventCell - 76);
+    struct MapGridScrollWork *state =
+        *(struct MapGridScrollWork **)((u8 *)eventCell - 76);
 #endif
     s32 x = state->viewX & 0xffff0000;
     s32 z = state->viewY & 0xffff0000;

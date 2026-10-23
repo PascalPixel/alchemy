@@ -100,11 +100,11 @@ one place's code replacing another's). In the source an overlay is three
 files: a table the engine calls into, the place's own code, and a table of the
 engine's routines the place calls out to.
 
-The scene table, `gField_SceneTable` in [field/maps.s](field/maps.s),
+The scene table, `gField_MapTable` in [field/maps.s](field/maps.s),
 has 201 scenes, and they share 96 overlays: 90 under `scene/`, three under
-`menu/` and three under `debug/`. `Scene_LoadOverlay`
+`menu/` and three under `debug/`. `Map_LoadOverlay`
 ([object/object/map.c](object/object/map.c)) unpacks the overlay a
-scene's row names before `Field_RunScene` runs it; a battle or a minigame is
+scene's row names before `Field_RunMap` runs it; a battle or a minigame is
 main-image code and loads none. [Engine](../engine.md) describes how an
 overlay meets the main image.
 

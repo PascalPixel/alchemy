@@ -11,9 +11,9 @@
 
 #define NULL ((void *)0)
 
-struct FieldActor;
+struct ObjectEvent;
 
-struct FieldActor *Engine_ObjectCreate(s32, s32, s32, s32);
-void Engine_ActorSetSpriteFlags(struct FieldActor *, s32);
+struct ObjectEvent *Engine_ObjectCreate(s32, s32, s32, s32);
+void Engine_ObjectEventSetSpriteFlags(struct ObjectEvent *, s32);
 
 #endif

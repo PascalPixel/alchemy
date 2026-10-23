@@ -9,18 +9,18 @@
 #include "static_assert.h"
 #include "battle_unit.h"
 
-/// A scene's variant (SceneRecord.variant, copied to GameState.sceneVariant).
-enum SceneVariant {
-  SCENE_VARIANT_FIELD = 1, ///< every other scene: dungeons, the world map
+/// A scene's variant (MapRecord.variant, copied to GameState.mapType).
+enum MapType {
+  MAP_TYPE_FIELD = 1, ///< every other scene: dungeons, the world map
   /// Towns and their interiors, where walking restores no PP, recovers no
   /// Djinn and does no poison damage, Retreat is blocked, Avoid does not wear
   /// off and FLAG_IN_TOWN is set.
-  SCENE_VARIANT_TOWN = 2
+  MAP_TYPE_TOWN = 2
 };
 
 /// gGameState.hazardMode: what advances the hazard count (Field_ProcessStep).
 enum HazardMode {
-  /// The distance the leader walks on MAP_CELL_HAZARD ground.
+  /// The distance the leader walks on MB_DESERT_SAND ground.
   HAZARD_COUNT_ON_CELLS = 0,
   /// One each frame the field loop runs; no ☀️ code sets it.
   HAZARD_COUNT_FRAMES = 1
@@ -43,7 +43,7 @@ enum BattleStart {
   /// itself refuses to run, with MsgNoTimeToRun ("This is no time to be
   /// running away!"), as it does once the party is challenged
   /// (UiText_ShowLocalizedMessageAndWait, window/battle_command/link_timer.c).
-  BATTLE_START_SCENE = 3,
+  BATTLE_START_SCRIPTED = 3,
   BATTLE_START_LINK = 4, ///< a link battle (Battle_RunEncounter, menu/lobby.c)
   /// The debug battle menu's mark (DebugBattle_RunMenu), which no code tests
   /// by value; it still lets the party run.
@@ -80,38 +80,38 @@ struct GameState {
   /// awarded); 8 on the last variant given of each category.
   s8 wonPrizes[0x10];
   u8 unk13c[0x84]; ///< not named by TBS code
-  /// The scene being played: its index in gField_SceneTable (a SceneId_
-  /// symbol), or SCENE_BATTLE or another number above the field scenes.
-  s16 scene;
-  s16 entrance;        ///< the entrance taken; in SCENE_BATTLE, the enemy group
-  s16 savedScene;      ///< where a defeat returns to without a defeat point
-  s16 savedEntrance;   ///< where a defeat returns to without a defeat point
-  s16 defaultScene;    ///< the scene being run, kept as it starts
-  s16 defaultEntrance; ///< the entrance it was entered by
-  s16 sceneGroup;   ///< the current scene's group; a new group resets its flags
-  s16 nextScene;    ///< where the event sends the party next; -1 for none
-  s16 nextEntrance; ///< where the event sends the party next; -1 for none
-  s16 defeatScene;  ///< where a defeat returns to; -1 for none
-  s16 defeatEntrance; ///< where a defeat returns to; -1 for none
+  /// The scene being played: its index in gField_MapTable (a MapId_
+  /// symbol), or MAP_BATTLE or another number above the field scenes.
+  s16 mapId;
+  s16 warpDest;        ///< the entrance taken; in MAP_BATTLE, the enemy group
+  s16 savedMap;        ///< where a defeat returns to without a defeat point
+  s16 savedWarpDest;   ///< where a defeat returns to without a defeat point
+  s16 defaultMap;      ///< the scene being run, kept as it starts
+  s16 defaultWarpDest; ///< the entrance it was entered by
+  s16 mapSec;       ///< the current scene's group; a new group resets its flags
+  s16 nextMap;      ///< where the event sends the party next; -1 for none
+  s16 nextWarpDest; ///< where the event sends the party next; -1 for none
+  s16 defeatMap;    ///< where a defeat returns to; -1 for none
+  s16 defeatWarpDest; ///< where a defeat returns to; -1 for none
   s16 special;        ///< the battle backdrop chosen for the scene or terrain
   u8 unk1d8[2];       ///< not named by TBS code
-  /// The scene record's map (mapIndex); the world map's is 1, which the
-  /// code compares as (s32)&SceneId_Clear.
-  s16 map;
-  s32 x;              ///< 16.16 fixed-point pixels
-  s32 y;              ///< 16.16 fixed-point pixels
-  s32 z;              ///< 16.16 fixed-point pixels
-  u32 heading;        ///< 1/65536 turns
-  u16 turn;           ///< the leader's terrainId, kept with its position
-  s16 sceneCue;       ///< the battle music chosen for the encounter
-  s16 cue;            ///< the current scene's field music
-  u8 movementMode;    ///< 1 while the leader is climbing, 0 otherwise
-  u8 unk1f3;          ///< not named by TBS code
-  s32 selectedActor;  ///< the leader: its unit and its actor
-  u8 activeOwners[8]; ///< the party in order
-  u8 unk200[5];       ///< not named by TBS code
-  u8 paletteGlow[2];  ///< window hue (0 to 23), brightness (0 to 14)
-  u8 unk207[3];       ///< not named by TBS code
+  /// The scene record's map (layoutIndex); the world map's is 1, which the
+  /// code compares as (s32)&MapId_Clear.
+  s16 layoutId;
+  s32 x;                   ///< 16.16 fixed-point pixels
+  s32 y;                   ///< 16.16 fixed-point pixels
+  s32 z;                   ///< 16.16 fixed-point pixels
+  u32 heading;             ///< 1/65536 turns
+  u16 turn;                ///< the leader's terrainId, kept with its position
+  s16 battleCue;           ///< the battle music chosen for the encounter
+  s16 cue;                 ///< the current scene's field music
+  u8 movementMode;         ///< 1 while the leader is climbing, 0 otherwise
+  u8 unk1f3;               ///< not named by TBS code
+  s32 selectedObjectEvent; ///< the leader: its unit and its actor
+  u8 activeOwners[8];      ///< the party in order
+  u8 unk200[5];            ///< not named by TBS code
+  u8 paletteGlow[2];       ///< window hue (0 to 23), brightness (0 to 14)
+  u8 unk207[3];            ///< not named by TBS code
   /// The voice sound option: 1, as on a new game, plays each speaker's voice
   /// sound as their message types (FieldEffect_GetResourceId).
   u8 speech;
@@ -139,7 +139,7 @@ struct GameState {
   u16 firstShortcut;
   u16 secondShortcut;
   ///@}
-  u8 perspectiveScene; ///< set to 1 on the world map; not read by name in TBS
+  u8 perspectiveMap;   ///< set to 1 on the world map; not read by name in TBS
   u8 unk225[5];        ///< not named by TBS code
   u8 idleSleepEnabled; ///< the option, saved from gIdleSleepEnabled
   u8 battleStart;      ///< an enum BattleStart
@@ -147,7 +147,7 @@ struct GameState {
   /// hazardLimit the party takes hazardDamage and the count starts again. A
   /// fresh entry into a scene, not a return from battle, resets them to 1 HP
   /// every 16 pixels walked on it; the desert sets 25 percent every 600
-  /// (Field_RunScene, LamakanDesert_Initialize).
+  /// (Field_RunMap, LamakanDesert_Initialize).
   ///@{
   s16 hazardLimit; ///< pixels walked on hazard cells, or frames, by hazardMode
   s16 hazardMode;  ///< an enum HazardMode
@@ -158,12 +158,12 @@ struct GameState {
   /// The Djinni battle pending (DJINNI_EVENT_0 plus its number, flags in bits
   /// 15 to 11), resolved on returning to the field.
   s16 pendingDjinnEvent;
-  s16 sceneChangeReason; ///< the last battle's result; -1 for a defeat
-  s32 encounterSteps;    ///< the encounter count, reset with a new group
-  u16 pendingItem;  ///< given on returning to the field if the party has room
-  s16 sceneVariant; ///< the current scene's variant from its record
-  s16 retreatScene; ///< where Retreat goes; the group's first entrance
-  s16 retreatEntrance; ///< where Retreat goes; the group's first entrance
+  s16 mapChangeReason; ///< the last battle's result; -1 for a defeat
+  s32 encounterSteps;  ///< the encounter count, reset with a new group
+  u16 pendingItem; ///< given on returning to the field if the party has room
+  s16 mapType;     ///< the current scene's variant from its record
+  s16 retreatMap;  ///< where Retreat goes; the group's first entrance
+  s16 retreatWarpDest; ///< where Retreat goes; the group's first entrance
   s32 avoidDistance;   ///< distance left of Avoid, 16.16 pixels; 0 when off
   s8 avoidByItem;      ///< Avoid came from an item (the Sacred Feather)
   s8 pausedPose;       ///< Halt: the stopped object's first animation param
@@ -191,14 +191,14 @@ STATIC_ASSERT(offsetof(struct GameState, shopGifts) == 0x11c);
 STATIC_ASSERT(offsetof(struct GameState, owners) == 0x2c0);
 STATIC_ASSERT(sizeof(struct GameState) == 0xd20);
 STATIC_ASSERT(offsetof(struct GameState, wonPrizes) == 0x12c);
-STATIC_ASSERT(offsetof(struct GameState, sceneGroup) == 0x1cc);
+STATIC_ASSERT(offsetof(struct GameState, mapSec) == 0x1cc);
 STATIC_ASSERT(offsetof(struct GameState, dashKeys) == 0x21c);
 STATIC_ASSERT(offsetof(struct GameState, avoidDistance) == 0x244);
-STATIC_ASSERT(offsetof(struct GameState, entrance) == 0x1c2);
+STATIC_ASSERT(offsetof(struct GameState, warpDest) == 0x1c2);
 STATIC_ASSERT(offsetof(struct GameState, special) == 0x1d6);
 STATIC_ASSERT(offsetof(struct GameState, x) == 0x1dc);
 STATIC_ASSERT(offsetof(struct GameState, movementMode) == 0x1f2);
-STATIC_ASSERT(offsetof(struct GameState, selectedActor) == 0x1f4);
+STATIC_ASSERT(offsetof(struct GameState, selectedObjectEvent) == 0x1f4);
 STATIC_ASSERT(offsetof(struct GameState, activeOwners) == 0x1f8);
 STATIC_ASSERT(offsetof(struct GameState, speech) == 0x20a);
 STATIC_ASSERT(offsetof(struct GameState, messageSpeed) == 0x20c);
@@ -206,7 +206,7 @@ STATIC_ASSERT(offsetof(struct GameState, aKeys) == 0x210);
 STATIC_ASSERT(offsetof(struct GameState, firstShortcutKeys) == 0x218);
 STATIC_ASSERT(offsetof(struct GameState, secondShortcutKeys) == 0x21a);
 STATIC_ASSERT(offsetof(struct GameState, firstShortcut) == 0x220);
-STATIC_ASSERT(offsetof(struct GameState, retreatEntrance) == 0x242);
+STATIC_ASSERT(offsetof(struct GameState, retreatWarpDest) == 0x242);
 STATIC_ASSERT(offsetof(struct GameState, cloaked) == 0x24c);
 STATIC_ASSERT(offsetof(struct GameState, linkTallies) == 0x2a4);
 STATIC_ASSERT(offsetof(struct GameState, startStamp) == 0x2b8);

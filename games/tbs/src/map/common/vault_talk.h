@@ -6,15 +6,15 @@
 
 /// Shows the message already set as the actor's thought: the actor stops and
 /// stands while the thought is shown.
-static void Vault_ShowThought(s32 actorId) {
-  u8 *paused = &Object_GetById(actorId)->paused;
+static void Vault_ShowThought(s32 objectEventId) {
+  u8 *paused = &ObjectEvent_GetById(objectEventId)->paused;
   s32 zero = 0;
 
   *paused = 1;
-  Engine_EventStart();
-  Engine_ActorSetAnimation(actorId, ANIMATION_STAND);
-  Engine_EventWait(2);
-  Engine_EventShowMessage(actorId, 0);
-  Engine_EventEnd();
+  Engine_ScriptStart();
+  Engine_ObjectEventSetAnimation(objectEventId, ANIMATION_STAND);
+  Engine_ScriptWait(2);
+  Engine_ScriptShowMessage(objectEventId, 0);
+  Engine_ScriptEnd();
   *paused = zero;
 }

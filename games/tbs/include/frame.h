@@ -41,7 +41,7 @@ extern u32 gCpuLoadTimer; ///< Frames gCpuLoadPeak is still held.
 /// ended on, plus 256 for each frame it overran.
 extern u32 gCpuLoadPeak;
 /// Frames WaitFrames has finished.
-// volatile: the VBlank pass reads it (MapAnimation_ApplyAffineFrame picks
+// volatile: the VBlank pass reads it (WorldMap_ApplyAffineFrame picks
 // the world map's affine page by it) while WaitFrames counts it, so it is no
 // device.
 extern volatile u32 gFrameCount;

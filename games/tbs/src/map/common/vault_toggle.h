@@ -6,7 +6,7 @@
 /// bridge, and VAULT_CELL_WEST_OF_BRIDGE gives them back the path's ground, so
 /// he walks under it (render probe vault-bridge: crossing either way he stays
 /// 32 pixels up, and walking the path he stays on the ground).
-/// FLAG_SCENE_TEMP_00 remembers the deck, which each scene restores on a
+/// FLAG_MAP_TEMP_00 remembers the deck, which each scene restores on a
 /// kept-position return, such as after battle.
 #include "types.h"
 #include "object_event.h"
@@ -15,16 +15,16 @@
 
 /// Gives the cells under the bridge the deck's ground, from a copy kept
 /// elsewhere in the map. VAULT_CELL_BRIDGE_END reaches it; it sets
-/// FLAG_SCENE_TEMP_00, keeping the deck across a kept-position return.
+/// FLAG_MAP_TEMP_00, keeping the deck across a kept-position return.
 static void Vault_RaisePathToBridge(void) {
-  Engine_GameFlagSet(FLAG_SCENE_TEMP_00);
-  Map_CopyCellAttributes(55, 26, 4, 2, 23, 26);
+  Engine_GameFlagSet(FLAG_MAP_TEMP_00);
+  MapGrid_CopyCellAttributes(55, 26, 4, 2, 23, 26);
 }
 
 /// Gives the cells under the bridge the path's ground again, from the path's
-/// cells north of the bridge, and clears FLAG_SCENE_TEMP_00.
+/// cells north of the bridge, and clears FLAG_MAP_TEMP_00.
 /// VAULT_CELL_WEST_OF_BRIDGE reaches it.
 static void Vault_LowerPathUnderBridge(void) {
-  Engine_GameFlagClear(FLAG_SCENE_TEMP_00);
-  Map_CopyCellAttributes(23, 23, 4, 2, 23, 26);
+  Engine_GameFlagClear(FLAG_MAP_TEMP_00);
+  MapGrid_CopyCellAttributes(23, 23, 4, 2, 23, 26);
 }

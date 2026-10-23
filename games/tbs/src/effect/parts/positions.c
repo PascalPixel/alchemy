@@ -181,7 +181,7 @@ void BattleEffect_DispatchByIdRange(struct BattleEffectArgument *effect) {
   if ((u32)value <= 35) {
     BattleEffect_RunCastingImpact(effect, value);
   } else if (kind > 199) {
-    BattleEffect_RunRingAndSparkScene(effect);
+    BattleEffect_RunRingAndSparkSequence(effect);
   } else {
     BattleEffect_RunBeamSequence(effect);
   }

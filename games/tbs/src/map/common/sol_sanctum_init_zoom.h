@@ -1,6 +1,6 @@
 /// @file
 /// The initialization that two rooms of Sol Sanctum share,
-/// SceneId_SolSanctumMaze and SceneId_SolSanctumCorridor.
+/// MapId_SolSanctumMaze and MapId_SolSanctumCorridor.
 #include "types.h"
 #include "object_event.h"
 #include "songs.h"
@@ -18,12 +18,12 @@ s32 SolSanctumRooms_Initialize(void) {
 
   work = (struct FieldWork *)gEventWork;
   work->transition =
-      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
+      MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   work->transitionFrames = 16;
   if (Engine_GameFlagIsSet(FLAG_SOL_SANCTUM_ERUPTED) != 0) {
-    QueueSceneSound(SE_141);
+    QueueMapSound(SE_141);
     Engine_WorkSetValuesIfNonNegative(shakeX, shakeY, shakeDecay);
-    InitializeSceneRecordBuffer();
+    InitializeSparkleRecordBuffer();
   }
   return 0;
 }

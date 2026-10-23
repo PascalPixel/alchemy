@@ -274,7 +274,7 @@ order.
 
 A task is added once and then runs by itself until it is removed. Some
 belong in the frame's work, such as scrolling the map
-(`Map_UpdateLayerScroll`) or updating the windows (`UiWork_ProcessAll`);
+(`MapGrid_UpdateLayerScroll`) or updating the windows (`UiWork_ProcessAll`);
 others have to happen in the blank, such as copying the windows' changed
 tiles to the screen (`UiWork_UploadDirtyBlocks`). Each task carries one
 number, its order, which says both: which of the two passes runs it, and
@@ -566,7 +566,7 @@ names ending in `Far`, so renaming one touches other folders too.
 | `Scheduler_` | the task scheduler |
 | `Math_`, `Vector_` | square roots and polar offsets beside `Random16` and `ArcTan2` |
 | `FixedPoint_` | 16.16 and 8.8 arithmetic: a remainder, a product, a reciprocal and the distance between two positions |
-| `Transform_`, `SceneTransform_`, `Projection_` | the 3D transform and projection |
+| `Transform_`, `Transform_`, `Projection_` | the 3D transform and projection |
 | `NumberText_`, `DebugText_` | number text and the debug text screen |
 | `ColorBuffer_` | shading a buffer of pixels, keeping a copy |
 | `SaveState_` | saving |
@@ -600,7 +600,7 @@ don't say so.
 
 `gSavedStack` holds 3,152 bytes, though a stack below the frame-wait top and
 above the heap's end is at most 512. `ewram.s` lays EWRAM out in 4 KB groups
-(`gSceneState` opens the second, `gSleepActive` the third, the music state the
+(`gMapLocalState` opens the second, `gSleepActive` the third, the music state the
 fourth), and `gSavedStack` is the last cell of the third, sized to reach the
 fourth. It could hold a stack that had run 2,640 bytes into the heap.
 
@@ -608,11 +608,11 @@ No task waits. A call graph of the tbs-en build's objects, main image and
 overlays, from each function the code hands to the scheduler, each object
 hook and each `SC_CALL` callback, finds nine tasks with a path of calls to
 `WaitFrames`, and none takes it: the scene tasks turn actors with a wait of 0
-(`Engine_ActorFaceDirection`), the world map's lighthouse jitter moves the
+(`Engine_ObjectEventFaceDirection`), the world map's lighthouse jitter moves the
 camera with a glide, the slot machine and the link countdown open instant
 windows (`UI_WINDOW_INSTANT`), and battle playback's sprite respawn tests
 `gSchedulerStatus`. The tenth path is the debug scene selector, which only
-the unused `DebugMenu_ScheduleSceneSelector` would schedule as a task.
+the unused `DebugMenu_ScheduleMapSelector` would schedule as a task.
 
 - XXX (no evidence): what the five empty exports after the fades
   (`RuntimeDispatch_ReservedNoOpA` to `E`) were for; they are empty in both

@@ -15,14 +15,14 @@
 // nothing calls, converts a full-screen tiled picture in place.
 
 /// Turns the screen into shades of blue, top down, with a ragged edge. Works
-/// on a copy of the screen in Ram_MapCellBuffer. Each column starts up to 63
-/// lines late, and the edge speeds up a little every frame; after 27 frames
+/// on a copy of the screen in Ram_MapGridCellBuffer. Each column starts up to
+/// 63 lines late, and the edge speeds up a little every frame; after 27 frames
 /// the picture moves onto a second blue ramp at colours 96 to 127. Takes 256
 /// random numbers, one a column.
 ///
 /// Nothing calls it or takes its address. Writes background colours 32 to 63
 /// and then 96 to 127, the 0x7800 bytes of BG character block 2 (the
-/// backdrop's picture) and Ram_MapCellBuffer, keeps its delays in the sheet
+/// backdrop's picture) and Ram_MapGridCellBuffer, keeps its delays in the sheet
 /// slot, and waits a frame for each step of the edge.
 UNUSED void Graphics_ConvertBackgroundToBlueRamp(void) {
   s32 i, x, y, row, end, speed;
@@ -248,11 +248,11 @@ void BattleEffect_RunBind(struct BattleEffectArgument *effect) {
               scale.x = 0x2a000 - (tick * 3 << 9);
               scale.y = 0x2a000 - (tick * 3 << 9);
               scale.z = 0x2a000 - (tick * 3 << 9);
-              SceneTransform_ApplyScale(Vector3_Coordinates(&scale));
-              SceneTransform_ApplyRoll((64 - tick) << 9);
-              SceneTransform_ApplyYaw((64 - tick) << 9);
+              Transform_ApplyScale(Vector3_Coordinates(&scale));
+              Transform_ApplyRoll((64 - tick) << 9);
+              Transform_ApplyYaw((64 - tick) << 9);
             }
-            SceneTransform_ApplyRoll(j * 0x5555);
+            Transform_ApplyRoll(j * 0x5555);
             EffectPosition_ProjectPoint(gBind_Vertex, &position.projected);
             point->velocityX = position.projected.x + screen.x;
             point->velocityY = position.projected.y + screen.y + 16;
@@ -392,11 +392,11 @@ void BattleEffect_RunUnusedTriangleStrike(struct BattleEffectArgument *effect) {
               scale.x = 0x2a000 - (tick * 3 << 9);
               scale.y = 0x2a000 - (tick * 3 << 9);
               scale.z = 0x2a000 - (tick * 3 << 9);
-              SceneTransform_ApplyScale(Vector3_Coordinates(&scale));
-              SceneTransform_ApplyRoll((64 - tick) << 9);
-              SceneTransform_ApplyYaw((64 - tick) << 9);
+              Transform_ApplyScale(Vector3_Coordinates(&scale));
+              Transform_ApplyRoll((64 - tick) << 9);
+              Transform_ApplyYaw((64 - tick) << 9);
             }
-            SceneTransform_ApplyRoll(j * 0x5555);
+            Transform_ApplyRoll(j * 0x5555);
             EffectPosition_ProjectPoint(gBind_TriangleStrikeVertex,
                                         &position.projected);
             point->velocityX = position.projected.x + screen.x;

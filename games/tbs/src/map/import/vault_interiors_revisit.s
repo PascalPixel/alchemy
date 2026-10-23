@@ -5,30 +5,30 @@
 	.set import.Engine_HeapRelease, 1
 	.set import.Engine_VramLoad, 1
 	.set import.Engine_ObjectCreate, 1
-	.set import.Engine_MapCopyCellsTo, 1
+	.set import.Engine_MapGridCopyCellsTo, 1
 	.set import.Engine_ItemLoadIcon, 1
 	.set import.Engine_GameFlagIsSet, 1
 	.set import.Engine_GameFlagSet, 1
 	.set import.Engine_GameFlagClear, 1
 	.set import.PartyInventory_HasSpace, 1
-	.set import.Engine_EventWait, 1
-	.set import.Engine_EventStart, 1
-	.set import.Engine_EventEnd, 1
-	.set import.FieldScene_PrepareActors, 1
+	.set import.Engine_ScriptWait, 1
+	.set import.Engine_ScriptStart, 1
+	.set import.Engine_ScriptEnd, 1
+	.set import.Map_PrepareObjectEvents, 1
 	.set import.Engine_PartyGiveItem, 1
-	.set import.Engine_EventChooseYesNo, 1
-	.set import.Object_GetById, 1
-	.set import.Engine_ActorEnableActionCallback, 1
-	.set import.Engine_ActorSetAnimation, 1
-	.set import.Engine_ActorSetAnimationAndWait, 1
-	.set import.Engine_ActorRunRepeatedMotion, 1
-	.set import.Engine_ActorFaceEachOther, 1
-	.set import.Engine_EventSetMessage, 1
-	.set import.Engine_EventOpenMessage, 1
-	.set import.Engine_EventShowMessage, 1
-	.set import.Engine_EventShowMessageAndWait, 1
-	.set import.Engine_ActorFaceDirection, 1
-	.set import.Engine_ActorShowEmote, 1
+	.set import.Engine_ScriptChooseYesNo, 1
+	.set import.ObjectEvent_GetById, 1
+	.set import.Engine_ObjectEventEnableActionCallback, 1
+	.set import.Engine_ObjectEventSetAnimation, 1
+	.set import.Engine_ObjectEventSetAnimationAndWait, 1
+	.set import.Engine_ObjectEventRunRepeatedMotion, 1
+	.set import.Engine_ObjectEventFaceEachOther, 1
+	.set import.Engine_ScriptSetMessage, 1
+	.set import.Engine_ScriptOpenMessage, 1
+	.set import.Engine_ScriptShowMessage, 1
+	.set import.Engine_ScriptShowMessageAndWait, 1
+	.set import.Engine_ObjectEventFaceDirection, 1
+	.set import.Engine_ObjectEventShowEmote, 1
 	.set import.Engine_ItemShowFound, 1
 	.set import.Engine_ShopOpen, 1
 	.set import.Engine_InnOpen, 1

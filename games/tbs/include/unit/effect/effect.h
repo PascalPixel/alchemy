@@ -10,22 +10,22 @@ struct BattleEffectArgument;
 struct EffectPosition;
 struct EffectStep;
 
-/// The large effects BattleEffect_RunSceneEffect runs, by kind: the twelve
+/// The large effects BattleEffect_RunSummonEffect runs, by kind: the twelve
 /// summons. A summon's row of actflags.tsv has effect 0x8000 plus its kind.
-enum SceneEffectKind {
-  SCENE_EFFECT_NONE,     ///< no row uses it; runs Meteor's scene too
-  SCENE_EFFECT_RAMSES,   ///< BattleEffect_RunRamses (ramses.c)
-  SCENE_EFFECT_NEREID,   ///< BattleEffect_RunNereid (nereid.c)
-  SCENE_EFFECT_KIRIN,    ///< BattleEffect_RunKirin (kirin.c)
-  SCENE_EFFECT_ATALANTA, ///< BattleEffect_RunAtalanta (atalanta.c)
-  SCENE_EFFECT_CYBELE,   ///< BattleEffect_RunCybele (cybele.c)
-  SCENE_EFFECT_NEPTUNE,  ///< BattleEffect_RunNeptune (neptune.c)
-  SCENE_EFFECT_TIAMAT,   ///< BattleEffect_RunTiamat (tiamat.c)
-  SCENE_EFFECT_PROCNE,   ///< BattleEffect_RunProcne (procne.c)
-  SCENE_EFFECT_JUDGMENT, ///< BattleEffect_RunJudgment (judgment.c)
-  SCENE_EFFECT_BOREAS,   ///< BattleEffect_RunBoreas (boreas.c)
-  SCENE_EFFECT_METEOR,   ///< BattleEffect_RunMeteor (particle_streams.c)
-  SCENE_EFFECT_THOR      ///< BattleEffect_RunThor (thor.c)
+enum SummonEffectKind {
+  SUMMON_EFFECT_NONE,     ///< no row uses it; runs Meteor's scene too
+  SUMMON_EFFECT_RAMSES,   ///< BattleEffect_RunRamses (ramses.c)
+  SUMMON_EFFECT_NEREID,   ///< BattleEffect_RunNereid (nereid.c)
+  SUMMON_EFFECT_KIRIN,    ///< BattleEffect_RunKirin (kirin.c)
+  SUMMON_EFFECT_ATALANTA, ///< BattleEffect_RunAtalanta (atalanta.c)
+  SUMMON_EFFECT_CYBELE,   ///< BattleEffect_RunCybele (cybele.c)
+  SUMMON_EFFECT_NEPTUNE,  ///< BattleEffect_RunNeptune (neptune.c)
+  SUMMON_EFFECT_TIAMAT,   ///< BattleEffect_RunTiamat (tiamat.c)
+  SUMMON_EFFECT_PROCNE,   ///< BattleEffect_RunProcne (procne.c)
+  SUMMON_EFFECT_JUDGMENT, ///< BattleEffect_RunJudgment (judgment.c)
+  SUMMON_EFFECT_BOREAS,   ///< BattleEffect_RunBoreas (boreas.c)
+  SUMMON_EFFECT_METEOR,   ///< BattleEffect_RunMeteor (particle_streams.c)
+  SUMMON_EFFECT_THOR      ///< BattleEffect_RunThor (thor.c)
 };
 
 /// An effect handler: plays one effect over the battle, frame by frame, and
@@ -228,10 +228,11 @@ typedef struct {
   s16 values[1];    ///< indexRadius * 2 + 1 values, searched in order
 } BattleEffectIndexWindow;
 
-/// The map cell buffer (gMapCellBuffer), which the effects borrow, has two
-/// views here: Ram_MapCellBuffer as bytes, at its fixed address, and PARTICLES
-/// as particles. The effects use these two, not gMapCellBuffer itself.
-#define PARTICLES ((struct EffectStep *)Ram_MapCellBuffer)
+/// The map cell buffer (gMapGridCellBuffer), which the effects borrow, has two
+/// views here: Ram_MapGridCellBuffer as bytes, at its fixed address, and
+/// PARTICLES as particles. The effects use these two, not gMapGridCellBuffer
+/// itself.
+#define PARTICLES ((struct EffectStep *)Ram_MapGridCellBuffer)
 
 /// Clips overflow on all four sides.
 #define EFFECT_CLIP_BOUNDS (COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y)
@@ -434,7 +435,7 @@ void Camera_ApplyPhasedDelta(void);
 
 // dispatch.c
 void BattleEffect_CallDoNothing(s32 count);
-void BattleEffect_RunSceneEffect(struct BattleEffectArgument *effect);
+void BattleEffect_RunSummonEffect(struct BattleEffectArgument *effect);
 void BattleEffect_RunTableEffect(struct BattleEffectArgument *effect);
 void BattleEffect_BuildWindowEdgeTable(void);
 void BattleEffect_SelectLivingTargets(struct BattleEffectArgument *effect);
@@ -589,7 +590,8 @@ void BattleEffect_RunRansack(struct BattleEffectArgument *effect);
 void BattleEffect_RunBacteriaRush(struct BattleEffectArgument *effect);
 void BattleEffect_RunFreebiteRush(struct BattleEffectArgument *effect);
 void BattleEffect_RunFlyingAttack(struct BattleEffectArgument *effect);
-void BattleEffect_RunBurstScene(struct BattleEffectArgument *effect, s32 mode);
+void BattleEffect_RunBurstSequence(struct BattleEffectArgument *effect,
+                                   s32 mode);
 
 // gaia.c
 void BattleEffect_RunGaia(struct BattleEffectArgument *effect);
@@ -611,7 +613,7 @@ void BattleEffect_DispatchByIdRange(struct BattleEffectArgument *effect);
 
 // beams.c
 void BattleEffect_RunBeamSequence(struct BattleEffectArgument *effect);
-void BattleEffect_RunRingAndSparkScene(struct BattleEffectArgument *effect);
+void BattleEffect_RunRingAndSparkSequence(struct BattleEffectArgument *effect);
 
 // casting_impact.c
 void BattleEffect_StepPaletteToResource(s32 resourceId);

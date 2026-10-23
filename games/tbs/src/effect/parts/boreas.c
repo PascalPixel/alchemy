@@ -7,7 +7,7 @@
 /// The smoke trails behind the spray, after the 128 spray particles in
 /// PARTICLES (28 bytes each, 0xe00 in all).
 #define BOREAS_ICE_BLOCK_TRAILS                                                \
-  ((struct EffectStep *)(Ram_MapCellBuffer + 0xe00))
+  ((struct EffectStep *)(Ram_MapGridCellBuffer + 0xe00))
 #define BOREAS_BIG_BLOCK_CELLS 0xc46      ///< the dropping 24x48 ice block
 #define BOREAS_FALLING_BLOCK_CELLS 0x14f9 ///< the diagonal 40x80 ice block
 
@@ -19,7 +19,7 @@
 /// throws up spray; then ice blocks rain down on the targets, and boulders
 /// crumble into bouncing chips.
 ///
-/// Abilities: Boreas (SCENE_EFFECT_BOREAS).
+/// Abilities: Boreas (SUMMON_EFFECT_BOREAS).
 ///
 /// The longest of the effects, in two halves. The first (288 frames, which A
 /// or B cuts short after frame 16) opens a window on a field of 16 rocks over
@@ -39,7 +39,7 @@
 ///
 /// Also clears background colours 0 and 1 for the wipe and then loads the
 /// ice block palette over the first 64, writes the window registers and the
-/// window-edge table at Ram_MapCellBuffer (through
+/// window-edge table at Ram_MapGridCellBuffer (through
 /// BattleEffect_BuildWindowEdgeTable), gBgScroll[1] for the shake,
 /// gProjection.centerY and work->shakeFrames; it releases the nine objects
 /// before the second half and its callbacks and blitters at the end.
@@ -136,9 +136,9 @@ void BattleEffect_RunBoreas(struct BattleEffectArgument *effect) {
     // Open the window from the left: its right edge speeds up, and each line
     // lags 0 to 63 pixels behind it.
     if (frame >= 0 && frame < 16) {
-      u16 *edge = (u16 *)Ram_MapCellBuffer;
+      u16 *edge = (u16 *)Ram_MapGridCellBuffer;
       if (frame == 1) {
-        u8 *inset = Ram_MapCellBuffer + 2;
+        u8 *inset = Ram_MapGridCellBuffer + 2;
         s32 line;
         for (line = 0; line != 128; line++) {
           inset[line] = Random16() & 63;
@@ -226,16 +226,16 @@ void BattleEffect_RunBoreas(struct BattleEffectArgument *effect) {
     dropFrame = frame - 160;
     if (dropFrame >= 0 && dropFrame < 158) {
       s32 sinkFrame = frame - 208;
-      s32 blockX = 80;
+      s32 metatileX = 80;
       s32 blockY = 8;
       if (frame <= 175) {
-        blockX = 96 - dropFrame;
+        metatileX = 96 - dropFrame;
         blockY = dropFrame * 4 - 56;
       } else if (frame > 208) {
         blockY = sinkFrame / 4 + 8;
       }
-      drawAlt(canvas, work->sheet + BOREAS_BIG_BLOCK_CELLS, blockX, blockY, 24,
-              48);
+      drawAlt(canvas, work->sheet + BOREAS_BIG_BLOCK_CELLS, metatileX, blockY,
+              24, 48);
     }
 
     if (frame == 32) {

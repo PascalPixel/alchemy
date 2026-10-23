@@ -74,7 +74,8 @@ void BattleEffect_RunRottenBlood(struct BattleEffectArgument *effect) {
 /// The bursts live after the shells in PARTICLES, from PARTICLES[256] (0x1c00
 /// bytes is 256 particles of 28): 32 slots a target, of which 4 smoke puffs
 /// or 16 shards are used.
-#define LOBBED_SHELLS_BURSTS ((struct EffectStep *)(Ram_MapCellBuffer + 0x1c00))
+#define LOBBED_SHELLS_BURSTS                                                   \
+  ((struct EffectStep *)(Ram_MapGridCellBuffer + 0x1c00))
 #define LOBBED_SHELLS_SLOTS 16           ///< particles reserved for each target
 #define LOBBED_SHELLS_BURST_SLOTS 256    ///< burst particles after the shells
 #define LOBBED_SHELLS_SMOKE_CELLS 0x3e80 ///< the smoke pictures in the sheet

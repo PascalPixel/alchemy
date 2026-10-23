@@ -224,10 +224,10 @@ void BattleBackground_Load(s32 mode, s32 resourceId, s32 level) {
 /// the picture a line shows, or none. At a zoom of 1 or more the plane wraps
 /// and turns sideways with the camera's yaw. While the background is
 /// BATTLE_BACKGROUND_FLAT (or secondMode is) and not busy, it also sets BG1's
-/// horizontal scroll. Called by BattlePresentation_SetupTransitionScene, by
+/// horizontal scroll. Called by BattlePresentation_SetupTransitionView, by
 /// BattlePresentation_UpdateCamera and the shoulder-key camera
 /// (DEFINE_ADJUST_CAMERA) while BattlePresentationTransition.flag is 0, by
-/// Battle_RunEncounter and by Camera_ConfigureScene. Does nothing before
+/// Battle_RunEncounter and by Camera_ConfigureView. Does nothing before
 /// HEAP_SLOT_BATTLE_SCANLINES is allocated, and builds no page unless the
 /// mode is BATTLE_BACKGROUND_PLANE.
 void BattleCamera_SetRange(s32 centerX, s32 centerY, s32 offsetX, s32 offsetY,
@@ -304,13 +304,13 @@ void BattleCamera_SetRange(s32 centerX, s32 centerY, s32 offsetX, s32 offsetY,
 /// Sets the camera's eye at its stored distance without taking a zoom;
 /// nothing in the source calls it.
 /// The original zoom is an uninitialized local; UBFIX makes it an explicit
-/// percentage argument, as in BattlePresentation_SetupTransitionScene.
+/// percentage argument, as in BattlePresentation_SetupTransitionView.
 #ifdef UBFIX
-UNUSED void BattlePresentation_SetupTransitionSceneAtDepth(s32 x, s32 depth,
-                                                           s32 y, s32 zoom) {
+UNUSED void BattlePresentation_SetupTransitionViewAtDepth(s32 x, s32 depth,
+                                                          s32 y, s32 zoom) {
 #else
-UNUSED void BattlePresentation_SetupTransitionSceneAtDepth(s32 x, s32 depth,
-                                                           s32 y) {
+UNUSED void BattlePresentation_SetupTransitionViewAtDepth(s32 x, s32 depth,
+                                                          s32 y) {
 #endif
   s32 span = 0x01fe0000;
   // BUG: zoom is uninitialized; reads entry r4 directly (lsls r0, r4, #16).
@@ -337,9 +337,9 @@ UNUSED void BattlePresentation_SetupTransitionSceneAtDepth(s32 x, s32 depth,
   result = Iwram_RatioMulQ14(span, alpha);
   Projection_Set(span, result, span * 2);
   Render_ResetTransformState();
-  SceneTransform_ApplyPosition(focus);
-  SceneTransform_ApplyYaw((s16)camera->yaw);
-  SceneTransform_ApplyPitch((s16)camera->pitch);
+  Transform_ApplyPosition(focus);
+  Transform_ApplyYaw((s16)camera->yaw);
+  Transform_ApplyPitch((s16)camera->pitch);
   renderBounds[0] = 0;
   renderBounds[1] = 0;
   renderBounds[2] = camera->distance;
@@ -368,8 +368,7 @@ UNUSED void BattlePresentation_SetupTransitionSceneAtDepth(s32 x, s32 depth,
 /// auto_battle.c), BattlePresentation_SetupTransitionAtPairMidpoint and several
 /// effects. Writes the camera's pos and eye, gProjection, and the plane's
 /// next page.
-void BattlePresentation_SetupTransitionScene(s32 x, s32 depth, s32 y,
-                                             s32 zoom) {
+void BattlePresentation_SetupTransitionView(s32 x, s32 depth, s32 y, s32 zoom) {
   struct BattleCamera *camera = gCameraWork;
   s32 *focus = camera->focus;
   s32 scale = (zoom << 16) / 100;
@@ -393,9 +392,9 @@ void BattlePresentation_SetupTransitionScene(s32 x, s32 depth, s32 y,
   result = Iwram_RatioMulQ14(span, alpha);
   Projection_Set(span, result, span * 2);
   Render_ResetTransformState();
-  SceneTransform_ApplyPosition(focus);
-  SceneTransform_ApplyYaw((s16)camera->yaw);
-  SceneTransform_ApplyPitch((s16)camera->pitch);
+  Transform_ApplyPosition(focus);
+  Transform_ApplyYaw((s16)camera->yaw);
+  Transform_ApplyPitch((s16)camera->pitch);
   renderBounds[0] = 0;
   renderBounds[1] = 0;
   renderBounds[2] = span;
@@ -418,7 +417,7 @@ void BattlePresentation_SetupTransitionScene(s32 x, s32 depth, s32 y,
   Projection_Set(width, result, half * 4);
 }
 
-/// Points the battle camera, through BattlePresentation_SetupTransitionScene,
+/// Points the battle camera, through BattlePresentation_SetupTransitionView,
 /// at the ground between two units' battle objects, with a zoom in percent.
 /// Called by the staging of a paired action (staging.c) and by the beam
 /// effects (beams.c).
@@ -434,7 +433,7 @@ void BattlePresentation_SetupTransitionAtPairMidpoint(s32 firstUnitId,
   s32 x = (secondX + firstX) / 2;
   s32 z = (secondZ + firstZ) / 2;
 
-  BattlePresentation_SetupTransitionScene(x, 0, z, zoom);
+  BattlePresentation_SetupTransitionView(x, 0, z, zoom);
 }
 
 /// Fades BG2 out over the backdrop in eight frames, its blend weight falling

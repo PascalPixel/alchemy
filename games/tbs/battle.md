@@ -27,7 +27,7 @@ as it would leave through a doorway, and comes back to the same place
 afterwards.
 
 In the code, a random encounter raises a field exit like any other, with
-`SCENE_BATTLE` as the next scene and the enemy group in
+`MAP_BATTLE` as the next scene and the enemy group in
 `gGameState.entrance`. `Game_Run` (`src/object/object/map.c`) clears what
 the last scene left running, as it does between any two scenes: the task
 table, the list of small jobs the game runs once a frame, and the heap, the
@@ -35,7 +35,7 @@ pool of memory a scene borrows from. Then, instead of loading a place's
 overlay (the code for one place, loaded when the party arrives there), it
 calls `Battle_RunEncounterFar(entrance)`, which fights the whole battle
 before it returns; a `Far` name is the one other parts of the program use
-to call into the battle's part. Afterwards `Scene_ReturnFromBattle` reloads the field scene the
+to call into the battle's part. Afterwards `Map_ReturnFromBattle` reloads the field scene the
 battle started from, with the party where it was, or after a defeat goes to
 the defeat point. The debug battle menu (`DebugBattle_RunMenu`) is the only
 other way in. The battle's code is always present, in the `battle` bank of
@@ -50,7 +50,7 @@ zones in `src/object/encounter.tsv` choose the row.
 
 | Name | Value | Meaning |
 | --- | --- | --- |
-| `SCENE_BATTLE` | `0x1fe` | the next scene that runs a battle instead of an overlay |
+| `MAP_BATTLE` | `0x1fe` | the next scene that runs a battle instead of an overlay |
 | `FLAG_IN_BATTLE` | `0x103` | set while a battle runs |
 | `ENCOUNTER_FLED` | 999 | `Battle_RunEncounter`'s result when the party got away |
 | `ENCOUNTER_PARTY_LOST` | -1 | its result when the party was defeated |
@@ -227,7 +227,7 @@ ability's `actflags.tsv` row:
 | --- | --- | --- |
 | `BattleEffect_RunTableEffect` | neither bit | an ordinary effect kind, an index into `gBattleEffect_EffectHandlers` |
 | `BattleEffect_DispatchByIdRange` | `STAGING_BY_ID_RANGE` (`0x4000`) | casting impacts, beam sequences and ring and spark scenes, by the effect kind's range |
-| `BattleEffect_RunSceneEffect` | `STAGING_SCENE` (`0x8000`) | the summons' scenes |
+| `BattleEffect_RunSummonEffect` | `STAGING_SUMMON` (`0x8000`) | the summons' scenes |
 
 Each entry point borrows three blocks of memory from the heap (the sprite
 sheet, the work block and the canvas), runs the effect to its end and gives
@@ -263,8 +263,8 @@ over earlier ones, and many steps draw random numbers, so moving one changes
 every random value after it.
 
 The twelve summons that need two or more Djinn are scenes, enumerated by
-`enum SceneEffectKind`. They take the same three blocks; unlike
-`BattleEffect_RunTableEffect`, `BattleEffect_RunSceneEffect` leaves setting
+`enum SummonEffectKind`. They take the same three blocks; unlike
+`BattleEffect_RunTableEffect`, `BattleEffect_RunSummonEffect` leaves setting
 `work->effect` to each scene. The four summons that need one Djinni, Venus,
 Mercury, Mars and Jupiter, are ordinary effect kinds. A summon's damage
 (`ABILITY_KIND_SUMMON`) also adds 3 percent of the target's maximum HP to the

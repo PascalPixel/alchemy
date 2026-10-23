@@ -25,7 +25,7 @@
 /// targets while sparks flash around them; then the picture dissolves pixel by
 /// pixel, and the targets drop and explode.
 ///
-/// Abilities: Cybele (SCENE_EFFECT_CYBELE).
+/// Abilities: Cybele (SUMMON_EFFECT_CYBELE).
 ///
 /// The scene runs for CYBELE_FRAMES, in these stages:
 ///
@@ -44,7 +44,7 @@
 /// (BattleEffect_RunImpactBurst) explodes at the formation.
 ///
 /// Besides the canvas and work->particles (above), it writes the dissolve
-/// order into the first 1024 bytes of Ram_MapCellBuffer, greys the first 64
+/// order into the first 1024 bytes of Ram_MapGridCellBuffer, greys the first 64
 /// background colours, lifts and drops the targets' objects (their y and
 /// gravity), and sets REG_BG2X, REG_BG2PA, REG_BLDCNT and work->shakeFrames.
 /// It spawns eight formation objects and releases them, the transfer callback
@@ -72,7 +72,7 @@ void BattleEffect_RunCybele(struct BattleEffectArgument *effect) {
 
   // Setup. The dissolve order: eight shuffled runs of the columns 0 to 127,
   // each shuffled by 128 random swaps.
-  order = Ram_MapCellBuffer;
+  order = Ram_MapGridCellBuffer;
   for (i = 0; i != 1024; i++)
     order[i] = i & 127;
   for (i = 0; i != 8; i++) {

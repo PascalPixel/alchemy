@@ -39,7 +39,7 @@ struct CursorSlot {
 ///
 /// Returns 0x100 | the party place or 0x180 | the enemy place of the unit
 /// chosen with A, or -1 when cancelled or when the link battle's time runs
-/// out. While it runs, the battle scene slides (targetSceneOffset of
+/// out. While it runs, the battle scene slides (targetViewOffset of
 /// BattleMenuWork: -2 for the party, 16 for the enemies) and the covered
 /// units are marked (BattlePresentation_SetActorModesFar). The Djinn tutorial
 /// presses A every 60 frames.
@@ -109,14 +109,14 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
   // add 12 bytes here in EN; using gWorkSlot adds 16 bytes.
 #ifdef UBFIX
   if (mode == TARGET_MODE_ALLIES || mode == TARGET_MODE_SELF)
-    gLinkCountdownWork->targetSceneOffset = -2;
+    gLinkCountdownWork->targetViewOffset = -2;
   else
-    gLinkCountdownWork->targetSceneOffset = 16;
+    gLinkCountdownWork->targetViewOffset = 16;
 #else
   if (mode == TARGET_MODE_ALLIES || mode == TARGET_MODE_SELF)
-    ((struct BattleMenuWork **)&gBattleWork)[48]->targetSceneOffset = -2;
+    ((struct BattleMenuWork **)&gBattleWork)[48]->targetViewOffset = -2;
   else
-    ((struct BattleMenuWork **)&gBattleWork)[48]->targetSceneOffset = 16;
+    ((struct BattleMenuWork **)&gBattleWork)[48]->targetViewOffset = 16;
 #endif
   for (i = 0; i < 6; i++)
     cursorTracks[i].flags = 0;
@@ -785,7 +785,7 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
     UiWork_Finalize(conditionWindow, 1);
   UiWork_Finalize(window, 1);
   BattlePresentation_SetActorModesFar(candidateIds, 0);
-  gLinkCountdownWork->targetSceneOffset = 0;
+  gLinkCountdownWork->targetViewOffset = 0;
   WaitFrames(1);
   return targetIndex;
 }

@@ -12,7 +12,7 @@
 /// A whirlwind lifts the targets, then comets from a block of objects in a
 /// violet sky strike them.
 ///
-/// Abilities: Procne (SCENE_EFFECT_PROCNE).
+/// Abilities: Procne (SUMMON_EFFECT_PROCNE).
 ///
 /// The scene runs for 400 frames:
 ///   0 to 159   : a whirlwind rises over the field and lifts the targets,
@@ -396,7 +396,7 @@ void BattleEffect_RunProcne(struct BattleEffectArgument *effect) {
         depthOffset.x = 0;
         depthOffset.y = 0;
         Render_ResetTransformState();
-        SceneTransform_ApplyPosition(Vector3_Coordinates(&depthOffset));
+        Transform_ApplyPosition(Vector3_Coordinates(&depthOffset));
 
         // Frames 256 to 329: the motes close in on the middle of the
         // block two pixels a frame (dist is half the distance in pixels, the
@@ -538,8 +538,8 @@ void BattleEffect_RunProcne(struct BattleEffectArgument *effect) {
               // growing 2 a frame round where the comet left the block (kept
               // in its mark's velocity); each comet turns the view further.
               // Its 28 motes lie 2340/65536 turn apart, a full circle.
-              SceneTransform_ApplyRoll(-2048);
-              SceneTransform_ApplyYaw(-4096);
+              Transform_ApplyRoll(-2048);
+              Transform_ApplyYaw(-4096);
 
               slot = 0;
               spark = &work->particles[32];

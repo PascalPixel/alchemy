@@ -2,36 +2,36 @@
 /// Sol Entrance and the first rooms of Sol Sanctum, two scenes one overlay
 /// serves, chosen by gGameState.scene in every entry point.
 ///
-/// - Sol Entrance (SceneId_SolEntrance), the mountainside before the
+/// - Sol Entrance (MapId_SolEntrance), the mountainside before the
 ///   sanctum's door, reached from Vale (VALE_TO_SOL_ENTRANCE). Walking north
-///   into the door opens it and takes the leader in (Event_OpenDoorAndEnter);
-///   searching the other door finds it "tightly locked". Retreat does not work
-///   here. The way down leads to SceneId_Vale, except between the eruption
-///   (FLAG_SOL_SANCTUM_ERUPTED) and the party leaving Vale
-///   (FLAG_VALE_PARTY_LEFT), when it leads to SceneId_ValeEruption. After the
-///   eruption the ground rumbles now and then; once the party has left Vale a
-///   man stands in the path and warns everyone away.
-/// - Sol Sanctum (SceneId_SolSanctumReliefs), the rooms inside the door, which
+///   into the door opens it and takes the leader in
+///   (EventScript_OpenDoorAndEnter); searching the other door finds it "tightly
+///   locked". Retreat does not work here. The way down leads to MapId_Vale,
+///   except between the eruption (FLAG_SOL_SANCTUM_ERUPTED) and the party
+///   leaving Vale (FLAG_VALE_PARTY_LEFT), when it leads to MapId_ValeEruption.
+///   After the eruption the ground rumbles now and then; once the party has
+///   left Vale a man stands in the path and warns everyone away.
+/// - Sol Sanctum (MapId_SolSanctumReliefs), the rooms inside the door, which
 ///   Isaac, Garet and Jenna explore with Kraden. Two minotaur reliefs each have
 ///   an empty eye socket, and a Small Jewel set in it opens the way on: the
 ///   first from this scene's chest (FLAG_SOL_SANCTUM_FIRST_GEM_PLACED), the
-///   second from the chest in SceneId_SolSanctumMaze
+///   second from the chest in MapId_SolSanctumMaze
 ///   (FLAG_SOL_SANCTUM_SECOND_GEM_PLACED). Kraden has a scene on the first
 ///   entry at the door (SolSanctumEntrance_IntroduceSanctum), in the first
 ///   relief room (SolSanctumEntrance_KradenSuspectsHiddenPassage) and in the
 ///   second (SolSanctumEntrance_KradenSeesStatuesOutOfReach). Two statues in
 ///   the first relief room and the row of six in the second can be pushed, or
 ///   moved with Move, a cell east or west. Its exits lead to
-///   SceneId_SolSanctumCorridor, SceneId_SolSanctumMaze, Sol Entrance and
-///   SceneId_SolSanctumLunaSolRooms; the rest lead between its own rooms.
+///   MapId_SolSanctumCorridor, MapId_SolSanctumMaze, Sol Entrance and
+///   MapId_SolSanctumLunaSolRooms; the rest lead between its own rooms.
 ///
-/// SceneId_SolSanctumReliefs is one map, but each relief room has placement
-/// and event tables of its own: SolSanctumEntrance_GetPlacements and _GetEvents
-/// choose them by the entrance the party came in at, so a room's statues and
-/// their events exist only while the party is in it. Each pushable statue's
-/// column is kept in two place flags, one for each side, which
+/// MapId_SolSanctumReliefs is one map, but each relief room has placement
+/// and event tables of its own: SolSanctumEntrance_GetObjectEventTemplates and
+/// _GetEvents choose them by the entrance the party came in at, so a room's
+/// statues and their events exist only while the party is in it. Each pushable
+/// statue's column is kept in two place flags, one for each side, which
 /// SolSanctumEntrance_RestoreInteriorState reads to put it back on entry;
-/// Scene_ResetFlagsOnEnter clears them when the party enters another place
+/// Map_ResetFlagsOnEnter clears them when the party enters another place
 /// group, so the statues are back at their starts on the next visit. Searching
 /// a relief while its Small Jewel is held asks for the field menu as the search
 /// ends, so that the jewel can be used on it at once.
@@ -74,7 +74,7 @@
 #include "songs.h"
 #include "item_ids.h"
 
-// Place flags: Scene_ResetFlagsOnEnter clears 0x300 to 0x3ff when the party
+// Place flags: Map_ResetFlagsOnEnter clears 0x300 to 0x3ff when the party
 // enters another place group, and other places use the numbers for their own.
 
 /// The column each statue that can be pushed stands in, east or west of its
@@ -131,7 +131,7 @@
 #define FLAG_SOL_SANCTUM_ROW_STATUE_6_AT_WEST 0x31b
 
 // Scene flags, cleared on every ordinary entrance:
-// - FLAG_SCENE_TEMP_34: set on entering the second relief room; the
+// - FLAG_MAP_TEMP_34: set on entering the second relief room; the
 //   Move rows of the first relief room apply only while it is clear, which
 //   it always is there: only the second room's entrances set it, every
 //   ordinary entrance into the first room clears it, and a return after a
@@ -140,13 +140,13 @@
 
 // An exit's flag word of -1 stands for no flag: GameFlag_TestFar reads it as
 // flag 0xfff, which nothing sets, so the exit is always taken.
-#define EXIT_FLAG_NONE 0xffffffff
+#define WARP_FLAG_NONE 0xffffffff
 
 /// The collision codes of the cells the two scenes' touch, search and item
 /// events answer; codes 1 to 16 are the exits, in the exit table's order.
 enum SolSanctumEntranceCell {
   /// ★ Named from what the player sees: the door that slides open as the
-  /// leader walks into it (Event_OpenDoorAndEnter)
+  /// leader walks into it (EventScript_OpenDoorAndEnter)
   SOL_ENTRANCE_CELL_DOOR = 2,
   /// ★ Named from the game: "The door is tightly locked."
   /// (MsgFieldDoorTightlyLocked)
@@ -177,79 +177,80 @@ static void SolSanctumEntrance_RestoreInteriorState(void);
 static void SolSanctumEntrance_IntroduceSanctum(void);
 static void SolSanctumEntrance_KradenSuspectsHiddenPassage(void);
 static void SolSanctumEntrance_KradenSeesStatuesOutOfReach(void);
-static void SolSanctumEntrance_RestoreRowStatueCells(s32 placeActors);
+static void SolSanctumEntrance_RestoreRowStatueCells(s32 placeObjectEvents);
 static void SolSanctumEntrance_UpdateEruptionRumbles(void);
 
 s32 gSolSanctumEntrance_RumbleTimer __attribute__((section(".bss")));
 
-void InitializeSceneRecordBuffer();
+void InitializeSparkleRecordBuffer();
 
-/// Returns Sol Entrance's entrances (SceneId_SolEntrance) or Sol Sanctum's
-/// (SceneId_SolSanctumReliefs).
-const struct SceneEntrance *SolSanctumEntrance_GetEntrances(void) {
-  s16 scene = gGameState.scene;
+/// Returns Sol Entrance's entrances (MapId_SolEntrance) or Sol Sanctum's
+/// (MapId_SolSanctumReliefs).
+const struct MapWarpDest *SolSanctumEntrance_GetWarpDests(void) {
+  s16 mapId = gGameState.mapId;
 
-  if (scene == (s32)&SceneId_SolEntrance) {
-    return gSolEntrance_Entrances;
+  if (mapId == (s32)&MapId_SolEntrance) {
+    return gSolEntrance_WarpDests;
   }
-  if (scene == (s32)&SceneId_SolSanctumReliefs) {
-    return gSolSanctumReliefs_Entrances;
+  if (mapId == (s32)&MapId_SolSanctumReliefs) {
+    return gSolSanctumReliefs_WarpDests;
   }
-  return gSolSanctumEntrance_FallbackEntrances;
+  return gSolSanctumEntrance_FallbackWarpDests;
 }
 
-const struct SceneRegion *SolSanctumEntrance_GetRegions(void) { return 0; }
+const struct MapWarpRegion *SolSanctumEntrance_GetRegions(void) { return 0; }
 
-const u32 *SolSanctumEntrance_GetExits(void) {
-  return gSolSanctumEntrance_Exits;
+const u32 *SolSanctumEntrance_GetWarps(void) {
+  return gSolSanctumEntrance_Warps;
 }
 
 /// Selects the actors for the place and, in Sol Sanctum, the room. The first
 /// relief room's entrances place Kraden and that room's eleven statues, the
 /// second relief room's Kraden and the row of six; the rest of Sol Sanctum
-/// places Kraden and one statue (ACTOR_STATUE), and Sol Entrance the man who
-/// warns everyone away (ACTOR_WARNING_MAN).
-const struct ScenePlacement *SolSanctumEntrance_GetPlacements(void) {
-  struct ScenePlacement *table;
-  s32 firstStatueRoomEntrance =
+/// places Kraden and one statue (LOCALID_STATUE), and Sol Entrance the man who
+/// warns everyone away (LOCALID_WARNING_MAN).
+const struct ObjectEventTemplate *
+SolSanctumEntrance_GetObjectEventTemplates(void) {
+  struct ObjectEventTemplate *table;
+  s32 firstStatueRoomWarpDest =
       SOL_SANCTUM_RELIEFS_FIRST_RELIEF_ROOM_FROM_CHEST_ROOM;
 
-  if (gGameState.scene == (s32)&SceneId_SolSanctumReliefs) {
-    if (gGameState.entrance >= firstStatueRoomEntrance) {
-      if (gGameState.entrance >
+  if (gGameState.mapId == (s32)&MapId_SolSanctumReliefs) {
+    if (gGameState.warpDest >= firstStatueRoomWarpDest) {
+      if (gGameState.warpDest >
           SOL_SANCTUM_RELIEFS_FIRST_RELIEF_ROOM_FROM_STEPS_ROOM) {
-        if (gGameState.entrance <=
+        if (gGameState.warpDest <=
             SOL_SANCTUM_RELIEFS_FROM_SOL_SANCTUM_LUNA_SOL_ROOMS) {
-          return gSolSanctumReliefs_SecondReliefRoomPlacements;
+          return gSolSanctumReliefs_SecondReliefRoomObjectEventTemplates;
         }
       } else {
-        return gSolSanctumReliefs_FirstReliefRoomPlacements;
+        return gSolSanctumReliefs_FirstReliefRoomObjectEventTemplates;
       }
     }
-    table = gSolSanctumReliefs_Placements;
-    FieldScene_PrepareActors(table);
+    table = gSolSanctumReliefs_ObjectEventTemplates;
+    Map_PrepareObjectEvents(table);
     return table;
   }
-  if (gGameState.scene == (s32)&SceneId_SolEntrance) {
-    return gSolEntrance_Placements;
+  if (gGameState.mapId == (s32)&MapId_SolEntrance) {
+    return gSolEntrance_ObjectEventTemplates;
   }
-  return gSolSanctumEntrance_FallbackPlacements;
+  return gSolSanctumEntrance_FallbackObjectEventTemplates;
 }
 
 /// Selects the events for the place and room, by the same entrances as
-/// SolSanctumEntrance_GetPlacements.
-const struct SceneEvent *SolSanctumEntrance_GetEvents(void) {
-  s32 firstStatueRoomEntrance =
+/// SolSanctumEntrance_GetObjectEventTemplates.
+const struct MapEvent *SolSanctumEntrance_GetEvents(void) {
+  s32 firstStatueRoomWarpDest =
       SOL_SANCTUM_RELIEFS_FIRST_RELIEF_ROOM_FROM_CHEST_ROOM;
 
-  if (gGameState.scene == (s32)&SceneId_SolEntrance) {
+  if (gGameState.mapId == (s32)&MapId_SolEntrance) {
     return gSolEntrance_Events;
   }
-  if (gGameState.scene == (s32)&SceneId_SolSanctumReliefs) {
-    if (gGameState.entrance >= firstStatueRoomEntrance) {
-      if (gGameState.entrance >
+  if (gGameState.mapId == (s32)&MapId_SolSanctumReliefs) {
+    if (gGameState.warpDest >= firstStatueRoomWarpDest) {
+      if (gGameState.warpDest >
           SOL_SANCTUM_RELIEFS_FIRST_RELIEF_ROOM_FROM_STEPS_ROOM) {
-        if (gGameState.entrance <=
+        if (gGameState.warpDest <=
             SOL_SANCTUM_RELIEFS_FROM_SOL_SANCTUM_LUNA_SOL_ROOMS) {
           return gSolSanctumReliefs_SecondReliefRoomEvents;
         }
@@ -265,31 +266,31 @@ const struct SceneEvent *SolSanctumEntrance_GetEvents(void) {
 /// Sol Entrance: walking north into the sanctum's door slides it open, and
 /// the leader walks in. Takes SOL_ENTRANCE_TO_SOL_SANCTUM_RELIEFS, into Sol
 /// Sanctum at SOL_SANCTUM_RELIEFS_FROM_SOL_ENTRANCE.
-static void Event_OpenDoorAndEnter(void) {
+static void EventScript_OpenDoorAndEnter(void) {
   s32 width;
   s32 height;
 
-  Engine_EventStart();
+  Engine_ScriptStart();
   // The door opens over three frames.
   width = 3;
   height = 2;
-  Event_PlayCue(SE_181);
-  Map_CopyCellsTo(16, 28, 21, 3, width, height);
+  Script_PlayCue(SE_181);
+  MapGrid_CopyCellsTo(16, 28, 21, 3, width, height);
   Engine_TaskWait(10);
-  Map_CopyCellsTo(16, 30, 21, 3, width, height);
+  MapGrid_CopyCellsTo(16, 30, 21, 3, width, height);
   Engine_TaskWait(10);
-  Map_CopyCellsTo(16, 32, 21, 3, width, height);
+  MapGrid_CopyCellsTo(16, 32, 21, 3, width, height);
   Engine_TaskWait(10);
-  Engine_ActorSetSpritePriority(ACTOR_PARTY_LEADER, 2);
-  Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(3) / 5, PIXELS(3) / 10);
-  Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 120, 98);
-  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIMATION_WALK);
-  Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, 0, -8);
-  Engine_EventWait(10);
-  Engine_EventCloseScreen();
-  Engine_EventWaitForScreen();
-  Engine_EventRequestExit(SOL_ENTRANCE_TO_SOL_SANCTUM_RELIEFS);
-  Engine_EventEnd();
+  Engine_ObjectEventSetSpritePriority(LOCALID_PARTY_LEADER, 2);
+  ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(3) / 5, PIXELS(3) / 10);
+  ObjectEvent_WalkToAndWait(LOCALID_PARTY_LEADER, 120, 98);
+  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIMATION_WALK);
+  ObjectEvent_SetDestinationOffset(LOCALID_PARTY_LEADER, 0, -8);
+  Engine_ScriptWait(10);
+  Engine_ScriptCloseScreen();
+  Engine_ScriptWaitForScreen();
+  Engine_ScriptRequestWarp(SOL_ENTRANCE_TO_SOL_SANCTUM_RELIEFS);
+  Engine_ScriptEnd();
 }
 
 /// Sol Sanctum: searching the first minotaur relief shows one eye sparkling, or
@@ -297,9 +298,9 @@ static void Event_OpenDoorAndEnter(void) {
 /// hole where the left eye should be." Once the first Small Jewel is found, and
 /// until it is set, the main menu opens as the search ends, so that the jewel
 /// can be used.
-static void Event_InspectFirstMinotaurRelief(void) {
+static void EventScript_InspectFirstMinotaurRelief(void) {
 
-  Engine_EventStart();
+  Engine_ScriptStart();
 
   if (Engine_GameFlagIsSet(FLAG_SOL_SANCTUM_FIRST_GEM_PLACED) != 0) {
     Engine_MessageShowCentered(MsgSolSanctumMinotaurReliefBothEyes, 1);
@@ -312,24 +313,25 @@ static void Event_InspectFirstMinotaurRelief(void) {
     }
   }
 
-  Engine_EventEnd();
+  Engine_ScriptEnd();
 }
 
 /// The room shakes as stone shifts; the leader looks around and jumps.
 static inline void SolSanctumEntrance_ReactToOpeningPassage(void) {
-  Map_SetShake(PIXELS(1), PIXELS(1), Q16_ONE);
-  Engine_EventWait(20);
-  Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
-  Map_SetShake(PIXELS(2), PIXELS(2), Q16_ONE);
-  Engine_EventWait(20);
-  Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 40);
-  Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_WEST, 20);
-  Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_EAST, 20);
-  Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 10);
-  Engine_ActorJump(ACTOR_PARTY_LEADER, 4, 20);
-  Engine_ActorJump(ACTOR_PARTY_LEADER, 6, 40);
-  Map_SetShake(-1, -1, 9 * Q16_ONE / 10);
-  Engine_EventWait(40);
+  MapGrid_SetShake(PIXELS(1), PIXELS(1), Q16_ONE);
+  Engine_ScriptWait(20);
+  ObjectEvent_ShowEmote(LOCALID_PARTY_LEADER,
+                        EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+  MapGrid_SetShake(PIXELS(2), PIXELS(2), Q16_ONE);
+  Engine_ScriptWait(20);
+  ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_SOUTH, 40);
+  ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_WEST, 20);
+  ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_EAST, 20);
+  ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_SOUTH, 10);
+  Engine_ObjectEventJump(LOCALID_PARTY_LEADER, 4, 20);
+  Engine_ObjectEventJump(LOCALID_PARTY_LEADER, 6, 40);
+  MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
+  Engine_ScriptWait(40);
 }
 
 /// Sol Sanctum: using the Small Jewel on the first relief sets it in, and a
@@ -337,7 +339,7 @@ static inline void SolSanctumEntrance_ReactToOpeningPassage(void) {
 /// hear the sound of shifting stone." Does nothing until the first Small Jewel
 /// is found, or once it is set. Sets FLAG_SOL_SANCTUM_FIRST_GEM_PLACED and
 /// FLAG_ITEM_USED_UP, which takes the jewel.
-static void Event_SetFirstSmallJewel(void) {
+static void EventScript_SetFirstSmallJewel(void) {
   s32 message;
   s32 oneCell;
   s32 reliefWidth;
@@ -346,28 +348,28 @@ static void Event_SetFirstSmallJewel(void) {
   } else {
     if (GameFlag_IsSet(FLAG_SOL_SANCTUM_FIRST_GEM_PLACED) != 0) {
     } else {
-      Engine_EventStart();
+      Engine_ScriptStart();
       Field_EndBusyAndReveal();
       // The eye sparkles, then the wall opens.
       oneCell = 1;
-      Event_PlayCue(SE_GEM_SET);
-      Map_CopyCellsTo(0, 70, 30, 42, oneCell, oneCell);
-      Engine_MapRedraw();
-      Engine_EventWait(40);
+      Script_PlayCue(SE_GEM_SET);
+      MapGrid_CopyCellsTo(0, 70, 30, 42, oneCell, oneCell);
+      Engine_MapGridRedraw();
+      Engine_ScriptWait(40);
       message = MsgSolSanctumSetSmallGem;
       Engine_MessageShowCentered(message, 1);
-      Engine_EventWait(20);
+      Engine_ScriptWait(20);
       reliefWidth = 3;
-      Event_PlayCue(SE_183);
-      Map_CopyCellsTo(0, 29, 3, 1, reliefWidth, 2);
-      Map_CopyCellAttributes(0, 29, 3, 2, reliefWidth, oneCell);
-      Map_CopyCellsTo(1, 109, 4, 81, oneCell, oneCell);
-      Engine_MapRedraw();
+      Script_PlayCue(SE_183);
+      MapGrid_CopyCellsTo(0, 29, 3, 1, reliefWidth, 2);
+      MapGrid_CopyCellAttributes(0, 29, 3, 2, reliefWidth, oneCell);
+      MapGrid_CopyCellsTo(1, 109, 4, 81, oneCell, oneCell);
+      Engine_MapGridRedraw();
       SolSanctumEntrance_ReactToOpeningPassage();
       Engine_MessageShowCentered(message + 1, 1);
       GameFlag_Set(FLAG_ITEM_USED_UP);
       GameFlag_Set(FLAG_SOL_SANCTUM_FIRST_GEM_PLACED);
-      Engine_EventEnd();
+      Engine_ScriptEnd();
     }
   }
 }
@@ -375,11 +377,11 @@ static void Event_SetFirstSmallJewel(void) {
 /// Sol Sanctum, the second relief room: searching the second minotaur
 /// relief, as the first. Once the second Small Jewel is found,
 /// and until it is set, it opens the main menu.
-static void Event_InspectSecondMinotaurRelief(void) {
+static void EventScript_InspectSecondMinotaurRelief(void) {
 
   struct EventWork *work;
 
-  Engine_EventStart();
+  Engine_ScriptStart();
 
   if (Engine_GameFlagIsSet(FLAG_SOL_SANCTUM_SECOND_GEM_PLACED) != 0) {
     Engine_MessageShowCentered(MsgSolSanctumMinotaurReliefBothEyes, 1);
@@ -397,37 +399,37 @@ static void Event_InspectSecondMinotaurRelief(void) {
     Engine_MessageShowCentered(MsgSolSanctumMinotaurReliefOneEye, 1);
   }
 
-  Engine_EventEnd();
+  Engine_ScriptEnd();
 }
 
 /// Sol Sanctum, the second relief room: using the Small Jewel on the
 /// second relief, as the first, and a doorway opens. Only once the
 /// second Small Jewel is found and until it is set. Sets
 /// FLAG_SOL_SANCTUM_SECOND_GEM_PLACED and FLAG_ITEM_USED_UP.
-static void Event_SetSecondSmallJewel(void) {
+static void EventScript_SetSecondSmallJewel(void) {
   s32 message;
 
   if (GameFlag_IsSet(FLAG_SOL_SANCTUM_SECOND_SMALL_JEWEL_FOUND) != 0 &&
       GameFlag_IsSet(FLAG_SOL_SANCTUM_SECOND_GEM_PLACED) == 0) {
-    Engine_EventStart();
+    Engine_ScriptStart();
     Field_EndBusyAndReveal();
     // The eye sparkles, then the doorway opens.
     Engine_AudioPlayCue(SE_GEM_SET);
-    Map_CopyCellsTo(0, 71, 100, 71, 1, 1);
-    Engine_MapRedraw();
-    Engine_EventWait(40);
+    MapGrid_CopyCellsTo(0, 71, 100, 71, 1, 1);
+    Engine_MapGridRedraw();
+    Engine_ScriptWait(40);
     message = MsgSolSanctumSetSmallGem;
     Engine_MessageShowCentered(message, 1);
-    Engine_EventWait(20);
+    Engine_ScriptWait(20);
     Engine_AudioPlayCue(SE_183);
-    Map_CopyCellsTo(122, 20, 120, 30, 1, 2);
-    Map_CopyCellAttributes(122, 20, 1, 2, 120, 30);
-    Engine_MapRedraw();
+    MapGrid_CopyCellsTo(122, 20, 120, 30, 1, 2);
+    MapGrid_CopyCellAttributes(122, 20, 1, 2, 120, 30);
+    Engine_MapGridRedraw();
     SolSanctumEntrance_ReactToOpeningPassage();
     Engine_MessageShowCentered(message + 1, 1);
     GameFlag_Set(FLAG_ITEM_USED_UP);
     GameFlag_Set(FLAG_SOL_SANCTUM_SECOND_GEM_PLACED);
-    Engine_EventEnd();
+    Engine_ScriptEnd();
   }
 }
 
@@ -446,12 +448,12 @@ static inline void SolSanctumEntrance_RecordStatueColumn(s32 column,
 }
 
 /// Sol Sanctum, the first relief room: Move on the west statue
-/// (ACTOR_WEST_STATUE) while FLAG_SCENE_TEMP_34 is clear, and called by
-/// Event_PushStatue there. The column it stops in is saved: sets
+/// (LOCALID_WEST_STATUE) while FLAG_MAP_TEMP_34 is clear, and called by
+/// EventScript_PushStatue there. The column it stops in is saved: sets
 /// FLAG_SOL_SANCTUM_WEST_STATUE_AT_EAST or _AT_WEST, or clears both when it
 /// stands in neither column.
-static void Event_WestStatueMoved(void) {
-  struct FieldActor *statue = Object_GetById(ACTOR_WEST_STATUE);
+static void EventScript_WestStatueMoved(void) {
+  struct ObjectEvent *statue = ObjectEvent_GetById(LOCALID_WEST_STATUE);
   s32 column;
 
   if (statue == NULL) {
@@ -463,10 +465,10 @@ static void Event_WestStatueMoved(void) {
 }
 
 /// Sol Sanctum, the first relief room: Move on the east statue
-/// (ACTOR_EAST_STATUE), as the west one. Sets
+/// (LOCALID_EAST_STATUE), as the west one. Sets
 /// FLAG_SOL_SANCTUM_EAST_STATUE_AT_EAST or _AT_WEST, or clears both.
-static void Event_EastStatueMoved(void) {
-  struct FieldActor *statue = Object_GetById(ACTOR_EAST_STATUE);
+static void EventScript_EastStatueMoved(void) {
+  struct ObjectEvent *statue = ObjectEvent_GetById(LOCALID_EAST_STATUE);
   s32 column;
 
   if (statue == NULL) {
@@ -483,11 +485,11 @@ static void Event_EastStatueMoved(void) {
 }
 
 /// Sol Sanctum, the second relief room: Move on the first statue of the
-/// row (ACTOR_ROW_STATUE_1), and called by Event_PushStatue there. The column
-/// it stops in is saved and the cells under all six are set again. Sets
+/// row (LOCALID_ROW_STATUE_1), and called by EventScript_PushStatue there. The
+/// column it stops in is saved and the cells under all six are set again. Sets
 /// FLAG_SOL_SANCTUM_ROW_STATUE_1_AT_EAST or _AT_WEST, or clears both.
-static void Event_RowStatue1Moved(void) {
-  struct FieldActor *statue = Object_GetById(ACTOR_ROW_STATUE_1);
+static void EventScript_RowStatue1Moved(void) {
+  struct ObjectEvent *statue = ObjectEvent_GetById(LOCALID_ROW_STATUE_1);
   s32 column;
 
   if (statue == NULL) {
@@ -499,10 +501,10 @@ static void Event_RowStatue1Moved(void) {
   SolSanctumEntrance_RestoreRowStatueCells(0);
 }
 
-/// Sol Sanctum, the second relief room: as Event_RowStatue1Moved, for
-/// the row's second statue (ACTOR_ROW_STATUE_2).
-static void Event_RowStatue2Moved(void) {
-  struct FieldActor *statue = Object_GetById(ACTOR_ROW_STATUE_2);
+/// Sol Sanctum, the second relief room: as EventScript_RowStatue1Moved, for
+/// the row's second statue (LOCALID_ROW_STATUE_2).
+static void EventScript_RowStatue2Moved(void) {
+  struct ObjectEvent *statue = ObjectEvent_GetById(LOCALID_ROW_STATUE_2);
   s32 column;
 
   if (statue == NULL) {
@@ -514,10 +516,10 @@ static void Event_RowStatue2Moved(void) {
   SolSanctumEntrance_RestoreRowStatueCells(0);
 }
 
-/// Sol Sanctum, the second relief room: as Event_RowStatue1Moved, for
-/// the row's third statue (ACTOR_ROW_STATUE_3).
-static void Event_RowStatue3Moved(void) {
-  struct FieldActor *statue = Object_GetById(ACTOR_ROW_STATUE_3);
+/// Sol Sanctum, the second relief room: as EventScript_RowStatue1Moved, for
+/// the row's third statue (LOCALID_ROW_STATUE_3).
+static void EventScript_RowStatue3Moved(void) {
+  struct ObjectEvent *statue = ObjectEvent_GetById(LOCALID_ROW_STATUE_3);
   s32 column;
 
   if (statue == NULL) {
@@ -529,10 +531,10 @@ static void Event_RowStatue3Moved(void) {
   SolSanctumEntrance_RestoreRowStatueCells(0);
 }
 
-/// Sol Sanctum, the second relief room: as Event_RowStatue1Moved, for
-/// the row's fourth statue (ACTOR_ROW_STATUE_4).
-static void Event_RowStatue4Moved(void) {
-  struct FieldActor *statue = Object_GetById(ACTOR_ROW_STATUE_4);
+/// Sol Sanctum, the second relief room: as EventScript_RowStatue1Moved, for
+/// the row's fourth statue (LOCALID_ROW_STATUE_4).
+static void EventScript_RowStatue4Moved(void) {
+  struct ObjectEvent *statue = ObjectEvent_GetById(LOCALID_ROW_STATUE_4);
   s32 column;
 
   if (statue == NULL) {
@@ -544,10 +546,10 @@ static void Event_RowStatue4Moved(void) {
   SolSanctumEntrance_RestoreRowStatueCells(0);
 }
 
-/// Sol Sanctum, the second relief room: as Event_RowStatue1Moved, for
-/// the row's fifth statue (ACTOR_ROW_STATUE_5).
-static void Event_RowStatue5Moved(void) {
-  struct FieldActor *statue = Object_GetById(ACTOR_ROW_STATUE_5);
+/// Sol Sanctum, the second relief room: as EventScript_RowStatue1Moved, for
+/// the row's fifth statue (LOCALID_ROW_STATUE_5).
+static void EventScript_RowStatue5Moved(void) {
+  struct ObjectEvent *statue = ObjectEvent_GetById(LOCALID_ROW_STATUE_5);
   s32 column;
 
   if (statue == NULL) {
@@ -559,10 +561,10 @@ static void Event_RowStatue5Moved(void) {
   SolSanctumEntrance_RestoreRowStatueCells(0);
 }
 
-/// Sol Sanctum, the second relief room: as Event_RowStatue1Moved, for
-/// the row's sixth statue (ACTOR_ROW_STATUE_6).
-static void Event_RowStatue6Moved(void) {
-  struct FieldActor *statue = Object_GetById(ACTOR_ROW_STATUE_6);
+/// Sol Sanctum, the second relief room: as EventScript_RowStatue1Moved, for
+/// the row's sixth statue (LOCALID_ROW_STATUE_6).
+static void EventScript_RowStatue6Moved(void) {
+  struct ObjectEvent *statue = ObjectEvent_GetById(LOCALID_ROW_STATUE_6);
   s32 column;
 
   if (statue == NULL)
@@ -578,9 +580,9 @@ static void Event_RowStatue6Moved(void) {
 /// Sol Sanctum, the two relief rooms: walking into a statue's cell
 /// pushes it one cell, the leader behind it, if nothing is in the way, and its
 /// column is saved through the room's Moved events.
-static void Event_PushStatue(void) {
-  struct FieldActor *leader;
-  struct FieldActor *statue;
+static void EventScript_PushStatue(void) {
+  struct ObjectEvent *leader;
+  struct ObjectEvent *statue;
   s32 stoppedVelocity;
   s32 packedStep;
   u32 direction;
@@ -588,9 +590,9 @@ static void Event_PushStatue(void) {
   struct FieldPosition *destination;
 
   // Find the statue one map cell ahead in the leader's facing direction.
-  leader = Object_GetById(ACTOR_PARTY_LEADER);
+  leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   direction = leader->facing >> 12;
-  statue = SceneActor_FindActorAtCell(
+  statue = MapObjectEvent_FindAtCell(
       (leader->x.part.pixel + (gSolSanctumPushSteps[direction] >> 16)) >> 4,
       (leader->z.part.pixel + (s16)gSolSanctumPushSteps[direction]) >> 4);
   if (statue != NULL) {
@@ -602,7 +604,7 @@ static void Event_PushStatue(void) {
                  statue->y.fixed, statue->z.fixed + (packedStep << 16));
     // Move only after the statue's proposed position passes collision.
     if (FieldObject_CheckMovementCollision(statue, destination) <= 0) {
-      Object_SetMode(leader, ANIMATION_PUSH);
+      ObjectEvent_SetMode(leader, ANIMATION_PUSH);
       Engine_TaskWait(15);
       Engine_AudioPlayCue(SE_PUSH);
       statue->speed = PIXELS(1) / 5;
@@ -618,44 +620,44 @@ static void Event_PushStatue(void) {
       statue->z.fixed = destination->z;
       statue->velocityX = stoppedVelocity;
       statue->velocityZ = stoppedVelocity;
-      Object_SetMode(leader, ANIMATION_STAND);
+      ObjectEvent_SetMode(leader, ANIMATION_STAND);
       // Save the moved statue in the flag set belonging to this room.
-      switch (gGameState.entrance) {
+      switch (gGameState.warpDest) {
       case SOL_SANCTUM_RELIEFS_FIRST_RELIEF_ROOM_FROM_CHEST_ROOM:
       case SOL_SANCTUM_RELIEFS_FIRST_RELIEF_ROOM_FROM_STATUE_NOOK:
       case SOL_SANCTUM_RELIEFS_FIRST_RELIEF_ROOM_FROM_STEPS_ROOM:
-        Event_WestStatueMoved();
-        Event_EastStatueMoved();
+        EventScript_WestStatueMoved();
+        EventScript_EastStatueMoved();
         break;
       case SOL_SANCTUM_RELIEFS_FROM_SOL_SANCTUM_MAZE_EAST:
       case SOL_SANCTUM_RELIEFS_SECOND_RELIEF_ROOM_FROM_ROUND_PASSAGE:
       case SOL_SANCTUM_RELIEFS_FROM_SOL_SANCTUM_LUNA_SOL_ROOMS:
-        Event_RowStatue1Moved();
-        Event_RowStatue2Moved();
-        Event_RowStatue3Moved();
-        Event_RowStatue4Moved();
-        Event_RowStatue5Moved();
-        Event_RowStatue6Moved();
+        EventScript_RowStatue1Moved();
+        EventScript_RowStatue2Moved();
+        EventScript_RowStatue3Moved();
+        EventScript_RowStatue4Moved();
+        EventScript_RowStatue5Moved();
+        EventScript_RowStatue6Moved();
         break;
       }
     }
   }
 }
 
-/// Sets up Sol Entrance or Sol Sanctum. Called by Field_RunScene once the
+/// Sets up Sol Entrance or Sol Sanctum. Called by Field_RunMap once the
 /// actors exist.
 s32 SolSanctumEntrance_Initialize(void) {
-  s32 scene = gGameState.scene;
+  s32 mapId = gGameState.mapId;
 
-  if (scene == (s32)&SceneId_SolEntrance) {
+  if (mapId == (s32)&MapId_SolEntrance) {
     SolSanctumEntrance_ApplyEntryState();
-  } else if (scene == (s32)&SceneId_SolSanctumReliefs) {
+  } else if (mapId == (s32)&MapId_SolSanctumReliefs) {
     SolSanctumEntrance_RestoreInteriorState();
   }
   return 0;
 }
 
-/// Sets up Sol Entrance (SceneId_SolEntrance): Retreat is blocked
+/// Sets up Sol Entrance (MapId_SolEntrance): Retreat is blocked
 /// (FLAG_RETREAT_BLOCKED), and after the eruption
 /// SolSanctumEntrance_UpdateEruptionRumbles shakes the ground now and then.
 /// Once Isaac and Garet are back in Vale (FLAG_VALE_RETURNED_FROM_MT_ALEPH),
@@ -667,26 +669,26 @@ s32 SolSanctumEntrance_Initialize(void) {
 static void SolSanctumEntrance_ApplyEntryState(void) {
   // Retreat does not work here.
   GameFlag_Set(FLAG_RETREAT_BLOCKED);
-  gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+  gEventWork->startTransition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   if (GameFlag_IsSet(FLAG_SOL_SANCTUM_ERUPTED) != 0) {
     gSolSanctumEntrance_RumbleTimer = 0;
     Task_AddCallback(SolSanctumEntrance_UpdateEruptionRumbles, 0xc80);
   }
   if (GameFlag_IsSet(FLAG_VALE_RETURNED_FROM_MT_ALEPH) != 0) {
-    Map_CopyCellAttributes(5, 6, 1, 1, 6, 6);
-    Map_CopyCellAttributes(5, 6, 1, 1, 7, 6);
-    Map_CopyCellAttributes(5, 6, 1, 1, 8, 6);
-    Map_CopyCellAttributes(0, 1, 3, 1, 6, 5);
+    MapGrid_CopyCellAttributes(5, 6, 1, 1, 6, 6);
+    MapGrid_CopyCellAttributes(5, 6, 1, 1, 7, 6);
+    MapGrid_CopyCellAttributes(5, 6, 1, 1, 8, 6);
+    MapGrid_CopyCellAttributes(0, 1, 3, 1, 6, 5);
   }
   if (GameFlag_IsSet(FLAG_VALE_PARTY_LEFT) != 0) {
-    Actor_SetPosition(ACTOR_WARNING_MAN, PIXELS(120), PIXELS(232));
-    Map_CopyCellAttributes(2, 10, 1, 1, 6, 14);
-    Map_CopyCellAttributes(2, 10, 1, 1, 7, 14);
-    Map_CopyCellAttributes(2, 10, 1, 1, 8, 14);
+    ObjectEvent_SetPosition(LOCALID_WARNING_MAN, PIXELS(120), PIXELS(232));
+    MapGrid_CopyCellAttributes(2, 10, 1, 1, 6, 14);
+    MapGrid_CopyCellAttributes(2, 10, 1, 1, 7, 14);
+    MapGrid_CopyCellAttributes(2, 10, 1, 1, 8, 14);
   }
 }
 
-/// Sets up Sol Sanctum (SceneId_SolSanctumReliefs): after the eruption its
+/// Sets up Sol Sanctum (MapId_SolSanctumReliefs): after the eruption its
 /// rooms rumble and shake. SOL_SANCTUM_RELIEFS_FROM_SOL_SANCTUM_CORRIDOR_WEST
 /// and SOL_SANCTUM_RELIEFS_CHEST_ROOM_FROM_FIRST_RELIEF_ROOM show the first
 /// relief's passage once it is open; SOL_SANCTUM_RELIEFS_FROM_SOL_ENTRANCE, the
@@ -695,38 +697,38 @@ static void SolSanctumEntrance_ApplyEntryState(void) {
 /// the hidden passage plays until FLAG_SEARCHING_FOR_HIDDEN_PASSAGE is set, and
 /// the two statues go back to their saved columns; in the second relief room
 /// Kraden sees the row of statues until FLAG_SOL_SANCTUM_MORE_STATUES_SEEN is
-/// set, the six go back to their columns, FLAG_SCENE_TEMP_34 is set and the
+/// set, the six go back to their columns, FLAG_MAP_TEMP_34 is set and the
 /// second relief's doorway shows once it is open.
 static void SolSanctumEntrance_RestoreInteriorState(void) {
-  s32 entrance;
+  s32 warpDest;
   gEventWork->startTransition =
-      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
+      MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   if (Engine_GameFlagIsSet(FLAG_SOL_SANCTUM_ERUPTED) != 0) {
     FieldEffect_SetQueuedSoundAndPlay(SE_141);
-    Map_SetShake(PIXELS(1), PIXELS(1), Q16_ONE);
-    InitializeSceneRecordBuffer();
+    MapGrid_SetShake(PIXELS(1), PIXELS(1), Q16_ONE);
+    InitializeSparkleRecordBuffer();
   }
 
-  entrance = gGameState.entrance;
-  switch (entrance) {
+  warpDest = gGameState.warpDest;
+  switch (warpDest) {
   case SOL_SANCTUM_RELIEFS_FROM_SOL_SANCTUM_CORRIDOR_WEST:
   case SOL_SANCTUM_RELIEFS_CHEST_ROOM_FROM_FIRST_RELIEF_ROOM:
     if (Engine_GameFlagIsSet(FLAG_SOL_SANCTUM_FIRST_GEM_PLACED) != 0) {
-      Map_CopyCellsTo(1, 109, 4, 81, 1, 1);
-      Map_CopyCellsTo(0, 70, 30, 42, 1, 1);
-      Map_CopyCellsTo(0, 29, 3, 1, 3, 2);
-      Map_CopyCellAttributes(0, 29, 3, 2, 3, 1);
-      Engine_MapRedraw();
+      MapGrid_CopyCellsTo(1, 109, 4, 81, 1, 1);
+      MapGrid_CopyCellsTo(0, 70, 30, 42, 1, 1);
+      MapGrid_CopyCellsTo(0, 29, 3, 1, 3, 2);
+      MapGrid_CopyCellAttributes(0, 29, 3, 2, 3, 1);
+      Engine_MapGridRedraw();
     }
     break;
 
   case SOL_SANCTUM_RELIEFS_STATUE_NOOK_FROM_FIRST_RELIEF_ROOM:
-    Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_STATUE), 0);
+    Engine_ObjectEventSetSpriteFlags(ObjectEvent_GetById(LOCALID_STATUE), 0);
     break;
 
   case SOL_SANCTUM_RELIEFS_FROM_SOL_ENTRANCE:
-    gGameState.retreatScene = (s32)&SceneId_SolSanctumReliefs;
-    gGameState.retreatEntrance = SOL_SANCTUM_RELIEFS_FROM_SOL_ENTRANCE;
+    gGameState.retreatMap = (s32)&MapId_SolSanctumReliefs;
+    gGameState.retreatWarpDest = SOL_SANCTUM_RELIEFS_FROM_SOL_ENTRANCE;
     if (GameFlag_IsSet(FLAG_SOL_SANCTUM_ENTERED) == 0)
       SolSanctumEntrance_IntroduceSanctum();
     break;
@@ -735,48 +737,65 @@ static void SolSanctumEntrance_RestoreInteriorState(void) {
   case SOL_SANCTUM_RELIEFS_FIRST_RELIEF_ROOM_FROM_STATUE_NOOK:
   case SOL_SANCTUM_RELIEFS_FIRST_RELIEF_ROOM_FROM_STEPS_ROOM:
     // Put back this room's statues after its introduction has played.
-    Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_WEST_STATUE), 0);
-    Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_EAST_STATUE), 0);
-    Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_FIRST_FIXED_STATUE), 0);
-    Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_FIRST_FIXED_STATUE + 1), 0);
-    Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_FIRST_FIXED_STATUE + 2), 0);
-    Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_FIRST_FIXED_STATUE + 3), 0);
-    Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_FIRST_FIXED_STATUE + 4), 0);
-    Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_FIRST_FIXED_STATUE + 5), 0);
-    Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_FIRST_FIXED_STATUE + 6), 0);
-    Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_FIRST_FIXED_STATUE + 7), 0);
-    Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_FIRST_FIXED_STATUE + 8), 0);
+    Engine_ObjectEventSetSpriteFlags(ObjectEvent_GetById(LOCALID_WEST_STATUE),
+                                     0);
+    Engine_ObjectEventSetSpriteFlags(ObjectEvent_GetById(LOCALID_EAST_STATUE),
+                                     0);
+    Engine_ObjectEventSetSpriteFlags(
+        ObjectEvent_GetById(LOCALID_FIRST_FIXED_STATUE), 0);
+    Engine_ObjectEventSetSpriteFlags(
+        ObjectEvent_GetById(LOCALID_FIRST_FIXED_STATUE + 1), 0);
+    Engine_ObjectEventSetSpriteFlags(
+        ObjectEvent_GetById(LOCALID_FIRST_FIXED_STATUE + 2), 0);
+    Engine_ObjectEventSetSpriteFlags(
+        ObjectEvent_GetById(LOCALID_FIRST_FIXED_STATUE + 3), 0);
+    Engine_ObjectEventSetSpriteFlags(
+        ObjectEvent_GetById(LOCALID_FIRST_FIXED_STATUE + 4), 0);
+    Engine_ObjectEventSetSpriteFlags(
+        ObjectEvent_GetById(LOCALID_FIRST_FIXED_STATUE + 5), 0);
+    Engine_ObjectEventSetSpriteFlags(
+        ObjectEvent_GetById(LOCALID_FIRST_FIXED_STATUE + 6), 0);
+    Engine_ObjectEventSetSpriteFlags(
+        ObjectEvent_GetById(LOCALID_FIRST_FIXED_STATUE + 7), 0);
+    Engine_ObjectEventSetSpriteFlags(
+        ObjectEvent_GetById(LOCALID_FIRST_FIXED_STATUE + 8), 0);
     if (Engine_GameFlagIsSet(FLAG_SEARCHING_FOR_HIDDEN_PASSAGE) == 0)
       SolSanctumEntrance_KradenSuspectsHiddenPassage();
     if (Engine_GameFlagIsSet(FLAG_SOL_SANCTUM_WEST_STATUE_AT_WEST) != 0)
-      Actor_SetPosition(ACTOR_WEST_STATUE, PIXELS(1496), PIXELS(136));
+      ObjectEvent_SetPosition(LOCALID_WEST_STATUE, PIXELS(1496), PIXELS(136));
     else if (GameFlag_IsSet(FLAG_SOL_SANCTUM_WEST_STATUE_AT_EAST) != 0)
-      Actor_SetPosition(ACTOR_WEST_STATUE, PIXELS(1528), PIXELS(136));
+      ObjectEvent_SetPosition(LOCALID_WEST_STATUE, PIXELS(1528), PIXELS(136));
     if (Engine_GameFlagIsSet(FLAG_SOL_SANCTUM_EAST_STATUE_AT_WEST) != 0)
-      Actor_SetPosition(ACTOR_EAST_STATUE, PIXELS(1816), PIXELS(136));
+      ObjectEvent_SetPosition(LOCALID_EAST_STATUE, PIXELS(1816), PIXELS(136));
     else if (Engine_GameFlagIsSet(FLAG_SOL_SANCTUM_EAST_STATUE_AT_EAST) != 0)
-      Actor_SetPosition(ACTOR_EAST_STATUE, PIXELS(1848), PIXELS(136));
+      ObjectEvent_SetPosition(LOCALID_EAST_STATUE, PIXELS(1848), PIXELS(136));
     break;
 
   case SOL_SANCTUM_RELIEFS_FROM_SOL_SANCTUM_MAZE_EAST:
   case SOL_SANCTUM_RELIEFS_SECOND_RELIEF_ROOM_FROM_ROUND_PASSAGE:
   case SOL_SANCTUM_RELIEFS_FROM_SOL_SANCTUM_LUNA_SOL_ROOMS:
     // Restore the row of statues and the second gem's doorway.
-    Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_ROW_STATUE_1), 0);
-    Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_ROW_STATUE_2), 0);
-    Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_ROW_STATUE_3), 0);
-    Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_ROW_STATUE_4), 0);
-    Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_ROW_STATUE_5), 0);
-    Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_ROW_STATUE_6), 0);
+    Engine_ObjectEventSetSpriteFlags(ObjectEvent_GetById(LOCALID_ROW_STATUE_1),
+                                     0);
+    Engine_ObjectEventSetSpriteFlags(ObjectEvent_GetById(LOCALID_ROW_STATUE_2),
+                                     0);
+    Engine_ObjectEventSetSpriteFlags(ObjectEvent_GetById(LOCALID_ROW_STATUE_3),
+                                     0);
+    Engine_ObjectEventSetSpriteFlags(ObjectEvent_GetById(LOCALID_ROW_STATUE_4),
+                                     0);
+    Engine_ObjectEventSetSpriteFlags(ObjectEvent_GetById(LOCALID_ROW_STATUE_5),
+                                     0);
+    Engine_ObjectEventSetSpriteFlags(ObjectEvent_GetById(LOCALID_ROW_STATUE_6),
+                                     0);
     if (Engine_GameFlagIsSet(FLAG_SOL_SANCTUM_MORE_STATUES_SEEN) == 0)
       SolSanctumEntrance_KradenSeesStatuesOutOfReach();
     SolSanctumEntrance_RestoreRowStatueCells(1);
-    Engine_GameFlagSet(FLAG_SCENE_TEMP_34);
+    Engine_GameFlagSet(FLAG_MAP_TEMP_34);
     if (GameFlag_IsSet(FLAG_SOL_SANCTUM_SECOND_GEM_PLACED) != 0) {
-      Map_CopyCellsTo(0, 71, 100, 71, 1, 1);
-      Map_CopyCellsTo(122, 20, 120, 30, 1, 2);
-      Map_CopyCellAttributes(122, 20, 1, 2, 120, 30);
-      Engine_MapRedraw();
+      MapGrid_CopyCellsTo(0, 71, 100, 71, 1, 1);
+      MapGrid_CopyCellsTo(122, 20, 120, 30, 1, 2);
+      MapGrid_CopyCellAttributes(122, 20, 1, 2, 120, 30);
+      Engine_MapGridRedraw();
     }
     break;
   }
@@ -790,87 +809,89 @@ static void SolSanctumEntrance_RestoreInteriorState(void) {
 /// SOL_SANCTUM_RELIEFS_FROM_SOL_ENTRANCE until FLAG_SOL_SANCTUM_ENTERED is
 /// set, which it sets; clears FLAG_SHOW_LOCATION_NAME.
 static void SolSanctumEntrance_IntroduceSanctum(void) {
-  struct FieldActor *leader;
+  struct ObjectEvent *leader;
 
-  Engine_EventStart();
-  gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
-  Engine_EventOpenScreen();
-  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 0);
-  Engine_EventWait(4);
+  Engine_ScriptStart();
+  gEventWork->startTransition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+  Engine_ScriptOpenScreen();
+  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, 0);
+  Engine_ScriptWait(4);
   Camera_MoveTo(-1, -1, -1, 0);
   // Gather the followers around the leader for Kraden's introduction.
   Camera_SetSpeed(PIXELS(3) / 5, PIXELS(3) / 40);
   Camera_MoveTo(PIXELS(1224), -1, PIXELS(136), 1);
-  leader = Object_GetById(ACTOR_PARTY_LEADER);
+  leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   if (leader != NULL) {
-    Actor_SetPosition(ACTOR_KRADEN, leader->x.fixed, leader->z.fixed);
+    ObjectEvent_SetPosition(LOCALID_KRADEN, leader->x.fixed, leader->z.fixed);
   }
-  leader = Object_GetById(ACTOR_PARTY_LEADER);
+  leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   if (leader != NULL) {
-    Actor_SetPosition(JENNA, leader->x.fixed, leader->z.fixed);
+    ObjectEvent_SetPosition(JENNA, leader->x.fixed, leader->z.fixed);
   }
-  leader = Object_GetById(ACTOR_PARTY_LEADER);
+  leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   if (leader != NULL) {
-    Actor_SetPosition(GARET, leader->x.fixed, leader->z.fixed);
+    ObjectEvent_SetPosition(GARET, leader->x.fixed, leader->z.fixed);
   }
-  Actor_SetSpeed(ACTOR_KRADEN, PIXELS(3) / 5, PIXELS(3) / 10);
-  Actor_SetSpeed(JENNA, PIXELS(3) / 5, PIXELS(3) / 10);
-  Actor_SetSpeed(GARET, PIXELS(3) / 5, PIXELS(3) / 10);
-  Engine_ActorSetAnimation(GARET, ANIMATION_WALK);
-  Engine_ActorSetAnimation(JENNA, ANIMATION_WALK);
-  Engine_ActorSetAnimation(ACTOR_KRADEN, ANIMATION_WALK);
-  Actor_SetDestinationOffset(GARET, -16, 0);
-  Actor_SetDestinationOffset(JENNA, 16, 0);
-  Actor_SetDestinationOffset(ACTOR_KRADEN, 0, -32);
-  Engine_ActorWaitForMove(GARET);
-  Engine_ActorSetAnimation(GARET, 0);
-  Engine_ActorSetAnimation(JENNA, 0);
-  Actor_FaceDirection(GARET, FACING_NORTH, 0);
-  Actor_FaceDirection(JENNA, FACING_NORTH, 0);
-  Engine_ActorWaitForMove(ACTOR_KRADEN);
-  Engine_ActorSetAnimation(ACTOR_KRADEN, ANIMATION_STAND);
-  Engine_EventWait(40);
-  Engine_ActorRunRepeatedMotion(ACTOR_KRADEN, 2);
-  Engine_EventWait(20);
-  Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTHEAST + FACING_STEP, 40);
-  Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTH + FACING_STEP, 40);
-  Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTHEAST + FACING_STEP, 20);
-  Engine_ActorJump(ACTOR_KRADEN, 4, 20);
+  ObjectEvent_SetSpeed(LOCALID_KRADEN, PIXELS(3) / 5, PIXELS(3) / 10);
+  ObjectEvent_SetSpeed(JENNA, PIXELS(3) / 5, PIXELS(3) / 10);
+  ObjectEvent_SetSpeed(GARET, PIXELS(3) / 5, PIXELS(3) / 10);
+  Engine_ObjectEventSetAnimation(GARET, ANIMATION_WALK);
+  Engine_ObjectEventSetAnimation(JENNA, ANIMATION_WALK);
+  Engine_ObjectEventSetAnimation(LOCALID_KRADEN, ANIMATION_WALK);
+  ObjectEvent_SetDestinationOffset(GARET, -16, 0);
+  ObjectEvent_SetDestinationOffset(JENNA, 16, 0);
+  ObjectEvent_SetDestinationOffset(LOCALID_KRADEN, 0, -32);
+  Engine_ObjectEventWaitForMove(GARET);
+  Engine_ObjectEventSetAnimation(GARET, 0);
+  Engine_ObjectEventSetAnimation(JENNA, 0);
+  ObjectEvent_FaceDirection(GARET, FACING_NORTH, 0);
+  ObjectEvent_FaceDirection(JENNA, FACING_NORTH, 0);
+  Engine_ObjectEventWaitForMove(LOCALID_KRADEN);
+  Engine_ObjectEventSetAnimation(LOCALID_KRADEN, ANIMATION_STAND);
+  Engine_ScriptWait(40);
+  Engine_ObjectEventRunRepeatedMotion(LOCALID_KRADEN, 2);
+  Engine_ScriptWait(20);
+  ObjectEvent_FaceDirection(LOCALID_KRADEN, FACING_SOUTHEAST + FACING_STEP, 40);
+  ObjectEvent_FaceDirection(LOCALID_KRADEN, FACING_SOUTH + FACING_STEP, 40);
+  ObjectEvent_FaceDirection(LOCALID_KRADEN, FACING_SOUTHEAST + FACING_STEP, 20);
+  Engine_ObjectEventJump(LOCALID_KRADEN, 4, 20);
   // Kraden: "This is your first time here, right?" Yes: "Take a good look at
   // it." No: "I doubt that..."
-  Engine_EventSetMessage(MsgSolSanctumKradenFirstTimeAtSol);
-  Event_AskYesNo(SPEAKER_WINDOW_ABOVE | ACTOR_KRADEN, 0);
-  Engine_EventWait(20);
+  Engine_ScriptSetMessage(MsgSolSanctumKradenFirstTimeAtSol);
+  Script_AskYesNo(SPEAKER_WINDOW_ABOVE | LOCALID_KRADEN, 0);
+  Engine_ScriptWait(20);
   Camera_MoveTo(PIXELS(1224), -1, PIXELS(148), 1);
-  Engine_ActorSetAnimation(GARET, ANIMATION_WALK);
-  leader = Object_GetById(ACTOR_PARTY_LEADER);
+  Engine_ObjectEventSetAnimation(GARET, ANIMATION_WALK);
+  leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   if (leader != NULL) {
-    Actor_SetDestination(GARET, leader->x.part.pixel, leader->z.part.pixel);
+    ObjectEvent_SetDestination(GARET, leader->x.part.pixel,
+                               leader->z.part.pixel);
   }
-  Engine_ActorSetAnimation(JENNA, ANIMATION_WALK);
-  leader = Object_GetById(ACTOR_PARTY_LEADER);
+  Engine_ObjectEventSetAnimation(JENNA, ANIMATION_WALK);
+  leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   if (leader != NULL) {
-    Actor_SetDestination(JENNA, leader->x.part.pixel, leader->z.part.pixel);
+    ObjectEvent_SetDestination(JENNA, leader->x.part.pixel,
+                               leader->z.part.pixel);
   }
-  Engine_ActorSetAnimation(ACTOR_KRADEN, ANIMATION_WALK);
-  leader = Object_GetById(ACTOR_PARTY_LEADER);
+  Engine_ObjectEventSetAnimation(LOCALID_KRADEN, ANIMATION_WALK);
+  leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   if (leader != NULL) {
-    Actor_SetDestination(ACTOR_KRADEN, leader->x.part.pixel,
-                         leader->z.part.pixel);
+    ObjectEvent_SetDestination(LOCALID_KRADEN, leader->x.part.pixel,
+                               leader->z.part.pixel);
   }
-  Engine_ActorWaitForMove(GARET);
-  Actor_SetPosition(GARET, 0, 0);
-  Actor_SetPosition(JENNA, 0, 0);
-  Engine_ActorWaitForMove(ACTOR_KRADEN);
-  Actor_SetPosition(ACTOR_KRADEN, 0, 0);
-  Engine_ActorSetAnimation(GARET, ANIMATION_STAND);
-  Engine_ActorSetAnimation(JENNA, ANIMATION_STAND);
-  Engine_ActorSetAnimation(ACTOR_KRADEN, ANIMATION_STAND);
+  Engine_ObjectEventWaitForMove(GARET);
+  ObjectEvent_SetPosition(GARET, 0, 0);
+  ObjectEvent_SetPosition(JENNA, 0, 0);
+  Engine_ObjectEventWaitForMove(LOCALID_KRADEN);
+  ObjectEvent_SetPosition(LOCALID_KRADEN, 0, 0);
+  Engine_ObjectEventSetAnimation(GARET, ANIMATION_STAND);
+  Engine_ObjectEventSetAnimation(JENNA, ANIMATION_STAND);
+  Engine_ObjectEventSetAnimation(LOCALID_KRADEN, ANIMATION_STAND);
   GameFlag_Set(FLAG_SOL_SANCTUM_ENTERED);
   gEventWork->startTransition =
-      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
+      MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   GameFlag_Clear(FLAG_SHOW_LOCATION_NAME);
-  Engine_EventEnd();
+  Engine_ScriptEnd();
 }
 
 /// Sol Sanctum, the first time the party enters the first relief
@@ -882,220 +903,222 @@ static void SolSanctumEntrance_IntroduceSanctum(void) {
 /// FLAG_SEARCHING_FOR_HIDDEN_PASSAGE is set, which it sets; clears
 /// FLAG_SHOW_LOCATION_NAME.
 static void SolSanctumEntrance_KradenSuspectsHiddenPassage(void) {
-  struct FieldActor *leader;
+  struct ObjectEvent *leader;
 
-  Engine_EventStart();
-  Engine_EventOpenScreen();
-  Engine_EventWaitForScreen();
+  Engine_ScriptStart();
+  Engine_ScriptOpenScreen();
+  Engine_ScriptWaitForScreen();
 
   // Spread the party out while Kraden examines the room.
-  leader = Object_GetById(ACTOR_PARTY_LEADER);
+  leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   if (leader != NULL)
-    Engine_ActorSetPosition(ACTOR_KRADEN, leader->x.fixed, leader->z.fixed);
-  leader = Object_GetById(ACTOR_PARTY_LEADER);
+    Engine_ObjectEventSetPosition(LOCALID_KRADEN, leader->x.fixed,
+                                  leader->z.fixed);
+  leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   if (leader != NULL)
-    Engine_ActorSetPosition(JENNA, leader->x.fixed, leader->z.fixed);
-  leader = Object_GetById(ACTOR_PARTY_LEADER);
+    Engine_ObjectEventSetPosition(JENNA, leader->x.fixed, leader->z.fixed);
+  leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   if (leader != NULL)
-    Engine_ActorSetPosition(GARET, leader->x.fixed, leader->z.fixed);
+    Engine_ObjectEventSetPosition(GARET, leader->x.fixed, leader->z.fixed);
 
-  Actor_SetSpeed(ACTOR_KRADEN, PIXELS(3) / 5, PIXELS(3) / 10);
-  Actor_SetSpeed(JENNA, PIXELS(3) / 5, PIXELS(3) / 10);
-  Actor_SetSpeed(GARET, PIXELS(3) / 5, PIXELS(3) / 10);
-  Engine_ActorSetAnimation(GARET, ANIMATION_WALK);
-  Engine_ActorSetAnimation(JENNA, ANIMATION_WALK);
-  Engine_ActorSetAnimation(ACTOR_KRADEN, ANIMATION_WALK);
-  Actor_SetDestinationOffset(GARET, -16, 0);
-  Actor_SetDestinationOffset(JENNA, 16, 0);
-  Actor_SetDestinationOffset(ACTOR_KRADEN, 0, -16);
-  Engine_ActorWaitForMove(ACTOR_KRADEN);
-  Engine_ActorSetAnimation(ACTOR_KRADEN, ANIMATION_STAND);
-  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, 0);
-  Engine_ActorSetAnimation(GARET, 0);
-  Engine_ActorSetAnimation(JENNA, 0);
-  Actor_FaceDirection(GARET, FACING_NORTHEAST, 0);
-  Actor_FaceDirection(JENNA, FACING_NORTHWEST, 0);
-  Actor_FaceDirection(ACTOR_KRADEN, FACING_NORTH, 30);
-  Actor_FaceDirection(GARET, FACING_WEST, 0);
-  Actor_FaceDirection(JENNA, FACING_EAST, 0);
-  Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 0);
-  Actor_FaceDirection(ACTOR_KRADEN, FACING_WEST, 30);
-  Actor_FaceDirection(GARET, FACING_SOUTH, 0);
-  Actor_FaceDirection(JENNA, FACING_WEST, 0);
-  Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_EAST, 0);
-  Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTH, 30);
-  Actor_FaceDirection(GARET, FACING_NORTHEAST, 0);
-  Actor_FaceDirection(JENNA, FACING_NORTHWEST, 0);
-  Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
-  Actor_FaceDirection(ACTOR_KRADEN, FACING_NORTH, 40);
-  Engine_ActorRunRepeatedMotion(ACTOR_KRADEN, 2);
-  Engine_EventWait(10);
-  Engine_ActorSetAnimation(ACTOR_KRADEN, ANIMATION_WALK);
-  Engine_ActorSetDestinationOffset(ACTOR_KRADEN, 0, -16);
-  Engine_ActorWaitForMove(ACTOR_KRADEN);
-  Engine_ActorSetAnimation(ACTOR_KRADEN, ANIMATION_STAND);
-  Engine_EventWait(6);
-  Actor_FaceDirection(ACTOR_KRADEN, FACING_WEST, 20);
-  Actor_FaceDirection(ACTOR_KRADEN, FACING_EAST, 20);
-  Actor_FaceDirection(ACTOR_KRADEN, FACING_NORTH, 40);
-  Engine_ActorRunRepeatedMotion(ACTOR_KRADEN, 2);
-  Engine_EventWait(20);
-  Engine_ActorSetAnimation(ACTOR_KRADEN, ANIMATION_WALK);
-  Engine_ActorSetDestinationOffset(ACTOR_KRADEN, 0, -32);
-  Engine_ActorWaitForMove(ACTOR_KRADEN);
-  Engine_ActorSetAnimation(ACTOR_KRADEN, ANIMATION_STAND);
+  ObjectEvent_SetSpeed(LOCALID_KRADEN, PIXELS(3) / 5, PIXELS(3) / 10);
+  ObjectEvent_SetSpeed(JENNA, PIXELS(3) / 5, PIXELS(3) / 10);
+  ObjectEvent_SetSpeed(GARET, PIXELS(3) / 5, PIXELS(3) / 10);
+  Engine_ObjectEventSetAnimation(GARET, ANIMATION_WALK);
+  Engine_ObjectEventSetAnimation(JENNA, ANIMATION_WALK);
+  Engine_ObjectEventSetAnimation(LOCALID_KRADEN, ANIMATION_WALK);
+  ObjectEvent_SetDestinationOffset(GARET, -16, 0);
+  ObjectEvent_SetDestinationOffset(JENNA, 16, 0);
+  ObjectEvent_SetDestinationOffset(LOCALID_KRADEN, 0, -16);
+  Engine_ObjectEventWaitForMove(LOCALID_KRADEN);
+  Engine_ObjectEventSetAnimation(LOCALID_KRADEN, ANIMATION_STAND);
+  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, 0);
+  Engine_ObjectEventSetAnimation(GARET, 0);
+  Engine_ObjectEventSetAnimation(JENNA, 0);
+  ObjectEvent_FaceDirection(GARET, FACING_NORTHEAST, 0);
+  ObjectEvent_FaceDirection(JENNA, FACING_NORTHWEST, 0);
+  ObjectEvent_FaceDirection(LOCALID_KRADEN, FACING_NORTH, 30);
+  ObjectEvent_FaceDirection(GARET, FACING_WEST, 0);
+  ObjectEvent_FaceDirection(JENNA, FACING_EAST, 0);
+  ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_SOUTH, 0);
+  ObjectEvent_FaceDirection(LOCALID_KRADEN, FACING_WEST, 30);
+  ObjectEvent_FaceDirection(GARET, FACING_SOUTH, 0);
+  ObjectEvent_FaceDirection(JENNA, FACING_WEST, 0);
+  ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_EAST, 0);
+  ObjectEvent_FaceDirection(LOCALID_KRADEN, FACING_SOUTH, 30);
+  ObjectEvent_FaceDirection(GARET, FACING_NORTHEAST, 0);
+  ObjectEvent_FaceDirection(JENNA, FACING_NORTHWEST, 0);
+  ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_NORTH, 0);
+  ObjectEvent_FaceDirection(LOCALID_KRADEN, FACING_NORTH, 40);
+  Engine_ObjectEventRunRepeatedMotion(LOCALID_KRADEN, 2);
+  Engine_ScriptWait(10);
+  Engine_ObjectEventSetAnimation(LOCALID_KRADEN, ANIMATION_WALK);
+  Engine_ObjectEventSetDestinationOffset(LOCALID_KRADEN, 0, -16);
+  Engine_ObjectEventWaitForMove(LOCALID_KRADEN);
+  Engine_ObjectEventSetAnimation(LOCALID_KRADEN, ANIMATION_STAND);
+  Engine_ScriptWait(6);
+  ObjectEvent_FaceDirection(LOCALID_KRADEN, FACING_WEST, 20);
+  ObjectEvent_FaceDirection(LOCALID_KRADEN, FACING_EAST, 20);
+  ObjectEvent_FaceDirection(LOCALID_KRADEN, FACING_NORTH, 40);
+  Engine_ObjectEventRunRepeatedMotion(LOCALID_KRADEN, 2);
+  Engine_ScriptWait(20);
+  Engine_ObjectEventSetAnimation(LOCALID_KRADEN, ANIMATION_WALK);
+  Engine_ObjectEventSetDestinationOffset(LOCALID_KRADEN, 0, -32);
+  Engine_ObjectEventWaitForMove(LOCALID_KRADEN);
+  Engine_ObjectEventSetAnimation(LOCALID_KRADEN, ANIMATION_STAND);
 
   // Survey both sides of the room before returning to Kraden.
   Camera_SetSpeed(PIXELS(2), PIXELS(1) / 4);
   Camera_MoveTo(PIXELS(1585), -1, PIXELS(150), 1);
   Engine_CameraWaitForMove();
-  Engine_EventWait(10);
+  Engine_ScriptWait(10);
   Camera_SetSpeed(PIXELS(6) / 5, PIXELS(3) / 20);
   Camera_MoveTo(PIXELS(1621), -1, PIXELS(100), 1);
   Engine_CameraWaitForMove();
   Camera_MoveTo(PIXELS(1718), -1, PIXELS(100), 1);
   Engine_CameraWaitForMove();
-  Engine_ActorSetAnimation(ACTOR_KRADEN, ANIMATION_STAND);
+  Engine_ObjectEventSetAnimation(LOCALID_KRADEN, ANIMATION_STAND);
   Camera_MoveTo(PIXELS(1752), -1, PIXELS(150), 1);
   Engine_CameraWaitForMove();
-  Engine_EventWait(40);
+  Engine_ScriptWait(40);
   Camera_SetSpeed(PIXELS(12) / 5, PIXELS(3) / 10);
   Camera_MoveTo(PIXELS(1668), -1, PIXELS(256), 1);
   Engine_CameraWaitForMove();
-  Engine_ActorSetAnimationAndWait(ACTOR_KRADEN, ANIMATION_NOD);
-  Engine_EventWait(10);
+  Engine_ObjectEventSetAnimationAndWait(LOCALID_KRADEN, ANIMATION_NOD);
+  Engine_ScriptWait(10);
 
-  Actor_FaceDirection(GARET, FACING_NORTHEAST, 0);
-  Actor_FaceDirection(JENNA, FACING_NORTHWEST, 10);
-  Actor_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 20);
+  ObjectEvent_FaceDirection(GARET, FACING_NORTHEAST, 0);
+  ObjectEvent_FaceDirection(JENNA, FACING_NORTHWEST, 10);
+  ObjectEvent_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 20);
   // Garet: "What's wrong, Kraden?"
-  Engine_EventSetMessage(MsgSolSanctumWrongKraden);
-  Event_ShowMessageAndWait(GARET, 0, 10);
-  Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
-  Engine_ActorStartRepeatedMotion(ACTOR_KRADEN, 2);
+  Engine_ScriptSetMessage(MsgSolSanctumWrongKraden);
+  Script_ShowMessageAndWait(GARET, 0, 10);
+  ObjectEvent_ShowEmote(LOCALID_KRADEN, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
+  Engine_ObjectEventStartRepeatedMotion(LOCALID_KRADEN, 2);
   // Kraden: "Those two said there was a hidden passage leading deeper into
   // the sanctum."
-  Event_ShowMessageAndWait(ACTOR_KRADEN, 0, 10);
-  Engine_ActorStartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
-  Engine_ActorStartRepeatedMotion(GARET, 2);
-  Engine_ActorStartRepeatedMotion(JENNA, 2);
-  Actor_SetAttachedEffect(ACTOR_PARTY_LEADER,
-                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-  Actor_SetAttachedEffect(GARET,
-                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-  Actor_SetAttachedEffect(JENNA,
-                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-  Engine_EventWait(40);
-  Engine_ActorRunRepeatedMotion(ACTOR_KRADEN, 2);
-  Engine_EventWait(20);
+  Script_ShowMessageAndWait(LOCALID_KRADEN, 0, 10);
+  Engine_ObjectEventStartRepeatedMotion(LOCALID_PARTY_LEADER, 2);
+  Engine_ObjectEventStartRepeatedMotion(GARET, 2);
+  Engine_ObjectEventStartRepeatedMotion(JENNA, 2);
+  ObjectEvent_SetAttachedEffect(LOCALID_PARTY_LEADER, ATTACHED_EFFECT_IN_FRONT |
+                                                          ATTACHED_EFFECT_ONCE);
+  ObjectEvent_SetAttachedEffect(GARET, ATTACHED_EFFECT_IN_FRONT |
+                                           ATTACHED_EFFECT_ONCE);
+  ObjectEvent_SetAttachedEffect(JENNA, ATTACHED_EFFECT_IN_FRONT |
+                                           ATTACHED_EFFECT_ONCE);
+  Engine_ScriptWait(40);
+  Engine_ObjectEventRunRepeatedMotion(LOCALID_KRADEN, 2);
+  Engine_ScriptWait(20);
   // Kraden: the sanctum always looked strange to him, not as he imagined.
-  Event_ShowMessage(ACTOR_KRADEN, 0);
-  Engine_ActorSetAnimationAndWait(ACTOR_KRADEN, ANIMATION_SHAKE_HEAD);
-  Event_ShowMessageAndWait(ACTOR_KRADEN, 0, 10);
-  Engine_ActorFaceEachOther(ACTOR_PARTY_LEADER, 5, 0);
-  Engine_EventWait(40);
-  Engine_ActorStartRepeatedMotion(ACTOR_PARTY_LEADER, 1);
-  Engine_ActorRunRepeatedMotion(JENNA, 1);
-  Engine_EventWait(10);
-  Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
-  Actor_FaceDirection(JENNA, FACING_NORTHWEST, 20);
-  Engine_ActorRunRepeatedMotion(JENNA, 2);
+  Script_ShowMessage(LOCALID_KRADEN, 0);
+  Engine_ObjectEventSetAnimationAndWait(LOCALID_KRADEN, ANIMATION_SHAKE_HEAD);
+  Script_ShowMessageAndWait(LOCALID_KRADEN, 0, 10);
+  Engine_ObjectEventFaceEachOther(LOCALID_PARTY_LEADER, 5, 0);
+  Engine_ScriptWait(40);
+  Engine_ObjectEventStartRepeatedMotion(LOCALID_PARTY_LEADER, 1);
+  Engine_ObjectEventRunRepeatedMotion(JENNA, 1);
+  Engine_ScriptWait(10);
+  ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_NORTH, 0);
+  ObjectEvent_FaceDirection(JENNA, FACING_NORTHWEST, 20);
+  Engine_ObjectEventRunRepeatedMotion(JENNA, 2);
   // Jenna: "What do you mean?"
-  Event_ShowMessageAndWait(JENNA, 0, 10);
-  Engine_ActorSetAnimationAndWait(ACTOR_KRADEN, ANIMATION_SHAKE_HEAD);
+  Script_ShowMessageAndWait(JENNA, 0, 10);
+  Engine_ObjectEventSetAnimationAndWait(LOCALID_KRADEN, ANIMATION_SHAKE_HEAD);
   // Kraden: a sanctum built in honour of the sun ought to show it somewhere.
-  Event_ShowMessageAndWait(ACTOR_KRADEN, 0, 10);
-  Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTHEAST + FACING_STEP, 10);
-  Event_ShowMessageAndWait(ACTOR_KRADEN, 0, 40);
-  Actor_FaceDirection(ACTOR_KRADEN, FACING_NORTH, 20);
-  Engine_ActorRunRepeatedMotion(ACTOR_KRADEN, 1);
-  Engine_EventWait(10);
-  Actor_SetAttachedEffect(ACTOR_KRADEN,
-                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-  Actor_FaceDirection(ACTOR_KRADEN, FACING_WEST, 20);
-  Actor_FaceDirection(ACTOR_KRADEN, FACING_EAST, 20);
-  Actor_FaceDirection(ACTOR_KRADEN, FACING_NORTH, 60);
-  Engine_ActorRunRepeatedMotion(ACTOR_KRADEN, 2);
-  Engine_EventWait(10);
+  Script_ShowMessageAndWait(LOCALID_KRADEN, 0, 10);
+  ObjectEvent_FaceDirection(LOCALID_KRADEN, FACING_SOUTHEAST + FACING_STEP, 10);
+  Script_ShowMessageAndWait(LOCALID_KRADEN, 0, 40);
+  ObjectEvent_FaceDirection(LOCALID_KRADEN, FACING_NORTH, 20);
+  Engine_ObjectEventRunRepeatedMotion(LOCALID_KRADEN, 1);
+  Engine_ScriptWait(10);
+  ObjectEvent_SetAttachedEffect(LOCALID_KRADEN, ATTACHED_EFFECT_IN_FRONT |
+                                                    ATTACHED_EFFECT_ONCE);
+  ObjectEvent_FaceDirection(LOCALID_KRADEN, FACING_WEST, 20);
+  ObjectEvent_FaceDirection(LOCALID_KRADEN, FACING_EAST, 20);
+  ObjectEvent_FaceDirection(LOCALID_KRADEN, FACING_NORTH, 60);
+  Engine_ObjectEventRunRepeatedMotion(LOCALID_KRADEN, 2);
+  Engine_ScriptWait(10);
   // Kraden: "If there is a hidden passage, then maybe it leads to..."
-  Event_ShowMessageAndWait(ACTOR_KRADEN, 0, 10);
-  Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTH, 20);
-  Engine_ActorJump(ACTOR_KRADEN, 2, 20);
+  Script_ShowMessageAndWait(LOCALID_KRADEN, 0, 10);
+  ObjectEvent_FaceDirection(LOCALID_KRADEN, FACING_SOUTH, 20);
+  Engine_ObjectEventJump(LOCALID_KRADEN, 2, 20);
 
   // Kraden hops: "Let's see if we can find it!"
-  Event_ShowMessageAndWait(ACTOR_KRADEN, 0, 40);
-  Actor_FaceDirection(GARET, FACING_EAST, 20);
+  Script_ShowMessageAndWait(LOCALID_KRADEN, 0, 40);
+  ObjectEvent_FaceDirection(GARET, FACING_EAST, 20);
   // Garet: "I think he's serious! Should we help him?"
-  Event_OpenMessage(GARET, 0);
-  if (Engine_EventChooseYesNo(0, 0) == 0) {
+  Script_OpenMessage(GARET, 0);
+  if (Engine_ScriptChooseYesNo(0, 0) == 0) {
     // Yes: Garet says it is too dangerous to split up; they stay together.
-    Engine_EventSetMessage(MsgSolSanctumDangerousSplitStay);
-    Engine_ActorRunRepeatedMotion(GARET, 1);
-    Engine_EventShowMessageAndWait(GARET, 0, 10);
+    Engine_ScriptSetMessage(MsgSolSanctumDangerousSplitStay);
+    Engine_ObjectEventRunRepeatedMotion(GARET, 1);
+    Engine_ScriptShowMessageAndWait(GARET, 0, 10);
   } else {
     // No: Jenna objects to turning back now; Isaac nods and Garet agrees to
     // help Kraden.
-    Engine_EventSetMessage(MsgSolSanctumCantSeriouslyWant);
-    Actor_FaceDirection(JENNA, FACING_WEST, 20);
-    Event_ShowMessageAndWait(JENNA, 0, 10);
-    Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
-    Actor_FaceDirection(GARET, FACING_NORTHEAST, 0);
-    Actor_FaceDirection(JENNA, FACING_NORTHWEST, 60);
-    Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
-    Engine_ActorRunRepeatedMotion(GARET, 1);
-    Engine_EventWait(10);
-    Engine_ActorSetAnimationAndWait(GARET, ANIMATION_NOD);
-    Engine_EventWait(10);
-    Actor_FaceDirection(GARET, FACING_EAST, 0);
-    Actor_FaceDirection(JENNA, FACING_WEST, 30);
-    Engine_ActorRunRepeatedMotion(GARET, 1);
-    Engine_EventWait(10);
-    Engine_EventShowMessageAndWait(GARET, 0, 10);
+    Engine_ScriptSetMessage(MsgSolSanctumCantSeriouslyWant);
+    ObjectEvent_FaceDirection(JENNA, FACING_WEST, 20);
+    Script_ShowMessageAndWait(JENNA, 0, 10);
+    ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_NORTH, 0);
+    ObjectEvent_FaceDirection(GARET, FACING_NORTHEAST, 0);
+    ObjectEvent_FaceDirection(JENNA, FACING_NORTHWEST, 60);
+    ObjectEvent_ShowEmote(LOCALID_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_WINCE,
+                          40);
+    Engine_ObjectEventRunRepeatedMotion(GARET, 1);
+    Engine_ScriptWait(10);
+    Engine_ObjectEventSetAnimationAndWait(GARET, ANIMATION_NOD);
+    Engine_ScriptWait(10);
+    ObjectEvent_FaceDirection(GARET, FACING_EAST, 0);
+    ObjectEvent_FaceDirection(JENNA, FACING_WEST, 30);
+    Engine_ObjectEventRunRepeatedMotion(GARET, 1);
+    Engine_ScriptWait(10);
+    Engine_ScriptShowMessageAndWait(GARET, 0, 10);
   }
 
   // Bring Kraden back and return the followers to the party.
-  Actor_SetSpeed(ACTOR_KRADEN, PIXELS(3) / 5, PIXELS(3) / 10);
-  Engine_ActorSetAnimation(ACTOR_KRADEN, ANIMATION_WALK);
-  Engine_ActorSetDestinationOffset(ACTOR_KRADEN, 0, 48);
-  Engine_ActorWaitForMove(ACTOR_KRADEN);
-  Engine_ActorSetAnimation(ACTOR_KRADEN, ANIMATION_STAND);
-  Engine_EventWait(6);
-  Actor_FaceDirection(GARET, FACING_NORTHEAST, 0);
-  Engine_ActorFaceDirection(JENNA, FACING_NORTHWEST, 0);
-  Engine_ActorWaitForMove(ACTOR_KRADEN);
-  Engine_ActorSetAnimation(ACTOR_KRADEN, ANIMATION_STAND);
-  Engine_EventWait(20);
-  Engine_ActorSetAnimation(GARET, ANIMATION_NOD);
-  Engine_ActorSetAnimation(JENNA, ANIMATION_NOD);
-  Engine_ActorSetAnimationAndWait(ACTOR_PARTY_LEADER, ANIMATION_NOD);
-  Engine_EventWait(6);
-  Engine_ActorSetAnimation(GARET, ANIMATION_WALK);
+  ObjectEvent_SetSpeed(LOCALID_KRADEN, PIXELS(3) / 5, PIXELS(3) / 10);
+  Engine_ObjectEventSetAnimation(LOCALID_KRADEN, ANIMATION_WALK);
+  Engine_ObjectEventSetDestinationOffset(LOCALID_KRADEN, 0, 48);
+  Engine_ObjectEventWaitForMove(LOCALID_KRADEN);
+  Engine_ObjectEventSetAnimation(LOCALID_KRADEN, ANIMATION_STAND);
+  Engine_ScriptWait(6);
+  ObjectEvent_FaceDirection(GARET, FACING_NORTHEAST, 0);
+  Engine_ObjectEventFaceDirection(JENNA, FACING_NORTHWEST, 0);
+  Engine_ObjectEventWaitForMove(LOCALID_KRADEN);
+  Engine_ObjectEventSetAnimation(LOCALID_KRADEN, ANIMATION_STAND);
+  Engine_ScriptWait(20);
+  Engine_ObjectEventSetAnimation(GARET, ANIMATION_NOD);
+  Engine_ObjectEventSetAnimation(JENNA, ANIMATION_NOD);
+  Engine_ObjectEventSetAnimationAndWait(LOCALID_PARTY_LEADER, ANIMATION_NOD);
+  Engine_ScriptWait(6);
+  Engine_ObjectEventSetAnimation(GARET, ANIMATION_WALK);
 
-  leader = Object_GetById(ACTOR_PARTY_LEADER);
+  leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   if (leader != NULL)
-    Engine_ActorSetDestination(GARET, leader->x.part.pixel,
-                               leader->z.part.pixel);
-  Engine_ActorSetAnimation(JENNA, ANIMATION_WALK);
-  leader = Object_GetById(ACTOR_PARTY_LEADER);
+    Engine_ObjectEventSetDestination(GARET, leader->x.part.pixel,
+                                     leader->z.part.pixel);
+  Engine_ObjectEventSetAnimation(JENNA, ANIMATION_WALK);
+  leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   if (leader != NULL)
-    Engine_ActorSetDestination(JENNA, leader->x.part.pixel,
-                               leader->z.part.pixel);
-  Engine_ActorSetAnimation(ACTOR_KRADEN, ANIMATION_WALK);
-  leader = Object_GetById(ACTOR_PARTY_LEADER);
+    Engine_ObjectEventSetDestination(JENNA, leader->x.part.pixel,
+                                     leader->z.part.pixel);
+  Engine_ObjectEventSetAnimation(LOCALID_KRADEN, ANIMATION_WALK);
+  leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   if (leader != NULL)
-    Engine_ActorSetDestination(ACTOR_KRADEN, leader->x.part.pixel,
-                               leader->z.part.pixel);
+    Engine_ObjectEventSetDestination(LOCALID_KRADEN, leader->x.part.pixel,
+                                     leader->z.part.pixel);
 
-  Engine_ActorWaitForMove(ACTOR_KRADEN);
-  Actor_SetPosition(GARET, 0, 0);
-  Actor_SetPosition(JENNA, 0, 0);
-  Actor_SetPosition(ACTOR_KRADEN, 0, 0);
-  Engine_ActorSetAnimation(ACTOR_KRADEN, ANIMATION_STAND);
-  Engine_ActorSetAnimation(GARET, ANIMATION_STAND);
-  Engine_ActorSetAnimation(JENNA, ANIMATION_STAND);
+  Engine_ObjectEventWaitForMove(LOCALID_KRADEN);
+  ObjectEvent_SetPosition(GARET, 0, 0);
+  ObjectEvent_SetPosition(JENNA, 0, 0);
+  ObjectEvent_SetPosition(LOCALID_KRADEN, 0, 0);
+  Engine_ObjectEventSetAnimation(LOCALID_KRADEN, ANIMATION_STAND);
+  Engine_ObjectEventSetAnimation(GARET, ANIMATION_STAND);
+  Engine_ObjectEventSetAnimation(JENNA, ANIMATION_STAND);
   GameFlag_Set(FLAG_SEARCHING_FOR_HIDDEN_PASSAGE);
   Engine_GameFlagClear(FLAG_SHOW_LOCATION_NAME);
-  Engine_EventEnd();
+  Engine_ScriptEnd();
 }
 
 /// Sol Sanctum, the first time the party enters the second relief
@@ -1104,148 +1127,154 @@ static void SolSanctumEntrance_KradenSuspectsHiddenPassage(void) {
 /// Isaac to try his Psynergy. Called by SolSanctumEntrance_RestoreInteriorState
 /// there until FLAG_SOL_SANCTUM_MORE_STATUES_SEEN is set, which it sets.
 static void SolSanctumEntrance_KradenSeesStatuesOutOfReach(void) {
-  struct FieldActor *leader;
+  struct ObjectEvent *leader;
 
-  Engine_EventStart();
+  Engine_ScriptStart();
   gEventWork->startTransition =
-      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
-  Engine_EventOpenScreen();
-  Engine_EventWaitForScreen();
-  Engine_EventWait(20);
-  leader = Object_GetById(ACTOR_PARTY_LEADER);
+      MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
+  Engine_ScriptOpenScreen();
+  Engine_ScriptWaitForScreen();
+  Engine_ScriptWait(20);
+  leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   if (leader != NULL) {
-    Actor_SetPosition(ACTOR_KRADEN, leader->x.fixed, leader->z.fixed);
+    ObjectEvent_SetPosition(LOCALID_KRADEN, leader->x.fixed, leader->z.fixed);
   }
-  Actor_SetSpeed(ACTOR_KRADEN, PIXELS(1), PIXELS(1) / 2);
-  Engine_ActorSetAnimation(ACTOR_KRADEN, ANIMATION_WALK);
-  Actor_SetDestinationOffset(ACTOR_KRADEN, 24, -10);
-  Engine_ActorWaitForMove(ACTOR_KRADEN);
-  Engine_ActorSetAnimation(ACTOR_KRADEN, ANIMATION_STAND);
-  Engine_EventWait(6);
-  Actor_FaceDirection(ACTOR_KRADEN, FACING_NORTHWEST + FACING_STEP, 0);
-  Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 40);
+  ObjectEvent_SetSpeed(LOCALID_KRADEN, PIXELS(1), PIXELS(1) / 2);
+  Engine_ObjectEventSetAnimation(LOCALID_KRADEN, ANIMATION_WALK);
+  ObjectEvent_SetDestinationOffset(LOCALID_KRADEN, 24, -10);
+  Engine_ObjectEventWaitForMove(LOCALID_KRADEN);
+  Engine_ObjectEventSetAnimation(LOCALID_KRADEN, ANIMATION_STAND);
+  Engine_ScriptWait(6);
+  ObjectEvent_FaceDirection(LOCALID_KRADEN, FACING_NORTHWEST + FACING_STEP, 0);
+  ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_NORTH, 40);
   Camera_SetSpeed(PIXELS(12) / 5, PIXELS(3) / 10);
   // Pan across the statues, then return to the party's position.
   Camera_MoveTo(PIXELS(1672), -1, PIXELS(524), 1);
   Engine_CameraWaitForMove();
-  Engine_EventWait(20);
+  Engine_ScriptWait(20);
   Camera_SetSpeed(PIXELS(8) / 5, PIXELS(1) / 5);
   Camera_MoveTo(PIXELS(1880), -1, PIXELS(524), 1);
   Engine_CameraWaitForMove();
-  Engine_EventWait(20);
+  Engine_ScriptWait(20);
   Camera_SetSpeed(PIXELS(16) / 5, PIXELS(2) / 5);
   Camera_MoveTo(PIXELS(1769), -1, PIXELS(548), 1);
   Engine_CameraWaitForMove();
-  Engine_EventWait(20);
-  Engine_ActorRunRepeatedMotion(ACTOR_KRADEN, 2);
-  Actor_FaceDirection(ACTOR_KRADEN, FACING_EAST, 30);
+  Engine_ScriptWait(20);
+  Engine_ObjectEventRunRepeatedMotion(LOCALID_KRADEN, 2);
+  ObjectEvent_FaceDirection(LOCALID_KRADEN, FACING_EAST, 30);
   // Kraden: "More statues... It doesn't look like we can reach them".
-  Engine_EventSetMessage(MsgSolSanctumMoreStatuesOutOfReach);
-  Event_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | ACTOR_KRADEN, 0, 10);
-  Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
-  Engine_ActorRunRepeatedMotion(ACTOR_KRADEN, 1);
-  Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTH + FACING_STEP, 20);
+  Engine_ScriptSetMessage(MsgSolSanctumMoreStatuesOutOfReach);
+  Script_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | LOCALID_KRADEN, 0, 10);
+  ObjectEvent_ShowEmote(LOCALID_KRADEN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
+  Engine_ObjectEventRunRepeatedMotion(LOCALID_KRADEN, 1);
+  ObjectEvent_FaceDirection(LOCALID_KRADEN, FACING_SOUTH + FACING_STEP, 20);
   // Kraden: "Perhaps Psynergy is the key..."
-  Event_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | ACTOR_KRADEN, 0, 10);
-  Engine_ActorSetAnimation(ACTOR_KRADEN, ANIMATION_WALK);
-  leader = Object_GetById(ACTOR_PARTY_LEADER);
+  Script_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | LOCALID_KRADEN, 0, 10);
+  Engine_ObjectEventSetAnimation(LOCALID_KRADEN, ANIMATION_WALK);
+  leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   if (leader != NULL) {
-    Actor_SetDestination(ACTOR_KRADEN, leader->x.part.pixel,
-                         leader->z.part.pixel);
+    ObjectEvent_SetDestination(LOCALID_KRADEN, leader->x.part.pixel,
+                               leader->z.part.pixel);
   }
-  Engine_ActorWaitForMove(ACTOR_KRADEN);
-  Actor_SetPosition(ACTOR_KRADEN, 0, 0);
+  Engine_ObjectEventWaitForMove(LOCALID_KRADEN);
+  ObjectEvent_SetPosition(LOCALID_KRADEN, 0, 0);
   GameFlag_Set(FLAG_SOL_SANCTUM_MORE_STATUES_SEEN);
-  Engine_EventEnd();
+  Engine_ScriptEnd();
 }
 
 /// Sol Sanctum, the second relief room: sets the cells the six statues
 /// start on, one collision while a statue stands there and another once it has
-/// been pushed to either side, and, when placeActors is nonzero (on entry),
-/// moves the statues to their saved columns.
-static void SolSanctumEntrance_RestoreRowStatueCells(s32 placeActors) {
+/// been pushed to either side, and, when placeObjectEvents is nonzero (on
+/// entry), moves the statues to their saved columns.
+static void SolSanctumEntrance_RestoreRowStatueCells(s32 placeObjectEvents) {
   // Clear all six destinations before restoring occupied cells.
-  Map_CopyCellAttributes(122, 20, 1, 1, 100, 32);
-  Map_CopyCellAttributes(122, 20, 1, 1, 104, 32);
-  Map_CopyCellAttributes(122, 20, 1, 1, 108, 32);
-  Map_CopyCellAttributes(122, 20, 1, 1, 112, 32);
-  Map_CopyCellAttributes(122, 20, 1, 1, 116, 32);
-  Map_CopyCellAttributes(122, 20, 1, 1, 120, 32);
+  MapGrid_CopyCellAttributes(122, 20, 1, 1, 100, 32);
+  MapGrid_CopyCellAttributes(122, 20, 1, 1, 104, 32);
+  MapGrid_CopyCellAttributes(122, 20, 1, 1, 108, 32);
+  MapGrid_CopyCellAttributes(122, 20, 1, 1, 112, 32);
+  MapGrid_CopyCellAttributes(122, 20, 1, 1, 116, 32);
+  MapGrid_CopyCellAttributes(122, 20, 1, 1, 120, 32);
   if (GameFlag_IsSet(FLAG_SOL_SANCTUM_ROW_STATUE_1_AT_WEST) != 0) {
-    Map_CopyCellAttributes(121, 20, 1, 1, 100, 32);
-    if (placeActors != 0) {
-      Actor_SetPosition(ACTOR_ROW_STATUE_1, PIXELS(1592), PIXELS(520));
+    MapGrid_CopyCellAttributes(121, 20, 1, 1, 100, 32);
+    if (placeObjectEvents != 0) {
+      ObjectEvent_SetPosition(LOCALID_ROW_STATUE_1, PIXELS(1592), PIXELS(520));
     }
   } else {
     if (GameFlag_IsSet(FLAG_SOL_SANCTUM_ROW_STATUE_1_AT_EAST) != 0) {
-      Map_CopyCellAttributes(121, 20, 1, 1, 100, 32);
-      if (placeActors != 0) {
-        Actor_SetPosition(ACTOR_ROW_STATUE_1, PIXELS(1624), PIXELS(520));
+      MapGrid_CopyCellAttributes(121, 20, 1, 1, 100, 32);
+      if (placeObjectEvents != 0) {
+        ObjectEvent_SetPosition(LOCALID_ROW_STATUE_1, PIXELS(1624),
+                                PIXELS(520));
       }
     }
   }
   if (GameFlag_IsSet(FLAG_SOL_SANCTUM_ROW_STATUE_2_AT_WEST) != 0) {
-    Map_CopyCellAttributes(121, 20, 1, 1, 104, 32);
-    if (placeActors != 0) {
-      Actor_SetPosition(ACTOR_ROW_STATUE_2, PIXELS(1656), PIXELS(520));
+    MapGrid_CopyCellAttributes(121, 20, 1, 1, 104, 32);
+    if (placeObjectEvents != 0) {
+      ObjectEvent_SetPosition(LOCALID_ROW_STATUE_2, PIXELS(1656), PIXELS(520));
     }
   } else {
     if (GameFlag_IsSet(FLAG_SOL_SANCTUM_ROW_STATUE_2_AT_EAST) != 0) {
-      Map_CopyCellAttributes(121, 20, 1, 1, 104, 32);
-      if (placeActors != 0) {
-        Actor_SetPosition(ACTOR_ROW_STATUE_2, PIXELS(1688), PIXELS(520));
+      MapGrid_CopyCellAttributes(121, 20, 1, 1, 104, 32);
+      if (placeObjectEvents != 0) {
+        ObjectEvent_SetPosition(LOCALID_ROW_STATUE_2, PIXELS(1688),
+                                PIXELS(520));
       }
     }
   }
   if (GameFlag_IsSet(FLAG_SOL_SANCTUM_ROW_STATUE_3_AT_WEST) != 0) {
-    Map_CopyCellAttributes(121, 20, 1, 1, 108, 32);
-    if (placeActors != 0) {
-      Actor_SetPosition(ACTOR_ROW_STATUE_3, PIXELS(1720), PIXELS(520));
+    MapGrid_CopyCellAttributes(121, 20, 1, 1, 108, 32);
+    if (placeObjectEvents != 0) {
+      ObjectEvent_SetPosition(LOCALID_ROW_STATUE_3, PIXELS(1720), PIXELS(520));
     }
   } else {
     if (GameFlag_IsSet(FLAG_SOL_SANCTUM_ROW_STATUE_3_AT_EAST) != 0) {
-      Map_CopyCellAttributes(121, 20, 1, 1, 108, 32);
-      if (placeActors != 0) {
-        Actor_SetPosition(ACTOR_ROW_STATUE_3, PIXELS(1752), PIXELS(520));
+      MapGrid_CopyCellAttributes(121, 20, 1, 1, 108, 32);
+      if (placeObjectEvents != 0) {
+        ObjectEvent_SetPosition(LOCALID_ROW_STATUE_3, PIXELS(1752),
+                                PIXELS(520));
       }
     }
   }
   if (GameFlag_IsSet(FLAG_SOL_SANCTUM_ROW_STATUE_4_AT_WEST) != 0) {
-    Map_CopyCellAttributes(121, 20, 1, 1, 112, 32);
-    if (placeActors != 0) {
-      Actor_SetPosition(ACTOR_ROW_STATUE_4, PIXELS(1784), PIXELS(520));
+    MapGrid_CopyCellAttributes(121, 20, 1, 1, 112, 32);
+    if (placeObjectEvents != 0) {
+      ObjectEvent_SetPosition(LOCALID_ROW_STATUE_4, PIXELS(1784), PIXELS(520));
     }
   } else {
     if (GameFlag_IsSet(FLAG_SOL_SANCTUM_ROW_STATUE_4_AT_EAST) != 0) {
-      Map_CopyCellAttributes(121, 20, 1, 1, 112, 32);
-      if (placeActors != 0) {
-        Actor_SetPosition(ACTOR_ROW_STATUE_4, PIXELS(1816), PIXELS(520));
+      MapGrid_CopyCellAttributes(121, 20, 1, 1, 112, 32);
+      if (placeObjectEvents != 0) {
+        ObjectEvent_SetPosition(LOCALID_ROW_STATUE_4, PIXELS(1816),
+                                PIXELS(520));
       }
     }
   }
   if (GameFlag_IsSet(FLAG_SOL_SANCTUM_ROW_STATUE_5_AT_WEST) != 0) {
-    Map_CopyCellAttributes(121, 20, 1, 1, 116, 32);
-    if (placeActors != 0) {
-      Actor_SetPosition(ACTOR_ROW_STATUE_5, PIXELS(1848), PIXELS(520));
+    MapGrid_CopyCellAttributes(121, 20, 1, 1, 116, 32);
+    if (placeObjectEvents != 0) {
+      ObjectEvent_SetPosition(LOCALID_ROW_STATUE_5, PIXELS(1848), PIXELS(520));
     }
   } else {
     if (GameFlag_IsSet(FLAG_SOL_SANCTUM_ROW_STATUE_5_AT_EAST) != 0) {
-      Map_CopyCellAttributes(121, 20, 1, 1, 116, 32);
-      if (placeActors != 0) {
-        Actor_SetPosition(ACTOR_ROW_STATUE_5, PIXELS(1880), PIXELS(520));
+      MapGrid_CopyCellAttributes(121, 20, 1, 1, 116, 32);
+      if (placeObjectEvents != 0) {
+        ObjectEvent_SetPosition(LOCALID_ROW_STATUE_5, PIXELS(1880),
+                                PIXELS(520));
       }
     }
   }
   if (GameFlag_IsSet(FLAG_SOL_SANCTUM_ROW_STATUE_6_AT_WEST) != 0) {
-    Map_CopyCellAttributes(121, 20, 1, 1, 120, 32);
-    if (placeActors != 0) {
-      Actor_SetPosition(ACTOR_ROW_STATUE_6, PIXELS(1912), PIXELS(520));
+    MapGrid_CopyCellAttributes(121, 20, 1, 1, 120, 32);
+    if (placeObjectEvents != 0) {
+      ObjectEvent_SetPosition(LOCALID_ROW_STATUE_6, PIXELS(1912), PIXELS(520));
     }
   } else {
     if (GameFlag_IsSet(FLAG_SOL_SANCTUM_ROW_STATUE_6_AT_EAST) != 0) {
-      Map_CopyCellAttributes(121, 20, 1, 1, 120, 32);
-      if (placeActors != 0) {
-        Actor_SetPosition(ACTOR_ROW_STATUE_6, PIXELS(1944), PIXELS(520));
+      MapGrid_CopyCellAttributes(121, 20, 1, 1, 120, 32);
+      if (placeObjectEvents != 0) {
+        ObjectEvent_SetPosition(LOCALID_ROW_STATUE_6, PIXELS(1944),
+                                PIXELS(520));
       }
     }
   }
@@ -1253,10 +1282,10 @@ static void SolSanctumEntrance_RestoreRowStatueCells(s32 placeActors) {
 
 /// Sol Entrance: searching the other door . "The door is
 /// tightly locked."
-static void Event_DoorTightlyLocked(void) {
-  Engine_EventStart();
+static void EventScript_DoorTightlyLocked(void) {
+  Engine_ScriptStart();
   Engine_MessageShowCentered(MsgFieldDoorTightlyLocked, 1);
-  Engine_EventEnd();
+  Engine_ScriptEnd();
 }
 
 /// Sol Entrance after the eruption: the ground rumbles now and then, and each
@@ -1273,36 +1302,36 @@ static void SolSanctumEntrance_UpdateEruptionRumbles(void) {
     remainingFrames = (*timer - 1);
     *timer = (*timer - 1);
     if (remainingFrames == 40) {
-      Map_SetShake(-1, -1, 9 * Q16_ONE / 10);
+      MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
     }
   } else {
     randomValue = Engine_RandomNext();
     if (((u32)(((randomValue << 4) - randomValue) << 3) >> 16) == 0) {
-      Event_PlayCue(SE_ITEM_BREAK);
-      Map_SetShake(PIXELS(1), PIXELS(2), Q16_ONE);
+      Script_PlayCue(SE_ITEM_BREAK);
+      MapGrid_SetShake(PIXELS(1), PIXELS(2), Q16_ONE);
       *timer = 80;
     }
   }
 }
 
-struct SceneEntrance gSolSanctumEntrance_FallbackEntrances[] = {
-    {ENTRANCE_DEFAULT, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1,
+struct MapWarpDest gSolSanctumEntrance_FallbackWarpDests[] = {
+    {WARP_DEST_DEFAULT, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1,
      -1, -1, 0},
-    {SCENE_TABLE_END},
+    {MAP_TABLE_END},
 };
 
-struct SceneEntrance gSolEntrance_Entrances[] = {
-    {ENTRANCE_DEFAULT, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1,
+struct MapWarpDest gSolEntrance_WarpDests[] = {
+    {WARP_DEST_DEFAULT, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1,
      -1, -1, 0},
     {SOL_ENTRANCE_FROM_VALE, CONDITION_ALWAYS, 80, 0, 288, FACING_NORTH, 0, -1,
      -1, -1, -1, 0},
     {SOL_ENTRANCE_FROM_SOL_SANCTUM_RELIEFS, CONDITION_ALWAYS, 120, 0, 112,
      FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {SCENE_TABLE_END},
+    {MAP_TABLE_END},
 };
 
-struct SceneEntrance gSolSanctumReliefs_Entrances[] = {
-    {ENTRANCE_DEFAULT, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1,
+struct MapWarpDest gSolSanctumReliefs_WarpDests[] = {
+    {WARP_DEST_DEFAULT, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1,
      -1, -1, 0},
     {SOL_SANCTUM_RELIEFS_FROM_SOL_SANCTUM_CORRIDOR_WEST, CONDITION_ALWAYS, 280,
      0, 472, FACING_NORTH, 0, 5, 0, 555, 510, 0},
@@ -1336,244 +1365,245 @@ struct SceneEntrance gSolSanctumReliefs_Entrances[] = {
      CONDITION_ALWAYS, 1672, 0, 520, FACING_SOUTH, 0, 1540, 440, 1995, 600, 0},
     {SOL_SANCTUM_RELIEFS_FROM_SOL_SANCTUM_LUNA_SOL_ROOMS, CONDITION_ALWAYS,
      1928, 0, 520, FACING_SOUTH, 0, 1540, 440, 1995, 600, 0},
-    {SCENE_TABLE_END},
+    {MAP_TABLE_END},
 };
 
-// Sol Entrance (SceneId_SolEntrance), then Sol Sanctum
-// (SceneId_SolSanctumReliefs). Sol Entrance's way
-// down leads to SceneId_Vale until the eruption, then to Vale during the
-// eruption (SceneId_ValeEruption) until the party has left Vale.
-u32 gSolSanctumEntrance_Exits[] = {
-    SCENE_EXITS(SolEntrance),
-    SCENE_EXIT_IF(SOL_ENTRANCE_TO_VALE, Vale, VALE_FROM_SOL_ENTRANCE,
-                  FLAG_SOL_SANCTUM_ERUPTED),
-    SCENE_EXIT_IF(SOL_ENTRANCE_TO_VALE, ValeEruption,
-                  VALE_ERUPTION_FROM_SOL_ENTRANCE, FLAG_VALE_PARTY_LEFT),
-    SCENE_EXIT_IF(SOL_ENTRANCE_TO_VALE, Vale, VALE_FROM_SOL_ENTRANCE,
-                  EXIT_FLAG_NONE),
-    SCENE_EXIT_IF(SOL_ENTRANCE_TO_SOL_SANCTUM_RELIEFS, SolSanctumReliefs,
-                  SOL_SANCTUM_RELIEFS_FROM_SOL_ENTRANCE, EXIT_FLAG_NONE),
-    SCENE_EXITS(SolSanctumReliefs),
-    SCENE_EXIT_IF(
+// Sol Entrance (MapId_SolEntrance), then Sol Sanctum
+// (MapId_SolSanctumReliefs). Sol Entrance's way
+// down leads to MapId_Vale until the eruption, then to Vale during the
+// eruption (MapId_ValeEruption) until the party has left Vale.
+u32 gSolSanctumEntrance_Warps[] = {
+    MAP_WARPS(SolEntrance),
+    MAP_WARP_IF(SOL_ENTRANCE_TO_VALE, Vale, VALE_FROM_SOL_ENTRANCE,
+                FLAG_SOL_SANCTUM_ERUPTED),
+    MAP_WARP_IF(SOL_ENTRANCE_TO_VALE, ValeEruption,
+                VALE_ERUPTION_FROM_SOL_ENTRANCE, FLAG_VALE_PARTY_LEFT),
+    MAP_WARP_IF(SOL_ENTRANCE_TO_VALE, Vale, VALE_FROM_SOL_ENTRANCE,
+                WARP_FLAG_NONE),
+    MAP_WARP_IF(SOL_ENTRANCE_TO_SOL_SANCTUM_RELIEFS, SolSanctumReliefs,
+                SOL_SANCTUM_RELIEFS_FROM_SOL_ENTRANCE, WARP_FLAG_NONE),
+    MAP_WARPS(SolSanctumReliefs),
+    MAP_WARP_IF(
         SOL_SANCTUM_RELIEFS_TO_SOL_SANCTUM_CORRIDOR_WEST, SolSanctumCorridor,
-        SOL_SANCTUM_CORRIDOR_FROM_SOL_SANCTUM_RELIEFS_WEST, EXIT_FLAG_NONE),
-    SCENE_EXIT_IF(
+        SOL_SANCTUM_CORRIDOR_FROM_SOL_SANCTUM_RELIEFS_WEST, WARP_FLAG_NONE),
+    MAP_WARP_IF(
         SOL_SANCTUM_RELIEFS_CHEST_ROOM_TO_FIRST_RELIEF_ROOM, SolSanctumReliefs,
-        SOL_SANCTUM_RELIEFS_FIRST_RELIEF_ROOM_FROM_CHEST_ROOM, EXIT_FLAG_NONE),
-    SCENE_EXIT_IF(
+        SOL_SANCTUM_RELIEFS_FIRST_RELIEF_ROOM_FROM_CHEST_ROOM, WARP_FLAG_NONE),
+    MAP_WARP_IF(
         SOL_SANCTUM_RELIEFS_STATUE_NOOK_TO_FIRST_RELIEF_ROOM, SolSanctumReliefs,
-        SOL_SANCTUM_RELIEFS_FIRST_RELIEF_ROOM_FROM_STATUE_NOOK, EXIT_FLAG_NONE),
-    SCENE_EXIT_IF(SOL_SANCTUM_RELIEFS_STEPPING_STONE_ROOM_TO_ENTRANCE_ROOM,
-                  SolSanctumReliefs,
-                  SOL_SANCTUM_RELIEFS_ENTRANCE_ROOM_FROM_STEPPING_STONE_ROOM,
-                  EXIT_FLAG_NONE),
-    SCENE_EXIT_IF(
+        SOL_SANCTUM_RELIEFS_FIRST_RELIEF_ROOM_FROM_STATUE_NOOK, WARP_FLAG_NONE),
+    MAP_WARP_IF(SOL_SANCTUM_RELIEFS_STEPPING_STONE_ROOM_TO_ENTRANCE_ROOM,
+                SolSanctumReliefs,
+                SOL_SANCTUM_RELIEFS_ENTRANCE_ROOM_FROM_STEPPING_STONE_ROOM,
+                WARP_FLAG_NONE),
+    MAP_WARP_IF(
         SOL_SANCTUM_RELIEFS_TO_SOL_SANCTUM_CORRIDOR_EAST, SolSanctumCorridor,
-        SOL_SANCTUM_CORRIDOR_FROM_SOL_SANCTUM_RELIEFS_EAST, EXIT_FLAG_NONE),
-    SCENE_EXIT_IF(
+        SOL_SANCTUM_CORRIDOR_FROM_SOL_SANCTUM_RELIEFS_EAST, WARP_FLAG_NONE),
+    MAP_WARP_IF(
         SOL_SANCTUM_RELIEFS_STEPS_ROOM_TO_FIRST_RELIEF_ROOM, SolSanctumReliefs,
-        SOL_SANCTUM_RELIEFS_FIRST_RELIEF_ROOM_FROM_STEPS_ROOM, EXIT_FLAG_NONE),
-    SCENE_EXIT_IF(SOL_SANCTUM_RELIEFS_TO_SOL_SANCTUM_MAZE_WEST, SolSanctumMaze,
-                  SOL_SANCTUM_MAZE_FROM_SOL_SANCTUM_RELIEFS_SOUTH,
-                  EXIT_FLAG_NONE),
-    SCENE_EXIT_IF(SOL_SANCTUM_RELIEFS_TO_SOL_ENTRANCE, SolEntrance,
-                  SOL_ENTRANCE_FROM_SOL_SANCTUM_RELIEFS, EXIT_FLAG_NONE),
-    SCENE_EXIT_IF(SOL_SANCTUM_RELIEFS_ENTRANCE_ROOM_TO_STEPPING_STONE_ROOM,
-                  SolSanctumReliefs,
-                  SOL_SANCTUM_RELIEFS_STEPPING_STONE_ROOM_FROM_ENTRANCE_ROOM,
-                  EXIT_FLAG_NONE),
-    SCENE_EXIT_IF(SOL_SANCTUM_RELIEFS_ROUND_PASSAGE_TO_SECOND_RELIEF_ROOM,
-                  SolSanctumReliefs,
-                  SOL_SANCTUM_RELIEFS_SECOND_RELIEF_ROOM_FROM_ROUND_PASSAGE,
-                  EXIT_FLAG_NONE),
-    SCENE_EXIT_IF(
+        SOL_SANCTUM_RELIEFS_FIRST_RELIEF_ROOM_FROM_STEPS_ROOM, WARP_FLAG_NONE),
+    MAP_WARP_IF(SOL_SANCTUM_RELIEFS_TO_SOL_SANCTUM_MAZE_WEST, SolSanctumMaze,
+                SOL_SANCTUM_MAZE_FROM_SOL_SANCTUM_RELIEFS_SOUTH,
+                WARP_FLAG_NONE),
+    MAP_WARP_IF(SOL_SANCTUM_RELIEFS_TO_SOL_ENTRANCE, SolEntrance,
+                SOL_ENTRANCE_FROM_SOL_SANCTUM_RELIEFS, WARP_FLAG_NONE),
+    MAP_WARP_IF(SOL_SANCTUM_RELIEFS_ENTRANCE_ROOM_TO_STEPPING_STONE_ROOM,
+                SolSanctumReliefs,
+                SOL_SANCTUM_RELIEFS_STEPPING_STONE_ROOM_FROM_ENTRANCE_ROOM,
+                WARP_FLAG_NONE),
+    MAP_WARP_IF(SOL_SANCTUM_RELIEFS_ROUND_PASSAGE_TO_SECOND_RELIEF_ROOM,
+                SolSanctumReliefs,
+                SOL_SANCTUM_RELIEFS_SECOND_RELIEF_ROOM_FROM_ROUND_PASSAGE,
+                WARP_FLAG_NONE),
+    MAP_WARP_IF(
         SOL_SANCTUM_RELIEFS_FIRST_RELIEF_ROOM_TO_CHEST_ROOM, SolSanctumReliefs,
-        SOL_SANCTUM_RELIEFS_CHEST_ROOM_FROM_FIRST_RELIEF_ROOM, EXIT_FLAG_NONE),
-    SCENE_EXIT_IF(
+        SOL_SANCTUM_RELIEFS_CHEST_ROOM_FROM_FIRST_RELIEF_ROOM, WARP_FLAG_NONE),
+    MAP_WARP_IF(
         SOL_SANCTUM_RELIEFS_FIRST_RELIEF_ROOM_TO_STATUE_NOOK, SolSanctumReliefs,
-        SOL_SANCTUM_RELIEFS_STATUE_NOOK_FROM_FIRST_RELIEF_ROOM, EXIT_FLAG_NONE),
-    SCENE_EXIT_IF(
+        SOL_SANCTUM_RELIEFS_STATUE_NOOK_FROM_FIRST_RELIEF_ROOM, WARP_FLAG_NONE),
+    MAP_WARP_IF(
         SOL_SANCTUM_RELIEFS_FIRST_RELIEF_ROOM_TO_STEPS_ROOM, SolSanctumReliefs,
-        SOL_SANCTUM_RELIEFS_STEPS_ROOM_FROM_FIRST_RELIEF_ROOM, EXIT_FLAG_NONE),
-    SCENE_EXIT_IF(SOL_SANCTUM_RELIEFS_TO_SOL_SANCTUM_MAZE_EAST, SolSanctumMaze,
-                  SOL_SANCTUM_MAZE_FROM_SOL_SANCTUM_RELIEFS_NORTH,
-                  EXIT_FLAG_NONE),
-    SCENE_EXIT_IF(SOL_SANCTUM_RELIEFS_SECOND_RELIEF_ROOM_TO_ROUND_PASSAGE,
-                  SolSanctumReliefs,
-                  SOL_SANCTUM_RELIEFS_ROUND_PASSAGE_FROM_SECOND_RELIEF_ROOM,
-                  EXIT_FLAG_NONE),
-    SCENE_EXIT_IF(SOL_SANCTUM_RELIEFS_TO_SOL_SANCTUM_LUNA_SOL_ROOMS,
-                  SolSanctumLunaSolRooms,
-                  SOL_SANCTUM_LUNA_SOL_ROOMS_FROM_SOL_SANCTUM_RELIEFS,
-                  EXIT_FLAG_NONE),
-    SCENE_EXITS_END,
+        SOL_SANCTUM_RELIEFS_STEPS_ROOM_FROM_FIRST_RELIEF_ROOM, WARP_FLAG_NONE),
+    MAP_WARP_IF(SOL_SANCTUM_RELIEFS_TO_SOL_SANCTUM_MAZE_EAST, SolSanctumMaze,
+                SOL_SANCTUM_MAZE_FROM_SOL_SANCTUM_RELIEFS_NORTH,
+                WARP_FLAG_NONE),
+    MAP_WARP_IF(SOL_SANCTUM_RELIEFS_SECOND_RELIEF_ROOM_TO_ROUND_PASSAGE,
+                SolSanctumReliefs,
+                SOL_SANCTUM_RELIEFS_ROUND_PASSAGE_FROM_SECOND_RELIEF_ROOM,
+                WARP_FLAG_NONE),
+    MAP_WARP_IF(SOL_SANCTUM_RELIEFS_TO_SOL_SANCTUM_LUNA_SOL_ROOMS,
+                SolSanctumLunaSolRooms,
+                SOL_SANCTUM_LUNA_SOL_ROOMS_FROM_SOL_SANCTUM_RELIEFS,
+                WARP_FLAG_NONE),
+    MAP_WARPS_END,
 };
 
-struct ScenePlacement gSolSanctumEntrance_FallbackPlacements[] = {
-    {SCENE_TABLE_END},
+struct ObjectEventTemplate gSolSanctumEntrance_FallbackObjectEventTemplates[] =
+    {
+        {MAP_TABLE_END},
 };
 
 // clang-format off
-struct ScenePlacement gSolSanctumReliefs_Placements[] = {
-    { GARET, CONDITION_ALWAYS, ACTOR_STAND,
+struct ObjectEventTemplate gSolSanctumReliefs_ObjectEventTemplates[] = {
+    { GARET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         0, 0, 0, FACING_NORTH, TALK_FACE_PARTY, 0 },
-    { JENNA, CONDITION_ALWAYS, ACTOR_STAND,
+    { JENNA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         0, 0, 0, FACING_NORTH, TALK_FACE_PARTY, 0 },
-    { SPRITE_KRADEN, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_KRADEN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         0, 0, 0, FACING_NORTH, TALK_FACE_PARTY, 0 },
-    { SPRITE_STONE_STATUE, 0x0, ACTOR_STAND,
+    { SPRITE_STONE_STATUE, 0x0, MOVEMENT_TYPE_STAND,
         PIXELS(744), 0, PIXELS(56), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { SCENE_TABLE_END },
+    { MAP_TABLE_END },
 };
 
-struct ScenePlacement gSolSanctumReliefs_FirstReliefRoomPlacements[] = {
-    { GARET, CONDITION_ALWAYS, ACTOR_STAND,
+struct ObjectEventTemplate gSolSanctumReliefs_FirstReliefRoomObjectEventTemplates[] = {
+    { GARET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         0, 0, 0, FACING_NORTH, TALK_FACE_PARTY, 0 },
-    { JENNA, CONDITION_ALWAYS, ACTOR_STAND,
+    { JENNA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         0, 0, 0, FACING_NORTH, TALK_FACE_PARTY, 0 },
-    { SPRITE_KRADEN, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_KRADEN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         0, 0, 0, FACING_NORTH, TALK_FACE_PARTY, 0 },
-    { SPRITE_STONE_STATUE, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_STONE_STATUE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(1512), 0, PIXELS(136), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { SPRITE_STONE_STATUE, CONDITION_ALWAYS, ACTOR_STAND,
-        PIXELS(1832), 0, PIXELS(136), FACING_SOUTH, TALK_KEEP_FACING, PLACEMENT_SHARE_PREVIOUS_SPRITE },
-    { SPRITE_STONE_STATUE, CONDITION_ALWAYS, ACTOR_STAND,
-        PIXELS(1560), 0, PIXELS(136), FACING_SOUTH, TALK_KEEP_FACING, PLACEMENT_SHARE_PREVIOUS_SPRITE },
-    { SPRITE_STONE_STATUE, CONDITION_ALWAYS, ACTOR_STAND,
-        PIXELS(1784), 0, PIXELS(136), FACING_SOUTH, TALK_KEEP_FACING, PLACEMENT_SHARE_PREVIOUS_SPRITE },
-    { SPRITE_STONE_STATUE, CONDITION_ALWAYS, ACTOR_STAND,
-        PIXELS(1640), 0, PIXELS(264), FACING_SOUTH, TALK_KEEP_FACING, PLACEMENT_SHARE_PREVIOUS_SPRITE },
-    { SPRITE_STONE_STATUE, CONDITION_ALWAYS, ACTOR_STAND,
-        PIXELS(1640), 0, PIXELS(200), FACING_SOUTH, TALK_KEEP_FACING, PLACEMENT_SHARE_PREVIOUS_SPRITE },
-    { SPRITE_STONE_STATUE, CONDITION_ALWAYS, ACTOR_STAND,
-        PIXELS(1640), 0, PIXELS(136), FACING_SOUTH, TALK_KEEP_FACING, PLACEMENT_SHARE_PREVIOUS_SPRITE },
-    { SPRITE_STONE_STATUE, CONDITION_ALWAYS, ACTOR_STAND,
-        PIXELS(1672), 0, PIXELS(88), FACING_SOUTH, TALK_KEEP_FACING, PLACEMENT_SHARE_PREVIOUS_SPRITE },
-    { SPRITE_STONE_STATUE, CONDITION_ALWAYS, ACTOR_STAND,
-        PIXELS(1704), 0, PIXELS(136), FACING_SOUTH, TALK_KEEP_FACING, PLACEMENT_SHARE_PREVIOUS_SPRITE },
-    { SPRITE_STONE_STATUE, CONDITION_ALWAYS, ACTOR_STAND,
-        PIXELS(1704), 0, PIXELS(200), FACING_SOUTH, TALK_KEEP_FACING, PLACEMENT_SHARE_PREVIOUS_SPRITE },
-    { SPRITE_STONE_STATUE, CONDITION_ALWAYS, ACTOR_STAND,
-        PIXELS(1704), 0, PIXELS(264), FACING_SOUTH, TALK_KEEP_FACING, PLACEMENT_SHARE_PREVIOUS_SPRITE },
-    { SCENE_TABLE_END },
+    { SPRITE_STONE_STATUE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
+        PIXELS(1832), 0, PIXELS(136), FACING_SOUTH, TALK_KEEP_FACING, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+    { SPRITE_STONE_STATUE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
+        PIXELS(1560), 0, PIXELS(136), FACING_SOUTH, TALK_KEEP_FACING, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+    { SPRITE_STONE_STATUE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
+        PIXELS(1784), 0, PIXELS(136), FACING_SOUTH, TALK_KEEP_FACING, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+    { SPRITE_STONE_STATUE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
+        PIXELS(1640), 0, PIXELS(264), FACING_SOUTH, TALK_KEEP_FACING, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+    { SPRITE_STONE_STATUE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
+        PIXELS(1640), 0, PIXELS(200), FACING_SOUTH, TALK_KEEP_FACING, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+    { SPRITE_STONE_STATUE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
+        PIXELS(1640), 0, PIXELS(136), FACING_SOUTH, TALK_KEEP_FACING, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+    { SPRITE_STONE_STATUE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
+        PIXELS(1672), 0, PIXELS(88), FACING_SOUTH, TALK_KEEP_FACING, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+    { SPRITE_STONE_STATUE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
+        PIXELS(1704), 0, PIXELS(136), FACING_SOUTH, TALK_KEEP_FACING, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+    { SPRITE_STONE_STATUE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
+        PIXELS(1704), 0, PIXELS(200), FACING_SOUTH, TALK_KEEP_FACING, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+    { SPRITE_STONE_STATUE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
+        PIXELS(1704), 0, PIXELS(264), FACING_SOUTH, TALK_KEEP_FACING, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+    { MAP_TABLE_END },
 };
 
-struct ScenePlacement gSolSanctumReliefs_SecondReliefRoomPlacements[] = {
-    { GARET, CONDITION_ALWAYS, ACTOR_STAND,
+struct ObjectEventTemplate gSolSanctumReliefs_SecondReliefRoomObjectEventTemplates[] = {
+    { GARET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         0, 0, 0, FACING_NORTH, TALK_FACE_PARTY, 0 },
-    { JENNA, CONDITION_ALWAYS, ACTOR_STAND,
+    { JENNA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         0, 0, 0, FACING_NORTH, TALK_FACE_PARTY, 0 },
-    { SPRITE_KRADEN, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_KRADEN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         0, 0, 0, FACING_NORTH, TALK_FACE_PARTY, 0 },
-    { SPRITE_STONE_STATUE, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_STONE_STATUE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(1608), 0, PIXELS(520), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { SPRITE_STONE_STATUE, CONDITION_ALWAYS, ACTOR_STAND,
-        PIXELS(1672), 0, PIXELS(520), FACING_SOUTH, TALK_KEEP_FACING, PLACEMENT_SHARE_PREVIOUS_SPRITE },
-    { SPRITE_STONE_STATUE, CONDITION_ALWAYS, ACTOR_STAND,
-        PIXELS(1736), 0, PIXELS(520), FACING_SOUTH, TALK_KEEP_FACING, PLACEMENT_SHARE_PREVIOUS_SPRITE },
-    { SPRITE_STONE_STATUE, CONDITION_ALWAYS, ACTOR_STAND,
-        PIXELS(1800), 0, PIXELS(520), FACING_SOUTH, TALK_KEEP_FACING, PLACEMENT_SHARE_PREVIOUS_SPRITE },
-    { SPRITE_STONE_STATUE, CONDITION_ALWAYS, ACTOR_STAND,
-        PIXELS(1864), 0, PIXELS(520), FACING_SOUTH, TALK_KEEP_FACING, PLACEMENT_SHARE_PREVIOUS_SPRITE },
-    { SPRITE_STONE_STATUE, CONDITION_ALWAYS, ACTOR_STAND,
-        PIXELS(1928), 0, PIXELS(520), FACING_SOUTH, TALK_KEEP_FACING, PLACEMENT_SHARE_PREVIOUS_SPRITE },
-    { SCENE_TABLE_END },
+    { SPRITE_STONE_STATUE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
+        PIXELS(1672), 0, PIXELS(520), FACING_SOUTH, TALK_KEEP_FACING, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+    { SPRITE_STONE_STATUE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
+        PIXELS(1736), 0, PIXELS(520), FACING_SOUTH, TALK_KEEP_FACING, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+    { SPRITE_STONE_STATUE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
+        PIXELS(1800), 0, PIXELS(520), FACING_SOUTH, TALK_KEEP_FACING, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+    { SPRITE_STONE_STATUE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
+        PIXELS(1864), 0, PIXELS(520), FACING_SOUTH, TALK_KEEP_FACING, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+    { SPRITE_STONE_STATUE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
+        PIXELS(1928), 0, PIXELS(520), FACING_SOUTH, TALK_KEEP_FACING, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
+    { MAP_TABLE_END },
 };
 
-struct ScenePlacement gSolEntrance_Placements[] = {
-    { SPRITE_BEARDED_MAN_IN_LONG_ROBE, CONDITION_ALWAYS, ACTOR_STAND,
+struct ObjectEventTemplate gSolEntrance_ObjectEventTemplates[] = {
+    { SPRITE_BEARDED_MAN_IN_LONG_ROBE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         0, 0, 0, FACING_SOUTH + FACING_STEP, TALK_FACE_PARTY, 0 },
-    { SCENE_TABLE_END },
+    { MAP_TABLE_END },
 };
 
-struct SceneEvent gSolSanctumEntrance_FallbackEvents[] = {
-    { SCENE_EVENTS_END },
+struct MapEvent gSolSanctumEntrance_FallbackEvents[] = {
+    { MAP_EVENTS_END },
 };
 
-struct SceneEvent gSolEntrance_Events[] = {
-    { EVENT_EXIT, 1, CONDITION_ALWAYS, SOL_ENTRANCE_TO_VALE },
-    { TOUCH_WALKING_INTO(FACING_NORTH), SOL_ENTRANCE_CELL_DOOR, CONDITION_ALWAYS, EVENT_SCRIPT(Event_OpenDoorAndEnter) },
-    { SEARCH(SEARCH_UNNAMED), SOL_ENTRANCE_CELL_LOCKED_DOOR, CONDITION_ALWAYS, EVENT_SCRIPT(Event_DoorTightlyLocked) },
-    { EVENT_TALK, ACTOR_WARNING_MAN, CONDITION_ALWAYS, MSGNO(MsgValeItIsVeryDangerousToGo) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WARNING_MAN, CONDITION_ALWAYS, MSGNO(MsgValeIAmAllAloneInThis) },
-    { SCENE_EVENTS_END },
+struct MapEvent gSolEntrance_Events[] = {
+    { MAP_EVENT_WARP, 1, CONDITION_ALWAYS, SOL_ENTRANCE_TO_VALE },
+    { COORD_EVENT_WALKING_INTO(FACING_NORTH), SOL_ENTRANCE_CELL_DOOR, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_OpenDoorAndEnter) },
+    { BG_EVENT(BG_EVENT_UNNAMED), SOL_ENTRANCE_CELL_LOCKED_DOOR, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_DoorTightlyLocked) },
+    { MAP_EVENT_TALK, LOCALID_WARNING_MAN, CONDITION_ALWAYS, MSGNO(MsgValeItIsVeryDangerousToGo) },
+    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_WARNING_MAN, CONDITION_ALWAYS, MSGNO(MsgValeIAmAllAloneInThis) },
+    { MAP_EVENTS_END },
 };
 
-struct SceneEvent gSolSanctumReliefs_Events[] = {
-    { EVENT_EXIT, 1, CONDITION_ALWAYS, SOL_SANCTUM_RELIEFS_TO_SOL_SANCTUM_CORRIDOR_WEST },
-    { EVENT_EXIT, 2, CONDITION_ALWAYS, SOL_SANCTUM_RELIEFS_CHEST_ROOM_TO_FIRST_RELIEF_ROOM },
-    { EVENT_EXIT, 3, CONDITION_ALWAYS, SOL_SANCTUM_RELIEFS_STATUE_NOOK_TO_FIRST_RELIEF_ROOM },
-    { EVENT_EXIT, 4, CONDITION_ALWAYS, SOL_SANCTUM_RELIEFS_STEPPING_STONE_ROOM_TO_ENTRANCE_ROOM },
-    { EVENT_EXIT, 5, CONDITION_ALWAYS, SOL_SANCTUM_RELIEFS_TO_SOL_SANCTUM_CORRIDOR_EAST },
-    { EVENT_EXIT, 6, CONDITION_ALWAYS, SOL_SANCTUM_RELIEFS_STEPS_ROOM_TO_FIRST_RELIEF_ROOM },
-    { EVENT_EXIT | EXIT_STYLE_ANIMATED, 7, CONDITION_ALWAYS, SOL_SANCTUM_RELIEFS_TO_SOL_SANCTUM_MAZE_WEST },
-    { EVENT_EXIT, 8, CONDITION_ALWAYS, SOL_SANCTUM_RELIEFS_TO_SOL_ENTRANCE },
-    { EVENT_EXIT, 9, CONDITION_ALWAYS, SOL_SANCTUM_RELIEFS_ENTRANCE_ROOM_TO_STEPPING_STONE_ROOM },
-    { EVENT_EXIT, 10, CONDITION_ALWAYS, SOL_SANCTUM_RELIEFS_ROUND_PASSAGE_TO_SECOND_RELIEF_ROOM },
-    { EVENT_EXIT, 11, CONDITION_ALWAYS, SOL_SANCTUM_RELIEFS_FIRST_RELIEF_ROOM_TO_CHEST_ROOM },
-    { EVENT_EXIT, 12, CONDITION_ALWAYS, SOL_SANCTUM_RELIEFS_FIRST_RELIEF_ROOM_TO_STATUE_NOOK },
-    { EVENT_EXIT, 13, CONDITION_ALWAYS, SOL_SANCTUM_RELIEFS_FIRST_RELIEF_ROOM_TO_STEPS_ROOM },
-    { EVENT_EXIT, 14, CONDITION_ALWAYS, SOL_SANCTUM_RELIEFS_TO_SOL_SANCTUM_MAZE_EAST },
-    { EVENT_EXIT, 15, CONDITION_ALWAYS, SOL_SANCTUM_RELIEFS_SECOND_RELIEF_ROOM_TO_ROUND_PASSAGE },
-    { EVENT_EXIT, 16, CONDITION_ALWAYS, SOL_SANCTUM_RELIEFS_TO_SOL_SANCTUM_LUNA_SOL_ROOMS },
-    { SEARCH(SEARCH_CHEST), SOL_SANCTUM_CELL_CHEST, FLAG_SOL_SANCTUM_FIRST_SMALL_JEWEL_FOUND, FIND_ITEM(ITEM_SMALL_JEWEL) },
-    { USE_ITEM(ITEM_SMALL_JEWEL), SOL_SANCTUM_ITEM_OWN_MESSAGE | SOL_SANCTUM_CELL_FIRST_RELIEF, CONDITION_ALWAYS, EVENT_SCRIPT(Event_SetFirstSmallJewel) },
-    { SEARCH(SEARCH_UNNAMED), SOL_SANCTUM_CELL_FIRST_RELIEF, CONDITION_ALWAYS, EVENT_SCRIPT(Event_InspectFirstMinotaurRelief) },
-    { SCENE_EVENTS_END },
+struct MapEvent gSolSanctumReliefs_Events[] = {
+    { MAP_EVENT_WARP, 1, CONDITION_ALWAYS, SOL_SANCTUM_RELIEFS_TO_SOL_SANCTUM_CORRIDOR_WEST },
+    { MAP_EVENT_WARP, 2, CONDITION_ALWAYS, SOL_SANCTUM_RELIEFS_CHEST_ROOM_TO_FIRST_RELIEF_ROOM },
+    { MAP_EVENT_WARP, 3, CONDITION_ALWAYS, SOL_SANCTUM_RELIEFS_STATUE_NOOK_TO_FIRST_RELIEF_ROOM },
+    { MAP_EVENT_WARP, 4, CONDITION_ALWAYS, SOL_SANCTUM_RELIEFS_STEPPING_STONE_ROOM_TO_ENTRANCE_ROOM },
+    { MAP_EVENT_WARP, 5, CONDITION_ALWAYS, SOL_SANCTUM_RELIEFS_TO_SOL_SANCTUM_CORRIDOR_EAST },
+    { MAP_EVENT_WARP, 6, CONDITION_ALWAYS, SOL_SANCTUM_RELIEFS_STEPS_ROOM_TO_FIRST_RELIEF_ROOM },
+    { MAP_EVENT_WARP | WARP_STYLE_ANIMATED, 7, CONDITION_ALWAYS, SOL_SANCTUM_RELIEFS_TO_SOL_SANCTUM_MAZE_WEST },
+    { MAP_EVENT_WARP, 8, CONDITION_ALWAYS, SOL_SANCTUM_RELIEFS_TO_SOL_ENTRANCE },
+    { MAP_EVENT_WARP, 9, CONDITION_ALWAYS, SOL_SANCTUM_RELIEFS_ENTRANCE_ROOM_TO_STEPPING_STONE_ROOM },
+    { MAP_EVENT_WARP, 10, CONDITION_ALWAYS, SOL_SANCTUM_RELIEFS_ROUND_PASSAGE_TO_SECOND_RELIEF_ROOM },
+    { MAP_EVENT_WARP, 11, CONDITION_ALWAYS, SOL_SANCTUM_RELIEFS_FIRST_RELIEF_ROOM_TO_CHEST_ROOM },
+    { MAP_EVENT_WARP, 12, CONDITION_ALWAYS, SOL_SANCTUM_RELIEFS_FIRST_RELIEF_ROOM_TO_STATUE_NOOK },
+    { MAP_EVENT_WARP, 13, CONDITION_ALWAYS, SOL_SANCTUM_RELIEFS_FIRST_RELIEF_ROOM_TO_STEPS_ROOM },
+    { MAP_EVENT_WARP, 14, CONDITION_ALWAYS, SOL_SANCTUM_RELIEFS_TO_SOL_SANCTUM_MAZE_EAST },
+    { MAP_EVENT_WARP, 15, CONDITION_ALWAYS, SOL_SANCTUM_RELIEFS_SECOND_RELIEF_ROOM_TO_ROUND_PASSAGE },
+    { MAP_EVENT_WARP, 16, CONDITION_ALWAYS, SOL_SANCTUM_RELIEFS_TO_SOL_SANCTUM_LUNA_SOL_ROOMS },
+    { BG_EVENT(BG_EVENT_CHEST), SOL_SANCTUM_CELL_CHEST, FLAG_SOL_SANCTUM_FIRST_SMALL_JEWEL_FOUND, FIND_ITEM(ITEM_SMALL_JEWEL) },
+    { USE_ITEM(ITEM_SMALL_JEWEL), SOL_SANCTUM_ITEM_OWN_MESSAGE | SOL_SANCTUM_CELL_FIRST_RELIEF, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_SetFirstSmallJewel) },
+    { BG_EVENT(BG_EVENT_UNNAMED), SOL_SANCTUM_CELL_FIRST_RELIEF, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_InspectFirstMinotaurRelief) },
+    { MAP_EVENTS_END },
 };
 
-struct SceneEvent gSolSanctumReliefs_FirstReliefRoomEvents[] = {
-    { EVENT_EXIT, 1, CONDITION_ALWAYS, SOL_SANCTUM_RELIEFS_TO_SOL_SANCTUM_CORRIDOR_WEST },
-    { EVENT_EXIT, 2, CONDITION_ALWAYS, SOL_SANCTUM_RELIEFS_CHEST_ROOM_TO_FIRST_RELIEF_ROOM },
-    { EVENT_EXIT, 3, CONDITION_ALWAYS, SOL_SANCTUM_RELIEFS_STATUE_NOOK_TO_FIRST_RELIEF_ROOM },
-    { EVENT_EXIT, 4, CONDITION_ALWAYS, SOL_SANCTUM_RELIEFS_STEPPING_STONE_ROOM_TO_ENTRANCE_ROOM },
-    { EVENT_EXIT, 5, CONDITION_ALWAYS, SOL_SANCTUM_RELIEFS_TO_SOL_SANCTUM_CORRIDOR_EAST },
-    { EVENT_EXIT, 6, CONDITION_ALWAYS, SOL_SANCTUM_RELIEFS_STEPS_ROOM_TO_FIRST_RELIEF_ROOM },
-    { EVENT_EXIT | EXIT_STYLE_ANIMATED, 7, CONDITION_ALWAYS, SOL_SANCTUM_RELIEFS_TO_SOL_SANCTUM_MAZE_WEST },
-    { EVENT_EXIT, 8, CONDITION_ALWAYS, SOL_SANCTUM_RELIEFS_TO_SOL_ENTRANCE },
-    { EVENT_EXIT, 9, CONDITION_ALWAYS, SOL_SANCTUM_RELIEFS_ENTRANCE_ROOM_TO_STEPPING_STONE_ROOM },
-    { EVENT_EXIT, 10, CONDITION_ALWAYS, SOL_SANCTUM_RELIEFS_ROUND_PASSAGE_TO_SECOND_RELIEF_ROOM },
-    { EVENT_EXIT, 11, CONDITION_ALWAYS, SOL_SANCTUM_RELIEFS_FIRST_RELIEF_ROOM_TO_CHEST_ROOM },
-    { EVENT_EXIT, 12, CONDITION_ALWAYS, SOL_SANCTUM_RELIEFS_FIRST_RELIEF_ROOM_TO_STATUE_NOOK },
-    { EVENT_EXIT, 13, CONDITION_ALWAYS, SOL_SANCTUM_RELIEFS_FIRST_RELIEF_ROOM_TO_STEPS_ROOM },
-    { EVENT_EXIT, 14, CONDITION_ALWAYS, SOL_SANCTUM_RELIEFS_TO_SOL_SANCTUM_MAZE_EAST },
-    { EVENT_EXIT, 15, CONDITION_ALWAYS, SOL_SANCTUM_RELIEFS_SECOND_RELIEF_ROOM_TO_ROUND_PASSAGE },
-    { EVENT_EXIT, 16, CONDITION_ALWAYS, SOL_SANCTUM_RELIEFS_TO_SOL_SANCTUM_LUNA_SOL_ROOMS },
-    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_WEST_STATUE, FLAG_SCENE_TEMP_34, EVENT_SCRIPT(Event_WestStatueMoved) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_EAST_STATUE, FLAG_SCENE_TEMP_34, EVENT_SCRIPT(Event_EastStatueMoved) },
-    { TOUCH_WALKING, SOL_SANCTUM_CELL_FIRST_ROOM_STATUE, CONDITION_ALWAYS, EVENT_SCRIPT(Event_PushStatue) },
-    { TOUCH_WALKING_INTO(FACING_EAST), SOL_SANCTUM_CELL_FIRST_ROOM_STATUE_EAST, CONDITION_ALWAYS, EVENT_SCRIPT(Event_PushStatue) },
-    { TOUCH_WALKING_INTO(FACING_WEST), SOL_SANCTUM_CELL_FIRST_ROOM_STATUE_WEST, CONDITION_ALWAYS, EVENT_SCRIPT(Event_PushStatue) },
-    { SCENE_EVENTS_END },
+struct MapEvent gSolSanctumReliefs_FirstReliefRoomEvents[] = {
+    { MAP_EVENT_WARP, 1, CONDITION_ALWAYS, SOL_SANCTUM_RELIEFS_TO_SOL_SANCTUM_CORRIDOR_WEST },
+    { MAP_EVENT_WARP, 2, CONDITION_ALWAYS, SOL_SANCTUM_RELIEFS_CHEST_ROOM_TO_FIRST_RELIEF_ROOM },
+    { MAP_EVENT_WARP, 3, CONDITION_ALWAYS, SOL_SANCTUM_RELIEFS_STATUE_NOOK_TO_FIRST_RELIEF_ROOM },
+    { MAP_EVENT_WARP, 4, CONDITION_ALWAYS, SOL_SANCTUM_RELIEFS_STEPPING_STONE_ROOM_TO_ENTRANCE_ROOM },
+    { MAP_EVENT_WARP, 5, CONDITION_ALWAYS, SOL_SANCTUM_RELIEFS_TO_SOL_SANCTUM_CORRIDOR_EAST },
+    { MAP_EVENT_WARP, 6, CONDITION_ALWAYS, SOL_SANCTUM_RELIEFS_STEPS_ROOM_TO_FIRST_RELIEF_ROOM },
+    { MAP_EVENT_WARP | WARP_STYLE_ANIMATED, 7, CONDITION_ALWAYS, SOL_SANCTUM_RELIEFS_TO_SOL_SANCTUM_MAZE_WEST },
+    { MAP_EVENT_WARP, 8, CONDITION_ALWAYS, SOL_SANCTUM_RELIEFS_TO_SOL_ENTRANCE },
+    { MAP_EVENT_WARP, 9, CONDITION_ALWAYS, SOL_SANCTUM_RELIEFS_ENTRANCE_ROOM_TO_STEPPING_STONE_ROOM },
+    { MAP_EVENT_WARP, 10, CONDITION_ALWAYS, SOL_SANCTUM_RELIEFS_ROUND_PASSAGE_TO_SECOND_RELIEF_ROOM },
+    { MAP_EVENT_WARP, 11, CONDITION_ALWAYS, SOL_SANCTUM_RELIEFS_FIRST_RELIEF_ROOM_TO_CHEST_ROOM },
+    { MAP_EVENT_WARP, 12, CONDITION_ALWAYS, SOL_SANCTUM_RELIEFS_FIRST_RELIEF_ROOM_TO_STATUE_NOOK },
+    { MAP_EVENT_WARP, 13, CONDITION_ALWAYS, SOL_SANCTUM_RELIEFS_FIRST_RELIEF_ROOM_TO_STEPS_ROOM },
+    { MAP_EVENT_WARP, 14, CONDITION_ALWAYS, SOL_SANCTUM_RELIEFS_TO_SOL_SANCTUM_MAZE_EAST },
+    { MAP_EVENT_WARP, 15, CONDITION_ALWAYS, SOL_SANCTUM_RELIEFS_SECOND_RELIEF_ROOM_TO_ROUND_PASSAGE },
+    { MAP_EVENT_WARP, 16, CONDITION_ALWAYS, SOL_SANCTUM_RELIEFS_TO_SOL_SANCTUM_LUNA_SOL_ROOMS },
+    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MOVE), LOCALID_WEST_STATUE, FLAG_MAP_TEMP_34, EVENT_SCRIPT(EventScript_WestStatueMoved) },
+    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MOVE), LOCALID_EAST_STATUE, FLAG_MAP_TEMP_34, EVENT_SCRIPT(EventScript_EastStatueMoved) },
+    { COORD_EVENT_WALKING, SOL_SANCTUM_CELL_FIRST_ROOM_STATUE, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_PushStatue) },
+    { COORD_EVENT_WALKING_INTO(FACING_EAST), SOL_SANCTUM_CELL_FIRST_ROOM_STATUE_EAST, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_PushStatue) },
+    { COORD_EVENT_WALKING_INTO(FACING_WEST), SOL_SANCTUM_CELL_FIRST_ROOM_STATUE_WEST, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_PushStatue) },
+    { MAP_EVENTS_END },
 };
 
-struct SceneEvent gSolSanctumReliefs_SecondReliefRoomEvents[] = {
-    { EVENT_EXIT, 1, CONDITION_ALWAYS, SOL_SANCTUM_RELIEFS_TO_SOL_SANCTUM_CORRIDOR_WEST },
-    { EVENT_EXIT, 2, CONDITION_ALWAYS, SOL_SANCTUM_RELIEFS_CHEST_ROOM_TO_FIRST_RELIEF_ROOM },
-    { EVENT_EXIT, 3, CONDITION_ALWAYS, SOL_SANCTUM_RELIEFS_STATUE_NOOK_TO_FIRST_RELIEF_ROOM },
-    { EVENT_EXIT, 4, CONDITION_ALWAYS, SOL_SANCTUM_RELIEFS_STEPPING_STONE_ROOM_TO_ENTRANCE_ROOM },
-    { EVENT_EXIT, 5, CONDITION_ALWAYS, SOL_SANCTUM_RELIEFS_TO_SOL_SANCTUM_CORRIDOR_EAST },
-    { EVENT_EXIT, 6, CONDITION_ALWAYS, SOL_SANCTUM_RELIEFS_STEPS_ROOM_TO_FIRST_RELIEF_ROOM },
-    { EVENT_EXIT | EXIT_STYLE_ANIMATED, 7, CONDITION_ALWAYS, SOL_SANCTUM_RELIEFS_TO_SOL_SANCTUM_MAZE_WEST },
-    { EVENT_EXIT, 8, CONDITION_ALWAYS, SOL_SANCTUM_RELIEFS_TO_SOL_ENTRANCE },
-    { EVENT_EXIT, 9, CONDITION_ALWAYS, SOL_SANCTUM_RELIEFS_ENTRANCE_ROOM_TO_STEPPING_STONE_ROOM },
-    { EVENT_EXIT, 10, CONDITION_ALWAYS, SOL_SANCTUM_RELIEFS_ROUND_PASSAGE_TO_SECOND_RELIEF_ROOM },
-    { EVENT_EXIT, 11, CONDITION_ALWAYS, SOL_SANCTUM_RELIEFS_FIRST_RELIEF_ROOM_TO_CHEST_ROOM },
-    { EVENT_EXIT, 12, CONDITION_ALWAYS, SOL_SANCTUM_RELIEFS_FIRST_RELIEF_ROOM_TO_STATUE_NOOK },
-    { EVENT_EXIT, 13, CONDITION_ALWAYS, SOL_SANCTUM_RELIEFS_FIRST_RELIEF_ROOM_TO_STEPS_ROOM },
-    { EVENT_EXIT, 14, CONDITION_ALWAYS, SOL_SANCTUM_RELIEFS_TO_SOL_SANCTUM_MAZE_EAST },
-    { EVENT_EXIT, 15, CONDITION_ALWAYS, SOL_SANCTUM_RELIEFS_SECOND_RELIEF_ROOM_TO_ROUND_PASSAGE },
-    { EVENT_EXIT, 16, CONDITION_ALWAYS, SOL_SANCTUM_RELIEFS_TO_SOL_SANCTUM_LUNA_SOL_ROOMS },
-    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_ROW_STATUE_1, CONDITION_ALWAYS, EVENT_SCRIPT(Event_RowStatue1Moved) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_ROW_STATUE_2, CONDITION_ALWAYS, EVENT_SCRIPT(Event_RowStatue2Moved) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_ROW_STATUE_3, CONDITION_ALWAYS, EVENT_SCRIPT(Event_RowStatue3Moved) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_ROW_STATUE_4, CONDITION_ALWAYS, EVENT_SCRIPT(Event_RowStatue4Moved) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_ROW_STATUE_5, CONDITION_ALWAYS, EVENT_SCRIPT(Event_RowStatue5Moved) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_ROW_STATUE_6, CONDITION_ALWAYS, EVENT_SCRIPT(Event_RowStatue6Moved) },
-    { TOUCH_WALKING, SOL_SANCTUM_CELL_ROW_STATUE, CONDITION_ALWAYS, EVENT_SCRIPT(Event_PushStatue) },
-    { USE_ITEM(ITEM_SMALL_JEWEL), SOL_SANCTUM_ITEM_OWN_MESSAGE | SOL_SANCTUM_CELL_SECOND_RELIEF, CONDITION_ALWAYS, EVENT_SCRIPT(Event_SetSecondSmallJewel) },
-    { SEARCH(SEARCH_UNNAMED), SOL_SANCTUM_CELL_SECOND_RELIEF, CONDITION_ALWAYS, EVENT_SCRIPT(Event_InspectSecondMinotaurRelief) },
-    { SCENE_EVENTS_END },
+struct MapEvent gSolSanctumReliefs_SecondReliefRoomEvents[] = {
+    { MAP_EVENT_WARP, 1, CONDITION_ALWAYS, SOL_SANCTUM_RELIEFS_TO_SOL_SANCTUM_CORRIDOR_WEST },
+    { MAP_EVENT_WARP, 2, CONDITION_ALWAYS, SOL_SANCTUM_RELIEFS_CHEST_ROOM_TO_FIRST_RELIEF_ROOM },
+    { MAP_EVENT_WARP, 3, CONDITION_ALWAYS, SOL_SANCTUM_RELIEFS_STATUE_NOOK_TO_FIRST_RELIEF_ROOM },
+    { MAP_EVENT_WARP, 4, CONDITION_ALWAYS, SOL_SANCTUM_RELIEFS_STEPPING_STONE_ROOM_TO_ENTRANCE_ROOM },
+    { MAP_EVENT_WARP, 5, CONDITION_ALWAYS, SOL_SANCTUM_RELIEFS_TO_SOL_SANCTUM_CORRIDOR_EAST },
+    { MAP_EVENT_WARP, 6, CONDITION_ALWAYS, SOL_SANCTUM_RELIEFS_STEPS_ROOM_TO_FIRST_RELIEF_ROOM },
+    { MAP_EVENT_WARP | WARP_STYLE_ANIMATED, 7, CONDITION_ALWAYS, SOL_SANCTUM_RELIEFS_TO_SOL_SANCTUM_MAZE_WEST },
+    { MAP_EVENT_WARP, 8, CONDITION_ALWAYS, SOL_SANCTUM_RELIEFS_TO_SOL_ENTRANCE },
+    { MAP_EVENT_WARP, 9, CONDITION_ALWAYS, SOL_SANCTUM_RELIEFS_ENTRANCE_ROOM_TO_STEPPING_STONE_ROOM },
+    { MAP_EVENT_WARP, 10, CONDITION_ALWAYS, SOL_SANCTUM_RELIEFS_ROUND_PASSAGE_TO_SECOND_RELIEF_ROOM },
+    { MAP_EVENT_WARP, 11, CONDITION_ALWAYS, SOL_SANCTUM_RELIEFS_FIRST_RELIEF_ROOM_TO_CHEST_ROOM },
+    { MAP_EVENT_WARP, 12, CONDITION_ALWAYS, SOL_SANCTUM_RELIEFS_FIRST_RELIEF_ROOM_TO_STATUE_NOOK },
+    { MAP_EVENT_WARP, 13, CONDITION_ALWAYS, SOL_SANCTUM_RELIEFS_FIRST_RELIEF_ROOM_TO_STEPS_ROOM },
+    { MAP_EVENT_WARP, 14, CONDITION_ALWAYS, SOL_SANCTUM_RELIEFS_TO_SOL_SANCTUM_MAZE_EAST },
+    { MAP_EVENT_WARP, 15, CONDITION_ALWAYS, SOL_SANCTUM_RELIEFS_SECOND_RELIEF_ROOM_TO_ROUND_PASSAGE },
+    { MAP_EVENT_WARP, 16, CONDITION_ALWAYS, SOL_SANCTUM_RELIEFS_TO_SOL_SANCTUM_LUNA_SOL_ROOMS },
+    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MOVE), LOCALID_ROW_STATUE_1, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_RowStatue1Moved) },
+    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MOVE), LOCALID_ROW_STATUE_2, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_RowStatue2Moved) },
+    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MOVE), LOCALID_ROW_STATUE_3, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_RowStatue3Moved) },
+    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MOVE), LOCALID_ROW_STATUE_4, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_RowStatue4Moved) },
+    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MOVE), LOCALID_ROW_STATUE_5, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_RowStatue5Moved) },
+    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MOVE), LOCALID_ROW_STATUE_6, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_RowStatue6Moved) },
+    { COORD_EVENT_WALKING, SOL_SANCTUM_CELL_ROW_STATUE, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_PushStatue) },
+    { USE_ITEM(ITEM_SMALL_JEWEL), SOL_SANCTUM_ITEM_OWN_MESSAGE | SOL_SANCTUM_CELL_SECOND_RELIEF, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_SetSecondSmallJewel) },
+    { BG_EVENT(BG_EVENT_UNNAMED), SOL_SANCTUM_CELL_SECOND_RELIEF, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_InspectSecondMinotaurRelief) },
+    { MAP_EVENTS_END },
 };
 // clang-format on
 

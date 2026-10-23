@@ -1,10 +1,10 @@
-#ifndef ALCHEMY_UNIT_SCENE_COMMON_WORLD_MAP_LINKED_EFFECTS_H
-#define ALCHEMY_UNIT_SCENE_COMMON_WORLD_MAP_LINKED_EFFECTS_H
+#ifndef ALCHEMY_UNIT_MAP_COMMON_WORLD_MAP_LINKED_EFFECTS_H
+#define ALCHEMY_UNIT_MAP_COMMON_WORLD_MAP_LINKED_EFFECTS_H
 
 #include "types.h"
 
-struct FieldActor;
+struct ObjectEvent;
 
-void WorldMap_CreateLinkedEffects(struct FieldActor *parent);
+void WorldMap_CreateLinkedEffects(struct ObjectEvent *parent);
 
 #endif

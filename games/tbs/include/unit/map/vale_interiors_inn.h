@@ -1,14 +1,15 @@
-#ifndef ALCHEMY_UNIT_SCENE_VALE_INTERIORS_INN_H
-#define ALCHEMY_UNIT_SCENE_VALE_INTERIORS_INN_H
+#ifndef ALCHEMY_UNIT_MAP_VALE_INTERIORS_INN_H
+#define ALCHEMY_UNIT_MAP_VALE_INTERIORS_INN_H
 
 #include "types.h"
 #include "map_tables.h"
 
-const struct SceneEntrance *ValeInteriorsInn_GetEntrances(void);
-const struct SceneRegion *ValeInteriorsInn_GetRegions(void);
-const u32 *ValeInteriorsInn_GetExits(void);
-const struct ScenePlacement *ValeInteriorsInn_GetPlacements(void);
-const struct SceneEvent *ValeInteriorsInn_GetEvents(void);
+const struct MapWarpDest *ValeInteriorsInn_GetWarpDests(void);
+const struct MapWarpRegion *ValeInteriorsInn_GetRegions(void);
+const u32 *ValeInteriorsInn_GetWarps(void);
+const struct ObjectEventTemplate *
+ValeInteriorsInn_GetObjectEventTemplates(void);
+const struct MapEvent *ValeInteriorsInn_GetEvents(void);
 s32 ValeInteriorsInn_Initialize(void);
 extern s32 gValeInteriorsInn_LeaveHouseScript[];
 extern s32 gValeInteriorsInn_DoraLeavesScript[];
@@ -23,18 +24,21 @@ extern s32 gValeInteriorsInn_FlameRisesScript[];
 extern s32 gValeInteriorsInn_DoraFacesIsaacScript[];
 extern s32 gValeInteriorsInn_MythrilBagRisesScript[];
 extern s32 gValeInteriorsInn_MythrilBagWobblesScript[];
-extern struct SceneEntrance gValeInteriorsInn_Entrances[];
-extern u32 gValeInteriorsInn_Exits[];
-extern u32 gValeInteriorsInn_StormExits[];
-extern struct ScenePlacement gValeInteriorsInn_Placements[];
-extern struct ScenePlacement gValeInteriorsInn_PlacementsAfterLeaving[];
-extern struct ScenePlacement gValeInteriorsInn_PlacementsAfterKalay[];
-extern struct ScenePlacement gValeInteriorsInn_ScholarsPlacements[];
-extern struct SceneEvent gValeInteriorsInn_StormEvents[];
-extern struct SceneEvent gValeInteriorsInn_Events[];
-extern struct SceneEvent gValeInteriorsInn_EventsAfterLeaving[];
-extern struct SceneEvent gValeInteriorsInn_EventsAfterKalay[];
-extern struct SceneEvent gValeInteriorsInn_ScholarsEvents[];
-extern struct SceneEvent gValeInteriorsInn_ScholarsLaterEvents[];
+extern struct MapWarpDest gValeInteriorsInn_WarpDests[];
+extern u32 gValeInteriorsInn_Warps[];
+extern u32 gValeInteriorsInn_StormWarps[];
+extern struct ObjectEventTemplate gValeInteriorsInn_ObjectEventTemplates[];
+extern struct ObjectEventTemplate
+    gValeInteriorsInn_ObjectEventTemplatesAfterLeaving[];
+extern struct ObjectEventTemplate
+    gValeInteriorsInn_ObjectEventTemplatesAfterKalay[];
+extern struct ObjectEventTemplate
+    gValeInteriorsInn_ScholarsObjectEventTemplates[];
+extern struct MapEvent gValeInteriorsInn_StormEvents[];
+extern struct MapEvent gValeInteriorsInn_Events[];
+extern struct MapEvent gValeInteriorsInn_EventsAfterLeaving[];
+extern struct MapEvent gValeInteriorsInn_EventsAfterKalay[];
+extern struct MapEvent gValeInteriorsInn_ScholarsEvents[];
+extern struct MapEvent gValeInteriorsInn_ScholarsLaterEvents[];
 
 #endif

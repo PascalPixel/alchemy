@@ -6,33 +6,35 @@
 
 /// Returns the placed actor drawn as SPRITE_FLOATING_PLATFORM nearest the
 /// leader, within 640 pixels, or 0.
-s32 SceneActor_FindNearestFloatingPlatform(void) {
+s32 MapObjectEvent_FindNearestFloatingPlatform(void) {
   struct EventWork *work = gEventWork;
-  struct FieldActor **slot;
-  struct FieldActor *origin;
-  s32 nearestActor = 0;
+  struct ObjectEvent **slot;
+  struct ObjectEvent *origin;
+  s32 nearestObjectEvent = 0;
   s32 minDist;
-  u32 actorId;
+  u32 objectEventId;
 
   minDist = 640;
-  origin = Object_GetById(ACTOR_PARTY_LEADER);
-  actorId = ACTOR_FIRST_PLACED;
-  slot = work->placedActors;
+  origin = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
+  objectEventId = LOCALID_FIRST_PLACED;
+  slot = work->placedObjectEvents;
   do {
-    struct FieldActor *actor = *slot++;
-    if (actor != 0) {
-      if (actor->sprite->entries[0]->animationId == SPRITE_FLOATING_PLATFORM) {
+    struct ObjectEvent *objectEvent = *slot++;
+    if (objectEvent != 0) {
+      if (objectEvent->sprite->entries[0]->animationId ==
+          SPRITE_FLOATING_PLATFORM) {
         s32 dist = FixedPoint_Distance(
-            (const u8 *)origin + offsetof(struct FieldActor, x),
-            (const u8 *)actor + offsetof(struct FieldActor, x));
+            (const u8 *)origin + offsetof(struct ObjectEvent, x),
+            (const u8 *)objectEvent + offsetof(struct ObjectEvent, x));
         if (dist < minDist) {
           minDist = dist;
-          nearestActor = actorId;
+          nearestObjectEvent = objectEventId;
         }
       }
     }
-    actorId++;
-  } while (actorId < ACTOR_FIRST_PLACED + sizeof(work->placedActors) /
-                                              sizeof(work->placedActors[0]));
-  return nearestActor;
+    objectEventId++;
+  } while (objectEventId <
+           LOCALID_FIRST_PLACED + sizeof(work->placedObjectEvents) /
+                                      sizeof(work->placedObjectEvents[0]));
+  return nearestObjectEvent;
 }

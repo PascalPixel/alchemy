@@ -5,7 +5,8 @@
 #include "../psynergy_effects_internal.h"
 
 /// The step code of the cells Cloak can stay hidden on: byte 2 of a cell
-/// (MapCell.collisionCode), or of a 4-byte gMapBlocks entry on the world map.
+/// (MapGridCell.collisionCode), or of a 4-byte gMetatiles entry on the world
+/// map.
 #define CLOAK_TILE 0xfb
 /// The Psynergy request that ends Cloak: ACT_PACKED (0x2000, no PP) |
 /// ABILITY_CLOAK (0x92).
@@ -13,7 +14,7 @@
 
 /// Scheduler callback of Cloak: when the tile under the leader is not
 /// CLOAK_TILE, requests CLOAK_END. On the world map it reads
-/// the 32-pixel gMapBlocks, elsewhere the 16-pixel terrain map. Runs once a
+/// the 32-pixel gMetatiles, elsewhere the 16-pixel terrain map. Runs once a
 /// frame from FieldEffect_StartCloak, and again from
 /// FieldEffect_ResumeCloakCheck when a scene loads with the leader still
 /// cloaked.
@@ -31,13 +32,13 @@ void FieldEffect_CheckCloakTile(void) {
   slot = (u32)&gEventWork;
 #endif
   work = (struct FieldWork *)gEventWork;
-  leader = ObjectTable_Get(gGameState.selectedActor);
+  leader = ObjectTable_Get(gGameState.selectedObjectEvent);
 #ifdef UBFIX
-  tile = gMapWork[0];
+  tile = gMapGridWork[0];
 #else
   // The named map slot avoids reading outside gEventWork. It adds 4 bytes
   // to this function in the forced native EN build (0xc0 -> 0xc4).
-  tile = (u8 *)*(struct MapState **)(slot - 76); // gMapWork[0]
+  tile = (u8 *)*(struct MapGridState **)(slot - 76); // gMapGridWork[0]
 #endif
 
   // Whole blocks or cells, rounded toward zero as a division would be.
@@ -55,12 +56,13 @@ void FieldEffect_CheckCloakTile(void) {
       y += 0x1fffff;
     ty = (y >> 21) & 31;
 
-    tile = (u8 *)gMapBlocks + ((tx + (ty << 5)) << 2);
+    tile = (u8 *)gMetatiles + ((tx + (ty << 5)) << 2);
   } else {
     if (leader->terrainId <= 2) {
-      tile = (u8 *)((struct MapState *)tile)->layers[leader->terrainId].cells;
+      tile =
+          (u8 *)((struct MapGridState *)tile)->layers[leader->terrainId].cells;
     } else
-      tile = (u8 *)gMapCellBuffer;
+      tile = (u8 *)gMapGridCellBuffer;
 
     x = leader->x;
     if (x < 0)
@@ -85,14 +87,14 @@ void FieldEffect_CheckCloakTile(void) {
 /// first five blinks, its outline (sprite flag bit 1) on and off; the last
 /// five alternate white and its own colours (param 0). Each half is 2
 /// frames. The leader ends with its shadow back.
-/// FieldEvent_RunTypeHandler runs it when the CLOAK_END request is handled.
+/// FieldScript_RunTypeHandler runs it when the CLOAK_END request is handled.
 void FieldEffect_EndCloak(void) {
   struct ObjectRuntime *object;
   struct AnimationObject *animation;
   struct AnimationEntry *entry;
   u32 i;
 
-  object = ObjectTable_Get(gGameState.selectedActor);
+  object = ObjectTable_Get(gGameState.selectedObjectEvent);
   animation = object->animation;
   entry = animation->entries[0];
 
@@ -125,7 +127,7 @@ void FieldEffect_EndCloak(void) {
   gGameState.cloaked = 0;
 }
 
-/// Starts the Cloak tile check if the leader is hidden. Field_RunScene calls
+/// Starts the Cloak tile check if the leader is hidden. Field_RunMap calls
 /// it as a scene loads, since gGameState.cloaked outlives the scene.
 void FieldEffect_ResumeCloakCheck(void) {
   if (gGameState.cloaked != 0) {
@@ -144,7 +146,8 @@ void FieldEffect_ResumeCloakCheck(void) {
 /// FieldEffect_DispatchRequestKind.
 void FieldEffect_StartCloak(void) {
   struct FieldWork *work = (struct FieldWork *)gEventWork;
-  struct ObjectRuntime *leader = ObjectTable_Get(gGameState.selectedActor);
+  struct ObjectRuntime *leader =
+      ObjectTable_Get(gGameState.selectedObjectEvent);
   struct AnimationObject *animation = leader->animation;
   struct AnimationEntry *entry = animation->entries[0];
   u32 n;

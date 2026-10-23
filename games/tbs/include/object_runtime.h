@@ -14,7 +14,7 @@
 ///
 /// ObjectSystem_Initialize takes the pool with the object system's work
 /// (HEAP_SLOT_MENU_CONTROL), so it lives until the next scene change. struct
-/// FieldActor is the same 0x70 bytes as scenes see them.
+/// ObjectEvent is the same 0x70 bytes as scenes see them.
 struct ObjectRuntime {
   s32 *script; ///< the object script it runs; null when the object is free
   s16 step;    ///< the script cursor, in words
@@ -23,10 +23,10 @@ struct ObjectRuntime {
   s32 y;       ///< 16.16 fixed-point pixels
   s32 z;       ///< 16.16 fixed-point pixels
   s32 terrainHeight; ///< 16.16 fixed-point pixels
-  u8 unk18[0x08];    ///< the x and y scales, FieldActor.scaleX and scaleY
+  u8 unk18[0x08];    ///< the x and y scales, ObjectEvent.scaleX and scaleY
   u16 radius;        ///< collision radius in pixels
   u8 terrainId;      ///< the map layer its ground height is read from
-  /// FieldActor.priorityFlags: 1 for placed actors, 2 for footprints.
+  /// ObjectEvent.priorityFlags: 1 for placed actors, 2 for footprints.
   u8 priorityFlags;
   s32 velocityX;  ///< 16.16 fixed-point pixels per frame
   s32 velocityY;  ///< 16.16 fixed-point pixels per frame
@@ -38,21 +38,21 @@ struct ObjectRuntime {
   s32 targetX; ///< 16.16 fixed-point pixels; 0x80000000 when unset
   s32 targetY; ///< 16.16 fixed-point pixels; 0x80000000 when unset
   s32 targetZ; ///< 16.16 fixed-point pixels; 0x80000000 when unset
-  /// FieldActor's bounce and gravity, and a word FieldObject_Create zeroes.
+  /// ObjectEvent's bounce and gravity, and a word FieldObject_Create zeroes.
   u8 unk44[0x0c];
   void *animation; ///< its sprite, or its list of four, by animationKind
   /// Low four bits: 0 no sprite, 1 one sprite, 2 a group of up to four.
   u8 animationKind;
-  /// FieldActor.motionFlags: 3 when created, 4 for a placed actor above the
+  /// ObjectEvent.motionFlags: 3 when created, 4 for a placed actor above the
   /// ground; zero is free flight in 3D.
   u8 flags;
   u8 arrivalAxis;     ///< the ARRIVAL_AXIS_* that decides arrival
   u8 conditionResult; ///< the object script's last flag test
   u8 snapToTarget;    ///< nonzero lands it exactly on its target
-  /// FieldActor.collisionFlags: bit 0 solid, bit 1 the player pushes it,
+  /// ObjectEvent.collisionFlags: bit 0 solid, bit 1 the player pushes it,
   /// bits 2 to 4 for talk and Psynergy targets; placed actors take 1.
   u8 collisionFlags;
-  u8 actionFlags;   ///< FieldActor.steeringFlags: bit 0 faces its motion
+  u8 actionFlags;   ///< ObjectEvent.steeringFlags: bit 0 faces its motion
   u8 movementState; ///< nonzero skips its script and motion (paused)
   /// Byte 0, when nonzero, keeps its sprite's VRAM cache entry while sprites
   /// are suspended or it is off screen; byte 1 is the object script's
@@ -71,7 +71,7 @@ struct ObjectRuntime {
                      ///< stop)
   /// The object its action script follows or faces.
   struct ObjectRuntime *linkedObject;
-  /// The update hook (FieldActor.update), which the unused
+  /// The update hook (ObjectEvent.update), which the unused
   /// ObjectDispatch_SetUpdateValue sets as a word.
   u8 unk6c[0x04];
 };
@@ -95,13 +95,14 @@ enum {
 struct ObjectTableSnapshot {
   u8 slots[OBJECT_SNAPSHOT_CAPACITY]; ///< actor numbers, or
                                       ///< OBJECT_SNAPSHOT_EMPTY
-  struct ObjectRuntime actors[OBJECT_SNAPSHOT_CAPACITY]; ///< copied by DMA
-  u8 animations[OBJECT_SNAPSHOT_CAPACITY];  ///< each sprite's lastNo
+  struct ObjectRuntime
+      objectEvents[OBJECT_SNAPSHOT_CAPACITY]; ///< copied by DMA
+  u8 animations[OBJECT_SNAPSHOT_CAPACITY];    ///< each sprite's lastNo
   u8 spriteFlags[OBJECT_SNAPSHOT_CAPACITY]; ///< restored through the dispatcher
   u8 priorities[OBJECT_SNAPSHOT_CAPACITY];  ///< both image and shadow priority
 };
 
-STATIC_ASSERT(offsetof(struct ObjectTableSnapshot, actors) == 0x20);
+STATIC_ASSERT(offsetof(struct ObjectTableSnapshot, objectEvents) == 0x20);
 STATIC_ASSERT(offsetof(struct ObjectTableSnapshot, animations) == 0xe20);
 STATIC_ASSERT(offsetof(struct ObjectTableSnapshot, spriteFlags) == 0xe40);
 STATIC_ASSERT(offsetof(struct ObjectTableSnapshot, priorities) == 0xe60);

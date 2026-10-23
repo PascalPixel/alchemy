@@ -10,18 +10,19 @@
 /// The world map's perspective view: the followed position, screen shake,
 /// view position, window, pitch and yaw, tile ids and zoom. Heap slot 8.
 struct PerspectiveWork {
-  s32 *origin;                    ///< the followed point, as in MapScrollWork
-  s32 shakeX, shakeY, shakeDecay; ///< the screen shake, as in MapScrollWork
+  s32 *origin; ///< the followed point, as in MapGridScrollWork
+  s32 shakeX, shakeY, shakeDecay; ///< the screen shake, as in MapGridScrollWork
   u8 *script;                     ///< NULL at load
-  u16 fade;    ///< MapScrollWork's flags: REG_DISPCNT bits, 0x1f00 at load
-  u8 fadeStep; ///< MapScrollWork's wideTiles, 0x80 at load
-  u8 unk017[0xe4 - 0x17]; ///< as MapScrollWork: tile animations, blend script
-  s32 viewX;              ///< 16.16 fixed-point pixels
-  s32 viewY;              ///< 16.16 fixed-point pixels
-  s32 scaleX;             ///< 0x200000 at load
-  s32 scaleY;             ///< 0x400000 at load
-  s32 limitX;             ///< 0x1fe00000 at load
-  s32 limitY;             ///< 0x1fe00000 at load
+  u16 fade;    ///< MapGridScrollWork's flags: REG_DISPCNT bits, 0x1f00 at load
+  u8 fadeStep; ///< MapGridScrollWork's wideTiles, 0x80 at load
+  u8 unk017[0xe4 -
+            0x17]; ///< as MapGridScrollWork: tile animations, blend script
+  s32 viewX;       ///< 16.16 fixed-point pixels
+  s32 viewY;       ///< 16.16 fixed-point pixels
+  s32 scaleX;      ///< 0x200000 at load
+  s32 scaleY;      ///< 0x400000 at load
+  s32 limitX;      ///< 0x1fe00000 at load
+  s32 limitY;      ///< 0x1fe00000 at load
   /// Set by WorldMap_StartStillView while BG1 shows the drawn map; the tile
   /// animations are then neither suspended nor resumed.
   s8 animationActive;

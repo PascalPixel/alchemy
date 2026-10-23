@@ -1,19 +1,19 @@
-#ifndef ALCHEMY_UNIT_SCENE_SOL_SANCTUM_MAZE_H
-#define ALCHEMY_UNIT_SCENE_SOL_SANCTUM_MAZE_H
+#ifndef ALCHEMY_UNIT_MAP_SOL_SANCTUM_MAZE_H
+#define ALCHEMY_UNIT_MAP_SOL_SANCTUM_MAZE_H
 
 #include "types.h"
 #include "map_tables.h"
 
-struct SceneRegion;
+struct MapWarpRegion;
 
-const struct SceneEntrance *Scene_GetEntrances(void);
-const struct SceneRegion *Scene_GetRegions(void);
-const u32 *Scene_GetExits(void);
-const struct ScenePlacement *Scene_GetPlacements(void);
-const struct SceneEvent *Scene_GetEvents(void);
-extern struct SceneEntrance gSolSanctumMazeEntrances[];
-extern u32 gSolSanctumMazeExits[];
-extern struct ScenePlacement gSolSanctumMazePlacements[];
-extern struct SceneEvent gSolSanctumMazeEvents[];
+const struct MapWarpDest *Map_GetWarpDests(void);
+const struct MapWarpRegion *Map_GetWarpRegions(void);
+const u32 *Map_GetWarps(void);
+const struct ObjectEventTemplate *Map_GetObjectEventTemplates(void);
+const struct MapEvent *Map_GetEvents(void);
+extern struct MapWarpDest gSolSanctumMazeWarpDests[];
+extern u32 gSolSanctumMazeWarps[];
+extern struct ObjectEventTemplate gSolSanctumMazeObjectEventTemplates[];
+extern struct MapEvent gSolSanctumMazeEvents[];
 
 #endif

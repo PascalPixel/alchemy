@@ -24,26 +24,26 @@ enum {
 
 /// The two square halves are stacked in the source map and drawn side by side.
 static inline void Vault_DrawDoorwayFrame(s32 sourceColumn) {
-  Map_CopyCellsTo(sourceColumn, 33, 34, 16, VAULT_DOOR_HALF_SIZE,
-                  VAULT_DOOR_HALF_SIZE);
-  Map_CopyCellsTo(sourceColumn, 35, 36, 16, VAULT_DOOR_HALF_SIZE,
-                  VAULT_DOOR_HALF_SIZE);
+  MapGrid_CopyCellsTo(sourceColumn, 33, 34, 16, VAULT_DOOR_HALF_SIZE,
+                      VAULT_DOOR_HALF_SIZE);
+  MapGrid_CopyCellsTo(sourceColumn, 35, 36, 16, VAULT_DOOR_HALF_SIZE,
+                      VAULT_DOOR_HALF_SIZE);
 }
 
 /// Walking north into VAULT_CELL_SANCTUM_DOORWAY opens the doorway to the
 /// Sanctum.
 /// The leader passes behind the doorframe through the exit.
 static void Vault_OpenDoorwayAndEnter(void) {
-  struct FieldActor *actor = Object_GetById(ACTOR_PARTY_LEADER);
-  struct AnimationObject *sprite = actor->sprite;
+  struct ObjectEvent *objectEvent = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
+  struct AnimationObject *sprite = objectEvent->sprite;
 
   Engine_AudioPlayCue(SE_188);
   Vault_DrawDoorwayFrame(VAULT_DOOR_OPENING_FRAME_COLUMN);
-  Engine_EventWait(4);
+  Engine_ScriptWait(4);
   Vault_DrawDoorwayFrame(VAULT_DOOR_OPEN_FRAME_COLUMN);
-  Engine_EventWait(4);
-  Map_CopyCellAttributes(33, 21, 2, 2, 3, 16);
-  actor->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
+  Engine_ScriptWait(4);
+  MapGrid_CopyCellAttributes(33, 21, 2, 2, 3, 16);
+  objectEvent->priorityFlags &= ~OBJ_EVENT_PRIORITY_AUTOMATIC;
   sprite->image.priority = 3;
   Vault_WalkThroughExit(64, 272, 11);
 }

@@ -108,8 +108,8 @@ s32 Battle_CollectPartyCommands(struct BattleActionRecord *commands,
   for (k = 0; k < 3; k++) {
     state->iconShown[k] = 0;
   }
-  state->targetSceneOffset = 0;
-  state->sceneOffset = 0;
+  state->targetViewOffset = 0;
+  state->viewOffset = 0;
   state->timer = -1;
   state->commandSelection[0] = 0;
   state->commandSelection[1] = 0;
@@ -832,7 +832,7 @@ s32 Battle_CollectPartyCommands(struct BattleActionRecord *commands,
       UiWork_Finalize((struct UiWindow *)state->timerWindow, 1);
     }
   }
-  Camera_ConfigureSceneFar(0);
+  Camera_ConfigureViewFar(0);
   Runtime_ReleaseHeapBlock(HEAP_SLOT_BATTLE_COMMANDS);
   return commandCount;
 }

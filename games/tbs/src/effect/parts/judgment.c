@@ -9,7 +9,7 @@
 #define JUDGMENT_SHEET_BYTES 0x2710
 
 /// Judgment's work block, laid over struct BattleEffectWork from its start.
-/// It is the HEAP_SLOT_BATTLE_EFFECT block BattleEffect_RunSceneEffect lends
+/// It is the HEAP_SLOT_BATTLE_EFFECT block BattleEffect_RunSummonEffect lends
 /// the scene and frees after it; only BattleEffect_RunJudgment reads it this
 /// way. The sweep's 120x120 wave picture (14,400 bytes from the block's start)
 /// later overwrites sheet and the dimmed copies up to most of copy 5, which
@@ -56,14 +56,14 @@ struct JudgmentWork {
 /// The battle wipes away to a violet sky where a formation flies forward while
 /// motes gather into it, bursts in a flash and sends out a ring of light.
 ///
-/// Abilities: Judgment (SCENE_EFFECT_JUDGMENT).
+/// Abilities: Judgment (SUMMON_EFFECT_JUDGMENT).
 ///
 /// The scene then cuts to an aerial view where the blast spreads in rings, to a
 /// beach, and to a forest swept by an explosion front, before brightening back
 /// into the battle. The folder README describes both parts.
 ///
-/// Reached through BattleEffect_RunSceneEffect, whose sheet slot holds the mote
-/// sheet here. The scene projects with gProjection.centerY at 240 until
+/// Reached through BattleEffect_RunSummonEffect, whose sheet slot holds the
+/// mote sheet here. The scene projects with gProjection.centerY at 240 until
 /// BattleEffect_SetupBlendedDisplay, on frame 280 of the sweep, puts it back at
 /// 120, and holds BG1's scroll from the battle camera until that frame too.
 /// It releases its formation and then its debris objects (16 each), and
@@ -283,9 +283,9 @@ void BattleEffect_RunJudgment(struct BattleEffectArgument *effect) {
         s32 size;
 
         Render_ResetTransformState();
-        SceneTransform_ApplyRoll(PARTICLES[i].velocityY);
-        SceneTransform_ApplyPitch(PARTICLES[i].velocityX);
-        SceneTransform_ApplyYaw(PARTICLES[i].velocityY + (frame << 9));
+        Transform_ApplyRoll(PARTICLES[i].velocityY);
+        Transform_ApplyPitch(PARTICLES[i].velocityX);
+        Transform_ApplyYaw(PARTICLES[i].velocityY + (frame << 9));
         anchor[0] = PARTICLES[i].x;
         PARTICLES[i].x -= 2;
         if (PARTICLES[i].x < 0) {

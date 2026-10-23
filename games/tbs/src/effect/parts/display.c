@@ -72,7 +72,7 @@ void BattleEffect_AdvanceBg2OnInterval(void) {
 }
 
 /// Restarts DMA 0 as an HBlank transfer of one WIN0H value a line from
-/// PARTICLES (Ram_MapCellBuffer), so window 0's edges follow the per-line
+/// PARTICLES (Ram_MapGridCellBuffer), so window 0's edges follow the per-line
 /// table the effect drew there.
 ///
 /// Runs each frame as a scheduler callback added by BattleEffect_RunIce and

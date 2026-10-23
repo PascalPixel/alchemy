@@ -189,10 +189,10 @@ void BattlePresentation_AdvanceTransitionTimer(void) {
     camera->yaw = 45 * frame * 8 + 0xaf80;
   next = (*timer = *timer + 1);
   if (next <= 0x50U) {
-    BattlePresentation_SetupTransitionScene(0, 0, 0, 0xb4 - next);
+    BattlePresentation_SetupTransitionView(0, 0, 0, 0xb4 - next);
     return;
   }
-  BattlePresentation_SetupTransitionScene(0, 0, 0, 0x64);
+  BattlePresentation_SetupTransitionView(0, 0, 0, 0x64);
 }
 
 /// Draws a frame of the curtain opening on BG1: over 80 frames a row moves up
@@ -362,7 +362,7 @@ void BattlePresentation_RunEntryTransition(s32 enemyCount, s32 encounterId) {
       // and the encounter is announced.
       // The timer in the main-loop pass (3200 is 0xc80), the rows in the
       // VBlank pass (0x480).
-      BattlePresentation_SetupTransitionScene(0, 0, 0, 180);
+      BattlePresentation_SetupTransitionView(0, 0, 0, 180);
       *timer = start;
       Scheduler_AddOrUpdateCallback(BattlePresentation_AdvanceTransitionTimer,
                                     3200);
@@ -418,7 +418,7 @@ void BattlePresentation_RunEntryTransition(s32 enemyCount, s32 encounterId) {
       work.effect.actors[work.effect.count] = BATTLE_UNIT_LIST_END;
       BattleObject_SpawnObjectsForList(work.effect.actors, 0);
       BattleEffect_RunShatteringOpeningFar(&work.effect);
-      BattlePresentation_SetupTransitionScene(0, 0, 0, 100);
+      BattlePresentation_SetupTransitionView(0, 0, 0, 100);
       *timer = start;
     }
     Runtime_SetIrqHandler(IRQ_VCOUNT, 32, Graphics_ClearBg0Vofs);

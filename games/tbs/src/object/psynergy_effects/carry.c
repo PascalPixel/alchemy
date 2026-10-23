@@ -10,12 +10,12 @@ STATIC_ASSERT(sizeof(struct EffectVector) == 0x0c);
 /// frame round the lifted object, 8 to 24 pixels above it and 0 to 48 pixels
 /// away in a random direction (FieldEffect_InitializeFallingFragment).
 void FieldEffect_SpawnFallingParticles(void) {
-  struct FieldActor *liftedObject;
+  struct ObjectEvent *liftedObject;
   struct EffectVector position;
   struct ItemBreakFragmentObject *fragment;
   u32 radius;
 
-  liftedObject = ((struct FieldEffectScene *)gEffectWork)->child;
+  liftedObject = ((struct FieldEffectWork *)gEffectWork)->child;
   position.x = liftedObject->x.fixed;
   position.y = liftedObject->y.fixed - Random16() * 16 + (24 << 16);
   position.z = liftedObject->z.fixed;
@@ -34,13 +34,13 @@ void FieldEffect_SpawnFallingParticles(void) {
 /// carried target passes over ground up to 24 pixels above its own (a step
 /// allows 8). Restores the reference before returning the collision result.
 static __inline__ s32
-FieldEffect_CheckRaisedTargetCollision(struct FieldActor *target,
+FieldEffect_CheckRaisedTargetCollision(struct ObjectEvent *target,
                                        struct EffectVector *position) {
   s32 collision;
 
   target->terrainHeight += 16 << 16;
-  collision = Map_CheckObjectStepFar((struct ObjectRuntime *)target,
-                                     (struct FieldPosition *)position);
+  collision = MapGrid_CheckObjectStepFar((struct ObjectRuntime *)target,
+                                         (struct FieldPosition *)position);
   target->terrainHeight -= 16 << 16;
   return collision;
 }
@@ -53,14 +53,14 @@ FieldEffect_CheckRaisedTargetCollision(struct FieldActor *target,
 ///
 /// Where the way is blocked a buzzer sounds.
 void FieldEffect_SteerLiftedTarget(s32 targetId) {
-  struct FieldEffectScene *work;
-  struct FieldActor *src;
-  struct FieldActor *target;
-  struct FieldActor *shards[CARRY_SHARD_MAX];
+  struct FieldEffectWork *work;
+  struct ObjectEvent *src;
+  struct ObjectEvent *target;
+  struct ObjectEvent *shards[CARRY_SHARD_MAX];
   struct EffectVector pos;
-  struct FieldActor *hands[2];
-  struct FieldActor *obj;
-  struct FieldActor *right;
+  struct ObjectEvent *hands[2];
+  struct ObjectEvent *obj;
+  struct ObjectEvent *right;
   s32 i;
   s32 angle;
   s32 dist;
@@ -82,10 +82,10 @@ void FieldEffect_SteerLiftedTarget(s32 targetId) {
    * everywhere, 10 of 531 instructions differ in tbs-en. */
   p = &pos;
   SET_POSITION(p, work->x, work->y + (16 << 16), work->z);
-  obj = (struct FieldActor *)FieldEffect_SpawnItemBreakMode1(
+  obj = (struct ObjectEvent *)FieldEffect_SpawnItemBreakMode1(
       p->x + (32 << 16), p->y, p->z, 0x8000);
   hands[0] = obj;
-  right = (struct FieldActor *)FieldEffect_SpawnItemBreakMode1(
+  right = (struct ObjectEvent *)FieldEffect_SpawnItemBreakMode1(
       p->x - (32 << 16), p->y, p->z, 0);
   hands[1] = right;
   if (hands[0] == NULL || right == NULL) {
@@ -187,7 +187,7 @@ void FieldEffect_SteerLiftedTarget(s32 targetId) {
     }
     // The way is free: move the target there.
     {
-      struct FieldActor *second;
+      struct ObjectEvent *second;
       s32 x;
       s32 z;
 
@@ -236,11 +236,12 @@ void FieldEffect_SteerLiftedTarget(s32 targetId) {
   SET_POSITION(p, target->x.fixed, target->y.fixed + (16 << 16),
                target->z.fixed);
   {
-    struct FieldActor **walk = shards;
+    struct ObjectEvent **walk = shards;
 
     // Shards: 2 to 3 pixels a frame, 8 to 32 pixels in a random direction.
     for (i = 0; i < CARRY_SHARD_MAX; i++) {
-      obj = (struct FieldActor *)Object_Spawn(SPRITE_SPARKLE, p->x, p->y, p->z);
+      obj =
+          (struct ObjectEvent *)Object_Spawn(SPRITE_SPARKLE, p->x, p->y, p->z);
       *walk++ = obj;
       if (obj != NULL) {
         ObjectDispatch_InitializeFar((struct DispatchObject *)obj,

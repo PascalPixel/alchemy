@@ -3,12 +3,13 @@
 
 /// @file
 /// The scene service layer: one typed inline for each engine service a scene
-/// calls by its own name, passing it on to the main image's import (Actor_Jump
-/// calls Engine_ActorJump).
+/// calls by its own name, passing it on to the main image's import
+/// (ObjectEvent_Jump calls Engine_ObjectEventJump).
 ///
 /// It is a habit of the whole game written once: a layer, not a
 /// compiler-steering device (AGENTS.md S2). A scene writes
-/// `Actor_Jump(ACTOR_VENUS_DJINNI, 4, 30);` and the inline makes the call.
+/// `ObjectEvent_Jump(LOCALID_VENUS_DJINNI, 4, 30);` and the inline makes the
+/// call.
 
 #include "unit/object/object.h"
 #include "unit/object/psynergy_effects.h"
@@ -19,54 +20,61 @@
 #include "farcall.h"
 
 /// Turns two actors toward each other, as a conversation between them begins.
-static inline void Actor_FaceEachOther(s32 actor, s32 other, s32 frames) {
-  Engine_ActorFaceEachOther(actor, other, frames);
+static inline void ObjectEvent_FaceEachOther(s32 objectEvent, s32 other,
+                                             s32 frames) {
+  Engine_ObjectEventFaceEachOther(objectEvent, other, frames);
 }
 
 /// Makes an actor hop, height being its launch speed in pixels a frame, and
 /// lets frames pass while it comes down.
-static inline void Actor_Jump(s32 actor, s32 height, s32 frames) {
-  Engine_ActorJump(actor, height, frames);
+static inline void ObjectEvent_Jump(s32 objectEvent, s32 height, s32 frames) {
+  Engine_ObjectEventJump(objectEvent, height, frames);
 }
 
 /// Makes an actor bob, squashing and springing back a few times, and waits for
 /// it to finish.
-static inline void Actor_RunRepeatedMotion(s32 actor, s32 repeats) {
-  Engine_ActorRunRepeatedMotion(actor, repeats);
+static inline void ObjectEvent_RunRepeatedMotion(s32 objectEvent, s32 repeats) {
+  Engine_ObjectEventRunRepeatedMotion(objectEvent, repeats);
 }
 
-/// Switches an actor to an ActorAnimation, such as ANIMATION_NOD.
-static inline void Actor_SetAnimation(s32 actor, s32 animation) {
-  Engine_ActorSetAnimation(actor, animation);
+/// Switches an actor to an ObjectEventAnimation, such as ANIMATION_NOD.
+static inline void ObjectEvent_SetAnimation(s32 objectEvent, s32 animation) {
+  Engine_ObjectEventSetAnimation(objectEvent, animation);
 }
 
 /// Plays an actor's animation through before the scene goes on.
-static inline void Actor_SetAnimationAndWait(s32 actor, s32 animation) {
-  Engine_ActorSetAnimationAndWait(actor, animation);
+static inline void ObjectEvent_SetAnimationAndWait(s32 objectEvent,
+                                                   s32 animation) {
+  Engine_ObjectEventSetAnimationAndWait(objectEvent, animation);
 }
 
 /// Turns a one-sprite actor's shadow on or off, bit 0 of its sprite's flags.
-static inline void Actor_SetSpriteFlags(struct FieldActor *actor, s32 flags) {
-  Engine_ActorSetSpriteFlags(actor, flags);
+static inline void ObjectEvent_SetSpriteFlags(struct ObjectEvent *objectEvent,
+                                              s32 flags) {
+  Engine_ObjectEventSetSpriteFlags(objectEvent, flags);
 }
 
 /// Draws an actor at a fixed priority against the scenery instead of by its
 /// depth.
-static inline void Actor_SetSpritePriority(s32 actor, s32 priority) {
-  Engine_ActorSetSpritePriority(actor, priority);
+static inline void ObjectEvent_SetSpritePriority(s32 objectEvent,
+                                                 s32 priority) {
+  Engine_ObjectEventSetSpritePriority(objectEvent, priority);
 }
 
 /// Starts an actor bobbing while the scene carries on.
-static inline void Actor_StartRepeatedMotion(s32 actor, s32 repeats) {
-  Engine_ActorStartRepeatedMotion(actor, repeats);
+static inline void ObjectEvent_StartRepeatedMotion(s32 objectEvent,
+                                                   s32 repeats) {
+  Engine_ObjectEventStartRepeatedMotion(objectEvent, repeats);
 }
 
 /// Stops whatever an actor is doing and hands it to the scene.
-static inline void Actor_Stop(s32 actor) { Engine_ActorStop(actor); }
+static inline void ObjectEvent_Stop(s32 objectEvent) {
+  Engine_ObjectEventStop(objectEvent);
+}
 
 /// Holds the scene until an actor has reached where it was sent.
-static inline void Actor_WaitForMove(s32 actor) {
-  Engine_ActorWaitForMove(actor);
+static inline void ObjectEvent_WaitForMove(s32 objectEvent) {
+  Engine_ObjectEventWaitForMove(objectEvent);
 }
 
 /// Holds the scene until the camera's pan is done.
@@ -79,42 +87,42 @@ static inline void ColorBuffer_Interpolate(s32 frames) {
 }
 
 /// Starts a scripted scene, taking the field out of the player's hands.
-static inline void Event_Start(void) { Engine_EventStart(); }
+static inline void Script_Start(void) { Engine_ScriptStart(); }
 
 /// Lets the player answer yes or no to the line on screen; 0 means yes.
-static inline s32 Event_ChooseYesNo(s32 actor, s32 flags) {
-  return Engine_EventChooseYesNo(actor, flags);
+static inline s32 Script_ChooseYesNo(s32 objectEvent, s32 flags) {
+  return Engine_ScriptChooseYesNo(objectEvent, flags);
 }
 
 /// Ends a scripted scene and gives the field back to the player.
-static inline void Event_End(void) { Engine_EventEnd(); }
+static inline void Script_End(void) { Engine_ScriptEnd(); }
 
 /// Returns the camera object, for a scene that moves the view itself.
-static inline struct FieldActor *Event_GetViewCenter(void) {
-  return Engine_EventGetViewCenter();
+static inline struct ObjectEvent *Script_GetViewCenter(void) {
+  return Engine_ScriptGetViewCenter();
 }
 
-/// Starts the scene's screen transition, which Event_WaitForScreen waits out.
-static inline void Event_OpenScreen(void) { Engine_EventOpenScreen(); }
+/// Starts the scene's screen transition, which Script_WaitForScreen waits out.
+static inline void Script_OpenScreen(void) { Engine_ScriptOpenScreen(); }
 
 /// Sends the party out of the room by one of its exits, as a door would.
-static inline void Event_RequestExit(s32 exit) {
-  Engine_EventRequestExit(exit);
+static inline void Script_RequestWarp(s32 warp) {
+  Engine_ScriptRequestWarp(warp);
 }
 
 /// Picks the line of dialogue the scene's next message shows.
-static inline void Event_SetMessage(s32 message) {
-  Engine_EventSetMessage(message);
+static inline void Script_SetMessage(s32 message) {
+  Engine_ScriptSetMessage(message);
 }
 
 /// Pauses the scene for frames, a pause debug fast-forward skips.
-static inline void Event_Wait(s32 frames) { Engine_EventWait(frames); }
+static inline void Script_Wait(s32 frames) { Engine_ScriptWait(frames); }
 
 /// Holds the scene until its screen transition is over.
-static inline void Event_WaitForScreen(void) { Engine_EventWaitForScreen(); }
+static inline void Script_WaitForScreen(void) { Engine_ScriptWaitForScreen(); }
 
 /// Sends an object toward a point, where it coasts to a stop.
-static inline void FieldObject_SetPosition(struct FieldActor *object,
+static inline void FieldObject_SetPosition(struct ObjectEvent *object,
                                            s32 fixed_x, s32 fixed_y,
                                            s32 fixed_z) {
   Engine_ObjectSetPosition(object, fixed_x, fixed_y, fixed_z);
@@ -139,7 +147,7 @@ static inline void Item_ShowFound(s32 item, s32 height) {
 
 /// Redraws the room around the point the camera follows, after a scene has
 /// moved it.
-static inline void Map_Redraw(void) { Engine_MapRedraw(); }
+static inline void MapGrid_Redraw(void) { Engine_MapGridRedraw(); }
 
 /// The cosine of an angle, a full turn being 0x10000, in 16.16, for a scene's
 /// circling motion.
@@ -167,8 +175,8 @@ static inline s32 Task_AddCallback(void (*callback)(void), s32 priority) {
   return FieldScheduler_AddCallback(callback, priority);
 }
 
-/// Lets frames go by even under debug fast-forward, where Event_Wait would skip
-/// them.
+/// Lets frames go by even under debug fast-forward, where Script_Wait would
+/// skip them.
 static inline void Task_Wait(s32 frames) { Engine_TaskWait(frames); }
 
 /// Loads a scene's sprite picture into VRAM; returns its first tile number, 0
@@ -177,37 +185,38 @@ static inline s32 Vram_Load(s32 block, s32 size, const void *data) {
   return Engine_VramLoad(block, size, data);
 }
 
-/// The walk and wait of Actor_WalkByAndWait, through the import named after the
-/// routine itself (ObjectMotion_CommitPositionAndActivate).
+/// The walk and wait of ObjectEvent_WalkByAndWait, through the import named
+/// after the routine itself (ObjectMotion_CommitPositionAndActivate).
 static inline void FieldObjectMotion_CommitPositionAndActivate(s32 a0, s32 a1,
                                                                s32 a2) {
   ObjectMotion_CommitPositionAndActivate(a0, a1, a2);
 }
 
-/// Actor_SetDestinationOffset under its main-image routine's name,
+/// ObjectEvent_SetDestinationOffset under its main-image routine's name,
 /// ObjectMotion_OffsetPositionAndResetMotion.
 static inline void
 FieldObjectMotion_OffsetPositionAndResetMotion(s32 a0, s32 a1, s32 a2) {
-  Engine_ActorSetDestinationOffset(a0, a1, a2);
+  Engine_ObjectEventSetDestinationOffset(a0, a1, a2);
 }
 
-/// Actor_CenterAndWalk by the import that bears ObjectMotion_CenterOnColumn's
-/// own name.
+/// ObjectEvent_CenterAndWalk by the import that bears
+/// ObjectMotion_CenterOnColumn's own name.
 static inline void FieldObjectMotion_CenterOnColumn(s32 a0, s32 a1, s32 a2) {
   ObjectMotion_CenterOnColumn(a0, a1, a2);
 }
 
-/// Actor_SetDestination as ObjectMotion_ResetAndSetPosition, the name of the
-/// routine behind it.
+/// ObjectEvent_SetDestination as ObjectMotion_ResetAndSetPosition, the name of
+/// the routine behind it.
 static inline void FieldObjectMotion_ResetAndSetPosition(s32 a0, s32 a1,
                                                          s32 a2) {
-  Engine_ActorSetDestination(a0, a1, a2);
+  Engine_ObjectEventSetDestination(a0, a1, a2);
 }
 
-/// Actor_MoveToAndWait, written with ObjectMotion_SetPositionAndCommit's name.
-static inline void FieldObject_MotionSetPositionAndCommit(s32 actor, s32 x,
-                                                          s32 z) {
-  Engine_ObjectMotionSetPositionAndCommit(actor, x, z);
+/// ObjectEvent_MoveToAndWait, written with ObjectMotion_SetPositionAndCommit's
+/// name.
+static inline void FieldObject_MotionSetPositionAndCommit(s32 objectEvent,
+                                                          s32 x, s32 z) {
+  Engine_ObjectMotionSetPositionAndCommit(objectEvent, x, z);
 }
 
 /// FieldScheduler_AddCallback (engine_call.h) under the scheduler's own name.
@@ -217,29 +226,30 @@ static inline s32 FieldScheduler_AddOrUpdateCallback(SchedulerCallback callback,
 }
 
 /// Changes the collision code of the cell at (x, y), in 16.16 pixels, opening
-/// or closing the way (SetMapCellCollision).
-static inline void Field_SetMapCellCollision(s32 a0, s32 a1, s32 a2, s32 a3) {
-  SetMapCellCollision(a0, a1, a2, a3);
+/// or closing the way (MapGrid_SetMetatileBehaviorAt).
+static inline void Field_SetMetatileBehaviorAt(s32 a0, s32 a1, s32 a2, s32 a3) {
+  MapGrid_SetMetatileBehaviorAt(a0, a1, a2, a3);
 }
 
 /// Changes one 512-pixel tile of the world map, drawn at once when it's next to
-/// the view (Map_SetWindowCellTile).
-static inline void FieldMap_SetWindowCellTile(s32 a0, s32 a1, s32 a2, s32 a3) {
-  Map_SetWindowCellTile(a0, a1, a2, a3);
+/// the view (WorldMap_SetWindowCellTile).
+static inline void Field_SetWorldMapWindowCellTile(s32 a0, s32 a1, s32 a2,
+                                                   s32 a3) {
+  WorldMap_SetWindowCellTile(a0, a1, a2, a3);
 }
 
 /// Puts an actor on the leader and sends it walking off by (dx, dz), then
 /// starts the action facing names (Motion_LaunchFromFocusedObject).
-static inline void FieldMotion_LaunchFromFocusedObject(s32 actor, s32 dx,
+static inline void FieldMotion_LaunchFromFocusedObject(s32 objectEvent, s32 dx,
                                                        s32 dz, s32 facing) {
-  Motion_LaunchFromFocusedObject(actor, dx, dz, facing);
+  Motion_LaunchFromFocusedObject(objectEvent, dx, dz, facing);
 }
 
 /// Makes an actor follow another and starts a script on it
-/// (Object_SetTargetAndCallback).
+/// (ObjectEvent_SetTargetAndCallback).
 static inline void FieldObject_SetTargetAndCallback(s32 object, s32 target,
                                                     const s32 *actions) {
-  Object_SetTargetAndCallback(object, target, actions);
+  ObjectEvent_SetTargetAndCallback(object, target, actions);
 }
 
 /// Moves a point radius along a heading on the ground plane

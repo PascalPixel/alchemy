@@ -21,7 +21,7 @@ void BattleEffect_CallDoNothing(s32 count) {
   }
 }
 
-// Two of the battle's three entry points, BattleEffect_RunSceneEffect and
+// Two of the battle's three entry points, BattleEffect_RunSummonEffect and
 // BattleEffect_RunTableEffect; README.md describes all three and the heap
 // blocks they lend an effect. Both size the sheet slot for one set of the ten
 // mote cells (MOTE_SET_BYTES), where most effects decode ParticleSpritesA; an
@@ -32,62 +32,62 @@ void BattleEffect_CallDoNothing(s32 count) {
 /// have bit 15 set: takes the effect's sheet, work and canvas, runs the
 /// effect chosen by its kind to the end, and frees them again.
 ///
-/// Called through BattleEffect_RunSceneEffectFar by
+/// Called through BattleEffect_RunSummonEffectFar by
 /// BattlePresentation_RunUnitTransition (battle/staging.c), when the plan's
-/// presentation flags have STAGING_SCENE, and by
+/// presentation flags have STAGING_SUMMON, and by
 /// BattlePresentation_RunPairedUnitTransition (battle/auto_battle.c).
 ///
 /// Each scene is named for the summon whose gBattle_ActionFlags entry selects
 /// its kind, as the handlers of gBattleEffect_EffectHandlers are;
-/// SCENE_EFFECT_NONE, which no ability selects, runs Meteor's scene too. Takes
+/// SUMMON_EFFECT_NONE, which no ability selects, runs Meteor's scene too. Takes
 /// heap slots HEAP_SLOT_BATTLE_SHEET, HEAP_SLOT_BATTLE_EFFECT and
 /// HEAP_SLOT_BATTLE_CANVAS and releases them in reverse, so the scene must have
 /// removed every callback that reads them. Unlike BattleEffect_RunTableEffect
 /// it does not set work->effect: each scene does that itself.
-void BattleEffect_RunSceneEffect(struct BattleEffectArgument *effect) {
+void BattleEffect_RunSummonEffect(struct BattleEffectArgument *effect) {
   Runtime_AllocateHeapBlock(HEAP_SLOT_BATTLE_SHEET, MOTE_SET_BYTES);
   Runtime_AllocateHeapBlock(HEAP_SLOT_BATTLE_EFFECT,
                             sizeof(struct BattleEffectWork));
   Runtime_AllocateHeapBlock(HEAP_SLOT_BATTLE_CANVAS, CANVAS_BYTES);
 
-  if (effect->kind == SCENE_EFFECT_NONE) {
+  if (effect->kind == SUMMON_EFFECT_NONE) {
     BattleEffect_RunMeteor(effect);
   } else {
     switch (effect->kind) {
-    case SCENE_EFFECT_RAMSES:
+    case SUMMON_EFFECT_RAMSES:
       BattleEffect_RunRamses(effect);
       break;
-    case SCENE_EFFECT_NEREID:
+    case SUMMON_EFFECT_NEREID:
       BattleEffect_RunNereid(effect);
       break;
-    case SCENE_EFFECT_KIRIN:
+    case SUMMON_EFFECT_KIRIN:
       BattleEffect_RunKirin(effect);
       break;
-    case SCENE_EFFECT_ATALANTA:
+    case SUMMON_EFFECT_ATALANTA:
       BattleEffect_RunAtalanta(effect);
       break;
-    case SCENE_EFFECT_CYBELE:
+    case SUMMON_EFFECT_CYBELE:
       BattleEffect_RunCybele(effect);
       break;
-    case SCENE_EFFECT_NEPTUNE:
+    case SUMMON_EFFECT_NEPTUNE:
       BattleEffect_RunNeptune(effect);
       break;
-    case SCENE_EFFECT_TIAMAT:
+    case SUMMON_EFFECT_TIAMAT:
       BattleEffect_RunTiamat(effect);
       break;
-    case SCENE_EFFECT_PROCNE:
+    case SUMMON_EFFECT_PROCNE:
       BattleEffect_RunProcne(effect);
       break;
-    case SCENE_EFFECT_JUDGMENT:
+    case SUMMON_EFFECT_JUDGMENT:
       BattleEffect_RunJudgment(effect);
       break;
-    case SCENE_EFFECT_BOREAS:
+    case SUMMON_EFFECT_BOREAS:
       BattleEffect_RunBoreas(effect);
       break;
-    case SCENE_EFFECT_METEOR:
+    case SUMMON_EFFECT_METEOR:
       BattleEffect_RunMeteor(effect);
       break;
-    case SCENE_EFFECT_THOR:
+    case SUMMON_EFFECT_THOR:
       BattleEffect_RunThor(effect);
       break;
     }
@@ -105,7 +105,7 @@ void BattleEffect_RunSceneEffect(struct BattleEffectArgument *effect) {
 /// Called through BattleEffect_RunTableEffectFar by
 /// BattlePresentation_RunAttack, BattlePresentation_RunItem,
 /// BattlePresentation_RunPsynergyCast and BattlePresentation_RunUnitTransition
-/// (battle/staging.c, the last when the plan sets neither STAGING_SCENE nor
+/// (battle/staging.c, the last when the plan sets neither STAGING_SUMMON nor
 /// STAGING_BY_ID_RANGE), and by BattlePresentation_RunUnitAction
 /// (battle/auto_battle.c).
 ///
@@ -142,10 +142,11 @@ void BattleEffect_RunTableEffect(struct BattleEffectArgument *effect) {
 /// offsets and remove the callback again. Writes the WIN0H table and stops and
 /// re-arms DMA channel 0.
 ///
-/// Ram_MapCellBuffer + 0    : the base right edge (u16)
-/// Ram_MapCellBuffer + 2    : how far each of lines 8 to 135 pulls the edge in
+/// Ram_MapGridCellBuffer + 0    : the base right edge (u16)
+/// Ram_MapGridCellBuffer + 2    : how far each of lines 8 to 135 pulls the edge
+/// in
 ///                            (u8 x 128)
-/// Ram_MapCellBuffer + 0x82 : the WIN0H table built here (u16 x 160)
+/// Ram_MapGridCellBuffer + 0x82 : the WIN0H table built here (u16 x 160)
 /// Lines outside 8 to 135 get 0xfff1, a left edge (255) past the right (241);
 /// window 0's vertical range, lines 16 to 135 since
 /// BattleEffect_ConfigureEffectDisplay, leaves them out anyway. Edges are
@@ -157,9 +158,9 @@ void BattleEffect_BuildWindowEdgeTable(void) {
   s32 scanline;
   s32 rightEdge;
 
-  baseRightEdge = (u16 *)Ram_MapCellBuffer;
-  scanlineEdges = (u16 *)(Ram_MapCellBuffer + 0x82);
-  edgeOffsets = Ram_MapCellBuffer + 2;
+  baseRightEdge = (u16 *)Ram_MapGridCellBuffer;
+  scanlineEdges = (u16 *)(Ram_MapGridCellBuffer + 0x82);
+  edgeOffsets = Ram_MapGridCellBuffer + 2;
   for (scanline = 0; scanline != 160; scanline++) {
     if (scanline >= 8 && scanline <= 135) {
       rightEdge = *baseRightEdge - edgeOffsets[scanline - 8];
@@ -173,7 +174,7 @@ void BattleEffect_BuildWindowEdgeTable(void) {
     volatile u16 *channel = REG_DMA0;
 
     Dma_Stop(channel);
-    Dma_Set(Ram_MapCellBuffer + 0x82, (void *)&REG_WIN0H,
+    Dma_Set(Ram_MapGridCellBuffer + 0x82, (void *)&REG_WIN0H,
             DMA_HBLANK_HALFWORD_PER_LINE, (volatile u32 *)channel);
   }
 }

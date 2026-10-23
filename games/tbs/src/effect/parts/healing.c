@@ -332,7 +332,7 @@ void BattleEffect_RunHealingMotes(struct BattleEffectArgument *effect,
       // Centre on the point 40 pixels above the target.
       EFFECT_VIEW_FROM_CAMERA(camera);
       SET_VECTOR(point, object->x, 40 << 16, object->z);
-      SceneTransform_ApplyPosition(point);
+      Transform_ApplyPosition(point);
       if (frame == start + HEALING_SOUND_DELAY)
         AudioCommand_PlayFar(SE_RECOVERY);
       if (frame == start + HEALING_TINT_DELAY)
@@ -345,17 +345,17 @@ void BattleEffect_RunHealingMotes(struct BattleEffectArgument *effect,
       // others offset it by their start, and Wish does not offset it.
       if (frame > start) {
         if (mode == HEALING_MODE_PLY || mode == HEALING_MODE_PSY_CRYSTAL) {
-          SceneTransform_ApplyYaw((frame - member * HEALING_STAGGER) << 9);
+          Transform_ApplyYaw((frame - member * HEALING_STAGGER) << 9);
         } else if (mode == HEALING_MODE_WISH) {
-          SceneTransform_ApplyPitch(frame << 9);
-          SceneTransform_ApplyRoll(frame << 9);
+          Transform_ApplyPitch(frame << 9);
+          Transform_ApplyRoll(frame << 9);
         } else if (mode == HEALING_MODE_CURE) {
-          SceneTransform_ApplyYaw((frame - member * 40) << 9);
+          Transform_ApplyYaw((frame - member * 40) << 9);
         } else if (mode == HEALING_MODE_CURE_POISON) {
-          SceneTransform_ApplyYaw((frame - member * HEALING_STAGGER) << 9);
+          Transform_ApplyYaw((frame - member * HEALING_STAGGER) << 9);
         } else {
-          SceneTransform_ApplyYaw((frame - member * HEALING_STAGGER) << 9);
-          SceneTransform_ApplyPitch((frame - member * HEALING_STAGGER) << 9);
+          Transform_ApplyYaw((frame - member * HEALING_STAGGER) << 9);
+          Transform_ApplyPitch((frame - member * HEALING_STAGGER) << 9);
         }
 
         // Four motes appear each frame; for Cure Poison, Restore and Tonic mote

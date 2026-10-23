@@ -20,7 +20,7 @@
 /// bounce, and the orb's flight ends in a burst of RAMSES_SPARKS sparks from
 /// PARTICLES.
 ///
-/// Abilities: Ramses (SCENE_EFFECT_RAMSES).
+/// Abilities: Ramses (SUMMON_EFFECT_RAMSES).
 ///
 /// The scene plays for up to RAMSES_FRAMES frames, and A or B ends it early.
 ///

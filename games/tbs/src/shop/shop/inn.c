@@ -47,7 +47,7 @@ s32 Inn_RoomPrice(s32 innId) {
 /// innkeeper, whose portrait the lines show.
 s32 Inn_CheckIn(s32 innId, s32 objectId) {
   struct InnRuntimeState *state;
-  struct FieldActor *innkeeper;
+  struct ObjectEvent *innkeeper;
   struct UiWindow *innkeeperWindow;
   s32 roomPrice;
   s32 messageBase;
@@ -60,7 +60,7 @@ s32 Inn_CheckIn(s32 innId, s32 objectId) {
   if (innId == INN_XIAN)
     state->specialActive = 1;
 
-  innkeeper = Object_GetByIdFar(objectId);
+  innkeeper = ObjectEvent_GetByIdFar(objectId);
   state->resourceId =
       ((struct AnimationObject *)innkeeper->sprite)->entries[0]->animationId;
   innkeeperWindow =
@@ -89,7 +89,7 @@ s32 Inn_CheckIn(s32 innId, s32 objectId) {
     UiWork_FinalizeFar(innkeeperWindow, 2);
     Inn_PlaySleep(roomPrice);
 
-    innkeeper = Object_GetByIdFar(objectId);
+    innkeeper = ObjectEvent_GetByIdFar(objectId);
     state->resourceId =
         ((struct AnimationObject *)innkeeper->sprite)->entries[0]->animationId;
     innkeeperWindow =
@@ -134,13 +134,13 @@ void Inn_PlaySleep(s32 roomPrice) {
   work->transition = 0x209;
   work->transitionFrames = 60;
   WaitFrames(20);
-  Event_FinishScreenTransitionFar();
-  Event_WaitTransitionFramesFar();
+  FieldScript_FinishScreenTransitionFar();
+  FieldScript_WaitTransitionFramesFar();
   AudioCommand_PlayFar(MUS_086);
   AudioCommand_WaitForStateByteClear();
   WaitFrames(10);
-  Event_StartScreenTransitionFar();
-  Event_WaitTransitionFramesFar();
+  FieldScript_StartScreenTransitionFar();
+  FieldScript_WaitTransitionFramesFar();
   WaitFrames(30);
   ((struct FieldWork *)gEventWork)->transitionFrames = 16;
 }

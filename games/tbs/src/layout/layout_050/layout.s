@@ -1,30 +1,30 @@
 	.include "games/tbs/src/layout/layout.inc"
 	.section .rodata
-	.global Field_Map050
-Field_Map050:
-	map_header 0, 0, 128, 128, 3, 2, 1, 0, 2, 2, 0, 0
-	map_layer 0, 0, 16, 16, 0, 0, 0xff, 0xff
-	map_layer 128, 0, 16, 16, 0, 0, 0xff, 0xff
-	map_layer 0, 128, 16, 16, 0, 0, 0xff, 0xff
-	map_block Field_Map050, .LField_Map050_METATILES
-	map_block Field_Map050, .LField_Map050_SHAPES
-	map_block Field_Map050, .LField_Map050_GRID
-	map_block Field_Map050, .LField_Map050_ANIMATION
-	map_block Field_Map050
-	map_block Field_Map050, .LField_Map050_MARKERS
-.LField_Map050_METATILES:
+	.global Field_Layout050
+Field_Layout050:
+	layout_header 0, 0, 128, 128, 3, 2, 1, 0, 2, 2, 0, 0
+	layout_layer 0, 0, 16, 16, 0, 0, 0xff, 0xff
+	layout_layer 128, 0, 16, 16, 0, 0, 0xff, 0xff
+	layout_layer 0, 128, 16, 16, 0, 0, 0xff, 0xff
+	layout_offset Field_Layout050, .LField_Layout050_METATILES
+	layout_offset Field_Layout050, .LField_Layout050_SHAPES
+	layout_offset Field_Layout050, .LField_Layout050_GRID
+	layout_offset Field_Layout050, .LField_Layout050_ANIMATION
+	layout_offset Field_Layout050
+	layout_offset Field_Layout050, .LField_Layout050_MARKERS
+.LField_Layout050_METATILES:
 	.incbin "games/tbs/src/layout/layout_050/metatiles.delta2.lz"
 	.balign 4, 0
-.LField_Map050_SHAPES:
+.LField_Layout050_SHAPES:
 	.incbin "games/tbs/src/layout/layout_050/shapes.table.lz"
 	.balign 4, 0
-.LField_Map050_GRID:
+.LField_Layout050_GRID:
 	.incbin "games/tbs/src/layout/layout_050/grid.parts.lz"
 	.balign 4, 0
-.LField_Map050_ANIMATION:
+.LField_Layout050_ANIMATION:
 	.incbin "games/tbs/src/layout/layout_033/animation.script.lz"
 	.balign 4, 0
-.LField_Map050_MARKERS:
+.LField_Layout050_MARKERS:
 	.incbin "games/tbs/src/layout/layout_050/markers.table"
 	.global Tileset_Set40Palette
 Tileset_Set40Palette:

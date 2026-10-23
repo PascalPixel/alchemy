@@ -32,8 +32,8 @@ struct ImpactChip {
   s32 life;      ///< frames left; 0 is free
 };
 
-/// Ram_MapCellBuffer seen as Planet Diver's chips.
-#define PLANET_DIVER_IMPACT_CHIPS ((struct ImpactChip *)Ram_MapCellBuffer)
+/// Ram_MapGridCellBuffer seen as Planet Diver's chips.
+#define PLANET_DIVER_IMPACT_CHIPS ((struct ImpactChip *)Ram_MapGridCellBuffer)
 
 #define PLANET_DIVER_FRAMES 88
 #define PLANET_DIVER_CLEARED_CHIPS 1024 ///< map-buffer chip slots cleared first
@@ -51,7 +51,7 @@ struct ImpactChip {
 /// Moves the user's object: it leaps on frame 4 and falls from frame 18. The
 /// flash's sheet and palette are replaced by the fireball's on frame 16. The
 /// sheet slot holds the mote sprites the chips are drawn from, and the chips
-/// themselves live in Ram_MapCellBuffer.
+/// themselves live in Ram_MapGridCellBuffer.
 void BattleEffect_RunPlanetDiver(struct BattleEffectArgument *effect) {
   struct EffectPosition screenPosition;
   BlitterPair draw;
@@ -331,9 +331,9 @@ void BattleEffect_RunHaunt(struct BattleEffectArgument *effect) {
       // frames into its turn.
       EFFECT_VIEW_FROM_CAMERA(camera);
       SET_VECTOR(point, target->x, 20 << 16, target->z);
-      SceneTransform_ApplyPosition(point);
+      Transform_ApplyPosition(point);
       if (frame > k * 32) {
-        SceneTransform_ApplyPitch(frame << 9);
+        Transform_ApplyPitch(frame << 9);
         if (frame == k * 32 + 32)
           ObjectGroup_UpdateMembers(work->effect->actors[k], SPRITE_COLOR_WHITE,
                                     POSE_DAMAGE, k, 32);

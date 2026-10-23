@@ -1,15 +1,15 @@
-#ifndef ALCHEMY_UNIT_SCENE_TOLBI_SHIP_MAST_H
-#define ALCHEMY_UNIT_SCENE_TOLBI_SHIP_MAST_H
+#ifndef ALCHEMY_UNIT_MAP_TOLBI_SHIP_MAST_H
+#define ALCHEMY_UNIT_MAP_TOLBI_SHIP_MAST_H
 
 #include "types.h"
 #include "map_tables.h"
 #include "field_runtime.h"
 
-const struct SceneEntrance *TolbiShipMast_GetEntrances(void);
-const struct SceneRegion *TolbiShipMast_GetRegions(void);
-const u32 *TolbiShipMast_GetExits(void);
-const struct ScenePlacement *TolbiShipMast_GetPlacements(void);
-const struct SceneEvent *TolbiShipMast_GetEvents(void);
+const struct MapWarpDest *TolbiShipMast_GetWarpDests(void);
+const struct MapWarpRegion *TolbiShipMast_GetRegions(void);
+const u32 *TolbiShipMast_GetWarps(void);
+const struct ObjectEventTemplate *TolbiShipMast_GetObjectEventTemplates(void);
+const struct MapEvent *TolbiShipMast_GetEvents(void);
 s32 TolbiShipMast_Initialize(void);
 extern s32 gTolbiShipMast_DriftY;
 extern s32 gTolbiShipMast_DriftX;
@@ -29,14 +29,15 @@ extern s32 gTolbiShipMast_BirdDeparture3[];
 extern s32 gTolbiShipMast_BirdDeparture4[];
 extern s32 gTolbiShipMast_BirdDeparture5[];
 extern u32 gTolbiShipMast_BirdDeparture6[];
-extern struct SceneEntrance gTolbiShipMast_Entrances[];
-extern struct SceneRegion gTolbiShipMast_Regions[];
-extern u32 gTolbiShipMast_Exits[];
-extern struct ScenePlacement gTolbiShipMast_Placements[];
-extern struct ScenePlacement gTolbiShipMast_FirstAttackPlacements[];
-extern struct ScenePlacement gTolbiShipMast_BirdPlacements[];
-extern struct ScenePlacement gTolbiShipMast_LandingPlacements[];
-extern struct SceneEvent gTolbiShipMast_Events[];
+extern struct MapWarpDest gTolbiShipMast_WarpDests[];
+extern struct MapWarpRegion gTolbiShipMast_Regions[];
+extern u32 gTolbiShipMast_Warps[];
+extern struct ObjectEventTemplate gTolbiShipMast_ObjectEventTemplates[];
+extern struct ObjectEventTemplate
+    gTolbiShipMast_FirstAttackObjectEventTemplates[];
+extern struct ObjectEventTemplate gTolbiShipMast_BirdObjectEventTemplates[];
+extern struct ObjectEventTemplate gTolbiShipMast_LandingObjectEventTemplates[];
+extern struct MapEvent gTolbiShipMast_Events[];
 extern u32 gTolbiShipMast_PassengerRowValues[];
 
 #endif

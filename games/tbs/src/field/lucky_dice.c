@@ -40,7 +40,7 @@ s32 Runtime_BlankDisplayAndRun(void) {
 /// and sets the projection's focal length (250), near plane and far plane.
 /// Called only by LuckyDice_Run, once the camera's heap block is allocated;
 /// writes gCameraWork's fields and gProjection.
-void Camera_ResetSceneDefaults(void) {
+void Camera_ResetViewDefaults(void) {
   struct BattleCamera *camera = gCameraWork;
   s32 offset[3];
   u32 nearPlane;
@@ -57,9 +57,9 @@ void Camera_ResetSceneDefaults(void) {
 
   // The eye sits `distance` behind the target along the camera's view.
   Render_ResetTransformState();
-  SceneTransform_ApplyPosition(&camera->focus[0]);
-  SceneTransform_ApplyYaw((s16)camera->yaw);
-  SceneTransform_ApplyPitch((s16)camera->pitch);
+  Transform_ApplyPosition(&camera->focus[0]);
+  Transform_ApplyYaw((s16)camera->yaw);
+  Transform_ApplyPitch((s16)camera->pitch);
 
   SET_VECTOR(offset, 0, 0, camera->distance);
   Iwram_TransformVector(offset, camera->eye);
@@ -330,7 +330,7 @@ void LuckyDice_Run(void) {
   sprites = Runtime_AllocateBlock(HEAP_SLOT_LUCKY_DICE_SPRITES, 0x618);
   camera = Runtime_AllocateBlock(HEAP_SLOT_CAMERA, sizeof(*camera));
   RuntimeDispatch_NoOpHook((s32)&ResourceId_EffectFarCalls);
-  Camera_ResetSceneDefaults();
+  Camera_ResetViewDefaults();
   Scheduler_ResetTaskTable();
   gOamCopyEnabled = 0;
 
@@ -354,11 +354,11 @@ void LuckyDice_Run(void) {
   // UB: Value2 passes integers to the decoder's two pointer parameters.
   // Plain typed calls add four bytes to LuckyDice_Run in tbs-en.
 #ifdef UBFIX
-  Resource_DecodeType01((const void *)resourceAddress, Ram_MapCellBuffer);
+  Resource_DecodeType01((const void *)resourceAddress, Ram_MapGridCellBuffer);
 #else
-  Value2(Resource_DecodeType01, resourceAddress, (s32)Ram_MapCellBuffer);
+  Value2(Resource_DecodeType01, resourceAddress, (s32)Ram_MapGridCellBuffer);
 #endif
-  Dma_Set(Ram_MapCellBuffer, BG_SCREEN_BLOCK(8),
+  Dma_Set(Ram_MapGridCellBuffer, BG_SCREEN_BLOCK(8),
           (DMA_ENABLE | DMA_32BIT) << 16 | 0x2580, REG_DMA3);
   resourceAddress =
       (s32)Resource_GetTableEntry((s32)&ResourceId_LuckyDiceSprites);
@@ -368,11 +368,11 @@ void LuckyDice_Run(void) {
           (DMA_ENABLE | DMA_32BIT) << 16 | 0x80, REG_DMA3);
   resourceAddress += 0x200;
 #ifdef UBFIX
-  Resource_DecodeType01((const void *)resourceAddress, Ram_MapCellBuffer);
+  Resource_DecodeType01((const void *)resourceAddress, Ram_MapGridCellBuffer);
 #else
-  Value2(Resource_DecodeType01, resourceAddress, (s32)Ram_MapCellBuffer);
+  Value2(Resource_DecodeType01, resourceAddress, (s32)Ram_MapGridCellBuffer);
 #endif
-  Dma_Set(Ram_MapCellBuffer, (void *)OBJ_VRAM0,
+  Dma_Set(Ram_MapGridCellBuffer, (void *)OBJ_VRAM0,
           (DMA_ENABLE | DMA_32BIT) << 16 | 0x1f00, REG_DMA3);
   Graphics_ScaleRgb555Buffer(spritePalette, (u16 *)OBJ_PLTT, 0, 256);
   Graphics_ScaleRgb555Buffer(bgPalette, (u16 *)BG_PLTT, 0, 256);

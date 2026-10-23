@@ -26,12 +26,12 @@
 /// after each round.
 ///
 /// Reached through its far stub from Game_Run's scene switch
-/// (SCENE_BATTLE, with the entrance as enemyGroup), and from
+/// (MAP_BATTLE, with the entrance as enemyGroup), and from
 /// DebugBattle_RunMenu. Allocates the battle's work slots (the camera,
 /// gBattleWork, the enemy units, the background transition, the display and
 /// others), sets FLAG_IN_BATTLE, and on its way out resets the party's
 /// battle state, sets gGameState.battleStart back to BATTLE_START_NORMAL and
-/// releases heap block 10. A broken link also sets flag FLAG_PLACE_TEMP_E8,
+/// releases heap block 10. A broken link also sets flag FLAG_MAPSEC_TEMP_E8,
 /// which the link lobby reads (LinkLobby_RunRoundResult).
 s32 Battle_RunEncounter(s32 enemyGroup) {
   struct BattleCamera *camera;
@@ -92,7 +92,7 @@ s32 Battle_RunEncounter(s32 enemyGroup) {
   display = Runtime_AllocateBlock(HEAP_SLOT_BATTLE_DISPLAY,
                                   sizeof(struct BattleDisplayWork));
   Dma_Fill32Cell(fill, 0, display, sizeof(struct BattleDisplayWork));
-  battle->background = Event_GetSpecialValueFar();
+  battle->background = FieldScript_GetSpecialValueFar();
   Runtime_AllocateBlock(HEAP_SLOT_ANIMATION_SPRITES, 0xe00);
   Runtime_AllocateBlock(HEAP_SLOT_ANIMATION_LAYERS, 0x600);
   ObjectSystem_InitializeFar(MODE_BATTLE);
@@ -148,7 +148,7 @@ s32 Battle_RunEncounter(s32 enemyGroup) {
   Scheduler_AddOrUpdateCallback(BattlePresentation_UpdateCamera, 0xc7f);
 
   // The battle music: the scene's own cue, or the usual battle songs.
-  cue = gGameState.sceneCue;
+  cue = gGameState.battleCue;
   if (cue != 0) {
     AudioCommand_PlayFar(cue);
     if (GameFlag_TestFar(FLAG_LINK_BATTLE) != 0) {
@@ -183,7 +183,7 @@ s32 Battle_RunEncounter(s32 enemyGroup) {
   // BATTLE_BACKGROUND_FLAT, BattleCamera_SetRange builds no plane page; it sets
   // at most BG1's horizontal scroll from the camera's yaw.
   BattleCamera_SetRange(0xa00000, 0x500000, 0, 0, 0x20000);
-  BattlePresentation_SetupTransitionScene(0, 0, 0, 190);
+  BattlePresentation_SetupTransitionView(0, 0, 0, 190);
   Party_ReservedNoOp5B14(1);
   REG_BLDCNT = 0;
   BattleSpoils_Clear();
@@ -329,13 +329,13 @@ won:
   goto finished;
 
 aborted:
-  // The link broke, or no actions could be gathered. Flag FLAG_PLACE_TEMP_E8
+  // The link broke, or no actions could be gathered. Flag FLAG_MAPSEC_TEMP_E8
   // tells the link lobby (LinkLobby_RunRoundResult) the battle did not finish.
   Battle_ClearSerialTransferPayload();
   Scheduler_SuspendTasks(0);
   REG_DISPCNT = DISPCNT_MODE_1;
   result = battle->spoils.defeated;
-  GameFlag_SetBitFar(FLAG_PLACE_TEMP_E8);
+  GameFlag_SetBitFar(FLAG_MAPSEC_TEMP_E8);
   goto finished;
 
 party_lost:

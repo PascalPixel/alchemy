@@ -10,13 +10,13 @@
 
 /// The event command "set view bounds": the camera keeps the screen inside
 /// these map coordinates (Camera_MoveWithinMapBounds).
-void Map_SetViewBounds(s32 minX, s32 minY, s32 maxX, s32 maxY) {
-  struct MapScrollWork *map = gMapWork[0];
+void MapGrid_SetViewBounds(s32 minX, s32 minY, s32 maxX, s32 maxY) {
+  struct MapGridScrollWork *grid = gMapGridWork[0];
 
-  map->minX = minX;
-  map->minY = minY;
-  map->maxX = maxX;
-  map->maxY = maxY;
+  grid->minX = minX;
+  grid->minY = minY;
+  grid->maxX = maxX;
+  grid->maxY = maxY;
 }
 
 // Scheduler callback: moves the zoom one step from its previous value toward
@@ -36,7 +36,7 @@ s32 FieldEffect_StepRatioTransition(void) {
   s32 zoom;
   s32 delta;
 
-  perspective = gMapWork[0];
+  perspective = gMapGridWork[0];
   if (((struct FieldWork *)Runtime_AllocateBlock(HEAP_SLOT_EVENT,
                                                  sizeof(struct FieldWork)))
           ->camera->movementState != 0)
@@ -68,9 +68,9 @@ s32 FieldEffect_StepRatioTransition(void) {
 /// Starts a zoom to zoom (16.16) over frames frames, on the world map only. The
 /// perspective work keeps the inverse, which scales the view's distance
 /// (farPlane times it, FieldEffect_StepRatioTransition): a zoom of 2 halves the
-/// distance. Event_WaitForZoomTransition waits for it.
+/// distance. FieldScript_WaitForZoomTransition waits for it.
 void FieldEffect_ScheduleRatioTransition(s32 zoom, s32 frames) {
-  struct PerspectiveWork *perspective = gMapWork[0];
+  struct PerspectiveWork *perspective = gMapGridWork[0];
   s32 inverse;
 
   if (((struct FieldWork *)Runtime_AllocateBlock(HEAP_SLOT_EVENT,
@@ -96,9 +96,9 @@ void FieldEffect_ScheduleRatioTransition(s32 zoom, s32 frames) {
 
 /// Waits for a zoom transition to end (on the world map only, at most 300
 /// frames).
-void Event_WaitForZoomTransition(void) {
+void FieldScript_WaitForZoomTransition(void) {
   s32 frames;
-  struct PerspectiveWork *perspective = gMapWork[0];
+  struct PerspectiveWork *perspective = gMapGridWork[0];
 
   if (((struct FieldWork *)Runtime_AllocateBlock(HEAP_SLOT_EVENT,
                                                  sizeof(struct FieldWork)))
@@ -124,8 +124,8 @@ void FieldEffect_CopyLinkedObjectPosition(union FieldObject *fieldObject) {
 s32 FieldEffect_CopyLinkedObjectPosition(union FieldObject *fieldObject) {
 #endif
   void *self = (void *)fieldObject;
-  struct FieldActor *obj = self;
-  struct FieldActor *host;
+  struct ObjectEvent *obj = self;
+  struct ObjectEvent *host;
 
   host = obj->linkedObject;
   if (host != NULL) {
@@ -134,7 +134,7 @@ s32 FieldEffect_CopyLinkedObjectPosition(union FieldObject *fieldObject) {
     obj->y.fixed =
         host->y.fixed +
         ((s8)Resource_GetMetadataRecordFar(
-             (s16)Scene_FindActorPlacement(*(s16 *)&obj->work)->sprite)
+             (s16)Map_FindObjectEventTemplate(*(s16 *)&obj->work)->sprite)
              ->boxX
          << 16) +
         (8 << 16);
@@ -153,16 +153,16 @@ s32 FieldEffect_CopyLinkedObjectPosition(union FieldObject *fieldObject) {
 /// The bubble rides the actor and frees itself after 46 frames
 /// (gFieldEffect_LinkedObjectScript: 16 frames of squash and stretch, then 30),
 /// whatever wait is.
-void FieldEffect_SpawnLinked(s32 actor, s32 emote, s32 wait) {
-  struct FieldActor *target;
+void FieldEffect_SpawnLinked(s32 objectEvent, s32 emote, s32 wait) {
+  struct ObjectEvent *target;
 
   if ((emote & 0xff) == EMOTE_LIGHT_BULB) {
     AudioCommand_PlayFar(SE_110);
   }
 
-  target = ObjectTable_Get(actor);
+  target = ObjectTable_Get(objectEvent);
   if (target != 0) {
-    struct FieldActor *bubble = (struct FieldActor *)Object_CreateFar(
+    struct ObjectEvent *bubble = (struct ObjectEvent *)Object_CreateFar(
         21, target->x.fixed, target->y.fixed, target->z.fixed);
 
     if (bubble != 0) {
@@ -173,7 +173,7 @@ void FieldEffect_SpawnLinked(s32 actor, s32 emote, s32 wait) {
       ObjectDispatch_SelectAnimationFar(bubble, emote & 15);
       bubble->motionFlags = 0;
       bubble->timer = 0;
-      bubble->work = actor;
+      bubble->work = objectEvent;
       sprite = bubble->sprite;
 #ifdef UBFIX
       bubble->update = FieldEffect_CopyLinkedObjectPosition;
@@ -207,7 +207,7 @@ void FieldEffect_SpawnLinked(s32 actor, s32 emote, s32 wait) {
         SPRITE_ATTR2_HIGH(sprite) = mask;
       }
     }
-    FieldEvent_WaitFrames(wait);
+    FieldScript_WaitFrames(wait);
   }
 }
 
@@ -219,9 +219,9 @@ void FieldEffect_SpawnLinked(s32 actor, s32 emote, s32 wait) {
 /// nothing while the actor has one, and ATTACHED_EFFECT_REMOVE releases
 /// whatever it is; a one-off is never recorded there. The leader's step runs
 /// all three for hazard ground (object/step.c).
-void FieldEffect_ConfigureLinkedObject(s32 actor, s32 flags) {
-  struct FieldActor *object = ObjectTable_Get(actor);
-  struct FieldActor *effect;
+void FieldEffect_ConfigureLinkedObject(s32 objectEvent, s32 flags) {
+  struct ObjectEvent *object = ObjectTable_Get(objectEvent);
+  struct ObjectEvent *effect;
   struct AnimationObject *visual;
   s32 mode;
 
@@ -233,7 +233,7 @@ void FieldEffect_ConfigureLinkedObject(s32 actor, s32 flags) {
 
   if ((flags & 3) != 0) {
     if ((flags & 3) == ATTACHED_EFFECT_ONCE || object->linkedObject == 0) {
-      effect = (struct FieldActor *)Object_CreateFar(
+      effect = (struct ObjectEvent *)Object_CreateFar(
           SPRITE_ATTACHED_EFFECT, object->x.fixed, object->y.fixed,
           object->z.fixed);
     }
@@ -264,7 +264,7 @@ void FieldEffect_ConfigureLinkedObject(s32 actor, s32 flags) {
     break;
   }
 
-  effect->work = actor;
+  effect->work = objectEvent;
   effect->motionFlags = 0;
 #ifdef UBFIX
   effect->update = FieldEffect_CopyLinkedObjectPosition;

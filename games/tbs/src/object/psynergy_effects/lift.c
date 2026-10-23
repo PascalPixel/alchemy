@@ -13,9 +13,9 @@
 /// It leaves the target raised and floating (motion flag bit 2), with its
 /// update set to ObjectGroup_ApplyRandomChildValues.
 void FieldEffect_RunLiftOnTarget(s32 unused) {
-  struct FieldEffectScene *work;
+  struct FieldEffectWork *work;
   struct DispatchObject *caster;
-  struct FieldActor *target;
+  struct ObjectEvent *target;
   struct MotionObject *pair[2];
   s32 pos[3];
   s32 x, y, z;
@@ -57,7 +57,7 @@ void FieldEffect_RunLiftOnTarget(s32 unused) {
   FieldObject_WaitForMoveFar(pair[0]);
   target->update = ObjectGroup_ApplyRandomChildValues;
   AudioCommand_PlayFar(SE_130);
-  target->motionFlags = ACTOR_FLOATS;
+  target->motionFlags = OBJ_EVENT_FLOATS;
 
   // Lift 32 pixels, a quarter pixel at a time.
   startY = target->y.fixed;
@@ -125,7 +125,7 @@ void FieldEffect_UpdateRadialBurst(struct EffectSlot *effect) {
   // A for/continue retry keeps the same states but grows the native English
   // callback from 0xf8 to 0xfc bytes. OUT_AND_BACK_FLYING_OUT must enter
   // OUT_AND_BACK_AIM_BACK immediately.
-  struct FieldEffectScene *scene = gEffectWork;
+  struct FieldEffectWork *effectWork = gEffectWork;
   struct EffectVector pos;
   s32 state;
 
@@ -157,12 +157,12 @@ again:
   if (state == OUT_AND_BACK_AIM_BACK) {
     // 8 pixels toward scene->angle from 16 pixels above the main object, on
     // screen, give or take 4 pixels.
-    struct MotionObject *caster = scene->mainObject;
+    struct MotionObject *caster = effectWork->mainObject;
 
     pos.x = caster->x;
     pos.y = caster->y + (16 << 16);
     pos.z = caster->z;
-    Vector_AddPolarOffset(8 << 16, scene->angle, &pos);
+    Vector_AddPolarOffset(8 << 16, effectWork->angle, &pos);
     Camera_WorldToScreen(&pos);
     Vector_AddPolarOffset(4 << 16, Random16(), &pos);
     effect->targetX = pos.x;

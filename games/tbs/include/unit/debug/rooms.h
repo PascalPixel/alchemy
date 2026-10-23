@@ -4,16 +4,16 @@
 #include "types.h"
 #include "map_tables.h"
 
-u8 *TestRooms_GetEntrances(void);
-s32 SceneData_ReturnZero(void);
-u8 *TestRooms_GetExits(void);
-u8 *TestRooms_GetPlacements(void);
+u8 *TestRooms_GetWarpDests(void);
+s32 MapData_ReturnZero(void);
+u8 *TestRooms_GetWarps(void);
+u8 *TestRooms_GetObjectEventTemplates(void);
 u8 *TestRooms_GetEvents(void);
-s32 Scene_RunEmptyScene(void);
-extern u32 gTestRooms_EntrancesHead[];
-extern struct SceneEntrance gTestRooms_Entrances[];
-extern u32 gTestRooms_Exits[];
-extern struct ScenePlacement gTestRooms_Placements[];
-extern struct SceneEvent gTestRooms_Events[];
+s32 Map_RunEmpty(void);
+extern u32 gTestRooms_WarpDestsHead[];
+extern struct MapWarpDest gTestRooms_WarpDests[];
+extern u32 gTestRooms_Warps[];
+extern struct ObjectEventTemplate gTestRooms_ObjectEventTemplates[];
+extern struct MapEvent gTestRooms_Events[];
 
 #endif

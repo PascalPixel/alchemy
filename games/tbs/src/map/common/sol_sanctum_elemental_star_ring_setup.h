@@ -22,7 +22,7 @@ enum { SOL_SANCTUM_RING_MAX = 10 };
 /// One floating light: its actor, its drift and its pulsing scale, and where it
 /// is while hidden.
 struct SolSanctumRingEntry {
-  struct FieldActor *actor;
+  struct ObjectEvent *objectEvent;
   s32 x; ///< 16.16 fixed-point pixels
   s32 y; ///< 16.16 fixed-point pixels
   s32 z; ///< 16.16 fixed-point pixels
@@ -56,7 +56,7 @@ static void SolSanctum_UpdateRing(void) {
 
   i = 0;
   while (i != list->count) {
-    struct FieldActor *obj;
+    struct ObjectEvent *obj;
     s32 speedX;
     s32 speedY;
     s32 speedZ;
@@ -68,7 +68,7 @@ static void SolSanctum_UpdateRing(void) {
     s32 z;
     u8 hold;
 
-    obj = entry->actor;
+    obj = entry->objectEvent;
     speedX = entry->speedX;
     speedY = entry->speedY;
     speedZ = entry->speedZ;
@@ -180,8 +180,8 @@ static void SolSanctum_UpdateRing(void) {
 void SolSanctum_StartFloatingLights(s32 first, u32 count) {
   // Each light is read here as FieldEffect, union FieldObject's effect view of
   // the same object, the plain-C form this site matches with (MATCHING.md):
-  // through FieldActor's sprite union, the sprite-flags address moves after
-  // the ring-entry store. The callback reads FieldActor.
+  // through ObjectEvent's sprite union, the sprite-flags address moves after
+  // the ring-entry store. The callback reads ObjectEvent.
   struct SolSanctumRingList *list;
   struct SolSanctumRingEntry *entry;
   struct FieldEffect *light;
@@ -200,15 +200,15 @@ void SolSanctum_StartFloatingLights(s32 first, u32 count) {
   if (count != 0) {
     cleared = none;
     do {
-      light = &((union FieldObject *)Object_GetById(first))->effect;
+      light = &((union FieldObject *)ObjectEvent_GetById(first))->effect;
       {
         u8 *flags = &light->sprite->flags;
 
-        entry->actor = (struct FieldActor *)light;
+        entry->objectEvent = (struct ObjectEvent *)light;
         *flags = cleared;
       }
       light->motionFlags = cleared;
-      Engine_ObjectSetBlendMode(Object_GetById(first),
+      Engine_ObjectSetBlendMode(ObjectEvent_GetById(first),
                                 OBJECT_BLEND_TRANSLUCENT);
       entry->scale = gSolSanctumRing_MaxScales[i];
       entry->scaleStep = -gSolSanctumRing_ScaleSteps[i];
@@ -219,5 +219,5 @@ void SolSanctum_StartFloatingLights(s32 first, u32 count) {
     } while (i != count);
   }
   list->count = count;
-  FieldScheduler_AddCallback(SolSanctum_UpdateRing, TASK_PRIORITY_SCENE);
+  FieldScheduler_AddCallback(SolSanctum_UpdateRing, TASK_PRIORITY_MAP);
 }

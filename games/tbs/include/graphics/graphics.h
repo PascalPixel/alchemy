@@ -239,14 +239,14 @@ extern const u8 Text_DecodeSymbol[];
 /// Text_DecodeSymbol, which the message decoders copy into heap slot
 /// TEXT_WORK_BLOCK.
 extern u8 Text_DecodeSymbolCodeSize[];
-/// Tile_BuildMetatiles, copied to the heap by UiWindow_FillFromScene for
+/// Tile_BuildMetatiles, copied to the heap by UiWindow_FillScanlineSpans for
 /// each frame of a window transition.
 extern u8 Tile_BuildMetatilesCodeSize[];
 /// Interleaves a field map's three decoded cell planes into cell words, for
 /// TileMap_ConvertBuffer.
-extern const u8 Tile_ConvertMap[];
-/// Tile_ConvertMap, which TileMap_ConvertBuffer runs from a heap copy.
-extern u8 Tile_ConvertMapCodeSize[];
+extern const u8 Tile_ConvertMapGrid[];
+/// Tile_ConvertMapGrid, which TileMap_ConvertBuffer runs from a heap copy.
+extern u8 Tile_ConvertMapGridCodeSize[];
 /// Unpacks a compressed icon into a glyph transfer's input buffer.
 extern const u8 Tile_Decompress4bpp[];
 /// Tile_Decompress4bpp, which UiIcon_Decode copies into

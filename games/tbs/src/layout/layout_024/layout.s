@@ -1,149 +1,149 @@
 	.include "games/tbs/src/layout/layout.inc"
 	.section .rodata
-	.global Field_Map024
-Field_Map024:
+	.global Field_Layout024
+Field_Layout024:
 	.ifdef TBS_EDITION_DE
-	map_header 0, 0, 96, 60, 3, 2, 1, 0, 2, 2, 0, 0
-	map_layer 0, 0, 16, 16, 0, 0, 0xff, 0xff
-	map_layer 0, 60, 16, 16, 0, 0, 0xff, 0xff
-	map_layer 100, 0, 16, 16, 0, 0, 0xff, 0xff
-	map_block Field_Map024, .LField_Map024_METATILES
-	map_block Field_Map024, .LField_Map024_SHAPES
-	map_block Field_Map024, .LField_Map024_GRID
-	map_block Field_Map024, .LField_Map024_ANIMATION
-	map_block Field_Map024, .LField_Map024_BLEND
-	map_block Field_Map024, .LField_Map024_MARKERS
-.LField_Map024_METATILES:
+	layout_header 0, 0, 96, 60, 3, 2, 1, 0, 2, 2, 0, 0
+	layout_layer 0, 0, 16, 16, 0, 0, 0xff, 0xff
+	layout_layer 0, 60, 16, 16, 0, 0, 0xff, 0xff
+	layout_layer 100, 0, 16, 16, 0, 0, 0xff, 0xff
+	layout_offset Field_Layout024, .LField_Layout024_METATILES
+	layout_offset Field_Layout024, .LField_Layout024_SHAPES
+	layout_offset Field_Layout024, .LField_Layout024_GRID
+	layout_offset Field_Layout024, .LField_Layout024_ANIMATION
+	layout_offset Field_Layout024, .LField_Layout024_BLEND
+	layout_offset Field_Layout024, .LField_Layout024_MARKERS
+.LField_Layout024_METATILES:
 	.incbin "games/tbs/src/layout/layout_024/metatiles.delta2.lz"
 	.balign 4, 0
-.LField_Map024_SHAPES:
+.LField_Layout024_SHAPES:
 	.incbin "games/tbs/src/layout/layout_024/shapes.table.lz"
 	.balign 4, 0
-.LField_Map024_GRID:
+.LField_Layout024_GRID:
 	.incbin "games/tbs/src/layout/layout_024/grid_de.parts.lz"
 	.balign 4, 0
-.LField_Map024_ANIMATION:
+.LField_Layout024_ANIMATION:
 	.incbin "games/tbs/src/layout/layout_022/animation.script.lz"
 	.balign 4, 0
-.LField_Map024_BLEND:
+.LField_Layout024_BLEND:
 	.incbin "games/tbs/src/layout/layout_022/blend.script.lz"
 	.balign 4, 0
-.LField_Map024_MARKERS:
+.LField_Layout024_MARKERS:
 	.incbin "games/tbs/src/layout/layout_000/markers.table"
 	.else
 	.ifdef TBS_EDITION_ES
-	map_header 0, 0, 96, 60, 3, 2, 1, 0, 2, 2, 0, 0
-	map_layer 0, 0, 16, 16, 0, 0, 0xff, 0xff
-	map_layer 0, 60, 16, 16, 0, 0, 0xff, 0xff
-	map_layer 100, 0, 16, 16, 0, 0, 0xff, 0xff
-	map_block Field_Map024, .LField_Map024_METATILES
-	map_block Field_Map024, .LField_Map024_SHAPES
-	map_block Field_Map024, .LField_Map024_GRID
-	map_block Field_Map024, .LField_Map024_ANIMATION
-	map_block Field_Map024, .LField_Map024_BLEND
-	map_block Field_Map024, .LField_Map024_MARKERS
-.LField_Map024_METATILES:
+	layout_header 0, 0, 96, 60, 3, 2, 1, 0, 2, 2, 0, 0
+	layout_layer 0, 0, 16, 16, 0, 0, 0xff, 0xff
+	layout_layer 0, 60, 16, 16, 0, 0, 0xff, 0xff
+	layout_layer 100, 0, 16, 16, 0, 0, 0xff, 0xff
+	layout_offset Field_Layout024, .LField_Layout024_METATILES
+	layout_offset Field_Layout024, .LField_Layout024_SHAPES
+	layout_offset Field_Layout024, .LField_Layout024_GRID
+	layout_offset Field_Layout024, .LField_Layout024_ANIMATION
+	layout_offset Field_Layout024, .LField_Layout024_BLEND
+	layout_offset Field_Layout024, .LField_Layout024_MARKERS
+.LField_Layout024_METATILES:
 	.incbin "games/tbs/src/layout/layout_024/metatiles.delta2.lz"
 	.balign 4, 0
-.LField_Map024_SHAPES:
+.LField_Layout024_SHAPES:
 	.incbin "games/tbs/src/layout/layout_024/shapes.table.lz"
 	.balign 4, 0
-.LField_Map024_GRID:
+.LField_Layout024_GRID:
 	.incbin "games/tbs/src/layout/layout_024/grid_de.parts.lz"
 	.balign 4, 0
-.LField_Map024_ANIMATION:
+.LField_Layout024_ANIMATION:
 	.incbin "games/tbs/src/layout/layout_022/animation.script.lz"
 	.balign 4, 0
-.LField_Map024_BLEND:
+.LField_Layout024_BLEND:
 	.incbin "games/tbs/src/layout/layout_022/blend.script.lz"
 	.balign 4, 0
-.LField_Map024_MARKERS:
+.LField_Layout024_MARKERS:
 	.incbin "games/tbs/src/layout/layout_000/markers.table"
 	.else
 	.ifdef TBS_EDITION_FR
-	map_header 0, 0, 96, 60, 3, 2, 1, 0, 2, 2, 0, 0
-	map_layer 0, 0, 16, 16, 0, 0, 0xff, 0xff
-	map_layer 0, 60, 16, 16, 0, 0, 0xff, 0xff
-	map_layer 100, 0, 16, 16, 0, 0, 0xff, 0xff
-	map_block Field_Map024, .LField_Map024_METATILES
-	map_block Field_Map024, .LField_Map024_SHAPES
-	map_block Field_Map024, .LField_Map024_GRID
-	map_block Field_Map024, .LField_Map024_ANIMATION
-	map_block Field_Map024, .LField_Map024_BLEND
-	map_block Field_Map024, .LField_Map024_MARKERS
-.LField_Map024_METATILES:
+	layout_header 0, 0, 96, 60, 3, 2, 1, 0, 2, 2, 0, 0
+	layout_layer 0, 0, 16, 16, 0, 0, 0xff, 0xff
+	layout_layer 0, 60, 16, 16, 0, 0, 0xff, 0xff
+	layout_layer 100, 0, 16, 16, 0, 0, 0xff, 0xff
+	layout_offset Field_Layout024, .LField_Layout024_METATILES
+	layout_offset Field_Layout024, .LField_Layout024_SHAPES
+	layout_offset Field_Layout024, .LField_Layout024_GRID
+	layout_offset Field_Layout024, .LField_Layout024_ANIMATION
+	layout_offset Field_Layout024, .LField_Layout024_BLEND
+	layout_offset Field_Layout024, .LField_Layout024_MARKERS
+.LField_Layout024_METATILES:
 	.incbin "games/tbs/src/layout/layout_024/metatiles.delta2.lz"
 	.balign 4, 0
-.LField_Map024_SHAPES:
+.LField_Layout024_SHAPES:
 	.incbin "games/tbs/src/layout/layout_024/shapes.table.lz"
 	.balign 4, 0
-.LField_Map024_GRID:
+.LField_Layout024_GRID:
 	.incbin "games/tbs/src/layout/layout_024/grid_de.parts.lz"
 	.balign 4, 0
-.LField_Map024_ANIMATION:
+.LField_Layout024_ANIMATION:
 	.incbin "games/tbs/src/layout/layout_022/animation.script.lz"
 	.balign 4, 0
-.LField_Map024_BLEND:
+.LField_Layout024_BLEND:
 	.incbin "games/tbs/src/layout/layout_022/blend.script.lz"
 	.balign 4, 0
-.LField_Map024_MARKERS:
+.LField_Layout024_MARKERS:
 	.incbin "games/tbs/src/layout/layout_000/markers.table"
 	.else
 	.ifdef TBS_EDITION_IT
-	map_header 0, 0, 96, 60, 3, 2, 1, 0, 2, 2, 0, 0
-	map_layer 0, 0, 16, 16, 0, 0, 0xff, 0xff
-	map_layer 0, 60, 16, 16, 0, 0, 0xff, 0xff
-	map_layer 100, 0, 16, 16, 0, 0, 0xff, 0xff
-	map_block Field_Map024, .LField_Map024_METATILES
-	map_block Field_Map024, .LField_Map024_SHAPES
-	map_block Field_Map024, .LField_Map024_GRID
-	map_block Field_Map024, .LField_Map024_ANIMATION
-	map_block Field_Map024, .LField_Map024_BLEND
-	map_block Field_Map024, .LField_Map024_MARKERS
-.LField_Map024_METATILES:
+	layout_header 0, 0, 96, 60, 3, 2, 1, 0, 2, 2, 0, 0
+	layout_layer 0, 0, 16, 16, 0, 0, 0xff, 0xff
+	layout_layer 0, 60, 16, 16, 0, 0, 0xff, 0xff
+	layout_layer 100, 0, 16, 16, 0, 0, 0xff, 0xff
+	layout_offset Field_Layout024, .LField_Layout024_METATILES
+	layout_offset Field_Layout024, .LField_Layout024_SHAPES
+	layout_offset Field_Layout024, .LField_Layout024_GRID
+	layout_offset Field_Layout024, .LField_Layout024_ANIMATION
+	layout_offset Field_Layout024, .LField_Layout024_BLEND
+	layout_offset Field_Layout024, .LField_Layout024_MARKERS
+.LField_Layout024_METATILES:
 	.incbin "games/tbs/src/layout/layout_024/metatiles.delta2.lz"
 	.balign 4, 0
-.LField_Map024_SHAPES:
+.LField_Layout024_SHAPES:
 	.incbin "games/tbs/src/layout/layout_024/shapes.table.lz"
 	.balign 4, 0
-.LField_Map024_GRID:
+.LField_Layout024_GRID:
 	.incbin "games/tbs/src/layout/layout_024/grid_de.parts.lz"
 	.balign 4, 0
-.LField_Map024_ANIMATION:
+.LField_Layout024_ANIMATION:
 	.incbin "games/tbs/src/layout/layout_022/animation.script.lz"
 	.balign 4, 0
-.LField_Map024_BLEND:
+.LField_Layout024_BLEND:
 	.incbin "games/tbs/src/layout/layout_022/blend.script.lz"
 	.balign 4, 0
-.LField_Map024_MARKERS:
+.LField_Layout024_MARKERS:
 	.incbin "games/tbs/src/layout/layout_000/markers.table"
 	.else
-	map_header 0, 0, 96, 60, 3, 2, 1, 0, 2, 2, 0, 0
-	map_layer 0, 0, 16, 16, 0, 0, 0xff, 0xff
-	map_layer 0, 60, 16, 16, 0, 0, 0xff, 0xff
-	map_layer 100, 0, 16, 16, 0, 0, 0xff, 0xff
-	map_block Field_Map024, .LField_Map024_METATILES
-	map_block Field_Map024, .LField_Map024_SHAPES
-	map_block Field_Map024, .LField_Map024_GRID
-	map_block Field_Map024, .LField_Map024_ANIMATION
-	map_block Field_Map024, .LField_Map024_BLEND
-	map_block Field_Map024, .LField_Map024_MARKERS
-.LField_Map024_METATILES:
+	layout_header 0, 0, 96, 60, 3, 2, 1, 0, 2, 2, 0, 0
+	layout_layer 0, 0, 16, 16, 0, 0, 0xff, 0xff
+	layout_layer 0, 60, 16, 16, 0, 0, 0xff, 0xff
+	layout_layer 100, 0, 16, 16, 0, 0, 0xff, 0xff
+	layout_offset Field_Layout024, .LField_Layout024_METATILES
+	layout_offset Field_Layout024, .LField_Layout024_SHAPES
+	layout_offset Field_Layout024, .LField_Layout024_GRID
+	layout_offset Field_Layout024, .LField_Layout024_ANIMATION
+	layout_offset Field_Layout024, .LField_Layout024_BLEND
+	layout_offset Field_Layout024, .LField_Layout024_MARKERS
+.LField_Layout024_METATILES:
 	.incbin "games/tbs/src/layout/layout_024/metatiles.delta2.lz"
 	.balign 4, 0
-.LField_Map024_SHAPES:
+.LField_Layout024_SHAPES:
 	.incbin "games/tbs/src/layout/layout_024/shapes.table.lz"
 	.balign 4, 0
-.LField_Map024_GRID:
+.LField_Layout024_GRID:
 	.incbin "games/tbs/src/layout/layout_024/grid.parts.lz"
 	.balign 4, 0
-.LField_Map024_ANIMATION:
+.LField_Layout024_ANIMATION:
 	.incbin "games/tbs/src/layout/layout_022/animation.script.lz"
 	.balign 4, 0
-.LField_Map024_BLEND:
+.LField_Layout024_BLEND:
 	.incbin "games/tbs/src/layout/layout_022/blend.script.lz"
 	.balign 4, 0
-.LField_Map024_MARKERS:
+.LField_Layout024_MARKERS:
 	.incbin "games/tbs/src/layout/layout_000/markers.table"
 	.endif
 	.endif

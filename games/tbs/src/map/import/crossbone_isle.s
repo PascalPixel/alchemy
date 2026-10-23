@@ -11,41 +11,41 @@
 	.set import.Engine_HeapAllocate, 1
 	.set import.Engine_HeapRelease, 1
 	.set import.Engine_VramLoad, 1
-	.set import.Object_SetMode, 1
+	.set import.ObjectEvent_SetMode, 1
 	.set import.Engine_ObjectSetScript, 1
 	.set import.Engine_ObjectCreate, 1
 	.set import.Engine_ObjectSetPosition, 1
 	.set import.FieldObject_WaitForMove, 1
-	.set import.Engine_MapAnimateCells, 1
-	.set import.Engine_MapCopyCellAttributes, 1
+	.set import.Engine_MapGridAnimateCells, 1
+	.set import.Engine_MapGridCopyCellAttributes, 1
 	.set import.Object_CheckMovementCollision, 1
-	.set import.Engine_ActorSetSpriteFlags, 1
+	.set import.Engine_ObjectEventSetSpriteFlags, 1
 	.set import.Engine_ObjectSetBlendMode, 1
-	.set import.SetMapCellCollision, 1
+	.set import.MapGrid_SetMetatileBehaviorAt, 1
 	.set import.Engine_ItemLoadIcon, 1
 	.set import.Engine_GameFlagIsSet, 1
 	.set import.Engine_GameFlagSet, 1
-	.set import.Engine_EventWait, 1
-	.set import.Engine_EventStart, 1
-	.set import.Engine_EventEnd, 1
+	.set import.Engine_ScriptWait, 1
+	.set import.Engine_ScriptStart, 1
+	.set import.Engine_ScriptEnd, 1
 	.set import.Engine_PartyGiveItem, 1
-	.set import.Object_GetById, 1
-	.set import.Engine_ActorSetSpeed, 1
-	.set import.Engine_ActorMoveToAndWait, 1
-	.set import.Engine_ActorCenterAndWalk, 1
-	.set import.Engine_ActorSetDestinationOffset, 1
-	.set import.Engine_ActorWaitForMove, 1
-	.set import.Engine_ActorSetPosition, 1
-	.set import.Engine_ActorSetAnimation, 1
+	.set import.ObjectEvent_GetById, 1
+	.set import.Engine_ObjectEventSetSpeed, 1
+	.set import.Engine_ObjectEventMoveToAndWait, 1
+	.set import.Engine_ObjectEventCenterAndWalk, 1
+	.set import.Engine_ObjectEventSetDestinationOffset, 1
+	.set import.Engine_ObjectEventWaitForMove, 1
+	.set import.Engine_ObjectEventSetPosition, 1
+	.set import.Engine_ObjectEventSetAnimation, 1
 	.set import.ObjectGroup_SetChildValue, 1
-	.set import.Engine_ActorSetSpritePriority, 1
-	.set import.Engine_EventRequestExit, 1
+	.set import.Engine_ObjectEventSetSpritePriority, 1
+	.set import.Engine_ScriptRequestWarp, 1
 	.set import.Field_RequestBattleFromEncounterTable, 1
-	.set import.Event_SetNextDestination, 1
-	.set import.Engine_EventOpenScreen, 1
-	.set import.Engine_EventWaitForScreen, 1
+	.set import.FieldScript_SetNextDestination, 1
+	.set import.Engine_ScriptOpenScreen, 1
+	.set import.Engine_ScriptWaitForScreen, 1
 	.set import.Engine_ItemShowFound, 1
-	.set import.Engine_MapObjectSetPosition, 1
+	.set import.Engine_MarkerSetPosition, 1
 	.set import.FieldEffect_PlayQueuedSound, 1
 	.set import.Engine_AudioPlayCue, 1
 	.include "games/tbs/src/system/overlay.inc"

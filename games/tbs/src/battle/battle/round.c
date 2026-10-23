@@ -62,7 +62,7 @@ void Palette_UpdatePulseBrightness(void) {
 /// camera, the transition's targetYaw and flag (left 1, so the camera
 /// callback leaves the background alone), gProjection and the background's
 /// affine page.
-void Camera_ConfigureScene(s32 verticalOffset) {
+void Camera_ConfigureView(s32 verticalOffset) {
   // UB: indexing past scalar gCameraWork reaches another work slot. Named
   // slots add four bytes in the native EN trial (0xd8 to 0xdc).
 #ifdef UBFIX
@@ -91,9 +91,9 @@ void Camera_ConfigureScene(s32 verticalOffset) {
   camera->unk18 = 0;
 
   Render_ResetTransformState();
-  SceneTransform_ApplyPosition(&camera->focus[0]);
-  SceneTransform_ApplyYaw((s16)camera->yaw);
-  SceneTransform_ApplyPitch((s16)camera->pitch);
+  Transform_ApplyPosition(&camera->focus[0]);
+  Transform_ApplyYaw((s16)camera->yaw);
+  Transform_ApplyPitch((s16)camera->pitch);
 
   eyeOffset.x = 0;
   eyeOffset.y = 0;
@@ -654,7 +654,7 @@ s32 BattlePresentation_BuildActions(struct BattleActionRecord *actions) {
   Palette_CopyBanksWithBrightnessOffset(8);
   GameFlag_SetBitFar(FLAG_CHOOSING_COMMANDS);
   encounterMode = &battle->encounterMode;
-  Camera_ConfigureScene(0);
+  Camera_ConfigureView(0);
   UiWork_FinalizeSharedSlotFar();
 
   // The party's commands (none when the enemies strike first).

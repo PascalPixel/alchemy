@@ -124,8 +124,8 @@ s32 Shop_Run(s32 stockRow, s32 keeperId) {
   if (stockRow == SHOP_STOCK_ROW_XIAN_ITEMS)
     shop->warriorShop = 1;
   shop->keeperResource =
-      ((struct AnimationObject *)((struct ObjectRuntime *)Object_GetByIdFar(
-                                      keeperId))
+      ((struct AnimationObject *)((struct ObjectRuntime *)
+                                      ObjectEvent_GetByIdFar(keeperId))
            ->animation)
           ->entries[0]
           ->animationId;

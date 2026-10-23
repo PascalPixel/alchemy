@@ -1,26 +1,26 @@
-#ifndef ALCHEMY_UNIT_SCENE_MCCOY_PALACE_GROUNDS_H
-#define ALCHEMY_UNIT_SCENE_MCCOY_PALACE_GROUNDS_H
+#ifndef ALCHEMY_UNIT_MAP_MCCOY_PALACE_GROUNDS_H
+#define ALCHEMY_UNIT_MAP_MCCOY_PALACE_GROUNDS_H
 
 #include "types.h"
 #include "map_tables.h"
 
-struct SceneEvent;
-struct ScenePlacement;
-struct SceneRegion;
+struct MapEvent;
+struct ObjectEventTemplate;
+struct MapWarpRegion;
 
-const struct SceneEntrance *Scene_GetEntrances(void);
-const struct SceneRegion *Scene_GetRegions(void);
-const u32 *Scene_GetExits(void);
-const struct ScenePlacement *Scene_GetPlacements(void);
-const struct SceneEvent *Scene_GetEvents(void);
-s32 Scene_Initialize(void);
+const struct MapWarpDest *Map_GetWarpDests(void);
+const struct MapWarpRegion *Map_GetWarpRegions(void);
+const u32 *Map_GetWarps(void);
+const struct ObjectEventTemplate *Map_GetObjectEventTemplates(void);
+const struct MapEvent *Map_GetEvents(void);
+s32 Map_Initialize(void);
 extern u16 gPalaceGateOpenSteps[];
 extern s32 gGuardWatchesParty[];
-extern struct SceneEntrance gMcCoyPalaceGroundsEntrances[];
-extern u32 gMcCoyPalaceGroundsExits[];
-extern struct ScenePlacement gMcCoyPalaceGroundsNoPlacements[];
-extern struct ScenePlacement gMcCoyPalaceGroundsPlacements[];
-extern struct SceneEvent gMcCoyPalaceGroundsNoEvents[];
-extern struct SceneEvent gMcCoyPalaceGroundsEvents[];
+extern struct MapWarpDest gMcCoyPalaceGroundsWarpDests[];
+extern u32 gMcCoyPalaceGroundsWarps[];
+extern struct ObjectEventTemplate gMcCoyPalaceGroundsNoObjectEventTemplates[];
+extern struct ObjectEventTemplate gMcCoyPalaceGroundsObjectEventTemplates[];
+extern struct MapEvent gMcCoyPalaceGroundsNoEvents[];
+extern struct MapEvent gMcCoyPalaceGroundsEvents[];
 
 #endif

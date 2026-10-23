@@ -134,7 +134,7 @@ s32 Shop_ConfirmAct(s32 unitId) {
   {
     s32 keeperAnimationId =
         (u16)((struct AnimationObject *)((struct ObjectRuntime *)
-                                             Object_GetByIdFar(unitId))
+                                             ObjectEvent_GetByIdFar(unitId))
                   ->animation)
             ->entries[0]
             ->animationId;

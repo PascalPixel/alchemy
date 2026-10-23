@@ -81,7 +81,7 @@ FarCall_WindowTable:
 	export Ui_PrepareTransferForItemFar, Ui_PrepareTransferForItem
 	export UiText_RenderWideStringAtOffsetFar, UiText_RenderWideStringAtOffset
 	overlay_veneer GraphicsPalette_SelectionNoOp
-	export UiWindow_FillFromSceneFar, UiWindow_FillFromScene
+	export UiWindow_FillScanlineSpansFar, UiWindow_FillScanlineSpans
 	export RenderOutput_RedrawSavedRectFar, RenderOutput_RedrawSavedRect
 	export RenderOutput_ClearListFar, RenderOutput_ClearList
 	export UiWindow_SetTilemapEntryFar, UiWindow_SetTilemapEntry

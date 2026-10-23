@@ -8,8 +8,8 @@
 
 struct FieldPosition;
 struct ObjectRuntime;
-struct SceneEvent;
-struct ScenePlacement;
+struct MapEvent;
+struct ObjectEventTemplate;
 struct UiWindow;
 
 s32 Engine_FieldEffectPlayCueAndStartEmitterOnTarget(s32 effect, s32 target,
@@ -24,20 +24,20 @@ void Engine_DisplayScrollStartHBlankDma(s32 mode, s32 freqX, s32 stepX,
                                         s32 ampY);
 s32 Engine_InnCheckIn(s32 mode, s32 objectId);
 void Engine_InventorySnapshotRestore(void);
-void Engine_MapSetWorkFlagBits9To11(u32 v);
+void Engine_MapGridSetWorkFlagBits9To11(u32 v);
 void Engine_OwnerRecalculateRatios(s32 owner_id);
 s32 Engine_PartyInventoryFindOwner(s32 item_id);
-void Engine_EventSetNextDestination(s32 first, s32 second);
+void Engine_ScriptSetNextDestination(s32 first, s32 second);
 void Engine_FieldEndBusyAndReveal(void);
 s32 Engine_ShopConfirmAct(s32 unitId);
 void Engine_UiTextDrawQuantity(u32 value, u32 kind);
-void Event_LoadAreaScript(const struct SceneEvent *events);
+void FieldScript_LoadAreaScript(const struct MapEvent *events);
 s32 GetPartyMemberCount(void);
 void InventorySnapshot_Take(void);
 s32 DjinnMenu_Open(void);
 s32 Object_CheckMovementCollision(struct ObjectRuntime *object,
                                   struct FieldPosition *position);
-void SceneEvents_UpdateInView(struct ScenePlacement *entry);
+void MapEvents_UpdateInView(struct ObjectEventTemplate *entry);
 void UiText_DrawQuantity(u32 value, u32 kind);
 
 #endif

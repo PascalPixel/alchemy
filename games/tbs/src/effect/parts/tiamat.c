@@ -23,7 +23,7 @@ void BattleEffect_RunDragonDriver(struct BattleEffectArgument *effect) {
 /// Embers rise from the ground while a formation of eight objects sweeps in,
 /// and the formation explodes at the end.
 ///
-/// Abilities: Tiamat (SCENE_EFFECT_TIAMAT).
+/// Abilities: Tiamat (SUMMON_EFFECT_TIAMAT).
 void BattleEffect_RunTiamat(struct BattleEffectArgument *effect) {
   BattleEffect_RunPaletteParticles(effect, PALETTE_PARTICLES_TIAMAT);
 }

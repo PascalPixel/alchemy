@@ -1,9 +1,9 @@
 	.section .rodata
-@ Layered maps by scene, indexed from ResourceId_Map001
-	.global gMap_LayeredScenes
-gMap_LayeredScenes:
+@ Layered maps by scene, indexed from ResourceId_Layout001
+	.global gLayouts
+gLayouts:
 	.incbin "games/tbs/src/field/layouts.table"
 
-	.global Map_LayeredScenesTail
-Map_LayeredScenesTail:
+	.global gLayoutsTail
+gLayoutsTail:
 	.4byte 0, 3, 7, 9

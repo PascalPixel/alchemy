@@ -21,7 +21,7 @@
 // The falling shards (Ice) and bolts (Douse) rain diagonally onto the
 // targets' side. Both show the canvas only inside a slanted band of window 0,
 // whose edges BattleEffect_ArmWin0HBlankDma feeds line by line from a table at
-// the start of Ram_MapCellBuffer. Each particle falls until it passes y 80,
+// the start of Ram_MapGridCellBuffer. Each particle falls until it passes y 80,
 // then lands: shards shatter and kick up sparkle puffs, bolts flash and throw a
 // fountain of sparks. A falling particle's variant is -1 until it lands, then
 // counts the frames since. Shards and bolts are positioned in eighths of a
@@ -123,11 +123,11 @@ void BattleEffect_RunIce(struct BattleEffectArgument *effect) {
   // enemies, moving left; from x 32 against the party, moving right), then a
   // fixed span down to line 135.
   if (work->effect->side == 0) {
-    line = (u16 *)Ram_MapCellBuffer;
+    line = (u16 *)Ram_MapGridCellBuffer;
     FALLING_BUILD_SLANTED_WINDOW(line, i, 103, (0xf0 - i) | ((0x70 - i) << 8),
                                  WIN_RANGE(8, 136));
   } else {
-    line = (u16 *)Ram_MapCellBuffer;
+    line = (u16 *)Ram_MapGridCellBuffer;
     FALLING_BUILD_SLANTED_WINDOW(line, i, 95, (i - 8 + 160) | ((i + 0x18) << 8),
                                  WIN_RANGE(120, 248));
   }
@@ -245,18 +245,18 @@ void BattleEffect_RunIce(struct BattleEffectArgument *effect) {
 }
 
 /// Douse's bolts are work->particles 0 to 63; their sparks follow window 0's
-/// scanline table in Ram_MapCellBuffer.
+/// scanline table in Ram_MapGridCellBuffer.
 enum { FALLING_BOLT_COUNT = 64, FALLING_BOLT_SPARK_COUNT = 512 };
 
-/// Ram_MapCellBuffer as the falling bolts use it: window 0's scanline table,
-/// then the bolts' sparks.
+/// Ram_MapGridCellBuffer as the falling bolts use it: window 0's scanline
+/// table, then the bolts' sparks.
 struct BoltSparkBuffer {
   u16 lines[160]; ///< WIN0H for each screen line, read by the HBlank DMA
   struct EffectStep sparks[FALLING_BOLT_SPARK_COUNT]; ///< free while -1
 };
 
-/// Ram_MapCellBuffer seen as Douse's struct BoltSparkBuffer.
-#define FALLING_BOLT_SPARKS ((struct BoltSparkBuffer *)Ram_MapCellBuffer)
+/// Ram_MapGridCellBuffer seen as Douse's struct BoltSparkBuffer.
+#define FALLING_BOLT_SPARKS ((struct BoltSparkBuffer *)Ram_MapGridCellBuffer)
 
 #define DOUSE_FALLING_CELL 0x604 ///< the falling bolt picture in the sheet
 #define DOUSE_FLASH_CELL 0x844   ///< the landing flash picture in the sheet
@@ -334,12 +334,12 @@ void BattleEffect_RunDouse(struct BattleEffectArgument *effect) {
   // Window 0's edges, one per scanline: a 128-pixel band slanting half a
   // pixel a line, as the bolts fall, then a fixed span down to line 135.
   if (work->effect->side == 0) {
-    line = (u16 *)Ram_MapCellBuffer;
+    line = (u16 *)Ram_MapGridCellBuffer;
     FALLING_BUILD_SLANTED_WINDOW(line, i, 103,
                                  ((0x34 - i / 2) << 8) | (0xb4 - i / 2),
                                  WIN_RANGE(0, 128));
   } else {
-    line = (u16 *)Ram_MapCellBuffer;
+    line = (u16 *)Ram_MapGridCellBuffer;
     FALLING_BUILD_SLANTED_WINDOW(
         line, i, 103, ((i / 2 + 60) << 8) | (i / 2 + 188), WIN_RANGE(112, 240));
   }

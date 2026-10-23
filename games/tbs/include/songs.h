@@ -5,7 +5,7 @@
 /// Song and sound effect ids, indices into gSound_SongTable. MUS_ ids are
 /// music and SE_ ids sound effects, as their sequences in sound/sequence are
 /// named. Only the ids ☀️ plays are here: the code's own, the field music
-/// gScene_InteractionRuleTable and gEncounter_BattleMusic choose by number, and
+/// gMap_InteractionRuleTable and gEncounter_BattleMusic choose by number, and
 /// the voices and defeat sounds reached by adding to a first id. A sound whose
 /// meaning is shown has a name; the others keep their number. AudioCommand_Play
 /// tests the controls AUDIO_CUE_FADE_BGM and AUDIO_CUE_FADE_SLOT3 first, then
@@ -60,7 +60,7 @@
 /// finds the heart of Sol Sanctum, and after the battle with Tret.
 #define MUS_021 21
 /// Field music of Mercury Lighthouse's aerie, the Elemental Star room, the
-/// Lemurian ship, Venus Lighthouse's aerie once FLAG_PLACE_TEMP_51 is set
+/// Lemurian ship, Venus Lighthouse's aerie once FLAG_MAPSEC_TEMP_51 is set
 /// there, and the world map reached from one of its entrances.
 #define MUS_022 22
 /// Field music of Altin Peak and the Lunpa Fortress, and of Vale once the
@@ -88,7 +88,7 @@
 /// plays as Alex appears at Mercury Lighthouse, in the fight with Tret, on the
 /// ship's mast, and as Saturos and Menardi are confronted at Venus Lighthouse.
 #define MUS_029 29
-/// Field music of Venus Lighthouse's aerie once FLAG_PLACE_TEMP_50 is set
+/// Field music of Venus Lighthouse's aerie once FLAG_MAPSEC_TEMP_50 is set
 /// there; it also plays as Babi meets the party in Altmiller Cave and after the
 /// Colosso, and as Iodem questions the wounded soldiers in Suhalla.
 #define MUS_030 30
@@ -300,10 +300,10 @@
 /// A heavy landing: the leader thrown out of Lunpa, or hopping down a step in
 /// the Tunnel Ruins.
 #define SE_LANDING_THUD 127
-/// Climbing stairs: an EXIT_STYLE_ANIMATED exit, and the stairs up in Vale's
+/// Climbing stairs: an WARP_STYLE_ANIMATED exit, and the stairs up in Vale's
 /// inn and Isaac's house.
 #define SE_STAIRS_UP 128
-/// Going down stairs: an EXIT_STYLE_ANIMATED_ALTERNATE exit, and the stairs
+/// Going down stairs: an WARP_STYLE_ANIMATED_ALTERNATE exit, and the stairs
 /// down in Vale's inn and Isaac's house.
 #define SE_STAIRS_DOWN 129
 /// Field Psynergy beginning: Carry, Cloak, Force, Lift, Mind Read and Ply, and
@@ -419,7 +419,7 @@
 /// effects.
 #define SE_164 164
 /// A scene transition effect.
-#define SE_SCENE_TRANSITION 167
+#define SE_MAP_TRANSITION 167
 /// The ambient sound a scene queues in Lama Temple, Xian and the Manticore's
 /// part of Lamakan Desert (FieldEffect_SetQueuedSoundAndPlay).
 #define SE_169 169
@@ -470,7 +470,7 @@
 /// The leader pushing what stands ahead a cell on: a statue, pillar, crate or
 /// torch walked into in Bilibin, Bilibin Cave, Goma Cave, Kalay, Sol Sanctum,
 /// the Tunnel Ruins, Venus Lighthouse and Altin Peak, and the scenes' staged
-/// pushes (StagedActor_AdvancePair).
+/// pushes (StagedObjectEvent_AdvancePair).
 /// ★ Named from what the player sees: the leader pushing a statue or pillar
 /// ahead (its render)
 #define SE_PUSH 185
@@ -525,7 +525,7 @@
 #define SE_212 212
 /// A pushed log or pillar coming to rest, after SE_STOP_SLOT3 cuts
 /// SE_HEAVY_MOVE: the Colosso matches, Kolima Forest's floodgate, Vale Cave,
-/// and the scenes' staged moves (SceneActor_MoveAndRedraw).
+/// and the scenes' staged moves (MapObjectEvent_MoveAndRedraw).
 /// ★ Named from what the player sees: a pushed log or pillar stopping (its
 /// render)
 #define SE_HEAVY_STOP 213
@@ -658,7 +658,7 @@
 #define SE_286 286 ///< voice blip
 #define SE_287 287 ///< voice blip
 /// A song with no tracks on player 3, which stops the loop playing there: every
-/// scene change (unless FLAG_SKIP_SCENE_CHANGE_SOUND), a rolling log or cart
+/// scene change (unless FLAG_SKIP_MAP_CHANGE_SOUND), a rolling log or cart
 /// stopping, a battle starting on the field.
 #define SE_STOP_SLOT3 288
 /// An effect pair spawned in the eruption at Sol Sanctum.

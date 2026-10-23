@@ -1,9 +1,9 @@
-#ifndef ALCHEMY_UNIT_SCENE_COMMON_EFFECT_PSYNERGY_H
-#define ALCHEMY_UNIT_SCENE_COMMON_EFFECT_PSYNERGY_H
+#ifndef ALCHEMY_UNIT_MAP_COMMON_EFFECT_PSYNERGY_H
+#define ALCHEMY_UNIT_MAP_COMMON_EFFECT_PSYNERGY_H
 
 #include "types.h"
 
-void Scene_StartCutscenePsynergy(void);
-void Scene_EndCutscenePsynergy(void);
+void Map_StartCutscenePsynergy(void);
+void Map_EndCutscenePsynergy(void);
 
 #endif

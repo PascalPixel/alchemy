@@ -1,6 +1,6 @@
 /// @file
-/// Kolima and Kolima Forest (SceneId_Kolima, SceneId_KolimaForestEntrance and
-/// SceneId_KolimaForestTree): an effect that
+/// Kolima and Kolima Forest (MapId_Kolima, MapId_KolimaForestEntrance and
+/// MapId_KolimaForestTree): an effect that
 /// stretches as it travels.
 #include "action_script.h"
 #include "types.h"
@@ -10,11 +10,11 @@
 /// release it once it has reached its destination.
 static s32
 FieldEffect_StretchUntilArrived(struct ScriptInterpreter *interpreter) {
-  struct FieldActor *streak = (struct FieldActor *)interpreter;
+  struct ObjectEvent *streak = (struct ObjectEvent *)interpreter;
   streak->scaleX += 3 * Q16_ONE / 25;
-  if (streak->targetX == ACTOR_NO_TARGET &&
-      streak->targetY == ACTOR_NO_TARGET &&
-      streak->targetZ == ACTOR_NO_TARGET) {
+  if (streak->targetX == OBJ_EVENT_NO_TARGET &&
+      streak->targetY == OBJ_EVENT_NO_TARGET &&
+      streak->targetZ == OBJ_EVENT_NO_TARGET) {
     Engine_ObjectDispatchRelease(streak);
   }
   return 1;

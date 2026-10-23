@@ -10,61 +10,61 @@
 #include "object_runtime.h"
 #include "map_tables.h"
 
-struct MapCell;
-struct FieldActor;
+struct MapGridCell;
+struct ObjectEvent;
 
-/// A scene's row in gField_SceneTable: its overlay's resource, its group
+/// A scene's row in gField_MapTable: its overlay's resource, its group
 /// (the place it belongs to), a variant and its map. One row per scene
-/// number; field/maps.s writes them, and its SceneId_ symbols are the row
+/// number; field/maps.s writes them, and its MapId_ symbols are the row
 /// numbers.
-struct SceneRecord {
+struct MapRecord {
   s16 resourceId; ///< the overlay Resource_LoadCode loads into gOverlayArea
-  /// The place: entering a new group clears the FLAG_PLACE_TEMP_ flags and the
-  /// step counters and moves Retreat's destination; FLAG_PLACE_VISITED(group)
-  /// marks it visited (Scene_ResetFlagsOnEnter).
+  /// The place: entering a new group clears the FLAG_MAPSEC_TEMP_ flags and the
+  /// step counters and moves Retreat's destination; FLAG_MAPSEC_VISITED(group)
+  /// marks it visited (Map_ResetFlagsOnEnter).
   s8 group;
-  /// An enum SceneVariant, copied to gGameState.sceneVariant:
-  /// SCENE_VARIANT_TOWN for towns and their interiors (53 rows: Vale,
-  /// Bilibin, Kalay, Tolbi and others), SCENE_VARIANT_FIELD for the rest.
+  /// An enum MapType, copied to gGameState.mapType:
+  /// MAP_TYPE_TOWN for towns and their interiors (53 rows: Vale,
+  /// Bilibin, Kalay, Tolbi and others), MAP_TYPE_FIELD for the rest.
   s8 variant;
-  u16 mapIndex; ///< the map loaded for it, copied to gGameState.map
-  u16 reserved; ///< 0 in every row; not read
+  u16 layoutIndex; ///< the map loaded for it, copied to gGameState.map
+  u16 reserved;    ///< 0 in every row; not read
 };
 
-STATIC_ASSERT(sizeof(struct SceneRecord) == 8);
+STATIC_ASSERT(sizeof(struct MapRecord) == 8);
 
 /// A scene's exit region: the box that, while its condition holds, takes the
 /// party leader out through its exit.
-struct SceneRegion {
+struct MapWarpRegion {
   s16 minX, minY, minZ; ///< pixels, inclusive; minX -1 ends the table
   s16 maxX, maxY, maxZ; ///< pixels, exclusive
   s16 condition;        ///< -1 always, a flag | 0x1000 set, else the flag clear
   s16 value;            ///< the exit kind, stored in FieldWork's exit
 };
 
-STATIC_ASSERT(sizeof(struct SceneRegion) == 16);
+STATIC_ASSERT(sizeof(struct MapWarpRegion) == 16);
 
 /// The entry table at the start of each scene overlay: its initialize
 /// function and the functions returning its entrances, exits, placements,
 /// events and regions, each behind a veneer word.
-struct SceneEntries {
+struct MapEntries {
   u32 initializeVeneer;
   s32 (*initialize)(void);
-  u32 entrancesVeneer;
-  const struct SceneEntrance *(*entrances)(void);
-  u32 exitsVeneer;
-  const u32 *(*exits)(void);
-  u32 placementsVeneer;
-  const struct ScenePlacement *(*placements)(void);
+  u32 warpDestsVeneer;
+  const struct MapWarpDest *(*warpDests)(void);
+  u32 warpsVeneer;
+  const u32 *(*warps)(void);
+  u32 objectEventTemplatesVeneer;
+  const struct ObjectEventTemplate *(*objectEventTemplates)(void);
   u32 eventsVeneer;
-  const struct SceneEvent *(*events)(void);
+  const struct MapEvent *(*events)(void);
   u32 regionsVeneer;
-  const struct SceneRegion *(*regions)(void);
+  const struct MapWarpRegion *(*regions)(void);
 };
 
-STATIC_ASSERT(sizeof(struct SceneEntries) == 48);
-STATIC_ASSERT(offsetof(struct SceneEntries, exits) == 0x14);
-STATIC_ASSERT(offsetof(struct SceneEntries, regions) == 0x2c);
+STATIC_ASSERT(sizeof(struct MapEntries) == 48);
+STATIC_ASSERT(offsetof(struct MapEntries, warps) == 0x14);
+STATIC_ASSERT(offsetof(struct MapEntries, regions) == 0x2c);
 
 /// A map marker placed as an actor: a chest or a Psynergy stone.
 struct MarkerSlot {
@@ -81,34 +81,35 @@ STATIC_ASSERT(offsetof(struct MarkerSlot, column) == 6);
 STATIC_ASSERT(offsetof(struct MarkerSlot, row) == 7);
 
 /// The values of FieldWork.event that the field loop handles itself, rather
-/// than passing them to the scene (Scene_RunRaisedEvent).
+/// than passing them to the scene (Map_RunRaisedEvent).
 enum FieldEventCode {
   /// Party members fell to poison or hazardous ground this step.
   FIELD_EVENT_PARTY_FELL = -1,
-  /// R on the world map: the picture of the whole world (Map_ShowWorldMap).
+  /// R on the world map: the picture of the whole world (WorldMap_Show).
   FIELD_EVENT_WORLD_MAP_PICTURE = -888,
   /// L on the world map: the view zooms out while L is held
   /// (FieldEffect_RunVisibilityTransition).
   FIELD_EVENT_WORLD_MAP_ZOOM = -889
 };
 
-/// A field scene's work, all of it: Field_RunScene allocates it in heap slot
+/// A field scene's work, all of it: Field_RunMap allocates it in heap slot
 /// 27 (HEAP_SLOT_EVENT), zeroes it and frees it on the way out. The scene
 /// overlays read it as struct EventWork through gEventWork. The twelve
 /// requests from action to event are handled by the field loop.
 struct FieldWork {
-  /// The placement tables placed so far, recorded by Event_SpawnObjectTable.
-  struct ScenePlacement *tables[4];
-  const struct SceneEvent *events; ///< the scene's event table
+  /// The placement tables placed so far, recorded by
+  /// FieldScript_SpawnObjectTable.
+  struct ObjectEventTemplate *tables[4];
+  const struct MapEvent *events; ///< the scene's event table
   /// The actors by id: 0 to 7 the party's characters, 8 on the placed actors.
-  struct FieldActor *actors[66];
+  struct ObjectEvent *objectEvents[66];
   struct MarkerSlot markers[10]; ///< the map's markers (MARKER_MAX)
   /// The twelve requests: each nonzero value asks the field loop for one
   /// thing; Field_ClearRequests clears them and Field_CountRequests sums them.
   ///@{
-  s16 action;   ///< a step event (1 to 239) for Scene_RunTouchOrExit
+  s16 action;   ///< a step event (1 to 239) for Map_RunCoordEventOrWarp
   s16 pushTile; ///< a tile code (252 to 254) for Field_RunPushTileEvent
-  s16 exit;     ///< the exit taken, which ends the scene
+  s16 warp;     ///< the exit taken, which ends the scene
   s16 menu;     ///< open the main menu
   s16 examine;  ///< the A button: examine what is ahead
   s16 start;    ///< the Start button: open the pause menu
@@ -117,7 +118,7 @@ struct FieldWork {
   s16 battle;   ///< the enemy group of a random encounter
   s16 psynergy; ///< a field Psynergy to use, as owner << 10 | Psynergy
   s16 item;     ///< an item to use, packed as Field_UseItem reads it
-  /// A raised event for Scene_RunRaisedEvent, or an enum FieldEventCode.
+  /// A raised event for Map_RunRaisedEvent, or an enum FieldEventCode.
   s16 event;
   ///@}
   s16 fallenCount;     ///< the characters who fell this step
@@ -137,18 +138,18 @@ struct FieldWork {
   /// Distance walked toward the next 0x10000, at which the party regains PP,
   /// Djinn recover and poison hurts (Field_ProcessStep).
   s32 walkingDistance;
-  struct MapCell *currentTile;  ///< the cell the leader last stepped onto
-  struct MapCell *previousTile; ///< the cell before it
-  s32 transition;       ///< SCENE_TRANSITION(style, variant); 0x100 on entry
+  struct MapGridCell *currentTile;  ///< the cell the leader last stepped onto
+  struct MapGridCell *previousTile; ///< the cell before it
+  s32 transition;       ///< MAP_TRANSITION(style, variant); 0x100 on entry
   u16 unk1c4;           ///< not named by TBS code
   u16 transitionActive; ///< set once the opening transition has started
   s32 transitionFrames; ///< frames; 16 on entry and at each event
   s32 fastForward;      ///< debug: skip timed event waits and actor messages
   u8 unk1d0[8];         ///< not named by TBS code
   s16 message;          ///< the next message, advanced as each window opens
-  u16 unk1da;           ///< set to 0xffff by FieldEvent_Start; not read by name
-  s16 unk1dc;           ///< set to -1 by FieldEvent_Start; not read by name
-  s16 unk1de;           ///< set to -1 by FieldEvent_Start; not read by name
+  u16 unk1da; ///< set to 0xffff by FieldScript_Start; not read by name
+  s16 unk1dc; ///< set to -1 by FieldScript_Start; not read by name
+  s16 unk1de; ///< set to -1 by FieldScript_Start; not read by name
   struct ObjectRuntime *camera; ///< the object the map view follows
   u8 unk1e4[0x10];              ///< not named by TBS code
   s32 speaker;       ///< the actor speaking; the leader at each event
@@ -157,7 +158,7 @@ struct FieldWork {
   /// ObjectTable_ResetForObject builds the leader's two-row placement table
   /// at its start; nothing else names it.
   u8 unk200[0xab6];
-  /// Set while a raised or touch event runs; FieldEvent_Start then resets the
+  /// Set while a raised or touch event runs; FieldScript_Start then resets the
   /// effect counter.
   u16 busy;
   s16 revealActive;  ///< nonzero while Reveal is active
@@ -177,7 +178,7 @@ struct FieldWork {
 STATIC_ASSERT(sizeof(struct FieldWork) == 0xccc);
 STATIC_ASSERT(offsetof(struct FieldWork, tables) == 0);
 STATIC_ASSERT(offsetof(struct FieldWork, events) == 0x10);
-STATIC_ASSERT(offsetof(struct FieldWork, actors) == 0x14);
+STATIC_ASSERT(offsetof(struct FieldWork, objectEvents) == 0x14);
 STATIC_ASSERT(offsetof(struct FieldWork, markers) == 0x11c);
 STATIC_ASSERT(offsetof(struct FieldWork, action) == 0x16c);
 STATIC_ASSERT(offsetof(struct FieldWork, talk) == 0x178);
@@ -224,9 +225,9 @@ struct FieldPosition {
 STATIC_ASSERT(sizeof(struct FieldPosition) == 12);
 
 /// Every scene's record, by scene number (field/maps.s).
-extern const struct SceneRecord gField_SceneTable[];
+extern const struct MapRecord gField_MapTable[];
 /// The running scene's overlay, loaded into these 0x8000 bytes of EWRAM at
 /// each scene change; its code opens with its entry table.
-extern struct SceneEntries gOverlayArea;
+extern struct MapEntries gOverlayArea;
 
 #endif

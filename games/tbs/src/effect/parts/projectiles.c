@@ -144,7 +144,7 @@ void BattleEffect_RunDjinniEntrance(struct BattleEffectArgument *effect,
       center[1] += step[1];
       center[2] += step[2];
     }
-    SceneTransform_ApplyPosition(center);
+    Transform_ApplyPosition(center);
     // The user glows white from frame 0 to frame 24.
     if (frame == 0)
       ObjectGroup_UpdateMembers(work->effect->actor, SPRITE_COLOR_WHITE, -1, -1,
@@ -167,17 +167,17 @@ void BattleEffect_RunDjinniEntrance(struct BattleEffectArgument *effect,
         Transform_Push();
         switch (i & 3) {
         case SPIN_YAW:
-          SceneTransform_ApplyYaw(frame * (i * 32 + 256));
+          Transform_ApplyYaw(frame * (i * 32 + 256));
           break;
         case SPIN_PITCH:
-          SceneTransform_ApplyPitch(-frame * (i * 32 + 256));
+          Transform_ApplyPitch(-frame * (i * 32 + 256));
           break;
         case SPIN_ROLL:
-          SceneTransform_ApplyRoll(-frame * (i * 32 + 256));
+          Transform_ApplyRoll(-frame * (i * 32 + 256));
           break;
         case SPIN_PITCH_AND_ROLL:
-          SceneTransform_ApplyPitch(-frame * (i * 32 + 256));
-          SceneTransform_ApplyRoll(-frame * (i * 32 + 256));
+          Transform_ApplyPitch(-frame * (i * 32 + 256));
+          Transform_ApplyRoll(-frame * (i * 32 + 256));
           break;
         }
         EffectPosition_ProjectPoint(&spark->x, &position);

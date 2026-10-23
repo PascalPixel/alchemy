@@ -38,7 +38,7 @@
 /// FIELD_MENU_PSYNERGY), over the field, which stops meanwhile. Psynergy used
 /// on a member takes effect here. When the player picks Psynergy to use on the
 /// field, it is recorded as the field's Psynergy request (EventWork's
-/// psynergyRequest, owner << 10 | Psynergy), which Field_RunScene hands to
+/// psynergyRequest, owner << 10 | Psynergy), which Field_RunMap hands to
 /// Field_UsePsynergy once the menu has closed, and 1 is returned; -1 when the
 /// player backs out or presses Start (the field menu then opens again). Owns
 /// the menu work (HEAP_SLOT_MENU) while it runs and frees it before returning.
@@ -100,7 +100,7 @@ s32 PsynergyMenu_Run(void) {
   WaitFrames(1);
   UiWindow_EraseBorderRectFar(0, 0, 30, 20);
   ((struct UiRenderWork *)WORK_SLOT(HEAP_SLOT_WINDOW))->menuBusy = 0;
-  Event_ClearInvalidPackedValuesFar();
+  FieldScript_ClearInvalidPackedValuesFar();
   return result;
 }
 

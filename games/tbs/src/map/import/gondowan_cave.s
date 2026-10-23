@@ -4,43 +4,43 @@
 	.set import.Engine_TaskWait, 1
 	.set import.Engine_MathSin, 1
 	.set import.Engine_MathCos, 1
-	.set import.Object_SetMode, 1
+	.set import.ObjectEvent_SetMode, 1
 	.set import.Engine_ObjectSetScript, 1
 	.set import.Engine_ObjectCreate, 1
 	.set import.Engine_ObjectSetPosition, 1
 	.set import.FieldObject_WaitForMove, 1
-	.set import.Engine_MapCopyCellAttributes, 1
+	.set import.Engine_MapGridCopyCellAttributes, 1
 	.set import.Object_CheckMovementCollision, 1
-	.set import.Engine_ActorSetSpriteFlags, 1
+	.set import.Engine_ObjectEventSetSpriteFlags, 1
 	.set import.Engine_ObjectSetBlendMode, 1
 	.set import.Engine_WorkSetValuesIfNonNegative, 1
-	.set import.Map_WaitForShakeToSettle, 1
+	.set import.MapGrid_WaitForShakeToSettle, 1
 	.set import.Engine_GameFlagIsSet, 1
 	.set import.Engine_GameFlagSet, 1
 	.set import.Engine_GameFlagClear, 1
-	.set import.Engine_EventWait, 1
-	.set import.Engine_EventStart, 1
-	.set import.Engine_EventEnd, 1
-	.set import.Engine_EventChooseYesNo, 1
-	.set import.Object_GetById, 1
-	.set import.Engine_ActorSetSpeed, 1
-	.set import.Engine_ActorSetDestination, 1
-	.set import.Engine_ActorWalkTo, 1
-	.set import.Engine_ActorSetDestinationOffset, 1
-	.set import.Engine_ActorWaitForMove, 1
-	.set import.Engine_ActorSetPosition, 1
-	.set import.Engine_ActorSetAnimation, 1
-	.set import.Engine_ActorFaceActor, 1
-	.set import.Engine_ActorFaceEachOther, 1
+	.set import.Engine_ScriptWait, 1
+	.set import.Engine_ScriptStart, 1
+	.set import.Engine_ScriptEnd, 1
+	.set import.Engine_ScriptChooseYesNo, 1
+	.set import.ObjectEvent_GetById, 1
+	.set import.Engine_ObjectEventSetSpeed, 1
+	.set import.Engine_ObjectEventSetDestination, 1
+	.set import.Engine_ObjectEventWalkTo, 1
+	.set import.Engine_ObjectEventSetDestinationOffset, 1
+	.set import.Engine_ObjectEventWaitForMove, 1
+	.set import.Engine_ObjectEventSetPosition, 1
+	.set import.Engine_ObjectEventSetAnimation, 1
+	.set import.Engine_ObjectEventFaceObjectEvent, 1
+	.set import.Engine_ObjectEventFaceEachOther, 1
 	.set import.ObjectGroup_SetChildValue, 1
-	.set import.Engine_EventSetMessage, 1
-	.set import.Engine_EventOpenMessage, 1
-	.set import.Engine_EventShowMessage, 1
-	.set import.Engine_ActorFaceDirection, 1
-	.set import.Engine_EventRequestExit, 1
+	.set import.Engine_ScriptSetMessage, 1
+	.set import.Engine_ScriptOpenMessage, 1
+	.set import.Engine_ScriptShowMessage, 1
+	.set import.Engine_ObjectEventFaceDirection, 1
+	.set import.Engine_ScriptRequestWarp, 1
 	.set import.Engine_LeaderCheckAhead, 1
-	.set import.Engine_EventCloseScreen, 1
-	.set import.Engine_EventWaitForScreen, 1
+	.set import.Engine_ScriptCloseScreen, 1
+	.set import.Engine_ScriptWaitForScreen, 1
 	.set import.FieldEffect_PlayQueuedSound, 1
 	.set import.Engine_AudioPlayCue, 1
 	.include "games/tbs/src/system/overlay.inc"

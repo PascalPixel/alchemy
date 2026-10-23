@@ -17,8 +17,8 @@ enum {
   WHIRLWIND_TRAVEL_FRAMES = 10
 };
 
-/// A FieldActor seen with the halfword at 0x64 unsigned and the one at 0x66
-/// signed, as the bytes read them (FieldActor's own types change the code).
+/// A ObjectEvent seen with the halfword at 0x64 unsigned and the one at 0x66
+/// signed, as the bytes read them (ObjectEvent's own types change the code).
 /// Whirlwind particles (object 0xf9) use this view.
 struct WhirlwindOrbit {
   u8 unk00[6];
@@ -194,26 +194,26 @@ void FieldEffect_RunWhirlwindOnTarget(s32 unused) {
 /// palettes to an effect colour and back, and gives the target its shrinking
 /// update; the orb is released at the end, the particles finish on their own.
 void FieldEffect_RunWhirlwind(void) {
-  struct FieldEffectScene *scene = gEffectWork;
-  struct FieldActor *src = scene->mainObject;
-  struct FieldActor *target = scene->child;
+  struct FieldEffectWork *effectWork = gEffectWork;
+  struct ObjectEvent *src = effectWork->mainObject;
+  struct ObjectEvent *target = effectWork->child;
   struct EffectVector pos;
   struct EffectVector from;
   struct EffectVector to;
-  struct FieldActor *ball;
+  struct ObjectEvent *ball;
   s32 step;
-  struct FieldActor *particle;
+  struct ObjectEvent *particle;
   s32 steps = WHIRLWIND_TRAVEL_FRAMES + 1;
 
   step = 0;
   from.x = src->x.fixed;
   from.y = src->y.fixed;
   from.z = src->z.fixed;
-  to.x = scene->x;
-  to.y = scene->y - (4 << 16);
-  to.z = scene->z;
+  to.x = effectWork->x;
+  to.y = effectWork->y - (4 << 16);
+  to.z = effectWork->z;
   // Include both endpoints of the ten-frame interpolation.
-  ball = (struct FieldActor *)Object_Spawn(0xda, 0, 0, 0);
+  ball = (struct ObjectEvent *)Object_Spawn(0xda, 0, 0, 0);
   if (ball == 0) {
     return;
   }
@@ -237,7 +237,7 @@ void FieldEffect_RunWhirlwind(void) {
   WaitFrames(20);
   // Cleared by FieldEffect_DispatchRequestKind: cast on a target a scene event
   // names, the target is blown away.
-  if (scene->enabled == 0) {
+  if (effectWork->enabled == 0) {
     if (target != 0)
       target->update = FieldEffect_ShrinkObjectScaleUntilHalf;
 
@@ -252,7 +252,7 @@ void FieldEffect_RunWhirlwind(void) {
       pos.z = ball->z.fixed;
       dist = Random16() * 5 + (3 << 16);
       Vector_AddPolarOffset(dist, Random16(), &pos);
-      particle = (struct FieldActor *)Object_Spawn(0xf9, pos.x, pos.y, pos.z);
+      particle = (struct ObjectEvent *)Object_Spawn(0xf9, pos.x, pos.y, pos.z);
       if (particle != 0) {
         particle->update = FieldEffect_CircleAnchor;
         particle->linkedObject = ball;

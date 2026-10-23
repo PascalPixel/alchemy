@@ -38,7 +38,7 @@ struct DmaRegisters {
 /// Dma_Fill32 through the caller's own volatile word `cell`, so a function that
 /// fills several blocks keeps one word for all of them and forms its address
 /// once; the word also takes the caller's place in the frame
-/// (Map_InitializePerspectiveScene's sp+28, where Dma_Fill32's would be sp+16).
+/// (WorldMap_InitializePerspective's sp+28, where Dma_Fill32's would be sp+16).
 #define Dma_Fill32Cell(cell, value, destination, size)                         \
   {                                                                            \
     (cell) = (value);                                                          \

@@ -5,8 +5,9 @@
 #include "../psynergy_effects_internal.h"
 
 /// Work slot 22 of the wave effect, 0x298 bytes (gBattleBgEffectWork). It lives
-/// from RunSceneTransitionEffect to FieldEffect_FinishSceneAndReleaseHeapBlock,
-/// after the conversation Mind Read reads.
+/// from FieldEffect_StartMindReadWave to
+/// FieldEffect_FinishWaveAndReleaseHeapBlock, after the conversation Mind Read
+/// reads.
 struct WaveEffectWork {
   /// Each scanline's BG0 horizontal scroll in pixels, two pages written in
   /// turn; 160 of each page's 162 are used.
@@ -32,7 +33,7 @@ struct WaveEffectWork {
 /// The effect stays up until FieldEffect_ClearChildValueOnMismatch ends it
 /// after the after event; meanwhile the message windows show thoughts
 /// (Ui_FillBank15PaletteGrey sets the window mode).
-void RunSceneTransitionEffect(s32 x, s32 y) {
+void FieldEffect_StartMindReadWave(s32 x, s32 y) {
   struct WaveEffectWork *work;
 
   work = Runtime_AllocateBlock(HEAP_SLOT_MIND_READ, 0x298);
@@ -52,13 +53,13 @@ void RunSceneTransitionEffect(s32 x, s32 y) {
 
 /// Stops the wave effect: restores the caster's colours and the palettes and
 /// releases the effect's work.
-void FieldEffect_FinishSceneAndReleaseHeapBlock(void) {
+void FieldEffect_FinishWaveAndReleaseHeapBlock(void) {
   void *work;
 
   work = *(void **)((u32)&gBattleBgEffectWork);
   Ui_SetBank15PaletteAndClearRenderMode();
   Scheduler_RemoveCallback(FieldEffect_UpdateMindReadWave);
-  Animation_ApplyChildPalette((struct MotionObject *)Object_GetById(
+  Animation_ApplyChildPalette((struct MotionObject *)ObjectEvent_GetById(
                                   ((struct WaveEffectWork *)work)->sourceId),
                               1);
   FieldEffect_FadeFromEffectColor();
@@ -74,9 +75,9 @@ void FieldEffect_UpdateMindReadWave(void) {
   struct WaveEffectWork *work = gBattleBgEffectWork;
   u16 *line;
   u32 scanline;
-  struct FieldActor *caster;
-  struct FieldActor *target;
-  struct FieldActor *particle;
+  struct ObjectEvent *caster;
+  struct ObjectEvent *target;
+  struct ObjectEvent *particle;
   struct WaveEffectSprite *sprite;
   struct EffectVector from;
   struct EffectVector to;
@@ -103,26 +104,26 @@ void FieldEffect_UpdateMindReadWave(void) {
     FieldEffect_AdvanceHueCycle();
   }
   Animation_ApplyChildPalette(
-      (struct MotionObject *)Object_GetById(work->sourceId), 0);
+      (struct MotionObject *)ObjectEvent_GetById(work->sourceId), 0);
 
   // At steps 0, 8 and 16 of the cycle, a particle from the target to the
   // caster.
   if (work->counter == 0 || work->counter == 8 || work->counter == 16) {
-    caster = Object_GetById(work->sourceId);
-    target = Object_GetById(work->targetId);
+    caster = ObjectEvent_GetById(work->sourceId);
+    target = ObjectEvent_GetById(work->targetId);
     if (caster != 0 && target != 0) {
       // From 2 pixels below each one's sprite height (its metadata's boxX).
       from.x = caster->x.fixed;
       meta = Resource_GetMetadataRecordFar(
-          (s16)Scene_FindActorPlacement(work->sourceId)->sprite);
+          (s16)Map_FindObjectEventTemplate(work->sourceId)->sprite);
       from.y = caster->y.fixed + ((s8)meta->boxX << 16) - (2 << 16);
       from.z = caster->z.fixed;
       to.x = target->x.fixed;
       meta = Resource_GetMetadataRecordFar(
-          (s16)Scene_FindActorPlacement(work->targetId)->sprite);
+          (s16)Map_FindObjectEventTemplate(work->targetId)->sprite);
       to.y = target->y.fixed + ((s8)meta->boxX << 16) - (2 << 16);
       to.z = target->z.fixed;
-      particle = (struct FieldActor *)Object_CreateFar(281, to.x, to.y, to.z);
+      particle = (struct ObjectEvent *)Object_CreateFar(281, to.x, to.y, to.z);
       if (particle != 0) {
         sprite = (struct WaveEffectSprite *)particle->sprite;
         particle->motionFlags = 0;

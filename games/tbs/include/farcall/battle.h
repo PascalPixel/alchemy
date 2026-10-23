@@ -9,8 +9,8 @@ void DebugBattle_RunMenuFar(void);
 void BattleObject_SpawnObjectsForListFar(s16 *list, s32 refresh);
 /// Points the battle camera at (x, depth, y) with a zoom in percent and lines
 /// the background's perspective plane up with it.
-void BattlePresentation_SetupTransitionSceneFar(s32 x, s32 depth, s32 y,
-                                                s32 zoom);
+void BattlePresentation_SetupTransitionViewFar(s32 x, s32 depth, s32 y,
+                                               s32 zoom);
 /// Points the battle camera at the ground between two units, with a zoom in
 /// percent, for a paired action or a beam.
 void BattlePresentation_SetupTransitionAtPairMidpointFar(s32 a, s32 b,
@@ -61,7 +61,7 @@ s32 BattleMotion_ProjectConditionalPositionFar(s32 id, s32 *projected);
 s32 BattleParty_PrepareActiveOwnersFar(u16 *owners);
 /// Sets the camera to the fixed view shown while commands are chosen, raised
 /// by `pos` pixels.
-void Camera_ConfigureSceneFar(s32 pos);
+void Camera_ConfigureViewFar(s32 pos);
 /// Returns one sprite record of an object, or null when it has no such sprite.
 void *GetMotionRecordFar(struct MotionObject *object, s32 record_index);
 /// Highlights the units in `actors` by turning every other unit's sprites

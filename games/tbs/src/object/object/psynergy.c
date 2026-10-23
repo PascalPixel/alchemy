@@ -13,17 +13,17 @@
 /// PSYNERGY_PHASE_EFFECT_ACTS event is not run here; it only makes
 /// the effect aim at the actor ahead, and the effects that act on it (Force,
 /// Frost, Reveal) find it themselves. An after event whose trigger has flag
-/// 0x400 plays the effect itself. Called by Field_RunScene for the Psynergy
+/// 0x400 plays the effect itself. Called by Field_RunMap for the Psynergy
 /// request (work->psynergy); sets work->resolvingAction while the effect plays.
 /// On the world map, placed actors far from the view are destroyed for the
 /// effect, and all placed actors are placed again afterwards. Returns 0
-/// whatever happens; Field_RunScene ignores it.
+/// whatever happens; Field_RunMap ignores it.
 s32 Field_UsePsynergy(u32 code) {
   s32 abilityId = ABILITY_ID(code);
   struct FieldWork *work = (struct FieldWork *)gEventWork;
-  const struct SceneEvent *before;
-  const struct SceneEvent *after;
-  const struct SceneEvent *during;
+  const struct MapEvent *before;
+  const struct MapEvent *after;
+  const struct MapEvent *during;
   s32 userId;
   s32 target;
   s32 retreat;
@@ -34,7 +34,7 @@ s32 Field_UsePsynergy(u32 code) {
   abilityGroup = BattleAction_Get(abilityId)->type0c;
   userId = ACT_UNIT(code);
   // The leader is looked up and the result is not used.
-  ObjectTable_Get(gGameState.selectedActor);
+  ObjectTable_Get(gGameState.selectedObjectEvent);
   retreat = 0;
   Leader_StopMoving();
   GameFlag_ClearBitFar(FLAG_ITEM_USE);
@@ -65,13 +65,13 @@ s32 Field_UsePsynergy(u32 code) {
       return 0;
     {
       struct GameState *state = &gGameState;
-      s32 scene, returnEntrance;
-      scene = (u16)state->retreatScene;
-      state->scene = scene;
-      returnEntrance = (u16)state->retreatEntrance;
-      state->entrance = returnEntrance;
+      s32 mapId, returnWarpDest;
+      mapId = (u16)state->retreatMap;
+      state->mapId = mapId;
+      returnWarpDest = (u16)state->retreatWarpDest;
+      state->warpDest = returnWarpDest;
     }
-    work->exit = EXIT_RETREAT;
+    work->warp = WARP_RETREAT;
     retreat = 1;
   }
   // A use that pays no PP only runs the scene's ending events.
@@ -86,7 +86,7 @@ s32 Field_UsePsynergy(u32 code) {
       // Retreat was already accepted: take its exit back (the scene and
       // entrance it chose stay in the game state).
       if (retreat)
-        work->exit = 0;
+        work->warp = 0;
       return 0;
     }
     Unit_AddPpFar(userId, -ppCost);
@@ -104,8 +104,8 @@ s32 Field_UsePsynergy(u32 code) {
   GameFlag_SetBitFar(FLAG_PSYNERGY_EFFECT);
   GameFlag_SetBitFar(FLAG_PSYNERGY_TARGET);
   if (before || after || during) {
-    target =
-        Field_FindNearbyPsynergyTarget(gGameState.selectedActor, abilityGroup);
+    target = Field_FindNearbyPsynergyTarget(gGameState.selectedObjectEvent,
+                                            abilityGroup);
     // An event with trigger flag 0x400 plays the effect itself.
     if (after && (after->trigger & 0x400)) {
       GameFlag_ClearBitFar(FLAG_PSYNERGY_EFFECT);
@@ -119,7 +119,7 @@ s32 Field_UsePsynergy(u32 code) {
     ObjectTable_ClearOutOfBounds();
   FieldEffect_LoadActionEffectResources(abilityId, 0);
   work->resolvingAction = 1;
-  FieldEffect_SetupObjectPair(gGameState.selectedActor, target);
+  FieldEffect_SetupObjectPair(gGameState.selectedObjectEvent, target);
   EventObject_Initialize();
 
   Field_RunEventAction(before, userId, target);

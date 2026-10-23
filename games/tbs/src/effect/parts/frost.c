@@ -91,7 +91,7 @@ void BattleEffect_RunFrost(struct BattleEffectArgument *effect) {
     // behind the eye, so they are never projected (see the motes below).
     SET_VECTOR(point, 0, 0, 512 << 16);
     Render_ResetTransformState();
-    SceneTransform_ApplyPosition(point);
+    Transform_ApplyPosition(point);
     // A chime every 4 frames while the columns spring up.
     if (frame >= 36 && frame < 64 && (frame & 3) == 0)
       AudioCommand_PlayFar(SE_ICE);

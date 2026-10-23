@@ -6,7 +6,7 @@ WorldMap_PaletteA:
 	.global WorldMap_TilesA
 WorldMap_TilesA:
 	.incbin "games/tbs/src/graphics/world_map/tiles_a.8bpp.lz"
-	.byte 0x91, 0xb3	@ PACKER: left in the buffer by Field_DefaultMapCells+0x16ba
+	.byte 0x91, 0xb3	@ PACKER: left in the buffer by Field_DefaultGridCells+0x16ba
 	.global WorldMap_TilesB
 WorldMap_TilesB:
 	.incbin "games/tbs/src/graphics/world_map/tiles_b.8bpp.lz"
@@ -22,7 +22,7 @@ WorldMap_TilesD:
 	.global WorldMap_TilesE
 WorldMap_TilesE:
 	.incbin "games/tbs/src/graphics/world_map/tiles_e.8bpp.lz"
-	.byte 0x48	@ PACKER: left in the buffer by Field_DefaultMapCells+0x1ea7
+	.byte 0x48	@ PACKER: left in the buffer by Field_DefaultGridCells+0x1ea7
 	.global WorldMap_PaletteB
 WorldMap_PaletteB:
 	.incbin "games/tbs/src/graphics/world_map/palette_b.gbapal.plz"

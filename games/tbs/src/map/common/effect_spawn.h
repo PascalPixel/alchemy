@@ -34,7 +34,7 @@ enum {
 /// it.
 static inline void FieldEffect_InitializeMotion(struct FieldEffect *effect,
                                                 struct AnimationObject *sprite,
-                                                struct FieldActor *leader,
+                                                struct ObjectEvent *leader,
                                                 s32 velocityX, s32 velocityY,
                                                 s32 velocityZ) {
   effect->velocity.x = velocityX;
@@ -45,7 +45,7 @@ static inline void FieldEffect_InitializeMotion(struct FieldEffect *effect,
   // reload moves after the velocity.z store.
   sprite->image.priority =
       (*(struct AnimationObject **)((u8 *)leader +
-                                    offsetof(struct FieldActor, sprite)))
+                                    offsetof(struct ObjectEvent, sprite)))
           ->image.priority;
   effect->scaleRateX = 0;
   effect->scaleRateY = 0;
@@ -55,7 +55,7 @@ static inline void FieldEffect_InitializeMotion(struct FieldEffect *effect,
 #define EFFECT_SPAWN(name, create, set_mode, set_script)                       \
   void name(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY, s32 velocityZ,  \
             u32 flags, const struct EffectOptions *options) {                  \
-    struct FieldActor *party = Actor_Get(ACTOR_PARTY_LEADER);                  \
+    struct ObjectEvent *party = ObjectEvent_Get(LOCALID_PARTY_LEADER);         \
     struct FieldEffect *effect;                                                \
     struct AnimationObject *sprite;                                            \
     const s32 *script;                                                         \
@@ -68,7 +68,7 @@ static inline void FieldEffect_InitializeMotion(struct FieldEffect *effect,
       return;                                                                  \
                                                                                \
     sprite = effect->sprite;                                                   \
-    set_mode((struct FieldActor *)effect, (flags + 1) & EFFECT_SCRIPT_MASK);   \
+    set_mode((struct ObjectEvent *)effect, (flags + 1) & EFFECT_SCRIPT_MASK);  \
     set_script((void *)effect, gEffectScripts[flags & EFFECT_SCRIPT_MASK]);    \
     effect->motionFlags = 0;                                                   \
     sprite->flags = 0;                                                         \
@@ -79,10 +79,10 @@ static inline void FieldEffect_InitializeMotion(struct FieldEffect *effect,
     if ((flags & EFFECT_OPTION_MASK) == 0 || options == 0)                     \
       return;                                                                  \
     if ((flags & EFFECT_USE_PALETTE) != 0)                                     \
-      ObjectGroup_SetChildValue((struct FieldActor *)effect,                   \
+      ObjectGroup_SetChildValue((struct ObjectEvent *)effect,                  \
                                 options->palette);                             \
     if ((flags & EFFECT_USE_PRIORITY) != 0) {                                  \
-      effect->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;                      \
+      effect->priorityFlags &= ~OBJ_EVENT_PRIORITY_AUTOMATIC;                  \
       sprite->image.priority = options->priority;                              \
     }                                                                          \
     if ((flags & EFFECT_USE_START_SCALE) != 0) {                               \
@@ -104,7 +104,7 @@ static inline void FieldEffect_InitializeMotion(struct FieldEffect *effect,
       }                                                                        \
     }                                                                          \
     if ((flags & EFFECT_USE_SCRIPT) != 0) {                                    \
-      set_mode((struct FieldActor *)effect, 1);                                \
+      set_mode((struct ObjectEvent *)effect, 1);                               \
       set_script((void *)effect, options->script);                             \
     }                                                                          \
     if ((flags & EFFECT_USE_ROTATION) != 0)                                    \
@@ -121,5 +121,6 @@ EFFECT_SPAWN(FieldEffect_SpawnResident, Object_CreateFar,
              ObjectDispatch_SelectAnimationFar, ObjectDispatch_InitializeFar)
 #else
 /// Each overlay includes its own copy of this version.
-EFFECT_SPAWN(FieldEffect_Spawn, Object_Create, Object_SetMode, Object_SetScript)
+EFFECT_SPAWN(FieldEffect_Spawn, ObjectEvent_Create, ObjectEvent_SetMode,
+             ObjectEvent_SetScript)
 #endif

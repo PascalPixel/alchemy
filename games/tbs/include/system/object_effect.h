@@ -9,21 +9,21 @@
 
 #include "animspr.h"
 
-struct FieldActor;
+struct ObjectEvent;
 
 /// The fade overlay draws one mark on each side of its tracked actor.
 struct FadeOverlayWork {
   /// The left and right marks: 16-pixel-wide semi-transparent sprites drawn
   /// where the ground beside the actor rises above its floor.
   struct AnimationSpritePart marks[2];
-  struct FieldActor *actor; ///< the actor tracked; null draws nothing
+  struct ObjectEvent *objectEvent; ///< the actor tracked; null draws nothing
 };
 
 STATIC_ASSERT(sizeof(struct FadeOverlayWork) == 28);
 
 /// HEAP_SLOT_FADE_OVERLAY: the fade overlay's work from
 /// FieldEffect_StartFadeOverlay until the next scene change.
-extern struct FadeOverlayWork *gActorEffectWork;
+extern struct FadeOverlayWork *gObjectEventEffectWork;
 
 #define FIELD_WEATHER_PARTICLE_COUNT 32 ///< GroundParticleWork.particles
 

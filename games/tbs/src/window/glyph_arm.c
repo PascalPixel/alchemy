@@ -5,7 +5,7 @@
 /// (UI_CANVAS_VRAM, mapped by UiWindow_MapTextCanvasTiles). The canvas tiles
 /// run down columns: each column of tiles is as tall as the window's interior,
 /// which is the window height less its two frame rows. UiText_DrawGlyph and
-/// UiWindow_FillFromScene copy these routines into RAM for each call.
+/// UiWindow_FillScanlineSpans copy these routines into RAM for each call.
 
 #include "unit/window/glyph_arm.h"
 #include "types.h"
@@ -307,7 +307,7 @@ s32 UiText_DrawGlyphArm(struct UiWindow *window, u32 character, u32 x, u32 y,
 /// gets 0. The rounded corner tiles trim the first or last scanline of a row by
 /// one pixel on that side, so the window follows the frame's rounded corners.
 /// Each frame of a window transition calls it, through
-/// UiWindow_FillFromScene (battle_command/outputs.c).
+/// UiWindow_FillScanlineSpans (battle_command/outputs.c).
 void Tile_BuildMetatiles(u16 *scanlineBounds, u16 *frameTiles) {
   u32 tileRow;
   u32 tileColumn;

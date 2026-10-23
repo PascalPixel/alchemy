@@ -102,14 +102,15 @@
 extern struct FieldEffectDefinition gFieldEffect_DefinitionTable[];
 
 /// The exit request whose destination is already in gGameState.scene and
-/// .entrance, so that Scene_TakeExit leaves them as they are. Random battles,
-/// Retreat and the event commands that set a destination (Event_SetDestination)
-/// raise it, and Field_RunScene returns it when the whole party falls;
-/// Scene_TakeExit also uses it for "no exit found" (scene.c, run_scene.c).
-#define EXIT_NONE 999
+/// .entrance, so that Map_TakeWarp leaves them as they are. Random battles,
+/// Retreat and the event commands that set a destination
+/// (FieldScript_SetDestination) raise it, and Field_RunMap returns it when the
+/// whole party falls; Map_TakeWarp also uses it for "no exit found" (scene.c,
+/// run_scene.c).
+#define WARP_NONE 999
 
 /// Scene ids above the field maps, which Game_Run runs without a
-/// map; each returns a result to Scene_ReturnFromBattle instead of an exit.
+/// map; each returns a result to Map_ReturnFromBattle instead of an exit.
 /// A 16.16 position that Vector_AddPolarOffset moves by a distance and a
 /// heading: the routine walks the coordinates as three words, and the callers
 /// read the result by name.
@@ -135,8 +136,8 @@ STATIC_ASSERT(sizeof(union PolarOffsetPosition) == 12);
 #define UNIT_NONE 15
 #define ALLY_MAX 7 ///< the last party member; only users up to it pay PP
 
-/// EXIT_NONE's value: Retreat writes its destination itself.
-#define EXIT_RETREAT 999
+/// WARP_NONE's value: Retreat writes its destination itself.
+#define WARP_RETREAT 999
 
 /// Shows message m with the user's and the Psynergy's names, and waits.
 #define PSYNERGY_MESSAGE(who, act, m)                                          \

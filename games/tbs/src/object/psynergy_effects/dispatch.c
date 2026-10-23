@@ -19,7 +19,7 @@ void Field_DispatchTypeHandler(s32 kind) {
   else if (kind == PSYNERGY_STEP_FINISH)
     FieldEffect_ClearChildValueOnMismatch();
   else if (kind == PSYNERGY_STEP_EXTRA)
-    FieldEvent_RunTypeHandler();
+    FieldScript_RunTypeHandler();
 }
 
 void _call_via_r3(s32, s32);
@@ -32,16 +32,16 @@ void _call_via_r3(s32, s32);
 /// action, and by Field_DispatchTypeHandler(PSYNERGY_STEP_UNTARGETED). Halt
 /// also moves gGameState.pausedObject to the actor it stops.
 void FieldEffect_Run(void) {
-  struct FieldEffectScene *scene;
+  struct FieldEffectWork *effectWork;
   struct FieldWork *runtime;
   s32 kind;
   s32 targetId;
   s32 nearestTargetId;
 
-  scene = *(gWorkSlot + HEAP_SLOT_EFFECT);
+  effectWork = *(gWorkSlot + HEAP_SLOT_EFFECT);
   runtime = *(gWorkSlot + HEAP_SLOT_EVENT);
-  kind = scene->fieldKind;
-  targetId = scene->secondObjectId;
+  kind = effectWork->fieldKind;
+  targetId = effectWork->secondObjectId;
 
   switch (kind) {
   case FIELD_KIND_MOVE:
@@ -82,10 +82,11 @@ void FieldEffect_Run(void) {
     }
 
     nearestTargetId =
-        Field_FindNearbyPsynergyTarget(gGameState.selectedActor, kind);
+        Field_FindNearbyPsynergyTarget(gGameState.selectedObjectEvent, kind);
     nearestTargetId = FieldEffect_FilterObjectIdByFlags(nearestTargetId);
-    if (Scene_FindActorTalkEvent(nearestTargetId) != 0) {
-      FieldEffect_SetupObjectPair(gGameState.selectedActor, nearestTargetId);
+    if (Map_FindObjectEventTalkEvent(nearestTargetId) != 0) {
+      FieldEffect_SetupObjectPair(gGameState.selectedObjectEvent,
+                                  nearestTargetId);
       FieldEffect_RunHaltOnTarget(nearestTargetId);
       FieldEffect_PauseObject(nearestTargetId);
       gGameState.pausedObject = nearestTargetId;
@@ -96,8 +97,8 @@ void FieldEffect_Run(void) {
   case FIELD_KIND_MIND_READ:
     // The wave and colour effect, stopping a running Reveal first.
     if (runtime->revealActive != 0)
-      ResetSceneTransitionEffect();
-    RunSceneTransitionEffect(scene->firstObjectId, targetId);
+      FieldEffect_EndReveal();
+    FieldEffect_StartMindReadWave(effectWork->firstObjectId, targetId);
     return;
   case FIELD_KIND_REVEAL:
     FieldEffect_RunReveal();
@@ -124,19 +125,19 @@ void FieldEffect_Run(void) {
 /// Whirlwind, Catch) tell that a scene event decides what happens to the
 /// target. Halt also moves gGameState.pausedObject to the target.
 void FieldEffect_DispatchRequestKind(void) {
-  struct FieldEffectScene *scene = *(gWorkSlot + HEAP_SLOT_EFFECT);
+  struct FieldEffectWork *effectWork = *(gWorkSlot + HEAP_SLOT_EFFECT);
   struct FieldWork *runtime = *(gWorkSlot + HEAP_SLOT_EVENT);
-  s32 kind = scene->fieldKind;
-  s32 targetId = scene->secondObjectId;
+  s32 kind = effectWork->fieldKind;
+  s32 targetId = effectWork->secondObjectId;
 
-  scene->enabled = 0;
+  effectWork->enabled = 0;
   switch (kind) {
   case FIELD_KIND_MIND_READ:
     if (runtime->revealActive != 0)
-      ResetSceneTransitionEffect();
-    if (gGameState.pausedObject != scene->secondObjectId)
-      ((struct ObjectRuntime *)scene->child)->movementState = 1;
-    RunSceneTransitionEffect(scene->firstObjectId, targetId);
+      FieldEffect_EndReveal();
+    if (gGameState.pausedObject != effectWork->secondObjectId)
+      ((struct ObjectRuntime *)effectWork->child)->movementState = 1;
+    FieldEffect_StartMindReadWave(effectWork->firstObjectId, targetId);
     break;
   case FIELD_KIND_MOVE:
     // Push the target with the direction keys.
@@ -199,12 +200,12 @@ void FieldEffect_DispatchRequestKind(void) {
 /// Field_DispatchTypeHandler(PSYNERGY_STEP_FINISH): Mind Read is the one kind
 /// whose effect stays up through the after event, the conversation it reads.
 void FieldEffect_ClearChildValueOnMismatch(void) {
-  struct FieldEffectScene *scene = gEffectWork;
+  struct FieldEffectWork *effectWork = gEffectWork;
 
-  if (scene->fieldKind == FIELD_KIND_MIND_READ) {
-    FieldEffect_FinishSceneAndReleaseHeapBlock();
-    if (gGameState.pausedObject != scene->secondObjectId) {
-      ((struct ObjectRuntime *)scene->child)->movementState = 0;
+  if (effectWork->fieldKind == FIELD_KIND_MIND_READ) {
+    FieldEffect_FinishWaveAndReleaseHeapBlock();
+    if (gGameState.pausedObject != effectWork->secondObjectId) {
+      ((struct ObjectRuntime *)effectWork->child)->movementState = 0;
     }
   }
 }
@@ -212,19 +213,19 @@ void FieldEffect_ClearChildValueOnMismatch(void) {
 /// The extra handler of Reveal, Cloak and Avoid: what each does when it ends.
 /// Called by Field_RunPsynergyEvents, which ends a Psynergy that runs out by
 /// itself, and by Field_DispatchTypeHandler(PSYNERGY_STEP_EXTRA).
-void FieldEvent_RunTypeHandler(void) {
+void FieldScript_RunTypeHandler(void) {
   u32 kind;
 
-  kind = ((struct FieldEffectScene *)gEffectWork)->fieldKind;
+  kind = ((struct FieldEffectWork *)gEffectWork)->fieldKind;
   switch (kind) {
   case FIELD_KIND_REVEAL:
-    ResetSceneTransitionEffect();
+    FieldEffect_EndReveal();
     return;
   case FIELD_KIND_CLOAK:
     FieldEffect_EndCloak();
     return;
   case FIELD_KIND_AVOID:
-    FieldEvent_ShowStatusMessage();
+    FieldScript_ShowStatusMessage();
     return;
   }
 }
@@ -246,18 +247,19 @@ s32 Field_RunEventAction(const void *event, s32 param, s32 target) {
     script = ((const struct EffectDescriptor *)event)->result;
     if (script != 0) {
       if (script < 0x10000) {
-        FieldEvent_Start();
-        Event_SetMessageId(((const struct EffectDescriptor *)event)->result);
-        FieldEvent_ShowMessageAndWait(target, 0);
-        FieldEvent_End();
+        FieldScript_Start();
+        FieldScript_SetMessageId(
+            ((const struct EffectDescriptor *)event)->result);
+        FieldScript_ShowMessageAndWait(target, 0);
+        FieldScript_End();
       } else {
         _call_via_r3(param, target);
       }
     }
     if (GameFlag_TestFar(FLAG_NOTHING_HAPPENS) != 0) {
-      FieldEvent_Start();
+      FieldScript_Start();
       UiText_ShowPositionedMessageAndWaitFar(MsgNothingHappens, 1);
-      FieldEvent_End();
+      FieldScript_End();
     }
   }
   return 0;
@@ -372,7 +374,7 @@ Sprite_ShareVramCache(struct AnimationObject *sourceSprite,
 /// flag bit 2) and has no shadow; its creator releases it, or its script
 /// frees it.
 struct ObjectRuntime *Object_Spawn(s32 kind, s32 x, s32 y, s32 z) {
-  struct FieldEffectScene *work = gEffectWork;
+  struct FieldEffectWork *work = gEffectWork;
   struct ObjectRuntime *object;
 
   object = Object_CreateFar(kind, x, y, z);
@@ -400,17 +402,17 @@ void ObjectGroup_SetActionForOthers(struct ObjectRuntime *except, s32 state,
                                     s32 value) {
   s16 *player;
   struct ObjectRuntime *object;
-  s32 actorId;
+  s32 objectEventId;
 
-  actorId = 0;
+  objectEventId = 0;
   player = (s16 *)gPlayerObjectId;
   do {
-    object = ObjectTable_Get(actorId);
-    if (actorId != *player && object != NULL && object != except) {
+    object = ObjectTable_Get(objectEventId);
+    if (objectEventId != *player && object != NULL && object != except) {
       object->movementState = state;
       ObjectDispatch_SetAnimationSpeedFar((struct DispatchObject *)object,
                                           value);
     }
-    actorId++;
-  } while (actorId <= OBJECT_LAST);
+    objectEventId++;
+  } while (objectEventId <= OBJECT_LAST);
 }

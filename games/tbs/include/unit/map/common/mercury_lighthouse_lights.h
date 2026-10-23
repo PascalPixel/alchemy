@@ -1,10 +1,10 @@
-#ifndef ALCHEMY_UNIT_SCENE_COMMON_MERCURY_LIGHTHOUSE_LIGHTS_H
-#define ALCHEMY_UNIT_SCENE_COMMON_MERCURY_LIGHTHOUSE_LIGHTS_H
+#ifndef ALCHEMY_UNIT_MAP_COMMON_MERCURY_LIGHTHOUSE_LIGHTS_H
+#define ALCHEMY_UNIT_MAP_COMMON_MERCURY_LIGHTHOUSE_LIGHTS_H
 
 #include "types.h"
 #include "static_assert.h"
 
-struct FieldActor;
+struct ObjectEvent;
 
 /// Published in the scene's light-controller slot while the pillar is active.
 struct MercuryLighthouseLights {
@@ -17,10 +17,10 @@ struct MercuryLighthouseLights {
   /// 16.16 fixed-point pixels: the centre of the column's cell, where a
   /// sinking leader is put back.
   s32 targetX;
-  s32 targetZ;               ///< as targetX
-  struct FieldActor *pillar; ///< the column of light over the leader, or null
+  s32 targetZ;                ///< as targetX
+  struct ObjectEvent *pillar; ///< the column of light over the leader, or null
   /// The light holding the leader up where they landed in the pool, or null.
-  struct FieldActor *stepEffect;
+  struct ObjectEvent *stepEffect;
 };
 
 STATIC_ASSERT(sizeof(struct MercuryLighthouseLights) == 0x1c);

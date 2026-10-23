@@ -1,11 +1,11 @@
-@ C2: Tile_ConvertMap:
+@ C2: Tile_ConvertMapGrid:
 @ push saves r5-r8 without lr.
 @ C2: Tile_CopyStrided:
 @ push saves r5-r9/sl/fp without lr; fp holds copied data.
 .syntax unified
 	.arm
-	.global Tile_ConvertMap
-Tile_ConvertMap:
+	.global Tile_ConvertMapGrid
+Tile_ConvertMapGrid:
 	push	{r5, r6, r7, r8}
 	mov	r5, #-16777216
 	orr	r5, r5, r5, lsr #4
@@ -48,8 +48,8 @@ Tile_ConvertMap:
 	bne	.Linterleave
 	pop	{r5, r6, r7, r8}
 	bx	lr
-	.global Tile_ConvertMapCodeSize
-	.set Tile_ConvertMapCodeSize, . - Tile_ConvertMap
+	.global Tile_ConvertMapGridCodeSize
+	.set Tile_ConvertMapGridCodeSize, . - Tile_ConvertMapGrid
 .syntax unified
 	.arm
 	.global Tile_CopyStrided

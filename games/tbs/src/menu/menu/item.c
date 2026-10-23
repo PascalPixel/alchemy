@@ -170,7 +170,7 @@ s32 ItemMenu_Run(void) {
   WaitFrames(1);
   UiWindow_EraseBorderRectFar(0, 0, 30, 20);
   ((struct UiRenderWork *)*process)->menuBusy = 0;
-  Event_ClearInvalidPackedValuesFar();
+  FieldScript_ClearInvalidPackedValuesFar();
   return result;
 }
 
@@ -508,7 +508,7 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
       }
       Unit_CalculateFar(menu->paneOwner[0]);
       menu->selectedItemIcon->active = ICON_HIDDEN;
-      Event_ClearInvalidPackedValuesFar();
+      FieldScript_ClearInvalidPackedValuesFar();
       break;
 
     // Give the item, or some of a stack, to the chosen member. A full
@@ -621,7 +621,7 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
           }
         }
       }
-      Event_ClearInvalidPackedValuesFar();
+      FieldScript_ClearInvalidPackedValuesFar();
       state = ITEM_STEP_OWNER;
       break;
 
@@ -766,7 +766,7 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
       }
       MemFree(targetCopy);
       MemFree(sourceCopy);
-      Event_ClearInvalidPackedValuesFar();
+      FieldScript_ClearInvalidPackedValuesFar();
       state = ITEM_STEP_OWNER;
       break;
 
@@ -826,7 +826,7 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
       menu->equipPreview = 0;
       RenderOutput_ClearListFar(menu->infoWindow);
       InventoryMenu_ShowModalMessage(MsgRemoved, ITEM_MODAL_REMOVED_X, 8);
-      Event_ClearInvalidPackedValuesFar();
+      FieldScript_ClearInvalidPackedValuesFar();
       state = ITEM_STEP_ITEM;
       break;
 

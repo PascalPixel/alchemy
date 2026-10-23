@@ -1,35 +1,36 @@
-#ifndef ALCHEMY_UNIT_SCENE_BABI_PALACE_H
-#define ALCHEMY_UNIT_SCENE_BABI_PALACE_H
+#ifndef ALCHEMY_UNIT_MAP_BABI_PALACE_H
+#define ALCHEMY_UNIT_MAP_BABI_PALACE_H
 
 #include "types.h"
 #include "map_tables.h"
 #include "field_runtime.h"
 
-struct SceneEntrance;
-struct SceneEvent;
-struct ScenePlacement;
+struct MapWarpDest;
+struct MapEvent;
+struct ObjectEventTemplate;
 
-const struct SceneEntrance *Scene_GetEntrances(void);
-const struct SceneRegion *BabiPalace_GetRegions(void);
-const u32 *BabiPalace_GetExits(void);
-const struct ScenePlacement *Scene_GetPlacements(void);
-const struct SceneEvent *Scene_GetEvents(void);
+const struct MapWarpDest *Map_GetWarpDests(void);
+const struct MapWarpRegion *BabiPalace_GetRegions(void);
+const u32 *BabiPalace_GetWarps(void);
+const struct ObjectEventTemplate *Map_GetObjectEventTemplates(void);
+const struct MapEvent *Map_GetEvents(void);
 s32 BabiPalace_ApplyEntryState(void);
 extern u16 gBabiPalace_DoorCells[];
 extern s32 gBabiPalace_IndigestionScript[];
-extern struct SceneEntrance gBabiPalace_Entrances[];
-extern struct SceneEntrance gBabiPalace_OutsideEntrances[];
-extern struct SceneRegion gBabiPalace_Regions[];
-extern u32 gBabiPalace_Exits[];
-extern struct ScenePlacement gBabiPalace_OutsidePlacements[];
-extern struct ScenePlacement gBabiPalace_PlacementsBabiMissing[];
-extern struct ScenePlacement gBabiPalace_PlacementsFinals[];
-extern struct ScenePlacement gBabiPalace_PlacementsAfterColosso[];
-extern struct SceneEvent gBabiPalace_EventsBabiMissing[];
-extern struct SceneEvent gBabiPalace_EventsFinals[];
-extern struct SceneEvent gBabiPalace_EventsAfterColosso[];
-extern struct SceneEvent gBabiPalace_OutsideEventsBabiMissing[];
-extern struct SceneEvent gBabiPalace_OutsideEventsFinals[];
-extern struct SceneEvent gBabiPalace_OutsideEventsAfterColosso[];
+extern struct MapWarpDest gBabiPalace_WarpDests[];
+extern struct MapWarpDest gBabiPalace_OutsideWarpDests[];
+extern struct MapWarpRegion gBabiPalace_Regions[];
+extern u32 gBabiPalace_Warps[];
+extern struct ObjectEventTemplate gBabiPalace_OutsideObjectEventTemplates[];
+extern struct ObjectEventTemplate gBabiPalace_ObjectEventTemplatesBabiMissing[];
+extern struct ObjectEventTemplate gBabiPalace_ObjectEventTemplatesFinals[];
+extern struct ObjectEventTemplate
+    gBabiPalace_ObjectEventTemplatesAfterColosso[];
+extern struct MapEvent gBabiPalace_EventsBabiMissing[];
+extern struct MapEvent gBabiPalace_EventsFinals[];
+extern struct MapEvent gBabiPalace_EventsAfterColosso[];
+extern struct MapEvent gBabiPalace_OutsideEventsBabiMissing[];
+extern struct MapEvent gBabiPalace_OutsideEventsFinals[];
+extern struct MapEvent gBabiPalace_OutsideEventsAfterColosso[];
 
 #endif

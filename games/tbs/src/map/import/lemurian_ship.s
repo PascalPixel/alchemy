@@ -11,40 +11,40 @@
 	.set import.Engine_VramLoad, 1
 	.set import.Resource_FindFreeEntry, 1
 	.set import.Runtime_PushSlotEntry, 1
-	.set import.Object_SetMode, 1
+	.set import.ObjectEvent_SetMode, 1
 	.set import.Engine_ObjectSetScript, 1
 	.set import.Engine_ObjectCreate, 1
-	.set import.Engine_MapRedraw, 1
-	.set import.Engine_MapCopyCellAttributes, 1
-	.set import.Engine_ActorSetSpriteFlags, 1
+	.set import.Engine_MapGridRedraw, 1
+	.set import.Engine_MapGridCopyCellAttributes, 1
+	.set import.Engine_ObjectEventSetSpriteFlags, 1
 	.set import.Engine_WorkSetValuesIfNonNegative, 1
 	.set import.Inventory_AddItem, 1
 	.set import.Engine_GameFlagSet, 1
-	.set import.Engine_EventWait, 1
-	.set import.Engine_EventStart, 1
-	.set import.Engine_EventEnd, 1
-	.set import.Engine_EventChooseYesNo, 1
-	.set import.Object_GetById, 1
-	.set import.Engine_ActorSetSpeed, 1
-	.set import.Engine_ActorEnableActionCallback, 1
-	.set import.Object_RefreshSelectorById, 1
-	.set import.Engine_ActorWalkToAndWait, 1
-	.set import.Engine_ActorWaitForMove, 1
-	.set import.Engine_ActorSetAnimation, 1
-	.set import.Engine_ActorSetAnimationAndWait, 1
-	.set import.Engine_ActorRunRepeatedMotion, 1
-	.set import.Engine_EventSetMessage, 1
+	.set import.Engine_ScriptWait, 1
+	.set import.Engine_ScriptStart, 1
+	.set import.Engine_ScriptEnd, 1
+	.set import.Engine_ScriptChooseYesNo, 1
+	.set import.ObjectEvent_GetById, 1
+	.set import.Engine_ObjectEventSetSpeed, 1
+	.set import.Engine_ObjectEventEnableActionCallback, 1
+	.set import.ObjectEvent_RefreshSelectorById, 1
+	.set import.Engine_ObjectEventWalkToAndWait, 1
+	.set import.Engine_ObjectEventWaitForMove, 1
+	.set import.Engine_ObjectEventSetAnimation, 1
+	.set import.Engine_ObjectEventSetAnimationAndWait, 1
+	.set import.Engine_ObjectEventRunRepeatedMotion, 1
+	.set import.Engine_ScriptSetMessage, 1
 	.set import.UiText_OpenMessageAtObject, 1
-	.set import.Engine_EventShowMessage, 1
-	.set import.Engine_ActorFaceDirection, 1
-	.set import.Engine_ActorShowEmote, 1
+	.set import.Engine_ScriptShowMessage, 1
+	.set import.Engine_ObjectEventFaceDirection, 1
+	.set import.Engine_ObjectEventShowEmote, 1
 	.set import.Engine_CameraSetSpeed, 1
 	.set import.Engine_CameraMoveTo, 1
 	.set import.Engine_CameraWaitForMove, 1
-	.set import.Event_SetDestination, 1
-	.set import.Engine_EventRequestExit, 1
-	.set import.Engine_EventCloseScreen, 1
-	.set import.Engine_EventWaitForScreen, 1
+	.set import.FieldScript_SetDestination, 1
+	.set import.Engine_ScriptRequestWarp, 1
+	.set import.Engine_ScriptCloseScreen, 1
+	.set import.Engine_ScriptWaitForScreen, 1
 	.set import.Field_EndBusyAndReveal, 1
 	.set import.Motion_LaunchFromFocusedObject, 1
 	.set import.ObjectMotion_CommitPositionAndActivate, 1

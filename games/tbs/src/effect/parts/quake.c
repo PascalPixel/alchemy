@@ -33,7 +33,7 @@ struct RockWallHeights {
 /// Each pillar is capped with a strip of ground cut from the background.
 ///
 /// Writes REG_BG2PA, REG_BLDCNT and, on side 1, REG_BG2X; overwrites the
-/// first 0x8000 bytes of Ram_MapCellBuffer with BG tiles; sets the targets'
+/// first 0x8000 bytes of Ram_MapGridCellBuffer with BG tiles; sets the targets'
 /// vertical velocity and gravity; arms work->shakeFrames.
 ///
 /// effect: the targets; variant picks the row of gQuake_Timings.
@@ -76,7 +76,7 @@ void BattleEffect_RunQuake(struct BattleEffectArgument *effect) {
   // Copy the background tiles (0x8000 bytes from VRAM 0x06008000) and cut
   // the strip at x 32 to 71, y 96 to 111 into the start of the sheet: the
   // ground that caps each pillar.
-  Iwram_CopyWords(Ram_MapCellBuffer, BG_CHAR_BLOCK(2), 0x8000);
+  Iwram_CopyWords(Ram_MapGridCellBuffer, BG_CHAR_BLOCK(2), 0x8000);
   for (row = 0; row != 16; row++) {
     y = row + 96;
     for (col = 0; col != QUAKE_PILLAR_WIDTH; col++) {
@@ -84,7 +84,8 @@ void BattleEffect_RunQuake(struct BattleEffectArgument *effect) {
       s32 pixel = (((col + 32) & 7) + (((col + 32) / 8) << 6) + ((y & 7) << 3) +
                    ((y / 8) << 11));
 
-      work->sheet[row * QUAKE_PILLAR_WIDTH + col] = Ram_MapCellBuffer[pixel];
+      work->sheet[row * QUAKE_PILLAR_WIDTH + col] =
+          Ram_MapGridCellBuffer[pixel];
     }
   }
 

@@ -39,7 +39,7 @@ extern char ResourceId_CamelotLogo;
 /// The title picture on BG2, loaded by Title_LoadBackground and, for the save
 /// menu, by Clear_LoadBackground.
 extern char ResourceId_GoldenSunLogo;
-/// The still world map Map_ShowWorldMap shows for a
+/// The still world map WorldMap_Show shows for a
 /// FIELD_EVENT_WORLD_MAP_PICTURE event; it loads this one whatever picture
 /// it's passed.
 extern char ResourceId_WorldMapPicture;
@@ -48,8 +48,8 @@ extern char ResourceId_WorldMapPicture;
 /// which it keeps the bottom 32 rows.
 extern char ResourceId_IntroTilesB;
 
-// Battle backdrops. Battle_SelectSceneBackdrop picks one for the current
-// scene from gBattle_BackdropScenes (object/map_rules.s), and on the world
+// Battle backdrops. Battle_SelectMapBackdrop picks one for the current
+// scene from gBattle_BackdropMaps (object/map_rules.s), and on the world
 // map Battle_SelectTerrainBackdrop picks one by terrain; either leaves it in
 // gGameState.special for the battle. The credits slideshow
 // (gDisplayScroll_SlideResources) shows every one but DesertBackdrop and
@@ -58,11 +58,11 @@ extern char ResourceId_IntroTilesB;
 /// Suhalla Gate's checkpoint and Dew rooms. The debug battle menu fights on it
 /// too.
 extern char ResourceId_SuhallaGateBackdrop;
-extern char ResourceId_PirateShipBackdrop;        ///< SceneId_PirateShip.
+extern char ResourceId_PirateShipBackdrop;        ///< MapId_PirateShip.
 extern char ResourceId_CrossboneIsleCaveBackdrop; ///< Crossbone Isle's floors.
 /// Colosso's three matches (Azart, Satrage and Navampa) and the link lobby.
 extern char ResourceId_ColossoBackdrop;
-/// SceneId_VenusLighthouseAerie.
+/// MapId_VenusLighthouseAerie.
 extern char ResourceId_VenusLighthouseAerieBackdrop;
 /// Venus Lighthouse's floors, from the ground floor to the fourth.
 extern char ResourceId_VenusLighthouseBackdrop;
@@ -71,20 +71,20 @@ extern char ResourceId_SuhallaDesertBackdrop;
 /// Altmiller Cave and Lunpa Fortress.
 extern char ResourceId_AltmillerCaveBackdrop;
 extern char ResourceId_TunnelRuinsBackdrop; ///< Tunnel Ruins' two statue rooms.
-/// Babi Lighthouse, and SceneId_CrossboneIsleBane on Crossbone Isle.
+/// Babi Lighthouse, and MapId_CrossboneIsleBane on Crossbone Isle.
 extern char ResourceId_BabiLighthouseBackdrop;
 /// Lamakan Desert's three scenes.
 extern char ResourceId_LamakanDesertBackdrop;
 extern char ResourceId_MogallForestBackdrop; ///< Mogall Forest's three scenes.
-/// SceneId_MercuryLighthouseAerie.
+/// MapId_MercuryLighthouseAerie.
 extern char ResourceId_MercuryLighthouseAerieBackdrop;
-/// SceneId_TolbiShipInteriors.
+/// MapId_TolbiShipInteriors.
 extern char ResourceId_TolbiShipInteriorsBackdrop;
-/// Fuchin Falls Cave, and SceneId_CrossboneIsleFloatingLogs on Crossbone
+/// Fuchin Falls Cave, and MapId_CrossboneIsleFloatingLogs on Crossbone
 /// Isle.
 extern char ResourceId_ImilFuchinFallsBackdrop;
 extern char ResourceId_KolimaForestBackdrop; ///< Kolima Forest's five scenes.
-/// SceneId_TretTreeInteriors.
+/// MapId_TretTreeInteriors.
 extern char ResourceId_TretTreeInteriorsBackdrop;
 /// Goma Cave, Kolima Tunnel, Bilibin Cave and Gateway Cave, and any scene the
 /// table doesn't list, since it comes last.
@@ -93,13 +93,13 @@ extern char ResourceId_GomaCaveBackdrop;
 extern char ResourceId_InteriorBackdrop;
 /// Altin Peak's scenes but the Hydros statue.
 extern char ResourceId_AltinPeakBackdrop;
-/// SceneId_TolbiShipDeck and SceneId_TolbiShipMast.
+/// MapId_TolbiShipDeck and MapId_TolbiShipMast.
 extern char ResourceId_TolbiShipDeckBackdrop;
 /// Mercury Lighthouse's floors below the aerie and its exterior.
 extern char ResourceId_MercuryLighthouseBackdrop;
 /// Vale's scenes, the stormy night included; the credits open on it.
 extern char ResourceId_ValeStormBackdrop;
-extern char ResourceId_TretTreeBranchBackdrop; ///< SceneId_TretTreeBranch.
+extern char ResourceId_TretTreeBranchBackdrop; ///< MapId_TretTreeBranch.
 /// Set by the first slot of ENCOUNTER_ZONE_SCRIPTED
 /// (Field_RequestBattleFromEncounterTable), and by the storm opening of
 /// BattlePresentation_RunEntryTransition, where the enemies alone take part.
@@ -109,8 +109,8 @@ extern char ResourceId_BeachBackdrop;
 /// World map snowfields and snowy forests.
 extern char ResourceId_SnowfieldBackdrop;
 extern char ResourceId_GrasslandBackdrop; ///< World map grassland.
-/// Sol Sanctum's rooms, SceneId_AltinPeakHydrosStatue and
-/// SceneId_CrossboneIsleSteppingStones, and any world map terrain without a
+/// Sol Sanctum's rooms, MapId_AltinPeakHydrosStatue and
+/// MapId_CrossboneIsleSteppingStones, and any world map terrain without a
 /// backdrop of its own.
 extern char ResourceId_SolSanctumBackdrop;
 /// World map forests; the Judgment and Kirin summons draw it too.
@@ -139,7 +139,7 @@ extern char ResourceId_LuckyDiceSprites;
 
 // The flashing strikes' pictures (effect/parts/thrash.c). Each holds two
 // pictures; the first of a pair fills work->imageStorage, the second the start
-// of Ram_MapCellBuffer.
+// of Ram_MapGridCellBuffer.
 
 extern char ResourceId_RevealMaskA; ///< Vorpal Slash, first of its pair.
 extern char ResourceId_RevealMaskB; ///< Vorpal Slash, second of its pair.
@@ -251,22 +251,22 @@ extern char ResourceId_CrystalSheet;
 // Field, world map and menu resources.
 
 /// The world map's tile offsets and packed tiles, which
-/// Map_WriteLayerCellTile decodes one at a time as the view moves
+/// WorldMap_WriteLayerCellTile decodes one at a time as the view moves
 /// (perspective->tiles).
 extern char ResourceId_PerspectiveDataA;
-/// The world map cells Map_InitializePerspectiveScene decodes into
-/// Ram_MapCellBuffer, and that the still views put back on their way out.
-extern char ResourceId_DefaultMapCells;
+/// The world map cells WorldMap_InitializePerspective decodes into
+/// Ram_MapGridCellBuffer, and that the still views put back on their way out.
+extern char ResourceId_DefaultGridCells;
 /// Colosso's first opponent's recorded path, played by the Azart match.
 extern char ResourceId_OpponentPathA;
-/// The world map's tile animation channels (MapAnimation_StartChannels).
-extern char ResourceId_DefaultMapAnimation;
+/// The world map's tile animation channels (TileAnimation_StartChannels).
+extern char ResourceId_DefaultTileAnimation;
 /// The world map's block attributes, loaded with its default cells.
 extern char ResourceId_DefaultMetatileAttributes;
 
 // The world map's two graphics sets (gWorldMap_GraphicsResources), each a
 // palette and five tile sets: WorldMap_LoadGraphics decodes the first four
-// into char blocks 2 and 3 and the fifth into gMapLayerData for the tile
+// into char blocks 2 and 3 and the fifth into gMapGridLayerData for the tile
 // animation. The second set is for WORLD_MAP_REGION_SNOWFIELD.
 
 extern char ResourceId_WorldMapPaletteA; ///< The first set's colours.
@@ -296,9 +296,9 @@ extern char ResourceId_Icons;
 /// The command icons, a halfword offset each and then 1 KB of 256-colour
 /// pixels compressed; an icon's number is also its name's in MsgCommandName.
 extern char ResourceId_CommandIcons;
-/// The first layered map row: gMap_LayeredScenes counts its rows from here,
-/// and Map_LoadLayeredScene adds them to it.
-extern char ResourceId_Map001;
+/// The first layered map row: gLayouts counts its rows from here,
+/// and MapGrid_LoadLayout adds them to it.
+extern char ResourceId_Layout001;
 
 // Battle effect pictures, continued.
 

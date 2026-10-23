@@ -9,8 +9,8 @@
 #include "types.h"
 
 #define SC_LABEL(n) (s32)(0x80000000 | (n) << 16) ///< Branch destination
-/// A jump's operand: the label SC_LABEL(n), which Script_FindLabel matches
-/// without bit 30.
+/// A jump's operand: the label SC_LABEL(n), which ActionScript_FindLabel
+/// matches without bit 30.
 #define SC_TO(n) (s32)(0xc0000000 | (n) << 16)
 #define SC_TOP 0          ///< Script start
 #define SC_FOREVER 0xffff ///< An SC_LOOP count that never runs out
@@ -91,15 +91,15 @@ enum ScriptWork {
   SW_PAUSED = 0x20,
   SW_REPEAT = 0x21,
   SW_WAIT = 0x22,
-  /// FieldActor.timer, the parameter an action script reads; a scene's own
+  /// ObjectEvent.timer, the parameter an action script reads; a scene's own
   /// scripts set it to 1 as they end, for the code that waits on them.
   SW_TIMER = 0x23,
-  /// FieldActor.work, scene scratch: a scene script sets it for the scene code
+  /// ObjectEvent.work, scene scratch: a scene script sets it for the scene code
   /// that reads or waits on it.
   SW_WORK = 0x24,
   SW_HOOK = 0x26,
-  SW_RISE_COUNTER = 0x27, ///< FieldActor.riseCounter, scene code's own byte
-  SW_RISE_ENABLED = 0x28  ///< FieldActor.riseEnabled, scene code's own byte
+  SW_RISE_COUNTER = 0x27, ///< ObjectEvent.riseCounter, scene code's own byte
+  SW_RISE_ENABLED = 0x28  ///< ObjectEvent.riseEnabled, scene code's own byte
 };
 
 #endif

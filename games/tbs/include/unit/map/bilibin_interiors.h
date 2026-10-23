@@ -1,20 +1,21 @@
-#ifndef ALCHEMY_UNIT_SCENE_BILIBIN_INTERIORS_H
-#define ALCHEMY_UNIT_SCENE_BILIBIN_INTERIORS_H
+#ifndef ALCHEMY_UNIT_MAP_BILIBIN_INTERIORS_H
+#define ALCHEMY_UNIT_MAP_BILIBIN_INTERIORS_H
 
 #include "types.h"
 #include "map_tables.h"
 
-struct SceneRegion;
+struct MapWarpRegion;
 
-const struct SceneEntrance *BilibinInteriors_GetEntrances(void);
-const struct SceneRegion *BilibinInteriors_GetRegions(void);
-const u32 *BilibinInteriors_GetExits(void);
-const struct ScenePlacement *BilibinInteriors_GetPlacements(void);
-const struct SceneEvent *BilibinInteriors_GetEvents(void);
+const struct MapWarpDest *BilibinInteriors_GetWarpDests(void);
+const struct MapWarpRegion *BilibinInteriors_GetRegions(void);
+const u32 *BilibinInteriors_GetWarps(void);
+const struct ObjectEventTemplate *
+BilibinInteriors_GetObjectEventTemplates(void);
+const struct MapEvent *BilibinInteriors_GetEvents(void);
 s32 BilibinInteriors_Initialize(void);
-extern struct SceneEntrance gBilibinInteriorsEntrances[];
-extern u32 gBilibinInteriorsExits[];
-extern struct ScenePlacement gBilibinInteriorsPlacements[];
-extern struct SceneEvent gBilibinInteriorsEvents[];
+extern struct MapWarpDest gBilibinInteriorsWarpDests[];
+extern u32 gBilibinInteriorsWarps[];
+extern struct ObjectEventTemplate gBilibinInteriorsObjectEventTemplates[];
+extern struct MapEvent gBilibinInteriorsEvents[];
 
 #endif

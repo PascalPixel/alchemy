@@ -61,7 +61,7 @@ void BattleEffect_RunBreak(struct BattleEffectArgument *effect) {
     SET_VECTOR(point, object->x, height, object->z);
     EffectPosition_ProjectPoint(point, &screen);
     screen.x >>= 1;
-    for (i = 0, shard = (struct EffectStep *)(Ram_MapCellBuffer + offset);
+    for (i = 0, shard = (struct EffectStep *)(Ram_MapGridCellBuffer + offset);
          i != DRAIN_ICE_SHARDS_PER_TARGET; i++) {
       s32 radius;
       s32 angle;
@@ -102,7 +102,8 @@ void BattleEffect_RunBreak(struct BattleEffectArgument *effect) {
       if (frame > member * 20) {
         struct EffectStep *shard;
 
-        for (i = 0, shard = (struct EffectStep *)(Ram_MapCellBuffer + offset);
+        for (i = 0,
+            shard = (struct EffectStep *)(Ram_MapGridCellBuffer + offset);
              i != DRAIN_ICE_SHARDS_PER_TARGET; i++) {
           if (shard->variant >= 0) {
             s32 size;

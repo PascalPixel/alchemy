@@ -7,7 +7,7 @@
 
 /// Schedules the debug scene and entrance selector; 0xc80 is a scheduler order,
 /// not a number of frames to wait. Nothing in the game calls it.
-UNUSED void DebugMenu_ScheduleSceneSelector(void) {
+UNUSED void DebugMenu_ScheduleMapSelector(void) {
 #ifdef UBFIX
   Scheduler_AddOrUpdateCallback(Menu_RunSelection, 0xC80);
 #else
@@ -19,28 +19,27 @@ UNUSED void DebugMenu_ScheduleSceneSelector(void) {
 /// The first line has the scene's name (MsgDebugCategoryName + scene) and,
 /// beside it, the area its entrance leads to (MsgDebugEntryName + area); the
 /// numbers, three digits each, go under them.
-void Menu_DrawSelectionRow(struct UiWindow *work, s32 scene,
-                           const s16 *entrance) {
-  s16 sceneIndex = scene;
-  s32 label =
-      Scene_GetAreaNameIndexFar(sceneIndex, *entrance) + MsgDebugEntryName;
+void Menu_DrawSelectionRow(struct UiWindow *work, s32 mapId,
+                           const s16 *warpDest) {
+  s16 mapIndex = mapId;
+  s32 label = MapSec_GetNameIndexFar(mapIndex, *warpDest) + MsgDebugEntryName;
   RenderOutput_PrepareForRedraw(work);
-  UiText_DrawNumber(sceneIndex, 3, work, 0, 14);
-  UiText_DrawNumber(*entrance, 3, work, MENU_LABEL_X, 14);
+  UiText_DrawNumber(mapIndex, 3, work, 0, 14);
+  UiText_DrawNumber(*warpDest, 3, work, MENU_LABEL_X, 14);
   UiText_DrawString(gMenu_ColonString, work, MENU_TEXT_X, 0);
-  UiText_DrawResource(sceneIndex + MsgDebugCategoryName, work, 0, 0);
+  UiText_DrawResource(mapIndex + MsgDebugCategoryName, work, 0, 0);
   UiText_DrawString(gMenu_ColonString, work, MENU_TEXT_X, 14);
   UiText_DrawResource(label, work, MENU_LABEL_X, 0);
 }
 
 // The debug scene selector: a scene and an entrance number, starting from
 // the scene being run (Menu_HandleSelectionRowInput has the keys). A warps
-// there (Event_SetDestinationFar), B closes it. The field opens it in debug
-// mode when the Start button's menu (Save your quest, Sleep, Change
+// there (FieldScript_SetDestinationFar), B closes it. The field opens it in
+// debug mode when the Start button's menu (Save your quest, Sleep, Change
 // settings) is opened with B held (object/object/run_map.c).
 // The scheduler and the debug menu's far call ignore this selection result.
 // Plain void removes two result moves (252 to 248 bytes in tbs-en) and
-// reorders Event_SetDestinationFar's argument setup.
+// reorders FieldScript_SetDestinationFar's argument setup.
 #ifdef UBFIX
 void Menu_RunSelection(void) {
 #else
@@ -48,18 +47,18 @@ s16 Menu_RunSelection(void) {
 #endif
   s32 cursorSlot;
   s16 selectedField;
-  s16 entrance;
+  s16 warpDest;
   struct MenuSprite cursor;
-  s16 scene;
+  s16 mapId;
   struct UiWindow *window;
   s16 result;
 
   window = 0;
   selectedField = 0;
-  scene = gGameState.defaultScene;
-  entrance = gGameState.defaultEntrance;
+  mapId = gGameState.defaultMap;
+  warpDest = gGameState.defaultWarpDest;
   window = UiWindow_Create(0, 7, 30, 5, 2);
-  Menu_DrawSelectionRow(window, scene, &entrance);
+  Menu_DrawSelectionRow(window, mapId, &warpDest);
   UiTextResource_Initialize(&cursor, &cursorSlot);
 
   // Wait for the keys that opened it to be let go.
@@ -68,11 +67,11 @@ s16 Menu_RunSelection(void) {
 
   for (;;) {
     result =
-        Menu_HandleSelectionRowInput(window, scene, &entrance, &selectedField);
+        Menu_HandleSelectionRowInput(window, mapId, &warpDest, &selectedField);
     if (result == -1) {
       UiTextResource_Release(cursorSlot);
       UiWork_Finalize(window, 2);
-      Event_SetDestinationFar(scene, entrance);
+      FieldScript_SetDestinationFar(mapId, warpDest);
 #ifdef UBFIX
       return;
 #else
@@ -91,7 +90,7 @@ s16 Menu_RunSelection(void) {
 
     UiTextResource_SetPosition(&cursor, MENU_TEXT_X,
                                selectedField * 14 + MENU_TEXT_Y);
-    scene = result;
+    mapId = result;
     WaitFrames(1);
   }
 }
@@ -104,8 +103,8 @@ s16 Menu_RunSelection(void) {
 /// step a scene by ten, setting the entrance to 0, and past either end go
 /// to the other (195 + 10 gives 0); they step an entrance by ten, wrapping
 /// by 99 (95 + 10 gives 6).
-s32 Menu_HandleSelectionRowInput(struct UiWindow *window, s16 scene,
-                                 s16 *entrance, s16 *selectedField) {
+s32 Menu_HandleSelectionRowInput(struct UiWindow *window, s16 mapId,
+                                 s16 *warpDest, s16 *selectedField) {
   if (gKeysRepeat & KEY_A)
     return -1;
   if (gKeysRepeat & KEY_B)
@@ -116,52 +115,52 @@ s32 Menu_HandleSelectionRowInput(struct UiWindow *window, s16 scene,
     *selectedField ^= 1;
   } else if (gKeysRepeat & KEY_RIGHT) {
     if (*selectedField == 0) {
-      scene++;
+      mapId++;
     } else {
-      (*entrance)++;
-      if (*entrance > 99)
-        *entrance = 0;
+      (*warpDest)++;
+      if (*warpDest > 99)
+        *warpDest = 0;
     }
-    if (scene > 200)
-      scene = 0;
-    Menu_DrawSelectionRow(window, scene, entrance);
+    if (mapId > 200)
+      mapId = 0;
+    Menu_DrawSelectionRow(window, mapId, warpDest);
   } else if (gKeysRepeat & KEY_LEFT) {
     if (*selectedField == 0) {
-      scene--;
+      mapId--;
     } else {
-      (*entrance)--;
-      if (*entrance < 0)
-        *entrance = 99;
+      (*warpDest)--;
+      if (*warpDest < 0)
+        *warpDest = 99;
     }
-    if (scene < 0)
-      scene = 200;
-    Menu_DrawSelectionRow(window, scene, entrance);
+    if (mapId < 0)
+      mapId = 200;
+    Menu_DrawSelectionRow(window, mapId, warpDest);
   } else if (gKeysRepeat & KEY_R) {
     if (*selectedField == 0) {
-      *entrance = 0;
-      scene += 10;
+      *warpDest = 0;
+      mapId += 10;
     } else {
-      *entrance += 10;
-      if (*entrance > 99)
-        *entrance -= 99;
+      *warpDest += 10;
+      if (*warpDest > 99)
+        *warpDest -= 99;
     }
-    if (scene > 200)
-      scene = 0;
-    Menu_DrawSelectionRow(window, scene, entrance);
+    if (mapId > 200)
+      mapId = 0;
+    Menu_DrawSelectionRow(window, mapId, warpDest);
   } else if (gKeysRepeat & KEY_L) {
     if (*selectedField == 0) {
-      *entrance = 0;
-      scene -= 10;
+      *warpDest = 0;
+      mapId -= 10;
     } else {
-      *entrance -= 10;
-      if (*entrance < 0)
-        *entrance += 99;
+      *warpDest -= 10;
+      if (*warpDest < 0)
+        *warpDest += 99;
     }
-    if (scene < 0)
-      scene = 200;
-    Menu_DrawSelectionRow(window, scene, entrance);
+    if (mapId < 0)
+      mapId = 200;
+    Menu_DrawSelectionRow(window, mapId, warpDest);
   }
-  return scene;
+  return mapId;
 }
 
 /// Shows a 16x16 flag grid per page and processes input until closed.

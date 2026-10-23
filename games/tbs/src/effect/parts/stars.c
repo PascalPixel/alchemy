@@ -113,7 +113,7 @@ void BattleEffect_RunAstralBlast(struct BattleEffectArgument *effect) {
         if (size > 10)
           size = 10;
         EFFECT_VIEW_FROM_CAMERA(camera);
-        SceneTransform_ApplyPosition(EffectStep_Coordinates(step));
+        Transform_ApplyPosition(EffectStep_Coordinates(step));
         // The ring's ten points, alternately near and far from its centre,
         // projected onto the canvas; peak is the largest projection scale
         // (16.16), that of the point nearest the camera. The ring spins 1/64
@@ -123,15 +123,15 @@ void BattleEffect_RunAstralBlast(struct BattleEffectArgument *effect) {
           s32 depth;
 
           Transform_Push();
-          SceneTransform_ApplyRoll((frame - start) << 10);
-          SceneTransform_ApplyYaw(0x4000);
+          Transform_ApplyRoll((frame - start) << 10);
+          Transform_ApplyYaw(0x4000);
           scale.x = ((frame - start) << 12) + 0x1000;
           if (scale.x > 0x10000)
             scale.x = 0x10000;
           scale.y = scale.x;
           scale.z = scale.x;
-          SceneTransform_ApplyScale(Vector3_Coordinates(&scale));
-          SceneTransform_ApplyRoll(j * 0x199a);
+          Transform_ApplyScale(Vector3_Coordinates(&scale));
+          Transform_ApplyRoll(j * 0x199a);
           depth = EffectPosition_ProjectPoint(&gStar_Points[j & 1],
                                               &screenPosition);
           if (peak < depth)

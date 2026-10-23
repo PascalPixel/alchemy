@@ -315,7 +315,7 @@ s32 BattlePresentation_RunPairedUnitTransition(
   } else {
     context.effect.side = EFFECT_SIDE_ENEMIES;
   }
-  BattleEffect_RunSceneEffectFar(&context.effect);
+  BattleEffect_RunSummonEffectFar(&context.effect);
 
   // Bring every unit back and fade the caster's side in.
   WaitFrames(10);
@@ -332,7 +332,7 @@ s32 BattlePresentation_RunPairedUnitTransition(
   for (index = 0; index != sideCount; index++) {
     BattlePresentation_SetActorRecordMode(index + sideStart, ACTOR_OPAQUE);
   }
-  BattlePresentation_SetupTransitionScene(0, 0, 0, 0x64);
+  BattlePresentation_SetupTransitionView(0, 0, 0, 0x64);
   WaitFrames(3);
   return 0;
 }
@@ -548,7 +548,7 @@ void BattleMotion_SetMode5AndActivateSlot(s32 unitId) {
     actorData->colorMode = SPRITE_COLOR_GREY;
     actorData->frame = 0xFF;
     WaitFrames(4);
-    Map_RenderAnimatedTileFramesForObjectFar((u8 *)animation);
+    SpriteDissolve_RunFar((u8 *)animation);
     BattleObject_MarkForRelease(unitId);
   }
 }

@@ -18,7 +18,7 @@ extern s32 gTransformStackDepth;
 /// HEAP_SLOT_TRANSFORM_STACK, or just past it while a matrix is saved.
 extern u8 *gTransformStackTop;
 
-void SceneTransform_RewindStack(void);
+void Transform_RewindStack(void);
 
 /// Sets a twelve-word matrix to identity: 0x10000 (1.0) on the rotation's
 /// diagonal, the rest 0.

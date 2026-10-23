@@ -24,7 +24,7 @@ the rooms: `TestRoom0` to `TestRoom7` all run the Djinn room's overlay, each
 on its own map, and `IncreaseItemAndLevel` and `MenuTest` run the other two.
 The only way in is the debug scene selector, `Menu_RunSelection`
 ([debug.c](../window/battle_command/debug.c)), which warps to any scene and
-entrance by number. `Field_RunScene` opens it when the Start menu is opened
+entrance by number. `Field_RunMap` opens it when the Start menu is opened
 with B held, and only while `gDebugMode` is set.
 
 Nothing but start-up (`gDebugMode = 0` in `runtime/runtime/system.c`) and the
@@ -59,8 +59,8 @@ party's levels to fixed targets, which a second visit cannot raise further,
 but adds to the shops' stock of rare items, which a second visit adds to
 again.
 
-The Djinn room's (`Scene_RunEmptyScene`) does nothing. The level room's
-(`FieldScene_RunEntrySetup`) draws the level editor 1.6 times its size (1.7 in
+The Djinn room's (`Map_RunEmpty`) does nothing. The level room's
+(`Map_RunLevelRoomSetup`) draws the level editor 1.6 times its size (1.7 in
 Japanese) and, outside Japanese, starts the emote testers' animations. The menu
 test room's (`CommandTable_ConfigureCommandList`) builds a test party: Jenna
 leaves, Garet, Mia and Ivan join, the shops' counters for their rare weapons
@@ -68,12 +68,12 @@ and armour go up, and everyone is raised to level 30, Isaac to 50 outside
 Japanese; in Japanese the coins are set to 777777. Each visit therefore adds to
 the shops' stock again, but changes a level only if it is still below the
 target, because `Unit_LevelUpTo` only ever raises one. None of the rooms has
-exit regions, so each answers that entry with `SceneData_ReturnZero`.
+exit regions, so each answers that entry with `MapData_ReturnZero`.
 
 | Room | Setup entry | What it does |
 | --- | --- | --- |
-| Djinn room | `Scene_RunEmptyScene` | nothing |
-| Level room | `FieldScene_RunEntrySetup` | draws the level editor 1.6 times its size (1.7 in Japanese); outside Japanese, starts the emote testers |
+| Djinn room | `Map_RunEmpty` | nothing |
+| Level room | `Map_RunLevelRoomSetup` | draws the level editor 1.6 times its size (1.7 in Japanese); outside Japanese, starts the emote testers |
 | Menu test room | `CommandTable_ConfigureCommandList` | builds the test party at level 30 (Isaac 50 outside Japanese) and raises the shops' rare-item counters |
 
 ## The Djinn room
@@ -96,10 +96,10 @@ on the next visit. Those two calls are the room's whole import table.
 
 | Actor | Name | Djinni |
 | --- | --- | --- |
-| 8 | `ACTOR_FLINT` | Flint, Venus |
-| 9 | `ACTOR_FIZZ` | Fizz, Mercury |
-| 10 | `ACTOR_FORGE` | Forge, Mars |
-| 11 | `ACTOR_GUST` | Gust, Jupiter |
+| 8 | `LOCALID_FLINT` | Flint, Venus |
+| 9 | `LOCALID_FIZZ` | Fizz, Mercury |
+| 10 | `LOCALID_FORGE` | Forge, Mars |
+| 11 | `LOCALID_GUST` | Gust, Jupiter |
 
 ## The level room
 
@@ -154,10 +154,10 @@ out Djinn and treasure, wound and afflict Isaac and Garet, and run a preset
 shop (`Shop_OpenDebugShop`) with 200000 coins, broken equipment and afflicted
 members.
 
-The two Felixes, actors 16 (`ACTOR_FELIX`) and 17 (`ACTOR_SECOND_FELIX`),
+The two Felixes, actors 16 (`LOCALID_FELIX`) and 17 (`LOCALID_SECOND_FELIX`),
 changed most. In Japanese they are plain talk events: 16 opens the character
 selector, whose choice nothing uses, and 17 an item browser. Everywhere else
-each has four `EVENT_TALK` rows that differ in the way the leader must face,
+each has four `MAP_EVENT_TALK` rows that differ in the way the leader must face,
 written in bits 15 to 12 of the control word as sixteenths of a turn from
 east, with bit 10 asking for the facing. Most open a message browser that
 pages through one keeper's lines. To the south, 17 has no row in English; in
@@ -174,7 +174,7 @@ speaker.
 ## How it fits with the rest of the game
 
 The rooms are scenes like any other: the scene table names their overlays,
-`Field_RunScene` runs them, and their events call the same main-image code
+`Field_RunMap` runs them, and their events call the same main-image code
 the real places call, through the same import tables
 ([System](../system/README.md#how-an-overlay-reaches-the-rest-of-the-game)).
 The selector that reaches them is in [Windows](../window/README.md), and the
@@ -208,8 +208,8 @@ debug mode. Link order is in `games/tbs/objects.tsv`; prototypes are in
 | --- | --- |
 | `TestRooms_` | the Djinn room (`rooms.c`) |
 | `ItemLevel_` | the level and browser room (`level.c`) |
-| `MenuTest_`, `DebugMenu_`, `SceneDialogue_` | the message and shop test room (`test.c`) and its message helper |
-| `SceneData_`, `Scene_`, `FieldScene_`, `CommandTable_` | the setup and region entries, which keep older names; the other four entries take the room's prefix (`TestRooms_GetEvents`) |
+| `MenuTest_`, `DebugMenu_`, `MenuTest_` | the message and shop test room (`test.c`) and its message helper |
+| `MapData_`, `Map_`, `Map_`, `CommandTable_` | the setup and region entries, which keep older names; the other four entries take the room's prefix (`TestRooms_GetEvents`) |
 
 ## Evidence and open questions
 
@@ -226,7 +226,7 @@ its labels. The rooms are reserved slots that were never given their own
 content, which is why one overlay serves them all.
 
 - XXX (no evidence): what the 56 words at the head of the Djinn room's data
-  (`gTestRooms_EntrancesHead`, eight rows of seven) and the same words in the
+  (`gTestRooms_WarpDestsHead`, eight rows of seven) and the same words in the
   menu test room (`gDebugItemPromptHead`) hold; no code reads them, since an
   overlay's data is reached only through its entries and none returns them,
   and no other data in the ROM has their layout.

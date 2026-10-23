@@ -8,9 +8,9 @@
 #include "edition.h"
 #include "static_assert.h"
 
-struct ScenePlacement;
-struct SceneEvent;
-struct FieldActor;
+struct ObjectEventTemplate;
+struct MapEvent;
+struct ObjectEvent;
 struct ObjectRuntime;
 
 /// The running scene's event work: its placement and event tables, its
@@ -18,14 +18,14 @@ struct ObjectRuntime;
 /// message on show. It is struct FieldWork (heap slot 27) as the scenes see
 /// it, through gEventWork; each field is the FieldWork field at its offset.
 struct EventWork {
-  struct ScenePlacement *tables[4];    ///< the placement tables placed so far
-  struct SceneEvent *events;           ///< the scene's event table
-  struct FieldActor *actors[8];        ///< the party's characters, ids 0 to 7
-  struct FieldActor *placedActors[58]; ///< the placed actors, from id 8
+  struct ObjectEventTemplate *tables[4]; ///< the placement tables placed so far
+  struct MapEvent *events;               ///< the scene's event table
+  struct ObjectEvent *objectEvents[8];   ///< the party's characters, ids 0 to 7
+  struct ObjectEvent *placedObjectEvents[58]; ///< the placed actors, from id 8
   u8 unk11c[0x50];    ///< FieldWork's markers; not named by TBS code
   s16 touchedTrigger; ///< the step event a touch or exit event answers
   u8 unk16e[2];       ///< FieldWork's pushTile request; not named by TBS code
-  u16 requestedExit;  ///< the exit kind taken, which ends the scene
+  u16 requestedWarp;  ///< the exit kind taken, which ends the scene
   /// FieldWork's menu: 1 opens the main menu once the event ends, so that
   /// the item the place asks for can be used there.
   u16 requestedMenu;
@@ -34,7 +34,7 @@ struct EventWork {
   u16 encounterEnemyGroup; ///< the next battle's enemy group, 0 for none
   s16 psynergyRequest;   ///< a field Psynergy to use, as owner << 10 | Psynergy
   u8 unk180[2];          ///< FieldWork's item request; not named by TBS code
-  s16 raisedTrigger;     ///< a raised event for Scene_RunRaisedEvent
+  s16 raisedTrigger;     ///< a raised event for Map_RunRaisedEvent
   u8 unk184[0x18];       ///< FieldWork's fallen characters and item slot
   s16 blockedSteps;      ///< frames the leader has pushed against something
   s16 mode;              ///< an enum ObjectSystemMode
@@ -42,16 +42,16 @@ struct EventWork {
   s32 encounterBias;     ///< randomized distance adjustment between battles
   s32 encounterThreshold; ///< encounter steps before a battle
   u8 unk1b0[0x10];        ///< FieldWork's walking distance and tiles
-  s32 startTransition;    ///< SCENE_TRANSITION(style, variant)
+  s32 startTransition;    ///< MAP_TRANSITION(style, variant)
   u8 unk1c4[4];           ///< FieldWork's unk1c4 and transitionActive
   s32 transitionFrames;   ///< frames
   u8 unk1cc[0x0c];        ///< FieldWork's fastForward and unk1d0
   u16 message;            ///< the next message, advanced as each window opens
   u8 unk1da[6];           ///< FieldWork's unk1da to unk1de
-  struct FieldActor *viewCenter; ///< the object the map view follows
-  u8 unk1e4[0x10];               ///< not named by TBS code through this view
+  struct ObjectEvent *viewCenter; ///< the object the map view follows
+  u8 unk1e4[0x10];                ///< not named by TBS code through this view
   /// The actor speaking; the yes/no choice closes the portrait window of its
-  /// sprite once answered (Event_AskYesNoWithActorAnimation).
+  /// sprite once answered (FieldScript_AskYesNoWithObjectEventAnimation).
   s32 speaker;
   u8 unk1f8[0xaca]; ///< not named by TBS code through this view
   /// FieldWork's nameMessage: the first of the two names the yes/no choice
@@ -60,9 +60,9 @@ struct EventWork {
   u16 choiceWidth; ///< FieldWork's nameWidth: its name window's width, 0 for 3
 };
 
-STATIC_ASSERT(offsetof(struct EventWork, placedActors) == 0x34);
+STATIC_ASSERT(offsetof(struct EventWork, placedObjectEvents) == 0x34);
 STATIC_ASSERT(offsetof(struct EventWork, touchedTrigger) == 0x16c);
-STATIC_ASSERT(offsetof(struct EventWork, requestedExit) == 0x170);
+STATIC_ASSERT(offsetof(struct EventWork, requestedWarp) == 0x170);
 STATIC_ASSERT(offsetof(struct EventWork, requestedMenu) == 0x172);
 STATIC_ASSERT(offsetof(struct EventWork, facingTrigger) == 0x17a);
 STATIC_ASSERT(offsetof(struct EventWork, encounterEnemyGroup) == 0x17c);

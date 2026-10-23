@@ -3,11 +3,11 @@
 	.set import.Scheduler_AddOrUpdateCallback, 1
 	.set import.Runtime_SetIrqHandler, 1
 	.set import.SerialRuntime_PollAndTransfer, 1
-	.set import.Map_GetTerrainHeight, 1
-	.set import.Engine_EventStart, 1
-	.set import.Engine_EventEnd, 1
-	.set import.Object_GetById, 1
-	.set import.Engine_EventRequestExit, 1
+	.set import.MapGrid_GetTerrainHeight, 1
+	.set import.Engine_ScriptStart, 1
+	.set import.Engine_ScriptEnd, 1
+	.set import.ObjectEvent_GetById, 1
+	.set import.Engine_ScriptRequestWarp, 1
 	.set import.Field_RequestDjinnBattle, 1
 	.set import.DisplayTransition_InitializeBattleEffectState, 1
 	.set import.Engine_AudioPlayCue, 1

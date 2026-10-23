@@ -39,7 +39,7 @@
 /// Returns nothing useful; callers ignore the value.
 s32 Menu_ResumeFieldTasks(void) {
   Scheduler_ResumeOverlayTasks();
-  MapAnimation_ResumeFar();
+  TileAnimation_ResumeFar();
   // FLAG_WEATHER_HELD freezes the field weather: its particles hold
   // their frame and the storm's lightning waits (psynergy_effects/weather.c).
   GameFlag_ClearBitFar(FLAG_WEATHER_HELD);
@@ -58,7 +58,7 @@ s32 Menu_ResumeFieldTasks(void) {
 s32 Menu_SuspendFieldTasks(void) {
   GameFlag_SetBitFar(FLAG_PALETTE_BLEND_HELD);
   GameFlag_SetBitFar(FLAG_WEATHER_HELD);
-  MapAnimation_SuspendFar();
+  TileAnimation_SuspendFar();
   return Scheduler_SuspendOverlayTasks();
 }
 

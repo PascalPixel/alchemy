@@ -181,14 +181,14 @@ These turn up all over the game.
     (`KolimaForestFloodgate_CreateLogs`, 1 of 82 instructions in tbs-en);
   - `*(u8 *)&actor->priorityFlags`, which the compiler doesn't treat as a
     struct reference; written as member stores, the loop's registers are
-    allocated differently (Crossbone Isle's `Event_MovePillar`, 100 of 265
+    allocated differently (Crossbone Isle's `EventScript_MovePillar`, 100 of 265
     instructions in tbs-en);
   - `*(u8 *)&unit->field` in `Battle_RollEffectSuccess`
     ([`game/game/battle_calc.c`](game/game/battle_calc.c)), where each zero
     test written as `unit->field` merges with a neighbour's into one halfword
     or word load (sleep and psySeal; delusion, confusion and charm; haunt and
     grimReaper), and 30 of 204 instructions differ in tbs-en;
-  - Altin's hop countdowns, which read and decrement `FieldActor.work` as a
+  - Altin's hop countdowns, which read and decrement `ObjectEvent.work` as a
     signed halfword and reset it through the declared unsigned member;
   - the Goma stump turns, which read `AnimationObject.rotation` as a signed
     halfword, keeping the negative literal.
@@ -196,7 +196,7 @@ These turn up all over the game.
   behaviour, marked `// UB:`, with the declared access behind `UBFIX`:
   - a pointer read or stored as an integer: `*(s32 *)&metadata->frames`,
     which keeps the zero load ahead of it (`Animation_AllocateLayer`); the
-    `u32` views of `gMapWork[0]` (`SceneActor_MoveAndRedraw`) and of
+    `u32` views of `gMapGridWork[0]` (`MapObjectEvent_MoveAndRedraw`) and of
     `gEventWork` (`TolbiShipDeck_SightLand`, where the word may alias the
     halfword facing stores before it and so stays after them); the update
     hooks `AltmillerCave_Initialize` stores as `s32` (as `->update`, one store
@@ -240,10 +240,10 @@ interrupts and calls into RAM.
   combining them changes the register allocation and the stores.
 - A register write is either `Io_Write16(value, &REG_X)`, which builds the
   value in a word first and keeps the store where it's written, or plain
-  `REG_X = value`. `Scene_RunEntrySetup`
+  `REG_X = value`. `Map_RunEntrySetup`
   ([`map/venus_lighthouse.c`](map/venus_lighthouse.c)) clears
   `REG_BLDCNT` with `Io_Write16(zero, &REG_BLDCNT)`, where `REG_BLDCNT = 0`
-  doesn't match. `Map_InitializePerspectiveScene`
+  doesn't match. `WorldMap_InitializePerspective`
   ([`field/field/world_map.c`](field/field/world_map.c)) writes the affine
   identity with `Io_Write16` and clears `REG_BG3Y` with `Io_Write16(0,
   &REG_BG3Y)`, which keep the 0x100 for `REG_BG2PD` built just before its
@@ -269,9 +269,9 @@ interrupts and calls into RAM.
 
 The field engine's spellings are about its map state and a few of its loops.
 
-- `(mapState->anim + channelIndex)->` stands for `mapState->anim[channelIndex].`
-  (`MapAnimation_Update`).
-- `(u16)~(...)` makes a halfword mask (`Map_SetShownLayers`).
+- `(gridState->anim + channelIndex)->` stands for `gridState->anim[channelIndex].`
+  (`TileAnimation_Update`).
+- `(u16)~(...)` makes a halfword mask (`MapGrid_SetShownLayers`).
 - Three loops are written with `goto` (`Sprite_ComposeAnimationFrame`,
   `AnimationObject_SelectAnimation`), and the comments beside them give the
   measured cost of their loop forms. The other `goto`s (the wander retries,
@@ -281,7 +281,7 @@ The field engine's spellings are about its map state and a few of its loops.
   [one object, many views](field/README.md#one-object-many-views) lists. They
   stay apart because the compiler addresses a field differently by its
   declared type and by whether it is reached through a union (the
-  `FieldActor` union moves a load), so one merged struct would change the
+  `ObjectEvent` union moves a load), so one merged struct would change the
   bytes at sites each view now matches. XXX: likely one struct in Camelot's
   source, because every view describes the same 112 bytes; merging them
   waits until every field has one name and type that every site matches
@@ -299,13 +299,13 @@ each keeps its spelling until it is.
   `WORK_SLOT(HEAP_SLOT_EVENT)`, or `Runtime_AllocateBlock(HEAP_SLOT_EVENT,
   sizeof(struct FieldWork))`, which returns the existing block.
 - The effect scene is `gEffectWork` or `*(gWorkSlot + HEAP_SLOT_EFFECT)`.
-- The map's view is `gMapWork[0]` or `WORK_SLOT(HEAP_SLOT_MAP)`.
+- The map's view is `gMapGridWork[0]` or `WORK_SLOT(HEAP_SLOT_MAP_GRID)`.
 - The field blend work is `gFieldBlendWork[0]`,
   `WORK_SLOT(HEAP_SLOT_FIELD_BLEND)` (`ValeInteriorsInn_Initialize`), or
   `Runtime_AllocateBlock(HEAP_SLOT_FIELD_BLEND, sizeof(struct
   FieldBlendWork))`, which returns the existing block.
 - The colour buffer is `gPaletteBufferWork`,
-  `WORK_SLOT(HEAP_SLOT_PALETTE_BUFFER)` (`TretPalette_UpdateSceneTint`,
+  `WORK_SLOT(HEAP_SLOT_PALETTE_BUFFER)` (`TretPalette_UpdateMapTint`,
   `SolSanctumLunaSolRooms_ArriveAfterWiseOnesRescue`), or
   `*(gWorkSlot + HEAP_SLOT_PALETTE_BUFFER)`
   (`FieldEffect_FadeToEffectColor`). It's also reached from a
@@ -331,47 +331,47 @@ come down to how a struct's member is addressed.
   callers take from whole actors. Its byte cursor steps across x, y and z, so
   it reads the actors' own signed coordinate members without treating them as
   an array or copying them into one.
-- Some helpers in Colosso and in `SceneId_KolimaForestFloodgate`, where logs
+- Some helpers in Colosso and in `MapId_KolimaForestFloodgate`, where logs
   roll, are called before they're declared. With their exact
   `void` prototype in scope, the arguments are set up in another order, so the
   matching build keeps the call ahead of the declaration, and their unit
   headers give the correct declarations under `UBFIX`.
 - A field is read or written through its offset,
-  `*(T *)((u8 *)p + offsetof(struct FieldActor, field))`, where `p->field`
-  goes through FieldActor's single/group union and moves a load
+  `*(T *)((u8 *)p + offsetof(struct ObjectEvent, field))`, where `p->field`
+  goes through ObjectEvent's single/group union and moves a load
   ([`map/common/effect_spawn.h`](map/common/effect_spawn.h),
   [`map/common/mercury_lighthouse_pillar.h`](map/common/mercury_lighthouse_pillar.h),
   [`map/crossbone_isle_stepping_stones.c`](map/crossbone_isle_stepping_stones.c),
   and `Imil_MiaSaysFarewellToApprentices` in [`map/imil.c`](map/imil.c)).
 - An actor is read as `struct FieldEffect`, union FieldObject's effect view of
   the same object, whose sprite pointer is a plain member. Through
-  FieldActor's sprite union, the flags address moves after the next store
+  ObjectEvent's sprite union, the flags address moves after the next store
   (`SolSanctum_StartFloatingLights` in
   [`map/common/sol_sanctum_elemental_star_ring_setup.h`](map/common/sol_sanctum_elemental_star_ring_setup.h)).
 - Field stores are byte-addressed with `sizeof` and `offsetof` rather than
   made through the struct members in `Colosso_RestoreWarrior`,
-  `TolbiShipInteriors_SelectPlacements`, and for row 10's talk facing in
-  `Imil_GetPlacements`, where `script[10].talkFacing` adds the row's 240 first
+  `TolbiShipInteriors_SelectObjectEventTemplates`, and for row 10's talk facing in
+  `Imil_GetObjectEventTemplates`, where `script[10].talkFacing` adds the row's 240 first
   and stores at 22 from another base. These byte views are valid, and they
   keep the original's address bases and registers.
 - The same byte view in `Xian_SpawnTrainingParticles` keeps the actor's Z load
   ahead of the options-script store. Through the members, the load moves after
   the store and the constant load that follows it in the English build.
 - A global's member is reached through a local pointer to the global or
-  through the global's own name, each where it matches. `Event_MovePillar`
+  through the global's own name, each where it matches. `EventScript_MovePillar`
   ([`map/crossbone_isle.c`](map/crossbone_isle.c)) takes `&state->scene`
   with `state = &gGameState`, because `&gGameState.scene` folds into one
   literal (1 of 78 instructions differ in tbs-en, 1 of 65 in tbs-ja). McCoy
-  Palace's `Scene_GetPlacements` writes the reward rows as
-  `gMcCoyPalacePlacements[6].talkFacing` and on, because the local
+  Palace's `Map_GetObjectEventTemplates` writes the reward rows as
+  `gMcCoyPalaceObjectEventTemplates[6].talkFacing` and on, because the local
   `placements[6].talkFacing` splits the address into base+144 and member+22
   (9 of 38 in tbs-en).
 - A table of `s16` pairs is read a word per index through a struct with an
   array member, `((struct DirectionSteps *)gVaultCave_DirectionSteps)->xz[heading]`,
   because an `s32` pointer to the table loses the original's loads
   (`VaultCave_PushPillarAhead`); `UBFIX` builds the word from its halfwords.
-- `gStagedActor_DirectionSteps`, `gStagedActor_FootprintKinds` and
-  `gStagedActor_FootprintBounds`
+- `gStagedObjectEvent_DirectionSteps`, `gStagedObjectEvent_FootprintKinds` and
+  `gStagedObjectEvent_FootprintBounds`
   ([`map/lunpa_fortress.c`](map/lunpa_fortress.c)) are put in read-only
   data with `__attribute__((section(".rodata")))` instead of `const`. Their
   shared externs in `field.h` and `common/object_staged_actor.h` lack `const`,

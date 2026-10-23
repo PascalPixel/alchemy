@@ -19,9 +19,9 @@
 	.endr
 	.endm
 
-	.macro area set:req, sheets:req, maps:vararg
-	.irp m, \maps
-	resource , Field_Map\m
+	.macro area set:req, sheets:req, layout_ids:vararg
+	.irp m, \layout_ids
+	resource , Field_Layout\m
 	.endr
 	resource , Tileset_\set\()Palette
 	.ifnc \sheets, -
@@ -31,9 +31,9 @@
 	.endif
 	.endm
 
-	.macro recolor palette:req, maps:vararg
-	.irp m, \maps
-	resource , Field_Map\m
+	.macro recolor palette:req, layout_ids:vararg
+	.irp m, \layout_ids
+	resource , Field_Layout\m
 	.endr
 	resource , Tileset_Palette\palette
 	.endm
@@ -120,7 +120,7 @@ Resource_DirectoryTable:
 	group BattleEffect, TwelveModeImage, WindStreakSheet, YellowPaletteB, BlueRingSheet, RedPaletteC
 	group BattleEffect, VioletPaletteD, BlueBeamSheet, VortexSheet, TornadoSheet, CrystalSheet
 	group BattleEffect, WaterSparkleSheet, LightningPillarSheet, StagedParticlePath, DualStreamPath
-	group Field, PerspectiveDataA, DefaultMapCells, DefaultMapAnimation, DefaultMetatileAttributes
+	group Field, PerspectiveDataA, DefaultGridCells, DefaultTileAnimation, DefaultMetatileAttributes
 	resource WorldMapPaletteA, WorldMap_PaletteA
 	resource WorldMapTilesA, WorldMap_TilesA
 	resource WorldMapTilesB, WorldMap_TilesB
@@ -154,7 +154,7 @@ Resource_DirectoryTable:
 	group Monster, FireDragonSprites, CrawlerSprites, MimicSprites, SeaBeastSprites, SpiritHorseSprites
 	group Monster, KrakenSprites, SlimeSprites, SaturosSprites, MenardiSprites, GhostHeadSprites
 	group Monster, FusionDragonSprites, PurpleBeastSprites, RedWarriorSprites, SwordGirlSprites
-	group Field, Map001
+	group Field, Layout001
 	resource , Tileset_BlankPalette
 	resource , Tileset_BlankTilesA
 	resource , Tileset_BlankTilesB
@@ -256,8 +256,8 @@ Resource_DirectoryTable:
 	area Set62, ABCD, 129
 	recolor 31, 130
 	recolor 32, 131, 132, 133
-	resource , Field_Map134
-	resource , Field_Map135
+	resource , Field_Layout134
+	resource , Field_Layout135
 	resource , Field_GondowanPassage
 	resource , Tileset_Palette33
 	recolor 34, 136
@@ -278,8 +278,8 @@ Resource_DirectoryTable:
 	recolor 46, 158
 	recolor 47, 159
 	recolor 48, 160
-	resource , Field_Map161
-	resource , Field_Map162
+	resource , Field_Layout161
+	resource , Field_Layout162
 	resource , Field_VenusEntrance
 	resource , Tileset_Palette49
 	recolor 50, 163

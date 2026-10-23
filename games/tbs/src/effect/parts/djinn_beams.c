@@ -159,7 +159,7 @@ void BattleEffect_RunDjinnBeams(struct BattleEffectArgument *effect,
 
       EFFECT_VIEW_FROM_CAMERA(camera);
       SET_VECTOR(point, target->x, 0, target->z);
-      SceneTransform_ApplyPosition(point);
+      Transform_ApplyPosition(point);
       if (frame > start) {
         for (i = 0; i != 8; i++) {
           struct EffectStep *mote = &PARTICLES[k * 64 + i];

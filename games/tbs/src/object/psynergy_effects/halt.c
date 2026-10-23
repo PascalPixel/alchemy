@@ -14,13 +14,13 @@ void FieldEffect_UpdateRadialCamera(struct EffectSlot *effect) {
   // A for/continue retry grows the native English callback 0x100 -> 0x104.
   // Retain the immediate OUT_AND_BACK_FLYING_OUT to OUT_AND_BACK_AIM_BACK
   // transition on arrival.
-  struct FieldEffectScene *scene;
+  struct FieldEffectWork *effectWork;
   struct EffectVector pos;
   s8 *statePointer;
   s16 angle;
   s32 state;
 
-  scene = gEffectWork;
+  effectWork = gEffectWork;
   statePointer = &effect->state;
 top:
   state = *statePointer;
@@ -44,9 +44,9 @@ top:
     goto top;
   }
   if (state == OUT_AND_BACK_AIM_BACK) {
-    pos.x = scene->x;
-    pos.y = scene->y + (8 << 16);
-    pos.z = scene->z;
+    pos.x = effectWork->x;
+    pos.y = effectWork->y + (8 << 16);
+    pos.z = effectWork->z;
     Camera_WorldToScreen(&pos);
     Vector_AddPolarOffset(4 << 16, Random16(), &pos);
     effect->targetX = pos.x;
@@ -66,7 +66,7 @@ top:
 /// FieldEffect_DispatchRequestKind for Halt on a target; sets the target's
 /// paused field.
 void FieldEffect_RunHaltOnTarget(s32 unused) {
-  struct FieldActor *target = ((struct FieldEffectScene *)gEffectWork)->child;
+  struct ObjectEvent *target = ((struct FieldEffectWork *)gEffectWork)->child;
 
   target->paused = 1;
   FieldEffect_RunHalt();
@@ -80,8 +80,8 @@ void FieldEffect_RunHaltOnTarget(s32 unused) {
 ///
 /// Abilities: Halt (FIELD_KIND_HALT).
 void FieldEffect_RunHalt(void) {
-  struct FieldEffectScene *scene = gEffectWork;
-  struct MotionObject *caster = scene->mainObject;
+  struct FieldEffectWork *effectWork = gEffectWork;
+  struct MotionObject *caster = effectWork->mainObject;
   struct MotionObject *orb;
   struct EffectSlot *effect;
   struct EffectVector pos;
@@ -90,7 +90,7 @@ void FieldEffect_RunHalt(void) {
   s32 step;
   s32 i;
 
-  scene->y = caster->y;
+  effectWork->y = caster->y;
   orb = (struct MotionObject *)Object_Spawn(250, 0, 0, 0);
   step = 0;
   ObjectDispatch_SelectAnimationFar(orb, 0);
@@ -102,9 +102,9 @@ void FieldEffect_RunHalt(void) {
   from.x = caster->x;
   from.y = caster->y + (16 << 16);
   from.z = caster->z;
-  to.x = scene->x;
-  to.y = scene->y + (8 << 16);
-  to.z = scene->z;
+  to.x = effectWork->x;
+  to.y = effectWork->y + (8 << 16);
+  to.z = effectWork->z;
   // Steps 0 to 10: the orb arrives on the 11th frame, grown to full size.
   for (;;) {
     s32 steps = 11;
@@ -136,7 +136,7 @@ void FieldEffect_RunHalt(void) {
 
   // Particles 4 pixels round it fly out, then come back to the effect's
   // position.
-  effect = &scene->effects[0];
+  effect = &effectWork->effects[0];
   for (i = 0; i < 16; i++) {
     pos.x = orb->x;
     pos.y = orb->y + (8 << 16);
@@ -179,11 +179,11 @@ void FieldEffect_UpdatePausedObject(union FieldObject *fieldObject) {
 /// fields, and stops its animation. gGameState keeps one object's state, so
 /// Halt resumes the one it stopped before it stops another; the paused
 /// object flickers through random sprite params meanwhile.
-void FieldEffect_PauseObject(s32 actorId) {
-  struct FieldActor *object;
+void FieldEffect_PauseObject(s32 objectEventId) {
+  struct ObjectEvent *object;
   struct AnimationEntry *entry;
 
-  object = ObjectTable_Get(actorId);
+  object = ObjectTable_Get(objectEventId);
   if (object != NULL) {
     gGameState.pausedUpdate = (u32)object->update;
     gGameState.pausedPose = 0;
@@ -202,11 +202,11 @@ void FieldEffect_PauseObject(s32 actorId) {
 /// Resumes object id with the update and param kept by
 /// FieldEffect_PauseObject. Called for gGameState.pausedObject by
 /// FieldEffect_Run and FieldEffect_DispatchRequestKind before Halt stops
-/// another object, and by Scene_TalkToActor after talking to the paused actor.
-/// Clears gGameState.pausedUpdate and the object's paused field, and restarts
-/// its animation at speed 16.
-void FieldEffect_ResumeObject(s32 actorId) {
-  struct FieldActor *object = ObjectTable_Get(actorId);
+/// another object, and by Map_TalkToObjectEvent after talking to the paused
+/// actor. Clears gGameState.pausedUpdate and the object's paused field, and
+/// restarts its animation at speed 16.
+void FieldEffect_ResumeObject(s32 objectEventId) {
+  struct ObjectEvent *object = ObjectTable_Get(objectEventId);
   if (object != 0) {
     if (object->update == FieldEffect_UpdatePausedObject) {
       struct GameState *state = &gGameState;

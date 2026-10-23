@@ -8,55 +8,55 @@
 	.set import.Engine_TaskRemoveCallback, 1
 	.set import.Engine_RandomNext, 1
 	.set import.Vector_AddPolarOffset, 1
-	.set import.Object_SetMode, 1
+	.set import.ObjectEvent_SetMode, 1
 	.set import.Engine_ObjectCreate, 1
 	.set import.Engine_ObjectSetPosition, 1
 	.set import.FieldObject_WaitForMove, 1
-	.set import.Engine_MapCopyCellAttributes, 1
-	.set import.Engine_MapCopyCellsLayered, 1
+	.set import.Engine_MapGridCopyCellAttributes, 1
+	.set import.Engine_MapGridCopyCellsLayered, 1
 	.set import.Object_CheckMovementCollision, 1
-	.set import.Engine_ActorSetSpriteFlags, 1
+	.set import.Engine_ObjectEventSetSpriteFlags, 1
 	.set import.Engine_WorkSetValuesIfNonNegative, 1
-	.set import.Engine_MapWaitWorkValuesBelow256, 1
+	.set import.Engine_MapGridWaitWorkValuesBelow256, 1
 	.set import.Animation_ApplyChildValues, 1
 	.set import.ObjectGroup_SetChildValueUnlessFifteen, 1
 	.set import.Engine_GameFlagIsSet, 1
 	.set import.Engine_GameFlagSet, 1
 	.set import.Engine_GameFlagClear, 1
 	.set import.Engine_PartyRemoveItem, 1
-	.set import.Engine_EventWait, 1
-	.set import.Engine_EventStart, 1
-	.set import.Engine_EventEnd, 1
-	.set import.Engine_EventChooseYesNo, 1
-	.set import.Object_GetById, 1
-	.set import.Engine_ActorSetSpeed, 1
-	.set import.Engine_ActorEnableActionCallback, 1
-	.set import.Object_RefreshSelectorById, 1
-	.set import.Engine_ActorStop, 1
-	.set import.Engine_ActorSetDestination, 1
+	.set import.Engine_ScriptWait, 1
+	.set import.Engine_ScriptStart, 1
+	.set import.Engine_ScriptEnd, 1
+	.set import.Engine_ScriptChooseYesNo, 1
+	.set import.ObjectEvent_GetById, 1
+	.set import.Engine_ObjectEventSetSpeed, 1
+	.set import.Engine_ObjectEventEnableActionCallback, 1
+	.set import.ObjectEvent_RefreshSelectorById, 1
+	.set import.Engine_ObjectEventStop, 1
+	.set import.Engine_ObjectEventSetDestination, 1
 	.set import.Engine_ObjectMotionSetPositionAndCommit, 1
-	.set import.Engine_ActorWalkToAndWait, 1
-	.set import.Engine_ActorSetDestinationOffset, 1
-	.set import.Engine_ActorWaitForMove, 1
-	.set import.Engine_ActorSetPosition, 1
-	.set import.Engine_ActorSetAnimation, 1
-	.set import.Engine_ActorSetAnimationAndWait, 1
-	.set import.Engine_ActorJump, 1
-	.set import.Engine_ActorStartRepeatedMotion, 1
-	.set import.Engine_ActorRunRepeatedMotion, 1
-	.set import.Engine_ActorFaceActor, 1
-	.set import.Engine_ActorFaceEachOther, 1
-	.set import.Engine_ActorSetChildValue, 1
-	.set import.Engine_EventSetMessage, 1
-	.set import.Engine_EventOpenMessage, 1
-	.set import.Engine_EventShowMessage, 1
-	.set import.Engine_ActorFaceDirection, 1
-	.set import.Engine_ActorShowEmote, 1
-	.set import.Engine_ActorSetAttachedEffect, 1
-	.set import.Engine_CameraFollowActor, 1
+	.set import.Engine_ObjectEventWalkToAndWait, 1
+	.set import.Engine_ObjectEventSetDestinationOffset, 1
+	.set import.Engine_ObjectEventWaitForMove, 1
+	.set import.Engine_ObjectEventSetPosition, 1
+	.set import.Engine_ObjectEventSetAnimation, 1
+	.set import.Engine_ObjectEventSetAnimationAndWait, 1
+	.set import.Engine_ObjectEventJump, 1
+	.set import.Engine_ObjectEventStartRepeatedMotion, 1
+	.set import.Engine_ObjectEventRunRepeatedMotion, 1
+	.set import.Engine_ObjectEventFaceObjectEvent, 1
+	.set import.Engine_ObjectEventFaceEachOther, 1
+	.set import.Engine_ObjectEventSetChildValue, 1
+	.set import.Engine_ScriptSetMessage, 1
+	.set import.Engine_ScriptOpenMessage, 1
+	.set import.Engine_ScriptShowMessage, 1
+	.set import.Engine_ObjectEventFaceDirection, 1
+	.set import.Engine_ObjectEventShowEmote, 1
+	.set import.Engine_ObjectEventSetAttachedEffect, 1
+	.set import.Engine_CameraFollowObjectEvent, 1
 	.set import.Engine_CameraMoveTo, 1
 	.set import.Engine_CameraWaitForMove, 1
-	.set import.Engine_CameraMoveToActor, 1
+	.set import.Engine_CameraMoveToObjectEvent, 1
 	.set import.Field_RequestDjinnBattle, 1
 	.set import.DisplayTransition_InitializeBattleEffectState, 1
 	.set import.Engine_PsynergyPlayEffect, 1
@@ -75,9 +75,9 @@
 	.set import.FieldEffect_InitializeSlots, 1
 	.set import.FieldEffect_ClearActiveSlotsAndScheduleUpdates, 1
 	.set import.Motion_LaunchFromFocusedObject, 1
-	.set import.Engine_ActorWalkBy, 1
-	.set import.Engine_ActorWalkByAndWait, 1
-	.set import.Engine_ActorFollow, 1
+	.set import.Engine_ObjectEventWalkBy, 1
+	.set import.Engine_ObjectEventWalkByAndWait, 1
+	.set import.Engine_ObjectEventFollow, 1
 	.set import.FieldEffect_PlayQueuedSound, 1
 	.set import.Shop_SaveAndTintFieldPalette, 1
 	.set import.Shop_RestoreFieldPalette, 1

@@ -1,22 +1,22 @@
 /// @file
-/// Tret Tree (SceneId_TretTreeInteriors), the inside of Tret, the holy tree
+/// Tret Tree (MapId_TretTreeInteriors), the inside of Tret, the holy tree
 /// of Kolima Forest, and the first of Tret Tree's two scenes. The party comes
 /// in from Kolima Forest (kolima_forest_tree.c) to face Tret's wrathful side.
 /// FLAG_TRET_DEFEATED, whether that battle is won and Tret has spoken with the
 /// party since, decides most of the scene.
 ///
 /// The scene is six rooms, the six camera boxes of its entrance table. The
-/// party comes in from Kolima Forest (SceneId_KolimaForestTree) at
+/// party comes in from Kolima Forest (MapId_KolimaForestTree) at
 /// TRET_TREE_INTERIORS_FROM_KOLIMA_FOREST_TREE and leaves by
 /// TRET_TREE_INTERIORS_TO_KOLIMA_FOREST_TREE; eight exits, from
 /// TRET_TREE_INTERIORS_TO_TRET_TREE_BRANCH_SOUTH_SOUTHWEST to _NORTH_NORTHEAST,
-/// lead out to Tret Tree's other scene (SceneId_TretTreeBranch), and six more,
+/// lead out to Tret Tree's other scene (MapId_TretTreeBranch), and six more,
 /// TRET_TREE_INTERIORS_ENTRANCE_TO_SECOND_FLOOR to
 /// TRET_TREE_INTERIORS_ENTRANCE_TO_TRET, lead from room to room, three of them
-/// through regions 28 to 36 pixels up (Scene_GetRegions).
+/// through regions 28 to 36 pixels up (Map_GetWarpRegions).
 ///
 /// Webs hold cocoons, each a touch cell (21 to 29, 31, 32 and 50 to 59) with
-/// a temporary flag of its own (FLAG_SCENE_TEMP_00 to _14). The first step on
+/// a temporary flag of its own (FLAG_MAP_TEMP_00 to _14). The first step on
 /// a cocoon tears it: its cell is redrawn and its flag set. The next step on a
 /// torn cocoon breaks through, and the leader spins and falls to the room
 /// below, arriving at the entrance numbered as the cocoon (FLAG_ARRIVE_FALLING
@@ -35,19 +35,20 @@
 /// (FLAG_KEEP_PARTY_POSITION) the setup redraws them from
 /// gTretTreeInteriors_MapPatches.
 ///
-/// Tret's face (ACTOR_TRET) and a second Tret actor at the same spot speak his
-/// lines. Walking up to him (touch cell 40, while FLAG_TRET_DEFEATED is clear)
-/// runs Event_FightTret: he roars, the party gathers in front of him, and the
-/// evil within him scorns them before the battle with Tret. The battle returns
-/// to TRET_TREE_INTERIORS_AFTER_FIGHT_TRET, where the setup plays the
-/// conversation after it: a passage opens in his room, he comes to himself,
-/// thanks the party and asks whether they need something, realises that he
-/// turned the people of Kolima into trees ("I turned the people of Kolima into
-/// trees?"), tries to free them but cannot reach that far, and his face sinks
-/// away as the party resolve to heal him. Only then is FLAG_TRET_DEFEATED set;
-/// in Kolima Forest it lets Hermes' Water heal Tret and lift the curse. Once it
-/// is set, the setup moves both Tret actors away, opens that passage and
-/// redraws cells near entrance 20; before, it keeps the passage closed.
+/// Tret's face (LOCALID_TRET) and a second Tret actor at the same spot speak
+/// his lines. Walking up to him (touch cell 40, while FLAG_TRET_DEFEATED is
+/// clear) runs EventScript_FightTret: he roars, the party gathers in front of
+/// him, and the evil within him scorns them before the battle with Tret. The
+/// battle returns to TRET_TREE_INTERIORS_AFTER_FIGHT_TRET, where the setup
+/// plays the conversation after it: a passage opens in his room, he comes to
+/// himself, thanks the party and asks whether they need something, realises
+/// that he turned the people of Kolima into trees ("I turned the people of
+/// Kolima into trees?"), tries to free them but cannot reach that far, and his
+/// face sinks away as the party resolve to heal him. Only then is
+/// FLAG_TRET_DEFEATED set; in Kolima Forest it lets Hermes' Water heal Tret and
+/// lift the curse. Once it is set, the setup moves both Tret actors away, opens
+/// that passage and redraws cells near entrance 20; before, it keeps the
+/// passage closed.
 ///
 /// The setup also saves the background palettes and starts a slow tint that
 /// shifts them every 32 frames (not after the battle until the conversation
@@ -104,17 +105,17 @@
 enum {
   /// ★ Named from the game: "Tret was once a kindly forest king."
   /// (MsgKolimaWatchOutItsHappeningAgain)
-  ACTOR_TRET = ACTOR_FIRST_PLACED,
+  LOCALID_TRET = LOCALID_FIRST_PLACED,
   /// Draws nothing the render shows beyond Tret's face.
   /// ★ Named from the game: "We can't let Tret die like this!" (MsgTretMmmmm)
-  ACTOR_SECOND_TRET
+  LOCALID_SECOND_TRET
 };
 
 /// The speaker of a message; every speaker in this scene has
 /// SPEAKER_WINDOW_BELOW.
-#define SPEAKER(actor) (SPEAKER_WINDOW_BELOW | (actor))
+#define SPEAKER(objectEvent) (SPEAKER_WINDOW_BELOW | (objectEvent))
 
-// The scene's temporary flags: FLAG_SCENE_TEMP_00 to _14 are set the first
+// The scene's temporary flags: FLAG_MAP_TEMP_00 to _14 are set the first
 // time each cocoon is stepped on, tearing it; the next step breaks through
 // (gTretTreeInteriors_MapPatches lists them).
 
@@ -125,8 +126,8 @@ enum {
 #define TRET_TINT_CHANNEL_MAX 31
 #define TRET_TINT_END 99
 
-static void TretPalette_SaveSceneColors(void);
-static void TretPalette_UpdateSceneTint(void);
+static void TretPalette_SaveMapColors(void);
+static void TretPalette_UpdateMapTint(void);
 /// The face gestures TretTreeInteriors_PlayGesture plays on Tret, each from
 /// the face with its eyes open; the wrathful ones on his wrathful face.
 enum TretTreeInteriorsGesture {
@@ -161,24 +162,24 @@ static s16 *sLastCocoon;
 #include "objcmd.h"
 
 /// Returns the scene's entrances, the cocoons' landing spots among them.
-const struct SceneEntrance *Scene_GetEntrances(void) {
-  return gTretTreeInteriorsEntrances;
+const struct MapWarpDest *Map_GetWarpDests(void) {
+  return gTretTreeInteriorsWarpDests;
 }
 
 /// Returns the three exit regions 28 to 36 pixels up: up to the second floor
 /// (TRET_TREE_INTERIORS_ENTRANCE_TO_SECOND_FLOOR), up to the fourth
 /// (TRET_TREE_INTERIORS_THIRD_FLOOR_TO_FOURTH_FLOOR) and back from Tret
 /// (TRET_TREE_INTERIORS_TRET_TO_ENTRANCE).
-const struct SceneRegion *Scene_GetRegions(void) {
+const struct MapWarpRegion *Map_GetWarpRegions(void) {
   return gTretTreeInteriorsRegions;
 }
 
-const u32 *Scene_GetExits(void) { return gTretTreeInteriorsExits; }
+const u32 *Map_GetWarps(void) { return gTretTreeInteriorsWarps; }
 
 /// Returns the party's other slots (Garet, Ivan and, once she has joined,
 /// Mia), placed for the scripted scenes, and the two Tret actors.
-const struct ScenePlacement *Scene_GetPlacements(void) {
-  return gTretTreeInteriorsPlacements;
+const struct ObjectEventTemplate *Map_GetObjectEventTemplates(void) {
+  return gTretTreeInteriorsObjectEventTemplates;
 }
 
 /// Stepping on a cocoon in Tret Tree: the first step tears it, copying its
@@ -187,52 +188,53 @@ const struct ScenePlacement *Scene_GetPlacements(void) {
 /// falls, to land at the given entrance, numbered as the cocoon. The latch
 /// ignores the same cocoon again until the leader walks on.
 static void TretTreeInteriors_StepOnCocoon(s32 cocoonFlag, s32 sourceColumn,
-                                           s32 sourceRow, s32 entrance) {
+                                           s32 sourceRow, s32 warpDest) {
   s32 destinationColumn;
   s32 destinationRow;
-  s32 selectedActorId;
-  struct FieldActor *actor;
+  s32 selectedObjectEventId;
+  struct ObjectEvent *objectEvent;
   s32 spinFrame;
 
   destinationColumn = (gGameState.x >> 20) + 64;
   destinationRow = gGameState.z >> 20;
-  selectedActorId = gGameState.selectedActor;
-  actor = Object_GetById(selectedActorId);
-  if (entrance == *sLastCocoon)
+  selectedObjectEventId = gGameState.selectedObjectEvent;
+  objectEvent = ObjectEvent_GetById(selectedObjectEventId);
+  if (warpDest == *sLastCocoon)
     return;
-  *sLastCocoon = entrance;
+  *sLastCocoon = warpDest;
   if (FLAG_CHECK(cocoonFlag) == 0) {
-    Map_CopyCells(sourceColumn, sourceRow, 1, 1, destinationColumn,
-                  destinationRow);
+    MapGrid_CopyCells(sourceColumn, sourceRow, 1, 1, destinationColumn,
+                      destinationRow);
     FLAG_SET(cocoonFlag);
     return;
   }
   // On the next touch, replace the tile and spin the actor into the fall.
   *sLastCocoon = -1;
-  Map_CopyCells(sourceColumn, sourceRow + 1, 1, 1, destinationColumn,
-                destinationRow);
+  MapGrid_CopyCells(sourceColumn, sourceRow + 1, 1, 1, destinationColumn,
+                    destinationRow);
   SE(SE_206);
   EV_START();
-  Event_SetDestination((s32)&SceneId_TretTreeInteriors, entrance);
-  OBJECT_MODE(selectedActorId, ANIMATION_LEADER_SPIN_AWAY);
-  Engine_ActorSetSpriteFlags(Object_GetById(selectedActorId), 0);
-  Actor_SetAttachedEffect(selectedActorId,
-                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ATTACH);
+  FieldScript_SetDestination((s32)&MapId_TretTreeInteriors, warpDest);
+  OBJECT_MODE(selectedObjectEventId, ANIMATION_LEADER_SPIN_AWAY);
+  Engine_ObjectEventSetSpriteFlags(ObjectEvent_GetById(selectedObjectEventId),
+                                   0);
+  ObjectEvent_SetAttachedEffect(
+      selectedObjectEventId, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ATTACH);
   WAIT(30);
   Camera_MoveTo(-1, -1, -1, 0);
-  actor->motionFlags = ACTOR_FALLS;
-  actor->terrainHeight = -PIXELS(160);
-  actor->gravity = PIXELS(1) / 2;
+  objectEvent->motionFlags = OBJ_EVENT_FALLS;
+  objectEvent->terrainHeight = -PIXELS(160);
+  objectEvent->gravity = PIXELS(1) / 2;
   SE(SE_204);
   WAIT(3);
-  actor->terrainId = 2;
-  Engine_ActorSetSpritePriority(selectedActorId, 3);
+  objectEvent->terrainId = 2;
+  Engine_ObjectEventSetSpritePriority(selectedObjectEventId, 3);
   for (spinFrame = COCOON_FALL_SPIN_FRAMES - 1; spinFrame >= 0; spinFrame--) {
 
-    actor->facing += 2 * FACING_STEP;
+    objectEvent->facing += 2 * FACING_STEP;
     Engine_TaskWait(1);
   }
-  if (entrance != 50)
+  if (warpDest != 50)
     FLAG_SET(FLAG_ARRIVE_FALLING);
 }
 
@@ -242,228 +244,228 @@ static void TretTreeInteriors_StepOnCocoon(s32 cocoonFlag, s32 sourceColumn,
 
 /// Stepping on a cocoon tears it, and the next step drops the leader to the
 /// room below.
-static void Event_StepOnCocoon21(void) {
-  TretTreeInteriors_StepOnCocoon(FLAG_SCENE_TEMP_00, 64, 35, 21);
+static void EventScript_StepOnCocoon21(void) {
+  TretTreeInteriors_StepOnCocoon(FLAG_MAP_TEMP_00, 64, 35, 21);
 }
 
 /// Stepping on a cocoon tears it, and the next step drops the leader to the
 /// room below.
-static void Event_StepOnCocoon22(void) {
-  TretTreeInteriors_StepOnCocoon(FLAG_SCENE_TEMP_01, 65, 35, 22);
+static void EventScript_StepOnCocoon22(void) {
+  TretTreeInteriors_StepOnCocoon(FLAG_MAP_TEMP_01, 65, 35, 22);
 }
 
 /// Stepping on a cocoon tears it, and the next step drops the leader to the
 /// room below.
-static void Event_StepOnCocoon23(void) {
-  TretTreeInteriors_StepOnCocoon(FLAG_SCENE_TEMP_02, 66, 35, 23);
+static void EventScript_StepOnCocoon23(void) {
+  TretTreeInteriors_StepOnCocoon(FLAG_MAP_TEMP_02, 66, 35, 23);
 }
 
 /// Stepping on a cocoon tears it, and the next step drops the leader to the
 /// room below.
-static void Event_StepOnCocoon24(void) {
-  TretTreeInteriors_StepOnCocoon(FLAG_SCENE_TEMP_03, 67, 35, 24);
+static void EventScript_StepOnCocoon24(void) {
+  TretTreeInteriors_StepOnCocoon(FLAG_MAP_TEMP_03, 67, 35, 24);
 }
 
 /// Stepping on a cocoon tears it, and the next step drops the leader to the
 /// room below.
-static void Event_StepOnCocoon25(void) {
-  TretTreeInteriors_StepOnCocoon(FLAG_SCENE_TEMP_04, 68, 35, 25);
+static void EventScript_StepOnCocoon25(void) {
+  TretTreeInteriors_StepOnCocoon(FLAG_MAP_TEMP_04, 68, 35, 25);
 }
 
 /// Stepping on a cocoon tears it, and the next step drops the leader to the
 /// room below.
-static void Event_StepOnCocoon26(void) {
-  TretTreeInteriors_StepOnCocoon(FLAG_SCENE_TEMP_05, 69, 35, 26);
+static void EventScript_StepOnCocoon26(void) {
+  TretTreeInteriors_StepOnCocoon(FLAG_MAP_TEMP_05, 69, 35, 26);
 }
 
 /// Stepping on a cocoon tears it, and the next step drops the leader to the
 /// room below.
-static void Event_StepOnCocoon27(void) {
-  TretTreeInteriors_StepOnCocoon(FLAG_SCENE_TEMP_06, 70, 35, 27);
+static void EventScript_StepOnCocoon27(void) {
+  TretTreeInteriors_StepOnCocoon(FLAG_MAP_TEMP_06, 70, 35, 27);
 }
 
 /// Stepping on a cocoon tears it, and the next step drops the leader to the
 /// room below.
-static void Event_StepOnCocoon28(void) {
-  TretTreeInteriors_StepOnCocoon(FLAG_SCENE_TEMP_07, 71, 35, 28);
+static void EventScript_StepOnCocoon28(void) {
+  TretTreeInteriors_StepOnCocoon(FLAG_MAP_TEMP_07, 71, 35, 28);
 }
 
 /// Stepping on a cocoon tears it, and the next step drops the leader to the
 /// room below.
-static void Event_StepOnCocoon29(void) {
-  TretTreeInteriors_StepOnCocoon(FLAG_SCENE_TEMP_08, 72, 35, 29);
+static void EventScript_StepOnCocoon29(void) {
+  TretTreeInteriors_StepOnCocoon(FLAG_MAP_TEMP_08, 72, 35, 29);
 }
 
 /// Stepping on a cocoon tears it, and the next step drops the leader to the
 /// room below.
-static void Event_StepOnCocoon31(void) {
-  TretTreeInteriors_StepOnCocoon(FLAG_SCENE_TEMP_09, 73, 35, 31);
+static void EventScript_StepOnCocoon31(void) {
+  TretTreeInteriors_StepOnCocoon(FLAG_MAP_TEMP_09, 73, 35, 31);
 }
 
 /// Stepping on a cocoon tears it, and the next step drops the leader to the
 /// room below.
-static void Event_StepOnCocoon32(void) {
-  TretTreeInteriors_StepOnCocoon(FLAG_SCENE_TEMP_0A, 74, 35, 32);
+static void EventScript_StepOnCocoon32(void) {
+  TretTreeInteriors_StepOnCocoon(FLAG_MAP_TEMP_0A, 74, 35, 32);
 }
 
 /// Stepping on a cocoon tears it, and the next step drops the leader to the
 /// room below.
-static void Event_StepOnCocoon50(void) {
-  TretTreeInteriors_StepOnCocoon(FLAG_SCENE_TEMP_0B, 79, 35, 50);
+static void EventScript_StepOnCocoon50(void) {
+  TretTreeInteriors_StepOnCocoon(FLAG_MAP_TEMP_0B, 79, 35, 50);
 }
 
 /// Stepping on a cocoon tears it, and the next step drops the leader to the
 /// room below.
-static void Event_StepOnCocoon51(void) {
-  TretTreeInteriors_StepOnCocoon(FLAG_SCENE_TEMP_0C, 75, 35, 51);
+static void EventScript_StepOnCocoon51(void) {
+  TretTreeInteriors_StepOnCocoon(FLAG_MAP_TEMP_0C, 75, 35, 51);
 }
 
 /// Stepping on a cocoon tears it, and the next step drops the leader to the
 /// room below.
-static void Event_StepOnCocoon52(void) {
-  TretTreeInteriors_StepOnCocoon(FLAG_SCENE_TEMP_0D, 76, 35, 52);
+static void EventScript_StepOnCocoon52(void) {
+  TretTreeInteriors_StepOnCocoon(FLAG_MAP_TEMP_0D, 76, 35, 52);
 }
 
 /// Stepping on a cocoon tears it, and the next step drops the leader to the
 /// room below.
-static void Event_StepOnCocoon53(void) {
-  TretTreeInteriors_StepOnCocoon(FLAG_SCENE_TEMP_0E, 77, 35, 53);
+static void EventScript_StepOnCocoon53(void) {
+  TretTreeInteriors_StepOnCocoon(FLAG_MAP_TEMP_0E, 77, 35, 53);
 }
 
 /// Stepping on a cocoon tears it, and the next step drops the leader to the
 /// room below.
-static void Event_StepOnCocoon54(void) {
-  TretTreeInteriors_StepOnCocoon(FLAG_SCENE_TEMP_0F, 78, 35, 54);
+static void EventScript_StepOnCocoon54(void) {
+  TretTreeInteriors_StepOnCocoon(FLAG_MAP_TEMP_0F, 78, 35, 54);
 }
 
 /// Stepping on a cocoon tears it, and the next step drops the leader to the
 /// room below.
-static void Event_StepOnCocoon55(void) {
-  TretTreeInteriors_StepOnCocoon(FLAG_SCENE_TEMP_10, 80, 35, 55);
+static void EventScript_StepOnCocoon55(void) {
+  TretTreeInteriors_StepOnCocoon(FLAG_MAP_TEMP_10, 80, 35, 55);
 }
 
 /// Stepping on a cocoon tears it, and the next step drops the leader to the
 /// room below. Cocoon 56 lands at the same spot as cocoon 54: their entrances
 /// agree.
-static void Event_StepOnCocoon56(void) {
-  TretTreeInteriors_StepOnCocoon(FLAG_SCENE_TEMP_11, 81, 35, 56);
+static void EventScript_StepOnCocoon56(void) {
+  TretTreeInteriors_StepOnCocoon(FLAG_MAP_TEMP_11, 81, 35, 56);
 }
 
 /// Stepping on a cocoon tears it, and the next step drops the leader to the
 /// room below.
-static void Event_StepOnCocoon57(void) {
-  TretTreeInteriors_StepOnCocoon(FLAG_SCENE_TEMP_12, 82, 35, 57);
+static void EventScript_StepOnCocoon57(void) {
+  TretTreeInteriors_StepOnCocoon(FLAG_MAP_TEMP_12, 82, 35, 57);
 }
 
 /// Stepping on a cocoon tears it, and the next step drops the leader to the
 /// room below.
-static void Event_StepOnCocoon58(void) {
-  TretTreeInteriors_StepOnCocoon(FLAG_SCENE_TEMP_13, 83, 35, 58);
+static void EventScript_StepOnCocoon58(void) {
+  TretTreeInteriors_StepOnCocoon(FLAG_MAP_TEMP_13, 83, 35, 58);
 }
 
 /// Stepping on a cocoon tears it, and the next step drops the leader to the
 /// room below.
-static void Event_StepOnCocoon59(void) {
-  TretTreeInteriors_StepOnCocoon(FLAG_SCENE_TEMP_14, 84, 35, 59);
+static void EventScript_StepOnCocoon59(void) {
+  TretTreeInteriors_StepOnCocoon(FLAG_MAP_TEMP_14, 84, 35, 59);
 }
 
 /// Walking on over a cocoon in Tret Tree clears the latch, so the next step on
 /// a cocoon counts again.
-static void Event_ResetCocoonLatch(void) {
+static void EventScript_ResetCocoonLatch(void) {
   if (Engine_LeaderCheckAhead() == 0)
     *sLastCocoon = -1;
 }
 
 /// Returns the exits, the cocoons, Tret, Reveal and the chests' events.
-const struct SceneEvent *Scene_GetEvents(void) {
-  return gTretTreeInteriorsEvents;
-}
+const struct MapEvent *Map_GetEvents(void) { return gTretTreeInteriorsEvents; }
 
 /// Walking up to Tret in Tret Tree (touch cell 40, while FLAG_TRET_DEFEATED is
 /// clear): he roars, the party gathers in front of him, and the evil within
 /// him scorns them before the battle with Tret starts. "Hm... HROOOM!!!" and
 /// "You hoped to find my kindly self?" The battle returns to
 /// TRET_TREE_INTERIORS_AFTER_FIGHT_TRET.
-static void Event_FightTret(void) {
+static void EventScript_FightTret(void) {
   s32 hasMia;
-  struct FieldActor *leader;
+  struct ObjectEvent *leader;
 
   hasMia = FLAG_CHECK(FLAG_IN_PARTY(MIA));
   EV_START();
   SE(AUDIO_CUE_FADE_BGM);
   MESSAGE_SET(MsgTretHmHrooom);
-  Engine_EventShowMessageAndWait(SPEAKER(ACTOR_SECOND_TRET), 0, 20);
+  Engine_ScriptShowMessageAndWait(SPEAKER(LOCALID_SECOND_TRET), 0, 20);
   SE(MUS_029);
-  OBJECT_SPEED(ACTOR_PARTY_LEADER, PIXELS(1), PIXELS(1) / 2);
+  OBJECT_SPEED(LOCALID_PARTY_LEADER, PIXELS(1), PIXELS(1) / 2);
   OBJECT_SPEED(GARET, PIXELS(1), PIXELS(1) / 2);
   OBJECT_SPEED(IVAN, PIXELS(1), PIXELS(1) / 2);
   OBJECT_SPEED(MIA, PIXELS(1), PIXELS(1) / 2);
-  Object_GetById(MIA)->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
-  Engine_ActorSetSpritePriority(MIA, 2);
-  Object_GetById(ACTOR_PARTY_LEADER)->priorityFlags &=
-      ~ACTOR_PRIORITY_AUTOMATIC;
-  Engine_ActorSetSpritePriority(ACTOR_PARTY_LEADER, 2);
-  leader = Object_GetById(ACTOR_PARTY_LEADER);
+  ObjectEvent_GetById(MIA)->priorityFlags &= ~OBJ_EVENT_PRIORITY_AUTOMATIC;
+  Engine_ObjectEventSetSpritePriority(MIA, 2);
+  ObjectEvent_GetById(LOCALID_PARTY_LEADER)->priorityFlags &=
+      ~OBJ_EVENT_PRIORITY_AUTOMATIC;
+  Engine_ObjectEventSetSpritePriority(LOCALID_PARTY_LEADER, 2);
+  leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   if (leader != NULL) {
-    Engine_ActorSetPosition(GARET, leader->x.fixed, leader->z.fixed);
+    Engine_ObjectEventSetPosition(GARET, leader->x.fixed, leader->z.fixed);
   }
-  leader = Object_GetById(ACTOR_PARTY_LEADER);
+  leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   if (leader != NULL) {
-    Engine_ActorSetPosition(IVAN, leader->x.fixed, leader->z.fixed);
+    Engine_ObjectEventSetPosition(IVAN, leader->x.fixed, leader->z.fixed);
   }
   if (hasMia != 0) {
-    leader = Object_GetById(ACTOR_PARTY_LEADER);
+    leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
     if (leader != NULL) {
-      Engine_ActorSetPosition(MIA, leader->x.fixed, leader->z.fixed);
+      Engine_ObjectEventSetPosition(MIA, leader->x.fixed, leader->z.fixed);
     }
-    Actor_SetActionScript(MIA, gTretTreeInteriors_MiaGathersActions);
+    ObjectEvent_SetActionScript(MIA, gTretTreeInteriors_MiaGathersActions);
   }
-  Actor_SetActionScript(ACTOR_PARTY_LEADER,
-                        gTretTreeInteriors_LeaderGathersActions);
-  Actor_SetActionScript(GARET, gTretTreeInteriors_GaretGathersActions);
-  Actor_RunActionScriptAndWait(IVAN, gTretTreeInteriors_IvanGathersActions);
+  ObjectEvent_SetActionScript(LOCALID_PARTY_LEADER,
+                              gTretTreeInteriors_LeaderGathersActions);
+  ObjectEvent_SetActionScript(GARET, gTretTreeInteriors_GaretGathersActions);
+  ObjectEvent_RunActionScriptAndWait(IVAN,
+                                     gTretTreeInteriors_IvanGathersActions);
   WAIT(10);
-  OBJECT_DIR(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
+  OBJECT_DIR(LOCALID_PARTY_LEADER, FACING_NORTH, 0);
   OBJECT_DIR(GARET, FACING_NORTH, 0);
   OBJECT_DIR(MIA, FACING_NORTH, 0);
   OBJECT_DIR(IVAN, FACING_NORTH, 40);
-  OBJECT_MODE(ACTOR_TRET, TRET_FACE_TURNING_WRATHFUL);
+  OBJECT_MODE(LOCALID_TRET, TRET_FACE_TURNING_WRATHFUL);
   WAIT(10);
-  OBJECT_MODE(ACTOR_TRET, TRET_FACE_WRATHFUL_CLOSED);
+  OBJECT_MODE(LOCALID_TRET, TRET_FACE_WRATHFUL_CLOSED);
   WAIT(20);
   TretTreeInteriors_PlayGesture(TRET_GESTURE_WRATHFUL_OPEN_EYES);
-  Event_ShowMessage(SPEAKER(ACTOR_TRET), 0);
-  Engine_ActorStartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
-  Engine_ActorStartRepeatedMotion(GARET, 2);
-  Engine_ActorStartRepeatedMotion(MIA, 2);
-  Engine_ActorStartRepeatedMotion(IVAN, 2);
-  OBJECT_EMOTE(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+  Script_ShowMessage(SPEAKER(LOCALID_TRET), 0);
+  Engine_ObjectEventStartRepeatedMotion(LOCALID_PARTY_LEADER, 2);
+  Engine_ObjectEventStartRepeatedMotion(GARET, 2);
+  Engine_ObjectEventStartRepeatedMotion(MIA, 2);
+  Engine_ObjectEventStartRepeatedMotion(IVAN, 2);
+  OBJECT_EMOTE(LOCALID_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   OBJECT_EMOTE(GARET, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   OBJECT_EMOTE(MIA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   OBJECT_EMOTE(IVAN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 60);
   TretTreeInteriors_PlayGesture(TRET_GESTURE_WRATHFUL_BLINK);
-  Event_ShowMessageAndWait(SPEAKER(ACTOR_TRET), 0, 10);
-  Engine_ActorStartRepeatedMotion(ACTOR_PARTY_LEADER, 1);
-  Engine_ActorStartRepeatedMotion(GARET, 1);
-  Engine_ActorStartRepeatedMotion(MIA, 1);
-  Engine_ActorRunRepeatedMotion(IVAN, 1);
-  Event_ShowMessage(SPEAKER(ACTOR_TRET), 0);
-  Actor_SetAttachedEffect(ACTOR_PARTY_LEADER,
-                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-  Actor_SetAttachedEffect(GARET,
-                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-  Actor_SetAttachedEffect(MIA, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-  Engine_ActorSetAttachedEffect(IVAN, ATTACHED_EFFECT_IN_FRONT |
-                                          ATTACHED_EFFECT_ONCE);
+  Script_ShowMessageAndWait(SPEAKER(LOCALID_TRET), 0, 10);
+  Engine_ObjectEventStartRepeatedMotion(LOCALID_PARTY_LEADER, 1);
+  Engine_ObjectEventStartRepeatedMotion(GARET, 1);
+  Engine_ObjectEventStartRepeatedMotion(MIA, 1);
+  Engine_ObjectEventRunRepeatedMotion(IVAN, 1);
+  Script_ShowMessage(SPEAKER(LOCALID_TRET), 0);
+  ObjectEvent_SetAttachedEffect(LOCALID_PARTY_LEADER, ATTACHED_EFFECT_IN_FRONT |
+                                                          ATTACHED_EFFECT_ONCE);
+  ObjectEvent_SetAttachedEffect(GARET, ATTACHED_EFFECT_IN_FRONT |
+                                           ATTACHED_EFFECT_ONCE);
+  ObjectEvent_SetAttachedEffect(MIA, ATTACHED_EFFECT_IN_FRONT |
+                                         ATTACHED_EFFECT_ONCE);
+  Engine_ObjectEventSetAttachedEffect(IVAN, ATTACHED_EFFECT_IN_FRONT |
+                                                ATTACHED_EFFECT_ONCE);
   WAIT(40);
   TretTreeInteriors_PlayGesture(TRET_GESTURE_WRATHFUL_BLINK);
-  MESSAGE_PUT(SPEAKER(ACTOR_TRET), 0);
+  MESSAGE_PUT(SPEAKER(LOCALID_TRET), 0);
   gEventWork->startTransition =
-      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_BARS);
+      MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_BARS);
   gEventWork->transitionFrames = 64;
-  Battle_SetStart(BATTLE_START_SCENE);
-  Event_SetNextDestination((s32)&SceneId_TretTreeInteriors,
-                           TRET_TREE_INTERIORS_AFTER_FIGHT_TRET);
+  Battle_SetStart(BATTLE_START_SCRIPTED);
+  FieldScript_SetNextDestination((s32)&MapId_TretTreeInteriors,
+                                 TRET_TREE_INTERIORS_AFTER_FIGHT_TRET);
   Field_RequestBattleFromEncounterTable(ENCOUNTER_ZONE_SCRIPTED_TRET_MERCURY,
                                         0);
   EV_END();
@@ -478,45 +480,45 @@ static void Event_FightTret(void) {
 /// Water heal him in Kolima Forest.
 static void TretTreeInteriors_PlayPostBattleConversation(void) {
   s32 hasMia;
-  struct FieldActor *partyActor;
+  struct ObjectEvent *partyObjectEvent;
   s32 openingColumn;
   SchedulerCallback sparkTask;
   const s32 *actions;
 
   // Restore the party positions before opening the post-battle conversation.
   hasMia = FLAG_CHECK(FLAG_IN_PARTY(MIA));
-  Object_GetById(MIA)->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
-  Engine_ActorSetSpritePriority(MIA, 2);
-  Object_GetById(ACTOR_PARTY_LEADER)->priorityFlags &=
-      ~ACTOR_PRIORITY_AUTOMATIC;
-  Engine_ActorSetSpritePriority(ACTOR_PARTY_LEADER, 2);
+  ObjectEvent_GetById(MIA)->priorityFlags &= ~OBJ_EVENT_PRIORITY_AUTOMATIC;
+  Engine_ObjectEventSetSpritePriority(MIA, 2);
+  ObjectEvent_GetById(LOCALID_PARTY_LEADER)->priorityFlags &=
+      ~OBJ_EVENT_PRIORITY_AUTOMATIC;
+  Engine_ObjectEventSetSpritePriority(LOCALID_PARTY_LEADER, 2);
   PartyInventory_FindOwner(ITEM_HERMES_WATER);
   SE(AUDIO_CUE_FADE_BGM);
   EV_START();
-  OBJECT_SPEED(ACTOR_PARTY_LEADER, 0xcccc, 0x6666);
+  OBJECT_SPEED(LOCALID_PARTY_LEADER, 0xcccc, 0x6666);
   OBJECT_SPEED(GARET, 0xcccc, 0x6666);
   OBJECT_SPEED(IVAN, 0xcccc, 0x6666);
   OBJECT_SPEED(MIA, 0xcccc, 0x6666);
-  OBJECT_POSITION_SET(ACTOR_PARTY_LEADER, 166, 80);
-  partyActor = Actor_Get(ACTOR_PARTY_LEADER);
-  partyActor->facing = FACING_NORTH;
+  OBJECT_POSITION_SET(LOCALID_PARTY_LEADER, 166, 80);
+  partyObjectEvent = ObjectEvent_Get(LOCALID_PARTY_LEADER);
+  partyObjectEvent->facing = FACING_NORTH;
   OBJECT_POSITION_SET(GARET, 148, 90);
-  partyActor = Actor_Get(GARET);
-  partyActor->facing = FACING_NORTH;
+  partyObjectEvent = ObjectEvent_Get(GARET);
+  partyObjectEvent->facing = FACING_NORTH;
   OBJECT_POSITION_SET(IVAN, 182, 90);
-  partyActor = Object_GetById(IVAN);
-  partyActor->facing = FACING_NORTH;
+  partyObjectEvent = ObjectEvent_GetById(IVAN);
+  partyObjectEvent->facing = FACING_NORTH;
   if (hasMia != 0) {
     OBJECT_POSITION_SET(MIA, 166, 104);
-    partyActor = Object_GetById(MIA);
-    partyActor->facing = FACING_NORTH;
+    partyObjectEvent = ObjectEvent_GetById(MIA);
+    partyObjectEvent->facing = FACING_NORTH;
   }
   TretTreeInteriors_PlayGesture(TRET_GESTURE_CLOSE_EYES);
   Engine_TaskWait(10);
-  gEventWork->startTransition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+  gEventWork->startTransition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   gEventWork->transitionFrames = 48;
-  Engine_EventOpenScreen();
-  Engine_EventWaitForScreen();
+  Engine_ScriptOpenScreen();
+  Engine_ScriptWaitForScreen();
   WAIT(20);
   Camera_SetSpeed(0x13333, 0x2666);
   Camera_MoveTo(PIXELS(168), -1, PIXELS(152), 1);
@@ -525,22 +527,22 @@ static void TretTreeInteriors_PlayPostBattleConversation(void) {
   // Open the passage in Tret's room before continuing the conversation.
   openingColumn = 10;
   SE(SE_MAP_EXIT);
-  Map_CopyCellAttributes(26, 3, 1, 2, openingColumn, 8);
-  Map_CopyCells(26, 38, 1, 1, openingColumn, 43);
+  MapGrid_CopyCellAttributes(26, 3, 1, 2, openingColumn, 8);
+  MapGrid_CopyCells(26, 38, 1, 1, openingColumn, 43);
   Engine_TaskWait(4);
-  Map_CopyCells(26, 37, 1, 2, openingColumn, 42);
+  MapGrid_CopyCells(26, 37, 1, 2, openingColumn, 42);
   Engine_TaskWait(4);
-  Map_CopyCells(26, 36, 1, 3, openingColumn, 41);
+  MapGrid_CopyCells(26, 36, 1, 3, openingColumn, 41);
   Engine_TaskWait(4);
-  Map_CopyCells(26, 35, 1, 4, openingColumn, 40);
+  MapGrid_CopyCells(26, 35, 1, 4, openingColumn, 40);
   Engine_TaskWait(80);
   // Tret comes to: "Oh... Mmmmm... What has happened to me?"
   MESSAGE_SET(MsgTretMmmmm);
-  Event_ShowMessageAndWait(SPEAKER(ACTOR_SECOND_TRET), 0, 20);
-  Engine_ActorStartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
-  Engine_ActorStartRepeatedMotion(GARET, 2);
-  Engine_ActorStartRepeatedMotion(MIA, 2);
-  Engine_ActorRunRepeatedMotion(IVAN, 2);
+  Script_ShowMessageAndWait(SPEAKER(LOCALID_SECOND_TRET), 0, 20);
+  Engine_ObjectEventStartRepeatedMotion(LOCALID_PARTY_LEADER, 2);
+  Engine_ObjectEventStartRepeatedMotion(GARET, 2);
+  Engine_ObjectEventStartRepeatedMotion(MIA, 2);
+  Engine_ObjectEventRunRepeatedMotion(IVAN, 2);
   WAIT(20);
   Camera_MoveTo(PIXELS(168), -1, PIXELS(90), 1);
   Engine_CameraWaitForMove();
@@ -549,70 +551,71 @@ static void TretTreeInteriors_PlayPostBattleConversation(void) {
   WAIT(60);
   SE(MUS_021);
   TretTreeInteriors_PlayGesture(TRET_GESTURE_BLINK);
-  Event_ShowMessageAndWait(SPEAKER(ACTOR_SECOND_TRET), 0, 20);
-  OBJECT_EMOTE(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
+  Script_ShowMessageAndWait(SPEAKER(LOCALID_SECOND_TRET), 0, 20);
+  OBJECT_EMOTE(LOCALID_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
   OBJECT_EMOTE(GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
   OBJECT_EMOTE(MIA, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
   OBJECT_EMOTE(IVAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 80);
-  Event_ShowMessage(SPEAKER(ACTOR_SECOND_TRET), 0);
+  Script_ShowMessage(SPEAKER(LOCALID_SECOND_TRET), 0);
   WAIT(40);
-  Event_ShowMessageAndWait(SPEAKER(ACTOR_SECOND_TRET), 0, 20);
-  OBJECT_MODE(ACTOR_PARTY_LEADER, ANIMATION_NOD);
+  Script_ShowMessageAndWait(SPEAKER(LOCALID_SECOND_TRET), 0, 20);
+  OBJECT_MODE(LOCALID_PARTY_LEADER, ANIMATION_NOD);
   OBJECT_MODE(GARET, ANIMATION_NOD);
   OBJECT_MODE(MIA, ANIMATION_NOD);
-  Engine_ActorSetAnimationAndWait(IVAN, ANIMATION_NOD);
+  Engine_ObjectEventSetAnimationAndWait(IVAN, ANIMATION_NOD);
   WAIT(20);
-  Event_ShowMessageAndWait(SPEAKER(ACTOR_SECOND_TRET), 0, 20);
+  Script_ShowMessageAndWait(SPEAKER(LOCALID_SECOND_TRET), 0, 20);
   TretTreeInteriors_PlayGesture(TRET_GESTURE_CLOSE_EYES);
   WAIT(40);
-  Event_ShowMessageAndWait(SPEAKER(ACTOR_SECOND_TRET), 0, 20);
-  Actor_SetAttachedEffect(ACTOR_PARTY_LEADER,
-                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-  Actor_SetAttachedEffect(GARET,
-                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-  Actor_SetAttachedEffect(MIA, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-  Actor_SetAttachedEffect(IVAN,
-                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+  Script_ShowMessageAndWait(SPEAKER(LOCALID_SECOND_TRET), 0, 20);
+  ObjectEvent_SetAttachedEffect(LOCALID_PARTY_LEADER, ATTACHED_EFFECT_IN_FRONT |
+                                                          ATTACHED_EFFECT_ONCE);
+  ObjectEvent_SetAttachedEffect(GARET, ATTACHED_EFFECT_IN_FRONT |
+                                           ATTACHED_EFFECT_ONCE);
+  ObjectEvent_SetAttachedEffect(MIA, ATTACHED_EFFECT_IN_FRONT |
+                                         ATTACHED_EFFECT_ONCE);
+  ObjectEvent_SetAttachedEffect(IVAN, ATTACHED_EFFECT_IN_FRONT |
+                                          ATTACHED_EFFECT_ONCE);
   WAIT(60);
   // Garet and Ivan will not let Tret die while they still need his help.
-  Engine_ActorRunRepeatedMotion(GARET, 2);
+  Engine_ObjectEventRunRepeatedMotion(GARET, 2);
   OBJECT_DIR(GARET, FACING_NORTHEAST, 10);
-  OBJECT_DIR(ACTOR_PARTY_LEADER, FACING_SOUTHWEST, 10);
-  Event_ShowMessageAndWait(SPEAKER(GARET), 0, 10);
-  Engine_ActorSetAnimationAndWait(IVAN, ANIMATION_SHAKE_HEAD);
-  OBJECT_DIR(ACTOR_PARTY_LEADER, FACING_SOUTHEAST, 0);
+  OBJECT_DIR(LOCALID_PARTY_LEADER, FACING_SOUTHWEST, 10);
+  Script_ShowMessageAndWait(SPEAKER(GARET), 0, 10);
+  Engine_ObjectEventSetAnimationAndWait(IVAN, ANIMATION_SHAKE_HEAD);
+  OBJECT_DIR(LOCALID_PARTY_LEADER, FACING_SOUTHEAST, 0);
   OBJECT_DIR(IVAN, FACING_NORTHWEST, 0);
-  Event_ShowMessageAndWait(SPEAKER(IVAN), 0, 20);
+  Script_ShowMessageAndWait(SPEAKER(IVAN), 0, 20);
   TretTreeInteriors_PlayGesture(TRET_GESTURE_CLOSE_EYES);
   WAIT(40);
-  Event_ShowMessageAndWait(SPEAKER(ACTOR_SECOND_TRET), 0, 10);
-  Engine_ActorStartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
-  Engine_ActorStartRepeatedMotion(GARET, 2);
-  Engine_ActorStartRepeatedMotion(MIA, 2);
-  Engine_ActorRunRepeatedMotion(IVAN, 2);
-  OBJECT_DIR(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
+  Script_ShowMessageAndWait(SPEAKER(LOCALID_SECOND_TRET), 0, 10);
+  Engine_ObjectEventStartRepeatedMotion(LOCALID_PARTY_LEADER, 2);
+  Engine_ObjectEventStartRepeatedMotion(GARET, 2);
+  Engine_ObjectEventStartRepeatedMotion(MIA, 2);
+  Engine_ObjectEventRunRepeatedMotion(IVAN, 2);
+  OBJECT_DIR(LOCALID_PARTY_LEADER, FACING_NORTH, 0);
   OBJECT_DIR(GARET, FACING_NORTH, 0);
   OBJECT_DIR(IVAN, FACING_NORTH, 40);
   TretTreeInteriors_PlayGesture(TRET_GESTURE_BLINK);
   // "Do you need something?" Answering no: "What are you doing, Isaac! Now's
   // not the time to fool around!"
-  Event_OpenMessage(SPEAKER(ACTOR_SECOND_TRET), 0);
+  Script_OpenMessage(SPEAKER(LOCALID_SECOND_TRET), 0);
   OBJECT_DIR(GARET, FACING_NORTHEAST, 0);
   OBJECT_DIR(IVAN, FACING_NORTHWEST, 0);
-  if (Engine_EventChooseYesNo(0, 0) != 0) {
+  if (Engine_ScriptChooseYesNo(0, 0) != 0) {
     OBJECT_EMOTE(GARET, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 20);
     OBJECT_MODE(GARET, ANIMATION_SHAKE_HEAD);
     MESSAGE_SET(MsgTretDoingNowsNot);
-    Event_ShowMessage(SPEAKER(GARET), 0);
+    Script_ShowMessage(SPEAKER(GARET), 0);
     OBJECT_EMOTE(IVAN, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 10);
     OBJECT_MODE(IVAN, ANIMATION_NOD);
-    Event_ShowMessage(SPEAKER(IVAN), 0);
+    Script_ShowMessage(SPEAKER(IVAN), 0);
   }
   WAIT(20);
   TretTreeInteriors_PlayGesture(TRET_GESTURE_BLINK);
   MESSAGE_SET(MsgTretTurnedPeopleKolima);
-  Event_ShowMessageAndWait(SPEAKER(ACTOR_SECOND_TRET), 0, 20);
-  Event_ShowMessageAndWait(SPEAKER(ACTOR_SECOND_TRET), 0, 10);
+  Script_ShowMessageAndWait(SPEAKER(LOCALID_SECOND_TRET), 0, 20);
+  Script_ShowMessageAndWait(SPEAKER(LOCALID_SECOND_TRET), 0, 10);
   TretTreeInteriors_PlayGesture(TRET_GESTURE_CLOSE_EYES);
   WAIT(20);
   // Tret tries to release the people of Kolima: the colours shift and sparks
@@ -621,10 +624,10 @@ static void TretTreeInteriors_PlayPostBattleConversation(void) {
   ColorBuffer_ApplyTarget(0x406218, 1);
   Engine_ColorBufferInterpolate(20);
   Engine_TaskWait(40);
-  Engine_ActorStartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
-  Engine_ActorStartRepeatedMotion(GARET, 2);
-  Engine_ActorStartRepeatedMotion(MIA, 2);
-  Engine_ActorRunRepeatedMotion(IVAN, 2);
+  Engine_ObjectEventStartRepeatedMotion(LOCALID_PARTY_LEADER, 2);
+  Engine_ObjectEventStartRepeatedMotion(GARET, 2);
+  Engine_ObjectEventStartRepeatedMotion(MIA, 2);
+  Engine_ObjectEventRunRepeatedMotion(IVAN, 2);
   OBJECT_DIR(GARET, FACING_NORTH, 0);
   OBJECT_DIR(IVAN, FACING_NORTH, 20);
   WAIT(20);
@@ -636,7 +639,7 @@ static void TretTreeInteriors_PlayPostBattleConversation(void) {
     sparkTask = TretTreeInteriors_SpawnSwirlSparks;
     origin->z = PIXELS(52);
   }
-  Task_AddCallback(sparkTask, TASK_PRIORITY_SCENE);
+  Task_AddCallback(sparkTask, TASK_PRIORITY_MAP);
   WAIT(220);
   Engine_TaskRemoveCallback(sparkTask);
   ColorBuffer_ApplyTarget(0x10000, 1);
@@ -647,40 +650,42 @@ static void TretTreeInteriors_PlayPostBattleConversation(void) {
   // "I can't do it... My power no longer reaches Kolima..." His face sinks
   // away on "People of Kolima... Forgive me...", and the party resolve to
   // heal him.
-  Event_ShowMessageAndWait(SPEAKER(ACTOR_SECOND_TRET), 0, 10);
+  Script_ShowMessageAndWait(SPEAKER(LOCALID_SECOND_TRET), 0, 10);
   TretTreeInteriors_PlayGesture(TRET_GESTURE_CLOSE_EYES);
-  Event_ShowMessage(SPEAKER(ACTOR_SECOND_TRET), 0);
-  Actor_RunActionScriptAndWait(ACTOR_TRET, gTretTreeInteriors_FaceSinksActions);
+  Script_ShowMessage(SPEAKER(LOCALID_SECOND_TRET), 0);
+  ObjectEvent_RunActionScriptAndWait(LOCALID_TRET,
+                                     gTretTreeInteriors_FaceSinksActions);
   WAIT(40);
   OBJECT_EMOTE(GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
-  Event_ShowMessage(SPEAKER(GARET), 0);
+  Script_ShowMessage(SPEAKER(GARET), 0);
   OBJECT_EMOTE(IVAN, EMOTE_IN_FRONT | EMOTE_WINCE, 10);
-  Event_ShowMessage(SPEAKER(IVAN), 0);
+  Script_ShowMessage(SPEAKER(IVAN), 0);
   OBJECT_DIR(GARET, FACING_NORTHEAST, 0);
   OBJECT_DIR(IVAN, FACING_NORTHWEST, 10);
-  OBJECT_DIR(ACTOR_PARTY_LEADER, FACING_SOUTH, 10);
-  Engine_ActorRunRepeatedMotion(GARET, 1);
-  Event_ShowMessageAndWait(SPEAKER(GARET), 0, 10);
-  Engine_ActorRunRepeatedMotion(IVAN, 1);
-  Event_ShowMessageAndWait(SPEAKER(IVAN), 0, 10);
+  OBJECT_DIR(LOCALID_PARTY_LEADER, FACING_SOUTH, 10);
+  Engine_ObjectEventRunRepeatedMotion(GARET, 1);
+  Script_ShowMessageAndWait(SPEAKER(GARET), 0, 10);
+  Engine_ObjectEventRunRepeatedMotion(IVAN, 1);
+  Script_ShowMessageAndWait(SPEAKER(IVAN), 0, 10);
   if (hasMia != 0) {
-    Engine_ActorRunRepeatedMotion(MIA, 1);
-    Engine_EventShowMessageAndWait(SPEAKER(MIA), 0, 10);
+    Engine_ObjectEventRunRepeatedMotion(MIA, 1);
+    Engine_ScriptShowMessageAndWait(SPEAKER(MIA), 0, 10);
   }
-  OBJECT_MODE(ACTOR_PARTY_LEADER, ANIMATION_NOD);
+  OBJECT_MODE(LOCALID_PARTY_LEADER, ANIMATION_NOD);
   OBJECT_MODE(GARET, ANIMATION_NOD);
   OBJECT_MODE(MIA, ANIMATION_NOD);
-  Engine_ActorSetAnimationAndWait(IVAN, ANIMATION_NOD);
+  Engine_ObjectEventSetAnimationAndWait(IVAN, ANIMATION_NOD);
   actions = gTretTreeInteriors_RejoinLeaderActions;
-  Actor_SetActionScript(GARET, actions);
+  ObjectEvent_SetActionScript(GARET, actions);
   if (hasMia != 0) {
-    Actor_SetActionScript(MIA, actions);
+    ObjectEvent_SetActionScript(MIA, actions);
   }
-  Actor_RunActionScriptAndWait(IVAN, actions);
+  ObjectEvent_RunActionScriptAndWait(IVAN, actions);
   WAIT(20);
-  Object_GetById(ACTOR_PARTY_LEADER)->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
+  ObjectEvent_GetById(LOCALID_PARTY_LEADER)->priorityFlags |=
+      OBJ_EVENT_PRIORITY_AUTOMATIC;
   FLAG_SET(FLAG_TRET_DEFEATED);
-  FieldScheduler_AddCallback(TretPalette_UpdateSceneTint, TASK_PRIORITY_SCENE);
+  FieldScheduler_AddCallback(TretPalette_UpdateMapTint, TASK_PRIORITY_MAP);
   EV_END();
 }
 
@@ -695,18 +700,18 @@ static void TretTreeInteriors_ApplyPostBattleState(s32 playRecoveryScene) {
   Engine_TaskWait(1);
   if (FLAG_CHECK(FLAG_TRET_DEFEATED) != 0) {
     s32 openingColumn = 10;
-    Map_CopyCells(121, 34, 3, 1, 93, openingColumn);
+    MapGrid_CopyCells(121, 34, 3, 1, 93, openingColumn);
     {
       s32 passageColumn = 30;
-      Map_CopyCells(46, 38, 1, 1, passageColumn, 43);
-      Map_CopyCellAttributes(0, 0, 1, 2, passageColumn, 9);
+      MapGrid_CopyCells(46, 38, 1, 1, passageColumn, 43);
+      MapGrid_CopyCellAttributes(0, 0, 1, 2, passageColumn, 9);
     }
-    Map_CopyCellAttributes(26, 3, 1, 2, openingColumn, 8);
-    Map_CopyCells(26, 35, 1, 4, openingColumn, 40);
+    MapGrid_CopyCellAttributes(26, 3, 1, 2, openingColumn, 8);
+    MapGrid_CopyCells(26, 35, 1, 4, openingColumn, 40);
   } else {
     s32 openingColumn = 10;
     s32 passageColumn = 8;
-    Map_CopyCellAttributes(11, 8, 1, 2, openingColumn, passageColumn);
+    MapGrid_CopyCellAttributes(11, 8, 1, 2, openingColumn, passageColumn);
   }
 }
 
@@ -716,100 +721,101 @@ static void TretTreeInteriors_ApplyPostBattleState(s32 playRecoveryScene) {
 /// from entrances 50, 40, 30 and 20, the landing at entrance 10, or the
 /// conversation after the battle at TRET_TREE_INTERIORS_AFTER_FIGHT_TRET.
 s32 TretTreeInteriors_EnterRoom(void) {
-  struct FieldActor *tret;
-  struct FieldActor *actor;
-  struct MapScrollWork *map;
-  struct MapLayerScroll *layer;
+  struct ObjectEvent *tret;
+  struct ObjectEvent *objectEvent;
+  struct MapGridScrollWork *grid;
+  struct MapGridLayerScroll *layer;
   struct FieldWork *work;
-  s32 entrance;
-  s32 selectedActorId;
+  s32 warpDest;
+  s32 selectedObjectEventId;
 
-  tret = Object_GetById(ACTOR_TRET);
+  tret = ObjectEvent_GetById(LOCALID_TRET);
   // Point the cocoon latch at the scene state and save the palette first.
-  sLastCocoon = (s16 *)gSceneState;
-  TretPalette_SaveSceneColors();
+  sLastCocoon = (s16 *)gMapLocalState;
+  TretPalette_SaveMapColors();
   tret->motionFlags = 0;
   tret->y.fixed = -PIXELS(10);
   {
-    struct FieldActor *tretSpeaker = Object_GetById(ACTOR_SECOND_TRET);
+    struct ObjectEvent *tretSpeaker = ObjectEvent_GetById(LOCALID_SECOND_TRET);
 
     tretSpeaker->motionFlags = 0;
     tretSpeaker->y.fixed = -PIXELS(10);
   }
-  Engine_ActorSetChildValue(ACTOR_SECOND_TRET, 15);
+  Engine_ObjectEventSetChildValue(LOCALID_SECOND_TRET, 15);
   TretTreeInteriors_PlayGesture(TRET_GESTURE_CLOSE_EYES);
-  if (gGameState.entrance != TRET_TREE_INTERIORS_AFTER_FIGHT_TRET)
-    FieldScheduler_AddCallback(TretPalette_UpdateSceneTint,
-                               TASK_PRIORITY_SCENE);
+  if (gGameState.warpDest != TRET_TREE_INTERIORS_AFTER_FIGHT_TRET)
+    FieldScheduler_AddCallback(TretPalette_UpdateMapTint, TASK_PRIORITY_MAP);
   if (FLAG_CHECK(FLAG_TRET_DEFEATED)) {
-    Engine_ActorSetPosition(ACTOR_SECOND_TRET, 0, 0);
-    Engine_ActorSetPosition(ACTOR_TRET, 0, 0);
+    Engine_ObjectEventSetPosition(LOCALID_SECOND_TRET, 0, 0);
+    Engine_ObjectEventSetPosition(LOCALID_TRET, 0, 0);
   }
   if (FLAG_CHECK(FLAG_KEEP_PARTY_POSITION))
     TretTreeInteriors_ApplyFlaggedMapPatches();
-  map = WORK_SLOT(8);
+  grid = WORK_SLOT(8);
   // Match the first layer's parallax offset and scale to the room bounds.
-  layer = &map->layers[0];
-  layer->offsetX += Iwram_MulQ16(map->minX + PIXELS(160), 0x1999);
-  layer->offsetY += Iwram_MulQ16(map->minY + PIXELS(136), 0x1999);
+  layer = &grid->layers[0];
+  layer->offsetX += Iwram_MulQ16(grid->minX + PIXELS(160), 0x1999);
+  layer->offsetY += Iwram_MulQ16(grid->minY + PIXELS(136), 0x1999);
   layer->scaleX = 0xe666;
   layer->scaleY = 0xe666;
   // The map draws four cocoons already torn: the first step on them breaks
   // through.
-  FLAG_SET(FLAG_SCENE_TEMP_01);
-  FLAG_SET(FLAG_SCENE_TEMP_0D);
-  FLAG_SET(FLAG_SCENE_TEMP_0F);
-  FLAG_SET(FLAG_SCENE_TEMP_13);
+  FLAG_SET(FLAG_MAP_TEMP_01);
+  FLAG_SET(FLAG_MAP_TEMP_0D);
+  FLAG_SET(FLAG_MAP_TEMP_0F);
+  FLAG_SET(FLAG_MAP_TEMP_13);
   Engine_TaskWait(1);
   TretTreeInteriors_ApplyPostBattleState(0);
   work = WORK_SLOT(HEAP_SLOT_EVENT);
-  work->transition =
-      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_NOISE);
-  entrance = gGameState.entrance;
-  selectedActorId = gGameState.selectedActor;
-  actor = Object_GetById(selectedActorId);
+  work->transition = MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_NOISE);
+  warpDest = gGameState.warpDest;
+  selectedObjectEventId = gGameState.selectedObjectEvent;
+  objectEvent = ObjectEvent_GetById(selectedObjectEventId);
   // Entrances 20, 30, 40 and 50: the leader falls on through the room, to
   // the entrance numbered ten lower. Entrance 10: the leader lands in a cloud
   // of dust in front of Tret.
   // TRET_TREE_INTERIORS_AFTER_FIGHT_TRET: back from the battle with Tret.
-  if (entrance == 50 || entrance == 40 || entrance == 30 || entrance == 20) {
-    Engine_EventOpenScreen();
-    OBJECT_MODE(selectedActorId, ANIMATION_LEADER_SPIN_AWAY);
-    Engine_ActorSetSpriteFlags(Object_GetById(selectedActorId), 0);
-    Actor_SetAttachedEffect(selectedActorId,
-                            ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ATTACH);
+  if (warpDest == 50 || warpDest == 40 || warpDest == 30 || warpDest == 20) {
+    Engine_ScriptOpenScreen();
+    OBJECT_MODE(selectedObjectEventId, ANIMATION_LEADER_SPIN_AWAY);
+    Engine_ObjectEventSetSpriteFlags(ObjectEvent_GetById(selectedObjectEventId),
+                                     0);
+    ObjectEvent_SetAttachedEffect(selectedObjectEventId,
+                                  ATTACHED_EFFECT_IN_FRONT |
+                                      ATTACHED_EFFECT_ATTACH);
     Camera_MoveTo(-1, -1, -1, 0);
-    actor->motionFlags = ACTOR_FALLS;
-    actor->y.fixed = PIXELS(100);
-    actor->terrainHeight = -PIXELS(160);
-    actor->gravity = PIXELS(1) / 2;
+    objectEvent->motionFlags = OBJ_EVENT_FALLS;
+    objectEvent->y.fixed = PIXELS(100);
+    objectEvent->terrainHeight = -PIXELS(160);
+    objectEvent->gravity = PIXELS(1) / 2;
     SE(SE_204);
-    Event_SetDestination((s32)&SceneId_TretTreeInteriors, entrance - 10);
+    FieldScript_SetDestination((s32)&MapId_TretTreeInteriors, warpDest - 10);
     WAIT(20);
-    actor->terrainId = 2;
-    Engine_ActorSetSpritePriority(selectedActorId, 3);
+    objectEvent->terrainId = 2;
+    Engine_ObjectEventSetSpritePriority(selectedObjectEventId, 3);
     WAIT(2);
-    Engine_ActorSetAttachedEffect(selectedActorId, ATTACHED_EFFECT_IN_FRONT |
-                                                       ATTACHED_EFFECT_REMOVE);
+    Engine_ObjectEventSetAttachedEffect(selectedObjectEventId,
+                                        ATTACHED_EFFECT_IN_FRONT |
+                                            ATTACHED_EFFECT_REMOVE);
     WAIT(8);
-  } else if (entrance == 10) {
+  } else if (warpDest == 10) {
     if (!FLAG_CHECK(FLAG_KEEP_PARTY_POSITION))
       TretTreeInteriors_RunLandingDustScene();
-  } else if (entrance == TRET_TREE_INTERIORS_AFTER_FIGHT_TRET) {
+  } else if (warpDest == TRET_TREE_INTERIORS_AFTER_FIGHT_TRET) {
     TretTreeInteriors_ApplyPostBattleState(1);
   }
   return 0;
 }
 
 /// Saves background palettes 0 to 13 as the base for Tret's scene tint.
-static void TretPalette_SaveSceneColors(void) {
+static void TretPalette_SaveMapColors(void) {
   Dma_Set((const void *)BG_PLTT, gPaletteBufferWork->palette,
           (DMA_ENABLE | DMA_32BIT) << 16 | 112, REG_DMA3);
 }
 
 /// Tints background colours 16 to 78 every thirty-two frames, leaving
 /// palette 4's last colour alone. Each later palette receives a weaker tint.
-static void TretPalette_UpdateSceneTint(void) {
+static void TretPalette_UpdateMapTint(void) {
   u16 *sourceColors;
   u16 *destinationColors;
   u32 colorIndex;
@@ -881,70 +887,70 @@ static void TretPalette_UpdateSceneTint(void) {
 static void TretTreeInteriors_PlayGesture(s32 gesture) {
   switch (gesture) {
   case TRET_GESTURE_CLOSE_EYES:
-    OBJECT_MODE(ACTOR_TRET, TRET_FACE_OPEN);
+    OBJECT_MODE(LOCALID_TRET, TRET_FACE_OPEN);
     Engine_TaskWait(6);
-    OBJECT_MODE(ACTOR_TRET, TRET_FACE_CLOSED);
+    OBJECT_MODE(LOCALID_TRET, TRET_FACE_CLOSED);
     break;
   case TRET_GESTURE_OPEN_EYES:
-    OBJECT_MODE(ACTOR_TRET, TRET_FACE_OPEN);
+    OBJECT_MODE(LOCALID_TRET, TRET_FACE_OPEN);
     break;
   case TRET_GESTURE_LOOK_LEFT:
-    OBJECT_MODE(ACTOR_TRET, TRET_FACE_OPEN);
+    OBJECT_MODE(LOCALID_TRET, TRET_FACE_OPEN);
     Engine_TaskWait(6);
-    OBJECT_MODE(ACTOR_TRET, TRET_FACE_LOOK_LEFT);
+    OBJECT_MODE(LOCALID_TRET, TRET_FACE_LOOK_LEFT);
     break;
   case TRET_GESTURE_LOOK_RIGHT:
-    OBJECT_MODE(ACTOR_TRET, TRET_FACE_OPEN);
+    OBJECT_MODE(LOCALID_TRET, TRET_FACE_OPEN);
     Engine_TaskWait(6);
-    OBJECT_MODE(ACTOR_TRET, TRET_FACE_LOOK_RIGHT);
+    OBJECT_MODE(LOCALID_TRET, TRET_FACE_LOOK_RIGHT);
     break;
   case TRET_GESTURE_BLINK:
-    OBJECT_MODE(ACTOR_TRET, TRET_FACE_OPEN);
+    OBJECT_MODE(LOCALID_TRET, TRET_FACE_OPEN);
     Engine_TaskWait(6);
-    OBJECT_MODE(ACTOR_TRET, TRET_FACE_CLOSED);
+    OBJECT_MODE(LOCALID_TRET, TRET_FACE_CLOSED);
     Engine_TaskWait(6);
-    OBJECT_MODE(ACTOR_TRET, TRET_FACE_OPEN);
+    OBJECT_MODE(LOCALID_TRET, TRET_FACE_OPEN);
     Engine_TaskWait(6);
-    OBJECT_MODE(ACTOR_TRET, TRET_FACE_CLOSED);
+    OBJECT_MODE(LOCALID_TRET, TRET_FACE_CLOSED);
     Engine_TaskWait(6);
-    OBJECT_MODE(ACTOR_TRET, TRET_FACE_OPEN);
+    OBJECT_MODE(LOCALID_TRET, TRET_FACE_OPEN);
     break;
   case TRET_GESTURE_HALF_CLOSE_EYES:
-    OBJECT_MODE(ACTOR_TRET, TRET_FACE_OPEN);
+    OBJECT_MODE(LOCALID_TRET, TRET_FACE_OPEN);
     Engine_TaskWait(6);
-    OBJECT_MODE(ACTOR_TRET, TRET_FACE_HALF_CLOSED);
+    OBJECT_MODE(LOCALID_TRET, TRET_FACE_HALF_CLOSED);
     break;
   case TRET_GESTURE_WRATHFUL_CLOSE_EYES:
-    OBJECT_MODE(ACTOR_TRET, TRET_FACE_WRATHFUL_OPEN);
+    OBJECT_MODE(LOCALID_TRET, TRET_FACE_WRATHFUL_OPEN);
     Engine_TaskWait(6);
-    OBJECT_MODE(ACTOR_TRET, TRET_FACE_WRATHFUL_CLOSED);
+    OBJECT_MODE(LOCALID_TRET, TRET_FACE_WRATHFUL_CLOSED);
     break;
   case TRET_GESTURE_WRATHFUL_OPEN_EYES:
-    OBJECT_MODE(ACTOR_TRET, TRET_FACE_WRATHFUL_OPEN);
+    OBJECT_MODE(LOCALID_TRET, TRET_FACE_WRATHFUL_OPEN);
     break;
   case TRET_GESTURE_WRATHFUL_LOOK_RIGHT:
-    OBJECT_MODE(ACTOR_TRET, TRET_FACE_WRATHFUL_OPEN);
+    OBJECT_MODE(LOCALID_TRET, TRET_FACE_WRATHFUL_OPEN);
     Engine_TaskWait(6);
-    OBJECT_MODE(ACTOR_TRET, TRET_FACE_WRATHFUL_LOOK_RIGHT);
+    OBJECT_MODE(LOCALID_TRET, TRET_FACE_WRATHFUL_LOOK_RIGHT);
     break;
   case TRET_GESTURE_WRATHFUL_LOOK_LEFT:
-    OBJECT_MODE(ACTOR_TRET, TRET_FACE_WRATHFUL_OPEN);
+    OBJECT_MODE(LOCALID_TRET, TRET_FACE_WRATHFUL_OPEN);
     Engine_TaskWait(6);
-    OBJECT_MODE(ACTOR_TRET, TRET_FACE_WRATHFUL_LOOK_LEFT);
+    OBJECT_MODE(LOCALID_TRET, TRET_FACE_WRATHFUL_LOOK_LEFT);
     break;
   case TRET_GESTURE_WRATHFUL_BLINK:
-    OBJECT_MODE(ACTOR_TRET, TRET_FACE_WRATHFUL_OPEN);
+    OBJECT_MODE(LOCALID_TRET, TRET_FACE_WRATHFUL_OPEN);
     Engine_TaskWait(6);
-    OBJECT_MODE(ACTOR_TRET, TRET_FACE_WRATHFUL_CLOSED);
+    OBJECT_MODE(LOCALID_TRET, TRET_FACE_WRATHFUL_CLOSED);
     Engine_TaskWait(6);
-    OBJECT_MODE(ACTOR_TRET, TRET_FACE_WRATHFUL_OPEN);
+    OBJECT_MODE(LOCALID_TRET, TRET_FACE_WRATHFUL_OPEN);
     Engine_TaskWait(6);
-    OBJECT_MODE(ACTOR_TRET, TRET_FACE_WRATHFUL_CLOSED);
+    OBJECT_MODE(LOCALID_TRET, TRET_FACE_WRATHFUL_CLOSED);
     Engine_TaskWait(6);
-    OBJECT_MODE(ACTOR_TRET, TRET_FACE_WRATHFUL_OPEN);
+    OBJECT_MODE(LOCALID_TRET, TRET_FACE_WRATHFUL_OPEN);
     break;
   case TRET_GESTURE_WRATHFUL_STARE:
-    OBJECT_MODE(ACTOR_TRET, TRET_FACE_WRATHFUL_OPEN);
+    OBJECT_MODE(LOCALID_TRET, TRET_FACE_WRATHFUL_OPEN);
     break;
   }
   Engine_TaskWait(12);
@@ -952,7 +958,7 @@ static void TretTreeInteriors_PlayGesture(s32 gesture) {
 
 /// Moves a fading spark outward from its saved origin, then releases it.
 static void TretTreeInteriors_UpdateSwirlSpark(union FieldObject *fieldObject) {
-  struct FieldActor *spark = (struct FieldActor *)fieldObject;
+  struct ObjectEvent *spark = (struct ObjectEvent *)fieldObject;
   struct FieldPosition position;
   s32 frame;
 
@@ -983,7 +989,7 @@ static void TretTreeInteriors_UpdateSwirlSpark(union FieldObject *fieldObject) {
 
 /// Emits five shrinking waves of fading sparks from the saved origin.
 static void TretTreeInteriors_SpawnSwirlSparks(void) {
-  struct FieldActor *spark;
+  struct ObjectEvent *spark;
   u32 frame;
   void *previousResourceEntry;
   s32 wave;
@@ -1009,8 +1015,8 @@ static void TretTreeInteriors_SpawnSwirlSparks(void) {
             Sprite_ShareVramCache(spark->sprite, previousResourceEntry);
         spark->motionFlags = 0;
         spark->sprite->image.priority = 0;
-        Engine_ActorSetSpriteFlags(spark, 0);
-        Object_SetMode(spark, 1);
+        Engine_ObjectEventSetSpriteFlags(spark, 0);
+        ObjectEvent_SetMode(spark, 1);
         spark->timer = 0;
         spark->work = ((360 / (u32)(6 - wave) * sparkIndex) << 16) / 360;
         spark->targetX = sSparkOrigin.x;
@@ -1040,17 +1046,17 @@ static void TretTreeInteriors_ApplyFlaggedMapPatches(void) {
        patchOffset += 6) {
     if (FLAG_CHECK(gTretTreeInteriors_MapPatches[patchOffset]) &&
         gTretTreeInteriors_MapPatches[patchOffset + 1] != 0)
-      Map_CopyCellsTo(gTretTreeInteriors_MapPatches[patchOffset + 2],
-                      gTretTreeInteriors_MapPatches[patchOffset + 3],
-                      gTretTreeInteriors_MapPatches[patchOffset + 4],
-                      gTretTreeInteriors_MapPatches[patchOffset + 5], 1, 1);
+      MapGrid_CopyCellsTo(gTretTreeInteriors_MapPatches[patchOffset + 2],
+                          gTretTreeInteriors_MapPatches[patchOffset + 3],
+                          gTretTreeInteriors_MapPatches[patchOffset + 4],
+                          gTretTreeInteriors_MapPatches[patchOffset + 5], 1, 1);
   }
 }
 
 /// Casting Reveal in Tret Tree (PSYNERGY_PHASE_EFFECT_ACTS) stops the scene
 /// tint until the scene is entered again.
-static void Event_CastReveal(void) {
-  Engine_TaskRemoveCallback(TretPalette_UpdateSceneTint);
+static void EventScript_CastReveal(void) {
+  Engine_TaskRemoveCallback(TretPalette_UpdateMapTint);
 }
 
 #include "common/effect_advance.h"
@@ -1063,26 +1069,26 @@ static void TretTreeInteriors_RunLandingDustScene(void) {
   struct FieldPosition velocity;
   struct EffectOptions *particleOptions;
   struct FieldPosition *particleVelocity;
-  struct FieldActor *leader;
+  struct ObjectEvent *leader;
   u32 particleIndex;
   s32 velocityX;
   s32 velocityZ;
 
   EV_START();
   Camera_MoveTo(-1, -1, -1, 0);
-  Engine_MapRedraw();
+  Engine_MapGridRedraw();
   Engine_TaskWait(1);
-  Object_GetById(ACTOR_PARTY_LEADER)->y.fixed = PIXELS(130);
-  Object_GetById(ACTOR_PARTY_LEADER)->gravity = 0x8000;
-  Object_GetById(ACTOR_PARTY_LEADER)->bounce = 0;
-  Object_GetById(ACTOR_PARTY_LEADER)->motionFlags = 0;
-  Engine_EventOpenScreen();
-  Engine_EventWaitForScreen();
+  ObjectEvent_GetById(LOCALID_PARTY_LEADER)->y.fixed = PIXELS(130);
+  ObjectEvent_GetById(LOCALID_PARTY_LEADER)->gravity = 0x8000;
+  ObjectEvent_GetById(LOCALID_PARTY_LEADER)->bounce = 0;
+  ObjectEvent_GetById(LOCALID_PARTY_LEADER)->motionFlags = 0;
+  Engine_ScriptOpenScreen();
+  Engine_ScriptWaitForScreen();
   SE(SE_204);
-  Object_GetById(ACTOR_PARTY_LEADER)->motionFlags =
-      ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
+  ObjectEvent_GetById(LOCALID_PARTY_LEADER)->motionFlags =
+      OBJ_EVENT_FOLLOWS_TERRAIN | OBJ_EVENT_FALLS;
   WAIT(24);
-  leader = Object_GetById(ACTOR_PARTY_LEADER);
+  leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   // Spread particles around the leader while the landing effect finishes.
   particleOptions = &options;
   particleOptions->palette = 7;
@@ -1105,16 +1111,16 @@ static void TretTreeInteriors_RunLandingDustScene(void) {
                       particleOptions);
   }
   SE(SE_188);
-  Actor_SetAttachedEffect(ACTOR_PARTY_LEADER,
-                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ATTACH);
-  OBJECT_MODE(ACTOR_PARTY_LEADER, 22);
-  Map_SetShake(0x50000, 0x50000, 0x10000);
-  Map_SetShake(-1, -1, 0xe666);
-  Engine_MapWaitWorkValuesBelow256();
-  Engine_ActorSetAttachedEffect(ACTOR_PARTY_LEADER, ATTACHED_EFFECT_IN_FRONT |
-                                                        ATTACHED_EFFECT_REMOVE);
-  Object_GetById(ACTOR_PARTY_LEADER)->gravity = 0x10000;
-  Object_GetById(ACTOR_PARTY_LEADER)->bounce = 0x4000;
+  ObjectEvent_SetAttachedEffect(
+      LOCALID_PARTY_LEADER, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ATTACH);
+  OBJECT_MODE(LOCALID_PARTY_LEADER, 22);
+  MapGrid_SetShake(0x50000, 0x50000, 0x10000);
+  MapGrid_SetShake(-1, -1, 0xe666);
+  Engine_MapGridWaitWorkValuesBelow256();
+  Engine_ObjectEventSetAttachedEffect(
+      LOCALID_PARTY_LEADER, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_REMOVE);
+  ObjectEvent_GetById(LOCALID_PARTY_LEADER)->gravity = 0x10000;
+  ObjectEvent_GetById(LOCALID_PARTY_LEADER)->bounce = 0x4000;
   EV_END();
 }
 
@@ -1138,27 +1144,27 @@ s32 gEffectScript2[] = {
 /// cocoon's cell x/y.
 // clang-format off
 s16 gTretTreeInteriors_MapPatches[] = {
-    FLAG_SCENE_TEMP_00, 1, 64, 35, 113, 6,
-    FLAG_SCENE_TEMP_01, 0, 65, 35, 115, 6,
-    FLAG_SCENE_TEMP_02, 1, 66, 35, 110, 8,
-    FLAG_SCENE_TEMP_03, 1, 67, 35, 110, 10,
-    FLAG_SCENE_TEMP_04, 1, 68, 35, 111, 12,
-    FLAG_SCENE_TEMP_05, 1, 69, 35, 113, 12,
-    FLAG_SCENE_TEMP_06, 1, 70, 35, 112, 14,
-    FLAG_SCENE_TEMP_07, 1, 71, 35, 114, 14,
-    FLAG_SCENE_TEMP_08, 1, 72, 35, 116, 14,
-    FLAG_SCENE_TEMP_09, 1, 73, 35, 71, 23,
-    FLAG_SCENE_TEMP_0A, 1, 74, 35, 77, 24,
-    FLAG_SCENE_TEMP_0C, 1, 75, 35, 112, 24,
-    FLAG_SCENE_TEMP_0D, 0, 76, 35, 114, 24,
-    FLAG_SCENE_TEMP_0E, 1, 77, 35, 116, 24,
-    FLAG_SCENE_TEMP_0F, 0, 78, 35, 112, 26,
-    FLAG_SCENE_TEMP_0B, 1, 79, 35, 114, 26,
-    FLAG_SCENE_TEMP_10, 1, 80, 35, 116, 26,
-    FLAG_SCENE_TEMP_11, 1, 81, 35, 112, 28,
-    FLAG_SCENE_TEMP_12, 1, 82, 35, 114, 28,
-    FLAG_SCENE_TEMP_13, 0, 83, 35, 116, 28,
-    FLAG_SCENE_TEMP_14, 1, 84, 35, 118, 28,
+    FLAG_MAP_TEMP_00, 1, 64, 35, 113, 6,
+    FLAG_MAP_TEMP_01, 0, 65, 35, 115, 6,
+    FLAG_MAP_TEMP_02, 1, 66, 35, 110, 8,
+    FLAG_MAP_TEMP_03, 1, 67, 35, 110, 10,
+    FLAG_MAP_TEMP_04, 1, 68, 35, 111, 12,
+    FLAG_MAP_TEMP_05, 1, 69, 35, 113, 12,
+    FLAG_MAP_TEMP_06, 1, 70, 35, 112, 14,
+    FLAG_MAP_TEMP_07, 1, 71, 35, 114, 14,
+    FLAG_MAP_TEMP_08, 1, 72, 35, 116, 14,
+    FLAG_MAP_TEMP_09, 1, 73, 35, 71, 23,
+    FLAG_MAP_TEMP_0A, 1, 74, 35, 77, 24,
+    FLAG_MAP_TEMP_0C, 1, 75, 35, 112, 24,
+    FLAG_MAP_TEMP_0D, 0, 76, 35, 114, 24,
+    FLAG_MAP_TEMP_0E, 1, 77, 35, 116, 24,
+    FLAG_MAP_TEMP_0F, 0, 78, 35, 112, 26,
+    FLAG_MAP_TEMP_0B, 1, 79, 35, 114, 26,
+    FLAG_MAP_TEMP_10, 1, 80, 35, 116, 26,
+    FLAG_MAP_TEMP_11, 1, 81, 35, 112, 28,
+    FLAG_MAP_TEMP_12, 1, 82, 35, 114, 28,
+    FLAG_MAP_TEMP_13, 0, 83, 35, 116, 28,
+    FLAG_MAP_TEMP_14, 1, 84, 35, 118, 28,
     -1, 0,
 };
 
@@ -1168,7 +1174,7 @@ const s32 *gEffectScripts[] = {
     gEffectScript2,
 };
 
-/// The party gathers in front of Tret before the battle (Event_FightTret),
+/// The party gathers in front of Tret before the battle (EventScript_FightTret),
 /// each walking to its own place.
 s32 gTretTreeInteriors_LeaderGathersActions[] = {
     SC_ANIMATION(2),
@@ -1287,8 +1293,8 @@ u32 gTretTreeInteriors_TintSteps[] = {
     99, 99, 99,
 };
 
-struct SceneEntrance gTretTreeInteriorsEntrances[] = {
-    { ENTRANCE_DEFAULT, CONDITION_ALWAYS, 136, 0, 136, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
+struct MapWarpDest gTretTreeInteriorsWarpDests[] = {
+    { WARP_DEST_DEFAULT, CONDITION_ALWAYS, 136, 0, 136, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
     { TRET_TREE_INTERIORS_FROM_KOLIMA_FOREST_TREE, CONDITION_ALWAYS, 488, 0, 248, FACING_NORTH, 0, 352, 0, 640, 272, 0 },
     { TRET_TREE_INTERIORS_FROM_TRET_TREE_BRANCH_SOUTH_SOUTHWEST, CONDITION_ALWAYS, 712, 0, 152, FACING_EAST, 0, 672, 0, 944, 272, 0 },
     { TRET_TREE_INTERIORS_FROM_TRET_TREE_BRANCH_SOUTH_SOUTHEAST, CONDITION_ALWAYS, 920, 0, 152, FACING_WEST, 0, 672, 0, 944, 272, 0 },
@@ -1330,10 +1336,10 @@ struct SceneEntrance gTretTreeInteriorsEntrances[] = {
     { 30, CONDITION_ALWAYS, 808, 0, 152, FACING_SOUTH, 0, 672, 0, 944, 272, 0 },
     { 20, CONDITION_ALWAYS, 488, 0, 152, FACING_SOUTH, 0, 352, 0, 640, 272, 0 },
     { TRET_TREE_INTERIORS_AFTER_FIGHT_TRET, CONDITION_ALWAYS, 168, 0, 72, FACING_SOUTH, 0, 32, 0, 304, 272, 0 },
-    { SCENE_TABLE_END },
+    { MAP_TABLE_END },
 };
 
-struct SceneRegion gTretTreeInteriorsRegions[] = {
+struct MapWarpRegion gTretTreeInteriorsRegions[] = {
     { 420, 28, 68, 428, 36, 76, -1, TRET_TREE_INTERIORS_ENTRANCE_TO_SECOND_FLOOR },
     { 228, 28, 338, 236, 36, 346, -1, TRET_TREE_INTERIORS_THIRD_FLOOR_TO_FOURTH_FLOOR },
 #if !TBS_PATCH_3
@@ -1344,135 +1350,158 @@ struct SceneRegion gTretTreeInteriorsRegions[] = {
     { -1, 0, 0, 0, 0, 0, 0, 0 },
 };
 
-u32 gTretTreeInteriorsExits[] = {
-    SCENE_EXITS(TretTreeInteriors),
-    SCENE_EXIT(TRET_TREE_INTERIORS_TO_KOLIMA_FOREST_TREE, KolimaForestTree, KOLIMA_FOREST_TREE_FROM_TRET_TREE_INTERIORS),
-    SCENE_EXIT(TRET_TREE_INTERIORS_TO_TRET_TREE_BRANCH_SOUTH_SOUTHWEST, TretTreeBranch, TRET_TREE_BRANCH_FROM_TRET_TREE_INTERIORS_SOUTH_SOUTHWEST),
-    SCENE_EXIT(TRET_TREE_INTERIORS_TO_TRET_TREE_BRANCH_SOUTH_SOUTHEAST, TretTreeBranch, TRET_TREE_BRANCH_FROM_TRET_TREE_INTERIORS_SOUTH_SOUTHEAST),
-    SCENE_EXIT(TRET_TREE_INTERIORS_TO_TRET_TREE_BRANCH_SOUTH, TretTreeBranch, TRET_TREE_BRANCH_FROM_TRET_TREE_INTERIORS_SOUTH),
-    SCENE_EXIT(TRET_TREE_INTERIORS_TO_TRET_TREE_BRANCH_SOUTHEAST, TretTreeBranch, TRET_TREE_BRANCH_FROM_TRET_TREE_INTERIORS_SOUTHEAST),
-    SCENE_EXIT(TRET_TREE_INTERIORS_TO_TRET_TREE_BRANCH_NORTHWEST, TretTreeBranch, TRET_TREE_BRANCH_FROM_TRET_TREE_INTERIORS_NORTHWEST),
-    SCENE_EXIT(TRET_TREE_INTERIORS_TO_TRET_TREE_BRANCH_NORTH, TretTreeBranch, TRET_TREE_BRANCH_FROM_TRET_TREE_INTERIORS_NORTH),
-    SCENE_EXIT(TRET_TREE_INTERIORS_TO_TRET_TREE_BRANCH_NORTH_NORTHWEST, TretTreeBranch, TRET_TREE_BRANCH_FROM_TRET_TREE_INTERIORS_NORTH_NORTHWEST),
-    SCENE_EXIT(TRET_TREE_INTERIORS_TO_TRET_TREE_BRANCH_NORTH_NORTHEAST, TretTreeBranch, TRET_TREE_BRANCH_FROM_TRET_TREE_INTERIORS_NORTH_NORTHEAST),
-    SCENE_EXIT(TRET_TREE_INTERIORS_ENTRANCE_TO_SECOND_FLOOR, TretTreeInteriors, TRET_TREE_INTERIORS_SECOND_FLOOR_FROM_ENTRANCE),
-    SCENE_EXIT(TRET_TREE_INTERIORS_SECOND_FLOOR_TO_ENTRANCE, TretTreeInteriors, TRET_TREE_INTERIORS_ENTRANCE_FROM_SECOND_FLOOR),
-    SCENE_EXIT(TRET_TREE_INTERIORS_THIRD_FLOOR_TO_FOURTH_FLOOR, TretTreeInteriors, TRET_TREE_INTERIORS_FOURTH_FLOOR_FROM_THIRD_FLOOR),
-    SCENE_EXIT(TRET_TREE_INTERIORS_FOURTH_FLOOR_TO_THIRD_FLOOR, TretTreeInteriors, TRET_TREE_INTERIORS_THIRD_FLOOR_FROM_FOURTH_FLOOR),
-    SCENE_EXIT(TRET_TREE_INTERIORS_TRET_TO_ENTRANCE, TretTreeInteriors, TRET_TREE_INTERIORS_ENTRANCE_FROM_TRET),
-    SCENE_EXIT(TRET_TREE_INTERIORS_ENTRANCE_TO_TRET, TretTreeInteriors, TRET_TREE_INTERIORS_TRET_FROM_ENTRANCE),
-    SCENE_EXITS_END,
+u32 gTretTreeInteriorsWarps[] = {
+    MAP_WARPS(TretTreeInteriors),
+    MAP_WARP(TRET_TREE_INTERIORS_TO_KOLIMA_FOREST_TREE, KolimaForestTree, KOLIMA_FOREST_TREE_FROM_TRET_TREE_INTERIORS),
+    MAP_WARP(TRET_TREE_INTERIORS_TO_TRET_TREE_BRANCH_SOUTH_SOUTHWEST, TretTreeBranch, TRET_TREE_BRANCH_FROM_TRET_TREE_INTERIORS_SOUTH_SOUTHWEST),
+    MAP_WARP(TRET_TREE_INTERIORS_TO_TRET_TREE_BRANCH_SOUTH_SOUTHEAST, TretTreeBranch, TRET_TREE_BRANCH_FROM_TRET_TREE_INTERIORS_SOUTH_SOUTHEAST),
+    MAP_WARP(TRET_TREE_INTERIORS_TO_TRET_TREE_BRANCH_SOUTH, TretTreeBranch, TRET_TREE_BRANCH_FROM_TRET_TREE_INTERIORS_SOUTH),
+    MAP_WARP(TRET_TREE_INTERIORS_TO_TRET_TREE_BRANCH_SOUTHEAST, TretTreeBranch, TRET_TREE_BRANCH_FROM_TRET_TREE_INTERIORS_SOUTHEAST),
+    MAP_WARP(TRET_TREE_INTERIORS_TO_TRET_TREE_BRANCH_NORTHWEST, TretTreeBranch, TRET_TREE_BRANCH_FROM_TRET_TREE_INTERIORS_NORTHWEST),
+    MAP_WARP(TRET_TREE_INTERIORS_TO_TRET_TREE_BRANCH_NORTH, TretTreeBranch, TRET_TREE_BRANCH_FROM_TRET_TREE_INTERIORS_NORTH),
+    MAP_WARP(TRET_TREE_INTERIORS_TO_TRET_TREE_BRANCH_NORTH_NORTHWEST, TretTreeBranch, TRET_TREE_BRANCH_FROM_TRET_TREE_INTERIORS_NORTH_NORTHWEST),
+    MAP_WARP(TRET_TREE_INTERIORS_TO_TRET_TREE_BRANCH_NORTH_NORTHEAST, TretTreeBranch, TRET_TREE_BRANCH_FROM_TRET_TREE_INTERIORS_NORTH_NORTHEAST),
+    MAP_WARP(TRET_TREE_INTERIORS_ENTRANCE_TO_SECOND_FLOOR, TretTreeInteriors, TRET_TREE_INTERIORS_SECOND_FLOOR_FROM_ENTRANCE),
+    MAP_WARP(TRET_TREE_INTERIORS_SECOND_FLOOR_TO_ENTRANCE, TretTreeInteriors, TRET_TREE_INTERIORS_ENTRANCE_FROM_SECOND_FLOOR),
+    MAP_WARP(TRET_TREE_INTERIORS_THIRD_FLOOR_TO_FOURTH_FLOOR, TretTreeInteriors, TRET_TREE_INTERIORS_FOURTH_FLOOR_FROM_THIRD_FLOOR),
+    MAP_WARP(TRET_TREE_INTERIORS_FOURTH_FLOOR_TO_THIRD_FLOOR, TretTreeInteriors, TRET_TREE_INTERIORS_THIRD_FLOOR_FROM_FOURTH_FLOOR),
+    MAP_WARP(TRET_TREE_INTERIORS_TRET_TO_ENTRANCE, TretTreeInteriors, TRET_TREE_INTERIORS_ENTRANCE_FROM_TRET),
+    MAP_WARP(TRET_TREE_INTERIORS_ENTRANCE_TO_TRET, TretTreeInteriors, TRET_TREE_INTERIORS_TRET_FROM_ENTRANCE),
+    MAP_WARPS_END,
 };
 
-struct ScenePlacement gTretTreeInteriorsPlacements[] = {
-    { GARET, CONDITION_ALWAYS, ACTOR_STAND,
+struct ObjectEventTemplate gTretTreeInteriorsObjectEventTemplates[] = {
+    { GARET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         0, 0, 0, FACING_EAST, TALK_KEEP_FACING, 0 },
-    { IVAN, CONDITION_ALWAYS, ACTOR_STAND,
+    { IVAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         0, 0, 0, FACING_EAST, TALK_KEEP_FACING, 0 },
-    { MIA, CONDITION_ALWAYS, ACTOR_STAND,
+    { MIA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         0, 0, 0, FACING_EAST, TALK_KEEP_FACING, 0 },
-    { SPRITE_TRET, CONDITION_ALWAYS, ACTOR_RESET_ACTION,
+    { SPRITE_TRET, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
         PIXELS(168), 0, PIXELS(48), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { SPRITE_TRET_RAISED, CONDITION_ALWAYS, ACTOR_RESET_ACTION,
+    { SPRITE_TRET_RAISED, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
         PIXELS(168), 0, PIXELS(48), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { SCENE_TABLE_END },
+    { MAP_TABLE_END },
 };
 // clang-format on
 
-struct SceneEvent gTretTreeInteriorsEvents[] = {
-    {EVENT_EXIT | EVENT_TOUCH_FACING | FACING_SOUTH, 1, CONDITION_ALWAYS,
+struct MapEvent gTretTreeInteriorsEvents[] = {
+    {MAP_EVENT_WARP | MAP_EVENT_FLAG_FACING | FACING_SOUTH, 1, CONDITION_ALWAYS,
      TRET_TREE_INTERIORS_TO_KOLIMA_FOREST_TREE},
-    {EVENT_EXIT | EVENT_TOUCH_FACING | FACING_WEST, 2, CONDITION_ALWAYS,
+    {MAP_EVENT_WARP | MAP_EVENT_FLAG_FACING | FACING_WEST, 2, CONDITION_ALWAYS,
      TRET_TREE_INTERIORS_TO_TRET_TREE_BRANCH_SOUTH_SOUTHWEST},
-    {EVENT_EXIT | EVENT_TOUCH_FACING | FACING_EAST, 3, CONDITION_ALWAYS,
+    {MAP_EVENT_WARP | MAP_EVENT_FLAG_FACING | FACING_EAST, 3, CONDITION_ALWAYS,
      TRET_TREE_INTERIORS_TO_TRET_TREE_BRANCH_SOUTH_SOUTHEAST},
-    {EVENT_EXIT | EVENT_TOUCH_FACING | FACING_SOUTH, 4, CONDITION_ALWAYS,
+    {MAP_EVENT_WARP | MAP_EVENT_FLAG_FACING | FACING_SOUTH, 4, CONDITION_ALWAYS,
      TRET_TREE_INTERIORS_TO_TRET_TREE_BRANCH_SOUTH},
-    {EVENT_EXIT | EVENT_TOUCH_FACING | FACING_EAST, 5, CONDITION_ALWAYS,
+    {MAP_EVENT_WARP | MAP_EVENT_FLAG_FACING | FACING_EAST, 5, CONDITION_ALWAYS,
      TRET_TREE_INTERIORS_TO_TRET_TREE_BRANCH_SOUTHEAST},
-    {EVENT_EXIT | EVENT_TOUCH_FACING | FACING_WEST, 6, CONDITION_ALWAYS,
+    {MAP_EVENT_WARP | MAP_EVENT_FLAG_FACING | FACING_WEST, 6, CONDITION_ALWAYS,
      TRET_TREE_INTERIORS_TO_TRET_TREE_BRANCH_NORTHWEST},
-    {EVENT_EXIT | EVENT_TOUCH_FACING | FACING_SOUTH, 7, CONDITION_ALWAYS,
+    {MAP_EVENT_WARP | MAP_EVENT_FLAG_FACING | FACING_SOUTH, 7, CONDITION_ALWAYS,
      TRET_TREE_INTERIORS_TO_TRET_TREE_BRANCH_NORTH},
-    {EVENT_EXIT | EVENT_TOUCH_FACING | FACING_WEST, 8, CONDITION_ALWAYS,
+    {MAP_EVENT_WARP | MAP_EVENT_FLAG_FACING | FACING_WEST, 8, CONDITION_ALWAYS,
      TRET_TREE_INTERIORS_TO_TRET_TREE_BRANCH_NORTH_NORTHWEST},
-    {EVENT_EXIT | EVENT_TOUCH_FACING | FACING_EAST, 9, CONDITION_ALWAYS,
+    {MAP_EVENT_WARP | MAP_EVENT_FLAG_FACING | FACING_EAST, 9, CONDITION_ALWAYS,
      TRET_TREE_INTERIORS_TO_TRET_TREE_BRANCH_NORTH_NORTHEAST},
-    {EVENT_EXIT, 11, CONDITION_ALWAYS,
+    {MAP_EVENT_WARP, 11, CONDITION_ALWAYS,
      TRET_TREE_INTERIORS_SECOND_FLOOR_TO_ENTRANCE},
-    {EVENT_EXIT, 13, CONDITION_ALWAYS,
+    {MAP_EVENT_WARP, 13, CONDITION_ALWAYS,
      TRET_TREE_INTERIORS_FOURTH_FLOOR_TO_THIRD_FLOOR},
-    {EVENT_EXIT, 15, CONDITION_ALWAYS, TRET_TREE_INTERIORS_ENTRANCE_TO_TRET},
-    {EVENT_TOUCH | EVENT_TOUCH_WALKING, 21, CONDITION_ALWAYS,
-     EVENT_SCRIPT(Event_ResetCocoonLatch)},
-    {EVENT_TOUCH | EVENT_TOUCH_WALKING, 22, CONDITION_ALWAYS,
-     EVENT_SCRIPT(Event_ResetCocoonLatch)},
-    {EVENT_TOUCH | EVENT_TOUCH_WALKING, 23, CONDITION_ALWAYS,
-     EVENT_SCRIPT(Event_ResetCocoonLatch)},
-    {EVENT_TOUCH | EVENT_TOUCH_WALKING, 24, CONDITION_ALWAYS,
-     EVENT_SCRIPT(Event_ResetCocoonLatch)},
-    {EVENT_TOUCH | EVENT_TOUCH_WALKING, 25, CONDITION_ALWAYS,
-     EVENT_SCRIPT(Event_ResetCocoonLatch)},
-    {EVENT_TOUCH | EVENT_TOUCH_WALKING, 26, CONDITION_ALWAYS,
-     EVENT_SCRIPT(Event_ResetCocoonLatch)},
-    {EVENT_TOUCH | EVENT_TOUCH_WALKING, 27, CONDITION_ALWAYS,
-     EVENT_SCRIPT(Event_ResetCocoonLatch)},
-    {EVENT_TOUCH | EVENT_TOUCH_WALKING, 28, CONDITION_ALWAYS,
-     EVENT_SCRIPT(Event_ResetCocoonLatch)},
-    {EVENT_TOUCH | EVENT_TOUCH_WALKING, 29, CONDITION_ALWAYS,
-     EVENT_SCRIPT(Event_ResetCocoonLatch)},
-    {EVENT_TOUCH | EVENT_TOUCH_WALKING, 31, CONDITION_ALWAYS,
-     EVENT_SCRIPT(Event_ResetCocoonLatch)},
-    {EVENT_TOUCH | EVENT_TOUCH_WALKING, 32, CONDITION_ALWAYS,
-     EVENT_SCRIPT(Event_ResetCocoonLatch)},
-    {EVENT_TOUCH | EVENT_TOUCH_WALKING, 50, CONDITION_ALWAYS,
-     EVENT_SCRIPT(Event_ResetCocoonLatch)},
-    {EVENT_TOUCH | EVENT_TOUCH_WALKING, 51, CONDITION_ALWAYS,
-     EVENT_SCRIPT(Event_ResetCocoonLatch)},
-    {EVENT_TOUCH | EVENT_TOUCH_WALKING, 52, CONDITION_ALWAYS,
-     EVENT_SCRIPT(Event_ResetCocoonLatch)},
-    {EVENT_TOUCH | EVENT_TOUCH_WALKING, 53, CONDITION_ALWAYS,
-     EVENT_SCRIPT(Event_ResetCocoonLatch)},
-    {EVENT_TOUCH | EVENT_TOUCH_WALKING, 54, CONDITION_ALWAYS,
-     EVENT_SCRIPT(Event_ResetCocoonLatch)},
-    {EVENT_TOUCH | EVENT_TOUCH_WALKING, 55, CONDITION_ALWAYS,
-     EVENT_SCRIPT(Event_ResetCocoonLatch)},
-    {EVENT_TOUCH | EVENT_TOUCH_WALKING, 56, CONDITION_ALWAYS,
-     EVENT_SCRIPT(Event_ResetCocoonLatch)},
-    {EVENT_TOUCH | EVENT_TOUCH_WALKING, 57, CONDITION_ALWAYS,
-     EVENT_SCRIPT(Event_ResetCocoonLatch)},
-    {EVENT_TOUCH | EVENT_TOUCH_WALKING, 58, CONDITION_ALWAYS,
-     EVENT_SCRIPT(Event_ResetCocoonLatch)},
-    {EVENT_TOUCH | EVENT_TOUCH_WALKING, 59, CONDITION_ALWAYS,
-     EVENT_SCRIPT(Event_ResetCocoonLatch)},
-    {EVENT_TOUCH, 21, CONDITION_ALWAYS, EVENT_SCRIPT(Event_StepOnCocoon21)},
-    {EVENT_TOUCH, 22, CONDITION_ALWAYS, EVENT_SCRIPT(Event_StepOnCocoon22)},
-    {EVENT_TOUCH, 23, CONDITION_ALWAYS, EVENT_SCRIPT(Event_StepOnCocoon23)},
-    {EVENT_TOUCH, 24, CONDITION_ALWAYS, EVENT_SCRIPT(Event_StepOnCocoon24)},
-    {EVENT_TOUCH, 25, CONDITION_ALWAYS, EVENT_SCRIPT(Event_StepOnCocoon25)},
-    {EVENT_TOUCH, 26, CONDITION_ALWAYS, EVENT_SCRIPT(Event_StepOnCocoon26)},
-    {EVENT_TOUCH, 27, CONDITION_ALWAYS, EVENT_SCRIPT(Event_StepOnCocoon27)},
-    {EVENT_TOUCH, 28, CONDITION_ALWAYS, EVENT_SCRIPT(Event_StepOnCocoon28)},
-    {EVENT_TOUCH, 29, CONDITION_ALWAYS, EVENT_SCRIPT(Event_StepOnCocoon29)},
-    {EVENT_TOUCH, 31, CONDITION_ALWAYS, EVENT_SCRIPT(Event_StepOnCocoon31)},
-    {EVENT_TOUCH, 32, CONDITION_ALWAYS, EVENT_SCRIPT(Event_StepOnCocoon32)},
-    {EVENT_TOUCH, 50, CONDITION_ALWAYS, EVENT_SCRIPT(Event_StepOnCocoon50)},
-    {EVENT_TOUCH, 51, CONDITION_ALWAYS, EVENT_SCRIPT(Event_StepOnCocoon51)},
-    {EVENT_TOUCH, 52, CONDITION_ALWAYS, EVENT_SCRIPT(Event_StepOnCocoon52)},
-    {EVENT_TOUCH, 53, CONDITION_ALWAYS, EVENT_SCRIPT(Event_StepOnCocoon53)},
-    {EVENT_TOUCH, 54, CONDITION_ALWAYS, EVENT_SCRIPT(Event_StepOnCocoon54)},
-    {EVENT_TOUCH, 55, CONDITION_ALWAYS, EVENT_SCRIPT(Event_StepOnCocoon55)},
-    {EVENT_TOUCH, 56, CONDITION_ALWAYS, EVENT_SCRIPT(Event_StepOnCocoon56)},
-    {EVENT_TOUCH, 57, CONDITION_ALWAYS, EVENT_SCRIPT(Event_StepOnCocoon57)},
-    {EVENT_TOUCH, 58, CONDITION_ALWAYS, EVENT_SCRIPT(Event_StepOnCocoon58)},
-    {EVENT_TOUCH, 59, CONDITION_ALWAYS, EVENT_SCRIPT(Event_StepOnCocoon59)},
-    {EVENT_TOUCH, 40, FLAG_TRET_DEFEATED, EVENT_SCRIPT(Event_FightTret)},
+    {MAP_EVENT_WARP, 15, CONDITION_ALWAYS,
+     TRET_TREE_INTERIORS_ENTRANCE_TO_TRET},
+    {MAP_EVENT_COORD | COORD_EVENT_FLAG_WALKING, 21, CONDITION_ALWAYS,
+     EVENT_SCRIPT(EventScript_ResetCocoonLatch)},
+    {MAP_EVENT_COORD | COORD_EVENT_FLAG_WALKING, 22, CONDITION_ALWAYS,
+     EVENT_SCRIPT(EventScript_ResetCocoonLatch)},
+    {MAP_EVENT_COORD | COORD_EVENT_FLAG_WALKING, 23, CONDITION_ALWAYS,
+     EVENT_SCRIPT(EventScript_ResetCocoonLatch)},
+    {MAP_EVENT_COORD | COORD_EVENT_FLAG_WALKING, 24, CONDITION_ALWAYS,
+     EVENT_SCRIPT(EventScript_ResetCocoonLatch)},
+    {MAP_EVENT_COORD | COORD_EVENT_FLAG_WALKING, 25, CONDITION_ALWAYS,
+     EVENT_SCRIPT(EventScript_ResetCocoonLatch)},
+    {MAP_EVENT_COORD | COORD_EVENT_FLAG_WALKING, 26, CONDITION_ALWAYS,
+     EVENT_SCRIPT(EventScript_ResetCocoonLatch)},
+    {MAP_EVENT_COORD | COORD_EVENT_FLAG_WALKING, 27, CONDITION_ALWAYS,
+     EVENT_SCRIPT(EventScript_ResetCocoonLatch)},
+    {MAP_EVENT_COORD | COORD_EVENT_FLAG_WALKING, 28, CONDITION_ALWAYS,
+     EVENT_SCRIPT(EventScript_ResetCocoonLatch)},
+    {MAP_EVENT_COORD | COORD_EVENT_FLAG_WALKING, 29, CONDITION_ALWAYS,
+     EVENT_SCRIPT(EventScript_ResetCocoonLatch)},
+    {MAP_EVENT_COORD | COORD_EVENT_FLAG_WALKING, 31, CONDITION_ALWAYS,
+     EVENT_SCRIPT(EventScript_ResetCocoonLatch)},
+    {MAP_EVENT_COORD | COORD_EVENT_FLAG_WALKING, 32, CONDITION_ALWAYS,
+     EVENT_SCRIPT(EventScript_ResetCocoonLatch)},
+    {MAP_EVENT_COORD | COORD_EVENT_FLAG_WALKING, 50, CONDITION_ALWAYS,
+     EVENT_SCRIPT(EventScript_ResetCocoonLatch)},
+    {MAP_EVENT_COORD | COORD_EVENT_FLAG_WALKING, 51, CONDITION_ALWAYS,
+     EVENT_SCRIPT(EventScript_ResetCocoonLatch)},
+    {MAP_EVENT_COORD | COORD_EVENT_FLAG_WALKING, 52, CONDITION_ALWAYS,
+     EVENT_SCRIPT(EventScript_ResetCocoonLatch)},
+    {MAP_EVENT_COORD | COORD_EVENT_FLAG_WALKING, 53, CONDITION_ALWAYS,
+     EVENT_SCRIPT(EventScript_ResetCocoonLatch)},
+    {MAP_EVENT_COORD | COORD_EVENT_FLAG_WALKING, 54, CONDITION_ALWAYS,
+     EVENT_SCRIPT(EventScript_ResetCocoonLatch)},
+    {MAP_EVENT_COORD | COORD_EVENT_FLAG_WALKING, 55, CONDITION_ALWAYS,
+     EVENT_SCRIPT(EventScript_ResetCocoonLatch)},
+    {MAP_EVENT_COORD | COORD_EVENT_FLAG_WALKING, 56, CONDITION_ALWAYS,
+     EVENT_SCRIPT(EventScript_ResetCocoonLatch)},
+    {MAP_EVENT_COORD | COORD_EVENT_FLAG_WALKING, 57, CONDITION_ALWAYS,
+     EVENT_SCRIPT(EventScript_ResetCocoonLatch)},
+    {MAP_EVENT_COORD | COORD_EVENT_FLAG_WALKING, 58, CONDITION_ALWAYS,
+     EVENT_SCRIPT(EventScript_ResetCocoonLatch)},
+    {MAP_EVENT_COORD | COORD_EVENT_FLAG_WALKING, 59, CONDITION_ALWAYS,
+     EVENT_SCRIPT(EventScript_ResetCocoonLatch)},
+    {MAP_EVENT_COORD, 21, CONDITION_ALWAYS,
+     EVENT_SCRIPT(EventScript_StepOnCocoon21)},
+    {MAP_EVENT_COORD, 22, CONDITION_ALWAYS,
+     EVENT_SCRIPT(EventScript_StepOnCocoon22)},
+    {MAP_EVENT_COORD, 23, CONDITION_ALWAYS,
+     EVENT_SCRIPT(EventScript_StepOnCocoon23)},
+    {MAP_EVENT_COORD, 24, CONDITION_ALWAYS,
+     EVENT_SCRIPT(EventScript_StepOnCocoon24)},
+    {MAP_EVENT_COORD, 25, CONDITION_ALWAYS,
+     EVENT_SCRIPT(EventScript_StepOnCocoon25)},
+    {MAP_EVENT_COORD, 26, CONDITION_ALWAYS,
+     EVENT_SCRIPT(EventScript_StepOnCocoon26)},
+    {MAP_EVENT_COORD, 27, CONDITION_ALWAYS,
+     EVENT_SCRIPT(EventScript_StepOnCocoon27)},
+    {MAP_EVENT_COORD, 28, CONDITION_ALWAYS,
+     EVENT_SCRIPT(EventScript_StepOnCocoon28)},
+    {MAP_EVENT_COORD, 29, CONDITION_ALWAYS,
+     EVENT_SCRIPT(EventScript_StepOnCocoon29)},
+    {MAP_EVENT_COORD, 31, CONDITION_ALWAYS,
+     EVENT_SCRIPT(EventScript_StepOnCocoon31)},
+    {MAP_EVENT_COORD, 32, CONDITION_ALWAYS,
+     EVENT_SCRIPT(EventScript_StepOnCocoon32)},
+    {MAP_EVENT_COORD, 50, CONDITION_ALWAYS,
+     EVENT_SCRIPT(EventScript_StepOnCocoon50)},
+    {MAP_EVENT_COORD, 51, CONDITION_ALWAYS,
+     EVENT_SCRIPT(EventScript_StepOnCocoon51)},
+    {MAP_EVENT_COORD, 52, CONDITION_ALWAYS,
+     EVENT_SCRIPT(EventScript_StepOnCocoon52)},
+    {MAP_EVENT_COORD, 53, CONDITION_ALWAYS,
+     EVENT_SCRIPT(EventScript_StepOnCocoon53)},
+    {MAP_EVENT_COORD, 54, CONDITION_ALWAYS,
+     EVENT_SCRIPT(EventScript_StepOnCocoon54)},
+    {MAP_EVENT_COORD, 55, CONDITION_ALWAYS,
+     EVENT_SCRIPT(EventScript_StepOnCocoon55)},
+    {MAP_EVENT_COORD, 56, CONDITION_ALWAYS,
+     EVENT_SCRIPT(EventScript_StepOnCocoon56)},
+    {MAP_EVENT_COORD, 57, CONDITION_ALWAYS,
+     EVENT_SCRIPT(EventScript_StepOnCocoon57)},
+    {MAP_EVENT_COORD, 58, CONDITION_ALWAYS,
+     EVENT_SCRIPT(EventScript_StepOnCocoon58)},
+    {MAP_EVENT_COORD, 59, CONDITION_ALWAYS,
+     EVENT_SCRIPT(EventScript_StepOnCocoon59)},
+    {MAP_EVENT_COORD, 40, FLAG_TRET_DEFEATED,
+     EVENT_SCRIPT(EventScript_FightTret)},
     {PSYNERGY_IN_AREA(ABILITY_REVEAL, PSYNERGY_PHASE_EFFECT_ACTS), 0,
-     CONDITION_ALWAYS, EVENT_SCRIPT(Event_CastReveal)},
-    {SEARCH(SEARCH_CHEST), 100, 0xf5b, FIND_ITEM(ITEM_HEALING_RING)},
-    {SEARCH(SEARCH_CHEST), 101, 0xf5c, FIND_ITEM(ITEM_NUT)},
-    {SEARCH(SEARCH_UNNAMED), 102, 0x350, FIND_PSYNERGY_STONE},
-    {SCENE_EVENTS_END},
+     CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_CastReveal)},
+    {BG_EVENT(BG_EVENT_CHEST), 100, 0xf5b, FIND_ITEM(ITEM_HEALING_RING)},
+    {BG_EVENT(BG_EVENT_CHEST), 101, 0xf5c, FIND_ITEM(ITEM_NUT)},
+    {BG_EVENT(BG_EVENT_UNNAMED), 102, 0x350, FIND_PSYNERGY_STONE},
+    {MAP_EVENTS_END},
 };
 
 s32 gTretTreeInteriors_TintIndex = 0;

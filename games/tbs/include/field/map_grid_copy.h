@@ -1,5 +1,5 @@
-#ifndef ALCHEMY_MAPCOPY_H
-#define ALCHEMY_MAPCOPY_H
+#ifndef ALCHEMY_MAP_GRID_COPY_H
+#define ALCHEMY_MAP_GRID_COPY_H
 
 #include "edition.h"
 #include "types.h"

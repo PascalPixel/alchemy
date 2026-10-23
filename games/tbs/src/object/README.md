@@ -38,7 +38,7 @@ takes an exit, the scene simply ends. Raising a flag that is already raised
 changes nothing, and a request an event raises waits until the event has
 finished, so a battle a cutscene asks for starts only after its last line.
 
-In the code, `Field_RunScene` ([`object/run_map.c`](object/run_map.c))
+In the code, `Field_RunMap` ([`object/run_map.c`](object/run_map.c))
 runs one scene. Before the loop it allocates the field work (`struct
 FieldWork`, the block of memory that holds the running scene's state: its
 actors, its event table and the requests below), loads the map,
@@ -52,20 +52,20 @@ describes. These are the request fields, in the order the loop tests them:
 
 | Order | Field | What it asks for |
 | --- | --- | --- |
-| 1 | `exit` | leave the scene; its kind is `Field_RunScene`'s result |
+| 1 | `exit` | leave the scene; its kind is `Field_RunMap`'s result |
 | 2 | `event` | run a raised event, or one of the codes below |
 | 3 | `battle` | a random or requested battle against this enemy group |
-| 4 | `action` | a touch event or exit on the cell stepped onto (`MAP_CELL_EVENT_FIRST` to `MAP_CELL_EVENT_LAST`) |
+| 4 | `action` | a touch event or exit on the cell stepped onto (`MB_EVENT_FIRST` to `MB_EVENT_LAST`) |
 | 5 | `pushTile` | a ledge, climbing spot or jump the leader pushes against (`Field_RunPushTileEvent`) |
 | 6 | `examine` | the A button: becomes `talk` for an actor ahead with a talk event, else `tile` for a searchable cell ahead, else `menu` |
 | 7 | `menu` | the main menu |
-| 8 | `talk` | talk to an actor (`Scene_TalkToActor`) |
+| 8 | `talk` | talk to an actor (`Map_TalkToObjectEvent`) |
 | 9 | `tile` | search a cell (`Field_SearchTile`) |
 | 10 | `psynergy` | use Psynergy (`Field_UsePsynergy`) |
 | 11 | `item` | use an item (`Field_UseItem`) |
 | 12 | `start` | the pause menu |
 
-An `event` is either a scene event to run (`Scene_RunRaisedEvent`) or a
+An `event` is either a scene event to run (`Map_RunRaisedEvent`) or a
 negative code from `enum FieldEventCode` that the loop handles itself:
 `FIELD_EVENT_PARTY_FELL` when characters fell to poison or hazardous ground
 (when no one survives, the party goes back to the last saved point with the
@@ -75,11 +75,11 @@ leader at 1 HP), `FIELD_EVENT_WORLD_MAP_PICTURE` and
 A battle is a way out of the scene, handled as an exit is. The game
 remembers where everyone stood, loads the battle as the next scene, and
 afterwards loads the place again with everyone put back. In the code, the
-`battle` handler calls `ObjectTable_Snapshot`, writes `SCENE_BATTLE` as the
-next scene with the enemy group as its entrance, and raises `EXIT_NONE`, the
-result that means the next scene is already set. `Scene_ReturnFromBattle`
+`battle` handler calls `ObjectTable_Snapshot`, writes `MAP_BATTLE` as the
+next scene with the enemy group as its entrance, and raises `WARP_NONE`, the
+result that means the next scene is already set. `Map_ReturnFromBattle`
 then loads the field scene again with `FLAG_KEEP_PARTY_POSITION`, and
-`Field_RunScene` calls `ObjectTable_Restore`.
+`Field_RunMap` calls `ObjectTable_Restore`.
 
 The snapshot (`ObjectTableSnapshot` in
 [`object_runtime.h`](../../include/object_runtime.h)) keeps up to
@@ -101,8 +101,8 @@ engine lends out to whatever runs, under the numbered slot
 | `FIELD_EVENT_PARTY_FELL` | -1 | characters fell to poison or hazardous ground |
 | `FIELD_EVENT_WORLD_MAP_PICTURE` | -888 | R on the world map: the world map screen |
 | `FIELD_EVENT_WORLD_MAP_ZOOM` | -889 | L on the world map: the view zooms out |
-| `SCENE_BATTLE` | `0x1fe` | the next scene a battle request writes |
-| `EXIT_NONE` | 999 | the exit result that means the next scene is already set |
+| `MAP_BATTLE` | `0x1fe` | the next scene a battle request writes |
+| `WARP_NONE` | 999 | the exit result that means the next scene is already set |
 | `FLAG_KEEP_PARTY_POSITION` | `0x109` | the next field scene starts where the party was, its actors restored from the snapshot |
 | `OBJECT_SNAPSHOT_CAPACITY` | 32 | actors a battle snapshot keeps |
 
@@ -131,7 +131,7 @@ eight groups is drawn, each with its own weight.
 In the code, `Field_ProcessStep` rolls on the zone of the ground underfoot
 through `Encounter_SelectEnemyGroup` ([`object/encounter.c`](object/encounter.c)),
 passing the leader's speed limit, doubled while `FLAG_LURE_CAP` is set. There
-is no battle when `FLAG_NO_ENCOUNTERS` or `FLAG_NO_ENCOUNTERS_IN_PLACE` is
+is no battle when `FLAG_NO_ENCOUNTERS` or `FLAG_NO_ENCOUNTERS_IN_MAPSEC` is
 set, on zone 0, while Cloak is active, or on a zone with rate 0. Otherwise:
 
 1. Each level, up to five, by which the party's average level exceeds the
@@ -156,13 +156,13 @@ Sanctum's eruption, and she joins at level 1 with no experience, so the rule
 ends the Sol Sanctum's random battles once she has fought her way to just
 short of level 4 (158 experience). Why is an open question (below).
 
-`Encounter_SelectSceneZones` gives a field scene its zones from
+`Encounter_SelectMapZones` gives a field scene its zones from
 `gBattle_LocationRules` (`location_rules.s`): the first rule for the scene and
 entrance (or any entrance) whose flag is clear gives a first zone, and grounds
 1 to 7 take consecutive zones from it while ground 0, ordinary ground, has
 none. A rule can instead move the first zone onto ground 0 and leave ground 1
-none, and most rules do. Cells marked `MAP_CELL_ENCOUNTER_GROUND_1` and
-`MAP_CELL_ENCOUNTER_GROUND_2` are grounds 1 and 2. A scene no rule matches has
+none, and most rules do. Cells marked `MB_ENCOUNTER_GROUND_1` and
+`MB_ENCOUNTER_GROUND_2` are grounds 1 and 2. A scene no rule matches has
 no battles. The world map takes its zone from `gWorldMap_EncounterRules`
 (`zonedata.c`) by the terrain under the leader, which also picks the battle's
 backdrop.
@@ -197,7 +197,7 @@ and the flags in `flags.h`.
 | `ENCOUNTER_ZONE_MIMIC` | 99 | mimic chests, by the chest's slot |
 | `ENCOUNTER_ZONE_VENUS_DJINN` to `ENCOUNTER_ZONE_JUPITER_DJINN` | 100 to 103 | Djinni battles, by `Field_RequestDjinnBattle` |
 | `FLAG_NO_ENCOUNTERS` | `0x160` | no random battles |
-| `FLAG_NO_ENCOUNTERS_IN_PLACE` | `0x161` | no random battles in this place |
+| `FLAG_NO_ENCOUNTERS_IN_MAPSEC` | `0x161` | no random battles in this place |
 | `FLAG_LURE_CAP` | `0x167` | the speed passed to the roll is doubled |
 | `work->encounterThreshold` | 16, in 16.16 fixed point | the steps at which a battle starts |
 
@@ -309,20 +309,20 @@ cells normally use, so it needs none of its own.
 On the world map, L and R don't use their shortcuts. L raises
 `FIELD_EVENT_WORLD_MAP_ZOOM`, and `FieldEffect_RunVisibilityTransition` sets the
 view 1.6 times as far while L is held. R raises `FIELD_EVENT_WORLD_MAP_PICTURE`,
-and `Map_ShowWorldMap` shows the picture.
+and `WorldMap_Show` shows the picture.
 
-`Map_ShowWorldMap` decodes the picture into `gMapCellBuffer`, the map cells'
+`WorldMap_Show` decodes the picture into `gMapGridCellBuffer`, the map cells'
 scratch memory, and copies it to VRAM, the console's video memory; only then
 does
 [`psynergy_effects/world_map.c`](psynergy_effects/world_map.c) reuse that
 buffer for its own work: the cursor, the markers and the name window. The
-marker task releases its window and VRAM before `Map_LoadAreaGraphics`
+marker task releases its window and VRAM before `WorldMap_LoadAreaGraphics`
 restores the field graphics into the same buffer.
 
-`gWorldMap_PlaceMarkers` (`scripts.s`) has a row for each place: its visited
-flag (`FLAG_PLACE_VISITED` of the place's group, set on entering the group),
+`gWorldMap_MapSecMarkers` (`scripts.s`) has a row for each place: its visited
+flag (`FLAG_MAPSEC_VISITED` of the place's group, set on entering the group),
 its marker's picture and its name. Rows belong to the world map's actors in
-order from slot 11 (`WORLD_MAP_FIRST_PLACE_ACTOR`), and each marker is drawn
+order from slot 11 (`WORLD_MAP_FIRST_MAPSEC_OBJ_EVENT`), and each marker is drawn
 where its actor stands, so a place's position on the picture is the position of
 its actor on the world map. A row of zeros is an actor with no marker, and -1
 ends the table. Markers take sprite entries one after another rather than one
@@ -336,7 +336,7 @@ name from a shorter distance (`WORLD_MAP_NAME_RANGE`). The edition block of
 
 | Name | Value | Meaning |
 | --- | --- | --- |
-| `WORLD_MAP_FIRST_PLACE_ACTOR` | 11 | the world map actor the first row of `gWorldMap_PlaceMarkers` belongs to |
+| `WORLD_MAP_FIRST_MAPSEC_OBJ_EVENT` | 11 | the world map actor the first row of `gWorldMap_MapSecMarkers` belongs to |
 | `WORLD_MAP_CURSOR_SNAPS` | 1 in `TBS_PATCH_2` editions, else 0 | the cursor glides onto the nearest place when the d-pad is released |
 | `WORLD_MAP_NAME_RANGE` | 64 in `TBS_PATCH_2` editions, else 100 | the squared distance at which a place's name shows |
 | `WORLD_MAP_NAME_LEFT` | 3 in `TBS_PATCH_2` editions, else 1 | how far left of its marker the name goes |
@@ -345,9 +345,9 @@ name from a shorter distance (`WORLD_MAP_NAME_RANGE`). The edition block of
 
 `Game_Run` (`object/map.c`) is the game's main loop; [the front
 page](../../README.md#the-main-loop) describes it. For a field scene it calls
-`Scene_ResetFlagsOnEnter`, loads the overlay (`Scene_LoadOverlay`) and runs
-`Field_RunScene`; for a battle or minigame it runs that and calls
-`Scene_ReturnFromBattle`. The overlay supplies the scene's tables and
+`Map_ResetFlagsOnEnter`, loads the overlay (`Map_LoadOverlay`) and runs
+`Field_RunMap`; for a battle or minigame it runs that and calls
+`Map_ReturnFromBattle`. The overlay supplies the scene's tables and
 initialization, and calls back into this folder through its import table for
 the commands of `field_event.h` and `field_service.h`.
 
@@ -378,9 +378,9 @@ effect scene's work serves the Djinn joining effects as well as Psynergy.
 | `battle_cue.c` | `gEncounter_BattleMusic`, the battle music of each encounter |
 | `zonedata.c` | the world map's encounter rules, and the zone and slot of each Djinni battle |
 | `location_rules.s` | `gBattle_LocationRules`, the encounter zones of field scenes |
-| `scene_rules.s` | the field music and area names of field scenes (`gScene_AreaNameRules`) |
+| `scene_rules.s` | the field music and area names of field scenes (`gMapSec_NameRules`) |
 | `encounter.tsv` | the 104 encounter zones |
-| `scripts.s` | object scripts, the leader's placement table, the display transition shapes, the weather pictures and `gWorldMap_PlaceMarkers` |
+| `scripts.s` | object scripts, the leader's placement table, the display transition shapes, the weather pictures and `gWorldMap_MapSecMarkers` |
 | `arcspark.s`, `swatch.s`, `mote.png` | the spark pictures, the debug palette editor's swatch (its picture is `../debug/swatch.png`) and the floating motes' picture |
 
 `object.c` and `psynergy_effects.c` are each one object in the ROM, written
@@ -400,14 +400,14 @@ Prototypes are in `games/tbs/include/unit/object/`.
   Local names `actor`, `object`, `leader`.
 - **request**: a field of the field work that something sets to interrupt the
   walk (above).
-- **scene event**: a row of the scene's event table (`struct SceneEvent`); its
+- **scene event**: a row of the scene's event table (`struct MapEvent`); its
   kind says what it answers. [Scenes](../map/README.md#the-tables) gives the
   kinds.
 - **field kind**: what an ability does on the field, the `type` column of
   `games/tbs/src/game/actions.tsv`, named by `enum FieldKind`
   (`unit/object/psynergy_effects.h`), `FIELD_KIND_MOVE` (1) to
   `FIELD_KIND_AVOID` (16). Whirlwind and Gale share `FIELD_KIND_WHIRLWIND`.
-- **effect scene**: `struct FieldEffectScene` (`field/fx_work.h`), the work of
+- **effect scene**: `struct FieldEffectWork` (`field/fx_work.h`), the work of
   the field effect playing: the ability, its field kind (`fieldKind`), its
   caster and target, and 24 effect slots. It is `HEAP_SLOT_EFFECT`, reached as
   `gEffectWork`. Local name `scene`.
@@ -421,10 +421,10 @@ Prototypes are in `games/tbs/include/unit/object/`.
 
 | Prefix | What it covers |
 | --- | --- |
-| `Scene_` | scene changes, a scene's events and its entrance |
+| `Map_` | scene changes, a scene's events and its entrance |
 | `Field_` | the scene loop and its requests |
 | `Encounter_` | random encounters |
-| `Event_`, `FieldEvent_` | the commands scene scripts run |
+| `Event_`, `FieldScript_` | the commands scene scripts run |
 | `Object_`, `ObjectMotion_`, `ObjectTable_` | actors, their motion and the actor table |
 | `Marker_` | the map's markers |
 | `ItemDisplay_` | a found item's picture, held up over the leader |
@@ -436,7 +436,7 @@ Prototypes are in `games/tbs/include/unit/object/`.
 | `FieldEffect_` | field effects: a field kind's runner is named for its Psynergy (`FieldEffect_RunCatch`), and the small effects scenes spawn go through `FieldEffect_Spawn` |
 | `ColorBuffer_` | the colour buffer, which moves the palettes toward target colours |
 | `ReelGame_`, `LzPack_` | the slot machine, and the packer beside it |
-| `Actor_`, `Leader_`, `Motion_`, `FacingObject_`, `ObjectVisual_` | the actor commands scene scripts call (`actor_commands.c`): placing, walking, turning and posing an actor or the leader |
+| `ObjectEvent_`, `Leader_`, `Motion_`, `FacingObject_`, `ObjectVisual_` | the actor commands scene scripts call (`actor_commands.c`): placing, walking, turning and posing an actor or the leader |
 | `EventObject_`, `ObjectEffect_` | the caster's casting pose and the context effects a Psynergy starts |
 | `ItemGift_` | the message for an item the party has just received |
 | `FadeOverlay_`, `RevealMarker_`, `FieldMotes_` | the fade overlay's marks beside the actor, a Reveal marker's sparkles and the floating motes |
@@ -468,19 +468,19 @@ wait until another request makes the sum non-zero, by which time a later
 cell's code may have replaced the action. It is marked `// BUG:`, and
 `BUGFIX` tests each request instead.
 
-`Scene_ResetFlagsOnEnter` clears flags `0x80` to `0xdf` on every ordinary
+`Map_ResetFlagsOnEnter` clears flags `0x80` to `0xdf` on every ordinary
 entrance, even within a group: the Djinn's hiding flags
 (`FLAG_DJINNI_HIDING_0` and the 79 after it), which keep a Djinni that got
 away out of its room until the room is entered again, and 16 more after them
 that nothing else uses.
 
-`Event_ShowSpeakerMessage`, `Event_ShowMessageAtPosition` and
-`Event_ForwardShowMessageAtPosition` are unused: each is reached only through
+`FieldScript_ShowSpeakerMessage`, `FieldScript_ShowMessageAtPosition` and
+`FieldScript_ForwardShowMessageAtPosition` are unused: each is reached only through
 a bare veneer in `system/far_call/OBJECT.S`, which has no symbol for code to
 call ([`psynergy_effects/messages.c`](psynergy_effects/messages.c)).
 
-- XXX (no evidence): what units `Event_ShowSpeakerMessage` and
-  `Event_ShowMessageAtPosition` expected; they clamp a position to 8 to 312
+- XXX (no evidence): what units `FieldScript_ShowSpeakerMessage` and
+  `FieldScript_ShowMessageAtPosition` expected; they clamp a position to 8 to 312
   and 20 to 220, more than the 240 by 160 screen, and pass it to a window
   service that takes tiles, and with no caller in the ROM nothing shows what
   they were given.

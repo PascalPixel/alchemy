@@ -1,14 +1,14 @@
-#ifndef ALCHEMY_UNIT_SCENE_XIAN_H
-#define ALCHEMY_UNIT_SCENE_XIAN_H
+#ifndef ALCHEMY_UNIT_MAP_XIAN_H
+#define ALCHEMY_UNIT_MAP_XIAN_H
 
 #include "types.h"
 #include "map_tables.h"
 
-const struct SceneEntrance *Xian_GetEntrances(void);
-const struct SceneRegion *Xian_GetRegions(void);
-const u32 *Xian_GetExits(void);
-const struct ScenePlacement *Xian_GetPlacements(void);
-const struct SceneEvent *Xian_GetEvents(void);
+const struct MapWarpDest *Xian_GetWarpDests(void);
+const struct MapWarpRegion *Xian_GetRegions(void);
+const u32 *Xian_GetWarps(void);
+const struct ObjectEventTemplate *Xian_GetObjectEventTemplates(void);
+const struct MapEvent *Xian_GetEvents(void);
 s32 Xian_Initialize(void);
 extern s32 gEffectScript0[];
 extern s32 gEffectScript1[];
@@ -23,9 +23,9 @@ extern u16 gXian_NorthHouseDoorOpens[];
 extern u16 gXian_InnDoorOpens[];
 extern u16 gXian_SanctumDoorOpens[];
 extern u16 gXian_SchoolDoorOpens[];
-extern struct SceneEntrance gXian_Entrances[];
-extern u32 gXian_Exits[];
-extern struct ScenePlacement gXian_Placements[];
-extern struct SceneEvent gXian_Events[];
+extern struct MapWarpDest gXian_WarpDests[];
+extern u32 gXian_Warps[];
+extern struct ObjectEventTemplate gXian_ObjectEventTemplates[];
+extern struct MapEvent gXian_Events[];
 
 #endif

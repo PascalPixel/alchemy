@@ -7,17 +7,17 @@
 /// Each frame: runs the 16 tile animation channels. A channel script is
 /// groups of four halfwords (source tile, count, destination tile, frames to
 /// wait) that copy tiles into VRAM; 0xfeNN jumps to halfword offset NN * 2,
-/// 0xfeff stops, and 0xffff loops to the start. MapAnimation_StartChannels
+/// 0xfeff stops, and 0xffff loops to the start. TileAnimation_StartChannels
 /// schedules it (order 0xc80); the world map's still view
 /// (WorldMap_StartStillView) suspends it. Moves each channel's cursor and timer
 /// in the map work.
-void MapAnimation_Update(void) {
-  // Each channel is written (mapState->animations + channelIndex): as
-  // mapState->animations[channelIndex], 78 of 119 instructions differ in
+void TileAnimation_Update(void) {
+  // Each channel is written (gridState->animations + channelIndex): as
+  // gridState->animations[channelIndex], 78 of 119 instructions differ in
   // tbs-en, and a channel pointer swaps ip and lr. The retries stay gotos: as
   // an inner for (;;) loop with continue and break, loop.c reshapes the channel
   // loop.
-  struct MapState *mapState = gMapWork[0];
+  struct MapGridState *gridState = gMapGridWork[0];
   u32 channelIndex;
 
   for (channelIndex = 0; channelIndex <= 15; channelIndex++) {
@@ -27,18 +27,18 @@ void MapAnimation_Update(void) {
     u32 destinationTile;
 
     // A channel with no script, or paused by a scene, keeps its place.
-    if ((mapState->animations + channelIndex)->start == NULL ||
-        (mapState->animations + channelIndex)->paused != 0)
+    if ((gridState->animations + channelIndex)->start == NULL ||
+        (gridState->animations + channelIndex)->paused != 0)
       continue;
     // While the wait lasts the channel only counts down; when it is over,
     // commands run in this same frame until one sets a new wait or stops.
   next:
-    if ((mapState->animations + channelIndex)->timer == 0) {
-      commands = (mapState->animations + channelIndex)->cursor;
+    if ((gridState->animations + channelIndex)->timer == 0) {
+      commands = (gridState->animations + channelIndex)->cursor;
       sourceTileOrOpcode = *commands++;
       if (sourceTileOrOpcode == 0xffff) {
-        (mapState->animations + channelIndex)->cursor =
-            (mapState->animations + channelIndex)->start;
+        (gridState->animations + channelIndex)->cursor =
+            (gridState->animations + channelIndex)->start;
         goto next;
       }
       // 0xfeff leaves the cursor on itself, so the channel stays stopped
@@ -47,19 +47,19 @@ void MapAnimation_Update(void) {
       if ((sourceTileOrOpcode & 0xff00) == 0xfe00) {
         if ((sourceTileOrOpcode & 0xff) == 0xff)
           continue;
-        (mapState->animations + channelIndex)->cursor =
-            (mapState->animations + channelIndex)->start +
+        (gridState->animations + channelIndex)->cursor =
+            (gridState->animations + channelIndex)->start +
             (sourceTileOrOpcode & 0xff) * 2;
         goto next;
       }
       tileCount = *commands++;
       destinationTile = commands[0];
-      (mapState->animations + channelIndex)->timer = commands[1];
+      (gridState->animations + channelIndex)->timer = commands[1];
       // A source tile from 0x600 (0x200 for 64-byte tiles) is read from
       // RAM: both bases put tile 0x600 (0x200) at 0x02028000, the start of
-      // gMapLayerData. A lower one is copied within VRAM. The count is in
+      // gMapGridLayerData. A lower one is copied within VRAM. The count is in
       // tiles, eight words each (16 when wide).
-      if (mapState->wideTiles == 0) {
+      if (gridState->wideTiles == 0) {
         if (sourceTileOrOpcode >= 0x600)
           Dma_Set(Ram_DecodeBuffer + sourceTileOrOpcode * 32,
                   BG_CHAR_BLOCK(1) + destinationTile * 32,
@@ -70,7 +70,7 @@ void MapAnimation_Update(void) {
                   (DMA_ENABLE | DMA_32BIT) << 16 | tileCount * 8, REG_DMA3);
       } else {
         if (sourceTileOrOpcode >= 0x200)
-          Dma_Set(Ram_MapBlocks + sourceTileOrOpcode * 64,
+          Dma_Set(Ram_Metatiles + sourceTileOrOpcode * 64,
                   BG_CHAR_BLOCK(2) + destinationTile * 64,
                   (DMA_ENABLE | DMA_32BIT) << 16 | tileCount * 16, REG_DMA3);
         else
@@ -79,47 +79,47 @@ void MapAnimation_Update(void) {
                   (DMA_ENABLE | DMA_32BIT) << 16 | tileCount * 16, REG_DMA3);
       }
       // A copy with a wait of 0 lets the next command run at once.
-      (mapState->animations + channelIndex)->cursor += 4;
+      (gridState->animations + channelIndex)->cursor += 4;
       goto next;
     } else {
-      (mapState->animations + channelIndex)->timer--;
+      (gridState->animations + channelIndex)->timer--;
     }
   }
 }
 
 /// Resumes tile animation channel channelIndex by clearing its paused byte.
 /// Scenes and the lobby (menu/lobby.c, channel 5) reach it through
-/// Map_ClearLayerEntryFlagFar.
-void Map_ClearLayerEntryFlag(u32 channelIndex) {
-  struct MapState *mapState = gMapWork[0];
-  struct MapAnimation *channel = &mapState->animations[channelIndex];
+/// TileAnimation_ResumeChannelFar.
+void TileAnimation_ResumeChannel(u32 channelIndex) {
+  struct MapGridState *gridState = gMapGridWork[0];
+  struct TileAnimation *channel = &gridState->animations[channelIndex];
 
   channel->paused = 0;
 }
 
 /// Pauses tile animation channel channelIndex by setting its paused byte.
 /// Scenes and the lobby (menu/lobby.c, channel 5) reach it through
-/// Map_SetLayerEntryFlagFar.
-void Map_SetLayerEntryFlag(u32 channelIndex) {
-  struct MapState *mapState = gMapWork[0];
-  struct MapAnimation *channel = &mapState->animations[channelIndex];
+/// TileAnimation_PauseChannelFar.
+void TileAnimation_PauseChannel(u32 channelIndex) {
+  struct MapGridState *gridState = gMapGridWork[0];
+  struct TileAnimation *channel = &gridState->animations[channelIndex];
 
   channel->paused = 1;
 }
 
 /// Starts the tile animation channels a map's animation script lists: each
 /// 0xfdNN marker starts channel NN & 15 there (paused when bit 7 is set).
-/// Clears all 16 channels first, and schedules MapAnimation_Update when any
-/// starts. Called by Map_LoadLayeredScene with the map's own script, and by
-/// Map_InitializePerspectiveScene with the world map's default one.
-void MapAnimation_StartChannels(const u16 *script) {
-  struct MapState *mapState;
+/// Clears all 16 channels first, and schedules TileAnimation_Update when any
+/// starts. Called by MapGrid_LoadLayout with the map's own script, and by
+/// WorldMap_InitializePerspective with the world map's default one.
+void TileAnimation_StartChannels(const u16 *script) {
+  struct MapGridState *gridState;
   s32 channelsStarted;
   u32 marker;
 
-  mapState = gMapWork[0];
+  gridState = gMapGridWork[0];
   channelsStarted = 0;
-  Dma_Fill32(0, mapState->animations, sizeof(mapState->animations));
+  Dma_Fill32(0, gridState->animations, sizeof(gridState->animations));
   // Each channel's script starts just after its marker and runs on through
   // the rest of the stream; the scan steps over the halfwords between
   // markers. Only the low four bits pick the channel, so a marker for 16 or
@@ -127,12 +127,12 @@ void MapAnimation_StartChannels(const u16 *script) {
   marker = *script++;
   while (marker != 0xffff) {
     if ((marker & 0xff00) == 0xfd00) {
-      struct MapAnimation *channel;
+      struct TileAnimation *channel;
       u32 channelIndex = marker & 15;
       u32 paused = 0;
       if (marker & 0x80)
         paused = 1;
-      channel = &mapState->animations[channelIndex];
+      channel = &gridState->animations[channelIndex];
       channel->start = script;
       channel->cursor = script;
       channel->timer = 0;
@@ -143,23 +143,23 @@ void MapAnimation_StartChannels(const u16 *script) {
   }
   // A map with no channels never schedules the update.
   if (channelsStarted != 0)
-    Scheduler_AddOrUpdateCallback(MapAnimation_Update, 0xc80);
+    Scheduler_AddOrUpdateCallback(TileAnimation_Update, 0xc80);
 }
 
 /// Suspends the tile animations, unless the world map's still view is shown.
 /// Menu_SuspendFieldTasks (menu/menu/common.c) calls it
-/// through MapAnimation_SuspendFar.
-void MapAnimation_Suspend(void) {
-  if (((struct MapScrollWork *)gMapWork[0])->animationActive == 0)
-    Scheduler_SuspendTasks(MapAnimation_Update);
+/// through TileAnimation_SuspendFar.
+void TileAnimation_Suspend(void) {
+  if (((struct MapGridScrollWork *)gMapGridWork[0])->animationActive == 0)
+    Scheduler_SuspendTasks(TileAnimation_Update);
 }
 
 /// Resumes the tile animations, unless the world map's still view is shown.
 /// Menu_ResumeFieldTasks (menu/menu/common.c) calls it
-/// through MapAnimation_ResumeFar.
-void MapAnimation_Resume(void) {
-  if (((struct MapScrollWork *)gMapWork[0])->animationActive == 0)
-    Scheduler_ResumeTasks(MapAnimation_Update);
+/// through TileAnimation_ResumeFar.
+void TileAnimation_Resume(void) {
+  if (((struct MapGridScrollWork *)gMapGridWork[0])->animationActive == 0)
+    Scheduler_ResumeTasks(TileAnimation_Update);
 }
 
 /// Each frame: runs the map's blend script. A 0x3NNN command sets BLDCNT; any
@@ -171,14 +171,14 @@ void MapAnimation_Resume(void) {
 void DisplayBlend_RunScript(void) {
   // The retries stay gotos: as a for (;;) loop with continue, loop.c hoists
   // blendControl's address and 118 bytes of tbs-en's code change.
-  struct MapState *mapState = gMapWork[0];
+  struct MapGridState *gridState = gMapGridWork[0];
   struct BlendScriptState *blend;
   u16 *commands;
   u32 instruction;
   u32 delayOrJumpIndex;
   u16 delay16;
 
-  blend = &mapState->blend;
+  blend = &gridState->blend;
   if (blend->script == 0)
     return;
   if (blend->paused != 0)
@@ -211,14 +211,14 @@ again:
     // BLDALPHA coefficients and BLDY go to 16 at most.
     if ((instruction & 0xf000) == 0x3000) {
       REG_BLDCNT = instruction;
-      mapState->blendControl = instruction;
+      gridState->blendControl = instruction;
       blend->cursor++;
       goto again;
     }
 
     // BLDCNT's effect bits (7..6) of 1 are alpha blending; 2 and 3 fade
     // to white or black by BLDY.
-    if ((mapState->blendControl & 0xc0) == 0x40)
+    if ((gridState->blendControl & 0xc0) == 0x40)
       REG_BLDALPHA = instruction;
     else
       REG_BLDY = instruction;
@@ -232,7 +232,7 @@ again:
 
 /// Starts a map's blend script, unless it is empty. Clears the map work's
 /// three-word blend state first, then schedules DisplayBlend_RunScript.
-/// Called by Map_LoadLayeredScene when the map's header has a blend script.
+/// Called by MapGrid_LoadLayout when the map's header has a blend script.
 void DisplayBlend_StartScript(u16 *script) {
   struct BlendScriptState *blend;
   s32 hasScript;
@@ -242,7 +242,7 @@ void DisplayBlend_StartScript(u16 *script) {
   // paused; a script that is only its end marker leaves the blend unset.
   hasScript = 0;
   zero = 0;
-  blend = &((struct MapState *)gMapWork[0])->blend;
+  blend = &((struct MapGridState *)gMapGridWork[0])->blend;
   Dma_Set((const void *)&zero, blend,
           (DMA_ENABLE | DMA_32BIT | DMA_SRC_FIXED) << 16 | 3, REG_DMA3);
   if (*script != 0xffff) {

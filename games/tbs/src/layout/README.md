@@ -10,10 +10,10 @@ unused.
 The map data is kept as editable tables: 182 layered maps for the towns,
 dungeons and interiors, the world map's ground and default cells, and the
 opponents' recorded paths in the Colosso finals. There is no code here. Each
-scene's row of `gField_SceneTable` ([`field/maps.s`](../field/maps.s))
-gives a map number, which picks a row of `gMap_LayeredScenes`
+scene's row of `gField_MapTable` ([`field/maps.s`](../field/maps.s))
+gives a map number, which picks a row of `gLayouts`
 ([`field/layouts.tsv`](../field/layouts.tsv)): the map's header, palette,
-three tile sheets and layer data. `Map_LoadLayeredScene`
+three tile sheets and layer data. `MapGrid_LoadLayout`
 ([`field/field/map_grid.c`](../field/field/map_grid.c)) loads it, and
 [Field](../field/README.md) describes how the engine draws and scrolls it.
 
@@ -39,22 +39,22 @@ A shape is four bytes, a row of `shapes.tsv`. The low four bits of the first
 pick one of the 16 terrain kinds (flat ground, slopes, steps, ground shaped
 through three heights and others), and the other three are height samples in
 steps of 8 pixels, which the kind's height function interpolates
-(`Map_GetTerrainHeight`, through `gMap_TerrainHeightFunctions`).
+(`MapGrid_GetTerrainHeight`, through `gMapGrid_TerrainHeightFunctions`).
 
-The collision code is what walls and events are keyed on. `MAP_CELL_WALL`
-blocks movement whatever the heights. The codes from `MAP_CELL_EVENT_FIRST`
-to `MAP_CELL_EVENT_LAST` belong to the scene: a touch event fires when the
+The collision code is what walls and events are keyed on. `MB_WALL`
+blocks movement whatever the heights. The codes from `MB_EVENT_FIRST`
+to `MB_EVENT_LAST` belong to the scene: a touch event fires when the
 leader steps onto or pushes against a cell with its code, and a search event
 when the player presses A facing one. The codes above them mean the same on
-every map: `MAP_CELL_ENCOUNTER_GROUND_1` and `_2` for ground with encounters
-of its own, `MAP_CELL_JAR` to `MAP_CELL_WELL` for search spots with shared
-lines, `MAP_CELL_HAZARD` for the Lamakan Desert's sand, and `MAP_CELL_LEDGE`,
-`MAP_CELL_CLIMB` and `MAP_CELL_JUMP_FORWARD`, which `Field_RunPushTileEvent`
+every map: `MB_ENCOUNTER_GROUND_1` and `_2` for ground with encounters
+of its own, `MB_JAR` to `MB_WELL` for search spots with shared
+lines, `MB_DESERT_SAND` for the Lamakan Desert's sand, and `MB_LEDGE`,
+`MB_CLIMB` and `MB_JUMP_FORWARD`, which `Field_RunPushTileEvent`
 acts on when the leader pushes against them.
 
-A wall need not be coded. `Map_CheckObjectStep` lets an object step at most
+A wall need not be coded. `MapGrid_CheckObjectStep` lets an object step at most
 8 pixels up or 12 down, so ground that rises sharply stops the leader as
-surely as `MAP_CELL_WALL`. Goma Cave has no wall-coded cells at all: a rim of
+surely as `MB_WALL`. Goma Cave has no wall-coded cells at all: a rim of
 ground 32 pixels high runs along the foot of each cliff, some of it cut along
 a cell's diagonal.
 
@@ -62,33 +62,33 @@ Collision and height belong to a layer: code that asks about the ground
 reads the cell in the window of the layer the object follows, so an object
 stands in one layer at a time ([Field](../field/README.md#how-high-a-step-can-go)).
 
-A cell is `struct MapCell` in [`map.h`](../../include/map_grid.h), and its code an
-`enum MapCellCode`.
+A cell is `struct MapGridCell` in [`map.h`](../../include/map_grid.h), and its code an
+`enum MetatileBehavior`.
 
 | Bits of the cell word | Field | Meaning |
 | --- | --- | --- |
 | 0 to 11 | `metatileAndFlags` | the block drawn in the cell |
-| 12 to 15 | `metatileAndFlags` | flags: the layer and priority an object standing there takes (15 and 14 read by `Map_GetCellHighFlags`) |
+| 12 to 15 | `metatileAndFlags` | flags: the layer and priority an object standing there takes (15 and 14 read by `MapGrid_GetCellHighFlags`) |
 | 16 to 23 | `collisionCode` | the collision code |
 | 24 to 31 | `attributeB` | the shape, a row of the map's shape table |
 
 | Name | Value | Meaning |
 | --- | --- | --- |
 | (open ground) | 0 | nothing happens |
-| `MAP_CELL_EVENT_FIRST` to `MAP_CELL_EVENT_LAST` | 1 to 239 | the scene's own touch, exit and search events |
-| `MAP_CELL_ENCOUNTER_GROUND_1`, `_2` | 240, 241 | ground with encounters of its own: grounds 1 and 2 of the scene's zones |
-| `MAP_CELL_JAR` | 242 | a search spot with lines of its own |
-| `MAP_CELL_BARREL` | 243 | a search spot with lines of its own |
-| `MAP_CELL_WOODEN_BOX` | 244 | a search spot with lines of its own |
-| `MAP_CELL_GRAVE` | 245 | a search spot with lines of its own |
-| `MAP_CELL_BOOKS` | 246 | a search spot with lines of its own |
-| `MAP_CELL_WELL` | 247 | a search spot with lines of its own |
-| `MAP_CELL_JUMP_FORWARD_UNREACHED` | 249 | jumps forward like `MAP_CELL_JUMP_FORWARD`, but never reaches `Field_RunPushTileEvent` |
-| `MAP_CELL_HAZARD` | 250 | ground that hurts the party over time: the Lamakan Desert's sand |
-| `MAP_CELL_LEDGE` | 252 | jumped down with Down held |
-| `MAP_CELL_CLIMB` | 253 | climbed up or down with Up or Down held |
-| `MAP_CELL_JUMP_FORWARD` | 254 | jumped across |
-| `MAP_CELL_WALL` | 255 | blocks whatever the heights |
+| `MB_EVENT_FIRST` to `MB_EVENT_LAST` | 1 to 239 | the scene's own touch, exit and search events |
+| `MB_ENCOUNTER_GROUND_1`, `_2` | 240, 241 | ground with encounters of its own: grounds 1 and 2 of the scene's zones |
+| `MB_JAR` | 242 | a search spot with lines of its own |
+| `MB_BARREL` | 243 | a search spot with lines of its own |
+| `MB_WOODEN_BOX` | 244 | a search spot with lines of its own |
+| `MB_GRAVE` | 245 | a search spot with lines of its own |
+| `MB_BOOKS` | 246 | a search spot with lines of its own |
+| `MB_WELL` | 247 | a search spot with lines of its own |
+| `MB_JUMP_FORWARD_UNREACHED` | 249 | jumps forward like `MB_JUMP_FORWARD`, but never reaches `Field_RunPushTileEvent` |
+| `MB_DESERT_SAND` | 250 | ground that hurts the party over time: the Lamakan Desert's sand |
+| `MB_LEDGE` | 252 | jumped down with Down held |
+| `MB_CLIMB` | 253 | climbed up or down with Up or Down held |
+| `MB_JUMP_FORWARD` | 254 | jumped across |
+| `MB_WALL` | 255 | blocks whatever the heights |
 
 ## A map's tables
 
@@ -131,8 +131,8 @@ as the ground; one that moves faster looks nearer. Suhalla Desert's north
 overhead haze a quarter faster, drifts the haze by -121 and 35 sixteenths of
 a pixel a frame, and wraps it every 32 tiles, 256 pixels.
 
-The header is one `map_header` line and three `map_layer` lines in `map.s`,
-read as `struct LayeredSceneHeader`. It gives the camera's bounds in 8-pixel
+The header is one `layout_header` line and three `layout_layer` lines in `map.s`,
+read as `struct LayoutHeader`. It gives the camera's bounds in 8-pixel
 tiles, each layer's priority (0 leaves the layer off) and the char block its
 tiles come from, and for each layer its origin in 8-pixel tiles (the
 picture at the top of this page), its parallax (in sixteenths of the view's
@@ -142,8 +142,8 @@ Six offsets from the header's start follow: the blocks, the shapes, the cell
 grid, the tile animation, the blend script and the markers. An offset of 0
 means the map has none of that part.
 
-`struct LayeredSceneHeader` and `struct LayeredSceneLayer` are defined in
-`field/field/map_grid.c`, and the `map_header` and `map_layer` macros that
+`struct LayoutHeader` and `struct LayoutLayer` are defined in
+`field/field/map_grid.c`, and the `layout_header` and `layout_layer` macros that
 write them in `map.inc`.
 
 | Field | Unit | Meaning |
@@ -182,7 +182,7 @@ The name of the file the build asks for says what to make:
   cell the table leaves out.
 - `parts`: the grid, the encodings of the files it lists one after another.
 - `delta0`, `delta1`, `delta2`: the blocks, halfwords behind a method byte
-  (`enum MapBlockPacking`) that `TileMap_DecodeStagedBuffer` undoes. Method 0
+  (`enum MetatilePacking`) that `TileMap_DecodeStagedBuffer` undoes. Method 0
   stores them as they are, 2 XORs each with the one before, and 1 does the
   same with all the high bytes stored before all the low bytes. Each `map.s`
   names the method its stream uses.
@@ -206,13 +206,13 @@ the Italian edition uses the Spanish. A map whose whole data differs by
 edition has a block of its `map.s` for each. A map that uses another map's
 table names that map's file.
 
-`enum MapBlockPacking` is in `field/field_internal.h`.
+`enum MetatilePacking` is in `field/field_internal.h`.
 
 | Name | Value | Form | Meaning |
 | --- | --- | --- | --- |
-| `MAP_BLOCKS_RAW` | 0 | `delta0` | the blocks as they are |
-| `MAP_BLOCKS_SPLIT_DELTA` | 1 | `delta1` | all the high bytes, then all the low bytes, each value XORed with the one before |
-| `MAP_BLOCKS_DELTA` | 2 | `delta2` | each value XORed with the one before |
+| `METATILE_PACKING_RAW` | 0 | `delta0` | the blocks as they are |
+| `METATILE_PACKING_SPLIT_DELTA` | 1 | `delta1` | all the high bytes, then all the low bytes, each value XORed with the one before |
+| `METATILE_PACKING_DELTA` | 2 | `delta2` | each value XORed with the one before |
 
 ## Loading a map
 
@@ -224,28 +224,28 @@ one go.
 
 ![A map's grid is stored as three whole planes, one after another: what stepping on each cell does (a byte a cell, 16 KB), the shape of each cell's ground (a byte a cell, 16 KB) and the picture drawn in each cell, with the layer an object standing there takes (two bytes a cell, 32 KB). As the map loads, a routine copied into RAM takes one value from each plane for every cell and puts them together into one four-byte word: the shape at the top, then what stepping does, then the picture. The 128 by 128 words take 64 KB.](https://alchemy.pascalpixel.com/illustrations/map/grid-weave.svg)
 
-`Map_LoadLayeredScene` decodes each part into a fixed buffer in EWRAM, the
+`MapGrid_LoadLayout` decodes each part into a fixed buffer in EWRAM, the
 console's 256 KB of work memory: the
-blocks into `gMapBlocks`, the shapes into `gMapCollision`, the grid into
-`Ram_MapCellBuffer`, and the two scripts into the space after the shapes. The
+blocks into `gMetatiles`, the shapes into `gMapGridCollision`, the grid into
+`Ram_MapGridCellBuffer`, and the two scripts into the space after the shapes. The
 markers are not decoded: the loader keeps a pointer to them in the map work.
 
 The grid is stored as three whole planes: collision codes, then shapes, then
 blocks (16 KB, 16 KB and 32 KB, since the block plane has a halfword per
-cell). `TileMap_ConvertBuffer` then runs `Tile_ConvertMap`, a routine in the
+cell). `TileMap_ConvertBuffer` then runs `Tile_ConvertMapGrid`, a routine in the
 processor's fast 32-bit ARM instructions copied into RAM, which weaves them into 128 by 128 cell words, 64 KB from the
-start of `Ram_MapCellBuffer`, and numbers the placeholder blocks as it goes.
+start of `Ram_MapGridCellBuffer`, and numbers the placeholder blocks as it goes.
 The first two planes are saved to a temporary buffer first, since the cell
 words overwrite them.
 
-`gMapCellBuffer` itself is 32 KB, so the cells run on through
+`gMapGridCellBuffer` itself is 32 KB, so the cells run on through
 `gActorSpriteSlots` and `gDecodeBuffer`, and neither can hold anything else
 while a map is loaded. Only code that reloads the cells afterwards writes
 there: a battle, after which the scene's map is loaded again; the link lobby,
 which leaves the partner's party in `gActorSpriteSlots` for the link battle
 that follows; and the world map's still view, which saves `BG1`'s tiles to
 `gDecodeBuffer` and draws into the cells, which
-`Map_LoadDefaultCellsAndUpdateBlock` then puts back. The debug sprite viewer
+`WorldMap_LoadDefaultCellsAndUpdateBlock` then puts back. The debug sprite viewer
 also loads sprites there. The tile animation only reads from
 `Ram_DecodeBuffer`, at offsets that land past it. [System](../system/README.md) has the
 EWRAM layout.
@@ -255,7 +255,7 @@ EWRAM layout.
 | collision codes | 16 KB | a byte a cell |
 | shapes | 16 KB | a byte a cell |
 | blocks | 32 KB | a halfword a cell |
-| the woven cell words | 64 KB | a word a cell, from the start of `Ram_MapCellBuffer` |
+| the woven cell words | 64 KB | a word a cell, from the start of `Ram_MapGridCellBuffer` |
 
 ### One grid, three layers
 
@@ -280,9 +280,9 @@ loads the map.
 ![Eight cells of a map's grid, in the order the game reads them, showing grass, grass, water, grass, rock, water, rock and grass. Where a picture appears for the first time, the grid stores a placeholder, the number 4,095, and as the map loads the game gives it the next block number: the first grass becomes block 0, the first water block 1, the first rock block 2. Every later cell with the same picture already stores its number. So a map has as many placeholders as it has blocks.](https://alchemy.pascalpixel.com/illustrations/map/placeholders.svg)
 
 A placeholder is a cell whose block is 4,095, the highest 12 bits can hold.
-As the map is converted, `Tile_ConvertMap` gives each placeholder a fresh
+As the map is converted, `Tile_ConvertMapGrid` gives each placeholder a fresh
 block number, counting up from 0 in grid order. The ROM also keeps an unused
-C version of that numbering, `TileMap_NumberPlaceholderBlocks`.
+C version of that numbering, `TileMap_NumberPlaceholderMetatiles`.
 
 Each map's block table is ordered by where its blocks first appear in the
 grid, and the grid writes that first appearance as 4,095 and every later one
@@ -346,16 +346,16 @@ Each `frame` is four values: the source tile, how many tiles, the destination
 tile and the frames to wait. `jump n` (`0xfe00 + n`) goes to halfword 2n of
 the channel's script, `stop` (`0xfeff`) halts the channel, and `end`
 (`0xffff`) loops it to its start. A source tile from 1,536 on is copied from
-RAM at `Ram_DecodeBuffer` plus its offset, which lands in `gMapLayerData`,
+RAM at `Ram_DecodeBuffer` plus its offset, which lands in `gMapGridLayerData`,
 and a lower one from elsewhere in video memory; the line is 512 for a map
-whose animations copy 64-byte tiles (`MapState.wideTiles`).
+whose animations copy 64-byte tiles (`MapGridState.wideTiles`).
 
 The blend script changes how the layers blend over time. `control` sets
 `REG_BLDCNT`; `level` sets `REG_BLDALPHA`, or `REG_BLDY` when the control's
 mode is not alpha blending, and waits its second value in frames. `jump`,
 `stop` and `end` act as in the tile animation.
 
-The words are tested in `MapAnimation_Update` and `DisplayBlend_RunScript`,
+The words are tested in `TileAnimation_Update` and `DisplayBlend_RunScript`,
 which have no names for them; the names are the tables' (`animation.tsv`,
 `blend.tsv`).
 
@@ -378,10 +378,10 @@ the party, bringing in new ones as the party walks.
 
 The world is 16 by 16 squares of 512 pixels, and a table in the world map's
 work (`PerspectiveWork.tileIds`) says which stored square shows at each of
-them. `Map_UpdateCurrentTileBlock` unpacks the 2 by 2 squares whose top left
+them. `WorldMap_UpdateCurrentTileBlock` unpacks the 2 by 2 squares whose top left
 holds the point 256 pixels left of the party and 320 above, in each of the
-two ground layers (`Map_WriteLayerCellTile`), and
-`Map_PreloadCurrentTileBlock` brings in at most one new square a frame as the
+two ground layers (`WorldMap_WriteLayerCellTile`), and
+`WorldMap_PreloadCurrentTileBlock` brings in at most one new square a frame as the
 party walks.
 
 The ground's data, `world/blocks.tsv` (`Field_PerspectiveDataA`), is one grid
@@ -392,9 +392,9 @@ offset of 0, and the world map leaves none out. The second ground layer's
 squares are numbered 320 on from the first's.
 
 The tables in `default/` are the world map's too.
-`Map_InitializePerspectiveScene` loads the default cells, block attributes and
+`WorldMap_InitializePerspective` loads the default cells, block attributes and
 tile animation when the world map scene starts, and
-`Map_LoadDefaultCellsAndUpdateBlock` puts the cells back after the world map's
+`WorldMap_LoadDefaultCellsAndUpdateBlock` puts the cells back after the world map's
 still view ([Field](../field/README.md#the-world-map-in-perspective)).
 
 | Part | Size |
@@ -451,7 +451,7 @@ and a layer's window can sit anywhere in the grid.
 - 4,095 blocks a map: a cell's block number has 12 bits, and 4,095 is the
   placeholder.
 - 256 shapes a map, since a cell names its shape in one byte.
-- 16 tile animation channels (`struct MapState`).
+- 16 tile animation channels (`struct MapGridState`).
 - `MARKER_MAX` (10) chests and Psynergy Stones placed on a map.
 
 ## Files
@@ -461,10 +461,10 @@ and a layer's window can sit anywhere in the grid.
 | `map_000/` to `map_179/` | one layered map each: its `map.s` and the tables it places |
 | `gondowan_passage/`, `venus_entrance/` | two more layered maps, Gondowan Passage and Venus Lighthouse's entrance, built like the others |
 | `world/blocks.tsv` | the world map's ground (`Field_PerspectiveDataA`) |
-| `default/` | the world map's default cells, tile animation and block attributes (`Field_DefaultMapCells` and the tables after it) |
+| `default/` | the world map's default cells, tile animation and block attributes (`Field_DefaultGridCells` and the tables after it) |
 | `colosso/` | the opponents' recorded paths, with the Colosso lettering placed after them |
 | `map.s` | places `world/` and `default/` |
-| `map.inc` | the `map_header`, `map_layer` and `map_block` macros every `map.s` uses |
+| `map.inc` | the `layout_header`, `layout_layer` and `layout_offset` macros every `map.s` uses |
 
 The map numbers are the order of the directories, not numbers the game gives
 its maps.
@@ -472,14 +472,14 @@ its maps.
 ## Words used here
 
 - A **cell** is a 16 by 16 pixel square, one 32-bit word once loaded
-  (`struct MapCell` in [`map.h`](../../include/map_grid.h)).
+  (`struct MapGridCell` in [`map.h`](../../include/map_grid.h)).
 - A **block** (a metatile) is the picture of a cell: 2 by 2 of the 8-pixel
   tiles, stored as the four BG map entries that draw them, top left, top
   right, bottom left, bottom right.
 - A **shape** is the form of the ground in a cell: a terrain kind and three
   height samples.
 - A **collision code** says what standing on, pushing against or searching a
-  cell does (`enum MapCellCode`).
+  cell does (`enum MetatileBehavior`).
 - A **layer** is one of the map's three backgrounds, each a window onto the
   one cell grid.
 - A **plane** is one value per cell over the whole 128 by 128 grid.
@@ -492,7 +492,7 @@ code does with it: the blocks become BG map entries, so they are `metatiles`;
 the shapes feed the height functions; and the markers are where
 `Field_PlaceMapMarkers` puts chests and Psynergy Stones. The sixth offset is
 called the marker list because that function is the only code that reads the
-pointer the loader stores to it, although `MapScrollWork`
+pointer the loader stores to it, although `MapGridScrollWork`
 (`include/map_grid_scroll.h`) still names the field `script`.
 
 XXX: that the grid is stored as planes to keep long runs together for the
@@ -508,6 +508,6 @@ placeholder and tile animation pictures stand for any map: their grass, water
 and rock are drawings, not the game's blocks.
 
 The header's last two bytes (`pad0` and `pad1` in `map.inc`, `reserved` in
-`struct LayeredSceneHeader`) are 0 in every map of both games, and nothing
+`struct LayoutHeader`) are 0 in every map of both games, and nothing
 reads them: the loader is the only code that reads the header.
 

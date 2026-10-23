@@ -52,28 +52,28 @@
 	.set import.PartyInventory_GiveItem, 1
 	.endif
 	.ifdef TBS_EDITION_DE
-	.set import.Engine_EventSetMessage, 1
+	.set import.Engine_ScriptSetMessage, 1
 	.endif
 	.ifdef TBS_EDITION_ES
-	.set import.Engine_EventSetMessage, 1
+	.set import.Engine_ScriptSetMessage, 1
 	.endif
 	.ifdef TBS_EDITION_FR
-	.set import.Engine_EventSetMessage, 1
+	.set import.Engine_ScriptSetMessage, 1
 	.endif
 	.ifdef TBS_EDITION_IT
-	.set import.Engine_EventSetMessage, 1
+	.set import.Engine_ScriptSetMessage, 1
 	.endif
 	.ifdef TBS_EDITION_DE
-	.set import.FieldEvent_ShowMessageAndWait, 1
+	.set import.FieldScript_ShowMessageAndWait, 1
 	.endif
 	.ifdef TBS_EDITION_ES
-	.set import.FieldEvent_ShowMessageAndWait, 1
+	.set import.FieldScript_ShowMessageAndWait, 1
 	.endif
 	.ifdef TBS_EDITION_FR
-	.set import.FieldEvent_ShowMessageAndWait, 1
+	.set import.FieldScript_ShowMessageAndWait, 1
 	.endif
 	.ifdef TBS_EDITION_IT
-	.set import.FieldEvent_ShowMessageAndWait, 1
+	.set import.FieldScript_ShowMessageAndWait, 1
 	.endif
 	.ifdef TBS_EDITION_JA
 	.set import.Menu_OpenCharacterSelector, 1

@@ -718,10 +718,10 @@ void SerialTest_Run(void) {
     tile--;
     value--;
   } while (n >= 0);
-  Cpu_Fill32(0, gMapCellBuffer, 0x400);
+  Cpu_Fill32(0, gMapGridCellBuffer, 0x400);
   SerialRuntime_WaitForStatusMask(LINK_STATUS_HEARD_BOTH);
 restart:
-  SerialRuntime_StartReceive(gMapCellBuffer);
+  SerialRuntime_StartReceive(gMapGridCellBuffer);
   for (;;) {
     // 0x280 bytes: 32 blocks, 20 tiles
     if (gKeysHeld & KEY_A)
@@ -736,7 +736,7 @@ restart:
       } while (tick >= 0);
     }
     if (gSerialReceiveDestination == 0) {
-      Dma_Set(gMapCellBuffer, (void *)0x06001000, DMA_COPY_WORDS(0xa0),
+      Dma_Set(gMapGridCellBuffer, (void *)0x06001000, DMA_COPY_WORDS(0xa0),
               REG_DMA3);
       goto restart;
     }

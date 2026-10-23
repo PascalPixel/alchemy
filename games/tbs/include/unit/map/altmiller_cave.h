@@ -1,39 +1,39 @@
-#ifndef ALCHEMY_UNIT_SCENE_ALTMILLER_CAVE_H
-#define ALCHEMY_UNIT_SCENE_ALTMILLER_CAVE_H
+#ifndef ALCHEMY_UNIT_MAP_ALTMILLER_CAVE_H
+#define ALCHEMY_UNIT_MAP_ALTMILLER_CAVE_H
 
 #include "types.h"
 #include "map_tables.h"
 
-struct SceneEvent;
-struct ScenePlacement;
+struct MapEvent;
+struct ObjectEventTemplate;
 struct LightWheel;
 
-const struct SceneEntrance *AltmillerCave_GetEntrances(void);
-const struct SceneRegion *AltmillerCave_GetRegions(void);
-const u32 *AltmillerCave_GetExits(void);
-const struct ScenePlacement *AltmillerCave_GetPlacements(void);
-const struct SceneEvent *AltmillerCave_GetEvents(void);
+const struct MapWarpDest *AltmillerCave_GetWarpDests(void);
+const struct MapWarpRegion *AltmillerCave_GetRegions(void);
+const u32 *AltmillerCave_GetWarps(void);
+const struct ObjectEventTemplate *AltmillerCave_GetObjectEventTemplates(void);
+const struct MapEvent *AltmillerCave_GetEvents(void);
 s32 AltmillerCave_Initialize(void);
-extern s32 gStagedActor_DirectionSteps[];
-extern u32 gStagedActor_FootprintKinds[];
-extern s32 gStagedActor_FootprintBounds[];
+extern s32 gStagedObjectEvent_DirectionSteps[];
+extern u32 gStagedObjectEvent_FootprintKinds[];
+extern s32 gStagedObjectEvent_FootprintBounds[];
 extern struct LightWheel *gAltmillerCave_LightWheel;
-extern struct SceneEntrance gAltmillerCave_Entrances[];
-extern u32 gAltmillerCave_Exits[];
-extern struct ScenePlacement gAltmillerCave_PlacementsOther[];
-extern struct ScenePlacement gAltmillerCave_BabiPlacements[];
-extern struct ScenePlacement gAltmillerCave_SquallPlacements[];
-extern struct ScenePlacement gAltmillerCave_DraughtPlacements[];
+extern struct MapWarpDest gAltmillerCave_WarpDests[];
+extern u32 gAltmillerCave_Warps[];
+extern struct ObjectEventTemplate gAltmillerCave_ObjectEventTemplatesOther[];
+extern struct ObjectEventTemplate gAltmillerCave_BabiObjectEventTemplates[];
+extern struct ObjectEventTemplate gAltmillerCave_SquallObjectEventTemplates[];
+extern struct ObjectEventTemplate gAltmillerCave_DraughtObjectEventTemplates[];
 extern u32 gAltmillerCave_PulseScales[];
 extern s32 gAltmillerCave_GuardsArrivePath[];
 extern s32 gAltmillerCave_SecondGuardLeavePath[];
 extern s32 gAltmillerCave_FirstGuardLeavePath[];
 extern s32 gAltmillerCave_BabiLeavePath[];
-extern struct SceneEvent gAltmillerCave_EventsOther[];
-extern struct SceneEvent gAltmillerCave_BabiEvents[];
-extern struct SceneEvent gAltmillerCave_VialChestEvents[];
-extern struct SceneEvent gAltmillerCave_SquallEvents[];
-extern struct SceneEvent gAltmillerCave_CookieChestEvents[];
-extern struct SceneEvent gAltmillerCave_DraughtEvents[];
+extern struct MapEvent gAltmillerCave_EventsOther[];
+extern struct MapEvent gAltmillerCave_BabiEvents[];
+extern struct MapEvent gAltmillerCave_VialChestEvents[];
+extern struct MapEvent gAltmillerCave_SquallEvents[];
+extern struct MapEvent gAltmillerCave_CookieChestEvents[];
+extern struct MapEvent gAltmillerCave_DraughtEvents[];
 
 #endif

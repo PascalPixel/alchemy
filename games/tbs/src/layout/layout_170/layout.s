@@ -1,33 +1,33 @@
 	.include "games/tbs/src/layout/layout.inc"
 	.section .rodata
-	.global Field_Map170
-Field_Map170:
-	map_header 0, 0, 30, 22, 3, 1, 2, 1, 1, 2, 0, 0
-	map_layer 0, 0, 16, 16, 0, 0, 0xff, 0xff
-	map_layer 128, 0, 16, 16, 0, 0, 0xff, 0xff
-	map_layer 0, 132, 16, 16, 0, 0, 0xff, 0xff
-	map_block Field_Map170, .LField_Map170_METATILES
-	map_block Field_Map170, .LField_Map170_SHAPES
-	map_block Field_Map170, .LField_Map170_GRID
-	map_block Field_Map170, .LField_Map170_ANIMATION
-	map_block Field_Map170, .LField_Map170_BLEND
-	map_block Field_Map170, .LField_Map170_MARKERS
-.LField_Map170_METATILES:
+	.global Field_Layout170
+Field_Layout170:
+	layout_header 0, 0, 30, 22, 3, 1, 2, 1, 1, 2, 0, 0
+	layout_layer 0, 0, 16, 16, 0, 0, 0xff, 0xff
+	layout_layer 128, 0, 16, 16, 0, 0, 0xff, 0xff
+	layout_layer 0, 132, 16, 16, 0, 0, 0xff, 0xff
+	layout_offset Field_Layout170, .LField_Layout170_METATILES
+	layout_offset Field_Layout170, .LField_Layout170_SHAPES
+	layout_offset Field_Layout170, .LField_Layout170_GRID
+	layout_offset Field_Layout170, .LField_Layout170_ANIMATION
+	layout_offset Field_Layout170, .LField_Layout170_BLEND
+	layout_offset Field_Layout170, .LField_Layout170_MARKERS
+.LField_Layout170_METATILES:
 	.incbin "games/tbs/src/layout/layout_170/metatiles.delta1.lz"
 	.balign 4, 0
-.LField_Map170_SHAPES:
+.LField_Layout170_SHAPES:
 	.incbin "games/tbs/src/layout/layout_170/shapes.table.lz"
 	.balign 4, 0
-.LField_Map170_GRID:
+.LField_Layout170_GRID:
 	.incbin "games/tbs/src/layout/layout_170/grid.parts.lz"
 	.balign 4, 0
-.LField_Map170_ANIMATION:
+.LField_Layout170_ANIMATION:
 	.incbin "games/tbs/src/layout/layout_170/animation.script.lz"
 	.balign 4, 0
-.LField_Map170_BLEND:
+.LField_Layout170_BLEND:
 	.incbin "games/tbs/src/layout/layout_020/blend.script.lz"
 	.balign 4, 0
-.LField_Map170_MARKERS:
+.LField_Layout170_MARKERS:
 	.incbin "games/tbs/src/layout/layout_000/markers.table"
 	.balign 4, 0
 	.global Tileset_Set67Palette

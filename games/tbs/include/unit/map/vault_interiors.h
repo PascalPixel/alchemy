@@ -1,13 +1,13 @@
-#ifndef ALCHEMY_UNIT_SCENE_VAULT_INTERIORS_H
-#define ALCHEMY_UNIT_SCENE_VAULT_INTERIORS_H
+#ifndef ALCHEMY_UNIT_MAP_VAULT_INTERIORS_H
+#define ALCHEMY_UNIT_MAP_VAULT_INTERIORS_H
 
 #include "types.h"
 #include "map_tables.h"
 #include "field_runtime.h"
 #include "static_assert.h"
 
-struct SceneEvent;
-struct ScenePlacement;
+struct MapEvent;
+struct ObjectEventTemplate;
 
 /// Each stop links to up to three others, with a heading for each connection.
 struct VaultInteriorsStopConnection {
@@ -27,12 +27,12 @@ struct VaultInteriorsStop {
 STATIC_ASSERT(sizeof(struct VaultInteriorsStopConnection) == 4);
 STATIC_ASSERT(sizeof(struct VaultInteriorsStop) == 16);
 
-const struct SceneEntrance *Scene_GetEntrances(void);
-const struct SceneRegion *Scene_GetRegions(void);
-const u32 *Scene_GetExits(void);
-const struct ScenePlacement *Scene_GetPlacements(void);
-const struct SceneEvent *Scene_GetEvents(void);
-s32 Scene_Initialize(void);
+const struct MapWarpDest *Map_GetWarpDests(void);
+const struct MapWarpRegion *Map_GetWarpRegions(void);
+const u32 *Map_GetWarps(void);
+const struct ObjectEventTemplate *Map_GetObjectEventTemplates(void);
+const struct MapEvent *Map_GetEvents(void);
+s32 Map_Initialize(void);
 extern struct VaultInteriorsStop gVaultInteriors_Stops[];
 extern s32 gVaultInteriors_ActionTable[];
 extern s32 gVaultInteriors_FirstThiefEntryScript[];
@@ -60,14 +60,14 @@ extern s32 gVaultInteriors_SuspectToSouthWestCorner[];
 extern s32 gVaultInteriors_SuspectAlongToSouthWestCorner[];
 extern s32 gVaultInteriors_SuspectToSouthEastCorner[];
 extern s32 gVaultInteriors_SuspectAlongToSouthEastCorner[];
-extern struct SceneEntrance gVaultInteriors_Entrances[];
-extern struct SceneRegion gVaultInteriors_Regions[];
-extern u32 gVaultInteriors_Exits[];
-extern struct ScenePlacement gVaultInteriors_Placements[];
-extern struct ScenePlacement gVaultInteriors_LoftPlacements[];
-extern struct SceneEvent gVaultInteriors_Events[];
-extern struct SceneEvent gVaultInteriors_LoftEvents[];
-extern struct SceneEvent gVaultInteriors_EventsAfterThieves[];
+extern struct MapWarpDest gVaultInteriors_WarpDests[];
+extern struct MapWarpRegion gVaultInteriors_Regions[];
+extern u32 gVaultInteriors_Warps[];
+extern struct ObjectEventTemplate gVaultInteriors_ObjectEventTemplates[];
+extern struct ObjectEventTemplate gVaultInteriors_LoftObjectEventTemplates[];
+extern struct MapEvent gVaultInteriors_Events[];
+extern struct MapEvent gVaultInteriors_LoftEvents[];
+extern struct MapEvent gVaultInteriors_EventsAfterThieves[];
 extern s32 *gVaultInteriors_StepActions[];
 extern s32 *gVaultInteriors_IdleActions[];
 extern s32 *gVaultInteriors_ResponseScripts[];

@@ -5,43 +5,43 @@
 	.set import.Engine_RandomNext, 1
 	.set import.Engine_MathSin, 1
 	.set import.Engine_MathCos, 1
-	.set import.Engine_MapRedraw, 1
+	.set import.Engine_MapGridRedraw, 1
 	.set import.Engine_ObjectSetPosition, 1
 	.set import.FieldObject_WaitForMove, 1
-	.set import.Engine_ActorSetSpriteFlags, 1
+	.set import.Engine_ObjectEventSetSpriteFlags, 1
 	.set import.Engine_GameFlagIsSet, 1
 	.set import.Engine_GameFlagSet, 1
-	.set import.Engine_EventWait, 1
-	.set import.Engine_EventStart, 1
-	.set import.Engine_EventEnd, 1
-	.set import.Event_CallWithLastActiveObjectId, 1
+	.set import.Engine_ScriptWait, 1
+	.set import.Engine_ScriptStart, 1
+	.set import.Engine_ScriptEnd, 1
+	.set import.FieldScript_CallWithLastActiveObjectId, 1
 	.set import.Engine_PartyGiveItem, 1
-	.set import.Object_GetById, 1
-	.set import.Engine_ActorSetSpeed, 1
-	.set import.Engine_ActorEnableActionCallback, 1
-	.set import.Engine_ActorStop, 1
-	.set import.Engine_ActorSetDestination, 1
-	.set import.Engine_ActorWalkToAndWait, 1
-	.set import.Engine_ActorSetPosition, 1
-	.set import.Engine_ActorJump, 1
-	.set import.Engine_ActorStartRepeatedMotion, 1
-	.set import.Engine_ActorRunRepeatedMotion, 1
-	.set import.Engine_ActorSetChildValue, 1
-	.set import.Engine_EventSetMessage, 1
-	.set import.Engine_EventShowMessageAndWait, 1
-	.set import.Engine_ActorFaceDirection, 1
-	.set import.Engine_ActorSetSpritePriority, 1
-	.set import.Engine_ActorShowEmote, 1
-	.set import.Engine_ActorSetAttachedEffect, 1
-	.set import.Engine_CameraFollowActor, 1
+	.set import.ObjectEvent_GetById, 1
+	.set import.Engine_ObjectEventSetSpeed, 1
+	.set import.Engine_ObjectEventEnableActionCallback, 1
+	.set import.Engine_ObjectEventStop, 1
+	.set import.Engine_ObjectEventSetDestination, 1
+	.set import.Engine_ObjectEventWalkToAndWait, 1
+	.set import.Engine_ObjectEventSetPosition, 1
+	.set import.Engine_ObjectEventJump, 1
+	.set import.Engine_ObjectEventStartRepeatedMotion, 1
+	.set import.Engine_ObjectEventRunRepeatedMotion, 1
+	.set import.Engine_ObjectEventSetChildValue, 1
+	.set import.Engine_ScriptSetMessage, 1
+	.set import.Engine_ScriptShowMessageAndWait, 1
+	.set import.Engine_ObjectEventFaceDirection, 1
+	.set import.Engine_ObjectEventSetSpritePriority, 1
+	.set import.Engine_ObjectEventShowEmote, 1
+	.set import.Engine_ObjectEventSetAttachedEffect, 1
+	.set import.Engine_CameraFollowObjectEvent, 1
 	.set import.Engine_CameraMoveTo, 1
-	.set import.Camera_GetEventObject, 1
-	.set import.Engine_EventRequestExit, 1
+	.set import.Camera_GetScriptObject, 1
+	.set import.Engine_ScriptRequestWarp, 1
 	.set import.Field_ClimbDown, 1
 	.set import.Field_ClimbUp, 1
-	.set import.Engine_EventOpenScreen, 1
-	.set import.Engine_EventCloseScreen, 1
-	.set import.Engine_EventWaitForScreen, 1
+	.set import.Engine_ScriptOpenScreen, 1
+	.set import.Engine_ScriptCloseScreen, 1
+	.set import.Engine_ScriptWaitForScreen, 1
 	.set import.Engine_ItemShowFound, 1
 	.set import.Engine_AudioPlayCue, 1
 	.include "games/tbs/src/system/overlay.inc"

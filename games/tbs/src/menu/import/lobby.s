@@ -16,11 +16,11 @@
 	.set import.SerialRuntime_StartReceive, 1
 	.set import.SerialRuntime_GetActiveTransfers, 1
 	.set import.Scheduler_SetTaskFlags, 1
-	.set import.Engine_MapRedraw, 1
-	.set import.Engine_MapCopyCellsTo, 1
-	.set import.Map_ClearLayerEntryFlag, 1
-	.set import.Map_SetLayerEntryFlag, 1
-	.set import.Engine_MapCopyCellAttributes, 1
+	.set import.Engine_MapGridRedraw, 1
+	.set import.Engine_MapGridCopyCellsTo, 1
+	.set import.TileAnimation_ResumeChannel, 1
+	.set import.TileAnimation_PauseChannel, 1
+	.set import.Engine_MapGridCopyCellAttributes, 1
 	.set import.Engine_DebugCreateWindow, 1
 	.set import.UiWork_Finalize, 1
 	.set import.Ui_AdjustValueWithoutLimit, 1
@@ -40,23 +40,23 @@
 	.set import.GameFlag_SetByte, 1
 	.set import.Party_CountActiveOwners, 1
 	.set import.Party_RestoreHpPp, 1
-	.set import.Engine_EventStart, 1
-	.set import.Engine_EventEnd, 1
-	.set import.Engine_EventChooseYesNo, 1
-	.set import.Object_GetById, 1
-	.set import.Engine_ActorSetSpeed, 1
-	.set import.Engine_ActorWalkTo, 1
-	.set import.Engine_ActorWaitForMove, 1
-	.set import.Engine_ActorFaceActor, 1
-	.set import.Engine_EventSetMessage, 1
-	.set import.Engine_EventOpenMessage, 1
-	.set import.Engine_EventShowMessage, 1
-	.set import.Event_SetDestination, 1
+	.set import.Engine_ScriptStart, 1
+	.set import.Engine_ScriptEnd, 1
+	.set import.Engine_ScriptChooseYesNo, 1
+	.set import.ObjectEvent_GetById, 1
+	.set import.Engine_ObjectEventSetSpeed, 1
+	.set import.Engine_ObjectEventWalkTo, 1
+	.set import.Engine_ObjectEventWaitForMove, 1
+	.set import.Engine_ObjectEventFaceObjectEvent, 1
+	.set import.Engine_ScriptSetMessage, 1
+	.set import.Engine_ScriptOpenMessage, 1
+	.set import.Engine_ScriptShowMessage, 1
+	.set import.FieldScript_SetDestination, 1
 	.set import.Field_RequestBattleFromEncounterTable, 1
-	.set import.Event_SetNextDestination, 1
-	.set import.Event_SetDefeatDestination, 1
-	.set import.Engine_EventOpenScreen, 1
-	.set import.Engine_EventWaitForScreen, 1
+	.set import.FieldScript_SetNextDestination, 1
+	.set import.FieldScript_SetDefeatDestination, 1
+	.set import.Engine_ScriptOpenScreen, 1
+	.set import.Engine_ScriptWaitForScreen, 1
 	.set import.Engine_SanctumOpen, 1
 	.set import.DjinnRecovery_TickTwenty, 1
 	.set import.DebugParty_LoadPreset, 1

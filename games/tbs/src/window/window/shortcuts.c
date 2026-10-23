@@ -29,9 +29,8 @@ void UiTimedNotice_Create(void) {
   notice = (struct TimedNoticeWork *)gEventWork;
   x = 8;
   y = 8;
-  areaMessage =
-      Scene_GetAreaNameIndexFar(gGameState.scene, gGameState.entrance) +
-      RENDER_RESOURCE_BASE;
+  areaMessage = MapSec_GetNameIndexFar(gGameState.mapId, gGameState.warpDest) +
+                RENDER_RESOURCE_BASE;
   UiText_GetResourceDimensions(areaMessage, &x, &y, &width, &height);
   x = (30 - width) >> 1;
   y = (10 - height) >> 1;

@@ -8,8 +8,8 @@
 /// Burst nine particles out from the actor in a ring (the ninth on the first),
 /// flung a third further east and west, slowing as they go
 /// (FieldEffect_AdvanceMotion).
-static void FieldEffect_SpawnNineRadialEffects(s32 actor) {
-  struct FieldActor *object;
+static void FieldEffect_SpawnNineRadialEffects(s32 objectEvent) {
+  struct ObjectEvent *object;
   struct Vector3 vec;
   struct EffectOptions params;
   u32 i;
@@ -17,7 +17,7 @@ static void FieldEffect_SpawnNineRadialEffects(s32 actor) {
   s32 x;
   s32 z;
 
-  object = Object_GetById(actor);
+  object = ObjectEvent_GetById(objectEvent);
   params.priority = 1;
   params.palette = 7;
   params.update = FieldEffect_AdvanceMotion;

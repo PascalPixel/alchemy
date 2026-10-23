@@ -6,7 +6,7 @@
 
 /// The trail particles' random rotations, 48 bytes each, after the 384
 /// particles in PARTICLES (28 bytes each, so they end at 0x2a00).
-#define ATALANTA_MATRICES (Ram_MapCellBuffer + 0x3800)
+#define ATALANTA_MATRICES (Ram_MapGridCellBuffer + 0x3800)
 
 /// The pictures in the slash sheet: five flash frames, then the slash in
 /// three parts. Each starts where the one before ends; the notes give the
@@ -32,7 +32,7 @@ enum SlashSheetCell {
 /// blades rain down diagonally on the targets and burst into flame, hitting
 /// each target as they land.
 ///
-/// Abilities: Atalanta (SCENE_EFFECT_ATALANTA).
+/// Abilities: Atalanta (SUMMON_EFFECT_ATALANTA).
 ///
 /// A or B skips the rest of the gathering, which lasts up to 220 frames; the
 /// fall lasts 88. work->particles holds the 16 gathering blades and then the
@@ -42,7 +42,7 @@ enum SlashSheetCell {
 /// and scrolls it with BattleEffect_AdvanceScrollOnInterval during the
 /// gathering, holding view->busy; restores gBgScroll[1].x and gives BG1 back
 /// with BattleEffect_SetupBlendedDisplay between the parts. Leaves the ember
-/// sheet in Ram_MapCellBuffer.
+/// sheet in Ram_MapGridCellBuffer.
 ///
 /// effect: the targets.
 void BattleEffect_RunAtalanta(struct BattleEffectArgument *effect) {
@@ -130,9 +130,9 @@ void BattleEffect_RunAtalanta(struct BattleEffectArgument *effect) {
     for (j = 0; j != 24; j++) {
       PARTICLES[i * 24 + j].x = (Random16() & 15) + 48;
       Render_ResetTransformState();
-      SceneTransform_ApplyRoll(Random16() & 0xffff);
-      SceneTransform_ApplyPitch(Random16() & 0xffff);
-      SceneTransform_ApplyYaw(Random16() & 0xffff);
+      Transform_ApplyRoll(Random16() & 0xffff);
+      Transform_ApplyPitch(Random16() & 0xffff);
+      Transform_ApplyYaw(Random16() & 0xffff);
       Transform_Store(ATALANTA_MATRICES + (i * 24 + j) * 48);
     }
   }
@@ -284,7 +284,7 @@ void BattleEffect_RunAtalanta(struct BattleEffectArgument *effect) {
   REG_BG2PA = Q_8_8(0.5);
   REG_DISPCNT = EFFECT_DISPCNT;
   Resource_LoadAndDecompress((s32)&ResourceId_EmberStreakSheet,
-                             Ram_MapCellBuffer, 1, 0);
+                             Ram_MapGridCellBuffer, 1, 0);
   // Second part: aim 32 blades above the field, in pixels, to fall
   // diagonally: blade i on target i % 6 where there is one, on a random
   // column otherwise. Only the first 24 fall. The x start allows for the
@@ -326,13 +326,15 @@ void BattleEffect_RunAtalanta(struct BattleEffectArgument *effect) {
 #ifdef UBFIX
             width = gBattleEffect_PuffArcCellWidths[cell];
             draw[i & 1](canvas,
-                        Ram_MapCellBuffer + gBattleEffect_PuffArcCells[cell],
+                        Ram_MapGridCellBuffer +
+                            gBattleEffect_PuffArcCells[cell],
                         slash->x - (width >> 1) - 8,
                         slash->y + gBattleEffect_PuffArcCellBiasY[cell] - 40,
                         width, gBattleEffect_PuffArcCellHeights[cell]);
 #else
             draw[i & 1](
-                canvas, Ram_MapCellBuffer + gBattleEffect_PuffArcCells[cell],
+                canvas,
+                Ram_MapGridCellBuffer + gBattleEffect_PuffArcCells[cell],
                 slash->x -
                     ((width = gBattleEffect_PuffArcCellWidths[cell]) >> 1) - 8,
                 slash->y + gBattleEffect_PuffArcCellBiasY[cell] - 40, width,

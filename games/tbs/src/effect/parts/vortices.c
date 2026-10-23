@@ -28,7 +28,7 @@
 ///
 /// work->particles 0 to 29 are the motes, battle positions in 16.16 until a
 /// mote strikes and then its burst's canvas pixels; from 32, one seat for
-/// each target. The first 30 bytes of Ram_MapCellBuffer mark the motes that
+/// each target. The first 30 bytes of Ram_MapGridCellBuffer mark the motes that
 /// have struck. Loads the vortex palette into the first 64 background
 /// colours, sets REG_BLDALPHA and work->shakeFrames, and turns the camera
 /// through Camera_ApplyPhasedDelta (work->cameraDelta and cameraPhase),
@@ -51,7 +51,7 @@ void BattleEffect_RunFroth(struct BattleEffectArgument *effect) {
   s8 *flags;
 
   // Nonzero once a mote has struck.
-  flags = (s8 *)Ram_MapCellBuffer;
+  flags = (s8 *)Ram_MapGridCellBuffer;
   work = WORK_SLOT(HEAP_SLOT_BATTLE_EFFECT);
   canvas = WORK_SLOT(HEAP_SLOT_BATTLE_CANVAS);
   work->effect = effect;

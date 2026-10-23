@@ -10,11 +10,11 @@
 
 /// Attaches two rising particles to the actor, sharing the effect's cached
 /// tiles.
-void WorldMap_CreateLinkedEffects(struct FieldActor *parent) {
-  struct FieldActor *pair[2];
-  struct FieldActor *child;
+void WorldMap_CreateLinkedEffects(struct ObjectEvent *parent) {
+  struct ObjectEvent *pair[2];
+  struct ObjectEvent *child;
   struct AnimationObject *sprite;
-  struct FieldEffectScene *work = gEffectWork;
+  struct FieldEffectWork *work = gEffectWork;
   s32 i;
 
   for (i = 0; i < 2; ++i) {
@@ -43,14 +43,14 @@ void WorldMap_CreateLinkedEffects(struct FieldActor *parent) {
     }
   }
   {
-    struct FieldActor *effect = pair[0];
+    struct ObjectEvent *effect = pair[0];
     struct AnimationObject *effectSprite = effect->sprite;
 
     effect->update = FieldEffect_AnimateVerticalNegative;
     effectSprite->image.priority = 1;
   }
   {
-    struct FieldActor *effect = pair[1];
+    struct ObjectEvent *effect = pair[1];
     struct AnimationObject *effectSprite = effect->sprite;
 
     effectSprite->image.priority = 1;

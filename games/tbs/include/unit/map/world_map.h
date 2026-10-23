@@ -1,17 +1,17 @@
-#ifndef ALCHEMY_UNIT_SCENE_WORLD_MAP_H
-#define ALCHEMY_UNIT_SCENE_WORLD_MAP_H
+#ifndef ALCHEMY_UNIT_MAP_WORLD_MAP_H
+#define ALCHEMY_UNIT_MAP_WORLD_MAP_H
 
 #include "types.h"
 #include "map_tables.h"
 
-struct SceneEvent;
-struct ScenePlacement;
+struct MapEvent;
+struct ObjectEventTemplate;
 
-const struct SceneEntrance *WorldMap_GetEntrances(void);
-const struct SceneRegion *WorldMap_GetRegions(void);
-const u32 *WorldMap_GetExits(void);
-const struct ScenePlacement *WorldMap_GetPlacements(void);
-const struct SceneEvent *WorldMap_GetEvents(void);
+const struct MapWarpDest *WorldMap_GetWarpDests(void);
+const struct MapWarpRegion *WorldMap_GetRegions(void);
+const u32 *WorldMap_GetWarps(void);
+const struct ObjectEventTemplate *WorldMap_GetObjectEventTemplates(void);
+const struct MapEvent *WorldMap_GetEvents(void);
 s32 WorldMap_Initialize(void);
 extern s32 gWorldMapIodem;
 extern u16 gWorldMapBlend;
@@ -38,22 +38,26 @@ extern s32 gCrossingShipSailsWest[];
 extern s32 gCrossingShipVeersNorth[];
 extern s32 gIslandDriftsEast[];
 extern s32 gWorldMapFlintScript[];
-extern struct SceneEntrance gWorldMapEntrances[];
-extern u32 gWorldMapExits[];
+extern struct MapWarpDest gWorldMapWarpDests[];
+extern u32 gWorldMapWarps[];
 extern s32 gWorldMapKolimaBridgeScript[];
 extern s32 gWorldMapAlignToMapScript[];
 extern s32 gWorldMapIodemScript[];
 extern s32 gWorldMapStormScript[];
-extern struct ScenePlacement gWorldMapPlacements[];
-extern struct ScenePlacement gWorldMapPlacementsHammetsCaravan[];
-extern struct ScenePlacement gWorldMapPlacementsFromWestLunpaCave[];
-extern struct ScenePlacement gWorldMapPlacementsCrossingEnds[];
-extern struct ScenePlacement gWorldMapPlacementsCrossing[];
-extern struct ScenePlacement gWorldMapPlacementsFromKalayTunnelEntranceSouth[];
-extern struct ScenePlacement gWorldMapPlacementsJennaAndKradenAdrift[];
-extern struct ScenePlacement gWorldMapPlacementsFromClear[];
-extern struct ScenePlacement gWorldMapPlacementsBeforeShebasFall[];
-extern struct SceneEvent gWorldMapEvents[];
+extern struct ObjectEventTemplate gWorldMapObjectEventTemplates[];
+extern struct ObjectEventTemplate gWorldMapObjectEventTemplatesHammetsCaravan[];
+extern struct ObjectEventTemplate
+    gWorldMapObjectEventTemplatesFromWestLunpaCave[];
+extern struct ObjectEventTemplate gWorldMapObjectEventTemplatesCrossingEnds[];
+extern struct ObjectEventTemplate gWorldMapObjectEventTemplatesCrossing[];
+extern struct ObjectEventTemplate
+    gWorldMapObjectEventTemplatesFromKalayTunnelEntranceSouth[];
+extern struct ObjectEventTemplate
+    gWorldMapObjectEventTemplatesJennaAndKradenAdrift[];
+extern struct ObjectEventTemplate gWorldMapObjectEventTemplatesFromClear[];
+extern struct ObjectEventTemplate
+    gWorldMapObjectEventTemplatesBeforeShebasFall[];
+extern struct MapEvent gWorldMapEvents[];
 extern u32 gWorldMapPassengerRowValues[];
 extern s32 gIslandWakeScript[];
 

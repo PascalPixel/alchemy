@@ -21,7 +21,7 @@
 /// A formation of twelve objects sweeps in among embers and columns of fire,
 /// and explodes.
 ///
-/// Abilities: Nereid (SCENE_EFFECT_NEREID).
+/// Abilities: Nereid (SUMMON_EFFECT_NEREID).
 ///
 /// Pressing A or B during frames 33 to 97 skips to frame 98. A formation of
 /// twelve objects sweeps in from the right; embers burst up on frame 28 and
@@ -30,9 +30,9 @@
 /// targets bounce. At the end the formation explodes with
 /// BattleEffect_RunImpactBurst; the battle shows the damage on frame 120.
 ///
-/// Reached through BattleEffect_RunSceneEffect, whose sheet slot holds the mote
-/// sheet here. The embers are PARTICLES 0 to 1023, canvas pixels in 16.16, a
-/// variant of -1 marking an idle one. Loads the water spray palette into the
+/// Reached through BattleEffect_RunSummonEffect, whose sheet slot holds the
+/// mote sheet here. The embers are PARTICLES 0 to 1023, canvas pixels in 16.16,
+/// a variant of -1 marking an idle one. Loads the water spray palette into the
 /// first 64 background colours, sets REG_BLDALPHA, spawns the twelve
 /// formation objects (released at the end) and gives the targets an upward
 /// speed and the usual battle gravity at each bounce. Before the impact burst

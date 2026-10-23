@@ -7,9 +7,9 @@
 	.set import.Engine_RandomNext, 1
 	.set import.Engine_MathSin, 1
 	.set import.Engine_MathCos, 1
-	.set import.Object_SetMode, 1
+	.set import.ObjectEvent_SetMode, 1
 	.set import.ObjectDispatch_SetAnimationSpeed, 1
-	.set import.Engine_MapCopyCellsTo, 1
+	.set import.Engine_MapGridCopyCellsTo, 1
 	.set import.UiWindow_Create, 1
 	.set import.UiWork_Finalize, 1
 	.set import.UiText_DrawCharacterAtOffset, 1
@@ -24,24 +24,24 @@
 	.set import.Party_GetAverageLevel, 1
 	.set import.PartyInventory_CountItem, 1
 	.set import.PartyInventory_CountFreeSlots, 1
-	.set import.Engine_EventWait, 1
-	.set import.Engine_EventStart, 1
-	.set import.Engine_EventEnd, 1
+	.set import.Engine_ScriptWait, 1
+	.set import.Engine_ScriptStart, 1
+	.set import.Engine_ScriptEnd, 1
 	.set import.Engine_PartyGiveItem, 1
-	.set import.Engine_EventChooseYesNo, 1
-	.set import.Object_GetById, 1
-	.set import.Engine_ActorWalkToAndWait, 1
-	.set import.Engine_ActorSetPosition, 1
-	.set import.Engine_ActorSetAnimation, 1
-	.set import.Engine_ActorSetChildValue, 1
-	.set import.Engine_EventSetMessage, 1
-	.set import.Engine_EventOpenMessage, 1
-	.set import.Engine_EventShowMessage, 1
-	.set import.Engine_ActorFaceDirection, 1
-	.set import.Event_SetNextDestination, 1
-	.set import.Event_RequestDestination, 1
-	.set import.Engine_EventOpenScreen, 1
-	.set import.Engine_EventWaitForScreen, 1
+	.set import.Engine_ScriptChooseYesNo, 1
+	.set import.ObjectEvent_GetById, 1
+	.set import.Engine_ObjectEventWalkToAndWait, 1
+	.set import.Engine_ObjectEventSetPosition, 1
+	.set import.Engine_ObjectEventSetAnimation, 1
+	.set import.Engine_ObjectEventSetChildValue, 1
+	.set import.Engine_ScriptSetMessage, 1
+	.set import.Engine_ScriptOpenMessage, 1
+	.set import.Engine_ScriptShowMessage, 1
+	.set import.Engine_ObjectEventFaceDirection, 1
+	.set import.FieldScript_SetNextDestination, 1
+	.set import.FieldScript_RequestDestination, 1
+	.set import.Engine_ScriptOpenScreen, 1
+	.set import.Engine_ScriptWaitForScreen, 1
 	.set import.Engine_ItemShowFound, 1
 	.set import.Field_EndBusyAndReveal, 1
 	.set import.ObjectTable_Snapshot, 1

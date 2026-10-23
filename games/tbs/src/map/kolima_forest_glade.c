@@ -1,7 +1,7 @@
 /// @file
-/// Kolima Forest (SceneId_KolimaForestGlade), the second of the forest's
-/// five maps, on the party's way to Tret between SceneId_KolimaForestEntrance
-/// and SceneId_KolimaForestCliff. Three logs lie in the grass to be rolled by
+/// Kolima Forest (MapId_KolimaForestGlade), the second of the forest's
+/// five maps, on the party's way to Tret between MapId_KolimaForestEntrance
+/// and MapId_KolimaForestCliff. Three logs lie in the grass to be rolled by
 /// walking into them, and a Nut floats out of reach until Catch pulls it in
 /// (FLAG_KOLIMA_FOREST_NUT_CAUGHT). Until Tret lifts the curse
 /// (FLAG_KOLIMA_CURSE_LIFTED), KolimaPalette_Curse gives the forest redder,
@@ -44,59 +44,61 @@
 #include "map_tables.h"
 #include "item_ids.h"
 
-/// Kolima Forest's actors, numbering the rows of gKolimaForestGlade_Placements.
-enum KolimaForestGladeActor {
+/// Kolima Forest's actors, numbering the rows of
+/// gKolimaForestGlade_ObjectEventTemplates.
+enum KolimaForestGladeLocalId {
   /// The three logs.
   /// ★ Named from what the player sees: logs lying on the forest grass among
   /// the stumps (its render)
-  ACTOR_FIRST_LOG = ACTOR_FIRST_PLACED,
+  LOCALID_FIRST_LOG = LOCALID_FIRST_PLACED,
   /// The Nut that floats until Catch pulls it in.
   /// ★ Named from the game: "Nut" (MsgItemName)
-  ACTOR_NUT = ACTOR_FIRST_LOG + 3
+  LOCALID_NUT = LOCALID_FIRST_LOG + 3
 };
 
 #include "common/object_staged_object_event.h"
 
-/// Where the party enters, from SceneId_KolimaForestEntrance and
-/// SceneId_KolimaForestCliff.
-const struct SceneEntrance *KolimaForestGlade_GetEntrances(void) {
-  return gKolimaForestGlade_Entrances;
+/// Where the party enters, from MapId_KolimaForestEntrance and
+/// MapId_KolimaForestCliff.
+const struct MapWarpDest *KolimaForestGlade_GetWarpDests(void) {
+  return gKolimaForestGlade_WarpDests;
 }
 
-const struct SceneRegion *KolimaForestGlade_GetRegions(void) { return 0; }
+const struct MapWarpRegion *KolimaForestGlade_GetRegions(void) { return 0; }
 
-/// The ways on into the forest (SceneId_KolimaForestCliff) and back
-/// (SceneId_KolimaForestEntrance).
-const u32 *KolimaForestGlade_GetExits(void) { return gKolimaForestGlade_Exits; }
+/// The ways on into the forest (MapId_KolimaForestCliff) and back
+/// (MapId_KolimaForestEntrance).
+const u32 *KolimaForestGlade_GetWarps(void) { return gKolimaForestGlade_Warps; }
 
 /// The three logs and the Nut.
-const struct ScenePlacement *KolimaForestGlade_GetPlacements(void) {
-  return gKolimaForestGlade_Placements;
+const struct ObjectEventTemplate *
+KolimaForestGlade_GetObjectEventTemplates(void) {
+  return gKolimaForestGlade_ObjectEventTemplates;
 }
 
-/// Kolima Forest (SceneId_KolimaForestGlade), walking into a log: it rolls
+/// Kolima Forest (MapId_KolimaForestGlade), walking into a log: it rolls
 /// ahead until something stops it.
 static void KolimaForestGlade_PushLog(void) {
-  struct StagedActorProbe result;
-  Engine_EventStart();
-  if (StagedActor_FindClearPosition(&result))
-    SceneActor_MoveAndRedraw(result);
-  Engine_EventEnd();
+  struct StagedObjectEventProbe result;
+  Engine_ScriptStart();
+  if (StagedObjectEvent_FindClearPosition(&result))
+    MapObjectEvent_MoveAndRedraw(result);
+  Engine_ScriptEnd();
 }
 
-/// Kolima Forest (SceneId_KolimaForestGlade), Catch on the floating Nut (until
+/// Kolima Forest (MapId_KolimaForestGlade), Catch on the floating Nut (until
 /// FLAG_KOLIMA_FOREST_NUT_CAUGHT): it vanishes and the party finds a Nut.
 static void KolimaForestGlade_CatchNut(void) {
-  Engine_EventStart();
-  Engine_ActorSetPosition(ACTOR_NUT, 0, 0);
+  Engine_ScriptStart();
+  Engine_ObjectEventSetPosition(LOCALID_NUT, 0, 0);
   Engine_GameFlagSet(FLAG_KOLIMA_FOREST_NUT_CAUGHT);
   Engine_ItemShowFound(ITEM_NUT, 3);
   Engine_PartyGiveItem(ITEM_NUT, 0);
-  Engine_EventEnd();
+  Engine_ScriptEnd();
 }
 
 /// The logs, the Nut and the two ways out.
-const struct SceneEvent *KolimaForestGlade_GetEvents(void) {
+const struct MapEvent *KolimaForestGlade_GetEvents(void) {
   return gKolimaForestGlade_Events;
 }
 
@@ -106,13 +108,13 @@ const struct SceneEvent *KolimaForestGlade_GetEvents(void) {
 s32 KolimaForestGlade_Initialize(void) {
 
   gEventWork->startTransition =
-      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
+      MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   if (Engine_GameFlagIsSet(FLAG_KOLIMA_FOREST_NUT_CAUGHT) == 0) {
-    Scene_FloatNut(ACTOR_NUT);
+    Map_FloatNut(LOCALID_NUT);
   }
-  FieldScene_RedrawActorFootprint(ACTOR_FIRST_LOG);
-  FieldScene_RedrawActorFootprint(ACTOR_FIRST_LOG + 1);
-  FieldScene_RedrawActorFootprint(ACTOR_FIRST_LOG + 2);
+  Map_RedrawObjectEventFootprint(LOCALID_FIRST_LOG);
+  Map_RedrawObjectEventFootprint(LOCALID_FIRST_LOG + 1);
+  Map_RedrawObjectEventFootprint(LOCALID_FIRST_LOG + 2);
   if (Engine_GameFlagIsSet(FLAG_KOLIMA_CURSE_LIFTED) == 0) {
     KolimaPalette_Curse(11);
   }
@@ -125,7 +127,7 @@ s32 KolimaForestGlade_Initialize(void) {
 /// Pixel step by direction: X in the upper halfword, Z in the lower.
 #define DIRECTION_STEP(dx, dz) (((dx) << 16) | ((dz) & 0xffff))
 
-s32 gStagedActor_DirectionSteps[] = {
+s32 gStagedObjectEvent_DirectionSteps[] = {
     DIRECTION_STEP(16, 0),  DIRECTION_STEP(16, 0),  DIRECTION_STEP(16, 0),
     DIRECTION_STEP(0, 16),  DIRECTION_STEP(0, 16),  DIRECTION_STEP(0, 16),
     DIRECTION_STEP(0, 16),  DIRECTION_STEP(-16, 0), DIRECTION_STEP(-16, 0),
@@ -135,11 +137,11 @@ s32 gStagedActor_DirectionSteps[] = {
 };
 
 // clang-format off
-u32 gStagedActor_FootprintKinds[] = {
+u32 gStagedObjectEvent_FootprintKinds[] = {
     207, 205, 228, 229, 298, 297,
 };
 
-s32 gStagedActor_FootprintBounds[] = {
+s32 gStagedObjectEvent_FootprintBounds[] = {
     -32, -8, 32, 8,
     -8, -32, 8, 32,
     -32, -16, 32, 0,
@@ -148,52 +150,52 @@ s32 gStagedActor_FootprintBounds[] = {
     -8, -32, 8, 32,
 };
 
-struct SceneEntrance gKolimaForestGlade_Entrances[] = {
+struct MapWarpDest gKolimaForestGlade_WarpDests[] = {
     { 0, CONDITION_ALWAYS, 209, 0, 279, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
     { KOLIMA_FOREST_GLADE_FROM_KOLIMA_FOREST_ENTRANCE, CONDITION_ALWAYS, 480, 0, 376, FACING_WEST, 0, -1, -1, -1, -1, 0 },
     { KOLIMA_FOREST_GLADE_FROM_KOLIMA_FOREST_CLIFF, CONDITION_ALWAYS, 312, 0, 40, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
-    { SCENE_TABLE_END },
+    { MAP_TABLE_END },
 };
 
 /// KOLIMA_FOREST_GLADE_TO_KOLIMA_FOREST_CLIFF on into the forest, and
 /// KOLIMA_FOREST_GLADE_TO_KOLIMA_FOREST_ENTRANCE back.
-u32 gKolimaForestGlade_Exits[] = {
-    SCENE_EXITS(KolimaForestGlade),
-    SCENE_EXIT(KOLIMA_FOREST_GLADE_TO_KOLIMA_FOREST_CLIFF, KolimaForestCliff, KOLIMA_FOREST_CLIFF_FROM_KOLIMA_FOREST_GLADE),
-    SCENE_EXIT(KOLIMA_FOREST_GLADE_TO_KOLIMA_FOREST_ENTRANCE, KolimaForestEntrance, KOLIMA_FOREST_ENTRANCE_FROM_KOLIMA_FOREST_GLADE),
-    SCENE_EXITS_END,
+u32 gKolimaForestGlade_Warps[] = {
+    MAP_WARPS(KolimaForestGlade),
+    MAP_WARP(KOLIMA_FOREST_GLADE_TO_KOLIMA_FOREST_CLIFF, KolimaForestCliff, KOLIMA_FOREST_CLIFF_FROM_KOLIMA_FOREST_GLADE),
+    MAP_WARP(KOLIMA_FOREST_GLADE_TO_KOLIMA_FOREST_ENTRANCE, KolimaForestEntrance, KOLIMA_FOREST_ENTRANCE_FROM_KOLIMA_FOREST_GLADE),
+    MAP_WARPS_END,
 };
 
 /// Until the third patch the Nut's placement tested Vale's FLAG_VALE_NUT_CAUGHT, not the flag
 /// catching it sets.
-struct ScenePlacement gKolimaForestGlade_Placements[] = {
-    { SPRITE_LOG_NORTH_SOUTH, CONDITION_ALWAYS, ACTOR_RESET_ACTION,
+struct ObjectEventTemplate gKolimaForestGlade_ObjectEventTemplates[] = {
+    { SPRITE_LOG_NORTH_SOUTH, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
         PIXELS(360), 0, PIXELS(368), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { SPRITE_LOG_WEST_EAST, CONDITION_ALWAYS, ACTOR_RESET_ACTION,
+    { SPRITE_LOG_WEST_EAST, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
         PIXELS(160), 0, PIXELS(392), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { SPRITE_LOG_NORTH_SOUTH, CONDITION_ALWAYS, ACTOR_RESET_ACTION,
+    { SPRITE_LOG_NORTH_SOUTH, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
         PIXELS(136), 0, PIXELS(336), FACING_SOUTH, TALK_KEEP_FACING, 0 },
 #if !TBS_PATCH_3
-    { SPRITE_BLANK, FLAG_VALE_NUT_CAUGHT, ACTOR_RESET_ACTION,
+    { SPRITE_BLANK, FLAG_VALE_NUT_CAUGHT, MOVEMENT_TYPE_RESET_ACTION,
         PIXELS(280), 0, PIXELS(280), FACING_SOUTH, TALK_KEEP_FACING, 0 },
 #else
-    { SPRITE_BLANK, FLAG_KOLIMA_FOREST_NUT_CAUGHT, ACTOR_RESET_ACTION,
+    { SPRITE_BLANK, FLAG_KOLIMA_FOREST_NUT_CAUGHT, MOVEMENT_TYPE_RESET_ACTION,
         PIXELS(280), 0, PIXELS(280), FACING_SOUTH, TALK_KEEP_FACING, 0 },
 #endif
-    { SCENE_TABLE_END },
+    { MAP_TABLE_END },
 };
 // clang-format on
 
-struct SceneEvent gKolimaForestGlade_Events[] = {
-    {EVENT_EXIT, 1, CONDITION_ALWAYS,
+struct MapEvent gKolimaForestGlade_Events[] = {
+    {MAP_EVENT_WARP, 1, CONDITION_ALWAYS,
      KOLIMA_FOREST_GLADE_TO_KOLIMA_FOREST_CLIFF},
-    {EVENT_EXIT, 2, CONDITION_ALWAYS,
+    {MAP_EVENT_WARP, 2, CONDITION_ALWAYS,
      KOLIMA_FOREST_GLADE_TO_KOLIMA_FOREST_ENTRANCE},
-    {EVENT_TOUCH | EVENT_TOUCH_WALKING, 10, CONDITION_ALWAYS,
+    {MAP_EVENT_COORD | COORD_EVENT_FLAG_WALKING, 10, CONDITION_ALWAYS,
      EVENT_SCRIPT(KolimaForestGlade_PushLog)},
-    {PSYNERGY_ON_ACTOR(ABILITY_CATCH), ACTOR_NUT, FLAG_KOLIMA_FOREST_NUT_CAUGHT,
-     EVENT_SCRIPT(KolimaForestGlade_CatchNut)},
-    {SCENE_EVENTS_END},
+    {PSYNERGY_ON_OBJ_EVENT(ABILITY_CATCH), LOCALID_NUT,
+     FLAG_KOLIMA_FOREST_NUT_CAUGHT, EVENT_SCRIPT(KolimaForestGlade_CatchNut)},
+    {MAP_EVENTS_END},
 };
 
 // The .bss order follows the first declarations (externs in field.h).

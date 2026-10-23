@@ -87,7 +87,7 @@ void BattleEffect_RunDragonCloud(struct BattleEffectArgument *effect) {
   Resource_LoadAndDecompress((s32)&ResourceId_EmberStreakSheet,
                              &work->sheet[DRAGON_CLOUD_PUFF_CELLS], 1, 1);
   Resource_LoadAndDecompress((s32)&ResourceId_FlashBurstSheet,
-                             Ram_MapCellBuffer, 1, 0);
+                             Ram_MapGridCellBuffer, 1, 0);
   BattleEffect_FetchRectangleBlitters(work->effect->side, draw);
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, 75);
 
@@ -152,7 +152,7 @@ void BattleEffect_RunDragonCloud(struct BattleEffectArgument *effect) {
       if (frame <= 63)
         camera->yaw += 0x100;
     }
-    BattlePresentation_SetupTransitionSceneFar(0, 0, 0, 100);
+    BattlePresentation_SetupTransitionViewFar(0, 0, 0, 100);
     if (frame <= 17) {
       s32 cell = frame / 3;
 
@@ -262,7 +262,7 @@ void BattleEffect_RunDragonCloud(struct BattleEffectArgument *effect) {
           if (i > 47) {
             if (ember->variant <= 11) {
               draw[0](canvas,
-                      Ram_MapCellBuffer + ember->variant / 2 * (32 * 64),
+                      Ram_MapGridCellBuffer + ember->variant / 2 * (32 * 64),
                       position.x - 16, position.y - 32, 32, 64);
               ember->variant++;
             }

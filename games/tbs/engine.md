@@ -138,7 +138,7 @@ several scenes need is copied into each of them (`src/scene/common/`).
 An overlay and the main image meet at two tables, each in a fixed order:
 
 - The entry table (`scene/entry/<place>.s`) opens the overlay with six stubs
-  the field code calls through `struct SceneEntries`: the scene's start-up
+  the field code calls through `struct MapEntries`: the scene's start-up
   and the functions that return its entrances, exits, placements, events and
   exit regions.
 - The import table (`scene/import/<place>.s`) holds the main-image functions

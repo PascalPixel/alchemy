@@ -168,7 +168,7 @@ void UiText_PrepareMessageWorkFar(s32 argument);
 /// when the speaker has none.
 s32 Localization_LookupEntryIdFar(u32 value);
 /// Runs the field menu until the player picks a screen that leaves it, and
-/// returns that screen's result; Field_RunScene ignores it.
+/// returns that screen's result; Field_RunMap ignores it.
 s32 Menu_RunTopSelectionFar(void);
 /// Runs the title menu built from the save files, New Game to Send, and returns
 /// the chosen SaveSlotAction, or -1 when cancelled.
@@ -208,7 +208,7 @@ void UiText_RenderWideStringAtOffsetFar(u16 *text, struct UiWindow *window,
                                         s32 x, s32 y);
 /// Writes each scan line's window frame extent into a page of the display
 /// transition's window table, as a window transition runs.
-void UiWindow_FillFromSceneFar(void *dst);
+void UiWindow_FillScanlineSpansFar(void *dst);
 /// Redraws a window's empty frame at its current rectangle.
 void RenderOutput_RedrawSavedRectFar(struct UiWindow *window);
 /// Releases every sprite in a list of render outputs, or a window's, and

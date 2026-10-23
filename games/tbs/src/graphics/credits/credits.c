@@ -1115,12 +1115,12 @@ s32 DisplayScroll_DrawLine(const u8 *text, s32 firstTile, s32 alignment) {
   // The ninth raster row holds the shadow below this line. Carry it into
   // the next line before clearing the rest of the reused scratch buffer.
   // The buffer comes back at the same address each call (MemFree rewinds the
-  // pool), so the last line's ninth row is still there. FLAG_SCENE_TEMP_00,
+  // pool), so the last line's ninth row is still there. FLAG_MAP_TEMP_00,
   // here a line has been drawn, is clear on entering the scene
-  // (Scene_ResetFlagsOnEnter), so the first line starts from a clean buffer.
-  if (!GameFlag_TestFar(FLAG_SCENE_TEMP_00)) {
+  // (Map_ResetFlagsOnEnter), so the first line starts from a clean buffer.
+  if (!GameFlag_TestFar(FLAG_MAP_TEMP_00)) {
     Iwram_FillWords(linePixels, CREDITS_BUFFER_BYTES, 0);
-    GameFlag_SetBitFar(FLAG_SCENE_TEMP_00);
+    GameFlag_SetBitFar(FLAG_MAP_TEMP_00);
   } else {
     Iwram_CopyWords(linePixels, linePixels + 0x800, 0x100);
     Iwram_FillWords(linePixels + 0x100, 0x800, 0);

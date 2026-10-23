@@ -20,8 +20,8 @@ gPlayerObjectId:
 	.global gSaveStamp
 gSaveStamp:
 	.space 0x00000b1c
-	.global gSceneState
-gSceneState:
+	.global gMapLocalState
+gMapLocalState:
 	.space 0x00000078
 	.global gInventorySnapshot
 gInventorySnapshot:
@@ -220,10 +220,10 @@ gFlashSavedIme:
 	.global gOverlayArea
 gOverlayArea:
 	.space 0x00008000
-	.global gMapCellBuffer
-	.type gMapCellBuffer, %object
-	.size gMapCellBuffer, 0xc000
-gMapCellBuffer:
+	.global gMapGridCellBuffer
+	.type gMapGridCellBuffer, %object
+	.size gMapGridCellBuffer, 0xc000
+gMapGridCellBuffer:
 	.space 0x00008000
 	.global gActorSpriteSlots
 gActorSpriteSlots:
@@ -233,20 +233,20 @@ gActorSpriteSlots:
 	.size gDecodeBuffer, 0x4000
 gDecodeBuffer:
 	.space 0x00004000
-	.global gMapBlocks
-	.type gMapBlocks, %object
-	.size gMapBlocks, 0x8000
-gMapBlocks:
+	.global gMetatiles
+	.type gMetatiles, %object
+	.size gMetatiles, 0x8000
+gMetatiles:
 	.space 0x00008000
-	.global gMapLayerData
-	.type gMapLayerData, %object
-	.size gMapLayerData, 0x4000
-gMapLayerData:
+	.global gMapGridLayerData
+	.type gMapGridLayerData, %object
+	.size gMapGridLayerData, 0x4000
+gMapGridLayerData:
 	.space 0x00004000
-	.global gMapCollision
-	.type gMapCollision, %object
-	.size gMapCollision, 0x4000
-gMapCollision:
+	.global gMapGridCollision
+	.type gMapGridCollision, %object
+	.size gMapGridCollision, 0x4000
+gMapGridCollision:
 	.space 0x00004000
 	.global gEwramHeap
 gEwramHeap:

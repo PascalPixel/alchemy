@@ -3,16 +3,16 @@
 	.section .rodata
 	.global Field_VenusEntrance
 Field_VenusEntrance:
-	map_header 0, 0, 64, 68, 3, 2, 1, 0, 2, 2, 0, 0
-	map_layer 0, 0, 16, 16, 0, 0, 0xff, 0xff
-	map_layer 64, 0, 16, 16, 0, 0, 0xff, 0xff
-	map_layer 0, 68, 16, 16, 0, 0, 0xff, 0xff
-	map_block Field_VenusEntrance, .LField_VenusEntrance_METATILES
-	map_block Field_VenusEntrance, .LField_VenusEntrance_SHAPES
-	map_block Field_VenusEntrance, .LField_VenusEntrance_GRID
-	map_block Field_VenusEntrance
-	map_block Field_VenusEntrance
-	map_block Field_VenusEntrance, .LField_VenusEntrance_MARKERS
+	layout_header 0, 0, 64, 68, 3, 2, 1, 0, 2, 2, 0, 0
+	layout_layer 0, 0, 16, 16, 0, 0, 0xff, 0xff
+	layout_layer 64, 0, 16, 16, 0, 0, 0xff, 0xff
+	layout_layer 0, 68, 16, 16, 0, 0, 0xff, 0xff
+	layout_offset Field_VenusEntrance, .LField_VenusEntrance_METATILES
+	layout_offset Field_VenusEntrance, .LField_VenusEntrance_SHAPES
+	layout_offset Field_VenusEntrance, .LField_VenusEntrance_GRID
+	layout_offset Field_VenusEntrance
+	layout_offset Field_VenusEntrance
+	layout_offset Field_VenusEntrance, .LField_VenusEntrance_MARKERS
 .LField_VenusEntrance_METATILES:
 	.incbin "games/tbs/src/layout/venus_entrance/metatiles.delta1.lz"
 	.balign 4, 0

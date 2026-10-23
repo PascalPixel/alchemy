@@ -23,8 +23,8 @@
 ///
 /// Opens the tiled canvas (BattleEffect_StartTiledCanvas) and adds
 /// BattleEffect_ArmBg2AffineHBlankDma to feed work->bg2xLines to BG2X; decodes
-/// the burst's pieces into Ram_MapCellBuffer; moves the target's object; and
-/// reloads the battle backdrop on BG1 before it closes the layer. It never
+/// the burst's pieces into Ram_MapGridCellBuffer; moves the target's object;
+/// and reloads the battle backdrop on BG1 before it closes the layer. It never
 /// calls EFFECT_SHOW_DAMAGE, and leaves the flash timers alone.
 void BattleEffect_RunCondemn(struct BattleEffectArgument *effect) {
   void **slots;
@@ -55,13 +55,13 @@ void BattleEffect_RunCondemn(struct BattleEffectArgument *effect) {
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
 
   // Setup. The panel and the first two burst pictures in work->sheet, with
-  // their palette; the later pieces in PARTICLES (Ram_MapCellBuffer), whose
+  // their palette; the later pieces in PARTICLES (Ram_MapGridCellBuffer), whose
   // own palette is skipped.
   sheet = Resource_GetTableEntry((s32)&ResourceId_CounterRevealSheet);
   Iwram_CopyWords((void *)BG_PLTT, sheet, 128);
   sheet = sheet + 128;
   Resource_DecodeType01(sheet, work->sheet);
-  cells = Ram_MapCellBuffer;
+  cells = Ram_MapGridCellBuffer;
   sheet = Resource_GetTableEntry((s32)&ResourceId_RedCrescentSheetA);
   sheet = sheet + 128;
   Resource_DecodeType01(sheet, cells);
@@ -201,23 +201,23 @@ void BattleEffect_RunCondemn(struct BattleEffectArgument *effect) {
         }
         if ((frame - 92) <= 1U) {
           draw[work->effect->side](
-              canvas, Ram_MapCellBuffer, CONDEMN_PANEL_X(panelColumn, 3),
+              canvas, Ram_MapGridCellBuffer, CONDEMN_PANEL_X(panelColumn, 3),
               CONDEMN_PANEL_Y(panelRow, 3) + screenY, 128, 91);
         }
         if ((frame - 94) <= 1U) {
-          draw[work->effect->side](canvas, Ram_MapCellBuffer + 0x2d80,
+          draw[work->effect->side](canvas, Ram_MapGridCellBuffer + 0x2d80,
                                    CONDEMN_PANEL_X(panelColumn, 4),
                                    CONDEMN_PANEL_Y(panelRow, 4) + screenY, 128,
                                    59);
         }
         if ((frame - 96) <= 1U) {
-          draw[work->effect->side](canvas, Ram_MapCellBuffer + 0x4b00,
+          draw[work->effect->side](canvas, Ram_MapGridCellBuffer + 0x4b00,
                                    CONDEMN_PANEL_X(panelColumn, 5),
                                    CONDEMN_PANEL_Y(panelRow, 5) + screenY, 122,
                                    29);
         }
         if ((frame - 98) <= 1U) {
-          draw[work->effect->side](canvas, Ram_MapCellBuffer + 0x58d2,
+          draw[work->effect->side](canvas, Ram_MapGridCellBuffer + 0x58d2,
                                    CONDEMN_PANEL_X(panelColumn, 6),
                                    CONDEMN_PANEL_Y(panelRow, 6) + screenY, 76,
                                    25);

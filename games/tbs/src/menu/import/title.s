@@ -14,11 +14,11 @@
 	.set import.Fade_Wait, 1
 	.set import.SaveState_ScanRecordFlags, 1
 	.set import.Party_EndChildhood, 1
-	.set import.Engine_EventWait, 1
-	.set import.Object_GetById, 1
-	.set import.Event_SetDestination, 1
-	.set import.Engine_EventOpenScreen, 1
-	.set import.Engine_EventWaitForScreen, 1
+	.set import.Engine_ScriptWait, 1
+	.set import.ObjectEvent_GetById, 1
+	.set import.FieldScript_SetDestination, 1
+	.set import.Engine_ScriptOpenScreen, 1
+	.set import.Engine_ScriptWaitForScreen, 1
 	.set import.ScrollFar_Entry00, 1
 	.set import.PaletteFar_Entry00, 1
 	.set import.Title_ShowSplashScreen, 1

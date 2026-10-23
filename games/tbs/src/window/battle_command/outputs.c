@@ -254,7 +254,7 @@ typedef void (*WindowSpanRoutine)(u16 *spans, u16 *tilemap);
 /// of the first 80 lines only.
 /// XXX: likely meant to cover all 160 lines, because each line takes 4 bytes;
 /// what the lower half then shows is not established.
-void UiWindow_FillFromScene(void *spans) {
+void UiWindow_FillScanlineSpans(void *spans) {
   void *tilemap = gWindowWork[0];
 
   if (tilemap == NULL) {

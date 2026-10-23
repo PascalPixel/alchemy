@@ -6,30 +6,30 @@
 
 /// The event command "camera follow actor": the camera (the event's view
 /// centre) follows actor. Unless keepPosition is set it jumps there at once
-/// and, off the world map, the map is redrawn around it. FieldEvent_End
+/// and, off the world map, the map is redrawn around it. FieldScript_End
 /// calls it with the leader and keepPosition 1, so after an event the view
 /// follows the leader again from where it is, without a jump.
-void Camera_FollowActor(s32 actor, s32 keepPosition) {
+void Camera_FollowObjectEvent(s32 objectEvent, s32 keepPosition) {
   struct ObjectRuntime *subject;
   struct ObjectRuntime *camera;
   struct FieldWork *work;
-  struct MapScrollWork *map;
+  struct MapGridScrollWork *grid;
 
-  subject = ObjectTable_Get(actor);
+  subject = ObjectTable_Get(objectEvent);
   // The slot already holds the field work, which this returns; the camera
   // commands here all find it this way.
   work = Runtime_AllocateBlock(HEAP_SLOT_EVENT, sizeof(struct FieldWork));
   camera = work->camera;
-  map = gMapWork[0];
+  grid = gMapGridWork[0];
   if (subject != 0) {
-    map->origin = &camera->x;
+    grid->origin = &camera->x;
     ObjectDispatch_StartCameraFar((struct DispatchObject *)camera,
                                   (s32)subject);
     if (keepPosition == 0) {
       SET_POSITION(camera, subject->x, subject->y, subject->z);
       WaitFrames(1);
       if (work->mode != MODE_WORLD_MAP) {
-        Map_CenterOnFollowedPointFar();
+        MapGrid_CenterOnFollowedPointFar();
       }
     }
   }
@@ -60,7 +60,7 @@ void Camera_MoveWithinMapBounds(s32 requestedX, s32 requestedY, s32 requestedZ,
   s32 positionX;
   s32 positionZ;
   s32 positionY;
-  struct MapScrollWork *map;
+  struct MapGridScrollWork *grid;
   struct ObjectRuntime *camera;
 
   positionX = requestedX;
@@ -70,18 +70,18 @@ void Camera_MoveWithinMapBounds(s32 requestedX, s32 requestedY, s32 requestedZ,
   runtimeBlock =
       Runtime_AllocateBlock(HEAP_SLOT_EVENT, sizeof(struct FieldWork));
   camera = runtimeBlock->camera;
-  map = gMapWork[0];
+  grid = gMapGridWork[0];
 
   // Keep the screen inside the map: the view centre stays 120 pixels from
   // either side, 96 from the top and 64 from the bottom (it sits 96 pixels
   // down the 160-pixel screen), the z limits moved down the map by its
   // height, since it shows at z less its height.
-  minimumX = map->minX + 0x780000;
+  minimumX = grid->minX + 0x780000;
   cameraY = camera->y;
-  minimumZ = map->minY + cameraY + 0x600000;
-  maximumX = map->maxX + 0xFF880000;
-  maximumZ = map->maxY + cameraY + 0xFFC00000;
-  map->origin = &camera->x;
+  minimumZ = grid->minY + cameraY + 0x600000;
+  maximumX = grid->maxX + 0xFF880000;
+  maximumZ = grid->maxY + cameraY + 0xFFC00000;
+  grid->origin = &camera->x;
   ObjectDispatch_StartIdleFar((struct DispatchObject *)camera);
   if (positionX == -1) {
     positionX = camera->x;
@@ -108,7 +108,7 @@ void Camera_MoveWithinMapBounds(s32 requestedX, s32 requestedY, s32 requestedZ,
     SET_POSITION(camera, positionX, positionY, positionZ);
     WaitFrames(1U);
     if (runtimeBlock->mode != MODE_WORLD_MAP) {
-      Map_CenterOnFollowedPointFar();
+      MapGrid_CenterOnFollowedPointFar();
     }
   } else {
     Object_SetMoveTargetFar(camera, positionX, positionY, positionZ);
@@ -117,10 +117,10 @@ void Camera_MoveWithinMapBounds(s32 requestedX, s32 requestedY, s32 requestedZ,
 
 /// The event command "camera move to actor": Camera_MoveWithinMapBounds to the
 /// actor's x and z.
-void Object_PlaceCurrentWithinCameraBounds(s32 actor, s32 glide) {
+void ObjectEvent_PlaceCurrentWithinCameraBounds(s32 objectEvent, s32 glide) {
   struct ObjectRuntime *subject;
 
-  subject = ObjectTable_Get(actor);
+  subject = ObjectTable_Get(objectEvent);
   // The field work, looked up and not used.
   Runtime_AllocateBlock(HEAP_SLOT_EVENT, 0xCCC);
   if (subject != NULL) {
@@ -134,13 +134,13 @@ void Camera_WaitForArrival(void) {
   FieldObject_WaitForMoveFar(((struct FieldWork *)Runtime_AllocateBlock(
                                   HEAP_SLOT_EVENT, sizeof(struct FieldWork)))
                                  ->camera);
-  FieldEvent_WaitFrames(2);
+  FieldScript_WaitFrames(2);
 }
 
 /// The event command "get view centre": returns the camera object.
-struct FieldActor *Camera_GetEventObject(void) {
-  return (struct FieldActor *)((struct FieldWork *)Runtime_AllocateBlock(
-                                   HEAP_SLOT_EVENT, sizeof(struct FieldWork)))
+struct ObjectEvent *Camera_GetScriptObject(void) {
+  return (struct ObjectEvent *)((struct FieldWork *)Runtime_AllocateBlock(
+                                    HEAP_SLOT_EVENT, sizeof(struct FieldWork)))
       ->camera;
 }
 

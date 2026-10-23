@@ -7,7 +7,7 @@
 /// Per-frame update Frost leaves on its target: sprite param 2 for 2 frames in
 /// every 8, otherwise 0, so the target glints.
 void FieldEffect_UpdateOrbitingParticleMain(union FieldObject *fieldObject) {
-  struct FieldActor *particle = (struct FieldActor *)fieldObject;
+  struct ObjectEvent *particle = (struct ObjectEvent *)fieldObject;
   s32 frame = gFrameCount & 7;
   if (frame == 0) {
     Animation_ApplyChildValuesFar((struct DispatchObject *)particle,
@@ -20,7 +20,7 @@ void FieldEffect_UpdateOrbitingParticleMain(union FieldObject *fieldObject) {
 
 /// Per-frame update: shrinks by 1/16 a frame and is released at 1/16.
 void FieldEffect_UpdateOrbitingParticleFade(union FieldObject *fieldObject) {
-  struct FieldActor *particle = (struct FieldActor *)fieldObject;
+  struct ObjectEvent *particle = (struct ObjectEvent *)fieldObject;
   s32 scale;
 
   if (particle != NULL) {
@@ -40,7 +40,7 @@ void FieldEffect_UpdateOrbitingParticleFade(union FieldObject *fieldObject) {
 static inline void
 FieldEffect_UpdateSpiralParticle(union FieldObject *fieldObject,
                                  s32 clockwise) {
-  struct FieldActor *particle = (struct FieldActor *)fieldObject;
+  struct ObjectEvent *particle = (struct ObjectEvent *)fieldObject;
   struct EffectVector position;
   s16 remainingFrames;
   s32 decrementedTimer;
@@ -85,15 +85,15 @@ void FieldEffect_UpdateOrbitingParticleRight(union FieldObject *fieldObject) {
 /// The target is the actor in scene->child. With childMode the target is left
 /// as it is and only the particles appear.
 void FieldEffect_RunFrostOnTarget(s32 unused) {
-  struct FieldEffectScene *scene = gEffectWork;
-  struct FieldActor *target = scene->child;
+  struct FieldEffectWork *effectWork = gEffectWork;
+  struct ObjectEvent *target = effectWork->child;
 
   if (target != 0) {
     // enabled set skips the target's part of FieldEffect_RunFrost.
-    if (scene->childMode != 0) {
-      scene->enabled = 1;
+    if (effectWork->childMode != 0) {
+      effectWork->enabled = 1;
     }
-    target->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
+    target->priorityFlags |= OBJ_EVENT_PRIORITY_UNDERFOOT;
     FieldEffect_RunFrost();
   }
 }
@@ -113,14 +113,14 @@ void FieldEffect_RunFrost(void) {
   s32 eventTarget;
   struct EffectVector pos;
   struct EffectVector *p;
-  struct FieldEffectScene *scene;
-  struct FieldActor *target;
-  struct FieldActor *particle;
+  struct FieldEffectWork *effectWork;
+  struct ObjectEvent *target;
+  struct ObjectEvent *particle;
   void *event;
   s32 remainingCycles;
 
-  scene = gEffectWork;
-  target = scene->child;
+  effectWork = gEffectWork;
+  target = effectWork->child;
   FieldEffect_FadeToEffectColor();
   AudioCommand_PlayFar(SE_ICE);
 
@@ -129,7 +129,7 @@ void FieldEffect_RunFrost(void) {
   p = &pos;
   remainingCycles = 15;
   do {
-    particle = (struct FieldActor *)Object_Spawn(0xe8, 0, 0, 0);
+    particle = (struct ObjectEvent *)Object_Spawn(0xe8, 0, 0, 0);
     if (particle != NULL) {
       u32 scale;
       s32 radius;
@@ -148,7 +148,7 @@ void FieldEffect_RunFrost(void) {
       Animation_ApplyChildValuesFar((struct DispatchObject *)particle,
                                     SPRITE_COLOR_BLUE_TINT);
 
-      SET_POSITION(p, scene->x, scene->y, scene->z);
+      SET_POSITION(p, effectWork->x, effectWork->y, effectWork->z);
       radius = (Random16() << 2) + (2 << 16);
       Vector_AddPolarOffset(radius, Random16(), p);
       particle->targetX = p->x;
@@ -164,7 +164,7 @@ void FieldEffect_RunFrost(void) {
   AudioCommand_PlayFar(SE_ICE);
   WaitFrames(50);
 
-  if (target != NULL && scene->enabled == 0) {
+  if (target != NULL && effectWork->enabled == 0) {
     AudioCommand_PlayFar(SE_212);
 
     // Flash for 1 frame in every 5.
@@ -179,7 +179,7 @@ void FieldEffect_RunFrost(void) {
       remainingCycles--;
     } while (remainingCycles >= 0);
 
-    if (scene->childOption == 0) {
+    if (effectWork->childOption == 0) {
       AudioCommand_PlayFar(SE_220);
       ObjectDispatch_SelectAnimationFar(target, 2);
     }
@@ -189,7 +189,7 @@ void FieldEffect_RunFrost(void) {
         FieldEffect_FindMatchingEvent(PSYNERGY_EV(PSYNERGY_PHASE_EFFECT_ACTS),
                                       FIELD_KIND_FROST, &eventTarget);
     if (event != NULL) {
-      Field_RunEventAction(event, gGameState.selectedActor, eventTarget);
+      Field_RunEventAction(event, gGameState.selectedObjectEvent, eventTarget);
     }
     WaitFrames(20);
   }

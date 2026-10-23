@@ -29,20 +29,20 @@ A random battle is a way out of the scene too. The game remembers where
 everyone stood, loads the battle as the next scene, and afterwards loads the
 place again with everyone put back.
 
-In the code, `Field_RunScene` runs one field scene: it loads the map, calls
+In the code, `Field_RunMap` runs one field scene: it loads the map, calls
 the overlay's entries, then lets the leader walk, calling `Field_ProcessStep`
 once a frame, until `Field_CountRequests` finds a request. The requests are
 fields of the field work, the block of memory that holds the running
 scene's state (`struct FieldWork`), so each kind holds at most one. A battle request
 saves the actors with `ObjectTable_Snapshot`, sets the next scene to
-`SCENE_BATTLE` and raises `EXIT_NONE`; afterwards `Scene_ReturnFromBattle`
+`MAP_BATTLE` and raises `WARP_NONE`; afterwards `Map_ReturnFromBattle`
 loads the field scene again with `FLAG_KEEP_PARTY_POSITION` set, and
 `ObjectTable_Restore` puts the actors back.
 
 | Name | Value | Meaning |
 | --- | --- | --- |
-| `SCENE_BATTLE` | 510 (`0x1fe`) | the next scene a battle request writes |
-| `EXIT_NONE` | 999 | the exit result that means the next scene is already set |
+| `MAP_BATTLE` | 510 (`0x1fe`) | the next scene a battle request writes |
+| `WARP_NONE` | 999 | the exit result that means the next scene is already set |
 | `FLAG_KEEP_PARTY_POSITION` | 265 (`0x109`) | the next field scene starts where the party was |
 
 [Field](src/field/README.md#the-walk-and-what-interrupts-it) explains the
@@ -61,14 +61,14 @@ leads.
 
 Each answer comes from a function rather than a fixed table, so a place can
 answer differently as the story moves on, and the engine needs no idea of
-the story at all. Vault's `Scene_GetEvents` returns
+the story at all. Vault's `Map_GetEvents` returns
 `gVault_EventsAfterThieves` once `FLAG_VAULT_THIEVES_JAILED` is set, and
 `gVault_Events` before. The rows of a table carry conditions of their own as
-well, and `Scene_FindEvent` runs the first row whose kind, trigger and
+well, and `Map_FindEvent` runs the first row whose kind, trigger and
 condition fit, so a later row for the same person or cell runs only where
 every earlier row's condition fails.
 
-The six functions are `struct SceneEntries`, at the start of every overlay.
+The six functions are `struct MapEntries`, at the start of every overlay.
 How an overlay is loaded and how it calls back into the main image is in
 [Engine](engine.md#overlays). The front page describes [how scenes depend on
 the story](README.md#how-scenes-depend-on-the-story) across the game.
@@ -85,21 +85,21 @@ the party enters a scene, place flags when it enters another place.
 
 ![What a place forgets, and when. Scene flags are forgotten every time the party enters a scene, even the one it just left: the plant Growth raised on Crossbone Isle is a sprout again. Place flags are kept while the party moves between the scenes of one place and forgotten when it enters another place: Vault's mayor remembers having welcomed Isaac back while the party stays in Vault, and welcomes him again on the next visit. Coming back from a battle forgets neither, so the room is as the party left it.](https://alchemy.pascalpixel.com/illustrations/scene/flag-reset.svg)
 
-`Scene_ResetFlagsOnEnter` clears the scene's 256 flags (`FLAG_SCENE_FIRST` to
-`FLAG_SCENE_LAST`) on every ordinary entrance, and the place's 256
-(`FLAG_PLACE_FIRST` to `FLAG_PLACE_LAST`) whenever the party enters a
-different group of scenes. A pushed pillar kept in a `FLAG_SCENE_TEMP_xx` flag
+`Map_ResetFlagsOnEnter` clears the scene's 256 flags (`FLAG_MAP_TEMP_FIRST` to
+`FLAG_MAP_TEMP_LAST`) on every ordinary entrance, and the place's 256
+(`FLAG_MAPSEC_TEMP_FIRST` to `FLAG_MAPSEC_TEMP_LAST`) whenever the party enters a
+different group of scenes. A pushed pillar kept in a `FLAG_MAP_TEMP_xx` flag
 is therefore back in place the next time the party comes in, and state that
 should last while the party is anywhere in the place goes in a
-`FLAG_PLACE_TEMP_xx` flag. `FLAG_KEEP_PARTY_POSITION` keeps both ranges, so
+`FLAG_MAPSEC_TEMP_xx` flag. `FLAG_KEEP_PARTY_POSITION` keeps both ranges, so
 returning from a battle restores the room as it was left.
 
 | Name | Value | Meaning |
 | --- | --- | --- |
-| `FLAG_SCENE_FIRST` | 512 (`0x200`) | the first of the scene's 256 flags |
-| `FLAG_SCENE_LAST` | 767 (`0x2ff`) | the last of them |
-| `FLAG_PLACE_FIRST` | 768 (`0x300`) | the first of the place's 256 flags |
-| `FLAG_PLACE_LAST` | 1,023 (`0x3ff`) | the last of them |
+| `FLAG_MAP_TEMP_FIRST` | 512 (`0x200`) | the first of the scene's 256 flags |
+| `FLAG_MAP_TEMP_LAST` | 767 (`0x2ff`) | the last of them |
+| `FLAG_MAPSEC_TEMP_FIRST` | 768 (`0x300`) | the first of the place's 256 flags |
+| `FLAG_MAPSEC_TEMP_LAST` | 1,023 (`0x3ff`) | the last of them |
 
 [Scenes](src/map/README.md#state-that-cleans-itself-up) says how a scene
 uses them.
@@ -126,12 +126,12 @@ an array of 32-bit words, an `SC_` command from `objcmd.h` and then its
 operands, run through `gScriptObject_CommandTable` by
 `Object_UpdateAllThumb`. A command that returns 1 has finished and the next
 runs in the same frame; one that returns 0 ends the object's turn. A jump
-stores no offset: `Script_FindLabel` searches the script for the matching
+stores no offset: `ActionScript_FindLabel` searches the script for the matching
 `SC_LABEL` word. `SC_END` leaves the object idling on `gScript_MainScript`;
 only `SC_FREE` frees the slot.
 
 Different parts of the code read an object's 112 bytes through different
-structs (`ObjectRuntime`, `ScriptMotionObject`, `FieldActor` and others),
+structs (`ObjectRuntime`, `ScriptMotionObject`, `ObjectEvent` and others),
 each naming the fields that part uses; [Matching](src/MATCHING.md) says why
 they are kept apart.
 
@@ -158,7 +158,7 @@ On a town or dungeon map the leader walks at `FIELD_WALK_SPEED` and runs at
 checks 8 pixels away: the way the pad points and 22.5 and 45 degrees either
 side. When one fails, `FieldObject_UpdatePlayerControl` tries headings 22.5,
 45 and 67.5 degrees off, nearest first, each with five checks of its own, and
-takes the first that passes. `Map_CheckObjectStep` decides each check from
+takes the first that passes. `MapGrid_CheckObjectStep` decides each check from
 the cell there. Speeds are in 16.16 fixed point, the engine's way of
 holding fractions of a pixel in a whole number: the upper 16 bits count
 whole pixels and the lower 16 bits sixty-five-thousandths of one, so
@@ -166,10 +166,10 @@ whole pixels and the lower 16 bits sixty-five-thousandths of one, so
 
 | Name | Value | Meaning |
 | --- | --- | --- |
-| `MAP_STEP_TOO_LOW` | -1 | the ground there is more than 12 pixels lower |
-| `MAP_STEP_OPEN` | 0 | the object can step there |
-| `MAP_STEP_TOO_HIGH` | 1 | the ground there is more than 8 pixels higher |
-| `MAP_STEP_WALL` | 2 | the cell there is a wall (`MAP_CELL_WALL`) |
+| `MAPGRID_STEP_TOO_LOW` | -1 | the ground there is more than 12 pixels lower |
+| `MAPGRID_STEP_OPEN` | 0 | the object can step there |
+| `MAPGRID_STEP_TOO_HIGH` | 1 | the ground there is more than 8 pixels higher |
+| `MAPGRID_STEP_WALL` | 2 | the cell there is a wall (`MB_WALL`) |
 | `FIELD_WALK_SPEED` | `0x10000` | 1 pixel a frame |
 | `FIELD_RUN_SPEED` | `0x18000` | 1.5 pixels a frame, with a dash button held |
 
@@ -195,19 +195,19 @@ wall. Goma Cave has no wall-coded cells at all; a rim of ground 32 pixels
 high runs along the foot of each cliff.
 
 The three layers of a map are windows onto one grid of 128 by 128 cells,
-decoded into the 64 KB at `Ram_MapCellBuffer`. A cell is one 32-bit word,
+decoded into the 64 KB at `Ram_MapGridCellBuffer`. A cell is one 32-bit word,
 four bytes: its first two bytes (a halfword) hold the block in their low 12
 bits and, above it, the layer and priority an object standing there takes;
 its third byte is the collision code and its fourth its ground shape, from which
-`Map_GetTerrainHeight` computes the height. `MAP_CELL_WALL` is a wall; the
-codes from `MAP_CELL_EVENT_FIRST` to `MAP_CELL_EVENT_LAST` belong to the
+`MapGrid_GetTerrainHeight` computes the height. `MB_WALL` is a wall; the
+codes from `MB_EVENT_FIRST` to `MB_EVENT_LAST` belong to the
 scene.
 
 | Name | Value | Meaning |
 | --- | --- | --- |
-| `MAP_CELL_EVENT_FIRST` | 1 | the first collision code the scene's events name |
-| `MAP_CELL_EVENT_LAST` | 239 | the last of them |
-| `MAP_CELL_WALL` | 255 | a wall, whatever the heights |
+| `MB_EVENT_FIRST` | 1 | the first collision code the scene's events name |
+| `MB_EVENT_LAST` | 239 | the last of them |
+| `MB_WALL` | 255 | a wall, whatever the heights |
 
 [Maps](src/layout/README.md#cells) gives every collision code, and goes on to the
 map's tables and [how the build makes each
@@ -227,19 +227,19 @@ priorities, and the characters are simply drawn between two layers of the
 same map.
 
 The three map layers are three of the console's four background layers:
-`MAP_LAYER_GROUND` on `BG3`, `MAP_LAYER_MIDDLE` on `BG2` and
-`MAP_LAYER_OVERHEAD` on `BG1`; `BG0` is the window layer, where messages and
+`MAPGRID_LAYER_GROUND` on `BG3`, `MAPGRID_LAYER_MIDDLE` on `BG2` and
+`MAPGRID_LAYER_OVERHEAD` on `BG1`; `BG0` is the window layer, where messages and
 menus are drawn. Each layer's priority comes from the map's header, most maps
 give the three layers 3, 2 and 1, and the field draws its sprites at priority
 2. A sprite wins a tie with a background, so actors stand in front of the
 middle layer and behind the overhead one. A priority of 0 leaves a layer off:
-`Map_LoadLayeredScene` enables only the layers whose priority isn't zero.
+`MapGrid_LoadLayout` enables only the layers whose priority isn't zero.
 
 | Name | Value | Background | What it holds |
 | --- | --- | --- | --- |
-| `MAP_LAYER_GROUND` | 0 | `BG3` | the ground, at the back |
-| `MAP_LAYER_MIDDLE` | 1 | `BG2` | walls and edges, under the actors |
-| `MAP_LAYER_OVERHEAD` | 2 | `BG1` | roofs and tree tops, over the actors |
+| `MAPGRID_LAYER_GROUND` | 0 | `BG3` | the ground, at the back |
+| `MAPGRID_LAYER_MIDDLE` | 1 | `BG2` | walls and edges, under the actors |
+| `MAPGRID_LAYER_OVERHEAD` | 2 | `BG1` | roofs and tree tops, over the actors |
 
 [Field](src/field/README.md#towns-and-dungeons-on-screen) shows Vale pulled
 apart into its layers and how they are put on screen, and
@@ -273,7 +273,7 @@ the camera's pitch changes, which nothing in the game does. Each frame
 `Transform_UpdateVertices` turns them into a page of affine values. It is ARM
 code, the processor's full 32-bit instructions, run from IWRAM, its fast
 internal memory, since that is where such code runs quickest; the rest of
-the game is in the compact 16-bit Thumb form. `MapAnimation_ApplyAffineFrame`
+the game is in the compact 16-bit Thumb form. `WorldMap_ApplyAffineFrame`
 sets the first line's values and starts an HBlank DMA: a copy the console
 makes by itself in the HBlank, the pause after each line is drawn, here
 feeding each following line its own values. There are two pages, and
@@ -282,7 +282,7 @@ alternate frames use them: the DMA reads one page throughout a frame while
 
 When a menu or event starts on the world map, `WorldMap_StartStillView` draws
 the current affine frame into ordinary tiles on `BG1` and switches the display
-to `DISPCNT_MODE_0`, in which no background is affine; `Map_LoadAreaGraphics`
+to `DISPCNT_MODE_0`, in which no background is affine; `WorldMap_LoadAreaGraphics`
 undoes it. The world map's own scene, its places and events, is described on
 [the front page](README.md#the-world-map).
 

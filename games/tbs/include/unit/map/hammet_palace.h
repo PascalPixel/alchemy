@@ -1,27 +1,27 @@
-#ifndef ALCHEMY_UNIT_SCENE_HAMMET_PALACE_H
-#define ALCHEMY_UNIT_SCENE_HAMMET_PALACE_H
+#ifndef ALCHEMY_UNIT_MAP_HAMMET_PALACE_H
+#define ALCHEMY_UNIT_MAP_HAMMET_PALACE_H
 
 #include "types.h"
 #include "map_tables.h"
 
-struct SceneEntrance;
-struct SceneEvent;
-struct ScenePlacement;
-struct SceneRegion;
+struct MapWarpDest;
+struct MapEvent;
+struct ObjectEventTemplate;
+struct MapWarpRegion;
 
-const struct SceneEntrance *Scene_GetEntrances(void);
-const struct SceneRegion *Scene_GetRegions(void);
-const u32 *Scene_GetExits(void);
-const struct ScenePlacement *Scene_GetPlacements(void);
-const struct SceneEvent *Scene_GetEvents(void);
-s32 Scene_Initialize(void);
+const struct MapWarpDest *Map_GetWarpDests(void);
+const struct MapWarpRegion *Map_GetWarpRegions(void);
+const u32 *Map_GetWarps(void);
+const struct ObjectEventTemplate *Map_GetObjectEventTemplates(void);
+const struct MapEvent *Map_GetEvents(void);
+s32 Map_Initialize(void);
 extern s32 gHammetPalace_PartyActions[];
-extern struct SceneEntrance gHammetPalaceEntrancesOther[];
-extern struct SceneEntrance gHammetPalaceEntrances[];
-extern u32 gHammetPalaceExits[];
-extern struct ScenePlacement gHammetPalacePlacementsOther[];
-extern struct ScenePlacement gHammetPalacePlacements[];
-extern struct SceneEvent gHammetPalaceEventsOther[];
-extern struct SceneEvent gHammetPalaceEvents[];
+extern struct MapWarpDest gHammetPalaceWarpDestsOther[];
+extern struct MapWarpDest gHammetPalaceWarpDests[];
+extern u32 gHammetPalaceWarps[];
+extern struct ObjectEventTemplate gHammetPalaceObjectEventTemplatesOther[];
+extern struct ObjectEventTemplate gHammetPalaceObjectEventTemplates[];
+extern struct MapEvent gHammetPalaceEventsOther[];
+extern struct MapEvent gHammetPalaceEvents[];
 
 #endif

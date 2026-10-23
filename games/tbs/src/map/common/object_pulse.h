@@ -6,8 +6,8 @@
 
 /// An object script call, each frame: every 60 to 149 frames the actor squashes
 /// and stretches back to its own shape over six frames.
-static s32 Scene_SquashAndStretch(struct ScriptInterpreter *interpreter) {
-  struct FieldActor *state = (struct FieldActor *)interpreter;
+static s32 Map_SquashAndStretch(struct ScriptInterpreter *interpreter) {
+  struct ObjectEvent *state = (struct ObjectEvent *)interpreter;
   switch (state->timer) {
   case 6:
     state->scaleX -= 0x4000;

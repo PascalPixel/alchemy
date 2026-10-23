@@ -12,7 +12,7 @@
 #define CURVE_HEIGHT_FIXED(sample) ((sample) << CURVE_VALUE_SHIFT)
 #endif
 
-/// The terrain height functions (gMap_TerrainHeightFunctions): each takes a
+/// The terrain height functions (gMapGrid_TerrainHeightFunctions): each takes a
 /// cell's height samples after its kind byte and a pixel (x, y) within the
 /// 16x16 cell, and returns the ground height there in 16.16 pixels. This one
 /// is flat: the first sample everywhere.
@@ -328,77 +328,77 @@ s32 Curve_GetFirstSampleC(const u8 *heightBytes, s32 pixelX, s32 pixelY) {
 /// y is the map's down axis, an object's z.
 ///
 /// Called each frame by Object_UpdateAllThumb for objects that follow the
-/// terrain, by the player control, and as Map_GetTerrainHeightFar by the
+/// terrain, by the player control, and as MapGrid_GetTerrainHeightFar by the
 /// field scene's objects, the Psynergy effects and about ten scene overlays.
-s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 y) {
-  struct MapState *work = gMapWork[0];
-  struct MapCell *cell;
+s32 MapGrid_GetTerrainHeight(s32 layer, s32 x, s32 y) {
+  struct MapGridState *work = gMapGridWork[0];
+  struct MapGridCell *cell;
   u8 *heightBytes;
 
   x >>= 16;
   y >>= 16;
   // Before the map work exists, the grid is read from its start.
-  cell = (struct MapCell *)Ram_MapCellBuffer;
+  cell = (struct MapGridCell *)Ram_MapGridCellBuffer;
   if (work != NULL) {
     cell = work->layers[layer & 3].cells;
   }
   // Cells are 16 pixels, 128 to a row. A cell's collision record is four
   // bytes: the kind, then up to three height samples.
   cell += x / 16 + (y / 16 << 7);
-  heightBytes = Ram_MapCollision + cell->attributeB * 4;
+  heightBytes = Ram_MapGridCollision + cell->attributeB * 4;
   // UB: sequence the kind-byte read before passing the remaining samples.
 #ifdef UBFIX
   {
     u32 kind = *heightBytes++ & 15;
 
-    return gMap_TerrainHeightFunctions[kind](heightBytes, x & 15, y & 15);
+    return gMapGrid_TerrainHeightFunctions[kind](heightBytes, x & 15, y & 15);
   }
 #else
-  return gMap_TerrainHeightFunctions[*heightBytes++ & 15](heightBytes, x & 15,
-                                                          y & 15);
+  return gMapGrid_TerrainHeightFunctions[*heightBytes++ & 15](heightBytes,
+                                                              x & 15, y & 15);
 #endif
 }
 
 /// Returns the terrain kind (the low four bits of the first collision byte)
 /// of a layer's cell at (x, y) in 16.16 pixels.
-/// Called through Map_GetCellAttributeLowNibbleFar by the Psynergy Move
+/// Called through MapGrid_GetCellAttributeLowNibbleFar by the Psynergy Move
 /// effect.
-s32 Map_GetCellAttributeLowNibble(s32 layer, s32 x, s32 y) {
-  struct MapState *mapState = gMapWork[0];
-  struct MapCell *cells;
+s32 MapGrid_GetCellAttributeLowNibble(s32 layer, s32 x, s32 y) {
+  struct MapGridState *gridState = gMapGridWork[0];
+  struct MapGridCell *cells;
   s32 cellX;
   s32 cellY;
   u32 heightAttributeIndex;
 
   x >>= 16;
   y >>= 16;
-  cells = (struct MapCell *)gMapCellBuffer;
-  if (mapState != 0) {
-    cells = mapState->layers[layer & 3].cells;
+  cells = (struct MapGridCell *)gMapGridCellBuffer;
+  if (gridState != 0) {
+    cells = gridState->layers[layer & 3].cells;
   }
   cellX = x / 16;
   cellY = y / 16;
   cells += cellX + (cellY << 7);
   // The kind byte of the cell's four-byte collision record.
   heightAttributeIndex = cells->attributeB;
-  return *(Ram_MapCollision + heightAttributeIndex * 4) & 15;
+  return *(Ram_MapGridCollision + heightAttributeIndex * 4) & 15;
 }
 
 /// Returns the collision code of a layer's cell at (x, y) in 16.16 pixels.
 /// The shift by 20 takes 16.16 pixels straight to 16-pixel cells. Called
-/// through GetMapCellCollisionFar by the Psynergy climbing and by scenes
-/// (Altin Peak, Colosso, Imil, Crossbone Isle).
-s32 GetMapCellCollision(s32 layer, s32 x, s32 y) {
-  struct MapState *mapState;
-  struct MapCell *cell;
+/// through MapGrid_GetMetatileBehaviorAtFar by the Psynergy climbing and by
+/// scenes (Altin Peak, Colosso, Imil, Crossbone Isle).
+s32 MapGrid_GetMetatileBehaviorAt(s32 layer, s32 x, s32 y) {
+  struct MapGridState *gridState;
+  struct MapGridCell *cell;
 
-  mapState = gMapWork[0];
+  gridState = gMapGridWork[0];
   x >>= 20;
   y >>= 20;
   // Before the map work exists, the grid is read from its start.
-  cell = (struct MapCell *)gMapCellBuffer;
-  if (mapState != NULL) {
-    cell = mapState->layers[layer & 3].cells;
+  cell = (struct MapGridCell *)gMapGridCellBuffer;
+  if (gridState != NULL) {
+    cell = gridState->layers[layer & 3].cells;
   }
   cell += x + (y << 7);
   return cell->collisionCode;
@@ -406,17 +406,17 @@ s32 GetMapCellCollision(s32 layer, s32 x, s32 y) {
 
 /// Sets the collision code of a layer's cell at (x, y) in 16.16 pixels.
 /// Writes the cell in the map's grid; does nothing before the map is set up.
-/// Called through SetMapCellCollisionFar by scenes
+/// Called through MapGrid_SetMetatileBehaviorAtFar by scenes
 /// (Colosso, Altin Peak, Crossbone Isle, Venus Lighthouse, Tolbi, Sol
 /// Sanctum).
-void SetMapCellCollision(u32 layer, s32 x, s32 y, u32 collisionCode) {
-  struct MapState *mapState = gMapWork[0];
+void MapGrid_SetMetatileBehaviorAt(u32 layer, s32 x, s32 y, u32 collisionCode) {
+  struct MapGridState *gridState = gMapGridWork[0];
 
   x >>= 20;
   y >>= 20;
   // Without the map work there is no layer to write to.
-  if (mapState != NULL) {
-    struct MapCell *cell = mapState->layers[layer & 3].cells;
+  if (gridState != NULL) {
+    struct MapGridCell *cell = gridState->layers[layer & 3].cells;
 
     cell += x + (y << 7);
     cell->collisionCode = collisionCode;
@@ -426,96 +426,96 @@ void SetMapCellCollision(u32 layer, s32 x, s32 y, u32 collisionCode) {
 /// Unused: returns the top two bits of the block word of the cell at pixel (x,
 /// y).
 /// Nothing calls it.
-UNUSED s32 Map_GetCellHighFlags(s32 x, s32 y) {
+UNUSED s32 MapGrid_GetCellHighFlags(s32 x, s32 y) {
   s32 cellX = x / 16;
   s32 cellY = y / 16;
-  struct MapCell *cell =
-      (struct MapCell *)gMapCellBuffer + (cellX + cellY * 128);
+  struct MapGridCell *cell =
+      (struct MapGridCell *)gMapGridCellBuffer + (cellX + cellY * 128);
 
   // The high byte of the block word; its top two bits are flags.
   return ((u8 *)&cell->metatileAndFlags)[1] >> 6;
 }
 
-/// Returns whether an object can step to position, an enum MapStepCheck:
+/// Returns whether an object can step to position, an enum MapGridStepCheck:
 /// whether the cell there is a wall, or the ground too high or too low for a
 /// step from the object's.
 ///
 /// Called by the player control and the script commands that pick a free
-/// step, and as Map_CheckObjectStepFar by the Psynergy effects (Move, Carry,
-/// Force, climbing). A terrainId past MAP_LAYER_OVERHEAD reads the grid from
-/// its start.
-s32 Map_CheckObjectStep(struct ObjectRuntime *object,
-                        struct FieldPosition *position) {
-  struct MapState *mapState;
+/// step, and as MapGrid_CheckObjectStepFar by the Psynergy effects (Move,
+/// Carry, Force, climbing). A terrainId past MAPGRID_LAYER_OVERHEAD reads the
+/// grid from its start.
+s32 MapGrid_CheckObjectStep(struct ObjectRuntime *object,
+                            struct FieldPosition *position) {
+  struct MapGridState *gridState;
   s32 pixelX;
   s32 pixelZ;
-  struct MapCell *cell;
+  struct MapGridCell *cell;
   u8 *heightBytes;
   s32 targetGround;
   s32 stepHeight;
 
   pixelX = ((union FieldCoordinate *)&position->x)->part.pixel;
   pixelZ = ((union FieldCoordinate *)&position->z)->part.pixel;
-  mapState = gMapWork[0];
-  if (mapState == NULL)
-    return MAP_STEP_OPEN;
+  gridState = gMapGridWork[0];
+  if (gridState == NULL)
+    return MAPGRID_STEP_OPEN;
   // The three layers have their windows into the grid; any other terrainId
   // reads the grid from its start.
-  if (object->terrainId <= MAP_LAYER_OVERHEAD)
-    cell = mapState->layers[object->terrainId].cells;
+  if (object->terrainId <= MAPGRID_LAYER_OVERHEAD)
+    cell = gridState->layers[object->terrainId].cells;
   else
-    cell = (struct MapCell *)Ram_MapCellBuffer;
+    cell = (struct MapGridCell *)Ram_MapGridCellBuffer;
   cell += pixelX / 16 + (pixelZ / 16 << 7);
   // A wall blocks whatever the heights.
-  if (cell->collisionCode == MAP_CELL_WALL)
-    return MAP_STEP_WALL;
-  heightBytes = Ram_MapCollision + cell->attributeB * 4;
+  if (cell->collisionCode == MB_WALL)
+    return MAPGRID_STEP_WALL;
+  heightBytes = Ram_MapGridCollision + cell->attributeB * 4;
   // UB: sequence the kind-byte read before passing the remaining samples.
 #ifdef UBFIX
   {
     u32 kind = *heightBytes++ & 15;
 
-    targetGround = gMap_TerrainHeightFunctions[kind](heightBytes, pixelX & 15,
-                                                     pixelZ & 15);
+    targetGround = gMapGrid_TerrainHeightFunctions[kind](
+        heightBytes, pixelX & 15, pixelZ & 15);
   }
 #else
-  targetGround = gMap_TerrainHeightFunctions[*heightBytes++ & 15](
+  targetGround = gMapGrid_TerrainHeightFunctions[*heightBytes++ & 15](
       heightBytes, pixelX & 15, pixelZ & 15);
 #endif
   // Up to 8 pixels up or 12 down is a step the object can take.
   stepHeight = targetGround - object->terrainHeight;
   if (stepHeight > 0x80000)
-    return MAP_STEP_TOO_HIGH;
+    return MAPGRID_STEP_TOO_HIGH;
   if (stepHeight < -0xc0000)
-    return MAP_STEP_TOO_LOW;
-  return MAP_STEP_OPEN;
+    return MAPGRID_STEP_TOO_LOW;
+  return MAPGRID_STEP_OPEN;
 }
 
 /// Returns -1 when the cell under position (its x, and y less its height) in
-/// MAP_LAYER_OVERHEAD is a wall (MAP_CELL_WALL), else 0; also 0 before the map
+/// MAPGRID_LAYER_OVERHEAD is a wall (MB_WALL), else 0; also 0 before the map
 /// work exists. Called by the player control and, as
-/// CheckMapPositionCellOccupiedFar, by the Psynergy climbing.
-s32 CheckMapPositionCellOccupied(struct WorldPosition *position) {
+/// MapGrid_IsWallAtFar, by the Psynergy climbing.
+s32 MapGrid_IsWallAt(struct WorldPosition *position) {
   s32 pixelX;
   s32 pixelY;
   s32 cellX;
   s32 cellY;
-  struct MapState *mapState;
-  struct MapCell *cell;
+  struct MapGridState *gridState;
+  struct MapGridCell *cell;
 
   pixelX = position->x / 65536;
   // The point on the ground below the position.
   pixelY = (position->y - position->height) / 65536;
-  mapState = gMapWork[0];
-  if (mapState == NULL)
+  gridState = gMapGridWork[0];
+  if (gridState == NULL)
     return 0;
   // Always the overhead layer, the one on BG1.
-  cell = mapState->layers[MAP_LAYER_OVERHEAD].cells;
+  cell = gridState->layers[MAPGRID_LAYER_OVERHEAD].cells;
   cellX = pixelX / 16;
   cellY = pixelY / 16;
   cell += cellX + cellY * 128;
   // 1 - 1 for open ground, 0 - 1 for a wall: nonzero means walled.
-  return (cell->collisionCode != MAP_CELL_WALL) - 1;
+  return (cell->collisionCode != MB_WALL) - 1;
 }
 
 /// Returns the world map's collision value (1-15) at position: from the upper
@@ -545,7 +545,7 @@ s32 GetWorldMapCollision(struct WorldPosition *position) {
   // into the collision buffer.
   collisionTile = BG_SCREEN_BLOCK(10)[collisionCell];
   packedCollisions =
-      *(Ram_MapCollision + 0x800 + (collisionTile << 3) + pixelOffset);
+      *(Ram_MapGridCollision + 0x800 + (collisionTile << 3) + pixelOffset);
   if (packedCollisions != 0) {
     if (halfPixelX & 2)
       result = packedCollisions >> 4;
@@ -557,7 +557,8 @@ s32 GetWorldMapCollision(struct WorldPosition *position) {
 
   // The lower layer: its tile map in screen block 8, its tiles at the start.
   collisionTile = BG_SCREEN_BLOCK(8)[collisionCell];
-  packedCollisions = *(Ram_MapCollision + (collisionTile << 3) + pixelOffset);
+  packedCollisions =
+      *(Ram_MapGridCollision + (collisionTile << 3) + pixelOffset);
   if (packedCollisions != 0) {
     if (halfPixelX & 2)
       result = packedCollisions >> 4;
@@ -598,28 +599,28 @@ s32 GetWorldMapTerrainBehavior(struct WorldPosition *position,
   s32 x = position->x;
   s32 y;
   s32 behaviorBank = 0;
-  u32 blockX;
+  u32 metatileX;
   u32 index;
-  u32 *blockWord;
+  u32 *metatileWord;
 
   // Blocks are 32 pixels, 32 to a row; the bias rounds a negative coordinate
   // towards zero, as division would.
   if (x < 0)
     x += 0x1fffff;
-  blockX = (x >> 21) & 31;
+  metatileX = (x >> 21) & 31;
   y = position->y;
   if (y < 0)
     y += 0x1fffff;
 
-  index = blockX + (((y >> 21) & 31) << 5);
-  blockWord = gMapBlocks + index;
+  index = metatileX + (((y >> 21) & 31) << 5);
+  metatileWord = gMetatiles + index;
   // Bit 31 of the block word selects the second bank of 16; the snowfield
   // the third, whatever bit 31 says.
-  if (((u8 *)blockWord)[3] & 0x80)
+  if (((u8 *)metatileWord)[3] & 0x80)
     behaviorBank = 0x10;
 
   // The terrain kind is bits 24 to 30 of the block word.
-  *terrainKind = (*blockWord << 1) >> 25;
+  *terrainKind = (*metatileWord << 1) >> 25;
   if (*terrainKind == WORLD_MAP_REGION_SNOWFIELD)
     behaviorBank = 0x20;
 

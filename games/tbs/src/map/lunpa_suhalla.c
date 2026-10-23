@@ -1,12 +1,12 @@
 /// @file
 /// The buildings of Lunpa and the house at Suhalla Gate: one scene
-/// (SceneId_LunpaSuhalla) whose rooms are told apart by the entrance the party
+/// (MapId_LunpaSuhalla) whose rooms are told apart by the entrance the party
 /// comes in by, and whose area name follows it:
 ///
 /// - Lunpa: the three homes, the weapon and armor shop, the item shop, the inn
 ///   and the crate room, entered by the town's doors (lunpa.c) at
 ///   ROOM_FIRST_HOME to ROOM_INN and ROOM_CRATE_ROOM.
-/// - Lunpa Temple: ROOM_TEMPLE from the town, and ROOM_TEMPLE_SECOND_ENTRANCE,
+/// - Lunpa Temple: ROOM_TEMPLE from the town, and ROOM_TEMPLE_SECOND_WARP_DEST,
 ///   where a party defeated in Lunpa wakes.
 /// - Gate to Suhalla: the house beside Suhalla Gate (suhalla_gate.c), entered
 ///   at ROOM_GATE_TO_SUHALLA, where a traveling Healer offers the Sanctum's
@@ -14,7 +14,7 @@
 ///
 /// A room's entrance number is also its exit kind and the trigger of its door
 /// (ROOM_DOOR), so each door leads back out the way the party came in.
-/// Scene_GetEvents gives the house at Suhalla Gate its own table, and Lunpa's
+/// Map_GetEvents gives the house at Suhalla Gate its own table, and Lunpa's
 /// rooms the sealed town's (gInteriorSealedEvents) until Donpa's judgment
 /// sets FLAG_DODONPA_LOCKED_UP, then the reopened town's
 /// (gInteriorReopenedEvents). While the town is sealed the merchants neither
@@ -25,7 +25,7 @@
 ///
 /// A merchant or Healer serves only a leader who faces north across the
 /// counter (FACING_IS_NORTH); otherwise they talk. The counters are blank
-/// actors in front of the merchants (ACTOR_WEAPON_COUNTER and the others),
+/// actors in front of the merchants (LOCALID_WEAPON_COUNTER and the others),
 /// so talking across one reaches the merchant's event. Entering by
 /// ROOM_GATE_TO_SUHALLA makes the house the place a defeated party wakes and
 /// hides the location name.
@@ -46,22 +46,22 @@
 #include "map_ids.h"
 #include "text/msg_ids.h"
 
-static void Event_TalkToInnkeeper(void);
-static void Event_TalkToChef(void);
-static void Event_ReadChefsThoughts(void);
-static void Event_AskWhetherDonpasGuest(void);
-static void Event_TalkToHealer(void);
-static void Event_ReadItemMerchantsThoughts(void);
-static void Event_TalkToItemMerchant(void);
-static void Event_ReadWeaponMerchantsThoughts(void);
-static void Event_TalkToWeaponMerchant(void);
-static void Event_ReadArmorMerchantsThoughts(void);
-static void Event_TalkToArmorMerchant(void);
-static void Event_TalkToTravelingHealer(void);
+static void EventScript_TalkToInnkeeper(void);
+static void EventScript_TalkToChef(void);
+static void EventScript_ReadChefsThoughts(void);
+static void EventScript_AskWhetherDonpasGuest(void);
+static void EventScript_TalkToHealer(void);
+static void EventScript_ReadItemMerchantsThoughts(void);
+static void EventScript_TalkToItemMerchant(void);
+static void EventScript_ReadWeaponMerchantsThoughts(void);
+static void EventScript_TalkToWeaponMerchant(void);
+static void EventScript_ReadArmorMerchantsThoughts(void);
+static void EventScript_TalkToArmorMerchant(void);
+static void EventScript_TalkToTravelingHealer(void);
 
 // clang-format off
-const struct SceneEntrance gInteriorEntrances[] = {
-    { ENTRANCE_DEFAULT, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
+const struct MapWarpDest gInteriorWarpDests[] = {
+    { WARP_DEST_DEFAULT, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
     { ROOM_FIRST_HOME, CONDITION_ALWAYS, 192, 0, 184, FACING_NORTH, 0, 16, 0, 256, 224, 0 },
     { ROOM_SECOND_HOME, CONDITION_ALWAYS, 432, 0, 264, FACING_NORTH, 0, 296, 48, 536, 288, 0 },
     { ROOM_THIRD_HOME, CONDITION_ALWAYS, 160, 0, 584, FACING_NORTH, 0, 16, 400, 256, 624, 0 },
@@ -72,65 +72,65 @@ const struct SceneEntrance gInteriorEntrances[] = {
     { ROOM_CRATE_ROOM, CONDITION_ALWAYS, 560, 0, 880, FACING_NORTH, 0, 400, 656, 640, 912, 0 },
     { ROOM_NINTH_UNUSED, CONDITION_ALWAYS, 672, 0, 888, FACING_NORTH, 0, 520, 656, 760, 896, 0 },
     { ROOM_GATE_TO_SUHALLA, CONDITION_ALWAYS, 832, 0, 848, FACING_NORTH, 0, 680, 656, 920, 896, 0 },
-    { ROOM_TEMPLE_SECOND_ENTRANCE, CONDITION_ALWAYS, 688, 0, 184, FACING_NORTH, 0, 568, 32, 808, 288, 0 },
-    { SCENE_TABLE_END },
+    { ROOM_TEMPLE_SECOND_WARP_DEST, CONDITION_ALWAYS, 688, 0, 184, FACING_NORTH, 0, 568, 32, 808, 288, 0 },
+    { MAP_TABLE_END },
 };
 
-const u32 gInteriorExits[] = {
-    SCENE_EXITS(LunpaSuhalla),
-    SCENE_EXIT(ROOM_FIRST_HOME, Lunpa, LUNPA_FROM_FIRST_HOME),
-    SCENE_EXIT(ROOM_SECOND_HOME, Lunpa, LUNPA_FROM_SECOND_HOME),
-    SCENE_EXIT(ROOM_THIRD_HOME, Lunpa, LUNPA_FROM_THIRD_HOME),
-    SCENE_EXIT(ROOM_ARMS_SHOP, Lunpa, LUNPA_FROM_WEAPON_AND_ARMOR_SHOP),
-    SCENE_EXIT(ROOM_ITEM_SHOP, Lunpa, LUNPA_FROM_ITEM_SHOP),
-    SCENE_EXIT(ROOM_INN, Lunpa, LUNPA_FROM_INN),
-    SCENE_EXIT(ROOM_TEMPLE, Lunpa, LUNPA_FROM_TEMPLE),
-    SCENE_EXIT(ROOM_CRATE_ROOM, Lunpa, LUNPA_FROM_CRATE_ROOM),
-    SCENE_EXIT(ROOM_GATE_TO_SUHALLA, SuhallaGateCheckpoint, SUHALLA_GATE_CHECKPOINT_FROM_LUNPA_SUHALLA),
-    SCENE_EXITS_END,
+const u32 gInteriorWarps[] = {
+    MAP_WARPS(LunpaSuhalla),
+    MAP_WARP(ROOM_FIRST_HOME, Lunpa, LUNPA_FROM_FIRST_HOME),
+    MAP_WARP(ROOM_SECOND_HOME, Lunpa, LUNPA_FROM_SECOND_HOME),
+    MAP_WARP(ROOM_THIRD_HOME, Lunpa, LUNPA_FROM_THIRD_HOME),
+    MAP_WARP(ROOM_ARMS_SHOP, Lunpa, LUNPA_FROM_WEAPON_AND_ARMOR_SHOP),
+    MAP_WARP(ROOM_ITEM_SHOP, Lunpa, LUNPA_FROM_ITEM_SHOP),
+    MAP_WARP(ROOM_INN, Lunpa, LUNPA_FROM_INN),
+    MAP_WARP(ROOM_TEMPLE, Lunpa, LUNPA_FROM_TEMPLE),
+    MAP_WARP(ROOM_CRATE_ROOM, Lunpa, LUNPA_FROM_CRATE_ROOM),
+    MAP_WARP(ROOM_GATE_TO_SUHALLA, SuhallaGateCheckpoint, SUHALLA_GATE_CHECKPOINT_FROM_LUNPA_SUHALLA),
+    MAP_WARPS_END,
 };
 
-const struct ScenePlacement gInteriorPlacements[] = {
-    { SPRITE_YOUNG_MAN_WITH_BROWN_HAIR, CONDITION_ALWAYS, ACTOR_WANDER,
+const struct ObjectEventTemplate gInteriorObjectEventTemplates[] = {
+    { SPRITE_YOUNG_MAN_WITH_BROWN_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER,
       PIXELS(144), 0, PIXELS(168), FACING_WEST, TALK_FACE_PARTY, 0 },
-    { SPRITE_WOMAN_WITH_FAIR_HAIR, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_WOMAN_WITH_FAIR_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
       PIXELS(96), 0, PIXELS(128), FACING_SOUTH, TALK_FACE_PARTY_AND_BACK, 0 },
-    { SPRITE_BURLY_MAN_WITH_GREY_HAIR, CONDITION_ALWAYS, ACTOR_WANDER,
+    { SPRITE_BURLY_MAN_WITH_GREY_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER,
       PIXELS(392), 0, PIXELS(240), FACING_SOUTH, TALK_FACE_PARTY, 0 },
-    { SPRITE_WOMAN_IN_PINK_APRON, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_WOMAN_IN_PINK_APRON, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
       PIXELS(403), 0, PIXELS(138), FACING_EAST, TALK_FACE_PARTY, 0 },
-    { SPRITE_OLD_MAN_WITH_CANE, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_OLD_MAN_WITH_CANE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
       PIXELS(160), 0, PIXELS(508), FACING_SOUTH - FACING_STEP, TALK_FACE_PARTY, 0 },
-    { SPRITE_OLD_WOMAN, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_OLD_WOMAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
       PIXELS(88), 0, PIXELS(584), FACING_NORTH + FACING_STEP, TALK_FACE_PARTY, 0 },
-    { SPRITE_BALD_MAN_IN_RED, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_BALD_MAN_IN_RED, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
       PIXELS(376), 0, PIXELS(531), FACING_SOUTH - FACING_STEP, TALK_FACE_PARTY_AND_BACK, 0 },
-    { SPRITE_YOUNG_MAN_IN_GREEN, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_YOUNG_MAN_IN_GREEN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
       PIXELS(464), 0, PIXELS(531), FACING_SOUTH + FACING_STEP, TALK_FACE_PARTY_AND_BACK, 0 },
-    { SPRITE_WOMAN_WITH_PONYTAIL, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_WOMAN_WITH_PONYTAIL, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
       PIXELS(720), 0, PIXELS(499), FACING_SOUTH, TALK_FACE_PARTY_AND_BACK, 0 },
-    { SPRITE_MAN_WITH_DARK_HAIR, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_MAN_WITH_DARK_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
       PIXELS(264), 0, PIXELS(744), FACING_SOUTH, TALK_FACE_PARTY, 0 },
-    { SPRITE_WOMAN_IN_PINK_APRON, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_WOMAN_IN_PINK_APRON, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
       PIXELS(248), 0, PIXELS(808), FACING_SOUTH + FACING_STEP, TALK_FACE_PARTY, 0 },
-    { SPRITE_WOMAN_WITH_FAIR_HAIR, CONDITION_ALWAYS, ACTOR_WANDER,
+    { SPRITE_WOMAN_WITH_FAIR_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER,
       PIXELS(144), 0, PIXELS(888), FACING_NORTHWEST, TALK_FACE_PARTY, 0 },
-    { SPRITE_CHEF, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_CHEF, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
       PIXELS(152), 0, PIXELS(744), FACING_SOUTH, TALK_FACE_PARTY_AND_BACK, 0 },
-    { SPRITE_BEARDED_MAN_IN_LONG_ROBE, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_BEARDED_MAN_IN_LONG_ROBE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
       PIXELS(688), 0, PIXELS(152), FACING_SOUTH, TALK_FACE_PARTY_AND_BACK, 0 },
-    { SPRITE_BEARDED_MAN_IN_LONG_ROBE, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_BEARDED_MAN_IN_LONG_ROBE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
       PIXELS(776), 0, PIXELS(800), FACING_SOUTH, TALK_FACE_PARTY_AND_BACK, 0 },
-    { SPRITE_BLANK, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_BLANK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
       PIXELS(376), 0, PIXELS(544), FACING_SOUTH - FACING_STEP, TALK_FACE_PARTY, 0 },
-    { SPRITE_BLANK, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_BLANK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
       PIXELS(464), 0, PIXELS(544), FACING_SOUTH + FACING_STEP, TALK_FACE_PARTY, 0 },
-    { SPRITE_BLANK, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_BLANK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
       PIXELS(720), 0, PIXELS(512), FACING_SOUTH, TALK_FACE_PARTY_AND_BACK, 0 },
-    { SCENE_TABLE_END },
+    { MAP_TABLE_END },
 };
 
-const struct SceneEvent gInteriorSealedEvents[] = {
+const struct MapEvent gInteriorSealedEvents[] = {
     ROOM_DOOR(ROOM_FIRST_HOME),
     ROOM_DOOR(ROOM_SECOND_HOME),
     ROOM_DOOR(ROOM_THIRD_HOME),
@@ -139,67 +139,67 @@ const struct SceneEvent gInteriorSealedEvents[] = {
     ROOM_DOOR(ROOM_INN),
     ROOM_DOOR(ROOM_TEMPLE),
     ROOM_DOOR(ROOM_CRATE_ROOM),
-    { EVENT_TALK, ACTOR_MAN_ON_HIS_LATE_GRANDFATHER, CONDITION_ALWAYS, MSGNO(MsgLunpaInteriorsFirstHomeASealed) },
-    { EVENT_TALK, ACTOR_WOMAN_NEVER_WORKING_FOR_DODONPA, CONDITION_ALWAYS, MSGNO(MsgLunpaInteriorsFirstHomeBSealed) },
-    { EVENT_TALK, ACTOR_MAN_ON_DONPAS_FORTRESS, CONDITION_ALWAYS, MSGNO(MsgLunpaInteriorsSecondHomeASealed) },
-    { EVENT_TALK, ACTOR_WOMAN_ON_THE_INNS_CHEF, CONDITION_ALWAYS, MSGNO(MsgLunpaInteriorsSecondHomeBSealed) },
-    { EVENT_TALK, ACTOR_OLD_MAN_ON_LUNPAS_DEATH, CONDITION_ALWAYS, MSGNO(MsgLunpaInteriorsThirdHomeASealed) },
-    { EVENT_TALK, ACTOR_OLD_WOMAN_ON_THE_GREAT_FLOOD, CONDITION_ALWAYS, MSGNO(MsgLunpaInteriorsThirdHomeBSealed) },
-    { EVENT_TALK, ACTOR_WEAPON_MERCHANT, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkToWeaponMerchant) },
-    { EVENT_TALK, ACTOR_ARMOR_MERCHANT, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkToArmorMerchant) },
-    { EVENT_TALK, ACTOR_WEAPON_COUNTER, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkToWeaponMerchant) },
-    { EVENT_TALK, ACTOR_ARMOR_COUNTER, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkToArmorMerchant) },
-    { EVENT_TALK, ACTOR_ITEM_MERCHANT, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkToItemMerchant) },
-    { EVENT_TALK, ACTOR_ITEM_COUNTER, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkToItemMerchant) },
-    { EVENT_TALK, ACTOR_INNKEEPER, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkToInnkeeper) },
-    { EVENT_TALK, ACTOR_WOMAN_ASKING_FOR_DONPAS_GUEST, CONDITION_ALWAYS, MSGNO(MsgLunpaInteriorsInnClerkSealed) },
-    { EVENT_TALK, ACTOR_INN_WORKER, CONDITION_ALWAYS, MSGNO(MsgLunpaInteriorsInnWorkerSealed) },
-    { EVENT_TALK, ACTOR_CHEF, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkToChef) },
-    { EVENT_TALK, ACTOR_HEALER, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkToHealer) },
-    { EVENT_TALK, ACTOR_TRAVELING_HEALER, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkToTravelingHealer) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MAN_ON_HIS_LATE_GRANDFATHER, CONDITION_ALWAYS,
+    { MAP_EVENT_TALK, LOCALID_MAN_ON_HIS_LATE_GRANDFATHER, CONDITION_ALWAYS, MSGNO(MsgLunpaInteriorsFirstHomeASealed) },
+    { MAP_EVENT_TALK, LOCALID_WOMAN_NEVER_WORKING_FOR_DODONPA, CONDITION_ALWAYS, MSGNO(MsgLunpaInteriorsFirstHomeBSealed) },
+    { MAP_EVENT_TALK, LOCALID_MAN_ON_DONPAS_FORTRESS, CONDITION_ALWAYS, MSGNO(MsgLunpaInteriorsSecondHomeASealed) },
+    { MAP_EVENT_TALK, LOCALID_WOMAN_ON_THE_INNS_CHEF, CONDITION_ALWAYS, MSGNO(MsgLunpaInteriorsSecondHomeBSealed) },
+    { MAP_EVENT_TALK, LOCALID_OLD_MAN_ON_LUNPAS_DEATH, CONDITION_ALWAYS, MSGNO(MsgLunpaInteriorsThirdHomeASealed) },
+    { MAP_EVENT_TALK, LOCALID_OLD_WOMAN_ON_THE_GREAT_FLOOD, CONDITION_ALWAYS, MSGNO(MsgLunpaInteriorsThirdHomeBSealed) },
+    { MAP_EVENT_TALK, LOCALID_WEAPON_MERCHANT, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkToWeaponMerchant) },
+    { MAP_EVENT_TALK, LOCALID_ARMOR_MERCHANT, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkToArmorMerchant) },
+    { MAP_EVENT_TALK, LOCALID_WEAPON_COUNTER, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkToWeaponMerchant) },
+    { MAP_EVENT_TALK, LOCALID_ARMOR_COUNTER, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkToArmorMerchant) },
+    { MAP_EVENT_TALK, LOCALID_ITEM_MERCHANT, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkToItemMerchant) },
+    { MAP_EVENT_TALK, LOCALID_ITEM_COUNTER, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkToItemMerchant) },
+    { MAP_EVENT_TALK, LOCALID_INNKEEPER, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkToInnkeeper) },
+    { MAP_EVENT_TALK, LOCALID_WOMAN_ASKING_FOR_DONPAS_GUEST, CONDITION_ALWAYS, MSGNO(MsgLunpaInteriorsInnClerkSealed) },
+    { MAP_EVENT_TALK, LOCALID_INN_WORKER, CONDITION_ALWAYS, MSGNO(MsgLunpaInteriorsInnWorkerSealed) },
+    { MAP_EVENT_TALK, LOCALID_CHEF, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkToChef) },
+    { MAP_EVENT_TALK, LOCALID_HEALER, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkToHealer) },
+    { MAP_EVENT_TALK, LOCALID_TRAVELING_HEALER, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkToTravelingHealer) },
+    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_MAN_ON_HIS_LATE_GRANDFATHER, CONDITION_ALWAYS,
       MSGNO(MsgLunpaInteriorsFirstHomeASealedThoughts) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WOMAN_NEVER_WORKING_FOR_DODONPA, CONDITION_ALWAYS,
+    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_WOMAN_NEVER_WORKING_FOR_DODONPA, CONDITION_ALWAYS,
       MSGNO(MsgLunpaInteriorsFirstHomeBSealedThoughts) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MAN_ON_DONPAS_FORTRESS, CONDITION_ALWAYS,
+    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_MAN_ON_DONPAS_FORTRESS, CONDITION_ALWAYS,
       MSGNO(MsgLunpaInteriorsSecondHomeASealedThoughts) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WOMAN_ON_THE_INNS_CHEF, CONDITION_ALWAYS,
+    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_WOMAN_ON_THE_INNS_CHEF, CONDITION_ALWAYS,
       MSGNO(MsgLunpaInteriorsSecondHomeBSealedThoughts) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_OLD_MAN_ON_LUNPAS_DEATH, CONDITION_ALWAYS,
+    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_OLD_MAN_ON_LUNPAS_DEATH, CONDITION_ALWAYS,
       MSGNO(MsgLunpaInteriorsThirdHomeASealedThoughts) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_OLD_WOMAN_ON_THE_GREAT_FLOOD, CONDITION_ALWAYS,
+    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_OLD_WOMAN_ON_THE_GREAT_FLOOD, CONDITION_ALWAYS,
       MSGNO(MsgLunpaInteriorsThirdHomeBSealedThoughts) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WEAPON_MERCHANT, CONDITION_ALWAYS,
-      EVENT_SCRIPT(Event_ReadWeaponMerchantsThoughts) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_ARMOR_MERCHANT, CONDITION_ALWAYS,
-      EVENT_SCRIPT(Event_ReadArmorMerchantsThoughts) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WEAPON_COUNTER, CONDITION_ALWAYS,
-      EVENT_SCRIPT(Event_ReadWeaponMerchantsThoughts) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_ARMOR_COUNTER, CONDITION_ALWAYS,
-      EVENT_SCRIPT(Event_ReadArmorMerchantsThoughts) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_ITEM_MERCHANT, CONDITION_ALWAYS,
-      EVENT_SCRIPT(Event_ReadItemMerchantsThoughts) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_ITEM_COUNTER, CONDITION_ALWAYS,
-      EVENT_SCRIPT(Event_ReadItemMerchantsThoughts) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_INNKEEPER, CONDITION_ALWAYS,
+    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_WEAPON_MERCHANT, CONDITION_ALWAYS,
+      EVENT_SCRIPT(EventScript_ReadWeaponMerchantsThoughts) },
+    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_ARMOR_MERCHANT, CONDITION_ALWAYS,
+      EVENT_SCRIPT(EventScript_ReadArmorMerchantsThoughts) },
+    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_WEAPON_COUNTER, CONDITION_ALWAYS,
+      EVENT_SCRIPT(EventScript_ReadWeaponMerchantsThoughts) },
+    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_ARMOR_COUNTER, CONDITION_ALWAYS,
+      EVENT_SCRIPT(EventScript_ReadArmorMerchantsThoughts) },
+    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_ITEM_MERCHANT, CONDITION_ALWAYS,
+      EVENT_SCRIPT(EventScript_ReadItemMerchantsThoughts) },
+    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_ITEM_COUNTER, CONDITION_ALWAYS,
+      EVENT_SCRIPT(EventScript_ReadItemMerchantsThoughts) },
+    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_INNKEEPER, CONDITION_ALWAYS,
       MSGNO(MsgLunpaInteriorsInnkeeperSealedThoughts) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WOMAN_ASKING_FOR_DONPAS_GUEST, CONDITION_ALWAYS,
+    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_WOMAN_ASKING_FOR_DONPAS_GUEST, CONDITION_ALWAYS,
       MSGNO(MsgLunpaInteriorsInnClerkSealedThoughts) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_INN_WORKER, CONDITION_ALWAYS,
+    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_INN_WORKER, CONDITION_ALWAYS,
       MSGNO(MsgLunpaInteriorsInnWorkerSealedThoughts) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_CHEF, CONDITION_ALWAYS,
-      EVENT_SCRIPT(Event_ReadChefsThoughts) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_HEALER, CONDITION_ALWAYS,
+    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_CHEF, CONDITION_ALWAYS,
+      EVENT_SCRIPT(EventScript_ReadChefsThoughts) },
+    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_HEALER, CONDITION_ALWAYS,
       MSGNO(MsgLunpaInteriorsTemplePriestSealedThoughts) },
-    { SEARCH(SEARCH_WOODEN_BOX), TRIGGER_WOODEN_BOX, FLAG_LUNPA_WOODEN_BOX_LUCKY_MEDAL,
+    { BG_EVENT(BG_EVENT_WOODEN_BOX), TRIGGER_WOODEN_BOX, FLAG_LUNPA_WOODEN_BOX_LUCKY_MEDAL,
       FIND_ITEM(ITEM_LUCKY_MEDAL) },
-    { SEARCH(SEARCH_BARREL), TRIGGER_BARREL, FLAG_LUNPA_BARREL_VIAL, FIND_ITEM(ITEM_VIAL) },
-    { SEARCH(SEARCH_OVEN), TRIGGER_FIRST_OVEN, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgLunpaInteriorsFirstOven)) },
-    { SEARCH(SEARCH_OVEN), TRIGGER_SECOND_OVEN, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgLunpaInteriorsSecondOven)) },
-    { SCENE_EVENTS_END },
+    { BG_EVENT(BG_EVENT_BARREL), TRIGGER_BARREL, FLAG_LUNPA_BARREL_VIAL, FIND_ITEM(ITEM_VIAL) },
+    { BG_EVENT(BG_EVENT_OVEN), TRIGGER_FIRST_OVEN, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgLunpaInteriorsFirstOven)) },
+    { BG_EVENT(BG_EVENT_OVEN), TRIGGER_SECOND_OVEN, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgLunpaInteriorsSecondOven)) },
+    { MAP_EVENTS_END },
 };
 
-const struct SceneEvent gInteriorReopenedEvents[] = {
+const struct MapEvent gInteriorReopenedEvents[] = {
     ROOM_DOOR(ROOM_FIRST_HOME),
     ROOM_DOOR(ROOM_SECOND_HOME),
     ROOM_DOOR(ROOM_THIRD_HOME),
@@ -208,92 +208,90 @@ const struct SceneEvent gInteriorReopenedEvents[] = {
     ROOM_DOOR(ROOM_INN),
     ROOM_DOOR(ROOM_TEMPLE),
     ROOM_DOOR(ROOM_CRATE_ROOM),
-    { EVENT_TALK, ACTOR_MAN_ON_HIS_LATE_GRANDFATHER, CONDITION_ALWAYS, MSGNO(MsgLunpaInteriorsFirstHomeAReopened) },
-    { EVENT_TALK, ACTOR_WOMAN_NEVER_WORKING_FOR_DODONPA, CONDITION_ALWAYS, MSGNO(MsgLunpaInteriorsFirstHomeBReopened) },
-    { EVENT_TALK, ACTOR_MAN_ON_DONPAS_FORTRESS, CONDITION_ALWAYS, MSGNO(MsgLunpaInteriorsSecondHomeAReopened) },
-    { EVENT_TALK, ACTOR_WOMAN_ON_THE_INNS_CHEF, CONDITION_ALWAYS, MSGNO(MsgLunpaInteriorsSecondHomeBReopened) },
-    { EVENT_TALK, ACTOR_OLD_MAN_ON_LUNPAS_DEATH, CONDITION_ALWAYS, MSGNO(MsgLunpaInteriorsThirdHomeAReopened) },
-    { EVENT_TALK, ACTOR_OLD_WOMAN_ON_THE_GREAT_FLOOD, CONDITION_ALWAYS, MSGNO(MsgLunpaInteriorsThirdHomeBReopened) },
-    { EVENT_TALK, ACTOR_WEAPON_MERCHANT, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkToWeaponMerchant) },
-    { EVENT_TALK, ACTOR_ARMOR_MERCHANT, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkToArmorMerchant) },
-    { EVENT_TALK, ACTOR_ITEM_MERCHANT, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkToItemMerchant) },
-    { EVENT_TALK, ACTOR_ITEM_COUNTER, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkToItemMerchant) },
-    { EVENT_TALK, ACTOR_WEAPON_COUNTER, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkToWeaponMerchant) },
-    { EVENT_TALK, ACTOR_ARMOR_COUNTER, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkToArmorMerchant) },
-    { EVENT_TALK, ACTOR_INNKEEPER, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkToInnkeeper) },
-    { EVENT_TALK, ACTOR_WOMAN_ASKING_FOR_DONPAS_GUEST, CONDITION_ALWAYS, EVENT_SCRIPT(Event_AskWhetherDonpasGuest) },
-    { EVENT_TALK, ACTOR_INN_WORKER, CONDITION_ALWAYS, MSGNO(MsgLunpaInteriorsInnWorkerReopened) },
-    { EVENT_TALK, ACTOR_CHEF, CONDITION_ALWAYS, MSGNO(MsgLunpaInteriorsChefReopened) },
-    { EVENT_TALK, ACTOR_HEALER, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkToHealer) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MAN_ON_HIS_LATE_GRANDFATHER, CONDITION_ALWAYS,
+    { MAP_EVENT_TALK, LOCALID_MAN_ON_HIS_LATE_GRANDFATHER, CONDITION_ALWAYS, MSGNO(MsgLunpaInteriorsFirstHomeAReopened) },
+    { MAP_EVENT_TALK, LOCALID_WOMAN_NEVER_WORKING_FOR_DODONPA, CONDITION_ALWAYS, MSGNO(MsgLunpaInteriorsFirstHomeBReopened) },
+    { MAP_EVENT_TALK, LOCALID_MAN_ON_DONPAS_FORTRESS, CONDITION_ALWAYS, MSGNO(MsgLunpaInteriorsSecondHomeAReopened) },
+    { MAP_EVENT_TALK, LOCALID_WOMAN_ON_THE_INNS_CHEF, CONDITION_ALWAYS, MSGNO(MsgLunpaInteriorsSecondHomeBReopened) },
+    { MAP_EVENT_TALK, LOCALID_OLD_MAN_ON_LUNPAS_DEATH, CONDITION_ALWAYS, MSGNO(MsgLunpaInteriorsThirdHomeAReopened) },
+    { MAP_EVENT_TALK, LOCALID_OLD_WOMAN_ON_THE_GREAT_FLOOD, CONDITION_ALWAYS, MSGNO(MsgLunpaInteriorsThirdHomeBReopened) },
+    { MAP_EVENT_TALK, LOCALID_WEAPON_MERCHANT, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkToWeaponMerchant) },
+    { MAP_EVENT_TALK, LOCALID_ARMOR_MERCHANT, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkToArmorMerchant) },
+    { MAP_EVENT_TALK, LOCALID_ITEM_MERCHANT, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkToItemMerchant) },
+    { MAP_EVENT_TALK, LOCALID_ITEM_COUNTER, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkToItemMerchant) },
+    { MAP_EVENT_TALK, LOCALID_WEAPON_COUNTER, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkToWeaponMerchant) },
+    { MAP_EVENT_TALK, LOCALID_ARMOR_COUNTER, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkToArmorMerchant) },
+    { MAP_EVENT_TALK, LOCALID_INNKEEPER, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkToInnkeeper) },
+    { MAP_EVENT_TALK, LOCALID_WOMAN_ASKING_FOR_DONPAS_GUEST, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_AskWhetherDonpasGuest) },
+    { MAP_EVENT_TALK, LOCALID_INN_WORKER, CONDITION_ALWAYS, MSGNO(MsgLunpaInteriorsInnWorkerReopened) },
+    { MAP_EVENT_TALK, LOCALID_CHEF, CONDITION_ALWAYS, MSGNO(MsgLunpaInteriorsChefReopened) },
+    { MAP_EVENT_TALK, LOCALID_HEALER, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkToHealer) },
+    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_MAN_ON_HIS_LATE_GRANDFATHER, CONDITION_ALWAYS,
       MSGNO(MsgLunpaInteriorsFirstHomeAReopenedThoughts) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WOMAN_NEVER_WORKING_FOR_DODONPA, CONDITION_ALWAYS,
+    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_WOMAN_NEVER_WORKING_FOR_DODONPA, CONDITION_ALWAYS,
       MSGNO(MsgLunpaInteriorsFirstHomeBReopenedThoughts) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MAN_ON_DONPAS_FORTRESS, CONDITION_ALWAYS,
+    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_MAN_ON_DONPAS_FORTRESS, CONDITION_ALWAYS,
       MSGNO(MsgLunpaInteriorsSecondHomeAReopenedThoughts) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WOMAN_ON_THE_INNS_CHEF, CONDITION_ALWAYS,
+    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_WOMAN_ON_THE_INNS_CHEF, CONDITION_ALWAYS,
       MSGNO(MsgLunpaInteriorsSecondHomeBReopenedThoughts) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_OLD_MAN_ON_LUNPAS_DEATH, CONDITION_ALWAYS,
+    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_OLD_MAN_ON_LUNPAS_DEATH, CONDITION_ALWAYS,
       MSGNO(MsgLunpaInteriorsThirdHomeAReopenedThoughts) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_OLD_WOMAN_ON_THE_GREAT_FLOOD, CONDITION_ALWAYS,
+    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_OLD_WOMAN_ON_THE_GREAT_FLOOD, CONDITION_ALWAYS,
       MSGNO(MsgLunpaInteriorsThirdHomeBReopenedThoughts) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WEAPON_MERCHANT, CONDITION_ALWAYS,
-      EVENT_SCRIPT(Event_ReadWeaponMerchantsThoughts) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_ARMOR_MERCHANT, CONDITION_ALWAYS,
-      EVENT_SCRIPT(Event_ReadArmorMerchantsThoughts) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WEAPON_COUNTER, CONDITION_ALWAYS,
-      EVENT_SCRIPT(Event_ReadWeaponMerchantsThoughts) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_ARMOR_COUNTER, CONDITION_ALWAYS,
-      EVENT_SCRIPT(Event_ReadArmorMerchantsThoughts) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_ITEM_MERCHANT, CONDITION_ALWAYS,
-      EVENT_SCRIPT(Event_ReadItemMerchantsThoughts) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_ITEM_COUNTER, CONDITION_ALWAYS,
-      EVENT_SCRIPT(Event_ReadItemMerchantsThoughts) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_INNKEEPER, CONDITION_ALWAYS,
+    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_WEAPON_MERCHANT, CONDITION_ALWAYS,
+      EVENT_SCRIPT(EventScript_ReadWeaponMerchantsThoughts) },
+    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_ARMOR_MERCHANT, CONDITION_ALWAYS,
+      EVENT_SCRIPT(EventScript_ReadArmorMerchantsThoughts) },
+    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_WEAPON_COUNTER, CONDITION_ALWAYS,
+      EVENT_SCRIPT(EventScript_ReadWeaponMerchantsThoughts) },
+    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_ARMOR_COUNTER, CONDITION_ALWAYS,
+      EVENT_SCRIPT(EventScript_ReadArmorMerchantsThoughts) },
+    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_ITEM_MERCHANT, CONDITION_ALWAYS,
+      EVENT_SCRIPT(EventScript_ReadItemMerchantsThoughts) },
+    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_ITEM_COUNTER, CONDITION_ALWAYS,
+      EVENT_SCRIPT(EventScript_ReadItemMerchantsThoughts) },
+    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_INNKEEPER, CONDITION_ALWAYS,
       MSGNO(MsgLunpaInteriorsInnkeeperReopenedThoughts) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WOMAN_ASKING_FOR_DONPAS_GUEST, CONDITION_ALWAYS,
+    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_WOMAN_ASKING_FOR_DONPAS_GUEST, CONDITION_ALWAYS,
       MSGNO(MsgLunpaInteriorsInnClerkReopenedThoughts) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_INN_WORKER, CONDITION_ALWAYS,
+    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_INN_WORKER, CONDITION_ALWAYS,
       MSGNO(MsgLunpaInteriorsInnWorkerReopenedThoughts) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_CHEF, CONDITION_ALWAYS,
+    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_CHEF, CONDITION_ALWAYS,
       MSGNO(MsgLunpaInteriorsChefReopenedThoughts) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_HEALER, CONDITION_ALWAYS,
+    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_HEALER, CONDITION_ALWAYS,
       MSGNO(MsgLunpaInteriorsTemplePriestReopenedThoughts) },
-    { SEARCH(SEARCH_WOODEN_BOX), TRIGGER_WOODEN_BOX, FLAG_LUNPA_WOODEN_BOX_LUCKY_MEDAL,
+    { BG_EVENT(BG_EVENT_WOODEN_BOX), TRIGGER_WOODEN_BOX, FLAG_LUNPA_WOODEN_BOX_LUCKY_MEDAL,
       FIND_ITEM(ITEM_LUCKY_MEDAL) },
-    { SEARCH(SEARCH_BARREL), TRIGGER_BARREL, FLAG_LUNPA_BARREL_VIAL, FIND_ITEM(ITEM_VIAL) },
-    { SEARCH(SEARCH_OVEN), TRIGGER_FIRST_OVEN, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgLunpaInteriorsFirstOven)) },
-    { SEARCH(SEARCH_OVEN), TRIGGER_SECOND_OVEN, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgLunpaInteriorsSecondOven)) },
-    { SCENE_EVENTS_END },
+    { BG_EVENT(BG_EVENT_BARREL), TRIGGER_BARREL, FLAG_LUNPA_BARREL_VIAL, FIND_ITEM(ITEM_VIAL) },
+    { BG_EVENT(BG_EVENT_OVEN), TRIGGER_FIRST_OVEN, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgLunpaInteriorsFirstOven)) },
+    { BG_EVENT(BG_EVENT_OVEN), TRIGGER_SECOND_OVEN, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgLunpaInteriorsSecondOven)) },
+    { MAP_EVENTS_END },
 };
 // clang-format on
 
-const struct SceneEvent gGateToSuhallaEvents[] = {
+const struct MapEvent gGateToSuhallaEvents[] = {
     ROOM_DOOR(ROOM_GATE_TO_SUHALLA),
-    {EVENT_TALK, ACTOR_TRAVELING_HEALER, CONDITION_ALWAYS,
-     EVENT_SCRIPT(Event_TalkToTravelingHealer)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_TRAVELING_HEALER,
+    {MAP_EVENT_TALK, LOCALID_TRAVELING_HEALER, CONDITION_ALWAYS,
+     EVENT_SCRIPT(EventScript_TalkToTravelingHealer)},
+    {PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_TRAVELING_HEALER,
      CONDITION_ALWAYS, MSGNO(MsgLunpaInteriorsTravelingPriestThoughts)},
-    {SCENE_EVENTS_END},
+    {MAP_EVENTS_END},
 };
 
-const struct SceneEntrance *Scene_GetEntrances(void) {
-  return gInteriorEntrances;
-}
+const struct MapWarpDest *Map_GetWarpDests(void) { return gInteriorWarpDests; }
 
-const struct SceneRegion *Scene_GetRegions(void) { return NULL; }
+const struct MapWarpRegion *Map_GetWarpRegions(void) { return NULL; }
 
-const u32 *Scene_GetExits(void) { return gInteriorExits; }
+const u32 *Map_GetWarps(void) { return gInteriorWarps; }
 
 /// The townsfolk, shopkeepers and counters of all three places.
-const struct ScenePlacement *Scene_GetPlacements(void) {
-  return gInteriorPlacements;
+const struct ObjectEventTemplate *Map_GetObjectEventTemplates(void) {
+  return gInteriorObjectEventTemplates;
 }
 
 /// The events of Gate to Suhalla, or those of Lunpa's buildings before and
 /// after Donpa's judgment.
-const struct SceneEvent *Scene_GetEvents(void) {
-  if (gGameState.entrance == ROOM_GATE_TO_SUHALLA) {
+const struct MapEvent *Map_GetEvents(void) {
+  if (gGameState.warpDest == ROOM_GATE_TO_SUHALLA) {
     return gGateToSuhallaEvents;
   }
   if (Engine_GameFlagIsSet(FLAG_DODONPA_LOCKED_UP) != 0) {
@@ -305,218 +303,221 @@ const struct SceneEvent *Scene_GetEvents(void) {
 /// Lunpa, the inn: across the counter after Donpa's judgment, a room at the
 /// inn; otherwise the innkeeper offers a room or, while Lunpa is sealed, a bed
 /// at home.
-static void Event_TalkToInnkeeper(void) {
-  struct FieldActor *leader;
+static void EventScript_TalkToInnkeeper(void) {
+  struct ObjectEvent *leader;
 
-  leader = Object_GetById(ACTOR_PARTY_LEADER);
+  leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   if (FACING_IS_NORTH(leader->facing)) {
     if (Engine_GameFlagIsSet(FLAG_DODONPA_LOCKED_UP) != 0) {
-      Engine_InnOpen(LUNPA_INN, ACTOR_INNKEEPER);
+      Engine_InnOpen(LUNPA_INN, LOCALID_INNKEEPER);
       return;
     }
   }
-  Engine_EventStart();
+  Engine_ScriptStart();
   if (Engine_GameFlagIsSet(FLAG_DODONPA_LOCKED_UP) != 0) {
-    Engine_EventSetMessage(MsgLunpaInnkeeperOffersRoom);
-    Engine_EventAskYesNo(ACTOR_INNKEEPER, 0);
+    Engine_ScriptSetMessage(MsgLunpaInnkeeperOffersRoom);
+    Engine_ScriptAskYesNo(LOCALID_INNKEEPER, 0);
   } else {
-    Engine_EventSetMessage(MsgLunpaInnkeeperOffersOwnHome);
-    Engine_EventAskYesNo(ACTOR_INNKEEPER, 0);
+    Engine_ScriptSetMessage(MsgLunpaInnkeeperOffersOwnHome);
+    Engine_ScriptAskYesNo(LOCALID_INNKEEPER, 0);
   }
-  Engine_EventEnd();
+  Engine_ScriptEnd();
 }
 
 /// Lunpa, the inn, before Donpa's judgment: the chef offers the story of
 /// taking meals to the fortress; either way the party has heard of the
 /// prisoner.
-static void Event_TalkToChef(void) {
-  Engine_EventStart();
-  Engine_EventSetMessage(MsgLunpaChefOffersStory);
-  Engine_EventAskYesNo(ACTOR_CHEF, 0);
+static void EventScript_TalkToChef(void) {
+  Engine_ScriptStart();
+  Engine_ScriptSetMessage(MsgLunpaChefOffersStory);
+  Engine_ScriptAskYesNo(LOCALID_CHEF, 0);
   Engine_GameFlagSet(FLAG_LUNPA_HEARD_OF_PRISONER);
-  Engine_EventEnd();
+  Engine_ScriptEnd();
 }
 
 /// Lunpa, the inn: Mind Read on the chef, who pities the prisoner in the
 /// dungeon.
-static void Event_ReadChefsThoughts(void) {
-  Engine_EventStart();
-  Engine_EventSetMessage(MsgLunpaChefThinksOfPrisoner);
-  Engine_EventShowMessage(ACTOR_CHEF, 0);
+static void EventScript_ReadChefsThoughts(void) {
+  Engine_ScriptStart();
+  Engine_ScriptSetMessage(MsgLunpaChefThinksOfPrisoner);
+  Engine_ScriptShowMessage(LOCALID_CHEF, 0);
   Engine_GameFlagSet(FLAG_LUNPA_HEARD_OF_PRISONER);
-  Engine_EventEnd();
+  Engine_ScriptEnd();
 }
 
 /// Lunpa, the inn, after Donpa's judgment: a woman asks whether the party is
 /// Donpa's guest.
-static void Event_AskWhetherDonpasGuest(void) {
-  Engine_EventStart();
-  Engine_EventSetMessage(MsgLunpaInnClerkAsksAboutGuest);
-  Engine_EventAskYesNo(ACTOR_WOMAN_ASKING_FOR_DONPAS_GUEST, 0);
-  Engine_EventEnd();
+static void EventScript_AskWhetherDonpasGuest(void) {
+  Engine_ScriptStart();
+  Engine_ScriptSetMessage(MsgLunpaInnClerkAsksAboutGuest);
+  Engine_ScriptAskYesNo(LOCALID_WOMAN_ASKING_FOR_DONPAS_GUEST, 0);
+  Engine_ScriptEnd();
 }
 
 /// Lunpa Temple: across the counter, the Sanctum's services; otherwise the
 /// Healer talks about Dodonpa.
-static void Event_TalkToHealer(void) {
-  struct FieldActor *leader;
+static void EventScript_TalkToHealer(void) {
+  struct ObjectEvent *leader;
 
-  leader = Object_GetById(ACTOR_PARTY_LEADER);
+  leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   if (FACING_IS_NORTH(leader->facing)) {
-    Engine_SanctumOpen(ACTOR_HEALER);
+    Engine_SanctumOpen(LOCALID_HEALER);
   } else if (Engine_GameFlagIsSet(FLAG_DODONPA_LOCKED_UP) != 0) {
-    Engine_EventStart();
-    Engine_EventSetMessage(MsgLunpaTemplePriestReopened);
-    Engine_EventShowMessage(ACTOR_HEALER, 0);
-    Engine_EventEnd();
+    Engine_ScriptStart();
+    Engine_ScriptSetMessage(MsgLunpaTemplePriestReopened);
+    Engine_ScriptShowMessage(LOCALID_HEALER, 0);
+    Engine_ScriptEnd();
   } else {
-    Engine_EventStart();
-    Engine_EventSetMessage(MsgLunpaTemplePriestSealed);
-    Engine_EventShowMessage(ACTOR_HEALER, 0);
-    Engine_EventEnd();
+    Engine_ScriptStart();
+    Engine_ScriptSetMessage(MsgLunpaTemplePriestSealed);
+    Engine_ScriptShowMessage(LOCALID_HEALER, 0);
+    Engine_ScriptEnd();
   }
 }
 
 /// Lunpa, the item shop: Mind Read on the merchant.
-static void Event_ReadItemMerchantsThoughts(void) {
+static void EventScript_ReadItemMerchantsThoughts(void) {
   if (Engine_GameFlagIsSet(FLAG_DODONPA_LOCKED_UP) != 0) {
-    Engine_EventStart();
-    Engine_EventSetMessage(MsgLunpaIsntWeaponsVendors);
-    Engine_EventShowMessage(ACTOR_ITEM_MERCHANT, 0);
-    Engine_EventEnd();
+    Engine_ScriptStart();
+    Engine_ScriptSetMessage(MsgLunpaIsntWeaponsVendors);
+    Engine_ScriptShowMessage(LOCALID_ITEM_MERCHANT, 0);
+    Engine_ScriptEnd();
   } else {
-    Engine_EventStart();
-    Engine_EventSetMessage(MsgLunpaItemMerchantSealedThoughts);
-    Engine_EventShowMessage(ACTOR_ITEM_MERCHANT, 0);
-    Engine_EventEnd();
+    Engine_ScriptStart();
+    Engine_ScriptSetMessage(MsgLunpaItemMerchantSealedThoughts);
+    Engine_ScriptShowMessage(LOCALID_ITEM_MERCHANT, 0);
+    Engine_ScriptEnd();
   }
 }
 
 /// Lunpa, the item shop: across the counter, the shop; otherwise small talk.
-static void Event_TalkToItemMerchant(void) {
-  struct FieldActor *leader;
+static void EventScript_TalkToItemMerchant(void) {
+  struct ObjectEvent *leader;
 
-  leader = Object_GetById(ACTOR_PARTY_LEADER);
+  leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   if (FACING_IS_NORTH(leader->facing)) {
-    Engine_ShopOpen(SHOP_LUNPA_ITEMS, ACTOR_ITEM_MERCHANT);
+    Engine_ShopOpen(SHOP_LUNPA_ITEMS, LOCALID_ITEM_MERCHANT);
   } else if (Engine_GameFlagIsSet(FLAG_DODONPA_LOCKED_UP) != 0) {
-    Engine_EventStart();
-    Engine_EventSetMessage(MsgLunpaItemMerchantReopened);
-    Engine_EventShowMessage(ACTOR_ITEM_MERCHANT, 0);
-    Engine_EventEnd();
+    Engine_ScriptStart();
+    Engine_ScriptSetMessage(MsgLunpaItemMerchantReopened);
+    Engine_ScriptShowMessage(LOCALID_ITEM_MERCHANT, 0);
+    Engine_ScriptEnd();
   } else {
-    Engine_EventStart();
-    Engine_EventSetMessage(MsgLunpaItemMerchantSealed);
-    Engine_EventShowMessage(ACTOR_ITEM_MERCHANT, 0);
-    Engine_EventEnd();
+    Engine_ScriptStart();
+    Engine_ScriptSetMessage(MsgLunpaItemMerchantSealed);
+    Engine_ScriptShowMessage(LOCALID_ITEM_MERCHANT, 0);
+    Engine_ScriptEnd();
   }
 }
 
 /// Lunpa, the weapon and armor shop: Mind Read on the weapon merchant.
-static void Event_ReadWeaponMerchantsThoughts(void) {
+static void EventScript_ReadWeaponMerchantsThoughts(void) {
   if (Engine_GameFlagIsSet(FLAG_DODONPA_LOCKED_UP) != 0) {
-    Engine_EventSetMessage(MsgLunpaWeaponMerchantReopenedThoughts);
-    Engine_EventShowMessage(ACTOR_WEAPON_MERCHANT, 0);
+    Engine_ScriptSetMessage(MsgLunpaWeaponMerchantReopenedThoughts);
+    Engine_ScriptShowMessage(LOCALID_WEAPON_MERCHANT, 0);
   } else {
-    Engine_EventSetMessage(MsgLunpaWeaponMerchantSealedThoughts);
-    Engine_EventShowMessage(ACTOR_WEAPON_MERCHANT, 0);
+    Engine_ScriptSetMessage(MsgLunpaWeaponMerchantSealedThoughts);
+    Engine_ScriptShowMessage(LOCALID_WEAPON_MERCHANT, 0);
   }
 }
 
 /// Lunpa, the weapon and armor shop: after Donpa's judgment, across the
 /// counter, the weapon shop; otherwise small talk.
-static void Event_TalkToWeaponMerchant(void) {
-  struct FieldActor *leader;
+static void EventScript_TalkToWeaponMerchant(void) {
+  struct ObjectEvent *leader;
   s32 facing;
 
-  leader = Object_GetById(ACTOR_PARTY_LEADER);
+  leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   facing = leader->facing;
   if (Engine_GameFlagIsSet(FLAG_DODONPA_LOCKED_UP) != 0) {
     if (FACING_IS_NORTH(facing)) {
-      Engine_ShopOpen(SHOP_LUNPA_WEAPONS, ACTOR_WEAPON_MERCHANT);
+      Engine_ShopOpen(SHOP_LUNPA_WEAPONS, LOCALID_WEAPON_MERCHANT);
     } else {
-      Engine_EventStart();
-      Engine_EventSetMessage(MsgLunpaWeaponMerchantReopened);
-      Engine_EventShowMessage(ACTOR_WEAPON_MERCHANT, 0);
-      Engine_EventEnd();
+      Engine_ScriptStart();
+      Engine_ScriptSetMessage(MsgLunpaWeaponMerchantReopened);
+      Engine_ScriptShowMessage(LOCALID_WEAPON_MERCHANT, 0);
+      Engine_ScriptEnd();
     }
   } else {
-    Engine_EventSetMessage(MsgLunpaWeaponMerchantSealed);
-    Engine_EventShowMessage(ACTOR_WEAPON_MERCHANT, 0);
+    Engine_ScriptSetMessage(MsgLunpaWeaponMerchantSealed);
+    Engine_ScriptShowMessage(LOCALID_WEAPON_MERCHANT, 0);
   }
 }
 
 /// Lunpa, the weapon and armor shop: Mind Read on the armor merchant.
-static void Event_ReadArmorMerchantsThoughts(void) {
+static void EventScript_ReadArmorMerchantsThoughts(void) {
   if (Engine_GameFlagIsSet(FLAG_DODONPA_LOCKED_UP) != 0) {
-    Engine_EventSetMessage(MsgLunpaArmorMerchantReopenedThoughts);
-    Engine_EventShowMessage(ACTOR_ARMOR_MERCHANT, 0);
+    Engine_ScriptSetMessage(MsgLunpaArmorMerchantReopenedThoughts);
+    Engine_ScriptShowMessage(LOCALID_ARMOR_MERCHANT, 0);
   } else {
-    Engine_EventSetMessage(MsgLunpaArmorMerchantSealedThoughts);
-    Engine_EventShowMessage(ACTOR_ARMOR_MERCHANT, 0);
+    Engine_ScriptSetMessage(MsgLunpaArmorMerchantSealedThoughts);
+    Engine_ScriptShowMessage(LOCALID_ARMOR_MERCHANT, 0);
   }
 }
 
 /// Lunpa, the weapon and armor shop: after Donpa's judgment, across the
 /// counter, the armor shop; otherwise small talk.
-static void Event_TalkToArmorMerchant(void) {
-  struct FieldActor *leader;
+static void EventScript_TalkToArmorMerchant(void) {
+  struct ObjectEvent *leader;
   s32 facing;
 
-  leader = Object_GetById(ACTOR_PARTY_LEADER);
+  leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   facing = leader->facing;
   if (Engine_GameFlagIsSet(FLAG_DODONPA_LOCKED_UP) != 0) {
     if (FACING_IS_NORTH(facing)) {
-      Engine_ShopOpen(SHOP_LUNPA_ARMOR, ACTOR_ARMOR_MERCHANT);
+      Engine_ShopOpen(SHOP_LUNPA_ARMOR, LOCALID_ARMOR_MERCHANT);
     } else {
-      Engine_EventStart();
-      Engine_EventSetMessage(MsgLunpaArmorMerchantReopened);
-      Engine_EventShowMessage(ACTOR_ARMOR_MERCHANT, 0);
-      Engine_EventEnd();
+      Engine_ScriptStart();
+      Engine_ScriptSetMessage(MsgLunpaArmorMerchantReopened);
+      Engine_ScriptShowMessage(LOCALID_ARMOR_MERCHANT, 0);
+      Engine_ScriptEnd();
     }
   } else {
-    Engine_EventSetMessage(MsgLunpaArmorMerchantSealed);
-    Engine_EventShowMessage(ACTOR_ARMOR_MERCHANT, 0);
+    Engine_ScriptSetMessage(MsgLunpaArmorMerchantSealed);
+    Engine_ScriptShowMessage(LOCALID_ARMOR_MERCHANT, 0);
   }
 }
 
 /// Sets the buildings up: entered by Gate to Suhalla, the house is where a
 /// defeated party wakes, and the counters are drawn behind their keepers.
-s32 Scene_Initialize(void) {
-  s16 entrance;
+s32 Map_Initialize(void) {
+  s16 warpDest;
 
   gEventWork->startTransition =
-      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
-  entrance = gGameState.entrance;
-  if (entrance == ROOM_GATE_TO_SUHALLA) {
+      MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
+  warpDest = gGameState.warpDest;
+  if (warpDest == ROOM_GATE_TO_SUHALLA) {
     Engine_GameFlagClear(FLAG_SHOW_LOCATION_NAME);
-    gGameState.savedScene = (s32)&SceneId_LunpaSuhalla;
-    gGameState.savedEntrance = entrance;
+    gGameState.savedMap = (s32)&MapId_LunpaSuhalla;
+    gGameState.savedWarpDest = warpDest;
   }
-  Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_WEAPON_COUNTER), 0);
-  Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_ARMOR_COUNTER), 0);
-  Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_ITEM_COUNTER), 0);
+  Engine_ObjectEventSetSpriteFlags(ObjectEvent_GetById(LOCALID_WEAPON_COUNTER),
+                                   0);
+  Engine_ObjectEventSetSpriteFlags(ObjectEvent_GetById(LOCALID_ARMOR_COUNTER),
+                                   0);
+  Engine_ObjectEventSetSpriteFlags(ObjectEvent_GetById(LOCALID_ITEM_COUNTER),
+                                   0);
   return 0;
 }
 
 /// Gate to Suhalla: the traveling Healer offers the Sanctum's services across
 /// the counter; otherwise he speaks of his good will.
-static void Event_TalkToTravelingHealer(void) {
-  struct FieldActor *leader;
+static void EventScript_TalkToTravelingHealer(void) {
+  struct ObjectEvent *leader;
 
-  leader = Object_GetById(ACTOR_PARTY_LEADER);
+  leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   if (FACING_IS_NORTH(leader->facing)) {
     // BUG: the temple's Healer, not the traveling one. The Sanctum only takes
     // its keeper's portrait from the actor (Shop_ConfirmAct), and both Healers
     // are placed in this scene in the same sprite, so the player sees no
     // difference.
 #ifdef BUGFIX
-    Engine_SanctumOpen(ACTOR_TRAVELING_HEALER);
+    Engine_SanctumOpen(LOCALID_TRAVELING_HEALER);
 #else
-    Engine_SanctumOpen(ACTOR_HEALER);
+    Engine_SanctumOpen(LOCALID_HEALER);
 #endif
   } else {
-    Engine_EventSetMessage(MsgLunpaTravelingPriest);
-    Engine_EventShowMessage(ACTOR_TRAVELING_HEALER, 0);
+    Engine_ScriptSetMessage(MsgLunpaTravelingPriest);
+    Engine_ScriptShowMessage(LOCALID_TRAVELING_HEALER, 0);
   }
 }

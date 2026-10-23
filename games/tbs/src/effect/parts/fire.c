@@ -99,7 +99,7 @@ void BattleEffect_RunFire(struct BattleEffectArgument *effect) {
     if (frame == (gFire_Counts[work->effect->variant] >> 1) + 108)
       EFFECT_SHOW_DAMAGE(SE_IMPACT);
     // Re-centre the camera's focus at full zoom, then project from it.
-    BattlePresentation_SetupTransitionSceneFar(0, 0, 0, 100);
+    BattlePresentation_SetupTransitionViewFar(0, 0, 0, 100);
     EFFECT_VIEW_FROM_CAMERA(camera);
 
     // The embers in flight: two launch each frame, ember i after frame i / 2.

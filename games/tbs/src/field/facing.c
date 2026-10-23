@@ -64,8 +64,8 @@ const u8 gAnimationFacing_SixFrames[64] = {
 };
 
 /// The order in which the 64 pixels of a sprite's tile in OBJ VRAM dissolve;
-/// read by Map_RenderAnimatedTileFrame (objects.c).
-const u8 gMap_TileDissolveOrder[64] = {
+/// read by SpriteDissolve_Step (objects.c).
+const u8 gSpriteDissolve_PixelOrder[64] = {
     4, 63, 12, 10, 44, 5, 1, 60, 46, 41, 3, 23, 29, 55, 51, 15,
     50, 25, 26, 57, 19, 49, 16, 61, 8, 58, 37, 17, 27, 31, 59, 53,
     11, 56, 33, 7, 30, 35, 36, 32, 42, 62, 21, 13, 2, 22, 45, 14,
@@ -73,7 +73,7 @@ const u8 gMap_TileDissolveOrder[64] = {
 };
 
 /// Two bytes after the dissolve order; no code in The Broken Seal names them.
-const u16 gMap_TileDissolveTail = 0x01ff;
+const u16 gSpriteDissolve_PixelOrderTail = 0x01ff;
 
 /// The fixed camera's view matrix (Q16): identity with a -0.8 shear of y by x.
 /// ObjectSystem_UpdateCameraFixed applies it while battle commands are chosen.
@@ -95,7 +95,7 @@ const s32 gScriptObject_CycleTable[32] = {
 };
 
 /// The idle script an object returns to when its own one ends: a lone SC_END,
-/// which reloads it. Script_End (SC_END) points an object here.
+/// which reloads it. ActionScript_End (SC_END) points an object here.
 const s32 gScript_MainScript[1] = {
     SC_END,
 };

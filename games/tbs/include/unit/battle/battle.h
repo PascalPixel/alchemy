@@ -181,7 +181,7 @@ void BattleMotion_SetMode5AndActivateSlot(s32 unitId);
 s32 BattleTarget_ReplaceDefeated(const struct BattleActionRecord *action);
 
 void Palette_UpdatePulseBrightness(void);
-void Camera_ConfigureScene(s32 verticalOffset);
+void Camera_ConfigureView(s32 verticalOffset);
 void BattleUnit_ResetGuardLevels(void);
 s32 BattleEscape_CheckSuccess(void);
 s32 BattlePresentation_BuildUnitEntries(struct BattleActionRecord *entries);
@@ -324,12 +324,12 @@ void BattleBackground_Load(s32 mode, s32 resourceId, s32 level);
 void BattleCamera_SetRange(s32 centerX, s32 centerY, s32 offsetX, s32 offsetY,
                            s32 scale);
 #ifdef UBFIX
-void BattlePresentation_SetupTransitionSceneAtDepth(s32 x, s32 depth, s32 y,
-                                                    s32 zoom);
+void BattlePresentation_SetupTransitionViewAtDepth(s32 x, s32 depth, s32 y,
+                                                   s32 zoom);
 #else
-void BattlePresentation_SetupTransitionSceneAtDepth(s32 x, s32 depth, s32 y);
+void BattlePresentation_SetupTransitionViewAtDepth(s32 x, s32 depth, s32 y);
 #endif
-void BattlePresentation_SetupTransitionScene(s32 x, s32 depth, s32 y, s32 zoom);
+void BattlePresentation_SetupTransitionView(s32 x, s32 depth, s32 y, s32 zoom);
 void BattlePresentation_SetupTransitionAtPairMidpoint(s32 firstUnitId,
                                                       s32 secondUnitId,
                                                       s32 zoom);

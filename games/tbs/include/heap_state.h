@@ -59,11 +59,11 @@ enum HeapSlot {
   /// menus and the world map effect set its suspended field while they are
   /// open, so sprites that are not held are not drawn and free their VRAM.
   HEAP_SLOT_MENU_CONTROL = 6,
-  /// The world map's frame work (struct MapFrameWork).
-  HEAP_SLOT_MAP_FRAME = 7,
-  /// The field map's scrolling work (struct MapScrollWork), or on the world
-  /// map its perspective view (struct PerspectiveWork); gMapWork.
-  HEAP_SLOT_MAP = 8,
+  /// The world map's frame work (struct WorldMapFrameWork).
+  HEAP_SLOT_WORLD_MAP_FRAME = 7,
+  /// The field map's scrolling work (struct MapGridScrollWork), or on the world
+  /// map its perspective view (struct PerspectiveWork); gMapGridWork.
+  HEAP_SLOT_MAP_GRID = 8,
   /// A battle's struct BattleWork (gBattleWork), from Battle_RunEncounter to
   /// the next scene change.
   HEAP_SLOT_BATTLE = 9,
@@ -90,7 +90,7 @@ enum HeapSlot {
   /// Mind Read's wave work (struct WaveEffectWork).
   HEAP_SLOT_MIND_READ = 22,
   /// A field scene's struct FieldWork, which scenes read as struct EventWork
-  /// (gEventWork); Field_RunScene takes it and frees it on the way out.
+  /// (gEventWork); Field_RunMap takes it and frees it on the way out.
   HEAP_SLOT_EVENT = 27,
   /// The palette cycling queue (struct PaletteSnapshotWork).
   HEAP_SLOT_PALETTE_CYCLES = 28,
@@ -163,7 +163,7 @@ enum HeapSlot {
   /// and the shop; each takes it on opening and releases it on closing. The
   /// save screen takes it for its sprite work (struct ShopRuntime).
   HEAP_SLOT_MENU = 55,
-  /// The Psynergy effect's work (struct FieldEffectScene, gEffectWork). A field
+  /// The Psynergy effect's work (struct FieldEffectWork, gEffectWork). A field
   /// Psynergy holds it from FieldEffect_LoadActionEffectResources to
   /// FieldEffect_End, a Djinni's joining from
   /// FieldEffect_InitializeSlots to

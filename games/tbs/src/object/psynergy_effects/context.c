@@ -7,12 +7,12 @@
 /// Finds where an actor is on screen: position[0] and position[1] receive its
 /// x and y in pixels, y at the top of its sprite. Returns 0, or -1 if there is
 /// no such actor. Called by the message window code in messages.c to place a
-/// speaker's bubble, and through Object_GetScreenPositionFar by the window
+/// speaker's bubble, and through ObjectEvent_GetScreenPositionFar by the window
 /// frames to open a message window above or below the leader.
-s32 Object_GetScreenPosition(s32 objectId, s32 *position) {
+s32 ObjectEvent_GetScreenPosition(s32 objectId, s32 *position) {
   struct ObjectRuntime *object = ObjectTable_Get(objectId);
 #ifdef UBFIX
-  struct MapScrollWork *map;
+  struct MapGridScrollWork *grid;
 #else
   s32 *camera;
 #endif
@@ -25,14 +25,14 @@ s32 Object_GetScreenPosition(s32 objectId, s32 *position) {
     return -1;
   // UB: camera[1] crosses the viewX scalar; UBFIX reads the named pair.
 #ifdef UBFIX
-  map = gMapWork[0];
-  cameraX = map->viewX & 0xffff0000;
-  cameraZ = map->viewY & 0xffff0000;
+  grid = gMapGridWork[0];
+  cameraX = grid->viewX & 0xffff0000;
+  cameraZ = grid->viewY & 0xffff0000;
 #else
   /* FAKEMATCH(temporary): the view position read as two adjacent words
    * through one pointer, so both loads share one base; as viewX and viewY
-   * through gMapWork[0], 28 of 59 instructions differ in tbs-en. */
-  camera = &((struct MapScrollWork *)gMapWork[0])->viewX;
+   * through gMapGridWork[0], 28 of 59 instructions differ in tbs-en. */
+  camera = &((struct MapGridScrollWork *)gMapGridWork[0])->viewX;
   cameraX = camera[0] & 0xffff0000;
   cameraZ = camera[1] & 0xffff0000;
 #endif
@@ -56,7 +56,7 @@ UNUSED void ObjectEffect_ReservedNoOp941DC(void) {}
 // changes.
 /// Starts the transition into a random battle: plays the scene's battle cue
 /// and the encounter sounds, closes the screen and flashes the backdrop white,
-/// fading it to black over 16 frames. Called by Field_RunScene when it handles
+/// fading it to black over 16 frames. Called by Field_RunMap when it handles
 /// work->battle; clears work->transitionActive once the screen is closed.
 #ifdef UBFIX
 void Field_StartEncounterTransition(s32 unused) {
@@ -67,7 +67,7 @@ s32 Field_StartEncounterTransition(s32 unused) {
   s32 i;
   s32 level;
 
-  AudioCommand_PlayFar(gGameState.sceneCue);
+  AudioCommand_PlayFar(gGameState.battleCue);
   AudioCommand_PlayFar(SE_STOP_SLOT3);
   AudioCommand_PlayFar(SE_147);
   if (work->mode == MODE_WORLD_MAP) {
@@ -76,7 +76,7 @@ s32 Field_StartEncounterTransition(s32 unused) {
     // a field scene closes with WINDOW_TRANSITION_LEADER_INVERSE. Both take
     // 16 frames.
     Io_Write16(RGB(31, 31, 31), (u16 *)&BG_PLTT_COLOR(15, 3));
-    DisplayTransition_Finish(SCENE_TRANSITION(4, 1), 16);
+    DisplayTransition_Finish(MAP_TRANSITION(4, 1), 16);
     work->transitionActive = 0;
     WaitFrames(16);
     // Step the white down by 2 a frame: 30 to 0 in 16 frames.
@@ -88,7 +88,7 @@ s32 Field_StartEncounterTransition(s32 unused) {
   } else {
     Io_Write16(RGB(31, 31, 31), &PLTT_BACKDROP);
     DisplayTransition_Finish(
-        SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER_INVERSE),
+        MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER_INVERSE),
         16);
     work->transitionActive = 0;
     WaitFrames(16);
@@ -111,7 +111,7 @@ void ObjectEffect_PrepareContextEffect(s32 animation) {
   struct AnimationObject *context;
   struct AnimationEntry *effect;
 
-  object = ObjectTable_Get(gGameState.selectedActor);
+  object = ObjectTable_Get(gGameState.selectedObjectEvent);
   context = object->animation;
   effect = (struct AnimationEntry *)ResourceMetadata_RegisterFar(context, 27);
   zero = 0;
@@ -126,27 +126,27 @@ void ObjectEffect_PrepareContextEffect(s32 animation) {
   object->z = (object->z & 0xFFF00000) + 0x100000;
   object->velocityX = zero;
   object->velocityZ = zero;
-  object->targetX = ACTOR_NO_TARGET;
-  object->targetZ = ACTOR_NO_TARGET;
+  object->targetX = OBJ_EVENT_NO_TARGET;
+  object->targetZ = OBJ_EVENT_NO_TARGET;
   ObjectDispatch_SelectAnimationFar(object, animation);
   WaitFrames(18);
 }
 
-/// Leaves through an EXIT_STYLE_ANIMATED exit (ANIMATION_LEADER_LEAVE);
-/// FLAG_EXIT_ARRIVAL_PENDING makes the next scene play the matching arrival
+/// Leaves through an WARP_STYLE_ANIMATED exit (ANIMATION_LEADER_LEAVE);
+/// FLAG_WARP_ARRIVAL_PENDING makes the next scene play the matching arrival
 /// (ObjectEffect_RunPendingFlagEvent). Called by the exit handling in events.c,
 /// after it plays SE_STAIRS_UP.
 void ObjectEffect_StartContextEffect26(void) {
   ObjectEffect_PrepareContextEffect(ANIMATION_LEADER_LEAVE);
-  GameFlag_SetBitFar(FLAG_EXIT_ARRIVAL_PENDING);
+  GameFlag_SetBitFar(FLAG_WARP_ARRIVAL_PENDING);
 }
 
-/// Leaves through an EXIT_STYLE_ANIMATED_ALTERNATE exit
-/// (ANIMATION_LEADER_LEAVE_ALTERNATE), recorded in FLAG_EXIT_ARRIVAL_ALTERNATE.
+/// Leaves through an WARP_STYLE_ANIMATED_ALTERNATE exit
+/// (ANIMATION_LEADER_LEAVE_ALTERNATE), recorded in FLAG_WARP_ARRIVAL_ALTERNATE.
 /// Called by the exit handling in events.c, after it plays SE_STAIRS_DOWN.
 void ObjectEffect_StartContextEffect25(void) {
   ObjectEffect_PrepareContextEffect(ANIMATION_LEADER_LEAVE_ALTERNATE);
-  GameFlag_SetBitFar(FLAG_EXIT_ARRIVAL_ALTERNATE);
+  GameFlag_SetBitFar(FLAG_WARP_ARRIVAL_ALTERNATE);
 }
 
 /// Plays the leader's arrival animation through an exit: centred on its tile
@@ -157,7 +157,8 @@ void ObjectEffect_StartContextEffect25(void) {
 void ObjectEffect_EndContextEffect(s32 animation) {
   s32 zero;
   s32 mask;
-  struct ObjectRuntime *leader = ObjectTable_Get(gGameState.selectedActor);
+  struct ObjectRuntime *leader =
+      ObjectTable_Get(gGameState.selectedObjectEvent);
   struct AnimationObject *spriteAnimation = leader->animation;
   struct AnimationEntry *eff =
       (struct AnimationEntry *)ResourceMetadata_RegisterFar(spriteAnimation,
@@ -184,23 +185,23 @@ void ObjectEffect_EndContextEffect(s32 animation) {
 }
 
 /// Plays the leader's arrival for the way the last scene was left: through an
-/// EXIT_STYLE_ANIMATED exit (FLAG_EXIT_ARRIVAL_PENDING,
-/// ANIMATION_LEADER_ARRIVE, returns 1) or an EXIT_STYLE_ANIMATED_ALTERNATE one
-/// (FLAG_EXIT_ARRIVAL_ALTERNATE, ANIMATION_LEADER_ARRIVE_ALTERNATE, returns 2),
+/// WARP_STYLE_ANIMATED exit (FLAG_WARP_ARRIVAL_PENDING,
+/// ANIMATION_LEADER_ARRIVE, returns 1) or an WARP_STYLE_ANIMATED_ALTERNATE one
+/// (FLAG_WARP_ARRIVAL_ALTERNATE, ANIMATION_LEADER_ARRIVE_ALTERNATE, returns 2),
 /// or falling in from 160 pixels above (FLAG_ARRIVE_FALLING, returns 3).
-/// Returns 0 when there is nothing to play. Called by Field_RunScene as the
+/// Returns 0 when there is nothing to play. Called by Field_RunMap as the
 /// scene fades in, which waits out the fade itself only when this returns 0.
 /// Clears the flag it acts on.
 s32 ObjectEffect_RunPendingFlagEvent(void) {
   s32 result = 0;
-  s32 flag = FLAG_EXIT_ARRIVAL_PENDING;
+  s32 flag = FLAG_WARP_ARRIVAL_PENDING;
 
   if (GameFlag_TestFar(flag) != 0) {
     ObjectEffect_EndContextEffect(ANIMATION_LEADER_ARRIVE);
     GameFlag_ClearBitFar(flag);
     result = 1;
   } else {
-    flag = FLAG_EXIT_ARRIVAL_ALTERNATE;
+    flag = FLAG_WARP_ARRIVAL_ALTERNATE;
     if (GameFlag_TestFar(flag) != 0) {
       ObjectEffect_EndContextEffect(ANIMATION_LEADER_ARRIVE_ALTERNATE);
       GameFlag_ClearBitFar(flag);
@@ -212,7 +213,7 @@ s32 ObjectEffect_RunPendingFlagEvent(void) {
         struct ObjectRuntime *leader;
 
         GameFlag_ClearBitFar(flag);
-        leaderId = gGameState.selectedActor;
+        leaderId = gGameState.selectedObjectEvent;
         leader = ObjectTable_Get(leaderId);
         // FLAG_ARRIVE_FALLING is set by scenes the party drops out of (the
         // Suhalla storm, a floor giving way in the Tret tree): start 160 pixels
@@ -226,8 +227,8 @@ s32 ObjectEffect_RunPendingFlagEvent(void) {
         AudioCommand_PlayFar(SE_159);
         leader->y = leader->terrainHeight;
         ObjectDispatch_SelectAnimationFar(leader, 22);
-        FieldEvent_WaitFrames(15);
-        Camera_FollowActor(leaderId, 1);
+        FieldScript_WaitFrames(15);
+        Camera_FollowObjectEvent(leaderId, 1);
         result = 3;
       }
     }

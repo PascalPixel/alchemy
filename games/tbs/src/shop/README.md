@@ -355,7 +355,7 @@ The counters are named for what the player meets at them, the stock row's
 columns from what `shop/artifacts.c` reads from each, the actions and services
 from the choices their windows offer in the English release, and the inns
 from the town scenes that open them. The inn rows follow the order of the
-towns' area names in `gScene_AreaNameRules` (Vale 3, Vault 5, up to Lunpa 34,
+towns' area names in `gMapSec_NameRules` (Vale 3, Vault 5, up to Lunpa 34,
 Suhalla 51 and Lalivero 55), and in that order row 9 falls where Tolbi (40)
 does: Tolbi is the one town with an inn door and no inn opened, since its inns
 are always full (`MsgTolbiInteriorsIsaacCheckedTheSignInnFull`), so its row

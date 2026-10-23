@@ -22,7 +22,7 @@ struct LinkSignature {
 
 /// A scheduler callback while the party's commands are chosen
 /// (Battle_CollectPartyCommands): eases the battle scene a third of the way
-/// to BattleMenuWork.targetSceneOffset each frame (a pixel at least), draws
+/// to BattleMenuWork.targetViewOffset each frame (a pixel at least), draws
 /// the sprites of BattleMenuWork.icons that are shown (the chosen command's
 /// and ability's icons, the member's portrait) and slides the page arrows.
 /// In a link battle it also runs the timer: once the partner has chosen its
@@ -46,8 +46,8 @@ void UpdateLinkSessionCountdown(void) {
   s32 i;
 
   if (state != 0) {
-    target = state->targetSceneOffset;
-    current = state->sceneOffset;
+    target = state->targetViewOffset;
+    current = state->viewOffset;
     if (target != current) {
       difference = target - current;
       step = difference / 3;
@@ -57,8 +57,8 @@ void UpdateLinkSessionCountdown(void) {
           step = 1;
       }
       newOffset = current + step;
-      state->sceneOffset = newOffset;
-      Camera_ConfigureSceneFar(newOffset);
+      state->viewOffset = newOffset;
+      Camera_ConfigureViewFar(newOffset);
     }
 
     entry = state->icons;

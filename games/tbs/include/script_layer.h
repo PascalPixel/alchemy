@@ -1,15 +1,16 @@
-#ifndef ALCHEMY_FIELD_EVENT_H
-#define ALCHEMY_FIELD_EVENT_H
+#ifndef ALCHEMY_SCRIPT_LAYER_H
+#define ALCHEMY_SCRIPT_LAYER_H
 
 /// @file
 /// The scene script layer: the engine services a scene's events call, declared
-/// once (Engine_EventStart, Engine_ActorJump, Engine_EventSetMessage and the
-/// rest), with the constants and small inlines scenes share.
+/// once (Engine_ScriptStart, Engine_ObjectEventJump, Engine_ScriptSetMessage
+/// and the rest), with the constants and small inlines scenes share.
 ///
 /// It is a habit of the whole game written once, as declarations and macros: a
 /// layer, not a compiler-steering device (AGENTS.md S2). The event.h commands
 /// and field_service.h are written over it. A scene's event reads `EV_START();
-/// Engine_ActorStop(9); OBJECT_FACE(9, ACTOR_PARTY_LEADER, 0); EV_END();`.
+/// Engine_ObjectEventStop(9); OBJECT_FACE(9, LOCALID_PARTY_LEADER, 0);
+/// EV_END();`.
 
 #include "unit/object/object.h"
 #include "unit/object/psynergy_effects.h"
@@ -32,7 +33,7 @@
 /// 0x78 bytes of EWRAM where scene overlays keep state of their own, such as
 /// Altmiller Cave's rock puzzle. It lies outside the heap, so a scene change
 /// leaves it alone; GameState_InitializeDefaults clears it for a new game.
-extern u8 gSceneState[];
+extern u8 gMapLocalState[];
 
 /// The Colosso race work, heap slot HEAP_SLOT_COLOSSO_RACE under its own name.
 extern u8 *gColossoWork;
@@ -43,10 +44,10 @@ extern u8 *gColossoWork;
 
 /// The main loop pass's task key, as SCHEDULER_KEY_MAIN_LOOP: a scene's
 /// per-frame callbacks run once a frame with the field's own.
-enum { TASK_PRIORITY_SCENE = 3200 };
+enum { TASK_PRIORITY_MAP = 3200 };
 
-/// Animation numbers of an actor's sprite, for Engine_ActorSetAnimation.
-enum ActorAnimation {
+/// Animation numbers of an actor's sprite, for Engine_ObjectEventSetAnimation.
+enum ObjectEventAnimation {
   /// Standing still: nearly every sprite's first frame held, without the
   /// blinks and small gestures of ANIMATION_STAND.
   ANIMATION_STILL = 0,
@@ -84,7 +85,7 @@ enum ActorAnimation {
   /// number to such a pose (spr_000.png to spr_003.png).
   ANIMATION_COLLAPSE = 19,
   ANIMATION_LEADER_LEAN_BACK = 22, ///< leaning back, his head thrown back
-  /// The arrivals and leavings of the animated exits (enum ExitStyle), each
+  /// The arrivals and leavings of the animated exits (enum WarpStyle), each
   /// four frames of the leader turning: an arrival grows from a small figure
   /// seen side-on to full size facing the player, a leaving turns from his
   /// back to side-on as he shrinks and is then hidden. The alternate pair has
@@ -112,68 +113,69 @@ enum ActorAnimation {
 
 /// One step of a cell animation: copy the width by height cells at sourceX,
 /// sourceY over the destination, then wait frames.
-#define MAP_CELL_STEP(sourceX, sourceY, width, height, frames)                 \
+#define MAPGRID_ANIM_STEP(sourceX, sourceY, width, height, frames)             \
   (sourceX), (sourceY), (width), (height), (frames)
-#define MAP_CELL_STEPS_END 0xffff ///< a source column that ends the steps
+#define MAPGRID_ANIM_STEPS_END 0xffff ///< a source column that ends the steps
 
 /// A cell animation, such as a door opening: its steps and the cell they are
-/// copied to (Map_PlayMetatileCopySequence, which blocks until the last).
-struct MapCellAnimation {
-  /// MAP_CELL_STEP records, ended by MAP_CELL_STEPS_END, for
-  /// Map_PlayMetatileCopySequence.
+/// copied to (MapGrid_PlayMetatileCopySequence, which blocks until the last).
+struct MapGridCellAnimation {
+  /// MAPGRID_ANIM_STEP records, ended by MAPGRID_ANIM_STEPS_END, for
+  /// MapGrid_PlayMetatileCopySequence.
   const u16 *steps;
   u16 x; ///< destination cell column
   u16 y; ///< destination cell row
 };
 
-// Imports of main-image routines. EventRequestExit, ActorSetPosition,
+// Imports of main-image routines. ScriptRequestWarp, ActorSetPosition,
 // ActorSetAnimation and RandomNext have differing argument counts at their
 // call sites, as measured in the bytes, so retain old-style declarations.
-/// Opens an event (FieldEvent_Start): closes any timed notice, stops the
+/// Opens an event (FieldScript_Start): closes any timed notice, stops the
 /// leader and makes it the speaker.
-void Engine_EventStart(void);
-/// Closes an event (FieldEvent_End): the camera follows the leader again and
+void Engine_ScriptStart(void);
+/// Closes an event (FieldScript_End): the camera follows the leader again and
 /// FLAG_LURE_CAP is refreshed.
-void Engine_EventEnd(void);
+void Engine_ScriptEnd(void);
 /// Waits the given frames unless debug fast-forward is on
-/// (FieldEvent_WaitFrames).
-void Engine_EventWait(s32 frames);
+/// (FieldScript_WaitFrames).
+void Engine_ScriptWait(s32 frames);
 /// Runs the frame loop for the given frames (WaitFrames); debug fast-forward
 /// doesn't shorten it.
 void Engine_TaskWait(s32 frames);
 /// Sets the number of the event's next message in the field work
-/// (Event_SetMessageId).
-void Engine_EventSetMessage(s32 message);
+/// (FieldScript_SetMessageId).
+void Engine_ScriptSetMessage(s32 message);
 /// Opens the current message at speaker and waits until it has been read and
-/// its window has closed (FieldEvent_ShowMessageAndWait). The speaker may carry
-/// SPEAKER_ bits.
-void Engine_EventShowMessage(s32 speaker, s32 flags);
+/// its window has closed (FieldScript_ShowMessageAndWait). The speaker may
+/// carry SPEAKER_ bits.
+void Engine_ScriptShowMessage(s32 speaker, s32 flags);
 /// Opens the current message beside speaker, with its portrait, and moves the
 /// event on to the next (UiText_OpenMessageAtObject). Returns the message
 /// window once its text is typed out, without waiting for it to be read.
-s32 Engine_EventOpenMessage(s32 speaker, s32 flags);
+s32 Engine_ScriptOpenMessage(s32 speaker, s32 flags);
 /// Asks the current message at speaker, then shows the message after it for
-/// yes or the one after that for no (FieldEvent_AskYesNoAndShowResponse).
+/// yes or the one after that for no (FieldScript_AskYesNoAndShowResponse).
 /// Returns 0 for yes, 1 for no; either way the event goes on past both.
-s32 Engine_EventAskYesNo(s32 speaker, s32 flags);
+s32 Engine_ScriptAskYesNo(s32 speaker, s32 flags);
 /// Offers yes or no once the message on screen is read, the speaker nodding at
-/// yes and shaking its head at no (Event_AskYesNoWithActorAnimation). Returns 0
-/// for yes, 1 for no; flags puts the choice below the message.
-s32 Engine_EventChooseYesNo(s32 actor, s32 flags);
+/// yes and shaking its head at no
+/// (FieldScript_AskYesNoWithObjectEventAnimation). Returns 0 for yes, 1 for no;
+/// flags puts the choice below the message.
+s32 Engine_ScriptChooseYesNo(s32 objectEvent, s32 flags);
 /// Shows message in a window centred on the screen, waits until it is typed out
 /// and closes it (UiText_ShowPositionedMessageAndWait). The bits of flags zoom
 /// the window, lower it or leave it open.
 void Engine_MessageShowCentered(s32 message, s32 flags);
-/// Sets the field's exit request (Event_SetExitRequest); 999 leaves for
+/// Sets the field's exit request (FieldScript_SetWarpRequest); 999 leaves for
 /// gGameState's scene and entrance.
-void Engine_EventRequestExit();
-/// Starts the event's screen transition (Event_StartScreenTransition).
-void Engine_EventOpenScreen(void);
-/// Finishes the event's screen transition (Event_FinishScreenTransition).
-void Engine_EventCloseScreen(void);
+void Engine_ScriptRequestWarp();
+/// Starts the event's screen transition (FieldScript_StartScreenTransition).
+void Engine_ScriptOpenScreen(void);
+/// Finishes the event's screen transition (FieldScript_FinishScreenTransition).
+void Engine_ScriptCloseScreen(void);
 /// Waits as long as the event's screen transition runs
-/// (Event_WaitTransitionFrames).
-void Engine_EventWaitForScreen(void);
+/// (FieldScript_WaitTransitionFrames).
+void Engine_ScriptWaitForScreen(void);
 /// Fades the game's layers to black (Fade_ToBlack). The argument is the fade's
 /// length in frames: the cleared-game menu passes 0 to black the screen at
 /// once.
@@ -184,59 +186,63 @@ u8 *Engine_ResourceGetTableEntry(s32 resource);
 /// Puts an actor at rest at (x, z), in 16.16 pixels; one that follows the
 /// ground keeps its height above the terrain
 /// (ObjectMotion_SetHorizontalPositionWithTerrain).
-void Engine_ActorSetPosition();
+void Engine_ObjectEventSetPosition();
 /// Sets an actor's top speed and acceleration, in 16.16 pixels per frame
 /// (ObjectMotion_SetSpeedParameters).
-void Engine_ActorSetSpeed(s32 actor, s32 speed, s32 acceleration);
+void Engine_ObjectEventSetSpeed(s32 objectEvent, s32 speed, s32 acceleration);
 /// Sends an actor toward (x, z), in pixels, in whatever animation it has
 /// (ObjectMotion_ResetAndSetPosition).
-void Engine_ActorSetDestination(s32 actor, s32 x, s32 z);
+void Engine_ObjectEventSetDestination(s32 objectEvent, s32 x, s32 z);
 /// Sends an actor (dx, dz) pixels from where it stands
 /// (ObjectMotion_OffsetPositionAndResetMotion).
-void Engine_ActorSetDestinationOffset(s32 actor, s32 dx, s32 dz);
+void Engine_ObjectEventSetDestinationOffset(s32 objectEvent, s32 dx, s32 dz);
 /// Walks an actor toward (x, z), in pixels, in ANIMATION_WALK
 /// (ObjectMotion_ResetAndSetPositionInMode2).
-void Engine_ActorWalkTo(s32 actor, s32 x, s32 z);
+void Engine_ObjectEventWalkTo(s32 objectEvent, s32 x, s32 z);
 /// Walks an actor (dx, dz) pixels from where it stands, in ANIMATION_WALK
 /// (ObjectMotion_OffsetPositionAndReset).
-void Engine_ActorWalkBy(s32 actor, s32 dx, s32 dz);
+void Engine_ObjectEventWalkBy(s32 objectEvent, s32 dx, s32 dz);
 /// Waits for an actor to arrive, 600 frames at most, and stands it still
 /// (ObjectMotion_CommitCurrentPositionAndActivate).
-void Engine_ActorWaitForMove(s32 actor);
+void Engine_ObjectEventWaitForMove(s32 objectEvent);
 /// Turns an actor toward facing, an angle where 0x10000 is a full turn, then
 /// waits frames (ObjectMotion_ArmCallback).
-void Engine_ActorFaceDirection(s32 actor, s32 facing, s32 frames);
+void Engine_ObjectEventFaceDirection(s32 objectEvent, s32 facing, s32 frames);
 /// Turns actor at once to face target, then waits frames
 /// (ObjectMotion_SetAngleToward).
-void Engine_ActorFaceActor(s32 actor, s32 target, s32 frames);
-/// Turns two actors toward each other, then waits frames (Object_LinkPair).
-void Engine_ActorFaceEachOther(s32 actor, s32 other, s32 frames);
-/// Switches an actor's sprite to an ActorAnimation (Object_SetModeById).
-void Engine_ActorSetAnimation();
-/// Plays an ActorAnimation and waits for it to end
+void Engine_ObjectEventFaceObjectEvent(s32 objectEvent, s32 target, s32 frames);
+/// Turns two actors toward each other, then waits frames
+/// (ObjectEvent_LinkPair).
+void Engine_ObjectEventFaceEachOther(s32 objectEvent, s32 other, s32 frames);
+/// Switches an actor's sprite to an ObjectEventAnimation
+/// (ObjectEvent_SetModeById).
+void Engine_ObjectEventSetAnimation();
+/// Plays an ObjectEventAnimation and waits for it to end
 /// (Motion_SetModeAndWaitAnimation).
-void Engine_ActorSetAnimationAndWait(s32 actor, s32 animation);
+void Engine_ObjectEventSetAnimationAndWait(s32 objectEvent, s32 animation);
 /// Starts an actor squashing and springing back repeats times, 1 to 3
 /// (ObjectMotion_SetVariantCallback).
-void Engine_ActorStartRepeatedMotion(s32 actor, s32 repeats);
-/// The same squash and spring as Engine_ActorStartRepeatedMotion, waiting for
-/// it to end (Motion_SetVarCbAndRefresh).
-void Engine_ActorRunRepeatedMotion(s32 actor, s32 repeats);
+void Engine_ObjectEventStartRepeatedMotion(s32 objectEvent, s32 repeats);
+/// The same squash and spring as Engine_ObjectEventStartRepeatedMotion, waiting
+/// for it to end (Motion_SetVarCbAndRefresh).
+void Engine_ObjectEventRunRepeatedMotion(s32 objectEvent, s32 repeats);
 /// Shows an emote bubble over an actor, which frees itself after 46 frames,
 /// then waits frames (FieldEffect_SpawnLinked). See EMOTE_IN_FRONT.
-void Engine_ActorShowEmote(s32 actor, s32 emote, s32 frames);
+void Engine_ObjectEventShowEmote(s32 objectEvent, s32 emote, s32 frames);
 /// Attaches, removes or plays once the effect object that rides an actor, by
 /// enum AttachedEffectFlag (FieldEffect_ConfigureLinkedObject).
-void Engine_ActorSetAttachedEffect(s32 actor, s32 effect);
+void Engine_ObjectEventSetAttachedEffect(s32 objectEvent, s32 effect);
 /// Fixes an actor's sprite priority, which then no longer follows its depth
 /// (ObjectMotion_SetActionVariant).
-void Engine_ActorSetSpritePriority(s32 actor, s32 priority);
+void Engine_ObjectEventSetSpritePriority(s32 objectEvent, s32 priority);
 /// Sets the flags of a one-sprite object's sprite, bit 0 drawing its shadow
 /// (ObjectDispatch_SetSingleChildFlags).
-void Engine_ActorSetSpriteFlags(struct FieldActor *actor, s32 flags);
-/// Makes the camera follow actor (Camera_FollowActor). Unless keep_position is
-/// set it jumps there at once and, off the world map, the map is redrawn.
-void Engine_CameraFollowActor(s32 actor, s32 keep_position);
+void Engine_ObjectEventSetSpriteFlags(struct ObjectEvent *objectEvent,
+                                      s32 flags);
+/// Makes the camera follow actor (Camera_FollowObjectEvent). Unless
+/// keep_position is set it jumps there at once and, off the world map, the map
+/// is redrawn.
+void Engine_CameraFollowObjectEvent(s32 objectEvent, s32 keep_position);
 /// Sets the camera's top speed and acceleration, in 16.16 pixels per frame
 /// (Camera_SetSpeedParameters).
 void Engine_CameraSetSpeed(s32 speed, s32 acceleration);
@@ -245,27 +251,27 @@ void Engine_CameraSetSpeed(s32 speed, s32 acceleration);
 /// keeps an axis; pan 0 jumps there at once.
 void Engine_CameraMoveTo(s32 fixed_x, s32 fixed_y, s32 fixed_z, s32 pan);
 /// Sends the camera to an actor's x and z, inside the map's edges
-/// (Object_PlaceCurrentWithinCameraBounds).
-void Engine_CameraMoveToActor(s32 actor, s32 pan);
+/// (ObjectEvent_PlaceCurrentWithinCameraBounds).
+void Engine_CameraMoveToObjectEvent(s32 objectEvent, s32 pan);
 /// Waits, 600 frames at most, for the camera to arrive, then two frames more
 /// (Camera_WaitForArrival).
 void Engine_CameraWaitForMove(void);
 /// Copies a rectangle of cells whole, block and attributes, from (sourceX,
 /// sourceY) to (destinationX, destinationY), and redraws those on screen
-/// (Map_CopyMetatileCellsRect).
-void Engine_MapCopyCells(s32 sourceX, s32 sourceY, s32 width, s32 height,
-                         s32 destinationX, s32 destinationY);
+/// (MapGrid_CopyMetatileCellsRect).
+void Engine_MapGridCopyCells(s32 sourceX, s32 sourceY, s32 width, s32 height,
+                             s32 destinationX, s32 destinationY);
 /// Copies only the attributes of a rectangle of cells (flags, collision code
 /// and shape), keeping each destination's block, so nothing on screen changes
-/// (Map_CopyCellAttributeRect).
-void Engine_MapCopyCellAttributes(s32 sourceX, s32 sourceY, s32 width,
-                                  s32 height, s32 destinationX,
-                                  s32 destinationY);
+/// (MapGrid_CopyCellAttributeRect).
+void Engine_MapGridCopyCellAttributes(s32 sourceX, s32 sourceY, s32 width,
+                                      s32 height, s32 destinationX,
+                                      s32 destinationY);
 /// Centres the camera on the point the map follows and scrolls the layers there
-/// (Map_CenterOnFollowedPoint).
-void Engine_MapRedraw(void);
+/// (MapGrid_CenterOnFollowedPoint).
+void Engine_MapGridRedraw(void);
 /// Sets the screen shake's amplitudes and decay, in 16.16, leaving alone the
-/// part whose argument is negative (Map_SetScreenShake).
+/// part whose argument is negative (MapGrid_SetScreenShake).
 void Engine_WorkSetValuesIfNonNegative(s32 first, s32 second, s32 third);
 /// Returns 1 when a game flag is set (GameFlag_Test).
 s32 Engine_GameFlagIsSet(s32 flag);
@@ -316,32 +322,32 @@ s32 Engine_VramLoad(s32 block, s32 size, const void *data);
 /// Creates a field object at (x, y, z) in 16.16 pixels, or returns NULL when
 /// none is free (FieldObject_Create). type / 4096 is its enum ObjectCreateKind
 /// and the low 12 bits the sprite's animation id.
-struct FieldActor *Engine_ObjectCreate(s32 type, s32 fixed_x, s32 fixed_y,
-                                       s32 fixed_z);
+struct ObjectEvent *Engine_ObjectCreate(s32 type, s32 fixed_x, s32 fixed_y,
+                                        s32 fixed_z);
 /// Switches every sprite of an object to an animation, the scene's import name
 /// for ObjectDispatch_SelectAnimation.
-void Object_SetMode(struct FieldActor *object, s32 animation);
+void ObjectEvent_SetMode(struct ObjectEvent *object, s32 animation);
 /// Gives an object a sprite script and starts it from the top
 /// (ObjectDispatch_Initialize).
-void Engine_ObjectSetScript(struct FieldActor *object, const s32 *script);
+void Engine_ObjectSetScript(struct ObjectEvent *object, const s32 *script);
 /// Sets a one-sprite object's OAM blend mode, an ObjectBlendMode
 /// (ObjectDispatch_SetChildBlendMode).
-void Engine_ObjectSetBlendMode(struct FieldActor *object, s32 mode);
+void Engine_ObjectSetBlendMode(struct ObjectEvent *object, s32 mode);
 /// Sets the colour mode (SpriteColorMode) of a one-sprite object's layers,
 /// except those drawn hidden (Animation_ApplyChildValues).
-void Engine_ObjectSetPartPalettes(struct FieldActor *object, s32 palette);
+void Engine_ObjectSetPartPalettes(struct ObjectEvent *object, s32 palette);
 /// Sends an object toward a point in 16.16 pixels, coasting to a stop there
 /// (Object_SetMoveTarget).
-void Engine_ObjectSetPosition(struct FieldActor *object, s32 fixed_x,
+void Engine_ObjectSetPosition(struct ObjectEvent *object, s32 fixed_x,
                               s32 fixed_y, s32 fixed_z);
-/// Plays a cell animation's MAP_CELL_STEP records onto the cell at
+/// Plays a cell animation's MAPGRID_ANIM_STEP records onto the cell at
 /// (destinationX, destinationY), returning only after the last
-/// (Map_PlayMetatileCopySequence).
-void Engine_MapAnimateCells(const u16 *steps, s32 destinationX,
-                            s32 destinationY);
+/// (MapGrid_PlayMetatileCopySequence).
+void Engine_MapGridAnimateCells(const u16 *steps, s32 destinationX,
+                                s32 destinationY);
 /// Moves the actor of a marker to (x, z) on the ground, in 16.16 pixels; -1
-/// keeps the centre of its cell on that axis (Marker_SetActorPosition).
-void Engine_MapObjectSetPosition(s32 object, s32 fixed_x, s32 fixed_z);
+/// keeps the centre of its cell on that axis (Marker_SetObjectEventPosition).
+void Engine_MarkerSetPosition(s32 object, s32 fixed_x, s32 fixed_z);
 /// Draws an item's icon into the glyph work buffer, with no frame or marks
 /// (Ui_PrepareTransferForItem).
 void Engine_ItemLoadIcon(s32 item);
@@ -355,13 +361,13 @@ void Engine_ItemShowFound(s32 item, s32 height);
 s32 Engine_PartyGiveItem(s32 item, s32 flags);
 /// Stops an actor's action and puts it back under the event's control, on the
 /// idle script (ObjectMotion_EnableActionAndResetMotion).
-void Engine_ActorStop(s32 actor);
+void Engine_ObjectEventStop(s32 objectEvent);
 /// Walks an actor to the middle of its 16-pixel column, fixes its sprite
 /// priority, then sends it dz pixels along z (ObjectMotion_CenterOnColumn).
-void Engine_ActorCenterAndWalk(s32 actor, s32 priority, s32 dz);
+void Engine_ObjectEventCenterAndWalk(s32 objectEvent, s32 priority, s32 dz);
 /// Walks an actor (dx, dz) pixels, waits for it to arrive and stands it still
 /// (ObjectMotion_CommitPositionAndActivate).
-void Engine_ActorWalkByAndWait(s32 actor, s32 dx, s32 dz);
+void Engine_ObjectEventWalkByAndWait(s32 objectEvent, s32 dx, s32 dz);
 /// Makes the leader jump two tiles forward where the map has a jump spot
 /// (Field_TryJumpForward). Returns 0 after a jump and -1 when it can't jump.
 s32 Engine_LeaderCheckAhead(void);
@@ -381,57 +387,60 @@ void Engine_PsynergyPlayEffect(s32 effect);
 /// (FieldEffect_StopCasterHook).
 void Engine_PsynergyLowerHands(void);
 /// Stops the wave effect: the caster's colours and the palettes come back and
-/// its work is released (FieldEffect_FinishSceneAndReleaseHeapBlock).
+/// its work is released (FieldEffect_FinishWaveAndReleaseHeapBlock).
 void Engine_PsynergyCancel(void);
-/// Shows the current message as Engine_EventShowMessage does, then waits frames
-/// (FieldEvent_ShowMessageThenWait).
-void Engine_EventShowMessageAndWait(s32 speaker, s32 flags, s32 frames);
-/// Returns the camera object an event moves (Camera_GetEventObject).
-struct FieldActor *Engine_EventGetViewCenter(void);
+/// Shows the current message as Engine_ScriptShowMessage does, then waits
+/// frames (FieldScript_ShowMessageThenWait).
+void Engine_ScriptShowMessageAndWait(s32 speaker, s32 flags, s32 frames);
+/// Returns the camera object an event moves (Camera_GetScriptObject).
+struct ObjectEvent *Engine_ScriptGetViewCenter(void);
 /// Returns the actor in a slot, or NULL (ObjectTable_Get).
-struct FieldActor *Engine_ActorLookup(s32 actor);
+struct ObjectEvent *Engine_ObjectEventLookup(s32 objectEvent);
 /// Releases an actor and empties its place in the actor table
 /// (ObjectTable_DestroyById).
-void Engine_ActorDestroy(s32 actor);
+void Engine_ObjectEventDestroy(s32 objectEvent);
 /// Gives every sprite part of an actor a sprite param; with bit 0x100 the actor
 /// blinks instead (ObjectGroup_ConfigureChildValue).
-void Engine_ActorSetChildValue(s32 actor, s32 value);
-/// Starts an actor's action, an enum ActorBehavior or a script's address, and
+void Engine_ObjectEventSetChildValue(s32 objectEvent, s32 value);
+/// Starts an actor's action, an enum MovementType or a script's address, and
 /// makes it face where it moves (ObjectMotion_EnableActionAndSetCallback).
-void Engine_ActorEnableActionCallback(s32 actor, s32 action);
+void Engine_ObjectEventEnableActionCallback(s32 objectEvent, s32 action);
 /// The engine encodes either a built-in action or an action-script address.
-static inline void Actor_SetActionScript(s32 actor, const s32 *script) {
-  Engine_ActorEnableActionCallback(actor, (s32)script);
+static inline void ObjectEvent_SetActionScript(s32 objectEvent,
+                                               const s32 *script) {
+  Engine_ObjectEventEnableActionCallback(objectEvent, (s32)script);
 }
 
 /// Runs a script, waiting at most 300 frames for its final command.
-static inline void Actor_RunActionScriptAndWait(s32 actor, const s32 *script) {
-  Object_SetActionCallbackAndRefreshById(actor, (s32)script);
+static inline void ObjectEvent_RunActionScriptAndWait(s32 objectEvent,
+                                                      const s32 *script) {
+  ObjectEvent_SetActionCallbackAndRefreshById(objectEvent, (s32)script);
 }
 
-/// Starts one of the engine's own actions on an actor, an enum ActorBehavior,
-/// where Actor_SetActionScript gives it a scene's script.
-static inline void Actor_SetBuiltinAction(s32 actor, s32 action) {
-  Engine_ActorEnableActionCallback(actor, action);
+/// Starts one of the engine's own actions on an actor, an enum MovementType,
+/// where ObjectEvent_SetActionScript gives it a scene's script.
+static inline void ObjectEvent_SetBuiltinAction(s32 objectEvent, s32 action) {
+  Engine_ObjectEventEnableActionCallback(objectEvent, action);
 }
 
-/// Starts an actor's action, an enum ActorBehavior or a script to run, leaving
+/// Starts an actor's action, an enum MovementType or a script to run, leaving
 /// its facing flag alone (ObjectMotion_SetActionCallback).
-void Engine_ActorSetActionCallback(struct FieldActor *actor, s32 value);
+void Engine_ObjectEventSetActionCallback(struct ObjectEvent *objectEvent,
+                                         s32 value);
 /// Puts back the actors ObjectTable_Snapshot saved and moves the camera to the
 /// leader's height (ObjectTable_Restore).
-void Engine_ActorsRefresh(void);
+void Engine_ObjectEventsRefresh(void);
 /// Copies the block numbers of a rectangle of cells, keeping each destination's
 /// attributes, and redraws the copied cells on screen
-/// (Map_CopyMetatileIndicesRect). It takes the destination before the size.
-void Engine_MapCopyCellsTo(s32 sourceX, s32 sourceY, s32 destinationX,
-                           s32 destinationY, s32 width, s32 height);
+/// (MapGrid_CopyMetatileIndicesRect). It takes the destination before the size.
+void Engine_MapGridCopyCellsTo(s32 sourceX, s32 sourceY, s32 destinationX,
+                               s32 destinationY, s32 width, s32 height);
 /// Copies the block numbers of a rectangle of cells, keeping each destination's
-/// attributes (Map_CopyCellIndexRect). XXX: the routine and its callers
+/// attributes (MapGrid_CopyCellIndexRect). XXX: the routine and its callers
 /// (lalivero.c) pass the size before the destination, as the parameter names
 /// here do not.
-void Engine_MapCopyCellsLayered(s32 sourceX, s32 sourceY, s32 destinationX,
-                                s32 destinationY, s32 width, s32 height);
+void Engine_MapGridCopyCellsLayered(s32 sourceX, s32 sourceY, s32 destinationX,
+                                    s32 destinationY, s32 width, s32 height);
 /// Sets the colours the colour buffer shows now (ColorBuffer_SetSource): value
 /// is one colour, a PALETTE_TRANSFORM_ value or a ready buffer, and mode picks
 /// all palettes (0), the BG's (1) or the OBJ's (2).
@@ -442,135 +451,143 @@ void Engine_ColorBufferApplyTarget(s32 value, s32 mode);
 /// Starts moving the shown colours to the target colours over frames
 /// (ColorBuffer_StartInterpolation).
 void Engine_ColorBufferInterpolate(s32 frames);
-/// Sends an actor toward (x, z) as Engine_ActorSetDestination does, then waits
-/// for it, giving up after 600 frames (ObjectMotion_SetPositionAndCommit).
-void Engine_ActorMoveToAndWait(s32 actor, s32 x, s32 z);
+/// Sends an actor toward (x, z) as Engine_ObjectEventSetDestination does, then
+/// waits for it, giving up after 600 frames
+/// (ObjectMotion_SetPositionAndCommit).
+void Engine_ObjectEventMoveToAndWait(s32 objectEvent, s32 x, s32 z);
 /// Walks an actor to (x, z), in pixels, waits for it to arrive and stands it in
 /// ANIMATION_STAND (ObjectMotion_SetPositionAndReset).
-void Engine_ActorWalkToAndWait(s32 actor, s32 x, s32 z);
+void Engine_ObjectEventWalkToAndWait(s32 objectEvent, s32 x, s32 z);
 /// Throws an actor upward at height pixels per frame with a jump sound, then
 /// waits frames while gravity brings it down (ObjectMotion_Launch).
-void Engine_ActorJump(s32 actor, s32 height, s32 frames);
+void Engine_ObjectEventJump(s32 objectEvent, s32 height, s32 frames);
 /// Two actors speak at once, each message and portrait at its own tile
 /// position, until A, B, L or R closes both
-/// (FieldEvent_ShowTwoMessagesAndWait). The routine takes ten arguments and
+/// (FieldScript_ShowTwoMessagesAndWait). The routine takes ten arguments and
 /// never reads flags.
-void Engine_EventShowTwoMessagesAndWait(s32 speaker, s32 x, s32 y, s32 arg,
-                                        s32 extra, s32 other_speaker,
-                                        s32 otherX, s32 other_y, s32 other_arg,
-                                        s32 other_extra, s32 flags);
+void Engine_ScriptShowTwoMessagesAndWait(s32 speaker, s32 x, s32 y, s32 arg,
+                                         s32 extra, s32 other_speaker,
+                                         s32 otherX, s32 other_y, s32 other_arg,
+                                         s32 other_extra, s32 flags);
 /// Adds two units to the party and announces them together
-/// (Event_PrepareTwoObjectsAndApply); Vale's scene calls it twice.
+/// (FieldScript_PrepareTwoObjectsAndApply); Vale's scene calls it twice.
 void Engine_PartyAddMembers(s32 first, s32 second);
 /// Waits until both shake amplitudes are below 1/256 pixel, 300 frames at
-/// most, then stops the shake (Map_WaitForShakeToSettle).
-void Engine_MapRenderWaitForValues(void);
+/// most, then stops the shake (MapGrid_WaitForShakeToSettle).
+void Engine_MapGridRenderWaitForValues(void);
 
-/// The same move and wait as Engine_ActorMoveToAndWait, under a second import
-/// name (ObjectMotion_SetPositionAndCommit).
-void Engine_ObjectMotionSetPositionAndCommit(s32 actor, s32 x, s32 z);
+/// The same move and wait as Engine_ObjectEventMoveToAndWait, under a second
+/// import name (ObjectMotion_SetPositionAndCommit).
+void Engine_ObjectMotionSetPositionAndCommit(s32 objectEvent, s32 x, s32 z);
 /// Releases an object's sprites and zeroes it, so it can be handed out again
 /// (ObjectDispatch_Release).
-void Engine_ObjectDispatchRelease(struct FieldActor *object);
-/// The shake wait of Engine_MapRenderWaitForValues under the name Goma Cave
-/// Entrance imports it by (Map_WaitForShakeToSettle).
-void Engine_MapWaitWorkValuesBelow256(void);
+void Engine_ObjectDispatchRelease(struct ObjectEvent *object);
+/// The shake wait of Engine_MapGridRenderWaitForValues under the name Goma Cave
+/// Entrance imports it by (MapGrid_WaitForShakeToSettle).
+void Engine_MapGridWaitWorkValuesBelow256(void);
 /// Shows a found item's picture object; bit 0 of mode adds sparkles and bit 1
 /// raises it above the leader (ItemDisplay_ShowPicture).
-void Engine_ItemShowPicture(struct FieldActor *object, s32 mode);
+void Engine_ItemShowPicture(struct ObjectEvent *object, s32 mode);
 
-#ifdef FIELD_STAGED_ACTOR_IMPORTS
-/// Declared for the scenes that define FIELD_STAGED_ACTOR_IMPORTS in place of
-/// Event_PlayCue. Nothing calls it and no import resolves it: those scenes call
-/// Engine_AudioPlayCue.
+#ifdef FIELD_STAGED_OBJ_EVENT_IMPORTS
+/// Declared for the scenes that define FIELD_STAGED_OBJ_EVENT_IMPORTS in place
+/// of Script_PlayCue. Nothing calls it and no import resolves it: those scenes
+/// call Engine_AudioPlayCue.
 void Audio_PlayCue(s32 cue);
 #endif
 
 /// Moves the event's message number count messages on, past lines the scene
 /// doesn't show.
-static inline void Event_SkipMessages(s32 count) {
+static inline void Script_SkipMessages(s32 count) {
   u16 *message = &gEventWork->message;
 
   *message = *message + count;
 }
 
 /// Shows the scene's next line of dialogue and waits for the player to read it.
-static inline void Event_ShowMessage(s32 speaker, s32 flags) {
-  Engine_EventShowMessage(speaker, flags);
+static inline void Script_ShowMessage(s32 speaker, s32 flags) {
+  Engine_ScriptShowMessage(speaker, flags);
 }
 
 /// Opens the scene's next line and returns its window once the text is typed
 /// out, so the scene can act while it is still on screen.
-static inline s32 Event_OpenMessage(s32 speaker, s32 flags) {
-  return Engine_EventOpenMessage(speaker, flags);
+static inline s32 Script_OpenMessage(s32 speaker, s32 flags) {
+  return Engine_ScriptOpenMessage(speaker, flags);
 }
 
 /// Puts the current line to the player as a question and shows the line that
 /// answers it; returns 0 for yes.
-static inline s32 Event_AskYesNo(s32 speaker, s32 flags) {
-  return Engine_EventAskYesNo(speaker, flags);
+static inline s32 Script_AskYesNo(s32 speaker, s32 flags) {
+  return Engine_ScriptAskYesNo(speaker, flags);
 }
 
-/// Looks up an actor for a scene, NULL when it doesn't exist (Object_GetById).
-static inline struct FieldActor *Actor_Get(s32 actor) {
-  return Object_GetById(actor);
+/// Looks up an actor for a scene, NULL when it doesn't exist
+/// (ObjectEvent_GetById).
+static inline struct ObjectEvent *ObjectEvent_Get(s32 objectEvent) {
+  return ObjectEvent_GetById(objectEvent);
 }
 
 /// Places an actor at a point at once, without walking it there.
-static inline void Actor_SetPosition(s32 actor, s32 fixed_x, s32 fixed_z) {
-  Engine_ActorSetPosition(actor, fixed_x, fixed_z);
+static inline void ObjectEvent_SetPosition(s32 objectEvent, s32 fixed_x,
+                                           s32 fixed_z) {
+  Engine_ObjectEventSetPosition(objectEvent, fixed_x, fixed_z);
 }
 
 /// Sets how fast an actor moves, and how quickly it gets up to speed, for the
 /// scene's next moves.
-static inline void Actor_SetSpeed(s32 actor, s32 speed, s32 acceleration) {
-  Engine_ActorSetSpeed(actor, speed, acceleration);
+static inline void ObjectEvent_SetSpeed(s32 objectEvent, s32 speed,
+                                        s32 acceleration) {
+  Engine_ObjectEventSetSpeed(objectEvent, speed, acceleration);
 }
 
 /// Moves an actor to a point in the pose it has, without walking; the scene
 /// carries on meanwhile.
-static inline void Actor_SetDestination(s32 actor, s32 x, s32 z) {
-  Engine_ActorSetDestination(actor, x, z);
+static inline void ObjectEvent_SetDestination(s32 objectEvent, s32 x, s32 z) {
+  Engine_ObjectEventSetDestination(objectEvent, x, z);
 }
 
-#ifndef FIELD_STAGED_ACTOR_IMPORTS
+#ifndef FIELD_STAGED_OBJ_EVENT_IMPORTS
 /// Moves an actor some distance from where it stands, without waiting for it.
-static inline void Actor_SetDestinationOffset(s32 actor, s32 dx, s32 dz) {
-  Engine_ActorSetDestinationOffset(actor, dx, dz);
+static inline void ObjectEvent_SetDestinationOffset(s32 objectEvent, s32 dx,
+                                                    s32 dz) {
+  Engine_ObjectEventSetDestinationOffset(objectEvent, dx, dz);
 }
 #endif
 
 /// Walks an actor to a point; the scene goes on while it walks.
-static inline void Actor_WalkTo(s32 actor, s32 x, s32 z) {
-  Engine_ActorWalkTo(actor, x, z);
+static inline void ObjectEvent_WalkTo(s32 objectEvent, s32 x, s32 z) {
+  Engine_ObjectEventWalkTo(objectEvent, x, z);
 }
 
 /// Walks an actor some distance from where it stands, without waiting for it
 /// to get there.
-static inline void Actor_WalkBy(s32 actor, s32 dx, s32 dz) {
-  Engine_ActorWalkBy(actor, dx, dz);
+static inline void ObjectEvent_WalkBy(s32 objectEvent, s32 dx, s32 dz) {
+  Engine_ObjectEventWalkBy(objectEvent, dx, dz);
 }
 
 /// Turns an actor to a direction and holds the scene for a few frames.
-static inline void Actor_FaceDirection(s32 actor, s32 facing, s32 frames) {
-  Engine_ActorFaceDirection(actor, facing, frames);
+static inline void ObjectEvent_FaceDirection(s32 objectEvent, s32 facing,
+                                             s32 frames) {
+  Engine_ObjectEventFaceDirection(objectEvent, facing, frames);
 }
 
 /// Has one actor look at another at once, then pauses the scene.
-static inline void Actor_FaceActor(s32 actor, s32 target, s32 frames) {
-  Engine_ActorFaceActor(actor, target, frames);
+static inline void ObjectEvent_FaceObjectEvent(s32 objectEvent, s32 target,
+                                               s32 frames) {
+  Engine_ObjectEventFaceObjectEvent(objectEvent, target, frames);
 }
 
 /// Pops an emote bubble up over an actor, then lets frames pass before the
 /// scene goes on.
-static inline void Actor_ShowEmote(s32 actor, s32 emote, s32 frames) {
-  Engine_ActorShowEmote(actor, emote, frames);
+static inline void ObjectEvent_ShowEmote(s32 objectEvent, s32 emote,
+                                         s32 frames) {
+  Engine_ObjectEventShowEmote(objectEvent, emote, frames);
 }
 
 /// Attaches an effect object to an actor, takes it off, or plays one over it
 /// once.
-static inline void Actor_SetAttachedEffect(s32 actor, s32 effect) {
-  Engine_ActorSetAttachedEffect(actor, effect);
+static inline void ObjectEvent_SetAttachedEffect(s32 objectEvent, s32 effect) {
+  Engine_ObjectEventSetAttachedEffect(objectEvent, effect);
 }
 
 /// Sets how fast the camera pans for the scene's next camera moves.
@@ -586,53 +603,54 @@ static inline void Camera_MoveTo(s32 fixed_x, s32 fixed_y, s32 fixed_z,
 
 /// Changes part of the room in place, copying whole cells, picture and
 /// collision alike, from another part of the map.
-static inline void Map_CopyCells(s32 sourceX, s32 sourceY, s32 width,
-                                 s32 height, s32 destinationX,
-                                 s32 destinationY) {
-  Engine_MapCopyCells(sourceX, sourceY, width, height, destinationX,
-                      destinationY);
+static inline void MapGrid_CopyCells(s32 sourceX, s32 sourceY, s32 width,
+                                     s32 height, s32 destinationX,
+                                     s32 destinationY) {
+  Engine_MapGridCopyCells(sourceX, sourceY, width, height, destinationX,
+                          destinationY);
 }
 
 /// Changes where the party can walk in part of the room, copying only the
 /// cells' collision and flags.
-static inline void Map_CopyCellAttributes(s32 sourceX, s32 sourceY, s32 width,
-                                          s32 height, s32 destinationX,
-                                          s32 destinationY) {
-  Engine_MapCopyCellAttributes(sourceX, sourceY, width, height, destinationX,
-                               destinationY);
+static inline void MapGrid_CopyCellAttributes(s32 sourceX, s32 sourceY,
+                                              s32 width, s32 height,
+                                              s32 destinationX,
+                                              s32 destinationY) {
+  Engine_MapGridCopyCellAttributes(sourceX, sourceY, width, height,
+                                   destinationX, destinationY);
 }
 
 /// Sets shake amplitudes in fixed-point pixels and the per-frame decay factor.
 /// A negative argument keeps that component unchanged; Q16_ONE keeps the shake.
-static inline void Map_SetShake(s32 horizontal, s32 vertical, s32 decay) {
+static inline void MapGrid_SetShake(s32 horizontal, s32 vertical, s32 decay) {
   Engine_WorkSetValuesIfNonNegative(horizontal, vertical, decay);
 }
 
-/// A scene's GameFlag_Set is FieldEvent_GameFlagSet, which keeps it apart from
+/// A scene's GameFlag_Set is FieldScript_GameFlagSet, which keeps it apart from
 /// the main image's declaration in game_flags.h.
-#define GameFlag_Set FieldEvent_GameFlagSet
-/// FieldEvent_GameFlagIsSet, apart from field.h's GameFlag_IsSet.
-#define GameFlag_IsSet FieldEvent_GameFlagIsSet
-/// FieldEvent_GameFlagClear, apart from game_flags.h's GameFlag_Clear.
-#define GameFlag_Clear FieldEvent_GameFlagClear
+#define GameFlag_Set FieldScript_GameFlagSet
+/// FieldScript_GameFlagIsSet, apart from field.h's GameFlag_IsSet.
+#define GameFlag_IsSet FieldScript_GameFlagIsSet
+/// FieldScript_GameFlagClear, apart from game_flags.h's GameFlag_Clear.
+#define GameFlag_Clear FieldScript_GameFlagClear
 /// Lets a scene branch on what the player has done: 1 when the FLAG_ is set.
-static inline s32 FieldEvent_GameFlagIsSet(s32 flag) {
+static inline s32 FieldScript_GameFlagIsSet(s32 flag) {
   return Engine_GameFlagIsSet(flag);
 }
 
 /// Records something for later scenes to test, setting its FLAG_.
-static inline void FieldEvent_GameFlagSet(s32 flag) {
+static inline void FieldScript_GameFlagSet(s32 flag) {
   Engine_GameFlagSet(flag);
 }
 
-/// Clears a FLAG_ a scene tracks, such as a FLAG_SCENE_TEMP_ one.
-static inline void FieldEvent_GameFlagClear(s32 flag) {
+/// Clears a FLAG_ a scene tracks, such as a FLAG_MAP_TEMP_ one.
+static inline void FieldScript_GameFlagClear(s32 flag) {
   Engine_GameFlagClear(flag);
 }
 
-#ifndef FIELD_STAGED_ACTOR_IMPORTS
+#ifndef FIELD_STAGED_OBJ_EVENT_IMPORTS
 /// Plays a sound effect or music from a scene: the SE command of event.h.
-static inline void Event_PlayCue(s32 cue) { Engine_AudioPlayCue(cue); }
+static inline void Script_PlayCue(s32 cue) { Engine_AudioPlayCue(cue); }
 #endif
 
 /// A random number from 0 to 0xffff for a scene.
@@ -645,14 +663,14 @@ static inline s32 Math_Divide(s32 dividend, s32 divisor) {
 
 /// Creates a free object in the room, outside the actor table, or returns NULL
 /// when every object is taken.
-static inline struct FieldActor *Object_Create(s32 type, s32 fixed_x,
-                                               s32 fixed_y, s32 fixed_z) {
+static inline struct ObjectEvent *ObjectEvent_Create(s32 type, s32 fixed_x,
+                                                     s32 fixed_y, s32 fixed_z) {
   return Engine_ObjectCreate(type, fixed_x, fixed_y, fixed_z);
 }
 
 /// Starts an object on a sprite script from its first command.
-static inline void Object_SetScript(struct FieldActor *object,
-                                    const s32 *script) {
+static inline void ObjectEvent_SetScript(struct ObjectEvent *object,
+                                         const s32 *script) {
   Engine_ObjectSetScript(object, script);
 }
 
@@ -662,36 +680,37 @@ enum ObjectBlendMode { OBJECT_BLEND_NORMAL = 0, OBJECT_BLEND_TRANSLUCENT = 1 };
 
 /// Plays a cell animation, such as a door opening, and holds the scene until
 /// its last step.
-static inline void Map_AnimateCells(const u16 *steps, s32 destinationX,
-                                    s32 destinationY) {
-  Engine_MapAnimateCells(steps, destinationX, destinationY);
+static inline void MapGrid_AnimateCells(const u16 *steps, s32 destinationX,
+                                        s32 destinationY) {
+  Engine_MapGridAnimateCells(steps, destinationX, destinationY);
 }
 
 /// Moves a marker's actor to a point on the ground.
-static inline void MapObject_SetPosition(s32 object, s32 fixed_x, s32 fixed_z) {
-  Engine_MapObjectSetPosition(object, fixed_x, fixed_z);
+static inline void Marker_SetPosition(s32 object, s32 fixed_x, s32 fixed_z) {
+  Engine_MarkerSetPosition(object, fixed_x, fixed_z);
 }
 
 /// Lines an actor up with the middle of its column, then walks it straight
 /// along z.
-static inline void Actor_CenterAndWalk(s32 actor, s32 priority, s32 dz) {
-  Engine_ActorCenterAndWalk(actor, priority, dz);
+static inline void ObjectEvent_CenterAndWalk(s32 objectEvent, s32 priority,
+                                             s32 dz) {
+  Engine_ObjectEventCenterAndWalk(objectEvent, priority, dz);
 }
 
 /// Walks an actor some distance and waits until it is there.
-static inline void Actor_WalkByAndWait(s32 actor, s32 dx, s32 dz) {
-  Engine_ActorWalkByAndWait(actor, dx, dz);
+static inline void ObjectEvent_WalkByAndWait(s32 objectEvent, s32 dx, s32 dz) {
+  Engine_ObjectEventWalkByAndWait(objectEvent, dx, dz);
 }
 
 /// Shows a line of dialogue, then pauses before the scene goes on.
-static inline void Event_ShowMessageAndWait(s32 speaker, s32 flags,
-                                            s32 frames) {
-  Engine_EventShowMessageAndWait(speaker, flags, frames);
+static inline void Script_ShowMessageAndWait(s32 speaker, s32 flags,
+                                             s32 frames) {
+  Engine_ScriptShowMessageAndWait(speaker, flags, frames);
 }
 
 /// Sets a sprite param on every part of an actor's sprite, or makes it blink.
-static inline void Actor_SetChildValue(s32 actor, s32 value) {
-  Engine_ActorSetChildValue(actor, value);
+static inline void ObjectEvent_SetChildValue(s32 objectEvent, s32 value) {
+  Engine_ObjectEventSetChildValue(objectEvent, value);
 }
 
 /// Not used in TBS.
@@ -699,19 +718,20 @@ static inline void Actor_SetChildValue(s32 actor, s32 value) {
 
 /// Changes what part of the room shows, copying the cells' pictures but not
 /// their collision.
-static inline void Map_CopyCellsTo(s32 sourceX, s32 sourceY, s32 destinationX,
-                                   s32 destinationY, s32 width, s32 height) {
-  Engine_MapCopyCellsTo(sourceX, sourceY, destinationX, destinationY, width,
-                        height);
+static inline void MapGrid_CopyCellsTo(s32 sourceX, s32 sourceY,
+                                       s32 destinationX, s32 destinationY,
+                                       s32 width, s32 height) {
+  Engine_MapGridCopyCellsTo(sourceX, sourceY, destinationX, destinationY, width,
+                            height);
 }
 
-/// Changes the pictures of part of the room as Map_CopyCellsTo does, through
-/// Map_CopyCellIndexRect, which takes the size first.
-static inline void Map_CopyCellsLayered(s32 sourceX, s32 sourceY,
-                                        s32 destinationX, s32 destinationY,
-                                        s32 width, s32 height) {
-  Engine_MapCopyCellsLayered(sourceX, sourceY, destinationX, destinationY,
-                             width, height);
+/// Changes the pictures of part of the room as MapGrid_CopyCellsTo does,
+/// through MapGrid_CopyCellIndexRect, which takes the size first.
+static inline void MapGrid_CopyCellsLayered(s32 sourceX, s32 sourceY,
+                                            s32 destinationX, s32 destinationY,
+                                            s32 width, s32 height) {
+  Engine_MapGridCopyCellsLayered(sourceX, sourceY, destinationX, destinationY,
+                                 width, height);
 }
 
 /// Sets the colours the screen shows now, where a scene's colour fade starts.
@@ -725,24 +745,24 @@ static inline void ColorBuffer_ApplyTarget(s32 value, s32 mode) {
 }
 
 /// Moves an actor to a point in the pose it has and waits for it.
-static inline void Actor_MoveToAndWait(s32 actor, s32 x, s32 z) {
-  Engine_ActorMoveToAndWait(actor, x, z);
+static inline void ObjectEvent_MoveToAndWait(s32 objectEvent, s32 x, s32 z) {
+  Engine_ObjectEventMoveToAndWait(objectEvent, x, z);
 }
 
 /// Walks an actor to a point and waits for it, then stands it still.
-static inline void Actor_WalkToAndWait(s32 actor, s32 x, s32 z) {
-  Engine_ActorWalkToAndWait(actor, x, z);
+static inline void ObjectEvent_WalkToAndWait(s32 objectEvent, s32 x, s32 z) {
+  Engine_ObjectEventWalkToAndWait(objectEvent, x, z);
 }
 
 /// Has two actors speak at once, each window placed by the scene.
-static inline void Event_ShowTwoMessagesAndWait(s32 speaker, s32 x, s32 y,
-                                                s32 arg, s32 extra,
-                                                s32 otherSpeaker, s32 otherX,
-                                                s32 otherY, s32 otherArg,
-                                                s32 otherExtra, s32 flags) {
-  Engine_EventShowTwoMessagesAndWait(speaker, x, y, arg, extra, otherSpeaker,
-                                     otherX, otherY, otherArg, otherExtra,
-                                     flags);
+static inline void Script_ShowTwoMessagesAndWait(s32 speaker, s32 x, s32 y,
+                                                 s32 arg, s32 extra,
+                                                 s32 otherSpeaker, s32 otherX,
+                                                 s32 otherY, s32 otherArg,
+                                                 s32 otherExtra, s32 flags) {
+  Engine_ScriptShowTwoMessagesAndWait(speaker, x, y, arg, extra, otherSpeaker,
+                                      otherX, otherY, otherArg, otherExtra,
+                                      flags);
 }
 
 #endif

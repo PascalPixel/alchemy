@@ -18,7 +18,7 @@
 ///   Screen          fade.c: Fade_Start; render.c: Render_BuildOamList;
 ///                   vram_cache.c: VramCache_Load
 ///   Memory          heap.c: Runtime_AllocateHeapBlock, MemAlloc
-///   3D              transform.c: SceneTransform_ApplyRotationTranslation,
+///   3D              transform.c: Transform_ApplyRotationTranslation,
 ///                   Render_ProjectPoint
 ///   Saving          save.c: SaveState_WriteRecord,
 ///                   SaveState_ReadRecordPayload

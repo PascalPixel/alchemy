@@ -171,27 +171,26 @@ u32 SaveState_BuildSummaryHeader(void) {
   summary = (struct SaveSummary *)((u32)gSaveBuffer - 16);
   gGameState.buildStamp = Runtime_GetBuildStampTimeFar(0);
   gGameState.playTime = gPlayTimeFrames;
-  // A second copy of the play time, 256 bytes from gSceneState: past its
-  // 0x78 bytes, in gInventorySnapshot's last word. gSceneState opens the save
-  // buffer's second half, so this lands at offset 0x110 of the file's second
-  // record (after its 16-byte header), which
+  // A second copy of the play time, 256 bytes from gMapLocalState: past its
+  // 0x78 bytes, in gInventorySnapshot's last word. gMapLocalState opens the
+  // save buffer's second half, so this lands at offset 0x110 of the file's
+  // second record (after its 16-byte header), which
   // SaveState_LoadSummaryRecords reads back into SaveSummary.unk38: the file
   // menu lists a file whose two play times differ as corrupted.
   {
-    u32 *copy = (u32 *)gSceneState;
+    u32 *copy = (u32 *)gMapLocalState;
     copy[64] = gPlayTimeFrames;
   }
   gGameState.idleSleepEnabled = gIdleSleepEnabled;
 
-  leader = Unit_GetFar(gGameState.selectedActor);
+  leader = Unit_GetFar(gGameState.selectedObjectEvent);
   destination = summary->name;
   source = leader->name;
   for (i = 11; i >= 0; i--)
     *destination++ = *source++;
   summary->level = leader->level;
   summary->playTime = gGameState.playTime;
-  summary->area =
-      Scene_GetAreaNameIndexFar(gGameState.scene, gGameState.entrance);
+  summary->area = MapSec_GetNameIndexFar(gGameState.mapId, gGameState.warpDest);
   summary->classId = leader->classIndex;
   summary->coins = gGameState.coins;
   summary->djinn[0] = Party_SumDjinnCountsFar(0);
@@ -970,7 +969,7 @@ s32 SaveMenu_SelectSlot(s32 selectedFile, s32 menuMode) {
       UiText_DrawResource(MsgSaveNoData, fileList, 10, y);
     } else if (summary->frames < buildStamp) {
       // Saved by an older build: "(Continue from a Sanctum)", since such a
-      // file resumes at GameState.savedScene, not where it was saved
+      // file resumes at GameState.savedMap, not where it was saved
       // (menu/clear.c).
       UiText_DrawResource(MsgSaveContinue, fileList, 10, y);
     } else if (summary->playTime != *(u32 *)summary->unk38) {

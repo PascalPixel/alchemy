@@ -1,25 +1,25 @@
-#ifndef ALCHEMY_UNIT_SCENE_MCCOY_PALACE_H
-#define ALCHEMY_UNIT_SCENE_MCCOY_PALACE_H
+#ifndef ALCHEMY_UNIT_MAP_MCCOY_PALACE_H
+#define ALCHEMY_UNIT_MAP_MCCOY_PALACE_H
 
 #include "types.h"
 #include "map_tables.h"
 
-struct SceneEvent;
-struct ScenePlacement;
+struct MapEvent;
+struct ObjectEventTemplate;
 
-const struct SceneEntrance *Scene_GetEntrances(void);
-const struct SceneRegion *Scene_GetRegions(void);
-const u32 *Scene_GetExits(void);
-const struct ScenePlacement *Scene_GetPlacements(void);
-const struct SceneEvent *Scene_GetEvents(void);
-s32 Scene_Initialize(void);
+const struct MapWarpDest *Map_GetWarpDests(void);
+const struct MapWarpRegion *Map_GetWarpRegions(void);
+const u32 *Map_GetWarps(void);
+const struct ObjectEventTemplate *Map_GetObjectEventTemplates(void);
+const struct MapEvent *Map_GetEvents(void);
+s32 Map_Initialize(void);
 extern s32 gPalace_FacingActions[];
 extern s32 gPalace_PacingActions[];
-extern struct SceneEntrance gMcCoyPalaceEntrances[];
-extern u32 gMcCoyPalaceExits[];
-extern struct ScenePlacement gMcCoyPalaceNoPlacements[];
-extern struct ScenePlacement gMcCoyPalacePlacements[];
-extern struct SceneEvent gMcCoyPalaceNoEvents[];
-extern struct SceneEvent gMcCoyPalaceEvents[];
+extern struct MapWarpDest gMcCoyPalaceWarpDests[];
+extern u32 gMcCoyPalaceWarps[];
+extern struct ObjectEventTemplate gMcCoyPalaceNoObjectEventTemplates[];
+extern struct ObjectEventTemplate gMcCoyPalaceObjectEventTemplates[];
+extern struct MapEvent gMcCoyPalaceNoEvents[];
+extern struct MapEvent gMcCoyPalaceEvents[];
 
 #endif

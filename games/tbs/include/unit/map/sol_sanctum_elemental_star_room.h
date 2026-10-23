@@ -1,14 +1,15 @@
-#ifndef ALCHEMY_UNIT_SCENE_SOL_SANCTUM_ELEMENTAL_STAR_ROOM_H
-#define ALCHEMY_UNIT_SCENE_SOL_SANCTUM_ELEMENTAL_STAR_ROOM_H
+#ifndef ALCHEMY_UNIT_MAP_SOL_SANCTUM_ELEMENTAL_STAR_ROOM_H
+#define ALCHEMY_UNIT_MAP_SOL_SANCTUM_ELEMENTAL_STAR_ROOM_H
 
 #include "types.h"
 #include "map_tables.h"
 
-const struct SceneEntrance *SolSanctumElementalStarRoom_GetEntrances(void);
-const struct SceneRegion *SolSanctumElementalStarRoom_GetRegions(void);
-const u32 *SolSanctumElementalStarRoom_GetExits(void);
-const struct ScenePlacement *SolSanctumElementalStarRoom_GetPlacements(void);
-const struct SceneEvent *SolSanctumElementalStarRoom_GetEvents(void);
+const struct MapWarpDest *SolSanctumElementalStarRoom_GetWarpDests(void);
+const struct MapWarpRegion *SolSanctumElementalStarRoom_GetRegions(void);
+const u32 *SolSanctumElementalStarRoom_GetWarps(void);
+const struct ObjectEventTemplate *
+SolSanctumElementalStarRoom_GetObjectEventTemplates(void);
+const struct MapEvent *SolSanctumElementalStarRoom_GetEvents(void);
 s32 SolSanctumElementalStarRoom_Initialize(void);
 extern s32 gEffectScript0[];
 extern s32 gEffectScript1[];
@@ -16,10 +17,11 @@ extern s32 gEffectScript2[];
 extern const s32 *gEffectScripts[];
 extern s32 gSolSanctumElementalStarRoom_AngleScript[];
 extern s32 gSolSanctumElementalStarRoom_PresentItemScript[];
-extern struct SceneEntrance gSolSanctumElementalStarRoom_Entrances[];
-extern u32 gSolSanctumElementalStarRoom_Exits[];
-extern struct ScenePlacement gSolSanctumElementalStarRoom_Placements[];
-extern struct SceneEvent gSolSanctumElementalStarRoom_Events[];
+extern struct MapWarpDest gSolSanctumElementalStarRoom_WarpDests[];
+extern u32 gSolSanctumElementalStarRoom_Warps[];
+extern struct ObjectEventTemplate
+    gSolSanctumElementalStarRoom_ObjectEventTemplates[];
+extern struct MapEvent gSolSanctumElementalStarRoom_Events[];
 extern u16 gSolSanctumElementalStarRoom_StarCells[];
 extern u8 gSolSanctum_RingDrift[][3];
 extern u8 gSolSanctum_RingSwing[][3];

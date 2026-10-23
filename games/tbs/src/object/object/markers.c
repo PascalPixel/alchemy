@@ -7,16 +7,18 @@
 /// Sets an actor's y and terrainHeight to the map's height at its x and z.
 /// Called by Field_PlaceMapMarkers for each marker it places.
 void ObjectMotion_SnapToTerrain(void *object) {
-  struct ObjectRuntime *actor = object;
+  struct ObjectRuntime *objectEvent = object;
   s32 terrainHeight;
 
-  terrainHeight = Map_GetTerrainHeightFar(0, actor->x, actor->z);
-  actor->y = terrainHeight;
-  actor->terrainHeight = terrainHeight;
+  terrainHeight =
+      MapGrid_GetTerrainHeightFar(0, objectEvent->x, objectEvent->z);
+  objectEvent->y = terrainHeight;
+  objectEvent->terrainHeight = terrainHeight;
 }
 
-/// The map's work (gMapWork[0], HEAP_SLOT_MAP), seen as its marker list.
-struct MarkerMap {
+/// The map's work (gMapGridWork[0], HEAP_SLOT_MAP_GRID), seen as its marker
+/// list.
+struct MapGridMarkers {
   u8 unk00[0x10];
   /// (column, row, id) triples, ended by 255, 255: a 16-pixel cell and the
   /// trigger of the scene event there; NULL for a map with none.
@@ -39,23 +41,23 @@ enum {
 /// shown open once its flag is set and gone once its mimic was beaten, and a
 /// Psynergy Stone for a search event giving one, until it is
 /// taken. A marker with no such event takes no slot. The objects are kept in
-/// work->markers, not in actor slots. Called by Field_RunScene on scene load;
+/// work->markers, not in actor slots. Called by Field_RunMap on scene load;
 /// clears and fills work->markers.
 void Field_PlaceMapMarkers(void) {
   u32 id;
-  struct MarkerMap *map = gMapWork[0];
+  struct MapGridMarkers *grid = gMapGridWork[0];
 #ifdef UBFIX
   struct FieldWork *work = (struct FieldWork *)gEventWork;
 #else
-  // UB: the event cell is a separate global, beyond gMapWork's one pointer.
+  // UB: the event cell is a separate global, beyond gMapGridWork's one pointer.
   // Reading gEventWork plainly grows 0x254 to 0x25c bytes in English.
-  struct FieldWork *work = gMapWork[HEAP_SLOT_EVENT - HEAP_SLOT_MAP];
+  struct FieldWork *work = gMapGridWork[HEAP_SLOT_EVENT - HEAP_SLOT_MAP_GRID];
 #endif
   s32 markerCount = 0;
-  u8 *list = map->markers;
+  u8 *list = grid->markers;
   struct MarkerSlot *marker = work->markers;
-  const struct SceneEvent *event;
-  struct ScriptObjectRuntime *markerActor;
+  const struct MapEvent *event;
+  struct ScriptObjectRuntime *markerObjectEvent;
   u32 column;
   u32 row;
 
@@ -76,64 +78,68 @@ void Field_PlaceMapMarkers(void) {
       for (; event->control != -1; event++) {
         if (event->trigger != id)
           continue;
-        if ((event->control & 0x1ff) == SEARCH(SEARCH_CHEST)) {
+        if ((event->control & 0x1ff) == BG_EVENT(BG_EVENT_CHEST)) {
           // A chest, at the centre of its cell (cells are 16 pixels, and
           // positions 16.16).
-          markerActor = (struct ScriptObjectRuntime *)Object_CreateFar(
+          markerObjectEvent = (struct ScriptObjectRuntime *)Object_CreateFar(
               MARKER_CHEST_SPRITE, (column << 20) + 0x80000, 0,
               (row << 20) + 0x80000);
-          if (markerActor == NULL)
+          if (markerObjectEvent == NULL)
             continue;
-          ObjectMotion_SnapToTerrain(markerActor);
+          ObjectMotion_SnapToTerrain(markerObjectEvent);
           ObjectDispatch_SetSingleChildFlagsFar(
-              (struct DispatchObject *)markerActor, 0);
+              (struct DispatchObject *)markerObjectEvent, 0);
           // An opened chest shows open; an opened mimic's chest
           // is not placed at all. A mimic's flag is set only after its battle,
           // when the one enemy was defeated (Djinn_ResolvePendingEvent).
           if (GameFlag_TestFar(event->condition)) {
             if ((event->value & 0xfff00000) == 0x500000) {
-              ObjectDispatch_ReleaseFar((struct DispatchObject *)markerActor);
+              ObjectDispatch_ReleaseFar(
+                  (struct DispatchObject *)markerObjectEvent);
               continue;
             }
-            ObjectDispatch_SelectAnimationFar(markerActor, MARKER_CHEST_OPEN);
+            ObjectDispatch_SelectAnimationFar(markerObjectEvent,
+                                              MARKER_CHEST_OPEN);
           }
-          ObjectDispatch_StartIdleFar((struct DispatchObject *)markerActor);
-          markerActor->homeX = markerActor->x / 0x10000;
-          markerActor->homeZ = markerActor->z / 0x10000;
-          markerActor->unk23 = 1;
-          markerActor->flags59 = 1;
+          ObjectDispatch_StartIdleFar(
+              (struct DispatchObject *)markerObjectEvent);
+          markerObjectEvent->homeX = markerObjectEvent->x / 0x10000;
+          markerObjectEvent->homeZ = markerObjectEvent->z / 0x10000;
+          markerObjectEvent->unk23 = 1;
+          markerObjectEvent->flags59 = 1;
           marker->id = event->trigger;
-          marker->object = (struct ObjectRuntime *)markerActor;
-          marker->column = markerActor->x / 0x100000;
-          marker->row = markerActor->z / 0x100000;
+          marker->object = (struct ObjectRuntime *)markerObjectEvent;
+          marker->column = markerObjectEvent->x / 0x100000;
+          marker->row = markerObjectEvent->z / 0x100000;
           marker++;
           markerCount++;
           if (markerCount >= MARKER_MAX)
             return;
-        } else if ((event->control & 0x1ff) == EVENT_SEARCH) {
+        } else if ((event->control & 0x1ff) == MAP_EVENT_BG) {
           // A Psynergy Stone not yet taken.
           if ((event->value & 0xfff00000) != FIND_PSYNERGY_STONE)
             continue;
           if (GameFlag_TestFar(event->condition))
             continue;
-          markerActor = (struct ScriptObjectRuntime *)Object_CreateFar(
+          markerObjectEvent = (struct ScriptObjectRuntime *)Object_CreateFar(
               MARKER_PSYNERGY_STONE_SPRITE, (column << 20) + 0x80000, 0,
               (row << 20) + 0x80000);
-          if (markerActor == NULL)
+          if (markerObjectEvent == NULL)
             continue;
-          ObjectMotion_SnapToTerrain(markerActor);
+          ObjectMotion_SnapToTerrain(markerObjectEvent);
           ObjectDispatch_SetSingleChildFlagsFar(
-              (struct DispatchObject *)markerActor, 0);
-          ObjectDispatch_StartIdleFar((struct DispatchObject *)markerActor);
-          ObjectDispatch_SelectAnimationFar(markerActor, 1);
-          markerActor->homeX = markerActor->x / 0x10000;
-          markerActor->homeZ = markerActor->z / 0x10000;
-          markerActor->flags59 = 1;
-          markerActor->unk23 = 1;
-          marker->object = (struct ObjectRuntime *)markerActor;
+              (struct DispatchObject *)markerObjectEvent, 0);
+          ObjectDispatch_StartIdleFar(
+              (struct DispatchObject *)markerObjectEvent);
+          ObjectDispatch_SelectAnimationFar(markerObjectEvent, 1);
+          markerObjectEvent->homeX = markerObjectEvent->x / 0x10000;
+          markerObjectEvent->homeZ = markerObjectEvent->z / 0x10000;
+          markerObjectEvent->flags59 = 1;
+          markerObjectEvent->unk23 = 1;
+          marker->object = (struct ObjectRuntime *)markerObjectEvent;
           marker->id = event->trigger;
-          marker->column = markerActor->x / 0x100000;
-          marker->row = markerActor->z / 0x100000;
+          marker->column = markerObjectEvent->x / 0x100000;
+          marker->row = markerObjectEvent->z / 0x100000;
           marker++;
           markerCount++;
           if (markerCount >= MARKER_MAX)
@@ -243,7 +249,7 @@ void Marker_ShowOpened(s32 id) {
 /// Returns the actor of marker id, or NULL when no slot has it. Called by
 /// Field_SearchTile, and by the world map markers (field_fx.c) to skip a
 /// marker already placed.
-struct ObjectRuntime *Marker_GetActor(s32 id) {
+struct ObjectRuntime *Marker_GetObjectEvent(s32 id) {
   s32 slotIndex = Marker_FindSlot(id);
   struct MarkerSlot *marker;
 
@@ -272,8 +278,8 @@ void Marker_Hide(s32 id) {
 
 /// Moves the actor of marker id to (x, z) on the ground; -1 keeps the centre
 /// of its cell on that axis. Positions are 16.16. Scene overlays call it as
-/// Engine_MapObjectSetPosition.
-void Marker_SetActorPosition(s32 id, s32 x, s32 z) {
+/// Engine_MarkerSetPosition.
+void Marker_SetObjectEventPosition(s32 id, s32 x, s32 z) {
   s32 slotIndex;
   s32 terrainHeight;
   s32 objectX;
@@ -294,7 +300,7 @@ void Marker_SetActorPosition(s32 id, s32 x, s32 z) {
         objectZ = (marker->row << 20) + 0x80000;
       object->x = objectX;
       object->z = objectZ;
-      terrainHeight = Map_GetTerrainHeightFar(0, objectX, objectZ);
+      terrainHeight = MapGrid_GetTerrainHeightFar(0, objectX, objectZ);
       object->terrainHeight = terrainHeight;
       object->y = terrainHeight;
     }

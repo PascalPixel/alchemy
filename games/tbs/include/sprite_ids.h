@@ -401,7 +401,7 @@ enum SpriteId {
   /// in purple clothes (spr_064.png)
   SPRITE_PERSON_IN_PURPLE = 0x40,
   /// Babi's second sheet, which Altmiller Cave places while he is invisible
-  /// (ACTOR_INVISIBLE_BABI).
+  /// (LOCALID_INVISIBLE_BABI).
   /// ★ Named from what the player sees: an old man with long pink hair in a
   /// red and gold robe, with a cane (spr_065.png)
   SPRITE_INVISIBLE_BABI = 0x41,

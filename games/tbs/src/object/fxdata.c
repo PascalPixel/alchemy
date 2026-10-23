@@ -546,7 +546,7 @@ const s32 gFieldEffect_LongEffectScript[] = {
 const s8 gFieldEffect_RandomChildValues[8] = {0, 0, 1, 2, 3, 4, 5, 6};
 
 /// The world map markers' blend weight in sixteenths, against the picture's
-/// 16 less it ((gFrameCount >> 1) & 31, Map_UpdateWorldMapMarkers): solid
+/// 16 less it ((gFrameCount >> 1) & 31, WorldMap_UpdateMarkers): solid
 /// for 32 frames, then down to half and back over the next 32.
 const u8 gWorldMap_MarkerBlendCycle[32] = {
     16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16,

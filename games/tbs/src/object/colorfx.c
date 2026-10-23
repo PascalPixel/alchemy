@@ -42,7 +42,7 @@
 //--------------------------------------------------------------------------
 
 /// The sparks of the jackpot, kept in the map cell buffer.
-#define REEL_SPARKS ((struct EffectStep *)Ram_MapCellBuffer)
+#define REEL_SPARKS ((struct EffectStep *)Ram_MapGridCellBuffer)
 
 /// The slot machine's own work block (struct ReelWork), beside the battle
 /// effect blocks it borrows.
@@ -136,7 +136,7 @@ void ReelGame_TransferCanvas(void) {
 
 /// Darkens the screen one step: lowers each channel of the 16 colours of BG
 /// palette 10 and of OBJ colours 1 to 239 by 1.
-void Palette_DarkenSceneStep(void) {
+void Palette_DarkenScreenStep(void) {
   u16 *col;
   s32 i;
 
@@ -977,7 +977,7 @@ void ReelGame_Run(void) {
   work = Runtime_AllocateBlock(HEAP_SLOT_BATTLE_EFFECT,
                                sizeof(struct BattleEffectWork));
   state = Runtime_AllocateBlock(REEL_HEAP_SLOT, sizeof(struct ReelWork));
-  tiles = Ram_MapCellBuffer;
+  tiles = Ram_MapGridCellBuffer;
   save = (struct ReelSave *)((u8 *)&gGameState + 12);
   RuntimeDispatch_NoOpHook((s32)&ResourceId_EffectFarCalls);
   save->wonPrizes[0] = -1;
@@ -1168,7 +1168,7 @@ void ReelGame_Run(void) {
         else
           Palette_StepTowardResource((s32)&ResourceId_JupiterDjinnSheet);
         if (state->timer <= 15)
-          Palette_DarkenSceneStep();
+          Palette_DarkenScreenStep();
         if (state->timer > 16 && (frame & 7) == 0) {
           s32 x = (Random16() & 127) + 56;
           s32 y = (Random16() & 31) + 48;
@@ -1468,7 +1468,7 @@ UNUSED s32 LzPack_PackStream(const u8 *input, u8 *dst, s32 size) {
   s16 code;
 
   defer = 0;
-  gFlash_Handler3 = (struct LzPackWork *)gMapCellBuffer;
+  gFlash_Handler3 = (struct LzPackWork *)gMapGridCellBuffer;
   LzPack_ResetSlotBuckets();
   gFlash_Handler3->inputLimit = size;
   gFlash_Handler3->position = 0;

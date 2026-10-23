@@ -16,15 +16,15 @@
 #include "common/colosso_story_flags.h"
 #include "flags.h"
 
-// Scene flags: FLAG_SCENE_TEMP_00 is set once Growth has raised the sprout,
-// FLAG_SCENE_TEMP_01 once Frost has frozen the puddle; both reset when the
+// Scene flags: FLAG_MAP_TEMP_00 is set once Growth has raised the sprout,
+// FLAG_MAP_TEMP_01 once Frost has frozen the puddle; both reset when the
 // party leaves the town.
 
 /// Actors, numbered in the order of the placement table from
-/// ACTOR_FIRST_PLACED. The townspeople the text gives no name are named by
+/// LOCALID_FIRST_PLACED. The townspeople the text gives no name are named by
 /// what their sprites show and what they say or, under Mind Read, think
 /// during the festival.
-enum TolbiActor {
+enum TolbiLocalId {
   TOLBI_SPROUT = 8,
   TOLBI_PUDDLE = 9,
   /// A young man with brown hair (SPRITE_YOUNG_MAN_WITH_BROWN_HAIR).
@@ -115,7 +115,7 @@ enum TolbiActor {
 
 /// The touch cells whose events are more than a door. The doors' own cells
 /// carry the numbers of their exits (Tolbi_EnterDoor,
-/// Tolbi_RequestTouchedExit).
+/// Tolbi_RequestTouchedWarp).
 enum TolbiCell {
   /// Where Babi's soldiers stop the party during the festival.
   TOLBI_CELL_SOLDIERS = 20,
@@ -135,13 +135,13 @@ enum TolbiSign {
 };
 
 /// Map objects the party can search.
-enum TolbiMapObject {
+enum TolbiMarker {
   TOLBI_BARREL = 100,
   TOLBI_JAR = 101,
   TOLBI_HIDDEN_CHEST = 102,
 };
 
-/// The running children keep these flags in FieldActor.timer, their scene
+/// The running children keep these flags in ObjectEvent.timer, their scene
 /// scratch halfword. Bits: 1 talking | 0 chases the younger sister.
 enum {
   /// Set on the older brother, who runs after TOLBI_YOUNGER_SISTER.

@@ -21,7 +21,8 @@ void Field_RequestBattleFromEncounterTable(s32 zoneNo, s32 slotNo) {
   if (zone == ENCOUNTER_ZONE_SCRIPTED && slot == 0)
     gGameState.special = (s32)&ResourceId_VenusLighthouseAerieStormBackdrop;
   if (work->mode == MODE_WORLD_MAP) {
-    struct ObjectRuntime *leader = ObjectTable_Get(gGameState.selectedActor);
+    struct ObjectRuntime *leader =
+        ObjectTable_Get(gGameState.selectedObjectEvent);
 
     Encounter_ResolveWorldMapZoneAndBackdrop(&leader->x);
   }
@@ -48,12 +49,12 @@ void Field_RequestDjinnBattle(s32 flag, s32 no) {
     Djinn_RunBattleStartHop(flag);
 
   state = &gGameState;
-  // DJINN_NO_HOP rides along: it tells FieldObject_PlaceSceneActors to put
+  // DJINN_NO_HOP rides along: it tells ObjectEvent_PlaceMapObjectEvents to put
   // the Djinni back 32 pixels north of the leader, not at its placement.
   state->pendingDjinnEvent = (no + DJINNI_EVENT_0) | skipHop;
   work->battle = Encounter_GetDjinnEnemyGroup(no);
   if (work->mode == MODE_WORLD_MAP) {
-    struct ObjectRuntime *leader = ObjectTable_Get(state->selectedActor);
+    struct ObjectRuntime *leader = ObjectTable_Get(state->selectedObjectEvent);
 
     Encounter_ResolveWorldMapZoneAndBackdrop(&leader->x);
   }
@@ -63,31 +64,31 @@ void Field_RequestDjinnBattle(s32 flag, s32 no) {
 }
 
 /// Sets the scene and entrance that the field goes to next
-/// (gGameState.nextScene and nextEntrance). About 30 scenes and the lobby
-/// reach it through Event_SetNextDestinationFar.
-void Event_SetNextDestination(s32 scene, s32 entrance) {
-  gGameState.nextScene = scene;
-  gGameState.nextEntrance = entrance;
+/// (gGameState.nextMap and nextWarpDest). About 30 scenes and the lobby
+/// reach it through FieldScript_SetNextDestinationFar.
+void FieldScript_SetNextDestination(s32 mapId, s32 warpDest) {
+  gGameState.nextMap = mapId;
+  gGameState.nextWarpDest = warpDest;
 }
 
 /// Sets where the party wakes up after losing a battle
-/// (gGameState.defeatScene and defeatEntrance). The scenes before scripted
+/// (gGameState.defeatMap and defeatWarpDest). The scenes before scripted
 /// battles (Colosso, the Vault, Vale, the Aerie) and the lobby reach it
-/// through Event_SetDefeatDestinationFar.
-void Event_SetDefeatDestination(s32 scene, s32 entrance) {
-  gGameState.defeatScene = scene;
-  gGameState.defeatEntrance = entrance;
+/// through FieldScript_SetDefeatDestinationFar.
+void FieldScript_SetDefeatDestination(s32 mapId, s32 warpDest) {
+  gGameState.defeatMap = mapId;
+  gGameState.defeatWarpDest = warpDest;
 }
 
 /// Makes the event leave for entrance entrance of scene scene: sets
-/// gGameState.scene and entrance and raises the exit request EXIT_NONE (999),
+/// gGameState.scene and entrance and raises the exit request WARP_NONE (999),
 /// so the scene loop leaves on its next pass. Only Tolbi's spring reaches it,
-/// through Event_RequestDestinationFar.
-void Event_RequestDestination(u16 scene, u16 entrance) {
+/// through FieldScript_RequestDestinationFar.
+void FieldScript_RequestDestination(u16 mapId, u16 warpDest) {
   struct FieldWork *work = (struct FieldWork *)gEventWork;
-  gGameState.scene = scene;
-  gGameState.entrance = entrance;
-  work->exit = 999;
+  gGameState.mapId = mapId;
+  gGameState.warpDest = warpDest;
+  work->warp = 999;
 }
 
 /// Plays SE_298, then soundId (AUDIO_CUE_FADE_SLOT3 for -1), and remembers

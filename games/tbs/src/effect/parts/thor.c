@@ -4,9 +4,9 @@
 
 #include "../effect_internal.h"
 
-/// 910 sparks from Ram_MapCellBuffer + 0xc58; the smoke pictures come
+/// 910 sparks from Ram_MapGridCellBuffer + 0xc58; the smoke pictures come
 /// before them.
-#define THOR_PARTICLES ((struct EffectStep *)(Ram_MapCellBuffer + 0xc58))
+#define THOR_PARTICLES ((struct EffectStep *)(Ram_MapGridCellBuffer + 0xc58))
 
 /// The particle sprites, after the light fan pictures.
 #define THOR_SPRITES_CELLS 0x1800
@@ -56,7 +56,7 @@
 /// sends down a beam of light; then a pillar of lightning strikes a formation,
 /// violet bolts follow, and the formation is pushed back in smoke.
 ///
-/// Abilities: Thor (SCENE_EFFECT_THOR).
+/// Abilities: Thor (SUMMON_EFFECT_THOR).
 ///
 /// The scene plays in two parts on the effect canvas. In the dusk part
 /// (THOR_DUSK_FRAMES, which A or B cuts short) a circle of 128 dots and three
@@ -227,24 +227,24 @@ void BattleEffect_RunThor(struct BattleEffectArgument *effect) {
       if (size > 8) {
         size = 8;
       }
-      SceneTransform_ApplyPosition(position);
-      SceneTransform_ApplyPitch(-0x1000);
-      SceneTransform_ApplyRoll(0x8000);
-      SceneTransform_ApplyPitch(0x8000);
-      SceneTransform_ApplyYaw(sinkFrame << 12);
+      Transform_ApplyPosition(position);
+      Transform_ApplyPitch(-0x1000);
+      Transform_ApplyRoll(0x8000);
+      Transform_ApplyPitch(0x8000);
+      Transform_ApplyYaw(sinkFrame << 12);
       if (frame > 150) {
         SET_VECTOR(scale, frame * 0x1800 - 0xd9400, scale[0], scale[0]);
         size = 5;
       } else {
         SET_VECTOR(scale, 0x10000 - sinkFrame * 3 * 0x400, scale[0], scale[0]);
       }
-      SceneTransform_ApplyScale(scale);
+      Transform_ApplyScale(scale);
     } else {
       SET_VECTOR(position, 0, 0, 0x1000000);
-      SceneTransform_ApplyPosition(position);
-      SceneTransform_ApplyPitch(-0x1000);
-      SceneTransform_ApplyRoll(frame << 8);
-      SceneTransform_ApplyPitch(frame << 8);
+      Transform_ApplyPosition(position);
+      Transform_ApplyPitch(-0x1000);
+      Transform_ApplyRoll(frame << 8);
+      Transform_ApplyPitch(frame << 8);
     }
 
     // The three lines, drawn dot by dot between pairs of points: line i
@@ -380,8 +380,8 @@ void BattleEffect_RunThor(struct BattleEffectArgument *effect) {
   // Nine objects of resource 0x173, the formation (SUMMON_FORMATION_THOR),
   // released at the end.
   BattleEffect_SpawnObjects(9, 0x173, 1);
-  Resource_LoadAndDecompress((s32)&ResourceId_TornadoSheet, Ram_MapCellBuffer,
-                             1, 0);
+  Resource_LoadAndDecompress((s32)&ResourceId_TornadoSheet,
+                             Ram_MapGridCellBuffer, 1, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_LightningPillarSheet, work->sheet,
                              1, 1);
   Resource_LoadAndDecompress((s32)&ResourceId_VioletMoteSheet,
@@ -624,8 +624,8 @@ void BattleEffect_RunThor(struct BattleEffectArgument *effect) {
           EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER_ALTERNATE,
                               3 | gThor_SmokeFlips[Random16() & 3], 2);
           EFFECT_BLITTERS[HEAP_SLOT_BLITTER_ALTERNATE](
-              canvas, Ram_MapCellBuffer + gBattleEffect_GlintCells[glint], x,
-              y + 56, gBattleEffect_GlintCellWidths[glint],
+              canvas, Ram_MapGridCellBuffer + gBattleEffect_GlintCells[glint],
+              x, y + 56, gBattleEffect_GlintCellWidths[glint],
               gBattleEffect_GlintCellHeights[glint]);
           Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
         }

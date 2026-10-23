@@ -1401,7 +1401,7 @@ void Resource_ResetPendingTransfer(void) {
 /// Runs the field menu until the player picks something that leaves it, and
 /// returns the chosen screen's result. Cancelling the menu returns an
 /// undefined value, the missing result of UiWork_CloseAndRelease (0 under
-/// UBFIX); its one caller, Field_RunScene, ignores the result. Its case for
+/// UBFIX); its one caller, Field_RunMap, ignores the result. Its case for
 /// command 0, which stores the trigger tile ahead in the event work's
 /// facingTrigger, is unreachable.
 s32 Menu_RunTopSelection(void) {
@@ -1440,7 +1440,7 @@ s32 Menu_RunTopSelection(void) {
     // tile ahead of the leader (0xff for none) in facingTrigger.
     switch (selection) {
     case 0:
-      ret = Object_GetTriggerTileAheadOfCurrentFar();
+      ret = ObjectEvent_GetTriggerTileAheadOfCurrentFar();
       if (ret == 0)
         ret = 0xff;
       ((struct EventWork *)state)->facingTrigger = ret;

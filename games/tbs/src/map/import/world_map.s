@@ -17,18 +17,18 @@
 	.set import.Engine_VramLoad, 1
 	.set import.IoWriteQueue_Store16, 1
 	.set import.AnimationObject_SelectAnimation, 1
-	.set import.Object_SetMode, 1
+	.set import.ObjectEvent_SetMode, 1
 	.set import.Engine_ObjectSetScript, 1
 	.set import.Engine_ObjectCreate, 1
 	.set import.Engine_ObjectDispatchRelease, 1
 	.set import.ObjectDispatch_StartIdle, 1
 	.set import.Engine_ObjectSetPosition, 1
 	.set import.FieldObject_WaitForMove, 1
-	.set import.Map_LoadDefaultCellsAndUpdateBlock, 1
-	.set import.Map_SetWindowCellTile, 1
-	.set import.Engine_ActorSetSpriteFlags, 1
+	.set import.WorldMap_LoadDefaultCellsAndUpdateBlock, 1
+	.set import.WorldMap_SetWindowCellTile, 1
+	.set import.Engine_ObjectEventSetSpriteFlags, 1
 	.set import.WorldMap_StartStillView, 1
-	.set import.Map_LoadAreaGraphics, 1
+	.set import.WorldMap_LoadAreaGraphics, 1
 	.set import.Engine_ObjectSetPartPalettes, 1
 	.set import.Engine_MessageShowCentered, 1
 	.set import.UiWork_PushValueSlot, 1
@@ -44,63 +44,63 @@
 	.set import.DjinnRecovery_AddStandby, 1
 	.set import.Party_RestoreHpPp, 1
 	.set import.PartyInventory_Discard, 1
-	.set import.Engine_EventWait, 1
-	.set import.Engine_EventStart, 1
-	.set import.Engine_EventEnd, 1
+	.set import.Engine_ScriptWait, 1
+	.set import.Engine_ScriptStart, 1
+	.set import.Engine_ScriptEnd, 1
 	.set import.Engine_PartyGiveItem, 1
-	.set import.Engine_EventChooseYesNo, 1
-	.set import.Object_GetById, 1
-	.set import.Engine_ActorDestroy, 1
-	.set import.Engine_ActorSetSpeed, 1
-	.set import.Engine_ActorEnableActionCallback, 1
-	.set import.Object_RefreshSelectorById, 1
-	.set import.Object_SetActionCallbackAndRefreshById, 1
-	.set import.Engine_ActorSetDestination, 1
-	.set import.Engine_ActorMoveToAndWait, 1
-	.set import.Engine_ActorWalkTo, 1
-	.set import.Engine_ActorWalkToAndWait, 1
-	.set import.Engine_ActorSetDestinationOffset, 1
-	.set import.Engine_ActorWaitForMove, 1
-	.set import.Engine_ActorSetPosition, 1
-	.set import.Engine_ActorSetAnimation, 1
-	.set import.Engine_ActorSetAnimationAndWait, 1
-	.set import.Engine_ActorJump, 1
-	.set import.Engine_ActorStartRepeatedMotion, 1
-	.set import.Engine_ActorRunRepeatedMotion, 1
-	.set import.Engine_ActorFaceActor, 1
-	.set import.Engine_ActorSetChildValue, 1
+	.set import.Engine_ScriptChooseYesNo, 1
+	.set import.ObjectEvent_GetById, 1
+	.set import.Engine_ObjectEventDestroy, 1
+	.set import.Engine_ObjectEventSetSpeed, 1
+	.set import.Engine_ObjectEventEnableActionCallback, 1
+	.set import.ObjectEvent_RefreshSelectorById, 1
+	.set import.ObjectEvent_SetActionCallbackAndRefreshById, 1
+	.set import.Engine_ObjectEventSetDestination, 1
+	.set import.Engine_ObjectEventMoveToAndWait, 1
+	.set import.Engine_ObjectEventWalkTo, 1
+	.set import.Engine_ObjectEventWalkToAndWait, 1
+	.set import.Engine_ObjectEventSetDestinationOffset, 1
+	.set import.Engine_ObjectEventWaitForMove, 1
+	.set import.Engine_ObjectEventSetPosition, 1
+	.set import.Engine_ObjectEventSetAnimation, 1
+	.set import.Engine_ObjectEventSetAnimationAndWait, 1
+	.set import.Engine_ObjectEventJump, 1
+	.set import.Engine_ObjectEventStartRepeatedMotion, 1
+	.set import.Engine_ObjectEventRunRepeatedMotion, 1
+	.set import.Engine_ObjectEventFaceObjectEvent, 1
+	.set import.Engine_ObjectEventSetChildValue, 1
 	.set import.ObjectGroup_SetChildValue, 1
-	.set import.Engine_EventSetMessage, 1
-	.set import.Engine_EventOpenMessage, 1
-	.set import.Engine_EventShowMessage, 1
-	.set import.Engine_EventShowMessageAndWait, 1
-	.set import.Engine_ActorFaceDirection, 1
-	.set import.Engine_EventShowTwoMessagesAndWait, 1
-	.set import.Engine_ActorShowEmote, 1
-	.set import.Engine_ActorSetAttachedEffect, 1
-	.set import.Engine_CameraFollowActor, 1
+	.set import.Engine_ScriptSetMessage, 1
+	.set import.Engine_ScriptOpenMessage, 1
+	.set import.Engine_ScriptShowMessage, 1
+	.set import.Engine_ScriptShowMessageAndWait, 1
+	.set import.Engine_ObjectEventFaceDirection, 1
+	.set import.Engine_ScriptShowTwoMessagesAndWait, 1
+	.set import.Engine_ObjectEventShowEmote, 1
+	.set import.Engine_ObjectEventSetAttachedEffect, 1
+	.set import.Engine_CameraFollowObjectEvent, 1
 	.set import.Engine_CameraSetSpeed, 1
 	.set import.Engine_CameraMoveTo, 1
 	.set import.Engine_CameraWaitForMove, 1
-	.set import.Event_SetDestination, 1
-	.set import.Engine_EventRequestExit, 1
+	.set import.FieldScript_SetDestination, 1
+	.set import.Engine_ScriptRequestWarp, 1
 	.set import.Field_RequestBattleFromEncounterTable, 1
 	.set import.Field_RequestDjinnBattle, 1
 	.set import.Engine_ColorBufferApplyTarget, 1
 	.set import.Engine_ColorBufferApplySource, 1
 	.set import.Engine_ColorBufferInterpolate, 1
-	.set import.Engine_EventOpenScreen, 1
-	.set import.Engine_EventCloseScreen, 1
-	.set import.Engine_EventWaitForScreen, 1
+	.set import.Engine_ScriptOpenScreen, 1
+	.set import.Engine_ScriptCloseScreen, 1
+	.set import.Engine_ScriptWaitForScreen, 1
 	.set import.Engine_ItemShowFound, 1
-	.set import.WorldMap_StartEvent, 1
-	.set import.WorldMap_EndEvent, 1
-	.set import.Engine_ActorLookup, 1
+	.set import.WorldMap_StartScript, 1
+	.set import.WorldMap_EndScript, 1
+	.set import.Engine_ObjectEventLookup, 1
 	.set import.Engine_PsynergyStart, 1
 	.set import.FieldEffect_End, 1
 	.set import.Djinn_JoinParty, 1
 	.set import.FieldEffect_ScheduleRatioTransition, 1
-	.set import.Event_WaitForZoomTransition, 1
+	.set import.FieldScript_WaitForZoomTransition, 1
 	.set import.DjinnMenu_Open, 1
 	.set import.Engine_AudioPlayCue, 1
 	.include "games/tbs/src/system/overlay.inc"

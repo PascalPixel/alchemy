@@ -1,38 +1,38 @@
 	.include "games/tbs/src/layout/layout.inc"
 	.section .rodata
-	.global Field_Map129
-Field_Map129:
-	map_header 0, 0, 206, 52, 3, 2, 1, 0, 2, 2, 0, 0
-	map_layer 0, 0, 16, 16, 0, 0, 0xff, 0xff
-	map_layer 0, 52, 16, 16, 0, 0, 0xff, 0xff
-	map_layer 0, 104, 16, 16, 0, 0, 0xff, 0xff
-	map_block Field_Map129, .LField_Map129_METATILES
-	map_block Field_Map129, .LField_Map129_SHAPES
-	map_block Field_Map129, .LField_Map129_GRID
-	map_block Field_Map129, .LField_Map129_ANIMATION
-	map_block Field_Map129, .LField_Map129_BLEND
-	map_block Field_Map129, .LField_Map129_MARKERS
-.LField_Map129_METATILES:
+	.global Field_Layout129
+Field_Layout129:
+	layout_header 0, 0, 206, 52, 3, 2, 1, 0, 2, 2, 0, 0
+	layout_layer 0, 0, 16, 16, 0, 0, 0xff, 0xff
+	layout_layer 0, 52, 16, 16, 0, 0, 0xff, 0xff
+	layout_layer 0, 104, 16, 16, 0, 0, 0xff, 0xff
+	layout_offset Field_Layout129, .LField_Layout129_METATILES
+	layout_offset Field_Layout129, .LField_Layout129_SHAPES
+	layout_offset Field_Layout129, .LField_Layout129_GRID
+	layout_offset Field_Layout129, .LField_Layout129_ANIMATION
+	layout_offset Field_Layout129, .LField_Layout129_BLEND
+	layout_offset Field_Layout129, .LField_Layout129_MARKERS
+.LField_Layout129_METATILES:
 	.incbin "games/tbs/src/layout/layout_129/metatiles.delta1.lz"
 	.balign 4, 0
-.LField_Map129_SHAPES:
+.LField_Layout129_SHAPES:
 	.incbin "games/tbs/src/layout/layout_129/shapes.table.lz"
 	.balign 4, 0
-.LField_Map129_GRID:
+.LField_Layout129_GRID:
 	.incbin "games/tbs/src/layout/layout_129/grid.parts.lz"
 	.balign 4, 0
-.LField_Map129_ANIMATION:
+.LField_Layout129_ANIMATION:
 	.incbin "games/tbs/src/layout/layout_129/animation.script.lz"
 	.balign 4, 0
-.LField_Map129_BLEND:
+.LField_Layout129_BLEND:
 	.incbin "games/tbs/src/layout/layout_020/blend.script.lz"
 	.balign 4, 0
-.LField_Map129_MARKERS:
+.LField_Layout129_MARKERS:
 	.incbin "games/tbs/src/layout/layout_129/markers.table"
 	.global Tileset_Set62Palette
 Tileset_Set62Palette:
 	.incbin "games/tbs/src/graphics/tileset/set_62/palette.gbapal.lz"
-	.byte 0x22, 0xb6	@ PACKER: left in the buffer by Field_Map129+0x13a
+	.byte 0x22, 0xb6	@ PACKER: left in the buffer by Field_Layout129+0x13a
 	.global Tileset_Set62TilesA
 Tileset_Set62TilesA:
 	.incbin "games/tbs/src/graphics/tileset/set_62/tiles_a.4bpp.mtf"

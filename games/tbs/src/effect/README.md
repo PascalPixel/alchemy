@@ -50,7 +50,7 @@ a label for readers that the build skips. When `BattleCommand_BuildPlan`
 | 0 to 11 | `STAGING_KIND_MASK` | the effect kind, 0 for none |
 | 12, 13 | `STAGING_VARIANT_MASK` | the variant, the ability's strength |
 | 14 | `STAGING_BY_ID_RANGE` | the kind goes to `BattleEffect_DispatchByIdRange` |
-| 15 | `STAGING_SCENE` | the kind is a summon's scene, an `enum SceneEffectKind` |
+| 15 | `STAGING_SUMMON` | the kind is a summon's scene, an `enum SummonEffectKind` |
 | 16 | `STAGING_ON_DOWNED` | shown on downed targets too |
 | 17 | `STAGING_OTHER_SIDE` | played from the other side |
 | 18 | `STAGING_VIEW_ACROSS` | the camera takes the other side's view |
@@ -61,7 +61,7 @@ kind `BATTLE_EFFECT_QUAKE` at `EFFECT_VARIANT_BASIC`, `EFFECT_VARIANT_STRONGER` 
 `EFFECT_VARIANT_STRONGEST`. `BattleEffect_RunQuake` reads the variant as a row
 of `gQuake_Timings`, which keeps each pillar standing 32, 64 or 96 frames
 (a frame is a sixtieth of a second) in an effect of 80, 112 or 144.
-Ramses reads `0x8001`, the scene `SCENE_EFFECT_RAMSES`, and Meltdown `0x4079`,
+Ramses reads `0x8001`, the scene `SUMMON_EFFECT_RAMSES`, and Meltdown `0x4079`,
 a kind dispatched by its range. The plan changes the word in three cases: a
 double or triple blow raises the variant by the first target's multiplier less
 one; an ability whose effect revives adds `STAGING_ON_DOWNED`, which no row
@@ -127,13 +127,13 @@ the heap, the pool of memory the game lends out in numbered slots
 
 In the code, the battle's staging (`battle/battle/staging.c`) chooses the door from the
 plan's `STAGING_` bits, as [Battle](../../battle.md#effects) describes:
-`BattlePresentation_RunUnitTransition` tests `STAGING_SCENE` first, and the
+`BattlePresentation_RunUnitTransition` tests `STAGING_SUMMON` first, and the
 attack and Psynergy staging test only `STAGING_BY_ID_RANGE`.
 
-- With `STAGING_SCENE`, `BattleEffect_RunSceneEffect`
-  ([`dispatch.c`](parts/dispatch.c)) switches on `enum SceneEffectKind` to the
+- With `STAGING_SUMMON`, `BattleEffect_RunSummonEffect`
+  ([`dispatch.c`](parts/dispatch.c)) switches on `enum SummonEffectKind` to the
   twelve summons' scenes, and leaves setting `work->effect` to each.
-  `SCENE_EFFECT_NONE`, which no row selects, plays Meteor's scene.
+  `SUMMON_EFFECT_NONE`, which no row selects, plays Meteor's scene.
 - With `STAGING_BY_ID_RANGE`, `BattleEffect_DispatchByIdRange`
   ([`positions.c`](parts/positions.c)) splits by the kind's range: 100 to 135
   are the casting impacts (`BattleEffect_RunCastingImpact`, given the kind less
@@ -252,7 +252,7 @@ Two kinds of effect use `BG1` as well. The beam sequences and the ring and
 spark scenes call `BattleEffect_SetupCanvasTileMap`, which shows the canvas on `BG1`
 at its own size instead of on `BG2`. The particle streams of Meteor and Outer
 Space (`BattleEffect_RunParticleStreams`, [`particle_streams.c`](parts/particle_streams.c))
-draw a full-screen picture into `Ram_MapCellBuffer` while their formation
+draw a full-screen picture into `Ram_MapGridCellBuffer` while their formation
 rises, shown on `BG1` through `BattleEffect_FlushPendingGraphicsTransfer`, which
 copies `0x7800` bytes into character block 2; their burst then switches back to
 the blended half-scale canvas on `BG2`.
@@ -288,8 +288,8 @@ picture. `EFFECT_FREE_PARTICLES` marks particles free with a `variant` of -1,
 though some families mark them otherwise, as their own comments say.
 
 The work block holds 64 (`work->particles`). `PARTICLES` names the map's cell
-buffer as particles and `Ram_MapCellBuffer` as bytes, both at its fixed
-address. `ewram.s` lays out 32 KB for `gMapCellBuffer` before
+buffer as particles and `Ram_MapGridCellBuffer` as bytes, both at its fixed
+address. `ewram.s` lays out 32 KB for `gMapGridCellBuffer` before
 `gActorSpriteSlots` and gives the symbol a size of 48 KB, which would hold
 1,755 particles. Each effect names its ranges of indices where it sets them up.
 `EffectStep_AdvanceWithGravity2D` and its 3D twin
@@ -487,7 +487,7 @@ The largest:
 | `BattleEffect_RunHealingMotes` | [`healing.c`](parts/healing.c) | healing motes swirling in to each target |
 | `BattleEffect_RunStreakVolley` | [`streaks.c`](parts/streaks.c) | streaks fired from above the user at each target |
 | `BattleEffect_RunRushingStrike` | [`rushing_strike.c`](parts/rushing_strike.c) | the user rushes at the first target and strikes |
-| `BattleEffect_RunBurstScene` | [`burst_scene.c`](parts/burst_sequence.c) | a flurry of strikes on the first target |
+| `BattleEffect_RunBurstSequence` | [`burst_scene.c`](parts/burst_sequence.c) | a flurry of strikes on the first target |
 | `BattleEffect_RunGrowingColumns` | [`growth.c`](parts/growth.c) | vines or green pillars growing from the ground |
 | `BattleEffect_RunSparkGroups` | [`plasma.c`](parts/plasma.c) | flashes and bouncing sparks in one or three bursts |
 | `BattleEffect_RunDjinnBeams` | [`djinn_beams.c`](parts/djinn_beams.c) | a Djinni appears, then columns of light fall on the targets; passed an element rather than a mode |
@@ -546,7 +546,7 @@ casting impacts: `BattleEffect_RunCastingImpact`
 `work->particles` holds the gathering sparks and then 32 scattering sparks
 whose `variant` is their life. The impact's own animation has
 `CASTING_IMPACT_IMPACT_PARTICLES`, 64 particles 16 KB into
-`Ram_MapCellBuffer`. An impact that hands over first removes its callbacks and
+`Ram_MapGridCellBuffer`. An impact that hands over first removes its callbacks and
 releases the blitters the next runner replaces.
 
 Flint's impact, `CASTING_IMPACT_IMPACT_FLINT`, has no animation of its own, so
@@ -840,7 +840,7 @@ same blitter builder also serves the battle's star field and
 - `work->sheet` holds 27,008 bytes. An effect that does not use the scanline
   table after it (`bg2xLines`) may use up to 28,800 (`imageStorage`).
 - The work block has 64 particles. `PARTICLES` has 1,170 before
-  `gActorSpriteSlots` and 1,755 in the 48 KB `ewram.s` gives `gMapCellBuffer`.
+  `gActorSpriteSlots` and 1,755 in the 48 KB `ewram.s` gives `gMapGridCellBuffer`.
 - There are two blitter slots, and each combination of canvas size, mirroring,
   clip and mode needs its own blitter; a picture's size is passed with each
   call.
@@ -866,7 +866,7 @@ template, the tables, the colour fragments and the bit operands, in that order.
 ## Words used here
 
 - **effect kind**: `effect->kind`, the number that picks which effect plays.
-  `enum BattleEffectKind` names the handler table's kinds, `enum SceneEffectKind`
+  `enum BattleEffectKind` names the handler table's kinds, `enum SummonEffectKind`
   the summons' scenes and `enum CastingImpact` the casting impacts. It is not
   the ability kind.
 - **runner** and **mode**: a runner draws a family of effect kinds, and the
@@ -953,7 +953,7 @@ The effect is an enumerator, never a number, and its prefix says how it is
 reached:
 
 - `BATTLE_EFFECT_` (`enum BattleEffectKind`): a row of the handler table;
-- `SCENE_EFFECT_` (`enum SceneEffectKind`): a row with `STAGING_SCENE`;
+- `SUMMON_EFFECT_` (`enum SummonEffectKind`): a row with `STAGING_SUMMON`;
 - `CASTING_IMPACT_` (`enum CastingImpact`, in
   [`casting_impact.c`](parts/casting_impact.c)): a row with
   `STAGING_BY_ID_RANGE` and a kind from 100 to 135, the enumerator's value

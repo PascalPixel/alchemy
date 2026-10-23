@@ -374,34 +374,34 @@ extern u8 gSpire_RockCounts[];
 extern u8 gSpire_ShardWidths[];
 extern u8 gSpire_ShardHeights[];
 extern u16 gSpire_ShardCells[];
-/// The burst scene's modes (BattleEffect_RunBurstScene), its rows of
-/// gBurstScene_Records: Gust and Flying Attack take one, two or three strikes
-/// as a double or triple blow raises their variant.
-enum BurstSceneMode {
-  BURST_SCENE_BEAR_CLAW,            ///< five strikes; also Ransack
-  BURST_SCENE_BACTERIA_RUSH,        ///< seven strikes, in lime
-  BURST_SCENE_FREEBITE_RUSH,        ///< nine strikes, in blue
-  BURST_SCENE_FLYING_ATTACK,        ///< one strike, in embers
-  BURST_SCENE_FLYING_ATTACK_DOUBLE, ///< two
-  BURST_SCENE_FLYING_ATTACK_TRIPLE, ///< three
-  BURST_SCENE_GUST,                 ///< one strike, each filling the canvas
-  BURST_SCENE_GUST_DOUBLE,          ///< two
-  BURST_SCENE_GUST_TRIPLE           ///< three
+/// The burst scene's modes (BattleEffect_RunBurstSequence), its rows of
+/// gBurstSequence_Records: Gust and Flying Attack take one, two or three
+/// strikes as a double or triple blow raises their variant.
+enum BurstSequenceMode {
+  BURST_SEQUENCE_BEAR_CLAW,            ///< five strikes; also Ransack
+  BURST_SEQUENCE_BACTERIA_RUSH,        ///< seven strikes, in lime
+  BURST_SEQUENCE_FREEBITE_RUSH,        ///< nine strikes, in blue
+  BURST_SEQUENCE_FLYING_ATTACK,        ///< one strike, in embers
+  BURST_SEQUENCE_FLYING_ATTACK_DOUBLE, ///< two
+  BURST_SEQUENCE_FLYING_ATTACK_TRIPLE, ///< three
+  BURST_SEQUENCE_GUST,                 ///< one strike, each filling the canvas
+  BURST_SEQUENCE_GUST_DOUBLE,          ///< two
+  BURST_SEQUENCE_GUST_TRIPLE           ///< three
 };
-/// A burst scene's arcs, its BURST_SCENE_ARC_SHEET.
-enum BurstSceneArcs {
-  BURST_SCENE_ARCS_AND_WAVES, ///< blue arc A, with a wave for the third and
-                              ///< fourth of every four strikes
-  BURST_SCENE_ARCS            ///< blue arc B for every strike
+/// A burst scene's arcs, its BURST_SEQUENCE_ARC_SHEET.
+enum BurstSequenceArcs {
+  BURST_SEQUENCE_ARCS_AND_WAVES, ///< blue arc A, with a wave for the third and
+                                 ///< fourth of every four strikes
+  BURST_SEQUENCE_ARCS            ///< blue arc B for every strike
 };
-/// Whose palette a burst scene takes, its BURST_SCENE_PALETTE.
-enum BurstScenePalette {
-  BURST_SCENE_PALETTE_MARS_DJINNI, ///< the Mars Djinni sheet's
-  BURST_SCENE_PALETTE_LIME,        ///< LimePalette
-  BURST_SCENE_PALETTE_BLUE_ARC,    ///< blue arc B's
-  BURST_SCENE_PALETTE_EMBER        ///< the ember streak sheet's
+/// Whose palette a burst scene takes, its BURST_SEQUENCE_PALETTE.
+enum BurstSequencePalette {
+  BURST_SEQUENCE_PALETTE_MARS_DJINNI, ///< the Mars Djinni sheet's
+  BURST_SEQUENCE_PALETTE_LIME,        ///< LimePalette
+  BURST_SEQUENCE_PALETTE_BLUE_ARC,    ///< blue arc B's
+  BURST_SEQUENCE_PALETTE_EMBER        ///< the ember streak sheet's
 };
-extern u8 gBurstScene_Records[][7];
+extern u8 gBurstSequence_Records[][7];
 extern u16 gGaia_RowCells[];
 extern u8 gGaia_RowWidths[];
 extern u16 gGaia_MoundCells[];

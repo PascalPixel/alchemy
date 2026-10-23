@@ -4,18 +4,18 @@
 #include "types.h"
 #include "map_tables.h"
 
-u8 *Clear_GetEntrances(void);
-s32 SceneData_ReturnZero(void);
-u8 *Clear_GetExits(void);
-u8 *Clear_GetPlacements(void);
+u8 *Clear_GetWarpDests(void);
+s32 MapData_ReturnZero(void);
+u8 *Clear_GetWarps(void);
+u8 *Clear_GetObjectEventTemplates(void);
 u8 *Clear_GetEvents(void);
 extern const u16 gClear_CodeSequence[];
 extern const u16 gClear_ExtraCodeSequence[];
 s32 SaveMenu_Run(void);
-extern struct SceneEntrance gClear_Entrances[];
-extern u32 gClear_Exits[];
-extern struct ScenePlacement gClear_Placements[];
-extern struct SceneEvent gClear_Events[];
+extern struct MapWarpDest gClear_WarpDests[];
+extern u32 gClear_Warps[];
+extern struct ObjectEventTemplate gClear_ObjectEventTemplates[];
+extern struct MapEvent gClear_Events[];
 extern s16 gClear_BlendFrame;
 extern s16 gClear_CodeUnlocked;
 extern s16 gClear_ExtraCodeUnlocked;

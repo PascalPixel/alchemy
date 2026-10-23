@@ -1,26 +1,26 @@
-#ifndef ALCHEMY_UNIT_SCENE_LEMURIAN_SHIP_H
-#define ALCHEMY_UNIT_SCENE_LEMURIAN_SHIP_H
+#ifndef ALCHEMY_UNIT_MAP_LEMURIAN_SHIP_H
+#define ALCHEMY_UNIT_MAP_LEMURIAN_SHIP_H
 
 #include "types.h"
 #include "map_tables.h"
 
-struct SceneRegion;
+struct MapWarpRegion;
 
-const struct SceneEntrance *LemurianShip_GetEntrances(void);
-const struct SceneRegion *LemurianShip_GetRegions(void);
-const u32 *LemurianShip_GetExits(void);
-const struct ScenePlacement *LemurianShip_GetPlacements(void);
-const struct SceneEvent *LemurianShip_GetEvents(void);
-s32 LemurianShip_SetupScene(void);
+const struct MapWarpDest *LemurianShip_GetWarpDests(void);
+const struct MapWarpRegion *LemurianShip_GetRegions(void);
+const u32 *LemurianShip_GetWarps(void);
+const struct ObjectEventTemplate *LemurianShip_GetObjectEventTemplates(void);
+const struct MapEvent *LemurianShip_GetEvents(void);
+s32 LemurianShip_SetupMap(void);
 void DisplayScroll_ArmHBlankDma(void);
 void DisplayScroll_BuildAndSwapHBlankPage(void);
 extern u16 gShipGlowPalettes[];
 extern s32 gSprayFallScript[];
 extern s16 gRippleSine[256];
-extern struct SceneEntrance gLemurianShipEntrances[];
-extern u32 gLemurianShipExits[];
-extern struct ScenePlacement gLemurianShipPlacements[];
-extern struct SceneEvent gLemurianShipEvents[];
+extern struct MapWarpDest gLemurianShipWarpDests[];
+extern u32 gLemurianShipWarps[];
+extern struct ObjectEventTemplate gLemurianShipObjectEventTemplates[];
+extern struct MapEvent gLemurianShipEvents[];
 extern s32 gOrbGlowActive;
 extern s32 gOrbGlowPhase;
 extern s32 gOrbGlowStrength;

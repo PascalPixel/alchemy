@@ -71,7 +71,7 @@ void Graphics_TransposeCopy(const u8 *src, u8 *dst, s32 w, s32 h) {
 /// Abilities: Mercury (BATTLE_EFFECT_MERCURY).
 ///
 /// work->particles 0 to 4 hold the flames, variant -1 until launched and then
-/// counting the frames since; Ram_MapCellBuffer takes the blue flame sheet
+/// counting the frames since; Ram_MapGridCellBuffer takes the blue flame sheet
 /// before it is turned. Sets work->shakeFrames as each flame shatters.
 ///
 /// effect: the targets.
@@ -98,7 +98,7 @@ void BattleEffect_RunMercury(struct BattleEffectArgument *effect) {
   BattleEffect_FetchRectangleBlitters(0, draw);
 
   // The flame pictures are the blue flame sheet turned on its side.
-  cells = Ram_MapCellBuffer;
+  cells = Ram_MapGridCellBuffer;
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_MercuryDjinnSmallSheet,
                              work->sheet, 1, 0);

@@ -1,19 +1,20 @@
-#ifndef ALCHEMY_UNIT_SCENE_COLOSSEUM_ENTRANCE_H
-#define ALCHEMY_UNIT_SCENE_COLOSSEUM_ENTRANCE_H
+#ifndef ALCHEMY_UNIT_MAP_COLOSSEUM_ENTRANCE_H
+#define ALCHEMY_UNIT_MAP_COLOSSEUM_ENTRANCE_H
 
 #include "types.h"
 #include "map_tables.h"
 
-struct SceneEntrance;
-struct SceneEvent;
-struct ScenePlacement;
-struct SceneRegion;
+struct MapWarpDest;
+struct MapEvent;
+struct ObjectEventTemplate;
+struct MapWarpRegion;
 
-const struct SceneEntrance *ColosseumEntrance_GetEntrances(void);
-const struct SceneRegion *ColosseumEntrance_GetRegions(void);
-const u32 *ColosseumEntrance_GetExits(void);
-const struct ScenePlacement *ColosseumEntrance_GetPlacements(void);
-const struct SceneEvent *ColosseumEntrance_GetEvents(void);
+const struct MapWarpDest *ColosseumEntrance_GetWarpDests(void);
+const struct MapWarpRegion *ColosseumEntrance_GetRegions(void);
+const u32 *ColosseumEntrance_GetWarps(void);
+const struct ObjectEventTemplate *
+ColosseumEntrance_GetObjectEventTemplates(void);
+const struct MapEvent *ColosseumEntrance_GetEvents(void);
 s32 ColosseumEntrance_Initialize(void);
 extern s32 gColosseumEntrance_GatherIntoIsaacScript[];
 extern s32 gColosseumEntrance_GatherIntoGaretScript[];
@@ -24,24 +25,28 @@ extern s32 gColosseumEntrance_JoinFinalsFromEastScript[];
 extern s32 gColosseumEntrance_JoinFinalsFromSouthScript[];
 extern s32 gColosseumEntrance_EnterFinalsScript[];
 extern s32 gColosseumEntrance_PulseScaleScript[];
-extern struct SceneEntrance gColosseumEntranceEntrancesOther[];
-extern struct SceneEntrance gColosseumEntrances[];
-extern struct SceneEntrance gColosseumEntranceEntrances[];
-extern u32 gColosseumEntranceExits[];
-extern struct ScenePlacement gColosseumEntrancePlacementsOther[];
-extern struct ScenePlacement gColosseumStandsPlacements[];
-extern struct ScenePlacement gColosseumTrialGroundsPlacements[];
-extern struct ScenePlacement gColosseumPlacements[];
-extern struct ScenePlacement gColosseumSoldiersPlacements[];
-extern struct ScenePlacement gColosseumPlacementsFromColosseumAzartMatchWest[];
-extern struct ScenePlacement gColosseumPlacementsFromColosseumNavampaMatch[];
-extern struct ScenePlacement gColosseumEntrancePlacements[];
-extern struct ScenePlacement gColosseumEntrancePlacementsFinalsDay[];
-extern struct ScenePlacement gColosseumEntrancePlacementsAfterColosso[];
-extern struct SceneEvent gColosseumEntranceEventsOther[];
-extern struct SceneEvent gColosseumTunnelEvents[];
-extern struct SceneEvent gColosseumEvents[];
-extern struct SceneEvent gColosseumEntranceEvents[];
-extern struct SceneEvent gColosseumEventsFromColosseumAzartMatchWest[];
+extern struct MapWarpDest gColosseumEntranceWarpDestsOther[];
+extern struct MapWarpDest gColosseumWarpDests[];
+extern struct MapWarpDest gColosseumEntranceWarpDests[];
+extern u32 gColosseumEntranceWarps[];
+extern struct ObjectEventTemplate gColosseumEntranceObjectEventTemplatesOther[];
+extern struct ObjectEventTemplate gColosseumStandsObjectEventTemplates[];
+extern struct ObjectEventTemplate gColosseumTrialGroundsObjectEventTemplates[];
+extern struct ObjectEventTemplate gColosseumObjectEventTemplates[];
+extern struct ObjectEventTemplate gColosseumSoldiersObjectEventTemplates[];
+extern struct ObjectEventTemplate
+    gColosseumObjectEventTemplatesFromColosseumAzartMatchWest[];
+extern struct ObjectEventTemplate
+    gColosseumObjectEventTemplatesFromColosseumNavampaMatch[];
+extern struct ObjectEventTemplate gColosseumEntranceObjectEventTemplates[];
+extern struct ObjectEventTemplate
+    gColosseumEntranceObjectEventTemplatesFinalsDay[];
+extern struct ObjectEventTemplate
+    gColosseumEntranceObjectEventTemplatesAfterColosso[];
+extern struct MapEvent gColosseumEntranceEventsOther[];
+extern struct MapEvent gColosseumTunnelEvents[];
+extern struct MapEvent gColosseumEvents[];
+extern struct MapEvent gColosseumEntranceEvents[];
+extern struct MapEvent gColosseumEventsFromColosseumAzartMatchWest[];
 
 #endif

@@ -22,8 +22,8 @@ void FieldEffect_SwayParticle(union FieldObject *fieldObject) {
 /// timer reaches 0. The update of FieldEffect_RunPly's eight spiralling
 /// particles; each one's work holds its starting angle.
 void FieldEffect_UpdateShrinkingOrbitObject(union FieldObject *fieldObject) {
-  struct FieldActor *particle = (struct FieldActor *)fieldObject;
-  struct FieldEffectScene *scene = gEffectWork;
+  struct ObjectEvent *particle = (struct ObjectEvent *)fieldObject;
+  struct FieldEffectWork *effectWork = gEffectWork;
   struct EffectVector pos;
   s16 remainingFrames;
   s32 decrementedTimer;
@@ -34,9 +34,9 @@ void FieldEffect_UpdateShrinkingOrbitObject(union FieldObject *fieldObject) {
     remainingFrames = decrementedTimer;
     if (remainingFrames != 0) {
       // The angle turns 1/32 of a circle (0x800) each frame left.
-      pos.x = scene->x;
-      pos.y = scene->y + (10 << 16);
-      pos.z = scene->z;
+      pos.x = effectWork->x;
+      pos.y = effectWork->y + (10 << 16);
+      pos.z = effectWork->z;
       Vector_AddPolarOffset(remainingFrames << 16,
                             (s16)particle->work + (remainingFrames << 11),
                             &pos);
@@ -57,17 +57,17 @@ void FieldEffect_UpdateShrinkingOrbitObject(union FieldObject *fieldObject) {
 /// spark.
 void FieldEffect_RunSparkEmitter(union FieldObject *fieldObject) {
   struct SparkObject *emitter = (struct SparkObject *)fieldObject;
-  struct FieldEffectScene *scene;
+  struct FieldEffectWork *effectWork;
   s16 *phase;
   struct SparkObject *spark;
   s32 pos[3];
 
   phase = &emitter->phase;
-  scene = gEffectWork;
+  effectWork = gEffectWork;
   if (*phase != -1) {
     SET_POSITION(emitter,
-                 scene->x + Iwram_MulQ16(6 << 16, Trig_Sin(*phase << 10)),
-                 scene->y + ABOVE, scene->z);
+                 effectWork->x + Iwram_MulQ16(6 << 16, Trig_Sin(*phase << 10)),
+                 effectWork->y + ABOVE, effectWork->z);
     (*phase)++;
     *phase = (*phase + 64) % 64;
   }
@@ -82,7 +82,7 @@ void FieldEffect_RunSparkEmitter(union FieldObject *fieldObject) {
     if (spark != 0) {
       spark->update = FieldEffect_SwayParticle;
       spark->scaleX = spark->scaleY = 0x9999; // 0.6
-      spark->motionFlags = ACTOR_FALLS;
+      spark->motionFlags = OBJ_EVENT_FALLS;
       spark->gravity = 458;
       spark->phase = Random16() >> 9;
       spark->anchorX = spark->x;
@@ -114,9 +114,9 @@ void FieldEffect_RunPlyOnTarget(s32 unused) {
 /// particles' shared sprite resource slot at the end and runs the effect
 /// scene's finishCallback.
 void FieldEffect_RunPly(void) {
-  struct FieldEffectScene *scene = gEffectWork;
-  struct FieldActor *target = scene->mainObject;
-  struct FieldActor *object;
+  struct FieldEffectWork *effectWork = gEffectWork;
+  struct ObjectEvent *target = effectWork->mainObject;
+  struct ObjectEvent *object;
   struct AnimationObject *last;
   u8 resourceSlot;
   s32 i;
@@ -126,7 +126,7 @@ void FieldEffect_RunPly(void) {
   // The spiralling particles: one a frame, each 1/8 turn on from the last.
   last = 0;
   for (i = 0; i < 8; i++) {
-    object = (struct FieldActor *)Object_Spawn(
+    object = (struct ObjectEvent *)Object_Spawn(
         233, target->x.fixed, target->y.fixed + 0x200000, target->z.fixed);
     if (object != 0) {
       object->scaleY = 0xb333; // 0.7
@@ -134,7 +134,7 @@ void FieldEffect_RunPly(void) {
       object->update = FieldEffect_UpdateShrinkingOrbitObject;
       object->timer = 120;
       object->work = i << 13;
-      object->motionFlags = ACTOR_FLOATS;
+      object->motionFlags = OBJ_EVENT_FLOATS;
       last = Sprite_ShareVramCache(object->sprite, last);
     }
     WaitFrames(1);
@@ -150,15 +150,15 @@ void FieldEffect_RunPly(void) {
   WaitFrames(110);
 
   // The one in the centre.
-  target = (struct FieldActor *)Object_Spawn(233, 0, 0, 0);
+  target = (struct ObjectEvent *)Object_Spawn(233, 0, 0, 0);
   object = target;
   if (target != 0) {
     target->scaleY = 0xb333;
     target->scaleX = 0xb333;
-    target->x.fixed = scene->x;
-    target->y.fixed = scene->y + 0x100000;
-    target->z.fixed = scene->z;
-    target->motionFlags = ACTOR_FLOATS;
+    target->x.fixed = effectWork->x;
+    target->y.fixed = effectWork->y + 0x100000;
+    target->z.fixed = effectWork->z;
+    target->motionFlags = OBJ_EVENT_FLOATS;
     Animation_ApplyChildValuesFar((struct DispatchObject *)target,
                                   SPRITE_COLOR_WHITE);
   }
@@ -191,7 +191,7 @@ void FieldEffect_RunPly(void) {
     target->timer = 0;
     // Cast on a target (enabled cleared by FieldEffect_DispatchRequestKind),
     // the sparks fall for 192 frames instead of 128.
-    if (scene->enabled != 0)
+    if (effectWork->enabled != 0)
       WaitFrames(128);
     else
       WaitFrames(192);
@@ -214,7 +214,7 @@ void FieldEffect_RunPly(void) {
   // returns for no entry.
   if (resourceSlot != 0x60)
     Resource_ResetEntry(resourceSlot);
-  if (scene->finishCallback != 0)
-    scene->finishCallback();
+  if (effectWork->finishCallback != 0)
+    effectWork->finishCallback();
   FieldEffect_FadeFromEffectColor();
 }

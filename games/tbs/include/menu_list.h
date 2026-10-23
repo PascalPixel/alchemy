@@ -107,10 +107,10 @@ struct BattleMenuWork {
   struct MenuSprite icons[3];
   u8 iconShown[3]; ///< whether each of icons is drawn
   u8 unk27;
-  /// Where the battle scene slides to (Camera_ConfigureScene's vertical
+  /// Where the battle scene slides to (Camera_ConfigureView's vertical
   /// offset): -2 or 16 by the target menu's mode, 0 otherwise.
-  s32 targetSceneOffset;
-  s32 sceneOffset;  ///< where the slide has reached; a third of the way a frame
+  s32 targetViewOffset;
+  s32 viewOffset;   ///< where the slide has reached; a third of the way a frame
   s32 row;          ///< the list row chosen last
   s32 page;         ///< the list page chosen last
   s32 preferredRow; ///< the row to return to
@@ -144,7 +144,7 @@ struct BattleMenuWork {
 };
 
 STATIC_ASSERT(sizeof(struct BattleMenuWork) == 0x104);
-STATIC_ASSERT(offsetof(struct BattleMenuWork, targetSceneOffset) == 0x28);
+STATIC_ASSERT(offsetof(struct BattleMenuWork, targetViewOffset) == 0x28);
 STATIC_ASSERT(offsetof(struct BattleMenuWork, row) == 0x30);
 STATIC_ASSERT(offsetof(struct BattleMenuWork, commandSelection) == 0x3c);
 STATIC_ASSERT(offsetof(struct BattleMenuWork, timerWindow) == 0x44);

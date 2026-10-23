@@ -33,6 +33,6 @@ void DisplayScroll_InitializeHBlankDma(s32 mode, s32 freqX, s32 stepX, s32 ampX,
   work->stepX = stepX;
   work->stepY = stepY;
   FieldScheduler_AddCallback(DisplayScroll_BuildAndSwapHBlankPage,
-                             TASK_PRIORITY_SCENE);
+                             TASK_PRIORITY_MAP);
   FieldScheduler_AddCallback(DisplayScroll_ArmHBlankDma, 1152);
 }

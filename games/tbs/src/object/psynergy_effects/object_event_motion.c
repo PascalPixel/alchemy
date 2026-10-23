@@ -68,7 +68,7 @@ s32 ObjectMotion_TurnTowardLinkedTarget(struct ObjectRuntime *object) {
 
   target = object->linkedObject;
   if (target != NULL) {
-    // Clear ACTOR_FACES_MOTION, so moving does not turn it away again.
+    // Clear OBJ_EVENT_FACES_MOTION, so moving does not turn it away again.
     object->actionFlags &= 0xfe;
     targetAngle = (u16)ArcTan2(target->z - object->z, target->x - object->x);
     currentAngle = object->angle;
@@ -84,34 +84,35 @@ s32 ObjectMotion_TurnTowardLinkedTarget(struct ObjectRuntime *object) {
   return 1;
 }
 
-/// Starts an actor's action script: an enum ActorBehavior, or any other value
+/// Starts an actor's action script: an enum MovementType, or any other value
 /// as the script to run itself. The built-in scripts are in scripts.s
 /// (field.h). Reached from a placement's behavior column (object/actors.c),
-/// from Scene_TalkToActor after a talk (object/events.c), from the actor
-/// commands and from Lalivero's interiors (Engine_ActorSetActionCallback).
+/// from Map_TalkToObjectEvent after a talk (object/events.c), from the actor
+/// commands and from Lalivero's interiors
+/// (Engine_ObjectEventSetActionCallback).
 void ObjectMotion_SetActionCallback(struct ObjectRuntime *object, s32 action) {
   switch (action) {
-  case ACTOR_STAND:
+  case MOVEMENT_TYPE_STAND:
     action = (s32)gObjectMotion_ActionKind1Script;
     break;
-  case ACTOR_WANDER:
+  case MOVEMENT_TYPE_WANDER:
     action = (s32)gObjectMotion_ActionKind2Script;
     break;
-  case ACTOR_WANDER_NEAR:
+  case MOVEMENT_TYPE_WANDER_NEAR:
     action = (s32)gObjectMotion_ActionKind3Script;
     break;
-  case ACTOR_WANDER_CLOSE:
+  case MOVEMENT_TYPE_WANDER_CLOSE:
     action = (s32)gObjectMotion_ActionKind4Script;
     break;
-  case ACTOR_FOLLOW_LINKED:
+  case MOVEMENT_TYPE_FOLLOW_LINKED:
     action = (s32)gObjectMotion_MoveTowardTargetScript;
     break;
-  case ACTOR_FACE_LEADER:
-    object->linkedObject =
-        (struct ObjectRuntime *)Object_GetById(gGameState.selectedActor);
+  case MOVEMENT_TYPE_FACE_LEADER:
+    object->linkedObject = (struct ObjectRuntime *)ObjectEvent_GetById(
+        gGameState.selectedObjectEvent);
     action = (s32)gObjectMotion_TurnTowardLinkedScript;
     break;
-  case ACTOR_RESET_ACTION:
+  case MOVEMENT_TYPE_RESET_ACTION:
     action = (s32)gObjectMotion_ResetActionScript;
     break;
   default:

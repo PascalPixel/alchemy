@@ -5,62 +5,62 @@
 	.set import.Engine_TaskRemoveCallback, 1
 	.set import.Engine_RandomNext, 1
 	.set import.ArcTan2, 1
-	.set import.Object_SetMode, 1
+	.set import.ObjectEvent_SetMode, 1
 	.set import.Engine_ObjectSetScript, 1
 	.set import.Engine_ObjectCreate, 1
 	.set import.Engine_ObjectDispatchRelease, 1
-	.set import.Engine_MapRedraw, 1
+	.set import.Engine_MapGridRedraw, 1
 	.set import.Engine_ObjectSetPosition, 1
-	.set import.Engine_MapAnimateCells, 1
-	.set import.Engine_MapCopyCellsTo, 1
-	.set import.Engine_MapCopyCellAttributes, 1
-	.set import.Engine_ActorSetSpriteFlags, 1
+	.set import.Engine_MapGridAnimateCells, 1
+	.set import.Engine_MapGridCopyCellsTo, 1
+	.set import.Engine_MapGridCopyCellAttributes, 1
+	.set import.Engine_ObjectEventSetSpriteFlags, 1
 	.set import.Engine_WorkSetValuesIfNonNegative, 1
 	.set import.Engine_GameFlagIsSet, 1
 	.set import.Engine_GameFlagSet, 1
-	.set import.Engine_EventWait, 1
-	.set import.Engine_EventStart, 1
-	.set import.Engine_EventEnd, 1
-	.set import.Event_CallWithLastActiveObjectId, 1
-	.set import.Engine_EventChooseYesNo, 1
-	.set import.Object_GetById, 1
-	.set import.Engine_ActorDestroy, 1
-	.set import.Engine_ActorSetSpeed, 1
-	.set import.Engine_ActorEnableActionCallback, 1
-	.set import.Object_RefreshSelectorById, 1
-	.set import.Engine_ActorStop, 1
-	.set import.Object_SetActionCallbackAndRefreshById, 1
-	.set import.Engine_ActorSetDestination, 1
+	.set import.Engine_ScriptWait, 1
+	.set import.Engine_ScriptStart, 1
+	.set import.Engine_ScriptEnd, 1
+	.set import.FieldScript_CallWithLastActiveObjectId, 1
+	.set import.Engine_ScriptChooseYesNo, 1
+	.set import.ObjectEvent_GetById, 1
+	.set import.Engine_ObjectEventDestroy, 1
+	.set import.Engine_ObjectEventSetSpeed, 1
+	.set import.Engine_ObjectEventEnableActionCallback, 1
+	.set import.ObjectEvent_RefreshSelectorById, 1
+	.set import.Engine_ObjectEventStop, 1
+	.set import.ObjectEvent_SetActionCallbackAndRefreshById, 1
+	.set import.Engine_ObjectEventSetDestination, 1
 	.set import.Engine_ObjectMotionSetPositionAndCommit, 1
-	.set import.Engine_ActorWalkToAndWait, 1
-	.set import.Engine_ActorSetDestinationOffset, 1
-	.set import.Engine_ActorWaitForMove, 1
-	.set import.Engine_ActorSetPosition, 1
-	.set import.Engine_ActorSetAnimation, 1
-	.set import.Engine_ActorSetAnimationAndWait, 1
-	.set import.Engine_ActorJump, 1
-	.set import.Engine_ActorStartRepeatedMotion, 1
-	.set import.Engine_ActorRunRepeatedMotion, 1
-	.set import.Engine_ActorFaceActor, 1
-	.set import.Engine_ActorFaceEachOther, 1
+	.set import.Engine_ObjectEventWalkToAndWait, 1
+	.set import.Engine_ObjectEventSetDestinationOffset, 1
+	.set import.Engine_ObjectEventWaitForMove, 1
+	.set import.Engine_ObjectEventSetPosition, 1
+	.set import.Engine_ObjectEventSetAnimation, 1
+	.set import.Engine_ObjectEventSetAnimationAndWait, 1
+	.set import.Engine_ObjectEventJump, 1
+	.set import.Engine_ObjectEventStartRepeatedMotion, 1
+	.set import.Engine_ObjectEventRunRepeatedMotion, 1
+	.set import.Engine_ObjectEventFaceObjectEvent, 1
+	.set import.Engine_ObjectEventFaceEachOther, 1
 	.set import.ObjectGroup_SetChildValue, 1
-	.set import.Object_SetTargetAndCallback, 1
-	.set import.Engine_EventSetMessage, 1
-	.set import.Engine_EventOpenMessage, 1
-	.set import.Engine_EventShowMessage, 1
-	.set import.Engine_EventAskYesNo, 1
-	.set import.Engine_ActorFaceDirection, 1
-	.set import.Engine_ActorSetSpritePriority, 1
-	.set import.Engine_ActorShowEmote, 1
-	.set import.Engine_ActorSetAttachedEffect, 1
+	.set import.ObjectEvent_SetTargetAndCallback, 1
+	.set import.Engine_ScriptSetMessage, 1
+	.set import.Engine_ScriptOpenMessage, 1
+	.set import.Engine_ScriptShowMessage, 1
+	.set import.Engine_ScriptAskYesNo, 1
+	.set import.Engine_ObjectEventFaceDirection, 1
+	.set import.Engine_ObjectEventSetSpritePriority, 1
+	.set import.Engine_ObjectEventShowEmote, 1
+	.set import.Engine_ObjectEventSetAttachedEffect, 1
 	.set import.Engine_CameraSetSpeed, 1
 	.set import.Engine_CameraMoveTo, 1
 	.set import.Engine_CameraWaitForMove, 1
-	.set import.Engine_EventRequestExit, 1
+	.set import.Engine_ScriptRequestWarp, 1
 	.set import.Engine_ColorBufferApplyTarget, 1
 	.set import.Engine_ColorBufferInterpolate, 1
-	.set import.Engine_EventOpenScreen, 1
-	.set import.Engine_EventWaitForScreen, 1
+	.set import.Engine_ScriptOpenScreen, 1
+	.set import.Engine_ScriptWaitForScreen, 1
 	.set import.Engine_PsynergyPlayEffect, 1
 	.set import.Engine_PsynergyStart, 1
 	.set import.Engine_PsynergySetTarget, 1

@@ -40,7 +40,7 @@ s32 BattlePresentation_DispatchAction(struct BattleActionRecord *request,
 
   // The view: the camera eases over 60 frames, the background at full
   // brightness (1.0 in 16.16). The projection is the one
-  // BattlePresentation_SetupTransitionScene sets at 100 percent (focal length
+  // BattlePresentation_SetupTransitionView sets at 100 percent (focal length
   // 510 pixels), but with its far depth at 32767 pixels where that one stops at
   // 1020.
   transition = WORK_SLOT(HEAP_SLOT_BATTLE_BACKGROUND);
@@ -279,7 +279,7 @@ s32 BattlePresentation_RunUnitTransition(struct BattlePlan *plan, s32 mode) {
   BattlePresentation_BuildTargetList(plan, &work.effect);
   actor = plan->actorId;
   target = plan->targetIds[0];
-  if (plan->presentationFlags & STAGING_SCENE) {
+  if (plan->presentationFlags & STAGING_SUMMON) {
     struct BattlePresentationTransition *transition;
     s32 yaw;
 #ifdef UBFIX
@@ -380,7 +380,7 @@ s32 BattlePresentation_RunUnitTransition(struct BattlePlan *plan, s32 mode) {
             animation->entries[child]->colorMode;
     }
     // The side the effect plays on: the targets'.
-    if (plan->presentationFlags & STAGING_SCENE) {
+    if (plan->presentationFlags & STAGING_SUMMON) {
       if (target > ALLY_MAX)
         work.effect.side = EFFECT_SIDE_ENEMIES;
       else
@@ -396,8 +396,8 @@ s32 BattlePresentation_RunUnitTransition(struct BattlePlan *plan, s32 mode) {
     // The effect runs to its end while playback, a scheduler callback, plays
     // the targets' events from the frame the blow lands.
     Scheduler_AddOrUpdateCallback(BattleEvent_Playback, 0xc80);
-    if (plan->presentationFlags & STAGING_SCENE)
-      BattleEffect_RunSceneEffectFar(&work.effect);
+    if (plan->presentationFlags & STAGING_SUMMON)
+      BattleEffect_RunSummonEffectFar(&work.effect);
     else if (plan->presentationFlags & STAGING_BY_ID_RANGE)
       BattleEffect_DispatchByIdRangeFar(&work.effect);
     else
@@ -422,7 +422,7 @@ s32 BattlePresentation_RunUnitTransition(struct BattlePlan *plan, s32 mode) {
   }
   for (i = 0; i != count; i++)
     BattlePresentation_SetActorRecordMode(units[i], ACTOR_OPAQUE);
-  BattlePresentation_SetupTransitionScene(0, 0, 0, 100);
+  BattlePresentation_SetupTransitionView(0, 0, 0, 100);
   WaitFrames(1);
   return 0;
 }
@@ -611,7 +611,7 @@ s32 BattlePresentation_RunAttack(struct BattlePlan *plan, s32 mode) {
     if (critical != 0) {
       transition->flag = 0;
       BattleParty_ListAllUnitsAndSubmit();
-      BattlePresentation_SetupTransitionScene(0, 0, 0, 100);
+      BattlePresentation_SetupTransitionView(0, 0, 0, 100);
     }
     BattleMotion_ReturnToSpot(work.effect.actors[0]);
   }
@@ -1113,7 +1113,7 @@ void BattleMotion_ShowDowned(s32 unitId) {
     WaitFrames(4);
     BattleObject_RemoveFromLists(unitId);
     // The whole dissolve, over 32 frames.
-    Map_RenderAllAnimatedTileFramesFar((u8 **)records, recordCount);
+    SpriteDissolve_RunManyFar((u8 **)records, recordCount);
     BattleObject_MarkForRelease(unitId);
   }
 }

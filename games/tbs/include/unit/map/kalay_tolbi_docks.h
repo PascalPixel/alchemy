@@ -1,43 +1,48 @@
-#ifndef ALCHEMY_UNIT_SCENE_KALAY_TOLBI_DOCKS_H
-#define ALCHEMY_UNIT_SCENE_KALAY_TOLBI_DOCKS_H
+#ifndef ALCHEMY_UNIT_MAP_KALAY_TOLBI_DOCKS_H
+#define ALCHEMY_UNIT_MAP_KALAY_TOLBI_DOCKS_H
 
 #include "types.h"
 #include "map_tables.h"
 
-struct SceneEntrance;
-struct SceneEvent;
-struct ScenePlacement;
-struct SceneRegion;
+struct MapWarpDest;
+struct MapEvent;
+struct ObjectEventTemplate;
+struct MapWarpRegion;
 
-const struct SceneEntrance *KalayTolbiDocks_GetEntrances(void);
-const struct SceneRegion *KalayTolbiDocks_GetRegions(void);
-const u32 *KalayTolbiDocks_GetExits(void);
-const struct ScenePlacement *KalayTolbiDocks_GetPlacements(void);
-const struct SceneEvent *KalayTolbiDocks_GetEvents(void);
+const struct MapWarpDest *KalayTolbiDocks_GetWarpDests(void);
+const struct MapWarpRegion *KalayTolbiDocks_GetRegions(void);
+const u32 *KalayTolbiDocks_GetWarps(void);
+const struct ObjectEventTemplate *KalayTolbiDocks_GetObjectEventTemplates(void);
+const struct MapEvent *KalayTolbiDocks_GetEvents(void);
 s32 KalayTolbiDocks_Initialize(void);
 extern u16 gKalayTolbiDocks_KalayDoorCells[];
 extern u16 gKalayTolbiDocks_TolbiDoorCells[];
 extern s32 gKalayTolbiDocks_BodyguardSpinScript[];
-extern struct SceneEntrance gKalayTolbiDocks_NoEntrances[];
-extern struct SceneEntrance gKalayTolbiDocks_KalayEntrances[];
-extern struct SceneEntrance gKalayTolbiDocks_TolbiEntrances[];
-extern struct SceneEntrance gKalayTolbiDocks_InteriorEntrances[];
-extern u32 gKalayTolbiDocks_Exits[];
-extern struct ScenePlacement gKalayTolbiDocks_NoPlacements[];
-extern struct ScenePlacement gKalayTolbiDocks_TolbiPlacements[];
-extern struct ScenePlacement gKalayTolbiDocks_TolbiPlacementsStranded[];
-extern struct ScenePlacement gKalayTolbiDocks_KalayPlacements[];
-extern struct ScenePlacement gKalayTolbiDocks_KalayPlacementsShipGone[];
-extern struct ScenePlacement gKalayTolbiDocks_InteriorPlacements[];
-extern struct ScenePlacement gKalayTolbiDocks_InteriorPlacementsShipGone[];
-extern struct ScenePlacement gKalayTolbiDocks_InteriorPlacementsStranded[];
-extern struct SceneEvent gKalayTolbiDocks_NoEvents[];
-extern struct SceneEvent gKalayTolbiDocks_KalayEvents[];
-extern struct SceneEvent gKalayTolbiDocks_KalayEventsShipGone[];
-extern struct SceneEvent gKalayTolbiDocks_TolbiEvents[];
-extern struct SceneEvent gKalayTolbiDocks_TolbiEventsStranded[];
-extern struct SceneEvent gKalayTolbiDocks_InteriorEvents[];
-extern struct SceneEvent gKalayTolbiDocks_InteriorEventsShipGone[];
-extern struct SceneEvent gKalayTolbiDocks_InteriorEventsStranded[];
+extern struct MapWarpDest gKalayTolbiDocks_NoWarpDests[];
+extern struct MapWarpDest gKalayTolbiDocks_KalayWarpDests[];
+extern struct MapWarpDest gKalayTolbiDocks_TolbiWarpDests[];
+extern struct MapWarpDest gKalayTolbiDocks_InteriorWarpDests[];
+extern u32 gKalayTolbiDocks_Warps[];
+extern struct ObjectEventTemplate gKalayTolbiDocks_NoObjectEventTemplates[];
+extern struct ObjectEventTemplate gKalayTolbiDocks_TolbiObjectEventTemplates[];
+extern struct ObjectEventTemplate
+    gKalayTolbiDocks_TolbiObjectEventTemplatesStranded[];
+extern struct ObjectEventTemplate gKalayTolbiDocks_KalayObjectEventTemplates[];
+extern struct ObjectEventTemplate
+    gKalayTolbiDocks_KalayObjectEventTemplatesShipGone[];
+extern struct ObjectEventTemplate
+    gKalayTolbiDocks_InteriorObjectEventTemplates[];
+extern struct ObjectEventTemplate
+    gKalayTolbiDocks_InteriorObjectEventTemplatesShipGone[];
+extern struct ObjectEventTemplate
+    gKalayTolbiDocks_InteriorObjectEventTemplatesStranded[];
+extern struct MapEvent gKalayTolbiDocks_NoEvents[];
+extern struct MapEvent gKalayTolbiDocks_KalayEvents[];
+extern struct MapEvent gKalayTolbiDocks_KalayEventsShipGone[];
+extern struct MapEvent gKalayTolbiDocks_TolbiEvents[];
+extern struct MapEvent gKalayTolbiDocks_TolbiEventsStranded[];
+extern struct MapEvent gKalayTolbiDocks_InteriorEvents[];
+extern struct MapEvent gKalayTolbiDocks_InteriorEventsShipGone[];
+extern struct MapEvent gKalayTolbiDocks_InteriorEventsStranded[];
 
 #endif

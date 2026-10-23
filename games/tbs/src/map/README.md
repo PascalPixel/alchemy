@@ -31,27 +31,27 @@ callbacks, or plays an arrival cutscene; it may take an exit at once. It
 skips arrival cutscenes when `FLAG_KEEP_PARTY_POSITION` says the party is
 returning to where it stood, as after a battle.
 
-In the code, the six are `struct SceneEntries` in `field_runtime.h`, in a
+In the code, the six are `struct MapEntries` in `field_runtime.h`, in a
 fixed order at the start of every overlay, `entry/<place>.s`: 48 bytes, each
 entry a veneer, a tiny piece of code that only jumps on: one word holding
 two instructions (load the address that follows, jump to it), then the
-address of the function. `Field_RunScene` calls
-`Scene_GetEvents`, then places the party at its entrance
-(`Scene_ApplyEntrance`), creates the actors from the placements and calls
-`Scene_Initialize`. `Field_ProcessStep` reads the regions at every step, and
-`Scene_TakeExit` reads the exits as the party leaves. An overlay that serves
+address of the function. `Field_RunMap` calls
+`Map_GetEvents`, then places the party at its entrance
+(`Map_ApplyWarpDest`), creates the actors from the placements and calls
+`Map_Initialize`. `Field_ProcessStep` reads the regions at every step, and
+`Map_TakeWarp` reads the exits as the party leaves. An overlay that serves
 several scenes chooses by `gGameState.scene`, as Babi Lighthouse's
-`Scene_GetRegions` does. Some overlays give the entries names of their own
-(`BabiLighthouse_GetExits`); only the order is fixed.
+`Map_GetWarpRegions` does. Some overlays give the entries names of their own
+(`BabiLighthouse_GetWarps`); only the order is fixed.
 
-| Entry, as Vault names it | Offset in `struct SceneEntries` | Returns or does |
+| Entry, as Vault names it | Offset in `struct MapEntries` | Returns or does |
 | --- | --- | --- |
-| `Scene_Initialize` | `0x04` | the scene's setup, run once its actors exist |
-| `Scene_GetEntrances` | `0x0c` | `struct SceneEntrance` rows |
-| `Scene_GetExits` | `0x14` | the exit table |
-| `Scene_GetPlacements` | `0x1c` | `struct ScenePlacement` rows |
-| `Scene_GetEvents` | `0x24` | `struct SceneEvent` rows |
-| `Scene_GetRegions` | `0x2c` | `struct SceneRegion` boxes, or `NULL` |
+| `Map_Initialize` | `0x04` | the scene's setup, run once its actors exist |
+| `Map_GetWarpDests` | `0x0c` | `struct MapWarpDest` rows |
+| `Map_GetWarps` | `0x14` | the exit table |
+| `Map_GetObjectEventTemplates` | `0x1c` | `struct ObjectEventTemplate` rows |
+| `Map_GetEvents` | `0x24` | `struct MapEvent` rows |
+| `Map_GetWarpRegions` | `0x2c` | `struct MapWarpRegion` boxes, or `NULL` |
 
 ## The tables
 
@@ -60,20 +60,20 @@ where, and what answers each thing the player does. A position in them is
 in pixels (x east, y up, z south) and a facing one of eight headings
 (`enum Facing`); [Words used here](#words-used-here) gives the units.
 
-- **Entrances** (`struct SceneEntrance`): for each entrance number, a flag
+- **Entrances** (`struct MapWarpDest`): for each entrance number, a flag
   that must be set (or -1), a position, a facing and the camera's limits.
-- **Exits**: a header word per scene (`SCENE_EXITS(Place)`), then rows of
-  `SCENE_EXIT(exit, scene, entrance)` mapping an exit kind to a scene and
-  entrance named in `scene_links.h`, ended by `SCENE_EXITS_END`.
-  `SCENE_EXIT_IF` adds a flag, and the row is taken only while that flag is
-  clear. `SCENE_EXIT_TO_BATTLE` leads into a battle.
-- **Placements** (`struct ScenePlacement`): a sprite, a condition, a behaviour
-  (an `enum ActorBehavior` such as `ACTOR_STAND` or `ACTOR_WANDER`, or an
+- **Exits**: a header word per scene (`MAP_WARPS(Place)`), then rows of
+  `MAP_WARP(exit, scene, entrance)` mapping an exit kind to a scene and
+  entrance named in `scene_links.h`, ended by `MAP_WARPS_END`.
+  `MAP_WARP_IF` adds a flag, and the row is taken only while that flag is
+  clear. `MAP_WARP_TO_BATTLE` leads into a battle.
+- **Placements** (`struct ObjectEventTemplate`): a sprite, a condition, a behaviour
+  (an `enum MovementType` such as `MOVEMENT_TYPE_STAND` or `MOVEMENT_TYPE_WANDER`, or an
   object script), a position, a facing and how the actor turns when spoken to.
-- **Regions** (`struct SceneRegion`): boxes in which the leader takes an exit
+- **Regions** (`struct MapWarpRegion`): boxes in which the leader takes an exit
   kind, each with a condition. Most scenes have none.
-- **Events** (`struct SceneEvent`): a control word (the kind and its detail), a
-  trigger, a condition and a value, ended by `SCENE_EVENTS_END`.
+- **Events** (`struct MapEvent`): a control word (the kind and its detail), a
+  trigger, a condition and a value, ended by `MAP_EVENTS_END`.
 
 ### Who stands where
 
@@ -91,13 +91,13 @@ the blue statue has one row for its place on the ledge and another for where
 it lands after it falls, and only one of the two appears.
 
 The party takes slots 0 to 7, the leader the one the player moves
-(`ACTOR_PARTY_LEADER`), and the table's rows take the slots from
-`ACTOR_FIRST_PLACED` in order: actor `ACTOR_FIRST_PLACED + n` is always row n
-(`Event_SpawnObjectTable`). A row whose sprite is one of the party's
+(`LOCALID_PARTY_LEADER`), and the table's rows take the slots from
+`LOCALID_FIRST_PLACED` in order: actor `LOCALID_FIRST_PLACED + n` is always row n
+(`FieldScript_SpawnObjectTable`). A row whose sprite is one of the party's
 characters (sprites 0 to 7) takes that character's own slot instead. A
-condition of 0 is no flag: `Scene_AssignViewFlags` replaces it with whether
+condition of 0 is no flag: `Map_AssignViewFlags` replaces it with whether
 the actor lies within the view. Each scene names its actors in an enum in
-row order (`ACTOR_FALLEN_STATUE = ACTOR_FIRST_PLACED`).
+row order (`LOCALID_FALLEN_STATUE = LOCALID_FIRST_PLACED`).
 
 ### Which events a cell starts
 
@@ -110,21 +110,21 @@ code means different things in different places.
 
 On the screen of Vale below, on the day the story begins, each door is a
 touch row rather than an exit row: walking north into the doorstep runs a
-script, `Event_EnterIsaacsHouse` for Isaac's house, that opens the door,
+script, `EventScript_EnterIsaacsHouse` for Isaac's house, that opens the door,
 walks the leader in and only then asks for the exit, and that can refuse
 instead, as Dora does once the party has left Vale. Touch rows also climb the
-ladder beside Isaac's house (`Event_ClimbLadderOntoRoof` up,
-`Event_ClimbDownFromRoof` down) and put the upper path's cells
-back when the leader steps off it (`Event_ClearPathCellOverride`). Three
+ladder beside Isaac's house (`EventScript_ClimbLadderOntoRoof` up,
+`EventScript_ClimbDownFromRoof` down) and put the upper path's cells
+back when the leader steps off it (`EventScript_ClearPathCellOverride`). Three
 cells of the path at the top carry a code no row answers.
 
 ![Which cells start events in Vale. A screen of Vale on the day the story begins, drawn from its map, with each cell that carries one of the scene's own collision codes tinted and numbered. In pink, cells a touch row answers: 1, a door into a house, walking north into it; 2, the door into Isaac's house, walking north; 3, the ladder up onto the roof of Isaac's house, walking north; 4, the ladder down from the roof, walking south; 5, the cell where stepping off the upper path changes its cells back. In grey, 6: three cells of the path at the top with a code of the scene's own that no row answers.](https://alchemy.pascalpixel.com/illustrations/scene/event-cells.svg)
 
 Stepping on or walking into a cell runs the first touch row whose trigger is
 its code and whose condition holds, or failing one the first such exit row
-(`Scene_RunTouchOrExit`); pressing A facing it runs the first such search
+(`Map_RunCoordEventOrWarp`); pressing A facing it runs the first such search
 row. A code with no row does nothing. The scene's own codes are
-`MAP_CELL_EVENT_FIRST` to `MAP_CELL_EVENT_LAST`; the codes above them mean
+`MB_EVENT_FIRST` to `MB_EVENT_LAST`; the codes above them mean
 the same on every map ([Maps](../layout/README.md#cells)).
 
 ### What an event row says
@@ -133,14 +133,14 @@ An event's kind says what starts it and what its trigger is:
 
 | Kind | Started by | Trigger |
 | --- | --- | --- |
-| `EVENT_TALK` | the A button on an actor | the actor's number |
-| `EVENT_TALK_HALTED` | talking to an actor Halt has stopped | the actor's number |
-| `EVENT_TOUCH`, `TOUCH_FACING(f)`, `TOUCH_WALKING_INTO(f)` | stepping onto a cell, facing a way, or pushing against it | the cell's collision code |
-| `EVENT_EXIT` | stepping onto a cell no touch event answers | the cell's collision code |
-| `SEARCH(target)` | the A button on what is ahead, when it is no actor | the cell's collision code |
-| `USE_ITEM(item)`, `USE_ITEM_ON_ACTOR(item)` | using an item | the cell's code or the actor's number |
-| `PSYNERGY_ON_ACTOR(ability)`, `PSYNERGY_IN_AREA(ability, phase)` | using Psynergy on an actor, or anywhere | the actor's number, or 0 |
-| `EVENT_RAISED` | the scene's code raising a value | the value |
+| `MAP_EVENT_TALK` | the A button on an actor | the actor's number |
+| `MAP_EVENT_TALK_HALTED` | talking to an actor Halt has stopped | the actor's number |
+| `MAP_EVENT_COORD`, `COORD_EVENT_FACING(f)`, `COORD_EVENT_WALKING_INTO(f)` | stepping onto a cell, facing a way, or pushing against it | the cell's collision code |
+| `MAP_EVENT_WARP` | stepping onto a cell no touch event answers | the cell's collision code |
+| `BG_EVENT(target)` | the A button on what is ahead, when it is no actor | the cell's collision code |
+| `USE_ITEM(item)`, `USE_ITEM_ON_OBJ_EVENT(item)` | using an item | the cell's code or the actor's number |
+| `PSYNERGY_ON_OBJ_EVENT(ability)`, `PSYNERGY_IN_AREA(ability, phase)` | using Psynergy on an actor, or anywhere | the actor's number, or 0 |
+| `MAP_EVENT_RAISED` | the scene's code raising a value | the value |
 
 A Psynergy event's phase (`enum PsynergyPhase`) says when it runs around the
 effect: `PSYNERGY_PHASE_BEFORE_CAST` before it plays,
@@ -163,22 +163,22 @@ The formats are in `games/tbs/include/map_tables.h`, the door names in
 
 | Name | Value | Meaning |
 | --- | --- | --- |
-| `ACTOR_PARTY_LEADER` | 0 | the actor the player moves |
-| `ACTOR_FIRST_PLACED` | 8 | the slot of a placement table's first row |
+| `LOCALID_PARTY_LEADER` | 0 | the actor the player moves |
+| `LOCALID_FIRST_PLACED` | 8 | the slot of a placement table's first row |
 | `CONDITION_ALWAYS` | -1 | a row that always holds |
-| `CONDITION_IN_VIEW` | 0 | a placement shown only while within the view (`Scene_AssignViewFlags`) |
+| `CONDITION_IN_VIEW` | 0 | a placement shown only while within the view (`Map_AssignViewFlags`) |
 | `CONDITION_FLAG_SET` | `0x1000` | with a flag (`IF_FLAG_SET`): the flag must be set, not clear |
-| `SCENE_EXITS_END` | `0x1ff` | ends an exit table |
-| `SCENE_EVENTS_END` | `0xffffffff` | ends an event table |
-| `EVENT_TALK` | 0 | event kind: talking to an actor |
-| `EVENT_EXIT` | 1 | event kind: an exit cell |
-| `EVENT_TOUCH` | 2 | event kind: stepping onto or pushing against a cell |
-| `EVENT_SEARCH` | 3 | event kind: a search |
-| `EVENT_ITEM` | 4 | event kind: an item used on a cell or an actor |
-| `EVENT_PSYNERGY` | 5 | event kind: Psynergy |
-| `EVENT_RAISED` | 6 | event kind: raised by code |
-| `EVENT_TALK_HALTED` | 7 | event kind: talking to an actor Halt has stopped |
-| `EVENT_TRIGGER_OWN_EFFECT` | `0x400` | trigger bit: a Psynergy event runs in place of the effect, a search shows no checking message |
+| `MAP_WARPS_END` | `0x1ff` | ends an exit table |
+| `MAP_EVENTS_END` | `0xffffffff` | ends an event table |
+| `MAP_EVENT_TALK` | 0 | event kind: talking to an actor |
+| `MAP_EVENT_WARP` | 1 | event kind: an exit cell |
+| `MAP_EVENT_COORD` | 2 | event kind: stepping onto or pushing against a cell |
+| `MAP_EVENT_BG` | 3 | event kind: a search |
+| `MAP_EVENT_ITEM` | 4 | event kind: an item used on a cell or an actor |
+| `MAP_EVENT_PSYNERGY` | 5 | event kind: Psynergy |
+| `MAP_EVENT_RAISED` | 6 | event kind: raised by code |
+| `MAP_EVENT_TALK_HALTED` | 7 | event kind: talking to an actor Halt has stopped |
+| `MAP_EVENT_TRIGGER_OWN_EFFECT` | `0x400` | trigger bit: a Psynergy event runs in place of the effect, a search shows no checking message |
 | `FIND_ITEM(item)` | `0x00100000` + item | a search finds an item |
 | `FIND_COINS(coins)` | `0x00200000` + coins | a search finds coins |
 | `FIND_PSYNERGY_STONE` | `0x00300000` | a search finds a Psynergy Stone |
@@ -199,8 +199,8 @@ he has welcomed Isaac back, and below it one that always holds: the first
 talk welcomes Isaac, and every later one warns of the thieves. A row behind
 one that always fits is never reached, as the cook's second row shows.
 
-`Scene_FindEvent` returns the first row whose kind, trigger and condition
-fit. A search on a named target (everything but `SEARCH_UNNAMED`) is
+`Map_FindEvent` returns the first row whose kind, trigger and condition
+fit. A search on a named target (everything but `BG_EVENT_UNNAMED`) is
 returned whatever its condition, unless it finds a mimic, and
 `Field_SearchTile` tests the condition afterwards, so that an opened chest
 still says it is empty. Rows these rules make unreachable keep a
@@ -209,8 +209,8 @@ such case.
 
 | Name | Value | Meaning |
 | --- | --- | --- |
-| `SEARCH_UNNAMED` | 0 | a search that shows nothing as the leader checks |
-| `SEARCH_CHEST` | 1 | the first named target; target n shows `MsgTileChecked` + n |
+| `BG_EVENT_UNNAMED` | 0 | a search that shows nothing as the leader checks |
+| `BG_EVENT_CHEST` | 1 | the first named target; target n shows `MsgTileChecked` + n |
 
 ## Scripts
 
@@ -234,13 +234,13 @@ commands of `event.h` over the engine calls of `field_event.h`.
 ```c
 /// LunpaFortressUpperFloor, raised when the patrolling pair spots the leader:
 /// the first stops and stares, and the second throws the party out.
-static void Event_PatrolPairThrowsPartyOut(void) {
+static void EventScript_PatrolPairThrowsPartyOut(void) {
   EV_START();
-  Engine_ActorStop(UPPER_FLOOR_FIRST_PATROL);
-  Engine_ActorSetDestinationOffset(UPPER_FLOOR_FIRST_PATROL, 0, 0);
+  Engine_ObjectEventStop(UPPER_FLOOR_FIRST_PATROL);
+  Engine_ObjectEventSetDestinationOffset(UPPER_FLOOR_FIRST_PATROL, 0, 0);
   OBJECT_MODE(UPPER_FLOOR_FIRST_PATROL, 0);
-  OBJECT_FACE(UPPER_FLOOR_FIRST_PATROL, ACTOR_PARTY_LEADER, 0);
-  Engine_ActorShowEmote(UPPER_FLOOR_FIRST_PATROL,
+  OBJECT_FACE(UPPER_FLOOR_FIRST_PATROL, LOCALID_PARTY_LEADER, 0);
+  Engine_ObjectEventShowEmote(UPPER_FLOOR_FIRST_PATROL,
                         EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   LunpaFortress_GuardThrowsPartyOut(UPPER_FLOOR_SECOND_PATROL);
   EV_END();
@@ -252,13 +252,13 @@ camera to it. `WAIT(n)` waits `n` frames, about 59.73 a second.
 `MESSAGE_SET` chooses a message and `MESSAGE_PUT` shows it spoken by an actor.
 `OBJECT_POSITION_SET`, `OBJECT_WALK`, `OBJECT_SPEED`, `OBJECT_DIR`, `OBJECT_FACE` and `OBJECT_MODE`
 move, turn and animate actors by number (`OBJECT_MODE` takes an `enum
-ActorAnimation` such as `ANIMATION_NOD`). `FLAG_CHECK` and `FLAG_SET` test and set
+ObjectEventAnimation` such as `ANIMATION_NOD`). `FLAG_CHECK` and `FLAG_SET` test and set
 game flags, and `SE(n)` plays a sound from `songs.h`. Callbacks are added with
-`FieldScheduler_AddCallback` at `TASK_PRIORITY_SCENE`.
+`FieldScheduler_AddCallback` at `TASK_PRIORITY_MAP`.
 
 | Name | Value | Meaning |
 | --- | --- | --- |
-| `TASK_PRIORITY_SCENE` | 3200 | the task priority a scene's callbacks run at |
+| `TASK_PRIORITY_MAP` | 3200 | the task priority a scene's callbacks run at |
 
 ## State that cleans itself up
 
@@ -273,20 +273,20 @@ time. Place flags last while the party stays anywhere in the place, so they
 hold what must survive moving between its rooms, as Fuchin Falls Cave keeps
 where its logs float. Coming back from a battle forgets neither.
 
-`Scene_ResetFlagsOnEnter` clears the scene's 256 flags on every ordinary
+`Map_ResetFlagsOnEnter` clears the scene's 256 flags on every ordinary
 entrance and the place's 256 when the party enters another group ([the front
 page](../../README.md#game-flags) explains the ranges). Because the numbers
 are reused everywhere, each scene says near its top (or beside a single use)
 what it keeps in them, and names those it gives a meaning in its own file
-(`FLAG_FIRST_PLANT_GROWN = FLAG_SCENE_TEMP_40` in Crossbone Isle,
-`FLAG_WELCOMED_BACK = FLAG_PLACE_TEMP_00` in Vault's houses).
+(`FLAG_FIRST_PLANT_GROWN = FLAG_MAP_TEMP_40` in Crossbone Isle,
+`FLAG_WELCOMED_BACK = FLAG_MAPSEC_TEMP_00` in Vault's houses).
 
 The flags are in `games/tbs/include/flags.h`.
 
 | Name | Value | Meaning |
 | --- | --- | --- |
-| `FLAG_SCENE_TEMP_00` to `FLAG_SCENE_TEMP_FF` | `0x200` to `0x2ff` | cleared on every ordinary entrance to a scene |
-| `FLAG_PLACE_TEMP_00` to `FLAG_PLACE_TEMP_FF` | `0x300` to `0x3ff` | cleared on entering another group |
+| `FLAG_MAP_TEMP_00` to `FLAG_MAP_TEMP_FF` | `0x200` to `0x2ff` | cleared on every ordinary entrance to a scene |
+| `FLAG_MAPSEC_TEMP_00` to `FLAG_MAPSEC_TEMP_FF` | `0x300` to `0x3ff` | cleared on entering another group |
 
 ## Code shared between overlays
 
@@ -324,8 +324,8 @@ header.
 
 ## How it fits with the rest of the game
 
-`Game_Run` unpacks the overlay into `gOverlayArea` (`Scene_LoadOverlay`) and
-`Field_RunScene` calls its entries; [Engine](../../engine.md#overlays)
+`Game_Run` unpacks the overlay into `gOverlayArea` (`Map_LoadOverlay`) and
+`Field_RunMap` calls its entries; [Engine](../../engine.md#overlays)
 describes the entry and import tables and how the overlay is loaded. The scene
 table and how scenes depend on the story are on [the front
 page](../../README.md#the-scene-table-and-places). The maps the scenes are set
@@ -359,8 +359,8 @@ is the name the scene writes (`MsgVaultWelcomeToVaultTheTownAt`).
 Each overlay is three objects in `games/tbs/objects.tsv`, linked in this order
 into the overlay area: `entry/<place>`, `<place>` and `import/<place>`; the
 rows' first column is the overlay's resource number. The scene table,
-`gField_SceneTable` in [`field/maps.s`](../field/maps.s), gives each
-scene its overlay, group, variant and map, and names it `SceneId_<Place>`;
+`gField_MapTable` in [`field/maps.s`](../field/maps.s), gives each
+scene its overlay, group, variant and map, and names it `MapId_<Place>`;
 several scenes may share one overlay, and then share its file. A scene overlay
 is never split into parts (S3): its code is laid out by kind, entry points,
 then handlers, then tables, not by place.
@@ -373,16 +373,16 @@ see are in `games/tbs/include/unit/map/`.
 ## Words used here
 
 - **actor**: a field object a scene addresses by number. 0 to 7 are the party
-  (`ACTOR_PARTY_LEADER` is 0, the one the player moves), and the placed actors
-  start at `ACTOR_FIRST_PLACED` (8). Each scene names its own in an enum.
+  (`LOCALID_PARTY_LEADER` is 0, the one the player moves), and the placed actors
+  start at `LOCALID_FIRST_PLACED` (8). Each scene names its own in an enum.
 - **position**: pixels, x east, y up and z south; the engine keeps them in
   16.16 fixed point (`PIXELS(n)`), and a cell is 16 by 16 pixels.
 - **facing**: `enum Facing`, eight headings in 1/65536 turns from `FACING_EAST`
   through `FACING_SOUTH` to `FACING_NORTHEAST`.
 - **condition**: a table row's test: `CONDITION_ALWAYS`, a flag that must be
   clear, or `IF_FLAG_SET(flag)`.
-- **scene flags** and **place flags**: `FLAG_SCENE_TEMP_xx` and
-  `FLAG_PLACE_TEMP_xx`, the two ranges cleared for scene code
+- **scene flags** and **place flags**: `FLAG_MAP_TEMP_xx` and
+  `FLAG_MAPSEC_TEMP_xx`, the two ranges cleared for scene code
   ([above](#state-that-cleans-itself-up)). A place flag with a proven meaning
   takes a name in the scene's own file, never in `flags.h`.
 - **messages**: linker symbols written by bare name, `MSGNO(name)` their
@@ -390,7 +390,7 @@ see are in `games/tbs/include/unit/map/`.
   `MESSAGE_PUT` chooses the next message after showing one, so a line that
   follows a named one has no name of its own.
 - **callback**: a function a scene adds with `FieldScheduler_AddCallback` at
-  `TASK_PRIORITY_SCENE`, run once a frame until removed.
+  `TASK_PRIORITY_MAP`, run once a frame until removed.
 - **update hook**: an actor's `update`, run each frame with the actor.
 
 ## Function prefixes
@@ -398,9 +398,9 @@ see are in `games/tbs/include/unit/map/`.
 A scene's functions take its place's name (`Vault_`, `VaultRevisit_`,
 `ColosseumNavampaMatch_`) and say what the player sees; most functions an
 event table names are `Event_` instead. Shared helpers take their family's
-prefix (`Colosso_`, `MercuryLighthouse_`, `KolimaPalette_`, `StagedActor_`, and
+prefix (`Colosso_`, `MercuryLighthouse_`, `KolimaPalette_`, `StagedObjectEvent_`, and
 `FieldEffect_` for the field effects). Some keep older descriptive names
-(`SceneActor_`, `OverlayObject_`, `FieldScene_`) until the scenes that call
+(`MapObjectEvent_`, `OverlayObject_`, `Map_`) until the scenes that call
 them are humanized. The spellings some sites keep to match (fields reached
 through `offsetof`, another struct's view of an actor, update hooks returning
 `s32`) are in [Matching](../MATCHING.md).
@@ -416,7 +416,7 @@ that character's (`Garet_`, `Mia_`, `Ivan_`, `Leader_`):
 | `Beast_`, `Spray_` | `altin.c` | the hopping water beast and its spray |
 | `Water_` | `altin_peak.c` | the water layer flickering away |
 | `Entrance_` | `babi_lighthouse.c` | an unused division |
-| `SceneState_` | `colosseum_satrage_match.c`, `crossbone_isle_keys.c` | storing a raised-event trigger, and an empty hook |
+| `MapLocalState_` | `colosseum_satrage_match.c`, `crossbone_isle_keys.c` | storing a raised-event trigger, and an empty hook |
 | `InnWorker_` | `lalivero_interiors.c` | the inn worker's sigh |
 | `Reveal_`, `HeatGauge_`, `Manticore_` | `lamakan_desert.c` | the secrets Reveal shows, the heat gauge and the Manticore |
 | `Ship_`, `ShipGlow_`, `OrbGlow_`, `Ripple_`, `Wave_`, `Curtain_` | `lemurian_ship.c` | the ship's swell and glows, the water's ripple and the closing curtains |
@@ -426,18 +426,18 @@ that character's (`Garet_`, `Mia_`, `Ivan_`, `Leader_`):
 
 ## Evidence and open questions
 
-A scene's name is its place's area name from `gScene_AreaNameRules`, or for a
+A scene's name is its place's area name from `gMapSec_NameRules`, or for a
 room the game leaves unnamed, what the player sees there (H3); its functions
 are named for what the player sees; its messages are linker symbols made from
 their English text. Overlay numbers are their rows of the resource directory.
 
-Many functions in `common/` keep older descriptive names (`SceneActor_`,
-`OverlayObject_`, `FieldScene_`); each takes its name with the places that
+Many functions in `common/` keep older descriptive names (`MapObjectEvent_`,
+`OverlayObject_`, `Map_`); each takes its name with the places that
 call it, as those places are humanized. A sound without a proven name keeps
 its number (`SE_188`), as `songs.h` says.
 
-The animated exits of `enum ExitStyle` play the leader's leaving and arrival
-animations, named in `enum ActorAnimation` from Isaac's sprite
+The animated exits of `enum WarpStyle` play the leader's leaving and arrival
+animations, named in `enum ObjectEventAnimation` from Isaac's sprite
 (`spr_000.tsv`, animations 23 to 26): an arrival grows from a small figure
 seen side-on to full size facing the player, and a leaving turns from his
 back to side-on as he shrinks and is then hidden. The alternate pair, which

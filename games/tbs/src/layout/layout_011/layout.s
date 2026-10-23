@@ -1,34 +1,34 @@
 	.include "games/tbs/src/layout/layout.inc"
 	.include "games/tbs/include/game/ed_asm.h"
 	.section .rodata
-	.global Field_Map011
-Field_Map011:
-	map_header 0, 0, 64, 32, 3, 2, 2, 0, 2, 2, 0, 0
-	map_layer 0, 0, 16, 16, 0, 0, 0xff, 0xff
-	map_layer 0, 32, 16, 16, 0, 0, 0xff, 0xff
-	map_layer 0, 64, 16, 16, 0, 0, 0xff, 0xff
-	map_block Field_Map011, .LField_Map011_METATILES
-	map_block Field_Map011, .LField_Map011_SHAPES
-	map_block Field_Map011, .LField_Map011_GRID
-	map_block Field_Map011, .LField_Map011_ANIMATION
-	map_block Field_Map011, .LField_Map011_BLEND
-	map_block Field_Map011, .LField_Map011_MARKERS
-.LField_Map011_METATILES:
+	.global Field_Layout011
+Field_Layout011:
+	layout_header 0, 0, 64, 32, 3, 2, 2, 0, 2, 2, 0, 0
+	layout_layer 0, 0, 16, 16, 0, 0, 0xff, 0xff
+	layout_layer 0, 32, 16, 16, 0, 0, 0xff, 0xff
+	layout_layer 0, 64, 16, 16, 0, 0, 0xff, 0xff
+	layout_offset Field_Layout011, .LField_Layout011_METATILES
+	layout_offset Field_Layout011, .LField_Layout011_SHAPES
+	layout_offset Field_Layout011, .LField_Layout011_GRID
+	layout_offset Field_Layout011, .LField_Layout011_ANIMATION
+	layout_offset Field_Layout011, .LField_Layout011_BLEND
+	layout_offset Field_Layout011, .LField_Layout011_MARKERS
+.LField_Layout011_METATILES:
 	.incbin "games/tbs/src/layout/layout_011/metatiles.delta1.lz"
 	.balign 4, 0
-.LField_Map011_SHAPES:
+.LField_Layout011_SHAPES:
 	.incbin "games/tbs/src/layout/layout_001/shapes.table.lz"
 	.balign 4, 0
-.LField_Map011_GRID:
+.LField_Layout011_GRID:
 	.incbin "games/tbs/src/layout/layout_011/grid.parts.lz"
 	.balign 4, 0
-.LField_Map011_ANIMATION:
+.LField_Layout011_ANIMATION:
 	.incbin "games/tbs/src/layout/layout_011/animation.script.lz"
 	.balign 4, 0
-.LField_Map011_BLEND:
+.LField_Layout011_BLEND:
 	.incbin "games/tbs/src/layout/layout_011/blend.script.lz"
 	.balign 4, 0
-.LField_Map011_MARKERS:
+.LField_Layout011_MARKERS:
 	.incbin "games/tbs/src/layout/layout_011/markers.table"
 	.balign 4, 0
 	.global Tileset_Set10Palette

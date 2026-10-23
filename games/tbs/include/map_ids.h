@@ -6,7 +6,7 @@
 /// (field/map_headers.s).
 ///
 /// Each MapId_ is an absolute symbol whose value is the map's row in the
-/// table; C takes the number as (s32)&MapId_Name, and the warp tables name a
+/// table; C takes the number as (s32)&MapId_Vale, and the warp tables name a
 /// map by its place (MAP_WARP).
 
 /// ★ Named from the game: "Title screen" (MsgDebugEntryName)

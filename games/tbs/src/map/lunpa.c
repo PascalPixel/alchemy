@@ -511,7 +511,7 @@ static void Lunpa_WatchForFortressApproach(void) {
 /// Lunpa Fortress Gates, MB_LUNPA_FORTRESS_GATES_FORTRESS_APPROACH after
 /// Donpa's judgment: Garet reminds the leader they cannot go into the fortress,
 /// and the leader steps back.
-static void EventScript_GaretTurnsLeaderBack(void) {
+static void EventScript_GaretTurnsIsaacBack(void) {
   FieldScript_Start();
   Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_STAND);
   FieldScript_SetMessageId(MsgLunpaGaretRefusesToReturn);
@@ -805,7 +805,7 @@ static void Lunpa_KickUpLeaderDust(void) {
 
 /// Lunpa Fortress Gates, LUNPA_FORTRESS_GATES_AFTER_CAUGHT, after being
 /// caught in the fortress: the guards throw the leader out and down the steps.
-static void EventScript_GuardsThrowLeaderOut(void) {
+static void EventScript_GuardsThrowIsaacOut(void) {
   FieldScript_Start();
   ObjectEvent_SetPosition(LOCALID_PARTY_LEADER, PIXELS(160), PIXELS(128));
   ObjectEvent_SetPosition(LOCALID_LEFT_GUARD, PIXELS(152), PIXELS(112));
@@ -952,7 +952,7 @@ s32 Map_Initialize(void) {
     gSaveBlock.retreatWarpDest = GATE_RETREAT_WARP_DEST;
     if (gSaveBlock.warpDest == LUNPA_FORTRESS_GATES_AFTER_CAUGHT &&
         GameFlag_Get(FLAG_KEEP_PARTY_POSITION) == 0) {
-      EventScript_GuardsThrowLeaderOut();
+      EventScript_GuardsThrowIsaacOut();
     }
     if (gSaveBlock.warpDest ==
             LUNPA_FORTRESS_GATES_FROM_LUNPA_FORTRESS_TOADONPA &&
@@ -1234,7 +1234,7 @@ struct MapEvent gGateEvents[] = {
     { MAP_EVENT_COORD, MB_LUNPA_FORTRESS_GATES_GUARDED_GROUND, FLAG_LUNPA_FORTRESS_GATES_GUARDS_AT_DOOR,
       EVENT_SCRIPT(EventScript_GuardsBlockGate) },
     { MAP_EVENT_COORD, MB_LUNPA_FORTRESS_GATES_FORTRESS_APPROACH, CONDITION_ALWAYS,
-      EVENT_SCRIPT(EventScript_GaretTurnsLeaderBack) },
+      EVENT_SCRIPT(EventScript_GaretTurnsIsaacBack) },
     { MAP_EVENT_RAISED, RAISED_PARTY_SPOTTED, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_GuardsCatchParty) },
     TALK(LOCALID_LEFT_GUARD, EVENT_SCRIPT(EventScript_TalkToLeftGuard)),
     TALK(LOCALID_RIGHT_GUARD, EVENT_SCRIPT(EventScript_TalkToRightGuard)),

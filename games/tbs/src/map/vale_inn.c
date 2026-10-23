@@ -14,9 +14,9 @@
 ///   (VALE_INN_ISAACS_HOUSE_TO_GROUND_FLOOR_WITH_DORA, to
 ///   VALE_INN_ISAACS_HOUSE_FROM_UPSTAIRS_WITH_DORA), where
 ///   EventScript_HurryToThePlaza plays: Kyle, Isaac's father, calls them to
-///   hurry, LOCALID_FLAME shakes outside the house, then turns to smoke and
-///   rises away, and they run for the plaza, where the village takes refuge, by
-///   VALE_INN_TO_VALE_STORMY_NIGHT_WITH_DORA into ValeStormyNight
+///   hurry, LOCALID_FLAME_AND_SMOKE shakes outside the house, then turns to
+///   smoke and rises away, and they run for the plaza, where the village takes
+///   refuge, by VALE_INN_TO_VALE_STORMY_NIGHT_WITH_DORA into ValeStormyNight
 ///   (VALE_STORMY_NIGHT_FROM_VALE_INN_WITH_DORA). While FLAG_VALE_STORM is
 ///   set the villagers are put out of sight, lightning flashes, and
 ///   VALE_INN_TO_VALE leads into the storm (ValeStormyNight) instead of
@@ -63,7 +63,8 @@
 /// parts.
 ///
 /// Open questions:
-/// - XXX (no evidence): what LOCALID_BLANK_AFTER_KALAY, the blank object event
+/// - XXX (no evidence): what LOCALID_INVISIBLE_AFTER_KALAY, the blank object
+/// event
 ///   beside the burly man at the inn back from Kalay, was meant to do; it draws
 ///   nothing once the setup turns off its shadow, and though it is solid it
 ///   stands where the innkeeper and the burly man already close the way (the
@@ -155,7 +156,7 @@ enum ValeInnLocalId {
   /// as it shrinks away.
   /// ★ Named from what the player sees: a small flame, then wisps of smoke,
   /// spr_208.png (its render)
-  LOCALID_FLAME,
+  LOCALID_FLAME_AND_SMOKE,
   /// A young man with brown hair who lost his father in the storm and means to
   /// be a smith. "My father also died in that storm three years ago."; once the
   /// party has left, "By then, I'll surely be a fine smith."
@@ -210,7 +211,7 @@ enum ValeInnAfterKalayLocalId {
   /// LOCALID_MAN_ISAAC_HAS_GROWN; no event answers it, the setup takes away the
   /// shadow its blank sprite would draw, and it closes no way the innkeeper
   /// and the man do not (an open question).
-  LOCALID_BLANK_AFTER_KALAY
+  LOCALID_INVISIBLE_AFTER_KALAY
 };
 
 /// Babi's scholars, numbered by the rows of
@@ -529,7 +530,7 @@ s32 ValeInn_Initialize(void) {
     }
     ObjectMotion_SetActionVariant(LOCALID_INNKEEPER, 1);
     if (GameFlag_Get(FLAG_KALAY_REACHED) != 0) {
-      objectEvent = ObjectEvent_GetById(LOCALID_BLANK_AFTER_KALAY);
+      objectEvent = ObjectEvent_GetById(LOCALID_INVISIBLE_AFTER_KALAY);
       ObjectEvent_SetSpriteFlags(objectEvent, 0);
       if (gSaveBlock.warpDest == VALE_INN_FROM_VALE ||
           gSaveBlock.warpDest == VALE_INN_ISAACS_HOUSE_FROM_UPSTAIRS) {
@@ -758,8 +759,8 @@ static __inline__ void SetBlendTarget(u32 value) { REG_BLDCNT = value; }
 static __inline__ void SetBlendAlpha(u32 value) { REG_BLDALPHA = value; }
 
 /// Outside the house in Vale on the stormy night, Kyle calls to Isaac and Dora
-/// to hurry; LOCALID_FLAME shakes, then turns to smoke and rises away, as they
-/// run to the plaza. Called by ValeInn_Initialize on arrival by
+/// to hurry; LOCALID_FLAME_AND_SMOKE shakes, then turns to smoke and rises
+/// away, as they run to the plaza. Called by ValeInn_Initialize on arrival by
 /// VALE_INN_ISAACS_HOUSE_FROM_UPSTAIRS_WITH_DORA, after
 /// EventScript_DoraWakesIsaac. Takes
 /// VALE_INN_TO_VALE_STORMY_NIGHT_WITH_DORA, to ValeStormyNight
@@ -771,10 +772,10 @@ static void EventScript_HurryToThePlaza(void) {
   u32 i;
   volatile u16 *alpha;
 
-  objectEvent = ObjectEvent_GetById(LOCALID_FLAME);
+  objectEvent = ObjectEvent_GetById(LOCALID_FLAME_AND_SMOKE);
   sprite = objectEvent->sprite;
   FieldScript_Start();
-  // The villagers stay out of sight; LOCALID_FLAME starts shaking.
+  // The villagers stay out of sight; LOCALID_FLAME_AND_SMOKE starts shaking.
   Import_ObjectEventSetPosition(LOCALID_YOUNG_SMITH, 0, 0);
   Import_ObjectEventSetPosition(LOCALID_YOUNG_SMITHS_MOTHER, 0, 0);
   Import_ObjectEventSetPosition(LOCALID_INNKEEPER, 0, 0);
@@ -782,12 +783,14 @@ static void EventScript_HurryToThePlaza(void) {
   Import_ObjectEventSetPosition(LOCALID_INN_WORKER, 0, 0);
   Import_ObjectEventSetPosition(LOCALID_MASKED_MAN, 0, 0);
   ObjectEvent_SetPosition(LOCALID_DORA, PIXELS(431), PIXELS(391));
-  Import_ObjectEventSetPosition(LOCALID_FLAME, PIXELS(463), PIXELS(404));
-  ObjectEvent_SetSpriteFlags(ObjectEvent_GetById(LOCALID_FLAME), 0);
+  Import_ObjectEventSetPosition(LOCALID_FLAME_AND_SMOKE, PIXELS(463),
+                                PIXELS(404));
+  ObjectEvent_SetSpriteFlags(ObjectEvent_GetById(LOCALID_FLAME_AND_SMOKE), 0);
   objectEvent->priorityFlags &= ~OBJ_EVENT_PRIORITY_AUTOMATIC;
   objectEvent->motionFlags = 0;
   sprite->image.priority = 1;
-  ObjectEvent_SetActionScript(LOCALID_FLAME, gValeInn_FlameShakesScript);
+  ObjectEvent_SetActionScript(LOCALID_FLAME_AND_SMOKE,
+                              gValeInn_FlameShakesScript);
   ((struct FieldWork *)HEAP_SLOT_BLOCK(HEAP_SLOT_FIELD))->transition =
       MAP_TRANSITION(TRANSITION_WINDOW, 1);
   MapGrid_CopyCellsTo(83, 15, 83, 19, 5, 4);
@@ -845,9 +848,10 @@ static void EventScript_HurryToThePlaza(void) {
                               gValeInn_IsaacRunsBackScript);
   Sound_PlaySong(SE_234);
   FieldScript_WaitFrames(20);
-  // LOCALID_FLAME flares up, turns to smoke and rises away
+  // LOCALID_FLAME_AND_SMOKE flares up, turns to smoke and rises away
   // (gValeInn_FlameRisesScript) as SE_202 plays.
-  ObjectEvent_SetActionScript(LOCALID_FLAME, gValeInn_FlameRisesScript);
+  ObjectEvent_SetActionScript(LOCALID_FLAME_AND_SMOKE,
+                              gValeInn_FlameRisesScript);
   alpha = &REG_BLDALPHA;
 
   // The flame brightens over four frames, then fades away over sixteen.

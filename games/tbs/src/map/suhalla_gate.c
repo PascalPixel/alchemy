@@ -121,7 +121,7 @@ enum { SPROUT_ANIMATION_HALF_GROWN = 3, SPROUT_ANIMATION_GROWN = 4 };
 
 /// Suhalla Gate's second map (MapId_SuhallaGateDew): talking to Dew, a
 /// Mercury Djinni, starts its battle.
-static void EventScript_FightDjinni(void) {
+static void EventScript_FightDew(void) {
   Field_RequestDjinnBattle(LOCALID_DEW, DJINNI_DEW);
 }
 
@@ -687,7 +687,7 @@ struct MapEvent gSuhallaGateDewEvents[] = {
      SUHALLA_GATE_DEW_TO_SUHALLA_GATE_CHECKPOINT_EAST},
     {MAP_EVENT_WARP, 5, CONDITION_ALWAYS, SUHALLA_GATE_DEW_TO_GATEWAY_CAVE},
     {MAP_EVENT_TALK, LOCALID_DEW, CONDITION_ALWAYS,
-     EVENT_SCRIPT(EventScript_FightDjinni)},
+     EVENT_SCRIPT(EventScript_FightDew)},
     {BG_EVENT(BG_EVENT_CHEST) | MAP_EVENT_FLAG_FACING | FACING_NORTH, 100,
      FLAG_SUHALLA_GATE_MINT, FIND_ITEM(ITEM_MINT)},
     {BG_EVENT(BG_EVENT_CHEST) | MAP_EVENT_FLAG_FACING | FACING_EAST, 100,

@@ -198,14 +198,15 @@ void ObjectEvent_PlaceMapObjectEvents(void) {
   if (GameFlag_GetFar(FLAG_KEEP_PARTY_POSITION) != 0 && flags == 0) {
     flags = event & 0x800;
     event &= 0x7ff;
-    // event is unsigned: events below DJINNI_EVENT_0 fail the range test too.
-    if (event - DJINNI_EVENT_0 <= 80 && gSaveBlock.runResult > 0) {
+    // event is unsigned: events below DJINNI_BATTLE_EVENT_FIRST fail the range
+    // test too.
+    if (event - DJINNI_BATTLE_EVENT_FIRST <= 80 && gSaveBlock.runResult > 0) {
       for (id = 8; id <= 65; id++) {
         struct ObjectEventTemplate *desc = Map_FindObjectEventTemplate(id);
         struct Object *object;
 
-        if (desc == NULL ||
-            desc->condition - FLAG_DJINN_FIRST != event - DJINNI_EVENT_0)
+        if (desc == NULL || desc->condition - FLAG_DJINN_FIRST !=
+                                event - DJINNI_BATTLE_EVENT_FIRST)
           continue;
         object = ObjectEvent_GetByLocalId(id);
         if (object == NULL)
@@ -253,12 +254,13 @@ void Djinn_ResolvePendingEvent(s32 shown) {
   if (shown == 0) {
     if (kind == 0) {
       flag &= 0x7ff;
-      if (flag < DJINNI_EVENT_0 || flag > DJINNI_EVENT_0 + 80)
+      if (flag < DJINNI_BATTLE_EVENT_FIRST ||
+          flag > DJINNI_BATTLE_EVENT_FIRST + 80)
         return;
       // Won: the event waits for the call once the map is shown.
       if (st->runResult > 0 && st->runResult != 999)
         return;
-      // DJINNI_EVENT_0 + n less 172 is FLAG_DJINN_HIDING_FIRST + n.
+      // DJINNI_BATTLE_EVENT_FIRST + n less 172 is FLAG_DJINN_HIDING_FIRST + n.
       GameFlag_SetFar(flag - 172);
       *pending = kind;
     } else if (kind == 0x1000) {
@@ -270,10 +272,11 @@ void Djinn_ResolvePendingEvent(s32 shown) {
   }
   if (kind == 0) {
     flag &= 0x7ff;
-    if (flag >= DJINNI_EVENT_0 && flag <= DJINNI_EVENT_0 + 80) {
+    if (flag >= DJINNI_BATTLE_EVENT_FIRST &&
+        flag <= DJINNI_BATTLE_EVENT_FIRST + 80) {
       flag &= 0x7ff;
       if (st->runResult > 0) {
-        s32 djinni = flag - DJINNI_EVENT_0;
+        s32 djinni = flag - DJINNI_BATTLE_EVENT_FIRST;
         s32 element = djinni / 20;
         s32 index = djinni % 20;
         s32 localId;
@@ -281,8 +284,8 @@ void Djinn_ResolvePendingEvent(s32 shown) {
         for (localId = 8; localId <= 65; localId++) {
           struct ObjectEventTemplate *found =
               Map_FindObjectEventTemplate(localId);
-          if (found != 0 &&
-              found->condition - FLAG_DJINN_FIRST == flag - DJINNI_EVENT_0) {
+          if (found != 0 && found->condition - FLAG_DJINN_FIRST ==
+                                flag - DJINNI_BATTLE_EVENT_FIRST) {
             WaitFrames(40);
             Djinn_JoinParty(localId, element, index);
             break;

@@ -19,7 +19,7 @@ struct ObjectEvent;
 /// writes them, and its MapId_ symbols are the row numbers.
 struct MapHeader {
   s16 resourceId; ///< the overlay Overlay_Load loads into gOverlayArea
-  /// The map section: entering a new one clears the FLAG_MAPSEC_TEMP_ flags
+  /// The map section: entering a new one clears the FLAG_MAPSEC_TEMP_xx flags
   /// and the step counters and moves Retreat's destination;
   /// FLAG_MAPSEC_VISITED(mapSec) marks it visited (Map_ResetFlagsOnEnter).
   s8 mapSec;

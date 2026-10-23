@@ -99,7 +99,7 @@
 /// gSaveBlock.pendingDjinnEvent of Djinni 0 (requests.c, djinni.c): a Djinni
 /// battle's event is 300 plus the Djinni's number (element * 20 + index),
 /// with DJINN_NO_HOP (0x800) beside it.
-#define DJINNI_EVENT_0 300
+#define DJINNI_BATTLE_EVENT_FIRST 300
 
 /// Per-frame update of an afterimage: closes half the distance to the object
 /// it is linked to, on all three axes.

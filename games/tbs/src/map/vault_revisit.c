@@ -570,7 +570,7 @@ static void EventScript_EnterJail(void) {
 #include "common/vault_toggle.h"
 
 /// Talking to Sap, a Venus Djinni: it joins the party.
-static void EventScript_TalkToVenusDjinni(void) {
+static void EventScript_SapJoins(void) {
   Djinn_JoinParty(LOCALID_SAP, ELEMENT_VENUS, DJINNI_INDEX(DJINNI_SAP));
 }
 
@@ -951,7 +951,7 @@ struct MapEvent gVaultRevisit_Events[] = {
     { MAP_EVENT_TALK, LOCALID_VILLAGER_DIVINE_PLAN, CONDITION_ALWAYS, MSGNO(MsgVaultTheThievesEscapedButIThink) },
     { MAP_EVENT_TALK, LOCALID_VAULT_DOG, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkToDog) },
     { MAP_EVENT_TALK, LOCALID_YOUNG_MAN_FIXING_THE_ROOF, CONDITION_ALWAYS, MSGNO(MsgVaultThereYouSeeTheRoofRepairs) },
-    { MAP_EVENT_TALK, LOCALID_SAP, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkToVenusDjinni) },
+    { MAP_EVENT_TALK, LOCALID_SAP, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_SapJoins) },
     { BG_EVENT(BG_EVENT_SILENT), MB_VAULT_BELL, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_RingBell) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), 0x400 | LOCALID_WELCOMING_YOUNG_MAN, FLAG_VAULT_REVISIT_YOUNG_MAN_RECOGNIZED_PARTY, EVENT_SCRIPT(EventScript_ReadMindAndRecognizeThiefCatchers) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_WELCOMING_YOUNG_MAN, CONDITION_ALWAYS, MSGNO(MsgVaultICantBelieveTheyreHereWhat) },

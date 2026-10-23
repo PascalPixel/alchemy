@@ -268,7 +268,7 @@ enum {
   /// him walk onto the jar, and with this object event he stops 14 pixels short
   /// of it. A blank sprite draws only its shadow, which
   /// LunpaFortress_InitializeCave turns off.
-  LOCALID_BLANK_CAVE_JAR,
+  LOCALID_INVISIBLE_CAVE_JAR,
   /// A stack of wooden crates (the sprite of the crates at the Bilibin
   /// Barricade and on Tolbi Docks), pushed or moved with Move onto its hole.
   /// ★ Named from what the player sees: a stack of two wooden crates
@@ -288,9 +288,9 @@ enum {
   /// chest's own cells already stop him, so the middle object event changes
   /// nothing. Map_Initialize turns off the shadows their blank sprites would
   /// draw and lays them underfoot.
-  LOCALID_BLANK_TOADONPA_WEST_JAR = LOCALID_FIRST_PLACED,
-  LOCALID_BLANK_TOADONPA_CHEST,
-  LOCALID_BLANK_TOADONPA_EAST_JAR,
+  LOCALID_INVISIBLE_TOADONPA_WEST_JAR = LOCALID_FIRST_PLACED,
+  LOCALID_INVISIBLE_TOADONPA_CHEST,
+  LOCALID_INVISIBLE_TOADONPA_EAST_JAR,
   /// The monster Dodonpa frees on the party (EventScript_FindHammet).
   /// ★ Named from the game: "Toadonpa" (MsgEnemyName)
   LOCALID_TOADONPA_BOSS,
@@ -306,7 +306,7 @@ enum {
   LOCALID_TOADONPA_DONPA,
   /// A blank sprite (SPRITE_BLANK_LARGE) laid underfoot with Toadonpa and
   /// moving with it, drawn 4/5 as wide.
-  LOCALID_BLANK_TOADONPA_BOSS_PART,
+  LOCALID_INVISIBLE_TOADONPA_BOSS_PART,
   /// One of Dodonpa's men, a man with brown hair
   /// (SPRITE_YOUNG_MAN_WITH_BROWN_HAIR), placed by Dodonpa's cell after
   /// Donpa's judgment. Read with Mind Read: "Actually, Dodonpa's in here, but
@@ -316,7 +316,7 @@ enum {
   LOCALID_TOADONPA_CELL_GUARD,
   /// An invisible object event that stands before Dodonpa's cell after Donpa's
   /// judgment; talking to it or reading its mind reaches Dodonpa.
-  LOCALID_BLANK_TOADONPA_DODONPA
+  LOCALID_INVISIBLE_TOADONPA_DODONPA
 };
 
 /// The metatile behaviors the fortress's map events answer: the cell doors
@@ -1835,9 +1835,9 @@ static void LunpaFortress_RevealMonster(void) {
   MESSAGE_SET(MsgLunpaPrepareBecomeMonster);
   MESSAGE_PUT(LOCALID_TOADONPA_DODONPA, 0);
   OBJECT_SPEED(LOCALID_TOADONPA_BOSS, PIXELS(1), PIXELS(1) / 2);
-  OBJECT_SPEED(LOCALID_BLANK_TOADONPA_BOSS_PART, PIXELS(1), PIXELS(1) / 2);
+  OBJECT_SPEED(LOCALID_INVISIBLE_TOADONPA_BOSS_PART, PIXELS(1), PIXELS(1) / 2);
   OBJECT_WALK(LOCALID_TOADONPA_BOSS, 472, 180);
-  OBJECT_WALK(LOCALID_BLANK_TOADONPA_BOSS_PART, 472, 180);
+  OBJECT_WALK(LOCALID_INVISIBLE_TOADONPA_BOSS_PART, 472, 180);
   FieldCamera_FollowObjectEvent(LOCALID_TOADONPA_BOSS, 1);
   ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_TOADONPA_BOSS);
   OBJECT_ANIMATION(LOCALID_TOADONPA_BOSS, 4);
@@ -2164,8 +2164,8 @@ static void EventScript_DonpaJudgesDodonpa(void) {
   OBJECT_DIR(LOCALID_TOADONPA_HAMMET, FACING_NORTHWEST + FACING_STEP, 0);
   OBJECT_POSITION_SET(LOCALID_TOADONPA_BOSS, 448, 237);
   OBJECT_DIR(LOCALID_TOADONPA_BOSS, FACING_WEST, 0);
-  OBJECT_POSITION_SET(LOCALID_BLANK_TOADONPA_BOSS_PART, 448, 238);
-  ObjectMotion_SetActionVariant(LOCALID_BLANK_TOADONPA_BOSS_PART, 3);
+  OBJECT_POSITION_SET(LOCALID_INVISIBLE_TOADONPA_BOSS_PART, 448, 238);
+  ObjectMotion_SetActionVariant(LOCALID_INVISIBLE_TOADONPA_BOSS_PART, 3);
   OBJECT_ANIMATION(LOCALID_TOADONPA_BOSS, 3);
   OBJECT_POSITION_SET(LOCALID_TOADONPA_DODONPA, 458, 243);
   OBJECT_DIR(LOCALID_TOADONPA_DODONPA, FACING_SOUTH, 0);
@@ -2312,10 +2312,11 @@ static void EventScript_DonpaJudgesDodonpa(void) {
   OBJECT_SPEED(LOCALID_IVAN, PIXELS(1) / 10, PIXELS(1) / 20);
   ObjectEvent_SetDestinationOffset(LOCALID_IVAN, -24, 0);
   OBJECT_SPEED(LOCALID_TOADONPA_BOSS, PIXELS(1) / 10, PIXELS(1) / 20);
-  OBJECT_SPEED(LOCALID_BLANK_TOADONPA_BOSS_PART, PIXELS(1) / 10,
+  OBJECT_SPEED(LOCALID_INVISIBLE_TOADONPA_BOSS_PART, PIXELS(1) / 10,
                PIXELS(1) / 20);
   ObjectEvent_SetDestinationOffset(LOCALID_TOADONPA_BOSS, -24, 0);
-  ObjectEvent_SetDestinationOffset(LOCALID_BLANK_TOADONPA_BOSS_PART, -24, 0);
+  ObjectEvent_SetDestinationOffset(LOCALID_INVISIBLE_TOADONPA_BOSS_PART, -24,
+                                   0);
   ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_PARTY_LEADER);
   SE(SE_STOP_SLOT3);
   WAIT(60);
@@ -3195,15 +3196,15 @@ s32 Map_Initialize(void) {
     OBJECT_DIR(LOCALID_TOADONPA_HAMMET, FACING_EAST, 0);
     OBJECT_ANIMATION(LOCALID_TOADONPA_HAMMET, 0);
     LunpaFortress_RestoreToadonpaDoors();
-    mapObjectEvent = ObjectEvent_Get(LOCALID_BLANK_TOADONPA_WEST_JAR);
+    mapObjectEvent = ObjectEvent_Get(LOCALID_INVISIBLE_TOADONPA_WEST_JAR);
     if (mapObjectEvent != 0)
       ObjectEvent_SetSpriteFlags(mapObjectEvent, 0);
     mapObjectEvent->priorityFlags = OBJ_EVENT_PRIORITY_UNDERFOOT;
-    mapObjectEvent = ObjectEvent_Get(LOCALID_BLANK_TOADONPA_CHEST);
+    mapObjectEvent = ObjectEvent_Get(LOCALID_INVISIBLE_TOADONPA_CHEST);
     if (mapObjectEvent != 0)
       ObjectEvent_SetSpriteFlags(mapObjectEvent, 0);
     mapObjectEvent->priorityFlags = OBJ_EVENT_PRIORITY_UNDERFOOT;
-    mapObjectEvent = ObjectEvent_Get(LOCALID_BLANK_TOADONPA_EAST_JAR);
+    mapObjectEvent = ObjectEvent_Get(LOCALID_INVISIBLE_TOADONPA_EAST_JAR);
     if (mapObjectEvent != 0)
       ObjectEvent_SetSpriteFlags(mapObjectEvent, 0);
     mapObjectEvent->priorityFlags = OBJ_EVENT_PRIORITY_UNDERFOOT;
@@ -3221,12 +3222,12 @@ s32 Map_Initialize(void) {
         OBJECT_DIR(LOCALID_TOADONPA_CELL_GUARD, FACING_SOUTH + FACING_STEP, 0);
         OBJECT_POSITION_SET(LOCALID_TOADONPA_DODONPA, 456, 288);
         OBJECT_DIR(LOCALID_TOADONPA_DODONPA, FACING_SOUTH + FACING_STEP, 0);
-        OBJECT_POSITION_SET(LOCALID_BLANK_TOADONPA_DODONPA, 456, 320);
+        OBJECT_POSITION_SET(LOCALID_INVISIBLE_TOADONPA_DODONPA, 456, 320);
         ObjectEvent_SetSpriteFlags(
-            ObjectEvent_Get(LOCALID_BLANK_TOADONPA_DODONPA), 0);
+            ObjectEvent_Get(LOCALID_INVISIBLE_TOADONPA_DODONPA), 0);
       }
     }
-    mapObjectEvent = ObjectEvent_Get(LOCALID_BLANK_TOADONPA_BOSS_PART);
+    mapObjectEvent = ObjectEvent_Get(LOCALID_INVISIBLE_TOADONPA_BOSS_PART);
     if (mapObjectEvent != 0)
       ObjectEvent_SetSpriteFlags(mapObjectEvent, 0);
     mapObjectEvent->priorityFlags = OBJ_EVENT_PRIORITY_UNDERFOOT;
@@ -3430,7 +3431,7 @@ static void LunpaFortress_InitializeCave(void) {
   if (mapObjectEvent != 0) {
     mapObjectEvent->priorityFlags = OBJ_EVENT_PRIORITY_UNDERFOOT;
   }
-  mapObjectEvent = ObjectEvent_Get(LOCALID_BLANK_CAVE_JAR);
+  mapObjectEvent = ObjectEvent_Get(LOCALID_INVISIBLE_CAVE_JAR);
   if (mapObjectEvent != 0) {
     ObjectEvent_SetSpriteFlags(mapObjectEvent, 0);
   }
@@ -3439,7 +3440,7 @@ static void LunpaFortress_InitializeCave(void) {
   if (mapObjectEvent != 0) {
     mapObjectEvent->collisionFlags |= OBJ_EVENT_NEAR_PSYNERGY;
   }
-  ObjectEvent_SetSpriteFlags(ObjectEvent_Get(LOCALID_BLANK_CAVE_JAR), 0);
+  ObjectEvent_SetSpriteFlags(ObjectEvent_Get(LOCALID_INVISIBLE_CAVE_JAR), 0);
   SCRIPT_END();
   MapGrid_SetShownLayers(LUNPA_FORTRESS_PASSAGE_LAYERS);
 }
@@ -4098,8 +4099,8 @@ struct MapEvent gLunpaFortressEventsOther[] = {
     // the party can reach them is not known.
     { MAP_EVENT_TALK, LOCALID_TOADONPA_HAMMET, CONDITION_ALWAYS, MSGNO(MsgLunpaWrongTurnOver) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_TOADONPA_HAMMET, CONDITION_ALWAYS, MSGNO(MsgLunpaCantBelieveWhen) },
-    { MAP_EVENT_TALK, LOCALID_BLANK_TOADONPA_DODONPA, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkToJailedDodonpa) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_BLANK_TOADONPA_DODONPA, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_ReadJailedDodonpasThoughts) },
+    { MAP_EVENT_TALK, LOCALID_INVISIBLE_TOADONPA_DODONPA, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkToJailedDodonpa) },
+    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_INVISIBLE_TOADONPA_DODONPA, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_ReadJailedDodonpasThoughts) },
     { BG_EVENT(BG_EVENT_CHEST), 101, FLAG_LUNPA_FORTRESS_CHEST_POWER_BREAD, FIND_ITEM(ITEM_POWER_BREAD) },
     { MAP_EVENTS_END },
 };

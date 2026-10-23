@@ -106,7 +106,7 @@ enum {
   /// Where one of the Suhalla Desert's storms sets the party down, still in
   /// the air, beside the world map's own storm.
   /// ★ Named from its area name: Suhalla Desert
-  WORLD_MAP_FROM_SUHALLA_DESERT_STORM = 77,
+  WORLD_MAP_FROM_SUHALLA_DESERT_SANDSTORM = 77,
   /// Where a defeat returns after Iodem hands over the Black Orb: the orb is
   /// discarded and WORLD_MAP_TO_LUNPA_INTERIORS leads on.
   WORLD_MAP_AFTER_BLACK_ORB_DEFEAT = 78,

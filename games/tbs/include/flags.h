@@ -1166,7 +1166,7 @@
 /// Douse has stopped the sandstorm that chases the party in the second map,
 /// for good.
 /// ★ Named from the game: "A sandstorm!" (MsgSuhallaSandstorm)
-#define FLAG_SUHALLA_DESERT_CHASING_STORM_DOUSED 0x9b7
+#define FLAG_SUHALLA_DESERT_CHASING_SANDSTORM_DOUSED 0x9b7
 // The desert's chests, set once each is opened or its mimic beaten.
 /// ★ Named from the game: "Virtuous Armlet" (MsgItemName)
 #define FLAG_SUHALLA_DESERT_VIRTUOUS_ARMLET 0xfb1

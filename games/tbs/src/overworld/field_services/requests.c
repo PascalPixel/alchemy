@@ -52,7 +52,7 @@ void Field_RequestDjinnBattle(s32 flag, s32 no) {
   // DJINN_NO_HOP rides along: it tells ObjectEvent_PlaceMapObjectEvents to put
   // the Djinni back 32 pixels north of the leader, not at its template's
   // position.
-  state->pendingDjinnEvent = (no + DJINNI_EVENT_0) | skipHop;
+  state->pendingDjinnEvent = (no + DJINNI_BATTLE_EVENT_FIRST) | skipHop;
   work->battle = Encounter_GetDjinnFormation(no);
   if (work->mode == OBJECT_SYSTEM_WORLD_MAP) {
     struct Object *leader = ObjectEvent_GetByLocalId(state->leaderLocalId);

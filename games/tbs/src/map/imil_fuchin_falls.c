@@ -157,7 +157,7 @@ enum ImilFuchinFallsLocalId {
   /// entry ImilFuchinFalls_PrepareRoom stills it at floor height and draws it
   /// at sprite priority 1 in SPRITE_COLOR_HIDDEN, as those are drawn, so
   /// every pixel is transparent and the player never sees it.
-  LOCALID_BLANK_DRAGON_ROOM_CRATE = LOCALID_FIRST_PLACED
+  LOCALID_INVISIBLE_DRAGON_ROOM_CRATE = LOCALID_FIRST_PLACED
 };
 
 enum {
@@ -1502,12 +1502,12 @@ static void ImilFuchinFalls_PrepareRoom(void) {
     }
   } else if (gSaveBlock.mapId == (s32)&MapId_FuchinFallsCaveDragonStatue) {
     value = 0;
-    objectEvent = ObjectEvent_Get(LOCALID_BLANK_DRAGON_ROOM_CRATE);
+    objectEvent = ObjectEvent_Get(LOCALID_INVISIBLE_DRAGON_ROOM_CRATE);
     gImilFuchinFalls_TrackLeader = value;
     objectEvent->motionFlags = value;
     objectEvent->y.fixed = value;
-    ObjectMotion_SetActionVariant(LOCALID_BLANK_DRAGON_ROOM_CRATE, 1);
-    ObjectEvent_SetSpriteColorById(LOCALID_BLANK_DRAGON_ROOM_CRATE,
+    ObjectMotion_SetActionVariant(LOCALID_INVISIBLE_DRAGON_ROOM_CRATE, 1);
+    ObjectEvent_SetSpriteColorById(LOCALID_INVISIBLE_DRAGON_ROOM_CRATE,
                                    SPRITE_COLOR_HIDDEN);
     switch (gSaveBlock.warpDest) {
     case FUCHIN_FALLS_CAVE_DRAGON_STATUE_FROM_FUCHIN_FALLS_CAVE_ORB_OF_FORCE_EAST:

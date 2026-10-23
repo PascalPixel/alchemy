@@ -234,7 +234,7 @@ enum BilibinBarricadeLocalId {
   /// Unused: a blank object event (SPRITE_BLANK_32) placed at the map's origin;
   /// no
   /// code or map event addresses it, so it never shows or answers anything.
-  LOCALID_BLANK_AT_ORIGIN,
+  LOCALID_INVISIBLE_AT_ORIGIN,
   /// The invisible object event (SPRITE_BLANK) that stands where the middle
   /// tree lies
   /// pushed down and answers for it.

@@ -40,7 +40,7 @@ enum LeaderMovementMode {
 enum GameRunMode {
   GAME_RUN_TITLE = 0,      ///< the title screen, with a fresh game state
   GAME_RUN_DEBUG_VALE = 1, ///< in debug mode, MapId_ValeGate
-  GAME_RUN_DEBUG_CLEAR = 2 ///< in debug mode, the clear screen
+  GAME_RUN_DEBUG_CLEAR = 2 ///< in debug mode, the file select screen
 };
 
 /// A window transition's shape: MAP_TRANSITION(TRANSITION_WINDOW, mode)'s

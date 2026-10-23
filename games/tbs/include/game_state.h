@@ -9,7 +9,7 @@
 #include "static_assert.h"
 #include "battle_unit.h"
 
-/// A map's variant (MapRecord.variant, copied to GameState.mapType).
+/// A map's type (MapRecord.mapType, copied to GameState.mapType).
 enum MapType {
   MAP_TYPE_FIELD = 1, ///< every other map: dungeons, the world map
   /// Towns and their interiors, where walking restores no PP, recovers no

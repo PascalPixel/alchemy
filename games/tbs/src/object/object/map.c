@@ -157,7 +157,7 @@ void Map_ReturnFromBattle(s32 result) {
 /// their music, area name and the flags kept while inside it.
 /// Called by Map_ResolveInteractionResult.
 s32 FieldEffect_GetResourceGroup(s32 mapId) {
-  return gField_MapTable[mapId].group;
+  return gField_MapTable[mapId].mapSec;
 }
 
 /// The last two 16-colour background palettes, which the minigame runners save
@@ -327,14 +327,14 @@ void Map_LoadOverlay(s32 unused) {
 /// (FLAG_MAPSEC_VISITED) is set. Called by Game_Run before each map, with keep
 /// from FLAG_KEEP_PARTY_POSITION; sets gGameState.mapSec and .mapType.
 void Map_ResetFlagsOnEnter(s32 unused, s32 keep) {
-  s32 group = MAP_RECORD(gGameState.mapId)->group;
+  s32 mapSec = MAP_RECORD(gGameState.mapId)->mapSec;
   s32 flag;
 
   if (keep == 0) {
     // Local puzzle flags expire on every normal entry to a map.
     for (flag = FLAG_MAP_TEMP_FIRST; flag <= FLAG_MAP_TEMP_LAST; flag++)
       GameFlag_ClearBitFar(flag);
-    if (group != gGameState.mapSec) {
+    if (mapSec != gGameState.mapSec) {
       // Map section state and Retreat's destination survive moves within it.
       for (flag = FLAG_MAPSEC_TEMP_FIRST; flag <= FLAG_MAPSEC_TEMP_LAST; flag++)
         GameFlag_ClearBitFar(flag);
@@ -361,9 +361,9 @@ void Map_ResetFlagsOnEnter(s32 unused, s32 keep) {
     GameFlag_ClearBitFar(FLAG_WORLD_MAP_LEFT);
     gGameState.returnCue = -1;
   }
-  gGameState.mapSec = group;
-  GameFlag_SetBitFar(FLAG_MAPSEC_VISITED(group & 0x7f));
-  gGameState.mapType = MAP_RECORD(gGameState.mapId)->variant;
+  gGameState.mapSec = mapSec;
+  GameFlag_SetBitFar(FLAG_MAPSEC_VISITED(mapSec & 0x7f));
+  gGameState.mapType = MAP_RECORD(gGameState.mapId)->mapType;
   if (gGameState.mapType == MAP_TYPE_TOWN)
     GameFlag_SetBitFar(FLAG_IN_TOWN);
   GameFlag_RefreshLureCapFar();

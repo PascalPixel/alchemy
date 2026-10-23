@@ -93,7 +93,7 @@ s32 Inventory_Count(s32 owner) {
 }
 
 /// Returns 1 when the selected character or any party member has a free
-/// inventory slot. Called by the scenes that give an item (the Vault's Water
+/// inventory slot. Called by the scripts that give an item (the Vault's Water
 /// of Life and the bones) and the debug item menus.
 s32 PartyInventory_HasSpace(void) {
   s16 owners[10];
@@ -185,7 +185,7 @@ s32 Inventory_AddItem(s32 owner, s32 itemId) {
 
 /// Gives the item to the first party member with room. Returns who took it,
 /// or -1. Called for a battle's spoils, a chest or search in the field, and
-/// the scenes that give items.
+/// the scripts that give items.
 s32 PartyInventory_Add(s32 itemId) {
   s16 owners[10];
   s32 ownerCount;
@@ -208,7 +208,7 @@ s32 PartyInventory_Add(s32 itemId) {
 }
 
 /// Returns the first slot holding `itemId` (any quantity, equipped or not),
-/// or -1. Called by the shops and the scenes that check for an item.
+/// or -1. Called by the shops and the scripts that check for an item.
 s32 Inventory_Find(s32 owner, s32 itemId) {
   struct BattleUnit *inv = Unit_Get(owner);
   s32 slot = 0;
@@ -224,7 +224,7 @@ s32 Inventory_Find(s32 owner, s32 itemId) {
 }
 
 /// Returns who carries `itemId`, asking the selected character first, or -1.
-/// Called by the scenes that need a key item, such as the Mercury Lighthouse's
+/// Called by the scripts that need a key item, such as the Mercury Lighthouse's
 /// Hermes' Water and Kolima's Tret.
 s32 PartyInventory_FindOwner(s32 itemId) {
   s16 owners[10];
@@ -373,7 +373,7 @@ s32 Inventory_Remove(s32 owner, s32 slot) {
 
 /// Removes one item as Inventory_Remove does, and puts a rare item back into
 /// circulation (its counter goes up by one) for the shops to sell. Called
-/// by selling an item and by the scenes that take an item away.
+/// by selling an item and by the scripts that take an item away.
 s32 Inventory_Discard(s32 owner, s32 slot) {
   s32 item = Unit_Get(owner)->inventory[slot];
   s32 removalResult = Inventory_Remove(owner, slot);
@@ -407,7 +407,7 @@ s32 Inventory_CheckDiscard(s32 owner, s32 slot) {
 }
 
 /// Removes one `itemId` from whoever carries it first; always returns 0.
-/// Called by the scenes that use up a key item, the slot machine's Game
+/// Called by the scripts that use up a key item, the slot machine's Game
 /// Tickets and the field shortcut that uses an item.
 s32 PartyInventory_Remove(s32 itemId) {
   s32 owner = PartyInventory_FindOwner(itemId);
@@ -419,7 +419,7 @@ s32 PartyInventory_Remove(s32 itemId) {
 }
 
 /// Discards one `itemId` from whoever carries it first, as Inventory_Discard
-/// does; always returns 0. Called by the scenes that take an item back, such
+/// does; always returns 0. Called by the scripts that take an item back, such
 /// as the Vault dog's bone and the Black Orb.
 s32 PartyInventory_Discard(s32 itemId) {
   s32 owner = PartyInventory_FindOwner(itemId);
@@ -502,7 +502,7 @@ s32 Item_AdjustCounter(s32 itemId, s32 delta) {
 }
 
 /// Counts matching nonstackable items, or the quantity in the first matching
-/// stack. Called by PartyInventory_CountItem and by the events that give an
+/// stack. Called by PartyInventory_CountItem and by the scripts that give an
 /// item, to keep stacks under their limit.
 s32 Inventory_CountItem(s32 owner, s32 itemId) {
   struct BattleUnit *unit = Unit_Get(owner);

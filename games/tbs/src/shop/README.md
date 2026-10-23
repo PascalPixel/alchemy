@@ -11,7 +11,7 @@ smaller things that share their screens: the Game Tickets a shopkeeper gives
 for spending, and the item picker, which asks what to drop when the party is
 given an item with every bag full.
 
-Each counter is opened by its town's scene when the player talks to the
+Each counter is opened by its town's map script when the player talks to the
 keeper. [Menus, windows and shops](../../menus.md#shops) gives the counters in
 brief; this page gives the prices, the services and the work behind each one.
 The windows and messages the counters draw with are in
@@ -46,9 +46,9 @@ counter: Buy, Sell, Artifacts and Repair.
 Every shop in the game is one row of the stock table. The row lists the
 ordinary items the shop always sells, the rare items it brings to market the
 first time it is visited, and what kind of shop it is: weapons, armor or
-items. A town's scene opens its shop by the row's number, with the keeper
+items. A town's map script opens its shop by the row's number, with the keeper
 whose face the lines show. The keeper's lines are the same set for every
-shop of a kind, so a scene only names which shop it is.
+shop of a kind, so a script only names which shop it is.
 
 `Shop_Run(stockRow, keeper)` runs a shop until the player leaves. A stock row
 holds up to `SHOP_STOCK_ITEM_COUNT` (24) ordinary items from
@@ -211,7 +211,7 @@ with the inn's music, and back.
 `Inn_CheckIn(innId, keeper)` charges `sInnPricesPerGuest[innId]` for each
 member still standing (`Inn_RoomPrice`). On Yes, with the coins,
 `Inn_PlaySleep` fades to black with the inn's music and fades back with the
-HP and PP of every standing member restored. Each town's scene names its own
+HP and PP of every standing member restored. Each town's map script names its own
 inn's row where it opens it:
 
 | Row | Inn | Coins a guest |
@@ -242,7 +242,7 @@ the bag, the items after it move up, and the new item takes the last place.
 An item the story needs can't be dropped, and nor can a cursed item being
 worn.
 
-`Shop_PickUnitItem` runs the picker. `PartyInventory_GiveItem`, the scene
+`Shop_PickUnitItem` runs the picker. `PartyInventory_GiveItem`, the script
 command that gives an item, opens it when every bag is full, as do the
 Elemental Star room when it gives the four Mythril Bags and the debug test.
 `Shop_SelectUse` refuses an indispensable item with a message and an
@@ -291,7 +291,7 @@ tiles, text positions in pixels.
   (`Party_AdjustShopCredit`, `Party_AdjustShopGifts`), so every ticket after
   the 28th costs entry 28 of `sGameTicketCreditCosts`, and entry 29 is never
   read.
-- Inn row 9, Tolbi's, has a price of 0 and no scene opens it: Tolbi's inns are
+- Inn row 9, Tolbi's, has a price of 0 and no script opens it: Tolbi's inns are
   always full.
 
 ## Files
@@ -344,7 +344,7 @@ work block's layout, `struct ShopRuntime`, is in
 | `Inn_` | the inn |
 | `BattleUnit_`, `AudioCommand_`, `NodeChain_` | things the engine names elsewhere |
 
-Scene overlays import these functions by name (`games/tbs/src/map/import/`),
+Map overlays import these functions by name (`games/tbs/src/map/import/`),
 and code in other banks calls them through the far-call table
 `system/far_call/SHOP.S` (the `...Far` names), so renaming one changes those
 folders too. [Matching](../MATCHING.md) explains the comment markers.
@@ -354,7 +354,7 @@ folders too. [Matching](../MATCHING.md) explains the comment markers.
 The counters are named for what the player meets at them, the stock row's
 columns from what `shop/artifacts.c` reads from each, the actions and services
 from the choices their windows offer in the English release, and the inns
-from the town scenes that open them. The inn rows follow the order of the
+from the town maps that open them. The inn rows follow the order of the
 towns' area names in `gMapSec_NameRules` (Vale 3, Vault 5, up to Lunpa 34,
 Suhalla 51 and Lalivero 55), and in that order row 9 falls where Tolbi (40)
 does: Tolbi is the one town with an inn door and no inn opened, since its inns

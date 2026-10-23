@@ -157,7 +157,7 @@ Releasing a heap block also releases every block allocated after it
 ([Runtime](../runtime/README.md)), so the three come back in the reverse of the
 order they were taken, and an effect must remove every callback (a function
 the scheduler calls once a frame) that reads them before it returns. While it runs, an effect also has the two blitter slots
-(`HEAP_SLOT_BLITTER`, `HEAP_SLOT_BLITTER_ALTERNATE`) and the map cell buffer
+(`HEAP_SLOT_BLITTER`, `HEAP_SLOT_BLITTER_ALTERNATE`) and the map grid cell buffer
 (`PARTICLES`) to itself, and frees the blitters before it returns.
 
 A critical hit adds `EFFECT_KIND_CRITICAL_OFFSET` to an attack's kind in
@@ -272,10 +272,10 @@ little each frame and has a picture drawn where it is. An effect keeps them in
 two pools of fixed size, so it never has to ask for more memory in the middle
 of an animation.
 
-![A particle is one spark, ember or shard: its position, its speed and one spare number for its life or picture. An effect has two fixed pools of them. Its own holds 64, and Heat Wave keeps a target's seven fireballs in the first seven. The second, 1,170 more, borrows the memory that holds the field's map, which the battle does not need while an effect plays. Heat Wave divides its first 1,024 into ranges: hit flashes, the forty sparks each hit throws, and the two trails each fireball leaves every frame; it leaves the rest unused. A finished particle's place is reused, so neither pool grows.](https://alchemy.pascalpixel.com/illustrations/effect/particles.svg)
+![A particle is one spark, ember or shard: its position, its speed and one spare number for its life or picture. An effect has two fixed pools of them. Its own holds 64, and Heat Wave keeps a target's seven fireballs in the first seven. The second, 1,170 more, borrows the memory that holds the field's map grid, which the battle does not need while an effect plays. Heat Wave divides its first 1,024 into ranges: hit flashes, the forty sparks each hit throws, and the two trails each fireball leaves every frame; it leaves the rest unused. A finished particle's place is reused, so neither pool grows.](https://alchemy.pascalpixel.com/illustrations/effect/particles.svg)
 
 The small pool belongs to the effect. The large one is borrowed: it is the
-memory that holds the field's map, which the battle does not need while an
+memory that holds the field's map grid, which the battle does not need while an
 effect plays. Each effect divides the pools into ranges of its own (in Heat Wave,
 fireballs in the small pool and flashes, sparks and trails in the large one)
 and reuses a finished particle's place for the next, so a pool never grows.
@@ -287,7 +287,7 @@ one spare word, `variant`, that each effect uses for a life, a frame or a
 picture. `EFFECT_FREE_PARTICLES` marks particles free with a `variant` of -1,
 though some families mark them otherwise, as their own comments say.
 
-The work block holds 64 (`work->particles`). `PARTICLES` names the map's cell
+The work block holds 64 (`work->particles`). `PARTICLES` names the map grid's cell
 buffer as particles and `Ram_MapGridCellBuffer` as bytes, both at its fixed
 address. `ewram.s` lays out 32 KB for `gMapGridCellBuffer` before
 `gActorSpriteSlots` and gives the symbol a size of 48 KB, which would hold
@@ -314,7 +314,7 @@ ranges and the order of those draws is part of its output.
 | Name | Value | Meaning |
 | --- | --- | --- |
 | `work->particles` | 64 particles | the work block's pool |
-| `PARTICLES` | 1,170 particles | the map cell buffer's 32 KB before `gActorSpriteSlots` |
+| `PARTICLES` | 1,170 particles | the map grid cell buffer's 32 KB before `gActorSpriteSlots` |
 | `variant` -1 | | a free particle, as `EFFECT_FREE_PARTICLES` marks it |
 | `PROJECTILE_VOLLEY_FIRST_SPARK` | 100 | a volley's first spark in `PARTICLES` |
 | `PROJECTILE_VOLLEY_FIRST_TRAIL` | 512 | a volley's first fireball trail in `PARTICLES` |
@@ -828,7 +828,7 @@ targets and its damage, and [Battle](../../battle.md#effects) stages the
 effect from the plan's `presentationFlags`. The effect only draws, and tells
 the battle when to show the damage it has already worked out. While it draws,
 it borrows from the rest of the game: the heap's slots from
-[Runtime](../runtime/README.md), the map's cell buffer (see
+[Runtime](../runtime/README.md), the map grid's cell buffer (see
 [Maps](../layout/README.md)), and the battle's own background, camera and
 fighters, which it shakes, tints and moves through the battle's helpers. The
 same blitter builder also serves the battle's star field and

@@ -451,8 +451,8 @@ void Unit_Calculate(s32 owner) {
 
 /// Sets FLAG_LURE_CAP when any party member has the Lure Cap (the one item
 /// with ITEM_EFFECT_LURE) equipped, and clears it otherwise. Called on entering
-/// a scene (Map_ResetFlagsOnEnter, Field_RunMap) and at the end of a field
-/// event, so the encounter rate follows the cap.
+/// a map (Map_ResetFlagsOnEnter, Field_RunMap) and at the end of a field
+/// script, so the encounter rate follows the cap.
 void GameFlag_RefreshLureCap(void) {
   s32 partySize;
   s32 partyIndex;
@@ -542,20 +542,20 @@ struct MapLocalStateTail {
   /// uses; nothing reads or writes it through this view.
   u32 playTime;
   /// gObjectSnapshots.slots[0]: set to 0xff, OBJECT_SNAPSHOT_EMPTY, so a
-  /// new game holds no saved actors.
+  /// new game holds no saved object events.
   u8 unk104;
 };
 
-/// Clears the game-state header, the scene state with the Colosso's inventory
-/// snapshot and the actor snapshot after it, the flags and most of the save
-/// stamp; sets a new game's defaults: Isaac alone in the party, the standard
-/// button layout, the message speed, the play time clock and the slot
+/// Clears the game-state header, the map state with the Colosso's inventory
+/// snapshot and the object event snapshot after it, the flags and most of the
+/// save stamp; sets a new game's defaults: Isaac alone in the party, the
+/// standard button layout, the message speed, the play time clock and the slot
 /// machine prize odds. Called by the file select screen's new game, by
 /// Game_Restart and Game_Run, and by the debug battle menu.
 void GameState_InitializeDefaults(void) {
   volatile s32 zero;
 
-  // Clear the state header, scene work, flags and save metadata in DMA order:
+  // Clear the state header, map state, flags and save metadata in DMA order:
   // 0xb0 words are gGameState up to the characters (owners, which
   // Party_InitializeCharacters sets up); 0x3e1 words run from gMapLocalState
   // through gInventorySnapshot and gObjectSnapshots; 0x80 words are all 4096
@@ -678,7 +678,7 @@ void Party_EndChildhood(void) {
 }
 
 /// Restores every party member's HP and PP; with `cureConditions` 1 it also
-/// cures poison and haunting. Called by the scenes that heal the party
+/// cures poison and haunting. Called by the scripts that heal the party
 /// (leaving Vale, meeting Flint, the Colosso rounds, Faran in Lalivero), by
 /// the Battle Arena after a round, and by InventorySnapshot_Save.
 void Party_RestoreHpPp(s32 cureConditions) {
@@ -703,7 +703,7 @@ void Party_RestoreHpPp(s32 cureConditions) {
 
 /// Restores the PP of each party member whose element group has a lit
 /// lighthouse: Venus or Mars for group 0, Mercury or Jupiter for the others.
-/// Called by the scenes at the top of the Mercury and Venus Lighthouses.
+/// Called by the scripts at the top of the Mercury and Venus Lighthouses.
 void Party_RestorePpOfLitElements(void) {
   s32 partySize;
   s32 partyIndex;

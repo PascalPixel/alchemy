@@ -303,7 +303,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *effect,
   //   work->sheet + CASTING_IMPACT_ORB_CELLS: the impact orb
   //   Ram_MapGridCellBuffer: the impact's own pictures
   //   Ram_MapGridCellBuffer + CASTING_IMPACT_DJINNI_CELLS: the element's Djinni
-  // The orb is decoded into the map buffer first and packed from there,
+  // The orb is decoded into the map grid buffer first and packed from there,
   // before the impact's own pictures replace it.
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sprites, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_FireStreakSheet, work, 1, 0);

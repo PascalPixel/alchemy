@@ -273,7 +273,7 @@ void BattleEffect_RunAtalanta(struct BattleEffectArgument *effect) {
     EFFECT_PRESENT_FRAME(work);
   }
   // Between the parts: stop the scroll, give BG1 back to the battle, release
-  // the formation and load the ember streak sheet into the map cell buffer
+  // the formation and load the ember streak sheet into the map grid cell buffer
   // for the flames.
   Scheduler_RemoveCallback(BattleEffect_AdvanceScrollOnInterval);
   view->busy = 0;

@@ -6,7 +6,7 @@ Everything the game needs to know about the party lives here: who is in it,
 each character's level, HP and stats, the items each one carries, the Djinn
 they hold, and the flags that remember what has happened in the story. So do
 the tables that describe every item, ability, Djinni, enemy, summon and
-class. The rest of the game asks this code its questions: a scene whether a
+class. The rest of the game asks this code its questions: a map whether a
 chest has been opened, a shop what an item costs, a menu what a character's
 Attack would be with another sword, and a battle what a blow does.
 [Battles](../battle/README.md) follows an ability from these tables to its
@@ -221,7 +221,7 @@ write whole, and four flags one nibble, half a byte (`GameFlag_GetNibble`,
 `GameFlag_SetNibble`). Counters live among the flags this way, such as the
 Battle Arena's win count (`FLAG_MONSTER_BATTLE_WINS`) and a link battle's
 party size (`FLAG_LINK_PARTY_COUNT`), and follow the flags' rules: one in
-a scene's range is cleared with that range, and all are saved.
+a map's range is cleared with that range, and all are saved.
 [The front page](../../README.md) gives the ranges and when they are
 cleared.
 
@@ -265,7 +265,7 @@ and selling or discarding one puts it back (`Item_AdjustCounter`,
 
 This code sits in its own part of the main program, the `game` bank. Code
 in the other banks calls its functions by their `Far` names, through the
-table of calls between banks, and a place's overlay through the list of
+table of calls between banks, and a map's overlay through the list of
 outside functions it was built with (its import table); some code reads
 `gGameState`, the record of the game in progress, directly, as the save
 summary does. The battle folder reads `actions.tsv` through

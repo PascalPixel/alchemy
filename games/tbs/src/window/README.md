@@ -21,9 +21,9 @@ whole layer in brief. The field menu's four screens are in
 ## The work block
 
 Everything the window system keeps between frames lives in one block of
-memory, set up with each scene and gone at the next.
+memory, set up with each map and gone at the next.
 
-![Everything the window system keeps is in one block of memory, set up with each scene. In it: the windows' tilemap, a picture of the screen 32 tiles wide and 20 tall that every window is drawn into; 8 window slots, 12 in the Japanese edition; 3 typists, each typing one message into one window; 64 sprites that windows carry, such as letters, icons, portraits and the page arrow; the ring of unpacked messages, 512 codes, 256 in Japanese; 8 blanks for names and numbers a message will fill in; and 2 portrait slots.](https://alchemy.pascalpixel.com/illustrations/window/work-block.svg)
+![Everything the window system keeps is in one block of memory, set up with each map. In it: the windows' tilemap, a picture of the screen 32 tiles wide and 20 tall that every window is drawn into; 8 window slots, 12 in the Japanese edition; 3 typists, each typing one message into one window; 64 sprites that windows carry, such as letters, icons, portraits and the page arrow; the ring of unpacked messages, 512 codes, 256 in Japanese; 8 blanks for names and numbers a message will fill in; and 2 portrait slots.](https://alchemy.pascalpixel.com/illustrations/window/work-block.svg)
 
 The block holds the picture of the screen that every window is drawn into,
 a slot for each window that can be open, three typists (one per message
@@ -35,7 +35,7 @@ the Japanese edition has more window slots and a shorter ring.
 In the code the block is `struct UiRenderWork`, borrowed from the heap (the
 memory the engine lends out to whatever runs) under the numbered slot
 `HEAP_SLOT_WINDOW` by `UiWork_InitializeWithResourceCounters` for the field
-and by `UiWork_Initialize` for battle; it lasts until the next scene change
+and by `UiWork_Initialize` for battle; it lasts until the next map change
 and is reached as `UI_WORK`. In order it holds:
 
 - `tilemap`: the windows' tilemap, 32 by 20 tiles, uploaded in 4-row bands

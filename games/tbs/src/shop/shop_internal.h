@@ -71,11 +71,12 @@ enum ShopType {
 };
 
 /// The inn the inn's own code names (Inn_CheckIn's innId, a row of
-/// sInnPricesPerGuest); each town scene names its own inn where it opens it.
+/// sInnPricesPerGuest); each town's map script names its own inn where it opens
+/// it.
 #define INN_XIAN 5
 
-/// The stock rows the shop code itself names; each town scene names its own
-/// shops' rows where it opens them.
+/// The stock rows the shop code itself names; each town's map script names its
+/// own shops' rows where it opens them.
 enum ShopStockRow {
   SHOP_STOCK_ROW_EMPTY = 0,        ///< sells nothing; stands in for a bad row
   SHOP_STOCK_ROW_VALE_WEAPONS = 1, ///< Vale's weapon shop

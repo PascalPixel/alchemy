@@ -6,7 +6,7 @@
 
 // - Planet Diver flashes the user, throws it into the air, turns it into a
 //   ball of fire that falls on the target and bursts into 256 chips that
-//   bounce on the ground. The impact chips reuse the map buffer that other
+//   bounce on the ground. The impact chips reuse the map grid buffer that other
 //   effects address as an array of EffectStep records.
 // - The closing skulls (Haunt) gather around each target in turn, eight
 //   skulls scattered in 3D that step towards a point above the target while
@@ -36,7 +36,7 @@ struct ImpactChip {
 #define PLANET_DIVER_IMPACT_CHIPS ((struct ImpactChip *)Ram_MapGridCellBuffer)
 
 #define PLANET_DIVER_FRAMES 88
-#define PLANET_DIVER_CLEARED_CHIPS 1024 ///< map-buffer chip slots cleared first
+#define PLANET_DIVER_CLEARED_CHIPS 1024 ///< map grid buffer slots cleared first
 #define PLANET_DIVER_CHIPS 256          ///< chips the fireball bursts into
 
 /// The user flashes and leaps into the air, turns into a ball of fire, falls

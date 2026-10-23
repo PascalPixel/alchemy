@@ -59,8 +59,8 @@ void BattleEffect_ArmPaletteHBlankDma(void) {
 ///
 /// Abilities: Meteor (SUMMON_EFFECT_METEOR).
 ///
-/// BattleEffect_RunSummonEffect also plays it for a scene effect of 0, which no
-/// row selects.
+/// BattleEffect_RunSummonEffect also plays it for a summon effect of 0, which
+/// no row selects.
 void BattleEffect_RunMeteor(struct BattleEffectArgument *effect) {
   BattleEffect_RunParticleStreams(effect, PARTICLE_STREAMS_METEOR);
 }

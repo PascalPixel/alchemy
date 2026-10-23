@@ -1,7 +1,7 @@
 /// @file
 /// The title overlay: the start screen, the Golden Sun logo shown after the
 /// ending, and the screens that lead from the prologue and the last scene on
-/// to Vale and the file select screen. Title_Run chooses by entrance.
+/// to Vale and the file select screen. Title_Run chooses by warp destination.
 
 #include "game_state.h"
 #include "vram_tab.h"
@@ -47,36 +47,39 @@
 static void Title_RevealScreen(s32 unused);
 static void Title_LoadBackground(void);
 
-/// The title overlay's scene tables, which Field_RunMap reads through
-/// entry/title.s: one entrance row, the exit, and no placements or events.
+/// The title overlay's map tables, which Field_RunMap reads through
+/// entry/title.s: one warp destination row, the warp, and no object event
+/// templates or map events.
 u8 *Title_GetWarpDests(void) { return (u8 *)gTitleWarpDests; }
 
-/// The regions entry: the title has no exit boxes.
+/// The warp regions entry: the title has no warp boxes.
 s32 MapData_ReturnZero(void) { return 0; }
 
 u8 *Title_GetWarps(void) { return (u8 *)gTitleWarps; }
 
-/// The title overlay has no placed field actors.
+/// The title overlay has no object events.
 u8 *Title_GetObjectEventTemplates(void) {
   return (u8 *)gTitleObjectEventTemplates;
 }
 
-/// The title overlay has no field events.
+/// The title overlay has no map events.
 u8 *Title_GetEvents(void) { return (u8 *)gTitleEvents; }
 
-/// The overlay's initialize entry: plays what the entrance asks for, sets the
-/// next destination and returns 0.
-/// - Entrance 10, after Jenna and Kraden's closing scene on the world map
-///   (WorldMap_ShowEndingScene): the Golden Sun logo for two seconds, then
-///   until a key is pressed or a minute passes, then entrance 2.
-/// - Entrance 9, after the ship sails (lemurian_ship.c's SetSail): the
-///   credits, then the file select screen's entrance 2, which offers to save
-///   the cleared game.
-/// - Entrance 2, at power-on (Game_Run) and after the logo: the
+/// The overlay's initialize entry: plays what the warp destination asks for,
+/// sets the next destination and returns 0.
+/// - Warp destination 10, after Jenna and Kraden's closing scene on the world
+///   map (WorldMap_ShowEndingScene): the Golden Sun logo for two seconds, then
+///   until a key is pressed or a minute passes, then warp destination 2.
+/// - Warp destination 9, after the ship sails (lemurian_ship.c's SetSail): the
+///   credits, then the file select screen's warp destination 2, which offers to
+///   save the cleared game.
+/// - Warp destination 2, at power-on (Game_Run) and after the logo: the
 ///   Nintendo and Camelot logos and, when a save file exists, the title intro
-///   with its "Press Start" prompt; then the file select screen's entrance 1.
-/// - Any other entrance is the title shown after the prologue: the intro
-///   without its prompt, then Vale's entrance 16 (Party_EndChildhood).
+///   with its "Press Start" prompt; then the file select screen's warp
+///   destination 1.
+/// - Any other warp destination is the title shown after the prologue: the
+///   intro without its prompt, then Vale's warp destination 16
+///   (Party_EndChildhood).
 s32 Title_Run(void) {
   s32 waitFrames;
 
@@ -286,10 +289,11 @@ static void Title_UpdateSpriteReveal(void) {
   gTitleRevealFrame++;
 }
 
-/// Shows the Golden Sun logo for Title_Run's entrance 10: loads it while the
-/// screen is black, starts the lettering's reveal (Title_UpdateSpriteReveal,
-/// left running), brings the logo up from black over 51 frames and opens the
-/// screen. Leaves the event work's transitions at 60 frames.
+/// Shows the Golden Sun logo for Title_Run's warp destination 10: loads it
+/// while the screen is black, starts the lettering's reveal
+/// (Title_UpdateSpriteReveal, left running), brings the logo up from black over
+/// 51 frames and opens the screen. Leaves the event work's transitions at 60
+/// frames.
 static void Title_RevealScreen(s32 unused) {
   s32 brightnessStep;
 

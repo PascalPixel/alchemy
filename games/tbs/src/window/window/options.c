@@ -156,8 +156,8 @@ u16 Color_ScaleComponents(s16 *rgb, s32 redScale, s32 greenScale,
 /// (SaveMenu_SelectSlot) shows the colours of the file under the cursor, and
 /// the saved ones for an empty file and on leaving. The file select
 /// (menu/clear.c), the main loop's start (Game_Run), the end of the
-/// Mind Read wave (Ui_SetBank15PaletteAndClearRenderMode) and the Vale and
-/// world map scenes call it with the saved settings.
+/// Mind Read wave (Ui_SetBank15PaletteAndClearRenderMode) and Vale and the
+/// world map call it with the saved settings.
 void PaletteGlow_Update(s32 phase, s32 brightness) {
   s16 rgb[3];
   s16 step;

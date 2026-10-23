@@ -26,7 +26,7 @@
 /// sprite, turned to face the centre, and starts its motion script
 /// (gBattlePresentation_ActorObjectScript). Called by
 /// BattleUnit_RefreshPlacement and by BattleTarget_Execute for an enemy that
-/// joins. Fills in actor, creates a field object for it and, for an enemy,
+/// joins. Fills in actor, creates an object event for it and, for an enemy,
 /// claims its sprite slots.
 void BattleObject_Make(struct BattleObject *actor, s32 unitId, s32 x, s32 y) {
   s32 fixedX;
@@ -44,7 +44,7 @@ void BattleObject_Make(struct BattleObject *actor, s32 unitId, s32 x, s32 y) {
   fixedX = x * 65536;
   fixedZ = y * 65536;
   // The id 0xf000 has no sprite kind of enum ObjectCreateKind, so
-  // FieldObject_Create makes no sprite; BattleObject_SpawnObjectsForList
+  // ObjectEvent_Create makes no sprite; BattleObject_SpawnObjectsForList
   // attaches the battle sprites later.
   object = (struct MotionObject *)Object_CreateFar(0xf000, fixedX, 0, fixedZ);
   unit = Unit_GetFar(unitId);

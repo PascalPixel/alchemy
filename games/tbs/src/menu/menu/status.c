@@ -91,7 +91,7 @@
 #define STATUS_EQUIPPED_NAME_X 16
 #endif
 
-/// Lets the player choose one party member, over the field (the Colosso scenes
+/// Lets the player choose one party member, over the field (the Colosso maps
 /// use it, through MENU.S, and so does the debug test). Returns the chosen
 /// member's id, or -1 when the player backs out. Owns the menu work
 /// (HEAP_SLOT_MENU) while it runs and frees it before returning.

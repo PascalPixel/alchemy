@@ -10,7 +10,7 @@ field holds still behind the screen, and when the player backs out the icons
 come back. Psynergy or an item meant for the field, such as Move for a stone
 pillar, closes the menu instead, so that the field can use it.
 
-The menu code runs those four screens, the member chooser the Colosso scenes
+The menu code runs those four screens, the member chooser the Colosso maps
 open, and three overlays that are mostly menus: the title screen, the file
 select screen and the Battle Arena's lobby.
 [Menus, windows and shops](../../menus.md#field-menu-screens) explains in
@@ -105,7 +105,7 @@ the PP, and the list comes back for another choice.
 The steps are `PSYNERGY_STEP_OWNER`, `_LIST`, `_CLASSIFY`
 (`PsynergyMenu_ClassifySelectedPsynergy`), `_TARGET` and `_APPLY`, run by
 `Menu_ResolveSelectedAction`. `_CLASSIFY` returns 0 for the field when the
-scene has an event for the Psynergy's field effect, 2 for the whole party
+map has an event for the Psynergy's field effect, 2 for the whole party
 when its range is the whole party, 1 for one member when its target mode is
 2, and 0 otherwise. Psynergy for the field is written as the field's
 Psynergy request (`psynergyRequest` in the event work,
@@ -223,7 +223,7 @@ The figures are placed by `FourObjectMotion_`
 ([`menu/djinn_figures.c`](menu/djinn_figures.c)).
 `Menu_OpenCharacterSelector` ([`menu/status.c`](menu/status.c)) lets the
 player choose one party member over the field and returns the member's id, or
--1. The Colosso scenes open it through `MENU.S`, and so does the debug test.
+-1. The Colosso maps open it through `MENU.S`, and so does the debug test.
 
 ## The status panel
 
@@ -367,7 +367,7 @@ name entry keyboard tilemap, the same as the Japanese one, that nothing reads.
 | `DjinnMenu_`, `Djinn_`, `OwnerAction_` | the Djinn screen, its lists and its preview loop |
 | `FourObjectMotion_` | the row of four figures the Status and Djinn screens show |
 | `Item_`, `Ability_` | using an item or Psynergy from the menu |
-| `Title_`, `Clear_`, `SaveMenu_`, `LinkLobby_`, `MapData_` | the three overlays and their scene entry functions |
+| `Title_`, `Clear_`, `SaveMenu_`, `LinkLobby_`, `MapData_` | the three overlays and their map entry functions |
 | `Owner_`, `State_` | copying a unit's record, and the lobby's unused empty callback |
 | `UiWindow_`, `UiText_`, `UiIcon_`, `UiWork_`, `UiPalette_`, `Palette_`, `Resource_`, `Render_`, `Scheduler_` | windows, text, icons, palettes, VRAM entries and tasks, whose main code is in other folders |
 

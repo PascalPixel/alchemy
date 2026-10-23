@@ -16,7 +16,7 @@ enum InnMessageId {
 /// The coins a night costs each living guest, by inn: Vale, Vault, Bilibin,
 /// Kolima, Imil, Xian, Altin, Kalay, Lunpa, Tolbi, Suhalla, Lalivero, in the
 /// order of their area names. Unused: Tolbi's row, 9, costs nothing and no
-/// scene opens it, since Tolbi's inns are always full
+/// script opens it, since Tolbi's inns are always full
 /// (MsgTolbiInteriorsIsaacCheckedTheSignInnFull).
 // clang-format off
 static const s8 sInnPricesPerGuest[12] = {
@@ -42,7 +42,7 @@ s32 Inn_RoomPrice(s32 innId) {
 /// Runs an inn's counter: the innkeeper names the price, and on Yes, with the
 /// coins, the party sleeps (Inn_PlaySleep) and the innkeeper speaks again.
 /// Holds the shop's work block while it runs; returns 0. Called by the town
-/// scenes' innkeepers through SHOP.S (Engine_InnOpen). `innId` is the row of
+/// maps' innkeepers through SHOP.S (Engine_InnOpen). `innId` is the row of
 /// sInnPricesPerGuest, 0 to 11, which nothing checks; `objectId` is the
 /// innkeeper, whose portrait the lines show.
 s32 Inn_CheckIn(s32 innId, s32 objectId) {

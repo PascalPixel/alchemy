@@ -1,6 +1,6 @@
 /// @file
 /// The menu object: the field menu's Psynergy, Djinn, Item and Status
-/// screens, the member chooser that the Colosso scenes open, and the pieces
+/// screens, the member chooser that the Colosso maps open, and the pieces
 /// they share. menu_internal.h holds what the parts share (includes,
 /// macros and types); the code is in the files under menu/, included here in
 /// the order it has in the ROM. Camelot's own files are not recoverable: the

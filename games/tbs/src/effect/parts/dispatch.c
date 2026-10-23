@@ -1,5 +1,5 @@
 /// @file
-/// Running scene and table effects, and shared target helpers.
+/// Running summon and table effects, and shared target helpers.
 // Part of effect.c.
 
 #include "../effect_internal.h"

@@ -53,7 +53,7 @@ void Graphics_SetBg2AffineScaleHalf(void) { REG_BG2PA = Q_8_8(0.5); }
 /// (variant counts its frames, -1 when free). In the second stage
 /// work->particles 0 to 4 are the flame columns (variant their frames on the
 /// ground) and PARTICLES the sparks (variant their frames left, 0 when free).
-/// The window's edge step, noise and scanline table use the map cell
+/// The window's edge step, noise and scanline table use the map grid cell
 /// buffer's first 450 bytes on frames 0 to 15, over spray particles 0 to 16,
 /// which are already launched.
 void BattleEffect_RunNeptune(struct BattleEffectArgument *effect) {

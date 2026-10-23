@@ -308,7 +308,7 @@ s32 Menu_ResolveSelectedAction(s32 *outOwner, s32 *unused, s32 *outAction) {
 }
 
 /// Says how the selected Psynergy is used from the menu: 0 on the field once
-/// the menu closes (the scene has an event for its field Psynergy, type0c,
+/// the menu closes (the map has an event for its field Psynergy, type0c,
 /// and what the leader faces), 2 on the whole party (range 0xff), 1 on one
 /// chosen member when its target mode is 2, and 0 otherwise.
 s32 PsynergyMenu_ClassifySelectedPsynergy(void) {
@@ -967,7 +967,7 @@ s32 PsynergyMenu_DrawDetailPage(struct UiWindow *window, s32 *work,
       MENU_DRAW_INFO_TEXT(description, menu->infoWindow, 0, 0);
     }
   } else {
-    // BUG: clears scene flag 0x2ff instead of FLAG_MENU_INFO_KEPT, so a kept
+    // BUG: clears map flag 0x2ff instead of FLAG_MENU_INFO_KEPT, so a kept
     // message keeps the descriptions away until another screen clears it.
 #ifdef BUGFIX
     GameFlag_ClearBitFar(FLAG_MENU_INFO_KEPT);

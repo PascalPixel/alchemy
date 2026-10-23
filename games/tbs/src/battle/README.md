@@ -152,7 +152,7 @@ of the round into one the enemies began.
 | `BATTLE_ENCOUNTER_ENEMIES_FIRST` | 2 | the enemies strike first |
 | `BATTLE_START_NORMAL` | 0 | a random encounter: the first-strike rolls are made |
 | `BATTLE_START_NO_ESCAPE` | 2 | a battle the party cannot run from, such as a Mimic's |
-| `BATTLE_START_SCRIPTED` | 3 | a battle a scene starts; the command menu refuses to run |
+| `BATTLE_START_SCRIPTED` | 3 | a battle a script starts; the command menu refuses to run |
 | `BATTLE_START_LINK` | 4 | a link battle |
 | `BATTLE_START_DEBUG` | 5 | the debug battle menu's battle; the party may run |
 

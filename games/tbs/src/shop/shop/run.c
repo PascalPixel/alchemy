@@ -101,7 +101,7 @@ void Shop_ReleaseCursorWork(void) {
 /// until the player leaves. `stockRow` picks the row of sStockTable
 /// (SHOP_STOCK_ROW_EMPTY for a row out of range) and `keeperId` the object
 /// whose portrait the messages show. Seeds the row's artifacts on the first
-/// visit and holds the work block while it runs. Called by the town scenes'
+/// visit and holds the work block while it runs. Called by the town maps'
 /// shopkeepers through SHOP.S, and by the debug shop. Returns 0.
 s32 Shop_Run(s32 stockRow, s32 keeperId) {
   struct ShopRuntime *shop;
@@ -201,7 +201,7 @@ s32 Shop_OpenDebugShop(s32 unused) {
 }
 
 /// Waits one frame at a time until the sound driver has finished the last
-/// command. Called by the inn's sleep, the sanctum and two scenes that wait
+/// command. Called by the inn's sleep, the sanctum and two scripts that wait
 /// for a fanfare.
 void AudioCommand_WaitForStateByteClear(void) {
   while (AudioCommand_GetStateByteFar() != 0) {

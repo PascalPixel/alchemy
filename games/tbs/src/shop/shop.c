@@ -1,7 +1,7 @@
 /// @file
 /// The shop object: every counter the party trades at. Shops that buy, sell
 /// and repair, the artifact and Game Ticket counters, the sanctum's healing
-/// services, the inn, and the item picker scenes use.
+/// services, the inn, and the item picker scripts use.
 ///
 /// Everything lives in one work block, struct ShopRuntime, reached as
 /// gMenuWork while a counter is open. shop_internal.h holds what every part

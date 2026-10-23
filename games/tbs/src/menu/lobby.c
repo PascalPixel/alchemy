@@ -90,7 +90,7 @@
 // FLAG_LINK_BATTLE_ARRANGED: a linked battle has been arranged (with
 // FLAG_LINK_BATTLE): only the
 //   first three members take part (LinkLobby_PartyContains).
-// The place flags it uses (flags.h):
+// The map section flags it uses (flags.h):
 // FLAG_MAPSEC_TEMP_00: the attendant has explained once; talking again offers
 // to apply. FLAG_MAPSEC_TEMP_02: this console is the link's child (multiplayer
 // id 1), which receives
@@ -105,7 +105,7 @@
 //   In a monster series, the byte flag at FLAG_MAPSEC_TEMP_E8 instead counts
 //   the victories, 0 to 2, towards a stronger monster.
 
-/// The placed actors, numbering the rows of gLinkLobbyObjectEventTemplates and
+/// The object events, numbering the rows of gLinkLobbyObjectEventTemplates and
 /// gLinkLobbyBattleObjectEventTemplates, which list the same people in the same
 /// order; the rows of Garet, Ivan, Mia and Jenna take those characters' own
 /// ids.
@@ -266,10 +266,11 @@ static s32 sLinkLobbyWaitFrames;
 #define LOBBY_NO_RESULT
 #endif
 
-/// The lobby's entrances, which Field_RunMap reads through entry/lobby.s.
+/// The lobby's warp destinations, which Field_RunMap reads through
+/// entry/lobby.s.
 u8 *LinkLobby_GetWarpDests(void) { return (u8 *)gLinkLobbyWarpDests; }
 
-/// The regions entry: the lobby has no exit boxes.
+/// The warp regions entry: the lobby has no warp boxes.
 s32 MapData_ReturnZero(void) { return 0; }
 
 /// Restarts the link with interrupts locked: removes the serial and timer 3
@@ -293,11 +294,11 @@ static s32 LinkLobby_InitializeSerial(void) {
 
 u8 *LinkLobby_GetWarps(void) { return (u8 *)gLinkLobbyWarps; }
 
-/// The placements entry. After a defeat (entrance 9 for a monster battle, 11
-/// for a linked one) the party members and four visitors roughly trade places
-/// (gLinkLobbyBattleObjectEventTemplates): Garet, Ivan and Mia or Jenna take
-/// three of the visitors' spots, and the visitors stand around where the party
-/// stood.
+/// The object event templates entry. After a defeat (warp destination 9 for a
+/// monster battle, 11 for a linked one) the party members and four visitors
+/// roughly trade places (gLinkLobbyBattleObjectEventTemplates): Garet, Ivan and
+/// Mia or Jenna take three of the visitors' spots, and the visitors stand
+/// around where the party stood.
 s32 LinkLobby_SelectObjectEventTemplates(void) {
   s16 warpDest = gGameState.warpDest;
 
@@ -308,9 +309,9 @@ s32 LinkLobby_SelectObjectEventTemplates(void) {
 }
 
 /// Returns 1 when the partner's payload holds slot's word in slot's column,
-/// 0 when it does not or there is no link. Also sets or clears place flags
-/// FLAG_MAPSEC_TEMP_03 (the link is up) and FLAG_MAPSEC_TEMP_02 (this console
-/// is the child), and reads the other console's payload by them.
+/// 0 when it does not or there is no link. Also sets or clears map section
+/// flags FLAG_MAPSEC_TEMP_03 (the link is up) and FLAG_MAPSEC_TEMP_02 (this
+/// console is the child), and reads the other console's payload by them.
 static s32 LinkLobby_PeerSlotMatches(s32 slot) {
   s32 serialPlayerId = -1;
 
@@ -820,9 +821,9 @@ done:
   return result;
 }
 
-/// Exchanges the two parties: the parent sends first, the child (place flag
-/// FLAG_MAPSEC_TEMP_02) receives first. On success stores the partner's member
-/// count in FLAG_LINK_PARTY_COUNT and returns it; on failure resets the
+/// Exchanges the two parties: the parent sends first, the child (map section
+/// flag FLAG_MAPSEC_TEMP_02) receives first. On success stores the partner's
+/// member count in FLAG_LINK_PARTY_COUNT and returns it; on failure resets the
 /// transfer state and returns a negative result.
 static s32 LinkLobby_ExchangePartyRecords(void) {
   s32 result;
@@ -867,7 +868,7 @@ check:
   return result;
 }
 
-/// Touch event 10, the circle: starts the battle. A monster battle starts at
+/// Coord event 10, the circle: starts the battle. A monster battle starts at
 /// once. A linked one needs the attendant's call (FLAG_MAP_TEMP_00) and no
 /// lost link waiting to be reported (FLAG_MAP_TEMP_05); it publishes
 /// LOBBY_SLOT_IN_CIRCLE and waits for the partner to step in, giving up when
@@ -875,8 +876,8 @@ check:
 /// stands in the circle for LOBBY_PEER_WAIT_FRAMES. The leader then walks in
 /// while the parties are exchanged; a failed exchange walks back, restarts the
 /// lobby's polling and raises LOBBY_EVENT_DISCONNECTED. Sets where the battle
-/// returns to (entrances 8 and 9 for a monster battle, 10 and 11 for a linked
-/// one) and requests it. The original returns have no defined status.
+/// returns to (warp destinations 8 and 9 for a monster battle, 10 and 11 for a
+/// linked one) and requests it. The original returns have no defined status.
 static s32 LinkLobby_EnterBattle(void) {
   struct EventWork *work;
   s32 failed;
@@ -1143,7 +1144,7 @@ static s32 LinkLobby_ChooseBattleMode(void) {
 /// Talking to LOCALID_LINKED_WINS_TELLER, who reports the linked battles won,
 /// the total when the leader faces north and those won in a row otherwise;
 /// before the first, the line says it will tell them later. Like the original
-/// handler, it never ends its event (no Engine_ScriptEnd) and returns nothing.
+/// handler, it never ends its script (no Engine_ScriptEnd) and returns nothing.
 static s32 LinkLobby_ReportWinTallies(s32 objectEvent) {
   u32 facing = ObjectEvent_GetById(LOCALID_PARTY_LEADER)->facing;
   u16 *tally;
@@ -1288,10 +1289,10 @@ static s32 LinkLobby_PartyContains(s32 ownerId) {
 UNUSED static void State_NoOp(void) {}
 
 /// Talking to Garet, Ivan, Mia or Jenna, who speaks of the last linked battle
-/// (place flags FLAG_MAPSEC_TEMP_04 and FLAG_MAPSEC_TEMP_05) and whether they
-/// fought in it, or else of whether Isaac and they are in the battle party.
-/// Each message family holds one line per character, at actor - 1; Felix's
-/// holds "?".
+/// (map section flags FLAG_MAPSEC_TEMP_04 and FLAG_MAPSEC_TEMP_05) and whether
+/// they fought in it, or else of whether Isaac and they are in the battle
+/// party. Each message family holds one line per character, at local id - 1;
+/// Felix's holds "?".
 static s32 LinkLobby_TalkByProgress(s32 objectEvent) {
   s32 messageBase = MsgLobbyCantWaitLets;
   s32 isaacPresent = LinkLobby_PartyContains(0);
@@ -1303,7 +1304,7 @@ static s32 LinkLobby_TalkByProgress(s32 objectEvent) {
   if (Engine_GameFlagIsSet(FLAG_MAPSEC_TEMP_04)) {
 
     // Isaac's flag is tested and the result dropped; messageBase first
-    // holds whether the speaker fought (FLAG_MAP_TEMP_F0 + actor).
+    // holds whether the speaker fought (FLAG_MAP_TEMP_F0 + local id).
     GameFlag_IsSet(FLAG_MAP_TEMP_F0);
     messageBase = Engine_GameFlagIsSet(objectEvent + 0x2f0);
     if (Engine_GameFlagIsSet(FLAG_MAPSEC_TEMP_05)) {
@@ -1331,8 +1332,8 @@ static s32 LinkLobby_TalkByProgress(s32 objectEvent) {
 #endif
 }
 
-/// Touch event 1, the way out: stops the link, loads sound preset 2 and goes
-/// back to the file select screen (its entrance CLEAR_FROM_SANCTUM).
+/// Coord event 1, the way out: stops the link, loads sound preset 2 and goes
+/// back to the file select screen (its warp destination CLEAR_FROM_SANCTUM).
 static s32 LinkLobby_LeaveArena(void) {
   SerialRuntime_RemoveIrqHandlers();
   Sound_LoadPresetParameters(2);
@@ -1349,7 +1350,7 @@ static s32 LinkLobby_LeaveArena(void) {
 /// LOCALID_FINALS_VISITOR, who explains the linked finals, and
 /// LOCALID_OLD_MANS_ARENA_VISITOR, who wonders whether this is the old man's
 /// Battle Arena. Each says their first line unless a linked battle has ended
-/// since the leader last walked south of z 224 (place flag
+/// since the leader last walked south of z 224 (map section flag
 /// FLAG_MAPSEC_TEMP_04), then their second after a win or their third after a
 /// loss (FLAG_MAPSEC_TEMP_05).
 static s32 LinkLobby_TalkToVisitor(s32 objectEvent) {
@@ -1498,13 +1499,13 @@ static s32 LinkLobby_DrawThreeDigitValue(s32 value) {
 }
 
 /// The overlay's initialize entry, run on every arrival: settles the battle
-/// that brought the party here and restarts the lobby's polling. Entrance 8
-/// is a monster battle won, 9 one lost, 10 a linked battle won (or broken
-/// off, FLAG_MAPSEC_TEMP_E8) and 11 one lost; any other entrance
-/// (LINK_LOBBY_FROM_CLEAR, from the file select screen) restarts the link.
-/// Updates gGameState.linkTallies, saves after linked battles and new monster
-/// records, and restores the party's HP, PP and Djinn unless a monster series
-/// goes on. Returns 0.
+/// that brought the party here and restarts the lobby's polling. Warp
+/// destination 8 is a monster battle won, 9 one lost, 10 a linked battle won
+/// (or broken off, FLAG_MAPSEC_TEMP_E8) and 11 one lost; any other warp
+/// destination (LINK_LOBBY_FROM_CLEAR, from the file select screen) restarts
+/// the link. Updates gGameState.linkTallies, saves after linked battles and new
+/// monster records, and restores the party's HP, PP and Djinn unless a monster
+/// series goes on. Returns 0.
 s32 LinkLobby_RunRoundResult(void) {
   s32 i;
   struct EventWork *work;
@@ -1538,7 +1539,7 @@ s32 LinkLobby_RunRoundResult(void) {
       Engine_GameFlagSet(0x2f0 + i);
     }
   }
-  // Entrance 8, a monster battle won: offer the next one.
+  // Warp destination 8, a monster battle won: offer the next one.
   if (gGameState.warpDest == 8) {
     s32 wins;
     s32 messageOffset;
@@ -1595,8 +1596,8 @@ s32 LinkLobby_RunRoundResult(void) {
       LinkLobby_WriteSlotValue(LOBBY_SLOT_SIGNATURE);
     }
     Engine_ScriptEnd();
-    // Entrance 9, a monster battle lost: the series ends, and a new record
-    // is saved.
+    // Warp destination 9, a monster battle lost: the series ends, and a new
+    // record is saved.
   } else if (gGameState.warpDest == 9) {
     gGameState.linkTallies[LINK_TALLY_MONSTER_LOSSES]++;
     Engine_ScriptStart();
@@ -1622,8 +1623,8 @@ s32 LinkLobby_RunRoundResult(void) {
     FieldGameFlag_SetByte(FLAG_MONSTER_BATTLE_WINS, -1);
     LinkLobby_WriteSlotValue(LOBBY_SLOT_SIGNATURE);
     Engine_ScriptEnd();
-    // Entrance 10, a linked battle won: count the win and the run; a longer
-    // run is the board's new record. Saved.
+    // Warp destination 10, a linked battle won: count the win and the run; a
+    // longer run is the board's new record. Saved.
   } else if (gGameState.warpDest == 10) {
     s32 v;
 
@@ -1656,8 +1657,8 @@ s32 LinkLobby_RunRoundResult(void) {
       Engine_GameFlagSet(FLAG_MAPSEC_TEMP_05);
     }
     Engine_ScriptEnd();
-    // Entrance 11, a linked battle lost: count the loss and end the run.
-    // Saved.
+    // Warp destination 11, a linked battle lost: count the loss and end the
+    // run. Saved.
   } else if (gGameState.warpDest == 11) {
     s32 v;
 

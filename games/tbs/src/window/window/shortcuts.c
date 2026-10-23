@@ -5,7 +5,7 @@
 #include "../window_internal.h"
 
 /// The area name notice's fields, which live in the event work block
-/// (gEventWork, a field scene's work), for as long as the scene runs.
+/// (gEventWork, a map's work), for as long as the map runs.
 struct TimedNoticeWork {
   u8 eventWork[0x230];     ///< the event work's other fields
   struct UiWindow *window; ///< the notice's window; it may since have closed

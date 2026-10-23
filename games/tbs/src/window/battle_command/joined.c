@@ -29,7 +29,7 @@
 
 /// The Colosso choice of what to do: "Descriptions", "Cheer" or "Nothing",
 /// chosen with a pointing hand. Returns the choice (0-2), or -1 when
-/// cancelled with B. The Colosso scenes ask it (map/common/colosso_solo.h).
+/// cancelled with B. The Colosso maps ask it (map/common/colosso_solo.h).
 /// It takes a VRAM slot for the hand and frees it before returning.
 s32 PartyTalkMenu_Choose(s32 unused) {
   struct UiWindow *window;

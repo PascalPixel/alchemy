@@ -1,12 +1,12 @@
 /// @file
-/// The debug menus (scenes, flags, icon browsers) and the system menu's
+/// The debug menus (maps, flags, icon browsers) and the system menu's
 /// choices.
 // Part of battle_command.c.
 
 #include "../battle_command_internal.h"
 
-/// Schedules the debug scene and entrance selector; 0xc80 is a scheduler order,
-/// not a number of frames to wait. Nothing in the game calls it.
+/// Schedules the debug map and warp destination selector; 0xc80 is a scheduler
+/// order, not a number of frames to wait. Nothing in the game calls it.
 UNUSED void DebugMenu_ScheduleMapSelector(void) {
 #ifdef UBFIX
   Scheduler_AddOrUpdateCallback(Menu_RunSelection, 0xC80);
@@ -15,10 +15,10 @@ UNUSED void DebugMenu_ScheduleMapSelector(void) {
 #endif
 }
 
-/// Draws the debug scene and entrance numbers with their category/area labels.
-/// The first line has the scene's name (MsgDebugCategoryName + scene) and,
-/// beside it, the area its entrance leads to (MsgDebugEntryName + area); the
-/// numbers, three digits each, go under them.
+/// Draws the debug map and warp destination numbers with their category/area
+/// labels. The first line has the map's name (MsgDebugCategoryName + map) and,
+/// beside it, the area its warp destination leads to (MsgDebugEntryName +
+/// area); the numbers, three digits each, go under them.
 void Menu_DrawSelectionRow(struct UiWindow *work, s32 mapId,
                            const s16 *warpDest) {
   s16 mapIndex = mapId;
@@ -32,8 +32,8 @@ void Menu_DrawSelectionRow(struct UiWindow *work, s32 mapId,
   UiText_DrawResource(label, work, MENU_LABEL_X, 0);
 }
 
-// The debug scene selector: a scene and an entrance number, starting from
-// the scene being run (Menu_HandleSelectionRowInput has the keys). A warps
+// The debug map selector: a map and a warp destination number, starting from
+// the map being run (Menu_HandleSelectionRowInput has the keys). A warps
 // there (FieldScript_SetDestinationFar), B closes it. The field opens it in
 // debug mode when the Start button's menu (Save your quest, Sleep, Change
 // settings) is opened with B held (object/object/run_map.c).
@@ -95,14 +95,14 @@ s16 Menu_RunSelection(void) {
   }
 }
 
-/// Edits the debug scene or entrance, returning -1 to warp and -2 to cancel.
-/// Shoulder buttons step by ten; it keeps the original 99-step entrance wrap.
-/// Otherwise it returns the scene after this frame's keys. Up and Down
-/// switch the field (`selectedField`: 0 scene, 1 entrance), Left and Right
-/// step by one, wrapping scenes 0 to 200 and entrances 0 to 99. R and L
-/// step a scene by ten, setting the entrance to 0, and past either end go
-/// to the other (195 + 10 gives 0); they step an entrance by ten, wrapping
-/// by 99 (95 + 10 gives 6).
+/// Edits the debug map or warp destination, returning -1 to warp and -2 to
+/// cancel. Shoulder buttons step by ten; it keeps the original 99-step warp
+/// destination wrap. Otherwise it returns the map after this frame's keys. Up
+/// and Down switch the field (`selectedField`: 0 map, 1 warp destination), Left
+/// and Right step by one, wrapping maps 0 to 200 and warp destinations 0 to 99.
+/// R and L step a map by ten, setting the warp destination to 0, and past
+/// either end go to the other (195 + 10 gives 0); they step a warp destination
+/// by ten, wrapping by 99 (95 + 10 gives 6).
 s32 Menu_HandleSelectionRowInput(struct UiWindow *window, s16 mapId,
                                  s16 *warpDest, s16 *selectedField) {
   if (gKeysRepeat & KEY_A)

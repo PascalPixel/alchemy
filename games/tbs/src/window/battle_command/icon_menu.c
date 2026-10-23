@@ -524,7 +524,7 @@ s32 Menu_SelectTopEntry(s32 selection) {
 /// Opens the field command menu and animates from start to the command's icon.
 /// Returns the final icon position after closing the menu. The Djinn icon is
 /// always shown, so `command` (enum FieldMenuCommand, as Menu_SelectTopEntry
-/// gives it) is position command - 1. The world map's scenes show it picking
+/// gives it) is position command - 1. The world map's cutscenes show it picking
 /// Djinn (map/world_map.c).
 s32 Menu_AnimateSelectionToEntry(s32 start, s32 command) {
   UiWindow_OpenMode1AndWaitFrame();

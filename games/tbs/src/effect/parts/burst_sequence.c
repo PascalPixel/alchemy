@@ -83,7 +83,7 @@ enum BurstField {
 
 /// The flash pictures, packed to half width after the arcs.
 #define BURST_SEQUENCE_FLASH_CELLS 0x5100
-/// The wave pictures, in the map buffer past the motes.
+/// The wave pictures, in the map grid buffer past the motes.
 #define BURST_SEQUENCE_WAVE_CELLS (Ram_MapGridCellBuffer + 0x5e00)
 
 /// The user closes on the first target and strikes it again and again; each

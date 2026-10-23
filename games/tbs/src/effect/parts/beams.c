@@ -326,7 +326,7 @@ void BattleEffect_RunRingAndSparkSequence(struct BattleEffectArgument *effect) {
   work->effect = effect;
   // Load the blitters and pictures a step a frame, keeping the transition
   // centred between the user and the first target meanwhile. The star
-  // burst goes to the image storage and the crescent to the map cell
+  // burst goes to the image storage and the crescent to the map grid cell
   // buffer; an enemy user (unit id above 7) also takes the small Mars
   // Djinni's palette.
   BattlePresentation_SetupTransitionAtPairMidpointFar(effect->actor,

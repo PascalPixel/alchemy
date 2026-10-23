@@ -129,8 +129,8 @@ void BattleEffect_RunRushingStrike(struct BattleEffectArgument *effect,
   draw[1] = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE];
 
   // Pictures and palette: the ring is the yellow orb packed to half width,
-  // six 20x48 pictures, into the map cell buffer, so that the blue burst can
-  // take its place in the sheet.
+  // six 20x48 pictures, into the map grid cell buffer, so that the blue burst
+  // can take its place in the sheet.
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_YellowOrbSheet, work->sheet, 1,
                              0);

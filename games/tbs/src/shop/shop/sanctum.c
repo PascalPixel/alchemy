@@ -120,7 +120,7 @@ void UiMessage_ShowResolvedAndRestoreState(s32 messageId) {
 /// poison, exorcise, remove a curse) until B, and the farewell. `unitId` is
 /// the keeper's object, whose portrait the lines show. Holds the shop work
 /// block while it runs; returns 0. Called through Engine_SanctumOpen by the
-/// scenes' sanctum keepers and the link lobby, and by the debug test.
+/// maps' sanctum keepers and the link lobby, and by the debug test.
 s32 Shop_ConfirmAct(s32 unitId) {
   s32 serviceSelection = 0;
   struct UiWindow *listWindow = 0;

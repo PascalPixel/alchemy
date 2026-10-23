@@ -24,7 +24,7 @@ struct BattleAct *BattleAction_GetDirect(s32 actionId) {
 }
 
 /// Returns 1 when `actionId` is in the unit's action list. Called by the
-/// events that check whether a member knows a Psynergy
+/// scripts that check whether a member knows a Psynergy
 /// (FieldScript_ValidatePackedId).
 s32 Unit_KnowsAction(s32 owner, s32 actionId) {
   struct BattleUnit *unit = Unit_Get(owner);
@@ -185,7 +185,7 @@ struct LevelUpWork {
 /// Teaches a character action `value` for good (or makes a class action
 /// permanent by clearing its marks), then rebuilds its list. Returns the
 /// action's place in the list, or -1 when the list is full. Called by the
-/// events that teach Psynergy, the prologue's end, the debug presets and the
+/// scripts that teach Psynergy, the prologue's end, the debug presets and the
 /// debug shortcut menu.
 s32 Unit_LearnPsynergy(s32 stateIndex, s32 value) {
   struct BattleUnit *state = Unit_Get(stateIndex);

@@ -138,11 +138,11 @@ static s32 Clear_PackPasswordData(s32 unused, s32 mode, u8 *out);
 static s32 Clear_EncodePassword(u8 *data, s32 size, u8 *out);
 static u16 Clear_CalculatePasswordCrc16(u32 byteCount, u8 *data);
 
-/// The file select overlay's scene tables, for the scene loader: one entrance,
-/// the exit, and no placements or events.
+/// The file select overlay's map tables, for the map loader: one warp
+/// destination, the warp, and no object event templates or map events.
 u8 *Clear_GetWarpDests(void) { return (u8 *)gClear_WarpDests; }
 
-/// The regions entry: the file select screen has no exit boxes.
+/// The warp regions entry: the file select screen has no warp boxes.
 s32 MapData_ReturnZero(void) { return 0; }
 
 u8 *Clear_GetWarps(void) { return (u8 *)gClear_Warps; }
@@ -366,8 +366,8 @@ static void Clear_NameEntryCharacter(s32 cell, u8 *text) {
 }
 
 /// Returns -1 when the loaded game may not restart at its last Sanctum, 0
-/// otherwise. It may not when it was saved where a scene's script blocked
-/// Retreat (FLAG_RETREAT_BLOCKED), except in scenes of variant 2, which block
+/// otherwise. It may not when it was saved where a map script blocked
+/// Retreat (FLAG_RETREAT_BLOCKED), except in towns (MAP_TYPE_TOWN), which block
 /// it by themselves, and on the world map.
 static s32 Clear_GetSaveRecoveryBlockMask(void) {
   s32 mapDifference;
@@ -378,13 +378,13 @@ static s32 Clear_GetSaveRecoveryBlockMask(void) {
   if (gGameState.mapType == MAP_TYPE_TOWN) {
     return 0;
   }
-  // -1 unless the scene is the world map: -d | d has its top bit set for any
+  // -1 unless the map is the world map: -d | d has its top bit set for any
   // d but 0.
   mapDifference = gGameState.mapId ^ (s32)&MapId_WorldMap;
   return -((u32)(-mapDifference | mapDifference) >> 31);
 }
 
-/// A view of the scene state that names its copy of the play time, checked
+/// A view of the map state that names its copy of the play time, checked
 /// against the loaded game's.
 struct SaveMenuMapLocalState {
   u8 unk000[0x100]; ///< not read here
@@ -406,8 +406,8 @@ struct SaveLinkGreeting {
 /// at one site (its FAKEMATCH tag).
 s32 __divsi3(s32, s32);
 
-/// The overlay's initialize entry: the file select screen. At entrance 2,
-/// after the credits, it offers to save the cleared game and goes on to the
+/// The overlay's initialize entry: the file select screen. At warp destination
+/// 2, after the credits, it offers to save the cleared game and goes on to the
 /// world map. Otherwise it loops on the start menu until the player starts a
 /// new game, continues a file or enters the Battle Arena; copying, erasing
 /// and sending a cleared file's data, by cable or as a password, come back to
@@ -449,8 +449,9 @@ s32 SaveMenu_Run(void) {
   gEventWork->startTransition = blendStarted;
   Engine_ScriptOpenScreen();
   Engine_ScriptWaitForScreen();
-  // Entrance 2, after the credits (Title_Run): save the cleared game, then
-  // the world map's entrance 72. Cancelling the file choice asks again.
+  // Warp destination 2, after the credits (Title_Run): save the cleared game,
+  // then the world map's warp destination 72. Cancelling the file choice asks
+  // again.
   if (gGameState.warpDest == 2) {
   L_ask:
     UiText_ShowPositionedMessageAndWait(MsgSaveAdventureQuestion, 5);
@@ -544,7 +545,7 @@ menu_top:;
   // Sanctum (savedMap); a file whose two play times differ is reported
   // corrupted, with the offer to restart there. Flags 0x13e and 0x13f mark
   // the two chosen restarts. XXX: their reader is unknown; it would test them
-  // by number in a scene's event table or script, or read flag byte 39 whole.
+  // by number in a map's event table or script, or read flag byte 39 whole.
   if (v6 == 1) {
     struct GameState *state;
 

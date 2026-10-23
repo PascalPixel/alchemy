@@ -105,7 +105,7 @@ void Field_PlaceMapMarkers(void) {
               (struct DispatchObject *)markerObjectEvent);
           markerObjectEvent->homeX = markerObjectEvent->x / 0x10000;
           markerObjectEvent->homeZ = markerObjectEvent->z / 0x10000;
-          markerObjectEvent->unk23 = 1;
+          markerObjectEvent->priorityFlags = 1;
           markerObjectEvent->flags59 = 1;
           marker->id = event->trigger;
           marker->object = (struct ObjectRuntime *)markerObjectEvent;
@@ -135,7 +135,7 @@ void Field_PlaceMapMarkers(void) {
           markerObjectEvent->homeX = markerObjectEvent->x / 0x10000;
           markerObjectEvent->homeZ = markerObjectEvent->z / 0x10000;
           markerObjectEvent->flags59 = 1;
-          markerObjectEvent->unk23 = 1;
+          markerObjectEvent->priorityFlags = 1;
           marker->object = (struct ObjectRuntime *)markerObjectEvent;
           marker->id = event->trigger;
           marker->column = markerObjectEvent->x / 0x100000;

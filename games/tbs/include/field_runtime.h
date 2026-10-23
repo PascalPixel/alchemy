@@ -70,9 +70,9 @@ STATIC_ASSERT(offsetof(struct MapEntries, regions) == 0x2c);
 struct MarkerSlot {
   struct ObjectRuntime *object; ///< the object event placed for it
   u8 id;                        ///< the trigger of its map event, 100 to 239
-  u8 unk05;  ///< cleared with the slot; not named by TBS code
-  u8 column; ///< its 16-pixel cell
-  u8 row;    ///< its 16-pixel cell
+  u8 unused;                    ///< cleared with the slot; no code names it
+  u8 column;                    ///< its 16-pixel cell
+  u8 row;                       ///< its 16-pixel cell
 };
 
 STATIC_ASSERT(sizeof(struct MarkerSlot) == 8);
@@ -142,23 +142,26 @@ struct FieldWork {
   struct MapGridCell *currentTile;  ///< the cell the leader last stepped onto
   struct MapGridCell *previousTile; ///< the cell before it
   s32 transition;       ///< MAP_TRANSITION(style, variant); 0x100 on entry
-  u16 unk1c4;           ///< not named by TBS code
+  u16 unused;           ///< no code names it
   u16 transitionActive; ///< set once the opening transition has started
   s32 transitionFrames; ///< frames; 16 on entry and at each script
   s32 fastForward; ///< debug: skip timed script waits and object event messages
-  u8 unk1d0[8];    ///< not named by TBS code
-  s16 message;     ///< the next message, advanced as each window opens
-  u16 unk1da;      ///< set to 0xffff by FieldScript_Start; not read by name
-  s16 unk1dc;      ///< set to -1 by FieldScript_Start; not read by name
-  s16 unk1de;      ///< set to -1 by FieldScript_Start; not read by name
+  u8 unusedAfterFastForward[8]; ///< no code names it
+  s16 message; ///< the next message, advanced as each window opens
+  /// XXX: set to 0xffff by FieldScript_Start and never read (see the field
+  /// README).
+  u16 unk1da;
+  s16 unk1dc; ///< XXX: set to -1 by FieldScript_Start and never read
+  s16 unk1de; ///< XXX: set to -1 by FieldScript_Start and never read
   struct ObjectRuntime *camera; ///< the object the map view follows
-  u8 unk1e4[0x10];              ///< not named by TBS code
+  u8 unusedAfterCamera[0x10];   ///< no code names it
   s32 speaker;       ///< the object event speaking; the leader at each script
   s32 messageWindow; ///< the open message window, 0 for none
   s32 sideWindow;    ///< the speaker's portrait window
-  /// ObjectTable_ResetForObject builds the leader's two-row object event
-  /// template table at its start; nothing else names it.
-  u8 unk200[0xab6];
+  /// The leader's two-row object event template table (its row and an end
+  /// row), which ObjectTable_ResetForObject builds through its offset.
+  u8 leaderTemplates[0x30];
+  u8 unusedAfterTemplates[0xa86]; ///< no code names it
   /// Set while a raised or coord event runs; FieldScript_Start then resets the
   /// effect counter.
   u16 busy;

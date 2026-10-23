@@ -32,13 +32,18 @@ struct ScriptMotionObject {
   s32 y;                           ///< 16.16 fixed-point pixels
   s32 z;                           ///< 16.16 fixed-point pixels
   s32 terrainHeight;               ///< 16.16 fixed-point pixels
-  u8 unk18[0x0a]; ///< the x and y scales and the radius; not named here
-  u8 terrainId;   ///< the map layer whose ground height it follows
-  u8 unk23;       ///< ObjectEvent.priorityFlags; not named here
-  s32 velocityX;  ///< 16.16 fixed-point pixels per frame
-  s32 velocityY;  ///< 16.16 fixed-point pixels per frame
-  s32 velocityZ;  ///< 16.16 fixed-point pixels per frame
-  s32 speedLimit; ///< 16.16 fixed-point pixels per frame
+  /// ObjectEvent's scales and radius; not named here.
+  ///@{
+  s32 scaleX;
+  s32 scaleY;
+  u16 radius;
+  ///@}
+  u8 terrainId;     ///< the map layer whose ground height it follows
+  u8 priorityFlags; ///< ObjectEvent's; not named here
+  s32 velocityX;    ///< 16.16 fixed-point pixels per frame
+  s32 velocityY;    ///< 16.16 fixed-point pixels per frame
+  s32 velocityZ;    ///< 16.16 fixed-point pixels per frame
+  s32 speedLimit;   ///< 16.16 fixed-point pixels per frame
   /// Added toward the target each frame, or taken off the speed when there is
   /// none, in 16.16 fixed-point pixels per frame.
   s32 acceleration;
@@ -54,26 +59,39 @@ struct ScriptMotionObject {
   /// Taken off velocityY each frame above the ground, 16.16 fixed-point
   /// pixels per frame; also scales a floating object's bob.
   s32 gravity;
-  /// A spare word, the sprite pointer and the sprite kind; not named here.
-  u8 unk4c[9];
+  /// ObjectEvent's riseBaseY, sprite and sprite kind; not named here.
+  ///@{
+  s32 riseBaseY;
+  void *sprite;
+  u8 spriteStorageKind;
+  ///@}
   /// bits: 4 no slowdown on slopes | 3 bigger float | 2 floats | 1 falls |
   /// 0 follows the terrain; zero is free flight in 3D
   u8 motionFlags;
-  u8 arrivalAxis;    ///< the ARRIVAL_AXIS_* that decides arrival
-  u8 unk57;          ///< the object script's last flag test; not named here
-  u8 snapToTarget;   ///< nonzero lands it exactly on its target
-  u8 collisionFlags; ///< bit 7: a solid object refuses its move
-  u8 steeringFlags;  ///< bit 0: turns toward its velocity, 1/16 turn a frame
-  u8 paused;         ///< nonzero skips its script and motion, not its hook
-  /// The flag that keeps its sprite's VRAM, and the object script's SC_LOOP
-  /// count; not named here.
-  u8 unk5c[2];
+  u8 arrivalAxis;     ///< the ARRIVAL_AXIS_* that decides arrival
+  u8 conditionResult; ///< the object script's last flag test; not named here
+  u8 snapToTarget;    ///< nonzero lands it exactly on its target
+  u8 collisionFlags;  ///< bit 7: a solid object refuses its move
+  u8 steeringFlags;   ///< bit 0: turns toward its velocity, 1/16 turn a frame
+  u8 paused;          ///< nonzero skips its script and motion, not its hook
+  /// ObjectEvent's flag that keeps its sprite's VRAM, and the object script's
+  /// SC_LOOP count; not named here.
+  ///@{
+  u8 retainSpriteCache;
+  u8 repeatCount;
+  ///@}
   s16 wait;   ///< frames left before its script runs again
   u8 refused; ///< frames in a row a solid object refused its move
   u8 frozen;  ///< nonzero skips steering, terrain, gravity and floating
-  /// Two bytes map code uses, the action parameter, the footprint side
-  /// and the linked object; not named here.
-  u8 unk62[10];
+  /// ObjectEvent's two bytes map code uses and ObjectRuntime's action
+  /// parameter, footprint side and linked object; not named here.
+  ///@{
+  u8 riseCounter;
+  u8 riseEnabled;
+  s16 action;
+  s16 footprintSide;
+  struct ScriptMotionObject *linkedObject;
+  ///@}
   /// Called each frame before its script.
   void (*hook)(union FieldObject *fieldObject);
 };

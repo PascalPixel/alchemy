@@ -213,8 +213,8 @@
 #define MUS_086 86
 /// The fanfare of a Sanctum's Remove Curse.
 #define MUS_REMOVE_CURSE 87
-/// The fanfare of a Sanctum's Exorcise.
-#define MUS_EXORCISE 88
+/// The fanfare of a Sanctum's Repel Evil.
+#define MUS_REPEL_EVIL 88
 /// The fanfare as a member levels up after a battle, and as a Colosso round
 /// begins.
 #define MUS_LEVEL_UP 89

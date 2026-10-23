@@ -48,7 +48,7 @@ Always: keep all twelve editions byte-identical (W5, W8); tag every compiler-ste
 
 Ask Pascal first: any compiler, option, routing or alchemy-gcc change (K1 to K3); anything that changes what counts (C2, W6); deleting what cannot be restored; pushing, pulling, fetching or publishing outside the verified humanization sync authorized in Workflow 6.
 
-Never: commit or publish a ROM or game files (L1); use another project's Golden Sun work (L2), or leaked Nintendo or Camelot code or SDKs or anything derived from them (L3); let the ROM steer the build or count (O1); write a function as inline assembly, place data through `asm()` (S1), patch compiler output or give a function its own compiler option (S2, K1); treat old history or deleted files as evidence (O5); add JSON, Python, shell or TypeScript programs (A5, W1).
+Never: commit or publish a ROM or game files (L1); use another project's Golden Sun work (L2), or leaked Nintendo or Camelot code or SDKs or anything derived from them (L3); let the ROM steer the build or count (O1); write a function as inline assembly, place data through `asm()` (S1), patch compiler output or give a function its own compiler option (S2, K1); treat old history or deleted files as evidence (O5); add JSON, Python, shell or TypeScript programs (A5, W1); commit a cache, a hand-kept registry, tool scaffolding or a background file (N1 to N6).
 
 ## Workflow
 
@@ -169,6 +169,17 @@ The set is frozen: three C generators built from the pinned `alchemy-gcc` submod
 - **W6** A change to what counts, a rule, an option or routing lands as its own commit with DONE before and after.
 - **W7** Parallel work divides by owner; check a name is free (`git log --all -S`) before using it; when branches merge an adoption wins over edits to its draft; commit only verified work.
 - **W8** Humanizing follows H2 toward H4 and keeps every edition byte-identical; message names stay linker symbols.
+
+### Nothing but the source
+
+Pascal calls the opposite "AI cheating": caches, registries and scaffolding that make the project look bigger and more thorough than it is, drift from the code, and keep it from being a few short C files, pictures, songs and tiny tools, as pret's are. On 23 October 2026 a names table, a per-site spelling list, hand-kept file and prefix tables, 779 rename redirects and committed render indexes were removed for this.
+
+- **N1** The repository holds the source and nothing else: C and assembly; the game's assets in editable form (PNG, MIDI, WAV, PO) and its data as C; the Makefile, linker scripts, object list and small tools; and the docs' prose. A tracked file under `games/` is either read by the build or is a guide's Markdown.
+- **N2** No caches: what a script can produce from the source (an index of renders, a list of names, a table of files or values, a catalogue of what comments say) is produced by the build or the docs site, never committed.
+- **N3** No registries kept by hand: a fact lives once, beside the thing it is about, as a comment on the declaration or a note at the site, never in a separate list of names, sites, renames, evidence or files that must be kept in step with the code.
+- **N4** No scaffolding for the tools: no per-asset recipe files, no stored offsets or sizes, no per-asset configuration a Makefile rule for that kind of asset could imply; one rule per kind of asset, as pret writes them.
+- **N5** No background files: notes, summaries and plans that repeat or describe the code stay out of the repository; working notes go in the agent's scratch space.
+- **N6** Volume is never progress: an agent adds no file, table, section or line to look thorough. Every new file says what reads it; a change that adds files must be the smallest that works; when a file can go, it goes. Before landing, every new tracked file is checked against N1.
 
 ## What matching has measured
 

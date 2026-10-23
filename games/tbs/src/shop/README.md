@@ -1,6 +1,6 @@
 # Shops
 
-![Where the party spends coins, a town has three kinds of counter. A shop, for weapons, armor or items, offers four things: Buy, Sell, its rare items (Artifacts) and Repair. Above them, the four as Bilibin's item shop shows them when it opens, Buy chosen. A sanctum serves one member at a time: it revives, cures poison, drives out a haunting or takes off cursed equipment, for a fee. An inn charges for each member still standing and gives them back their HP and PP overnight. Each is opened by its town's map script, when the player talks to the keeper.](https://alchemy.pascalpixel.com/illustrations/shop/counters.svg)
+![A town's three kinds of counter. A shop, for weapons, armor or items, offers Buy, Sell, its rare items (Artifacts) and Repair, shown as Bilibin's item shop opens. A sanctum revives, cures poison, drives out a haunting or takes off cursed equipment, one member at a time. An inn charges for each member still standing and restores their HP and PP overnight.](https://alchemy.pascalpixel.com/illustrations/shop/counters.svg)
 
 In a town the [party](../../glossary.md#the-party) spends its coins at three kinds of counter. At a shop it
 buys and sells weapons, armor or items, has broken equipment mended, and
@@ -8,8 +8,8 @@ finds the rare items the game calls artifacts. At a sanctum a priest revives
 a fallen member or lifts poison, a haunting or a curse. At an inn the party
 sleeps and wakes with full HP and [PP](../../glossary.md#psynergy-and-pp). The shop code runs all three, and two
 smaller things that share their screens: the Game Tickets a shopkeeper gives
-for spending, and the item picker, which asks what to drop when the party is
-given an item with every bag full.
+for spending, which pay for Tolbi's Lucky Wheels, and the item picker, which
+asks what to drop when the party is given an item with every bag full.
 
 Each counter is opened by its town's [map](../../glossary.md#map) [script](../../glossary.md#script) when the player talks to the
 keeper. [Menus, windows and shops](../../menus.md#shops) gives the counters in
@@ -17,24 +17,6 @@ brief; this page gives the prices, the services and the work behind each one.
 The windows and messages the counters draw with are in
 [Windows](../window/README.md), and the items and their stock counters in
 [Game rules](../game/README.md).
-
-## The work block
-
-A counter borrows the memory the field menu's screens use, so a counter and
-the field menu are never open together.
-
-![The menu screens and the shop counters share one block of memory, 2,672 bytes. Whichever is open takes the block as it opens and gives it back as it closes, and reads it in its own way: the Item screen as its windows and the items listed, the Psynergy screen as the Psynergy listed, a shop as its stock and cursor. Over time the block passes from one to the next, never held by two at once, which is why a shop and the field menu are never open together.](https://alchemy.pascalpixel.com/illustrations/menu/menu-work.svg)
-
-Every counter and the item picker take the menu's [heap](../../glossary.md#heap-and-pools) block (memory the
-engine lends out, under the numbered slot `HEAP_SLOT_MENU`) as
-`struct ShopRuntime` with `Shop_InitializeCursorWork` and give it back with
-`Shop_ReleaseCursorWork`; the [layout](../../glossary.md#layout) is in
-[`include/shop.h`](../../include/shop.h). Some of the shop's pieces are used
-elsewhere: `ShopCursor_Advance` also moves the cursors of the option, name
-entry and save menus and the joined-party choice, the Item screen draws its
-quantity bar with `Shop_FillSelector`, and `Shop_SaveAndTintFieldPalette`,
-which saves the field's colours and fades them over 16 [frames](../../glossary.md#frame), also runs
-before a [Djinni](../../glossary.md#djinn) joins the party and before Altmiller's wall bursts.
 
 ## Shops
 
@@ -50,7 +32,35 @@ items. A town's map script opens its shop by the row's number, with the keeper
 whose face the lines show. The keeper's lines are the same set for every
 shop of a kind, so a script only names which shop it is.
 
-`Shop_Run(stockRow, keeper)` runs a shop until the player leaves. A stock row
+`Shop_Run(stockRow, keeper)` runs a shop until the player leaves. After
+setting up its windows and the hand, it is one loop over the counter's four
+actions (`shop/run.c`, simplified):
+
+```c
+UiMessage_ShowAndWait(MsgWeaponShopWelcome);
+while (1) {
+  action = Menu_SelectShopCommandFar(action);
+  if (action == SHOP_ACTION_BUY) {
+    shop->stockCount = ShopStock_CopyItems(stockRow, shop->stockItemIds);
+    UiMessage_ShowAndWait(MsgWhatWouldYouLike);
+    Shop_SelectBuy();
+  } else if (action == SHOP_ACTION_SELL) {
+    UiMessage_ShowAndWait(MsgWhatToSell);
+    Shop_PickUnit();
+  } else if (action == SHOP_ACTION_ARTIFACTS) {
+    /* Shop_ListAvailableArtifacts, then Shop_SelectBuy */
+  } else if (action == SHOP_ACTION_REPAIR) {
+    UiMessage_ShowAndWait(MsgFixDamaged);
+    Shop_SelectUnit();
+  } else {
+    break;   /* the player leaves */
+  }
+  UiMessage_ShowAndWait(MsgAnythingElse);
+}
+UiMessage_ShowAndWait(MsgShopFarewell);
+```
+
+A stock row
 holds up to `SHOP_STOCK_ITEM_COUNT` (24) ordinary items from
 `SHOP_STOCK_ITEMS`, ended by 0, up to `SHOP_STOCK_ARTIFACT_COUNT` (8)
 artifacts from `SHOP_STOCK_ARTIFACTS`, and the shop type in
@@ -58,13 +68,24 @@ artifacts from `SHOP_STOCK_ARTIFACTS`, and the shop type in
 range opens `SHOP_STOCK_ROW_EMPTY`, which sells nothing. Bilibin's weapon
 shop, in the picture, is row 7.
 
-Each keeper line exists once for each shop type, in the same order, and the
-code names the weapon shop's version (`MsgWeaponShopWelcome` and the lines
-after it); `UiMessage_ShowAndWait` adds the distance from that welcome to
-the welcome of the shop's own type. Xian's three rows
-(`SHOP_STOCK_ROW_XIAN_WEAPONS` to `SHOP_STOCK_ROW_XIAN_ITEMS`) set
-`shop->warriorShop`, which adds the distance to `MsgWarriorShopWelcome` as
-well, so those shops say a set of lines of their own.
+The keepers' lines are written once for each shop type, each set in the
+same order, and the code names only the weapon shop's (`MsgWeaponShopWelcome`
+and the lines after it). `UiMessage_ShowAndWait` moves the line into the
+shop's own set by the distance between the two sets' welcomes:
+
+```c
+if (shopType == SHOP_TYPE_ARMOR)
+  resolvedMessage += MsgArmorShopWelcome - MsgWeaponShopWelcome;
+if (shopType == SHOP_TYPE_ITEMS)
+  resolvedMessage += MsgItemShopWelcome - MsgWeaponShopWelcome;
+if ((s8)shop->warriorShop != 0)
+  resolvedMessage += MsgWarriorShopWelcome - MsgWeaponShopWelcome;
+```
+
+Xian's three rows (`SHOP_STOCK_ROW_XIAN_WEAPONS` to
+`SHOP_STOCK_ROW_XIAN_ITEMS`) set `shop->warriorShop`, so those shops add the
+warriors' distance on top of their type's and say a set of lines of their
+own.
 
 The stock rows are `sStockTable` in [`shop/artifacts.c`](shop/artifacts.c),
 with their columns named there; the actions, shop types and rows are in
@@ -80,10 +101,10 @@ with their columns named there; the actions, shop types and rows are in
 | `SHOP_STOCK_ROWS` | 35 | rows in the table |
 | `SHOP_STOCK_ROW_EMPTY` | 0 | sells nothing; stands in for a bad row |
 | `SHOP_STOCK_ROW_XIAN_WEAPONS` to `_XIAN_ITEMS` | 16 to 18 | Xian's shops, the warriors' lines |
-| `SHOP_TYPE_ITEMS`, `_WEAPONS`, `_ARMOR` | `EQUIPMENT_GROUP_NONE`, `_WEAPON`, `_ARMOR` | the equipment group the shop sells |
+| `SHOP_TYPE_ITEMS`, `_WEAPONS`, `_ARMOR` | `EQUIPMENT_GROUP_NONE`, `_WEAPON`, `_ARMOR` | the equipment group the shop sells, as `Item_GetEquipmentGroup` sorts items: an item shop sells what is not equipment |
 | `SHOP_ACTION_BUY`, `_SELL`, `_ARTIFACTS`, `_REPAIR` | 0 to 3 | the counter's four actions |
 | `SHOP_STOCK_PAGE_ITEMS` | 7 | stock items a page of the Buy screen |
-| `FLAG_SHOP_ARTIFACTS_STOCKED` | `0x400` | the first of the flags, one a row, set once a shop has added its artifacts |
+| `FLAG_SHOP_ARTIFACTS_STOCKED` | 1,024 (`0x400`) | the first of 35 [game flags](../../glossary.md#game-flag), one a stock row, set once a shop has added its artifacts |
 
 ### Buying
 
@@ -157,8 +178,8 @@ and sets `FLAG_SHOP_ARTIFACTS_STOCKED + stockRow`, so a revisited shop adds
 nothing. Buying one takes one off its counter once the purchase is complete,
 and the quantity the player can buy stops at what the counter holds. A rare
 item the party sells, drops or discards goes through `Inventory_Discard`,
-which adds one back. An item that two shops' rows list can therefore be
-bought twice once both shops have been visited.
+which adds one back. When two shops' rows list the same item, each first
+visit adds one, so its counter reaches 2 and it can be bought twice.
 
 In the picture, Vault's weapon shop is row 4, whose only artifact is the
 Magic Rod, and Bilibin's weapon shop is row 7, whose only artifact is the
@@ -177,12 +198,16 @@ but a member who doesn't need the service is refused with a line, and the
 choice comes round again while anyone is left who does. Reviving and
 removing a curse cost more for a higher-level member.
 
-`Shop_CanServe` tests the member and `Shop_ServicePrice` sets the fee.
-`BattleUnit_ResetStateByMode` applies the service: full HP for a revive,
-poison or the haunting cleared, or every cursed item taken off, after which
-`Unit_Calculate` rebuilds the curse bits from what is still equipped. A member
-with no cursed item equipped is therefore unchanged by removing a curse,
-whatever restraint bits made them eligible. Each service's lines are a run in
+`Shop_CanServe` tests the member and `Shop_ServicePrice` sets the fee. A
+curse is the member's restraint bits (`BattleUnit.restraint`, `enum
+RestraintFlag`): bound, which costs a member one action in four in battle,
+and a cursed item worn. `BattleUnit_ResetStateByMode` applies the service:
+full HP for a revive, poison or the haunting cleared, or every cursed item
+taken off, after which `Unit_Calculate` rebuilds the restraint bits from what
+is still equipped. Since `Unit_Calculate` sets those bits only for a cursed
+item worn, and nothing sets `RESTRAINT_KEEP_BOUND`, a member the sanctum
+accepts for removing a curse always has a cursed item to take off. Each
+service's lines are a run in
 the same order from `MsgReviveService`, `MsgCurePoisonService`,
 `MsgExorcismService` and `MsgRemoveCurseService`. The services are
 `enum SanctumService` in `shop_internal.h`.
@@ -192,7 +217,7 @@ the same order from `MsgReviveService`, `MsgCurePoisonService`,
 | `SANCTUM_SERVICE_REVIVE` | 0 | is down (HP 0) | 20 coins a level |
 | `SANCTUM_SERVICE_CURE_POISON` | 1 | is poisoned or deadly poisoned | 10 coins |
 | `SANCTUM_SERVICE_EXORCISE` | 2 | is haunted | 50 coins |
-| `SANCTUM_SERVICE_REMOVE_CURSE` | 3 | has any restraint bit set | 10 coins a level |
+| `SANCTUM_SERVICE_REMOVE_CURSE` | 3 | wears a cursed item (any restraint bit set) | 10 coins a level |
 
 ## Inns
 
@@ -247,9 +272,22 @@ command that gives an item, opens it when every bag is full, as do the
 Elemental Star room when it gives the four Mythril Bags and the debug test.
 `Shop_SelectUse` refuses an indispensable item with a message and an
 equipped cursed one with only the cancel sound. The silence is a bug in [the
-original](../../glossary.md#the-original), which tests its selection result rather than the discard error;
-built with [`BUGFIX`](../../glossary.md#bug-bugfix-and-ubfix), `SHOP_CANNOT_REMOVE_STATUS` tests the error and the
-message shows.
+original](../../glossary.md#the-original): its test reads the selection result where it means the discard
+error. The macro `SHOP_CANNOT_REMOVE_STATUS` keeps that test, and built with
+[`BUGFIX`](../../glossary.md#bug-bugfix-and-ubfix) it tests the error instead, so the message shows.
+
+## The work block
+
+A counter borrows the memory of the field menu, the menu the player opens
+while walking, so a counter and the field menu are never open together.
+
+![The menu screens and the shop counters share one block of memory, 2,672 bytes. Whichever is open takes the block as it opens and gives it back as it closes, and reads it in its own way: the Item screen as its windows and the items listed, the Psynergy screen as the Psynergy listed, a shop as its stock and cursor. Over time the block passes from one to the next, never held by two at once, which is why a shop and the field menu are never open together.](https://alchemy.pascalpixel.com/illustrations/menu/menu-work.svg)
+
+Every counter and the item picker take the menu's [heap](../../glossary.md#heap-and-pools) block, under the
+[heap slot](../../glossary.md#heap-slot) `HEAP_SLOT_MENU`, as `struct ShopRuntime` with
+`Shop_InitializeCursorWork` and give it back with `Shop_ReleaseCursorWork`;
+the struct is in [`include/shop.h`](../../include/shop.h).
+[Menus](../menu/README.md#the-menu-work) describes the block.
 
 ## Design
 
@@ -265,7 +303,7 @@ The counters' layout differs by [edition](../../glossary.md#editions) where long
 value is a named macro chosen in one `#if` block in `shop_internal.h`: the
 Yes/No menu is one column further left in German (`SHOP_CONFIRM_MENU_X`),
 French and Spanish move the price and the word after it
-(`SHOP_PRICE_NUMBER_X`, `SHOP_PRICE_LABEL_X`), and outside Japan the coins
+(`SHOP_PRICE_NUMBER_X`, `SHOP_PRICE_LABEL_X`), and in the international editions the coins
 window is a tile wider (`SHOP_MONEY_WINDOW_WIDTH`) and the item description
 is drawn as tiles rather than into a text canvas. Window values are in
 tiles, text positions in pixels.
@@ -281,6 +319,19 @@ tiles, text positions in pixels.
 | `SHOP_QUANTITY_CURSOR_X` | 128 | 128 | 120 | 120 | 128 | 128 |
 | `SHOP_ITEM_NOTE_X` | 8 | 0 | 0 | 0 | 0 | 0 |
 | `SHOP_EMPTY_GRID_X`, `_Y` | 8, 20 | 8, 20 | 8, 20 | 8, 20 | 8, 20 | 20, 12 |
+
+## How it fits with the rest of the game
+
+Maps open the counters through their [import tables](../../glossary.md#entry-table-and-import-table), and the rest of the
+program through the shop [bank](../../glossary.md#bank)'s [far-call](../../glossary.md#far-call) table. Some of the shop's
+pieces serve other screens:
+
+- `ShopCursor_Advance` also moves the cursors of the option, name entry and
+  save menus and the choice of who joins the party.
+- The Item screen draws its quantity bar with `Shop_FillSelector`.
+- `Shop_SaveAndTintFieldPalette`, which saves the field's colours and fades
+  them over 16 [frames](../../glossary.md#frame), also runs before a [Djinni](../../glossary.md#djinn) joins the party and before
+  the wall in Altmiller Cave bursts.
 
 ## Limits
 
@@ -312,7 +363,7 @@ work block's layout, `struct ShopRuntime`, is in
 
 ## Words used here
 
-- **work block**: `struct ShopRuntime` in [heap slot](../../glossary.md#heap-slot) `HEAP_SLOT_MENU`, reached
+- **work block**: `struct ShopRuntime` in heap slot `HEAP_SLOT_MENU`, reached
   as `gMenuWork` while a counter is open.
 - **stock row**: a row of `sStockTable` in [`shop/artifacts.c`](shop/artifacts.c),
   one per shop, with its columns named by `SHOP_STOCK_`.
@@ -345,22 +396,29 @@ work block's layout, `struct ShopRuntime`, is in
 | `BattleUnit_`, `AudioCommand_`, `NodeChain_` | things the engine names elsewhere |
 
 Map [overlays](../../glossary.md#overlay) import these functions by name (`games/tbs/src/map/import/`),
-and code in other [banks](../../glossary.md#bank) calls them through the [far-call](../../glossary.md#far-call) table
-`system/far_call/SHOP.S` (the `...Far` names), so renaming one changes those
-folders too. [Matching](../MATCHING.md) explains the comment markers.
+and the far-call table `system/far_call/SHOP.S` names them with `Far` added,
+so renaming one changes those folders too. [Matching](../MATCHING.md)
+explains the `BUG`, `FAKEMATCH` and other markers in the code.
 
 ## Evidence and open questions
 
 The counters are named for what the player meets at them, the stock row's
 columns from what `shop/artifacts.c` reads from each, the actions and services
 from the choices their windows offer in the English release, and the inns
-from the town maps that open them. The inn rows follow the order of the
-towns' area names in `gMapSec_NameRules` (Vale 3, Vault 5, up to Lunpa 34,
-Suhalla 51 and Lalivero 55), and in that order row 9 falls where Tolbi (40)
-does: Tolbi is the one town with an inn door and no inn opened, since its inns
-are always full (`MsgTolbiInteriorsIsaacCheckedTheSignInnFull`), so its row
-costs nothing and nothing reads it. The stock rows' `ShopStock_` functions
-read and seed the stock table. The item names in the pictures are
+from the town maps that open them. The stock rows' `ShopStock_` functions
+read and seed the stock table.
+
+Inn row 9 is taken to be Tolbi's by three facts:
+
+- The inn rows follow the order of the towns' area names in
+  `gMapSec_NameRules`: Vale 3, Vault 5, and so on up to Lunpa 34, Suhalla 51
+  and Lalivero 55.
+- In that order row 9 falls between Lunpa and Suhalla, where Tolbi (40) is.
+- Tolbi is the one town with an inn door and no inn opened, since its inns
+  are always full (`MsgTolbiInteriorsIsaacCheckedTheSignInnFull`), so its row
+  costs nothing and nothing reads it.
+
+The item names in the pictures are
 `MsgItemName` plus each row's item ids; the game crops come from renders of a
 tbs-en build. The inn render's price, 21 coins at 7 a guest, shows three
 members standing.

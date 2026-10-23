@@ -200,7 +200,7 @@ the whole buffer. The party is seen from behind in a battle, so the facing
 table adds 1 to each frame a script names: the script of his swing names
 frames 12, 14 and 16, and the sheets' frames 13, 15 and 17 are drawn. The
 picture composes those frames from the sprite sheets themselves (`spr_300.png`,
-`spr_320.png` and `spr_510.png` in [`../graphics/sprite`](../graphics/sprite))
+`spr_320.png` and `spr_510.png` in [`graphics/sprite`](../graphics/sprite))
 in the order `Sprite_ComposeAnimationFrame` uses.
 
 A sprite is a `struct AnimationObject`, and each of its layers a

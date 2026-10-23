@@ -10,11 +10,11 @@ unused.
 The map data is kept as editable tables: 182 layered maps for the towns,
 dungeons and interiors, the world map's ground and default cells, and the
 opponents' recorded paths in the Colosso finals. There is no code here. Each
-scene's row of `gField_SceneTable` ([`../field/scenes.s`](../field/scenes.s))
+scene's row of `gField_SceneTable` ([`field/scenes.s`](../field/scenes.s))
 gives a map number, which picks a row of `gMap_LayeredScenes`
-([`../field/layered.tsv`](../field/layered.tsv)): the map's header, palette,
+([`field/layered.tsv`](../field/layered.tsv)): the map's header, palette,
 three tile sheets and layer data. `Map_LoadLayeredScene`
-([`../field/field/map_layers.c`](../field/field/map_layers.c)) loads it, and
+([`field/field/map_layers.c`](../field/field/map_layers.c)) loads it, and
 [Field](../field/README.md) describes how the engine draws and scrolls it.
 
 ## Cells
@@ -310,7 +310,7 @@ east wall.
 
 The marker list is (column, row, id) triples, a cell and the trigger of a
 scene event, ended by 255, 255. When a scene loads, `Field_PlaceMapMarkers`
-([`../object/object/markers.c`](../object/object/markers.c)) places an
+([`object/object/markers.c`](../object/object/markers.c)) places an
 object at each marker whose id (100 to 239) the scene has an event for, up to
 `MARKER_MAX` (10): a chest for a chest event, shown open once its flag is set
 and gone once its mimic has been beaten, and a Psynergy Stone for a search

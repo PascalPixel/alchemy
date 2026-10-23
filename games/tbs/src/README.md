@@ -134,17 +134,17 @@ is packed.
 The shared headers hold what the whole game uses, and `include/unit` mirrors
 this folder with one header for each compiled C file.
 
-[`../include`](../include) holds what the whole game shares: types and
+[`games/tbs/include`](../include) holds what the whole game shares: types and
 structures, the flags in `flags.h`, the songs and sound effects in
 `songs.h`, and the commands scenes are written in, in `event.h`. The
 `Makefile` puts `include` and its folders `battle`, `field`, `game`,
 `graphics`, `lib`, `menu`, `sound` and `system` on the include path, so code
 includes those headers by name alone.
 
-[`../include/unit`](../include/unit) mirrors this folder: each compiled C
+[`include/unit`](../include/unit) mirrors this folder: each compiled C
 file has a header at the same path under `unit` that declares what it
 defines (`unit/battle/battle.h` for `battle/battle.c`; `unit/scene/` has one
-for each place). [`../include/farcall`](../include/farcall) has a header for
+for each place). [`include/farcall`](../include/farcall) has a header for
 each bank with its `Far` names. An object written as parts keeps its private
 header beside it.
 
@@ -239,7 +239,7 @@ and overlays are found through, and the flash save library.
 [Graphics](graphics/README.md) holds most of the pictures, the title intro,
 the credits and the handwritten decoders. [Sound](sound/README.md) holds the
 cue layer and Nintendo's MusicPlayer2000 driver; the songs and samples are
-in [`../sound`](../sound). [Debug rooms](debug/README.md) holds the three
+in [`games/tbs/sound`](../sound). [Debug rooms](debug/README.md) holds the three
 test scenes the ROM keeps.
 
 ## Where to start reading
@@ -252,7 +252,7 @@ To find the code behind something in the game, search for its English name.
 Each effect's comment names the abilities that play it, so searching
 `effect/` for Quake finds [effect/parts/quake.c](effect/parts/quake.c). Each
 place's code is the scene named for it. The game's text is in
-[`../text`](../text), a PO catalog for each language, where each message
+[`games/tbs/text`](../text), a PO catalog for each language, where each message
 carries its linker name: "(No saved data)" is `MsgSaveNoData`, which leads to
 the save file menu in
 [window/battle_command/save.c](window/battle_command/save.c).

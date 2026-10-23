@@ -295,9 +295,8 @@ No row sets both bits.
 Each entry point borrows three blocks of memory from the heap (the sprite
 sheet, the work block and the canvas), runs the effect to its end and gives
 them back in reverse order, since giving a heap block back also frees
-everything borrowed after it. An effect must therefore stop every callback
-(a function the scheduler calls once a frame) that reads those blocks
-before it returns.
+everything borrowed after it. An effect must therefore remove every task
+that reads those blocks before it returns.
 
 Most effects draw into a canvas, a hidden picture of 128 by 128 pixels, one
 byte each, which `BG2` shows blended over the battle and stretched to twice
@@ -328,9 +327,7 @@ every random value after it.
 The twelve summons that need two or more Djinn are scenes, enumerated by
 `enum SummonEffectKind`, and take the same three blocks. The four summons
 that need one Djinni, Venus, Mercury, Mars and Jupiter, are ordinary effect
-kinds. A summon's damage
-(`ABILITY_KIND_SUMMON`) also adds 3 percent of the target's maximum HP to the
-power for each Djinni it uses.
+kinds.
 
 ![Isaac summons Judgment: the screen goes dark, Judgment rises out of the clouds and strikes, and the scene clears to a wide landscape](https://alchemy.pascalpixel.com/abilities/judgment.gif)
 

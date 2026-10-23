@@ -11,10 +11,11 @@
 ///   leader up and a conversation plays, with one yes-or-no question that
 ///   changes only the reply.
 /// - Six floating platforms lie between the party and the beacon
-///   (TRIGGER_PLATFORM, TRIGGER_FLOOR_BY_PLATFORMS): the leader jumps from one
+///   (MB_VENUS_LIGHTHOUSE_AERIE_PLATFORM,
+///   MB_VENUS_LIGHTHOUSE_AERIE_FLOOR_BY_PLATFORMS): the leader jumps from one
 ///   to the next, and each stops bobbing and dips under him as he lands
 ///   (FLAG_MAP_TEMP_50 while he stands on one).
-/// - The confrontation (TRIGGER_BEFORE_BEACON,
+/// - The confrontation (MB_VENUS_LIGHTHOUSE_AERIE_BEFORE_BEACON,
 ///   EventScript_ConfrontSaturosAndMenardi): the Shaman's Rod is handed over,
 ///   remembered in FLAG_SHAMANS_ROD_OWNER plus the member who carried it, and
 ///   the first battle follows (ENCOUNTER_ZONE_SCRIPTED, slot 1,
@@ -167,12 +168,13 @@ static void
 VenusLighthouseAerie_UpdateOrbitingEffect(union FieldObject *fieldObject);
 
 /// The metatile behaviors the aerie's coord events answer.
-enum VenusLighthouseAerieTrigger {
-  TRIGGER_BEFORE_BEACON = 5, ///< where the party confronts Saturos and Menardi
-  TRIGGER_PLATFORM = 10,     ///< a floating platform's cells
+enum VenusLighthouseAerieMetatileBehavior {
+  MB_VENUS_LIGHTHOUSE_AERIE_BEFORE_BEACON =
+      5, ///< where the party confronts Saturos and Menardi
+  MB_VENUS_LIGHTHOUSE_AERIE_PLATFORM = 10, ///< a floating platform's cells
   /// The floor beside the platforms, from which the leader jumps
   /// onto them.
-  TRIGGER_FLOOR_BY_PLATFORMS = 11
+  MB_VENUS_LIGHTHOUSE_AERIE_FLOOR_BY_PLATFORMS = 11
 };
 
 /// A child value that makes an object event blink rather than set its colour
@@ -828,12 +830,12 @@ static void VenusLighthouseAerie_ShowPartyMember(s32 localId, s32 shown) {
   }
 }
 
-/// Walking up to Saturos and Menardi (TRIGGER_BEFORE_BEACON): Felix refuses to
-/// be rescued, Sheba reads the party's minds for the rod that reaches Jupiter
-/// Lighthouse, they promise not to harm her for the Shaman's Rod, Felix
-/// carries it over, they will not let her go, and the first battle begins. It
-/// sets FLAG_SHAMANS_ROD_OWNER plus the member who carried the rod, and
-/// FLAG_AERIE_FIRST_BATTLE_BEGUN as the battle starts, which changes the
+/// Walking up to Saturos and Menardi (MB_VENUS_LIGHTHOUSE_AERIE_BEFORE_BEACON):
+/// Felix refuses to be rescued, Sheba reads the party's minds for the rod that
+/// reaches Jupiter Lighthouse, they promise not to harm her for the Shaman's
+/// Rod, Felix carries it over, they will not let her go, and the first battle
+/// begins. It sets FLAG_SHAMANS_ROD_OWNER plus the member who carried the rod,
+/// and FLAG_AERIE_FIRST_BATTLE_BEGUN as the battle starts, which changes the
 /// aerie's music.
 static void EventScript_ConfrontSaturosAndMenardi(void) {
   s32 rodOwner;
@@ -3561,15 +3563,17 @@ struct ObjectEventTemplate gVenusLighthouseAerieObjectEventTemplates[] = {
 s32 gVenusLighthouseAerie_LandedPlatform = 0;
 
 struct MapEvent gVenusLighthouseAerieEvents[] = {
-    {MAP_EVENT_COORD | COORD_EVENT_FLAG_WALKING, TRIGGER_FLOOR_BY_PLATFORMS,
-     CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_JumpToNextPlatform)},
-    {MAP_EVENT_COORD, TRIGGER_FLOOR_BY_PLATFORMS, CONDITION_ALWAYS,
-     EVENT_SCRIPT(EventScript_FloatPlatforms)},
-    {MAP_EVENT_COORD | COORD_EVENT_FLAG_WALKING, TRIGGER_PLATFORM,
-     CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_JumpToNextPlatform)},
-    {MAP_EVENT_COORD, TRIGGER_PLATFORM, FLAG_MAP_TEMP_50,
+    {MAP_EVENT_COORD | COORD_EVENT_FLAG_WALKING,
+     MB_VENUS_LIGHTHOUSE_AERIE_FLOOR_BY_PLATFORMS, CONDITION_ALWAYS,
+     EVENT_SCRIPT(EventScript_JumpToNextPlatform)},
+    {MAP_EVENT_COORD, MB_VENUS_LIGHTHOUSE_AERIE_FLOOR_BY_PLATFORMS,
+     CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_FloatPlatforms)},
+    {MAP_EVENT_COORD | COORD_EVENT_FLAG_WALKING,
+     MB_VENUS_LIGHTHOUSE_AERIE_PLATFORM, CONDITION_ALWAYS,
+     EVENT_SCRIPT(EventScript_JumpToNextPlatform)},
+    {MAP_EVENT_COORD, MB_VENUS_LIGHTHOUSE_AERIE_PLATFORM, FLAG_MAP_TEMP_50,
      EVENT_SCRIPT(EventScript_LandOnPlatform)},
-    {MAP_EVENT_COORD, TRIGGER_BEFORE_BEACON, CONDITION_ALWAYS,
+    {MAP_EVENT_COORD, MB_VENUS_LIGHTHOUSE_AERIE_BEFORE_BEACON, CONDITION_ALWAYS,
      EVENT_SCRIPT(EventScript_ConfrontSaturosAndMenardi)},
     {MAP_EVENTS_END},
 };

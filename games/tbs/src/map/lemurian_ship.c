@@ -80,9 +80,9 @@ static void Ripple_Stop(void);
 static void Curtain_Start(void);
 
 enum {
-  GANGWAY_NORTH =
+  LOCALID_GANGWAY_NORTH =
       LOCALID_FIRST_PLACED, ///< the gangway, in two pieces (SPRITE_GANGWAY)
-  GANGWAY_SOUTH
+  LOCALID_GANGWAY_SOUTH
 };
 
 /// The deck height of a party member who has not yet boarded: the swell
@@ -549,13 +549,13 @@ static void LemurianShip_SetSail(void) {
   Curtain_Start();
   Engine_ScriptWait(LEMURIAN_SHIP_DEPARTURE_DELAY_FRAMES);
   grid = gMapGridWork[0];
-  ship = ObjectEvent_GetById(GANGWAY_NORTH);
+  ship = ObjectEvent_GetById(LOCALID_GANGWAY_NORTH);
   ship->acceleration = 131;
   ship->speed = 0x20000;
   grid->layers[MAPGRID_LAYER_GROUND].speedX = -0x3000;
-  ObjectMotion_CommitPositionAndActivate(GANGWAY_NORTH, 60, 0);
+  ObjectMotion_CommitPositionAndActivate(LOCALID_GANGWAY_NORTH, 60, 0);
   grid->layers[MAPGRID_LAYER_GROUND].speedX = -0x6000;
-  ObjectMotion_CommitPositionAndActivate(GANGWAY_NORTH, 60, 0);
+  ObjectMotion_CommitPositionAndActivate(LOCALID_GANGWAY_NORTH, 60, 0);
   Engine_ScriptWait(80);
   Engine_ScriptWait(100);
   Engine_CameraSetSpeed(0x23333, 0x28f);
@@ -713,19 +713,21 @@ s32 LemurianShip_SetupMap(void) {
   }
   ((struct EventWork *)gMapGridWork[19])->startTransition =
       MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
-  ObjectEvent_GetById(GANGWAY_NORTH)->collisionFlags = 0;
-  ObjectEvent_GetById(GANGWAY_NORTH)->priorityFlags =
+  ObjectEvent_GetById(LOCALID_GANGWAY_NORTH)->collisionFlags = 0;
+  ObjectEvent_GetById(LOCALID_GANGWAY_NORTH)->priorityFlags =
       OBJ_EVENT_PRIORITY_UNDERFOOT;
-  ObjectEvent_GetById(GANGWAY_SOUTH)->collisionFlags = 0;
-  ObjectEvent_GetById(GANGWAY_SOUTH)->priorityFlags =
+  ObjectEvent_GetById(LOCALID_GANGWAY_SOUTH)->collisionFlags = 0;
+  ObjectEvent_GetById(LOCALID_GANGWAY_SOUTH)->priorityFlags =
       OBJ_EVENT_PRIORITY_UNDERFOOT;
   {
-    struct ObjectEvent *objectEvent = ObjectEvent_GetById(GANGWAY_NORTH);
+    struct ObjectEvent *objectEvent =
+        ObjectEvent_GetById(LOCALID_GANGWAY_NORTH);
 
     SET_IMAGE_PRIORITY(objectEvent, 1);
   }
   {
-    struct ObjectEvent *objectEvent = ObjectEvent_GetById(GANGWAY_SOUTH);
+    struct ObjectEvent *objectEvent =
+        ObjectEvent_GetById(LOCALID_GANGWAY_SOUTH);
 
     SET_IMAGE_PRIORITY(objectEvent, 1);
   }

@@ -14,9 +14,9 @@
 /// - Sol Sanctum (MapId_SolSanctumReliefs), the rooms inside the door, which
 ///   Isaac, Garet and Jenna explore with Kraden. Two minotaur reliefs each have
 ///   an empty eye socket, and a Small Jewel set in it opens the way on: the
-///   first from this map's chest (FLAG_SOL_SANCTUM_FIRST_GEM_PLACED), the
+///   first from this map's chest (FLAG_SOL_SANCTUM_FIRST_SMALL_JEWEL_SET), the
 ///   second from the chest in MapId_SolSanctumMaze
-///   (FLAG_SOL_SANCTUM_SECOND_GEM_PLACED). Kraden has a scene on the first
+///   (FLAG_SOL_SANCTUM_SECOND_SMALL_JEWEL_SET). Kraden has a scene on the first
 ///   entry at the door (SolSanctumEntrance_IntroduceSanctum), in the first
 ///   relief room (SolSanctumEntrance_KradenSuspectsHiddenPassage) and in the
 ///   second (SolSanctumEntrance_KradenSeesStatuesOutOfReach). Two statues in
@@ -304,7 +304,7 @@ static void EventScript_InspectFirstMinotaurRelief(void) {
 
   Engine_ScriptStart();
 
-  if (Engine_GameFlagIsSet(FLAG_SOL_SANCTUM_FIRST_GEM_PLACED) != 0) {
+  if (Engine_GameFlagIsSet(FLAG_SOL_SANCTUM_FIRST_SMALL_JEWEL_SET) != 0) {
     Engine_MessageShowCentered(MsgSolSanctumMinotaurReliefBothEyes, 1);
   } else {
     Engine_MessageShowCentered(MsgSolSanctumMinotaurReliefOneEye, 1);
@@ -339,7 +339,7 @@ static inline void SolSanctumEntrance_ReactToOpeningPassage(void) {
 /// Sol Sanctum: using the Small Jewel on the first relief sets it in, and a
 /// passage opens. `<leader> set the small gem into the empty socket.`, "You
 /// hear the sound of shifting stone." Does nothing until the first Small Jewel
-/// is found, or once it is set. Sets FLAG_SOL_SANCTUM_FIRST_GEM_PLACED and
+/// is found, or once it is set. Sets FLAG_SOL_SANCTUM_FIRST_SMALL_JEWEL_SET and
 /// FLAG_ITEM_USED_UP, which takes the jewel.
 static void EventScript_SetFirstSmallJewel(void) {
   s32 message;
@@ -348,7 +348,7 @@ static void EventScript_SetFirstSmallJewel(void) {
 
   if (GameFlag_IsSet(FLAG_SOL_SANCTUM_FIRST_SMALL_JEWEL_FOUND) == 0) {
   } else {
-    if (GameFlag_IsSet(FLAG_SOL_SANCTUM_FIRST_GEM_PLACED) != 0) {
+    if (GameFlag_IsSet(FLAG_SOL_SANCTUM_FIRST_SMALL_JEWEL_SET) != 0) {
     } else {
       Engine_ScriptStart();
       Field_EndBusyAndReveal();
@@ -370,7 +370,7 @@ static void EventScript_SetFirstSmallJewel(void) {
       SolSanctumEntrance_ReactToOpeningPassage();
       Engine_MessageShowCentered(message + 1, 1);
       GameFlag_Set(FLAG_ITEM_USED_UP);
-      GameFlag_Set(FLAG_SOL_SANCTUM_FIRST_GEM_PLACED);
+      GameFlag_Set(FLAG_SOL_SANCTUM_FIRST_SMALL_JEWEL_SET);
       Engine_ScriptEnd();
     }
   }
@@ -385,7 +385,7 @@ static void EventScript_InspectSecondMinotaurRelief(void) {
 
   Engine_ScriptStart();
 
-  if (Engine_GameFlagIsSet(FLAG_SOL_SANCTUM_SECOND_GEM_PLACED) != 0) {
+  if (Engine_GameFlagIsSet(FLAG_SOL_SANCTUM_SECOND_SMALL_JEWEL_SET) != 0) {
     Engine_MessageShowCentered(MsgSolSanctumMinotaurReliefBothEyes, 1);
   } else if (Engine_GameFlagIsSet(FLAG_SOL_SANCTUM_SECOND_SMALL_JEWEL_FOUND) !=
              0) {
@@ -407,12 +407,12 @@ static void EventScript_InspectSecondMinotaurRelief(void) {
 /// Sol Sanctum, the second relief room: using the Small Jewel on the
 /// second relief, as the first, and a doorway opens. Only once the
 /// second Small Jewel is found and until it is set. Sets
-/// FLAG_SOL_SANCTUM_SECOND_GEM_PLACED and FLAG_ITEM_USED_UP.
+/// FLAG_SOL_SANCTUM_SECOND_SMALL_JEWEL_SET and FLAG_ITEM_USED_UP.
 static void EventScript_SetSecondSmallJewel(void) {
   s32 message;
 
   if (GameFlag_IsSet(FLAG_SOL_SANCTUM_SECOND_SMALL_JEWEL_FOUND) != 0 &&
-      GameFlag_IsSet(FLAG_SOL_SANCTUM_SECOND_GEM_PLACED) == 0) {
+      GameFlag_IsSet(FLAG_SOL_SANCTUM_SECOND_SMALL_JEWEL_SET) == 0) {
     Engine_ScriptStart();
     Field_EndBusyAndReveal();
     // The eye sparkles, then the doorway opens.
@@ -430,7 +430,7 @@ static void EventScript_SetSecondSmallJewel(void) {
     SolSanctumEntrance_ReactToOpeningPassage();
     Engine_MessageShowCentered(message + 1, 1);
     GameFlag_Set(FLAG_ITEM_USED_UP);
-    GameFlag_Set(FLAG_SOL_SANCTUM_SECOND_GEM_PLACED);
+    GameFlag_Set(FLAG_SOL_SANCTUM_SECOND_SMALL_JEWEL_SET);
     Engine_ScriptEnd();
   }
 }
@@ -715,7 +715,7 @@ static void SolSanctumEntrance_RestoreInteriorState(void) {
   switch (warpDest) {
   case SOL_SANCTUM_RELIEFS_FROM_SOL_SANCTUM_CORRIDOR_WEST:
   case SOL_SANCTUM_RELIEFS_CHEST_ROOM_FROM_FIRST_RELIEF_ROOM:
-    if (Engine_GameFlagIsSet(FLAG_SOL_SANCTUM_FIRST_GEM_PLACED) != 0) {
+    if (Engine_GameFlagIsSet(FLAG_SOL_SANCTUM_FIRST_SMALL_JEWEL_SET) != 0) {
       MapGrid_CopyCellsTo(1, 109, 4, 81, 1, 1);
       MapGrid_CopyCellsTo(0, 70, 30, 42, 1, 1);
       MapGrid_CopyCellsTo(0, 29, 3, 1, 3, 2);
@@ -793,7 +793,7 @@ static void SolSanctumEntrance_RestoreInteriorState(void) {
       SolSanctumEntrance_KradenSeesStatuesOutOfReach();
     SolSanctumEntrance_RestoreRowStatueCells(1);
     Engine_GameFlagSet(FLAG_MAP_TEMP_34);
-    if (GameFlag_IsSet(FLAG_SOL_SANCTUM_SECOND_GEM_PLACED) != 0) {
+    if (GameFlag_IsSet(FLAG_SOL_SANCTUM_SECOND_SMALL_JEWEL_SET) != 0) {
       MapGrid_CopyCellsTo(0, 71, 100, 71, 1, 1);
       MapGrid_CopyCellsTo(122, 20, 120, 30, 1, 2);
       MapGrid_CopyCellAttributes(122, 20, 1, 2, 120, 30);

@@ -726,9 +726,9 @@ main	rom_tail_02	games/tbs/src/system/overlay/overlays
 389	text	games/tbs/src/map/import/goma_cave_pillar
 389	text	libgcc.a:_call_via_rX
 389	bss	*	.bss COMMON
-38a	text	games/tbs/src/map/entry/goma_cave_waterway
-38a	text	games/tbs/src/map/goma_cave_waterway
-38a	text	games/tbs/src/map/import/goma_cave_waterway
+38a	text	games/tbs/src/map/entry/goma_cave_stream
+38a	text	games/tbs/src/map/goma_cave_stream
+38a	text	games/tbs/src/map/import/goma_cave_stream
 38b	text	games/tbs/src/map/entry/bilibin
 38b	text	games/tbs/src/map/bilibin
 38b	text	games/tbs/src/map/import/bilibin
@@ -861,9 +861,9 @@ main	rom_tail_02	games/tbs/src/system/overlay/overlays
 3ab	text	games/tbs/src/map/entry/lunpa
 3ab	text	games/tbs/src/map/lunpa
 3ab	text	games/tbs/src/map/import/lunpa
-3ac	text	games/tbs/src/map/entry/lunpa_suhalla
-3ac	text	games/tbs/src/map/lunpa_suhalla
-3ac	text	games/tbs/src/map/import/lunpa_suhalla
+3ac	text	games/tbs/src/map/entry/lunpa_interiors
+3ac	text	games/tbs/src/map/lunpa_interiors
+3ac	text	games/tbs/src/map/import/lunpa_interiors
 3ad	text	games/tbs/src/map/entry/west_lunpa_cave
 3ad	text	games/tbs/src/map/west_lunpa_cave
 3ad	text	games/tbs/src/map/import/west_lunpa_cave

@@ -305,13 +305,13 @@ walker arrives.
 /// the first stops and stares, and the second throws the party out.
 static void EventScript_PatrolPairThrowsPartyOut(void) {
   EV_START();
-  Engine_ObjectEventStop(UPPER_FLOOR_FIRST_PATROL);
-  Engine_ObjectEventSetDestinationOffset(UPPER_FLOOR_FIRST_PATROL, 0, 0);
-  OBJECT_MODE(UPPER_FLOOR_FIRST_PATROL, 0);
-  OBJECT_FACE(UPPER_FLOOR_FIRST_PATROL, LOCALID_PARTY_LEADER, 0);
-  Engine_ObjectEventShowEmote(UPPER_FLOOR_FIRST_PATROL,
+  Engine_ObjectEventStop(LOCALID_UPPER_FLOOR_FIRST_PATROL);
+  Engine_ObjectEventSetDestinationOffset(LOCALID_UPPER_FLOOR_FIRST_PATROL, 0, 0);
+  OBJECT_MODE(LOCALID_UPPER_FLOOR_FIRST_PATROL, 0);
+  OBJECT_FACE(LOCALID_UPPER_FLOOR_FIRST_PATROL, LOCALID_PARTY_LEADER, 0);
+  Engine_ObjectEventShowEmote(LOCALID_UPPER_FLOOR_FIRST_PATROL,
                         EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
-  LunpaFortress_GuardThrowsPartyOut(UPPER_FLOOR_SECOND_PATROL);
+  LunpaFortress_GuardThrowsPartyOut(LOCALID_UPPER_FLOOR_SECOND_PATROL);
   EV_END();
 }
 ```

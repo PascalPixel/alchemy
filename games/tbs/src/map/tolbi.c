@@ -88,7 +88,8 @@ static void Tolbi_FreezePuddle(void);
 /// Talking to Ember, a Mars Djinni, makes it join the party. Its index among
 /// the Mars Djinn is 4, the fifth Mars name in the game text.
 static void Tolbi_JoinEmber(void) {
-  Djinn_JoinParty(TOLBI_EMBER, ELEMENT_MARS, DJINNI_INDEX(DJINNI_EMBER));
+  Djinn_JoinParty(LOCALID_TOLBI_EMBER, ELEMENT_MARS,
+                  DJINNI_INDEX(DJINNI_EMBER));
 }
 
 #include "common/object_distance.h"
@@ -158,9 +159,9 @@ static s32 Tolbi_UpdateKid(union FieldObject *fieldObject) {
   struct ObjectEvent *leader;
 
   if ((*kidFlags & KID_CHASES_YOUNGER) != 0) {
-    other = ObjectEvent_GetById(TOLBI_YOUNGER_SISTER);
+    other = ObjectEvent_GetById(LOCALID_TOLBI_YOUNGER_SISTER);
   } else {
-    other = ObjectEvent_GetById(TOLBI_OLDER_BROTHER);
+    other = ObjectEvent_GetById(LOCALID_TOLBI_OLDER_BROTHER);
   }
   if (Tolbi_KidStopForTarget(self, other, 32, 0) != 0) {
 #ifdef UBFIX
@@ -202,11 +203,11 @@ const struct ObjectEventTemplate *Tolbi_GetObjectEventTemplates(void) {
 static void Tolbi_GrowSprout(void) {
   struct ObjectEvent *sprout;
 
-  sprout = ObjectEvent_GetById(TOLBI_SPROUT);
+  sprout = ObjectEvent_GetById(LOCALID_TOLBI_SPROUT);
   if ((s32)sprout != 0) {
     sprout->collisionFlags = 0;
   }
-  sprout = ObjectEvent_GetById(TOLBI_SPROUT);
+  sprout = ObjectEvent_GetById(LOCALID_TOLBI_SPROUT);
   Engine_ObjectEventSetSpriteFlags(sprout, 0);
   Field_SetMetatileBehaviorAt(0, PIXELS(544), PIXELS(288), 253);
   Engine_GameFlagSet(FLAG_MAP_TEMP_00);
@@ -246,7 +247,7 @@ static void Tolbi_TalkToOlderBrother(void) {
   s16 facing;
   s32 msg;
 
-  kid = ObjectEvent_GetById(TOLBI_OLDER_BROTHER);
+  kid = ObjectEvent_GetById(LOCALID_TOLBI_OLDER_BROTHER);
   facing = kid->facing;
   Engine_ScriptStart();
   kid->timer |= KID_TALKING;
@@ -268,9 +269,10 @@ static void Tolbi_TalkToOlderBrother(void) {
     }
   }
   Engine_ScriptSetMessage(msg);
-  Engine_ObjectEventSetAnimation(TOLBI_OLDER_BROTHER, 0);
-  Engine_ObjectEventFaceEachOther(TOLBI_OLDER_BROTHER, LOCALID_PARTY_LEADER, 2);
-  Engine_ScriptShowMessageAndWait(TOLBI_OLDER_BROTHER, 0, 10);
+  Engine_ObjectEventSetAnimation(LOCALID_TOLBI_OLDER_BROTHER, 0);
+  Engine_ObjectEventFaceEachOther(LOCALID_TOLBI_OLDER_BROTHER,
+                                  LOCALID_PARTY_LEADER, 2);
+  Engine_ScriptShowMessageAndWait(LOCALID_TOLBI_OLDER_BROTHER, 0, 10);
   kid->facing = facing;
   Engine_TaskWait(1);
   kid->timer &= KID_CHASES_YOUNGER;
@@ -284,7 +286,7 @@ static void Tolbi_TalkToYoungerSister(void) {
   s16 facing;
   s32 msg;
 
-  kid = ObjectEvent_GetById(TOLBI_YOUNGER_SISTER);
+  kid = ObjectEvent_GetById(LOCALID_TOLBI_YOUNGER_SISTER);
   facing = kid->facing;
   Engine_ScriptStart();
   kid->timer |= KID_TALKING;
@@ -306,10 +308,10 @@ static void Tolbi_TalkToYoungerSister(void) {
     }
   }
   Engine_ScriptSetMessage(msg);
-  Engine_ObjectEventSetAnimation(TOLBI_YOUNGER_SISTER, 0);
-  Engine_ObjectEventFaceEachOther(TOLBI_YOUNGER_SISTER, LOCALID_PARTY_LEADER,
-                                  2);
-  Engine_ScriptShowMessageAndWait(TOLBI_YOUNGER_SISTER, 0, 10);
+  Engine_ObjectEventSetAnimation(LOCALID_TOLBI_YOUNGER_SISTER, 0);
+  Engine_ObjectEventFaceEachOther(LOCALID_TOLBI_YOUNGER_SISTER,
+                                  LOCALID_PARTY_LEADER, 2);
+  Engine_ScriptShowMessageAndWait(LOCALID_TOLBI_YOUNGER_SISTER, 0, 10);
   kid->facing = facing;
   Engine_TaskWait(1);
   kid->timer &= KID_CHASES_YOUNGER;
@@ -328,13 +330,13 @@ const struct MapEvent *Tolbi_SelectEvents(void) {
 }
 
 /// A suspicious old woman asks whether anyone can live past 100 years old.
-/// She's TOLBI_SUSPICIOUS_OLD_WOMAN, in Tolbi during the festival, and asks
-/// whether someone can live to be more than 100 years old; either way the talk
-/// turns to Babi, who is older still.
+/// She's LOCALID_TOLBI_SUSPICIOUS_OLD_WOMAN, in Tolbi during the festival, and
+/// asks whether someone can live to be more than 100 years old; either way the
+/// talk turns to Babi, who is older still.
 static void Tolbi_AskAboutLivingPastHundred(void) {
   Engine_ScriptStart();
   Engine_ScriptSetMessage(MsgTolbiSomeoneLiveMore);
-  Engine_ScriptAskYesNo(TOLBI_SUSPICIOUS_OLD_WOMAN, 0);
+  Engine_ScriptAskYesNo(LOCALID_TOLBI_SUSPICIOUS_OLD_WOMAN, 0);
   Engine_ScriptEnd();
 }
 
@@ -343,7 +345,7 @@ static void Tolbi_AskAboutLivingPastHundred(void) {
 static void Tolbi_TalkToFather(void) {
   Engine_ScriptStart();
   Engine_ScriptSetMessage(MsgTolbiChildrenLoveSouvenirs);
-  Engine_ScriptAskYesNo(TOLBI_FATHER, 0);
+  Engine_ScriptAskYesNo(LOCALID_TOLBI_FATHER, 0);
   Engine_ScriptEnd();
 }
 
@@ -352,20 +354,20 @@ static void Tolbi_TalkToFather(void) {
 static void Tolbi_TalkToMother(void) {
   Engine_ScriptStart();
   Engine_ScriptSetMessage(MsgTolbiPatientLittleGuy);
-  ObjectEvent_FaceDirection(TOLBI_MOTHER, FACING_NORTH, 0);
-  Engine_ScriptShowMessage(TOLBI_MOTHER, 0);
-  ObjectEvent_FaceDirection(TOLBI_MOTHER, FACING_WEST, 0);
-  Engine_ScriptShowMessage(TOLBI_MOTHER, 0);
+  ObjectEvent_FaceDirection(LOCALID_TOLBI_MOTHER, FACING_NORTH, 0);
+  Engine_ScriptShowMessage(LOCALID_TOLBI_MOTHER, 0);
+  ObjectEvent_FaceDirection(LOCALID_TOLBI_MOTHER, FACING_WEST, 0);
+  Engine_ScriptShowMessage(LOCALID_TOLBI_MOTHER, 0);
   Engine_ScriptEnd();
 }
 
 /// The crying boy turns, stamps twice and wails for sweets.
 static void Tolbi_TalkToCryingBoy(void) {
   Engine_ScriptStart();
-  ObjectEvent_FaceDirection(TOLBI_CRYING_BOY, FACING_SOUTH, 0);
-  Engine_ObjectEventStartRepeatedMotion(TOLBI_CRYING_BOY, 2);
+  ObjectEvent_FaceDirection(LOCALID_TOLBI_CRYING_BOY, FACING_SOUTH, 0);
+  Engine_ObjectEventStartRepeatedMotion(LOCALID_TOLBI_CRYING_BOY, 2);
   Engine_ScriptSetMessage(MsgTolbiWaahBuySweets);
-  Engine_ScriptShowMessage(TOLBI_CRYING_BOY, 0);
+  Engine_ScriptShowMessage(LOCALID_TOLBI_CRYING_BOY, 0);
   Engine_ScriptEnd();
 }
 
@@ -374,16 +376,16 @@ static void Tolbi_TalkToCryingBoy(void) {
 static void Tolbi_TalkToSleepingScalper(void) {
   Engine_ScriptStart();
   Engine_ScriptSetMessage(MsgTolbiInnsFullStaying);
-  Engine_ScriptShowMessage(TOLBI_SCALPER, 0);
+  Engine_ScriptShowMessage(LOCALID_TOLBI_SCALPER, 0);
   Engine_ScriptEnd();
 }
 
-/// After Colosso, TOLBI_FINALS_FAN asks whether the party was in the finals.
-/// The question is anchored to the father, who has left town by then.
+/// After Colosso, LOCALID_TOLBI_FINALS_FAN asks whether the party was in the
+/// finals. The question is anchored to the father, who has left town by then.
 static void Tolbi_AskWhetherPartyWasInFinals(void) {
   Engine_ScriptStart();
   Engine_ScriptSetMessage(MsgTolbiFinalsWerent);
-  Engine_ScriptAskYesNo(TOLBI_FATHER, 0);
+  Engine_ScriptAskYesNo(LOCALID_TOLBI_FATHER, 0);
   Engine_ScriptEnd();
 }
 
@@ -393,14 +395,14 @@ static void Tolbi_TalkToSnackVendor(void) {
   if (GameFlag_IsSet(FLAG_TOLBI_CORN_GIVEN) == 0) {
     Engine_GameFlagSet(FLAG_TOLBI_CORN_GIVEN);
     Engine_ScriptSetMessage(MsgTolbiLeftovers);
-    Engine_ScriptShowMessage(TOLBI_SNACK_VENDOR, 0);
+    Engine_ScriptShowMessage(LOCALID_TOLBI_SNACK_VENDOR, 0);
     Engine_ItemShowFound(ITEM_CORN, 3);
-    Engine_ScriptShowMessage(TOLBI_SNACK_VENDOR, 0);
+    Engine_ScriptShowMessage(LOCALID_TOLBI_SNACK_VENDOR, 0);
     Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIMATION_STAND);
     Engine_PartyGiveItem(ITEM_CORN, 0);
   } else {
     Engine_ScriptSetMessage(MsgTolbiFestivalLongerUsual);
-    Engine_ScriptShowMessage(TOLBI_SNACK_VENDOR, 0);
+    Engine_ScriptShowMessage(LOCALID_TOLBI_SNACK_VENDOR, 0);
   }
   Engine_ScriptEnd();
 }
@@ -437,9 +439,9 @@ static void Tolbi_EnterDoor(void) {
   Engine_ScriptEnd();
 }
 
-/// The update of TOLBI_OLD_MAN, who during the festival says he is 65 and that
-/// Babi was already old when he was born: gives him the leader's sprite
-/// priority every frame, for both of his sprite parts.
+/// The update of LOCALID_TOLBI_OLD_MAN, who during the festival says he is 65
+/// and that Babi was already old when he was born: gives him the leader's
+/// sprite priority every frame, for both of his sprite parts.
 static void Tolbi_CopyLeaderPriority(union FieldObject *fieldObject) {
   s32 priority;
 
@@ -452,8 +454,8 @@ static void Tolbi_CopyLeaderPriority(union FieldObject *fieldObject) {
   }
 }
 
-/// Sets up the map on entry: the running children, TOLBI_OLD_MAN's update,
-/// and everything the flags have already changed.
+/// Sets up the map on entry: the running children, LOCALID_TOLBI_OLD_MAN's
+/// update, and everything the flags have already changed.
 s32 Tolbi_ApplyEntryState(s32 unused) {
   struct ObjectEvent *objectEvent;
   void (*kidUpdate)(union FieldObject *);
@@ -462,9 +464,11 @@ s32 Tolbi_ApplyEntryState(s32 unused) {
   gEventWork->startTransition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
 
   // The two children run their loop south-east of the fountain.
-  ObjectEvent_SetPosition(TOLBI_OLDER_BROTHER, PIXELS(352), PIXELS(352));
-  ObjectEvent_SetActionScript(TOLBI_OLDER_BROTHER, gTolbiOlderBrotherRun);
-  objectEvent = ObjectEvent_GetById(TOLBI_OLDER_BROTHER);
+  ObjectEvent_SetPosition(LOCALID_TOLBI_OLDER_BROTHER, PIXELS(352),
+                          PIXELS(352));
+  ObjectEvent_SetActionScript(LOCALID_TOLBI_OLDER_BROTHER,
+                              gTolbiOlderBrotherRun);
+  objectEvent = ObjectEvent_GetById(LOCALID_TOLBI_OLDER_BROTHER);
 #ifdef UBFIX
   kidUpdate = Tolbi_UpdateKid;
 #else
@@ -473,17 +477,20 @@ s32 Tolbi_ApplyEntryState(s32 unused) {
   objectEvent->timer = KID_CHASES_YOUNGER;
   objectEvent->update = kidUpdate;
   clearFlags = 0;
-  Engine_ObjectEventSetPosition(TOLBI_YOUNGER_SISTER, PIXELS(368), PIXELS(320));
-  ObjectEvent_SetActionScript(TOLBI_YOUNGER_SISTER, gTolbiYoungerSisterRun);
-  objectEvent = ObjectEvent_GetById(TOLBI_YOUNGER_SISTER);
+  Engine_ObjectEventSetPosition(LOCALID_TOLBI_YOUNGER_SISTER, PIXELS(368),
+                                PIXELS(320));
+  ObjectEvent_SetActionScript(LOCALID_TOLBI_YOUNGER_SISTER,
+                              gTolbiYoungerSisterRun);
+  objectEvent = ObjectEvent_GetById(LOCALID_TOLBI_YOUNGER_SISTER);
   objectEvent->timer = clearFlags;
   objectEvent->update = kidUpdate;
-  objectEvent = ObjectEvent_GetById(TOLBI_OLD_MAN);
+  objectEvent = ObjectEvent_GetById(LOCALID_TOLBI_OLD_MAN);
   objectEvent->update = Tolbi_CopyLeaderPriority;
 
   // What the party has already done here.
   if (Engine_GameFlagIsSet(FLAG_TOLBI_SPRING_OPENED) != 0) {
-    ObjectEvent_SetPosition(TOLBI_SPRING_VISITOR, PIXELS(316), PIXELS(328));
+    ObjectEvent_SetPosition(LOCALID_TOLBI_SPRING_VISITOR, PIXELS(316),
+                            PIXELS(328));
   }
   // The puddle is frozen.
   if (Engine_GameFlagIsSet(FLAG_MAP_TEMP_01) != 0) {
@@ -492,24 +499,27 @@ s32 Tolbi_ApplyEntryState(s32 unused) {
   // The sprout has grown.
   if (Engine_GameFlagIsSet(FLAG_MAP_TEMP_00) != 0) {
     Tolbi_GrowSprout();
-    Engine_ObjectEventSetAnimation(TOLBI_SPROUT, 4);
+    Engine_ObjectEventSetAnimation(LOCALID_TOLBI_SPROUT, 4);
   }
 
   // After Colosso the crowd has gone home and is moved off the map. On finals
   // day the scalper waits by the gate.
   if (Engine_GameFlagIsSet(FLAG_COLOSSO_OVER) != 0) {
-    ObjectEvent_SetPosition(TOLBI_WOULD_BE_FIGHTER, PIXELS(520), PIXELS(560));
-    ObjectEvent_SetPosition(TOLBI_XIAN_VISITOR, PIXELS(520), PIXELS(560));
-    ObjectEvent_SetPosition(TOLBI_OVERSLEEPER, PIXELS(520), PIXELS(560));
-    ObjectEvent_SetPosition(TOLBI_FATHER, PIXELS(520), PIXELS(560));
-    ObjectEvent_SetPosition(TOLBI_MOTHER, PIXELS(520), PIXELS(560));
-    ObjectEvent_SetPosition(TOLBI_CRYING_BOY, PIXELS(520), PIXELS(560));
-    ObjectEvent_SetPosition(TOLBI_SCALPER, PIXELS(520), PIXELS(560));
+    ObjectEvent_SetPosition(LOCALID_TOLBI_WOULD_BE_FIGHTER, PIXELS(520),
+                            PIXELS(560));
+    ObjectEvent_SetPosition(LOCALID_TOLBI_XIAN_VISITOR, PIXELS(520),
+                            PIXELS(560));
+    ObjectEvent_SetPosition(LOCALID_TOLBI_OVERSLEEPER, PIXELS(520),
+                            PIXELS(560));
+    ObjectEvent_SetPosition(LOCALID_TOLBI_FATHER, PIXELS(520), PIXELS(560));
+    ObjectEvent_SetPosition(LOCALID_TOLBI_MOTHER, PIXELS(520), PIXELS(560));
+    ObjectEvent_SetPosition(LOCALID_TOLBI_CRYING_BOY, PIXELS(520), PIXELS(560));
+    ObjectEvent_SetPosition(LOCALID_TOLBI_SCALPER, PIXELS(520), PIXELS(560));
   } else {
     if (Engine_GameFlagIsSet(FLAG_BABI_SAVED) != 0) {
-      ObjectEvent_SetPosition(TOLBI_SCALPER, PIXELS(280), PIXELS(80));
-      ObjectEvent_FaceDirection(TOLBI_SCALPER, FACING_SOUTHEAST, 0);
-      Engine_ObjectEventSetAnimation(TOLBI_SCALPER, ANIMATION_STAND);
+      ObjectEvent_SetPosition(LOCALID_TOLBI_SCALPER, PIXELS(280), PIXELS(80));
+      ObjectEvent_FaceDirection(LOCALID_TOLBI_SCALPER, FACING_SOUTHEAST, 0);
+      Engine_ObjectEventSetAnimation(LOCALID_TOLBI_SCALPER, ANIMATION_STAND);
     }
   }
   return 0;
@@ -521,21 +531,24 @@ static void Tolbi_TalkToSpringVisitor(void) {
   Engine_ScriptStart();
   ObjectEvent_WalkToAndWait(LOCALID_PARTY_LEADER, 304, 312);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_NORTH, 0);
-  Engine_ObjectEventFaceDirection(TOLBI_SPRING_VISITOR, FACING_SOUTH, 0);
+  Engine_ObjectEventFaceDirection(LOCALID_TOLBI_SPRING_VISITOR, FACING_SOUTH,
+                                  0);
   Engine_ScriptWait(20);
   Engine_ScriptSetMessage(MsgTolbiWantTestLuck);
-  Script_OpenMessage(TOLBI_SPRING_VISITOR, 0);
+  Script_OpenMessage(LOCALID_TOLBI_SPRING_VISITOR, 0);
   if (Engine_ScriptChooseYesNo(LOCALID_PARTY_LEADER, 0) == 0) {
     // Yes: "I'll give you the chance to go first."
     gEventWork->message++;
-    Engine_ScriptShowMessage(TOLBI_SPRING_VISITOR, 0);
-    ObjectEvent_SetSpeed(TOLBI_SPRING_VISITOR, PIXELS(1), PIXELS(1) / 2);
-    ObjectEvent_WalkToAndWait(TOLBI_SPRING_VISITOR, 320, 304);
-    ObjectEvent_WalkToAndWait(TOLBI_SPRING_VISITOR, 316, 328);
-    Engine_ObjectEventFaceDirection(TOLBI_SPRING_VISITOR, FACING_NORTHWEST, 0);
+    Engine_ScriptShowMessage(LOCALID_TOLBI_SPRING_VISITOR, 0);
+    ObjectEvent_SetSpeed(LOCALID_TOLBI_SPRING_VISITOR, PIXELS(1),
+                         PIXELS(1) / 2);
+    ObjectEvent_WalkToAndWait(LOCALID_TOLBI_SPRING_VISITOR, 320, 304);
+    ObjectEvent_WalkToAndWait(LOCALID_TOLBI_SPRING_VISITOR, 316, 328);
+    Engine_ObjectEventFaceDirection(LOCALID_TOLBI_SPRING_VISITOR,
+                                    FACING_NORTHWEST, 0);
     Engine_GameFlagSet(FLAG_TOLBI_SPRING_OPENED);
   } else {
-    Engine_ScriptShowMessage(TOLBI_SPRING_VISITOR, 0);
+    Engine_ScriptShowMessage(LOCALID_TOLBI_SPRING_VISITOR, 0);
   }
   Engine_ScriptEnd();
 }
@@ -563,104 +576,112 @@ static void Tolbi_MeetSearchingSoldiers(void) {
 
   Engine_ScriptStart();
   Camera_MoveTo(-1, -1, -1, 0);
-  ObjectEvent_SetSpeed(TOLBI_SOLDIER_A, PIXELS(1), PIXELS(1) / 2);
-  Engine_ObjectEventSetSpeed(TOLBI_SOLDIER_B, PIXELS(1), PIXELS(1) / 2);
+  ObjectEvent_SetSpeed(LOCALID_TOLBI_SOLDIER_A, PIXELS(1), PIXELS(1) / 2);
+  Engine_ObjectEventSetSpeed(LOCALID_TOLBI_SOLDIER_B, PIXELS(1), PIXELS(1) / 2);
   firstMsg = MsgTolbiSeenAnyoneWho;
   Engine_ScriptSetMessage(firstMsg);
 
   // The soldiers come up to the party; the poster waits off to the side.
-  ObjectEvent_SetPosition(TOLBI_SOLDIER_A, PIXELS(72), PIXELS(208));
-  ObjectEvent_SetPosition(TOLBI_SOLDIER_B, PIXELS(56), PIXELS(208));
-  Engine_ObjectEventSetChildValue(TOLBI_MISSING_PERSON_POSTER, 15);
+  ObjectEvent_SetPosition(LOCALID_TOLBI_SOLDIER_A, PIXELS(72), PIXELS(208));
+  ObjectEvent_SetPosition(LOCALID_TOLBI_SOLDIER_B, PIXELS(56), PIXELS(208));
+  Engine_ObjectEventSetChildValue(LOCALID_TOLBI_MISSING_PERSON_POSTER, 15);
   Engine_ObjectEventSetSpriteFlags(
-      ObjectEvent_GetById(TOLBI_MISSING_PERSON_POSTER), 0);
-  ObjectEvent_SetPosition(TOLBI_MISSING_PERSON_POSTER, PIXELS(95), PIXELS(40));
-  Engine_ObjectEventWalkTo(TOLBI_SOLDIER_A, 72, 248);
-  Engine_ObjectEventWalkTo(TOLBI_SOLDIER_B, 56, 248);
+      ObjectEvent_GetById(LOCALID_TOLBI_MISSING_PERSON_POSTER), 0);
+  ObjectEvent_SetPosition(LOCALID_TOLBI_MISSING_PERSON_POSTER, PIXELS(95),
+                          PIXELS(40));
+  Engine_ObjectEventWalkTo(LOCALID_TOLBI_SOLDIER_A, 72, 248);
+  Engine_ObjectEventWalkTo(LOCALID_TOLBI_SOLDIER_B, 56, 248);
   ObjectEvent_WalkToAndWait(LOCALID_PARTY_LEADER, 64, 264);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_NORTH, 0);
-  Engine_ObjectEventWaitForMove(TOLBI_SOLDIER_A);
-  Engine_ObjectEventSetAnimation(TOLBI_SOLDIER_A, ANIMATION_STAND);
-  Engine_ObjectEventSetAnimation(TOLBI_SOLDIER_B, ANIMATION_STAND);
+  Engine_ObjectEventWaitForMove(LOCALID_TOLBI_SOLDIER_A);
+  Engine_ObjectEventSetAnimation(LOCALID_TOLBI_SOLDIER_A, ANIMATION_STAND);
+  Engine_ObjectEventSetAnimation(LOCALID_TOLBI_SOLDIER_B, ANIMATION_STAND);
   Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIMATION_STAND);
-  Engine_ObjectEventFaceObjectEvent(TOLBI_SOLDIER_A, LOCALID_PARTY_LEADER, 0);
-  Engine_ObjectEventFaceObjectEvent(TOLBI_SOLDIER_B, LOCALID_PARTY_LEADER, 0);
+  Engine_ObjectEventFaceObjectEvent(LOCALID_TOLBI_SOLDIER_A,
+                                    LOCALID_PARTY_LEADER, 0);
+  Engine_ObjectEventFaceObjectEvent(LOCALID_TOLBI_SOLDIER_B,
+                                    LOCALID_PARTY_LEADER, 0);
   Engine_ScriptWait(20);
-  ObjectEvent_SetAttachedEffect(TOLBI_SOLDIER_A, ATTACHED_EFFECT_IN_FRONT |
-                                                     ATTACHED_EFFECT_ONCE);
-  ObjectEvent_SetAttachedEffect(TOLBI_SOLDIER_B, ATTACHED_EFFECT_IN_FRONT |
-                                                     ATTACHED_EFFECT_ONCE);
-  Engine_ObjectEventStartRepeatedMotion(TOLBI_SOLDIER_A, 2);
-  Engine_ObjectEventRunRepeatedMotion(TOLBI_SOLDIER_B, 2);
+  ObjectEvent_SetAttachedEffect(
+      LOCALID_TOLBI_SOLDIER_A, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+  ObjectEvent_SetAttachedEffect(
+      LOCALID_TOLBI_SOLDIER_B, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+  Engine_ObjectEventStartRepeatedMotion(LOCALID_TOLBI_SOLDIER_A, 2);
+  Engine_ObjectEventRunRepeatedMotion(LOCALID_TOLBI_SOLDIER_B, 2);
   Engine_ScriptWait(20);
 
   // "Have you seen anyone who looks like this?", under a "Missing Person"
   // window showing Babi's portrait. The poster, placed with Babi's sprite,
   // becomes the speaker so that answering closes that portrait window.
-  Script_OpenMessage(TOLBI_SOLDIER_A, 0);
+  Script_OpenMessage(LOCALID_TOLBI_SOLDIER_A, 0);
   Engine_ScriptWait(25);
   UiWindow_CreateWithSideObject(SPRITE_BABI, 0, 12, 7);
   UiText_OpenMessageWindow((firstMsg + 3), 11, 12, 2);
-  gEventWork->speaker = TOLBI_MISSING_PERSON_POSTER;
+  gEventWork->speaker = LOCALID_TOLBI_MISSING_PERSON_POSTER;
   if (Engine_ScriptChooseYesNo(LOCALID_PARTY_LEADER, 0) == 0) {
     // Yes: "Babi must be nearby!!!" They nod and run east.
     Engine_ScriptWait(20);
-    Engine_ObjectEventRunRepeatedMotion(TOLBI_SOLDIER_B, 2);
+    Engine_ObjectEventRunRepeatedMotion(LOCALID_TOLBI_SOLDIER_B, 2);
     Engine_ScriptWait(30);
-    Engine_ObjectEventFaceDirection(TOLBI_SOLDIER_B, FACING_EAST, 0);
+    Engine_ObjectEventFaceDirection(LOCALID_TOLBI_SOLDIER_B, FACING_EAST, 0);
     Engine_ScriptWait(30);
     Engine_ScriptWait(10);
-    Engine_ObjectEventSetAnimationAndWait(TOLBI_SOLDIER_A, ANIMATION_NOD);
+    Engine_ObjectEventSetAnimationAndWait(LOCALID_TOLBI_SOLDIER_A,
+                                          ANIMATION_NOD);
     Engine_ScriptWait(20);
-    Engine_ObjectEventFaceDirection(TOLBI_SOLDIER_A, FACING_EAST, 0);
+    Engine_ObjectEventFaceDirection(LOCALID_TOLBI_SOLDIER_A, FACING_EAST, 0);
     Engine_ScriptWait(30);
-    Engine_ScriptShowMessage(TOLBI_SOLDIER_A, 0);
+    Engine_ScriptShowMessage(LOCALID_TOLBI_SOLDIER_A, 0);
     Engine_ScriptWait(20);
-    ObjectEvent_FaceDirection(TOLBI_SOLDIER_A, FACING_SOUTH, 0);
-    Engine_ObjectEventFaceDirection(TOLBI_SOLDIER_B, FACING_SOUTH, 0);
+    ObjectEvent_FaceDirection(LOCALID_TOLBI_SOLDIER_A, FACING_SOUTH, 0);
+    Engine_ObjectEventFaceDirection(LOCALID_TOLBI_SOLDIER_B, FACING_SOUTH, 0);
     Engine_ScriptWait(30);
-    Engine_ObjectEventSetAnimation(TOLBI_SOLDIER_A, ANIMATION_NOD);
-    Engine_ObjectEventSetAnimationAndWait(TOLBI_SOLDIER_B, ANIMATION_NOD);
+    Engine_ObjectEventSetAnimation(LOCALID_TOLBI_SOLDIER_A, ANIMATION_NOD);
+    Engine_ObjectEventSetAnimationAndWait(LOCALID_TOLBI_SOLDIER_B,
+                                          ANIMATION_NOD);
     Engine_ScriptWait(20);
-    ObjectEvent_SetSpeed(TOLBI_SOLDIER_A, PIXELS(9) / 5, PIXELS(9) / 10);
-    ObjectEvent_SetSpeed(TOLBI_SOLDIER_B, PIXELS(9) / 5, PIXELS(9) / 10);
-    ObjectEvent_WalkTo(TOLBI_SOLDIER_A, 232, 248);
+    ObjectEvent_SetSpeed(LOCALID_TOLBI_SOLDIER_A, PIXELS(9) / 5,
+                         PIXELS(9) / 10);
+    ObjectEvent_SetSpeed(LOCALID_TOLBI_SOLDIER_B, PIXELS(9) / 5,
+                         PIXELS(9) / 10);
+    ObjectEvent_WalkTo(LOCALID_TOLBI_SOLDIER_A, 232, 248);
     Engine_ScriptWait(2);
-    ObjectEvent_WalkTo(TOLBI_SOLDIER_B, 232, 248);
-    Engine_ObjectEventWaitForMove(TOLBI_SOLDIER_A);
-    Engine_ObjectEventWalkTo(TOLBI_SOLDIER_A, 248, 248);
-    Engine_ObjectEventWalkToAndWait(TOLBI_SOLDIER_B, 248, 248);
+    ObjectEvent_WalkTo(LOCALID_TOLBI_SOLDIER_B, 232, 248);
+    Engine_ObjectEventWaitForMove(LOCALID_TOLBI_SOLDIER_A);
+    Engine_ObjectEventWalkTo(LOCALID_TOLBI_SOLDIER_A, 248, 248);
+    Engine_ObjectEventWalkToAndWait(LOCALID_TOLBI_SOLDIER_B, 248, 248);
   } else {
     // No: "He doesn't seem to be here. Let's look over there." They shake
     // their heads and go back north.
     Engine_ScriptWait(20);
-    Engine_ObjectEventRunRepeatedMotion(TOLBI_SOLDIER_B, 2);
+    Engine_ObjectEventRunRepeatedMotion(LOCALID_TOLBI_SOLDIER_B, 2);
     Engine_ScriptWait(30);
-    Engine_ObjectEventFaceDirection(TOLBI_SOLDIER_B, FACING_EAST, 0);
+    Engine_ObjectEventFaceDirection(LOCALID_TOLBI_SOLDIER_B, FACING_EAST, 0);
     Engine_ScriptWait(30);
     Engine_ScriptWait(10);
-    Engine_ObjectEventSetAnimationAndWait(TOLBI_SOLDIER_A,
+    Engine_ObjectEventSetAnimationAndWait(LOCALID_TOLBI_SOLDIER_A,
                                           ANIMATION_SHAKE_HEAD);
     Engine_ScriptWait(20);
-    Engine_ObjectEventFaceDirection(TOLBI_SOLDIER_A, FACING_EAST, 0);
+    Engine_ObjectEventFaceDirection(LOCALID_TOLBI_SOLDIER_A, FACING_EAST, 0);
     Engine_ScriptWait(30);
     gEventWork->message += 1;
-    Engine_ScriptShowMessage(TOLBI_SOLDIER_A, 0);
+    Engine_ScriptShowMessage(LOCALID_TOLBI_SOLDIER_A, 0);
     Engine_ScriptWait(20);
-    ObjectEvent_FaceDirection(TOLBI_SOLDIER_A, FACING_SOUTH, 0);
-    ObjectEvent_FaceDirection(TOLBI_SOLDIER_B, FACING_SOUTH, 0);
+    ObjectEvent_FaceDirection(LOCALID_TOLBI_SOLDIER_A, FACING_SOUTH, 0);
+    ObjectEvent_FaceDirection(LOCALID_TOLBI_SOLDIER_B, FACING_SOUTH, 0);
     Engine_ScriptWait(30);
-    Engine_ObjectEventSetAnimation(TOLBI_SOLDIER_A, ANIMATION_NOD);
-    Engine_ObjectEventSetAnimationAndWait(TOLBI_SOLDIER_B, ANIMATION_NOD);
+    Engine_ObjectEventSetAnimation(LOCALID_TOLBI_SOLDIER_A, ANIMATION_NOD);
+    Engine_ObjectEventSetAnimationAndWait(LOCALID_TOLBI_SOLDIER_B,
+                                          ANIMATION_NOD);
     Engine_ScriptWait(20);
-    ObjectEvent_SetSpeed(TOLBI_SOLDIER_A, PIXELS(8) / 5, PIXELS(4) / 5);
-    ObjectEvent_SetSpeed(TOLBI_SOLDIER_B, PIXELS(8) / 5, PIXELS(4) / 5);
-    Engine_ObjectEventWalkTo(TOLBI_SOLDIER_A, 72, 184);
-    Engine_ObjectEventWalkToAndWait(TOLBI_SOLDIER_B, 56, 184);
+    ObjectEvent_SetSpeed(LOCALID_TOLBI_SOLDIER_A, PIXELS(8) / 5, PIXELS(4) / 5);
+    ObjectEvent_SetSpeed(LOCALID_TOLBI_SOLDIER_B, PIXELS(8) / 5, PIXELS(4) / 5);
+    Engine_ObjectEventWalkTo(LOCALID_TOLBI_SOLDIER_A, 72, 184);
+    Engine_ObjectEventWalkToAndWait(LOCALID_TOLBI_SOLDIER_B, 56, 184);
   }
-  Engine_ObjectEventSetPosition(TOLBI_SOLDIER_A, 0, 0);
-  Engine_ObjectEventSetPosition(TOLBI_SOLDIER_B, 0, 0);
-  Engine_ObjectEventSetPosition(TOLBI_MISSING_PERSON_POSTER, 0, 0);
+  Engine_ObjectEventSetPosition(LOCALID_TOLBI_SOLDIER_A, 0, 0);
+  Engine_ObjectEventSetPosition(LOCALID_TOLBI_SOLDIER_B, 0, 0);
+  Engine_ObjectEventSetPosition(LOCALID_TOLBI_MISSING_PERSON_POSTER, 0, 0);
   Engine_GameFlagSet(FLAG_TOLBI_SOLDIERS_ASKED_ABOUT_BABI);
   Engine_ScriptEnd();
 }
@@ -668,13 +689,13 @@ static void Tolbi_MeetSearchingSoldiers(void) {
 /// Frost on the puddle: the frozen pillar is drawn underfoot and stops
 /// following the terrain, and its map cell becomes solid.
 static void Tolbi_FreezePuddle(void) {
-  struct ObjectEvent *puddle = ObjectEvent_GetById(TOLBI_PUDDLE);
+  struct ObjectEvent *puddle = ObjectEvent_GetById(LOCALID_TOLBI_PUDDLE);
   if (puddle != 0) {
     Engine_ObjectEventSetSpriteFlags(puddle, 0);
     puddle->priorityFlags = OBJ_EVENT_PRIORITY_UNDERFOOT;
     puddle->motionFlags = 0;
   }
-  Engine_ObjectEventSetAnimation(TOLBI_PUDDLE, 5);
+  Engine_ObjectEventSetAnimation(LOCALID_TOLBI_PUDDLE, 5);
   {
     MapGrid_CopyCellAttributes(36, 16, 1, 1, 34, 16);
   }
@@ -859,7 +880,7 @@ struct ObjectEventTemplate gTolbiObjectEventTemplates[] = {
 
 /// During the festival, before the finals.
 struct MapEvent gTolbiEventsFestival[] = {
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_GROWTH), TOLBI_SPROUT, FLAG_MAP_TEMP_00, EVENT_SCRIPT(Tolbi_GrowSprout) },
+    { PSYNERGY_ON_OBJ_EVENT(ABILITY_GROWTH), LOCALID_TOLBI_SPROUT, FLAG_MAP_TEMP_00, EVENT_SCRIPT(Tolbi_GrowSprout) },
     { COORD_EVENT_WALKING_INTO(FACING_NORTH), TOLBI_TO_HOUSE_SOUTH, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_EnterDoor) },
     { COORD_EVENT_WALKING_INTO(FACING_NORTH), TOLBI_TO_HOUSE_NORTHWEST, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_EnterDoor) },
     { COORD_EVENT_WALKING_INTO(FACING_NORTH), TOLBI_TO_INN, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_EnterDoor) },
@@ -876,51 +897,51 @@ struct MapEvent gTolbiEventsFestival[] = {
     { MAP_EVENT_COORD | MAP_EVENT_FLAG_FACING | FACING_NORTH, TOLBI_TO_LUCKY_DICE, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_RequestTouchedWarp) },
     { MAP_EVENT_COORD, TOLBI_CELL_SOLDIERS, FLAG_TOLBI_SOLDIERS_ASKED_ABOUT_BABI, EVENT_SCRIPT(Tolbi_MeetSearchingSoldiers) },
     { MAP_EVENT_COORD | MAP_EVENT_FLAG_FACING | FACING_NORTH, TOLBI_CELL_SPRING_GATE, IF_FLAG_SET(FLAG_TOLBI_SPRING_OPENED), EVENT_SCRIPT(Tolbi_EnterSpring) },
-    { MAP_EVENT_TALK, TOLBI_EXCITED_YOUNG_MAN, CONDITION_ALWAYS, MSGNO(MsgTolbiTolbisAlwaysReallyBustlingDuringColosso) },
-    { MAP_EVENT_TALK, TOLBI_HURRYING_WOMAN, CONDITION_ALWAYS, MSGNO(MsgTolbiColossoIsHeldInTheColosseum) },
-    { MAP_EVENT_TALK, TOLBI_FINALS_FAN, CONDITION_ALWAYS, MSGNO(MsgTolbiTryoutsStartedAtTheColosseumToday) },
-    { MAP_EVENT_TALK, TOLBI_WORRIED_WOMAN, CONDITION_ALWAYS, MSGNO(MsgTolbiColossoShouldHaveStartedTodayWhat) },
-    { MAP_EVENT_TALK, TOLBI_OLD_MAN, CONDITION_ALWAYS, MSGNO(MsgTolbiBabiWasAlreadyPrettyOldBack) },
-    { MAP_EVENT_TALK, TOLBI_SUSPICIOUS_OLD_WOMAN, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_AskAboutLivingPastHundred) },
-    { MAP_EVENT_TALK, TOLBI_OLDER_BROTHER, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_TalkToOlderBrother) },
-    { MAP_EVENT_TALK, TOLBI_YOUNGER_SISTER, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_TalkToYoungerSister) },
-    { MAP_EVENT_TALK, TOLBI_SOUVENIR_SELLER, CONDITION_ALWAYS, MSGNO(MsgTolbiGetYourColossoSouvenirsTheyMake) },
-    { MAP_EVENT_TALK, TOLBI_SNACK_VENDOR, CONDITION_ALWAYS, MSGNO(MsgTolbiGetYourSnacksAndDrinksBefore) },
-    { MAP_EVENT_TALK, TOLBI_WOULD_BE_FIGHTER, CONDITION_ALWAYS, MSGNO(MsgTolbiIveDecidedNotToFightAt) },
-    { MAP_EVENT_TALK, TOLBI_XIAN_VISITOR, CONDITION_ALWAYS, MSGNO(MsgTolbiWowTolbisFestivalIsHumongousJust) },
-    { MAP_EVENT_TALK, TOLBI_OVERSLEEPER, CONDITION_ALWAYS, MSGNO(MsgTolbiRatsWeOversleptAndNowThe) },
-    { MAP_EVENT_TALK, TOLBI_FATHER, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_TalkToFather) },
-    { MAP_EVENT_TALK, TOLBI_MOTHER, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_TalkToMother) },
-    { MAP_EVENT_TALK, TOLBI_CRYING_BOY, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_TalkToCryingBoy) },
-    { MAP_EVENT_TALK, TOLBI_SCALPER, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_TalkToSleepingScalper) },
-    { MAP_EVENT_TALK, TOLBI_SPRING_VISITOR, FLAG_TOLBI_SPRING_OPENED, EVENT_SCRIPT(Tolbi_TalkToSpringVisitor) },
-    { MAP_EVENT_TALK, TOLBI_SPRING_VISITOR, CONDITION_ALWAYS, MSGNO(MsgTolbiAhIGuessIJustDont) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), TOLBI_EXCITED_YOUNG_MAN, CONDITION_ALWAYS, MSGNO(MsgTolbiTouristsArentTheOnlyOnesWho) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), TOLBI_HURRYING_WOMAN, CONDITION_ALWAYS, MSGNO(MsgTolbiTheTrialsAreStartingAtThe) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), TOLBI_FINALS_FAN, CONDITION_ALWAYS, MSGNO(MsgTolbiTheTrialsAreOkayButThe) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), TOLBI_WORRIED_WOMAN, CONDITION_ALWAYS, MSGNO(MsgTolbiItsNotLikeThereHaveBeen) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), TOLBI_OLD_MAN, CONDITION_ALWAYS, MSGNO(MsgTolbiEveryYearIGetOlderAnd) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), TOLBI_SUSPICIOUS_OLD_WOMAN, CONDITION_ALWAYS, MSGNO(MsgTolbiWhatIfBabiIsActuallyA) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), TOLBI_OLDER_BROTHER, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_TalkToOlderBrother) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), TOLBI_YOUNGER_SISTER, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_TalkToYoungerSister) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), TOLBI_SOUVENIR_SELLER, CONDITION_ALWAYS, MSGNO(MsgTolbiWeHaveToSellAllOf) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), TOLBI_SNACK_VENDOR, CONDITION_ALWAYS, MSGNO(MsgTolbiTheyreSellingTheseAtTheColosseum) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), TOLBI_WOULD_BE_FIGHTER, CONDITION_ALWAYS, MSGNO(MsgTolbiISawThePeopleWhoAre) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), TOLBI_XIAN_VISITOR, CONDITION_ALWAYS, MSGNO(MsgTolbiTolbiIsNotLikeXianIt) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), TOLBI_OVERSLEEPER, CONDITION_ALWAYS, MSGNO(MsgTolbiICantSayAnythingCauseIt) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), TOLBI_FATHER, CONDITION_ALWAYS, MSGNO(MsgTolbiTheStuffTheyreSellingAtThe) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), TOLBI_MOTHER, CONDITION_ALWAYS, MSGNO(MsgTolbiWhyDoKidsWantSuchAwful) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), TOLBI_CRYING_BOY, CONDITION_ALWAYS, MSGNO(MsgTolbiThoseSweetsSmellGreatImNot) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), TOLBI_SCALPER, CONDITION_ALWAYS, MSGNO(MsgTolbiIveBeenGuardingOurSpotBut) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), TOLBI_SPRING_VISITOR, CONDITION_ALWAYS, MSGNO(MsgTolbiIKeepLosingCoinsButI) },
-    { MAP_EVENT_TALK, TOLBI_EMBER, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_JoinEmber) },
+    { MAP_EVENT_TALK, LOCALID_TOLBI_EXCITED_YOUNG_MAN, CONDITION_ALWAYS, MSGNO(MsgTolbiTolbisAlwaysReallyBustlingDuringColosso) },
+    { MAP_EVENT_TALK, LOCALID_TOLBI_HURRYING_WOMAN, CONDITION_ALWAYS, MSGNO(MsgTolbiColossoIsHeldInTheColosseum) },
+    { MAP_EVENT_TALK, LOCALID_TOLBI_FINALS_FAN, CONDITION_ALWAYS, MSGNO(MsgTolbiTryoutsStartedAtTheColosseumToday) },
+    { MAP_EVENT_TALK, LOCALID_TOLBI_WORRIED_WOMAN, CONDITION_ALWAYS, MSGNO(MsgTolbiColossoShouldHaveStartedTodayWhat) },
+    { MAP_EVENT_TALK, LOCALID_TOLBI_OLD_MAN, CONDITION_ALWAYS, MSGNO(MsgTolbiBabiWasAlreadyPrettyOldBack) },
+    { MAP_EVENT_TALK, LOCALID_TOLBI_SUSPICIOUS_OLD_WOMAN, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_AskAboutLivingPastHundred) },
+    { MAP_EVENT_TALK, LOCALID_TOLBI_OLDER_BROTHER, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_TalkToOlderBrother) },
+    { MAP_EVENT_TALK, LOCALID_TOLBI_YOUNGER_SISTER, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_TalkToYoungerSister) },
+    { MAP_EVENT_TALK, LOCALID_TOLBI_SOUVENIR_SELLER, CONDITION_ALWAYS, MSGNO(MsgTolbiGetYourColossoSouvenirsTheyMake) },
+    { MAP_EVENT_TALK, LOCALID_TOLBI_SNACK_VENDOR, CONDITION_ALWAYS, MSGNO(MsgTolbiGetYourSnacksAndDrinksBefore) },
+    { MAP_EVENT_TALK, LOCALID_TOLBI_WOULD_BE_FIGHTER, CONDITION_ALWAYS, MSGNO(MsgTolbiIveDecidedNotToFightAt) },
+    { MAP_EVENT_TALK, LOCALID_TOLBI_XIAN_VISITOR, CONDITION_ALWAYS, MSGNO(MsgTolbiWowTolbisFestivalIsHumongousJust) },
+    { MAP_EVENT_TALK, LOCALID_TOLBI_OVERSLEEPER, CONDITION_ALWAYS, MSGNO(MsgTolbiRatsWeOversleptAndNowThe) },
+    { MAP_EVENT_TALK, LOCALID_TOLBI_FATHER, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_TalkToFather) },
+    { MAP_EVENT_TALK, LOCALID_TOLBI_MOTHER, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_TalkToMother) },
+    { MAP_EVENT_TALK, LOCALID_TOLBI_CRYING_BOY, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_TalkToCryingBoy) },
+    { MAP_EVENT_TALK, LOCALID_TOLBI_SCALPER, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_TalkToSleepingScalper) },
+    { MAP_EVENT_TALK, LOCALID_TOLBI_SPRING_VISITOR, FLAG_TOLBI_SPRING_OPENED, EVENT_SCRIPT(Tolbi_TalkToSpringVisitor) },
+    { MAP_EVENT_TALK, LOCALID_TOLBI_SPRING_VISITOR, CONDITION_ALWAYS, MSGNO(MsgTolbiAhIGuessIJustDont) },
+    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_TOLBI_EXCITED_YOUNG_MAN, CONDITION_ALWAYS, MSGNO(MsgTolbiTouristsArentTheOnlyOnesWho) },
+    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_TOLBI_HURRYING_WOMAN, CONDITION_ALWAYS, MSGNO(MsgTolbiTheTrialsAreStartingAtThe) },
+    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_TOLBI_FINALS_FAN, CONDITION_ALWAYS, MSGNO(MsgTolbiTheTrialsAreOkayButThe) },
+    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_TOLBI_WORRIED_WOMAN, CONDITION_ALWAYS, MSGNO(MsgTolbiItsNotLikeThereHaveBeen) },
+    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_TOLBI_OLD_MAN, CONDITION_ALWAYS, MSGNO(MsgTolbiEveryYearIGetOlderAnd) },
+    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_TOLBI_SUSPICIOUS_OLD_WOMAN, CONDITION_ALWAYS, MSGNO(MsgTolbiWhatIfBabiIsActuallyA) },
+    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_TOLBI_OLDER_BROTHER, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_TalkToOlderBrother) },
+    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_TOLBI_YOUNGER_SISTER, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_TalkToYoungerSister) },
+    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_TOLBI_SOUVENIR_SELLER, CONDITION_ALWAYS, MSGNO(MsgTolbiWeHaveToSellAllOf) },
+    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_TOLBI_SNACK_VENDOR, CONDITION_ALWAYS, MSGNO(MsgTolbiTheyreSellingTheseAtTheColosseum) },
+    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_TOLBI_WOULD_BE_FIGHTER, CONDITION_ALWAYS, MSGNO(MsgTolbiISawThePeopleWhoAre) },
+    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_TOLBI_XIAN_VISITOR, CONDITION_ALWAYS, MSGNO(MsgTolbiTolbiIsNotLikeXianIt) },
+    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_TOLBI_OVERSLEEPER, CONDITION_ALWAYS, MSGNO(MsgTolbiICantSayAnythingCauseIt) },
+    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_TOLBI_FATHER, CONDITION_ALWAYS, MSGNO(MsgTolbiTheStuffTheyreSellingAtThe) },
+    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_TOLBI_MOTHER, CONDITION_ALWAYS, MSGNO(MsgTolbiWhyDoKidsWantSuchAwful) },
+    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_TOLBI_CRYING_BOY, CONDITION_ALWAYS, MSGNO(MsgTolbiThoseSweetsSmellGreatImNot) },
+    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_TOLBI_SCALPER, CONDITION_ALWAYS, MSGNO(MsgTolbiIveBeenGuardingOurSpotBut) },
+    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_TOLBI_SPRING_VISITOR, CONDITION_ALWAYS, MSGNO(MsgTolbiIKeepLosingCoinsButI) },
+    { MAP_EVENT_TALK, LOCALID_TOLBI_EMBER, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_JoinEmber) },
     { BG_EVENT(BG_EVENT_UNNAMED), TOLBI_SPRING_SIGN, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_ReadSpringSign) },
     { BG_EVENT(BG_EVENT_UNNAMED), TOLBI_LUCKY_MEDAL_SIGN, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_ReadLuckyMedalSign) },
     { BG_EVENT(BG_EVENT_BARREL), TOLBI_BARREL, FLAG_TOLBI_BARREL_COINS, FIND_COINS(9) },
 // The international editions find the jar only when the party faces north.
     { TOLBI_JAR_SEARCH_KIND, TOLBI_JAR, FLAG_TOLBI_JAR_LUCKY_MEDAL, FIND_ITEM(ITEM_LUCKY_MEDAL) },
     { BG_EVENT(BG_EVENT_CHEST), TOLBI_HIDDEN_CHEST, FLAG_TOLBI_CHEST_POWER_BREAD, FIND_ITEM(ITEM_POWER_BREAD) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_FROST), TOLBI_PUDDLE, FLAG_MAP_TEMP_01, EVENT_SCRIPT(Tolbi_FreezePuddle) },
+    { PSYNERGY_ON_OBJ_EVENT(ABILITY_FROST), LOCALID_TOLBI_PUDDLE, FLAG_MAP_TEMP_01, EVENT_SCRIPT(Tolbi_FreezePuddle) },
     { PSYNERGY_IN_AREA(ABILITY_REVEAL, PSYNERGY_PHASE_EFFECT_ACTS), 0, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_RevealHiddenChest) },
     { PSYNERGY_IN_AREA(ABILITY_REVEAL, PSYNERGY_PHASE_EFFECT_ENDS), 0, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_HideRevealedChest) },
     { MAP_EVENTS_END },
@@ -928,7 +949,7 @@ struct MapEvent gTolbiEventsFestival[] = {
 
 /// On finals day.
 struct MapEvent gTolbiEventsFinalsDay[] = {
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_GROWTH), TOLBI_SPROUT, FLAG_MAP_TEMP_00, EVENT_SCRIPT(Tolbi_GrowSprout) },
+    { PSYNERGY_ON_OBJ_EVENT(ABILITY_GROWTH), LOCALID_TOLBI_SPROUT, FLAG_MAP_TEMP_00, EVENT_SCRIPT(Tolbi_GrowSprout) },
     { COORD_EVENT_WALKING_INTO(FACING_NORTH), TOLBI_TO_HOUSE_SOUTH, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_EnterDoor) },
     { COORD_EVENT_WALKING_INTO(FACING_NORTH), TOLBI_TO_HOUSE_NORTHWEST, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_EnterDoor) },
     { COORD_EVENT_WALKING_INTO(FACING_NORTH), TOLBI_TO_INN, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_EnterDoor) },
@@ -944,52 +965,52 @@ struct MapEvent gTolbiEventsFinalsDay[] = {
     { COORD_EVENT_WALKING_INTO(FACING_SOUTH), TOLBI_TO_WORLD_MAP, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_RequestTouchedWarp) },
     { MAP_EVENT_COORD | MAP_EVENT_FLAG_FACING | FACING_NORTH, TOLBI_TO_LUCKY_DICE, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_RequestTouchedWarp) },
     { MAP_EVENT_COORD | MAP_EVENT_FLAG_FACING | FACING_NORTH, TOLBI_CELL_SPRING_GATE, IF_FLAG_SET(FLAG_TOLBI_SPRING_OPENED), EVENT_SCRIPT(Tolbi_EnterSpring) },
-    { MAP_EVENT_TALK, TOLBI_EXCITED_YOUNG_MAN, CONDITION_ALWAYS, MSGNO(MsgTolbiColossoWillReachItsApexAny) },
-    { MAP_EVENT_TALK, TOLBI_HURRYING_WOMAN, CONDITION_ALWAYS, MSGNO(MsgTolbiAreYouPlanningToWatchThe) },
-    { MAP_EVENT_TALK, TOLBI_FINALS_FAN, CONDITION_ALWAYS, MSGNO(MsgTolbiMyFamilySavedMeASeat) },
-    { MAP_EVENT_TALK, TOLBI_WORRIED_WOMAN, CONDITION_ALWAYS, MSGNO(MsgTolbiIThoughtSomethingHappenedToBabi) },
-    { MAP_EVENT_TALK, TOLBI_OLD_MAN, CONDITION_ALWAYS, MSGNO(MsgTolbiTheColosseumWasSoFullThat) },
-    { MAP_EVENT_TALK, TOLBI_SUSPICIOUS_OLD_WOMAN, CONDITION_ALWAYS, MSGNO(MsgTolbiNobodyElseHasNoticedButThis) },
-    { MAP_EVENT_TALK, TOLBI_OLDER_BROTHER, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_TalkToOlderBrother) },
-    { MAP_EVENT_TALK, TOLBI_YOUNGER_SISTER, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_TalkToYoungerSister) },
-    { MAP_EVENT_TALK, TOLBI_SOUVENIR_SELLER, CONDITION_ALWAYS, MSGNO(MsgTolbiHowAboutSomeColossoSouvenirsThis) },
-    { MAP_EVENT_TALK, TOLBI_SNACK_VENDOR, CONDITION_ALWAYS, MSGNO(MsgTolbiTheFinalsAreSoLongIts) },
-    { MAP_EVENT_TALK, TOLBI_WOULD_BE_FIGHTER, CONDITION_ALWAYS, MSGNO(MsgTolbiTheTrialsWereSoRivetingThe) },
-    { MAP_EVENT_TALK, TOLBI_XIAN_VISITOR, CONDITION_ALWAYS, MSGNO(MsgTolbiIHaveSeatsToTheFinals) },
-    { MAP_EVENT_TALK, TOLBI_OVERSLEEPER, CONDITION_ALWAYS, MSGNO(MsgTolbiIOversleptAgainSoICant) },
+    { MAP_EVENT_TALK, LOCALID_TOLBI_EXCITED_YOUNG_MAN, CONDITION_ALWAYS, MSGNO(MsgTolbiColossoWillReachItsApexAny) },
+    { MAP_EVENT_TALK, LOCALID_TOLBI_HURRYING_WOMAN, CONDITION_ALWAYS, MSGNO(MsgTolbiAreYouPlanningToWatchThe) },
+    { MAP_EVENT_TALK, LOCALID_TOLBI_FINALS_FAN, CONDITION_ALWAYS, MSGNO(MsgTolbiMyFamilySavedMeASeat) },
+    { MAP_EVENT_TALK, LOCALID_TOLBI_WORRIED_WOMAN, CONDITION_ALWAYS, MSGNO(MsgTolbiIThoughtSomethingHappenedToBabi) },
+    { MAP_EVENT_TALK, LOCALID_TOLBI_OLD_MAN, CONDITION_ALWAYS, MSGNO(MsgTolbiTheColosseumWasSoFullThat) },
+    { MAP_EVENT_TALK, LOCALID_TOLBI_SUSPICIOUS_OLD_WOMAN, CONDITION_ALWAYS, MSGNO(MsgTolbiNobodyElseHasNoticedButThis) },
+    { MAP_EVENT_TALK, LOCALID_TOLBI_OLDER_BROTHER, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_TalkToOlderBrother) },
+    { MAP_EVENT_TALK, LOCALID_TOLBI_YOUNGER_SISTER, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_TalkToYoungerSister) },
+    { MAP_EVENT_TALK, LOCALID_TOLBI_SOUVENIR_SELLER, CONDITION_ALWAYS, MSGNO(MsgTolbiHowAboutSomeColossoSouvenirsThis) },
+    { MAP_EVENT_TALK, LOCALID_TOLBI_SNACK_VENDOR, CONDITION_ALWAYS, MSGNO(MsgTolbiTheFinalsAreSoLongIts) },
+    { MAP_EVENT_TALK, LOCALID_TOLBI_WOULD_BE_FIGHTER, CONDITION_ALWAYS, MSGNO(MsgTolbiTheTrialsWereSoRivetingThe) },
+    { MAP_EVENT_TALK, LOCALID_TOLBI_XIAN_VISITOR, CONDITION_ALWAYS, MSGNO(MsgTolbiIHaveSeatsToTheFinals) },
+    { MAP_EVENT_TALK, LOCALID_TOLBI_OVERSLEEPER, CONDITION_ALWAYS, MSGNO(MsgTolbiIOversleptAgainSoICant) },
     // The family repeats its festival lines on finals day; the file's open
     // questions ask whether four unused messages were meant for it.
-    { MAP_EVENT_TALK, TOLBI_FATHER, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_TalkToFather) },
-    { MAP_EVENT_TALK, TOLBI_MOTHER, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_TalkToMother) },
-    { MAP_EVENT_TALK, TOLBI_CRYING_BOY, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_TalkToCryingBoy) },
-    { MAP_EVENT_TALK, TOLBI_SCALPER, CONDITION_ALWAYS, MSGNO(MsgTolbiTheFinalsStartTodayIWonder) },
-    { MAP_EVENT_TALK, TOLBI_SPRING_VISITOR, FLAG_TOLBI_SPRING_OPENED, EVENT_SCRIPT(Tolbi_TalkToSpringVisitor) },
-    { MAP_EVENT_TALK, TOLBI_SPRING_VISITOR, CONDITION_ALWAYS, MSGNO(MsgTolbiAhIGuessIJustDont) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), TOLBI_EXCITED_YOUNG_MAN, CONDITION_ALWAYS, MSGNO(MsgTolbiIveGotToGetToThe) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), TOLBI_HURRYING_WOMAN, CONDITION_ALWAYS, MSGNO(MsgTolbiABattleToTheDeathWith) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), TOLBI_FINALS_FAN, CONDITION_ALWAYS, MSGNO(MsgTolbiTheFinalsStartOnBabisSignal) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), TOLBI_WORRIED_WOMAN, CONDITION_ALWAYS, MSGNO(MsgTolbiSoWhyWereTheSoldiersAll) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), TOLBI_OLD_MAN, CONDITION_ALWAYS, MSGNO(MsgTolbiICouldStillBuySeatsFrom) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), TOLBI_SUSPICIOUS_OLD_WOMAN, CONDITION_ALWAYS, MSGNO(MsgTolbiNoMatterHowIAddIt) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), TOLBI_OLDER_BROTHER, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_TalkToOlderBrother) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), TOLBI_YOUNGER_SISTER, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_TalkToYoungerSister) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), TOLBI_SOUVENIR_SELLER, CONDITION_ALWAYS, MSGNO(MsgTolbiWeCantSellAnythingOnceThe) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), TOLBI_SNACK_VENDOR, CONDITION_ALWAYS, MSGNO(MsgTolbiThisIsTheFinalPushAnything) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), TOLBI_WOULD_BE_FIGHTER, CONDITION_ALWAYS, MSGNO(MsgTolbiFightingInColossoRequiresALot) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), TOLBI_XIAN_VISITOR, CONDITION_ALWAYS, MSGNO(MsgTolbiTheyreSellingFinalsSeatsRightAt) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), TOLBI_OVERSLEEPER, CONDITION_ALWAYS, MSGNO(MsgTolbiItsSupposedToBeFreeHaving) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), TOLBI_FATHER, CONDITION_ALWAYS, MSGNO(MsgTolbiOnceColossoEndsOurLivesCan) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), TOLBI_MOTHER, CONDITION_ALWAYS, MSGNO(MsgTolbiFestivalsAreSoExpensiveMyWallets) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), TOLBI_CRYING_BOY, CONDITION_ALWAYS, MSGNO(MsgTolbiMomYouSaidYouWereAll) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), TOLBI_SCALPER, CONDITION_ALWAYS, MSGNO(MsgTolbiTodayIsABigDayFor) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), TOLBI_SPRING_VISITOR, CONDITION_ALWAYS, MSGNO(MsgTolbiIKeepLosingCoinsButI) },
-    { MAP_EVENT_TALK, TOLBI_EMBER, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_JoinEmber) },
+    { MAP_EVENT_TALK, LOCALID_TOLBI_FATHER, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_TalkToFather) },
+    { MAP_EVENT_TALK, LOCALID_TOLBI_MOTHER, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_TalkToMother) },
+    { MAP_EVENT_TALK, LOCALID_TOLBI_CRYING_BOY, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_TalkToCryingBoy) },
+    { MAP_EVENT_TALK, LOCALID_TOLBI_SCALPER, CONDITION_ALWAYS, MSGNO(MsgTolbiTheFinalsStartTodayIWonder) },
+    { MAP_EVENT_TALK, LOCALID_TOLBI_SPRING_VISITOR, FLAG_TOLBI_SPRING_OPENED, EVENT_SCRIPT(Tolbi_TalkToSpringVisitor) },
+    { MAP_EVENT_TALK, LOCALID_TOLBI_SPRING_VISITOR, CONDITION_ALWAYS, MSGNO(MsgTolbiAhIGuessIJustDont) },
+    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_TOLBI_EXCITED_YOUNG_MAN, CONDITION_ALWAYS, MSGNO(MsgTolbiIveGotToGetToThe) },
+    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_TOLBI_HURRYING_WOMAN, CONDITION_ALWAYS, MSGNO(MsgTolbiABattleToTheDeathWith) },
+    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_TOLBI_FINALS_FAN, CONDITION_ALWAYS, MSGNO(MsgTolbiTheFinalsStartOnBabisSignal) },
+    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_TOLBI_WORRIED_WOMAN, CONDITION_ALWAYS, MSGNO(MsgTolbiSoWhyWereTheSoldiersAll) },
+    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_TOLBI_OLD_MAN, CONDITION_ALWAYS, MSGNO(MsgTolbiICouldStillBuySeatsFrom) },
+    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_TOLBI_SUSPICIOUS_OLD_WOMAN, CONDITION_ALWAYS, MSGNO(MsgTolbiNoMatterHowIAddIt) },
+    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_TOLBI_OLDER_BROTHER, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_TalkToOlderBrother) },
+    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_TOLBI_YOUNGER_SISTER, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_TalkToYoungerSister) },
+    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_TOLBI_SOUVENIR_SELLER, CONDITION_ALWAYS, MSGNO(MsgTolbiWeCantSellAnythingOnceThe) },
+    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_TOLBI_SNACK_VENDOR, CONDITION_ALWAYS, MSGNO(MsgTolbiThisIsTheFinalPushAnything) },
+    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_TOLBI_WOULD_BE_FIGHTER, CONDITION_ALWAYS, MSGNO(MsgTolbiFightingInColossoRequiresALot) },
+    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_TOLBI_XIAN_VISITOR, CONDITION_ALWAYS, MSGNO(MsgTolbiTheyreSellingFinalsSeatsRightAt) },
+    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_TOLBI_OVERSLEEPER, CONDITION_ALWAYS, MSGNO(MsgTolbiItsSupposedToBeFreeHaving) },
+    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_TOLBI_FATHER, CONDITION_ALWAYS, MSGNO(MsgTolbiOnceColossoEndsOurLivesCan) },
+    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_TOLBI_MOTHER, CONDITION_ALWAYS, MSGNO(MsgTolbiFestivalsAreSoExpensiveMyWallets) },
+    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_TOLBI_CRYING_BOY, CONDITION_ALWAYS, MSGNO(MsgTolbiMomYouSaidYouWereAll) },
+    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_TOLBI_SCALPER, CONDITION_ALWAYS, MSGNO(MsgTolbiTodayIsABigDayFor) },
+    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_TOLBI_SPRING_VISITOR, CONDITION_ALWAYS, MSGNO(MsgTolbiIKeepLosingCoinsButI) },
+    { MAP_EVENT_TALK, LOCALID_TOLBI_EMBER, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_JoinEmber) },
     { BG_EVENT(BG_EVENT_UNNAMED), TOLBI_SPRING_SIGN, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_ReadSpringSign) },
     { BG_EVENT(BG_EVENT_UNNAMED), TOLBI_LUCKY_MEDAL_SIGN, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_ReadLuckyMedalSign) },
     { BG_EVENT(BG_EVENT_BARREL), TOLBI_BARREL, FLAG_TOLBI_BARREL_COINS, FIND_COINS(9) },
     { BG_EVENT(BG_EVENT_JAR), TOLBI_JAR, FLAG_TOLBI_JAR_LUCKY_MEDAL, FIND_ITEM(ITEM_LUCKY_MEDAL) },
     { BG_EVENT(BG_EVENT_CHEST), TOLBI_HIDDEN_CHEST, FLAG_TOLBI_CHEST_POWER_BREAD, FIND_ITEM(ITEM_POWER_BREAD) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_FROST), TOLBI_PUDDLE, FLAG_MAP_TEMP_01, EVENT_SCRIPT(Tolbi_FreezePuddle) },
+    { PSYNERGY_ON_OBJ_EVENT(ABILITY_FROST), LOCALID_TOLBI_PUDDLE, FLAG_MAP_TEMP_01, EVENT_SCRIPT(Tolbi_FreezePuddle) },
     { PSYNERGY_IN_AREA(ABILITY_REVEAL, PSYNERGY_PHASE_EFFECT_ACTS), 0, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_RevealHiddenChest) },
     { PSYNERGY_IN_AREA(ABILITY_REVEAL, PSYNERGY_PHASE_EFFECT_ENDS), 0, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_HideRevealedChest) },
     { MAP_EVENTS_END },
@@ -997,7 +1018,7 @@ struct MapEvent gTolbiEventsFinalsDay[] = {
 
 /// After Colosso has ended.
 struct MapEvent gTolbiEventsAfterColosso[] = {
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_GROWTH), TOLBI_SPROUT, FLAG_MAP_TEMP_00, EVENT_SCRIPT(Tolbi_GrowSprout) },
+    { PSYNERGY_ON_OBJ_EVENT(ABILITY_GROWTH), LOCALID_TOLBI_SPROUT, FLAG_MAP_TEMP_00, EVENT_SCRIPT(Tolbi_GrowSprout) },
     { COORD_EVENT_WALKING_INTO(FACING_NORTH), TOLBI_TO_HOUSE_SOUTH, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_EnterDoor) },
     { COORD_EVENT_WALKING_INTO(FACING_NORTH), TOLBI_TO_HOUSE_NORTHWEST, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_EnterDoor) },
     { COORD_EVENT_WALKING_INTO(FACING_NORTH), TOLBI_TO_INN, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_EnterDoor) },
@@ -1013,36 +1034,36 @@ struct MapEvent gTolbiEventsAfterColosso[] = {
     { COORD_EVENT_WALKING_INTO(FACING_SOUTH), TOLBI_TO_WORLD_MAP, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_RequestTouchedWarp) },
     { MAP_EVENT_COORD | MAP_EVENT_FLAG_FACING | FACING_NORTH, TOLBI_TO_LUCKY_DICE, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_RequestTouchedWarp) },
     { MAP_EVENT_COORD | MAP_EVENT_FLAG_FACING | FACING_NORTH, TOLBI_CELL_SPRING_GATE, IF_FLAG_SET(FLAG_TOLBI_SPRING_OPENED), EVENT_SCRIPT(Tolbi_EnterSpring) },
-    { MAP_EVENT_TALK, TOLBI_EXCITED_YOUNG_MAN, CONDITION_ALWAYS, MSGNO(MsgTolbiWellThisYearsColossoHasEnded) },
-    { MAP_EVENT_TALK, TOLBI_HURRYING_WOMAN, CONDITION_ALWAYS, MSGNO(MsgTolbiItsBackToOurNormalQuiet) },
-    { MAP_EVENT_TALK, TOLBI_FINALS_FAN, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_AskWhetherPartyWasInFinals) },
-    { MAP_EVENT_TALK, TOLBI_WORRIED_WOMAN, CONDITION_ALWAYS, MSGNO(MsgTolbiWithAllThoseRevelersGoneThe) },
-    { MAP_EVENT_TALK, TOLBI_OLD_MAN, CONDITION_ALWAYS, MSGNO(MsgTolbiIHadNoLuckInThe) },
-    { MAP_EVENT_TALK, TOLBI_SUSPICIOUS_OLD_WOMAN, CONDITION_ALWAYS, MSGNO(MsgTolbiItsSoQuietTheHustleAnd) },
-    { MAP_EVENT_TALK, TOLBI_OLDER_BROTHER, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_TalkToOlderBrother) },
-    { MAP_EVENT_TALK, TOLBI_YOUNGER_SISTER, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_TalkToYoungerSister) },
-    { MAP_EVENT_TALK, TOLBI_SOUVENIR_SELLER, CONDITION_ALWAYS, MSGNO(MsgTolbiIllBeBackToDoBusiness) },
-    { MAP_EVENT_TALK, TOLBI_SNACK_VENDOR, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_TalkToSnackVendor) },
-    { MAP_EVENT_TALK, TOLBI_SPRING_VISITOR, FLAG_TOLBI_SPRING_OPENED, EVENT_SCRIPT(Tolbi_TalkToSpringVisitor) },
-    { MAP_EVENT_TALK, TOLBI_SPRING_VISITOR, CONDITION_ALWAYS, MSGNO(MsgTolbiAhIGuessIJustDont) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), TOLBI_EXCITED_YOUNG_MAN, CONDITION_ALWAYS, MSGNO(MsgTolbiTheSpectatorsHaveAllLeftSo) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), TOLBI_HURRYING_WOMAN, CONDITION_ALWAYS, MSGNO(MsgTolbiThinkHowFunItWouldBe) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), TOLBI_FINALS_FAN, CONDITION_ALWAYS, MSGNO(MsgTolbiAllTheWarriorsWhoGainFame) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), TOLBI_WORRIED_WOMAN, CONDITION_ALWAYS, MSGNO(MsgTolbiComeToThinkOfItNo) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), TOLBI_OLD_MAN, CONDITION_ALWAYS, MSGNO(MsgTolbiHmmSinceColossoEndedSoDramatically) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), TOLBI_SUSPICIOUS_OLD_WOMAN, CONDITION_ALWAYS, MSGNO(MsgTolbiTheCalmAfterTheStormIs) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), TOLBI_OLDER_BROTHER, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_TalkToOlderBrother) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), TOLBI_YOUNGER_SISTER, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_TalkToYoungerSister) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), TOLBI_SOUVENIR_SELLER, CONDITION_ALWAYS, MSGNO(MsgTolbiEveryYearITryToSell) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), TOLBI_SNACK_VENDOR, CONDITION_ALWAYS, MSGNO(MsgTolbiHowCanWeGetHomeIf) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), TOLBI_SPRING_VISITOR, CONDITION_ALWAYS, MSGNO(MsgTolbiIKeepLosingCoinsButI) },
-    { MAP_EVENT_TALK, TOLBI_EMBER, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_JoinEmber) },
+    { MAP_EVENT_TALK, LOCALID_TOLBI_EXCITED_YOUNG_MAN, CONDITION_ALWAYS, MSGNO(MsgTolbiWellThisYearsColossoHasEnded) },
+    { MAP_EVENT_TALK, LOCALID_TOLBI_HURRYING_WOMAN, CONDITION_ALWAYS, MSGNO(MsgTolbiItsBackToOurNormalQuiet) },
+    { MAP_EVENT_TALK, LOCALID_TOLBI_FINALS_FAN, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_AskWhetherPartyWasInFinals) },
+    { MAP_EVENT_TALK, LOCALID_TOLBI_WORRIED_WOMAN, CONDITION_ALWAYS, MSGNO(MsgTolbiWithAllThoseRevelersGoneThe) },
+    { MAP_EVENT_TALK, LOCALID_TOLBI_OLD_MAN, CONDITION_ALWAYS, MSGNO(MsgTolbiIHadNoLuckInThe) },
+    { MAP_EVENT_TALK, LOCALID_TOLBI_SUSPICIOUS_OLD_WOMAN, CONDITION_ALWAYS, MSGNO(MsgTolbiItsSoQuietTheHustleAnd) },
+    { MAP_EVENT_TALK, LOCALID_TOLBI_OLDER_BROTHER, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_TalkToOlderBrother) },
+    { MAP_EVENT_TALK, LOCALID_TOLBI_YOUNGER_SISTER, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_TalkToYoungerSister) },
+    { MAP_EVENT_TALK, LOCALID_TOLBI_SOUVENIR_SELLER, CONDITION_ALWAYS, MSGNO(MsgTolbiIllBeBackToDoBusiness) },
+    { MAP_EVENT_TALK, LOCALID_TOLBI_SNACK_VENDOR, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_TalkToSnackVendor) },
+    { MAP_EVENT_TALK, LOCALID_TOLBI_SPRING_VISITOR, FLAG_TOLBI_SPRING_OPENED, EVENT_SCRIPT(Tolbi_TalkToSpringVisitor) },
+    { MAP_EVENT_TALK, LOCALID_TOLBI_SPRING_VISITOR, CONDITION_ALWAYS, MSGNO(MsgTolbiAhIGuessIJustDont) },
+    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_TOLBI_EXCITED_YOUNG_MAN, CONDITION_ALWAYS, MSGNO(MsgTolbiTheSpectatorsHaveAllLeftSo) },
+    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_TOLBI_HURRYING_WOMAN, CONDITION_ALWAYS, MSGNO(MsgTolbiThinkHowFunItWouldBe) },
+    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_TOLBI_FINALS_FAN, CONDITION_ALWAYS, MSGNO(MsgTolbiAllTheWarriorsWhoGainFame) },
+    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_TOLBI_WORRIED_WOMAN, CONDITION_ALWAYS, MSGNO(MsgTolbiComeToThinkOfItNo) },
+    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_TOLBI_OLD_MAN, CONDITION_ALWAYS, MSGNO(MsgTolbiHmmSinceColossoEndedSoDramatically) },
+    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_TOLBI_SUSPICIOUS_OLD_WOMAN, CONDITION_ALWAYS, MSGNO(MsgTolbiTheCalmAfterTheStormIs) },
+    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_TOLBI_OLDER_BROTHER, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_TalkToOlderBrother) },
+    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_TOLBI_YOUNGER_SISTER, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_TalkToYoungerSister) },
+    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_TOLBI_SOUVENIR_SELLER, CONDITION_ALWAYS, MSGNO(MsgTolbiEveryYearITryToSell) },
+    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_TOLBI_SNACK_VENDOR, CONDITION_ALWAYS, MSGNO(MsgTolbiHowCanWeGetHomeIf) },
+    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_TOLBI_SPRING_VISITOR, CONDITION_ALWAYS, MSGNO(MsgTolbiIKeepLosingCoinsButI) },
+    { MAP_EVENT_TALK, LOCALID_TOLBI_EMBER, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_JoinEmber) },
     { BG_EVENT(BG_EVENT_UNNAMED), TOLBI_SPRING_SIGN, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_ReadSpringSign) },
     { BG_EVENT(BG_EVENT_UNNAMED), TOLBI_LUCKY_MEDAL_SIGN, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_ReadLuckyMedalSign) },
     { BG_EVENT(BG_EVENT_BARREL), TOLBI_BARREL, FLAG_TOLBI_BARREL_COINS, FIND_COINS(9) },
     { BG_EVENT(BG_EVENT_JAR), TOLBI_JAR, FLAG_TOLBI_JAR_LUCKY_MEDAL, FIND_ITEM(ITEM_LUCKY_MEDAL) },
     { BG_EVENT(BG_EVENT_CHEST), TOLBI_HIDDEN_CHEST, FLAG_TOLBI_CHEST_POWER_BREAD, FIND_ITEM(ITEM_POWER_BREAD) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_FROST), TOLBI_PUDDLE, FLAG_MAP_TEMP_01, EVENT_SCRIPT(Tolbi_FreezePuddle) },
+    { PSYNERGY_ON_OBJ_EVENT(ABILITY_FROST), LOCALID_TOLBI_PUDDLE, FLAG_MAP_TEMP_01, EVENT_SCRIPT(Tolbi_FreezePuddle) },
     { PSYNERGY_IN_AREA(ABILITY_REVEAL, PSYNERGY_PHASE_EFFECT_ACTS), 0, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_RevealHiddenChest) },
     { PSYNERGY_IN_AREA(ABILITY_REVEAL, PSYNERGY_PHASE_EFFECT_ENDS), 0, CONDITION_ALWAYS, EVENT_SCRIPT(Tolbi_HideRevealedChest) },
     { MAP_EVENTS_END },

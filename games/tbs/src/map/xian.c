@@ -1,8 +1,8 @@
 /// @file
 /// MapId_Xian, the village of Xian. Its houses, shops and inn are
 /// xian_interiors.c; Master Feh's school is a room of the Fuchin Temple overlay
-/// (FuchinTempleInteriors, which XIAN_TO_FUCHIN_TEMPLE_INTERIORS leads into;
-/// fuchin_temple.c).
+/// (FuchinTempleInteriors, which XIAN_TO_FUCHIN_TEMPLE_INTERIORS_FEHS_SCHOOL
+/// leads into; fuchin_temple.c).
 ///
 /// The village's talk turns on FLAG_XIAN_HEARD_HSU_TRAPPED, which Master
 /// Hama's Reveal lesson at Lama Temple sets: every villager's talk and Mind
@@ -34,10 +34,11 @@
 /// A jar holds a Lucky Medal. Five doors lead into the houses, shops and inn
 /// (MapId_XianInteriors, XIAN_TO_HOUSE to XIAN_TO_WEAPON_AND_ARMOR_SHOP),
 /// XIAN_TO_SANCTUM into Xian Sanctum, its sliding door playing SE_188,
-/// XIAN_TO_FUCHIN_TEMPLE_INTERIORS into Master Feh's school, and
+/// XIAN_TO_FUCHIN_TEMPLE_INTERIORS_FEHS_SCHOOL into Master Feh's school, and
 /// XIAN_TO_WORLD_MAP out to the world map. Coming back from the school
-/// (XIAN_FROM_FUCHIN_TEMPLE_INTERIORS) or the Sanctum (XIAN_FROM_SANCTUM_WEST)
-/// clears FLAG_SHOW_LOCATION_NAME, so the name is not shown again.
+/// (XIAN_FROM_FUCHIN_TEMPLE_INTERIORS_FEHS_SCHOOL) or the Sanctum
+/// (XIAN_FROM_SANCTUM_WEST) clears FLAG_SHOW_LOCATION_NAME, so the name is not
+/// shown again.
 ///
 /// Open questions:
 ///
@@ -688,7 +689,7 @@ static void Xian_WalkThroughExit(s32 warpNumber) {
 /// Walking north into one of Xian's doors: it opens and the party goes in. Each
 /// door's metatile behavior is the number of the warp it leads by: five lead
 /// into the houses, shops and inn, XIAN_TO_SANCTUM into Xian Sanctum (SE_188)
-/// and XIAN_TO_FUCHIN_TEMPLE_INTERIORS into Master Feh's school.
+/// and XIAN_TO_FUCHIN_TEMPLE_INTERIORS_FEHS_SCHOOL into Master Feh's school.
 static void Xian_OpenDoorAndLeave(void) {
   struct EventWork *work = gEventWork;
 
@@ -719,7 +720,7 @@ static void Xian_OpenDoorAndLeave(void) {
     Engine_AudioPlayCue(SE_188);
     Engine_MapGridAnimateCells(gXian_SanctumDoorOpens, 69, 11);
     break;
-  case XIAN_TO_FUCHIN_TEMPLE_INTERIORS:
+  case XIAN_TO_FUCHIN_TEMPLE_INTERIORS_FEHS_SCHOOL:
     Engine_AudioPlayCue(SE_DOOR_OPEN);
     Engine_MapGridAnimateCells(gXian_SchoolDoorOpens, 83, 7);
     break;
@@ -823,10 +824,10 @@ s32 Xian_Initialize(void) {
 
   gEventWork->startTransition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   FieldEffect_SetQueuedSoundAndPlay(SE_169);
-  // Back from the school (XIAN_FROM_FUCHIN_TEMPLE_INTERIORS) or the Sanctum
-  // (XIAN_FROM_SANCTUM_WEST), the last two warp destinations, the name is not
-  // shown.
-  if (gGameState.warpDest >= XIAN_FROM_FUCHIN_TEMPLE_INTERIORS) {
+  // Back from the school (XIAN_FROM_FUCHIN_TEMPLE_INTERIORS_FEHS_SCHOOL) or the
+  // Sanctum (XIAN_FROM_SANCTUM_WEST), the last two warp destinations, the name
+  // is not shown.
+  if (gGameState.warpDest >= XIAN_FROM_FUCHIN_TEMPLE_INTERIORS_FEHS_SCHOOL) {
     Engine_GameFlagClear(FLAG_SHOW_LOCATION_NAME);
   }
   if (Engine_GameFlagIsSet(FLAG_XIAN_HEARD_HSU_TRAPPED)) {
@@ -1017,8 +1018,8 @@ struct MapWarpDest gXian_WarpDests[] = {
      FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {XIAN_FROM_XIAN_INTERIORS_WEST, CONDITION_ALWAYS, 216, 0, 184, FACING_SOUTH,
      0, -1, -1, -1, -1, 0},
-    {XIAN_FROM_FUCHIN_TEMPLE_INTERIORS, CONDITION_ALWAYS, 392, 0, 184,
-     FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {XIAN_FROM_FUCHIN_TEMPLE_INTERIORS_FEHS_SCHOOL, CONDITION_ALWAYS, 392, 0,
+     184, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {XIAN_FROM_SANCTUM_WEST, CONDITION_ALWAYS, 176, 0, 216, FACING_SOUTH, 0, -1,
      -1, -1, -1, 0},
     {MAP_TABLE_END},
@@ -1034,8 +1035,8 @@ u32 gXian_Warps[] = {
     MAP_WARP(XIAN_TO_WEAPON_AND_ARMOR_SHOP, XianInteriors,
              XIAN_INTERIORS_WEAPON_AND_ARMOR_SHOP),
     MAP_WARP(XIAN_TO_SANCTUM, Sanctum, SANCTUM_FROM_XIAN),
-    MAP_WARP(XIAN_TO_FUCHIN_TEMPLE_INTERIORS, FuchinTempleInteriors,
-             FUCHIN_TEMPLE_INTERIORS_FROM_XIAN),
+    MAP_WARP(XIAN_TO_FUCHIN_TEMPLE_INTERIORS_FEHS_SCHOOL, FuchinTempleInteriors,
+             FUCHIN_TEMPLE_INTERIORS_FEHS_SCHOOL_FROM_XIAN),
     MAP_WARP(XIAN_TO_WORLD_MAP, WorldMap, WORLD_MAP_FROM_XIAN),
     MAP_WARPS_END,
 };

@@ -1,5 +1,5 @@
-#ifndef ALCHEMY_UNIT_MAP_LUNPA_SUHALLA_H
-#define ALCHEMY_UNIT_MAP_LUNPA_SUHALLA_H
+#ifndef ALCHEMY_UNIT_MAP_LUNPA_INTERIORS_H
+#define ALCHEMY_UNIT_MAP_LUNPA_INTERIORS_H
 
 #include "types.h"
 #include "map_tables.h"

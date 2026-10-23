@@ -188,54 +188,58 @@ static void ColosseumSatrageMatch_PushAdjacentObstacle(void);
 /// stage, the Log-Rolling Stage, The Wall and the Board Walk lead to the arena.
 /// The stone pillars are drawn as the stone pillars Move pushes elsewhere.
 enum ColosseumSatrageMatchLocalId {
-  OPPONENT = LOCALID_FIRST_PLACED, ///< Satrage, racing Isaac to the arena
+  LOCALID_OPPONENT =
+      LOCALID_FIRST_PLACED, ///< Satrage, racing Isaac to the arena
   /// The Board Walk's two stone pillars, on which Move does nothing.
-  BOARD_WALK_WEST_PILLAR,
-  BOARD_WALK_EAST_PILLAR,
-  WALL_PILLAR, ///< the stone pillar by The Wall, pushed or moved with Move
+  LOCALID_BOARD_WALK_WEST_PILLAR,
+  LOCALID_BOARD_WALK_EAST_PILLAR,
+  LOCALID_WALL_PILLAR, ///< the stone pillar by The Wall, pushed or moved with
+                       ///< Move
   /// The Mini-Maze's three stone pillars, pushed or moved with Move.
   /// ColosseumSatrageMatch_Initialize stands them west to east, at columns 73,
   /// 76 and 79, until they have been moved.
-  MINI_MAZE_FIRST_PILLAR,
+  LOCALID_MINI_MAZE_FIRST_PILLAR,
   /// The Board Walk's three logs, in the room of its stone pillars
   /// (https://alchemy.pascalpixel.com/places/colosseum-satrage-match/map-1.png):
   /// the western and eastern logs roll, and the center one never does
   /// (ColosseumSatrageMatch_UnusedRollCenterLogNorth).
-  ROLLING_LOG_WEST = MINI_MAZE_FIRST_PILLAR + 3,
-  ROLLING_LOG_EAST,
-  ROLLING_LOG_CENTER,
-  FORCE_TARGET,
-  GROWTH_PLANT,
+  LOCALID_ROLLING_LOG_WEST = LOCALID_MINI_MAZE_FIRST_PILLAR + 3,
+  LOCALID_ROLLING_LOG_EAST,
+  LOCALID_ROLLING_LOG_CENTER,
+  LOCALID_FORCE_TARGET,
+  LOCALID_GROWTH_PLANT,
   /// The Log-Rolling Stage's two Frost targets, drawn as the puddle Frost
   /// freezes in Lunpa (lunpa.h's SPRITE_PUDDLE).
-  FROST_TARGET_WEST,
-  FROST_TARGET_EAST,
+  LOCALID_FROST_TARGET_WEST,
+  LOCALID_FROST_TARGET_EAST,
   /// The shifting floor stage's four lifts, from west to east, which the
   /// lifts' operator runs.
-  COLOSSEUM_SATRAGE_MATCH_FIRST_LIFT,
-  COLOSSEUM_SATRAGE_MATCH_LAST_LIFT = COLOSSEUM_SATRAGE_MATCH_FIRST_LIFT + 3,
+  LOCALID_COLOSSEUM_SATRAGE_MATCH_FIRST_LIFT,
+  LOCALID_COLOSSEUM_SATRAGE_MATCH_LAST_LIFT =
+          LOCALID_COLOSSEUM_SATRAGE_MATCH_FIRST_LIFT +
+      3,
   /// Four platforms in the lifts' sprite laid across the water channel at the
   /// Board Walk's south edge, drawn underfoot; nothing but
   /// ColosseumSatrageMatch_Initialize touches them.
   /// ★ Named from what the player sees: four white platforms across a water
   /// channel (its render)
-  BOARD_WALK_FIRST_PLATFORM,
-  /// Knocked down onto the Board Walk by Force on FORCE_TARGET.
-  FALLING_OBSTACLE = BOARD_WALK_FIRST_PLATFORM + 4,
+  LOCALID_BOARD_WALK_FIRST_PLATFORM,
+  /// Knocked down onto the Board Walk by Force on LOCALID_FORCE_TARGET.
+  LOCALID_FALLING_OBSTACLE = LOCALID_BOARD_WALK_FIRST_PLATFORM + 4,
   /// "The operator of the lifts", as the shifting floor stage's attendant
   /// calls him: a young man with fair hair.
-  LIFT_OPERATOR,
-  RIDING_LOG_NORTH, ///< the Log-Rolling Stage's two logs
-  RIDING_LOG_SOUTH,
-  GUIDE, ///< a soldier who explains the second finals match
+  LOCALID_LIFT_OPERATOR,
+  LOCALID_RIDING_LOG_NORTH, ///< the Log-Rolling Stage's two logs
+  LOCALID_RIDING_LOG_SOUTH,
+  LOCALID_GUIDE, ///< a soldier who explains the second finals match
   /// The stages' attendants, young men with fair hair in white tunics.
-  MINI_MAZE_ATTENDANT,
-  SHIFTING_FLOOR_ATTENDANT,
-  LOG_ROLLING_ATTENDANT,
-  WALL_ATTENDANT,
-  BOARD_WALK_ATTENDANT,
-  PRIZE_A, ///< the arena's Chain Mail and Cotton Shirt
-  PRIZE_B
+  LOCALID_MINI_MAZE_ATTENDANT,
+  LOCALID_SHIFTING_FLOOR_ATTENDANT,
+  LOCALID_LOG_ROLLING_ATTENDANT,
+  LOCALID_WALL_ATTENDANT,
+  LOCALID_BOARD_WALK_ATTENDANT,
+  LOCALID_PRIZE_A, ///< the arena's Chain Mail and Cotton Shirt
+  LOCALID_PRIZE_B
 };
 
 /// The temporary flags that keep what the friends changed on the stages, for
@@ -252,7 +256,7 @@ enum {
   /// ★ Named from the game: "Growth" (MsgAbilityName)
   FLAG_PLANT_GROWN = FLAG_MAPSEC_TEMP_33, ///< by Growth, up The Wall
   /// ★ Named from the game: "Halt" (MsgAbilityName)
-  FLAG_LIFTS_HALTED = FLAG_MAPSEC_TEMP_34, ///< by Halt on LIFT_OPERATOR
+  FLAG_LIFTS_HALTED = FLAG_MAPSEC_TEMP_34, ///< by Halt on LOCALID_LIFT_OPERATOR
   /// The stone pillar by The Wall stands at column 36.
   /// ★ Named from the game: "The fans just call this The Wall."
   /// (MsgColossoFansJustCallWall)
@@ -315,7 +319,7 @@ static void EventScript_UpdateMovedPillarCell(void) {
   s32 column;
   s32 row;
 
-  obstacle = ObjectEvent_GetById(WALL_PILLAR);
+  obstacle = ObjectEvent_GetById(LOCALID_WALL_PILLAR);
   if ((obstacle->x.fixed >> 20) == 36) {
     Engine_GameFlagSet(FLAG_WALL_PILLAR_MOVED);
     column = 0x23;
@@ -346,17 +350,17 @@ static void EventScript_SaveMovedPillarColumns(void) {
 
   MapGrid_CopyCellAttributes(100, 11, 12, 4, 14, 11);
 
-  obstacle = ObjectEvent_GetById(MINI_MAZE_FIRST_PILLAR);
+  obstacle = ObjectEvent_GetById(LOCALID_MINI_MAZE_FIRST_PILLAR);
   column = obstacle->x.fixed >> 20;
   FieldGameFlag_SetByte(FLAG_MINI_MAZE_FIRST_PILLAR_COLUMN, column);
   MapGrid_CopyCellAttributes(71, 16, 1, 1, column, 16);
 
-  obstacle = ObjectEvent_GetById(MINI_MAZE_FIRST_PILLAR + 1);
+  obstacle = ObjectEvent_GetById(LOCALID_MINI_MAZE_FIRST_PILLAR + 1);
   column = obstacle->x.fixed >> 20;
   FieldGameFlag_SetByte(FLAG_MINI_MAZE_SECOND_PILLAR_COLUMN, column);
   MapGrid_CopyCellAttributes(71, 16, 1, 1, column, 16);
 
-  obstacle = ObjectEvent_GetById(MINI_MAZE_FIRST_PILLAR + 2);
+  obstacle = ObjectEvent_GetById(LOCALID_MINI_MAZE_FIRST_PILLAR + 2);
   column = obstacle->x.fixed >> 20;
   FieldGameFlag_SetByte(FLAG_MINI_MAZE_THIRD_PILLAR_COLUMN, column);
   MapGrid_CopyCellAttributes(71, 16, 1, 1, column, 16);
@@ -380,7 +384,7 @@ static void EventScript_KnockDownObstacle(void) {
   s32 settleRotationStep;
   struct AnimationObject *sprite;
 
-  obstacle = ObjectEvent_GetById(FALLING_OBSTACLE);
+  obstacle = ObjectEvent_GetById(LOCALID_FALLING_OBSTACLE);
   sprite = obstacle->sprite;
   GameFlag_Set(FLAG_OBSTACLE_KNOCKED_DOWN);
   obstacle->acceleration = 0x1999;
@@ -408,7 +412,8 @@ static void EventScript_KnockDownObstacle(void) {
 
     sprite->rotation = rotation;
   }
-  Engine_ObjectEventSetAnimation(FALLING_OBSTACLE, ANIMATION_SHAKE_HEAD);
+  Engine_ObjectEventSetAnimation(LOCALID_FALLING_OBSTACLE,
+                                 ANIMATION_SHAKE_HEAD);
   obstacle->x.fixed = PIXELS(336);
   obstacle->y.fixed = -PIXELS(8);
   obstacle->z.fixed = PIXELS(264);
@@ -425,7 +430,7 @@ static void EventScript_FreezeWestTarget(void) {
   struct ObjectEvent *obstacle;
 
   Engine_GameFlagSet(FLAG_WEST_TARGET_FROZEN);
-  obstacle = ObjectEvent_GetById(FROST_TARGET_WEST);
+  obstacle = ObjectEvent_GetById(LOCALID_FROST_TARGET_WEST);
   obstacle->motionFlags = 0;
   {
 
@@ -439,7 +444,7 @@ static void EventScript_FreezeEastTarget(void) {
   struct ObjectEvent *obstacle;
 
   Engine_GameFlagSet(FLAG_EAST_TARGET_FROZEN);
-  obstacle = ObjectEvent_GetById(FROST_TARGET_EAST);
+  obstacle = ObjectEvent_GetById(LOCALID_FROST_TARGET_EAST);
   obstacle->motionFlags = 0;
   {
 
@@ -529,10 +534,10 @@ static void EventScript_RideLog(void) {
   struct ObjectEvent *pusher = ObjectEvent_GetById(gGameState.selectedLocalId);
   s32 column = pusher->x.fixed >> 20;
   s32 offsetX = 0;
-  s32 logId = RIDING_LOG_NORTH;
+  s32 logId = LOCALID_RIDING_LOG_NORTH;
 
   if (pusher->z.fixed >> 20 > 12) {
-    logId = RIDING_LOG_SOUTH;
+    logId = LOCALID_RIDING_LOG_SOUTH;
   }
   if (ObjectEvent_GetById(logId)->x.fixed >> 20 != column) {
     return;
@@ -548,9 +553,9 @@ static void EventScript_RideLog(void) {
     ColosseumSatrageMatch_MovePusherAndLog(logId, offsetX, 0);
     // Replace both log footprints after the moving pair has stopped.
     MapGrid_CopyCellAttributes(120, 10, 5, 6, 48, 10);
-    column = ObjectEvent_GetById(RIDING_LOG_NORTH)->x.fixed >> 20;
+    column = ObjectEvent_GetById(LOCALID_RIDING_LOG_NORTH)->x.fixed >> 20;
     MapGrid_CopyCellAttributes(52, 28, 1, 3, column, 10);
-    column = ObjectEvent_GetById(RIDING_LOG_SOUTH)->x.fixed >> 20;
+    column = ObjectEvent_GetById(LOCALID_RIDING_LOG_SOUTH)->x.fixed >> 20;
     MapGrid_CopyCellAttributes(52, 28, 1, 3, column, 13);
   }
 }
@@ -614,13 +619,13 @@ static void ColosseumSatrageMatch_UpdateRollingLogCollision(void) {
 
   MapGrid_CopyCellAttributes(100, 11, 12, 4, 14, 11);
 
-  cell = ObjectEvent_GetById(ROLLING_LOG_WEST)->x.fixed >> 20;
+  cell = ObjectEvent_GetById(LOCALID_ROLLING_LOG_WEST)->x.fixed >> 20;
   MapGrid_CopyCellAttributes(13, 28, 1, 4, cell, 11);
 
-  cell = ObjectEvent_GetById(ROLLING_LOG_EAST)->x.fixed >> 20;
+  cell = ObjectEvent_GetById(LOCALID_ROLLING_LOG_EAST)->x.fixed >> 20;
   MapGrid_CopyCellAttributes(13, 28, 1, 4, cell, 11);
 
-  cell = ObjectEvent_GetById(ROLLING_LOG_CENTER)->z.fixed >> 20;
+  cell = ObjectEvent_GetById(LOCALID_ROLLING_LOG_CENTER)->z.fixed >> 20;
   MapGrid_CopyCellAttributes(13, 28, 4, 1, 18, cell);
 }
 
@@ -629,28 +634,28 @@ static void ColosseumSatrageMatch_UpdateRollingLogCollision(void) {
 /// eastern one from the east (28) or the west (27), rolls it the way the leader
 /// walks.
 static void EventScript_RollWestLogWest(void) {
-  ColosseumSatrageMatch_RollLogToCell(ROLLING_LOG_WEST, 29, 26);
+  ColosseumSatrageMatch_RollLogToCell(LOCALID_ROLLING_LOG_WEST, 29, 26);
   ColosseumSatrageMatch_UpdateRollingLogCollision();
 }
 
 /// Walking east into the Board Walk's western log (coord event 25) rolls it
 /// east.
 static void EventScript_RollWestLogEast(void) {
-  ColosseumSatrageMatch_RollLogToCell(ROLLING_LOG_WEST, 33, 26);
+  ColosseumSatrageMatch_RollLogToCell(LOCALID_ROLLING_LOG_WEST, 33, 26);
   ColosseumSatrageMatch_UpdateRollingLogCollision();
 }
 
 /// Walking west into the Board Walk's eastern log (coord event 28) rolls it
 /// west.
 static void EventScript_RollEastLogWest(void) {
-  ColosseumSatrageMatch_RollLogToCell(ROLLING_LOG_EAST, 45, 26);
+  ColosseumSatrageMatch_RollLogToCell(LOCALID_ROLLING_LOG_EAST, 45, 26);
   ColosseumSatrageMatch_UpdateRollingLogCollision();
 }
 
 /// Walking east into the Board Walk's eastern log (coord event 27) rolls it
 /// east.
 static void EventScript_RollEastLogEast(void) {
-  ColosseumSatrageMatch_RollLogToCell(ROLLING_LOG_EAST, 49, 26);
+  ColosseumSatrageMatch_RollLogToCell(LOCALID_ROLLING_LOG_EAST, 49, 26);
   ColosseumSatrageMatch_UpdateRollingLogCollision();
 }
 
@@ -658,14 +663,14 @@ static void EventScript_RollEastLogEast(void) {
 /// rolls. Walking into it would have rolled it north, as the western and
 /// eastern logs roll west and east (EventScript_RollWestLogWest and the rest).
 static UNUSED void ColosseumSatrageMatch_UnusedRollCenterLogNorth(void) {
-  ColosseumSatrageMatch_RollLogToCell(ROLLING_LOG_CENTER, 40, 23);
+  ColosseumSatrageMatch_RollLogToCell(LOCALID_ROLLING_LOG_CENTER, 40, 23);
   ColosseumSatrageMatch_UpdateRollingLogCollision();
 }
 
 /// Unused: as ColosseumSatrageMatch_UnusedRollCenterLogNorth, rolling the
 /// center log south.
 static UNUSED void ColosseumSatrageMatch_UnusedRollCenterLogSouth(void) {
-  ColosseumSatrageMatch_RollLogToCell(ROLLING_LOG_CENTER, 40, 25);
+  ColosseumSatrageMatch_RollLogToCell(LOCALID_ROLLING_LOG_CENTER, 40, 25);
   ColosseumSatrageMatch_UpdateRollingLogCollision();
 }
 
@@ -687,8 +692,8 @@ static void ColosseumSatrageMatch_UpdateLifts(void) {
   rider = ObjectEvent_GetById(gGameState.selectedLocalId);
   // Carry a rider only while both horizontal distances are less than ten
   // pixels.
-  for (liftId = COLOSSEUM_SATRAGE_MATCH_FIRST_LIFT;
-       liftId <= COLOSSEUM_SATRAGE_MATCH_LAST_LIFT; liftId++) {
+  for (liftId = LOCALID_COLOSSEUM_SATRAGE_MATCH_FIRST_LIFT;
+       liftId <= LOCALID_COLOSSEUM_SATRAGE_MATCH_LAST_LIFT; liftId++) {
     lift = ObjectEvent_GetById(liftId);
     lift->paused = 0;
     liftX = lift->x.fixed;
@@ -741,29 +746,33 @@ static void ColosseumSatrageMatch_UpdateLifts(void) {
   if (gColosseumSatrageMatch_LiftTimer == 0) {
     gColosseumSatrageMatch_LiftPhase ^= 1;
     if (gColosseumSatrageMatch_LiftPhase != 0) {
-      liftObjectEvent = ObjectEvent_GetById(COLOSSEUM_SATRAGE_MATCH_FIRST_LIFT);
+      liftObjectEvent =
+          ObjectEvent_GetById(LOCALID_COLOSSEUM_SATRAGE_MATCH_FIRST_LIFT);
       FieldObject_SetPosition(liftObjectEvent, PIXELS(936), 0, PIXELS(184));
       liftObjectEvent =
-          ObjectEvent_GetById(COLOSSEUM_SATRAGE_MATCH_FIRST_LIFT + 1);
+          ObjectEvent_GetById(LOCALID_COLOSSEUM_SATRAGE_MATCH_FIRST_LIFT + 1);
       FieldObject_SetPosition(liftObjectEvent, PIXELS(968), 0, PIXELS(248));
       liftObjectEvent =
-          ObjectEvent_GetById(COLOSSEUM_SATRAGE_MATCH_FIRST_LIFT + 2);
+          ObjectEvent_GetById(LOCALID_COLOSSEUM_SATRAGE_MATCH_FIRST_LIFT + 2);
       FieldObject_SetPosition(liftObjectEvent, PIXELS(1000), 0, PIXELS(184));
-      liftObjectEvent = ObjectEvent_GetById(COLOSSEUM_SATRAGE_MATCH_LAST_LIFT);
+      liftObjectEvent =
+          ObjectEvent_GetById(LOCALID_COLOSSEUM_SATRAGE_MATCH_LAST_LIFT);
       FieldObject_SetPosition(liftObjectEvent, PIXELS(1032), 0, PIXELS(248));
-      Engine_ObjectEventSetAnimation(LIFT_OPERATOR, 11);
+      Engine_ObjectEventSetAnimation(LOCALID_LIFT_OPERATOR, 11);
     } else {
-      liftObjectEvent = ObjectEvent_GetById(COLOSSEUM_SATRAGE_MATCH_FIRST_LIFT);
+      liftObjectEvent =
+          ObjectEvent_GetById(LOCALID_COLOSSEUM_SATRAGE_MATCH_FIRST_LIFT);
       FieldObject_SetPosition(liftObjectEvent, PIXELS(936), 0, PIXELS(216));
       liftObjectEvent =
-          ObjectEvent_GetById(COLOSSEUM_SATRAGE_MATCH_FIRST_LIFT + 1);
+          ObjectEvent_GetById(LOCALID_COLOSSEUM_SATRAGE_MATCH_FIRST_LIFT + 1);
       FieldObject_SetPosition(liftObjectEvent, PIXELS(968), 0, PIXELS(216));
       liftObjectEvent =
-          ObjectEvent_GetById(COLOSSEUM_SATRAGE_MATCH_FIRST_LIFT + 2);
+          ObjectEvent_GetById(LOCALID_COLOSSEUM_SATRAGE_MATCH_FIRST_LIFT + 2);
       FieldObject_SetPosition(liftObjectEvent, PIXELS(1000), 0, PIXELS(216));
-      liftObjectEvent = ObjectEvent_GetById(COLOSSEUM_SATRAGE_MATCH_LAST_LIFT);
+      liftObjectEvent =
+          ObjectEvent_GetById(LOCALID_COLOSSEUM_SATRAGE_MATCH_LAST_LIFT);
       FieldObject_SetPosition(liftObjectEvent, PIXELS(1032), 0, PIXELS(216));
-      Engine_ObjectEventSetAnimation(LIFT_OPERATOR, 10);
+      Engine_ObjectEventSetAnimation(LOCALID_LIFT_OPERATOR, 10);
     }
   }
   gColosseumSatrageMatch_LiftTimer++;
@@ -780,15 +789,15 @@ static void ColosseumSatrageMatch_ResetLifts(void) {
   gColosseumSatrageMatch_LiftTimer = 0;
   gColosseumSatrageMatch_LiftPhase = 0;
   Engine_TaskRemoveCallback(ColosseumSatrageMatch_UpdateLifts);
-  ObjectEvent_SetPosition(COLOSSEUM_SATRAGE_MATCH_FIRST_LIFT, PIXELS(936),
-                          PIXELS(216));
-  ObjectEvent_SetPosition(COLOSSEUM_SATRAGE_MATCH_FIRST_LIFT + 1, PIXELS(968),
-                          PIXELS(216));
-  ObjectEvent_SetPosition(COLOSSEUM_SATRAGE_MATCH_FIRST_LIFT + 2, PIXELS(1000),
-                          PIXELS(216));
-  ObjectEvent_SetPosition(COLOSSEUM_SATRAGE_MATCH_LAST_LIFT, PIXELS(1032),
-                          PIXELS(216));
-  Engine_ObjectEventSetAnimation(LIFT_OPERATOR, 10);
+  ObjectEvent_SetPosition(LOCALID_COLOSSEUM_SATRAGE_MATCH_FIRST_LIFT,
+                          PIXELS(936), PIXELS(216));
+  ObjectEvent_SetPosition(LOCALID_COLOSSEUM_SATRAGE_MATCH_FIRST_LIFT + 1,
+                          PIXELS(968), PIXELS(216));
+  ObjectEvent_SetPosition(LOCALID_COLOSSEUM_SATRAGE_MATCH_FIRST_LIFT + 2,
+                          PIXELS(1000), PIXELS(216));
+  ObjectEvent_SetPosition(LOCALID_COLOSSEUM_SATRAGE_MATCH_LAST_LIFT,
+                          PIXELS(1032), PIXELS(216));
+  Engine_ObjectEventSetAnimation(LOCALID_LIFT_OPERATOR, 10);
 }
 
 /// Starts the moving-lift task and releases its pause flag.
@@ -819,7 +828,7 @@ static void ColosseumSatrageMatch_WaitForLiftCrossingPhase(void) {
 /// Halt on the shifting floor's lift operator: the lifts stop and leave a
 /// crossing (FLAG_LIFTS_HALTED).
 static void EventScript_HaltLifts(void) {
-  FieldEffect_PauseObject(LIFT_OPERATOR);
+  FieldEffect_PauseObject(LOCALID_LIFT_OPERATOR);
   Engine_GameFlagSet(FLAG_LIFTS_HALTED);
 
   if (gColosseumSatrageMatch_LiftPhase != 0) {
@@ -853,26 +862,27 @@ static void EventScript_ReachArena(void) {
   ColosseumSatrageMatch_WaitForOpponentFinish();
   refreshCount = 9;
   do {
-    ObjectEvent_RefreshSelectorById(OPPONENT);
+    ObjectEvent_RefreshSelectorById(LOCALID_OPPONENT);
     refreshCount = (refreshCount - 1);
   } while (refreshCount >= 0);
   // Bring the warriors together before selecting the battle's result bias.
-  ObjectEvent_SetSpeed(OPPONENT, PIXELS(1), PIXELS(1) / 2);
-  ObjectEvent_WalkTo(OPPONENT, 88, 256);
+  ObjectEvent_SetSpeed(LOCALID_OPPONENT, PIXELS(1), PIXELS(1) / 2);
+  ObjectEvent_WalkTo(LOCALID_OPPONENT, 88, 256);
   ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(1), PIXELS(1) / 2);
   ObjectEvent_WalkToAndWait(LOCALID_PARTY_LEADER, 120, 256);
-  Engine_ObjectEventSetAnimation(OPPONENT, ANIMATION_STAND);
-  Engine_ObjectEventFaceEachOther(LOCALID_PARTY_LEADER, OPPONENT, 0);
+  Engine_ObjectEventSetAnimation(LOCALID_OPPONENT, ANIMATION_STAND);
+  Engine_ObjectEventFaceEachOther(LOCALID_PARTY_LEADER, LOCALID_OPPONENT, 0);
   Engine_ScriptWait(10);
-  Engine_ObjectEventSetAnimation(OPPONENT, ANIMATION_NOD);
+  Engine_ObjectEventSetAnimation(LOCALID_OPPONENT, ANIMATION_NOD);
   Engine_ObjectEventSetAnimationAndWait(LOCALID_PARTY_LEADER, ANIMATION_NOD);
   Engine_ScriptWait(20);
   ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(2), PIXELS(1));
-  ObjectEvent_SetSpeed(OPPONENT, PIXELS(2), PIXELS(1));
+  ObjectEvent_SetSpeed(LOCALID_OPPONENT, PIXELS(2), PIXELS(1));
   ObjectEvent_WalkTo(LOCALID_PARTY_LEADER, 112, 256);
-  Engine_ObjectEventWalkToAndWait(OPPONENT, 96, 0x100);
+  Engine_ObjectEventWalkToAndWait(LOCALID_OPPONENT, 96, 0x100);
   Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIMATION_LEADER_STRIDE);
-  Engine_ObjectEventSetAnimation(OPPONENT, WARRIOR_ANIMATION_FIGHTING_STANCE);
+  Engine_ObjectEventSetAnimation(LOCALID_OPPONENT,
+                                 WARRIOR_ANIMATION_FIGHTING_STANCE);
   Engine_ScriptWait(10);
   /* FAKEMATCH(temporary): resultBase, set to 2 at the top, keeps the + 1
    * unfolded; as 3 - opponentFinishedFirst, which shares r5's 3 with
@@ -897,28 +907,30 @@ const struct MapEvent *Map_GetEvents(void) {
 /// Isaac and Satrage stand in the arena as the result is shown.
 static void ColosseumSatrageMatch_StageBattleResult(s32 result) {
 
-  Engine_ObjectEventDestroy(PRIZE_A);
-  Engine_ObjectEventDestroy(PRIZE_B);
+  Engine_ObjectEventDestroy(LOCALID_PRIZE_A);
+  Engine_ObjectEventDestroy(LOCALID_PRIZE_B);
   Party_RestoreHpPp(1);
   Engine_ScriptStart();
-  ObjectEvent_SetPosition(OPPONENT, PIXELS(88), PIXELS(256));
+  ObjectEvent_SetPosition(LOCALID_OPPONENT, PIXELS(88), PIXELS(256));
   ObjectEvent_SetPosition(LOCALID_PARTY_LEADER, PIXELS(120), PIXELS(256));
   // BUG: 0x4000 is FACING_SOUTH, passed where ObjectEvent_FaceObjectEvent takes
   // a local id; ObjectTable_Get has no object event past 0xbf, so neither
   // turns.
 #ifdef BUGFIX
-  ObjectEvent_FaceDirection(OPPONENT, FACING_SOUTH, 0);
+  ObjectEvent_FaceDirection(LOCALID_OPPONENT, FACING_SOUTH, 0);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_SOUTH, 0);
 #else
-  ObjectEvent_FaceObjectEvent(OPPONENT, 0x4000, 0);
+  ObjectEvent_FaceObjectEvent(LOCALID_OPPONENT, 0x4000, 0);
   ObjectEvent_FaceObjectEvent(LOCALID_PARTY_LEADER, 0x4000, 0);
 #endif
   if (result < 0) {
-    Engine_ObjectEventSetAnimation(OPPONENT, WARRIOR_ANIMATION_ARMS_RAISED);
+    Engine_ObjectEventSetAnimation(LOCALID_OPPONENT,
+                                   WARRIOR_ANIMATION_ARMS_RAISED);
     Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER,
                                    ANIMATION_LEADER_CROUCH);
   } else {
-    Engine_ObjectEventSetAnimation(OPPONENT, WARRIOR_ANIMATION_DEFEATED);
+    Engine_ObjectEventSetAnimation(LOCALID_OPPONENT,
+                                   WARRIOR_ANIMATION_DEFEATED);
     Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER,
                                    ANIMATION_LEADER_ARMS_RAISED);
   }
@@ -950,54 +962,54 @@ s32 ColosseumSatrageMatch_Initialize(void) {
   Engine_GameFlagSet(FLAG_RETREAT_BLOCKED);
   MapGrid_CopyCellAttributes(14, 11, 12, 4, 100, 11);
   MapGrid_CopyCellAttributes(48, 10, 5, 6, 120, 10);
-  for (obstacleId = BOARD_WALK_FIRST_PLATFORM; obstacleId <= FALLING_OBSTACLE;
-       obstacleId++) {
+  for (obstacleId = LOCALID_BOARD_WALK_FIRST_PLATFORM;
+       obstacleId <= LOCALID_FALLING_OBSTACLE; obstacleId++) {
     objectEvent = ObjectEvent_GetById(obstacleId);
     ObjectEvent_SetMode(objectEvent, 4);
     objectEvent->motionFlags = 0;
     objectEvent->y.fixed = 0;
     objectEvent->priorityFlags = 2;
   }
-  ObjectEvent_GetById(FORCE_TARGET)->priorityFlags = 2;
+  ObjectEvent_GetById(LOCALID_FORCE_TARGET)->priorityFlags = 2;
   if (Engine_GameFlagIsSet(FLAG_OBSTACLE_KNOCKED_DOWN)) {
-    objectEvent = ObjectEvent_GetById(FALLING_OBSTACLE);
+    objectEvent = ObjectEvent_GetById(LOCALID_FALLING_OBSTACLE);
     objectEvent->x.fixed = PIXELS(336);
     objectEvent->y.fixed = -PIXELS(8);
     objectEvent->z.fixed = PIXELS(264);
     MapGrid_CopyCellAttributes(19, 16, 1, 1, 20, 16);
     MapGrid_CopyCellAttributes(20, 80, 1, 1, 21, 80);
   } else {
-    objectEvent = ObjectEvent_GetById(FALLING_OBSTACLE);
+    objectEvent = ObjectEvent_GetById(LOCALID_FALLING_OBSTACLE);
     ObjectEvent_SetMode(objectEvent, 3);
     objectEvent->y.fixed = PIXELS(16);
   }
-  ObjectEvent_GetById(WALL_PILLAR)->priorityFlags = 2;
+  ObjectEvent_GetById(LOCALID_WALL_PILLAR)->priorityFlags = 2;
   zero = 0;
   if (Engine_GameFlagIsSet(FLAG_WALL_PILLAR_MOVED)) {
     MapGrid_CopyCellAttributes(35, 78, 1, 1, 35, 77);
   }
   if (Engine_GameFlagIsSet(FLAG_PLANT_GROWN)) {
-    Engine_ObjectEventSetAnimation(GROWTH_PLANT, ANIMATION_SHAKE_HEAD);
+    Engine_ObjectEventSetAnimation(LOCALID_GROWTH_PLANT, ANIMATION_SHAKE_HEAD);
     MapGrid_CopyCellAttributes(32, 37, 1, 4, 32, 77);
   }
   if (Engine_GameFlagIsSet(FLAG_WEST_TARGET_FROZEN)) {
-    ObjectEvent_GetById(FROST_TARGET_WEST)->motionFlags = zero;
-    ObjectEvent_GetById(FROST_TARGET_WEST)->priorityFlags = 2;
-    Engine_ObjectEventSetAnimation(FROST_TARGET_WEST, 5);
+    ObjectEvent_GetById(LOCALID_FROST_TARGET_WEST)->motionFlags = zero;
+    ObjectEvent_GetById(LOCALID_FROST_TARGET_WEST)->priorityFlags = 2;
+    Engine_ObjectEventSetAnimation(LOCALID_FROST_TARGET_WEST, 5);
     MapGrid_CopyCellAttributes(46, 17, 1, 1, 44, 17);
   }
   if (Engine_GameFlagIsSet(FLAG_EAST_TARGET_FROZEN)) {
-    ObjectEvent_GetById(FROST_TARGET_EAST)->motionFlags = zero;
-    ObjectEvent_GetById(FROST_TARGET_EAST)->priorityFlags = 2;
-    Engine_ObjectEventSetAnimation(FROST_TARGET_EAST, 5);
+    ObjectEvent_GetById(LOCALID_FROST_TARGET_EAST)->motionFlags = zero;
+    ObjectEvent_GetById(LOCALID_FROST_TARGET_EAST)->priorityFlags = 2;
+    Engine_ObjectEventSetAnimation(LOCALID_FROST_TARGET_EAST, 5);
     MapGrid_CopyCellAttributes(46, 17, 1, 1, 50, 17);
   }
-  objectEvent = ObjectEvent_GetById(RIDING_LOG_NORTH);
+  objectEvent = ObjectEvent_GetById(LOCALID_RIDING_LOG_NORTH);
   column = objectEvent->x.fixed >> 20;
   objectEvent->motionFlags = zero;
   objectEvent->priorityFlags = 2;
   MapGrid_CopyCellAttributes(52, 28, 1, 3, column, 10);
-  objectEvent = ObjectEvent_GetById(RIDING_LOG_SOUTH);
+  objectEvent = ObjectEvent_GetById(LOCALID_RIDING_LOG_SOUTH);
   column = objectEvent->x.fixed >> 20;
   objectEvent->motionFlags = zero;
   objectEvent->priorityFlags = 2;
@@ -1009,7 +1021,7 @@ s32 ColosseumSatrageMatch_Initialize(void) {
   if (x == 0) {
     x = 73;
   }
-  objectEvent = ObjectEvent_GetById(MINI_MAZE_FIRST_PILLAR);
+  objectEvent = ObjectEvent_GetById(LOCALID_MINI_MAZE_FIRST_PILLAR);
   objectEvent->x.fixed = (x << 20) + 0x80000;
   objectEvent->motionFlags = zero;
   objectEvent->priorityFlags = 2;
@@ -1018,7 +1030,7 @@ s32 ColosseumSatrageMatch_Initialize(void) {
   if (x == 0) {
     x = 76;
   }
-  objectEvent = ObjectEvent_GetById(MINI_MAZE_FIRST_PILLAR + 1);
+  objectEvent = ObjectEvent_GetById(LOCALID_MINI_MAZE_FIRST_PILLAR + 1);
   objectEvent->x.fixed = (x << 20) + 0x80000;
   objectEvent->motionFlags = zero;
   objectEvent->priorityFlags = 2;
@@ -1027,7 +1039,7 @@ s32 ColosseumSatrageMatch_Initialize(void) {
   if (x == 0) {
     x = 79;
   }
-  objectEvent = ObjectEvent_GetById(MINI_MAZE_FIRST_PILLAR + 2);
+  objectEvent = ObjectEvent_GetById(LOCALID_MINI_MAZE_FIRST_PILLAR + 2);
   objectEvent->x.fixed = (x << 20) + 0x80000;
   objectEvent->motionFlags = zero;
   objectEvent->priorityFlags = 2;
@@ -1035,22 +1047,22 @@ s32 ColosseumSatrageMatch_Initialize(void) {
 
   ColosseumSatrageMatch_UpdateRollingLogCollision();
   // A Halted controller leaves the lifts standing; otherwise resume the task.
-  Engine_ObjectEventSetAnimation(LIFT_OPERATOR, 10);
+  Engine_ObjectEventSetAnimation(LOCALID_LIFT_OPERATOR, 10);
   if (Engine_GameFlagIsSet(FLAG_LIFTS_HALTED)) {
-    for (liftId = COLOSSEUM_SATRAGE_MATCH_FIRST_LIFT, row = 13,
+    for (liftId = LOCALID_COLOSSEUM_SATRAGE_MATCH_FIRST_LIFT, row = 13,
         columnOffset = 58;
-         liftId <= COLOSSEUM_SATRAGE_MATCH_LAST_LIFT;
+         liftId <= LOCALID_COLOSSEUM_SATRAGE_MATCH_LAST_LIFT;
          liftId++, columnOffset += 2) {
       objectEvent = ObjectEvent_GetById(liftId);
       objectEvent->priorityFlags = 2;
       ObjectEvent_SetMode(objectEvent, 4);
       MapGrid_CopyCellAttributes(56, 13, 1, 1, columnOffset, row);
     }
-    Engine_ObjectEventSetAnimation(LIFT_OPERATOR, 10);
-    FieldEffect_PauseObject(LIFT_OPERATOR);
+    Engine_ObjectEventSetAnimation(LOCALID_LIFT_OPERATOR, 10);
+    FieldEffect_PauseObject(LOCALID_LIFT_OPERATOR);
   } else {
-    for (liftId = COLOSSEUM_SATRAGE_MATCH_FIRST_LIFT;
-         liftId <= COLOSSEUM_SATRAGE_MATCH_LAST_LIFT; liftId++) {
+    for (liftId = LOCALID_COLOSSEUM_SATRAGE_MATCH_FIRST_LIFT;
+         liftId <= LOCALID_COLOSSEUM_SATRAGE_MATCH_LAST_LIFT; liftId++) {
       objectEvent = ObjectEvent_GetById(liftId);
       objectEvent->priorityFlags = 2;
       ObjectEvent_SetMode(objectEvent, 4);
@@ -1061,24 +1073,25 @@ s32 ColosseumSatrageMatch_Initialize(void) {
                                TASK_PRIORITY_MAP + 5);
     Scheduler_SetTaskFlags(ColosseumSatrageMatch_UpdateLifts, 1);
   }
-  Engine_ObjectEventSetAnimation(OPPONENT, WARRIOR_ANIMATION_FIGHTING_STANCE);
+  Engine_ObjectEventSetAnimation(LOCALID_OPPONENT,
+                                 WARRIOR_ANIMATION_FIGHTING_STANCE);
   gGameState.movementMode = LEADER_MOVEMENT_WALK;
-  Colosso_ShowItemIcon(PRIZE_B, ITEM_COTTON_SHIRT);
-  Colosso_ShowItemIcon(PRIZE_A, ITEM_CHAIN_MAIL);
-  Engine_ObjectEventSetChildValue(OPPONENT, 1);
+  Colosso_ShowItemIcon(LOCALID_PRIZE_B, ITEM_COTTON_SHIRT);
+  Colosso_ShowItemIcon(LOCALID_PRIZE_A, ITEM_CHAIN_MAIL);
+  Engine_ObjectEventSetChildValue(LOCALID_OPPONENT, 1);
   // The race, the friends' turns, the tour, and the battle's result.
   switch (gGameState.warpDest) {
   case COLOSSEUM_SATRAGE_MATCH_RACE_FROM_LEND_A_HAND:
-    Map_BuildDescriptorAndInstallTask(LOCALID_PARTY_LEADER, OPPONENT, 5,
-                                      PIXELS(104), PIXELS(256), PRIZE_A,
-                                      PRIZE_B);
+    Map_BuildDescriptorAndInstallTask(LOCALID_PARTY_LEADER, LOCALID_OPPONENT, 5,
+                                      PIXELS(104), PIXELS(256), LOCALID_PRIZE_A,
+                                      LOCALID_PRIZE_B);
     MapGrid_CopyCellsLayered(127, 0, 1, 2, 79, 6);
-    Engine_ObjectEventDestroy(GUIDE);
-    Engine_ObjectEventDestroy(MINI_MAZE_ATTENDANT);
-    Engine_ObjectEventDestroy(SHIFTING_FLOOR_ATTENDANT);
-    Engine_ObjectEventDestroy(LOG_ROLLING_ATTENDANT);
-    Engine_ObjectEventDestroy(WALL_ATTENDANT);
-    Engine_ObjectEventDestroy(BOARD_WALK_ATTENDANT);
+    Engine_ObjectEventDestroy(LOCALID_GUIDE);
+    Engine_ObjectEventDestroy(LOCALID_MINI_MAZE_ATTENDANT);
+    Engine_ObjectEventDestroy(LOCALID_SHIFTING_FLOOR_ATTENDANT);
+    Engine_ObjectEventDestroy(LOCALID_LOG_ROLLING_ATTENDANT);
+    Engine_ObjectEventDestroy(LOCALID_WALL_ATTENDANT);
+    Engine_ObjectEventDestroy(LOCALID_BOARD_WALK_ATTENDANT);
     if (!Engine_GameFlagIsSet(FLAG_KEEP_PARTY_POSITION)) {
       Engine_AudioPlayCue(AUDIO_CUE_FADE_BGM);
       Colosso_ControlCharacterAlone(ISAAC);
@@ -1093,8 +1106,8 @@ s32 ColosseumSatrageMatch_Initialize(void) {
   case COLOSSEUM_SATRAGE_MATCH_FROM_COLOSSEUM_EAST:
     FieldScheduler_AddCallback(Colosso_RaiseTakePlaceOnPsynergy,
                                TASK_PRIORITY_MAP);
-    Engine_ObjectEventDestroy(PRIZE_A);
-    Engine_ObjectEventDestroy(PRIZE_B);
+    Engine_ObjectEventDestroy(LOCALID_PRIZE_A);
+    Engine_ObjectEventDestroy(LOCALID_PRIZE_B);
     if (!Engine_GameFlagIsSet(FLAG_KEEP_PARTY_POSITION)) {
       Colosso_PlaceFriendsAtCheeringSpots();
       Colosso_ControlCharacterAlone(GARET);
@@ -1103,7 +1116,7 @@ s32 ColosseumSatrageMatch_Initialize(void) {
     break;
   case COLOSSEUM_SATRAGE_MATCH_FROM_COLOSSEUM_WEST:
     if (!Engine_GameFlagIsSet(FLAG_KEEP_PARTY_POSITION)) {
-      ColosseumSatrageMatch_IntroduceSecondFinals(GUIDE);
+      ColosseumSatrageMatch_IntroduceSecondFinals(LOCALID_GUIDE);
       Colosso_ClearCheeringSpots();
     }
     break;
@@ -1324,7 +1337,8 @@ static void EventScript_TalkToLogRollingAttendant(s32 attendant) {
       /* FAKEMATCH(wrapper): called through a cast to the s32 call the bytes
        * show, which sets r0 last; as a direct call, 1 of 163 instructions
        * differ in tbs-en. */
-      COLOSSEUM_SATRAGE_MATCH_MOVE_OBJ_EVENT_PAIR(RIDING_LOG_SOUTH, -64, 0);
+      COLOSSEUM_SATRAGE_MATCH_MOVE_OBJ_EVENT_PAIR(LOCALID_RIDING_LOG_SOUTH, -64,
+                                                  0);
       Camera_MoveTo(PIXELS(752), -1, PIXELS(216), 1);
       Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIMATION_STAND);
       Engine_ScriptWait(10);
@@ -1335,7 +1349,8 @@ static void EventScript_TalkToLogRollingAttendant(s32 attendant) {
       Script_ShowMessage(attendant, 0);
       Colosso_RestoreWarrior(LOCALID_PARTY_LEADER);
       Engine_CameraFollowObjectEvent(LOCALID_PARTY_LEADER, 0);
-      ObjectEvent_SetPosition(RIDING_LOG_SOUTH, PIXELS(840), PIXELS(232));
+      ObjectEvent_SetPosition(LOCALID_RIDING_LOG_SOUTH, PIXELS(840),
+                              PIXELS(232));
       Colosso_RepeatStageNumber(attendant, 3);
     } else if (result == COLOSSO_GUIDE_OFFER_CHEERING) {
       Engine_ScriptSetMessage(MsgColossoHereYourObjectiveRideLogs);
@@ -1476,7 +1491,8 @@ static void EventScript_TalkToBoardWalkAttendant(s32 attendant) {
     Colosso_WalkObjectEventToAndStand(LOCALID_PARTY_LEADER, 408, 216);
     ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_WEST, 10);
     Engine_ScriptShowMessage(attendant, 0);
-    ColosseumSatrageMatch_PushObstacleToCell(ROLLING_LOG_EAST, 360, 208);
+    ColosseumSatrageMatch_PushObstacleToCell(LOCALID_ROLLING_LOG_EAST, 360,
+                                             208);
     Engine_ObjectEventShowEmote(LOCALID_PARTY_LEADER,
                                 EMOTE_IN_FRONT | EMOTE_SMILE, 45);
     ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(3) / 2, PIXELS(3) / 4);
@@ -1486,7 +1502,7 @@ static void EventScript_TalkToBoardWalkAttendant(s32 attendant) {
     Engine_ScriptShowMessage(attendant, 0);
     Colosso_RestoreWarrior(LOCALID_PARTY_LEADER);
     Engine_CameraFollowObjectEvent(LOCALID_PARTY_LEADER, 0);
-    ObjectEvent_SetPosition(ROLLING_LOG_EAST, PIXELS(392), PIXELS(208));
+    ObjectEvent_SetPosition(LOCALID_ROLLING_LOG_EAST, PIXELS(392), PIXELS(208));
     Colosso_RepeatStageNumber(attendant, 5);
   } else if (result == COLOSSO_GUIDE_OFFER_CHEERING) {
     Engine_ScriptSetMessage(MsgColossoFocusRollingLogs);
@@ -2153,30 +2169,30 @@ struct MapEvent gColosseumSatrageMatchEvents[] = {
     { BG_EVENT(BG_EVENT_CHEST), 101, FLAG_MAPSEC_TEMP_38, FIND_ITEM(ITEM_NUT) },
     { BG_EVENT(BG_EVENT_CHEST) | MAP_EVENT_FLAG_FACING | FACING_WEST, 102, FLAG_MAPSEC_TEMP_39, FIND_ITEM(ITEM_SMOKE_BOMB) },
     { BG_EVENT(BG_EVENT_CHEST), 104, FLAG_MAPSEC_TEMP_3B, FIND_ITEM(ITEM_NUT) },
-    { PSYNERGY_PHASE_ON_OBJ_EVENT(ABILITY_FROST, PSYNERGY_PHASE_EFFECT_ACTS), FROST_TARGET_WEST, FLAG_WEST_TARGET_FROZEN, EVENT_SCRIPT(EventScript_FreezeWestTarget) },
-    { PSYNERGY_PHASE_ON_OBJ_EVENT(ABILITY_FROST, PSYNERGY_PHASE_EFFECT_ACTS), FROST_TARGET_EAST, FLAG_EAST_TARGET_FROZEN, EVENT_SCRIPT(EventScript_FreezeEastTarget) },
-    { PSYNERGY_PHASE_ON_OBJ_EVENT(ABILITY_FORCE, PSYNERGY_PHASE_BEFORE_CAST), FORCE_TARGET, FLAG_OBSTACLE_KNOCKED_DOWN, EVENT_SCRIPT(EventScript_PrepareForce) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_FORCE), FORCE_TARGET, FLAG_OBSTACLE_KNOCKED_DOWN, EVENT_SCRIPT(EventScript_KnockDownObstacle) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_GROWTH), GROWTH_PLANT, FLAG_PLANT_GROWN, EVENT_SCRIPT(EventScript_GrowPlant) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MOVE), BOARD_WALK_WEST_PILLAR, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_IgnoreMove) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MOVE), BOARD_WALK_EAST_PILLAR, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_IgnoreMove) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MOVE), WALL_PILLAR, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_UpdateMovedPillarCell) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MOVE), MINI_MAZE_FIRST_PILLAR, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_SaveMovedPillarColumns) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MOVE), MINI_MAZE_FIRST_PILLAR + 1, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_SaveMovedPillarColumns) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MOVE), MINI_MAZE_FIRST_PILLAR + 2, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_SaveMovedPillarColumns) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_HALT), LIFT_OPERATOR, FLAG_LIFTS_HALTED, EVENT_SCRIPT(EventScript_HaltLifts) },
-    { MAP_EVENT_TALK, GUIDE, CONDITION_ALWAYS, EVENT_SCRIPT(Colosso_AskReadyToRace) },
-    { MAP_EVENT_TALK, MINI_MAZE_ATTENDANT, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkToMiniMazeAttendant) },
-    { MAP_EVENT_TALK, SHIFTING_FLOOR_ATTENDANT, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkToShiftingFloorAttendant) },
-    { MAP_EVENT_TALK, LOG_ROLLING_ATTENDANT, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkToLogRollingAttendant) },
-    { MAP_EVENT_TALK, WALL_ATTENDANT, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkToWallAttendant) },
-    { MAP_EVENT_TALK, BOARD_WALK_ATTENDANT, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkToBoardWalkAttendant) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), GUIDE, CONDITION_ALWAYS, MSGNO(MsgColossoRiverThisYearsFinalsAreIncredibleThis) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), MINI_MAZE_ATTENDANT, CONDITION_ALWAYS, MSGNO(MsgColossoWallICantBelieveAnybodyEverGets) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), SHIFTING_FLOOR_ATTENDANT, CONDITION_ALWAYS, MSGNO(MsgColossoWallHowDoTheyMakeThatFloor) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOG_ROLLING_ATTENDANT, CONDITION_ALWAYS, MSGNO(MsgColossoWallImAmazedPeopleCanActuallyCross) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), WALL_ATTENDANT, CONDITION_ALWAYS, MSGNO(MsgColossoWallBoyThatBitOverThereMust) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), BOARD_WALK_ATTENDANT, CONDITION_ALWAYS, MSGNO(MsgColossoWallIHeardBabiGotTheLog) },
+    { PSYNERGY_PHASE_ON_OBJ_EVENT(ABILITY_FROST, PSYNERGY_PHASE_EFFECT_ACTS), LOCALID_FROST_TARGET_WEST, FLAG_WEST_TARGET_FROZEN, EVENT_SCRIPT(EventScript_FreezeWestTarget) },
+    { PSYNERGY_PHASE_ON_OBJ_EVENT(ABILITY_FROST, PSYNERGY_PHASE_EFFECT_ACTS), LOCALID_FROST_TARGET_EAST, FLAG_EAST_TARGET_FROZEN, EVENT_SCRIPT(EventScript_FreezeEastTarget) },
+    { PSYNERGY_PHASE_ON_OBJ_EVENT(ABILITY_FORCE, PSYNERGY_PHASE_BEFORE_CAST), LOCALID_FORCE_TARGET, FLAG_OBSTACLE_KNOCKED_DOWN, EVENT_SCRIPT(EventScript_PrepareForce) },
+    { PSYNERGY_ON_OBJ_EVENT(ABILITY_FORCE), LOCALID_FORCE_TARGET, FLAG_OBSTACLE_KNOCKED_DOWN, EVENT_SCRIPT(EventScript_KnockDownObstacle) },
+    { PSYNERGY_ON_OBJ_EVENT(ABILITY_GROWTH), LOCALID_GROWTH_PLANT, FLAG_PLANT_GROWN, EVENT_SCRIPT(EventScript_GrowPlant) },
+    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MOVE), LOCALID_BOARD_WALK_WEST_PILLAR, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_IgnoreMove) },
+    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MOVE), LOCALID_BOARD_WALK_EAST_PILLAR, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_IgnoreMove) },
+    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MOVE), LOCALID_WALL_PILLAR, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_UpdateMovedPillarCell) },
+    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MOVE), LOCALID_MINI_MAZE_FIRST_PILLAR, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_SaveMovedPillarColumns) },
+    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MOVE), LOCALID_MINI_MAZE_FIRST_PILLAR + 1, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_SaveMovedPillarColumns) },
+    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MOVE), LOCALID_MINI_MAZE_FIRST_PILLAR + 2, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_SaveMovedPillarColumns) },
+    { PSYNERGY_ON_OBJ_EVENT(ABILITY_HALT), LOCALID_LIFT_OPERATOR, FLAG_LIFTS_HALTED, EVENT_SCRIPT(EventScript_HaltLifts) },
+    { MAP_EVENT_TALK, LOCALID_GUIDE, CONDITION_ALWAYS, EVENT_SCRIPT(Colosso_AskReadyToRace) },
+    { MAP_EVENT_TALK, LOCALID_MINI_MAZE_ATTENDANT, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkToMiniMazeAttendant) },
+    { MAP_EVENT_TALK, LOCALID_SHIFTING_FLOOR_ATTENDANT, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkToShiftingFloorAttendant) },
+    { MAP_EVENT_TALK, LOCALID_LOG_ROLLING_ATTENDANT, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkToLogRollingAttendant) },
+    { MAP_EVENT_TALK, LOCALID_WALL_ATTENDANT, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkToWallAttendant) },
+    { MAP_EVENT_TALK, LOCALID_BOARD_WALK_ATTENDANT, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkToBoardWalkAttendant) },
+    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_GUIDE, CONDITION_ALWAYS, MSGNO(MsgColossoRiverThisYearsFinalsAreIncredibleThis) },
+    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_MINI_MAZE_ATTENDANT, CONDITION_ALWAYS, MSGNO(MsgColossoWallICantBelieveAnybodyEverGets) },
+    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_SHIFTING_FLOOR_ATTENDANT, CONDITION_ALWAYS, MSGNO(MsgColossoWallHowDoTheyMakeThatFloor) },
+    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_LOG_ROLLING_ATTENDANT, CONDITION_ALWAYS, MSGNO(MsgColossoWallImAmazedPeopleCanActuallyCross) },
+    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_WALL_ATTENDANT, CONDITION_ALWAYS, MSGNO(MsgColossoWallBoyThatBitOverThereMust) },
+    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_BOARD_WALK_ATTENDANT, CONDITION_ALWAYS, MSGNO(MsgColossoWallIHeardBabiGotTheLog) },
     { MAP_EVENT_RAISED, 99, CONDITION_ALWAYS, EVENT_SCRIPT(Colosso_TakePlaceForMatch) },
     { MAP_EVENTS_END },
 };

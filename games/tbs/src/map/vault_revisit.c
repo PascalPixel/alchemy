@@ -15,7 +15,7 @@
 /// indoors does.
 ///
 /// Searching the bell rings it, and a ring while
-/// FLAG_VAULT_DJINNI_CALLED_BY_BELL is clear calls Sap, a Venus Djinni, out to
+/// FLAG_VAULT_SAP_CALLED_BY_BELL is clear calls Sap, a Venus Djinni, out to
 /// stand by the bell; spoken to, Sap joins the party. Coming in by a gate
 /// clears the call, so Sap hides again until it has joined. The dog, given a
 /// Bone, runs to a spot and jumps there three times
@@ -442,12 +442,12 @@ static void VaultRevisit_JumpObjectEventToAndWait(int localId, int x, int z,
 
 /// Searching the bell rings it (SE_100). The first ring since the party came in
 /// from the world map makes Sap jump out of hiding and walk to the bell, at
-/// (408, 120), and sets FLAG_VAULT_DJINNI_CALLED_BY_BELL.
+/// (408, 120), and sets FLAG_VAULT_SAP_CALLED_BY_BELL.
 static void EventScript_RingBell(void) {
   Engine_ScriptStart();
   Script_PlayCue(SE_100);
   Engine_ScriptWait(40);
-  if (GameFlag_IsSet(FLAG_VAULT_DJINNI_CALLED_BY_BELL) == 0) {
+  if (GameFlag_IsSet(FLAG_VAULT_SAP_CALLED_BY_BELL) == 0) {
     ObjectEvent_SetAttachedEffect(LOCALID_SAP, ATTACHED_EFFECT_IN_FRONT |
                                                    ATTACHED_EFFECT_ONCE);
     Engine_ObjectEventJump(LOCALID_SAP, 4, 0);
@@ -459,7 +459,7 @@ static void EventScript_RingBell(void) {
     Engine_ScriptWait(20);
     ObjectEvent_WalkToAndWait(LOCALID_SAP, 408, 104);
     ObjectEvent_WalkToAndWait(LOCALID_SAP, 408, 120);
-    GameFlag_Set(FLAG_VAULT_DJINNI_CALLED_BY_BELL);
+    GameFlag_Set(FLAG_VAULT_SAP_CALLED_BY_BELL);
   }
   Engine_ScriptEnd();
 }
@@ -671,7 +671,7 @@ static inline s32 VaultRevisit_ShouldKeepBellDjinniPosition(void) {
 /// Vault_UpdateWalkingVillager. The dog waits at the hidden passage once it has
 /// shown it. Coming in by a gate (WARP_DEST_DEFAULT to
 /// VAULT_REVISIT_NORTH_UNUSED, forwarded from vault.c) before Sap has joined
-/// clears FLAG_VAULT_DJINNI_CALLED_BY_BELL, so Sap is hidden again; while it is
+/// clears FLAG_VAULT_SAP_CALLED_BY_BELL, so Sap is hidden again; while it is
 /// called and has not joined, it stands by the bell. Coming out of Vault
 /// Sanctum (VAULT_REVISIT_FROM_SANCTUM) clears FLAG_SHOW_LOCATION_NAME, and
 /// coming up from Vault Cave (VAULT_REVISIT_FROM_VAULT_CAVE_PASSAGE) clears
@@ -717,8 +717,8 @@ s32 Map_Initialize(void) {
   if (gGameState.warpDest <= VAULT_REVISIT_NORTH_UNUSED &&
       !Engine_GameFlagIsSet(FLAG_DJINNI(DJINNI_SAP)) &&
       !VaultRevisit_ShouldKeepBellDjinniPosition())
-    Engine_GameFlagClear(FLAG_VAULT_DJINNI_CALLED_BY_BELL);
-  if (Engine_GameFlagIsSet(FLAG_VAULT_DJINNI_CALLED_BY_BELL) &&
+    Engine_GameFlagClear(FLAG_VAULT_SAP_CALLED_BY_BELL);
+  if (Engine_GameFlagIsSet(FLAG_VAULT_SAP_CALLED_BY_BELL) &&
       !Engine_GameFlagIsSet(FLAG_DJINNI(DJINNI_SAP)))
     ObjectEvent_SetPosition(LOCALID_SAP, PIXELS(408), PIXELS(120));
   if (gGameState.warpDest == VAULT_REVISIT_FROM_SANCTUM)

@@ -25,10 +25,10 @@ extern s16 gImilFuchinFalls_SlideHeadings[];
 extern struct ObjectEvent *gImilFuchinFalls_DragonsEye;
 extern struct MapWarpDest gImilFuchinFalls_NoWarpDests[];
 extern struct MapWarpDest gImilFuchinFalls_ImilFallsCaveWarpDests[];
-extern struct MapWarpDest gImilFuchinFalls_FirstRoomWarpDests[];
-extern struct MapWarpDest gImilFuchinFalls_SecondRoomWarpDests[];
-extern struct MapWarpDest gImilFuchinFalls_ThirdRoomWarpDests[];
-extern struct MapWarpDest gImilFuchinFalls_FourthRoomWarpDests[];
+extern struct MapWarpDest gImilFuchinFalls_EntranceWarpDests[];
+extern struct MapWarpDest gImilFuchinFalls_ZephyrRoomWarpDests[];
+extern struct MapWarpDest gImilFuchinFalls_DragonsEyeRoomWarpDests[];
+extern struct MapWarpDest gImilFuchinFalls_ArcticBladeRoomWarpDests[];
 extern struct MapWarpDest gImilFuchinFalls_KiRoomWarpDests[];
 extern struct MapWarpDest gImilFuchinFalls_DragonRoomWarpDests[];
 extern u32 gImilFuchinFalls_Warps[];
@@ -36,21 +36,21 @@ extern struct ObjectEventTemplate gImilFuchinFalls_NoObjectEventTemplates[];
 extern struct ObjectEventTemplate
     gImilFuchinFalls_ImilFallsCaveObjectEventTemplates[];
 extern struct ObjectEventTemplate
-    gImilFuchinFalls_FirstRoomObjectEventTemplates[];
+    gImilFuchinFalls_EntranceObjectEventTemplates[];
 extern struct ObjectEventTemplate
-    gImilFuchinFalls_SecondRoomObjectEventTemplates[];
+    gImilFuchinFalls_ZephyrRoomObjectEventTemplates[];
 extern struct ObjectEventTemplate
-    gImilFuchinFalls_ThirdRoomObjectEventTemplates[];
+    gImilFuchinFalls_DragonsEyeRoomObjectEventTemplates[];
 extern struct ObjectEventTemplate
-    gImilFuchinFalls_FourthRoomObjectEventTemplates[];
+    gImilFuchinFalls_ArcticBladeRoomObjectEventTemplates[];
 extern struct ObjectEventTemplate
     gImilFuchinFalls_DragonRoomObjectEventTemplates[];
 extern struct MapEvent gImilFuchinFalls_NoEvents[];
 extern struct MapEvent gImilFuchinFalls_ImilFallsCaveEvents[];
-extern struct MapEvent gImilFuchinFalls_FirstRoomEvents[];
-extern struct MapEvent gImilFuchinFalls_SecondRoomEvents[];
-extern struct MapEvent gImilFuchinFalls_ThirdRoomEvents[];
-extern struct MapEvent gImilFuchinFalls_FourthRoomEvents[];
+extern struct MapEvent gImilFuchinFalls_EntranceEvents[];
+extern struct MapEvent gImilFuchinFalls_ZephyrRoomEvents[];
+extern struct MapEvent gImilFuchinFalls_DragonsEyeRoomEvents[];
+extern struct MapEvent gImilFuchinFalls_ArcticBladeRoomEvents[];
 extern struct MapEvent gImilFuchinFalls_KiRoomEvents[];
 extern struct MapEvent gImilFuchinFalls_DragonRoomEvents[];
 extern s32 gImilFuchinFalls_ShortDustScript[];

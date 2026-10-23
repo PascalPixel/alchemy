@@ -1,7 +1,7 @@
 /// @file
 /// The buildings of Lunpa and the house at Suhalla Gate: one map
-/// (MapId_LunpaSuhalla) whose rooms are told apart by the warp destination the
-/// party comes in by, and whose area name follows it:
+/// (MapId_LunpaInteriors) whose rooms are told apart by the warp destination
+/// the party comes in by, and whose area name follows it:
 ///
 /// - Lunpa: the three homes, the weapon and armor shop, the item shop, the inn
 ///   and the crate room, entered by the town's doors (lunpa.c) at
@@ -40,10 +40,10 @@
 
 #include "game_state.h"
 #include "script_layer.h"
-#include "unit/map/lunpa_suhalla.h"
+#include "unit/map/lunpa_interiors.h"
 #include "unit/object/object.h"
 #include "unit/object/psynergy_effects.h"
-#include "lunpa_suhalla.h"
+#include "lunpa_interiors.h"
 #include "map_ids.h"
 #include "text/msg_ids.h"
 
@@ -78,7 +78,7 @@ const struct MapWarpDest gInteriorWarpDests[] = {
 };
 
 const u32 gInteriorWarps[] = {
-    MAP_WARPS(LunpaSuhalla),
+    MAP_WARPS(LunpaInteriors),
     MAP_WARP(ROOM_FIRST_HOME, Lunpa, LUNPA_FROM_FIRST_HOME),
     MAP_WARP(ROOM_SECOND_HOME, Lunpa, LUNPA_FROM_SECOND_HOME),
     MAP_WARP(ROOM_THIRD_HOME, Lunpa, LUNPA_FROM_THIRD_HOME),
@@ -87,7 +87,7 @@ const u32 gInteriorWarps[] = {
     MAP_WARP(ROOM_INN, Lunpa, LUNPA_FROM_INN),
     MAP_WARP(ROOM_TEMPLE, Lunpa, LUNPA_FROM_TEMPLE),
     MAP_WARP(ROOM_CRATE_ROOM, Lunpa, LUNPA_FROM_CRATE_ROOM),
-    MAP_WARP(ROOM_GATE_TO_SUHALLA, SuhallaGateCheckpoint, SUHALLA_GATE_CHECKPOINT_FROM_LUNPA_SUHALLA),
+    MAP_WARP(ROOM_GATE_TO_SUHALLA, SuhallaGateCheckpoint, SUHALLA_GATE_CHECKPOINT_FROM_LUNPA_INTERIORS),
     MAP_WARPS_END,
 };
 
@@ -489,7 +489,7 @@ s32 Map_Initialize(void) {
   warpDest = gGameState.warpDest;
   if (warpDest == ROOM_GATE_TO_SUHALLA) {
     Engine_GameFlagClear(FLAG_SHOW_LOCATION_NAME);
-    gGameState.savedMap = (s32)&MapId_LunpaSuhalla;
+    gGameState.savedMap = (s32)&MapId_LunpaInteriors;
     gGameState.savedWarpDest = warpDest;
   }
   Engine_ObjectEventSetSpriteFlags(ObjectEvent_GetById(LOCALID_WEAPON_COUNTER),

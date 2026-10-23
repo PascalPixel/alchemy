@@ -270,12 +270,12 @@
 /// both eyes sparkling, and the passage stays open on later visits.
 /// ★ Named from the game: "set the small gem into the empty socket."
 /// (MsgSolSanctumSetSmallGem)
-#define FLAG_SOL_SANCTUM_FIRST_GEM_PLACED 0x81a
-/// As FLAG_SOL_SANCTUM_FIRST_GEM_PLACED, for the second Small Jewel and the
-/// second minotaur relief, whose doorway it opened.
+#define FLAG_SOL_SANCTUM_FIRST_SMALL_JEWEL_SET 0x81a
+/// As FLAG_SOL_SANCTUM_FIRST_SMALL_JEWEL_SET, for the second Small Jewel and
+/// the second minotaur relief, whose doorway it opened.
 /// ★ Named from the game: "set the small gem into the empty socket."
 /// (MsgSolSanctumSetSmallGem)
-#define FLAG_SOL_SANCTUM_SECOND_GEM_PLACED 0x821
+#define FLAG_SOL_SANCTUM_SECOND_SMALL_JEWEL_SET 0x821
 /// The party has beaten the evil within Tret in Tret Tree and he has spoken
 /// with it since, too weak to free Kolima. Set only once that talk ends; from
 /// then on his room's passage stays open, and in Kolima Forest Hermes' Water
@@ -316,7 +316,7 @@
 #define FLAG_VAULT_BONE_RECEIVED 0x85b
 /// Ringing Vault's bell has called Sap out of hiding.
 /// ★ Named from the game: "Sap" (MsgDjinnName)
-#define FLAG_VAULT_DJINNI_CALLED_BY_BELL 0x867
+#define FLAG_VAULT_SAP_CALLED_BY_BELL 0x867
 /// Douse has put out the fire between two torches in BilibinCaveRapier.
 /// ★ Named from what the player sees: a small fire burning between two torches
 /// before a doorway (its render)
@@ -448,7 +448,7 @@
 /// (MsgAltinTheWaterBeastsLookedExactlyLike)
 #define FLAG_ALTIN_WATER_BEAST_LEFT 0x8ff
 /// Altin's stone pillar stands in column 22, where Move pushes it. Checked
-/// after every Move (Village_CheckPillarMoved), which clears it if the pillar
+/// after every Move (Altin_CheckPillarMoved), which clears it if the pillar
 /// is anywhere else; the setup puts the pillar back there while it is set.
 /// ★ Named from its area name: Altin
 #define FLAG_ALTIN_PILLAR_MOVED 0x906
@@ -711,7 +711,7 @@
 #define FLAG_KALAY_INTERIORS_ELIXIR_BARREL 0xf85
 
 // Imil
-/// Mia's second apprentice told the party Mia went to the old couple's house.
+/// Megan, Mia's apprentice, told the party Mia went to the old couple's house.
 /// ★ Named from the game: "Have you visited the old couple"
 /// (MsgImilHaveVisitedOldCoupleWho)
 #define FLAG_IMIL_HEARD_MIA_WENT_TO_COUPLE 0x82a
@@ -724,10 +724,11 @@
 /// hurried off to fetch her, or her apprentice told the party where she went.
 /// ★ Named from the game: "Please, get" (MsgMercuryOoohHelpMe)
 #define FLAG_IMIL_MIA_SENT_FOR 0x82c
-/// Her apprentice told the party she can act as its healer in the sanctum.
+/// Justin, Mia's apprentice, told the party he can act as its healer in the
+/// sanctum.
 /// ★ Named from the game: "I can act as your healer."
 /// (MsgImilMayOnlyStudentButCan)
-#define FLAG_IMIL_APPRENTICE_OFFERED_HEALING 0x82d
+#define FLAG_IMIL_JUSTIN_OFFERED_HEALING 0x82d
 /// Mia has said farewell to her two apprentices.
 /// ★ Named from the game: "I'll leave the village in your hands"
 /// (MsgImilMia)
@@ -1069,11 +1070,11 @@
 /// Saturos is beaten in the Lighthouse Aerie and Alex has come for him; set
 /// with FLAG_SATUROS_BEATEN_AT_MERCURY.
 /// ★ Named from the game: "Alex!" (MsgMercuryGot)
-#define FLAG_MERCURY_AERIE_ALEX_APPEARED 0x880
+#define FLAG_MERCURY_LIGHTHOUSE_AERIE_ALEX_APPEARED 0x880
 /// The party has beaten Saturos in the Lighthouse Aerie, and Alex has come for
-/// him; set with FLAG_MERCURY_AERIE_ALEX_APPEARED. The Fountain of Healing at
-/// the lighthouse's foot flows again and people come to drink from it, and
-/// Imil and Bilibin talk of what has changed.
+/// him; set with FLAG_MERCURY_LIGHTHOUSE_AERIE_ALEX_APPEARED. The Fountain of
+/// Healing at the lighthouse's foot flows again and people come to drink from
+/// it, and Imil and Bilibin talk of what has changed.
 /// ★ Named from the game: "we got him!" (MsgMercuryGot)
 #define FLAG_SATUROS_BEATEN_AT_MERCURY 0x881
 /// The Psynergy Armor in the entrance's chest is taken.
@@ -1322,16 +1323,16 @@
 /// ★ Named from the game: "It looks like it's trapped in the ivy."
 /// (MsgGomaNoUsePsynergy)
 #define FLAG_TUNNEL_RUINS_IVY_BLOWN_AWAY 0x970
-/// The first of TunnelRuinsGreatStatue's two sinking pillars has gone down
-/// into the floor on its column, leaving a puddle in its place.
-/// ★ Named from what the player sees: the stone pillar gone into the floor
-/// with a puddle where it stood (its render)
-#define FLAG_TUNNEL_RUINS_PILLAR_A_IN_FLOOR 0x971
-/// As FLAG_TUNNEL_RUINS_PILLAR_A_IN_FLOOR, for the second pillar, which sinks
-/// only after Douse has soaked it.
-/// ★ Named from what the player sees: the second stone pillar gone into the
+/// The north-west of TunnelRuinsGreatStatue's two sinking pillars has gone
+/// down into the floor on its column, leaving a puddle in its place.
+/// ★ Named from what the player sees: the north-west stone pillar gone into the
 /// floor with a puddle where it stood (its render)
-#define FLAG_TUNNEL_RUINS_PILLAR_B_IN_FLOOR 0x972
+#define FLAG_TUNNEL_RUINS_NORTHWEST_PILLAR_IN_FLOOR 0x971
+/// As FLAG_TUNNEL_RUINS_NORTHWEST_PILLAR_IN_FLOOR, for the south-east pillar,
+/// which sinks only after Douse has soaked it.
+/// ★ Named from what the player sees: the south-east stone pillar gone into the
+/// floor with a puddle where it stood (its render)
+#define FLAG_TUNNEL_RUINS_SOUTHEAST_PILLAR_IN_FLOOR 0x972
 /// The first of the two stone pillars in TunnelRuinsLadyStatues' east room is
 /// pushed to the west of its row; the map puts it back there on the next
 /// visit.
@@ -1648,17 +1649,17 @@
 
 // Vault Jail: its chests, set once each is opened
 /// ★ Named from the game: "Water of Life" (MsgItemName)
-#define FLAG_JAIL_CHEST_WATER_OF_LIFE 0xf8c
+#define FLAG_VAULT_JAIL_CHEST_WATER_OF_LIFE 0xf8c
 /// ★ Named from the game: "Smoke Bomb" (MsgItemName)
-#define FLAG_JAIL_CHEST_SMOKE_BOMB 0xf8d
+#define FLAG_VAULT_JAIL_CHEST_SMOKE_BOMB 0xf8d
 /// ★ Named from the game: "Lucky Medal" (MsgItemName)
-#define FLAG_JAIL_CHEST_LUCKY_MEDAL 0xf8e
+#define FLAG_VAULT_JAIL_CHEST_LUCKY_MEDAL 0xf8e
 /// ★ Named from the game: "Antidote" (MsgItemName)
-#define FLAG_JAIL_CHEST_ANTIDOTE 0xf8f
+#define FLAG_VAULT_JAIL_CHEST_ANTIDOTE 0xf8f
 /// ★ Named from the game: "coin" (MsgGotCoins)
-#define FLAG_JAIL_CHEST_COINS 0xf90
+#define FLAG_VAULT_JAIL_CHEST_COINS 0xf90
 /// ★ Named from the game: "Elixir" (MsgItemName)
-#define FLAG_JAIL_CHEST_ELIXIR 0xf91
+#define FLAG_VAULT_JAIL_CHEST_ELIXIR 0xf91
 /// Xian: set once the jar's Lucky Medal is taken.
 /// ★ Named from the game: "Lucky Medal" (MsgItemName)
 #define FLAG_XIAN_LUCKY_MEDAL_JAR 0xf6e

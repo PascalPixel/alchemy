@@ -11,7 +11,9 @@
 
 /// The enemy classes the code tests by id, each named by its row of
 /// enemies.tsv: a class id is the row plus ENEMY_CLASS_FIRST. Where several
-/// rows share a name, the later ones take `_2` onwards in row order.
+/// rows share a name and each is fought in one place (its formation in
+/// formatn.tsv, chosen from a scripted or mimic zone of encounter.tsv), each
+/// takes that place; the others take `_2` onwards in row order.
 enum EnemyClassId {
   ENEMY_SLIME = 18,
   ENEMY_SLIME_2 = 19,
@@ -37,8 +39,8 @@ enum EnemyClassId {
   ENEMY_CHIMERA = 110,
   ENEMY_KRAKEN = 121,
   ENEMY_MYSTERY_MAN = 122,
-  ENEMY_SATUROS = 123,   ///< level 18
-  ENEMY_SATUROS_2 = 124, ///< level 38, as Menardi is
+  ENEMY_SATUROS_MERCURY_LIGHTHOUSE = 123, ///< level 18, alone
+  ENEMY_SATUROS_VENUS_LIGHTHOUSE = 124,   ///< level 38, beside Menardi
   ENEMY_MYSTERY_WOMAN = 125,
   ENEMY_MENARDI = 126,
   ENEMY_LIZARD_FIGHTER = 128,
@@ -59,14 +61,14 @@ enum EnemyClassId {
   ENEMY_TRET = 147,
   ENEMY_FUSION_DRAGON = 148,
   ENEMY_DEADBEARD = 149,
-  ENEMY_MIMIC = 150,
-  ENEMY_MIMIC_2 = 151,
-  ENEMY_MIMIC_3 = 152,
-  ENEMY_MIMIC_4 = 153,
-  ENEMY_MIMIC_5 = 154,
-  ENEMY_MIMIC_6 = 155,
-  ENEMY_MIMIC_7 = 156,
-  ENEMY_MIMIC_8 = 157,
+  ENEMY_MIMIC_MERCURY_LIGHTHOUSE = 150,
+  ENEMY_MIMIC_FUCHIN_FALLS_CAVE = 151,
+  ENEMY_MIMIC_ALTIN_PEAK = 152,
+  ENEMY_MIMIC_VAULT_CAVE = 153,
+  ENEMY_MIMIC_CROSSBONE_ISLE = 154,
+  ENEMY_MIMIC_ALTMILLER_CAVE = 155,
+  ENEMY_MIMIC_SUHALLA_DESERT = 156,
+  ENEMY_MIMIC_PIRATE_SHIP = 157,
   /// The Djinn the party fights, each element's in order of level;
   /// BattleUnit_Set puts them on the party's side.
   ENEMY_VENUS_DJINNI = 158,

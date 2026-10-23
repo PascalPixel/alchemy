@@ -5,8 +5,8 @@
 ///
 /// - Lunpa (MapId_Lunpa, area name Lunpa): the town. Two guards keep the
 ///   road in from the world map; doors lead into the homes, shops, inn and
-///   temple (LunpaSuhalla, lunpa_suhalla.c), roads to West Lunpa Cave and up
-///   to the Lunpa Fortress Gates, and a hidden passage to the jail
+///   temple (LunpaInteriors, lunpa_interiors.c), roads to West Lunpa Cave and
+///   up to the Lunpa Fortress Gates, and a hidden passage to the jail
 ///   (LUNPA_TO_VAULT_JAIL, whose area name there is Lunpa).
 /// - Lunpa Fortress Gates (MapId_LunpaFortressGates, area name Lunpa
 ///   Fortress Gates): the steps up to the fortress door, kept by two guards
@@ -998,7 +998,7 @@ struct MapWarpDest gGateWarpDests[] = {
     {MAP_TABLE_END},
 };
 
-#define ROOM_WARP(warp) MAP_WARP((warp), LunpaSuhalla, ROOM_WARP_DEST(warp))
+#define ROOM_WARP(warp) MAP_WARP((warp), LunpaInteriors, ROOM_WARP_DEST(warp))
 
 u32 gLunpaWarps[] = {
     MAP_WARPS(Lunpa),

@@ -31,16 +31,17 @@
 /// hops across gaps (TunnelRuins_HopLeaderTo), jumps off ledges and steps down.
 ///
 /// The puzzles that must survive a visit keep story flags
-/// (FLAG_TUNNEL_RUINS_IVY_BLOWN_AWAY, FLAG_TUNNEL_RUINS_PILLAR_A_IN_FLOOR,
-/// FLAG_TUNNEL_RUINS_PILLAR_B_IN_FLOOR,
+/// (FLAG_TUNNEL_RUINS_IVY_BLOWN_AWAY,
+/// FLAG_TUNNEL_RUINS_NORTHWEST_PILLAR_IN_FLOOR,
+/// FLAG_TUNNEL_RUINS_SOUTHEAST_PILLAR_IN_FLOOR,
 /// FLAG_TUNNEL_RUINS_EAST_PILLAR_A_PUSHED_WEST and
 /// FLAG_TUNNEL_RUINS_EAST_PILLAR_B_PUSHED_WEST); the rest keep map flags,
 /// which mean different things in each map:
 ///
 /// - TunnelRuinsGreatStatue: FLAG_MAP_TEMP_00 and FLAG_MAP_TEMP_01 are
 ///   ivy A and B blown away beside the small pillars, and in the sinking
-///   pillars' room puddles A and B frozen; FLAG_MAP_TEMP_02 is pillar B
-///   soaked by Douse.
+///   pillars' room the two pillars' puddles frozen; FLAG_MAP_TEMP_02 is the
+///   south-east pillar soaked by Douse.
 /// - TunnelRuinsLadyStatues: FLAG_MAP_TEMP_00 to FLAG_MAP_TEMP_02 are the
 ///   carved stones set on the balance, FLAG_MAP_TEMP_03 the pillar soaked by
 ///   Douse and FLAG_MAP_TEMP_04 its puddle frozen.
@@ -146,16 +147,16 @@ enum {
   LOCALID_IVY_C,
   /// ★ Named from what the player sees: a grey pillar with a white top on an
   /// orange base, in the north-west of its room (its render)
-  LOCALID_SINKING_PILLAR_A,
+  LOCALID_NORTHWEST_SINKING_PILLAR,
   /// ★ Named from what the player sees: a second grey pillar with a white top,
   /// in the south-east of the room (its render)
-  LOCALID_SINKING_PILLAR_B,
+  LOCALID_SOUTHEAST_SINKING_PILLAR,
   /// ★ Named from what the player sees: a small blue puddle in the middle of
   /// the room (its render)
-  LOCALID_PUDDLE_A,
+  LOCALID_NORTHWEST_PILLAR_PUDDLE,
   /// ★ Named from what the player sees: the puddle at the same place, for the
-  /// second pillar (its render)
-  LOCALID_PUDDLE_B
+  /// south-east pillar (its render)
+  LOCALID_SOUTHEAST_PILLAR_PUDDLE
 };
 
 /// The object events of TunnelRuinsLadyStatues and any other map: a pillar for
@@ -178,19 +179,19 @@ enum {
   LOCALID_BALANCE_EAST,
   /// ★ Named from what the player sees: a grey stone carved with spirals, the
   /// west of three in a row (its render)
-  LOCALID_CARRY_STONE_A,
+  LOCALID_WEST_CARRY_STONE,
   /// ★ Named from what the player sees: the middle grey stone carved with
   /// spirals (its render)
-  LOCALID_CARRY_STONE_B,
+  LOCALID_MIDDLE_CARRY_STONE,
   /// ★ Named from what the player sees: the east grey stone carved with spirals
   /// (its render)
-  LOCALID_CARRY_STONE_C,
+  LOCALID_EAST_CARRY_STONE,
   /// ★ Named from what the player sees: a white statue standing over a chest in
   /// the west (its render)
-  LOCALID_VANISHING_STATUE_A,
+  LOCALID_WEST_VANISHING_STATUE,
   /// ★ Named from what the player sees: a white statue standing over a chest in
   /// the east (its render)
-  LOCALID_VANISHING_STATUE_B,
+  LOCALID_EAST_VANISHING_STATUE,
   /// ★ Named from what the player sees: one of a pair of grey pillars with gold
   /// tops in the east (its render)
   LOCALID_EAST_PILLAR_A,
@@ -199,19 +200,19 @@ enum {
   LOCALID_EAST_PILLAR_B,
   /// ★ Named from what the player sees: a pink statue of a robed woman,
   /// north-west of the five (its render)
-  LOCALID_LADY_STATUE_A,
+  LOCALID_LADY_STATUE_NORTHWEST,
   /// ★ Named from what the player sees: a pink statue of a robed woman,
   /// north-east of the five (its render)
-  LOCALID_LADY_STATUE_B,
+  LOCALID_LADY_STATUE_NORTHEAST,
   /// ★ Named from what the player sees: a pink statue of a robed woman,
   /// south-west of the five (its render)
-  LOCALID_LADY_STATUE_C,
+  LOCALID_LADY_STATUE_SOUTHWEST,
   /// ★ Named from what the player sees: a pink statue of a robed woman,
   /// south-east of the five (its render)
-  LOCALID_LADY_STATUE_D,
+  LOCALID_LADY_STATUE_SOUTHEAST,
   /// ★ Named from what the player sees: a pink statue of a robed woman, the
   /// southmost of the five (its render)
-  LOCALID_LADY_STATUE_E
+  LOCALID_LADY_STATUE_SOUTH
 };
 
 /// Sprites, as the sheets show them.
@@ -575,8 +576,8 @@ static void EventScript_PushFirstPillars(void) {
 
 /// Walking west into a gap: the leader hops 32 pixels across it.
 /// Reached by walking west into the gaps' cells: metatile behaviors 23, 31 and
-/// 32 in TunnelRuinsGreatStatue (31 until puddle A is frozen), 26 and 30 in
-/// TunnelRuinsLadyStatues.
+/// 32 in TunnelRuinsGreatStatue (31 until the north-west pillar's puddle is
+/// frozen), 26 and 30 in TunnelRuinsLadyStatues.
 static void EventScript_HopWest(void) {
   struct FieldPosition target;
   struct ObjectEvent *objectEvent = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
@@ -723,13 +724,13 @@ static __inline__ void TunnelRuins_AnimateLoweringImpact(s32 sourceColumn,
   MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
 }
 
-/// Moving sinking pillar A into column 46: it sinks 16 pixels into the floor
-/// in a cloud of dust, puddle A appears on it, and the floor beside it changes
-/// in two jolts that shake the screen.
-/// Reached by Move on sinking pillar A until it has sunk, and called by
-/// EventScript_PushSinkingPillarA; sets FLAG_TUNNEL_RUINS_PILLAR_A_IN_FLOOR
-/// when it sinks.
-static void EventScript_SinkPillarA(void) {
+/// Moving the north-west sinking pillar into column 46: it sinks 16 pixels into
+/// the floor in a cloud of dust, its puddle appears on it, and the floor beside
+/// it changes in two jolts that shake the screen.
+/// Reached by Move on the north-west sinking pillar until it has sunk, and
+/// called by EventScript_PushNorthwestSinkingPillar; sets
+/// FLAG_TUNNEL_RUINS_NORTHWEST_PILLAR_IN_FLOOR when it sinks.
+static void EventScript_SinkNorthwestPillar(void) {
   u32 i;
   struct ObjectEvent *overlay;
   s32 randomX;
@@ -739,7 +740,7 @@ static void EventScript_SinkPillarA(void) {
   struct EffectOptions *options;
 
   EV_START();
-  objectEvent = ObjectEvent_GetById(LOCALID_SINKING_PILLAR_A);
+  objectEvent = ObjectEvent_GetById(LOCALID_NORTHWEST_SINKING_PILLAR);
   if ((objectEvent->x.fixed >> 20) == 46) {
     WAIT(30);
     overlay = OverlayObject_PrepareObject(PIXELS(744), 0, PIXELS(184),
@@ -749,11 +750,11 @@ static void EventScript_SinkPillarA(void) {
     options->startScaleX = 3 * Q16_ONE / 5;
     options->startScaleY = 3 * Q16_ONE / 5;
     options->palette = 7;
-    ObjectEvent_Get(LOCALID_SINKING_PILLAR_A)->motionFlags = 0;
+    ObjectEvent_Get(LOCALID_NORTHWEST_SINKING_PILLAR)->motionFlags = 0;
     Engine_AudioPlayCue(SE_PUSH);
     for (i = 0; i < 16; i++) {
       Engine_TaskWait(3);
-      ObjectEvent_Get(LOCALID_SINKING_PILLAR_A)->y.fixed -= PIXELS(1);
+      ObjectEvent_Get(LOCALID_NORTHWEST_SINKING_PILLAR)->y.fixed -= PIXELS(1);
       randomX = Random_Next();
       randomX = ((((u32)(randomX << 4) >> 16) << 16) + PIXELS(736));
       randomZ = Engine_RandomNext();
@@ -765,51 +766,53 @@ static void EventScript_SinkPillarA(void) {
     }
     MapGrid_CopyCellAttributes(51, 8, 1, 1, 49, 8);
     WAIT(30);
-    ObjectEvent_Get(LOCALID_SINKING_PILLAR_A)->priorityFlags |=
+    ObjectEvent_Get(LOCALID_NORTHWEST_SINKING_PILLAR)->priorityFlags |=
         OBJ_EVENT_PRIORITY_UNDERFOOT;
-    OBJECT_MODE(LOCALID_SINKING_PILLAR_A, 3);
+    OBJECT_MODE(LOCALID_NORTHWEST_SINKING_PILLAR, 3);
     Engine_ObjectDispatchRelease(overlay);
     MapGrid_CopyCellAttributes(45, 4, 1, 1, 46, 8);
-    OBJECT_POSITION_SET(LOCALID_PUDDLE_A, 744, 136);
+    OBJECT_POSITION_SET(LOCALID_NORTHWEST_PILLAR_PUDDLE, 744, 136);
     TunnelRuins_AnimateLoweringImpact(58, 49, 8);
     WAIT(20);
     TunnelRuins_AnimateLoweringImpact(59, 49, 8);
     Engine_MapGridRenderWaitForValues();
     WAIT(10);
-    FLAG_SET(FLAG_TUNNEL_RUINS_PILLAR_A_IN_FLOOR);
+    FLAG_SET(FLAG_TUNNEL_RUINS_NORTHWEST_PILLAR_IN_FLOOR);
   }
   EV_END();
 }
 
-/// Walking into sinking pillar A pushes it, and it sinks if it reaches column
-/// 46 (until FLAG_TUNNEL_RUINS_PILLAR_A_IN_FLOOR).
+/// Walking into the north-west sinking pillar pushes it, and it sinks if it
+/// reaches column 46 (until FLAG_TUNNEL_RUINS_NORTHWEST_PILLAR_IN_FLOOR).
 /// Reached by walking into metatile behavior 29 in TunnelRuinsGreatStatue.
-static void EventScript_PushSinkingPillarA(void) {
+static void EventScript_PushNorthwestSinkingPillar(void) {
   EV_START();
   StagedObjectEvent_AdvancePair();
   EV_END();
-  EventScript_SinkPillarA();
+  EventScript_SinkNorthwestPillar();
 }
 
-/// Frost on puddle A freezes it into a pillar of ice.
-/// Reached by Frost on puddle A until FLAG_MAP_TEMP_00 is set; sets it.
-static void EventScript_FreezePuddleA(void) {
+/// Frost on the north-west pillar's puddle freezes it into a pillar of ice.
+/// Reached by Frost on the north-west pillar's puddle until FLAG_MAP_TEMP_00 is
+/// set; sets it.
+static void EventScript_FreezeNorthwestPillarPuddle(void) {
   u8 *flags;
 
-  OBJECT_MODE(LOCALID_PUDDLE_A, 1);
-  Engine_ObjectEventSetChildValue(LOCALID_PUDDLE_A, 0);
-  OBJECT_MODE(LOCALID_PUDDLE_A, 2);
-  flags = &ObjectEvent_GetById(LOCALID_PUDDLE_A)->priorityFlags;
+  OBJECT_MODE(LOCALID_NORTHWEST_PILLAR_PUDDLE, 1);
+  Engine_ObjectEventSetChildValue(LOCALID_NORTHWEST_PILLAR_PUDDLE, 0);
+  OBJECT_MODE(LOCALID_NORTHWEST_PILLAR_PUDDLE, 2);
+  flags = &ObjectEvent_GetById(LOCALID_NORTHWEST_PILLAR_PUDDLE)->priorityFlags;
   *flags &= ~OBJ_EVENT_PRIORITY_UNDERFOOT;
   FLAG_SET(FLAG_MAP_TEMP_00);
 }
 
-/// Moving sinking pillar B into column 48 once Douse has soaked it: it sinks
-/// as pillar A does, and puddle B appears on it.
-/// Reached by Move on sinking pillar B until it has sunk, and called by
-/// EventScript_PushSinkingPillarB and EventScript_DousePillarB; sets
-/// FLAG_TUNNEL_RUINS_PILLAR_B_IN_FLOOR when it sinks.
-static void EventScript_SinkPillarB(void) {
+/// Moving the south-east sinking pillar into column 48 once Douse has soaked
+/// it: it sinks as the north-west pillar does, and its puddle appears on it.
+/// Reached by Move on the south-east sinking pillar until it has sunk, and
+/// called by EventScript_PushSoutheastSinkingPillar and
+/// EventScript_DouseSoutheastPillar; sets
+/// FLAG_TUNNEL_RUINS_SOUTHEAST_PILLAR_IN_FLOOR when it sinks.
+static void EventScript_SinkSoutheastPillar(void) {
   u32 i;
   struct ObjectEvent *overlay;
   s32 randomX;
@@ -821,7 +824,7 @@ static void EventScript_SinkPillarB(void) {
   struct EffectOptions *options;
 
   EV_START();
-  objectEvent = ObjectEvent_GetById(LOCALID_SINKING_PILLAR_B);
+  objectEvent = ObjectEvent_GetById(LOCALID_SOUTHEAST_SINKING_PILLAR);
   if ((objectEvent->x.fixed >> 20) == 48) {
     if (FLAG_CHECK(FLAG_MAP_TEMP_02) != 0) {
       WAIT(30);
@@ -830,11 +833,11 @@ static void EventScript_SinkPillarB(void) {
       options->startScaleX = 3 * Q16_ONE / 5;
       options->startScaleY = 3 * Q16_ONE / 5;
       options->palette = 7;
-      ObjectEvent_Get(LOCALID_SINKING_PILLAR_B)->motionFlags = 0;
+      ObjectEvent_Get(LOCALID_SOUTHEAST_SINKING_PILLAR)->motionFlags = 0;
       Engine_AudioPlayCue(SE_PUSH);
       for (i = 0; i < 16; i++) {
         Engine_TaskWait(3);
-        ObjectEvent_Get(LOCALID_SINKING_PILLAR_B)->y.fixed -= PIXELS(1);
+        ObjectEvent_Get(LOCALID_SOUTHEAST_SINKING_PILLAR)->y.fixed -= PIXELS(1);
         randomX = Engine_RandomNext();
         effectX = ((((u32)(randomX << 4) >> 16) << 16) + PIXELS(768));
         randomZ = Engine_RandomNext();
@@ -845,58 +848,61 @@ static void EventScript_SinkPillarB(void) {
       }
       MapGrid_CopyCellAttributes(51, 8, 1, 1, 45, 14);
       WAIT(30);
-      ObjectEvent_Get(LOCALID_SINKING_PILLAR_B)->priorityFlags |=
+      ObjectEvent_Get(LOCALID_SOUTHEAST_SINKING_PILLAR)->priorityFlags |=
           OBJ_EVENT_PRIORITY_UNDERFOOT;
-      OBJECT_MODE(LOCALID_SINKING_PILLAR_B, 3);
+      OBJECT_MODE(LOCALID_SOUTHEAST_SINKING_PILLAR, 3);
       Engine_ObjectDispatchRelease(overlay);
       MapGrid_CopyCellAttributes(45, 4, 1, 1, 48, 14);
-      OBJECT_POSITION_SET(LOCALID_PUDDLE_B, 776, 232);
+      OBJECT_POSITION_SET(LOCALID_SOUTHEAST_PILLAR_PUDDLE, 776, 232);
       TunnelRuins_AnimateLoweringImpact(58, 45, 14);
       WAIT(20);
       TunnelRuins_AnimateLoweringImpact(59, 45, 14);
       Engine_MapGridRenderWaitForValues();
       WAIT(10);
-      FLAG_SET(FLAG_TUNNEL_RUINS_PILLAR_B_IN_FLOOR);
+      FLAG_SET(FLAG_TUNNEL_RUINS_SOUTHEAST_PILLAR_IN_FLOOR);
     }
   }
   EV_END();
 }
 
-/// Walking into sinking pillar B pushes it, and it sinks if it is soaked and
-/// reaches column 48.
+/// Walking into the south-east sinking pillar pushes it, and it sinks if it is
+/// soaked and reaches column 48.
 /// Reached by walking into metatile behavior 30, or east into 32 before Douse
 /// has soaked it, in TunnelRuinsGreatStatue.
-static void EventScript_PushSinkingPillarB(void) {
+static void EventScript_PushSoutheastSinkingPillar(void) {
   EV_START();
   StagedObjectEvent_AdvancePair();
   EV_END();
-  EventScript_SinkPillarB();
+  EventScript_SinkSoutheastPillar();
 }
 
-/// As Douse begins on sinking pillar B, water splashes on it.
-/// Reached by Douse's first phase on sinking pillar B until it is soaked.
-static void EventScript_DouseStartsOnPillarB(void) {
-  ObjectEvent_SetActionScript(LOCALID_SINKING_PILLAR_B,
+/// As Douse begins on the south-east sinking pillar, water splashes on it.
+/// Reached by Douse's first phase on the south-east sinking pillar until it is
+/// soaked.
+static void EventScript_DouseStartsOnSoutheastPillar(void) {
+  ObjectEvent_SetActionScript(LOCALID_SOUTHEAST_SINKING_PILLAR,
                               gTunnelRuins_DouseSplashScript);
 }
 
-/// Douse soaks sinking pillar B, which sinks at once if it is in column 48.
-/// Reached by Douse on sinking pillar B until it is soaked; sets
+/// Douse soaks the south-east sinking pillar, which sinks at once if it is in
+/// column 48.
+/// Reached by Douse on the south-east sinking pillar until it is soaked; sets
 /// FLAG_MAP_TEMP_02.
-static void EventScript_DousePillarB(void) {
+static void EventScript_DouseSoutheastPillar(void) {
   FLAG_SET(FLAG_MAP_TEMP_02);
-  EventScript_SinkPillarB();
+  EventScript_SinkSoutheastPillar();
 }
 
-/// Frost on puddle B freezes it into a pillar of ice.
-/// Reached by Frost on puddle B until FLAG_MAP_TEMP_01 is set; sets it.
-static void EventScript_FreezePuddleB(void) {
+/// Frost on the south-east pillar's puddle freezes it into a pillar of ice.
+/// Reached by Frost on the south-east pillar's puddle until FLAG_MAP_TEMP_01 is
+/// set; sets it.
+static void EventScript_FreezeSoutheastPillarPuddle(void) {
   u8 *flags;
 
-  OBJECT_MODE(LOCALID_PUDDLE_B, 1);
-  Engine_ObjectEventSetChildValue(LOCALID_PUDDLE_B, 0);
-  OBJECT_MODE(LOCALID_PUDDLE_B, 2);
-  flags = &ObjectEvent_GetById(LOCALID_PUDDLE_B)->priorityFlags;
+  OBJECT_MODE(LOCALID_SOUTHEAST_PILLAR_PUDDLE, 1);
+  Engine_ObjectEventSetChildValue(LOCALID_SOUTHEAST_PILLAR_PUDDLE, 0);
+  OBJECT_MODE(LOCALID_SOUTHEAST_PILLAR_PUDDLE, 2);
+  flags = &ObjectEvent_GetById(LOCALID_SOUTHEAST_PILLAR_PUDDLE)->priorityFlags;
   *flags &= ~OBJ_EVENT_PRIORITY_UNDERFOOT;
   FLAG_SET(FLAG_MAP_TEMP_01);
 }
@@ -1115,65 +1121,67 @@ static void EventScript_SetStoneOnBalance(void) {
 
   EV_START();
   for (i = 0; i <= 2; i++) {
-    if (ObjectEvent_GetById(i + LOCALID_CARRY_STONE_A)
+    if (ObjectEvent_GetById(i + LOCALID_WEST_CARRY_STONE)
                 ->sprite->image.priority == 3 &&
         FLAG_CHECK(i + FLAG_MAP_TEMP_00) == 0) {
       TunnelRuins_WaitForObjectEventToLand(
-          ObjectEvent_Get(i + LOCALID_CARRY_STONE_A));
-      ObjectEvent_SetPosition(i + LOCALID_CARRY_STONE_A, 0, 0);
+          ObjectEvent_Get(i + LOCALID_WEST_CARRY_STONE));
+      ObjectEvent_SetPosition(i + LOCALID_WEST_CARRY_STONE, 0, 0);
       FLAG_SET(i + FLAG_MAP_TEMP_00);
       break;
     }
-    if ((ObjectEvent_GetById(i + LOCALID_CARRY_STONE_A)->z.fixed >> 20) == 9 &&
+    if ((ObjectEvent_GetById(i + LOCALID_WEST_CARRY_STONE)->z.fixed >> 20) ==
+            9 &&
         FLAG_CHECK(i + FLAG_MAP_TEMP_00) == 0) {
-      ObjectEvent_GetById(i + LOCALID_CARRY_STONE_A)->terrainHeight = 0;
-      ObjectEvent_GetById(i + LOCALID_CARRY_STONE_A)->velocityY = 0;
-      ObjectEvent_GetById(i + LOCALID_CARRY_STONE_A)->targetY =
+      ObjectEvent_GetById(i + LOCALID_WEST_CARRY_STONE)->terrainHeight = 0;
+      ObjectEvent_GetById(i + LOCALID_WEST_CARRY_STONE)->velocityY = 0;
+      ObjectEvent_GetById(i + LOCALID_WEST_CARRY_STONE)->targetY =
           OBJ_EVENT_NO_TARGET;
-      ObjectEvent_Get(i + LOCALID_CARRY_STONE_A)->motionFlags = 0;
-      ObjectEvent_GetById(i + LOCALID_CARRY_STONE_A)->timer = 0;
+      ObjectEvent_Get(i + LOCALID_WEST_CARRY_STONE)->motionFlags = 0;
+      ObjectEvent_GetById(i + LOCALID_WEST_CARRY_STONE)->timer = 0;
       // The carved stone set down takes the place of the first carved stone not
       // yet set.
       settledIndex = i;
       for (j = 0; j < i; j++) {
         if (FLAG_CHECK(FLAG_MAP_TEMP_00 + j) == 0) {
           savedPosition.x.fixed =
-              ObjectEvent_GetById(i + LOCALID_CARRY_STONE_A)->x.fixed;
+              ObjectEvent_GetById(i + LOCALID_WEST_CARRY_STONE)->x.fixed;
           savedPosition.y.fixed =
-              ObjectEvent_GetById(i + LOCALID_CARRY_STONE_A)->y.fixed;
+              ObjectEvent_GetById(i + LOCALID_WEST_CARRY_STONE)->y.fixed;
           savedPosition.z.fixed =
-              ObjectEvent_GetById(i + LOCALID_CARRY_STONE_A)->z.fixed;
-          ObjectEvent_Get(i + LOCALID_CARRY_STONE_A)->x.fixed =
-              ObjectEvent_GetById(j + LOCALID_CARRY_STONE_A)->x.fixed;
-          ObjectEvent_GetById(i + LOCALID_CARRY_STONE_A)->y.fixed =
-              ObjectEvent_GetById(j + LOCALID_CARRY_STONE_A)->y.fixed;
-          ObjectEvent_GetById(i + LOCALID_CARRY_STONE_A)->z.fixed =
-              ObjectEvent_GetById(j + LOCALID_CARRY_STONE_A)->z.fixed;
-          ObjectEvent_Get(j + LOCALID_CARRY_STONE_A)->x.fixed =
+              ObjectEvent_GetById(i + LOCALID_WEST_CARRY_STONE)->z.fixed;
+          ObjectEvent_Get(i + LOCALID_WEST_CARRY_STONE)->x.fixed =
+              ObjectEvent_GetById(j + LOCALID_WEST_CARRY_STONE)->x.fixed;
+          ObjectEvent_GetById(i + LOCALID_WEST_CARRY_STONE)->y.fixed =
+              ObjectEvent_GetById(j + LOCALID_WEST_CARRY_STONE)->y.fixed;
+          ObjectEvent_GetById(i + LOCALID_WEST_CARRY_STONE)->z.fixed =
+              ObjectEvent_GetById(j + LOCALID_WEST_CARRY_STONE)->z.fixed;
+          ObjectEvent_Get(j + LOCALID_WEST_CARRY_STONE)->x.fixed =
               savedPosition.x.fixed;
-          ObjectEvent_Get(j + LOCALID_CARRY_STONE_A)->y.fixed =
+          ObjectEvent_Get(j + LOCALID_WEST_CARRY_STONE)->y.fixed =
               savedPosition.y.fixed;
-          ObjectEvent_Get(j + LOCALID_CARRY_STONE_A)->z.fixed =
+          ObjectEvent_Get(j + LOCALID_WEST_CARRY_STONE)->z.fixed =
               savedPosition.z.fixed;
           settledIndex = j;
           break;
         }
       }
-      ObjectEvent_GetById(settledIndex + LOCALID_CARRY_STONE_A)->terrainHeight =
-          0;
-      ObjectEvent_Get(settledIndex + LOCALID_CARRY_STONE_A)->velocityY = 0;
-      ObjectEvent_GetById(settledIndex + LOCALID_CARRY_STONE_A)->targetY =
+      ObjectEvent_GetById(settledIndex + LOCALID_WEST_CARRY_STONE)
+          ->terrainHeight = 0;
+      ObjectEvent_Get(settledIndex + LOCALID_WEST_CARRY_STONE)->velocityY = 0;
+      ObjectEvent_GetById(settledIndex + LOCALID_WEST_CARRY_STONE)->targetY =
           OBJ_EVENT_NO_TARGET;
-      ObjectEvent_Get(settledIndex + LOCALID_CARRY_STONE_A)->motionFlags = 0;
-      ObjectEvent_GetById(settledIndex + LOCALID_CARRY_STONE_A)->timer = 0;
+      ObjectEvent_Get(settledIndex + LOCALID_WEST_CARRY_STONE)->motionFlags = 0;
+      ObjectEvent_GetById(settledIndex + LOCALID_WEST_CARRY_STONE)->timer = 0;
       // The camera turns to the balance as the carved stone drops and the
       // platforms move.
       Engine_CameraSetSpeed(PIXELS(3), PIXELS(3) / 8);
       Camera_GetScriptObject()->motionFlags = 0;
       Camera_MoveTo(PIXELS(168), PIXELS(8), PIXELS(184), 1);
       Engine_CameraWaitForMove();
-      TunnelRuins_DropStoneOnStack(settledIndex + LOCALID_CARRY_STONE_A);
-      if ((ObjectEvent_GetById(settledIndex + LOCALID_CARRY_STONE_A)->x.fixed >>
+      TunnelRuins_DropStoneOnStack(settledIndex + LOCALID_WEST_CARRY_STONE);
+      if ((ObjectEvent_GetById(settledIndex + LOCALID_WEST_CARRY_STONE)
+               ->x.fixed >>
            20) == 8) {
         ObjectEvent_GetById(LOCALID_BALANCE_WEST)->timer++;
         (ObjectEvent_GetById(LOCALID_BALANCE_EAST)->timer)--;
@@ -1182,14 +1190,14 @@ static void EventScript_SetStoneOnBalance(void) {
         ObjectEvent_GetById(LOCALID_BALANCE_EAST)->timer++;
       }
 #ifdef UBFIX
-      ObjectEvent_Get(settledIndex + LOCALID_CARRY_STONE_A)->update =
+      ObjectEvent_Get(settledIndex + LOCALID_WEST_CARRY_STONE)->update =
           TunnelRuins_RideStoneBelow;
 #else
-      ObjectEvent_Get(settledIndex + LOCALID_CARRY_STONE_A)->update =
+      ObjectEvent_Get(settledIndex + LOCALID_WEST_CARRY_STONE)->update =
           (void (*)(union FieldObject *))TunnelRuins_RideStoneBelow;
 #endif
       TunnelRuins_SettleBalance(40);
-      ObjectEvent_Get(settledIndex + LOCALID_CARRY_STONE_A)->priorityFlags |=
+      ObjectEvent_Get(settledIndex + LOCALID_WEST_CARRY_STONE)->priorityFlags |=
           OBJ_EVENT_PRIORITY_UNDERFOOT;
       FLAG_SET(FLAG_MAP_TEMP_00 + settledIndex);
       break;
@@ -1247,8 +1255,8 @@ static void EventScript_ShowFalseStatues(void) {
   MapGrid_CopyCellAttributes(113, 43, 1, 1, 49, 43);
   Marker_SetPosition(100, 0, 0);
   Marker_SetPosition(101, 0, 0);
-  OBJECT_POSITION_SET(LOCALID_VANISHING_STATUE_A, 136, 792);
-  OBJECT_POSITION_SET(LOCALID_VANISHING_STATUE_B, 792, 696);
+  OBJECT_POSITION_SET(LOCALID_WEST_VANISHING_STATUE, 136, 792);
+  OBJECT_POSITION_SET(LOCALID_EAST_VANISHING_STATUE, 792, 696);
 }
 
 /// Reveal makes the two false statues vanish. As it shows what is hidden, the
@@ -1259,8 +1267,8 @@ static void EventScript_HideFalseStatues(void) {
   MapGrid_CopyCellAttributes(49, 107, 1, 1, 49, 43);
   Marker_SetPosition(100, -1, -1);
   Marker_SetPosition(101, -1, -1);
-  ObjectEvent_SetPosition(LOCALID_VANISHING_STATUE_A, 0, 0);
-  ObjectEvent_SetPosition(LOCALID_VANISHING_STATUE_B, 0, 0);
+  ObjectEvent_SetPosition(LOCALID_WEST_VANISHING_STATUE, 0, 0);
+  ObjectEvent_SetPosition(LOCALID_EAST_VANISHING_STATUE, 0, 0);
 }
 
 /// Moving one of the five coloured statues in TunnelRuinsLadyStatues: with all
@@ -1278,68 +1286,68 @@ static void EventScript_MoveLadyStatue(void) {
   correctPositions = 0;
   EV_START();
   MapGrid_CopyCellAttributes(83, 45, 11, 8, 19, 45);
-  objectEvent = ObjectEvent_GetById(LOCALID_LADY_STATUE_A);
+  objectEvent = ObjectEvent_GetById(LOCALID_LADY_STATUE_NORTHWEST);
   column = objectEvent->x.fixed;
-  row = ObjectEvent_GetById(LOCALID_LADY_STATUE_A)->z.fixed;
+  row = ObjectEvent_GetById(LOCALID_LADY_STATUE_NORTHWEST)->z.fixed;
   row >>= 20;
   column >>= 20;
   MapGrid_CopyCellAttributes(20, 56, 1, 1, column, row);
-  objectEvent = ObjectEvent_GetById(LOCALID_LADY_STATUE_B);
+  objectEvent = ObjectEvent_GetById(LOCALID_LADY_STATUE_NORTHEAST);
   column = objectEvent->x.fixed;
-  row = ObjectEvent_GetById(LOCALID_LADY_STATUE_B)->z.fixed;
+  row = ObjectEvent_GetById(LOCALID_LADY_STATUE_NORTHEAST)->z.fixed;
   row >>= 20;
   column >>= 20;
   MapGrid_CopyCellAttributes(20, 56, 1, 1, column, row);
-  objectEvent = ObjectEvent_GetById(LOCALID_LADY_STATUE_C);
+  objectEvent = ObjectEvent_GetById(LOCALID_LADY_STATUE_SOUTHWEST);
   column = objectEvent->x.fixed;
-  row = ObjectEvent_GetById(LOCALID_LADY_STATUE_C)->z.fixed;
+  row = ObjectEvent_GetById(LOCALID_LADY_STATUE_SOUTHWEST)->z.fixed;
   row >>= 20;
   column >>= 20;
   MapGrid_CopyCellAttributes(20, 56, 1, 1, column, row);
-  objectEvent = ObjectEvent_GetById(LOCALID_LADY_STATUE_D);
+  objectEvent = ObjectEvent_GetById(LOCALID_LADY_STATUE_SOUTHEAST);
   column = objectEvent->x.fixed;
-  row = ObjectEvent_GetById(LOCALID_LADY_STATUE_D)->z.fixed;
+  row = ObjectEvent_GetById(LOCALID_LADY_STATUE_SOUTHEAST)->z.fixed;
   row >>= 20;
   column >>= 20;
   MapGrid_CopyCellAttributes(20, 56, 1, 1, column, row);
-  objectEvent = ObjectEvent_GetById(LOCALID_LADY_STATUE_E);
+  objectEvent = ObjectEvent_GetById(LOCALID_LADY_STATUE_SOUTH);
   column = objectEvent->x.fixed;
-  row = ObjectEvent_GetById(LOCALID_LADY_STATUE_E)->z.fixed;
+  row = ObjectEvent_GetById(LOCALID_LADY_STATUE_SOUTH)->z.fixed;
   row >>= 20;
   column >>= 20;
   MapGrid_CopyCellAttributes(20, 56, 1, 1, column, row);
   // Count the statues on their marks.
-  objectEvent = ObjectEvent_GetById(LOCALID_LADY_STATUE_A);
+  objectEvent = ObjectEvent_GetById(LOCALID_LADY_STATUE_NORTHWEST);
   if ((objectEvent->x.fixed >> 20) == 25) {
-    objectEvent = ObjectEvent_GetById(LOCALID_LADY_STATUE_A);
+    objectEvent = ObjectEvent_GetById(LOCALID_LADY_STATUE_NORTHWEST);
     if ((objectEvent->z.fixed >> 20) == 49) {
       correctPositions = 1;
     }
   }
-  objectEvent = ObjectEvent_GetById(LOCALID_LADY_STATUE_B);
+  objectEvent = ObjectEvent_GetById(LOCALID_LADY_STATUE_NORTHEAST);
   if ((objectEvent->x.fixed >> 20) == 23) {
-    objectEvent = ObjectEvent_GetById(LOCALID_LADY_STATUE_B);
+    objectEvent = ObjectEvent_GetById(LOCALID_LADY_STATUE_NORTHEAST);
     if ((objectEvent->z.fixed >> 20) == 49) {
       correctPositions = (correctPositions + 1);
     }
   }
-  objectEvent = ObjectEvent_GetById(LOCALID_LADY_STATUE_C);
+  objectEvent = ObjectEvent_GetById(LOCALID_LADY_STATUE_SOUTHWEST);
   if ((objectEvent->x.fixed >> 20) == 25) {
-    objectEvent = ObjectEvent_GetById(LOCALID_LADY_STATUE_C);
+    objectEvent = ObjectEvent_GetById(LOCALID_LADY_STATUE_SOUTHWEST);
     if ((objectEvent->z.fixed >> 20) == 47) {
       correctPositions = (correctPositions + 1);
     }
   }
-  objectEvent = ObjectEvent_GetById(LOCALID_LADY_STATUE_D);
+  objectEvent = ObjectEvent_GetById(LOCALID_LADY_STATUE_SOUTHEAST);
   if ((objectEvent->x.fixed >> 20) == 23) {
-    objectEvent = ObjectEvent_GetById(LOCALID_LADY_STATUE_D);
+    objectEvent = ObjectEvent_GetById(LOCALID_LADY_STATUE_SOUTHEAST);
     if ((objectEvent->z.fixed >> 20) == 47) {
       correctPositions = (correctPositions + 1);
     }
   }
-  objectEvent = ObjectEvent_GetById(LOCALID_LADY_STATUE_E);
+  objectEvent = ObjectEvent_GetById(LOCALID_LADY_STATUE_SOUTH);
   if ((objectEvent->x.fixed >> 20) == 24) {
-    objectEvent = ObjectEvent_GetById(LOCALID_LADY_STATUE_E);
+    objectEvent = ObjectEvent_GetById(LOCALID_LADY_STATUE_SOUTH);
     if ((objectEvent->z.fixed >> 20) == 48) {
       correctPositions = (correctPositions + 1);
     }
@@ -1594,49 +1602,51 @@ s32 TunnelRuins_Initialize(void) {
     case TUNNEL_RUINS_GREAT_STATUE_SINKING_PILLARS_FROM_COLUMNS_NORTH:
     case TUNNEL_RUINS_GREAT_STATUE_SINKING_PILLARS_FROM_COLUMNS_SOUTH:
       Engine_ObjectEventSetSpriteFlags(
-          ObjectEvent_GetById(LOCALID_SINKING_PILLAR_A), 0);
+          ObjectEvent_GetById(LOCALID_NORTHWEST_SINKING_PILLAR), 0);
       Engine_ObjectEventSetSpriteFlags(
-          ObjectEvent_GetById(LOCALID_SINKING_PILLAR_B), 0);
-      OBJECT_MODE(LOCALID_SINKING_PILLAR_A, 2);
-      Engine_ObjectEventSetSpriteFlags(ObjectEvent_GetById(LOCALID_PUDDLE_A),
-                                       0);
-      Engine_ObjectEventSetSpriteFlags(ObjectEvent_GetById(LOCALID_PUDDLE_B),
-                                       0);
-      Engine_ObjectEventSetChildValue(LOCALID_PUDDLE_A, 15);
-      Engine_ObjectEventSetChildValue(LOCALID_PUDDLE_B, 15);
-      if (FLAG_CHECK(FLAG_TUNNEL_RUINS_PILLAR_A_IN_FLOOR)) {
+          ObjectEvent_GetById(LOCALID_SOUTHEAST_SINKING_PILLAR), 0);
+      OBJECT_MODE(LOCALID_NORTHWEST_SINKING_PILLAR, 2);
+      Engine_ObjectEventSetSpriteFlags(
+          ObjectEvent_GetById(LOCALID_NORTHWEST_PILLAR_PUDDLE), 0);
+      Engine_ObjectEventSetSpriteFlags(
+          ObjectEvent_GetById(LOCALID_SOUTHEAST_PILLAR_PUDDLE), 0);
+      Engine_ObjectEventSetChildValue(LOCALID_NORTHWEST_PILLAR_PUDDLE, 15);
+      Engine_ObjectEventSetChildValue(LOCALID_SOUTHEAST_PILLAR_PUDDLE, 15);
+      if (FLAG_CHECK(FLAG_TUNNEL_RUINS_NORTHWEST_PILLAR_IN_FLOOR)) {
         MapGrid_CopyCellsTo(59, 8, 49, 8, 1, 3);
         MapGrid_CopyCellAttributes(51, 8, 1, 1, 49, 8);
-        ObjectEvent_GetById(LOCALID_SINKING_PILLAR_A)->priorityFlags |=
+        ObjectEvent_GetById(LOCALID_NORTHWEST_SINKING_PILLAR)->priorityFlags |=
             OBJ_EVENT_PRIORITY_UNDERFOOT;
-        OBJECT_MODE(LOCALID_SINKING_PILLAR_A, 3);
+        OBJECT_MODE(LOCALID_NORTHWEST_SINKING_PILLAR, 3);
         MapGrid_CopyCellAttributes(45, 4, 1, 1, 46, 8);
-        OBJECT_POSITION_SET(LOCALID_SINKING_PILLAR_A, 744, 136);
-        ObjectEvent_GetById(LOCALID_SINKING_PILLAR_A)->y.fixed = -PIXELS(16);
-        OBJECT_POSITION_SET(LOCALID_PUDDLE_A, 744, 136);
+        OBJECT_POSITION_SET(LOCALID_NORTHWEST_SINKING_PILLAR, 744, 136);
+        ObjectEvent_GetById(LOCALID_NORTHWEST_SINKING_PILLAR)->y.fixed =
+            -PIXELS(16);
+        OBJECT_POSITION_SET(LOCALID_NORTHWEST_PILLAR_PUDDLE, 744, 136);
       }
       if (FLAG_CHECK(FLAG_MAP_TEMP_00)) {
-        Engine_ObjectEventSetChildValue(LOCALID_PUDDLE_A, 0);
-        OBJECT_MODE(LOCALID_PUDDLE_A, 5);
+        Engine_ObjectEventSetChildValue(LOCALID_NORTHWEST_PILLAR_PUDDLE, 0);
+        OBJECT_MODE(LOCALID_NORTHWEST_PILLAR_PUDDLE, 5);
       }
       if (FLAG_CHECK(FLAG_MAP_TEMP_02))
-        OBJECT_MODE(LOCALID_SINKING_PILLAR_B, 2);
-      if (FLAG_CHECK(FLAG_TUNNEL_RUINS_PILLAR_B_IN_FLOOR)) {
+        OBJECT_MODE(LOCALID_SOUTHEAST_SINKING_PILLAR, 2);
+      if (FLAG_CHECK(FLAG_TUNNEL_RUINS_SOUTHEAST_PILLAR_IN_FLOOR)) {
         MapGrid_CopyCellsTo(59, 8, 45, 14, 1, 3);
         MapGrid_CopyCellAttributes(51, 8, 1, 1, 45, 14);
-        ObjectEvent_GetById(LOCALID_SINKING_PILLAR_B)->priorityFlags |=
+        ObjectEvent_GetById(LOCALID_SOUTHEAST_SINKING_PILLAR)->priorityFlags |=
             OBJ_EVENT_PRIORITY_UNDERFOOT;
-        OBJECT_MODE(LOCALID_SINKING_PILLAR_B, 3);
+        OBJECT_MODE(LOCALID_SOUTHEAST_SINKING_PILLAR, 3);
         MapGrid_CopyCellAttributes(45, 4, 1, 1, 48, 14);
-        OBJECT_POSITION_SET(LOCALID_SINKING_PILLAR_B, 776, 232);
-        ObjectEvent_GetById(LOCALID_SINKING_PILLAR_B)->y.fixed = -PIXELS(16);
-        Engine_ObjectEventSetPosition(LOCALID_PUDDLE_B, PIXELS(776),
-                                      PIXELS(232));
+        OBJECT_POSITION_SET(LOCALID_SOUTHEAST_SINKING_PILLAR, 776, 232);
+        ObjectEvent_GetById(LOCALID_SOUTHEAST_SINKING_PILLAR)->y.fixed =
+            -PIXELS(16);
+        Engine_ObjectEventSetPosition(LOCALID_SOUTHEAST_PILLAR_PUDDLE,
+                                      PIXELS(776), PIXELS(232));
         FLAG_SET(FLAG_MAP_TEMP_02);
       }
       if (FLAG_CHECK(FLAG_MAP_TEMP_01)) {
-        Engine_ObjectEventSetChildValue(LOCALID_PUDDLE_B, 0);
-        OBJECT_MODE(LOCALID_PUDDLE_B, 5);
+        Engine_ObjectEventSetChildValue(LOCALID_SOUTHEAST_PILLAR_PUDDLE, 0);
+        OBJECT_MODE(LOCALID_SOUTHEAST_PILLAR_PUDDLE, 5);
       }
       break;
     case TUNNEL_RUINS_GREAT_STATUE_WHIRLWIND_ROOM_FROM_SECOND_PILLARS:
@@ -1722,45 +1732,45 @@ s32 TunnelRuins_Initialize(void) {
         ObjectEvent_GetById(LOCALID_BALANCE_EAST)->timer = 3;
         Engine_ObjectEventSetSpritePriority(LOCALID_BALANCE_WEST, 1);
         Engine_ObjectEventSetSpritePriority(LOCALID_BALANCE_EAST, 1);
-        ObjectEvent_GetById(LOCALID_CARRY_STONE_A)->motionFlags = 0;
-        ObjectEvent_GetById(LOCALID_CARRY_STONE_B)->motionFlags = 0;
-        ObjectEvent_GetById(LOCALID_CARRY_STONE_C)->motionFlags = 0;
+        ObjectEvent_GetById(LOCALID_WEST_CARRY_STONE)->motionFlags = 0;
+        ObjectEvent_GetById(LOCALID_MIDDLE_CARRY_STONE)->motionFlags = 0;
+        ObjectEvent_GetById(LOCALID_EAST_CARRY_STONE)->motionFlags = 0;
         Engine_ObjectEventSetSpriteFlags(
-            ObjectEvent_GetById(LOCALID_CARRY_STONE_A), 0);
+            ObjectEvent_GetById(LOCALID_WEST_CARRY_STONE), 0);
         Engine_ObjectEventSetSpriteFlags(
-            ObjectEvent_GetById(LOCALID_CARRY_STONE_B), 0);
+            ObjectEvent_GetById(LOCALID_MIDDLE_CARRY_STONE), 0);
         Engine_ObjectEventSetSpriteFlags(
-            ObjectEvent_GetById(LOCALID_CARRY_STONE_C), 0);
-        ObjectEvent_GetById(LOCALID_CARRY_STONE_A)->timer = 0;
-        ObjectEvent_GetById(LOCALID_CARRY_STONE_B)->timer = 0;
-        ObjectEvent_GetById(LOCALID_CARRY_STONE_C)->timer = 0;
+            ObjectEvent_GetById(LOCALID_EAST_CARRY_STONE), 0);
+        ObjectEvent_GetById(LOCALID_WEST_CARRY_STONE)->timer = 0;
+        ObjectEvent_GetById(LOCALID_MIDDLE_CARRY_STONE)->timer = 0;
+        ObjectEvent_GetById(LOCALID_EAST_CARRY_STONE)->timer = 0;
         if (gGameState.warpDest != TUNNEL_RUINS_LADY_STATUES_BALANCE_SOUTH)
           break;
         ObjectEvent_GetById(LOCALID_BALANCE_WEST)->y.fixed = -PIXELS(32);
         ObjectEvent_GetById(LOCALID_BALANCE_EAST)->y.fixed = -PIXELS(64);
         ObjectEvent_GetById(LOCALID_BALANCE_WEST)->timer = 2;
         ObjectEvent_GetById(LOCALID_BALANCE_EAST)->timer = 4;
-        OBJECT_POSITION_SET(LOCALID_CARRY_STONE_A, 200, 152);
-        ObjectEvent_GetById(LOCALID_CARRY_STONE_A)->timer =
+        OBJECT_POSITION_SET(LOCALID_WEST_CARRY_STONE, 200, 152);
+        ObjectEvent_GetById(LOCALID_WEST_CARRY_STONE)->timer =
             LOCALID_BALANCE_EAST;
-        ObjectEvent_GetById(LOCALID_CARRY_STONE_A)->update =
+        ObjectEvent_GetById(LOCALID_WEST_CARRY_STONE)->update =
             UPDATE_RIDE_STONE_BELOW;
-        ObjectEvent_GetById(LOCALID_CARRY_STONE_A)->priorityFlags |=
+        ObjectEvent_GetById(LOCALID_WEST_CARRY_STONE)->priorityFlags |=
             OBJ_EVENT_PRIORITY_UNDERFOOT;
-        OBJECT_POSITION_SET(LOCALID_CARRY_STONE_B, 200, 152);
-        ObjectEvent_GetById(LOCALID_CARRY_STONE_B)->timer =
-            LOCALID_CARRY_STONE_A;
-        ObjectEvent_GetById(LOCALID_CARRY_STONE_B)->update =
+        OBJECT_POSITION_SET(LOCALID_MIDDLE_CARRY_STONE, 200, 152);
+        ObjectEvent_GetById(LOCALID_MIDDLE_CARRY_STONE)->timer =
+            LOCALID_WEST_CARRY_STONE;
+        ObjectEvent_GetById(LOCALID_MIDDLE_CARRY_STONE)->update =
             UPDATE_RIDE_STONE_BELOW;
-        ObjectEvent_GetById(LOCALID_CARRY_STONE_B)->priorityFlags |=
+        ObjectEvent_GetById(LOCALID_MIDDLE_CARRY_STONE)->priorityFlags |=
             OBJ_EVENT_PRIORITY_UNDERFOOT;
-        Engine_ObjectEventSetPosition(LOCALID_CARRY_STONE_C, PIXELS(136),
+        Engine_ObjectEventSetPosition(LOCALID_EAST_CARRY_STONE, PIXELS(136),
                                       PIXELS(152));
-        ObjectEvent_GetById(LOCALID_CARRY_STONE_C)->timer =
+        ObjectEvent_GetById(LOCALID_EAST_CARRY_STONE)->timer =
             LOCALID_BALANCE_WEST;
-        ObjectEvent_GetById(LOCALID_CARRY_STONE_C)->update =
+        ObjectEvent_GetById(LOCALID_EAST_CARRY_STONE)->update =
             UPDATE_RIDE_STONE_BELOW;
-        ObjectEvent_GetById(LOCALID_CARRY_STONE_C)->priorityFlags |=
+        ObjectEvent_GetById(LOCALID_EAST_CARRY_STONE)->priorityFlags |=
             OBJ_EVENT_PRIORITY_UNDERFOOT;
         WAIT(2);
         FLAG_SET(FLAG_MAP_TEMP_00);
@@ -1790,49 +1800,49 @@ s32 TunnelRuins_Initialize(void) {
       WAIT(1);
       if (FLAG_CHECK(FLAG_TUNNEL_RUINS_STATUE_DOOR_OPEN)) {
         MapGrid_CopyCells(24, 59, 1, 2, 32, 46);
-        OBJECT_POSITION_SET(LOCALID_LADY_STATUE_A, 408, 792);
-        OBJECT_POSITION_SET(LOCALID_LADY_STATUE_B, 376, 792);
-        OBJECT_POSITION_SET(LOCALID_LADY_STATUE_C, 408, 760);
-        OBJECT_POSITION_SET(LOCALID_LADY_STATUE_D, 376, 760);
-        OBJECT_POSITION_SET(LOCALID_LADY_STATUE_E, 392, 776);
+        OBJECT_POSITION_SET(LOCALID_LADY_STATUE_NORTHWEST, 408, 792);
+        OBJECT_POSITION_SET(LOCALID_LADY_STATUE_NORTHEAST, 376, 792);
+        OBJECT_POSITION_SET(LOCALID_LADY_STATUE_SOUTHWEST, 408, 760);
+        OBJECT_POSITION_SET(LOCALID_LADY_STATUE_SOUTHEAST, 376, 760);
+        OBJECT_POSITION_SET(LOCALID_LADY_STATUE_SOUTH, 392, 776);
       }
-      ObjectEvent_GetById(LOCALID_LADY_STATUE_A)->motionFlags &=
+      ObjectEvent_GetById(LOCALID_LADY_STATUE_NORTHWEST)->motionFlags &=
           ~OBJ_EVENT_FOLLOWS_TERRAIN;
-      ObjectEvent_GetById(LOCALID_LADY_STATUE_B)->motionFlags &=
+      ObjectEvent_GetById(LOCALID_LADY_STATUE_NORTHEAST)->motionFlags &=
           ~OBJ_EVENT_FOLLOWS_TERRAIN;
-      ObjectEvent_GetById(LOCALID_LADY_STATUE_C)->motionFlags &=
+      ObjectEvent_GetById(LOCALID_LADY_STATUE_SOUTHWEST)->motionFlags &=
           ~OBJ_EVENT_FOLLOWS_TERRAIN;
-      ObjectEvent_GetById(LOCALID_LADY_STATUE_D)->motionFlags &=
+      ObjectEvent_GetById(LOCALID_LADY_STATUE_SOUTHEAST)->motionFlags &=
           ~OBJ_EVENT_FOLLOWS_TERRAIN;
-      ObjectEvent_GetById(LOCALID_LADY_STATUE_E)->motionFlags &=
+      ObjectEvent_GetById(LOCALID_LADY_STATUE_SOUTH)->motionFlags &=
           ~OBJ_EVENT_FOLLOWS_TERRAIN;
-      Engine_ObjectEventSetChildValue(LOCALID_LADY_STATUE_A, 4);
-      Engine_ObjectEventSetChildValue(LOCALID_LADY_STATUE_B, 1);
-      Engine_ObjectEventSetChildValue(LOCALID_LADY_STATUE_C, 4);
-      Engine_ObjectEventSetChildValue(LOCALID_LADY_STATUE_D, 10);
-      Engine_ObjectEventSetChildValue(LOCALID_LADY_STATUE_E, 0);
-      OBJECT_MODE(LOCALID_LADY_STATUE_A, 2);
-      OBJECT_MODE(LOCALID_LADY_STATUE_E, 2);
+      Engine_ObjectEventSetChildValue(LOCALID_LADY_STATUE_NORTHWEST, 4);
+      Engine_ObjectEventSetChildValue(LOCALID_LADY_STATUE_NORTHEAST, 1);
+      Engine_ObjectEventSetChildValue(LOCALID_LADY_STATUE_SOUTHWEST, 4);
+      Engine_ObjectEventSetChildValue(LOCALID_LADY_STATUE_SOUTHEAST, 10);
+      Engine_ObjectEventSetChildValue(LOCALID_LADY_STATUE_SOUTH, 0);
+      OBJECT_MODE(LOCALID_LADY_STATUE_NORTHWEST, 2);
+      OBJECT_MODE(LOCALID_LADY_STATUE_SOUTH, 2);
       Engine_MapGridCopyCellAttributes(
           20, 56, 1, 1,
-          ObjectEvent_GetById(LOCALID_LADY_STATUE_A)->x.fixed >> 20,
-          ObjectEvent_GetById(LOCALID_LADY_STATUE_A)->z.fixed >> 20);
+          ObjectEvent_GetById(LOCALID_LADY_STATUE_NORTHWEST)->x.fixed >> 20,
+          ObjectEvent_GetById(LOCALID_LADY_STATUE_NORTHWEST)->z.fixed >> 20);
       Engine_MapGridCopyCellAttributes(
           20, 56, 1, 1,
-          ObjectEvent_GetById(LOCALID_LADY_STATUE_B)->x.fixed >> 20,
-          ObjectEvent_GetById(LOCALID_LADY_STATUE_B)->z.fixed >> 20);
+          ObjectEvent_GetById(LOCALID_LADY_STATUE_NORTHEAST)->x.fixed >> 20,
+          ObjectEvent_GetById(LOCALID_LADY_STATUE_NORTHEAST)->z.fixed >> 20);
       Engine_MapGridCopyCellAttributes(
           20, 56, 1, 1,
-          ObjectEvent_GetById(LOCALID_LADY_STATUE_C)->x.fixed >> 20,
-          ObjectEvent_GetById(LOCALID_LADY_STATUE_C)->z.fixed >> 20);
+          ObjectEvent_GetById(LOCALID_LADY_STATUE_SOUTHWEST)->x.fixed >> 20,
+          ObjectEvent_GetById(LOCALID_LADY_STATUE_SOUTHWEST)->z.fixed >> 20);
       Engine_MapGridCopyCellAttributes(
           20, 56, 1, 1,
-          ObjectEvent_GetById(LOCALID_LADY_STATUE_D)->x.fixed >> 20,
-          ObjectEvent_GetById(LOCALID_LADY_STATUE_D)->z.fixed >> 20);
+          ObjectEvent_GetById(LOCALID_LADY_STATUE_SOUTHEAST)->x.fixed >> 20,
+          ObjectEvent_GetById(LOCALID_LADY_STATUE_SOUTHEAST)->z.fixed >> 20);
       Engine_MapGridCopyCellAttributes(
           20, 56, 1, 1,
-          ObjectEvent_GetById(LOCALID_LADY_STATUE_E)->x.fixed >> 20,
-          ObjectEvent_GetById(LOCALID_LADY_STATUE_E)->z.fixed >> 20);
+          ObjectEvent_GetById(LOCALID_LADY_STATUE_SOUTH)->x.fixed >> 20,
+          ObjectEvent_GetById(LOCALID_LADY_STATUE_SOUTH)->z.fixed >> 20);
       break;
     case TUNNEL_RUINS_LADY_STATUES_FROM_TUNNEL_RUINS_GREAT_STATUE_SOUTHEAST:
       MapGrid_CopyCellAttributes(49, 43, 1, 1, 49, 107);
@@ -2250,7 +2260,7 @@ struct MapEvent gTunnelRuinsGreatStatueEvents[] = {
         EVENT_SCRIPT(EventScript_HopSouth)},
     {COORD_EVENT_WALKING_INTO(FACING_SOUTH), 28, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_HopSouthOrPushSmallPillars)},
     {MAP_EVENT_COORD | COORD_EVENT_FLAG_WALKING, 28, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_PushSmallPillars)},
-    {MAP_EVENT_COORD | COORD_EVENT_FLAG_WALKING, 29, FLAG_TUNNEL_RUINS_PILLAR_A_IN_FLOOR, EVENT_SCRIPT(EventScript_PushSinkingPillarA)},
+    {MAP_EVENT_COORD | COORD_EVENT_FLAG_WALKING, 29, FLAG_TUNNEL_RUINS_NORTHWEST_PILLAR_IN_FLOOR, EVENT_SCRIPT(EventScript_PushNorthwestSinkingPillar)},
     {COORD_EVENT_WALKING_INTO(FACING_EAST), 29, FLAG_MAP_TEMP_00,
         EVENT_SCRIPT(EventScript_HopEast)},
     {COORD_EVENT_WALKING_INTO(FACING_SOUTH), 29, FLAG_MAP_TEMP_00,
@@ -2261,14 +2271,14 @@ struct MapEvent gTunnelRuinsGreatStatueEvents[] = {
         EVENT_SCRIPT(EventScript_HopWest)},
     {COORD_EVENT_WALKING_INTO(FACING_EAST), 31, CONDITION_ALWAYS,
         EVENT_SCRIPT(EventScript_HopEast)},
-    {MAP_EVENT_COORD | COORD_EVENT_FLAG_WALKING, 30, FLAG_TUNNEL_RUINS_PILLAR_B_IN_FLOOR, EVENT_SCRIPT(EventScript_PushSinkingPillarB)},
+    {MAP_EVENT_COORD | COORD_EVENT_FLAG_WALKING, 30, FLAG_TUNNEL_RUINS_SOUTHEAST_PILLAR_IN_FLOOR, EVENT_SCRIPT(EventScript_PushSoutheastSinkingPillar)},
     {COORD_EVENT_WALKING_INTO(FACING_WEST), 30, FLAG_MAP_TEMP_01,
         EVENT_SCRIPT(EventScript_HopWest)},
     {COORD_EVENT_WALKING_INTO(FACING_SOUTH), 30, FLAG_MAP_TEMP_01,
         EVENT_SCRIPT(EventScript_HopSouth)},
     {COORD_EVENT_WALKING_INTO(FACING_NORTH), 30, FLAG_MAP_TEMP_01,
         EVENT_SCRIPT(EventScript_HopNorth)},
-    {COORD_EVENT_WALKING_INTO(FACING_EAST), 32, FLAG_MAP_TEMP_02, EVENT_SCRIPT(EventScript_PushSinkingPillarB)},
+    {COORD_EVENT_WALKING_INTO(FACING_EAST), 32, FLAG_MAP_TEMP_02, EVENT_SCRIPT(EventScript_PushSoutheastSinkingPillar)},
     {COORD_EVENT_WALKING_INTO(FACING_EAST), 32, FLAG_MAP_TEMP_01,
         EVENT_SCRIPT(EventScript_HopEast)},
     {COORD_EVENT_WALKING_INTO(FACING_WEST), 32, CONDITION_ALWAYS,
@@ -2286,12 +2296,12 @@ struct MapEvent gTunnelRuinsGreatStatueEvents[] = {
     {PSYNERGY_ON_OBJ_EVENT(ABILITY_WHIRLWIND), LOCALID_IVY_A, FLAG_MAP_TEMP_00, EVENT_SCRIPT(EventScript_BlowAwayIvyA)},
     {PSYNERGY_ON_OBJ_EVENT(ABILITY_WHIRLWIND), LOCALID_IVY_B, FLAG_MAP_TEMP_01, EVENT_SCRIPT(EventScript_BlowAwayIvyB)},
     {PSYNERGY_ON_OBJ_EVENT(ABILITY_WHIRLWIND), LOCALID_IVY_C, FLAG_TUNNEL_RUINS_IVY_BLOWN_AWAY, EVENT_SCRIPT(EventScript_BlowAwayIvyC)},
-    {PSYNERGY_ON_OBJ_EVENT(ABILITY_MOVE), LOCALID_SINKING_PILLAR_A, FLAG_TUNNEL_RUINS_PILLAR_A_IN_FLOOR, EVENT_SCRIPT(EventScript_SinkPillarA)},
-    {PSYNERGY_ON_OBJ_EVENT(ABILITY_FROST), LOCALID_PUDDLE_A, FLAG_MAP_TEMP_00, EVENT_SCRIPT(EventScript_FreezePuddleA)},
-    {PSYNERGY_ON_OBJ_EVENT(ABILITY_MOVE), LOCALID_SINKING_PILLAR_B, FLAG_TUNNEL_RUINS_PILLAR_B_IN_FLOOR, EVENT_SCRIPT(EventScript_SinkPillarB)},
-    {PSYNERGY_ON_OBJ_EVENT(ABILITY_FROST), LOCALID_PUDDLE_B, FLAG_MAP_TEMP_01, EVENT_SCRIPT(EventScript_FreezePuddleB)},
-    {PSYNERGY_ON_OBJ_EVENT(ABILITY_DOUSE) | 1 << 28, LOCALID_SINKING_PILLAR_B, FLAG_MAP_TEMP_02, EVENT_SCRIPT(EventScript_DouseStartsOnPillarB)},
-    {PSYNERGY_ON_OBJ_EVENT(ABILITY_DOUSE), LOCALID_SINKING_PILLAR_B, FLAG_MAP_TEMP_02, EVENT_SCRIPT(EventScript_DousePillarB)},
+    {PSYNERGY_ON_OBJ_EVENT(ABILITY_MOVE), LOCALID_NORTHWEST_SINKING_PILLAR, FLAG_TUNNEL_RUINS_NORTHWEST_PILLAR_IN_FLOOR, EVENT_SCRIPT(EventScript_SinkNorthwestPillar)},
+    {PSYNERGY_ON_OBJ_EVENT(ABILITY_FROST), LOCALID_NORTHWEST_PILLAR_PUDDLE, FLAG_MAP_TEMP_00, EVENT_SCRIPT(EventScript_FreezeNorthwestPillarPuddle)},
+    {PSYNERGY_ON_OBJ_EVENT(ABILITY_MOVE), LOCALID_SOUTHEAST_SINKING_PILLAR, FLAG_TUNNEL_RUINS_SOUTHEAST_PILLAR_IN_FLOOR, EVENT_SCRIPT(EventScript_SinkSoutheastPillar)},
+    {PSYNERGY_ON_OBJ_EVENT(ABILITY_FROST), LOCALID_SOUTHEAST_PILLAR_PUDDLE, FLAG_MAP_TEMP_01, EVENT_SCRIPT(EventScript_FreezeSoutheastPillarPuddle)},
+    {PSYNERGY_ON_OBJ_EVENT(ABILITY_DOUSE) | 1 << 28, LOCALID_SOUTHEAST_SINKING_PILLAR, FLAG_MAP_TEMP_02, EVENT_SCRIPT(EventScript_DouseStartsOnSoutheastPillar)},
+    {PSYNERGY_ON_OBJ_EVENT(ABILITY_DOUSE), LOCALID_SOUTHEAST_SINKING_PILLAR, FLAG_MAP_TEMP_02, EVENT_SCRIPT(EventScript_DouseSoutheastPillar)},
     {MAP_EVENTS_END},
 };
 
@@ -2335,12 +2345,12 @@ struct MapEvent gTunnelRuinsEventsOther[] = {
     {PSYNERGY_ON_OBJ_EVENT(ABILITY_MOVE), LOCALID_DOUSE_PILLAR, FLAG_MAP_TEMP_04, EVENT_SCRIPT(EventScript_MoveDousePillar)},
     {PSYNERGY_ON_OBJ_EVENT(ABILITY_DOUSE) | 1 << 28, LOCALID_DOUSE_PILLAR, FLAG_MAP_TEMP_03, EVENT_SCRIPT(EventScript_DouseStartsOnPillar)},
     {PSYNERGY_ON_OBJ_EVENT(ABILITY_FROST), LOCALID_DOUSE_PUDDLE, FLAG_MAP_TEMP_04, EVENT_SCRIPT(EventScript_FreezeDousePuddle)},
-    {PSYNERGY_ON_OBJ_EVENT(ABILITY_MOVE), LOCALID_CARRY_STONE_A, CONDITION_ALWAYS, 0},
-    {PSYNERGY_ON_OBJ_EVENT(ABILITY_MOVE), LOCALID_CARRY_STONE_B, CONDITION_ALWAYS, 0},
-    {PSYNERGY_ON_OBJ_EVENT(ABILITY_MOVE), LOCALID_CARRY_STONE_C, CONDITION_ALWAYS, 0},
-    {PSYNERGY_ON_OBJ_EVENT(ABILITY_CARRY), LOCALID_CARRY_STONE_A, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_SetStoneOnBalance)},
-    {PSYNERGY_ON_OBJ_EVENT(ABILITY_CARRY), LOCALID_CARRY_STONE_B, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_SetStoneOnBalance)},
-    {PSYNERGY_ON_OBJ_EVENT(ABILITY_CARRY), LOCALID_CARRY_STONE_C, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_SetStoneOnBalance)},
+    {PSYNERGY_ON_OBJ_EVENT(ABILITY_MOVE), LOCALID_WEST_CARRY_STONE, CONDITION_ALWAYS, 0},
+    {PSYNERGY_ON_OBJ_EVENT(ABILITY_MOVE), LOCALID_MIDDLE_CARRY_STONE, CONDITION_ALWAYS, 0},
+    {PSYNERGY_ON_OBJ_EVENT(ABILITY_MOVE), LOCALID_EAST_CARRY_STONE, CONDITION_ALWAYS, 0},
+    {PSYNERGY_ON_OBJ_EVENT(ABILITY_CARRY), LOCALID_WEST_CARRY_STONE, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_SetStoneOnBalance)},
+    {PSYNERGY_ON_OBJ_EVENT(ABILITY_CARRY), LOCALID_MIDDLE_CARRY_STONE, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_SetStoneOnBalance)},
+    {PSYNERGY_ON_OBJ_EVENT(ABILITY_CARRY), LOCALID_EAST_CARRY_STONE, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_SetStoneOnBalance)},
     {PSYNERGY_IN_AREA(ABILITY_REVEAL, PSYNERGY_PHASE_EFFECT_ACTS), 0, CONDITION_ALWAYS,
         EVENT_SCRIPT(EventScript_HideFalseStatues)},
     {PSYNERGY_IN_AREA(ABILITY_REVEAL, PSYNERGY_PHASE_EFFECT_ENDS), 0, CONDITION_ALWAYS,
@@ -2349,20 +2359,20 @@ struct MapEvent gTunnelRuinsEventsOther[] = {
         EVENT_SCRIPT(EventScript_MoveEastPillar)},
     {PSYNERGY_ON_OBJ_EVENT(ABILITY_MOVE), LOCALID_EAST_PILLAR_B, CONDITION_ALWAYS,
         EVENT_SCRIPT(EventScript_MoveEastPillar)},
-    {PSYNERGY_ON_OBJ_EVENT(ABILITY_MOVE), LOCALID_LADY_STATUE_A, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_MoveLadyStatue)},
-    {PSYNERGY_ON_OBJ_EVENT(ABILITY_MOVE), LOCALID_LADY_STATUE_B, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_MoveLadyStatue)},
-    {PSYNERGY_ON_OBJ_EVENT(ABILITY_MOVE), LOCALID_LADY_STATUE_C, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_MoveLadyStatue)},
-    {PSYNERGY_ON_OBJ_EVENT(ABILITY_MOVE), LOCALID_LADY_STATUE_D, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_MoveLadyStatue)},
-    {PSYNERGY_ON_OBJ_EVENT(ABILITY_MOVE), LOCALID_LADY_STATUE_E, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_MoveLadyStatue)},
-    {PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_LADY_STATUE_A, CONDITION_ALWAYS,
+    {PSYNERGY_ON_OBJ_EVENT(ABILITY_MOVE), LOCALID_LADY_STATUE_NORTHWEST, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_MoveLadyStatue)},
+    {PSYNERGY_ON_OBJ_EVENT(ABILITY_MOVE), LOCALID_LADY_STATUE_NORTHEAST, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_MoveLadyStatue)},
+    {PSYNERGY_ON_OBJ_EVENT(ABILITY_MOVE), LOCALID_LADY_STATUE_SOUTHWEST, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_MoveLadyStatue)},
+    {PSYNERGY_ON_OBJ_EVENT(ABILITY_MOVE), LOCALID_LADY_STATUE_SOUTHEAST, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_MoveLadyStatue)},
+    {PSYNERGY_ON_OBJ_EVENT(ABILITY_MOVE), LOCALID_LADY_STATUE_SOUTH, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_MoveLadyStatue)},
+    {PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_LADY_STATUE_NORTHWEST, CONDITION_ALWAYS,
         MSGNO(MsgTunnelRuinsRedShinesNorthwestOfMe)},
-    {PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_LADY_STATUE_B, CONDITION_ALWAYS,
+    {PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_LADY_STATUE_NORTHEAST, CONDITION_ALWAYS,
         MSGNO(MsgTunnelRuinsYellowShinesNortheastOfMe)},
-    {PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_LADY_STATUE_C, CONDITION_ALWAYS,
+    {PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_LADY_STATUE_SOUTHWEST, CONDITION_ALWAYS,
         MSGNO(MsgTunnelRuinsRedShinesDueWestOfMe)},
-    {PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_LADY_STATUE_D, CONDITION_ALWAYS,
+    {PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_LADY_STATUE_SOUTHEAST, CONDITION_ALWAYS,
         MSGNO(MsgTunnelRuinsVioletShinesSoutheastOfMe)},
-    {PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_LADY_STATUE_E, CONDITION_ALWAYS,
+    {PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_LADY_STATUE_SOUTH, CONDITION_ALWAYS,
         MSGNO(MsgTunnelRuinsVioletPointsSoutheast)},
     {MAP_EVENTS_END},
 };

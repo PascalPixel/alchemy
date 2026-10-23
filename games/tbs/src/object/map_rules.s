@@ -111,7 +111,7 @@ gMap_InteractionRuleTable:
 	group_cue 31, -1, -1, 24
 	group_cue 32, -1, -1, 6
 	group_cue 33, -1, -1, 3
-	map_cue LunpaSuhalla, 10, -1, 24
+	map_cue LunpaInteriors, 10, -1, 24
 	group_cue 34, -1, -1, 1
 	group_cue 35, -1, -1, 24
 	group_cue 36, -1, -1, 6
@@ -188,8 +188,8 @@ gMapSec_NameRules:
 	map_name SolSanctumElementalStarRoom, -1, 12
 	map_name SolSanctumEruption, -1, 12
 	group_name 4, -1, 13
-	map_name LunpaSuhalla, 7, 14
-	map_name LunpaSuhalla, 11, 14
+	map_name LunpaInteriors, 7, 14
+	map_name LunpaInteriors, 11, 14
 	map_name VaultJail, 2, 15
 	group_name 5, -1, 16
 	group_name 6, -1, 17
@@ -233,7 +233,7 @@ gMapSec_NameRules:
 	group_name 32, -1, 50
 	map_name HammetPalace, -1, 51
 	group_name 33, -1, 51
-	map_name LunpaSuhalla, 10, 52
+	map_name LunpaInteriors, 10, 52
 	group_name 34, -1, 53
 	group_name 35, -1, 54
 	map_name KalayTolbiDocksInteriors, 2, 55
@@ -316,7 +316,7 @@ gParty_PairResolveRules:
 	return_to LamaTemple, -1, LamaTemple, 5
 	return_to VaultRevisit, -1, Sanctum, 11
 	return_to Kalay, -1, KalaySanctum, 2
-	return_to Lunpa, 3, LunpaSuhalla, 11
+	return_to Lunpa, 3, LunpaInteriors, 11
 	return_to Tolbi, -1, TolbiInteriors, 30
 	return_to Suhalla, -1, SuhallaInteriors, 6
 	return_to Lalivero, -1, LaliveroShops, 12

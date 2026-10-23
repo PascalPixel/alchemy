@@ -333,10 +333,10 @@ enum VenusLighthouseFirstFloorLocalId {
 /// gVenusLighthouseSecondFloorObjectEventTemplates.
 enum VenusLighthouseSecondFloorLocalId {
   /// A lady statue, as LOCALID_FLOOR_SWITCH_STATUE is, where
-  /// LOCALID_GATE_EFFECT sets out for the gate.
+  /// LOCALID_GATE_SPARKLE sets out for the gate.
   /// ★ Named from what the player sees: a white statue of a robed woman beside
   /// the gate (its render)
-  LOCALID_GATE_EFFECT_STATUE = LOCALID_FIRST_PLACED,
+  LOCALID_GATE_STATUE = LOCALID_FIRST_PLACED,
   /// The pillar before the gate, which sinks into its socket
   /// (EventScript_MoveGatePillar).
   /// ★ Named from what the player sees: a grey pillar carved with spirals on
@@ -349,7 +349,7 @@ enum VenusLighthouseSecondFloorLocalId {
   /// shedding particles.
   /// ★ Named from what the player sees: a small sparkle that rises by the
   /// gate as the pillar sinks (its render)
-  LOCALID_GATE_EFFECT
+  LOCALID_GATE_SPARKLE
 };
 
 /// VenusLighthouseThirdFloor's object events, numbering the rows of
@@ -360,17 +360,17 @@ enum VenusLighthouseThirdFloorLocalId {
   /// three switch pillars have sunk.
   /// ★ Named from what the player sees: a white statue of a robed woman at the
   /// end of the gold track (its render)
-  LOCALID_SWITCH_EFFECT_STATUE = LOCALID_FIRST_PLACED,
+  LOCALID_SWITCH_STATUE = LOCALID_FIRST_PLACED,
   /// The three pillars that sink into free sockets
   /// (EventScript_MoveSwitchPillar).
   /// ★ Named from what the player sees: three grey pillars carved with spirals
   /// on the gold track (its render)
   LOCALID_FIRST_SWITCH_PILLAR,
-  /// SPRITE_PARTICLE, as LOCALID_GATE_EFFECT, placed where the gate effects end
-  /// once the gate is open.
+  /// SPRITE_PARTICLE, as LOCALID_GATE_SPARKLE, placed where the gate effects
+  /// end once the gate is open.
   /// ★ Named from what the player sees: a sparkle, as on the second floor,
   /// where a gate has opened (its render)
-  LOCALID_SWITCH_GATE_EFFECT = LOCALID_FIRST_SWITCH_PILLAR + 3
+  LOCALID_SWITCH_GATE_SPARKLE = LOCALID_FIRST_SWITCH_PILLAR + 3
 };
 
 /// VenusLighthouseFourthFloor's object events, numbering the rows of
@@ -395,16 +395,16 @@ enum VenusLighthouseFourthFloorLocalId {
   /// four socket pillars have sunk; the camera goes to it first.
   /// ★ Named from what the player sees: a white statue of a robed woman at the
   /// foot of the gold track (its render)
-  LOCALID_SOCKET_EFFECT_STATUE = LOCALID_FIRST_FLOATING_PILLAR + 4,
+  LOCALID_SOCKET_STATUE = LOCALID_FIRST_FLOATING_PILLAR + 4,
   /// The four pillars of the pillar room (EventScript_MoveSocketPillar).
   /// ★ Named from what the player sees: four grey pillars carved with spirals
   /// on the gold track (its render)
   LOCALID_FIRST_SOCKET_PILLAR,
-  /// SPRITE_PARTICLE, as LOCALID_GATE_EFFECT, placed where the gate effects end
-  /// once the gate is open.
+  /// SPRITE_PARTICLE, as LOCALID_GATE_SPARKLE, placed where the gate effects
+  /// end once the gate is open.
   /// ★ Named from what the player sees: a sparkle, as on the second floor,
   /// where a gate has opened (its render)
-  LOCALID_SOCKET_GATE_EFFECT = LOCALID_FIRST_SOCKET_PILLAR + 4,
+  LOCALID_SOCKET_GATE_SPARKLE = LOCALID_FIRST_SOCKET_PILLAR + 4,
   /// The platform, SPRITE_FLOATING_PLATFORM as the floating platforms of
   /// Mercury
   /// Lighthouse's aerie, that dips as the leader lands on it at
@@ -1928,14 +1928,14 @@ static void EventScript_MoveGatePillar(void) {
         Engine_ObjectDispatchRelease(occlusionEffect);
         pillar->collisionFlags = gateOpened;
         *flags |= 2;
-        ObjectEvent_GetById(LOCALID_GATE_EFFECT)->collisionFlags = gateOpened;
-        ObjectEvent_GetById(LOCALID_GATE_EFFECT)->priorityFlags |=
+        ObjectEvent_GetById(LOCALID_GATE_SPARKLE)->collisionFlags = gateOpened;
+        ObjectEvent_GetById(LOCALID_GATE_SPARKLE)->priorityFlags |=
             OBJ_EVENT_PRIORITY_UNDERFOOT;
-        Engine_ObjectEventSetPosition(LOCALID_GATE_EFFECT, PIXELS(808),
+        Engine_ObjectEventSetPosition(LOCALID_GATE_SPARKLE, PIXELS(808),
                                       PIXELS(728));
-        ObjectEvent_SetActionScript(LOCALID_GATE_EFFECT,
+        ObjectEvent_SetActionScript(LOCALID_GATE_SPARKLE,
                                     gVenusSecondFloorLightToGate);
-        ObjectEvent_RefreshSelectorById(LOCALID_GATE_EFFECT);
+        ObjectEvent_RefreshSelectorById(LOCALID_GATE_SPARKLE);
         Engine_ScriptWait(30);
         Engine_AudioPlayCue(SE_DOOR_OPEN);
         Engine_MapGridAnimateCells(gVenusSecondFloorGateCells, 110, 41);
@@ -2621,8 +2621,7 @@ static void EventScript_MoveSocketPillar(void) {
       struct ObjectEvent *secondGateEffect;
 
       Camera_SetSpeed(PIXELS(1), PIXELS(1) / 8);
-      ObjectEvent_PlaceCurrentWithinCameraBounds(LOCALID_SOCKET_EFFECT_STATUE,
-                                                 1);
+      ObjectEvent_PlaceCurrentWithinCameraBounds(LOCALID_SOCKET_STATUE, 1);
       Camera_WaitForMove();
       firstGateEffect = VenusLighthouse_CreateLight(
           136, 776, gVenusFourthFloorLightFromStatue);
@@ -2915,7 +2914,7 @@ s32 VenusLighthouse_Initialize(void) {
       break;
     case VENUS_LIGHTHOUSE_SECOND_FLOOR_GATE_FROM_WALL_SWITCH:
     case VENUS_LIGHTHOUSE_SECOND_FLOOR_GATE_FROM_PILLAR_PIT:
-      objectEvent = ObjectEvent_GetById(LOCALID_GATE_EFFECT_STATUE);
+      objectEvent = ObjectEvent_GetById(LOCALID_GATE_STATUE);
       objectEvent->motionFlags = 0;
       objectEvent->y.fixed = 0;
       objectEvent = ObjectEvent_GetById(LOCALID_GATE_PILLAR);
@@ -2931,13 +2930,13 @@ s32 VenusLighthouse_Initialize(void) {
         Engine_ObjectEventSetSpritePriority(LOCALID_GATE_PILLAR, 3);
         objectEvent->priorityFlags = OBJ_EVENT_PRIORITY_UNDERFOOT;
         MapGrid_CopyCellAttributes(45, 45, 1, 1, 46, 45);
-        Engine_ObjectEventSetAnimation(LOCALID_GATE_EFFECT,
+        Engine_ObjectEventSetAnimation(LOCALID_GATE_SPARKLE,
                                        PARTICLE_ANIMATION_FLICKER);
-        Engine_ObjectEventSetSpritePriority(LOCALID_GATE_EFFECT, 1);
-        objectEvent = ObjectEvent_GetById(LOCALID_GATE_EFFECT);
+        Engine_ObjectEventSetSpritePriority(LOCALID_GATE_SPARKLE, 1);
+        objectEvent = ObjectEvent_GetById(LOCALID_GATE_SPARKLE);
         objectEvent->collisionFlags = 0;
         objectEvent->priorityFlags = OBJ_EVENT_PRIORITY_UNDERFOOT;
-        ObjectEvent_SetPosition(LOCALID_GATE_EFFECT, PIXELS(743), PIXELS(696));
+        ObjectEvent_SetPosition(LOCALID_GATE_SPARKLE, PIXELS(743), PIXELS(696));
 #ifdef UBFIX
         objectEvent->update = VenusLighthouse_TrailLight;
 #else
@@ -3030,7 +3029,7 @@ s32 VenusLighthouse_Initialize(void) {
       break;
     case VENUS_LIGHTHOUSE_THIRD_FLOOR_PILLAR_SOCKETS_FROM_DRIFTING_FLOOR:
     case VENUS_LIGHTHOUSE_THIRD_FLOOR_PILLAR_SOCKETS_FROM_WEST_ROOM:
-      objectEvent = ObjectEvent_GetById(LOCALID_SWITCH_EFFECT_STATUE);
+      objectEvent = ObjectEvent_GetById(LOCALID_SWITCH_STATUE);
       objectEvent->motionFlags = 0;
       objectEvent->y.fixed = 0;
       ObjectEvent_GetById(LOCALID_FIRST_SWITCH_PILLAR)->motionFlags = 0;
@@ -3067,15 +3066,15 @@ s32 VenusLighthouse_Initialize(void) {
         objectEvent = ObjectEvent_GetById(LOCALID_FIRST_SWITCH_PILLAR + 2);
         objectEvent->y.fixed = -PIXELS(16);
         objectEvent->priorityFlags = OBJ_EVENT_PRIORITY_UNDERFOOT;
-        Engine_ObjectEventSetAnimation(LOCALID_SWITCH_GATE_EFFECT,
+        Engine_ObjectEventSetAnimation(LOCALID_SWITCH_GATE_SPARKLE,
                                        PARTICLE_ANIMATION_FLICKER);
         Engine_ObjectEventSetSpriteFlags(
-            ObjectEvent_GetById(LOCALID_SWITCH_GATE_EFFECT), 0);
-        Engine_ObjectEventSetSpritePriority(LOCALID_SWITCH_GATE_EFFECT, 1);
-        objectEvent = ObjectEvent_GetById(LOCALID_SWITCH_GATE_EFFECT);
+            ObjectEvent_GetById(LOCALID_SWITCH_GATE_SPARKLE), 0);
+        Engine_ObjectEventSetSpritePriority(LOCALID_SWITCH_GATE_SPARKLE, 1);
+        objectEvent = ObjectEvent_GetById(LOCALID_SWITCH_GATE_SPARKLE);
         objectEvent->collisionFlags = 0;
         objectEvent->priorityFlags = OBJ_EVENT_PRIORITY_UNDERFOOT;
-        ObjectEvent_SetPosition(LOCALID_SWITCH_GATE_EFFECT, PIXELS(727),
+        ObjectEvent_SetPosition(LOCALID_SWITCH_GATE_SPARKLE, PIXELS(727),
                                 PIXELS(632));
 #ifdef UBFIX
         objectEvent->update = VenusLighthouse_TrailLight;
@@ -3214,7 +3213,7 @@ s32 VenusLighthouse_Initialize(void) {
       Engine_TaskWait(1);
       FieldScheduler_AddCallback(VenusLighthouse_VisitPillarObjectEvents,
                                  TASK_PRIORITY_MAP);
-      objectEvent = ObjectEvent_GetById(LOCALID_SOCKET_EFFECT_STATUE);
+      objectEvent = ObjectEvent_GetById(LOCALID_SOCKET_STATUE);
       objectEvent->motionFlags = 0;
       objectEvent->y.fixed = 0;
       ObjectEvent_GetById(LOCALID_FIRST_SOCKET_PILLAR)->motionFlags = 0;
@@ -3249,15 +3248,15 @@ s32 VenusLighthouse_Initialize(void) {
         objectEvent->y.fixed = -PIXELS(16);
         objectEvent->priorityFlags = OBJ_EVENT_PRIORITY_UNDERFOOT;
         Engine_ObjectEventSetSpritePriority(LOCALID_FIRST_SOCKET_PILLAR + 3, 3);
-        Engine_ObjectEventSetAnimation(LOCALID_SOCKET_GATE_EFFECT,
+        Engine_ObjectEventSetAnimation(LOCALID_SOCKET_GATE_SPARKLE,
                                        PARTICLE_ANIMATION_FLICKER);
         Engine_ObjectEventSetSpriteFlags(
-            ObjectEvent_GetById(LOCALID_SOCKET_GATE_EFFECT), 0);
-        Engine_ObjectEventSetSpritePriority(LOCALID_SOCKET_GATE_EFFECT, 1);
-        objectEvent = ObjectEvent_GetById(LOCALID_SOCKET_GATE_EFFECT);
+            ObjectEvent_GetById(LOCALID_SOCKET_GATE_SPARKLE), 0);
+        Engine_ObjectEventSetSpritePriority(LOCALID_SOCKET_GATE_SPARKLE, 1);
+        objectEvent = ObjectEvent_GetById(LOCALID_SOCKET_GATE_SPARKLE);
         objectEvent->collisionFlags = 0;
         objectEvent->priorityFlags = OBJ_EVENT_PRIORITY_UNDERFOOT;
-        ObjectEvent_SetPosition(LOCALID_SOCKET_GATE_EFFECT, PIXELS(215),
+        ObjectEvent_SetPosition(LOCALID_SOCKET_GATE_SPARKLE, PIXELS(215),
                                 PIXELS(600));
 #ifdef UBFIX
         objectEvent->update = VenusLighthouse_TrailLight;

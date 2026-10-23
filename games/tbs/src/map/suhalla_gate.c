@@ -6,7 +6,7 @@
 /// - SuhallaGateCheckpoint (MapId_SuhallaGateCheckpoint, area name Suhalla
 ///   Gate): the gate itself, entered from the world map from the south and
 ///   from the east, each into its own part of the map, with the house beside
-///   it (Gate to Suhalla, lunpa_suhalla.c). Two soldiers keep the passage
+///   it (Gate to Suhalla, lunpa_interiors.c). Two soldiers keep the passage
 ///   north.
 /// - SuhallaGateDew (MapId_SuhallaGateDew, area name Suhalla Gate): beyond
 ///   the passage, in a west part and an east part, with Dew, a Mercury
@@ -183,8 +183,8 @@ s32 Map_Initialize(void) {
   s32 mapId;
 
   if (Engine_GameFlagIsSet(FLAG_SUHALLA_GATE_ATTACK_SEEN)) {
-    gGameState.savedMap = (s32)&MapId_LunpaSuhalla;
-    gGameState.savedWarpDest = LUNPA_SUHALLA_FROM_SUHALLA_GATE_CHECKPOINT;
+    gGameState.savedMap = (s32)&MapId_LunpaInteriors;
+    gGameState.savedWarpDest = LUNPA_INTERIORS_FROM_SUHALLA_GATE_CHECKPOINT;
   }
   mapId = gGameState.mapId;
   if (mapId == (s32)&MapId_SuhallaGateCheckpoint) {
@@ -200,7 +200,7 @@ s32 Map_Initialize(void) {
 #endif
     // Out of the house, Retreat leads back to the side the party came in by,
     // and the map section's name is not shown again.
-    if (gGameState.warpDest == SUHALLA_GATE_CHECKPOINT_FROM_LUNPA_SUHALLA) {
+    if (gGameState.warpDest == SUHALLA_GATE_CHECKPOINT_FROM_LUNPA_INTERIORS) {
       if (Engine_GameFlagIsSet(FLAG_SUHALLA_GATE_ENTERED_FROM_SOUTH)) {
         gGameState.retreatMap = SUHALLA_GATE_RETREAT_MAP(mapId);
         gGameState.retreatWarpDest =
@@ -537,8 +537,8 @@ struct MapWarpDest gSuhallaGateWarpDestsOther[] = {
      520, FACING_NORTH, 0, 32, 32, 272, 544, 0},
     {SUHALLA_GATE_CHECKPOINT_FROM_SUHALLA_GATE_DEW_WEST, CONDITION_ALWAYS, 248,
      0, 280, FACING_WEST, 0, 32, 32, 272, 544, 0},
-    {SUHALLA_GATE_CHECKPOINT_FROM_LUNPA_SUHALLA, CONDITION_ALWAYS, 136, 0, 304,
-     FACING_SOUTH, 0, 32, 32, 272, 544, 0},
+    {SUHALLA_GATE_CHECKPOINT_FROM_LUNPA_INTERIORS, CONDITION_ALWAYS, 136, 0,
+     304, FACING_SOUTH, 0, 32, 32, 272, 544, 0},
     {SUHALLA_GATE_CHECKPOINT_FROM_SUHALLA_GATE_DEW_EAST, CONDITION_ALWAYS, 360,
      0, 296, FACING_EAST, 0, 336, 32, 736, 496, 0},
     {SUHALLA_GATE_CHECKPOINT_FROM_WORLD_MAP_EAST, CONDITION_ALWAYS, 664, 0, 424,
@@ -578,8 +578,8 @@ u32 gSuhallaGateWarps[] = {
              WORLD_MAP_FROM_SUHALLA_GATE_CHECKPOINT_SOUTH),
     MAP_WARP(SUHALLA_GATE_CHECKPOINT_TO_SUHALLA_GATE_DEW_WEST, SuhallaGateDew,
              SUHALLA_GATE_DEW_FROM_SUHALLA_GATE_CHECKPOINT_WEST),
-    MAP_WARP(SUHALLA_GATE_CHECKPOINT_TO_LUNPA_SUHALLA, LunpaSuhalla,
-             LUNPA_SUHALLA_FROM_SUHALLA_GATE_CHECKPOINT),
+    MAP_WARP(SUHALLA_GATE_CHECKPOINT_TO_LUNPA_INTERIORS, LunpaInteriors,
+             LUNPA_INTERIORS_FROM_SUHALLA_GATE_CHECKPOINT),
     MAP_WARP(SUHALLA_GATE_CHECKPOINT_TO_SUHALLA_GATE_DEW_EAST, SuhallaGateDew,
              SUHALLA_GATE_DEW_FROM_SUHALLA_GATE_CHECKPOINT_EAST),
     MAP_WARP(SUHALLA_GATE_CHECKPOINT_TO_WORLD_MAP_EAST, WorldMap,

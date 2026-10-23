@@ -121,28 +121,28 @@ void BattleObject_Make(struct BattleObject *actor, s32 unitId, s32 x, s32 y) {
   case ENEMY_FUSION_DRAGON:
     actor->scale = 0x18000;
     break;
-  case ENEMY_MIMIC:
+  case ENEMY_MIMIC_MERCURY_LIGHTHOUSE:
     actor->scale = 0x18000;
     break;
-  case ENEMY_MIMIC_2:
+  case ENEMY_MIMIC_FUCHIN_FALLS_CAVE:
     actor->scale = 0x18000;
     break;
-  case ENEMY_MIMIC_3:
+  case ENEMY_MIMIC_ALTIN_PEAK:
     actor->scale = 0x18000;
     break;
-  case ENEMY_MIMIC_4:
+  case ENEMY_MIMIC_VAULT_CAVE:
     actor->scale = 0x18000;
     break;
-  case ENEMY_MIMIC_5:
+  case ENEMY_MIMIC_CROSSBONE_ISLE:
     actor->scale = 0x18000;
     break;
-  case ENEMY_MIMIC_6:
+  case ENEMY_MIMIC_ALTMILLER_CAVE:
     actor->scale = 0x18000;
     break;
-  case ENEMY_MIMIC_7:
+  case ENEMY_MIMIC_SUHALLA_DESERT:
     actor->scale = 0x18000;
     break;
-  case ENEMY_MIMIC_8:
+  case ENEMY_MIMIC_PIRATE_SHIP:
     actor->scale = 0x18000;
     break;
   case ENEMY_TROLL:
@@ -221,8 +221,8 @@ void BattleObject_Make(struct BattleObject *actor, s32 unitId, s32 x, s32 y) {
   case ENEMY_NIGHTMARE:
   case ENEMY_KOBOLD:
   case ENEMY_MYSTERY_MAN:
-  case ENEMY_SATUROS:
-  case ENEMY_SATUROS_2:
+  case ENEMY_SATUROS_MERCURY_LIGHTHOUSE:
+  case ENEMY_SATUROS_VENUS_LIGHTHOUSE:
   case ENEMY_MYSTERY_WOMAN:
   case ENEMY_MENARDI:
     actor->scale = 0xe666;

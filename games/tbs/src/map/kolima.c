@@ -154,16 +154,16 @@ enum KolimaLocalId {
   /// stands in Kolima_WitnessForestCurse; Mia's only with her in the party.
   /// ★ Named from the game: "You know what those fields were?"
   /// (MsgKolimaKnowThoseFieldsWere)
-  LOCALID_LEADERS_PSYNERGY_FIELD,
+  LOCALID_LEADER_PSYNERGY_FIELD,
   /// ★ Named from the game: "You know what those fields were?"
   /// (MsgKolimaKnowThoseFieldsWere)
-  LOCALID_IVANS_PSYNERGY_FIELD,
+  LOCALID_IVAN_PSYNERGY_FIELD,
   /// ★ Named from the game: "You know what those fields were?"
   /// (MsgKolimaKnowThoseFieldsWere)
-  LOCALID_MIAS_PSYNERGY_FIELD,
+  LOCALID_MIA_PSYNERGY_FIELD,
   /// ★ Named from the game: "You know what those fields were?"
   /// (MsgKolimaKnowThoseFieldsWere)
-  LOCALID_GARETS_PSYNERGY_FIELD,
+  LOCALID_GARET_PSYNERGY_FIELD,
   /// The four sparkles on the ground while the curse lasts
   /// (gKolima_EntryActions).
   /// ★ Named from the game: "I turned into a tree right when the sparkles
@@ -564,10 +564,10 @@ s32 Kolima_Initialize(void) {
     Engine_ObjectEventDestroy(MIA);
     Engine_ObjectEventDestroy(LOCALID_TRET);
     Engine_ObjectEventDestroy(LOCALID_LAUREL);
-    Engine_ObjectEventDestroy(LOCALID_LEADERS_PSYNERGY_FIELD);
-    Engine_ObjectEventDestroy(LOCALID_IVANS_PSYNERGY_FIELD);
-    Engine_ObjectEventDestroy(LOCALID_MIAS_PSYNERGY_FIELD);
-    Engine_ObjectEventDestroy(LOCALID_GARETS_PSYNERGY_FIELD);
+    Engine_ObjectEventDestroy(LOCALID_LEADER_PSYNERGY_FIELD);
+    Engine_ObjectEventDestroy(LOCALID_IVAN_PSYNERGY_FIELD);
+    Engine_ObjectEventDestroy(LOCALID_MIA_PSYNERGY_FIELD);
+    Engine_ObjectEventDestroy(LOCALID_GARET_PSYNERGY_FIELD);
     FieldScript_CallWithLastActiveObjectId(gKolima_EntryScript);
   }
 
@@ -591,10 +591,10 @@ static __inline__ void Kolima_SetProtectiveFieldHeight(s32 localId,
 
 /// Makes the four domes flicker, two on even frames and two on odd.
 static void Kolima_AlternateProtectiveFieldHeights(void) {
-  Kolima_SetProtectiveFieldHeight(LOCALID_LEADERS_PSYNERGY_FIELD, 0);
-  Kolima_SetProtectiveFieldHeight(LOCALID_IVANS_PSYNERGY_FIELD, 1);
-  Kolima_SetProtectiveFieldHeight(LOCALID_MIAS_PSYNERGY_FIELD, 0);
-  Kolima_SetProtectiveFieldHeight(LOCALID_GARETS_PSYNERGY_FIELD, 1);
+  Kolima_SetProtectiveFieldHeight(LOCALID_LEADER_PSYNERGY_FIELD, 0);
+  Kolima_SetProtectiveFieldHeight(LOCALID_IVAN_PSYNERGY_FIELD, 1);
+  Kolima_SetProtectiveFieldHeight(LOCALID_MIA_PSYNERGY_FIELD, 0);
+  Kolima_SetProtectiveFieldHeight(LOCALID_GARET_PSYNERGY_FIELD, 1);
 }
 
 /// Begins Mind Read on one of Kolima's villagers turned into a tree.
@@ -656,13 +656,13 @@ static void Kolima_WitnessForestCurse(void) {
   Engine_ScriptStart();
   partyLayout = &gKolima_MiaInParty;
   *partyLayout = GameFlag_IsSet(FLAG_IN_PARTY(MIA));
-  objectEvent = ObjectEvent_GetById(LOCALID_LEADERS_PSYNERGY_FIELD);
+  objectEvent = ObjectEvent_GetById(LOCALID_LEADER_PSYNERGY_FIELD);
   Engine_ObjectEventSetSpriteFlags(objectEvent, 0);
-  objectEvent = ObjectEvent_GetById(LOCALID_IVANS_PSYNERGY_FIELD);
+  objectEvent = ObjectEvent_GetById(LOCALID_IVAN_PSYNERGY_FIELD);
   Engine_ObjectEventSetSpriteFlags(objectEvent, 0);
-  objectEvent = ObjectEvent_GetById(LOCALID_MIAS_PSYNERGY_FIELD);
+  objectEvent = ObjectEvent_GetById(LOCALID_MIA_PSYNERGY_FIELD);
   Engine_ObjectEventSetSpriteFlags(objectEvent, 0);
-  objectEvent = ObjectEvent_GetById(LOCALID_GARETS_PSYNERGY_FIELD);
+  objectEvent = ObjectEvent_GetById(LOCALID_GARET_PSYNERGY_FIELD);
   Engine_ObjectEventSetSpriteFlags(objectEvent, 0);
   Camera_MoveTo(PIXELS(104), -1, PIXELS(256), 0);
   Engine_MapGridRedraw();
@@ -975,29 +975,29 @@ static void Kolima_WitnessForestCurse(void) {
   FieldScheduler_AddCallback(Kolima_AlternateProtectiveFieldHeights,
                              TASK_PRIORITY_MAP);
   Script_PlayCue(SE_220);
-  ObjectEvent_GetById(LOCALID_LEADERS_PSYNERGY_FIELD)->priorityFlags &= 254;
-  Engine_ObjectEventSetSpritePriority(LOCALID_LEADERS_PSYNERGY_FIELD, 2);
-  ObjectEvent_SetPosition(LOCALID_LEADERS_PSYNERGY_FIELD, PIXELS(120),
+  ObjectEvent_GetById(LOCALID_LEADER_PSYNERGY_FIELD)->priorityFlags &= 254;
+  Engine_ObjectEventSetSpritePriority(LOCALID_LEADER_PSYNERGY_FIELD, 2);
+  ObjectEvent_SetPosition(LOCALID_LEADER_PSYNERGY_FIELD, PIXELS(120),
                           PIXELS(248));
   growFieldActions = gKolima_ProtectiveFieldGrowActions;
-  ObjectEvent_SetActionScript(LOCALID_LEADERS_PSYNERGY_FIELD, growFieldActions);
-  ObjectEvent_GetById(LOCALID_IVANS_PSYNERGY_FIELD)->priorityFlags &= 254;
-  Engine_ObjectEventSetSpritePriority(LOCALID_IVANS_PSYNERGY_FIELD, 2);
-  ObjectEvent_SetPosition(LOCALID_IVANS_PSYNERGY_FIELD, PIXELS(100),
+  ObjectEvent_SetActionScript(LOCALID_LEADER_PSYNERGY_FIELD, growFieldActions);
+  ObjectEvent_GetById(LOCALID_IVAN_PSYNERGY_FIELD)->priorityFlags &= 254;
+  Engine_ObjectEventSetSpritePriority(LOCALID_IVAN_PSYNERGY_FIELD, 2);
+  ObjectEvent_SetPosition(LOCALID_IVAN_PSYNERGY_FIELD, PIXELS(100),
                           PIXELS(274));
-  ObjectEvent_SetActionScript(LOCALID_IVANS_PSYNERGY_FIELD, growFieldActions);
+  ObjectEvent_SetActionScript(LOCALID_IVAN_PSYNERGY_FIELD, growFieldActions);
   if (gKolima_MiaInParty != 0) {
-    ObjectEvent_GetById(LOCALID_MIAS_PSYNERGY_FIELD)->priorityFlags &= 254;
-    Engine_ObjectEventSetSpritePriority(LOCALID_MIAS_PSYNERGY_FIELD, 2);
-    ObjectEvent_SetPosition(LOCALID_MIAS_PSYNERGY_FIELD, PIXELS(74),
+    ObjectEvent_GetById(LOCALID_MIA_PSYNERGY_FIELD)->priorityFlags &= 254;
+    Engine_ObjectEventSetSpritePriority(LOCALID_MIA_PSYNERGY_FIELD, 2);
+    ObjectEvent_SetPosition(LOCALID_MIA_PSYNERGY_FIELD, PIXELS(74),
                             PIXELS(254));
-    ObjectEvent_SetActionScript(LOCALID_MIAS_PSYNERGY_FIELD, growFieldActions);
+    ObjectEvent_SetActionScript(LOCALID_MIA_PSYNERGY_FIELD, growFieldActions);
   }
-  ObjectEvent_GetById(LOCALID_GARETS_PSYNERGY_FIELD)->priorityFlags &= 254;
-  Engine_ObjectEventSetSpritePriority(LOCALID_GARETS_PSYNERGY_FIELD, 2);
-  ObjectEvent_SetPosition(LOCALID_GARETS_PSYNERGY_FIELD, PIXELS(94),
+  ObjectEvent_GetById(LOCALID_GARET_PSYNERGY_FIELD)->priorityFlags &= 254;
+  Engine_ObjectEventSetSpritePriority(LOCALID_GARET_PSYNERGY_FIELD, 2);
+  ObjectEvent_SetPosition(LOCALID_GARET_PSYNERGY_FIELD, PIXELS(94),
                           PIXELS(225));
-  ObjectEvent_SetActionScript(LOCALID_GARETS_PSYNERGY_FIELD, growFieldActions);
+  ObjectEvent_SetActionScript(LOCALID_GARET_PSYNERGY_FIELD, growFieldActions);
   if (*mapState != KOLIMA_DUST_CENTRED) {
     do {
       Engine_TaskWait(1);
@@ -1010,22 +1010,21 @@ static void Kolima_WitnessForestCurse(void) {
   ColorBuffer_ApplyTarget(PALETTE_TRANSFORM_PLAIN, 1);
   Engine_ColorBufferInterpolate(60);
   Engine_TaskWait(60);
-  Engine_ObjectEventStop(LOCALID_LEADERS_PSYNERGY_FIELD);
-  Engine_ObjectEventStop(LOCALID_IVANS_PSYNERGY_FIELD);
+  Engine_ObjectEventStop(LOCALID_LEADER_PSYNERGY_FIELD);
+  Engine_ObjectEventStop(LOCALID_IVAN_PSYNERGY_FIELD);
   if (gKolima_MiaInParty != 0) {
-    Engine_ObjectEventStop(LOCALID_MIAS_PSYNERGY_FIELD);
+    Engine_ObjectEventStop(LOCALID_MIA_PSYNERGY_FIELD);
   }
-  Engine_ObjectEventStop(LOCALID_GARETS_PSYNERGY_FIELD);
+  Engine_ObjectEventStop(LOCALID_GARET_PSYNERGY_FIELD);
   Engine_TaskWait(1);
   shrinkFieldActions = gKolima_ProtectiveFieldShrinkActions;
-  ObjectEvent_SetActionScript(LOCALID_LEADERS_PSYNERGY_FIELD,
+  ObjectEvent_SetActionScript(LOCALID_LEADER_PSYNERGY_FIELD,
                               shrinkFieldActions);
-  ObjectEvent_SetActionScript(LOCALID_IVANS_PSYNERGY_FIELD, shrinkFieldActions);
+  ObjectEvent_SetActionScript(LOCALID_IVAN_PSYNERGY_FIELD, shrinkFieldActions);
   if (gKolima_MiaInParty != 0) {
-    ObjectEvent_SetActionScript(LOCALID_MIAS_PSYNERGY_FIELD,
-                                shrinkFieldActions);
+    ObjectEvent_SetActionScript(LOCALID_MIA_PSYNERGY_FIELD, shrinkFieldActions);
   }
-  ObjectEvent_RunActionScriptAndWait(LOCALID_GARETS_PSYNERGY_FIELD,
+  ObjectEvent_RunActionScriptAndWait(LOCALID_GARET_PSYNERGY_FIELD,
                                      shrinkFieldActions);
   Engine_ScriptWait(80);
   Engine_ObjectEventRunRepeatedMotion(GARET, 2);
@@ -1256,21 +1255,21 @@ static void Kolima_WitnessForestCurse(void) {
   Engine_ObjectEventSetSpritePriority(MIA, 3);
   *secondCurtainState = KOLIMA_DUST_CLOSING_WIDE;
   Script_PlayCue(SE_220);
-  ObjectEvent_SetPosition(LOCALID_LEADERS_PSYNERGY_FIELD, PIXELS(120),
+  ObjectEvent_SetPosition(LOCALID_LEADER_PSYNERGY_FIELD, PIXELS(120),
                           PIXELS(248));
   growFieldActions = gKolima_ProtectiveFieldGrowActions;
-  ObjectEvent_SetActionScript(LOCALID_LEADERS_PSYNERGY_FIELD, growFieldActions);
-  ObjectEvent_SetPosition(LOCALID_IVANS_PSYNERGY_FIELD, PIXELS(100),
+  ObjectEvent_SetActionScript(LOCALID_LEADER_PSYNERGY_FIELD, growFieldActions);
+  ObjectEvent_SetPosition(LOCALID_IVAN_PSYNERGY_FIELD, PIXELS(100),
                           PIXELS(274));
-  ObjectEvent_SetActionScript(LOCALID_IVANS_PSYNERGY_FIELD, growFieldActions);
+  ObjectEvent_SetActionScript(LOCALID_IVAN_PSYNERGY_FIELD, growFieldActions);
   if (gKolima_MiaInParty != 0) {
-    ObjectEvent_SetPosition(LOCALID_MIAS_PSYNERGY_FIELD, PIXELS(74),
+    ObjectEvent_SetPosition(LOCALID_MIA_PSYNERGY_FIELD, PIXELS(74),
                             PIXELS(254));
-    ObjectEvent_SetActionScript(LOCALID_MIAS_PSYNERGY_FIELD, growFieldActions);
+    ObjectEvent_SetActionScript(LOCALID_MIA_PSYNERGY_FIELD, growFieldActions);
   }
-  ObjectEvent_SetPosition(LOCALID_GARETS_PSYNERGY_FIELD, PIXELS(94),
+  ObjectEvent_SetPosition(LOCALID_GARET_PSYNERGY_FIELD, PIXELS(94),
                           PIXELS(225));
-  ObjectEvent_SetActionScript(LOCALID_GARETS_PSYNERGY_FIELD, growFieldActions);
+  ObjectEvent_SetActionScript(LOCALID_GARET_PSYNERGY_FIELD, growFieldActions);
   Engine_ScriptWait(120);
   *secondCurtainState = KOLIMA_DUST_DRIFTING;
   do {
@@ -1376,21 +1375,20 @@ static void Kolima_WitnessForestCurse(void) {
   ColorBuffer_ApplyTarget(PALETTE_TRANSFORM_PLAIN, 1);
   Engine_ColorBufferInterpolate(60);
   Engine_TaskWait(80);
-  Engine_ObjectEventStop(LOCALID_LEADERS_PSYNERGY_FIELD);
-  Engine_ObjectEventStop(LOCALID_IVANS_PSYNERGY_FIELD);
+  Engine_ObjectEventStop(LOCALID_LEADER_PSYNERGY_FIELD);
+  Engine_ObjectEventStop(LOCALID_IVAN_PSYNERGY_FIELD);
   mapState = &gKolima_MiaInParty;
-  Engine_ObjectEventStop(LOCALID_MIAS_PSYNERGY_FIELD);
-  Engine_ObjectEventStop(LOCALID_GARETS_PSYNERGY_FIELD);
+  Engine_ObjectEventStop(LOCALID_MIA_PSYNERGY_FIELD);
+  Engine_ObjectEventStop(LOCALID_GARET_PSYNERGY_FIELD);
   Engine_TaskWait(1);
   shrinkFieldActions = gKolima_ProtectiveFieldShrinkActions;
-  ObjectEvent_SetActionScript(LOCALID_LEADERS_PSYNERGY_FIELD,
+  ObjectEvent_SetActionScript(LOCALID_LEADER_PSYNERGY_FIELD,
                               shrinkFieldActions);
-  ObjectEvent_SetActionScript(LOCALID_IVANS_PSYNERGY_FIELD, shrinkFieldActions);
+  ObjectEvent_SetActionScript(LOCALID_IVAN_PSYNERGY_FIELD, shrinkFieldActions);
   if (*mapState != 0) {
-    ObjectEvent_SetActionScript(LOCALID_MIAS_PSYNERGY_FIELD,
-                                shrinkFieldActions);
+    ObjectEvent_SetActionScript(LOCALID_MIA_PSYNERGY_FIELD, shrinkFieldActions);
   }
-  ObjectEvent_RunActionScriptAndWait(LOCALID_GARETS_PSYNERGY_FIELD,
+  ObjectEvent_RunActionScriptAndWait(LOCALID_GARET_PSYNERGY_FIELD,
                                      shrinkFieldActions);
   Engine_ScriptWait(20);
   Engine_ObjectEventSetSpritePriority(LOCALID_PARTY_LEADER, 2);

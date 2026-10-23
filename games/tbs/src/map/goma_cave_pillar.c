@@ -3,7 +3,7 @@
 /// in the cave in the Goma Range that the mayor of Vault tells the party to
 /// pass through on the way to Bilibin.
 ///
-/// The party comes in from the cave's first room (goma_cave_waterway.c), and
+/// The party comes in from the cave's first room (goma_cave_stream.c), and
 /// the room's puzzle is Move on three things. The west pillar slides between
 /// two places a step apart, and the map grid cells along its track follow it
 /// (FLAG_GOMA_CAVE_WEST_PILLAR_MOVED says which). The stump is pushed a step

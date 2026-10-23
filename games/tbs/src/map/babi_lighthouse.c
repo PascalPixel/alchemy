@@ -122,7 +122,7 @@ enum {
 /// BabiLighthouseLuff's Djinni, Luff.
 enum {
   /// ★ Named from the game: "Luff" (MsgDjinnName)
-  LOCALID_DJINNI = 8
+  LOCALID_LUFF = 8
 };
 
 /// The Entry (BabiLighthouseEntry): the two pillars on the ledges, the plant
@@ -223,7 +223,7 @@ static __inline__ s32 UNUSED Entrance_Divide(s32 dividend, s32 divisor) {
 /// Talking to the Djinni in BabiLighthouseLuff starts the battle with
 /// Luff, a Jupiter Djinni.
 static void BabiLighthouse_StartDjinnBattle(void) {
-  Field_RequestDjinnBattle(LOCALID_DJINNI, DJINNI_LUFF);
+  Field_RequestDjinnBattle(LOCALID_LUFF, DJINNI_LUFF);
 }
 
 #include "common/object_waitidle.h"
@@ -1893,7 +1893,7 @@ struct MapEvent gBabiLighthouse_LuffEvents[] = {
     {COORD_EVENT_WALKING_INTO(FACING_SOUTH), 26, CONDITION_ALWAYS, EVENT_SCRIPT(BabiLighthouse_DropFromEastRoomPit)},
     {COORD_EVENT_WALKING_INTO(FACING_SOUTH), 27, CONDITION_ALWAYS, EVENT_SCRIPT(BabiLighthouse_DropFromWestRoomSouthwestPit)},
     {COORD_EVENT_WALKING_INTO(FACING_SOUTH), 28, CONDITION_ALWAYS, EVENT_SCRIPT(BabiLighthouse_DropFromWestRoomNorthwestPit)},
-    {MAP_EVENT_TALK, LOCALID_DJINNI, CONDITION_ALWAYS, EVENT_SCRIPT(BabiLighthouse_StartDjinnBattle)},
+    {MAP_EVENT_TALK, LOCALID_LUFF, CONDITION_ALWAYS, EVENT_SCRIPT(BabiLighthouse_StartDjinnBattle)},
     {BG_EVENT(BG_EVENT_UNNAMED), 20, CONDITION_ALWAYS, EVENT_SCRIPT(BabiLighthouse_InspectLockedDoor)},
     {MAP_EVENTS_END},
 };

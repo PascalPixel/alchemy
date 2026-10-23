@@ -872,8 +872,8 @@ s32 ObjectMotion_StepAngle(struct Object *object) {
 }
 
 /// Clears an object event's destination, puts it under script control and
-/// stands it still. Reached only through an unnamed veneer in the object bank's
-/// far-call table; nothing in ☀️ names it.
+/// stands it still. Reached only through an unnamed veneer in the overworld
+/// bank's far-call table; nothing in ☀️ names it.
 void ObjectEvent_ResetTargetAndSetMode1(u32 objectId) {
   struct Object *object = ObjectEvent_GetByLocalId(objectId);
 
@@ -979,7 +979,7 @@ s32 ObjectEvent_ReadActiveValue(s32 localId) {
 }
 
 /// Returns the first of the map's object events (8 to 65) showing sprite, or
-/// -1. Reached only through an unnamed veneer in the object bank's far-call
+/// -1. Reached only through an unnamed veneer in the overworld bank's far-call
 /// table; nothing in ☀️ names it.
 s32 ObjectEvent_FindActiveByValue(s32 sprite) {
   struct FieldWork *state = (struct FieldWork *)gFieldWork;

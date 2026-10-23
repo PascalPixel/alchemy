@@ -92,8 +92,7 @@ into the title picture and waits for Start.
 ![The title intro: the clouds and the mountain scroll past the sun and its lens flares, ending on the title picture](https://alchemy.pascalpixel.com/story/title.gif)
 
 The title [overlay](../../glossary.md#overlay), `Title_Run` in [Menus](../menu/README.md), decides what
-runs; the code is here, in the palette [bank](../../glossary.md#bank), named after the palette fade it
-holds. At power-on
+runs; the code is here, in the title [bank](../../glossary.md#bank). At power-on
 `Title_ShowNintendoLogo` shows the Nintendo logo with its fanfare and
 `Title_ShowCamelotLogo` the Camelot logo for two seconds, cycling its four
 frames of tiles. When a save file exists, `Title_ShowIntro` then scrolls the
@@ -131,7 +130,7 @@ last entry, 0, fades the screen to black. They run at the end of the game:
 
 1. the ending sends the party to the title screen's [warp destination](../../glossary.md#warp-destination)
    `TITLE_FROM_LEMURIAN_SHIP`, with `MUS_ENDING` playing;
-2. `Title_Run` calls the credits through the scroll bank's [far-call](../../glossary.md#far-call) table,
+2. `Title_Run` calls the credits through the credits bank's [far-call](../../glossary.md#far-call) table,
    as `CreditsFar_Entry00`;
 3. after them the game goes on to `MapId_MainMenu`, the main menu.
 
@@ -276,7 +275,7 @@ the code that loads them: battle animations, maps, layouts, windows and menus.
 | `animref*.s` | animation slot tables, whose entries point back at their own table |
 
 The unit headers are in `games/tbs/include/unit/graphics/`. The credits are
-the scroll bank and the title intro the palette bank
+the credits bank and the title intro the title bank
 ([Source](../README.md)); everything else here is linked where its users
 are, as `games/tbs/objects.tsv` lists.
 

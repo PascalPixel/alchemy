@@ -979,7 +979,7 @@ void LuckyWheels_Run(void) {
                              sizeof(struct LuckyWheelsWork));
   tiles = Ram_MapGridCellBuffer;
   save = (struct ReelSave *)((u8 *)&gGameState + 12);
-  RuntimeDispatch_NoOpHook((s32)&ResourceId_EffectFarCalls);
+  RuntimeDispatch_NoOpHook((s32)&ResourceId_BattleAnimFarCalls);
   save->wonPrizes[0] = -1;
   state->repeat = 0;
   state->bet = 1;

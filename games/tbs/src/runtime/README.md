@@ -56,7 +56,7 @@ function, in order:
 The German, French, Spanish and Italian [editions](../../glossary.md#editions) (`TBS_PATCH_2`) also
 install `Iwram_Halt` for the cartridge-removed interrupt.
 
-`Game_Run` (`games/tbs/src/overworld/overworld/map.c`) is in the object [bank](../../glossary.md#bank), so
+`Game_Run` (`games/tbs/src/overworld/overworld/map.c`) is in the overworld [bank](../../glossary.md#bank), so
 start-up reaches it through its [far-call](../../glossary.md#far-call) entry, `Game_RunFar`. It never
 returns: it runs one map after another, starting at the title, and before
 each one it resets the task table, removes the HBlank and VCount handlers,

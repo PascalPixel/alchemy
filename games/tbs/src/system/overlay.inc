@@ -241,7 +241,7 @@
 	import InventorySnapshot_Take, InventorySnapshot_SaveFar
 	import Engine_InventorySnapshotRestore, InventorySnapshot_RestoreFar
 	import InventorySnapshot_Restore, InventorySnapshot_RestoreFar
-@ Object bank (far_call/OBJECT.S)
+@ Overworld bank (far_call/OVERWORLD.S)
 	import Engine_ScriptWait, FieldScript_WaitFramesFar
 	import Engine_ScriptStart, FieldScript_StartFar
 	import Engine_ScriptEnd, FieldScript_EndFar
@@ -428,9 +428,9 @@
 @ Battle bank (far_call/BATTLE.S)
 	import DjinnRecovery_TickTwenty, DjinnRecovery_TickTwentyFar
 	import DebugParty_LoadPreset, DebugParty_LoadPresetFar
-@ Scroll bank (far_call/SCROLL.S)
+@ Credits bank (far_call/CREDITS.S)
 	import CreditsFar_Entry00, Credits_RunFar
-@ Palette bank (far_call/PALETTE.S)
+@ Title bank (far_call/TITLE.S)
 	import TitleFar_Entry00, Title_ShowIntroFar
 	import Title_ShowNintendoLogo, Title_ShowNintendoLogoFar
 	import TitleFar_Entry20, Title_ShowCamelotLogoFar

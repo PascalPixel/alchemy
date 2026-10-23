@@ -394,7 +394,7 @@ builds the usual pair, clipped on all four sides, `[0]` using `BLITTER_MAX`
 and `[1]` using `COMPOSITE_ADDITIVE`, both mirrored across when it is passed the
 targets' side. The battle's star field (`battle/battle/star_field.c`) and
 `overworld/colorfx.c` reach the builder from other [banks](../../glossary.md#bank) through its
-[far-call](../../glossary.md#far-call) entry, `BattleAnim_BuildBlitterFar` (`system/far_call/EFFECT.S`).
+[far-call](../../glossary.md#far-call) entry, `BattleAnim_BuildBlitterFar` (`system/far_call/BATTLE_ANIM.S`).
 
 ### How the builder writes a blitter
 

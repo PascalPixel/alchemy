@@ -281,8 +281,8 @@ s32 CalculateFacingAngle(s32, s32);
 void Engine_ObjectEventFollow(s32 localId, s32 leader);
 void Engine_ScriptClearInvalidPackedValues(void);
 s32 Engine_PartyRemoveItem(s32 item);
-s32 FarCall_BlankLoadTable(s32 warpDest);
-s32 FarCall_BlankRunTable(s32 warpDest);
+s32 FarCall_LuckyWheelsTable(s32 warpDest);
+s32 FarCall_LuckyDiceTable(s32 warpDest);
 #ifndef OWN_Map_PrepareObjectEvents
 void Map_PrepareObjectEvents(struct ObjectEventTemplate *entry);
 #endif

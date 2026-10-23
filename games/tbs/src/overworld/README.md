@@ -501,7 +501,7 @@ that nothing else uses.
 
 `FieldScript_ShowSpeakerMessage`, `FieldScript_ShowMessageAtPosition` and
 `FieldScript_ForwardShowMessageAtPosition` are unused: each is reached only through
-a bare [veneer](../../glossary.md#veneer) in `system/far_call/OBJECT.S`, which has no symbol for code to
+a bare [veneer](../../glossary.md#veneer) in `system/far_call/OVERWORLD.S`, which has no symbol for code to
 call ([`psynergy_effects/messages.c`](psynergy_effects/messages.c)).
 
 - XXX (no evidence): what units `FieldScript_ShowSpeakerMessage` and

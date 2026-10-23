@@ -2,8 +2,8 @@
 @ Ordered 8-byte jumps into this bank. Named exports are callable symbols;
 @ bare veneers preserve entries that have no exported name.
 #include "stub.inc"
-	.global FarCall_PaletteTable
-FarCall_PaletteTable:
+	.global FarCall_TitleTable
+FarCall_TitleTable:
 	export Title_ShowIntroFar, Title_ShowIntro
 	overlay_veneer Title_NoOpColor
 	overlay_veneer Title_NoOpPalette

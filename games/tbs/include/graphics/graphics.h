@@ -304,12 +304,12 @@ extern u8 Message_FindCodeSize[];
 /// The party status window's column lines, ended by -1: the Djinn column's
 /// first, then one between members.
 extern const s8 gWindow_PartyColumnOffsets[];
-#ifndef OWN_FarCall_EffectTable
+#ifndef OWN_FarCall_BattleAnimTable
 /// The battle animation bank's far-call table, declared as a function so that a
 /// call reaches its first stub, BattleAnim_BuildBlitterFar; nothing in this
 /// game calls it by this name.
-s32 FarCall_EffectTable(s32 slot, s32 width_shift, s32 height_shift, s32 flags,
-                        u32 mode);
+s32 FarCall_BattleAnimTable(s32 slot, s32 width_shift, s32 height_shift,
+                            s32 flags, u32 mode);
 #endif
 
 #endif

@@ -325,7 +325,7 @@ s32 FieldScript_AskYesNoAndShowResponse(s32 localId, s32 flags) {
 
 void FieldScript_EmptyCallback(void) {}
 
-/// Unused: reached only through a bare veneer in system/far_call/OBJECT.S,
+/// Unused: reached only through a bare veneer in system/far_call/OVERWORLD.S,
 /// which has no symbol, so no code can call it. It would record the speaker,
 /// open the message near it and wait unless fast-forwarding, then advance the
 /// message index. Like FieldScript_ShowMessageAtPosition it moves the position
@@ -404,14 +404,14 @@ void FieldScript_ShowSpeakerMessage(s32 speaker) {
   state->message++;
 }
 
-/// Unused: reached only through a bare veneer in OBJECT.S; forwards its
+/// Unused: reached only through a bare veneer in OVERWORLD.S; forwards its
 /// arguments to FieldScript_ShowMessageAtPosition.
 void FieldScript_ForwardShowMessageAtPosition(s32 unused0, s32 unused1, s32 x,
                                               s32 y) {
   FieldScript_ShowMessageAtPosition(unused0, unused1, x, y);
 }
 
-/// Unused: reached only through a bare veneer in OBJECT.S. It would open the
+/// Unused: reached only through a bare veneer in OVERWORLD.S. It would open the
 /// script's message at (x, y), wait for it and advance the message index; its
 /// units are as unknown as FieldScript_ShowSpeakerMessage's.
 void FieldScript_ShowMessageAtPosition(s32 unused0, s32 unused1, s32 x, s32 y) {

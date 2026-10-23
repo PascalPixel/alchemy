@@ -137,7 +137,7 @@ void FieldScript_NoOpHook(void) {}
 
 /// Respawns the map's object events from an object event template table and
 /// waits one frame for them to appear. Reached only through an unnamed veneer
-/// in the object bank's far-call table; nothing in ☀️ names it.
+/// in the overworld bank's far-call table; nothing in ☀️ names it.
 void FieldScript_RunObjectHookAndWait(struct ObjectEventTemplate *table) {
   FieldScript_NoOpHook();
   ObjectEvent_ResetForObject(table);
@@ -375,7 +375,7 @@ s32 PartyInventory_GiveItem(s32 item, s32 unused) {
 }
 
 /// Gives item to one party member. Returns unit, or -1 if its bag is full.
-/// Reached only through an unnamed veneer in the object bank's far-call
+/// Reached only through an unnamed veneer in the overworld bank's far-call
 /// table; nothing in ☀️ names it.
 s32 Inventory_TryAddAndReturnMember(s32 item, s32 unused, s32 unit) {
   if (Inventory_AddItemFar(unit, item) >= 0)
@@ -523,7 +523,7 @@ void FieldScript_SetDestination(s32 mapId, s32 warpDest) {
 }
 
 /// Makes the script leave and records map and warp destination as the saved
-/// destination. Reached only through an unnamed veneer in the object bank's
+/// destination. Reached only through an unnamed veneer in the overworld bank's
 /// far-call table; nothing in ☀️ names it.
 void FieldScript_SetSavedDestination(u16 mapId, u16 warpDest) {
   struct FieldWork *state = (struct FieldWork *)gFieldWork;

@@ -60,15 +60,15 @@ Resource_DirectoryTable:
 	resource , FarCall_FieldTable
 	resource , FarCall_WindowTable
 	resource , FarCall_GameTable
-	resource , FarCall_ObjectTable
+	resource , FarCall_OverworldTable
 	resource , FarCall_MenuTable
 	resource , FarCall_ShopTable
 	resource , FarCall_BattleTable
-	resource , FarCall_ScrollTable
-	resource PaletteFarCalls, FarCall_PaletteTable
-	resource EffectFarCalls, FarCall_EffectTable
-	resource , FarCall_BlankRunTable
-	resource , FarCall_BlankLoadTable
+	resource , FarCall_CreditsTable
+	resource TitleFarCalls, FarCall_TitleTable
+	resource BattleAnimFarCalls, FarCall_BattleAnimTable
+	resource , FarCall_LuckyDiceTable
+	resource , FarCall_LuckyWheelsTable
 	resource , FarCall_SoundTable
 	resource , FarCall_SoundTable
 	resource ResourceFarCalls, FarCall_ResourceTable

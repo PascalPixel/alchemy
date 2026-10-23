@@ -2,8 +2,8 @@
 @ Ordered 8-byte jumps into this bank. Named exports are callable symbols;
 @ bare veneers preserve entries that have no exported name.
 #include "stub.inc"
-	.global FarCall_ObjectTable
-FarCall_ObjectTable:
+	.global FarCall_OverworldTable
+FarCall_OverworldTable:
 	export Map_RunFar, Map_Run
 	export Game_RunFar, Game_Run
 	export FieldScript_WaitFramesFar, FieldScript_WaitFrames

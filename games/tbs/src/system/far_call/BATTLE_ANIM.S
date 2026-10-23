@@ -2,8 +2,8 @@
 @ Ordered 8-byte jumps into this bank. Named exports are callable symbols;
 @ bare veneers preserve entries that have no exported name.
 #include "stub.inc"
-	.global FarCall_EffectTable
-FarCall_EffectTable:
+	.global FarCall_BattleAnimTable
+FarCall_BattleAnimTable:
 	export BattleAnim_BuildBlitterFar, BattleAnim_BuildBlitter
 	export BattleAnim_DispatchByIdRangeFar, BattleAnim_DispatchByIdRange
 	export BattleAnim_RunSummonEffectFar, BattleAnim_RunSummonEffect

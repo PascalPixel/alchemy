@@ -81,8 +81,9 @@ u32 BattleClass_GetAttackHop(u32 index) {
 }
 
 /// Returns 1 for a class whose blow lands with SE_HEAVY_IMPACT instead of
-/// SE_IMPACT; 0 out of range. Only the Mars Lighthouse bosses set it in
-/// sprites.tsv: ENEMY_SATUROS_2, ENEMY_MENARDI and ENEMY_FUSION_DRAGON.
+/// SE_IMPACT; 0 out of range. Only the Venus Lighthouse aerie bosses set it in
+/// sprites.tsv: ENEMY_SATUROS_VENUS_LIGHTHOUSE, ENEMY_MENARDI and
+/// ENEMY_FUSION_DRAGON.
 /// Called by the beam effects (beams.c) through its far stub.
 s32 BattleClass_HasHeavyImpact(s32 index) {
   if (index < 0 || index > ENEMY_CLASS_LAST)

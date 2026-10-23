@@ -30,7 +30,7 @@
 /// unless Cloak is on, and each guard has a watcher, a callback that the
 /// warp destination the party arrives by starts
 /// (LunpaFortress_InitializeGroundFloor, LunpaFortress_InitializeUpperFloor). A
-/// watcher that sees the leader raises one of the TRIGGER_*_SPOTTED map events,
+/// watcher that sees the leader raises one of the RAISED_*_SPOTTED map events,
 /// whose script has the guard challenge the party and throw it out to the gates
 /// (LunpaFortress_GuardThrowsPartyOut, WARP_THROWN_OUT). A cloaked leader
 /// within four cells of a patrolling guard makes the watcher request
@@ -315,18 +315,22 @@ enum {
   LOCALID_BLANK_TOADONPA_DODONPA
 };
 
-/// Triggers: the cell doors count from TRIGGER_DOOR_FIRST in each map, and a
-/// watching guard raises one of the TRIGGER_*_SPOTTED triggers.
-enum {
-  TRIGGER_LOCKED_DOOR = 99,
-  TRIGGER_SEALED_DOOR = 98,
-  TRIGGER_DOOR_FIRST = 40,
-  TRIGGER_PATROL_PAIR_SPOTTED = 91,
-  TRIGGER_HALL_PATROL_SPOTTED,
-  TRIGGER_GROUND_FLOOR_PATROL_SPOTTED,
-  TRIGGER_UPPER_HALL_SPOTTED,
-  TRIGGER_ENTRANCE_GUARD_SPOTTED,
-  TRIGGER_SENTRIES_SPOTTED
+/// The metatile behaviors the fortress's map events answer: the cell doors
+/// count from MB_LUNPA_FORTRESS_FIRST_DOOR in each map.
+enum LunpaFortressMetatileBehavior {
+  MB_LUNPA_FORTRESS_LOCKED_DOOR = 99,
+  MB_LUNPA_FORTRESS_SEALED_DOOR = 98,
+  MB_LUNPA_FORTRESS_FIRST_DOOR = 40
+};
+
+/// The events a watching guard raises on spotting the party.
+enum LunpaFortressRaisedEvent {
+  RAISED_PATROL_PAIR_SPOTTED = 91,
+  RAISED_HALL_PATROL_SPOTTED,
+  RAISED_GROUND_FLOOR_PATROL_SPOTTED,
+  RAISED_UPPER_HALL_SPOTTED,
+  RAISED_ENTRANCE_GUARD_SPOTTED,
+  RAISED_SENTRIES_SPOTTED
 };
 
 /// Reveal's phases: the hidden things show, and hide again.
@@ -338,7 +342,7 @@ enum { WARP_THROWN_OUT = 60 };
 enum { CLOAK_NEAR_GUARD = 0x2000 | ABILITY_CLOAK };
 
 /// The first of the flags that remember which cell doors the Cell Key opened,
-/// per map: one for each door trigger from TRIGGER_DOOR_FIRST.
+/// per map: one for each door trigger from MB_LUNPA_FORTRESS_FIRST_DOOR.
 enum {
   TOADONPA_DOOR_FLAG = FLAG_MAPSEC_TEMP_50,
   CAVE_DOOR_FLAG = FLAG_MAPSEC_TEMP_55,
@@ -527,13 +531,14 @@ static void EventScript_UnlockToadonpaDoor(void) {
   fieldWork = gFieldWork;
   if (PartyInventory_FindMember(ITEM_CELL_KEY) != -1) {
     doorTrigger = fieldWork->coordEvent;
-    doorIndex = doorTrigger - TRIGGER_DOOR_FIRST;
+    doorIndex = doorTrigger - MB_LUNPA_FORTRESS_FIRST_DOOR;
     if (FLAG_CHECK(FLAG_DODONPA_LOCKED_UP) == 0 || doorIndex != 4) {
       LunpaFortress_OpenToadonpaDoor(doorIndex);
       SE(SE_GATE_MOVE);
       MapGrid_SetShake(PIXELS(3), PIXELS(3), Q16_ONE);
       MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
-      FLAG_SET(doorTrigger + (TOADONPA_DOOR_FLAG - TRIGGER_DOOR_FIRST));
+      FLAG_SET(doorTrigger +
+               (TOADONPA_DOOR_FLAG - MB_LUNPA_FORTRESS_FIRST_DOOR));
     }
   }
 }
@@ -566,11 +571,11 @@ static void EventScript_UnlockCaveDoor(void) {
   fieldWork = gFieldWork;
   if (PartyInventory_FindMember(ITEM_CELL_KEY) != -1) {
     doorTrigger = fieldWork->coordEvent;
-    LunpaFortress_OpenCaveDoor(doorTrigger - TRIGGER_DOOR_FIRST);
+    LunpaFortress_OpenCaveDoor(doorTrigger - MB_LUNPA_FORTRESS_FIRST_DOOR);
     SE(SE_GATE_MOVE);
     MapGrid_SetShake(PIXELS(3), PIXELS(3), Q16_ONE);
     MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
-    FLAG_SET(doorTrigger + (CAVE_DOOR_FLAG - TRIGGER_DOOR_FIRST));
+    FLAG_SET(doorTrigger + (CAVE_DOOR_FLAG - MB_LUNPA_FORTRESS_FIRST_DOOR));
   }
 }
 
@@ -594,11 +599,13 @@ static void EventScript_UnlockUpperFloorDoor(void) {
   fieldWork = gFieldWork;
   if (PartyInventory_FindMember(ITEM_CELL_KEY) != -1) {
     doorTrigger = fieldWork->coordEvent;
-    LunpaFortress_OpenUpperFloorDoor(doorTrigger - TRIGGER_DOOR_FIRST);
+    LunpaFortress_OpenUpperFloorDoor(doorTrigger -
+                                     MB_LUNPA_FORTRESS_FIRST_DOOR);
     SE(SE_GATE_MOVE);
     MapGrid_SetShake(PIXELS(3), PIXELS(3), Q16_ONE);
     MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
-    FLAG_SET(doorTrigger + (UPPER_FLOOR_DOOR_FLAG - TRIGGER_DOOR_FIRST));
+    FLAG_SET(doorTrigger +
+             (UPPER_FLOOR_DOOR_FLAG - MB_LUNPA_FORTRESS_FIRST_DOOR));
   }
 }
 
@@ -625,11 +632,13 @@ static void EventScript_UnlockGroundFloorDoor(void) {
   fieldWork = gFieldWork;
   if (PartyInventory_FindMember(ITEM_CELL_KEY) != -1) {
     doorTrigger = fieldWork->coordEvent;
-    LunpaFortress_OpenGroundFloorDoor(doorTrigger - TRIGGER_DOOR_FIRST);
+    LunpaFortress_OpenGroundFloorDoor(doorTrigger -
+                                      MB_LUNPA_FORTRESS_FIRST_DOOR);
     SE(SE_GATE_MOVE);
     MapGrid_SetShake(PIXELS(3), PIXELS(3), Q16_ONE);
     MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
-    FLAG_SET(doorTrigger + (GROUND_FLOOR_DOOR_FLAG - TRIGGER_DOOR_FIRST));
+    FLAG_SET(doorTrigger +
+             (GROUND_FLOOR_DOOR_FLAG - MB_LUNPA_FORTRESS_FIRST_DOOR));
   }
 }
 
@@ -767,11 +776,11 @@ static s32 LunpaFortress_IsLeaderInPatrolSafeZone(void) {
 #ifdef UBFIX
 #define PATROL_PSYNERGY_REQUEST(work) ((work)->psynergy)
 #define PATROL_ITEM_REQUEST(work) ((work)->item)
-#define PATROL_RAISED_TRIGGER(work) ((work)->raisedEvent)
+#define PATROL_RAISED_EVENT(work) ((work)->raisedEvent)
 #else
 #define PATROL_PSYNERGY_REQUEST(work) ((work)[191])
 #define PATROL_ITEM_REQUEST(work) ((work)[192])
-#define PATROL_RAISED_TRIGGER(work) ((work)[193])
+#define PATROL_RAISED_EVENT(work) ((work)[193])
 #endif
 
 /// Every frame in LunpaFortressUpperFloor: the pair patrolling the west
@@ -779,7 +788,7 @@ static s32 LunpaFortress_IsLeaderInPatrolSafeZone(void) {
 /// item is in use; otherwise they walk, with MAPGRID_LAYER_OVERHEAD shaking and
 /// following the first. Close to a cloaked leader they request
 /// CLOAK_NEAR_GUARD; seeing an uncloaked leader, they raise
-/// TRIGGER_PATROL_PAIR_SPOTTED.
+/// RAISED_PATROL_PAIR_SPOTTED.
 static void LunpaFortress_UpdatePairedGuardDetection(void) {
   struct ObjectEvent *firstGuard =
       ObjectEvent_Get(LOCALID_UPPER_FLOOR_FIRST_PATROL);
@@ -837,8 +846,8 @@ static void LunpaFortress_UpdatePairedGuardDetection(void) {
         }
       }
       if (FLAG_CHECK(FLAG_MAP_TEMP_14)) {
-        SetFieldWorkValue(&PATROL_RAISED_TRIGGER(work),
-                          TRIGGER_PATROL_PAIR_SPOTTED);
+        SetFieldWorkValue(&PATROL_RAISED_EVENT(work),
+                          RAISED_PATROL_PAIR_SPOTTED);
       }
     }
   }
@@ -897,7 +906,7 @@ static s32 LunpaFortress_IsLeaderPassingPatrollingGuard(void) {
 
 /// Every frame in LunpaFortressUpperFloor: the patrol in the east hall, as
 /// LunpaFortress_UpdatePairedGuardDetection; seeing the leader, it raises
-/// TRIGGER_HALL_PATROL_SPOTTED.
+/// RAISED_HALL_PATROL_SPOTTED.
 static void LunpaFortress_UpdateHallGuardDetection(void) {
 
   struct ObjectEvent *guard = ObjectEvent_Get(LOCALID_UPPER_FLOOR_HALL_PATROL);
@@ -941,8 +950,8 @@ static void LunpaFortress_UpdateHallGuardDetection(void) {
         }
       }
       if (FLAG_CHECK(FLAG_MAP_TEMP_14)) {
-        SetFieldWorkValue(&PATROL_RAISED_TRIGGER(work),
-                          TRIGGER_HALL_PATROL_SPOTTED);
+        SetFieldWorkValue(&PATROL_RAISED_EVENT(work),
+                          RAISED_HALL_PATROL_SPOTTED);
       }
     }
   }
@@ -976,7 +985,7 @@ static s32 LunpaFortress_IsLeaderInGroundFloorPatrolSafeZone(void) {
 
 /// Every frame in LunpaFortressGroundFloor: the patrolling guard, as
 /// LunpaFortress_UpdatePairedGuardDetection; seeing the leader, it raises
-/// TRIGGER_GROUND_FLOOR_PATROL_SPOTTED.
+/// RAISED_GROUND_FLOOR_PATROL_SPOTTED.
 static void LunpaFortress_UpdateGroundFloorPatrolDetection(void) {
 
   struct ObjectEvent *guard =
@@ -1020,8 +1029,8 @@ static void LunpaFortress_UpdateGroundFloorPatrolDetection(void) {
         }
       }
       if (FLAG_CHECK(FLAG_MAP_TEMP_14)) {
-        SetFieldWorkValue(&PATROL_RAISED_TRIGGER(work),
-                          TRIGGER_GROUND_FLOOR_PATROL_SPOTTED);
+        SetFieldWorkValue(&PATROL_RAISED_EVENT(work),
+                          RAISED_GROUND_FLOOR_PATROL_SPOTTED);
       }
     }
   }
@@ -1048,7 +1057,7 @@ static s32 LunpaFortress_IsLeaderOutsideUpperHall(void) {
 }
 
 /// Every frame in LunpaFortressGroundFloor's upper hall: the guard who sees the
-/// uncloaked leader raises TRIGGER_UPPER_HALL_SPOTTED.
+/// uncloaked leader raises RAISED_UPPER_HALL_SPOTTED.
 static void LunpaFortress_CheckUpperHallGuard(void) {
 
   struct EventWork *fieldWork;
@@ -1064,7 +1073,7 @@ static void LunpaFortress_CheckUpperHallGuard(void) {
         }
       }
       if (FLAG_CHECK(FLAG_MAP_TEMP_14) != 0) {
-        fieldWork->raisedEvent = TRIGGER_UPPER_HALL_SPOTTED;
+        fieldWork->raisedEvent = RAISED_UPPER_HALL_SPOTTED;
       }
     }
   }
@@ -1079,7 +1088,7 @@ static void EventScript_UpperHallGuardThrowsPartyOut(void) {
 
 /// Every frame after the party arrives in LunpaFortressGroundFloor's entrance
 /// or main passage: the guard who sees the uncloaked leader raises
-/// TRIGGER_ENTRANCE_GUARD_SPOTTED, once.
+/// RAISED_ENTRANCE_GUARD_SPOTTED, once.
 static void LunpaFortress_CheckEntranceGuard(void) {
 
   struct EventWork *fieldWork = gFieldWork;
@@ -1092,14 +1101,14 @@ static void LunpaFortress_CheckEntranceGuard(void) {
 
     Task_Remove(LunpaFortress_CheckEntranceGuard);
     raisedTrigger = &fieldWork->raisedEvent;
-    caughtTrigger = TRIGGER_ENTRANCE_GUARD_SPOTTED;
+    caughtTrigger = RAISED_ENTRANCE_GUARD_SPOTTED;
     *raisedTrigger = caughtTrigger;
   }
 }
 
 /// Every frame after the party arrives in LunpaFortressGroundFloor's entrance
 /// or main passage: either sentry who sees the uncloaked leader raises
-/// TRIGGER_SENTRIES_SPOTTED, once for both.
+/// RAISED_SENTRIES_SPOTTED, once for both.
 static void LunpaFortress_CheckFirstEntranceSentry(void) {
 
   struct EventWork *fieldWork;
@@ -1112,7 +1121,7 @@ static void LunpaFortress_CheckFirstEntranceSentry(void) {
         FLAG_SET(FLAG_MAP_TEMP_25);
         Task_Remove(LunpaFortress_CheckFirstEntranceSentry);
         Task_Remove(LunpaFortress_CheckSecondEntranceSentry);
-        fieldWork->raisedEvent = TRIGGER_SENTRIES_SPOTTED;
+        fieldWork->raisedEvent = RAISED_SENTRIES_SPOTTED;
       }
     }
   }
@@ -1131,7 +1140,7 @@ static void LunpaFortress_CheckSecondEntranceSentry(void) {
         FLAG_SET(FLAG_MAP_TEMP_25);
         Task_Remove(LunpaFortress_CheckSecondEntranceSentry);
         Task_Remove(LunpaFortress_CheckFirstEntranceSentry);
-        fieldWork->raisedEvent = TRIGGER_SENTRIES_SPOTTED;
+        fieldWork->raisedEvent = RAISED_SENTRIES_SPOTTED;
       }
     }
   }
@@ -1252,7 +1261,7 @@ static void LunpaFortress_CheckGroundFloorDoorApproach(void) {
 
     if (playerX == 43 && playerZ > 28 && playerZ <= 31) {
       s16 *touchedTrigger = &gFieldWork->coordEvent;
-      s32 doorTrigger = TRIGGER_DOOR_FIRST + 1;
+      s32 doorTrigger = MB_LUNPA_FORTRESS_FIRST_DOOR + 1;
 
       *touchedTrigger = doorTrigger;
       EventScript_UnlockGroundFloorDoor();
@@ -1273,7 +1282,7 @@ static void LunpaFortress_CheckUpperFloorDoorApproach(void) {
     if (playerX == 16 && playerZ > 55 && playerZ <= 58 &&
         (leader->facing == 0xc000 || leader->facing == 0x4000)) {
       s16 *touchedTrigger = &gFieldWork->coordEvent;
-      s32 doorTrigger = TRIGGER_DOOR_FIRST;
+      s32 doorTrigger = MB_LUNPA_FORTRESS_FIRST_DOOR;
 
       *touchedTrigger = doorTrigger;
       EventScript_UnlockUpperFloorDoor();
@@ -3915,13 +3924,13 @@ struct MapEvent gLunpaFortressGroundFloorEvents[] = {
     { MAP_EVENT_WARP, 18, CONDITION_ALWAYS, LUNPA_FORTRESS_GROUND_FLOOR_EAST_PASSAGE_TO_TREASURE_ROOM },
     { MAP_EVENT_WARP, 19, CONDITION_ALWAYS, LUNPA_FORTRESS_GROUND_FLOOR_BARREL_ROOM_TO_NORTHEAST_PASSAGE },
     { MAP_EVENT_WARP, 20, CONDITION_ALWAYS, LUNPA_FORTRESS_GROUND_FLOOR_TREASURE_ROOM_TO_EAST_PASSAGE },
-    { BG_EVENT(BG_EVENT_SILENT), TRIGGER_LOCKED_DOOR, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_SearchLockedDoor) },
-    { COORD_EVENT_FACING(FACING_NORTH), TRIGGER_DOOR_FIRST, GROUND_FLOOR_DOOR_FLAG, EVENT_SCRIPT(EventScript_UnlockGroundFloorDoor) },
-    { COORD_EVENT_FACING(FACING_SOUTH), TRIGGER_DOOR_FIRST, GROUND_FLOOR_DOOR_FLAG, EVENT_SCRIPT(EventScript_UnlockGroundFloorDoor) },
-    { COORD_EVENT_FACING(FACING_NORTH), TRIGGER_DOOR_FIRST + 1, GROUND_FLOOR_DOOR_FLAG + 1, EVENT_SCRIPT(EventScript_UnlockGroundFloorDoor) },
-    { COORD_EVENT_FACING(FACING_SOUTH), TRIGGER_DOOR_FIRST + 1, GROUND_FLOOR_DOOR_FLAG + 1, EVENT_SCRIPT(EventScript_UnlockGroundFloorDoor) },
-    { COORD_EVENT_FACING(FACING_NORTH), TRIGGER_DOOR_FIRST + 2, GROUND_FLOOR_DOOR_FLAG + 2, EVENT_SCRIPT(EventScript_UnlockGroundFloorDoor) },
-    { COORD_EVENT_FACING(FACING_SOUTH), TRIGGER_DOOR_FIRST + 2, GROUND_FLOOR_DOOR_FLAG + 2, EVENT_SCRIPT(EventScript_UnlockGroundFloorDoor) },
+    { BG_EVENT(BG_EVENT_SILENT), MB_LUNPA_FORTRESS_LOCKED_DOOR, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_SearchLockedDoor) },
+    { COORD_EVENT_FACING(FACING_NORTH), MB_LUNPA_FORTRESS_FIRST_DOOR, GROUND_FLOOR_DOOR_FLAG, EVENT_SCRIPT(EventScript_UnlockGroundFloorDoor) },
+    { COORD_EVENT_FACING(FACING_SOUTH), MB_LUNPA_FORTRESS_FIRST_DOOR, GROUND_FLOOR_DOOR_FLAG, EVENT_SCRIPT(EventScript_UnlockGroundFloorDoor) },
+    { COORD_EVENT_FACING(FACING_NORTH), MB_LUNPA_FORTRESS_FIRST_DOOR + 1, GROUND_FLOOR_DOOR_FLAG + 1, EVENT_SCRIPT(EventScript_UnlockGroundFloorDoor) },
+    { COORD_EVENT_FACING(FACING_SOUTH), MB_LUNPA_FORTRESS_FIRST_DOOR + 1, GROUND_FLOOR_DOOR_FLAG + 1, EVENT_SCRIPT(EventScript_UnlockGroundFloorDoor) },
+    { COORD_EVENT_FACING(FACING_NORTH), MB_LUNPA_FORTRESS_FIRST_DOOR + 2, GROUND_FLOOR_DOOR_FLAG + 2, EVENT_SCRIPT(EventScript_UnlockGroundFloorDoor) },
+    { COORD_EVENT_FACING(FACING_SOUTH), MB_LUNPA_FORTRESS_FIRST_DOOR + 2, GROUND_FLOOR_DOOR_FLAG + 2, EVENT_SCRIPT(EventScript_UnlockGroundFloorDoor) },
     { MAP_EVENT_COORD, 50, FLAG_MAP_TEMP_24, EVENT_SCRIPT(EventScript_EntranceGuardThrowsPartyOut) },
     { MAP_EVENT_COORD, 51, FLAG_MAP_TEMP_25, EVENT_SCRIPT(EventScript_SentriesThrowPartyOut) },
     { MAP_EVENT_TALK, LOCALID_GROUND_FLOOR_MAN_WONDERING_ABOUT_DONPA, CONDITION_ALWAYS, MSGNO(MsgLunpaDonpaResting) },
@@ -3936,10 +3945,10 @@ struct MapEvent gLunpaFortressGroundFloorEvents[] = {
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_GROUND_FLOOR_BOASTING_MAN, CONDITION_ALWAYS, MSGNO(MsgLunpaHammetKeepsEarnings) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_GROUND_FLOOR_STARTLED_OLD_MAN, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_ReadStartledResidentsThoughts) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_GROUND_FLOOR_SECOND_SENTRY, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_ReadSentrysThoughts) },
-    { MAP_EVENT_RAISED, TRIGGER_GROUND_FLOOR_PATROL_SPOTTED, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_GroundFloorPatrolThrowsPartyOut) },
-    { MAP_EVENT_RAISED, TRIGGER_UPPER_HALL_SPOTTED, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_UpperHallGuardThrowsPartyOut) },
-    { MAP_EVENT_RAISED, TRIGGER_ENTRANCE_GUARD_SPOTTED, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_EntranceGuardThrowsPartyOut) },
-    { MAP_EVENT_RAISED, TRIGGER_SENTRIES_SPOTTED, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_SentriesThrowPartyOut) },
+    { MAP_EVENT_RAISED, RAISED_GROUND_FLOOR_PATROL_SPOTTED, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_GroundFloorPatrolThrowsPartyOut) },
+    { MAP_EVENT_RAISED, RAISED_UPPER_HALL_SPOTTED, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_UpperHallGuardThrowsPartyOut) },
+    { MAP_EVENT_RAISED, RAISED_ENTRANCE_GUARD_SPOTTED, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_EntranceGuardThrowsPartyOut) },
+    { MAP_EVENT_RAISED, RAISED_SENTRIES_SPOTTED, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_SentriesThrowPartyOut) },
     { BG_EVENT(BG_EVENT_CHEST), 100, FLAG_LUNPA_FORTRESS_CHEST_ELIXIR, FIND_ITEM(ITEM_ELIXIR) },
     { BG_EVENT(BG_EVENT_CHEST), 101, FLAG_LUNPA_FORTRESS_CHEST_LUCKY_MEDAL, FIND_ITEM(ITEM_LUCKY_MEDAL) },
     { BG_EVENT(BG_EVENT_CHEST), 102, FLAG_LUNPA_FORTRESS_CHEST_MYTHRIL_CIRCLET, FIND_ITEM(ITEM_MYTHRIL_CIRCLET) },
@@ -3977,10 +3986,10 @@ struct MapEvent gLunpaFortressUpperFloorEvents[] = {
     { MAP_EVENT_COORD, 31, FLAG_LUNPA_FORTRESS_THREE_GUARDS_BEATEN, EVENT_SCRIPT(EventScript_FightThreeGuards) },
     { MAP_EVENT_COORD, 32, FLAG_LUNPA_FORTRESS_EAST_GUARD_BEATEN, EVENT_SCRIPT(EventScript_FightEastGuard) },
     { MAP_EVENT_COORD, 33, FLAG_LUNPA_FORTRESS_WEST_GUARD_BEATEN, EVENT_SCRIPT(EventScript_FightWestGuard) },
-    { BG_EVENT(BG_EVENT_SILENT), TRIGGER_LOCKED_DOOR, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_SearchLockedDoor) },
-    { COORD_EVENT_FACING(FACING_SOUTH), TRIGGER_DOOR_FIRST, UPPER_FLOOR_DOOR_FLAG, EVENT_SCRIPT(EventScript_UnlockUpperFloorDoor) },
-    { COORD_EVENT_FACING(FACING_NORTH), TRIGGER_DOOR_FIRST + 1, UPPER_FLOOR_DOOR_FLAG + 1, EVENT_SCRIPT(EventScript_UnlockUpperFloorDoor) },
-    { COORD_EVENT_FACING(FACING_SOUTH), TRIGGER_DOOR_FIRST + 1, UPPER_FLOOR_DOOR_FLAG + 1, EVENT_SCRIPT(EventScript_UnlockUpperFloorDoor) },
+    { BG_EVENT(BG_EVENT_SILENT), MB_LUNPA_FORTRESS_LOCKED_DOOR, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_SearchLockedDoor) },
+    { COORD_EVENT_FACING(FACING_SOUTH), MB_LUNPA_FORTRESS_FIRST_DOOR, UPPER_FLOOR_DOOR_FLAG, EVENT_SCRIPT(EventScript_UnlockUpperFloorDoor) },
+    { COORD_EVENT_FACING(FACING_NORTH), MB_LUNPA_FORTRESS_FIRST_DOOR + 1, UPPER_FLOOR_DOOR_FLAG + 1, EVENT_SCRIPT(EventScript_UnlockUpperFloorDoor) },
+    { COORD_EVENT_FACING(FACING_SOUTH), MB_LUNPA_FORTRESS_FIRST_DOOR + 1, UPPER_FLOOR_DOOR_FLAG + 1, EVENT_SCRIPT(EventScript_UnlockUpperFloorDoor) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_CATCH), LOCALID_UPPER_FLOOR_CELL_KEY, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TakeCellKey) },
     { MAP_EVENT_TALK, LOCALID_UPPER_FLOOR_CELL_KEY, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TakeCellKey) },
     { MAP_EVENT_TALK, LOCALID_UPPER_FLOOR_DODONPAS_WIFE, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_AskWhereDodonpaIs) },
@@ -4006,8 +4015,8 @@ struct MapEvent gLunpaFortressUpperFloorEvents[] = {
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_UPPER_FLOOR_THREE_GUARDS_EAST, CONDITION_ALWAYS, MSGNO(MsgLunpaHiddenDoorSwitch) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_UPPER_FLOOR_DONPA, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_ReadDonpasThoughts) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_UPPER_FLOOR_ATTENDANT, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_ReadAttendantsThoughts) },
-    { MAP_EVENT_RAISED, TRIGGER_PATROL_PAIR_SPOTTED, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_PatrolPairThrowsPartyOut) },
-    { MAP_EVENT_RAISED, TRIGGER_HALL_PATROL_SPOTTED, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_HallPatrolThrowsPartyOut) },
+    { MAP_EVENT_RAISED, RAISED_PATROL_PAIR_SPOTTED, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_PatrolPairThrowsPartyOut) },
+    { MAP_EVENT_RAISED, RAISED_HALL_PATROL_SPOTTED, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_HallPatrolThrowsPartyOut) },
     { MAP_EVENTS_END },
 };
 
@@ -4018,12 +4027,12 @@ struct MapEvent gLunpaFortressCaveEvents[] = {
     { MAP_EVENT_WARP, 4, CONDITION_ALWAYS, LUNPA_FORTRESS_CAVE_TO_LUNPA_FORTRESS_TOADONPA_NORTHEAST },
     { MAP_EVENT_WARP, 5, CONDITION_ALWAYS, LUNPA_FORTRESS_CAVE_TO_LUNPA_FORTRESS_TOADONPA_NORTH },
     { MAP_EVENT_WARP | WARP_STYLE_STAIRS_DOWN, 6, CONDITION_ALWAYS, LUNPA_FORTRESS_CAVE_TO_LUNPA_FORTRESS_TOADONPA_NORTHWEST },
-    { BG_EVENT(BG_EVENT_SILENT), TRIGGER_LOCKED_DOOR, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_SearchLockedDoor) },
-    { BG_EVENT(BG_EVENT_SILENT), TRIGGER_SEALED_DOOR, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_SearchSealedDoor) },
-    { COORD_EVENT_FACING(FACING_NORTH), TRIGGER_DOOR_FIRST, CAVE_DOOR_FLAG, EVENT_SCRIPT(EventScript_UnlockCaveDoor) },
-    { COORD_EVENT_FACING(FACING_NORTH), TRIGGER_DOOR_FIRST + 1, CAVE_DOOR_FLAG + 1, EVENT_SCRIPT(EventScript_UnlockCaveDoor) },
-    { COORD_EVENT_FACING(FACING_NORTH), TRIGGER_DOOR_FIRST + 2, CAVE_DOOR_FLAG + 2, EVENT_SCRIPT(EventScript_UnlockCaveDoor) },
-    { COORD_EVENT_FACING(FACING_SOUTH), TRIGGER_DOOR_FIRST + 2, CAVE_DOOR_FLAG + 2, EVENT_SCRIPT(EventScript_UnlockCaveDoor) },
+    { BG_EVENT(BG_EVENT_SILENT), MB_LUNPA_FORTRESS_LOCKED_DOOR, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_SearchLockedDoor) },
+    { BG_EVENT(BG_EVENT_SILENT), MB_LUNPA_FORTRESS_SEALED_DOOR, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_SearchSealedDoor) },
+    { COORD_EVENT_FACING(FACING_NORTH), MB_LUNPA_FORTRESS_FIRST_DOOR, CAVE_DOOR_FLAG, EVENT_SCRIPT(EventScript_UnlockCaveDoor) },
+    { COORD_EVENT_FACING(FACING_NORTH), MB_LUNPA_FORTRESS_FIRST_DOOR + 1, CAVE_DOOR_FLAG + 1, EVENT_SCRIPT(EventScript_UnlockCaveDoor) },
+    { COORD_EVENT_FACING(FACING_NORTH), MB_LUNPA_FORTRESS_FIRST_DOOR + 2, CAVE_DOOR_FLAG + 2, EVENT_SCRIPT(EventScript_UnlockCaveDoor) },
+    { COORD_EVENT_FACING(FACING_SOUTH), MB_LUNPA_FORTRESS_FIRST_DOOR + 2, CAVE_DOOR_FLAG + 2, EVENT_SCRIPT(EventScript_UnlockCaveDoor) },
     { COORD_EVENT_WALKING_INTO(FACING_SOUTH), 50, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_CratesSink) },
     { COORD_EVENT_WALKING, 70, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_PushCrates) },
     { BG_EVENT(BG_EVENT_SILENT), 51, FLAG_MAP_TEMP_18, EVENT_SCRIPT(EventScript_FlipSecondSwitch) },
@@ -4041,12 +4050,12 @@ struct MapEvent gLunpaFortressEventsOther[] = {
     { MAP_EVENT_WARP, 1, CONDITION_ALWAYS, LUNPA_FORTRESS_TOADONPA_TO_LUNPA_FORTRESS_CAVE_NORTH },
     { MAP_EVENT_WARP, 2, CONDITION_ALWAYS, LUNPA_FORTRESS_TOADONPA_TO_LUNPA_FORTRESS_CAVE_NORTHEAST },
     { MAP_EVENT_WARP | WARP_STYLE_STAIRS_UP, 5, CONDITION_ALWAYS, LUNPA_FORTRESS_TOADONPA_TO_LUNPA_FORTRESS_CAVE_NORTHWEST },
-    { BG_EVENT(BG_EVENT_SILENT), TRIGGER_LOCKED_DOOR, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_SearchLockedDoor) },
-    { COORD_EVENT_FACING(FACING_NORTH), TRIGGER_DOOR_FIRST, TOADONPA_DOOR_FLAG, EVENT_SCRIPT(EventScript_UnlockToadonpaDoor) },
-    { COORD_EVENT_FACING(FACING_NORTH), TRIGGER_DOOR_FIRST + 1, TOADONPA_DOOR_FLAG + 1, EVENT_SCRIPT(EventScript_UnlockToadonpaDoor) },
-    { COORD_EVENT_FACING(FACING_NORTH), TRIGGER_DOOR_FIRST + 2, TOADONPA_DOOR_FLAG + 2, EVENT_SCRIPT(EventScript_UnlockToadonpaDoor) },
-    { COORD_EVENT_FACING(FACING_NORTH), TRIGGER_DOOR_FIRST + 3, TOADONPA_DOOR_FLAG + 3, EVENT_SCRIPT(EventScript_UnlockToadonpaDoor) },
-    { COORD_EVENT_FACING(FACING_NORTH), TRIGGER_DOOR_FIRST + 4, TOADONPA_DOOR_FLAG + 4, EVENT_SCRIPT(EventScript_UnlockToadonpaDoor) },
+    { BG_EVENT(BG_EVENT_SILENT), MB_LUNPA_FORTRESS_LOCKED_DOOR, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_SearchLockedDoor) },
+    { COORD_EVENT_FACING(FACING_NORTH), MB_LUNPA_FORTRESS_FIRST_DOOR, TOADONPA_DOOR_FLAG, EVENT_SCRIPT(EventScript_UnlockToadonpaDoor) },
+    { COORD_EVENT_FACING(FACING_NORTH), MB_LUNPA_FORTRESS_FIRST_DOOR + 1, TOADONPA_DOOR_FLAG + 1, EVENT_SCRIPT(EventScript_UnlockToadonpaDoor) },
+    { COORD_EVENT_FACING(FACING_NORTH), MB_LUNPA_FORTRESS_FIRST_DOOR + 2, TOADONPA_DOOR_FLAG + 2, EVENT_SCRIPT(EventScript_UnlockToadonpaDoor) },
+    { COORD_EVENT_FACING(FACING_NORTH), MB_LUNPA_FORTRESS_FIRST_DOOR + 3, TOADONPA_DOOR_FLAG + 3, EVENT_SCRIPT(EventScript_UnlockToadonpaDoor) },
+    { COORD_EVENT_FACING(FACING_NORTH), MB_LUNPA_FORTRESS_FIRST_DOOR + 4, TOADONPA_DOOR_FLAG + 4, EVENT_SCRIPT(EventScript_UnlockToadonpaDoor) },
     { MAP_EVENT_COORD, 20, FLAG_MAP_TEMP_70, EVENT_SCRIPT(EventScript_FindHammet) },
     { MAP_EVENT_TALK, LOCALID_TOADONPA_CELL_GUARD, CONDITION_ALWAYS, MSGNO(MsgLunpaHammetStillInside) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_TOADONPA_CELL_GUARD, CONDITION_ALWAYS, MSGNO(MsgLunpaDodonpaSecretlyInside) },

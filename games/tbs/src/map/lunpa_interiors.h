@@ -27,11 +27,13 @@ enum InteriorRoom {
 
 #define ROOM_DOOR(room) {MAP_EVENT_WARP, (room), CONDITION_ALWAYS, (room)}
 
-enum InteriorTrigger {
-  TRIGGER_WOODEN_BOX = 100,
-  TRIGGER_BARREL,
-  TRIGGER_FIRST_OVEN = 200,
-  TRIGGER_SECOND_OVEN
+/// The metatile behaviors the rooms' bg events answer; each door's cells carry
+/// the number of its warp.
+enum LunpaInteriorsMetatileBehavior {
+  MB_LUNPA_INTERIORS_WOODEN_BOX = 100,
+  MB_LUNPA_INTERIORS_BARREL,
+  MB_LUNPA_INTERIORS_FIRST_OVEN = 200,
+  MB_LUNPA_INTERIORS_SECOND_OVEN
 };
 
 /// The placed actors of Lunpa's houses, shops, inn and temple, numbered in the

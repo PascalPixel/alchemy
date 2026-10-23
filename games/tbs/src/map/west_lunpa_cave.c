@@ -4,10 +4,10 @@
 /// party meets Bunza on the way out of Lunpa with Hammet.
 ///
 /// The party comes in from the world map (WEST_LUNPA_CAVE_FROM_WORLD_MAP) and
-/// from Lunpa (WEST_LUNPA_CAVE_FROM_LUNPA); TRIGGER_WORLD_MAP_PASSAGE and
-/// TRIGGER_LUNPA_PASSAGE lead back out. WEST_LUNPA_CAVE_FROM_LUNPA_UNUSED,
-/// which no warp names, repeats WEST_LUNPA_CAVE_FROM_LUNPA with a shorter
-/// camera.
+/// from Lunpa (WEST_LUNPA_CAVE_FROM_LUNPA);
+/// MB_WEST_LUNPA_CAVE_WORLD_MAP_PASSAGE and MB_WEST_LUNPA_CAVE_LUNPA_PASSAGE
+/// lead back out. WEST_LUNPA_CAVE_FROM_LUNPA_UNUSED, which no warp names,
+/// repeats WEST_LUNPA_CAVE_FROM_LUNPA with a shorter camera.
 ///
 /// The gate puzzle runs on map flags, which Map_Initialize redraws: the
 /// lowering switch brings the gate down and the raising switch lifts it, each
@@ -25,14 +25,15 @@
 ///   changes one cell's metatile behavior.
 ///
 /// Once Donpa has let the party leave Lunpa Fortress with Hammet
-/// (FLAG_DODONPA_LOCKED_UP), stepping onto TRIGGER_BUNZA_HIDING_PLACE the
-/// first time (FLAG_LUNPA_CAVE_REUNION_SEEN) plays the reunion: Bunza, a Kalay
-/// merchant, comes out from behind a rock (EventScript_HammetFindsBunza), they
-/// talk (Reunion_Converse), and the party's answers decide whether it rides
-/// home in Bunza's wagon (WagonChoice_Run). Riding leaves by
-/// WEST_LUNPA_CAVE_BY_WAGON to WORLD_MAP_FROM_WEST_LUNPA_CAVE, where
-/// world_map.c plays the departure; staying, Hammet and Bunza leave alone.
-/// Either way FLAG_BUNZAS_WAGON_LEFT is set, on the world map or here.
+/// (FLAG_DODONPA_LOCKED_UP), stepping onto
+/// MB_WEST_LUNPA_CAVE_BUNZA_HIDING_PLACE the first time
+/// (FLAG_LUNPA_CAVE_REUNION_SEEN) plays the reunion: Bunza, a Kalay merchant,
+/// comes out from behind a rock (EventScript_HammetFindsBunza), they talk
+/// (Reunion_Converse), and the party's answers decide whether it rides home in
+/// Bunza's wagon (WagonChoice_Run). Riding leaves by WEST_LUNPA_CAVE_BY_WAGON
+/// to WORLD_MAP_FROM_WEST_LUNPA_CAVE, where world_map.c plays the departure;
+/// staying, Hammet and Bunza leave alone. Either way FLAG_BUNZAS_WAGON_LEFT is
+/// set, on the world map or here.
 ///
 /// Unused: a fourth puddle stands at the map's origin, outside the cave's
 /// camera bounds, so Frost can never reach it (EventScript_UnusedFreezePuddle).
@@ -1098,13 +1099,13 @@ const struct MapEvent gCaveNoEvents[] = {
 };
 
 const struct MapEvent gCaveEvents[] = {
-    { MAP_EVENT_WARP, TRIGGER_WORLD_MAP_PASSAGE, CONDITION_ALWAYS, WEST_LUNPA_CAVE_TO_WORLD_MAP },
-    { MAP_EVENT_WARP, TRIGGER_LUNPA_PASSAGE, CONDITION_ALWAYS, WEST_LUNPA_CAVE_TO_LUNPA },
-    { MAP_EVENT_COORD, TRIGGER_BUNZA_HIDING_PLACE, FLAG_LUNPA_CAVE_REUNION_SEEN,
+    { MAP_EVENT_WARP, MB_WEST_LUNPA_CAVE_WORLD_MAP_PASSAGE, CONDITION_ALWAYS, WEST_LUNPA_CAVE_TO_WORLD_MAP },
+    { MAP_EVENT_WARP, MB_WEST_LUNPA_CAVE_LUNPA_PASSAGE, CONDITION_ALWAYS, WEST_LUNPA_CAVE_TO_LUNPA },
+    { MAP_EVENT_COORD, MB_WEST_LUNPA_CAVE_BUNZA_HIDING_PLACE, FLAG_LUNPA_CAVE_REUNION_SEEN,
       EVENT_SCRIPT(EventScript_HammetFindsBunza) },
-    { BG_EVENT(BG_EVENT_SILENT), TRIGGER_LOWERING_SWITCH, CONDITION_ALWAYS,
+    { BG_EVENT(BG_EVENT_SILENT), MB_WEST_LUNPA_CAVE_LOWERING_SWITCH, CONDITION_ALWAYS,
       EVENT_SCRIPT(EventScript_FlipLoweringSwitch) },
-    { BG_EVENT(BG_EVENT_SILENT), TRIGGER_RAISING_SWITCH, CONDITION_ALWAYS,
+    { BG_EVENT(BG_EVENT_SILENT), MB_WEST_LUNPA_CAVE_RAISING_SWITCH, CONDITION_ALWAYS,
       EVENT_SCRIPT(EventScript_FlipRaisingSwitch) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_FROST), LOCALID_UNUSED_PUDDLE, CONDITION_ALWAYS,
       EVENT_SCRIPT(EventScript_UnusedFreezePuddle) },

@@ -241,7 +241,11 @@ interrupts and calls into RAM.
   `REG_X = value`. `Scene_RunEntrySetup`
   ([`scene/venus_lighthouse.c`](scene/venus_lighthouse.c)) clears
   `REG_BLDCNT` with `Io_Write16(zero, &REG_BLDCNT)`, where `REG_BLDCNT = 0`
-  doesn't match.
+  doesn't match. `Map_InitializePerspectiveScene`
+  ([`field/field/world_map.c`](field/field/world_map.c)) writes the affine
+  identity with `Io_Write16` and clears `REG_BG3Y` with `Io_Write16(0,
+  &REG_BG3Y)`, which keep the 0x100 for `REG_BG2PD` built just before its
+  store; as plain stores, 3 of 331 instructions differ in tbs-en.
 - `IRQ_LOCK` is written out as its steps in `SerialRuntime_Initialize`, with
   the IME pointer set inside the save:
   `IME_SAVE((ime = &REG_IME), interruptEnable); IME_DISABLE(ime);`. That reads

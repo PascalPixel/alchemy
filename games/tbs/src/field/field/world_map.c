@@ -181,20 +181,15 @@ s32 Map_InitializePerspectiveScene(void) {
   Io_Write16(0x100, &REG_BG2PA);
   REG_BG2PB = 0;
   REG_BG2PC = 0;
-  /* FAKEMATCH(one-pass): its loop notes keep the 0x100 for BG2PD built just
-   * before its store and the 12 for Runtime_AllocateBlock loaded before the 76;
-   * as plain statements, 3 of 331 instructions differ in tbs-en. */
-  do {
-    Io_Put16(&REG_BG2PD, 0x100);
-    REG_BG2X = 0;
-    REG_BG2Y = 0;
-    Io_Put16(&REG_BG3PA, 0x100);
-    REG_BG3PB = 0;
-    REG_BG3PC = 0;
-    Io_Put16(&REG_BG3PD, 0x100);
-    REG_BG3X = 0;
-    REG_BG3Y = 0;
-  } while (0);
+  Io_Write16(0x100, &REG_BG2PD);
+  REG_BG2X = 0;
+  REG_BG2Y = 0;
+  Io_Write16(0x100, &REG_BG3PA);
+  REG_BG3PB = 0;
+  REG_BG3PC = 0;
+  Io_Write16(0x100, &REG_BG3PD);
+  REG_BG3X = 0;
+  Io_Write16(0, &REG_BG3Y);
 
   camera = Runtime_AllocateBlock(HEAP_SLOT_CAMERA, sizeof(struct BattleCamera));
   frameWork = Runtime_AllocateHeapBlock(HEAP_SLOT_MAP_FRAME,

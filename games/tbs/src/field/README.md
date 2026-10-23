@@ -14,7 +14,7 @@ of everything that moves (the party, the townspeople, the camera, even
 footprints), moves each of them a little every frame, decides whether the
 ground ahead can be walked on, and draws the map: a town as three flat layers,
 or the world map tilted into perspective. It decides nothing about any one
-place. The loop itself is in [Field objects](../object/README.md), each
+place. The loop itself is in [Running a place](../object/README.md), each
 place's events come from its overlay in [Scenes](../scene/README.md), and the
 maps are in [Maps](../map/README.md). [World](../../world.md) gives the whole
 layer in brief.
@@ -59,7 +59,7 @@ runs one scene. Its inner loop is the walk: it waits a frame and calls
 `Field_ProcessStep`, which checks the ground under the leader, until
 `Field_CountRequests` finds a request. The leader's control script reads the
 buttons through `Field_CheckConfiguredKeys`. The requests are fields of
-`struct FieldWork`; [Field objects](../object/README.md#the-scene-loop-handles-requests-not-events)
+`struct FieldWork`; [Running a place](../object/README.md#the-scene-loop-handles-requests-not-events)
 lists all twelve in the order they are handled and goes through each one. An
 exit is `Field_RunScene`'s result, which `Game_Run` passes to `Scene_TakeExit`
 to load the next scene.
@@ -132,8 +132,10 @@ flight in 3D towards its target, following the ground, floating, and solid
 objects refusing to overlap. In a battle, `Object_UpdateAllMotion` replaces
 it; it moves the first 14 objects and runs no scripts.
 
-The objects are the 64 slots of `gObjectSlots`, 112 bytes each, in the heap
-block `HEAP_SLOT_OBJECT_POOL`, and the handlers are the rows of
+The objects are the 64 slots of `gObjectSlots`, 112 bytes each, in a block
+of memory borrowed from the heap (the memory the engine lends out to
+whatever runs) under the numbered slot `HEAP_SLOT_OBJECT_POOL`, and the
+handlers are the rows of
 `gScriptObject_CommandTable` (`object_script.c`).
 
 | Name | Value | Meaning |
@@ -227,8 +229,8 @@ moved to.
 
 The two steps are two tasks of the scheduler, the list of jobs the game runs
 once a frame. `ObjectSystem_Initialize` sets the engine up for one kind of
-map and schedules both: the object update at order 0xc8a and a camera at
-0xc80. The scheduler runs higher orders first, so objects move before the
+map and schedules both: the object update at order 3210 (`0xc8a`) and a camera at
+3200 (`0xc80`). The scheduler runs higher orders first, so objects move before the
 camera places them.
 
 | Mode | Started by | Object update | Camera |
@@ -238,7 +240,9 @@ camera places them.
 | `MODE_BATTLE` (4) | the encounter (`battle/battle/encounter.c`) | `Object_UpdateAllMotion` | `ObjectSystem_UpdateCameraFixed` |
 
 The camera places each object's sprite and queues it by depth, and the
-frame's sprite list is built from that queue. The battle effects, the
+frame's sprite list, the list of every sprite's position and picture that
+the console keeps in its OAM (object attribute memory), is built from that
+queue. The battle effects, the
 Psynergy effects and the menus place their own sprites through the same
 routine, `Object_ApplyProjectedPlacementFar`. While the item, Psynergy,
 Status, Djinn or debug menu is open, `ObjectSystemWork.suspended` is set, so
@@ -353,6 +357,8 @@ with the characters between them.
 
 ![Vale pulled apart into its layers: the ground at the back, then the middle layer, the actors and the overhead layer in front](https://alchemy.pascalpixel.com/guides/field/layers-3d.gif)
 
+![Vale's four planes. A screen of Vale pulled apart into the four planes the console stacks to draw it, numbered from back to front: 1, the ground layer, BG3, with the grass, water and paths; 2, the middle layer, BG2, with walls and edges; 3, the sprites, Isaac and the other actors; 4, the overhead layer, BG1, with what is drawn over them. Isaac is drawn between planes 2 and 4, in front of the middle layer and behind the overhead one.](https://alchemy.pascalpixel.com/illustrations/field/layer-planes.svg)
+
 The ground is at the back, then a middle layer, and in front an overhead
 layer of roofs and treetops. On most maps the characters are drawn between
 the middle and overhead layers, which is how Isaac can walk behind a roof.
@@ -419,7 +425,7 @@ line to 0.44 on the bottom one, so a line near the top covers more of the map.
 ground distance, or zeros for a line above the horizon. It runs when the world
 map is set up and again only if the camera's pitch changes, which nothing in
 the game does, and at that one pitch every line meets the ground. Each frame
-`Transform_UpdateVertices`, an ARM routine run from RAM, turns them into a
+`Transform_UpdateVertices`, an ARM routine run from RAM (ARM code is the processor's full 32-bit instructions, the fastest form when run from RAM, as [Routines run from RAM](#routines-run-from-ram) explains), turns them into a
 page of values for the console. `MapAnimation_ApplyAffineFrame` sets the first
 line's values and starts a DMA, a copy the console makes by itself, that runs
 in each HBlank, the pause after a line is drawn, to feed the next line its
@@ -473,13 +479,10 @@ the scripts, `update` to scenes and `unk6c` to `ObjectRuntime`. Even
 `gObjectSlots` is declared as an `ObjectRuntime *` in `include/field/field.h`
 and as a `ScriptMotionObject *` in `update.c`.
 
-They stay apart because they are also what the code matches with: the
-compiler addresses a field differently by its declared type and by whether it
-is reached through a union (the `FieldActor` union moves a load, as
-[Matching](../MATCHING.md) records), so one merged struct would change the
-bytes at sites each view now matches. XXX: likely one struct in Camelot's
-source, because every view describes the same 112 bytes; merging them waits
-until every field has one name and type that every site matches with.
+Why the code keeps several views rather than one struct is a question of
+rebuilding the original bytes exactly, which [Matching](../MATCHING.md#field)
+covers; Camelot's source likely had one, since every view describes the
+same 112 bytes.
 
 ### Scripts without addresses
 
@@ -503,7 +506,7 @@ so it could not stand in for the Thumb update.
 
 ## How the field fits with the rest of the game
 
-[Field objects](../object/README.md) owns the scene loop: it starts the
+[Running a place](../object/README.md) owns the scene loop: it starts the
 object system, loads the map and the overlay, places the actors and handles
 requests; the engine supplies the objects, scripts and ground checks it
 uses. Overlays reach the engine through their import tables

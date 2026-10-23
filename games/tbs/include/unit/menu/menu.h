@@ -186,7 +186,7 @@ s32 PsynergyMenu_ChooseMember(void);
 s32 MemberChooser_MoveEntry(s32 selectedIndex, s32 direction);
 void Menu_InitializeSelectorCursorAndEntries(s32 unused0, s32 unused1,
                                              s32 unused2, s32 unused3);
-void Menu_CreateWindowAndEntryObjects(s32 resource, s32 frame);
+void SummaryScreen_ShowMemberStatus(s32 member, s32 frame);
 s32 SummaryScreen_SelectCommand(void);
 void SummaryScreen_DrawSelectionCursor(s32 mode, s32 selected, u8 *entries,
                                        s32 invert);

@@ -468,7 +468,7 @@ s32 MemberChooser_RunRearrange(void) {
       memberIndex = (memberIndex + memberCount) % memberCount;
       Unit_GetFar(menu->memberIds[memberIndex]);
       page = (page + 3) % 3;
-      Menu_CreateWindowAndEntryObjects(menu->memberIds[memberIndex], page);
+      SummaryScreen_ShowMemberStatus(menu->memberIds[memberIndex], page);
       PsynergyMenu_CallIconRoutineWithValue(menu, menu->memberIds[memberIndex]);
       SummaryScreen_SetSelectedMemberRow(menu, memberIndex);
     }
@@ -557,7 +557,7 @@ s32 PsynergyMenu_ChooseMember(void) {
       memberIndex = (memberIndex + memberCount) % memberCount;
       Unit_GetFar(menu->memberTable[memberIndex]);
       page = (page + 3) % 3;
-      Menu_CreateWindowAndEntryObjects(menu->memberTable[memberIndex], page);
+      SummaryScreen_ShowMemberStatus(menu->memberTable[memberIndex], page);
       PsynergyMenu_CallIconRoutineWithValue(menu,
                                             menu->memberTable[memberIndex]);
       for (rowIndex = 0; rowIndex < MENU_ROW_COUNT; rowIndex++)
@@ -689,12 +689,12 @@ void Menu_InitializeSelectorCursorAndEntries(s32 unused0, s32 unused1,
   menu->rowCount = 2;
 }
 
-/// Shows member resource's status in the status window (0, 5, 30 by 15),
+/// Shows `member`'s status in the status window (0, 5, 30 by 15),
 /// opening it first with the member's portrait (kept as the work's
 /// statusCursor), the 32 entry icons (the chooser's Psynergy icons) on the
 /// chooser page, and the eight category sprites that show the status icons;
 /// then draws the stats and statuses. frame is not used.
-void Menu_CreateWindowAndEntryObjects(s32 resource, s32 frame) {
+void SummaryScreen_ShowMemberStatus(s32 member, s32 frame) {
   s32 created;
   struct Window *window;
   struct WindowSprite *cursor;
@@ -708,17 +708,17 @@ void Menu_CreateWindowAndEntryObjects(s32 resource, s32 frame) {
     window = menu->statusWindow;
   }
   if (created != 0) {
-    cursor = SideObject_CreateFar(resource, 0, 0, window, 0, 0);
+    cursor = SideObject_CreateFar(member, 0, 0, window, 0, 0);
     menu->statusCursor = cursor;
     // The portrait goes to depth slot 240, as the category sprites do.
     if ((cursor->sentinel = 0xF0, menu->page) == SUMMARY_SCREEN_PAGE_CHOOSER) {
       Menu_SpawnIconEntries((struct ItemMenuWork *)menu, window);
     }
     Menu_CreateEightEntryObjects(window);
-    SummaryScreen_DrawStatusAilments(window, resource, 0x100);
+    SummaryScreen_DrawStatusAilments(window, member, 0x100);
     return;
   }
-  SummaryScreen_DrawStatusAilments(window, resource, 0);
+  SummaryScreen_DrawStatusAilments(window, member, 0);
 }
 
 /// The member's status page. The left side lists their statuses (or the stat

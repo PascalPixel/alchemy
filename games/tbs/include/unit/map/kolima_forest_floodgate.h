@@ -7,7 +7,7 @@
 struct ObjectEvent;
 
 /// A log's saved record: its sprite, first map cell and orientation, then its
-/// actor once created.
+/// object event once created.
 struct FloodgateLog {
   s16 sprite;   ///< sprite number; -1 ends the list
   s16 x;        ///< map cells

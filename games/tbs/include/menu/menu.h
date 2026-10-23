@@ -92,7 +92,7 @@ extern u8 gItemMenu_EquipmentKeyString[];
 /// (0x44444444) in turn every four frames.
 extern const u8 gMenu_BackdropFrameTile[];
 #ifndef OWN_Menu_ColonString
-/// The colon the debug menus' scene and flag rows draw
+/// The colon the debug menus' map and flag rows draw
 /// (window/battle_command/debug.c): `:`.
 extern const u8 gMenu_ColonString[];
 #endif

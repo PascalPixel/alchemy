@@ -2,18 +2,18 @@
 #define ALCHEMY_OBJECT_EVENT_H
 
 /// @file
-/// Field objects and actors, and the scene transition styles.
+/// Field objects and object events, and the map transition styles.
 
 #include "types.h"
 #include "static_assert.h"
 
 #include "event_work.h"
 
-/// The running field scene's work, heap slot HEAP_SLOT_EVENT, as the scenes
+/// The running field map's work, heap slot HEAP_SLOT_EVENT, as the maps
 /// read it; Field_RunMap takes it and frees it.
 extern struct EventWork *gEventWork;
 
-/// How a scene fades in and out: MAP_TRANSITION's high byte, which
+/// How a map fades in and out: MAP_TRANSITION's high byte, which
 /// DisplayTransition_Start and DisplayTransition_Finish read.
 enum MapTransitionStyle {
   TRANSITION_FADE = 0,          ///< from or to black
@@ -24,7 +24,7 @@ enum MapTransitionStyle {
   TRANSITION_CENTRE_LINE = 4
 };
 
-/// A scene transition as EventWork.startTransition holds it. For
+/// A map transition as EventWork.startTransition holds it. For
 /// TRANSITION_WINDOW the variant is the window mode, listed at
 /// DisplayTransition_UpdateScanlineTable: 3 a circle at the centre, 9 an
 /// ellipse around the leader, and others.
@@ -36,7 +36,7 @@ enum MapTransitionStyle {
 
 union FieldObject;
 
-/// A field actor: a person or thing on the field with a position, motion
+/// An object event: a person or thing on the field with a position, motion
 /// toward a target, sprites and an update callback.
 struct ObjectEvent {
   /// The object's script pointer (nonzero while the object is live) and its
@@ -75,7 +75,7 @@ struct ObjectEvent {
   /// ground, in 16.16 fixed-point pixels per frame (0x10000 when created);
   /// also scales a floating object's bob.
   s32 gravity;
-  /// Zeroed by FieldObject_Create and not read by the engine; scene code
+  /// Zeroed by FieldObject_Create and not read by the engine; map code
   /// keeps a resting height, a sway or a countdown here.
   s32 riseBaseY;
   union {
@@ -107,12 +107,12 @@ struct ObjectEvent {
   /// Nonzero skips steering, terrain, gravity and floating; its velocity
   /// still moves it (ScriptMotionObject.frozen).
   u8 frozen;
-  u8 riseCounter; ///< not read by the engine; scene code's own counter
-  u8 riseEnabled; ///< not read by the engine; scene code's own state
+  u8 riseCounter; ///< not read by the engine; map code's own counter
+  u8 riseEnabled; ///< not read by the engine; map code's own state
   /// The parameter its action script reads (a follow distance or an angle to
-  /// face), the player's frames to its next footprint, or scene scratch.
+  /// face), the player's frames to its next footprint, or map scratch.
   s16 timer;
-  /// The side of the player's next footprint (2 after a stop), or scene
+  /// The side of the player's next footprint (2 after a stop), or map
   /// scratch.
   u16 work;
   /// The object its action script follows or faces.

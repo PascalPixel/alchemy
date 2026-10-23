@@ -23,7 +23,7 @@ extern void *gFieldBlendWork[];
 extern struct DisplayTransitionState *gDisplayTransition;
 /// HEAP_SLOT_BATTLE_ENTRY_TIMER: the battle's entry transition timer in frames.
 extern s32 *gDisp;
-/// HEAP_SLOT_EFFECT: points to a scene-specific structure.
+/// HEAP_SLOT_EFFECT: points to a map-specific structure.
 extern void *gEffectWork;
 
 // EWRAM buffers

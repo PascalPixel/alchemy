@@ -25,7 +25,7 @@ struct SparkObject;
 struct UiWindow;
 union FieldObject;
 
-/// gGameState.movementMode: how the scene loop hands the party leader back to
+/// gGameState.movementMode: how the map loop hands the party leader back to
 /// the player (Field_RunMap).
 enum LeaderMovementMode {
   /// Walking: the pad moves the leader, on the world map or a layered map.
@@ -135,20 +135,20 @@ void FieldEffect_ShrinkObjectAndDestroyFast(union FieldObject *fieldObject);
 void FieldEffect_RunLift(void);
 void FieldEffect_RunCarry(void);
 
-/// One of the scene's events (the same 12 bytes as struct MapEvent).
+/// One of the map's events (the same 12 bytes as struct MapEvent).
 struct EffectDescriptor {
   s32 flags; ///< the low 4 bits are the kind (MapEventKind; 7 talks to
-             ///< the actor the party stopped)
-  u8 value;  ///< the target (an actor or a tile code)
+             ///< the object event the party stopped)
+  u8 value;  ///< the target (a local id or a metatile behavior)
   u8 unused05;
   s16 condition; ///< as for GameFlag_IsConditionActive
   s32 result;    ///< below 0x10000 a message, else a function to call
 };
 
-#define OBJECT_LAST 66 ///< the last actor slot searched
+#define OBJECT_LAST 66 ///< the last object event slot searched
 
 //--------------------------------------------------------------------------
-// The map's marker actors (chests and Psynergy stones)
+// The map's marker object events (chests and Psynergy stones)
 //--------------------------------------------------------------------------
 #define MARKER_MAX 10
 

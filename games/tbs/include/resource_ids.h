@@ -49,7 +49,7 @@ extern char ResourceId_WorldMapPicture;
 extern char ResourceId_IntroTilesB;
 
 // Battle backdrops. Battle_SelectMapBackdrop picks one for the current
-// scene from gBattle_BackdropMaps (object/map_rules.s), and on the world
+// map from gBattle_BackdropMaps (object/map_rules.s), and on the world
 // map Battle_SelectTerrainBackdrop picks one by terrain; either leaves it in
 // gGameState.special for the battle. The credits slideshow
 // (gDisplayScroll_SlideResources) shows every one but DesertBackdrop and
@@ -73,9 +73,9 @@ extern char ResourceId_AltmillerCaveBackdrop;
 extern char ResourceId_TunnelRuinsBackdrop; ///< Tunnel Ruins' two statue rooms.
 /// Babi Lighthouse, and MapId_CrossboneIsleBane on Crossbone Isle.
 extern char ResourceId_BabiLighthouseBackdrop;
-/// Lamakan Desert's three scenes.
+/// Lamakan Desert's three maps.
 extern char ResourceId_LamakanDesertBackdrop;
-extern char ResourceId_MogallForestBackdrop; ///< Mogall Forest's three scenes.
+extern char ResourceId_MogallForestBackdrop; ///< Mogall Forest's three maps.
 /// MapId_MercuryLighthouseAerie.
 extern char ResourceId_MercuryLighthouseAerieBackdrop;
 /// MapId_TolbiShipInteriors.
@@ -83,21 +83,21 @@ extern char ResourceId_TolbiShipInteriorsBackdrop;
 /// Fuchin Falls Cave, and MapId_CrossboneIsleFloatingLogs on Crossbone
 /// Isle.
 extern char ResourceId_ImilFuchinFallsBackdrop;
-extern char ResourceId_KolimaForestBackdrop; ///< Kolima Forest's five scenes.
+extern char ResourceId_KolimaForestBackdrop; ///< Kolima Forest's five maps.
 /// MapId_TretTreeInteriors.
 extern char ResourceId_TretTreeInteriorsBackdrop;
-/// Goma Cave, Kolima Tunnel, Bilibin Cave and Gateway Cave, and any scene the
+/// Goma Cave, Kolima Tunnel, Bilibin Cave and Gateway Cave, and any map the
 /// table doesn't list, since it comes last.
 extern char ResourceId_GomaCaveBackdrop;
-/// The vault interiors and Lalivero's scenes, Faran's house included.
+/// The vault interiors and Lalivero's maps, Faran's house included.
 extern char ResourceId_InteriorBackdrop;
-/// Altin Peak's scenes but the Hydros statue.
+/// Altin Peak's maps but the Hydros statue.
 extern char ResourceId_AltinPeakBackdrop;
 /// MapId_TolbiShipDeck and MapId_TolbiShipMast.
 extern char ResourceId_TolbiShipDeckBackdrop;
 /// Mercury Lighthouse's floors below the aerie and its exterior.
 extern char ResourceId_MercuryLighthouseBackdrop;
-/// Vale's scenes, the stormy night included; the credits open on it.
+/// Vale's maps, the stormy night included; the credits open on it.
 extern char ResourceId_ValeStormBackdrop;
 extern char ResourceId_TretTreeBranchBackdrop; ///< MapId_TretTreeBranch.
 /// Set by the first slot of ENCOUNTER_ZONE_SCRIPTED
@@ -261,7 +261,7 @@ extern char ResourceId_DefaultGridCells;
 extern char ResourceId_OpponentPathA;
 /// The world map's tile animation channels (TileAnimation_StartChannels).
 extern char ResourceId_DefaultTileAnimation;
-/// The world map's block attributes, loaded with its default cells.
+/// The world map's metatile attributes, loaded with its default cells.
 extern char ResourceId_DefaultMetatileAttributes;
 
 // The world map's two graphics sets (gWorldMap_GraphicsResources), each a
@@ -296,7 +296,7 @@ extern char ResourceId_Icons;
 /// The command icons, a halfword offset each and then 1 KB of 256-colour
 /// pixels compressed; an icon's number is also its name's in MsgCommandName.
 extern char ResourceId_CommandIcons;
-/// The first layered map row: gLayouts counts its rows from here,
+/// The first layout row: gLayouts counts its rows from here,
 /// and MapGrid_LoadLayout adds them to it.
 extern char ResourceId_Layout001;
 

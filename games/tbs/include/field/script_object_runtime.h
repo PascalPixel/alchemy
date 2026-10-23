@@ -49,7 +49,7 @@ struct ScriptObjectRuntime {
   /// sets 1 when it turns back, to wait a frame.
   u16 turnedBack;
   /// Not named by TBS code through this struct: the refusal count, the
-  /// frozen flag and two bytes scene code uses.
+  /// frozen flag and two bytes map code uses.
   void *callback;
   /// Its home, in pixels: where it was created or placed. The bytes are
   /// ObjectRuntime's action and footprintSide too.

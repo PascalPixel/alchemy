@@ -91,15 +91,15 @@ enum ScriptWork {
   SW_PAUSED = 0x20,
   SW_REPEAT = 0x21,
   SW_WAIT = 0x22,
-  /// ObjectEvent.timer, the parameter an action script reads; a scene's own
+  /// ObjectEvent.timer, the parameter an action script reads; a map's own
   /// scripts set it to 1 as they end, for the code that waits on them.
   SW_TIMER = 0x23,
-  /// ObjectEvent.work, scene scratch: a scene script sets it for the scene code
+  /// ObjectEvent.work, map scratch: a map script sets it for the map code
   /// that reads or waits on it.
   SW_WORK = 0x24,
   SW_HOOK = 0x26,
-  SW_RISE_COUNTER = 0x27, ///< ObjectEvent.riseCounter, scene code's own byte
-  SW_RISE_ENABLED = 0x28  ///< ObjectEvent.riseEnabled, scene code's own byte
+  SW_RISE_COUNTER = 0x27, ///< ObjectEvent.riseCounter, map code's own byte
+  SW_RISE_ENABLED = 0x28  ///< ObjectEvent.riseEnabled, map code's own byte
 };
 
 #endif

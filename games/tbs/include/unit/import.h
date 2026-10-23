@@ -2,7 +2,7 @@
 #define ALCHEMY_UNIT_IMPORT_H
 
 /// @file
-/// The main-image routines scene overlays import.
+/// The main-image routines map overlays import.
 
 #include "types.h"
 

@@ -21,7 +21,7 @@ enum { UI_OUTPUT_COUNT = 64 };
 ///
 /// It is heap slot HEAP_SLOT_WINDOW (gWindowWork), which
 /// UiWork_InitializeWithResourceCounters takes for the field and
-/// UiWork_Initialize for battle; it lasts until the next scene change. Its
+/// UiWork_Initialize for battle; it lasts until the next map change. Its
 /// size and offsets differ between Japanese and the other editions
 /// (tbs_edition.h's RENDER_ values).
 struct UiRenderWork {

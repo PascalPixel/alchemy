@@ -2,7 +2,7 @@
 #define ALCHEMY_STAGED_OBJECT_EVENT_H
 
 /// @file
-/// The pushable actors' movement probes and footprint bounds.
+/// The pushable object events' movement probes and footprint bounds.
 
 #include "types.h"
 #include "object_event.h"
@@ -10,12 +10,13 @@
 #include "static_assert.h"
 
 /// Where a large thing ahead of the leader would roll to: its footprint, its
-/// actor, that position, and a callback during the leader's follow-through.
+/// object event, that position, and a callback during the leader's
+/// follow-through.
 struct StagedObjectEventProbe {
   /// The large thing's row in gStagedObjectEvent_FootprintKinds and
   /// gStagedObjectEvent_FootprintBounds, 0 to 5.
   s32 footprintIndex;
-  s32 objectEventSlot; ///< the large thing's actor number, 8 to 65
+  s32 objectEventSlot; ///< the large thing's local id, 8 to 65
   /// 16.16 pixels while moving; converted to cells by footprint redraws.
   struct FieldPosition position;
   /// Run as the leader follows the rolling thing, when not null; the probe

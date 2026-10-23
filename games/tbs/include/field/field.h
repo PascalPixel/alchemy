@@ -61,18 +61,19 @@ struct TileRun2;
 struct V;
 union FieldObject;
 
-/// An actor seen only as its priority flags at 0x23 (enum
+/// An object event seen only as its priority flags at 0x23 (enum
 /// ObjectEventPriorityFlag). No code in the tree uses it.
 struct Flags35 {
   u8 pad[35];
   u8 flags;
 };
-/// An actor seen only as the coordinate at 0x08. No code in the tree uses it.
+/// An object event seen only as the coordinate at 0x08. No code in the tree
+/// uses it.
 struct OverlayObjectEventPosition {
   u8 pad00[8];
   s32 depthFixed; ///< 16.16 fixed-point pixels
 };
-/// An actor seen only as its priority flags at 0x23 (enum
+/// An object event seen only as its priority flags at 0x23 (enum
 /// ObjectEventPriorityFlag). No code in the tree uses it.
 struct OverlayObjectEventState {
   u8 pad00[35];
@@ -83,9 +84,10 @@ struct OverlayObjectEventState {
 struct PathRecorder {
   s16 mode;        ///< 1 plays the path, 2 records it, 9 finished
   s16 mirror;      ///< nonzero mirrors the path across the finish
-  s16 objectEvent; ///< the actor id moved along the path
+  s16 objectEvent; ///< the local id moved along the path
   u16 pathIndex;   ///< the next halfword of ColossoRaceWork.path, x then z
-  /// Frames the actor has not moved; from 3 it stands (ObjectEvent_SetMode 1).
+  /// Frames the object event has not moved; from 3 it stands
+  /// (ObjectEvent_SetMode 1).
   s16 still;
 };
 /// A placeholder layout no code in the tree uses.
@@ -261,10 +263,10 @@ extern struct MenuSprite gHeatGauge_Sprites[];
 /// HEAP_SLOT_FRAME_SCRATCH.
 extern u8 Render_DecodeFrame[];
 #endif
-/// The statue scene's three scrolling strips, packed (Resource_DecodeByteLz).
+/// The statue map's three scrolling strips, packed (Resource_DecodeByteLz).
 extern u8 gSolSanctumStatue_SpriteRowsGraphics[];
 /// The six large things' sprite animations, which pick their footprints in
-/// gStagedObjectEvent_FootprintBounds; each scene with them defines its own.
+/// gStagedObjectEvent_FootprintBounds; each map with them defines its own.
 extern u32 gStagedObjectEvent_FootprintKinds[];
 /// The tilemap row drawer, run from a copy in HEAP_SLOT_TEMP_RENDERER.
 extern const u8 TileMap_DrawRows[];

@@ -374,7 +374,7 @@ extern u8 gSpire_RockCounts[];
 extern u8 gSpire_ShardWidths[];
 extern u8 gSpire_ShardHeights[];
 extern u16 gSpire_ShardCells[];
-/// The burst scene's modes (BattleEffect_RunBurstSequence), its rows of
+/// The burst sequence's modes (BattleEffect_RunBurstSequence), its rows of
 /// gBurstSequence_Records: Gust and Flying Attack take one, two or three
 /// strikes as a double or triple blow raises their variant.
 enum BurstSequenceMode {
@@ -388,13 +388,13 @@ enum BurstSequenceMode {
   BURST_SEQUENCE_GUST_DOUBLE,          ///< two
   BURST_SEQUENCE_GUST_TRIPLE           ///< three
 };
-/// A burst scene's arcs, its BURST_SEQUENCE_ARC_SHEET.
+/// A burst sequence's arcs, its BURST_SEQUENCE_ARC_SHEET.
 enum BurstSequenceArcs {
   BURST_SEQUENCE_ARCS_AND_WAVES, ///< blue arc A, with a wave for the third and
                                  ///< fourth of every four strikes
   BURST_SEQUENCE_ARCS            ///< blue arc B for every strike
 };
-/// Whose palette a burst scene takes, its BURST_SEQUENCE_PALETTE.
+/// Whose palette a burst sequence takes, its BURST_SEQUENCE_PALETTE.
 enum BurstSequencePalette {
   BURST_SEQUENCE_PALETTE_MARS_DJINNI, ///< the Mars Djinni sheet's
   BURST_SEQUENCE_PALETTE_LIME,        ///< LimePalette

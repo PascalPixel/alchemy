@@ -45,7 +45,7 @@ struct FieldEffect {
   /// 1/65536 turns per frame; Imil's rising effects keep a drift here instead.
   u16 spin;
   u8 unk66[2]; ///< ObjectEvent's work; not named by this view
-  /// Frames until a scene's update hook releases the effect: 20 for Altin
+  /// Frames until a map's update hook releases the effect: 20 for Altin
   /// Peak's spray, 60 for Imil's rising effects.
   s32 countdown;
   /// Called each frame while the effect is live: the spawner sets
@@ -60,7 +60,7 @@ STATIC_ASSERT(offsetof(struct FieldEffect, spin) == 0x64);
 STATIC_ASSERT(offsetof(struct FieldEffect, countdown) == 0x68);
 STATIC_ASSERT(offsetof(struct FieldEffect, update) == 0x6c);
 
-/// An object on the field, read as an actor or as an effect.
+/// An object on the field, read as an object event or as an effect.
 union FieldObject {
   struct ObjectEvent objectEvent;
   struct FieldEffect effect;
@@ -73,7 +73,7 @@ union FieldObject {
 #define SCRIPT_REPEAT(count, label) 12, (count), (label)
 #define SCRIPT_DELETE 27
 
-/// The flags of a scene's effect spawner (EFFECT_SPAWN in
+/// The flags of a map's effect spawner (EFFECT_SPAWN in
 /// map/common/effect_spawn.h): a script number in the low bits and which of
 /// struct EffectOptions' fields to use.
 enum EffectSpawnFlags {
@@ -92,7 +92,7 @@ enum EffectSpawnFlags {
   EFFECT_USE_UPDATE = 0x1000000     ///< options.update
 };
 
-/// The three scripts a scene's own effect spawner picks from by
+/// The three scripts a map's own effect spawner picks from by
 /// EFFECT_SCRIPT_MASK, wrapped so that the spawner can copy them into its frame
 /// whole.
 struct EffectScripts {

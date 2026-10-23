@@ -60,11 +60,12 @@ struct WorldPosition;
 // Entries have their target's parameters. Seven keep empty parameter lists
 // (no prototype): their callers pass different arguments than the target
 // takes, which C89 accepts with no prototype in scope. They are the
-// blank-display runners (the entrance in r0), Unit_LearnPsynergyFar (called
-// with none), Party_ShowJoinedMessageFar (two), UiTimedNotice_CreateFar,
-// Menu_RunWorkspaceResultLoopFar and Runtime_GetBuildStampTimeFar (one
-// each). The near call UiWork_ResetCounters is declared the same way in
-// unit/window/window.h (UiWindow_Create passes it one).
+// blank-display runners (the warp destination in r0), Unit_LearnPsynergyFar
+// (called with none), Party_ShowJoinedMessageFar (two),
+// UiTimedNotice_CreateFar, Menu_RunWorkspaceResultLoopFar and
+// Runtime_GetBuildStampTimeFar (one each). The near call UiWork_ResetCounters
+// is declared the same way in unit/window/window.h (UiWindow_Create passes it
+// one).
 #include "farcall/runtime.h"
 #include "farcall/field.h"
 #include "farcall/window.h"

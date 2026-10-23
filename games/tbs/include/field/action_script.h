@@ -68,7 +68,7 @@ struct ScriptOperands {
   u32 targetZ;       ///< SW_TARGET_Z
   u32 bounce;        ///< SW_BOUNCE, or a floating object's phase
   u32 gravity;       ///< SW_GRAVITY
-  /// Work value 0x17: the word FieldObject_Create zeroes and only scene code
+  /// Work value 0x17: the word FieldObject_Create zeroes and only map code
   /// reads.
   u32 mapWord;
   u32 sprite;           ///< work value 0x18: the sprite, or its list of four
@@ -85,10 +85,10 @@ struct ScriptOperands {
   u16 wait;             ///< SW_WAIT, compared as signed
   u8 refused;           ///< ScriptInterpreter.refused; no work value
   u8 frozen;            ///< ScriptMotionObject.frozen; no work value
-  u8 mapByte62;         ///< work value 0x27, kept by scene code
-  u8 mapByte63;         ///< work value 0x28, kept by scene code
+  u8 mapByte62;         ///< work value 0x27, kept by map code
+  u8 mapByte63;         ///< work value 0x28, kept by map code
   s16 actionParameter;  ///< work value 0x23, what its action script reads
-  s16 footprintSide;    ///< work value 0x24, or scene scratch
+  s16 footprintSide;    ///< work value 0x24, or map scratch
   u32 linkedObject;     ///< work value 0x25, the object it follows or faces
   u32 hook;             ///< SW_HOOK, the routine run each frame
 };

@@ -2,14 +2,14 @@
 #define ALCHEMY_VENUS_LIGHTHOUSE_AERIE_H
 
 /// @file
-/// The Lighthouse Aerie's actors; its entrances and exits are in
-/// scene_links.h.
+/// The Lighthouse Aerie's object events; its warp destinations and warps are in
+/// map_warps.h.
 
 #include "map_tables.h"
 #include "types.h"
 
-/// The aerie's actors, in the order of its placements; Garet, Ivan, Mia and
-/// Sheba keep their character numbers.
+/// The aerie's object events, in the order of its object event templates;
+/// Garet, Ivan, Mia and Sheba keep their character numbers.
 enum {
   /// The four statues around the beacon (SPRITE_STATUE_WITH_WREATH), the east
   /// two drawn mirrored. When the beacon erupts and splits the aerie, the west
@@ -42,7 +42,8 @@ enum {
   LOCALID_SATUROS = 20,
   /// ★ Named from the game: "Felix" (MsgCharacterName)
   LOCALID_FELIX = 21,
-  /// A blank actor (SPRITE_BLANK) that runs across the floor under the Venus
+  /// A blank object event (SPRITE_BLANK) that runs across the floor under the
+  /// Venus
   /// Star as Saturos throws it into the beacon, so that only its shadow shows,
   /// the star's shadow.
   /// ★ Named from what the player sees: a small shadow crossing the floor

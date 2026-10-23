@@ -2,12 +2,12 @@
 #define ALCHEMY_RESOURCE_3A8_EFFECT_H
 
 /// @file
-/// The view a scene overlay takes of an effect; most fields are still unnamed.
+/// The view a map overlay takes of an effect; most fields are still unnamed.
 
 #include "types.h"
 #include "static_assert.h"
 
-/// A view of a 0x68-byte record that nothing in TBS reads; Kalay's scene
+/// A view of a 0x68-byte record that nothing in TBS reads; Kalay's map
 /// includes the header.
 struct Resource3a8Effect {
   u8 unk00[0x06];

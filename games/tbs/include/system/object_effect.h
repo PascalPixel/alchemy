@@ -2,7 +2,7 @@
 #define ALCHEMY_OBJECT_EFFECT_H
 
 /// @file
-/// The fade overlay, the weather particles and the actor effect work.
+/// The fade overlay, the weather particles and the object event effect work.
 
 #include "types.h"
 #include "edition.h"
@@ -11,18 +11,19 @@
 
 struct ObjectEvent;
 
-/// The fade overlay draws one mark on each side of its tracked actor.
+/// The fade overlay draws one mark on each side of its tracked object event.
 struct FadeOverlayWork {
   /// The left and right marks: 16-pixel-wide semi-transparent sprites drawn
-  /// where the ground beside the actor rises above its floor.
+  /// where the ground beside the object event rises above its floor.
   struct AnimationSpritePart marks[2];
-  struct ObjectEvent *objectEvent; ///< the actor tracked; null draws nothing
+  struct ObjectEvent
+      *objectEvent; ///< the object event tracked; null draws nothing
 };
 
 STATIC_ASSERT(sizeof(struct FadeOverlayWork) == 28);
 
 /// HEAP_SLOT_FADE_OVERLAY: the fade overlay's work from
-/// FieldEffect_StartFadeOverlay until the next scene change.
+/// FieldEffect_StartFadeOverlay until the next map change.
 extern struct FadeOverlayWork *gObjectEventEffectWork;
 
 #define FIELD_WEATHER_PARTICLE_COUNT 32 ///< GroundParticleWork.particles

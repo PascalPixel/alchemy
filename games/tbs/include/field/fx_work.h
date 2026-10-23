@@ -32,7 +32,7 @@ struct ArcEffectObject {
 /// It is the HEAP_SLOT_EFFECT work slot, read as gEffectWork, cleared when
 /// allocated: FieldEffect_LoadActionEffectResources takes it for a Psynergy or
 /// item use, and FieldEffect_InitializeSlots for the Djinn joining effects and
-/// Altmiller Cave's scene. The effect's end releases it.
+/// Altmiller Cave's map. The effect's end releases it.
 struct FieldEffectWork {
   s32 angle;          ///< 1/65536 turns
   s32 x;              ///< 16.16 fixed-point pixels
@@ -52,10 +52,10 @@ struct FieldEffectWork {
   s8 active;  ///< set at the start: the ability's name is announced
   void (*finishCallback)(void); ///< run, when set, as Ply's effect ends
   u8 unk28[0x0c];               ///< not named by TBS code
-  /// Set by some scenes before an effect; Carry, Frost, Force and Reveal
+  /// Set by some maps before an effect; Carry, Frost, Force and Reveal
   /// treat the target differently with it.
   s8 childOption;
-  s8 childMode; ///< set by some scenes: Frost and Force leave the target be
+  s8 childMode; ///< set by some maps: Frost and Force leave the target be
   u8 unk36[2];  ///< not named by TBS code
   /// The target's update hook and script, saved at the start and restored
   /// when Move or Carry lets it go.
@@ -78,7 +78,7 @@ struct FieldEffectWork {
   struct EffectSlot effects[24];
   u8 unk718[2];    ///< not named by TBS code
   s16 arcTileSlot; ///< resource entry of Avoid's falling arcs' tiles
-  s8 messageMode;  ///< the announcement's box mode: 1, a scene adds 8
+  s8 messageMode;  ///< the announcement's box mode: 1, a script adds 8
   u8 unk71d[3];    ///< not named by TBS code
 };
 

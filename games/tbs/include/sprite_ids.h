@@ -6,15 +6,16 @@
 /// The characters' and Djinn's sprites are in character_ids.h. A sprite's
 /// picture is graphics/sprite/spr_<number>.png, its number in decimal.
 
-/// The sprites the field, its Psynergy and the scenes' placement tables create
-/// objects of by number.
+/// The sprites the field, its Psynergy and the maps' object event template
+/// tables create objects of by number.
 enum SpriteId {
   /// A treasure chest, shut, opening and open, with the frames of the mimic
   /// some chests turn out to be.
   /// ★ Named from what the player sees: a red treasure chest (its render)
   SPRITE_CHEST = 0x14,
-  /// A blank 16-pixel square: an actor that shows nothing, such as a shop
-  /// counter, or that a scene draws an item's icon on, as for the Nuts that
+  /// A blank 16-pixel square: an object event that shows nothing, such as a
+  /// shop
+  /// counter, or that a map draws an item's icon on, as for the Nuts that
   /// Catch takes.
   SPRITE_BLANK = 0x16,
   /// A blank 32-pixel square (spr_023.png holds no drawn pixel).
@@ -35,7 +36,8 @@ enum SpriteId {
   /// night, and the Boulder of Mt. Aleph drawn at twice its size.
   /// ★ Named from the game: "It's a huge rock" (MsgValeRockCannotBeMoved)
   SPRITE_ROCK = 0xc8,
-  /// A blank 32-pixel square: an actor seen only by its shadow, such as the
+  /// A blank 32-pixel square: an object event seen only by its shadow, such as
+  /// the
   /// shadows under Altin Peak's falling boulder and its Hydros statue.
   /// ★ Named from what the player sees: nothing, every pixel transparent
   /// (spr_288.png)
@@ -108,7 +110,8 @@ enum SpriteId {
   SPRITE_LOG_NORTH_SOUTH = 0xcd,
   /// ★ Named from what the player sees: a log lying west to east (its render)
   SPRITE_LOG_WEST_EAST = 0xcf,
-  /// The effect FieldEffect_ConfigureLinkedObject attaches to an actor or shows
+  /// The effect FieldEffect_ConfigureLinkedObject attaches to an object event
+  /// or shows
   /// once, as the leader flinches on hazard ground.
   SPRITE_ATTACHED_EFFECT = 209,
   /// ★ Named from the game: "chest of valuables" (MsgValeSChestValuables)
@@ -139,7 +142,8 @@ enum SpriteId {
   /// ★ Named from what the player sees: a golden statue of a figure in a long
   /// robe (spr_243.png)
   SPRITE_GOLDEN_STATUE = 0xf3,
-  /// A puff of dust kicked up where an actor stands; the water beasts of Altin
+  /// A puff of dust kicked up where an object event stands; the water beasts of
+  /// Altin
   /// and its mine spit it as spray, drawn SPRITE_COLOR_BGR or
   /// SPRITE_COLOR_WHITE.
   SPRITE_DUST_PUFF = 222,
@@ -191,7 +195,7 @@ enum SpriteId {
   /// ★ Named from what the player sees: a round floating platform (its
   /// render)
   SPRITE_FLOATING_PLATFORM = 0xf2,
-  /// The keys the scenes show: the barricade key McCoy tosses to the party,
+  /// The keys the maps show: the barricade key McCoy tosses to the party,
   /// and Lunpa Fortress's Cell Key.
   /// ★ Named from what the player sees: a golden key (spr_245.png)
   SPRITE_KEY = 0xf5,
@@ -738,7 +742,7 @@ enum GoldenHelmetWarriorAnimation {
   WARRIOR_ANIMATION_ARMS_RAISED = 10     ///< both arms raised in victory
 };
 
-/// SPRITE_BABI's animations that scenes set by number (spr_052.tsv).
+/// SPRITE_BABI's animations that maps set by number (spr_052.tsv).
 enum BabiAnimation {
   /// Lying in bed, only his head on the pillow showing, its two frames
   /// alternating.

@@ -22,7 +22,7 @@ struct MapSecNameRule;
 /// Battlefield (x, y) pixel pairs by place: 0 to 3 the party's column at x 80,
 /// 32 pixels apart, and 5 to 10 a column at x -80, 20 apart (battle_data.s).
 extern const s8 gBattlePlacement_StepPairs[];
-/// Read as a halfword by ObjectGroup_SetActionForOthers: the actor id of the
+/// Read as a halfword by ObjectGroup_SetActionForOthers: the local id of the
 /// player's object, which it leaves alone.
 extern u8 gPlayerObjectId[];
 /// Each weapon's kind: bits 15..9 the kind, which indexes the
@@ -181,11 +181,11 @@ extern u32 gRandomSeed;
 /// background.c reads the same slot as struct BattleBackgroundView.
 extern struct BattlePresentationTransition *gTransitionWork;
 #endif
-/// SC_FACE_LINK every frame, forever: the script of an actor told to keep
-/// facing its linked object.
+/// SC_FACE_LINK every frame, forever: the script of an object event told to
+/// keep facing its linked object.
 extern const u8 gObjectMotion_LinkedActionScript[];
-/// Where the party returns after a defeat: {scene, entrance (-1 any), return
-/// scene, return entrance} rows, ended by scene -1
+/// Where the party returns after a defeat: {map, warp destination (-1 any),
+/// return map, return warp destination} rows, ended by map -1
 /// (Map_SetDefeatReturnPoint).
 extern const s16 gParty_PairResolveRules[];
 /// Isaac's weapon sprite by weapon kind (BattleUnit_LookupWeaponValueByClass).
@@ -193,8 +193,8 @@ extern u16 gBattleUnit_WeaponAnimationsIsaac[];
 /// The 20 enemy classes whose defeated flags a monster battle clears before it
 /// picks a formation (BattleFormation_SelectLevelMatchedCandidate).
 extern u16 gBattleFormation_LevelMatchedEnemies[];
-/// Battle backdrops by scene: a backdrop word (bit 31 set, resource id below)
-/// and then its scenes, ended by 0; a scene not listed takes the last backdrop
+/// Battle backdrops by map: a backdrop word (bit 31 set, resource id below)
+/// and then its maps, ended by 0; a map not listed takes the last backdrop
 /// (Battle_SelectMapBackdrop).
 extern s32 gBattle_BackdropMaps[];
 /// The template BattleEffect_BuildBlitter walks word by word to write a blitter
@@ -205,8 +205,9 @@ extern const u32 BattleEffect_Composite[];
 extern u8 gUi_RenderResultValues[];
 extern const u16 gWorldMap_CursorDirectionAngles[];
 extern const u8 gWorldMap_MarkerBlendCycle[];
-/// The world map's place markers, {tile << 16 | flag, place} for each place
-/// actor from 11, ended by -1; a zero row reserves an actor with no marker.
+/// The world map's map section markers, {tile << 16 | flag, map section} for
+/// each map section's local id from 11, ended by -1; a zero row reserves a
+/// local id with no marker.
 extern const s32 gWorldMap_MapSecMarkers[];
 u32 __udivsi3(u32 numerator, u32 denominator);
 #ifndef OWN__call_via_r0

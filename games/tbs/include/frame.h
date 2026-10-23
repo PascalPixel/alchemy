@@ -21,7 +21,7 @@ extern u8 gFrameRenderPending;
 /* FAKEMATCH(volatile): as plain u8, 88 of 438 instructions differ in tbs-en
  * (Title_ShowIntro). */
 extern volatile u8 gCpuLoadDisplayEnabled;
-/// The VBlank handler copies the OAM list only while it is set; scenes clear
+/// The VBlank handler copies the OAM list only while it is set; maps clear
 /// it to keep their own sprites on screen.
 extern u8 gOamCopyEnabled;
 /// VBlanks since WaitFrames last started a frame: 1 when the frame took one.

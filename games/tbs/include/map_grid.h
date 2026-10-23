@@ -2,24 +2,25 @@
 #define ALCHEMY_MAP_GRID_H
 
 /// @file
-/// Maps: their cells, layers, animations and blend scripts, and the map state.
+/// Map grids: their cells, layers, animations and blend scripts, and the map
+/// grid state.
 
 #include "unit/field/field.h"
 #include "types.h"
 #include "static_assert.h"
 
-/// A map cell's collision code (`MapGridCell.collisionCode`): what stepping on,
-/// pushing against or searching the cell does. 0 is open ground.
+/// A map cell's metatile behavior (`MapGridCell.collisionCode`): what stepping
+/// on, pushing against or searching the cell does. 0 is open ground.
 enum MetatileBehavior {
-  /// 1 to 239: the scene's own events, touch or exit when stepped on
-  /// (Map_RunCoordEventOrWarp), search when the player presses A facing the
+  /// 1 to 239: the map's own events, coord event or warp when stepped on
+  /// (Map_RunCoordEventOrWarp), bg event when the player presses A facing the
   /// cell.
   MB_EVENT_FIRST = 1,
   MB_EVENT_LAST = 239,
-  /// Ground with encounters of its own: grounds 1 and 2 of the scene's zones.
+  /// Ground with encounters of its own: grounds 1 and 2 of the map's zones.
   MB_ENCOUNTER_GROUND_1 = 240,
   MB_ENCOUNTER_GROUND_2 = 241,
-  /// 242 to 247: search spots with lines of their own, the same on every map
+  /// 242 to 247: bg events with lines of their own, the same on every map
   /// (Field_SearchTile, gField_TileMessageOffsets).
   MB_JAR = 242,
   MB_BARREL = 243,
@@ -39,8 +40,8 @@ enum MetatileBehavior {
   MB_WALL = 255          ///< blocks whatever the heights
 };
 
-/// One cell of a map layer: its metatile and flags, its collision code and an
-/// attribute indexing the collision table.
+/// One cell of a map layer: its metatile and flags, its metatile behavior and
+/// an attribute indexing the collision table.
 struct MapGridCell {
   /// bits: 15..12 flags (15..14 read by MapGrid_GetCellHighFlags) | 11..0
   /// metatile
@@ -74,17 +75,19 @@ struct TileAnimation {
   const u16 *start;  ///< where 0xffff loops back to; null for none
   const u16 *cursor; ///< the next group
   u16 timer;         ///< frames left of the current wait
-  u16 paused;        ///< nonzero, set by a scene, holds the channel
+  u16 paused;        ///< nonzero, set by a map, holds the channel
 };
 
-/// A layered map's three layers, by what they hold. Most maps give them
+/// A layout's three layers, by what they hold. Most layouts give them
 /// priorities 3, 2 and 1, and the field draws sprites at priority 2, so the
-/// ground is at the back, the middle layer under the actors and the overhead
-/// layer over them. Each shows on its own background: `BG3`, `BG2` and `BG1`.
+/// ground is at the back, the middle layer under the object events and the
+/// overhead layer over them. Each shows on its own background: `BG3`, `BG2` and
+/// `BG1`.
 enum MapGridLayerIndex {
-  MAPGRID_LAYER_GROUND = 0,   ///< `BG3`: the ground, at the back
-  MAPGRID_LAYER_MIDDLE = 1,   ///< `BG2`: walls and edges, under the actors
-  MAPGRID_LAYER_OVERHEAD = 2, ///< `BG1`: roofs and tree tops, over the actors
+  MAPGRID_LAYER_GROUND = 0, ///< `BG3`: the ground, at the back
+  MAPGRID_LAYER_MIDDLE = 1, ///< `BG2`: walls and edges, under the object events
+  MAPGRID_LAYER_OVERHEAD =
+      2, ///< `BG1`: roofs and tree tops, over the object events
   MAPGRID_LAYER_COUNT = 3
 };
 
@@ -121,8 +124,8 @@ struct WorldPosition {
   s32 y;      ///< 16.16 fixed-point pixels
 };
 
-/// The map's blocks, 32 KB of EWRAM at 0x02020000: each block 8 bytes, its
-/// four tile entries. MapGrid_LoadLayout decodes them in.
+/// The layout's metatiles, 32 KB of EWRAM at 0x02020000: each metatile 8 bytes,
+/// its four tile entries. MapGrid_LoadLayout decodes them in.
 extern u32 gMetatiles[];
 
 /// The map's layer data, 16 KB of EWRAM at 0x02028000. A tile animation's

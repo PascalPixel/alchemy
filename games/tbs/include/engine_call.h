@@ -3,7 +3,7 @@
 
 /// @file
 /// The engine call layer: one typed inline for each of the thirteen main-image
-/// routines below that the scene, menu and debug overlays import; every overlay
+/// routines below that the map, menu and debug overlays import; every overlay
 /// call of them goes through it.
 ///
 /// It is a habit of the whole game written once: a layer, not a
@@ -13,7 +13,7 @@
 /// stub. Main-image code calls the routines as ordinary functions; only the
 /// shared map/common/scroll_initialize_hblank_dma.h, which
 /// object/psynergy_effects.c includes as lemurian_ship.c does, reaches the
-/// layer there. field_service.h includes this layer; rooms without the scene
+/// layer there. field_service.h includes this layer; rooms without the script
 /// command layer use it directly.
 
 // Passing arguments through inline parameters rematerializes constants at each
@@ -34,7 +34,7 @@ struct MenuSprite;
 /// runs it every frame in the main loop pass), or gives the task already
 /// running it that key. Returns the slot it wrote, which the sort in the same
 /// call may already have moved, or -1 when all 20 task slots are taken. The
-/// scene layer's
+/// map service layer's
 /// Task_AddCallback and FieldScheduler_AddOrUpdateCallback call it too, so
 /// overlays import the routine under one name.
 static inline s32 FieldScheduler_AddCallback(SchedulerCallback callback,
@@ -88,7 +88,7 @@ static inline s32 FieldUnit_AddHp(s32 owner, s32 delta) {
   return Unit_AddHp(owner, delta);
 }
 
-/// Decodes type-01 compressed data from `source` into `destination`. Scenes
+/// Decodes type-01 compressed data from `source` into `destination`. Maps
 /// and the title and clear menus reach the decoder through it; main-image code
 /// calls Resource_DecodeType01 without it, LuckyDice_Run through call.h's
 /// Value2.

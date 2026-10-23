@@ -24,7 +24,7 @@ struct MapGridLayerScroll {
 /// The field map's work: the followed position, screen shake, tile
 /// animations, blend script, view and its bounds, and three scrolling layers.
 /// HEAP_SLOT_MAP_GRID: MapGrid_LoadLayout takes and clears it as a
-/// field scene with a layered map starts, and the next scene change frees it.
+/// field map with a layout starts, and the next map change frees it.
 struct MapGridScrollWork {
   /// The followed point, read as x, height and z in 16.16 fixed-point pixels;
   /// Camera_FollowObjectEvent points it at the camera's position.
@@ -32,7 +32,7 @@ struct MapGridScrollWork {
   /// Screen shake amplitudes in 16.16 fixed-point pixels, and the 16.16
   /// factor that scales them each frame.
   s32 shakeX, shakeY, shakeDecay;
-  u8 *script;    ///< set from the layered scene's header; not read by name
+  u8 *script;    ///< set from the layout's header; not read by name
   u16 flags;     ///< REG_DISPCNT bits: objects and the BG1 to BG3 shown
   u8 wideTiles;  ///< nonzero: tile animations copy 64-byte tiles
   u8 footprints; ///< nonzero: the leader leaves footprints

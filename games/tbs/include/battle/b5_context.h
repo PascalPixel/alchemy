@@ -8,7 +8,7 @@
 #include "types.h"
 #include "static_assert.h"
 
-/// An object context layout that many private headers and scenes include but
+/// An object context layout that many private headers and maps include but
 /// no code reads, so nothing in the tree supports its field names.
 struct B5Context {
   void *object;

@@ -79,7 +79,7 @@ enum { BATTLE_ENEMY_CAPACITY = 6, BATTLE_ACTION_CAPACITY = 20 };
 /// actions, the spoils, the background palette, the plan and the events.
 ///
 /// It lives in the HEAP_SLOT_BATTLE work slot: Battle_RunEncounter takes and
-/// zeroes it, sets promptSlot to -1 and enemyGroup, and the next scene change
+/// zeroes it, sets promptSlot to -1 and enemyGroup, and the next map change
 /// clears the heap. Every battle part reads it through gBattleWork, and the
 /// battle effects read its background id and palette.
 struct BattleWork {

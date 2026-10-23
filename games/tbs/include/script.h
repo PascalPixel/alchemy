@@ -2,19 +2,19 @@
 #define ALCHEMY_SCRIPT_H
 
 /// @file
-/// Scene commands: the all-caps macros the scene scripts are written in. The
-/// scene README shows them at work.
+/// Script commands: the all-caps macros the map scripts are written in. The
+/// map README shows them at work.
 
 #define WAIT(n) Engine_ScriptWait(n) ///< n frames, about 59.73 a second
 
 #define MESSAGE_SET(m) Engine_ScriptSetMessage(m)
-/// Actor no speaks the chosen message; the next one is chosen after it.
+/// Object event no speaks the chosen message; the next one is chosen after it.
 #define MESSAGE_PUT(no, f) Engine_ScriptShowMessage((no), (f))
 #define MESSAGE_OPEN(no, f) Engine_ScriptOpenMessage((no), (f))
 
-// Actors by number. Positions are whole pixels, speeds 16.16 pixels a frame,
-// headings 1/65536 turns (enum Facing), modes enum ObjectEventAnimation, emotes
-// enum Emote (with EMOTE_IN_FRONT), and t the frames waited after.
+// Object events by number. Positions are whole pixels, speeds 16.16 pixels a
+// frame, headings 1/65536 turns (enum Facing), modes enum ObjectEventAnimation,
+// emotes enum Emote (with EMOTE_IN_FRONT), and t the frames waited after.
 #define OBJECT_POSITION_SET(no, x, z)                                          \
   ObjectEvent_SetPosition((no), (x) << 16, (z) << 16)
 #define OBJECT_WALK(no, x, z) ObjectEvent_WalkTo((no), (x), (z))

@@ -9,7 +9,7 @@
 #include "static_assert.h"
 
 /// The world map's perspective work (struct PerspectiveWork) as the world
-/// map scene sees it, for the map's rotation.
+/// map overlay sees it, for the map's rotation.
 struct WorldMapRenderWork {
   u8 unk000[0xfc]; ///< PerspectiveWork's fields before animationActive
   s8 active;       ///< PerspectiveWork's animationActive; not read by name

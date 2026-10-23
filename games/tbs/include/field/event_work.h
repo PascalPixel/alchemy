@@ -2,7 +2,7 @@
 #define ALCHEMY_EVENT_WORK_H
 
 /// @file
-/// EventWork, the running scene's event work.
+/// EventWork, the running map's event work.
 
 #include "types.h"
 #include "edition.h"
@@ -13,24 +13,27 @@ struct MapEvent;
 struct ObjectEvent;
 struct ObjectRuntime;
 
-/// The running scene's event work: its placement and event tables, its
-/// actors, the triggers and exit it has hit, encounters, transitions and the
-/// message on show. It is struct FieldWork (heap slot 27) as the scenes see
-/// it, through gEventWork; each field is the FieldWork field at its offset.
+/// The running map's event work: its object event template and map event
+/// tables, its object events, the triggers and warp it has hit, encounters,
+/// transitions and the message on show. It is struct FieldWork (heap slot 27)
+/// as the maps see it, through gEventWork; each field is the FieldWork field at
+/// its offset.
 struct EventWork {
-  struct ObjectEventTemplate *tables[4]; ///< the placement tables placed so far
-  struct MapEvent *events;               ///< the scene's event table
-  struct ObjectEvent *objectEvents[8];   ///< the party's characters, ids 0 to 7
-  struct ObjectEvent *placedObjectEvents[58]; ///< the placed actors, from id 8
-  u8 unk11c[0x50];    ///< FieldWork's markers; not named by TBS code
-  s16 touchedTrigger; ///< the step event a touch or exit event answers
-  u8 unk16e[2];       ///< FieldWork's pushTile request; not named by TBS code
-  u16 requestedWarp;  ///< the exit kind taken, which ends the scene
-  /// FieldWork's menu: 1 opens the main menu once the event ends, so that
+  struct ObjectEventTemplate
+      *tables[4];          ///< the object event template tables placed so far
+  struct MapEvent *events; ///< the map's event table
+  struct ObjectEvent *objectEvents[8]; ///< the party's characters, ids 0 to 7
+  struct ObjectEvent
+      *placedObjectEvents[58]; ///< the placed object events, from local id 8
+  u8 unk11c[0x50];             ///< FieldWork's markers; not named by TBS code
+  s16 touchedTrigger;          ///< the step event a coord event or warp answers
+  u8 unk16e[2];      ///< FieldWork's pushTile request; not named by TBS code
+  u16 requestedWarp; ///< the warp kind taken, which ends the map
+  /// FieldWork's menu: 1 opens the main menu once the script ends, so that
   /// the item the place asks for can be used there.
   u16 requestedMenu;
-  u8 unk174[6];            ///< FieldWork's examine, start and talk
-  s16 facingTrigger;       ///< the collision code ahead, which a search answers
+  u8 unk174[6];      ///< FieldWork's examine, start and talk
+  s16 facingTrigger; ///< the metatile behavior ahead, which a bg event answers
   u16 encounterEnemyGroup; ///< the next battle's enemy group, 0 for none
   s16 psynergyRequest;   ///< a field Psynergy to use, as owner << 10 | Psynergy
   u8 unk180[2];          ///< FieldWork's item request; not named by TBS code
@@ -50,8 +53,8 @@ struct EventWork {
   u8 unk1da[6];           ///< FieldWork's unk1da to unk1de
   struct ObjectEvent *viewCenter; ///< the object the map view follows
   u8 unk1e4[0x10];                ///< not named by TBS code through this view
-  /// The actor speaking; the yes/no choice closes the portrait window of its
-  /// sprite once answered (FieldScript_AskYesNoWithObjectEventAnimation).
+  /// The object event speaking; the yes/no choice closes the portrait window of
+  /// its sprite once answered (FieldScript_AskYesNoWithObjectEventAnimation).
   s32 speaker;
   u8 unk1f8[0xaca]; ///< not named by TBS code through this view
   /// FieldWork's nameMessage: the first of the two names the yes/no choice

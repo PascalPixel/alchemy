@@ -1,5 +1,5 @@
 /// @file
-/// Field actors, movement, map drawing and scene services.
+/// Field object events, movement, map drawing and map services.
 
 /// Allocates the 64 sprites and their animation layers, loads the basic sprite
 /// palettes and shadow tiles, and puts the tile uploader in RAM; `mode` picks
@@ -84,13 +84,13 @@ void SpriteDissolve_RunFar(u8 *obj);
 /// Dissolves `cnt` sprites together over 32 frames; the battle's staging uses
 /// it once a unit is off its lists.
 void SpriteDissolve_RunManyFar(u8 **table, s32 cnt);
-/// Loads layered scene `index` (blocks, collision, cells, tile animations,
+/// Loads layout `index` (metatiles, metatile behaviors, cells, tile animations,
 /// blend script, markers and graphics) and starts its layers scrolling.
 /// Returns 2.
 s32 MapGrid_LoadLayoutFar(s32 index);
 /// Sets up the world map's perspective view: the affine ground plane, its
 /// camera and projection, and its per-frame and HBlank updates. XXX: returns no
-/// value; the world map scene ignores it.
+/// value; the world map ignores it.
 s32 WorldMap_InitializePerspectiveFar(void);
 /// Centres the camera on the point the map follows, or on (0, 0) with none,
 /// and scrolls the layers there.
@@ -117,13 +117,13 @@ void FieldObject_WaitForMoveFar(void *fieldObject);
 /// the perspective view, without reloading the area's palette or tiles.
 void WorldMap_LoadDefaultCellsAndUpdateBlockFar(void);
 /// Plays a map edit sequence, as doors and other changing scenery are drawn:
-/// each record's block numbers go to the destination, then it waits that
+/// each record's metatile numbers go to the destination, then it waits that
 /// record's delay. Returns only when the sequence ends.
 void MapGrid_PlayMetatileCopySequenceFar(u16 *command, s32 destination_x,
                                          u32 destination_y);
-/// Copies the block numbers of a rectangle of cells, keeping the destination's
-/// attributes, and redraws what's on screen; the destination comes before the
-/// size.
+/// Copies the metatile numbers of a rectangle of cells, keeping the
+/// destination's attributes, and redraws what's on screen; the destination
+/// comes before the size.
 void MapGrid_CopyMetatileIndicesRectFar(s32 sourceX, s32 sourceY, u32 dst_x,
                                         u32 dst_y, u32 width, u32 height);
 /// Restarts tile animation channel `no` by clearing its paused byte.
@@ -132,25 +132,25 @@ void TileAnimation_ResumeChannelFar(u32 no);
 void TileAnimation_PauseChannelFar(u32 no);
 /// Lets the map's blend script run again after DisplayBlend_SuspendScriptFar.
 void DisplayBlend_ResumeScriptFar(void);
-/// Stops the map's blend script, as the lighthouse scenes and Vale's Babi
+/// Stops the map's blend script, as the lighthouse maps and Vale's Babi
 /// scene do while they set the blend themselves.
 void DisplayBlend_SuspendScriptFar(void);
 /// Returns the ground height of `layer` at (x, y) in 16.16 pixels, where y is
 /// the map's down axis (an object's z).
 s32 MapGrid_GetTerrainHeightFar(s32 layer, s32 x, s32 y);
-/// Returns the collision code of the cell of `layer` under (x, y), given in
+/// Returns the metatile behavior of the cell of `layer` under (x, y), given in
 /// 16.16 pixels.
 s32 MapGrid_GetMetatileBehaviorAtFar(s32 layer, s32 x, s32 y);
-/// Copies a rectangle of cells whole, block numbers and attributes, and draws
-/// the copied cells that are in view.
+/// Copies a rectangle of cells whole, metatile numbers and attributes, and
+/// draws the copied cells that are in view.
 void MapGrid_CopyMetatileCellsRectFar(s32 sourceX, s32 sourceY, s32 width,
                                       s32 height, s32 dst_x, s32 dst_y);
-/// Copies only the attributes (flags, collision and shape) of a rectangle of
-/// cells. Nothing is redrawn, since attributes don't show.
+/// Copies only the attributes (flags, metatile behavior and shape) of a
+/// rectangle of cells. Nothing is redrawn, since attributes don't show.
 void MapGrid_CopyCellAttributeRectFar(s32 sourceX, s32 sourceY, s32 width,
                                       s32 height, s32 dst_x, s32 dst_y);
-/// Copies only the block numbers of a rectangle of cells, the size before the
-/// destination, and redraws the cells in view.
+/// Copies only the metatile numbers of a rectangle of cells, the size before
+/// the destination, and redraws the cells in view.
 void MapGrid_CopyCellIndexRectFar(s32 sourceX, s32 sourceY, s32 width,
                                   s32 height, s32 dst_x, s32 dst_y);
 /// Puts world map tile (x / 16, y / 16) into the tile grid at
@@ -187,7 +187,7 @@ s32 MapGrid_IsWallAtFar(struct WorldPosition *position);
 void ObjectDispatch_RegisterChildMetadataFar(struct DispatchObject *object,
                                              s32 no);
 /// Freezes the world map's perspective view as a still picture on BG1, so a
-/// menu or event can use the window and VBlank.
+/// menu or script can use the window and VBlank.
 void WorldMap_StartStillViewFar(void);
 /// Reloads the world map area's palette and tiles after the still view and
 /// returns to the perspective view.

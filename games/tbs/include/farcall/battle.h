@@ -80,7 +80,7 @@ s32 DjinnRecovery_TickFar(void);
 /// Returns the palette of a unit's battle object.
 s32 BattleMotion_GetSlotPaletteFar(s32 id);
 /// Sets every recovering Djinni of a member with HP at once, as the link lobby
-/// and Vault's scene do; returns 0.
+/// and Vault's map do; returns 0.
 s32 DjinnRecovery_TickTwentyFar(void);
 /// Debug: replaces the party with one of the preset parties, levels, Djinn,
 /// abilities and items included; returns 1 past the table's end.

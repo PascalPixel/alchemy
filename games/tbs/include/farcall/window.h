@@ -219,12 +219,12 @@ void RenderOutput_ClearListFar(void *work);
 void UiWindow_SetTilemapEntryFar(struct UiWindow *window, s32 value, s32 x,
                                  s32 y, u32 mode);
 #ifdef UBFIX
-/// Debug: the scene selector, returning nothing under UBFIX.
+/// Debug: the map selector, returning nothing under UBFIX.
 void Menu_RunSelectionFar(void);
 #else
-/// Debug: the scene selector, where A warps to the chosen scene and entrance
-/// and B closes it. The field opens it from the Start menu with B held. Its
-/// result is undefined, and nothing reads it.
+/// Debug: the map selector, where A warps to the chosen map and warp
+/// destination and B closes it. The field opens it from the Start menu with B
+/// held. Its result is undefined, and nothing reads it.
 s16 Menu_RunSelectionFar(void);
 #endif
 /// Debug: shows the game flags 256 at a time as a grid the player can toggle,

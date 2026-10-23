@@ -288,8 +288,8 @@
 #define REEL_HINT_BEFORE_LAST_SPIN 0
 #endif
 
-// The first area name message, for the place name shown on entering a new
-// place (UiTimedNotice_Create).
+// The first area name message, for the map section name shown on entering a new
+// map section (UiTimedNotice_Create).
 #if LANGUAGE == LANGUAGE_JAPANESE
 #define RENDER_RESOURCE_BASE 0x9D4
 #elif (LANGUAGE == LANGUAGE_GERMAN) || (LANGUAGE == LANGUAGE_SPANISH) ||       \

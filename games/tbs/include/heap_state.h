@@ -6,9 +6,9 @@
 ///
 /// The heap is two stacks of blocks, one in IWRAM and one in EWRAM; the
 /// runtime README's "The heap" gives the allocators and
-/// the lifetime rule. Every scene change resets both pools and clears every
-/// slot (Runtime_InitializeHeap, from the scene loop in object/scene.c), so
-/// no block outlives the scene, battle or minigame that took it.
+/// the lifetime rule. Every map change resets both pools and clears every
+/// slot (Runtime_InitializeHeap, from the map loop in object/map.c), so
+/// no block outlives the map, battle or minigame that took it.
 
 #include "types.h"
 #include "static_assert.h"
@@ -65,7 +65,7 @@ enum HeapSlot {
   /// map its perspective view (struct PerspectiveWork); gMapGridWork.
   HEAP_SLOT_MAP_GRID = 8,
   /// A battle's struct BattleWork (gBattleWork), from Battle_RunEncounter to
-  /// the next scene change.
+  /// the next map change.
   HEAP_SLOT_BATTLE = 9,
   /// The battle background's scanline work (struct BattleAffineHdma).
   HEAP_SLOT_BATTLE_SCANLINES = 10,
@@ -89,7 +89,7 @@ enum HeapSlot {
   HEAP_SLOT_OPTIONS = 20,
   /// Mind Read's wave work (struct WaveEffectWork).
   HEAP_SLOT_MIND_READ = 22,
-  /// A field scene's struct FieldWork, which scenes read as struct EventWork
+  /// A field map's struct FieldWork, which maps read as struct EventWork
   /// (gEventWork); Field_RunMap takes it and frees it on the way out.
   HEAP_SLOT_EVENT = 27,
   /// The palette cycling queue (struct PaletteSnapshotWork).
@@ -102,11 +102,11 @@ enum HeapSlot {
   /// allocate.
   HEAP_SLOT_FIELD_BLEND = 30,
   /// The display transition (struct DisplayTransitionState,
-  /// gDisplayTransition): the window edges and dissolve of a scene change.
+  /// gDisplayTransition): the window edges and dissolve of a map change.
   HEAP_SLOT_TRANSITION = 31,
   /// The colour buffer (gPaletteBufferWork) that moves the BG and OBJ palettes
   /// toward target colours: the struct ColorBuffer
-  /// ColorBuffer_Initialize allocates on scene load, or the title
+  /// ColorBuffer_Initialize allocates on map load, or the title
   /// intro's struct PaletteFade.
   HEAP_SLOT_PALETTE_BUFFER = 32,
   /// The floating lights of Sol Sanctum's Elemental Star room (struct

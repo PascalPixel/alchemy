@@ -242,7 +242,7 @@ extern u8 Text_DecodeSymbolCodeSize[];
 /// Tile_BuildMetatiles, copied to the heap by UiWindow_FillScanlineSpans for
 /// each frame of a window transition.
 extern u8 Tile_BuildMetatilesCodeSize[];
-/// Interleaves a field map's three decoded cell planes into cell words, for
+/// Interleaves a layout's three decoded cell planes into cell words, for
 /// TileMap_ConvertBuffer.
 extern const u8 Tile_ConvertMapGrid[];
 /// Tile_ConvertMapGrid, which TileMap_ConvertBuffer runs from a heap copy.

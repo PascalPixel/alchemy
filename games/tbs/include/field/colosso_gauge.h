@@ -32,12 +32,12 @@ struct ColossoGaugeWork {
   /// Nonzero keeps the gauge down (level 2); only the unused
   /// Colosso_SetGaugeHold sets it.
   s16 hold;
-  s16 playerObjectEvent; ///< the actor id drawn as the player's marker
-  /// The actor id drawn as the opponent's marker, and the actor that runs the
-  /// recorded path.
+  s16 playerObjectEvent; ///< the local id drawn as the player's marker
+  /// The local id drawn as the opponent's marker, and the object event that
+  /// runs the recorded path.
   s16 opponentObjectEvent;
-  /// The first finisher's prize: the actor raised over that finisher, who
-  /// stops at finishZ minus 16 pixels.
+  /// The first finisher's prize: the object event raised over that finisher,
+  /// who stops at finishZ minus 16 pixels.
   u16 finishItemObjectEventA;
   /// The second finisher's prize; that finisher stops at finishZ plus 16
   /// pixels.

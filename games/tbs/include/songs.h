@@ -29,7 +29,7 @@
 /// the party its mission.
 #define MUS_002 2
 /// Field music of McCoy's Palace, Hammet Palace, the Colosseum's halls and
-/// Vale's inn from one entrance; the debug link test plays it too
+/// Vale's inn from one warp destination; the debug link test plays it too
 /// (SerialTest_Run).
 #define MUS_003 3
 /// Field music of the Tret Tree and of Altin.
@@ -61,7 +61,7 @@
 #define MUS_021 21
 /// Field music of Mercury Lighthouse's aerie, the Elemental Star room, the
 /// Lemurian ship, Venus Lighthouse's aerie once FLAG_MAPSEC_TEMP_51 is set
-/// there, and the world map reached from one of its entrances.
+/// there, and the world map reached from one of its warp destinations.
 #define MUS_022 22
 /// Field music of Altin Peak and the Lunpa Fortress, and of Vale once the
 /// stormy night's monster is fought (FLAG_VALE_STORM_MONSTER_FOUGHT); it also
@@ -96,7 +96,7 @@
 /// the songs of nine or more tracks.
 #define MUS_040 40
 /// Field music of the Tolbi-bound ship, and of the world map reached from seven
-/// of its entrances.
+/// of its warp destinations.
 #define MUS_041 41
 /// Field music of the world map, and of Goma Cave's entrance, the Bilibin Cave
 /// entrance, the Alpine Crossing, Crossbone Isle, the Gondowan Passage and the
@@ -172,12 +172,12 @@
 #define MUS_071 71
 /// Plays as Sheba falls from Venus Lighthouse's aerie.
 #define MUS_072 72
-/// Field music of the Sanctum and of the clear-data scene.
+/// Field music of the Sanctum and of the clear-data map.
 #define MUS_074 74
 /// The music of the Golden Sun logo shown after Jenna and Kraden's closing
-/// scene on the world map, until a key is pressed (Title_Run's entrance 10).
-/// ★ Named from what the player sees: the Golden Sun logo after the ending's
-/// last scene (its render)
+/// scene on the world map, until a key is pressed (Title_Run's warp destination
+/// 10). ★ Named from what the player sees: the Golden Sun logo after the
+/// ending's last scene (its render)
 #define MUS_ENDING_LOGO 75
 /// Battle music gEncounter_BattleMusic gives the battles that end the Colosso
 /// finals' matches (ENCOUNTER_ZONE_COLOSSO); Battle_RunEncounter plays it after
@@ -251,7 +251,8 @@
 /// Psynergy is shown at the gate to Mt. Aleph, and as Hammet's caravan crosses
 /// the world map.
 #define SE_107 107
-/// The low triple tone: Halt freezing an actor, and the link session countdown.
+/// The low triple tone: Halt freezing an object event, and the link session
+/// countdown.
 #define SE_TRIPLE_TONE_LOW 108
 /// The high triple tone: Halt ending.
 #define SE_TRIPLE_TONE_HIGH 109
@@ -284,7 +285,7 @@
 #define SE_118 118
 /// The guards throwing the leader out of Lunpa.
 #define SE_SCUFFLE 121
-/// Leaving a scene through an ordinary exit.
+/// Leaving a map through an ordinary warp.
 #define SE_MAP_EXIT 123
 /// A chest opening; also a Psynergy target reacting, the Fuchin Temple
 /// students' lessons, the Vault mayor's urn, and the training tree in Xian.
@@ -300,10 +301,10 @@
 /// A heavy landing: the leader thrown out of Lunpa, or hopping down a step in
 /// the Tunnel Ruins.
 #define SE_LANDING_THUD 127
-/// Climbing stairs: an WARP_STYLE_ANIMATED exit, and the stairs up in Vale's
+/// Climbing stairs: an WARP_STYLE_ANIMATED warp, and the stairs up in Vale's
 /// inn and Isaac's house.
 #define SE_STAIRS_UP 128
-/// Going down stairs: an WARP_STYLE_ANIMATED_ALTERNATE exit, and the stairs
+/// Going down stairs: an WARP_STYLE_ANIMATED_ALTERNATE warp, and the stairs
 /// down in Vale's inn and Isaac's house.
 #define SE_STAIRS_DOWN 129
 /// Field Psynergy beginning: Carry, Cloak, Force, Lift, Mind Read and Ply, and
@@ -382,8 +383,8 @@
 #define SE_150 150
 /// Altmiller Cave's lights growing in, one by one, and a Venus Djinni caught.
 #define SE_151 151
-/// An actor jumps: ObjectMotion_Launch plays the high jump above 5 pixels a
-/// frame.
+/// An object event jumps: ObjectMotion_Launch plays the high jump above 5
+/// pixels a frame.
 #define SE_JUMP 152
 /// A high jump: ObjectMotion_Launch above 5 pixels a frame, Djinn leaping, and
 /// the leaps on Altin Peak, at the Kalay docks and in the Elemental Star room.
@@ -418,12 +419,12 @@
 /// Jupiter Djinn joining, and the Neptune, Nereid, Titan Blade and Froth battle
 /// effects.
 #define SE_164 164
-/// A scene transition effect.
+/// A map transition effect.
 #define SE_MAP_TRANSITION 167
-/// The ambient sound a scene queues in Lama Temple, Xian and the Manticore's
+/// The ambient sound a map queues in Lama Temple, Xian and the Manticore's
 /// part of Lamakan Desert (FieldEffect_SetQueuedSoundAndPlay).
 #define SE_169 169
-/// The ambient sound a scene queues (FieldEffect_SetQueuedSoundAndPlay) with
+/// The ambient sound a map queues (FieldEffect_SetQueuedSoundAndPlay) with
 /// the ground particles and Altin's water-spitting beasts, and in Fuchin
 /// Temple, Vale, Kalay's tunnel, Mercury and Venus Lighthouse and the Goma Cave
 /// entrance.
@@ -469,7 +470,7 @@
 #define SE_184 184
 /// The leader pushing what stands ahead a cell on: a statue, pillar, crate or
 /// torch walked into in Bilibin, Bilibin Cave, Goma Cave, Kalay, Sol Sanctum,
-/// the Tunnel Ruins, Venus Lighthouse and Altin Peak, and the scenes' staged
+/// the Tunnel Ruins, Venus Lighthouse and Altin Peak, and the maps' staged
 /// pushes (StagedObjectEvent_AdvancePair).
 /// ★ Named from what the player sees: the leader pushing a statue or pillar
 /// ahead (its render)
@@ -497,8 +498,8 @@
 /// The curse's sparkles at Kolima and Kolima Forest, Tret rejecting the party,
 /// and Sol Sanctum's statue opening its central hole.
 #define SE_200 200
-/// The party rising to the Elemental Star room, and an actor raised and shrunk
-/// in the eruption.
+/// The party rising to the Elemental Star room, and an object event raised and
+/// shrunk in the eruption.
 #define SE_201 201
 /// The flame flaring up and rising away as smoke, on the stormy night.
 #define SE_202 202
@@ -525,7 +526,7 @@
 #define SE_212 212
 /// A pushed log or pillar coming to rest, after SE_STOP_SLOT3 cuts
 /// SE_HEAVY_MOVE: the Colosso matches, Kolima Forest's floodgate, Vale Cave,
-/// and the scenes' staged moves (MapObjectEvent_MoveAndRedraw).
+/// and the maps' staged moves (MapObjectEvent_MoveAndRedraw).
 /// ★ Named from what the player sees: a pushed log or pillar stopping (its
 /// render)
 #define SE_HEAVY_STOP 213
@@ -539,7 +540,7 @@
 /// crates dropping into holes in Vale Cave.
 #define SE_216 216
 /// A floor switch: Mercury Lighthouse's switches and gates, the Colosso's
-/// moving walkway, and an actor jumping down a ledge.
+/// moving walkway, and an object event jumping down a ledge.
 #define SE_217 217
 /// Mercury Lighthouse's fountain, and the storm carrying the party off in
 /// Suhalla Desert and dropping it on the world map.
@@ -548,7 +549,7 @@
 /// Temple's Reveal lesson, Mia in Imil and at Mercury Lighthouse, the curse on
 /// Kolima, and the Elemental Stars taken by Alex.
 #define SE_220 220
-/// An actor raised with sparks at Mercury Lighthouse.
+/// An object event raised with sparks at Mercury Lighthouse.
 #define SE_221 221
 /// The lifts of Mercury Lighthouse and its aerie, as they carry the party.
 /// ★ Named from what the player sees: the party riding Mercury Lighthouse's
@@ -595,7 +596,7 @@
 #define SE_238 238
 /// A pushed log, pillar or wall moving, on player 3 until SE_STOP_SLOT3 cuts
 /// it: the Colosso, Kolima Forest's floodgate, Vale Cave, Venus Lighthouse's
-/// sliding walls and the scenes' staged moves; SE_HEAVY_STOP follows.
+/// sliding walls and the maps' staged moves; SE_HEAVY_STOP follows.
 /// ★ Named from what the player sees: a log rolling or a pillar or wall
 /// sliding (its render)
 #define SE_HEAVY_MOVE 239
@@ -622,7 +623,7 @@
 /// A Colosso warrior fading in (Colosso_FadeInWarrior).
 /// ★ Named from what the player sees: a Colosso warrior appearing (its render)
 #define SE_COLOSSO_WARRIOR_APPEAR 252
-/// The first voice blip of a message: an actor's voice is 0x100 plus its
+/// The first voice blip of a message: an object event's voice is 0x100 plus its
 /// sprite's value (FieldEffect_GetResourceId), and every few letters typed play
 /// it plus the letter code's low two bits (UiWork_StepChannelScript).
 #define SE_256 256
@@ -658,12 +659,12 @@
 #define SE_286 286 ///< voice blip
 #define SE_287 287 ///< voice blip
 /// A song with no tracks on player 3, which stops the loop playing there: every
-/// scene change (unless FLAG_SKIP_MAP_CHANGE_SOUND), a rolling log or cart
+/// map change (unless FLAG_SKIP_MAP_CHANGE_SOUND), a rolling log or cart
 /// stopping, a battle starting on the field.
 #define SE_STOP_SLOT3 288
 /// An effect pair spawned in the eruption at Sol Sanctum.
 #define SE_292 292
-/// Played before each queued scene sound (FieldEffect_SetQueuedSoundAndPlay).
+/// Played before each queued map sound (FieldEffect_SetQueuedSoundAndPlay).
 #define SE_298 298
 /// Tolbi Spring: 50 frames into a toss.
 #define SE_300 300

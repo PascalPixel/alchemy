@@ -71,7 +71,7 @@ struct ScriptMotionObject {
   s16 wait;   ///< frames left before its script runs again
   u8 refused; ///< frames in a row a solid object refused its move
   u8 frozen;  ///< nonzero skips steering, terrain, gravity and floating
-  /// Two bytes scene code uses, the action parameter, the footprint side
+  /// Two bytes map code uses, the action parameter, the footprint side
   /// and the linked object; not named here.
   u8 unk62[10];
   /// Called each frame before its script.

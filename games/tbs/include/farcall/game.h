@@ -24,14 +24,14 @@ s32 Shop_GetSelectionState(s32 owner, s32 slot);
 /// slot, and returns the slot, or -1 when there was no room.
 s32 Inventory_AddItemFar(s32 owner_id, s32 item_id);
 /// Gives an item to the first party member with room and returns who took it,
-/// or -1; spoils, chests and the scenes' gifts land this way.
+/// or -1; spoils, chests and the maps' gifts land this way.
 s32 PartyInventory_AddFar(s32 item_id);
 /// Returns the first slot holding the item, equipped or not, or -1.
 s32 Inventory_FindFar(s32 owner, s32 item_id);
 /// Returns who carries the item, asking the selected character first, or -1;
-/// scenes use it to find a key item.
+/// scripts use it to find a key item.
 s32 PartyInventory_FindOwnerFar(s32 item_id);
-/// Takes one of the item from whoever carries it first, as a scene uses up a
+/// Takes one of the item from whoever carries it first, as a script uses up a
 /// key item; always returns 0.
 s32 PartyInventory_RemoveFar(s32 item_id);
 /// Equips the item in `slot` in place of the one of its type, then rebuilds
@@ -56,7 +56,7 @@ struct BattleAct *BattleAction_Get(s32 actionId);
 /// Teaches a character an action for good and rebuilds its list, returning the
 /// action's place there, or -1 when the list is full.
 s32 Unit_LearnPsynergyFar();
-/// Returns 1 when the action is in the unit's action list; events check a
+/// Returns 1 when the action is in the unit's action list; scripts check a
 /// member's Psynergy with it.
 s32 Unit_KnowsActionFar(s32 owner, s32 value);
 /// Clears the game state and sets a new game's defaults: Isaac alone in the
@@ -68,7 +68,7 @@ void GameState_InitializeDefaultsFar(void);
 struct LevelUpResult *Unit_TryLevelUpFar(s32 owner_id,
                                          struct LevelUpResult *value);
 /// Returns 1 when the flag is set; the whole game tests flags here, the
-/// scenes through the event layer.
+/// maps through the script layer.
 s32 GameFlag_TestFar(s32 flag);
 /// Sets the flag and returns the number of the byte it's in.
 s32 GameFlag_SetBitFar(s32 flag);
@@ -76,7 +76,7 @@ s32 GameFlag_SetBitFar(s32 flag);
 /// byte.
 void GameFlag_ClearBitFar(s32 flag);
 /// Returns the whole byte the flag is in, a counter kept among the flags, as
-/// the encounter code and the Colosso and Battle Arena scenes use.
+/// the encounter code and the Colosso and Battle Arena maps use.
 s32 GameFlag_GetByteFar(s32 flag);
 /// Writes the whole byte the flag is in, such as the Battle Arena's win count.
 void GameFlag_SetByteFar(s32 flag, s32 value);
@@ -237,7 +237,7 @@ s32 Inventory_CountItemFar(s32 owner, s32 item_id);
 /// Counts the item across the whole party, as the slot machine counts Game
 /// Tickets.
 s32 PartyInventory_CountItemFar(s32 item_id);
-/// Discards one of the item from whoever carries it first, as a scene takes
+/// Discards one of the item from whoever carries it first, as a script takes
 /// it back; always returns 0.
 s32 PartyInventory_DiscardFar(s32 item_id);
 /// Sets FLAG_LURE_CAP while any member wears the Lure Cap and clears it

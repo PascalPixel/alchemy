@@ -2,7 +2,7 @@
 #define ALCHEMY_BATTLE_EFFECT_RUNTIME_H
 
 /// @file
-/// The speaker lookup's views of a field actor and its sprite, the speaker
+/// The speaker lookup's views of an object event and its sprite, the speaker
 /// definitions, and the colour buffer's work slot.
 
 #include "unit/object/object.h"
@@ -11,8 +11,8 @@
 #include "static_assert.h"
 #include "palbuf.h"
 
-/// An actor's animated sprite (struct AnimationObject), as far as the pointer
-/// to its sprite id.
+/// An object event's animated sprite (struct AnimationObject), as far as the
+/// pointer to its sprite id.
 struct FieldEffectSpeakerSprite {
   u8 unk00[0x28]; ///< AnimationObject's fields before its layers
   /// AnimationObject.entries[0], its first layer, whose first halfword is the
@@ -20,7 +20,7 @@ struct FieldEffectSpeakerSprite {
   s16 *value28;
 };
 
-/// A field actor as the speaker lookup reads it: its kind (1 for an animated
+/// An object event as the speaker lookup reads it: its kind (1 for an animated
 /// sprite) and that sprite.
 struct FieldEffectSpeakerObject {
   u8 unk00[0x24];

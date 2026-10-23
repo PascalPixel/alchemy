@@ -583,7 +583,7 @@ void BattleEffect_RunThor(struct BattleEffectArgument *effect);
 // spire.c
 void BattleEffect_RunSpire(struct BattleEffectArgument *effect);
 
-// burst_scene.c
+// burst_sequence.c
 void BattleEffect_RunGust(struct BattleEffectArgument *effect);
 void BattleEffect_RunBearClaw(struct BattleEffectArgument *effect);
 void BattleEffect_RunRansack(struct BattleEffectArgument *effect);

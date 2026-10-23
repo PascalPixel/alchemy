@@ -2,12 +2,12 @@
 #define ALCHEMY_MAP_IDS_H
 
 /// @file
-/// Scene numbers, named after their places, in the order of gField_MapTable
+/// Map numbers, named after their places, in the order of gField_MapTable
 /// (field/maps.s).
 ///
-/// Each MapId_ is an absolute symbol whose value is the scene's row in the
-/// table; C takes the number as (s32)&MapId_Name, and the exit tables name a
-/// scene by its place (MAP_WARP).
+/// Each MapId_ is an absolute symbol whose value is the map's row in the
+/// table; C takes the number as (s32)&MapId_Name, and the warp tables name a
+/// map by its place (MAP_WARP).
 
 /// ★ Named from the game: "Title screen" (MsgDebugEntryName)
 extern char MapId_Title;

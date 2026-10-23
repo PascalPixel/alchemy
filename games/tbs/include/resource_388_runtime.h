@@ -2,13 +2,13 @@
 #define ALCHEMY_RESOURCE_388_RUNTIME_H
 
 /// @file
-/// The views a scene overlay takes of its runtime work and slots; most fields
+/// The views a map overlay takes of its runtime work and slots; most fields
 /// are still unnamed.
 
 #include "global_cells.h"
 #include "static_assert.h"
 
-/// A view of a work block that nothing in TBS reads; Goma Cave's pond scene
+/// A view of a work block that nothing in TBS reads; Goma Cave's pond map
 /// includes the header. XXX: likely struct FieldWork, because 0x1c0 and 0x1c8
 /// are its transition and transitionFrames.
 struct Resource388Runtime {

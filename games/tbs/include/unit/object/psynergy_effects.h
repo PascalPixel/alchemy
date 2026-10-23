@@ -202,7 +202,8 @@ s32 FieldEffect_CopyLinkedObjectPosition(union FieldObject *fieldObject);
 #endif
 void FieldEffect_SpawnLinked(s32 objectEvent, s32 emote, s32 wait);
 /// FieldEffect_SpawnLinked's emote flag: the bubble takes sprite priority 1
-/// instead of its actor's. The low four bits pick the bubble (enum Emote).
+/// instead of its object event's. The low four bits pick the bubble (enum
+/// Emote).
 #define EMOTE_IN_FRONT 0x100
 
 /// The bubbles FieldEffect_SpawnLinked can show, by the animation they pick in
@@ -219,7 +220,7 @@ enum Emote {
   EMOTE_LIGHT_BULB = 6, ///< a lit bulb, with SE_110
   EMOTE_SCOWL = 7,      ///< a scowling face
   EMOTE_SMILE = 8,      ///< a smiling face
-  /// A sweat drop; no scene shows it, and the Japanese sheet has no tenth
+  /// A sweat drop; no map shows it, and the Japanese sheet has no tenth
   /// bubble.
   EMOTE_SWEAT_DROP = 9
 };
@@ -229,7 +230,7 @@ enum AttachedEffectFlag {
   ATTACHED_EFFECT_REMOVE = 0, ///< removes the attached object
   ATTACHED_EFFECT_ATTACH = 1, ///< attaches one that stays until removed
   ATTACHED_EFFECT_ONCE = 2,   ///< shows a one-off one that ends by itself
-  /// The object takes sprite priority 1, not the actor's.
+  /// The object takes sprite priority 1, not the object event's.
   ATTACHED_EFFECT_IN_FRONT = 0x100
 };
 void FieldEffect_ConfigureLinkedObject(s32 objectEvent, s32 flags);

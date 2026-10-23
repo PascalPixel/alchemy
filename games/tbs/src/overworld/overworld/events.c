@@ -270,7 +270,7 @@ s32 Map_TalkToObjectEvent(s32 id) {
     }
     // A result below 0x10000 is a message; above, a function to call.
     if (event->result < 0x10000) {
-      UiWork_SetBusyFlagsFar(usePausedDialogue);
+      Message_SetDecodeFlagsFar(usePausedDialogue);
       FieldScript_Start();
       FieldScript_SetMessageId(event->result);
       FieldScript_ShowMessageAndWait(id, 0);

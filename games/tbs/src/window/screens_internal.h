@@ -102,7 +102,7 @@ struct TextPrinter *TextPrinter_Add(struct Window *window, s32 entry, s32 x,
 void Text_DrawWideStringInWindow(s16 *text, struct Window *window, s32 x,
                                  s32 y);
 void Window_PutGlyph(struct Window *win, u32 tile, u32 x, u32 y, s32 mode);
-void Text_DrawPrefixedNumberAtOffset(s32 value, const struct Window *work,
+void Text_DrawPrefixedNumberAtOffset(s32 value, const struct Window *window,
                                      s32 offsetX, s32 offsetY, s32 variant);
 #endif
 
@@ -292,8 +292,6 @@ void Text_DrawPrefixedNumberAtOffset(s32 value, const struct Window *work,
 // portraitSprites), and their palette.
 #define PORTRAIT_SLOT_COUNT 2
 #define PORTRAIT_PALETTE 14 ///< OBJ palette of slot 0; slot 1 uses 15
-/// portraitPictures value of a free slot, as Portrait_ClearSlots writes it.
-#define PORTRAIT_SLOT_EMPTY 999
 
 // The battle menus' message buffers, in halfwords, and the copier that fills
 // them: the Japanese edition decodes the message (Message_DecodeRaw), the

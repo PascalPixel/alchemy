@@ -1314,7 +1314,7 @@ static void Kalay_PrepareTown(void) {
     nut->y = PIXELS(10);
     nut->visible = 1;
     heap = AllocHeapSlot(17, 0x608);
-    Ui_PrepareTransferForItem(ITEM_NUT);
+    Icon_DrawItem(ITEM_NUT);
     VramCache_Load(sprite->palette, 128, heap + 0x400);
     FreeHeapSlot(17);
     nut->orbitAngle = found;

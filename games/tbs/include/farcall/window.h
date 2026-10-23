@@ -4,10 +4,10 @@
 /// Sets up the window system for the field and the other screens outside
 /// battle: a fresh work block, a blank tilemap and the per-frame upload and
 /// update callbacks.
-void UiWork_InitializeWithResourceCountersFar(void);
+void WindowSystem_InitFieldFar(void);
 /// Sets up the window system for battle; kind set reserves the glyph sprites'
 /// tiles, which Battle_Run asks for only during the Djinn lesson.
-void UiWork_InitializeFar(s32 kind);
+void WindowSystem_InitBattleFar(s32 kind);
 #ifndef OWN_Window_CreateFar
 /// Opens a window at tile (x, y), width by height tiles, and waits for it to
 /// zoom open unless attrs has WINDOW_FLAG_INSTANT. Returns NULL when every
@@ -15,9 +15,9 @@ void UiWork_InitializeFar(s32 kind);
 struct Window *Window_CreateFar(s32 x, s32 y, s32 width, s32 height, s32 attrs);
 #endif
 /// Clears a window and closes it, at once with release set, else over four
-/// frames without waiting; UiWork_IsIdle says when its slot is free. NULL is
+/// frames without waiting; Window_IsClosed says when its slot is free. NULL is
 /// ignored.
-void Window_CloseFar(struct Window *work, s32 release);
+void Window_CloseFar(struct Window *window, s32 release);
 /// Decodes message into buf with no length limit, so buf must hold the whole
 /// message and its terminator.
 void Message_DecodeRawUnboundedFar(s32 message, u16 *buf);
@@ -38,14 +38,14 @@ struct Window *Message_OpenWindowFar(s32 message, s32 x, s32 y, u32 packed);
 void FieldMessage_ShowFar(s32 no, s32 flags);
 /// Returns 1 once every text printer has finished typing its text, even if
 /// its window is still open.
-s32 UiWork_IsCompleteFar(void);
+s32 TextPrinter_AllFinishedFar(void);
 /// Returns 1 once window has closed and freed its slot; a new window in that
 /// slot reads as still open.
-s32 UiWork_IsIdleFar(struct Window *window);
+s32 Window_IsClosedFar(struct Window *window);
 /// Sets the effects the next messages are decoded with until a message window
 /// starts typing: bit 0 makes halting speech, broken off with an ellipsis after
 /// the first word.
-void UiWork_SetBusyFlagsFar(s32 flags);
+void Message_SetDecodeFlagsFar(s32 flags);
 /// Redraws a window's empty frame and releases the sprites it carries, leaving
 /// a text canvas alone.
 void WindowSprite_PrepareForRedrawFar(struct Window *window);
@@ -73,7 +73,7 @@ void Text_DrawStringFar(const u8 *text, struct Window *arg1, s32 arg2,
                         s32 arg3);
 /// Draws a byte string of at most 255 characters as tiles in a window's
 /// interior at pixel (offsetX, offsetY).
-void Text_DrawStringAtOffsetFar(const u8 *text, const struct Window *work,
+void Text_DrawStringAtOffsetFar(const u8 *text, const struct Window *window,
                                 s32 offsetX, s32 offsetY);
 /// Draws a byte string straight into a window's tilemap, (x, y) being pixels of
 /// its interior rounded down to tiles.
@@ -93,7 +93,7 @@ void Text_DrawNumberInWindowFar(s32 arg0, s32 arg1, struct Window *arg2,
                                 s32 arg3, s32 arg4);
 /// Sets the colour (0 to 15) text is drawn in from now on; the menus colour HP
 /// figures with it and put colour 15 back after.
-void UiWork_SetParameterNibbleFar(s32 param);
+void Text_SetColorFar(s32 param);
 /// Shows the picture in VRAM cache slot as a sprite in a window, (offsetX,
 /// offsetY) pixels in from its inner corner. Returns NULL, releasing the slot,
 /// when every output is in use.
@@ -114,7 +114,7 @@ struct WindowSprite *SideObject_CreateFar(s32 object_kind, s32 position,
                                           s32 arg4, s32 arg5);
 /// Reloads the portrait in slot so it shows character, keeping its sprite, as
 /// the field menus change a portrait already on screen.
-void Ui_LoadCharacterEntryForSlotFar(u32 slot, s32 character, s32 value);
+void Portrait_ReloadFar(u32 slot, s32 character, s32 value);
 /// Opens a portrait window at tile (x, y) for the speaker arg0, at once.
 /// Returns 0 when the speaker has no portrait.
 struct Window *Portrait_OpenWindowFar(s32 arg0, s32 arg1, s32 x, s32 y);
@@ -143,9 +143,9 @@ void PartyStatus_DrawFar(s32 flags);
 void PartyStatus_CloseFar(void);
 /// Closes each message window whose text has ended, then waits ten frames;
 /// windows still typing stay open.
-void UiWork_FinalizePendingCoreFar(void);
+void TextPrinter_CloseFinishedWindowsFar(void);
 /// Closes every window, waiting only for the message windows to finish closing.
-void UiWork_DrainPendingFar(s32 unused);
+void Window_CloseAllFar(s32 unused);
 /// Runs the party's battle commands for a round into out, one per unit in in,
 /// and returns how many it wrote: 1 when the party flees, -1 when the link
 /// fails.
@@ -192,7 +192,7 @@ void MenuArrow_SetPositionFar(struct MenuSprite *obj, s32 x, s32 y);
 void MenuArrow_ReleaseFar(s32 value);
 /// Draws an item's icon, from its inventory code, into the glyph work buffer
 /// with no frame or marks.
-void Ui_PrepareTransferForItemFar(s32 code);
+void Icon_DrawItemFar(s32 code);
 /// Draws a string of 16-bit character codes into a text canvas at pixel (x, y)
 /// at once, running its colour, outline and new line codes. NULL draws the ring
 /// of decoded text.
@@ -305,8 +305,8 @@ s32 Resource_LoadFixedBlockBIntoFreeSlotFar(void);
 /// leaving its arguments for the message to be shown.
 void Text_MeasureMessageFar(s32 no, s32 *x, s32 *y);
 /// Switches a rectangle of screen tiles to palette 15, or 14 when alt's low bit
-/// is clear: the menus' row highlight (Ui_SetRectHighlight).
-void Window_SetPaletteBitRectFar(s32 x, s32 y, s32 width, s32 height, s32 alt);
+/// is clear: the menus' row highlight (Window_HighlightRect).
+void Window_HighlightRectFar(s32 x, s32 y, s32 width, s32 height, s32 alt);
 /// Builds the Psynergy icon of a battle action, as Icon_BuildAbilityIconTiles
 /// does.
 void Ability_LoadGlyphFar(s32 action, s32 with_base, s32 *slot, s32 *tile,
@@ -320,8 +320,8 @@ void Text_UseExtraTilesFar(s32 flag);
 /// Opens the field command menu and moves its cursor to a command's icon, as
 /// the world map's scenes show it picking Djinn. Returns the icon's position.
 s32 Menu_AnimateSelectionToEntryFar(s32 arg0, s32 arg1);
-/// Returns the first entry of gUi_FixedTileBlocks, whatever no is.
-s32 Ui_GetTableWordZeroFar(s32 no);
+/// Returns the first entry of gWindowSprite_PointerTiles, whatever no is.
+s32 WindowSprite_GetPointerTilesFar(s32 no);
 /// Types a message into an open window from its top left, without voice blips.
 /// Returns the text printer as an integer, or 0 when nothing could start.
 s32 Message_OpenDecodedFar(struct Window *window, s32 argument);

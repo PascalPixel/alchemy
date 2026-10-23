@@ -238,7 +238,7 @@ struct Window *FieldMessage_ShowAtObject(s32 localId, s32 unused) {
       portrait = (s32)Portrait_OpenWindowFar(sprite, 0, column, portraitTop);
     else
       portrait = (s32)Portrait_OpenWindowFar(sprite, 0, column, portraitTop);
-    while (!UiWork_IsCompleteFar())
+    while (!TextPrinter_AllFinishedFar())
       WaitFrames(1);
   }
   work->messageWindow = (s32)handle;
@@ -277,12 +277,12 @@ void FieldScript_ShowMessageAndWait(s32 localId, s32 flags) {
   Portrait_CloseWindowFar(sprite);
 
   if (runtime->fastForward == 0) {
-    while (UiWork_IsIdleFar(window) == 0) {
+    while (Window_IsClosedFar(window) == 0) {
       WaitFrames(1);
       frames++;
       if (frames > 600 || ((gKeysHeld & KEY_SELECT) && (gKeysHeld & KEY_R) &&
                            (gKeysHeld & KEY_L) && (gKeysHeld & KEY_A))) {
-        UiWork_FinalizePendingCoreFar();
+        TextPrinter_CloseFinishedWindowsFar();
       }
     }
   }
@@ -394,7 +394,7 @@ void FieldScript_ShowSpeakerMessage(s32 speaker) {
         py = 220;
       win = (s32)Message_OpenWindowFar(state->message, px, py, 1);
       state->messageWindow = win;
-      while (UiWork_IsIdleFar((struct Window *)win) == 0)
+      while (Window_IsClosedFar((struct Window *)win) == 0)
         WaitFrames(1);
 #ifdef UBFIX
     }
@@ -433,7 +433,7 @@ void FieldScript_ShowMessageAtPosition(s32 unused0, s32 unused1, s32 x, s32 y) {
   CLAMP(py, minY, 220);
 
   window = (s32)Message_OpenWindowFar(state->message, px, py, 1);
-  while (UiWork_IsIdleFar((struct Window *)window) == 0)
+  while (Window_IsClosedFar((struct Window *)window) == 0)
     WaitFrames(1);
   state->message++;
 }
@@ -469,7 +469,7 @@ void FieldScript_ShowTwoMessagesAndWait(s32 first, s32 firstX, s32 firstY,
       work->message++, secondX, secondY, Speaker_GetVoice(secondSprite) << 16);
   Portrait_OpenWindowFar(secondSprite, 0, secondPortraitX, secondPortraitY);
 
-  while (UiWork_IsCompleteFar() == 0)
+  while (TextPrinter_AllFinishedFar() == 0)
     WaitFrames(1);
 
   WaitFrames(1);
@@ -479,12 +479,12 @@ void FieldScript_ShowTwoMessagesAndWait(s32 first, s32 firstX, s32 firstY,
   WaitFrames(1);
   Portrait_CloseWindowFar(firstSprite);
   Portrait_CloseWindowFar(secondSprite);
-  UiWork_FinalizePendingCoreFar();
+  TextPrinter_CloseFinishedWindowsFar();
   WaitFrames(1);
 
-  while (UiWork_IsIdleFar((struct Window *)firstWindow) == 0)
+  while (Window_IsClosedFar((struct Window *)firstWindow) == 0)
     WaitFrames(1);
-  while (UiWork_IsIdleFar((struct Window *)secondWindow) == 0)
+  while (Window_IsClosedFar((struct Window *)secondWindow) == 0)
     WaitFrames(1);
 
   WaitFrames(1);

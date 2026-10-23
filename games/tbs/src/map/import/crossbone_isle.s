@@ -22,7 +22,7 @@
 	.set import.ObjectDispatch_SetSingleChildFlags, 1
 	.set import.ObjectDispatch_SetChildBlendMode, 1
 	.set import.MapGrid_SetMetatileBehaviorAt, 1
-	.set import.Ui_PrepareTransferForItem, 1
+	.set import.Icon_DrawItem, 1
 	.set import.GameFlag_Test, 1
 	.set import.Engine_GameFlagSet, 1
 	.set import.FieldScript_WaitFrames, 1

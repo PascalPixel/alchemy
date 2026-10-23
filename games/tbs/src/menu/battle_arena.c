@@ -635,11 +635,11 @@ done:
 /// Copies the character ids of the party's first three members
 /// (gGameState.party), ends them with 0xff and returns how many. A
 /// null destination only counts them.
-static s32 BattleArena_CopyPartyOwnerIds(u16 *ownerIds) {
-  s32 ownerCount = Party_CountMembers();
-  if (ownerCount > LOBBY_UNIT_RECORD_COUNT)
-    ownerCount = LOBBY_UNIT_RECORD_COUNT;
-  if (ownerCount > 0) {
+static s32 BattleArena_CopyPartyOwnerIds(u16 *memberIds) {
+  s32 memberCount = Party_CountMembers();
+  if (memberCount > LOBBY_UNIT_RECORD_COUNT)
+    memberCount = LOBBY_UNIT_RECORD_COUNT;
+  if (memberCount > 0) {
 #ifndef UBFIX
     s16 *partyAddress = (s16 *)&gGameState;
 #endif
@@ -654,19 +654,19 @@ static s32 BattleArena_CopyPartyOwnerIds(u16 *ownerIds) {
     partyAddress += 252;
     source = (const u8 *)partyAddress;
 #endif
-    remaining = ownerCount;
+    remaining = memberCount;
     do {
-      u8 ownerId = *source++;
-      if (ownerIds != 0) {
-        *ownerIds = ownerId;
-        ownerIds++;
+      u8 memberId = *source++;
+      if (memberIds != 0) {
+        *memberIds = memberId;
+        memberIds++;
       }
       remaining--;
     } while (remaining != 0);
   }
-  if (ownerIds != 0)
-    *ownerIds = 0x00ff;
-  return ownerCount;
+  if (memberIds != 0)
+    *memberIds = 0x00ff;
+  return memberCount;
 }
 
 /// Sends the party's first three members' records, marked side 2
@@ -682,11 +682,11 @@ static s32 BattleArena_SendPartyRecords(void) {
   // polling region with while(active transfers) adds 8 bytes in tbs-en.
   s32 result;
   u8 *slotMap;
-  u16 ownerIds[8];
+  u16 memberIds[8];
   u8 peerSlots[8];
   s32 transferResult;
   u8 *heap;
-  s32 ownerCount;
+  s32 memberCount;
   s32 timeout;
   s32 tries;
   s32 i;
@@ -699,21 +699,21 @@ static s32 BattleArena_SendPartyRecords(void) {
   heap = AllocEwram(size);
   result = 0;
   timeout = LOBBY_SEND_TIMEOUT_FRAMES;
-  ownerCount = BattleArena_CopyPartyOwnerIds(ownerIds);
+  memberCount = BattleArena_CopyPartyOwnerIds(memberIds);
   slotMap = peerSlots;
   for (i = 7; i >= 0; i--) {
     slotMap[i] = 0;
   }
-  for (i = 0; i < ownerCount; i++) {
+  for (i = 0; i < memberCount; i++) {
     /* FAKEMATCH(one-pass): the record's send in a one-pass block, which keeps
      * the send failure inside the loop and gives the copy's argument order;
      * as a plain block, 3 of 255 instructions differ in tbs-en. */
     do {
-      Iwram_CopyWords(heap, Unit_Get(ownerIds[i]), size);
+      Iwram_CopyWords(heap, Unit_Get(memberIds[i]), size);
       heap[0x12a] = 2;
       // As a u8, i - 128 is 0x80 + i: this member's unit on the partner's
       // side.
-      slotMap[ownerIds[i]] = i - 128;
+      slotMap[memberIds[i]] = i - 128;
       transferResult = SerialRuntime_StartSend(heap, size);
       tries = 0;
       if (transferResult == -1) {
@@ -826,7 +826,7 @@ done:
 /// transfer state and returns a negative result.
 static s32 BattleArena_ExchangePartyRecords(void) {
   s32 result;
-  s32 receivedOwnerCount;
+  s32 receivedMemberCount;
   s32 receiveFirst;
 
   /* FAKEMATCH(one-pass): result's zero in a one-pass block, which loads it
@@ -845,11 +845,11 @@ static s32 BattleArena_ExchangePartyRecords(void) {
     if (result < 0)
       goto fail;
     WaitFrames(5);
-    receivedOwnerCount = result = BattleArena_ReceivePartyRecords();
+    receivedMemberCount = result = BattleArena_ReceivePartyRecords();
     if (result < 0)
       goto check;
   } else {
-    receivedOwnerCount = result = BattleArena_ReceivePartyRecords();
+    receivedMemberCount = result = BattleArena_ReceivePartyRecords();
     if (result < 0)
       goto fail;
     WaitFrames(10);
@@ -857,10 +857,10 @@ static s32 BattleArena_ExchangePartyRecords(void) {
     if (result < 0)
       goto fail;
   }
-  FieldGameFlag_SetByte(FLAG_LINK_PARTY_COUNT, receivedOwnerCount);
-  result = receivedOwnerCount;
+  FieldGameFlag_SetByte(FLAG_LINK_PARTY_COUNT, receivedMemberCount);
+  result = receivedMemberCount;
 check:
-  if (receivedOwnerCount < 0) {
+  if (receivedMemberCount < 0) {
   fail:
     SerialRuntime_ResetTransferState();
   }
@@ -1254,27 +1254,27 @@ static s32 BattleArena_OpenSanctum(s32 localId) {
 #endif
 }
 
-/// Returns 1 when character ownerId is among the party's first three members
+/// Returns 1 when character memberId is among the party's first three members
 /// while a linked battle is arranged (FLAG_LINK_BATTLE_ARRANGED), or its first
 /// four otherwise; 0 when not.
-static s32 BattleArena_PartyContains(s32 ownerId) {
+static s32 BattleArena_PartyContains(s32 memberId) {
   s32 count;
-  s32 ownerLimit;
+  s32 memberLimit;
   s32 i;
 
   count = Party_CountMembers();
-  ownerLimit = 3;
+  memberLimit = 3;
   if (GameFlag_Test(FLAG_LINK_BATTLE_ARRANGED) == 0) {
-    ownerLimit = 4;
+    memberLimit = 4;
   }
-  if (count > ownerLimit) {
-    count = ownerLimit;
+  if (count > memberLimit) {
+    count = memberLimit;
   }
   for (i = 0; i < count; i++) {
     if (gGameState.party[i] == 0xff) {
       return 0;
     }
-    if (gGameState.party[i] == ownerId) {
+    if (gGameState.party[i] == memberId) {
       return 1;
     }
   }
@@ -1436,13 +1436,13 @@ static s32 BattleArena_SaveBattleResults(void) {
 
   Sound_PlaySong(MUS_SAVED);
   window = Message_OpenWindow(MsgLobbySavingBattleResults, 5, 4, 1);
-  while (UiWork_IsComplete() == 0)
+  while (TextPrinter_AllFinished() == 0)
     WaitFrames(1);
   Save_ProcessSelectedFile();
   Window_Close(window, 1);
   WaitFrames(1);
   window = Message_OpenWindow(MsgLobbyBattleResultsSaved, 5, 4, 1);
-  while (UiWork_IsComplete() == 0)
+  while (TextPrinter_AllFinished() == 0)
     WaitFrames(1);
   Window_Close(window, 1);
 #ifdef UBFIX
@@ -1458,13 +1458,13 @@ static s32 BattleArena_SaveMonsterBattleResults(void) {
 
   Sound_PlaySong(MUS_SAVED);
   window = Message_OpenWindow(MsgLobbySavingMonsterBattle, 5, 4, 1);
-  while (UiWork_IsComplete() == 0)
+  while (TextPrinter_AllFinished() == 0)
     WaitFrames(1);
   Save_ProcessSelectedFile();
   Window_Close(window, 1);
   WaitFrames(1);
   window = Message_OpenWindow(MsgLobbyMonsterBattleResults, 5, 4, 1);
-  while (UiWork_IsComplete() == 0)
+  while (TextPrinter_AllFinished() == 0)
     WaitFrames(1);
   Window_Close(window, 1);
 #ifdef UBFIX

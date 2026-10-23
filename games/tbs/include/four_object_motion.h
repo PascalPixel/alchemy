@@ -13,12 +13,12 @@ struct Sprite;
 /// The menu work (HEAP_SLOT_MENU) as the row of four figures reads it: each
 /// figure's object, screen position and scale.
 struct DjinnFiguresWork {
-  /// ItemMenuWork's fields before ownerY; not named here.
-  u8 beforeOwnerY[0x144];
-  /// Screen pixels: the party figures' ownerY, which moves only the depth
+  /// ItemMenuWork's fields before memberY; not named here.
+  u8 beforeMemberY[0x144];
+  /// Screen pixels: the party figures' memberY, which moves only the depth
   /// slot.
   s16 verticalOrigins[4];
-  /// ItemMenuWork's fields from ownerY[4] to completionFlag; not
+  /// ItemMenuWork's fields from memberY[4] to completionFlag; not
   /// named here.
   u8 beforeFigures[0xd8];
   struct Sprite *animations[4];

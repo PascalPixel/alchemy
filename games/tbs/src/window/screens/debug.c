@@ -19,17 +19,17 @@ UNUSED void DebugMapSelect_Schedule(void) {
 /// labels. The first line has the map's name (MsgDebugCategoryName + map) and,
 /// beside it, the area its warp destination leads to (MsgDebugEntryName +
 /// area); the numbers, three digits each, go under them.
-void DebugMapSelect_DrawRow(struct Window *work, s32 mapId,
+void DebugMapSelect_DrawRow(struct Window *window, s32 mapId,
                             const s16 *warpDest) {
   s16 mapIndex = mapId;
   s32 label = MapSec_GetNameIndexFar(mapIndex, *warpDest) + MsgDebugEntryName;
-  WindowSprite_PrepareForRedraw(work);
-  Text_DrawNumber(mapIndex, 3, work, 0, 14);
-  Text_DrawNumber(*warpDest, 3, work, MENU_LABEL_X, 14);
-  Text_DrawString(gMenu_ColonString, work, MENU_TEXT_X, 0);
-  Text_DrawMessage(mapIndex + MsgDebugCategoryName, work, 0, 0);
-  Text_DrawString(gMenu_ColonString, work, MENU_TEXT_X, 14);
-  Text_DrawMessage(label, work, MENU_LABEL_X, 0);
+  WindowSprite_PrepareForRedraw(window);
+  Text_DrawNumber(mapIndex, 3, window, 0, 14);
+  Text_DrawNumber(*warpDest, 3, window, MENU_LABEL_X, 14);
+  Text_DrawString(gMenu_ColonString, window, MENU_TEXT_X, 0);
+  Text_DrawMessage(mapIndex + MsgDebugCategoryName, window, 0, 0);
+  Text_DrawString(gMenu_ColonString, window, MENU_TEXT_X, 14);
+  Text_DrawMessage(label, window, MENU_LABEL_X, 0);
 }
 
 // The debug map selector: a map and a warp destination number, starting from
@@ -315,9 +315,9 @@ void Menu_ReservedNoOp(void) {}
 
 /// Sets the Djinni's collected flag, then adds it to the specified member.
 /// The flag is FLAG_DJINN_FIRST + 20 * element + index. Nothing calls it.
-void Djinn_SetFoundFlagAndAdd(s32 owner, s32 element, s32 index) {
+void Djinn_SetFoundFlagAndAdd(s32 member, s32 element, s32 index) {
   GameFlag_SetBitFar((element * 0x14) + index + FLAG_DJINN_FIRST);
-  Djinn_GiveFar(owner, element, index);
+  Djinn_GiveFar(member, element, index);
 }
 
 /// Handles Save, Sleep and Options from the pause menu. A cancelled save
@@ -424,7 +424,7 @@ s32 DebugBrowser_Icons(void) {
           WindowSprite_Create(slot, OUTPUT_SIZE_16X16, window, x, y);
         } else {
           slot = VramCache_FindFreeEntry();
-          Ui_BuildPatternToSlot(i, 0, slot);
+          Icon_BuildMiscIconTiles(i, 0, slot);
           WindowSprite_Create(slot, OUTPUT_SIZE_16X16, window, x, y);
         }
       }
@@ -519,7 +519,7 @@ s32 DebugBrowser_Portraits(void) {
         s32 loadedSlot = *(u16 *)((u8 *)work + slotOffset);
         palette = 15;
         slot = loadedSlot;
-        UiGlyph_LoadEntryWithPalette(glyph, 0, &slot, &tile, palette, 1);
+        Icon_LoadWithPalette(glyph, 0, &slot, &tile, palette, 1);
       }
       Text_DrawNumberInWindow(index, 2, window, 0, 0);
       Text_DrawMessageAsTiles(index + DEBUG_GLYPH_NAME, window, 24, 0);

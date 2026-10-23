@@ -297,9 +297,9 @@ A task is added once and then runs by itself until it is removed. It is a
 `Task_Remove(callback)`; [Engine](../../engine.md#waiting-and-tasks)
 shows the battle camera being added. Some
 belong in the frame's work, such as scrolling the map
-(`MapGrid_UpdateLayerScroll`) or updating the windows (`UiWork_ProcessAll`);
+(`MapGrid_UpdateLayerScroll`) or updating the windows (`WindowSystem_Update`);
 others have to happen in the blank, such as copying the windows' changed
-tiles to the screen (`UiWork_UploadDirtyBlocks`). Each task carries one
+tiles to the screen (`WindowSystem_UploadTilemap`). Each task carries one
 number, its priority, which says both: which of the two passes runs it, and
 where in that pass. Where the priority matters, it matters a lot: in a battle the
 camera (`BattleCamera_Update`) is added with a lower priority than

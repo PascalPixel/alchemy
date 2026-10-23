@@ -31,7 +31,7 @@
 /// outside battle and three in battle, plus one with the PP row.
 void PartyStatus_BuildLayoutBounds(s32 flags) {
   // UB: slot[-1] steps before the single party-status heap slot. Reading
-  // the actual owners grows the EN function from 0x68 to 0x6c bytes.
+  // the actual members grows the EN function from 0x68 to 0x6c bytes.
   // Keep the original address formation only in the matching build.
 #ifdef UBFIX
   struct PartyStatusWindow *layout = HEAP_SLOT_BLOCK(HEAP_SLOT_PARTY_STATUS);
@@ -229,7 +229,7 @@ s32 PartyStatus_DrawBars(struct Window *window, s32 x, s32 y, s32 length) {
 /// and laid out again first.
 void PartyStatus_Draw(s32 flags) {
   // UB: the negative indices leave the single party-status heap slot.
-  // Named owners grow the EN function from 0x3d4 to 0x3dc bytes. Keep the
+  // Named members grow the EN function from 0x3d4 to 0x3dc bytes. Keep the
   // original address formation and load order in the matching build.
 #ifdef UBFIX
   struct PartyStatusWindow *layout = HEAP_SLOT_BLOCK(HEAP_SLOT_PARTY_STATUS);
@@ -305,11 +305,11 @@ void PartyStatus_Draw(s32 flags) {
     s32 current;
 
     if (hp == 0)
-      UiWork_SetParameterNibble(2);
+      Text_SetColor(2);
     else if (hp <= hpMax / 4)
-      UiWork_SetParameterNibble(4);
+      Text_SetColor(4);
     else
-      UiWork_SetParameterNibble(15);
+      Text_SetColor(15);
     // The numbers' tiles take BG palette 14 in the field and 5 in battle
     // (WindowWork.textPalette); the name keeps palette 15.
     work->textPalette = 14;
@@ -320,7 +320,7 @@ void PartyStatus_Draw(s32 flags) {
     work->textPalette = 15;
     Text_DrawStringAtOffset(unit->name, window,
                             (x + i * PARTY_STATUS_COLUMN_WIDTH) * 8, y * 8);
-    UiWork_SetParameterNibble(15);
+    Text_SetColor(15);
     if (unit->hpMax != 0) {
       // A member with any HP left shows at least one pixel of bar.
       current = unit->hp;

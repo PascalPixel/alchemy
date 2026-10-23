@@ -876,7 +876,7 @@ s32 Lalivero_Initialize(void) {
   sprite->image.fullColor = 0;
   sprite->image.palette = 0;
   icon = AllocHeapSlot(HEAP_SLOT_GLYPH_TRANSFER, sizeof(GlyphTransfer));
-  Ui_PrepareTransferForItem(ITEM_BLACK_ORB);
+  Icon_DrawItem(ITEM_BLACK_ORB);
   VramCache_Load(sprite->slot, ICON_TILE_BYTES, icon->tiles);
   FreeHeapSlot(HEAP_SLOT_GLYPH_TRANSFER);
 

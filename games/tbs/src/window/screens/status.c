@@ -112,7 +112,7 @@ struct StatusCursor {
   s32 row;            ///< tiles
 };
 
-/// Runs the summary screen for party member `owner` until B is pressed or
+/// Runs the summary screen for party member `member` until B is pressed or
 /// the link battle's time runs out: the member's level, experience, HP and
 /// PP, class, stats, Djinn, elements and statuses, with a help line for
 /// the item under the cursor. With `listCount` nonzero, L and R step through
@@ -121,7 +121,7 @@ struct StatusCursor {
 /// (BattleMenuWork.timerHidden), and the party status window is redrawn on the
 /// way out. Returns 0. Battle_CollectPartyCommands opens it from the Status
 /// command and from L or R in a member's command row.
-s32 BattleSummaryScreen_Run(u16 *list, s32 listCount, s32 owner) {
+s32 BattleSummaryScreen_Run(u16 *list, s32 listCount, s32 member) {
   struct MenuSprite portraitSprite;
   struct MenuSprite cursorSprite;
   s32 statusSlots[11];
@@ -132,7 +132,7 @@ s32 BattleSummaryScreen_Run(u16 *list, s32 listCount, s32 owner) {
   struct WindowWork *work;
   struct Window *statusWindow;
   struct Window *helpWindow;
-  s32 ownerIndex;
+  s32 memberIndex;
   s32 cursorSlot;
   struct MenuPoint cursorPosition;
   s32 portraitSlot;
@@ -159,7 +159,7 @@ s32 BattleSummaryScreen_Run(u16 *list, s32 listCount, s32 owner) {
 
   work = WINDOW_WORK;
   redraw = OWNER_STATUS_REDRAW_ALL;
-  ownerIndex = -1;
+  memberIndex = -1;
   portraitSlot = VramCache_AllocEntry(0x200);
   statusCount = 0;
   hasDjinn = Party_SumDjinnCountsFar(-1);
@@ -195,8 +195,8 @@ s32 BattleSummaryScreen_Run(u16 *list, s32 listCount, s32 owner) {
         break;
       }
       if (kind != BATTLE_UNIT_REMOVED) {
-        if (kind == owner) {
-          ownerIndex = i;
+        if (kind == member) {
+          memberIndex = i;
           break;
         }
       }
@@ -216,7 +216,7 @@ s32 BattleSummaryScreen_Run(u16 *list, s32 listCount, s32 owner) {
     // The member's 32x32 portrait at the top left.
     nameSprite.oam.word.attr01 = 0x80000400;
     nameSprite.oam.word.attr23 = 0;
-    nameSprite.oam.f.tile = Portrait_Load(owner, portraitSlot);
+    nameSprite.oam.f.tile = Portrait_Load(member, portraitSlot);
     nameSprite.oam.f.x = 8;
     nameSprite.oam.f.y = 24;
     nameSprite.oam.f.palette = 14;
@@ -245,8 +245,8 @@ s32 BattleSummaryScreen_Run(u16 *list, s32 listCount, s32 owner) {
       break;
     }
 
-    Ui_SetRectHighlight(statusWindow->x, statusWindow->y, statusWindow->width,
-                        statusWindow->height, 15);
+    Window_HighlightRect(statusWindow->x, statusWindow->y, statusWindow->width,
+                         statusWindow->height, 15);
 
     if (statusCount != 0) {
       if ((u32)cursor.group <= STATUS_CURSOR_COMBAT_STATS) {
@@ -336,9 +336,9 @@ s32 BattleSummaryScreen_Run(u16 *list, s32 listCount, s32 owner) {
       cursor.helpEntry = cursorStop->entry;
       cursor.column = cursorStop->column;
       cursor.row = cursorStop->row;
-      Ui_SetRectHighlight(statusWindow->x + cursorStop->highlightColumn + 1,
-                          statusWindow->y + cursorStop->highlightRow + 1,
-                          cursorStop->highlightWidth, 1, 14);
+      Window_HighlightRect(statusWindow->x + cursorStop->highlightColumn + 1,
+                           statusWindow->y + cursorStop->highlightRow + 1,
+                           cursorStop->highlightWidth, 1, 14);
     } else if (cursor.group == STATUS_CURSOR_COMBAT_STATS) {
       cursor.helpEntry = gBattleSummaryScreen_EquipmentCursors
                              [cursor.groupPositions[cursor.group]]
@@ -371,7 +371,7 @@ s32 BattleSummaryScreen_Run(u16 *list, s32 listCount, s32 owner) {
     // The member's battle figure: its battle object's first sprite record,
     // as a 64x64, 256-colour sprite at (172, 56).
     {
-      struct MenuSprite *face = GetBattleObjectSlotFar(owner)->object->records;
+      struct MenuSprite *face = GetBattleObjectSlotFar(member)->object->records;
 
       portraitSprite.oam.word.attr01 = 0xC0002400;
       portraitSprite.oam.word.attr23 = 0;
@@ -407,11 +407,11 @@ s32 BattleSummaryScreen_Run(u16 *list, s32 listCount, s32 owner) {
     Oam_AddSpriteAtDepth((s32 *)&cursorSprite, 241);
 
     if (redraw != 0) {
-      unit = Unit_GetFar(owner);
+      unit = Unit_GetFar(member);
 #if TBS_PATCH_1
       Window_MarkVisibleTextTiles();
 #endif
-      Ui_FillVramBlockPattern();
+      Text_FillCanvasBackground();
 
       if ((redraw & OWNER_STATUS_REDRAW_ALL) != 0) {
         WindowSprite_RedrawSavedRect(statusWindow);
@@ -531,7 +531,7 @@ s32 BattleSummaryScreen_Run(u16 *list, s32 listCount, s32 owner) {
             Text_DrawNumberInWindow(unit->djinnHeldCounts[j], 1, statusWindow,
                                     48 + j * 32 + 8, 72);
           }
-          Text_DrawNumberInWindow(Unit_GetElementLevelFar(owner, j), 2,
+          Text_DrawNumberInWindow(Unit_GetElementLevelFar(member, j), 2,
                                   statusWindow, 48 + j * 32, 80);
           Text_DrawNumberInWindow(unit->element[j].power, 3, statusWindow,
                                   40 + j * 32, 88);
@@ -686,7 +686,7 @@ s32 BattleSummaryScreen_Run(u16 *list, s32 listCount, s32 owner) {
         unit->attackStage = 0;
         unit->defenseStage = 0;
         unit->agilityStage = 0;
-        Unit_CalculateFar(owner);
+        Unit_CalculateFar(member);
         attackDelta -= unit->atk;
         defenseDelta -= unit->def;
         agilityDelta -= unit->agi;
@@ -734,7 +734,7 @@ s32 BattleSummaryScreen_Run(u16 *list, s32 listCount, s32 owner) {
                  unit->level <= 98) {
         // Experience below level 99: the points still needed for the next.
         MessageArgument_Push(
-            Unit_GetExperienceForLevelFar(owner, unit->level + 1) -
+            Unit_GetExperienceForLevelFar(member, unit->level + 1) -
                 unit->experience,
             MESSAGE_ARGUMENT_NUMBER);
         Message_CopyExpanded(MsgOwnerStatusNextLevel, helpText,
@@ -780,19 +780,19 @@ s32 BattleSummaryScreen_Run(u16 *list, s32 listCount, s32 owner) {
 
     if (listCount != 0) {
       if ((keys & KEY_R) != 0) {
-        ownerIndex++;
-        if (ownerIndex >= listCount) {
-          ownerIndex = 0;
+        memberIndex++;
+        if (memberIndex >= listCount) {
+          memberIndex = 0;
         }
-        owner = list[ownerIndex];
+        member = list[memberIndex];
         redraw = OWNER_STATUS_REDRAW_ALL;
         Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
       } else if ((keys & KEY_L) != 0) {
-        ownerIndex--;
-        if (ownerIndex < 0) {
-          ownerIndex = listCount - 1;
+        memberIndex--;
+        if (memberIndex < 0) {
+          memberIndex = listCount - 1;
         }
-        owner = list[ownerIndex];
+        member = list[memberIndex];
         redraw = OWNER_STATUS_REDRAW_ALL;
         Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
       }

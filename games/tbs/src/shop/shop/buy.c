@@ -770,9 +770,9 @@ s32 Shop_ConfirmEquip(s32 unitId, s32 slot) {
 
   if (item->flags & ITEM_CURSED) {
     Sound_PlaySongFar(SE_103);
-    UiWork_FinalizePendingCoreFar();
+    TextPrinter_CloseFinishedWindowsFar();
     Message_OpenWindowFar(MsgBecameCursed, 8, 4, 2);
-    while (UiWork_IsCompleteFar() == 0) {
+    while (TextPrinter_AllFinishedFar() == 0) {
       WaitFrames(1);
     }
   }

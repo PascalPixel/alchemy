@@ -71,7 +71,7 @@ FOUR_OBJECT_MOTION_DEFINE_RELEASE(DjinnFigures_ClearSlotsAndSchedule,
 /// Projects the four objects at full scale from their saved row positions.
 /// Task, each frame from DjinnFigures_InitializeTopRow. The
 /// image stands at (positionsX, positionsY); verticalOrigins, which is the
-/// party figures' ownerY, only moves the depth slot.
+/// party figures' memberY, only moves the depth slot.
 void DjinnFigures_UpdateAllPositions(void) {
   struct DjinnFiguresWork *state = gMenuWork;
   s32 index;
@@ -238,7 +238,7 @@ UNUSED void Menu_StartPartyFiguresWalking(void) {
   s32 index;
 
   for (index = 0; index < menu->partyCount; ++index) {
-    Sprite_StartAnimFar(menu->ownerObjects[index], 1);
+    Sprite_StartAnimFar(menu->memberObjects[index], 1);
   }
 }
 

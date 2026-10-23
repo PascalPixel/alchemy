@@ -97,7 +97,7 @@ void SelectionScreen_AddEntry(u32 kind, u32 base) {
   struct SelectionScreenWork *state = gSelectionScreenWork;
   u16 entryCount = state->count;
 
-  if (entryCount != UI_SELECTION_ENTRY_LIMIT) {
+  if (entryCount != SELECTION_SCREEN_ENTRY_LIMIT) {
     state->kinds[entryCount] = kind;
     state->bases[entryCount] = base;
     state->count++;
@@ -168,7 +168,7 @@ void SelectionScreen_BuildEntries(u32 unused) {
 
 /// An empty function, reached only through a bare entry of the window
 /// far-call table (system/far_call/WINDOW.S).
-void UiWork_ReservedNoOp(void) {}
+void SelectionScreen_ReservedNoOp(void) {}
 
 /// Returns a free selection icon record of `kind` (enum SelectionIconGroup),
 /// or NULL.
@@ -922,7 +922,7 @@ void SelectionScreen_RedrawIcon(struct SelectionScreenWork *state,
     u32 first = node->message - MsgCommandName;
 
     value = node->slot;
-    Ui_BuildPairedPatternsToSlot(first, 0, &value, &tile, 1);
+    Icon_BuildCommandIconTiles(first, 0, &value, &tile, 1);
   }
 }
 
@@ -943,7 +943,7 @@ void SelectionScreen_HighlightIcon(struct SelectionScreenWork *state,
     u32 resource = node->message - MsgCommandName;
 
     value = node->slot;
-    Ui_BuildPairedPatternsToSlot(resource, 0, &value, &tile, 1);
+    Icon_BuildCommandIconTiles(resource, 0, &value, &tile, 1);
     SelectionScreen_LoadLargeIcon();
   }
 }
@@ -1077,7 +1077,7 @@ s32 Resource_LoadByMode(s32 mode, s32 value) {
   switch (mode) {
   case ICON_KIND_COMMAND:
   case ICON_KIND_YES_NO:
-    Ui_BuildPairedPatternsToSlot(value, 0, &result, &output, 0);
+    Icon_BuildCommandIconTiles(value, 0, &result, &output, 0);
     break;
   case ICON_KIND_ITEM:
     result = VramCache_FindFreeEntry();
@@ -1118,7 +1118,7 @@ s32 Resource_LoadByModeIntoSlot(s32 mode, s32 value, s32 result, s32 option) {
   switch (mode) {
   case ICON_KIND_COMMAND:
   case ICON_KIND_YES_NO:
-    Ui_BuildPairedPatternsToSlot(value, option, &result, &output, 1);
+    Icon_BuildCommandIconTiles(value, option, &result, &output, 1);
     break;
   case ICON_KIND_ITEM:
     Icon_CopyResourceToSlot(value,
@@ -1134,7 +1134,7 @@ s32 Resource_LoadByModeIntoSlot(s32 mode, s32 value, s32 result, s32 option) {
     Ability_LoadGlyph(value, option, &result, &output, 1);
     break;
   case ICON_KIND_PATTERN:
-    Ui_BuildPatternToSlot(value, 0, result);
+    Icon_BuildMiscIconTiles(value, 0, result);
     break;
   case ICON_KIND_TABLE_ENTRY:
     RenderResource_LoadTableEntry(value, 0, result);
@@ -1160,7 +1160,7 @@ void SelectionScreen_SetupIcon(u32 kind, s32 base, struct SelectionNode *node,
   case ICON_KIND_YES_NO:
     if (reuse != 0)
       cacheSlot = node->slot;
-    Ui_BuildPairedPatternsToSlot(base, 0, &cacheSlot, &tile, reuse);
+    Icon_BuildCommandIconTiles(base, 0, &cacheSlot, &tile, reuse);
     node->message = base + MsgCommandName;
     break;
   case ICON_KIND_ITEM:
@@ -1399,7 +1399,7 @@ void Resource_ResetPendingTransfer(void) {
 
 /// Runs the field menu until the player picks something that leaves it, and
 /// returns the chosen screen's result. Cancelling the menu returns an
-/// undefined value, the missing result of UiWork_CloseAndRelease (0 under
+/// undefined value, the missing result of PartyStatus_CloseWithMenu (0 under
 /// UBFIX); its one caller, Map_Run, ignores the result. Its case for
 /// command 0, which stores the trigger tile ahead in the event work's
 /// searchCell, is unreachable.
@@ -1427,10 +1427,10 @@ s32 FieldMenu_Run(void) {
 #ifdef UBFIX
     // UB: the original reads a void return. The default result is ignored by
     // the only caller, so give it a defined value after closing the window.
-    UiWork_CloseAndRelease();
+    PartyStatus_CloseWithMenu();
     ret = 0;
 #else
-    ret = UiWork_CloseAndRelease();
+    ret = PartyStatus_CloseWithMenu();
 #endif
 
     // A screen left without a choice (-1, or nonzero from the Djinn screen)
@@ -1485,7 +1485,7 @@ void PartyStatus_OpenAndWait(void) {
 
 /// Closes the party status window, kept in heap block 16 (gPartyStatusWork),
 /// and frees the block.
-void UiWork_CloseAndRelease(void) { PartyStatus_Close(); }
+void PartyStatus_CloseWithMenu(void) { PartyStatus_Close(); }
 
 /// Sets up an empty selection screen and waits a frame.
 /// Nothing calls it.

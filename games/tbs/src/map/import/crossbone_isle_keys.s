@@ -17,7 +17,7 @@
 	.set import.MapGrid_CopyCellAttributeRect, 1
 	.set import.MapGrid_CheckCollision, 1
 	.set import.MapGrid_SetScreenShake, 1
-	.set import.Ui_PrepareTransferForItem, 1
+	.set import.Icon_DrawItem, 1
 	.set import.PartyInventory_FindMember, 1
 	.set import.PartyInventory_Remove, 1
 	.set import.GameFlag_Test, 1

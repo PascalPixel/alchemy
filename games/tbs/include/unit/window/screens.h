@@ -24,9 +24,9 @@ struct WindowSprite *WindowSprite_CreateFromTable(s32 table_entry,
                                                   s32 y);
 struct WindowSprite *CreateSideObject(s32 character, s32 unused, s32 side,
                                       struct Window *window, s32 x, s32 y);
-void Ui_LoadCharacterEntryForSlot(u32 side, s32 character, s32 unused);
+void Portrait_Reload(u32 side, s32 character, s32 unused);
 void WindowSprite_SetMotion(struct WindowSprite *out, s32 mode);
-void WindowSprite_SetInvertedSentinel(void *output, s32 priority);
+void WindowSprite_SetInvertedSentinel(void *sprite, s32 priority);
 void Win_FillScanlineSpans(void *spans);
 void Win_FillScreenBlockRect(s32 unused0, s32 unused1, u32 width, u32 height,
                              s32 value);
@@ -97,7 +97,7 @@ void Heading_Bob(struct WindowSprite *obj);
 void CommandIcon_Load(s32 icon, s32 slot, s32 remap);
 struct WindowSprite *CommandIcon_Create(s32 icon, s32 remap,
                                         struct Window *window, s32 x, s32 y);
-void Ui_ApplyTableScaleToObject(struct WindowSprite *obj);
+void WindowSprite_Pulse(struct WindowSprite *obj);
 
 struct BattleAction;
 struct AbilityDefinition;
@@ -122,7 +122,7 @@ s32 Resource_LoadTableEntryToBuffer(s32 resource, s32 index);
 s32 ItemIcon_LoadIntoSlot(s32 resource, s32 index);
 s32 Resource_LoadIndexedEntryToBuffer(s32 resource, s32 index);
 s32 Portrait_Load(u32 member, s32 cacheSlot);
-s32 Ui_GetTableWordZero(s32 no);
+s32 WindowSprite_GetPointerTiles(s32 no);
 void Icon_Decompress(GlyphTransfer *work);
 struct Window *Link_CreateCountdownLabelWindow(void);
 s32 Resource_LoadIndexedIntoBuffer(s32 arg0, s32 arg1);
@@ -133,7 +133,7 @@ void Graphics_SetBg1Priority0(void);
 void Graphics_InstallBg1VCountHandler(void);
 struct Window *Message_ShowAndWait(s32 message, s32 x, s32 y);
 s32 BattleCommandRow_Run(s32 mode);
-void Ui_SetRectHighlight(s32 x, s32 y, s32 width, s32 height, s32 alt);
+void Window_HighlightRect(s32 x, s32 y, s32 width, s32 height, s32 alt);
 s32 PartyStatus_HighlightMembers(u16 *ids);
 #ifdef UBFIX
 void String_FormatNumberToHalfwords(s16 *out, s32 value);
@@ -144,21 +144,21 @@ s32 BattleDjinnMenu_ListChangedDjinn(const struct PsynergyEntry *oldGrid,
                                      const struct PsynergyEntry *newGrid,
                                      u16 *out, s32 *gained, s32 *lost);
 #ifdef UBFIX
-void Ui_CreateOutputFromResourceSlot(struct Window *input, s32 x, s32 y,
-                                     s32 ability);
-#else
-s32 Ui_CreateOutputFromResourceSlot(struct Window *input, s32 x, s32 y,
+void WindowSprite_CreateAbilityIcon(struct Window *input, s32 x, s32 y,
                                     s32 ability);
+#else
+s32 WindowSprite_CreateAbilityIcon(struct Window *input, s32 x, s32 y,
+                                   s32 ability);
 #endif
-struct Window *BattleDjinnMenu_ShowChangePreview(struct Window *win, s32 owner,
+struct Window *BattleDjinnMenu_ShowChangePreview(struct Window *win, s32 member,
                                                  s32 code, s32 page,
                                                  s32 *pageCount);
-s32 BattleSummaryScreen_Run(u16 *list, s32 listCount, s32 owner);
-s32 BattleDjinnMenu_Run(s32 owner, s32 unused);
+s32 BattleSummaryScreen_Run(u16 *list, s32 listCount, s32 member);
+s32 BattleDjinnMenu_Run(s32 member, s32 unused);
 s32 BattleSummonMenu_Run(s32 unused0, s32 unused1, const u8 *standby);
 s32 Item_ClassifyUseAbility(s32 unit, s32 item);
 void Vram_CopyTile(u32 source_tile, u32 destination_tile);
-s32 BattleItemMenu_Run(s32 owner, u16 *entries, s32 count);
+s32 BattleItemMenu_Run(s32 member, u16 *entries, s32 count);
 s32 BattlePsynergyMenu_Run(s32 unitId, u16 *actions, s32 count);
 s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind);
 void UpdateLinkSessionCountdown(void);
@@ -227,7 +227,8 @@ s32 YesNoMenu_RunAt(s32 x, s32 y, s32 selection);
 s32 Menu_SelectCoinsOrMedals(s32 selection);
 
 void DebugMapSelect_Schedule(void);
-void DebugMapSelect_DrawRow(struct Window *work, s32 first, const s16 *second);
+void DebugMapSelect_DrawRow(struct Window *window, s32 first,
+                            const s16 *second);
 #ifdef UBFIX
 void DebugMapSelect_Run(void);
 #else
@@ -240,7 +241,7 @@ void String_FormatHexDigits(u32 value, u32 count, u8 *out);
 void DebugFlagEditor_DrawTable(struct Window *window, s32 start_flag);
 s32 DebugFlagEditor_HandleInput(struct Window *window, s32 *page, s32 *cursor);
 void Menu_ReservedNoOp(void);
-void Djinn_SetFoundFlagAndAdd(s32 owner, s32 element, s32 index);
+void Djinn_SetFoundFlagAndAdd(s32 member, s32 element, s32 index);
 s32 PauseMenu_Run(void);
 s32 DebugBrowser_Icons(void);
 s32 DebugBrowser_Portraits(void);

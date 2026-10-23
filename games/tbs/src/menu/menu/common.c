@@ -62,8 +62,8 @@ s32 Menu_SuspendFieldTasks(void) {
   return Task_SuspendOverlayTasks();
 }
 
-/// Clears the whole menu work and sets its defaults: no pane selected, one
-/// entry in each pane, and a 1x1 cursor grid. Each screen's run function calls
+/// Clears the whole menu work and sets its defaults: no side selected, one
+/// entry in each side, and a 1x1 cursor grid. Each screen's run function calls
 /// it once the menu work's heap block is allocated, so every window handle and
 /// icon pointer in the work starts as NULL.
 void Window_InitializeWork(s32 unused) {
@@ -112,13 +112,13 @@ void Window_CloseIfOpen(struct Window **handle, s32 style) {
 
 /// Copies one Unit through _call_via_r3 to the resident IWRAM word copy, where
 /// menu/djinn.c's Unit_Copy calls Iwram_CopyWords.
-static inline void Unit_CopyViaR3(struct Unit *destination,
-                                  struct Unit *source) {
+static inline void StatusPanel_CopyUnit(struct Unit *destination,
+                                        struct Unit *source) {
   _call_via_r3(destination, source, sizeof(struct Unit), IwramCopyWords);
 }
 
 /// Draws the status panel of the Item and Psynergy screens for the party
-/// member owner (window at tile 0,5, 13 by 12): the name, up to two statuses
+/// member `member` (window at tile 0,5, 13 by 12): the name, up to two statuses
 /// or the level, the member's portrait, and below them what mode's panel kind
 /// asks for. slot is the inventory slot of the item the panel is about, for
 /// the equipment and Psynergy item panels. The first parameter, the status
@@ -128,7 +128,7 @@ static inline void Unit_CopyViaR3(struct Unit *destination,
 /// unless mode has STATUS_PANEL_LOWER_ONLY, the portrait it creates replaces
 /// the work's cursor. The equipment panel equips the item on the real unit for
 /// a moment and puts the unit back from a heap copy it frees before returning.
-void StatusPanel_Draw(struct Window *unused, s32 owner, s32 slot, s32 mode) {
+void StatusPanel_Draw(struct Window *unused, s32 member, s32 slot, s32 mode) {
   s32 created;
   struct ItemDefinition *def;
   u32 item;
@@ -141,7 +141,7 @@ void StatusPanel_Draw(struct Window *unused, s32 owner, s32 slot, s32 mode) {
 
   created = 0;
   menu = gMenuWork;
-  unit = Unit_GetFar(owner);
+  unit = Unit_GetFar(member);
   item = unit->inventory[slot];
   def = Item_GetDirectFar(item & INVENTORY_ITEM_ID_MASK);
   if (!(mode & STATUS_PANEL_LOWER_ONLY))
@@ -159,7 +159,7 @@ void StatusPanel_Draw(struct Window *unused, s32 owner, s32 slot, s32 mode) {
       Window_ClearInteriorTilesFar(menu->statusWindow, 0, 0, 88, 32);
     }
     Text_DrawStringAtOffsetFar(unit->name, window, STATUS_PANEL_TEXT_X, 0);
-    SummaryScreen_BuildAvailability(ailments, 1, owner);
+    SummaryScreen_BuildAvailability(ailments, 1, member);
     ailmentRows = 0;
     if (ailments[CHARACTER_POISON]) {
       Text_DrawMessageAsTilesFar(MsgPoisonLabel, window, STATUS_PANEL_TEXT_X,
@@ -183,7 +183,7 @@ void StatusPanel_Draw(struct Window *unused, s32 owner, s32 slot, s32 mode) {
     }
     if (ailmentRows < 2) {
       value = unit->level;
-      MENU_DRAW_STATUS_LABEL(gUi_LvString, window, 40, 16);
+      MENU_DRAW_STATUS_LABEL(gStatusPanel_LevelString, window, 40, 16);
       Text_DrawNumberInWindowFar(value, 4, window, 56, 16);
     }
   }
@@ -195,13 +195,13 @@ void StatusPanel_Draw(struct Window *unused, s32 owner, s32 slot, s32 mode) {
   }
   WindowSprite_ClearListFar(window);
   if (!(mode & STATUS_PANEL_LOWER_ONLY))
-    menu->cursor = SideObject_CreateFar(owner, 0, 0, window, 0, 0);
+    menu->cursor = SideObject_CreateFar(member, 0, 0, window, 0, 0);
 
   switch (mode & STATUS_PANEL_KIND_MASK) {
   case STATUS_PANEL_EXPERIENCE:
     value = unit->classId + MsgClassName;
     Text_DrawMessageAsTilesFar(value, window, 0, 32);
-    Ui_DrawValuePairRows(unit, window);
+    StatusPanel_DrawHpPp(unit, window);
     value = unit->experience;
     Text_DrawMessageAsTilesFar(MsgExpLabel, window, 0, 64);
     Text_DrawNumberInWindowFar(value, 8, window, 24, 72);
@@ -209,13 +209,13 @@ void StatusPanel_Draw(struct Window *unused, s32 owner, s32 slot, s32 mode) {
   case STATUS_PANEL_CLASS:
     value = unit->classId + MsgClassName;
     Text_DrawMessageAsTilesFar(value, window, 0, 32);
-    Ui_DrawValuePairRows(unit, window);
+    StatusPanel_DrawHpPp(unit, window);
     break;
   case STATUS_PANEL_EQUIP:
   case STATUS_PANEL_EQUIP + 1: { // draws the same panel
     struct Unit *backup;
 
-    if (!Item_CanUnitEquip(owner, item)) {
+    if (!Item_CanUnitEquip(member, item)) {
       Text_DrawMessageAsTilesFar(MsgCannotEquip, window,
                                  STATUS_PANEL_CANNOT_EQUIP_X, 48);
       break;
@@ -224,14 +224,14 @@ void StatusPanel_Draw(struct Window *unused, s32 owner, s32 slot, s32 mode) {
     // recalculate its stats, show them against the saved copy, then put the
     // unit back as it was.
     backup = Alloc(sizeof(struct Unit));
-    Unit_CopyViaR3(backup, unit);
+    StatusPanel_CopyUnit(backup, unit);
     if (menu->equipPreview)
       unit->inventory[slot] &= ~INVENTORY_EQUIPPED;
     else
-      Inventory_EquipFar(owner, slot);
-    Unit_CalculateFar(owner);
+      Inventory_EquipFar(member, slot);
+    Unit_CalculateFar(member);
     Text_DrawStatComparison(unit, backup, window);
-    Unit_CopyViaR3(unit, backup);
+    StatusPanel_CopyUnit(unit, backup);
     Free(backup);
     break;
   }
@@ -315,7 +315,7 @@ static inline s32 CountDigitsAtLeastTwo(s32 number) {
 /// allows 8 pixels for each digit, at least two digits wide.
 ///
 /// The international editions draw a character's HP and PP with it
-/// (Ui_DrawValuePairRows). The Japanese editions draw those figures in
+/// (StatusPanel_DrawHpPp). The Japanese editions draw those figures in
 /// four-character fields padded with spaces, which keeps the digits in line
 /// because the Japanese font's space is as wide as a digit (7 pixels). The
 /// Latin font's space is 5 pixels, so here each figure gets a field as wide
@@ -346,7 +346,7 @@ void Text_DrawNumberRightAligned(s32 number, struct Window *window, s32 x,
 /// at pixel row 40 and "PP current/maximum" at row 48. Current HP is drawn in
 /// colour 4 when it is below a quarter of maximum HP and in colour 2 at 0;
 /// then the colour goes back to 15, the default text colour.
-void Ui_DrawValuePairRows(struct Unit *unit, struct Window *window) {
+void StatusPanel_DrawHpPp(struct Unit *unit, struct Window *window) {
   // Each figure in turn, as an s16. Read straight from unit, the figures
   // compile differently.
   s16 value;
@@ -355,21 +355,21 @@ void Ui_DrawValuePairRows(struct Unit *unit, struct Window *window) {
   // The label at the left and a slash at 48. A current figure ends before
   // the slash, at 48, and a maximum at 88, each in a field as wide as its
   // digits.
-  Text_DrawStringAtOffsetFar(gUi_HpString, window, 0, 40);
-  Text_DrawStringInWindowFar((u8 *)gUi_SlashString, window, 48, 40);
+  Text_DrawStringAtOffsetFar(gStatusPanel_HpString, window, 0, 40);
+  Text_DrawStringInWindowFar((u8 *)gStatusPanel_SlashString, window, 48, 40);
   value = unit->hpMax;
   Text_DrawNumberRightAligned(value, window, 88, 40);
   value = unit->hp;
   if (value < unit->hpMax >> 2) { // below a quarter of maximum HP
-    UiWork_SetParameterNibbleFar(TEXT_COLOR_LOW_HP);
+    Text_SetColorFar(TEXT_COLOR_LOW_HP);
   }
   if (value == 0) {
-    UiWork_SetParameterNibbleFar(TEXT_COLOR_NO_HP);
+    Text_SetColorFar(TEXT_COLOR_NO_HP);
   }
   Text_DrawNumberRightAligned(value, window, 48, 40);
-  UiWork_SetParameterNibbleFar(TEXT_COLOR_NORMAL);
-  Text_DrawStringAtOffsetFar(gUi_PpString, window, 0, 48);
-  Text_DrawStringInWindowFar((u8 *)gUi_SlashString, window, 48, 48);
+  Text_SetColorFar(TEXT_COLOR_NORMAL);
+  Text_DrawStringAtOffsetFar(gStatusPanel_PpString, window, 0, 48);
+  Text_DrawStringInWindowFar((u8 *)gStatusPanel_SlashString, window, 48, 48);
   value = unit->pp;
   Text_DrawNumberRightAligned(value, window, 48, 48);
   value = unit->ppMax;
@@ -380,19 +380,19 @@ void Ui_DrawValuePairRows(struct Unit *unit, struct Window *window) {
   // figure is four characters padded with spaces: the current one drawn
   // from 16 at the font's widths, the maximum from 56 a cell a character,
   // ending at 88.
-  Text_DrawStringInWindowFar((u8 *)gUi_HpRowString, window, 0, 40);
+  Text_DrawStringInWindowFar((u8 *)gStatusPanel_HpRowString, window, 0, 40);
   value = unit->hpMax;
   Text_DrawNumberInWindowFar(value, 4, window, 56, 40);
   value = unit->hp;
   if (value < unit->hpMax >> 2) { // below a quarter of maximum HP
-    UiWork_SetParameterNibbleFar(TEXT_COLOR_LOW_HP);
+    Text_SetColorFar(TEXT_COLOR_LOW_HP);
   }
   if (value == 0) {
-    UiWork_SetParameterNibbleFar(TEXT_COLOR_NO_HP);
+    Text_SetColorFar(TEXT_COLOR_NO_HP);
   }
   Text_DrawNumberAtOffsetFar(value, 4, window, 16, 40);
-  UiWork_SetParameterNibbleFar(TEXT_COLOR_NORMAL);
-  Text_DrawStringInWindowFar((u8 *)gUi_PpRowString, window, 0, 48);
+  Text_SetColorFar(TEXT_COLOR_NORMAL);
+  Text_DrawStringInWindowFar((u8 *)gStatusPanel_PpRowString, window, 0, 48);
   value = unit->pp;
   Text_DrawNumberAtOffsetFar(value, 4, window, 16, 48);
   value = unit->ppMax;
@@ -497,11 +497,11 @@ void Icon_PrepareObject(struct WindowSprite *object) {
 /// Loads the graphics of character unit into menu entry slot 0. The calling
 /// menu argument is not used.
 void PsynergyMenu_CallIconRoutineWithValue(const void *unused, s32 unit) {
-  Ui_LoadCharacterEntryForSlotFar(0, unit, 0);
+  Portrait_ReloadFar(0, unit, 0);
 }
 
 /// Opens the menu's top-left window (13 by 5 tiles) and puts the hand cursor
-/// in it, hidden for now, as paneIcon[0]. Selects no tab yet (the s8
+/// in it, hidden for now, as sideIcon[0]. Selects no tab yet (the s8
 /// tabIndex[0] = 255 reads as -1). Returns the window, which
 /// ItemMenu_Initialize (the Item, Psynergy and Djinn screens) and
 /// Menu_InitializeSelectorCursorAndEntries (the summary screen and the member
@@ -522,16 +522,16 @@ struct Window *MenuCursor_Create(void *source) {
   cursor->motion = ICON_HIDDEN;
   menu->tabIndex[0] = 255;
   menu->tabIndex[1] = zero;
-  menu->paneIcon[0] = cursor;
+  menu->sideIcon[0] = cursor;
   // sentinel is the depth slot an icon is drawn at: the hand at 254, with
   // the glyphs.
   sentinel = 254;
   cursor->sentinel = sentinel;
   sentinel -= 255;
-  // paneIcon[1] gets slot 255. Nothing in TBS stores paneIcon[1], so it is
+  // sideIcon[1] gets slot 255. Nothing in TBS stores sideIcon[1], so it is
   // still NULL from Window_InitializeWork and this byte goes to address 0xf,
   // in the BIOS, which ignores writes.
-  menu->paneIcon[1]->sentinel = sentinel; // -1
+  menu->sideIcon[1]->sentinel = sentinel; // -1
   return window;
 }
 
@@ -544,17 +544,17 @@ struct Window *MenuCursor_Create(void *source) {
 /// Menu_ReleaseEntryObjects frees the figures.
 void PsynergyMenu_InitializeEntryObjects(void *source, s32 originX, s32 originY,
                                          s32 spacing, s32 unused) {
-  u16 ownerIds[14];
+  u16 memberIds[14];
   struct PsynergyMenuWork *menu = gMenuWork;
   struct Window *window = source;
-  s32 ownerCount = (u16)Party_ListMembersFar(ownerIds);
+  s32 memberCount = (u16)Party_ListMembersFar(memberIds);
   s32 i;
 
-  menu->tabCounts[0] = ownerCount;
+  menu->tabCounts[0] = memberCount;
   // Create and position the figures before scheduling their updates.
-  for (i = 0; i < ownerCount; i++) {
+  for (i = 0; i < memberCount; i++) {
     struct Sprite *figure =
-        Sprite_CreateFar(Party_RemapCharacterIdByFlagsFar(ownerIds[i]));
+        Sprite_CreateFar(Party_RemapCharacterIdByFlagsFar(memberIds[i]));
     if (figure != 0) {
       s32 offsetX;
       s32 windowX;
@@ -567,7 +567,7 @@ void PsynergyMenu_InitializeEntryObjects(void *source, s32 originX, s32 originY,
       tileX = originX + windowX;
       menu->tabX[i] = tileX * 8 + offsetX;
       menu->rowPositions[i] = (originY + window->y) * 8 + 16;
-      menu->ownerScale[i] = 0x10000; // 1.0 in 16.16
+      menu->memberScale[i] = 0x10000; // 1.0 in 16.16
       figure->image.priority = 0;
       figure->flags = 0;
       Sprite_StartAnimFar(figure, 1);
@@ -589,13 +589,13 @@ void PsynergyMenu_InitializeEntryObjects(void *source, s32 originX, s32 originY,
 /// Releases the party figures PsynergyMenu_InitializeEntryObjects created and
 /// stops their placement callback.
 void Menu_ReleaseEntryObjects(void) {
-  u16 ownerIds[14];
+  u16 memberIds[14];
   struct PsynergyMenuWork *menu = gMenuWork;
   s32 count;
   struct Sprite **figures;
   s32 i;
 
-  count = (u16)Party_ListMembersFar(ownerIds);
+  count = (u16)Party_ListMembersFar(memberIds);
   if (count != 0) {
     figures = menu->tabObjects;
     i = count;
@@ -631,8 +631,8 @@ void Menu_UpdateEntryObjectTransforms(void) {
 
     if (figure != 0) {
       figure->image.priority = 0;
-      scale.x = menu->ownerScale[i];
-      scale.y = menu->ownerScale[i];
+      scale.x = menu->memberScale[i];
+      scale.y = menu->memberScale[i];
       position.x = menu->tabX[i] << 16;
       position.height = placeY;
       position.y = (menu->rowPositions[i] << 16) + placeY; // always 482
@@ -649,7 +649,7 @@ void Menu_UpdateEntryObjectTransforms(void) {
 /// window, bobbing.
 void MenuCursor_Position(s32 xOffset, s32 yOffset) {
   struct PsynergyMenuWork *menu = gMenuWork;
-  struct WindowSprite *cursor = menu->paneIcon[0];
+  struct WindowSprite *cursor = menu->sideIcon[0];
 
   cursor->oam.x = cursor->x = gMenuCursor_BobX[CURSOR_BOB_STEP()] + xOffset +
                               (menu->auxiliaryWindow)->x * 8 + 8;
@@ -678,7 +678,7 @@ void MenuCursor_Slide(s32 x, s32 y) {
     menu->skipSlide = 0;
     return;
   }
-  cursor = menu->paneIcon[0];
+  cursor = menu->sideIcon[0];
   {
     s32 biasedX = cursor->oam.x + 64;
     s32 biasedY = cursor->oam.y + 64;
@@ -1289,20 +1289,14 @@ void Menu_EnsureCancelSound(void) {
 
 /// Makes the text drawn after it colour 15 (TEXT_COLOR_NORMAL). Nothing calls
 /// it or the two after it; the status panel sets its colours with
-/// UiWork_SetParameterNibbleFar.
-void WindowPalette_SetColor15(void) {
-  UiWork_SetParameterNibbleFar(TEXT_COLOR_NORMAL);
-}
+/// Text_SetColorFar.
+void WindowPalette_SetColor15(void) { Text_SetColorFar(TEXT_COLOR_NORMAL); }
 
 /// Makes the text drawn after it colour 2 (TEXT_COLOR_NO_HP).
-void WindowPalette_SetColor2(void) {
-  UiWork_SetParameterNibbleFar(TEXT_COLOR_NO_HP);
-}
+void WindowPalette_SetColor2(void) { Text_SetColorFar(TEXT_COLOR_NO_HP); }
 
 /// Makes the text drawn after it colour 4 (TEXT_COLOR_LOW_HP).
-void WindowPalette_SetColor4(void) {
-  UiWork_SetParameterNibbleFar(TEXT_COLOR_LOW_HP);
-}
+void WindowPalette_SetColor4(void) { Text_SetColorFar(TEXT_COLOR_LOW_HP); }
 
 #undef STATUS_PANEL_TEXT_X
 #undef STATUS_PANEL_CANNOT_EQUIP_X

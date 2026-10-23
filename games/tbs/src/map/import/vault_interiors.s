@@ -21,7 +21,7 @@
 	.endif
 	.set import.ObjectDispatch_SetSingleChildFlags, 1
 	.set import.FieldMessage_Show, 1
-	.set import.Ui_PrepareTransferForItem, 1
+	.set import.Icon_DrawItem, 1
 	.set import.Unit_Get, 1
 	.set import.Unit_Calculate, 1
 	.set import.GameFlag_Test, 1

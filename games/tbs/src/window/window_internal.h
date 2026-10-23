@@ -128,30 +128,29 @@ void Window_ClearTextTilesInRect(s32 x, s32 y, u32 width, u32 height);
 
 // WindowWork owns three text printers, each with four line gaps.
 #define TEXT_PRINTER_COUNT 3
-#define UI_MESSAGE_LINE_COUNT 4      ///< lines a page; spacing has one gap each
+#define TEXT_PRINTER_LINE_COUNT 4    ///< lines a page; spacing has one gap each
 #define TEXT_DEFAULT_COLOR 15        ///< a text printer's text colour at start
 #define TEXT_DEFAULT_LINE_SPACING 10 ///< a text printer's line spacing at start
 /// The palette of the text tiles (WindowWork.textPalette), the UI palette.
 #define WINDOW_PALETTE 15
 
-// Window animation lengths and the palette slot's unused marker.
+// Window animation lengths.
 #define WINDOW_OPEN_FRAMES 8
 #define WINDOW_CLOSE_FRAMES 4
-#define UI_PALETTE_SLOT_FREE 999 ///< a portrait palette slot no one holds
 /// Eight 4bpp pixels of colour 4, the window background, for filling the
 /// text canvas a word at a time.
 #define TEXT_CANVAS_BACKGROUND_WORD 0x44444444
 
 // Scratch capacities are in bytes unless the name says halfwords.
-#define UI_NUMBER_BUFFER_SIZE 16 ///< String_FormatNumber writes 14 of them
+#define TEXT_NUMBER_BUFFER_SIZE 16 ///< String_FormatNumber writes 14 of them
 /// A byte string widened to codes: 255 bytes and the terminator.
-#define UI_BYTE_STRING_BUFFER_SIZE 0x200
+#define TEXT_WIDE_STRING_BUFFER_SIZE 0x200
 /// A name the decoder writes out into a message, decoded first into a buffer
 /// of this many halfwords.
-#define UI_MESSAGE_NAME_HALFWORDS 24
-#define MESSAGE_ARGUMENT_COUNT 8    ///< the message argument table's places
-#define UI_SELECTION_ENTRY_LIMIT 16 ///< entries a selection row can list
-#define MAP_NAME_POPUP_FRAMES 90    ///< how long the area's name shows
+#define MESSAGE_NAME_HALFWORDS 24
+#define MESSAGE_ARGUMENT_COUNT 8        ///< the message argument table's places
+#define SELECTION_SCREEN_ENTRY_LIMIT 16 ///< entries a selection row can list
+#define MAP_NAME_POPUP_FRAMES 90        ///< how long the area's name shows
 
 /// The control codes of decoded message text (WindowWork.textBuffer). Codes
 /// from TEXT_SPACE up are characters.

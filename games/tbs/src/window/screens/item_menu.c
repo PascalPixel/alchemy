@@ -48,7 +48,7 @@ void Vram_CopyTile(u32 sourceTile, u32 destinationTile) {
           DMA_COPY32(8), REG_DMA3);
 }
 
-/// The battle item list for unit `owner`: `count` inventory entries (ended by
+/// The battle item list for unit `member`: `count` inventory entries (ended by
 /// 0), five to a page, each with its icon and name: plain when usable,
 /// colour 4 when Item_ClassifyUseAbility refuses it, colour 2 when broken;
 /// the window above names the one under the cursor (MsgItemPlainName), or
@@ -57,7 +57,7 @@ void Vram_CopyTile(u32 sourceTile, u32 destinationTile) {
 /// runs out, or when there are no items. A refused item stays on the list
 /// with its reason ("It's broken.", and the classifier's messages). The
 /// item command runs it (Battle_CollectPartyCommands).
-s32 BattleItemMenu_Run(s32 owner, u16 *entries, s32 count) {
+s32 BattleItemMenu_Run(s32 member, u16 *entries, s32 count) {
   struct WindowWork *work;
   s32 drawnFirstEntry;
   s32 drawnRow;
@@ -116,12 +116,12 @@ s32 BattleItemMenu_Run(s32 owner, u16 *entries, s32 count) {
   for (;;) {
     if (firstEntry != drawnFirstEntry || selectedRow != drawnRow) {
       work->holdTilemapUpload = 1;
-      Ui_SetRectHighlight(window->x + 1, window->y + drawnRow * 2 + 1,
-                          window->width - 2, 1, 15);
-      Ui_FillVramBlockPattern();
+      Window_HighlightRect(window->x + 1, window->y + drawnRow * 2 + 1,
+                           window->width - 2, 1, 15);
+      Text_FillCanvasBackground();
       if (count != 0) {
-        if (Item_ClassifyUseAbility(owner, entries[firstEntry + selectedRow]) ==
-            2) {
+        if (Item_ClassifyUseAbility(member,
+                                    entries[firstEntry + selectedRow]) == 2) {
           BATTLE_MENU_MESSAGE_COPY(MsgBattleItemUnavailable, messageText,
                                    BATTLE_MENU_MESSAGE_CAPACITY);
         } else {
@@ -146,15 +146,15 @@ s32 BattleItemMenu_Run(s32 owner, u16 *entries, s32 count) {
             break;
           }
           Item_GetDirectFar(item);
-          UiWork_SetParameterNibble(15);
-          if (Item_ClassifyUseAbility(owner, item) != 0) {
-            UiWork_SetParameterNibble(4);
+          Text_SetColor(15);
+          if (Item_ClassifyUseAbility(member, item) != 0) {
+            Text_SetColor(4);
           } else if ((item & INVENTORY_BROKEN) != 0) {
-            UiWork_SetParameterNibble(2);
+            Text_SetColor(2);
           }
           Text_DrawMessageAsTiles((item & INVENTORY_ITEM_ID_MASK) + MsgItemName,
                                   window, 16, i * 16);
-          UiWork_SetParameterNibble(15);
+          Text_SetColor(15);
           sprites[i].oam.f.tile = ItemIcon_LoadIntoSlot(item, iconSlots[i]);
         }
         iconCount = i;
@@ -173,8 +173,8 @@ s32 BattleItemMenu_Run(s32 owner, u16 *entries, s32 count) {
         }
       }
 
-      Ui_SetRectHighlight(window->x + 1, window->y + selectedRow * 2 + 1,
-                          window->width - 2, 1, 14);
+      Window_HighlightRect(window->x + 1, window->y + selectedRow * 2 + 1,
+                           window->width - 2, 1, 14);
       work->dirty = 1;
       work->holdTilemapUpload = 0;
     }
@@ -234,7 +234,7 @@ s32 BattleItemMenu_Run(s32 owner, u16 *entries, s32 count) {
         Item_GetDirectFar(entries[result]);
         unusableReason = 0;
         if ((entries[result] & INVENTORY_BROKEN) == 0) {
-          unusableReason = Item_ClassifyUseAbility(owner, entries[result]);
+          unusableReason = Item_ClassifyUseAbility(member, entries[result]);
           if (unusableReason == 0) {
             break;
           }
@@ -250,7 +250,7 @@ s32 BattleItemMenu_Run(s32 owner, u16 *entries, s32 count) {
           BATTLE_MENU_MESSAGE_COPY(MsgBattleItemNoEffect, messageText,
                                    BATTLE_MENU_MESSAGE_CAPACITY);
         }
-        Ui_FillVramBlockPattern();
+        Text_FillCanvasBackground();
         Text_DrawWideStringAtOffset(messageText, messageWindow, 0, 4);
       } else {
         result = -1;

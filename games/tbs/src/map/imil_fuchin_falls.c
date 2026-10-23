@@ -1528,7 +1528,7 @@ static void ImilFuchinFalls_PlaceDragonsEye(void) {
     objectEvent->motionFlags = clear;
     objectEvent->retainSpriteCache = 1;
     glyph = AllocHeapSlot(17, sizeof(*glyph));
-    Ui_PrepareTransferForItem(ITEM_DRAGONS_EYE);
+    Icon_DrawItem(ITEM_DRAGONS_EYE);
     VramCache_Load(sprite->slot, 128, glyph->tiles);
     FreeHeapSlot(17);
     gImilFuchinFalls_DragonsEye = objectEvent;

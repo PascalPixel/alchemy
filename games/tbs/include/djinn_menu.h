@@ -44,13 +44,13 @@ struct DjinnMenuBackdrop {
 /// opening to its closing.
 struct DjinnMenuWork {
   u8 unused[8]; ///< no view of the menu work names it (see menu/README.md)
-  s32 owner;
+  s32 member;
   struct Window *moneyWindow; ///< ShopWork's; not named here
   struct Window *statusWindow;
   struct WindowSprite *cursor;
   /// The second of ItemMenuWork's sideIcons; not named here.
-  struct WindowSprite *secondPaneIcon;
-  s8 selectedColumn[2]; ///< each pane's member, an index into owners
+  struct WindowSprite *secondSideIcon;
+  s8 selectedColumn[2]; ///< each side's member, an index into members
   s8 sideCount[2];      ///< ItemMenuWork's; not named here
   /// ItemMenuWork's and ShopWork's itemWindow; not named here.
   struct Window *itemWindow;
@@ -75,21 +75,21 @@ struct DjinnMenuWork {
   /// here.
   u8 cursorGrid[4];
   /// ItemMenuWork's party figures; not named here.
-  struct Sprite *ownerObjects[8];
-  s16 ownerX[8];      ///< screen pixels
-  s16 ownerY[8];      ///< screen pixels
-  s32 ownerScale[8];  ///< ItemMenuWork's; not named here
-  u16 selection[2];   ///< each pane's Djinni row chosen
+  struct Sprite *memberObjects[8];
+  s16 memberX[8];     ///< screen pixels
+  s16 memberY[8];     ///< screen pixels
+  s32 memberScale[8]; ///< ItemMenuWork's; not named here
+  u16 selection[2];   ///< each side's Djinni row chosen
   u16 pairEntries[2]; ///< 255 at first
   struct WindowSprite *secondCursor;
   u8 unusedBeforeBackdrop[4]; ///< no view of the menu work names it
   struct DjinnMenuBackdrop *backdrop;
-  u8 unusedAfterBackdrop[0x40];   ///< no view of the menu work names it
-  u16 entries[32];                ///< ItemMenuWork's items; not named here
-  u16 owners[DJINN_LIST_MEMBERS]; ///< the party in order
+  u8 unusedAfterBackdrop[0x40];    ///< no view of the menu work names it
+  u16 entries[32];                 ///< ItemMenuWork's items; not named here
+  u16 members[DJINN_LIST_MEMBERS]; ///< the party in order
   u8 pairCount;
-  u8 ownerCount;
-  u8 shownOwner[2]; ///< the member giving and the one receiving
+  u8 memberCount;
+  u8 shownMember[2]; ///< the member giving and the one receiving
   /// ItemMenuWork's selectedItemIcon; not named here.
   struct WindowSprite *selectedIcon;
   /// bits: 1 a give or trade awaits its confirmation | 0 a second Djinni is
@@ -102,18 +102,18 @@ struct DjinnMenuWork {
   u16 slotX[4];
   u16 slotY[4];
   s32 figurePhases[4]; ///< DjinnFiguresWork's phases; not named here
-  /// The Djinn chosen in each pane: index in their element, element, member.
+  /// The Djinn chosen in each side: index in their element, element, member.
   ///@{
   u8 pairIndex[2];
   u8 pairElement[2];
-  u8 pairOwner[2]; ///< not named by TBS code
+  u8 pairMember[2]; ///< not named by TBS code
   ///@}
 };
 
 STATIC_ASSERT(offsetof(struct DjinnMenuWork, statusWindow) == 0x10);
 STATIC_ASSERT(offsetof(struct DjinnMenuWork, selectedColumn) == 0x1c);
-STATIC_ASSERT(offsetof(struct DjinnMenuWork, ownerX) == 0x134);
-STATIC_ASSERT(offsetof(struct DjinnMenuWork, ownerY) == 0x144);
+STATIC_ASSERT(offsetof(struct DjinnMenuWork, memberX) == 0x134);
+STATIC_ASSERT(offsetof(struct DjinnMenuWork, memberY) == 0x144);
 STATIC_ASSERT(offsetof(struct DjinnMenuWork, selection) == 0x174);
 STATIC_ASSERT(offsetof(struct DjinnMenuWork, pending) == 0x220);
 STATIC_ASSERT(offsetof(struct DjinnMenuWork, pairIndex) == 0x254);

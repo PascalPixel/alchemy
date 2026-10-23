@@ -49,21 +49,21 @@ extern u8 Decompress_Type2CommandsCodeSize[];
 extern u8 Decompress_ByteLzCodeSize[];
 /// The Japanese status panel's PP row, "EP    /": label and slash in one
 /// string, drawn by the unit summary in menu/menu/common.c.
-extern const u8 gUi_PpRowString[];
+extern const u8 gStatusPanel_PpRowString[];
 /// A one-entry table of sprite tiles: the pointing hand cursor
-/// (gResource_FixedBlockBTiles), returned by Ui_GetTableWordZero.
-extern s32 gUi_FixedTileBlocks[];
+/// (gResource_FixedBlockBTiles), returned by WindowSprite_GetPointerTiles.
+extern s32 gWindowSprite_PointerTiles[];
 /// The Japanese status panel's HP row, "HP    /", the slash already in its
 /// cell at 48.
-extern const u8 gUi_HpRowString[];
+extern const u8 gStatusPanel_HpRowString[];
 /// The HP label outside Japan, in each language's form ("KP" in German, "PV"
 /// in Spanish and French, "PS" in Italian).
-extern const u8 gUi_HpString[];
+extern const u8 gStatusPanel_HpString[];
 /// The PP label outside Japan, which every language writes "PP".
-extern const u8 gUi_PpString[];
+extern const u8 gStatusPanel_PpString[];
 /// The slash between a current and maximum figure on the status panel,
 /// outside Japan.
-extern const u8 gUi_SlashString[];
+extern const u8 gStatusPanel_SlashString[];
 /// The compressed item icons, indexed by an item's icon field.
 extern u8 *gItemIcons[];
 /// The end of gItemIcons, so Icon_CountItemIcons can count
@@ -265,7 +265,7 @@ extern u8 Tile_ExpandOpaqueCodeSize[];
 /// The title screen's "Press Start" prompt, byte-LZ compressed, in each
 /// language.
 extern const u8 gTitle_PromptTiles[];
-/// The eight scales, in 1/65536, that Ui_ApplyTableScaleToObject pulses the
+/// The eight scales, in 1/65536, that WindowSprite_Pulse pulses the
 /// options menu's selected icon through.
 extern s32 gWindowSprite_PulseScales[];
 /// The pixel offsets Heading_Bob moves a sprite pair up and down

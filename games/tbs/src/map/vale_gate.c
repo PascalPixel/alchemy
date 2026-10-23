@@ -497,7 +497,7 @@ static void EventScript_UsePsynergyStone(void) {
   Party_AddPp(999, 0);
   FieldScript_WaitFrames(10);
   FieldMessage_Show(MsgValePartyPpRestored, 1);
-  UiWork_FinalizePendingCore();
+  TextPrinter_CloseFinishedWindows();
   GameFlag_ClearBit(FLAG_NOTHING_HAPPENS);
   FieldScript_End();
 }

@@ -432,7 +432,7 @@ void LuckyDice_Run(void) {
   diceWork->particles[1].z = -0xa00000;
 
   // Open the coins window and the Throw / Quit help.
-  UiWork_InitializeWithResourceCountersFar();
+  WindowSystem_InitFieldFar();
   window = Window_CreateFar(DICE_COIN_X, 0, DICE_COIN_W, 3, 6);
   sprites->coinsWindow = window;
   Text_DrawMessageAsTilesFar(MsgLuckyDiceCoins, window, DICE_LABEL_X, 0);

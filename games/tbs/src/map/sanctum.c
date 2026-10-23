@@ -2041,7 +2041,7 @@ static void Sanctum_RaiseItemIcon(s32 item, s32 fixedX, s32 fixedY,
     icon->velocityY = PIXELS(2);
     icon->gravity = PIXELS(1) / 4;
     transferBuffer = AllocHeapSlot(17, 0x608);
-    Ui_PrepareTransferForItem(item);
+    Icon_DrawItem(item);
     VramCache_Load(sprite->slot, 128, transferBuffer + 0x400);
     FreeHeapSlot(17);
     for (frame = 0; frame < 60; frame++) {

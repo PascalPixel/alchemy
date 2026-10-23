@@ -24,6 +24,6 @@ NamingScreen_KeyboardTilemap3:
 	.endif
 	.endif
 	.balign 4, 0
-	.global gUi_FixedTileBlocks
-gUi_FixedTileBlocks:
+	.global gWindowSprite_PointerTiles
+gWindowSprite_PointerTiles:
 	.4byte gResource_FixedBlockBTiles

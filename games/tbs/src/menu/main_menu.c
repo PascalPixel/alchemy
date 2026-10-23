@@ -455,7 +455,7 @@ s32 MainMenu_Run(void) {
   L_ask:
     FieldMessage_Show(MsgSaveAdventureQuestion, 5);
     v7 = FieldYesNo_Ask(1);
-    UiWork_FinalizePendingCore();
+    TextPrinter_CloseFinishedWindows();
     if (v7 == 0) {
       FieldMessage_Show(MsgSaveAdventureQuestion + 1, 1);
       // Marks the file cleared (SaveFileSummary's sendFlag): its data can be
@@ -573,10 +573,10 @@ menu_top:;
       FieldMessage_Show(MsgSaveDataCorrupted, 9);
       FieldMessage_Show(MsgSaveDataCorrupted + 1, 13);
       if (YesNoMenu_Run(1, 0, 0, YES) != YES) {
-        UiWork_FinalizePendingCore();
+        TextPrinter_CloseFinishedWindows();
         goto menu_top;
       }
-      UiWork_FinalizePendingCore();
+      TextPrinter_CloseFinishedWindows();
       if (MainMenu_GetSaveRecoveryBlockMask() != 0) {
         // MsgSaveRecoveryFailed, spelled as MsgSaveDataCorrupted + 2: the ROM
         // adds 2 to the register holding the earlier message's number, and by
@@ -1019,7 +1019,7 @@ struct PasswordStats {
 /// A party member as the password reads them: their level, base stats,
 /// inventory and Djinn. A view of struct Unit at its offsets;
 /// MainMenu_PackPasswordData's opening note says why it is kept.
-struct PasswordOwner {
+struct PasswordMember {
   u8 name[0x0f]; ///< Unit's; not read here
   u8 level;      ///< clamped to 1 to 99; 7 bits
   struct PasswordStats stats;
@@ -1045,8 +1045,8 @@ struct PasswordOwner {
 /// gMainMenu_PasswordStackItems for each member; and the coins in bytes 165 to
 /// 167.
 static s32 MainMenu_PackPasswordData(s32 unused, s32 mode, u8 *out) {
-  // A direct Unit owner plus the real member table shrinks the native
-  // function from 0x400 to 0x3f4. The private view remains pending owner
+  // A direct Unit member plus the real member table shrinks the native
+  // function from 0x400 to 0x3f4. The private view remains pending member
   // reconciliation; its fields below follow Unit's actual base stats.
   s32 length;
   u32 levelBits;
@@ -1093,9 +1093,9 @@ static s32 MainMenu_PackPasswordData(s32 unused, s32 mode, u8 *out) {
   }
 
   for (i = 0; i != 4; i++) {
-    struct PasswordOwner *owner = (struct PasswordOwner *)Unit_Get(
+    struct PasswordMember *member = (struct PasswordMember *)Unit_Get(
         ((const struct { s32 id[4]; } *)gMainMenu_PasswordMembers)->id[i]);
-    struct PasswordStats *stats = &owner->stats;
+    struct PasswordStats *stats = &member->stats;
 
     if (stats->baseHp > 1999) {
       stats->baseHp = 1999;
@@ -1127,20 +1127,20 @@ static s32 MainMenu_PackPasswordData(s32 unused, s32 mode, u8 *out) {
         (u32)stats->baseHp << 21 | stats->basePp << 10 | stats->baseAttack;
     packedStats[i * 2 + 1] = (u32)stats->baseDefense << 22 |
                              stats->baseAgility << 12 | stats->baseLuck << 4;
-    if (owner->level > 99) {
-      owner->level = 99;
+    if (member->level > 99) {
+      member->level = 99;
     }
-    if (owner->level == 0) {
-      owner->level = 1;
+    if (member->level == 0) {
+      member->level = 1;
     }
-    levelBits |= owner->level << (i * 7);
+    levelBits |= member->level << (i * 7);
     for (j = 0; j != 4; j++) {
-      djinnBits += owner->djinnHeld[j] << (j * 7);
+      djinnBits += member->djinnHeld[j] << (j * 7);
     }
     // Which of the eight Psynergy items (gMainMenu_PasswordKeyItems) any member
     // carries.
     for (j = 0; j != 15; j++) {
-      u16 item = owner->inventory[j] & 0x1ff;
+      u16 item = member->inventory[j] & 0x1ff;
 
       for (k = 0; k != 8; k++) {
         if (item == ((const u16 *)gMainMenu_PasswordKeyItems)[k]) {
@@ -1155,15 +1155,15 @@ static s32 MainMenu_PackPasswordData(s32 unused, s32 mode, u8 *out) {
     outputIndex = 39;
     bitOffset = 0;
     for (i = 0; i != 4; i++) {
-      struct PasswordOwner *owner = (struct PasswordOwner *)Unit_Get(
+      struct PasswordMember *member = (struct PasswordMember *)Unit_Get(
           ((const struct { s32 id[4]; } *)gMainMenu_PasswordMembers)->id[i]);
 
       for (n = 0; n != 15; n++) {
         u16 item;
 
         // Item_GetDirect only looks the definition up; its result is not used.
-        Item_GetDirect(owner->inventory[n]);
-        item = owner->inventory[n] & 0x1ff;
+        Item_GetDirect(member->inventory[n]);
+        item = member->inventory[n] & 0x1ff;
         out[outputIndex] += item >> (bitOffset + 1);
         out[outputIndex + 1] += item << (7 - bitOffset);
         bitOffset++;
@@ -1178,7 +1178,7 @@ static s32 MainMenu_PackPasswordData(s32 unused, s32 mode, u8 *out) {
     outputIndex = 107;
     bitOffset = -1;
     for (i = 0; i != 4; i++) {
-      struct PasswordOwner *owner = (struct PasswordOwner *)Unit_Get(
+      struct PasswordMember *member = (struct PasswordMember *)Unit_Get(
           ((const struct { s32 id[4]; } *)gMainMenu_PasswordMembers)->id[i]);
       s32 m;
 
@@ -1187,9 +1187,9 @@ static s32 MainMenu_PackPasswordData(s32 unused, s32 mode, u8 *out) {
 
         j = 0;
         for (n = 0; n != 15; n++) {
-          if ((owner->inventory[n] & 0x1ff) ==
+          if ((member->inventory[n] & 0x1ff) ==
               ((const u16 *)gMainMenu_PasswordStackItems)[m]) {
-            j = (owner->inventory[n] & 0xf800) >> 11;
+            j = (member->inventory[n] & 0xf800) >> 11;
           }
         }
         /* FAKEMATCH(dead): a halfword copy of the quantity nothing reads,

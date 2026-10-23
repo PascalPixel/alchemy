@@ -415,15 +415,15 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
         state->iconShown[1] = 1;
         work->textPalette = 5;
         if ((s32)ability->ppCost > (s32)unit->pp) {
-          UiWork_SetParameterNibble(2);
+          Text_SetColor(2);
         } else if (unit->psySeal != 0) {
-          UiWork_SetParameterNibble(9);
+          Text_SetColor(9);
         }
         Text_DrawMessageAsTiles(parameter + MsgAbilityName, commandWindow, 16,
                                 0);
         Text_DrawNumberAtOffset(ability->ppCost, 2, commandWindow, 104, 0);
         work->textPalette = 15;
-        UiWork_SetParameterNibble(15);
+        Text_SetColor(15);
         // 61471 is 0xf01f, the PP label's first tile; 20481 below is 0x5001,
         // LIST_TILE_SUMMON_ELEMENT.
         Window_SetTilemapEntry(commandWindow, 61471, 11, 0, 0);
@@ -502,7 +502,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
             summon->abilityId & 0x3fff, handle);
         state->iconShown[1] = 1;
         if (ok == 0) {
-          UiWork_SetParameterNibble(2);
+          Text_SetColor(2);
         }
         Text_DrawMessageAsTiles(SummonDefinition_Get(mode)->abilityId +
                                     MsgAbilityName,
@@ -590,7 +590,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
                   (const struct AbilityDefinition *)ability));
           if (state->tutorialStep != 0) {
             hint = Message_ShowAndWait(MsgDjinnUnleashHint, 15, 8);
-            while (UiWork_IsComplete() == 0) {
+            while (TextPrinter_AllFinished() == 0) {
               WaitFrames(1);
             }
             Window_Close(hint, 1);
@@ -606,11 +606,11 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
         }
         commandWindow = Window_Create(11, 17, 10, 3, 6);
         state->icons[0].oam.f.x = 64;
-        UiWork_SetParameterNibble(2);
+        Text_SetColor(2);
         Window_SetTilemapEntry(commandWindow, element + 20481, 0, 0, 0);
         Text_DrawMessageAsTiles(element * 20 + index + MsgDjinnName,
                                 commandWindow, 16, 0);
-        UiWork_SetParameterNibble(15);
+        Text_SetColor(15);
         command->range = 1;
         WaitFrames(1);
         Sound_PlaySongFar(SE_MENU_CONFIRM);
@@ -797,7 +797,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
     mode = 0;
     if (state->timerWindow == 0 && linkBattle->linkPaused == 0) {
       state->timerWindow = (s32)Window_Create(0, 16, 30, 4, 42);
-      Ui_FillVramBlockPattern();
+      Text_FillCanvasBackground();
       Link_DrawWaitingForOpponent();
     } else {
       state->timerWindow = 0;

@@ -124,9 +124,9 @@ s32 BattleSummonMenu_Run(s32 unused0, s32 unused1, const u8 *standby) {
     //------------------------------------------------------------------
     if (firstEntry != drawnFirstEntry || selectedRow != drawnRow) {
       work->holdTilemapUpload = 1;
-      Ui_SetRectHighlight(window->x + 1, window->y + drawnRow * 2 + 1,
-                          window->width - 2, 1, 15);
-      Ui_FillVramBlockPattern();
+      Window_HighlightRect(window->x + 1, window->y + drawnRow * 2 + 1,
+                           window->width - 2, 1, 15);
+      Text_FillCanvasBackground();
 
       // Description and required Djinni elements: mask has bit n for each
       // element n the summon needs, which blink below.
@@ -182,7 +182,7 @@ s32 BattleSummonMenu_Run(s32 unused0, s32 unused1, const u8 *standby) {
             sprites[index].oam.f.tile = glyph;
             // A summon the party cannot afford is drawn in colour 2.
             if (!affordable)
-              UiWork_SetParameterNibble(2);
+              Text_SetColor(2);
             Text_DrawMessageAsTiles(SummonDefinition_Get(id)->abilityId +
                                         MsgAbilityName,
                                     window, 16, index * 16);
@@ -197,7 +197,7 @@ s32 BattleSummonMenu_Run(s32 unused0, s32 unused1, const u8 *standby) {
                 col++;
               }
             }
-            UiWork_SetParameterNibble(15);
+            Text_SetColor(15);
             visibleSummons[index++] = 1;
             if (index <= 3 &&
                 (id = orderedSummons[firstEntry + index]) != SUMMON_END)
@@ -219,8 +219,8 @@ s32 BattleSummonMenu_Run(s32 unused0, s32 unused1, const u8 *standby) {
               window, tile, window->width - (count + 3) / 4 + index - 2, -1, 0);
         }
       }
-      Ui_SetRectHighlight(window->x + 1, window->y + selectedRow * 2 + 1,
-                          window->width - 2, 1, 14);
+      Window_HighlightRect(window->x + 1, window->y + selectedRow * 2 + 1,
+                           window->width - 2, 1, 14);
       work->dirty = 1;
       work->holdTilemapUpload = 0;
     }
@@ -257,8 +257,8 @@ s32 BattleSummonMenu_Run(s32 unused0, s32 unused1, const u8 *standby) {
         tile = 15 - (blink != 0);
         if ((1 << element & mask) == 0)
           tile = 15;
-        Ui_SetRectHighlight(counts->x + element * 2 + 1, counts->y + 1, 2, 1,
-                            tile);
+        Window_HighlightRect(counts->x + element * 2 + 1, counts->y + 1, 2, 1,
+                             tile);
       }
     }
 

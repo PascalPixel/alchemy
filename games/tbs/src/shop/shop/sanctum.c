@@ -83,10 +83,10 @@ void Sanctum_ShowKeeperMessage(s32 messageId) {
 
   portraitResource =
       Speaker_GetVoiceFar(((struct ShopWork *)gMenuWork)->keeperGraphics);
-  UiWork_FinalizePendingCoreFar();
+  TextPrinter_CloseFinishedWindowsFar();
   messageId = Shop_MessageByMode(messageId);
   Message_OpenWindowFar(messageId, 5, 0, (portraitResource << 0x10) | 0x22);
-  while (UiWork_IsCompleteFar() == 0) {
+  while (TextPrinter_AllFinishedFar() == 0) {
     WaitFrames(1U);
   }
   WaitFrames(1U);
@@ -107,9 +107,9 @@ void Sanctum_ShowKeeperMessageHidingCursor(s32 messageId) {
   portraitResource = Speaker_GetVoiceFar(shop->keeperGraphics);
   messageId = Shop_MessageByMode(messageId);
   (*cursorSlot)->motion = 13;
-  UiWork_FinalizePendingCoreFar();
+  TextPrinter_CloseFinishedWindowsFar();
   Message_OpenWindowFar(messageId, 5, 0, (portraitResource << 16) | 0x22);
-  while (UiWork_IsCompleteFar() == 0)
+  while (TextPrinter_AllFinishedFar() == 0)
     WaitFrames(1);
   WaitFrames(1);
   shop->cursor.anchor->motion = savedCursorMode;
@@ -283,7 +283,7 @@ s32 Sanctum_RunPartyService(void) {
       }
       MessageArgument_PushFar(unitId, MESSAGE_ARGUMENT_ACTOR);
       Sanctum_ShowKeeperMessage(messageBase + 3);
-      UiWork_FinalizePendingCoreFar();
+      TextPrinter_CloseFinishedWindowsFar();
       // Apply the cure and animation before collecting the donation.
       BattleUnit_ResetStateByMode(unitId, serviceKind);
       Sanctum_RunMemberIconBurst(memberIndex);

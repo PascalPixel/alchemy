@@ -138,7 +138,7 @@ extern s8 gOptionMenu_SleepFrames[];
 extern s8 gOptionMenu_SpeechFrames[];
 extern s8 gOptionMenu_SpeedFrames[];
 /// The status panel's level label: `Lv`; `Nv.` in Spanish, `Niv` in French.
-extern u8 gUi_LvString[];
+extern u8 gStatusPanel_LevelString[];
 extern u8 gMenuCursor_BobX[];
 extern u8 gMenuCursor_BobY[];
 /// A debug window's title: `ENERGY`.

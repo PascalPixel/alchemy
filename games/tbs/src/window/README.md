@@ -29,8 +29,8 @@ one place, the code that reads it is the same in every [edition](../../glossary.
 the Japanese edition has more window slots and a shorter ring.
 
 In the code the block is `struct WindowWork`, borrowed from the [heap](../../glossary.md#heap-and-pools) under
-the [heap slot](../../glossary.md#heap-slot) `HEAP_SLOT_WINDOW` by `UiWork_InitializeWithResourceCounters`
-for the field and by `UiWork_Initialize` for battle; it lasts until the next
+the [heap slot](../../glossary.md#heap-slot) `HEAP_SLOT_WINDOW` by `WindowSystem_InitField`
+for the field and by `WindowSystem_InitBattle` for battle; it lasts until the next
 map change and is reached as `WINDOW_WORK`. In order it holds:
 
 - `tilemap`: the windows' tilemap, 32 by 20 tiles, uploaded to video memory
@@ -62,7 +62,7 @@ is doing:
 | `battleMode` | Set by | Meaning |
 | --- | --- | --- |
 | 0 | the field setup, which clears the block | on the field |
-| 1 | `UiWork_Initialize` | in battle: typing is faster, and cleared rows near the bottom keep the battle's tile |
+| 1 | `WindowSystem_InitBattle` | in battle: typing is faster, and cleared rows near the bottom keep the battle's tile |
 | 2 | `BattleMessage_Open`, while it decodes | a battle message is being decoded |
 
 `mindRead` is set while Mind Read, the Psynergy that shows what a person is
@@ -106,7 +106,7 @@ free slot, or returns `NULL` when none is free, and places the window at tile
 console's background layers are, but the screen's 240 pixels show only 30 of
 them, so windows are placed on a screen of 30 by 20 tiles. Offsets inside a
 window are pixels from its interior's top left. Unless the window has
-`WINDOW_FLAG_INSTANT`, `UiWork_ProcessDirectWork` zooms it open over
+`WINDOW_FLAG_INSTANT`, `Window_UpdateZooms` zooms it open over
 `WINDOW_OPEN_FRAMES` (8), drawing its frame at (8 − frame) / 8 of its size
 about its centre, and closed over `WINDOW_CLOSE_FRAMES` (4); the slot is
 freed only once the close has finished. `Window_Close(window, instant)`
@@ -258,10 +258,10 @@ three are busy; the printer stays taken until its window closes.
 `BattleMessage_Continue` also reuses a text printer whose window has finished,
 continuing below its last line and scrolling once both lines are used.
 
-`UiWork_ProcessAll` is the window system's [task](../../glossary.md#task). Both setups add it in
+`WindowSystem_Update` is the window system's [task](../../glossary.md#task). Both setups add it in
 the main loop's pass, and it runs every frame: the windows' zoom
-(`UiWork_ProcessDirectWork`), then the text printers, then the window sprites
-(`UiWork_AnimateSpriteSlots`). Code that shows a message waits on its window
+(`Window_UpdateZooms`), then the text printers, then the window sprites
+(`WindowSprite_UpdateAll`). Code that shows a message waits on its window
 while the task types it. `Message_OpenWindow` (`window/frames.c`) is the
 whole path for one message, and a caller then waits a frame at a time
 (simplified, with the shop's wait from `Shop_ShowKeeperMessage`):
@@ -272,7 +272,7 @@ Window_FitOnScreen(entry, &x, &y, &width, &height, bounds, 0);
 window = Window_Create(x, y, width, height, flags);  // NULL: no free slot
 TextPrinter_Add(window, entry, 0, 0, bounds, 0); // take a text printer
 
-while (UiWork_IsCompleteFar() == 0)   // every printer has typed its text
+while (TextPrinter_AllFinishedFar() == 0)   // every printer has typed its text
   WaitFrames(1);
 ```
 
@@ -361,8 +361,8 @@ portrait or the page arrow. It moves with its window and goes when the
 window closes.
 
 Each window keeps a list of its sprites, taken from the pool's free list and
-returned when the window closes. `UiWork_AnimateSpriteSlots` moves each
-sprite every frame by its `UI_SPRITE_` motion and queues it for drawing. A
+returned when the window closes. `WindowSprite_UpdateAll` moves each
+sprite every frame by its `WINDOW_SPRITE_MOTION_` motion and queues it for drawing. A
 window sprite's picture occupies an entry of the VRAM cache, loaded into a free one
 (`VramCache_FindFreeEntry`, `VramCache_Load`) and freed by
 `VramCache_FreeEntry`. The two portrait slots record which picture each shows
@@ -430,8 +430,8 @@ is in `games/tbs/objects.tsv`, from `glyph_arm`.
 
 The prototypes are in `games/tbs/include/unit/window/`; its
 [`window.h`](../../include/unit/window/window.h) also holds what both objects
-use: the tilemap's tiles (`UI_TILE_`), the window flags (`UI_WINDOW_`), sprite
-motions (`UI_SPRITE_`), message argument kinds (`MESSAGE_ARGUMENT_`) and the text
+use: the tilemap's tiles (`WINDOW_TILE_`), the window flags (`WINDOW_FLAG_`), sprite
+motions (`WINDOW_SPRITE_MOTION_`), message argument kinds (`MESSAGE_ARGUMENT_`) and the text
 canvas's place in VRAM. The work block's layout, `struct WindowWork`, is in
 [`include/window.h`](../../include/window.h), and its offsets for each edition
 in `include/tbs_edition.h`.
@@ -457,12 +457,12 @@ in `include/tbs_edition.h`.
 
 | Prefix | What it acts on |
 | --- | --- |
-| `UiWork_` | the work block and its per-frame updates |
+| `WindowSystem_` | setting up the window system for the field or for battle, and its per-frame updates |
 | `Window_`, `Win_` | a window's rectangle of the tilemap: frames, fills, dividers, tiles |
 | `Text_`, `Message_`, `MessageArgument_`, `TextPrinter_` | messages and text: decoding, measuring, drawing and typing |
 | `WindowSprite_` | the window sprite pool and a window's sprite list |
 | `MenuArrow_` | the menus' arrow sprites |
-| `Icon_`, `ItemIcon_`, `CommandIcon_`, `UiGlyph_`, `Portrait_` | icons and portraits built into sprite tiles |
+| `Icon_`, `ItemIcon_`, `CommandIcon_`, `Portrait_` | icons and portraits built into sprite tiles |
 | `SelectionScreen_`, `Menu_` | the selection row, and the menus built from command icons |
 | `OptionMenu_`, `PauseMenu_`, `WindowColor_` | the option and pause menus and the window colours |
 | `Save_`, `FileMenu_` | save files and the file menu |
@@ -473,7 +473,6 @@ in `include/tbs_edition.h`.
 | `IconMenu_` | the icon menus' pulsing icon and their position table |
 | `Link_` | the link countdown window and its page arrows |
 | `Color_` | scaling a colour's channels |
-| `UiRender_` | an empty function nothing calls |
 | `Resource_`, `Graphics_`, `Vram_`, `VramCache_` | things the engine names elsewhere: VRAM cache entries, pictures, palettes and video registers |
 | `FieldMessage_` | showing a message window in the field: at an object, centred, or at a window position |
 | `Glyph_` | drawing a font glyph with its outline into a window |
@@ -483,7 +482,7 @@ in `include/tbs_edition.h`.
 | `Heading_` | the 64 by 16 headings of the menus (Save, Continue, Copy, Erase, Battle, Link, Pause, Setup), loaded and bobbing |
 | `RenderResource_` | loading one sprite tile of the heading pictures into the VRAM cache |
 
-The `Ui_` functions that remain have no family yet. Many of these names are
+Many of these names are
 shared with [The Lost Age](../../glossary.md#the-two-games)'s copies of these files and with the [far-call](../../glossary.md#far-call) table
 `system/far_call/WINDOW.S`, so renaming one changes other folders too.
 [Matching](../MATCHING.md) explains the spellings some sites keep and the
@@ -518,6 +517,6 @@ in every edition, and nothing reads them.
   editions gave up four windows when they doubled the ring; the code shows
   only the counts each edition uses, and only Camelot's sources could say how
   they were chosen.
-- XXX: what `WindowWork.unknownAfterLineSpacing` holds; `UiWork_ResetCounters`
+- XXX: what `WindowWork.unknownAfterLineSpacing` holds; `Text_ResetStyle`
   sets it to 1 beside the text style and no C reads it, so a read in the
   glyph assembly or a text control code that changes it would settle it.

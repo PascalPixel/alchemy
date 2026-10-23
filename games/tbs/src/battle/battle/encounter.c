@@ -97,9 +97,9 @@ s32 Battle_Run(s32 enemyGroup) {
   AllocHeapSlotEwram(HEAP_SLOT_SPRITE_ANIMS, 0x600);
   ObjectSystem_InitializeFar(OBJECT_SYSTEM_BATTLE);
   if (GameFlag_TestFar(FLAG_DJINN_LESSON) != 0)
-    UiWork_InitializeFar(1);
+    WindowSystem_InitBattleFar(1);
   else
-    UiWork_InitializeFar(0);
+    WindowSystem_InitBattleFar(0);
 
   // The camera's starting view, in 16.16 pixels and 1/65536 turns: the focus
   // 64 pixels up, the eye at (0, 180, 64), a yaw of 0x2800 and a distance of
@@ -290,7 +290,7 @@ s32 Battle_Run(s32 enemyGroup) {
     // zoom open at tiles (0, 4) and (10, 4), the second closed by a key at
     // the cursor, at pixel (92, 24).
     tutorialWindow = Message_OpenWindowFar(MsgTutorialUnleashed, 0, 4, 1);
-    while (UiWork_IsCompleteFar() == 0)
+    while (TextPrinter_AllFinishedFar() == 0)
       WaitFrames(1);
     Window_CloseFar(tutorialWindow, 1);
     WaitFrames(1);

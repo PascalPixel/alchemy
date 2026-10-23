@@ -93,7 +93,7 @@ UNUSED void OptionMenu_StepWindowHue(s32 keys) {
 /// A Psynergy the debug shortcut picker lists: its member and the Psynergy.
 /// The picker's list is a Alloc block of 448 of them.
 struct AbilityListEntry {
-  u16 owner;   ///< the party member's unit id
+  u16 member;  ///< the party member's unit id
   u16 ability; ///< the action id (10 bits in a shortcut)
 };
 
@@ -153,7 +153,7 @@ void Debug_SelectAbilityPair(void) {
      * message passed directly, 2 of 362 instructions differ in tbs-en. */
     slot = MsgPanelHpMaxLabel;
     Text_DrawMessageAsTiles(slot, title, 16, 0);
-    // Redraw both shortcut rows and the selected ability's detail pane.
+    // Redraw both shortcut rows and the selected ability's detail side.
     for (;;) {
       if (redraw != 0) {
         redraw = 0;
@@ -175,10 +175,10 @@ void Debug_SelectAbilityPair(void) {
                                 32);
         Text_DrawMessageAsTiles(MsgPanelStatusLabel - 2, win, 16, 16);
         Text_DrawMessageAsTiles(MsgPanelStatusLabel - 1, win, 16, 32);
-        Text_DrawMessageAsTiles(list[first].owner + MsgCharacterName, win, 104,
+        Text_DrawMessageAsTiles(list[first].member + MsgCharacterName, win, 104,
                                 16);
-        Text_DrawMessageAsTiles(list[second].owner + MsgCharacterName, win, 104,
-                                32);
+        Text_DrawMessageAsTiles(list[second].member + MsgCharacterName, win,
+                                104, 32);
         WindowSprite_RedrawSavedRect(info);
         Text_DrawMessageAsTiles(MsgPsynergyNeedMorePp, info, 0, 16);
         if (row != 0) {
@@ -235,9 +235,9 @@ void Debug_SelectAbilityPair(void) {
     // Persist both member/ability pairs before releasing the picker resources.
     // A, B and START all keep the picks. The cursor's window sprite and VRAM
     // entry go with its window.
-    gGameState.firstShortcut = (list[first].owner << 10) | list[first].ability;
+    gGameState.firstShortcut = (list[first].member << 10) | list[first].ability;
     gGameState.secondShortcut =
-        (list[second].owner << 10) | list[second].ability;
+        (list[second].member << 10) | list[second].ability;
     Window_Close(win, 1);
     Window_Close(title, 1);
     Window_Close(info, 1);
@@ -251,19 +251,19 @@ void Debug_SelectAbilityPair(void) {
 /// output must hold every member's nonzero action slots; there is no capacity
 /// argument. Each member's list stops at its first empty slot.
 s32 Party_ListPsynergy(struct AbilityListEntry *output) {
-  u16 ownerIds[14];
+  u16 memberIds[14];
   s32 outputCount = 0;
-  s32 ownerCount = Party_ListMembersFar(ownerIds);
+  s32 memberCount = Party_ListMembersFar(memberIds);
   s32 i;
 
-  for (i = 0; i < ownerCount; i++) {
+  for (i = 0; i < memberCount; i++) {
     struct Unit *unit;
-    u32 owner;
+    u32 member;
     s32 slotIndex;
     u32 ability;
 
-    owner = ownerIds[i];
-    unit = Unit_GetFar(owner);
+    member = memberIds[i];
+    unit = Unit_GetFar(member);
     for (slotIndex = 0;
          slotIndex < (s32)(sizeof(unit->psynergy) / sizeof(unit->psynergy[0]));
          slotIndex++) {
@@ -271,7 +271,7 @@ s32 Party_ListPsynergy(struct AbilityListEntry *output) {
       if (ability == 0)
         break;
       Ability_Get(ability);
-      output[outputCount].owner = owner;
+      output[outputCount].member = member;
       output[outputCount].ability = ability;
       outputCount++;
     }
@@ -294,7 +294,7 @@ void Menu_FindShortcutEntries(u32 *firstIndex, u32 *secondIndex,
 
   for (entryIndex = 0; entryIndex <= 447; entryIndex++) {
     if (entries[entryIndex].ability == (gGameState.firstShortcut & 0x3ff) &&
-        entries[entryIndex].owner == (gGameState.firstShortcut >> 10)) {
+        entries[entryIndex].member == (gGameState.firstShortcut >> 10)) {
       *firstIndex = entryIndex;
       break;
     }
@@ -302,7 +302,7 @@ void Menu_FindShortcutEntries(u32 *firstIndex, u32 *secondIndex,
 
   for (entryIndex = 0; entryIndex <= 447; entryIndex++) {
     if (entries[entryIndex].ability == (gGameState.secondShortcut & 0x3ff) &&
-        entries[entryIndex].owner == (gGameState.secondShortcut >> 10)) {
+        entries[entryIndex].member == (gGameState.secondShortcut >> 10)) {
       *secondIndex = entryIndex;
       break;
     }
@@ -349,7 +349,7 @@ UNUSED void Menu_ReleaseSelectionWorkspace(void) {
 
   state = *(struct SelectionWorkspace **)gSelectionWorkspace;
   Window_Close(state->window, 0);
-  while (UiWork_IsIdle(state->window) == 0) {
+  while (Window_IsClosed(state->window) == 0) {
     WaitFrames(1);
   }
   if (state->firstActive != 0) {

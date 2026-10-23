@@ -78,36 +78,36 @@ s32 Glyph_Draw(struct Window *window, s32 character, s32 x, s32 y, s32 mode) {
     // style (the motions of enum TextStyle) or, with GLYPH_DRAW_PAGE_ARROW, as
     // the page arrow.
     u32 tiles[32];
-    struct WindowSprite *output;
+    struct WindowSprite *windowSprite;
     struct CursorSprite *sprite;
     s32 index;
 
-    output = WindowSprite_AcquireFree();
-    if (output == NULL)
+    windowSprite = WindowSprite_AcquireFree();
+    if (windowSprite == NULL)
       return 0;
     // The sprite's own four tiles of the glyph sheet.
-    index = (output - work->sprites) * 4;
-    output->motion = WINDOW_SPRITE_MOTION_STILL;
-    output->kind = WINDOW_SPRITE_GLYPH;
+    index = (windowSprite - work->sprites) * 4;
+    windowSprite->motion = WINDOW_SPRITE_MOTION_STILL;
+    windowSprite->kind = WINDOW_SPRITE_GLYPH;
     if (mode == GLYPH_DRAW_PAGE_ARROW) {
       width = 1;
-      output->motion = WINDOW_SPRITE_MOTION_PAGE_ARROW;
+      windowSprite->motion = WINDOW_SPRITE_MOTION_PAGE_ARROW;
     } else {
       switch (work->outline) {
       case TEXT_STYLE_SHAKE:
-        output->motion = WINDOW_SPRITE_MOTION_SHAKE;
+        windowSprite->motion = WINDOW_SPRITE_MOTION_SHAKE;
         break;
       case TEXT_STYLE_POP:
-        output->motion = WINDOW_SPRITE_MOTION_POP;
-        output->animationStep = 8;
+        windowSprite->motion = WINDOW_SPRITE_MOTION_POP;
+        windowSprite->animationStep = 8;
         break;
       case TEXT_STYLE_SPIN:
-        output->motion = WINDOW_SPRITE_MOTION_SPIN;
-        output->animationStep = 0;
+        windowSprite->motion = WINDOW_SPRITE_MOTION_SPIN;
+        windowSprite->animationStep = 0;
         break;
       case TEXT_STYLE_WOBBLE:
-        output->motion = WINDOW_SPRITE_MOTION_WOBBLE;
-        output->animationStep = 0;
+        windowSprite->motion = WINDOW_SPRITE_MOTION_WOBBLE;
+        windowSprite->animationStep = 0;
         break;
       }
 #if (LANGUAGE == LANGUAGE_JAPANESE)
@@ -123,11 +123,11 @@ s32 Glyph_Draw(struct Window *window, s32 character, s32 x, s32 y, s32 mode) {
 #endif
     }
 
-    if ((u8)output->motion == WINDOW_SPRITE_MOTION_PAGE_ARROW) {
+    if ((u8)windowSprite->motion == WINDOW_SPRITE_MOTION_PAGE_ARROW) {
       // The page arrow sits in the window's bottom-right corner. Its picture
-      // is loaded each frame (UiWork_AnimateSpriteSlots) into a VRAM cache
+      // is loaded each frame (WindowSprite_UpdateAll) into a VRAM cache
       // entry of its own, taken here when none is held.
-      sprite = SPRITE_CELL(output);
+      sprite = SPRITE_CELL(windowSprite);
       if (work->glyphResource == NO_GLYPH_RESOURCE)
         work->glyphResource = VramCache_FindFreeEntry();
       sprite->x = (window->x << 3) + ((window->width - 2) << 3) + 4;
@@ -144,29 +144,29 @@ s32 Glyph_Draw(struct Window *window, s32 character, s32 x, s32 y, s32 mode) {
       Dma_Set(tiles, (void *)(OBJ_VRAM0 + (work->glyphTiles + index) * 32),
               DMA_COPY32(32), REG_DMA3);
 #if (LANGUAGE == LANGUAGE_JAPANESE)
-      ((u16 *)&output->oam)[0] = y + (spacingY >> 1) + window->y * 8;
+      ((u16 *)&windowSprite->oam)[0] = y + (spacingY >> 1) + window->y * 8;
 #else
-      ((u16 *)&output->oam)[0] = y + (spacingY >> 1) + window->y * 8 - 2;
+      ((u16 *)&windowSprite->oam)[0] = y + (spacingY >> 1) + window->y * 8 - 2;
 #endif
-      ((u16 *)&output->oam)[1] =
+      ((u16 *)&windowSprite->oam)[1] =
           (x + (spacingX >> 1) + window->x * 8 + 2) | 0x4000;
-      ((u16 *)&output->oam)[2] = work->glyphTiles + index;
-      sprite = SPRITE_CELL(output);
+      ((u16 *)&windowSprite->oam)[2] = work->glyphTiles + index;
+      sprite = SPRITE_CELL(windowSprite);
     }
     // Glyphs are drawn at depth slot 254.
-    output->sentinel = 254;
-    output->x = sprite->x;
-    output->y = sprite->y;
-    output->index = index;
-    output->next = NULL;
-    WindowSprite_AppendToList(&window->sprites, output);
+    windowSprite->sentinel = 254;
+    windowSprite->x = sprite->x;
+    windowSprite->y = sprite->y;
+    windowSprite->index = index;
+    windowSprite->next = NULL;
+    WindowSprite_AppendToList(&window->sprites, windowSprite);
   }
 done:
   return width;
 }
 
 // The view is a struct of its own for matching: read through a cast of
-// WindowSprite.link instead, UiWork_AnimateSpriteSlots does not match (578
+// WindowSprite.link instead, WindowSprite_UpdateAll does not match (578
 // instructions become 605), and through WindowSprite itself Window_PutGlyph's
 // position stores move.
 
@@ -176,7 +176,7 @@ done:
 struct SpriteOutput {
   struct SpriteOutput *next;
   u8 kind;
-  u8 active;         ///< its UI_SPRITE_ motion
+  u8 active;         ///< its WINDOW_SPRITE_MOTION_ motion
   u16 x;             ///< screen pixels, where the motion is centred
   u16 y;             ///< screen pixels, where the motion is centred
   u16 unused;        ///< WindowSprite's; no code names it
@@ -417,33 +417,36 @@ void Window_SetTilemapEntry(struct Window *window, s32 value, s32 x, s32 y,
 /// The swells loop over gWindowSprite_BounceScales' 32 steps; the shrinks take
 /// its second half, every other entry, over 8 frames and then stay at full
 /// size.
-void WindowSprite_UpdateScaleAnimation(struct WindowSprite *output) {
+void WindowSprite_UpdateScaleAnimation(struct WindowSprite *windowSprite) {
   // Scales are 8.8 fixed point: 256 is the sprite's own size.
   s32 scale = 256;
-  struct CursorSprite *sprite = SPRITE_CELL(output);
+  struct CursorSprite *sprite = SPRITE_CELL(windowSprite);
   struct AffineTransform effect;
 
-  switch ((u8)output->motion) {
+  switch ((u8)windowSprite->motion) {
   case WINDOW_SPRITE_MOTION_SWELL:
-    scale = gWindowSprite_BounceScales[output->animationStep++ & 31];
+    scale = gWindowSprite_BounceScales[windowSprite->animationStep++ & 31];
     break;
   case WINDOW_SPRITE_MOTION_SWELL_HALF:
-    scale = gWindowSprite_BounceScales[output->animationStep++ & 31] >> 1;
+    scale = gWindowSprite_BounceScales[windowSprite->animationStep++ & 31] >> 1;
     break;
   case WINDOW_SPRITE_MOTION_SHRINK:
-    if (output->animationStep <= 7)
-      scale = gWindowSprite_BounceScales[output->animationStep++ * 2 + 16];
+    if (windowSprite->animationStep <= 7)
+      scale =
+          gWindowSprite_BounceScales[windowSprite->animationStep++ * 2 + 16];
     break;
   case WINDOW_SPRITE_MOTION_SHRINK_HALF:
-    if (output->animationStep <= 7)
-      scale = gWindowSprite_BounceScales[output->animationStep++ * 2 + 16] >> 1;
+    if (windowSprite->animationStep <= 7)
+      scale =
+          gWindowSprite_BounceScales[windowSprite->animationStep++ * 2 + 16] >>
+          1;
     break;
   }
   if (scale == 256) {
     sprite->affineIndex = 0;
     sprite->affine = 0;
-    sprite->x = output->x;
-    sprite->y = output->y;
+    sprite->x = windowSprite->x;
+    sprite->y = windowSprite->y;
   } else {
     effect.scaleX = scale;
     effect.scaleY = scale;
@@ -455,43 +458,44 @@ void WindowSprite_UpdateScaleAnimation(struct WindowSprite *output) {
       sprite->affine = 3;
       // x read through a u16 pointer, which loads the -8 first; as sprite->x
       // the two loads swap.
-      sprite->x = *(u16 *)&output->x - 8;
-      sprite->y = (u16)output->y - 8;
+      sprite->x = *(u16 *)&windowSprite->x - 8;
+      sprite->y = (u16)windowSprite->y - 8;
     } else {
       sprite->affine = 1;
-      sprite->x = output->x;
-      sprite->y = output->y;
+      sprite->x = windowSprite->x;
+      sprite->y = windowSprite->y;
     }
   }
 }
 
 /// The per-frame sprite update: moves each sprite that an open window carries
-/// by its animation mode (UI_SPRITE_) and queues it for drawing, at its depth
-/// slot (WindowSprite.sentinel). The last step of UiWork_ProcessAll. While a
-/// window swells (WINDOW_EFFECT_SWELL) all its sprites pulse.
-void UiWork_AnimateSpriteSlots(void) {
+/// by its animation mode (WINDOW_SPRITE_MOTION_) and queues it for drawing, at
+/// its depth slot (WindowSprite.sentinel). The last step of
+/// WindowSystem_Update. While a window swells (WINDOW_EFFECT_SWELL) all its
+/// sprites pulse.
+void WindowSprite_UpdateAll(void) {
   struct WindowWork *work = WINDOW_WORK;
   struct Window *window = work->windows;
   s32 no;
   struct AffineTransform effect;
 
   for (no = 0; no != WINDOW_COUNT; window++, no++) {
-    struct SpriteOutput *output;
+    struct SpriteOutput *windowSprite;
     u32 phase;
 
     if (!(window->flags & WINDOW_FLAG_OPEN))
       continue;
-    output = (struct SpriteOutput *)window->sprites.head;
+    windowSprite = (struct SpriteOutput *)window->sprites.head;
     // The page arrow's frame: one of 8, each shown for 4 frames.
     phase = (gFrameTick >> 2) & 7;
-    while (output != NULL) {
-      struct CursorSprite *sprite = &output->attr;
+    while (windowSprite != NULL) {
+      struct CursorSprite *sprite = &windowSprite->attr;
 
       if (window->effect == WINDOW_EFFECT_SWELL) {
-        output->animationStep = 2;
-        output->active = WINDOW_SPRITE_MOTION_PULSE;
+        windowSprite->animationStep = 2;
+        windowSprite->active = WINDOW_SPRITE_MOTION_PULSE;
       }
-      switch (output->active) {
+      switch (windowSprite->active) {
       case WINDOW_SPRITE_MOTION_PAGE_ARROW:
         // 0x60 is VRAM_CACHE_ENTRY_COUNT: no entry was free for the arrow.
         // Its 128-byte frame is an 8x16 sprite of 256 colours (colors 1,
@@ -500,14 +504,14 @@ void UiWork_AnimateSpriteSlots(void) {
           const u8 *tiles = &gWindowSprite_CursorFrameTiles[phase * 128];
 
           sprite->tile = VramCache_Load(work->glyphResource, 128, tiles);
-          output->index = sprite->tile;
+          windowSprite->index = sprite->tile;
           sprite->mode = 0;
           sprite->mosaic = 0;
           sprite->colors = 1;
           sprite->size = 0;
           sprite->shape = 2;
-          sprite->y =
-              output->y + gWindowSprite_CursorBobOffsets[gFrameTick % 80] + 2;
+          sprite->y = windowSprite->y +
+                      gWindowSprite_CursorBobOffsets[gFrameTick % 80] + 2;
           sprite->affine = 0;
           sprite->affineIndex = 0;
         }
@@ -517,21 +521,21 @@ void UiWork_AnimateSpriteSlots(void) {
         // half the sum of two random 0 to 2, less 1.
         if (gFrameTick & 1) {
           sprite->x =
-              output->x +
+              windowSprite->x +
               (s32)(((Random16() * 3 >> 16) + (Random16() * 3 >> 16)) >> 1) - 1;
           sprite->y =
-              output->y +
+              windowSprite->y +
               (s32)(((Random16() * 3 >> 16) + (Random16() * 3 >> 16)) >> 1) - 1;
         }
         break;
       case WINDOW_SPRITE_MOTION_POP:
         // Double size (512 in 8.8) for animationStep frames, which
         // Glyph_Draw starts at 8.
-        if (output->animationStep == 0) {
+        if (windowSprite->animationStep == 0) {
           sprite->affineIndex = 0;
           sprite->affine = 0;
-          sprite->x = output->x;
-          sprite->y = output->y;
+          sprite->x = windowSprite->x;
+          sprite->y = windowSprite->y;
           break;
         }
         effect.scaleX = 512;
@@ -539,84 +543,92 @@ void UiWork_AnimateSpriteSlots(void) {
         effect.angle = 0;
         sprite->affineIndex = OamMatrix_AllocFromTransform(&effect);
         sprite->affine = 3;
-        sprite->x = output->x - 5;
-        sprite->y = output->y - 5;
-        output->animationStep--;
+        sprite->x = windowSprite->x - 5;
+        sprite->y = windowSprite->y - 5;
+        windowSprite->animationStep--;
         break;
       case WINDOW_SPRITE_MOTION_SPIN:
         // animationStep is the angle, 65536 a turn: 768 a frame, a turn in
         // about 85 frames, while the sprite circles its place.
         effect.scaleX = 256;
         effect.scaleY = 256;
-        output->animationStep += 768;
-        effect.angle = output->animationStep;
+        windowSprite->animationStep += 768;
+        effect.angle = windowSprite->animationStep;
         sprite->affineIndex = OamMatrix_AllocFromTransform(&effect);
         sprite->affine = 1;
-        sprite->x = output->x - (Trig_Sin(effect.angle + 0xe800) >> 14) - 2;
-        sprite->y = output->y - (Trig_Cos(effect.angle + 0x6800) >> 14) - 2;
+        sprite->x =
+            windowSprite->x - (Trig_Sin(effect.angle + 0xe800) >> 14) - 2;
+        sprite->y =
+            windowSprite->y - (Trig_Cos(effect.angle + 0x6800) >> 14) - 2;
         break;
       case WINDOW_SPRITE_MOTION_WOBBLE:
         // One step of the 20 of gWindowSprite_WobbleOffsets every other frame.
         if (gFrameTick & 1)
-          output->animationStep++;
-        sprite->x = output->x +
-                    gWindowSprite_WobbleOffsets[output->animationStep % 20][0];
-        sprite->y = output->y +
-                    gWindowSprite_WobbleOffsets[output->animationStep % 20][1] -
-                    2;
+          windowSprite->animationStep++;
+        sprite->x =
+            windowSprite->x +
+            gWindowSprite_WobbleOffsets[windowSprite->animationStep % 20][0];
+        sprite->y =
+            windowSprite->y +
+            gWindowSprite_WobbleOffsets[windowSprite->animationStep % 20][1] -
+            2;
         break;
       case WINDOW_SPRITE_MOTION_HOP_UP:
-        output->animationStep++;
+        windowSprite->animationStep++;
         sprite->y =
-            output->y - gWindowSprite_BounceOffsets[output->animationStep & 15];
+            windowSprite->y -
+            gWindowSprite_BounceOffsets[windowSprite->animationStep & 15];
         break;
       case WINDOW_SPRITE_MOTION_HOP_DOWN:
       case WINDOW_SPRITE_MOTION_HOP_DOWN_2:
       case WINDOW_SPRITE_MOTION_HOP_DOWN_3:
-        output->animationStep++;
+        windowSprite->animationStep++;
         sprite->y =
-            output->y + gWindowSprite_BounceOffsets[output->animationStep & 15];
+            windowSprite->y +
+            gWindowSprite_BounceOffsets[windowSprite->animationStep & 15];
         break;
       case WINDOW_SPRITE_MOTION_HOP_DOWN_LEFT:
-        output->animationStep++;
+        windowSprite->animationStep++;
         sprite->x =
-            output->x - gWindowSprite_BounceOffsets[output->animationStep & 15];
+            windowSprite->x -
+            gWindowSprite_BounceOffsets[windowSprite->animationStep & 15];
         sprite->y =
-            output->y + gWindowSprite_BounceOffsets[output->animationStep & 15];
+            windowSprite->y +
+            gWindowSprite_BounceOffsets[windowSprite->animationStep & 15];
         break;
       case WINDOW_SPRITE_MOTION_PULSE:
         // 1.25 times (320 in 8.8) for animationStep frames, then its own size.
-        if (output->animationStep != 0) {
+        if (windowSprite->animationStep != 0) {
           effect.scaleX = 320;
           effect.scaleY = 320;
           effect.angle = 0;
           sprite->affineIndex = OamMatrix_AllocFromTransform(&effect);
           sprite->affine = 3;
-          sprite->x = output->x - 8;
-          sprite->y = output->y - 8;
-          output->animationStep--;
+          sprite->x = windowSprite->x - 8;
+          sprite->y = windowSprite->y - 8;
+          windowSprite->animationStep--;
           break;
         }
         sprite->affineIndex = 0;
         sprite->affine = 0;
-        sprite->x = output->x;
-        sprite->y = output->y;
+        sprite->x = windowSprite->x;
+        sprite->y = windowSprite->y;
         break;
       case WINDOW_SPRITE_MOTION_SWELL:
       case WINDOW_SPRITE_MOTION_SWELL_HALF:
       case WINDOW_SPRITE_MOTION_SHRINK:
       case WINDOW_SPRITE_MOTION_SHRINK_HALF:
-        WindowSprite_UpdateScaleAnimation((struct WindowSprite *)output);
+        WindowSprite_UpdateScaleAnimation((struct WindowSprite *)windowSprite);
         break;
       }
       // Queue it unless it is hidden, or an arrow with no picture.
-      if (output->active == WINDOW_SPRITE_MOTION_PAGE_ARROW) {
+      if (windowSprite->active == WINDOW_SPRITE_MOTION_PAGE_ARROW) {
         if (work->glyphResource != 0x60)
-          Oam_AddSpriteAtDepth(sprite, output->sentinel);
-      } else if (output->active != WINDOW_SPRITE_MOTION_HIDDEN) {
-        Oam_AddSpriteAtDepth(sprite, output->sentinel);
+          Oam_AddSpriteAtDepth(sprite, windowSprite->sentinel);
+      } else if (windowSprite->active != WINDOW_SPRITE_MOTION_HIDDEN) {
+        Oam_AddSpriteAtDepth(sprite, windowSprite->sentinel);
       }
-      output = output->next;
+      windowSprite = windowSprite->next;
       phase = (gFrameTick >> 2) & 7;
     }
   }

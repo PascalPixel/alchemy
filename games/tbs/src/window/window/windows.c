@@ -69,7 +69,7 @@ void WindowSprite_InitializeFreeList(void) {
 /// (DebugBattle_ViewMessages), Lucky Dice and Lucky Wheels (LuckyWheels_Run).
 /// The work block (heap slot HEAP_SLOT_WINDOW) lives until the slot is next
 /// allocated; nothing here frees it.
-void UiWork_InitializeWithResourceCounters(void) {
+void WindowSystem_InitField(void) {
   struct WindowWork *work;
 #if TBS_PATCH_1
   volatile u32 fill;
@@ -99,18 +99,18 @@ void UiWork_InitializeWithResourceCounters(void) {
   // upload's order, 0x480, is TASK_PRIORITY_VBLANK: it runs in vertical blank.
   WindowSprite_InitializeFreeList();
   Portrait_ClearSlots();
-  Task_Add(UiWork_UploadDirtyBlocks, 0x480);
-  UiWork_InitializeCountersWithResourceAndScheduleRefresh();
+  Task_Add(WindowSystem_UploadTilemap, 0x480);
+  WindowSystem_StartFieldUpdate();
 }
 
 /// Sets up the window system for battle, as
-/// UiWork_InitializeWithResourceCounters does for the field, and marks the work
+/// WindowSystem_InitField does for the field, and marks the work
 /// block as in battle (battleMode 1). Battle_Run's setup
 /// (battle/battle/encounter.c) passes loadGlyphTiles set only while
 /// FLAG_DJINN_LESSON is set: it reserves the glyph sprites' tiles, which
 /// only windows other than text canvases need. Unlike the field setup it does
 /// not mark the portrait slots free (999): they stay 0 from the clear.
-void UiWork_Initialize(s32 loadGlyphTiles) {
+void WindowSystem_InitBattle(s32 loadGlyphTiles) {
   struct WindowWork *work;
 #if TBS_PATCH_1
   volatile u32 fill;
@@ -120,7 +120,7 @@ void UiWork_Initialize(s32 loadGlyphTiles) {
   // Copies pixel rows 4 to 6 of UI tile src to rows 0 to 2 of tile dst and
   // clears the rest of dst. A 4bpp row is 4 bytes: the copy takes rows 4 to 7
   // (16 bytes from byte 16), and the clear then blanks rows 3 to 7.
-  s32 UiWork_CopyTileTail(u32 sourceTile, u32 destinationTile) {
+  s32 WindowSystem_CopyTileLowerRows(u32 sourceTile, u32 destinationTile) {
     sourceTile &= 0x3ff;
     destinationTile &= 0x3ff;
     Dma_Set(BG_CHAR_BLOCK(0) + sourceTile * TILE_SIZE_4BPP + 16,
@@ -152,12 +152,12 @@ void UiWork_Initialize(s32 loadGlyphTiles) {
                   WINDOW_TILE_PAIR(WINDOW_TILE_BLANK));
 #endif
   WindowSprite_InitializeFreeList();
-  Task_Add(UiWork_UploadDirtyBlocks, 0x480);
-  UiWork_InitializeCountersAndScheduleRefresh(loadGlyphTiles);
+  Task_Add(WindowSystem_UploadTilemap, 0x480);
+  WindowSystem_StartBattleUpdate(loadGlyphTiles);
   // Tiles 128 to 130 take the lower rows of the bottom frame tiles.
-  UiWork_CopyTileTail(WINDOW_TILE_FRAME_BOTTOM_LEFT, 128);
-  UiWork_CopyTileTail(WINDOW_TILE_FRAME_BOTTOM, 129);
-  UiWork_CopyTileTail(WINDOW_TILE_FRAME_BOTTOM_RIGHT, 130);
+  WindowSystem_CopyTileLowerRows(WINDOW_TILE_FRAME_BOTTOM_LEFT, 128);
+  WindowSystem_CopyTileLowerRows(WINDOW_TILE_FRAME_BOTTOM, 129);
+  WindowSystem_CopyTileLowerRows(WINDOW_TILE_FRAME_BOTTOM_RIGHT, 130);
   // Tiles 128 to 130 are also the first three text tiles. Attribute 4 is
   // neither allocated nor shown, but nonzero, so the text tile search skips
   // them and no clear of the shown bits ever frees them.
@@ -173,7 +173,7 @@ void UiWork_Initialize(s32 loadGlyphTiles) {
 /// (four tile rows) marked in the dirty bits to VRAM. Bit 0 marks the whole
 /// tilemap, bits 1 to 5 one band each. Nothing is copied while
 /// holdTilemapUpload holds the upload off.
-void UiWork_UploadDirtyBlocks(void) {
+void WindowSystem_UploadTilemap(void) {
   struct WindowWork *work = WINDOW_WORK;
   u32 bands;
   u8 *src;
@@ -297,8 +297,8 @@ void Window_DrawOpened(struct Window *window) {
 
 /// Opens a window at tile (x, y) of width by height tiles in the first free
 /// window slot, and returns it, or NULL when all slots are in use. attrs takes
-/// the UI_WINDOW_ flags. Unless it is WINDOW_FLAG_INSTANT the window zooms open
-/// over eight frames, and this waits until it is fully open.
+/// the WINDOW_FLAG_ flags. Unless it is WINDOW_FLAG_INSTANT the window zooms
+/// open over eight frames, and this waits until it is fully open.
 struct Window *Window_Create(s32 x, s32 y, s32 width, s32 height, s32 attrs) {
   struct Window *slot;
   struct Window *found;
@@ -326,7 +326,7 @@ struct Window *Window_Create(s32 x, s32 y, s32 width, s32 height, s32 attrs) {
     found->flags = WINDOW_FLAG_OPEN;
     // Every new window starts the shared text style afresh. The function
     // takes no arguments: x is passed and ignored.
-    UiWork_ResetCounters(x);
+    Text_ResetStyle(x);
     if (attrs & WINDOW_FLAG_TEXT_CANVAS) {
       found->flags |= WINDOW_FLAG_TEXT_CANVAS;
     }
@@ -370,7 +370,7 @@ void Window_WaitZoom(struct Window *window) {
 /// Closes a window: clears its contents and remembers its last rectangle.
 /// With instant set the window is erased and its slot freed at once; otherwise
 /// it zooms closed over four frames first, and its slot stays taken until
-/// UiWork_ProcessDirectWork frees it (UiWork_IsIdle says when). It returns
+/// Window_UpdateZooms frees it (Window_IsClosed says when). It returns
 /// without waiting. Unless the window is a text canvas, its window sprites go
 /// back to the pool at once; a text printer typing into it lets go of it
 /// once it has closed (TextPrinter_RunAll). Does nothing for NULL.
@@ -408,7 +408,7 @@ void Window_Close(struct Window *window, s32 instant) {
     window->previousWidth = zero;
     window->previousHeight = zero;
   } else {
-    // Zoom closed over four frames (UiWork_ProcessDirectWork), from frame 0:
+    // Zoom closed over four frames (Window_UpdateZooms), from frame 0:
     // instant is 0 here.
     window->frame = instant;
     window->duration = WINDOW_CLOSE_FRAMES;
@@ -429,10 +429,10 @@ void WindowSprite_RedrawSavedRect(struct Window *window) {
   Window_DrawFrame(window->x, window->y, window->width, window->height);
 }
 
-/// Releases every window sprite in a list and empties it. outputs is the list,
+/// Releases every window sprite in a list and empties it. sprites is the list,
 /// or a window (whose sprite list comes first); NULL is ignored.
-void WindowSprite_ClearList(void *outputs) {
-  struct WindowSpriteList *list = outputs;
+void WindowSprite_ClearList(void *sprites) {
+  struct WindowSpriteList *list = sprites;
   struct WindowSprite *node;
   struct WindowSprite *next;
 
@@ -530,7 +530,7 @@ void WindowSprite_Release(struct WindowSprite *entry) {
     if ((u8)entry->kind == WINDOW_SPRITE_PORTRAIT) {
       u8 *work = gWindowWork[0];
       s32 offset = entry->oam.palette * 2 + WINDOW_WORK_PALETTE_TABLE_OFFSET;
-      *(u16 *)(work + offset) = UI_PALETTE_SLOT_FREE;
+      *(u16 *)(work + offset) = PORTRAIT_SLOT_EMPTY;
     }
   }
   entry->motion = 0;
@@ -545,13 +545,13 @@ void WindowSprite_Release(struct WindowSprite *entry) {
 /// until its window closes.
 struct TextPrinter *TextPrinter_Add(struct Window *window, s32 entry, s32 x,
                                     s32 y, u16 *spacing, s32 flags) {
-  struct TextPrinter *channel = WINDOW_WORK->printers;
+  struct TextPrinter *printer = WINDOW_WORK->printers;
   struct TextPrinter *found = NULL;
   u32 i;
 
-  for (i = 0; i != TEXT_PRINTER_COUNT; i++, channel++) {
-    if (channel->window == NULL) {
-      found = channel;
+  for (i = 0; i != TEXT_PRINTER_COUNT; i++, printer++) {
+    if (printer->window == NULL) {
+      found = printer;
       break;
     }
   }
@@ -569,10 +569,10 @@ struct TextPrinter *TextPrinter_Add(struct Window *window, s32 entry, s32 x,
     found->ended = 0;
     found->flags = flags;
     if (spacing != NULL) {
-      for (i = 0; i < UI_MESSAGE_LINE_COUNT; i++)
+      for (i = 0; i < TEXT_PRINTER_LINE_COUNT; i++)
         found->spacing[i] = *spacing++;
     } else {
-      for (i = 0; i < UI_MESSAGE_LINE_COUNT; i++)
+      for (i = 0; i < TEXT_PRINTER_LINE_COUNT; i++)
         found->spacing[i] = 0;
     }
     found->line = 0;
@@ -587,17 +587,17 @@ struct TextPrinter *TextPrinter_Add(struct Window *window, s32 entry, s32 x,
 /// marked flag there. Returns the printer, or NULL when all three are busy.
 struct TextPrinter *BattleMessage_Continue(struct Window *window, s32 entry,
                                            s32 keepPosition) {
-  struct TextPrinter *channel;
+  struct TextPrinter *printer;
   struct TextPrinter *selected;
   u16 *spacing;
   u16 zero;
   u32 index;
 
-  channel = WINDOW_WORK->printers;
+  printer = WINDOW_WORK->printers;
   selected = 0;
-  for (index = 0; index != TEXT_PRINTER_COUNT; channel++, index++) {
-    if (channel->window == 0 || channel->window->state != 0) {
-      selected = channel;
+  for (index = 0; index != TEXT_PRINTER_COUNT; printer++, index++) {
+    if (printer->window == 0 || printer->window->state != 0) {
+      selected = printer;
       break;
     }
   }
@@ -636,18 +636,18 @@ struct TextPrinter *BattleMessage_Continue(struct Window *window, s32 entry,
     do {
       index++;
       *spacing++ = zero;
-    } while (index < UI_MESSAGE_LINE_COUNT);
+    } while (index < TEXT_PRINTER_LINE_COUNT);
   }
   return selected;
 }
 
 /// Clears the text canvas to transparent.
-s32 Ui_ClearVramBlock(void) {
+s32 Text_ClearCanvas(void) {
   return Iwram_FillWords(TEXT_CANVAS_VRAM, TEXT_CANVAS_SIZE, 0);
 }
 
 /// Fills the text canvas with the window background colour (4).
-s32 Ui_FillVramBlockPattern(void) {
+s32 Text_FillCanvasBackground(void) {
   return Iwram_FillWords(TEXT_CANVAS_VRAM, TEXT_CANVAS_SIZE,
                          TEXT_CANVAS_BACKGROUND_WORD);
 }
@@ -657,19 +657,19 @@ s32 Ui_FillVramBlockPattern(void) {
 /// (battle/battle/auto_battle.c) calls it after playing each action, so the
 /// next battle message starts on a clear canvas at its first line.
 void TextPrinter_ResetFree(void) {
-  struct TextPrinter *channel = WINDOW_WORK->printers;
+  struct TextPrinter *printer = WINDOW_WORK->printers;
   struct TextPrinter *selection = 0;
   s32 i;
 
-  for (i = 0; i != TEXT_PRINTER_COUNT; channel++, i++) {
-    if (channel->window == 0 || channel->window->state != 0) {
-      selection = channel;
+  for (i = 0; i != TEXT_PRINTER_COUNT; printer++, i++) {
+    if (printer->window == 0 || printer->window->state != 0) {
+      selection = printer;
       break;
     }
   }
   if (selection != 0) {
     if (selection->window != 0) {
-      Ui_ClearVramBlock();
+      Text_ClearCanvas();
       selection->y = 0;
     }
     selection->x = 0;
@@ -682,17 +682,17 @@ void TextPrinter_ResetFree(void) {
 
 /// Copies the printer's text colour, outline and line spacing into the shared
 /// glyph renderer before that printer draws its next character.
-void TextPrinter_ApplyStyle(struct TextPrinter *channel) {
+void TextPrinter_ApplyStyle(struct TextPrinter *printer) {
   struct WindowWork *work = WINDOW_WORK;
 
-  work->colour = channel->colour;
-  work->outline = channel->outline;
-  work->lineSpacing = channel->lineSpacing;
+  work->colour = printer->colour;
+  work->outline = printer->outline;
+  work->lineSpacing = printer->lineSpacing;
 }
 
 /// Starts a text printer scrolling its canvas up a line: 12 pixel rows, 6 a
 /// frame over two frames (TextPrinter_Step, Text_ScrollCanvasUp), during which
 /// the printer types nothing.
-void Text_StartCanvasScroll(struct TextPrinter *channel) {
-  channel->transition = 2;
+void Text_StartCanvasScroll(struct TextPrinter *printer) {
+  printer->transition = 2;
 }

@@ -2,61 +2,61 @@
 	.section .rodata
 	.balign 4
 	.ifdef TBS_EDITION_ES
-	.global gUi_LvString
-gUi_LvString:
+	.global gStatusPanel_LevelString
+gStatusPanel_LevelString:
 	.asciz "Nv."
 	.else
 	.ifdef TBS_EDITION_FR
-	.global gUi_LvString
-gUi_LvString:
+	.global gStatusPanel_LevelString
+gStatusPanel_LevelString:
 	.asciz "Niv"
 	.else
-	.global gUi_LvString
-gUi_LvString:
+	.global gStatusPanel_LevelString
+gStatusPanel_LevelString:
 	.asciz "Lv"
 	.balign 4, 0
 	.endif
 	.endif
 	.if EDITION_INTERNATIONAL
 	.else
-	.global gUi_HpRowString
-gUi_HpRowString:
+	.global gStatusPanel_HpRowString
+gStatusPanel_HpRowString:
 	.asciz "HP    /"
 	.endif
 	.if EDITION_INTERNATIONAL
 	.else
-	.global gUi_PpRowString
-gUi_PpRowString:
+	.global gStatusPanel_PpRowString
+gStatusPanel_PpRowString:
 	.asciz "EP    /"
 	.endif
 	.ifdef TBS_EDITION_JA
 	.else
 	.ifdef TBS_EDITION_DE
-	.global gUi_HpString
-gUi_HpString:
+	.global gStatusPanel_HpString
+gStatusPanel_HpString:
 	.asciz "KP"
 	.balign 4, 0
 	.else
 	.ifdef TBS_EDITION_ES
-	.global gUi_HpString
-gUi_HpString:
+	.global gStatusPanel_HpString
+gStatusPanel_HpString:
 	.asciz "PV"
 	.balign 4, 0
 	.else
 	.ifdef TBS_EDITION_FR
-	.global gUi_HpString
-gUi_HpString:
+	.global gStatusPanel_HpString
+gStatusPanel_HpString:
 	.asciz "PV"
 	.balign 4, 0
 	.else
 	.ifdef TBS_EDITION_IT
-	.global gUi_HpString
-gUi_HpString:
+	.global gStatusPanel_HpString
+gStatusPanel_HpString:
 	.asciz "PS"
 	.balign 4, 0
 	.else
-	.global gUi_HpString
-gUi_HpString:
+	.global gStatusPanel_HpString
+gStatusPanel_HpString:
 	.asciz "HP"
 	.balign 4, 0
 	.endif
@@ -65,15 +65,15 @@ gUi_HpString:
 	.endif
 	.endif
 	.if EDITION_INTERNATIONAL
-	.global gUi_SlashString
-gUi_SlashString:
+	.global gStatusPanel_SlashString
+gStatusPanel_SlashString:
 	.asciz "/"
 	.balign 4, 0
 	.else
 	.endif
 	.if EDITION_INTERNATIONAL
-	.global gUi_PpString
-gUi_PpString:
+	.global gStatusPanel_PpString
+gStatusPanel_PpString:
 	.asciz "PP"
 	.balign 4, 0
 	.else

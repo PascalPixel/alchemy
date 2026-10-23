@@ -6,7 +6,7 @@
 extern const u16 gWindowSprite_BounceScales[32];
 extern const s8 gWindowSprite_BounceScalesTail[8];
 extern const s8 gMenuCursor_BobOffsets[16];
-extern const u8 gPaletteGlow_WaveTable[121];
+extern const u8 gWindowColor_WaveTable[121];
 
 extern const u8 gOptionMenu_HuePresets[6];
 extern const u8 gOptionMenu_BrightnessPresets[6];

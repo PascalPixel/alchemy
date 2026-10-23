@@ -98,11 +98,11 @@ s32 BattleDjinnMenu_ListChangedDjinn(const struct PsynergyEntry *oldGrid,
 // UBFIX makes it void, which changes the register its epilogue returns
 // through.
 #ifdef UBFIX
-void Ui_CreateOutputFromResourceSlot(struct Window *window, s32 x, s32 y,
-                                     s32 abilityId) {
-#else
-s32 Ui_CreateOutputFromResourceSlot(struct Window *window, s32 x, s32 y,
+void WindowSprite_CreateAbilityIcon(struct Window *window, s32 x, s32 y,
                                     s32 abilityId) {
+#else
+s32 WindowSprite_CreateAbilityIcon(struct Window *window, s32 x, s32 y,
+                                   s32 abilityId) {
 #endif
   s32 iconSlot;
 
@@ -115,7 +115,7 @@ s32 Ui_CreateOutputFromResourceSlot(struct Window *window, s32 x, s32 y,
 }
 
 /// Shows what setting or removing Djinni `encodedDjinn` (element << 8 |
-/// index) would change for `owner`: closes the preview window `win`, opens a
+/// index) would change for `member`: closes the preview window `win`, opens a
 /// new one and returns it, or NULL when none could be opened. Page 0
 /// compares the class and stats, old against new, with an arrow by each stat
 /// that rises or falls; pages 1 on list, five a page, the unit's battle
@@ -125,7 +125,7 @@ s32 Ui_CreateOutputFromResourceSlot(struct Window *window, s32 x, s32 y,
 /// The Djinni is toggled and the unit recalculated (Unit_CalculateFar) only to
 /// measure: the unit is restored from a copy before it returns.
 /// BattleDjinnMenu_Run calls it as the cursor moves.
-struct Window *BattleDjinnMenu_ShowChangePreview(struct Window *win, s32 owner,
+struct Window *BattleDjinnMenu_ShowChangePreview(struct Window *win, s32 member,
                                                  s32 encodedDjinn, s32 page,
                                                  s32 *pageCount) {
   struct Unit *unit;
@@ -155,18 +155,18 @@ struct Window *BattleDjinnMenu_ShowChangePreview(struct Window *win, s32 owner,
   // a 16x16 sprite on layer 240 at pixel (x, y) of the window, in a VRAM
   // cache entry of its own that the window's sprite list frees (kind 1).
   void DjinnMenu_DrawStatArrow(s32 x, s32 y, s32 rising) {
-    struct WindowSprite *output = WindowSprite_AcquireFree();
+    struct WindowSprite *sprite = WindowSprite_AcquireFree();
     struct PreviewSprite *entry;
     u32 zero;
-    if (output) {
-      output->motion = 1;
-      output->kind = WINDOW_SPRITE_ICON;
+    if (sprite) {
+      sprite->motion = 1;
+      sprite->kind = WINDOW_SPRITE_ICON;
       // Stored through a cast, the index stays ahead of the attribute word.
-      *(s8 *)&output->index = VramCache_AllocEntry(128);
-      entry = (struct PreviewSprite *)((u8 *)output + 16);
-      output->sentinel = 240;
-      output->x = 120;
-      output->y = 120;
+      *(s8 *)&sprite->index = VramCache_AllocEntry(128);
+      entry = (struct PreviewSprite *)((u8 *)sprite + 16);
+      sprite->sentinel = 240;
+      sprite->x = 120;
+      sprite->y = 120;
       // UB: the two stores below write the attribute and tile words through
       // pointer types, which keeps sched2's order of the stores around them;
       // UBFIX writes the unions' words.
@@ -187,13 +187,13 @@ struct Window *BattleDjinnMenu_ShowChangePreview(struct Window *win, s32 owner,
       win++;
       win--;
       entry->tile.bits.index = VramCache_Reload(
-          (u8)output->index,
+          (u8)sprite->index,
           (s32)(rising ? gDjinnMenu_ArrowUpTiles : gDjinnMenu_ArrowDownTiles));
-      WindowSprite_AppendToList((struct WindowSpriteList *)win, output);
+      WindowSprite_AppendToList((struct WindowSpriteList *)win, sprite);
     }
   }
 
-  unit = Unit_GetFar(owner);
+  unit = Unit_GetFar(member);
   if (win != 0)
     Window_Close(win, 1);
 
@@ -217,11 +217,11 @@ struct Window *BattleDjinnMenu_ShowChangePreview(struct Window *win, s32 owner,
 
   element = (encodedDjinn >> 8) & 15;
   djinnIndex = encodedDjinn & 255;
-  if (Djinn_IsSetFar(owner, element, djinnIndex) != 0)
-    Djinn_PutOnStandbyFar(owner, element, djinnIndex);
+  if (Djinn_IsSetFar(member, element, djinnIndex) != 0)
+    Djinn_PutOnStandbyFar(member, element, djinnIndex);
   else
-    Djinn_SetFar(owner, element, djinnIndex);
-  Unit_CalculateFar(owner);
+    Djinn_SetFar(member, element, djinnIndex);
+  Unit_CalculateFar(member);
 
   abilityCount = BattleDjinnMenu_ListChangedDjinn(
       savedUnit->psynergy, unit->psynergy, changedAbilities, &gained, &lost);
@@ -267,10 +267,10 @@ struct Window *BattleDjinnMenu_ShowChangePreview(struct Window *win, s32 owner,
     Window_DrawDividerLine(win, 0, 8, 19, 8);
     // "R: Psynergy Gained" stands out in colour 2 when the Psynergy changes.
     if (gained != 0 || lost != 0)
-      UiWork_SetParameterNibble(2);
+      Text_SetColor(2);
     Text_DrawMessageAsTiles(MsgBattleAdditionalPsynergyHelp, win,
                             DJINN_PREVIEW_HELP_X, 64);
-    UiWork_SetParameterNibble(15);
+    Text_SetColor(15);
   }
 
   if (page > 0) {
@@ -294,14 +294,14 @@ struct Window *BattleDjinnMenu_ShowChangePreview(struct Window *win, s32 owner,
         rangePattern--;
       Window_DrawThreeTileColumn(win, 16, visibleRow * 2, rangePattern, 0);
 
-      Ui_CreateOutputFromResourceSlot(win, 0, visibleRow * 16 - 4,
-                                      changedAbilities[i] & ACTION_ID_MASK);
+      WindowSprite_CreateAbilityIcon(win, 0, visibleRow * 16 - 4,
+                                     changedAbilities[i] & ACTION_ID_MASK);
       if ((changedAbilities[i] & DJINN_PREVIEW_ABILITY_GAINED) != 0)
-        UiWork_SetParameterNibble(4);
+        Text_SetColor(4);
       else if ((changedAbilities[i] & DJINN_PREVIEW_ABILITY_LOST) != 0)
-        UiWork_SetParameterNibble(2);
+        Text_SetColor(2);
       else
-        UiWork_SetParameterNibble(15);
+        Text_SetColor(15);
 
       Text_DrawMessageAsTiles((changedAbilities[i] & ACTION_ID_MASK) +
                                   MsgAbilityName,
@@ -314,19 +314,19 @@ struct Window *BattleDjinnMenu_ShowChangePreview(struct Window *win, s32 owner,
     }
 
     if (gained != 0) {
-      UiWork_SetParameterNibble(4);
+      Text_SetColor(4);
       Text_DrawMessageAsTiles(MsgPsynergyGained, win, 32, 80);
       summaryRows = 1;
     }
     if (lost != 0) {
-      UiWork_SetParameterNibble(2);
+      Text_SetColor(2);
       Text_DrawMessageAsTiles(MsgPsynergyLost, win, 32, summaryRows * 8 + 80);
       summaryRows++;
     }
     if (summaryRows == 0)
       Text_DrawMessageAsTiles(MsgPsynergyUnchanged, win, 32, 80);
-    UiWork_SetParameterNibble(15);
-    UiWork_SetParameterNibble(15);
+    Text_SetColor(15);
+    Text_SetColor(15);
     Window_DrawDividerLine(win, 0, 10, 19, 10);
   }
 

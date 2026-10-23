@@ -397,7 +397,7 @@ void Text_UseExtraTiles(s32 allowAlternateTiles) {
 }
 
 /// Nothing calls it.
-UNUSED void UiRender_ReservedNoOp(void) {}
+UNUSED void Window_ReservedNoOp(void) {}
 
 /// Draws a straight divider line inside a window from tile (x1, y1) to
 /// (x2, y2), horizontal or vertical: its ends join the frame or the lines they
@@ -563,7 +563,7 @@ void Window_DrawDividerLine(struct Window *win, u32 x1, u32 y1, u32 x2,
 /// Sets the text colour (0 to 15) of drawn text. The menus colour the HP
 /// figures with it (menu/menu/common.c, screens/party_status.c), and
 /// set colour 15 back after.
-void UiWork_SetParameterNibble(s32 param) {
+void Text_SetColor(s32 param) {
   struct WindowWork *work = WINDOW_WORK;
 
   work->colour = param & 15;
@@ -572,7 +572,7 @@ void UiWork_SetParameterNibble(s32 param) {
 /// Sets the text style (WindowWork.outline) of drawn text: 1 outlined, 2 to
 /// 5 a motion of glyph sprites. Reached only through a bare entry of the
 /// window far-call table.
-void UiWork_SetRenderWord(u16 value) {
+void Text_SetStyle(u16 value) {
   struct WindowWork *work = WINDOW_WORK;
 
   work->outline = value;
@@ -652,7 +652,7 @@ void Text_DrawString(const u8 *text, struct Window *window, s32 x, s32 y) {
   const u8 *input;
 
   input = text;
-  buffer = AllocEwram(UI_BYTE_STRING_BUFFER_SIZE);
+  buffer = AllocEwram(TEXT_WIDE_STRING_BUFFER_SIZE);
   Text_WidenByteString(input, (u16 *)buffer);
   Text_DrawWideStringAtOffset((u16 *)buffer, window, x, y);
   Free(buffer);
@@ -662,7 +662,7 @@ void Text_DrawString(const u8 *text, struct Window *window, s32 x, s32 y) {
 /// its interior.
 /// The conversion scratch has the same 255-byte input limit as
 /// Text_DrawString.
-void Text_DrawStringAtOffset(const u8 *text, const struct Window *work,
+void Text_DrawStringAtOffset(const u8 *text, const struct Window *window,
                              s32 offsetX, s32 offsetY) {
   s16 *buffer;
   struct WindowWork *canvas;
@@ -672,12 +672,12 @@ void Text_DrawStringAtOffset(const u8 *text, const struct Window *work,
   s32 dst;
   s32 phase;
 
-  buffer = AllocEwram(UI_BYTE_STRING_BUFFER_SIZE);
+  buffer = AllocEwram(TEXT_WIDE_STRING_BUFFER_SIZE);
   canvas = WINDOW_WORK;
   Text_WidenByteString(text, (u16 *)buffer);
 
-  cell = ((work->y + ((u32)offsetY >> 3) + 1) << 5) +
-         (work->x + ((u32)offsetX >> 3)) + 1;
+  cell = ((window->y + ((u32)offsetY >> 3) + 1) << 5) +
+         (window->x + ((u32)offsetX >> 3)) + 1;
   if (cell < 32 * 20) {
     // Inside the tilemap.
     vram = (s32)WINDOW_TILEMAP_VRAM;
@@ -698,7 +698,7 @@ void Text_DrawStringAtOffset(const u8 *text, const struct Window *work,
 /// coordinates.
 void Text_DrawStringInWindow(const u8 *text, struct Window *window, u32 x,
                              u32 y) {
-  u16 *buffer = AllocEwram(UI_BYTE_STRING_BUFFER_SIZE);
+  u16 *buffer = AllocEwram(TEXT_WIDE_STRING_BUFFER_SIZE);
   Text_WidenByteString(text, buffer);
   x >>= 3;
   y >>= 3;
@@ -710,7 +710,7 @@ void Text_DrawStringInWindow(const u8 *text, struct Window *window, u32 x,
 /// pixel (x, y).
 void Text_DrawNumber(s32 value, s32 width, struct Window *window, s32 x,
                      s32 y) {
-  u8 numberText[UI_NUMBER_BUFFER_SIZE];
+  u8 numberText[TEXT_NUMBER_BUFFER_SIZE];
 
   Text_DrawString(String_FormatNumber(numberText, value, width), window, x, y);
 }
@@ -719,7 +719,7 @@ void Text_DrawNumber(s32 value, s32 width, struct Window *window, s32 x,
 /// (x, y) of its interior.
 void Text_DrawNumberAtOffset(s32 value, s32 width, const struct Window *window,
                              s32 x, s32 y) {
-  u8 numberText[UI_NUMBER_BUFFER_SIZE];
+  u8 numberText[TEXT_NUMBER_BUFFER_SIZE];
 
   Text_DrawStringAtOffset(String_FormatNumber(numberText, value, width), window,
                           x, y);
@@ -729,7 +729,7 @@ void Text_DrawNumberAtOffset(s32 value, s32 width, const struct Window *window,
 /// pixel (x, y) of its interior.
 void Text_DrawNumberInWindow(s32 value, s32 width, struct Window *window, s32 x,
                              s32 y) {
-  u8 numberText[UI_NUMBER_BUFFER_SIZE];
+  u8 numberText[TEXT_NUMBER_BUFFER_SIZE];
 
   Text_DrawStringInWindow(String_FormatNumber(numberText, value, width), window,
                           x, y);
@@ -740,9 +740,9 @@ void Text_DrawNumberInWindow(s32 value, s32 width, struct Window *window, s32 x,
 /// variant 0, the party status window's HP; 0x1f and 0x1e for variant 1, its
 /// PP (0x1f and 0x05 in Spanish, French and Italian). The number is padded
 /// to four places with spaces.
-void Text_DrawPrefixedNumberAtOffset(s32 value, const struct Window *work,
+void Text_DrawPrefixedNumberAtOffset(s32 value, const struct Window *window,
                                      s32 offsetX, s32 offsetY, s32 variant) {
-  u8 formatted[UI_NUMBER_BUFFER_SIZE];
+  u8 formatted[TEXT_NUMBER_BUFFER_SIZE];
   s16 output[8];
   u8 *text;
   s32 index;
@@ -777,8 +777,8 @@ void Text_DrawPrefixedNumberAtOffset(s32 value, const struct Window *work,
   }
   output[6] = 0;
 
-  cell = ((work->y + ((u32)offsetY >> 3) + 1) << 5) +
-         (work->x + ((u32)offsetX >> 3)) + 1;
+  cell = ((window->y + ((u32)offsetY >> 3) + 1) << 5) +
+         (window->x + ((u32)offsetX >> 3)) + 1;
   if (cell < 32 * 20) {
     // Inside the tilemap.
     vram = (s32)WINDOW_TILEMAP_VRAM;

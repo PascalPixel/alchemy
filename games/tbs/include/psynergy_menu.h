@@ -19,13 +19,13 @@ struct Unit;
 /// and the Psynergy listed for the chosen member. It is the HEAP_SLOT_MENU
 /// block as this menu reads it, from the menu's opening to its closing.
 struct PsynergyMenuWork {
-  u8 unused[8];      ///< no view of the menu work names it (see menu/README.md)
-  s32 selectedOwner; ///< the party member chosen
+  u8 unused[8]; ///< no view of the menu work names it (see menu/README.md)
+  s32 selectedMember;         ///< the party member chosen
   struct Window *moneyWindow; ///< ShopWork's; not named here
   struct Window *auxiliaryWindow;
-  struct WindowSprite *paneIcon[2]; ///< each pane's cursor
-  s8 tabIndex[2];                   ///< each pane's member, in ownerTable
-  s8 tabCounts[2];                  ///< members each pane chooses from
+  struct WindowSprite *sideIcon[2]; ///< each side's cursor
+  s8 tabIndex[2];                   ///< each side's member, in memberTable
+  s8 tabCounts[2];                  ///< members each side chooses from
   struct Window *psynergyWindow;
   struct Window *statusWindow;
   struct Window *shortcutWindow; ///< the L and R shortcuts
@@ -50,19 +50,19 @@ struct PsynergyMenuWork {
   struct Sprite *tabObjects[8]; ///< the party members' figures
   s16 tabX[8];                  ///< screen pixels
   s16 rowPositions[8];          ///< screen pixels
-  s32 ownerScale[8];            ///< 16.16 fixed point, 0x10000 full size
-  u16 paneRow[2];               ///< each pane's Psynergy row chosen
-  u16 paneAction[2]; ///< each pane's Psynergy chosen, as a member action entry
+  s32 memberScale[8];           ///< 16.16 fixed point, 0x10000 full size
+  u16 sideRow[2];               ///< each side's Psynergy row chosen
+  u16 sideAction[2]; ///< each side's Psynergy chosen, as a member action entry
   struct WindowSprite *cursor; ///< ItemMenuWork's; not named here
   /// DjinnMenuWork's backdrop pointer at 0x184; no view names the rest.
   u8 aroundBackdrop[0x48];
   u16 psynergies[32]; ///< the chosen member's Psynergy listed
-  u16 ownerTable[8];  ///< the party in order (Party_ListMembers)
+  u16 memberTable[8]; ///< the party in order (Party_ListMembers)
   u8 psynergyCount;
-  u8 ownerCount;
+  u8 memberCount;
   /// The user and the target: [1] is MENU_TARGET_WHOLE_PARTY for Psynergy
   /// on the whole party.
-  u8 ownerIds[2];
+  u8 memberIds[2];
   struct WindowSprite *cursorIcon;
   /// bits: 1 the list shows the shortcut help | 0 set after a use or a
   /// cancelled target
@@ -76,8 +76,8 @@ struct PsynergyMenuWork {
   s16 useResult;   ///< the use's result message, after MsgItemUseResult
   s8 equipPreview; ///< ItemMenuWork's; not named here
   u8 listMode;     ///< ItemMenuWork's; not named here
-  u8 unusedAfterListMode[2];  ///< no view of the menu work names it
-  s8 selectedIndexByOwner[8]; ///< each member's entry chosen last
+  u8 unusedAfterListMode[2];   ///< no view of the menu work names it
+  s8 selectedIndexByMember[8]; ///< each member's entry chosen last
   u8 mode; ///< 0 to use Psynergy; 1 or 2 to set the L or R shortcut
 };
 
@@ -90,14 +90,15 @@ STATIC_ASSERT(offsetof(struct PsynergyMenuWork, selectedColumn) == 0x110);
 STATIC_ASSERT(offsetof(struct PsynergyMenuWork, selectedRow) == 0x111);
 STATIC_ASSERT(offsetof(struct PsynergyMenuWork, columnCount) == 0x112);
 STATIC_ASSERT(offsetof(struct PsynergyMenuWork, rowCount) == 0x113);
-STATIC_ASSERT(offsetof(struct PsynergyMenuWork, paneAction[0]) == 0x178);
+STATIC_ASSERT(offsetof(struct PsynergyMenuWork, sideAction[0]) == 0x178);
 STATIC_ASSERT(offsetof(struct PsynergyMenuWork, psynergies) == 0x1c8);
 STATIC_ASSERT(offsetof(struct PsynergyMenuWork, psynergyCount) == 0x218);
-STATIC_ASSERT(offsetof(struct PsynergyMenuWork, ownerIds) == 0x21a);
-STATIC_ASSERT(offsetof(struct PsynergyMenuWork, selectedIndexByOwner) == 0x260);
+STATIC_ASSERT(offsetof(struct PsynergyMenuWork, memberIds) == 0x21a);
+STATIC_ASSERT(offsetof(struct PsynergyMenuWork, selectedIndexByMember) ==
+              0x260);
 
 STATIC_ASSERT(offsetof(struct PsynergyMenuWork, skipSlide) == 0x222);
 STATIC_ASSERT(offsetof(struct PsynergyMenuWork, tabObjects) == 0x114);
-STATIC_ASSERT(offsetof(struct PsynergyMenuWork, ownerScale) == 0x154);
+STATIC_ASSERT(offsetof(struct PsynergyMenuWork, memberScale) == 0x154);
 
 #endif

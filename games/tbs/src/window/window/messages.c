@@ -124,45 +124,45 @@ s32 *Runtime_ClearWordIfSet(s32 *p) {
 
 /// Closes every window: first the text printers' windows, waiting until
 /// they have closed, then the windows opened directly, which it does not wait
-/// for. Channel references are cleared only after their windows finish
+/// for. A printer lets go of its window only once the window has finished
 /// closing. Reached from the debug message viewer (DebugBattle_ViewMessages,
 /// battle/battle/debug.c).
-void UiWork_DrainPending(s32 unused) {
-  struct WindowWork *uw;
-  struct TextPrinter *ch;
+void Window_CloseAll(s32 unused) {
+  struct WindowWork *windowWork;
+  struct TextPrinter *printer;
   struct Window *win;
   u32 done;
-  struct Window *work;
-  struct Window *poll_work;
+  struct Window *window;
+  struct Window *pollWindow;
   s32 i;
   u16 flag;
 
-  uw = WINDOW_WORK;
-  ch = uw->printers;
-  win = uw->windows;
+  windowWork = WINDOW_WORK;
+  printer = windowWork->printers;
+  win = windowWork->windows;
   i = 0;
   do {
-    work = ch->window;
-    if (work != 0 && work->flags != 0)
-      Window_Close(work, 0);
+    window = printer->window;
+    if (window != 0 && window->flags != 0)
+      Window_Close(window, 0);
     i++;
-    ch++;
+    printer++;
   } while (i != 3);
 
   // Free each printer whose window has closed; while one is still closing,
   // wait a frame.
   for (;;) {
     done = 1;
-    ch = uw->printers;
+    printer = windowWork->printers;
     i = 0;
     do {
-      poll_work = ch->window;
-      if (poll_work != 0) {
-        if (poll_work->frame == 0 && poll_work->duration == 0) {
-          flag = poll_work->flags;
+      pollWindow = printer->window;
+      if (pollWindow != 0) {
+        if (pollWindow->frame == 0 && pollWindow->duration == 0) {
+          flag = pollWindow->flags;
           // flag is 0 here: the printer is set free.
           if (flag == 0)
-            ch->window = (struct Window *)(u32)flag;
+            printer->window = (struct Window *)(u32)flag;
           else
             done = 0;
         } else {
@@ -170,7 +170,7 @@ void UiWork_DrainPending(s32 unused) {
         }
       }
       i++;
-      ch++;
+      printer++;
     } while (i != 3);
     i = 0;
     if (done)
@@ -194,8 +194,8 @@ void UiWork_DrainPending(s32 unused) {
 /// normal. Any other effect is left set and does nothing, so the printer types
 /// no more text. TextPrinter_RunAll calls it in place of typing while the
 /// window has an effect.
-void Window_StepSwellEffect(struct TextPrinter *channel) {
-  struct Window *window = channel->window;
+void Window_StepSwellEffect(struct TextPrinter *printer) {
+  struct Window *window = printer->window;
   s32 effect = window->effect;
   s32 x = window->x;
   s32 y = window->y;
@@ -206,11 +206,11 @@ void Window_StepSwellEffect(struct TextPrinter *channel) {
     return;
 
   Window_DrawFrame(x - 1, y - 1, width + 2, height + 2);
-  channel->countdown--;
-  if (channel->countdown != 0)
+  printer->countdown--;
+  if (printer->countdown != 0)
     return;
 
-  channel->window->effect = 0;
+  printer->window->effect = 0;
   Window_EraseBorderRect(x - 1, y - 1, width + 2, height + 2);
   Window_DrawFrame(x, y, width, height);
 }
@@ -280,7 +280,7 @@ u32 MessageArgument_Lookup(u32 kind, u32 clear) {
 /// This path uses held keys; dismissal below uses newly pressed keys instead.
 /// TextPrinter_Step asks it each frame of a short or longest pause;
 /// the long pause cannot be cut short.
-s32 Text_CheckPauseSkipped(struct TextPrinter *channel) {
+s32 Text_CheckPauseSkipped(struct TextPrinter *printer) {
   struct WindowWork *work = WINDOW_WORK;
   s32 cancelKeys = 0;
   s32 zero;
@@ -291,7 +291,7 @@ s32 Text_CheckPauseSkipped(struct TextPrinter *channel) {
   if (gKeysHeld & (KEY_A | KEY_B | KEYS_SHOULDERS))
     cancelKeys = 1;
   if (cancelKeys != zero) {
-    channel->countdown = zero;
+    printer->countdown = zero;
     return 1;
   }
   return zero;
@@ -302,7 +302,7 @@ s32 Text_CheckPauseSkipped(struct TextPrinter *channel) {
 /// dismissed the text.
 /// Mode chooses latched presses rather than changing which buttons dismiss
 /// text.
-s32 Text_CheckTextDismissed(struct TextPrinter *channel) {
+s32 Text_CheckTextDismissed(struct TextPrinter *printer) {
   struct WindowWork *work = WINDOW_WORK;
   s32 pressedKeys;
   s32 cancelKeys = 0;
@@ -317,7 +317,7 @@ s32 Text_CheckTextDismissed(struct TextPrinter *channel) {
   if (pressedKeys & (KEY_A | KEY_B | KEYS_SHOULDERS))
     cancelKeys = 1;
   if (cancelKeys != 0) {
-    channel->countdown = zero;
+    printer->countdown = zero;
     return 1;
   }
   return 0;
@@ -326,21 +326,21 @@ s32 Text_CheckTextDismissed(struct TextPrinter *channel) {
 /// Closes each text printer's window whose text has ended, then waits ten
 /// frames. It does not wait for the zooms to finish, and leaves windows still
 /// typing open.
-void UiWork_FinalizePendingCore(void) {
+void TextPrinter_CloseFinishedWindows(void) {
   s32 i;
-  struct TextPrinter *ch;
-  struct Window *work;
+  struct TextPrinter *printer;
+  struct Window *window;
 
-  ch = WINDOW_WORK->printers;
+  printer = WINDOW_WORK->printers;
   i = 0;
   do {
-    work = ch->window;
-    if (work != NULL && work->frame == 0 && work->duration == 0 &&
-        work->flags != 0 && work->state != 0) {
-      Window_Close(work, WINDOW_FLAG_INSTANT & work->flags);
+    window = printer->window;
+    if (window != NULL && window->frame == 0 && window->duration == 0 &&
+        window->flags != 0 && window->state != 0) {
+      Window_Close(window, WINDOW_FLAG_INSTANT & window->flags);
     }
     i++;
-    ch++;
+    printer++;
   } while (i != 3);
   WaitFrames(10);
 }
@@ -381,11 +381,11 @@ void FieldMessage_ShowCentered(s32 message, s32 mode, s32 yOffset) {
     if (TextPrinter_Add(messageWindow, entryIndex, 0, 0, 0, 0) == 0)
       Window_Close(messageWindow, 1);
     else {
-      while (UiWork_IsComplete() == 0)
+      while (TextPrinter_AllFinished() == 0)
         WaitFrames(1);
       if (mode != CENTERED_MESSAGE_BARE) {
         Window_Close(messageWindow, 0);
-        while (UiWork_IsIdle(messageWindow) == 0)
+        while (Window_IsClosed(messageWindow) == 0)
           WaitFrames(1);
       } else
         Window_Close(messageWindow, 1);
@@ -509,14 +509,14 @@ UNUSED s32 Text_DecodeSymbolInC(struct MessageReader *reader) {
   return code;
 }
 
-/// Marks both portrait slots free (UI_PALETTE_SLOT_FREE). Only the field's
+/// Marks both portrait slots free (PORTRAIT_SLOT_EMPTY). Only the field's
 /// setup calls it.
 void Portrait_ClearSlots(void) {
   struct WindowWork *work = WINDOW_WORK;
   s32 index = 0;
 
   do {
-    work->portraitPictures[index] = UI_PALETTE_SLOT_FREE;
+    work->portraitPictures[index] = PORTRAIT_SLOT_EMPTY;
     index++;
   } while (index != 2);
 }
@@ -561,7 +561,7 @@ s32 Portrait_GetForSpeaker(u32 value) {
 
 /// Opens a portrait window at tile (x, y) showing the speaker's portrait.
 /// portraitOption is passed on through CreateSideObject to
-/// UiGlyph_LoadEntryWithPalette, which ignores it.
+/// Icon_LoadWithPalette, which ignores it.
 /// Returns the window, or 0 when the speaker has no portrait.
 /// Portrait offsets are in pixels; the enclosing window bounds are in tiles.
 /// The window opens at once, 5 by 5 tiles, or 6 by 5 under Mind Read with the
@@ -603,7 +603,7 @@ void Portrait_CloseWindow(u32 speaker) {
   s32 resourceId;
   s32 portraitSlot;
   s32 windowIndex;
-  struct WindowSprite *portraitOutput;
+  struct WindowSprite *portraitSprite;
 
   state = WINDOW_WORK;
   window = state->windows;
@@ -622,16 +622,16 @@ void Portrait_CloseWindow(u32 speaker) {
   resourceId = state->portraitSprites[portraitSlot];
 
   for (windowIndex = 0; windowIndex != WINDOW_COUNT; windowIndex++, window++) {
-    portraitOutput = window->sprites.head;
+    portraitSprite = window->sprites.head;
 #ifdef UBFIX
     // Window_Create and the closing update leave empty heads NULL. Skip
     // them before reading kind: dereferencing that NULL pointer is undefined.
     // The plain guard adds four bytes to the native English object.
-    if (portraitOutput == NULL)
+    if (portraitSprite == NULL)
       continue;
 #endif
-    if ((u8)portraitOutput->kind == WINDOW_SPRITE_PORTRAIT &&
-        (u8)portraitOutput->index == resourceId) {
+    if ((u8)portraitSprite->kind == WINDOW_SPRITE_PORTRAIT &&
+        (u8)portraitSprite->index == resourceId) {
       Window_Close(window, 2);
       return;
     }

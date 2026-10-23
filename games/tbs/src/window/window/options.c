@@ -61,9 +61,9 @@ UNUSED void WindowColor_CalculateTint(struct OptionMenuWork *work) {
 
   phase = (gGameState.windowColor[0] + 12) % 24 * 4;
   bias = gGameState.windowColor[1] - 7;
-  red = gPaletteGlow_WaveTable[(phase % 96)];
-  green = gPaletteGlow_WaveTable[(phase + 32) % 96];
-  blue = gPaletteGlow_WaveTable[(phase + 64) % 96];
+  red = gWindowColor_WaveTable[(phase % 96)];
+  green = gWindowColor_WaveTable[(phase + 32) % 96];
+  blue = gWindowColor_WaveTable[(phase + 64) % 96];
   red += bias;
   green += bias;
   blue += bias;
@@ -171,9 +171,9 @@ void WindowColor_Apply(s32 phase, s32 brightness) {
   // every channel.
   step = ((phase + 12) % 24) * 4;
   offset = brightness - 7;
-  red = gPaletteGlow_WaveTable[(step % 96)] + offset;
-  green = gPaletteGlow_WaveTable[(step + 32) % 96] + offset;
-  blue = gPaletteGlow_WaveTable[(step + 64) % 96] + offset;
+  red = gWindowColor_WaveTable[(step % 96)] + offset;
+  green = gWindowColor_WaveTable[(step + 32) % 96] + offset;
+  blue = gWindowColor_WaveTable[(step + 64) % 96] + offset;
   CLAMP(red, 0, 31);
   CLAMP(green, 0, 31);
   CLAMP(blue, 0, 31);
@@ -287,7 +287,7 @@ void OptionMenu_AnimateCursors(void) {
   } else {
     cursorResource = (s32)&ResourceId_MenuCursorFrames;
   }
-  VramCache_Load((u8)work->marker[0].output->index, 0x100,
+  VramCache_Load((u8)work->marker[0].sprite->index, 0x100,
                  Resource_GetTableEntry(cursorResource));
 
   if (selectedOption == 1) {
@@ -296,11 +296,11 @@ void OptionMenu_AnimateCursors(void) {
   } else {
     markerResource = (s32)&ResourceId_MenuCursorFrames;
   }
-  VramCache_Load((u8)work->marker[1].output->index, 0x100,
+  VramCache_Load((u8)work->marker[1].sprite->index, 0x100,
                  Resource_GetTableEntry(markerResource));
 
   if (selectedOption > 1)
-    Ui_ApplyTableScaleToObject(
+    WindowSprite_Pulse(
         work->frame[selectedOption - 2][work->option[selectedOption]]);
   work->cursorFrame++;
 }
@@ -379,7 +379,7 @@ struct Window *OptionMenu_Open(void) {
   if (x < RESOURCE_SLOTS) {
     VramCache_Load(x, 128, gResource_FixedBlockBTiles);
     marker = WindowSprite_Create(x, 0x40000000, window, 0, 0);
-    work->cursor.output = marker;
+    work->cursor.sprite = marker;
     x = window->x * 8;
     y = window->y * 8 + 12;
     MenuCursor_SetPositionImmediateFar(&work->cursor.cursor, x, y);
@@ -417,7 +417,7 @@ struct Window *OptionMenu_Open(void) {
     VramCache_Load(x, 256, 0);
     marker = WindowSprite_Create(x, 0x40000000, window, 0, 0);
     marker->oam.palette256 = 1;
-    work->marker[0].output = marker;
+    work->marker[0].sprite = marker;
     x = window->x * 8 + OPTION_SLIDER_X;
     x += work->option[0] * 60 / work->optionCount[0];
     y = window->y * 8 + 4;
@@ -429,7 +429,7 @@ struct Window *OptionMenu_Open(void) {
     VramCache_Load(x, 256, 0);
     marker = WindowSprite_Create(x, 0x40000000, window, 0, 0);
     marker->oam.palette256 = 1;
-    work->marker[1].output = marker;
+    work->marker[1].sprite = marker;
     x = window->x * 8 + OPTION_SLIDER_X;
     x += work->option[1] * 60 / work->optionCount[1];
     y = window->y * 8 + 20;
@@ -652,7 +652,7 @@ void PauseMenu_AnimateCursor(void) {
 
   MenuCursor_AdvanceFar(&work->cursor.cursor);
   index = work->page;
-  Ui_ApplyTableScaleToObject(work->icon[index]);
+  WindowSprite_Pulse(work->icon[index]);
 }
 
 /// Allocates the pause menu's work block and starts its per-frame callback.
@@ -736,7 +736,7 @@ struct Window *PauseMenu_Open(void) {
   cacheSlot = VramCache_FindFreeEntry();
   if (cacheSlot < RESOURCE_SLOTS) {
     VramCache_Load(cacheSlot, 128, gResource_FixedBlockBTiles);
-    work->cursor.output =
+    work->cursor.sprite =
         WindowSprite_Create(cacheSlot, 0x40000000, window, 0, 0);
     x = window->x * 8;
     y = window->y * 8 + 16;

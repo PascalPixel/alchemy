@@ -10,7 +10,7 @@ struct Window *Message_ShowAndWait(s32 message, s32 x, s32 y) {
   struct Window *result;
 
   result = Message_OpenWindow(message, x, y, 1);
-  while (UiWork_IsComplete() == 0)
+  while (TextPrinter_AllFinished() == 0)
     WaitFrames(1);
   return result;
 }
@@ -371,7 +371,7 @@ s32 BattleCommandRow_Run(s32 mode) {
 /// of which only the low bit counts (15 plain, 14 highlighted). Clipped as
 /// Window_SetTextTileBitRect clips; each row changed is marked for
 /// upload.
-void Ui_SetRectHighlight(s32 x, s32 y, s32 width, s32 height, s32 paletteBit) {
+void Window_HighlightRect(s32 x, s32 y, s32 width, s32 height, s32 paletteBit) {
   struct WindowWork *work = WINDOW_WORK;
 
   paletteBit &= 1;
@@ -427,7 +427,7 @@ s32 PartyStatus_HighlightMembers(u16 *ids) {
   s32 j;
 
   count = BattleUnit_ListIdsFar(1, 0);
-  Ui_SetRectHighlight(29 - count * 6, 0, 25, 5, 15);
+  Window_HighlightRect(29 - count * 6, 0, 25, 5, 15);
   i = 0;
   // The loop over ids is written with goto (MATCHING.md): as
   // for (i = 0; i < 4 && ids[i] != 0xff; i++), or as a do-while loop inside
@@ -441,7 +441,7 @@ s32 PartyStatus_HighlightMembers(u16 *ids) {
       }
     }
     if (j != 4)
-      Ui_SetRectHighlight(29 - (count - j) * 6, 0, 7, 5, 14);
+      Window_HighlightRect(29 - (count - j) * 6, 0, 7, 5, 14);
     if (++i < 4 && ids[i] != 0xff)
       goto next_id;
   }

@@ -20,7 +20,7 @@
 	.set import.MenuArrow_Create, 1
 	.set import.MenuArrow_SetPosition, 1
 	.set import.MenuArrow_Release, 1
-	.set import.Ui_PrepareTransferForItem, 1
+	.set import.Icon_DrawItem, 1
 	.set import.Save_CountRecordsExcludingFlagged, 1
 	.set import.GameFlag_Test, 1
 	.set import.Engine_GameFlagSet, 1

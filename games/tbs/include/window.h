@@ -28,7 +28,7 @@ struct Window {
   /// 0 while a text printer is typing into the window; 1 once its text has
   /// ended or closed the window, which frees the printer for the next text.
   u16 state;
-  u16 flags; ///< UI_WINDOW_ flags; 0 once closing or free
+  u16 flags; ///< WINDOW_FLAG_ flags; 0 once closing or free
   /// The zoom's step: counts down from 7 to 0 while opening, and up from 0 to
   /// duration while closing.
   u16 frame;
@@ -87,12 +87,16 @@ STATIC_ASSERT(offsetof(struct TextPrinter, flags) == 0x24);
 /// glyphs, icons and portraits together.
 enum { WINDOW_SPRITE_COUNT = 64 };
 
+/// WindowWork.portraitPictures of a free portrait slot, as Portrait_ClearSlots
+/// writes it.
+#define PORTRAIT_SLOT_EMPTY 999
+
 /// The window system's work: the windows' tilemap, the windows, the three text
 /// printers, the 64 window sprites, and the decoded message and its arguments.
 ///
 /// It is heap slot HEAP_SLOT_WINDOW (gWindowWork), which
-/// UiWork_InitializeWithResourceCounters takes for the field and
-/// UiWork_Initialize for battle; it lasts until the next map change. Its
+/// WindowSystem_InitField takes for the field and
+/// WindowSystem_InitBattle for battle; it lasts until the next map change. Its
 /// size and offsets differ between Japanese and the other editions
 /// (tbs_edition.h's RENDER_ values).
 struct WindowWork {
@@ -138,8 +142,8 @@ struct WindowWork {
   u32 argumentValues[8];
   u16 argumentKinds[8]; ///< the MESSAGE_ARGUMENT_ kind of each value; 0 for a
                         ///< free slot
-  u16 portraitPictures[2]; ///< picture shown in each portrait slot; 999 when
-                           ///< free
+  u16 portraitPictures[2]; ///< picture shown in each portrait slot;
+                           ///< PORTRAIT_SLOT_EMPTY when free
   u16 portraitSprites[2];  ///< VRAM cache slot of each portrait slot's picture
   u16 voiceSound;          ///< first of four voice blip sounds; 0 for none
   u16 voiceCountdown;      ///< characters until the next voice blip
@@ -148,10 +152,10 @@ struct WindowWork {
   /// pages once the sound is over.
   u8 waitingForSound;
   /// 1 for halting speech: a pause before each character, broken off with an
-  /// ellipsis after the first word (UiWork_SetBusyFlags bit 0).
+  /// ellipsis after the first word (Message_SetDecodeFlags bit 0).
   u8 haltingSpeech;
   /// 1 puts code 222 after certain characters in English and Japanese
-  /// (UiWork_SetBusyFlags bit 1).
+  /// (Message_SetDecodeFlags bit 1).
   u8 spacingAfter;
 };
 

@@ -292,7 +292,7 @@ extern char ResourceId_Lettering;
 /// menu's slider marker adds the frame to it (OptionMenu_AnimateCursors).
 extern char ResourceId_MenuCursorFrames;
 /// The 32x32 icons and portraits, each with 16 colours before its tiles
-/// (UiGlyph_LoadEntryWithPalette).
+/// (Icon_LoadWithPalette).
 extern char ResourceId_Icons;
 /// The command icons, a halfword offset each and then 1 KB of 256-colour
 /// pixels compressed; an icon's number is also its name's in MsgCommandName.

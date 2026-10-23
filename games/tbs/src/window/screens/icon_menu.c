@@ -47,7 +47,7 @@ struct WindowBuffer {
 /// bottom, whose lines are 136 to 159).
 void IconMenu_DrawIcons(void) {
   // UB: native pointers traverse scalar link/span fields into adjacent fields
-  // and records. Use their real owners under UBFIX. Plain OAM field accesses
+  // and records. Use their real members under UBFIX. Plain OAM field accesses
   // and indexed scanlines each shrink the EN body from 0x348 to 0x344 bytes.
   struct IconMenuWork *work;
   struct IconMenuEntry *entry;
@@ -534,7 +534,7 @@ s32 Menu_AnimateSelectionToEntry(s32 start, s32 command) {
   IconMenu_Center(0x11, ANIMATE_ENTRIES_ROW, 0);
   command = IconMenu_AnimateTo(start, command - 1);
   IconMenu_Close();
-  UiWork_CloseAndRelease();
+  PartyStatus_CloseWithMenu();
   return command;
 }
 

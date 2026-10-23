@@ -6,7 +6,7 @@
 
 /// Scratch values for a step of a window's zoom: the scaled part of a side,
 /// the scaled duration and their ratio. A local of Window_DrawZoomFrame.
-struct UiWindowInterpolationScratch {
+struct WindowZoomScratch {
   s32 scaledPart;     ///< frame (or frames left) times a side in tiles, << 16
   s32 scaledDuration; ///< the zoom's duration << 17
   s32 result; ///< scaledPart / scaledDuration, 16.16 fixed point (in tiles)
@@ -14,11 +14,12 @@ struct UiWindowInterpolationScratch {
 
 /// The per-frame window update: steps each window's zoom while it opens or
 /// closes, draws it in full once open, and frees its slot once closed. The
-/// first step of UiWork_ProcessAll. A window opens over 8 frames (frame 7 down
-/// to 0, then the full draw) and closes over 4 (frame 0 up to its duration).
-void UiWork_ProcessDirectWork(void) {
+/// first step of WindowSystem_Update. A window opens over 8 frames (frame 7
+/// down to 0, then the full draw) and closes over 4 (frame 0 up to its
+/// duration).
+void Window_UpdateZooms(void) {
   struct WindowWork *state = WINDOW_WORK;
-  struct Window *work = state->windows;
+  struct Window *window = state->windows;
   s32 index = 0;
   u8 dirty;
 
@@ -28,51 +29,51 @@ void UiWork_ProcessDirectWork(void) {
 loop:
   // Flags 0 with a duration left means closing (Window_Close clears the
   // flags first).
-  if (work->flags != 0) {
+  if (window->flags != 0) {
     // Opening: zoom out one step a frame, then draw the window in full, which
     // clears the duration.
-    if ((s16)work->frame != 0) {
-      Window_DrawZoomFrame(work, 0);
-      work->frame = (s16)work->frame - 1;
-    } else if (work->duration != 0) {
-      Window_DrawOpened(work);
+    if ((s16)window->frame != 0) {
+      Window_DrawZoomFrame(window, 0);
+      window->frame = (s16)window->frame - 1;
+    } else if (window->duration != 0) {
+      Window_DrawOpened(window);
     }
-  } else if (work->duration != 0) {
+  } else if (window->duration != 0) {
     // Closing: zoom in one step a frame, then erase it and free its slot. Each
     // step erases the rectangle the step before drew (previousX and its kin).
-    if ((s16)work->frame != work->duration) {
-      Window_EraseBorderRect((s16)work->previousX, (s16)work->previousY,
-                             (s16)work->previousWidth,
-                             (s16)work->previousHeight);
-      Window_DrawZoomFrame(work, 1);
-      work->frame++;
+    if ((s16)window->frame != window->duration) {
+      Window_EraseBorderRect((s16)window->previousX, (s16)window->previousY,
+                             (s16)window->previousWidth,
+                             (s16)window->previousHeight);
+      Window_DrawZoomFrame(window, 1);
+      window->frame++;
       dirty = 1;
       state->dirty = dirty;
     } else {
-      Window_EraseBorderRect((s16)work->previousX, (s16)work->previousY,
-                             (s16)work->previousWidth,
-                             (s16)work->previousHeight);
-      work->sprites.head = NULL;
-      work->sprites.tailLink = NULL;
-      work->width = 0;
-      work->height = 0;
-      work->x = 0;
-      work->y = 0;
-      work->opened = 0;
-      work->effect = 0;
-      work->state = 0;
-      work->flags = 0;
-      work->frame = 0;
-      work->duration = 0;
-      work->previousX = 0;
-      work->previousY = 0;
-      work->previousWidth = 0;
-      work->previousHeight = 0;
+      Window_EraseBorderRect((s16)window->previousX, (s16)window->previousY,
+                             (s16)window->previousWidth,
+                             (s16)window->previousHeight);
+      window->sprites.head = NULL;
+      window->sprites.tailLink = NULL;
+      window->width = 0;
+      window->height = 0;
+      window->x = 0;
+      window->y = 0;
+      window->opened = 0;
+      window->effect = 0;
+      window->state = 0;
+      window->flags = 0;
+      window->frame = 0;
+      window->duration = 0;
+      window->previousX = 0;
+      window->previousY = 0;
+      window->previousWidth = 0;
+      window->previousHeight = 0;
       state->dirty = 1;
     }
   }
   index++;
-  work++;
+  window++;
   if (index != WINDOW_COUNT)
     goto loop;
 }
@@ -82,7 +83,7 @@ loop:
 /// closing) the drawn rectangle is remembered, for the next frame to erase.
 void Window_DrawZoomFrame(void *windowArg, s32 savePosition) {
   struct Window *window = windowArg;
-  struct UiWindowInterpolationScratch scratch;
+  struct WindowZoomScratch scratch;
   s32 frame;
   s32 duration;
   s32 remaining;
@@ -229,13 +230,13 @@ void Window_MapTextCanvasTiles(s32 x, s32 y, u32 width, u32 height,
 /// and 0 while one is still typing. The message routines wait on it a frame at
 /// a time; a window whose text has ended counts as finished though it is still
 /// open.
-s32 UiWork_IsComplete(void) {
-  struct TextPrinter *ch;
+s32 TextPrinter_AllFinished(void) {
+  struct TextPrinter *printer;
   s32 i;
 
-  ch = WINDOW_WORK->printers;
-  for (i = 0; i != 3; i++, ch++) {
-    if (ch->window != NULL && ch->window->state == 0)
+  printer = WINDOW_WORK->printers;
+  for (i = 0; i != 3; i++, printer++) {
+    if (printer->window != NULL && printer->window->state == 0)
       return 0;
   }
   return 1;
@@ -244,7 +245,7 @@ s32 UiWork_IsComplete(void) {
 /// Returns 1 when a window is fully closed (its slot free), and 0 while it is
 /// open or closing. The slot may since have been taken by a new window, which
 /// then reads as not closed.
-s32 UiWork_IsIdle(struct Window *window) {
+s32 Window_IsClosed(struct Window *window) {
   // Japanese only: a NULL window counts as closed; the other editions read
   // through it.
 #if !TBS_PATCH_1
@@ -259,7 +260,7 @@ s32 UiWork_IsIdle(struct Window *window) {
 /// Resets the text style glyphs are drawn with: colour 15, no outline, line
 /// spacing 10 and letter spacing 9. Window_Create calls it for every new
 /// window, and Text_DrawWideStringAtOffset on TEXT_COLORS_RESET.
-void UiWork_ResetCounters(void) {
+void Text_ResetStyle(void) {
   struct WindowWork *state = WINDOW_WORK;
 
   state->colour = 15;
@@ -271,9 +272,9 @@ void UiWork_ResetCounters(void) {
 
 /// Reserves the glyph sprites' tiles, resets the text style, starts the ring
 /// of decoded text from its beginning and starts the per-frame window update
-/// (UiWork_ProcessAll). Called by the field's setup,
-/// UiWork_InitializeWithResourceCounters.
-void UiWork_InitializeCountersWithResourceAndScheduleRefresh(void) {
+/// (WindowSystem_Update). Called by the field's setup,
+/// WindowSystem_InitField.
+void WindowSystem_StartFieldUpdate(void) {
   struct WindowWork *state = WINDOW_WORK;
   s32 priority;
 
@@ -289,13 +290,14 @@ void UiWork_InitializeCountersWithResourceAndScheduleRefresh(void) {
   // loop's pass.
   priority = 200;
   priority <<= 4;
-  Task_Add(UiWork_ProcessAll, priority);
+  Task_Add(WindowSystem_Update, priority);
 }
 
 /// Resets the text style and starts the per-frame window update
-/// (UiWork_ProcessAll), reserving the glyph sprites' tiles first when
-/// loadGlyphTiles is set. Called by the battle's setup, UiWork_Initialize.
-void UiWork_InitializeCountersAndScheduleRefresh(s32 loadGlyphTiles) {
+/// (WindowSystem_Update), reserving the glyph sprites' tiles first when
+/// loadGlyphTiles is set. Called by the battle's setup,
+/// WindowSystem_InitBattle.
+void WindowSystem_StartBattleUpdate(s32 loadGlyphTiles) {
   struct WindowWork *state = WINDOW_WORK;
   s32 priority;
 
@@ -309,7 +311,7 @@ void UiWork_InitializeCountersAndScheduleRefresh(s32 loadGlyphTiles) {
   state->textBufferEnd = 0;
   priority = 200;
   priority <<= 4;
-  Task_Add(UiWork_ProcessAll, priority);
+  Task_Add(WindowSystem_Update, priority);
 }
 
 /// Closes the battle message window at once, if one is open, and forgets it,
@@ -332,7 +334,7 @@ void BattleMessage_Close(void) {
 /// when none was free.
 void BattleMessage_Open(s32 argument) {
   s32 entryIndex;
-  struct TextPrinter *channel;
+  struct TextPrinter *printer;
   struct Window *previousWindow;
   struct Window *messageWindow;
   struct WindowWork *state;
@@ -343,7 +345,7 @@ void BattleMessage_Open(s32 argument) {
       gWindowWork[HEAP_SLOT_BATTLE_MESSAGE - HEAP_SLOT_WINDOW];
   // printer starts as NULL, though it is assigned again before it is read; the
   // same zero clears marked below
-  channel = NULL;
+  printer = NULL;
   // battleMode 2 while decoding marks a battle message: the Japanese decoder
   // then sets names off with spaces and style codes, and doubles each space.
   state->battleMode = 2;
@@ -364,13 +366,13 @@ void BattleMessage_Open(s32 argument) {
       messageWindow = previousWindow;
     }
     if (messageWindow != NULL) {
-      channel =
+      printer =
           BattleMessage_Continue(messageWindow, entryIndex, control->marked);
-      control->offset = (struct BattleMessageOffset *)channel;
+      control->offset = (struct BattleMessageOffset *)printer;
       control->marked = 0;
       // With no printer free the window is closed, though control->window
       // still names its slot.
-      if (channel == NULL) {
+      if (printer == NULL) {
         Window_Close(messageWindow, 1);
       }
     }
@@ -381,7 +383,7 @@ void BattleMessage_Open(s32 argument) {
 /// typed out.
 void BattleMessage_ShowAndWait(s32 argument) {
   BattleMessage_Open(argument);
-  while (UiWork_IsComplete() == 0)
+  while (TextPrinter_AllFinished() == 0)
     WaitFrames(1);
   WaitFrames(1);
 }
@@ -394,7 +396,7 @@ void BattleMessage_ShowAndWait(s32 argument) {
 s32 Message_OpenDecoded(struct Window *window, s32 message) {
   struct WindowWork *work = WINDOW_WORK;
   s32 entry;
-  s32 channel = 0;
+  s32 printer = 0;
   /* FAKEMATCH(dead): an unused array for the frame's 8 bytes above the
    * outgoing arguments; as no array, 2 of 42 instructions differ in tbs-en. */
   UNUSED u16 frameReserve[4];
@@ -406,10 +408,10 @@ s32 Message_OpenDecoded(struct Window *window, s32 message) {
     return 0;
   if (window == 0)
     return 0;
-  channel = (s32)TextPrinter_Add(window, entry, 0, 0, 0, 1);
-  if (channel == 0)
+  printer = (s32)TextPrinter_Add(window, entry, 0, 0, 0, 1);
+  if (printer == 0)
     return 0;
-  return channel;
+  return printer;
 }
 
 /// Sets the effects the next message is decoded with
@@ -419,7 +421,7 @@ s32 Message_OpenDecoded(struct Window *window, s32 message) {
 /// characters in English and Japanese. Flags already set stay set: only
 /// Message_OpenWindow clears both, once it has started a message typing,
 /// so they also apply to every message decoded before that.
-void UiWork_SetBusyFlags(s32 flags) {
+void Message_SetDecodeFlags(s32 flags) {
   struct WindowWork *work;
 
   work = WINDOW_WORK;
@@ -538,7 +540,7 @@ void FieldMessage_Show(s32 message, s32 flags) {
   window = Message_OpenWindow(message, x, y, zoom);
 
   if (window != NULL) {
-    while (UiWork_IsComplete() == 0) {
+    while (TextPrinter_AllFinished() == 0) {
       WaitFrames(1);
     }
 
@@ -548,7 +550,7 @@ void FieldMessage_Show(s32 message, s32 flags) {
 
     if (!(flags & 4)) {
       Window_Close(window, zoom);
-      while (UiWork_IsIdle(window) == 0) {
+      while (Window_IsClosed(window) == 0) {
         WaitFrames(1);
       }
     }
@@ -564,8 +566,8 @@ void FieldMessage_Show(s32 message, s32 flags) {
 /// The window system's per-frame callback: windows, then text printers,
 /// then sprite animation. Both setups schedule it in the main loop's pass
 /// (0xc80); nothing here removes it.
-void UiWork_ProcessAll(void) {
-  UiWork_ProcessDirectWork();
+void WindowSystem_Update(void) {
+  Window_UpdateZooms();
   TextPrinter_RunAll();
-  UiWork_AnimateSpriteSlots();
+  WindowSprite_UpdateAll();
 }

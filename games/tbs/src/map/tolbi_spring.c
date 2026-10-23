@@ -685,7 +685,7 @@ prompt:
   }
   choice = Menu_SelectCoinsOrMedals(choice);
   Window_Close(window, 2);
-  UiWork_FinalizePendingCore();
+  TextPrinter_CloseFinishedWindows();
   if (choice == cancel) {
     Script_End();
     return 0;
@@ -759,7 +759,7 @@ prompt:
     Text_DrawMessageAsTiles(MsgTolbiCounterMarker, window, 104, 8);
     choice = Menu_SelectCoinsOrMedals(choice);
     Window_Close(window, 2);
-    UiWork_FinalizePendingCore();
+    TextPrinter_CloseFinishedWindows();
     if (choice == cancel) {
       Script_End();
       return 0;

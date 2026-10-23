@@ -16,7 +16,7 @@
 /// spellings the parts use. Where to start:
 ///
 ///   Windows         windows.c: Window_Create, Window_Close;
-///                   frames.c: Window_DrawFrame, UiWork_ProcessDirectWork
+///                   frames.c: Window_DrawFrame, Window_UpdateZooms
 ///   Messages        frames.c: Message_OpenWindow,
 ///                   FieldMessage_Show; typing.c:
 ///                   TextPrinter_Step; decode.c:

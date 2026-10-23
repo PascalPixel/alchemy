@@ -168,7 +168,7 @@ void DebugBattle_ViewMessages(void) {
       break;
   }
   unit->name[UNIT_NAME_LENGTH] = 0;
-  UiWork_InitializeWithResourceCountersFar();
+  WindowSystem_InitFieldFar();
   Sound_PlaySongFar(MUS_EMPTY);
   for (;;) {
     index = 0;
@@ -228,11 +228,11 @@ void DebugBattle_ViewMessages(void) {
           index = DEBUG_VIEW_LIMIT;
         if (gKeysRepeat & (KEY_B | KEYS_DPAD | KEYS_SHOULDERS))
           break;
-        if (UiWork_IsCompleteFar() != 0 && (gKeysRepeat & KEY_A))
+        if (TextPrinter_AllFinishedFar() != 0 && (gKeysRepeat & KEY_A))
           break;
         WaitFrames(1);
       }
-      UiWork_DrainPendingFar(1);
+      Window_CloseAllFar(1);
       // Close the window and free the message system for the next one.
       Window_CloseFar(messageWindow, 1);
       (*(u8 **)&gWindowWork)[WINDOW_WORK_MESSAGE_BUSY] = 0;

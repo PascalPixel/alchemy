@@ -200,9 +200,9 @@ These turn up all over the game.
   one where the member form would move the access or merge it with a
   neighbour's:
   - `*&gProjection.centerX` ([`field/vertices.c`](field/vertices.c));
-  - `*(s8 *)&output->index`, which keeps the index store ahead of the
+  - `*(s8 *)&sprite->index`, which keeps the index store ahead of the
     attribute word (`DjinnMenu_DrawStatArrow`);
-  - `*(u16 *)&output->x`, which loads the -8 before x
+  - `*(u16 *)&windowSprite->x`, which loads the -8 before x
     (`WindowSprite_UpdateScaleAnimation`);
   - `*(s32 *)&actor->y` for the union's `actor->y.fixed`, because the member
     form schedules the step to the next log after the store
@@ -449,8 +449,8 @@ its cells.
   `work->records[n].kind = 0` (`SelectionScreen_Create`, entries 7 and 8).
 - A window sprite is read as `struct SpriteOutput`, whose sprite cell is the
   member `attr`, rather than as `struct WindowSprite` with a cast of `unk10`
-  (`Window_PutGlyph`, `UiWork_AnimateSpriteSlots`).
-- A menu cursor whose screens write only the output pointer is a
+  (`Window_PutGlyph`, `WindowSprite_UpdateAll`).
+- A menu cursor whose screens write only the sprite pointer is a
   `union MenuCursorRef` rather than a struct of the same size, which keeps the
   store order (`OptionMenu_Open`).
 - `gHeadingPictures` goes by three more extern names, given as
@@ -475,7 +475,7 @@ one for reaching a heap block.
 
 - A unit is copied with the resident IWRAM routine as `Iwram_CopyWords`
   (`Unit_Copy` in `menu/djinn.c`), through
-  `_call_via_r3(..., IwramCopyWords)` (`Unit_CopyViaR3`), or
+  `_call_via_r3(..., IwramCopyWords)` (`StatusPanel_CopyUnit`), or
   through `Item_CopyWords` (tagged).
 - A neighbouring heap block is reached from the menu control slot as
   `cache[HEAP_SLOT_FIELD - HEAP_SLOT_OBJECT_SYSTEM]`.

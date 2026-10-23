@@ -34,7 +34,7 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
   s32 result;
   s32 zero;
   s32 index;
-  s32 ownerIndex;
+  s32 memberIndex;
 
   menu = gMenuWork;
   confirmationChoice = YES;
@@ -48,13 +48,13 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
 
   // The party figures go below the screen (y 200), except the two members
   // concerned: the first over the left window, the second over the right.
-  for (ownerIndex = 3; ownerIndex >= 0; ownerIndex--) {
-    menu->ownerY[ownerIndex] = 0xc8;
+  for (memberIndex = 3; memberIndex >= 0; memberIndex--) {
+    menu->memberY[memberIndex] = 0xc8;
   }
-  menu->ownerX[menu->selectedColumn[1]] = 0x78;
-  menu->ownerY[menu->selectedColumn[1]] = 0x20;
-  menu->ownerX[menu->selectedColumn[0]] = 0x10;
-  menu->ownerY[menu->selectedColumn[0]] = 0x20;
+  menu->memberX[menu->selectedColumn[1]] = 0x78;
+  menu->memberY[menu->selectedColumn[1]] = 0x20;
+  menu->memberX[menu->selectedColumn[0]] = 0x10;
+  menu->memberY[menu->selectedColumn[0]] = 0x20;
 
   WindowSprite_ClearListFar(menu->listWindow);
   WaitFrames(1);
@@ -69,7 +69,7 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
     u16 *diffWork;
     struct Unit *originalUnit;
     struct Unit *unit;
-    s32 ownerId;
+    s32 memberId;
     s32 firstElement;
     s32 firstIndex;
     s32 secondElement;
@@ -85,39 +85,39 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
     originalUnit = AllocEwram(size);
     secondElement = 0;
     secondIndex = 0;
-    ownerId = menu->shownOwner[0];
+    memberId = menu->shownMember[0];
     firstElement = menu->pairElement[0];
     firstIndex = menu->pairIndex[0] & DJINN_ENTRY_INDEX;
     firstWasSet = (u16)(menu->pairEntries[0] & DJINN_ENTRY_IS_SET);
 
-    unit = Unit_GetFar(ownerId);
+    unit = Unit_GetFar(memberId);
     Iwram_CopyWords(originalUnit, unit, size);
-    Djinn_PutOnStandbyFar(ownerId, firstElement, firstIndex);
+    Djinn_PutOnStandbyFar(memberId, firstElement, firstIndex);
     if (mode == DJINN_COMPARE_TRADE) {
       secondElement = menu->pairElement[1];
       secondIndex = menu->pairIndex[1] & DJINN_ENTRY_INDEX;
       secondWasSet = (u16)(menu->pairEntries[1] & DJINN_ENTRY_IS_SET);
-      Djinn_GiveFar(ownerId, secondElement, secondIndex);
+      Djinn_GiveFar(memberId, secondElement, secondIndex);
       if (secondWasSet != 0) {
-        Djinn_SetFar(ownerId, secondElement, secondIndex);
+        Djinn_SetFar(memberId, secondElement, secondIndex);
       }
     }
-    Unit_CalculateFar(ownerId);
+    Unit_CalculateFar(memberId);
     pageCounts[0] = PsynergyList_Diff(originalUnit->psynergy, unit->psynergy,
                                       diffWork, &gainedCount, &lostCount);
     Iwram_CopyWords(unit, originalUnit, size);
 
-    ownerId = menu->shownOwner[1];
-    unit = Unit_GetFar(ownerId);
+    memberId = menu->shownMember[1];
+    unit = Unit_GetFar(memberId);
     Iwram_CopyWords(originalUnit, unit, size);
     if (mode == DJINN_COMPARE_TRADE) {
-      Djinn_PutOnStandbyFar(ownerId, secondElement, secondIndex);
+      Djinn_PutOnStandbyFar(memberId, secondElement, secondIndex);
     }
-    Djinn_GiveFar(ownerId, firstElement, firstIndex);
+    Djinn_GiveFar(memberId, firstElement, firstIndex);
     if (firstWasSet != 0) {
-      Djinn_SetFar(ownerId, firstElement, firstIndex);
+      Djinn_SetFar(memberId, firstElement, firstIndex);
     }
-    Unit_CalculateFar(ownerId);
+    Unit_CalculateFar(memberId);
     pageCounts[1] = PsynergyList_Diff(originalUnit->psynergy, unit->psynergy,
                                       diffWork, &gainedCount, &lostCount);
     Iwram_CopyWords(unit, originalUnit, size);
@@ -127,7 +127,7 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
     u16 *diffWork;
     struct Unit *originalUnit;
     struct Unit *unit;
-    s32 firstOwnerId;
+    s32 firstMemberId;
     s32 firstElement;
     s32 firstIndex;
     s32 applySecond;
@@ -136,18 +136,18 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
 
     diffWork = AllocEwram(96);
     originalUnit = AllocEwram(sizeof(*originalUnit));
-    firstOwnerId = menu->shownOwner[0];
+    firstMemberId = menu->shownMember[0];
     firstElement = menu->pairElement[0];
     firstIndex = menu->pairIndex[0] & DJINN_ENTRY_INDEX;
     applySecond = (mode == DJINN_COMPARE_SET);
 
-    unit = Unit_GetFar(firstOwnerId);
+    unit = Unit_GetFar(firstMemberId);
     Iwram_CopyWords(originalUnit, unit, sizeof(*originalUnit));
-    Djinn_PutOnStandbyFar(firstOwnerId, firstElement, firstIndex);
+    Djinn_PutOnStandbyFar(firstMemberId, firstElement, firstIndex);
     if (applySecond != 0) {
-      Djinn_SetFar(firstOwnerId, firstElement, firstIndex);
+      Djinn_SetFar(firstMemberId, firstElement, firstIndex);
     }
-    Unit_CalculateFar(firstOwnerId);
+    Unit_CalculateFar(firstMemberId);
     pageCounts[0] = PsynergyList_Diff(originalUnit->psynergy, unit->psynergy,
                                       diffWork, &gainedCount, &lostCount);
     Iwram_CopyWords(unit, originalUnit, sizeof(*originalUnit));
@@ -167,7 +167,7 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
     pageCounts[1] = 1;
   }
 
-  // Open the paired panes only after both units have been restored.
+  // Open the paired sides only after both units have been restored.
   Window_UpdateOrCreate(&menu->window, 0, 5, 15, 15, 2);
   Window_UpdateOrCreate(&menu->secondWindow, 15, 5, 15, 15, 2);
   WindowSprite_RedrawSavedRectFar(menu->helpWindow);
@@ -196,7 +196,7 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
   // 0x296 of palette 15 between the two.
   row = (mode == DJINN_COMPARE_GIVE);
   if ((menu->pairEntries[0] & DJINN_ENTRY_IS_SET) == 0) {
-    UiWork_SetParameterNibbleFar(2);
+    Text_SetColorFar(2);
   }
   Text_DrawMessageAsTilesFar(
       DJINN_ELEMENT(menu->pairEntries[0]) * DJINN_PER_ELEMENT +
@@ -206,11 +206,11 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
                             DJINN_ELEMENT(menu->pairEntries[0]) +
                                 DJINN_ELEMENT_TILE,
                             5, row, zero = 0);
-  UiWork_SetParameterNibbleFar(TEXT_COLOR_NORMAL);
+  Text_SetColorFar(TEXT_COLOR_NORMAL);
 
   if (mode == DJINN_COMPARE_TRADE) {
     if ((menu->pairEntries[1] & DJINN_ENTRY_IS_SET) == 0) {
-      UiWork_SetParameterNibbleFar(2);
+      Text_SetColorFar(2);
     }
     Text_DrawMessageAsTilesFar(
         DJINN_ELEMENT(menu->pairEntries[1]) * DJINN_PER_ELEMENT +
@@ -219,10 +219,10 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
     Window_SetTilemapEntryFar(
         menu->helpWindow,
         DJINN_ELEMENT(menu->pairEntries[1]) + DJINN_ELEMENT_TILE, 5, 2, mode);
-    UiWork_SetParameterNibbleFar(TEXT_COLOR_NORMAL);
+    Text_SetColorFar(TEXT_COLOR_NORMAL);
   } else if (mode - 2 <= 1) {
     if ((menu->pairEntries[0] & DJINN_ENTRY_IS_SET) != 0) {
-      UiWork_SetParameterNibbleFar(2);
+      Text_SetColorFar(2);
     }
     Text_DrawMessageAsTilesFar(
         DJINN_ELEMENT(menu->pairEntries[0]) * DJINN_PER_ELEMENT +
@@ -231,7 +231,7 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
     Window_SetTilemapEntryFar(
         menu->helpWindow,
         DJINN_ELEMENT(menu->pairEntries[0]) + DJINN_ELEMENT_TILE, 5, 2, zero);
-    UiWork_SetParameterNibbleFar(TEXT_COLOR_NORMAL);
+    Text_SetColorFar(TEXT_COLOR_NORMAL);
     Window_SetTilemapEntryFar(menu->helpWindow, 0xf296, 7, 1, zero);
   }
 
@@ -282,7 +282,7 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
           } while (0);
           MenuCursor_Slide(2, 96);
           gGameState.messageSpeed = MESSAGE_SPEED_NORMAL;
-          while (UiWork_IsCompleteFar() == 0) {
+          while (TextPrinter_AllFinishedFar() == 0) {
             WaitFrames(1);
           }
           Window_CloseFar(window, 1);
@@ -315,7 +315,7 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
           } while (0);
           MenuCursor_Slide(106, 56);
           gGameState.messageSpeed = MESSAGE_SPEED_NORMAL;
-          while (UiWork_IsCompleteFar() == 0) {
+          while (TextPrinter_AllFinishedFar() == 0) {
             WaitFrames(1);
           }
           Window_CloseFar(window, 1);
@@ -352,7 +352,7 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
                                      16);
         } else {
           MessageArgument_PushFar(
-              menu->shownOwner[page != DJINN_COMPARE_PAGE_BOTH],
+              menu->shownMember[page != DJINN_COMPARE_PAGE_BOTH],
               MESSAGE_ARGUMENT_ACTOR);
           Text_DrawMessageAsTilesFar(MsgDjinnPsyHelp, menu->helpWindow, 128,
                                      16);
@@ -383,20 +383,20 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
         if (mode == DJINN_COMPARE_GIVE) {
           previewMode = DJINN_PREVIEW_ADD;
         }
-        DjinnMenu_DrawStatPreview(menu->window, 0, 0, menu->shownOwner[1], page,
-                                  0, previewMode, 0, 0);
-        DjinnMenu_DrawStatPreview(menu->secondWindow, 0, 0, menu->shownOwner[1],
-                                  page, 0, previewMode, selectedPages[1] + 1,
-                                  0);
+        DjinnMenu_DrawStatPreview(menu->window, 0, 0, menu->shownMember[1],
+                                  page, 0, previewMode, 0, 0);
+        DjinnMenu_DrawStatPreview(menu->secondWindow, 0, 0,
+                                  menu->shownMember[1], page, 0, previewMode,
+                                  selectedPages[1] + 1, 0);
         break;
       case DJINN_COMPARE_PAGE_GIVER:
         if (mode == DJINN_COMPARE_GIVE) {
           previewMode = DJINN_PREVIEW_UNSET;
           addPairSlot = 0;
         }
-        DjinnMenu_DrawStatPreview(menu->window, 0, 0, menu->pairOwner[0], page,
+        DjinnMenu_DrawStatPreview(menu->window, 0, 0, menu->pairMember[0], page,
                                   addPairSlot, previewMode, page, 1);
-        DjinnMenu_DrawStatPreview(menu->secondWindow, 0, 0, menu->pairOwner[0],
+        DjinnMenu_DrawStatPreview(menu->secondWindow, 0, 0, menu->pairMember[0],
                                   page, addPairSlot, previewMode,
                                   selectedPages[0] + 1, 1);
         break;
@@ -539,7 +539,7 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
     WaitFrames(1);
   }
 
-  // Restore the ordinary list drawing tasks and close the preview panes; the
+  // Restore the ordinary list drawing tasks and close the preview sides; the
   // figures grow in again from phase 0.
   DjinnFigures_SetSlotPhase(0, 0);
   DjinnFigures_SetSlotPhase(1, 0);
@@ -601,7 +601,7 @@ s32 DjinnMenu_ShowMemberStatus(void) {
   menu->cursor->motion = ICON_HIDDEN;
   selectedPages[1] = selectedPages[0] = result;
   for (side = 3; side >= 0; side--)
-    menu->ownerY[side] = 200;
+    menu->memberY[side] = 200;
   WindowSprite_ClearListFar(menu->listWindow);
   WaitFrames(1);
   // Count the member's Psynergy by diffing their list with itself; saved is
@@ -610,7 +610,7 @@ s32 DjinnMenu_ShowMemberStatus(void) {
   counts[1] = counts[0] = 1;
   listedActions = AllocEwram(96);
   saved = AllocEwram(332);
-  unit = Unit_GetFar(menu->shownOwner[0]);
+  unit = Unit_GetFar(menu->shownMember[0]);
   counts[1] = counts[0] = PsynergyList_Diff(unit->psynergy, unit->psynergy,
                                             listedActions, &gained, &lost);
   Free(saved);
@@ -638,10 +638,10 @@ s32 DjinnMenu_ShowMemberStatus(void) {
       work->holdTilemapUpload = 1;
       WindowSprite_PrepareForRedrawFar(menu->window);
       WindowSprite_PrepareForRedrawFar(menu->secondWindow);
-      DjinnMenu_DrawStatPreview(menu->window, 0, 0, menu->pairOwner[0], 0, 0,
+      DjinnMenu_DrawStatPreview(menu->window, 0, 0, menu->pairMember[0], 0, 0,
                                 DJINN_PREVIEW_NO_CHANGE, 0, 1);
-      DjinnMenu_DrawStatPreview(menu->secondWindow, 0, 0, menu->pairOwner[0], 0,
-                                0, DJINN_PREVIEW_NO_CHANGE,
+      DjinnMenu_DrawStatPreview(menu->secondWindow, 0, 0, menu->pairMember[0],
+                                0, 0, DJINN_PREVIEW_NO_CHANGE,
                                 selectedPages[0] + 1, 1);
       work->holdTilemapUpload = 0;
     }
@@ -726,60 +726,60 @@ s32 DjinnMenu_ShowMemberStatus(void) {
 /// Returns how many recipients would need a trade instead.
 ///
 /// requiresTrade[i] becomes 1 for each other member i who cannot take one of
-/// sourceOwnerColumn's Djinn without two members' totals differing by more
+/// sourceMemberColumn's Djinn without two members' totals differing by more
 /// than one (Djinn_CheckTurnBalance), else 0. The second Djinn chooser offers
 /// such a member only Trade.
-s32 Djinn_MarkBalancedEntries(s8 *requiresTrade, s32 sourceOwnerColumn) {
+s32 Djinn_MarkBalancedEntries(s8 *requiresTrade, s32 sourceMemberColumn) {
   s32 tradeCount;
-  s32 ownerColumn;
+  s32 memberColumn;
   s8 *entry;
   struct DjinnMenuWork *menu;
 
   menu = gMenuWork;
   tradeCount = 0;
-  ownerColumn = 0;
-  if (tradeCount < menu->ownerCount) {
+  memberColumn = 0;
+  if (tradeCount < menu->memberCount) {
     entry = requiresTrade;
     do {
       *entry = 0;
-      if (ownerColumn != sourceOwnerColumn) {
-        if (Djinn_CheckTurnBalance(sourceOwnerColumn, ownerColumn) == 0) {
+      if (memberColumn != sourceMemberColumn) {
+        if (Djinn_CheckTurnBalance(sourceMemberColumn, memberColumn) == 0) {
           *entry = 1;
           tradeCount += 1;
         }
       }
-      ownerColumn += 1;
+      memberColumn += 1;
       entry += 1;
-    } while (ownerColumn < menu->ownerCount);
+    } while (memberColumn < menu->memberCount);
   }
   return tradeCount;
 }
 
 /// Tests whether a hypothetical give leaves every pair of members within one
-/// Djinn. Returns 1 when, with one Djinni moved from sourceOwnerColumn to
-/// targetOwnerColumn, no two members' totals (Djinn_CountTurns) differ by
+/// Djinn. Returns 1 when, with one Djinni moved from sourceMemberColumn to
+/// targetMemberColumn, no two members' totals (Djinn_CountTurns) differ by
 /// more than one; 0 otherwise.
-s32 Djinn_CheckTurnBalance(s32 sourceOwnerColumn, s32 targetOwnerColumn) {
+s32 Djinn_CheckTurnBalance(s32 sourceMemberColumn, s32 targetMemberColumn) {
   struct DjinnMenuWork *menu;
   s8 ownedCounts[16];
-  u8 firstOwner;
-  u8 secondOwner;
+  u8 firstMember;
+  u8 secondMember;
   s32 difference;
   s32 balanced;
 
   menu = gMenuWork;
   Djinn_CountTurns((u8 *)ownedCounts);
-  ownedCounts[sourceOwnerColumn] -= 1;
-  ownedCounts[targetOwnerColumn] += 1;
+  ownedCounts[sourceMemberColumn] -= 1;
+  ownedCounts[targetMemberColumn] += 1;
   balanced = 1;
-  for (firstOwner = 0; firstOwner < menu->ownerCount; firstOwner++) {
-    secondOwner = firstOwner;
-    if (firstOwner < menu->ownerCount) {
+  for (firstMember = 0; firstMember < menu->memberCount; firstMember++) {
+    secondMember = firstMember;
+    if (firstMember < menu->memberCount) {
       while (1) {
-        secondOwner++;
-        if (secondOwner >= menu->ownerCount)
+        secondMember++;
+        if (secondMember >= menu->memberCount)
           break;
-        difference = ownedCounts[firstOwner] - ownedCounts[secondOwner];
+        difference = ownedCounts[firstMember] - ownedCounts[secondMember];
         if (difference < -1 || difference > 1) {
           balanced = 0;
           break;
@@ -795,14 +795,14 @@ s32 Djinn_CheckTurnBalance(s32 sourceOwnerColumn, s32 targetOwnerColumn) {
 void Djinn_CountTurns(u8 *ownedCounts) {
   struct DjinnMenuWork *menu;
   struct Unit *unit;
-  s32 ownerIndex;
+  s32 memberIndex;
   s32 element;
   s32 djinnIndex;
   s32 ownedCount;
 
   menu = gMenuWork;
-  for (ownerIndex = 0; ownerIndex < menu->ownerCount; ownerIndex++) {
-    unit = Unit_GetFar(menu->owners[ownerIndex]);
+  for (memberIndex = 0; memberIndex < menu->memberCount; memberIndex++) {
+    unit = Unit_GetFar(menu->members[memberIndex]);
     ownedCount = 0;
     for (element = 0; element <= 3; element++) {
       for (djinnIndex = 0; djinnIndex <= 19; djinnIndex++) {
@@ -812,6 +812,6 @@ void Djinn_CountTurns(u8 *ownedCounts) {
           ownedCount++;
       }
     }
-    ownedCounts[ownerIndex] = ownedCount;
+    ownedCounts[memberIndex] = ownedCount;
   }
 }

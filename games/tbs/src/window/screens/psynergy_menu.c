@@ -75,9 +75,9 @@ s32 BattlePsynergyMenu_Run(s32 unitId, u16 *actions, s32 count) {
   for (;;) {
     if (firstEntry != drawnFirstEntry || selectedRow != drawnRow) {
       work->holdTilemapUpload = 1;
-      Ui_SetRectHighlight(window->x + 1, window->y + drawnRow * 2 + 1,
-                          window->width - 2, 1, 15);
-      Ui_FillVramBlockPattern();
+      Window_HighlightRect(window->x + 1, window->y + drawnRow * 2 + 1,
+                           window->width - 2, 1, 15);
+      Text_FillCanvasBackground();
       if (count != 0) {
         BATTLE_MENU_MESSAGE_COPY(
             (actions[firstEntry + selectedRow] & ACTION_ID_MASK) +
@@ -109,11 +109,11 @@ s32 BattlePsynergyMenu_Run(s32 unitId, u16 *actions, s32 count) {
           sprites[i].oam.f.tile = glyph;
 
           if ((action->flags & ABILITY_USABLE_IN_BATTLE) == 0) {
-            UiWork_SetParameterNibble(4);
+            Text_SetColor(4);
           } else if (action->ppCost > unit->pp) {
-            UiWork_SetParameterNibble(2);
+            Text_SetColor(2);
           } else if (unit->psySeal != 0) {
-            UiWork_SetParameterNibble(9);
+            Text_SetColor(9);
           }
 
           // The name and cost take BG palette 5 (WindowWork.textPalette).
@@ -121,7 +121,7 @@ s32 BattlePsynergyMenu_Run(s32 unitId, u16 *actions, s32 count) {
           Text_DrawMessageAsTiles(encodedAction + MsgAbilityName, window, 16,
                                   i * 16);
           Text_DrawNumberAtOffset(action->ppCost, 2, window, 104, i * 16);
-          UiWork_SetParameterNibble(15);
+          Text_SetColor(15);
           work->textPalette = 15;
 
           // Element 4 is none: no element icon.
@@ -154,8 +154,8 @@ s32 BattlePsynergyMenu_Run(s32 unitId, u16 *actions, s32 count) {
         }
       }
 
-      Ui_SetRectHighlight(window->x + 1, window->y + selectedRow * 2 + 1,
-                          window->width - 2, 1, 14);
+      Window_HighlightRect(window->x + 1, window->y + selectedRow * 2 + 1,
+                           window->width - 2, 1, 14);
       work->dirty = 1;
       work->holdTilemapUpload = 0;
     }

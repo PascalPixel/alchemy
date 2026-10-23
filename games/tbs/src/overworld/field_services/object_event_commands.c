@@ -701,27 +701,14 @@ void FacingObject_TurnPairToFaceEachOther(struct FacingObject *firstObject,
   }
 }
 
-#ifndef UBFIX
-/// The event work seen as its object event slots, which the object event
-/// commands index by local id.
-struct ObjectSlotTable {
-  u8 tablesAndEvents[0x14]; ///< FieldWork's tables and events
-  struct Object *slots[0];
-};
-
-STATIC_ASSERT(offsetof(struct ObjectSlotTable, slots) == 0x14);
-#endif
-
 /// The script command "destroy object event": releases the object event and
 /// frees its slot, writing NULL to its place in the field work's object event
 /// table. Map scripts reach it (about 14 of them).
 void ObjectEvent_DestroyById(s32 index) {
   void *object = ObjectEvent_GetByLocalId(index);
+  struct FieldWork *table = gFieldWork;
 #ifdef UBFIX
-  struct FieldWork *table = (struct FieldWork *)gFieldWork;
   struct Object *empty = NULL;
-#else
-  struct ObjectSlotTable *table = (struct ObjectSlotTable *)gFieldWork;
 #endif
 
   if (object != 0) {
@@ -731,7 +718,8 @@ void ObjectEvent_DestroyById(s32 index) {
     // Copy the pointer representation without extending the object event array.
     memcpy((u8 *)table + 0x14 + index * sizeof(void *), &empty, sizeof(empty));
 #else
-    table->slots[index] = NULL;
+    // UB: the getter accepts slots through 191, past the 66 object events.
+    table->objectEvents[index] = NULL;
 #endif
   }
 }
@@ -939,9 +927,7 @@ UNUSED void ObjectVisual_ReservedNoOp(void) {}
 /// The script command "set message": the number of the script's next message,
 /// written to work->message. Map scripts reach it (MESSAGE_SET); the field's
 /// talk, coord event, item and Psynergy scripts call it too.
-void FieldScript_SetMessageId(s32 message) {
-  ((struct FieldWork *)gFieldWork)->message = message;
-}
+void FieldScript_SetMessageId(s32 message) { gFieldWork->message = message; }
 
 /// Returns the sprite (the first animation's id) of the object event in the low
 /// 12 bits of localId, or -1 if there is no such animated object event. The
@@ -949,7 +935,7 @@ void FieldScript_SetMessageId(s32 message) {
 /// voice.
 s32 ObjectEvent_ReadActiveValue(s32 localId) {
 #ifdef UBFIX
-  struct FieldWork *state = (struct FieldWork *)gFieldWork;
+  struct FieldWork *state = gFieldWork;
   s32 sprite = -1;
   struct Object *entry;
 
@@ -960,7 +946,7 @@ s32 ObjectEvent_ReadActiveValue(s32 localId) {
     return -1;
   entry = (struct Object *)state->objectEvents[localId];
 #else
-  struct FieldWork *state = (struct FieldWork *)gFieldWork;
+  struct FieldWork *state = gFieldWork;
   s32 sprite = -1;
   struct Object *entry = (struct Object *)state->objectEvents[localId & 0x0fff];
 #endif
@@ -974,7 +960,7 @@ s32 ObjectEvent_ReadActiveValue(s32 localId) {
 /// -1. Reached only through an unnamed veneer in the overworld bank's far-call
 /// table; nothing in ☀️ names it.
 s32 ObjectEvent_FindActiveByValue(s32 sprite) {
-  struct FieldWork *state = (struct FieldWork *)gFieldWork;
+  struct FieldWork *state = gFieldWork;
   s32 result = -1;
   s32 index;
   struct Object *object;

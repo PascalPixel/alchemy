@@ -1578,7 +1578,7 @@ static void SolSanctumLunaSolRooms_ArriveAfterWiseOnesRescue(void) {
   // This script reads its heap slots from one address: HEAP_SLOT_PALETTE_FADE
   // is reached from HEAP_SLOT_FIELD's slot. As gFieldWork and
   // gPaletteFadeWork they would load two.
-  ((struct EventWork *)HEAP_SLOT_BLOCK(HEAP_SLOT_FIELD))->transitionFrames = 1;
+  ((struct FieldWork *)HEAP_SLOT_BLOCK(HEAP_SLOT_FIELD))->transitionFrames = 1;
   FieldScript_StartScreenTransition();
   FieldScript_WaitTransitionFrames();
   PaletteFade_SetTarget(SOL_SANCTUM_BLUE_TINT, 1);
@@ -1657,9 +1657,9 @@ static void SolSanctumLunaSolRooms_ArriveAfterWiseOnesRescue(void) {
   palette->step = 1;
   palette->padding2a03 = 1;
   Io_Write16(0, &PLTT_BACKDROP);
-  ((struct EventWork *)HEAP_SLOT_BLOCK(HEAP_SLOT_FIELD))->transition =
+  ((struct FieldWork *)HEAP_SLOT_BLOCK(HEAP_SLOT_FIELD))->transition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
-  ((struct EventWork *)HEAP_SLOT_BLOCK(HEAP_SLOT_FIELD))->transitionFrames = 16;
+  ((struct FieldWork *)HEAP_SLOT_BLOCK(HEAP_SLOT_FIELD))->transitionFrames = 16;
   FieldScript_End();
 }
 

@@ -655,7 +655,7 @@ static void EventScript_AskAboutJourney(void) {
         1) {
       FieldScript_ShowMessageAndWait(LOCALID_AFTER_KALAY_CURIOUS_OLD_MAN, 0);
     } else {
-      struct EventWork *work = gFieldWork;
+      struct FieldWork *work = gFieldWork;
 
       work->message++;
       FieldScript_AskYesNoAndShowResponse(LOCALID_AFTER_KALAY_CURIOUS_OLD_MAN,
@@ -1518,7 +1518,7 @@ static void EventScript_TravelersLeaveAfterBattle(void) {
   objectEvent = ObjectEvent_GetById(LOCALID_STORM_GARET);
   ObjectEvent_SetSpriteFlags(objectEvent, 0);
   {
-    struct EventWork *work = gFieldWork;
+    struct FieldWork *work = gFieldWork;
 
     work->transition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   }
@@ -1580,7 +1580,7 @@ static void EventScript_TravelersLeaveAfterBattle(void) {
 /// takes VALE_GATE_TO_WORLD_MAP.
 static void EventScript_DepartForQuest(void) {
   struct ObjectEvent *objectEvent;
-  struct EventWork *work;
+  struct FieldWork *work;
   s32 priorityFlags;
   const s32 *faceActions;
   const s32 *chaseActions;

@@ -22,7 +22,7 @@ void Field_ClearRequests(void) {
   s16 noRequest;
   struct FieldWork *work;
   noRequest = 0;
-  work = (struct FieldWork *)gFieldWork;
+  work = gFieldWork;
   work->coordEvent = noRequest;
   work->pushCell = 0;
   work->warp = 0;
@@ -42,7 +42,7 @@ void Field_ClearRequests(void) {
 ///
 /// Map_Run tests it to stop walking and to leave its request loop.
 s32 Field_CountRequests(void) {
-  struct FieldWork *work = (struct FieldWork *)gFieldWork;
+  struct FieldWork *work = gFieldWork;
 
   // BUG: a sum can be 0 with requests pending. Field_ProcessStep raises event
   // FIELD_RAISED_EVENT_PARTY_FELL (-1) on the frame a member falls to poison,
@@ -156,8 +156,7 @@ void Field_CheckWarpRegions(s32 positionX, s32 positionY, s32 positionZ) {
   fixedY = positionY;
   fixedZ = positionZ;
   region = gOverlayArea.regions();
-  if (region != 0 && (work = (struct FieldWork *)gFieldWork,
-                      minX = region->minX, minX != -1)) {
+  if (region != 0 && (work = gFieldWork, minX = region->minX, minX != -1)) {
   loop:
     minY = region->minY;
     minZ = region->minZ;
@@ -175,7 +174,7 @@ void Field_CheckWarpRegions(s32 positionX, s32 positionY, s32 positionZ) {
       Leader_StopMoving();
       return;
     }
-    work = (struct FieldWork *)gFieldWork;
+    work = gFieldWork;
     region++;
     minX = region->minX;
     if (minX != -1)

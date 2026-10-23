@@ -1116,7 +1116,7 @@ static void BabiLighthouse_CloseTruthDoor(void) {
 /// door opens; otherwise it reads an inscription. "The truth of this door is
 /// open to those seeing with their true heart."
 static void BabiLighthouse_InspectTruthDoorSwitch(void) {
-  struct FieldWork *work = (struct FieldWork *)gFieldWork;
+  struct FieldWork *work = gFieldWork;
 
   FieldScript_Start();
   if (work->revealActive != 0) {

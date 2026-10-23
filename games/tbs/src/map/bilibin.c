@@ -443,7 +443,7 @@ static void EventScript_OpenDoorAndLeave(void) {
   s32 rowOffset;
   s32 column;
   s32 row;
-  struct EventWork *work;
+  struct FieldWork *work;
 
   work = gFieldWork;
   FieldScript_Start();

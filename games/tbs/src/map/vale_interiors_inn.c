@@ -385,7 +385,7 @@ static void EventScript_AskIsaacHisBusiness(void) {
 /// talking to LOCALID_YOUNG_MAN_SAW_MASK once the party has left Vale and until
 /// it reaches Kalay (gValeInteriorsInn_EventsAfterLeaving).
 static void EventScript_AskWhetherMaskedManWasFelix(void) {
-  struct EventWork *work;
+  struct FieldWork *work;
 
   FieldScript_Start();
   ObjectMotion_SetAngleToward(LOCALID_YOUNG_MAN_SAW_MASK, LOCALID_PARTY_LEADER,
@@ -514,7 +514,7 @@ s32 ValeInteriorsInn_Initialize(void) {
 
   if (gGameState.warpDest == VALE_INTERIORS_INN_FROM_BABI_PALACE) {
     GameFlag_ClearBit(FLAG_SHOW_LOCATION_NAME);
-    ((struct EventWork *)HEAP_SLOT_BLOCK(HEAP_SLOT_FIELD))->transition =
+    ((struct FieldWork *)HEAP_SLOT_BLOCK(HEAP_SLOT_FIELD))->transition =
         MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
   } else {
     if (GameFlag_Test(FLAG_VALE_STORM) != 0) {
@@ -559,7 +559,7 @@ s32 ValeInteriorsInn_Initialize(void) {
               VALE_INTERIORS_INN_FROM_VALE_KRADEN_MYTHRIL_BAG) {
             EventScript_ShowMythrilBag();
           } else {
-            ((struct EventWork *)HEAP_SLOT_BLOCK(HEAP_SLOT_FIELD))->transition =
+            ((struct FieldWork *)HEAP_SLOT_BLOCK(HEAP_SLOT_FIELD))->transition =
                 MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
             if (GameFlag_Test(FLAG_VALE_STORM) != 0) {
               Weather_StartLightning();
@@ -595,17 +595,17 @@ static void EventScript_DoraWakesIsaac(void) {
   struct Sprite *sprite;
   struct MapGridScrollWork *grid;
   struct ObjectEvent *viewCenter;
-  struct EventWork **eventSlot;
+  struct FieldWork **eventSlot;
 
-  eventSlot = (struct EventWork **)Ram_FieldWork;
+  eventSlot = (struct FieldWork **)Ram_FieldWork;
   /* FAKEMATCH(temporary): the event record read into a block-local before
      the map work and view centre; as reads in place, 11 of 430 instructions
      differ in tbs-en (13 with the view centre first). */
   {
-    struct EventWork *work = *eventSlot;
+    struct FieldWork *work = *eventSlot;
 
     grid = *(struct MapGridScrollWork **)Ram_MapGridWork;
-    viewCenter = work->camera;
+    viewCenter = (struct ObjectEvent *)work->camera;
   }
   sprite = ObjectEvent_GetById(LOCALID_TUNIC)->sprite;
   // Present the bedside conversation before revealing the wider storm scene.
@@ -793,7 +793,7 @@ static void EventScript_HurryToThePlaza(void) {
   sprite->image.priority = 1;
   ObjectEvent_SetActionScript(LOCALID_FLAME,
                               gValeInteriorsInn_FlameShakesScript);
-  ((struct EventWork *)HEAP_SLOT_BLOCK(HEAP_SLOT_FIELD))->transition =
+  ((struct FieldWork *)HEAP_SLOT_BLOCK(HEAP_SLOT_FIELD))->transition =
       MAP_TRANSITION(TRANSITION_WINDOW, 1);
   MapGrid_CopyCellsTo(83, 15, 83, 19, 5, 4);
   MapGrid_CopyCellsTo(90, 16, 90, 20, 5, 4);
@@ -894,9 +894,9 @@ ramp:
   ObjectEvent_SetActionScript(LOCALID_DORA, gValeInteriorsInn_RunToPlazaScript);
   ObjectEvent_RunActionScriptAndWait(LOCALID_PARTY_LEADER,
                                      gValeInteriorsInn_RunToPlazaScript);
-  ((struct EventWork *)HEAP_SLOT_BLOCK(HEAP_SLOT_FIELD))->transition =
+  ((struct FieldWork *)HEAP_SLOT_BLOCK(HEAP_SLOT_FIELD))->transition =
       MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
-  ((struct EventWork *)HEAP_SLOT_BLOCK(HEAP_SLOT_FIELD))->transitionFrames = 32;
+  ((struct FieldWork *)HEAP_SLOT_BLOCK(HEAP_SLOT_FIELD))->transitionFrames = 32;
   FieldScript_FinishScreenTransition();
   FieldScript_WaitTransitionFrames();
   Engine_ScriptRequestWarp(VALE_INTERIORS_INN_TO_VALE_STORM_WITH_DORA);

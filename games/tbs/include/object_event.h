@@ -9,10 +9,6 @@
 
 #include "field_work.h"
 
-/// The running field map's work, heap slot HEAP_SLOT_FIELD, as the maps
-/// read it; Map_Run takes it and frees it.
-extern struct EventWork *gFieldWork;
-
 /// How a map fades in and out: MAP_TRANSITION's high byte, which
 /// ScreenTransition_Start and ScreenTransition_Finish read.
 enum MapTransitionStyle {
@@ -24,7 +20,7 @@ enum MapTransitionStyle {
   TRANSITION_CENTRE_LINE = 4
 };
 
-/// A map transition as EventWork.transition holds it. For
+/// A map transition as FieldWork.transition holds it. For
 /// TRANSITION_WINDOW the variant is the window mode, listed at
 /// ScreenTransition_UpdateScanlineTable: 3 a circle at the centre, 9 an
 /// ellipse around the leader, and others.

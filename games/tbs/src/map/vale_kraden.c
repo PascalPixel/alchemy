@@ -1126,7 +1126,7 @@ static void EventScript_TalkToRockslideSurvivor(void) {
 /// FLAG_VALE_STORM_MONSTER_FOUGHT, and starts the first slot of the encounter
 /// zone of the scripted battles of Vale, Vault and the world map.
 static void EventScript_FightFirstMonster(void) {
-  struct EventWork *work;
+  struct FieldWork *work;
 
   FieldScript_Start();
 
@@ -1146,7 +1146,7 @@ static void EventScript_FightFirstMonster(void) {
 /// FLAG_VALE_STORM_SECOND_MONSTER_FOUGHT is set. Sets it and
 /// FLAG_VALE_STORM_MONSTER_FOUGHT, and starts its second slot.
 static void EventScript_FightSecondMonster(void) {
-  struct EventWork *work;
+  struct FieldWork *work;
 
   FieldScript_Start();
 

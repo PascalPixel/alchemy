@@ -64,7 +64,7 @@ void Field_StartEncounterTransition(s32 unused) {
 #else
 s32 Field_StartEncounterTransition(s32 unused) {
 #endif
-  struct FieldWork *work = (struct FieldWork *)gFieldWork;
+  struct FieldWork *work = gFieldWork;
   s32 i;
   s32 level;
 

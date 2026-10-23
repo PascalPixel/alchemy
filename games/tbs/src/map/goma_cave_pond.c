@@ -32,7 +32,7 @@
 #include "system.h"
 #include "types.h"
 
-#include "resource_388_runtime.h"
+#include "heap_slots.h"
 #include "map_tables.h"
 #include "object_event.h"
 
@@ -74,7 +74,7 @@ const struct MapEvent *Map_GetEvents(void) { return gGomaCavePondEvents; }
 /// Sets up the room as the party enters. Once the stump in the room above has
 /// been pushed over, it lies here underfoot, and the cells it covers change.
 s32 Map_Initialize(void) {
-  struct EventWork *work;
+  struct FieldWork *work;
 
   work = gFieldWork;
   work->transition =

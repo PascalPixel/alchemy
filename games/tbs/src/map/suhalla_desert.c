@@ -234,7 +234,7 @@ const struct ObjectEventTemplate *Map_GetObjectEventTemplates(void) {
 /// 99, the storm carrying the party away.
 static void SuhallaDesert_UpdateCaptureTimer(void) {
   struct ObjectEvent *selectedObjectEvent;
-  struct EventWork *requests;
+  struct FieldWork *requests;
   s32 remainingFrames;
 
   selectedObjectEvent = ObjectEvent_GetById(gGameState.leaderLocalId);
@@ -559,7 +559,7 @@ static s32 SuhallaDesert_ChaseLeader(struct ObjectScriptContext *interpreter) {
     if (dx + (dz >= 0 ? objectEvent->z.fixed - selectedObjectEvent->z.fixed
                       : selectedObjectEvent->z.fixed - objectEvent->z.fixed) <
         PIXELS(8)) {
-      struct EventWork *work = gFieldWork;
+      struct FieldWork *work = gFieldWork;
 
       if (selectedObjectEvent->motionFlags != 0) {
         work->raisedEvent = RAISED_CHASING_STORM_CATCHES;
@@ -786,7 +786,7 @@ s32 Map_Initialize(void) {
   struct MapGridState *gridState;
 
   gridState = HEAP_SLOT_BLOCK(HEAP_SLOT_MAP_GRID);
-  ((struct EventWork *)HEAP_SLOT_BLOCK(HEAP_SLOT_FIELD))->transition =
+  ((struct FieldWork *)HEAP_SLOT_BLOCK(HEAP_SLOT_FIELD))->transition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_SHAPE);
   if (FieldGameFlag_GetByte(FLAG_MAP_TEMP_10) != 0) {
     gGameState.movementMode = LEADER_MOVEMENT_AIRBORNE;

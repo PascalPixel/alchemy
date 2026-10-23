@@ -6,7 +6,7 @@
 
 #include "window.h"
 
-extern struct EventWork *gFieldWork;
+#include "field_work.h"
 #include "heap_slots.h"
 
 void Engine_ObjectEventSetAnimation();

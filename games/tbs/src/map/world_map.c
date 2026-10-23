@@ -423,7 +423,7 @@ enum {
 /// Reached by talking to LOCALID_VENUS_DJINNI, or by walking onto
 /// MB_WORLD_MAP_VINE until Vine is caught.
 static void EventScript_MeetVine(void) {
-  struct EventWork *work = gFieldWork;
+  struct FieldWork *work = gFieldWork;
 
   if (gGameState.encounterSteps >=
       Math_Divide(work->encounterThreshold * 9, 10)) {
@@ -444,7 +444,7 @@ static void EventScript_MeetVine(void) {
 static void EventScript_MeetCorona(void) {
   struct GameState *state = &gGameState;
   s32 *steps = &state->encounterSteps;
-  struct EventWork *work = gFieldWork;
+  struct FieldWork *work = gFieldWork;
 
   if (*steps >= Math_Divide(work->encounterThreshold * 9, 10)) {
     Field_RequestDjinnBattle(DJINN_NO_HOP | LOCALID_CORONA, DJINNI_CORONA);
@@ -459,7 +459,7 @@ static void EventScript_MeetCorona(void) {
 static void EventScript_MeetHail(void) {
   struct GameState *state = &gGameState;
   s32 *steps = &state->encounterSteps;
-  struct EventWork *work = gFieldWork;
+  struct FieldWork *work = gFieldWork;
 
   if (*steps >= Math_Divide(work->encounterThreshold * 9, 10)) {
     Field_RequestDjinnBattle(DJINN_NO_HOP | LOCALID_HAIL, DJINNI_HAIL);
@@ -673,7 +673,7 @@ const struct ObjectEventTemplate *WorldMap_GetObjectEventTemplates(void) {
 /// Chooses a passage warp from the side of the object event the leader
 /// approaches.
 static void WorldMap_SelectWarpByX(s32 trigger, s32 warpBefore, s32 warpAfter) {
-  struct EventWork *work;
+  struct FieldWork *work;
   struct ObjectEvent *subject;
   struct ObjectEvent *other;
 
@@ -690,7 +690,7 @@ static void WorldMap_SelectWarpByX(s32 trigger, s32 warpBefore, s32 warpAfter) {
 
 /// Chooses a passage warp from the leader's north-south approach.
 static void WorldMap_SelectWarpByZ(s32 trigger, s32 warpBefore, s32 warpAfter) {
-  struct EventWork *work;
+  struct FieldWork *work;
   struct ObjectEvent *subject;
   struct ObjectEvent *other;
 
@@ -761,7 +761,7 @@ const struct MapEvent *WorldMap_GetEvents(void) { return gWorldMapEvents; }
 /// debug flag FLAG_DEBUG_STEPS_OFF it raises none.
 static void WorldMap_UpdateLocationContacts(void) {
   struct ObjectEvent *leader;
-  struct EventWork *work;
+  struct FieldWork *work;
   struct ObjectEvent *objectEvent;
   s32 left;
   s32 right;
@@ -773,7 +773,7 @@ static void WorldMap_UpdateLocationContacts(void) {
   leader = ObjectEvent_GetById(gGameState.leaderLocalId);
   leaderReach = leader->sprite->scale * leader->radius;
   work = gFieldWork;
-  objectEvent = work->camera;
+  objectEvent = (struct ObjectEvent *)work->camera;
   left = objectEvent->x.fixed - PIXELS(160);
   right = objectEvent->x.fixed + PIXELS(160);
   top = objectEvent->z.fixed - PIXELS(300);
@@ -2607,7 +2607,7 @@ static void WorldMap_ShowIslandDrifting(void) {
 static void WorldMap_UpdateStormTimer(void) {
 
   struct ObjectEvent *objectEvent;
-  struct EventWork *work;
+  struct FieldWork *work;
   s32 progress;
 
   objectEvent = ObjectEvent_GetById(gGameState.leaderLocalId);

@@ -173,7 +173,7 @@ static void EventScript_GrowSprout(void) {
 /// leader steps through and the party leaves by that warp into the village's
 /// buildings.
 static void EventScript_EnterDoor(void) {
-  struct EventWork *work = gFieldWork;
+  struct FieldWork *work = gFieldWork;
   s32 warpTrigger = work->coordEvent;
   u16 cellX = gSuhallaDoorCells[warpTrigger][0];
   u16 cellZ = gSuhallaDoorCells[warpTrigger][1];
@@ -188,7 +188,7 @@ static void EventScript_EnterDoor(void) {
 
 /// The same through the wide door of SUHALLA_TO_SANCTUM, into Suhalla Sanctum.
 static void EventScript_EnterWideDoor(void) {
-  struct EventWork *work = gFieldWork;
+  struct FieldWork *work = gFieldWork;
   s32 warpTrigger = work->coordEvent;
   u16 cellX = gSuhallaDoorCells[warpTrigger][0];
   u16 cellZ = gSuhallaDoorCells[warpTrigger][1];
@@ -214,7 +214,7 @@ const struct MapEvent *Map_GetEvents(void) {
 /// return that keeps the party's position. SUHALLA_AFTER_BABI_SPOKE sets
 /// FLAG_BABI_SPOKE_AFTER_COLOSSO.
 s32 Map_Initialize(void) {
-  struct EventWork *work;
+  struct FieldWork *work;
 
   if (gGameState.warpDest == SUHALLA_AFTER_BABI_SPOKE) {
     Engine_GameFlagSet(FLAG_BABI_SPOKE_AFTER_COLOSSO);

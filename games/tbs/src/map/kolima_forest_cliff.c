@@ -111,7 +111,7 @@ const struct MapEvent *KolimaForestCliff_GetEvents(void) {
 /// river floats there again, the logs mark the cells they cover, and the forest
 /// keeps its cursed colours until the curse is lifted.
 s32 KolimaForestCliff_Initialize(void) {
-  struct EventWork *work = gFieldWork;
+  struct FieldWork *work = gFieldWork;
 
   work->transition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);

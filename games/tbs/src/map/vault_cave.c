@@ -293,7 +293,7 @@ static struct ObjectEvent *VaultCave_FindCollidableObjectEventAtCell(s32 column,
   // lookup adds four native bytes in EN; retain the original reads for
   // matching.
 #ifdef UBFIX
-  struct FieldWork *work = (struct FieldWork *)gFieldWork;
+  struct FieldWork *work = gFieldWork;
   u32 objectEventSlot;
 
   for (objectEventSlot = LOCALID_FIRST_PLACED; objectEventSlot <= 65;
@@ -1001,7 +1001,7 @@ static void VaultCave_StartTimedFalls(void) {
 /// events, then sets the Retreat destination, the foot of the ladder from
 /// Vault.
 s32 Map_Initialize(void) {
-  ((struct FieldWork *)gFieldWork)->transition =
+  gFieldWork->transition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   if (gGameState.mapId == (s32)&MapId_VaultCavePassage) {
     switch (gGameState.warpDest) {

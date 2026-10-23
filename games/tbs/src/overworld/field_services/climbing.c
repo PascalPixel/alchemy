@@ -32,7 +32,7 @@ s32 Field_TryJumpForward(void) {
   s32 angle = (leader->facing + 0x2000) & 0xc000; // to the nearest quarter
   u8 *flags = &leader->flags;
   u8 saved = *flags;
-  struct FieldWork *work = (struct FieldWork *)gFieldWork;
+  struct FieldWork *work = gFieldWork;
   s32 spriteFlags = 1;
   struct FieldPosition positionStorage;
   struct FieldPosition *position;

@@ -938,7 +938,7 @@ static s32 CrossboneIsleSteppingStones_UpdateObjectEventPriority(
   s32 hit;
   u32 id;
 
-  if (((struct FieldWork *)gFieldWork)->castStarted == 1) {
+  if (gFieldWork->castStarted == 1) {
     objectEvent->sprite->image.priority = leader->sprite->image.priority;
     objectEvent->collisionFlags |= OBJ_EVENT_SOLID;
 #ifdef UBFIX

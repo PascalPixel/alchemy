@@ -409,7 +409,7 @@ static void EventScript_LeaveToValeGateNorth(void) {
 /// Vale, Jenna's grandmother lies sick in bed.
 s32 ValeInteriorsShops_Initialize(void) {
   struct ObjectEvent *objectEvent;
-  struct EventWork **eventSlot = &gFieldWork;
+  struct FieldWork **eventSlot = &gFieldWork;
 
   (*eventSlot)->transition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);

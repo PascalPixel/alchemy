@@ -367,7 +367,7 @@ static void Kolima_WalkThroughExit(s32 warpNumber) {
 /// north open their door (gKolima_DoorCells) and the leader walks in, while
 /// KOLIMA_TO_HOUSE_NORTH, entered walking south, has no door to draw.
 static void Kolima_EnterDoor(void) {
-  struct EventWork *work = gFieldWork;
+  struct FieldWork *work = gFieldWork;
   s32 x = 0;
   s32 y = 0;
 

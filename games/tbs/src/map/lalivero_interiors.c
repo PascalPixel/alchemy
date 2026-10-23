@@ -395,7 +395,7 @@ static void EventScript_TalkToIodem(void) {
 /// Both maps, a doorway out: take the touched coord event's warp with the exit
 /// sound.
 static void EventScript_LeaveBuilding(void) {
-  struct EventWork *work = gFieldWork;
+  struct FieldWork *work = gFieldWork;
   s16 *trigger = (s16 *)&work->coordEvent;
 
   Engine_ScriptRequestWarp(*trigger);

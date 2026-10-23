@@ -215,7 +215,7 @@ static void EventScript_LayanaScoldsLunpaVisit(void) {
 /// opens, and the leader walks through it to the next room.
 static void EventScript_LeaveThroughDoor(void) {
 
-  struct EventWork *work;
+  struct FieldWork *work;
 
   work = gFieldWork;
   SCRIPT_START();
@@ -326,7 +326,7 @@ static void HammetPalace_SetUpWarpDest(void) {
 /// what the rod is to find, then sends everyone back to their posts.
 static void HammetPalace_IvanReportsToLayana(void) {
 
-  struct EventWork *work;
+  struct FieldWork *work;
   s32 advanceAfterReply;
   const s32 *partyScript;
 
@@ -837,7 +837,7 @@ static void HammetPalace_FacePartyNorth(s32 waitFrames) {
 static void HammetPalace_HammetsHomecoming(void) {
 
   struct ObjectEvent *leader;
-  struct EventWork *work;
+  struct FieldWork *work;
   s32 v5;
   const s32 *partyScript;
 

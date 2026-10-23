@@ -47,7 +47,7 @@ extern s32 gPushedObject_FootprintBounds[];
 static struct ObjectEvent *
 PushedObject_FindAtTile(const struct FieldPosition *position,
                         const struct ObjectEvent *origin) {
-  struct FieldWork *work = (struct FieldWork *)gFieldWork;
+  struct FieldWork *work = gFieldWork;
   struct ObjectEvent **slots = work->objectEvents;
   u32 i;
 
@@ -244,7 +244,7 @@ static s32 PushedObject_StopBlockedMotion(struct ObjectEvent *objectEvent) {
 /// leader's direction, its local id and its footprint; or NULL.
 static struct ObjectEvent *Map_FindObjectEventRegion(s32 *direction, s32 *slot,
                                                      s32 *footprint) {
-  struct FieldWork *work = (struct FieldWork *)gFieldWork;
+  struct FieldWork *work = gFieldWork;
   struct ObjectEvent *player = ObjectEvent_GetById(0);
   struct ObjectEvent **list;
   u32 i, j;

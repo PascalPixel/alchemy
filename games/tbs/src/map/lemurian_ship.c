@@ -340,7 +340,7 @@ static s32 Ivan_StepOnDeck(struct ObjectScriptContext *interpreter) {
 static void LemurianShip_SetSail(void) {
   struct MapGridScrollWork *grid;
   struct ObjectEvent *ship;
-  struct EventWork *work;
+  struct FieldWork *work;
 
   FieldScript_Start();
   FieldCamera_MoveTo(-1, -1, -1, 0);
@@ -716,7 +716,7 @@ s32 LemurianShip_SetupMap(void) {
   if (gGameState.warpDest == LEMURIAN_SHIP_WITH_BLACK_ORB) {
     Inventory_AddItem(LOCALID_PARTY_LEADER, ITEM_BLACK_ORB);
   }
-  ((struct EventWork *)gMapGridWork[19])->transition =
+  ((struct FieldWork *)gMapGridWork[19])->transition =
       MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   ObjectEvent_GetById(LOCALID_GANGWAY_NORTH)->collisionFlags = 0;
   ObjectEvent_GetById(LOCALID_GANGWAY_NORTH)->priorityFlags =

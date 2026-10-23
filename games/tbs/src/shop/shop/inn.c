@@ -128,7 +128,7 @@ void Inn_PlaySleep(s32 roomPrice) {
   // Sleep between the two screen-transition halves and the rest sound.
   // The night's fades take 60 frames each; the 16 set at the end is what
   // the field's transitions take again afterward
-  work = (struct FieldWork *)gFieldWork;
+  work = gFieldWork;
   work->transition = 0x209;
   work->transitionFrames = 60;
   WaitFrames(20);
@@ -140,5 +140,5 @@ void Inn_PlaySleep(s32 roomPrice) {
   FieldScript_StartScreenTransitionFar();
   FieldScript_WaitTransitionFramesFar();
   WaitFrames(30);
-  ((struct FieldWork *)gFieldWork)->transitionFrames = 16;
+  gFieldWork->transitionFrames = 16;
 }

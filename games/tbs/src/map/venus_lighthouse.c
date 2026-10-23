@@ -660,7 +660,8 @@ static UNUSED s32 PushedObject_FillGridAttributeRectangle(u32 layerIndex, s32 x,
 /// After a battle, draws every object event whose timer holds a
 /// VENUS_COLOR_MARK in its colour mode again.
 static void VenusLighthouse_RestoreScriptedChildValues(void) {
-  struct ObjectEvent **objectEvents = gFieldWork->placedObjectEvents;
+  struct ObjectEvent **objectEvents =
+      &gFieldWork->objectEvents[LOCALID_FIRST_PLACED];
   struct ObjectEvent *objectEvent;
   u32 localId;
 
@@ -801,7 +802,7 @@ VenusLighthouse_EmitPassageSparkTrail(union FieldObject *fieldObject) {
 /// (VenusLighthouse_ArriveThroughSparkPassage).
 static void EventScript_EnterSparklingPassage(void) {
   struct ObjectEvent *leader;
-  struct EventWork *work;
+  struct FieldWork *work;
 
   work = gFieldWork;
   leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
@@ -1243,7 +1244,7 @@ static void EventScript_CarryPillarPastWall(void) {
 static void EventScript_ReadRelief(void) {
   s32 message;
 #if !TBS_PATCH_1 || TBS_PATCH_2
-  struct EventWork *work = gFieldWork;
+  struct FieldWork *work = gFieldWork;
 #endif
   FieldScript_Start();
   Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_STAND);
@@ -1386,7 +1387,7 @@ static inline void VenusLighthouse_DrawSecondPath(void) {
 static void EventScript_SearchStatue(void) {
   struct FieldWork *work;
 
-  work = (struct FieldWork *)gFieldWork;
+  work = gFieldWork;
   work->revealFrames = 0;
   work->busy = 1;
   FieldScript_Start();
@@ -1564,7 +1565,7 @@ static void EventScript_StepOnFloorSwitch(void) {
 static void EventScript_TalkToScholarByDoor(void) {
   struct FieldWork *work;
 
-  work = (struct FieldWork *)gFieldWork;
+  work = gFieldWork;
   work->revealFrames = 0;
   work->busy = 1;
   FieldScript_Start();
@@ -3341,10 +3342,10 @@ static void VenusLighthouse_StepObjectEventWithDust(struct Vector3 *direction) {
   s32 particleX;
 
   {
-    struct EventWork *work = gFieldWork;
+    struct FieldWork *work = gFieldWork;
 
     localId = gGameState.leaderLocalId;
-    viewCenter = work->camera;
+    viewCenter = (struct ObjectEvent *)work->camera;
   }
   objectEvent = ObjectEvent_GetById(localId);
   nextPosition.x = objectEvent->x.fixed +

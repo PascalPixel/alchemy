@@ -368,7 +368,7 @@ static void AltmillerCave_SetFadeLevel(s32 level) {
   struct FieldWork *work;
   u8 *fade = &gMapLocalState[4];
 
-  work = (struct FieldWork *)gFieldWork;
+  work = gFieldWork;
   *fade = level;
   if (work->revealActive == 0) {
     AltmillerCave_ApplyFadeBlend();
@@ -416,7 +416,7 @@ static void AltmillerCave_InitializeDarkness(void) {
   struct ScreenTransitionState *state;
 
   {
-    struct EventWork *work = (struct EventWork *)*workCells;
+    struct FieldWork *work = (struct FieldWork *)*workCells;
     work->transition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
     work->transitionFrames = 24;
   }

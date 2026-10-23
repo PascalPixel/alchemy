@@ -572,7 +572,7 @@ static void EventScript_KiteKeepsAway(void) {
   s32 routeIndex;
   const u8 *walkTargetBytes;
   s32 targetZOffset;
-  struct EventWork *work;
+  struct FieldWork *work;
 
   work = gFieldWork;
   if (GameFlag_Test(FLAG_VALE_CAVE_KITE_BEHIND_LEDGE) != 0) {

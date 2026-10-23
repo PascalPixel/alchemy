@@ -622,7 +622,7 @@ static void Imil_ReadJustinsMind(void) {
 /// stops, the door opens and the leader walks in; the Sanctum's door
 /// (IMIL_TO_IMIL_INTERIORS_NORTHEAST) has its own sound and a slower walk.
 static void Imil_OpenDoorAndExit(void) {
-  struct EventWork *work;
+  struct FieldWork *work;
   struct ObjectEvent *objectEvent;
   u32 i;
   s32 warp;
@@ -986,7 +986,7 @@ s32 Imil_Initialize(void) {
 static void Imil_MeetMiaAtOldCouplesHouse(void) {
   struct ObjectEvent *leader;
   const s32 *table;
-  struct EventWork *work;
+  struct FieldWork *work;
 
   FieldScript_Start();
   ObjectEvent_SetPosition(MIA, PIXELS(182), PIXELS(150));
@@ -1424,7 +1424,7 @@ static void Imil_ArriveFromFallsCave(void) {
 static void Imil_MiaSaysFarewellToApprentices(void) {
 
   struct ObjectEvent *leader;
-  struct EventWork *work;
+  struct FieldWork *work;
 
   FieldScript_Start();
   ObjectEvent_FaceDirection(MIA, FACING_NORTHWEST, 0);

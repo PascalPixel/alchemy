@@ -183,7 +183,7 @@ enum BattleArenaSlot {
   LOBBY_SLOT_ALONE = 5
 };
 
-/// The Battle Arena's raised events (EventWork.raisedEvent).
+/// The Battle Arena's raised events (FieldWork.raisedEvent).
 enum BattleArenaRaisedEvent {
   LOBBY_EVENT_NONE = 0,
   LOBBY_EVENT_PROMPT = 1,      ///< BattleArena_PromptToParticipate
@@ -367,7 +367,7 @@ static void BattleArena_PollPeerReady(void) {
 #else
 static s32 BattleArena_PollPeerReady(void) {
 #endif
-  struct EventWork *work;
+  struct FieldWork *work;
   s32 result;
   s32 i;
 
@@ -477,7 +477,7 @@ static s32 BattleArena_PromptToParticipate(void) {
 /// FLAG_MAP_TEMP_00, _03 and _05. The original handler has no defined return
 /// value.
 static s32 BattleArena_ReportDisconnection(void) {
-  struct EventWork *work = gFieldWork;
+  struct FieldWork *work = gFieldWork;
 
   BattleArena_WriteSlotValue(LOBBY_SLOT_IDLE);
   GameFlag_ClearBit(FLAG_MAP_TEMP_00);
@@ -879,7 +879,7 @@ check:
 /// for a linked one) and requests it. The original returns have no defined
 /// status.
 static s32 BattleArena_EnterBattle(void) {
-  struct EventWork *work;
+  struct FieldWork *work;
   s32 failed;
   struct Window *window;
   s32 missedFrames;
@@ -1500,7 +1500,7 @@ static s32 BattleArena_DrawThreeDigitValue(s32 value) {
 /// unless a monster series goes on. Returns 0.
 s32 BattleArena_RunRoundResult(void) {
   s32 i;
-  struct EventWork *work;
+  struct FieldWork *work;
   void (*callback)(void);
 
   gBattleArenaCallFrames = 0;

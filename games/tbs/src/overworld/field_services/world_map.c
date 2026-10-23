@@ -523,7 +523,7 @@ void Field_UpdateObjectVisibilityBounds(void) {
   // The selected object event lookup has no used result; the bounds follow the
   // camera.
   ObjectEvent_GetById(gGameState.leaderLocalId);
-  object = ((struct FieldWork *)gFieldWork)->camera;
+  object = gFieldWork->camera;
   x = object->x;
   left = x - (320 << 16);
   right = x + (320 << 16);

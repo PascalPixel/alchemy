@@ -1442,7 +1442,7 @@ s32 FieldMenu_Run(void) {
       ret = ObjectEvent_GetTriggerTileAheadOfCurrentFar();
       if (ret == 0)
         ret = 0xff;
-      ((struct EventWork *)state)->searchCell = ret;
+      ((struct FieldWork *)state)->searchCell = ret;
       break;
     case FIELD_MENU_PSYNERGY:
       ret = PsynergyMenu_RunFar();

@@ -16,7 +16,7 @@
 void Field_RequestBattleFromEncounterTable(s32 zoneNo, s32 slotNo) {
   s32 zone = zoneNo;
   s32 slot = slotNo;
-  struct FieldWork *work = (struct FieldWork *)gFieldWork;
+  struct FieldWork *work = gFieldWork;
 
   work->battle = Encounter_GetFormationAtSlot(zone, slot);
   if (zone == ENCOUNTER_ZONE_SCRIPTED && slot == 0)
@@ -41,7 +41,7 @@ void Field_RequestDjinnBattle(s32 flag, s32 no) {
   struct GameState *state;
   s32 skipHop;
 
-  work = (struct FieldWork *)gFieldWork;
+  work = gFieldWork;
   skipHop = flag & DJINN_NO_HOP;
   flag &= 0xff;
 
@@ -86,7 +86,7 @@ void FieldScript_SetDefeatDestination(s32 mapId, s32 warpDest) {
 /// so the map loop leaves on its next pass. Only Tolbi's spring reaches it,
 /// through FieldScript_RequestDestinationFar.
 void FieldScript_RequestDestination(u16 mapId, u16 warpDest) {
-  struct FieldWork *work = (struct FieldWork *)gFieldWork;
+  struct FieldWork *work = gFieldWork;
   gGameState.mapId = mapId;
   gGameState.warpDest = warpDest;
   work->warp = 999;
@@ -98,7 +98,7 @@ void FieldScript_RequestDestination(u16 mapId, u16 warpDest) {
 /// now and nothing later. About 30 maps reach it through the far alias, and the
 /// ground particles (weather.c) queue SE_170 with it.
 void Map_QueueMusic(s32 soundId) {
-  ((struct FieldWork *)gFieldWork)->queuedSound = soundId;
+  gFieldWork->queuedSound = soundId;
   if ((s16)soundId == -1) {
     soundId = SONG_FADE_OUT_ACTION_SE;
   }
@@ -110,7 +110,7 @@ void Map_QueueMusic(s32 soundId) {
 /// by maps, by the event runner (overworld/events.c), by setup.c and by an
 /// object event's landing (object_event_commands.c).
 void Map_PlayQueuedMusic(void) {
-  s16 soundId = ((struct FieldWork *)gFieldWork)->queuedSound;
+  s16 soundId = gFieldWork->queuedSound;
 
   if (soundId != -1)
     Sound_PlaySongFar(soundId);

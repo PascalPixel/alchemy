@@ -367,7 +367,7 @@ static void EventScript_ReadRewardSoldiersThoughts(void) {
 /// opens it with a sound, the leader walks through and the next room loads.
 /// McCoy's door (coord event 9) makes no sound once the captain has opened it.
 static void EventScript_WalkThroughDoor(void) {
-  struct EventWork *work;
+  struct FieldWork *work;
   s32 hideDoorLayers;
 
   work = gFieldWork;

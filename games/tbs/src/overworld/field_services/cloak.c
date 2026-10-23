@@ -31,7 +31,7 @@ void FieldEffect_CheckCloakTile(void) {
 #ifndef UBFIX
   slot = (u32)&gFieldWork;
 #endif
-  work = (struct FieldWork *)gFieldWork;
+  work = gFieldWork;
   leader = ObjectEvent_GetByLocalId(gGameState.leaderLocalId);
 #ifdef UBFIX
   tile = gMapGridWork[0];
@@ -144,7 +144,7 @@ void FieldEffect_ResumeCloakCheck(void) {
 /// (Encounter_CountStepsAndSelectFormation). Called by FieldEffect_Run and
 /// FieldEffect_DispatchRequestKind.
 void FieldEffect_StartCloak(void) {
-  struct FieldWork *work = (struct FieldWork *)gFieldWork;
+  struct FieldWork *work = gFieldWork;
   struct Object *leader = ObjectEvent_GetByLocalId(gGameState.leaderLocalId);
   struct Sprite *animation = leader->animation;
   struct SpriteAnim *entry = animation->entries[0];

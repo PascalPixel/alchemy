@@ -334,7 +334,7 @@ ColosseumNavampaMatch_GetObjectEventTemplates(void) {
 /// and raises the opening event (4 or 5) when the rider stands in an open
 /// gap.
 static void ColosseumNavampaMatch_UpdateWallWedge(void) {
-  struct EventWork *work = gFieldWork;
+  struct FieldWork *work = gFieldWork;
   struct ObjectEvent *objectEvent =
       ObjectEvent_GetById(gGameState.leaderLocalId);
   s32 row = objectEvent->z.fixed >> 20;
@@ -416,10 +416,10 @@ static void ColosseumNavampaMatch_WaitForWallWedgeOpening(void) {
 /// 11, and until FLAG_SIDEWALK_LOG_KNOCKED_OFF is set the belt carries the
 /// controlled object event and the camera west.
 static void EventScript_RideMovingSidewalk(void) {
-  struct EventWork *work = gFieldWork;
+  struct FieldWork *work = gFieldWork;
   struct GameState *state = &gGameState;
   s32 id = state->leaderLocalId;
-  struct ObjectEvent *subject = work->camera;
+  struct ObjectEvent *subject = (struct ObjectEvent *)work->camera;
   struct ObjectEvent *objectEvent = ObjectEvent_GetById(id);
   s32 z = objectEvent->z.part.pixel;
 
@@ -686,7 +686,7 @@ static s32 ColosseumNavampaMatch_CheckLongLogPath(s32 x, s32 z) {
 static void EventScript_RollLongLog(void) {
   struct ObjectEvent *rider;
   struct ObjectEvent *log;
-  struct EventWork *work;
+  struct FieldWork *work;
   s32 angle;
   s32 localId;
   s32 x;
@@ -915,7 +915,7 @@ UNUSED static void ColosseumNavampaMatch_UnusedEventHook(void) {}
 /// from MsgColossoDidntThinkBattles are a spectator's thought and the stage
 /// announcements, not this question.
 UNUSED static void ColosseumNavampaMatch_UnusedWarriorTalk(s32 warriorId) {
-  struct EventWork *work;
+  struct FieldWork *work;
   s32 localId;
   s32 messageOffset;
   s32 warpDest;
@@ -1728,7 +1728,7 @@ static void EventScript_TalkToSteppingStoneAttendant(s32 guideId) {
 /// Isaac appears and times his way past the pistons; then that the walls'
 /// operator will cheer for him, and a place for a friend to cheer.
 static void EventScript_TalkToWallWedgeAttendant(s32 guideId) {
-  struct EventWork *work;
+  struct FieldWork *work;
   s32 promptResult;
 
   if (gGameState.warpDest == COLOSSEUM_NAVAMPA_MATCH_FROM_COLOSSEUM_SOUTH) {

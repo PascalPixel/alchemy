@@ -179,7 +179,7 @@ KolimaForestTree_GetObjectEventTemplates(void) {
 /// Unused: takes the touched warp after the leader's current movement; no
 /// map event row names it.
 UNUSED static void KolimaForestTree_ExitTouchedRegion(void) {
-  struct EventWork *work;
+  struct FieldWork *work;
 
   work = gFieldWork;
   FieldScript_Start();

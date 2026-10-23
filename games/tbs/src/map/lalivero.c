@@ -262,7 +262,7 @@ static void EventScript_EnterDoor(void) {
 /// Lalivero: a doorway with no door (coord events 8 and 11); leave by the
 /// touched coord event's warp.
 static void EventScript_TakeTouchedWarp(void) {
-  struct EventWork *work = gFieldWork;
+  struct FieldWork *work = gFieldWork;
   s16 *trigger = (s16 *)&work->coordEvent;
   s32 warp = *trigger;
 

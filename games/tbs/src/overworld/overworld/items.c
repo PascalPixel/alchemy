@@ -15,7 +15,7 @@ typedef s32 (*BattleItemCallback)(s32 item, s32 localId, s32 slot);
 /// a direction. Called by Field_UseItem, and by Map_HasPsynergyEvent
 /// (psynergy.c) to test whether an item would do anything here.
 s32 Field_FindItemEvent(s32 item) {
-  struct FieldWork *work = (struct FieldWork *)gFieldWork;
+  struct FieldWork *work = gFieldWork;
   const struct MapEvent *event = work->events;
   s32 facing = ((struct MotionObject *)ObjectEvent_GetByLocalId(
                     gGameState.leaderLocalId))
@@ -150,7 +150,7 @@ s32 Field_UseItem(s32 packedItem, s32 slot) {
     GameFlag_ClearBitFar(FLAG_ITEM_USED_UP);
     GameFlag_SetBitFar(FLAG_NOTHING_HAPPENS);
     actionId = Item_GetDirectFar(itemId)->abilityId;
-    work = (struct FieldWork *)gFieldWork;
+    work = gFieldWork;
 
     if (actionId != 0) {
       GameFlag_SetBitFar(FLAG_ITEM_USE);
@@ -211,7 +211,7 @@ s32 Field_UseItem(s32 packedItem, s32 slot) {
 /// Field_UsePsynergy for each phase, by Field_RunPsynergyEvents, and by the
 /// Force, Frost and Reveal effects (field_services/) for their own phases.
 void *Map_FindPsynergyEvent(s32 eventFlags, s32 group, void *target) {
-  struct FieldWork *work = (struct FieldWork *)gFieldWork;
+  struct FieldWork *work = gFieldWork;
   const struct MapEvent *event = work->events;
   s32 facing = ((struct MotionObject *)ObjectEvent_GetByLocalId(
                     gGameState.leaderLocalId))

@@ -526,7 +526,7 @@ static void LunpaFortress_OpenToadonpaDoor(s32 doorIndex) {
 /// LunpaFortressToadonpa: facing a cell door with the Cell Key opens it with a
 /// rumble. After Donpa's judgment the fifth, Dodonpa's cell, stays shut.
 static void EventScript_UnlockToadonpaDoor(void) {
-  struct EventWork *fieldWork;
+  struct FieldWork *fieldWork;
   s32 doorTrigger;
   s32 doorIndex;
 
@@ -567,7 +567,7 @@ static void LunpaFortress_OpenCaveDoor(s32 doorIndex) {
 /// LunpaFortressCave: facing a cell door with the Cell Key opens it with a
 /// rumble.
 static void EventScript_UnlockCaveDoor(void) {
-  struct EventWork *fieldWork;
+  struct FieldWork *fieldWork;
   s32 doorTrigger;
 
   fieldWork = gFieldWork;
@@ -595,7 +595,7 @@ static void LunpaFortress_OpenUpperFloorDoor(s32 doorIndex) {
 /// LunpaFortressUpperFloor: facing a cell door with the Cell Key opens it with
 /// a rumble.
 static void EventScript_UnlockUpperFloorDoor(void) {
-  struct EventWork *fieldWork;
+  struct FieldWork *fieldWork;
   s32 doorTrigger;
 
   fieldWork = gFieldWork;
@@ -628,7 +628,7 @@ static void LunpaFortress_OpenGroundFloorDoor(s32 doorIndex) {
 /// LunpaFortressGroundFloor: facing a cell door with the Cell Key opens it with
 /// a rumble.
 static void EventScript_UnlockGroundFloorDoor(void) {
-  struct EventWork *fieldWork;
+  struct FieldWork *fieldWork;
   s32 doorTrigger;
 
   fieldWork = gFieldWork;
@@ -800,7 +800,7 @@ static void LunpaFortress_UpdatePairedGuardDetection(void) {
       &((struct MapGridScrollWork *)gMapGridWork[0])
            ->layers[MAPGRID_LAYER_OVERHEAD];
 #ifdef UBFIX
-  struct FieldWork *work = (struct FieldWork *)gFieldWork;
+  struct FieldWork *work = gFieldWork;
 #else
   s16 *work = *(s16 **)&gMapGridWork[19];
 #endif
@@ -916,7 +916,7 @@ static void LunpaFortress_UpdateHallGuardDetection(void) {
       &((struct MapGridScrollWork *)gMapGridWork[0])
            ->layers[MAPGRID_LAYER_OVERHEAD];
 #ifdef UBFIX
-  struct FieldWork *work = (struct FieldWork *)gFieldWork;
+  struct FieldWork *work = gFieldWork;
 #else
   s16 *work = *(s16 **)&gMapGridWork[19];
 #endif
@@ -996,7 +996,7 @@ static void LunpaFortress_UpdateGroundFloorPatrolDetection(void) {
       &((struct MapGridScrollWork *)gMapGridWork[0])
            ->layers[MAPGRID_LAYER_OVERHEAD];
 #ifdef UBFIX
-  struct FieldWork *work = (struct FieldWork *)gFieldWork;
+  struct FieldWork *work = gFieldWork;
 #else
   s16 *work = *(s16 **)&gMapGridWork[19];
 #endif
@@ -1062,7 +1062,7 @@ static s32 LunpaFortress_IsLeaderOutsideUpperHall(void) {
 /// uncloaked leader raises RAISED_UPPER_HALL_SPOTTED.
 static void LunpaFortress_CheckUpperHallGuard(void) {
 
-  struct EventWork *fieldWork;
+  struct FieldWork *fieldWork;
 
   fieldWork = gFieldWork;
   if (FLAG_CHECK(FLAG_MAP_TEMP_14) == 0) {
@@ -1093,7 +1093,7 @@ static void EventScript_UpperHallGuardThrowsPartyOut(void) {
 /// RAISED_ENTRANCE_GUARD_SPOTTED, once.
 static void LunpaFortress_CheckEntranceGuard(void) {
 
-  struct EventWork *fieldWork = gFieldWork;
+  struct FieldWork *fieldWork = gFieldWork;
 
   if (LunpaFortress_CanGuardSeeLeader(LOCALID_GROUND_FLOOR_ENTRANCE_GUARD) !=
           0 &&
@@ -1113,7 +1113,7 @@ static void LunpaFortress_CheckEntranceGuard(void) {
 /// RAISED_SENTRIES_SPOTTED, once for both.
 static void LunpaFortress_CheckFirstEntranceSentry(void) {
 
-  struct EventWork *fieldWork;
+  struct FieldWork *fieldWork;
 
   fieldWork = gFieldWork;
   if (FLAG_CHECK(FLAG_MAP_TEMP_25) == 0) {
@@ -1132,7 +1132,7 @@ static void LunpaFortress_CheckFirstEntranceSentry(void) {
 /// The second sentry, as the first.
 static void LunpaFortress_CheckSecondEntranceSentry(void) {
 
-  struct EventWork *fieldWork;
+  struct FieldWork *fieldWork;
 
   fieldWork = gFieldWork;
   if (FLAG_CHECK(FLAG_MAP_TEMP_25) == 0) {
@@ -1674,7 +1674,7 @@ LunpaFortress_FlipHiddenSwitch(s32 cellX, s32 cellY,
 /// while Reveal shows it flips it, and its passage opens. "You flipped the
 /// switch."
 static void EventScript_FlipFirstSwitch(void) {
-  if (((struct FieldWork *)gFieldWork)->revealActive != 0) {
+  if (gFieldWork->revealActive != 0) {
     if (FLAG_CHECK(FLAG_LUNPA_FORTRESS_FIRST_SWITCH_FLIPPED) == 0) {
       FieldMessage_Show(MsgFieldFlippedSwitch, 1);
       SE(SE_188);
@@ -1690,7 +1690,7 @@ static void EventScript_FlipFirstSwitch(void) {
 /// while Reveal shows it flips it, and its passage opens. "You flipped the
 /// switch."
 static void EventScript_FlipSecondSwitch(void) {
-  if (((struct FieldWork *)gFieldWork)->revealActive != 0) {
+  if (gFieldWork->revealActive != 0) {
     if (FLAG_CHECK(FLAG_LUNPA_FORTRESS_SECOND_SWITCH_FLIPPED) == 0) {
       FieldMessage_Show(MsgFieldFlippedSwitch, 1);
       SE(SE_188);

@@ -2,7 +2,8 @@
 #define ALCHEMY_FIELD_WORK_H
 
 /// @file
-/// EventWork, the running map's event work.
+/// FieldWork, the running map's work, with its treasure spots and the raised
+/// events the field loop handles itself.
 
 #include "types.h"
 #include "edition.h"
@@ -14,107 +15,167 @@ struct ObjectEvent;
 struct Object;
 struct MapGridCell;
 
-/// The running map's event work: its object event template and map event
-/// tables, its object events, the triggers and warp it has hit, encounters,
-/// transitions and the message on show. It is struct FieldWork (heap slot 27)
-/// as the maps see it, through gFieldWork; each field is the FieldWork field at
-/// its offset.
-struct EventWork {
-  struct ObjectEventTemplate
-      *tables[4];          ///< the object event template tables placed so far
-  struct MapEvent *events; ///< the map's event table
-  struct ObjectEvent *objectEvents[8]; ///< the party's characters, ids 0 to 7
-  struct ObjectEvent
-      *placedObjectEvents[58]; ///< the placed object events, from local id 8
-  u8 treasureSpots[0x50];      ///< FieldWork's; not named through this view
-  s16 coordEvent;              ///< the step event a coord event or warp answers
-  s16 pushCell;                ///< FieldWork's; not named through this view
-  u16 warp;                    ///< the warp kind taken, which ends the map
-  /// FieldWork's menu: 1 opens the main menu once the script ends, so that
-  /// the item the place asks for can be used there.
-  u16 menu;
-  /// FieldWork's examine, start and talk requests; not named through this view.
+/// A treasure spot placed as an object event: a chest or a Psynergy Stone.
+struct TreasureSpot {
+  struct Object *object; ///< the object event placed for it
+  u8 id;                 ///< the trigger of its map event, 100 to 239
+  u8 unused;             ///< cleared with the slot; no code names it
+  u8 column;             ///< its 16-pixel cell
+  u8 row;                ///< its 16-pixel cell
+};
+
+STATIC_ASSERT(sizeof(struct TreasureSpot) == 8);
+STATIC_ASSERT(offsetof(struct TreasureSpot, id) == 4);
+STATIC_ASSERT(offsetof(struct TreasureSpot, column) == 6);
+STATIC_ASSERT(offsetof(struct TreasureSpot, row) == 7);
+
+/// The values of FieldWork.raisedEvent that the field loop handles itself,
+/// rather than passing them to the map (Map_RunRaisedEvent).
+enum FieldRaisedEvent {
+  /// Party members fell to poison or hazardous ground this step.
+  FIELD_RAISED_EVENT_PARTY_FELL = -1,
+  /// R on the world map: the picture of the whole world (RegionMap_Show).
+  FIELD_RAISED_EVENT_REGION_MAP = -888,
+  /// L on the world map: the view zooms out while L is held
+  /// (FieldEffect_RunVisibilityTransition).
+  FIELD_RAISED_EVENT_WORLD_MAP_ZOOM = -889
+};
+
+/// A field map's work: Map_Run allocates it in heap slot HEAP_SLOT_FIELD,
+/// zeroes it and frees it on the way out, and the field loop, the field
+/// services and the map overlays all reach it through gFieldWork. The twelve
+/// requests from coordEvent to raisedEvent are handled by the field loop.
+struct FieldWork {
+  /// The object event template tables placed so far, recorded by
+  /// FieldScript_SpawnObjectEventTemplates.
+  struct ObjectEventTemplate *tables[4];
+  const struct MapEvent *events; ///< the map's event table
+  /// The object events by local id: 0 to 7 the party's characters, 8 on the
+  /// placed object events.
+  struct ObjectEvent *objectEvents[66];
+  struct TreasureSpot
+      treasureSpots[10]; ///< the map's treasure spots (TREASURE_SPOT_MAX)
+  /// The twelve requests: each nonzero value asks the field loop for one
+  /// thing; Field_ClearRequests clears them and Field_CountRequests sums them.
   ///@{
-  s16 examine;
-  s16 start;
-  u16 talk;
+  s16 coordEvent; ///< a step event (1 to 239) for Map_RunCoordEventOrWarp
+  s16 pushCell; ///< a metatile behavior (252 to 254) for Field_RunPushCellEvent
+  s16 warp;     ///< the warp taken, which ends the map
+  s16 menu;     ///< open the field menu
+  s16 examine;  ///< the A button: examine what is ahead
+  s16 start;    ///< the Start button: open the pause menu
+  u16 talk;     ///< an object event's talk event, as local id | 0x1000
+  s16 searchCell; ///< a cell's metatile behavior, for Field_SearchCell
+  s16 battle;     ///< the formation of a random encounter
+  s16 psynergy;   ///< a field Psynergy to use, as unit << 10 | Psynergy
+  s16 item;       ///< an item to use, packed as Field_UseItem reads it
+  /// A raised event for Map_RunRaisedEvent, or an enum FieldRaisedEvent.
+  s16 raisedEvent;
   ///@}
-  s16 searchCell;  ///< the metatile behavior ahead, which a bg event answers
-  u16 battle;      ///< the next battle's formation, 0 for none
-  s16 psynergy;    ///< a field Psynergy to use, as unit << 10 | Psynergy
-  s16 item;        ///< FieldWork's; not named through this view
-  s16 raisedEvent; ///< a raised event for Map_RunRaisedEvent
-  /// FieldWork's fallen characters and item slot; not named through this view.
-  ///@{
-  s16 fallenCount;
-  s16 survivorCount;
-  s16 fallenOwners[9];
-  s16 itemArgument;
-  ///@}
-  s16 blockedSteps;       ///< frames the leader has pushed against something
+  s16 fallenCount;     ///< the characters who fell this step
+  s16 survivorCount;   ///< 0 when the whole party fell
+  s16 fallenOwners[9]; ///< the characters who fell, from the active party
+  s16 itemArgument;    ///< the inventory slot Field_UseItem receives
+  /// Frames the leader has pushed against something, counted by the player
+  /// controls; coord events and push cells need more than 12.
+  s16 blockedSteps;
   s16 mode;               ///< an enum ObjectSystemMode
   u8 encounterZones[8];   ///< encounter zone for each kind of ground
   s32 encounterBias;      ///< randomized distance adjustment between battles
-  s32 encounterThreshold; ///< encounter steps before a battle
-  /// FieldWork's walking distance and tiles; not named through this view.
-  ///@{
+  s32 encounterThreshold; ///< encounter steps before a battle; 0x100000
+  /// Scales the leader's speed into walkingDistance, 16.16 fixed point: 0x199
+  /// (about 1/160) on entry, 0 in a town.
   s32 walkingDistanceScale;
+  /// Distance walked toward the next 0x10000, at which the party regains PP,
+  /// Djinn recover and poison hurts (Field_ProcessStep).
   s32 walkingDistance;
-  struct MapGridCell *currentCell;
-  struct MapGridCell *previousCell;
-  ///@}
-  s32 transition;               ///< MAP_TRANSITION(style, variant)
-  u16 unused;                   ///< FieldWork's; no code names it
-  u16 transitionActive;         ///< FieldWork's; not named through this view
-  s32 transitionFrames;         ///< frames
-  s32 fastForward;              ///< FieldWork's; not named through this view
-  u8 unusedAfterFastForward[8]; ///< FieldWork's; no code names it
-  u16 message;  ///< the next message, advanced as each window opens
-  u8 unk1da[6]; ///< XXX: FieldWork's unk1da to unk1de (see the field README)
-  struct ObjectEvent *camera; ///< the object the map view follows
-  u8 unusedAfterCamera[0x10]; ///< FieldWork's; no code names it
-  /// The object event speaking; the yes/no choice closes the portrait window of
-  /// its sprite once answered (FieldScript_AskYesNoWithObjectEventAnimation).
-  s32 speaker;
-  /// FieldWork's windows, the leader's templates and the Reveal state; not
-  /// named through this view.
-  ///@{
-  s32 messageWindow;
-  s32 sideWindow;
+  struct MapGridCell *currentCell;  ///< the cell the leader last stepped onto
+  struct MapGridCell *previousCell; ///< the cell before it
+  s32 transition;       ///< MAP_TRANSITION(style, variant); 0x100 on entry
+  u16 unused;           ///< no code names it
+  u16 transitionActive; ///< set once the opening transition has started
+  s32 transitionFrames; ///< frames; 16 on entry and at each script
+  s32 fastForward; ///< debug: skip timed script waits and object event messages
+  u8 unusedAfterFastForward[8]; ///< no code names it
+  s16 message; ///< the next message, advanced as each window opens
+  /// XXX: set to 0xffff by FieldScript_Start and never read (see the field
+  /// README).
+  u16 unk1da;
+  s16 unk1dc; ///< XXX: set to -1 by FieldScript_Start and never read
+  s16 unk1de; ///< XXX: set to -1 by FieldScript_Start and never read
+  struct Object
+      *camera; ///< the object the map view follows, which has no local id
+  u8 unusedAfterCamera[0x10]; ///< no code names it
+  s32 speaker;       ///< the object event speaking; the leader at each script
+  s32 messageWindow; ///< the open message window, 0 for none
+  s32 sideWindow;    ///< the speaker's portrait window
+  /// The leader's two-row object event template table (its row and an end
+  /// row), which ObjectEvent_ResetForObject builds through its offset.
   u8 leaderTemplates[0x30];
-  u8 unusedAfterTemplates[0xa86];
+  u8 unusedAfterTemplates[0xa86]; ///< no code names it
+  /// Set while a raised or coord event runs; FieldScript_Start then resets the
+  /// effect counter.
   u16 busy;
-  s16 revealActive;
-  s16 revealFrames;
-  s16 revealCenterX;
+  s16 revealActive;  ///< nonzero while Reveal is active
+  s16 revealFrames;  ///< the frames Reveal has left
+  s16 revealCenterX; ///< where Reveal was cast, in pixels
   s16 revealCenterY;
+  /// Nonzero lets the Reveal countdown advance; menus and other effects pause
+  /// it.
   s16 effectTimerRunning;
-  ///@}
-  /// FieldWork's nameMessage: the first of the two names the yes/no choice
-  /// shows in place of Yes and No, 0 for those.
-  u16 choiceMessage;
-  u16 choiceWidth; ///< FieldWork's nameWidth: its name window's width, 0 for 3
+  /// The first of the two names the next yes/no choice shows in place of Yes
+  /// and No (YesNoMenu_Run), 0 for those.
+  s16 choiceMessage;
+  s16 choiceWidth;   ///< the choice window's width, 0 for the default
+  s8 psynergyActing; ///< set while Psynergy takes effect
+  s8 castStarted;    ///< set once a cast has been announced
+  s16 queuedSound;   ///< a sound Map_PlayQueuedMusic plays; -1 for none
 };
 
-STATIC_ASSERT(offsetof(struct EventWork, placedObjectEvents) == 0x34);
-STATIC_ASSERT(offsetof(struct EventWork, coordEvent) == 0x16c);
-STATIC_ASSERT(offsetof(struct EventWork, warp) == 0x170);
-STATIC_ASSERT(offsetof(struct EventWork, menu) == 0x172);
-STATIC_ASSERT(offsetof(struct EventWork, searchCell) == 0x17a);
-STATIC_ASSERT(offsetof(struct EventWork, battle) == 0x17c);
-STATIC_ASSERT(offsetof(struct EventWork, psynergy) == 0x17e);
-STATIC_ASSERT(offsetof(struct EventWork, raisedEvent) == 0x182);
-STATIC_ASSERT(offsetof(struct EventWork, blockedSteps) == 0x19c);
-STATIC_ASSERT(offsetof(struct EventWork, mode) == 0x19e);
-STATIC_ASSERT(offsetof(struct EventWork, encounterZones) == 0x1a0);
-STATIC_ASSERT(offsetof(struct EventWork, encounterBias) == 0x1a8);
-STATIC_ASSERT(offsetof(struct EventWork, encounterThreshold) == 0x1ac);
-STATIC_ASSERT(offsetof(struct EventWork, transition) == 0x1c0);
-STATIC_ASSERT(offsetof(struct EventWork, transitionFrames) == 0x1c8);
-STATIC_ASSERT(offsetof(struct EventWork, message) == 0x1d8);
-STATIC_ASSERT(offsetof(struct EventWork, camera) == 0x1e0);
-STATIC_ASSERT(offsetof(struct EventWork, speaker) == 0x1f4);
-STATIC_ASSERT(offsetof(struct EventWork, choiceMessage) == 0xcc2);
-STATIC_ASSERT(offsetof(struct EventWork, choiceWidth) == 0xcc4);
+STATIC_ASSERT(sizeof(struct FieldWork) == 0xccc);
+STATIC_ASSERT(offsetof(struct FieldWork, tables) == 0);
+STATIC_ASSERT(offsetof(struct FieldWork, events) == 0x10);
+STATIC_ASSERT(offsetof(struct FieldWork, objectEvents) == 0x14);
+STATIC_ASSERT(offsetof(struct FieldWork, treasureSpots) == 0x11c);
+STATIC_ASSERT(offsetof(struct FieldWork, coordEvent) == 0x16c);
+STATIC_ASSERT(offsetof(struct FieldWork, talk) == 0x178);
+STATIC_ASSERT(offsetof(struct FieldWork, battle) == 0x17c);
+STATIC_ASSERT(offsetof(struct FieldWork, raisedEvent) == 0x182);
+STATIC_ASSERT(offsetof(struct FieldWork, blockedSteps) == 0x19c);
+STATIC_ASSERT(offsetof(struct FieldWork, mode) == 0x19e);
+STATIC_ASSERT(offsetof(struct FieldWork, encounterZones) == 0x1a0);
+STATIC_ASSERT(offsetof(struct FieldWork, encounterBias) == 0x1a8);
+STATIC_ASSERT(offsetof(struct FieldWork, encounterThreshold) == 0x1ac);
+STATIC_ASSERT(offsetof(struct FieldWork, walkingDistanceScale) == 0x1b0);
+STATIC_ASSERT(offsetof(struct FieldWork, walkingDistance) == 0x1b4);
+STATIC_ASSERT(offsetof(struct FieldWork, currentCell) == 0x1b8);
+STATIC_ASSERT(offsetof(struct FieldWork, previousCell) == 0x1bc);
+STATIC_ASSERT(offsetof(struct FieldWork, transition) == 0x1c0);
+STATIC_ASSERT(offsetof(struct FieldWork, transitionActive) == 0x1c6);
+STATIC_ASSERT(offsetof(struct FieldWork, transitionFrames) == 0x1c8);
+STATIC_ASSERT(offsetof(struct FieldWork, fastForward) == 0x1cc);
+STATIC_ASSERT(offsetof(struct FieldWork, message) == 0x1d8);
+STATIC_ASSERT(offsetof(struct FieldWork, camera) == 0x1e0);
+STATIC_ASSERT(offsetof(struct FieldWork, unk1da) == 0x1da);
+STATIC_ASSERT(offsetof(struct FieldWork, unk1dc) == 0x1dc);
+STATIC_ASSERT(offsetof(struct FieldWork, unk1de) == 0x1de);
+STATIC_ASSERT(offsetof(struct FieldWork, speaker) == 0x1f4);
+STATIC_ASSERT(offsetof(struct FieldWork, messageWindow) == 0x1f8);
+STATIC_ASSERT(offsetof(struct FieldWork, sideWindow) == 0x1fc);
+STATIC_ASSERT(offsetof(struct FieldWork, busy) == 0xcb6);
+STATIC_ASSERT(offsetof(struct FieldWork, revealActive) == 0xcb8);
+STATIC_ASSERT(offsetof(struct FieldWork, revealFrames) == 0xcba);
+STATIC_ASSERT(offsetof(struct FieldWork, revealCenterX) == 0xcbc);
+STATIC_ASSERT(offsetof(struct FieldWork, revealCenterY) == 0xcbe);
+STATIC_ASSERT(offsetof(struct FieldWork, effectTimerRunning) == 0xcc0);
+STATIC_ASSERT(offsetof(struct FieldWork, choiceMessage) == 0xcc2);
+STATIC_ASSERT(offsetof(struct FieldWork, choiceWidth) == 0xcc4);
+STATIC_ASSERT(offsetof(struct FieldWork, psynergyActing) == 0xcc6);
+STATIC_ASSERT(offsetof(struct FieldWork, castStarted) == 0xcc7);
+STATIC_ASSERT(offsetof(struct FieldWork, queuedSound) == 0xcc8);
+
+/// The running field map's work, heap slot HEAP_SLOT_FIELD; Map_Run takes it
+/// and frees it.
+extern struct FieldWork *gFieldWork;
 
 #endif

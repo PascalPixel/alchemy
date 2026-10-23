@@ -2233,7 +2233,7 @@ static s32 SolSanctumElementalStarRoom_PresentStar(s32 item, s32 x, s32 y,
 /// Makes room among the items and gives the party four Mythril Bags, keeping
 /// the dialogue's place.
 static void SolSanctumElementalStarRoom_GiveMythrilBags(void) {
-  struct EventWork *work = gFieldWork;
+  struct FieldWork *work = gFieldWork;
   s16 savedMessage = work->message;
   s32 itemSlot;
   s32 itemOwner;

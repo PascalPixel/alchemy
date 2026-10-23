@@ -243,7 +243,7 @@ static void Tolbi_ReadLuckyMedalSign(void) {
 /// Talking to the older brother, or reading his mind. He stops running while
 /// he speaks, then turns back the way he was going.
 static void Tolbi_TalkToOlderBrother(void) {
-  struct EventWork *work = gFieldWork;
+  struct FieldWork *work = gFieldWork;
   struct ObjectEvent *kid;
   s16 facing;
   s32 msg;
@@ -281,7 +281,7 @@ static void Tolbi_TalkToOlderBrother(void) {
 
 /// Talking to the younger sister, or reading her mind, as above.
 static void Tolbi_TalkToYoungerSister(void) {
-  struct EventWork *work = gFieldWork;
+  struct FieldWork *work = gFieldWork;
   struct ObjectEvent *kid;
   s16 facing;
   s32 msg;
@@ -410,7 +410,7 @@ static void Tolbi_TalkToSnackVendor(void) {
 /// (except at TOLBI_TO_WEAPON_AND_ARMOR_SHOP) and the map changes through the
 /// door's warp, numbered as its metatile behavior.
 static void Tolbi_EnterDoor(void) {
-  struct EventWork *work = gFieldWork;
+  struct FieldWork *work = gFieldWork;
   u32 localId;
   s32 door;
 

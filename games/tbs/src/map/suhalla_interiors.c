@@ -234,7 +234,7 @@ static void EventScript_AskIfBlownHere(s32 localId) {
 /// The doors of Suhalla and Suhalla Sanctum, and the doors between the inn and
 /// its guest rooms: the party leaves by the touched warp.
 static void EventScript_LeaveByWarp(void) {
-  struct EventWork *state = gFieldWork;
+  struct FieldWork *state = gFieldWork;
   s16 *touchedTrigger = (s16 *)&state->coordEvent;
 
   Engine_ScriptRequestWarp(*touchedTrigger);

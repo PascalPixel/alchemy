@@ -37,7 +37,7 @@
 /// The field menu's Psynergy screen (FieldMenu_Run,
 /// FIELD_MENU_PSYNERGY), over the field, which stops meanwhile. Psynergy used
 /// on a member takes effect here. When the player picks Psynergy to use on the
-/// field, it is recorded as the field's Psynergy request (EventWork's
+/// field, it is recorded as the field's Psynergy request (FieldWork's
 /// psynergy, member << 10 | Psynergy), which Map_Run hands to
 /// Field_UsePsynergy once the menu has closed, and 1 is returned; -1 when the
 /// player backs out or presses Start (the field menu then opens again). Owns
@@ -74,7 +74,7 @@ s32 PsynergyMenu_Run(void) {
   result = PsynergyMenu_RunSteps(&member, &unused, &psynergy);
   Menu_EnsureCancelSound();
   if (result == 1) {
-    struct EventWork *target = HEAP_SLOT_BLOCK(HEAP_SLOT_FIELD);
+    struct FieldWork *target = HEAP_SLOT_BLOCK(HEAP_SLOT_FIELD);
     u16 request;
     // The action looked up here is not used.
     Ability_Get(PSYNERGY_ABILITY_MASK & menu->sideAction[0]);

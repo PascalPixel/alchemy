@@ -648,7 +648,7 @@ static void ColosseumSatrageMatch_RollLogToCell(s32 logId, s32 halfCellX,
   Engine_ObjectEventSetAnimation(pusher, ANIM_WALK);
   // Follow halfway behind the rolling log while its finish effect runs.
   ObjectDispatch_StartCamera(
-      (struct DispatchObject *)((struct EventWork *)AllocHeapSlotEwram(
+      (struct DispatchObject *)((struct FieldWork *)AllocHeapSlotEwram(
                                     HEAP_SLOT_FIELD, sizeof(struct FieldWork)))
           ->camera,
       (s32)log);

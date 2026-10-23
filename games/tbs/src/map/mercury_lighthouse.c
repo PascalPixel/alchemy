@@ -612,7 +612,7 @@ static void MercuryLighthouse_PushChannelPipes(void) {
 /// stairs are raised, or 46: the leader is carried to the landing in a trail of
 /// sparkles.
 static void MercuryLighthouse_WalkLeaderIn(void) {
-  struct EventWork *work;
+  struct FieldWork *work;
 
   work = gFieldWork;
   FieldScript_Start();
@@ -2082,7 +2082,7 @@ static void MercuryLighthouse_InspectHealingFountain(void) {
     FieldMessage_Show(MSGNO(MsgMercuryLighthouseFountainFlowsWithWater), 1);
   if (PartyInventory_FindMember(ITEM_EMPTY_BOTTLE) != -1) {
     // The field loop handles this menu request after the inspection ends.
-    s16 *menuRequest = &((struct FieldWork *)gFieldWork)->menu;
+    s16 *menuRequest = &gFieldWork->menu;
     s32 enabled = 1;
 
     *menuRequest = enabled;

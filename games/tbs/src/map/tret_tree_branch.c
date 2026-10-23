@@ -103,7 +103,7 @@ const struct ObjectEventTemplate *TretTreeBranch_GetObjectEventTemplates(void) {
 /// at the ground height of its destination.
 static void TretTreeBranch_ShiftLeaderAndCameraByCells(s32 cellOffsetX,
                                                        s32 cellOffsetZ) {
-  struct EventWork *state = gFieldWork;
+  struct FieldWork *state = gFieldWork;
   struct ObjectEvent *objectEvent;
   s32 offsetX = cellOffsetX;
   s32 offsetZ = cellOffsetZ;
@@ -125,7 +125,7 @@ static void TretTreeBranch_ShiftLeaderAndCameraByCells(s32 cellOffsetX,
     objectEvent->groundHeight = groundHeight;
   }
 
-  objectEvent = state->camera;
+  objectEvent = (struct ObjectEvent *)state->camera;
   if (objectEvent != 0) {
     objectEvent->x.fixed += offsetX;
     objectEvent->z.fixed += offsetZ;
@@ -177,7 +177,7 @@ static void EventScript_ShiftNorthSixCells(void) {
 /// leaves by the warp touched, into Tret Tree's other map
 /// (MapId_TretTreeInteriors).
 static void EventScript_TakeTouchedWarp(void) {
-  struct EventWork *state = gFieldWork;
+  struct FieldWork *state = gFieldWork;
   s16 *touchedWarp;
 
   SE(SE_MAP_EXIT);

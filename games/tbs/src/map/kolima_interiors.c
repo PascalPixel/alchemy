@@ -265,7 +265,7 @@ const struct MapEvent *KolimaInteriors_GetEvents(void) {
 /// a window transition, sets the trees' sprites while the curse lasts, and
 /// draws the father's room for the way it is entered.
 s32 KolimaInteriors_Initialize(void) {
-  struct EventWork *work = gFieldWork;
+  struct FieldWork *work = gFieldWork;
   s32 localId;
   u32 warpDest;
 

@@ -475,7 +475,7 @@ static void TolbiShipMast_AnnounceClearCourse(void) {
 static void TolbiShipMast_RunAvastScene(void) {
   s32 *placement = ((struct MapGridScrollWork *)gMapGridWork[0])->origin;
   struct ObjectEvent *objectEvent;
-  struct EventWork **work;
+  struct FieldWork **work;
   s32 x;
   s32 zero = 0;
   s32 scale;
@@ -488,7 +488,7 @@ static void TolbiShipMast_RunAvastScene(void) {
   ObjectGroup_ConfigureChildValue(LOCALID_PARTY_LEADER, 15);
   ObjectEvent_SetSpriteFlags(ObjectEvent_GetById(LOCALID_PARTY_LEADER), 0);
   ObjectEvent_SetActionScript(LOCALID_LOOKOUT, gTolbiShipMast_LookoutActions);
-  work = (struct EventWork **)(gMapGridWork +
+  work = (struct FieldWork **)(gMapGridWork +
                                (HEAP_SLOT_FIELD - HEAP_SLOT_MAP_GRID));
   (*work)->transition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_CIRCLE);

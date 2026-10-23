@@ -141,7 +141,7 @@ s32 ValeEruption_Initialize(void) {
 /// FLAG_VALE_RETURNED_FROM_MT_ALEPH and takes VALE_ERUPTION_TO_SANCTUM, where
 /// Sanctum_RequestQuestAcceptance follows.
 static void EventScript_ReturnFromMtAleph(void) {
-  struct EventWork *work;
+  struct FieldWork *work;
   const s32 *actionScript;
 
   FieldScript_Start();

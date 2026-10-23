@@ -54,7 +54,7 @@ struct Window *FieldMessage_ShowAtObject(s32 localId, s32 unused) {
   // into HEAP_SLOT_FIELD. Its named load adds eight bytes in native EN
   // (0x344 to 0x34c).
 #ifdef UBFIX
-  work = (struct FieldWork *)gFieldWork;
+  work = gFieldWork;
 #else
   work = (struct FieldWork *)((struct WorkPointers *)gWindowWork)->event;
 #endif
@@ -257,7 +257,7 @@ struct Window *FieldMessage_ShowAtObject(s32 localId, s32 unused) {
 /// message (overworld/items.c) and the debug menu's message test call it too.
 void FieldScript_ShowMessageAndWait(s32 localId, s32 flags) {
   s32 member;
-  struct FieldWork *runtime = (struct FieldWork *)gFieldWork;
+  struct FieldWork *runtime = gFieldWork;
   struct Window *window = FieldMessage_ShowAtObject(localId, flags);
   s32 sprite;
   u32 frames;
@@ -312,10 +312,10 @@ s32 FieldScript_AskYesNoAndShowResponse(s32 localId, s32 flags) {
   answer = FieldScript_AskYesNoWithObjectEventAnimation(save->leaderLocalId, 0);
   if (answer == 0) {
     FieldScript_ShowMessageAndWait(localId, flags);
-    runtime = (struct FieldWork *)gFieldWork;
+    runtime = gFieldWork;
     runtime->message += 1;
   } else {
-    runtime = (struct FieldWork *)gFieldWork;
+    runtime = gFieldWork;
     runtime->message += 1;
     FieldScript_ShowMessageAndWait(localId, flags);
   }
@@ -341,7 +341,7 @@ void FieldScript_ShowSpeakerMessage(s32 speaker) {
     s32 x, y;
   } pos;
 #endif
-  struct FieldWork *state = (struct FieldWork *)gFieldWork;
+  struct FieldWork *state = gFieldWork;
 
   speaker &= 0xfff;
 #ifdef UBFIX
@@ -414,7 +414,7 @@ void FieldScript_ForwardShowMessageAtPosition(s32 unused0, s32 unused1, s32 x,
 /// script's message at (x, y), wait for it and advance the message index; its
 /// units are as unknown as FieldScript_ShowSpeakerMessage's.
 void FieldScript_ShowMessageAtPosition(s32 unused0, s32 unused1, s32 x, s32 y) {
-  struct FieldWork *state = (struct FieldWork *)gFieldWork;
+  struct FieldWork *state = gFieldWork;
   s32 py = y;
   s32 px = x;
   s32 minX = 8;
@@ -455,7 +455,7 @@ void FieldScript_ShowTwoMessagesAndWait(s32 first, s32 firstX, s32 firstY,
                                         s32 second, s32 secondX, s32 secondY,
                                         s32 secondPortraitX,
                                         s32 secondPortraitY) {
-  struct FieldWork *work = (struct FieldWork *)gFieldWork;
+  struct FieldWork *work = gFieldWork;
   s32 firstSprite = ObjectEvent_ReadActiveValue(first);
   s32 secondSprite = ObjectEvent_ReadActiveValue(second);
   s32 firstWindow;

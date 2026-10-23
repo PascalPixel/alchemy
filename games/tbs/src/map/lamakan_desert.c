@@ -503,7 +503,7 @@ static void LamakanDesert_ComplainAboutHeat(s32 mark) {
 /// the gauge drops back below it. Nothing is raised while Reveal is showing the
 /// pits.
 static void HeatGauge_RaiseQuarterTriggers(void) {
-  struct EventWork *work = gFieldWork;
+  struct FieldWork *work = gFieldWork;
   s32 percent = gGameState.hazardSteps * 100 / gGameState.hazardLimit;
 
   if (GameFlag_IsSet(FLAG_SECRETS_REVEALED) != 0)
@@ -695,7 +695,7 @@ static void LamakanDesert_BatheInOasis(void) {
 /// moving frame adds a step of heat and kicks up dust, faster on the run.
 static void HeatGauge_CountStep(void) {
   struct ObjectEvent *objectEvent;
-  struct EventWork *work;
+  struct FieldWork *work;
   struct EffectOptions params;
   s32 dx;
   s32 z;
@@ -843,10 +843,10 @@ static void LamakanDesert_SlideDownDune(void) {
 
   HeatGauge_CountStep();
   {
-    struct EventWork *work = gFieldWork;
+    struct FieldWork *work = gFieldWork;
 
     id = gGameState.leaderLocalId;
-    center = work->camera;
+    center = (struct ObjectEvent *)work->camera;
   }
   objectEvent = ObjectEvent_GetById(id);
   // First check for a ledge immediately below the sliding object event.

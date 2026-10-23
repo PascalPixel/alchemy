@@ -43,7 +43,7 @@ void FieldEffect_WatchLeaderDistance(void) {
   s32 distanceX;
   s32 distanceZ;
 
-  work = (struct FieldWork *)gFieldWork;
+  work = gFieldWork;
   objectEvent = ObjectEvent_GetByLocalId(gGameState.leaderLocalId);
   if (work->effectTimerRunning != 0) {
     timer = &work->revealFrames;
@@ -135,7 +135,7 @@ void FieldEffect_EndReveal(void) {
 #ifdef UBFIX
   struct FieldEffectWork *effectWork = gFieldEffectWork;
   struct ScreenTransitionState *scene = gScreenTransitionWork;
-  struct FieldWork *state = (struct FieldWork *)gFieldWork;
+  struct FieldWork *state = gFieldWork;
 #else
   // Named slots avoid stepping outside gFieldEffectWork. They add 8 bytes to
   // this function in the forced native EN build (0xe8 -> 0xf0).

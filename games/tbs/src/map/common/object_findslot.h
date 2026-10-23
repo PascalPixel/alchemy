@@ -9,10 +9,7 @@
 static void *MapData_FindSlotAtPosition(const struct FieldPosition *position,
                                         void *self) {
   const struct FieldPosition *pos = position;
-  // Map_Run owns all 66 slots. EventWork's object events view holds only
-  // the first eight; the placed object events follow in its separate
-  // placedObjectEvents array.
-  struct FieldWork *work = (struct FieldWork *)gFieldWork;
+  struct FieldWork *work = gFieldWork;
   struct ObjectEvent **slots = work->objectEvents;
   u32 i;
 

@@ -67,7 +67,7 @@ UNUSED void ObjectDispatch_SetUpdateValue(void *rawObject, s32 value) {
 u32 Field_RequestShortcut(u32 encodedAssignment) {
   u32 assignmentKind = encodedAssignment >> 14;
   u32 requestId = 0x3FFF & encodedAssignment;
-  struct FieldWork *work = (struct FieldWork *)gFieldWork;
+  struct FieldWork *work = gFieldWork;
 
   if (GameFlag_TestFar(FLAG_MENUS_RAISE_EVENT) != 0) {
     Field_StoreHalfword(&work->raisedEvent, FIELD_RAISED_EVENT_MENUS);
@@ -102,7 +102,7 @@ u32 Field_RequestShortcut(u32 encodedAssignment) {
 /// Called each frame by the leader's control commands: SC_PLAYER, SC_WORLD
 /// and SC_KEY_COUNT. Sets work->menu, examine or start.
 s32 Field_CheckConfiguredKeys(void) {
-  struct FieldWork *work = (struct FieldWork *)gFieldWork;
+  struct FieldWork *work = gFieldWork;
   s32 result = 0;
 
   if (work == NULL)

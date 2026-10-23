@@ -2912,7 +2912,7 @@ static void ValeStorm_RebuildRiverbank(void) {
 /// Reached by stepping on metatile behavior 16 until
 /// FLAG_VALE_STORM_THIRD_MONSTER_FOUGHT is set.
 static void EventScript_FightThirdMonster(void) {
-  struct EventWork *state;
+  struct FieldWork *state;
 
   FieldScript_Start();
   state = gFieldWork;
@@ -2929,7 +2929,7 @@ static void EventScript_FightThirdMonster(void) {
 /// Reached by stepping on metatile behavior 17 until
 /// FLAG_VALE_STORM_FOURTH_MONSTER_FOUGHT is set.
 static void EventScript_FightFourthMonster(void) {
-  struct EventWork *state;
+  struct FieldWork *state;
 
   FieldScript_Start();
   state = gFieldWork;

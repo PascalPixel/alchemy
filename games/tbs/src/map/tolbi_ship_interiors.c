@@ -1200,7 +1200,7 @@ static void TolbiShipInteriors_AskOldManToRow(void) {
 /// position.
 static struct ObjectEvent *TolbiShipInteriors_FindObjectEventNear(s32 x,
                                                                   s32 z) {
-  struct EventWork *work;
+  struct FieldWork *work;
   struct ObjectEvent **objectEvent;
   struct ObjectEvent *current;
   u32 i;
@@ -1217,7 +1217,7 @@ static struct ObjectEvent *TolbiShipInteriors_FindObjectEventNear(s32 x,
   right = x + 12;
   top = z - 12;
   bottom = z + 12;
-  objectEvent = work->placedObjectEvents;
+  objectEvent = &work->objectEvents[LOCALID_FIRST_PLACED];
   while (i <= 65) {
     current = *objectEvent++;
     objectEventX = current->x.part.pixel;

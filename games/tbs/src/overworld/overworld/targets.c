@@ -265,7 +265,7 @@ void Anim_ApplyChildPalette(struct MotionObject *object, s32 palette) {
 /// when a script starts while the field is busy, by Map_Run before the
 /// pause menu, and by 30 map overlays.
 void Field_EndBusyAndReveal(void) {
-  struct FieldWork *work = (struct FieldWork *)gFieldWork;
+  struct FieldWork *work = gFieldWork;
 
   work->busy = 0;
   if (work->revealActive != 0) {

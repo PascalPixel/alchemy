@@ -179,7 +179,7 @@ static void EventScript_MoveEastPillar(void) {
 /// event 5) or the east (coord event 6): the leader leans on it and pushes it
 /// one step.
 static void EventScript_PushWestPillar(void) {
-  struct EventWork *work;
+  struct FieldWork *work;
   s32 offsetX;
 
   work = gFieldWork;

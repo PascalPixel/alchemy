@@ -142,7 +142,7 @@ void Djinn_JoinParty(s32 slot, s32 element, s32 djinn) {
   struct FieldWork *work;
   s32 owner;
 
-  work = (struct FieldWork *)gFieldWork;
+  work = gFieldWork;
   if (GameFlag_TestFar(FLAG_DJINN_LESSON) != 0) {
     owner = 0;
     GameFlag_SetBitFar(djinn + element * 20 + FLAG_DJINN_FIRST);

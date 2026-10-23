@@ -479,7 +479,7 @@ static void SolSanctumStatue_ExplainTrapDisarmed(void) {
 /// FLAG_SOL_SANCTUM_STATUE_PUZZLE_EXPLAINED is set, which the caller sets.
 /// Clears FLAG_SHOW_LOCATION_NAME.
 static void SolSanctumStatue_ExplainStatuePuzzle(void) {
-  struct EventWork *work;
+  struct FieldWork *work;
   struct ObjectEvent *leader;
 
   FieldScript_Start();

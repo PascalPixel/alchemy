@@ -693,7 +693,7 @@ static void Xian_WalkThroughExit(s32 warpNumber) {
 /// into the houses, shops and inn, XIAN_TO_SANCTUM into Xian Sanctum (SE_188)
 /// and XIAN_TO_FUCHIN_TEMPLE_INTERIORS_FEHS_SCHOOL into Master Feh's school.
 static void Xian_OpenDoorAndLeave(void) {
-  struct EventWork *work = gFieldWork;
+  struct FieldWork *work = gFieldWork;
 
   FieldScript_Start();
 

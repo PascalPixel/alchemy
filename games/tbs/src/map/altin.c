@@ -597,7 +597,7 @@ static void AltinInteriors_TalkToInnkeeper(void) {
 /// in two halves by hand; the others play their opening pictures.
 static void Altin_EnterDoor(void) {
   u32 localId;
-  struct EventWork *work;
+  struct FieldWork *work;
   struct ObjectEvent *objectEvent;
   s32 doorIndex;
   u8 *doorBytes;
@@ -673,7 +673,7 @@ static void Altin_EnterDoor(void) {
 /// Walking north into one of the doorways of Altin's village that lead into
 /// the mine: the leader walks out.
 static void Altin_WalkThroughDoorway(void) {
-  struct EventWork *work;
+  struct FieldWork *work;
 
   work = gFieldWork;
   FieldScript_Start();

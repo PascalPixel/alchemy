@@ -3,7 +3,7 @@ Work (struct FooWork, gFooWork)	word	pret	a running system's block, as pret's sW
 Alloc, Free, InitHeap	prefix	pret	pokeemerald include/malloc.h; runtime/runtime/heap.c
 AllocHeapSlot, AllocHeapSlotEwram, FreeHeapSlot, AllocEwram	prefix	common	heap.c: blocks kept in a heap slot; AllocEwram takes the EWRAM pool first
 heap slot (gHeapSlots, HEAP_SLOT_*, HEAP_SLOT_BLOCK)	word	common	include/heap.h enum HeapSlot; one global per slot, g<Slot>Work
-gFieldWork, HEAP_SLOT_FIELD	global	common	the running map's block Map_Run allocates (overworld/overworld/run_map.c)
+struct FieldWork, gFieldWork, HEAP_SLOT_FIELD	struct	common	the running map's block Map_Run allocates (overworld/overworld/run_map.c); one struct (field/field_work.h) for the field loop, the field services and the overlays, which read it as struct EventWork before
 gObjectSystemWork, HEAP_SLOT_OBJECT_SYSTEM	global	common	ObjectSystem_Initialize allocates the slot (field/field/objects.c)
 gBattleEntryTimer	global	common	the battle's entry transition timer in frames (battle/battle/transition.c)
 task (struct Task, TaskFunc, gTasks, Task_, TASK_PRIORITY_*)	word	pret	pokeemerald include/task.h (gTasks, TaskFunc, priority); runtime/runtime/scheduler.c

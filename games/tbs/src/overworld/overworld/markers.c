@@ -54,7 +54,7 @@ void Field_PlaceTreasureSpots(void) {
   u32 id;
   struct MapGridMarkers *grid = gMapGridWork[0];
 #ifdef UBFIX
-  struct FieldWork *work = (struct FieldWork *)gFieldWork;
+  struct FieldWork *work = gFieldWork;
 #else
   // UB: the event cell is a separate global, beyond gMapGridWork's one pointer.
   // Reading gFieldWork plainly grows 0x254 to 0x25c bytes in English.
@@ -170,7 +170,7 @@ s32 TreasureSpot_FindSlot(s32 id) {
   s32 matchingSlot;
   struct TreasureSpot *marker;
 
-  marker = ((struct FieldWork *)gFieldWork)->treasureSpots;
+  marker = gFieldWork->treasureSpots;
   matchingSlot = -1;
   for (slotIndex = 0; slotIndex <= TREASURE_SPOT_MAX - 1;
        slotIndex++, marker++) {
@@ -195,7 +195,7 @@ static __inline__ void SetMarkerAnimationAndPlaySound(s32 id, s32 animation,
 
   slotIndex = TreasureSpot_FindSlot(id);
   if (slotIndex != -1) {
-    marker = &((struct FieldWork *)gFieldWork)->treasureSpots[slotIndex];
+    marker = &gFieldWork->treasureSpots[slotIndex];
     object = marker->object;
     if (object != NULL)
       ObjectDispatch_SelectAnimationFar(object, animation);
@@ -220,7 +220,7 @@ void TreasureSpot_LaunchMimic(s32 id) {
 
   slotIndex = TreasureSpot_FindSlot(id);
   if (slotIndex != -1) {
-    marker = &((struct FieldWork *)gFieldWork)->treasureSpots[slotIndex];
+    marker = &gFieldWork->treasureSpots[slotIndex];
     object = marker->object;
     WaitFrames(18);
     if (object != NULL)
@@ -248,7 +248,7 @@ void TreasureSpot_ShowOpened(s32 id) {
 
   slotIndex = TreasureSpot_FindSlot(id);
   if (slotIndex != -1) {
-    marker = &((struct FieldWork *)gFieldWork)->treasureSpots[slotIndex];
+    marker = &gFieldWork->treasureSpots[slotIndex];
     object = marker->object;
     if (object != NULL)
       ObjectDispatch_SelectAnimationFar(object, TREASURE_SPOT_CHEST_OPEN);
@@ -264,7 +264,7 @@ struct Object *TreasureSpot_GetObjectEvent(s32 id) {
 
   if (slotIndex == -1)
     return NULL;
-  marker = &((struct FieldWork *)gFieldWork)->treasureSpots[slotIndex];
+  marker = &gFieldWork->treasureSpots[slotIndex];
   return marker->object;
 }
 
@@ -278,7 +278,7 @@ void TreasureSpot_Hide(s32 id) {
 
   slotIndex = TreasureSpot_FindSlot(id);
   if (slotIndex != -1) {
-    marker = &((struct FieldWork *)gFieldWork)->treasureSpots[slotIndex];
+    marker = &gFieldWork->treasureSpots[slotIndex];
     object = marker->object;
     if (object != NULL)
       object->animationKind = OBJECT_SPRITE_NONE;
@@ -299,7 +299,7 @@ void TreasureSpot_SetObjectEventPosition(s32 id, s32 x, s32 z) {
   objectX = x;
   slotIndex = TreasureSpot_FindSlot(id);
   if (slotIndex != -1) {
-    marker = &((struct FieldWork *)gFieldWork)->treasureSpots[slotIndex];
+    marker = &gFieldWork->treasureSpots[slotIndex];
     object = marker->object;
     if (object != NULL) {
       if (objectX == -1)

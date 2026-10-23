@@ -329,7 +329,7 @@ static void KalayInteriors_TalkToHealer(void) {
 /// (coord events 12, 13, 16 and 19): stops the room's object events, opens the
 /// door and walks the leader out.
 static void KalayInteriors_OpenDoorAndExit(void) {
-  struct EventWork *work = gFieldWork;
+  struct FieldWork *work = gFieldWork;
   u32 slot;
   s32 doorIndex;
   struct ObjectEvent *leader;

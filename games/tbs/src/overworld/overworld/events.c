@@ -18,7 +18,7 @@ struct ObjectEventTemplate *Map_FindObjectEventTemplate(s32 id) {
   s32 placedLocalId = LOCALID_FIRST_PLACED;
 
   for (tableIndex = 0; tableIndex < 4; tableIndex++) {
-    template = ((struct FieldWork *)gFieldWork)->tables[tableIndex];
+    template = gFieldWork->tables[tableIndex];
     if (template == NULL)
       continue;
     if (id <= 7) {
@@ -113,7 +113,7 @@ u32 Map_BgEventIgnoresCondition(s32 flags, s32 result) {
 /// Called by every lookup of a map's events in this part and by
 /// ObjectEvent_GetTriggerTileAheadOfCurrent. Changes nothing.
 struct EffectDescriptor *Map_FindEvent(s32 kind, s32 target) {
-  struct FieldWork *work = (struct FieldWork *)gFieldWork;
+  struct FieldWork *work = gFieldWork;
   struct EffectDescriptor *event = (struct EffectDescriptor *)work->events;
   s32 flags;
   u32 facing =
@@ -359,7 +359,7 @@ s32 Map_RunCoordEventOrWarp(s32 value) {
 
   touch = Map_FindEvent(MAP_EVENT_COORD, value);
   handled = -1;
-  work = (struct FieldWork *)gFieldWork;
+  work = gFieldWork;
   if ((touch != 0) && (touch->result != 0)) {
     if (touch->flags & COORD_EVENT_FLAG_WALKING) {
       work->blockedSteps = 0;
@@ -408,7 +408,7 @@ s32 Map_RunCoordEventOrWarp(s32 value) {
 /// Field_ProcessStep raises for MB_LEDGE to MB_JUMP_FORWARD.
 /// Clears work->blockedSteps when it acts.
 s32 Field_RunPushCellEvent(s32 collisionCode) {
-  struct FieldWork *work = (struct FieldWork *)gFieldWork;
+  struct FieldWork *work = gFieldWork;
   s32 leader = gGameState.leaderLocalId;
 
   switch (collisionCode) {
@@ -547,7 +547,7 @@ s32 Field_SearchCell(s32 tile) {
                 GameFlag_SetBitFar(condition);
             } else if (rewardType == FIND_MIMIC) {
               // A mimic: a battle with its slot of ENCOUNTER_ZONE_MIMIC.
-              struct FieldWork *work = (struct FieldWork *)gFieldWork;
+              struct FieldWork *work = gFieldWork;
 
               if ((event->kind & 0x1ff) == BG_EVENT(BG_EVENT_CHEST))
                 TreasureSpot_LaunchMimic(tile);

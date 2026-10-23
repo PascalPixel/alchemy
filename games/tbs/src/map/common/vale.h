@@ -8,7 +8,7 @@
 /// Takes warp no in the backdrop fade over 16 frames, first stopping the
 /// storm's lightning while the storm rages (FLAG_VALE_STORM).
 static void Vale_RequestBackdropWarp(s32 no) {
-  struct EventWork *p;
+  struct FieldWork *p;
   if (GameFlag_Test(FLAG_VALE_STORM) != 0) {
     Weather_StopLightning();
   }

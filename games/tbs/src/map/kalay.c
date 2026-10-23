@@ -586,7 +586,7 @@ static void Kalay_TalkToItemMerchant(void) {
 /// the houses, the inn or the Sanctum: everyone stops, the door opens and the
 /// leader walks in.
 static void Kalay_OpenDoorAndExit(void) {
-  struct EventWork *work;
+  struct FieldWork *work;
   struct ObjectEvent *objectEvent;
   s16 *trigger;
   u32 i;
@@ -665,7 +665,7 @@ static void Kalay_WatchTourGroupDeparture(void) {
   struct ObjectEvent *headBack;
   struct ObjectEvent *headAgain;
   struct ObjectEvent *headHome;
-  struct EventWork *work;
+  struct FieldWork *work;
 
   work = gFieldWork;
   FieldScript_Start();
@@ -1407,7 +1407,7 @@ static void Kalay_PrepareTunnel(void) {
   // gFieldWork declaration.
   void **workSlots = gHeapSlots + HEAP_SLOT_FIELD;
 
-  ((struct EventWork *)workSlots[0])->transition =
+  ((struct FieldWork *)workSlots[0])->transition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   FieldEffect_StartFadeOverlay(0);
 #if TBS_PATCH_1
@@ -1858,7 +1858,7 @@ static void Kalay_HammetReturnsToPalace(void) {
   u32 random;
   u32 motionPhase;
   struct ObjectEvent *objectEvent;
-  struct EventWork *work;
+  struct FieldWork *work;
   const s32 *motionActions;
   s32 southFacing;
   const s32 *exitActions;

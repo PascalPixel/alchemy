@@ -544,7 +544,7 @@ const struct MapEvent *Map_GetEvents(void) { return gGomaCavePillar_Events; }
 /// Djinni joins the party; once the Djinni's script is over, it raises
 /// RAISED_FORGE_JOINED.
 static void GomaCavePillar_FidgetWhileForgeFights(void) {
-  struct EventWork *work;
+  struct FieldWork *work;
   s32 frame;
 
   work = gFieldWork;
@@ -600,7 +600,7 @@ static void EventScript_WitnessCheersForgeCaught(void) {
 /// battle with Forge, the man's reaction starts.
 s32 Map_Initialize(void) {
   struct ObjectEvent *objectEvent;
-  struct EventWork *work;
+  struct FieldWork *work;
 
   work = gFieldWork;
   work->transition =

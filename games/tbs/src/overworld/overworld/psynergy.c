@@ -20,7 +20,7 @@
 /// afterwards. Returns 0 whatever happens; Map_Run ignores it.
 s32 Field_UsePsynergy(u32 code) {
   s32 abilityId = ABILITY_ID(code);
-  struct FieldWork *work = (struct FieldWork *)gFieldWork;
+  struct FieldWork *work = gFieldWork;
   const struct MapEvent *before;
   const struct MapEvent *after;
   const struct MapEvent *during;

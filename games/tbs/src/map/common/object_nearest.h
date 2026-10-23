@@ -7,7 +7,7 @@
 /// Returns the placed object event drawn as SPRITE_FLOATING_PLATFORM nearest
 /// the leader, within 640 pixels, or 0.
 s32 ObjectEvent_FindNearestFloatingPlatform(void) {
-  struct EventWork *work = gFieldWork;
+  struct FieldWork *work = gFieldWork;
   struct ObjectEvent **slot;
   struct ObjectEvent *origin;
   s32 nearestLocalId = 0;
@@ -17,7 +17,7 @@ s32 ObjectEvent_FindNearestFloatingPlatform(void) {
   minDist = 640;
   origin = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   localId = LOCALID_FIRST_PLACED;
-  slot = work->placedObjectEvents;
+  slot = &work->objectEvents[LOCALID_FIRST_PLACED];
   do {
     struct ObjectEvent *objectEvent = *slot++;
     if (objectEvent != 0) {
@@ -34,7 +34,6 @@ s32 ObjectEvent_FindNearestFloatingPlatform(void) {
     }
     localId++;
   } while (localId <
-           LOCALID_FIRST_PLACED + sizeof(work->placedObjectEvents) /
-                                      sizeof(work->placedObjectEvents[0]));
+           sizeof(work->objectEvents) / sizeof(work->objectEvents[0]));
   return nearestLocalId;
 }

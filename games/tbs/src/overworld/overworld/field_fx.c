@@ -48,7 +48,7 @@ STATIC_ASSERT(offsetof(struct EffectObject, updateHook) == 0x6c);
 /// Desert).
 void TreasureSpot_MoveLeaderAway(void) {
   struct Object *leader = ObjectEvent_GetByLocalId(gGameState.leaderLocalId);
-  struct TreasureSpot *marker = ((struct FieldWork *)gFieldWork)->treasureSpots;
+  struct TreasureSpot *marker = gFieldWork->treasureSpots;
   s32 markerIndex = 0;
   s32 x;
   s32 z;
@@ -145,7 +145,7 @@ struct EffectObject *FieldEffect_StartRandomParticleEmitter(s32 localId,
   struct EffectObject *picture;
 
   s32 work = (s32)gFieldWork;
-  u32 objectEventOffset = (localId * 4) + 0x14; // EventWork's objectEvents
+  u32 objectEventOffset = (localId * 4) + 0x14; // FieldWork's objectEvents
 
   s32 srcZ = (s32)*(struct ObjectEvent **)(work + objectEventOffset);
   union PolarOffsetPosition picturePosition;
@@ -337,7 +337,7 @@ void FieldEffect_StartEffectObject22(s32 item, s32 flags) {
 /// by the field menu (FieldMenu_Run, window/selection.c) each time
 /// FieldMenu_SelectCommand returns, a cancel included, while Reveal is active.
 void FieldEffect_ClearRandomParticles(void) {
-  if (((struct FieldWork *)gFieldWork)->revealActive != 0) {
+  if (gFieldWork->revealActive != 0) {
     struct EffectObject *effect = EFFECT_OBJECT_POOL;
     s32 remainingObjectEvents = EFFECT_OBJECT_COUNT - 1;
 
@@ -386,7 +386,7 @@ void Reveal_EmitSparkles(union FieldObject *fieldObject) {
 s32 Field_IsRevealActive(struct ObjectScriptContext *interpreter) {
   s16 revealState;
   u32 isActive = 0;
-  struct FieldWork *work = (struct FieldWork *)gFieldWork;
+  struct FieldWork *work = gFieldWork;
 
   if (work != NULL) {
     revealState = work->revealActive;

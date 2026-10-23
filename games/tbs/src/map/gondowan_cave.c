@@ -351,7 +351,7 @@ static void EventScript_ReadSoldierMind(void) {
 /// game sets, three unnamed flags and the pillar's are first put into one
 /// arrangement.
 static void EventScript_LeaveToWorldMapEast(void) {
-  struct EventWork *work;
+  struct FieldWork *work;
 
   work = gFieldWork;
   SCRIPT_START();

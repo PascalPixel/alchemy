@@ -152,7 +152,7 @@ const struct MapEvent *TolbiInteriors_SelectEvents(void) {
 /// Unused: leaves through TRANSITION_WINDOW, a screen transition of 24
 /// frames; no event row names it.
 UNUSED static void TolbiInteriors_ExitThroughWindow(void) {
-  struct EventWork *work = gFieldWork;
+  struct FieldWork *work = gFieldWork;
 
   work->transition = MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_SHAPE);
   work->transitionFrames = 24;
@@ -165,7 +165,7 @@ UNUSED static void TolbiInteriors_ExitThroughWindow(void) {
 static void TolbiInteriors_EnterDoor(void) {
   u32 localId;
   struct ObjectEvent *objectEvent;
-  struct EventWork *work;
+  struct FieldWork *work;
   s16 *trigger;
   s32 doorIndex;
 

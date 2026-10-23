@@ -965,7 +965,7 @@ static void TolbiShipDeck_OpenSecondDoor(void) {
 static void TolbiShipDeck_GoBelow(void) {
 
   s32 throughDoor;
-  struct EventWork *work;
+  struct FieldWork *work;
 
   work = gFieldWork;
   FieldScript_Start();
@@ -1281,7 +1281,7 @@ s32 TolbiShipDeck_Initialize(void) {
       &((struct MapGridScrollWork *)base[0])->layers[MAPGRID_LAYER_GROUND];
 
   GameFlag_ClearBit(FLAG_WORLD_MAP_LEFT);
-  ((struct EventWork *)base[HEAP_SLOT_FIELD - HEAP_SLOT_MAP_GRID])->transition =
+  ((struct FieldWork *)base[HEAP_SLOT_FIELD - HEAP_SLOT_MAP_GRID])->transition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
   layer->speedY = 0;
   sSwayAngleX = (u16)Engine_RandomNext();
@@ -2239,7 +2239,7 @@ static void TolbiShipDeck_SightLand(void) {
   gFieldWork->transition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_NOISE);
 #else
-  ((struct EventWork *)*(u32 *)&gFieldWork)->transition =
+  ((struct FieldWork *)*(u32 *)&gFieldWork)->transition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_NOISE);
 #endif
   FieldScript_StartScreenTransition();

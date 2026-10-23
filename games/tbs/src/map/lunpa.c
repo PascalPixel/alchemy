@@ -448,7 +448,7 @@ static void EventScript_ReadLeftGuardsThoughts(void) {
       GameFlag_IsSet(FLAG_LUNPA_CAVE_REUNION_SEEN) == 0) {
     recognizedHammet = GameFlag_IsSet(FLAG_LUNPA_GATE_GUARD_SAW_HAMMET);
     if (recognizedHammet == 0) {
-      ((struct FieldWork *)gFieldWork)->psynergy = recognizedHammet;
+      gFieldWork->psynergy = recognizedHammet;
       FieldEffect_FinishWaveAndReleaseHeapBlock();
       ObjectEvent_FaceObjectEvent(LOCALID_LEFT_GUARD, LOCALID_PARTY_LEADER, 0);
       ObjectEvent_ShowEmote(LOCALID_LEFT_GUARD, EMOTE_IN_FRONT | EMOTE_QUESTION,
@@ -485,8 +485,7 @@ static void Lunpa_WatchForFortressApproach(void) {
 
   if (GameFlag_IsSet(FLAG_MAP_TEMP_43) == 0 && leaderRow == 10) {
     GameFlag_Set(FLAG_MAP_TEMP_43);
-    ((struct FieldWork *)gFieldWork)->coordEvent =
-        MB_LUNPA_FORTRESS_GATES_FORTRESS_APPROACH;
+    gFieldWork->coordEvent = MB_LUNPA_FORTRESS_GATES_FORTRESS_APPROACH;
   }
 }
 
@@ -516,7 +515,7 @@ static void EventScript_EnterDoor(void) {
   u32 localId;
   s32 doorIndex;
 
-  work = (struct FieldWork *)gFieldWork;
+  work = gFieldWork;
   FieldScript_Start();
   // Freeze placed object events before opening the selected door and crossing
   // it.
@@ -734,7 +733,7 @@ static void EventScript_CloakFades(void) {
   struct ObjectEvent *leader;
 
 #if TBS_PATCH_1
-  work = (struct FieldWork *)gFieldWork;
+  work = gFieldWork;
 #endif
   GameFlag_ClearBit(FLAG_MAP_TEMP_41);
   GameFlag_ClearBit(FLAG_MAP_TEMP_40);
@@ -758,7 +757,7 @@ static void Lunpa_WatchForUncloakedParty(void) {
   struct FieldWork *work;
   struct ObjectEvent *leader;
 
-  work = (struct FieldWork *)gFieldWork;
+  work = gFieldWork;
   leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   if (gGameState.cloaked == 0 &&
       (u32)(leader->x.fixed - PIXELS(144)) <= PIXELS(32) &&
@@ -917,8 +916,7 @@ s32 Map_Initialize(void) {
   struct ObjectEvent *puddle;
 
   if (gGameState.mapId == (s32)&MapId_Lunpa) {
-    ((struct FieldWork *)gFieldWork)->transition =
-        MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+    gFieldWork->transition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
     EventScript_HideSecrets();
     if (GameFlag_Test(FLAG_LUNPA_NUT_CAUGHT) == 0) {
       Map_FloatNut(LOCALID_FLOATING_NUT);
@@ -931,8 +929,7 @@ s32 Map_Initialize(void) {
   }
   // Restore the gate's arrival cutscene and active detection tasks separately.
   if (gGameState.mapId == (s32)&MapId_LunpaFortressGates) {
-    ((struct FieldWork *)gFieldWork)->transition =
-        MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+    gFieldWork->transition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
     gGameState.retreatWarpDest = GATE_RETREAT_WARP_DEST;
     if (gGameState.warpDest == LUNPA_FORTRESS_GATES_AFTER_CAUGHT &&
         GameFlag_Test(FLAG_KEEP_PARTY_POSITION) == 0) {

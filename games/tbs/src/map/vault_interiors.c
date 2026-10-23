@@ -1835,7 +1835,7 @@ static inline void VaultInteriors_SetPartyImagePriority(void) {
 /// FLAG_VAULT_SUSPECTS_MIND_READ.
 static void EventScript_ReadCorneredSuspectsMinds(void) {
   s32 localId;
-  struct EventWork *work;
+  struct FieldWork *work;
 
   work = gFieldWork;
   FieldScript_Start();
@@ -1974,7 +1974,7 @@ static void VaultInteriors_DiscussMindReading(void) {
   MapGrid_CenterOnFollowedPoint();
   FieldScript_WaitFrames(30);
   {
-    struct EventWork *work = gFieldWork;
+    struct FieldWork *work = gFieldWork;
 
     work->transitionFrames = 24;
     work->transition =
@@ -2490,7 +2490,7 @@ static s32 VaultInteriors_GetIvanVenusDjinnCount(void) {
 /// where it was; then VaultInteriors_ReturnStolenGoods follows.
 static void VaultInteriors_DefeatThieves(void) {
   struct ObjectEvent *objectEvent;
-  struct EventWork *work;
+  struct FieldWork *work;
   const s32 *actions;
   struct Sprite *thirdThiefSprite;
 
@@ -2744,7 +2744,7 @@ static void VaultInteriors_ReturnStolenGoods(void) {
   struct ObjectEvent *objectEvent;
   s32 aftermath;
   s32 rod;
-  struct EventWork *work;
+  struct FieldWork *work;
 
   work = gFieldWork;
   GameFlag_Set(FLAG_VAULT_THIEVES_JAILED);
@@ -3241,7 +3241,7 @@ static void VaultInteriors_ReturnStolenGoods(void) {
 
 /// Opens the window transition and waits one frame after it finishes.
 static void VaultInteriors_OpenWindowTransition(void) {
-  struct EventWork *state;
+  struct FieldWork *state;
 
   state = gFieldWork;
   state->transition =
@@ -3443,7 +3443,7 @@ VaultInteriors_MoveObjectEventToStop(struct ObjectEvent *objectEvent,
 static void VaultInteriors_UpdateObjectEventStops(void) {
   struct ObjectEvent *leader;
   struct ObjectEvent *objectEvent;
-  struct EventWork *work;
+  struct FieldWork *work;
   struct VaultInteriorsStop *entry;
   struct VaultInteriorsStop *destination;
   s32 dx;

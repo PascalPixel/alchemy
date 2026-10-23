@@ -1278,9 +1278,9 @@ static void MercuryLighthouseAerie_AlexAppears(void) {
       ObjectMotion_SetVarCbAndRefresh(LOCALID_SATUROS, 2);
       FieldScript_WaitFrames(20);
       Script_ShowMessageAndWait(LOCALID_SATUROS, 0, 20);
-      ((struct EventWork *)cells[19])->message++;
+      ((struct FieldWork *)cells[19])->message++;
     } else {
-      ((struct EventWork *)cells[19])->message++;
+      ((struct FieldWork *)cells[19])->message++;
       FieldScript_WaitFrames(20);
       Script_ShowMessageAndWait(LOCALID_SATUROS, 0, 20);
     }
@@ -1663,7 +1663,7 @@ static void MercuryLighthouseAerie_FindLiftRiders(s32 *out, s32 y) {
   struct FieldWork *work;
   u32 slot;
 
-  work = (struct FieldWork *)gFieldWork;
+  work = gFieldWork;
   y = 64 - (y >> 20);
   for (slot = 0;
        slot < sizeof(work->objectEvents) / sizeof(work->objectEvents[0]);

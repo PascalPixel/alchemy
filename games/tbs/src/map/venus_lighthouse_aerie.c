@@ -3075,9 +3075,9 @@ static void VenusLighthouseAerie_PlayShebasFall(void) {
   ObjectEvent_WalkToAndWait(LOCALID_PARTY_LEADER, 272, 216);
   ObjectEvent_WalkTo(LOCALID_PARTY_LEADER, 272, 254);
   FieldScript_WaitFrames(80);
-  ((struct EventWork *)HEAP_SLOT_BLOCK(HEAP_SLOT_FIELD))->transition =
+  ((struct FieldWork *)HEAP_SLOT_BLOCK(HEAP_SLOT_FIELD))->transition =
       MAP_TRANSITION(TRANSITION_WINDOW, 1);
-  ((struct EventWork *)HEAP_SLOT_BLOCK(HEAP_SLOT_FIELD))->transitionFrames = 16;
+  ((struct FieldWork *)HEAP_SLOT_BLOCK(HEAP_SLOT_FIELD))->transitionFrames = 16;
   FieldScript_FinishScreenTransition();
   FieldScript_WaitTransitionFrames();
   FieldScript_WaitFrames(80);

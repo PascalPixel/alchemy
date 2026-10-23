@@ -1164,7 +1164,7 @@ static void BabiPalace_WakeAfterFinals(void) {
   struct ObjectEvent *objectEvent;
   s32 step;
   s32 pick;
-  struct EventWork *work;
+  struct FieldWork *work;
   struct ScreenTransitionState *state;
 
   Script_Start();
@@ -2338,7 +2338,7 @@ static void BabiPalace_MeetBabiAfterColosso(void) {
 /// passed on as the warp. The throne room's door walks the leader straight
 /// north; the others first center the leader on the door.
 static void BabiPalace_LeaveThroughDoor(void) {
-  struct EventWork *work;
+  struct FieldWork *work;
 
   work = gFieldWork;
   Script_Start();

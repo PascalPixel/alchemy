@@ -69,7 +69,7 @@ void Encounter_SelectMapZones(s32 useRules) {
   s16 firstZoneOnGround;
   u32 i;
 
-  work = (struct FieldWork *)gFieldWork;
+  work = gFieldWork;
   mapId = gGameState.mapId;
   warpDest = gGameState.warpDest;
   groundZones = work->encounterZones;
@@ -158,7 +158,7 @@ s32 Encounter_CountStepsAndSelectFormation(s32 zone, s32 steps) {
   s32 pick;
   s32 i;
 
-  work = (struct FieldWork *)gFieldWork;
+  work = gFieldWork;
   // UB: FLAG_IGNORE_ENCOUNTER_CHECKS reaches the draw without setting entry.
   // Hoisting the zone lookup changes native instructions at the same 440-byte
   // size in tbs-en.
@@ -254,7 +254,7 @@ s32 Encounter_CountStepsAndSelectFormation(s32 zone, s32 steps) {
 s32 Encounter_RollLayoutStep(u32 terrain, s32 steps) {
   u8 *zone;
 
-  zone = ((struct FieldWork *)gFieldWork)->encounterZones;
+  zone = gFieldWork->encounterZones;
   return Encounter_CountStepsAndSelectFormation(zone[terrain], steps);
 }
 

@@ -37,10 +37,10 @@ finished, so a battle a cutscene asks for starts only after its last line.
 
 In the code, `Map_Run` ([`overworld/run_map.c`](overworld/run_map.c))
 runs one map. Its state is the field work, `struct FieldWork`
-(`map_header.h`): the running map's object events, its event table and
+(`field_work.h`): the running map's object events, its event table and
 the requests. It is a block borrowed from the [heap](../../glossary.md#heap-and-pools) under the [heap
-slot](../../glossary.md#heap-slot) `HEAP_SLOT_FIELD`, and is reached through the global `gFieldWork`; overlays read the same block
-as `struct EventWork`, so one block goes by three names. Before the
+slot](../../glossary.md#heap-slot) `HEAP_SLOT_FIELD`, and is reached through the global `gFieldWork`; the field
+services and the map overlays read the same block through it. Before the
 loop, `Map_Run`:
 
 1. allocates the field work;

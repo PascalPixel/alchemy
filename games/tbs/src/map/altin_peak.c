@@ -2227,7 +2227,7 @@ static void AltinPeak_FlickerStatue(void) {
 /// it, and they agree to open it before they go, then rejoin the leader.
 static void AltinPeak_CelebrateHydrosVictory(void) {
   struct ObjectEvent *leader;
-  struct EventWork *work;
+  struct FieldWork *work;
   TaskFunc update;
   const s32 *celebrate;
   const s32 *party;

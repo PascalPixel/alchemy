@@ -326,7 +326,7 @@ name of their own (`gFieldWork`, `gFieldEffectWork` and so on), so the same bloc
 can be reached two or three ways. Not all of these sites have been measured;
 each keeps its spelling until it is.
 
-- The field work is `(struct FieldWork *)gFieldWork`,
+- The field work is `gFieldWork`,
   `HEAP_SLOT_BLOCK(HEAP_SLOT_FIELD)`, or `AllocHeapSlotEwram(HEAP_SLOT_FIELD,
   sizeof(struct FieldWork))`, which returns the existing block.
 - The effect scene is `gFieldEffectWork` or `*(gHeapSlots + HEAP_SLOT_FIELD_EFFECT)`.

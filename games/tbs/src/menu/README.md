@@ -159,7 +159,7 @@ receiver (`ITEM_STEP_TARGET`) and, when the receiver's bag is full, what they
 give back (`ITEM_STEP_TRADE`). Nothing sets `ITEM_STEP_IDLE` or
 `ITEM_STEP_QUANTITY`. `ItemMenu_Run` returns 1 when an item is to be used
 outside the menu, with its member, target and item id in its out parameters,
-and writes the field's item request (`struct ItemPickerResult`).
+and writes the field's item request (`FieldWork`'s `item` and `itemArgument`).
 
 Each window is a `struct Window` that `struct ItemMenuWork` keeps a
 pointer to. `ItemMenu_Initialize`, which the Psynergy and Djinn screens open

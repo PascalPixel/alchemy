@@ -129,7 +129,7 @@ void Colosso_ControlCharacterAlone(s32 id) {
 /// lend a hand): when the Psynergy request names that friend and
 /// FLAG_PSYNERGY_TARGET is set, raise map event 99, Colosso_TakePlaceForMatch.
 void Colosso_RaiseTakePlaceOnPsynergy(void) {
-  struct EventWork *work = gFieldWork;
+  struct FieldWork *work = gFieldWork;
   s32 selection = gGameState.leaderLocalId;
 
   if (selection != 0 && (work->psynergy >> 10) == selection &&
@@ -147,7 +147,7 @@ void Colosso_RaiseTakePlaceOnPsynergy(void) {
 /// begin. Please take your places." The next friend then looks around, or,
 /// after Mia, the party leaves for the race.
 static void Colosso_TakePlaceForMatch(void) {
-  struct EventWork *work = gFieldWork;
+  struct FieldWork *work = gFieldWork;
   s32 speakerId = 8;
   s32 nearestDistance = 0x100000;
   s32 supporterId = gGameState.leaderLocalId;
@@ -218,7 +218,7 @@ static void Colosso_TakePlaceForMatch(void) {
 /// place, and the next friend looks around, or, after Mia, the party leaves by
 /// the way to the race. On "Nope", "Then cheer as best you can!"
 void Colosso_AskDoneCheering(s32 id) {
-  struct EventWork *work;
+  struct FieldWork *work;
   s32 slot;
   struct ObjectEvent *objectEvent;
   s32 msg;

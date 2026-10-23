@@ -132,7 +132,7 @@ void FieldEffect_End(void) {
 
 #ifdef UBFIX
   effectWork = gFieldEffectWork;
-  runtime = (struct FieldWork *)gFieldWork;
+  runtime = gFieldWork;
   grid = gMapGridWork[0];
 #else
   // Indexing beyond the scalar global is undefined in C. Named slots add
@@ -315,7 +315,7 @@ void FieldEffect_FadeFromEffectColor(void) {
 /// projection.
 void Camera_WorldToScreen(struct EffectVector *position) {
 #ifdef UBFIX
-  struct FieldWork *event = (struct FieldWork *)gFieldWork;
+  struct FieldWork *event = gFieldWork;
 
   if (event->mode == OBJECT_SYSTEM_WORLD_MAP) {
 #else

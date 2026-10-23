@@ -93,7 +93,7 @@ void FieldScript_SpawnObjectEventTemplates(struct ObjectEventTemplate *entry,
   u8 spriteSlot;
   u16 templateSprite;
 
-  work = (struct FieldWork *)gFieldWork;
+  work = gFieldWork;
   // Remember the table once, before consuming slots for its object event
   // templates.
   for (tableIndex = 0; tableIndex < 4; tableIndex++) {
@@ -209,7 +209,7 @@ void FieldScript_SpawnObjectEventTemplates(struct ObjectEventTemplate *entry,
 /// empties the slot. No caller names it; its far-call veneer has no exported
 /// name.
 void ObjectEvent_DestroyAtIndex(s32 objectEventIndex) {
-  struct FieldWork *work = (struct FieldWork *)gFieldWork;
+  struct FieldWork *work = gFieldWork;
   void *object = ObjectEvent_GetByLocalId(objectEventIndex);
 
   if (object != NULL) {
@@ -252,7 +252,7 @@ void ObjectEvent_ResetForObject(struct ObjectEventTemplate *table) {
   s32 pos;
   s32 height;
 
-  work = (struct FieldWork *)gFieldWork;
+  work = gFieldWork;
   leader = gGameState.leaderLocalId;
   // Build the leader's temporary object event template before the map's placed
   // object events. The two-row table, the leader's row and an end row, lives in
@@ -315,7 +315,7 @@ void ObjectEvent_ResetForObject(struct ObjectEventTemplate *table) {
 /// Called by ObjectEvent_Respawn and FieldScript_CallWithLastActiveObjectId
 /// to choose where FieldScript_SpawnObjectEventTemplates starts.
 s32 ObjectEvent_FindLastActiveId(void) {
-  struct FieldWork *work = (struct FieldWork *)gFieldWork;
+  struct FieldWork *work = gFieldWork;
   s32 lastObjectEventIndex = LOCALID_FIRST_PLACED - 1;
   s32 objectEventIndex = LOCALID_FIRST_PLACED;
   struct ObjectEvent **slot = &work->objectEvents[LOCALID_FIRST_PLACED];
@@ -390,7 +390,7 @@ void Map_AssignViewFlags(struct ObjectEventTemplate *entry) {
 /// Djinn_JoinParty; empties the slots it frees. ObjectEvent_Respawn
 /// brings the object events back afterwards.
 void ObjectEvent_ClearOutOfBounds(void) {
-  struct FieldWork *work = (struct FieldWork *)gFieldWork;
+  struct FieldWork *work = gFieldWork;
   struct Object *camera;
   s32 centerX;
   s32 centerZ;
@@ -452,7 +452,7 @@ void ObjectEvent_ClearOutOfBounds(void) {
 /// Djinn_JoinParty. Clears work->tables 1 to 3 before the table is spawned
 /// again.
 void ObjectEvent_Respawn(void) {
-  struct FieldWork *work = (struct FieldWork *)gFieldWork;
+  struct FieldWork *work = gFieldWork;
   struct ObjectEventTemplate *templates;
   s32 slotIndex;
 
@@ -488,7 +488,7 @@ void ObjectEvent_ClearAll(void) {
 
   emptyObjectEvent = NULL;
   objectEventIndex = OBJ_EVENT_SLOT_COUNT - 1;
-  work = (struct FieldWork *)gFieldWork;
+  work = gFieldWork;
   do {
     work->objectEvents[objectEventIndex] = emptyObjectEvent;
     objectEventIndex--;
@@ -544,7 +544,7 @@ void ObjectEvent_Snapshot(void) {
   u32 spriteFlagBits;
   u32 priority;
 
-  work = (struct FieldWork *)gFieldWork;
+  work = gFieldWork;
   if (work->mode == OBJECT_SYSTEM_WORLD_MAP)
     objectEventLimit = LOCALID_FIRST_PLACED;
   // Keep each object event and its three sprite-state bytes at matching save
@@ -604,7 +604,7 @@ void ObjectEvent_Restore(void) {
   s32 priority;
   s32 y;
   s32 *leaderId = &gGameState.leaderLocalId;
-  struct EventWork **fieldWork = &gFieldWork;
+  struct FieldWork **fieldWork = &gFieldWork;
   struct MapGridScrollWork **grid = (struct MapGridScrollWork **)gMapGridWork;
 
   restoredCount = 0;
@@ -631,7 +631,7 @@ void ObjectEvent_Restore(void) {
       object->animation = sprite;
       // Re-anchor the camera only when restoring the selected leader.
       if (objectEventIndex == *leaderId) {
-        camera = ((struct FieldWork *)*fieldWork)->camera;
+        camera = (*fieldWork)->camera;
         cameraPosition = (*grid)->origin;
         y = object->y;
         camera->groundHeight = y;

@@ -326,7 +326,7 @@ static void EventScript_EnterPalace(void) {
 /// Sets up the grounds outside McCoy's Palace: the west worker drawn in
 /// front, and the guards, Lady McCoy and the arrest as the story stands.
 s32 Map_Initialize(void) {
-  struct EventWork *work = gFieldWork;
+  struct FieldWork *work = gFieldWork;
   struct ObjectEvent *objectEvent;
 
   work->transition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);

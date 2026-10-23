@@ -75,24 +75,13 @@
 #define ITEM_LIST_NAME_X 32
 #endif
 
-/// The field's work (heap slot HEAP_SLOT_FIELD) as the Item screen writes it:
-/// the item request that the field loop hands to Field_UseItem once the menu
-/// has closed. struct FieldWork (map_header.h) names these fields item and
-/// itemArgument.
-struct ItemPickerResult {
-  s32 fieldWorkHead[0x60];  ///< FieldWork up to its item request
-  u16 chosenItem;           ///< FieldWork.item: member << 10 | item id
-  u8 fieldWorkMiddle[0x18]; ///< FieldWork's raised event and fallen characters
-  u16 chosenSlot; ///< FieldWork.itemArgument: the member's inventory slot
-};
-
 /// The field menu's Item screen (FieldMenu_Run, FIELD_MENU_ITEM): choose
 /// a party member, one of their items and a command. Items used here take
 /// effect at once; an item to be used on the field is written as the field's
-/// item request (struct ItemPickerResult), run when the field menu has closed.
-/// Owns the menu work (HEAP_SLOT_MENU) while it runs and frees it before
-/// returning. Returns ItemMenu_RunCommands' result: 1 when an item is to be
-/// used on the field, -1 when the player backed out or pressed Start (the
+/// item request (FieldWork.item and itemArgument), run when the field menu has
+/// closed. Owns the menu work (HEAP_SLOT_MENU) while it runs and frees it
+/// before returning. Returns ItemMenu_RunCommands' result: 1 when an item is to
+/// be used on the field, -1 when the player backed out or pressed Start (the
 /// field menu then opens again).
 s32 ItemMenu_Run(void) {
 #if TBS_PATCH_1
@@ -142,11 +131,11 @@ s32 ItemMenu_Run(void) {
   result = ItemMenu_RunCommands(&member, &target, &item);
   Menu_EnsureCancelSound();
   if (result == 1) {
-    struct ItemPickerResult *selection =
+    struct FieldWork *selection =
         cache[HEAP_SLOT_FIELD - HEAP_SLOT_OBJECT_SYSTEM];
 
-    selection->chosenItem = (member << 10) | (item & INVENTORY_ITEM_ID_MASK);
-    selection->chosenSlot = screen->selectedSlots[0];
+    selection->item = (member << 10) | (item & INVENTORY_ITEM_ID_MASK);
+    selection->itemArgument = screen->selectedSlots[0];
   }
 
   // Close the menu and give the screen back to the field.

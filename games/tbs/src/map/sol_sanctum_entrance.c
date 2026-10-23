@@ -388,7 +388,7 @@ static void EventScript_SetFirstSmallJewel(void) {
 /// and until it is set, it opens the main menu.
 static void EventScript_InspectSecondMinotaurRelief(void) {
 
-  struct EventWork *work;
+  struct FieldWork *work;
 
   FieldScript_Start();
 

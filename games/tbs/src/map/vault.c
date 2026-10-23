@@ -231,7 +231,7 @@ static int Vault_GetIvanVenusDjinnCount(void) {
 /// any Venus Djinni with Isaac and leaves the party.
 static void EventScript_IvanStaysBehind(void) {
   struct ObjectEvent *objectEvent;
-  struct EventWork *work;
+  struct FieldWork *work;
 
   work = gFieldWork;
   if (GameFlag_IsSet(FLAG_VAULT_THIEVES_JAILED) != 0 ||
@@ -294,7 +294,7 @@ const struct MapEvent *Map_GetEvents(void) {
 static inline void Vault_AskYesNoAndShowReply(s32 speaker) {
   FieldMessage_ShowAtObject(speaker, 0);
   if (FieldScript_AskYesNoWithObjectEventAnimation(0, 0) != 0) {
-    struct EventWork *work = gFieldWork;
+    struct FieldWork *work = gFieldWork;
 
     ++work->message;
   }
@@ -479,7 +479,7 @@ static void EventScript_PraiseThievesCapture(void) {
 /// After the thieves are jailed, he says Ivan went out to Lunpa, or, with Ivan
 /// in the party, that rescuing Hammet must have been impossible.
 static void EventScript_TalkAboutIvan(void) {
-  struct EventWork *workspace;
+  struct FieldWork *workspace;
   FieldScript_Start();
   FieldScript_SetMessageId(MsgVaultTalkingAboutHammetsServantIvan);
   if (GameFlag_Test(FLAG_IN_PARTY(IVAN)) != 0) {

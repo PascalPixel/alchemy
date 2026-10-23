@@ -433,7 +433,7 @@ static void EventScript_BaneKeepsAway(void) {
   s32 targetByteOffset;
   const u8 *targets;
   s32 zByteOffset;
-  struct EventWork *work;
+  struct FieldWork *work;
 
   work = gFieldWork;
   if (GameFlag_Test(FLAG_CROSSBONE_ISLE_BANE_LAST_ESCAPE) != 0) {
@@ -673,7 +673,7 @@ static void CrossboneIsleKeys_CheckFirstPursuerTrigger(void) {
   struct ObjectEvent *leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   s32 column = leader->x.fixed / PIXELS(16);
   s32 row = leader->z.fixed / PIXELS(16);
-  struct EventWork *work = gFieldWork;
+  struct FieldWork *work = gFieldWork;
 
   if (!FLAG_CHECK(PURSUER_AFTER_LEADER_FLAG) && gGameState.cloaked == 0 &&
       gGameState.pausedObject != LOCALID_FIRST_STATUE &&
@@ -715,7 +715,7 @@ static void CrossboneIsleKeys_CheckSecondPursuerTrigger(void) {
   struct ObjectEvent *leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   s32 column = leader->x.fixed / PIXELS(16);
   s32 row = leader->z.fixed / PIXELS(16);
-  struct EventWork *work = gFieldWork;
+  struct FieldWork *work = gFieldWork;
 
   if (FLAG_CHECK(PURSUER_AFTER_LEADER_FLAG) == 0 && gGameState.cloaked == 0 &&
       gGameState.pausedObject != LOCALID_SECOND_STATUE && column == 10 &&
@@ -873,7 +873,7 @@ static void CrossboneIsleKeys_CheckFifthPursuerTrigger(void) {
   struct ObjectEvent *leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   s32 column = leader->x.fixed / PIXELS(16);
   s32 row = leader->z.fixed / PIXELS(16);
-  struct EventWork *work = gFieldWork;
+  struct FieldWork *work = gFieldWork;
   struct GameState *state = &gGameState;
 
   if (state->pausedObject != LOCALID_FIFTH_STATUE &&

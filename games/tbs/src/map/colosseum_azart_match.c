@@ -556,7 +556,7 @@ static void EventScript_PushPipeworksPillar(void) {
   FieldScript_WaitFrames(6);
   Engine_ObjectEventSetAnimation(leaderId, ANIM_WALK);
   ObjectDispatch_StartCamera(
-      (struct DispatchObject *)((struct EventWork *)AllocHeapSlotEwram(
+      (struct DispatchObject *)((struct FieldWork *)AllocHeapSlotEwram(
                                     HEAP_SLOT_FIELD, sizeof(struct FieldWork)))
           ->camera,
       (s32)objectEvent);

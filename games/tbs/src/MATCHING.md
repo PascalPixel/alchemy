@@ -426,6 +426,11 @@ its cells.
 - In the Japanese small font, `nextRow = row + 1` is in both arms of
   `if (bits == 0)` rather than once ahead of the test (`UiText_DrawGlyphArm`
   in [`window/glyph_arm.c`](window/glyph_arm.c)).
+- `gUiText_MarkGlyphCodes`, the Japanese kana marks, is declared without
+  `const` and put in read-only data with `__attribute__((section(".rodata")))`
+  ([`window/articles.c`](window/articles.c)), as Lunpa's staged-actor tables
+  are. Through a `const` extern, its load in `UiText_RenderGlyphPair` is
+  scheduled ahead of the spill of `out` (2 of 185 instructions in tbs-ja).
 
 ### Menus
 

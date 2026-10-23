@@ -16,7 +16,7 @@ extern const u8 gUiText_NumberWord7[];
 extern const u8 gUiText_NumberWord8[];
 extern const u8 gUiText_NumberWord9[];
 #endif
-extern const u16 gUiText_MarkGlyphCodes[];
+extern u16 gUiText_MarkGlyphCodes[];
 extern const u8 gUiSprite_CursorBobOffsets[80];
 extern const u8 gUiSprite_WobbleTail[16];
 

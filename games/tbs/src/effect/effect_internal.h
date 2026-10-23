@@ -296,9 +296,12 @@ static inline void Dma_Stop(volatile u16 *channel) {
     *(volatile s16 *)((u8 *)BG_CANVAS_MAP + (offset)) = pair;                  \
   }
 
-/// Added to BattleEffect_RunDjinniEntrance's element for the long entrance: 84
-/// frames instead of 64, ending in a burst of motes.
-#define DJINNI_ENTRANCE_LONG ELEMENT_COUNT
+/// What BattleEffect_RunDjinniEntrance takes added to its element; the element
+/// alone plays the 64-frame entrance.
+enum DjinniEntranceLength {
+  /// The long entrance: 84 frames instead of 64, ending in a burst of motes.
+  DJINNI_ENTRANCE_LONG = ELEMENT_COUNT
+};
 
 /// Where BattleEffect_RunDjinniEntrance's Djinni appears.
 enum DjinniEntranceAnchor {

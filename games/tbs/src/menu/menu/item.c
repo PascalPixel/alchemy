@@ -573,7 +573,7 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
         menu->selectedSlots[1] = result;
         result =
             Inventory_RemoveFar(menu->paneOwner[0], menu->selectedSlots[0]);
-        if (result == -1) {
+        if (result == INVENTORY_REMOVE_EMPTY_SLOT) {
           transferFailed = 1;
         }
       }
@@ -652,16 +652,17 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
       Item_CopyWords(ITEM_IWRAM_COPY_WORDS, targetCopy, targetUnit,
                      BATTLE_UNIT_SIZE);
       // Take both whole stacks out, one item at a time (at most a stack of
-      // 30): Inventory_RemoveFar returns 2 for the last one and -1 for an
-      // empty slot. Each count ends one short and is made up after its loop.
+      // 30): Inventory_RemoveFar returns INVENTORY_REMOVE_LAST for the last one
+      // and INVENTORY_REMOVE_EMPTY_SLOT for an empty slot. Each count ends one
+      // short and is made up after its loop.
       sourceQuantity = 0;
       while (sourceQuantity <= 29) {
         result =
             Inventory_RemoveFar(menu->paneOwner[0], menu->selectedSlots[0]);
-        if (result == 2) {
+        if (result == INVENTORY_REMOVE_LAST) {
           break;
         }
-        if (result == -1) {
+        if (result == INVENTORY_REMOVE_EMPTY_SLOT) {
           transferFailed = 1;
           break;
         }
@@ -680,10 +681,10 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
         }
         result =
             Inventory_RemoveFar(menu->paneOwner[1], menu->selectedSlots[1]);
-        if (result == 2) {
+        if (result == INVENTORY_REMOVE_LAST) {
           break;
         }
-        if (result == -1) {
+        if (result == INVENTORY_REMOVE_EMPTY_SLOT) {
           transferFailed = 1;
           break;
         }
@@ -1654,7 +1655,7 @@ s32 Inventory_RemoveFirstUnflagged(s32 ownerId) {
         count = 1;
       for (removedCount = 0; removedCount < count; removedCount++)
         result = Inventory_RemoveFar(ownerId, slotIndex);
-      if (result != 2)
+      if (result != INVENTORY_REMOVE_LAST)
         return 0;
       result = 1;
       break;

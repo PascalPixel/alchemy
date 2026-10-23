@@ -284,10 +284,13 @@ enum PsynergyPhase {
 #define EVENT_PSYNERGY_ON_ACTOR 0x10
 #define PSYNERGY_ON_ACTOR(ability)                                             \
   (EVENT_PSYNERGY | EVENT_PSYNERGY_ON_ACTOR | (ability) << 8)
-/// A bit of an after-cast Psynergy event's trigger, beside the actor's number:
-/// Field_UsePsynergy then clears FLAG_PSYNERGY_EFFECT and plays no effect of
-/// its own, leaving it to the event's script.
-#define PSYNERGY_SCRIPT_PLAYS_EFFECT 0x400
+/// Bits of an after-cast Psynergy event's target word, beside the actor's
+/// number.
+enum PsynergyEventTarget {
+  /// Field_UsePsynergy clears FLAG_PSYNERGY_EFFECT and plays no effect of its
+  /// own, leaving it to the event's script.
+  PSYNERGY_SCRIPT_PLAYS_EFFECT = 0x400
+};
 /// A Psynergy event on an actor at one phase of the cast, as PSYNERGY_IN_AREA
 /// is for an area.
 #define PSYNERGY_PHASE_ON_ACTOR(ability, phase)                                \

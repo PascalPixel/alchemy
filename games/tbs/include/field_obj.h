@@ -146,8 +146,12 @@ STATIC_ASSERT(offsetof(struct FieldActor, targetX) == 0x38);
 STATIC_ASSERT(offsetof(struct FieldActor, sprite) == 0x50);
 STATIC_ASSERT(offsetof(struct FieldActor, update) == 0x6c);
 
-/// A target coordinate that is not set: the object has no target.
-#define ACTOR_NO_TARGET ((s32)0x80000000)
+/// The values of FieldActor.targetX, targetY and targetZ that are not
+/// coordinates.
+enum ActorTarget {
+  /// A target coordinate that is not set: the object has no target.
+  ACTOR_NO_TARGET = (s32)0x80000000
+};
 
 /// Preserves the current action and motion when assigning a linked target.
 enum ActorLinkFlag { ACTOR_LINK_KEEP_MOTION = 0x10000 };

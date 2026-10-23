@@ -696,10 +696,6 @@ UNUSED s32 BattlePresentation_RunPlainAttack(struct BattlePlan *input,
   return 0;
 }
 
-/// Inventory_RemoveFar's result when the last one left its slot, and the
-/// slots after it moved up.
-#define ITEM_REMOVED_SLOT_GONE 2
-
 /// Plays an item's use: the camera turns to the user's side, the user raises
 /// the item and, for an item with an effect, the screen dims while it plays
 /// with the events. Then the item is spent as its use type says; when its
@@ -798,7 +794,7 @@ s32 BattlePresentation_RunItem(struct BattlePlan *plan, s32 unused,
   if (item->useType == ITEM_USE_CONSUMED) {
     s32 result = Inventory_RemoveFar(selection->unitId, selection->parameter);
     s32 index = selection->parameter;
-    if (result == ITEM_REMOVED_SLOT_GONE) {
+    if (result == INVENTORY_REMOVE_LAST) {
       struct BattleWork *battle = gBattleWork;
       u32 row;
 

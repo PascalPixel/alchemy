@@ -180,7 +180,7 @@ enum ValeInteriorsInnActor {
   /// me?"
   /// ★ Named from the game: "That masked man..." (MsgValeTheMaskedManWasFelix)
   ACTOR_MASKED_MAN,
-  /// Sprite 0xe2, set beside Isaac's bed on the stormy night: Catch reaches it
+  /// SPRITE_TUNIC, set beside Isaac's bed on the stormy night: Catch reaches it
   /// and Isaac puts it on (FLAG_ISAAC_WEARS_TUNIC). Dora: "Don't go out without
   /// your tunic!"
   /// ★ Named from the game: "Don't go out without your tunic!"
@@ -700,7 +700,8 @@ static void Event_DoraWakesIsaac(void) {
   Engine_EventWait(10);
   Engine_ActorRunRepeatedMotion(ACTOR_DORA, 2);
   ObjectDispatch_RegisterChildMetadata(
-      (struct DispatchObject *)Object_GetById(ACTOR_PARTY_LEADER), 226);
+      (struct DispatchObject *)Object_GetById(ACTOR_PARTY_LEADER),
+      SPRITE_TUNIC);
   Engine_GameFlagSet(FLAG_ISAAC_WEARS_TUNIC);
   Engine_AudioPlayCue(SE_RECOVERY);
   Engine_ActorSetChildValue(ACTOR_PARTY_LEADER, 7);
@@ -1559,7 +1560,7 @@ struct ScenePlacement gValeInteriorsInn_Placements[] = {
         PIXELS(218), 0, PIXELS(373), FACING_EAST + FACING_STEP, TALK_FACE_PARTY_AND_BACK, 0 },
     { SPRITE_FELIX_MASKED, 0x0, ACTOR_STAND,
         PIXELS(54), 0, PIXELS(669), FACING_WEST, TALK_FACE_PARTY_AND_BACK, 0 },
-    { 0xe2, CONDITION_ALWAYS, ACTOR_STAND,
+    { SPRITE_TUNIC, CONDITION_ALWAYS, ACTOR_STAND,
         0, 0, 0, FACING_NORTHEAST, TALK_KEEP_FACING, 0 },
     { SPRITE_KRADEN, CONDITION_ALWAYS, ACTOR_STAND,
         0, 0, 0, FACING_SOUTH, TALK_KEEP_FACING, 0 },

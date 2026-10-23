@@ -345,25 +345,26 @@ s32 Inventory_GetEquippedItem(struct BattleUnit *unit, s32 type) {
   return 0;
 }
 
-/// Takes one item out of `slot`: a stack shrinks by one (returns 1), a last
-/// item empties the slot and the inventory closes up (returns 2). Returns -1
-/// for an empty slot. The unit's stats are recomputed either way; its Psynergy
+/// Takes one item out of `slot`: a stack shrinks by one
+/// (INVENTORY_REMOVE_ONE), a last item empties the slot and the inventory
+/// closes up (INVENTORY_REMOVE_LAST). Returns INVENTORY_REMOVE_EMPTY_SLOT for
+/// an empty slot. The unit's stats are recomputed either way; its Psynergy
 /// list is not rebuilt here (Unit_RefreshPsynergy), so a removed item's
 /// Psynergy stays listed until something rebuilds it. Called by using an item
 /// in the field or in battle, by the shops and by Inventory_Discard.
 s32 Inventory_Remove(s32 owner, s32 slot) {
   struct BattleUnit *unit = Unit_Get(owner);
   u16 item = unit->inventory[slot];
-  s32 result = -1;
+  s32 result = INVENTORY_REMOVE_EMPTY_SLOT;
 
   if (item != 0) {
     if (item & INVENTORY_QUANTITY_MASK) {
       unit->inventory[slot] = item - INVENTORY_QUANTITY_STEP;
-      result = 1;
+      result = INVENTORY_REMOVE_ONE;
     } else {
       unit->inventory[slot] = 0;
       Inventory_CompactSlots(unit->inventory);
-      result = 2;
+      result = INVENTORY_REMOVE_LAST;
     }
   }
   Unit_Calculate(owner);
@@ -377,7 +378,7 @@ s32 Inventory_Discard(s32 owner, s32 slot) {
   s32 item = Unit_Get(owner)->inventory[slot];
   s32 removalResult = Inventory_Remove(owner, slot);
 
-  if (removalResult != -1) {
+  if (removalResult != INVENTORY_REMOVE_EMPTY_SLOT) {
     Item_AdjustCounter(item, 1);
     Event_ClearInvalidPackedValuesFar();
   }

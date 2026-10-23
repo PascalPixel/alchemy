@@ -7,9 +7,6 @@
 enum {
   /// 20 flags per element: the Djinn's caught flags are 48 to 127.
   ACTOR_DJINNI_FLAG_COUNT = ELEMENT_COUNT * 20,
-  /// The tunic's child part, drawn over a child sprite while
-  /// FLAG_ISAAC_WEARS_TUNIC is set.
-  ACTOR_TUNIC_ANIMATION = 226,
   /// The field work's actor slots: the party's eight, then the placed
   /// actors.
   ACTOR_SLOT_COUNT = 66
@@ -148,7 +145,7 @@ void Event_SpawnObjectTable(struct ScenePlacement *entry, s32 slot) {
       if (GameFlag_TestFar(FLAG_ISAAC_WEARS_TUNIC) &&
           (u32)(spriteId - ISAAC_CHILD) <= GARET_CHILD - ISAAC_CHILD)
         ObjectDispatch_RegisterChildMetadataFar((struct DispatchObject *)object,
-                                                ACTOR_TUNIC_ANIMATION);
+                                                SPRITE_TUNIC);
     } else if (!GameFlag_TestFar(FLAG_KEEP_PARTY_POSITION)) {
       Object_SetPositionAndResetMotionFar(object, entry->x, entry->y, entry->z);
     }

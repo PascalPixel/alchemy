@@ -1716,7 +1716,7 @@ static void EventScript_HideSwitches(void) {
 /// LunpaFortressCave, Whirlwind on the ivy over the first switch: it blows
 /// away.
 static void EventScript_BlowAwayFirstSwitchIvy(void) {
-  Engine_GameFlagSet(FLAG_LUNPA_FORTRESS_FIRST_SWITCH_PLANT_BLOWN_AWAY);
+  Engine_GameFlagSet(FLAG_LUNPA_FORTRESS_FIRST_SWITCH_IVY_BLOWN_AWAY);
   Engine_GameFlagClear(FLAG_MAP_TEMP_17);
   Engine_ObjectEventSetPosition(LOCALID_CAVE_FIRST_SWITCH_IVY, 0, 0);
 }
@@ -1724,7 +1724,7 @@ static void EventScript_BlowAwayFirstSwitchIvy(void) {
 /// LunpaFortressCave, Whirlwind on the ivy over the passage: it blows away and
 /// the passage opens.
 static void EventScript_BlowAwayPassageIvy(void) {
-  Engine_GameFlagSet(FLAG_LUNPA_FORTRESS_PASSAGE_PLANT_BLOWN_AWAY);
+  Engine_GameFlagSet(FLAG_LUNPA_FORTRESS_PASSAGE_IVY_BLOWN_AWAY);
   LunpaFortress_OpenIvyPassage();
   Engine_ObjectEventSetPosition(LOCALID_CAVE_PASSAGE_IVY, 0, 0);
 }
@@ -1732,7 +1732,7 @@ static void EventScript_BlowAwayPassageIvy(void) {
 /// LunpaFortressCave, Whirlwind on the ivy over the second switch: it blows
 /// away.
 static void EventScript_BlowAwaySecondSwitchIvy(void) {
-  Engine_GameFlagSet(FLAG_LUNPA_FORTRESS_SECOND_SWITCH_PLANT_BLOWN_AWAY);
+  Engine_GameFlagSet(FLAG_LUNPA_FORTRESS_SECOND_SWITCH_IVY_BLOWN_AWAY);
   Engine_GameFlagClear(FLAG_MAP_TEMP_18);
   Engine_ObjectEventSetPosition(LOCALID_CAVE_SECOND_SWITCH_IVY, 0, 0);
 }
@@ -3368,15 +3368,15 @@ static void LunpaFortress_InitializeCave(void) {
   }
   FLAG_SET(FLAG_MAP_TEMP_17);
   FLAG_SET(FLAG_MAP_TEMP_18);
-  if (FLAG_CHECK(FLAG_LUNPA_FORTRESS_FIRST_SWITCH_PLANT_BLOWN_AWAY)) {
+  if (FLAG_CHECK(FLAG_LUNPA_FORTRESS_FIRST_SWITCH_IVY_BLOWN_AWAY)) {
     OBJECT_POSITION_SET(LOCALID_CAVE_FIRST_SWITCH_IVY, 0, 0);
     Engine_GameFlagClear(FLAG_MAP_TEMP_17);
   }
-  if (FLAG_CHECK(FLAG_LUNPA_FORTRESS_PASSAGE_PLANT_BLOWN_AWAY)) {
+  if (FLAG_CHECK(FLAG_LUNPA_FORTRESS_PASSAGE_IVY_BLOWN_AWAY)) {
     OBJECT_POSITION_SET(LOCALID_CAVE_PASSAGE_IVY, 0, 0);
     LunpaFortress_OpenIvyPassage();
   }
-  if (FLAG_CHECK(FLAG_LUNPA_FORTRESS_SECOND_SWITCH_PLANT_BLOWN_AWAY)) {
+  if (FLAG_CHECK(FLAG_LUNPA_FORTRESS_SECOND_SWITCH_IVY_BLOWN_AWAY)) {
     OBJECT_POSITION_SET(LOCALID_CAVE_SECOND_SWITCH_IVY, 0, 0);
     Engine_GameFlagClear(FLAG_MAP_TEMP_18);
   }

@@ -949,9 +949,9 @@ s32 Map_Initialize(void) {
 #endif
     FieldScheduler_AddCallback(Lunpa_WatchForUncloakedParty, TASK_PRIORITY_MAP);
     // The fortress's puzzles and beaten guards are reset.
-    Engine_GameFlagClear(FLAG_LUNPA_FORTRESS_FIRST_SWITCH_PLANT_BLOWN_AWAY);
-    Engine_GameFlagClear(FLAG_LUNPA_FORTRESS_PASSAGE_PLANT_BLOWN_AWAY);
-    Engine_GameFlagClear(FLAG_LUNPA_FORTRESS_SECOND_SWITCH_PLANT_BLOWN_AWAY);
+    Engine_GameFlagClear(FLAG_LUNPA_FORTRESS_FIRST_SWITCH_IVY_BLOWN_AWAY);
+    Engine_GameFlagClear(FLAG_LUNPA_FORTRESS_PASSAGE_IVY_BLOWN_AWAY);
+    Engine_GameFlagClear(FLAG_LUNPA_FORTRESS_SECOND_SWITCH_IVY_BLOWN_AWAY);
     Engine_GameFlagClear(FLAG_LUNPA_FORTRESS_FIRST_SWITCH_FLIPPED);
     Engine_GameFlagClear(FLAG_LUNPA_FORTRESS_SECOND_SWITCH_FLIPPED);
     Engine_GameFlagClear(FLAG_LUNPA_FORTRESS_CRATES_MOVED);

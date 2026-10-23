@@ -1147,7 +1147,7 @@ s32 ColosseumNavampaMatch_Initialize(void) {
     Engine_ObjectEventSetSpriteFlags(objectEvent, 0);
     ObjectEvent_SetMode(objectEvent, 3);
     Engine_ObjectSetScript(objectEvent,
-                           gColosseumNavampaMatch_SidewalkBlockOffBelt);
+                           gColosseumNavampaMatch_SidewalkLogOffBelt);
   } else {
     TilesetAnim_Pause(2);
   }
@@ -2371,7 +2371,7 @@ static void ColosseumNavampaMatch_PushObjectEventAhead(void) {
 
 /// The Moving Sidewalk Stage's log where Force has knocked it off the belt,
 /// bobbing a pixel up and down.
-const s32 gColosseumNavampaMatch_SidewalkBlockOffBelt[] = {
+const s32 gColosseumNavampaMatch_SidewalkLogOffBelt[] = {
     SC_SET(SW_Y, PIXELS(1)),     SC_WAIT(10), SC_SET(SW_Y, 0), SC_WAIT(10),
     SC_LOOP(SC_FOREVER, SC_TOP),
 };

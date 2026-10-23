@@ -47,13 +47,13 @@
 /// The shops and the inn open across their counters when the leader faces
 /// north; otherwise their keepers speak. A jar, two barrels and a wooden box
 /// hold coins, a Sleep Bomb and a Mint, each found once, and two bookcases can
-/// be read. The cells the events answer are enum VaultInteriorsCell
+/// be read. The cells the events answer are enum VaultInteriorsMetatileBehavior
 /// (vault_interiors.h).
 ///
 /// EventScript_ApproachSuspects plays once: it copies
-/// VAULT_INTERIORS_CELL_GUESTS_ROOM_DOOR cells over the guests' room's
-/// VAULT_INTERIORS_CELL_GUESTS_ROOM cells, EventScript_DiscussSuspiciousGuests
-/// makes them VAULT_INTERIORS_CELL_CORNERING_START, and every later arrival
+/// MB_VAULT_INTERIORS_GUESTS_ROOM_DOOR cells over the guests' room's
+/// MB_VAULT_INTERIORS_GUESTS_ROOM cells, EventScript_DiscussSuspiciousGuests
+/// makes them MB_VAULT_INTERIORS_CORNERING_START, and every later arrival
 /// with FLAG_VAULT_SUSPECTS_APPROACHED set rewrites them again (render probe
 /// vault-interiors: the room has no GUESTS_ROOM cell once the flag is set).
 ///
@@ -360,7 +360,7 @@ static s32 VaultInteriors_TryJumpTo(struct FieldPosition *position) {
 /// Indoors in Vault, facing north or south across the gap in the roof, the
 /// leader jumps it.
 ///
-/// Reached by walking onto VAULT_INTERIORS_CELL_ROOF_GAP. Then copies the cell
+/// Reached by walking onto MB_VAULT_INTERIORS_ROOF_GAP. Then copies the cell
 /// (41, 85) or (43, 85) over the gap's cell (42, 85), whichever side the leader
 /// faced.
 static void EventScript_JumpAcrossRoofGap(void) {
@@ -511,7 +511,7 @@ static void EventScript_GaretRefusesToLeave(void) {
 
 /// At Vault's inn, Isaac checks the barrel but doesn't find anything.
 ///
-/// Reached by searching VAULT_INTERIORS_CELL_INN_BARREL before the thieves are
+/// Reached by searching MB_VAULT_INTERIORS_INN_BARREL before the thieves are
 /// jailed; after, the same spot holds the Bone (Vault_FindBone).
 static void EventScript_SearchEmptyBarrel(void) {
   FieldScript_Start();
@@ -1553,7 +1553,7 @@ static void EventScript_FreeRooferAndConfrontThieves(void) {
 /// At Vault's inn, the party leaves the guests' room for the floor below
 /// (VAULT_INTERIORS_INN_FROM_INN_UPSTAIRS).
 ///
-/// Reached by stepping on VAULT_INTERIORS_CELL_GUESTS_ROOM_STAIRS before the
+/// Reached by stepping on MB_VAULT_INTERIORS_GUESTS_ROOM_STAIRS before the
 /// thieves are jailed (after, the same cell is a plain warp); takes
 /// VAULT_INTERIORS_INN_UPSTAIRS_TO_INN.
 static void EventScript_LeaveGuestsRoom(void) {
@@ -1564,7 +1564,7 @@ static void EventScript_LeaveGuestsRoom(void) {
 /// In Vault's room with the crate, the party climbs up into the inn's loft by
 /// the way behind the crate.
 ///
-/// Reached by stepping on VAULT_INTERIORS_CELL_LOFT_CLIMB; takes
+/// Reached by stepping on MB_VAULT_INTERIORS_LOFT_CLIMB; takes
 /// VAULT_INTERIORS_CRATE_ROOM_TO_LOFT.
 static void EventScript_ClimbToLoft(void) {
   ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(1) / 2, PIXELS(1) / 4);
@@ -1578,7 +1578,7 @@ static void EventScript_ClimbToLoft(void) {
 /// It hears him when it leaves before the thieves are confronted.
 /// "Uhnn... Uhnn..."
 ///
-/// Reached by stepping on VAULT_INTERIORS_CELL_LOFT_DESCENT; takes
+/// Reached by stepping on MB_VAULT_INTERIORS_LOFT_DESCENT; takes
 /// VAULT_INTERIORS_LOFT_TO_CRATE_ROOM back down.
 static void EventScript_LeaveLoft(void) {
   ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(1) / 2, PIXELS(1) / 4);
@@ -1597,11 +1597,11 @@ static void EventScript_LeaveLoft(void) {
 /// In the guests' room at Vault's inn, the two suspects spot "that weird kid"
 /// with the party and run from him. "What do you want?"
 ///
-/// Reached by stepping on VAULT_INTERIORS_CELL_GUESTS_ROOM while
+/// Reached by stepping on MB_VAULT_INTERIORS_GUESTS_ROOM while
 /// FLAG_VAULT_IVAN_JOINED_ROD_SEARCH is set. Sets
 /// FLAG_VAULT_SUSPECTS_APPROACHED and FLAG_SUSPECTS_FLEEING, starts their
 /// routes and the callback that keeps them facing the leader.
-/// It plays once: it copies VAULT_INTERIORS_CELL_GUESTS_ROOM_DOOR cells over
+/// It plays once: it copies MB_VAULT_INTERIORS_GUESTS_ROOM_DOOR cells over
 /// the cells that reach it.
 static void EventScript_ApproachSuspects(void) {
 
@@ -1658,7 +1658,7 @@ static void EventScript_ApproachSuspects(void) {
 /// Ivan can't read their minds while they run; Garet tells Isaac to take the
 /// lead and corner them.
 ///
-/// Reached by stepping on VAULT_INTERIORS_CELL_GUESTS_ROOM_DOOR while
+/// Reached by stepping on MB_VAULT_INTERIORS_GUESTS_ROOM_DOOR while
 /// FLAG_SUSPECTS_FLEEING is set. Clears it and stops the facing callback; the
 /// suspects go back to their places.
 static void EventScript_DiscussSuspiciousGuests(void) {
@@ -1755,7 +1755,7 @@ static void EventScript_DiscussSuspiciousGuests(void) {
 /// In the guests' room at Vault's inn, the party sets out to corner the two
 /// suspects.
 ///
-/// Reached by stepping on VAULT_INTERIORS_CELL_CORNERING_START while
+/// Reached by stepping on MB_VAULT_INTERIORS_CORNERING_START while
 /// FLAG_VAULT_SUSPECTS_APPROACHED is set. Sets FLAG_MENUS_RAISE_EVENT, so the
 /// menus answer with Garet's refusal, and FLAG_MAP_TEMP_50, so talking to
 /// Ivan or the suspects does nothing; then starts the chase
@@ -2069,21 +2069,21 @@ static void VaultInteriors_DiscussMindReading(void) {
 
 /// The fleeing suspects move on to their next spots.
 /// This is in the guests' room at Vault's inn, when the leader steps on one of
-/// the route cells, VAULT_INTERIORS_CELL_FIRST_SUSPECT_ROUTE to
+/// the route cells, MB_VAULT_INTERIORS_FIRST_SUSPECT_ROUTE to
 /// _LAST_SUSPECT_ROUTE.
 ///
 /// Reached by stepping on one of them while FLAG_SUSPECTS_FLEEING is
 /// set.
 static void EventScript_AdvanceSuspectRoutes(void) {
   switch (gFieldWork->coordEvent) {
-  case VAULT_INTERIORS_CELL_FIRST_SUSPECT_ROUTE:
+  case MB_VAULT_INTERIORS_FIRST_SUSPECT_ROUTE:
     VaultInteriors_AdvanceSuspectRoute(LOCALID_SUSPECTED_LEADER, 1, 2,
                                        gVaultInteriors_SuspectToMiddleBedHead);
     VaultInteriors_AdvanceSuspectRoute(
         LOCALID_SUSPECTED_THIEF, 3, 4,
         gVaultInteriors_SuspectAlongToSouthEastCorner);
     break;
-  case VAULT_INTERIORS_CELL_FIRST_SUSPECT_ROUTE + 1:
+  case MB_VAULT_INTERIORS_FIRST_SUSPECT_ROUTE + 1:
     VaultInteriors_AdvanceSuspectRoute(
         LOCALID_SUSPECTED_LEADER, 1, 4,
         gVaultInteriors_SuspectRoundToWestBedFoot);
@@ -2093,7 +2093,7 @@ static void EventScript_AdvanceSuspectRoutes(void) {
         LOCALID_SUSPECTED_THIEF, 1, 3,
         gVaultInteriors_SuspectToSouthWestCorner);
     break;
-  case VAULT_INTERIORS_CELL_FIRST_SUSPECT_ROUTE + 2:
+  case MB_VAULT_INTERIORS_FIRST_SUSPECT_ROUTE + 2:
     VaultInteriors_AdvanceSuspectRoute(LOCALID_SUSPECTED_LEADER, 2, 1,
                                        gVaultInteriors_SuspectToWestBedHead);
     VaultInteriors_AdvanceSuspectRoute(
@@ -2103,21 +2103,21 @@ static void EventScript_AdvanceSuspectRoutes(void) {
         LOCALID_SUSPECTED_THIEF, 2, 4,
         gVaultInteriors_SuspectToSouthEastCorner);
     break;
-  case VAULT_INTERIORS_CELL_FIRST_SUSPECT_ROUTE + 3:
+  case MB_VAULT_INTERIORS_FIRST_SUSPECT_ROUTE + 3:
     VaultInteriors_AdvanceSuspectRoute(LOCALID_SUSPECTED_LEADER, 3, 2,
                                        gVaultInteriors_SuspectToMiddleBedHead);
     VaultInteriors_AdvanceSuspectRoute(
         LOCALID_SUSPECTED_THIEF, 4, 3,
         gVaultInteriors_SuspectAlongToSouthWestCorner);
     break;
-  case VAULT_INTERIORS_CELL_FIRST_SUSPECT_ROUTE + 4:
+  case MB_VAULT_INTERIORS_FIRST_SUSPECT_ROUTE + 4:
     VaultInteriors_AdvanceSuspectRoute(LOCALID_SUSPECTED_LEADER, 4, 5,
                                        gVaultInteriors_SuspectToMiddleBedFoot);
     VaultInteriors_AdvanceSuspectRoute(
         LOCALID_SUSPECTED_THIEF, 1, 2,
         gVaultInteriors_SuspectAcrossToEastOfBeds);
     break;
-  case VAULT_INTERIORS_CELL_FIRST_SUSPECT_ROUTE + 5:
+  case MB_VAULT_INTERIORS_FIRST_SUSPECT_ROUTE + 5:
     VaultInteriors_AdvanceSuspectRoute(
         LOCALID_SUSPECTED_LEADER, 4, 1,
         gVaultInteriors_SuspectRoundToWestBedHead);
@@ -2126,7 +2126,7 @@ static void EventScript_AdvanceSuspectRoutes(void) {
     VaultInteriors_AdvanceSuspectRoute(LOCALID_SUSPECTED_THIEF, 3, 1,
                                        gVaultInteriors_SuspectToWestOfBeds);
     break;
-  case VAULT_INTERIORS_CELL_FIRST_SUSPECT_ROUTE + 6:
+  case MB_VAULT_INTERIORS_FIRST_SUSPECT_ROUTE + 6:
     VaultInteriors_AdvanceSuspectRoute(LOCALID_SUSPECTED_LEADER, 5, 4,
                                        gVaultInteriors_SuspectToWestBedFoot);
     VaultInteriors_AdvanceSuspectRoute(
@@ -2135,7 +2135,7 @@ static void EventScript_AdvanceSuspectRoutes(void) {
     VaultInteriors_AdvanceSuspectRoute(LOCALID_SUSPECTED_THIEF, 4, 2,
                                        gVaultInteriors_SuspectToEastOfBeds);
     break;
-  case VAULT_INTERIORS_CELL_LAST_SUSPECT_ROUTE:
+  case MB_VAULT_INTERIORS_LAST_SUSPECT_ROUTE:
     VaultInteriors_AdvanceSuspectRoute(LOCALID_SUSPECTED_LEADER, 6, 5,
                                        gVaultInteriors_SuspectToMiddleBedFoot);
     VaultInteriors_AdvanceSuspectRoute(
@@ -4100,25 +4100,25 @@ struct MapEvent gVaultInteriors_Events[] = {
     { MAP_EVENT_WARP, 4, CONDITION_ALWAYS, VAULT_INTERIORS_TO_VAULT_EAST },
     { MAP_EVENT_WARP, 5, CONDITION_ALWAYS, VAULT_INTERIORS_TO_VAULT_NORTH_NORTHEAST },
     { MAP_EVENT_WARP, 6, CONDITION_ALWAYS, VAULT_INTERIORS_TO_VAULT_NORTHWEST },
-    { MAP_EVENT_COORD, VAULT_INTERIORS_CELL_GUESTS_ROOM_STAIRS, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_LeaveGuestsRoom) },
+    { MAP_EVENT_COORD, MB_VAULT_INTERIORS_GUESTS_ROOM_STAIRS, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_LeaveGuestsRoom) },
     { MAP_EVENT_WARP, 8, CONDITION_ALWAYS, VAULT_INTERIORS_INN_TO_INN_UPSTAIRS },
-    { MAP_EVENT_COORD, VAULT_INTERIORS_CELL_GUESTS_ROOM, IF_FLAG_SET(FLAG_VAULT_IVAN_JOINED_ROD_SEARCH), EVENT_SCRIPT(EventScript_ApproachSuspects) },
-    { MAP_EVENT_COORD, VAULT_INTERIORS_CELL_FIRST_SUSPECT_ROUTE, IF_FLAG_SET(FLAG_SUSPECTS_FLEEING), EVENT_SCRIPT(EventScript_AdvanceSuspectRoutes) },
-    { MAP_EVENT_COORD, VAULT_INTERIORS_CELL_FIRST_SUSPECT_ROUTE + 1, IF_FLAG_SET(FLAG_SUSPECTS_FLEEING), EVENT_SCRIPT(EventScript_AdvanceSuspectRoutes) },
-    { MAP_EVENT_COORD, VAULT_INTERIORS_CELL_FIRST_SUSPECT_ROUTE + 2, IF_FLAG_SET(FLAG_SUSPECTS_FLEEING), EVENT_SCRIPT(EventScript_AdvanceSuspectRoutes) },
-    { MAP_EVENT_COORD, VAULT_INTERIORS_CELL_FIRST_SUSPECT_ROUTE + 3, IF_FLAG_SET(FLAG_SUSPECTS_FLEEING), EVENT_SCRIPT(EventScript_AdvanceSuspectRoutes) },
-    { MAP_EVENT_COORD, VAULT_INTERIORS_CELL_FIRST_SUSPECT_ROUTE + 4, IF_FLAG_SET(FLAG_SUSPECTS_FLEEING), EVENT_SCRIPT(EventScript_AdvanceSuspectRoutes) },
-    { MAP_EVENT_COORD, VAULT_INTERIORS_CELL_FIRST_SUSPECT_ROUTE + 5, IF_FLAG_SET(FLAG_SUSPECTS_FLEEING), EVENT_SCRIPT(EventScript_AdvanceSuspectRoutes) },
-    { MAP_EVENT_COORD, VAULT_INTERIORS_CELL_FIRST_SUSPECT_ROUTE + 6, IF_FLAG_SET(FLAG_SUSPECTS_FLEEING), EVENT_SCRIPT(EventScript_AdvanceSuspectRoutes) },
-    { MAP_EVENT_COORD, VAULT_INTERIORS_CELL_LAST_SUSPECT_ROUTE, IF_FLAG_SET(FLAG_SUSPECTS_FLEEING), EVENT_SCRIPT(EventScript_AdvanceSuspectRoutes) },
-    { MAP_EVENT_COORD, VAULT_INTERIORS_CELL_GUESTS_ROOM_DOOR, IF_FLAG_SET(FLAG_SUSPECTS_FLEEING), EVENT_SCRIPT(EventScript_DiscussSuspiciousGuests) },
-    { MAP_EVENT_COORD, VAULT_INTERIORS_CELL_CORNERING_START, IF_FLAG_SET(FLAG_VAULT_SUSPECTS_APPROACHED), EVENT_SCRIPT(EventScript_StartCorneringSuspects) },
+    { MAP_EVENT_COORD, MB_VAULT_INTERIORS_GUESTS_ROOM, IF_FLAG_SET(FLAG_VAULT_IVAN_JOINED_ROD_SEARCH), EVENT_SCRIPT(EventScript_ApproachSuspects) },
+    { MAP_EVENT_COORD, MB_VAULT_INTERIORS_FIRST_SUSPECT_ROUTE, IF_FLAG_SET(FLAG_SUSPECTS_FLEEING), EVENT_SCRIPT(EventScript_AdvanceSuspectRoutes) },
+    { MAP_EVENT_COORD, MB_VAULT_INTERIORS_FIRST_SUSPECT_ROUTE + 1, IF_FLAG_SET(FLAG_SUSPECTS_FLEEING), EVENT_SCRIPT(EventScript_AdvanceSuspectRoutes) },
+    { MAP_EVENT_COORD, MB_VAULT_INTERIORS_FIRST_SUSPECT_ROUTE + 2, IF_FLAG_SET(FLAG_SUSPECTS_FLEEING), EVENT_SCRIPT(EventScript_AdvanceSuspectRoutes) },
+    { MAP_EVENT_COORD, MB_VAULT_INTERIORS_FIRST_SUSPECT_ROUTE + 3, IF_FLAG_SET(FLAG_SUSPECTS_FLEEING), EVENT_SCRIPT(EventScript_AdvanceSuspectRoutes) },
+    { MAP_EVENT_COORD, MB_VAULT_INTERIORS_FIRST_SUSPECT_ROUTE + 4, IF_FLAG_SET(FLAG_SUSPECTS_FLEEING), EVENT_SCRIPT(EventScript_AdvanceSuspectRoutes) },
+    { MAP_EVENT_COORD, MB_VAULT_INTERIORS_FIRST_SUSPECT_ROUTE + 5, IF_FLAG_SET(FLAG_SUSPECTS_FLEEING), EVENT_SCRIPT(EventScript_AdvanceSuspectRoutes) },
+    { MAP_EVENT_COORD, MB_VAULT_INTERIORS_FIRST_SUSPECT_ROUTE + 6, IF_FLAG_SET(FLAG_SUSPECTS_FLEEING), EVENT_SCRIPT(EventScript_AdvanceSuspectRoutes) },
+    { MAP_EVENT_COORD, MB_VAULT_INTERIORS_LAST_SUSPECT_ROUTE, IF_FLAG_SET(FLAG_SUSPECTS_FLEEING), EVENT_SCRIPT(EventScript_AdvanceSuspectRoutes) },
+    { MAP_EVENT_COORD, MB_VAULT_INTERIORS_GUESTS_ROOM_DOOR, IF_FLAG_SET(FLAG_SUSPECTS_FLEEING), EVENT_SCRIPT(EventScript_DiscussSuspiciousGuests) },
+    { MAP_EVENT_COORD, MB_VAULT_INTERIORS_CORNERING_START, IF_FLAG_SET(FLAG_VAULT_SUSPECTS_APPROACHED), EVENT_SCRIPT(EventScript_StartCorneringSuspects) },
     { MAP_EVENT_RAISED, VAULT_INTERIORS_LEADER_CORNERED, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_ReadCorneredSuspectsMinds) },
     { MAP_EVENT_RAISED, VAULT_INTERIORS_THIEF_CORNERED, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_ReadCorneredSuspectsMinds) },
     { MAP_EVENT_RAISED, VAULT_INTERIORS_BOTH_CORNERED, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_ReadCorneredSuspectsMinds) },
     { MAP_EVENT_RAISED, FIELD_RAISED_EVENT_MENUS, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_GaretRefusesToLeave) },
-    { MAP_EVENT_COORD, VAULT_INTERIORS_CELL_LOFT_CLIMB, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_ClimbToLoft) },
-    { COORD_EVENT_WALKING, VAULT_INTERIORS_CELL_ROOF_GAP, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_JumpAcrossRoofGap) },
+    { MAP_EVENT_COORD, MB_VAULT_INTERIORS_LOFT_CLIMB, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_ClimbToLoft) },
+    { COORD_EVENT_WALKING, MB_VAULT_INTERIORS_ROOF_GAP, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_JumpAcrossRoofGap) },
     { MAP_EVENT_TALK, IVAN, IF_FLAG_SET(FLAG_MAP_TEMP_50), 0 },
     { MAP_EVENT_TALK, IVAN, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_MeetIvan) },
     { MAP_EVENT_TALK, LOCALID_GEM_OWNER, CONDITION_ALWAYS, MSGNO(MsgVaultThisRockWasBlownHereAll) },
@@ -4167,18 +4167,18 @@ struct MapEvent gVaultInteriors_Events[] = {
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), 0x400 | LOCALID_SUSPECTED_LEADER, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_SuspectedLeaderDodges) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), 0x400 | LOCALID_SUSPECTED_THIEF, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_SuspectedThiefDodges) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MOVE), LOCALID_CRATE, FLAG_VAULT_CRATE_MOVED, EVENT_SCRIPT(EventScript_CheckCrateMoved) },
-    { BG_EVENT(BG_EVENT_SILENT), VAULT_INTERIORS_CELL_INN_BARREL, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_SearchEmptyBarrel) },
-    { BG_EVENT(BG_EVENT_JAR), VAULT_INTERIORS_CELL_JAR, FLAG_VAULT_INTERIORS_JAR_COINS, FIND_COINS(7) },
-    { BG_EVENT(BG_EVENT_BARREL), VAULT_INTERIORS_CELL_FIRST_BARREL, FLAG_VAULT_INTERIORS_BARREL_COINS, FIND_COINS(4) },
-    { BG_EVENT(BG_EVENT_BARREL), VAULT_INTERIORS_CELL_SECOND_BARREL, FLAG_VAULT_INTERIORS_BARREL_SLEEP_BOMB, FIND_ITEM(ITEM_SLEEP_BOMB) },
-    { BG_EVENT(BG_EVENT_WOODEN_BOX), VAULT_INTERIORS_CELL_WOODEN_BOX, FLAG_VAULT_INTERIORS_BOX_MINT, FIND_ITEM(ITEM_MINT) },
-    { BG_EVENT(BG_EVENT_BOOKCASE) | MAP_EVENT_FLAG_FACING | FACING_NORTH, VAULT_INTERIORS_CELL_HISTORY_BOOKCASE, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgVaultTheresABookEntitledHistoryOf)) },
-    { BG_EVENT(BG_EVENT_BOOKCASE), VAULT_INTERIORS_CELL_GEMS_BOOKCASE, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgVaultTheresABookEntitledGemsOf)) },
+    { BG_EVENT(BG_EVENT_SILENT), MB_VAULT_INTERIORS_INN_BARREL, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_SearchEmptyBarrel) },
+    { BG_EVENT(BG_EVENT_JAR), MB_VAULT_INTERIORS_JAR, FLAG_VAULT_INTERIORS_JAR_COINS, FIND_COINS(7) },
+    { BG_EVENT(BG_EVENT_BARREL), MB_VAULT_INTERIORS_FIRST_BARREL, FLAG_VAULT_INTERIORS_BARREL_COINS, FIND_COINS(4) },
+    { BG_EVENT(BG_EVENT_BARREL), MB_VAULT_INTERIORS_SECOND_BARREL, FLAG_VAULT_INTERIORS_BARREL_SLEEP_BOMB, FIND_ITEM(ITEM_SLEEP_BOMB) },
+    { BG_EVENT(BG_EVENT_WOODEN_BOX), MB_VAULT_INTERIORS_WOODEN_BOX, FLAG_VAULT_INTERIORS_BOX_MINT, FIND_ITEM(ITEM_MINT) },
+    { BG_EVENT(BG_EVENT_BOOKCASE) | MAP_EVENT_FLAG_FACING | FACING_NORTH, MB_VAULT_INTERIORS_HISTORY_BOOKCASE, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgVaultTheresABookEntitledHistoryOf)) },
+    { BG_EVENT(BG_EVENT_BOOKCASE), MB_VAULT_INTERIORS_GEMS_BOOKCASE, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgVaultTheresABookEntitledGemsOf)) },
     { MAP_EVENTS_END },
 };
 
 struct MapEvent gVaultInteriors_LoftEvents[] = {
-    { MAP_EVENT_COORD, VAULT_INTERIORS_CELL_LOFT_DESCENT, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_LeaveLoft) },
+    { MAP_EVENT_COORD, MB_VAULT_INTERIORS_LOFT_DESCENT, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_LeaveLoft) },
     { MAP_EVENT_TALK, LOCALID_TIED_UP_VILLAGER, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_FreeRooferAndConfrontThieves) },
     { MAP_EVENT_TALK, LOCALID_FIRST_CHEST, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_SearchEmptyChest) },
     { MAP_EVENT_TALK, LOCALID_SECOND_CHEST, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_SearchEmptyChest) },
@@ -4188,7 +4188,7 @@ struct MapEvent gVaultInteriors_LoftEvents[] = {
 };
 
 struct MapEvent gVaultInteriors_EventsAfterThieves[] = {
-    { BG_EVENT(BG_EVENT_SILENT), VAULT_INTERIORS_CELL_INN_BARREL, CONDITION_ALWAYS, EVENT_SCRIPT(Vault_FindBone) },
+    { BG_EVENT(BG_EVENT_SILENT), MB_VAULT_INTERIORS_INN_BARREL, CONDITION_ALWAYS, EVENT_SCRIPT(Vault_FindBone) },
     { MAP_EVENT_WARP, 1, CONDITION_ALWAYS, VAULT_INTERIORS_TO_VAULT_EAST_SOUTHEAST },
     { MAP_EVENT_WARP, 2, CONDITION_ALWAYS, VAULT_INTERIORS_TO_VAULT_SOUTHEAST },
     { MAP_EVENT_WARP, 3, CONDITION_ALWAYS, VAULT_INTERIORS_TO_VAULT_SOUTHWEST },
@@ -4197,8 +4197,8 @@ struct MapEvent gVaultInteriors_EventsAfterThieves[] = {
     { MAP_EVENT_WARP, 6, CONDITION_ALWAYS, VAULT_INTERIORS_TO_VAULT_NORTHWEST },
     { MAP_EVENT_WARP, 7, CONDITION_ALWAYS, VAULT_INTERIORS_INN_UPSTAIRS_TO_INN },
     { MAP_EVENT_WARP, 8, CONDITION_ALWAYS, VAULT_INTERIORS_INN_TO_INN_UPSTAIRS },
-    { MAP_EVENT_COORD, VAULT_INTERIORS_CELL_LOFT_CLIMB, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_ClimbToLoft) },
-    { MAP_EVENT_COORD, VAULT_INTERIORS_CELL_LOFT_DESCENT, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_LeaveLoft) },
+    { MAP_EVENT_COORD, MB_VAULT_INTERIORS_LOFT_CLIMB, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_ClimbToLoft) },
+    { MAP_EVENT_COORD, MB_VAULT_INTERIORS_LOFT_DESCENT, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_LeaveLoft) },
     { MAP_EVENT_TALK, LOCALID_GEM_OWNER, CONDITION_ALWAYS, MSGNO(MsgVaultICanSleepWellNowThat) },
     { MAP_EVENT_TALK, LOCALID_GEM_OWNERS_WIFE, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkAboutRocks) },
     { MAP_EVENT_TALK, LOCALID_VILLAGER_SUSPECTING_THE_NEIGHBOR, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_AskWhetherThievesCameFromLunpa) },
@@ -4231,12 +4231,12 @@ struct MapEvent gVaultInteriors_EventsAfterThieves[] = {
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_ITEM_MERCHANT, CONDITION_ALWAYS, MSGNO(MsgVaultWhyAreThesePeopleSoAnxious) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_INN_STAFF, CONDITION_ALWAYS, MSGNO(MsgVaultWhoCouldHaveKnownTheyWere) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_INNKEEPER, CONDITION_ALWAYS, MSGNO(MsgVaultOfCourseIAlwaysSuspectedThey) },
-    { BG_EVENT(BG_EVENT_JAR), VAULT_INTERIORS_CELL_JAR, FLAG_VAULT_INTERIORS_JAR_COINS, FIND_COINS(7) },
-    { BG_EVENT(BG_EVENT_BARREL), VAULT_INTERIORS_CELL_FIRST_BARREL, FLAG_VAULT_INTERIORS_BARREL_COINS, FIND_COINS(4) },
-    { BG_EVENT(BG_EVENT_BARREL), VAULT_INTERIORS_CELL_SECOND_BARREL, FLAG_VAULT_INTERIORS_BARREL_SLEEP_BOMB, FIND_ITEM(ITEM_SLEEP_BOMB) },
-    { BG_EVENT(BG_EVENT_WOODEN_BOX), VAULT_INTERIORS_CELL_WOODEN_BOX, FLAG_VAULT_INTERIORS_BOX_MINT, FIND_ITEM(ITEM_MINT) },
-    { BG_EVENT(BG_EVENT_BOOKCASE) | MAP_EVENT_FLAG_FACING | FACING_NORTH, VAULT_INTERIORS_CELL_HISTORY_BOOKCASE, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgVaultTheresABookEntitledHistoryOf)) },
-    { BG_EVENT(BG_EVENT_BOOKCASE), VAULT_INTERIORS_CELL_GEMS_BOOKCASE, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgVaultTheresABookEntitledGemsOf)) },
+    { BG_EVENT(BG_EVENT_JAR), MB_VAULT_INTERIORS_JAR, FLAG_VAULT_INTERIORS_JAR_COINS, FIND_COINS(7) },
+    { BG_EVENT(BG_EVENT_BARREL), MB_VAULT_INTERIORS_FIRST_BARREL, FLAG_VAULT_INTERIORS_BARREL_COINS, FIND_COINS(4) },
+    { BG_EVENT(BG_EVENT_BARREL), MB_VAULT_INTERIORS_SECOND_BARREL, FLAG_VAULT_INTERIORS_BARREL_SLEEP_BOMB, FIND_ITEM(ITEM_SLEEP_BOMB) },
+    { BG_EVENT(BG_EVENT_WOODEN_BOX), MB_VAULT_INTERIORS_WOODEN_BOX, FLAG_VAULT_INTERIORS_BOX_MINT, FIND_ITEM(ITEM_MINT) },
+    { BG_EVENT(BG_EVENT_BOOKCASE) | MAP_EVENT_FLAG_FACING | FACING_NORTH, MB_VAULT_INTERIORS_HISTORY_BOOKCASE, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgVaultTheresABookEntitledHistoryOf)) },
+    { BG_EVENT(BG_EVENT_BOOKCASE), MB_VAULT_INTERIORS_GEMS_BOOKCASE, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgVaultTheresABookEntitledGemsOf)) },
     { MAP_EVENTS_END },
 };
 // clang-format on

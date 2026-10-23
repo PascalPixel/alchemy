@@ -8,38 +8,38 @@
 
 /// The cells the interiors' coord events and bg events answer; the warps have
 /// metatile behaviors of their own.
-enum VaultInteriorsCell {
+enum VaultInteriorsMetatileBehavior {
   /// The stairs down from the inn's guests' room.
-  VAULT_INTERIORS_CELL_GUESTS_ROOM_STAIRS = 7,
+  MB_VAULT_INTERIORS_GUESTS_ROOM_STAIRS = 7,
   /// Inside the guests' room, where the suspects first see Ivan.
-  VAULT_INTERIORS_CELL_GUESTS_ROOM = 10,
+  MB_VAULT_INTERIORS_GUESTS_ROOM = 10,
   /// The first of the eight cells (to 18) that move the fleeing suspects on
   /// along their routes.
-  VAULT_INTERIORS_CELL_FIRST_SUSPECT_ROUTE = 11,
-  VAULT_INTERIORS_CELL_LAST_SUSPECT_ROUTE = 18,
+  MB_VAULT_INTERIORS_FIRST_SUSPECT_ROUTE = 11,
+  MB_VAULT_INTERIORS_LAST_SUSPECT_ROUTE = 18,
   /// The guests' room's door.
-  VAULT_INTERIORS_CELL_GUESTS_ROOM_DOOR = 20,
+  MB_VAULT_INTERIORS_GUESTS_ROOM_DOOR = 20,
   /// In the guests' room, where the party sets out to corner the suspects.
-  VAULT_INTERIORS_CELL_CORNERING_START = 21,
+  MB_VAULT_INTERIORS_CORNERING_START = 21,
   /// The way up behind the crate to the inn's loft.
-  VAULT_INTERIORS_CELL_LOFT_CLIMB = 26,
+  MB_VAULT_INTERIORS_LOFT_CLIMB = 26,
   /// The way back down from the loft.
-  VAULT_INTERIORS_CELL_LOFT_DESCENT = 27,
+  MB_VAULT_INTERIORS_LOFT_DESCENT = 27,
   /// The gap in the roof, which the leader jumps.
-  VAULT_INTERIORS_CELL_ROOF_GAP = 40,
+  MB_VAULT_INTERIORS_ROOF_GAP = 40,
   /// The barrel beside the girl at the inn, where the Bones are once the
   /// thieves are jailed.
-  VAULT_INTERIORS_CELL_INN_BARREL = 41,
-  VAULT_INTERIORS_CELL_JAR = 100,
-  VAULT_INTERIORS_CELL_FIRST_BARREL = 101,
-  VAULT_INTERIORS_CELL_SECOND_BARREL = 102,
-  VAULT_INTERIORS_CELL_WOODEN_BOX = 103,
+  MB_VAULT_INTERIORS_INN_BARREL = 41,
+  MB_VAULT_INTERIORS_JAR = 100,
+  MB_VAULT_INTERIORS_FIRST_BARREL = 101,
+  MB_VAULT_INTERIORS_SECOND_BARREL = 102,
+  MB_VAULT_INTERIORS_WOODEN_BOX = 103,
   /// ★ Named from the game: "History of Vault, Vol 1."
   /// (MsgVaultTheresABookEntitledHistoryOf)
-  VAULT_INTERIORS_CELL_HISTORY_BOOKCASE = 200,
+  MB_VAULT_INTERIORS_HISTORY_BOOKCASE = 200,
   /// ★ Named from the game: "Gems of Angara."
   /// (MsgVaultTheresABookEntitledGemsOf)
-  VAULT_INTERIORS_CELL_GEMS_BOOKCASE = 201
+  MB_VAULT_INTERIORS_GEMS_BOOKCASE = 201
 };
 
 #endif

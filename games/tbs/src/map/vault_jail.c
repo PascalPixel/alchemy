@@ -246,7 +246,7 @@ s32 Map_Initialize(void) {
   warpDest = gGameState.warpDest;
 
   if (warpDest == VAULT_JAIL_FROM_LUNPA) {
-    GameFlag_ClearBit(FLAG_SHOW_LOCATION_NAME);
+    GameFlag_Clear(FLAG_SHOW_LOCATION_NAME);
   } else if (warpDest == VAULT_JAIL_FROM_VAULT_REVISIT) {
     ObjectEvent_GetById(LOCALID_PRISONER)->collisionFlags |=
         JAIL_REACH_ACROSS_BARS;

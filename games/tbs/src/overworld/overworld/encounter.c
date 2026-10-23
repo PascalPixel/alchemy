@@ -80,7 +80,7 @@ void Encounter_SelectMapZones(s32 useRules) {
     while (rule->mapId != -1) {
       if (rule->mapId == mapId &&
           (rule->warpDest == -1 || rule->warpDest == warpDest)) {
-        if (rule->flag == -1 || GameFlag_TestFar(rule->flag) == 0) {
+        if (rule->flag == -1 || GameFlag_GetFar(rule->flag) == 0) {
           zone = rule->firstZone;
           firstZoneOnGround = rule->firstZoneOnGround;
           break;
@@ -123,7 +123,7 @@ s32 Encounter_ResolveWorldMapZoneAndBackdrop(void *pos) {
   while (rule->kind != -1) {
     if (rule->kind == kind &&
         (rule->behavior == -1 || rule->behavior == behavior) &&
-        (rule->flag == -1 || GameFlag_TestFar(rule->flag) == 0)) {
+        (rule->flag == -1 || GameFlag_GetFar(rule->flag) == 0)) {
       zone = rule->zone;
       break;
     }
@@ -165,9 +165,9 @@ s32 Encounter_CountStepsAndSelectFormation(s32 zone, s32 steps) {
 #ifdef UBFIX
   entry = (struct EncounterZone *)gEncounterZones + zone;
 #endif
-  if (GameFlag_TestFar(FLAG_IGNORE_ENCOUNTER_CHECKS) == 0) {
-    if (GameFlag_TestFar(FLAG_NO_ENCOUNTERS) != 0 ||
-        GameFlag_TestFar(FLAG_NO_ENCOUNTERS_IN_MAPSEC) != 0)
+  if (GameFlag_GetFar(FLAG_IGNORE_ENCOUNTER_CHECKS) == 0) {
+    if (GameFlag_GetFar(FLAG_NO_ENCOUNTERS) != 0 ||
+        GameFlag_GetFar(FLAG_NO_ENCOUNTERS_IN_MAPSEC) != 0)
       return 0;
     if (zone == 0)
       return 0;
@@ -183,7 +183,7 @@ s32 Encounter_CountStepsAndSelectFormation(s32 zone, s32 steps) {
     // Sanctum's eruption, starting at level 1 with none, so this ends random
     // battles in the Sol Sanctum once she nears level 4 (158). XXX: likely a
     // cap on training before the journey, because it can act nowhere else.
-    if (GameFlag_TestFar(5) != 0) {
+    if (GameFlag_GetFar(5) != 0) {
       level = Unit_GetFar(5)->experience;
       if (level > 130)
         return 0;
@@ -318,7 +318,7 @@ void Map_ChooseMusic(void) {
         continue;
       if (rule->warpDest != -1 && rule->warpDest != warpDest)
         continue;
-      if (rule->flag != -1 && GameFlag_TestFar(rule->flag) == 0)
+      if (rule->flag != -1 && GameFlag_GetFar(rule->flag) == 0)
         continue;
       music = rule->music;
       break;
@@ -327,7 +327,7 @@ void Map_ChooseMusic(void) {
       continue;
     if (rule->warpDest != -1 && rule->warpDest != warpDest)
       continue;
-    if (rule->flag != -1 && GameFlag_TestFar(rule->flag) == 0)
+    if (rule->flag != -1 && GameFlag_GetFar(rule->flag) == 0)
       continue;
     music = rule->music;
     break;
@@ -478,7 +478,7 @@ void Encounter_SelectBattleMusic(s32 zone, s32 slot) {
   u16 music;
   u16 value;
 
-  if (GameFlag_TestFar(FLAG_LINK_BATTLE)) {
+  if (GameFlag_GetFar(FLAG_LINK_BATTLE)) {
     music = SONG_KEEP_BGM;
   } else {
     for (;;) {

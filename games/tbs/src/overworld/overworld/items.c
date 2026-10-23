@@ -125,8 +125,8 @@ s32 Field_UseItem(s32 packedItem, s32 slot) {
     // The map's event: a message, or a function. A value below 0x10000 is
     // a message number; anything else is a code address. Trigger bit 0x400
     // skips the "uses the item" message.
-    GameFlag_ClearBitFar(FLAG_ITEM_USED_UP);
-    GameFlag_ClearBitFar(FLAG_NOTHING_HAPPENS);
+    GameFlag_ClearFar(FLAG_ITEM_USED_UP);
+    GameFlag_ClearFar(FLAG_NOTHING_HAPPENS);
     if (!(event->trigger & 0x400)) {
       MessageArgument_PushFar(localId, 1);
       MessageArgument_PushFar(itemId, 2);
@@ -147,17 +147,17 @@ s32 Field_UseItem(s32 packedItem, s32 slot) {
     // plays as if cast. Items with useType bit 0 are used up.
     s32 actionId;
 
-    GameFlag_ClearBitFar(FLAG_ITEM_USED_UP);
-    GameFlag_SetBitFar(FLAG_NOTHING_HAPPENS);
+    GameFlag_ClearFar(FLAG_ITEM_USED_UP);
+    GameFlag_SetFar(FLAG_NOTHING_HAPPENS);
     actionId = Item_GetDirectFar(itemId)->abilityId;
     work = gFieldWork;
 
     if (actionId != 0) {
-      GameFlag_SetBitFar(FLAG_ITEM_USE);
-      GameFlag_ClearBitFar(FLAG_NOTHING_HAPPENS);
+      GameFlag_SetFar(FLAG_ITEM_USE);
+      GameFlag_ClearFar(FLAG_NOTHING_HAPPENS);
 
       if (actionId == ABILITY_RETREAT &&
-          !GameFlag_TestFar(FLAG_RETREAT_BLOCKED)) {
+          !GameFlag_GetFar(FLAG_RETREAT_BLOCKED)) {
         MessageArgument_PushFar(itemId, 2);
         FieldMessage_ShowFar(MsgUseItemQuestion, 13);
         /* FAKEMATCH(temporary): the answer kept in partyIndex, which ranks it
@@ -191,13 +191,13 @@ s32 Field_UseItem(s32 packedItem, s32 slot) {
       FieldEffect_End();
 
       if (Item_GetDirectFar(itemId)->useType & 1)
-        GameFlag_SetBitFar(FLAG_ITEM_USED_UP);
+        GameFlag_SetFar(FLAG_ITEM_USED_UP);
     }
   }
 
-  if (GameFlag_TestFar(FLAG_NOTHING_HAPPENS))
+  if (GameFlag_GetFar(FLAG_NOTHING_HAPPENS))
     FieldMessage_ShowFar(MsgNothingHappens, 1);
-  if (GameFlag_TestFar(FLAG_ITEM_USED_UP))
+  if (GameFlag_GetFar(FLAG_ITEM_USED_UP))
     Inventory_RemoveFar(localId, slot);
   return result;
 }

@@ -36,7 +36,7 @@ void MercuryLighthouse_RestoreLights(s32 region,
 
   *(struct MercuryLighthouseLights **)AllocHeapSlotEwram(
       HEAP_SLOT_MERCURY_LIGHTHOUSE_LIGHTS, sizeof(st)) = st;
-  flag = GameFlag_Test(FLAG_KEEP_PARTY_POSITION);
+  flag = GameFlag_Get(FLAG_KEEP_PARTY_POSITION);
   if (flag == 0) {
     Dma_Fill32(flag, st, sizeof(*st));
     st->poolBehavior = region;

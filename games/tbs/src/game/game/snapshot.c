@@ -73,7 +73,7 @@ void InventorySnapshot_Save(void) {
     save[1] = inventory[1];
 #endif
     Inventory_AddAndEquip(ISAAC, ITEM_SHORT_SWORD);
-    GameFlag_SetBit(FLAG_COLOSSO_HOLDS_EQUIPMENT);
+    GameFlag_Set(FLAG_COLOSSO_HOLDS_EQUIPMENT);
   }
   Party_RestoreHpPp(1);
 }
@@ -114,7 +114,7 @@ void InventorySnapshot_Restore(void) {
 #endif
     source = gInventorySnapshot;
     *source = 0;
-    GameFlag_ClearBit(FLAG_COLOSSO_HOLDS_EQUIPMENT);
+    GameFlag_Clear(FLAG_COLOSSO_HOLDS_EQUIPMENT);
   }
 }
 

@@ -376,7 +376,7 @@ static void EventScript_MoveWestCratesIntoHole(void) {
     MapGrid_CopyCellAttributes(23, 41, 1, 1, 23, 39);
     ObjectEvent_GetById(LOCALID_WEST_CRATES)->priorityFlags |=
         OBJ_EVENT_PRIORITY_UNDERFOOT;
-    Engine_GameFlagSet(FLAG_MAP_TEMP_00);
+    GameFlag_Set(FLAG_MAP_TEMP_00);
     ObjectEvent_GetById(LOCALID_WEST_CRATES)->y.fixed = -PIXELS(8);
     Engine_ObjectEventSetAnimation(LOCALID_WEST_CRATES, 2);
     ObjectEvent_Release(leftEffect);
@@ -422,7 +422,7 @@ static void EventScript_MoveEastCratesIntoHole(void) {
     MapGrid_CopyCellAttributes(31, 39, 2, 1, 27, 41);
     ObjectEvent_GetById(LOCALID_EAST_CRATES)->priorityFlags |=
         OBJ_EVENT_PRIORITY_UNDERFOOT;
-    Engine_GameFlagSet(FLAG_MAP_TEMP_01);
+    GameFlag_Set(FLAG_MAP_TEMP_01);
     ObjectEvent_GetById(LOCALID_EAST_CRATES)->y.fixed = -PIXELS(8);
     Engine_ObjectEventSetAnimation(LOCALID_EAST_CRATES, 2);
     ObjectEvent_Release(leftEffect);
@@ -502,7 +502,7 @@ static void EventScript_KiteRunsOff(void) {
 
   struct ObjectEvent *djinni;
 
-  if (GameFlag_IsSet(FLAG_MAP_TEMP_00) == 0) {
+  if (Script_GetFlag(FLAG_MAP_TEMP_00) == 0) {
     GameFlag_Set(FLAG_MAP_TEMP_00);
     FieldScript_Start();
     FieldCamera_SetSpeed(PIXELS(1), PIXELS(1) / 8);
@@ -538,8 +538,8 @@ static void EventScript_KiteRunsBehindLedge(void) {
 
   struct ObjectEvent *djinni;
 
-  if (GameFlag_IsSet(FLAG_MAP_TEMP_00) != 0) {
-    if (GameFlag_IsSet(FLAG_MAP_TEMP_01) == 0) {
+  if (GameFlag_Get(FLAG_MAP_TEMP_00) != 0) {
+    if (Script_GetFlag(FLAG_MAP_TEMP_01) == 0) {
       GameFlag_Set(FLAG_MAP_TEMP_01);
       GameFlag_Set(FLAG_VALE_CAVE_KITE_BEHIND_LEDGE);
       FieldScript_Start();
@@ -575,7 +575,7 @@ static void EventScript_KiteKeepsAway(void) {
   struct FieldWork *work;
 
   work = gFieldWork;
-  if (GameFlag_Test(FLAG_VALE_CAVE_KITE_BEHIND_LEDGE) != 0) {
+  if (GameFlag_Get(FLAG_VALE_CAVE_KITE_BEHIND_LEDGE) != 0) {
     if (gGameState.pausedObject != LOCALID_KITE) {
       // Preserve the speed reads before resolving this route point.
       routeIndex = work->coordEvent;
@@ -658,7 +658,7 @@ static void EventScript_PushLogOverEdge(void) {
                                               stationaryMotion);
       PushedObject_FillGridAttributeRectangle(0, 16, 16, 1, clearedRows,
                                               stationaryMotion);
-      Engine_GameFlagSet(FLAG_MAP_TEMP_03);
+      GameFlag_Set(FLAG_MAP_TEMP_03);
       Sound_PlaySong(SE_240);
     }
   }
@@ -741,9 +741,9 @@ static void EventScript_PushLogNorth(void) {
           0, 13, (probe.position.z >> 20) - 1, 4, clearedRows, emptyAttributes);
     }
     if ((probe.position.z >> 20) == 20) {
-      Engine_GameFlagSet(FLAG_MAP_TEMP_05);
+      GameFlag_Set(FLAG_MAP_TEMP_05);
     } else {
-      Engine_GameFlagSet(FLAG_MAP_TEMP_04);
+      GameFlag_Set(FLAG_MAP_TEMP_04);
       {
 
         MapGrid_CopyCellAttributes(14, 17, 2, 1, 14, 16);
@@ -786,7 +786,7 @@ s32 ValeCave_Initialize(void) {
     WaitFrames(1);
     ObjectMotion_SetActionVariant(LOCALID_VALE_CAVE_MOUTH_FIRST_LOG, 3);
     ObjectMotion_SetActionVariant(LOCALID_VALE_CAVE_MOUTH_SECOND_LOG, 3);
-    GameFlag_ClearBit(FLAG_SHOW_LOCATION_NAME);
+    GameFlag_Clear(FLAG_SHOW_LOCATION_NAME);
   }
   ValeCave_ApplyEntryState();
   return 0;
@@ -809,7 +809,7 @@ static void EventScript_LeaveRoom(void) {
 static void ValeCave_UpdateRidingLogPassage(void) {
   MapGrid_CopyCellAttributes(0, 34, 13, 3, 23, 34);
 
-  if (GameFlag_Test(FLAG_VALE_CAVE_RIDING_LOG_EAST) != 0) {
+  if (GameFlag_Get(FLAG_VALE_CAVE_RIDING_LOG_EAST) != 0) {
     ValeCave_CenterObjectEventOnCell(LOCALID_RIDING_LOG, 35, 35);
     MapGrid_CopyCellAttributes(24, 34, 1, 3, 23, 34);
   } else {
@@ -830,7 +830,7 @@ static void EventScript_RideLogEast(void) {
   Sound_PlaySong(SE_WATER_MOVE);
   ObjectEvent_PlacePairAtOffset(LOCALID_RIDING_LOG, 112, 0);
   ObjectEvent_PlacePairAtOffset(LOCALID_RIDING_LOG, 80, 0);
-  Engine_GameFlagSet(FLAG_VALE_CAVE_RIDING_LOG_EAST);
+  GameFlag_Set(FLAG_VALE_CAVE_RIDING_LOG_EAST);
   WaitFrames(2);
   ValeCave_UpdateRidingLogPassage();
   Sound_PlaySong(SONG_FADE_OUT_ACTION_SE);
@@ -846,7 +846,7 @@ static void EventScript_RideLogWest(void) {
   Sound_PlaySong(SE_WATER_MOVE);
   ObjectEvent_PlacePairAtOffset(LOCALID_RIDING_LOG, -112, 0);
   ObjectEvent_PlacePairAtOffset(LOCALID_RIDING_LOG, -80, 0);
-  GameFlag_ClearBit(FLAG_VALE_CAVE_RIDING_LOG_EAST);
+  GameFlag_Clear(FLAG_VALE_CAVE_RIDING_LOG_EAST);
   WaitFrames(2);
   ValeCave_UpdateRidingLogPassage();
   Sound_PlaySong(SONG_FADE_OUT_ACTION_SE);
@@ -892,18 +892,18 @@ static void ValeCave_ApplyEntryState(void) {
     case VALE_CAVE_KITE_EAST_FROM_WEST:
     case VALE_CAVE_KITE_EAST_FROM_SOUTH:
     case VALE_CAVE_KITE_FROM_VALE_CAVE_LOGS_EAST:
-      if (GameFlag_Test(FLAG_KITE) != 0) {
+      if (GameFlag_Get(FLAG_KITE) != 0) {
         break;
       }
-      if (GameFlag_Test(FLAG_VALE_CAVE_KITE_BEHIND_LEDGE) == 0) {
+      if (GameFlag_Get(FLAG_VALE_CAVE_KITE_BEHIND_LEDGE) == 0) {
         break;
       }
-      Engine_GameFlagSet(FLAG_MAP_TEMP_00);
+      GameFlag_Set(FLAG_MAP_TEMP_00);
       if (gGameState.warpDest == VALE_CAVE_KITE_EAST_FROM_WEST) {
-        Engine_GameFlagSet(FLAG_MAP_TEMP_01);
+        GameFlag_Set(FLAG_MAP_TEMP_01);
       }
       WaitFrames(1);
-      if (GameFlag_Test(FLAG_KEEP_PARTY_POSITION) != 0) {
+      if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) != 0) {
         break;
       }
       // Kite waits behind the ledge, watching the leader.
@@ -920,10 +920,10 @@ static void ValeCave_ApplyEntryState(void) {
                                          SPRITE_CHEST);
       MapGrid_CopyCellAttributes(23, 34, 13, 3, 0, 34);
       ValeCave_UpdateRidingLogPassage();
-      if (GameFlag_Test(FLAG_MAP_TEMP_00) != 0) {
+      if (GameFlag_Get(FLAG_MAP_TEMP_00) != 0) {
         MapGrid_CopyCellAttributes(23, 41, 1, 1, 23, 39);
       }
-      if (GameFlag_Test(FLAG_MAP_TEMP_01) != 0) {
+      if (GameFlag_Get(FLAG_MAP_TEMP_01) != 0) {
         MapGrid_CopyCellAttributes(31, 39, 2, 1, 27, 41);
       }
       break;
@@ -935,22 +935,22 @@ static void ValeCave_ApplyEntryState(void) {
     case VALE_CAVE_LOGS_FROM_VALE_CAVE_KITE_EAST:
       // Each log already pushed leaves open floor; else its footprint
       // blocks its cells again.
-      if (GameFlag_Test(FLAG_MAP_TEMP_02) != 0) {
+      if (GameFlag_Get(FLAG_MAP_TEMP_02) != 0) {
         PushedObject_FillGridAttributeRectangle(0, 12, 16, 1, 4, 0);
         PushedObject_FillGridAttributeRectangle(0, 13, 16, 1, 4, 0);
       } else {
         Map_RedrawObjectEventFootprint(LOCALID_WEST_LOG);
       }
-      if (GameFlag_Test(FLAG_MAP_TEMP_03) != 0) {
+      if (GameFlag_Get(FLAG_MAP_TEMP_03) != 0) {
         PushedObject_FillGridAttributeRectangle(2, 16, 16, 1, 4, 0);
         PushedObject_FillGridAttributeRectangle(0, 16, 16, 1, 4, 0);
       } else {
         Map_RedrawObjectEventFootprint(LOCALID_EAST_LOG);
       }
-      southLogOnSouthernRow = GameFlag_Test(FLAG_MAP_TEMP_05);
+      southLogOnSouthernRow = GameFlag_Get(FLAG_MAP_TEMP_05);
       if (southLogOnSouthernRow != 0) {
         PushedObject_FillGridAttributeRectangle(0, 13, 19, 4, 2, 0);
-      } else if (GameFlag_Test(FLAG_MAP_TEMP_04) != 0) {
+      } else if (GameFlag_Get(FLAG_MAP_TEMP_04) != 0) {
         PushedObject_FillGridAttributeRectangle(0, 13, 15, 4, 2,
                                                 southLogOnSouthernRow);
         MapGrid_CopyCellAttributes(14, 17, 2, 1, 14, 16);

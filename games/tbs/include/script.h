@@ -28,9 +28,6 @@
 /// hooks.
 #define OBJECT_GET(no) ((union FieldObject *)ObjectEvent_GetById(no))
 
-#define FLAG_CHECK(f) GameFlag_IsSet(f)
-#define FLAG_SET(f) GameFlag_Set(f)
-
 #define SE(n) Script_PlaySong(n)
 
 #define SCRIPT_START() FieldScript_Start()

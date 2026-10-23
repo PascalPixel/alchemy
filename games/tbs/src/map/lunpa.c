@@ -152,7 +152,7 @@ const struct ObjectEventTemplate *Map_GetObjectEventTemplates(void) {
 static void EventScript_CatchFloatingNut(void) {
   FieldScript_Start();
   Engine_ObjectEventSetPosition(LOCALID_FLOATING_NUT, 0, 0);
-  Engine_GameFlagSet(FLAG_LUNPA_NUT_CAUGHT);
+  GameFlag_Set(FLAG_LUNPA_NUT_CAUGHT);
   FieldEffect_StartEffectObject22(ITEM_NUT, 3);
   PartyInventory_GiveItem(ITEM_NUT, 0);
   FieldScript_End();
@@ -213,7 +213,7 @@ static void EventScript_RevealSecrets(void) {
   objectEvent = ObjectEvent_Get(LOCALID_PARTY_LEADER);
   cellX = objectEvent->x.fixed / CELL_SIZE;
   cellZ = objectEvent->z.fixed / CELL_SIZE;
-  if (GameFlag_IsSet(FLAG_LUNPA_PSYNERGY_STONE) == 0) {
+  if (GameFlag_Get(FLAG_LUNPA_PSYNERGY_STONE) == 0) {
     if (cellX == 7 && cellZ == 16) {
       ObjectEvent_WalkByAndWait(LOCALID_PARTY_LEADER, 0, 16);
     }
@@ -225,12 +225,12 @@ static void EventScript_RevealSecrets(void) {
   ObjectEvent_SetPosition(LOCALID_HIDDEN_PUDDLE, PIXELS(232), PIXELS(72));
   ObjectEvent_Get(LOCALID_HIDDEN_PUDDLE)->y.fixed = 0;
 #if TBS_PATCH_4
-  if (GameFlag_IsSet(FLAG_MAP_TEMP_00)) {
+  if (GameFlag_Get(FLAG_MAP_TEMP_00)) {
     Lunpa_ApplyFrozenPuddleCollision();
   }
 #endif
   // The opened passage replaces the sparkle; otherwise show the hidden switch.
-  if (GameFlag_IsSet(FLAG_MAP_TEMP_02) != 0) {
+  if (GameFlag_Get(FLAG_MAP_TEMP_02) != 0) {
     Lunpa_DrawHiddenPassageFrame(41, 49);
   } else {
     ObjectEvent_SetPosition(LOCALID_SWITCH_SPARKLE, PIXELS(56), PIXELS(268));
@@ -285,11 +285,10 @@ const struct MapEvent *Map_GetEvents(void) {
   s32 mapId = gGameState.mapId;
 
   if (mapId == (s32)&MapId_LunpaFortressGates) {
-    GameFlag_Test(FLAG_DODONPA_LOCKED_UP);
+    GameFlag_Get(FLAG_DODONPA_LOCKED_UP);
     return gGateEvents;
   }
-  if (mapId == (s32)&MapId_Lunpa &&
-      GameFlag_Test(FLAG_DODONPA_LOCKED_UP) != 0) {
+  if (mapId == (s32)&MapId_Lunpa && GameFlag_Get(FLAG_DODONPA_LOCKED_UP) != 0) {
     return gLunpaReopenedEvents;
   }
   return gLunpaSealedEvents;
@@ -310,7 +309,7 @@ static void EventScript_TalkToWestGuard(void) {
 /// the party came from there and whether they are here to save Hammet.
 static void EventScript_TalkToEastGuard(void) {
   FieldScript_Start();
-  if (GameFlag_Test(FLAG_LUNPA_GUARDS_SUSPECT_KALAY) == 0) {
+  if (GameFlag_Get(FLAG_LUNPA_GUARDS_SUSPECT_KALAY) == 0) {
     FieldScript_SetMessageId(MsgLunpaEastGuardDemandsAuthorization);
     FieldScript_ShowMessageAndWait(LOCALID_EAST_GUARD, 0);
   } else {
@@ -337,8 +336,8 @@ static void EventScript_TalkToEastGuard(void) {
 static void EventScript_ReadEastGuardsThoughts(void) {
   s32 thoughts;
 
-  if (GameFlag_Test(FLAG_DODONPA_LOCKED_UP) == 0) {
-    thoughts = GameFlag_Test(FLAG_LUNPA_GUARDS_SUSPECT_KALAY);
+  if (GameFlag_Get(FLAG_DODONPA_LOCKED_UP) == 0) {
+    thoughts = GameFlag_Get(FLAG_LUNPA_GUARDS_SUSPECT_KALAY);
     if (thoughts == 0) {
       thoughts = MsgLunpaEastGuardFearsBlame;
     } else {
@@ -406,8 +405,8 @@ static void EventScript_TalkToLeftGuard(void) {
 
   if (gGameState.cloaked != 0) {
     FieldScript_SetMessageId(MsgLunpaLeftGuardHearsSomeone);
-  } else if (GameFlag_Test(FLAG_DODONPA_LOCKED_UP) != 0 &&
-             GameFlag_Test(FLAG_LUNPA_CAVE_REUNION_SEEN) == 0) {
+  } else if (GameFlag_Get(FLAG_DODONPA_LOCKED_UP) != 0 &&
+             GameFlag_Get(FLAG_LUNPA_CAVE_REUNION_SEEN) == 0) {
     FieldEffect_SpawnLinked(LOCALID_LEFT_GUARD, EMOTE_IN_FRONT | EMOTE_QUESTION,
                             60);
     recognitionMessageBase = MsgLunpaLeftGuardRecognizesHammet;
@@ -416,7 +415,7 @@ static void EventScript_TalkToLeftGuard(void) {
     FieldScript_ShowMessageAndWait(LOCALID_LEFT_GUARD, 0);
     ObjectMotion_SetVariantCallback(LOCALID_LEFT_GUARD, 1);
     FieldScript_SetMessageId(recognitionMessageBase + RECOGNITION_IMPOSSIBLE);
-    Engine_GameFlagSet(FLAG_LUNPA_GATE_GUARD_SAW_HAMMET);
+    GameFlag_Set(FLAG_LUNPA_GATE_GUARD_SAW_HAMMET);
   } else {
     FieldScript_SetMessageId(MsgLunpaLeftGuardResentsDodonpa);
   }
@@ -429,7 +428,7 @@ static void EventScript_TalkToLeftGuard(void) {
 static void EventScript_TalkToRightGuard(void) {
   if (gGameState.cloaked != 0) {
     FieldScript_SetMessageId(MsgLunpaRightGuardFeelsCreepy);
-  } else if (GameFlag_Test(FLAG_DODONPA_LOCKED_UP) != 0) {
+  } else if (GameFlag_Get(FLAG_DODONPA_LOCKED_UP) != 0) {
     FieldScript_SetMessageId(MsgLunpaRightGuardWondersHow);
   } else {
     FieldScript_SetMessageId(MsgLunpaRightGuardBoasts);
@@ -444,9 +443,9 @@ static void EventScript_TalkToRightGuard(void) {
 static void EventScript_ReadLeftGuardsThoughts(void) {
   s32 recognizedHammet;
 
-  if (gGameState.cloaked == 0 && GameFlag_IsSet(FLAG_DODONPA_LOCKED_UP) != 0 &&
-      GameFlag_IsSet(FLAG_LUNPA_CAVE_REUNION_SEEN) == 0) {
-    recognizedHammet = GameFlag_IsSet(FLAG_LUNPA_GATE_GUARD_SAW_HAMMET);
+  if (gGameState.cloaked == 0 && GameFlag_Get(FLAG_DODONPA_LOCKED_UP) != 0 &&
+      GameFlag_Get(FLAG_LUNPA_CAVE_REUNION_SEEN) == 0) {
+    recognizedHammet = Script_GetFlag(FLAG_LUNPA_GATE_GUARD_SAW_HAMMET);
     if (recognizedHammet == 0) {
       gFieldWork->psynergy = recognizedHammet;
       FieldEffect_FinishWaveAndReleaseHeapBlock();
@@ -469,7 +468,7 @@ static void EventScript_ReadLeftGuardsThoughts(void) {
 
 /// Lunpa Fortress Gates: Mind Read on the right guard.
 static void EventScript_ReadRightGuardsThoughts(void) {
-  if (GameFlag_Test(FLAG_DODONPA_LOCKED_UP) != 0) {
+  if (GameFlag_Get(FLAG_DODONPA_LOCKED_UP) != 0) {
     FieldScript_SetMessageId(MsgLunpaRightGuardReopenedThoughts);
   } else {
     FieldScript_SetMessageId(MsgLunpaYoudShadowSneak);
@@ -483,7 +482,7 @@ static void EventScript_ReadRightGuardsThoughts(void) {
 static void Lunpa_WatchForFortressApproach(void) {
   s32 leaderRow = ObjectEvent_Get(LOCALID_PARTY_LEADER)->z.fixed / CELL_SIZE;
 
-  if (GameFlag_IsSet(FLAG_MAP_TEMP_43) == 0 && leaderRow == 10) {
+  if (Script_GetFlag(FLAG_MAP_TEMP_43) == 0 && leaderRow == 10) {
     GameFlag_Set(FLAG_MAP_TEMP_43);
     gFieldWork->coordEvent = MB_LUNPA_FORTRESS_GATES_FORTRESS_APPROACH;
   }
@@ -546,8 +545,8 @@ static void EventScript_EnterDoor(void) {
 /// Lunpa, MB_LUNPA_HIDDEN_PASSAGE: the hidden passage leads to the jail once
 /// opened, while Reveal shows it.
 static void EventScript_EnterHiddenPassage(void) {
-  if (GameFlag_IsSet(FLAG_MAP_TEMP_02) != 0) {
-    if (GameFlag_IsSet(FLAG_MAP_TEMP_01) == 0) {
+  if (GameFlag_Get(FLAG_MAP_TEMP_02) != 0) {
+    if (GameFlag_Get(FLAG_MAP_TEMP_01) == 0) {
       ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(1) / 5, PIXELS(1) / 10);
       ObjectEvent_Get(LOCALID_PARTY_LEADER)->motionFlags = 0;
       Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_WALK);
@@ -583,7 +582,7 @@ static void UNUSED Lunpa_CheckAhead(void) { Field_TryJumpForward(); }
 /// Unused: plays the treasure fanfare for Reveal uncovering something, until
 /// FLAG_MAP_TEMP_01 is set; nothing calls it.
 UNUSED static void Lunpa_PlayRevealCue(void) {
-  if (GameFlag_Test(FLAG_MAP_TEMP_01) == 0) {
+  if (GameFlag_Get(FLAG_MAP_TEMP_01) == 0) {
     Sound_PlaySong(MUS_TREASURE_FOUND);
   }
 }
@@ -591,10 +590,10 @@ UNUSED static void Lunpa_PlayRevealCue(void) {
 /// Lunpa: searching the switch Reveal shows opens the passage to the jail in
 /// five steps.
 static void EventScript_PressHiddenSwitch(void) {
-  if (GameFlag_IsSet(FLAG_MAP_TEMP_01) != 0) {
+  if (GameFlag_Get(FLAG_MAP_TEMP_01) != 0) {
     return;
   }
-  if (GameFlag_IsSet(FLAG_MAP_TEMP_02) != 0) {
+  if (Script_GetFlag(FLAG_MAP_TEMP_02) != 0) {
     return;
   }
   // Open the passage over five map frames, then remember its final state.
@@ -657,7 +656,7 @@ static void UNUSED Lunpa_DoNothing(void) {}
 /// Lunpa Fortress Gates, casting Cloak: the gateway closes behind the guards.
 static void EventScript_CastCloak(void) {
   Lunpa_CopyGatewayCollision(6, 11);
-  Engine_GameFlagSet(FLAG_MAP_TEMP_41);
+  GameFlag_Set(FLAG_MAP_TEMP_41);
 }
 
 /// Lunpa Fortress Gates, raised when the guards spot the party: they wonder
@@ -666,7 +665,7 @@ static void EventScript_GuardsCatchParty(void) {
   struct ObjectEvent *leader;
   s32 warningMessageBase;
 
-  if (GameFlag_IsSet(FLAG_MAP_TEMP_44) != 0) {
+  if (Script_GetFlag(FLAG_MAP_TEMP_44) != 0) {
     return;
   }
   GameFlag_Set(FLAG_MAP_TEMP_44);
@@ -735,8 +734,8 @@ static void EventScript_CloakFades(void) {
 #if TBS_PATCH_1
   work = gFieldWork;
 #endif
-  GameFlag_ClearBit(FLAG_MAP_TEMP_41);
-  GameFlag_ClearBit(FLAG_MAP_TEMP_40);
+  GameFlag_Clear(FLAG_MAP_TEMP_41);
+  GameFlag_Clear(FLAG_MAP_TEMP_40);
   leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   if (leader->x.fixed > PIXELS(104) && leader->x.fixed < PIXELS(240) &&
       leader->z.fixed > PIXELS(160) && leader->z.fixed < PIXELS(248)) {
@@ -748,7 +747,7 @@ static void EventScript_CloakFades(void) {
 #endif
   }
   Lunpa_ReopenGateway();
-  GameFlag_ClearBit(FLAG_MAP_TEMP_44);
+  GameFlag_Clear(FLAG_MAP_TEMP_44);
 }
 
 /// Every frame at the Lunpa Fortress Gates: an uncloaked leader in front of
@@ -918,30 +917,30 @@ s32 Map_Initialize(void) {
   if (gGameState.mapId == (s32)&MapId_Lunpa) {
     gFieldWork->transition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
     EventScript_HideSecrets();
-    if (GameFlag_Test(FLAG_LUNPA_NUT_CAUGHT) == 0) {
+    if (GameFlag_Get(FLAG_LUNPA_NUT_CAUGHT) == 0) {
       Map_FloatNut(LOCALID_FLOATING_NUT);
     }
     puddle = ObjectEvent_GetById(LOCALID_HIDDEN_PUDDLE);
     if (puddle != NULL) {
       ObjectEvent_SetSpriteFlags(puddle, 0);
     }
-    Engine_GameFlagSet(FLAG_MAP_TEMP_01);
+    GameFlag_Set(FLAG_MAP_TEMP_01);
   }
   // Restore the gate's arrival cutscene and active detection tasks separately.
   if (gGameState.mapId == (s32)&MapId_LunpaFortressGates) {
     gFieldWork->transition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
     gGameState.retreatWarpDest = GATE_RETREAT_WARP_DEST;
     if (gGameState.warpDest == LUNPA_FORTRESS_GATES_AFTER_CAUGHT &&
-        GameFlag_Test(FLAG_KEEP_PARTY_POSITION) == 0) {
+        GameFlag_Get(FLAG_KEEP_PARTY_POSITION) == 0) {
       EventScript_GuardsThrowLeaderOut();
     }
     if (gGameState.warpDest ==
             LUNPA_FORTRESS_GATES_FROM_LUNPA_FORTRESS_TOADONPA &&
-        GameFlag_Test(FLAG_KEEP_PARTY_POSITION) == 0) {
+        GameFlag_Get(FLAG_KEEP_PARTY_POSITION) == 0) {
       EventScript_LeaderSneaksOut();
     }
-    if (GameFlag_Test(FLAG_DODONPA_LOCKED_UP) != 0 &&
-        GameFlag_Test(FLAG_LUNPA_CAVE_REUNION_SEEN) == 0) {
+    if (GameFlag_Get(FLAG_DODONPA_LOCKED_UP) != 0 &&
+        GameFlag_Get(FLAG_LUNPA_CAVE_REUNION_SEEN) == 0) {
       FieldScheduler_AddCallback(Lunpa_WatchForFortressApproach,
                                  TASK_PRIORITY_MAP);
     }
@@ -951,16 +950,16 @@ s32 Map_Initialize(void) {
 #endif
     FieldScheduler_AddCallback(Lunpa_WatchForUncloakedParty, TASK_PRIORITY_MAP);
     // The fortress's puzzles and beaten guards are reset.
-    GameFlag_ClearBit(FLAG_LUNPA_FORTRESS_FIRST_SWITCH_IVY_BLOWN_AWAY);
-    GameFlag_ClearBit(FLAG_LUNPA_FORTRESS_PASSAGE_IVY_BLOWN_AWAY);
-    GameFlag_ClearBit(FLAG_LUNPA_FORTRESS_SECOND_SWITCH_IVY_BLOWN_AWAY);
-    GameFlag_ClearBit(FLAG_LUNPA_FORTRESS_FIRST_SWITCH_FLIPPED);
-    GameFlag_ClearBit(FLAG_LUNPA_FORTRESS_SECOND_SWITCH_FLIPPED);
-    GameFlag_ClearBit(FLAG_LUNPA_FORTRESS_CRATES_MOVED);
-    GameFlag_ClearBit(FLAG_LUNPA_FORTRESS_MIDDLE_GUARD_BEATEN);
-    GameFlag_ClearBit(FLAG_LUNPA_FORTRESS_THREE_GUARDS_BEATEN);
-    GameFlag_ClearBit(FLAG_LUNPA_FORTRESS_EAST_GUARD_BEATEN);
-    GameFlag_ClearBit(FLAG_LUNPA_FORTRESS_WEST_GUARD_BEATEN);
+    GameFlag_Clear(FLAG_LUNPA_FORTRESS_FIRST_SWITCH_IVY_BLOWN_AWAY);
+    GameFlag_Clear(FLAG_LUNPA_FORTRESS_PASSAGE_IVY_BLOWN_AWAY);
+    GameFlag_Clear(FLAG_LUNPA_FORTRESS_SECOND_SWITCH_IVY_BLOWN_AWAY);
+    GameFlag_Clear(FLAG_LUNPA_FORTRESS_FIRST_SWITCH_FLIPPED);
+    GameFlag_Clear(FLAG_LUNPA_FORTRESS_SECOND_SWITCH_FLIPPED);
+    GameFlag_Clear(FLAG_LUNPA_FORTRESS_CRATES_MOVED);
+    GameFlag_Clear(FLAG_LUNPA_FORTRESS_MIDDLE_GUARD_BEATEN);
+    GameFlag_Clear(FLAG_LUNPA_FORTRESS_THREE_GUARDS_BEATEN);
+    GameFlag_Clear(FLAG_LUNPA_FORTRESS_EAST_GUARD_BEATEN);
+    GameFlag_Clear(FLAG_LUNPA_FORTRESS_WEST_GUARD_BEATEN);
   }
   return 0;
 }

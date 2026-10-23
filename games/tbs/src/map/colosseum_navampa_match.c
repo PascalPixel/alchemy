@@ -432,7 +432,7 @@ static void EventScript_RideMovingSidewalk(void) {
 /// Growth on the plant on Colosseum Final 3's stages: it grows and opens a
 /// shortcut (FLAG_PLANT_GROWN).
 static void EventScript_GrowPlant(void) {
-  Engine_GameFlagSet(FLAG_PLANT_GROWN);
+  GameFlag_Set(FLAG_PLANT_GROWN);
   {
 
     MapGrid_CopyCellAttributes(47, 61, 1, 4, 49, 61);
@@ -463,7 +463,7 @@ static void EventScript_FreezeOnScales(void) {
   objectEvent = ObjectEvent_GetById(LOCALID_SCALES_WEST_LEDGE);
   ColosseumNavampaMatch_MoveOnScales(objectEvent, PIXELS(4));
 
-  Engine_GameFlagSet(FLAG_SCALES_FROZEN);
+  GameFlag_Set(FLAG_SCALES_FROZEN);
   MapGrid_CopyCellAttributes(15, 12, 1, 1, 13, 12);
   MapGrid_CopyCellAttributes(14, 12, 1, 1, 9, 12);
 }
@@ -479,7 +479,7 @@ static void EventScript_StepOnScales(void) {
   u8 *flags;
 
   localId = gGameState.leaderLocalId;
-  lowered = GameFlag_IsSet(FLAG_SCALES_FROZEN);
+  lowered = GameFlag_Get(FLAG_SCALES_FROZEN);
   if (lowered == 0) {
     log = ObjectEvent_GetById(LOCALID_SCALES_WEST_LEDGE);
     if (log != NULL) {
@@ -503,7 +503,7 @@ static void EventScript_StepOnScales(void) {
     ObjectEvent_SetSpriteFlags(rider, SPRITE_FLAG_SHADOW);
     *flags = OBJ_EVENT_FOLLOWS_TERRAIN | OBJ_EVENT_FALLS;
     rider->groundHeight = rider->y.fixed;
-    Engine_GameFlagSet(FLAG_ON_SCALES);
+    GameFlag_Set(FLAG_ON_SCALES);
   }
 }
 
@@ -526,7 +526,7 @@ static void EventScript_StepOffScales(void) {
     MapGrid_CopyCellAttributes(0, 25, 1, 1, 9, 12);
   }
   WaitFrames(2);
-  GameFlag_ClearBit(FLAG_ON_SCALES);
+  GameFlag_Clear(FLAG_ON_SCALES);
 }
 
 /// Move on the weight by the Scales of Justice: when it reaches the western
@@ -555,7 +555,7 @@ static void EventScript_SetWeightOnScales(void) {
       ColosseumNavampaMatch_MoveOnScales(upper, PIXELS(32));
       lower = ObjectEvent_GetById(LOCALID_SCALES_WEST_LEDGE);
       ColosseumNavampaMatch_MoveOnScales(lower, PIXELS(4));
-      Engine_GameFlagSet(FLAG_WEIGHT_ON_SCALES);
+      GameFlag_Set(FLAG_WEIGHT_ON_SCALES);
       MapGrid_CopyCellAttributes(15, 12, 1, 1, 13, z);
       MapGrid_CopyCellAttributes(1, 25, 1, 1, x, z);
     }
@@ -616,8 +616,8 @@ static void EventScript_SettleStones(void) {
       x2 = objectEvent->x.fixed >> 20;
       z2 = objectEvent->z.fixed >> 20;
       MapGrid_CopyCellAttributes(83, 13, 1, 1, x2, z2 + 52);
-      Engine_GameFlagSet(slot - LOCALID_LOG_AREA_STONE_A +
-                         FLAG_FIRST_LOG_AREA_STONE_SETTLED);
+      GameFlag_Set(slot - LOCALID_LOG_AREA_STONE_A +
+                   FLAG_FIRST_LOG_AREA_STONE_SETTLED);
     }
   }
 }
@@ -822,14 +822,14 @@ static void EventScript_ForceSidewalkLog(void) {
   effect->speed = moveRate;
   ObjectDispatch_SelectAnimation(effect, 2);
   ObjectEvent_SetScript(effect, gColossoMapEventEffect);
-  Engine_GameFlagSet(FLAG_SIDEWALK_LOG_KNOCKED_OFF);
+  GameFlag_Set(FLAG_SIDEWALK_LOG_KNOCKED_OFF);
 }
 
 /// Halt on the Wall Wedge's operator: the pistons stop at their next open
 /// pattern (FLAG_WALL_WEDGE_HALTED).
 static void EventScript_HaltWall(void) {
   FieldEffect_PauseObject(LOCALID_WALL_OPERATOR);
-  Engine_GameFlagSet(FLAG_WALL_WEDGE_HALTED);
+  GameFlag_Set(FLAG_WALL_WEDGE_HALTED);
   WaitFrames(10);
   while (gColossoMapTaskStatus != 1 && gColossoMapTaskStatus != 3)
     WaitFrames(1);
@@ -993,7 +993,7 @@ static void EventScript_ReachArena(void) {
                                  COLOSSEUM_NAVAMPA_MATCH_AFTER_MATCH_WON);
   FieldScript_SetDefeatDestination((s32)&MapId_ColosseumNavampaMatch,
                                    COLOSSEUM_NAVAMPA_MATCH_AFTER_MATCH_LOST);
-  Engine_GameFlagSet(FLAG_KEEP_MUSIC);
+  GameFlag_Set(FLAG_KEEP_MUSIC);
 }
 
 /// Walking into something on Colosseum Final 3's stages (coord event 90):
@@ -1031,7 +1031,7 @@ s32 ColosseumNavampaMatch_Initialize(void) {
   s32 column;
 
   gFieldWork->transition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
-  Engine_GameFlagSet(FLAG_RETREAT_BLOCKED);
+  GameFlag_Set(FLAG_RETREAT_BLOCKED);
   // Restore the scale ledges, movable weight and supporting metatile behaviors.
   FieldScheduler_AddCallback(ColosseumNavampaMatch_UpdateEastEndCollision,
                              TASK_PRIORITY_MAP);
@@ -1049,7 +1049,7 @@ s32 ColosseumNavampaMatch_Initialize(void) {
   objectEvent->motionFlags = 0;
   objectEvent->y.fixed = PIXELS(4);
 
-  if (GameFlag_Test(866) != 0) {
+  if (GameFlag_Get(866) != 0) {
     Engine_ObjectEventSetAnimation(LOCALID_PUDDLE, 5);
     objectEvent = ObjectEvent_GetById(LOCALID_SCALES_WEST_LEDGE);
     objectEvent->y.fixed = PIXELS(4);
@@ -1060,14 +1060,14 @@ s32 ColosseumNavampaMatch_Initialize(void) {
     objectEvent = ObjectEvent_GetById(LOCALID_PUDDLE);
     objectEvent->scaleX = 3 * Q16_ONE / 2;
     objectEvent->scaleY = 3 * Q16_ONE / 2;
-    if (GameFlag_Test(871) != 0) {
+    if (GameFlag_Get(871) != 0) {
       MapGrid_CopyCellAttributes(0, 24, 1, 1, 9, 12);
     } else {
       MapGrid_CopyCellAttributes(0, 25, 1, 1, 9, 12);
     }
   }
 
-  if (GameFlag_Test(872) != 0) {
+  if (GameFlag_Get(872) != 0) {
     MapGrid_CopyCellAttributes(15, 12, 1, 1, 13, 12);
     MapGrid_CopyCellAttributes(1, 25, 1, 1, 9, 12);
     objectEvent = ObjectEvent_GetById(LOCALID_SCALES_WEIGHT);
@@ -1108,7 +1108,7 @@ s32 ColosseumNavampaMatch_Initialize(void) {
   }
 
   // Halt preserves a stationary wall; otherwise restart its pattern cycle.
-  if (GameFlag_Test(865) != 0) {
+  if (GameFlag_Get(865) != 0) {
     for (i = LOCALID_FIRST_PISTON; i <= LOCALID_LAST_PISTON; i++) {
       objectEvent = ObjectEvent_GetById(i);
       objectEvent->priorityFlags = OBJ_EVENT_PRIORITY_UNDERFOOT;
@@ -1135,12 +1135,12 @@ s32 ColosseumNavampaMatch_Initialize(void) {
                                TASK_PRIORITY_MAP);
   }
 
-  if (GameFlag_Test(864) != 0) {
+  if (GameFlag_Get(864) != 0) {
     Engine_ObjectEventSetAnimation(LOCALID_GROWTH_PLANT, ANIM_SHAKE_HEAD);
     MapGrid_CopyCellAttributes(47, 61, 1, 4, 49, 61);
   }
 
-  if (GameFlag_Test(867) != 0) {
+  if (GameFlag_Get(867) != 0) {
     TilesetAnim_Pause(1);
     objectEvent = ObjectEvent_GetById(LOCALID_SIDEWALK_LOG);
     objectEvent->motionFlags = 0;
@@ -1154,7 +1154,7 @@ s32 ColosseumNavampaMatch_Initialize(void) {
     TilesetAnim_Pause(2);
   }
 
-  if (GameFlag_Test(873) != 0) {
+  if (GameFlag_Get(873) != 0) {
     objectEvent = ObjectEvent_GetById(LOCALID_LONG_LOG);
     ObjectDispatch_SelectAnimation(objectEvent, 8);
     objectEvent->priorityFlags = OBJ_EVENT_PRIORITY_UNDERFOOT;
@@ -1197,7 +1197,7 @@ s32 ColosseumNavampaMatch_Initialize(void) {
     ObjectEvent_DestroyById(LOCALID_FREE_CLIMB_ATTENDANT);
     ObjectEvent_DestroyById(LOCALID_MOVING_SIDEWALK_ATTENDANT);
     ObjectEvent_DestroyById(LOCALID_LOG_ROLLING_ATTENDANT);
-    if (GameFlag_Test(FLAG_KEEP_PARTY_POSITION) == 0) {
+    if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) == 0) {
       Sound_PlaySong(SONG_FADE_OUT_BGM);
       Colosso_ControlCharacterAlone(ISAAC);
       Colosso_PlaceFriendsAtCheeringSpots();
@@ -1215,7 +1215,7 @@ s32 ColosseumNavampaMatch_Initialize(void) {
                                TASK_PRIORITY_MAP);
     ObjectEvent_DestroyById(LOCALID_PRIZE_A);
     ObjectEvent_DestroyById(LOCALID_PRIZE_B);
-    if (GameFlag_Test(FLAG_KEEP_PARTY_POSITION) != 0) {
+    if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) != 0) {
       break;
     }
     Colosso_PlaceFriendsAtCheeringSpots();
@@ -1224,7 +1224,7 @@ s32 ColosseumNavampaMatch_Initialize(void) {
     break;
 
   case COLOSSEUM_NAVAMPA_MATCH_FROM_COLOSSEUM_NORTH:
-    if (GameFlag_Test(FLAG_KEEP_PARTY_POSITION) != 0) {
+    if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) != 0) {
       break;
     }
     ColosseumNavampaMatch_IntroduceThirdFinals(LOCALID_GUIDE);
@@ -1234,14 +1234,14 @@ s32 ColosseumNavampaMatch_Initialize(void) {
   case COLOSSEUM_NAVAMPA_MATCH_AFTER_MATCH_WON:
     ColosseumNavampaMatch_PlayPostBattleReunion(1);
     Engine_ScriptRequestWarp(COLOSSEUM_NAVAMPA_MATCH_TO_BABI_PALACE);
-    Engine_GameFlagSet(FLAG_COLOSSO_OVER);
-    Engine_GameFlagSet(FLAG_WON_COLOSSO);
+    GameFlag_Set(FLAG_COLOSSO_OVER);
+    GameFlag_Set(FLAG_WON_COLOSSO);
     break;
 
   case COLOSSEUM_NAVAMPA_MATCH_AFTER_MATCH_LOST:
     ColosseumNavampaMatch_PlayPostBattleReunion(-1);
     Engine_ScriptRequestWarp(COLOSSEUM_NAVAMPA_MATCH_TO_BABI_PALACE_LOST);
-    Engine_GameFlagSet(FLAG_COLOSSO_OVER);
+    GameFlag_Set(FLAG_COLOSSO_OVER);
     break;
   }
   return 0;
@@ -2089,7 +2089,7 @@ static void ColosseumNavampaMatch_ShowRoundStartLettering(s32 mode) {
   Sound_PlaySong(SE_COLOSSO_GO);
   Map_PlayMusic();
   FieldScript_End();
-  Engine_GameFlagSet(FLAG_IN_TOWN);
+  GameFlag_Set(FLAG_IN_TOWN);
 }
 
 /// Unused: a lettering countdown before the match, for a signed number of
@@ -2237,7 +2237,7 @@ static s32 ColosseumNavampaMatch_CollectFinishEquipment(s32 firstItem,
   u16 *itemLocalId;
   s16 *linkedItemLocalId;
 
-  opponentFinishedFirst = GameFlag_Test(FLAG_ARENA_REACHED);
+  opponentFinishedFirst = GameFlag_Get(FLAG_ARENA_REACHED);
   objectEvent = ObjectEvent_GetById(gGameState.leaderLocalId);
   if (gauge->finishX < objectEvent->x.fixed) {
     x = gauge->finishX + PIXELS(12);
@@ -2256,7 +2256,7 @@ static s32 ColosseumNavampaMatch_CollectFinishEquipment(s32 firstItem,
   objectEvent->acceleration = PIXELS(1) / 4;
   objectEvent->speed = PIXELS(1);
   Object_SetPosition(objectEvent, x, 0, z);
-  Engine_GameFlagSet(FLAG_ARENA_REACHED);
+  GameFlag_Set(FLAG_ARENA_REACHED);
   ObjectEvent_SetScript(objectEvent, gColosseumNavampaMatch_PlaceScript);
   while (*linkedItemLocalId != 0) {
     WaitFrames(1);

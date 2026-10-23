@@ -176,7 +176,7 @@ static void EventScript_UpdateRoomTint(void) {
 
   // Test all four quarters' flags without skipping any flag reads.
   if (SolSanctumLunaSolRooms_AreAllStatueLightsLit() != 0) {
-    paletteActive = GameFlag_IsSet(FLAG_MAP_TEMP_01);
+    paletteActive = Script_GetFlag(FLAG_MAP_TEMP_01);
     if (paletteActive == 0) {
       FieldScript_Start();
       PaletteFade_ApplyTarget(SOL_SANCTUM_BLUE_TINT, 1);
@@ -184,18 +184,18 @@ static void EventScript_UpdateRoomTint(void) {
       GameFlag_Set(FLAG_MAP_TEMP_01);
       GameFlag_Clear(FLAG_MAP_TEMP_00);
       GameFlag_Clear(FLAG_MAP_TEMP_02);
-      if (GameFlag_IsSet(FLAG_SOL_SANCTUM_LUNA_SOL_ROOMS_SEEN) == 0) {
+      if (GameFlag_Get(FLAG_SOL_SANCTUM_LUNA_SOL_ROOMS_SEEN) == 0) {
         SolSanctumLunaSolRooms_IntroduceSolAndLunaRooms();
       }
       if (SolSanctumLunaSolRooms_AreAllStatueLightsLit() != 0) {
-        if (GameFlag_IsSet(FLAG_SOL_SANCTUM_FLOOR_SYMBOL_SEEN) == 0) {
+        if (GameFlag_Get(FLAG_SOL_SANCTUM_FLOOR_SYMBOL_SEEN) == 0) {
           SolSanctumLunaSolRooms_DiscussFloorSymbolChangingToLuna();
         }
       }
       FieldScript_End();
     }
   } else {
-    if (GameFlag_IsSet(FLAG_MAP_TEMP_00) == 0) {
+    if (Script_GetFlag(FLAG_MAP_TEMP_00) == 0) {
       FieldScript_Start();
       PaletteFade_ApplyTarget(PALETTE_TINT_NONE, 1);
       PaletteFade_StartInterpolation(20);
@@ -211,7 +211,7 @@ static void EventScript_UpdateRoomTint(void) {
 /// back to plain colours. Also called by EventScript_KradenStopsPartyLeaving
 /// after the eruption. Sets FLAG_MAP_TEMP_00 and clears _01 and _02.
 static void EventScript_RestorePlainTint(void) {
-  if (GameFlag_IsSet(FLAG_MAP_TEMP_00) == 0) {
+  if (Script_GetFlag(FLAG_MAP_TEMP_00) == 0) {
     FieldScript_Start();
     PaletteFade_ApplyTarget(PALETTE_TINT_NONE, 1);
     PaletteFade_StartInterpolation(20);
@@ -231,7 +231,7 @@ static void EventScript_UpdateRoomTintInverse(void) {
   s32 paletteActive;
 
   if (SolSanctumLunaSolRooms_AreAllStatueLightsLit() != 0) {
-    paletteActive = GameFlag_IsSet(FLAG_MAP_TEMP_00);
+    paletteActive = Script_GetFlag(FLAG_MAP_TEMP_00);
     if (paletteActive == 0) {
       FieldScript_Start();
       PaletteFade_ApplyTarget(PALETTE_TINT_NONE, 1);
@@ -242,14 +242,14 @@ static void EventScript_UpdateRoomTintInverse(void) {
       FieldScript_End();
     }
   } else {
-    if (GameFlag_IsSet(FLAG_MAP_TEMP_01) == 0) {
+    if (Script_GetFlag(FLAG_MAP_TEMP_01) == 0) {
       FieldScript_Start();
       PaletteFade_ApplyTarget(SOL_SANCTUM_BLUE_TINT, 1);
       PaletteFade_StartInterpolation(20);
       GameFlag_Set(FLAG_MAP_TEMP_01);
       GameFlag_Clear(FLAG_MAP_TEMP_00);
       GameFlag_Clear(FLAG_MAP_TEMP_02);
-      if (GameFlag_IsSet(FLAG_SOL_SANCTUM_LUNA_SOL_ROOMS_SEEN) == 0) {
+      if (GameFlag_Get(FLAG_SOL_SANCTUM_LUNA_SOL_ROOMS_SEEN) == 0) {
         SolSanctumLunaSolRooms_IntroduceSolAndLunaRooms();
       }
       FieldScript_End();
@@ -261,7 +261,7 @@ static void EventScript_UpdateRoomTintInverse(void) {
 /// rooms to SOL_SANCTUM_WARM_TINT. Sets FLAG_MAP_TEMP_02 and clears _00 and
 /// _01.
 static void EventScript_ApplySecondRoomTint(void) {
-  if (GameFlag_IsSet(FLAG_MAP_TEMP_02) == 0) {
+  if (Script_GetFlag(FLAG_MAP_TEMP_02) == 0) {
     PaletteFade_ApplyTarget(SOL_SANCTUM_WARM_TINT, 1);
     PaletteFade_StartInterpolation(20);
     GameFlag_Set(FLAG_MAP_TEMP_02);
@@ -282,13 +282,13 @@ static void EventScript_ClearBackdropColor(void) {
 /// consecutive flags, with the tiles of the given source row.
 static inline void SolSanctumLunaSolRooms_DrawStatueLightTiles(s32 firstFlag,
                                                                s32 sourceRow) {
-  if (GameFlag_Test(firstFlag) != 0)
+  if (GameFlag_Get(firstFlag) != 0)
     MapGrid_CopyCellsTo(45, sourceRow, 34, 10, 2, 1);
-  if (GameFlag_Test(firstFlag + 1) != 0)
+  if (GameFlag_Get(firstFlag + 1) != 0)
     MapGrid_CopyCellsTo(47, sourceRow, 36, 10, 2, 1);
-  if (GameFlag_Test(firstFlag + 2) != 0)
+  if (GameFlag_Get(firstFlag + 2) != 0)
     MapGrid_CopyCellsTo(45, sourceRow + 1, 34, 11, 2, 1);
-  if (GameFlag_Test(firstFlag + 3) != 0)
+  if (GameFlag_Get(firstFlag + 3) != 0)
     MapGrid_CopyCellsTo(47, sourceRow + 1, 36, 11, 2, 1);
 }
 
@@ -345,10 +345,10 @@ static inline void SolSanctumLunaSolRooms_FlashSavedStatueLights(s32 frames) {
 static void EventScript_KradenFindsHeartOfSanctum(void) {
   struct ObjectEvent *leader;
 
-  if (GameFlag_Test(FLAG_SOL_SANCTUM_ERUPTED) != 0) {
+  if (GameFlag_Get(FLAG_SOL_SANCTUM_ERUPTED) != 0) {
     EventScript_UpdateRoomTint();
   }
-  if (GameFlag_Test(FLAG_SOL_SANCTUM_FOUND) == 0) {
+  if (GameFlag_Get(FLAG_SOL_SANCTUM_FOUND) == 0) {
     FieldScript_Start();
     // The leader walks in as the music changes.
     FieldScript_SetMessageId(MsgSolSanctumFound);
@@ -522,8 +522,8 @@ static void EventScript_KradenFindsHeartOfSanctum(void) {
     }
     ObjectMotion_CommitCurrentPositionAndActivate(JENNA);
     Engine_ObjectEventSetPosition(JENNA, 0, 0);
-    Engine_GameFlagSet(FLAG_RETREAT_BLOCKED);
-    Engine_GameFlagSet(FLAG_SOL_SANCTUM_FOUND);
+    GameFlag_Set(FLAG_RETREAT_BLOCKED);
+    GameFlag_Set(FLAG_SOL_SANCTUM_FOUND);
     FieldScript_End();
   }
 }
@@ -616,47 +616,47 @@ static void EventScript_KradenStopsPartyLeaving(void) {
   struct ObjectEvent *destinationObjectEvent;
 
   kraden = ObjectEvent_GetById(LOCALID_KRADEN);
-  if (GameFlag_IsSet(FLAG_SOL_SANCTUM_FOUND) == 0) {
+  if (GameFlag_Get(FLAG_SOL_SANCTUM_FOUND) == 0) {
     return;
   }
-  if (GameFlag_IsSet(FLAG_SOL_SANCTUM_ERUPTED) != 0) {
+  if (GameFlag_Get(FLAG_SOL_SANCTUM_ERUPTED) != 0) {
     EventScript_RestorePlainTint();
     return;
   }
-  if (GameFlag_IsSet(FLAG_SOL_SANCTUM_STAR_ROOM_PASSAGE_OPEN) != 0) {
+  if (GameFlag_Get(FLAG_SOL_SANCTUM_STAR_ROOM_PASSAGE_OPEN) != 0) {
     return;
   }
   FieldScript_Start();
   Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, 0);
   FieldScript_SetMessageId(MsgSolSanctumWayLeadsOutSanctum);
-  if (GameFlag_IsSet(FLAG_SOL_SANCTUM_LUNA_PICTURE_CHANGED) != 0 ||
-      GameFlag_IsSet(FLAG_SOL_SANCTUM_LUNA_SOL_ROOMS_SEEN) == 0) {
+  if (Script_GetFlag(FLAG_SOL_SANCTUM_LUNA_PICTURE_CHANGED) != 0 ||
+      GameFlag_Get(FLAG_SOL_SANCTUM_LUNA_SOL_ROOMS_SEEN) == 0) {
     leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
     if (leader != 0) {
       ObjectEvent_SetPosition(LOCALID_KRADEN, leader->x.fixed, leader->z.fixed);
     }
     FieldScript_WaitFrames(4);
     ObjectEvent_SetSpeed(LOCALID_KRADEN, PIXELS(1), PIXELS(1) / 2);
-  } else if (GameFlag_IsSet(FLAG_SOL_SANCTUM_LUNA_PICTURE_CHANGED) != 0 ||
+  } else if (GameFlag_Get(FLAG_SOL_SANCTUM_LUNA_PICTURE_CHANGED) != 0 ||
              kraden->x.fixed > PIXELS(340)) {
     ObjectEvent_SetPosition(LOCALID_KRADEN, PIXELS(392), PIXELS(168));
     FieldScript_WaitFrames(4);
     ObjectEvent_SetSpeed(LOCALID_KRADEN, PIXELS(2), PIXELS(1));
   }
-  if (GameFlag_IsSet(FLAG_SOL_SANCTUM_LUNA_PICTURE_CHANGED) != 0 ||
+  if (GameFlag_Get(FLAG_SOL_SANCTUM_LUNA_PICTURE_CHANGED) != 0 ||
       kraden->x.fixed > PIXELS(340)) {
     ObjectEvent_WalkToAndWait(LOCALID_KRADEN, 288, 232);
   } else {
     // The result is unused.
-    GameFlag_IsSet(FLAG_SOL_SANCTUM_LUNA_SOL_ROOMS_SEEN);
+    GameFlag_Get(FLAG_SOL_SANCTUM_LUNA_SOL_ROOMS_SEEN);
   }
   ObjectEvent_WalkToAndWait(LOCALID_KRADEN, 288, 232);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_NORTH, 0);
   ObjectEvent_FaceDirection(LOCALID_KRADEN, FACING_SOUTH, 10);
   Script_ShowMessageAndWait(LOCALID_KRADEN, 0, 10);
   ObjectMotion_SetAnimationAndWait(LOCALID_PARTY_LEADER, ANIM_NOD);
-  if (GameFlag_IsSet(FLAG_SOL_SANCTUM_LUNA_PICTURE_CHANGED) != 0 ||
-      GameFlag_IsSet(FLAG_SOL_SANCTUM_LUNA_SOL_ROOMS_SEEN) == 0) {
+  if (GameFlag_Get(FLAG_SOL_SANCTUM_LUNA_PICTURE_CHANGED) != 0 ||
+      GameFlag_Get(FLAG_SOL_SANCTUM_LUNA_SOL_ROOMS_SEEN) == 0) {
     Engine_ObjectEventSetAnimation(LOCALID_KRADEN, ANIM_WALK);
     destinationObjectEvent = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
     if (destinationObjectEvent != 0) {
@@ -1033,36 +1033,36 @@ static void SolSanctumLunaSolRooms_UnusedAnimateSavedStatueLights(void) {
 
   FieldScript_Start();
   // Toggle the shown lights only where the quarters are lit now.
-  if (GameFlag_IsSet(FLAG_SOL_SANCTUM_NORTHWEST_SEAL_OPEN) != 0 &&
-      GameFlag_IsSet(FLAG_SOL_SANCTUM_NORTHWEST_LIGHT_SHOWN) != 0) {
+  if (GameFlag_Get(FLAG_SOL_SANCTUM_NORTHWEST_SEAL_OPEN) != 0 &&
+      Script_GetFlag(FLAG_SOL_SANCTUM_NORTHWEST_LIGHT_SHOWN) != 0) {
     GameFlag_Clear(FLAG_SOL_SANCTUM_NORTHWEST_LIGHT_SHOWN);
     MapGrid_CopyCellsTo(45, 28, 34, 10, 2, 1);
-  } else if (GameFlag_IsSet(FLAG_SOL_SANCTUM_NORTHWEST_SEAL_OPEN) != 0 &&
-             GameFlag_IsSet(FLAG_SOL_SANCTUM_NORTHWEST_LIGHT_SHOWN) == 0) {
+  } else if (GameFlag_Get(FLAG_SOL_SANCTUM_NORTHWEST_SEAL_OPEN) != 0 &&
+             Script_GetFlag(FLAG_SOL_SANCTUM_NORTHWEST_LIGHT_SHOWN) == 0) {
     GameFlag_Set(FLAG_SOL_SANCTUM_NORTHWEST_LIGHT_SHOWN);
   }
-  if (GameFlag_IsSet(FLAG_SOL_SANCTUM_NORTHEAST_SEAL_OPEN) != 0 &&
-      GameFlag_IsSet(FLAG_SOL_SANCTUM_NORTHEAST_LIGHT_SHOWN) != 0) {
+  if (GameFlag_Get(FLAG_SOL_SANCTUM_NORTHEAST_SEAL_OPEN) != 0 &&
+      Script_GetFlag(FLAG_SOL_SANCTUM_NORTHEAST_LIGHT_SHOWN) != 0) {
     GameFlag_Clear(FLAG_SOL_SANCTUM_NORTHEAST_LIGHT_SHOWN);
     MapGrid_CopyCellsTo(47, 28, 36, 10, 2, 1);
-  } else if (GameFlag_IsSet(FLAG_SOL_SANCTUM_NORTHEAST_SEAL_OPEN) != 0 &&
-             GameFlag_IsSet(FLAG_SOL_SANCTUM_NORTHEAST_LIGHT_SHOWN) == 0) {
+  } else if (GameFlag_Get(FLAG_SOL_SANCTUM_NORTHEAST_SEAL_OPEN) != 0 &&
+             Script_GetFlag(FLAG_SOL_SANCTUM_NORTHEAST_LIGHT_SHOWN) == 0) {
     GameFlag_Set(FLAG_SOL_SANCTUM_NORTHEAST_LIGHT_SHOWN);
   }
-  if (GameFlag_IsSet(FLAG_SOL_SANCTUM_SOUTHWEST_SEAL_OPEN) != 0 &&
-      GameFlag_IsSet(FLAG_SOL_SANCTUM_SOUTHWEST_LIGHT_SHOWN) != 0) {
+  if (GameFlag_Get(FLAG_SOL_SANCTUM_SOUTHWEST_SEAL_OPEN) != 0 &&
+      Script_GetFlag(FLAG_SOL_SANCTUM_SOUTHWEST_LIGHT_SHOWN) != 0) {
     GameFlag_Clear(FLAG_SOL_SANCTUM_SOUTHWEST_LIGHT_SHOWN);
     MapGrid_CopyCellsTo(45, 29, 34, 11, 2, 1);
-  } else if (GameFlag_IsSet(FLAG_SOL_SANCTUM_SOUTHWEST_SEAL_OPEN) != 0 &&
-             GameFlag_IsSet(FLAG_SOL_SANCTUM_SOUTHWEST_LIGHT_SHOWN) == 0) {
+  } else if (GameFlag_Get(FLAG_SOL_SANCTUM_SOUTHWEST_SEAL_OPEN) != 0 &&
+             Script_GetFlag(FLAG_SOL_SANCTUM_SOUTHWEST_LIGHT_SHOWN) == 0) {
     GameFlag_Set(FLAG_SOL_SANCTUM_SOUTHWEST_LIGHT_SHOWN);
   }
-  if (GameFlag_IsSet(FLAG_SOL_SANCTUM_SOUTHEAST_SEAL_OPEN) != 0 &&
-      GameFlag_IsSet(FLAG_SOL_SANCTUM_SOUTHEAST_LIGHT_SHOWN) != 0) {
+  if (GameFlag_Get(FLAG_SOL_SANCTUM_SOUTHEAST_SEAL_OPEN) != 0 &&
+      Script_GetFlag(FLAG_SOL_SANCTUM_SOUTHEAST_LIGHT_SHOWN) != 0) {
     GameFlag_Clear(FLAG_SOL_SANCTUM_SOUTHEAST_LIGHT_SHOWN);
     MapGrid_CopyCellsTo(47, 29, 36, 11, 2, 1);
-  } else if (GameFlag_IsSet(FLAG_SOL_SANCTUM_SOUTHEAST_SEAL_OPEN) != 0 &&
-             GameFlag_IsSet(FLAG_SOL_SANCTUM_SOUTHEAST_LIGHT_SHOWN) == 0) {
+  } else if (GameFlag_Get(FLAG_SOL_SANCTUM_SOUTHEAST_SEAL_OPEN) != 0 &&
+             Script_GetFlag(FLAG_SOL_SANCTUM_SOUTHEAST_LIGHT_SHOWN) == 0) {
     GameFlag_Set(FLAG_SOL_SANCTUM_SOUTHEAST_LIGHT_SHOWN);
   }
   SolSanctumLunaSolRooms_OpenOnKradenInLunaRoom();
@@ -1091,7 +1091,7 @@ static void SolSanctumLunaSolRooms_UnusedAnimateSavedStatueLights(void) {
   FieldScript_WaitFrames(6);
   // Kraden, once: "You found it, Isaac." and "Keep doing that until the light
   // bathes all the remaining quarters."
-  if (GameFlag_IsSet(FLAG_SOL_SANCTUM_KRADEN_SAID_YOU_FOUND_IT) == 0) {
+  if (GameFlag_Get(FLAG_SOL_SANCTUM_KRADEN_SAID_YOU_FOUND_IT) == 0) {
     speaker = SPEAKER_WINDOW_BELOW | LOCALID_KRADEN;
     FieldScript_SetMessageId(MsgSolSanctumYouFoundIt);
     SolSanctumLunaSolRooms_ShowMessageAndWait(speaker, 6);
@@ -1114,7 +1114,7 @@ static void SolSanctumLunaSolRooms_UnusedAnimateSavedStatueLights(void) {
 static void EventScript_KradenSeesLunaPictureChange(void) {
   struct ObjectEvent *leader;
 
-  if (GameFlag_IsSet(FLAG_SOL_SANCTUM_LUNA_PICTURE_CHANGED) != 0) {
+  if (Script_GetFlag(FLAG_SOL_SANCTUM_LUNA_PICTURE_CHANGED) != 0) {
   } else {
     if (SolSanctumLunaSolRooms_AreAllStatueLightsLit() == 0) {
     } else {
@@ -1196,7 +1196,7 @@ static void SolSanctumLunaSolRooms_DiscussFloorSymbolChangingToLuna(void) {
   ObjectEvent_WalkToAndWait(LOCALID_KRADEN, 376, 184);
   ObjectEvent_SetPosition(LOCALID_KRADEN, PIXELS(1608), PIXELS(1608));
   FieldScript_WaitFrames(4);
-  Engine_GameFlagSet(FLAG_SOL_SANCTUM_FLOOR_SYMBOL_SEEN);
+  GameFlag_Set(FLAG_SOL_SANCTUM_FLOOR_SYMBOL_SEEN);
 }
 
 /// Sol Sanctum: searching the floor symbol once Kraden has seen
@@ -1211,7 +1211,7 @@ static void EventScript_RiseToElementalStarRoom(void) {
   s32 frame;
   struct Sprite *sprite;
 
-  if (GameFlag_Test(FLAG_SOL_SANCTUM_FLOOR_SYMBOL_SEEN) == 0) {
+  if (GameFlag_Get(FLAG_SOL_SANCTUM_FLOOR_SYMBOL_SEEN) == 0) {
   } else {
     FieldScript_Start();
     // Isaac steps onto the symbol and Kraden comes out beside him.
@@ -1230,12 +1230,12 @@ static void EventScript_RiseToElementalStarRoom(void) {
     ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER,
                               FACING_NORTHWEST + FACING_STEP, 0);
     ObjectMotion_ArmCallback(LOCALID_KRADEN, FACING_NORTH + FACING_STEP, 20);
-    if (GameFlag_IsSet(FLAG_SOL_SANCTUM_STAR_ROOM_PASSAGE_OPEN) == 0) {
+    if (Script_GetFlag(FLAG_SOL_SANCTUM_STAR_ROOM_PASSAGE_OPEN) == 0) {
       Sound_PlaySong(SE_220);
     }
     FieldScript_WaitFrames(40);
     // Reveal the passage only once; later visits reuse its open state.
-    if (GameFlag_IsSet(FLAG_SOL_SANCTUM_STAR_ROOM_PASSAGE_OPEN) != 0) {
+    if (Script_GetFlag(FLAG_SOL_SANCTUM_STAR_ROOM_PASSAGE_OPEN) != 0) {
     } else {
       MapGrid_CopyCellsTo(36, 62, 17, 36, 2, 3);
       MapGrid_CopyCellsTo(44, 59, 17, 38, 2, 1);
@@ -1262,7 +1262,7 @@ static void EventScript_RiseToElementalStarRoom(void) {
       FieldScript_WaitFrames(80);
       TilesetAnim_Resume(9);
       TilesetAnim_Resume(10);
-      Engine_GameFlagSet(FLAG_SOL_SANCTUM_STAR_ROOM_PASSAGE_OPEN);
+      GameFlag_Set(FLAG_SOL_SANCTUM_STAR_ROOM_PASSAGE_OPEN);
     }
     ObjectEvent_LinkPair(LOCALID_KRADEN, LOCALID_PARTY_LEADER, 30);
     Engine_ObjectEventSetAnimation(LOCALID_KRADEN, ANIM_NOD);
@@ -1388,25 +1388,25 @@ s32 SolSanctumLunaSolRooms_Initialize(void) {
   gFieldWork->transition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   playedEntrySequence = 0;
-  if (GameFlag_Test(FLAG_SOL_SANCTUM_FOUND) != 0 &&
-      GameFlag_Test(FLAG_SOL_SANCTUM_ERUPTED) == 0 &&
-      GameFlag_Test(FLAG_SOL_SANCTUM_STAR_ROOM_PASSAGE_OPEN) == 0) {
-    Engine_GameFlagSet(FLAG_RETREAT_BLOCKED);
+  if (GameFlag_Get(FLAG_SOL_SANCTUM_FOUND) != 0 &&
+      GameFlag_Get(FLAG_SOL_SANCTUM_ERUPTED) == 0 &&
+      GameFlag_Get(FLAG_SOL_SANCTUM_STAR_ROOM_PASSAGE_OPEN) == 0) {
+    GameFlag_Set(FLAG_RETREAT_BLOCKED);
   }
   PaletteFade_SetSource(PALETTE_TINT_NONE, 0);
-  if (GameFlag_Test(FLAG_KEEP_PARTY_POSITION) != 0) {
-    if (GameFlag_Test(FLAG_MAP_TEMP_01) != 0) {
+  if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) != 0) {
+    if (GameFlag_Get(FLAG_MAP_TEMP_01) != 0) {
       PaletteFade_SetTarget(SOL_SANCTUM_BLUE_TINT, 1);
       PaletteFade_StartInterpolation(1);
       WaitFrames(1);
-    } else if (GameFlag_Test(FLAG_MAP_TEMP_02) != 0) {
+    } else if (GameFlag_Get(FLAG_MAP_TEMP_02) != 0) {
       PaletteFade_SetTarget(SOL_SANCTUM_WARM_TINT, 1);
       PaletteFade_StartInterpolation(1);
       WaitFrames(1);
     }
   } else {
-    Engine_GameFlagSet(FLAG_MAP_TEMP_00);
-    if (GameFlag_Test(FLAG_SOL_SANCTUM_LUNA_SOL_ROOMS_SEEN) != 0) {
+    GameFlag_Set(FLAG_MAP_TEMP_00);
+    if (GameFlag_Get(FLAG_SOL_SANCTUM_LUNA_SOL_ROOMS_SEEN) != 0) {
       ObjectEvent_SetPosition(LOCALID_KRADEN, PIXELS(576), PIXELS(120));
     }
   }
@@ -1414,42 +1414,42 @@ s32 SolSanctumLunaSolRooms_Initialize(void) {
   // MapId_SolSanctumStatue for.
   if (gGameState.warpDest ==
       SOL_SANCTUM_LUNA_SOL_ROOMS_FROM_SOL_SANCTUM_STATUE_TRAP_DISARMED) {
-    if (GameFlag_IsSet(FLAG_SOL_SANCTUM_KRADEN_SAID_FOUND_SOMETHING) == 0) {
+    if (Script_GetFlag(FLAG_SOL_SANCTUM_KRADEN_SAID_FOUND_SOMETHING) == 0) {
       SolSanctumLunaSolRooms_FlashLightsWithTrapDisarmed();
-      Engine_GameFlagSet(FLAG_SOL_SANCTUM_KRADEN_SAID_FOUND_SOMETHING);
+      GameFlag_Set(FLAG_SOL_SANCTUM_KRADEN_SAID_FOUND_SOMETHING);
       playedEntrySequence = 1;
     }
   } else if (
       gGameState.warpDest ==
       SOL_SANCTUM_LUNA_SOL_ROOMS_FROM_SOL_SANCTUM_STATUE_TRAP_TRIGGERED) {
-    if (GameFlag_IsSet(FLAG_SOL_SANCTUM_FALLING_LIGHTS_SEEN) == 0) {
+    if (Script_GetFlag(FLAG_SOL_SANCTUM_FALLING_LIGHTS_SEEN) == 0) {
       SolSanctumLunaSolRooms_SpringTrap();
-      Engine_GameFlagSet(FLAG_SOL_SANCTUM_FALLING_LIGHTS_SEEN);
-      GameFlag_ClearBit(FLAG_SOL_SANCTUM_NORTHWEST_SEAL_OPEN);
-      GameFlag_ClearBit(FLAG_SOL_SANCTUM_NORTHEAST_SEAL_OPEN);
-      GameFlag_ClearBit(FLAG_SOL_SANCTUM_SOUTHWEST_SEAL_OPEN);
-      GameFlag_ClearBit(FLAG_SOL_SANCTUM_SOUTHEAST_SEAL_OPEN);
+      GameFlag_Set(FLAG_SOL_SANCTUM_FALLING_LIGHTS_SEEN);
+      GameFlag_Clear(FLAG_SOL_SANCTUM_NORTHWEST_SEAL_OPEN);
+      GameFlag_Clear(FLAG_SOL_SANCTUM_NORTHEAST_SEAL_OPEN);
+      GameFlag_Clear(FLAG_SOL_SANCTUM_SOUTHWEST_SEAL_OPEN);
+      GameFlag_Clear(FLAG_SOL_SANCTUM_SOUTHEAST_SEAL_OPEN);
       playedEntrySequence = 1;
     }
   } else if (gGameState.warpDest ==
              SOL_SANCTUM_LUNA_SOL_ROOMS_FROM_SOL_SANCTUM_STATUE_LIGHTS_SHOWN) {
-    if (GameFlag_Test(FLAG_SOL_SANCTUM_FALLING_LIGHTS_SEEN) != 0) {
+    if (GameFlag_Get(FLAG_SOL_SANCTUM_FALLING_LIGHTS_SEEN) != 0) {
       SolSanctumLunaSolRooms_UnusedAnimateSavedStatueLights();
-      Engine_GameFlagSet(FLAG_SOL_SANCTUM_KRADEN_SAID_YOU_FOUND_IT);
+      GameFlag_Set(FLAG_SOL_SANCTUM_KRADEN_SAID_YOU_FOUND_IT);
     }
     playedEntrySequence = 1;
   }
-  if (GameFlag_IsSet(FLAG_SOL_SANCTUM_NORTHWEST_SEAL_OPEN) != 0) {
-    Engine_GameFlagSet(FLAG_SOL_SANCTUM_NORTHWEST_LIGHT_SHOWN);
+  if (Script_GetFlag(FLAG_SOL_SANCTUM_NORTHWEST_SEAL_OPEN) != 0) {
+    GameFlag_Set(FLAG_SOL_SANCTUM_NORTHWEST_LIGHT_SHOWN);
   }
-  if (GameFlag_IsSet(FLAG_SOL_SANCTUM_NORTHEAST_SEAL_OPEN) != 0) {
-    Engine_GameFlagSet(FLAG_SOL_SANCTUM_NORTHEAST_LIGHT_SHOWN);
+  if (Script_GetFlag(FLAG_SOL_SANCTUM_NORTHEAST_SEAL_OPEN) != 0) {
+    GameFlag_Set(FLAG_SOL_SANCTUM_NORTHEAST_LIGHT_SHOWN);
   }
-  if (GameFlag_IsSet(FLAG_SOL_SANCTUM_SOUTHWEST_SEAL_OPEN) != 0) {
-    Engine_GameFlagSet(FLAG_SOL_SANCTUM_SOUTHWEST_LIGHT_SHOWN);
+  if (Script_GetFlag(FLAG_SOL_SANCTUM_SOUTHWEST_SEAL_OPEN) != 0) {
+    GameFlag_Set(FLAG_SOL_SANCTUM_SOUTHWEST_LIGHT_SHOWN);
   }
-  if (GameFlag_IsSet(FLAG_SOL_SANCTUM_SOUTHEAST_SEAL_OPEN) != 0) {
-    Engine_GameFlagSet(FLAG_SOL_SANCTUM_SOUTHEAST_LIGHT_SHOWN);
+  if (Script_GetFlag(FLAG_SOL_SANCTUM_SOUTHEAST_SEAL_OPEN) != 0) {
+    GameFlag_Set(FLAG_SOL_SANCTUM_SOUTHEAST_LIGHT_SHOWN);
   }
   WaitFrames(4);
   // Restore completed puzzle tiles without replaying the warp
@@ -1464,8 +1464,8 @@ s32 SolSanctumLunaSolRooms_Initialize(void) {
       MapGrid_CopyCellsTo(14, 45, 14, 41, 8, 4);
       if (gGameState.warpDest !=
           SOL_SANCTUM_LUNA_SOL_ROOMS_FROM_SOL_SANCTUM_ERUPTION) {
-        if (GameFlag_Test(FLAG_SOL_SANCTUM_ERUPTED) == 0) {
-          if (GameFlag_Test(FLAG_SOL_SANCTUM_STAR_ROOM_PASSAGE_OPEN) != 0) {
+        if (GameFlag_Get(FLAG_SOL_SANCTUM_ERUPTED) == 0) {
+          if (GameFlag_Get(FLAG_SOL_SANCTUM_STAR_ROOM_PASSAGE_OPEN) != 0) {
             MapGrid_CopyCellsTo(0, 32, 17, 39, 2, 1);
             MapGrid_CopyCellsTo(42, 62, 17, 36, 2, 3);
             MapGrid_CopyCellsTo(0, 32, 17, 40, 2, 1);
@@ -1481,27 +1481,27 @@ s32 SolSanctumLunaSolRooms_Initialize(void) {
       Engine_ObjectEventSetPosition(LOCALID_KRADEN, 0, 0);
     } else {
       anyLightLit = 0;
-      if (GameFlag_Test(FLAG_SOL_SANCTUM_NORTHWEST_SEAL_OPEN) != 0) {
+      if (GameFlag_Get(FLAG_SOL_SANCTUM_NORTHWEST_SEAL_OPEN) != 0) {
         MapGrid_CopyCellsTo(45, 28, 34, 10, 2, 1);
         MapGrid_CopyCellsTo(45, 30, 16, 10, 2, 1);
         anyLightLit = 1;
       }
-      if (GameFlag_Test(FLAG_SOL_SANCTUM_NORTHEAST_SEAL_OPEN) != 0) {
+      if (GameFlag_Get(FLAG_SOL_SANCTUM_NORTHEAST_SEAL_OPEN) != 0) {
         MapGrid_CopyCellsTo(47, 28, 36, 10, 2, 1);
         MapGrid_CopyCellsTo(47, 30, 18, 10, 2, 1);
         anyLightLit = 1;
       }
-      if (GameFlag_Test(FLAG_SOL_SANCTUM_SOUTHWEST_SEAL_OPEN) != 0) {
+      if (GameFlag_Get(FLAG_SOL_SANCTUM_SOUTHWEST_SEAL_OPEN) != 0) {
         MapGrid_CopyCellsTo(45, 29, 34, 11, 2, 1);
         MapGrid_CopyCellsTo(45, 31, 16, 11, 2, 1);
         anyLightLit = 1;
       }
-      if (GameFlag_Test(FLAG_SOL_SANCTUM_SOUTHEAST_SEAL_OPEN) != 0) {
+      if (GameFlag_Get(FLAG_SOL_SANCTUM_SOUTHEAST_SEAL_OPEN) != 0) {
         MapGrid_CopyCellsTo(47, 29, 36, 11, 2, 1);
         MapGrid_CopyCellsTo(47, 31, 18, 11, 2, 1);
         anyLightLit = 1;
       }
-      if (GameFlag_Test(FLAG_SOL_SANCTUM_FALLING_LIGHTS_SEEN) != 0 ||
+      if (GameFlag_Get(FLAG_SOL_SANCTUM_FALLING_LIGHTS_SEEN) != 0 ||
           anyLightLit != 0) {
         MapGrid_CopyCellsTo(30, 43, 32, 40, 8, 3);
         MapGrid_CopyCellsTo(30, 43, 33, 39, 8, 1);
@@ -1512,14 +1512,14 @@ s32 SolSanctumLunaSolRooms_Initialize(void) {
     }
   }
   // The arrival after the Wise One's rescue plays only once.
-  if (GameFlag_IsSet(FLAG_SOL_SANCTUM_RESCUE_ARRIVAL_SEEN) == 0 &&
+  if (Script_GetFlag(FLAG_SOL_SANCTUM_RESCUE_ARRIVAL_SEEN) == 0 &&
       gGameState.warpDest ==
           SOL_SANCTUM_LUNA_SOL_ROOMS_FROM_SOL_SANCTUM_ERUPTION) {
     SolSanctumLunaSolRooms_ArriveAfterWiseOnesRescue();
-    Engine_GameFlagSet(FLAG_SOL_SANCTUM_RESCUE_ARRIVAL_SEEN);
+    GameFlag_Set(FLAG_SOL_SANCTUM_RESCUE_ARRIVAL_SEEN);
     MapGrid_CopyCellAttributes(15, 6, 2, 1, 17, 6);
   } else {
-    if (GameFlag_Test(FLAG_SOL_SANCTUM_ERUPTED) != 0) {
+    if (GameFlag_Get(FLAG_SOL_SANCTUM_ERUPTED) != 0) {
       Map_QueueMusic(SE_RUMBLE);
       MapGrid_SetShake(PIXELS(1), PIXELS(1), Q16_ONE);
       FieldEffect_InitializeSparkles();
@@ -1533,13 +1533,13 @@ s32 SolSanctumLunaSolRooms_Initialize(void) {
 static s32 SolSanctumLunaSolRooms_AreAllStatueLightsLit(void) {
   s32 allLit = 1;
 
-  if (GameFlag_Test(FLAG_SOL_SANCTUM_NORTHWEST_SEAL_OPEN) == 0)
+  if (GameFlag_Get(FLAG_SOL_SANCTUM_NORTHWEST_SEAL_OPEN) == 0)
     allLit = 0;
-  if (GameFlag_Test(FLAG_SOL_SANCTUM_NORTHEAST_SEAL_OPEN) == 0)
+  if (GameFlag_Get(FLAG_SOL_SANCTUM_NORTHEAST_SEAL_OPEN) == 0)
     allLit = 0;
-  if (GameFlag_Test(FLAG_SOL_SANCTUM_SOUTHWEST_SEAL_OPEN) == 0)
+  if (GameFlag_Get(FLAG_SOL_SANCTUM_SOUTHWEST_SEAL_OPEN) == 0)
     allLit = 0;
-  if (GameFlag_Test(FLAG_SOL_SANCTUM_SOUTHEAST_SEAL_OPEN) == 0)
+  if (GameFlag_Get(FLAG_SOL_SANCTUM_SOUTHEAST_SEAL_OPEN) == 0)
     allLit = 0;
 
   return allLit;
@@ -1584,9 +1584,9 @@ static void SolSanctumLunaSolRooms_ArriveAfterWiseOnesRescue(void) {
   PaletteFade_SetTarget(SOL_SANCTUM_BLUE_TINT, 1);
   PaletteFade_StartInterpolation(120);
   WaitFrames(120);
-  Engine_GameFlagSet(FLAG_MAP_TEMP_01);
-  GameFlag_ClearBit(FLAG_MAP_TEMP_00);
-  GameFlag_ClearBit(FLAG_MAP_TEMP_02);
+  GameFlag_Set(FLAG_MAP_TEMP_01);
+  GameFlag_Clear(FLAG_MAP_TEMP_00);
+  GameFlag_Clear(FLAG_MAP_TEMP_02);
   PaletteFade_ApplyTarget(PALETTE_TINT_NONE, 2);
   PaletteFade_StartInterpolation(60);
   WaitFrames(100);
@@ -1668,7 +1668,7 @@ static void SolSanctumLunaSolRooms_ArriveAfterWiseOnesRescue(void) {
 /// over there."
 static void EventScript_TalkToKraden(void) {
   FieldScript_Start();
-  if (GameFlag_IsSet(FLAG_SOL_SANCTUM_ISAAC_SEARCHING_FOR_KRADEN) != 0) {
+  if (GameFlag_Get(FLAG_SOL_SANCTUM_ISAAC_SEARCHING_FOR_KRADEN) != 0) {
     FieldScript_SetMessageId(MsgSolSanctumKradenLetMeKnowWhat);
   } else {
     FieldScript_SetMessageId(MsgSolSanctumKradenJustWaitOverThere);

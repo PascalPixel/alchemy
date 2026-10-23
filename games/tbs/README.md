@@ -264,16 +264,16 @@ that dependence takes, in [story order](glossary.md#the-places-in-story-order).
 
   ```c
   const struct MapEvent *ValeGate_GetEvents(void) {
-    if (GameFlag_Test(FLAG_KALAY_REACHED) != 0) {
+    if (GameFlag_Get(FLAG_KALAY_REACHED) != 0) {
       return gValeGate_EventsAfterKalay;
     }
-    if (GameFlag_Test(FLAG_VALE_PARTY_LEFT) != 0) {
+    if (GameFlag_Get(FLAG_VALE_PARTY_LEFT) != 0) {
       return gValeGate_EventsAfterLeaving;
     }
     if (gGameState.warpDest == VALE_GATE_FROM_SANCTUM) {
       return gValeGate_DepartureEvents;
     }
-    if (GameFlag_Test(FLAG_VALE_STORM) != 0) {
+    if (GameFlag_Get(FLAG_VALE_STORM) != 0) {
       return gValeGate_StormEvents;
     }
     return gValeGate_Events;

@@ -413,7 +413,7 @@ static void VaultCave_PushPillarAhead(void) {
 /// and the ivy stays gone for as long as the party stays in the cave
 /// (FLAG_WHIRLWIND_USED is a map section flag).
 static void EventScript_UseWhirlwind(void) {
-  Engine_GameFlagSet(FLAG_WHIRLWIND_USED);
+  GameFlag_Set(FLAG_WHIRLWIND_USED);
 }
 
 /// In any room of Vault Cave, searching the locked door only says so.
@@ -473,7 +473,7 @@ static inline void VaultCave_CompleteSouthernSwitch(void) {
 /// In VaultCaveVambrace's southern room, pushing the southern pillar; once it
 /// rests on its switch, the puzzle chime plays and the switch opens the way.
 static void EventScript_PushSouthernPillar(void) {
-  if (GameFlag_IsSet(FLAG_VAULT_CAVE_SOUTH_PILLAR_ON_SWITCH) == 0) {
+  if (Script_GetFlag(FLAG_VAULT_CAVE_SOUTH_PILLAR_ON_SWITCH) == 0) {
     VaultCave_PushPillarAhead();
     VaultCave_CompleteSouthernSwitch();
   }
@@ -489,7 +489,7 @@ static void VaultCave_ApplySouthernSwitchCells(void) {
 /// In VaultCaveVambrace's southern room, Move on the southern pillar, with the
 /// same switch check.
 static void EventScript_MoveSouthernPillar(void) {
-  if (GameFlag_IsSet(FLAG_VAULT_CAVE_SOUTH_PILLAR_ON_SWITCH) == 0) {
+  if (Script_GetFlag(FLAG_VAULT_CAVE_SOUTH_PILLAR_ON_SWITCH) == 0) {
     VaultCave_CompleteSouthernSwitch();
   }
 }
@@ -528,9 +528,9 @@ static s32 VaultCave_IsNorthernPillarOnSwitch(void) {
 
 /// The northern switch also waits until the falling-object guard is clear.
 static inline void VaultCave_CompleteNorthernSwitch(void) {
-  if (GameFlag_IsSet(FLAG_VAULT_CAVE_NORTH_PILLAR_ON_SWITCH) == 0) {
+  if (GameFlag_Get(FLAG_VAULT_CAVE_NORTH_PILLAR_ON_SWITCH) == 0) {
     if (VaultCave_IsNorthernPillarOnSwitch() != 0) {
-      if (GameFlag_IsSet(FLAG_NORTH_PILLAR_STRUCK) == 0) {
+      if (GameFlag_Get(FLAG_NORTH_PILLAR_STRUCK) == 0) {
         Script_PlaySong(MUS_PUZZLE_SOLVED);
         VaultCave_ApplyNorthernSwitchCells();
         GameFlag_Set(FLAG_VAULT_CAVE_NORTH_PILLAR_ON_SWITCH);
@@ -572,7 +572,7 @@ static void EventScript_FreezeWestUpperPuddle(void) {
     target->priorityFlags = OBJ_EVENT_PRIORITY_AUTOMATIC;
   }
 
-  Engine_GameFlagSet(FLAG_WEST_UPPER_FROZEN);
+  GameFlag_Set(FLAG_WEST_UPPER_FROZEN);
 }
 
 /// In VaultCaveVambrace's puddle room, Frost on the lower western puddle, as on
@@ -588,7 +588,7 @@ static void EventScript_FreezeWestLowerPuddle(void) {
     target->priorityFlags = OBJ_EVENT_PRIORITY_AUTOMATIC;
   }
 
-  Engine_GameFlagSet(FLAG_WEST_LOWER_FROZEN);
+  GameFlag_Set(FLAG_WEST_LOWER_FROZEN);
 }
 
 /// In VaultCaveVambrace's puddle room, Frost on the inner lower western puddle.
@@ -604,7 +604,7 @@ static void EventScript_FreezeInnerWestLowerPuddle(void) {
     target->priorityFlags = OBJ_EVENT_PRIORITY_AUTOMATIC;
   }
 
-  Engine_GameFlagSet(FLAG_INNER_WEST_LOWER_FROZEN);
+  GameFlag_Set(FLAG_INNER_WEST_LOWER_FROZEN);
 }
 
 /// In VaultCaveVambrace's puddle room, Frost on the upper eastern puddle.
@@ -620,7 +620,7 @@ static void EventScript_FreezeEastUpperPuddle(void) {
     target->priorityFlags = OBJ_EVENT_PRIORITY_AUTOMATIC;
   }
 
-  Engine_GameFlagSet(FLAG_EAST_UPPER_FROZEN);
+  GameFlag_Set(FLAG_EAST_UPPER_FROZEN);
 }
 
 /// In VaultCaveVambrace's puddle room, Frost on the lower eastern puddle.
@@ -636,7 +636,7 @@ static void EventScript_FreezeEastLowerPuddle(void) {
     target->priorityFlags = OBJ_EVENT_PRIORITY_AUTOMATIC;
   }
 
-  Engine_GameFlagSet(FLAG_EAST_LOWER_FROZEN);
+  GameFlag_Set(FLAG_EAST_LOWER_FROZEN);
 }
 
 /// In VaultCaveVambrace's puddle room, Frost on the far eastern puddle.
@@ -652,7 +652,7 @@ static void EventScript_FreezeFarEastPuddle(void) {
     target->priorityFlags = OBJ_EVENT_PRIORITY_AUTOMATIC;
   }
 
-  Engine_GameFlagSet(FLAG_FAR_EAST_FROZEN);
+  GameFlag_Set(FLAG_FAR_EAST_FROZEN);
 }
 
 /// Changes the puddles' draw priorities when the leader is above them.
@@ -754,7 +754,7 @@ static void EventScript_FlipSwitch(void) {
   s32 destinationRow;
   s32 destinationColumn;
 
-  if (GameFlag_IsSet(FLAG_VAULT_CAVE_SWITCH_FLIPPED) == 0) {
+  if (Script_GetFlag(FLAG_VAULT_CAVE_SWITCH_FLIPPED) == 0) {
     FieldMessage_Show(MSGNO(MsgFieldFlippedSwitch), 1);
     GameFlag_Set(FLAG_VAULT_CAVE_SWITCH_FLIPPED);
     // Animate the switch face before the adjacent mechanism starts.
@@ -846,7 +846,7 @@ static void VaultCave_UpdateTimedFallingObjects(void) {
     if (VaultCave_ResetFallingObjectAtObjectEventCell(
             LOCALID_NORTHERN_PILLAR) != 0) {
       Engine_ObjectEventSetAnimation(LOCALID_NORTHERN_PILLAR, 1);
-      if (GameFlag_IsSet(FLAG_NORTH_PILLAR_STRUCK) == 0) {
+      if (Script_GetFlag(FLAG_NORTH_PILLAR_STRUCK) == 0) {
         GameFlag_Set(FLAG_NORTH_PILLAR_STRUCK);
         Script_PlaySong(SE_204);
       } else {
@@ -885,7 +885,7 @@ static void VaultCave_UpdateFrostControlledFallingObjects(void) {
     for (fallingIndex = 0; fallingIndex <= 5; fallingIndex++) {
       fallingObjectEvent =
           ObjectEvent_GetById((fallingIndex + LOCALID_FIRST_WATER_DROP));
-      stateValue = GameFlag_Test((fallingIndex + FLAG_WEST_UPPER_FROZEN));
+      stateValue = GameFlag_Get((fallingIndex + FLAG_WEST_UPPER_FROZEN));
       if (stateValue != 0) {
         if (fallingObjectEvent->velocityY <= 0) {
           if (fallingObjectEvent->y.fixed > 0x20ffff) {
@@ -1010,7 +1010,7 @@ s32 Map_Initialize(void) {
     case VAULT_CAVE_PASSAGE_FROM_VAULT_CAVE_VAMBRACE_SOUTHEAST:
     case VAULT_CAVE_PASSAGE_WATER_ROOM_FROM_CHEST:
     case VAULT_CAVE_PASSAGE_WATER_ROOM_FROM_NORTH_EAST:
-      if (GameFlag_Test(FLAG_VAULT_CAVE_SWITCH_FLIPPED) == 0) {
+      if (GameFlag_Get(FLAG_VAULT_CAVE_SWITCH_FLIPPED) == 0) {
         MapGrid_CopyCellAttributes(22, 29, 1, 1, 21, 29);
       } else {
         MapGrid_CopyCells(108, 27, 1, 1, 92, 27);
@@ -1023,12 +1023,12 @@ s32 Map_Initialize(void) {
       WaitFrames(1);
       break;
     case VAULT_CAVE_PASSAGE_FROM_VAULT_REVISIT:
-      GameFlag_ClearBit(FLAG_VAULT_CAVE_SWITCH_FLIPPED);
+      GameFlag_Clear(FLAG_VAULT_CAVE_SWITCH_FLIPPED);
       break;
     }
   }
   if (gGameState.mapId == (s32)&MapId_VaultCaveVambrace) {
-    if (GameFlag_Test(FLAG_WHIRLWIND_USED) == 0) {
+    if (GameFlag_Get(FLAG_WHIRLWIND_USED) == 0) {
       ObjectEvent_GetById(LOCALID_IVY)->scaleY = 0x18000;
     }
     switch (gGameState.warpDest) {
@@ -1036,7 +1036,7 @@ s32 Map_Initialize(void) {
     case VAULT_CAVE_VAMBRACE_FROM_VAULT_CAVE_MOUTH_NORTH:
     case VAULT_CAVE_VAMBRACE_NORTH_FROM_FROST_ROOM:
     case VAULT_CAVE_VAMBRACE_NORTH_FROM_WEST:
-      if (GameFlag_Test(FLAG_VAULT_CAVE_SWITCH_FLIPPED) == 0) {
+      if (GameFlag_Get(FLAG_VAULT_CAVE_SWITCH_FLIPPED) == 0) {
         MapGrid_CopyCells(5, 81, 11, 7, 5, 73);
       } else {
         MapGrid_CopyCellAttributes(5, 12, 1, 1, 6, 12);
@@ -1047,27 +1047,27 @@ s32 Map_Initialize(void) {
     case VAULT_CAVE_VAMBRACE_FROST_ROOM_FROM_SOUTH:
     case VAULT_CAVE_VAMBRACE_FROST_ROOM_FROM_CHEST:
       VaultCave_StartFrostControlledFalls();
-      if (GameFlag_Test(FLAG_WEST_UPPER_FROZEN) != 0) {
+      if (GameFlag_Get(FLAG_WEST_UPPER_FROZEN) != 0) {
         Engine_ObjectEventSetAnimation(LOCALID_WEST_UPPER_PUDDLE, 5);
         EventScript_FreezeWestUpperPuddle();
       }
-      if (GameFlag_Test(FLAG_WEST_LOWER_FROZEN) != 0) {
+      if (GameFlag_Get(FLAG_WEST_LOWER_FROZEN) != 0) {
         Engine_ObjectEventSetAnimation(LOCALID_WEST_LOWER_PUDDLE, 5);
         EventScript_FreezeWestLowerPuddle();
       }
-      if (GameFlag_Test(FLAG_INNER_WEST_LOWER_FROZEN) != 0) {
+      if (GameFlag_Get(FLAG_INNER_WEST_LOWER_FROZEN) != 0) {
         Engine_ObjectEventSetAnimation(LOCALID_INNER_WEST_LOWER_PUDDLE, 5);
         EventScript_FreezeInnerWestLowerPuddle();
       }
-      if (GameFlag_Test(FLAG_EAST_UPPER_FROZEN) != 0) {
+      if (GameFlag_Get(FLAG_EAST_UPPER_FROZEN) != 0) {
         Engine_ObjectEventSetAnimation(LOCALID_EAST_UPPER_PUDDLE, 5);
         EventScript_FreezeEastUpperPuddle();
       }
-      if (GameFlag_Test(FLAG_EAST_LOWER_FROZEN) != 0) {
+      if (GameFlag_Get(FLAG_EAST_LOWER_FROZEN) != 0) {
         Engine_ObjectEventSetAnimation(LOCALID_EAST_LOWER_PUDDLE, 5);
         EventScript_FreezeEastLowerPuddle();
       }
-      if (GameFlag_Test(FLAG_FAR_EAST_FROZEN) != 0) {
+      if (GameFlag_Get(FLAG_FAR_EAST_FROZEN) != 0) {
         Engine_ObjectEventSetAnimation(LOCALID_FAR_EAST_PUDDLE, 5);
         EventScript_FreezeFarEastPuddle();
       }
@@ -1076,7 +1076,7 @@ s32 Map_Initialize(void) {
       break;
     case VAULT_CAVE_VAMBRACE_FROM_VAULT_CAVE_PASSAGE_SOUTH:
     case VAULT_CAVE_VAMBRACE_SOUTH_FROM_FROST_ROOM:
-      if (GameFlag_Test(FLAG_VAULT_CAVE_SOUTH_PILLAR_ON_SWITCH) != 0) {
+      if (GameFlag_Get(FLAG_VAULT_CAVE_SOUTH_PILLAR_ON_SWITCH) != 0) {
         VaultCave_ApplySouthernSwitchCells();
         ObjectEvent_SetPosition(LOCALID_SOUTHERN_PILLAR, PIXELS(248),
                                 PIXELS(876));
@@ -1094,7 +1094,7 @@ s32 Map_Initialize(void) {
   }
   if (gGameState.mapId == (s32)&MapId_VaultCaveMouth) {
     Engine_ObjectEventSetAnimation(LOCALID_PILLAR_EAST_OF_NORTHERN_SWITCH, 2);
-    if (GameFlag_Test(FLAG_NORTH_PILLAR_STRUCK) == 0) {
+    if (GameFlag_Get(FLAG_NORTH_PILLAR_STRUCK) == 0) {
       Engine_ObjectEventSetAnimation(LOCALID_NORTHERN_PILLAR, 2);
     }
     ObjectEvent_SetSpriteFlags(
@@ -1121,7 +1121,7 @@ s32 Map_Initialize(void) {
       ObjectEvent_GetById(LOCALID_NORTHERN_PILLAR)->collisionFlags = 1;
       ObjectEvent_GetById(LOCALID_PILLAR_SOUTH_OF_NORTHERN_SWITCH)
           ->collisionFlags = 1;
-      if (GameFlag_Test(FLAG_VAULT_CAVE_NORTH_PILLAR_ON_SWITCH) != 0) {
+      if (GameFlag_Get(FLAG_VAULT_CAVE_NORTH_PILLAR_ON_SWITCH) != 0) {
         VaultCave_ApplyNorthernSwitchCells();
         ObjectEvent_SetPosition(LOCALID_NORTHERN_PILLAR, PIXELS(264),
                                 PIXELS(204));

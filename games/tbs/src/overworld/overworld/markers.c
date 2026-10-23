@@ -99,7 +99,7 @@ void Field_PlaceTreasureSpots(void) {
           // An opened chest shows open; an opened mimic's chest
           // is not placed at all. A mimic's flag is set only after its battle,
           // when the one enemy was defeated (Djinn_ResolvePendingEvent).
-          if (GameFlag_TestFar(event->condition)) {
+          if (GameFlag_GetFar(event->condition)) {
             if ((event->value & 0xfff00000) == 0x500000) {
               ObjectDispatch_ReleaseFar(
                   (struct DispatchObject *)markerObjectEvent);
@@ -126,7 +126,7 @@ void Field_PlaceTreasureSpots(void) {
           // A Psynergy Stone not yet taken.
           if ((event->value & 0xfff00000) != FIND_PSYNERGY_STONE)
             continue;
-          if (GameFlag_TestFar(event->condition))
+          if (GameFlag_GetFar(event->condition))
             continue;
           markerObjectEvent = (struct ScriptObjectRuntime *)Object_CreateFar(
               TREASURE_SPOT_PSYNERGY_STONE_SPRITE, (column << 20) + 0x80000, 0,

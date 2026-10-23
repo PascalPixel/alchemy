@@ -1113,9 +1113,9 @@ s32 Credits_DrawLine(const u8 *text, s32 firstTile, s32 alignment) {
   // pool), so the last line's ninth row is still there. FLAG_MAP_TEMP_00,
   // here a line has been drawn, is clear on entering the map
   // (Map_ResetFlagsOnEnter), so the first line starts from a clean buffer.
-  if (!GameFlag_TestFar(FLAG_MAP_TEMP_00)) {
+  if (!GameFlag_GetFar(FLAG_MAP_TEMP_00)) {
     Iwram_FillWords(linePixels, CREDITS_BUFFER_BYTES, 0);
-    GameFlag_SetBitFar(FLAG_MAP_TEMP_00);
+    GameFlag_SetFar(FLAG_MAP_TEMP_00);
   } else {
     Iwram_CopyWords(linePixels, linePixels + 0x800, 0x100);
     Iwram_FillWords(linePixels + 0x100, 0x800, 0);

@@ -259,7 +259,7 @@ void Field_ProcessStep(s32 layer, s32 x, s32 y, s32 z) {
     // battle environment, or from the ground the leader stands on.
     // FLAG_LURE_CAP doubles the speed the roll counts.
     encounterSpeed = leader->speedLimit;
-    if (GameFlag_TestFar(FLAG_LURE_CAP))
+    if (GameFlag_GetFar(FLAG_LURE_CAP))
       encounterSpeed <<= 1;
     if (work->mode == OBJECT_SYSTEM_WORLD_MAP) {
       fullEncounterRate = 1;

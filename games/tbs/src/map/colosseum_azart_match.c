@@ -377,7 +377,7 @@ static void EventScript_GrowPlant(void) {
 
     MapGrid_CopyCellAttributes(47, 24, 1, 1, 47, 12);
   }
-  Engine_GameFlagSet(FLAG_PLANT_GROWN);
+  GameFlag_Set(FLAG_PLANT_GROWN);
 }
 
 /// Douse on the Pipeworks' west pipe: the camera turns to the Pipeworks and the
@@ -572,7 +572,7 @@ static void EventScript_PushPipeworksPillar(void) {
   FieldScript_End();
   MapGrid_CopyCellAttributes(37, 7, 1, 4, 34, 7);
   MapGrid_CopyCellAttributes(36, 7, 1, 4, 37, 7);
-  none = GameFlag_IsSet(FLAG_PIPES_MOVED);
+  none = Script_GetFlag(FLAG_PIPES_MOVED);
   if (none != 0) {
     FieldScript_Start();
     FieldCamera_SetSpeed(PIXELS(2), PIXELS(1) / 4);
@@ -610,7 +610,7 @@ static void EventScript_PushPipeworksPillar(void) {
 
 /// Unused: sets FLAG_MAPSEC_TEMP_00; nothing calls it.
 UNUSED static void ColosseumAzartMatch_SetCourseFlag(void) {
-  Engine_GameFlagSet(FLAG_MAPSEC_TEMP_00);
+  GameFlag_Set(FLAG_MAPSEC_TEMP_00);
 }
 
 /// Reaching Colosseum Final 1's arena: the leader takes a prize (the Iron
@@ -770,7 +770,7 @@ s32 ColosseumAzartMatch_Initialize(void) {
   objectEvent = ObjectEvent_GetById(LOCALID_GROWTH_PLANT);
   objectEvent->layer = 1;
   zero = 0;
-  if (GameFlag_Test(FLAG_PLANT_GROWN)) {
+  if (GameFlag_Get(FLAG_PLANT_GROWN)) {
     ObjectDispatch_SelectAnimation(objectEvent, 4);
     ObjectEvent_SetSpriteFlags(objectEvent, 0);
     objectEvent->collisionFlags = zero;
@@ -787,13 +787,13 @@ s32 ColosseumAzartMatch_Initialize(void) {
   objectEvent->motionFlags = zero;
   objectEvent->priorityFlags = 2;
   MapGrid_CopyCellAttributes(63, 25, 1, 3, col, 9);
-  if (GameFlag_Test(FLAG_PIPEWORKS_PIPE_PUSHED)) {
+  if (GameFlag_Get(FLAG_PIPEWORKS_PIPE_PUSHED)) {
     MapGrid_CopyCellAttributes(37, 7, 1, 4, 34, 7);
     MapGrid_CopyCellAttributes(36, 7, 1, 4, 37, 7);
     MapGrid_CopyCells(100, 29, 1, 3, 34, 38);
   }
   objectEvent = ObjectEvent_GetById(LOCALID_PIPE_WEST);
-  if (GameFlag_Test(FLAG_PIPES_MOVED)) {
+  if (GameFlag_Get(FLAG_PIPES_MOVED)) {
     MapGrid_CopyCellAttributes(43, 12, 1, 1, 41, 12);
     objectEvent->motionFlags = zero;
     objectEvent->acceleration = PIXELS(2) / 5;
@@ -818,7 +818,7 @@ s32 ColosseumAzartMatch_Initialize(void) {
     ObjectEvent_DestroyById(LOCALID_PIPEWORKS_ATTENDANT);
     ObjectEvent_DestroyById(LOCALID_BRIDGE_ATTENDANT);
     ObjectEvent_DestroyById(LOCALID_LUMBER_ATTENDANT);
-    if (!GameFlag_Test(FLAG_KEEP_PARTY_POSITION)) {
+    if (!GameFlag_Get(FLAG_KEEP_PARTY_POSITION)) {
       Sound_PlaySong(SONG_FADE_OUT_BGM);
       Colosso_ControlCharacterAlone(ISAAC);
       Colosso_PlaceFriendsAtCheeringSpots();
@@ -837,14 +837,14 @@ s32 ColosseumAzartMatch_Initialize(void) {
                                TASK_PRIORITY_MAP);
     ObjectEvent_DestroyById(LOCALID_PRIZE_A);
     ObjectEvent_DestroyById(LOCALID_PRIZE_B);
-    if (!GameFlag_Test(FLAG_KEEP_PARTY_POSITION)) {
+    if (!GameFlag_Get(FLAG_KEEP_PARTY_POSITION)) {
       Colosso_PlaceFriendsAtCheeringSpots();
       Colosso_ControlCharacterAlone(GARET);
       ColosseumAzartMatch_ShowRoundIntroduction(0);
     }
     break;
   case COLOSSEUM_AZART_MATCH_FROM_COLOSSEUM:
-    if (!GameFlag_Test(FLAG_KEEP_PARTY_POSITION)) {
+    if (!GameFlag_Get(FLAG_KEEP_PARTY_POSITION)) {
       ColosseumAzartMatch_ExplainFinalsRules(LOCALID_GUIDE);
       Colosso_ClearCheeringSpots();
     }
@@ -1337,7 +1337,7 @@ static void ColosseumAzartMatch_ShowRoundIntroduction(s32 round) {
     Sound_PlaySong(SE_COLOSSO_GO);
     Map_PlayMusic();
     FieldScript_End();
-    Engine_GameFlagSet(FLAG_IN_TOWN);
+    GameFlag_Set(FLAG_IN_TOWN);
   }
 }
 
@@ -1487,7 +1487,7 @@ static s32 ColosseumAzartMatch_CollectFinishItem(s32 firstItem,
   u16 *itemLocalId;
   s16 *pendingItemLocalId;
 
-  flag = GameFlag_Test(FLAG_ARENA_REACHED);
+  flag = GameFlag_Get(FLAG_ARENA_REACHED);
 
   objectEvent = ObjectEvent_GetById(gGameState.leaderLocalId);
 
@@ -1511,7 +1511,7 @@ static s32 ColosseumAzartMatch_CollectFinishItem(s32 firstItem,
   objectEvent->speed = PIXELS(1);
 
   Object_SetPosition(objectEvent, x, 0, z);
-  Engine_GameFlagSet(FLAG_ARENA_REACHED);
+  GameFlag_Set(FLAG_ARENA_REACHED);
   ObjectEvent_SetScript(objectEvent, gColosseumAzartMatch_ApproachScript);
 
   while (*pendingItemLocalId != 0) {

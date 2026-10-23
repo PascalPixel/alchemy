@@ -197,7 +197,7 @@ static void KolimaForestEntrance_PushLog(void) {
           OBJ_EVENT_PRIORITY_UNDERFOOT;
       MapGrid_CopyCellAttributes(0, 17, 2, 4, 19, 17);
       PushedObject_FillGridAttributeRectangle(2, 20, 17, 1, 4, 0);
-      Engine_GameFlagSet(FLAG_MAP_TEMP_00);
+      GameFlag_Set(FLAG_MAP_TEMP_00);
       objectEvent = ObjectEvent_GetById(LOCALID_RIVER_LOG);
       ObjectEvent_SetSpriteFlags(objectEvent, 0);
     }
@@ -219,7 +219,7 @@ const struct MapEvent *KolimaForestEntrance_GetEvents(void) {
 /// gone.
 s32 KolimaForestEntrance_Initialize(void) {
   Map_RedrawObjectEventFootprint(LOCALID_RIVER_LOG);
-  if (GameFlag_Test(FLAG_MAP_TEMP_00) != 0) {
+  if (GameFlag_Get(FLAG_MAP_TEMP_00) != 0) {
     ObjectEvent_GetById(LOCALID_RIVER_LOG)->priorityFlags =
         OBJ_EVENT_PRIORITY_UNDERFOOT;
     MapGrid_CopyCellAttributes(0, 17, 2, 4, 19, 17);
@@ -229,11 +229,11 @@ s32 KolimaForestEntrance_Initialize(void) {
   Map_RedrawObjectEventFootprint(LOCALID_FIRST_LOG);
   Map_RedrawObjectEventFootprint(LOCALID_FIRST_LOG + 1);
   if (gGameState.warpDest == KOLIMA_FOREST_ENTRANCE_FROM_WORLD_MAP) {
-    if (GameFlag_Test(FLAG_KOLIMA_CURSE_WITNESSED) == 0) {
+    if (GameFlag_Get(FLAG_KOLIMA_CURSE_WITNESSED) == 0) {
       KolimaForestEntrance_WitnessForestCurse();
     }
   }
-  if (GameFlag_Test(FLAG_KOLIMA_CURSE_LIFTED) != 0) {
+  if (GameFlag_Get(FLAG_KOLIMA_CURSE_LIFTED) != 0) {
     Engine_ObjectEventSetPosition(LOCALID_FIRST_GROUND_SPARKLE, 0, 0);
     Engine_ObjectEventSetPosition(LOCALID_FIRST_GROUND_SPARKLE + 1, 0, 0);
     Engine_ObjectEventSetPosition(LOCALID_FIRST_GROUND_SPARKLE + 2, 0, 0);
@@ -269,7 +269,7 @@ static void KolimaForestEntrance_WitnessForestCurse(void) {
   WaitFrames(1);
   FieldCamera_MoveTo(PIXELS(246), -1, PIXELS(604), 0);
   party = &gKolimaForestEntrance_MiaInParty;
-  *party = GameFlag_IsSet(FLAG_IN_PARTY(MIA));
+  *party = GameFlag_Get(FLAG_IN_PARTY(MIA));
   record = ObjectEvent_GetById(LOCALID_LEADER_PSYNERGY_FIELD);
   ObjectEvent_SetSpriteFlags(record, 0);
   record = ObjectEvent_GetById(LOCALID_IVAN_PSYNERGY_FIELD);

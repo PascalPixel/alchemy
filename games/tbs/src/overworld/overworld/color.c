@@ -44,7 +44,7 @@ void PaletteFade_Update(void) {
   u16 *channelDelta = work->delta;
   s32 i;
 
-  if (GameFlag_TestFar(FLAG_PALETTE_BLEND_HELD) != 0) {
+  if (GameFlag_GetFar(FLAG_PALETTE_BLEND_HELD) != 0) {
     return;
   }
   if (work->duration == 0) {

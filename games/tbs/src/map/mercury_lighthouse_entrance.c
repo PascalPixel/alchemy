@@ -372,7 +372,7 @@ static void MercuryLighthouseEntrance_ReturnToDoorway(void) {
 /// Mercury Lighthouse, the doorway: touching metatile behavior 40 or 42 while
 /// the Lizard Man stands aside: he steps back in front of the doorway.
 static void MercuryLighthouseEntrance_LizardManReturnsToCentre(void) {
-  GameFlag_ClearBit(FLAG_LIZARD_MAN_STEPPED_ASIDE);
+  GameFlag_Clear(FLAG_LIZARD_MAN_STEPPED_ASIDE);
   ObjectEvent_SetActionScript(LOCALID_LIZARD_MAN,
                               gMercuryLighthouseEntrance_LizardManStepCentre);
 }
@@ -388,7 +388,7 @@ static void MercuryLighthouseEntrance_LizardManBlocksLeader(void) {
   leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   leaderX = leader->x.fixed;
   leaderColumn = leaderX / PIXELS(16);
-  Engine_GameFlagSet(FLAG_LIZARD_MAN_STEPPED_ASIDE);
+  GameFlag_Set(FLAG_LIZARD_MAN_STEPPED_ASIDE);
   if (leaderColumn == 7) {
     ObjectEvent_SetActionScript(LOCALID_LIZARD_MAN,
                                 gMercuryLighthouseEntrance_LizardManStepWest);
@@ -446,7 +446,7 @@ s32 MercuryLighthouseEntrance_Initialize(void) {
   gGameState.retreatWarpDest = MERCURY_LIGHTHOUSE_EXTERIOR_FROM_WORLD_MAP;
   gGameState.retreatMap = (s32)&MapId_MercuryLighthouseExterior;
   FieldEffect_StartFadeOverlay(0);
-  if (GameFlag_IsSet(FLAG_MERCURY_LIGHTHOUSE_HEART_HONORED))
+  if (GameFlag_Get(FLAG_MERCURY_LIGHTHOUSE_HEART_HONORED))
     FieldScheduler_AddCallback(MercuryLighthouse_CyclePalette,
                                TASK_PRIORITY_MAP);
   else
@@ -457,7 +457,7 @@ s32 MercuryLighthouseEntrance_Initialize(void) {
   switch (gGameState.warpDest) {
   case MERCURY_LIGHTHOUSE_ENTRANCE_FROM_MERCURY_LIGHTHOUSE_EXTERIOR:
     // Until Mia has gone in, arriving here plays the Lizard Man scene.
-    if (!GameFlag_IsSet(FLAG_MERCURY_LIGHTHOUSE_ENTERED_BY_MIA))
+    if (!GameFlag_Get(FLAG_MERCURY_LIGHTHOUSE_ENTERED_BY_MIA))
       Engine_ScriptRequestWarp(
           MERCURY_LIGHTHOUSE_ENTRANCE_TO_SIX_STATUES_BEFORE_LIZARD_MAN);
     // Both doorway warp destinations mirror the east side's statues.
@@ -474,7 +474,7 @@ s32 MercuryLighthouseEntrance_Initialize(void) {
   case MERCURY_LIGHTHOUSE_ENTRANCE_TWIN_FOUNTAINS_FROM_EAST_WATERFALLS:
   case MERCURY_LIGHTHOUSE_ENTRANCE_FROM_MERCURY_LIGHTHOUSE_LOWER_WEST:
   case MERCURY_LIGHTHOUSE_ENTRANCE_FROM_MERCURY_LIGHTHOUSE_LOWER_WEST_NORTHWEST:
-    if (GameFlag_IsSet(FLAG_MERCURY_LIGHTHOUSE_HEART_HONORED)) {
+    if (GameFlag_Get(FLAG_MERCURY_LIGHTHOUSE_HEART_HONORED)) {
       MapGrid_CopyCellAttributes(84, 5, 10, 7, 20, 5);
       MapGrid_CopyCellAttributes(101, 5, 12, 7, 37, 5);
     }
@@ -485,7 +485,7 @@ s32 MercuryLighthouseEntrance_Initialize(void) {
   case MERCURY_LIGHTHOUSE_ENTRANCE_FROM_MERCURY_LIGHTHOUSE_LOWER_HOLE:
     FieldScheduler_AddCallback(MercuryLighthouse_CyclePalette,
                                TASK_PRIORITY_MAP);
-    if (GameFlag_IsSet(FLAG_MERCURY_LIGHTHOUSE_HEART_HONORED)) {
+    if (GameFlag_Get(FLAG_MERCURY_LIGHTHOUSE_HEART_HONORED)) {
       MapGrid_CopyCellsTo(37, 98, 10, 97, 5, 3);
       MapGrid_CenterOnFollowedPoint();
       WaitFrames(1);
@@ -494,7 +494,7 @@ s32 MercuryLighthouseEntrance_Initialize(void) {
     if (gGameState.warpDest !=
         MERCURY_LIGHTHOUSE_ENTRANCE_FROM_MERCURY_LIGHTHOUSE_LOWER_HOLE)
       break;
-    arrivalSeen = GameFlag_IsSet(FLAG_DROP_FROM_ABOVE_SEEN);
+    arrivalSeen = Script_GetFlag(FLAG_DROP_FROM_ABOVE_SEEN);
     if (arrivalSeen != 0)
       break;
     // The first time, the leader drops from 130 pixels up and lands in a
@@ -540,7 +540,7 @@ s32 MercuryLighthouseEntrance_Initialize(void) {
                                       ATTACHED_EFFECT_REMOVE);
     ObjectEvent_Get(LOCALID_PARTY_LEADER)->gravity = 0x10000;
     ObjectEvent_Get(LOCALID_PARTY_LEADER)->bounce = 0x4000;
-    if (!GameFlag_IsSet(FLAG_MERCURY_LIGHTHOUSE_HEART_HONORED)) {
+    if (!GameFlag_Get(FLAG_MERCURY_LIGHTHOUSE_HEART_HONORED)) {
       PaletteFade_ApplySource(PALETTE_TINT_NONE, 0);
       PaletteFade_ApplyTarget(PALETTE_TINT_WARM, 1);
       PaletteFade_StartInterpolation(30);
@@ -577,13 +577,13 @@ s32 MercuryLighthouseEntrance_Initialize(void) {
     FieldScript_End();
     break;
   case MERCURY_LIGHTHOUSE_ENTRANCE_SIX_STATUES_BEFORE_LIZARD_MAN:
-    if (!GameFlag_IsSet(FLAG_KEEP_PARTY_POSITION))
+    if (!GameFlag_Get(FLAG_KEEP_PARTY_POSITION))
       MercuryLighthouseEntrance_LizardManBlocksMia();
     else
       MapGrid_CopyCellAttributes(0, 0, 3, 3, 7, 9);
     break;
   case MERCURY_LIGHTHOUSE_ENTRANCE_SIX_STATUES_AFTER_LIZARD_MAN:
-    if (!GameFlag_IsSet(FLAG_KEEP_PARTY_POSITION))
+    if (!GameFlag_Get(FLAG_KEEP_PARTY_POSITION))
       MercuryLighthouseEntrance_MiaEntersLighthouse();
     break;
   }
@@ -682,7 +682,7 @@ static void MercuryLighthouseEntrance_LizardManBlocksMia(void) {
 static void MercuryLighthouseEntrance_MiaEntersLighthouse(void) {
   struct ObjectEvent *objectEvent;
 
-  if (GameFlag_IsSet(FLAG_MIA_GOES_IN_SEEN) == 0) {
+  if (Script_GetFlag(FLAG_MIA_GOES_IN_SEEN) == 0) {
     GameFlag_Set(FLAG_MIA_GOES_IN_SEEN);
     FieldScript_Start();
     objectEvent = ObjectEvent_Get(LOCALID_FIRST_EAST_STATUE);

@@ -69,12 +69,12 @@ struct LevelUpResult *Unit_TryLevelUpFar(s32 owner_id,
                                          struct LevelUpResult *value);
 /// Returns 1 when the flag is set; the whole game tests flags here, the
 /// maps through the script layer.
-s32 GameFlag_TestFar(s32 flag);
+s32 GameFlag_GetFar(s32 flag);
 /// Sets the flag and returns the number of the byte it's in.
-s32 GameFlag_SetBitFar(s32 flag);
-/// Clears the flag, returning nothing where GameFlag_SetBitFar returns its
+s32 GameFlag_SetFar(s32 flag);
+/// Clears the flag, returning nothing where GameFlag_SetFar returns its
 /// byte.
-void GameFlag_ClearBitFar(s32 flag);
+void GameFlag_ClearFar(s32 flag);
 /// Returns the whole byte the flag is in, a counter kept among the flags, as
 /// the encounter code and the Colosso and Battle Arena maps use.
 s32 GameFlag_GetByteFar(s32 flag);

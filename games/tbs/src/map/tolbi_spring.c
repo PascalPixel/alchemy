@@ -315,8 +315,8 @@ static void TolbiSpring_AskAboutFirstDiceGame(s32 localId) {
 static void TolbiSpring_TossCoinOrMedal(void) {
   s32 leader = gGameState.leaderLocalId;
 
-  if (GameFlag_IsSet(FLAG_MAP_TEMP_00) == 0) {
-    Engine_GameFlagSet(FLAG_MAP_TEMP_00);
+  if (Script_GetFlag(FLAG_MAP_TEMP_00) == 0) {
+    GameFlag_Set(FLAG_MAP_TEMP_00);
     TolbiSpring_RiseAndFadeIn();
   }
   FieldScript_Start();
@@ -386,13 +386,13 @@ s32 TolbiSpring_Initialize(void) {
     FieldScript_StartScreenTransition();
     if (gGameState.warpDest == TOLBI_SPRING_FROM_TOLBI) {
       TolbiSpring_InitializeTossSimulation();
-      if (GameFlag_Test(FLAG_MAP_TEMP_00)) {
+      if (GameFlag_Get(FLAG_MAP_TEMP_00)) {
         Io_SetBlendControl(0x3f42);
         Io_SetBlendAlpha(0x1000);
       }
     }
   } else {
-    if (GameFlag_Test(FLAG_COLOSSO_OVER)) {
+    if (GameFlag_Get(FLAG_COLOSSO_OVER)) {
       Engine_ObjectEventSetPosition(LOCALID_TOLBI_SPRING_SOLDIER, 0, 0);
     }
     gOamCopyEnabled = 1;
@@ -403,7 +403,7 @@ s32 TolbiSpring_Initialize(void) {
     }
     // Lucky Dice returns here to report the change in the party's coins.
     if (gGameState.warpDest == TOLBI_GAME_ROOMS_AFTER_OFFER_LUCKY_DICE &&
-        !GameFlag_Test(FLAG_KEEP_PARTY_POSITION)) {
+        !GameFlag_Get(FLAG_KEEP_PARTY_POSITION)) {
       FieldScript_Start();
       ObjectGroup_ConfigureChildValue(LOCALID_TOLBI_SPRING_WHEELS_ATTENDANT, 1);
       ObjectGroup_ConfigureChildValue(LOCALID_TOLBI_SPRING_DICE_ATTENDANT, 2);
@@ -435,7 +435,7 @@ s32 TolbiSpring_Initialize(void) {
     }
     // Lucky Wheels returns item categories for the attendant to award.
     if (gGameState.warpDest == TOLBI_GAME_ROOMS_AFTER_OFFER_LUCKY_WHEELS &&
-        !GameFlag_Test(FLAG_KEEP_PARTY_POSITION)) {
+        !GameFlag_Get(FLAG_KEEP_PARTY_POSITION)) {
       wonPrizes = gGameState.wonPrizes;
       FieldScript_Start();
       FieldScript_StartScreenTransition();

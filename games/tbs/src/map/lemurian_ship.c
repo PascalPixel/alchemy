@@ -574,7 +574,7 @@ static void LemurianShip_SetSail(void) {
   FieldScript_FinishScreenTransition();
   FieldScript_WaitTransitionFrames();
   FieldScript_WaitFrames(30);
-  Engine_GameFlagSet(FLAG_KEEP_MUSIC);
+  GameFlag_Set(FLAG_KEEP_MUSIC);
   FieldScript_SetDestination((s32)&MapId_Title, TITLE_FROM_LEMURIAN_SHIP);
 }
 

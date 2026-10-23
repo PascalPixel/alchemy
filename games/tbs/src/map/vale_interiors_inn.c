@@ -291,7 +291,7 @@ const struct MapWarpRegion *ValeInteriorsInn_GetRegions(void) { return NULL; }
 
 /// On the stormy night the warps lead into the storm.
 const u32 *ValeInteriorsInn_GetWarps(void) {
-  if (GameFlag_Test(FLAG_VALE_STORM) != 0) {
+  if (GameFlag_Get(FLAG_VALE_STORM) != 0) {
     return gValeInteriorsInn_StormWarps;
   }
   return gValeInteriorsInn_Warps;
@@ -304,9 +304,9 @@ ValeInteriorsInn_GetObjectEventTemplates(void) {
 
   if (gGameState.warpDest == VALE_INTERIORS_INN_FROM_BABI_PALACE)
     return gValeInteriorsInn_ScholarsObjectEventTemplates;
-  if (GameFlag_Test(FLAG_KALAY_REACHED) != 0)
+  if (GameFlag_Get(FLAG_KALAY_REACHED) != 0)
     table = gValeInteriorsInn_ObjectEventTemplatesAfterKalay;
-  else if (GameFlag_Test(FLAG_VALE_PARTY_LEFT) != 0)
+  else if (GameFlag_Get(FLAG_VALE_PARTY_LEFT) != 0)
     table = gValeInteriorsInn_ObjectEventTemplatesAfterLeaving;
   else
     table = gValeInteriorsInn_ObjectEventTemplates;
@@ -336,19 +336,19 @@ static void EventScript_ScholarAsksAboutKraden(s32 speakerId) {
 /// finals are over; Vale's villagers follow the storm and the story.
 const struct MapEvent *ValeInteriorsInn_GetEvents(void) {
   if (gGameState.warpDest == VALE_INTERIORS_INN_FROM_BABI_PALACE) {
-    if (GameFlag_Test(FLAG_COLOSSO_OVER) != 0) {
+    if (GameFlag_Get(FLAG_COLOSSO_OVER) != 0) {
       return gValeInteriorsInn_ScholarsLaterEvents;
     }
     return gValeInteriorsInn_ScholarsEvents;
   }
 
-  if (GameFlag_Test(FLAG_VALE_STORM) != 0) {
+  if (GameFlag_Get(FLAG_VALE_STORM) != 0) {
     return gValeInteriorsInn_StormEvents;
   }
-  if (GameFlag_Test(FLAG_KALAY_REACHED) != 0) {
+  if (GameFlag_Get(FLAG_KALAY_REACHED) != 0) {
     return gValeInteriorsInn_EventsAfterKalay;
   }
-  if (GameFlag_Test(FLAG_VALE_PARTY_LEFT) != 0) {
+  if (GameFlag_Get(FLAG_VALE_PARTY_LEFT) != 0) {
     return gValeInteriorsInn_EventsAfterLeaving;
   }
   return gValeInteriorsInn_Events;
@@ -405,7 +405,7 @@ static void EventScript_AskWhetherMaskedManWasFelix(void) {
 /// Stops storm lightning before fading through the requested warp.
 /// Called by the warps below.
 static void ValeInteriorsInn_CloseScreenAndExit(s32 warpNumber) {
-  if (GameFlag_Test(FLAG_VALE_STORM) != 0) {
+  if (GameFlag_Get(FLAG_VALE_STORM) != 0) {
     Weather_StopLightning();
   }
   gFieldWork->transition =
@@ -513,11 +513,11 @@ s32 ValeInteriorsInn_Initialize(void) {
   struct ObjectEvent *objectEvent;
 
   if (gGameState.warpDest == VALE_INTERIORS_INN_FROM_BABI_PALACE) {
-    GameFlag_ClearBit(FLAG_SHOW_LOCATION_NAME);
+    GameFlag_Clear(FLAG_SHOW_LOCATION_NAME);
     ((struct FieldWork *)HEAP_SLOT_BLOCK(HEAP_SLOT_FIELD))->transition =
         MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
   } else {
-    if (GameFlag_Test(FLAG_VALE_STORM) != 0) {
+    if (GameFlag_Get(FLAG_VALE_STORM) != 0) {
       Engine_ObjectEventSetPosition(LOCALID_YOUNG_SMITH, 0, 0);
       Engine_ObjectEventSetPosition(LOCALID_YOUNG_SMITHS_MOTHER, 0, 0);
       Engine_ObjectEventSetPosition(LOCALID_INNKEEPER, 0, 0);
@@ -528,14 +528,14 @@ s32 ValeInteriorsInn_Initialize(void) {
       ValeInteriorsInn_RestoreRoomPatch();
     }
     ObjectMotion_SetActionVariant(LOCALID_INNKEEPER, 1);
-    if (GameFlag_Test(FLAG_KALAY_REACHED) != 0) {
+    if (GameFlag_Get(FLAG_KALAY_REACHED) != 0) {
       objectEvent = ObjectEvent_GetById(LOCALID_BLANK_AFTER_KALAY);
       ObjectEvent_SetSpriteFlags(objectEvent, 0);
       if (gGameState.warpDest == VALE_INTERIORS_INN_FROM_VALE ||
           gGameState.warpDest ==
               VALE_INTERIORS_INN_ISAACS_HOUSE_FROM_UPSTAIRS) {
-        if (GameFlag_Test(FLAG_KEEP_PARTY_POSITION) != 0) {
-          if (GameFlag_Test(FLAG_MAP_TEMP_03) != 0) {
+        if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) != 0) {
+          if (GameFlag_Get(FLAG_MAP_TEMP_03) != 0) {
             TilesetAnim_Resume(12);
           }
         } else {
@@ -552,7 +552,7 @@ s32 ValeInteriorsInn_Initialize(void) {
       } else {
         if (gGameState.warpDest ==
             VALE_INTERIORS_INN_FROM_VALE_GATE_SOUTHEAST) {
-          Engine_GameFlagSet(FLAG_VALE_STORM);
+          GameFlag_Set(FLAG_VALE_STORM);
           EventScript_DoraWakesIsaac();
         } else {
           if (gGameState.warpDest ==
@@ -561,7 +561,7 @@ s32 ValeInteriorsInn_Initialize(void) {
           } else {
             ((struct FieldWork *)HEAP_SLOT_BLOCK(HEAP_SLOT_FIELD))->transition =
                 MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
-            if (GameFlag_Test(FLAG_VALE_STORM) != 0) {
+            if (GameFlag_Get(FLAG_VALE_STORM) != 0) {
               Weather_StartLightning();
               ((struct LightningWork *)HEAP_SLOT_BLOCK(HEAP_SLOT_LIGHTNING))
                   ->loud = 1;
@@ -708,7 +708,7 @@ static void EventScript_DoraWakesIsaac(void) {
   ObjectDispatch_RegisterChildMetadata(
       (struct DispatchObject *)ObjectEvent_GetById(LOCALID_PARTY_LEADER),
       SPRITE_TUNIC);
-  Engine_GameFlagSet(FLAG_ISAAC_WEARS_TUNIC);
+  GameFlag_Set(FLAG_ISAAC_WEARS_TUNIC);
   Sound_PlaySong(SE_RECOVERY);
   ObjectGroup_ConfigureChildValue(LOCALID_PARTY_LEADER, 7);
   FieldScript_WaitFrames(10);
@@ -915,10 +915,10 @@ static void EventScript_TalkToInnkeeper(void) {
     Inn_CheckIn(0, LOCALID_INNKEEPER);
   } else {
     FieldScript_Start();
-    if (GameFlag_IsSet(FLAG_KALAY_REACHED) != 0) {
+    if (GameFlag_Get(FLAG_KALAY_REACHED) != 0) {
       ObjectMotion_SetVarCbAndRefresh(LOCALID_INNKEEPER, 2);
       ObjectEvent_FaceObjectEvent(LOCALID_INNKEEPER, LOCALID_PARTY_LEADER, 10);
-      if (GameFlag_IsSet(FLAG_VALE_INNKEEPER_WELCOMED_ISAAC) == 0) {
+      if (Script_GetFlag(FLAG_VALE_INNKEEPER_WELCOMED_ISAAC) == 0) {
         FieldScript_SetMessageId(MsgValeCameBack2);
         Script_ShowMessage(LOCALID_INNKEEPER, 0);
         GameFlag_Set(FLAG_VALE_INNKEEPER_WELCOMED_ISAAC);
@@ -928,7 +928,7 @@ static void EventScript_TalkToInnkeeper(void) {
       ObjectEvent_FaceDirection(LOCALID_INNKEEPER, FACING_WEST + FACING_STEP,
                                 10);
     } else {
-      if (GameFlag_IsSet(FLAG_VALE_PARTY_LEFT) != 0) {
+      if (GameFlag_Get(FLAG_VALE_PARTY_LEFT) != 0) {
         FieldScript_SetMessageId(MsgValeTheVisitorsCausedTheEruption);
       } else {
         FieldScript_SetMessageId(MsgValeTheThreeTravelersSeemOdd);
@@ -954,7 +954,7 @@ static void EventScript_RemarkIsaacHasGrown(void) {
   FieldScript_ShowMessageAndWait(LOCALID_MAN_ISAAC_HAS_GROWN, 0);
   ObjectMotion_ArmCallback(LOCALID_MAN_ISAAC_HAS_GROWN,
                            FACING_NORTHWEST + FACING_STEP, 10);
-  Engine_GameFlagSet(FLAG_VALE_MAN_SAW_ISAAC_GROWN);
+  GameFlag_Set(FLAG_VALE_MAN_SAW_ISAAC_GROWN);
   FieldScript_End();
 }
 
@@ -965,7 +965,7 @@ static void EventScript_ReadInnkeepersThoughts(void) {
   FieldScript_Start();
   FieldScript_SetMessageId(MsgValeDoraWouldntLetHimStay);
   FieldScript_ShowMessageAndWait(LOCALID_INNKEEPER, 0);
-  Engine_GameFlagSet(FLAG_READ_THOUGHTS_ABOUT_DORA);
+  GameFlag_Set(FLAG_READ_THOUGHTS_ABOUT_DORA);
   FieldScript_End();
 }
 
@@ -976,7 +976,7 @@ static void EventScript_ReadThoughtsAboutDorasIllness(void) {
   FieldScript_Start();
   FieldScript_SetMessageId(MsgValeDoraWasStruckWithIllness);
   FieldScript_ShowMessageAndWait(LOCALID_MAN_ISAAC_HAS_GROWN, 0);
-  Engine_GameFlagSet(FLAG_READ_THOUGHTS_ABOUT_DORA);
+  GameFlag_Set(FLAG_READ_THOUGHTS_ABOUT_DORA);
   FieldScript_End();
 }
 
@@ -1036,7 +1036,7 @@ static void EventScript_VisitSickDora(void) {
   if (FieldScript_AskYesNoWithObjectEventAnimation(0, 0) == 1) {
     gFieldWork->message += 1;
   }
-  if (GameFlag_IsSet(FLAG_READ_THOUGHTS_ABOUT_DORA) != 0) {
+  if (Script_GetFlag(FLAG_READ_THOUGHTS_ABOUT_DORA) != 0) {
     ObjectEvent_ShowEmote(LOCALID_DORA, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
   }
   FieldScript_WaitFrames(20);
@@ -1049,7 +1049,7 @@ static void EventScript_VisitSickDora(void) {
   if (FieldScript_AskYesNoWithObjectEventAnimation(0, 0) == 1) {
     gFieldWork->message += 1;
   }
-  if (GameFlag_Test(FLAG_READ_THOUGHTS_ABOUT_DORA) != 0) {
+  if (GameFlag_Get(FLAG_READ_THOUGHTS_ABOUT_DORA) != 0) {
     ObjectEvent_ShowEmote(LOCALID_DORA, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
   }
   FieldScript_WaitFrames(20);
@@ -1100,8 +1100,8 @@ static void EventScript_VisitSickDora(void) {
   ObjectMotion_SetAnimationAndWait(LOCALID_PARTY_LEADER, ANIM_NOD);
   FieldScript_WaitFrames(20);
   ObjectMotion_SetAnimationAndWait(LOCALID_DORA, ANIM_NOD);
-  Engine_GameFlagSet(FLAG_VISITED_SICK_DORA);
-  Engine_GameFlagSet(FLAG_MAP_TEMP_03);
+  GameFlag_Set(FLAG_VISITED_SICK_DORA);
+  GameFlag_Set(FLAG_MAP_TEMP_03);
   FieldScript_End();
 }
 
@@ -1113,7 +1113,7 @@ static void EventScript_TalkToDora(void) {
   s32 message;
 
   FieldScript_Start();
-  if (GameFlag_Test(FLAG_MAP_TEMP_03) != 0) {
+  if (GameFlag_Get(FLAG_MAP_TEMP_03) != 0) {
     ObjectEvent_SetTargetAndCallback(
         LOCALID_DORA, OBJ_EVENT_LINK_KEEP_MOTION | LOCALID_PARTY_LEADER,
         gValeInteriorsInn_DoraFacesIsaacScript);

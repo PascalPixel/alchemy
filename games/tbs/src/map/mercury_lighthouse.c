@@ -520,9 +520,9 @@ static void MercuryLighthouse_LeaveWaterfallByPassage(void) {
 /// (MERCURY_LIGHTHOUSE_LOWER_TO_MERCURY_LIGHTHOUSE_ENTRANCE_PIPE); moving one
 /// out again clears the flag.
 static void MercuryLighthouse_ExitWhenChannelsOpen(void) {
-  if (GameFlag_IsSet(FLAG_PIPE_1_JOINED) != 0 &&
-      GameFlag_IsSet(FLAG_PIPE_2_JOINED) != 0 &&
-      GameFlag_IsSet(FLAG_PIPE_3_JOINED) != 0) {
+  if (GameFlag_Get(FLAG_PIPE_1_JOINED) != 0 &&
+      GameFlag_Get(FLAG_PIPE_2_JOINED) != 0 &&
+      GameFlag_Get(FLAG_PIPE_3_JOINED) != 0) {
     GameFlag_Set(FLAG_MERCURY_LIGHTHOUSE_CHANNELS_OPEN);
     FieldScript_WaitFrames(30);
     MapGrid_SetShake(PIXELS(1), PIXELS(1), Q16_ONE);
@@ -574,7 +574,7 @@ static void MercuryLighthouse_PushChannelPipes(void) {
       if (probe.position.z >> 20 == 12) {
         ObjectEvent_MoveAndRedraw(probe);
         FieldScript_WaitFrames(10);
-        if (GameFlag_IsSet(FLAG_PIPE_1_JOINED)) {
+        if (Script_GetFlag(FLAG_PIPE_1_JOINED)) {
           MapGrid_CopyCellsTo(118, 9, 104, 13, 1, 1);
           MercuryLighthouse_SpawnRandomizedBurst(PIXELS(644), 0, PIXELS(210),
                                                  0x4000);
@@ -584,22 +584,22 @@ static void MercuryLighthouse_PushChannelPipes(void) {
         s32 cellCount = 1;
 
         MapGrid_CopyCellsTo(119, 8, 109, 11, cellCount, cellCount);
-        if (GameFlag_IsSet(FLAG_PIPE_1_JOINED)) {
+        if (GameFlag_Get(FLAG_PIPE_1_JOINED)) {
           MapGrid_CopyCellsTo(119, 9, 109, 11, cellCount, cellCount);
           MapGrid_CopyCellsTo(118, 8, 104, 13, cellCount, cellCount);
         }
         ObjectEvent_MoveAndRedraw(probe);
-        GameFlag_Clear(FLAG_PIPE_2_JOINED);
+        Script_ClearFlag(FLAG_PIPE_2_JOINED);
       }
       break;
     case LOCALID_THIRD_PIPE:
       column = probe.position.x;
       if (column >> 20 == 40) {
         ObjectEvent_MoveAndRedraw(probe);
-        GameFlag_Set(FLAG_PIPE_3_JOINED);
+        Script_SetFlag(FLAG_PIPE_3_JOINED);
       } else {
         ObjectEvent_MoveAndRedraw(probe);
-        GameFlag_Clear(FLAG_PIPE_3_JOINED);
+        Script_ClearFlag(FLAG_PIPE_3_JOINED);
       }
       break;
     }
@@ -677,7 +677,7 @@ static void MercuryLighthouse_OpenGateWithMovedStatue(void) {
       s32 gateRow = 10;
       MapGrid_CopyCellAttributes(9, 5, 1, 1, gateColumn, gateRow);
     }
-    Engine_GameFlagSet(FLAG_MERCURY_LIGHTHOUSE_GATE_HELD_OPEN);
+    GameFlag_Set(FLAG_MERCURY_LIGHTHOUSE_GATE_HELD_OPEN);
   }
   FieldScript_End();
 }
@@ -690,12 +690,12 @@ static void MercuryLighthouse_PressGateFloorSwitch(void) {
   s32 z;
   struct ObjectEvent *leader;
 
-  if (GameFlag_IsSet(FLAG_LEADER_ON_FLOOR_SWITCH) == 0) {
+  if (Script_GetFlag(FLAG_LEADER_ON_FLOOR_SWITCH) == 0) {
     x = ObjectEvent_GetById(LOCALID_PARTY_LEADER)->x.part.pixel;
     z = ObjectEvent_GetById(LOCALID_PARTY_LEADER)->z.part.pixel;
     if ((u32)(x - 84) <= 7 && z > 211 && z <= 219) {
       FieldScript_Start();
-      Engine_GameFlagSet(FLAG_LEADER_ON_FLOOR_SWITCH);
+      GameFlag_Set(FLAG_LEADER_ON_FLOOR_SWITCH);
       FieldScript_WaitFrames(5);
       ObjectEvent_GetById(LOCALID_PARTY_LEADER)->y.fixed += -PIXELS(2);
       leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
@@ -713,7 +713,7 @@ static void MercuryLighthouse_PressGateFloorSwitch(void) {
 static void MercuryLighthouse_CloseFloorSwitch(void) {
   struct ObjectEvent *leader;
 
-  if (GameFlag_IsSet(FLAG_LEADER_ON_FLOOR_SWITCH) != 0) {
+  if (Script_GetFlag(FLAG_LEADER_ON_FLOOR_SWITCH) != 0) {
     FieldScript_Start();
     GameFlag_Clear(FLAG_LEADER_ON_FLOOR_SWITCH);
     ObjectEvent_Get(LOCALID_PARTY_LEADER)->y.fixed += PIXELS(2);
@@ -934,7 +934,7 @@ static void MercuryLighthouse_PushStairAndFountainPipes(void) {
         MapGrid_CopyCellsTo(75, 59, 86, 43, 1, 2);
         MapGrid_CopyCellsTo(76, 59, 80, 49, 2, 1);
         MapGrid_CopyCellsTo(77, 59, 82, 49, 2, 1);
-        Engine_GameFlagSet(FLAG_STAIRS_RAISED);
+        GameFlag_Set(FLAG_STAIRS_RAISED);
       } else {
         probe.callback = MercuryLighthouse_LowerStairsWithSparkles;
         MapGrid_CopyCellsTo(75, 57, 86, 41, 1, 1);
@@ -951,7 +951,7 @@ static void MercuryLighthouse_PushStairAndFountainPipes(void) {
     } else if (pillarId == LOCALID_FOUNTAIN_PIPE) {
       if ((probe.position.z >> 20) == 40) {
         ObjectEvent_MoveAndRedraw(probe);
-        if (GameFlag_IsSet(FLAG_FOUNTAIN_SHOWN) == 0) {
+        if (Script_GetFlag(FLAG_FOUNTAIN_SHOWN) == 0) {
           FieldCamera_SetSpeed(PIXELS(3) / 2, PIXELS(3) / 16);
           FieldCamera_MoveTo(PIXELS(714), -1, PIXELS(592), 1);
           FieldCamera_WaitForArrival();
@@ -1001,7 +1001,7 @@ static void MercuryLighthouse_OpenStairGateWithMovedStatue(void) {
     MapGrid_PlayMetatileCopySequence(gMercuryLighthouse_FloorSwitchCells, 10,
                                      18);
     MapGrid_CopyCellAttributes(10, 16, 1, 1, column, 19);
-    Engine_GameFlagSet(FLAG_MERCURY_LIGHTHOUSE_UPPER_GATE_HELD_OPEN);
+    GameFlag_Set(FLAG_MERCURY_LIGHTHOUSE_UPPER_GATE_HELD_OPEN);
   }
   FieldScript_End();
 }
@@ -1012,7 +1012,7 @@ static void MercuryLighthouse_PressStairFloorSwitch(void) {
   s32 x;
   s32 z;
 
-  if (GameFlag_IsSet(FLAG_LEADER_ON_FLOOR_SWITCH) != 0)
+  if (Script_GetFlag(FLAG_LEADER_ON_FLOOR_SWITCH) != 0)
     return;
   x = ObjectEvent_GetById(LOCALID_PARTY_LEADER)->x.part.pixel;
   z = ObjectEvent_GetById(LOCALID_PARTY_LEADER)->z.part.pixel;
@@ -1023,7 +1023,7 @@ static void MercuryLighthouse_PressStairFloorSwitch(void) {
   if (z >= 380)
     return;
   FieldScript_Start();
-  Engine_GameFlagSet(FLAG_LEADER_ON_FLOOR_SWITCH);
+  GameFlag_Set(FLAG_LEADER_ON_FLOOR_SWITCH);
   FieldScript_WaitFrames(5);
   ObjectEvent_GetById(LOCALID_PARTY_LEADER)->y.fixed -= PIXELS(2);
   ObjectEvent_GetById(LOCALID_PARTY_LEADER)->targetY =
@@ -1039,7 +1039,7 @@ static void MercuryLighthouse_PressStairFloorSwitch(void) {
 static void MercuryLighthouse_ReleaseStairFloorSwitch(void) {
   struct ObjectEvent *leader;
 
-  if (GameFlag_IsSet(FLAG_LEADER_ON_FLOOR_SWITCH) != 0) {
+  if (Script_GetFlag(FLAG_LEADER_ON_FLOOR_SWITCH) != 0) {
     FieldScript_Start();
     GameFlag_Clear(FLAG_LEADER_ON_FLOOR_SWITCH);
     ObjectEvent_Get(LOCALID_PARTY_LEADER)->y.fixed += PIXELS(2);
@@ -1188,23 +1188,23 @@ static s32 MercuryLighthouse_StartStatueSlide(void) {
   FieldCamera_MoveWithinMapBounds(PIXELS(816), -1, PIXELS(712), 1);
   FieldCamera_WaitForArrival();
   // Only the recorded pipe arrangements allow the pipe's next push.
-  if (!GameFlag_Test(FLAG_MERCURY_LIGHTHOUSE_STATUE_FELL)) {
-    if (cellX == 50 && GameFlag_Test(FLAG_DOOR_SWITCH_PIPE_OPENS_NORTH_DOOR)) {
+  if (!GameFlag_Get(FLAG_MERCURY_LIGHTHOUSE_STATUE_FELL)) {
+    if (cellX == 50 && GameFlag_Get(FLAG_DOOR_SWITCH_PIPE_OPENS_NORTH_DOOR)) {
       ObjectEvent_SetActionScript(LOCALID_SLIDING_STATUE,
                                   gMercuryLighthouse_PushScriptA);
     } else if (cellX == 49) {
       if (cellZ == 44 &&
-          !GameFlag_Test(FLAG_DOOR_SWITCH_PIPE_OPENS_NORTH_DOOR) &&
-          !GameFlag_Test(FLAG_DOOR_SWITCH_PIPE_OPENS_SOUTH_DOOR) &&
-          !GameFlag_Test(FLAG_DOOR_SWITCH_PIPE_SHUTS_DOORS)) {
+          !GameFlag_Get(FLAG_DOOR_SWITCH_PIPE_OPENS_NORTH_DOOR) &&
+          !GameFlag_Get(FLAG_DOOR_SWITCH_PIPE_OPENS_SOUTH_DOOR) &&
+          !GameFlag_Get(FLAG_DOOR_SWITCH_PIPE_SHUTS_DOORS)) {
         ObjectEvent_SetActionScript(LOCALID_SLIDING_STATUE,
                                     gMercuryLighthouse_PushScriptB);
       } else if (cellZ == 44 &&
-                 GameFlag_Test(FLAG_DOOR_SWITCH_PIPE_OPENS_NORTH_DOOR)) {
+                 GameFlag_Get(FLAG_DOOR_SWITCH_PIPE_OPENS_NORTH_DOOR)) {
         ObjectEvent_SetActionScript(LOCALID_SLIDING_STATUE,
                                     gMercuryLighthouse_PushScriptC);
       } else if (cellZ == 46 &&
-                 GameFlag_Test(FLAG_DOOR_SWITCH_PIPE_OPENS_SOUTH_DOOR)) {
+                 GameFlag_Get(FLAG_DOOR_SWITCH_PIPE_OPENS_SOUTH_DOOR)) {
         ObjectEvent_SetActionScript(LOCALID_SLIDING_STATUE,
                                     gMercuryLighthouse_PushScriptD);
         FieldScript_WaitFrames(30);
@@ -1264,9 +1264,9 @@ static void MercuryLighthouse_PushStoneDoorPipes(void) {
     case LOCALID_DOOR_ROOM_PIPE:
       ObjectEvent_MoveAndRedraw(probe);
       if (probe.position.z >> 20 == 38)
-        Engine_GameFlagSet(FLAG_DOOR_ROOM_PIPE_PUSHED);
+        GameFlag_Set(FLAG_DOOR_ROOM_PIPE_PUSHED);
       else
-        GameFlag_ClearBit(FLAG_DOOR_ROOM_PIPE_PUSHED);
+        GameFlag_Clear(FLAG_DOOR_ROOM_PIPE_PUSHED);
       break;
     case LOCALID_DOOR_SWITCH_PIPE:
       // Close the previous opening before revealing the new door edge.
@@ -1275,9 +1275,9 @@ static void MercuryLighthouse_PushStoneDoorPipes(void) {
       ObjectEvent_MoveAndRedraw(probe);
       destinationColumn = probe.position.x >> 20;
       if (destinationColumn == 47) {
-        Engine_GameFlagSet(FLAG_DOOR_SWITCH_PIPE_OPENS_NORTH_DOOR);
-        GameFlag_ClearBit(FLAG_DOOR_SWITCH_PIPE_OPENS_SOUTH_DOOR);
-        GameFlag_ClearBit(FLAG_DOOR_SWITCH_PIPE_SHUTS_DOORS);
+        GameFlag_Set(FLAG_DOOR_SWITCH_PIPE_OPENS_NORTH_DOOR);
+        GameFlag_Clear(FLAG_DOOR_SWITCH_PIPE_OPENS_SOUTH_DOOR);
+        GameFlag_Clear(FLAG_DOOR_SWITCH_PIPE_SHUTS_DOORS);
         MercuryLighthouse_StartStatueSlide();
         if (startColumn == 54)
           MercuryLighthouse_CloseStoneDoor(STONE_DOOR_WEST);
@@ -1286,9 +1286,9 @@ static void MercuryLighthouse_PushStoneDoorPipes(void) {
         MercuryLighthouse_OpenStoneDoor(STONE_DOOR_NORTH);
         FieldScript_WaitFrames(60);
       } else if (destinationColumn == 48) {
-        Engine_GameFlagSet(FLAG_DOOR_SWITCH_PIPE_OPENS_SOUTH_DOOR);
-        GameFlag_ClearBit(FLAG_DOOR_SWITCH_PIPE_SHUTS_DOORS);
-        GameFlag_ClearBit(FLAG_DOOR_SWITCH_PIPE_OPENS_NORTH_DOOR);
+        GameFlag_Set(FLAG_DOOR_SWITCH_PIPE_OPENS_SOUTH_DOOR);
+        GameFlag_Clear(FLAG_DOOR_SWITCH_PIPE_SHUTS_DOORS);
+        GameFlag_Clear(FLAG_DOOR_SWITCH_PIPE_OPENS_NORTH_DOOR);
         if (MercuryLighthouse_StartStatueSlide() != 0) {
           s32 x;
 
@@ -1308,7 +1308,7 @@ static void MercuryLighthouse_PushStoneDoorPipes(void) {
           Sound_PlaySong(SE_189);
           ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_SLIDING_STATUE);
           FieldScript_WaitFrames(40);
-          Engine_GameFlagSet(FLAG_MERCURY_LIGHTHOUSE_STATUE_FELL);
+          GameFlag_Set(FLAG_MERCURY_LIGHTHOUSE_STATUE_FELL);
           PaletteFade_SetSource(PALETTE_TINT_NONE, 0);
           gFieldWork->transition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
           FieldScript_FinishScreenTransition();
@@ -1326,16 +1326,16 @@ static void MercuryLighthouse_PushStoneDoorPipes(void) {
           FieldScript_WaitFrames(60);
         }
       } else if (destinationColumn == 53) {
-        Engine_GameFlagSet(FLAG_DOOR_SWITCH_PIPE_SHUTS_DOORS);
-        GameFlag_ClearBit(FLAG_DOOR_SWITCH_PIPE_OPENS_NORTH_DOOR);
-        GameFlag_ClearBit(FLAG_DOOR_SWITCH_PIPE_OPENS_SOUTH_DOOR);
+        GameFlag_Set(FLAG_DOOR_SWITCH_PIPE_SHUTS_DOORS);
+        GameFlag_Clear(FLAG_DOOR_SWITCH_PIPE_OPENS_NORTH_DOOR);
+        GameFlag_Clear(FLAG_DOOR_SWITCH_PIPE_OPENS_SOUTH_DOOR);
         MercuryLighthouse_StartStatueSlide();
         MercuryLighthouse_CloseStoneDoor(STONE_DOOR_WEST);
         FieldScript_WaitFrames(60);
       } else {
-        GameFlag_ClearBit(FLAG_DOOR_SWITCH_PIPE_OPENS_NORTH_DOOR);
-        GameFlag_ClearBit(FLAG_DOOR_SWITCH_PIPE_OPENS_SOUTH_DOOR);
-        GameFlag_ClearBit(FLAG_DOOR_SWITCH_PIPE_SHUTS_DOORS);
+        GameFlag_Clear(FLAG_DOOR_SWITCH_PIPE_OPENS_NORTH_DOOR);
+        GameFlag_Clear(FLAG_DOOR_SWITCH_PIPE_OPENS_SOUTH_DOOR);
+        GameFlag_Clear(FLAG_DOOR_SWITCH_PIPE_SHUTS_DOORS);
         MercuryLighthouse_StartStatueSlide();
         if (startColumn == 47)
           MercuryLighthouse_CloseStoneDoor(STONE_DOOR_NORTH);
@@ -1375,30 +1375,30 @@ static void MercuryLighthouse_SyncCrossingStatueFlags(void) {
                  ->x.fixed /
              PIXELS(16);
     if (column == (statueIndex << 2) + 39) {
-      Engine_GameFlagSet(positionFlag);
-      GameFlag_ClearBit(positionFlag + 1);
+      GameFlag_Set(positionFlag);
+      GameFlag_Clear(positionFlag + 1);
     } else if (column == (statueIndex << 2) + 41) {
-      Engine_GameFlagSet(positionFlag + 1);
-      GameFlag_ClearBit(positionFlag);
+      GameFlag_Set(positionFlag + 1);
+      GameFlag_Clear(positionFlag);
     } else {
-      GameFlag_ClearBit(positionFlag);
-      GameFlag_ClearBit(positionFlag + 1);
+      GameFlag_Clear(positionFlag);
+      GameFlag_Clear(positionFlag + 1);
     }
   }
   // The last statue also determines whether the crossing cell is open.
   column =
       ObjectEvent_GetById(LOCALID_LAST_CROSSING_STATUE)->x.fixed / PIXELS(16);
   if (column == 57) {
-    Engine_GameFlagSet(FLAG_LAST_ROW_STATUE_WEST);
-    GameFlag_ClearBit(FLAG_LAST_ROW_STATUE_EAST);
+    GameFlag_Set(FLAG_LAST_ROW_STATUE_WEST);
+    GameFlag_Clear(FLAG_LAST_ROW_STATUE_EAST);
     MapGrid_CopyCellAttributes(53, 10, 1, 1, 58, 7);
   } else if (column == 59) {
-    Engine_GameFlagSet(FLAG_LAST_ROW_STATUE_EAST);
-    GameFlag_ClearBit(FLAG_LAST_ROW_STATUE_WEST);
+    GameFlag_Set(FLAG_LAST_ROW_STATUE_EAST);
+    GameFlag_Clear(FLAG_LAST_ROW_STATUE_WEST);
     MapGrid_CopyCellAttributes(53, 10, 1, 1, 58, 7);
   } else {
-    GameFlag_ClearBit(FLAG_LAST_ROW_STATUE_WEST);
-    GameFlag_ClearBit(FLAG_LAST_ROW_STATUE_EAST);
+    GameFlag_Clear(FLAG_LAST_ROW_STATUE_WEST);
+    GameFlag_Clear(FLAG_LAST_ROW_STATUE_EAST);
     MapGrid_CopyCellAttributes(53, 11, 1, 1, 58, 7);
   }
   FieldScript_End();
@@ -1412,7 +1412,7 @@ static void MercuryLighthouse_OpenMovedStatueCrossing(void) {
   FieldScript_Start();
   column = ObjectEvent_GetById(LOCALID_GAP_STATUE)->x.fixed / PIXELS(16);
   if (column == 28) {
-    Engine_GameFlagSet(FLAG_PASSAGE_STATUE_MOVED);
+    GameFlag_Set(FLAG_PASSAGE_STATUE_MOVED);
     {
       s32 destinationColumn = 31;
       s32 destinationRow = 20;
@@ -1505,7 +1505,7 @@ static void MercuryLighthouse_MiaSensesSomeoneInside(void) {
   ObjectMotion_SetAnimationAndWait(MIA, ANIM_SHAKE_HEAD);
   FieldScript_WaitFrames(20);
   Script_ShowMessageAndWait(MIA, 0, 20);
-  Engine_GameFlagSet(FLAG_MIA_SENSED_SOMEONE_INSIDE);
+  GameFlag_Set(FLAG_MIA_SENSED_SOMEONE_INSIDE);
   FieldScript_End();
 }
 
@@ -1719,7 +1719,7 @@ static void MercuryLighthouse_MiaOpensEntranceWithPly(void) {
     Engine_ObjectEventSetPosition(GARET, 0, 0);
     ObjectMotion_CommitCurrentPositionAndActivate(IVAN);
     Engine_ObjectEventSetPosition(IVAN, 0, 0);
-    Engine_GameFlagSet(FLAG_MERCURY_LIGHTHOUSE_OPENED_BY_MIA);
+    GameFlag_Set(FLAG_MERCURY_LIGHTHOUSE_OPENED_BY_MIA);
   }
   FieldScript_End();
 }
@@ -1941,7 +1941,7 @@ static void MercuryLighthouse_PlyOpensWaterfallPassage(void) {
   Map_PlayQueuedMusic();
   FieldScript_WaitFrames(30);
   // After Saturos the leader goes alone; the first time Mia leads the party.
-  if (GameFlag_IsSet(FLAG_SATUROS_BEATEN_AT_MERCURY) != 0) {
+  if (GameFlag_Get(FLAG_SATUROS_BEATEN_AT_MERCURY) != 0) {
     ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(4) / 5, PIXELS(2) / 5);
     ObjectEvent_WalkToAndWait(LOCALID_PARTY_LEADER, 824, 232);
     ObjectEvent_WalkToAndWait(LOCALID_PARTY_LEADER, 792, 232);
@@ -2076,7 +2076,7 @@ static void MercuryLighthouse_InspectHealingFountain(void) {
 
   FieldScript_Start();
   Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_STAND);
-  if (GameFlag_Test(FLAG_SATUROS_BEATEN_AT_MERCURY) == 0)
+  if (GameFlag_Get(FLAG_SATUROS_BEATEN_AT_MERCURY) == 0)
     FieldMessage_Show(MSGNO(MsgMercuryLighthouseFountainSeemsDry), 1);
   else
     FieldMessage_Show(MSGNO(MsgMercuryLighthouseFountainFlowsWithWater), 1);
@@ -2101,7 +2101,7 @@ static void MercuryLighthouse_FillHermesWaterBottle(void) {
   MessageArgument_Push(PartyInventory_FindMember(ITEM_HERMES_WATER), 1);
   MessageArgument_Push(ITEM_HERMES_WATER, 2);
   FieldMessage_Show(MSGNO(MsgMercuryLighthouseIsaacGot), 1);
-  Engine_GameFlagSet(FLAG_HERMES_WATER_TAKEN);
+  GameFlag_Set(FLAG_HERMES_WATER_TAKEN);
   FieldScript_End();
 }
 
@@ -2322,7 +2322,7 @@ s32 MercuryLighthouse_Initialize(void) {
   s32 pillarX;
   s32 keepPartyPosition;
 
-  Engine_GameFlagSet(FLAG_MERCURY_LIGHTHOUSE_LIT);
+  GameFlag_Set(FLAG_MERCURY_LIGHTHOUSE_LIT);
   // Set up common lighting before restoring each map's puzzle-specific state.
   gGameState.retreatWarpDest = MERCURY_LIGHTHOUSE_EXTERIOR_FROM_WORLD_MAP;
   gGameState.retreatMap = (s32)&MapId_MercuryLighthouseExterior;
@@ -2336,7 +2336,7 @@ s32 MercuryLighthouse_Initialize(void) {
   MercuryLighthouse_RestoreLights(
       21, (struct MercuryLighthouseLights *)gMapLocalState);
   FieldEffect_StartFadeOverlay(0);
-  if (GameFlag_Test(FLAG_MERCURY_LIGHTHOUSE_HEART_HONORED))
+  if (GameFlag_Get(FLAG_MERCURY_LIGHTHOUSE_HEART_HONORED))
     FieldScheduler_AddCallback(MercuryLighthouse_CyclePalette,
                                TASK_PRIORITY_MAP);
   else
@@ -2347,7 +2347,7 @@ s32 MercuryLighthouse_Initialize(void) {
     case MERCURY_LIGHTHOUSE_LOWER_FROM_MERCURY_LIGHTHOUSE_ENTRANCE_WEST:
     case MERCURY_LIGHTHOUSE_LOWER_FROM_MERCURY_LIGHTHOUSE_ENTRANCE_WEST_NORTHWEST:
     case MERCURY_LIGHTHOUSE_LOWER_POOL_FROM_STATUE:
-      if (GameFlag_Test(FLAG_MERCURY_LIGHTHOUSE_HEART_HONORED))
+      if (GameFlag_Get(FLAG_MERCURY_LIGHTHOUSE_HEART_HONORED))
         MapGrid_CopyCellAttributes(66, 5, 27, 23, 2, 5);
       break;
     case MERCURY_LIGHTHOUSE_LOWER_WATERFALLS_FROM_STATUE:
@@ -2358,16 +2358,16 @@ s32 MercuryLighthouse_Initialize(void) {
       SetEffectRecordMode(ObjectEvent_GetById(LOCALID_PARTY_LEADER), 1);
       // Fall through.
     case MERCURY_LIGHTHOUSE_LOWER_FROM_MERCURY_LIGHTHOUSE_ENTRANCE_EAST_NORTHEAST:
-      if (GameFlag_Test(FLAG_MERCURY_LIGHTHOUSE_CHANNELS_OPEN)) {
+      if (GameFlag_Get(FLAG_MERCURY_LIGHTHOUSE_CHANNELS_OPEN)) {
         WaitFrames(1);
         ObjectEvent_SetPosition(LOCALID_FIRST_PIPE, PIXELS(672), PIXELS(128));
         ObjectEvent_SetPosition(LOCALID_SECOND_PIPE, PIXELS(704), PIXELS(192));
         ObjectEvent_SetPosition(LOCALID_THIRD_PIPE, PIXELS(648), PIXELS(240));
-      } else if (!GameFlag_Test(FLAG_KEEP_PARTY_POSITION)) {
-        GameFlag_ClearBit(FLAG_PIPE_1_JOINED);
-        GameFlag_ClearBit(FLAG_PIPE_2_JOINED);
-        GameFlag_ClearBit(FLAG_PIPE_3_JOINED);
-        GameFlag_ClearBit(FLAG_UNUSED_PIPE_4_JOINED);
+      } else if (!GameFlag_Get(FLAG_KEEP_PARTY_POSITION)) {
+        GameFlag_Clear(FLAG_PIPE_1_JOINED);
+        GameFlag_Clear(FLAG_PIPE_2_JOINED);
+        GameFlag_Clear(FLAG_PIPE_3_JOINED);
+        GameFlag_Clear(FLAG_UNUSED_PIPE_4_JOINED);
       }
       SetEffectRecordMode(ObjectEvent_GetById(LOCALID_FIRST_PIPE), 1);
       SetEffectRecordMode(ObjectEvent_GetById(LOCALID_SECOND_PIPE), 1);
@@ -2376,9 +2376,9 @@ s32 MercuryLighthouse_Initialize(void) {
       Map_RedrawObjectEventFootprint(LOCALID_SECOND_PIPE);
       Map_RedrawObjectEventFootprint(LOCALID_THIRD_PIPE);
       SetEffectRecordMode(ObjectEvent_GetById(LOCALID_PIPE_END), 1);
-      if (GameFlag_Test(FLAG_PIPE_1_JOINED)) {
+      if (GameFlag_Get(FLAG_PIPE_1_JOINED)) {
         MapGrid_CopyCellsTo(119, 9, 109, 11, 1, 1);
-        if (GameFlag_Test(FLAG_PIPE_2_JOINED))
+        if (GameFlag_Get(FLAG_PIPE_2_JOINED))
           MapGrid_CopyCellsTo(118, 9, 104, 13, 1, 1);
         MapGrid_CenterOnFollowedPoint();
         WaitFrames(1);
@@ -2386,7 +2386,7 @@ s32 MercuryLighthouse_Initialize(void) {
       break;
     case MERCURY_LIGHTHOUSE_LOWER_STATUE_FROM_POOL:
     case MERCURY_LIGHTHOUSE_LOWER_STATUE_FROM_WATERFALLS:
-      if (!GameFlag_Test(FLAG_MIA_JOINED_PARTY)) {
+      if (!GameFlag_Get(FLAG_MIA_JOINED_PARTY)) {
         ObjectEvent_SetPosition(MIA, PIXELS(696), PIXELS(632));
         ObjectMotion_ArmCallback(MIA, FACING_EAST, 0);
       } else {
@@ -2404,7 +2404,7 @@ s32 MercuryLighthouse_Initialize(void) {
     case MERCURY_LIGHTHOUSE_MIDDLE_PIPES_FROM_GATE:
       SetEffectRecordMode(ObjectEvent_GetById(LOCALID_STAIR_PIPE), 1);
       SetEffectRecordMode(ObjectEvent_GetById(LOCALID_STAIR_PIPE_END), 1);
-      if (GameFlag_Test(FLAG_STAIRS_RAISED)) {
+      if (GameFlag_Get(FLAG_STAIRS_RAISED)) {
         WaitFrames(1);
         Sound_PlaySong(SE_211);
         ObjectEvent_SetPosition(LOCALID_STAIR_PIPE, PIXELS(184), PIXELS(528));
@@ -2424,12 +2424,12 @@ s32 MercuryLighthouse_Initialize(void) {
     case MERCURY_LIGHTHOUSE_MIDDLE_GATE_FROM_PIPES:
       MapGrid_CenterOnFollowedPoint();
       WaitFrames(1);
-      if (GameFlag_Test(FLAG_KEEP_PARTY_POSITION) &&
-          GameFlag_Test(FLAG_LEADER_ON_FLOOR_SWITCH)) {
+      if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) &&
+          GameFlag_Get(FLAG_LEADER_ON_FLOOR_SWITCH)) {
         MapGrid_CopyCellsTo(5, 2, 5, 11, 1, 1);
         MapGrid_CopyCellsTo(9, 1, 9, 7, 1, 2);
       }
-      if (GameFlag_Test(FLAG_MERCURY_LIGHTHOUSE_GATE_HELD_OPEN)) {
+      if (GameFlag_Get(FLAG_MERCURY_LIGHTHOUSE_GATE_HELD_OPEN)) {
         Engine_ObjectEventSetPosition(LOCALID_GATE_STATUE, PIXELS(88),
                                       PIXELS(216));
         ObjectEvent_GetById(LOCALID_GATE_STATUE)->y.fixed += -PIXELS(2);
@@ -2448,7 +2448,7 @@ s32 MercuryLighthouse_Initialize(void) {
     case MERCURY_LIGHTHOUSE_MIDDLE_FROM_MERCURY_LIGHTHOUSE_UPPER_EAST_NORTHEAST:
     case MERCURY_LIGHTHOUSE_MIDDLE_FROM_MERCURY_LIGHTHOUSE_UPPER_NORTH_NORTHEAST:
       SetEffectRecordMode(ObjectEvent_GetById(LOCALID_FOUNTAIN_PIPE), 1);
-      if (GameFlag_Test(FLAG_FOUNTAIN_RUNNING)) {
+      if (GameFlag_Get(FLAG_FOUNTAIN_RUNNING)) {
         MercuryLighthouse_OpenFountainWithSpray(0);
         MapGrid_CopyCellAttributes(42, 41, 4, 1, 42, 39);
         MapGrid_CopyCellAttributes(42, 40, 4, 1, 42, 41);
@@ -2478,21 +2478,21 @@ s32 MercuryLighthouse_Initialize(void) {
       pillarX = PIXELS(632);
       positionFlag = FLAG_FIRST_ROW_STATUE;
       for (; statueIndex <= 3; statueIndex++) {
-        if (GameFlag_Test(positionFlag))
+        if (GameFlag_Get(positionFlag))
           Engine_ObjectEventSetPosition(
               statueIndex + LOCALID_FIRST_CROSSING_STATUE, pillarX, PIXELS(88));
-        else if (GameFlag_Test(positionFlag + 1))
+        else if (GameFlag_Get(positionFlag + 1))
           Engine_ObjectEventSetPosition(statueIndex +
                                             LOCALID_FIRST_CROSSING_STATUE,
                                         pillarX + PIXELS(32), PIXELS(88));
         pillarX += PIXELS(64);
         positionFlag += 2;
       }
-      if (GameFlag_Test(FLAG_LAST_ROW_STATUE_WEST)) {
+      if (GameFlag_Get(FLAG_LAST_ROW_STATUE_WEST)) {
         ObjectEvent_SetPosition(LOCALID_LAST_CROSSING_STATUE, PIXELS(920),
                                 PIXELS(88));
         MapGrid_CopyCellAttributes(53, 10, 1, 1, 58, 7);
-      } else if (GameFlag_Test(FLAG_LAST_ROW_STATUE_EAST)) {
+      } else if (GameFlag_Get(FLAG_LAST_ROW_STATUE_EAST)) {
         ObjectEvent_SetPosition(LOCALID_LAST_CROSSING_STATUE, PIXELS(952),
                                 PIXELS(88));
         MapGrid_CopyCellAttributes(53, 10, 1, 1, 58, 7);
@@ -2500,7 +2500,7 @@ s32 MercuryLighthouse_Initialize(void) {
       break;
     case MERCURY_LIGHTHOUSE_UPPER_FROM_MERCURY_LIGHTHOUSE_EXTERIOR_EAST:
     case MERCURY_LIGHTHOUSE_UPPER_GAP_FROM_WATERFALLS:
-      if (GameFlag_Test(FLAG_PASSAGE_STATUE_MOVED)) {
+      if (GameFlag_Get(FLAG_PASSAGE_STATUE_MOVED)) {
         ObjectEvent_SetPosition(LOCALID_GAP_STATUE, PIXELS(456), PIXELS(328));
         MapGrid_CopyCellAttributes(29, 20, 1, 1, 31, 20);
       }
@@ -2517,15 +2517,15 @@ s32 MercuryLighthouse_Initialize(void) {
     case MERCURY_LIGHTHOUSE_UPPER_FROM_MERCURY_LIGHTHOUSE_LOWER:
     case MERCURY_LIGHTHOUSE_UPPER_GATE_FROM_FIVE_PILLARS:
     case MERCURY_LIGHTHOUSE_UPPER_GATE_FROM_STONE_DOORS:
-      if (GameFlag_Test(FLAG_KEEP_PARTY_POSITION) &&
-          GameFlag_Test(FLAG_LEADER_ON_FLOOR_SWITCH)) {
+      if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) &&
+          GameFlag_Get(FLAG_LEADER_ON_FLOOR_SWITCH)) {
         ObjectEvent_GetById(LOCALID_PARTY_LEADER)->y.fixed = -PIXELS(2);
         ObjectEvent_GetById(LOCALID_PARTY_LEADER)->targetY =
             ObjectEvent_GetById(LOCALID_PARTY_LEADER)->y.fixed;
         MapGrid_CopyCellsTo(6, 29, 10, 23, 1, 1);
         MapGrid_CopyCellsTo(10, 28, 10, 18, 1, 2);
       }
-      if (GameFlag_Test(FLAG_MERCURY_LIGHTHOUSE_UPPER_GATE_HELD_OPEN)) {
+      if (GameFlag_Get(FLAG_MERCURY_LIGHTHOUSE_UPPER_GATE_HELD_OPEN)) {
         Engine_ObjectEventSetPosition(LOCALID_FALLEN_STATUE, PIXELS(168),
                                       PIXELS(376));
         ObjectEvent_GetById(LOCALID_FALLEN_STATUE)->y.fixed += -PIXELS(2);
@@ -2540,16 +2540,16 @@ s32 MercuryLighthouse_Initialize(void) {
     case MERCURY_LIGHTHOUSE_UPPER_STONE_DOORS_FROM_GATE_STATUE_FALLS:
       WaitFrames(1);
 #if TBS_PATCH_2
-      if (GameFlag_Test(FLAG_DOOR_ROOM_PIPE_PUSHED))
+      if (GameFlag_Get(FLAG_DOOR_ROOM_PIPE_PUSHED))
         ObjectEvent_SetPosition(LOCALID_DOOR_ROOM_PIPE, PIXELS(816),
                                 PIXELS(608));
-      if (GameFlag_Test(FLAG_DOOR_SWITCH_PIPE_OPENS_SOUTH_DOOR))
+      if (GameFlag_Get(FLAG_DOOR_SWITCH_PIPE_OPENS_SOUTH_DOOR))
         ObjectEvent_SetPosition(LOCALID_DOOR_SWITCH_PIPE, PIXELS(776),
                                 PIXELS(576));
-      else if (GameFlag_Test(FLAG_DOOR_SWITCH_PIPE_OPENS_NORTH_DOOR))
+      else if (GameFlag_Get(FLAG_DOOR_SWITCH_PIPE_OPENS_NORTH_DOOR))
         ObjectEvent_SetPosition(LOCALID_DOOR_SWITCH_PIPE, PIXELS(760),
                                 PIXELS(576));
-      else if (GameFlag_Test(FLAG_DOOR_SWITCH_PIPE_SHUTS_DOORS))
+      else if (GameFlag_Get(FLAG_DOOR_SWITCH_PIPE_SHUTS_DOORS))
         ObjectEvent_SetPosition(LOCALID_DOOR_SWITCH_PIPE, PIXELS(856),
                                 PIXELS(576));
 #else
@@ -2560,14 +2560,14 @@ s32 MercuryLighthouse_Initialize(void) {
       SetEffectRecordMode(ObjectEvent_GetById(LOCALID_PARTY_LEADER), 1);
       MercuryLighthouse_CloseStoneDoor(STONE_DOOR_WEST);
 #if TBS_PATCH_2
-      if (GameFlag_Test(FLAG_DOOR_SWITCH_PIPE_OPENS_NORTH_DOOR)) {
+      if (GameFlag_Get(FLAG_DOOR_SWITCH_PIPE_OPENS_NORTH_DOOR)) {
         MercuryLighthouse_OpenStoneDoor(STONE_DOOR_NORTH);
         if (ObjectEvent_GetById(LOCALID_SLIDING_STATUE)->z.fixed >> 20 == 44)
           FieldScheduler_AddCallback(MercuryLighthouse_SprayAboveStatue,
                                      TASK_PRIORITY_MAP);
-      } else if (GameFlag_Test(FLAG_DOOR_SWITCH_PIPE_OPENS_SOUTH_DOOR)) {
+      } else if (GameFlag_Get(FLAG_DOOR_SWITCH_PIPE_OPENS_SOUTH_DOOR)) {
         MercuryLighthouse_OpenStoneDoor(STONE_DOOR_SOUTH);
-      } else if (!GameFlag_Test(FLAG_DOOR_SWITCH_PIPE_SHUTS_DOORS)) {
+      } else if (!GameFlag_Get(FLAG_DOOR_SWITCH_PIPE_SHUTS_DOORS)) {
         MercuryLighthouse_OpenStoneDoor(STONE_DOOR_WEST);
       }
 #else
@@ -2590,22 +2590,22 @@ s32 MercuryLighthouse_Initialize(void) {
       Map_RedrawObjectEventFootprint(LOCALID_DOOR_SWITCH_PIPE);
       if (gGameState.warpDest != MERCURY_LIGHTHOUSE_UPPER_STONE_DOORS_FROM_GATE)
         break;
-      if (!GameFlag_Test(FLAG_KEEP_PARTY_POSITION)) {
-        GameFlag_ClearBit(FLAG_DOOR_ROOM_PIPE_PUSHED);
-        GameFlag_ClearBit(FLAG_DOOR_SWITCH_PIPE_OPENS_NORTH_DOOR);
-        GameFlag_ClearBit(FLAG_DOOR_SWITCH_PIPE_OPENS_SOUTH_DOOR);
-        GameFlag_ClearBit(FLAG_DOOR_SWITCH_PIPE_SHUTS_DOORS);
+      if (!GameFlag_Get(FLAG_KEEP_PARTY_POSITION)) {
+        GameFlag_Clear(FLAG_DOOR_ROOM_PIPE_PUSHED);
+        GameFlag_Clear(FLAG_DOOR_SWITCH_PIPE_OPENS_NORTH_DOOR);
+        GameFlag_Clear(FLAG_DOOR_SWITCH_PIPE_OPENS_SOUTH_DOOR);
+        GameFlag_Clear(FLAG_DOOR_SWITCH_PIPE_SHUTS_DOORS);
         break;
       }
       MercuryLighthouse_CloseStoneDoor(STONE_DOOR_WEST);
-      if (GameFlag_Test(FLAG_DOOR_SWITCH_PIPE_OPENS_NORTH_DOOR)) {
+      if (GameFlag_Get(FLAG_DOOR_SWITCH_PIPE_OPENS_NORTH_DOOR)) {
         MercuryLighthouse_OpenStoneDoor(STONE_DOOR_NORTH);
         if (ObjectEvent_GetById(LOCALID_SLIDING_STATUE)->z.fixed >> 20 == 44)
           FieldScheduler_AddCallback(MercuryLighthouse_SprayAboveStatue,
                                      TASK_PRIORITY_MAP);
-      } else if (GameFlag_Test(FLAG_DOOR_SWITCH_PIPE_OPENS_SOUTH_DOOR)) {
+      } else if (GameFlag_Get(FLAG_DOOR_SWITCH_PIPE_OPENS_SOUTH_DOOR)) {
         MercuryLighthouse_OpenStoneDoor(STONE_DOOR_SOUTH);
-      } else if (!GameFlag_Test(FLAG_DOOR_SWITCH_PIPE_SHUTS_DOORS)) {
+      } else if (!GameFlag_Get(FLAG_DOOR_SWITCH_PIPE_SHUTS_DOORS)) {
         MercuryLighthouse_OpenStoneDoor(STONE_DOOR_WEST);
       }
       break;
@@ -2642,7 +2642,7 @@ s32 MercuryLighthouse_Initialize(void) {
     case MERCURY_LIGHTHOUSE_EXTERIOR_WATERFALL_FROM_UPPER_PATH:
       FieldScheduler_AddCallback(MercuryLighthouse_CycleWaterfallPalette,
                                  TASK_PRIORITY_MAP);
-      if (GameFlag_Test(FLAG_KEEP_PARTY_POSITION))
+      if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION))
         break;
       MercuryLighthouse_ArriveWithSparks();
       Map_QueueMusic(SE_170);
@@ -2664,7 +2664,7 @@ s32 MercuryLighthouse_Initialize(void) {
       ObjectMotion_SetActionVariant(LOCALID_FIRST_VISITOR, 1);
       ObjectMotion_SetActionVariant(LOCALID_FIRST_VISITOR + 1, 1);
       ObjectMotion_SetActionVariant(LOCALID_FIRST_VISITOR + 2, 1);
-      keepPartyPosition = GameFlag_Test(FLAG_KEEP_PARTY_POSITION);
+      keepPartyPosition = GameFlag_Get(FLAG_KEEP_PARTY_POSITION);
       if (keepPartyPosition) {
         MapGrid_CopyCellAttributes(104, 34, 5, 4, 40, 34);
         MapGrid_CopyCellsTo(45, 91, 40, 91, 5, 4);
@@ -2690,7 +2690,7 @@ s32 MercuryLighthouse_Initialize(void) {
     case MERCURY_LIGHTHOUSE_EXTERIOR_FROM_WORLD_MAP:
       MapGrid_CopyCellAttributes(104, 34, 5, 4, 40, 34);
       MapGrid_CopyCellsTo(45, 91, 40, 91, 5, 4);
-      if (!GameFlag_Test(FLAG_SATUROS_BEATEN_AT_MERCURY)) {
+      if (!GameFlag_Get(FLAG_SATUROS_BEATEN_AT_MERCURY)) {
         MapGrid_CopyCellsTo(30, 45, 50, 45, 5, 6);
         MapGrid_CopyCellsTo(50, 105, 50, 109, 5, 3);
         MapGrid_CenterOnFollowedPoint();
@@ -2703,7 +2703,7 @@ s32 MercuryLighthouse_Initialize(void) {
       ObjectEvent_GetById(LOCALID_EAST_APPROACH_STATUE)->scaleX = -Q16_ONE;
       // Until Mia has hurried here from Imil (FLAG_IMIL_MET_MIA, set in
       // imil.c), she is not here and the door stays shut.
-      if (!GameFlag_Test(FLAG_IMIL_MET_MIA)) {
+      if (!GameFlag_Get(FLAG_IMIL_MET_MIA)) {
         Engine_ObjectEventSetPosition(MIA, 0, 0);
         ObjectEvent_SetPosition(LOCALID_DOOR_STATUE, PIXELS(824), PIXELS(600));
         ObjectMotion_SetActionVariant(LOCALID_DOOR_STATUE, 1);
@@ -2713,8 +2713,8 @@ s32 MercuryLighthouse_Initialize(void) {
                                    TASK_PRIORITY_MAP);
         break;
       }
-      if (!GameFlag_Test(FLAG_MERCURY_LIGHTHOUSE_OPENED_BY_MIA)) {
-        if (!GameFlag_Test(FLAG_MIA_SENSED_SOMEONE_INSIDE)) {
+      if (!GameFlag_Get(FLAG_MERCURY_LIGHTHOUSE_OPENED_BY_MIA)) {
+        if (!GameFlag_Get(FLAG_MIA_SENSED_SOMEONE_INSIDE)) {
           ObjectMotion_ArmCallback(MIA, FACING_EAST, 0);
           Engine_ObjectEventSetAnimation(MIA, 16);
         } else {
@@ -2827,7 +2827,7 @@ static void MercuryLighthouse_MiaJoinsAfterRescue(void) {
   FieldScript_PrepareObjectAndApplyValue(MIA, 1);
   // "The Adept Mia joined your party!" Fizz, a Mercury Djinni, comes with
   // her and is set; her stats are worked out again.
-  Engine_GameFlagSet(FLAG_DJINNI(DJINNI_FIZZ));
+  GameFlag_Set(FLAG_DJINNI(DJINNI_FIZZ));
   Djinn_Give(MIA, ELEMENT_MERCURY, DJINNI_INDEX(DJINNI_FIZZ));
   Djinn_Set(MIA, ELEMENT_MERCURY, DJINNI_INDEX(DJINNI_FIZZ));
   Unit_Calculate(MIA);
@@ -2840,7 +2840,7 @@ static void MercuryLighthouse_MiaJoinsAfterRescue(void) {
   ObjectMotion_CommitCurrentPositionAndActivate(MIA);
   Engine_ObjectEventSetPosition(MIA, 0, 0);
   MapGrid_CopyCellAttributes(110, 39, 5, 1, 46, 39);
-  Engine_GameFlagSet(FLAG_MIA_JOINED_PARTY);
+  GameFlag_Set(FLAG_MIA_JOINED_PARTY);
   FieldScript_End();
 }
 

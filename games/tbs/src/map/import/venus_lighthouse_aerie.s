@@ -36,9 +36,9 @@
 	.set import.Inventory_AddItem, 1
 	.set import.PartyInventory_FindMember, 1
 	.set import.PartyInventory_Remove, 1
-	.set import.GameFlag_Test, 1
-	.set import.Engine_GameFlagSet, 1
-	.set import.GameFlag_ClearBit, 1
+	.set import.GameFlag_Get, 1
+	.set import.GameFlag_Set, 1
+	.set import.GameFlag_Clear, 1
 	.set import.Party_RestorePpOfLitElements, 1
 	.set import.FieldScript_WaitFrames, 1
 	.set import.FieldScript_Start, 1

@@ -69,7 +69,7 @@ u32 Field_RequestShortcut(u32 encodedAssignment) {
   u32 requestId = 0x3FFF & encodedAssignment;
   struct FieldWork *work = gFieldWork;
 
-  if (GameFlag_TestFar(FLAG_MENUS_RAISE_EVENT) != 0) {
+  if (GameFlag_GetFar(FLAG_MENUS_RAISE_EVENT) != 0) {
     Field_StoreHalfword(&work->raisedEvent, FIELD_RAISED_EVENT_MENUS);
   } else if (work->mode == OBJECT_SYSTEM_WORLD_MAP) {
     if (FIELD_SHORTCUT_KEYS & KEY_R) {
@@ -184,7 +184,7 @@ s32 Object_UpdateLeaderControl(struct ObjectScriptContext *interpreter) {
   pushed = 0;
   // Debug (FLAG_DEBUG_RESOURCE_BEEP): beep when fewer than 136 of the 512
   // resource blocks are free.
-  if (gDebugMode != 0 && GameFlag_TestFar(FLAG_DEBUG_RESOURCE_BEEP) != 0) {
+  if (gDebugMode != 0 && GameFlag_GetFar(FLAG_DEBUG_RESOURCE_BEEP) != 0) {
     s32 freeBlocks;
     s32 blockIndex;
 
@@ -242,7 +242,7 @@ s32 Object_UpdateLeaderControl(struct ObjectScriptContext *interpreter) {
     object->acceleration = FIELD_ACCELERATION;
     movementAnimation = 2;
   }
-  if (GameFlag_TestFar(FLAG_FAST_WALK) != 0 && (gKeysHeld & KEY_B)) {
+  if (GameFlag_GetFar(FLAG_FAST_WALK) != 0 && (gKeysHeld & KEY_B)) {
     object->speedLimit = FIELD_FAST_WALK_SPEED;
     object->acceleration = FIELD_FAST_WALK_ACCELERATION;
     movementAnimation = 5;

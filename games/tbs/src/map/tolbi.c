@@ -211,7 +211,7 @@ static void Tolbi_GrowSprout(void) {
   sprout = ObjectEvent_GetById(LOCALID_TOLBI_SPROUT);
   ObjectEvent_SetSpriteFlags(sprout, 0);
   Field_SetMetatileBehaviorAt(0, PIXELS(544), PIXELS(288), MB_CLIMB);
-  Engine_GameFlagSet(FLAG_MAP_TEMP_00);
+  GameFlag_Set(FLAG_MAP_TEMP_00);
 }
 
 /// Reveal uncovers the hidden chest: its map cell is drawn in and the chest
@@ -253,17 +253,17 @@ static void Tolbi_TalkToOlderBrother(void) {
   FieldScript_Start();
   kid->timer |= KID_TALKING;
   if (work->psynergy == 0) {
-    if (GameFlag_Test(FLAG_COLOSSO_OVER) != 0) {
+    if (GameFlag_Get(FLAG_COLOSSO_OVER) != 0) {
       msg = MsgTolbiYayEasyRun;
-    } else if (GameFlag_Test(FLAG_BABI_SAVED) != 0) {
+    } else if (GameFlag_Get(FLAG_BABI_SAVED) != 0) {
       msg = MsgTolbiHoorayFinalsSeven;
     } else {
       msg = MsgTolbiWheeFestivalColosso;
     }
   } else {
-    if (GameFlag_Test(FLAG_COLOSSO_OVER) != 0) {
+    if (GameFlag_Get(FLAG_COLOSSO_OVER) != 0) {
       msg = MsgTolbiMainStreetTolbi;
-    } else if (GameFlag_Test(FLAG_BABI_SAVED) != 0) {
+    } else if (GameFlag_Get(FLAG_BABI_SAVED) != 0) {
       msg = MsgTolbiWinBigUsed;
     } else {
       msg = MsgTolbiOldestShouldntShare;
@@ -291,17 +291,17 @@ static void Tolbi_TalkToYoungerSister(void) {
   FieldScript_Start();
   kid->timer |= KID_TALKING;
   if (work->psynergy == 0) {
-    if (GameFlag_Test(FLAG_COLOSSO_OVER) != 0) {
+    if (GameFlag_Get(FLAG_COLOSSO_OVER) != 0) {
       msg = MsgTolbiHaHaHa;
-    } else if (GameFlag_Test(FLAG_BABI_SAVED) != 0) {
+    } else if (GameFlag_Get(FLAG_BABI_SAVED) != 0) {
       msg = MsgTolbiWaahBigBrother;
     } else {
       msg = MsgTolbiWaahSaidMoney;
     }
   } else {
-    if (GameFlag_Test(FLAG_COLOSSO_OVER) != 0) {
+    if (GameFlag_Get(FLAG_COLOSSO_OVER) != 0) {
       msg = MsgTolbiBrotherMeanDuring;
-    } else if (GameFlag_Test(FLAG_BABI_SAVED) != 0) {
+    } else if (GameFlag_Get(FLAG_BABI_SAVED) != 0) {
       msg = MsgTolbiMamaWhyListen;
     } else {
       msg = MsgTolbiMamaToldShare;
@@ -319,10 +319,10 @@ static void Tolbi_TalkToYoungerSister(void) {
 
 /// Picks the event table for Tolbi's current mood.
 const struct MapEvent *Tolbi_SelectEvents(void) {
-  if (GameFlag_Test(FLAG_COLOSSO_OVER) != 0) {
+  if (GameFlag_Get(FLAG_COLOSSO_OVER) != 0) {
     return gTolbiEventsAfterColosso;
   }
-  if (GameFlag_Test(FLAG_BABI_SAVED) != 0) {
+  if (GameFlag_Get(FLAG_BABI_SAVED) != 0) {
     return gTolbiEventsFinalsDay;
   }
   return gTolbiEventsFestival;
@@ -391,8 +391,8 @@ static void Tolbi_AskWhetherPartyWasInFinals(void) {
 /// After Colosso, the snack vendor gives the party his leftover corn, once.
 static void Tolbi_TalkToSnackVendor(void) {
   FieldScript_Start();
-  if (GameFlag_IsSet(FLAG_TOLBI_CORN_GIVEN) == 0) {
-    Engine_GameFlagSet(FLAG_TOLBI_CORN_GIVEN);
+  if (Script_GetFlag(FLAG_TOLBI_CORN_GIVEN) == 0) {
+    GameFlag_Set(FLAG_TOLBI_CORN_GIVEN);
     FieldScript_SetMessageId(MsgTolbiLeftovers);
     FieldScript_ShowMessageAndWait(LOCALID_TOLBI_SNACK_VENDOR, 0);
     FieldEffect_StartEffectObject22(ITEM_CORN, 3);
@@ -487,23 +487,23 @@ s32 Tolbi_ApplyEntryState(s32 unused) {
   objectEvent->update = Tolbi_CopyLeaderPriority;
 
   // What the party has already done here.
-  if (GameFlag_Test(FLAG_TOLBI_SPRING_OPENED) != 0) {
+  if (GameFlag_Get(FLAG_TOLBI_SPRING_OPENED) != 0) {
     ObjectEvent_SetPosition(LOCALID_TOLBI_SPRING_VISITOR, PIXELS(316),
                             PIXELS(328));
   }
   // The puddle is frozen.
-  if (GameFlag_Test(FLAG_MAP_TEMP_01) != 0) {
+  if (GameFlag_Get(FLAG_MAP_TEMP_01) != 0) {
     Tolbi_FreezePuddle();
   }
   // The sprout has grown.
-  if (GameFlag_Test(FLAG_MAP_TEMP_00) != 0) {
+  if (GameFlag_Get(FLAG_MAP_TEMP_00) != 0) {
     Tolbi_GrowSprout();
     Engine_ObjectEventSetAnimation(LOCALID_TOLBI_SPROUT, 4);
   }
 
   // After Colosso the crowd has gone home and is moved off the map. On finals
   // day the scalper waits by the gate.
-  if (GameFlag_Test(FLAG_COLOSSO_OVER) != 0) {
+  if (GameFlag_Get(FLAG_COLOSSO_OVER) != 0) {
     ObjectEvent_SetPosition(LOCALID_TOLBI_WOULD_BE_FIGHTER, PIXELS(520),
                             PIXELS(560));
     ObjectEvent_SetPosition(LOCALID_TOLBI_XIAN_VISITOR, PIXELS(520),
@@ -515,7 +515,7 @@ s32 Tolbi_ApplyEntryState(s32 unused) {
     ObjectEvent_SetPosition(LOCALID_TOLBI_CRYING_BOY, PIXELS(520), PIXELS(560));
     ObjectEvent_SetPosition(LOCALID_TOLBI_SCALPER, PIXELS(520), PIXELS(560));
   } else {
-    if (GameFlag_Test(FLAG_BABI_SAVED) != 0) {
+    if (GameFlag_Get(FLAG_BABI_SAVED) != 0) {
       ObjectEvent_SetPosition(LOCALID_TOLBI_SCALPER, PIXELS(280), PIXELS(80));
       ObjectEvent_FaceDirection(LOCALID_TOLBI_SCALPER, FACING_SOUTHEAST, 0);
       Engine_ObjectEventSetAnimation(LOCALID_TOLBI_SCALPER, ANIM_STAND);
@@ -544,7 +544,7 @@ static void Tolbi_TalkToSpringVisitor(void) {
     ObjectEvent_WalkToAndWait(LOCALID_TOLBI_SPRING_VISITOR, 320, 304);
     ObjectEvent_WalkToAndWait(LOCALID_TOLBI_SPRING_VISITOR, 316, 328);
     ObjectMotion_ArmCallback(LOCALID_TOLBI_SPRING_VISITOR, FACING_NORTHWEST, 0);
-    Engine_GameFlagSet(FLAG_TOLBI_SPRING_OPENED);
+    GameFlag_Set(FLAG_TOLBI_SPRING_OPENED);
   } else {
     FieldScript_ShowMessageAndWait(LOCALID_TOLBI_SPRING_VISITOR, 0);
   }
@@ -676,7 +676,7 @@ static void Tolbi_MeetSearchingSoldiers(void) {
   Engine_ObjectEventSetPosition(LOCALID_TOLBI_SOLDIER_A, 0, 0);
   Engine_ObjectEventSetPosition(LOCALID_TOLBI_SOLDIER_B, 0, 0);
   Engine_ObjectEventSetPosition(LOCALID_TOLBI_MISSING_PERSON_POSTER, 0, 0);
-  Engine_GameFlagSet(FLAG_TOLBI_SOLDIERS_ASKED_ABOUT_BABI);
+  GameFlag_Set(FLAG_TOLBI_SOLDIERS_ASKED_ABOUT_BABI);
   FieldScript_End();
 }
 
@@ -693,7 +693,7 @@ static void Tolbi_FreezePuddle(void) {
   {
     MapGrid_CopyCellAttributes(36, 16, 1, 1, 34, 16);
   }
-  Engine_GameFlagSet(FLAG_MAP_TEMP_01);
+  GameFlag_Set(FLAG_MAP_TEMP_01);
 }
 
 /// The action script of a mirrored object event: flips its sprite and passes 7

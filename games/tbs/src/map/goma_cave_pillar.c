@@ -264,10 +264,10 @@ static void EventScript_MoveWestPillar(void) {
   SCRIPT_START();
   if (x == 20) {
     GomaCavePillar_CopyWestPillarCells(18);
-    GameFlag_ClearBit(FLAG_GOMA_CAVE_WEST_PILLAR_MOVED);
+    GameFlag_Clear(FLAG_GOMA_CAVE_WEST_PILLAR_MOVED);
   } else {
     GomaCavePillar_CopyWestPillarCells(24);
-    Engine_GameFlagSet(FLAG_GOMA_CAVE_WEST_PILLAR_MOVED);
+    GameFlag_Set(FLAG_GOMA_CAVE_WEST_PILLAR_MOVED);
   }
   SCRIPT_END();
 }
@@ -427,7 +427,7 @@ static void EventScript_PushStumpOver(void) {
     MapGrid_WaitForShakeToSettle();
     Engine_ObjectEventSetPosition(LOCALID_STUMP, 0, 0);
     Engine_ObjectEventSetPosition(LOCALID_MASK_FOR_STUMP, 0, 0);
-    Engine_GameFlagSet(FLAG_GOMA_CAVE_STUMP_FELL);
+    GameFlag_Set(FLAG_GOMA_CAVE_STUMP_FELL);
     MapGrid_CopyCellAttributes(21, 45, 4, 2, 21, 11);
   }
   SCRIPT_END();
@@ -476,7 +476,7 @@ static void GomaCavePillar_SettleEastPillar(void) {
         ObjectEvent_GetById(LOCALID_EAST_PILLAR)->y.fixed,
         ObjectEvent_GetById(LOCALID_EAST_PILLAR)->z.fixed, -PIXELS(2) / 5,
         -PIXELS(2) / 5, 0, PLANE_XZ);
-    Engine_GameFlagSet(FLAG_GOMA_CAVE_EAST_PILLAR_IN_PLACE);
+    GameFlag_Set(FLAG_GOMA_CAVE_EAST_PILLAR_IN_PLACE);
   }
 }
 
@@ -591,7 +591,7 @@ static void EventScript_WitnessCheersForgeCaught(void) {
   OBJECT_POSITION_SET(LOCALID_WITNESS, 0, 0);
   ObjectEvent_GetById(LOCALID_EAST_PILLAR)->priorityFlags |=
       OBJ_EVENT_PRIORITY_UNDERFOOT;
-  FLAG_SET(FLAG_GOMA_CAVE_WITNESS_LEFT);
+  GameFlag_Set(FLAG_GOMA_CAVE_WITNESS_LEFT);
   SCRIPT_END();
 }
 
@@ -607,17 +607,17 @@ s32 Map_Initialize(void) {
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   work->transitionFrames = 24;
   ObjectEvent_GetById(LOCALID_STUMP)->collisionFlags |= OBJ_EVENT_NEAR_PSYNERGY;
-  if (FLAG_CHECK(FLAG_GOMA_CAVE_WEST_PILLAR_MOVED) != 0) {
+  if (GameFlag_Get(FLAG_GOMA_CAVE_WEST_PILLAR_MOVED) != 0) {
     OBJECT_POSITION_SET(LOCALID_WEST_PILLAR, 344, 104);
     GomaCavePillar_CopyWestPillarCells(24);
   } else {
     GomaCavePillar_CopyWestPillarCells(18);
   }
-  if (FLAG_CHECK(FLAG_GOMA_CAVE_STUMP_FELL) != 0) {
+  if (GameFlag_Get(FLAG_GOMA_CAVE_STUMP_FELL) != 0) {
     OBJECT_POSITION_SET(LOCALID_STUMP, 0, 0);
     MapGrid_CopyCellAttributes(21, 45, 4, 2, 21, 11);
   }
-  if (FLAG_CHECK(FLAG_GOMA_CAVE_EAST_PILLAR_IN_PLACE) != 0) {
+  if (GameFlag_Get(FLAG_GOMA_CAVE_EAST_PILLAR_IN_PLACE) != 0) {
     OBJECT_POSITION_SET(LOCALID_EAST_PILLAR, 616, 232);
     if (gGameState.warpDest == GOMA_CAVE_PILLAR_FROM_GOMA_CAVE_STREAM_EAST ||
         gGameState.warpDest == GOMA_CAVE_PILLAR_FROM_GOMA_CAVE_POND_EAST) {

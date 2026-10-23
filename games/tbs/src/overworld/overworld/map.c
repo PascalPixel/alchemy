@@ -68,7 +68,7 @@ void Map_TakeWarp(s32 warpId) {
         break;
       }
       if (kind == WARP_ID_ANY || kind == warpId) {
-        if (flag == 0 || GameFlag_TestFar(flag) == 0) {
+        if (flag == 0 || GameFlag_GetFar(flag) == 0) {
           nextMap = mapId;
           nextWarpDest = warpDest;
           break;
@@ -109,7 +109,7 @@ void Map_ReturnFromRun(s32 result) {
       unit->hp = 1;
       Unit_UpdateGauges(unit);
     }
-    if (GameFlag_TestFar(FLAG_CHILDHOOD)) {
+    if (GameFlag_GetFar(FLAG_CHILDHOOD)) {
       for (i = 0; i < 2; i++) {
         unit = Unit_GetFar(i);
         unit->hp = unit->hpMax;
@@ -148,7 +148,7 @@ void Map_ReturnFromRun(s32 result) {
     } else {
       gGameState.mapId = gGameState.defaultMap;
       gGameState.warpDest = gGameState.defaultWarpDest;
-      GameFlag_SetBitFar(FLAG_KEEP_PARTY_POSITION);
+      GameFlag_SetFar(FLAG_KEEP_PARTY_POSITION);
     }
   }
 }
@@ -235,8 +235,8 @@ void Game_Run(s32 mode) {
   for (;;) {
     // FLAG_SKIP_MAP_CHANGE_SOUND skips SE_STOP_SLOT3 for one map
     // change, then clears itself.
-    if (GameFlag_TestFar(FLAG_SKIP_MAP_CHANGE_SOUND))
-      GameFlag_ClearBitFar(FLAG_SKIP_MAP_CHANGE_SOUND);
+    if (GameFlag_GetFar(FLAG_SKIP_MAP_CHANGE_SOUND))
+      GameFlag_ClearFar(FLAG_SKIP_MAP_CHANGE_SOUND);
     else
       Sound_PlaySongFar(SE_STOP_SLOT3);
     record = &table[gGameState.mapId];
@@ -281,14 +281,14 @@ void Game_Run(s32 mode) {
 
     // A map: set its flags and music, load its code and run it.
     Map_ResetFlagsOnEnter(gGameState.mapId,
-                          GameFlag_TestFar(FLAG_KEEP_PARTY_POSITION));
+                          GameFlag_GetFar(FLAG_KEEP_PARTY_POSITION));
     Map_ChooseMusic();
-    if (!GameFlag_TestFar(FLAG_KEEP_PARTY_POSITION)) {
+    if (!GameFlag_GetFar(FLAG_KEEP_PARTY_POSITION)) {
       // Either flag keeps the music that is playing: FLAG_KEEP_MUSIC for this
       // one change, FLAG_KEEP_MUSIC_HELD for as long as it stays set.
-      if (GameFlag_TestFar(FLAG_KEEP_MUSIC) ||
-          GameFlag_TestFar(FLAG_KEEP_MUSIC_HELD))
-        GameFlag_ClearBitFar(FLAG_KEEP_MUSIC);
+      if (GameFlag_GetFar(FLAG_KEEP_MUSIC) ||
+          GameFlag_GetFar(FLAG_KEEP_MUSIC_HELD))
+        GameFlag_ClearFar(FLAG_KEEP_MUSIC);
       else
         Map_PlayMusic();
     } else if (gGameState.returnMusic != -1) {
@@ -331,39 +331,39 @@ void Map_ResetFlagsOnEnter(s32 unused, s32 keep) {
   if (keep == 0) {
     // Local puzzle flags expire on every normal entry to a map.
     for (flag = FLAG_MAP_TEMP_FIRST; flag <= FLAG_MAP_TEMP_LAST; flag++)
-      GameFlag_ClearBitFar(flag);
+      GameFlag_ClearFar(flag);
     if (mapSec != gGameState.mapSec) {
       // Map section state and Retreat's destination survive moves within it.
       for (flag = FLAG_MAPSEC_TEMP_FIRST; flag <= FLAG_MAPSEC_TEMP_LAST; flag++)
-        GameFlag_ClearBitFar(flag);
-      GameFlag_SetBitFar(FLAG_SHOW_LOCATION_NAME);
+        GameFlag_ClearFar(flag);
+      GameFlag_SetFar(FLAG_SHOW_LOCATION_NAME);
       gGameState.encounterSteps = 0;
       gGameState.hazardSteps = 0;
-      GameFlag_ClearBitFar(FLAG_VENUS_LIGHTHOUSE_LIT);
-      GameFlag_ClearBitFar(FLAG_MERCURY_LIGHTHOUSE_LIT);
-      GameFlag_ClearBitFar(FLAG_MARS_LIGHTHOUSE_LIT);
-      GameFlag_ClearBitFar(FLAG_JUPITER_LIGHTHOUSE_LIT);
+      GameFlag_ClearFar(FLAG_VENUS_LIGHTHOUSE_LIT);
+      GameFlag_ClearFar(FLAG_MERCURY_LIGHTHOUSE_LIT);
+      GameFlag_ClearFar(FLAG_MARS_LIGHTHOUSE_LIT);
+      GameFlag_ClearFar(FLAG_JUPITER_LIGHTHOUSE_LIT);
       gGameState.retreatMap = gGameState.mapId;
       gGameState.retreatWarpDest = gGameState.warpDest;
     }
     // The Djinn's hiding flags last for one map, even within a map section, and
     // so do the 16 after them to 0xdf, which nothing else uses.
     for (flag = FLAG_DJINN_HIDING_FIRST; flag <= 0xdf; flag++)
-      GameFlag_ClearBitFar(flag);
-    GameFlag_ClearBitFar(FLAG_LINK_BATTLE);
-    GameFlag_ClearBitFar(FLAG_RETREAT_BLOCKED);
+      GameFlag_ClearFar(flag);
+    GameFlag_ClearFar(FLAG_LINK_BATTLE);
+    GameFlag_ClearFar(FLAG_RETREAT_BLOCKED);
     // FLAG_NO_ENCOUNTERS_IN_MAPSEC stops random battles
     // (Encounter_CountStepsAndSelectFormation).
-    GameFlag_ClearBitFar(FLAG_NO_ENCOUNTERS_IN_MAPSEC);
-    GameFlag_ClearBitFar(FLAG_IN_TOWN);
-    GameFlag_ClearBitFar(FLAG_WORLD_MAP_LEFT);
+    GameFlag_ClearFar(FLAG_NO_ENCOUNTERS_IN_MAPSEC);
+    GameFlag_ClearFar(FLAG_IN_TOWN);
+    GameFlag_ClearFar(FLAG_WORLD_MAP_LEFT);
     gGameState.returnMusic = -1;
   }
   gGameState.mapSec = mapSec;
-  GameFlag_SetBitFar(FLAG_MAPSEC_VISITED(mapSec & 0x7f));
+  GameFlag_SetFar(FLAG_MAPSEC_VISITED(mapSec & 0x7f));
   gGameState.mapType = MAP_HEADER(gGameState.mapId)->mapType;
   if (gGameState.mapType == MAP_TYPE_TOWN)
-    GameFlag_SetBitFar(FLAG_IN_TOWN);
+    GameFlag_SetFar(FLAG_IN_TOWN);
   GameFlag_RefreshLureCapFar();
 }
 

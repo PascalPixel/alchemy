@@ -180,7 +180,7 @@ s32 Class_Determine(s32 character, const u8 *djinn) {
   if (character > 7)
     return 0;
   Unit_GetElementLevels(character, djinn, levels);
-  if (GameFlag_Test(FLAG_CHILDHOOD)) {
+  if (GameFlag_Get(FLAG_CHILDHOOD)) {
     if (character == ISAAC)
       return 200;
     if (character == GARET)

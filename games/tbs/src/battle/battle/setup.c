@@ -297,7 +297,7 @@ s32 DjinnRecovery_Reconcile(void) {
   }
 
   // Link battles leave the Djinn waiting on the list.
-  if (GameFlag_TestFar(FLAG_LINK_BATTLE) != 0)
+  if (GameFlag_GetFar(FLAG_LINK_BATTLE) != 0)
     return;
 
   {

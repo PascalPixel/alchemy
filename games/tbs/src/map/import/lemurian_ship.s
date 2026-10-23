@@ -19,7 +19,7 @@
 	.set import.ObjectDispatch_SetSingleChildFlags, 1
 	.set import.MapGrid_SetScreenShake, 1
 	.set import.Inventory_AddItem, 1
-	.set import.Engine_GameFlagSet, 1
+	.set import.GameFlag_Set, 1
 	.set import.FieldScript_WaitFrames, 1
 	.set import.FieldScript_Start, 1
 	.set import.FieldScript_End, 1

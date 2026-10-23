@@ -245,7 +245,7 @@ static void SuhallaDesert_UpdateCaptureTimer(void) {
   if (remainingFrames != 0) {
     if (remainingFrames == 1) {
       requests->raisedEvent = RAISED_STORM_CARRIES_PARTY_AWAY;
-    } else if (GameFlag_Test(FLAG_MENU_OPEN) == 0) {
+    } else if (GameFlag_Get(FLAG_MENU_OPEN) == 0) {
       remainingFrames -= 1;
     }
   }
@@ -267,7 +267,7 @@ static void SuhallaDesert_CatchInStorm(s32 stormId) {
   stormIdCopy = stormId;
   selectedObjectEvent = ObjectEvent_GetById(leaderLocalId);
   ObjectEvent_Get(stormIdCopy);
-  captureActive = GameFlag_IsSet(FLAG_MAP_TEMP_0F);
+  captureActive = Script_GetFlag(FLAG_MAP_TEMP_0F);
   if (captureActive == 0) {
     FieldScript_Start();
     ObjectEvent_SetAttachedEffect(leaderLocalId, ATTACHED_EFFECT_IN_FRONT |
@@ -352,7 +352,7 @@ static void SuhallaDesert_RaiseStorm(s32 stormId) {
   stormIdCopy = stormId;
   selectedObjectEvent = ObjectEvent_GetById(gGameState.leaderLocalId);
   storm = ObjectEvent_GetById(stormIdCopy);
-  appearanceRestored = GameFlag_Test(FLAG_STORMS_RISEN);
+  appearanceRestored = GameFlag_Get(FLAG_STORMS_RISEN);
   leaderX = selectedObjectEvent->x.part.pixel;
   leaderZ = selectedObjectEvent->z.part.pixel;
   FieldScript_Start();
@@ -372,11 +372,11 @@ static void SuhallaDesert_RaiseStorm(s32 stormId) {
     WaitFrames(1);
     frame = nextFrame;
   } while (frame <= 15);
-  Engine_GameFlagSet((FLAG_MAP_TEMP_06 - LOCALID_FIRST_STORM + stormIdCopy));
-  Engine_GameFlagSet(FLAG_STORMS_RISEN);
-  if (GameFlag_Test(FLAG_IODEM_FOLLOWING_PARTY) != 0 &&
-      GameFlag_IsSet(FLAG_SUHALLA_DESERT_IODEM_WARNED) == 0) {
-    Engine_GameFlagSet(FLAG_SUHALLA_DESERT_IODEM_WARNED);
+  GameFlag_Set((FLAG_MAP_TEMP_06 - LOCALID_FIRST_STORM + stormIdCopy));
+  GameFlag_Set(FLAG_STORMS_RISEN);
+  if (GameFlag_Get(FLAG_IODEM_FOLLOWING_PARTY) != 0 &&
+      Script_GetFlag(FLAG_SUHALLA_DESERT_IODEM_WARNED) == 0) {
+    GameFlag_Set(FLAG_SUHALLA_DESERT_IODEM_WARNED);
     ObjectEvent_SetSpeed(LOCALID_IODEM, PIXELS(1), PIXELS(1) / 2);
     ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(3) / 2, PIXELS(3) / 4);
     leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
@@ -472,9 +472,9 @@ static void EventScript_FifthStormRises(void) {
 static void EventScript_IodemAsksWhetherToPressOn(void) {
   struct ObjectEvent *leader;
 
-  if (GameFlag_IsSet(FLAG_IODEM_FOLLOWING_PARTY) != 0 &&
-      GameFlag_IsSet(0x1b7) == 0 &&
-      GameFlag_IsSet(FLAG_IODEM_MET_WOUNDED_SOLDIERS) != 0) {
+  if (GameFlag_Get(FLAG_IODEM_FOLLOWING_PARTY) != 0 &&
+      GameFlag_Get(0x1b7) == 0 &&
+      GameFlag_Get(FLAG_IODEM_MET_WOUNDED_SOLDIERS) != 0) {
     GameFlag_Set(FLAG_SUHALLA_DESERT_TALKED_OF_SHEBA);
     FieldScript_Start();
     FieldScript_SetMessageId(MsgSuhallaNowhereFound);
@@ -543,7 +543,7 @@ static s32 SuhallaDesert_ChaseLeader(struct ObjectScriptContext *interpreter) {
   objectEvent->motionFlags = 0;
   ObjectEvent_SetSpriteFlags(objectEvent, 0);
   objectEvent->spriteStorageKind ^= 1;
-  if (GameFlag_Test(FLAG_FIELD_HANDLING_REQUESTS)) {
+  if (GameFlag_Get(FLAG_FIELD_HANDLING_REQUESTS)) {
     objectEvent->targetX = OBJ_EVENT_NO_TARGET;
     objectEvent->targetY = OBJ_EVENT_NO_TARGET;
     objectEvent->targetZ = OBJ_EVENT_NO_TARGET;
@@ -588,7 +588,7 @@ static s32 SuhallaDesert_ChaseLeader(struct ObjectScriptContext *interpreter) {
 /// In SuhallaDesertSouth, until the chasing storm has been doused: it
 /// appears behind the party and gives chase.
 static void EventScript_StormGivesChase(void) {
-  if (GameFlag_IsSet(FLAG_SUHALLA_DESERT_CHASING_STORM_DOUSED) == 0) {
+  if (GameFlag_Get(FLAG_SUHALLA_DESERT_CHASING_STORM_DOUSED) == 0) {
     GameFlag_Set(FLAG_MAP_TEMP_0E);
     ObjectEvent_SetPosition(LOCALID_CHASING_STORM, PIXELS(120), PIXELS(824));
     ObjectEvent_SetActionScript(LOCALID_CHASING_STORM,
@@ -617,13 +617,12 @@ static void EventScript_DouseStorm(s32 unused, s32 stormId) {
   if (gFieldWork->raisedEvent == RAISED_STORM_CARRIES_PARTY_AWAY) {
     gFieldWork->raisedEvent = 0;
   }
-  GameFlag_ClearBit(FLAG_MAP_TEMP_0F);
+  GameFlag_Clear(FLAG_MAP_TEMP_0F);
   if (gGameState.mapId == (s32)&MapId_SuhallaDesertNorth) {
-    Engine_GameFlagSet(
-        (stormId + FLAG_FIRST_MAP_STORM_DOUSED - LOCALID_FIRST_STORM));
+    GameFlag_Set((stormId + FLAG_FIRST_MAP_STORM_DOUSED - LOCALID_FIRST_STORM));
   } else {
     if (gGameState.mapId == (s32)&MapId_SuhallaDesertSouth) {
-      Engine_GameFlagSet(
+      GameFlag_Set(
           (stormId + FLAG_SECOND_MAP_STORM_DOUSED - LOCALID_FIRST_STORM));
     }
   }
@@ -683,7 +682,7 @@ static void EventScript_StormCarriesPartyAway(void) {
   FieldScript_FinishScreenTransition();
   FieldScript_WaitTransitionFrames();
   FieldScript_End();
-  Engine_GameFlagSet(FLAG_ARRIVE_FALLING);
+  GameFlag_Set(FLAG_ARRIVE_FALLING);
   if (gGameState.mapId == (s32)&MapId_SuhallaDesertSouth &&
       FieldGameFlag_GetByte(FLAG_MAP_TEMP_18) == LOCALID_FOURTH_STORM) {
     FieldScript_SetDestination((s32)&MapId_WorldMap,
@@ -821,26 +820,26 @@ static void SuhallaDesert_SetUpFirstMapStorms(void) {
   s32 stormId;
   s32 stormAlpha = 0;
 
-  if (GameFlag_Test(FLAG_FIRST_MAP_STORM_DOUSED)) {
-    Engine_GameFlagSet(FLAG_MAP_TEMP_06);
+  if (GameFlag_Get(FLAG_FIRST_MAP_STORM_DOUSED)) {
+    GameFlag_Set(FLAG_MAP_TEMP_06);
   }
-  if (GameFlag_Test(FLAG_FIRST_MAP_STORM_DOUSED + 1)) {
-    Engine_GameFlagSet(FLAG_MAP_TEMP_07);
+  if (GameFlag_Get(FLAG_FIRST_MAP_STORM_DOUSED + 1)) {
+    GameFlag_Set(FLAG_MAP_TEMP_07);
   }
-  if (GameFlag_Test(FLAG_FIRST_MAP_STORM_DOUSED + 2)) {
-    Engine_GameFlagSet(FLAG_MAP_TEMP_08);
+  if (GameFlag_Get(FLAG_FIRST_MAP_STORM_DOUSED + 2)) {
+    GameFlag_Set(FLAG_MAP_TEMP_08);
   }
-  if (GameFlag_Test(FLAG_FIRST_MAP_STORM_DOUSED + 3)) {
-    Engine_GameFlagSet(FLAG_MAP_TEMP_09);
+  if (GameFlag_Get(FLAG_FIRST_MAP_STORM_DOUSED + 3)) {
+    GameFlag_Set(FLAG_MAP_TEMP_09);
   }
-  if (GameFlag_Test(FLAG_FIRST_MAP_STORM_DOUSED + 4)) {
-    Engine_GameFlagSet(FLAG_MAP_TEMP_0A);
+  if (GameFlag_Get(FLAG_FIRST_MAP_STORM_DOUSED + 4)) {
+    GameFlag_Set(FLAG_MAP_TEMP_0A);
   }
   for (stormId = LOCALID_FIRST_STORM; stormId <= LOCALID_LAST_STORM;
        stormId++) {
     objectEvent = ObjectEvent_GetById(stormId);
     if (objectEvent != 0) {
-      if (!GameFlag_Test(FLAG_KEEP_PARTY_POSITION)) {
+      if (!GameFlag_Get(FLAG_KEEP_PARTY_POSITION)) {
         objectEvent->scaleX = Q16_ONE / 32;
         objectEvent->scaleY = Q16_ONE / 32;
       }
@@ -848,7 +847,7 @@ static void SuhallaDesert_SetUpFirstMapStorms(void) {
     }
   }
   IO_WRITE_QUEUE_PUSH((u32)&REG_BLDCNT, SUHALLA_DESERT_HAZE_BLEND, 0x20000);
-  if (GameFlag_Test(FLAG_STORMS_RISEN)) {
+  if (GameFlag_Get(FLAG_STORMS_RISEN)) {
     stormAlpha = 16;
     Map_QueueMusic(SE_SANDSTORM);
   }
@@ -867,20 +866,20 @@ static void SuhallaDesert_SetUpSecondMapStorms(void) {
   s32 stormId;
   s32 stormAlpha = 0;
 
-  if (GameFlag_Test(FLAG_SECOND_MAP_STORM_DOUSED)) {
-    Engine_GameFlagSet(FLAG_MAP_TEMP_06);
+  if (GameFlag_Get(FLAG_SECOND_MAP_STORM_DOUSED)) {
+    GameFlag_Set(FLAG_MAP_TEMP_06);
   }
-  if (GameFlag_Test(FLAG_SECOND_MAP_STORM_DOUSED + 1)) {
-    Engine_GameFlagSet(FLAG_MAP_TEMP_07);
+  if (GameFlag_Get(FLAG_SECOND_MAP_STORM_DOUSED + 1)) {
+    GameFlag_Set(FLAG_MAP_TEMP_07);
   }
-  if (GameFlag_Test(FLAG_SECOND_MAP_STORM_DOUSED + 2)) {
-    Engine_GameFlagSet(FLAG_MAP_TEMP_08);
+  if (GameFlag_Get(FLAG_SECOND_MAP_STORM_DOUSED + 2)) {
+    GameFlag_Set(FLAG_MAP_TEMP_08);
   }
   for (stormId = LOCALID_FIRST_STORM; stormId < LOCALID_FOURTH_STORM;
        stormId++) {
     objectEvent = ObjectEvent_GetById(stormId);
     if (objectEvent != 0) {
-      if (!GameFlag_Test(FLAG_KEEP_PARTY_POSITION)) {
+      if (!GameFlag_Get(FLAG_KEEP_PARTY_POSITION)) {
         objectEvent->scaleX = Q16_ONE / 32;
         objectEvent->scaleY = Q16_ONE / 32;
       }
@@ -900,11 +899,11 @@ static void SuhallaDesert_SetUpSecondMapStorms(void) {
     sprite->dirty = 1;
     sprite->flags = 0;
   }
-  if (GameFlag_Test(FLAG_SECOND_MAP_STORM_DOUSED + 4)) {
-    Engine_GameFlagSet(FLAG_SUHALLA_DESERT_CHASING_STORM_DOUSED);
+  if (GameFlag_Get(FLAG_SECOND_MAP_STORM_DOUSED + 4)) {
+    GameFlag_Set(FLAG_SUHALLA_DESERT_CHASING_STORM_DOUSED);
   }
   IO_WRITE_QUEUE_PUSH((u32)&REG_BLDCNT, SUHALLA_DESERT_HAZE_BLEND, 0x20000);
-  if (GameFlag_Test(FLAG_STORMS_RISEN)) {
+  if (GameFlag_Get(FLAG_STORMS_RISEN)) {
     stormAlpha = 16;
     Map_QueueMusic(SE_SANDSTORM);
   }

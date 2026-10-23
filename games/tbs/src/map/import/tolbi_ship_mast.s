@@ -9,8 +9,8 @@
 	.set import.Object_SetMoveTarget, 1
 	.set import.Object_WaitForMove, 1
 	.set import.ObjectDispatch_SetSingleChildFlags, 1
-	.set import.GameFlag_Test, 1
-	.set import.Engine_GameFlagSet, 1
+	.set import.GameFlag_Get, 1
+	.set import.GameFlag_Set, 1
 	.set import.FieldScript_WaitFrames, 1
 	.set import.FieldScript_Start, 1
 	.set import.FieldScript_End, 1

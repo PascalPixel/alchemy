@@ -30,7 +30,7 @@ s32 Djinn_GiveToParty(s32 element, s32 djinn) {
   s32 partyIndex;
   s32 elementIndex;
 
-  if (GameFlag_Test(flag) != 0)
+  if (GameFlag_Get(flag) != 0)
     return -1;
 
   partySize = Party_CountMembers();
@@ -54,7 +54,7 @@ s32 Djinn_GiveToParty(s32 element, s32 djinn) {
 
   Djinn_Give(leastLoadedMember, element, djinn);
   DjinnRecovery_AddStandby(leastLoadedMember, element, djinn);
-  GameFlag_SetBit(flag);
+  GameFlag_Set(flag);
   return leastLoadedMember;
 }
 

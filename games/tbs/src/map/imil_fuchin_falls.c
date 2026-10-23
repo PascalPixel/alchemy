@@ -283,7 +283,7 @@ static void FuchinFallsCave_Entrance_MoveFirstLogEast(void) {
   ObjectEvent_PlacePairAtOffset(LOCALID_FIRST_LOG, 112, 0);
   ObjectEvent_PlacePairAtOffset(LOCALID_FIRST_LOG, 112, 0);
   Sound_PlaySong(SONG_FADE_OUT_ACTION_SE);
-  Engine_GameFlagSet(FLAG_MAPSEC_TEMP_01);
+  GameFlag_Set(FLAG_MAPSEC_TEMP_01);
   WaitFrames(2);
   FuchinFallsCave_RebuildEntranceLogs();
 }
@@ -299,7 +299,7 @@ static void FuchinFallsCave_Entrance_MoveFirstLogWest(void) {
   ObjectEvent_PlacePairAtOffset(LOCALID_FIRST_LOG, offset, 0);
   ObjectEvent_PlacePairAtOffset(LOCALID_FIRST_LOG, offset, 0);
   Sound_PlaySong(SONG_FADE_OUT_ACTION_SE);
-  GameFlag_ClearBit(FLAG_MAPSEC_TEMP_01);
+  GameFlag_Clear(FLAG_MAPSEC_TEMP_01);
   WaitFrames(2);
   FuchinFallsCave_RebuildEntranceLogs();
 }
@@ -311,7 +311,7 @@ static void FuchinFallsCave_Entrance_MoveSecondLogSouth(void) {
   Sound_PlaySong(SE_WATER_MOVE);
   ObjectEvent_PlacePairAtOffset(LOCALID_SECOND_LOG, 0, 64);
   Sound_PlaySong(SONG_FADE_OUT_ACTION_SE);
-  GameFlag_ClearBit(FLAG_MAPSEC_TEMP_02);
+  GameFlag_Clear(FLAG_MAPSEC_TEMP_02);
   WaitFrames(2);
   FuchinFallsCave_RebuildEntranceLogs();
 }
@@ -323,7 +323,7 @@ static void FuchinFallsCave_Entrance_MoveSecondLogNorth(void) {
   Sound_PlaySong(SE_WATER_MOVE);
   ObjectEvent_PlacePairAtOffset(LOCALID_SECOND_LOG, 0, -64);
   Sound_PlaySong(SONG_FADE_OUT_ACTION_SE);
-  Engine_GameFlagSet(FLAG_MAPSEC_TEMP_02);
+  GameFlag_Set(FLAG_MAPSEC_TEMP_02);
   WaitFrames(2);
   FuchinFallsCave_RebuildEntranceLogs();
 }
@@ -335,7 +335,7 @@ static void FuchinFallsCave_Entrance_MoveThirdLogSouth(void) {
   Sound_PlaySong(SE_WATER_MOVE);
   ObjectEvent_PlacePairAtOffset(LOCALID_THIRD_LOG, 0, 64);
   Sound_PlaySong(SONG_FADE_OUT_ACTION_SE);
-  GameFlag_ClearBit(FLAG_MAPSEC_TEMP_03);
+  GameFlag_Clear(FLAG_MAPSEC_TEMP_03);
   WaitFrames(2);
   FuchinFallsCave_RebuildEntranceLogs();
 }
@@ -347,7 +347,7 @@ static void FuchinFallsCave_Entrance_MoveThirdLogNorth(void) {
   Sound_PlaySong(SE_WATER_MOVE);
   ObjectEvent_PlacePairAtOffset(LOCALID_THIRD_LOG, 0, -64);
   Sound_PlaySong(SONG_FADE_OUT_ACTION_SE);
-  Engine_GameFlagSet(FLAG_MAPSEC_TEMP_03);
+  GameFlag_Set(FLAG_MAPSEC_TEMP_03);
   WaitFrames(2);
   FuchinFallsCave_RebuildEntranceLogs();
 }
@@ -359,7 +359,7 @@ static void FuchinFallsCave_ZephyrRoom_MoveFirstLogToEastEnd(void) {
   Sound_PlaySong(SE_WATER_MOVE);
   ObjectEvent_PlacePairAtOffset(LOCALID_FIRST_LOG, 144, 0);
   Sound_PlaySong(SONG_FADE_OUT_ACTION_SE);
-  Engine_GameFlagSet(FLAG_MAPSEC_TEMP_04);
+  GameFlag_Set(FLAG_MAPSEC_TEMP_04);
   WaitFrames(2);
   FuchinFallsCave_RebuildZephyrRoomLogs();
 }
@@ -371,8 +371,8 @@ static void FuchinFallsCave_ZephyrRoom_MoveFirstLogToWestEnd(void) {
   Sound_PlaySong(SE_WATER_MOVE);
   ObjectEvent_PlacePairAtOffset(LOCALID_FIRST_LOG, -144, 0);
   Sound_PlaySong(SONG_FADE_OUT_ACTION_SE);
-  GameFlag_ClearBit(FLAG_MAPSEC_TEMP_04);
-  Engine_GameFlagSet(FLAG_MAPSEC_TEMP_05);
+  GameFlag_Clear(FLAG_MAPSEC_TEMP_04);
+  GameFlag_Set(FLAG_MAPSEC_TEMP_05);
   WaitFrames(2);
   FuchinFallsCave_RebuildZephyrRoomLogs();
 }
@@ -384,7 +384,7 @@ static void FuchinFallsCave_ZephyrRoom_NudgeFirstLogWest(void) {
   Sound_PlaySong(SE_WATER_MOVE);
   ObjectEvent_PlacePairAtOffset(LOCALID_FIRST_LOG, -14, 0);
   Sound_PlaySong(SONG_FADE_OUT_ACTION_SE);
-  Engine_GameFlagSet(FLAG_MAPSEC_TEMP_05);
+  GameFlag_Set(FLAG_MAPSEC_TEMP_05);
   WaitFrames(2);
   FuchinFallsCave_RebuildZephyrRoomLogs();
 }
@@ -396,13 +396,13 @@ static void FuchinFallsCave_ZephyrRoom_NudgeFirstLogWest(void) {
 static void FuchinFallsCave_ZephyrRoom_MoveFirstLogEast(void) {
   Sound_PlaySong(SE_WATER_MOVE);
 
-  if (GameFlag_Test(FLAG_MAPSEC_TEMP_06) != 0) {
+  if (GameFlag_Get(FLAG_MAPSEC_TEMP_06) != 0) {
     ObjectEvent_PlacePairAtOffset(LOCALID_FIRST_LOG, 16, 0);
-    GameFlag_ClearBit(FLAG_MAPSEC_TEMP_05);
+    GameFlag_Clear(FLAG_MAPSEC_TEMP_05);
   } else {
     ObjectEvent_PlacePairAtOffset(LOCALID_FIRST_LOG, 144, 0);
 
-    Engine_GameFlagSet(FLAG_MAPSEC_TEMP_04);
+    GameFlag_Set(FLAG_MAPSEC_TEMP_04);
   }
 
   FuchinFallsCave_FinishLogMove(FuchinFallsCave_RebuildZephyrRoomLogs);
@@ -415,7 +415,7 @@ static void FuchinFallsCave_ZephyrRoom_MoveSecondLogSouth(void) {
   Sound_PlaySong(SE_WATER_MOVE);
   ObjectEvent_PlacePairAtOffset(LOCALID_SECOND_LOG, 0, 64);
   Sound_PlaySong(SONG_FADE_OUT_ACTION_SE);
-  Engine_GameFlagSet(FLAG_MAPSEC_TEMP_06);
+  GameFlag_Set(FLAG_MAPSEC_TEMP_06);
   WaitFrames(2);
   FuchinFallsCave_RebuildZephyrRoomLogs();
 }
@@ -427,7 +427,7 @@ static void FuchinFallsCave_ZephyrRoom_MoveSecondLogNorth(void) {
   Sound_PlaySong(SE_WATER_MOVE);
   ObjectEvent_PlacePairAtOffset(LOCALID_SECOND_LOG, 0, -64);
   Sound_PlaySong(SONG_FADE_OUT_ACTION_SE);
-  GameFlag_ClearBit(FLAG_MAPSEC_TEMP_06);
+  GameFlag_Clear(FLAG_MAPSEC_TEMP_06);
   WaitFrames(2);
   FuchinFallsCave_RebuildZephyrRoomLogs();
 }
@@ -440,7 +440,7 @@ static void FuchinFallsCave_ZephyrRoom_MoveThirdLogSouth(void) {
   ObjectEvent_PlacePairAtOffset(LOCALID_THIRD_LOG, 0, 144);
   ObjectEvent_PlacePairAtOffset(LOCALID_THIRD_LOG, 0, 128);
   Sound_PlaySong(SONG_FADE_OUT_ACTION_SE);
-  GameFlag_ClearBit(FLAG_MAPSEC_TEMP_07);
+  GameFlag_Clear(FLAG_MAPSEC_TEMP_07);
   WaitFrames(2);
   FuchinFallsCave_RebuildZephyrRoomLogs();
 }
@@ -456,7 +456,7 @@ static void FuchinFallsCave_ZephyrRoom_MoveThirdLogNorth(void) {
   ObjectEvent_PlacePairAtOffset(LOCALID_THIRD_LOG, 0, depth);
   ObjectEvent_PlacePairAtOffset(LOCALID_THIRD_LOG, 0, -80);
   Sound_PlaySong(SONG_FADE_OUT_ACTION_SE);
-  Engine_GameFlagSet(FLAG_MAPSEC_TEMP_07);
+  GameFlag_Set(FLAG_MAPSEC_TEMP_07);
   WaitFrames(2);
   FuchinFallsCave_RebuildZephyrRoomLogs();
 }
@@ -468,15 +468,15 @@ static void FuchinFallsCave_ZephyrRoom_MoveThirdLogNorth(void) {
 static void FuchinFallsCave_DragonsEyeRoom_MoveFirstLogWest(void) {
   Sound_PlaySong(SE_WATER_MOVE);
 
-  if (GameFlag_Test(FLAG_MAPSEC_TEMP_10) != 0 ||
-      GameFlag_Test(FLAG_MAPSEC_TEMP_0D) != 0) {
+  if (GameFlag_Get(FLAG_MAPSEC_TEMP_10) != 0 ||
+      GameFlag_Get(FLAG_MAPSEC_TEMP_0D) != 0) {
     ObjectEvent_PlacePairAtOffset(LOCALID_FIRST_LOG, -48, 0);
-    GameFlag_ClearBit(FLAG_MAPSEC_TEMP_08);
-    Engine_GameFlagSet(FLAG_MAPSEC_TEMP_09);
+    GameFlag_Clear(FLAG_MAPSEC_TEMP_08);
+    GameFlag_Set(FLAG_MAPSEC_TEMP_09);
   } else {
     ObjectEvent_PlacePairAtOffset(LOCALID_FIRST_LOG, -96, 0);
-    Engine_GameFlagSet(FLAG_MAPSEC_TEMP_08);
-    GameFlag_ClearBit(FLAG_MAPSEC_TEMP_09);
+    GameFlag_Set(FLAG_MAPSEC_TEMP_08);
+    GameFlag_Clear(FLAG_MAPSEC_TEMP_09);
   }
 
   FuchinFallsCave_FinishLogMove(FuchinFallsCave_RebuildDragonsEyeRoomLogs);
@@ -487,8 +487,8 @@ static void FuchinFallsCave_DragonsEyeRoom_MoveFirstLogWest(void) {
 /// (FLAG_MAPSEC_TEMP_08 and FLAG_MAPSEC_TEMP_09 clear).
 static void FuchinFallsCave_DragonsEyeRoom_MoveFirstLogEastFromMiddle(void) {
   Sound_PlaySong(SE_WATER_MOVE);
-  GameFlag_ClearBit(FLAG_MAPSEC_TEMP_08);
-  GameFlag_ClearBit(FLAG_MAPSEC_TEMP_09);
+  GameFlag_Clear(FLAG_MAPSEC_TEMP_08);
+  GameFlag_Clear(FLAG_MAPSEC_TEMP_09);
   ObjectEvent_PlacePairAtOffset(LOCALID_FIRST_LOG, 48, 0);
   FuchinFallsCave_FinishLogMove(FuchinFallsCave_RebuildDragonsEyeRoomLogs);
 }
@@ -498,17 +498,17 @@ static void FuchinFallsCave_DragonsEyeRoom_MoveFirstLogEastFromMiddle(void) {
 /// FLAG_MAPSEC_TEMP_0D or the fourth at FLAG_MAPSEC_TEMP_10, floats it 48
 /// pixels west (FLAG_MAPSEC_TEMP_08 set).
 static void FuchinFallsCave_DragonsEyeRoom_MoveFirstLogWestIfClear(void) {
-  if (GameFlag_Test(FLAG_MAPSEC_TEMP_10) != 0) {
+  if (GameFlag_Get(FLAG_MAPSEC_TEMP_10) != 0) {
     return;
   }
-  if (GameFlag_Test(FLAG_MAPSEC_TEMP_0D) != 0) {
+  if (GameFlag_Get(FLAG_MAPSEC_TEMP_0D) != 0) {
     return;
   }
 
   Sound_PlaySong(SE_WATER_MOVE);
 
-  Engine_GameFlagSet(FLAG_MAPSEC_TEMP_08);
-  GameFlag_ClearBit(FLAG_MAPSEC_TEMP_09);
+  GameFlag_Set(FLAG_MAPSEC_TEMP_08);
+  GameFlag_Clear(FLAG_MAPSEC_TEMP_09);
 
   ObjectEvent_PlacePairAtOffset(LOCALID_FIRST_LOG, -48, 0);
   FuchinFallsCave_FinishLogMove(FuchinFallsCave_RebuildDragonsEyeRoomLogs);
@@ -519,8 +519,8 @@ static void FuchinFallsCave_DragonsEyeRoom_MoveFirstLogWestIfClear(void) {
 /// (FLAG_MAPSEC_TEMP_08 and FLAG_MAPSEC_TEMP_09 clear).
 static void FuchinFallsCave_DragonsEyeRoom_MoveFirstLogEastFromWestEnd(void) {
   Sound_PlaySong(SE_WATER_MOVE);
-  GameFlag_ClearBit(FLAG_MAPSEC_TEMP_08);
-  GameFlag_ClearBit(FLAG_MAPSEC_TEMP_09);
+  GameFlag_Clear(FLAG_MAPSEC_TEMP_08);
+  GameFlag_Clear(FLAG_MAPSEC_TEMP_09);
   ObjectEvent_PlacePairAtOffset(LOCALID_FIRST_LOG, 96, 0);
   FuchinFallsCave_FinishLogMove(FuchinFallsCave_RebuildDragonsEyeRoomLogs);
 }
@@ -532,7 +532,7 @@ static void FuchinFallsCave_DragonsEyeRoom_MoveSecondLogWest(void) {
   Sound_PlaySong(SE_WATER_MOVE);
   ObjectEvent_PlacePairAtOffset(LOCALID_SECOND_LOG, -32, 0);
   Sound_PlaySong(SONG_FADE_OUT_ACTION_SE);
-  Engine_GameFlagSet(FLAG_MAPSEC_TEMP_0A);
+  GameFlag_Set(FLAG_MAPSEC_TEMP_0A);
   WaitFrames(2);
   FuchinFallsCave_RebuildDragonsEyeRoomLogs();
 }
@@ -544,7 +544,7 @@ static void FuchinFallsCave_DragonsEyeRoom_MoveSecondLogEast(void) {
   Sound_PlaySong(SE_WATER_MOVE);
   ObjectEvent_PlacePairAtOffset(LOCALID_SECOND_LOG, 32, 0);
   Sound_PlaySong(SONG_FADE_OUT_ACTION_SE);
-  GameFlag_ClearBit(FLAG_MAPSEC_TEMP_0A);
+  GameFlag_Clear(FLAG_MAPSEC_TEMP_0A);
   WaitFrames(2);
   FuchinFallsCave_RebuildDragonsEyeRoomLogs();
 }
@@ -554,18 +554,18 @@ static void FuchinFallsCave_DragonsEyeRoom_MoveSecondLogEast(void) {
 /// the first log lies at FLAG_MAPSEC_TEMP_08, else 128 (FLAG_MAPSEC_TEMP_0B).
 static void FuchinFallsCave_DragonsEyeRoom_MoveThirdLogNorthFromSouthEnd(void) {
   Sound_PlaySong(SE_WATER_MOVE);
-  if (GameFlag_Test(FLAG_MAPSEC_TEMP_08) != 0) {
+  if (GameFlag_Get(FLAG_MAPSEC_TEMP_08) != 0) {
     ObjectEvent_PlacePairAtOffset(LOCALID_THIRD_LOG, 0, -64);
-    GameFlag_ClearBit(FLAG_MAPSEC_TEMP_0B);
-    Engine_GameFlagSet(FLAG_MAPSEC_TEMP_0C);
-    GameFlag_ClearBit(FLAG_MAPSEC_TEMP_0D);
-    GameFlag_ClearBit(FLAG_MAPSEC_TEMP_0E);
+    GameFlag_Clear(FLAG_MAPSEC_TEMP_0B);
+    GameFlag_Set(FLAG_MAPSEC_TEMP_0C);
+    GameFlag_Clear(FLAG_MAPSEC_TEMP_0D);
+    GameFlag_Clear(FLAG_MAPSEC_TEMP_0E);
   } else {
     ObjectEvent_PlacePairAtOffset(LOCALID_THIRD_LOG, 0, -128);
-    Engine_GameFlagSet(FLAG_MAPSEC_TEMP_0B);
-    GameFlag_ClearBit(FLAG_MAPSEC_TEMP_0C);
-    GameFlag_ClearBit(FLAG_MAPSEC_TEMP_0D);
-    GameFlag_ClearBit(FLAG_MAPSEC_TEMP_0E);
+    GameFlag_Set(FLAG_MAPSEC_TEMP_0B);
+    GameFlag_Clear(FLAG_MAPSEC_TEMP_0C);
+    GameFlag_Clear(FLAG_MAPSEC_TEMP_0D);
+    GameFlag_Clear(FLAG_MAPSEC_TEMP_0E);
   }
   FuchinFallsCave_FinishLogMove(FuchinFallsCave_RebuildDragonsEyeRoomLogs);
 }
@@ -578,30 +578,30 @@ static void FuchinFallsCave_DragonsEyeRoom_MoveThirdLogNorthFromSouthEnd(void) {
 static void FuchinFallsCave_DragonsEyeRoom_MoveThirdLogSouthFromNorthEnd(void) {
   Sound_PlaySong(SE_WATER_MOVE);
 
-  if (GameFlag_Test(FLAG_MAPSEC_TEMP_08) != 0) {
+  if (GameFlag_Get(FLAG_MAPSEC_TEMP_08) != 0) {
     ObjectEvent_PlacePairAtOffset(LOCALID_THIRD_LOG, 0, 16);
-    GameFlag_ClearBit(FLAG_MAPSEC_TEMP_0B);
-    Engine_GameFlagSet(FLAG_MAPSEC_TEMP_0C);
-    GameFlag_ClearBit(FLAG_MAPSEC_TEMP_0D);
-    GameFlag_ClearBit(FLAG_MAPSEC_TEMP_0E);
-  } else if (GameFlag_Test(FLAG_MAPSEC_TEMP_10) != 0) {
+    GameFlag_Clear(FLAG_MAPSEC_TEMP_0B);
+    GameFlag_Set(FLAG_MAPSEC_TEMP_0C);
+    GameFlag_Clear(FLAG_MAPSEC_TEMP_0D);
+    GameFlag_Clear(FLAG_MAPSEC_TEMP_0E);
+  } else if (GameFlag_Get(FLAG_MAPSEC_TEMP_10) != 0) {
     ObjectEvent_PlacePairAtOffset(LOCALID_THIRD_LOG, 0, 16);
-    GameFlag_ClearBit(FLAG_MAPSEC_TEMP_0B);
-    Engine_GameFlagSet(FLAG_MAPSEC_TEMP_0C);
-    GameFlag_ClearBit(FLAG_MAPSEC_TEMP_0D);
-    GameFlag_ClearBit(FLAG_MAPSEC_TEMP_0E);
-  } else if (GameFlag_Test(FLAG_MAPSEC_TEMP_11) != 0) {
+    GameFlag_Clear(FLAG_MAPSEC_TEMP_0B);
+    GameFlag_Set(FLAG_MAPSEC_TEMP_0C);
+    GameFlag_Clear(FLAG_MAPSEC_TEMP_0D);
+    GameFlag_Clear(FLAG_MAPSEC_TEMP_0E);
+  } else if (GameFlag_Get(FLAG_MAPSEC_TEMP_11) != 0) {
     ObjectEvent_PlacePairAtOffset(LOCALID_THIRD_LOG, 0, 64);
-    GameFlag_ClearBit(FLAG_MAPSEC_TEMP_0B);
-    GameFlag_ClearBit(FLAG_MAPSEC_TEMP_0C);
-    Engine_GameFlagSet(FLAG_MAPSEC_TEMP_0D);
-    GameFlag_ClearBit(FLAG_MAPSEC_TEMP_0E);
+    GameFlag_Clear(FLAG_MAPSEC_TEMP_0B);
+    GameFlag_Clear(FLAG_MAPSEC_TEMP_0C);
+    GameFlag_Set(FLAG_MAPSEC_TEMP_0D);
+    GameFlag_Clear(FLAG_MAPSEC_TEMP_0E);
   } else {
     ObjectEvent_PlacePairAtOffset(LOCALID_THIRD_LOG, 0, 128);
-    GameFlag_ClearBit(FLAG_MAPSEC_TEMP_0B);
-    GameFlag_ClearBit(FLAG_MAPSEC_TEMP_0C);
-    GameFlag_ClearBit(FLAG_MAPSEC_TEMP_0D);
-    GameFlag_ClearBit(FLAG_MAPSEC_TEMP_0E);
+    GameFlag_Clear(FLAG_MAPSEC_TEMP_0B);
+    GameFlag_Clear(FLAG_MAPSEC_TEMP_0C);
+    GameFlag_Clear(FLAG_MAPSEC_TEMP_0D);
+    GameFlag_Clear(FLAG_MAPSEC_TEMP_0E);
   }
   FuchinFallsCave_FinishLogMove(FuchinFallsCave_RebuildDragonsEyeRoomLogs);
 }
@@ -613,10 +613,10 @@ static void FuchinFallsCave_DragonsEyeRoom_NudgeThirdLogNorth(void) {
   Sound_PlaySong(SE_WATER_MOVE);
   ObjectEvent_PlacePairAtOffset(LOCALID_THIRD_LOG, 0, -16);
   Sound_PlaySong(SONG_FADE_OUT_ACTION_SE);
-  Engine_GameFlagSet(FLAG_MAPSEC_TEMP_0B);
-  GameFlag_ClearBit(FLAG_MAPSEC_TEMP_0C);
-  GameFlag_ClearBit(FLAG_MAPSEC_TEMP_0D);
-  GameFlag_ClearBit(FLAG_MAPSEC_TEMP_0E);
+  GameFlag_Set(FLAG_MAPSEC_TEMP_0B);
+  GameFlag_Clear(FLAG_MAPSEC_TEMP_0C);
+  GameFlag_Clear(FLAG_MAPSEC_TEMP_0D);
+  GameFlag_Clear(FLAG_MAPSEC_TEMP_0E);
   WaitFrames(2);
   FuchinFallsCave_RebuildDragonsEyeRoomLogs();
 }
@@ -629,25 +629,25 @@ static void FuchinFallsCave_DragonsEyeRoom_NudgeThirdLogNorth(void) {
 static void
 FuchinFallsCave_DragonsEyeRoom_MoveThirdLogSouthFromUpperStop(void) {
   Sound_PlaySong(SE_WATER_MOVE);
-  if (GameFlag_Test(FLAG_MAPSEC_TEMP_11) != 0) {
+  if (GameFlag_Get(FLAG_MAPSEC_TEMP_11) != 0) {
     ObjectEvent_PlacePairAtOffset(LOCALID_THIRD_LOG, 0, 48);
-    GameFlag_ClearBit(FLAG_MAPSEC_TEMP_0B);
+    GameFlag_Clear(FLAG_MAPSEC_TEMP_0B);
 
-    GameFlag_ClearBit(FLAG_MAPSEC_TEMP_0C);
-    Engine_GameFlagSet(FLAG_MAPSEC_TEMP_0D);
-    GameFlag_ClearBit(FLAG_MAPSEC_TEMP_0E);
-  } else if (GameFlag_Test(FLAG_MAPSEC_TEMP_10) != 0) {
+    GameFlag_Clear(FLAG_MAPSEC_TEMP_0C);
+    GameFlag_Set(FLAG_MAPSEC_TEMP_0D);
+    GameFlag_Clear(FLAG_MAPSEC_TEMP_0E);
+  } else if (GameFlag_Get(FLAG_MAPSEC_TEMP_10) != 0) {
     ObjectEvent_PlacePairAtOffset(LOCALID_THIRD_LOG, 0, 32);
-    GameFlag_ClearBit(FLAG_MAPSEC_TEMP_0B);
-    Engine_GameFlagSet(FLAG_MAPSEC_TEMP_0C);
-    GameFlag_ClearBit(FLAG_MAPSEC_TEMP_0D);
-    GameFlag_ClearBit(FLAG_MAPSEC_TEMP_0E);
+    GameFlag_Clear(FLAG_MAPSEC_TEMP_0B);
+    GameFlag_Set(FLAG_MAPSEC_TEMP_0C);
+    GameFlag_Clear(FLAG_MAPSEC_TEMP_0D);
+    GameFlag_Clear(FLAG_MAPSEC_TEMP_0E);
   } else {
     ObjectEvent_PlacePairAtOffset(LOCALID_THIRD_LOG, 0, 112);
-    GameFlag_ClearBit(FLAG_MAPSEC_TEMP_0B);
-    GameFlag_ClearBit(FLAG_MAPSEC_TEMP_0C);
-    GameFlag_ClearBit(FLAG_MAPSEC_TEMP_0D);
-    GameFlag_ClearBit(FLAG_MAPSEC_TEMP_0E);
+    GameFlag_Clear(FLAG_MAPSEC_TEMP_0B);
+    GameFlag_Clear(FLAG_MAPSEC_TEMP_0C);
+    GameFlag_Clear(FLAG_MAPSEC_TEMP_0D);
+    GameFlag_Clear(FLAG_MAPSEC_TEMP_0E);
   }
   FuchinFallsCave_FinishLogMove(FuchinFallsCave_RebuildDragonsEyeRoomLogs);
 }
@@ -659,8 +659,8 @@ static void FuchinFallsCave_DragonsEyeRoom_MoveThirdLogNorthFromMiddle(void) {
   Sound_PlaySong(SE_WATER_MOVE);
   ObjectEvent_PlacePairAtOffset(LOCALID_THIRD_LOG, 0, -64);
   Sound_PlaySong(SONG_FADE_OUT_ACTION_SE);
-  Engine_GameFlagSet(FLAG_MAPSEC_TEMP_0B);
-  GameFlag_ClearBit(FLAG_MAPSEC_TEMP_0D);
+  GameFlag_Set(FLAG_MAPSEC_TEMP_0B);
+  GameFlag_Clear(FLAG_MAPSEC_TEMP_0D);
   WaitFrames(2);
   FuchinFallsCave_RebuildDragonsEyeRoomLogs();
 }
@@ -672,10 +672,10 @@ static void FuchinFallsCave_DragonsEyeRoom_MoveThirdLogSouthFromMiddle(void) {
   Sound_PlaySong(SE_WATER_MOVE);
   ObjectEvent_PlacePairAtOffset(LOCALID_THIRD_LOG, 0, 64);
   Sound_PlaySong(SONG_FADE_OUT_ACTION_SE);
-  GameFlag_ClearBit(FLAG_MAPSEC_TEMP_0B);
-  GameFlag_ClearBit(FLAG_MAPSEC_TEMP_0C);
-  GameFlag_ClearBit(FLAG_MAPSEC_TEMP_0D);
-  GameFlag_ClearBit(FLAG_MAPSEC_TEMP_0E);
+  GameFlag_Clear(FLAG_MAPSEC_TEMP_0B);
+  GameFlag_Clear(FLAG_MAPSEC_TEMP_0C);
+  GameFlag_Clear(FLAG_MAPSEC_TEMP_0D);
+  GameFlag_Clear(FLAG_MAPSEC_TEMP_0E);
   WaitFrames(2);
   FuchinFallsCave_RebuildDragonsEyeRoomLogs();
 }
@@ -688,10 +688,10 @@ FuchinFallsCave_DragonsEyeRoom_MoveThirdLogNorthFromLowerStop(void) {
   Sound_PlaySong(SE_WATER_MOVE);
   ObjectEvent_PlacePairAtOffset(LOCALID_THIRD_LOG, 0, -80);
   Sound_PlaySong(SONG_FADE_OUT_ACTION_SE);
-  Engine_GameFlagSet(FLAG_MAPSEC_TEMP_0B);
-  GameFlag_ClearBit(FLAG_MAPSEC_TEMP_0C);
-  GameFlag_ClearBit(FLAG_MAPSEC_TEMP_0D);
-  GameFlag_ClearBit(FLAG_MAPSEC_TEMP_0E);
+  GameFlag_Set(FLAG_MAPSEC_TEMP_0B);
+  GameFlag_Clear(FLAG_MAPSEC_TEMP_0C);
+  GameFlag_Clear(FLAG_MAPSEC_TEMP_0D);
+  GameFlag_Clear(FLAG_MAPSEC_TEMP_0E);
   WaitFrames(2);
   FuchinFallsCave_RebuildDragonsEyeRoomLogs();
 }
@@ -704,10 +704,10 @@ FuchinFallsCave_DragonsEyeRoom_MoveThirdLogSouthFromLowerStop(void) {
   Sound_PlaySong(SE_WATER_MOVE);
   ObjectEvent_PlacePairAtOffset(LOCALID_THIRD_LOG, 0, 64);
   Sound_PlaySong(SONG_FADE_OUT_ACTION_SE);
-  GameFlag_ClearBit(FLAG_MAPSEC_TEMP_0B);
-  GameFlag_ClearBit(FLAG_MAPSEC_TEMP_0C);
-  GameFlag_ClearBit(FLAG_MAPSEC_TEMP_0D);
-  GameFlag_ClearBit(FLAG_MAPSEC_TEMP_0E);
+  GameFlag_Clear(FLAG_MAPSEC_TEMP_0B);
+  GameFlag_Clear(FLAG_MAPSEC_TEMP_0C);
+  GameFlag_Clear(FLAG_MAPSEC_TEMP_0D);
+  GameFlag_Clear(FLAG_MAPSEC_TEMP_0E);
   WaitFrames(2);
   FuchinFallsCave_RebuildDragonsEyeRoomLogs();
 }
@@ -720,35 +720,35 @@ FuchinFallsCave_DragonsEyeRoom_MoveThirdLogSouthFromLowerStop(void) {
 static void FuchinFallsCave_DragonsEyeRoom_MoveFourthLogNorth(void) {
   Sound_PlaySong(SE_WATER_MOVE);
 
-  if (GameFlag_Test(FLAG_MAPSEC_TEMP_08) != 0 ||
-      GameFlag_Test(FLAG_MAPSEC_TEMP_0D) != 0) {
+  if (GameFlag_Get(FLAG_MAPSEC_TEMP_08) != 0 ||
+      GameFlag_Get(FLAG_MAPSEC_TEMP_0D) != 0) {
     ObjectEvent_PlacePairAtOffset(LOCALID_FOURTH_LOG, 0, -64);
-    GameFlag_ClearBit(FLAG_MAPSEC_TEMP_0F);
-    GameFlag_ClearBit(FLAG_MAPSEC_TEMP_10);
-    Engine_GameFlagSet(FLAG_MAPSEC_TEMP_11);
-    GameFlag_ClearBit(FLAG_MAPSEC_TEMP_12);
-  } else if (GameFlag_Test(FLAG_MAPSEC_TEMP_0C) != 0) {
+    GameFlag_Clear(FLAG_MAPSEC_TEMP_0F);
+    GameFlag_Clear(FLAG_MAPSEC_TEMP_10);
+    GameFlag_Set(FLAG_MAPSEC_TEMP_11);
+    GameFlag_Clear(FLAG_MAPSEC_TEMP_12);
+  } else if (GameFlag_Get(FLAG_MAPSEC_TEMP_0C) != 0) {
     ObjectEvent_PlacePairAtOffset(LOCALID_FOURTH_LOG, 0, -112);
-    GameFlag_ClearBit(FLAG_MAPSEC_TEMP_0F);
-    Engine_GameFlagSet(FLAG_MAPSEC_TEMP_10);
-    GameFlag_ClearBit(FLAG_MAPSEC_TEMP_11);
-    GameFlag_ClearBit(FLAG_MAPSEC_TEMP_12);
+    GameFlag_Clear(FLAG_MAPSEC_TEMP_0F);
+    GameFlag_Set(FLAG_MAPSEC_TEMP_10);
+    GameFlag_Clear(FLAG_MAPSEC_TEMP_11);
+    GameFlag_Clear(FLAG_MAPSEC_TEMP_12);
   } else {
     ObjectEvent_PlacePairAtOffset(LOCALID_FOURTH_LOG, 0, -128);
-    Engine_GameFlagSet(FLAG_MAPSEC_TEMP_0F);
-    GameFlag_ClearBit(FLAG_MAPSEC_TEMP_10);
-    GameFlag_ClearBit(FLAG_MAPSEC_TEMP_11);
-    GameFlag_ClearBit(FLAG_MAPSEC_TEMP_12);
+    GameFlag_Set(FLAG_MAPSEC_TEMP_0F);
+    GameFlag_Clear(FLAG_MAPSEC_TEMP_10);
+    GameFlag_Clear(FLAG_MAPSEC_TEMP_11);
+    GameFlag_Clear(FLAG_MAPSEC_TEMP_12);
   }
   FuchinFallsCave_FinishLogMove(FuchinFallsCave_RebuildDragonsEyeRoomLogs);
 }
 
 /// Clears all saved intermediate stops for the fourth log.
 static void FuchinFallsCave_ClearFourthLogStops(void) {
-  GameFlag_ClearBit(FLAG_MAPSEC_TEMP_0F);
-  GameFlag_ClearBit(FLAG_MAPSEC_TEMP_10);
-  GameFlag_ClearBit(FLAG_MAPSEC_TEMP_11);
-  GameFlag_ClearBit(FLAG_MAPSEC_TEMP_12);
+  GameFlag_Clear(FLAG_MAPSEC_TEMP_0F);
+  GameFlag_Clear(FLAG_MAPSEC_TEMP_10);
+  GameFlag_Clear(FLAG_MAPSEC_TEMP_11);
+  GameFlag_Clear(FLAG_MAPSEC_TEMP_12);
 }
 
 /// Fuchin Falls Cave, third room: pushing
@@ -769,10 +769,10 @@ static void FuchinFallsCave_DragonsEyeRoom_NudgeFourthLogNorth(void) {
   Sound_PlaySong(SE_WATER_MOVE);
   ObjectEvent_PlacePairAtOffset(LOCALID_FOURTH_LOG, 0, -16);
   Sound_PlaySong(SONG_FADE_OUT_ACTION_SE);
-  Engine_GameFlagSet(FLAG_MAPSEC_TEMP_0F);
-  GameFlag_ClearBit(FLAG_MAPSEC_TEMP_10);
-  GameFlag_ClearBit(FLAG_MAPSEC_TEMP_11);
-  GameFlag_ClearBit(FLAG_MAPSEC_TEMP_12);
+  GameFlag_Set(FLAG_MAPSEC_TEMP_0F);
+  GameFlag_Clear(FLAG_MAPSEC_TEMP_10);
+  GameFlag_Clear(FLAG_MAPSEC_TEMP_11);
+  GameFlag_Clear(FLAG_MAPSEC_TEMP_12);
   WaitFrames(2);
   FuchinFallsCave_RebuildDragonsEyeRoomLogs();
 }
@@ -843,7 +843,7 @@ static void FuchinFallsCave_ArcticBladeRoom_MoveFirstLogSouth(void) {
   Sound_PlaySong(SE_WATER_MOVE);
   ObjectEvent_PlacePairAtOffset(LOCALID_FIRST_LOG, 0, 112);
   Sound_PlaySong(SONG_FADE_OUT_ACTION_SE);
-  Engine_GameFlagSet(FLAG_MAPSEC_TEMP_13);
+  GameFlag_Set(FLAG_MAPSEC_TEMP_13);
   WaitFrames(2);
   FuchinFallsCave_RebuildArcticBladeRoomLogs();
 }
@@ -855,7 +855,7 @@ static void FuchinFallsCave_ArcticBladeRoom_MoveFirstLogNorth(void) {
   Sound_PlaySong(SE_WATER_MOVE);
   ObjectEvent_PlacePairAtOffset(LOCALID_FIRST_LOG, 0, -112);
   Sound_PlaySong(SONG_FADE_OUT_ACTION_SE);
-  GameFlag_ClearBit(FLAG_MAPSEC_TEMP_13);
+  GameFlag_Clear(FLAG_MAPSEC_TEMP_13);
   WaitFrames(2);
   FuchinFallsCave_RebuildArcticBladeRoomLogs();
 }
@@ -868,7 +868,7 @@ static void FuchinFallsCave_ArcticBladeRoom_MoveSecondLogWest(void) {
   Sound_PlaySong(SE_WATER_MOVE);
   ObjectEvent_PlacePairAtOffset(LOCALID_SECOND_LOG, -128, 0);
   Sound_PlaySong(SONG_FADE_OUT_ACTION_SE);
-  Engine_GameFlagSet(FLAG_MAPSEC_TEMP_14);
+  GameFlag_Set(FLAG_MAPSEC_TEMP_14);
   WaitFrames(2);
   FuchinFallsCave_RebuildArcticBladeRoomLogs();
 }
@@ -880,7 +880,7 @@ static void FuchinFallsCave_ArcticBladeRoom_MoveSecondLogEast(void) {
   Sound_PlaySong(SE_WATER_MOVE);
   ObjectEvent_PlacePairAtOffset(LOCALID_SECOND_LOG, 128, 0);
   Sound_PlaySong(SONG_FADE_OUT_ACTION_SE);
-  GameFlag_ClearBit(FLAG_MAPSEC_TEMP_14);
+  GameFlag_Clear(FLAG_MAPSEC_TEMP_14);
   WaitFrames(2);
   FuchinFallsCave_RebuildArcticBladeRoomLogs();
 }
@@ -892,7 +892,7 @@ static void FuchinFallsCave_ArcticBladeRoom_MoveThirdLogEast(void) {
   Sound_PlaySong(SE_WATER_MOVE);
   ObjectEvent_PlacePairAtOffset(LOCALID_THIRD_LOG, 160, 0);
   Sound_PlaySong(SONG_FADE_OUT_ACTION_SE);
-  Engine_GameFlagSet(FLAG_MAPSEC_TEMP_15);
+  GameFlag_Set(FLAG_MAPSEC_TEMP_15);
   WaitFrames(2);
   FuchinFallsCave_RebuildArcticBladeRoomLogs();
 }
@@ -904,7 +904,7 @@ static void FuchinFallsCave_ArcticBladeRoom_MoveThirdLogWest(void) {
   Sound_PlaySong(SE_WATER_MOVE);
   ObjectEvent_PlacePairAtOffset(LOCALID_THIRD_LOG, -160, 0);
   Sound_PlaySong(SONG_FADE_OUT_ACTION_SE);
-  GameFlag_ClearBit(FLAG_MAPSEC_TEMP_15);
+  GameFlag_Clear(FLAG_MAPSEC_TEMP_15);
   WaitFrames(2);
   FuchinFallsCave_RebuildArcticBladeRoomLogs();
 }
@@ -1023,7 +1023,7 @@ static void FuchinFallsCave_RebuildEntranceLogs(void) {
     MapGrid_CopyCellAttributes(8, 42, 15, 5, column, row);
   }
 
-  if (GameFlag_Test(FLAG_MAPSEC_TEMP_01) != 0) {
+  if (GameFlag_Get(FLAG_MAPSEC_TEMP_01) != 0) {
     FuchinFallsCave_PlaceLogAtCell(LOCALID_FIRST_LOG, 22, 31);
     {
       s32 column = 8;
@@ -1039,7 +1039,7 @@ static void FuchinFallsCave_RebuildEntranceLogs(void) {
     }
   }
 
-  if (GameFlag_Test(FLAG_MAPSEC_TEMP_02) != 0) {
+  if (GameFlag_Get(FLAG_MAPSEC_TEMP_02) != 0) {
     FuchinFallsCave_PlaceLogAtCell(LOCALID_SECOND_LOG, 12, 29);
     {
       s32 column = 11;
@@ -1055,7 +1055,7 @@ static void FuchinFallsCave_RebuildEntranceLogs(void) {
     }
   }
 
-  if (GameFlag_Test(FLAG_MAPSEC_TEMP_03) != 0) {
+  if (GameFlag_Get(FLAG_MAPSEC_TEMP_03) != 0) {
     FuchinFallsCave_PlaceLogAtCell(LOCALID_THIRD_LOG, 18, 29);
     {
       s32 column = 17;
@@ -1082,7 +1082,7 @@ static void FuchinFallsCave_RebuildZephyrRoomLogs(void) {
     MapGrid_CopyCellAttributes(0, 28, 10, 18, column, row);
   }
 
-  if (GameFlag_Test(FLAG_MAPSEC_TEMP_04) != 0) {
+  if (GameFlag_Get(FLAG_MAPSEC_TEMP_04) != 0) {
     FuchinFallsCave_PlaceLogAtCell(LOCALID_FIRST_LOG, 21, 20);
     {
       s32 column = 13;
@@ -1098,7 +1098,7 @@ static void FuchinFallsCave_RebuildZephyrRoomLogs(void) {
     }
   }
 
-  if (GameFlag_Test(FLAG_MAPSEC_TEMP_05) != 0) {
+  if (GameFlag_Get(FLAG_MAPSEC_TEMP_05) != 0) {
     FuchinFallsCave_PlaceLogAtCell(LOCALID_FIRST_LOG, 12, 20);
     {
       s32 column = 12;
@@ -1110,7 +1110,7 @@ static void FuchinFallsCave_RebuildZephyrRoomLogs(void) {
       s32 row = 19;
       MapGrid_CopyCellAttributes(20, 19, 1, 3, column, row);
     }
-    if (GameFlag_Test(FLAG_MAPSEC_TEMP_04) != 0) {
+    if (GameFlag_Get(FLAG_MAPSEC_TEMP_04) != 0) {
       FuchinFallsCave_PlaceLogAtCell(LOCALID_FIRST_LOG, 21, 20);
       {
         s32 column = 13;
@@ -1125,7 +1125,7 @@ static void FuchinFallsCave_RebuildZephyrRoomLogs(void) {
     }
   }
 
-  if (GameFlag_Test(FLAG_MAPSEC_TEMP_06) != 0) {
+  if (GameFlag_Get(FLAG_MAPSEC_TEMP_06) != 0) {
     FuchinFallsCave_PlaceLogAtCell(LOCALID_SECOND_LOG, 15, 21);
     {
       s32 column = 14;
@@ -1141,7 +1141,7 @@ static void FuchinFallsCave_RebuildZephyrRoomLogs(void) {
     }
   }
 
-  if (GameFlag_Test(FLAG_MAPSEC_TEMP_07) != 0) {
+  if (GameFlag_Get(FLAG_MAPSEC_TEMP_07) != 0) {
     FuchinFallsCave_PlaceLogAtCell(LOCALID_THIRD_LOG, 19, 8);
     {
       s32 column = 18;
@@ -1166,12 +1166,12 @@ static void FuchinFallsCave_RebuildDragonsEyeRoomLogs(void) {
     MapGrid_CopyCellAttributes(12, 3, 9, 16, 12, 21);
   }
 
-  if (GameFlag_Test(FLAG_MAPSEC_TEMP_08) != 0) {
+  if (GameFlag_Get(FLAG_MAPSEC_TEMP_08) != 0) {
     FuchinFallsCave_PlaceLogAtCell(LOCALID_FIRST_LOG, 14, 25);
     {
       MapGrid_CopyCellAttributes(16, 24, 1, 3, 20, 24);
     }
-  } else if (GameFlag_Test(FLAG_MAPSEC_TEMP_09) != 0) {
+  } else if (GameFlag_Get(FLAG_MAPSEC_TEMP_09) != 0) {
     FuchinFallsCave_PlaceLogAtCell(LOCALID_FIRST_LOG, 17, 25);
     {
       s32 row = 24;
@@ -1186,7 +1186,7 @@ static void FuchinFallsCave_RebuildDragonsEyeRoomLogs(void) {
     }
   }
 
-  if (GameFlag_Test(FLAG_MAPSEC_TEMP_0A) != 0) {
+  if (GameFlag_Get(FLAG_MAPSEC_TEMP_0A) != 0) {
     FuchinFallsCave_PlaceLogAtCell(LOCALID_SECOND_LOG, 13, 35);
     {
       MapGrid_CopyCellAttributes(14, 34, 1, 3, 15, 34);
@@ -1198,14 +1198,14 @@ static void FuchinFallsCave_RebuildDragonsEyeRoomLogs(void) {
     }
   }
 
-  if (GameFlag_Test(FLAG_MAPSEC_TEMP_0B) != 0) {
+  if (GameFlag_Get(FLAG_MAPSEC_TEMP_0B) != 0) {
     FuchinFallsCave_PlaceLogAtCell(LOCALID_THIRD_LOG, 15, 22);
     {
       s32 column = 14;
       MapGrid_CopyCellAttributes(14, 29, 3, 1, column, 30);
       MapGrid_CopyCellAttributes(5, 41, 3, 1, column, 22);
     }
-  } else if (GameFlag_Test(FLAG_MAPSEC_TEMP_0C) != 0) {
+  } else if (GameFlag_Get(FLAG_MAPSEC_TEMP_0C) != 0) {
     FuchinFallsCave_PlaceLogAtCell(LOCALID_THIRD_LOG, 15, 23);
     {
       s32 column = 14;
@@ -1213,7 +1213,7 @@ static void FuchinFallsCave_RebuildDragonsEyeRoomLogs(void) {
       MapGrid_CopyCellAttributes(14, 29, 3, 1, column, 30);
       MapGrid_CopyCellAttributes(10, 44, 3, 1, column, 21);
     }
-  } else if (GameFlag_Test(FLAG_MAPSEC_TEMP_0D) != 0) {
+  } else if (GameFlag_Get(FLAG_MAPSEC_TEMP_0D) != 0) {
     FuchinFallsCave_PlaceLogAtCell(LOCALID_THIRD_LOG, 15, 26);
     {
       s32 column = 14;
@@ -1221,7 +1221,7 @@ static void FuchinFallsCave_RebuildDragonsEyeRoomLogs(void) {
       MapGrid_CopyCellAttributes(5, 43, 3, 1, column, 26);
       MapGrid_CopyCellAttributes(14, 29, 3, 1, column, 30);
     }
-  } else if (GameFlag_Test(FLAG_MAPSEC_TEMP_0E) != 0) {
+  } else if (GameFlag_Get(FLAG_MAPSEC_TEMP_0E) != 0) {
     FuchinFallsCave_PlaceLogAtCell(LOCALID_THIRD_LOG, 15, 27);
     {
       s32 column = 14;
@@ -1233,28 +1233,28 @@ static void FuchinFallsCave_RebuildDragonsEyeRoomLogs(void) {
     FuchinFallsCave_PlaceLogAtCell(LOCALID_THIRD_LOG, 15, 30);
   }
 
-  if (GameFlag_Test(FLAG_MAPSEC_TEMP_0F) != 0) {
+  if (GameFlag_Get(FLAG_MAPSEC_TEMP_0F) != 0) {
     FuchinFallsCave_PlaceLogAtCell(LOCALID_FOURTH_LOG, 15, 23);
     {
       s32 column = 14;
       MapGrid_CopyCellAttributes(14, 29, 3, 1, column, 31);
       MapGrid_CopyCellAttributes(10, 40, 3, 1, column, 23);
     }
-  } else if (GameFlag_Test(FLAG_MAPSEC_TEMP_10) != 0) {
+  } else if (GameFlag_Get(FLAG_MAPSEC_TEMP_10) != 0) {
     FuchinFallsCave_PlaceLogAtCell(LOCALID_FOURTH_LOG, 15, 24);
     {
       s32 column = 14;
       MapGrid_CopyCellAttributes(14, 29, 3, 1, column, 31);
       MapGrid_CopyCellAttributes(10, 41, 3, 1, column, 24);
     }
-  } else if (GameFlag_Test(FLAG_MAPSEC_TEMP_11) != 0) {
+  } else if (GameFlag_Get(FLAG_MAPSEC_TEMP_11) != 0) {
     FuchinFallsCave_PlaceLogAtCell(LOCALID_FOURTH_LOG, 15, 27);
     {
       s32 column = 14;
       MapGrid_CopyCellAttributes(14, 29, 3, 1, column, 31);
       MapGrid_CopyCellAttributes(10, 42, 3, 1, column, 27);
     }
-  } else if (GameFlag_Test(FLAG_MAPSEC_TEMP_12) != 0) {
+  } else if (GameFlag_Get(FLAG_MAPSEC_TEMP_12) != 0) {
     // Unused: no move sets FLAG_MAPSEC_TEMP_12, so the log never lies here and
     // the room never gets coord event 24.
     FuchinFallsCave_PlaceLogAtCell(LOCALID_FOURTH_LOG, 15, 28);
@@ -1286,7 +1286,7 @@ static void FuchinFallsCave_RebuildArcticBladeRoomLogs(void) {
     }
   }
 
-  if (GameFlag_Test(FLAG_MAPSEC_TEMP_13) != 0) {
+  if (GameFlag_Get(FLAG_MAPSEC_TEMP_13) != 0) {
     FuchinFallsCave_PlaceLogAtCell(LOCALID_FIRST_LOG, 20, 17);
     {
       s32 column = 19;
@@ -1302,7 +1302,7 @@ static void FuchinFallsCave_RebuildArcticBladeRoomLogs(void) {
     }
   }
 
-  if (GameFlag_Test(FLAG_MAPSEC_TEMP_14) != 0) {
+  if (GameFlag_Get(FLAG_MAPSEC_TEMP_14) != 0) {
     FuchinFallsCave_PlaceLogAtCell(LOCALID_SECOND_LOG, 14, 16);
     {
       s32 column = 22;
@@ -1318,7 +1318,7 @@ static void FuchinFallsCave_RebuildArcticBladeRoomLogs(void) {
     }
   }
 
-  if (GameFlag_Test(FLAG_MAPSEC_TEMP_15) != 0) {
+  if (GameFlag_Get(FLAG_MAPSEC_TEMP_15) != 0) {
     FuchinFallsCave_PlaceLogAtCell(LOCALID_THIRD_LOG, 17, 46);
     {
       s32 column = 7;
@@ -1361,9 +1361,9 @@ static void FuchinFallsCave_StopLightFollowingLeader(void) {
 /// of Fuchin Falls Cave restores its logs, the Dragon's Eye and its lighting.
 s32 ImilFuchinFalls_Initialize(void) {
   gFieldWork->transition = MAP_TRANSITION(TRANSITION_WINDOW, 4);
-  if (GameFlag_Test(FLAG_KEEP_PARTY_POSITION) == 0 &&
+  if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) == 0 &&
       gGameState.mapId == (s32)&MapId_ImilFallsCave) {
-    Engine_GameFlagSet(FLAG_RETREAT_BLOCKED);
+    GameFlag_Set(FLAG_RETREAT_BLOCKED);
     Imil_WalkTowardFever();
   } else {
     ImilFuchinFalls_PrepareRoom();
@@ -1396,7 +1396,7 @@ static void ImilFuchinFalls_PrepareRoom(void) {
 
   ImilFuchinFalls_RebuildLogRoom();
   if (gGameState.mapId == (s32)&MapId_FuchinFallsCaveDragonsEye) {
-    if (!GameFlag_IsSet(FLAG_FUCHIN_FALLS_DRAGONS_EYE_FOUND) &&
+    if (!GameFlag_Get(FLAG_FUCHIN_FALLS_DRAGONS_EYE_FOUND) &&
         gGameState.warpDest ==
             FUCHIN_FALLS_CAVE_DRAGONS_EYE_CHAMBER_FROM_LOGS) {
       ImilFuchinFalls_PlaceDragonsEye();
@@ -1431,7 +1431,7 @@ static void ImilFuchinFalls_PrepareRoom(void) {
     }
     if (gGameState.warpDest <=
         FUCHIN_FALLS_CAVE_DRAGON_STATUE_NORTH_HALF_FROM_SOUTH_HALF_EAST) {
-      if (GameFlag_IsSet(FLAG_FUCHIN_FALLS_DRAGONS_EYE_SET)) {
+      if (GameFlag_Get(FLAG_FUCHIN_FALLS_DRAGONS_EYE_SET)) {
         MapGrid_CopyCellsTo(30, 57, 19, 57, 1, 1);
         MapGrid_CopyCellsTo(30, 8, 12, 8, 8, 7);
       } else {
@@ -1486,7 +1486,7 @@ static void ImilFuchinFalls_HopOnTrigger(void) {
     }
   }
   if (gGameState.mapId == (s32)&MapId_FuchinFallsCaveDragonsEye &&
-      trigger == 25 && GameFlag_Test(FLAG_MAPSEC_TEMP_09)) {
+      trigger == 25 && GameFlag_Get(FLAG_MAPSEC_TEMP_09)) {
     ImilFuchinFalls_HopBy(0, 32);
   }
 }
@@ -1546,7 +1546,7 @@ static void FuchinFallsCave_CollectDragonsEye(void) {
   }
 
   PartyInventory_GiveItem(ITEM_DRAGONS_EYE, 0);
-  Engine_GameFlagSet(FLAG_FUCHIN_FALLS_DRAGONS_EYE_FOUND);
+  GameFlag_Set(FLAG_FUCHIN_FALLS_DRAGONS_EYE_FOUND);
 
   if (gImilFuchinFalls_DragonsEye != NULL) {
     ObjectEvent_Release(gImilFuchinFalls_DragonsEye);
@@ -1697,7 +1697,7 @@ static void FuchinFallsCave_LightDragonWithEye(void) {
 
   WaitFrames(80);
 
-  Engine_GameFlagSet(FLAG_FUCHIN_FALLS_DRAGONS_EYE_SET);
+  GameFlag_Set(FLAG_FUCHIN_FALLS_DRAGONS_EYE_SET);
   PartyInventory_Discard(ITEM_DRAGONS_EYE);
   Map_PlayMusic();
 
@@ -1734,7 +1734,7 @@ static void FuchinFallsCave_ReadShadowInscription(void) {
 static void FuchinFallsCave_SearchDragonStatue(void) {
   FieldScript_Start();
 
-  if (GameFlag_Test(FLAG_FUCHIN_FALLS_DRAGONS_EYE_SET) != 0) {
+  if (GameFlag_Get(FLAG_FUCHIN_FALLS_DRAGONS_EYE_SET) != 0) {
     FieldMessage_Show(MsgFuchinDragonRedEyes, 1);
   } else {
     FieldMessage_Show(MsgFuchinEyelessDragon, 1);

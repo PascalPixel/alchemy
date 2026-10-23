@@ -79,10 +79,10 @@ s32 Battle_Run(s32 enemyGroup) {
   view->unk18 = 0;
   view->unk1c = 0;
   REG_DISPCNT = DISPCNT_MODE_1;
-  GameFlag_SetBitFar(FLAG_IN_BATTLE);
+  GameFlag_SetFar(FLAG_IN_BATTLE);
   // XXX: what flag 0x169 marks; nothing in the source reads it by number,
   // so a reader through another name or a script would settle it.
-  GameFlag_SetBitFar(0x169);
+  GameFlag_SetFar(0x169);
   Transform_Reset();
 
   Dma_Fill32Cell(fill, 0, camera, sizeof(struct BattleCamera));
@@ -96,7 +96,7 @@ s32 Battle_Run(s32 enemyGroup) {
   AllocHeapSlotEwram(HEAP_SLOT_SPRITES, 0xe00);
   AllocHeapSlotEwram(HEAP_SLOT_SPRITE_ANIMS, 0x600);
   ObjectSystem_InitializeFar(OBJECT_SYSTEM_BATTLE);
-  if (GameFlag_TestFar(FLAG_DJINN_LESSON) != 0)
+  if (GameFlag_GetFar(FLAG_DJINN_LESSON) != 0)
     WindowSystem_InitBattleFar(1);
   else
     WindowSystem_InitBattleFar(0);
@@ -116,7 +116,7 @@ s32 Battle_Run(s32 enemyGroup) {
   // left at gActorSpriteSlots (menu/battle_arena.c), and lay it out left to
   // right (FORMATION_LAYOUT_SHUFFLED). Both consoles start from seed 0 so their
   // rolls agree; the opponent's party size is the enemy count.
-  if (GameFlag_TestFar(FLAG_LINK_BATTLE) != 0) {
+  if (GameFlag_GetFar(FLAG_LINK_BATTLE) != 0) {
     battle->isLink = 1;
     Battle_SetType(BATTLE_TYPE_LINK);
   }
@@ -151,7 +151,7 @@ s32 Battle_Run(s32 enemyGroup) {
   cue = gGameState.battleMusic;
   if (cue != 0) {
     Sound_PlaySongFar(cue);
-    if (GameFlag_TestFar(FLAG_LINK_BATTLE) != 0) {
+    if (GameFlag_GetFar(FLAG_LINK_BATTLE) != 0) {
       Sound_PlaySongFar(MUS_055);
       Sound_LoadReverbCode(SOUND_REVERB_NONE);
     }
@@ -194,7 +194,7 @@ s32 Battle_Run(s32 enemyGroup) {
   // A random encounter may open with a first strike (1 in 16) or a
   // surprise (1 in 32 of the rest); the Djinn tutorial always strikes first.
   battle->firstStrike = FIRST_STRIKE_NONE;
-  if (GameFlag_TestFar(FLAG_DJINN_LESSON) != 0) {
+  if (GameFlag_GetFar(FLAG_DJINN_LESSON) != 0) {
     battle->firstStrike = FIRST_STRIKE_PARTY;
   } else if (gGameState.battleType == BATTLE_TYPE_NORMAL) {
     if ((Battle_RandomFar() & 15) == 0)
@@ -228,7 +228,7 @@ s32 Battle_Run(s32 enemyGroup) {
     // Every unit's action for the round, in turn order.
     Iwram_ClearWords(battle->actions, sizeof(battle->actions));
     VramCache_FreeEntry(battle->arrowTiles);
-    if (GameFlag_TestFar(FLAG_AUTO_BATTLE) == 0) {
+    if (GameFlag_GetFar(FLAG_AUTO_BATTLE) == 0) {
       // XXX: likely free-memory probes left from debugging, because no
       // caller here reads their results.
       Runtime_GetRemainingIwram();
@@ -250,7 +250,7 @@ s32 Battle_Run(s32 enemyGroup) {
       actingUnit = battle->actions[i].unitId;
       Runtime_GetRemainingIwram();
       Runtime_GetRemainingEwram();
-      if (GameFlag_TestFar(FLAG_AUTO_BATTLE) == 0) {
+      if (GameFlag_GetFar(FLAG_AUTO_BATTLE) == 0) {
         if (BattleStaging_DispatchAction(&battle->actions[i],
                                          i == 0 ? 10 : 0) == 1)
           goto fled;
@@ -283,7 +283,7 @@ s32 Battle_Run(s32 enemyGroup) {
     } else {
       WaitFrames(20);
     }
-    if (GameFlag_TestFar(FLAG_DJINN_LESSON) == 0)
+    if (GameFlag_GetFar(FLAG_DJINN_LESSON) == 0)
       continue;
 
     // The Djinn tutorial explains unleashing and standby: two windows that
@@ -306,7 +306,7 @@ won:
   // rewritten as that class to carry the name, bare: letter 26 is past every
   // edition's last (BattleUnit_Set). DEFEAT_BY_PARTY_MEMBER shows no line.
   Battle_ClearSerialTransferPayload();
-  if (GameFlag_TestFar(FLAG_DJINN_LESSON) == 0) {
+  if (GameFlag_GetFar(FLAG_DJINN_LESSON) == 0) {
     if (battle->isLink != 0)
       Sound_PlaySongFar(MUS_VICTORY);
     if (battle->spoils.defeated != 0) {
@@ -336,7 +336,7 @@ aborted:
   Task_SuspendAll(0);
   REG_DISPCNT = DISPCNT_MODE_1;
   result = battle->spoils.defeated;
-  GameFlag_SetBitFar(FLAG_MAPSEC_TEMP_E8);
+  GameFlag_SetFar(FLAG_MAPSEC_TEMP_E8);
   goto finished;
 
 party_lost:
@@ -423,7 +423,7 @@ s32 BattleEnemy_List(s16 *unitIds) {
   lastId = ENEMY_BATTLE_SIZE;
   count = 0;
   if (output != NULL) {
-    if (GameFlag_TestFar(FLAG_LINK_BATTLE) != 0) {
+    if (GameFlag_GetFar(FLAG_LINK_BATTLE) != 0) {
       lastId = LINK_PARTY_SIZE;
     }
     id = FIRST_ENEMY_UNIT;
@@ -464,7 +464,7 @@ s32 BattleUnit_ListLiving(s32 sideMask, u16 *unitIds) {
   output = unitIds;
   livingCount = 0;
   enemyCapacity = ENEMY_BATTLE_SIZE;
-  if (GameFlag_TestFar(FLAG_LINK_BATTLE) != 0) {
+  if (GameFlag_GetFar(FLAG_LINK_BATTLE) != 0) {
     enemyCapacity = LINK_PARTY_SIZE;
   }
   // The party, in its battle order; then every enemy unit id that is

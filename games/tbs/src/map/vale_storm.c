@@ -328,7 +328,7 @@ const struct MapEvent *ValeStorm_GetEvents(void) { return gValeStorm_Events; }
 /// Reached by stepping on metatile behavior 15. Sets FLAG_MAP_TEMP_10,
 /// which ValeStorm_Initialize reads to swap them again.
 static void EventScript_SetPathCellOverride(void) {
-  Engine_GameFlagSet(FLAG_MAP_TEMP_10);
+  GameFlag_Set(FLAG_MAP_TEMP_10);
   MapGrid_CopyCellAttributes(40, 84, 7, 4, 10, 84);
 }
 
@@ -336,7 +336,7 @@ static void EventScript_SetPathCellOverride(void) {
 /// the leader steps off it.
 /// Reached by stepping on metatile behavior 14. Clears FLAG_MAP_TEMP_10.
 static void EventScript_ClearPathCellOverride(void) {
-  GameFlag_ClearBit(FLAG_MAP_TEMP_10);
+  GameFlag_Clear(FLAG_MAP_TEMP_10);
   MapGrid_CopyCellAttributes(40, 89, 7, 4, 10, 84);
 }
 
@@ -393,8 +393,8 @@ static void EventScript_LeaveToValeKradenSouth(void) {
 /// (ValeStorm_GaretFollowsIsaac).
 static void EventScript_LeaveToValeGate(void) {
   Sound_PlaySong(SE_MAP_EXIT);
-  if (GameFlag_Test(FLAG_VALE_STORM_BOULDER_SWEPT_THEM_AWAY) != 0 &&
-      GameFlag_Test(FLAG_VALE_STORM_GARET_LEFT) == 0) {
+  if (GameFlag_Get(FLAG_VALE_STORM_BOULDER_SWEPT_THEM_AWAY) != 0 &&
+      GameFlag_Get(FLAG_VALE_STORM_GARET_LEFT) == 0) {
     ValeStorm_GaretFollowsIsaac();
   }
   Vale_RequestBackdropWarp(VALE_STORM_TO_VALE_GATE);
@@ -420,12 +420,12 @@ static void EventScript_LeaveToValeInteriorsShopsEast(void) {
 /// otherwise goes into a house of Vale (MapId_ValeInteriorsShops, at
 /// VALE_INTERIORS_SHOPS_FROM_VALE_SOUTH).
 static void EventScript_LeaveToValeInteriorsShops(void) {
-  if (GameFlag_IsSet(FLAG_MAP_TEMP_06) == 0) {
+  if (Script_GetFlag(FLAG_MAP_TEMP_06) == 0) {
     Script_PlaySong(SE_DOOR_OPEN);
     MapGrid_AnimateCells(gValeStorm_GrandparentsDoorOpens, 45, 39);
   }
-  if (GameFlag_IsSet(FLAG_VALE_STORM_BUMPED_INTO_VILLAGER) == 0 &&
-      GameFlag_IsSet(FLAG_VALE_STORM_SECOND_ROCK_FELL) == 0) {
+  if (GameFlag_Get(FLAG_VALE_STORM_BUMPED_INTO_VILLAGER) == 0 &&
+      GameFlag_Get(FLAG_VALE_STORM_SECOND_ROCK_FELL) == 0) {
     ValeStorm_BumpIntoShovingMan();
     GameFlag_Set(FLAG_MAP_TEMP_06);
   } else {
@@ -442,7 +442,7 @@ static void EventScript_LeaveToValeInteriorsShops(void) {
 /// VALE_INTERIORS_INN_FROM_VALE in MapId_ValeInteriorsInn, where Vale's
 /// VALE_TO_VALE_INTERIORS_INN leads by day.
 static void EventScript_LeaveToValeInteriorsInn(void) {
-  if (GameFlag_Test(FLAG_MAP_TEMP_05) == 0) {
+  if (GameFlag_Get(FLAG_MAP_TEMP_05) == 0) {
     Sound_PlaySong(SE_DOOR_OPEN);
     MapGrid_PlayMetatileCopySequence(gValeStorm_IsaacsDoorOpens, 50, 44);
   }
@@ -522,24 +522,24 @@ static void EventScript_LeaveToValeInteriorsInnEast(void) {
 s32 ValeStorm_Initialize(void) {
   Map_QueueMusic(SE_170);
   Engine_ObjectEventSetPosition(LOCALID_FELIX, 0, 0);
-  if (GameFlag_Test(FLAG_KEEP_PARTY_POSITION) != 0) {
-    GameFlag_ClearBit(FLAG_MAP_TEMP_05);
-    GameFlag_ClearBit(FLAG_MAP_TEMP_06);
+  if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) != 0) {
+    GameFlag_Clear(FLAG_MAP_TEMP_05);
+    GameFlag_Clear(FLAG_MAP_TEMP_06);
   }
   // Restore the rocks that have already fallen.
-  if (GameFlag_Test(FLAG_VALE_STORM_FIRST_ROCK_FELL) != 0) {
+  if (GameFlag_Get(FLAG_VALE_STORM_FIRST_ROCK_FELL) != 0) {
     ObjectEvent_SetPosition(LOCALID_FIRST_ROCK, PIXELS(334), PIXELS(932));
     ValeStorm_ApplyFirstRockCollision();
   }
-  if (GameFlag_Test(FLAG_VALE_STORM_SECOND_ROCK_FELL) != 0) {
+  if (GameFlag_Get(FLAG_VALE_STORM_SECOND_ROCK_FELL) != 0) {
     ObjectEvent_SetPosition(LOCALID_FIRST_ROCK + 1, PIXELS(224), PIXELS(872));
     ValeStorm_ApplySecondRockCollision();
   }
-  if (GameFlag_Test(FLAG_VALE_STORM_THIRD_ROCK_FELL) != 0) {
+  if (GameFlag_Get(FLAG_VALE_STORM_THIRD_ROCK_FELL) != 0) {
     ObjectEvent_SetPosition(LOCALID_FIRST_ROCK + 2, PIXELS(64), PIXELS(703));
     ValeStorm_ApplyThirdRockCollision();
   }
-  if (GameFlag_Test(FLAG_VALE_STORM_FOURTH_ROCK_FELL) != 0) {
+  if (GameFlag_Get(FLAG_VALE_STORM_FOURTH_ROCK_FELL) != 0) {
     ObjectEvent_SetPosition(LOCALID_FIRST_ROCK + 3, PIXELS(432), PIXELS(1147));
     ValeStorm_ApplyFourthRockCollision();
   }
@@ -562,7 +562,7 @@ s32 ValeStorm_Initialize(void) {
   ObjectEvent_GetById(LOCALID_FIRST_ROCK + 7)->collisionFlags |=
       OBJ_EVENT_NEAR_TALK;
   // Garet walks with the party once he has joined.
-  if (GameFlag_Test(FLAG_VALE_STORM_GARET_JOINED) != 0) {
+  if (GameFlag_Get(FLAG_VALE_STORM_GARET_JOINED) != 0) {
     Engine_ObjectEventSetPosition(LOCALID_GARET, 0, 0);
   }
   {
@@ -573,13 +573,13 @@ s32 ValeStorm_Initialize(void) {
     objectEvent->scaleY = 2 * Q16_ONE;
   }
   // The Boulder lies where it fell, or waits on the mountainside.
-  if (GameFlag_Test(FLAG_VALE_BOULDER_FELL) != 0) {
+  if (GameFlag_Get(FLAG_VALE_BOULDER_FELL) != 0) {
     ObjectEvent_SetPosition(LOCALID_BOULDER, PIXELS(114), PIXELS(333));
   } else {
     ObjectEvent_SetActionScript(LOCALID_BOULDER, gValeStorm_BoulderWaits);
   }
   // Restore the riverbank cast at the saved stage of the storm.
-  if (GameFlag_Test(FLAG_VALE_STORM_BOULDER_SWEPT_THEM_AWAY) != 0) {
+  if (GameFlag_Get(FLAG_VALE_STORM_BOULDER_SWEPT_THEM_AWAY) != 0) {
     s32 facing;
     const s32 *table;
     ValeStorm_RebuildRiverbank();
@@ -638,12 +638,12 @@ s32 ValeStorm_Initialize(void) {
     Engine_ObjectEventSetPosition(LOCALID_JENNAS_MOTHER, 0, 0);
     Engine_ObjectEventSetPosition(LOCALID_FELIX, 0, 0);
     Engine_ObjectEventSetPosition(LOCALID_BOULDER, 0, 0);
-    if (GameFlag_Test(FLAG_VALE_STORM_GARET_LEFT) != 0) {
+    if (GameFlag_Get(FLAG_VALE_STORM_GARET_LEFT) != 0) {
       Engine_ObjectEventSetPosition(LOCALID_GARET, 0, 0);
     }
     // While they try to save Felix: Kyle and Jenna's parents at the river,
     // Felix in it.
-  } else if (GameFlag_Test(FLAG_VALE_STORM_SAW_FELIX_HANGING_ON) != 0) {
+  } else if (GameFlag_Get(FLAG_VALE_STORM_SAW_FELIX_HANGING_ON) != 0) {
     const s32 *table;
     ObjectEvent_SetPosition(LOCALID_KYLE, PIXELS(192), PIXELS(1214));
     ObjectEvent_FaceDirection(LOCALID_KYLE, FACING_SOUTHEAST, 0);
@@ -689,14 +689,14 @@ s32 ValeStorm_Initialize(void) {
   }
   // The lightning starts at once, except before Dora and Kyle's scene.
   if (gGameState.warpDest != VALE_STORM_FROM_VALE_INTERIORS_INN_WITH_DORA ||
-      GameFlag_Test(FLAG_VALE_STORM_SENT_TO_PLAZA) != 0) {
+      GameFlag_Get(FLAG_VALE_STORM_SENT_TO_PLAZA) != 0) {
     Weather_StartRain();
     Weather_StartLightning();
   }
-  if (GameFlag_Test(FLAG_MAP_TEMP_10) != 0) {
+  if (GameFlag_Get(FLAG_MAP_TEMP_10) != 0) {
     EventScript_SetPathCellOverride();
   }
-  Engine_GameFlagSet(FLAG_VALE_STORM);
+  GameFlag_Set(FLAG_VALE_STORM);
   MapGrid_CopyCellAttributes(29, 24, 1, 2, 26, 46);
   MapGrid_CopyCellAttributes(29, 25, 1, 1, 27, 46);
   MapGrid_CopyCellAttributes(29, 25, 1, 1, 28, 46);
@@ -712,7 +712,7 @@ s32 ValeStorm_Initialize(void) {
     ObjectEvent_SetSpriteFlags(objectEvent, 0);
   }
   WaitFrames(1);
-  if (GameFlag_Test(FLAG_VALE_STORM_SENT_TO_PLAZA) == 0 &&
+  if (GameFlag_Get(FLAG_VALE_STORM_SENT_TO_PLAZA) == 0 &&
       gGameState.warpDest == VALE_STORM_FROM_VALE_INTERIORS_INN_WITH_DORA) {
     EventScript_DoraSendsIsaacToThePlaza();
     return 0;
@@ -720,7 +720,7 @@ s32 ValeStorm_Initialize(void) {
   // Garet drags his chest out of his house until he joins, then the chest
   // stands by the door.
   Engine_ObjectEventSetAnimation(LOCALID_FELIX, ANIM_FELIX_CLING);
-  if (GameFlag_Test(FLAG_VALE_STORM_GARET_JOINED) == 0) {
+  if (GameFlag_Get(FLAG_VALE_STORM_GARET_JOINED) == 0) {
     FieldScript_Start();
     ObjectEvent_SetAttachedEffect(LOCALID_GARET, ATTACHED_EFFECT_IN_FRONT |
                                                      ATTACHED_EFFECT_ATTACH);
@@ -874,10 +874,10 @@ static void EventScript_FirstRockFalls(void) {
   s32 walkZ;
   struct Sprite *rockSprite;
 
-  if (GameFlag_IsSet(FLAG_VALE_STORM_FIRST_ROCK_PASSED) != 0) {
+  if (Script_GetFlag(FLAG_VALE_STORM_FIRST_ROCK_PASSED) != 0) {
   } else {
     FieldScript_Start();
-    if (GameFlag_IsSet(FLAG_VALE_STORM_FIRST_ROCK_FELL) == 0) {
+    if (Script_GetFlag(FLAG_VALE_STORM_FIRST_ROCK_FELL) == 0) {
       rock = ObjectEvent_GetById(LOCALID_FIRST_ROCK);
       rockSprite = rock->sprite;
       // A rumble (SE_RUMBLE, then SE_145), and the rock bounces down from the
@@ -904,14 +904,14 @@ static void EventScript_FirstRockFalls(void) {
       MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
       MapGrid_WaitForShakeToSettle();
       Map_PlayQueuedMusic();
-      Engine_GameFlagSet(FLAG_VALE_STORM_FIRST_ROCK_FELL);
+      GameFlag_Set(FLAG_VALE_STORM_FIRST_ROCK_FELL);
     }
     // The rock now blocks the path.
     ValeStorm_ApplyFirstRockCollision();
-    Engine_GameFlagSet(FLAG_VALE_STORM_FIRST_ROCK_PASSED);
-    if (GameFlag_Test(FLAG_VALE_STORM_GARET_JOINED) != 0) {
-      if (GameFlag_Test(FLAG_VALE_STORM_BOULDER_SWEPT_THEM_AWAY) == 0) {
-        if (GameFlag_Test(FLAG_VALE_STORM_GARET_SAW_BLOCKED_PATH) == 0) {
+    GameFlag_Set(FLAG_VALE_STORM_FIRST_ROCK_PASSED);
+    if (GameFlag_Get(FLAG_VALE_STORM_GARET_JOINED) != 0) {
+      if (GameFlag_Get(FLAG_VALE_STORM_BOULDER_SWEPT_THEM_AWAY) == 0) {
+        if (GameFlag_Get(FLAG_VALE_STORM_GARET_SAW_BLOCKED_PATH) == 0) {
           // Garet comes out beside Isaac on whichever side of the rock he
           // stands.
           leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
@@ -922,7 +922,7 @@ static void EventScript_FirstRockFalls(void) {
           } else {
             ValeStorm_GaretCommentsOnBlockedPath(0x14f, 0x3bd);
           }
-          Engine_GameFlagSet(FLAG_VALE_STORM_GARET_SAW_BLOCKED_PATH);
+          GameFlag_Set(FLAG_VALE_STORM_GARET_SAW_BLOCKED_PATH);
         }
       }
     }
@@ -951,10 +951,10 @@ static void EventScript_SecondRockFalls(void) {
   struct ObjectEvent *leader;
   s32 targetHeight;
 
-  if (GameFlag_IsSet(FLAG_VALE_STORM_SECOND_ROCK_PASSED) != 0) {
+  if (Script_GetFlag(FLAG_VALE_STORM_SECOND_ROCK_PASSED) != 0) {
   } else {
     FieldScript_Start();
-    if (GameFlag_IsSet(FLAG_VALE_STORM_SECOND_ROCK_FELL) == 0) {
+    if (Script_GetFlag(FLAG_VALE_STORM_SECOND_ROCK_FELL) == 0) {
       rock = ObjectEvent_GetById(LOCALID_FIRST_ROCK + 1);
       // A rumble, then the rock rolls down the slope from the north-east.
       MapGrid_SetShake(PIXELS(4), PIXELS(4), Q16_ONE);
@@ -979,13 +979,13 @@ static void EventScript_SecondRockFalls(void) {
       MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
       MapGrid_WaitForShakeToSettle();
       Map_PlayQueuedMusic();
-      Engine_GameFlagSet(FLAG_VALE_STORM_SECOND_ROCK_FELL);
+      GameFlag_Set(FLAG_VALE_STORM_SECOND_ROCK_FELL);
     }
     ValeStorm_ApplySecondRockCollision();
-    Engine_GameFlagSet(FLAG_VALE_STORM_SECOND_ROCK_PASSED);
-    if (GameFlag_Test(FLAG_VALE_STORM_GARET_JOINED) != 0) {
-      if (GameFlag_Test(FLAG_VALE_STORM_BOULDER_SWEPT_THEM_AWAY) == 0) {
-        if (GameFlag_Test(FLAG_VALE_STORM_GARET_SAW_BLOCKED_PATH) == 0) {
+    GameFlag_Set(FLAG_VALE_STORM_SECOND_ROCK_PASSED);
+    if (GameFlag_Get(FLAG_VALE_STORM_GARET_JOINED) != 0) {
+      if (GameFlag_Get(FLAG_VALE_STORM_BOULDER_SWEPT_THEM_AWAY) == 0) {
+        if (GameFlag_Get(FLAG_VALE_STORM_GARET_SAW_BLOCKED_PATH) == 0) {
           // Garet comes out beside Isaac on whichever side of the rock he
           // stands.
           leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
@@ -996,7 +996,7 @@ static void EventScript_SecondRockFalls(void) {
             ValeStorm_GaretCommentsOnBlockedPath(214, 0x38c);
             ObjectEvent_WalkToAndWait(LOCALID_PARTY_LEADER, 219, 911);
           }
-          Engine_GameFlagSet(FLAG_VALE_STORM_GARET_SAW_BLOCKED_PATH);
+          GameFlag_Set(FLAG_VALE_STORM_GARET_SAW_BLOCKED_PATH);
         }
       }
     }
@@ -1024,9 +1024,9 @@ static void ValeStorm_ApplySecondRockCollision(void) {
 /// does the first, with FLAG_VALE_STORM_THIRD_ROCK_FELL and
 /// FLAG_VALE_STORM_THIRD_ROCK_PASSED.
 static void EventScript_ThirdRockFalls(void) {
-  if (GameFlag_IsSet(FLAG_VALE_STORM_THIRD_ROCK_PASSED) == 0) {
+  if (Script_GetFlag(FLAG_VALE_STORM_THIRD_ROCK_PASSED) == 0) {
     FieldScript_Start();
-    if (GameFlag_IsSet(FLAG_VALE_STORM_THIRD_ROCK_FELL) == 0) {
+    if (Script_GetFlag(FLAG_VALE_STORM_THIRD_ROCK_FELL) == 0) {
       struct ObjectEvent *objectEvent = ObjectEvent_Get(LOCALID_FIRST_ROCK + 2);
       struct ObjectEvent *leader = ObjectEvent_Get(LOCALID_PARTY_LEADER);
       u16 priority = leader->sprite->image.priority;
@@ -1062,9 +1062,9 @@ static void EventScript_ThirdRockFalls(void) {
     }
     ValeStorm_ApplyThirdRockCollision();
     GameFlag_Set(FLAG_VALE_STORM_THIRD_ROCK_PASSED);
-    if (GameFlag_IsSet(FLAG_VALE_STORM_GARET_JOINED) != 0) {
-      if (GameFlag_IsSet(FLAG_VALE_STORM_BOULDER_SWEPT_THEM_AWAY) == 0) {
-        if (GameFlag_IsSet(FLAG_VALE_STORM_GARET_SAW_BLOCKED_PATH) == 0) {
+    if (GameFlag_Get(FLAG_VALE_STORM_GARET_JOINED) != 0) {
+      if (GameFlag_Get(FLAG_VALE_STORM_BOULDER_SWEPT_THEM_AWAY) == 0) {
+        if (GameFlag_Get(FLAG_VALE_STORM_GARET_SAW_BLOCKED_PATH) == 0) {
           // Garet comes out beside Isaac on whichever side of the rock he
           // stands.
           if (ObjectEvent_Get(LOCALID_PARTY_LEADER)->z.fixed <= 0x2b4ffff) {
@@ -1102,10 +1102,10 @@ static void EventScript_FourthRockFalls(void) {
   struct ObjectEvent *leader;
   s32 targetHeight;
 
-  if (GameFlag_IsSet(FLAG_VALE_STORM_FOURTH_ROCK_PASSED) != 0) {
+  if (Script_GetFlag(FLAG_VALE_STORM_FOURTH_ROCK_PASSED) != 0) {
   } else {
     FieldScript_Start();
-    if (GameFlag_IsSet(FLAG_VALE_STORM_FOURTH_ROCK_FELL) == 0) {
+    if (Script_GetFlag(FLAG_VALE_STORM_FOURTH_ROCK_FELL) == 0) {
       rock = ObjectEvent_GetById(LOCALID_FIRST_ROCK + 3);
       // A rumble, then the rock rolls in from the east.
       MapGrid_SetShake(PIXELS(4), PIXELS(4), Q16_ONE);
@@ -1127,13 +1127,13 @@ static void EventScript_FourthRockFalls(void) {
       MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
       MapGrid_WaitForShakeToSettle();
       Map_PlayQueuedMusic();
-      Engine_GameFlagSet(FLAG_VALE_STORM_FOURTH_ROCK_FELL);
+      GameFlag_Set(FLAG_VALE_STORM_FOURTH_ROCK_FELL);
     }
     ValeStorm_ApplyFourthRockCollision();
-    Engine_GameFlagSet(FLAG_VALE_STORM_FOURTH_ROCK_PASSED);
-    if (GameFlag_Test(FLAG_VALE_STORM_GARET_JOINED) != 0) {
-      if (GameFlag_Test(FLAG_VALE_STORM_BOULDER_SWEPT_THEM_AWAY) == 0) {
-        if (GameFlag_Test(FLAG_VALE_STORM_GARET_SAW_BLOCKED_PATH) == 0) {
+    GameFlag_Set(FLAG_VALE_STORM_FOURTH_ROCK_PASSED);
+    if (GameFlag_Get(FLAG_VALE_STORM_GARET_JOINED) != 0) {
+      if (GameFlag_Get(FLAG_VALE_STORM_BOULDER_SWEPT_THEM_AWAY) == 0) {
+        if (GameFlag_Get(FLAG_VALE_STORM_GARET_SAW_BLOCKED_PATH) == 0) {
           // Garet comes out beside Isaac on whichever side of the rock he
           // stands.
           leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
@@ -1144,7 +1144,7 @@ static void EventScript_FourthRockFalls(void) {
             ValeStorm_GaretCommentsOnBlockedPath(0x1bd, 0x494);
             ObjectEvent_WalkToAndWait(LOCALID_PARTY_LEADER, 447, 1227);
           }
-          Engine_GameFlagSet(FLAG_VALE_STORM_GARET_SAW_BLOCKED_PATH);
+          GameFlag_Set(FLAG_VALE_STORM_GARET_SAW_BLOCKED_PATH);
         }
       }
     }
@@ -1205,8 +1205,8 @@ static void ValeStorm_BumpIntoShovingMan(void) {
 /// Reached by stepping on metatile behavior 30, until Garet has joined. Sets
 /// FLAG_VALE_STORM_HEARD_GARET.
 static void EventScript_HearGaretStruggling(void) {
-  if (GameFlag_IsSet(FLAG_VALE_STORM_HEARD_GARET) == 0) {
-    if (GameFlag_IsSet(FLAG_VALE_STORM_GARET_JOINED) == 0) {
+  if (Script_GetFlag(FLAG_VALE_STORM_HEARD_GARET) == 0) {
+    if (GameFlag_Get(FLAG_VALE_STORM_GARET_JOINED) == 0) {
       FieldScript_Start();
       FieldScript_SetMessageId(MsgValeUghHrnghhh);
       Script_ShowMessageAndWait(LOCALID_GARET, 0, 20);
@@ -1228,8 +1228,8 @@ static void EventScript_HearGaretStruggling(void) {
 /// Reached by stepping on metatile behavior 31 once Isaac has heard Garet and
 /// before Garet joins; ValeStorm_GaretLeavesHisChest brings him along.
 static void EventScript_GaretCallsAfterIsaac(void) {
-  if (GameFlag_Test(FLAG_VALE_STORM_GARET_JOINED) == 0 &&
-      GameFlag_Test(FLAG_VALE_STORM_HEARD_GARET) != 0) {
+  if (GameFlag_Get(FLAG_VALE_STORM_GARET_JOINED) == 0 &&
+      GameFlag_Get(FLAG_VALE_STORM_HEARD_GARET) != 0) {
     FieldScript_Start();
     ObjectMotion_SetVarCbAndRefresh(LOCALID_GARET, 2);
     FieldScript_WaitFrames(20);
@@ -1244,7 +1244,7 @@ static void EventScript_GaretCallsAfterIsaac(void) {
 /// Reached by talking to Garet: before he joins, ValeStorm_GaretLeavesHisChest
 /// brings him along.
 static void EventScript_TalkToGaret(void) {
-  if (GameFlag_IsSet(FLAG_VALE_STORM_BOULDER_SWEPT_THEM_AWAY) != 0) {
+  if (GameFlag_Get(FLAG_VALE_STORM_BOULDER_SWEPT_THEM_AWAY) != 0) {
     FieldScript_Start();
     ObjectEvent_FaceObjectEvent(LOCALID_GARET, LOCALID_PARTY_LEADER, 0);
     FieldScript_WaitFrames(20);
@@ -1253,7 +1253,7 @@ static void EventScript_TalkToGaret(void) {
     ObjectEvent_FaceDirection(LOCALID_GARET, FACING_NORTHEAST, 10);
     FieldScript_End();
   } else {
-    if (GameFlag_IsSet(FLAG_VALE_STORM_GARET_JOINED) == 0) {
+    if (GameFlag_Get(FLAG_VALE_STORM_GARET_JOINED) == 0) {
       FieldScript_Start();
       FieldScript_SetMessageId(MsgValeWantDumpStuff);
       ValeStorm_GaretLeavesHisChest();
@@ -1306,7 +1306,7 @@ static void ValeStorm_GaretLeavesHisChest(void) {
   ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_GARET);
   Engine_ObjectEventSetPosition(LOCALID_GARET, 0, 0);
   FieldScript_PrepareObjectAndApplyValue(1, 1);
-  Engine_GameFlagSet(FLAG_VALE_STORM_GARET_JOINED);
+  GameFlag_Set(FLAG_VALE_STORM_GARET_JOINED);
 }
 
 /// Unused: an earlier version of Garet joining Isaac on the stormy night,
@@ -1325,7 +1325,7 @@ static void EventScript_UnusedGaretJoinsIsaac(void) {
   struct ObjectEvent *objectEvent;
   s32 message;
 
-  if (GameFlag_IsSet(FLAG_VALE_STORM_GARET_JOINED) == 0) {
+  if (Script_GetFlag(FLAG_VALE_STORM_GARET_JOINED) == 0) {
     FieldScript_Start();
     ObjectEvent_SetAttachedEffect(LOCALID_GARET, ATTACHED_EFFECT_IN_FRONT |
                                                      ATTACHED_EFFECT_REMOVE);
@@ -1463,7 +1463,7 @@ static void EventScript_WatchBoulderFall(void) {
   TaskFunc cycleBoulderPalette;
   s32 boulderHeight;
 
-  if (GameFlag_IsSet(FLAG_VALE_BOULDER_FELL) == 0) {
+  if (GameFlag_Get(FLAG_VALE_BOULDER_FELL) == 0) {
     FieldScript_Start();
     FieldScript_CallWithLastActiveObjectId(gValeStorm_BoulderWatchers);
     Map_StartCutscenePsynergy();
@@ -1716,7 +1716,7 @@ UNUSED static void ValeStorm_FlashBoulderMapAnimationEntries(void) {
 static void EventScript_WatchAttemptToSaveFelix(void) {
   const s32 *pulseScript;
 
-  if (GameFlag_IsSet(FLAG_VALE_STORM_SAW_FELIX_HANGING_ON) != 0) {
+  if (Script_GetFlag(FLAG_VALE_STORM_SAW_FELIX_HANGING_ON) != 0) {
     return;
   }
   FieldScript_Start();
@@ -1959,7 +1959,7 @@ static void EventScript_WatchAttemptToSaveFelix(void) {
   ObjectMotion_SetVarCbAndRefresh(LOCALID_DORA, 1);
   FieldScript_ShowMessageThenWait(LOCALID_DORA, 0, 10);
   ValeStorm_DoraGoesForHelp();
-  Engine_GameFlagSet(FLAG_VALE_STORM_SAW_FELIX_HANGING_ON);
+  GameFlag_Set(FLAG_VALE_STORM_SAW_FELIX_HANGING_ON);
   FieldScript_End();
 }
 
@@ -2130,7 +2130,7 @@ static void EventScript_TalkAboutSavingFelix(void) {
   Engine_ObjectEventSetAnimation(LOCALID_KYLE, ANIM_STAND);
   FieldScript_WaitFrames(10);
   ObjectEvent_LinkPair(LOCALID_KYLE, LOCALID_PARTY_LEADER, 20);
-  if (GameFlag_Test(FLAG_VALE_STORM_KYLE_GREETED_ISAAC) != 0) {
+  if (GameFlag_Get(FLAG_VALE_STORM_KYLE_GREETED_ISAAC) != 0) {
     FieldScript_SetMessageId(MsgValeTwoDontEnough);
     FieldScript_ShowMessageThenWait(LOCALID_KYLE, 0, 10);
   } else {
@@ -2153,7 +2153,7 @@ static void EventScript_TalkAboutSavingFelix(void) {
     ObjectEvent_SetActionScript(LOCALID_KYLE, pulseScript);
   }
   FieldScript_WaitFrames(20);
-  Engine_GameFlagSet(FLAG_VALE_STORM_KYLE_GREETED_ISAAC);
+  GameFlag_Set(FLAG_VALE_STORM_KYLE_GREETED_ISAAC);
   FieldScript_End();
 }
 
@@ -2170,9 +2170,9 @@ static void EventScript_BoulderSweepsThemAway(void) {
   s32 automaticPriority;
   struct Sprite *sprite;
 
-  if (GameFlag_Test(FLAG_VALE_STORM_SENT_TO_AID_ELDERS) == 0) {
+  if (GameFlag_Get(FLAG_VALE_STORM_SENT_TO_AID_ELDERS) == 0) {
   } else {
-    if (GameFlag_IsSet(FLAG_VALE_STORM_BOULDER_SWEPT_THEM_AWAY) != 0) {
+    if (Script_GetFlag(FLAG_VALE_STORM_BOULDER_SWEPT_THEM_AWAY) != 0) {
     } else {
       FieldScript_Start();
       ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(1), PIXELS(1) / 2);
@@ -2282,7 +2282,7 @@ static void EventScript_BoulderSweepsThemAway(void) {
       objectEvent = ObjectEvent_GetById(LOCALID_EXHAUSTED_STRONGMAN);
       objectEvent->priorityFlags |= automaticPriority;
       ValeStorm_ShowBoulderSweepingDownriver();
-      Engine_GameFlagSet(FLAG_VALE_STORM_BOULDER_SWEPT_THEM_AWAY);
+      GameFlag_Set(FLAG_VALE_STORM_BOULDER_SWEPT_THEM_AWAY);
       FieldScript_End();
     }
   }
@@ -2577,7 +2577,7 @@ static void ValeStorm_ShowBoulderSweepingDownriver(void) {
   ObjectEvent_SetPosition(LOCALID_BOULDER_SHADOW, PIXELS(214), PIXELS(1216));
   ObjectEvent_FaceDirection(LOCALID_JENNAS_FATHER, FACING_NORTH, 0);
   ObjectEvent_FaceDirection(LOCALID_JENNAS_MOTHER, FACING_NORTH, 20);
-  GameFlag_Set(FLAG_WEATHER_HELD);
+  Script_SetFlag(FLAG_WEATHER_HELD);
   TilesetAnim_Pause(0);
   TilesetAnim_Pause(1);
   TilesetAnim_Pause(2);
@@ -2676,7 +2676,7 @@ static void ValeStorm_ShowBoulderSweepingDownriver(void) {
 /// black, then lets the rain and the animations run again.
 static void ValeStorm_FlashLightning(void) {
   WaitFrames(20);
-  GameFlag_Set(FLAG_WEATHER_HELD);
+  Script_SetFlag(FLAG_WEATHER_HELD);
   TilesetAnim_Pause(0);
   TilesetAnim_Pause(1);
   TilesetAnim_Pause(2);
@@ -2785,7 +2785,7 @@ static void EventScript_StrongmanTriesToGoForHelp(void) {
   leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   villager = ObjectEvent_GetById(LOCALID_EXHAUSTED_STRONGMAN);
   FieldScript_Start();
-  if (GameFlag_IsSet(FLAG_VALE_STORM_STRONGMAN_TRIED_TO_GO) != 0) {
+  if (GameFlag_Get(FLAG_VALE_STORM_STRONGMAN_TRIED_TO_GO) != 0) {
     ObjectMotion_EnableActionAndResetMotion(LOCALID_EXHAUSTED_STRONGMAN);
     FieldScript_WaitFrames(10);
     ObjectMotion_SetVarCbAndRefresh(LOCALID_EXHAUSTED_STRONGMAN, 2);
@@ -2918,9 +2918,9 @@ static void EventScript_FightThirdMonster(void) {
   state = gFieldWork;
   state->transition = MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_BARS);
   state->transitionFrames = 64;
-  Engine_GameFlagSet(FLAG_VALE_STORM_THIRD_MONSTER_FOUGHT);
+  GameFlag_Set(FLAG_VALE_STORM_THIRD_MONSTER_FOUGHT);
   Field_RequestBattleFromEncounterTable(ENCOUNTER_ZONE_SCRIPTED_VALE_VAULT, 2);
-  Engine_GameFlagSet(FLAG_VALE_STORM_MONSTER_FOUGHT);
+  GameFlag_Set(FLAG_VALE_STORM_MONSTER_FOUGHT);
   FieldScript_End();
 }
 
@@ -2935,9 +2935,9 @@ static void EventScript_FightFourthMonster(void) {
   state = gFieldWork;
   state->transition = MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_BARS);
   state->transitionFrames = 64;
-  Engine_GameFlagSet(FLAG_VALE_STORM_FOURTH_MONSTER_FOUGHT);
+  GameFlag_Set(FLAG_VALE_STORM_FOURTH_MONSTER_FOUGHT);
   Field_RequestBattleFromEncounterTable(ENCOUNTER_ZONE_SCRIPTED_VALE_VAULT, 3);
-  Engine_GameFlagSet(FLAG_VALE_STORM_MONSTER_FOUGHT);
+  GameFlag_Set(FLAG_VALE_STORM_MONSTER_FOUGHT);
   FieldScript_End();
 }
 

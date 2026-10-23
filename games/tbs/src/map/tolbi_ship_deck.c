@@ -829,19 +829,19 @@ const u32 *TolbiShipDeck_GetWarps(void) { return gTolbiShipDeckWarps; }
 const struct ObjectEventTemplate *TolbiShipDeck_GetObjectEventTemplates(void) {
   s32 afterFirstAttack;
 
-  if (GameFlag_Test(FLAG_TOLBI_SHIP_REACHED_TOLBI))
+  if (GameFlag_Get(FLAG_TOLBI_SHIP_REACHED_TOLBI))
     return gTolbiShipDeckObjectEventTemplatesArrived;
-  if (GameFlag_Test(FLAG_TOLBI_SHIP_ROWING))
+  if (GameFlag_Get(FLAG_TOLBI_SHIP_ROWING))
     return gTolbiShipDeckObjectEventTemplatesRowing;
-  afterFirstAttack = GameFlag_Test(FLAG_TOLBI_SHIP_FIRST_ATTACK_FOUGHT_OFF);
+  afterFirstAttack = GameFlag_Get(FLAG_TOLBI_SHIP_FIRST_ATTACK_FOUGHT_OFF);
   if (afterFirstAttack != 0)
     return gTolbiShipDeckObjectEventTemplatesAtSea;
-  if (GameFlag_Test(FLAG_KALAY_COLOSSO_TOUR_LEFT)) {
-    if (GameFlag_Test(FLAG_TOLBI_SHIP_ANCHOR_CHARM_RETURNED)) {
+  if (GameFlag_Get(FLAG_KALAY_COLOSSO_TOUR_LEFT)) {
+    if (GameFlag_Get(FLAG_TOLBI_SHIP_ANCHOR_CHARM_RETURNED)) {
       KALAY_TALK_FACING(LOCALID_KALAY_CREW_MEMBER) = afterFirstAttack;
       KALAY_TALK_FACING(LOCALID_KALAY_PASSENGER_WAITING_LONG) = 2;
       KALAY_TALK_FACING(LOCALID_KALAY_PASSENGER_SEEING_COLOSSO) = 2;
-    } else if (GameFlag_Test(FLAG_TOLBI_SHIP_WARRIORS_SEEK_CAPTAIN)) {
+    } else if (GameFlag_Get(FLAG_TOLBI_SHIP_WARRIORS_SEEK_CAPTAIN)) {
       KALAY_TALK_FACING(LOCALID_KALAY_PASSENGER_WAITING_LONG) = 1;
       KALAY_TALK_FACING(LOCALID_KALAY_PASSENGER_SEEING_COLOSSO) = 1;
     }
@@ -853,11 +853,11 @@ const struct ObjectEventTemplate *TolbiShipDeck_GetObjectEventTemplates(void) {
 #undef KALAY_TALK_FACING
 
 const struct MapEvent *TolbiShipDeck_GetEvents(void) {
-  if (GameFlag_Test(FLAG_TOLBI_SHIP_REACHED_TOLBI))
+  if (GameFlag_Get(FLAG_TOLBI_SHIP_REACHED_TOLBI))
     return gTolbiShipDeckEventsArrived;
-  if (GameFlag_Test(FLAG_TOLBI_SHIP_AT_ISLAND))
+  if (GameFlag_Get(FLAG_TOLBI_SHIP_AT_ISLAND))
     return gTolbiShipDeckEventsAtIsland;
-  if (GameFlag_Test(FLAG_TOLBI_SHIP_FIRST_ATTACK_FOUGHT_OFF))
+  if (GameFlag_Get(FLAG_TOLBI_SHIP_FIRST_ATTACK_FOUGHT_OFF))
     return gTolbiShipDeckEventsAtSea;
   return gTolbiShipDeckEvents;
 }
@@ -872,11 +872,11 @@ static void TolbiShipDeck_TalkToCrewMember(void) {
   s32 wait;
 
   FieldScript_Start();
-  if (GameFlag_IsSet(FLAG_TOLBI_SHIP_ANCHOR_CHARM_RETURNED) != 0) {
+  if (GameFlag_Get(FLAG_TOLBI_SHIP_ANCHOR_CHARM_RETURNED) != 0) {
     FieldScript_SetMessageId(MsgTolbiShipNowWeHaveProtectShip);
     Script_ShowMessage(LOCALID_KALAY_CREW_MEMBER, 0);
   } else {
-    if (GameFlag_IsSet(FLAG_TOLBI_SHIP_WARRIORS_SEEK_CAPTAIN) != 0) {
+    if (GameFlag_Get(FLAG_TOLBI_SHIP_WARRIORS_SEEK_CAPTAIN) != 0) {
       ObjectMotion_SetVarCbAndRefresh(LOCALID_KALAY_CREW_MEMBER, 2);
       FieldScript_SetMessageId(MsgTolbiShipSomebodyStopThem);
       Script_ShowMessage(LOCALID_KALAY_CREW_MEMBER, 0);
@@ -906,11 +906,11 @@ static void TolbiShipDeck_TalkToTourGuide(void) {
   s32 wait;
 
   FieldScript_Start();
-  if (GameFlag_IsSet(FLAG_TOLBI_SHIP_ANCHOR_CHARM_RETURNED) != 0) {
+  if (GameFlag_Get(FLAG_TOLBI_SHIP_ANCHOR_CHARM_RETURNED) != 0) {
     FieldScript_SetMessageId(MsgTolbiShipHaveMakeThemPromiseHelp);
     Script_ShowMessage(LOCALID_KALAY_TOUR_GUIDE, 0);
   } else {
-    if (GameFlag_IsSet(FLAG_TOLBI_SHIP_WARRIORS_SEEK_CAPTAIN) != 0) {
+    if (GameFlag_Get(FLAG_TOLBI_SHIP_WARRIORS_SEEK_CAPTAIN) != 0) {
       ObjectMotion_SetVarCbAndRefresh(LOCALID_KALAY_TOUR_GUIDE, 2);
       FieldScript_SetMessageId(MsgTolbiShipTheyCantPlanningMutiny);
       Script_ShowMessage(LOCALID_KALAY_TOUR_GUIDE, 0);
@@ -942,7 +942,7 @@ static void TolbiShipDeck_AskHeadedForColosso(void) {
 
 /// Opens the first door to below deck, once a visit.
 static void TolbiShipDeck_OpenFirstDoor(void) {
-  if (GameFlag_IsSet(FLAG_MAP_TEMP_71) == 0) {
+  if (Script_GetFlag(FLAG_MAP_TEMP_71) == 0) {
     Script_PlaySong(SE_DOOR_OPEN);
     MapGrid_CopyCellsTo(30, 94, 13, 94, 1, 3);
     GameFlag_Set(FLAG_MAP_TEMP_71);
@@ -951,7 +951,7 @@ static void TolbiShipDeck_OpenFirstDoor(void) {
 
 /// Opens the second door to below deck, once a visit.
 static void TolbiShipDeck_OpenSecondDoor(void) {
-  if (GameFlag_IsSet(FLAG_MAP_TEMP_72) == 0) {
+  if (Script_GetFlag(FLAG_MAP_TEMP_72) == 0) {
     Script_PlaySong(SE_DOOR_OPEN);
     MapGrid_CopyCellsTo(30, 108, 13, 108, 1, 2);
     GameFlag_Set(FLAG_MAP_TEMP_72);
@@ -1014,7 +1014,7 @@ static void TolbiShipDeck_GoBelowWhileFacingWest(void) {
 static void TolbiShipDeck_WatchCrewDecideToSail(void) {
   struct ObjectEvent *record;
 
-  if (GameFlag_IsSet(FLAG_KALAY_COLOSSO_TOUR_LEFT) != 0) {
+  if (GameFlag_Get(FLAG_KALAY_COLOSSO_TOUR_LEFT) != 0) {
     FieldScript_Start();
     Field_EndBusyAndReveal();
     ObjectEvent_FaceObjectEvent(LOCALID_PARTY_LEADER, LOCALID_KALAY_CREWMAN,
@@ -1150,8 +1150,8 @@ static void TolbiShipDeck_WatchCrewDecideToSail(void) {
 static void TolbiShipDeck_CatchCrewmanFromEast(void) {
   u8 bits;
 
-  if (GameFlag_IsSet(FLAG_KALAY_COLOSSO_TOUR_LEFT) != 0) {
-    if (GameFlag_IsSet(FLAG_TOLBI_SHIP_WARRIORS_SEEK_CAPTAIN) == 0) {
+  if (GameFlag_Get(FLAG_KALAY_COLOSSO_TOUR_LEFT) != 0) {
+    if (GameFlag_Get(FLAG_TOLBI_SHIP_WARRIORS_SEEK_CAPTAIN) == 0) {
       FieldScript_Start();
       Field_EndBusyAndReveal();
       TolbiShipDeck_ConfrontCrewman();
@@ -1200,8 +1200,8 @@ static void TolbiShipDeck_CatchCrewmanFromEast(void) {
 static void TolbiShipDeck_CatchCrewmanFromWest(void) {
   u8 bits;
 
-  if (GameFlag_IsSet(FLAG_KALAY_COLOSSO_TOUR_LEFT) != 0) {
-    if (GameFlag_IsSet(FLAG_TOLBI_SHIP_WARRIORS_SEEK_CAPTAIN) == 0) {
+  if (GameFlag_Get(FLAG_KALAY_COLOSSO_TOUR_LEFT) != 0) {
+    if (GameFlag_Get(FLAG_TOLBI_SHIP_WARRIORS_SEEK_CAPTAIN) == 0) {
       FieldScript_Start();
       Field_EndBusyAndReveal();
       TolbiShipDeck_ConfrontCrewman();
@@ -1280,7 +1280,7 @@ s32 TolbiShipDeck_Initialize(void) {
   struct MapGridLayerScroll *layer =
       &((struct MapGridScrollWork *)base[0])->layers[MAPGRID_LAYER_GROUND];
 
-  GameFlag_ClearBit(FLAG_WORLD_MAP_LEFT);
+  GameFlag_Clear(FLAG_WORLD_MAP_LEFT);
   ((struct FieldWork *)base[HEAP_SLOT_FIELD - HEAP_SLOT_MAP_GRID])->transition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
   layer->speedY = 0;
@@ -1302,32 +1302,32 @@ s32 TolbiShipDeck_Initialize(void) {
 static void TolbiShipDeck_ApplyEntryState(void) {
   s32 flag;
 
-  Engine_GameFlagSet(FLAG_RETREAT_BLOCKED);
-  if (GameFlag_Test(FLAG_KEEP_PARTY_POSITION) != 0) {
-    GameFlag_ClearBit(FLAG_MAP_TEMP_71);
-    GameFlag_ClearBit(FLAG_MAP_TEMP_72);
+  GameFlag_Set(FLAG_RETREAT_BLOCKED);
+  if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) != 0) {
+    GameFlag_Clear(FLAG_MAP_TEMP_71);
+    GameFlag_Clear(FLAG_MAP_TEMP_72);
   }
-  if (GameFlag_Test(FLAG_TOLBI_SHIP_REACHED_TOLBI) != 0) {
+  if (GameFlag_Get(FLAG_TOLBI_SHIP_REACHED_TOLBI) != 0) {
     TolbiShipDeck_CopyUnderwayCells();
     TolbiShipDeck_CopyAnchoredCells();
     ObjectGroup_ConfigureChildValue(LOCALID_ARRIVED_FIRST_PASSENGER + 1, 2);
-  } else if (GameFlag_Test(FLAG_TOLBI_SHIP_AT_ISLAND) != 0) {
+  } else if (GameFlag_Get(FLAG_TOLBI_SHIP_AT_ISLAND) != 0) {
     TolbiShipDeck_CopyUnderwayCells();
     TolbiShipDeck_CopyAnchoredCells();
-  } else if ((flag = GameFlag_Test(FLAG_TOLBI_SHIP_ROWING)) != 0) {
+  } else if ((flag = GameFlag_Get(FLAG_TOLBI_SHIP_ROWING)) != 0) {
     TolbiShipDeck_CopyUnderwayCells();
     TolbiShipDeck_SetUpOars();
     Task_AddCallback(TolbiShipDeck_RowOars, TASK_PRIORITY_MAP);
     sSeaScroll[1] = 0x200000;
     sSeaSpeed[1] = 0x13333;
     FieldScheduler_AddCallback(TolbiShipDeck_RockDeck, TASK_PRIORITY_MAP);
-  } else if (GameFlag_Test(FLAG_TOLBI_SHIP_FIRST_ATTACK_FOUGHT_OFF) != 0) {
+  } else if (GameFlag_Get(FLAG_TOLBI_SHIP_FIRST_ATTACK_FOUGHT_OFF) != 0) {
     TolbiShipDeck_CopyUnderwayCells();
     sSeaScroll[1] = flag;
     sSeaSpeed[1] = flag;
     FieldScheduler_AddCallback(TolbiShipDeck_RockDeck, TASK_PRIORITY_MAP);
   }
-  if (GameFlag_Test(FLAG_TOLBI_SHIP_ROWING) == 0) {
+  if (GameFlag_Get(FLAG_TOLBI_SHIP_ROWING) == 0) {
     TolbiShipDeck_RestOars();
   }
   switch (gGameState.warpDest) {
@@ -1335,7 +1335,7 @@ static void TolbiShipDeck_ApplyEntryState(void) {
     ObjectEvent_GetById(LOCALID_PARTY_LEADER)->sprite->image.priority = 1;
     break;
   case TOLBI_SHIP_DECK_FROM_TOLBI_SHIP_INTERIORS_READY:
-    if (GameFlag_Test(FLAG_TOLBI_SHIP_FIRST_ATTACK_FOUGHT_OFF) != 0) {
+    if (GameFlag_Get(FLAG_TOLBI_SHIP_FIRST_ATTACK_FOUGHT_OFF) != 0) {
       TolbiShipDeck_DepartWithParty();
     } else {
       TolbiShipDeck_DepartFromKalay();
@@ -1357,7 +1357,7 @@ static void TolbiShipDeck_ApplyEntryState(void) {
     TolbiShipDeck_JumpIntoKrakenBattle();
     return;
   case TOLBI_SHIP_DECK_AFTER_JUMP_INTO_KRAKEN_BATTLE:
-    if (GameFlag_Test(FLAG_KEEP_PARTY_POSITION) != 0) {
+    if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) != 0) {
       TolbiShipDeck_SetUpAfterKraken();
     } else {
       TolbiShipDeck_ThankForKraken();
@@ -1367,7 +1367,7 @@ static void TolbiShipDeck_ApplyEntryState(void) {
     TolbiShipDeck_SightLand();
     return;
   case TOLBI_SHIP_DECK_FROM_WORLD_MAP:
-    if (GameFlag_Test(FLAG_KEEP_PARTY_POSITION) == 0) {
+    if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) == 0) {
       TolbiShipDeck_RowersDisembark();
     }
     return;
@@ -1375,17 +1375,17 @@ static void TolbiShipDeck_ApplyEntryState(void) {
     TolbiShipDeck_SightIsland();
     return;
   }
-  if (GameFlag_Test(FLAG_TOLBI_SHIP_REACHED_TOLBI) != 0) {
+  if (GameFlag_Get(FLAG_TOLBI_SHIP_REACHED_TOLBI) != 0) {
     ((struct MapGridScrollWork *)gMapGridWork[0])->minX = PIXELS(65);
-  } else if (GameFlag_Test(FLAG_TOLBI_SHIP_AT_ISLAND) != 0) {
+  } else if (GameFlag_Get(FLAG_TOLBI_SHIP_AT_ISLAND) != 0) {
     TolbiShipDeck_SetUpAtAnchor();
-  } else if (GameFlag_Test(FLAG_TOLBI_SHIP_KRAKEN_DEFEATED) != 0) {
+  } else if (GameFlag_Get(FLAG_TOLBI_SHIP_KRAKEN_DEFEATED) != 0) {
     TolbiShipDeck_SetUpAfterKraken();
-  } else if (GameFlag_Test(FLAG_TOLBI_SHIP_FIRST_ATTACK_FOUGHT_OFF) != 0) {
+  } else if (GameFlag_Get(FLAG_TOLBI_SHIP_FIRST_ATTACK_FOUGHT_OFF) != 0) {
     TolbiShipDeck_SetUpUnderSail();
-  } else if (GameFlag_Test(FLAG_TOLBI_SHIP_ANCHOR_CHARM_RETURNED) != 0) {
+  } else if (GameFlag_Get(FLAG_TOLBI_SHIP_ANCHOR_CHARM_RETURNED) != 0) {
     TolbiShipDeck_PlacePassengersAgreedToRow();
-  } else if (GameFlag_Test(FLAG_KALAY_COLOSSO_TOUR_LEFT) != 0) {
+  } else if (GameFlag_Get(FLAG_KALAY_COLOSSO_TOUR_LEFT) != 0) {
     TolbiShipDeck_PlaceWaitingPassengers();
   }
 }
@@ -1401,14 +1401,14 @@ static void TolbiShipDeck_PlaceWaitingPassengers(void) {
   ObjectMotion_SetActionVariant(LOCALID_KALAY_CAPTAIN, 1);
   ObjectMotion_SetActionVariant(LOCALID_KALAY_PASSENGER_SEEING_COLOSSO, 1);
   ObjectMotion_SetActionVariant(LOCALID_KALAY_TOUR_GUIDE, 1);
-  if (GameFlag_Test(FLAG_TOLBI_SHIP_CREW_WONDERED_AT_DELAY) != 0) {
+  if (GameFlag_Get(FLAG_TOLBI_SHIP_CREW_WONDERED_AT_DELAY) != 0) {
     Engine_ObjectEventSetPosition(LOCALID_KALAY_CAPTAIN, PIXELS(162),
                                   PIXELS(666));
     ObjectEvent_GetById(LOCALID_KALAY_CAPTAIN)->facing = FACING_WEST;
     Engine_ObjectEventSetPosition(LOCALID_KALAY_KAJA, 0, 0);
     Engine_ObjectEventSetPosition(LOCALID_KALAY_CREWMAN, 0, 0);
   }
-  flag = GameFlag_Test(FLAG_TOLBI_SHIP_WARRIORS_SEEK_CAPTAIN);
+  flag = GameFlag_Get(FLAG_TOLBI_SHIP_WARRIORS_SEEK_CAPTAIN);
   if (flag != 0) {
     Engine_ObjectEventSetPosition(LOCALID_KALAY_CREW_MEMBER, PIXELS(264),
                                   PIXELS(702));
@@ -1426,7 +1426,7 @@ static void TolbiShipDeck_PlaceWaitingPassengers(void) {
                                 gTolbiShipDeck_SquashAndStretchActions);
     Engine_ObjectEventSetPosition(LOCALID_KALAY_CAPTAIN, 0, 0);
   } else {
-    if (GameFlag_Test(FLAG_TOLBI_SHIP_CREWMAN_CAUGHT) != 0) {
+    if (GameFlag_Get(FLAG_TOLBI_SHIP_CREWMAN_CAUGHT) != 0) {
       ObjectEvent_SetPosition(LOCALID_KALAY_CREWMAN, PIXELS(246), PIXELS(512));
       ObjectEvent_GetById(LOCALID_KALAY_CREWMAN)->facing = flag;
     }
@@ -1499,7 +1499,7 @@ static void TolbiShipDeck_SetUpUnderSail(void) {
   ObjectEvent_SetSpeed(LOCALID_SEA_OURANOS, PIXELS(4) / 5, PIXELS(2) / 5);
   ObjectEvent_SetActionScript(LOCALID_SEA_OURANOS,
                               gTolbiShipDeck_OuranosPatrolsActions);
-  if (GameFlag_IsSet(FLAG_KEEP_PARTY_POSITION) != 0) {
+  if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) != 0) {
     TolbiShipDeck_PlaceLeaderOnDeck();
   }
   FieldScript_End();
@@ -1527,7 +1527,7 @@ static void TolbiShipDeck_SetUpAfterKraken(void) {
   ObjectEvent_SetSpeed(LOCALID_SEA_OURANOS, PIXELS(4) / 5, PIXELS(2) / 5);
   ObjectEvent_SetActionScript(LOCALID_SEA_OURANOS,
                               gTolbiShipDeck_OuranosPatrolsActions);
-  if (GameFlag_IsSet(FLAG_KEEP_PARTY_POSITION) != 0) {
+  if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) != 0) {
     TolbiShipDeck_PlaceLeaderOnDeck();
   }
   FieldScript_End();
@@ -1550,7 +1550,7 @@ static void TolbiShipDeck_SetUpAtAnchor(void) {
   facing = 192; // 192 << 6 is 0x3000, south-southeast
   record = ObjectEvent_GetById(LOCALID_SEA_CREW_MEMBER);
   record->facing = (facing << 6);
-  if (GameFlag_Test(FLAG_TOLBI_SHIP_ISLAND_SCOUT_AGREED) != 0) {
+  if (GameFlag_Get(FLAG_TOLBI_SHIP_ISLAND_SCOUT_AGREED) != 0) {
     ObjectEvent_SetPosition(LOCALID_SEA_SEAN, PIXELS(162), PIXELS(634));
     record = ObjectEvent_GetById(LOCALID_SEA_SEAN);
     record->facing = (facing << 6);
@@ -2490,7 +2490,7 @@ static void TolbiShipDeck_RowersDisembark(void) {
                            0);
   Engine_ObjectEventSetPosition(LOCALID_BLANK_ARRIVED_CAMERA_TARGET, 0, 0);
 
-  GameFlag_ClearBit(FLAG_SHOW_LOCATION_NAME);
+  GameFlag_Clear(FLAG_SHOW_LOCATION_NAME);
   FieldScript_End();
 }
 
@@ -2517,7 +2517,7 @@ static s32 TolbiShipDeck_GetRowerAtSeat(u32 seat) {
     break;
   }
   for (i = 0; i < 9; i++) {
-    if (GameFlag_Test(flag) != 0)
+    if (GameFlag_Get(flag) != 0)
       return passenger;
     flag++;
     passenger++;
@@ -2666,7 +2666,7 @@ static s32 TolbiShipDeck_GetSeatStroke(u32 seat) {
     break;
   }
   for (i = 0; i < 9; i++) {
-    if (GameFlag_Test(base + i) != 0)
+    if (GameFlag_Get(base + i) != 0)
       return gTolbiShipDeckRowerStrokes[i];
   }
   return 0;

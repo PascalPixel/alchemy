@@ -277,10 +277,10 @@ const struct MapEvent *Sanctum_GetEvents(void) {
     break;
   }
 
-  if (GameFlag_Test(FLAG_KALAY_REACHED) != 0) {
+  if (GameFlag_Get(FLAG_KALAY_REACHED) != 0) {
     return gSanctum_ValeEventsAfterKalay;
   }
-  if (GameFlag_Test(FLAG_VALE_PARTY_LEFT) != 0) {
+  if (GameFlag_Get(FLAG_VALE_PARTY_LEFT) != 0) {
     return gSanctum_ValeEventsAfterLeaving;
   }
   return gSanctum_ValeEvents;
@@ -293,7 +293,7 @@ const struct MapEvent *Sanctum_GetEvents(void) {
 static void EventScript_TalkAboutGoldenStatue(void) {
   FieldScript_Start();
 
-  if (GameFlag_Test(FLAG_VAULT_THIEVES_JAILED) != 0) {
+  if (GameFlag_Get(FLAG_VAULT_THIEVES_JAILED) != 0) {
     FieldScript_SetMessageId(MsgSanctumWhenStrayFromYourWorldly);
   } else {
     FieldScript_SetMessageId(MsgSanctumHealerMustWorriedAboutNever);
@@ -317,7 +317,7 @@ static void EventScript_ReadMindAboutGoldenStatue(void) {
 
   FieldScript_Start();
 
-  if (GameFlag_Test(FLAG_VAULT_THIEVES_JAILED) == 0) {
+  if (GameFlag_Get(FLAG_VAULT_THIEVES_JAILED) == 0) {
     FieldScript_SetMessageId(MsgSanctumWonderIfEverSeeOur);
   } else {
     FieldScript_SetMessageId(MsgSanctumChildHasAwakenedOurTeachings);
@@ -389,7 +389,7 @@ static void EventScript_ReconsiderQuest(void) {
         FieldScript_WaitFrames(120);
         Sound_PlaySong(MUS_086);
         Sound_WaitForSong();
-        Engine_GameFlagSet(FLAG_SANCTUM_QUEST_ACCEPTED);
+        GameFlag_Set(FLAG_SANCTUM_QUEST_ACCEPTED);
         Engine_ScriptRequestWarp(SANCTUM_TO_VALE_GATE);
       }
     }
@@ -461,29 +461,29 @@ s32 Sanctum_Initialize(void) {
   case SANCTUM_FROM_VAULT:
   case SANCTUM_FROM_VAULT_REVISIT:
   case SANCTUM_FROM_VAULT_INTERIORS:
-    if (GameFlag_Test(FLAG_VAULT_THIEVES_JAILED) != 0) {
+    if (GameFlag_Get(FLAG_VAULT_THIEVES_JAILED) != 0) {
       ObjectEvent_SetPosition(LOCALID_GOLD_STATUE, PIXELS(200), PIXELS(80));
     }
-    GameFlag_ClearBit(FLAG_SHOW_LOCATION_NAME);
+    GameFlag_Clear(FLAG_SHOW_LOCATION_NAME);
     break;
   case SANCTUM_FROM_VALE_ERUPTION:
     Sanctum_RestoreQuestFloor();
-    if (GameFlag_Test(FLAG_KEEP_PARTY_POSITION) == 0) {
+    if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) == 0) {
       Sanctum_RequestQuestAcceptance();
     }
     // Fall through.
   case SANCTUM_FROM_ALTIN:
   case SANCTUM_FROM_XIAN:
   case SANCTUM_FROM_BILIBIN:
-    GameFlag_ClearBit(FLAG_SHOW_LOCATION_NAME);
+    GameFlag_Clear(FLAG_SHOW_LOCATION_NAME);
     break;
   case SANCTUM_FROM_QUEST_RESTART:
     Sanctum_RestoreQuestFloor();
-    Engine_GameFlagSet(FLAG_MAP_TEMP_01);
-    if (GameFlag_Test(FLAG_KEEP_PARTY_POSITION) == 0) {
+    GameFlag_Set(FLAG_MAP_TEMP_01);
+    if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) == 0) {
       Sanctum_RequestQuestAcceptance();
     }
-    GameFlag_ClearBit(FLAG_SHOW_LOCATION_NAME);
+    GameFlag_Clear(FLAG_SHOW_LOCATION_NAME);
     break;
   }
   return 0;
@@ -505,7 +505,7 @@ static void EventScript_WarnBeforeLeaving(void) {
   FieldScript_WaitFrames(20);
   FieldScript_SetMessageId(MsgSanctumOnceStepOutsideVillageCannot);
   FieldScript_ShowMessageAndWait(LOCALID_HEALER, 0);
-  Engine_GameFlagSet(FLAG_MAP_TEMP_00);
+  GameFlag_Set(FLAG_MAP_TEMP_00);
   FieldScript_End();
 }
 
@@ -618,7 +618,7 @@ static void Sanctum_RequestQuestAcceptance(void) {
 
   FieldScript_Start();
   // A repeat visit skips the account of Sol Sanctum.
-  if (GameFlag_IsSet(FLAG_MAP_TEMP_01) != 0) {
+  if (GameFlag_Get(FLAG_MAP_TEMP_01) != 0) {
     ObjectEvent_LinkPair(LOCALID_PARTY_LEADER, LOCALID_HEALER, 0);
     ObjectEvent_FaceObjectEvent(GARET, LOCALID_PARTY_LEADER, 0);
     ObjectEvent_FaceObjectEvent(LOCALID_DORA, LOCALID_PARTY_LEADER, 0);
@@ -2145,9 +2145,9 @@ static void EventScript_TalkToHealer(void) {
   }
 
   FieldScript_Start();
-  if (GameFlag_Test(FLAG_KALAY_REACHED) != 0)
+  if (GameFlag_Get(FLAG_KALAY_REACHED) != 0)
     FieldScript_SetMessageId(MsgSanctumPathSolSanctumStillClosed);
-  else if (GameFlag_Test(FLAG_VALE_PARTY_LEFT) != 0)
+  else if (GameFlag_Get(FLAG_VALE_PARTY_LEFT) != 0)
     FieldScript_SetMessageId(MsgSanctumMyControlOverPsynergyHas);
   else
     FieldScript_SetMessageId(MsgSanctumWieldersPsynergyCalledAdeptsAdepts);
@@ -2176,7 +2176,7 @@ static void EventScript_TalkToHealerOnVisit(void) {
   switch (warpDest) {
   case SANCTUM_FROM_VAULT:
   case SANCTUM_FROM_VAULT_INTERIORS:
-    if (GameFlag_Test(FLAG_VAULT_THIEVES_JAILED) != 0) {
+    if (GameFlag_Get(FLAG_VAULT_THIEVES_JAILED) != 0) {
       FieldScript_SetMessageId(MsgSanctumWasHandFateReturnedGold);
     } else {
       FieldScript_SetMessageId(MsgSanctumWeWillHelpAnytimeAs);
@@ -2208,7 +2208,7 @@ static void EventScript_TalkAboutCurse(void) {
   }
 
   FieldScript_Start();
-  if (GameFlag_Test(FLAG_KOLIMA_CURSE_LIFTED) != 0)
+  if (GameFlag_Get(FLAG_KOLIMA_CURSE_LIFTED) != 0)
     FieldScript_SetMessageId(MsgSanctumCurseMayOverButWe);
   else
     FieldScript_SetMessageId(MsgSanctumAmStartingFeelOnlyBeginning);
@@ -2226,7 +2226,7 @@ static void EventScript_TalkAboutAltinMonsters(void) {
 
   FieldScript_Start();
   FieldScript_SetMessageId(MsgSanctumWasAfterEerieNightWhen);
-  if (GameFlag_Test(FLAG_HYDROS_STATUES_DEFEATED) != 0)
+  if (GameFlag_Get(FLAG_HYDROS_STATUES_DEFEATED) != 0)
     FieldScript_SetMessageId(MsgSanctumSavedAltinFromMonstersClearly);
   FieldScript_ShowMessageAndWait(LOCALID_HEALER, 0);
   FieldScript_End();

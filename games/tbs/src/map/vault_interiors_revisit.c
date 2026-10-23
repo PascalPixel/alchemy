@@ -264,7 +264,7 @@ static void EventScript_UnusedOfferLeftoverBones(void) {
 static void EventScript_OfferBones(void) {
   FieldScript_Start();
   ObjectEvent_LinkPair(LOCALID_GIRL_AT_THE_INN, LOCALID_PARTY_LEADER, 0);
-  if (GameFlag_IsSet(FLAG_VAULT_BONE_RECEIVED) == 0) {
+  if (GameFlag_Get(FLAG_VAULT_BONE_RECEIVED) == 0) {
     FieldScript_SetMessageId(MsgVaultHaveLotLeftoverBonesFrom);
     Script_OpenMessage(LOCALID_GIRL_AT_THE_INN, 0);
   } else {
@@ -401,7 +401,7 @@ static void EventScript_TalkToInnkeeper(void) {
 /// given, wondering whether "he" has a calcium deficiency.
 static void EventScript_ReadBoneGiverMind(void) {
   FieldScript_Start();
-  if (GameFlag_Test(FLAG_VAULT_BONE_RECEIVED) == 0) {
+  if (GameFlag_Get(FLAG_VAULT_BONE_RECEIVED) == 0) {
     FieldScript_SetMessageId(MsgVaultGeeAlwaysGetHungryWhen);
   } else {
     FieldScript_SetMessageId(MsgVaultHeReallyLikesBonesWonder);

@@ -653,8 +653,8 @@ static void EventScript_BlowAwayIvyA(void) {
   u8 *flags;
   u8 value;
 
-  FLAG_SET(FLAG_MAP_TEMP_00);
-  if (FLAG_CHECK(FLAG_MAP_TEMP_01) != 0) {
+  GameFlag_Set(FLAG_MAP_TEMP_00);
+  if (GameFlag_Get(FLAG_MAP_TEMP_01) != 0) {
     ObjectEvent_GetById(LOCALID_SMALL_PILLAR_C)->riseCounter = 0;
     ObjectEvent_GetById(LOCALID_SMALL_PILLAR_C)->collisionFlags &= 0xf7;
   } else {
@@ -672,8 +672,8 @@ static void EventScript_BlowAwayIvyB(void) {
   u8 *flags;
   u8 value;
 
-  FLAG_SET(FLAG_MAP_TEMP_01);
-  if (FLAG_CHECK(FLAG_MAP_TEMP_00) != 0) {
+  GameFlag_Set(FLAG_MAP_TEMP_01);
+  if (GameFlag_Get(FLAG_MAP_TEMP_00) != 0) {
     ObjectEvent_GetById(LOCALID_SMALL_PILLAR_C)->riseCounter = 0;
     ObjectEvent_GetById(LOCALID_SMALL_PILLAR_C)->collisionFlags &= 0xf7;
   } else {
@@ -689,7 +689,7 @@ static void EventScript_BlowAwayIvyB(void) {
 /// Reached by Whirlwind on ivy C until it is gone; sets
 /// FLAG_TUNNEL_RUINS_IVY_BLOWN_AWAY.
 static void EventScript_BlowAwayIvyC(void) {
-  FLAG_SET(FLAG_TUNNEL_RUINS_IVY_BLOWN_AWAY);
+  GameFlag_Set(FLAG_TUNNEL_RUINS_IVY_BLOWN_AWAY);
 }
 
 /// Hops west as EventScript_HopWest, except from cell (32, 50).
@@ -777,7 +777,7 @@ static void EventScript_SinkNorthwestPillar(void) {
     TunnelRuins_AnimateLoweringImpact(59, 49, 8);
     MapGrid_WaitForShakeToSettle();
     WAIT(10);
-    FLAG_SET(FLAG_TUNNEL_RUINS_NORTHWEST_PILLAR_IN_FLOOR);
+    GameFlag_Set(FLAG_TUNNEL_RUINS_NORTHWEST_PILLAR_IN_FLOOR);
   }
   SCRIPT_END();
 }
@@ -803,7 +803,7 @@ static void EventScript_FreezeNorthwestPillarPuddle(void) {
   OBJECT_ANIMATION(LOCALID_NORTHWEST_PILLAR_PUDDLE, 2);
   flags = &ObjectEvent_GetById(LOCALID_NORTHWEST_PILLAR_PUDDLE)->priorityFlags;
   *flags &= ~OBJ_EVENT_PRIORITY_UNDERFOOT;
-  FLAG_SET(FLAG_MAP_TEMP_00);
+  GameFlag_Set(FLAG_MAP_TEMP_00);
 }
 
 /// Moving the south-east sinking pillar into column 48 once Douse has soaked
@@ -826,7 +826,7 @@ static void EventScript_SinkSoutheastPillar(void) {
   SCRIPT_START();
   objectEvent = ObjectEvent_GetById(LOCALID_SOUTHEAST_SINKING_PILLAR);
   if ((objectEvent->x.fixed >> 20) == 48) {
-    if (FLAG_CHECK(FLAG_MAP_TEMP_02) != 0) {
+    if (GameFlag_Get(FLAG_MAP_TEMP_02) != 0) {
       WAIT(30);
       overlay = ObjectEvent_PrepareObject(PIXELS(770), 0, PIXELS(274), 223);
       options = &optionsStorage;
@@ -859,7 +859,7 @@ static void EventScript_SinkSoutheastPillar(void) {
       TunnelRuins_AnimateLoweringImpact(59, 45, 14);
       MapGrid_WaitForShakeToSettle();
       WAIT(10);
-      FLAG_SET(FLAG_TUNNEL_RUINS_SOUTHEAST_PILLAR_IN_FLOOR);
+      GameFlag_Set(FLAG_TUNNEL_RUINS_SOUTHEAST_PILLAR_IN_FLOOR);
     }
   }
   SCRIPT_END();
@@ -889,7 +889,7 @@ static void EventScript_DouseStartsOnSoutheastPillar(void) {
 /// Reached by Douse on the south-east sinking pillar until it is soaked; sets
 /// FLAG_MAP_TEMP_02.
 static void EventScript_DouseSoutheastPillar(void) {
-  FLAG_SET(FLAG_MAP_TEMP_02);
+  GameFlag_Set(FLAG_MAP_TEMP_02);
   EventScript_SinkSoutheastPillar();
 }
 
@@ -904,7 +904,7 @@ static void EventScript_FreezeSoutheastPillarPuddle(void) {
   OBJECT_ANIMATION(LOCALID_SOUTHEAST_PILLAR_PUDDLE, 2);
   flags = &ObjectEvent_GetById(LOCALID_SOUTHEAST_PILLAR_PUDDLE)->priorityFlags;
   *flags &= ~OBJ_EVENT_PRIORITY_UNDERFOOT;
-  FLAG_SET(FLAG_MAP_TEMP_01);
+  GameFlag_Set(FLAG_MAP_TEMP_01);
 }
 
 /// Searching the statue in TunnelRuinsGreatStatue's first room: it speaks to
@@ -916,8 +916,8 @@ static void EventScript_FreezeSoutheastPillarPuddle(void) {
 static void EventScript_ReadFirstStatue(void) {
   SCRIPT_START();
   OBJECT_ANIMATION(LOCALID_PARTY_LEADER, ANIM_STAND);
-  if (FLAG_CHECK(FLAG_VENUS_LIGHTHOUSE_FIRST_PATH) != 0 ||
-      FLAG_CHECK(FLAG_VENUS_LIGHTHOUSE_SECOND_PATH) != 0) {
+  if (GameFlag_Get(FLAG_VENUS_LIGHTHOUSE_FIRST_PATH) != 0 ||
+      GameFlag_Get(FLAG_VENUS_LIGHTHOUSE_SECOND_PATH) != 0) {
     FieldMessage_Show(MSGNO(MsgTunnelRuinsStatueSpeaksAfterAnswer), 1);
   } else {
     FieldMessage_Show(MSGNO(MsgTunnelRuinsStatueSpeaksIsaacSoulYe), 1);
@@ -951,7 +951,7 @@ static void EventScript_DouseStartsOnPillar(void) {
 
   ObjectEvent_SetActionScript(LOCALID_DOUSE_PILLAR,
                               gTunnelRuins_DouseSplashScript);
-  FLAG_SET(FLAG_MAP_TEMP_03);
+  GameFlag_Set(FLAG_MAP_TEMP_03);
   puddle = ObjectEvent_GetById(LOCALID_DOUSE_PUDDLE);
 #ifdef UBFIX
   puddle->update = TunnelRuins_PuddleFollowsPillar;
@@ -981,7 +981,7 @@ static void EventScript_FreezeDousePuddle(void) {
     *flag &= ~OBJ_EVENT_PRIORITY_UNDERFOOT;
   }
 
-  FLAG_SET(FLAG_MAP_TEMP_04);
+  GameFlag_Set(FLAG_MAP_TEMP_04);
 
   column = ObjectEvent_GetById(LOCALID_DOUSE_PUDDLE)->x.fixed;
   row = ObjectEvent_GetById(LOCALID_DOUSE_PUDDLE)->z.fixed >> 20;
@@ -1123,16 +1123,16 @@ static void EventScript_SetStoneOnBalance(void) {
   for (i = 0; i <= 2; i++) {
     if (ObjectEvent_GetById(i + LOCALID_WEST_CARRY_STONE)
                 ->sprite->image.priority == 3 &&
-        FLAG_CHECK(i + FLAG_MAP_TEMP_00) == 0) {
+        Script_GetFlag(i + FLAG_MAP_TEMP_00) == 0) {
       TunnelRuins_WaitForObjectEventToLand(
           ObjectEvent_Get(i + LOCALID_WEST_CARRY_STONE));
       ObjectEvent_SetPosition(i + LOCALID_WEST_CARRY_STONE, 0, 0);
-      FLAG_SET(i + FLAG_MAP_TEMP_00);
+      GameFlag_Set(i + FLAG_MAP_TEMP_00);
       break;
     }
     if ((ObjectEvent_GetById(i + LOCALID_WEST_CARRY_STONE)->z.fixed >> 20) ==
             9 &&
-        FLAG_CHECK(i + FLAG_MAP_TEMP_00) == 0) {
+        GameFlag_Get(i + FLAG_MAP_TEMP_00) == 0) {
       ObjectEvent_GetById(i + LOCALID_WEST_CARRY_STONE)->groundHeight = 0;
       ObjectEvent_GetById(i + LOCALID_WEST_CARRY_STONE)->velocityY = 0;
       ObjectEvent_GetById(i + LOCALID_WEST_CARRY_STONE)->targetY =
@@ -1143,7 +1143,7 @@ static void EventScript_SetStoneOnBalance(void) {
       // yet set.
       settledIndex = i;
       for (j = 0; j < i; j++) {
-        if (FLAG_CHECK(FLAG_MAP_TEMP_00 + j) == 0) {
+        if (GameFlag_Get(FLAG_MAP_TEMP_00 + j) == 0) {
           savedPosition.x.fixed =
               ObjectEvent_GetById(i + LOCALID_WEST_CARRY_STONE)->x.fixed;
           savedPosition.y.fixed =
@@ -1199,7 +1199,7 @@ static void EventScript_SetStoneOnBalance(void) {
       TunnelRuins_SettleBalance(40);
       ObjectEvent_Get(settledIndex + LOCALID_WEST_CARRY_STONE)->priorityFlags |=
           OBJ_EVENT_PRIORITY_UNDERFOOT;
-      FLAG_SET(FLAG_MAP_TEMP_00 + settledIndex);
+      GameFlag_Set(FLAG_MAP_TEMP_00 + settledIndex);
       break;
     }
   }
@@ -1223,15 +1223,15 @@ static void EventScript_MoveEastPillar(void) {
   SCRIPT_START();
 
   if ((ObjectEvent_GetById(LOCALID_EAST_PILLAR_A)->x.fixed >> 20) == 45) {
-    FLAG_SET(FLAG_TUNNEL_RUINS_EAST_PILLAR_A_PUSHED_WEST);
+    GameFlag_Set(FLAG_TUNNEL_RUINS_EAST_PILLAR_A_PUSHED_WEST);
   } else {
-    GameFlag_ClearBit(FLAG_TUNNEL_RUINS_EAST_PILLAR_A_PUSHED_WEST);
+    GameFlag_Clear(FLAG_TUNNEL_RUINS_EAST_PILLAR_A_PUSHED_WEST);
   }
 
   if ((ObjectEvent_GetById(LOCALID_EAST_PILLAR_B)->x.fixed >> 20) == 46) {
-    FLAG_SET(FLAG_TUNNEL_RUINS_EAST_PILLAR_B_PUSHED_WEST);
+    GameFlag_Set(FLAG_TUNNEL_RUINS_EAST_PILLAR_B_PUSHED_WEST);
   } else {
-    GameFlag_ClearBit(FLAG_TUNNEL_RUINS_EAST_PILLAR_B_PUSHED_WEST);
+    GameFlag_Clear(FLAG_TUNNEL_RUINS_EAST_PILLAR_B_PUSHED_WEST);
   }
 
   TunnelRuins_MarkPushPillarCells();
@@ -1354,7 +1354,7 @@ static void EventScript_MoveLadyStatue(void) {
   }
   // The door moves only when the arrangement is completed or broken.
   if (correctPositions == 5) {
-    if (FLAG_CHECK(FLAG_TUNNEL_RUINS_STATUE_DOOR_OPEN) != 0) {
+    if (Script_GetFlag(FLAG_TUNNEL_RUINS_STATUE_DOOR_OPEN) != 0) {
       SCRIPT_END();
       return;
     }
@@ -1363,13 +1363,13 @@ static void EventScript_MoveLadyStatue(void) {
     FieldCamera_MoveTo(PIXELS(472), -1, PIXELS(780), 1);
     FieldCamera_WaitForArrival();
     WAIT(30);
-    FLAG_SET(FLAG_TUNNEL_RUINS_STATUE_DOOR_OPEN);
+    GameFlag_Set(FLAG_TUNNEL_RUINS_STATUE_DOOR_OPEN);
     Sound_PlaySong(SE_DOOR_OPEN);
     MapGrid_AnimateCells(gTunnelRuins_DoorOpenSteps, 32, 46);
     MapGrid_CopyCellAttributes(24, 60, 1, 1, 32, 47);
     WAIT(40);
   } else {
-    if (FLAG_CHECK(FLAG_TUNNEL_RUINS_STATUE_DOOR_OPEN) != 0) {
+    if (Script_GetFlag(FLAG_TUNNEL_RUINS_STATUE_DOOR_OPEN) != 0) {
       WAIT(20);
       FieldCamera_SetSpeed(PIXELS(4) / 5, PIXELS(1) / 10);
       FieldCamera_MoveTo(PIXELS(472), -1, PIXELS(780), 1);
@@ -1540,7 +1540,7 @@ s32 TunnelRuins_Initialize(void) {
     switch (gGameState.warpDest) {
     case TUNNEL_RUINS_GREAT_STATUE_FROM_BABI_LIGHTHOUSE_STONE_DOOR:
     case TUNNEL_RUINS_GREAT_STATUE_STATUE_FROM_FIRST_PILLARS:
-      if (FLAG_CHECK(FLAG_VENUS_LIGHTHOUSE_FIRST_PATH)) {
+      if (GameFlag_Get(FLAG_VENUS_LIGHTHOUSE_FIRST_PATH)) {
         MapGrid_CopyCellsTo(121, 4, 74, 9, 5, 8);
         MapGrid_CopyCellsTo(18, 83, 9, 73, 3, 2);
         MapGrid_CopyCellsTo(18, 81, 9, 75, 3, 2);
@@ -1549,7 +1549,7 @@ s32 TunnelRuins_Initialize(void) {
         MapGrid_CopyCellsTo(18, 83, 11, 78, 3, 2);
         MapGrid_CopyCellsTo(18, 83, 13, 79, 3, 2);
       } else {
-        if (!FLAG_CHECK(FLAG_VENUS_LIGHTHOUSE_SECOND_PATH))
+        if (!GameFlag_Get(FLAG_VENUS_LIGHTHOUSE_SECOND_PATH))
           break;
         MapGrid_CopyCellsTo(121, 13, 74, 9, 5, 8);
         MapGrid_CopyCellsTo(18, 85, 11, 74, 3, 2);
@@ -1578,9 +1578,9 @@ s32 TunnelRuins_Initialize(void) {
     case TUNNEL_RUINS_GREAT_STATUE_COLUMNS_NORTH_FROM_FIRST_PILLARS:
     case TUNNEL_RUINS_GREAT_STATUE_COLUMNS_NORTH_FROM_SECOND_PILLARS:
     case TUNNEL_RUINS_GREAT_STATUE_COLUMNS_NORTH_FROM_SINKING_PILLARS:
-      if (FLAG_CHECK(FLAG_VENUS_LIGHTHOUSE_FIRST_PATH))
+      if (GameFlag_Get(FLAG_VENUS_LIGHTHOUSE_FIRST_PATH))
         MapGrid_CopyCells(23, 17, 1, 2, 30, 8);
-      if (FLAG_CHECK(FLAG_VENUS_LIGHTHOUSE_SECOND_PATH))
+      if (GameFlag_Get(FLAG_VENUS_LIGHTHOUSE_SECOND_PATH))
         MapGrid_CopyCells(23, 17, 1, 2, 32, 10);
       break;
     case TUNNEL_RUINS_GREAT_STATUE_SECOND_PILLARS_FROM_COLUMNS_NORTH:
@@ -1612,7 +1612,7 @@ s32 TunnelRuins_Initialize(void) {
           ObjectEvent_GetById(LOCALID_SOUTHEAST_PILLAR_PUDDLE), 0);
       ObjectGroup_ConfigureChildValue(LOCALID_NORTHWEST_PILLAR_PUDDLE, 15);
       ObjectGroup_ConfigureChildValue(LOCALID_SOUTHEAST_PILLAR_PUDDLE, 15);
-      if (FLAG_CHECK(FLAG_TUNNEL_RUINS_NORTHWEST_PILLAR_IN_FLOOR)) {
+      if (GameFlag_Get(FLAG_TUNNEL_RUINS_NORTHWEST_PILLAR_IN_FLOOR)) {
         MapGrid_CopyCellsTo(59, 8, 49, 8, 1, 3);
         MapGrid_CopyCellAttributes(51, 8, 1, 1, 49, 8);
         ObjectEvent_GetById(LOCALID_NORTHWEST_SINKING_PILLAR)->priorityFlags |=
@@ -1624,13 +1624,13 @@ s32 TunnelRuins_Initialize(void) {
             -PIXELS(16);
         OBJECT_POSITION_SET(LOCALID_NORTHWEST_PILLAR_PUDDLE, 744, 136);
       }
-      if (FLAG_CHECK(FLAG_MAP_TEMP_00)) {
+      if (GameFlag_Get(FLAG_MAP_TEMP_00)) {
         ObjectGroup_ConfigureChildValue(LOCALID_NORTHWEST_PILLAR_PUDDLE, 0);
         OBJECT_ANIMATION(LOCALID_NORTHWEST_PILLAR_PUDDLE, 5);
       }
-      if (FLAG_CHECK(FLAG_MAP_TEMP_02))
+      if (Script_GetFlag(FLAG_MAP_TEMP_02))
         OBJECT_ANIMATION(LOCALID_SOUTHEAST_SINKING_PILLAR, 2);
-      if (FLAG_CHECK(FLAG_TUNNEL_RUINS_SOUTHEAST_PILLAR_IN_FLOOR)) {
+      if (GameFlag_Get(FLAG_TUNNEL_RUINS_SOUTHEAST_PILLAR_IN_FLOOR)) {
         MapGrid_CopyCellsTo(59, 8, 45, 14, 1, 3);
         MapGrid_CopyCellAttributes(51, 8, 1, 1, 45, 14);
         ObjectEvent_GetById(LOCALID_SOUTHEAST_SINKING_PILLAR)->priorityFlags |=
@@ -1642,9 +1642,9 @@ s32 TunnelRuins_Initialize(void) {
             -PIXELS(16);
         Engine_ObjectEventSetPosition(LOCALID_SOUTHEAST_PILLAR_PUDDLE,
                                       PIXELS(776), PIXELS(232));
-        FLAG_SET(FLAG_MAP_TEMP_02);
+        GameFlag_Set(FLAG_MAP_TEMP_02);
       }
-      if (FLAG_CHECK(FLAG_MAP_TEMP_01)) {
+      if (GameFlag_Get(FLAG_MAP_TEMP_01)) {
         ObjectGroup_ConfigureChildValue(LOCALID_SOUTHEAST_PILLAR_PUDDLE, 0);
         OBJECT_ANIMATION(LOCALID_SOUTHEAST_PILLAR_PUDDLE, 5);
       }
@@ -1683,12 +1683,12 @@ s32 TunnelRuins_Initialize(void) {
       gGameState.retreatWarpDest =
           BABI_LIGHTHOUSE_ENTRY_FROM_ROAD_TO_BABI_LIGHTHOUSE;
       gGameState.retreatMap = (s32)&MapId_BabiLighthouseEntry;
-      GameFlag_ClearBit(FLAG_SHOW_LOCATION_NAME);
+      GameFlag_Clear(FLAG_SHOW_LOCATION_NAME);
       ObjectGroup_ConfigureChildValue(LOCALID_EAST_PILLAR_A, 6);
       ObjectGroup_ConfigureChildValue(LOCALID_EAST_PILLAR_B, 6);
-      if (FLAG_CHECK(FLAG_TUNNEL_RUINS_EAST_PILLAR_A_PUSHED_WEST))
+      if (GameFlag_Get(FLAG_TUNNEL_RUINS_EAST_PILLAR_A_PUSHED_WEST))
         OBJECT_POSITION_SET(LOCALID_EAST_PILLAR_A, 728, 312);
-      if (FLAG_CHECK(FLAG_TUNNEL_RUINS_EAST_PILLAR_B_PUSHED_WEST))
+      if (GameFlag_Get(FLAG_TUNNEL_RUINS_EAST_PILLAR_B_PUSHED_WEST))
         OBJECT_POSITION_SET(LOCALID_EAST_PILLAR_B, 744, 312);
       TunnelRuins_MarkPushPillarCells();
       break;
@@ -1701,7 +1701,7 @@ s32 TunnelRuins_Initialize(void) {
       ObjectGroup_ConfigureChildValue(LOCALID_DOUSE_PUDDLE, 15);
       ObjectEvent_SetSpriteFlags(ObjectEvent_GetById(LOCALID_DOUSE_PUDDLE), 0);
       ObjectEvent_GetById(LOCALID_DOUSE_PUDDLE)->motionFlags = 0;
-      if (!FLAG_CHECK(FLAG_MAP_TEMP_04))
+      if (!GameFlag_Get(FLAG_MAP_TEMP_04))
         break;
       ObjectGroup_ConfigureChildValue(LOCALID_DOUSE_PUDDLE, 0);
       OBJECT_ANIMATION(LOCALID_DOUSE_PUDDLE, 5);
@@ -1715,7 +1715,7 @@ s32 TunnelRuins_Initialize(void) {
       break;
     case TUNNEL_RUINS_LADY_STATUES_FROM_TUNNEL_RUINS_GREAT_STATUE_NORTH:
     case TUNNEL_RUINS_LADY_STATUES_BALANCE_SOUTH:
-      if (!FLAG_CHECK(FLAG_KEEP_PARTY_POSITION)) {
+      if (!GameFlag_Get(FLAG_KEEP_PARTY_POSITION)) {
         ObjectEvent_GetById(LOCALID_BALANCE_WEST)->motionFlags = 0;
         ObjectEvent_GetById(LOCALID_BALANCE_EAST)->motionFlags = 0;
         ObjectEvent_GetById(LOCALID_BALANCE_WEST)->y.fixed = -PIXELS(48);
@@ -1771,9 +1771,9 @@ s32 TunnelRuins_Initialize(void) {
         ObjectEvent_GetById(LOCALID_EAST_CARRY_STONE)->priorityFlags |=
             OBJ_EVENT_PRIORITY_UNDERFOOT;
         WAIT(2);
-        FLAG_SET(FLAG_MAP_TEMP_00);
-        FLAG_SET(FLAG_MAP_TEMP_01);
-        FLAG_SET(FLAG_MAP_TEMP_02);
+        GameFlag_Set(FLAG_MAP_TEMP_00);
+        GameFlag_Set(FLAG_MAP_TEMP_01);
+        GameFlag_Set(FLAG_MAP_TEMP_02);
       }
       TunnelRuins_SettleBalance(0);
       break;
@@ -1781,11 +1781,11 @@ s32 TunnelRuins_Initialize(void) {
     case TUNNEL_RUINS_LADY_STATUES_PATHS_NORTHWEST:
     case TUNNEL_RUINS_LADY_STATUES_PATHS_SOUTHEAST:
     case TUNNEL_RUINS_LADY_STATUES_PATHS_NORTHEAST:
-      if (FLAG_CHECK(FLAG_VENUS_LIGHTHOUSE_FIRST_PATH))
+      if (GameFlag_Get(FLAG_VENUS_LIGHTHOUSE_FIRST_PATH))
         MapGrid_CopyCells(10, 30, 1, 2, 16, 30);
-      if (FLAG_CHECK(FLAG_VENUS_LIGHTHOUSE_SECOND_PATH))
+      if (GameFlag_Get(FLAG_VENUS_LIGHTHOUSE_SECOND_PATH))
         MapGrid_CopyCells(10, 30, 1, 2, 22, 30);
-      FLAG_SET(FLAG_TUNNEL_RUINS_FOUR_PATHS_ROOM_ENTERED);
+      GameFlag_Set(FLAG_TUNNEL_RUINS_FOUR_PATHS_ROOM_ENTERED);
       break;
     case TUNNEL_RUINS_LADY_STATUES_REVEAL_STATUE_WEST:
       MapGrid_CopyCellAttributes(8, 49, 1, 1, 8, 113);
@@ -1796,7 +1796,7 @@ s32 TunnelRuins_Initialize(void) {
     case TUNNEL_RUINS_LADY_STATUES_FIVE_STATUES_NORTH:
     case TUNNEL_RUINS_LADY_STATUES_FIVE_STATUES_EAST:
       WAIT(1);
-      if (FLAG_CHECK(FLAG_TUNNEL_RUINS_STATUE_DOOR_OPEN)) {
+      if (GameFlag_Get(FLAG_TUNNEL_RUINS_STATUE_DOOR_OPEN)) {
         MapGrid_CopyCells(24, 59, 1, 2, 32, 46);
         OBJECT_POSITION_SET(LOCALID_LADY_STATUE_NORTHWEST, 408, 792);
         OBJECT_POSITION_SET(LOCALID_LADY_STATUE_NORTHEAST, 376, 792);

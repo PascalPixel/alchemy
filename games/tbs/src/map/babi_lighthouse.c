@@ -1059,7 +1059,7 @@ static void BabiLighthouse_ExplainTruthDoor(void) {
 /// Reveal at BabiLighthouseStoneDoor shows the stone door's switch, flipped one
 /// way or the other as the door stands.
 static void BabiLighthouse_ShowTruthDoorSwitch(void) {
-  if (GameFlag_Test(FLAG_BABI_LIGHTHOUSE_DOOR_OPEN) == 0) {
+  if (GameFlag_Get(FLAG_BABI_LIGHTHOUSE_DOOR_OPEN) == 0) {
     MapGrid_CopyCellsLayered(36, 78, 1, 2, 17, 78);
   } else {
     MapGrid_CopyCellsLayered(34, 78, 1, 2, 17, 78);
@@ -1075,7 +1075,7 @@ static void BabiLighthouse_HideTruthDoorSwitch(void) {
 /// The stone door's halves slide open (SE_GATE_MOVE); the first time, Iodem
 /// and Faran see it.
 static void BabiLighthouse_OpenTruthDoor(void) {
-  if (GameFlag_IsSet(FLAG_BABI_LIGHTHOUSE_DOOR_OPEN) == 0) {
+  if (Script_GetFlag(FLAG_BABI_LIGHTHOUSE_DOOR_OPEN) == 0) {
     GameFlag_Set(FLAG_BABI_LIGHTHOUSE_DOOR_OPEN);
     Sound_PlaySong(SE_GATE_MOVE);
     FieldScript_Start();
@@ -1085,7 +1085,7 @@ static void BabiLighthouse_OpenTruthDoor(void) {
     ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_RIGHT_DOOR);
     MapGrid_CopyCellAttributes(81, 14, 4, 1, 17, 14);
     FieldScript_End();
-    if (GameFlag_IsSet(FLAG_BABI_LIGHTHOUSE_DOOR_SHOWN) == 0) {
+    if (GameFlag_Get(FLAG_BABI_LIGHTHOUSE_DOOR_SHOWN) == 0) {
       BabiLighthouse_ExplainTruthDoor();
     }
   }
@@ -1094,7 +1094,7 @@ static void BabiLighthouse_OpenTruthDoor(void) {
 /// Walking through the open door: it slides shut behind the party, now on its
 /// other side.
 static void BabiLighthouse_CloseTruthDoor(void) {
-  if (GameFlag_IsSet(FLAG_BABI_LIGHTHOUSE_DOOR_OPEN) != 0) {
+  if (Script_GetFlag(FLAG_BABI_LIGHTHOUSE_DOOR_OPEN) != 0) {
     GameFlag_Clear(FLAG_BABI_LIGHTHOUSE_DOOR_OPEN);
     Sound_PlaySong(SE_GATE_MOVE);
     FieldScript_Start();
@@ -1104,7 +1104,7 @@ static void BabiLighthouse_CloseTruthDoor(void) {
     ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_RIGHT_DOOR);
     MapGrid_CopyCellAttributes(0, 14, 4, 1, 17, 14);
     FieldScript_End();
-    if (GameFlag_IsSet(FLAG_BEYOND_DOOR) != 0) {
+    if (Script_GetFlag(FLAG_BEYOND_DOOR) != 0) {
       GameFlag_Clear(FLAG_BEYOND_DOOR);
     } else {
       GameFlag_Set(FLAG_BEYOND_DOOR);
@@ -1120,7 +1120,7 @@ static void BabiLighthouse_InspectTruthDoorSwitch(void) {
 
   FieldScript_Start();
   if (work->revealActive != 0) {
-    if (GameFlag_Test(FLAG_BABI_LIGHTHOUSE_DOOR_OPEN) == 0) {
+    if (GameFlag_Get(FLAG_BABI_LIGHTHOUSE_DOOR_OPEN) == 0) {
 
       FieldMessage_Show(MsgFieldFlippedSwitch, 1);
       Sound_PlaySong(SE_155);
@@ -1265,7 +1265,7 @@ static void BabiLighthouse_OpenGrowthPassage(void) {
 
   MapGrid_CopyCellAttributes(82, 7, 1, 2, 18, 7);
   WaitFrames(1);
-  Engine_GameFlagSet(FLAG_GROWTH_PASSAGE_OPEN);
+  GameFlag_Set(FLAG_GROWTH_PASSAGE_OPEN);
 }
 
 /// Redraws the ledge cells of the Babi Lighthouse Entry, then blocks the cells
@@ -1374,14 +1374,14 @@ s32 BabiLighthouse_SetupMap(void) {
 #endif
     if (state->warpDest ==
             BABI_LIGHTHOUSE_ENTRY_FROM_TUNNEL_RUINS_LADY_STATUES_SOUTH &&
-        GameFlag_IsSet(FLAG_KEEP_PARTY_POSITION) == 0) {
+        GameFlag_Get(FLAG_KEEP_PARTY_POSITION) == 0) {
       ObjectEvent_SetPosition(LOCALID_RIGHT_PILLAR, PIXELS(312), PIXELS(328));
     }
     BabiLighthouse_RedrawLedgePillarCells();
     objectEvent = ObjectEvent_GetById(LOCALID_RIGHT_PILLAR);
     objectEvent->y.fixed =
         ObjectEvent_GetById(LOCALID_RIGHT_PILLAR)->groundHeight;
-    if (GameFlag_IsSet(FLAG_GROWTH_PASSAGE_OPEN) != 0) {
+    if (GameFlag_Get(FLAG_GROWTH_PASSAGE_OPEN) != 0) {
       Engine_ObjectEventSetAnimation(LOCALID_PLANT, 4);
       ObjectEvent_GetById(LOCALID_PLANT)->collisionFlags = 0xfe;
       BabiLighthouse_OpenGrowthPassage();
@@ -1431,7 +1431,7 @@ s32 BabiLighthouse_SetupMap(void) {
       // Both warp destinations restore the same remembered cell changes.
       // fall through
     case BABI_LIGHTHOUSE_LUFF_LOCKED_DOOR_ROOM_FROM_SOUTH_ROOM:
-      if (GameFlag_IsSet(FLAG_BABI_LIGHTHOUSE_BACK_FROM_STONE_DOOR) != 0) {
+      if (GameFlag_Get(FLAG_BABI_LIGHTHOUSE_BACK_FROM_STONE_DOOR) != 0) {
         MapGrid_CopyCellsTo(120, 7, 109, 7, 1, 3);
         MapGrid_CopyCellAttributes(45, 8, 1, 1, 45, 9);
       }
@@ -1457,7 +1457,7 @@ s32 BabiLighthouse_SetupMap(void) {
     case BABI_LIGHTHOUSE_LUFF_EAST_ROOM_FROM_WEST_ROOM_PIT_EAST:
     case BABI_LIGHTHOUSE_LUFF_SOUTH_ROOM_FROM_EAST_ROOM_PIT:
     case BABI_LIGHTHOUSE_LUFF_SOUTH_ROOM_FROM_EAST_ROOM_FALL_SOUTH:
-      if (GameFlag_IsSet(FLAG_KEEP_PARTY_POSITION) == 0) {
+      if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) == 0) {
         BabiLighthouse_LandWithParticles();
       }
       break;
@@ -1471,7 +1471,7 @@ s32 BabiLighthouse_SetupMap(void) {
         ~OBJ_EVENT_FACES_MOTION;
     ObjectEvent_SetSpeed(LOCALID_LEFT_DOOR, 0x10000, 0x8000);
     ObjectEvent_SetSpeed(LOCALID_RIGHT_DOOR, 0x10000, 0x8000);
-    if (GameFlag_IsSet(FLAG_KEEP_PARTY_POSITION) == 0) {
+    if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) == 0) {
       if (state->warpDest ==
           BABI_LIGHTHOUSE_STONE_DOOR_FROM_TUNNEL_RUINS_GREAT_STATUE) {
         GameFlag_Set(FLAG_BEYOND_DOOR);
@@ -1479,7 +1479,7 @@ s32 BabiLighthouse_SetupMap(void) {
         GameFlag_Clear(FLAG_BEYOND_DOOR);
       }
     }
-    if (GameFlag_IsSet(FLAG_BABI_LIGHTHOUSE_ASKED_TO_FOLLOW) == 0) {
+    if (GameFlag_Get(FLAG_BABI_LIGHTHOUSE_ASKED_TO_FOLLOW) == 0) {
       ObjectEvent_SetPosition(LOCALID_IODEM, -PIXELS(64), -PIXELS(64));
       ObjectEvent_SetPosition(LOCALID_WITNESS, PIXELS(280), PIXELS(296));
       ObjectEvent_SetPosition(LOCALID_DOUBTING_THE_DOOR, PIXELS(312),
@@ -1492,7 +1492,7 @@ s32 BabiLighthouse_SetupMap(void) {
       ObjectEvent_FaceDirection(LOCALID_WORRIED_FOR_SHEBA, FACING_NORTH, 0);
       ObjectEvent_FaceDirection(LOCALID_FARAN, FACING_WEST, 0);
       FieldScript_WaitFrames(5);
-    } else if (GameFlag_IsSet(FLAG_BABI_LIGHTHOUSE_DOOR_SHOWN) != 0) {
+    } else if (GameFlag_Get(FLAG_BABI_LIGHTHOUSE_DOOR_SHOWN) != 0) {
       ObjectEvent_SetPosition(LOCALID_IODEM, PIXELS(312), PIXELS(312));
       ObjectEvent_FaceDirection(LOCALID_IODEM, FACING_NORTHWEST + FACING_STEP,
                                 0);
@@ -1506,7 +1506,7 @@ s32 BabiLighthouse_SetupMap(void) {
                                 0);
       FieldScript_WaitFrames(5);
     }
-    if (GameFlag_IsSet(FLAG_BABI_LIGHTHOUSE_DOOR_OPEN) != 0) {
+    if (GameFlag_Get(FLAG_BABI_LIGHTHOUSE_DOOR_OPEN) != 0) {
       ObjectEvent_SetPosition(LOCALID_LEFT_DOOR, PIXELS(280), PIXELS(240));
       ObjectEvent_SetPosition(LOCALID_RIGHT_DOOR, PIXELS(328), PIXELS(240));
       ObjectEvent_FaceDirection(LOCALID_LEFT_DOOR, FACING_WEST, 0);
@@ -1515,7 +1515,7 @@ s32 BabiLighthouse_SetupMap(void) {
     }
     if (gGameState.warpDest ==
         BABI_LIGHTHOUSE_STONE_DOOR_FROM_BABI_LIGHTHOUSE_LUFF_EAST) {
-      if (GameFlag_IsSet(FLAG_KEEP_PARTY_POSITION) == 0) {
+      if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) == 0) {
         BabiLighthouse_LandWithParticles();
       }
     }

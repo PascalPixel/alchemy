@@ -321,7 +321,7 @@ const u32 *Xian_GetWarps(void) { return gXian_Warps; }
 /// Once Xian has heard Hsu is trapped, LOCALID_MUSCULAR_MAN_ON_DISASTERS turns
 /// to face the party.
 const struct ObjectEventTemplate *Xian_GetObjectEventTemplates(void) {
-  if (GameFlag_Test(FLAG_XIAN_HEARD_HSU_TRAPPED) != 0)
+  if (GameFlag_Get(FLAG_XIAN_HEARD_HSU_TRAPPED) != 0)
     gXian_ObjectEventTemplates[LOCALID_MUSCULAR_MAN_ON_DISASTERS -
                                LOCALID_FIRST_PLACED]
         .talkFacing = TALK_FACING_PARTY;
@@ -362,7 +362,7 @@ static void Xian_TalkToWaterCarrier(void) {
   leaderMustStepAside = 0;
   carrier = ObjectEvent_Get(LOCALID_WOMAN_CARRYING_WATER);
   carrier->update = NULL;
-  if (GameFlag_IsSet(FLAG_MAP_TEMP_00) != 0 ||
+  if (Script_GetFlag(FLAG_MAP_TEMP_00) != 0 ||
       (ObjectEvent_GetById(LOCALID_WOMAN_CARRYING_WATER)->x.fixed >> 20) <=
           19) {
     carrier = ObjectEvent_Get(LOCALID_WOMAN_CARRYING_WATER);
@@ -371,7 +371,7 @@ static void Xian_TalkToWaterCarrier(void) {
                                 LOCALID_PARTY_LEADER, 0);
     FieldScript_WaitFrames(10);
     FieldScript_SetMessageId(MsgXianNowMustGetWaterAgain);
-    if (GameFlag_IsSet(FLAG_MAP_TEMP_00) == 0) {
+    if (GameFlag_Get(FLAG_MAP_TEMP_00) == 0) {
       gFieldWork->message++;
       Script_ShowMessage(LOCALID_WOMAN_CARRYING_WATER, 0);
       ObjectEvent_GetById(LOCALID_WOMAN_CARRYING_WATER)->timer = 0;
@@ -534,7 +534,7 @@ static void Xian_TalkToKungFuStudent(void) {
   struct EffectOptions effectParams;
 
   FieldScript_Start();
-  demonstrationSeen = GameFlag_Test(FLAG_MAP_TEMP_02);
+  demonstrationSeen = GameFlag_Get(FLAG_MAP_TEMP_02);
   if (demonstrationSeen != 0) {
     ObjectMotion_SetAngleToward(LOCALID_KUNG_FU_STUDENT, LOCALID_PARTY_LEADER,
                                 0);
@@ -617,7 +617,7 @@ static void Xian_TalkToKungFuStudent(void) {
     ObjectMotion_SetVarCbAndRefresh(LOCALID_KUNG_FU_STUDENT, 2);
     FieldScript_WaitFrames(20);
     FieldScript_ShowMessageThenWait(LOCALID_KUNG_FU_STUDENT, 0, 20);
-    Engine_GameFlagSet(FLAG_MAP_TEMP_02);
+    GameFlag_Set(FLAG_MAP_TEMP_02);
     Map_PlayQueuedMusic();
     FieldScript_End();
   }
@@ -645,7 +645,7 @@ static void Xian_JumpOverSpilledWater(void) {
 
   leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   savedMotionFlags = leader->motionFlags;
-  if (GameFlag_Test(FLAG_MAP_TEMP_00) != 0) {
+  if (GameFlag_Get(FLAG_MAP_TEMP_00) != 0) {
     landing = &landingPosition;
     landing->x = (leader->x.fixed & -0x100000) + PIXELS(8);
     landing->y = leader->y.fixed;
@@ -761,11 +761,11 @@ static void Xian_StrikeTrainingTreeWithForce(void) {
   ObjectMotion_SetVarCbAndRefresh(LOCALID_KUNG_FU_STUDENT, 2);
   FieldScript_WaitFrames(10);
   FieldScript_SetMessageId(MsgXianWhaWhaHappened);
-  if (GameFlag_IsSet(FLAG_MAP_TEMP_03)) {
+  if (Script_GetFlag(FLAG_MAP_TEMP_03)) {
     gFieldWork->message++;
   }
   FieldScript_ShowMessageAndWait(LOCALID_KUNG_FU_STUDENT, 0);
-  Engine_GameFlagSet(FLAG_MAP_TEMP_03);
+  GameFlag_Set(FLAG_MAP_TEMP_03);
   Map_PlayQueuedMusic();
   FieldScript_End();
 }
@@ -830,19 +830,19 @@ s32 Xian_Initialize(void) {
   // Sanctum (XIAN_FROM_SANCTUM_WEST), the last two warp destinations, the name
   // is not shown.
   if (gGameState.warpDest >= XIAN_FROM_FUCHIN_TEMPLE_INTERIORS_FEHS_SCHOOL) {
-    GameFlag_ClearBit(FLAG_SHOW_LOCATION_NAME);
+    GameFlag_Clear(FLAG_SHOW_LOCATION_NAME);
   }
-  if (GameFlag_Test(FLAG_XIAN_HEARD_HSU_TRAPPED)) {
+  if (GameFlag_Get(FLAG_XIAN_HEARD_HSU_TRAPPED)) {
     ObjectEvent_FaceDirection(LOCALID_BOY_ON_SILK_CLOTHES, FACING_WEST, 0);
     ObjectEvent_SetPosition(LOCALID_KUNG_FU_STUDENT, PIXELS(146), PIXELS(312));
     ObjectMotion_ArmCallback(LOCALID_KUNG_FU_STUDENT, FACING_EAST, 0);
-    if (GameFlag_Test(FLAG_FEIZHI_WENT_TO_HSU)) {
+    if (GameFlag_Get(FLAG_FEIZHI_WENT_TO_HSU)) {
       Engine_ObjectEventSetPosition(LOCALID_FEIZHI, 0, 0);
     }
   }
   // Gone once she has found the road blocked (Alpine Crossing's
   // FLAG_FEIZHI_SAW_ROCKSLIDE).
-  if (GameFlag_Test(FLAG_FEIZHI_SAW_ROCKSLIDE)) {
+  if (GameFlag_Get(FLAG_FEIZHI_SAW_ROCKSLIDE)) {
     Engine_ObjectEventSetPosition(LOCALID_FEIZHI, 0, 0);
   }
   // Set the three crates up as ObjectEvent_CreateConfiguredObject sets up
@@ -859,12 +859,12 @@ s32 Xian_Initialize(void) {
         (objectEvent->priorityFlags & ~OBJ_EVENT_PRIORITY_AUTOMATIC) |
         OBJ_EVENT_PRIORITY_UNDERFOOT;
   }
-  if (GameFlag_Test(FLAG_MAP_TEMP_02)) {
+  if (GameFlag_Get(FLAG_MAP_TEMP_02)) {
     ObjectEvent_SetPosition(LOCALID_KUNG_FU_STUDENT, PIXELS(146), PIXELS(312));
     ObjectMotion_ArmCallback(LOCALID_KUNG_FU_STUDENT, FACING_EAST, 0);
   }
   // Restore the frozen puddle and callbacks when re-entering the village.
-  if (GameFlag_Test(FLAG_MAP_TEMP_01)) {
+  if (GameFlag_Get(FLAG_MAP_TEMP_01)) {
     Engine_ObjectEventSetAnimation(LOCALID_SPILLED_WATER,
                                    PUDDLE_ANIMATION_FROZEN);
     {

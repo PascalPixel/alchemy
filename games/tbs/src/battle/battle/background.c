@@ -283,7 +283,7 @@ void BattleCamera_SetRange(s32 centerX, s32 centerY, s32 offsetX, s32 offsetY,
   // Each line's BG2CNT. The plane covers lines 0 to 135, above the status
   // window; its top 16 lines are left off except while commands are chosen.
   scanline = 0;
-  if (!GameFlag_TestFar(FLAG_CHOOSING_COMMANDS)) {
+  if (!GameFlag_GetFar(FLAG_CHOOSING_COMMANDS)) {
     for (; scanline < 16; scanline++)
       *line++ = BACKGROUND_PLANE_OFF;
   }

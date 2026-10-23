@@ -434,7 +434,7 @@ static void AltmillerCave_InitializeDarkness(void) {
     s32 value = ALTMILLER_CAVE_LIGHT_STEPS;
     *slot = value;
   }
-  if (GameFlag_Test(FLAG_DARKNESS_BY_STEPS) != 0) {
+  if (GameFlag_Get(FLAG_DARKNESS_BY_STEPS) != 0) {
     {
       s16 *slot = &state->mask;
       s32 value = ALTMILLER_CAVE_STEPS_LIGHT_WININ;
@@ -491,7 +491,7 @@ static void AltmillerCave_EndReveal(void) {
   struct FieldEffectWork *effectWork =
       (struct FieldEffectWork *)gFieldEffectWork;
 
-  if (GameFlag_Test(FLAG_DARK) != 0) {
+  if (GameFlag_Get(FLAG_DARK) != 0) {
     AltmillerCave_InitializeDarkness();
     effectWork->childOption = 1;
   }
@@ -540,7 +540,7 @@ static void AltmillerCave_UpdateMovedObstacle(void) {
     objectEvent->priorityFlags = 2;
     MapGrid_CopyCellAttributes(30, 20, 1, 1, 32, 20);
 #if TBS_PATCH_1
-    Engine_GameFlagSet(FLAG_PILLAR_IN_PLACE);
+    GameFlag_Set(FLAG_PILLAR_IN_PLACE);
 #endif
   }
 }
@@ -584,7 +584,7 @@ static void AltmillerCave_FreezePuddle(void) {
       puddle->motionFlags = motionFlags;
       puddle->priorityFlags = blocked;
     }
-    Engine_GameFlagSet(FLAG_PUDDLE_FROZEN);
+    GameFlag_Set(FLAG_PUDDLE_FROZEN);
   }
 }
 
@@ -2025,12 +2025,12 @@ static void AltmillerCave_RepeatRockOrder(void) {
 /// time after meeting him: he calls the party back and says where the draught
 /// is. "Wait... The draught is... on a table behind the door."
 static void AltmillerCave_BabiCallsPartyBack(void) {
-  if (GameFlag_Test(FLAG_MET_INVISIBLE_BABI) == 0)
+  if (GameFlag_Get(FLAG_MET_INVISIBLE_BABI) == 0)
     return;
-  if (GameFlag_Test(FLAG_BABI_SAVED) != 0)
+  if (GameFlag_Get(FLAG_BABI_SAVED) != 0)
     return;
 
-  Engine_GameFlagSet(FLAG_BABI_CALLED_PARTY_BACK);
+  GameFlag_Set(FLAG_BABI_CALLED_PARTY_BACK);
   FieldScript_Start();
   FieldScript_SetMessageId(MsgAltmillerWait);
   FieldScript_ShowMessageAndWait(LOCALID_INVISIBLE_BABI, 0);
@@ -2114,24 +2114,24 @@ s32 AltmillerCave_Initialize(void) {
           ALTMILLER_CAVE_DRAUGHT_FROM_ALTMILLER_CAVE_COOKIE_CHEST;
     }
   }
-  Engine_GameFlagSet(FLAG_DARK);
-  GameFlag_Clear(FLAG_DARKNESS_BY_STEPS);
+  GameFlag_Set(FLAG_DARK);
+  Script_ClearFlag(FLAG_DARKNESS_BY_STEPS);
   if (gGameState.mapId == (s32)&MapId_AltmillerCaveEntrance) {
     if (gGameState.warpDest == ALTMILLER_CAVE_ENTRANCE_FROM_WORLD_MAP) {
-      if (!GameFlag_Test(FLAG_KEEP_PARTY_POSITION)) {
+      if (!GameFlag_Get(FLAG_KEEP_PARTY_POSITION)) {
         *(u8 *)((u32)gMapLocalState + 4) = 0;
       }
-      Engine_GameFlagSet(FLAG_DARKNESS_BY_STEPS);
+      GameFlag_Set(FLAG_DARKNESS_BY_STEPS);
     }
     if (gGameState.warpDest == ALTMILLER_CAVE_ENTRANCE_FROM_TORCH_CHAMBER) {
-      if (!GameFlag_Test(FLAG_KEEP_PARTY_POSITION)) {
+      if (!GameFlag_Get(FLAG_KEEP_PARTY_POSITION)) {
         *(u8 *)((u32)gMapLocalState + 4) = 5;
       }
-      Engine_GameFlagSet(FLAG_DARKNESS_BY_STEPS);
+      GameFlag_Set(FLAG_DARKNESS_BY_STEPS);
     }
   }
   if (gGameState.mapId == (s32)&MapId_AltmillerCaveBabi) {
-    if (GameFlag_Test(FLAG_BABI_SAVED)) {
+    if (GameFlag_Get(FLAG_BABI_SAVED)) {
       Engine_ObjectEventSetPosition(LOCALID_INVISIBLE_BABI, 0, 0);
     } else {
       objectEvent = ObjectEvent_GetById(LOCALID_INVISIBLE_BABI);
@@ -2142,9 +2142,9 @@ s32 AltmillerCave_Initialize(void) {
   }
   // Restore AltmillerCaveSquall's moved obstacles and frozen puddle.
   if (gGameState.mapId == (s32)&MapId_AltmillerCaveSquall) {
-    GameFlag_ClearBit(FLAG_DARK);
+    GameFlag_Clear(FLAG_DARK);
     AltmillerCave_RedrawObstacleFootprints();
-    if (GameFlag_Test(FLAG_PUDDLE_FROZEN)) {
+    if (GameFlag_Get(FLAG_PUDDLE_FROZEN)) {
       Engine_ObjectEventSetAnimation(LOCALID_SQUALL_ROOM_PUDDLE,
                                      PUDDLE_ANIMATION_FROZEN);
       MapGrid_CopyCellAttributes(76, 16, 1, 1, 73, 17);
@@ -2155,14 +2155,14 @@ s32 AltmillerCave_Initialize(void) {
     ObjectEvent_SetSpriteFlags(ObjectEvent_GetById(LOCALID_SQUALL_ROOM_PUDDLE),
                                0);
 #if TBS_PATCH_1
-    if (GameFlag_Test(FLAG_PILLAR_IN_PLACE)) {
+    if (GameFlag_Get(FLAG_PILLAR_IN_PLACE)) {
       MapGrid_CopyCellAttributes(30, 20, 1, 1, 32, 20);
     }
 #endif
   }
   // Rebuild the final rock puzzle from its saved phase and chosen light.
   if (gGameState.mapId == (s32)&MapId_AltmillerCaveDraught) {
-    GameFlag_ClearBit(FLAG_DARK);
+    GameFlag_Clear(FLAG_DARK);
     AltmillerCave_RedrawObstacleFootprints();
     // UB: the callbacks are stored through an s32 view of update, which keeps
     // the warp destination read below the last store.
@@ -2185,7 +2185,7 @@ s32 AltmillerCave_Initialize(void) {
     // starts the puzzle over, with the red light first.
     if (gGameState.warpDest == ALTMILLER_CAVE_DRAUGHT_ROCKS_FROM_PILLAR_CAVE) {
       Dma_Fill32(0, gAltmillerCave_LightWheel, 12);
-      if (!GameFlag_Test(FLAG_KEEP_PARTY_POSITION)) {
+      if (!GameFlag_Get(FLAG_KEEP_PARTY_POSITION)) {
         u8 *puzzleState = gMapLocalState;
 
         puzzleState[0] = 0;
@@ -2230,7 +2230,7 @@ s32 AltmillerCave_Initialize(void) {
     ObjectEvent_SetSpriteFlags(ObjectEvent_GetById(LOCALID_BLUE_ROCK), 0);
     ObjectEvent_SetSpriteFlags(ObjectEvent_GetById(LOCALID_RED_ROCK), 0);
   }
-  if (GameFlag_Test(FLAG_DARK)) {
+  if (GameFlag_Get(FLAG_DARK)) {
     AltmillerCave_InitializeDarkness();
   } else {
     gFieldWork->transition = MAP_TRANSITION(TRANSITION_WINDOW, 4);

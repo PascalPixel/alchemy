@@ -184,7 +184,7 @@ s32 ObjectScript_End(struct ObjectScriptContext *interpreter) {
 /// SC_FLAG_CHECK(f): tests game flag f.
 s32 ObjectScript_TestFlag(struct ObjectScriptContext *interpreter) {
   interpreter->conditionResult =
-      GameFlag_TestFar(interpreter->script[interpreter->cursor + 1]);
+      GameFlag_GetFar(interpreter->script[interpreter->cursor + 1]);
   interpreter->cursor += 2;
   return 1;
 }
@@ -196,15 +196,15 @@ s32 ObjectScript_TestFlag(struct ObjectScriptContext *interpreter) {
     s32 flagId;                                                                \
                                                                                \
     flagId = interpreter->script[interpreter->cursor + 1];                     \
-    interpreter->conditionResult = GameFlag_TestFar(flagId);                   \
+    interpreter->conditionResult = GameFlag_GetFar(flagId);                    \
     change(flagId);                                                            \
     interpreter->cursor += 2;                                                  \
     return 1;                                                                  \
   }
 
 /// SC_FLAG_ON(f) and SC_FLAG_OFF(f): test game flag f, then set or clear it.
-SCRIPT_DEFINE_FLAG_COMMAND(ObjectScript_SetFlagAndTest, GameFlag_SetBitFar)
-SCRIPT_DEFINE_FLAG_COMMAND(ObjectScript_ClearFlagAndTest, GameFlag_ClearBitFar)
+SCRIPT_DEFINE_FLAG_COMMAND(ObjectScript_SetFlagAndTest, GameFlag_SetFar)
+SCRIPT_DEFINE_FLAG_COMMAND(ObjectScript_ClearFlagAndTest, GameFlag_ClearFar)
 
 /// SC_FLAG_REV(f): tests game flag f, then flips it.
 s32 ObjectScript_ToggleFlagAndTest(struct ObjectScriptContext *interpreter) {
@@ -212,13 +212,13 @@ s32 ObjectScript_ToggleFlagAndTest(struct ObjectScriptContext *interpreter) {
   s32 previousFlagValue;
 
   flagId = interpreter->script[interpreter->cursor + 1];
-  previousFlagValue = GameFlag_TestFar(flagId);
+  previousFlagValue = GameFlag_GetFar(flagId);
   interpreter->conditionResult = previousFlagValue;
   // The test's low byte is 1 when the flag was set.
   if ((previousFlagValue << 0x18) == 0x01000000) {
-    GameFlag_ClearBitFar(flagId);
+    GameFlag_ClearFar(flagId);
   } else {
-    GameFlag_SetBitFar(flagId);
+    GameFlag_SetFar(flagId);
   }
   interpreter->cursor += 2;
   return 1;

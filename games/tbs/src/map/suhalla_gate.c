@@ -147,7 +147,7 @@ const struct ObjectEventTemplate *Map_GetObjectEventTemplates(void) {
     return gSuhallaGateDewObjectEventTemplates;
   }
   if (mapId == (s32)&MapId_SuhallaGateCheckpoint) {
-    if (GameFlag_Test(FLAG_BABI_SPOKE_AFTER_COLOSSO) != 0) {
+    if (GameFlag_Get(FLAG_BABI_SPOKE_AFTER_COLOSSO) != 0) {
       return gSuhallaGateCheckpointObjectEventTemplatesAfterAudience;
     }
     return gSuhallaGateCheckpointObjectEventTemplates;
@@ -182,18 +182,18 @@ const struct MapEvent *Map_GetEvents(void) {
 s32 Map_Initialize(void) {
   s32 mapId;
 
-  if (GameFlag_Test(FLAG_SUHALLA_GATE_ATTACK_SEEN)) {
+  if (GameFlag_Get(FLAG_SUHALLA_GATE_ATTACK_SEEN)) {
     gGameState.savedMap = (s32)&MapId_LunpaInteriors;
     gGameState.savedWarpDest = LUNPA_INTERIORS_FROM_SUHALLA_GATE_CHECKPOINT;
   }
   mapId = gGameState.mapId;
   if (mapId == (s32)&MapId_SuhallaGateCheckpoint) {
-    if (GameFlag_Test(FLAG_SUHALLA_GATE_SOLDIER_VANISHED))
+    if (GameFlag_Get(FLAG_SUHALLA_GATE_SOLDIER_VANISHED))
       Engine_ObjectEventSetPosition(LOCALID_VANISHING_SOLDIER, 0, 0);
 #if TBS_PATCH_3
-    else if (GameFlag_Test(FLAG_BABI_SPOKE_AFTER_COLOSSO))
+    else if (GameFlag_Get(FLAG_BABI_SPOKE_AFTER_COLOSSO))
       MapGrid_CopyCellAttributes(0, 0, 2, 1, 29, 18);
-    if (GameFlag_Test(FLAG_BABI_SPOKE_AFTER_COLOSSO)) {
+    if (GameFlag_Get(FLAG_BABI_SPOKE_AFTER_COLOSSO)) {
       MapGrid_CopyCellAttributes(0, 0, 2, 1, 8, 25);
       MapGrid_CopyCellAttributes(0, 0, 2, 1, 9, 26);
     }
@@ -201,25 +201,25 @@ s32 Map_Initialize(void) {
     // Out of the house, Retreat leads back to the side the party came in by,
     // and the map section's name is not shown again.
     if (gGameState.warpDest == SUHALLA_GATE_CHECKPOINT_FROM_LUNPA_INTERIORS) {
-      if (GameFlag_Test(FLAG_SUHALLA_GATE_ENTERED_FROM_SOUTH)) {
+      if (GameFlag_Get(FLAG_SUHALLA_GATE_ENTERED_FROM_SOUTH)) {
         gGameState.retreatMap = SUHALLA_GATE_RETREAT_MAP(mapId);
         gGameState.retreatWarpDest =
             SUHALLA_GATE_CHECKPOINT_FROM_WORLD_MAP_SOUTH;
       }
-      if (GameFlag_Test(FLAG_SUHALLA_GATE_ENTERED_FROM_EAST)) {
+      if (GameFlag_Get(FLAG_SUHALLA_GATE_ENTERED_FROM_EAST)) {
         gGameState.retreatMap = SUHALLA_GATE_RETREAT_MAP(mapId);
         gGameState.retreatWarpDest =
             SUHALLA_GATE_CHECKPOINT_FROM_WORLD_MAP_EAST;
       }
-      GameFlag_ClearBit(FLAG_SHOW_LOCATION_NAME);
+      GameFlag_Clear(FLAG_SHOW_LOCATION_NAME);
     }
     if (gGameState.warpDest == SUHALLA_GATE_CHECKPOINT_FROM_WORLD_MAP_SOUTH) {
-      Engine_GameFlagSet(FLAG_SUHALLA_GATE_ENTERED_FROM_SOUTH);
-      if (!GameFlag_Test(FLAG_BABI_SPOKE_AFTER_COLOSSO))
+      GameFlag_Set(FLAG_SUHALLA_GATE_ENTERED_FROM_SOUTH);
+      if (!GameFlag_Get(FLAG_BABI_SPOKE_AFTER_COLOSSO))
         MapGrid_CopyCellAttributes(6, 0, 2, 1, 8, 27);
     }
     if (gGameState.warpDest == SUHALLA_GATE_CHECKPOINT_FROM_WORLD_MAP_EAST)
-      Engine_GameFlagSet(FLAG_SUHALLA_GATE_ENTERED_FROM_EAST);
+      GameFlag_Set(FLAG_SUHALLA_GATE_ENTERED_FROM_EAST);
   } else if (mapId == (s32)&MapId_SuhallaGateDew) {
     Engine_ObjectEventSetAnimation(LOCALID_FIRST_SPROUT,
                                    SPROUT_ANIMATION_GROWN);
@@ -270,8 +270,8 @@ static void EventScript_LeaveForWorldMap(void) {
   s16 warpTrigger = gFieldWork->coordEvent;
 
   Sound_PlaySong(SE_MAP_EXIT);
-  GameFlag_ClearBit(FLAG_SUHALLA_GATE_ENTERED_FROM_SOUTH);
-  GameFlag_ClearBit(FLAG_SUHALLA_GATE_ENTERED_FROM_EAST);
+  GameFlag_Clear(FLAG_SUHALLA_GATE_ENTERED_FROM_SOUTH);
+  GameFlag_Clear(FLAG_SUHALLA_GATE_ENTERED_FROM_EAST);
   Engine_ScriptRequestWarp(warpTrigger);
 }
 
@@ -362,7 +362,7 @@ static void EventScript_IodemQuestionsGuards(void) {
   // has heard the wounded soldiers in Suhalla he adds that they must find
   // Sheba, then track down the monsters that did this.
   Script_AskYesNo(LOCALID_IODEM, 0);
-  if (GameFlag_IsSet(FLAG_IODEM_MET_WOUNDED_SOLDIERS) != 0) {
+  if (GameFlag_Get(FLAG_IODEM_MET_WOUNDED_SOLDIERS) != 0) {
     ObjectEvent_FaceDirection(LOCALID_IODEM, FACING_NORTH + FACING_STEP, 40);
     ObjectEvent_SetAttachedEffect(LOCALID_IODEM, ATTACHED_EFFECT_IN_FRONT |
                                                      ATTACHED_EFFECT_ONCE);
@@ -427,7 +427,7 @@ static void EventScript_IodemQuestionsGuards(void) {
 static void EventScript_TalkToEastGuard(void) {
   FieldScript_Start();
 
-  if (GameFlag_Test(FLAG_SUHALLA_GATE_ATTACK_SEEN) != 0) {
+  if (GameFlag_Get(FLAG_SUHALLA_GATE_ATTACK_SEEN) != 0) {
     FieldScript_SetMessageId(MsgSuhallaPityColossoVictor);
     FieldScript_ShowMessageAndWait(LOCALID_EAST_GUARD, 0);
   } else {

@@ -370,7 +370,7 @@ static void EventScript_InspectHumanShapedTree(void) {
 static void EventScript_ExamineTreeMan(void) {
   FieldScript_Start();
   FieldScript_SetMessageId(MsgBilibinItsTreeButAlmostLooks);
-  if (GameFlag_IsSet(FLAG_MAPSEC_TEMP_01) != 0) {
+  if (Script_GetFlag(FLAG_MAPSEC_TEMP_01) != 0) {
     gFieldWork->message++;
   }
   Script_ShowMessage(LOCALID_TREE_MAN, 0);
@@ -564,8 +564,8 @@ static void EventScript_JillGivesHardNut(void) {
   struct ObjectEvent *eastMember;
 
   leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
-  if (GameFlag_IsSet(FLAG_KOLIMA_CURSE_LIFTED) == 0 ||
-      GameFlag_IsSet(FLAG_BILIBIN_JILL_RESCUED) == 0)
+  if (GameFlag_Get(FLAG_KOLIMA_CURSE_LIFTED) == 0 ||
+      GameFlag_Get(FLAG_BILIBIN_JILL_RESCUED) == 0)
     return;
 
   FieldScript_Start();
@@ -692,7 +692,7 @@ static void Bilibin_RestoreVillageObjectEvents(void) {
   struct ObjectEvent *objectEvent;
   s16 warpDest;
 
-  if (GameFlag_IsSet(FLAG_KOLIMA_CURSE_LIFTED) != 0) {
+  if (GameFlag_Get(FLAG_KOLIMA_CURSE_LIFTED) != 0) {
     Engine_ObjectEventSetPosition(LOCALID_TREE_MAN, 0, 0);
     ObjectEvent_FaceDirection(LOCALID_OLD_MAN_ASKS_ABOUT_SOUTHEAST,
                               FACING_SOUTHEAST + FACING_STEP, 0);
@@ -712,15 +712,15 @@ static void Bilibin_RestoreVillageObjectEvents(void) {
   } else if (warpDest == BILIBIN_FROM_SANCTUM) {
     GameFlag_Clear(FLAG_SHOW_LOCATION_NAME);
   }
-  if (GameFlag_IsSet(FLAG_KEEP_PARTY_POSITION) == 0) {
+  if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) == 0) {
     warpDest = gGameState.warpDest;
     if (warpDest == BILIBIN_FROM_BILIBIN_TREASURY_EAST) {
       ObjectEvent_SetPosition(LOCALID_VILLAGE_STATUE, PIXELS(248), PIXELS(216));
     }
   }
   Bilibin_UpdateVillageStatueCells();
-  if (GameFlag_IsSet(FLAG_MCCOY_PALACE_ADMITTED) != 0 &&
-      GameFlag_IsSet(FLAG_MCCOY_PALACE_VISITED) == 0) {
+  if (GameFlag_Get(FLAG_MCCOY_PALACE_ADMITTED) != 0 &&
+      GameFlag_Get(FLAG_MCCOY_PALACE_VISITED) == 0) {
     GameFlag_Set(FLAG_MAPSEC_TEMP_04);
   }
 }
@@ -785,7 +785,7 @@ static void Bilibin_RestoreRiverObjectEvents(void) {
   jillTree = ObjectEvent_GetById(LOCALID_JILL_TREE);
   objectEvent = ObjectEvent_Get(LOCALID_BARRICADE_CRATES);
   ObjectEvent_SetSpriteFlags(objectEvent, 0);
-  populationState = GameFlag_IsSet(FLAG_KOLIMA_CURSE_LIFTED);
+  populationState = GameFlag_Get(FLAG_KOLIMA_CURSE_LIFTED);
   if (populationState != 0) {
     // The curse is lifted: the trees are gone.
     ObjectEvent_SetPosition(LOCALID_BOTTOM_TREE, 0, 0);
@@ -793,8 +793,8 @@ static void Bilibin_RestoreRiverObjectEvents(void) {
     ObjectEvent_SetPosition(LOCALID_JILL_TREE, 0, 0);
     MapGrid_CopyCellsTo(56, 15, 40, 15, 1, 2);
     MapGrid_CopyCellAttributes(26, 15, 1, 3, 10, 15);
-    if (GameFlag_IsSet(FLAG_BILIBIN_JILL_GIFT_RECEIVED) == 0) {
-      if (GameFlag_IsSet(FLAG_BILIBIN_JILL_RESCUED) == 0) {
+    if (GameFlag_Get(FLAG_BILIBIN_JILL_GIFT_RECEIVED) == 0) {
+      if (GameFlag_Get(FLAG_BILIBIN_JILL_RESCUED) == 0) {
         Engine_ObjectEventSetPosition(LOCALID_JILL, 0, 0);
         ObjectEvent_FaceDirection(LOCALID_GANG_MEMBER_EAST,
                                   FACING_NORTH + FACING_STEP, 0);
@@ -821,7 +821,7 @@ static void Bilibin_RestoreRiverObjectEvents(void) {
     // Once FLAG_SATUROS_BEATEN_AT_MERCURY is set ("They crossed the river
     // after pushing us down"), the middle tree lies on its side and Jill is in
     // the water, or on the bank where she was pulled ashore.
-    crossingState = GameFlag_IsSet(FLAG_SATUROS_BEATEN_AT_MERCURY);
+    crossingState = GameFlag_Get(FLAG_SATUROS_BEATEN_AT_MERCURY);
     if (crossingState != 0) {
       ObjectEvent_GetById(LOCALID_BOTTOM_TREE)->collisionFlags |=
           OBJ_EVENT_NEAR_PSYNERGY;
@@ -836,7 +836,7 @@ static void Bilibin_RestoreRiverObjectEvents(void) {
       ObjectEvent_SetPosition(LOCALID_MIDDLE_TREE, PIXELS(142), PIXELS(156));
       fallenTree->sprite->rotation = 0x4000;
       fallenTree->y.fixed += -PIXELS(8);
-      if (GameFlag_IsSet(FLAG_BILIBIN_JILL_RESCUED) != 0) {
+      if (GameFlag_Get(FLAG_BILIBIN_JILL_RESCUED) != 0) {
         ObjectEvent_SetPosition(LOCALID_JILL_TREE, PIXELS(132), PIXELS(186));
       } else {
         ObjectEvent_SetPosition(LOCALID_JILL_TREE, PIXELS(88), PIXELS(196));
@@ -885,7 +885,7 @@ static void Bilibin_SetUpTreasury(void) {
   Bilibin_UpdateTreasuryStatueCells();
   if (gGameState.warpDest == BILIBIN_TREASURY_UPPER_FROM_LOWER ||
       gGameState.warpDest == BILIBIN_TREASURY_FROM_BILIBIN_NORTH) {
-    if (GameFlag_Test(FLAG_KEEP_PARTY_POSITION) == 0) {
+    if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) == 0) {
       leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
       FieldScript_Start();
       leader->y.fixed = PIXELS(16);

@@ -144,7 +144,7 @@ const u32 *Map_GetWarps(void) { return gSuhallaInteriorsWarps; }
 /// Suhalla's people, joined after Babi's audience by Iodem, the wounded
 /// soldiers and the travelers the sandstorms brought.
 const struct ObjectEventTemplate *Map_GetObjectEventTemplates(void) {
-  if (GameFlag_Test(FLAG_BABI_SPOKE_AFTER_COLOSSO) != 0) {
+  if (GameFlag_Get(FLAG_BABI_SPOKE_AFTER_COLOSSO) != 0) {
     return gSuhallaInteriorsObjectEventTemplatesAfterAudience;
   }
   return gSuhallaInteriorsObjectEventTemplates;
@@ -159,7 +159,7 @@ static void EventScript_TalkToMerchant(s32 localId) {
       (ObjectEvent_GetById(LOCALID_PARTY_LEADER)->facing + 0x2000) & ~0x3fff;
   if (facing == FACING_NORTH) {
     Shop_Run(SHOP_SUHALLA, localId);
-  } else if (GameFlag_Test(FLAG_BABI_SPOKE_AFTER_COLOSSO)) {
+  } else if (GameFlag_Get(FLAG_BABI_SPOKE_AFTER_COLOSSO)) {
     s32 question = MsgSuhallaArentSurprisedFind;
     FieldScript_SetMessageId(question);
     FieldMessage_ShowAtObject(localId, 0);
@@ -185,7 +185,7 @@ static void EventScript_TalkToInnkeeper(s32 localId) {
       (ObjectEvent_GetById(LOCALID_PARTY_LEADER)->facing + 0x2000) & ~0x3fff;
   if (facing == FACING_NORTH) {
     Inn_CheckIn(INN_SUHALLA, localId);
-  } else if (GameFlag_Test(FLAG_BABI_SPOKE_AFTER_COLOSSO)) {
+  } else if (GameFlag_Get(FLAG_BABI_SPOKE_AFTER_COLOSSO)) {
     FieldScript_SetMessageId(MsgSuhallaBusyEverSince);
     FieldScript_ShowMessageAndWait(localId, 0);
   } else {
@@ -203,7 +203,7 @@ static void EventScript_TalkToHealer(s32 localId) {
       (ObjectEvent_GetById(LOCALID_PARTY_LEADER)->facing + 0x2000) & ~0x3fff;
   if (facing == FACING_NORTH) {
     Sanctum_Run(localId);
-  } else if (GameFlag_Test(FLAG_BABI_SPOKE_AFTER_COLOSSO)) {
+  } else if (GameFlag_Get(FLAG_BABI_SPOKE_AFTER_COLOSSO)) {
     FieldScript_SetMessageId(MsgSuhallaWonderWhySandstorms);
     FieldScript_ShowMessageAndWait(localId, 0);
   } else {
@@ -253,7 +253,7 @@ static void EventScript_LeaveByWarp(void) {
 static void EventScript_IodemQuestionsWoundedSoldiers(void) {
   struct ObjectEvent *leader;
   GameFlag_Set(FLAG_IODEM_MET_WOUNDED_SOLDIERS);
-  if (GameFlag_IsSet(FLAG_BABI_LIGHTHOUSE_IODEM_ARRIVED) == 0) {
+  if (GameFlag_Get(FLAG_BABI_LIGHTHOUSE_IODEM_ARRIVED) == 0) {
     Script_PlaySong(MUS_030);
     Script_Start();
     // Frame the speakers and bring the leader over before the dialogue.
@@ -530,7 +530,7 @@ static void EventScript_IodemQuestionsWoundedSoldiers(void) {
 /// The doors and inner warps, people and ovens of Suhalla's buildings and
 /// Suhalla Sanctum, before or after Babi's audience.
 const struct MapEvent *Map_GetEvents(void) {
-  if (GameFlag_Test(FLAG_BABI_SPOKE_AFTER_COLOSSO) != 0) {
+  if (GameFlag_Get(FLAG_BABI_SPOKE_AFTER_COLOSSO) != 0) {
     return gSuhallaInteriorsEventsAfterAudience;
   }
   return gSuhallaInteriorsEvents;
@@ -543,7 +543,7 @@ const struct MapEvent *Map_GetEvents(void) {
 s32 Map_Initialize(void) {
   struct ObjectEvent *objectEvent;
   if (gGameState.warpDest == SUHALLA_INTERIORS_AFTER_BABI_SPOKE)
-    Engine_GameFlagSet(FLAG_BABI_SPOKE_AFTER_COLOSSO);
+    GameFlag_Set(FLAG_BABI_SPOKE_AFTER_COLOSSO);
   gFieldWork->transition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
   gFieldWork->transitionFrames = 24;

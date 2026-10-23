@@ -64,7 +64,7 @@ static void Colosso_UpdatePathOpponent(void) {
       } else {
         x = work->gauge.finishX - 0xc0000;
       }
-      if (GameFlag_Test(FLAG_MAP_TEMP_11)) {
+      if (GameFlag_Get(FLAG_MAP_TEMP_11)) {
         fz = work->gauge.finishZ + 0x100000;
         itemLocalId = &work->gauge.finishItemLocalIdB;
       } else {
@@ -75,7 +75,7 @@ static void Colosso_UpdatePathOpponent(void) {
       objectEvent->acceleration = 0x4000;
       objectEvent->speed = 0x10000;
       Object_SetPosition(objectEvent, x, 0, fz);
-      Engine_GameFlagSet(FLAG_MAP_TEMP_11);
+      GameFlag_Set(FLAG_MAP_TEMP_11);
       ObjectEvent_SetScript(objectEvent, gColosso_OpponentFinishScript);
       return;
     }
@@ -147,7 +147,7 @@ static void Colosso_DrawGauge(void) {
   segments = gauge->segments;
   if (gauge->hold != 0) {
     gauge->level = 2;
-  } else if (GameFlag_Test(FLAG_MENU_OPEN)) {
+  } else if (GameFlag_Get(FLAG_MENU_OPEN)) {
     if (gauge->level > 0) {
       gauge->level--;
     }

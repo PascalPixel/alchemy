@@ -228,7 +228,7 @@ s32 BattleTurn_Build(struct BattleAction *request, struct BattleTurn *plan) {
   // Debug: hold R to defeat all enemies, or R+Select to defeat the whole party.
   // Only in debug mode, with FLAG_DEBUG_BATTLE_KEYS set; each unit loses
   // 0x40000000 HP, more than any unit has.
-  if (BATTLE_AUTO_MODE && GameFlag_TestFar(FLAG_DEBUG_BATTLE_KEYS) &&
+  if (BATTLE_AUTO_MODE && GameFlag_GetFar(FLAG_DEBUG_BATTLE_KEYS) &&
       (BATTLE_OPTIONS & KEY_R)) {
     s32 enemy = 1;
     s32 index;
@@ -653,7 +653,7 @@ s32 BattleTurn_Build(struct BattleAction *request, struct BattleTurn *plan) {
       if ((Battle_RandomFar() & 31) == 0)
         plan->targetMultiplier[0] = 0;
     } while (0);
-    if (GameFlag_TestFar(FLAG_DJINN_LESSON))
+    if (GameFlag_GetFar(FLAG_DJINN_LESSON))
       plan->targetMultiplier[0] = 0;
     // Critical hit: one chance in 32, or else the equipment's unleash bonus
     // in 200ths, against a 16-bit roll.

@@ -140,7 +140,7 @@ s32 PsynergyMenu_RunSteps(s32 *outMember, s32 *unused, s32 *outAction) {
   menu = gMenuWork;
   useResult = 0;
 
-  while (done == 0 && GameFlag_TestFar(FLAG_MENU_START_PRESSED) == 0) {
+  while (done == 0 && GameFlag_GetFar(FLAG_MENU_START_PRESSED) == 0) {
     switch (step) {
     // Choose whose Psynergy to look at.
     case PSYNERGY_STEP_MEMBER: {
@@ -304,7 +304,7 @@ s32 PsynergyMenu_RunSteps(s32 *outMember, s32 *unused, s32 *outAction) {
     }
   }
 
-  if (GameFlag_TestFar(FLAG_MENU_START_PRESSED) != 0) {
+  if (GameFlag_GetFar(FLAG_MENU_START_PRESSED) != 0) {
     useResult = -1;
   }
   return useResult;
@@ -406,7 +406,7 @@ s32 PsynergyMenu_SelectMember(u16 *memberIds, u16 *unused) {
         ICON_KIND_ITEM, 0, menu->shortcutWindow, 0, result);
     menu->cursorIcon->motion = ICON_HIDDEN;
   }
-  while (!GameFlag_TestFar(FLAG_MENU_START_PRESSED)) {
+  while (!GameFlag_GetFar(FLAG_MENU_START_PRESSED)) {
     if (redraw) {
       redraw = 0;
       selection = (memberCount + selection) % memberCount;
@@ -421,7 +421,7 @@ s32 PsynergyMenu_SelectMember(u16 *memberIds, u16 *unused) {
         menu->rowPositions[i] = 30;
       // Raise the chosen member.
       menu->rowPositions[selection] = 26;
-      if (!GameFlag_TestFar(FLAG_MENU_INFO_KEPT) && !shown) {
+      if (!GameFlag_GetFar(FLAG_MENU_INFO_KEPT) && !shown) {
         WindowSprite_ClearListFar((void *)menu->infoWindow);
 #if TBS_PATCH_1
         WindowSprite_RedrawSavedRectFar((void *)menu->infoWindow);
@@ -429,7 +429,7 @@ s32 PsynergyMenu_SelectMember(u16 *memberIds, u16 *unused) {
         Text_DrawWorkValueWithLabel(menu->infoWindow);
         shown = 1;
       } else {
-        GameFlag_ClearBitFar(FLAG_MENU_INFO_KEPT);
+        GameFlag_ClearFar(FLAG_MENU_INFO_KEPT);
       }
     }
     MenuCursor_Position(selection * 24 - 10, 16);
@@ -533,7 +533,7 @@ s32 PsynergyMenu_SelectTarget(s32 targetMode) {
   shown = 0;
   Unit_GetFar(menu->memberTable[menu->tabIndex[0]]);
   MenuCursor_Slide(selection * 24 - 10, 16);
-  while (!GameFlag_TestFar(FLAG_MENU_START_PRESSED)) {
+  while (!GameFlag_GetFar(FLAG_MENU_START_PRESSED)) {
     if (redraw) {
       redraw = 0;
       selection = (selection + count) % count;
@@ -550,14 +550,14 @@ s32 PsynergyMenu_SelectTarget(s32 targetMode) {
                          STATUS_PANEL_EXPERIENCE);
         PsynergyMenu_CallIconRoutineWithValue(menu,
                                               menu->memberTable[selection]);
-        if (!GameFlag_TestFar(FLAG_MENU_INFO_KEPT) && !shown) {
+        if (!GameFlag_GetFar(FLAG_MENU_INFO_KEPT) && !shown) {
           MENU_RESET_DESCRIPTION_WINDOW((void *)menu->infoWindow);
           MENU_DRAW_DESCRIPTION((menu->sideAction[0] & PSYNERGY_ABILITY_MASK) +
                                     MsgAbilityDescription,
                                 menu->infoWindow, 0, 0);
           shown = 1;
         } else {
-          GameFlag_ClearBitFar(FLAG_MENU_INFO_KEPT);
+          GameFlag_ClearFar(FLAG_MENU_INFO_KEPT);
         }
       }
     }
@@ -951,7 +951,7 @@ s32 PsynergyMenu_DrawDetailPage(struct Window *window, s32 *work,
   actionIndex += state->row;
   state->selectedIndex = actionIndex;
 
-  if (GameFlag_TestFar(FLAG_MENU_INFO_KEPT) == 0) {
+  if (GameFlag_GetFar(FLAG_MENU_INFO_KEPT) == 0) {
     MENU_RESET_DESCRIPTION_WINDOW(menu->infoWindow);
     WaitFrames(1);
 
@@ -965,9 +965,9 @@ s32 PsynergyMenu_DrawDetailPage(struct Window *window, s32 *work,
     // BUG: clears map flag 0x2ff instead of FLAG_MENU_INFO_KEPT, so a kept
     // message keeps the descriptions away until another screen clears it.
 #ifdef BUGFIX
-    GameFlag_ClearBitFar(FLAG_MENU_INFO_KEPT);
+    GameFlag_ClearFar(FLAG_MENU_INFO_KEPT);
 #else
-    GameFlag_ClearBitFar(0x2ff);
+    GameFlag_ClearFar(0x2ff);
 #endif
   }
 
@@ -1095,7 +1095,7 @@ s32 PsynergyMenu_RunList(s32 sideIndex) {
   window = menu->listWindow;
   done = 0;
 
-  while (done == 0 && GameFlag_TestFar(FLAG_MENU_START_PRESSED) == 0) {
+  while (done == 0 && GameFlag_GetFar(FLAG_MENU_START_PRESSED) == 0) {
     memberUnit = Unit_GetFar(menu->memberIds[sideIndex]);
     if (menu->mode != PSYNERGY_MODE_USE) {
       menu->psynergyCount = PsynergyMenu_CollectActions(
@@ -1110,7 +1110,7 @@ s32 PsynergyMenu_RunList(s32 sideIndex) {
     changed = 1;
     menu->sideIcon[sideIndex]->motion = ICON_SHOWN;
 
-    while (GameFlag_TestFar(FLAG_MENU_START_PRESSED) == 0) {
+    while (GameFlag_GetFar(FLAG_MENU_START_PRESSED) == 0) {
       MenuCursor_Position(PSYNERGY_LIST_CURSOR_X, state.row * 16 + 36);
 
       if (changed != 0) {
@@ -1295,7 +1295,7 @@ s32 PsynergyMenu_RunList(s32 sideIndex) {
   menu->sideRow[sideIndex] = state.selectedIndex;
   menu->selectedIndexByMember[menu->memberIds[sideIndex]] = state.selectedIndex;
   menu->sideAction[sideIndex] = result;
-  if (GameFlag_TestFar(FLAG_MENU_START_PRESSED) != 0) {
+  if (GameFlag_GetFar(FLAG_MENU_START_PRESSED) != 0) {
     result = -1;
   }
   WaitFrames(1);

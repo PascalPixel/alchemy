@@ -140,7 +140,7 @@
 //   after a battle comes back by the warp destination the party last came in
 //   by, so the condition never stops a Move.
 
-// A warp's flag word of -1 stands for no flag: GameFlag_TestFar reads it as
+// A warp's flag word of -1 stands for no flag: GameFlag_GetFar reads it as
 // flag 0xfff, which nothing sets, so the warp is always taken.
 #define WARP_FLAG_NONE 0xffffffff
 
@@ -311,11 +311,11 @@ static void EventScript_InspectFirstMinotaurRelief(void) {
 
   FieldScript_Start();
 
-  if (GameFlag_Test(FLAG_SOL_SANCTUM_FIRST_SMALL_JEWEL_SET) != 0) {
+  if (GameFlag_Get(FLAG_SOL_SANCTUM_FIRST_SMALL_JEWEL_SET) != 0) {
     FieldMessage_Show(MsgSolSanctumMinotaurReliefBothEyes, 1);
   } else {
     FieldMessage_Show(MsgSolSanctumMinotaurReliefOneEye, 1);
-    if (GameFlag_Test(FLAG_SOL_SANCTUM_FIRST_SMALL_JEWEL_FOUND) != 0) {
+    if (GameFlag_Get(FLAG_SOL_SANCTUM_FIRST_SMALL_JEWEL_FOUND) != 0) {
       u16 *menuRequest = &gFieldWork->menu;
       u16 open = 1;
       *menuRequest = open;
@@ -353,9 +353,9 @@ static void EventScript_SetFirstSmallJewel(void) {
   s32 oneCell;
   s32 reliefWidth;
 
-  if (GameFlag_IsSet(FLAG_SOL_SANCTUM_FIRST_SMALL_JEWEL_FOUND) == 0) {
+  if (GameFlag_Get(FLAG_SOL_SANCTUM_FIRST_SMALL_JEWEL_FOUND) == 0) {
   } else {
-    if (GameFlag_IsSet(FLAG_SOL_SANCTUM_FIRST_SMALL_JEWEL_SET) != 0) {
+    if (Script_GetFlag(FLAG_SOL_SANCTUM_FIRST_SMALL_JEWEL_SET) != 0) {
     } else {
       FieldScript_Start();
       Field_EndBusyAndReveal();
@@ -392,9 +392,9 @@ static void EventScript_InspectSecondMinotaurRelief(void) {
 
   FieldScript_Start();
 
-  if (GameFlag_Test(FLAG_SOL_SANCTUM_SECOND_SMALL_JEWEL_SET) != 0) {
+  if (GameFlag_Get(FLAG_SOL_SANCTUM_SECOND_SMALL_JEWEL_SET) != 0) {
     FieldMessage_Show(MsgSolSanctumMinotaurReliefBothEyes, 1);
-  } else if (GameFlag_Test(FLAG_SOL_SANCTUM_SECOND_SMALL_JEWEL_FOUND) != 0) {
+  } else if (GameFlag_Get(FLAG_SOL_SANCTUM_SECOND_SMALL_JEWEL_FOUND) != 0) {
     work = gFieldWork;
     FieldMessage_Show(MsgSolSanctumMinotaurReliefOneEye, 1);
     {
@@ -417,8 +417,8 @@ static void EventScript_InspectSecondMinotaurRelief(void) {
 static void EventScript_SetSecondSmallJewel(void) {
   s32 message;
 
-  if (GameFlag_IsSet(FLAG_SOL_SANCTUM_SECOND_SMALL_JEWEL_FOUND) != 0 &&
-      GameFlag_IsSet(FLAG_SOL_SANCTUM_SECOND_SMALL_JEWEL_SET) == 0) {
+  if (GameFlag_Get(FLAG_SOL_SANCTUM_SECOND_SMALL_JEWEL_FOUND) != 0 &&
+      Script_GetFlag(FLAG_SOL_SANCTUM_SECOND_SMALL_JEWEL_SET) == 0) {
     FieldScript_Start();
     Field_EndBusyAndReveal();
     // The eye sparkles, then the doorway opens.
@@ -449,9 +449,9 @@ static inline void SolSanctumEntrance_RecordStatueColumn(s32 column,
   GameFlag_Clear(flagBase);
   GameFlag_Clear(flagBase + 1);
   if (column == leftColumn) {
-    Engine_GameFlagSet(flagBase + 1);
+    GameFlag_Set(flagBase + 1);
   } else if (column == rightColumn) {
-    Engine_GameFlagSet(flagBase);
+    GameFlag_Set(flagBase);
   }
 }
 
@@ -483,12 +483,12 @@ static void EventScript_EastStatueMoved(void) {
     return;
   }
   column = statue->x.fixed >> 20;
-  GameFlag_Clear(FLAG_SOL_SANCTUM_EAST_STATUE_AT_EAST);
-  GameFlag_Clear(FLAG_SOL_SANCTUM_EAST_STATUE_AT_WEST);
+  Script_ClearFlag(FLAG_SOL_SANCTUM_EAST_STATUE_AT_EAST);
+  Script_ClearFlag(FLAG_SOL_SANCTUM_EAST_STATUE_AT_WEST);
   if (column == 115) {
-    Engine_GameFlagSet(FLAG_SOL_SANCTUM_EAST_STATUE_AT_EAST);
+    GameFlag_Set(FLAG_SOL_SANCTUM_EAST_STATUE_AT_EAST);
   } else if (column == 113) {
-    Engine_GameFlagSet(FLAG_SOL_SANCTUM_EAST_STATUE_AT_WEST);
+    GameFlag_Set(FLAG_SOL_SANCTUM_EAST_STATUE_AT_WEST);
   }
 }
 
@@ -678,17 +678,17 @@ static void SolSanctumEntrance_ApplyEntryState(void) {
   // Retreat does not work here.
   GameFlag_Set(FLAG_RETREAT_BLOCKED);
   gFieldWork->transition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
-  if (GameFlag_IsSet(FLAG_SOL_SANCTUM_ERUPTED) != 0) {
+  if (GameFlag_Get(FLAG_SOL_SANCTUM_ERUPTED) != 0) {
     gSolSanctumEntrance_RumbleTimer = 0;
     Task_AddCallback(SolSanctumEntrance_UpdateEruptionRumbles, 0xc80);
   }
-  if (GameFlag_IsSet(FLAG_VALE_RETURNED_FROM_MT_ALEPH) != 0) {
+  if (GameFlag_Get(FLAG_VALE_RETURNED_FROM_MT_ALEPH) != 0) {
     MapGrid_CopyCellAttributes(5, 6, 1, 1, 6, 6);
     MapGrid_CopyCellAttributes(5, 6, 1, 1, 7, 6);
     MapGrid_CopyCellAttributes(5, 6, 1, 1, 8, 6);
     MapGrid_CopyCellAttributes(0, 1, 3, 1, 6, 5);
   }
-  if (GameFlag_IsSet(FLAG_VALE_PARTY_LEFT) != 0) {
+  if (GameFlag_Get(FLAG_VALE_PARTY_LEFT) != 0) {
     ObjectEvent_SetPosition(LOCALID_WARNING_MAN, PIXELS(120), PIXELS(232));
     MapGrid_CopyCellAttributes(2, 10, 1, 1, 6, 14);
     MapGrid_CopyCellAttributes(2, 10, 1, 1, 7, 14);
@@ -711,7 +711,7 @@ static void SolSanctumEntrance_RestoreInteriorState(void) {
   s32 warpDest;
   gFieldWork->transition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
-  if (GameFlag_Test(FLAG_SOL_SANCTUM_ERUPTED) != 0) {
+  if (GameFlag_Get(FLAG_SOL_SANCTUM_ERUPTED) != 0) {
     Map_QueueMusic(SE_RUMBLE);
     MapGrid_SetShake(PIXELS(1), PIXELS(1), Q16_ONE);
     FieldEffect_InitializeSparkles();
@@ -721,7 +721,7 @@ static void SolSanctumEntrance_RestoreInteriorState(void) {
   switch (warpDest) {
   case SOL_SANCTUM_RELIEFS_FROM_SOL_SANCTUM_CORRIDOR_WEST:
   case SOL_SANCTUM_RELIEFS_CHEST_ROOM_FROM_FIRST_RELIEF_ROOM:
-    if (GameFlag_Test(FLAG_SOL_SANCTUM_FIRST_SMALL_JEWEL_SET) != 0) {
+    if (GameFlag_Get(FLAG_SOL_SANCTUM_FIRST_SMALL_JEWEL_SET) != 0) {
       MapGrid_CopyCellsTo(1, 109, 4, 81, 1, 1);
       MapGrid_CopyCellsTo(0, 70, 30, 42, 1, 1);
       MapGrid_CopyCellsTo(0, 29, 3, 1, 3, 2);
@@ -737,7 +737,7 @@ static void SolSanctumEntrance_RestoreInteriorState(void) {
   case SOL_SANCTUM_RELIEFS_FROM_SOL_ENTRANCE:
     gGameState.retreatMap = (s32)&MapId_SolSanctumReliefs;
     gGameState.retreatWarpDest = SOL_SANCTUM_RELIEFS_FROM_SOL_ENTRANCE;
-    if (GameFlag_IsSet(FLAG_SOL_SANCTUM_ENTERED) == 0)
+    if (GameFlag_Get(FLAG_SOL_SANCTUM_ENTERED) == 0)
       SolSanctumEntrance_IntroduceSanctum();
     break;
 
@@ -765,15 +765,15 @@ static void SolSanctumEntrance_RestoreInteriorState(void) {
         ObjectEvent_GetById(LOCALID_FIRST_FIXED_STATUE + 7), 0);
     ObjectEvent_SetSpriteFlags(
         ObjectEvent_GetById(LOCALID_FIRST_FIXED_STATUE + 8), 0);
-    if (GameFlag_Test(FLAG_SEARCHING_FOR_HIDDEN_PASSAGE) == 0)
+    if (GameFlag_Get(FLAG_SEARCHING_FOR_HIDDEN_PASSAGE) == 0)
       SolSanctumEntrance_KradenSuspectsHiddenPassage();
-    if (GameFlag_Test(FLAG_SOL_SANCTUM_WEST_STATUE_AT_WEST) != 0)
+    if (GameFlag_Get(FLAG_SOL_SANCTUM_WEST_STATUE_AT_WEST) != 0)
       ObjectEvent_SetPosition(LOCALID_WEST_STATUE, PIXELS(1496), PIXELS(136));
-    else if (GameFlag_IsSet(FLAG_SOL_SANCTUM_WEST_STATUE_AT_EAST) != 0)
+    else if (GameFlag_Get(FLAG_SOL_SANCTUM_WEST_STATUE_AT_EAST) != 0)
       ObjectEvent_SetPosition(LOCALID_WEST_STATUE, PIXELS(1528), PIXELS(136));
-    if (GameFlag_Test(FLAG_SOL_SANCTUM_EAST_STATUE_AT_WEST) != 0)
+    if (GameFlag_Get(FLAG_SOL_SANCTUM_EAST_STATUE_AT_WEST) != 0)
       ObjectEvent_SetPosition(LOCALID_EAST_STATUE, PIXELS(1816), PIXELS(136));
-    else if (GameFlag_Test(FLAG_SOL_SANCTUM_EAST_STATUE_AT_EAST) != 0)
+    else if (GameFlag_Get(FLAG_SOL_SANCTUM_EAST_STATUE_AT_EAST) != 0)
       ObjectEvent_SetPosition(LOCALID_EAST_STATUE, PIXELS(1848), PIXELS(136));
     break;
 
@@ -787,11 +787,11 @@ static void SolSanctumEntrance_RestoreInteriorState(void) {
     ObjectEvent_SetSpriteFlags(ObjectEvent_GetById(LOCALID_ROW_STATUE_4), 0);
     ObjectEvent_SetSpriteFlags(ObjectEvent_GetById(LOCALID_ROW_STATUE_5), 0);
     ObjectEvent_SetSpriteFlags(ObjectEvent_GetById(LOCALID_ROW_STATUE_6), 0);
-    if (GameFlag_Test(FLAG_SOL_SANCTUM_MORE_STATUES_SEEN) == 0)
+    if (GameFlag_Get(FLAG_SOL_SANCTUM_MORE_STATUES_SEEN) == 0)
       SolSanctumEntrance_KradenSeesStatuesOutOfReach();
     SolSanctumEntrance_RestoreRowStatueCells(1);
-    Engine_GameFlagSet(FLAG_MAP_TEMP_34);
-    if (GameFlag_IsSet(FLAG_SOL_SANCTUM_SECOND_SMALL_JEWEL_SET) != 0) {
+    GameFlag_Set(FLAG_MAP_TEMP_34);
+    if (GameFlag_Get(FLAG_SOL_SANCTUM_SECOND_SMALL_JEWEL_SET) != 0) {
       MapGrid_CopyCellsTo(0, 71, 100, 71, 1, 1);
       MapGrid_CopyCellsTo(122, 20, 120, 30, 1, 2);
       MapGrid_CopyCellAttributes(122, 20, 1, 2, 120, 30);
@@ -1117,7 +1117,7 @@ static void SolSanctumEntrance_KradenSuspectsHiddenPassage(void) {
   Engine_ObjectEventSetAnimation(GARET, ANIM_STAND);
   Engine_ObjectEventSetAnimation(JENNA, ANIM_STAND);
   GameFlag_Set(FLAG_SEARCHING_FOR_HIDDEN_PASSAGE);
-  GameFlag_ClearBit(FLAG_SHOW_LOCATION_NAME);
+  GameFlag_Clear(FLAG_SHOW_LOCATION_NAME);
   FieldScript_End();
 }
 
@@ -1194,13 +1194,13 @@ static void SolSanctumEntrance_RestoreRowStatueCells(s32 placeObjectEvents) {
   MapGrid_CopyCellAttributes(122, 20, 1, 1, 112, 32);
   MapGrid_CopyCellAttributes(122, 20, 1, 1, 116, 32);
   MapGrid_CopyCellAttributes(122, 20, 1, 1, 120, 32);
-  if (GameFlag_IsSet(FLAG_SOL_SANCTUM_ROW_STATUE_1_AT_WEST) != 0) {
+  if (GameFlag_Get(FLAG_SOL_SANCTUM_ROW_STATUE_1_AT_WEST) != 0) {
     MapGrid_CopyCellAttributes(121, 20, 1, 1, 100, 32);
     if (placeObjectEvents != 0) {
       ObjectEvent_SetPosition(LOCALID_ROW_STATUE_1, PIXELS(1592), PIXELS(520));
     }
   } else {
-    if (GameFlag_IsSet(FLAG_SOL_SANCTUM_ROW_STATUE_1_AT_EAST) != 0) {
+    if (GameFlag_Get(FLAG_SOL_SANCTUM_ROW_STATUE_1_AT_EAST) != 0) {
       MapGrid_CopyCellAttributes(121, 20, 1, 1, 100, 32);
       if (placeObjectEvents != 0) {
         ObjectEvent_SetPosition(LOCALID_ROW_STATUE_1, PIXELS(1624),
@@ -1208,13 +1208,13 @@ static void SolSanctumEntrance_RestoreRowStatueCells(s32 placeObjectEvents) {
       }
     }
   }
-  if (GameFlag_IsSet(FLAG_SOL_SANCTUM_ROW_STATUE_2_AT_WEST) != 0) {
+  if (GameFlag_Get(FLAG_SOL_SANCTUM_ROW_STATUE_2_AT_WEST) != 0) {
     MapGrid_CopyCellAttributes(121, 20, 1, 1, 104, 32);
     if (placeObjectEvents != 0) {
       ObjectEvent_SetPosition(LOCALID_ROW_STATUE_2, PIXELS(1656), PIXELS(520));
     }
   } else {
-    if (GameFlag_IsSet(FLAG_SOL_SANCTUM_ROW_STATUE_2_AT_EAST) != 0) {
+    if (GameFlag_Get(FLAG_SOL_SANCTUM_ROW_STATUE_2_AT_EAST) != 0) {
       MapGrid_CopyCellAttributes(121, 20, 1, 1, 104, 32);
       if (placeObjectEvents != 0) {
         ObjectEvent_SetPosition(LOCALID_ROW_STATUE_2, PIXELS(1688),
@@ -1222,13 +1222,13 @@ static void SolSanctumEntrance_RestoreRowStatueCells(s32 placeObjectEvents) {
       }
     }
   }
-  if (GameFlag_IsSet(FLAG_SOL_SANCTUM_ROW_STATUE_3_AT_WEST) != 0) {
+  if (GameFlag_Get(FLAG_SOL_SANCTUM_ROW_STATUE_3_AT_WEST) != 0) {
     MapGrid_CopyCellAttributes(121, 20, 1, 1, 108, 32);
     if (placeObjectEvents != 0) {
       ObjectEvent_SetPosition(LOCALID_ROW_STATUE_3, PIXELS(1720), PIXELS(520));
     }
   } else {
-    if (GameFlag_IsSet(FLAG_SOL_SANCTUM_ROW_STATUE_3_AT_EAST) != 0) {
+    if (GameFlag_Get(FLAG_SOL_SANCTUM_ROW_STATUE_3_AT_EAST) != 0) {
       MapGrid_CopyCellAttributes(121, 20, 1, 1, 108, 32);
       if (placeObjectEvents != 0) {
         ObjectEvent_SetPosition(LOCALID_ROW_STATUE_3, PIXELS(1752),
@@ -1236,13 +1236,13 @@ static void SolSanctumEntrance_RestoreRowStatueCells(s32 placeObjectEvents) {
       }
     }
   }
-  if (GameFlag_IsSet(FLAG_SOL_SANCTUM_ROW_STATUE_4_AT_WEST) != 0) {
+  if (GameFlag_Get(FLAG_SOL_SANCTUM_ROW_STATUE_4_AT_WEST) != 0) {
     MapGrid_CopyCellAttributes(121, 20, 1, 1, 112, 32);
     if (placeObjectEvents != 0) {
       ObjectEvent_SetPosition(LOCALID_ROW_STATUE_4, PIXELS(1784), PIXELS(520));
     }
   } else {
-    if (GameFlag_IsSet(FLAG_SOL_SANCTUM_ROW_STATUE_4_AT_EAST) != 0) {
+    if (GameFlag_Get(FLAG_SOL_SANCTUM_ROW_STATUE_4_AT_EAST) != 0) {
       MapGrid_CopyCellAttributes(121, 20, 1, 1, 112, 32);
       if (placeObjectEvents != 0) {
         ObjectEvent_SetPosition(LOCALID_ROW_STATUE_4, PIXELS(1816),
@@ -1250,13 +1250,13 @@ static void SolSanctumEntrance_RestoreRowStatueCells(s32 placeObjectEvents) {
       }
     }
   }
-  if (GameFlag_IsSet(FLAG_SOL_SANCTUM_ROW_STATUE_5_AT_WEST) != 0) {
+  if (GameFlag_Get(FLAG_SOL_SANCTUM_ROW_STATUE_5_AT_WEST) != 0) {
     MapGrid_CopyCellAttributes(121, 20, 1, 1, 116, 32);
     if (placeObjectEvents != 0) {
       ObjectEvent_SetPosition(LOCALID_ROW_STATUE_5, PIXELS(1848), PIXELS(520));
     }
   } else {
-    if (GameFlag_IsSet(FLAG_SOL_SANCTUM_ROW_STATUE_5_AT_EAST) != 0) {
+    if (GameFlag_Get(FLAG_SOL_SANCTUM_ROW_STATUE_5_AT_EAST) != 0) {
       MapGrid_CopyCellAttributes(121, 20, 1, 1, 116, 32);
       if (placeObjectEvents != 0) {
         ObjectEvent_SetPosition(LOCALID_ROW_STATUE_5, PIXELS(1880),
@@ -1264,13 +1264,13 @@ static void SolSanctumEntrance_RestoreRowStatueCells(s32 placeObjectEvents) {
       }
     }
   }
-  if (GameFlag_IsSet(FLAG_SOL_SANCTUM_ROW_STATUE_6_AT_WEST) != 0) {
+  if (GameFlag_Get(FLAG_SOL_SANCTUM_ROW_STATUE_6_AT_WEST) != 0) {
     MapGrid_CopyCellAttributes(121, 20, 1, 1, 120, 32);
     if (placeObjectEvents != 0) {
       ObjectEvent_SetPosition(LOCALID_ROW_STATUE_6, PIXELS(1912), PIXELS(520));
     }
   } else {
-    if (GameFlag_IsSet(FLAG_SOL_SANCTUM_ROW_STATUE_6_AT_EAST) != 0) {
+    if (GameFlag_Get(FLAG_SOL_SANCTUM_ROW_STATUE_6_AT_EAST) != 0) {
       MapGrid_CopyCellAttributes(121, 20, 1, 1, 120, 32);
       if (placeObjectEvents != 0) {
         ObjectEvent_SetPosition(LOCALID_ROW_STATUE_6, PIXELS(1944),

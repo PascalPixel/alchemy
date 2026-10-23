@@ -176,7 +176,7 @@ static void XianInteriors_TalkToWeaponMerchant(void) {
       leaderFacing <= FACING_NORTHEAST - 1) {
     Shop_Run(XIAN_WEAPON_STOCK, LOCALID_XIAN_WEAPON_MERCHANT);
   } else {
-    if (GameFlag_Test(FLAG_XIAN_HEARD_HSU_TRAPPED) == 0) {
+    if (GameFlag_Get(FLAG_XIAN_HEARD_HSU_TRAPPED) == 0) {
       FieldScript_SetMessageId(MsgXianXianHasMartialArtsBut);
     } else {
       FieldScript_SetMessageId(MsgXianHsusInjuryTaughtGoodLesson);
@@ -196,7 +196,7 @@ static void XianInteriors_TalkToArmorMerchant(void) {
       leaderFacing <= FACING_NORTHEAST - 1) {
     Shop_Run(XIAN_ARMOR_STOCK, LOCALID_XIAN_ARMOR_MERCHANT);
   } else {
-    if (GameFlag_Test(FLAG_XIAN_HEARD_HSU_TRAPPED) == 0) {
+    if (GameFlag_Get(FLAG_XIAN_HEARD_HSU_TRAPPED) == 0) {
       FieldScript_SetMessageId(MsgXianMartialArtistsCantUseHeavy);
     } else {
       FieldScript_SetMessageId(MsgXianKungFuMakesQuickDoes);
@@ -217,7 +217,7 @@ static void XianInteriors_TalkToItemMerchant(void) {
   if (leaderFacing >= FACING_NORTHWEST + 1 &&
       leaderFacing <= FACING_NORTHEAST - 1) {
     Shop_Run(XIAN_ITEM_STOCK, LOCALID_XIAN_ITEM_MERCHANT);
-  } else if (GameFlag_Test(FLAG_XIAN_HEARD_HSU_TRAPPED) == 0) {
+  } else if (GameFlag_Get(FLAG_XIAN_HEARD_HSU_TRAPPED) == 0) {
     FieldScript_SetMessageId(MsgXianXiansSpecialArmorNotSuited);
     FieldScript_ShowMessageAndWait(LOCALID_XIAN_ITEM_MERCHANT, 0);
   } else {
@@ -237,7 +237,7 @@ static void XianInteriors_TalkToInnkeeper(void) {
   if (leaderFacing < FACING_SOUTHEAST || leaderFacing > FACING_NORTHEAST) {
     Inn_CheckIn(XIAN_INN, LOCALID_XIAN_INNKEEPER);
   } else {
-    if (GameFlag_Test(FLAG_XIAN_HEARD_HSU_TRAPPED) == 0) {
+    if (GameFlag_Get(FLAG_XIAN_HEARD_HSU_TRAPPED) == 0) {
       FieldScript_SetMessageId(MsgXianWarriorsShouldLearnAboutTowns);
     } else {
       FieldScript_SetMessageId(MsgXianWeHaveFewCustomersThese);
@@ -316,7 +316,7 @@ s32 XianInteriors_Initialize(void) {
                                        SPRITE_CHEST);
   } else if (warpDest ==
              XIAN_INTERIORS_FROM_FUCHIN_TEMPLE_INTERIORS_FEHS_SCHOOL) {
-    GameFlag_ClearBit(FLAG_SHOW_LOCATION_NAME);
+    GameFlag_Clear(FLAG_SHOW_LOCATION_NAME);
     Engine_ObjectEventSetAnimation(LOCALID_HSU, ANIM_HSU_IN_BED);
   }
   return 0;

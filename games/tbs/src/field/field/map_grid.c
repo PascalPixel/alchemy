@@ -338,8 +338,8 @@ s32 MapGrid_LoadLayout(s32 index) {
              &REG_BG1CNT);
   // A set FLAG_KEEP_LAYER_GRAPHICS skips loading the graphics once, and is
   // cleared.
-  if (GameFlag_TestFar(FLAG_KEEP_LAYER_GRAPHICS) != 0) {
-    GameFlag_ClearBitFar(FLAG_KEEP_LAYER_GRAPHICS);
+  if (GameFlag_GetFar(FLAG_KEEP_LAYER_GRAPHICS) != 0) {
+    GameFlag_ClearFar(FLAG_KEEP_LAYER_GRAPHICS);
   } else {
     // One 16 KB buffer takes each resource in turn: the palette (0x1c0
     // bytes, 14 of the 16 BG palettes), the three 16 KB tilesets, and

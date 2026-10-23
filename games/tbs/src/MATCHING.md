@@ -427,6 +427,15 @@ come down to how a struct's member is addressed.
   table, which sits in the middle of `.data`.
 - A command of `script.h` and the service it names are interchangeable; each
   site keeps the one it matches with.
+- A game flag is tested, set or cleared by a direct call
+  (`GameFlag_Get`, `GameFlag_Set`, `GameFlag_Clear`) or through the script
+  layer's inline of the same verb (`Script_GetFlag`, `Script_SetFlag`,
+  `Script_ClearFlag`), each where it matches. An inline call's argument is a
+  pseudo of its own, so a flag number used twice is loaded twice; called
+  directly, the number is kept in a callee-saved register (Bilibin's chef,
+  `EventScript_TalkToBusyChef`). Imil's and Sol Sanctum's Psynergy Stone
+  room's calls of `GameFlag_Set` compile only against a `void` declaration and
+  call it as `Engine_GameFlagSet` (`script_layer.h`).
 
 ### Windows
 

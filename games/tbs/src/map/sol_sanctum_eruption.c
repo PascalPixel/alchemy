@@ -780,7 +780,7 @@ static void SolSanctumEruption_StepEmbers(void) {
     angle = Math_RemainderUnsigned(Engine_RandomNext(), 0xffff);
     ember = ObjectEvent_GetById(emberIndex + 16);
     if (gEmberState[emberIndex] == 0) {
-      if (GameFlag_Test(FLAG_MAP_TEMP_46) == 0)
+      if (GameFlag_Get(FLAG_MAP_TEMP_46) == 0)
         Sound_PlaySong(SE_246);
       gEmberState[emberIndex] = 1;
       ember->motionFlags = 0;

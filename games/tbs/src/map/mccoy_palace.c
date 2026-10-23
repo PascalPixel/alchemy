@@ -223,7 +223,7 @@ const struct ObjectEventTemplate *Map_GetObjectEventTemplates(void) {
     templates = gMcCoyPalaceObjectEventTemplates;
     Map_AssignViewFlags(templates);
 
-    if (GameFlag_Test(FLAG_MCCOY_PALACE_REWARD_TAKEN) != 0) {
+    if (GameFlag_Get(FLAG_MCCOY_PALACE_REWARD_TAKEN) != 0) {
       gMcCoyPalaceObjectEventTemplates[LOCALID_VILLAGER_IN_MILADYS_NIGHTGOWN -
                                        LOCALID_FIRST_PLACED]
           .talkFacing = TALK_FACING_KEEP;
@@ -287,7 +287,7 @@ static void EventScript_TalkToWomanInMiladysNightgown(void) {
 static void EventScript_TalkToOldManPraisingTheWarriors(void) {
   FieldScript_Start();
   FieldScript_SetMessageId(MsgBilibinFineWarrior);
-  if (GameFlag_IsSet(FLAG_OLD_MAN_HAS_PRAISED) != 0) {
+  if (Script_GetFlag(FLAG_OLD_MAN_HAS_PRAISED) != 0) {
     FieldScript_SetMessageId(MsgBilibinItsVeryRecklessForSuch);
   }
   Script_ShowMessage(LOCALID_OLD_MAN_PRAISING_THE_WARRIORS, 0);
@@ -313,13 +313,13 @@ static void EventScript_TalkToSoldierWatchingKolima(void) {
 static void EventScript_TalkToSoldierShowingTheReward(void) {
   FieldScript_Start();
 
-  if (GameFlag_Test(FLAG_CHOOSING_REWARD) != 0) {
+  if (GameFlag_Get(FLAG_CHOOSING_REWARD) != 0) {
     FieldScript_SetMessageId(MsgBilibinMayChooseOnlyOneItem);
-  } else if (GameFlag_Test(FLAG_MCCOY_PALACE_REWARD_TAKEN) != 0) {
+  } else if (GameFlag_Get(FLAG_MCCOY_PALACE_REWARD_TAKEN) != 0) {
     FieldScript_SetMessageId(MsgBilibinRewardReceivedWasIndeedGreatest);
   } else {
     FieldScript_SetMessageId(MsgBilibinDoThinkTheseBilibinsGreat);
-    if (GameFlag_Test(0x84d) != 0) {
+    if (GameFlag_Get(0x84d) != 0) {
       gFieldWork->message++;
     }
   }
@@ -335,7 +335,7 @@ static void EventScript_TalkToSoldierShowingTheReward(void) {
 static void EventScript_ReadOldMansThoughtsOnTheWarriors(void) {
   FieldScript_Start();
   FieldScript_SetMessageId(MsgBilibinSometimesWeNeedChildrenRemind);
-  if (GameFlag_IsSet(FLAG_OLD_MAN_THOUGHTS_READ) != 0) {
+  if (Script_GetFlag(FLAG_OLD_MAN_THOUGHTS_READ) != 0) {
     FieldScript_SetMessageId(MsgBilibinLookedVeryCourageousWalkingToward);
   }
   Script_ShowMessage(LOCALID_OLD_MAN_PRAISING_THE_WARRIORS, 0);
@@ -348,13 +348,13 @@ static void EventScript_ReadOldMansThoughtsOnTheWarriors(void) {
 static void EventScript_ReadRewardSoldiersThoughts(void) {
   FieldScript_Start();
 
-  if (GameFlag_Test(FLAG_CHOOSING_REWARD) != 0) {
+  if (GameFlag_Get(FLAG_CHOOSING_REWARD) != 0) {
     FieldScript_SetMessageId(MsgBilibinNonethelessIfYourLuckSour);
-  } else if (GameFlag_Test(FLAG_KOLIMA_CURSE_LIFTED) == 0) {
+  } else if (GameFlag_Get(FLAG_KOLIMA_CURSE_LIFTED) == 0) {
     FieldScript_SetMessageId(MsgBilibinGoodTreasureIfGetTurned);
   } else {
     FieldScript_SetMessageId(MsgBilibinWeReallyGivingOurTreasure);
-    if (GameFlag_Test(FLAG_MCCOY_PALACE_REWARD_TAKEN) != 0) {
+    if (GameFlag_Get(FLAG_MCCOY_PALACE_REWARD_TAKEN) != 0) {
       FieldScript_SetMessageId(MsgBilibinGotPrettyNiceRewardBut);
     }
   }
@@ -373,7 +373,7 @@ static void EventScript_WalkThroughDoor(void) {
   work = gFieldWork;
   hideDoorLayers = 0;
   if (work->coordEvent == 9) {
-    if (GameFlag_Test(FLAG_MCCOYS_DOOR_OPEN) == 0) {
+    if (GameFlag_Get(FLAG_MCCOYS_DOOR_OPEN) == 0) {
       Sound_PlaySong(SE_188);
       hideDoorLayers = 1;
     }
@@ -417,7 +417,7 @@ static void McCoyPalace_ShowChestLocked(void) {
 /// Searching a reward chest after the reward: the chosen one is empty, the
 /// others locked.
 static void McCoyPalace_ShowUnavailableChest(s32 chestFlag) {
-  if (GameFlag_Test(chestFlag) != 0) {
+  if (GameFlag_Get(chestFlag) != 0) {
     McCoyPalace_ShowChestEmpty();
   } else {
     McCoyPalace_ShowChestLocked();
@@ -427,7 +427,7 @@ static void McCoyPalace_ShowUnavailableChest(s32 chestFlag) {
 /// McCoy's Palace, the treasure room: searching the first reward chest gives
 /// a Vial, while no reward is taken.
 static void EventScript_SearchVialChest(void) {
-  if (GameFlag_Test(FLAG_MCCOY_PALACE_REWARD_TAKEN) != 0) {
+  if (GameFlag_Get(FLAG_MCCOY_PALACE_REWARD_TAKEN) != 0) {
     McCoyPalace_ShowUnavailableChest(FLAG_TOOK_VIAL);
   } else {
     McCoyPalace_ClaimReward(LOCALID_VIAL_CHEST, ITEM_VIAL, FLAG_TOOK_VIAL);
@@ -437,7 +437,7 @@ static void EventScript_SearchVialChest(void) {
 /// McCoy's Palace, the treasure room: searching the second reward chest gives
 /// a Potion, while no reward is taken.
 static void EventScript_SearchPotionChest(void) {
-  if (GameFlag_Test(FLAG_MCCOY_PALACE_REWARD_TAKEN) != 0) {
+  if (GameFlag_Get(FLAG_MCCOY_PALACE_REWARD_TAKEN) != 0) {
     McCoyPalace_ShowUnavailableChest(FLAG_TOOK_POTION);
   } else {
     McCoyPalace_ClaimReward(LOCALID_POTION_CHEST, ITEM_POTION,
@@ -448,7 +448,7 @@ static void EventScript_SearchPotionChest(void) {
 /// McCoy's Palace, the treasure room: searching the third reward chest gives
 /// a Psy Crystal, while no reward is taken.
 static void EventScript_SearchPsyCrystalChest(void) {
-  if (GameFlag_Test(FLAG_MCCOY_PALACE_REWARD_TAKEN) != 0) {
+  if (GameFlag_Get(FLAG_MCCOY_PALACE_REWARD_TAKEN) != 0) {
     McCoyPalace_ShowUnavailableChest(FLAG_TOOK_PSY_CRYSTAL);
   } else {
     McCoyPalace_ClaimReward(LOCALID_PSY_CRYSTAL_CHEST, ITEM_PSY_CRYSTAL,
@@ -459,7 +459,7 @@ static void EventScript_SearchPsyCrystalChest(void) {
 /// McCoy's Palace, the treasure room: searching the fourth reward chest gives
 /// a Water of Life, while no reward is taken.
 static void EventScript_SearchWaterOfLifeChest(void) {
-  if (GameFlag_Test(FLAG_MCCOY_PALACE_REWARD_TAKEN) != 0) {
+  if (GameFlag_Get(FLAG_MCCOY_PALACE_REWARD_TAKEN) != 0) {
     McCoyPalace_ShowUnavailableChest(FLAG_TOOK_WATER_OF_LIFE);
   } else {
     McCoyPalace_ClaimReward(LOCALID_WATER_OF_LIFE_CHEST, ITEM_WATER_OF_LIFE,
@@ -480,10 +480,10 @@ static void McCoyPalace_ClaimReward(s32 chestLocalId, s32 itemId,
 
   if (PartyInventory_GiveItem(itemId, 0) != -1) {
     Engine_ObjectEventSetAnimation(chestLocalId, CHEST_ANIMATION_OPEN_EMPTY);
-    Engine_GameFlagSet(FLAG_MCCOY_PALACE_REWARD_TAKEN);
-    Engine_GameFlagSet(chestFlag);
-    GameFlag_ClearBit(FLAG_REWARD_OFFERED);
-    GameFlag_ClearBit(FLAG_CHOOSING_REWARD);
+    GameFlag_Set(FLAG_MCCOY_PALACE_REWARD_TAKEN);
+    GameFlag_Set(chestFlag);
+    GameFlag_Clear(FLAG_REWARD_OFFERED);
+    GameFlag_Clear(FLAG_CHOOSING_REWARD);
   } else {
     Sound_PlaySong(SE_125);
     Engine_ObjectEventSetAnimation(chestLocalId, CHEST_ANIMATION_PEEK_AND_SHUT);
@@ -497,8 +497,8 @@ static void McCoyPalace_ClaimReward(s32 chestLocalId, s32 itemId,
 /// the captain walks the leader back. "Please take your reward before your
 /// depart!"
 static void EventScript_CaptainAsksPartyToChoose(void) {
-  if (GameFlag_IsSet(FLAG_MCCOY_PALACE_REWARD_TAKEN) == 0) {
-    if (GameFlag_Test(FLAG_REWARD_OFFERED) != 0) {
+  if (GameFlag_Get(FLAG_MCCOY_PALACE_REWARD_TAKEN) == 0) {
+    if (GameFlag_Get(FLAG_REWARD_OFFERED) != 0) {
       FieldScript_Start();
       ObjectEvent_ShowEmote(LOCALID_CAPTAIN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION,
                             0);
@@ -521,7 +521,7 @@ static void EventScript_CaptainAsksPartyToChoose(void) {
 /// captain sees the party off. "You are always welcome in the palace of Lord
 /// McCoy."
 static void EventScript_CaptainSeesPartyOff(void) {
-  if (GameFlag_IsSet(FLAG_MCCOY_PALACE_REWARD_TAKEN) != 0) {
+  if (GameFlag_Get(FLAG_MCCOY_PALACE_REWARD_TAKEN) != 0) {
     FieldScript_Start();
     ObjectEvent_FaceObjectEvent(LOCALID_PARTY_LEADER, LOCALID_CAPTAIN, 0);
     ObjectEvent_SetSpeed(LOCALID_CAPTAIN, PIXELS(3) / 5, PIXELS(3) / 10);
@@ -574,27 +574,27 @@ s32 Map_Initialize(void) {
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
   TilesetAnim_Pause(1);
   TilesetAnim_Pause(2);
-  Engine_GameFlagSet(FLAG_MCCOY_PALACE_VISITED);
-  if (GameFlag_Test(FLAG_KEEP_PARTY_POSITION) != 0) {
-    GameFlag_ClearBit(FLAG_MCCOYS_DOOR_OPEN);
+  GameFlag_Set(FLAG_MCCOY_PALACE_VISITED);
+  if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) != 0) {
+    GameFlag_Clear(FLAG_MCCOYS_DOOR_OPEN);
   }
   // A first audience and a return visit have different greetings.
-  if (GameFlag_Test(FLAG_MCCOY_PALACE_BARRICADE_NEEDS_NO_KEY) == 0 &&
-      GameFlag_Test(FLAG_KOLIMA_CURSE_LIFTED) == 0) {
+  if (GameFlag_Get(FLAG_MCCOY_PALACE_BARRICADE_NEEDS_NO_KEY) == 0 &&
+      GameFlag_Get(FLAG_KOLIMA_CURSE_LIFTED) == 0) {
     if (gGameState.warpDest == MCCOY_PALACE_FROM_MCCOY_PALACE_GROUNDS_EAST) {
       EventScript_AudienceWithMcCoy();
     } else if (gGameState.warpDest ==
                    MCCOY_PALACE_ENTRANCE_ROOM_FROM_MCCOYS_ROOM &&
-               GameFlag_Test(FLAG_CAPTAIN_SEEING_PARTY_OUT) != 0) {
+               GameFlag_Get(FLAG_CAPTAIN_SEEING_PARTY_OUT) != 0) {
       EventScript_CaptainHintsAtBarricade();
     }
   } else {
-    rewardTaken = GameFlag_Test(FLAG_MCCOY_PALACE_REWARD_TAKEN);
+    rewardTaken = GameFlag_Get(FLAG_MCCOY_PALACE_REWARD_TAKEN);
     if (rewardTaken != 0) {
     } else {
       if (gGameState.warpDest == MCCOY_PALACE_FROM_MCCOY_PALACE_GROUNDS_EAST) {
-        if (GameFlag_Test(FLAG_MCCOY_PALACE_PARTY_REWARDED) == 0) {
-          curseLifted = GameFlag_Test(FLAG_KOLIMA_CURSE_LIFTED);
+        if (GameFlag_Get(FLAG_MCCOY_PALACE_PARTY_REWARDED) == 0) {
+          curseLifted = GameFlag_Get(FLAG_KOLIMA_CURSE_LIFTED);
           if (curseLifted != 0) {
             EventScript_McCoyRewardsParty();
           }
@@ -603,8 +603,8 @@ s32 Map_Initialize(void) {
         // Restore the displayed chest row after reloading the treasure room.
         if (gGameState.warpDest ==
             MCCOY_PALACE_TREASURE_ROOM_FROM_ENTRANCE_ROOM) {
-          if (GameFlag_Test(FLAG_REWARD_OFFERED) != 0) {
-            if (GameFlag_Test(FLAG_KEEP_PARTY_POSITION) != 0) {
+          if (GameFlag_Get(FLAG_REWARD_OFFERED) != 0) {
+            if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) != 0) {
               McCoyPalace_OpenRewardChestRow();
               McCoyPalace_PositionRewardChests();
               chest = ObjectEvent_GetById(LOCALID_VIAL_CHEST);
@@ -670,7 +670,7 @@ static void EventScript_AudienceWithMcCoy(void) {
   FieldCamera_MoveTo(PIXELS(894), -1, PIXELS(664), 0);
   WaitFrames(1);
   Engine_ObjectEventSetPosition(LOCALID_PARTY_LEADER, 0, 0);
-  if (GameFlag_IsSet(FLAG_MCCOY_PALACE_JOB_REFUSED) != 0) {
+  if (Script_GetFlag(FLAG_MCCOY_PALACE_JOB_REFUSED) != 0) {
     FieldCamera_MoveTo(PIXELS(894), -1, PIXELS(698), 0);
     ObjectEvent_SetPosition(LOCALID_CAPTAIN, PIXELS(876), PIXELS(634));
     ObjectEvent_FaceDirection(LOCALID_CAPTAIN, FACING_SOUTHEAST + FACING_STEP,
@@ -683,7 +683,7 @@ static void EventScript_AudienceWithMcCoy(void) {
   gFieldWork->transitionFrames = 40;
   FieldScript_StartScreenTransition();
   FieldScript_WaitTransitionFrames();
-  if (GameFlag_Test(FLAG_MCCOY_PALACE_JOB_REFUSED) == 0) {
+  if (GameFlag_Get(FLAG_MCCOY_PALACE_JOB_REFUSED) == 0) {
     FieldScript_WaitFrames(80);
     ObjectEvent_SetPosition(LOCALID_CAPTAIN, PIXELS(894), PIXELS(798));
     FieldCamera_SetSpeed(PIXELS(3) / 5, PIXELS(3) / 40);
@@ -748,7 +748,7 @@ static void EventScript_AudienceWithMcCoy(void) {
       Engine_ObjectEventSetPosition(IVAN, objectEvent->x.fixed,
                                     objectEvent->z.fixed);
     }
-    if (GameFlag_Test(FLAG_IN_PARTY(MIA)) != 0) {
+    if (GameFlag_Get(FLAG_IN_PARTY(MIA)) != 0) {
       objectEvent = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
       if (objectEvent != 0) {
         Engine_ObjectEventSetPosition(MIA, objectEvent->x.fixed,
@@ -758,7 +758,7 @@ static void EventScript_AudienceWithMcCoy(void) {
     McCoyPalace_PrepareCompanionApproach();
     ObjectEvent_SetDestinationOffset(GARET, -16, 16);
     ObjectMotion_OffsetPositionAndResetMotion(IVAN, 16, 16);
-    if (GameFlag_Test(FLAG_IN_PARTY(MIA)) != 0) {
+    if (GameFlag_Get(FLAG_IN_PARTY(MIA)) != 0) {
       ObjectMotion_OffsetPositionAndResetMotion(MIA, 32, 16);
     }
     ObjectMotion_CommitCurrentPositionAndActivate(IVAN);
@@ -823,7 +823,7 @@ static void EventScript_AudienceWithMcCoy(void) {
       ObjectMotion_ResetAndSetPosition(IVAN, objectEvent->x.part.pixel,
                                        objectEvent->z.part.pixel);
     }
-    if (GameFlag_Test(FLAG_IN_PARTY(MIA)) != 0) {
+    if (GameFlag_Get(FLAG_IN_PARTY(MIA)) != 0) {
       Engine_ObjectEventSetAnimation(MIA, ANIM_WALK);
       objectEvent = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
       if (objectEvent != 0) {
@@ -835,7 +835,7 @@ static void EventScript_AudienceWithMcCoy(void) {
     Engine_ObjectEventSetPosition(GARET, 0, 0);
     Engine_ObjectEventSetPosition(IVAN, 0, 0);
     ObjectEvent_SetPosition(MIA, 0, 0);
-    Engine_GameFlagSet(FLAG_MCCOY_PALACE_JOB_REFUSED);
+    GameFlag_Set(FLAG_MCCOY_PALACE_JOB_REFUSED);
     ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(1), PIXELS(1) / 2);
     ObjectEvent_WalkToAndWait(LOCALID_PARTY_LEADER, 894, 752);
     gFieldWork->transitionFrames = 16;
@@ -860,7 +860,7 @@ static void EventScript_AudienceWithMcCoy(void) {
     Engine_ObjectEventSetPosition(IVAN, objectEvent->x.fixed,
                                   objectEvent->z.fixed);
   }
-  if (GameFlag_Test(FLAG_IN_PARTY(MIA)) != 0) {
+  if (GameFlag_Get(FLAG_IN_PARTY(MIA)) != 0) {
     objectEvent = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
     if (objectEvent != 0) {
       Engine_ObjectEventSetPosition(MIA, objectEvent->x.fixed,
@@ -870,7 +870,7 @@ static void EventScript_AudienceWithMcCoy(void) {
   McCoyPalace_PrepareCompanionApproach();
   ObjectEvent_SetDestinationOffset(GARET, -16, 16);
   ObjectMotion_OffsetPositionAndResetMotion(IVAN, 16, 16);
-  if (GameFlag_Test(FLAG_IN_PARTY(MIA)) != 0) {
+  if (GameFlag_Get(FLAG_IN_PARTY(MIA)) != 0) {
     ObjectMotion_OffsetPositionAndResetMotion(MIA, 32, 16);
   }
   ObjectMotion_CommitCurrentPositionAndActivate(IVAN);
@@ -1129,7 +1129,7 @@ accepted:
     ObjectMotion_ResetAndSetPosition(IVAN, objectEvent->x.part.pixel,
                                      objectEvent->z.part.pixel);
   }
-  if (GameFlag_Test(FLAG_IN_PARTY(MIA)) != 0) {
+  if (GameFlag_Get(FLAG_IN_PARTY(MIA)) != 0) {
     Engine_ObjectEventSetAnimation(MIA, ANIM_WALK);
     objectEvent = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
     if (objectEvent != 0) {
@@ -1146,7 +1146,7 @@ accepted:
   gFieldWork->transitionFrames = 16;
   FieldScript_FinishScreenTransition();
   FieldScript_WaitTransitionFrames();
-  Engine_GameFlagSet(FLAG_CAPTAIN_SEEING_PARTY_OUT);
+  GameFlag_Set(FLAG_CAPTAIN_SEEING_PARTY_OUT);
 leave:
   Engine_ScriptRequestWarp(MCCOY_PALACE_MCCOYS_ROOM_TO_ENTRANCE_ROOM);
   FieldScript_End();
@@ -1165,7 +1165,7 @@ static void EventScript_CaptainHintsAtBarricade(void) {
   ObjectEvent_WalkToAndWait(LOCALID_PARTY_LEADER, 256, 660);
   FieldScript_WaitFrames(20);
   FieldCamera_MoveTo(-1, -1, -1, 0);
-  Engine_GameFlagSet(FLAG_MCCOYS_DOOR_OPEN);
+  GameFlag_Set(FLAG_MCCOYS_DOOR_OPEN);
   Script_PlaySong(SE_188);
   TilesetAnim_Resume(1);
   TilesetAnim_Resume(2);
@@ -1203,8 +1203,8 @@ static void EventScript_CaptainHintsAtBarricade(void) {
   ObjectEvent_SetSpeed(LOCALID_CAPTAIN, PIXELS(4) / 5, PIXELS(2) / 5);
   ObjectEvent_WalkToAndWait(LOCALID_CAPTAIN, 248, 772);
   Engine_ObjectEventSetPosition(LOCALID_CAPTAIN, 0, 0);
-  GameFlag_ClearBit(FLAG_SHOW_LOCATION_NAME);
-  Engine_GameFlagSet(FLAG_MCCOY_PALACE_BARRICADE_NEEDS_NO_KEY);
+  GameFlag_Clear(FLAG_SHOW_LOCATION_NAME);
+  GameFlag_Set(FLAG_MCCOY_PALACE_BARRICADE_NEEDS_NO_KEY);
   FieldScript_End();
 }
 
@@ -1274,7 +1274,7 @@ static void EventScript_McCoyRewardsParty(void) {
   // Adjacent variants depend on whether McCoy's earlier request was declined.
 
   advanceAlternateReply = 1;
-  if (GameFlag_IsSet(FLAG_MCCOY_PALACE_BARRICADE_NEEDS_NO_KEY) == 0) {
+  if (Script_GetFlag(FLAG_MCCOY_PALACE_BARRICADE_NEEDS_NO_KEY) == 0) {
     gFieldWork->message++;
     advanceAlternateReply = 0;
   }
@@ -1317,7 +1317,7 @@ static void EventScript_McCoyRewardsParty(void) {
   FieldScript_WaitFrames(20);
 
   advanceAlternateReply = 1;
-  if (GameFlag_IsSet(FLAG_MCCOY_PALACE_BARRICADE_NEEDS_NO_KEY) == 0) {
+  if (Script_GetFlag(FLAG_MCCOY_PALACE_BARRICADE_NEEDS_NO_KEY) == 0) {
     gFieldWork->message++;
     advanceAlternateReply = 0;
   }
@@ -1328,7 +1328,7 @@ static void EventScript_McCoyRewardsParty(void) {
   }
 
   advanceAlternateReply = 1;
-  if (GameFlag_IsSet(FLAG_MCCOY_PALACE_BARRICADE_NEEDS_NO_KEY) == 0) {
+  if (Script_GetFlag(FLAG_MCCOY_PALACE_BARRICADE_NEEDS_NO_KEY) == 0) {
     gFieldWork->message++;
     advanceAlternateReply = 0;
   }
@@ -1341,7 +1341,7 @@ static void EventScript_McCoyRewardsParty(void) {
   // Let the companions answer McCoy\'s thanks in turn.
   McCoyPalace_FaceCompanionsForDiscussion();
   FieldScript_WaitFrames(20);
-  if (GameFlag_IsSet(FLAG_MCCOY_PALACE_BARRICADE_NEEDS_NO_KEY) != 0) {
+  if (GameFlag_Get(FLAG_MCCOY_PALACE_BARRICADE_NEEDS_NO_KEY) != 0) {
     ObjectEvent_ShowEmote(LOCALID_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_WINCE,
                           60);
     ObjectEvent_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 40);
@@ -1363,7 +1363,7 @@ static void EventScript_McCoyRewardsParty(void) {
   ObjectEvent_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 0);
   ObjectEvent_ShowEmote(LOCALID_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
 
-  if (GameFlag_IsSet(FLAG_MCCOY_PALACE_BARRICADE_NEEDS_NO_KEY) != 0) {
+  if (GameFlag_Get(FLAG_MCCOY_PALACE_BARRICADE_NEEDS_NO_KEY) != 0) {
     ObjectMotion_SetVarCbAndRefresh(LOCALID_LORD_MCCOY, 1);
     ObjectMotion_SetAnimationAndWait(LOCALID_LORD_MCCOY, 4);
     Script_OpenMessage(SPEAKER_PORTRAIT_RIGHT | LOCALID_LORD_MCCOY, 0);
@@ -1507,7 +1507,7 @@ static void EventScript_McCoyRewardsParty(void) {
   FieldScript_FinishScreenTransition();
   FieldScript_WaitTransitionFrames();
   GameFlag_Set(FLAG_REWARD_OFFERED);
-  if (GameFlag_IsSet(FLAG_MCCOY_PALACE_BARRICADE_NEEDS_NO_KEY) == 0) {
+  if (Script_GetFlag(FLAG_MCCOY_PALACE_BARRICADE_NEEDS_NO_KEY) == 0) {
     GameFlag_Set(FLAG_MCCOY_PALACE_BARRICADE_NEEDS_NO_KEY);
     GameFlag_Set(FLAG_MCCOY_PALACE_ADMITTED);
   }
@@ -1573,8 +1573,8 @@ static void EventScript_PresentRewardChests(void) {
   ObjectMotion_SetVarCbAndRefresh(LOCALID_SOLDIER_SHOWING_THE_REWARD, 2);
   FieldScript_ShowMessageThenWait(LOCALID_SOLDIER_SHOWING_THE_REWARD, 0, 10);
   ObjectMotion_SetAnimationAndWait(LOCALID_PARTY_LEADER, ANIM_NOD);
-  GameFlag_ClearBit(FLAG_SHOW_LOCATION_NAME);
-  Engine_GameFlagSet(FLAG_CHOOSING_REWARD);
+  GameFlag_Clear(FLAG_SHOW_LOCATION_NAME);
+  GameFlag_Set(FLAG_CHOOSING_REWARD);
   FieldScript_End();
 }
 

@@ -189,7 +189,7 @@ const struct ObjectEventTemplate *Map_GetObjectEventTemplates(void) {
   s16 mapId = gGameState.mapId;
 
   if (mapId == (s32)&MapId_GondowanPassage) {
-    if (GameFlag_Test(FLAG_BABI_SPOKE_AFTER_COLOSSO) != 0) {
+    if (GameFlag_Get(FLAG_BABI_SPOKE_AFTER_COLOSSO) != 0) {
       return gGondowanPassageObjectEventTemplatesWithIodem;
     }
     return gGondowanPassageObjectEventTemplates;
@@ -209,7 +209,7 @@ const struct MapEvent *Map_GetEvents(void) {
   s16 mapId = gGameState.mapId;
 
   if (mapId == (s32)&MapId_GondowanPassage) {
-    if (GameFlag_Test(FLAG_BABI_SPOKE_AFTER_COLOSSO) != 0) {
+    if (GameFlag_Get(FLAG_BABI_SPOKE_AFTER_COLOSSO) != 0) {
       return gGondowanPassageEventsWithIodem;
     }
     return gGondowanPassageEvents;
@@ -230,8 +230,8 @@ const struct MapEvent *Map_GetEvents(void) {
 static void EventScript_IodemAsksWhyTurningBack(void) {
   struct ObjectEvent *leader;
 
-  if (FLAG_CHECK(FLAG_BABI_LIGHTHOUSE_IODEM_ARRIVED) == 0 &&
-      FLAG_CHECK(FLAG_IODEM_FOLLOWING_PARTY) != 0) {
+  if (GameFlag_Get(FLAG_BABI_LIGHTHOUSE_IODEM_ARRIVED) == 0 &&
+      Script_GetFlag(FLAG_IODEM_FOLLOWING_PARTY) != 0) {
     SCRIPT_START();
     // Bring Iodem out of the party before opening his question.
     ObjectMotion_SetSpeedParameters(LOCALID_IODEM, PIXELS(1), PIXELS(1) / 2);
@@ -251,7 +251,7 @@ static void EventScript_IodemAsksWhyTurningBack(void) {
       // saved place becomes Tolbi's.
       Script_ShowMessage(LOCALID_IODEM, 0);
       OBJECT_WALK(LOCALID_IODEM, 152, 232);
-      GameFlag_Clear(FLAG_IODEM_FOLLOWING_PARTY);
+      Script_ClearFlag(FLAG_IODEM_FOLLOWING_PARTY);
       ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_IODEM);
       OBJECT_ANIMATION(LOCALID_IODEM, ANIM_STAND);
       gGameState.savedMap = (s32)&MapId_TolbiInteriors;
@@ -303,7 +303,7 @@ static void EventScript_IodemRejoins(void) {
   ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_IODEM);
   Engine_ObjectEventSetPosition(LOCALID_IODEM, 0, 0);
   WAIT(20);
-  Engine_GameFlagSet(FLAG_IODEM_FOLLOWING_PARTY);
+  GameFlag_Set(FLAG_IODEM_FOLLOWING_PARTY);
   SCRIPT_END();
 }
 
@@ -320,8 +320,8 @@ static void EventScript_SoldierAsksAboutCrossing(void) {
   MESSAGE_SET(firstMessage);
   MESSAGE_OPEN(LOCALID_FIRST_SOLDIER, 0);
   if (FieldScript_AskYesNoWithObjectEventAnimation(0, 0) == 0) {
-    if (GameFlag_Test(FLAG_COLOSSO_OVER) != 0) {
-      if (GameFlag_Test(FLAG_BABI_SPOKE_AFTER_COLOSSO) == 0) {
+    if (GameFlag_Get(FLAG_COLOSSO_OVER) != 0) {
+      if (GameFlag_Get(FLAG_BABI_SPOKE_AFTER_COLOSSO) == 0) {
         // The shorter answer, without the advice to watch Colosso.
         MESSAGE_SET(firstMessage + 8);
       }
@@ -338,8 +338,8 @@ static void EventScript_SoldierAsksAboutCrossing(void) {
 /// that guard duty made him miss all of it; before, that the warriors fight
 /// while he guards the bridge.
 static void EventScript_ReadSoldierMind(void) {
-  if (GameFlag_Test(FLAG_COLOSSO_OVER) != 0 &&
-      GameFlag_Test(FLAG_BABI_SPOKE_AFTER_COLOSSO) == 0)
+  if (GameFlag_Get(FLAG_COLOSSO_OVER) != 0 &&
+      GameFlag_Get(FLAG_BABI_SPOKE_AFTER_COLOSSO) == 0)
     MESSAGE_SET(MsgKaragolWeMissedColossoBecauseWe);
   else
     MESSAGE_SET(MsgKaragolWarriorsHaveBeenFightingWhile);
@@ -355,13 +355,13 @@ static void EventScript_LeaveToWorldMapEast(void) {
 
   work = gFieldWork;
   SCRIPT_START();
-  if (FLAG_CHECK(FLAG_MAP_TEMP_04) != 0) {
+  if (GameFlag_Get(FLAG_MAP_TEMP_04) != 0) {
     GameFlag_Clear(0x9a3);
-    GameFlag_Clear(FLAG_GONDOWAN_CAVE_PILLAR_DROPPED);
-    GameFlag_Clear(0x9a4);
+    Script_ClearFlag(FLAG_GONDOWAN_CAVE_PILLAR_DROPPED);
+    Script_ClearFlag(0x9a4);
     GameFlag_Clear(0x9a6);
-    FLAG_SET(FLAG_GONDOWAN_CAVE_PILLAR_DROPPED);
-    FLAG_SET(0x9a4);
+    GameFlag_Set(FLAG_GONDOWAN_CAVE_PILLAR_DROPPED);
+    GameFlag_Set(0x9a4);
   }
   Engine_ScriptRequestWarp(work->coordEvent);
   FieldScript_FinishScreenTransition();
@@ -385,7 +385,7 @@ static void EventScript_MoveStump(void) {
     if ((objectEvent->x.fixed >> 20) <= 30) {
       GondowanCave_RunSpinningLeap(LOCALID_STUMP);
       MapGrid_CopyCellAttributes(29, 19, 1, 1, 27, 19);
-      Engine_GameFlagSet(FLAG_GONDOWAN_CAVE_STUMP_MOVED);
+      GameFlag_Set(FLAG_GONDOWAN_CAVE_STUMP_MOVED);
     }
   }
   SCRIPT_END();
@@ -419,7 +419,7 @@ static void EventScript_MovePillar(void) {
     WAIT(8);
     GondowanCave_PlaceDroppedPillar(STUMP_ANIMATION_SPLASH);
     SE(SE_CAST);
-    FLAG_SET(FLAG_GONDOWAN_CAVE_PILLAR_DROPPED);
+    GameFlag_Set(FLAG_GONDOWAN_CAVE_PILLAR_DROPPED);
   }
   SCRIPT_END();
 }
@@ -517,8 +517,8 @@ s32 Map_Initialize(void) {
   struct ObjectEvent *objectEvent;
 
   if (gGameState.mapId == (s32)&MapId_GondowanPassage) {
-    FLAG_SET(FLAG_RETREAT_BLOCKED);
-    if (FLAG_CHECK(FLAG_IODEM_FOLLOWING_PARTY) != 0) {
+    GameFlag_Set(FLAG_RETREAT_BLOCKED);
+    if (GameFlag_Get(FLAG_IODEM_FOLLOWING_PARTY) != 0) {
       OBJECT_POSITION_SET(LOCALID_IODEM, 0, 0);
     }
   }
@@ -526,12 +526,12 @@ s32 Map_Initialize(void) {
     if (gGameState.warpDest == GONDOWAN_CAVE_FROM_WORLD_MAP_EAST) {
       MapGrid_CopyCellAttributes(108, 17, 1, 1, 107, 17);
     }
-    if (FLAG_CHECK(FLAG_GONDOWAN_CAVE_STUMP_MOVED) != 0) {
+    if (GameFlag_Get(FLAG_GONDOWAN_CAVE_STUMP_MOVED) != 0) {
       OBJECT_POSITION_SET(LOCALID_STUMP, 440, 308);
       OBJECT_ANIMATION(LOCALID_STUMP, STUMP_ANIMATION_SINK);
       MapGrid_CopyCellAttributes(29, 19, 1, 1, 27, 19);
     }
-    if (FLAG_CHECK(FLAG_GONDOWAN_CAVE_PILLAR_DROPPED) != 0) {
+    if (GameFlag_Get(FLAG_GONDOWAN_CAVE_PILLAR_DROPPED) != 0) {
       GondowanCave_PlaceDroppedPillar(STUMP_ANIMATION_SINK);
     }
     objectEvent = ObjectEvent_Get(LOCALID_BOULDER_GAP);

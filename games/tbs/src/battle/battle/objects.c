@@ -608,7 +608,7 @@ s32 BattleCamera_ApplyTransform(void) {
 #endif
   struct BattleCamera *camera = gCameraWork;
   Transform_Reset();
-  if (GameFlag_TestFar(FLAG_CHOOSING_COMMANDS) != 0) {
+  if (GameFlag_GetFar(FLAG_CHOOSING_COMMANDS) != 0) {
     Iwram_TransformMatrix((s32 *)gBattleCamera_CommandMatrix);
     Transform_ApplyLookAt(camera->eye, camera->focus);
   } else {

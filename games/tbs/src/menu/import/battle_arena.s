@@ -33,9 +33,9 @@
 	.set import.Save_ProcessSelectedFile, 1
 	.set import.Djinn_GetRecoveryTable, 1
 	.set import.Unit_Get, 1
-	.set import.GameFlag_Test, 1
-	.set import.Engine_GameFlagSet, 1
-	.set import.GameFlag_ClearBit, 1
+	.set import.GameFlag_Get, 1
+	.set import.GameFlag_Set, 1
+	.set import.GameFlag_Clear, 1
 	.set import.GameFlag_GetByte, 1
 	.set import.GameFlag_SetByte, 1
 	.set import.Party_CountMembers, 1

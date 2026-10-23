@@ -465,7 +465,7 @@ const struct MapWarpRegion *ValeGate_GetRegions(void) { return NULL; }
 /// Returns the stormy night's warps while FLAG_VALE_STORM is set, else the
 /// day's.
 const u32 *ValeGate_GetWarps(void) {
-  if (GameFlag_Test(FLAG_VALE_STORM) != 0) {
+  if (GameFlag_Get(FLAG_VALE_STORM) != 0) {
     return gValeGate_StormWarps;
   }
   return gValeGate_Warps;
@@ -474,13 +474,13 @@ const u32 *ValeGate_GetWarps(void) {
 /// Selects the object event templates: the stormy night's, the farewell's
 /// (VALE_GATE_FROM_SANCTUM), after Kalay, else the day's.
 const struct ObjectEventTemplate *ValeGate_GetObjectEventTemplates(void) {
-  if (GameFlag_Test(FLAG_VALE_STORM) != 0) {
+  if (GameFlag_Get(FLAG_VALE_STORM) != 0) {
     return gValeGate_StormObjectEventTemplates;
   }
   if (gGameState.warpDest == VALE_GATE_FROM_SANCTUM) {
     return gValeGate_DepartureObjectEventTemplates;
   }
-  if (GameFlag_Test(FLAG_KALAY_REACHED) != 0) {
+  if (GameFlag_Get(FLAG_KALAY_REACHED) != 0) {
     return gValeGate_ObjectEventTemplatesAfterKalay;
   }
   return gValeGate_ObjectEventTemplates;
@@ -498,23 +498,23 @@ static void EventScript_UsePsynergyStone(void) {
   FieldScript_WaitFrames(10);
   FieldMessage_Show(MsgValePartyPpRestored, 1);
   TextPrinter_CloseFinishedWindows();
-  GameFlag_ClearBit(FLAG_NOTHING_HAPPENS);
+  GameFlag_Clear(FLAG_NOTHING_HAPPENS);
   FieldScript_End();
 }
 
 /// Selects the events: after Kalay, after the party has left, the farewell's
 /// (VALE_GATE_FROM_SANCTUM), the stormy night's, else the day's.
 const struct MapEvent *ValeGate_GetEvents(void) {
-  if (GameFlag_Test(FLAG_KALAY_REACHED) != 0) {
+  if (GameFlag_Get(FLAG_KALAY_REACHED) != 0) {
     return gValeGate_EventsAfterKalay;
   }
-  if (GameFlag_Test(FLAG_VALE_PARTY_LEFT) != 0) {
+  if (GameFlag_Get(FLAG_VALE_PARTY_LEFT) != 0) {
     return gValeGate_EventsAfterLeaving;
   }
   if (gGameState.warpDest == VALE_GATE_FROM_SANCTUM) {
     return gValeGate_DepartureEvents;
   }
-  if (GameFlag_Test(FLAG_VALE_STORM) != 0) {
+  if (GameFlag_Get(FLAG_VALE_STORM) != 0) {
     return gValeGate_StormEvents;
   }
   return gValeGate_Events;
@@ -575,15 +575,15 @@ static void EventScript_DemonstratePsynergy(void) {
   s32 *origin;
 
   FieldScript_Start();
-  if (GameFlag_Test(FLAG_VALE_PARTY_LEFT) != 0) {
+  if (GameFlag_Get(FLAG_VALE_PARTY_LEFT) != 0) {
     message = MsgValeArentWorriedCrossing;
     FieldScript_SetMessageId(message);
     // "...with just the two of you?", three or four: the flag numbered for a
     // character is set once that character has joined.
-    if (GameFlag_Test(FLAG_IN_PARTY(IVAN)) != 0) {
+    if (GameFlag_Get(FLAG_IN_PARTY(IVAN)) != 0) {
       gFieldWork->message++;
     }
-    if (GameFlag_Test(FLAG_IN_PARTY(MIA)) != 0) {
+    if (GameFlag_Get(FLAG_IN_PARTY(MIA)) != 0) {
       gFieldWork->message++;
     }
     FieldMessage_ShowAtObject(LOCALID_STRONGMAN_SHOWING_PSYNERGY, 0);
@@ -648,7 +648,7 @@ static void EventScript_DemonstratePsynergy(void) {
 /// question.
 static void EventScript_AskAboutJourney(void) {
   FieldScript_Start();
-  if (GameFlag_Test(FLAG_KALAY_REACHED) != 0) {
+  if (GameFlag_Get(FLAG_KALAY_REACHED) != 0) {
     FieldScript_SetMessageId(MsgValeAnythingInterestingOnYourTrip);
     FieldMessage_ShowAtObject(LOCALID_AFTER_KALAY_CURIOUS_OLD_MAN, 0);
     if (FieldScript_AskYesNoWithObjectEventAnimation(LOCALID_PARTY_LEADER, 0) ==
@@ -661,7 +661,7 @@ static void EventScript_AskAboutJourney(void) {
       FieldScript_AskYesNoAndShowResponse(LOCALID_AFTER_KALAY_CURIOUS_OLD_MAN,
                                           0);
     }
-  } else if (GameFlag_Test(FLAG_VALE_PARTY_LEFT) != 0) {
+  } else if (GameFlag_Get(FLAG_VALE_PARTY_LEFT) != 0) {
     FieldScript_SetMessageId(MsgValeYouSawTheWiseOne);
     FieldScript_AskYesNoAndShowResponse(LOCALID_CURIOUS_OLD_MAN, 0);
   } else {
@@ -765,7 +765,7 @@ static void EventScript_TalkAboutHelping(void) {
   FieldScript_Start();
   ObjectEvent_LinkPair(LOCALID_STORM_GIRL_WHO_SAW_JENNA, LOCALID_PARTY_LEADER,
                        10);
-  if (GameFlag_Test(FLAG_VALE_STORM_SENT_TO_AID_ELDERS) != 0) {
+  if (GameFlag_Get(FLAG_VALE_STORM_SENT_TO_AID_ELDERS) != 0) {
     FieldScript_SetMessageId(MsgValeSureHelp);
     FieldScript_ShowMessageAndWait(LOCALID_STORM_GIRL_WHO_SAW_JENNA, 0);
   } else {
@@ -782,7 +782,7 @@ static void EventScript_TalkAboutHelping(void) {
 /// Sets FLAG_VALE_WELCOMED_HOME.
 static void EventScript_WelcomeIsaacHome(void) {
   FieldScript_Start();
-  if (GameFlag_IsSet(FLAG_VALE_WELCOMED_HOME) != 0) {
+  if (Script_GetFlag(FLAG_VALE_WELCOMED_HOME) != 0) {
     FieldScript_SetMessageId(MsgValeThisIsVale);
   } else {
     FieldScript_SetMessageId(MsgValeYouCameBackHome);
@@ -819,7 +819,7 @@ static void EventScript_PsynergyStoneIsGone(void) {
                               LOCALID_PARTY_LEADER, 20);
   ObjectMotion_SetVariantCallback(LOCALID_AFTER_KALAY_HUT_OWNER, 2);
   FieldScript_ShowMessageAndWait(LOCALID_AFTER_KALAY_HUT_OWNER, 0);
-  Engine_GameFlagSet(FLAG_VALE_PSYNERGY_STONE_GONE_TOLD);
+  GameFlag_Set(FLAG_VALE_PSYNERGY_STONE_GONE_TOLD);
   ObjectMotion_EnableActionAndResetMotion(LOCALID_AFTER_KALAY_HUT_OWNER);
   WaitFrames(1);
   ObjectEvent_SetActionScript(LOCALID_AFTER_KALAY_HUT_OWNER,
@@ -917,7 +917,7 @@ static void EventScript_LeaveThroughWestPassage(void) {
 /// (EventScript_DepartForQuest) shows the villagers gathered at the gate and
 /// leaves by the same warp.
 static void EventScript_LeaveThroughTownGate(void) {
-  if (GameFlag_Test(FLAG_VALE_PARTY_LEFT) != 0) {
+  if (GameFlag_Get(FLAG_VALE_PARTY_LEFT) != 0) {
     Sound_PlaySong(SE_MAP_EXIT);
     Vale_RequestBackdropWarp(VALE_GATE_TO_WORLD_MAP);
   }
@@ -928,7 +928,7 @@ static void EventScript_LeaveThroughTownGate(void) {
 /// Reached by Whirlwind on it by day, until it is gone; sets
 /// FLAG_VALE_FIRST_IVY_BLOWN_AWAY.
 static void EventScript_BlowAwayFirstIvy(void) {
-  Engine_GameFlagSet((FLAG_VALE_FIRST_IVY_BLOWN_AWAY));
+  GameFlag_Set((FLAG_VALE_FIRST_IVY_BLOWN_AWAY));
 }
 
 /// In Vale, Whirlwind blows LOCALID_SECOND_IVY away.
@@ -936,7 +936,7 @@ static void EventScript_BlowAwayFirstIvy(void) {
 /// Reached by Whirlwind on it by day, until it is gone; sets
 /// FLAG_VALE_SECOND_IVY_BLOWN_AWAY.
 static void EventScript_BlowAwaySecondIvy(void) {
-  Engine_GameFlagSet((FLAG_VALE_SECOND_IVY_BLOWN_AWAY));
+  GameFlag_Set((FLAG_VALE_SECOND_IVY_BLOWN_AWAY));
 }
 
 /// In Vale, Whirlwind blows LOCALID_THIRD_IVY away.
@@ -944,7 +944,7 @@ static void EventScript_BlowAwaySecondIvy(void) {
 /// Reached by Whirlwind on it by day, until it is gone; sets
 /// FLAG_VALE_THIRD_IVY_BLOWN_AWAY.
 static void EventScript_BlowAwayThirdIvy(void) {
-  Engine_GameFlagSet((FLAG_VALE_THIRD_IVY_BLOWN_AWAY));
+  GameFlag_Set((FLAG_VALE_THIRD_IVY_BLOWN_AWAY));
 }
 
 /// Arriving in this part of Vale: hides the ivy Whirlwind has blown away, runs
@@ -965,18 +965,18 @@ s32 ValeGate_Initialize(void) {
   s32 flag;
   s32 verticalScale;
 
-  if (GameFlag_Test((FLAG_VALE_FIRST_IVY_BLOWN_AWAY)) != 0) {
+  if (GameFlag_Get((FLAG_VALE_FIRST_IVY_BLOWN_AWAY)) != 0) {
     Engine_ObjectEventSetPosition(LOCALID_FIRST_IVY, 0, 0);
   }
-  if (GameFlag_Test((FLAG_VALE_SECOND_IVY_BLOWN_AWAY)) != 0) {
+  if (GameFlag_Get((FLAG_VALE_SECOND_IVY_BLOWN_AWAY)) != 0) {
     Engine_ObjectEventSetPosition(LOCALID_SECOND_IVY, 0, 0);
   }
-  if (GameFlag_Test((FLAG_VALE_THIRD_IVY_BLOWN_AWAY)) != 0) {
+  if (GameFlag_Get((FLAG_VALE_THIRD_IVY_BLOWN_AWAY)) != 0) {
     Engine_ObjectEventSetPosition(LOCALID_THIRD_IVY, 0, 0);
   }
   switch (gGameState.warpDest) {
   case VALE_GATE_DEBUG_CHILDHOOD:
-    Engine_GameFlagSet(FLAG_CHILDHOOD);
+    GameFlag_Set(FLAG_CHILDHOOD);
     Engine_ScriptRequestWarp(VALE_GATE_TO_VALE_INTERIORS_INN_SOUTHEAST);
     return 0;
   case VALE_GATE_DEBUG_STORY_FLAGS:
@@ -993,17 +993,17 @@ s32 ValeGate_Initialize(void) {
   objectEvent->scaleY = verticalScale;
   objectEvent = ObjectEvent_GetById(LOCALID_THIRD_IVY);
   objectEvent->scaleY = verticalScale;
-  if (GameFlag_Test(FLAG_KALAY_REACHED) != 0) {
+  if (GameFlag_Get(FLAG_KALAY_REACHED) != 0) {
     MapGrid_CopyCellsTo(97, 2, 80, 5, 2, 2);
     MapGrid_CopyCellsTo(42, 53, 42, 54, 3, 1);
     MapGrid_CenterOnFollowedPoint();
     WaitFrames(1);
   } else {
-    if (GameFlag_Test(FLAG_VALE_STORM) != 0) {
+    if (GameFlag_Get(FLAG_VALE_STORM) != 0) {
       Weather_StartRain();
       Weather_StartLightning();
       MapGrid_CopyCellAttributes(21, 38, 1, 1, 18, 41);
-      flag = GameFlag_Test(FLAG_VALE_STORM_SENT_TO_AID_ELDERS);
+      flag = GameFlag_Get(FLAG_VALE_STORM_SENT_TO_AID_ELDERS);
       if (flag != 0) {
         Engine_ObjectEventSetPosition(LOCALID_STORM_FIRST_AIDE, 0, 0);
         Engine_ObjectEventSetPosition(LOCALID_STORM_SECOND_AIDE, 0, 0);
@@ -1013,7 +1013,7 @@ s32 ValeGate_Initialize(void) {
                                     gValeGate_FaceTargetActions);
       }
     } else {
-      if (GameFlag_Test(FLAG_VALE_PARTY_LEFT) != 0) {
+      if (GameFlag_Get(FLAG_VALE_PARTY_LEFT) != 0) {
         ObjectEvent_SetPosition(LOCALID_SECOND_CHILD, PIXELS(180), PIXELS(568));
         MapGrid_CopyCellsTo(92, 2, 80, 5, 2, 2);
         MapGrid_CopyCellsTo(42, 53, 42, 54, 3, 1);
@@ -1024,7 +1024,7 @@ s32 ValeGate_Initialize(void) {
     if (gGameState.warpDest == VALE_GATE_FROM_SANCTUM) {
       EventScript_DepartForQuest();
     } else {
-      if (GameFlag_Test(FLAG_VALE_STORM) != 0) {
+      if (GameFlag_Get(FLAG_VALE_STORM) != 0) {
         objectEvent = ObjectEvent_GetById(LOCALID_STORM_SMALL_ROCK);
         objectEvent->scaleX = 3 * Q16_ONE / 10;
         objectEvent->scaleY = 3 * Q16_ONE / 10;
@@ -1036,7 +1036,7 @@ s32 ValeGate_Initialize(void) {
         Engine_ObjectEventSetAnimation(LOCALID_STORM_ROCK_DEFLECTING_YOUNG_MAN,
                                        5);
       } else {
-        if (GameFlag_Test(FLAG_VALE_PARTY_LEFT) != 0) {
+        if (GameFlag_Get(FLAG_VALE_PARTY_LEFT) != 0) {
           ObjectEvent_SetPosition(LOCALID_FALLEN_STONE_SPOT, PIXELS(331),
                                   PIXELS(249));
           objectEvent = ObjectEvent_GetById(LOCALID_FALLEN_STONE_SPOT);
@@ -1048,10 +1048,10 @@ s32 ValeGate_Initialize(void) {
       // out of sight: the hut's owner is hidden from the prologue's end until
       // Kalay, and his talk and EventScript_TalkAboutFallenStone never play.
 #ifdef BUGFIX
-      if (GameFlag_Test(FLAG_VALE_STORM) != 0 &&
-          GameFlag_Test(FLAG_VALE_STORM_SENT_TO_AID_ELDERS) != 0) {
+      if (GameFlag_Get(FLAG_VALE_STORM) != 0 &&
+          GameFlag_Get(FLAG_VALE_STORM_SENT_TO_AID_ELDERS) != 0) {
 #else
-      if (GameFlag_Test(FLAG_VALE_STORM_SENT_TO_AID_ELDERS) != 0) {
+      if (GameFlag_Get(FLAG_VALE_STORM_SENT_TO_AID_ELDERS) != 0) {
 #endif
         Engine_ObjectEventSetPosition(LOCALID_STORM_JENNA, 0, 0);
         Engine_ObjectEventSetPosition(LOCALID_STORM_CHARGED_UP_STRONGMAN, 0, 0);
@@ -1059,11 +1059,11 @@ s32 ValeGate_Initialize(void) {
       if (gGameState.warpDest == VALE_GATE_AFTER_TRAVELERS_BATTLE) {
         EventScript_TravelersLeaveAfterBattle();
       } else {
-        if (GameFlag_Test(FLAG_VALE_STORM) != 0 &&
-            (flag = GameFlag_Test(FLAG_VALE_STORM_GARET_LEFT)) != 0) {
+        if (GameFlag_Get(FLAG_VALE_STORM) != 0 &&
+            (flag = GameFlag_Get(FLAG_VALE_STORM_GARET_LEFT)) != 0) {
           EventScript_MeetSurvivingTravelers();
         } else {
-          if (GameFlag_Test(FLAG_VALE_STORM) != 0) {
+          if (GameFlag_Get(FLAG_VALE_STORM) != 0) {
             FieldScript_StartScreenTransition();
             FieldScript_WaitTransitionFrames();
             Weather_ResumeLightning();
@@ -1104,8 +1104,8 @@ static void EventScript_SentToAidElders(void) {
   s32 skipReply = 0;
   s32 speechFlags;
 
-  if (GameFlag_Test(FLAG_VALE_STORM) != 0 &&
-      GameFlag_Test(FLAG_VALE_STORM_SENT_TO_AID_ELDERS) == 0) {
+  if (GameFlag_Get(FLAG_VALE_STORM) != 0 &&
+      GameFlag_Get(FLAG_VALE_STORM_SENT_TO_AID_ELDERS) == 0) {
     // The camera goes to the villagers by the stone. Garet's grandfather: go
     // aid the elders, the Boulder is too heavy for them.
     FieldScript_Start();
@@ -1271,7 +1271,7 @@ static void EventScript_SentToAidElders(void) {
                                 OBJ_EVENT_LINK_KEEP_MOTION |
                                     LOCALID_PARTY_LEADER,
                                 gValeGate_FaceTargetActions);
-    Engine_GameFlagSet(FLAG_VALE_STORM_SENT_TO_AID_ELDERS);
+    GameFlag_Set(FLAG_VALE_STORM_SENT_TO_AID_ELDERS);
     FieldScript_End();
   }
 }
@@ -1477,7 +1477,7 @@ static void ValeGate_FightTravelers(void) {
                                      VALE_GATE_AFTER_TRAVELERS_BATTLE);
   }
   Field_RequestBattleFromEncounterTable(ENCOUNTER_ZONE_SCRIPTED_VALE_VAULT, 4);
-  Engine_GameFlagSet(FLAG_KEEP_MUSIC);
+  GameFlag_Set(FLAG_KEEP_MUSIC);
 }
 
 /// In Vale after the battle, the travelers leave Isaac and Garet lying in the
@@ -1566,7 +1566,7 @@ static void EventScript_TravelersLeaveAfterBattle(void) {
   gFieldWork->transitionFrames = 120;
   FieldScript_FinishScreenTransition();
   FieldScript_WaitTransitionFrames();
-  GameFlag_ClearBit(FLAG_VALE_STORM);
+  GameFlag_Clear(FLAG_VALE_STORM);
   Engine_ScriptRequestWarp(VALE_GATE_TO_TITLE);
   FieldScript_End();
 }
@@ -2140,61 +2140,61 @@ static void ValeGate_UpdateSmallRockPalette(void) {
 /// FLAG_DEBUG_BATTLE_KEYS; from the third patch the whole story up to Kalay,
 /// before it FLAG_TRET_DEFEATED and FLAG_KOLIMA_CURSE_LIFTED.
 static void ValeGate_SetProgressFlagsAndExit(void) {
-  Engine_GameFlagSet(FLAG_NO_ENCOUNTERS);
-  Engine_GameFlagSet(FLAG_DEBUG_BATTLE_KEYS);
+  GameFlag_Set(FLAG_NO_ENCOUNTERS);
+  GameFlag_Set(FLAG_DEBUG_BATTLE_KEYS);
 #if TBS_PATCH_3
-  Engine_GameFlagSet(FLAG_VALE_STORM_FIRST_ROCK_FELL);
-  Engine_GameFlagSet(FLAG_VALE_STORM_SECOND_ROCK_FELL);
-  Engine_GameFlagSet(FLAG_VALE_STORM_THIRD_ROCK_FELL);
-  Engine_GameFlagSet(FLAG_VALE_STORM_FOURTH_ROCK_FELL);
-  Engine_GameFlagSet(FLAG_VALE_STORM_BUMPED_INTO_VILLAGER);
-  Engine_GameFlagSet(FLAG_VALE_STORM_HEARD_GARET);
-  Engine_GameFlagSet(FLAG_VALE_STORM_GARET_JOINED);
-  Engine_GameFlagSet(FLAG_VALE_BOULDER_FELL);
-  Engine_GameFlagSet(FLAG_VALE_ROCKSLIDE_SURVIVOR_ESCAPED);
-  Engine_GameFlagSet(FLAG_VALE_STORM_SAW_FELIX_HANGING_ON);
-  Engine_GameFlagSet(FLAG_VALE_STORM_SENT_TO_AID_ELDERS);
-  Engine_GameFlagSet(FLAG_VALE_STORM_BOULDER_SWEPT_THEM_AWAY);
-  Engine_GameFlagSet(FLAG_VALE_STORM_GARET_LEFT);
-  Engine_GameFlagSet(FLAG_VALE_ASKED_IF_GOING_TO_KRADEN);
-  Engine_GameFlagSet(FLAG_VALE_GARET_TOLD_OFF_FOR_FLOWERS);
-  Engine_GameFlagSet(FLAG_MET_SATUROS_AND_MENARDI);
-  Engine_GameFlagSet(FLAG_KRADEN_WONDERED_ABOUT_STRANGERS);
-  Engine_GameFlagSet(FLAG_SANCTUM_VISIT_PLANNED);
-  Engine_GameFlagSet(FLAG_VALE_WARNED_AGAINST_MT_ALEPH);
-  Engine_GameFlagSet(FLAG_SOL_SANCTUM_ENTERED);
-  Engine_GameFlagSet(FLAG_SOL_SANCTUM_FIRST_SMALL_JEWEL_FOUND);
-  Engine_GameFlagSet(FLAG_SOL_SANCTUM_FIRST_SMALL_JEWEL_SET);
-  Engine_GameFlagSet(FLAG_SEARCHING_FOR_HIDDEN_PASSAGE);
-  Engine_GameFlagSet(FLAG_SOL_SANCTUM_SECOND_SMALL_JEWEL_FOUND);
-  Engine_GameFlagSet(FLAG_SOL_SANCTUM_SECOND_SMALL_JEWEL_SET);
-  Engine_GameFlagSet(FLAG_SOL_SANCTUM_MORE_STATUES_SEEN);
-  Engine_GameFlagSet(FLAG_SOL_SANCTUM_FOUND);
-  Engine_GameFlagSet(FLAG_SOL_SANCTUM_LUNA_SOL_ROOMS_SEEN);
-  Engine_GameFlagSet(FLAG_SOL_SANCTUM_CENTER_STATUE_MOVED);
-  Engine_GameFlagSet(FLAG_SOL_SANCTUM_NORTHWEST_SEAL_OPEN);
-  Engine_GameFlagSet(FLAG_SOL_SANCTUM_NORTHEAST_SEAL_OPEN);
-  Engine_GameFlagSet(FLAG_SOL_SANCTUM_SOUTHWEST_SEAL_OPEN);
-  Engine_GameFlagSet(FLAG_SOL_SANCTUM_SOUTHEAST_SEAL_OPEN);
-  Engine_GameFlagSet(FLAG_SOL_SANCTUM_ALL_SEALS_OPEN);
-  Engine_GameFlagSet(FLAG_SOL_SANCTUM_KRADEN_SAID_FOUND_SOMETHING);
-  Engine_GameFlagSet(FLAG_SOL_SANCTUM_LUNA_PICTURE_CHANGED);
-  Engine_GameFlagSet(FLAG_SOL_SANCTUM_FLOOR_SYMBOL_SEEN);
-  Engine_GameFlagSet(FLAG_SOL_SANCTUM_STAR_ROOM_PASSAGE_OPEN);
-  Engine_GameFlagSet(FLAG_SOL_SANCTUM_STAR_ROOM_EXPLAINED);
-  Engine_GameFlagSet(FLAG_SOL_SANCTUM_VENUS_STAR_BAGGED);
-  Engine_GameFlagSet(FLAG_SOL_SANCTUM_MERCURY_STAR_BAGGED);
-  Engine_GameFlagSet(FLAG_SOL_SANCTUM_STARS_GIVEN_TO_ALEX);
-  Engine_GameFlagSet(FLAG_SOL_SANCTUM_STAR_ROOM_COLLAPSED);
-  Engine_GameFlagSet(FLAG_SOL_SANCTUM_ERUPTED);
-  Engine_GameFlagSet(FLAG_VALE_RETURNED_FROM_MT_ALEPH);
-  Engine_GameFlagSet(FLAG_VALE_PARTY_LEFT);
-  Engine_GameFlagSet(FLAG_VALE_FAREWELL_HERB_RECEIVED);
-  Engine_GameFlagSet(FLAG_GARET_CAME_HOME);
-  Engine_GameFlagSet(FLAG_KALAY_REACHED);
+  GameFlag_Set(FLAG_VALE_STORM_FIRST_ROCK_FELL);
+  GameFlag_Set(FLAG_VALE_STORM_SECOND_ROCK_FELL);
+  GameFlag_Set(FLAG_VALE_STORM_THIRD_ROCK_FELL);
+  GameFlag_Set(FLAG_VALE_STORM_FOURTH_ROCK_FELL);
+  GameFlag_Set(FLAG_VALE_STORM_BUMPED_INTO_VILLAGER);
+  GameFlag_Set(FLAG_VALE_STORM_HEARD_GARET);
+  GameFlag_Set(FLAG_VALE_STORM_GARET_JOINED);
+  GameFlag_Set(FLAG_VALE_BOULDER_FELL);
+  GameFlag_Set(FLAG_VALE_ROCKSLIDE_SURVIVOR_ESCAPED);
+  GameFlag_Set(FLAG_VALE_STORM_SAW_FELIX_HANGING_ON);
+  GameFlag_Set(FLAG_VALE_STORM_SENT_TO_AID_ELDERS);
+  GameFlag_Set(FLAG_VALE_STORM_BOULDER_SWEPT_THEM_AWAY);
+  GameFlag_Set(FLAG_VALE_STORM_GARET_LEFT);
+  GameFlag_Set(FLAG_VALE_ASKED_IF_GOING_TO_KRADEN);
+  GameFlag_Set(FLAG_VALE_GARET_TOLD_OFF_FOR_FLOWERS);
+  GameFlag_Set(FLAG_MET_SATUROS_AND_MENARDI);
+  GameFlag_Set(FLAG_KRADEN_WONDERED_ABOUT_STRANGERS);
+  GameFlag_Set(FLAG_SANCTUM_VISIT_PLANNED);
+  GameFlag_Set(FLAG_VALE_WARNED_AGAINST_MT_ALEPH);
+  GameFlag_Set(FLAG_SOL_SANCTUM_ENTERED);
+  GameFlag_Set(FLAG_SOL_SANCTUM_FIRST_SMALL_JEWEL_FOUND);
+  GameFlag_Set(FLAG_SOL_SANCTUM_FIRST_SMALL_JEWEL_SET);
+  GameFlag_Set(FLAG_SEARCHING_FOR_HIDDEN_PASSAGE);
+  GameFlag_Set(FLAG_SOL_SANCTUM_SECOND_SMALL_JEWEL_FOUND);
+  GameFlag_Set(FLAG_SOL_SANCTUM_SECOND_SMALL_JEWEL_SET);
+  GameFlag_Set(FLAG_SOL_SANCTUM_MORE_STATUES_SEEN);
+  GameFlag_Set(FLAG_SOL_SANCTUM_FOUND);
+  GameFlag_Set(FLAG_SOL_SANCTUM_LUNA_SOL_ROOMS_SEEN);
+  GameFlag_Set(FLAG_SOL_SANCTUM_CENTER_STATUE_MOVED);
+  GameFlag_Set(FLAG_SOL_SANCTUM_NORTHWEST_SEAL_OPEN);
+  GameFlag_Set(FLAG_SOL_SANCTUM_NORTHEAST_SEAL_OPEN);
+  GameFlag_Set(FLAG_SOL_SANCTUM_SOUTHWEST_SEAL_OPEN);
+  GameFlag_Set(FLAG_SOL_SANCTUM_SOUTHEAST_SEAL_OPEN);
+  GameFlag_Set(FLAG_SOL_SANCTUM_ALL_SEALS_OPEN);
+  GameFlag_Set(FLAG_SOL_SANCTUM_KRADEN_SAID_FOUND_SOMETHING);
+  GameFlag_Set(FLAG_SOL_SANCTUM_LUNA_PICTURE_CHANGED);
+  GameFlag_Set(FLAG_SOL_SANCTUM_FLOOR_SYMBOL_SEEN);
+  GameFlag_Set(FLAG_SOL_SANCTUM_STAR_ROOM_PASSAGE_OPEN);
+  GameFlag_Set(FLAG_SOL_SANCTUM_STAR_ROOM_EXPLAINED);
+  GameFlag_Set(FLAG_SOL_SANCTUM_VENUS_STAR_BAGGED);
+  GameFlag_Set(FLAG_SOL_SANCTUM_MERCURY_STAR_BAGGED);
+  GameFlag_Set(FLAG_SOL_SANCTUM_STARS_GIVEN_TO_ALEX);
+  GameFlag_Set(FLAG_SOL_SANCTUM_STAR_ROOM_COLLAPSED);
+  GameFlag_Set(FLAG_SOL_SANCTUM_ERUPTED);
+  GameFlag_Set(FLAG_VALE_RETURNED_FROM_MT_ALEPH);
+  GameFlag_Set(FLAG_VALE_PARTY_LEFT);
+  GameFlag_Set(FLAG_VALE_FAREWELL_HERB_RECEIVED);
+  GameFlag_Set(FLAG_GARET_CAME_HOME);
+  GameFlag_Set(FLAG_KALAY_REACHED);
 #else
-  Engine_GameFlagSet(FLAG_TRET_DEFEATED);
-  Engine_GameFlagSet(FLAG_KOLIMA_CURSE_LIFTED);
+  GameFlag_Set(FLAG_TRET_DEFEATED);
+  GameFlag_Set(FLAG_KOLIMA_CURSE_LIFTED);
 #endif
   Engine_ScriptRequestWarp(VALE_GATE_TO_BILIBIN);
 }

@@ -143,9 +143,9 @@ void Djinn_JoinParty(s32 slot, s32 element, s32 djinn) {
   s32 owner;
 
   work = gFieldWork;
-  if (GameFlag_TestFar(FLAG_DJINN_LESSON) != 0) {
+  if (GameFlag_GetFar(FLAG_DJINN_LESSON) != 0) {
     owner = 0;
-    GameFlag_SetBitFar(djinn + element * 20 + FLAG_DJINN_FIRST);
+    GameFlag_SetFar(djinn + element * 20 + FLAG_DJINN_FIRST);
   } else {
     owner = Djinn_GiveToPartyFar(element, djinn);
   }
@@ -194,7 +194,7 @@ void ObjectEvent_PlaceMapObjectEvents(void) {
   s32 id;
 
   // Kind 0 is a Djinni battle; a mimic chest's event (0x1000) is skipped.
-  if (GameFlag_TestFar(FLAG_KEEP_PARTY_POSITION) != 0 && flags == 0) {
+  if (GameFlag_GetFar(FLAG_KEEP_PARTY_POSITION) != 0 && flags == 0) {
     flags = event & 0x800;
     event &= 0x7ff;
     // event is unsigned: events below DJINNI_EVENT_0 fail the range test too.
@@ -258,11 +258,11 @@ void Djinn_ResolvePendingEvent(s32 shown) {
       if (st->runResult > 0 && st->runResult != 999)
         return;
       // DJINNI_EVENT_0 + n less 172 is FLAG_DJINN_HIDING_FIRST + n.
-      GameFlag_SetBitFar(flag - 172);
+      GameFlag_SetFar(flag - 172);
       *pending = kind;
     } else if (kind == 0x1000) {
       if (st->runResult == 1)
-        GameFlag_SetBitFar(flag);
+        GameFlag_SetFar(flag);
       *pending = shown;
     }
     return;

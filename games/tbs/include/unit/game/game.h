@@ -80,9 +80,9 @@ struct LevelUpResult *Unit_LevelUp(s32 unitId, struct LevelUpResult *gains);
 struct LevelUpResult *Unit_TryLevelUp(s32 unitId, struct LevelUpResult *gains);
 void Unit_LevelUpTo(s32 unitId, s32 targetLevel);
 
-s32 GameFlag_Test(s32 flag);
-s32 GameFlag_SetBit(s32 flag);
-void GameFlag_ClearBit(s32 flag);
+s32 GameFlag_Get(s32 flag);
+s32 GameFlag_Set(s32 flag);
+void GameFlag_Clear(s32 flag);
 u32 GameFlag_Toggle(s32 flag);
 s32 GameFlag_GetByte(s32 flag);
 void GameFlag_SetByte(s32 flag, s32 value);

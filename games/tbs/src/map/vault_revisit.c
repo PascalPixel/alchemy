@@ -191,7 +191,7 @@ static void EventScript_RecognizeThiefCatchers(void) {
   FieldScript_Start();
   ObjectMotion_SetAngleToward(LOCALID_WELCOMING_YOUNG_MAN, LOCALID_PARTY_LEADER,
                               2);
-  Engine_GameFlagSet(FLAG_WELCOMING_YOUNG_MAN_RECOGNIZED_PARTY);
+  GameFlag_Set(FLAG_WELCOMING_YOUNG_MAN_RECOGNIZED_PARTY);
   FieldScript_SetMessageId(MsgVaultWarriorsWhoCaptured);
   FieldScript_ShowMessageAndWait(LOCALID_WELCOMING_YOUNG_MAN, 0);
   FieldScript_End();
@@ -214,8 +214,8 @@ static void EventScript_PraisePartyStrength(void) {
 
   FieldScript_Start();
   ObjectMotion_SetAngleToward(LOCALID_MAYORS_VISITOR, LOCALID_PARTY_LEADER, 2);
-  Engine_GameFlagSet(FLAG_PARTY_PRAISED);
-  Engine_GameFlagSet(FLAG_VAULT_WARNED_OF_ESCAPED_THIEVES);
+  GameFlag_Set(FLAG_PARTY_PRAISED);
+  GameFlag_Set(FLAG_VAULT_WARNED_OF_ESCAPED_THIEVES);
   FieldScript_SetMessageId(MsgVaultTalkingMayorStrong);
   FieldScript_ShowMessageAndWait(LOCALID_MAYORS_VISITOR, 0);
   FieldScript_End();
@@ -246,7 +246,7 @@ static void EventScript_GreetWarriorGuy(void) {
   FieldScript_SetMessageId(text);
   Engine_ObjectEventSetAnimation(LOCALID_BOY_ROUND_THE_WELL, 0);
   ObjectEvent_LinkPair(LOCALID_BOY_ROUND_THE_WELL, LOCALID_PARTY_LEADER, 2);
-  if (GameFlag_IsSet(FLAG_WARRIOR_GUY_GREETED) == 0) {
+  if (Script_GetFlag(FLAG_WARRIOR_GUY_GREETED) == 0) {
     ObjectEvent_ShowEmote(LOCALID_BOY_ROUND_THE_WELL,
                           EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 60);
     Script_ShowMessageAndWait(LOCALID_BOY_ROUND_THE_WELL, 0, 10);
@@ -294,7 +294,7 @@ static void EventScript_AskAboutJailbreak(void) {
     gFieldWork->message += 1;
   }
   FieldScript_ShowMessageAndWait(LOCALID_STRONGMAN_ON_WATCH, 0);
-  Engine_GameFlagSet(FLAG_ASKED_ABOUT_JAIL);
+  GameFlag_Set(FLAG_ASKED_ABOUT_JAIL);
   FieldScript_End();
 }
 
@@ -306,7 +306,7 @@ static void EventScript_ReadMindAndRecognizeThiefCatchers(void) {
   FieldScript_WaitFrames(20);
   ObjectMotion_SetAngleToward(LOCALID_WELCOMING_YOUNG_MAN, LOCALID_PARTY_LEADER,
                               20);
-  Engine_GameFlagSet(FLAG_WELCOMING_YOUNG_MAN_RECOGNIZED_PARTY);
+  GameFlag_Set(FLAG_WELCOMING_YOUNG_MAN_RECOGNIZED_PARTY);
   FieldScript_SetMessageId(MsgVaultWarriorsWhoCaptured);
   FieldScript_ShowMessageThenWait(LOCALID_WELCOMING_YOUNG_MAN, 0, 20);
   FieldScript_End();
@@ -328,8 +328,8 @@ static void EventScript_ReadMindAndPraisePartyStrength(void) {
   ObjectMotion_SetVarCbAndRefresh(LOCALID_MAYORS_VISITOR, 1);
   FieldScript_WaitFrames(20);
   ObjectMotion_SetAngleToward(LOCALID_MAYORS_VISITOR, LOCALID_PARTY_LEADER, 20);
-  Engine_GameFlagSet(FLAG_PARTY_PRAISED);
-  Engine_GameFlagSet(FLAG_VAULT_WARNED_OF_ESCAPED_THIEVES);
+  GameFlag_Set(FLAG_PARTY_PRAISED);
+  GameFlag_Set(FLAG_VAULT_WARNED_OF_ESCAPED_THIEVES);
   FieldScript_SetMessageId(MsgVaultTalkingMayorStrong);
   FieldScript_ShowMessageThenWait(LOCALID_MAYORS_VISITOR, 0, 20);
   FieldScript_End();
@@ -350,7 +350,7 @@ static void EventScript_ReadMindOnFeelingBrave(void) {
   ObjectEvent_Get(LOCALID_BOY_ROUND_THE_WELL)->timer |=
       VAULT_PROXIMITY_REACTION_PAUSED;
   FieldScript_Start();
-  if (GameFlag_IsSet(FLAG_BOY_ROUND_THE_WELL_SPOKE) != 0) {
+  if (Script_GetFlag(FLAG_BOY_ROUND_THE_WELL_SPOKE) != 0) {
     FieldScript_SetMessageId(MsgVaultWatchingGuysMakes);
     VaultRevisit_ShowStandingObjectEventMessage(LOCALID_BOY_ROUND_THE_WELL);
   } else {
@@ -386,7 +386,7 @@ static void EventScript_ReadMindOnJailKey(void) {
   s32 requestHeard;
   s32 unpaused;
 
-  requestHeard = GameFlag_IsSet(FLAG_ASKED_ABOUT_JAIL);
+  requestHeard = Script_GetFlag(FLAG_ASKED_ABOUT_JAIL);
   if (requestHeard == 0) {
     FieldScript_Start();
     ObjectEvent_Get(LOCALID_STRONGMAN_ON_WATCH)->paused = 1;
@@ -443,7 +443,7 @@ static void EventScript_RingBell(void) {
   FieldScript_Start();
   Script_PlaySong(SE_100);
   FieldScript_WaitFrames(40);
-  if (GameFlag_IsSet(FLAG_VAULT_SAP_CALLED_BY_BELL) == 0) {
+  if (Script_GetFlag(FLAG_VAULT_SAP_CALLED_BY_BELL) == 0) {
     ObjectEvent_SetAttachedEffect(LOCALID_SAP, ATTACHED_EFFECT_IN_FRONT |
                                                    ATTACHED_EFFECT_ONCE);
     ObjectMotion_Launch(LOCALID_SAP, 4, 0);
@@ -633,7 +633,7 @@ static void EventScript_TalkToDog(void) {
   Engine_ObjectEventSetAnimation(LOCALID_VAULT_DOG, ANIM_STAND);
 
   if (PartyInventory_FindMember(ITEM_BONE) != -1 &&
-      GameFlag_Test(FLAG_VAULT_DOG_SHOWN_PASSAGE) == 0) {
+      GameFlag_Get(FLAG_VAULT_DOG_SHOWN_PASSAGE) == 0) {
     gFieldWork->menu = 1;
   }
 
@@ -655,7 +655,7 @@ const struct MapEvent *Map_GetEvents(void) { return gVaultRevisit_Events; }
 /// as on a return from battle.
 static inline s32 VaultRevisit_ShouldKeepBellDjinniPosition(void) {
 #if TBS_PATCH_1
-  return GameFlag_Test(FLAG_KEEP_PARTY_POSITION);
+  return GameFlag_Get(FLAG_KEEP_PARTY_POSITION);
 #else
   return 0;
 #endif
@@ -681,7 +681,7 @@ s32 Map_Initialize(void) {
   s32 mode;
 
   // Keep the bridge deck after a battle, and mend the inn's roof.
-  if (GameFlag_Test(FLAG_MAP_TEMP_00))
+  if (GameFlag_Get(FLAG_MAP_TEMP_00))
     MapGrid_CopyCellAttributes(55, 26, 4, 2, 23, 26);
   // A still object on the well that shows nothing (an open question).
   ObjectEvent_CreateConfiguredObject(PIXELS(128), 0, PIXELS(420), 223);
@@ -711,19 +711,19 @@ s32 Map_Initialize(void) {
 #endif
   ObjectEvent_GetById(LOCALID_GIRL_ROUND_THE_WELL)->timer = mode;
   // Restore the dog's clue position and the bell's current Djinni position.
-  if (GameFlag_Test(FLAG_VAULT_DOG_SHOWN_PASSAGE))
+  if (GameFlag_Get(FLAG_VAULT_DOG_SHOWN_PASSAGE))
     ObjectEvent_SetPosition(LOCALID_VAULT_DOG, PIXELS(216), PIXELS(392));
   if (gGameState.warpDest <= VAULT_REVISIT_NORTH_UNUSED &&
-      !GameFlag_Test(FLAG_DJINNI(DJINNI_SAP)) &&
+      !GameFlag_Get(FLAG_DJINNI(DJINNI_SAP)) &&
       !VaultRevisit_ShouldKeepBellDjinniPosition())
-    GameFlag_ClearBit(FLAG_VAULT_SAP_CALLED_BY_BELL);
-  if (GameFlag_Test(FLAG_VAULT_SAP_CALLED_BY_BELL) &&
-      !GameFlag_Test(FLAG_DJINNI(DJINNI_SAP)))
+    GameFlag_Clear(FLAG_VAULT_SAP_CALLED_BY_BELL);
+  if (GameFlag_Get(FLAG_VAULT_SAP_CALLED_BY_BELL) &&
+      !GameFlag_Get(FLAG_DJINNI(DJINNI_SAP)))
     ObjectEvent_SetPosition(LOCALID_SAP, PIXELS(408), PIXELS(120));
   if (gGameState.warpDest == VAULT_REVISIT_FROM_SANCTUM)
-    GameFlag_ClearBit(FLAG_SHOW_LOCATION_NAME);
+    GameFlag_Clear(FLAG_SHOW_LOCATION_NAME);
   if (gGameState.warpDest == VAULT_REVISIT_FROM_VAULT_CAVE_PASSAGE)
-    GameFlag_ClearBit(FLAG_WARP_ARRIVAL_STAIRS_UP);
+    GameFlag_Clear(FLAG_WARP_ARRIVAL_STAIRS_UP);
   return 0;
 }
 

@@ -123,7 +123,7 @@ s32 Party_CountMembers(void) {
   count = 0;
   unitId = 0;
   do {
-    if (GameFlag_Test(FLAG_IN_PARTY(unitId)) != 0)
+    if (GameFlag_Get(FLAG_IN_PARTY(unitId)) != 0)
       count++;
     unitId++;
   } while (unitId <= PIERS);
@@ -138,7 +138,7 @@ s32 Party_AddMember(s32 unitId) {
   s32 partySize = Party_CountMembers();
   s32 partyIndex;
 
-  GameFlag_SetBit(FLAG_IN_PARTY(unitId));
+  GameFlag_Set(FLAG_IN_PARTY(unitId));
   partyIndex = 0;
   while (partyIndex < partySize) {
     if (gGameState.party[partyIndex] == unitId)
@@ -158,7 +158,7 @@ s32 Party_RemoveMember(s32 unitId) {
   s32 removedIndex;
   s32 partyIndex;
 
-  GameFlag_ClearBit(FLAG_IN_PARTY(unitId));
+  GameFlag_Clear(FLAG_IN_PARTY(unitId));
   for (removedIndex = 0; removedIndex < partySize; removedIndex++) {
     if (gGameState.party[removedIndex] == unitId)
       break;

@@ -203,10 +203,10 @@ const struct MapEvent *KolimaForestTree_GetEvents(void) {
 static void KolimaForestTree_TalkToLaurel(void) {
   FieldScript_Start();
   KolimaForestTree_PlayGesture(LOCALID_LAUREL_BLANK, FACE_GESTURE_OPEN_EYES);
-  if (GameFlag_Test(FLAG_KOLIMA_CURSE_LIFTED) != 0) {
+  if (GameFlag_Get(FLAG_KOLIMA_CURSE_LIFTED) != 0) {
     FieldScript_SetMessageId(MsgKolimaForestKolimaAlive);
     FieldScript_ShowMessageAndWait(LOCALID_LAUREL, 0);
-  } else if (GameFlag_IsSet(FLAG_MET_LAUREL) != 0) {
+  } else if (Script_GetFlag(FLAG_MET_LAUREL) != 0) {
     FieldScript_SetMessageId(MsgKolimaLeaveBeforeForest);
     FieldScript_ShowMessageAndWait(LOCALID_LAUREL, 0);
   } else {
@@ -224,7 +224,7 @@ static void KolimaForestTree_TalkToLaurel(void) {
     FieldScript_ShowMessageThenWait(LOCALID_LAUREL, 0, 20);
     KolimaForestTree_PlayGesture(LOCALID_LAUREL_BLANK, FACE_GESTURE_OPEN_EYES);
     FieldScript_ShowMessageThenWait(LOCALID_LAUREL, 0, 20);
-    Engine_GameFlagSet(FLAG_MET_LAUREL);
+    GameFlag_Set(FLAG_MET_LAUREL);
   }
   KolimaForestTree_PlayGesture(LOCALID_LAUREL_BLANK, FACE_GESTURE_CLOSE_EYES);
   FieldScript_End();
@@ -240,13 +240,13 @@ static void KolimaForestTree_TalkToTret(void) {
   s32 waterHolder;
 
   FieldScript_Start();
-  if (GameFlag_IsSet(FLAG_KOLIMA_CURSE_LIFTED) != 0) {
+  if (GameFlag_Get(FLAG_KOLIMA_CURSE_LIFTED) != 0) {
     KolimaForestTree_PlayGesture(LOCALID_TRET_BLANK, FACE_GESTURE_OPEN_EYES);
     FieldScript_SetMessageId(MsgKolimaNowHaveSuchPowerAxe);
     Script_ShowMessage(LOCALID_TRET, 0);
     KolimaForestTree_PlayGesture(LOCALID_TRET_BLANK, FACE_GESTURE_CLOSE_EYES);
   } else {
-    if (GameFlag_IsSet(FLAG_TRET_DEFEATED) != 0) {
+    if (GameFlag_Get(FLAG_TRET_DEFEATED) != 0) {
       KolimaForestTree_PlayGesture(LOCALID_TRET_BLANK, FACE_GESTURE_OPEN_EYES);
       FieldScript_SetMessageId(MsgKolimaSilence2);
       Script_ShowMessage(LOCALID_TRET, 0);
@@ -283,7 +283,7 @@ static void KolimaForestTree_TalkToTret(void) {
 /// river.
 static void KolimaForestTree_ReadLaurelThoughts(void) {
   FieldScript_Start();
-  if (GameFlag_Test(FLAG_KOLIMA_CURSE_LIFTED) != 0) {
+  if (GameFlag_Get(FLAG_KOLIMA_CURSE_LIFTED) != 0) {
     FieldScript_SetMessageId(MsgKolimaMustHorribleBeyondRiverAm);
   } else {
     FieldScript_SetMessageId(MsgKolimaHealingWatersMercuryLighthouseMight);
@@ -297,7 +297,7 @@ static void KolimaForestTree_ReadLaurelThoughts(void) {
 /// be careful beyond the river.
 static void KolimaForestTree_ReadTretThoughts(void) {
   FieldScript_Start();
-  if (GameFlag_Test(FLAG_KOLIMA_CURSE_LIFTED) != 0) {
+  if (GameFlag_Get(FLAG_KOLIMA_CURSE_LIFTED) != 0) {
     FieldScript_SetMessageId(MsgKolimaKnowCannotStopButPlease);
   } else {
     FieldScript_SetMessageId(MsgKolimaPeopleKolimaForgiveMe);
@@ -314,7 +314,7 @@ static void KolimaForestTree_ReadTretThoughts(void) {
 static void KolimaForestTree_UseHermesWater(void) {
   FieldScript_Start();
   Field_EndBusyAndReveal();
-  if (GameFlag_Test(FLAG_TRET_DEFEATED) == 0) {
+  if (GameFlag_Get(FLAG_TRET_DEFEATED) == 0) {
     KolimaForestTree_RejectHermesWater();
   } else {
     KolimaForestTree_RestoreTret();
@@ -428,7 +428,7 @@ static void KolimaForestTree_RestoreTret(void) {
   const s32 *finalActions;
 
   // Gather the companions while Hermes' Water seeps into Tret.
-  includeMia = GameFlag_IsSet(FLAG_IN_PARTY(MIA));
+  includeMia = GameFlag_Get(FLAG_IN_PARTY(MIA));
   ObjectEvent_WalkToAndWait(LOCALID_PARTY_LEADER, 328, 212);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_NORTH, 20);
   Script_PlaySong(SONG_FADE_OUT_BGM);
@@ -797,7 +797,7 @@ s32 KolimaForestTree_Initialize(void) {
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   gGameState.retreatMap = (s32)&MapId_KolimaForestEntrance;
   gGameState.retreatWarpDest = KOLIMA_FOREST_ENTRANCE_FROM_WORLD_MAP;
-  if (!GameFlag_Test(FLAG_KOLIMA_CURSE_LIFTED))
+  if (!GameFlag_Get(FLAG_KOLIMA_CURSE_LIFTED))
     KolimaPalette_Curse(3);
   ObjectEvent_GetById(LOCALID_TRET)->radius = 6;
   ObjectEvent_GetById(LOCALID_LAUREL)->radius = 6;

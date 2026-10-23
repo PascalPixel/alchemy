@@ -269,7 +269,7 @@ void ObjectSystem_ProjectSprites(void) {
   Transform_Reset();
   // Under the fixed view matrix every sprite also faces an eighth of a turn
   // (0x2000) further back.
-  if (GameFlag_TestFar(FLAG_CHOOSING_COMMANDS)) {
+  if (GameFlag_GetFar(FLAG_CHOOSING_COMMANDS)) {
     angle += 0xffffe000;
     Iwram_TransformMatrix(gCamera_FixedViewMatrix);
     Transform_ApplyLookAt((s32 *)eye, (s32 *)target);
@@ -291,7 +291,7 @@ void ObjectSystem_ProjectSprites(void) {
       scale[0] = object->scaleX;
       scale[1] = object->scaleY;
       sprite = object->sprite;
-      if (GameFlag_TestFar(FLAG_CHOOSING_COMMANDS)) {
+      if (GameFlag_GetFar(FLAG_CHOOSING_COMMANDS)) {
         scale[0] = fixedScale;
         scale[1] = fixedScale;
       }
@@ -301,7 +301,7 @@ void ObjectSystem_ProjectSprites(void) {
     case OBJECT_SPRITE_GROUP:
       groupScale[0] = object->scaleX;
       groupScale[1] = object->scaleY;
-      if (GameFlag_TestFar(FLAG_CHOOSING_COMMANDS)) {
+      if (GameFlag_GetFar(FLAG_CHOOSING_COMMANDS)) {
         groupScale[0] = fixedScale;
         groupScale[1] = fixedScale;
       }

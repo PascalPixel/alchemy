@@ -160,10 +160,10 @@ const struct ObjectEventTemplate *ValeKraden_GetObjectEventTemplates(void) {
 /// (FLAG_KALAY_REACHED), on the stormy night (FLAG_VALE_STORM), else the day
 /// the story begins.
 const struct MapEvent *ValeKraden_GetEvents(void) {
-  if (GameFlag_Test(FLAG_KALAY_REACHED) != 0) {
+  if (GameFlag_Get(FLAG_KALAY_REACHED) != 0) {
     return gValeKraden_EventsAfterKalay;
   }
-  if (GameFlag_Test(FLAG_VALE_STORM) != 0) {
+  if (GameFlag_Get(FLAG_VALE_STORM) != 0) {
     return gValeKraden_StormEvents;
   }
   return gValeKraden_Events;
@@ -205,7 +205,7 @@ static void EventScript_TalkToBoyByTheFence(void) {
   s32 message;
 
   FieldScript_Start();
-  if (GameFlag_IsSet(FLAG_VALE_PARTY_LEFT) != 0) {
+  if (GameFlag_Get(FLAG_VALE_PARTY_LEFT) != 0) {
     FieldScript_SetMessageId(MsgValeIllClimbTheFenceSomeday);
     Script_ShowMessage(LOCALID_BOY_BY_THE_FENCE, 0);
   } else {
@@ -242,7 +242,7 @@ static void EventScript_KradenPlansSanctumVisit(void) {
   s32 x, z;
   s32 sneakingMessage;
 
-  if (GameFlag_IsSet(FLAG_SANCTUM_VISIT_PLANNED) == 0) {
+  if (GameFlag_Get(FLAG_SANCTUM_VISIT_PLANNED) == 0) {
     // Isaac walks up to Kraden, who greets him.
     FieldScript_Start();
     ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(1), PIXELS(1) / 2);
@@ -582,7 +582,7 @@ static void EventScript_KradenSetsOff(void) {
 /// Reached by walking north into metatile behavior 3, by day and after Kalay;
 /// takes VALE_KRADEN_TO_VALE_INTERIORS_INN_NORTH into the cottage.
 static void EventScript_EnterCottage(void) {
-  if (GameFlag_Test(FLAG_MAP_TEMP_42) == 0) {
+  if (GameFlag_Get(FLAG_MAP_TEMP_42) == 0) {
     Sound_PlaySong(SE_DOOR_OPEN);
     MapGrid_PlayMetatileCopySequence(gValeKraden_GateCells, 43, 8);
   }
@@ -603,7 +603,7 @@ static void EventScript_MeetSaturosAndMenardi(void) {
   s32 strangersMessage;
   s32 accusationMessage;
 
-  if (GameFlag_IsSet(FLAG_MET_SATUROS_AND_MENARDI) != 0) {
+  if (Script_GetFlag(FLAG_MET_SATUROS_AND_MENARDI) != 0) {
     return;
   }
 
@@ -830,7 +830,7 @@ static void EventScript_MeetSaturosAndMenardi(void) {
 static void EventScript_OverhearKraden(void) {
   struct ObjectEvent *leader;
 
-  if (GameFlag_IsSet(FLAG_KRADEN_WONDERED_ABOUT_STRANGERS) != 0) {
+  if (Script_GetFlag(FLAG_KRADEN_WONDERED_ABOUT_STRANGERS) != 0) {
   } else {
     FieldScript_Start();
     ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(1), PIXELS(1) / 2);
@@ -911,7 +911,7 @@ static void EventScript_OverhearKraden(void) {
     }
     ObjectMotion_CommitCurrentPositionAndActivate(JENNA);
     Engine_ObjectEventSetPosition(JENNA, 0, 0);
-    Engine_GameFlagSet(FLAG_KRADEN_WONDERED_ABOUT_STRANGERS);
+    GameFlag_Set(FLAG_KRADEN_WONDERED_ABOUT_STRANGERS);
     FieldScript_End();
   }
 }
@@ -933,13 +933,13 @@ s32 ValeKraden_Initialize(void) {
 
   if (gGameState.warpDest == VALE_KRADEN_FROM_VALE_CAVE_MOUTH_UNUSED ||
       gGameState.warpDest == VALE_KRADEN_FROM_VALE_CAVE_MOUTH_EAST) {
-    GameFlag_ClearBit(FLAG_SHOW_LOCATION_NAME);
+    GameFlag_Clear(FLAG_SHOW_LOCATION_NAME);
   }
-  if (GameFlag_IsSet(FLAG_KEEP_PARTY_POSITION) != 0) {
-    GameFlag_ClearBit(FLAG_MAP_TEMP_42);
+  if (Script_GetFlag(FLAG_KEEP_PARTY_POSITION) != 0) {
+    GameFlag_Clear(FLAG_MAP_TEMP_42);
   }
   // The rockslide chapter replaces residents with debris and a survivor.
-  if (GameFlag_Test(FLAG_VALE_STORM) != 0) {
+  if (GameFlag_Get(FLAG_VALE_STORM) != 0) {
     Weather_StartRain();
     Weather_StartLightning();
     FieldScript_Start();
@@ -966,7 +966,7 @@ s32 ValeKraden_Initialize(void) {
     }
     ObjectEvent_SetActionScript(LOCALID_ROCKSLIDE_SURVIVOR,
                                 gValeKraden_RockslideSurvivorSquashes);
-    if (GameFlag_Test(FLAG_VALE_ROCKSLIDE_SURVIVOR_ESCAPED) != 0) {
+    if (GameFlag_Get(FLAG_VALE_ROCKSLIDE_SURVIVOR_ESCAPED) != 0) {
       Engine_ObjectEventSetPosition(LOCALID_ROCKSLIDE_SURVIVOR, 0, 0);
     }
     debrisRow = 21;
@@ -984,17 +984,17 @@ s32 ValeKraden_Initialize(void) {
     Engine_ObjectEventSetPosition(GARET, 0, 0);
     Engine_ObjectEventSetPosition(LOCALID_ROCKSLIDE_SURVIVOR, 0, 0);
     FieldScript_Start();
-    if (GameFlag_Test(FLAG_KEEP_PARTY_POSITION) == 0) {
+    if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) == 0) {
       if (gGameState.warpDest == VALE_KRADEN_FROM_VALE_INTERIORS_INN_SOUTH) {
         EventScript_KradenSetsOff();
       }
     }
-    if (GameFlag_Test(FLAG_SANCTUM_VISIT_PLANNED) != 0) {
+    if (GameFlag_Get(FLAG_SANCTUM_VISIT_PLANNED) != 0) {
       Engine_ObjectEventSetPosition(LOCALID_KRADEN, 0, 0);
       Engine_ObjectEventSetPosition(LOCALID_SATUROS, 0, 0);
       Engine_ObjectEventSetPosition(LOCALID_MENARDI, 0, 0);
     } else {
-      if (GameFlag_Test(FLAG_MET_SATUROS_AND_MENARDI) != 0) {
+      if (GameFlag_Get(FLAG_MET_SATUROS_AND_MENARDI) != 0) {
         ObjectEvent_SetPosition(LOCALID_SATUROS, PIXELS(392), PIXELS(376));
         ObjectEvent_SetPosition(LOCALID_MENARDI, PIXELS(376), PIXELS(376));
         Object_SetTargetAndCallback(
@@ -1005,7 +1005,7 @@ s32 ValeKraden_Initialize(void) {
             gValeKraden_FaceTargetActions);
       }
     }
-    if (GameFlag_Test(FLAG_KALAY_REACHED) != 0) {
+    if (GameFlag_Get(FLAG_KALAY_REACHED) != 0) {
       ObjectEvent_SetPosition(LOCALID_COTTAGE_VISITOR, PIXELS(132),
                               PIXELS(264));
     }
@@ -1027,8 +1027,8 @@ static void EventScript_TalkToRockslideSurvivor(void) {
   struct ObjectEvent *leader;
   s32 message;
 
-  if (GameFlag_IsSet(FLAG_VALE_ROCKSLIDE_SURVIVOR_ESCAPED) == 0) {
-    if (GameFlag_IsSet(FLAG_VALE_ROCKSLIDE_SURVIVOR_GAVE_UP) != 0) {
+  if (Script_GetFlag(FLAG_VALE_ROCKSLIDE_SURVIVOR_ESCAPED) == 0) {
+    if (Script_GetFlag(FLAG_VALE_ROCKSLIDE_SURVIVOR_GAVE_UP) != 0) {
       FieldScript_Start();
       ObjectMotion_SetVarCbAndRefresh(LOCALID_ROCKSLIDE_SURVIVOR, 2);
       FieldScript_SetMessageId(MsgValeSaveYourselves);
@@ -1064,7 +1064,7 @@ static void EventScript_TalkToRockslideSurvivor(void) {
         FieldScript_WaitFrames(20);
         FieldScript_SetMessageId((message + 2));
         FieldScript_ShowMessageAndWait(LOCALID_ROCKSLIDE_SURVIVOR, 0);
-        Engine_GameFlagSet(FLAG_VALE_ROCKSLIDE_SURVIVOR_GAVE_UP);
+        GameFlag_Set(FLAG_VALE_ROCKSLIDE_SURVIVOR_GAVE_UP);
       } else {
         // No: he laments, then jumps up, finds he is not hurt at all, and
         // warns them of the monsters on the way to the plaza.
@@ -1103,7 +1103,7 @@ static void EventScript_TalkToRockslideSurvivor(void) {
         ObjectEvent_ShowEmote(LOCALID_PARTY_LEADER,
                               EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
         FieldEffect_SpawnLinked(GARET, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 120);
-        Engine_GameFlagSet(FLAG_VALE_ROCKSLIDE_SURVIVOR_ESCAPED);
+        GameFlag_Set(FLAG_VALE_ROCKSLIDE_SURVIVOR_ESCAPED);
       }
       // Garet walks back into Isaac.
       Engine_ObjectEventSetAnimation(GARET, ANIM_WALK);
@@ -1134,9 +1134,9 @@ static void EventScript_FightFirstMonster(void) {
   work->transition = MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_BARS);
   work->transitionFrames = 64;
 
-  Engine_GameFlagSet(FLAG_VALE_STORM_FIRST_MONSTER_FOUGHT);
+  GameFlag_Set(FLAG_VALE_STORM_FIRST_MONSTER_FOUGHT);
   Field_RequestBattleFromEncounterTable(ENCOUNTER_ZONE_SCRIPTED_VALE_VAULT, 0);
-  Engine_GameFlagSet(FLAG_VALE_STORM_MONSTER_FOUGHT);
+  GameFlag_Set(FLAG_VALE_STORM_MONSTER_FOUGHT);
   FieldScript_End();
 }
 
@@ -1154,9 +1154,9 @@ static void EventScript_FightSecondMonster(void) {
   work->transition = MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_BARS);
   work->transitionFrames = 64;
 
-  Engine_GameFlagSet(FLAG_VALE_STORM_SECOND_MONSTER_FOUGHT);
+  GameFlag_Set(FLAG_VALE_STORM_SECOND_MONSTER_FOUGHT);
   Field_RequestBattleFromEncounterTable(ENCOUNTER_ZONE_SCRIPTED_VALE_VAULT, 1);
-  Engine_GameFlagSet(FLAG_VALE_STORM_MONSTER_FOUGHT);
+  GameFlag_Set(FLAG_VALE_STORM_MONSTER_FOUGHT);
   FieldScript_End();
 }
 

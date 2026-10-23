@@ -20,7 +20,7 @@ s32 SolSanctumRooms_Initialize(void) {
   work->transition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   work->transitionFrames = 16;
-  if (GameFlag_Test(FLAG_SOL_SANCTUM_ERUPTED) != 0) {
+  if (GameFlag_Get(FLAG_SOL_SANCTUM_ERUPTED) != 0) {
     Map_QueueMusic(SE_RUMBLE);
     MapGrid_SetScreenShake(shakeX, shakeY, shakeDecay);
     FieldEffect_InitializeSparkles();

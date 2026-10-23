@@ -259,13 +259,13 @@ const struct MapEvent *SolSanctumStatue_GetEvents(void) {
 /// FLAG_SOL_SANCTUM_FALLING_LIGHTS_SEEN is set. Returns 1 when it requests an
 /// warp, otherwise -1.
 static s32 SolSanctumStatue_SelectStoryWarp(void) {
-  if (GameFlag_Test(FLAG_SOL_SANCTUM_CENTER_STATUE_MOVED) != 0) {
-    if (GameFlag_Test(FLAG_SOL_SANCTUM_KRADEN_SAID_FOUND_SOMETHING) == 0) {
+  if (GameFlag_Get(FLAG_SOL_SANCTUM_CENTER_STATUE_MOVED) != 0) {
+    if (GameFlag_Get(FLAG_SOL_SANCTUM_KRADEN_SAID_FOUND_SOMETHING) == 0) {
       Engine_ScriptRequestWarp(
           SOL_SANCTUM_STATUE_TO_SOL_SANCTUM_LUNA_SOL_ROOMS_TRAP_DISARMED);
       return 1;
     }
-  } else if (GameFlag_Test(FLAG_SOL_SANCTUM_FALLING_LIGHTS_SEEN) == 0) {
+  } else if (GameFlag_Get(FLAG_SOL_SANCTUM_FALLING_LIGHTS_SEEN) == 0) {
     Engine_ScriptRequestWarp(
         SOL_SANCTUM_STATUE_TO_SOL_SANCTUM_LUNA_SOL_ROOMS_TRAP_TRIGGERED);
     return 1;
@@ -297,7 +297,7 @@ static void SolSanctumStatue_OpenCentralHole(void) {
   {
     MapGrid_CopyCellAttributes(0, 0, 2, 1, 17, 8);
   }
-  Engine_GameFlagSet(FLAG_MAP_TEMP_07);
+  GameFlag_Set(FLAG_MAP_TEMP_07);
   EventScript_CenterStatueMoved();
 }
 
@@ -462,7 +462,7 @@ static void SolSanctumStatue_ExplainTrapDisarmed(void) {
   }
   ObjectMotion_CommitCurrentPositionAndActivate(JENNA);
   ObjectEvent_SetPosition(JENNA, 0, 0);
-  GameFlag_Clear(FLAG_SHOW_LOCATION_NAME);
+  Script_ClearFlag(FLAG_SHOW_LOCATION_NAME);
   gFieldWork->transition = MAP_TRANSITION(TRANSITION_WINDOW, 4);
   gFieldWork->transitionFrames = 16;
   FieldScript_End();
@@ -836,7 +836,7 @@ static void EventScript_JumpSouth(void) {
 ///
 /// Nothing calls it; the player moves the statue there with Move instead.
 UNUSED static void SolSanctumStatue_UnusedMoveNorthwestStatue(void) {
-  if (GameFlag_IsSet(FLAG_SOL_SANCTUM_NORTHWEST_SEAL_OPEN) == 0) {
+  if (GameFlag_Get(FLAG_SOL_SANCTUM_NORTHWEST_SEAL_OPEN) == 0) {
     FieldScript_Start();
     ObjectEvent_GetById(LOCALID_NORTHWEST_STATUE);
     ObjectEvent_SetSpeed(LOCALID_NORTHWEST_STATUE, PIXELS(1) / 5,
@@ -880,7 +880,7 @@ s32 SolSanctumStatue_Initialize(void) {
     ObjectEvent_SetPosition(JENNA, 0, 0);
     ObjectEvent_SetPosition(GARET, 0, 0);
   }
-  if (GameFlag_IsSet(FLAG_SOL_SANCTUM_CENTER_STATUE_MOVED) != 0) {
+  if (GameFlag_Get(FLAG_SOL_SANCTUM_CENTER_STATUE_MOVED) != 0) {
     ObjectEvent_SetPosition(LOCALID_MOVED_CENTER_STATUE, PIXELS(288),
                             PIXELS(178));
     ObjectEvent_SetPosition(LOCALID_CENTER_STATUE, PIXELS(1608), PIXELS(1608));
@@ -894,8 +894,8 @@ s32 SolSanctumStatue_Initialize(void) {
     MapGrid_CopyCellsTo(4, 59, 17, 38, 4, 3);
     MapGrid_CopyCellsTo(8, 60, 17, 39, 2, 2);
     MapGrid_CopyCellAttributes(0, 1, 2, 1, 17, 7);
-  } else if (GameFlag_IsSet(FLAG_SOL_SANCTUM_LEFT_BEAM_SHINING) != 0 &&
-             GameFlag_IsSet(FLAG_SOL_SANCTUM_RIGHT_BEAM_SHINING) != 0) {
+  } else if (GameFlag_Get(FLAG_SOL_SANCTUM_LEFT_BEAM_SHINING) != 0 &&
+             GameFlag_Get(FLAG_SOL_SANCTUM_RIGHT_BEAM_SHINING) != 0) {
     ObjectEvent_SetPosition(LOCALID_LEFT_BEAM_STATUE, PIXELS(232), PIXELS(120));
     ObjectEvent_SetPosition(LOCALID_RIGHT_BEAM_STATUE, PIXELS(344),
                             PIXELS(120));
@@ -908,36 +908,36 @@ s32 SolSanctumStatue_Initialize(void) {
     MapGrid_CopyCellsTo(8, 60, 17, 39, 2, 2);
     MapGrid_CopyCellAttributes(0, 0, 2, 1, 17, 8);
   } else {
-    if (GameFlag_IsSet(FLAG_SOL_SANCTUM_LEFT_BEAM_SHINING) != 0) {
+    if (GameFlag_Get(FLAG_SOL_SANCTUM_LEFT_BEAM_SHINING) != 0) {
       ObjectEvent_SetPosition(LOCALID_LEFT_BEAM_STATUE, PIXELS(232),
                               PIXELS(120));
       MapGrid_CopyCellsTo(0, 59, 15, 38, 4, 3);
     }
-    if (GameFlag_IsSet(FLAG_SOL_SANCTUM_RIGHT_BEAM_SHINING) != 0) {
+    if (GameFlag_Get(FLAG_SOL_SANCTUM_RIGHT_BEAM_SHINING) != 0) {
       ObjectEvent_SetPosition(LOCALID_RIGHT_BEAM_STATUE, PIXELS(344),
                               PIXELS(120));
       MapGrid_CopyCellsTo(4, 59, 17, 38, 4, 3);
     }
   }
-  if (GameFlag_IsSet(FLAG_SOL_SANCTUM_NORTHWEST_SEAL_OPEN) != 0) {
+  if (GameFlag_Get(FLAG_SOL_SANCTUM_NORTHWEST_SEAL_OPEN) != 0) {
     ObjectEvent_SetPosition(LOCALID_NORTHWEST_STATUE, PIXELS(504), PIXELS(152));
     MapGrid_CopyCellsTo(2, 28, 34, 10, 2, 1);
     MapGrid_CopyCellsTo(2, 30, 16, 10, 2, 1);
     MapGrid_CopyCellsTo(0, 55, 32, 40, 4, 3);
   }
-  if (GameFlag_IsSet(FLAG_SOL_SANCTUM_NORTHEAST_SEAL_OPEN) != 0) {
+  if (GameFlag_Get(FLAG_SOL_SANCTUM_NORTHEAST_SEAL_OPEN) != 0) {
     ObjectEvent_SetPosition(LOCALID_NORTHEAST_STATUE, PIXELS(648), PIXELS(152));
     MapGrid_CopyCellsTo(4, 28, 36, 10, 2, 1);
     MapGrid_CopyCellsTo(4, 30, 18, 10, 2, 1);
     MapGrid_CopyCellsTo(4, 55, 36, 40, 4, 3);
   }
-  if (GameFlag_IsSet(FLAG_SOL_SANCTUM_SOUTHWEST_SEAL_OPEN) != 0) {
+  if (GameFlag_Get(FLAG_SOL_SANCTUM_SOUTHWEST_SEAL_OPEN) != 0) {
     ObjectEvent_SetPosition(LOCALID_SOUTHWEST_STATUE, PIXELS(504), PIXELS(200));
     MapGrid_CopyCellsTo(2, 29, 34, 11, 2, 1);
     MapGrid_CopyCellsTo(2, 31, 16, 11, 2, 1);
     MapGrid_CopyCellsTo(0, 58, 32, 43, 4, 1);
   }
-  if (GameFlag_IsSet(FLAG_SOL_SANCTUM_SOUTHEAST_SEAL_OPEN) != 0) {
+  if (GameFlag_Get(FLAG_SOL_SANCTUM_SOUTHEAST_SEAL_OPEN) != 0) {
     ObjectEvent_SetPosition(LOCALID_SOUTHEAST_STATUE, PIXELS(648), PIXELS(200));
     MapGrid_CopyCellsTo(4, 29, 36, 11, 2, 1);
     MapGrid_CopyCellsTo(4, 31, 18, 11, 2, 1);
@@ -945,25 +945,25 @@ s32 SolSanctumStatue_Initialize(void) {
   }
   if (gGameState.warpDest ==
       SOL_SANCTUM_STATUE_FROM_SOL_SANCTUM_LUNA_SOL_ROOMS_TRAP_DISARMED) {
-    if (GameFlag_IsSet(FLAG_SOL_SANCTUM_TRAP_DISARMED_EXPLAINED) != 0) {
+    if (Script_GetFlag(FLAG_SOL_SANCTUM_TRAP_DISARMED_EXPLAINED) != 0) {
       ObjectEvent_SetPosition(GARET, 0, 0);
       ObjectEvent_SetPosition(JENNA, 0, 0);
-    } else if (GameFlag_IsSet(FLAG_KEEP_PARTY_POSITION) == 0) {
+    } else if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) == 0) {
       SolSanctumStatue_ExplainTrapDisarmed();
       GameFlag_Set(FLAG_SOL_SANCTUM_TRAP_DISARMED_EXPLAINED);
     }
   }
   if (gGameState.warpDest ==
       SOL_SANCTUM_STATUE_FROM_SOL_SANCTUM_LUNA_SOL_ROOMS_TRAP_TRIGGERED) {
-    if (GameFlag_IsSet(FLAG_SOL_SANCTUM_STATUE_PUZZLE_EXPLAINED) != 0) {
+    if (Script_GetFlag(FLAG_SOL_SANCTUM_STATUE_PUZZLE_EXPLAINED) != 0) {
       ObjectEvent_SetPosition(GARET, 0, 0);
       ObjectEvent_SetPosition(JENNA, 0, 0);
-    } else if (GameFlag_IsSet(FLAG_KEEP_PARTY_POSITION) == 0) {
+    } else if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) == 0) {
       SolSanctumStatue_ExplainStatuePuzzle();
       GameFlag_Set(FLAG_SOL_SANCTUM_STATUE_PUZZLE_EXPLAINED);
     }
   }
-  if (GameFlag_IsSet(FLAG_SOL_SANCTUM_ERUPTED) != 0) {
+  if (GameFlag_Get(FLAG_SOL_SANCTUM_ERUPTED) != 0) {
     Map_QueueMusic(SE_RUMBLE);
     MapGrid_SetShake(PIXELS(1), PIXELS(1), Q16_ONE);
     FieldEffect_InitializeSparkles();
@@ -1141,7 +1141,7 @@ static void EventScript_CenterStatueMoved(void) {
     statueZ = statue->z.fixed;
     FieldScript_Start();
     if ((statueZ >> 20) == 8) {
-      if (GameFlag_Test(FLAG_MAP_TEMP_07) == 0) {
+      if (GameFlag_Get(FLAG_MAP_TEMP_07) == 0) {
         leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
         if ((u32)(leader->z.fixed >> 19) <= 17) {
           ObjectEvent_WalkToAndWait(LOCALID_PARTY_LEADER, 289, 158);
@@ -1149,9 +1149,9 @@ static void EventScript_CenterStatueMoved(void) {
           leader->facing = FACING_NORTH;
         }
       }
-      if (GameFlag_Test(FLAG_SOL_SANCTUM_LEFT_BEAM_SHINING) != 0 &&
-          GameFlag_Test(FLAG_SOL_SANCTUM_RIGHT_BEAM_SHINING) != 0) {
-        Engine_GameFlagSet(FLAG_SOL_SANCTUM_CENTER_STATUE_MOVED);
+      if (GameFlag_Get(FLAG_SOL_SANCTUM_LEFT_BEAM_SHINING) != 0 &&
+          GameFlag_Get(FLAG_SOL_SANCTUM_RIGHT_BEAM_SHINING) != 0) {
+        GameFlag_Set(FLAG_SOL_SANCTUM_CENTER_STATUE_MOVED);
         // The statue slides south into the hole; LOCALID_MOVED_CENTER_STATUE
         // stands in for it there and the room shakes hard, then settles.
         FieldCamera_SetSpeed(PIXELS(2), PIXELS(1) / 4);
@@ -1194,11 +1194,11 @@ static void EventScript_CenterStatueMoved(void) {
         MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
         FieldScript_WaitFrames(60);
         Sound_PlaySong(SE_188);
-        if (GameFlag_Test(FLAG_SOL_SANCTUM_NORTHWEST_SEAL_OPEN) != 0 &&
-            GameFlag_Test(FLAG_SOL_SANCTUM_NORTHEAST_SEAL_OPEN) != 0 &&
-            GameFlag_Test(FLAG_SOL_SANCTUM_SOUTHWEST_SEAL_OPEN) != 0 &&
-            GameFlag_Test(FLAG_SOL_SANCTUM_SOUTHEAST_SEAL_OPEN) != 0) {
-          Engine_GameFlagSet(FLAG_SOL_SANCTUM_ALL_SEALS_OPEN);
+        if (GameFlag_Get(FLAG_SOL_SANCTUM_NORTHWEST_SEAL_OPEN) != 0 &&
+            GameFlag_Get(FLAG_SOL_SANCTUM_NORTHEAST_SEAL_OPEN) != 0 &&
+            GameFlag_Get(FLAG_SOL_SANCTUM_SOUTHWEST_SEAL_OPEN) != 0 &&
+            GameFlag_Get(FLAG_SOL_SANCTUM_SOUTHEAST_SEAL_OPEN) != 0) {
+          GameFlag_Set(FLAG_SOL_SANCTUM_ALL_SEALS_OPEN);
         }
         FieldScript_WaitFrames(40);
         FieldMessage_Show(MsgSolSanctumSomethingClicked, 1);
@@ -1607,7 +1607,7 @@ static void SolSanctumStatue_OpenSeal(void) {
 
   warpResult = 0;
   FieldScript_Start();
-  if (!GameFlag_Test(FLAG_SOL_SANCTUM_ALL_SEALS_OPEN)) {
+  if (!GameFlag_Get(FLAG_SOL_SANCTUM_ALL_SEALS_OPEN)) {
     // Show the configured seal and flash its two tile states.
     FieldCamera_SetSpeedParameters(PIXELS(2), PIXELS(1) / 4);
     FieldCamera_MoveWithinMapBounds(PIXELS(576), -1, PIXELS(172), 1);
@@ -1624,11 +1624,11 @@ static void SolSanctumStatue_OpenSeal(void) {
     }
     seal = &sSealOpening;
     COPY_CELLS(seal->opened);
-    Engine_GameFlagSet(seal->flag);
+    GameFlag_Set(seal->flag);
     warpResult = SolSanctumStatue_SelectStoryWarp();
     // Keep the statue reusable until the central statue has moved.
     if (warpResult == -1) {
-      if (!GameFlag_Test(FLAG_SOL_SANCTUM_CENTER_STATUE_MOVED)) {
+      if (!GameFlag_Get(FLAG_SOL_SANCTUM_CENTER_STATUE_MOVED)) {
         FieldCamera_FollowObjectEvent(LOCALID_PARTY_LEADER, 1);
         ObjectEvent_GetById(LOCALID_PARTY_LEADER)->facing = seal->facing;
         ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(2), PIXELS(2));
@@ -1646,19 +1646,19 @@ static void SolSanctumStatue_OpenSeal(void) {
                                           seal->objectEventZ);
         ObjectEvent_GetById(LOCALID_PARTY_LEADER)->steeringFlags |=
             OBJ_EVENT_FACES_MOTION;
-        GameFlag_ClearBit(seal->flag);
+        GameFlag_Clear(seal->flag);
       }
     } else if (warpResult == 0 &&
-               GameFlag_Test(FLAG_SOL_SANCTUM_CENTER_STATUE_MOVED)) {
+               GameFlag_Get(FLAG_SOL_SANCTUM_CENTER_STATUE_MOVED)) {
       // DEAD: SelectStoryWarp returns only 1 or -1, so this branch cannot run.
-      if (GameFlag_Test(FLAG_SOL_SANCTUM_NORTHWEST_SEAL_OPEN) &&
-          GameFlag_Test(FLAG_SOL_SANCTUM_SOUTHWEST_SEAL_OPEN) &&
-          GameFlag_Test(FLAG_SOL_SANCTUM_SOUTHEAST_SEAL_OPEN)) {
-        if (!GameFlag_IsSet(FLAG_SOL_SANCTUM_ALL_SEALS_OPEN)) {
-          Engine_GameFlagSet(FLAG_SOL_SANCTUM_ALL_SEALS_OPEN);
+      if (GameFlag_Get(FLAG_SOL_SANCTUM_NORTHWEST_SEAL_OPEN) &&
+          GameFlag_Get(FLAG_SOL_SANCTUM_SOUTHWEST_SEAL_OPEN) &&
+          GameFlag_Get(FLAG_SOL_SANCTUM_SOUTHEAST_SEAL_OPEN)) {
+        if (!Script_GetFlag(FLAG_SOL_SANCTUM_ALL_SEALS_OPEN)) {
+          GameFlag_Set(FLAG_SOL_SANCTUM_ALL_SEALS_OPEN);
           SolSanctumStatue_RunSealOpenedSequence();
         }
-      } else if (GameFlag_Test(FLAG_SOL_SANCTUM_FALLING_LIGHTS_SEEN)) {
+      } else if (GameFlag_Get(FLAG_SOL_SANCTUM_FALLING_LIGHTS_SEEN)) {
         Engine_ScriptRequestWarp(
             SOL_SANCTUM_STATUE_TO_SOL_SANCTUM_LUNA_SOL_ROOMS_LIGHTS_SHOWN);
         warpResult = 1;
@@ -1677,20 +1677,20 @@ static void SolSanctumStatue_OpenSeal(void) {
 /// until the centre statue has moved. Sets FLAG_SOL_SANCTUM_LEFT_BEAM_SHINING.
 static void SolSanctumStatue_ShineLeftBeam(void) {
   FieldScript_Start();
-  if (GameFlag_IsSet(FLAG_SOL_SANCTUM_CENTER_STATUE_MOVED) == 0) {
-    if (GameFlag_IsSet(FLAG_SOL_SANCTUM_LEFT_BEAM_SHINING) == 0) {
+  if (GameFlag_Get(FLAG_SOL_SANCTUM_CENTER_STATUE_MOVED) == 0) {
+    if (Script_GetFlag(FLAG_SOL_SANCTUM_LEFT_BEAM_SHINING) == 0) {
       FieldCamera_SetSpeed(PIXELS(2), PIXELS(1) / 4);
       FieldCamera_MoveTo(PIXELS(286), -1, PIXELS(146), 1);
       FieldCamera_WaitForArrival();
       Script_PlaySong(SE_SOL_SANCTUM_LIGHT_UP);
       MapGrid_CopyCellsTo(0, 59, 15, 38, 4, 3);
-      if (GameFlag_IsSet(FLAG_SOL_SANCTUM_RIGHT_BEAM_SHINING) != 0) {
+      if (Script_GetFlag(FLAG_SOL_SANCTUM_RIGHT_BEAM_SHINING) != 0) {
         MapGrid_CopyCellsTo(8, 60, 17, 39, 2, 2);
       }
       ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_EAST, 0);
       FieldScript_WaitFrames(30);
       GameFlag_Set(FLAG_SOL_SANCTUM_LEFT_BEAM_SHINING);
-      if (GameFlag_IsSet(FLAG_SOL_SANCTUM_RIGHT_BEAM_SHINING) != 0) {
+      if (GameFlag_Get(FLAG_SOL_SANCTUM_RIGHT_BEAM_SHINING) != 0) {
         SolSanctumStatue_OpenCentralHole();
       }
     }
@@ -1702,20 +1702,20 @@ static void SolSanctumStatue_ShineLeftBeam(void) {
 /// As the left one; sets FLAG_SOL_SANCTUM_RIGHT_BEAM_SHINING.
 static void SolSanctumStatue_ShineRightBeam(void) {
   FieldScript_Start();
-  if (GameFlag_IsSet(FLAG_SOL_SANCTUM_CENTER_STATUE_MOVED) == 0) {
-    if (GameFlag_IsSet(FLAG_SOL_SANCTUM_RIGHT_BEAM_SHINING) == 0) {
+  if (GameFlag_Get(FLAG_SOL_SANCTUM_CENTER_STATUE_MOVED) == 0) {
+    if (Script_GetFlag(FLAG_SOL_SANCTUM_RIGHT_BEAM_SHINING) == 0) {
       FieldCamera_SetSpeed(PIXELS(2), PIXELS(1) / 4);
       FieldCamera_MoveTo(PIXELS(286), -1, PIXELS(146), 1);
       FieldCamera_WaitForArrival();
       Script_PlaySong(SE_SOL_SANCTUM_LIGHT_UP);
       MapGrid_CopyCellsTo(4, 59, 17, 38, 4, 3);
-      if (GameFlag_IsSet(FLAG_SOL_SANCTUM_LEFT_BEAM_SHINING) != 0) {
+      if (Script_GetFlag(FLAG_SOL_SANCTUM_LEFT_BEAM_SHINING) != 0) {
         MapGrid_CopyCellsTo(8, 60, 17, 39, 2, 2);
       }
       ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_WEST, 0);
       FieldScript_WaitFrames(30);
       GameFlag_Set(FLAG_SOL_SANCTUM_RIGHT_BEAM_SHINING);
-      if (GameFlag_IsSet(FLAG_SOL_SANCTUM_LEFT_BEAM_SHINING) != 0) {
+      if (GameFlag_Get(FLAG_SOL_SANCTUM_LEFT_BEAM_SHINING) != 0) {
         SolSanctumStatue_OpenCentralHole();
       }
     }

@@ -268,14 +268,14 @@ restart:
   Task_ResetAll();
   InitHeap();
   VramCache_Reset();
-  GameFlag_SetBitFar(FLAG_AUTO_BATTLE);
+  GameFlag_SetFar(FLAG_AUTO_BATTLE);
   encounter = DEBUG_FIRST_ENCOUNTER;
   if (gKeysHeld & KEY_DOWN) {
     loadedPreset = -1;
-    GameFlag_ClearBitFar(FLAG_AUTO_BATTLE);
+    GameFlag_ClearFar(FLAG_AUTO_BATTLE);
     preset = 0;
     for (;;) {
-      GameFlag_ClearBitFar(FLAG_CHILDHOOD);
+      GameFlag_ClearFar(FLAG_CHILDHOOD);
       WaitFrames(1);
       for (;;) {
         if (gKeysRepeat & KEY_RIGHT)
@@ -311,12 +311,12 @@ restart:
       // background comes from gGameState.special
       // (FieldScript_GetSpecialValueFar in Battle_Run).
       if (gKeysHeld & KEY_DOWN)
-        GameFlag_SetBitFar(FLAG_LINK_BATTLE);
+        GameFlag_SetFar(FLAG_LINK_BATTLE);
       Unit_CalculateFar(0);
       gGameState.special = (s32)&ResourceId_SuhallaGateBackdrop;
       if (encounter == DJINN_TUTORIAL_ENCOUNTER)
-        GameFlag_SetBitFar(FLAG_DJINN_LESSON);
-      GameFlag_SetBitFar(FLAG_DEBUG_BATTLE);
+        GameFlag_SetFar(FLAG_DJINN_LESSON);
+      GameFlag_SetFar(FLAG_DEBUG_BATTLE);
       Battle_Run(encounter);
       // Rebuild what the battle replaced, then return to the chooser.
       Window_LoadGraphics();
@@ -327,7 +327,7 @@ restart:
     }
   }
   // Without Down: the same auto battle, over and over.
-  GameFlag_SetBitFar(FLAG_DEBUG_BATTLE);
+  GameFlag_SetFar(FLAG_DEBUG_BATTLE);
   Battle_Run(DEBUG_FIRST_ENCOUNTER);
   goto restart;
 }

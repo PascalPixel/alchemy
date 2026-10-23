@@ -143,16 +143,16 @@ static void EventScript_MoveWestPillar(void) {
 
   pillar = ObjectEvent_GetById(LOCALID_WEST_PILLAR);
   column = pillar->x.fixed / PIXELS(16);
-  GameFlag_Clear(FLAG_GOMA_CAVE_ENTRANCE_WEST_PILLAR_ONE_STEP);
-  GameFlag_Clear(FLAG_GOMA_CAVE_ENTRANCE_WEST_PILLAR_TWO_STEPS);
+  Script_ClearFlag(FLAG_GOMA_CAVE_ENTRANCE_WEST_PILLAR_ONE_STEP);
+  Script_ClearFlag(FLAG_GOMA_CAVE_ENTRANCE_WEST_PILLAR_TWO_STEPS);
   if (column == 15) {
     MapGrid_CopyCellAttributes(47, 18, 1, 2, 16, 18);
   } else if (column == 16) {
     MapGrid_CopyCellAttributes(48, 18, 1, 2, column, 18);
-    FLAG_SET(FLAG_GOMA_CAVE_ENTRANCE_WEST_PILLAR_ONE_STEP);
+    GameFlag_Set(FLAG_GOMA_CAVE_ENTRANCE_WEST_PILLAR_ONE_STEP);
   } else {
     MapGrid_CopyCellAttributes(47, 18, 1, 2, 16, 18);
-    FLAG_SET(FLAG_GOMA_CAVE_ENTRANCE_WEST_PILLAR_TWO_STEPS);
+    GameFlag_Set(FLAG_GOMA_CAVE_ENTRANCE_WEST_PILLAR_TWO_STEPS);
   }
 }
 
@@ -171,7 +171,7 @@ static void EventScript_MoveEastPillar(void) {
     ObjectEvent_GetById(LOCALID_EAST_PILLAR)->motionFlags = 0;
     ObjectEvent_SetSpriteFlags(ObjectEvent_GetById(LOCALID_EAST_PILLAR), 0);
     MapGrid_CopyCellAttributes(54, 17, 1, 1, column, 17);
-    Engine_GameFlagSet(FLAG_GOMA_CAVE_ENTRANCE_EAST_PILLAR_IN_PLACE);
+    GameFlag_Set(FLAG_GOMA_CAVE_ENTRANCE_EAST_PILLAR_IN_PLACE);
   }
 }
 
@@ -212,7 +212,7 @@ UNUSED static void GomaCaveEntrance_NoOpB(void) {}
 /// good.
 static void EventScript_BlowAwayIvy(void) {
   SCRIPT_START();
-  Engine_GameFlagSet(FLAG_GOMA_CAVE_ENTRANCE_IVY_BLOWN_AWAY);
+  GameFlag_Set(FLAG_GOMA_CAVE_ENTRANCE_IVY_BLOWN_AWAY);
   SCRIPT_END();
 }
 
@@ -224,7 +224,7 @@ const struct MapEvent *Map_GetEvents(void) { return gGomaCaveEntranceEvents; }
 s32 Map_Initialize(void) {
   struct ObjectEvent *movedObject;
 
-  Engine_GameFlagSet(FLAG_RETREAT_BLOCKED);
+  GameFlag_Set(FLAG_RETREAT_BLOCKED);
   WAIT(10);
   Map_QueueMusic(SE_170);
   OBJECT_ANIMATION(LOCALID_SUNKEN_STUMP, STUMP_ANIMATION_SINK);
@@ -242,10 +242,10 @@ s32 Map_Initialize(void) {
 
     record->collisionFlags = OBJ_EVENT_NOT_TARGETED | record->collisionFlags;
   }
-  if (GameFlag_Test(FLAG_GOMA_CAVE_IVAN_JOINED) != 0) {
+  if (GameFlag_Get(FLAG_GOMA_CAVE_IVAN_JOINED) != 0) {
     MapGrid_CopyCellAttributes(74, 11, 1, 1, 73, 11);
   }
-  if (GameFlag_Test(FLAG_GOMA_CAVE_ENTRANCE_STUMP_MOVED) != 0) {
+  if (GameFlag_Get(FLAG_GOMA_CAVE_ENTRANCE_STUMP_MOVED) != 0) {
     Engine_ObjectEventSetPosition(LOCALID_STUMP, PIXELS(136), PIXELS(196));
     ObjectEvent_GetById(LOCALID_STUMP)->priorityFlags |=
         OBJ_EVENT_PRIORITY_UNDERFOOT;
@@ -253,16 +253,16 @@ s32 Map_Initialize(void) {
     MapGrid_CopyCellAttributes(39, 12, 3, 1, 8, 12);
     MapGrid_CopyCellAttributes(43, 11, 3, 1, 12, 11);
   }
-  if (GameFlag_Test(FLAG_GOMA_CAVE_ENTRANCE_WEST_PILLAR_ONE_STEP) != 0) {
+  if (GameFlag_Get(FLAG_GOMA_CAVE_ENTRANCE_WEST_PILLAR_ONE_STEP) != 0) {
     OBJECT_POSITION_SET(LOCALID_WEST_PILLAR, 264, 312);
     MapGrid_CopyCellAttributes(48, 18, 1, 2, 16, 18);
   } else {
-    if (GameFlag_Test(FLAG_GOMA_CAVE_ENTRANCE_WEST_PILLAR_TWO_STEPS) != 0) {
+    if (GameFlag_Get(FLAG_GOMA_CAVE_ENTRANCE_WEST_PILLAR_TWO_STEPS) != 0) {
       OBJECT_POSITION_SET(LOCALID_WEST_PILLAR, 280, 312);
       MapGrid_CopyCellAttributes(47, 18, 1, 2, 16, 18);
     }
   }
-  if (GameFlag_Test(FLAG_GOMA_CAVE_ENTRANCE_EAST_PILLAR_IN_PLACE) != 0) {
+  if (GameFlag_Get(FLAG_GOMA_CAVE_ENTRANCE_EAST_PILLAR_IN_PLACE) != 0) {
     Engine_ObjectEventSetPosition(LOCALID_EAST_PILLAR, PIXELS(376),
                                   PIXELS(280));
     ObjectEvent_GetById(LOCALID_EAST_PILLAR)->priorityFlags =
@@ -304,7 +304,7 @@ static void EventScript_IvanRejoins(void) {
   Script_ShowMessageAndWait(GARET, 0, 20);
   ObjectMotion_SetAnimationAndWait(LOCALID_PARTY_LEADER, ANIM_NOD);
   WAIT(20);
-  if (FLAG_CHECK(FLAG_VAULT_THIEVES_JAILED) == 0) {
+  if (GameFlag_Get(FLAG_VAULT_THIEVES_JAILED) == 0) {
     // Garet falls back into line.
     OBJECT_ANIMATION(GARET, ANIM_WALK);
     leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
@@ -483,7 +483,7 @@ static void EventScript_IvanRejoins(void) {
     ObjectMotion_CommitCurrentPositionAndActivate(GARET);
     OBJECT_POSITION_SET(GARET, 0, 0);
     MapGrid_CopyCellAttributes(74, 11, 1, 1, 73, 11);
-    FLAG_SET(FLAG_GOMA_CAVE_IVAN_JOINED);
+    GameFlag_Set(FLAG_GOMA_CAVE_IVAN_JOINED);
     SCRIPT_END();
   }
 }
@@ -502,7 +502,7 @@ static void EventScript_MoveStump(void) {
     stump->priorityFlags |= OBJ_EVENT_PRIORITY_UNDERFOOT;
     MapGrid_CopyCellAttributes(39, 12, 3, 1, 8, 12);
     MapGrid_CopyCellAttributes(43, 11, 3, 1, 12, column);
-    Engine_GameFlagSet(FLAG_GOMA_CAVE_ENTRANCE_STUMP_MOVED);
+    GameFlag_Set(FLAG_GOMA_CAVE_ENTRANCE_STUMP_MOVED);
   }
   SCRIPT_END();
 }

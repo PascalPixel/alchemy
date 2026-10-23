@@ -395,7 +395,7 @@ s32 Portrait_Load(u32 member, s32 cacheSlot) {
   if (portrait > (u32)PIERS) {
     portrait = 0;
   }
-  if (GameFlag_TestFar(FLAG_CHILDHOOD) != 0) {
+  if (GameFlag_GetFar(FLAG_CHILDHOOD) != 0) {
     switch (portrait) {
     case ISAAC:
       portrait = FACE_ISAAC_CHILD;

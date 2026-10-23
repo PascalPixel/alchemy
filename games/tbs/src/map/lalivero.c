@@ -183,7 +183,7 @@ const u32 *Lalivero_GetWarps(void) { return gLaliveroWarps; }
 /// The townsfolk, who stand differently once the party is back from Venus
 /// Lighthouse.
 const struct ObjectEventTemplate *Lalivero_GetObjectEventTemplates(void) {
-  if (GameFlag_Test(FLAG_VENUS_LIGHTHOUSE_PARTY_RETURNED) != 0) {
+  if (GameFlag_Get(FLAG_VENUS_LIGHTHOUSE_PARTY_RETURNED) != 0) {
     return gLaliveroObjectEventTemplatesAfterLighthouse;
   }
   return gLaliveroObjectEventTemplates;
@@ -228,7 +228,7 @@ static void EventScript_WomanAsksIfLeaving(s32 localId) {
 /// aside (sets FLAG_LALIVERO_WHARF_OPEN).
 static void EventScript_WharfGuardLetsPartyThrough(void) {
 
-  Engine_GameFlagSet(FLAG_LALIVERO_WHARF_OPEN);
+  GameFlag_Set(FLAG_LALIVERO_WHARF_OPEN);
   FieldScript_SetMessageId(MsgLaliveroWasToldLetInIf);
   FieldScript_ShowMessageAndWait(LOCALID_WHARF_GUARD, 0);
   ObjectEvent_SetSpeed(LOCALID_WHARF_GUARD, 0x10000, 0x8000);
@@ -650,7 +650,7 @@ static void EventScript_IodemGivesBlackOrb(void) {
   Script_ShowMessage(LOCALID_IODEM, 0);
   // Arriving through the aerie, the party also talks about the ship they saw
   // at Idejima.
-  if (GameFlag_IsSet(FLAG_SAW_SHIP_AT_IDEJIMA) != 0) {
+  if (GameFlag_Get(FLAG_SAW_SHIP_AT_IDEJIMA) != 0) {
     Lalivero_TalkAboutIdejimaShip();
   }
   FieldScript_SetMessageId(MsgLaliveroBabiToldMeShipAncients);
@@ -827,7 +827,7 @@ static void EventScript_TurnBackToTheShip(void) {
 /// What the party can talk to, touch and search, which changes once they are
 /// back from Venus Lighthouse.
 const struct MapEvent *Lalivero_GetEvents(void) {
-  if (GameFlag_Test(FLAG_VENUS_LIGHTHOUSE_PARTY_RETURNED) != 0) {
+  if (GameFlag_Get(FLAG_VENUS_LIGHTHOUSE_PARTY_RETURNED) != 0) {
     return gLaliveroEventsAfterLighthouse;
   }
   return gLaliveroEvents;
@@ -879,7 +879,7 @@ s32 Lalivero_Initialize(void) {
   VramCache_Load(sprite->slot, ICON_TILE_BYTES, icon->tiles);
   FreeHeapSlot(HEAP_SLOT_GLYPH_TRANSFER);
 
-  if (GameFlag_IsSet(FLAG_VENUS_LIGHTHOUSE_PARTY_RETURNED)) {
+  if (GameFlag_Get(FLAG_VENUS_LIGHTHOUSE_PARTY_RETURNED)) {
     // A sign now stands at the north exit, and the three open cells of the
     // gap in the north wall become wall, closing the way north.
     ObjectEvent_SetSpriteFlags(ObjectEvent_Get(LOCALID_NORTH_EXIT_SIGN), 0);
@@ -887,7 +887,7 @@ s32 Lalivero_Initialize(void) {
     MapGrid_CopyCellAttributes(WALL_CELL_X, WALL_CELL_Y, 1, 1, 14, 4);
     MapGrid_CopyCellAttributes(WALL_CELL_X, WALL_CELL_Y, 1, 1, 15, 4);
     MapGrid_CopyCellAttributes(WALL_CELL_X, WALL_CELL_Y, 1, 1, 16, 4);
-    if (GameFlag_IsSet(FLAG_LALIVERO_WHARF_OPEN)) {
+    if (GameFlag_Get(FLAG_LALIVERO_WHARF_OPEN)) {
       ObjectEvent_SetPosition(LOCALID_WHARF_GUARD, PIXELS(56), PIXELS(184));
     }
   } else {
@@ -912,7 +912,7 @@ s32 Lalivero_Initialize(void) {
     MapGrid_CopyCellAttributes(20, 23, 1, 1, 18, 23);
     if ((gGameState.warpDest == LALIVERO_FROM_WORLD_MAP_EAST ||
          gGameState.warpDest == LALIVERO_FROM_WORLD_MAP_WEST) &&
-        !GameFlag_IsSet(FLAG_LALIVERO_WOUNDED_SOLDIERS_SEEN)) {
+        !Script_GetFlag(FLAG_LALIVERO_WOUNDED_SOLDIERS_SEEN)) {
       GameFlag_Set(FLAG_LALIVERO_WOUNDED_SOLDIERS_SEEN);
       // The woman and the girl who wander nearest the soldiers stay put during
       // the cutscene.

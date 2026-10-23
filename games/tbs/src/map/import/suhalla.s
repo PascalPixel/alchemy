@@ -2,8 +2,8 @@
 	.set overlay_imports, 1
 	.set import.MapGrid_PlayMetatileCopySequence, 1
 	.set import.MapGrid_CopyCellAttributeRect, 1
-	.set import.GameFlag_Test, 1
-	.set import.Engine_GameFlagSet, 1
+	.set import.GameFlag_Get, 1
+	.set import.GameFlag_Set, 1
 	.set import.FieldScript_WaitFrames, 1
 	.set import.FieldScript_AskYesNoWithObjectEventAnimation, 1
 	.set import.Engine_ObjectEventSetAnimation, 1

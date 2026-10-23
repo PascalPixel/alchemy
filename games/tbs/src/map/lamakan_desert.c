@@ -262,9 +262,9 @@ const u32 *LamakanDesert_GetWarps(void) { return gLamakanDesertWarps; }
 const struct ObjectEventTemplate *LamakanDesert_GetObjectEventTemplates(void) {
   if (gGameState.mapId == (s32)&MapId_LamakanDesertManticore) {
     if (gGameState.warpDest == LAMAKAN_DESERT_MANTICORE_AFTER_FIGHT_MANTICORE) {
-      Engine_GameFlagSet(FLAG_LAMAKAN_MANTICORE_BEATEN);
+      GameFlag_Set(FLAG_LAMAKAN_MANTICORE_BEATEN);
 #if TBS_PATCH_3
-      Engine_GameFlagSet(FLAG_KALAY_REACHED);
+      GameFlag_Set(FLAG_KALAY_REACHED);
 #endif
     }
   }
@@ -285,8 +285,8 @@ const struct ObjectEventTemplate *LamakanDesert_GetObjectEventTemplates(void) {
 /// comment).
 static void LamakanDesert_LeaveForTheWorldMap(void) {
   FieldScript_Start();
-  if (GameFlag_IsSet(FLAG_HSU_RESCUED) == 0) {
-    if (GameFlag_IsSet(FLAG_HSU_RESCUED_WITHOUT_PARTY) == 0) {
+  if (Script_GetFlag(FLAG_HSU_RESCUED) == 0) {
+    if (Script_GetFlag(FLAG_HSU_RESCUED_WITHOUT_PARTY) == 0) {
       GameFlag_Set(FLAG_HSU_RESCUED_WITHOUT_PARTY);
       GameFlag_Set(FLAG_HSU_RESCUED);
     }
@@ -317,7 +317,7 @@ static s32 Reveal_HideSecrets(void) {
 #endif
   s32 markerId;
 
-  GameFlag_ClearBit(FLAG_SECRETS_REVEALED);
+  GameFlag_Clear(FLAG_SECRETS_REVEALED);
   if (gGameState.mapId == (s32)&MapId_LamakanDesertEast) {
     MapGrid_CopyCells(70, 68, 4, 2, 22, 7);
     MapGrid_CopyCells(70, 68, 4, 2, 8, 10);
@@ -390,8 +390,8 @@ static s32 Reveal_ShowSecrets(void) {
 #endif
   s32 i;
 
-  GameFlag_ClearBit(FLAG_DESERT_EVENT_RUNNING);
-  Engine_GameFlagSet(FLAG_SECRETS_REVEALED);
+  GameFlag_Clear(FLAG_DESERT_EVENT_RUNNING);
+  GameFlag_Set(FLAG_SECRETS_REVEALED);
   // Restore each hidden patch from the spare cells saved on entry.
   if (gGameState.mapId == (s32)&MapId_LamakanDesertEast) {
     MapGrid_CopyCells(64, 126, 4, 2, 22, 7);
@@ -438,7 +438,7 @@ static s32 Reveal_ShowSecrets(void) {
     ObjectEvent_SetPosition(LOCALID_MANTICORE, PIXELS(168), PIXELS(92));
     ObjectEvent_SetPosition(LOCALID_FIRST_PIT, PIXELS(128), PIXELS(316));
     MapGrid_CopyCellAttributes(6, 0, 3, 3, 9, 6);
-    if (GameFlag_Test(FLAG_LAMAKAN_MANTICORE_BEATEN) == 0) {
+    if (GameFlag_Get(FLAG_LAMAKAN_MANTICORE_BEATEN) == 0) {
       MapGrid_CopyCells(0, 119, 3, 1, 9, 5);
     }
   }
@@ -481,9 +481,9 @@ static void LamakanDesert_ComplainAboutHeat(s32 mark) {
     random = Engine_RandomNext();
     member = (u32)((random << 1) + random) >> 16; // 0 to 2
     flag = member + FLAG_GARET_COMPLAINED;
-    alreadySpoke = GameFlag_Test(flag);
+    alreadySpoke = GameFlag_Get(flag);
     if (alreadySpoke == 0) {
-      Engine_GameFlagSet(flag);
+      GameFlag_Set(flag);
       break;
     }
   }
@@ -506,35 +506,35 @@ static void HeatGauge_RaiseQuarterTriggers(void) {
   struct FieldWork *work = gFieldWork;
   s32 percent = gGameState.hazardSteps * 100 / gGameState.hazardLimit;
 
-  if (GameFlag_IsSet(FLAG_SECRETS_REVEALED) != 0)
+  if (GameFlag_Get(FLAG_SECRETS_REVEALED) != 0)
     return;
-  if (GameFlag_IsSet(FLAG_HEAT_THREE_QUARTERS) != 0 && percent <= 74) {
+  if (Script_GetFlag(FLAG_HEAT_THREE_QUARTERS) != 0 && percent <= 74) {
     GameFlag_Clear(FLAG_HEAT_THREE_QUARTERS);
     GameFlag_Clear(FLAG_GARET_COMPLAINED);
     GameFlag_Clear(FLAG_IVAN_COMPLAINED);
     GameFlag_Clear(FLAG_MIA_COMPLAINED);
   }
-  if (GameFlag_IsSet(FLAG_HEAT_HALF) != 0 && percent <= 49) {
+  if (Script_GetFlag(FLAG_HEAT_HALF) != 0 && percent <= 49) {
     GameFlag_Clear(FLAG_HEAT_HALF);
     GameFlag_Clear(FLAG_GARET_COMPLAINED);
     GameFlag_Clear(FLAG_IVAN_COMPLAINED);
     GameFlag_Clear(FLAG_MIA_COMPLAINED);
   }
-  if (GameFlag_IsSet(FLAG_HEAT_QUARTER) != 0 && percent <= 24) {
+  if (Script_GetFlag(FLAG_HEAT_QUARTER) != 0 && percent <= 24) {
     GameFlag_Clear(FLAG_HEAT_QUARTER);
     GameFlag_Clear(FLAG_GARET_COMPLAINED);
     GameFlag_Clear(FLAG_IVAN_COMPLAINED);
     GameFlag_Clear(FLAG_MIA_COMPLAINED);
   }
-  if (GameFlag_IsSet(FLAG_HEAT_QUARTER) == 0 && percent > 24) {
+  if (Script_GetFlag(FLAG_HEAT_QUARTER) == 0 && percent > 24) {
     GameFlag_Set(FLAG_HEAT_QUARTER);
     work->raisedEvent = LAMAKAN_DESERT_RAISED_HEAT_QUARTER;
   }
-  if (GameFlag_IsSet(FLAG_HEAT_HALF) == 0 && percent > 49) {
+  if (Script_GetFlag(FLAG_HEAT_HALF) == 0 && percent > 49) {
     GameFlag_Set(FLAG_HEAT_HALF);
     work->raisedEvent = LAMAKAN_DESERT_RAISED_HEAT_HALF;
   }
-  if (GameFlag_IsSet(FLAG_HEAT_THREE_QUARTERS) == 0 && percent > 74) {
+  if (Script_GetFlag(FLAG_HEAT_THREE_QUARTERS) == 0 && percent > 74) {
     GameFlag_Set(FLAG_HEAT_THREE_QUARTERS);
     work->raisedEvent = LAMAKAN_DESERT_RAISED_HEAT_THREE_QUARTERS;
   }
@@ -917,8 +917,8 @@ static void LamakanDesert_MeetManticore(void) {
 
   eventBytes = (u8 *)gFieldWork;
   HeatGauge_CountStep();
-  if (GameFlag_IsSet(FLAG_LAMAKAN_MANTICORE_BEATEN) == 0) {
-    paused = GameFlag_IsSet(FLAG_DESERT_EVENT_RUNNING);
+  if (GameFlag_Get(FLAG_LAMAKAN_MANTICORE_BEATEN) == 0) {
+    paused = Script_GetFlag(FLAG_DESERT_EVENT_RUNNING);
     if (paused == 0) {
       GameFlag_Set(FLAG_DESERT_EVENT_RUNNING);
       // Suspend heat accumulation while the leader notices the Manticore.
@@ -1063,7 +1063,7 @@ static void HeatGauge_Draw(void) {
   tile = gVramCacheEntries[(*(s16 *)&gHeatGauge_VramSlot)].offset >> 5;
   if ((*(s16 *)&gHeatGauge_Held) != 0) {
     gHeatGaugeSlide = 2;
-  } else if (GameFlag_Test(FLAG_FIELD_HANDLING_REQUESTS) != 0) {
+  } else if (GameFlag_Get(FLAG_FIELD_HANDLING_REQUESTS) != 0) {
     if (gHeatGaugeSlide > 0) {
       gHeatGaugeSlide--;
     }

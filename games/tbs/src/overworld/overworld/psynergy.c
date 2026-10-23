@@ -37,12 +37,12 @@ s32 Field_UsePsynergy(u32 code) {
   ObjectEvent_GetByLocalId(gGameState.leaderLocalId);
   retreat = 0;
   Leader_StopMoving();
-  GameFlag_ClearBitFar(FLAG_ITEM_USE);
+  GameFlag_ClearFar(FLAG_ITEM_USE);
   if (userId == UNIT_NONE)
     userId = 0;
 
   // Where Psynergy has no effect.
-  if (GameFlag_TestFar(FLAG_IN_BATTLE_ARENA)) {
+  if (GameFlag_GetFar(FLAG_IN_BATTLE_ARENA)) {
     PSYNERGY_MESSAGE(userId, abilityId, MsgNothingHappened);
     return 0;
   }
@@ -53,7 +53,7 @@ s32 Field_UsePsynergy(u32 code) {
 
   // Retreat: ask, then go back to where the party entered this map section.
   if (abilityId == ABILITY_RETREAT) {
-    if (GameFlag_TestFar(FLAG_RETREAT_BLOCKED)) {
+    if (GameFlag_GetFar(FLAG_RETREAT_BLOCKED)) {
       PSYNERGY_MESSAGE(userId, ABILITY_RETREAT, MsgDoesNotWorkHere);
       return 0;
     }
@@ -101,18 +101,18 @@ s32 Field_UsePsynergy(u32 code) {
   during = Map_FindPsynergyEvent(PSYNERGY_EVENT(PSYNERGY_PHASE_EFFECT_ACTS),
                                  abilityGroup, &target);
   target = -1;
-  GameFlag_SetBitFar(FLAG_PSYNERGY_EFFECT);
-  GameFlag_SetBitFar(FLAG_PSYNERGY_TARGET);
+  GameFlag_SetFar(FLAG_PSYNERGY_EFFECT);
+  GameFlag_SetFar(FLAG_PSYNERGY_TARGET);
   if (before || after || during) {
     target =
         Field_FindNearbyPsynergyTarget(gGameState.leaderLocalId, abilityGroup);
     // The after event plays the effect itself.
     if (after && (after->trigger & MAP_EVENT_TRIGGER_OWN_EFFECT)) {
-      GameFlag_ClearBitFar(FLAG_PSYNERGY_EFFECT);
-      GameFlag_ClearBitFar(FLAG_PSYNERGY_TARGET);
+      GameFlag_ClearFar(FLAG_PSYNERGY_EFFECT);
+      GameFlag_ClearFar(FLAG_PSYNERGY_TARGET);
     }
   } else
-    GameFlag_ClearBitFar(FLAG_PSYNERGY_TARGET);
+    GameFlag_ClearFar(FLAG_PSYNERGY_TARGET);
 
   // Play the effect.
   if (work->mode == OBJECT_SYSTEM_WORLD_MAP)
@@ -123,18 +123,18 @@ s32 Field_UsePsynergy(u32 code) {
   FieldEffect_StartCast();
 
   Field_RunEventAction(before, userId, target);
-  if (GameFlag_TestFar(FLAG_PSYNERGY_EFFECT)) {
-    if (GameFlag_TestFar(FLAG_PSYNERGY_TARGET))
+  if (GameFlag_GetFar(FLAG_PSYNERGY_EFFECT)) {
+    if (GameFlag_GetFar(FLAG_PSYNERGY_TARGET))
       FieldEffect_DispatchRequestKind();
     else
       FieldEffect_Run();
   }
   FieldEffect_StopCasterHook();
   Field_RunEventAction(after, userId, target);
-  if (GameFlag_TestFar(FLAG_PSYNERGY_EFFECT))
+  if (GameFlag_GetFar(FLAG_PSYNERGY_EFFECT))
     FieldEffect_FinishMindRead();
-  GameFlag_ClearBitFar(FLAG_PSYNERGY_EFFECT);
-  GameFlag_ClearBitFar(FLAG_PSYNERGY_TARGET);
+  GameFlag_ClearFar(FLAG_PSYNERGY_EFFECT);
+  GameFlag_ClearFar(FLAG_PSYNERGY_TARGET);
   work->psynergyActing = 0;
   FieldEffect_End();
   if (work->mode == OBJECT_SYSTEM_WORLD_MAP)

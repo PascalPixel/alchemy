@@ -114,7 +114,7 @@ static void EventScript_MoveStump(void) {
     MapGrid_CopyCellAttributes(19, 74, 9, 3, 19, 17);
     landed = ObjectEvent_GetById(LOCALID_STUMP);
     ObjectEvent_SetSpriteFlags(landed, 0);
-    Engine_GameFlagSet(FLAG_GOMA_CAVE_STREAM_STUMP_MOVED);
+    GameFlag_Set(FLAG_GOMA_CAVE_STREAM_STUMP_MOVED);
   }
 }
 
@@ -136,11 +136,11 @@ s32 Map_Initialize(void) {
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   if (gGameState.mapId == (s32)&MapId_GomaCaveStream) {
     if (gGameState.warpDest == GOMA_CAVE_STREAM_FROM_VALE_GATE) {
-      GameFlag_ClearBit(FLAG_SHOW_LOCATION_NAME);
+      GameFlag_Clear(FLAG_SHOW_LOCATION_NAME);
     } else {
       ObjectEvent_GetById(LOCALID_STUMP)->collisionFlags |=
           OBJ_EVENT_NEAR_PSYNERGY;
-      if (GameFlag_Test(FLAG_GOMA_CAVE_STREAM_STUMP_MOVED) != 0) {
+      if (GameFlag_Get(FLAG_GOMA_CAVE_STREAM_STUMP_MOVED) != 0) {
         Engine_ObjectEventSetPosition(LOCALID_STUMP, PIXELS(346), PIXELS(292));
         stump = ObjectEvent_GetById(LOCALID_STUMP);
         ObjectEvent_SetSpriteFlags(stump, 0);

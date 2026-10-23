@@ -539,10 +539,10 @@ static void WorldMap_CircleFlint(union FieldObject *fieldObject) {
 /// lesson has begun (FLAG_DJINN_LESSON), he circles his spot at half size.
 static s32 WorldMap_SetUpFlint(struct ObjectScriptContext *interpreter) {
   struct ObjectEvent *objectEvent = (struct ObjectEvent *)interpreter;
-  if (GameFlag_Test(FLAG_DJINNI(DJINNI_FLINT)) != 0) {
+  if (GameFlag_Get(FLAG_DJINNI(DJINNI_FLINT)) != 0) {
     return 0;
   }
-  if (GameFlag_Test(FLAG_DJINN_LESSON) != 0) {
+  if (GameFlag_Get(FLAG_DJINN_LESSON) != 0) {
     return 0;
   }
   objectEvent->update = WorldMap_CircleFlint;
@@ -568,7 +568,7 @@ const u32 *WorldMap_GetWarps(void) { return gWorldMapWarps; }
 static s32 WorldMap_SetUpKolimaBridge(struct ObjectScriptContext *interpreter) {
   struct ObjectEvent *objectEvent = (struct ObjectEvent *)interpreter;
   WorldMap_AlignToMap(interpreter);
-  if (GameFlag_Test(FLAG_KOLIMA_BRIDGE_LOWERED) != 0) {
+  if (GameFlag_Get(FLAG_KOLIMA_BRIDGE_LOWERED) != 0) {
     ObjectDispatch_SelectAnimation(objectEvent,
                                    WORLD_MAP_BRIDGE_ANIMATION_LOWERED);
   }
@@ -609,8 +609,8 @@ static s32 WorldMap_SetUpStorm(struct ObjectScriptContext *interpreter) {
   ObjectEvent_SetSpriteFlags(objectEvent, 0);
   ObjectEvent_SetColorMode(objectEvent, SPRITE_COLOR_RED_TINT);
   objectEvent->collisionFlags = 0;
-  if (GameFlag_Test(FLAG_TOLBI_SHIP_AT_ISLAND) != 0) {
-    Engine_GameFlagSet(FLAG_MAP_TEMP_F1);
+  if (GameFlag_Get(FLAG_TOLBI_SHIP_AT_ISLAND) != 0) {
+    GameFlag_Set(FLAG_MAP_TEMP_F1);
     objectEvent->x.fixed = 0;
     objectEvent->y.fixed = 0;
   }
@@ -635,13 +635,13 @@ WorldMap_BlinkObjectEventSprite(struct ObjectScriptContext *interpreter) {
 const struct ObjectEventTemplate *WorldMap_GetObjectEventTemplates(void) {
   switch (gGameState.warpDest) {
   case WORLD_MAP_FROM_WEST_LUNPA_CAVE:
-    if (GameFlag_Test(FLAG_BUNZAS_WAGON_LEFT) == 0 &&
-        GameFlag_Test(FLAG_DODONPA_LOCKED_UP) != 0) {
+    if (GameFlag_Get(FLAG_BUNZAS_WAGON_LEFT) == 0 &&
+        GameFlag_Get(FLAG_DODONPA_LOCKED_UP) != 0) {
       return gWorldMapObjectEventTemplatesFromWestLunpaCave;
     }
     break;
   case WORLD_MAP_HAMMETS_CARAVAN_LEAVES:
-    if (GameFlag_Test(FLAG_LUNPA_GUARDS_SUSPECT_KALAY) == 0) {
+    if (GameFlag_Get(FLAG_LUNPA_GUARDS_SUSPECT_KALAY) == 0) {
       return gWorldMapObjectEventTemplatesHammetsCaravan;
     }
     break;
@@ -666,7 +666,7 @@ const struct ObjectEventTemplate *WorldMap_GetObjectEventTemplates(void) {
     break;
   }
 
-  Engine_GameFlagSet(FLAG_MAP_TEMP_35);
+  GameFlag_Set(FLAG_MAP_TEMP_35);
   return gWorldMapObjectEventTemplates;
 }
 
@@ -797,7 +797,7 @@ static void WorldMap_UpdateLocationContacts(void) {
       continue;
     }
     objectEvent->spriteStorageKind = 1;
-    if (gDebugMode != 0 && GameFlag_Test(FLAG_DEBUG_STEPS_OFF) != 0) {
+    if (gDebugMode != 0 && GameFlag_Get(FLAG_DEBUG_STEPS_OFF) != 0) {
       continue;
     }
     scale = objectEvent->sprite->scale;
@@ -810,7 +810,7 @@ static void WorldMap_UpdateLocationContacts(void) {
                   ? leader->z.fixed - objectEvent->z.fixed
                   : objectEvent->z.fixed - leader->z.fixed) <
             reach &&
-        GameFlag_Test(FLAG_FIELD_HANDLING_REQUESTS) == 0) {
+        GameFlag_Get(FLAG_FIELD_HANDLING_REQUESTS) == 0) {
       work->coordEvent = i + COORD_EVENT_MAPSEC_BASE;
     }
   }
@@ -821,7 +821,7 @@ static void WorldMap_UpdateLocationContacts(void) {
 /// plays Hammet's caravan leaving (WORLD_MAP_TO_HAMMETS_CARAVAN_LEAVES); later
 /// it is Vault's door (WORLD_MAP_TO_VAULT_SOUTH).
 static void EventScript_EnterVault(void) {
-  if (GameFlag_Test(FLAG_LUNPA_GUARDS_SUSPECT_KALAY) == 0) {
+  if (GameFlag_Get(FLAG_LUNPA_GUARDS_SUSPECT_KALAY) == 0) {
     Engine_ScriptRequestWarp(WORLD_MAP_TO_HAMMETS_CARAVAN_LEAVES);
   } else {
     Sound_PlaySong(SE_MAP_EXIT);
@@ -858,9 +858,9 @@ s32 WorldMap_Initialize(void) {
   s16 *warpDest = &state->warpDest;
 
   if (*warpDest == WORLD_MAP_FROM_DEBUG) {
-    Engine_GameFlagSet(FLAG_NO_ENCOUNTERS);
-    Engine_GameFlagSet(FLAG_NO_ENCOUNTERS_IN_MAPSEC);
-    Engine_GameFlagSet(FLAG_DEBUG_STEPS_OFF);
+    GameFlag_Set(FLAG_NO_ENCOUNTERS);
+    GameFlag_Set(FLAG_NO_ENCOUNTERS_IN_MAPSEC);
+    GameFlag_Set(FLAG_DEBUG_STEPS_OFF);
   }
   if (*warpDest == WORLD_MAP_AFTER_MERCURY_LIGHTHOUSE_LIT) {
     WorldMap_PlayLighthouseTransition(0);
@@ -875,48 +875,48 @@ s32 WorldMap_Initialize(void) {
     PartyInventory_Discard(ITEM_BLACK_ORB);
     Engine_ScriptRequestWarp(WORLD_MAP_TO_LUNPA_INTERIORS);
   } else {
-    Engine_GameFlagSet(FLAG_RETREAT_BLOCKED);
+    GameFlag_Set(FLAG_RETREAT_BLOCKED);
     gFieldWork->transition = MAP_TRANSITION(TRANSITION_CENTRE_LINE, 0);
     gFieldWork->transitionFrames = 16;
     WaitFrames(1);
     FieldCamera_SetSpeedParameters(PIXELS(8), PIXELS(1));
-    GameFlag_ClearBit(FLAG_SHOW_LOCATION_NAME);
+    GameFlag_Clear(FLAG_SHOW_LOCATION_NAME);
     FieldScheduler_AddCallback(WorldMap_UpdateLocationContacts,
                                TASK_PRIORITY_MAP);
-    if (GameFlag_Test(FLAG_LAMAKAN_MANTICORE_BEATEN) == 0) {
+    if (GameFlag_Get(FLAG_LAMAKAN_MANTICORE_BEATEN) == 0) {
       Field_SetWorldMapWindowCellTile(128, 256, 176, 56);
     }
     // Each special warp destination resumes its travel or story sequence.
     switch (*warpDest) {
     case WORLD_MAP_FROM_VALE_GATE:
-      if (GameFlag_IsSet(FLAG_VALE_PARTY_LEFT) == 0) {
-        Engine_GameFlagSet(FLAG_VALE_PARTY_LEFT);
-        Engine_GameFlagSet(0x85c);
+      if (Script_GetFlag(FLAG_VALE_PARTY_LEFT) == 0) {
+        GameFlag_Set(FLAG_VALE_PARTY_LEFT);
+        GameFlag_Set(0x85c);
       }
       break;
     case WORLD_MAP_FROM_GATEWAY_CAVE:
-      if (GameFlag_Test(FLAG_KEEP_PARTY_POSITION) != 0) {
-        if (GameFlag_Test(FLAG_BLACK_ORB_RETURNED) == 0 &&
-            GameFlag_Test(FLAG_MAP_TEMP_34) != 0) {
+      if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) != 0) {
+        if (GameFlag_Get(FLAG_BLACK_ORB_RETURNED) == 0 &&
+            GameFlag_Get(FLAG_MAP_TEMP_34) != 0) {
           gWorldMapIodem = LOCALID_IODEM;
           ObjectEvent_SetPosition(LOCALID_IODEM, PIXELS(6036), PIXELS(3400));
           ObjectEvent_GetById(gWorldMapIodem)->facing =
               FACING_SOUTHEAST + FACING_STEP;
           WorldMap_BlockGatewayCaveWarp(gWorldMapIodem);
         }
-      } else if (GameFlag_Test(FLAG_BLACK_ORB_RETURNED) == 0 &&
-                 GameFlag_Test(FLAG_LALIVERO_WOUNDED_SOLDIERS_SEEN) == 0) {
+      } else if (GameFlag_Get(FLAG_BLACK_ORB_RETURNED) == 0 &&
+                 GameFlag_Get(FLAG_LALIVERO_WOUNDED_SOLDIERS_SEEN) == 0) {
         WorldMap_RunBlackOrbScene();
       }
       break;
     case WORLD_MAP_FROM_WEST_LUNPA_CAVE:
-      if (GameFlag_Test(FLAG_BUNZAS_WAGON_LEFT) == 0 &&
-          GameFlag_Test(FLAG_DODONPA_LOCKED_UP) != 0) {
+      if (GameFlag_Get(FLAG_BUNZAS_WAGON_LEFT) == 0 &&
+          GameFlag_Get(FLAG_DODONPA_LOCKED_UP) != 0) {
         WorldMap_BoardBunzasWagon();
       }
       break;
     case WORLD_MAP_HAMMETS_CARAVAN_LEAVES:
-      if (GameFlag_Test(FLAG_LUNPA_GUARDS_SUSPECT_KALAY) == 0) {
+      if (GameFlag_Get(FLAG_LUNPA_GUARDS_SUSPECT_KALAY) == 0) {
         WorldMap_ShowHammetsCaravan();
       }
       break;
@@ -950,7 +950,7 @@ s32 WorldMap_Initialize(void) {
     case WORLD_MAP_FROM_TOLBI_SHIP_DECK_CROSSBONE_ISLE:
     case WORLD_MAP_FROM_CROSSBONE_ISLE:
     case WORLD_MAP_FROM_SUHALLA_DESERT_STORM:
-      Engine_GameFlagSet(FLAG_WORLD_MAP_LEFT);
+      GameFlag_Set(FLAG_WORLD_MAP_LEFT);
       if (FieldGameFlag_GetByte(FLAG_MAP_TEMP_F8) != 0) {
         gGameState.movementMode = LEADER_MOVEMENT_AIRBORNE;
         FieldScheduler_AddCallback(WorldMap_UpdateStormTimer,
@@ -1418,7 +1418,7 @@ static void WorldMap_UpdateFallingRock(void) {
   objectEvent->z.fixed = guide->z.fixed;
   if (objectEvent->y.fixed < PIXELS(10)) {
     objectEvent->y.fixed = PIXELS(10);
-    if (GameFlag_IsSet(FLAG_MAP_TEMP_00) == 0) {
+    if (Script_GetFlag(FLAG_MAP_TEMP_00) == 0) {
       Script_PlaySong(SE_145);
       ObjectDispatch_SelectAnimation(objectEvent,
                                      FALLING_ROCK_ANIMATION_SHATTER);
@@ -1595,8 +1595,8 @@ static void WorldMap_ShowDjinnTutorial(void) {
   FieldScript_WaitFrames(30);
   Script_PlaySong(SE_MENU_CURSOR_MOVE);
   Menu_AnimateSelectionToEntry(0, 2);
-  GameFlag_Clear(FLAG_DJINN_LESSON_PART_A);
-  GameFlag_Clear(FLAG_DJINN_LESSON_PART_B);
+  Script_ClearFlag(FLAG_DJINN_LESSON_PART_A);
+  Script_ClearFlag(FLAG_DJINN_LESSON_PART_B);
   DjinnMenu_Run();
   ObjectMotion_Launch(LOCALID_VENUS_DJINNI, 4, 30);
   FieldScript_SetMessageId(MsgWorldMapNextIllShowHowCan);
@@ -1627,7 +1627,7 @@ static void EventScript_MeetFlint(void) {
   x = (leader->x.fixed - PIXELS(5584)) / 2 + PIXELS(5584);
   z = (leader->z.fixed - PIXELS(1328)) / 2 + PIXELS(1328);
   // Introduce the Djinni and demonstrate how it joins the party.
-  if (!GameFlag_IsSet(FLAG_DJINN_LESSON)) {
+  if (!Script_GetFlag(FLAG_DJINN_LESSON)) {
     Party_RestoreHpPp(1);
     GameFlag_Set(FLAG_DJINN_LESSON);
     Script_Start();
@@ -1816,8 +1816,8 @@ static void EventScript_MeetFlint(void) {
   ObjectEvent_ShowEmote(LOCALID_VENUS_DJINNI,
                         EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
   Script_ShowMessage(LOCALID_VENUS_DJINNI, 0);
-  GameFlag_Set(FLAG_DJINN_LESSON_PART_A);
-  GameFlag_Set(FLAG_DJINN_LESSON_PART_B);
+  Script_SetFlag(FLAG_DJINN_LESSON_PART_A);
+  Script_SetFlag(FLAG_DJINN_LESSON_PART_B);
   DjinnMenu_Run();
   ObjectEvent_Jump(LOCALID_VENUS_DJINNI, 2, 20);
   Script_ShowMessage(LOCALID_VENUS_DJINNI, 0);
@@ -1974,8 +1974,8 @@ static void WorldMap_RunBlackOrbScene(void) {
   WorldMap_EndScript();
   FieldEffect_ScheduleRatioTransition(Q16_ONE, 10);
   FieldScript_WaitFrames(20);
-  Engine_GameFlagSet(FLAG_MAP_TEMP_34);
-  Engine_GameFlagSet(FLAG_SAW_SHIP_AT_IDEJIMA);
+  GameFlag_Set(FLAG_MAP_TEMP_34);
+  GameFlag_Set(FLAG_SAW_SHIP_AT_IDEJIMA);
   gGameState.savedMap = (s32)&MapId_WorldMap;
   gGameState.savedWarpDest = WORLD_MAP_AFTER_BLACK_ORB_DEFEAT;
   FieldScript_End();
@@ -2073,7 +2073,7 @@ static void EventScript_SearchShipwreck(void) {
   WorldMap_StartScript();
 #endif
   FieldMessage_Show(MsgWorldMapWreckageShipScuttledOffCoast, 1);
-  if (GameFlag_Test(FLAG_MAP_TEMP_34) != 0) {
+  if (GameFlag_Get(FLAG_MAP_TEMP_34) != 0) {
     gFieldWork->menu = 1;
   }
 #if !TBS_PATCH_3
@@ -2394,7 +2394,7 @@ static void WorldMap_ShakeVenusLighthouse(void) {
   PaletteFade_StartInterpolation(80);
   WaitFrames(90);
   Engine_ScriptRequestWarp(WORLD_MAP_TO_VENUS_LIGHTHOUSE_AERIE);
-  Engine_GameFlagSet(FLAG_KEEP_MUSIC);
+  GameFlag_Set(FLAG_KEEP_MUSIC);
   FieldScript_End();
 }
 
@@ -2517,7 +2517,7 @@ static s32 WorldMap_GetSeatRowValue(u32 seat) {
     break;
   }
   for (offset = 0; offset < 9; offset++) {
-    if (GameFlag_Test(flagBase + offset) != 0)
+    if (GameFlag_Get(flagBase + offset) != 0)
       return gWorldMapPassengerRowValues[offset];
   }
   return 0;
@@ -2618,7 +2618,7 @@ static void WorldMap_UpdateStormTimer(void) {
   if (progress != 0) {
     if (progress == 1) {
       work->raisedEvent = RAISED_STORM_TIME_UP;
-    } else if (GameFlag_Test(FLAG_MENU_OPEN) == 0) {
+    } else if (GameFlag_Get(FLAG_MENU_OPEN) == 0) {
       progress -= 1;
     }
   }
@@ -2636,7 +2636,7 @@ static void WorldMap_CatchInStorm(s32 targetLocalId) {
 
   id = gGameState.leaderLocalId;
   objectEvent = ObjectEvent_GetById(id);
-  alreadyTraveling = GameFlag_IsSet(FLAG_MAP_TEMP_F0);
+  alreadyTraveling = Script_GetFlag(FLAG_MAP_TEMP_F0);
   if (alreadyTraveling == 0) {
     FieldScript_Start();
     ObjectEvent_SetAttachedEffect(id, ATTACHED_EFFECT_IN_FRONT |
@@ -2690,8 +2690,8 @@ static void EventScript_DouseMapStorm(void) {
   if (gFieldWork->raisedEvent == RAISED_STORM_TIME_UP) {
     gFieldWork->raisedEvent = 0;
   }
-  GameFlag_ClearBit(FLAG_MAP_TEMP_F0);
-  Engine_GameFlagSet(FLAG_MAP_TEMP_F1);
+  GameFlag_Clear(FLAG_MAP_TEMP_F0);
+  GameFlag_Set(FLAG_MAP_TEMP_F1);
   FieldGameFlag_SetByte(FLAG_MAP_TEMP_F8, 0);
   Field_RequestBattleFromEncounterTable(ENCOUNTER_ZONE_SCRIPTED, 5);
   Battle_SetType(BATTLE_TYPE_SCRIPTED);
@@ -2800,7 +2800,7 @@ static void WorldMap_PlayLighthouseTransition(s32 palette) {
   u8 *buffer = AllocEwram(0x4000);
 
   WaitFrames(1);
-  GameFlag_ClearBit(FLAG_KEEP_PARTY_POSITION);
+  GameFlag_Clear(FLAG_KEEP_PARTY_POSITION);
   WorldMap_StartStillView();
   FieldResource_DecodeType01(gWorldMapPackedTiles, buffer);
   FieldResource_DecodeType01(gWorldMapPackedFrames, buffer + 0x1000);
@@ -2860,7 +2860,7 @@ static void WorldMap_PlayLighthouseTransition(s32 palette) {
   FieldScript_FinishScreenTransition();
   FieldScript_WaitTransitionFrames();
   Free(buffer);
-  Engine_GameFlagSet(FLAG_SKIP_MAP_CHANGE_SOUND);
+  GameFlag_Set(FLAG_SKIP_MAP_CHANGE_SOUND);
 }
 
 /// Unused: an update hook that blinks an object event and now and then creates

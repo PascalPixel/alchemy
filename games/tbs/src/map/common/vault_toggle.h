@@ -17,7 +17,7 @@
 /// elsewhere in the map. MB_VAULT_BRIDGE_END reaches it; it sets
 /// FLAG_MAP_TEMP_00, keeping the deck across a kept-position return.
 static void Vault_RaisePathToBridge(void) {
-  Engine_GameFlagSet(FLAG_MAP_TEMP_00);
+  GameFlag_Set(FLAG_MAP_TEMP_00);
   MapGrid_CopyCellAttributes(55, 26, 4, 2, 23, 26);
 }
 
@@ -25,6 +25,6 @@ static void Vault_RaisePathToBridge(void) {
 /// cells north of the bridge, and clears FLAG_MAP_TEMP_00.
 /// MB_VAULT_WEST_OF_BRIDGE reaches it.
 static void Vault_LowerPathUnderBridge(void) {
-  GameFlag_ClearBit(FLAG_MAP_TEMP_00);
+  GameFlag_Clear(FLAG_MAP_TEMP_00);
   MapGrid_CopyCellAttributes(23, 23, 4, 2, 23, 26);
 }

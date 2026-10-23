@@ -80,7 +80,7 @@ s32 Map_Initialize(void) {
   work->transition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   work->transitionFrames = 24;
-  if (GameFlag_Test(FLAG_GOMA_CAVE_STUMP_FELL) != 0) {
+  if (GameFlag_Get(FLAG_GOMA_CAVE_STUMP_FELL) != 0) {
     OBJECT_POSITION_SET(LOCALID_FALLEN_STUMP, 216, 136);
     OBJECT_ANIMATION(LOCALID_FALLEN_STUMP, STUMP_ANIMATION_SINK);
     ObjectEvent_SetSpriteFlags(ObjectEvent_GetById(LOCALID_FALLEN_STUMP), 0);

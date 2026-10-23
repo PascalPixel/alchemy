@@ -416,7 +416,7 @@ s32 KolimaForestFloodgate_Initialize(void) {
   MapGrid_CopyCells(32, 0, 64, 32, 0, 64);
   MapGrid_CopyCellAttributes(0, 0, 32, 32, 0, 64);
   MapGrid_CopyCellAttributes(32, 0, 32, 32, 0, 32);
-  if (GameFlag_Test(FLAG_KEEP_PARTY_POSITION) == 0) {
+  if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) == 0) {
     Dma_Set(gKolimaForestFloodgate_DefaultRecords,
             gKolimaForestFloodgateRecords,
             (DMA_ENABLE | DMA_32BIT) << 16 | 0x12, REG_DMA3);
@@ -435,7 +435,7 @@ s32 KolimaForestFloodgate_Initialize(void) {
   objectEvent->scaleY = 0xc000;
   gFieldWork->transition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
-  if (GameFlag_Test(FLAG_KOLIMA_CURSE_LIFTED) == 0)
+  if (GameFlag_Get(FLAG_KOLIMA_CURSE_LIFTED) == 0)
     KolimaPalette_Curse(4);
   return 0;
 }

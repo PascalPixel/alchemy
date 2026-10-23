@@ -176,7 +176,7 @@ s32 Party_LookupCharacterValueByFlag32(u32 index) {
   if (index > 8) {
     return 0;
   }
-  if (GameFlag_TestFar(FLAG_CHILDHOOD) == 0) {
+  if (GameFlag_GetFar(FLAG_CHILDHOOD) == 0) {
     return gCharacter_SpriteTable[index];
   }
   return gCharacter_ChildSpriteTable[index];

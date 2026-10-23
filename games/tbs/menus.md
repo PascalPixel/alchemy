@@ -225,14 +225,14 @@ this (`menu/common.c`):
 void Menu_CancelSoundTick(void) {
   if (gKeysPressed & KEY_START) {
     Sound_PlaySongFar(SE_MENU_CANCEL);
-    GameFlag_SetBitFar(FLAG_MENU_START_PRESSED);
+    GameFlag_SetFar(FLAG_MENU_START_PRESSED);
     Task_Remove(Menu_CancelSoundTick);
   }
 }
 ```
 
 and each loop tests the flag in its condition, as the Item screen's does:
-`while (done == 0 && GameFlag_TestFar(FLAG_MENU_START_PRESSED) == 0)`. The
+`while (done == 0 && GameFlag_GetFar(FLAG_MENU_START_PRESSED) == 0)`. The
 Djinn screen has no watcher: its choosers test Start themselves, play the
 same sound and return `DJINN_RESULT_START`, which ends the screen's loop.
 

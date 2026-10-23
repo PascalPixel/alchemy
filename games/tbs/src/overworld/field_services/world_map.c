@@ -140,7 +140,7 @@ void FieldEffect_SetupResourcesAndWindow(void) {
 #endif
   }
   Free(markerTiles);
-  if (GameFlag_TestFar(FLAG_WORLD_MAP_LEFT)) {
+  if (GameFlag_GetFar(FLAG_WORLD_MAP_LEFT)) {
     work->cursorX.fixed = WORLD_MAP_SCREEN_WIDTH << 15;
     work->cursorY.fixed = WORLD_MAP_SCREEN_HEIGHT << 15;
   } else {
@@ -250,7 +250,7 @@ void RegionMap_UpdateMarkers(void) {
 
   // Map_Run creates the selected object event before event -888 opens this
   // screen. No object event task removes it while the marker callback runs.
-  if (!GameFlag_TestFar(FLAG_WORLD_MAP_LEFT) && (gKeysHeld & KEYS_SHOULDERS)) {
+  if (!GameFlag_GetFar(FLAG_WORLD_MAP_LEFT) && (gKeysHeld & KEYS_SHOULDERS)) {
     // L or R: the current map section.
     mapSecObjectEvent = ObjectEvent_GetByLocalId(gGameState.leaderLocalId);
 #ifdef UBFIX
@@ -301,7 +301,7 @@ void RegionMap_UpdateMarkers(void) {
     if (markerIndex != leader && markerIndex < WORLD_MAP_FIRST_MAPSEC_OBJ_EVENT)
       continue;
     if (markerIndex == 0) {
-      if (GameFlag_TestFar(FLAG_WORLD_MAP_LEFT))
+      if (GameFlag_GetFar(FLAG_WORLD_MAP_LEFT))
         continue;
       tile = 0;
       flag = leader;
@@ -323,7 +323,7 @@ void RegionMap_UpdateMarkers(void) {
         break;
 #endif
     }
-    if (!GameFlag_TestFar(flag))
+    if (!GameFlag_GetFar(flag))
       continue;
     mapSecObjectEvent = ObjectEvent_GetByLocalId(markerIndex);
     if (mapSecObjectEvent == NULL)
@@ -486,7 +486,7 @@ void RegionMap_Show(s32 picture) {
              &REG_DISPCNT);
   FieldEffect_SetupResourcesAndWindow();
   Task_Add(RegionMap_UpdateMarkers, TASK_PRIORITY_MAIN_LOOP);
-  if (GameFlag_TestFar(FLAG_WORLD_MAP_LEFT))
+  if (GameFlag_GetFar(FLAG_WORLD_MAP_LEFT))
     FieldMessage_ShowFar(MsgNotOnMap, 1);
   do {
     WaitFrames(1);

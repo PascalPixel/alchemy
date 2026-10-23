@@ -152,7 +152,7 @@ struct WindowSprite *CreateSideObject(s32 character, s32 unused, s32 side,
   s32 icon;
   s32 palette;
 
-  if (GameFlag_TestFar(FLAG_CHILDHOOD) != 0) {
+  if (GameFlag_GetFar(FLAG_CHILDHOOD) != 0) {
     if (character == 0)
       character = 18;
     if (character == 1)
@@ -202,7 +202,7 @@ void Portrait_Reload(u32 side, s32 character, s32 unused) {
 
   work = WINDOW_WORK;
 
-  if (GameFlag_TestFar(FLAG_CHILDHOOD) != 0) {
+  if (GameFlag_GetFar(FLAG_CHILDHOOD) != 0) {
     if (character == 0)
       character = 18;
     if (character == 1)

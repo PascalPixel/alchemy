@@ -268,7 +268,7 @@ static void KalayInteriors_TalkToTourGuide(void) {
   FieldScript_Start();
   FieldScript_SetMessageId(MsgKalayPleaseFinishEatingIfTaking);
   FieldScript_ShowMessageAndWait(LOCALID_TOUR_GUIDE, 0);
-  Engine_GameFlagSet(FLAG_KALAY_HEARD_OF_COLOSSO_TOUR);
+  GameFlag_Set(FLAG_KALAY_HEARD_OF_COLOSSO_TOUR);
   FieldScript_End();
 }
 
@@ -294,13 +294,13 @@ static void KalayInteriors_TalkToInnkeeper(void) {
   } else {
     FieldScript_Start();
 
-    if (GameFlag_Test(FLAG_KALAY_COLOSSO_TOUR_LEFT) != 0) {
+    if (GameFlag_Get(FLAG_KALAY_COLOSSO_TOUR_LEFT) != 0) {
       FieldScript_SetMessageId(MsgKalayOurInnFeelsEmptyNow);
       FieldScript_ShowMessageAndWait(LOCALID_INNKEEPER, 0);
     } else {
       FieldScript_SetMessageId(MsgKalayGoingTolbiAlso);
       FieldScript_AskYesNoAndShowResponse(LOCALID_INNKEEPER, 0);
-      Engine_GameFlagSet(FLAG_KALAY_HEARD_OF_COLOSSO_TOUR);
+      GameFlag_Set(FLAG_KALAY_HEARD_OF_COLOSSO_TOUR);
     }
 
     FieldScript_End();
@@ -420,7 +420,7 @@ static void KalayInteriors_ApplyRoomState(void) {
   case KALAY_INTERIORS_INN_PASSAGE_FROM_GUEST_ROOM_SOUTHWEST:
   case KALAY_INTERIORS_INN_PASSAGE_FROM_GUEST_ROOM_SOUTHEAST:
   case KALAY_INTERIORS_GUEST_ROOM_NORTHWEST_FROM_INN_PASSAGE:
-    if (GameFlag_Test(FLAG_KALAY_COLOSSO_TOUR_LEFT) != 0) {
+    if (GameFlag_Get(FLAG_KALAY_COLOSSO_TOUR_LEFT) != 0) {
       ObjectEvent_DestroyById(LOCALID_FIRST_TOURIST);
       ObjectEvent_DestroyById(LOCALID_SECOND_TOURIST);
       ObjectEvent_DestroyById(LOCALID_TOUR_GUIDE);
@@ -436,7 +436,7 @@ static void KalayInteriors_ApplyRoomState(void) {
     }
     return;
   default:
-    if (GameFlag_Test(FLAG_KALAY_COLOSSO_TOUR_LEFT) != 0) {
+    if (GameFlag_Get(FLAG_KALAY_COLOSSO_TOUR_LEFT) != 0) {
       ObjectEvent_DestroyById(LOCALID_YOUNG_MAN_ASKING_ABOUT_THE_SOUTH);
       ObjectEvent_DestroyById(LOCALID_WOMAN_BOUND_FOR_THE_TOUR);
     }

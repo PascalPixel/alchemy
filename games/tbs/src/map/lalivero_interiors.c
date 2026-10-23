@@ -221,7 +221,7 @@ const struct ObjectEventTemplate *
 LaliveroInteriors_GetObjectEventTemplates(void) {
   if (gGameState.mapId == (s32)&MapId_LaliveroFaransHouse) {
     // Faran's house and the inn.
-    if (GameFlag_Test(FLAG_VENUS_LIGHTHOUSE_PARTY_RETURNED) != 0) {
+    if (GameFlag_Get(FLAG_VENUS_LIGHTHOUSE_PARTY_RETURNED) != 0) {
       return gLaliveroInteriors_FaransHouseObjectEventTemplatesAfterLighthouse;
     }
     return gLaliveroInteriors_FaransHouseObjectEventTemplates;
@@ -249,7 +249,7 @@ static void EventScript_TalkToWeaponMerchant(s32 keeper) {
 
   if (side == FACING_NORTH) {
     Shop_Run(LALIVERO_WEAPON_STOCK, keeper);
-  } else if (GameFlag_Test(FLAG_VENUS_LIGHTHOUSE_PARTY_RETURNED)) {
+  } else if (GameFlag_Get(FLAG_VENUS_LIGHTHOUSE_PARTY_RETURNED)) {
     FieldScript_SetMessageId(MsgLaliveroWentOceanLook);
     FieldScript_ShowMessageAndWait(keeper, 0);
   } else {
@@ -273,7 +273,7 @@ static void EventScript_TalkToWeaponMerchant(s32 keeper) {
 static void EventScript_TalkToArmorMerchant(s32 keeper) {
   if (Leader_GetSide() == FACING_NORTH) {
     Shop_Run(LALIVERO_ARMOR_STOCK, keeper);
-  } else if (GameFlag_Test(FLAG_VENUS_LIGHTHOUSE_PARTY_RETURNED)) {
+  } else if (GameFlag_Get(FLAG_VENUS_LIGHTHOUSE_PARTY_RETURNED)) {
     FieldScript_SetMessageId(MsgLaliveroWantedSendShips);
     FieldScript_ShowMessageAndWait(keeper, 0);
   } else {
@@ -287,7 +287,7 @@ static void EventScript_TalkToArmorMerchant(s32 keeper) {
 static void EventScript_TalkToItemMerchant(s32 keeper) {
   if (Leader_GetSide() == FACING_NORTH) {
     Shop_Run(LALIVERO_ITEM_STOCK, keeper);
-  } else if (GameFlag_Test(FLAG_VENUS_LIGHTHOUSE_PARTY_RETURNED)) {
+  } else if (GameFlag_Get(FLAG_VENUS_LIGHTHOUSE_PARTY_RETURNED)) {
     FieldScript_SetMessageId(MsgLaliveroImpossibleGoOcean);
     FieldScript_ShowMessageAndWait(keeper, 0);
   } else {
@@ -301,7 +301,7 @@ static void EventScript_TalkToItemMerchant(s32 keeper) {
 static void EventScript_TalkToHealer(s32 healer) {
   if (Leader_GetSide() == FACING_NORTH) {
     Sanctum_Run(healer);
-  } else if (GameFlag_Test(FLAG_VENUS_LIGHTHOUSE_PARTY_RETURNED)) {
+  } else if (GameFlag_Get(FLAG_VENUS_LIGHTHOUSE_PARTY_RETURNED)) {
     FieldScript_SetMessageId(MsgLaliveroBabiLighthouseStruck);
     FieldScript_ShowMessageAndWait(healer, 0);
   } else {
@@ -315,7 +315,7 @@ static void EventScript_TalkToHealer(s32 healer) {
 static void EventScript_TalkToInnkeeper(s32 innkeeper) {
   if (Leader_GetSide() == FACING_NORTH) {
     Inn_CheckIn(LALIVERO_INN, innkeeper);
-  } else if (GameFlag_Test(FLAG_VENUS_LIGHTHOUSE_PARTY_RETURNED)) {
+  } else if (GameFlag_Get(FLAG_VENUS_LIGHTHOUSE_PARTY_RETURNED)) {
     FieldScript_SetMessageId(MsgLaliveroDidntKnowTime);
     FieldScript_ShowMessageAndWait(innkeeper, 0);
   } else {
@@ -366,7 +366,7 @@ static void EventScript_TalkToInnWorker(void) {
 /// report: the camera finds Iodem, who asks the party to wait for him outside.
 static void EventScript_IodemCallsOut(void) {
 
-  Engine_GameFlagSet(FLAG_IODEM_ASKED_TO_MEET);
+  GameFlag_Set(FLAG_IODEM_ASKED_TO_MEET);
   FieldScript_Start();
   Field_EndBusyAndReveal();
   FieldScript_WaitFrames(10);
@@ -387,7 +387,7 @@ static void EventScript_IodemCallsOut(void) {
 /// Black Orb, repeats his request.
 static void EventScript_TalkToIodem(void) {
 
-  Engine_GameFlagSet(FLAG_IODEM_ASKED_TO_MEET);
+  GameFlag_Set(FLAG_IODEM_ASKED_TO_MEET);
   FieldScript_SetMessageId(MsgLaliveroPleaseWaitForMeOutside);
   FieldScript_ShowMessageAndWait(LOCALID_IODEM, 0);
 }
@@ -406,12 +406,12 @@ static void EventScript_LeaveBuilding(void) {
 /// after Venus Lighthouse.
 const struct MapEvent *LaliveroInteriors_GetEvents(void) {
   if (gGameState.mapId == (s32)&MapId_LaliveroFaransHouse) {
-    if (GameFlag_Test(FLAG_VENUS_LIGHTHOUSE_PARTY_RETURNED) != 0) {
+    if (GameFlag_Get(FLAG_VENUS_LIGHTHOUSE_PARTY_RETURNED) != 0) {
       return gLaliveroInteriors_FaransHouseEventsAfterLighthouse;
     }
     return gLaliveroInteriors_FaransHouseEvents;
   }
-  if (GameFlag_Test(FLAG_VENUS_LIGHTHOUSE_PARTY_RETURNED) != 0) {
+  if (GameFlag_Get(FLAG_VENUS_LIGHTHOUSE_PARTY_RETURNED) != 0) {
     return gLaliveroInteriors_ShopsEventsAfterLighthouse;
   }
   return gLaliveroInteriors_ShopsEvents;
@@ -477,7 +477,7 @@ static void EventScript_ReportToFaran(void) {
   FieldScript_ShowMessageAndWait(LOCALID_FARAN, 0);
   // The party tells what became of Jenna and the others; the version that saw
   // the ship at Idejima knows Idejima was swept away with it.
-  if (GameFlag_IsSet(FLAG_SAW_SHIP_AT_IDEJIMA) == 0) {
+  if (GameFlag_Get(FLAG_SAW_SHIP_AT_IDEJIMA) == 0) {
     LaliveroInteriors_TellFaranAboutJenna();
   } else {
     FieldScript_WaitFrames(20);
@@ -832,7 +832,7 @@ s32 Map_Initialize(void) {
   struct ObjectEvent *objectEvent;
 
   if (gGameState.warpDest == ENTRANCE_FROM_AERIE) {
-    Engine_GameFlagSet(FLAG_VENUS_LIGHTHOUSE_PARTY_RETURNED);
+    GameFlag_Set(FLAG_VENUS_LIGHTHOUSE_PARTY_RETURNED);
   }
   gFieldWork->transition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
@@ -866,7 +866,7 @@ s32 Map_Initialize(void) {
     objectEvent->collisionFlags |= OBJ_EVENT_NEAR_TALK;
     objectEvent->priorityFlags = 0;
     objectEvent->sprite->image.priority = 2;
-    if (GameFlag_Test(FLAG_INN_WORKER_APOLOGIZED) != 0) {
+    if (GameFlag_Get(FLAG_INN_WORKER_APOLOGIZED) != 0) {
       ObjectEvent_SetActionScript(LOCALID_INN_WORKER,
                                   gLaliveroInteriors_InnWorkerChores);
     }

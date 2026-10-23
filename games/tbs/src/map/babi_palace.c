@@ -354,10 +354,10 @@ const struct ObjectEventTemplate *Map_GetObjectEventTemplates(void) {
   if (gGameState.mapId == (s32)&MapId_BabiPalaceEntrance) {
     return gBabiPalace_OutsideObjectEventTemplates;
   }
-  if (GameFlag_Test(FLAG_COLOSSO_OVER) != 0) {
+  if (GameFlag_Get(FLAG_COLOSSO_OVER) != 0) {
     return gBabiPalace_ObjectEventTemplatesAfterColosso;
   }
-  if (GameFlag_Test(FLAG_BABI_SAVED) != 0) {
+  if (GameFlag_Get(FLAG_BABI_SAVED) != 0) {
     return gBabiPalace_ObjectEventTemplatesFinals;
   }
   return gBabiPalace_ObjectEventTemplatesBabiMissing;
@@ -397,7 +397,7 @@ static void BabiPalace_ShowBeds(s32 localId) {
   roundedFacing = (leader->facing + 0x2000) & 0xc000;
   Script_Start();
   Field_EndBusyAndReveal();
-  if (GameFlag_IsSet(FLAG_ATTENDANT_SHOWED_BEDS) == 0) {
+  if (Script_GetFlag(FLAG_ATTENDANT_SHOWED_BEDS) == 0) {
     GameFlag_Set(FLAG_ATTENDANT_SHOWED_BEDS);
     GameFlag_Clear(FLAG_BABI_PALACE_BEDS_OPEN);
     Script_SetMessage(MsgTolbiWeHaveJustEnoughExtra);
@@ -451,7 +451,7 @@ static void BabiPalace_OfferRest(s32 localId) {
 
   Script_Start();
   Field_EndBusyAndReveal();
-  if (GameFlag_IsSet(FLAG_BABI_PALACE_FINALS_REST_OFFERED) == 0) {
+  if (Script_GetFlag(FLAG_BABI_PALACE_FINALS_REST_OFFERED) == 0) {
     GameFlag_Set(FLAG_BABI_PALACE_FINALS_REST_OFFERED);
     GameFlag_Set(FLAG_BABI_PALACE_FINALS_BEDS_OPEN);
     ObjectEvent_FaceDirection(localId, FACING_SOUTH, 0);
@@ -548,7 +548,7 @@ static void BabiPalace_ReadShebasMind(s32 casterId, s32 localId) {
   Script_Start();
   Script_SetMessage(MsgTolbiEvenIfEscapedBabiPalace);
   Script_ShowMessage(localId, 0);
-  if (GameFlag_IsSet(FLAG_SHEBA_NOTICED_MIND_READ) == 0) {
+  if (Script_GetFlag(FLAG_SHEBA_NOTICED_MIND_READ) == 0) {
     GameFlag_Set(FLAG_SHEBA_NOTICED_MIND_READ);
     Psynergy_Cancel();
     Script_Wait(50);
@@ -608,7 +608,7 @@ static void BabiPalace_OfferCloakBall(void) {
     FieldEffect_StartEffectObject22(ITEM_CLOAK_BALL, 3);
     Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_STAND);
     PartyInventory_GiveItem(ITEM_CLOAK_BALL, 0);
-    Engine_GameFlagSet(FLAG_BABI_PALACE_CLOAK_BALL);
+    GameFlag_Set(FLAG_BABI_PALACE_CLOAK_BALL);
   }
 }
 
@@ -757,7 +757,7 @@ static void BabiPalace_RestInPalaceBeds(void) {
   Script_OpenMessage(-1, 0);
   if (Script_ChooseYesNo(LOCALID_PARTY_LEADER, 0) != 0) {
   } else {
-    if (GameFlag_IsSet(FLAG_BABI_PALACE_FIRST_NIGHT) != 0) {
+    if (Script_GetFlag(FLAG_BABI_PALACE_FIRST_NIGHT) != 0) {
       Script_Wait(20);
       Inn_PlaySleep(0);
       return;
@@ -823,14 +823,14 @@ static void BabiPalace_RestInPalaceBeds(void) {
     Script_ShowMessage(MIA, 0);
     ObjectEvent_SetAnimationAndWait(GARET, ANIM_NOD);
     Script_Wait(10);
-    if (GameFlag_IsSet(FLAG_BABI_PALACE_FIRST_NIGHT) == 0) {
+    if (GameFlag_Get(FLAG_BABI_PALACE_FIRST_NIGHT) == 0) {
       Script_ShowMessage(GARET, 0);
     } else {
       gFieldWork->message++;
     }
     ObjectEvent_SetAnimationAndWait(IVAN, ANIM_NOD);
     Script_Wait(10);
-    if (GameFlag_IsSet(FLAG_BABI_PALACE_FIRST_NIGHT) == 0) {
+    if (GameFlag_Get(FLAG_BABI_PALACE_FIRST_NIGHT) == 0) {
       Script_ShowMessage(IVAN, 0);
     } else {
       gFieldWork->message++;
@@ -851,14 +851,14 @@ static void BabiPalace_RestInPalaceBeds(void) {
     Script_ShowMessage(GARET, 0);
     ObjectEvent_SetAnimationAndWait(IVAN, ANIM_NOD);
     Script_Wait(10);
-    if (GameFlag_IsSet(FLAG_BABI_PALACE_FIRST_NIGHT) == 0) {
+    if (GameFlag_Get(FLAG_BABI_PALACE_FIRST_NIGHT) == 0) {
       Script_ShowMessage(IVAN, 0);
     } else {
       gFieldWork->message++;
     }
     ObjectEvent_SetAnimationAndWait(MIA, ANIM_NOD);
     Script_Wait(10);
-    if (GameFlag_IsSet(FLAG_BABI_PALACE_FIRST_NIGHT) == 0) {
+    if (GameFlag_Get(FLAG_BABI_PALACE_FIRST_NIGHT) == 0) {
       Script_ShowMessage(MIA, 0);
     } else {
       gFieldWork->message++;
@@ -1463,7 +1463,7 @@ static void BabiPalace_MeetBabiAfterColosso(void) {
 
   // If the leader won the finals, Iodem brings the victor's prize, the Lure
   // Cap; otherwise Babi only praises how far the party came.
-  if (GameFlag_IsSet(FLAG_WON_COLOSSO) != 0) {
+  if (GameFlag_Get(FLAG_WON_COLOSSO) != 0) {
     Script_Wait(10);
     ObjectEvent_SetAnimationAndWait(LOCALID_IODEM, ANIM_NOD);
     Script_Wait(20);
@@ -2435,7 +2435,7 @@ static void BabiPalace_PassOnBabisWord(void) {
 /// The other guard thanks the party for saving Babi once, then sends it to
 /// the colosseum.
 static void BabiPalace_ThankForSavingBabi(void) {
-  if (GameFlag_IsSet(FLAG_BABI_PALACE_GUARD_THANKED_PARTY) == 0) {
+  if (Script_GetFlag(FLAG_BABI_PALACE_GUARD_THANKED_PARTY) == 0) {
     GameFlag_Set(FLAG_BABI_PALACE_GUARD_THANKED_PARTY);
     Script_SetMessage(MsgTolbiIsaacIdReallyLikeThank);
     Script_ShowMessage(LOCALID_SECOND_GUARD, 0);
@@ -2476,18 +2476,18 @@ static void BabiPalace_ExamineWell(void) {
 /// templates.
 const struct MapEvent *Map_GetEvents(void) {
   if (gGameState.mapId == (s32)&MapId_BabiPalaceEntrance) {
-    if (GameFlag_Test(FLAG_COLOSSO_OVER) != 0) {
+    if (GameFlag_Get(FLAG_COLOSSO_OVER) != 0) {
       return gBabiPalace_OutsideEventsAfterColosso;
     }
-    if (GameFlag_Test(FLAG_BABI_SAVED) != 0) {
+    if (GameFlag_Get(FLAG_BABI_SAVED) != 0) {
       return gBabiPalace_OutsideEventsFinals;
     }
     return gBabiPalace_OutsideEventsBabiMissing;
   }
-  if (GameFlag_Test(FLAG_COLOSSO_OVER) != 0) {
+  if (GameFlag_Get(FLAG_COLOSSO_OVER) != 0) {
     return gBabiPalace_EventsAfterColosso;
   }
-  if (GameFlag_Test(FLAG_BABI_SAVED) != 0) {
+  if (GameFlag_Get(FLAG_BABI_SAVED) != 0) {
     return gBabiPalace_EventsFinals;
   }
   return gBabiPalace_EventsBabiMissing;
@@ -2514,8 +2514,8 @@ s32 BabiPalace_ApplyEntryState(void) {
     if (gGameState.warpDest == BABI_PALACE_FROM_VALE_INTERIORS_INN) {
       GameFlag_Clear(FLAG_SHOW_LOCATION_NAME);
     }
-    if (GameFlag_IsSet(FLAG_COLOSSO_OVER)) {
-      set = GameFlag_IsSet(FLAG_BABI_PALACE_CLOAK_BALL);
+    if (GameFlag_Get(FLAG_COLOSSO_OVER)) {
+      set = GameFlag_Get(FLAG_BABI_PALACE_CLOAK_BALL);
       if (set) {
         ObjectEvent_SetPosition(LOCALID_CLOAK_BALL, 0, 0);
       } else {
@@ -2535,7 +2535,7 @@ s32 BabiPalace_ApplyEntryState(void) {
         Heap_Release(HEAP_SLOT_GLYPH_TRANSFER);
       }
       if (gGameState.warpDest == BABI_PALACE_MEETING_ROOM_FROM_CARPET_ROOM &&
-          !GameFlag_IsSet(FLAG_BABI_SPOKE_AFTER_COLOSSO)) {
+          !Script_GetFlag(FLAG_BABI_SPOKE_AFTER_COLOSSO)) {
         GameFlag_Set(FLAG_BABI_SPOKE_AFTER_COLOSSO);
         ObjectEvent_SetPosition(LOCALID_BABI, PIXELS(208), PIXELS(704));
         BabiPalace_MeetBabiAfterColosso();
@@ -2544,8 +2544,8 @@ s32 BabiPalace_ApplyEntryState(void) {
       // (https://alchemy.pascalpixel.com/places/babi-palace_colosso-over/map-18.png).
       ObjectEvent_SetAnimation(LOCALID_BABI, BABI_ANIMATION_IN_BED);
       ObjectEvent_SetSpriteFlags(ObjectEvent_Get(LOCALID_BABI), 0);
-    } else if (GameFlag_IsSet(FLAG_BABI_SAVED) &&
-               !GameFlag_IsSet(FLAG_BABI_PALACE_FINALS_REST_OFFERED)) {
+    } else if (GameFlag_Get(FLAG_BABI_SAVED) &&
+               !GameFlag_Get(FLAG_BABI_PALACE_FINALS_REST_OFFERED)) {
       ObjectEvent_SetPosition(LOCALID_FINALS_ATTENDANT, PIXELS(120),
                               PIXELS(72));
     }

@@ -12,8 +12,8 @@
 // the same byte.
 
 /// Returns 1 when `flag` is set. Every bank tests flags through it, as
-/// GameFlag_TestFar, and the map scripts through the script layer.
-s32 GameFlag_Test(s32 flag) {
+/// GameFlag_GetFar, and the map scripts directly or through the script layer.
+s32 GameFlag_Get(s32 flag) {
   s32 flagMask;
   u8 *flagBytes;
   s32 flagValue;
@@ -26,8 +26,9 @@ s32 GameFlag_Test(s32 flag) {
 }
 
 /// Sets `flag` and returns its byte number. Called from every bank, as
-/// GameFlag_SetBitFar, and by the map scripts through the script layer.
-s32 GameFlag_SetBit(s32 flag) {
+/// GameFlag_SetFar, and by the map scripts directly or through the script
+/// layer.
+s32 GameFlag_Set(s32 flag) {
   s32 flagMask;
   u8 *flagBytes;
 
@@ -38,9 +39,9 @@ s32 GameFlag_SetBit(s32 flag) {
   return flag;
 }
 
-/// Clears `flag`. Called from every bank, as GameFlag_ClearBitFar, and by the
-/// map scripts through the script layer.
-void GameFlag_ClearBit(s32 flag) {
+/// Clears `flag`. Called from every bank, as GameFlag_ClearFar, and by the
+/// map scripts directly or through the script layer.
+void GameFlag_Clear(s32 flag) {
   s32 flagMask;
   u8 *flagBytes;
 

@@ -288,7 +288,7 @@ static void EventScript_BagVenusStar(void) {
   WaitFrames(1);
   FieldScript_StartScreenTransition();
   FieldScript_WaitTransitionFrames();
-  Engine_GameFlagSet(FLAG_SOL_SANCTUM_VENUS_STAR_BAGGED);
+  GameFlag_Set(FLAG_SOL_SANCTUM_VENUS_STAR_BAGGED);
   FieldScript_End();
 }
 
@@ -410,7 +410,7 @@ static void EventScript_BagJupiterStarAndMeetSaturos(void) {
   SolSanctumElementalStarRoom_OfferHostageGuarantee();
   SolSanctumElementalStarRoom_UnmaskFelix();
   SolSanctumElementalStarRoom_AlexTakesStars();
-  Engine_GameFlagSet(FLAG_SOL_SANCTUM_STARS_GIVEN_TO_ALEX);
+  GameFlag_Set(FLAG_SOL_SANCTUM_STARS_GIVEN_TO_ALEX);
   FieldScript_End();
   SolSanctumElementalStarRoom_LineUpCaptors();
 }
@@ -1339,11 +1339,11 @@ static void EventScript_TakeMarsStar(void) {
 /// once Alex holds them, Kraden's regret: "I am responsible for all of this."
 static void EventScript_TalkToKraden(void) {
   FieldScript_Start();
-  if (GameFlag_Test(FLAG_SOL_SANCTUM_STARS_GIVEN_TO_ALEX)) {
+  if (GameFlag_Get(FLAG_SOL_SANCTUM_STARS_GIVEN_TO_ALEX)) {
     FieldScript_SetMessageId(MsgSolSanctumKradenIAmResponsible);
     FieldScript_ShowMessageAndWait(LOCALID_KRADEN, 0);
   } else {
-    if (GameFlag_Test(FLAG_SOL_SANCTUM_VENUS_STAR_BAGGED) == 0)
+    if (GameFlag_Get(FLAG_SOL_SANCTUM_VENUS_STAR_BAGGED) == 0)
       FieldScript_SetMessageId(MsgSolSanctumKradenBringTheStarsHere);
     else
       FieldScript_SetMessageId(MsgSolSanctumKradenFetchTheOthers);
@@ -1358,11 +1358,11 @@ static void EventScript_TalkToKraden(void) {
 /// or once Alex holds them, her brother alive.
 static void EventScript_TalkToJenna(void) {
   FieldScript_Start();
-  if (GameFlag_Test(FLAG_SOL_SANCTUM_STARS_GIVEN_TO_ALEX)) {
+  if (GameFlag_Get(FLAG_SOL_SANCTUM_STARS_GIVEN_TO_ALEX)) {
     FieldScript_SetMessageId(MsgSolSanctumJennaMyBrotherIsAlive);
     FieldScript_ShowMessageAndWait(JENNA, 0);
   } else {
-    if (GameFlag_Test(FLAG_SOL_SANCTUM_VENUS_STAR_BAGGED) == 0)
+    if (GameFlag_Get(FLAG_SOL_SANCTUM_VENUS_STAR_BAGGED) == 0)
       FieldScript_SetMessageId(MsgSolSanctumJennaBeCareful);
     else
       FieldScript_SetMessageId(MsgSolSanctumJennaKradenIsGiddy);
@@ -2130,18 +2130,18 @@ s32 SolSanctumElementalStarRoom_Initialize(void) {
   s32 ringLocalId;
 
   PaletteFade_SetSource(PALETTE_TINT_NONE, 0);
-  Engine_GameFlagSet(FLAG_RETREAT_BLOCKED);
+  GameFlag_Set(FLAG_RETREAT_BLOCKED);
   ringLocalId = LOCALID_FIRST_FLOATING_LIGHT;
   do {
     ObjectEvent_GetById(ringLocalId)->collisionFlags = 0;
     ObjectMotion_SetActionVariant(ringLocalId++, 1);
   } while ((u32)ringLocalId <= LOCALID_LAST_FLOATING_LIGHT);
   SolSanctum_StartFloatingLights(LOCALID_FIRST_FLOATING_LIGHT, 16);
-  if (GameFlag_IsSet(FLAG_SOL_SANCTUM_STAR_ROOM_EXPLAINED) != 0) {
+  if (Script_GetFlag(FLAG_SOL_SANCTUM_STAR_ROOM_EXPLAINED) != 0) {
     ObjectEvent_SetPosition(LOCALID_KRADEN, PIXELS(456), PIXELS(360));
     ObjectEvent_SetPosition(JENNA, PIXELS(440), PIXELS(346));
   }
-  if (GameFlag_Test(FLAG_SOL_SANCTUM_VENUS_STAR_BAGGED) != 0) {
+  if (GameFlag_Get(FLAG_SOL_SANCTUM_VENUS_STAR_BAGGED) != 0) {
     MapGrid_CopyCellsTo(0, 40, 43, 66, 3, 3);
     MapGrid_CopyCellsTo(83, 40, 96, 29, 3, 4);
     MapGrid_CopyCellAttributes(0, 0, 1, 1, 41, 29);
@@ -2153,7 +2153,7 @@ s32 SolSanctumElementalStarRoom_Initialize(void) {
     MapGrid_CopyCellAttributes(0, 0, 1, 1, 41, 10);
     MapGrid_CopyCellsTo(87, 42, 41, 12, 1, 2);
   }
-  if (GameFlag_Test(FLAG_SOL_SANCTUM_MERCURY_STAR_BAGGED) != 0) {
+  if (GameFlag_Get(FLAG_SOL_SANCTUM_MERCURY_STAR_BAGGED) != 0) {
     MapGrid_CopyCellsTo(0, 40, 43, 46, 3, 3);
     MapGrid_CopyCellsTo(83, 40, 84, 4, 3, 4);
     MapGrid_CopyCellAttributes(0, 0, 1, 1, 29, 4);
@@ -2165,7 +2165,7 @@ s32 SolSanctumElementalStarRoom_Initialize(void) {
     MapGrid_CopyCellAttributes(0, 0, 1, 1, 21, 29);
     MapGrid_CopyCellsTo(87, 42, 21, 31, 1, 2);
   }
-  if (GameFlag_Test(FLAG_SOL_SANCTUM_STARS_GIVEN_TO_ALEX) != 0) {
+  if (GameFlag_Get(FLAG_SOL_SANCTUM_STARS_GIVEN_TO_ALEX) != 0) {
     MapGrid_CopyCellsTo(0, 40, 13, 66, 3, 3);
     MapGrid_CopyCellsTo(83, 40, 65, 31, 3, 4);
     MapGrid_CopyCellAttributes(0, 0, 1, 1, 10, 31);
@@ -2178,7 +2178,7 @@ s32 SolSanctumElementalStarRoom_Initialize(void) {
     MapGrid_CopyCellsTo(87, 42, 36, 12, 1, 2);
     SolSanctumElementalStarRoom_LineUpCaptors();
   }
-  if (GameFlag_Test(FLAG_SOL_SANCTUM_STAR_ROOM_EXPLAINED) == 0) {
+  if (GameFlag_Get(FLAG_SOL_SANCTUM_STAR_ROOM_EXPLAINED) == 0) {
     if (gGameState.warpDest ==
         SOL_SANCTUM_ELEMENTAL_STAR_ROOM_FROM_SOL_SANCTUM_LUNA_SOL_ROOMS) {
       SolSanctumElementalStarRoom_EnterStarRoom();

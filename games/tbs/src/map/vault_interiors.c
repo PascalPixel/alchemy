@@ -420,7 +420,7 @@ static void EventScript_CheckCrateMoved(void) {
   crate = ObjectEvent_GetById(LOCALID_CRATE);
   if ((crate->x.fixed >> 20) == 42) {
     MapGrid_CopyCellAttributes(101, 24, 3, 4, 41, 24);
-    Engine_GameFlagSet(FLAG_VAULT_CRATE_MOVED);
+    GameFlag_Set(FLAG_VAULT_CRATE_MOVED);
   }
   FieldScript_End();
 }
@@ -440,7 +440,7 @@ static void EventScript_TalkToWeaponMerchant(void) {
   if (leaderFacing >= 0xa001 && leaderFacing <= 0xdfff) {
     Shop_Run(4, LOCALID_WEAPON_MERCHANT);
   } else {
-    if (GameFlag_Test(FLAG_VAULT_THIEVES_JAILED) == 0) {
+    if (GameFlag_Get(FLAG_VAULT_THIEVES_JAILED) == 0) {
       FieldScript_SetMessageId(MsgVaultMasterHammetIsntOnlyOne);
     } else {
       FieldScript_SetMessageId(MsgVaultWeFoundOurStolenWeapons);
@@ -462,7 +462,7 @@ static void EventScript_TalkToArmorMerchant(void) {
   if (leaderFacing >= 0xa001 && leaderFacing <= 0xdfff) {
     Shop_Run(5, LOCALID_ARMOR_MERCHANT);
   } else {
-    if (GameFlag_Test(FLAG_VAULT_THIEVES_JAILED) == 0) {
+    if (GameFlag_Get(FLAG_VAULT_THIEVES_JAILED) == 0) {
       FieldScript_SetMessageId(MsgVaultThievesDidntHitOurHouse);
     } else {
       FieldScript_SetMessageId(MsgVaultIfYoureGonnaHeadInto);
@@ -484,7 +484,7 @@ static void EventScript_TalkToInnkeeper(void) {
   if (leaderFacing >= 0xa001 && leaderFacing <= 0xdfff) {
     Inn_CheckIn(1, LOCALID_INNKEEPER);
   } else {
-    if (GameFlag_Test(FLAG_VAULT_THIEVES_JAILED) == 0) {
+    if (GameFlag_Get(FLAG_VAULT_THIEVES_JAILED) == 0) {
       FieldScript_SetMessageId(MsgVaultEveryoneThinksOurGuestsThieves);
     } else {
       FieldScript_SetMessageId(MsgVaultTheyHidThoseStolenGoods);
@@ -540,7 +540,7 @@ const struct MapEvent *Map_GetEvents(void) {
   case VAULT_INTERIORS_LOFT_AFTER_THIEVES_DEFEATED:
     return gVaultInteriors_LoftEvents;
   }
-  if (GameFlag_Test(FLAG_VAULT_THIEVES_JAILED) != 0) {
+  if (GameFlag_Get(FLAG_VAULT_THIEVES_JAILED) != 0) {
     return gVaultInteriors_EventsAfterThieves;
   }
   return gVaultInteriors_Events;
@@ -603,7 +603,7 @@ static void EventScript_TalkToItemMerchant(void) {
   FieldScript_Start();
   if (leaderFacing >= 0xa001 && leaderFacing <= 0xdfff) {
     Shop_Run(6, LOCALID_ITEM_MERCHANT);
-  } else if (GameFlag_Test(FLAG_VAULT_THIEVES_JAILED) == 0) {
+  } else if (GameFlag_Get(FLAG_VAULT_THIEVES_JAILED) == 0) {
     FieldScript_SetMessageId(MsgVaultDidJustArriveInTown);
     VaultInteriors_AskYesNoAndShowReply(LOCALID_ITEM_MERCHANT);
   } else {
@@ -620,7 +620,7 @@ static void EventScript_TalkToItemMerchant(void) {
 /// Reached by talking to the gem owner's wife (LOCALID_GEM_OWNERS_WIFE).
 static void EventScript_TalkAboutRocks(void) {
   FieldScript_Start();
-  if (GameFlag_Test(FLAG_VAULT_THIEVES_JAILED) == 0) {
+  if (GameFlag_Get(FLAG_VAULT_THIEVES_JAILED) == 0) {
     FieldScript_SetMessageId(MsgVaultIfOnlyTheseRocksWere);
   } else {
     FieldScript_SetMessageId(MsgVaultThankGoodnessThoseThievesWere);
@@ -637,7 +637,7 @@ static void EventScript_TalkAboutRocks(void) {
 /// Reached by talking to Grandpa (LOCALID_GRANDPA).
 static void EventScript_TalkAboutMissingThings(void) {
   FieldScript_Start();
-  if (GameFlag_Test(FLAG_VAULT_THIEVES_JAILED) != 0) {
+  if (GameFlag_Get(FLAG_VAULT_THIEVES_JAILED) != 0) {
     FieldScript_SetMessageId(MsgVaultThievesHidStolenTreasureIn);
   } else {
     FieldScript_SetMessageId(MsgVaultJustMeOrAmMissing);
@@ -656,13 +656,13 @@ static void EventScript_MayorAsksHelpForIvan(void) {
   s32 thankedForHelpingFlag;
   thankedForHelpingFlag = FLAG_VAULT_MAYOR_THANKED_PARTY;
   FieldScript_Start();
-  if (GameFlag_Test(FLAG_VAULT_IVAN_JOINED_ROD_SEARCH) != 0) {
-    if (GameFlag_Test(thankedForHelpingFlag) == 0) {
+  if (GameFlag_Get(FLAG_VAULT_IVAN_JOINED_ROD_SEARCH) != 0) {
+    if (GameFlag_Get(thankedForHelpingFlag) == 0) {
       FieldScript_SetMessageId(MsgVaultYoureGoingHelpIvan);
       VaultInteriors_StandAndShowMessage(LOCALID_MAYOR);
       FieldScript_WaitFrames(10);
       VaultInteriors_PlayAnimationAndWait(LOCALID_MAYOR, ANIM_NOD, 20);
-      Engine_GameFlagSet(thankedForHelpingFlag);
+      GameFlag_Set(thankedForHelpingFlag);
     } else {
       FieldScript_SetMessageId(MsgVaultPleaseLookAfterIvan);
     }
@@ -859,7 +859,7 @@ static void EventScript_AskAboutDefeatingThieves(void) {
 /// once; with a full bag he says to come back for it.
 static void EventScript_MayorGivesWaterOfLife(void) {
   FieldScript_Start();
-  if (GameFlag_IsSet(FLAG_VAULT_WATER_OF_LIFE_RECEIVED) == 0) {
+  if (Script_GetFlag(FLAG_VAULT_WATER_OF_LIFE_RECEIVED) == 0) {
     FieldScript_SetMessageId(MsgVaultYouWereSuchGreatHelp);
     VaultInteriors_ShowMessageAndWait(LOCALID_MAYOR, 20);
     VaultInteriors_PlayAnimationAndWait(LOCALID_MAYOR, ANIM_NOD, 20);
@@ -901,7 +901,7 @@ static void EventScript_OfferBones(void) {
   FieldScript_Start();
   VaultInteriors_FaceEachOtherAndWait(LOCALID_GIRL_AT_THE_INN,
                                       LOCALID_PARTY_LEADER, 2);
-  if (GameFlag_IsSet(FLAG_VAULT_BONE_RECEIVED) == 0) {
+  if (GameFlag_Get(FLAG_VAULT_BONE_RECEIVED) == 0) {
     FieldScript_SetMessageId(MsgVaultHaveLotLeftoverBonesFrom);
     Script_OpenMessage(LOCALID_GIRL_AT_THE_INN, 0);
   } else {
@@ -945,7 +945,7 @@ static void EventScript_OfferBones(void) {
 /// picks the thought).
 static void EventScript_ReadMindOnRock(void) {
   FieldScript_Start();
-  if (GameFlag_Test(FLAG_VAULT_THIEVES_JAILED) == 0) {
+  if (GameFlag_Get(FLAG_VAULT_THIEVES_JAILED) == 0) {
     FieldScript_SetMessageId(MsgVaultOkMisterLetMeSee);
   } else {
     FieldScript_SetMessageId(MsgVaultIfRockWorthlessMaybeThats);
@@ -958,7 +958,7 @@ static void EventScript_ReadMindOnRock(void) {
 /// like, or Father looks sad.
 static void EventScript_ReadBoysMind(void) {
   FieldScript_Start();
-  if (GameFlag_Test(FLAG_VAULT_THIEVES_JAILED) == 0) {
+  if (GameFlag_Get(FLAG_VAULT_THIEVES_JAILED) == 0) {
     FieldScript_SetMessageId(MsgVaultWonderOutsideWorldLike);
   } else {
     FieldScript_SetMessageId(MsgVaultFatherLooksSadWorryingLike);
@@ -971,7 +971,7 @@ static void EventScript_ReadBoysMind(void) {
 /// be trusted? Or nothing in the house was worth stealing.
 static void EventScript_ReadMindOnThieves(void) {
   FieldScript_Start();
-  if (GameFlag_Test(FLAG_VAULT_THIEVES_JAILED) == 0) {
+  if (GameFlag_Get(FLAG_VAULT_THIEVES_JAILED) == 0) {
     FieldScript_SetMessageId(MsgVaultCouldTheyThievesGoodDont);
   } else {
     FieldScript_SetMessageId(MsgVaultGuessNothingInOurHouse);
@@ -984,7 +984,7 @@ static void EventScript_ReadMindOnThieves(void) {
 /// the Goma Range is dangerous, but the party will be okay. "That tickles..."
 static void EventScript_ReadMayorMind(void) {
   FieldScript_Start();
-  if (GameFlag_Test(FLAG_VAULT_THIEVES_JAILED) == 0) {
+  if (GameFlag_Get(FLAG_VAULT_THIEVES_JAILED) == 0) {
     FieldScript_SetMessageId(MsgVaultTicklesBeingTickledByBoy);
   } else {
     FieldScript_SetMessageId(MsgVaultCaveInGomaRangeDangerous);
@@ -998,9 +998,9 @@ static void EventScript_ReadMayorMind(void) {
 /// or, once a Bone was given, wondering about calcium.
 static void EventScript_ReadBoneGiverMind(void) {
   FieldScript_Start();
-  if (GameFlag_Test(FLAG_VAULT_THIEVES_JAILED) == 0) {
+  if (GameFlag_Get(FLAG_VAULT_THIEVES_JAILED) == 0) {
     FieldScript_SetMessageId(MsgVaultMasterHisWifeBlindedBy);
-  } else if (GameFlag_Test(FLAG_VAULT_BONE_RECEIVED) == 0) {
+  } else if (GameFlag_Get(FLAG_VAULT_BONE_RECEIVED) == 0) {
     FieldScript_SetMessageId(MsgVaultGeeAlwaysGetHungryWhen);
   } else {
     FieldScript_SetMessageId(MsgVaultHeReallyLikesBonesWonder);
@@ -1033,7 +1033,7 @@ static void EventScript_MeetIvan(void) {
   ObjectEvent_WalkToAndWait(GARET, 368, 408);
   ObjectEvent_FaceDirection(GARET, FACING_NORTH + FACING_STEP, 20);
   // Introduce Ivan's ability only on the first meeting.
-  if (GameFlag_IsSet(FLAG_VAULT_MET_IVAN) == 0) {
+  if (Script_GetFlag(FLAG_VAULT_MET_IVAN) == 0) {
     GameFlag_Set(FLAG_VAULT_MET_IVAN);
     // Ivan reads Isaac's mind and admits his strange powers.
     VaultInteriors_StartMindRead(IVAN, LOCALID_PARTY_LEADER);
@@ -1583,7 +1583,7 @@ static void EventScript_ClimbToLoft(void) {
 static void EventScript_LeaveLoft(void) {
   ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(1) / 2, PIXELS(1) / 4);
   ObjectEvent_WalkToAndWait(LOCALID_PARTY_LEADER, 744, 408);
-  if (GameFlag_IsSet(FLAG_VAULT_THIEVES_ATTACKED) == 0) {
+  if (GameFlag_Get(FLAG_VAULT_THIEVES_ATTACKED) == 0) {
     FieldScript_Start();
     FieldScript_SetMessageId(MsgVaultUhnnUhnn);
     Script_ShowMessage(LOCALID_TIED_UP_VILLAGER, 0);
@@ -1761,8 +1761,8 @@ static void EventScript_DiscussSuspiciousGuests(void) {
 /// Ivan or the suspects does nothing; then starts the chase
 /// (VaultInteriors_StartObjectEventStops).
 static void EventScript_StartCorneringSuspects(void) {
-  Engine_GameFlagSet(FLAG_MENUS_RAISE_EVENT);
-  Engine_GameFlagSet(FLAG_MAP_TEMP_50);
+  GameFlag_Set(FLAG_MENUS_RAISE_EVENT);
+  GameFlag_Set(FLAG_MAP_TEMP_50);
   VaultInteriors_StartObjectEventStops();
 }
 
@@ -2184,14 +2184,14 @@ s32 Map_Initialize(void) {
   case VAULT_INTERIORS_FROM_VAULT_NORTHWEST:
     // The mayor's house: Ivan waits a step back once met and is gone once he
     // has joined; after the thieves are jailed, the mayor stands by the door.
-    if (GameFlag_Test(FLAG_VAULT_MET_IVAN) != 0) {
+    if (GameFlag_Get(FLAG_VAULT_MET_IVAN) != 0) {
       ObjectEvent_SetPosition(IVAN, PIXELS(376), PIXELS(376));
       ObjectEvent_FaceDirection(IVAN, FACING_SOUTH, 0);
     }
-    if (GameFlag_Test(FLAG_VAULT_IVAN_JOINED_ROD_SEARCH) != 0) {
+    if (GameFlag_Get(FLAG_VAULT_IVAN_JOINED_ROD_SEARCH) != 0) {
       Engine_ObjectEventSetPosition(IVAN, 0, 0);
     }
-    if (GameFlag_Test(FLAG_VAULT_THIEVES_JAILED) != 0) {
+    if (GameFlag_Get(FLAG_VAULT_THIEVES_JAILED) != 0) {
       ObjectEvent_SetPosition(LOCALID_MAYOR, PIXELS(536),
                               VAULT_INTERIORS_ENTRY_OBJ_EVENT_Z);
       ObjectEvent_SetBuiltinAction(LOCALID_MAYOR, OBJ_EVENT_ACTION_IDLE);
@@ -2203,7 +2203,7 @@ s32 Map_Initialize(void) {
     // The inn: once the thieves are jailed, the Bone lies on the floor beside
     // the girl at the inn; after the mind reading and before that, she is
     // out.
-    if (GameFlag_Test(FLAG_VAULT_THIEVES_JAILED) != 0) {
+    if (GameFlag_Get(FLAG_VAULT_THIEVES_JAILED) != 0) {
       ObjectEvent_SetPosition(LOCALID_GIRL_AT_THE_INN, PIXELS(568),
                               PIXELS(648));
       ObjectEvent_SetBuiltinAction(LOCALID_GIRL_AT_THE_INN,
@@ -2211,32 +2211,32 @@ s32 Map_Initialize(void) {
       ObjectEvent_FaceDirection(LOCALID_GIRL_AT_THE_INN, FACING_SOUTH, 0);
       Vault_PlaceItemIcon(ITEM_BONE, PIXELS(568), PIXELS(16), PIXELS(672));
       Task_AddCallback(Vault_UpdateBoneProximityFlag, TASK_PRIORITY_MAP);
-    } else if (GameFlag_Test(FLAG_VAULT_SUSPECTS_MIND_READ) != 0) {
+    } else if (GameFlag_Get(FLAG_VAULT_SUSPECTS_MIND_READ) != 0) {
       Engine_ObjectEventSetPosition(LOCALID_GIRL_AT_THE_INN, 0, 0);
     }
     break;
   case VAULT_INTERIORS_INN_UPSTAIRS_FROM_INN:
     // The guests' room upstairs at the inn: back from a battle mid-chase, the
     // suspects keep running.
-    if (GameFlag_Test(FLAG_KEEP_PARTY_POSITION) != 0 &&
-        GameFlag_Test(FLAG_VAULT_SUSPECTS_APPROACHED) != 0 &&
-        GameFlag_Test(FLAG_VAULT_SUSPECTS_MIND_READ) == 0 &&
-        GameFlag_Test(FLAG_SUSPECTS_FLEEING) != 0) {
+    if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) != 0 &&
+        GameFlag_Get(FLAG_VAULT_SUSPECTS_APPROACHED) != 0 &&
+        GameFlag_Get(FLAG_VAULT_SUSPECTS_MIND_READ) == 0 &&
+        GameFlag_Get(FLAG_SUSPECTS_FLEEING) != 0) {
       MapGrid_CopyCellAttributes(14, 45, 3, 1, 14, 44);
       Task_AddCallback(VaultInteriors_FaceSuspectsTowardLeader,
                        TASK_PRIORITY_MAP);
       break;
     }
-    if (GameFlag_Test(FLAG_VAULT_IVAN_JOINED_ROD_SEARCH) != 0) {
+    if (GameFlag_Get(FLAG_VAULT_IVAN_JOINED_ROD_SEARCH) != 0) {
       ObjectEvent_SetPosition(LOCALID_SUSPECTED_THIEF, PIXELS(120),
                               PIXELS(696));
       ObjectEvent_FaceDirection(LOCALID_SUSPECTED_THIEF, FACING_WEST, 0);
     }
     // Once approached, the room's doorway metatile behavior changes; after the
     // mind reading the suspects sit turned toward the leader.
-    if (GameFlag_Test(FLAG_VAULT_SUSPECTS_APPROACHED) != 0) {
+    if (GameFlag_Get(FLAG_VAULT_SUSPECTS_APPROACHED) != 0) {
       MapGrid_CopyCellAttributes(14, 45, 3, 1, 14, 44);
-      if (GameFlag_Test(FLAG_VAULT_SUSPECTS_MIND_READ) == 0) {
+      if (GameFlag_Get(FLAG_VAULT_SUSPECTS_MIND_READ) == 0) {
         MapGrid_CopyCellAttributes(14, 50, 3, 1, 14, 44);
         break;
       }
@@ -2258,7 +2258,7 @@ s32 Map_Initialize(void) {
     MapGrid_CopyCellsTo(54, 2, 46, 81, 4, 8);
     ObjectEvent_GetById(LOCALID_CRATE)->collisionFlags |= 4;
     ObjectEvent_SetSpriteFlags(ObjectEvent_GetById(LOCALID_CRATE), 0);
-    if (GameFlag_Test(FLAG_VAULT_CRATE_MOVED) != 0) {
+    if (GameFlag_Get(FLAG_VAULT_CRATE_MOVED) != 0) {
       ObjectEvent_SetPosition(LOCALID_CRATE, PIXELS(676), PIXELS(411));
       MapGrid_CopyCellAttributes(101, 24, 3, 4, 41, 24);
     }
@@ -2271,7 +2271,7 @@ s32 Map_Initialize(void) {
     // The loft: emptied chests after the thieves are jailed; else the tied-up
     // villager lies tied, groaning to SONG_FADE_OUT_BGM, or the thieves wait
     // for a rematch.
-    if (GameFlag_Test(FLAG_VAULT_THIEVES_JAILED) != 0) {
+    if (GameFlag_Get(FLAG_VAULT_THIEVES_JAILED) != 0) {
       Engine_ObjectEventSetAnimation(LOCALID_FIRST_CHEST, ANIM_WALK);
       Engine_ObjectEventSetAnimation(LOCALID_SECOND_CHEST, ANIM_WALK);
       FieldScript_WaitFrames(1);
@@ -2280,7 +2280,7 @@ s32 Map_Initialize(void) {
     }
     Engine_ObjectEventSetPosition(LOCALID_TIED_UP_VILLAGER, PIXELS(824),
                                   PIXELS(456));
-    if (GameFlag_Test(FLAG_VAULT_THIEVES_ATTACKED) != 0) {
+    if (GameFlag_Get(FLAG_VAULT_THIEVES_ATTACKED) != 0) {
       VaultInteriors_ConfrontThievesAgain();
       FieldScript_End();
       break;
@@ -2305,7 +2305,7 @@ s32 Map_Initialize(void) {
     // Won: the thieves are caught and the stolen goods handed back.
     MapGrid_CopyCells(54, 2, 2, 8, 44, 21);
     MapGrid_CopyCells(54, 2, 2, 8, 44, 81);
-    if (GameFlag_Test(FLAG_KEEP_PARTY_POSITION) == 0) {
+    if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) == 0) {
       ObjectEvent_SetPosition(LOCALID_TIED_UP_VILLAGER, PIXELS(824),
                               PIXELS(456));
       VaultInteriors_DefeatThieves();
@@ -3585,7 +3585,7 @@ static void VaultInteriors_StartObjectEventStops(void) {
   // Flag 0x1ff holds nothing: no table, script or function sets or reads it,
   // and render probe flag-reads sees no read of it, so clearing it changes
   // nothing.
-  GameFlag_Clear(0x1ff);
+  Script_ClearFlag(0x1ff);
   FieldScript_End();
   Sound_PlaySong(MUS_009);
 }

@@ -308,7 +308,7 @@ const struct ObjectEventTemplate *Kolima_GetObjectEventTemplates(void) {
   s32 mapId = gGameState.mapId;
 
   if (mapId == (s32)&MapId_Kolima) {
-    if (GameFlag_Test(FLAG_KOLIMA_CURSE_LIFTED) == 0) {
+    if (GameFlag_Get(FLAG_KOLIMA_CURSE_LIFTED) == 0) {
       Kolima_InitializeCursedVillagers(gKolimaObjectEventTemplates);
     }
     return gKolimaObjectEventTemplates;
@@ -498,7 +498,7 @@ static void Kolima_LowerBridge(void) {
   FieldScript_WaitFrames(60);
   FieldEffect_SpawnLinked(LOCALID_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_WINCE,
                           60);
-  Engine_GameFlagSet(FLAG_KOLIMA_BRIDGE_LOWERED);
+  GameFlag_Set(FLAG_KOLIMA_BRIDGE_LOWERED);
   FieldScript_End();
 }
 
@@ -539,7 +539,7 @@ s32 Kolima_Initialize(void) {
   ObjectEvent_SetActionScript(LOCALID_FIRST_SPARKLE + 2, table);
   ObjectEvent_SetActionScript(LOCALID_FIRST_SPARKLE + 3, table);
 
-  if (GameFlag_Test(FLAG_KOLIMA_CURSE_LIFTED) == 0) {
+  if (GameFlag_Get(FLAG_KOLIMA_CURSE_LIFTED) == 0) {
     for (localId = LOCALID_FIRST_VILLAGER; localId <= LOCALID_LAST_VILLAGER;
          localId++) {
       ObjectEvent_SetSpriteFlags(ObjectEvent_GetById(localId), 0);
@@ -549,13 +549,13 @@ s32 Kolima_Initialize(void) {
     MapGrid_CopyCellAttributes(13, 9, 1, 1, 14, 9);
   }
 
-  if (GameFlag_Test(FLAG_KOLIMA_CURSE_WITNESSED) == 0) {
+  if (GameFlag_Get(FLAG_KOLIMA_CURSE_WITNESSED) == 0) {
     if (gGameState.warpDest == KOLIMA_FROM_WORLD_MAP) {
       Kolima_WitnessForestCurse();
     }
   }
 
-  if (GameFlag_Test(FLAG_KOLIMA_CURSE_WITNESSED) != 0) {
+  if (GameFlag_Get(FLAG_KOLIMA_CURSE_WITNESSED) != 0) {
     ObjectEvent_DestroyById(GARET);
     ObjectEvent_DestroyById(IVAN);
     ObjectEvent_DestroyById(MIA);
@@ -652,7 +652,7 @@ static void Kolima_WitnessForestCurse(void) {
   // Enter the deserted village and let Ivan inspect one of its trees.
   FieldScript_Start();
   partyLayout = &gKolima_MiaInParty;
-  *partyLayout = GameFlag_IsSet(FLAG_IN_PARTY(MIA));
+  *partyLayout = GameFlag_Get(FLAG_IN_PARTY(MIA));
   objectEvent = ObjectEvent_GetById(LOCALID_LEADER_PSYNERGY_FIELD);
   ObjectEvent_SetSpriteFlags(objectEvent, 0);
   objectEvent = ObjectEvent_GetById(LOCALID_IVAN_PSYNERGY_FIELD);
@@ -1677,7 +1677,7 @@ s32 gKolima_EffectActive __attribute__((section(".bss")));
 /// bridge while the curse lasts, because the bridge's one coord event (10)
 /// needs the man who is a tree until then.
 static void Kolima_RestoreBridgeState(void) {
-  if (GameFlag_Test(FLAG_KOLIMA_CURSE_LIFTED) == 0) {
+  if (GameFlag_Get(FLAG_KOLIMA_CURSE_LIFTED) == 0) {
     Engine_ObjectEventSetPosition(LOCALID_BRIDGE_VILLAGER, 0, 0);
     {
       MapGrid_CopyCellAttributes(9, 17, 5, 1, 9, 18);
@@ -1687,7 +1687,7 @@ static void Kolima_RestoreBridgeState(void) {
   } else {
     Engine_ObjectEventSetPosition(LOCALID_BRIDGE_VILLAGER_AS_TREE, 0, 0);
   }
-  if (GameFlag_Test(FLAG_KOLIMA_BRIDGE_LOWERED) != 0) {
+  if (GameFlag_Get(FLAG_KOLIMA_BRIDGE_LOWERED) != 0) {
     {
       MapGrid_CopyCellsTo(91, 19, 72, 9, 5, 7);
     }

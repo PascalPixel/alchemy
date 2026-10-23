@@ -12,9 +12,9 @@
 	.set import.ObjectDispatch_SetChildBlendMode, 1
 	.set import.MapGrid_SetScreenShake, 1
 	.set import.MapGrid_WaitForShakeToSettle, 1
-	.set import.GameFlag_Test, 1
-	.set import.Engine_GameFlagSet, 1
-	.set import.GameFlag_ClearBit, 1
+	.set import.GameFlag_Get, 1
+	.set import.GameFlag_Set, 1
+	.set import.GameFlag_Clear, 1
 	.set import.ObjectEvent_GetById, 1
 	.set import.ObjectMotion_SetSpeedParameters, 1
 	.set import.ObjectMotion_ResetAndSetPosition, 1

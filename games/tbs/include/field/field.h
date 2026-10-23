@@ -281,9 +281,6 @@ s32 FarCall_LuckyWheelsTable(s32 warpDest);
 s32 FarCall_LuckyDiceTable(s32 warpDest);
 #ifndef OWN_Map_PrepareObjectEvents
 #endif
-#ifndef OWN_GameFlag_IsSet
-s32 GameFlag_IsSet(s32 flag);
-#endif
 void WorldMap_StartStillView(void);
 #ifndef OWN_Object_Destroy
 #endif

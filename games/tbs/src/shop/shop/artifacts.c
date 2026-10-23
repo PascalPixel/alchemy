@@ -321,8 +321,8 @@ void ShopStock_AddArtifacts(s32 stockRow) {
   s32 initializedFlag;
 
   initializedFlag = stockRow + FLAG_SHOP_ARTIFACTS_STOCKED;
-  if (GameFlag_TestFar(initializedFlag) == 0) {
-    GameFlag_SetBitFar(initializedFlag);
+  if (GameFlag_GetFar(initializedFlag) == 0) {
+    GameFlag_SetFar(initializedFlag);
     artifactIndex = 0;
     itemId = sStockTable[stockRow][SHOP_STOCK_ARTIFACTS];
     if (itemId != 0) {

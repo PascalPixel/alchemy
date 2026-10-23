@@ -448,7 +448,7 @@ void FieldEffect_SpawnNearbyMarkers(void) {
           case FIND_PSYNERGY_STONE:
           case FIND_MIMIC:
             if (entry->condition != -1 &&
-                GameFlag_TestFar(entry->condition) == 0) {
+                GameFlag_GetFar(entry->condition) == 0) {
               /* FAKEMATCH(temporary): the spawned marker reuses objectEvent, so
                * the one pseudo keeps ObjectEvent_GetByLocalId's result in r5;
                * as a variable of its own, 9 of 163 instructions differ in

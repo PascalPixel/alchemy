@@ -207,7 +207,7 @@ static void EventScript_LayanaScoldsLunpaVisit(void) {
   FieldScript_ShowMessageThenWait(LOCALID_LAYANA, 0, 10);
   ObjectMotion_SetAnimationAndWait(LOCALID_LAYANA, ANIM_NOD);
   FieldScript_ShowMessageThenWait(LOCALID_LAYANA, 0, 10);
-  Engine_GameFlagSet(FLAG_KALAY_LAYANA_SAID_LUNPA_TOO_DANGEROUS);
+  GameFlag_Set(FLAG_KALAY_LAYANA_SAID_LUNPA_TOO_DANGEROUS);
   SCRIPT_END();
 }
 
@@ -274,18 +274,18 @@ static void HammetPalace_SetUpWarpDest(void) {
 
   switch (gGameState.warpDest) {
   case HAMMET_PALACE_LAYANAS_ROOM_FROM_ENTRANCE_ROOM:
-    if (GameFlag_Test(FLAG_DODONPA_LOCKED_UP) != 0) {
+    if (GameFlag_Get(FLAG_DODONPA_LOCKED_UP) != 0) {
       // Hammet is home.
       objectEvent = ObjectEvent_GetById(LOCALID_LAYANA);
       facing = FACING_EAST + FACING_STEP;
       objectEvent->facing = facing;
 
-      if (GameFlag_Test(FLAG_HAMMET_BACK_HOME_SEEN) == 0) {
+      if (GameFlag_Get(FLAG_HAMMET_BACK_HOME_SEEN) == 0) {
         HammetPalace_HammetsHomecoming();
       }
     } else {
       Engine_ObjectEventSetPosition(LOCALID_HAMMET, 0, 0);
-      if (GameFlag_Test(FLAG_MAPSEC_TEMP_21) != 0) {
+      if (GameFlag_Get(FLAG_MAPSEC_TEMP_21) != 0) {
         Engine_ObjectEventSetPosition(LOCALID_LAYANA, waitingX, waitingZ);
         objectEvent = ObjectEvent_GetById(LOCALID_LAYANA);
         facing = FACING_NORTH + FACING_STEP;
@@ -296,7 +296,7 @@ static void HammetPalace_SetUpWarpDest(void) {
 
   case HAMMET_PALACE_PASSAGE_DOOR_FROM_EAST_WING:
   case HAMMET_PALACE_FROM_KALAY_TUNNEL_TREASURE_ROOM:
-    if (GameFlag_Test(FLAG_KALAY_TUNNEL_OPEN) != 0) {
+    if (GameFlag_Get(FLAG_KALAY_TUNNEL_OPEN) != 0) {
       MapGrid_CopyCellsTo(58, 70, 54, 70, 4, 3);
       {
         MapGrid_CopyCellAttributes(55, 9, 2, 1, 55, 8);
@@ -308,7 +308,7 @@ static void HammetPalace_SetUpWarpDest(void) {
 
   case HAMMET_PALACE_LAYANAS_ROOM_FROM_HAMMET_PALACE_GROUNDS:
     Engine_ObjectEventSetPosition(LOCALID_HAMMET, 0, 0);
-    if (GameFlag_Test(FLAG_KEEP_PARTY_POSITION) == 0) {
+    if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) == 0) {
       HammetPalace_IvanReportsToLayana();
     }
     break;
@@ -803,7 +803,7 @@ static void HammetPalace_IvanReportsToLayana(void) {
   work->transition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
   GameFlag_Clear(FLAG_SHOW_LOCATION_NAME);
-  FLAG_SET(FLAG_IVAN_REPORTED_TO_LAYANA);
+  GameFlag_Set(FLAG_IVAN_REPORTED_TO_LAYANA);
   SCRIPT_END();
 }
 
@@ -1004,7 +1004,7 @@ static void HammetPalace_HammetsHomecoming(void) {
   work->transition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
   GameFlag_Clear(FLAG_SHOW_LOCATION_NAME);
-  FLAG_SET(FLAG_HAMMET_BACK_HOME_SEEN);
+  GameFlag_Set(FLAG_HAMMET_BACK_HOME_SEEN);
   SCRIPT_END();
 }
 

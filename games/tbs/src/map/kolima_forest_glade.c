@@ -91,7 +91,7 @@ static void KolimaForestGlade_PushLog(void) {
 static void KolimaForestGlade_CatchNut(void) {
   FieldScript_Start();
   Engine_ObjectEventSetPosition(LOCALID_NUT, 0, 0);
-  Engine_GameFlagSet(FLAG_KOLIMA_FOREST_NUT_CAUGHT);
+  GameFlag_Set(FLAG_KOLIMA_FOREST_NUT_CAUGHT);
   FieldEffect_StartEffectObject22(ITEM_NUT, 3);
   PartyInventory_GiveItem(ITEM_NUT, 0);
   FieldScript_End();
@@ -109,13 +109,13 @@ s32 KolimaForestGlade_Initialize(void) {
 
   gFieldWork->transition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
-  if (GameFlag_Test(FLAG_KOLIMA_FOREST_NUT_CAUGHT) == 0) {
+  if (GameFlag_Get(FLAG_KOLIMA_FOREST_NUT_CAUGHT) == 0) {
     Map_FloatNut(LOCALID_NUT);
   }
   Map_RedrawObjectEventFootprint(LOCALID_FIRST_LOG);
   Map_RedrawObjectEventFootprint(LOCALID_FIRST_LOG + 1);
   Map_RedrawObjectEventFootprint(LOCALID_FIRST_LOG + 2);
-  if (GameFlag_Test(FLAG_KOLIMA_CURSE_LIFTED) == 0) {
+  if (GameFlag_Get(FLAG_KOLIMA_CURSE_LIFTED) == 0) {
     KolimaPalette_Curse(11);
   }
   return 0;

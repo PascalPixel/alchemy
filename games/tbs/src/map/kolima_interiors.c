@@ -181,7 +181,7 @@ const struct ObjectEventTemplate *
 KolimaInteriors_GetObjectEventTemplates(void) {
   struct ObjectEventTemplate *templates;
 
-  if (GameFlag_Test(FLAG_KOLIMA_CURSE_LIFTED) == 0) {
+  if (GameFlag_Get(FLAG_KOLIMA_CURSE_LIFTED) == 0) {
     KolimaInteriors_TurnVillagersIntoTrees(
         gKolimaInteriors_ObjectEventTemplates);
   }
@@ -273,7 +273,7 @@ s32 KolimaInteriors_Initialize(void) {
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
 
   // The residents remain visible as trees, with their sprite flags cleared.
-  if (GameFlag_Test(FLAG_KOLIMA_CURSE_LIFTED) == 0) {
+  if (GameFlag_Get(FLAG_KOLIMA_CURSE_LIFTED) == 0) {
     localId = LOCALID_FIRST_VILLAGER;
     do {
       struct ObjectEvent *objectEvent = ObjectEvent_GetById(localId);

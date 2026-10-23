@@ -28,9 +28,9 @@ FarCall_GameTable:
 	overlay_veneer Party_InitializeCharacters
 	overlay_veneer Unit_LevelNoOp
 	export Unit_TryLevelUpFar, Unit_TryLevelUp
-	export GameFlag_TestFar, GameFlag_Test
-	export GameFlag_SetBitFar, GameFlag_SetBit
-	export GameFlag_ClearBitFar, GameFlag_ClearBit
+	export GameFlag_GetFar, GameFlag_Get
+	export GameFlag_SetFar, GameFlag_Set
+	export GameFlag_ClearFar, GameFlag_Clear
 	overlay_veneer GameFlag_Toggle
 	export GameFlag_GetByteFar, GameFlag_GetByte
 	export GameFlag_SetByteFar, GameFlag_SetByte

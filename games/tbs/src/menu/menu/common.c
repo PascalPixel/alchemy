@@ -42,9 +42,9 @@ s32 Menu_ResumeFieldTasks(void) {
   TilesetAnim_ResumeAllFar();
   // FLAG_WEATHER_HELD freezes the field weather: its particles hold
   // their frame and the storm's lightning waits (field_services/weather.c).
-  GameFlag_ClearBitFar(FLAG_WEATHER_HELD);
+  GameFlag_ClearFar(FLAG_WEATHER_HELD);
   // FLAG_PALETTE_BLEND_HELD stops PaletteFade_Update.
-  GameFlag_ClearBitFar(FLAG_PALETTE_BLEND_HELD);
+  GameFlag_ClearFar(FLAG_PALETTE_BLEND_HELD);
 #ifdef UBFIX
   return 0;
 #endif
@@ -56,8 +56,8 @@ s32 Menu_ResumeFieldTasks(void) {
 /// which undoes it). Returns Task_SuspendOverlayTasks' result, the last
 /// task index changed or -1; callers ignore it.
 s32 Menu_SuspendFieldTasks(void) {
-  GameFlag_SetBitFar(FLAG_PALETTE_BLEND_HELD);
-  GameFlag_SetBitFar(FLAG_WEATHER_HELD);
+  GameFlag_SetFar(FLAG_PALETTE_BLEND_HELD);
+  GameFlag_SetFar(FLAG_WEATHER_HELD);
   TilesetAnim_SuspendAllFar();
   return Task_SuspendOverlayTasks();
 }
@@ -850,7 +850,7 @@ void ItemMenu_ShowMessage(s32 message, s32 x, s32 y) {
 #endif
     WindowSprite_ClearListFar((void *)window);
   } else {
-    GameFlag_SetBitFar(FLAG_MENU_INFO_KEPT);
+    GameFlag_SetFar(FLAG_MENU_INFO_KEPT);
   }
   menu->completionFlag = 1;
   menu->sideIcons[0]->motion = ICON_SHOWN;
@@ -1266,7 +1266,7 @@ s32 Audio_PlayCueReturnOne(s32 cue) {
 void Menu_CancelSoundTick(void) {
   if (gKeysPressed & KEY_START) {
     Sound_PlaySongFar(SE_MENU_CANCEL);
-    GameFlag_SetBitFar(FLAG_MENU_START_PRESSED);
+    GameFlag_SetFar(FLAG_MENU_START_PRESSED);
     Task_Remove(Menu_CancelSoundTick);
   }
 }
@@ -1275,14 +1275,14 @@ void Menu_CancelSoundTick(void) {
 /// Menu_CancelSoundTick. ItemMenu_Run, PsynergyMenu_Run and SummaryScreen_Run
 /// call it before their command loops and Menu_EnsureCancelSound after them.
 void Menu_CancelSoundReset(void) {
-  GameFlag_ClearBitFar(FLAG_MENU_START_PRESSED);
+  GameFlag_ClearFar(FLAG_MENU_START_PRESSED);
   // TASK_PRIORITY_MAIN_LOOP: once a frame in the main loop.
   Task_Add(Menu_CancelSoundTick, 0xC80);
 }
 
 /// Stops watching for Start, if Start has not removed the watch already.
 void Menu_EnsureCancelSound(void) {
-  if (GameFlag_TestFar(FLAG_MENU_START_PRESSED) == 0) {
+  if (GameFlag_GetFar(FLAG_MENU_START_PRESSED) == 0) {
     Task_Remove(Menu_CancelSoundTick);
   }
 }

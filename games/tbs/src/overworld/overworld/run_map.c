@@ -40,7 +40,7 @@ s32 Map_Run(s32 warpDest) {
   // Set up the map.
   work = AllocHeapSlotEwram(HEAP_SLOT_FIELD, sizeof(struct FieldWork));
   Dma_Fill32(0, work, sizeof(struct FieldWork));
-  GameFlag_ClearBitFar(FLAG_IN_BATTLE);
+  GameFlag_ClearFar(FLAG_IN_BATTLE);
   gGameState.defaultMap = gGameState.mapId;
   gGameState.defaultWarpDest = gGameState.warpDest;
   gGameState.nextMap = -1;
@@ -67,7 +67,7 @@ s32 Map_Run(s32 warpDest) {
   Map_ApplyWarpDest();
   ObjectEvent_ResetForObject(
       (struct ObjectEventTemplate *)gOverlayArea.objectEventTemplates());
-  if (GameFlag_TestFar(FLAG_KEEP_PARTY_POSITION) != 0)
+  if (GameFlag_GetFar(FLAG_KEEP_PARTY_POSITION) != 0)
     ObjectEvent_Restore();
   if (gGameState.pendingDjinnEvent != 0)
     ObjectEvent_PlaceMapObjectEvents();
@@ -93,12 +93,12 @@ s32 Map_Run(s32 warpDest) {
   work->walkingDistance = 0;
   if (gGameState.mapType == MAP_TYPE_TOWN) {
     work->walkingDistanceScale = 0;
-    GameFlag_SetBitFar(FLAG_RETREAT_BLOCKED);
+    GameFlag_SetFar(FLAG_RETREAT_BLOCKED);
   }
   work->previousCell = (struct MapGridCell *)Ram_MapGridCellBuffer;
   // A fresh entry (not a return from battle) resets the hazard count to its
   // defaults (damage 1 every 16 steps), the stopped object event and Cloak.
-  if (GameFlag_TestFar(FLAG_KEEP_PARTY_POSITION) == 0) {
+  if (GameFlag_GetFar(FLAG_KEEP_PARTY_POSITION) == 0) {
     Map_SetDefeatReturnPoint();
     gGameState.hazardLimit = 16;
     gGameState.hazardMode = HAZARD_COUNT_ON_CELLS;
@@ -116,7 +116,7 @@ s32 Map_Run(s32 warpDest) {
     result = code;
     work->warp = 0;
   } else {
-    GameFlag_ClearBitFar(FLAG_KEEP_PARTY_POSITION);
+    GameFlag_ClearFar(FLAG_KEEP_PARTY_POSITION);
     // Fade in, show the area name and give what was left pending.
     if (Field_CountRequests() == 0) {
       if (work->transitionActive == 0) {
@@ -129,8 +129,8 @@ s32 Map_Run(s32 warpDest) {
         if (Warp_PlayArrival() == 0)
           WaitFrames((work->transitionFrames + 1) / 2);
       }
-      if (GameFlag_TestFar(FLAG_SHOW_LOCATION_NAME) != 0) {
-        GameFlag_ClearBitFar(FLAG_SHOW_LOCATION_NAME);
+      if (GameFlag_GetFar(FLAG_SHOW_LOCATION_NAME) != 0) {
+        GameFlag_ClearFar(FLAG_SHOW_LOCATION_NAME);
         MapNamePopup_ShowFar(gGameState.mapId);
       }
       if (gGameState.pendingDjinnEvent != 0) {
@@ -148,7 +148,7 @@ s32 Map_Run(s32 warpDest) {
 
     for (;;) {
       // Note where the leader is, for the requests to use.
-      GameFlag_SetBitFar(FLAG_FIELD_HANDLING_REQUESTS);
+      GameFlag_SetFar(FLAG_FIELD_HANDLING_REQUESTS);
       objectEvent = work->objectEvents[gGameState.leaderLocalId];
       ObjectDispatch_StartIdleFar((struct DispatchObject *)objectEvent);
       gGameState.x = objectEvent->x.fixed;
@@ -184,7 +184,7 @@ s32 Map_Run(s32 warpDest) {
               struct Unit *vitals;
 
               if (gGameState.leaderLocalId == 0) {
-                if (GameFlag_TestFar(FLAG_CHILDHOOD) != 0)
+                if (GameFlag_GetFar(FLAG_CHILDHOOD) != 0)
                   ObjectDispatch_SelectAnimationFar(objectEvent, 21);
                 else
                   ObjectDispatch_SelectAnimationFar(objectEvent, 37);
@@ -268,11 +268,11 @@ s32 Map_Run(s32 warpDest) {
           Leader_StopMoving();
           Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
           WorldMap_StartScript();
-          GameFlag_SetBitFar(FLAG_MENU_OPEN);
+          GameFlag_SetFar(FLAG_MENU_OPEN);
           if (gDebugMode != 0 && (gKeysHeld & KEY_B) != 0 &&
               (gKeysHeld & KEY_SELECT) != 0) {
             DebugFlagEditor_RunFar();
-          } else if (GameFlag_TestFar(FLAG_MENUS_RAISE_EVENT) != 0) {
+          } else if (GameFlag_GetFar(FLAG_MENUS_RAISE_EVENT) != 0) {
             work->raisedEvent = FIELD_RAISED_EVENT_MENUS;
           } else {
             work->effectTimerRunning = 0;
@@ -280,7 +280,7 @@ s32 Map_Run(s32 warpDest) {
             work->effectTimerRunning = 1;
           }
           WorldMap_EndScript();
-          GameFlag_ClearBitFar(FLAG_MENU_OPEN);
+          GameFlag_ClearFar(FLAG_MENU_OPEN);
           GameFlag_RefreshLureCapFar();
           work->menu = 0;
         } else if ((s16)work->talk != 0) {
@@ -310,7 +310,7 @@ s32 Map_Run(s32 warpDest) {
           Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
           Leader_StopMoving();
           WorldMap_StartScript();
-          GameFlag_SetBitFar(FLAG_MENU_OPEN);
+          GameFlag_SetFar(FLAG_MENU_OPEN);
           if (gDebugMode != 0 && (gKeysHeld & KEY_B) != 0) {
             DebugMapSelect_RunFar();
           }
@@ -320,14 +320,14 @@ s32 Map_Run(s32 warpDest) {
           else if (*(volatile u8 *)&gDebugMode != 0 &&
                    (gKeysHeld & KEY_L) != 0) {
             PaletteEditor_Run();
-          } else if (GameFlag_TestFar(FLAG_MENUS_RAISE_EVENT) != 0) {
+          } else if (GameFlag_GetFar(FLAG_MENUS_RAISE_EVENT) != 0) {
             // As for the main menu above.
             work->raisedEvent = FIELD_RAISED_EVENT_MENUS;
           } else {
             Field_EndBusyAndReveal();
             MapNamePopup_HideFar();
             gGameState.returnMusic = Sound_GetCurrentBgmFar();
-            if (GameFlag_TestFar(FLAG_IN_BATTLE_ARENA) == 0) {
+            if (GameFlag_GetFar(FLAG_IN_BATTLE_ARENA) == 0) {
               // With fewer than 136 of the 512 sprite VRAM blocks (64 bytes
               // each) free, sprite drawing stays suspended while the menu
               // runs, and a frame passes so that the field's sprites give
@@ -352,7 +352,7 @@ s32 Map_Run(s32 warpDest) {
             }
           }
           WorldMap_EndScript();
-          GameFlag_ClearBitFar(FLAG_MENU_OPEN);
+          GameFlag_ClearFar(FLAG_MENU_OPEN);
           work->start = 0;
         }
       }
@@ -360,7 +360,7 @@ s32 Map_Run(s32 warpDest) {
       // Hand the leader back to the player, as climbing, carried through the
       // air (only a key check runs), on the world map or walking, and step
       // until the next request.
-      GameFlag_ClearBitFar(FLAG_FIELD_HANDLING_REQUESTS);
+      GameFlag_ClearFar(FLAG_FIELD_HANDLING_REQUESTS);
       objectEvent = work->objectEvents[gGameState.leaderLocalId];
       if (objectEvent != NULL) {
         if (gGameState.movementMode == LEADER_MOVEMENT_AIRBORNE)
@@ -378,7 +378,7 @@ s32 Map_Run(s32 warpDest) {
       do {
         WaitFrames(1);
         objectEvent = work->objectEvents[gGameState.leaderLocalId];
-        if (gDebugMode == 0 || GameFlag_TestFar(FLAG_DEBUG_STEPS_OFF) == 0)
+        if (gDebugMode == 0 || GameFlag_GetFar(FLAG_DEBUG_STEPS_OFF) == 0)
           Field_ProcessStep(objectEvent->layer, objectEvent->x.fixed,
                             objectEvent->y.fixed, objectEvent->z.fixed);
       } while (Field_CountRequests() == 0);
@@ -479,7 +479,7 @@ void Map_ApplyWarpDest(void) {
   while (warpDestEntry->warpDest != -1) {
     if (warpDestEntry->warpDest == warpDest &&
         (warpDestEntry->requiredFlag == -1 ||
-         GameFlag_TestFar(warpDestEntry->requiredFlag))) {
+         GameFlag_GetFar(warpDestEntry->requiredFlag))) {
       foundWarpDest = 1;
       break;
     }
@@ -489,7 +489,7 @@ void Map_ApplyWarpDest(void) {
     warpDestEntry = gOverlayArea.warpDests();
 
   // Camera bounds apply even when returning to a saved party position.
-  if (!GameFlag_TestFar(FLAG_KEEP_PARTY_POSITION)) {
+  if (!GameFlag_GetFar(FLAG_KEEP_PARTY_POSITION)) {
     gGameState.x = REGION_FIXED(warpDestEntry->x);
     gGameState.y = REGION_FIXED(warpDestEntry->y);
     gGameState.z = REGION_FIXED(warpDestEntry->z);

@@ -202,7 +202,7 @@ const struct MapWarpRegion *ValeInteriorsShops_GetRegions(void) { return NULL; }
 
 /// On the stormy night, the doors lead out into the storm.
 const u32 *ValeInteriorsShops_GetWarps(void) {
-  if (GameFlag_Test(FLAG_VALE_STORM) != 0)
+  if (GameFlag_Get(FLAG_VALE_STORM) != 0)
     return gValeInteriorsShops_StormWarps;
   return gValeInteriorsShops_Warps;
 }
@@ -214,9 +214,9 @@ const struct ObjectEventTemplate *
 ValeInteriorsShops_GetObjectEventTemplates(void) {
   struct ObjectEventTemplate *table;
 
-  if (GameFlag_Test(FLAG_KALAY_REACHED)) {
+  if (GameFlag_Get(FLAG_KALAY_REACHED)) {
     table = gValeInteriorsShops_ObjectEventTemplatesAfterKalay;
-  } else if (GameFlag_Test(FLAG_VALE_PARTY_LEFT)) {
+  } else if (GameFlag_Get(FLAG_VALE_PARTY_LEFT)) {
     table = gValeInteriorsShops_ObjectEventTemplatesAfterLeaving;
   } else {
     table = gValeInteriorsShops_ObjectEventTemplates;
@@ -229,11 +229,11 @@ ValeInteriorsShops_GetObjectEventTemplates(void) {
 /// (FLAG_VALE_STORM), after Kalay, after the party has left, or the day the
 /// story begins.
 const struct MapEvent *ValeInteriorsShops_GetEvents(void) {
-  if (GameFlag_Test(FLAG_VALE_STORM) != 0)
+  if (GameFlag_Get(FLAG_VALE_STORM) != 0)
     return gValeInteriorsShops_StormEvents;
-  if (GameFlag_Test(FLAG_KALAY_REACHED) != 0)
+  if (GameFlag_Get(FLAG_KALAY_REACHED) != 0)
     return gValeInteriorsShops_EventsAfterKalay;
-  if (GameFlag_Test(FLAG_VALE_PARTY_LEFT) != 0)
+  if (GameFlag_Get(FLAG_VALE_PARTY_LEFT) != 0)
     return gValeInteriorsShops_EventsAfterLeaving;
   return gValeInteriorsShops_Events;
 }
@@ -277,7 +277,7 @@ static void ValeInteriorsShops_GiveFarewellHerb(void) {
   s32 gift;
 
   FieldScript_Start();
-  if (GameFlag_IsSet(FLAG_VALE_FAREWELL_HERB_RECEIVED) != 0) {
+  if (Script_GetFlag(FLAG_VALE_FAREWELL_HERB_RECEIVED) != 0) {
     FieldScript_SetMessageId(MsgValeYouMustSaveJenna);
     Script_ShowMessage(LOCALID_ITEM_MERCHANT, 0);
     Object_SetTargetAndCallback(LOCALID_ITEM_MERCHANT,
@@ -333,7 +333,7 @@ static void EventScript_WorryAboutTravelersHealth(void) {
 /// Leaves a house through its door: the warp sound plays and the screen
 /// closes, stopping the lightning first on the stormy night.
 static void ValeInteriorsShops_RequestWindowWarp(s32 warpNumber) {
-  if (GameFlag_Test(FLAG_VALE_STORM) != 0)
+  if (GameFlag_Get(FLAG_VALE_STORM) != 0)
     Weather_StopLightning();
   Sound_PlaySong(SE_MAP_EXIT);
   gFieldWork->transition =
@@ -414,7 +414,7 @@ s32 ValeInteriorsShops_Initialize(void) {
   (*eventSlot)->transition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
   // On the stormy night every resident is out, and lightning flashes outside.
-  if (GameFlag_Test(FLAG_VALE_STORM) != 0) {
+  if (GameFlag_Get(FLAG_VALE_STORM) != 0) {
     Engine_ObjectEventSetPosition(LOCALID_GARETS_GRANDFATHER, 0, 0);
     Engine_ObjectEventSetPosition(LOCALID_GARETS_GRANDMOTHER, 0, 0);
     Engine_ObjectEventSetPosition(LOCALID_GARETS_FATHER, 0, 0);
@@ -440,9 +440,9 @@ s32 ValeInteriorsShops_Initialize(void) {
     Weather_ResumeLightning();
   }
   // The returning party gets the household reunion only on its first visit.
-  if (GameFlag_Test(FLAG_KALAY_REACHED) != 0) {
+  if (GameFlag_Get(FLAG_KALAY_REACHED) != 0) {
     if (gGameState.warpDest == VALE_INTERIORS_SHOPS_FROM_VALE_EAST) {
-      if (GameFlag_Test(FLAG_GARET_CAME_HOME) == 0) {
+      if (GameFlag_Get(FLAG_GARET_CAME_HOME) == 0) {
         EventScript_GaretComesHome();
       }
     }
@@ -450,7 +450,7 @@ s32 ValeInteriorsShops_Initialize(void) {
   }
   // Once Jenna is taken, her grandmother lies sick in bed.
   if (gGameState.warpDest == VALE_INTERIORS_SHOPS_FROM_VALE_NORTH) {
-    if (GameFlag_Test(FLAG_VALE_PARTY_LEFT) != 0) {
+    if (GameFlag_Get(FLAG_VALE_PARTY_LEFT) != 0) {
       Engine_ObjectEventSetPosition(LOCALID_JENNAS_GRANDMOTHER, PIXELS(454),
                                     PIXELS(150));
       objectEvent = ObjectEvent_GetById(LOCALID_JENNAS_GRANDMOTHER);
@@ -480,11 +480,11 @@ static void EventScript_TalkToWeaponMerchant(void) {
   }
 
   FieldScript_Start();
-  if (GameFlag_Test(FLAG_KALAY_REACHED) != 0) {
+  if (GameFlag_Get(FLAG_KALAY_REACHED) != 0) {
     FieldScript_SetMessageId(MsgValeYouCameBack);
     FieldScript_AskYesNoAndShowResponse(LOCALID_WEAPON_MERCHANT, 0);
   } else {
-    if (GameFlag_Test(FLAG_VALE_PARTY_LEFT) != 0) {
+    if (GameFlag_Get(FLAG_VALE_PARTY_LEFT) != 0) {
       FieldScript_SetMessageId(MsgValeValeFeelsEmpty);
     } else {
       FieldScript_SetMessageId(MsgValeGoodWeaponsDrawOutStrength);
@@ -507,10 +507,10 @@ static void EventScript_TalkToArmorMerchant(void) {
     Shop_Run(2, LOCALID_ARMOR_MERCHANT);
   } else {
     FieldScript_Start();
-    if (GameFlag_Test(FLAG_KALAY_REACHED) != 0) {
+    if (GameFlag_Get(FLAG_KALAY_REACHED) != 0) {
       FieldScript_SetMessageId(MsgValeTheRumorWasTrue);
     } else {
-      if (GameFlag_Test(FLAG_VALE_PARTY_LEFT) != 0) {
+      if (GameFlag_Get(FLAG_VALE_PARTY_LEFT) != 0) {
         FieldScript_SetMessageId(MsgValeImNotSadJustGo);
       } else {
         FieldScript_SetMessageId(MsgValeGoodArmorDrawsOutStrength);
@@ -534,13 +534,13 @@ static void EventScript_TalkToItemMerchant(void) {
   if (FACING_IS_NORTH(objectEvent->facing)) {
     Shop_Run(3, LOCALID_ITEM_MERCHANT);
   } else {
-    if (GameFlag_Test(FLAG_KALAY_REACHED) != 0) {
+    if (GameFlag_Get(FLAG_KALAY_REACHED) != 0) {
       FieldScript_Start();
       FieldScript_SetMessageId(MsgValeWhenDidYouComeBack);
       FieldScript_ShowMessageAndWait(LOCALID_ITEM_MERCHANT, 0);
       FieldScript_End();
     } else {
-      if (GameFlag_Test(FLAG_VALE_PARTY_LEFT) != 0) {
+      if (GameFlag_Get(FLAG_VALE_PARTY_LEFT) != 0) {
         ValeInteriorsShops_GiveFarewellHerb();
       } else {
         FieldScript_Start();

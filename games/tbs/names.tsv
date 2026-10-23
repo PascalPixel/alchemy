@@ -82,6 +82,7 @@ facing	word	common	enum Facing
 encounter (Encounter_, gEncounterZones)	prefix	common	encounter zones per ground
 formation (Encounter_CountStepsAndSelectFormation)	word	common	battle row: formation, never enemy group
 temp flags (FLAG_MAP_TEMP_, FLAG_MAPSEC_TEMP_)	constant	pret	pokeemerald FLAG_TEMP_
+GameFlag_Get, GameFlag_Set, GameFlag_Clear	prefix	pret	pokeemerald FlagGet, FlagSet, FlagClear: one verb each, folding GameFlag_Test, GameFlag_IsSet, FLAG_CHECK, FLAG_SET, GameFlag_SetBit, GameFlag_ClearBit and their Far stubs; Script_GetFlag, Script_SetFlag and Script_ClearFlag are the script layer's inlines where a site matches only through one, and Engine_GameFlagSet the void import Imil and Sol Sanctum's Psynergy Stone room match with (MATCHING.md)
 map local state	word	common	gMapLocalState
 ScreenTransition_	prefix	common	FieldScript_StartScreenTransition already says screen transition
 ScreenTransitionWin	struct	pret	pokeemerald spells the hardware window Win (gBattle_WIN0H)

@@ -295,7 +295,7 @@ const struct MapEvent *Map_GetEvents(void) {
   if (gGameState.warpDest == ROOM_GATE_TO_SUHALLA) {
     return gGateToSuhallaEvents;
   }
-  if (GameFlag_Test(FLAG_DODONPA_LOCKED_UP) != 0) {
+  if (GameFlag_Get(FLAG_DODONPA_LOCKED_UP) != 0) {
     return gInteriorReopenedEvents;
   }
   return gInteriorSealedEvents;
@@ -309,13 +309,13 @@ static void EventScript_TalkToInnkeeper(void) {
 
   leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   if (FACING_IS_NORTH(leader->facing)) {
-    if (GameFlag_Test(FLAG_DODONPA_LOCKED_UP) != 0) {
+    if (GameFlag_Get(FLAG_DODONPA_LOCKED_UP) != 0) {
       Inn_CheckIn(LUNPA_INN, LOCALID_INNKEEPER);
       return;
     }
   }
   FieldScript_Start();
-  if (GameFlag_Test(FLAG_DODONPA_LOCKED_UP) != 0) {
+  if (GameFlag_Get(FLAG_DODONPA_LOCKED_UP) != 0) {
     FieldScript_SetMessageId(MsgLunpaInnkeeperOffersRoom);
     FieldScript_AskYesNoAndShowResponse(LOCALID_INNKEEPER, 0);
   } else {
@@ -332,7 +332,7 @@ static void EventScript_TalkToChef(void) {
   FieldScript_Start();
   FieldScript_SetMessageId(MsgLunpaChefOffersStory);
   FieldScript_AskYesNoAndShowResponse(LOCALID_CHEF, 0);
-  Engine_GameFlagSet(FLAG_LUNPA_HEARD_OF_PRISONER);
+  GameFlag_Set(FLAG_LUNPA_HEARD_OF_PRISONER);
   FieldScript_End();
 }
 
@@ -342,7 +342,7 @@ static void EventScript_ReadChefsThoughts(void) {
   FieldScript_Start();
   FieldScript_SetMessageId(MsgLunpaChefThinksOfPrisoner);
   FieldScript_ShowMessageAndWait(LOCALID_CHEF, 0);
-  Engine_GameFlagSet(FLAG_LUNPA_HEARD_OF_PRISONER);
+  GameFlag_Set(FLAG_LUNPA_HEARD_OF_PRISONER);
   FieldScript_End();
 }
 
@@ -363,7 +363,7 @@ static void EventScript_TalkToHealer(void) {
   leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   if (FACING_IS_NORTH(leader->facing)) {
     Sanctum_Run(LOCALID_HEALER);
-  } else if (GameFlag_Test(FLAG_DODONPA_LOCKED_UP) != 0) {
+  } else if (GameFlag_Get(FLAG_DODONPA_LOCKED_UP) != 0) {
     FieldScript_Start();
     FieldScript_SetMessageId(MsgLunpaTemplePriestReopened);
     FieldScript_ShowMessageAndWait(LOCALID_HEALER, 0);
@@ -378,7 +378,7 @@ static void EventScript_TalkToHealer(void) {
 
 /// Lunpa, the item shop: Mind Read on the merchant.
 static void EventScript_ReadItemMerchantsThoughts(void) {
-  if (GameFlag_Test(FLAG_DODONPA_LOCKED_UP) != 0) {
+  if (GameFlag_Get(FLAG_DODONPA_LOCKED_UP) != 0) {
     FieldScript_Start();
     FieldScript_SetMessageId(MsgLunpaIsntWeaponsVendors);
     FieldScript_ShowMessageAndWait(LOCALID_ITEM_MERCHANT, 0);
@@ -398,7 +398,7 @@ static void EventScript_TalkToItemMerchant(void) {
   leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   if (FACING_IS_NORTH(leader->facing)) {
     Shop_Run(SHOP_LUNPA_ITEMS, LOCALID_ITEM_MERCHANT);
-  } else if (GameFlag_Test(FLAG_DODONPA_LOCKED_UP) != 0) {
+  } else if (GameFlag_Get(FLAG_DODONPA_LOCKED_UP) != 0) {
     FieldScript_Start();
     FieldScript_SetMessageId(MsgLunpaItemMerchantReopened);
     FieldScript_ShowMessageAndWait(LOCALID_ITEM_MERCHANT, 0);
@@ -413,7 +413,7 @@ static void EventScript_TalkToItemMerchant(void) {
 
 /// Lunpa, the weapon and armor shop: Mind Read on the weapon merchant.
 static void EventScript_ReadWeaponMerchantsThoughts(void) {
-  if (GameFlag_Test(FLAG_DODONPA_LOCKED_UP) != 0) {
+  if (GameFlag_Get(FLAG_DODONPA_LOCKED_UP) != 0) {
     FieldScript_SetMessageId(MsgLunpaWeaponMerchantReopenedThoughts);
     FieldScript_ShowMessageAndWait(LOCALID_WEAPON_MERCHANT, 0);
   } else {
@@ -430,7 +430,7 @@ static void EventScript_TalkToWeaponMerchant(void) {
 
   leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   facing = leader->facing;
-  if (GameFlag_Test(FLAG_DODONPA_LOCKED_UP) != 0) {
+  if (GameFlag_Get(FLAG_DODONPA_LOCKED_UP) != 0) {
     if (FACING_IS_NORTH(facing)) {
       Shop_Run(SHOP_LUNPA_WEAPONS, LOCALID_WEAPON_MERCHANT);
     } else {
@@ -447,7 +447,7 @@ static void EventScript_TalkToWeaponMerchant(void) {
 
 /// Lunpa, the weapon and armor shop: Mind Read on the armor merchant.
 static void EventScript_ReadArmorMerchantsThoughts(void) {
-  if (GameFlag_Test(FLAG_DODONPA_LOCKED_UP) != 0) {
+  if (GameFlag_Get(FLAG_DODONPA_LOCKED_UP) != 0) {
     FieldScript_SetMessageId(MsgLunpaArmorMerchantReopenedThoughts);
     FieldScript_ShowMessageAndWait(LOCALID_ARMOR_MERCHANT, 0);
   } else {
@@ -464,7 +464,7 @@ static void EventScript_TalkToArmorMerchant(void) {
 
   leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   facing = leader->facing;
-  if (GameFlag_Test(FLAG_DODONPA_LOCKED_UP) != 0) {
+  if (GameFlag_Get(FLAG_DODONPA_LOCKED_UP) != 0) {
     if (FACING_IS_NORTH(facing)) {
       Shop_Run(SHOP_LUNPA_ARMOR, LOCALID_ARMOR_MERCHANT);
     } else {
@@ -488,7 +488,7 @@ s32 Map_Initialize(void) {
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
   warpDest = gGameState.warpDest;
   if (warpDest == ROOM_GATE_TO_SUHALLA) {
-    GameFlag_ClearBit(FLAG_SHOW_LOCATION_NAME);
+    GameFlag_Clear(FLAG_SHOW_LOCATION_NAME);
     gGameState.savedMap = (s32)&MapId_LunpaInteriors;
     gGameState.savedWarpDest = warpDest;
   }

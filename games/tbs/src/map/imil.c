@@ -329,7 +329,7 @@ const struct ObjectEventTemplate *Imil_GetObjectEventTemplates(void) {
   if (gGameState.mapId == ((s32)&MapId_ImilInteriors)) {
     script = gImil_InteriorObjectEventTemplates;
     Map_AssignViewFlags(script);
-    if (GameFlag_Test(FLAG_SATUROS_BEATEN_AT_MERCURY) != 0) {
+    if (GameFlag_Get(FLAG_SATUROS_BEATEN_AT_MERCURY) != 0) {
       // A byte view: written as script[row].talkFacing, the row's address is
       // formed first.
       ((u8 *)script)[(LOCALID_RESTAURANT_OWNER - LOCALID_FIRST_PLACED) *
@@ -344,7 +344,7 @@ const struct ObjectEventTemplate *Imil_GetObjectEventTemplates(void) {
     return script;
   }
 
-  if (GameFlag_Test(FLAG_SATUROS_BEATEN_AT_MERCURY) != 0) {
+  if (GameFlag_Get(FLAG_SATUROS_BEATEN_AT_MERCURY) != 0) {
     return gImil_TownObjectEventTemplatesCured;
   }
   return gImil_TownObjectEventTemplates;
@@ -367,7 +367,7 @@ const struct MapEvent *Imil_GetEvents(void) {
 /// he says that even her healing can't help them all.
 static void Imil_TalkToFreezingYoungMan(void) {
   FieldScript_Start();
-  if (GameFlag_Test(FLAG_IN_PARTY(MIA)) != 0) {
+  if (GameFlag_Get(FLAG_IN_PARTY(MIA)) != 0) {
     FieldScript_SetMessageId(MSGNO(MsgImilEvenIfMiaHealsUs));
   } else {
     FieldScript_SetMessageId(MSGNO(MsgImilBrrrrrChooImFreezingMia));
@@ -385,7 +385,7 @@ static void Imil_TalkToFreezingYoungMan(void) {
 /// understand why anyone would exercise in the cold.
 static void Imil_ReadFreezingYoungMansMind(void) {
   FieldScript_Start();
-  if (GameFlag_Test(FLAG_IN_PARTY(MIA)) != 0) {
+  if (GameFlag_Get(FLAG_IN_PARTY(MIA)) != 0) {
     FieldScript_SetMessageId(MSGNO(MsgImilCantUnderstandWhyAnyOne));
   } else {
     FieldScript_SetMessageId(MSGNO(MsgImilMiaShouldHereByNow));
@@ -410,7 +410,7 @@ static void Imil_GreetVisitor(void) {
 static void Imil_TalkToStrongmanKeepingInShape(void) {
   FieldScript_Start();
 
-  if (GameFlag_IsSet(FLAG_SATUROS_BEATEN_AT_MERCURY) != 0) {
+  if (GameFlag_Get(FLAG_SATUROS_BEATEN_AT_MERCURY) != 0) {
     FieldScript_SetMessageId(MSGNO(MsgImilCountingAfterDeparture));
     Script_ShowMessage(LOCALID_STRONGMAN_KEEPING_IN_SHAPE, 0);
     ObjectEvent_SetAttachedEffect(LOCALID_STRONGMAN_KEEPING_IN_SHAPE,
@@ -458,7 +458,7 @@ static void Imil_TalkToOldMan(void) {
   struct ObjectEvent *oldMan;
   struct ObjectEvent *oldWoman;
 
-  if (GameFlag_IsSet(FLAG_SATUROS_BEATEN_AT_MERCURY) != 0) {
+  if (GameFlag_Get(FLAG_SATUROS_BEATEN_AT_MERCURY) != 0) {
     FieldScript_Start();
     ObjectEvent_FaceObjectEvent(LOCALID_OLD_MAN, LOCALID_PARTY_LEADER, 0);
     FieldScript_WaitFrames(10);
@@ -466,7 +466,7 @@ static void Imil_TalkToOldMan(void) {
     Script_AskYesNo(LOCALID_OLD_MAN, 0);
     FieldScript_End();
   } else {
-    if (GameFlag_IsSet(FLAG_IMIL_MET_MIA) != 0) {
+    if (GameFlag_Get(FLAG_IMIL_MET_MIA) != 0) {
       FieldScript_Start();
       Engine_ObjectEventSetAnimation(LOCALID_OLD_MAN, IMIL_ANIMATION_SIT_UP);
       MapGrid_PlayMetatileCopySequence(gImil_CellStepsA, 10, 69);
@@ -507,7 +507,7 @@ static void Imil_TalkToOldMan(void) {
       FieldScript_ShowMessageAndWait(LOCALID_OLD_WOMAN, 0);
       oldWoman = ObjectEvent_GetById(LOCALID_OLD_WOMAN);
       oldWoman->collisionFlags ^= 0x2;
-      GameFlag_Set(FLAG_IMIL_MIA_SENT_FOR);
+      Engine_GameFlagSet(FLAG_IMIL_MIA_SENT_FOR);
       FieldScript_End();
     }
   }
@@ -539,7 +539,7 @@ static void Imil_AskAboutRestaurantMenu(void) {
 /// everyone counts on her.
 static void Imil_TalkToMegan(void) {
   FieldScript_Start();
-  if (GameFlag_Test(FLAG_IN_PARTY(MIA)) != 0) {
+  if (GameFlag_Get(FLAG_IN_PARTY(MIA)) != 0) {
     FieldScript_SetMessageId(MSGNO(MsgImilEveryoneCountsOnMiaThats));
     FieldScript_ShowMessageAndWait(LOCALID_MEGAN, 0);
   } else {
@@ -555,7 +555,7 @@ static void Imil_TalkToMegan(void) {
 /// beaten: Mia had a bad feeling, or, once she has joined, they must help her.
 static void Imil_ReadMegansMind(void) {
   FieldScript_Start();
-  if (GameFlag_Test(FLAG_IN_PARTY(MIA)) != 0) {
+  if (GameFlag_Get(FLAG_IN_PARTY(MIA)) != 0) {
     FieldScript_SetMessageId(MSGNO(MsgImilWeHaveDoWhateverWe));
   } else {
     FieldScript_SetMessageId(MSGNO(MsgImilMiaWasSayingSheHas));
@@ -580,9 +580,9 @@ static void Imil_TalkToOldWoman(void) {
 /// over town.
 static void Imil_ReadOldWomanMind(void) {
   FieldScript_Start();
-  if (GameFlag_Test(FLAG_IMIL_MET_MIA) != 0) {
+  if (GameFlag_Get(FLAG_IMIL_MET_MIA) != 0) {
     FieldScript_SetMessageId(MSGNO(MsgImilMiaClanOnceLivedHere));
-  } else if (GameFlag_Test(FLAG_IMIL_MIA_SENT_FOR) != 0) {
+  } else if (GameFlag_Get(FLAG_IMIL_MIA_SENT_FOR) != 0) {
     FieldScript_SetMessageId(MSGNO(MsgImilHesAlwaysExaggeratingThingsBut));
   } else {
     FieldScript_SetMessageId(MSGNO(MsgImilMiaRunningAroundTownCaring));
@@ -609,7 +609,7 @@ static void Imil_ReadOldManInBedMind(void) {
 /// grown up serving as a healer.
 static void Imil_ReadJustinsMind(void) {
   FieldScript_Start();
-  if (GameFlag_Test(FLAG_IN_PARTY(MIA)) != 0) {
+  if (GameFlag_Get(FLAG_IN_PARTY(MIA)) != 0) {
     FieldScript_SetMessageId(MSGNO(MsgImilFeelLikeGrownUpWhen));
   } else {
     FieldScript_SetMessageId(MSGNO(MsgImilTheseFolkOkayTheyDont));
@@ -671,7 +671,7 @@ static void Imil_TalkToWeaponMerchant(void) {
   s32 facing;
 
   facing = (s16)ObjectEvent_GetById(LOCALID_PARTY_LEADER)->facing;
-  if (GameFlag_Test(FLAG_SATUROS_BEATEN_AT_MERCURY) != 0) {
+  if (GameFlag_Get(FLAG_SATUROS_BEATEN_AT_MERCURY) != 0) {
     if (IMIL_FACES_COUNTER(facing)) {
       Shop_Run(SHOP_IMIL_WEAPONS, LOCALID_WEAPON_MERCHANT);
       return;
@@ -709,7 +709,7 @@ static void Imil_TalkToArmorMerchant(void) {
   s32 facing;
 
   facing = (s16)ObjectEvent_GetById(LOCALID_PARTY_LEADER)->facing;
-  if (GameFlag_Test(FLAG_SATUROS_BEATEN_AT_MERCURY) != 0) {
+  if (GameFlag_Get(FLAG_SATUROS_BEATEN_AT_MERCURY) != 0) {
     if (IMIL_FACES_COUNTER(facing)) {
       Shop_Run(SHOP_IMIL_ARMOR, LOCALID_ARMOR_MERCHANT);
       return;
@@ -747,7 +747,7 @@ static void Imil_TalkToItemMerchant(void) {
   s32 facing;
 
   facing = (s16)ObjectEvent_GetById(LOCALID_PARTY_LEADER)->facing;
-  if (GameFlag_Test(FLAG_SATUROS_BEATEN_AT_MERCURY) != 0) {
+  if (GameFlag_Get(FLAG_SATUROS_BEATEN_AT_MERCURY) != 0) {
     if (IMIL_FACES_COUNTER(facing)) {
       Shop_Run(SHOP_IMIL_ITEMS, LOCALID_ITEM_MERCHANT);
       return;
@@ -791,7 +791,7 @@ static void Imil_TalkToInnkeeper(void) {
   } else {
     FieldScript_Start();
     ObjectEvent_FaceObjectEvent(LOCALID_INNKEEPER, LOCALID_PARTY_LEADER, 10);
-    if (GameFlag_IsSet(FLAG_SATUROS_BEATEN_AT_MERCURY) != 0) {
+    if (GameFlag_Get(FLAG_SATUROS_BEATEN_AT_MERCURY) != 0) {
       FieldScript_SetMessageId(MSGNO(MsgImilItsAlmostTimeForLeave));
       Script_AskYesNo(LOCALID_INNKEEPER, 0);
     } else {
@@ -813,19 +813,19 @@ static void Imil_TalkToJustin(void) {
   leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   if (IMIL_FACES_COUNTER_HALFWORD(leader->facing)) {
     FieldScript_Start();
-    if (GameFlag_IsSet(FLAG_IMIL_JUSTIN_OFFERED_HEALING) == 0) {
+    if (Script_GetFlag(FLAG_IMIL_JUSTIN_OFFERED_HEALING) == 0) {
       FieldScript_SetMessageId(MSGNO(MsgImilMayOnlyStudentButCan));
       Script_ShowMessage(LOCALID_JUSTIN, 0);
-      GameFlag_Set(FLAG_IMIL_JUSTIN_OFFERED_HEALING);
+      Engine_GameFlagSet(FLAG_IMIL_JUSTIN_OFFERED_HEALING);
     }
     FieldScript_End();
     Sanctum_Run(LOCALID_JUSTIN);
   } else {
     FieldScript_Start();
-    if (GameFlag_IsSet(FLAG_SATUROS_BEATEN_AT_MERCURY) != 0) {
+    if (GameFlag_Get(FLAG_SATUROS_BEATEN_AT_MERCURY) != 0) {
       FieldScript_SetMessageId(MSGNO(MsgImilMiaGoingOnJourneyWith));
       Script_ShowMessage(LOCALID_JUSTIN, 0);
-    } else if (GameFlag_IsSet(FLAG_IN_PARTY(MIA)) != 0) {
+    } else if (GameFlag_Get(FLAG_IN_PARTY(MIA)) != 0) {
       FieldScript_SetMessageId(MSGNO(MsgImilAmHealerWhileMiaOut));
       Script_ShowMessage(LOCALID_JUSTIN, 0);
     } else {
@@ -851,19 +851,19 @@ s32 Imil_Initialize(void) {
     gFieldWork->transition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
     Engine_ObjectEventSetAnimation(LOCALID_STRONGMAN_KEEPING_IN_SHAPE,
                                    IMIL_ANIMATION_SQUATS);
-    if (GameFlag_IsSet(FLAG_KEEP_PARTY_POSITION)) {
-      GameFlag_ClearBit(FLAG_IMIL_NO_FOOTPRINTS);
-      GameFlag_ClearBit(FLAG_IMIL_FOOTPRINTS);
+    if (Script_GetFlag(FLAG_KEEP_PARTY_POSITION)) {
+      GameFlag_Clear(FLAG_IMIL_NO_FOOTPRINTS);
+      GameFlag_Clear(FLAG_IMIL_FOOTPRINTS);
     }
     leader->timer = 0;
     leader->work = 0;
     Task_AddCallback(Imil_SpawnAmbientEffects, TASK_PRIORITY_MAP);
     FieldScheduler_AddCallback(Imil_UpdateFootprints, TASK_PRIORITY_MAP);
     ObjectMotion_SetActionVariant(LOCALID_SNOWMAN, 1);
-    if (GameFlag_Test(FLAG_IMIL_SNOWMAN_MOVED)) {
+    if (GameFlag_Get(FLAG_IMIL_SNOWMAN_MOVED)) {
       Imil_PlaceMovedSnowman();
     }
-    if (!GameFlag_Test(FLAG_KEEP_PARTY_POSITION) &&
+    if (!GameFlag_Get(FLAG_KEEP_PARTY_POSITION) &&
         gGameState.warpDest == IMIL_FROM_IMIL_FALLS_CAVE) {
       Imil_ArriveFromFallsCave();
     }
@@ -876,15 +876,15 @@ s32 Imil_Initialize(void) {
       ObjectGroup_ConfigureChildValue(LOCALID_CRATE, 15);
       ObjectEvent_GetById(LOCALID_CRATE)->collisionFlags |= 8;
       ObjectMotion_SetActionVariant(LOCALID_CRATE, 1);
-      if (GameFlag_Test(FLAG_SATUROS_BEATEN_AT_MERCURY)) {
+      if (GameFlag_Get(FLAG_SATUROS_BEATEN_AT_MERCURY)) {
         MapGrid_CopyCellAttributes(10, 7, 1, 1, 10, 8);
         MapGrid_CopyCellsTo(3, 125, 9, 69, 3, 3);
         MapGrid_CenterOnFollowedPoint();
         WaitFrames(1);
         ObjectEvent_SetBuiltinAction(LOCALID_OLD_WOMAN, 2);
         Engine_ObjectEventSetPosition(LOCALID_OLD_MANS_BED, 0, 0);
-      } else if (GameFlag_Test(FLAG_IMIL_MIA_SENT_FOR) &&
-                 GameFlag_Test(FLAG_IMIL_HEARD_MIA_WENT_TO_COUPLE)) {
+      } else if (GameFlag_Get(FLAG_IMIL_MIA_SENT_FOR) &&
+                 GameFlag_Get(FLAG_IMIL_HEARD_MIA_WENT_TO_COUPLE)) {
         ObjectEvent_SetSpriteFlags(ObjectEvent_GetById(LOCALID_OLD_MANS_BED),
                                    0);
         Engine_ObjectEventSetPosition(LOCALID_OLD_MAN, PIXELS(174),
@@ -895,7 +895,7 @@ s32 Imil_Initialize(void) {
         ObjectEvent_SetPosition(LOCALID_OLD_WOMAN, PIXELS(168), PIXELS(152));
         ObjectEvent_GetById(LOCALID_OLD_WOMAN)->facing =
             FACING_SOUTHEAST + FACING_STEP;
-        if (!GameFlag_Test(FLAG_IMIL_MET_MIA)) {
+        if (!GameFlag_Get(FLAG_IMIL_MET_MIA)) {
           Imil_MeetMiaAtOldCouplesHouse();
         }
       } else {
@@ -903,7 +903,7 @@ s32 Imil_Initialize(void) {
         MapGrid_CopyCellsTo(3, 125, 9, 69, 3, 3);
         MapGrid_CenterOnFollowedPoint();
         WaitFrames(1);
-        if (GameFlag_Test(FLAG_IMIL_MIA_SENT_FOR)) {
+        if (GameFlag_Get(FLAG_IMIL_MIA_SENT_FOR)) {
           Engine_ObjectEventSetPosition(LOCALID_OLD_WOMAN, PIXELS(149),
                                         PIXELS(116));
           ObjectEvent_GetById(LOCALID_OLD_WOMAN)->facing = 0;
@@ -914,12 +914,12 @@ s32 Imil_Initialize(void) {
         }
       }
     } else if (warpDest == IMIL_INTERIORS_FROM_IMIL_WEST_SOUTHWEST) {
-      if (!GameFlag_Test(FLAG_SATUROS_BEATEN_AT_MERCURY)) {
+      if (!GameFlag_Get(FLAG_SATUROS_BEATEN_AT_MERCURY)) {
         ObjectEvent_GetById(LOCALID_SICK_OLD_MAN)->work = 1;
         ObjectEvent_SetActionScript(LOCALID_SICK_OLD_MAN, gImil_ShiverScript);
       }
     } else if (warpDest == IMIL_INTERIORS_HOUSE_NORTHEAST) {
-      if (GameFlag_Test(FLAG_SATUROS_BEATEN_AT_MERCURY)) {
+      if (GameFlag_Get(FLAG_SATUROS_BEATEN_AT_MERCURY)) {
         ObjectEvent_SetPosition(LOCALID_WEAPON_MERCHANT, PIXELS(364),
                                 PIXELS(578));
         ObjectMotion_SetActionVariant(LOCALID_WEAPON_MERCHANT, 2);
@@ -942,7 +942,7 @@ s32 Imil_Initialize(void) {
                                        IMIL_ANIMATION_LIE_IN_BED);
       }
     } else if (warpDest == IMIL_INTERIORS_HOUSE_WEST) {
-      if (GameFlag_Test(FLAG_SATUROS_BEATEN_AT_MERCURY)) {
+      if (GameFlag_Get(FLAG_SATUROS_BEATEN_AT_MERCURY)) {
         ObjectEvent_SetPosition(LOCALID_ITEM_MERCHANT, PIXELS(460),
                                 PIXELS(258));
         ObjectMotion_SetActionVariant(LOCALID_ITEM_MERCHANT, 2);
@@ -965,10 +965,10 @@ s32 Imil_Initialize(void) {
                                        IMIL_ANIMATION_LIE_IN_BED);
       }
     } else if (warpDest == IMIL_INTERIORS_FROM_IMIL_EAST_NORTHEAST) {
-      if (GameFlag_Test(FLAG_SATUROS_BEATEN_AT_MERCURY)) {
+      if (GameFlag_Get(FLAG_SATUROS_BEATEN_AT_MERCURY)) {
         ObjectEvent_GetById(LOCALID_MEGAN)->facing =
             FACING_SOUTHEAST + FACING_STEP;
-        if (!GameFlag_Test(FLAG_IMIL_MIA_SAID_FAREWELL)) {
+        if (!GameFlag_Get(FLAG_IMIL_MIA_SAID_FAREWELL)) {
           ObjectEvent_SetPosition(LOCALID_MEGAN, PIXELS(650), PIXELS(161));
           Imil_MiaSaysFarewellToApprentices();
         } else {
@@ -1340,12 +1340,12 @@ static void Imil_UpdateFootprints(void) {
   if ((u32)(column - 24) <= 7 ||
       ((u32)((objectEvent->z.fixed >> 19) - 36) <= 9 &&
        (u32)(column - 22) <= 9)) {
-    isSet = GameFlag_Test(zoneFlag);
+    isSet = GameFlag_Get(zoneFlag);
     if (isSet != 0)
       return;
     ((struct MapGridScrollWork *)gMapGridWork[0])->footprints = isSet;
     Engine_GameFlagSet(zoneFlag);
-    GameFlag_ClearBit(otherZoneFlag);
+    GameFlag_Clear(otherZoneFlag);
     return;
   }
   if (x > PIXELS(232) && objectEvent->y.fixed > PIXELS(30) &&
@@ -1353,16 +1353,16 @@ static void Imil_UpdateFootprints(void) {
     grid = gMapGridWork[0];
     grid->footprints = 0;
     Engine_GameFlagSet(zoneFlag);
-    GameFlag_ClearBit(otherZoneFlag);
+    GameFlag_Clear(otherZoneFlag);
     return;
   }
-  isSet = GameFlag_Test(otherZoneFlag);
+  isSet = GameFlag_Get(otherZoneFlag);
   if (isSet != 0)
     return;
   grid = gMapGridWork[0];
   grid->footprints = 1;
   Engine_GameFlagSet(otherZoneFlag);
-  GameFlag_ClearBit(zoneFlag);
+  GameFlag_Clear(zoneFlag);
   return;
 }
 
@@ -1566,7 +1566,7 @@ static void Imil_MiaSaysFarewellToApprentices(void) {
     offsetof(struct ObjectEvent, steeringFlags)) |= OBJ_EVENT_FACES_MOTION;
   gFieldWork->transition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
-  GameFlag_Set(FLAG_IMIL_MIA_SAID_FAREWELL);
+  Engine_GameFlagSet(FLAG_IMIL_MIA_SAID_FAREWELL);
   GameFlag_Clear(FLAG_IMIL_JUSTIN_OFFERED_HEALING);
   FieldScript_End();
 }

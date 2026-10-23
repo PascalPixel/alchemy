@@ -1,9 +1,9 @@
 @ C2: aligned 8-byte veneers: overlay_veneer emits ldr r4, bx r4 and a target word.
 	.set overlay_imports, 1
 	.set import.ObjectDispatch_SetSingleChildFlags, 1
-	.set import.GameFlag_Test, 1
-	.set import.Engine_GameFlagSet, 1
-	.set import.GameFlag_ClearBit, 1
+	.set import.GameFlag_Get, 1
+	.set import.GameFlag_Set, 1
+	.set import.GameFlag_Clear, 1
 	.set import.FieldScript_Start, 1
 	.set import.FieldScript_End, 1
 	.set import.ObjectEvent_GetById, 1

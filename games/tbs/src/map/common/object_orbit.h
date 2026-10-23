@@ -42,7 +42,7 @@ void Map_FloatNut(s32 id) {
   objectEvent->active = zero;
   objectEvent->mode = zero;
 
-  if (GameFlag_Test(FLAG_KEEP_PARTY_POSITION) == 0)
+  if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) == 0)
     objectEvent->y += 0x200000;
 
   objectEvent->priorityFlags &= 0xfe;

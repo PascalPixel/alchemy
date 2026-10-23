@@ -334,12 +334,12 @@ static void TolbiShipMast_ClimbDownLadder(void) { Field_ClimbDown(); }
 /// (MB_TOLBI_SHIP_MAST_ANCHOR_CHARM): gives the Anchor Charm once the crewman
 /// has been confronted or the warriors have gone to the captain.
 static void TolbiShipMast_FindAnchorCharm(void) {
-  if (GameFlag_Test(FLAG_TOLBI_SHIP_CREWMAN_CAUGHT) != 0 ||
-      GameFlag_Test(FLAG_TOLBI_SHIP_WARRIORS_SEEK_CAPTAIN) != 0) {
+  if (GameFlag_Get(FLAG_TOLBI_SHIP_CREWMAN_CAUGHT) != 0 ||
+      GameFlag_Get(FLAG_TOLBI_SHIP_WARRIORS_SEEK_CAPTAIN) != 0) {
     FieldScript_Start();
     FieldEffect_StartEffectObject22(ITEM_ANCHOR_CHARM, 3);
     PartyInventory_GiveItem(ITEM_ANCHOR_CHARM, 0);
-    Engine_GameFlagSet(FLAG_TOLBI_SHIP_ANCHOR_CHARM_FOUND);
+    GameFlag_Set(FLAG_TOLBI_SHIP_ANCHOR_CHARM_FOUND);
     FieldScript_End();
   }
 }
@@ -352,25 +352,25 @@ static void TolbiShipMast_FindAnchorCharm(void) {
 s32 TolbiShipMast_Initialize(void) {
   struct ObjectEvent *leader;
 
-  Engine_GameFlagSet(FLAG_RETREAT_BLOCKED);
+  GameFlag_Set(FLAG_RETREAT_BLOCKED);
   gFieldWork->transition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
-  if ((GameFlag_Test(FLAG_TOLBI_SHIP_ROWING) != 0 ||
-       GameFlag_Test(FLAG_TOLBI_SHIP_FIRST_ATTACK_FOUGHT_OFF) != 0) &&
-      GameFlag_Test(FLAG_TOLBI_SHIP_REACHED_TOLBI) == 0 &&
-      GameFlag_Test(FLAG_TOLBI_SHIP_AT_ISLAND) == 0) {
+  if ((GameFlag_Get(FLAG_TOLBI_SHIP_ROWING) != 0 ||
+       GameFlag_Get(FLAG_TOLBI_SHIP_FIRST_ATTACK_FOUGHT_OFF) != 0) &&
+      GameFlag_Get(FLAG_TOLBI_SHIP_REACHED_TOLBI) == 0 &&
+      GameFlag_Get(FLAG_TOLBI_SHIP_AT_ISLAND) == 0) {
     gTolbiShipMast_SwayX = (u16)Engine_RandomNext();
     gTolbiShipMast_SwayY = (u16)Engine_RandomNext();
     FieldScheduler_AddCallback(TolbiShipMast_UpdateSway, TASK_PRIORITY_MAP);
   }
-  if (GameFlag_Test(FLAG_TOLBI_SHIP_ANCHOR_CHARM_RETURNED) != 0 &&
-      GameFlag_Test(FLAG_TOLBI_SHIP_REACHED_TOLBI) == 0) {
+  if (GameFlag_Get(FLAG_TOLBI_SHIP_ANCHOR_CHARM_RETURNED) != 0 &&
+      GameFlag_Get(FLAG_TOLBI_SHIP_REACHED_TOLBI) == 0) {
     ObjectEvent_SetPosition(LOCALID_LOOKOUT, PIXELS(164), PIXELS(328));
   }
   // The ship's scripted warp destinations resume their matching lookout scenes.
   switch (gGameState.warpDest) {
   case TOLBI_SHIP_MAST_FROM_TOLBI_SHIP_DECK:
-    if (GameFlag_Test(FLAG_KEEP_PARTY_POSITION) == 0) {
+    if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) == 0) {
       leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
       FieldScript_Start();
       Field_ClimbUp();
@@ -384,7 +384,7 @@ s32 TolbiShipMast_Initialize(void) {
     }
     break;
   case TOLBI_SHIP_MAST_FROM_TOLBI_SHIP_DECK_COURSE_CLEAR:
-    if (GameFlag_Test(FLAG_TOLBI_SHIP_FIRST_ATTACK_FOUGHT_OFF) != 0) {
+    if (GameFlag_Get(FLAG_TOLBI_SHIP_FIRST_ATTACK_FOUGHT_OFF) != 0) {
       TolbiShipMast_SetupVisibleLeaderLookout();
     } else {
       TolbiShipMast_SetupHiddenLeaderLookout();
@@ -507,7 +507,7 @@ static void TolbiShipMast_RunAvastScene(void) {
                               gTolbiShipMast_FollowCameraActions);
   FieldScript_WaitFrames(20);
   Sound_PlaySong(MUS_029);
-  Engine_GameFlagSet(FLAG_TOLBI_SHIP_MONSTERS_SIGHTED);
+  GameFlag_Set(FLAG_TOLBI_SHIP_MONSTERS_SIGHTED);
   ObjectMotion_EnableActionAndResetMotion(LOCALID_LOOKOUT);
   WaitFrames(1);
   ObjectEvent_ShowEmote(LOCALID_LOOKOUT, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
@@ -943,7 +943,7 @@ static s32 TolbiShipMast_GetSeatRowValue(u32 seat) {
     break;
   }
   for (passenger = 0; passenger <= 8; passenger++) {
-    if (GameFlag_Test(firstFlag + passenger) != 0)
+    if (GameFlag_Get(firstFlag + passenger) != 0)
       return gTolbiShipMast_PassengerRowValues[passenger];
   }
   return 0;

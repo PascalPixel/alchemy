@@ -117,7 +117,7 @@ const u32 *Map_GetWarps(void) { return gSuhallaWarps; }
 
 /// Suhalla's people, who stand elsewhere after Babi's audience.
 const struct ObjectEventTemplate *Map_GetObjectEventTemplates(void) {
-  if (GameFlag_Test(FLAG_BABI_SPOKE_AFTER_COLOSSO) != 0) {
+  if (GameFlag_Get(FLAG_BABI_SPOKE_AFTER_COLOSSO) != 0) {
     return gSuhallaObjectEventTemplatesLater;
   }
   return gSuhallaObjectEventTemplates;
@@ -164,7 +164,7 @@ static void EventScript_AskIfBroughtBySandstorm(s32 localId) {
 /// metatile behavior of the grown plant's cell. Sets FLAG_MAP_TEMP_01.
 static void EventScript_GrowSprout(void) {
   MapGrid_CopyCellAttributes(25, 9, 1, 1, 4, 9);
-  Engine_GameFlagSet(FLAG_MAP_TEMP_01);
+  GameFlag_Set(FLAG_MAP_TEMP_01);
 }
 
 /// Walking north into one of Suhalla's doors (SUHALLA_TO_INN,
@@ -203,7 +203,7 @@ static void EventScript_EnterWideDoor(void) {
 /// Suhalla's doors, people, treasure and sprout, before or after Babi's
 /// audience.
 const struct MapEvent *Map_GetEvents(void) {
-  if (GameFlag_Test(FLAG_BABI_SPOKE_AFTER_COLOSSO) != 0) {
+  if (GameFlag_Get(FLAG_BABI_SPOKE_AFTER_COLOSSO) != 0) {
     return gSuhallaEventsLater;
   }
   return gSuhallaEvents;
@@ -217,14 +217,14 @@ s32 Map_Initialize(void) {
   struct FieldWork *work;
 
   if (gGameState.warpDest == SUHALLA_AFTER_BABI_SPOKE) {
-    Engine_GameFlagSet(FLAG_BABI_SPOKE_AFTER_COLOSSO);
+    GameFlag_Set(FLAG_BABI_SPOKE_AFTER_COLOSSO);
   }
 
   work = gFieldWork;
   work->transition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   work->transitionFrames = 24;
 
-  if (GameFlag_Test(FLAG_MAP_TEMP_01) != 0) {
+  if (GameFlag_Get(FLAG_MAP_TEMP_01) != 0) {
     EventScript_GrowSprout();
     Engine_ObjectEventSetAnimation(LOCALID_SPROUT, SPROUT_ANIMATION_GROWN);
   }

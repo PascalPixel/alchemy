@@ -410,9 +410,9 @@ ColosseumEntrance_GetObjectEventTemplates(void) {
       break;
     }
   } else if (gGameState.mapId == (s32)&MapId_ColosseumEntrance) {
-    if (GameFlag_Test(FLAG_COLOSSO_OVER) != 0) {
+    if (GameFlag_Get(FLAG_COLOSSO_OVER) != 0) {
       table = gColosseumEntranceObjectEventTemplatesAfterColosso;
-    } else if (GameFlag_Test(FLAG_BABI_SAVED) != 0) {
+    } else if (GameFlag_Get(FLAG_BABI_SAVED) != 0) {
       table = gColosseumEntranceObjectEventTemplatesFinalsDay;
     } else {
       table = gColosseumEntranceObjectEventTemplates;
@@ -447,7 +447,7 @@ const struct MapEvent *ColosseumEntrance_GetEvents(void) {
 /// seats.
 static void EventScript_DiscussSeating(void) {
   FieldScript_Start();
-  if (GameFlag_Test(FLAG_BABI_SAVED)) {
+  if (GameFlag_Get(FLAG_BABI_SAVED)) {
     FieldScript_SetMessageId(MsgColosseumColosseumAlreadyFullIfReally);
     FieldScript_ShowMessageAndWait(LOCALID_VILLAGER_SEATING, 0);
   } else {
@@ -461,7 +461,7 @@ static void EventScript_DiscussSeating(void) {
 /// better; on the finals day, a good spot costs too much.
 static void EventScript_DiscussLuckyGuessSeats(void) {
   FieldScript_Start();
-  if (GameFlag_Test(FLAG_BABI_SAVED)) {
+  if (GameFlag_Get(FLAG_BABI_SAVED)) {
     FieldEffect_SpawnLinked(LOCALID_OLD_WOMAN_GOOD_SPOT,
                             EMOTE_IN_FRONT | EMOTE_WINCE, 40);
     FieldScript_SetMessageId(MsgColosseumWantWatchFinalsFromGood);
@@ -478,7 +478,7 @@ static void EventScript_DiscussLuckyGuessSeats(void) {
 /// party wants seats.
 static void EventScript_DiscussLuckyGuessWinnings(void) {
   FieldScript_Start();
-  if (GameFlag_Test(FLAG_BABI_SAVED) != 0) {
+  if (GameFlag_Get(FLAG_BABI_SAVED) != 0) {
     ObjectMotion_SetVarCbAndRefresh(LOCALID_SCALPER, 2);
     FieldScript_SetMessageId(MsgColosseumHoldOnSecond);
     ColosseumEntrance_ShowMessageAndPause(LOCALID_SCALPER);
@@ -498,8 +498,8 @@ static void EventScript_DiscussLuckyGuessWinnings(void) {
 /// may not play (FLAG_LUCKY_GUESS_REFUSED_ISAAC: said once).
 static void EventScript_OfferLuckyGuess(void) {
   FieldScript_Start();
-  if (GameFlag_IsSet(FLAG_BABI_SAVED) != 0) {
-    if (GameFlag_IsSet(FLAG_LUCKY_GUESS_REFUSED_ISAAC) != 0) {
+  if (GameFlag_Get(FLAG_BABI_SAVED) != 0) {
+    if (Script_GetFlag(FLAG_LUCKY_GUESS_REFUSED_ISAAC) != 0) {
       FieldScript_SetMessageId(MsgColosseumLookImSorryButWe);
       Script_ShowMessage(LOCALID_LUCKY_GUESS_MAN, 0);
     } else {
@@ -595,7 +595,7 @@ static void EventScript_TalkToDekka(void) {
   ObjectMotion_SetVarCbAndRefresh(LOCALID_DEKKA, 2);
   FieldScript_SetMessageId(MsgColosseumDekkaMustWinFinalsDekka);
   Script_ShowMessageAndWait(LOCALID_DEKKA, 0, 20);
-  if (GameFlag_IsSet(FLAG_NAVAMPA_SPOKE_FOR_DEKKA) != 0) {
+  if (Script_GetFlag(FLAG_NAVAMPA_SPOKE_FOR_DEKKA) != 0) {
     FieldScript_WaitFrames(20);
   } else {
     ColosseumEntrance_FaceDirection(LOCALID_NAVAMPA, FACING_EAST);
@@ -672,7 +672,7 @@ static void EventScript_CrowdRecognizesIsaac(void) {
   // reply.
   s32 objectEventOrAnswer;
 
-  if (GameFlag_Test(FLAG_BABI_SAVED) == 0) {
+  if (GameFlag_Get(FLAG_BABI_SAVED) == 0) {
     return;
   }
 
@@ -921,7 +921,7 @@ static void EventScript_CrowdRecognizesIsaac(void) {
   }
 
   Engine_ScriptRequestWarp(COLOSSEUM_ENTRANCE_TO_COLOSSEUM);
-  Engine_GameFlagSet(FLAG_COLOSSEUM_FINALS_ENTERED);
+  GameFlag_Set(FLAG_COLOSSEUM_FINALS_ENTERED);
   FieldScript_End();
 }
 
@@ -935,8 +935,8 @@ static void EventScript_FinalsStart(void) {
   struct ObjectEvent *objectEvent;
   const s32 *script;
 
-  if (GameFlag_Test(FLAG_FINALS_LINE_ARMED) != 0) {
-    Engine_GameFlagSet(FLAG_FINALS_LINE_REACHED);
+  if (GameFlag_Get(FLAG_FINALS_LINE_ARMED) != 0) {
+    GameFlag_Set(FLAG_FINALS_LINE_REACHED);
     FieldScript_Start();
     ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(1), PIXELS(1) / 2);
     ObjectEvent_WalkToAndWait(LOCALID_PARTY_LEADER, 872, 120);
@@ -1076,8 +1076,8 @@ static void EventScript_FinalsStart(void) {
 /// (MB_COLOSSEUM_BEHIND_FINALS_LINE) arms the question again
 /// (FLAG_FINALS_LINE_ARMED and FLAG_FINALS_LINE_REACHED).
 static void EventScript_RearmFinalsStart(void) {
-  GameFlag_ClearBit(FLAG_FINALS_LINE_REACHED);
-  Engine_GameFlagSet(FLAG_FINALS_LINE_ARMED);
+  GameFlag_Clear(FLAG_FINALS_LINE_REACHED);
+  GameFlag_Set(FLAG_FINALS_LINE_ARMED);
 }
 
 /// The trial attendant in the Colosseum's stands: until both trials have been
@@ -1088,7 +1088,7 @@ static void EventScript_TalkToTrialAttendant(void) {
   s32 clearedTrialSeen;
 
   FieldScript_Start();
-  clearedTrialSeen = GameFlag_IsSet(FLAG_COLOSSO_CLEARED_TRIAL_SEEN);
+  clearedTrialSeen = GameFlag_Get(FLAG_COLOSSO_CLEARED_TRIAL_SEEN);
   if (clearedTrialSeen != 0) {
     ObjectEvent_LinkPair(LOCALID_TRIAL_ATTENDANT, LOCALID_PARTY_LEADER, 40);
     FieldScript_SetMessageId(MsgColosseumHavePerfectTechniquesLikeThose);
@@ -1108,7 +1108,7 @@ static void EventScript_TalkToTrialAttendant(void) {
     gFieldWork->transitionFrames = 32;
     FieldScript_FinishScreenTransition();
     FieldScript_WaitTransitionFrames();
-    if (GameFlag_IsSet(FLAG_COLOSSO_FAILED_TRIAL_SEEN) != 0) {
+    if (GameFlag_Get(FLAG_COLOSSO_FAILED_TRIAL_SEEN) != 0) {
       Engine_ScriptRequestWarp(COLOSSEUM_STANDS_TO_CLEARED_TRIAL);
     } else {
       Engine_ScriptRequestWarp(COLOSSEUM_STANDS_TO_FAILED_TRIAL);
@@ -1263,14 +1263,14 @@ static void ColosseumEntrance_ExplainTrial(void) {
                                   FACING_SOUTH + FACING_STEP);
   FieldScript_SetMessageId(MsgColosseumHaveMakeThroughCountlessMatches);
 
-  if (GameFlag_Test(FLAG_COLOSSO_CLEARED_TRIAL_SEEN) != 0) {
+  if (GameFlag_Get(FLAG_COLOSSO_CLEARED_TRIAL_SEEN) != 0) {
     gFieldWork->message = (gFieldWork->message + 1);
   }
 
   ColosseumEntrance_ShowMessageAndPause(LOCALID_TRIAL_ATTENDANT);
   ColosseumEntrance_FaceDirection(LOCALID_TRIAL_ATTENDANT,
                                   FACING_SOUTHEAST + FACING_STEP);
-  Engine_GameFlagSet(FLAG_COLOSSO_FAILED_TRIAL_SEEN);
+  GameFlag_Set(FLAG_COLOSSO_FAILED_TRIAL_SEEN);
 
   FieldScript_End();
 }
@@ -1457,7 +1457,7 @@ static void ColosseumEntrance_ApplyArrivalState(void) {
   case COLOSSEUM_STANDS_FROM_TRIAL_GROUNDS:
     Engine_ObjectEventSetAnimation(LOCALID_STANDS_WEST_TORCH, ANIM_WALK);
     Engine_ObjectEventSetAnimation(LOCALID_STANDS_EAST_TORCH, ANIM_WALK);
-    if (GameFlag_Test(FLAG_KEEP_PARTY_POSITION) != 0)
+    if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) != 0)
       break;
     ColosseumEntrance_ExplainTrial();
     break;
@@ -1478,9 +1478,9 @@ static void ColosseumEntrance_ApplyArrivalState(void) {
     ColosseumEntrance_WalkToEastExit();
     break;
   case COLOSSEUM_FROM_COLOSSEUM_AZART_MATCH_WEST:
-    Engine_GameFlagSet(FLAG_RETREAT_BLOCKED);
+    GameFlag_Set(FLAG_RETREAT_BLOCKED);
     ColosseumEntrance_InitializeContestants();
-    if (GameFlag_Test(FLAG_KEEP_PARTY_POSITION) != 0)
+    if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) != 0)
       break;
     ColosseumEntrance_AnnounceFinals();
     break;
@@ -1488,7 +1488,7 @@ static void ColosseumEntrance_ApplyArrivalState(void) {
     Party_AddMember(GARET);
     Party_AddMember(IVAN);
     Party_AddMember(MIA);
-    Engine_GameFlagSet(FLAG_COLOSSO_FIRST_MATCH_WON);
+    GameFlag_Set(FLAG_COLOSSO_FIRST_MATCH_WON);
     ColosseumEntrance_CelebrateAdvancement();
     break;
   case COLOSSEUM_LONG_PASSAGE_FROM_WAITING_ROOM_WEST:
@@ -1501,7 +1501,7 @@ static void ColosseumEntrance_ApplyArrivalState(void) {
     Party_AddMember(GARET);
     Party_AddMember(IVAN);
     Party_AddMember(MIA);
-    Engine_GameFlagSet(FLAG_COLOSSO_SECOND_MATCH_WON);
+    GameFlag_Set(FLAG_COLOSSO_SECOND_MATCH_WON);
     ColosseumEntrance_CelebrateBothWins();
     break;
   default:
@@ -1526,14 +1526,14 @@ static void ColosseumEntrance_FaceDirection(s32 localId, s32 facing) {
 static void ColosseumEntrance_UpdateEntranceCells(void) {
   s32 column, row;
 
-  if (GameFlag_Test(FLAG_COLOSSO_OVER) != 0) {
+  if (GameFlag_Get(FLAG_COLOSSO_OVER) != 0) {
     MapGrid_CopyCellsTo(64, 0, 48, 5, 2, 2);
     column = 16;
     row = 8;
     MapGrid_CopyCellAttributes(14, 8, 2, 1, column, row);
   } else {
     ObjectGroup_ConfigureChildValue(LOCALID_LUCKY_GUESS_MAN, 2);
-    if (GameFlag_Test(FLAG_BABI_SAVED) != 0) {
+    if (GameFlag_Get(FLAG_BABI_SAVED) != 0) {
       column = 14;
       row = 11;
       MapGrid_CopyCellAttributes(30, 22, 1, 2, column, row);
@@ -1775,7 +1775,7 @@ static void ColosseumEntrance_ExplainPartySupport(void) {
 static void ColosseumEntrance_EscortToEastExit(void) {
   struct ObjectEvent *escort;
 
-  if (GameFlag_IsSet(JENNA) != 0) {
+  if (GameFlag_Get(JENNA) != 0) {
     GameFlag_Set(FLAG_DEBUG_BATTLE_KEYS);
     Party_RemoveMember(JENNA);
     Party_AddMember(MIA);
@@ -1799,7 +1799,7 @@ static void ColosseumEntrance_EscortToEastExit(void) {
   ObjectEvent_SetDestination(LOCALID_ESCORTING_SOLDIER, 1012, 588);
   FieldScript_FinishScreenTransition();
   FieldScript_WaitTransitionFrames();
-  if (GameFlag_IsSet(FLAG_COLOSSO_SECOND_MATCH_WON) != 0) {
+  if (GameFlag_Get(FLAG_COLOSSO_SECOND_MATCH_WON) != 0) {
     Engine_ScriptRequestWarp(COLOSSEUM_TO_COLOSSEUM_NAVAMPA_MATCH_NORTH);
   } else {
     Engine_ScriptRequestWarp(COLOSSEUM_TO_COLOSSEUM_AZART_MATCH);
@@ -1869,7 +1869,7 @@ static void ColosseumEntrance_WalkToEastExit(void) {
   ObjectEvent_SetDestination(LOCALID_PARTY_LEADER, 980, 428);
   FieldScript_FinishScreenTransition();
   FieldScript_WaitTransitionFrames();
-  if (GameFlag_IsSet(FLAG_COLOSSO_SECOND_MATCH_WON) != 0) {
+  if (GameFlag_Get(FLAG_COLOSSO_SECOND_MATCH_WON) != 0) {
     Engine_ScriptRequestWarp(COLOSSEUM_TO_COLOSSEUM_NAVAMPA_MATCH_SOUTH);
   } else {
     Engine_ScriptRequestWarp(COLOSSEUM_TO_COLOSSEUM_AZART_MATCH_WEST);
@@ -1934,7 +1934,7 @@ static void ColosseumEntrance_CelebrateAdvancement(void) {
 static void ColosseumEntrance_EscortToWestExit(void) {
   struct ObjectEvent *escort;
 
-  if (GameFlag_IsSet(JENNA) != 0) {
+  if (GameFlag_Get(JENNA) != 0) {
     GameFlag_Set(FLAG_DEBUG_BATTLE_KEYS);
     Party_RemoveMember(JENNA);
     Party_AddMember(MIA);

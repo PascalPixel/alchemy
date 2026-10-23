@@ -201,7 +201,7 @@ const u32 *MercuryLighthouseAerie_GetWarps(void) {
 const struct ObjectEventTemplate *
 MercuryLighthouseAerie_GetObjectEventTemplates(void) {
   if (gGameState.warpDest != MERCURY_LIGHTHOUSE_AERIE_AFTER_BEACON_LIT) {
-    Engine_GameFlagSet(FLAG_HOSTAGES_GONE);
+    GameFlag_Set(FLAG_HOSTAGES_GONE);
   }
   return gMercuryLighthouseAerieObjectEventTemplates;
 }
@@ -223,11 +223,11 @@ s32 MercuryLighthouseAerie_Initialize(void) {
   s32 localId;
   struct ObjectEvent *objectEvent;
 
-  Engine_GameFlagSet(FLAG_MERCURY_LIGHTHOUSE_LIT);
+  GameFlag_Set(FLAG_MERCURY_LIGHTHOUSE_LIT);
   gFieldWork->transition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   if (gGameState.mapId == (s32)&MapId_MercuryLighthouseAerie) {
-    Engine_GameFlagSet(FLAG_RETREAT_BLOCKED);
+    GameFlag_Set(FLAG_RETREAT_BLOCKED);
     FieldScheduler_AddCallback(MercuryLighthouseAerie_FlickerBeacon,
                                TASK_PRIORITY_MAP);
     ObjectMotion_SetActionVariant(LOCALID_PARTY_LEADER, 1);
@@ -252,7 +252,7 @@ s32 MercuryLighthouseAerie_Initialize(void) {
       ObjectEvent_GetById(i)->priorityFlags |= 2;
       ObjectEvent_GetById(i)->y.fixed = -(PIXELS(50) + PIXELS(1) / 2);
     }
-    if (GameFlag_Test(FLAG_KEEP_PARTY_POSITION) &&
+    if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) &&
         (localId = ObjectEvent_FindNearestFloatingPlatform()) != 0 &&
         (objectEvent = ObjectEvent_GetById(localId)) != NULL) {
       objectEvent->motionFlags = 0;
@@ -269,12 +269,12 @@ s32 MercuryLighthouseAerie_Initialize(void) {
     ObjectEvent_GetById(LOCALID_FIRST_BEACON_STATUE + 2)->scaleX = -Q16_ONE;
     ObjectEvent_GetById(LOCALID_FIRST_BEACON_STATUE + 3)->scaleX = -Q16_ONE;
     if (gGameState.warpDest == MERCURY_LIGHTHOUSE_AERIE_AFTER_BEACON_LIT) {
-      if (!GameFlag_Test(FLAG_KEEP_PARTY_POSITION)) {
+      if (!GameFlag_Get(FLAG_KEEP_PARTY_POSITION)) {
         MercuryLighthouseAerie_PartyArrives();
       }
     } else if (gGameState.warpDest ==
                MERCURY_LIGHTHOUSE_AERIE_AFTER_SATUROS_BATTLE) {
-      if (!GameFlag_Test(FLAG_LIFT_UP)) {
+      if (!GameFlag_Get(FLAG_LIFT_UP)) {
         {
           struct MapGridLayerScroll *lift =
               &((struct MapGridScrollWork *)gMapGridWork[0])->layers[2];
@@ -285,13 +285,13 @@ s32 MercuryLighthouseAerie_Initialize(void) {
         WaitFrames(1);
         MapGrid_CopyCellsTo(4, 70, 4, 74, 5, 4);
         Engine_ObjectEventSetPosition(LOCALID_LIFT_STATUE, 0, 0);
-        if (!GameFlag_Test(FLAG_KEEP_PARTY_POSITION)) {
+        if (!GameFlag_Get(FLAG_KEEP_PARTY_POSITION)) {
           MercuryLighthouseAerie_AlexAppears();
         }
       }
     } else if (gGameState.warpDest ==
                MERCURY_LIGHTHOUSE_AERIE_FROM_MERCURY_LIGHTHOUSE_EXTERIOR) {
-      Engine_GameFlagSet(FLAG_LIFT_UP);
+      GameFlag_Set(FLAG_LIFT_UP);
     }
   }
   return 0;
@@ -418,7 +418,7 @@ static void MercuryLighthouseAerie_JumpToPlatform(void) {
                (objectEvent->z.fixed & 0xfff00000) + PIXELS(8));
   Vector_AddPolarOffset(PIXELS(32), angle, &position);
   if (FieldObject_CheckMovementCollision(objectEvent, &position) == 0) {
-    GameFlag_ClearBit(FLAG_ON_PLATFORM);
+    GameFlag_Clear(FLAG_ON_PLATFORM);
     MercuryLighthouseAerie_SettlePlatforms();
     ObjectDispatch_SelectAnimation(objectEvent, 6);
     WaitFrames(6);
@@ -449,7 +449,7 @@ static void MercuryLighthouseAerie_StepOntoPlatform(void) {
   id = ObjectEvent_FindNearestFloatingPlatform();
   gMercuryLighthouseAerie_PlatformUnderfoot = id;
   if (id != 0) {
-    Engine_GameFlagSet(FLAG_ON_PLATFORM);
+    GameFlag_Set(FLAG_ON_PLATFORM);
     objectEvent =
         ObjectEvent_GetById(gMercuryLighthouseAerie_PlatformUnderfoot);
     objectEvent->motionFlags = 0;
@@ -1515,7 +1515,7 @@ static void MercuryLighthouseAerie_CallLift(void) {
   ObjectMotion_SetActionVariant(LOCALID_FIRST_LIFT_PLATFORM, 1);
   ObjectMotion_SetActionVariant(LOCALID_SECOND_LIFT_PLATFORM, 1);
   FieldScript_WaitFrames(20);
-  Engine_GameFlagSet(FLAG_LIFT_UP);
+  GameFlag_Set(FLAG_LIFT_UP);
   FieldScript_End();
 }
 

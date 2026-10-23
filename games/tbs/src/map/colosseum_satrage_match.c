@@ -379,12 +379,12 @@ static void EventScript_UpdateMovedPillarCell(void) {
 
   obstacle = ObjectEvent_GetById(LOCALID_WALL_PILLAR);
   if ((obstacle->x.fixed >> 20) == 36) {
-    Engine_GameFlagSet(FLAG_WALL_PILLAR_MOVED);
+    GameFlag_Set(FLAG_WALL_PILLAR_MOVED);
     column = 0x23;
     row = 0x4D;
     MapGrid_CopyCellAttributes(0x23, 0x4E, 1, 1, column, row);
   } else {
-    GameFlag_ClearBit(FLAG_WALL_PILLAR_MOVED);
+    GameFlag_Clear(FLAG_WALL_PILLAR_MOVED);
     column = 0x23;
     row = 0x4D;
     MapGrid_CopyCellAttributes(0x22, 0x4D, 1, 1, column, row);
@@ -444,7 +444,7 @@ static void EventScript_KnockDownObstacle(void) {
 
   obstacle = ObjectEvent_GetById(LOCALID_FALLING_LOG);
   sprite = obstacle->sprite;
-  GameFlag_Set(FLAG_OBSTACLE_KNOCKED_DOWN);
+  Script_SetFlag(FLAG_OBSTACLE_KNOCKED_DOWN);
   obstacle->acceleration = 0x1999;
   obstacle->speed = 0x13333;
   Sound_PlaySong(SE_TOPPLE);
@@ -486,7 +486,7 @@ static void EventScript_KnockDownObstacle(void) {
 static void EventScript_FreezeWestTarget(void) {
   struct ObjectEvent *obstacle;
 
-  Engine_GameFlagSet(FLAG_WEST_TARGET_FROZEN);
+  GameFlag_Set(FLAG_WEST_TARGET_FROZEN);
   obstacle = ObjectEvent_GetById(LOCALID_PUDDLE_WEST);
   obstacle->motionFlags = 0;
   {
@@ -500,7 +500,7 @@ static void EventScript_FreezeWestTarget(void) {
 static void EventScript_FreezeEastTarget(void) {
   struct ObjectEvent *obstacle;
 
-  Engine_GameFlagSet(FLAG_EAST_TARGET_FROZEN);
+  GameFlag_Set(FLAG_EAST_TARGET_FROZEN);
   obstacle = ObjectEvent_GetById(LOCALID_PUDDLE_EAST);
   obstacle->motionFlags = 0;
   {
@@ -512,7 +512,7 @@ static void EventScript_FreezeEastTarget(void) {
 /// Growth on the plant by The Wall: it grows into a strip that can be climbed
 /// (FLAG_PLANT_GROWN).
 static void EventScript_GrowPlant(void) {
-  Engine_GameFlagSet(FLAG_PLANT_GROWN);
+  GameFlag_Set(FLAG_PLANT_GROWN);
   {
 
     MapGrid_CopyCellAttributes(32, 37, 1, 4, 32, 77);
@@ -777,7 +777,7 @@ static void ColosseumSatrageMatch_UpdateLifts(void) {
         continue;
       }
     }
-    if (GameFlag_IsSet(FLAG_FIELD_HANDLING_REQUESTS) != 0) {
+    if (GameFlag_Get(FLAG_FIELD_HANDLING_REQUESTS) != 0) {
       riderZ = lift->z.fixed;
     } else {
       riderZ = rider->z.fixed;
@@ -833,7 +833,7 @@ static void ColosseumSatrageMatch_UpdateLifts(void) {
   gColosseumSatrageMatch_LiftTimer++;
   if ((u32)gColosseumSatrageMatch_LiftTimer >=
       COLOSSEUM_SATRAGE_MATCH_LIFT_CYCLE_FRAMES) {
-    if (GameFlag_IsSet(FLAG_FIELD_HANDLING_REQUESTS) == 0) {
+    if (GameFlag_Get(FLAG_FIELD_HANDLING_REQUESTS) == 0) {
       gColosseumSatrageMatch_LiftTimer = 0;
     }
   }
@@ -859,7 +859,7 @@ static void ColosseumSatrageMatch_ResetLifts(void) {
 static void ColosseumSatrageMatch_StartLifts(void) {
   FieldScheduler_AddCallback(ColosseumSatrageMatch_UpdateLifts,
                              TASK_PRIORITY_MAP + 5);
-  GameFlag_ClearBit(FLAG_FIELD_HANDLING_REQUESTS);
+  GameFlag_Clear(FLAG_FIELD_HANDLING_REQUESTS);
 }
 
 /// Waits for the demonstration's crossing phase, with a ten-second timeout.
@@ -884,7 +884,7 @@ static void ColosseumSatrageMatch_WaitForLiftCrossingPhase(void) {
 /// crossing (FLAG_LIFTS_HALTED).
 static void EventScript_HaltLifts(void) {
   FieldEffect_PauseObject(LOCALID_LIFT_OPERATOR);
-  Engine_GameFlagSet(FLAG_LIFTS_HALTED);
+  GameFlag_Set(FLAG_LIFTS_HALTED);
 
   if (gColosseumSatrageMatch_LiftPhase != 0) {
     gColosseumSatrageMatch_LiftTimer = 0;
@@ -950,7 +950,7 @@ static void EventScript_ReachArena(void) {
                                  COLOSSEUM_SATRAGE_MATCH_AFTER_MATCH_WON);
   FieldScript_SetDefeatDestination((s32)&MapId_ColosseumSatrageMatch,
                                    COLOSSEUM_SATRAGE_MATCH_AFTER_MATCH_LOST);
-  Engine_GameFlagSet(FLAG_KEEP_MUSIC);
+  GameFlag_Set(FLAG_KEEP_MUSIC);
 }
 
 /// Returns Colosseum Final 2's obstacle interactions and attendant dialogue.
@@ -1013,7 +1013,7 @@ s32 ColosseumSatrageMatch_Initialize(void) {
   gFieldWork->transition = MAP_TRANSITION(TRANSITION_FADE, 0);
   // Restore the metatile behavior templates before applying saved puzzle
   // progress.
-  Engine_GameFlagSet(FLAG_RETREAT_BLOCKED);
+  GameFlag_Set(FLAG_RETREAT_BLOCKED);
   MapGrid_CopyCellAttributes(14, 11, 12, 4, 100, 11);
   MapGrid_CopyCellAttributes(48, 10, 5, 6, 120, 10);
   for (obstacleId = LOCALID_BOARD_WALK_FIRST_PLATFORM;
@@ -1025,7 +1025,7 @@ s32 ColosseumSatrageMatch_Initialize(void) {
     objectEvent->priorityFlags = 2;
   }
   ObjectEvent_GetById(LOCALID_FORCE_TARGET)->priorityFlags = 2;
-  if (GameFlag_Test(FLAG_OBSTACLE_KNOCKED_DOWN)) {
+  if (GameFlag_Get(FLAG_OBSTACLE_KNOCKED_DOWN)) {
     objectEvent = ObjectEvent_GetById(LOCALID_FALLING_LOG);
     objectEvent->x.fixed = PIXELS(336);
     objectEvent->y.fixed = -PIXELS(8);
@@ -1039,20 +1039,20 @@ s32 ColosseumSatrageMatch_Initialize(void) {
   }
   ObjectEvent_GetById(LOCALID_WALL_PILLAR)->priorityFlags = 2;
   zero = 0;
-  if (GameFlag_Test(FLAG_WALL_PILLAR_MOVED)) {
+  if (GameFlag_Get(FLAG_WALL_PILLAR_MOVED)) {
     MapGrid_CopyCellAttributes(35, 78, 1, 1, 35, 77);
   }
-  if (GameFlag_Test(FLAG_PLANT_GROWN)) {
+  if (GameFlag_Get(FLAG_PLANT_GROWN)) {
     Engine_ObjectEventSetAnimation(LOCALID_GROWTH_PLANT, ANIM_SHAKE_HEAD);
     MapGrid_CopyCellAttributes(32, 37, 1, 4, 32, 77);
   }
-  if (GameFlag_Test(FLAG_WEST_TARGET_FROZEN)) {
+  if (GameFlag_Get(FLAG_WEST_TARGET_FROZEN)) {
     ObjectEvent_GetById(LOCALID_PUDDLE_WEST)->motionFlags = zero;
     ObjectEvent_GetById(LOCALID_PUDDLE_WEST)->priorityFlags = 2;
     Engine_ObjectEventSetAnimation(LOCALID_PUDDLE_WEST, 5);
     MapGrid_CopyCellAttributes(46, 17, 1, 1, 44, 17);
   }
-  if (GameFlag_Test(FLAG_EAST_TARGET_FROZEN)) {
+  if (GameFlag_Get(FLAG_EAST_TARGET_FROZEN)) {
     ObjectEvent_GetById(LOCALID_PUDDLE_EAST)->motionFlags = zero;
     ObjectEvent_GetById(LOCALID_PUDDLE_EAST)->priorityFlags = 2;
     Engine_ObjectEventSetAnimation(LOCALID_PUDDLE_EAST, 5);
@@ -1102,7 +1102,7 @@ s32 ColosseumSatrageMatch_Initialize(void) {
   ColosseumSatrageMatch_UpdateRollingLogCollision();
   // A Halted controller leaves the lifts standing; otherwise resume the task.
   Engine_ObjectEventSetAnimation(LOCALID_LIFT_OPERATOR, 10);
-  if (GameFlag_Test(FLAG_LIFTS_HALTED)) {
+  if (GameFlag_Get(FLAG_LIFTS_HALTED)) {
     for (liftId = LOCALID_COLOSSEUM_SATRAGE_MATCH_FIRST_LIFT, row = 13,
         columnOffset = 58;
          liftId <= LOCALID_COLOSSEUM_SATRAGE_MATCH_LAST_LIFT;
@@ -1146,7 +1146,7 @@ s32 ColosseumSatrageMatch_Initialize(void) {
     ObjectEvent_DestroyById(LOCALID_LOG_ROLLING_ATTENDANT);
     ObjectEvent_DestroyById(LOCALID_WALL_ATTENDANT);
     ObjectEvent_DestroyById(LOCALID_BOARD_WALK_ATTENDANT);
-    if (!GameFlag_Test(FLAG_KEEP_PARTY_POSITION)) {
+    if (!GameFlag_Get(FLAG_KEEP_PARTY_POSITION)) {
       Sound_PlaySong(SONG_FADE_OUT_BGM);
       Colosso_ControlCharacterAlone(ISAAC);
       Colosso_PlaceFriendsAtCheeringSpots();
@@ -1162,14 +1162,14 @@ s32 ColosseumSatrageMatch_Initialize(void) {
                                TASK_PRIORITY_MAP);
     ObjectEvent_DestroyById(LOCALID_PRIZE_A);
     ObjectEvent_DestroyById(LOCALID_PRIZE_B);
-    if (!GameFlag_Test(FLAG_KEEP_PARTY_POSITION)) {
+    if (!GameFlag_Get(FLAG_KEEP_PARTY_POSITION)) {
       Colosso_PlaceFriendsAtCheeringSpots();
       Colosso_ControlCharacterAlone(GARET);
       ColosseumSatrageMatch_ShowRoundStartLettering(0);
     }
     break;
   case COLOSSEUM_SATRAGE_MATCH_FROM_COLOSSEUM_WEST:
-    if (!GameFlag_Test(FLAG_KEEP_PARTY_POSITION)) {
+    if (!GameFlag_Get(FLAG_KEEP_PARTY_POSITION)) {
       ColosseumSatrageMatch_IntroduceSecondFinals(LOCALID_GUIDE);
       Colosso_ClearCheeringSpots();
     }
@@ -1655,7 +1655,7 @@ static void ColosseumSatrageMatch_ShowRoundStartLettering(s32 mode) {
   Sound_PlaySong(SE_COLOSSO_GO);
   Map_PlayMusic();
   FieldScript_End();
-  Engine_GameFlagSet(FLAG_IN_TOWN);
+  GameFlag_Set(FLAG_IN_TOWN);
 }
 
 /// The result: `Won` or `Lose` in large lettering, and the loser's reaction.
@@ -1799,7 +1799,7 @@ static s32 ColosseumSatrageMatch_ApproachFinishAndTakeItem(s32 firstItem,
   u16 *itemLocalId;
   s16 *timer;
 
-  finishAlreadyReached = GameFlag_Test(FLAG_ARENA_REACHED);
+  finishAlreadyReached = GameFlag_Get(FLAG_ARENA_REACHED);
 
   gameState = (u8 *)&gGameState;
   warrior = ObjectEvent_GetById(((struct GameState *)gameState)->leaderLocalId);
@@ -1824,7 +1824,7 @@ static s32 ColosseumSatrageMatch_ApproachFinishAndTakeItem(s32 firstItem,
   warrior->speed = PIXELS(1);
 
   Object_SetPosition(warrior, x, 0, z);
-  Engine_GameFlagSet(FLAG_ARENA_REACHED);
+  GameFlag_Set(FLAG_ARENA_REACHED);
   ObjectEvent_SetScript(warrior, gColosseumSatrageMatch_ApproachScript);
 
   while (*timer != 0) {
@@ -1883,7 +1883,7 @@ void Map_BuildDescriptorAndInstallTask(s32 leaderId, s32 opponentId,
 
   // Mirror the recorded opponent start when this is a fresh arrival at the
   // race.
-  if (GameFlag_Test(FLAG_KEEP_PARTY_POSITION) == 0) {
+  if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) == 0) {
     opponent->x.fixed = (finishX << 1) - leader->x.fixed;
     opponent->z.fixed = leader->z.fixed;
   }
@@ -1910,7 +1910,7 @@ static void ColosseumSatrageMatch_StartOpponentPath(s32 pathResource) {
   struct PathRecorder *recorder = (struct PathRecorder *)gMapLocalState;
 
   FieldResource_DecodeType01(Resource_GetTableEntry(pathResource), work->path);
-  if (GameFlag_Test(FLAG_KEEP_PARTY_POSITION) == 0) {
+  if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) == 0) {
     recorder->mode = PATH_RECORDER_PLAY;
     recorder->mirror = 1;
     recorder->localId = work->gauge.opponentLocalId;

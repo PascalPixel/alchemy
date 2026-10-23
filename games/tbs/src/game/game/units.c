@@ -378,19 +378,19 @@ void Unit_Calculate(s32 unitId) {
     // Faster PP recovery once the character's own element's lighthouse is lit
     switch (unit->id) {
     case ISAAC:
-      lighthouseLit = GameFlag_Test(FLAG_VENUS_LIGHTHOUSE_LIT);
+      lighthouseLit = GameFlag_Get(FLAG_VENUS_LIGHTHOUSE_LIT);
       break;
     case GARET:
-      lighthouseLit = GameFlag_Test(FLAG_MARS_LIGHTHOUSE_LIT);
+      lighthouseLit = GameFlag_Get(FLAG_MARS_LIGHTHOUSE_LIT);
       break;
     case IVAN:
-      lighthouseLit = GameFlag_Test(FLAG_JUPITER_LIGHTHOUSE_LIT);
+      lighthouseLit = GameFlag_Get(FLAG_JUPITER_LIGHTHOUSE_LIT);
       break;
     case MIA:
-      lighthouseLit = GameFlag_Test(FLAG_MERCURY_LIGHTHOUSE_LIT);
+      lighthouseLit = GameFlag_Get(FLAG_MERCURY_LIGHTHOUSE_LIT);
       break;
     case JENNA:
-      lighthouseLit = GameFlag_Test(FLAG_MARS_LIGHTHOUSE_LIT);
+      lighthouseLit = GameFlag_Get(FLAG_MARS_LIGHTHOUSE_LIT);
       break;
     }
     if (lighthouseLit)
@@ -459,7 +459,7 @@ void GameFlag_RefreshLureCap(void) {
   s32 partySize;
   s32 partyIndex;
 
-  GameFlag_ClearBit(FLAG_LURE_CAP);
+  GameFlag_Clear(FLAG_LURE_CAP);
   partySize = Party_CountMembers();
   for (partyIndex = 0; partyIndex < partySize; partyIndex++) {
     struct Unit *unit;
@@ -478,7 +478,7 @@ void GameFlag_RefreshLureCap(void) {
           effectKind = effect->kind;
           effect++;
           if (effectKind == EQUIP_EFFECT_LURE) {
-            GameFlag_SetBit(FLAG_LURE_CAP);
+            GameFlag_Set(FLAG_LURE_CAP);
           }
         }
       }
@@ -626,7 +626,7 @@ void GameState_InitializeDefaults(void) {
 /// then take their childhood forms. Called by the main menu when a
 /// new game starts the prologue.
 void Party_StartChildhood(void) {
-  GameFlag_SetBit(FLAG_CHILDHOOD);
+  GameFlag_Set(FLAG_CHILDHOOD);
   Unit_UpdateClass(ISAAC);
   Unit_UpdateClass(GARET);
   Unit_UpdateClass(JENNA);
@@ -644,13 +644,13 @@ void Party_StartChildhood(void) {
 void Party_EndChildhood(void) {
   s32 unitId;
 
-  GameFlag_ClearBit(FLAG_CHILDHOOD);
-  GameFlag_ClearBit(FLAG_ISAAC_WEARS_TUNIC);
-  GameFlag_SetBit(0x901);
+  GameFlag_Clear(FLAG_CHILDHOOD);
+  GameFlag_Clear(FLAG_ISAAC_WEARS_TUNIC);
+  GameFlag_Set(0x901);
   Unit_UpdateClass(JENNA);
   Unit_Calculate(JENNA);
-  GameFlag_ClearBit(FLAG_KEEP_MUSIC_HELD);
-  GameFlag_SetBit(FLAG_KEEP_MUSIC);
+  GameFlag_Clear(FLAG_KEEP_MUSIC_HELD);
+  GameFlag_Set(FLAG_KEEP_MUSIC);
 
   for (unitId = 0; unitId <= 1; unitId++) {
     struct Unit *unit = Unit_Get(unitId);
@@ -721,13 +721,13 @@ void Party_RestorePpOfLitElements(void) {
     elementGroup = gCharacter_ElementGroupTable[unitId];
     restorePp = 0;
     if (elementGroup == 0) {
-      if (GameFlag_Test(FLAG_VENUS_LIGHTHOUSE_LIT) ||
-          GameFlag_Test(FLAG_MARS_LIGHTHOUSE_LIT)) {
+      if (GameFlag_Get(FLAG_VENUS_LIGHTHOUSE_LIT) ||
+          GameFlag_Get(FLAG_MARS_LIGHTHOUSE_LIT)) {
         restorePp = 1;
       }
     } else {
-      if (GameFlag_Test(FLAG_MERCURY_LIGHTHOUSE_LIT) ||
-          GameFlag_Test(FLAG_JUPITER_LIGHTHOUSE_LIT)) {
+      if (GameFlag_Get(FLAG_MERCURY_LIGHTHOUSE_LIT) ||
+          GameFlag_Get(FLAG_JUPITER_LIGHTHOUSE_LIT)) {
         restorePp = 1;
       }
     }

@@ -59,7 +59,7 @@ found:
 
 /// Returns whether an event condition holds: -1 always holds; a condition with
 /// bit 0x1000 holds while that flag is set, any other while its flag is clear.
-/// The flag is the low 12 bits, since GameFlag_Test ignores bit 12.
+/// The flag is the low 12 bits, since GameFlag_Get ignores bit 12.
 ///
 /// Used for every condition column of a map's tables: events
 /// (Map_FindEvent, Field_SearchCell), object event templates
@@ -72,9 +72,9 @@ s32 GameFlag_IsConditionActive(s32 condition) {
     return 1;
   }
   if (0x1000 & condition) {
-    return GameFlag_TestFar(condition);
+    return GameFlag_GetFar(condition);
   }
-  flagSet = GameFlag_TestFar(condition);
+  flagSet = GameFlag_GetFar(condition);
   return flagSet == 0;
 }
 
@@ -483,9 +483,9 @@ s32 Field_SearchCell(s32 tile) {
           messageOffset != 0) {
         Leader_StopMoving();
         FieldMessage_ShowFar(MsgTileChecked + messageOffset, 1);
-        GameFlag_SetBitFar(FLAG_NOTHING_HAPPENS);
+        GameFlag_SetFar(FLAG_NOTHING_HAPPENS);
       } else {
-        GameFlag_ClearBitFar(FLAG_NOTHING_HAPPENS);
+        GameFlag_ClearFar(FLAG_NOTHING_HAPPENS);
       }
       // The value is a function address (bits 27 to 24 set) or a FIND_ value
       // whose top 12 bits give its type: an item, coins, a Psynergy Stone, a
@@ -497,7 +497,7 @@ s32 Field_SearchCell(s32 tile) {
           // A function.
           if (GameFlag_IsConditionActive(condition) != 0)
             ((void (*)(s32))event->value)(gGameState.leaderLocalId);
-          if (GameFlag_TestFar(FLAG_NOTHING_HAPPENS) != 0)
+          if (GameFlag_GetFar(FLAG_NOTHING_HAPPENS) != 0)
             FieldMessage_ShowFar(MsgTileResult + messageOffset, 1);
         } else {
           // A message.
@@ -544,7 +544,7 @@ s32 Field_SearchCell(s32 tile) {
               FieldMessage_ShowFar(MsgGotPsynergyStone + 2, 1);
               TreasureSpot_Hide(tile);
               if (condition != -1)
-                GameFlag_SetBitFar(condition);
+                GameFlag_SetFar(condition);
             } else if (rewardType == FIND_MIMIC) {
               // A mimic: a battle with its slot of ENCOUNTER_ZONE_MIMIC.
               struct FieldWork *work = gFieldWork;
@@ -583,7 +583,7 @@ s32 Field_SearchCell(s32 tile) {
               FieldMessage_ShowFar(MsgGotCoins, 3);
               Party_AdjustCoinsFar((u16)event->value);
               if (condition != -1)
-                GameFlag_SetBitFar(condition);
+                GameFlag_SetFar(condition);
               ObjectDispatch_ReleaseFar(object);
             } else {
               // An item, which stays in the chest when nobody can carry it.
@@ -616,7 +616,7 @@ s32 Field_SearchCell(s32 tile) {
                   FieldMessage_ShowFar(MsgGaveItemToMember, 3);
                 }
                 if (condition != -1)
-                  GameFlag_SetBitFar(condition);
+                  GameFlag_SetFar(condition);
                 ObjectDispatch_ReleaseFar(object);
               }
             }
@@ -634,7 +634,7 @@ s32 Field_SearchCell(s32 tile) {
       FieldMessage_ShowFar(MsgCheckedGround, 1);
       FieldMessage_ShowFar(MsgGroundDidntFindAnything, 1);
     }
-    GameFlag_ClearBitFar(FLAG_NOTHING_HAPPENS);
+    GameFlag_ClearFar(FLAG_NOTHING_HAPPENS);
   }
   return 0;
 }

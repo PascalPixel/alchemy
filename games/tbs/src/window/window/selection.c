@@ -263,7 +263,7 @@ void SelectionScreen_Draw(void) {
       }
     }
     if (node->scale != 0) {
-      if (GameFlag_TestFar(FLAG_IN_BATTLE) != 0) {
+      if (GameFlag_GetFar(FLAG_IN_BATTLE) != 0) {
         if (state->records[14].kind == ICON_KIND_COMMAND) {
           sprite->mode = 1;
         } else {
@@ -307,7 +307,7 @@ void SelectionScreen_Draw(void) {
       commandSprite->y += 0xf0;
       transfer->scale += transfer->scaleStep;
     }
-    if (GameFlag_TestFar(FLAG_IN_BATTLE) != 0) {
+    if (GameFlag_GetFar(FLAG_IN_BATTLE) != 0) {
       commandSprite->mode = 1;
     }
     Oam_AddSpriteAtDepth(commandSprite, 248);
@@ -339,7 +339,7 @@ void SelectionScreen_Draw(void) {
       sprite->affine = 0;
       sprite->matrix = 0;
     }
-    if (GameFlag_TestFar(FLAG_IN_BATTLE) != 0) {
+    if (GameFlag_GetFar(FLAG_IN_BATTLE) != 0) {
       if (state->records[14].kind == ICON_KIND_COMMAND) {
         sprite->mode = 1;
       } else {
@@ -380,7 +380,7 @@ void SelectionScreen_Draw(void) {
     cursorEntry->y =
         cursor->y + gMenuCursor_BobOffsets[(gFrameTick >> 2) & 15] - 32;
     cursorEntry->x = cursor->x - 4;
-    if (GameFlag_TestFar(FLAG_IN_BATTLE) != 0) {
+    if (GameFlag_GetFar(FLAG_IN_BATTLE) != 0) {
       if (state->records[14].kind == ICON_KIND_COMMAND) {
         cursorEntry->mode = 1;
       } else {
@@ -417,7 +417,7 @@ void SelectionScreen_DrawArrow(struct SelectionScreenWork *state, s32 side) {
   }
   tmp = arrowTiles + animationStep * 128;
   arrow->tile = VramCache_Load(state->records[side].slot, 128, tmp);
-  if (GameFlag_TestFar(FLAG_IN_BATTLE)) {
+  if (GameFlag_GetFar(FLAG_IN_BATTLE)) {
     if (state->records[14].kind == ICON_KIND_COMMAND)
       arrow->mode = 1;
     else

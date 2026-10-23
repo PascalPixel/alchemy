@@ -145,9 +145,10 @@ struct MapGridCellAnimation {
 // Engine_ObjectEventSetPosition, Engine_ObjectEventSetAnimation and
 // Engine_RandomNext are called with differing argument counts, so they keep
 // old-style declarations; FieldScript_SetWarpRequest also takes a u16 and
-// Random16 returns a u32, where the maps pass and read an int. Two maps'
-// calls of GameFlag_SetBit, which returns the flag, compile only as calls of
-// a void routine (Engine_GameFlagSet), and the maps pass
+// Random16 returns a u32, where the maps pass and read an int. Imil's and Sol
+// Sanctum's Psynergy Stone room's calls of GameFlag_Set, which returns the
+// flag, compile only as calls of a void routine (Engine_GameFlagSet), where
+// every other map's match through GameFlag_Set itself, and the maps pass
 // FieldScript_ShowTwoMessagesAndWait eleven arguments where it takes ten
 // (Engine_ScriptShowTwoMessagesAndWait).
 /// Sets the field's warp request (FieldScript_SetWarpRequest); 999 leaves for
@@ -160,7 +161,8 @@ void Engine_ObjectEventSetPosition();
 /// Switches an object event's sprite to an ObjectEventAnimation
 /// (ObjectEvent_SetModeById).
 void Engine_ObjectEventSetAnimation();
-/// Sets a game flag (GameFlag_SetBit).
+/// Sets a game flag (GameFlag_Set), for the two maps whose calls compile only
+/// as calls of a void routine.
 void Engine_GameFlagSet(s32 flag);
 /// Advances the game's random number generator and returns 0 to 0xffff
 /// (Random16).
@@ -337,27 +339,20 @@ static inline void MapGrid_SetShake(s32 horizontal, s32 vertical, s32 decay) {
   MapGrid_SetScreenShake(horizontal, vertical, decay);
 }
 
-/// A map's GameFlag_Set is FieldScript_GameFlagSet, which keeps it apart from
-/// the main image's declaration in game_flags.h.
-#define GameFlag_Set FieldScript_GameFlagSet
-/// FieldScript_GameFlagIsSet, apart from field.h's GameFlag_IsSet.
-#define GameFlag_IsSet FieldScript_GameFlagIsSet
-/// FieldScript_GameFlagClear, apart from game_flags.h's GameFlag_Clear.
-#define GameFlag_Clear FieldScript_GameFlagClear
-/// Lets a script branch on what the player has done: 1 when the FLAG_ is set.
-static inline s32 FieldScript_GameFlagIsSet(s32 flag) {
-  return GameFlag_Test(flag);
-}
+// Most map scripts call GameFlag_Get, GameFlag_Set and GameFlag_Clear
+// directly; the scripts that match only through an inline call spell them
+// Script_GetFlag, Script_SetFlag and Script_ClearFlag. An inline call's
+// argument is a pseudo of its own, so a flag number two calls share is loaded
+// twice instead of kept in a register (MATCHING.md).
 
-/// Records something for later scripts to test, setting its FLAG_.
-static inline void FieldScript_GameFlagSet(s32 flag) {
-  Engine_GameFlagSet(flag);
-}
+/// GameFlag_Get, from a script: 1 when the FLAG_ is set.
+static inline s32 Script_GetFlag(s32 flag) { return GameFlag_Get(flag); }
 
-/// Clears a FLAG_ a map tracks, such as a FLAG_MAP_TEMP_ one.
-static inline void FieldScript_GameFlagClear(s32 flag) {
-  GameFlag_ClearBit(flag);
-}
+/// GameFlag_Set, from a script.
+static inline void Script_SetFlag(s32 flag) { GameFlag_Set(flag); }
+
+/// GameFlag_Clear, from a script.
+static inline void Script_ClearFlag(s32 flag) { GameFlag_Clear(flag); }
 
 #ifndef FIELD_STAGED_OBJ_EVENT_IMPORTS
 /// Plays a sound effect or music from a script: the SE command of script.h.

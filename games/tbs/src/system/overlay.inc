@@ -178,9 +178,10 @@
 	import Inventory_Equip, Inventory_EquipFar
 	import Ability_GetDirect, Ability_Get
 	import GameState_InitializeDefaults, GameState_InitializeDefaultsFar
-	import GameFlag_Test, GameFlag_TestFar
-	import Engine_GameFlagSet, GameFlag_SetBitFar
-	import GameFlag_ClearBit, GameFlag_ClearBitFar
+	import GameFlag_Get, GameFlag_GetFar
+	import GameFlag_Set, GameFlag_SetFar
+	import Engine_GameFlagSet, GameFlag_SetFar
+	import GameFlag_Clear, GameFlag_ClearFar
 	import GameFlag_GetByte, GameFlag_GetByteFar
 	import GameFlag_SetByte, GameFlag_SetByteFar
 	import Unit_AddHp, Unit_AddHpFar

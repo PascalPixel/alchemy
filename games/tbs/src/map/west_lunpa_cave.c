@@ -153,7 +153,7 @@ static void EventScript_FreezeGatePuddle(void) {
     ObjectEvent_SetSpriteFlags(pillar, 0);
     pillar->priorityFlags = OBJ_EVENT_PRIORITY_AUTOMATIC;
   }
-  if (GameFlag_IsSet(FLAG_MAP_TEMP_02) == 0) {
+  if (Script_GetFlag(FLAG_MAP_TEMP_02) == 0) {
     Script_PlaySong(SE_GATE_MOVE);
     Gate_DrawPropped();
     Script_PlaySong(MUS_PUZZLE_SOLVED);
@@ -164,13 +164,13 @@ static void EventScript_FreezeGatePuddle(void) {
 /// In West Lunpa Cave, Frost on the north puddle: its pillar stays frozen when
 /// the party returns.
 static void EventScript_FreezeNorthPuddle(void) {
-  Engine_GameFlagSet(FLAG_MAP_TEMP_03);
+  GameFlag_Set(FLAG_MAP_TEMP_03);
 }
 
 /// Lowers the gate in four-frame steps and restores the blocked cell
 /// attributes.
 static void Gate_Lower(void) {
-  if (GameFlag_IsSet(FLAG_MAP_TEMP_02) != 0) {
+  if (GameFlag_Get(FLAG_MAP_TEMP_02) != 0) {
     MapGrid_CopyCells(41, 86, 2, 6, 21, 57);
     WaitFrames(4);
     MapGrid_CopyCells(43, 86, 2, 6, 21, 57);
@@ -196,8 +196,8 @@ static void Gate_Lower(void) {
 /// the gate comes down, unless it is down already or a frozen pillar props it
 /// open. "flipped the switch."
 static void EventScript_FlipLoweringSwitch(void) {
-  if (GameFlag_IsSet(FLAG_MAP_TEMP_01) == 0) {
-    if (GameFlag_IsSet(FLAG_MAP_TEMP_00) == 0) {
+  if (Script_GetFlag(FLAG_MAP_TEMP_01) == 0) {
+    if (GameFlag_Get(FLAG_MAP_TEMP_00) == 0) {
       FieldMessage_Show(MsgFieldFlippedSwitch, 1);
       Script_PlaySong(SE_GATE_MOVE);
       Gate_Lower();
@@ -226,8 +226,8 @@ static void Gate_Raise(void) {
 /// the gate goes up, unless it is up already or propped open. "flipped the
 /// switch."
 static void EventScript_FlipRaisingSwitch(void) {
-  if (GameFlag_IsSet(FLAG_MAP_TEMP_00) == 0) {
-    if (GameFlag_IsSet(FLAG_MAP_TEMP_02) == 0) {
+  if (GameFlag_Get(FLAG_MAP_TEMP_00) == 0) {
+    if (Script_GetFlag(FLAG_MAP_TEMP_02) == 0) {
       FieldMessage_Show(MsgFieldFlippedSwitch, 1);
       Script_PlaySong(SE_GATE_MOVE);
       Gate_Raise();
@@ -251,7 +251,7 @@ static void EventScript_HammetFindsBunza(void) {
   s32 sighting;
   s32 recognition;
 
-  if (GameFlag_IsSet(FLAG_DODONPA_LOCKED_UP) != 0) {
+  if (GameFlag_Get(FLAG_DODONPA_LOCKED_UP) != 0) {
     // Bring Hammet and the party into view as Bunza leaves his hiding place.
     GameFlag_Set(FLAG_LUNPA_CAVE_REUNION_SEEN);
     FieldScript_Start();
@@ -1035,20 +1035,20 @@ s32 Map_Initialize(void) {
     ObjectEvent_SetSpriteFlags(ObjectEvent_GetById(LOCALID_GATE_PUDDLE), 0);
     ObjectEvent_SetSpriteFlags(ObjectEvent_GetById(LOCALID_NORTH_PUDDLE), 0);
     ObjectEvent_GetById(LOCALID_NORTH_PUDDLE)->scaleY = 19 * Q16_ONE / 20;
-    if (GameFlag_Test(FLAG_MAP_TEMP_01) != 0) {
+    if (GameFlag_Get(FLAG_MAP_TEMP_01) != 0) {
       Gate_Lower();
     }
-    if (GameFlag_Test(FLAG_MAP_TEMP_02) != 0) {
+    if (GameFlag_Get(FLAG_MAP_TEMP_02) != 0) {
       Gate_Raise();
     }
-    if (GameFlag_Test(FLAG_MAP_TEMP_00) != 0) {
+    if (GameFlag_Get(FLAG_MAP_TEMP_00) != 0) {
       Gate_DrawPropped();
     }
-    if (GameFlag_Test(FLAG_MAP_TEMP_03) != 0) {
+    if (GameFlag_Get(FLAG_MAP_TEMP_03) != 0) {
       Engine_ObjectEventSetAnimation(LOCALID_NORTH_PUDDLE,
                                      PUDDLE_ANIMATION_FROZEN);
     }
-    if (GameFlag_Test(FLAG_MAP_TEMP_04) != 0) {
+    if (GameFlag_Get(FLAG_MAP_TEMP_04) != 0) {
       Engine_ObjectEventSetAnimation(LOCALID_SOUTH_PUDDLE,
                                      PUDDLE_ANIMATION_FROZEN);
     }

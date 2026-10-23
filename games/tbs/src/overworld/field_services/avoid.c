@@ -110,7 +110,7 @@ void FieldEffect_RunAvoid(void) {
     *tileSlot = slot;
     VramCache_Load((s16)slot, 0x100, gFieldEffect_ArcSparkTiles);
     gGameState.avoidDistance = 0x09600000;
-    gGameState.avoidByItem = GameFlag_TestFar(FLAG_ITEM_USE);
+    gGameState.avoidByItem = GameFlag_GetFar(FLAG_ITEM_USE);
     Anim_ApplyChildValuesFar((struct DispatchObject *)object, zero);
     object->callback = FieldEffect_UpdatePairedArcSpawner;
     object->phase = zero;

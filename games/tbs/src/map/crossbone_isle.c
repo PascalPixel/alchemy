@@ -343,7 +343,7 @@ const struct MapEvent *Map_GetEvents(void) {
 static void EventScript_CatchNut(void) {
   SCRIPT_START();
   Engine_ObjectEventSetPosition(LOCALID_ISLE_NUT, 0, 0);
-  Engine_GameFlagSet(FLAG_CROSSBONE_ISLE_NUT_CAUGHT);
+  GameFlag_Set(FLAG_CROSSBONE_ISLE_NUT_CAUGHT);
   FieldEffect_StartEffectObject22(ITEM_NUT, 3);
   PartyInventory_GiveItem(ITEM_NUT, 0);
   SCRIPT_END();
@@ -370,18 +370,18 @@ s32 Map_Initialize(void) {
     return 0;
   }
   if (mapId == (s32)&MapId_PirateShip) {
-    if (FLAG_CHECK(FLAG_PIRATE_SHIP_MIMIC_BEATEN) == 0) {
+    if (GameFlag_Get(FLAG_PIRATE_SHIP_MIMIC_BEATEN) == 0) {
       MapGrid_CopyCellAttributes(0, 3, 1, 1, 13, 40);
       MapGrid_CopyCellAttributes(0, 2, 1, 1, 15, 40);
       TreasureSpot_SetPosition(101, PIXELS(216), PIXELS(648));
     }
     if (gGameState.mapId == mapId) {
       if (gGameState.warpDest != WARP_DEST_AFTER_BATTLE) {
-        if (FLAG_CHECK(FLAG_CROSSBONE_ISLE_DEADBEARD_DEFEATED) == 0) {
+        if (GameFlag_Get(FLAG_CROSSBONE_ISLE_DEADBEARD_DEFEATED) == 0) {
           return 0;
         }
       }
-      FLAG_SET(FLAG_CROSSBONE_ISLE_DEADBEARD_DEFEATED);
+      GameFlag_Set(FLAG_CROSSBONE_ISLE_DEADBEARD_DEFEATED);
       MapGrid_CopyCellAttributes(0, 1, 1, 1, 13, 30);
       TreasureSpot_SetPosition(100, PIXELS(216), PIXELS(488));
       return 0;
@@ -393,7 +393,7 @@ s32 Map_Initialize(void) {
     ObjectEvent_Get(LOCALID_ISLE_NUT)->targetX = PIXELS(129);
     Map_RedrawObjectEventFootprint(LOCALID_FIRST_ISLE_LOG);
     Map_RedrawObjectEventFootprint(LOCALID_FIRST_ISLE_LOG + 1);
-    if (FLAG_CHECK(FLAG_FIRST_PLANT_GROWN) != 0) {
+    if (GameFlag_Get(FLAG_FIRST_PLANT_GROWN) != 0) {
       objectEvent = ObjectEvent_Get(LOCALID_FIRST_PLANT);
       if (objectEvent != 0) {
         objectEvent->collisionFlags = 0;
@@ -402,7 +402,7 @@ s32 Map_Initialize(void) {
       }
       Field_SetMetatileBehaviorAt(0, PIXELS(304), PIXELS(368), MB_CLIMB);
     }
-    if (FLAG_CHECK(FLAG_FIRST_PLANT_GROWN + 1) != 0) {
+    if (GameFlag_Get(FLAG_FIRST_PLANT_GROWN + 1) != 0) {
       objectEvent = ObjectEvent_Get(LOCALID_FIRST_PLANT + 1);
       if (objectEvent != 0) {
         objectEvent->collisionFlags = 0;
@@ -411,7 +411,7 @@ s32 Map_Initialize(void) {
       }
       Field_SetMetatileBehaviorAt(0, PIXELS(80), PIXELS(368), MB_CLIMB);
     }
-    if (FLAG_CHECK(FLAG_FIRST_PLANT_GROWN + 2) != 0) {
+    if (GameFlag_Get(FLAG_FIRST_PLANT_GROWN + 2) != 0) {
       objectEvent = ObjectEvent_Get(LOCALID_FIRST_PLANT + 2);
       if (objectEvent != 0) {
         objectEvent->collisionFlags = 0;
@@ -420,7 +420,7 @@ s32 Map_Initialize(void) {
       }
       Field_SetMetatileBehaviorAt(0, PIXELS(96), PIXELS(336), MB_CLIMB);
     }
-    if (FLAG_CHECK(FLAG_FIRST_PLANT_GROWN + 3) != 0) {
+    if (GameFlag_Get(FLAG_FIRST_PLANT_GROWN + 3) != 0) {
       objectEvent = ObjectEvent_Get(LOCALID_FIRST_PLANT + 3);
       if (objectEvent != 0) {
         objectEvent->collisionFlags = 0;
@@ -430,7 +430,7 @@ s32 Map_Initialize(void) {
       Field_SetMetatileBehaviorAt(0, PIXELS(144), PIXELS(320), MB_CLIMB);
       Field_SetMetatileBehaviorAt(0, PIXELS(752), PIXELS(320), MB_CLIMB);
     }
-    if (FLAG_CHECK(FLAG_CROSSBONE_ISLE_NUT_CAUGHT) != 0) {
+    if (GameFlag_Get(FLAG_CROSSBONE_ISLE_NUT_CAUGHT) != 0) {
       return 0;
     }
     Map_FloatNut(LOCALID_ISLE_NUT);
@@ -441,7 +441,7 @@ s32 Map_Initialize(void) {
   // warp destination.
   first = (s32)&MapId_CrossboneIsleFirstFloor;
   if (current == first) {
-    if (FLAG_CHECK(FLAG_CROSSBONE_ISLE_FIRST_FLOOR_MIMIC_BEATEN) == 0) {
+    if (GameFlag_Get(FLAG_CROSSBONE_ISLE_FIRST_FLOOR_MIMIC_BEATEN) == 0) {
       MapGrid_CopyCellAttributes(0, 0, 1, 1, 37, 10);
       TreasureSpot_SetPosition(100, PIXELS(600), PIXELS(168));
     }
@@ -465,9 +465,9 @@ static void CrossboneIsle_RestoreSunkPillar(void) {
   s32 cleared;
 
   objectEvent = ObjectEvent_Get(LOCALID_SINKING_PILLAR);
-  cleared =
-      FLAG_CHECK((gGameState.mapId + (FLAG_CROSSBONE_ISLE_FIRST_PASSAGE_OPENED -
-                                      (s32)&MapId_CrossboneIsleFirstFloor)));
+  cleared = GameFlag_Get(
+      (gGameState.mapId + (FLAG_CROSSBONE_ISLE_FIRST_PASSAGE_OPENED -
+                           (s32)&MapId_CrossboneIsleFirstFloor)));
   if (cleared != 0) {
     OBJECT_POSITION_SET(LOCALID_SINKING_PILLAR, 650, 168);
     objectEvent->y.fixed = -PIXELS(32);
@@ -502,8 +502,8 @@ static void EventScript_MovePillar(void) {
   // offset, as the bytes have it; &gGameState.mapId folds into one literal.
   state = &gGameState;
   mapNumber = &state->mapId;
-  if (GameFlag_Test(*mapNumber + (FLAG_CROSSBONE_ISLE_FIRST_PASSAGE_OPENED -
-                                  (s32)&MapId_CrossboneIsleFirstFloor)) != 0) {
+  if (GameFlag_Get(*mapNumber + (FLAG_CROSSBONE_ISLE_FIRST_PASSAGE_OPENED -
+                                 (s32)&MapId_CrossboneIsleFirstFloor)) != 0) {
     return;
   }
 #endif
@@ -529,8 +529,8 @@ static void EventScript_MovePillar(void) {
   state = &gGameState;
   mapNumber = &state->mapId;
 #endif
-  Engine_GameFlagSet(*mapNumber + (FLAG_CROSSBONE_ISLE_FIRST_PASSAGE_OPENED -
-                                   (s32)&MapId_CrossboneIsleFirstFloor));
+  GameFlag_Set(*mapNumber + (FLAG_CROSSBONE_ISLE_FIRST_PASSAGE_OPENED -
+                             (s32)&MapId_CrossboneIsleFirstFloor));
 }
 
 /// Walking into a corridor room's pillar in Crossbone Isle Cave (coord event
@@ -555,9 +555,9 @@ static void EventScript_OpenWestDoor(void) {
 /// back at WARP_DEST_AFTER_BATTLE; once they are beaten, the door opens onto
 /// the side room.
 static void EventScript_OpenEastDoor(void) {
-  if (GameFlag_Test(gGameState.mapId +
-                    (FLAG_CROSSBONE_ISLE_FIRST_EAST_DOOR_MONSTERS_DEFEATED -
-                     (s32)&MapId_CrossboneIsleFirstFloor)) == 0) {
+  if (GameFlag_Get(gGameState.mapId +
+                   (FLAG_CROSSBONE_ISLE_FIRST_EAST_DOOR_MONSTERS_DEFEATED -
+                    (s32)&MapId_CrossboneIsleFirstFloor)) == 0) {
     SCRIPT_START();
     FieldScript_SetNextDestination(gGameState.mapId, WARP_DEST_AFTER_BATTLE);
     Battle_SetType(BATTLE_TYPE_SCRIPTED);
@@ -616,9 +616,9 @@ static void CrossboneIsle_OpenEastDoorAfterBattle(void) {
   OBJECT_SPEED(LOCALID_PARTY_LEADER, PIXELS(2) / 5, PIXELS(1) / 5);
   FieldScript_StartScreenTransition();
   FieldScript_WaitTransitionFrames();
-  FLAG_SET((gGameState.mapId +
-            (FLAG_CROSSBONE_ISLE_FIRST_EAST_DOOR_MONSTERS_DEFEATED -
-             (s32)&MapId_CrossboneIsleFirstFloor)));
+  GameFlag_Set((gGameState.mapId +
+                (FLAG_CROSSBONE_ISLE_FIRST_EAST_DOOR_MONSTERS_DEFEATED -
+                 (s32)&MapId_CrossboneIsleFirstFloor)));
   WAIT(30);
   MapGrid_AnimateCells(gCrossboneIsle_EntranceCells, 44, 7);
   ObjectEvent_CenterAndWalk(LOCALID_PARTY_LEADER, 3, -16);
@@ -640,7 +640,7 @@ static void EventScript_UnusedGrowFirstPlant(s32 localId) {
   }
   ObjectEvent_SetSpriteFlags(ObjectEvent_GetById(localId), 0);
   MapGrid_SetMetatileBehaviorAt(0, fixedX, fixedZ, MB_CLIMB);
-  Engine_GameFlagSet(FLAG_FIRST_PLANT_GROWN);
+  GameFlag_Set(FLAG_FIRST_PLANT_GROWN);
 }
 
 /// Growth on Crossbone Isle's second plant.
@@ -655,7 +655,7 @@ static void EventScript_GrowSecondPlant(s32 localId) {
   }
   ObjectEvent_SetSpriteFlags(ObjectEvent_GetById(localId), 0);
   MapGrid_SetMetatileBehaviorAt(0, fixedX, fixedZ, MB_CLIMB);
-  Engine_GameFlagSet(FLAG_FIRST_PLANT_GROWN + 1);
+  GameFlag_Set(FLAG_FIRST_PLANT_GROWN + 1);
 }
 
 /// Growth on Crossbone Isle's third plant.
@@ -670,7 +670,7 @@ static void EventScript_GrowThirdPlant(s32 localId) {
   }
   ObjectEvent_SetSpriteFlags(ObjectEvent_GetById(localId), 0);
   MapGrid_SetMetatileBehaviorAt(0, fixedX, fixedZ, MB_CLIMB);
-  Engine_GameFlagSet(FLAG_FIRST_PLANT_GROWN + 2);
+  GameFlag_Set(FLAG_FIRST_PLANT_GROWN + 2);
 }
 
 /// Growth on Crossbone Isle's fourth plant, which opens two cells.
@@ -688,13 +688,13 @@ static void EventScript_GrowFourthPlant(s32 localId) {
   ObjectEvent_SetSpriteFlags(ObjectEvent_GetById(localId), 0);
   MapGrid_SetMetatileBehaviorAt(0, fixedX, fixedZ, MB_CLIMB);
   MapGrid_SetMetatileBehaviorAt(0, secondFixedX, secondFixedZ, MB_CLIMB);
-  Engine_GameFlagSet(FLAG_FIRST_PLANT_GROWN + 3);
+  GameFlag_Set(FLAG_FIRST_PLANT_GROWN + 3);
 }
 
 /// Whirlwind on Crossbone Isle's first ivy: it is blown away for good, and
 /// its cell opens.
 static void EventScript_BlowAwayFirstIvy(void) {
-  Engine_GameFlagSet(FLAG_CROSSBONE_ISLE_FIRST_IVY_BLOWN_AWAY);
+  GameFlag_Set(FLAG_CROSSBONE_ISLE_FIRST_IVY_BLOWN_AWAY);
   {
 
     MapGrid_CopyCellAttributes(0, 0, 1, 1, 8, 21);
@@ -705,45 +705,45 @@ static void EventScript_BlowAwayFirstIvy(void) {
 /// good, but the object event templates put that ivy at the map's origin, off
 /// stage, where no cast can reach it and the player never sees it (its render).
 static void EventScript_UnusedBlowAwaySecondIvy(void) {
-  Engine_GameFlagSet(FLAG_CROSSBONE_ISLE_FIRST_IVY_BLOWN_AWAY + 1);
+  GameFlag_Set(FLAG_CROSSBONE_ISLE_FIRST_IVY_BLOWN_AWAY + 1);
 }
 
 /// Whirlwind on Crossbone Isle's third ivy.
 static void EventScript_BlowAwayThirdIvy(void) {
-  Engine_GameFlagSet(FLAG_CROSSBONE_ISLE_FIRST_IVY_BLOWN_AWAY + 2);
+  GameFlag_Set(FLAG_CROSSBONE_ISLE_FIRST_IVY_BLOWN_AWAY + 2);
 }
 
 /// Unused: Whirlwind on Crossbone Isle's fourth ivy would blow it away for
 /// good, but the object event templates place only three, so no object event
 /// answers its map event.
 static void EventScript_UnusedBlowAwayFourthIvy(void) {
-  Engine_GameFlagSet(FLAG_CROSSBONE_ISLE_FIRST_IVY_BLOWN_AWAY + 3);
+  GameFlag_Set(FLAG_CROSSBONE_ISLE_FIRST_IVY_BLOWN_AWAY + 3);
 }
 
 /// On Crossbone Isle, ivy blown away stays gone; the rest stands tall.
 static void CrossboneIsle_RestoreIvy(void) {
   struct ObjectEvent *objectEvent;
 
-  if (FLAG_CHECK(FLAG_CROSSBONE_ISLE_FIRST_IVY_BLOWN_AWAY) != 0) {
+  if (GameFlag_Get(FLAG_CROSSBONE_ISLE_FIRST_IVY_BLOWN_AWAY) != 0) {
     MapGrid_CopyCellAttributes(0, 0, 1, 1, 8, 21);
     OBJECT_POSITION_SET(LOCALID_FIRST_IVY, 968, 968);
   } else {
     objectEvent = ObjectEvent_Get(LOCALID_FIRST_IVY);
     objectEvent->scaleY = 8 * Q16_ONE / 5;
   }
-  if (FLAG_CHECK(FLAG_CROSSBONE_ISLE_FIRST_IVY_BLOWN_AWAY + 1) != 0) {
+  if (GameFlag_Get(FLAG_CROSSBONE_ISLE_FIRST_IVY_BLOWN_AWAY + 1) != 0) {
     OBJECT_POSITION_SET(LOCALID_FIRST_IVY + 1, 968, 968);
   } else {
     objectEvent = ObjectEvent_Get(LOCALID_FIRST_IVY + 1);
     objectEvent->scaleY = 8 * Q16_ONE / 5;
   }
-  if (FLAG_CHECK(FLAG_CROSSBONE_ISLE_FIRST_IVY_BLOWN_AWAY + 2) != 0) {
+  if (GameFlag_Get(FLAG_CROSSBONE_ISLE_FIRST_IVY_BLOWN_AWAY + 2) != 0) {
     OBJECT_POSITION_SET(LOCALID_FIRST_IVY + 2, 968, 968);
   } else {
     objectEvent = ObjectEvent_Get(LOCALID_FIRST_IVY + 2);
     objectEvent->scaleY = 8 * Q16_ONE / 5;
   }
-  if (FLAG_CHECK(FLAG_CROSSBONE_ISLE_FIRST_IVY_BLOWN_AWAY + 3) != 0) {
+  if (GameFlag_Get(FLAG_CROSSBONE_ISLE_FIRST_IVY_BLOWN_AWAY + 3) != 0) {
     OBJECT_POSITION_SET(LOCALID_FIRST_IVY + 3, 968, 968);
   } else {
     objectEvent = ObjectEvent_Get(LOCALID_FIRST_IVY + 3);

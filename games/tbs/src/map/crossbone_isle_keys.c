@@ -293,8 +293,8 @@ CrossboneIsleKeys_FaceBaneTowardLeader(union FieldObject *fieldObject) {
 static void EventScript_BaneFirstEscape(void) {
   struct ObjectEvent *djinni;
 
-  if (FLAG_CHECK(FLAG_CROSSBONE_ISLE_BANE_FIRST_ESCAPE) == 0) {
-    FLAG_SET(FLAG_CROSSBONE_ISLE_BANE_FIRST_ESCAPE);
+  if (Script_GetFlag(FLAG_CROSSBONE_ISLE_BANE_FIRST_ESCAPE) == 0) {
+    GameFlag_Set(FLAG_CROSSBONE_ISLE_BANE_FIRST_ESCAPE);
     SCRIPT_START();
     FieldCamera_SetSpeed(PIXELS(2), PIXELS(1) / 4);
     ObjectEvent_PlaceCurrentWithinCameraBounds(LOCALID_BANE, 1);
@@ -321,10 +321,10 @@ static void EventScript_BaneSecondEscape(void) {
   s32 escapeComplete;
   struct ObjectEvent *jumpingDjinni;
 
-  if (FLAG_CHECK(FLAG_CROSSBONE_ISLE_BANE_FIRST_ESCAPE) != 0) {
-    escapeComplete = FLAG_CHECK(FLAG_CROSSBONE_ISLE_BANE_SECOND_ESCAPE);
+  if (GameFlag_Get(FLAG_CROSSBONE_ISLE_BANE_FIRST_ESCAPE) != 0) {
+    escapeComplete = Script_GetFlag(FLAG_CROSSBONE_ISLE_BANE_SECOND_ESCAPE);
     if (escapeComplete == 0) {
-      FLAG_SET(FLAG_CROSSBONE_ISLE_BANE_SECOND_ESCAPE);
+      GameFlag_Set(FLAG_CROSSBONE_ISLE_BANE_SECOND_ESCAPE);
       SCRIPT_START();
 
       // Focus on the Djinni before its next jump away.
@@ -376,9 +376,9 @@ static void EventScript_BaneSecondEscape(void) {
 static void EventScript_BaneLastEscape(void) {
   struct ObjectEvent *djinni;
 
-  if (FLAG_CHECK(FLAG_CROSSBONE_ISLE_BANE_SECOND_ESCAPE) != 0 &&
-      FLAG_CHECK(FLAG_CROSSBONE_ISLE_BANE_LAST_ESCAPE) == 0) {
-    FLAG_SET(FLAG_CROSSBONE_ISLE_BANE_LAST_ESCAPE);
+  if (GameFlag_Get(FLAG_CROSSBONE_ISLE_BANE_SECOND_ESCAPE) != 0 &&
+      Script_GetFlag(FLAG_CROSSBONE_ISLE_BANE_LAST_ESCAPE) == 0) {
+    GameFlag_Set(FLAG_CROSSBONE_ISLE_BANE_LAST_ESCAPE);
     SCRIPT_START();
 
     // Restore the sprite before the last jump and winding escape path.
@@ -436,7 +436,7 @@ static void EventScript_BaneKeepsAway(void) {
   struct FieldWork *work;
 
   work = gFieldWork;
-  if (GameFlag_Test(FLAG_CROSSBONE_ISLE_BANE_LAST_ESCAPE) != 0) {
+  if (GameFlag_Get(FLAG_CROSSBONE_ISLE_BANE_LAST_ESCAPE) != 0) {
     if (gGameState.pausedObject != LOCALID_BANE) {
       targetByteOffset = work->coordEvent;
       djinni = ObjectEvent_GetById(LOCALID_BANE);
@@ -528,9 +528,9 @@ static void EventScript_UseRedKey(void) {
 
   leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   if (leader->facing == FACING_NORTH) {
-    if (FLAG_CHECK(FLAG_CROSSBONE_ISLE_RED_DOOR_OPEN) == 0) {
+    if (Script_GetFlag(FLAG_CROSSBONE_ISLE_RED_DOOR_OPEN) == 0) {
       if (PartyInventory_FindMember(ITEM_RED_KEY) != -1) {
-        FLAG_SET(FLAG_CROSSBONE_ISLE_RED_DOOR_OPEN);
+        GameFlag_Set(FLAG_CROSSBONE_ISLE_RED_DOOR_OPEN);
         CrossboneIsleKeys_OpenRedDoor(PASSAGE_PLAY_OPENING);
         PartyInventory_Remove(ITEM_RED_KEY);
       }
@@ -548,13 +548,13 @@ static void CrossboneIsleKeys_UseBlueKey(s32 doorIndex) {
     return;
   }
   flag = doorIndex + FLAG_CROSSBONE_ISLE_FIRST_BLUE_DOOR_OPEN;
-  if (GameFlag_Test(flag) != 0) {
+  if (GameFlag_Get(flag) != 0) {
     return;
   }
   if (PartyInventory_FindMember(ITEM_BLUE_KEY) == -1) {
     return;
   }
-  Engine_GameFlagSet(flag);
+  GameFlag_Set(flag);
   CrossboneIsleKeys_OpenBlueDoor(PASSAGE_PLAY_OPENING | doorIndex);
   PartyInventory_Remove(ITEM_BLUE_KEY);
 }
@@ -615,7 +615,7 @@ static void EventScript_ShowRedKey(void) {
   s32 z = PIXELS(776);
 
   MapGrid_CopyCells(25, 45, 1, 2, 25, 48);
-  if (GameFlag_Test(FLAG_CROSSBONE_ISLE_RED_KEY) == 0)
+  if (GameFlag_Get(FLAG_CROSSBONE_ISLE_RED_KEY) == 0)
     Engine_ObjectEventSetPosition(keyLocalId, x, z);
   WAIT(1);
 }
@@ -635,7 +635,7 @@ static inline void CrossboneIsleKeys_CollectKey(s32 localId, s32 itemId,
   OBJECT_ANIMATION(LOCALID_PARTY_LEADER, ANIM_STAND);
   PartyInventory_GiveItem(itemId, 0);
   Engine_ObjectEventSetPosition(localId, 0, 0);
-  Engine_GameFlagSet(collectedFlag);
+  GameFlag_Set(collectedFlag);
 }
 
 /// Catch on CrossboneIsleKeys's first Blue Key: the party gets it.
@@ -675,10 +675,10 @@ static void CrossboneIsleKeys_CheckFirstPursuerTrigger(void) {
   s32 row = leader->z.fixed / PIXELS(16);
   struct FieldWork *work = gFieldWork;
 
-  if (!FLAG_CHECK(PURSUER_AFTER_LEADER_FLAG) && gGameState.cloaked == 0 &&
+  if (!Script_GetFlag(PURSUER_AFTER_LEADER_FLAG) && gGameState.cloaked == 0 &&
       gGameState.pausedObject != LOCALID_FIRST_STATUE &&
       (u32)(column - 21) <= 2 && row >= 10 && row <= 11) {
-    Engine_GameFlagSet(PURSUER_AFTER_LEADER_FLAG);
+    GameFlag_Set(PURSUER_AFTER_LEADER_FLAG);
     work->raisedEvent = RAISED_FIRST_CHASE;
   }
 }
@@ -717,10 +717,11 @@ static void CrossboneIsleKeys_CheckSecondPursuerTrigger(void) {
   s32 row = leader->z.fixed / PIXELS(16);
   struct FieldWork *work = gFieldWork;
 
-  if (FLAG_CHECK(PURSUER_AFTER_LEADER_FLAG) == 0 && gGameState.cloaked == 0 &&
+  if (Script_GetFlag(PURSUER_AFTER_LEADER_FLAG) == 0 &&
+      gGameState.cloaked == 0 &&
       gGameState.pausedObject != LOCALID_SECOND_STATUE && column == 10 &&
       (u32)(row - 16) <= 2) {
-    FLAG_SET(PURSUER_AFTER_LEADER_FLAG);
+    Script_SetFlag(PURSUER_AFTER_LEADER_FLAG);
     MapLocalState_StoreStep(&work->raisedEvent, RAISED_SECOND_CHASE);
   }
 }
@@ -877,9 +878,9 @@ static void CrossboneIsleKeys_CheckFifthPursuerTrigger(void) {
   struct GameState *state = &gGameState;
 
   if (state->pausedObject != LOCALID_FIFTH_STATUE &&
-      FLAG_CHECK(PURSUER_AFTER_LEADER_FLAG) == 0 && state->cloaked == 0 &&
+      Script_GetFlag(PURSUER_AFTER_LEADER_FLAG) == 0 && state->cloaked == 0 &&
       column == 19 && (u32)(row - 15) <= 1) {
-    FLAG_SET(PURSUER_AFTER_LEADER_FLAG);
+    Script_SetFlag(PURSUER_AFTER_LEADER_FLAG);
     MapLocalState_StoreStep(&work->raisedEvent, RAISED_FIFTH_CHASE);
   }
 }
@@ -935,7 +936,7 @@ static void EventScript_UseLadder(void) {
   u16 facing = leader->facing;
 
   if (facing == FACING_NORTH) {
-    if (GameFlag_Test(BANE_CHEST_AT_LADDER_FLAG) != 0) {
+    if (GameFlag_Get(BANE_CHEST_AT_LADDER_FLAG) != 0) {
       {
         s32 destinationColumn = 45;
         s32 destinationRow = 43;
@@ -943,12 +944,12 @@ static void EventScript_UseLadder(void) {
                                    destinationRow);
       }
     }
-    GameFlag_ClearBit(BANE_LOOKED_EAST_FLAG);
+    GameFlag_Clear(BANE_LOOKED_EAST_FLAG);
     Field_ClimbUp();
   } else if (facing == FACING_SOUTH) {
     Field_ClimbDown();
   } else if (facing == FACING_EAST) {
-    if (GameFlag_Test(BANE_CHEST_AT_LADDER_FLAG) != 0) {
+    if (GameFlag_Get(BANE_CHEST_AT_LADDER_FLAG) != 0) {
       {
         s32 destinationColumn = 45;
         s32 destinationRow = 43;
@@ -956,7 +957,7 @@ static void EventScript_UseLadder(void) {
                                    destinationRow);
       }
     }
-    Engine_GameFlagSet(BANE_LOOKED_EAST_FLAG);
+    GameFlag_Set(BANE_LOOKED_EAST_FLAG);
     Field_TryJumpForward();
   } else if (facing == FACING_WEST) {
     if (leader->y.fixed == 0) {
@@ -983,7 +984,7 @@ static void EventScript_FreezePuddle(void) {
     *motionFlags = 0;
     *priorityFlags = OBJ_EVENT_PRIORITY_UNDERFOOT;
   }
-  Engine_GameFlagSet(BANE_PUDDLE_FROZEN_FLAG);
+  GameFlag_Set(BANE_PUDDLE_FROZEN_FLAG);
 }
 
 /// Walking into CrossboneIsleBane's first pillar from the ladder side
@@ -1097,13 +1098,13 @@ static void EventScript_PushFirstPillar(void) {
 static void CrossboneIsleKeys_ReleaseSecondPillarChest(void) {
   Task_Remove(CrossboneIsleKeys_FollowSecondPillar);
   OBJECT_POSITION_SET(LOCALID_SECOND_PILLAR_CHEST, 0, 0);
-  if (FLAG_CHECK(BANE_LOOKED_EAST_FLAG) != 0) {
+  if (GameFlag_Get(BANE_LOOKED_EAST_FLAG) != 0) {
     MapGrid_CopyCellAttributes(58, 36, 1, 1, 45, 43);
   } else {
     MapGrid_CopyCellAttributes(46, 43, 1, 1, 45, 43);
   }
   CrossboneIsleKeys_PositionSecondPillarMarker();
-  FLAG_SET(BANE_CHEST_AT_LADDER_FLAG);
+  GameFlag_Set(BANE_CHEST_AT_LADDER_FLAG);
 }
 
 /// Move on CrossboneIsleBane's second pillar: the chest on top of it stays
@@ -1154,10 +1155,10 @@ static void EventScript_UpdateThirdPillarTerrain(void) {
   s32 column = pillar->x.fixed / PIXELS(16);
   s32 row = pillar->z.fixed / PIXELS(16);
 
-  if (!FLAG_CHECK(FLAG_CROSSBONE_ISLE_THIRD_PILLAR_LOWERED) &&
+  if (!Script_GetFlag(FLAG_CROSSBONE_ISLE_THIRD_PILLAR_LOWERED) &&
       heightCells <= 2) {
     CrossboneIsleKeys_RestoreThirdPillarWestCell();
-    Engine_GameFlagSet(FLAG_CROSSBONE_ISLE_THIRD_PILLAR_LOWERED);
+    GameFlag_Set(FLAG_CROSSBONE_ISLE_THIRD_PILLAR_LOWERED);
   }
   if (row == 55) {
     if (column == 42) {
@@ -1314,16 +1315,16 @@ UNUSED static void CrossboneIsleKeys_UnusedUpdateKeyIcons(void) {
   }
   switch (gCrossboneIsleKeys_IconTimer) {
   case 12:
-    if (GameFlag_Test(FLAG_CROSSBONE_ISLE_FIRST_BLUE_KEY) == 0) {
+    if (GameFlag_Get(FLAG_CROSSBONE_ISLE_FIRST_BLUE_KEY) == 0) {
       OBJECT_POSITION_SET(LOCALID_FIRST_BLUE_KEY, 232, 872);
     }
-    if (GameFlag_Test(FLAG_CROSSBONE_ISLE_FIRST_BLUE_KEY + 1) == 0) {
+    if (GameFlag_Get(FLAG_CROSSBONE_ISLE_FIRST_BLUE_KEY + 1) == 0) {
       OBJECT_POSITION_SET(LOCALID_SECOND_BLUE_KEY, 296, 824);
     }
-    if (GameFlag_Test(FLAG_CROSSBONE_ISLE_FIRST_BLUE_KEY + 2) == 0) {
+    if (GameFlag_Get(FLAG_CROSSBONE_ISLE_FIRST_BLUE_KEY + 2) == 0) {
       OBJECT_POSITION_SET(LOCALID_THIRD_BLUE_KEY, 328, 760);
     }
-    if (GameFlag_Test(FLAG_CROSSBONE_ISLE_FIRST_BLUE_KEY + 3) == 0) {
+    if (GameFlag_Get(FLAG_CROSSBONE_ISLE_FIRST_BLUE_KEY + 3) == 0) {
       OBJECT_POSITION_SET(LOCALID_FOURTH_BLUE_KEY, 360, 872);
     }
     break;
@@ -1355,31 +1356,31 @@ static void CrossboneIsleKeys_InitializeKeys(void) {
   Colosso_ShowItemIcon(LOCALID_THIRD_BLUE_KEY, ITEM_BLUE_KEY);
   Colosso_ShowItemIcon(LOCALID_SECOND_BLUE_KEY, ITEM_BLUE_KEY);
   Colosso_ShowItemIcon(LOCALID_FIRST_BLUE_KEY, ITEM_BLUE_KEY);
-  if (FLAG_CHECK(FLAG_CROSSBONE_ISLE_FIRST_BLUE_KEY) == 0) {
+  if (GameFlag_Get(FLAG_CROSSBONE_ISLE_FIRST_BLUE_KEY) == 0) {
     OBJECT_POSITION_SET(LOCALID_FIRST_BLUE_KEY, 232, 872);
   }
-  if (FLAG_CHECK(FLAG_CROSSBONE_ISLE_FIRST_BLUE_KEY + 1) == 0) {
+  if (GameFlag_Get(FLAG_CROSSBONE_ISLE_FIRST_BLUE_KEY + 1) == 0) {
     OBJECT_POSITION_SET(LOCALID_SECOND_BLUE_KEY, 296, 824);
   }
-  if (FLAG_CHECK(FLAG_CROSSBONE_ISLE_FIRST_BLUE_KEY + 2) == 0) {
+  if (GameFlag_Get(FLAG_CROSSBONE_ISLE_FIRST_BLUE_KEY + 2) == 0) {
     OBJECT_POSITION_SET(LOCALID_THIRD_BLUE_KEY, 328, 760);
   }
-  if (FLAG_CHECK(FLAG_CROSSBONE_ISLE_FIRST_BLUE_KEY + 3) == 0) {
+  if (GameFlag_Get(FLAG_CROSSBONE_ISLE_FIRST_BLUE_KEY + 3) == 0) {
     OBJECT_POSITION_SET(LOCALID_FOURTH_BLUE_KEY, 360, 872);
   }
-  if (FLAG_CHECK(FLAG_CROSSBONE_ISLE_FIRST_BLUE_DOOR_OPEN) != 0) {
+  if (GameFlag_Get(FLAG_CROSSBONE_ISLE_FIRST_BLUE_DOOR_OPEN) != 0) {
     CrossboneIsleKeys_OpenBlueDoor(0);
   }
-  if (FLAG_CHECK(FLAG_CROSSBONE_ISLE_FIRST_BLUE_DOOR_OPEN + 1) != 0) {
+  if (GameFlag_Get(FLAG_CROSSBONE_ISLE_FIRST_BLUE_DOOR_OPEN + 1) != 0) {
     CrossboneIsleKeys_OpenBlueDoor(1);
   }
-  if (FLAG_CHECK(FLAG_CROSSBONE_ISLE_FIRST_BLUE_DOOR_OPEN + 2) != 0) {
+  if (GameFlag_Get(FLAG_CROSSBONE_ISLE_FIRST_BLUE_DOOR_OPEN + 2) != 0) {
     CrossboneIsleKeys_OpenBlueDoor(2);
   }
-  if (FLAG_CHECK(FLAG_CROSSBONE_ISLE_FIRST_BLUE_DOOR_OPEN + 3) != 0) {
+  if (GameFlag_Get(FLAG_CROSSBONE_ISLE_FIRST_BLUE_DOOR_OPEN + 3) != 0) {
     CrossboneIsleKeys_OpenBlueDoor(3);
   }
-  if (FLAG_CHECK(FLAG_CROSSBONE_ISLE_RED_DOOR_OPEN) != 0) {
+  if (GameFlag_Get(FLAG_CROSSBONE_ISLE_RED_DOOR_OPEN) != 0) {
     CrossboneIsleKeys_OpenRedDoor(0);
   }
 }
@@ -1417,7 +1418,7 @@ static void CrossboneIsleKeys_InitializeBane(void) {
   FieldScheduler_AddCallback(CrossboneIsleKeys_UpdatePillarPriorities,
                              TASK_PRIORITY_MAP);
   TreasureSpot_SetPosition(107, 0, 0);
-  if (FLAG_CHECK(FLAG_CROSSBONE_ISLE_DEMON_AXE) != 0) {
+  if (GameFlag_Get(FLAG_CROSSBONE_ISLE_DEMON_AXE) != 0) {
     OBJECT_ANIMATION(LOCALID_SECOND_PILLAR_CHEST, 2);
   }
   EventScript_UpdateFirstPillarTerrain();
@@ -1431,14 +1432,14 @@ static void CrossboneIsleKeys_InitializeBane(void) {
   ObjectEvent_GetById(LOCALID_FOURTH_PILLAR)->motionFlags = 0;
   ObjectEvent_GetById(LOCALID_FIFTH_PILLAR)->motionFlags = 0;
   CrossboneIsleKeys_RepaintFourthAndFifthPillarCells();
-  if (FLAG_CHECK(BANE_PUDDLE_FROZEN_FLAG) != 0) {
+  if (GameFlag_Get(BANE_PUDDLE_FROZEN_FLAG) != 0) {
     EventScript_FreezePuddle();
     OBJECT_ANIMATION(LOCALID_PUDDLE, 5);
   }
 
   // Restore the surviving Djinni at the last completed escape stage.
-  if (FLAG_CHECK(FLAG_KEEP_PARTY_POSITION) == 0) {
-    if (FLAG_CHECK(FLAG_CROSSBONE_ISLE_BANE_LAST_ESCAPE) != 0) {
+  if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) == 0) {
+    if (GameFlag_Get(FLAG_CROSSBONE_ISLE_BANE_LAST_ESCAPE) != 0) {
       OBJECT_POSITION_SET(LOCALID_BANE, 856, 824);
       djinni = ObjectEvent_GetById(LOCALID_BANE);
 #ifdef UBFIX
@@ -1447,12 +1448,12 @@ static void CrossboneIsleKeys_InitializeBane(void) {
       djinni->update =
           (void (*)(union FieldObject *))CrossboneIsleKeys_FaceBaneTowardLeader;
 #endif
-    } else if (FLAG_CHECK(FLAG_CROSSBONE_ISLE_BANE_SECOND_ESCAPE) != 0) {
+    } else if (GameFlag_Get(FLAG_CROSSBONE_ISLE_BANE_SECOND_ESCAPE) != 0) {
       OBJECT_POSITION_SET(LOCALID_BANE, 888, 664);
       djinni = ObjectEvent_GetById(LOCALID_BANE);
       djinni->sprite->rotation = 0;
       ObjectDispatch_SetAnimationSpeed((struct DispatchObject *)djinni, 16);
-    } else if (FLAG_CHECK(FLAG_CROSSBONE_ISLE_BANE_FIRST_ESCAPE) != 0) {
+    } else if (GameFlag_Get(FLAG_CROSSBONE_ISLE_BANE_FIRST_ESCAPE) != 0) {
       OBJECT_POSITION_SET(LOCALID_BANE, 584, 680);
     } else {
       OBJECT_POSITION_SET(LOCALID_BANE, 584, 664);

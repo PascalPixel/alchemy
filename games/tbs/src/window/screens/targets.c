@@ -194,7 +194,7 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
   if (targetIndex < 0)
     targetIndex = (targetCount - 1) / 2;
   while (candidateIds[targetIndex] == BATTLE_UNIT_REMOVED ||
-         (GameFlag_TestFar(FLAG_LINK_BATTLE) && mode == ABILITY_TARGET_FOES &&
+         (GameFlag_GetFar(FLAG_LINK_BATTLE) && mode == ABILITY_TARGET_FOES &&
           Unit_GetFar(candidateIds[targetIndex])->hp == 0)) {
     targetIndex = targetIndex + targetCount - 1;
     targetIndex %= targetCount;

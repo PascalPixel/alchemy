@@ -133,7 +133,7 @@ void Colosso_RaiseTakePlaceOnPsynergy(void) {
   s32 selection = gGameState.leaderLocalId;
 
   if (selection != 0 && (work->psynergy >> 10) == selection &&
-      GameFlag_Test(FLAG_PSYNERGY_TARGET) != 0) {
+      GameFlag_Get(FLAG_PSYNERGY_TARGET) != 0) {
     u16 *raised = (u16 *)&work->raisedEvent;
     s32 trigger = 99;
 
@@ -202,7 +202,7 @@ static void Colosso_TakePlaceForMatch(void) {
   supporterId++;
   if (supporterId > MIA) {
     Engine_ScriptRequestWarp(10);
-    Engine_GameFlagSet(FLAG_KEEP_MUSIC);
+    GameFlag_Set(FLAG_KEEP_MUSIC);
   } else {
     Colosso_ControlCharacterAlone(supporterId);
     FieldScript_StartScreenTransition();
@@ -252,7 +252,7 @@ void Colosso_AskDoneCheering(s32 id) {
     slot++;
     if (slot > MIA) {
       Engine_ScriptRequestWarp(10);
-      Engine_GameFlagSet(FLAG_KEEP_MUSIC);
+      GameFlag_Set(FLAG_KEEP_MUSIC);
     } else {
       Colosso_ControlCharacterAlone(slot);
       FieldScript_StartScreenTransition();
@@ -334,10 +334,10 @@ s32 Colosso_GreetAtStage(s32 speaker, s32 warrior) {
   }
   FieldScript_SetMessageId(message);
   FieldScript_ShowMessageAndWait(speaker, 0);
-  if (GameFlag_Test(warrior + COLOSSO_STAGE_CHEERED) != 0) {
+  if (GameFlag_Get(warrior + COLOSSO_STAGE_CHEERED) != 0) {
     return COLOSSO_GUIDE_CHEER;
   }
-  if (GameFlag_Test(warrior + COLOSSO_STAGE_DESCRIBED) != 0) {
+  if (GameFlag_Get(warrior + COLOSSO_STAGE_DESCRIBED) != 0) {
     choice = ColossoMenu_Choose(0);
     if (choice == 1) {
       return COLOSSO_GUIDE_CHEER;
@@ -347,7 +347,7 @@ s32 Colosso_GreetAtStage(s32 speaker, s32 warrior) {
     }
     return choice;
   }
-  Engine_GameFlagSet(warrior + COLOSSO_STAGE_DESCRIBED);
+  GameFlag_Set(warrior + COLOSSO_STAGE_DESCRIBED);
   FieldScript_SetMessageId(MsgColossoWouldYouLikeHearDescription);
   FieldMessage_ShowAtObject(speaker, 0);
   return FieldScript_AskYesNoWithObjectEventAnimation(0, 0);
@@ -411,7 +411,7 @@ void Colosso_OfferCheeringSpot(s32 mode, s32 guide, s32 stage) {
       Script_ShowMessage(guide, 0);
       return;
     }
-    if (GameFlag_IsSet(stage + COLOSSO_STAGE_CHEERED) != 0) {
+    if (GameFlag_Get(stage + COLOSSO_STAGE_CHEERED) != 0) {
       FieldScript_SetMessageId(MsgColossoUnfortunatelyWeHaveFullHouse);
       Script_ShowMessage(guide, 0);
       return;

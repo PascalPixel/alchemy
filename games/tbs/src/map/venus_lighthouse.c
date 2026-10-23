@@ -833,7 +833,7 @@ static void VenusLighthouse_ArriveThroughSparkPassage(void) {
   struct ObjectEvent *leader;
 
   leader = ObjectEvent_Get(LOCALID_PARTY_LEADER);
-  if (GameFlag_IsSet(FLAG_KEEP_PARTY_POSITION) == 0) {
+  if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) == 0) {
     FieldScript_Start();
     FieldCamera_MoveTo(-1, -1, -1, 0);
     leader->motionFlags = 0;
@@ -1200,7 +1200,7 @@ static void EventScript_HearOfTheAttack(void) {
     }
     flickersLeft--;
   } while (flickersLeft != 0);
-  Engine_GameFlagSet(FLAG_VENUS_LIGHTHOUSE_ATTACK_TOLD);
+  GameFlag_Set(FLAG_VENUS_LIGHTHOUSE_ATTACK_TOLD);
   Engine_ObjectEventSetPosition(LOCALID_SOLDIER_TELLING_OF_THE_ATTACK, 0, 0);
   MapGrid_CopyCellAttributes(7, 17, 2, 1, 7, 16);
   FieldScript_End();
@@ -1227,7 +1227,7 @@ static void EventScript_CarryPillarPastWall(void) {
   pillar = ObjectEvent_GetById(LOCALID_WALL_PILLAR);
   FieldScript_Start();
   if (pillar->x.fixed >> 20 == 54 || pillar->z.fixed >> 20 == 6) {
-    Engine_GameFlagSet(FLAG_VENUS_LIGHTHOUSE_PILLAR_CARRIED);
+    GameFlag_Set(FLAG_VENUS_LIGHTHOUSE_PILLAR_CARRIED);
   }
   FieldScript_End();
 }
@@ -1265,7 +1265,7 @@ static void EventScript_HidePath(void) {
   s32 row;
 
 #if TBS_PATCH_1
-  GameFlag_ClearBit(FLAG_NO_ENCOUNTERS_IN_MAPSEC);
+  GameFlag_Clear(FLAG_NO_ENCOUNTERS_IN_MAPSEC);
 #endif
   column = 23;
   row = 8;
@@ -1286,7 +1286,7 @@ static void EventScript_RevealPath(void) {
   s32 row;
 
 #if TBS_PATCH_1
-  Engine_GameFlagSet(FLAG_NO_ENCOUNTERS_IN_MAPSEC);
+  GameFlag_Set(FLAG_NO_ENCOUNTERS_IN_MAPSEC);
 #endif
   column = 23;
   row = 8;
@@ -1403,8 +1403,8 @@ static void EventScript_SearchStatue(void) {
   PaletteFade_StartInterpolation(60);
   FieldScript_WaitFrames(70);
   // The first consultation selects a route; later consultations alternate it.
-  if (GameFlag_IsSet(FLAG_VENUS_LIGHTHOUSE_FIRST_PATH) == 0) {
-    if (GameFlag_IsSet(FLAG_VENUS_LIGHTHOUSE_SECOND_PATH) == 0) {
+  if (Script_GetFlag(FLAG_VENUS_LIGHTHOUSE_FIRST_PATH) == 0) {
+    if (Script_GetFlag(FLAG_VENUS_LIGHTHOUSE_SECOND_PATH) == 0) {
       if ((gFrameCount & 1) != 0) {
         GameFlag_Set(FLAG_VENUS_LIGHTHOUSE_FIRST_PATH);
       } else {
@@ -1412,7 +1412,7 @@ static void EventScript_SearchStatue(void) {
       }
     }
   }
-  if (GameFlag_IsSet(FLAG_VENUS_LIGHTHOUSE_FIRST_PATH) == 0) {
+  if (Script_GetFlag(FLAG_VENUS_LIGHTHOUSE_FIRST_PATH) == 0) {
     GameFlag_Set(FLAG_VENUS_LIGHTHOUSE_FIRST_PATH);
     GameFlag_Clear(FLAG_VENUS_LIGHTHOUSE_SECOND_PATH);
     VenusLighthouse_DrawFirstPath();
@@ -1457,10 +1457,10 @@ static void EventScript_MovePillarTowardWall(void) {
   FieldScript_Start();
   objectEvent = ObjectEvent_GetById(LOCALID_WALL_PILLAR);
   if (objectEvent->x.fixed >> 20 == 53) {
-    if (GameFlag_Test(conversationFlag) == 0) {
+    if (GameFlag_Get(conversationFlag) == 0) {
       // Record the one-time conversation before bringing Garet out to inspect
       // the pillar.
-      Engine_GameFlagSet(conversationFlag);
+      GameFlag_Set(conversationFlag);
       objectEvent = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
       if (objectEvent != 0) {
         Engine_ObjectEventSetPosition(GARET, objectEvent->x.fixed,
@@ -1525,7 +1525,7 @@ static void EventScript_MovePillarOntoSwitch(void) {
     switchHeight = -PIXELS(2);
     pillar->groundHeight = switchHeight;
     pillar->y.fixed = switchHeight;
-    Engine_GameFlagSet(FLAG_MAP_TEMP_00);
+    GameFlag_Set(FLAG_MAP_TEMP_00);
     MapGrid_CopyCellsTo(44, 117, 41, 117, 3, 5);
   }
   FieldScript_End();
@@ -1545,7 +1545,7 @@ static void EventScript_StepOnFloorSwitch(void) {
     leader->motionFlags |= OBJ_EVENT_FOLLOWS_TERRAIN;
     leader->groundHeight = 0;
     leader->y.fixed = 0;
-  } else if (!GameFlag_IsSet(FLAG_MAP_TEMP_01)) {
+  } else if (!Script_GetFlag(FLAG_MAP_TEMP_01)) {
     FieldScript_Start();
     FieldScript_WaitFrames(5);
     MapGrid_CopyCellsTo(52, 50, 42, 49, 1, 1);
@@ -1823,7 +1823,7 @@ static void EventScript_StepOnWallSwitch(void) {
   leader->y.fixed = 0;
   if (column >= 308 && column <= 315 && leaderZ >= 532 && leaderZ < 540) {
     leader->y.fixed = -PIXELS(2);
-    if (!GameFlag_IsSet(FLAG_VENUS_LIGHTHOUSE_WALL_MOVED)) {
+    if (!Script_GetFlag(FLAG_VENUS_LIGHTHOUSE_WALL_MOVED)) {
       FieldScript_Start();
       Sound_PlaySong(SE_161);
       GameFlag_Set(FLAG_VENUS_LIGHTHOUSE_WALL_MOVED);
@@ -1914,7 +1914,7 @@ static void EventScript_MoveGatePillar(void) {
     } else {
       // Sink an unsolved pillar only when both of its target cell coordinates
       // match.
-      gateOpened = GameFlag_Test(FLAG_VENUS_LIGHTHOUSE_GATE_OPEN);
+      gateOpened = GameFlag_Get(FLAG_VENUS_LIGHTHOUSE_GATE_OPEN);
       if (gateOpened != 0) {
       } else {
         if ((leader->z.fixed >> 20) <= 45) {
@@ -1957,7 +1957,7 @@ static void EventScript_MoveGatePillar(void) {
         Sound_PlaySong(SE_DOOR_OPEN);
         MapGrid_PlayMetatileCopySequence(gVenusSecondFloorGateCells, 110, 41);
         MapGrid_CopyCellAttributes(46, 41, 1, 1, column, 42);
-        Engine_GameFlagSet(FLAG_VENUS_LIGHTHOUSE_GATE_OPEN);
+        GameFlag_Set(FLAG_VENUS_LIGHTHOUSE_GATE_OPEN);
       }
     }
   }
@@ -2070,7 +2070,7 @@ static void EventScript_MoveSwitchPillar(void) {
     if (occlusionEffect != 0) {
       ObjectEvent_Release(occlusionEffect);
     }
-    if (GameFlag_Test(FLAG_VENUS_LIGHTHOUSE_THREE_PILLAR_GATE_OPEN)) {
+    if (GameFlag_Get(FLAG_VENUS_LIGHTHOUSE_THREE_PILLAR_GATE_OPEN)) {
       FieldScript_End();
       return;
     }
@@ -2099,11 +2099,11 @@ static void EventScript_MoveSwitchPillar(void) {
                 gVenusThirdFloorSockets[0].x &&
             ObjectEvent_GetById(LOCALID_FIRST_SWITCH_PILLAR)->z.fixed >> 20 ==
                 gVenusThirdFloorSockets[0].z) {
-          Engine_GameFlagSet(FLAG_VENUS_LIGHTHOUSE_SOCKETS_A);
+          GameFlag_Set(FLAG_VENUS_LIGHTHOUSE_SOCKETS_A);
         } else {
-          Engine_GameFlagSet(FLAG_VENUS_LIGHTHOUSE_SOCKETS_B);
+          GameFlag_Set(FLAG_VENUS_LIGHTHOUSE_SOCKETS_B);
         }
-        Engine_GameFlagSet(FLAG_VENUS_LIGHTHOUSE_THREE_PILLAR_GATE_OPEN);
+        GameFlag_Set(FLAG_VENUS_LIGHTHOUSE_THREE_PILLAR_GATE_OPEN);
         break;
       }
       WaitFrames(1);
@@ -2264,7 +2264,7 @@ static void EventScript_CarryFloatingPillar(void) {
     pillar = ObjectEvent_GetById(pillarIndex + LOCALID_FIRST_FLOATING_PILLAR);
     column = pillar->x.fixed >> 20;
     if (column == 13 && (row = pillar->z.fixed >> 20) == 7 &&
-        !GameFlag_IsSet(FLAG_MAP_TEMP_00 + pillarIndex)) {
+        !GameFlag_Get(FLAG_MAP_TEMP_00 + pillarIndex)) {
       ObjectEvent_WaitUntilIdle(pillar);
       GameFlag_Set(FLAG_MAP_TEMP_00 + pillarIndex);
       pillar->priorityFlags |= OBJ_EVENT_PRIORITY_UNDERFOOT;
@@ -2274,7 +2274,7 @@ static void EventScript_CarryFloatingPillar(void) {
       break;
     }
     if (pillar->sprite->image.priority == 3 &&
-        !GameFlag_IsSet(FLAG_MAP_TEMP_00 + pillarIndex)) {
+        !Script_GetFlag(FLAG_MAP_TEMP_00 + pillarIndex)) {
       /* FAKEMATCH(temporary): the zero in the search counter, set before the
        * priority call; as block->bounce = 0 after the call, 2 of 272
        * instructions differ in tbs-en. */
@@ -2297,13 +2297,13 @@ static void EventScript_CarryFloatingPillar(void) {
       break;
     }
     if (pillar->z.fixed >> 20 == 19 &&
-        !GameFlag_IsSet(FLAG_MAP_TEMP_00 + pillarIndex)) {
+        !GameFlag_Get(FLAG_MAP_TEMP_00 + pillarIndex)) {
       // Keep settled pillars at the front of the object event slots before
       // finding their support.
       FloatingPillar_Settle(pillar, 0);
       settledIndex = pillarIndex;
       for (earlierIndex = 0; earlierIndex < pillarIndex; earlierIndex++) {
-        if (!GameFlag_IsSet(FLAG_MAP_TEMP_00 + earlierIndex)) {
+        if (!GameFlag_Get(FLAG_MAP_TEMP_00 + earlierIndex)) {
           other =
               ObjectEvent_GetById(earlierIndex + LOCALID_FIRST_FLOATING_PILLAR);
           ObjectEvent_CopyPosition(&savedPosition, pillar);
@@ -2384,7 +2384,7 @@ static void EventScript_StepOnWestWallSwitch(void) {
   leader->y.fixed = 0;
   if (column >= 532 && column <= 539 && leaderZ >= 324 && leaderZ < 332) {
     leader->y.fixed = -PIXELS(2);
-    if (!GameFlag_Test(FLAG_VENUS_LIGHTHOUSE_WEST_WALL_MOVED)) {
+    if (!GameFlag_Get(FLAG_VENUS_LIGHTHOUSE_WEST_WALL_MOVED)) {
       FieldScript_Start();
       MapGrid_CopyCellsTo(63, 29, 33, 20, 1, 1);
       Sound_PlaySong(SE_161);
@@ -2458,7 +2458,7 @@ static void EventScript_StepOnEastWallSwitch(void) {
   leader->y.fixed = 0;
   if (column >= 788 && column <= 795 && leaderZ >= 324 && leaderZ < 332) {
     leader->y.fixed = -PIXELS(2);
-    if (!GameFlag_Test(FLAG_VENUS_LIGHTHOUSE_EAST_WALL_MOVED)) {
+    if (!GameFlag_Get(FLAG_VENUS_LIGHTHOUSE_EAST_WALL_MOVED)) {
       FieldScript_Start();
       MapGrid_CopyCellsTo(63, 29, 49, 20, 1, 1);
       Sound_PlaySong(SE_161);
@@ -2621,7 +2621,7 @@ static void EventScript_MoveSocketPillar(void) {
       }
     }
     ObjectEvent_Release(occlusionEffect);
-    if (GameFlag_IsSet(FLAG_VENUS_LIGHTHOUSE_PILLAR_GATE_OPEN)) {
+    if (GameFlag_Get(FLAG_VENUS_LIGHTHOUSE_PILLAR_GATE_OPEN)) {
       Script_End();
       return;
     }
@@ -2778,16 +2778,16 @@ s32 VenusLighthouse_Initialize(void) {
   s32 row;
 
   FieldScript_WaitFrames(1);
-  if (GameFlag_Test(FLAG_KEEP_PARTY_POSITION))
+  if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION))
     VenusLighthouse_RestoreScriptedChildValues();
-  Engine_GameFlagSet(FLAG_VENUS_LIGHTHOUSE_LIT);
+  GameFlag_Set(FLAG_VENUS_LIGHTHOUSE_LIT);
   gFieldWork->transition = MAP_TRANSITION(TRANSITION_WINDOW, 4);
   mapId = gGameState.mapId;
   // Restore the scholars and soldiers outside and each interior puzzle by its
   // warp destination.
   if (mapId == (s32)&MapId_VenusLighthouseEntry) {
     gFieldWork->transition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
-    if (!GameFlag_Test(FLAG_VENUS_LIGHTHOUSE_ATTACK_TOLD))
+    if (!GameFlag_Get(FLAG_VENUS_LIGHTHOUSE_ATTACK_TOLD))
       VenusLighthouse_LayDownHurtObjectEvent(
           LOCALID_SOLDIER_TELLING_OF_THE_ATTACK);
     else
@@ -2807,7 +2807,7 @@ s32 VenusLighthouse_Initialize(void) {
       VenusLighthouse_LayDownHurtObjectEvent(LOCALID_SCHOLAR_ATTACKED_ANYWAY);
       break;
     case VENUS_LIGHTHOUSE_GROUND_FLOOR_RELIEFS_FROM_CARRY_STONE_WEST:
-      GameFlag_ClearBit(FLAG_WARP_ARRIVAL_STAIRS_UP);
+      GameFlag_Clear(FLAG_WARP_ARRIVAL_STAIRS_UP);
       // The other scholar setup still applies.
       // fall through
     case VENUS_LIGHTHOUSE_GROUND_FLOOR_RELIEFS_FROM_FRONT_ROOM:
@@ -2817,23 +2817,23 @@ s32 VenusLighthouse_Initialize(void) {
       break;
     case VENUS_LIGHTHOUSE_GROUND_FLOOR_GREAT_STATUE_FROM_FLOOR_SWITCH:
     case VENUS_LIGHTHOUSE_GROUND_FLOOR_GREAT_STATUE_FROM_SMALL_ROOM:
-      if (GameFlag_Test(FLAG_VENUS_LIGHTHOUSE_FIRST_PATH)) {
+      if (GameFlag_Get(FLAG_VENUS_LIGHTHOUSE_FIRST_PATH)) {
         VenusLighthouse_DrawFirstPath();
       } else {
-        if (!GameFlag_Test(FLAG_VENUS_LIGHTHOUSE_SECOND_PATH))
+        if (!GameFlag_Get(FLAG_VENUS_LIGHTHOUSE_SECOND_PATH))
           break;
         VenusLighthouse_DrawSecondPath();
       }
       break;
     case VENUS_LIGHTHOUSE_GROUND_FLOOR_FLOOR_SWITCH_FROM_GREAT_STATUE:
-      GameFlag_ClearBit(FLAG_WARP_ARRIVAL_STAIRS_DOWN);
+      GameFlag_Clear(FLAG_WARP_ARRIVAL_STAIRS_DOWN);
       // Restore the same passage tiles as the room's other two warp
       // destinations.
       // fall through
     case VENUS_LIGHTHOUSE_GROUND_FLOOR_FLOOR_SWITCH_FROM_PILLARS:
     case VENUS_LIGHTHOUSE_GROUND_FLOOR_FROM_VENUS_LIGHTHOUSE_FIRST_FLOOR:
-      GameFlag_ClearBit(FLAG_SHOW_LOCATION_NAME);
-      if (GameFlag_Test(FLAG_MAP_TEMP_00))
+      GameFlag_Clear(FLAG_SHOW_LOCATION_NAME);
+      if (GameFlag_Get(FLAG_MAP_TEMP_00))
         MapGrid_CopyCellsTo(44, 117, 41, 117, 3, 5);
       break;
     case VENUS_LIGHTHOUSE_GROUND_FLOOR_PILLARS_FROM_RELIEFS:
@@ -2841,7 +2841,7 @@ s32 VenusLighthouse_Initialize(void) {
     case VENUS_LIGHTHOUSE_GROUND_FLOOR_PILLARS_FROM_FLOOR_SWITCH:
     case VENUS_LIGHTHOUSE_GROUND_FLOOR_PILLARS_FROM_STATUE_ROW_NORTH:
     case VENUS_LIGHTHOUSE_GROUND_FLOOR_PILLARS_FROM_STATUE_ROW_WEST:
-      if (GameFlag_Test(FLAG_VENUS_LIGHTHOUSE_PILLAR_CARRIED)) {
+      if (GameFlag_Get(FLAG_VENUS_LIGHTHOUSE_PILLAR_CARRIED)) {
         ObjectEvent_SetPosition(LOCALID_WALL_PILLAR, PIXELS(872), PIXELS(88));
         objectEvent = ObjectEvent_GetById(LOCALID_WALL_PILLAR);
         objectEvent->y.fixed = -PIXELS(24);
@@ -2853,14 +2853,14 @@ s32 VenusLighthouse_Initialize(void) {
     // Restore depth pillars, the Carry puzzle and the paired tile-wave passage.
     switch (gGameState.warpDest) {
     case VENUS_LIGHTHOUSE_FIRST_FLOOR_FROM_VENUS_LIGHTHOUSE_GROUND_FLOOR:
-      GameFlag_ClearBit(FLAG_SHOW_LOCATION_NAME);
+      GameFlag_Clear(FLAG_SHOW_LOCATION_NAME);
       break;
     case VENUS_LIGHTHOUSE_FIRST_FLOOR_FROM_VENUS_LIGHTHOUSE_SECOND_FLOOR_EAST:
       VenusLighthouse_AnimatePairedTileWaves();
       break;
     case VENUS_LIGHTHOUSE_FIRST_FLOOR_LOWER_ROOM_FROM_DRIFTING_FLOOR_HOLE:
       Map_QueueMusic(SE_170);
-      if (!GameFlag_Test(FLAG_KEEP_PARTY_POSITION))
+      if (!GameFlag_Get(FLAG_KEEP_PARTY_POSITION))
         VenusLighthouse_LandWithRadialDust();
       break;
     case VENUS_LIGHTHOUSE_FIRST_FLOOR_GAP_FROM_DRIFTING_FLOOR:
@@ -2900,7 +2900,7 @@ s32 VenusLighthouse_Initialize(void) {
       Map_QueueMusic(SE_170);
       FieldEffect_StartFadeOverlay(0);
       WaitFrames(2);
-      if (GameFlag_Test(FLAG_VENUS_LIGHTHOUSE_WALL_MOVED)) {
+      if (GameFlag_Get(FLAG_VENUS_LIGHTHOUSE_WALL_MOVED)) {
         MapGrid_CopyCellsTo(111, 5, 117, 5, 5, 2);
         MapGrid_CopyCellsTo(111, 10, 117, 10, 5, 2);
         MapGrid_CopyCellsTo(111, 7, 111, 5, 5, 2);
@@ -2936,7 +2936,7 @@ s32 VenusLighthouse_Initialize(void) {
       objectEvent = ObjectEvent_GetById(LOCALID_GATE_PILLAR);
       objectEvent->motionFlags = 0;
       objectEvent->collisionFlags = 0;
-      if (GameFlag_Test(FLAG_VENUS_LIGHTHOUSE_GATE_OPEN)) {
+      if (GameFlag_Get(FLAG_VENUS_LIGHTHOUSE_GATE_OPEN)) {
         WaitFrames(1);
         MapGrid_CopyCellsTo(124, 41, 110, 41, 1, 2);
         MapGrid_CopyCellAttributes(46, 41, 1, 1, 46, 42);
@@ -2980,7 +2980,7 @@ s32 VenusLighthouse_Initialize(void) {
         asm("" : "+l"(zero));
         Io_Write16(zero, &REG_BLDCNT);
       }
-      if (GameFlag_Test(FLAG_VENUS_LIGHTHOUSE_WALL_MOVED)) {
+      if (GameFlag_Get(FLAG_VENUS_LIGHTHOUSE_WALL_MOVED)) {
         MapGrid_CopyCellsTo(15, 96, 9, 96, 3, 3);
         MapGrid_CopyCellsTo(12, 96, 15, 96, 3, 3);
         MapGrid_CopyCellsTo(5, 50, 15, 32, 3, 4);
@@ -3013,14 +3013,14 @@ s32 VenusLighthouse_Initialize(void) {
     case VENUS_LIGHTHOUSE_THIRD_FLOOR_DRIFTING_FLOOR_FROM_PILLAR_SOCKETS:
     case VENUS_LIGHTHOUSE_THIRD_FLOOR_FROM_VENUS_LIGHTHOUSE_FOURTH_FLOOR_EAST_NORTHEAST:
       Map_QueueMusic(SE_170);
-      if (GameFlag_Test(FLAG_VENUS_LIGHTHOUSE_WEST_WALL_MOVED)) {
+      if (GameFlag_Get(FLAG_VENUS_LIGHTHOUSE_WEST_WALL_MOVED)) {
         MapGrid_CopyCells(53, 12, 3, 13, 26, 12);
         MapGrid_CopyCellsTo(81, 41, 89, 14, 9, 2);
         WaitFrames(1);
         FieldScheduler_AddCallback(VenusLighthouse_EmitWestPassageParticles,
                                    TASK_PRIORITY_MAP);
       }
-      if (GameFlag_Test(FLAG_VENUS_LIGHTHOUSE_EAST_WALL_MOVED)) {
+      if (GameFlag_Get(FLAG_VENUS_LIGHTHOUSE_EAST_WALL_MOVED)) {
         MapGrid_CopyCells(58, 12, 3, 13, 34, 12);
         MapGrid_CopyCellsTo(81, 41, 97, 14, 5, 2);
         WaitFrames(1);
@@ -3051,11 +3051,11 @@ s32 VenusLighthouse_Initialize(void) {
       ObjectEvent_GetById(LOCALID_FIRST_SWITCH_PILLAR)->motionFlags = 0;
       ObjectEvent_GetById(LOCALID_FIRST_SWITCH_PILLAR + 1)->motionFlags = 0;
       ObjectEvent_GetById(LOCALID_FIRST_SWITCH_PILLAR + 2)->motionFlags = 0;
-      if (GameFlag_Test(FLAG_VENUS_LIGHTHOUSE_THREE_PILLAR_GATE_OPEN)) {
+      if (GameFlag_Get(FLAG_VENUS_LIGHTHOUSE_THREE_PILLAR_GATE_OPEN)) {
         WaitFrames(1);
         MapGrid_CopyCellsTo(111, 59, 109, 37, 1, 2);
         MapGrid_CopyCellAttributes(45, 37, 1, 1, 45, 38);
-        if (GameFlag_Test(FLAG_VENUS_LIGHTHOUSE_SOCKETS_A)) {
+        if (GameFlag_Get(FLAG_VENUS_LIGHTHOUSE_SOCKETS_A)) {
           ObjectEvent_SetPosition(LOCALID_FIRST_SWITCH_PILLAR, PIXELS(776),
                                   PIXELS(664));
           ObjectEvent_SetPosition(LOCALID_FIRST_SWITCH_PILLAR + 1, PIXELS(840),
@@ -3111,7 +3111,7 @@ s32 VenusLighthouse_Initialize(void) {
     switch (gGameState.warpDest) {
     case VENUS_LIGHTHOUSE_FOURTH_FLOOR_FROM_VENUS_LIGHTHOUSE_THIRD_FLOOR_WEST_NORTHWEST:
     case VENUS_LIGHTHOUSE_FOURTH_FLOOR_PILLARS_FROM_WALL_SWITCHES:
-      if (GameFlag_Test(FLAG_KEEP_PARTY_POSITION)) {
+      if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION)) {
         VenusLighthouse_LowerFloatingPillars(0);
         ObjectEvent_WaitUntilIdle(ObjectEvent_GetById(LOCALID_PARTY_LEADER));
         for (pillarIndex = 0; pillarIndex <= 3; pillarIndex++) {
@@ -3120,7 +3120,7 @@ s32 VenusLighthouse_Initialize(void) {
           column = objectEvent->x.fixed >> 20;
           if (column == 13) {
             row = objectEvent->z.fixed >> 20;
-            if (row == 7 && GameFlag_Test(pillarIndex + FLAG_MAP_TEMP_00)) {
+            if (row == 7 && GameFlag_Get(pillarIndex + FLAG_MAP_TEMP_00)) {
               objectEvent->priorityFlags |= OBJ_EVENT_PRIORITY_UNDERFOOT;
               objectEvent->collisionFlags = 0;
               objectEvent->motionFlags = 0;
@@ -3194,7 +3194,7 @@ s32 VenusLighthouse_Initialize(void) {
       ObjectEvent_GetById(LOCALID_RISING_PLATFORM)->y.fixed = -(PIXELS(33) / 2);
       BlendScript_Suspend();
       Io_Write16(0, &REG_BLDCNT);
-      if (GameFlag_Test(FLAG_VENUS_LIGHTHOUSE_WEST_WALL_MOVED)) {
+      if (GameFlag_Get(FLAG_VENUS_LIGHTHOUSE_WEST_WALL_MOVED)) {
         Map_QueueMusic(SE_170);
         MapGrid_CopyCellsTo(36, 81, 32, 81, 3, 2);
         MapGrid_CopyCellsTo(36, 83, 36, 81, 3, 2);
@@ -3203,7 +3203,7 @@ s32 VenusLighthouse_Initialize(void) {
         MapGrid_CopyCellsTo(63, 29, 33, 20, 1, 1);
         MapGrid_CopyCellsTo(20, 56, 36, 17, 3, 4);
       }
-      if (GameFlag_Test(FLAG_VENUS_LIGHTHOUSE_EAST_WALL_MOVED)) {
+      if (GameFlag_Get(FLAG_VENUS_LIGHTHOUSE_EAST_WALL_MOVED)) {
         MapGrid_CopyCellsTo(44, 81, 48, 81, 3, 2);
         MapGrid_CopyCellsTo(44, 83, 44, 81, 3, 2);
         MapGrid_CopyCellAttributes(44, 17, 3, 1, 48, 17);
@@ -3235,7 +3235,7 @@ s32 VenusLighthouse_Initialize(void) {
       ObjectEvent_GetById(LOCALID_FIRST_SOCKET_PILLAR + 1)->motionFlags = 0;
       ObjectEvent_GetById(LOCALID_FIRST_SOCKET_PILLAR + 2)->motionFlags = 0;
       ObjectEvent_GetById(LOCALID_FIRST_SOCKET_PILLAR + 3)->motionFlags = 0;
-      if (GameFlag_Test(FLAG_VENUS_LIGHTHOUSE_PILLAR_GATE_OPEN)) {
+      if (GameFlag_Get(FLAG_VENUS_LIGHTHOUSE_PILLAR_GATE_OPEN)) {
         WaitFrames(1);
         MapGrid_CopyCellsTo(95, 56, 77, 35, 1, 2);
         MapGrid_CopyCellAttributes(13, 35, 1, 1, 13, 36);
@@ -3580,7 +3580,7 @@ static void VenusLighthouse_AnimateWestTileWave(void) {
   FieldCamera_WaitForArrival();
   FieldCamera_MoveTo(-1, -1, -1, 0);
   FieldScript_WaitFrames(60);
-  Engine_GameFlagSet(FLAG_VENUS_LIGHTHOUSE_WEST_WALL_MOVED);
+  GameFlag_Set(FLAG_VENUS_LIGHTHOUSE_WEST_WALL_MOVED);
   Engine_ScriptRequestWarp(
       VENUS_LIGHTHOUSE_THIRD_FLOOR_TO_VENUS_LIGHTHOUSE_FOURTH_FLOOR_NORTHWEST);
   FieldScript_End();
@@ -3642,7 +3642,7 @@ static void VenusLighthouse_AnimateEastTileWave(void) {
   FieldCamera_WaitForArrival();
   FieldCamera_MoveTo(-1, -1, -1, 0);
   FieldScript_WaitFrames(60);
-  Engine_GameFlagSet(FLAG_VENUS_LIGHTHOUSE_EAST_WALL_MOVED);
+  GameFlag_Set(FLAG_VENUS_LIGHTHOUSE_EAST_WALL_MOVED);
   Engine_ScriptRequestWarp(
       VENUS_LIGHTHOUSE_THIRD_FLOOR_TO_VENUS_LIGHTHOUSE_FOURTH_FLOOR_EAST_NORTHEAST);
   FieldScript_End();

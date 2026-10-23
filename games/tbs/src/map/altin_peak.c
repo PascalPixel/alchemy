@@ -557,7 +557,7 @@ static void AltinPeak_FreezeFirstWaterBeastRoomPuddle(void) {
     puddle->y.fixed -= PIXELS(32);
     puddle->priorityFlags = OBJ_EVENT_PRIORITY_UNDERFOOT;
   }
-  Engine_GameFlagSet(FLAG_PUDDLE_FROZEN);
+  GameFlag_Set(FLAG_PUDDLE_FROZEN);
 }
 
 /// Frost on AltinPeakFirstWaterBeast's second puddle, three cells across: the
@@ -570,7 +570,7 @@ static void AltinPeak_FreezeFirstWaterBeastRoomSecondPuddle(void) {
   if (puddle != 0) {
     puddle->motionFlags = OBJ_EVENT_FALLS;
   }
-  Engine_GameFlagSet(FLAG_SECOND_PUDDLE_FROZEN);
+  GameFlag_Set(FLAG_SECOND_PUDDLE_FROZEN);
 }
 
 /// Frost on AltinPeakSpritz's first puddle.
@@ -584,7 +584,7 @@ static void AltinPeak_FreezeSpritzRoomPuddle(void) {
     puddle->y.fixed -= PIXELS(32);
     puddle->priorityFlags = OBJ_EVENT_PRIORITY_UNDERFOOT;
   }
-  Engine_GameFlagSet(FLAG_PUDDLE_FROZEN);
+  GameFlag_Set(FLAG_PUDDLE_FROZEN);
 }
 
 /// Frost on AltinPeakThirdWaterBeast's puddle.
@@ -598,7 +598,7 @@ static void AltinPeak_FreezeThirdWaterBeastRoomPuddle(void) {
     puddle->y.fixed -= PIXELS(32);
     puddle->priorityFlags = OBJ_EVENT_PRIORITY_UNDERFOOT;
   }
-  Engine_GameFlagSet(FLAG_PUDDLE_FROZEN);
+  GameFlag_Set(FLAG_PUDDLE_FROZEN);
 }
 
 /// Frost on AltinPeakPool's puddle.
@@ -612,7 +612,7 @@ static void AltinPeak_FreezePoolRoomPuddle(void) {
     puddle->y.fixed -= PIXELS(32);
     puddle->priorityFlags = OBJ_EVENT_PRIORITY_UNDERFOOT;
   }
-  Engine_GameFlagSet(FLAG_PUDDLE_FROZEN);
+  GameFlag_Set(FLAG_PUDDLE_FROZEN);
 }
 
 /// Frost on AltinPeakSpritz's second puddle.
@@ -626,7 +626,7 @@ static void AltinPeak_FreezeSpritzRoomSecondPuddle(void) {
     puddle->y.fixed -= PIXELS(32);
     puddle->priorityFlags = OBJ_EVENT_PRIORITY_UNDERFOOT;
   }
-  Engine_GameFlagSet(FLAG_SECOND_PUDDLE_FROZEN);
+  GameFlag_Set(FLAG_SECOND_PUDDLE_FROZEN);
 }
 
 /// Frost on AltinPeakSpritz's third puddle.
@@ -640,7 +640,7 @@ static void AltinPeak_FreezeSpritzRoomThirdPuddle(void) {
     puddle->y.fixed -= PIXELS(32);
     puddle->priorityFlags = OBJ_EVENT_PRIORITY_UNDERFOOT;
   }
-  Engine_GameFlagSet(FLAG_THIRD_PUDDLE_FROZEN);
+  GameFlag_Set(FLAG_THIRD_PUDDLE_FROZEN);
 }
 
 /// Interrupt handler while the water layer vanishes: each time, background 1
@@ -786,7 +786,7 @@ static void AltinPeak_DrainThirdWater(void) {
 /// Flips AltinPeakSecondWaterBeast's switch to its other position, redrawing it
 /// and changing the cell its position opens or closes.
 static void AltinPeak_ToggleSecondWaterBeastRoomSwitchCells(void) {
-  if (GameFlag_IsSet(FLAG_ALTIN_PEAK_SECOND_WATER_BEAST_ROOM_SWITCH) != 0) {
+  if (Script_GetFlag(FLAG_ALTIN_PEAK_SECOND_WATER_BEAST_ROOM_SWITCH) != 0) {
     MapGrid_CopyCellAttributes(2, 0, 1, 1, 24, 80);
     MapGrid_CopyCellsTo(2, 1, 24, 11, 1, 2);
     GameFlag_Clear(FLAG_ALTIN_PEAK_SECOND_WATER_BEAST_ROOM_SWITCH);
@@ -811,7 +811,7 @@ static void AltinPeak_FlipSecondWaterBeastRoomSwitch(void) {
 
 /// Flips AltinPeakThirdWaterBeast's switch, the same way.
 static void AltinPeak_ToggleThirdWaterBeastRoomSwitchCells(void) {
-  if (GameFlag_IsSet(FLAG_ALTIN_PEAK_THIRD_WATER_BEAST_ROOM_SWITCH) != 0) {
+  if (Script_GetFlag(FLAG_ALTIN_PEAK_THIRD_WATER_BEAST_ROOM_SWITCH) != 0) {
     MapGrid_CopyCellAttributes(12, 72, 1, 1, 11, 73);
     MapGrid_CopyCellsTo(48, 32, 11, 4, 1, 2);
     GameFlag_Clear(FLAG_ALTIN_PEAK_THIRD_WATER_BEAST_ROOM_SWITCH);
@@ -838,7 +838,7 @@ static void AltinPeak_FlipPoolRoomSwitch(void) {
   FieldScript_Start();
   FieldMessage_Show(MsgFieldFlippedSwitch, 1);
   Script_PlaySong(SE_125);
-  if (GameFlag_IsSet(FLAG_ALTIN_PEAK_POOL_ROOM_SWITCH) != 0) {
+  if (Script_GetFlag(FLAG_ALTIN_PEAK_POOL_ROOM_SWITCH) != 0) {
     MapGrid_CopyCellAttributes(15, 93, 1, 1, 16, 92);
     MapGrid_CopyCellsTo(47, 29, 16, 28, 1, 2);
     GameFlag_Clear(FLAG_ALTIN_PEAK_POOL_ROOM_SWITCH);
@@ -857,7 +857,7 @@ static void AltinPeak_FlipSpritzRoomSwitch(void) {
   FieldScript_Start();
   FieldMessage_Show(MsgFieldFlippedSwitch, 1);
   Script_PlaySong(SE_125);
-  if (GameFlag_IsSet(FLAG_ALTIN_PEAK_SPRITZ_ROOM_SWITCH) != 0) {
+  if (Script_GetFlag(FLAG_ALTIN_PEAK_SPRITZ_ROOM_SWITCH) != 0) {
     MapGrid_CopyCellAttributes(28, 82, 1, 1, 29, 81);
     MapGrid_CopyCellsTo(47, 28, 29, 17, 1, 2);
     GameFlag_Clear(FLAG_ALTIN_PEAK_SPRITZ_ROOM_SWITCH);
@@ -1044,7 +1044,7 @@ static void AltinPeak_RunBoulderChase(s32 boulderDelay) {
   ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(5) / 2, PIXELS(5) / 4);
   leader->timer = 0;
   ObjectEvent_SetActionScript(LOCALID_PARTY_LEADER, gAltinPeak_LeaderFleePath);
-  if (GameFlag_IsSet(FLAG_GARET_WATCHING_ROCKS) != 0) {
+  if (GameFlag_Get(FLAG_GARET_WATCHING_ROCKS) != 0) {
     ObjectEvent_SetPosition(GARET, PIXELS(878), PIXELS(528));
     objectEvent = ObjectEvent_Get(GARET);
     objectEvent->facing = FACING_SOUTH + FACING_STEP;
@@ -1096,13 +1096,13 @@ static void AltinPeak_RunBoulderChase(s32 boulderDelay) {
   MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
   // Return Garet to the party if the warning sign brought him into the scene.
   FieldScript_WaitFrames(120);
-  if (GameFlag_IsSet(FLAG_GARET_WATCHING_ROCKS) != 0) {
+  if (Script_GetFlag(FLAG_GARET_WATCHING_ROCKS) != 0) {
     ObjectEvent_SetSpeed(GARET, PIXELS(1), PIXELS(1) / 2);
     ObjectEvent_WalkTo(GARET, 824, 558);
   }
   ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(3) / 5, PIXELS(3) / 10);
   ObjectEvent_WalkToAndWait(LOCALID_PARTY_LEADER, 854, 584);
-  if (GameFlag_IsSet(FLAG_GARET_WATCHING_ROCKS) != 0) {
+  if (Script_GetFlag(FLAG_GARET_WATCHING_ROCKS) != 0) {
     Engine_ObjectEventSetAnimation(GARET, ANIM_STAND);
     ObjectEvent_FaceDirection(GARET, FACING_SOUTH, 0);
   }
@@ -1113,7 +1113,7 @@ static void AltinPeak_RunBoulderChase(s32 boulderDelay) {
   FieldCamera_WaitForArrival();
   Script_PlaySong(SE_148);
   FieldScript_WaitFrames(240);
-  if (GameFlag_IsSet(FLAG_GARET_WATCHING_ROCKS) != 0) {
+  if (GameFlag_Get(FLAG_GARET_WATCHING_ROCKS) != 0) {
     FieldCamera_SetSpeed(PIXELS(4), PIXELS(1) / 2);
     FieldCamera_MoveTo(PIXELS(854), 0, PIXELS(584), 1);
     FieldCamera_WaitForArrival();
@@ -1144,8 +1144,8 @@ static void AltinPeak_ReadFallingRockSign(void) {
   FieldScript_Start();
   message = MsgAltinWatchFallingRocks;
   FieldMessage_Show(message, 1);
-  if (GameFlag_IsSet(FLAG_ALTIN_PEAK_BOULDER_FALLEN) == 0 &&
-      GameFlag_IsSet(FLAG_FUCHIN_FALLS_ORB_OF_FORCE_FOUND) == 0) {
+  if (GameFlag_Get(FLAG_ALTIN_PEAK_BOULDER_FALLEN) == 0 &&
+      GameFlag_Get(FLAG_FUCHIN_FALLS_ORB_OF_FORCE_FOUND) == 0) {
     // Bring Garet out to inspect the warning and demonstrate the danger.
     GameFlag_Set(FLAG_GARET_WATCHING_ROCKS);
     ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(4) / 5, PIXELS(2) / 5);
@@ -1228,7 +1228,7 @@ const struct MapEvent *Map_GetEvents(void) {
   const struct MapEvent *table;
 
   if (gGameState.mapId == (s32)&MapId_AltinPeakFirstWaterBeast) {
-    if (GameFlag_Test(FLAG_ALTIN_MINE_FIRST_DRAIN) != 0) {
+    if (GameFlag_Get(FLAG_ALTIN_MINE_FIRST_DRAIN) != 0) {
       table = gAltinPeak_FirstWaterBeastEventsDrained;
     } else {
       table = gAltinPeak_FirstWaterBeastEvents;
@@ -1443,7 +1443,7 @@ static void AltinPeak_ShowFirstBeastRoute(void) {
   Object_SetTargetAndCallback(LOCALID_FIRST_WATER_BEAST,
                               OBJ_EVENT_LINK_KEEP_MOTION | LOCALID_PARTY_LEADER,
                               gAltinPeak_FaceLeaderScript);
-  Engine_GameFlagSet(FLAG_ALTIN_PEAK_FIRST_BEAST_ROUTE_SEEN);
+  GameFlag_Set(FLAG_ALTIN_PEAK_FIRST_BEAST_ROUTE_SEEN);
   FieldScript_End();
 }
 
@@ -1580,13 +1580,13 @@ static void AltinPeak_RestoreFirstWaterBeastRoom(void) {
   struct ObjectEvent *objectEvent;
   struct MapGridScrollWork *grid;
 
-  if (GameFlag_Test(FLAG_KEEP_PARTY_POSITION) == 0) {
+  if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) == 0) {
     if (gGameState.warpDest == WARP_DEST_AFTER_BATTLE) {
       AltinPeak_AwardFrostJewelAndDrain();
     }
   }
   AltinPeak_StartPaletteAnimation();
-  if (GameFlag_Test(FLAG_ALTIN_MINE_FIRST_DRAIN) == 0) {
+  if (GameFlag_Get(FLAG_ALTIN_MINE_FIRST_DRAIN) == 0) {
     Engine_ObjectEventSetPosition(LOCALID_FIRST_WATER_BEAST_ROOM_PUDDLE, 0, 0);
   } else {
     objectEvent = ObjectEvent_GetById(LOCALID_FIRST_WATER_BEAST_ROOM_PUDDLE);
@@ -1601,11 +1601,11 @@ static void AltinPeak_RestoreFirstWaterBeastRoom(void) {
     objectEvent->priorityFlags = OBJ_EVENT_PRIORITY_UNDERFOOT;
     ObjectEvent_SetSpriteFlags(objectEvent, 0);
   }
-  opened = GameFlag_Test(FLAG_ALTIN_MINE_FIRST_DRAIN);
+  opened = GameFlag_Get(FLAG_ALTIN_MINE_FIRST_DRAIN);
   if (opened == 0) {
     ObjectGroup_ConfigureChildValue(LOCALID_FIRST_WATER_BEAST,
                                     SPRITE_COLOR_RBG);
-    flag = GameFlag_Test(FLAG_ALTIN_PEAK_SECOND_BEAST_ROUTE_SEEN);
+    flag = GameFlag_Get(FLAG_ALTIN_PEAK_SECOND_BEAST_ROUTE_SEEN);
     if (flag != 0) {
       Engine_ObjectEventSetAnimation(
           LOCALID_FIRST_WATER_BEAST_ROOM_SECOND_PUDDLE, 0);
@@ -1627,7 +1627,7 @@ static void AltinPeak_RestoreFirstWaterBeastRoom(void) {
       AltinPeak_StartSpitting(PIXELS(130), 0, PIXELS(168), 0);
       return;
     }
-    if (GameFlag_Test(FLAG_ALTIN_PEAK_FIRST_BEAST_ROUTE_SEEN) == 0) {
+    if (GameFlag_Get(FLAG_ALTIN_PEAK_FIRST_BEAST_ROUTE_SEEN) == 0) {
       return;
     }
     Engine_ObjectEventSetAnimation(LOCALID_FIRST_WATER_BEAST_ROOM_SECOND_PUDDLE,
@@ -1652,7 +1652,7 @@ static void AltinPeak_RestoreFirstWaterBeastRoom(void) {
     MapGrid_CopyCellAttributes(0, 0, 1, 2, 3, 14);
     grid->flags &= 0xfdff;
     AltinPeak_MarkObjectEventTerrainCell(LOCALID_FIRST_WATER_BEAST_ROOM_PUDDLE);
-    if (GameFlag_Test(FLAG_PUDDLE_FROZEN) != 0) {
+    if (GameFlag_Get(FLAG_PUDDLE_FROZEN) != 0) {
       Engine_ObjectEventSetAnimation(LOCALID_FIRST_WATER_BEAST_ROOM_PUDDLE,
                                      PUDDLE_ANIMATION_FROZEN);
       MapGrid_CopyCellAttributes(7, 13, 1, 1, 9, 13);
@@ -1662,7 +1662,7 @@ static void AltinPeak_RestoreFirstWaterBeastRoom(void) {
     }
     AltinPeak_MarkObjectEventTerrainCell(
         LOCALID_FIRST_WATER_BEAST_ROOM_SECOND_PUDDLE);
-    if (GameFlag_Test(FLAG_SECOND_PUDDLE_FROZEN) != 0) {
+    if (GameFlag_Get(FLAG_SECOND_PUDDLE_FROZEN) != 0) {
       Engine_ObjectEventSetAnimation(
           LOCALID_FIRST_WATER_BEAST_ROOM_SECOND_PUDDLE,
           PUDDLE_ANIMATION_FROZEN);
@@ -1678,18 +1678,18 @@ static void AltinPeak_RestoreFirstWaterBeastRoom(void) {
 /// AltinPeakSecondWaterBeast: after its beast's battle the second drain runs;
 /// while the water is up the beast spits it; the switch is restored.
 static void AltinPeak_RestoreSecondWaterBeastRoom(void) {
-  if (GameFlag_IsSet(FLAG_ALTIN_MINE_SECOND_DRAIN) != 0) {
+  if (GameFlag_Get(FLAG_ALTIN_MINE_SECOND_DRAIN) != 0) {
     ((struct MapGridScrollWork *)gMapGridWork[0])->flags &= ~0x200;
     ObjectEvent_SetPosition(LOCALID_SECOND_WATER_BEAST, 0, 0);
   } else {
     AltinPeak_StartPaletteAnimation();
-    if (GameFlag_IsSet(FLAG_KEEP_PARTY_POSITION) == 0 &&
+    if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) == 0 &&
         gGameState.warpDest == WARP_DEST_AFTER_BATTLE) {
       AltinPeak_DrainAfterSecondBeast();
     } else {
       MapGrid_CopyCellAttributes(38, 24, 1, 2, 37, 24);
       MapGrid_CopyCellAttributes(44, 23, 1, 2, 45, 23);
-      if (GameFlag_IsSet(FLAG_ALTIN_MINE_SECOND_DRAIN) == 0) {
+      if (GameFlag_Get(FLAG_ALTIN_MINE_SECOND_DRAIN) == 0) {
         ObjectEvent_SetChildValue(LOCALID_SECOND_WATER_BEAST, SPRITE_COLOR_RBG);
         Engine_ObjectEventSetAnimation(LOCALID_SECOND_WATER_BEAST,
                                        WATER_BEAST_ANIMATION_SPIT);
@@ -1697,7 +1697,7 @@ static void AltinPeak_RestoreSecondWaterBeastRoom(void) {
       }
     }
   }
-  if (GameFlag_IsSet(FLAG_ALTIN_PEAK_SECOND_WATER_BEAST_ROOM_SWITCH) != 0) {
+  if (GameFlag_Get(FLAG_ALTIN_PEAK_SECOND_WATER_BEAST_ROOM_SWITCH) != 0) {
     MapGrid_CopyCellAttributes(0, 0, 1, 1, 24, 80);
     MapGrid_CopyCellsTo(0, 1, 24, 11, 1, 2);
   } else {
@@ -1711,7 +1711,7 @@ static void AltinPeak_RestoreSecondWaterBeastRoom(void) {
 /// ALTIN_PEAK_SOUTH_ENTRANCE_FROM_ALPINE_CROSSING_WEST or _EAST, shows no area
 /// name.
 static void AltinPeak_RestoreSouthEntranceRoom(void) {
-  if (GameFlag_IsSet(FLAG_ALTIN_MINE_SECOND_DRAIN) != 0) {
+  if (GameFlag_Get(FLAG_ALTIN_MINE_SECOND_DRAIN) != 0) {
     ((struct MapGridScrollWork *)gMapGridWork[0])->flags &= ~0x200;
   } else {
     MapGrid_CopyCellAttributes(52, 42, 1, 1, 53, 42);
@@ -1732,17 +1732,17 @@ static void AltinPeak_RestoreSouthEntranceRoom(void) {
 /// are restored.
 static void AltinPeak_RestoreThirdWaterBeastRoom(void) {
 
-  if (GameFlag_IsSet(FLAG_ALTIN_MINE_THIRD_DRAIN) != 0) {
+  if (GameFlag_Get(FLAG_ALTIN_MINE_THIRD_DRAIN) != 0) {
     ((struct MapGridScrollWork *)gMapGridWork[0])->flags &= ~0x200;
     ObjectEvent_SetPosition(LOCALID_THIRD_WATER_BEAST, 0, 0);
   } else {
-    if (GameFlag_IsSet(FLAG_KEEP_PARTY_POSITION) == 0) {
+    if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) == 0) {
       if (gGameState.warpDest == WARP_DEST_AFTER_BATTLE) {
         AltinPeak_DrainAfterThirdBeast();
       }
     }
     AltinPeak_StartPaletteAnimation();
-    if (GameFlag_IsSet(FLAG_ALTIN_MINE_THIRD_DRAIN) == 0) {
+    if (GameFlag_Get(FLAG_ALTIN_MINE_THIRD_DRAIN) == 0) {
       ObjectEvent_SetChildValue(LOCALID_THIRD_WATER_BEAST, SPRITE_COLOR_RBG);
       Engine_ObjectEventSetAnimation(LOCALID_THIRD_WATER_BEAST,
                                      WATER_BEAST_ANIMATION_SPIT);
@@ -1750,7 +1750,7 @@ static void AltinPeak_RestoreThirdWaterBeastRoom(void) {
     }
   }
   AltinPeak_MarkObjectEventTerrainCell(LOCALID_THIRD_WATER_BEAST_ROOM_PUDDLE);
-  if (GameFlag_IsSet(FLAG_PUDDLE_FROZEN) != 0) {
+  if (GameFlag_Get(FLAG_PUDDLE_FROZEN) != 0) {
     Engine_ObjectEventSetAnimation(LOCALID_THIRD_WATER_BEAST_ROOM_PUDDLE,
                                    PUDDLE_ANIMATION_FROZEN);
     MapGrid_CopyCellAttributes(23, 13, 1, 1, 25, 13);
@@ -1761,7 +1761,7 @@ static void AltinPeak_RestoreThirdWaterBeastRoom(void) {
           OBJ_EVENT_PRIORITY_UNDERFOOT | objectEvent->priorityFlags;
     }
   }
-  if (GameFlag_IsSet(FLAG_ALTIN_PEAK_THIRD_WATER_BEAST_ROOM_SWITCH) != 0) {
+  if (GameFlag_Get(FLAG_ALTIN_PEAK_THIRD_WATER_BEAST_ROOM_SWITCH) != 0) {
     MapGrid_CopyCellAttributes(10, 72, 1, 1, 11, 73);
     MapGrid_CopyCellsTo(49, 32, 11, 4, 1, 2);
   } else {
@@ -1777,12 +1777,12 @@ static void AltinPeak_RestorePoolRoom(void) {
   struct ObjectEvent *pillar;
 
   if (gGameState.warpDest == ALTIN_PEAK_POOL_NORTH_FROM_SOUTHWEST) {
-    if (GameFlag_IsSet(FLAG_KEEP_PARTY_POSITION) == 0) {
+    if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) == 0) {
       ObjectEvent_SetPosition(LOCALID_CART, PIXELS(358), PIXELS(104));
     }
   }
   AltinPeak_MarkObjectEventTerrainCell(LOCALID_POOL_ROOM_PUDDLE);
-  if (GameFlag_IsSet(FLAG_PUDDLE_FROZEN) != 0) {
+  if (GameFlag_Get(FLAG_PUDDLE_FROZEN) != 0) {
     pillar = ObjectEvent_Get(LOCALID_POOL_ROOM_PUDDLE);
     Engine_ObjectEventSetAnimation(LOCALID_POOL_ROOM_PUDDLE,
                                    PUDDLE_ANIMATION_FROZEN);
@@ -1792,10 +1792,10 @@ static void AltinPeak_RestorePoolRoom(void) {
           OBJ_EVENT_PRIORITY_UNDERFOOT | pillar->priorityFlags;
     }
   }
-  if (GameFlag_IsSet(FLAG_ALTIN_MINE_THIRD_DRAIN) != 0) {
+  if (GameFlag_Get(FLAG_ALTIN_MINE_THIRD_DRAIN) != 0) {
     ((struct MapGridScrollWork *)gMapGridWork[0])->flags &= ~0x200;
   }
-  if (GameFlag_IsSet(FLAG_ALTIN_PEAK_POOL_ROOM_SWITCH) != 0) {
+  if (GameFlag_Get(FLAG_ALTIN_PEAK_POOL_ROOM_SWITCH) != 0) {
     MapGrid_CopyCellAttributes(17, 93, 1, 1, 16, 92);
     MapGrid_CopyCellsTo(46, 29, 16, 28, 1, 2);
   } else {
@@ -1813,7 +1813,7 @@ static void AltinPeak_RestoreSpritzRoom(void) {
   ObjectEvent_SetSpriteFlags(objectEvent, 0);
   AltinPeak_SettleSpritzRoomPillar();
   AltinPeak_MarkObjectEventTerrainCell(LOCALID_SPRITZ_ROOM_PUDDLE);
-  if (GameFlag_IsSet(FLAG_PUDDLE_FROZEN) != 0) {
+  if (GameFlag_Get(FLAG_PUDDLE_FROZEN) != 0) {
     Engine_ObjectEventSetAnimation(LOCALID_SPRITZ_ROOM_PUDDLE,
                                    PUDDLE_ANIMATION_FROZEN);
     MapGrid_CopyCellAttributes(0, 0, 1, 1, 26, 26);
@@ -1825,7 +1825,7 @@ static void AltinPeak_RestoreSpritzRoom(void) {
     }
   }
   AltinPeak_MarkObjectEventTerrainCell(LOCALID_SPRITZ_ROOM_SECOND_PUDDLE);
-  if (GameFlag_IsSet(FLAG_SECOND_PUDDLE_FROZEN) != 0) {
+  if (GameFlag_Get(FLAG_SECOND_PUDDLE_FROZEN) != 0) {
     Engine_ObjectEventSetAnimation(LOCALID_SPRITZ_ROOM_SECOND_PUDDLE,
                                    PUDDLE_ANIMATION_FROZEN);
     MapGrid_CopyCellAttributes(1, 0, 1, 1, 17, 10);
@@ -1837,7 +1837,7 @@ static void AltinPeak_RestoreSpritzRoom(void) {
     }
   }
   AltinPeak_MarkObjectEventTerrainCell(LOCALID_SPRITZ_ROOM_THIRD_PUDDLE);
-  if (GameFlag_IsSet(FLAG_THIRD_PUDDLE_FROZEN) != 0) {
+  if (GameFlag_Get(FLAG_THIRD_PUDDLE_FROZEN) != 0) {
     Engine_ObjectEventSetAnimation(LOCALID_SPRITZ_ROOM_THIRD_PUDDLE,
                                    PUDDLE_ANIMATION_FROZEN);
     MapGrid_CopyCellAttributes(1, 0, 1, 1, 26, 15);
@@ -1850,7 +1850,7 @@ static void AltinPeak_RestoreSpritzRoom(void) {
   }
   FieldScheduler_AddCallback(AltinPeak_UpdateFrostPillarPriority,
                              TASK_PRIORITY_MAP);
-  if (GameFlag_IsSet(FLAG_ALTIN_PEAK_SPRITZ_ROOM_SWITCH) != 0) {
+  if (GameFlag_Get(FLAG_ALTIN_PEAK_SPRITZ_ROOM_SWITCH) != 0) {
     MapGrid_CopyCellAttributes(30, 82, 1, 1, 29, 81);
     MapGrid_CopyCellsTo(46, 28, 29, 17, 1, 2);
   } else {
@@ -1877,12 +1877,12 @@ static void AltinPeak_RestoreFallingRocksRoom(void) {
   objectEvent->sprite->rotation = 0x8000;
   ObjectEvent_GetById(LOCALID_FALLING_ROCK_SIGN)->motionFlags = 0;
   ObjectEvent_GetById(LOCALID_FALLING_ROCK_SIGN)->y.fixed = -PIXELS(28);
-  if (GameFlag_IsSet(FLAG_ALTIN_PEAK_BOULDER_FALLEN)) {
+  if (Script_GetFlag(FLAG_ALTIN_PEAK_BOULDER_FALLEN)) {
     objectEvent->x.fixed += PIXELS(14);
     objectEvent->y.fixed += -PIXELS(8);
     objectEvent->sprite->rotation = 0xc000;
   }
-  if (GameFlag_Test(FLAG_ALTIN_PEAK_BOULDER_FALLEN)) {
+  if (GameFlag_Get(FLAG_ALTIN_PEAK_BOULDER_FALLEN)) {
     MapGrid_CopyCellsTo(25, 36, 43, 36, 11, 9);
     MapGrid_CopyCellAttributes(25, 35, 10, 5, 43, 35);
     MapGrid_CenterOnFollowedPoint();
@@ -1890,7 +1890,7 @@ static void AltinPeak_RestoreFallingRocksRoom(void) {
   }
   if (gGameState.warpDest ==
           ALTIN_PEAK_FALLING_ROCKS_FROM_ALTIN_PEAK_HYDROS_STATUE &&
-      !GameFlag_Test(FLAG_KEEP_PARTY_POSITION)) {
+      !GameFlag_Get(FLAG_KEEP_PARTY_POSITION)) {
     FieldScript_Start();
     ObjectEvent_GetById(LOCALID_PARTY_LEADER)->y.fixed = -PIXELS(88);
     FieldCamera_MoveWithinMapBounds(PIXELS(792), -PIXELS(88), PIXELS(577), 0);
@@ -1908,7 +1908,7 @@ static void AltinPeak_RestoreHydrosStatueRoom(void) {
   struct ObjectEvent *objectEvent;
   s16 warpDest;
 
-  statuesDefeated = GameFlag_Test(FLAG_HYDROS_STATUES_DEFEATED);
+  statuesDefeated = GameFlag_Get(FLAG_HYDROS_STATUES_DEFEATED);
   if (statuesDefeated != 0) {
     Engine_ObjectEventSetPosition(LOCALID_STATUE, 0, 0);
     Engine_ObjectEventSetPosition(LOCALID_STATUE_SHADOW, 0, 0);
@@ -1924,14 +1924,14 @@ static void AltinPeak_RestoreHydrosStatueRoom(void) {
   warpDest = gGameState.warpDest;
   if (warpDest == ALTIN_PEAK_HYDROS_STATUE_FROM_ALTIN_PEAK_FALLING_ROCKS ||
       warpDest == 98) {
-    if (GameFlag_Test(FLAG_KEEP_PARTY_POSITION) == 0) {
+    if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) == 0) {
       leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
       FieldScript_Start();
       leader->y.fixed = PIXELS(16);
       FieldScript_End();
     }
   } else if (warpDest == WARP_DEST_AFTER_BATTLE) {
-    if (GameFlag_Test(FLAG_KEEP_PARTY_POSITION) == 0) {
+    if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) == 0) {
       AltinPeak_CelebrateHydrosVictory();
     }
   }
@@ -2140,7 +2140,7 @@ static void AltinPeak_DrainAfterSecondBeast(void) {
   FieldScript_Start();
   Engine_ObjectEventSetPosition(LOCALID_SECOND_WATER_BEAST, 0, 0);
   Engine_ObjectEventSetPosition(LOCALID_CART, PIXELS(328), PIXELS(424));
-  Engine_GameFlagSet(FLAG_ALTIN_PEAK_SECOND_WATER_BEAST_ROOM_SWITCH);
+  GameFlag_Set(FLAG_ALTIN_PEAK_SECOND_WATER_BEAST_ROOM_SWITCH);
   AltinPeak_ToggleSecondWaterBeastRoomSwitchCells();
   MapGrid_CenterOnFollowedPoint();
   WaitFrames(1);
@@ -2160,7 +2160,7 @@ static void AltinPeak_DrainAfterThirdBeast(void) {
   FieldScript_Start();
   Engine_ObjectEventSetPosition(LOCALID_THIRD_WATER_BEAST, 0, 0);
   Engine_ObjectEventSetPosition(LOCALID_CART, PIXELS(488), PIXELS(138));
-  Engine_GameFlagSet(FLAG_ALTIN_PEAK_THIRD_WATER_BEAST_ROOM_SWITCH);
+  GameFlag_Set(FLAG_ALTIN_PEAK_THIRD_WATER_BEAST_ROOM_SWITCH);
   AltinPeak_ToggleThirdWaterBeastRoomSwitchCells();
   MapGrid_CenterOnFollowedPoint();
   WaitFrames(1);

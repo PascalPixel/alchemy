@@ -282,7 +282,7 @@ static void EventScript_HideRevealedPath(void) {
 static void EventScript_DouseRapierRoomFire(void) {
   FieldScript_Start();
   Engine_ObjectEventSetPosition(LOCALID_RAPIER_ROOM_FIRE, 0, 0);
-  Engine_GameFlagSet(FLAG_BILIBIN_CAVE_SECOND_FIRE_DOUSED);
+  GameFlag_Set(FLAG_BILIBIN_CAVE_SECOND_FIRE_DOUSED);
   FieldScript_End();
 }
 
@@ -361,9 +361,9 @@ static void BilibinCave_UpdateThirdPuddleFromTorches(void) {
   } else {
     GameFlag_Clear(FLAG_MAPSEC_TEMP_04);
   }
-  if (GameFlag_IsSet(FLAG_MAPSEC_TEMP_03) != 0 ||
-      GameFlag_IsSet(FLAG_MAPSEC_TEMP_04) != 0) {
-    if (GameFlag_IsSet(FLAG_MAPSEC_TEMP_02) == 0) {
+  if (GameFlag_Get(FLAG_MAPSEC_TEMP_03) != 0 ||
+      GameFlag_Get(FLAG_MAPSEC_TEMP_04) != 0) {
+    if (Script_GetFlag(FLAG_MAPSEC_TEMP_02) == 0) {
       FieldScript_Start();
       FieldScript_WaitFrames(40);
       Script_PlaySong(SE_HIDDEN_PASSAGE_OPEN);
@@ -376,7 +376,7 @@ static void BilibinCave_UpdateThirdPuddleFromTorches(void) {
     }
     GameFlag_Set(FLAG_MAPSEC_TEMP_02);
   } else {
-    if (GameFlag_IsSet(FLAG_MAPSEC_TEMP_02) != 0) {
+    if (Script_GetFlag(FLAG_MAPSEC_TEMP_02) != 0) {
       FieldScript_Start();
       FieldScript_WaitFrames(40);
       Script_PlaySong(SE_220);
@@ -397,7 +397,7 @@ static void BilibinCave_UpdateThirdPuddleFromTorches(void) {
 static void EventScript_GrowPlant(void) {
 
   MapGrid_CopyCellAttributes(31, 0, 1, 1, 8, 13);
-  Engine_GameFlagSet(FLAG_MAPSEC_TEMP_05);
+  GameFlag_Set(FLAG_MAPSEC_TEMP_05);
 }
 
 /// Stepping on coord event 20 in Bilibin Cave (MapId_BilibinCaveIce): from here
@@ -431,7 +431,7 @@ s32 BilibinCave_Initialize(void) {
 
 /// Sets up the Bilibin Cave Entrance: the vine Growth has grown, with its cell.
 static void BilibinCave_RestoreEntrance(void) {
-  if (GameFlag_Test(FLAG_MAPSEC_TEMP_05) != 0) {
+  if (GameFlag_Get(FLAG_MAPSEC_TEMP_05) != 0) {
 
     MapGrid_CopyCellAttributes(31, 0, 1, 1, 8, 13);
     Engine_ObjectEventSetAnimation(LOCALID_SPROUT, 0);
@@ -450,7 +450,7 @@ static void BilibinCave_RestoreRapierRoom(void) {
   Engine_ObjectEventSetAnimation(LOCALID_RAPIER_ROOM_EAST_TORCH,
                                  TORCH_ANIMATION_LIT);
 
-  if (GameFlag_Test(FLAG_BILIBIN_CAVE_SECOND_FIRE_DOUSED) != 0) {
+  if (GameFlag_Get(FLAG_BILIBIN_CAVE_SECOND_FIRE_DOUSED) != 0) {
     Engine_ObjectEventSetPosition(LOCALID_RAPIER_ROOM_FIRE, 0, 0);
   } else {
     ObjectEvent_SetSpriteFlags(ObjectEvent_GetById(LOCALID_RAPIER_ROOM_FIRE),
@@ -524,7 +524,7 @@ static void BilibinCave_RestoreIceRoom(void) {
   BilibinCave_EmptyObjectEventSetupHook(LOCALID_FIRST_TORCH + 5);
   // Restore the surface exposed by Douse, including its metatile behavior and
   // priority.
-  if (GameFlag_IsSet(FLAG_BILIBIN_CAVE_FIRST_FIRE_DOUSED) != 0) {
+  if (GameFlag_Get(FLAG_BILIBIN_CAVE_FIRST_FIRE_DOUSED) != 0) {
     ObjectEvent_SetPosition(LOCALID_ICE_ROOM_FIRE, 0, 0);
     Engine_ObjectEventSetAnimation(LOCALID_FIRST_PUDDLE,
                                    PUDDLE_ANIMATION_PILLAR);
@@ -545,7 +545,7 @@ static void BilibinCave_RestoreIceRoom(void) {
   // cells.
   Engine_ObjectEventSetAnimation(LOCALID_SECOND_PUDDLE,
                                  PUDDLE_ANIMATION_PUDDLE);
-  if (GameFlag_IsSet(FLAG_MAPSEC_TEMP_02) != 0) {
+  if (GameFlag_Get(FLAG_MAPSEC_TEMP_02) != 0) {
     destinationCellX = 36;
     Engine_ObjectEventSetAnimation(LOCALID_THIRD_PUDDLE,
                                    PUDDLE_ANIMATION_PUDDLE);
@@ -558,10 +558,10 @@ static void BilibinCave_RestoreIceRoom(void) {
     MapGrid_CopyCellAttributes(1, 1, 1, 1, destinationCellX, 22);
     MapGrid_CopyCellAttributes(1, 2, 1, 1, destinationCellX, 24);
   }
-  if (GameFlag_IsSet(FLAG_MAPSEC_TEMP_03) != 0) {
+  if (GameFlag_Get(FLAG_MAPSEC_TEMP_03) != 0) {
     ObjectEvent_SetPosition(LOCALID_THIRD_TORCH, PIXELS(570), PIXELS(376));
   }
-  if (GameFlag_IsSet(FLAG_MAPSEC_TEMP_04) != 0) {
+  if (GameFlag_Get(FLAG_MAPSEC_TEMP_04) != 0) {
     ObjectEvent_SetPosition(LOCALID_FOURTH_TORCH, PIXELS(570), PIXELS(376));
   }
 }

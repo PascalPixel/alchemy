@@ -313,7 +313,7 @@ const u32 *Map_GetWarps(void) { return gAltin_Warps; }
 const struct ObjectEventTemplate *Map_GetObjectEventTemplates(void) {
   s32 mapId = gGameState.mapId;
   if (mapId == MAP_ALTIN_VILLAGE) {
-    if (GameFlag_Test(FLAG_HYDROS_STATUES_DEFEATED)) {
+    if (GameFlag_Get(FLAG_HYDROS_STATUES_DEFEATED)) {
       gAltin_ObjectEventTemplates[LOCALID_WOMAN_WATER_LUCK -
                                   LOCALID_FIRST_PLACED]
           .talkFacing = TALK_FACING_PARTY;
@@ -324,12 +324,12 @@ const struct ObjectEventTemplate *Map_GetObjectEventTemplates(void) {
     return gAltin_ObjectEventTemplates;
   }
   if (mapId == MAP_ALTIN_HOUSES) {
-    if (GameFlag_Test(FLAG_ALTIN_MINE_FIRST_DRAIN))
+    if (GameFlag_Get(FLAG_ALTIN_MINE_FIRST_DRAIN))
       gAltinInteriors_ObjectEventTemplates[LOCALID_ROOM_ONE_SECOND_GUEST -
                                            LOCALID_FIRST_PLACED]
           .talkFacing = TALK_FACING_PARTY_AND_BACK;
-    if (GameFlag_Test(FLAG_ALTIN_MINE_SECOND_DRAIN) ||
-        GameFlag_Test(FLAG_ALTIN_MINE_THIRD_DRAIN))
+    if (GameFlag_Get(FLAG_ALTIN_MINE_SECOND_DRAIN) ||
+        GameFlag_Get(FLAG_ALTIN_MINE_THIRD_DRAIN))
       gAltinInteriors_ObjectEventTemplates[LOCALID_ROOM_TWO_SECOND_GUEST -
                                            LOCALID_FIRST_PLACED]
           .talkFacing = TALK_FACING_PARTY_AND_BACK;
@@ -389,14 +389,14 @@ static void Altin_TalkToThirstyOldWoman(void) {
   struct ObjectEvent *leader;
 
   FieldScript_Start();
-  if (GameFlag_IsSet(FLAG_HYDROS_STATUES_DEFEATED) != 0) {
+  if (GameFlag_Get(FLAG_HYDROS_STATUES_DEFEATED) != 0) {
     FieldScript_SetMessageId(MsgAltinOnesWhoDefeatedWaterBeasts);
     Script_AskYesNo(LOCALID_THIRSTY_OLD_WOMAN, 0);
   } else {
     Engine_ObjectEventSetAnimation(LOCALID_THIRSTY_OLD_WOMAN, ANIM_SHAKE_HEAD);
     FieldScript_SetMessageId(MsgAltinWeCantDrinkWaterMonsters);
     Script_ShowMessageAndWait(LOCALID_THIRSTY_OLD_WOMAN, 0, 10);
-    if (GameFlag_IsSet(FLAG_ALTIN_WATER_BEAST_LEFT) == 0) {
+    if (GameFlag_Get(FLAG_ALTIN_WATER_BEAST_LEFT) == 0) {
       beast = ObjectEvent_GetById(LOCALID_WATER_BEAST);
 
       FieldCamera_GetScriptObject()->motionFlags = 0;
@@ -492,7 +492,7 @@ static s32 Leader_FacesCounter(void) {
 /// counter.
 static void AltinInteriors_TalkToWeaponMerchant(void) {
 
-  if (GameFlag_Test(FLAG_WATER_DRAINED) == 0) {
+  if (GameFlag_Get(FLAG_WATER_DRAINED) == 0) {
     FieldScript_Start();
     FieldScript_SetMessageId(MsgAltinDoWantWeapons);
 
@@ -508,7 +508,7 @@ static void AltinInteriors_TalkToWeaponMerchant(void) {
 
   FieldScript_Start();
   FieldScript_SetMessageId(MsgAltinThankGoodnessWaterHasReceded);
-  if (GameFlag_Test(FLAG_HYDROS_STATUES_DEFEATED) != 0) {
+  if (GameFlag_Get(FLAG_HYDROS_STATUES_DEFEATED) != 0) {
     FieldScript_SetMessageId(MsgAltinYoullHaveFindPassageIn);
   }
   FieldScript_ShowMessageAndWait(LOCALID_WEAPON_MERCHANT, 0);
@@ -520,7 +520,7 @@ static void AltinInteriors_TalkToWeaponMerchant(void) {
 /// his counter in the houses.
 static void Altin_TalkToArmorMerchant(void) {
 
-  if (GameFlag_Test(FLAG_WATER_DROPPED_TWICE) == 0) {
+  if (GameFlag_Get(FLAG_WATER_DROPPED_TWICE) == 0) {
     FieldScript_Start();
     FieldScript_SetMessageId(MsgAltinMyStoreSubmergedWantSell);
     FieldScript_ShowMessageAndWait(LOCALID_FLOODED_ARMOR_MERCHANT, 0);
@@ -535,7 +535,7 @@ static void Altin_TalkToArmorMerchant(void) {
 
   FieldScript_Start();
   FieldScript_SetMessageId(MsgAltinItsGreatCanSellArmor);
-  if (GameFlag_Test(FLAG_HYDROS_STATUES_DEFEATED) != 0) {
+  if (GameFlag_Get(FLAG_HYDROS_STATUES_DEFEATED) != 0) {
     FieldScript_SetMessageId(MsgAltinHowAboutArentImpressedBy);
   }
   FieldScript_ShowMessageAndWait(LOCALID_ARMOR_MERCHANT, 0);
@@ -544,7 +544,7 @@ static void Altin_TalkToArmorMerchant(void) {
 
 /// Altin's item merchant, the same way: she reopens after the first drop.
 static void Altin_TalkToItemMerchant(void) {
-  if (GameFlag_Test(FLAG_WATER_DROPPED_ONCE) == 0) {
+  if (GameFlag_Get(FLAG_WATER_DROPPED_ONCE) == 0) {
     FieldScript_Start();
     FieldScript_SetMessageId(MsgAltinWillDoIfMyMerchandise);
     FieldScript_ShowMessageAndWait(LOCALID_FLOODED_ITEM_MERCHANT, 0);
@@ -559,7 +559,7 @@ static void Altin_TalkToItemMerchant(void) {
 
   FieldScript_Start();
   FieldScript_SetMessageId(MsgAltinNoneMyGoodsWereDamaged);
-  if (GameFlag_Test(FLAG_HYDROS_STATUES_DEFEATED) != 0) {
+  if (GameFlag_Get(FLAG_HYDROS_STATUES_DEFEATED) != 0) {
     FieldScript_SetMessageId(MsgAltinGirlFromXianBoughtLot);
   }
   FieldScript_ShowMessageAndWait(LOCALID_ITEM_MERCHANT, 0);
@@ -581,7 +581,7 @@ static void AltinInteriors_TalkToInnkeeper(void) {
 
   FieldScript_Start();
 
-  if (GameFlag_Test(FLAG_HYDROS_STATUES_DEFEATED) != 0) {
+  if (GameFlag_Get(FLAG_HYDROS_STATUES_DEFEATED) != 0) {
     FieldScript_SetMessageId(MsgAltinThereSmallTempleWestAltin);
     FieldScript_ShowMessageAndWait(LOCALID_INNKEEPER, 0);
   } else {
@@ -753,9 +753,9 @@ static void Altin_CheckPillarMoved(void) {
   struct ObjectEvent *pillar = ObjectEvent_GetById(LOCALID_STONE_STATUE);
 
   if ((pillar->x.fixed >> 20) == 22) {
-    Engine_GameFlagSet(FLAG_ALTIN_PILLAR_MOVED);
+    GameFlag_Set(FLAG_ALTIN_PILLAR_MOVED);
   } else {
-    GameFlag_ClearBit(FLAG_ALTIN_PILLAR_MOVED);
+    GameFlag_Clear(FLAG_ALTIN_PILLAR_MOVED);
   }
 }
 
@@ -764,18 +764,18 @@ static void Altin_CheckPillarMoved(void) {
 s32 Map_Initialize(void) {
   s16 mapId;
 
-  if (GameFlag_Test(FLAG_ALTIN_MINE_FIRST_DRAIN) != 0) {
-    Engine_GameFlagSet(FLAG_WATER_DROPPED_ONCE);
+  if (GameFlag_Get(FLAG_ALTIN_MINE_FIRST_DRAIN) != 0) {
+    GameFlag_Set(FLAG_WATER_DROPPED_ONCE);
   }
 
-  if (GameFlag_Test(FLAG_ALTIN_MINE_SECOND_DRAIN) != 0 ||
-      GameFlag_Test(FLAG_ALTIN_MINE_THIRD_DRAIN) != 0) {
-    Engine_GameFlagSet(FLAG_WATER_DROPPED_TWICE);
+  if (GameFlag_Get(FLAG_ALTIN_MINE_SECOND_DRAIN) != 0 ||
+      GameFlag_Get(FLAG_ALTIN_MINE_THIRD_DRAIN) != 0) {
+    GameFlag_Set(FLAG_WATER_DROPPED_TWICE);
   }
 
-  if (GameFlag_Test(FLAG_ALTIN_MINE_SECOND_DRAIN) != 0 &&
-      GameFlag_Test(FLAG_ALTIN_MINE_THIRD_DRAIN) != 0) {
-    Engine_GameFlagSet(FLAG_WATER_DRAINED);
+  if (GameFlag_Get(FLAG_ALTIN_MINE_SECOND_DRAIN) != 0 &&
+      GameFlag_Get(FLAG_ALTIN_MINE_THIRD_DRAIN) != 0) {
+    GameFlag_Set(FLAG_WATER_DRAINED);
   }
 
   mapId = gGameState.mapId;
@@ -798,18 +798,18 @@ static void Altin_ApplyWaterLevel(void) {
   leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   // Select the water-level layout area and remove villagers whose areas are
   // flooded.
-  if (GameFlag_IsSet(FLAG_WATER_DRAINED) != 0) {
+  if (GameFlag_Get(FLAG_WATER_DRAINED) != 0) {
     MapGrid_CopyCellsTo(64, 32, 0, 32, 32, 32);
     MapGrid_CopyCellAttributes(64, 32, 32, 32, 0, 0);
     ObjectEvent_DestroyById(LOCALID_FLOODED_ARMOR_MERCHANT);
     ObjectEvent_DestroyById(LOCALID_FLOODED_ITEM_MERCHANT);
-  } else if (GameFlag_IsSet(FLAG_WATER_DROPPED_TWICE) != 0) {
+  } else if (Script_GetFlag(FLAG_WATER_DROPPED_TWICE) != 0) {
     MapGrid_CopyCellsTo(64, 0, 0, 32, 32, 32);
     MapGrid_CopyCellAttributes(64, 0, 32, 32, 0, 0);
     ObjectEvent_DestroyById(LOCALID_OLD_MAN_ROCK_FLUSHED_OUT);
     ObjectEvent_DestroyById(LOCALID_FLOODED_ARMOR_MERCHANT);
     ObjectEvent_DestroyById(LOCALID_FLOODED_ITEM_MERCHANT);
-  } else if (GameFlag_IsSet(FLAG_WATER_DROPPED_ONCE) != 0) {
+  } else if (GameFlag_Get(FLAG_WATER_DROPPED_ONCE) != 0) {
     MapGrid_CopyCellsTo(0, 64, 0, 32, 32, 32);
     MapGrid_CopyCellAttributes(0, 64, 32, 32, 0, 0);
     ObjectEvent_DestroyById(LOCALID_STRONGMAN_GUARDIAN_STATUES);
@@ -823,7 +823,7 @@ static void Altin_ApplyWaterLevel(void) {
   }
   // Restore the remaining beast spitting water, with its sound (SE_170) and
   // its spray.
-  if (GameFlag_IsSet(FLAG_ALTIN_WATER_BEAST_LEFT) != 0) {
+  if (GameFlag_Get(FLAG_ALTIN_WATER_BEAST_LEFT) != 0) {
     ObjectEvent_DestroyById(LOCALID_WATER_BEAST);
   } else {
     Map_QueueMusic(SE_170);
@@ -836,7 +836,7 @@ static void Altin_ApplyWaterLevel(void) {
     GameFlag_Clear(FLAG_SHOW_LOCATION_NAME);
   }
   MapGrid_CopyCellAttributes(0, 33, 4, 3, 20, 41);
-  if (GameFlag_IsSet(FLAG_ALTIN_PILLAR_MOVED) != 0) {
+  if (GameFlag_Get(FLAG_ALTIN_PILLAR_MOVED) != 0) {
     ObjectEvent_SetPosition(LOCALID_STONE_STATUE, PIXELS(360), PIXELS(168));
   }
   ObjectEvent_SetSpriteFlags(ObjectEvent_GetById(LOCALID_STONE_STATUE), 0);
@@ -875,21 +875,21 @@ static void Altin_ApplyWaterLevel(void) {
 static void AltinInteriors_PlaceSheltering(void) {
   struct ObjectEvent *objectEvent;
 
-  if (GameFlag_IsSet(FLAG_WATER_DROPPED_ONCE) == 0) {
+  if (GameFlag_Get(FLAG_WATER_DROPPED_ONCE) == 0) {
     ObjectEvent_SetPosition(LOCALID_ROOM_ONE_GUEST, PIXELS(808), PIXELS(727));
     ObjectEvent_GetById(LOCALID_ROOM_ONE_GUEST)->facing =
         FACING_SOUTH - FACING_STEP;
     ObjectEvent_SetPosition(LOCALID_ROOM_ONE_SECOND_GUEST, PIXELS(794),
                             PIXELS(825));
   }
-  if (GameFlag_IsSet(FLAG_WATER_DROPPED_TWICE) == 0) {
+  if (GameFlag_Get(FLAG_WATER_DROPPED_TWICE) == 0) {
     ObjectEvent_SetPosition(LOCALID_ROOM_TWO_GUEST, PIXELS(560), PIXELS(710));
     ObjectEvent_GetById(LOCALID_ROOM_TWO_GUEST)->facing =
         FACING_EAST + FACING_STEP;
     ObjectEvent_SetPosition(LOCALID_ROOM_TWO_SECOND_GUEST, PIXELS(576),
                             PIXELS(710));
   }
-  if (GameFlag_IsSet(FLAG_WATER_DRAINED) == 0) {
+  if (GameFlag_Get(FLAG_WATER_DRAINED) == 0) {
     ObjectEvent_SetPosition(LOCALID_WEAPON_MERCHANT, PIXELS(295), PIXELS(744));
     ObjectEvent_GetById(LOCALID_WEAPON_MERCHANT)->facing =
         FACING_NORTHWEST + FACING_STEP;

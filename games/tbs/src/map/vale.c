@@ -385,9 +385,9 @@ const struct ObjectEventTemplate *Vale_GetObjectEventTemplates(void) {
   u8 *gameStateBytes = (u8 *)&gGameState;
   if (((struct GameState *)gameStateBytes)->warpDest == VALE_FROM_TITLE)
     return gVale_RepairObjectEventTemplates;
-  if (GameFlag_Test(FLAG_KALAY_REACHED) != 0)
+  if (GameFlag_Get(FLAG_KALAY_REACHED) != 0)
     return gVale_ObjectEventTemplatesAfterKalay;
-  if (GameFlag_Test(FLAG_VALE_PARTY_LEFT) != 0)
+  if (GameFlag_Get(FLAG_VALE_PARTY_LEFT) != 0)
     return gVale_ObjectEventTemplatesAfterLeaving;
   return gVale_ObjectEventTemplates;
 }
@@ -396,7 +396,7 @@ const struct ObjectEventTemplate *Vale_GetObjectEventTemplates(void) {
 static void EventScript_CatchNut(void) {
   FieldScript_Start();
   Engine_ObjectEventSetPosition(LOCALID_NUT, 0, 0);
-  Engine_GameFlagSet(FLAG_VALE_NUT_CAUGHT);
+  GameFlag_Set(FLAG_VALE_NUT_CAUGHT);
   FieldEffect_StartEffectObject22(ITEM_NUT, 3);
   PartyInventory_GiveItem(ITEM_NUT, 0);
   FieldScript_End();
@@ -406,7 +406,7 @@ static void EventScript_CatchNut(void) {
 static void EventScript_CatchNutAfterKalay(void) {
   FieldScript_Start();
   Engine_ObjectEventSetPosition(LOCALID_NUT_AFTER_KALAY, 0, 0);
-  Engine_GameFlagSet(FLAG_VALE_NUT_CAUGHT);
+  GameFlag_Set(FLAG_VALE_NUT_CAUGHT);
   FieldEffect_StartEffectObject22(ITEM_NUT, 3);
   PartyInventory_GiveItem(ITEM_NUT, 0);
   FieldScript_End();
@@ -415,9 +415,9 @@ static void EventScript_CatchNutAfterKalay(void) {
 /// Vale's map events for the story so far: before leaving, after leaving, or
 /// back from Kalay.
 const struct MapEvent *Vale_GetEvents(void) {
-  if (GameFlag_Test(FLAG_KALAY_REACHED) != 0)
+  if (GameFlag_Get(FLAG_KALAY_REACHED) != 0)
     return gVale_EventsAfterKalay;
-  if (GameFlag_Test(FLAG_VALE_PARTY_LEFT) != 0)
+  if (GameFlag_Get(FLAG_VALE_PARTY_LEFT) != 0)
     return gVale_EventsAfterLeaving;
   return gVale_Events;
 }
@@ -426,7 +426,7 @@ const struct MapEvent *Vale_GetEvents(void) {
 /// before the party leaves, and speaks of the tremors after.
 static void EventScript_TalkAboutTheMayorAndTremors(void) {
   FieldScript_Start();
-  if (GameFlag_Test(FLAG_VALE_PARTY_LEFT) != 0) {
+  if (GameFlag_Get(FLAG_VALE_PARTY_LEFT) != 0) {
     FieldScript_SetMessageId(MsgValeTheGroundStillShakes);
     FieldScript_ShowMessageAndWait(LOCALID_GIRL_JEALOUS_OF_GARET, 0);
   } else {
@@ -444,11 +444,11 @@ static void EventScript_TalkAboutTheMayorAndTremors(void) {
 static void EventScript_WarnAboutGoingBeyondKradensCottage(void) {
   s32 flag = FLAG_VALE_ASKED_IF_GOING_TO_KRADEN;
   FieldScript_Start();
-  if (GameFlag_Test(FLAG_VALE_PARTY_LEFT) != 0) {
+  if (GameFlag_Get(FLAG_VALE_PARTY_LEFT) != 0) {
     FieldScript_SetMessageId(MsgValeKradenHasntComeBack);
     FieldScript_ShowMessageAndWait(LOCALID_WOMAN_ON_THE_WAY_TO_KRADEN, 0);
-  } else if (GameFlag_Test(flag) == 0) {
-    Engine_GameFlagSet(flag);
+  } else if (GameFlag_Get(flag) == 0) {
+    GameFlag_Set(flag);
     FieldScript_SetMessageId(MsgValeDoYouNeedToGo);
     ObjectEvent_LinkPair(LOCALID_WOMAN_ON_THE_WAY_TO_KRADEN,
                          LOCALID_PARTY_LEADER, 4);
@@ -466,7 +466,7 @@ static void EventScript_WarnAboutGoingBeyondKradensCottage(void) {
 /// "Garet, you make me so mad sometimes!"
 static void EventScript_ArgueWithGaretsSister(void) {
   FieldScript_Start();
-  if (GameFlag_IsSet(FLAG_VALE_GARET_TOLD_OFF_FOR_FLOWERS) == 0) {
+  if (Script_GetFlag(FLAG_VALE_GARET_TOLD_OFF_FOR_FLOWERS) == 0) {
     GameFlag_Set(FLAG_VALE_GARET_TOLD_OFF_FOR_FLOWERS);
     FieldScript_SetMessageId(MsgValeYouMakeMeSoMad);
     ObjectEvent_ShowEmote(LOCALID_GARETS_SISTER,
@@ -496,7 +496,7 @@ static void EventScript_ArgueWithGaretsSister(void) {
 /// otherwise, since it will not rain for a while, Isaac can fix it later.
 static void EventScript_DoraFretsAboutTheRoof(void) {
   FieldScript_Start();
-  if (GameFlag_Test(FLAG_MAP_TEMP_02) != 0) {
+  if (GameFlag_Get(FLAG_MAP_TEMP_02) != 0) {
     FieldScript_SetMessageId(MsgValeIToldGaretItWas);
   } else {
     FieldScript_SetMessageId(MsgValeItWontRainForSome);
@@ -513,7 +513,7 @@ static void EventScript_AskWhetherJennaHasReturned(void) {
                        20);
   FieldScript_SetMessageId(MsgValeIsJennaBackYet);
   FieldScript_ShowMessageAndWait(LOCALID_YOUNG_MAN_ASKING_FOR_JENNA, 0);
-  Engine_GameFlagSet(FLAG_VALE_ASKED_IF_JENNA_IS_BACK);
+  GameFlag_Set(FLAG_VALE_ASKED_IF_JENNA_IS_BACK);
   FieldScript_End();
 }
 
@@ -543,21 +543,21 @@ static void EventScript_AskAboutTheLackOfTravelers(void) {
                               LOCALID_PARTY_LEADER, 20);
   FieldScript_SetMessageId(MsgValeNoTravelersSinceTheEruption);
   FieldScript_AskYesNoAndShowResponse(LOCALID_MAN_MISSING_TRAVELERS, 0);
-  Engine_GameFlagSet(FLAG_MAPSEC_TEMP_07);
+  GameFlag_Set(FLAG_MAPSEC_TEMP_07);
   FieldScript_End();
 }
 
 /// Walking onto the upper path in Vale (metatile behavior 15): its cells'
 /// metatile behaviors change, remembered in FLAG_MAP_TEMP_10.
 static void EventScript_SetPathCellOverride(void) {
-  Engine_GameFlagSet(FLAG_MAP_TEMP_10);
+  GameFlag_Set(FLAG_MAP_TEMP_10);
   MapGrid_CopyCellAttributes(40, 84, 7, 4, 10, 84);
 }
 
 /// Walking off the upper path in Vale (metatile behavior 14) restores its
 /// cells' metatile behaviors.
 static void EventScript_ClearPathCellOverride(void) {
-  GameFlag_ClearBit(FLAG_MAP_TEMP_10);
+  GameFlag_Clear(FLAG_MAP_TEMP_10);
   MapGrid_CopyCellAttributes(40, 89, 7, 4, 10, 84);
 }
 
@@ -575,7 +575,7 @@ static void EventScript_EnterSanctum(void) {
 /// VALE_TO_SOL_ENTRANCE leads up to Sol Entrance. Jenna says "Kraden is waiting
 /// for us".
 static void EventScript_ApproachMtAleph(void) {
-  if (GameFlag_Test(FLAG_SANCTUM_VISIT_PLANNED) == 0) {
+  if (GameFlag_Get(FLAG_SANCTUM_VISIT_PLANNED) == 0) {
     Vale_HaveJennaStopTheAlephDetour();
   } else {
     Sound_PlaySong(SE_MAP_EXIT);
@@ -624,8 +624,8 @@ static void EventScript_EnterValeInteriorsShops(void) {
 /// left and before Kalay, Dora will not open. "My Isaac would keep his
 /// promise... Go away." Otherwise VALE_TO_VALE_INTERIORS_INN leads in.
 static void EventScript_EnterIsaacsHouse(void) {
-  if (GameFlag_Test(FLAG_VALE_PARTY_LEFT) != 0 &&
-      GameFlag_Test(FLAG_KALAY_REACHED) == 0) {
+  if (GameFlag_Get(FLAG_VALE_PARTY_LEFT) != 0 &&
+      GameFlag_Get(FLAG_KALAY_REACHED) == 0) {
     FieldScript_Start();
     FieldScript_SetMessageId(MsgValeYouCantBeIsaac);
     FieldMessage_ShowAtObject(LOCALID_DORA, 0);
@@ -734,7 +734,7 @@ static void EventScript_WatchThePuppies(void) {
   s32 frame;
   s32 cameraPosition[3];
 
-  if (GameFlag_Test(FLAG_MET_SATUROS_AND_MENARDI) == 0) {
+  if (GameFlag_Get(FLAG_MET_SATUROS_AND_MENARDI) == 0) {
     grid = gMapGridWork[0];
     FieldScript_Start();
     ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(1), PIXELS(1) / 2);
@@ -779,7 +779,7 @@ static void EventScript_WatchThePuppies(void) {
 static void EventScript_TurnBackFromThePuppies(void) {
   s32 msg;
 
-  if (GameFlag_IsSet(FLAG_MET_SATUROS_AND_MENARDI) == 0) {
+  if (GameFlag_Get(FLAG_MET_SATUROS_AND_MENARDI) == 0) {
     FieldScript_Start();
     ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(1), PIXELS(1) / 2);
     msg = MsgValeRrruffRrrruff;
@@ -800,7 +800,7 @@ static void EventScript_ClimbLadderOntoRoof(void) {
   FieldScript_Start();
   MapGrid_CopyCellAttributes(49, 53, 8, 4, 20, 50);
   Vale_MoveObjectEventAlongLowerZPath(LOCALID_PARTY_LEADER, 10, 11, 1);
-  Engine_GameFlagSet(FLAG_MAP_TEMP_04);
+  GameFlag_Set(FLAG_MAP_TEMP_04);
   FieldScript_End();
 }
 
@@ -810,7 +810,7 @@ static void EventScript_ClimbLadderOntoRoof(void) {
 static void EventScript_ClimbDownFromRoof(void) {
   FieldScript_Start();
   Vale_MoveObjectEventAlongHigherZPath(LOCALID_PARTY_LEADER, 13, 10, 1);
-  GameFlag_ClearBit(FLAG_MAP_TEMP_04);
+  GameFlag_Clear(FLAG_MAP_TEMP_04);
   MapGrid_CopyCellAttributes(49, 46, 8, 4, 20, 50);
   FieldScript_End();
 }
@@ -884,7 +884,7 @@ static void EventScript_WarnAgainstSneakingUpMtAleph(void) {
 static void EventScript_RepeatMtAlephWarningFromFirstApproach(void) {
   struct ObjectEvent *guard =
       ObjectEvent_GetById(LOCALID_MAN_GUARDING_MT_ALEPH);
-  if (GameFlag_Test(FLAG_VALE_WARNED_AGAINST_MT_ALEPH) != 0) {
+  if (GameFlag_Get(FLAG_VALE_WARNED_AGAINST_MT_ALEPH) != 0) {
     if (guard->timer == 1) {
       Vale_AskAboutSneakingToAleph(gVale_LeaderFromWestPath,
                                    gVale_GuardFromFirstPausePath);
@@ -940,7 +940,7 @@ static void Vale_AskAboutSneakingToAleph(const s32 *leaderActions,
 static void EventScript_RepeatMtAlephWarningFromSecondApproach(void) {
   struct ObjectEvent *guard =
       ObjectEvent_GetById(LOCALID_MAN_GUARDING_MT_ALEPH);
-  if (GameFlag_Test(FLAG_VALE_WARNED_AGAINST_MT_ALEPH) != 0) {
+  if (GameFlag_Get(FLAG_VALE_WARNED_AGAINST_MT_ALEPH) != 0) {
     if (guard->timer == 2) {
       Vale_AskAboutSneakingToAleph(gVale_LeaderPushedBackPath,
                                    gVale_GuardFromSecondPausePath);
@@ -952,7 +952,7 @@ static void EventScript_RepeatMtAlephWarningFromSecondApproach(void) {
 static void EventScript_RepeatMtAlephWarningAtEitherPause(void) {
   struct ObjectEvent *guard =
       ObjectEvent_GetById(LOCALID_MAN_GUARDING_MT_ALEPH);
-  if (GameFlag_Test(FLAG_VALE_WARNED_AGAINST_MT_ALEPH) != 0) {
+  if (GameFlag_Get(FLAG_VALE_WARNED_AGAINST_MT_ALEPH) != 0) {
     s32 pause;
     pause = guard->timer;
     if (pause == 1) {
@@ -1549,8 +1549,8 @@ s32 Vale_Initialize(void) {
     WindowColor_Apply(((u8 *)&gGameState)[517], ((u8 *)&gGameState)[518]);
     EventScript_MendingTheRoof();
   } else {
-    if (!GameFlag_Test(FLAG_VALE_NUT_CAUGHT)) {
-      if (!GameFlag_Test(FLAG_KALAY_REACHED)) {
+    if (!GameFlag_Get(FLAG_VALE_NUT_CAUGHT)) {
+      if (!GameFlag_Get(FLAG_KALAY_REACHED)) {
         Map_FloatNut(LOCALID_NUT);
       } else {
         Map_FloatNut(LOCALID_NUT_AFTER_KALAY);
@@ -1558,12 +1558,12 @@ s32 Vale_Initialize(void) {
     }
     MapGrid_CopyCellsTo(2, 102, 84, 41, 2, 1);
     MapGrid_CopyCellsTo(1, 102, 83, 41, 1, 1);
-    objectEvent = ObjectEvent_GetById((GameFlag_Test(FLAG_KALAY_REACHED) != 0) +
+    objectEvent = ObjectEvent_GetById((GameFlag_Get(FLAG_KALAY_REACHED) != 0) +
                                       LOCALID_PILLAR);
     ObjectEvent_SetSpriteFlags(objectEvent, 0);
-    if (GameFlag_Test(FLAG_MAPSEC_TEMP_14)) {
+    if (GameFlag_Get(FLAG_MAPSEC_TEMP_14)) {
       objectEvent->x.fixed = 181 << 17;
-    } else if (GameFlag_Test(FLAG_MAPSEC_TEMP_16)) {
+    } else if (GameFlag_Get(FLAG_MAPSEC_TEMP_16)) {
       objectEvent->x.fixed = 197 << 17;
     } else {
       objectEvent->x.fixed = 189 << 17;
@@ -1576,34 +1576,34 @@ s32 Vale_Initialize(void) {
     FieldScheduler_AddCallback(Vale_AdjustPillarPriorityForLeaderHeight,
                                TASK_PRIORITY_MAP);
 #if TBS_PATCH_4
-    if (GameFlag_Test(FLAG_KALAY_REACHED)) {
-      if (GameFlag_Test(FLAG_KEEP_PARTY_POSITION)) {
-        if (GameFlag_Test(FLAG_MAP_TEMP_04)) {
+    if (GameFlag_Get(FLAG_KALAY_REACHED)) {
+      if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION)) {
+        if (GameFlag_Get(FLAG_MAP_TEMP_04)) {
           MapGrid_CopyCellAttributes(49, 53, 8, 4, 20, 50);
         }
-        if (GameFlag_Test(FLAG_MAP_TEMP_10)) {
+        if (GameFlag_Get(FLAG_MAP_TEMP_10)) {
           EventScript_SetPathCellOverride();
         }
       }
     } else {
 #else
-    if (!GameFlag_Test(FLAG_KALAY_REACHED)) {
+    if (!GameFlag_Get(FLAG_KALAY_REACHED)) {
 #endif
-      if (GameFlag_IsSet(FLAG_VALE_PARTY_LEFT)) {
+      if (Script_GetFlag(FLAG_VALE_PARTY_LEFT)) {
         objectEvent = ObjectEvent_GetById(LOCALID_DORA);
         ObjectEvent_SetSpriteFlags(ObjectEvent_GetById(LOCALID_DORA), 0);
         objectEvent->scaleX = 0x28f;
         objectEvent->scaleY = 0x28f;
       }
-      if (GameFlag_Test(FLAG_MET_SATUROS_AND_MENARDI)) {
+      if (GameFlag_Get(FLAG_MET_SATUROS_AND_MENARDI)) {
         Engine_ObjectEventSetPosition(LOCALID_FIRST_PUPPY, 0, 0);
         Engine_ObjectEventSetPosition(LOCALID_FIRST_PUPPY + 1, 0, 0);
         Engine_ObjectEventSetPosition(LOCALID_FIRST_PUPPY + 2, 0, 0);
       }
-      set = GameFlag_Test(FLAG_VALE_PARTY_LEFT);
+      set = GameFlag_Get(FLAG_VALE_PARTY_LEFT);
       if (set == 0) {
-        if (!GameFlag_Test(FLAG_KEEP_PARTY_POSITION)) {
-          if (GameFlag_Test(FLAG_VALE_WARNED_AGAINST_MT_ALEPH)) {
+        if (!GameFlag_Get(FLAG_KEEP_PARTY_POSITION)) {
+          if (GameFlag_Get(FLAG_VALE_WARNED_AGAINST_MT_ALEPH)) {
             ObjectEvent_SetPosition(LOCALID_MAN_GUARDING_MT_ALEPH, PIXELS(256),
                                     PIXELS(456));
 #ifdef UBFIX
@@ -1618,25 +1618,25 @@ s32 Vale_Initialize(void) {
           }
         } else {
           ObjectEvent_GetById(LOCALID_MAN_GUARDING_MT_ALEPH)->paused = set;
-          GameFlag_ClearBit(FLAG_MAP_TEMP_41);
+          GameFlag_Clear(FLAG_MAP_TEMP_41);
         }
         if (gGameState.warpDest != VALE_FROM_TITLE &&
-            !GameFlag_Test(FLAG_KALAY_REACHED)) {
+            !GameFlag_Get(FLAG_KALAY_REACHED)) {
           FieldScheduler_AddCallback(Vale_SynchronizeAlephGuardPause,
                                      TASK_PRIORITY_MAP);
         }
       }
-      if (!GameFlag_IsSet(FLAG_MAPSEC_TEMP_08) &&
+      if (!Script_GetFlag(FLAG_MAPSEC_TEMP_08) &&
           gGameState.warpDest == VALE_FROM_ROOF_MENDED) {
         EventScript_RoofMended();
-        Engine_GameFlagSet(FLAG_MAPSEC_TEMP_08);
+        GameFlag_Set(FLAG_MAPSEC_TEMP_08);
       }
 #if TBS_PATCH_4
-      if (GameFlag_Test(FLAG_KEEP_PARTY_POSITION)) {
-        if (GameFlag_Test(FLAG_MAP_TEMP_04)) {
+      if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION)) {
+        if (GameFlag_Get(FLAG_MAP_TEMP_04)) {
           MapGrid_CopyCellAttributes(49, 53, 8, 4, 20, 50);
         }
-        if (GameFlag_Test(FLAG_MAP_TEMP_10)) {
+        if (GameFlag_Get(FLAG_MAP_TEMP_10)) {
           EventScript_SetPathCellOverride();
         }
       }
@@ -1651,11 +1651,11 @@ s32 Vale_Initialize(void) {
 #endif
     }
 #if !TBS_PATCH_4
-    if (GameFlag_Test(FLAG_KEEP_PARTY_POSITION)) {
-      if (GameFlag_Test(FLAG_MAP_TEMP_04)) {
+    if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION)) {
+      if (GameFlag_Get(FLAG_MAP_TEMP_04)) {
         MapGrid_CopyCellAttributes(49, 53, 8, 4, 20, 50);
       }
-      if (GameFlag_Test(FLAG_MAP_TEMP_10)) {
+      if (GameFlag_Get(FLAG_MAP_TEMP_10)) {
         EventScript_SetPathCellOverride();
       }
     }
@@ -3207,7 +3207,7 @@ static void Vale_UpdateParticlePosition(struct ObjectEvent *particle,
 static void EventScript_PushPillar(void) {
 #if !TBS_PATCH_1
   // Japanese edition only: look up the pillar but do not use the return value.
-  if (GameFlag_Test(FLAG_KALAY_REACHED))
+  if (GameFlag_Get(FLAG_KALAY_REACHED))
     ObjectEvent_GetById(LOCALID_PILLAR_AFTER_KALAY);
   else
     ObjectEvent_GetById(LOCALID_PILLAR);
@@ -3225,25 +3225,25 @@ static void EventScript_SettleMovedPillar(void) {
   s32 column;
 
   MapGrid_CopyCellAttributes(17, 0, 3, 1, 22, 36);
-  if (GameFlag_Test(FLAG_KALAY_REACHED))
+  if (GameFlag_Get(FLAG_KALAY_REACHED))
     objectEvent = ObjectEvent_GetById(LOCALID_PILLAR_AFTER_KALAY);
   else
     objectEvent = ObjectEvent_GetById(LOCALID_PILLAR);
   if (objectEvent == NULL)
     return;
-  GameFlag_Clear(FLAG_MAPSEC_TEMP_14);
-  GameFlag_Clear(FLAG_MAPSEC_TEMP_15);
-  GameFlag_Clear(FLAG_MAPSEC_TEMP_16);
+  Script_ClearFlag(FLAG_MAPSEC_TEMP_14);
+  Script_ClearFlag(FLAG_MAPSEC_TEMP_15);
+  Script_ClearFlag(FLAG_MAPSEC_TEMP_16);
   column = objectEvent->x.fixed >> 20;
   if (column == 22) {
     MapGrid_CopyCellAttributes(17, 1, 1, 1, column, 36);
-    Engine_GameFlagSet(FLAG_MAPSEC_TEMP_14);
+    GameFlag_Set(FLAG_MAPSEC_TEMP_14);
   } else if (column == 23) {
     MapGrid_CopyCellAttributes(17, 1, 1, 1, column, 36);
-    Engine_GameFlagSet(FLAG_MAPSEC_TEMP_15);
+    GameFlag_Set(FLAG_MAPSEC_TEMP_15);
   } else {
     MapGrid_CopyCellAttributes(17, 1, 1, 1, 24, 36);
-    Engine_GameFlagSet(FLAG_MAPSEC_TEMP_16);
+    GameFlag_Set(FLAG_MAPSEC_TEMP_16);
   }
 }
 
@@ -3265,14 +3265,14 @@ static void EventScript_SearchTheLockedDoor(void) {
 static void Vale_SynchronizeAlephGuardPause(void) {
   s32 pauseFlag;
 
-  if (GameFlag_IsSet(FLAG_MAP_TEMP_41) != 0) {
-    pauseFlag = GameFlag_IsSet(FLAG_MENU_OPEN);
+  if (Script_GetFlag(FLAG_MAP_TEMP_41) != 0) {
+    pauseFlag = GameFlag_Get(FLAG_MENU_OPEN);
     if (pauseFlag == 0) {
       ObjectEvent_GetById(LOCALID_MAN_GUARDING_MT_ALEPH)->paused = pauseFlag;
       GameFlag_Clear(FLAG_MAP_TEMP_41);
     }
   } else {
-    if (GameFlag_IsSet(FLAG_MENU_OPEN) != 0) {
+    if (GameFlag_Get(FLAG_MENU_OPEN) != 0) {
       ObjectEvent_GetById(LOCALID_MAN_GUARDING_MT_ALEPH)->paused = 1;
       GameFlag_Set(FLAG_MAP_TEMP_41);
     }
@@ -3283,7 +3283,7 @@ static void Vale_SynchronizeAlephGuardPause(void) {
 static void Vale_AdjustPillarPriorityForLeaderHeight(void) {
   struct ObjectEvent *leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   struct ObjectEvent *pillar;
-  if (GameFlag_Test(FLAG_KALAY_REACHED) != 0)
+  if (GameFlag_Get(FLAG_KALAY_REACHED) != 0)
     pillar = ObjectEvent_GetById(LOCALID_PILLAR_AFTER_KALAY);
   else
     pillar = ObjectEvent_GetById(LOCALID_PILLAR);

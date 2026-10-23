@@ -694,7 +694,7 @@ struct Window *PauseMenu_Open(void) {
 
   rows = PAUSE_MENU_ROWS;
   work = gOptionMenuWork;
-  settingsOnly = GameFlag_TestFar(FLAG_IN_BATTLE_ARENA);
+  settingsOnly = GameFlag_GetFar(FLAG_IN_BATTLE_ARENA);
   first = 0;
   if (settingsOnly != 0) {
     rows = 1;
@@ -778,7 +778,7 @@ s32 PauseMenu_Choose(void) {
 
   redraw = 1;
   rows = PAUSE_MENU_ROWS;
-  settingsOnly = GameFlag_TestFar(FLAG_IN_BATTLE_ARENA);
+  settingsOnly = GameFlag_GetFar(FLAG_IN_BATTLE_ARENA);
   first = 0;
   PauseMenu_Initialize();
   work = gOptionMenuWork;

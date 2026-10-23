@@ -650,7 +650,7 @@ s32 Battle_GatherActions(struct BattleAction *actions) {
   // brighter; the camera takes the command view.
   BattleUnit_ResetGuardLevels();
   Palette_CopyBanksWithBrightnessOffset(8);
-  GameFlag_SetBitFar(FLAG_CHOOSING_COMMANDS);
+  GameFlag_SetFar(FLAG_CHOOSING_COMMANDS);
   firstStrike = &battle->firstStrike;
   BattleCamera_SetCommandView(0);
   BattleMessage_CloseFar();
@@ -708,7 +708,7 @@ s32 Battle_GatherActions(struct BattleAction *actions) {
 
 finish:
   // The battle view again, turned toward the party's turn.
-  GameFlag_ClearBitFar(FLAG_CHOOSING_COMMANDS);
+  GameFlag_ClearFar(FLAG_CHOOSING_COMMANDS);
   BattleCamera_SetDefaultView();
   gBattleViewWork->targetYaw = YAW_PARTY_TURN;
   return count;

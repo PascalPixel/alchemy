@@ -203,10 +203,10 @@ static void TretTreeInteriors_StepOnCocoon(s32 cocoonFlag, s32 sourceColumn,
   if (warpDest == *sLastCocoon)
     return;
   *sLastCocoon = warpDest;
-  if (FLAG_CHECK(cocoonFlag) == 0) {
+  if (GameFlag_Get(cocoonFlag) == 0) {
     MapGrid_CopyCells(sourceColumn, sourceRow, 1, 1, destinationColumn,
                       destinationRow);
-    FLAG_SET(cocoonFlag);
+    GameFlag_Set(cocoonFlag);
     return;
   }
   // On the next touch, replace the cell and spin the object event into the
@@ -236,7 +236,7 @@ static void TretTreeInteriors_StepOnCocoon(s32 cocoonFlag, s32 sourceColumn,
     WaitFrames(1);
   }
   if (warpDest != 50)
-    FLAG_SET(FLAG_ARRIVE_FALLING);
+    GameFlag_Set(FLAG_ARRIVE_FALLING);
 }
 
 // The cocoons' coord events in Tret Tree, one per cocoon: each passes its
@@ -389,7 +389,7 @@ static void EventScript_FightTret(void) {
   s32 hasMia;
   struct ObjectEvent *leader;
 
-  hasMia = FLAG_CHECK(FLAG_IN_PARTY(MIA));
+  hasMia = GameFlag_Get(FLAG_IN_PARTY(MIA));
   SCRIPT_START();
   SE(SONG_FADE_OUT_BGM);
   MESSAGE_SET(MsgTretHmHrooom);
@@ -487,7 +487,7 @@ static void TretTreeInteriors_PlayPostBattleConversation(void) {
   const s32 *actions;
 
   // Restore the party positions before opening the post-battle conversation.
-  hasMia = FLAG_CHECK(FLAG_IN_PARTY(MIA));
+  hasMia = GameFlag_Get(FLAG_IN_PARTY(MIA));
   ObjectEvent_GetById(MIA)->priorityFlags &= ~OBJ_EVENT_PRIORITY_AUTOMATIC;
   ObjectMotion_SetActionVariant(MIA, 2);
   ObjectEvent_GetById(LOCALID_PARTY_LEADER)->priorityFlags &=
@@ -685,7 +685,7 @@ static void TretTreeInteriors_PlayPostBattleConversation(void) {
   WAIT(20);
   ObjectEvent_GetById(LOCALID_PARTY_LEADER)->priorityFlags |=
       OBJ_EVENT_PRIORITY_AUTOMATIC;
-  FLAG_SET(FLAG_TRET_DEFEATED);
+  GameFlag_Set(FLAG_TRET_DEFEATED);
   FieldScheduler_AddCallback(TretPalette_UpdateMapTint, TASK_PRIORITY_MAP);
   SCRIPT_END();
 }
@@ -695,11 +695,11 @@ static void TretTreeInteriors_PlayPostBattleConversation(void) {
 /// playRecoveryScene it first plays the conversation after the battle, unless
 /// FLAG_KEEP_PARTY_POSITION is set.
 static void TretTreeInteriors_ApplyPostBattleState(s32 playRecoveryScene) {
-  if (playRecoveryScene != 0 && FLAG_CHECK(FLAG_KEEP_PARTY_POSITION) == 0)
+  if (playRecoveryScene != 0 && GameFlag_Get(FLAG_KEEP_PARTY_POSITION) == 0)
     TretTreeInteriors_PlayPostBattleConversation();
 
   WaitFrames(1);
-  if (FLAG_CHECK(FLAG_TRET_DEFEATED) != 0) {
+  if (GameFlag_Get(FLAG_TRET_DEFEATED) != 0) {
     s32 openingColumn = 10;
     MapGrid_CopyCells(121, 34, 3, 1, 93, openingColumn);
     {
@@ -747,11 +747,11 @@ s32 TretTreeInteriors_EnterRoom(void) {
   TretTreeInteriors_PlayGesture(TRET_GESTURE_CLOSE_EYES);
   if (gGameState.warpDest != TRET_TREE_INTERIORS_AFTER_FIGHT_TRET)
     FieldScheduler_AddCallback(TretPalette_UpdateMapTint, TASK_PRIORITY_MAP);
-  if (FLAG_CHECK(FLAG_TRET_DEFEATED)) {
+  if (GameFlag_Get(FLAG_TRET_DEFEATED)) {
     Engine_ObjectEventSetPosition(LOCALID_SECOND_TRET, 0, 0);
     Engine_ObjectEventSetPosition(LOCALID_TRET, 0, 0);
   }
-  if (FLAG_CHECK(FLAG_KEEP_PARTY_POSITION))
+  if (Script_GetFlag(FLAG_KEEP_PARTY_POSITION))
     TretTreeInteriors_ApplyFlaggedMapPatches();
   grid = HEAP_SLOT_BLOCK(8);
   // Match the first layer's parallax offset and scale to the room bounds.
@@ -762,10 +762,10 @@ s32 TretTreeInteriors_EnterRoom(void) {
   layer->scaleY = 0xe666;
   // The layout draws four cocoons already torn: the first step on them breaks
   // through.
-  FLAG_SET(FLAG_MAP_TEMP_01);
-  FLAG_SET(FLAG_MAP_TEMP_0D);
-  FLAG_SET(FLAG_MAP_TEMP_0F);
-  FLAG_SET(FLAG_MAP_TEMP_13);
+  GameFlag_Set(FLAG_MAP_TEMP_01);
+  GameFlag_Set(FLAG_MAP_TEMP_0D);
+  GameFlag_Set(FLAG_MAP_TEMP_0F);
+  GameFlag_Set(FLAG_MAP_TEMP_13);
   WaitFrames(1);
   TretTreeInteriors_ApplyPostBattleState(0);
   work = HEAP_SLOT_BLOCK(HEAP_SLOT_FIELD);
@@ -798,7 +798,7 @@ s32 TretTreeInteriors_EnterRoom(void) {
         leaderLocalId, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_REMOVE);
     WAIT(8);
   } else if (warpDest == 10) {
-    if (!FLAG_CHECK(FLAG_KEEP_PARTY_POSITION))
+    if (!GameFlag_Get(FLAG_KEEP_PARTY_POSITION))
       TretTreeInteriors_RunLandingDustScene();
   } else if (warpDest == TRET_TREE_INTERIORS_AFTER_FIGHT_TRET) {
     TretTreeInteriors_ApplyPostBattleState(1);
@@ -1043,7 +1043,7 @@ static void TretTreeInteriors_ApplyFlaggedMapPatches(void) {
 
   for (patchOffset = 0; gTretTreeInteriors_MapPatches[patchOffset] != -1;
        patchOffset += 6) {
-    if (FLAG_CHECK(gTretTreeInteriors_MapPatches[patchOffset]) &&
+    if (GameFlag_Get(gTretTreeInteriors_MapPatches[patchOffset]) &&
         gTretTreeInteriors_MapPatches[patchOffset + 1] != 0)
       MapGrid_CopyCellsTo(gTretTreeInteriors_MapPatches[patchOffset + 2],
                           gTretTreeInteriors_MapPatches[patchOffset + 3],

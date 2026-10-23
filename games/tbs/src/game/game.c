@@ -16,7 +16,7 @@
 ///   Inventory_AddItem, Inventory_Equip,
 ///                   PartyInventory_Add
 ///   Levels          levels.c: Unit_RefreshPsynergy, Unit_LevelUp
-///   Flags           flags.c: GameFlag_Test, GameFlag_SetBit
+///   Flags           flags.c: GameFlag_Get, GameFlag_Set
 ///   Enemies, party  party.c: BattleUnit_Set, Party_AddMember,
 ///                   Party_AdjustCoins
 ///   Classes         classes.c: Class_Determine, Unit_UpdateClass

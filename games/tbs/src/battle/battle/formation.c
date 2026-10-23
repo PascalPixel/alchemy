@@ -52,8 +52,8 @@ s32 BattleFormation_AverageLevel(s32 recordId) {
     if (enemy == 0)
       continue;
     // XXX: flag 0x174 makes every enemy eligible; what sets it would name it.
-    if (enemy->level > 3 && !GameFlag_TestFar(0x174) &&
-        !GameFlag_TestFar(ENEMY_DEFEATED_FLAG(enemyId + ENEMY_ID_FIRST)))
+    if (enemy->level > 3 && !GameFlag_GetFar(0x174) &&
+        !GameFlag_GetFar(ENEMY_DEFEATED_FLAG(enemyId + ENEMY_ID_FIRST)))
       return -2;
     levelTotal += enemy->level;
     enemyCount++;
@@ -143,7 +143,7 @@ s32 BattleFormation_SelectLevelMatchedCandidate(s32 *outMargin) {
        candidateOrUnitIndex++) {
     Enemy_GetDefinitionFar(
         gBattleFormation_LevelMatchedEnemies[candidateOrUnitIndex]);
-    GameFlag_ClearBitFar(ENEMY_DEFEATED_FLAG(
+    GameFlag_ClearFar(ENEMY_DEFEATED_FLAG(
         gBattleFormation_LevelMatchedEnemies[candidateOrUnitIndex]));
   }
 
@@ -480,7 +480,7 @@ s32 BattleFormation_BuildEnemyList(s32 recordId) {
   levelAdjustment = 0;
   battle->enemyKindCount = 0;
   enemyKinds = listBuffer;
-  if (GameFlag_TestFar(FLAG_MONSTER_BATTLE))
+  if (GameFlag_GetFar(FLAG_MONSTER_BATTLE))
     recordId = BattleFormation_SelectLevelMatchedCandidate(&levelAdjustment);
   if (recordId < 0 || recordId >= FORMATION_COUNT)
     recordId = 1;

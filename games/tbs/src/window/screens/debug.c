@@ -248,7 +248,7 @@ void DebugFlagEditor_DrawTable(struct Window *window, s32 page) {
     Text_DrawStringInWindow((u8 *)gMenu_ColonString, window, 32, y);
 
     for (i = 0; i < 16; i++) {
-      s32 set = GameFlag_TestFar(flag);
+      s32 set = GameFlag_GetFar(flag);
       bits[i] = (set != 0) + 48;
       flag++;
     }
@@ -268,10 +268,10 @@ s32 DebugFlagEditor_HandleInput(struct Window *window, s32 *page, s32 *cursor) {
   if (gKeysRepeat & KEY_A) {
     s32 flag = (((*page << 4) + *row) << 4) + cursor[0];
 
-    if (GameFlag_TestFar(flag))
-      GameFlag_ClearBitFar(flag);
+    if (GameFlag_GetFar(flag))
+      GameFlag_ClearFar(flag);
     else
-      GameFlag_SetBitFar(flag);
+      GameFlag_SetFar(flag);
     return 1;
   }
   if ((gKeysPressed & KEY_B) || (gKeysRepeat & KEY_SELECT))
@@ -316,7 +316,7 @@ void Menu_ReservedNoOp(void) {}
 /// Sets the Djinni's collected flag, then adds it to the specified member.
 /// The flag is FLAG_DJINN_FIRST + 20 * element + index. Nothing calls it.
 void Djinn_SetFoundFlagAndAdd(s32 member, s32 element, s32 index) {
-  GameFlag_SetBitFar((element * 0x14) + index + FLAG_DJINN_FIRST);
+  GameFlag_SetFar((element * 0x14) + index + FLAG_DJINN_FIRST);
   Djinn_GiveFar(member, element, index);
 }
 

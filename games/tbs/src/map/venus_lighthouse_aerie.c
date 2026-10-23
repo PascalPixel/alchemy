@@ -334,7 +334,7 @@ static void EventScript_JumpToNextPlatform(void) {
   Vector_AddPolarOffset(PIXELS(32), angle, destination.coordinates);
   if (FieldObject_CheckMovementCollision(objectEvent, &destination.position) ==
       0) {
-    GameFlag_ClearBit(FLAG_MAP_TEMP_50);
+    GameFlag_Clear(FLAG_MAP_TEMP_50);
     EventScript_FloatPlatforms();
     ObjectDispatch_SelectAnimation(objectEvent, ANIM_LEADER_SPRING);
     WaitFrames(6);
@@ -367,7 +367,7 @@ static void EventScript_LandOnPlatform(void) {
   platformId = ObjectEvent_FindNearestFloatingPlatform();
   gVenusLighthouseAerie_LandedPlatform = platformId;
   if (platformId != 0) {
-    Engine_GameFlagSet(FLAG_MAP_TEMP_50);
+    GameFlag_Set(FLAG_MAP_TEMP_50);
     platform = ObjectEvent_GetById(gVenusLighthouseAerie_LandedPlatform);
     platform->motionFlags = 0;
     leader->motionFlags &= ~OBJ_EVENT_FOLLOWS_TERRAIN;
@@ -429,9 +429,9 @@ s32 VenusLighthouseAerie_Initialize(void) {
   s16 warpDest;
   struct ObjectEvent *platform;
 
-  Engine_GameFlagSet(FLAG_RETREAT_BLOCKED);
+  GameFlag_Set(FLAG_RETREAT_BLOCKED);
   WaitFrames(1);
-  Engine_GameFlagSet(FLAG_VENUS_LIGHTHOUSE_LIT);
+  GameFlag_Set(FLAG_VENUS_LIGHTHOUSE_LIT);
   ObjectEvent_SetSpriteFlags(
       ObjectEvent_GetById(LOCALID_BEACON_STATUE_SOUTHWEST), 0);
   ObjectEvent_SetSpriteFlags(
@@ -459,7 +459,7 @@ s32 VenusLighthouseAerie_Initialize(void) {
 
   switch (warpDest) {
   case VENUS_LIGHTHOUSE_AERIE_FROM_VENUS_LIGHTHOUSE_FOURTH_FLOOR:
-    if (GameFlag_Test(FLAG_KEEP_PARTY_POSITION) == 0) {
+    if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) == 0) {
       VenusLighthouseAerie_OverhearSaturosAndMenardi();
     }
     break;
@@ -477,11 +477,11 @@ s32 VenusLighthouseAerie_Initialize(void) {
     break;
   case VENUS_LIGHTHOUSE_AERIE_AFTER_DEFEAT:
     FieldScript_Start();
-    if (GameFlag_Test(FLAG_SHAMANS_ROD_OWNER) != 0) {
+    if (GameFlag_Get(FLAG_SHAMANS_ROD_OWNER) != 0) {
       Inventory_AddItem(0, ITEM_SHAMANS_ROD);
-    } else if (GameFlag_Test(FLAG_SHAMANS_ROD_OWNER + 1) != 0) {
+    } else if (GameFlag_Get(FLAG_SHAMANS_ROD_OWNER + 1) != 0) {
       Inventory_AddItem(1, ITEM_SHAMANS_ROD);
-    } else if (GameFlag_Test(FLAG_SHAMANS_ROD_OWNER + 2) != 0) {
+    } else if (GameFlag_Get(FLAG_SHAMANS_ROD_OWNER + 2) != 0) {
       Inventory_AddItem(2, ITEM_SHAMANS_ROD);
     } else {
       Inventory_AddItem(3, ITEM_SHAMANS_ROD);
@@ -490,7 +490,7 @@ s32 VenusLighthouseAerie_Initialize(void) {
     break;
   }
 
-  if (GameFlag_Test(FLAG_KEEP_PARTY_POSITION) != 0) {
+  if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) != 0) {
     s32 slot = ObjectEvent_FindNearestFloatingPlatform();
 
     if (slot != 0) {
@@ -2016,12 +2016,12 @@ static void VenusLighthouseAerie_SpawnUpperOrbitParticles(void) {
   struct Sprite *sprite;
   s32 angle;
 
-  if (GameFlag_IsSet(FLAG_MAP_TEMP_36) == 0 &&
+  if (Script_GetFlag(FLAG_MAP_TEMP_36) == 0 &&
       Math_RemainderUnsigned(gFrameCount, 3) != 0) {
     return;
   }
   center = ObjectEvent_Get(LOCALID_BEAM_BOTTOM);
-  if (GameFlag_IsSet(FLAG_MAP_TEMP_36) != 0) {
+  if (GameFlag_Get(FLAG_MAP_TEMP_36) != 0) {
     effect = ObjectEvent_Create(SPRITE_PARTICLE, center->x.fixed,
                                 (s32)((u32)(Random_Next() << 8) >> 16 << 16) +
                                     center->y.fixed - PIXELS(28),
@@ -2072,7 +2072,7 @@ static void VenusLighthouseAerie_UpdateBeamObjectEvents(void) {
   if (pairParked != 0) {
     saturos->facing = 0;
     menardi->facing = 0;
-    if (GameFlag_Test(FLAG_MAP_TEMP_35) != 0) {
+    if (GameFlag_Get(FLAG_MAP_TEMP_35) != 0) {
       ObjectGroup_ConfigureChildValue(LOCALID_SATUROS, SPRITE_COLOR_WHITE);
       ObjectGroup_ConfigureChildValue(LOCALID_MENARDI, SPRITE_COLOR_WHITE);
       if (saturos->scaleX < 5 * Q16_ONE / 4) {
@@ -2090,7 +2090,7 @@ static void VenusLighthouseAerie_UpdateBeamObjectEvents(void) {
         ObjectGroup_ConfigureChildValue(LOCALID_MENARDI, SPRITE_COLOR_HIDDEN);
       }
     }
-    if (GameFlag_Test(FLAG_MAP_TEMP_34) != 0) {
+    if (GameFlag_Get(FLAG_MAP_TEMP_34) != 0) {
       if (saturos->x.fixed < PIXELS(312)) {
         saturos->x.fixed += PIXELS(1) / 16;
         menardi->x.fixed += PIXELS(1) / 16;
@@ -2121,7 +2121,7 @@ static void VenusLighthouseAerie_ShowShebaInDanger(void) {
   FieldScript_Start();
   VenusLighthouseAerie_RestorePartyOnBrokenAerie();
   VenusLighthouseAerie_TryToPreventFall();
-  Engine_GameFlagSet(FLAG_KEEP_MUSIC);
+  GameFlag_Set(FLAG_KEEP_MUSIC);
 
   gFieldWork->transition = MAP_TRANSITION(TRANSITION_WINDOW, 0);
   gFieldWork->transitionFrames = 24;
@@ -2487,7 +2487,7 @@ static void VenusLighthouseAerie_EruptBeacon(void) {
   PaletteFade_StartInterpolation(24);
   WaitFrames(60);
   Sound_PlaySong(SE_RUMBLE);
-  Engine_GameFlagSet(FLAG_MAP_TEMP_36);
+  GameFlag_Set(FLAG_MAP_TEMP_36);
   ObjectEvent_GetById(LOCALID_BEAM_BOTTOM)->y.fixed = -PIXELS(96);
   ObjectEvent_GetById(LOCALID_BEAM_LOWER)->y.fixed = -PIXELS(64);
   ObjectGroup_ConfigureChildValue(LOCALID_BEAM_MIDDLE, SPRITE_COLOR_WHITE);
@@ -2648,10 +2648,10 @@ static void VenusLighthouseAerie_EruptBeacon(void) {
                              TASK_PRIORITY_MAP);
   do {
     WaitFrames(1);
-  } while (GameFlag_Test(FLAG_MAP_TEMP_37) == 0);
-  Engine_GameFlagSet(FLAG_SKIP_MAP_CHANGE_SOUND);
+  } while (GameFlag_Get(FLAG_MAP_TEMP_37) == 0);
+  GameFlag_Set(FLAG_SKIP_MAP_CHANGE_SOUND);
   FieldScript_WaitFrames(30);
-  Engine_GameFlagSet(FLAG_KEEP_MUSIC);
+  GameFlag_Set(FLAG_KEEP_MUSIC);
   ObjectEvent_Snapshot();
   FieldScript_SetDestination((s32)&MapId_WorldMap,
                              WORLD_MAP_AFTER_VENUS_LIGHTHOUSE_LIT);
@@ -3188,7 +3188,7 @@ static void VenusLighthouseAerie_UpdateBeaconRise(void) {
     break;
   case 48:
     ObjectMotion_EnableActionAndResetMotion(LOCALID_BEACON_ORB);
-    GameFlag_Set(FLAG_MAP_TEMP_37);
+    Script_SetFlag(FLAG_MAP_TEMP_37);
     break;
   }
   if (spawnParticles) {

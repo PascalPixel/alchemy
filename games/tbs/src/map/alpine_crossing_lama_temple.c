@@ -567,7 +567,7 @@ static void LamaTemple_TalkToHealer(void) {
 static void AlpineCrossing_FeizhiArrives(void) {
   struct ObjectEvent *leader;
 
-  if (GameFlag_IsSet(FLAG_FEIZHI_WENT_TO_HSU)) {
+  if (GameFlag_Get(FLAG_FEIZHI_WENT_TO_HSU)) {
     FieldScript_Start();
     ObjectEvent_SetPosition(LOCALID_FEIZHI, PIXELS(536), PIXELS(216));
     FieldScript_SetMessageId(MsgMountainYahhSilkRoadBouldersBlock);
@@ -901,7 +901,7 @@ static void AlpineCrossing_FreezePuddle(void) {
   MapGrid_CopyCellAttributes(55, 16, 1, 1, 20, 18);
 
   WaitFrames(1);
-  Engine_GameFlagSet(FLAG_PUDDLE_FROZEN);
+  GameFlag_Set(FLAG_PUDDLE_FROZEN);
   ObjectMotion_SetActionVariant(LOCALID_WATER_FOR_FROST, 2);
   FieldScript_End();
 }
@@ -913,7 +913,7 @@ static void AlpineCrossing_GrowSprout(void) {
   FieldScript_Start();
   MapGrid_CopyCellAttributes(14, 6, 1, 2, 21, 11);
   ObjectEvent_GetById(LOCALID_PLANT)->collisionFlags = (u8)~OBJ_EVENT_SOLID;
-  Engine_GameFlagSet(FLAG_SPROUT_GROWN);
+  GameFlag_Set(FLAG_SPROUT_GROWN);
   FieldScript_End();
 }
 
@@ -941,15 +941,15 @@ s32 Map_Initialize(void) {
                                    TURNING_ROCK_ANIMATION_MOSSY);
     MapGrid_CopyCellAttributes(21, 9, 1, 1, 21, 73);
     LamaTemple_ShowFalseWall();
-    if (GameFlag_Test(FLAG_HSU_RESCUED)) {
+    if (GameFlag_Get(FLAG_HSU_RESCUED)) {
       ObjectEvent_SetPosition(LOCALID_CHI_MONK, PIXELS(136), PIXELS(256));
       ObjectMotion_ArmCallback(LOCALID_CHI_MONK, FACING_EAST, 0);
     }
     warpDest = gGameState.warpDest;
     if (warpDest == LAMA_TEMPLE_FROM_FUCHIN_TEMPLE_INTERIORS_HAMAS_ROOM) {
-      GameFlag_ClearBit(FLAG_SHOW_LOCATION_NAME);
+      GameFlag_Clear(FLAG_SHOW_LOCATION_NAME);
     } else if (warpDest == LAMA_TEMPLE_FROM_ALPINE_CROSSING &&
-               !GameFlag_Test(FLAG_KEEP_PARTY_POSITION)) {
+               !GameFlag_Get(FLAG_KEEP_PARTY_POSITION)) {
       LamaTemple_RunHamasFarewell();
     }
   } else if (gGameState.mapId == MAP_ALPINE_CROSSING) {
@@ -957,12 +957,12 @@ s32 Map_Initialize(void) {
     ObjectEvent_SetSpriteFlags(ObjectEvent_GetById(LOCALID_WATER_FOR_FROST), 0);
     ObjectEvent_GetById(LOCALID_WATER_FOR_FROST)->priorityFlags |=
         OBJ_EVENT_PRIORITY_UNDERFOOT;
-    if (GameFlag_Test(FLAG_PUDDLE_FROZEN)) {
+    if (GameFlag_Get(FLAG_PUDDLE_FROZEN)) {
       Engine_ObjectEventSetAnimation(LOCALID_WATER_FOR_FROST,
                                      PUDDLE_ANIMATION_FROZEN);
       AlpineCrossing_FreezePuddle();
     }
-    if (GameFlag_Test(FLAG_SPROUT_GROWN)) {
+    if (GameFlag_Get(FLAG_SPROUT_GROWN)) {
       Engine_ObjectEventSetAnimation(LOCALID_PLANT, SPROUT_ANIMATION_GROWN);
       AlpineCrossing_GrowSprout();
     }
@@ -970,29 +970,29 @@ s32 Map_Initialize(void) {
             ALPINE_CROSSING_FROM_ALTIN_PEAK_SOUTH_ENTRANCE_WEST ||
         gGameState.warpDest ==
             ALPINE_CROSSING_FROM_ALTIN_PEAK_SOUTH_ENTRANCE_EAST) {
-      GameFlag_ClearBit(FLAG_SHOW_LOCATION_NAME);
+      GameFlag_Clear(FLAG_SHOW_LOCATION_NAME);
     }
 
     // Feizhi is here only once she has set out after Hsu.
-    if (!GameFlag_Test(FLAG_FEIZHI_WENT_TO_HSU) &&
-        !GameFlag_Test(FLAG_XIAN_HEARD_HSU_TRAPPED) &&
-        !GameFlag_Test(FLAG_HSU_RESCUED)) {
+    if (!GameFlag_Get(FLAG_FEIZHI_WENT_TO_HSU) &&
+        !GameFlag_Get(FLAG_XIAN_HEARD_HSU_TRAPPED) &&
+        !GameFlag_Get(FLAG_HSU_RESCUED)) {
       Engine_ObjectEventSetPosition(LOCALID_FEIZHI, 0, 0);
     }
 
     // Arriving from the north after Hama's lesson, before the party has freed
     // Hsu: he has been freed without it and the boulder is gone.
-    if (!GameFlag_IsSet(FLAG_HSU_RESCUED) &&
-        GameFlag_Test(FLAG_XIAN_HEARD_HSU_TRAPPED) &&
+    if (!Script_GetFlag(FLAG_HSU_RESCUED) &&
+        GameFlag_Get(FLAG_XIAN_HEARD_HSU_TRAPPED) &&
         gGameState.warpDest == ALPINE_CROSSING_FROM_WORLD_MAP_NORTH) {
       Engine_ObjectEventSetPosition(LOCALID_BOULDER, 0, 0);
-      Engine_GameFlagSet(FLAG_HSU_RESCUED);
-      Engine_GameFlagSet(FLAG_HSU_RESCUED_WITHOUT_PARTY);
+      GameFlag_Set(FLAG_HSU_RESCUED);
+      GameFlag_Set(FLAG_HSU_RESCUED_WITHOUT_PARTY);
       Engine_ObjectEventSetPosition(LOCALID_FEIZHI, 0, 0);
     }
 
     // Once Hsu is free, the cleared rocks open the road.
-    if (GameFlag_IsSet(FLAG_HSU_RESCUED)) {
+    if (Script_GetFlag(FLAG_HSU_RESCUED)) {
       MapGrid_CopyCellsTo(54, 21, 53, 21, 1, 2);
       MapGrid_CopyCellAttributes(18, 20, 1, 3, 17, 21);
       MapGrid_CopyCellsTo(44, 18, 43, 17, 1, 1);
@@ -1001,8 +1001,8 @@ s32 Map_Initialize(void) {
 
     // After Hama's lesson, while Hsu is still trapped, Hama and Feizhi stand
     // by him, and the workers from Xian have not come yet.
-    if (GameFlag_Test(FLAG_XIAN_HEARD_HSU_TRAPPED) &&
-        !GameFlag_Test(FLAG_HSU_RESCUED)) {
+    if (GameFlag_Get(FLAG_XIAN_HEARD_HSU_TRAPPED) &&
+        !GameFlag_Get(FLAG_HSU_RESCUED)) {
       Engine_ObjectEventSetPosition(LOCALID_FIRST_WORKER, 0, 0);
       Engine_ObjectEventSetPosition(LOCALID_SECOND_WORKER, 0, 0);
       ObjectEvent_SetPosition(LOCALID_HAMA, PIXELS(192), PIXELS(264));
@@ -1014,16 +1014,16 @@ s32 Map_Initialize(void) {
       ObjectEvent_SetActionScript(LOCALID_HSU, gAlpineCrossing_HsuStruggle);
       ObjectEvent_GetById(LOCALID_HSU)->scaleX = -0x10000;
     }
-    if (!GameFlag_IsSet(FLAG_HSU_RESCUED)) {
+    if (!Script_GetFlag(FLAG_HSU_RESCUED)) {
       ObjectEvent_SetPosition(LOCALID_HSU, PIXELS(164), PIXELS(280));
       ObjectEvent_SetActionScript(LOCALID_HSU, gAlpineCrossing_HsuStruggle);
       ObjectEvent_GetById(LOCALID_HSU)->scaleX = -0x10000;
     }
     if (gGameState.warpDest ==
             ALPINE_CROSSING_FROM_ALTIN_PEAK_SOUTH_ENTRANCE_EAST &&
-        !GameFlag_Test(FLAG_HAMA_REACHED_HSU) &&
-        !GameFlag_Test(FLAG_KEEP_PARTY_POSITION) &&
-        !GameFlag_Test(FLAG_HSU_RESCUED)) {
+        !GameFlag_Get(FLAG_HAMA_REACHED_HSU) &&
+        !GameFlag_Get(FLAG_KEEP_PARTY_POSITION) &&
+        !GameFlag_Get(FLAG_HSU_RESCUED)) {
       AlpineCrossing_HamaReachesHsu();
     }
   }

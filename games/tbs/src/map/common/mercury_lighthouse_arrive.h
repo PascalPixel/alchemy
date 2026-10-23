@@ -17,7 +17,7 @@ static void MercuryLighthouse_ArriveWithSparks(void) {
   struct Sprite *sprite;
 
   objectEvent = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
-  flag = GameFlag_IsSet(FLAG_KEEP_PARTY_POSITION);
+  flag = GameFlag_Get(FLAG_KEEP_PARTY_POSITION);
   if (flag == 0) {
     FieldScript_Start();
     FieldCamera_MoveTo(-1, -1, -1, 0);

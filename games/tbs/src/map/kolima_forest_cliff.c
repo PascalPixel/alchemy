@@ -92,7 +92,7 @@ static void KolimaForestCliff_PushLog(void) {
           OBJ_EVENT_PRIORITY_UNDERFOOT;
       MapGrid_CopyCellAttributes(32, 20, 2, 4, 11, 16);
       PushedObject_FillGridAttributeRectangle(2, 12, 16, 1, 4, 0);
-      Engine_GameFlagSet(FLAG_MAP_TEMP_01);
+      GameFlag_Set(FLAG_MAP_TEMP_01);
       objectEvent = ObjectEvent_GetById(LOCALID_RIVER_LOG);
       ObjectEvent_SetSpriteFlags(objectEvent, 0);
     }
@@ -117,7 +117,7 @@ s32 KolimaForestCliff_Initialize(void) {
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   Map_RedrawObjectEventFootprint(LOCALID_RIVER_LOG);
 
-  if (GameFlag_Test(FLAG_MAP_TEMP_01) != 0) {
+  if (GameFlag_Get(FLAG_MAP_TEMP_01) != 0) {
     ObjectEvent_GetById(LOCALID_RIVER_LOG)->priorityFlags =
         OBJ_EVENT_PRIORITY_UNDERFOOT;
     MapGrid_CopyCellAttributes(32, 20, 2, 4, 11, 16);
@@ -128,7 +128,7 @@ s32 KolimaForestCliff_Initialize(void) {
   Map_RedrawObjectEventFootprint(LOCALID_FIRST_LOG);
   Map_RedrawObjectEventFootprint(LOCALID_FIRST_LOG + 1);
 
-  if (GameFlag_Test(FLAG_KOLIMA_CURSE_LIFTED) == 0) {
+  if (GameFlag_Get(FLAG_KOLIMA_CURSE_LIFTED) == 0) {
     KolimaPalette_Curse(6);
   }
   return 0;

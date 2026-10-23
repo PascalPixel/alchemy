@@ -371,7 +371,7 @@ static void MainMenu_NamingScreenCharacter(s32 cell, u8 *text) {
 static s32 MainMenu_GetSaveRecoveryBlockMask(void) {
   s32 mapDifference;
 
-  if (GameFlag_Test(FLAG_RETREAT_BLOCKED) == 0) {
+  if (GameFlag_Get(FLAG_RETREAT_BLOCKED) == 0) {
     return 0;
   }
   if (gGameState.mapType == MAP_TYPE_TOWN) {
@@ -552,13 +552,13 @@ menu_top:;
     if (v6 == -1) {
       goto menu_top;
     }
-    GameFlag_Set(FLAG_KEEP_PARTY_POSITION);
+    Script_SetFlag(FLAG_KEEP_PARTY_POSITION);
     state = &gGameState;
     WindowColor_Apply(state->windowColor[0], state->windowColor[1]);
     if (state->buildStamp != Runtime_GetBuildStampTime()) {
       state->mapId = state->savedMap;
       state->warpDest = state->savedWarpDest;
-      GameFlag_ClearBit(FLAG_KEEP_PARTY_POSITION);
+      GameFlag_Clear(FLAG_KEEP_PARTY_POSITION);
     } else if ((gKeysHeld & (KEY_L | KEY_START)) == (KEY_L | KEY_START)) {
       if (MainMenu_GetSaveRecoveryBlockMask() != 0) {
         FieldMessage_Show(MsgSaveRecoveryFailed, 9);
@@ -566,8 +566,8 @@ menu_top:;
       }
       state->mapId = state->savedMap;
       state->warpDest = state->savedWarpDest;
-      GameFlag_ClearBit(FLAG_KEEP_PARTY_POSITION);
-      Engine_GameFlagSet(0x13e);
+      GameFlag_Clear(FLAG_KEEP_PARTY_POSITION);
+      GameFlag_Set(0x13e);
     } else if (state->playTime !=
                ((struct SaveMenuMapLocalState *)gMapLocalState)->word100) {
       FieldMessage_Show(MsgSaveDataCorrupted, 9);
@@ -586,10 +586,10 @@ menu_top:;
       }
       state->mapId = state->savedMap;
       state->warpDest = state->savedWarpDest;
-      GameFlag_ClearBit(FLAG_KEEP_PARTY_POSITION);
-      Engine_GameFlagSet(0x13f);
+      GameFlag_Clear(FLAG_KEEP_PARTY_POSITION);
+      GameFlag_Set(0x13f);
     }
-    GameFlag_ClearBit(FLAG_MENU_OPEN);
+    GameFlag_Clear(FLAG_MENU_OPEN);
     goto leave;
   }
   if (v6 == 2) {
@@ -609,7 +609,7 @@ menu_top:;
       goto menu_top;
     }
     gGameState.leaderLocalId = 0;
-    if (GameFlag_IsSet(FLAG_COLOSSO_HOLDS_EQUIPMENT) != 0) {
+    if (Script_GetFlag(FLAG_COLOSSO_HOLDS_EQUIPMENT) != 0) {
       InventorySnapshot_Restore();
       Party_RemoveMember(0);
       Party_RemoveMember(1);
@@ -621,9 +621,9 @@ menu_top:;
       Party_AddMember(3);
     }
     WindowColor_Apply(gGameState.windowColor[0], gGameState.windowColor[1]);
-    GameFlag_ClearBit(FLAG_KEEP_PARTY_POSITION);
-    GameFlag_ClearBit(FLAG_MENU_OPEN);
-    Engine_GameFlagSet(FLAG_IN_BATTLE_ARENA);
+    GameFlag_Clear(FLAG_KEEP_PARTY_POSITION);
+    GameFlag_Clear(FLAG_MENU_OPEN);
+    GameFlag_Set(FLAG_IN_BATTLE_ARENA);
     gSleepDisabled = 1;
     FieldScript_SetDestination((s32)&MapId_BattleArena,
                                BATTLE_ARENA_FROM_MAIN_MENU);
@@ -1087,7 +1087,7 @@ static s32 MainMenu_PackPasswordData(s32 unused, s32 mode, u8 *out) {
 
   // Preserve the selected story flags and four heroes' transfer data.
   for (i = 0; i != 6; i++) {
-    if (GameFlag_Test(((const u16 *)gMainMenu_PasswordFlags)[i])) {
+    if (GameFlag_Get(((const u16 *)gMainMenu_PasswordFlags)[i])) {
       flagBits |= 1 << i;
     }
   }

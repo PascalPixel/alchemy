@@ -212,7 +212,7 @@ const struct MapWarpRegion *Map_GetWarpRegions(void) { return NULL; }
 const u32 *Map_GetWarps(void) { return gVault_Warps; }
 
 const struct ObjectEventTemplate *Map_GetObjectEventTemplates(void) {
-  if (GameFlag_Test(FLAG_VAULT_THIEVES_JAILED) != 0)
+  if (GameFlag_Get(FLAG_VAULT_THIEVES_JAILED) != 0)
     return gVault_ObjectEventTemplatesAfterThieves;
   return gVault_ObjectEventTemplates;
 }
@@ -234,8 +234,8 @@ static void EventScript_IvanStaysBehind(void) {
   struct FieldWork *work;
 
   work = gFieldWork;
-  if (GameFlag_IsSet(FLAG_VAULT_THIEVES_JAILED) != 0 ||
-      GameFlag_IsSet(FLAG_VAULT_IVAN_JOINED_ROD_SEARCH) == 0) {
+  if (GameFlag_Get(FLAG_VAULT_THIEVES_JAILED) != 0 ||
+      GameFlag_Get(FLAG_VAULT_IVAN_JOINED_ROD_SEARCH) == 0) {
     Engine_ScriptRequestWarp(work->coordEvent -
                              (MB_VAULT_SOUTH_GATE - VAULT_TO_WORLD_MAP_SOUTH));
     return;
@@ -285,7 +285,7 @@ static void EventScript_PeerIntoWell(void) {
 }
 
 const struct MapEvent *Map_GetEvents(void) {
-  if (GameFlag_Test(FLAG_VAULT_THIEVES_JAILED) != 0)
+  if (GameFlag_Get(FLAG_VAULT_THIEVES_JAILED) != 0)
     return gVault_EventsAfterThieves;
   return gVault_Events;
 }
@@ -482,7 +482,7 @@ static void EventScript_TalkAboutIvan(void) {
   struct FieldWork *workspace;
   FieldScript_Start();
   FieldScript_SetMessageId(MsgVaultTalkingAboutHammetsServantIvan);
-  if (GameFlag_Test(FLAG_IN_PARTY(IVAN)) != 0) {
+  if (GameFlag_Get(FLAG_IN_PARTY(IVAN)) != 0) {
     workspace = gFieldWork;
     ++workspace->message;
   }
@@ -511,7 +511,7 @@ static void EventScript_AskWhetherIvanWentToLunpa(void) {
   objectEvent->timer |= 2;
   FieldScript_Start();
   FieldScript_SetMessageId(MsgVaultDidntGoLunpa);
-  if (GameFlag_Test(FLAG_IN_PARTY(IVAN)) != 0)
+  if (GameFlag_Get(FLAG_IN_PARTY(IVAN)) != 0)
     ++gFieldWork->message;
   Engine_ObjectEventSetAnimation(LOCALID_BOY_ROUND_THE_WELL, 0);
   Vault_FaceObjectEventAndWait(LOCALID_BOY_ROUND_THE_WELL, LOCALID_PARTY_LEADER,
@@ -579,7 +579,7 @@ static void EventScript_TalkToDogAfterCapture(void) {
   FieldScript_ShowMessageAndWait(LOCALID_VAULT_DOG, 0);
   Engine_ObjectEventSetAnimation(LOCALID_VAULT_DOG, ANIM_STAND);
   if (PartyInventory_FindMember(ITEM_BONE) != -1 &&
-      GameFlag_Test(FLAG_VAULT_DOG_SHOWN_PASSAGE) == 0) {
+      GameFlag_Get(FLAG_VAULT_DOG_SHOWN_PASSAGE) == 0) {
     u16 *menuRequest = &gFieldWork->menu;
     u16 open = 1;
 
@@ -607,7 +607,7 @@ static void EventScript_ThankBeforeDeparture(void) {
 /// unforgivable, or how should the prisoners be punished?
 static void EventScript_ReadMindOnTheft(void) {
   FieldScript_Start();
-  if (GameFlag_Test(FLAG_VAULT_THIEVES_JAILED) == 0)
+  if (GameFlag_Get(FLAG_VAULT_THIEVES_JAILED) == 0)
     FieldScript_SetMessageId(MsgVaultManShouldStealFromAnother);
   else
     FieldScript_SetMessageId(MsgVaultHowPunishPrisoners);
@@ -620,7 +620,7 @@ static void EventScript_ReadMindOnTheft(void) {
 /// Range.
 static void EventScript_ReadMindOnTravelers(void) {
   FieldScript_Start();
-  if (GameFlag_Test(FLAG_VAULT_THIEVES_JAILED) == 0) {
+  if (GameFlag_Get(FLAG_VAULT_THIEVES_JAILED) == 0) {
     FieldScript_SetMessageId(MsgVaultGroupTravelersWasStrangeBunch);
   } else {
     FieldScript_SetMessageId(MsgVaultWithRoadOutOnlyWay);
@@ -635,11 +635,11 @@ static void EventScript_ReadMindOnTravelers(void) {
 static void EventScript_ReadMindOnIvan(void) {
   ObjectEvent_GetById(LOCALID_BOY_ROUND_THE_WELL)->timer |= 2;
   FieldScript_Start();
-  if (GameFlag_Test(FLAG_VAULT_THIEVES_JAILED) == 0) {
+  if (GameFlag_Get(FLAG_VAULT_THIEVES_JAILED) == 0) {
     FieldScript_SetMessageId(MsgVaultBetWasThoseThreeCreeps);
   } else {
     FieldScript_SetMessageId(MsgVaultWhereDidIvanGoBy);
-    if (GameFlag_Test(FLAG_IN_PARTY(IVAN)) != 0)
+    if (GameFlag_Get(FLAG_IN_PARTY(IVAN)) != 0)
       ++gFieldWork->message;
   }
   Vault_ShowThought(LOCALID_BOY_ROUND_THE_WELL);
@@ -652,7 +652,7 @@ static void EventScript_ReadMindOnIvan(void) {
 static void EventScript_ReadMindOnWealth(void) {
   ObjectEvent_GetById(LOCALID_GIRL_ROUND_THE_WELL)->timer |= 2;
   FieldScript_Start();
-  if (GameFlag_Test(FLAG_VAULT_THIEVES_JAILED) == 0)
+  if (GameFlag_Get(FLAG_VAULT_THIEVES_JAILED) == 0)
     FieldScript_SetMessageId(MsgVaultSupposeDoesntMatterHowRich);
   else
     FieldScript_SetMessageId(MsgVaultMustStrongerThanLookHave);
@@ -665,7 +665,7 @@ static void EventScript_ReadMindOnWealth(void) {
 /// the inn stole the rod, or he feels much better with them behind bars.
 static void EventScript_ReadMindOnSuspects(void) {
   FieldScript_Start();
-  if (GameFlag_Test(FLAG_VAULT_THIEVES_JAILED) == 0)
+  if (GameFlag_Get(FLAG_VAULT_THIEVES_JAILED) == 0)
     FieldScript_SetMessageId(MsgVaultEveryoneKnowsThoseThreeAt);
   else
     FieldScript_SetMessageId(MsgVaultFeelMuchBetter);
@@ -680,11 +680,11 @@ static void EventScript_ReadDogMind(void) {
   struct ObjectEvent *objectEvent = ObjectEvent_GetById(LOCALID_VAULT_DOG);
   objectEvent->paused = 1;
   FieldScript_Start();
-  if (GameFlag_Test(FLAG_VAULT_THIEVES_JAILED) == 0) {
+  if (GameFlag_Get(FLAG_VAULT_THIEVES_JAILED) == 0) {
     FieldScript_SetMessageId(MsgVaultStealingInMidstVolcanicEruption);
     Engine_ObjectEventSetAnimation(LOCALID_VAULT_DOG, 0);
     FieldScript_WaitFrames(2);
-  } else if (GameFlag_Test(FLAG_VAULT_DOG_SHOWN_PASSAGE) != 0) {
+  } else if (GameFlag_Get(FLAG_VAULT_DOG_SHOWN_PASSAGE) != 0) {
     FieldScript_SetMessageId(MsgVaultCarefulSearchWillRevealPassage);
   } else {
     FieldScript_SetMessageId(MsgVaultIfBringMeBoneIll);
@@ -830,7 +830,7 @@ static void EventScript_RingBell(void) {
   FieldScript_Start();
   Script_PlaySong(SE_100);
   FieldScript_WaitFrames(40);
-  if (GameFlag_IsSet(FLAG_VAULT_SAP_CALLED_BY_BELL) == 0) {
+  if (Script_GetFlag(FLAG_VAULT_SAP_CALLED_BY_BELL) == 0) {
     ObjectEvent_SetAttachedEffect(LOCALID_SAP, ATTACHED_EFFECT_IN_FRONT |
                                                    ATTACHED_EFFECT_ONCE);
     ObjectMotion_Launch(LOCALID_SAP, 4, 0);
@@ -883,12 +883,12 @@ s32 Map_Initialize(void) {
 
   // Once the party has reached Kalay (FLAG_KALAY_REACHED), the town is its
   // later map, MapId_VaultRevisit (vault_revisit.c).
-  if (GameFlag_Test(FLAG_KALAY_REACHED) != 0) {
+  if (GameFlag_Get(FLAG_KALAY_REACHED) != 0) {
     Engine_ScriptRequestWarp(VAULT_TO_VAULT_REVISIT);
   }
   // Keep the bridge deck after a battle, and restore the two children's
   // proximity callbacks.
-  if (GameFlag_Test(FLAG_MAP_TEMP_00) != 0) {
+  if (GameFlag_Get(FLAG_MAP_TEMP_00) != 0) {
     MapGrid_CopyCellAttributes(55, 26, 4, 2, 23, 26);
   }
   // A still object on the well that shows nothing (vault_revisit.c's open
@@ -912,11 +912,11 @@ s32 Map_Initialize(void) {
   objectEvent->update =
       (void (*)(union FieldObject *))Vault_UpdateWalkingVillager;
 #endif
-  if (GameFlag_Test(FLAG_VAULT_DOG_SHOWN_PASSAGE) != 0) {
+  if (GameFlag_Get(FLAG_VAULT_DOG_SHOWN_PASSAGE) != 0) {
     ObjectEvent_SetPosition(LOCALID_VAULT_DOG, PIXELS(216), PIXELS(392));
   }
-  suspectsMindRead = GameFlag_Test(FLAG_VAULT_SUSPECTS_MIND_READ);
-  if (GameFlag_Test(FLAG_VAULT_THIEVES_JAILED) == 0) {
+  suspectsMindRead = GameFlag_Get(FLAG_VAULT_SUSPECTS_MIND_READ);
+  if (GameFlag_Get(FLAG_VAULT_THIEVES_JAILED) == 0) {
     if ((lowBit & suspectsMindRead) != 0) {
       objectEvent = ObjectEvent_GetById(LOCALID_WOMAN_WANTING_THE_ROOF_FIXED);
 #ifdef UBFIX
@@ -930,10 +930,10 @@ s32 Map_Initialize(void) {
   // Back through the gates while Ivan waits in Vault: "Welcome back, you two!
   // Let's go find the rod!"
   if (gGameState.warpDest <= VAULT_NORTH_UNUSED) {
-    if (GameFlag_Test(FLAG_KEEP_PARTY_POSITION) == 0) {
-      GameFlag_ClearBit(FLAG_VAULT_SAP_CALLED_BY_BELL);
-      if (GameFlag_Test(FLAG_VAULT_THIEVES_JAILED) == 0) {
-        if (GameFlag_Test(FLAG_VAULT_IVAN_JOINED_ROD_SEARCH) != 0) {
+    if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) == 0) {
+      GameFlag_Clear(FLAG_VAULT_SAP_CALLED_BY_BELL);
+      if (GameFlag_Get(FLAG_VAULT_THIEVES_JAILED) == 0) {
+        if (GameFlag_Get(FLAG_VAULT_IVAN_JOINED_ROD_SEARCH) != 0) {
           FieldScript_Start();
           objectEvent = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
           if (objectEvent != 0) {
@@ -968,14 +968,14 @@ s32 Map_Initialize(void) {
       }
     }
   }
-  if (GameFlag_Test(FLAG_VAULT_SAP_CALLED_BY_BELL) != 0) {
+  if (GameFlag_Get(FLAG_VAULT_SAP_CALLED_BY_BELL) != 0) {
     ObjectEvent_SetPosition(LOCALID_SAP, PIXELS(408), PIXELS(120));
   }
   // The same welcome out of the Vault Sanctum while Ivan is out of the party.
   if (gGameState.warpDest == VAULT_FROM_SANCTUM) {
-    if (GameFlag_Test(FLAG_VAULT_THIEVES_JAILED) == 0) {
-      if (GameFlag_Test(FLAG_VAULT_IVAN_JOINED_ROD_SEARCH) != 0) {
-        if (GameFlag_Test(FLAG_IN_PARTY(IVAN)) == 0) {
+    if (GameFlag_Get(FLAG_VAULT_THIEVES_JAILED) == 0) {
+      if (GameFlag_Get(FLAG_VAULT_IVAN_JOINED_ROD_SEARCH) != 0) {
+        if (GameFlag_Get(FLAG_IN_PARTY(IVAN)) == 0) {
           FieldScript_Start();
           ObjectEvent_SetPosition(IVAN, PIXELS(40), PIXELS(310));
           ObjectEvent_LinkPair(IVAN, LOCALID_PARTY_LEADER, 0);
@@ -1000,10 +1000,10 @@ s32 Map_Initialize(void) {
         }
       }
     }
-    GameFlag_ClearBit(FLAG_SHOW_LOCATION_NAME);
+    GameFlag_Clear(FLAG_SHOW_LOCATION_NAME);
   } else {
     if (gGameState.warpDest == VAULT_FROM_VAULT_INTERIORS_WEST) {
-      if (GameFlag_Test(FLAG_VAULT_THIEVES_JAILED) != 0) {
+      if (GameFlag_Get(FLAG_VAULT_THIEVES_JAILED) != 0) {
         Engine_ObjectEventSetPosition(LOCALID_YOUNG_MAN_FIXING_THE_ROOF, 0, 0);
       }
     }

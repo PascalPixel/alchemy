@@ -307,24 +307,24 @@ KalayTolbiDocks_GetObjectEventTemplates(void) {
   s16 mapId = gGameState.mapId;
 
   if (mapId == (s32)&MapId_KalayDocks) {
-    if (GameFlag_Test(FLAG_TOLBI_SHIP_REACHED_TOLBI) != 0) {
+    if (GameFlag_Get(FLAG_TOLBI_SHIP_REACHED_TOLBI) != 0) {
       return gKalayTolbiDocks_KalayObjectEventTemplatesShipGone;
     }
     return gKalayTolbiDocks_KalayObjectEventTemplates;
   }
 
   if (mapId == (s32)&MapId_TolbiDocks) {
-    if (GameFlag_Test(FLAG_COLOSSO_OVER) != 0) {
+    if (GameFlag_Get(FLAG_COLOSSO_OVER) != 0) {
       return gKalayTolbiDocks_TolbiObjectEventTemplatesStranded;
     }
     return gKalayTolbiDocks_TolbiObjectEventTemplates;
   }
 
   if (mapId == (s32)&MapId_KalayTolbiDocksInteriors) {
-    if (GameFlag_Test(FLAG_COLOSSO_OVER) != 0) {
+    if (GameFlag_Get(FLAG_COLOSSO_OVER) != 0) {
       return gKalayTolbiDocks_InteriorObjectEventTemplatesStranded;
     }
-    if (GameFlag_Test(FLAG_TOLBI_SHIP_REACHED_TOLBI) != 0) {
+    if (GameFlag_Get(FLAG_TOLBI_SHIP_REACHED_TOLBI) != 0) {
       return gKalayTolbiDocks_InteriorObjectEventTemplatesShipGone;
     }
     return gKalayTolbiDocks_InteriorObjectEventTemplates;
@@ -354,24 +354,24 @@ const struct MapEvent *KalayTolbiDocks_GetEvents(void) {
   s16 mapId = gGameState.mapId;
 
   if (mapId == (s32)&MapId_KalayDocks) {
-    if (GameFlag_Test(FLAG_TOLBI_SHIP_REACHED_TOLBI) != 0) {
+    if (GameFlag_Get(FLAG_TOLBI_SHIP_REACHED_TOLBI) != 0) {
       return gKalayTolbiDocks_KalayEventsShipGone;
     }
     return gKalayTolbiDocks_KalayEvents;
   }
 
   if (mapId == (s32)&MapId_TolbiDocks) {
-    if (GameFlag_Test(FLAG_COLOSSO_OVER) != 0) {
+    if (GameFlag_Get(FLAG_COLOSSO_OVER) != 0) {
       return gKalayTolbiDocks_TolbiEventsStranded;
     }
     return gKalayTolbiDocks_TolbiEvents;
   }
 
   if (mapId == (s32)&MapId_KalayTolbiDocksInteriors) {
-    if (GameFlag_Test(FLAG_COLOSSO_OVER) != 0) {
+    if (GameFlag_Get(FLAG_COLOSSO_OVER) != 0) {
       return gKalayTolbiDocks_InteriorEventsStranded;
     }
-    if (GameFlag_Test(FLAG_TOLBI_SHIP_REACHED_TOLBI) != 0) {
+    if (GameFlag_Get(FLAG_TOLBI_SHIP_REACHED_TOLBI) != 0) {
       return gKalayTolbiDocks_InteriorEventsShipGone;
     }
     return gKalayTolbiDocks_InteriorEvents;
@@ -396,7 +396,7 @@ static void KalayTolbiDocks_AskAboutTolbiCrossing(void) {
 /// FLAG_KALAY_DOCKS_CARRYING_MESSAGE); afterwards she repeats the message.
 static void KalayTolbiDocks_TalkToWomanWithAMessage(void) {
   FieldScript_Start();
-  if (GameFlag_IsSet(FLAG_KALAY_DOCKS_CARRYING_MESSAGE) == 0) {
+  if (Script_GetFlag(FLAG_KALAY_DOCKS_CARRYING_MESSAGE) == 0) {
     FieldScript_SetMessageId(MsgKalayGoingTakeShip);
     Script_OpenMessage(LOCALID_WOMAN_WITH_A_MESSAGE, 0);
     if (FieldScript_AskYesNoWithObjectEventAnimation(0, 0) == 0) {
@@ -421,8 +421,8 @@ static void KalayTolbiDocks_RemindBoardShip(void) {
   ((void)ObjectEvent_GetById(LOCALID_PARTY_LEADER));
   FieldScript_Start();
 #endif
-  if (GameFlag_IsSet(FLAG_KALAY_DOCKS_TICKET_HANDED_OVER) != 0) {
-    if (GameFlag_IsSet(FLAG_KALAY_DOCKS_WENT_ASHORE) != 0) {
+  if (GameFlag_Get(FLAG_KALAY_DOCKS_TICKET_HANDED_OVER) != 0) {
+    if (GameFlag_Get(FLAG_KALAY_DOCKS_WENT_ASHORE) != 0) {
 #if TBS_PATCH_3
       FieldScript_Start();
 #endif
@@ -450,8 +450,8 @@ static void KalayTolbiDocks_TalkToTicketTaker(void) {
   leader = ObjectEvent_Get(LOCALID_PARTY_LEADER);
   cardinalFacing = ((leader->facing + 0x2000) & ~0x3fff);
   FieldScript_Start();
-  if (GameFlag_IsSet(FLAG_KALAY_DOCKS_TICKET_HANDED_OVER) != 0) {
-    if (GameFlag_IsSet(FLAG_KALAY_DOCKS_WENT_ASHORE) != 0) {
+  if (Script_GetFlag(FLAG_KALAY_DOCKS_TICKET_HANDED_OVER) != 0) {
+    if (Script_GetFlag(FLAG_KALAY_DOCKS_WENT_ASHORE) != 0) {
       FieldScript_SetMessageId(MsgKalayFinishedOutHereBoardShip);
       Script_OpenMessage(LOCALID_CHECKING_TICKETS, 0);
     } else {
@@ -477,7 +477,7 @@ static void KalayTolbiDocks_TalkToTicketTaker(void) {
     FieldScript_SetMessageId(MsgKalayTicketsPlease);
     Script_ShowMessage(LOCALID_CHECKING_TICKETS, 0);
     // Hand over the actual inventory ticket before walking past the gate.
-    if (GameFlag_IsSet(FLAG_KALAY_DOCKS_TICKET_BOUGHT) != 0) {
+    if (GameFlag_Get(FLAG_KALAY_DOCKS_TICKET_BOUGHT) != 0) {
       ticketHolder = PartyInventory_FindMember(ITEM_BOAT_TICKET);
       ticketSlot = Inventory_Find(ticketHolder, ITEM_BOAT_TICKET);
       ObjectMotion_SetAnimationAndWait(LOCALID_CHECKING_TICKETS, ANIM_NOD);
@@ -506,10 +506,10 @@ static void KalayTolbiDocks_TalkToTicketTaker(void) {
 static void KalayTolbiDocks_TalkToDockWorker(void) {
   FieldScript_Start();
 
-  if (GameFlag_Test(FLAG_KALAY_DOCKS_TICKET_HANDED_OVER) != 0) {
+  if (GameFlag_Get(FLAG_KALAY_DOCKS_TICKET_HANDED_OVER) != 0) {
     FieldScript_SetMessageId(MsgKalayBoardWaitSetSail);
     FieldMessage_ShowAtObject(LOCALID_DOCK_WORKER, 0);
-  } else if (GameFlag_Test(FLAG_KALAY_DOCKS_TICKET_BOUGHT) != 0) {
+  } else if (GameFlag_Get(FLAG_KALAY_DOCKS_TICKET_BOUGHT) != 0) {
     FieldScript_SetMessageId(MsgKalayHaveTicketsGiveHim);
     FieldScript_ShowMessageAndWait(LOCALID_DOCK_WORKER, 0);
   } else {
@@ -539,7 +539,7 @@ static void KalayTolbiDocks_TalkToTicketSeller(void) {
 
   ticketPrice = 600;
   FieldScript_Start();
-  if (GameFlag_IsSet(FLAG_KALAY_DOCKS_TICKET_BOUGHT) != 0) {
+  if (Script_GetFlag(FLAG_KALAY_DOCKS_TICKET_BOUGHT) != 0) {
     FieldScript_SetMessageId(MsgKalayHandInTicketPlank);
     Script_ShowMessage(LOCALID_SELLING_TICKETS, 0);
   } else {
@@ -589,7 +589,7 @@ static void KalayTolbiDocks_TalkToTicketSeller(void) {
         Script_ShowMessage(LOCALID_SELLING_TICKETS, 0);
         // Complete both inventory and coin changes only after confirmation.
         PartyInventory_GiveItem(ITEM_BOAT_TICKET, 0);
-        GameFlag_Set(FLAG_KALAY_DOCKS_TICKET_BOUGHT);
+        Script_SetFlag(FLAG_KALAY_DOCKS_TICKET_BOUGHT);
         Party_AdjustCoins(-ticketPrice);
       }
     }
@@ -621,7 +621,7 @@ static void KalayTolbiDocks_AskAboutSeasickTourists(void) {
 /// once it is given; otherwise she turns back to the sea.
 static void KalayTolbiDocks_TalkToWaitingDaughter(void) {
   FieldScript_Start();
-  if (GameFlag_IsSet(FLAG_TOLBI_DOCKS_MESSAGE_DELIVERED) != 0) {
+  if (Script_GetFlag(FLAG_TOLBI_DOCKS_MESSAGE_DELIVERED) != 0) {
     ObjectEvent_FaceObjectEvent(LOCALID_WAITING_DAUGHTER, LOCALID_PARTY_LEADER,
                                 0);
     FieldScript_WaitFrames(20);
@@ -637,7 +637,7 @@ static void KalayTolbiDocks_TalkToWaitingDaughter(void) {
     FieldScript_WaitFrames(20);
     FieldScript_SetMessageId(MsgKalaySilkRoadBlocked);
     Script_ShowMessage(LOCALID_WAITING_DAUGHTER, 0);
-    if (GameFlag_IsSet(FLAG_KALAY_DOCKS_CARRYING_MESSAGE) != 0) {
+    if (GameFlag_Get(FLAG_KALAY_DOCKS_CARRYING_MESSAGE) != 0) {
       FieldScript_WaitFrames(20);
       ObjectEvent_ShowEmote(LOCALID_WAITING_DAUGHTER,
                             EMOTE_IN_FRONT | EMOTE_WINCE, 40);
@@ -695,7 +695,7 @@ enum { KALAY_TOLBI_DOCKS_WARP_DEST_AFTER_COLOSSO = 90 };
 /// leaves the tour's passengers stranded on the Tolbi Docks.
 s32 KalayTolbiDocks_Initialize(void) {
   if (gGameState.warpDest == KALAY_TOLBI_DOCKS_WARP_DEST_AFTER_COLOSSO) {
-    Engine_GameFlagSet(FLAG_COLOSSO_OVER);
+    GameFlag_Set(FLAG_COLOSSO_OVER);
   }
   if (gGameState.mapId == (s32)&MapId_KalayDocks) {
     KalayTolbiDocks_PrepareKalayDocks();
@@ -713,18 +713,18 @@ s32 KalayTolbiDocks_Initialize(void) {
 /// until the party goes ashore.
 static void KalayTolbiDocks_PrepareKalayDocks(void) {
   if (gGameState.warpDest == KALAY_DOCKS_FROM_WORLD_MAP_SOUTH) {
-    if (GameFlag_IsSet(FLAG_KALAY_DOCKS_GARET_SAW_KARAGOL) == 0) {
+    if (Script_GetFlag(FLAG_KALAY_DOCKS_GARET_SAW_KARAGOL) == 0) {
       GameFlag_Set(FLAG_KALAY_DOCKS_GARET_SAW_KARAGOL);
       KalayTolbiDocks_GaretSeesTheKaragol();
     }
   }
   if (gGameState.warpDest == KALAY_DOCKS_FROM_TOLBI_SHIP_DECK) {
-    if (GameFlag_IsSet(FLAG_KEEP_PARTY_POSITION) == 0) {
+    if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) == 0) {
       GameFlag_Clear(FLAG_KALAY_DOCKS_WENT_ASHORE);
     }
   }
-  if (GameFlag_IsSet(FLAG_KALAY_COLOSSO_TOUR_LEFT) != 0) {
-    if (GameFlag_IsSet(FLAG_KALAY_DOCKS_WENT_ASHORE) == 0) {
+  if (GameFlag_Get(FLAG_KALAY_COLOSSO_TOUR_LEFT) != 0) {
+    if (GameFlag_Get(FLAG_KALAY_DOCKS_WENT_ASHORE) == 0) {
       ObjectEvent_SetPosition(LOCALID_CHECKING_TICKETS, PIXELS(88),
                               PIXELS(1304));
       ObjectEvent_FaceDirection(LOCALID_CHECKING_TICKETS, FACING_EAST, 0);
@@ -741,23 +741,23 @@ static void KalayTolbiDocks_PrepareTolbiDocks(void) {
   u8 zero;
 
   KalayTolbiDocks_UpdateCrateCells();
-  if (GameFlag_IsSet(FLAG_COLOSSO_OVER)) {
+  if (Script_GetFlag(FLAG_COLOSSO_OVER)) {
     ObjectGroup_ConfigureChildValue(LOCALID_SECOND_TOUR_GUIDE,
                                     SPRITE_COLOR_RBG);
   }
   if (gGameState.warpDest == TOLBI_DOCKS_FROM_KALAY_TOLBI_DOCKS_INTERIORS) {
-    GameFlag_ClearBit(FLAG_SHOW_LOCATION_NAME);
+    GameFlag_Clear(FLAG_SHOW_LOCATION_NAME);
   }
   if (gGameState.warpDest == TOLBI_DOCKS_FROM_TOLBI_SHIP_DECK) {
-    GameFlag_ClearBit(FLAG_TOLBI_DOCKS_ARRIVALS_GREETED);
+    GameFlag_Clear(FLAG_TOLBI_DOCKS_ARRIVALS_GREETED);
   }
-  if (GameFlag_Test(FLAG_TOLBI_DOCKS_ARRIVALS_GREETED)) {
+  if (GameFlag_Get(FLAG_TOLBI_DOCKS_ARRIVALS_GREETED)) {
     ObjectEvent_SetPosition(LOCALID_MAN_HEARING_OF_THE_SCARY_TRIP, PIXELS(408),
                             PIXELS(296));
     ObjectEvent_FaceDirection(LOCALID_MAN_HEARING_OF_THE_SCARY_TRIP,
                               FACING_WEST, 0);
   }
-  if (GameFlag_Test(FLAG_TOLBI_DOCKS_TOUR_GROUP_BLAMED)) {
+  if (GameFlag_Get(FLAG_TOLBI_DOCKS_TOUR_GROUP_BLAMED)) {
     ObjectEvent_SetPosition(LOCALID_TOUR_GUIDE, PIXELS(280), PIXELS(296));
     ObjectEvent_FaceDirection(LOCALID_TOUR_GUIDE, FACING_NORTH, 0);
     ObjectEvent_SetPosition(LOCALID_BODYGUARD, PIXELS(288), PIXELS(280));
@@ -778,7 +778,7 @@ static void KalayTolbiDocks_PrepareTolbiDocks(void) {
     ((u8 *)objectEvent->sprite)[9] |= 12;
     ((u8 *)objectEvent->sprite)[21] |= 12;
   }
-  if (GameFlag_Test(FLAG_COLOSSO_OVER)) {
+  if (GameFlag_Get(FLAG_COLOSSO_OVER)) {
     MapGrid_CopyCellAttributes(18, 18, 1, 1, 14, 18);
     MapGrid_CopyCellAttributes(18, 18, 1, 1, 15, 18);
   }
@@ -789,7 +789,7 @@ static void KalayTolbiDocks_PrepareTolbiDocks(void) {
 static void KalayTolbiDocks_PrepareInterior(void) {
   gFieldWork->transition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
-  GameFlag_ClearBit(FLAG_SHOW_LOCATION_NAME);
+  GameFlag_Clear(FLAG_SHOW_LOCATION_NAME);
 }
 
 /// Tolbi Docks, after Move pushes either stack of crates: the pier's cells

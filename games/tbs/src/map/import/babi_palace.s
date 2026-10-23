@@ -12,9 +12,9 @@
 	.set import.MessageArgument_Push, 1
 	.set import.Icon_DrawItem, 1
 	.set import.Unit_Get, 1
-	.set import.GameFlag_Test, 1
-	.set import.Engine_GameFlagSet, 1
-	.set import.GameFlag_ClearBit, 1
+	.set import.GameFlag_Get, 1
+	.set import.GameFlag_Set, 1
+	.set import.GameFlag_Clear, 1
 	.set import.Unit_RecalculateGauges, 1
 	.set import.Party_AddMember, 1
 	.set import.Party_ListMembers, 1

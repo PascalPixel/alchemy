@@ -209,10 +209,10 @@ u32 Save_BuildFileSummary(void) {
   summary->sendFlag = gGameState.sendFlag;
   summary->flagCount = 0;
   for (i = 48; i <= 127; i++) {
-    if (GameFlag_TestFar(i))
+    if (GameFlag_GetFar(i))
       summary->flagCount++;
   }
-  summary->hasFlag20 = GameFlag_TestFar(FLAG_CHILDHOOD) != 0;
+  summary->hasFlag20 = GameFlag_GetFar(FLAG_CHILDHOOD) != 0;
   {
     s32 n;
     u32 *frame = &gGameState.buildStamp;

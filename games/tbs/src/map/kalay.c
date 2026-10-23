@@ -447,7 +447,7 @@ static void Kalay_SearchWell(void) {
 static void Kalay_CatchTunnelEntranceNut(void) {
   FieldScript_Start();
   Engine_ObjectEventSetPosition(LOCALID_TUNNEL_ENTRANCE_NUT, 0, 0);
-  Engine_GameFlagSet(FLAG_KALAY_TUNNEL_ENTRANCE_NUT_CAUGHT);
+  GameFlag_Set(FLAG_KALAY_TUNNEL_ENTRANCE_NUT_CAUGHT);
   FieldEffect_StartEffectObject22(ITEM_NUT, 3);
   PartyInventory_GiveItem(ITEM_NUT, 0);
   FieldScript_End();
@@ -669,8 +669,8 @@ static void Kalay_WatchTourGroupDeparture(void) {
 
   work = gFieldWork;
   FieldScript_Start();
-  if (GameFlag_IsSet(FLAG_KALAY_HEARD_OF_COLOSSO_TOUR) != 0 &&
-      GameFlag_IsSet(FLAG_KALAY_COLOSSO_TOUR_LEFT) == 0) {
+  if (GameFlag_Get(FLAG_KALAY_HEARD_OF_COLOSSO_TOUR) != 0 &&
+      GameFlag_Get(FLAG_KALAY_COLOSSO_TOUR_LEFT) == 0) {
     FieldScript_CallWithLastActiveObjectId(
         gKalay_TourGroupObjectEventTemplates);
     ObjectEvent_SetPosition(LOCALID_HEAD_GUIDE, PIXELS(252), PIXELS(272));
@@ -1198,7 +1198,7 @@ static void Kalay_WatchTourGroupDeparture(void) {
 /// Touching coord event 10 in the Kalay Tunnel (KalayTunnelTreasureRoom) stops
 /// the fade overlay following the leader.
 static void Kalay_StopTrackingLeader(void) {
-  if (GameFlag_IsSet(FLAG_TUNNEL_OVERLAY_FOLLOWS_LEADER) != 0) {
+  if (Script_GetFlag(FLAG_TUNNEL_OVERLAY_FOLLOWS_LEADER) != 0) {
     gObjectEventEffectWork->objectEvent = NULL;
     GameFlag_Clear(FLAG_TUNNEL_OVERLAY_FOLLOWS_LEADER);
   }
@@ -1209,7 +1209,7 @@ static void Kalay_StopTrackingLeader(void) {
 static void Kalay_StartTrackingLeader(void) {
   struct FadeOverlayWork *work;
 
-  if (GameFlag_IsSet(FLAG_TUNNEL_OVERLAY_FOLLOWS_LEADER) == 0) {
+  if (Script_GetFlag(FLAG_TUNNEL_OVERLAY_FOLLOWS_LEADER) == 0) {
     work = gObjectEventEffectWork;
     work->objectEvent = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
     GameFlag_Set(FLAG_TUNNEL_OVERLAY_FOLLOWS_LEADER);
@@ -1245,7 +1245,7 @@ static void Kalay_CatchTownNut(void) {
   Task_Remove(Kalay_UpdateNutOrbit);
   WaitFrames(1);
   Engine_ObjectEventSetPosition(LOCALID_TOWN_NUT, 0, 0);
-  Engine_GameFlagSet(FLAG_KALAY_TOWN_NUT_CAUGHT);
+  GameFlag_Set(FLAG_KALAY_TOWN_NUT_CAUGHT);
   FieldEffect_StartEffectObject22(ITEM_NUT, 3);
   PartyInventory_GiveItem(ITEM_NUT, 0);
 }
@@ -1255,7 +1255,7 @@ static void Kalay_CatchTownNut(void) {
 s32 Kalay_Initialize(void) {
   s32 mapId;
 
-  Engine_GameFlagSet(FLAG_KALAY_REACHED);
+  GameFlag_Set(FLAG_KALAY_REACHED);
   mapId = gGameState.mapId;
   if (mapId == (s32)&MapId_Kalay) {
     Kalay_PrepareTown();
@@ -1284,14 +1284,14 @@ static void Kalay_PrepareTown(void) {
   u8 *heap;
   OrbitingMapObjectSprite *sprite;
 
-  if (GameFlag_Test(FLAG_DODONPA_LOCKED_UP) != 0) {
-    Engine_GameFlagSet(FLAG_MAPSEC_TEMP_21);
-    Engine_GameFlagSet(FLAG_KALAY_LAYANA_SAID_LUNPA_TOO_DANGEROUS);
-    Engine_GameFlagSet(FLAG_IVAN_REPORTED_TO_LAYANA);
-    Engine_GameFlagSet(FLAG_KALAY_TUNNEL_OPEN);
+  if (GameFlag_Get(FLAG_DODONPA_LOCKED_UP) != 0) {
+    GameFlag_Set(FLAG_MAPSEC_TEMP_21);
+    GameFlag_Set(FLAG_KALAY_LAYANA_SAID_LUNPA_TOO_DANGEROUS);
+    GameFlag_Set(FLAG_IVAN_REPORTED_TO_LAYANA);
+    GameFlag_Set(FLAG_KALAY_TUNNEL_OPEN);
   }
-  if (GameFlag_Test(FLAG_LUNPA_HEARD_OF_PRISONER) != 0) {
-    Engine_GameFlagSet(FLAG_MAPSEC_TEMP_21);
+  if (GameFlag_Get(FLAG_LUNPA_HEARD_OF_PRISONER) != 0) {
+    GameFlag_Set(FLAG_MAPSEC_TEMP_21);
   }
   if (gGameState.warpDest == KALAY_FROM_KALAY_TUNNEL_TREASURE_ROOM) {
     ObjectEvent_SetPosition(LOCALID_TOWN_STATUE, PIXELS(424), PIXELS(88));
@@ -1299,7 +1299,7 @@ static void Kalay_PrepareTown(void) {
   // The second guide shares the first's sprite, drawn with its green and blue
   // swapped to tell them apart.
   ObjectGroup_ConfigureChildValue(LOCALID_SECOND_GUIDE, SPRITE_COLOR_RBG);
-  found = GameFlag_Test(FLAG_KALAY_TOWN_NUT_CAUGHT);
+  found = GameFlag_Get(FLAG_KALAY_TOWN_NUT_CAUGHT);
   if (found != 0) {
     Engine_ObjectEventSetPosition(LOCALID_TOWN_NUT, 0, 0);
   } else {
@@ -1329,17 +1329,17 @@ static void Kalay_PrepareTown(void) {
 /// the town, and, the first time the party comes before Ivan has reported to
 /// Layana, the guards scene.
 static void Kalay_PrepareHammetPalace(void) {
-  if (GameFlag_Test(FLAG_DODONPA_LOCKED_UP) != 0) {
-    Engine_GameFlagSet(FLAG_MAPSEC_TEMP_21);
-    Engine_GameFlagSet(FLAG_KALAY_LAYANA_SAID_LUNPA_TOO_DANGEROUS);
-    Engine_GameFlagSet(FLAG_IVAN_REPORTED_TO_LAYANA);
-    Engine_GameFlagSet(FLAG_KALAY_TUNNEL_OPEN);
+  if (GameFlag_Get(FLAG_DODONPA_LOCKED_UP) != 0) {
+    GameFlag_Set(FLAG_MAPSEC_TEMP_21);
+    GameFlag_Set(FLAG_KALAY_LAYANA_SAID_LUNPA_TOO_DANGEROUS);
+    GameFlag_Set(FLAG_IVAN_REPORTED_TO_LAYANA);
+    GameFlag_Set(FLAG_KALAY_TUNNEL_OPEN);
   }
-  if (GameFlag_Test(FLAG_LUNPA_HEARD_OF_PRISONER) != 0) {
-    Engine_GameFlagSet(FLAG_MAPSEC_TEMP_21);
+  if (GameFlag_Get(FLAG_LUNPA_HEARD_OF_PRISONER) != 0) {
+    GameFlag_Set(FLAG_MAPSEC_TEMP_21);
   }
   if (gGameState.warpDest != WARP_DEST_DEFAULT) {
-    if (GameFlag_Test(FLAG_IVAN_REPORTED_TO_LAYANA) == 0) {
+    if (GameFlag_Get(FLAG_IVAN_REPORTED_TO_LAYANA) == 0) {
       Kalay_IvanMeetsPalaceGuards();
     }
   }
@@ -1352,10 +1352,10 @@ static void Kalay_PrepareHammetPalace(void) {
 static void Kalay_PrepareTunnelEntrance(void) {
   struct ObjectEvent *guard;
 
-  if (GameFlag_Test(FLAG_KALAY_TUNNEL_ENTRANCE_NUT_CAUGHT) == 0) {
+  if (GameFlag_Get(FLAG_KALAY_TUNNEL_ENTRANCE_NUT_CAUGHT) == 0) {
     Map_FloatNut(LOCALID_TUNNEL_ENTRANCE_NUT);
   }
-  if (GameFlag_Test(FLAG_KALAY_TUNNEL_OPEN) != 0) {
+  if (GameFlag_Get(FLAG_KALAY_TUNNEL_OPEN) != 0) {
     guard = ObjectEvent_GetById(LOCALID_TUNNEL_GUARD);
     guard->facing = 0;
   }
@@ -1374,7 +1374,7 @@ static void Kalay_PrepareTunnelEntrance(void) {
 static void Kalay_StartWindowTransition(void) {
   gFieldWork->transition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
-  if (GameFlag_Test(FLAG_KALAY_TUNNEL_OPEN) != 0) {
+  if (GameFlag_Get(FLAG_KALAY_TUNNEL_OPEN) != 0) {
     MapGrid_CopyCellsTo(58, 5, 58, 8, 2, 3);
     {
       MapGrid_CopyCellAttributes(8, 11, 2, 1, 8, 10);
@@ -1411,10 +1411,10 @@ static void Kalay_PrepareTunnel(void) {
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   FieldEffect_StartFadeOverlay(0);
 #if TBS_PATCH_1
-  resumedMap = GameFlag_IsSet(FLAG_KEEP_PARTY_POSITION);
+  resumedMap = GameFlag_Get(FLAG_KEEP_PARTY_POSITION);
   if (resumedMap != 0) {
     effectWork = workSlots[HEAP_SLOT_FADE_OVERLAY - HEAP_SLOT_FIELD];
-    trackingValue = GameFlag_IsSet(FLAG_TUNNEL_OVERLAY_FOLLOWS_LEADER);
+    trackingValue = GameFlag_Get(FLAG_TUNNEL_OVERLAY_FOLLOWS_LEADER);
 #ifdef UBFIX
     if (trackingValue != 0) {
       objectEvent = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
@@ -1431,7 +1431,7 @@ static void Kalay_PrepareTunnel(void) {
     effectWork->objectEvent = (struct ObjectEvent *)trackingValue;
 #endif
   } else {
-    GameFlag_Set(FLAG_TUNNEL_OVERLAY_FOLLOWS_LEADER);
+    Script_SetFlag(FLAG_TUNNEL_OVERLAY_FOLLOWS_LEADER);
     if (gGameState.warpDest == KALAY_TUNNEL_TREASURE_ROOM_FROM_KALAY) {
       ((struct FadeOverlayWork *)
            workSlots[HEAP_SLOT_FADE_OVERLAY - HEAP_SLOT_FIELD])
@@ -1440,10 +1440,10 @@ static void Kalay_PrepareTunnel(void) {
     }
   }
 #else
-  GameFlag_Set(FLAG_TUNNEL_OVERLAY_FOLLOWS_LEADER);
-  if (GameFlag_IsSet(FLAG_KEEP_PARTY_POSITION) != 0) {
+  Script_SetFlag(FLAG_TUNNEL_OVERLAY_FOLLOWS_LEADER);
+  if (Script_GetFlag(FLAG_KEEP_PARTY_POSITION) != 0) {
     effectWork = workSlots[HEAP_SLOT_FADE_OVERLAY - HEAP_SLOT_FIELD];
-    trackingValue = GameFlag_IsSet(FLAG_TUNNEL_OVERLAY_FOLLOWS_LEADER);
+    trackingValue = Script_GetFlag(FLAG_TUNNEL_OVERLAY_FOLLOWS_LEADER);
 #ifdef UBFIX
     if (trackingValue != 0) {
       objectEvent = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
@@ -1465,9 +1465,9 @@ static void Kalay_PrepareTunnel(void) {
     GameFlag_Clear(FLAG_TUNNEL_OVERLAY_FOLLOWS_LEADER);
   }
 #endif
-  if (GameFlag_IsSet(FLAG_TUNNEL_FIRST_PASSAGE_OPEN) != 0) {
+  if (GameFlag_Get(FLAG_TUNNEL_FIRST_PASSAGE_OPEN) != 0) {
     ObjectEvent_SetPosition(LOCALID_PUDDLE, PIXELS(150), PIXELS(728));
-    if (GameFlag_IsSet(FLAG_TUNNEL_PUDDLE_FROZEN) != 0) {
+    if (GameFlag_Get(FLAG_TUNNEL_PUDDLE_FROZEN) != 0) {
       ObjectEvent_Get(LOCALID_PUDDLE);
       column = 9;
       Engine_ObjectEventSetAnimation(LOCALID_PUDDLE, PUDDLE_ANIMATION_FROZEN);
@@ -1487,7 +1487,7 @@ static void Kalay_PrepareTunnel(void) {
   objectEvent = ObjectEvent_Get(LOCALID_SECOND_STATUE);
   ObjectEvent_SetSpriteFlags(objectEvent, 0);
   FieldScheduler_AddCallback(Kalay_UpdateTunnelEmitters, TASK_PRIORITY_MAP);
-  if (GameFlag_IsSet(FLAG_KALAY_TUNNEL_OPEN) != 0) {
+  if (GameFlag_Get(FLAG_KALAY_TUNNEL_OPEN) != 0) {
     ObjectEvent_SetPosition(LOCALID_WAITING_MAN, PIXELS(426), PIXELS(730));
     objectEvent = ObjectEvent_Get(LOCALID_WAITING_MAN);
     {
@@ -1500,7 +1500,7 @@ static void Kalay_PrepareTunnel(void) {
     MapGrid_CopyCellsTo(25, 42, 25, 47, 1, 1);
     MapGrid_CopyCellAttributes(22, 50, 2, 1, 24, 49);
   }
-  if (GameFlag_IsSet(FLAG_TUNNEL_FIRST_PASSAGE_OPEN) != 0) {
+  if (GameFlag_Get(FLAG_TUNNEL_FIRST_PASSAGE_OPEN) != 0) {
     ObjectEvent_SetPosition(LOCALID_FIRST_STATUE, PIXELS(232), PIXELS(732));
     MapGrid_CopyCellAttributes(7, 44, 1, 1, 0, 1);
     MapGrid_CopyCellsTo(74, 58, 78, 41, 1, 5);
@@ -1539,7 +1539,7 @@ static void Kalay_PrepareTunnel(void) {
       break;
     }
   }
-  if (GameFlag_IsSet(FLAG_TUNNEL_SECOND_PASSAGE_OPEN) != 0) {
+  if (GameFlag_Get(FLAG_TUNNEL_SECOND_PASSAGE_OPEN) != 0) {
     ObjectEvent_SetPosition(LOCALID_SECOND_STATUE, PIXELS(696), PIXELS(732));
     MapGrid_CopyCellsTo(74, 58, 107, 41, 1, 5);
     MapGrid_CopyCellsTo(45, 109, 42, 109, 3, 2);
@@ -2216,7 +2216,7 @@ static void Kalay_UpdateTunnelPassages(void) {
   // Open each passage only after its corresponding statue reaches the trigger.
   firstStatue = ObjectEvent_GetById(LOCALID_FIRST_STATUE);
   secondStatue = ObjectEvent_GetById(LOCALID_SECOND_STATUE);
-  firstPassageOpen = GameFlag_IsSet(FLAG_TUNNEL_FIRST_PASSAGE_OPEN);
+  firstPassageOpen = GameFlag_Get(FLAG_TUNNEL_FIRST_PASSAGE_OPEN);
   if (firstPassageOpen != 0) {
   } else if ((firstStatue->x.fixed >> 19) > 29) {
   } else {
@@ -2276,7 +2276,7 @@ static void Kalay_UpdateTunnelPassages(void) {
     MapGrid_CopyCellAttributes(0, 1, 1, 1, 7, span);
     FieldScript_End();
   }
-  if (GameFlag_IsSet(FLAG_TUNNEL_SECOND_PASSAGE_OPEN) != 0) {
+  if (GameFlag_Get(FLAG_TUNNEL_SECOND_PASSAGE_OPEN) != 0) {
   } else if ((secondStatue->x.fixed >> 19) > 87) {
   } else {
     FieldScript_Start();
@@ -2380,9 +2380,9 @@ static void Kalay_UpdateTunnelEmitters(void) {
       firstEmitter->z.part.pixel > 777) {
     firstEmitter->sprite->image.priority =
         ObjectEvent_Get(LOCALID_PARTY_LEADER)->sprite->image.priority;
-  } else if (!GameFlag_IsSet(FLAG_TUNNEL_FIRST_PASSAGE_OPEN) &&
+  } else if (!GameFlag_Get(FLAG_TUNNEL_FIRST_PASSAGE_OPEN) &&
              firstEmitter->x.part.pixel <= 245 && (gFrameCount & 1) == 0) {
-    if (!GameFlag_IsSet(FLAG_TUNNEL_FIRST_PARTICLES_SOUNDED)) {
+    if (!Script_GetFlag(FLAG_TUNNEL_FIRST_PARTICLES_SOUNDED)) {
       Map_QueueMusic(-1);
       Script_PlaySong(SE_230);
       GameFlag_Set(FLAG_TUNNEL_FIRST_PARTICLES_SOUNDED);
@@ -2390,9 +2390,9 @@ static void Kalay_UpdateTunnelEmitters(void) {
     Kalay_SpawnTunnelParticle(firstEmitter->x.fixed, firstEmitter->y.fixed,
                               firstEmitter->z.fixed);
   }
-  if (!GameFlag_IsSet(FLAG_TUNNEL_SECOND_PASSAGE_OPEN) &&
+  if (!GameFlag_Get(FLAG_TUNNEL_SECOND_PASSAGE_OPEN) &&
       secondEmitter->x.part.pixel <= 709 && (gFrameCount & 1) == 0) {
-    if (!GameFlag_IsSet(FLAG_TUNNEL_SECOND_PARTICLES_SOUNDED)) {
+    if (!Script_GetFlag(FLAG_TUNNEL_SECOND_PARTICLES_SOUNDED)) {
       Map_QueueMusic(-1);
       Script_PlaySong(SE_230);
       GameFlag_Set(FLAG_TUNNEL_SECOND_PARTICLES_SOUNDED);
@@ -2473,7 +2473,7 @@ static void Kalay_FreezePuddle(void) {
     effect->y.fixed -= PIXELS(32);
     effect->priorityFlags = 2;
   }
-  Engine_GameFlagSet(FLAG_TUNNEL_PUDDLE_FROZEN);
+  GameFlag_Set(FLAG_TUNNEL_PUDDLE_FROZEN);
 }
 
 // Shared source, included in link order.

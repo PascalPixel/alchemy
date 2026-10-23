@@ -195,7 +195,7 @@ static void EventScript_TalkToWeaponMerchant(void) {
   if (FACING_IS_NORTH(leaderFacing)) {
     Shop_Run(SHOP_BILIBIN_WEAPONS, LOCALID_BILIBIN_WEAPON_MERCHANT);
   } else {
-    if (GameFlag_Test(FLAG_KOLIMA_CURSE_LIFTED) == 0) {
+    if (GameFlag_Get(FLAG_KOLIMA_CURSE_LIFTED) == 0) {
       FieldScript_SetMessageId(MsgBilibinThereWasAbleHealerIn);
     } else {
       FieldScript_SetMessageId(MsgBilibinOurWeaponsBestCanFind);
@@ -218,7 +218,7 @@ static void EventScript_TalkToItemMerchant(void) {
   if (FACING_IS_NORTH(leaderFacing)) {
     Shop_Run(SHOP_BILIBIN_ITEMS, LOCALID_BILIBIN_ITEM_MERCHANT);
   } else {
-    if (GameFlag_Test(FLAG_KOLIMA_CURSE_LIFTED) == 0) {
+    if (GameFlag_Get(FLAG_KOLIMA_CURSE_LIFTED) == 0) {
       FieldScript_SetMessageId(MsgBilibinMustUsedTypesDangerBeing);
     } else {
       FieldScript_SetMessageId(MsgBilibinTurnedOutWarriorsHiredBy);
@@ -246,7 +246,7 @@ static void EventScript_TalkToArmorMerchant(void) {
   if (FACING_IS_NORTH(leaderFacing)) {
     Shop_Run(SHOP_BILIBIN_ARMOR, LOCALID_BILIBIN_ARMOR_MERCHANT);
   } else {
-    if (GameFlag_IsSet(FLAG_KOLIMA_CURSE_LIFTED) == 0) {
+    if (GameFlag_Get(FLAG_KOLIMA_CURSE_LIFTED) == 0) {
       FieldScript_SetMessageId(MsgBilibinHaveEverHeardOcean);
       ObjectEvent_FaceObjectEvent(LOCALID_BILIBIN_ARMOR_MERCHANT,
                                   LOCALID_PARTY_LEADER, 0);
@@ -339,7 +339,7 @@ static void EventScript_TalkToInnkeeper(void) {
 
   if (FACING_IS_NORTH(leaderFacing)) {
     Inn_CheckIn(BILIBIN_INN, LOCALID_BILIBIN_INNKEEPER);
-  } else if (GameFlag_Test(FLAG_KOLIMA_CURSE_LIFTED) != 0) {
+  } else if (GameFlag_Get(FLAG_KOLIMA_CURSE_LIFTED) != 0) {
     FieldScript_SetMessageId(MsgBilibinWasntCurseInKolimaHorrifying);
     FieldScript_AskYesNoAndShowResponse(LOCALID_BILIBIN_INNKEEPER, 0);
   } else {
@@ -354,7 +354,7 @@ static void EventScript_TalkToInnkeeper(void) {
 /// out orders once, then sends the party to the waitress.
 static void EventScript_TalkToBusyChef(void) {
   FieldScript_Start();
-  if (GameFlag_IsSet(FLAG_MAPSEC_TEMP_00) == 0) {
+  if (Script_GetFlag(FLAG_MAPSEC_TEMP_00) == 0) {
     // The first time (FLAG_MAPSEC_TEMP_00, kept until the party leaves
     // Bilibin), the chef shouts orders and the kitchen worker answers.
     FieldScript_SetMessageId(MsgBilibinTwoSpecialsOneDinnerOne);
@@ -419,7 +419,7 @@ static void EventScript_TalkAboutMeal(void) {
 /// again in spring.
 static void EventScript_ReadMiaAdmirersMind(void) {
   FieldScript_Start();
-  if (GameFlag_Test(FLAG_IN_PARTY(MIA)) != 0) {
+  if (GameFlag_Get(FLAG_IN_PARTY(MIA)) != 0) {
     FieldScript_SetMessageId(MsgBilibinEvenFrozenImilMustFeel);
   } else {
     FieldScript_SetMessageId(MsgBilibinWhenSpringComesWantGo);

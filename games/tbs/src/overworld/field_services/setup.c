@@ -234,7 +234,7 @@ void FieldEffect_StartCast(void) {
     }
     ObjectGroup_SetActionForOthers((struct Object *)caster, 0, 0x10);
   }
-  if (GameFlag_TestFar(0x140) != 0) {
+  if (GameFlag_GetFar(0x140) != 0) {
     if (effectWork->visible != 0) {
       caster->update = FieldEffect_CycleObjectValueByCounter;
     }
@@ -272,21 +272,21 @@ void FieldEffect_FadeToEffectColor(void) {
 
   // Of the forcing flags, the highest one set wins.
   no = gFrameCount & 7;
-  if (GameFlag_TestFar(FLAG_PSYNERGY_TINT(0)))
+  if (GameFlag_GetFar(FLAG_PSYNERGY_TINT(0)))
     no = 0;
-  if (GameFlag_TestFar(FLAG_PSYNERGY_TINT(1)))
+  if (GameFlag_GetFar(FLAG_PSYNERGY_TINT(1)))
     no = 1;
-  if (GameFlag_TestFar(FLAG_PSYNERGY_TINT(2)))
+  if (GameFlag_GetFar(FLAG_PSYNERGY_TINT(2)))
     no = 2;
-  if (GameFlag_TestFar(FLAG_PSYNERGY_TINT(3)))
+  if (GameFlag_GetFar(FLAG_PSYNERGY_TINT(3)))
     no = 3;
-  if (GameFlag_TestFar(FLAG_PSYNERGY_TINT(4)))
+  if (GameFlag_GetFar(FLAG_PSYNERGY_TINT(4)))
     no = 4;
-  if (GameFlag_TestFar(FLAG_PSYNERGY_TINT(5)))
+  if (GameFlag_GetFar(FLAG_PSYNERGY_TINT(5)))
     no = 5;
-  if (GameFlag_TestFar(FLAG_PSYNERGY_TINT(6)))
+  if (GameFlag_GetFar(FLAG_PSYNERGY_TINT(6)))
     no = 6;
-  if (GameFlag_TestFar(FLAG_PSYNERGY_TINT(7)))
+  if (GameFlag_GetFar(FLAG_PSYNERGY_TINT(7)))
     no = 7;
   PaletteFade_SetTarget(gFieldEffect_TargetColors[no], 1);
   PaletteFade_StartInterpolation(8);

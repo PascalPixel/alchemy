@@ -137,11 +137,11 @@ const u32 *Map_GetWarps(void) { return gMcCoyPalaceGroundsWarps; }
 /// McCoy faces the party.
 const struct ObjectEventTemplate *Map_GetObjectEventTemplates(void) {
   if (gGameState.mapId == (s32)&MapId_McCoyPalaceGrounds) {
-    if (GameFlag_Test(FLAG_MCCOY_PALACE_BARRICADE_NEEDS_NO_KEY) != 0)
+    if (GameFlag_Get(FLAG_MCCOY_PALACE_BARRICADE_NEEDS_NO_KEY) != 0)
       gMcCoyPalaceGroundsObjectEventTemplates[LOCALID_EAST_GUARD -
                                               LOCALID_FIRST_PLACED]
           .talkFacing = TALK_FACING_PARTY_AND_BACK;
-    if (GameFlag_Test(FLAG_KOLIMA_CURSE_LIFTED) != 0)
+    if (GameFlag_Get(FLAG_KOLIMA_CURSE_LIFTED) != 0)
       gMcCoyPalaceGroundsObjectEventTemplates[LOCALID_LADY_MCCOY -
                                               LOCALID_FIRST_PLACED]
           .talkFacing = TALK_FACING_PARTY;
@@ -155,7 +155,7 @@ const struct ObjectEventTemplate *Map_GetObjectEventTemplates(void) {
 static void EventScript_CatchFloatingNut(void) {
   FieldScript_Start();
   Engine_ObjectEventSetPosition(LOCALID_FLOATING_NUT, 0, 0);
-  Engine_GameFlagSet(FLAG_MCCOY_PALACE_GROUNDS_NUT_CAUGHT);
+  GameFlag_Set(FLAG_MCCOY_PALACE_GROUNDS_NUT_CAUGHT);
   FieldEffect_StartEffectObject22(ITEM_NUT, 3);
   PartyInventory_GiveItem(ITEM_NUT, 0);
   FieldScript_End();
@@ -218,16 +218,16 @@ static void EventScript_TalkToWestGuard(void) {
 static void EventScript_TalkToEastGuard(void) {
   FieldScript_Start();
   // Once admitted, the party only receives the guard's current reminder.
-  if (GameFlag_IsSet(FLAG_MCCOY_PALACE_ADMITTED) != 0) {
-    if (GameFlag_Test(FLAG_KEEPING_MCCOY_WAITING) != 0) {
-      if (GameFlag_IsSet(FLAG_GUARD_SCOLDED) == 0) {
+  if (Script_GetFlag(FLAG_MCCOY_PALACE_ADMITTED) != 0) {
+    if (GameFlag_Get(FLAG_KEEPING_MCCOY_WAITING) != 0) {
+      if (Script_GetFlag(FLAG_GUARD_SCOLDED) == 0) {
         FieldScript_SetMessageId(MsgBilibinWhere);
         FieldScript_ShowMessageThenWait(LOCALID_EAST_GUARD, 0, 10);
         ObjectEvent_ShowEmote(LOCALID_EAST_GUARD, EMOTE_IN_FRONT | EMOTE_SCOWL,
                               40);
         FieldScript_ShowMessageThenWait(LOCALID_EAST_GUARD, 0, 10);
         ObjectMotion_SetVarCbAndRefresh(LOCALID_EAST_GUARD, 2);
-        Engine_GameFlagSet(FLAG_GUARD_SCOLDED);
+        GameFlag_Set(FLAG_GUARD_SCOLDED);
       }
       FieldScript_SetMessageId(MsgBilibinMasterQuiteCranky);
       FieldScript_ShowMessageAndWait(LOCALID_EAST_GUARD, 0);
@@ -292,7 +292,7 @@ static void EventScript_TalkToEastGuard(void) {
       /* FAKEMATCH(one-pass): the block keeps r0 last among the call above's
          arguments; as a plain call, 1 of 233 instructions differ in tbs-en. */
       do {
-        Engine_GameFlagSet(FLAG_MCCOY_PALACE_ADMITTED);
+        GameFlag_Set(FLAG_MCCOY_PALACE_ADMITTED);
       } while (0);
     guard:
       Object_SetTargetAndCallback(
@@ -311,7 +311,7 @@ static void EventScript_TalkToEastGuard(void) {
 /// opens it if it is still shut, and the leader walks into the palace.
 static void EventScript_EnterPalace(void) {
   FieldScript_Start();
-  if (GameFlag_IsSet(FLAG_GATE_OPEN) == 0) {
+  if (GameFlag_Get(FLAG_GATE_OPEN) == 0) {
     McCoyPalaceGrounds_OpenGate();
   }
   ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, 0x8000, 0x4000);
@@ -346,17 +346,17 @@ s32 Map_Initialize(void) {
 /// Lady McCoy stands before the palace and, until McCoy has rewarded the
 /// party, the guards arrest them.
 static void McCoyPalaceGrounds_RestoreStory(void) {
-  if (GameFlag_Test(FLAG_KEEP_PARTY_POSITION) != 0) {
-    GameFlag_ClearBit(FLAG_GATE_OPEN);
+  if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) != 0) {
+    GameFlag_Clear(FLAG_GATE_OPEN);
   }
-  if (GameFlag_Test(FLAG_MCCOY_PALACE_GROUNDS_NUT_CAUGHT) == 0) {
+  if (GameFlag_Get(FLAG_MCCOY_PALACE_GROUNDS_NUT_CAUGHT) == 0) {
     Map_FloatNut(LOCALID_FLOATING_NUT);
   }
-  if (GameFlag_Test(FLAG_MCCOY_PALACE_ADMITTED) != 0) {
+  if (GameFlag_Get(FLAG_MCCOY_PALACE_ADMITTED) != 0) {
     ObjectEvent_SetPosition(LOCALID_WEST_GUARD, PIXELS(308), PIXELS(263));
     Engine_ObjectEventSetPosition(LOCALID_EAST_GUARD, PIXELS(346), PIXELS(263));
-    if (GameFlag_Test(FLAG_MCCOY_PALACE_BARRICADE_NEEDS_NO_KEY) == 0) {
-      if (GameFlag_Test(FLAG_KOLIMA_CURSE_LIFTED) == 0) {
+    if (GameFlag_Get(FLAG_MCCOY_PALACE_BARRICADE_NEEDS_NO_KEY) == 0) {
+      if (GameFlag_Get(FLAG_KOLIMA_CURSE_LIFTED) == 0) {
         Engine_ObjectEventSetPosition(LOCALID_WEST_GUARD, 0, 0);
         Object_SetTargetAndCallback(LOCALID_EAST_GUARD,
                                     OBJ_EVENT_LINK_KEEP_MOTION |
@@ -366,11 +366,11 @@ static void McCoyPalaceGrounds_RestoreStory(void) {
     }
   }
   // Lady McCoy's new place and the arrest come only after the curse lifts.
-  if (GameFlag_Test(FLAG_KOLIMA_CURSE_LIFTED) != 0) {
+  if (GameFlag_Get(FLAG_KOLIMA_CURSE_LIFTED) != 0) {
     ObjectEvent_SetPosition(LOCALID_LADY_MCCOY, PIXELS(224), PIXELS(292));
     ObjectEvent_FaceDirection(LOCALID_LADY_MCCOY, FACING_SOUTH, 0);
     ObjectMotion_ArmCallback(LOCALID_WEST_WORKER, FACING_EAST, 0);
-    if (GameFlag_Test(FLAG_MCCOY_PALACE_PARTY_REWARDED) == 0) {
+    if (GameFlag_Get(FLAG_MCCOY_PALACE_PARTY_REWARDED) == 0) {
       EventScript_GuardsArrestParty();
     }
   }
@@ -443,7 +443,7 @@ static void EventScript_GuardsArrestParty(void) {
   ObjectEvent_SetAttachedEffect(LOCALID_PARTY_LEADER, ATTACHED_EFFECT_IN_FRONT |
                                                           ATTACHED_EFFECT_ONCE);
   FieldScript_WaitFrames(60);
-  if (GameFlag_Test(FLAG_MCCOY_PALACE_ADMITTED) == 0) {
+  if (GameFlag_Get(FLAG_MCCOY_PALACE_ADMITTED) == 0) {
     ObjectMotion_SetSpeedParameters(LOCALID_EAST_GUARD, 0x10000, 0x8000);
     ObjectEvent_GetById(LOCALID_EAST_GUARD)->steeringFlags &=
         ~OBJ_EVENT_FACES_MOTION;
@@ -479,7 +479,7 @@ static void EventScript_GuardsArrestParty(void) {
 static void McCoyPalaceGrounds_OpenGate(void) {
   Sound_PlaySong(SE_188);
   MapGrid_PlayMetatileCopySequence(gPalaceGateOpenSteps, 52, 11);
-  Engine_GameFlagSet(FLAG_GATE_OPEN);
+  GameFlag_Set(FLAG_GATE_OPEN);
 }
 
 #include "common/object_orbit.h"

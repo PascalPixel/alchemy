@@ -252,7 +252,7 @@ s32 SummaryScreen_RunPages(void) {
   s32 result = 0;
   u32 changed;
 
-  while (!finished && !GameFlag_TestFar(FLAG_MENU_START_PRESSED)) {
+  while (!finished && !GameFlag_GetFar(FLAG_MENU_START_PRESSED)) {
     switch (step) {
     case STATUS_STEP_MEMBER:
       menu->selectedSlots[0] = finished;
@@ -287,7 +287,7 @@ s32 SummaryScreen_RunPages(void) {
     }
   }
 
-  if (GameFlag_TestFar(FLAG_MENU_START_PRESSED))
+  if (GameFlag_GetFar(FLAG_MENU_START_PRESSED))
     result = -1;
 
   return result;
@@ -314,7 +314,7 @@ s32 SummaryScreen_SelectMember(s32 slot) {
   // Battle Arena, in which only the first three members fight
   // (BattleArena_PartyContains); the divider falls between the third and
   // fourth figures, which stand three tiles apart.
-  if (GameFlag_TestFar(FLAG_LINK_BATTLE_ARRANGED))
+  if (GameFlag_GetFar(FLAG_LINK_BATTLE_ARRANGED))
     Window_DrawDividerLineFar(menu->memberWindow, 9, 1, 9, 3);
   if (index == -1)
     menu->memberIndex[slot] = 0;
@@ -369,7 +369,7 @@ s32 DjinnMenu_ShowCurrentList(void) {
       // element. Each name
       // follows its element's icon: window tile 1 + element in palette 1
       // (0x1000).
-      if (GameFlag_TestFar(FLAG_DJINNI(id))) {
+      if (GameFlag_GetFar(FLAG_DJINNI(id))) {
         Window_SetTilemapEntryFar(window, 0x1001 + element, element * 7 + 1,
                                   djinn + 3, 0);
         Text_DrawMessageAsTilesFar(MsgDjinnName + id, window, element * 56 + 16,
@@ -379,7 +379,7 @@ s32 DjinnMenu_ShowCurrentList(void) {
   }
   ((struct WindowWork *)gWindowWork[0])->dirty = 1;
   for (;;) {
-    if (GameFlag_TestFar(FLAG_MENU_START_PRESSED))
+    if (GameFlag_GetFar(FLAG_MENU_START_PRESSED))
       break;
     WaitFrames(1);
     if (gKeysPressed & (KEY_A | KEY_B | KEY_SELECT))
@@ -454,13 +454,13 @@ s32 MemberChooser_RunRearrange(void) {
           REG_DMA3);
   Dma_Set((void *)&BG_PLTT_COLOR(15, 4), (void *)&BG_PLTT_COLOR(1, 14),
           DMA_ENABLE << 16 | 1, REG_DMA3);
-  while (!GameFlag_TestFar(FLAG_MENU_START_PRESSED)) {
+  while (!GameFlag_GetFar(FLAG_MENU_START_PRESSED)) {
     if (redraw) {
       redraw = 0;
       // The help lines, and the member's status and figure.
       WindowSprite_RedrawSavedRectFar(menu->selectorWindow);
       Text_DrawMessageAsTilesFar(MsgRearrangeHelp, menu->selectorWindow, 0, 0);
-      if (GameFlag_TestFar(FLAG_DJINN_FIRST))
+      if (GameFlag_GetFar(FLAG_DJINN_FIRST))
         Text_DrawMessageAsTilesFar(MsgDjinnListHelp, menu->selectorWindow, 0,
                                    16);
       Text_DrawMessageAsTilesFar(MsgRearrangeHelp - 3, // "A: Details"
@@ -508,7 +508,7 @@ s32 MemberChooser_RunRearrange(void) {
       }
       WaitFrames(1);
     } else if ((gKeysPressed & KEY_SELECT) &&
-               GameFlag_TestFar(FLAG_DJINN_FIRST)) {
+               GameFlag_GetFar(FLAG_DJINN_FIRST)) {
       DjinnMenu_ShowCurrentList();
       redraw = 1;
     } else {
@@ -763,7 +763,7 @@ s32 SummaryScreen_SelectCommand(void) {
   MenuCursor_Slide(-10, 88);
 
   // One member's page at a time; L and R start the next.
-  while (done == 0 && GameFlag_TestFar(FLAG_MENU_START_PRESSED) == 0) {
+  while (done == 0 && GameFlag_GetFar(FLAG_MENU_START_PRESSED) == 0) {
     Unit_GetFar(menu->selectedIds[0]);
     SummaryScreen_DrawStatusAilments(menu->statusWindow, menu->selectedIds[0],
                                      1);
@@ -775,7 +775,7 @@ s32 SummaryScreen_SelectCommand(void) {
       hasAilments = 1;
     redraw = 1;
 
-    while (GameFlag_TestFar(FLAG_MENU_START_PRESSED) == 0) {
+    while (GameFlag_GetFar(FLAG_MENU_START_PRESSED) == 0) {
       if (redraw != 0) {
         s32 limit;
 
@@ -1542,7 +1542,7 @@ s32 PsynergyMenu_SelectAction(void) {
   Text_DrawMessageAsTilesFar(MsgSwitchCharacterHelp + 2, menu->statusWindow, 0,
                              -24);
 
-  while (done == 0 && GameFlag_TestFar(FLAG_MENU_START_PRESSED) == 0) {
+  while (done == 0 && GameFlag_GetFar(FLAG_MENU_START_PRESSED) == 0) {
     ItemMenu_PositionCategory();
     WindowSprite_RedrawSavedRectFar(menu->statusWindow);
     menu->psynergyCount = PsynergyMenu_CollectActions(
@@ -1554,7 +1554,7 @@ s32 PsynergyMenu_SelectAction(void) {
     redraw = 1;
     listNeedsRedraw = 1;
 
-    while (GameFlag_TestFar(FLAG_MENU_START_PRESSED) == 0) {
+    while (GameFlag_GetFar(FLAG_MENU_START_PRESSED) == 0) {
       if (redraw != 0) {
         redraw = 0;
         if (listNeedsRedraw != 0) {
@@ -1823,7 +1823,7 @@ s32 ItemMenu_SelectItem(void) {
   Menu_SpawnIconEntries((struct ItemMenuWork *)menu, menu->questionWindow);
 
   done = 0;
-  while (done == 0 && GameFlag_TestFar(FLAG_MENU_START_PRESSED) == 0) {
+  while (done == 0 && GameFlag_GetFar(FLAG_MENU_START_PRESSED) == 0) {
     ItemMenu_PositionCategory();
     WindowSprite_RedrawSavedRectFar(menu->statusWindow);
     member = Unit_GetFar(menu->sideMember[0]);
@@ -1839,7 +1839,7 @@ s32 ItemMenu_SelectItem(void) {
     redraw = 1;
     listNeedsRedraw = 1;
 
-    while (GameFlag_TestFar(FLAG_MENU_START_PRESSED) == 0) {
+    while (GameFlag_GetFar(FLAG_MENU_START_PRESSED) == 0) {
       if (redraw != 0) {
         WindowSprite_ClearListFar(menu->descriptionWindow);
         redraw = 0;

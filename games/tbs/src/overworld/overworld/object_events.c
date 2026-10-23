@@ -25,14 +25,14 @@ s32 Party_RemapCharacterIdByFlags(s32 character) {
 
   sprite = character;
   if (sprite <= 8) {
-    if (GameFlag_TestFar(FLAG_CHILDHOOD) != 0) {
+    if (GameFlag_GetFar(FLAG_CHILDHOOD) != 0) {
       if (sprite == ISAAC) {
         sprite = ISAAC_CHILD;
       }
       if (sprite == GARET) {
         sprite = GARET_CHILD;
       }
-    } else if ((GameFlag_TestFar(FLAG_ISAAC_WEARS_TUNIC) != 0) &&
+    } else if ((GameFlag_GetFar(FLAG_ISAAC_WEARS_TUNIC) != 0) &&
                (sprite == ISAAC)) {
       sprite = 0x11;
     }
@@ -146,11 +146,11 @@ void FieldScript_SpawnObjectEventTemplates(struct ObjectEventTemplate *entry,
         }
       }
       // Dora's tunic overlays the young sprites with its child part.
-      if (GameFlag_TestFar(FLAG_ISAAC_WEARS_TUNIC) &&
+      if (GameFlag_GetFar(FLAG_ISAAC_WEARS_TUNIC) &&
           (u32)(spriteId - ISAAC_CHILD) <= GARET_CHILD - ISAAC_CHILD)
         ObjectDispatch_RegisterChildMetadataFar((struct DispatchObject *)object,
                                                 SPRITE_TUNIC);
-    } else if (!GameFlag_TestFar(FLAG_KEEP_PARTY_POSITION)) {
+    } else if (!GameFlag_GetFar(FLAG_KEEP_PARTY_POSITION)) {
       Object_SetPositionAndResetMotionFar(object, entry->x, entry->y, entry->z);
     }
 
@@ -184,7 +184,7 @@ void FieldScript_SpawnObjectEventTemplates(struct ObjectEventTemplate *entry,
         // the ground. While the tunic flag is set, all keep their native
         // scale; otherwise they draw at 3/4 size.
         object->flags &= 0xfe;
-        if (!GameFlag_TestFar(FLAG_ISAAC_WEARS_TUNIC)) {
+        if (!GameFlag_GetFar(FLAG_ISAAC_WEARS_TUNIC)) {
           // UB: sprite creation can fail while the object event slot stays
           // live. The native local is then indeterminate or from an earlier
           // row. Checking the sprite grows tbs-en from 608 to 628 bytes.
@@ -359,8 +359,8 @@ UNUSED void *ObjectEvent_GetSlotAddress(u32 objectEventIndex) {
 void Map_AssignViewFlags(struct ObjectEventTemplate *entry) {
   struct MapGridScrollWork *view = gMapGridWork[0];
 
-  GameFlag_ClearBitFar(FLAG_IN_VIEW);
-  GameFlag_SetBitFar(FLAG_OUT_OF_VIEW);
+  GameFlag_ClearFar(FLAG_IN_VIEW);
+  GameFlag_SetFar(FLAG_OUT_OF_VIEW);
   while (entry->sprite != -1) {
     /* FAKEMATCH(temporary): the condition read into a u16 local and then an
      * s16 one, which keeps loop.c to one hoisted bound address; as

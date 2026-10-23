@@ -122,7 +122,7 @@ const u32 *TolbiInteriors_GetWarps(void) { return gTolbiInteriorsWarps; }
 /// After Colosso the rooms hold a different crowd.
 const struct ObjectEventTemplate *
 TolbiInteriors_SelectObjectEventTemplates(void) {
-  if (GameFlag_Test(FLAG_COLOSSO_OVER) != 0) {
+  if (GameFlag_Get(FLAG_COLOSSO_OVER) != 0) {
     return gTolbiInteriorsObjectEventTemplatesAfterColosso;
   }
   return gTolbiInteriorsObjectEventTemplates;
@@ -140,10 +140,10 @@ static void TolbiInteriors_AskWhetherBabiWasMissing(s32 speaker) {
 
 /// Picks the event table for the current point in the Colosso story.
 const struct MapEvent *TolbiInteriors_SelectEvents(void) {
-  if (GameFlag_Test(FLAG_COLOSSO_OVER) != 0) {
+  if (GameFlag_Get(FLAG_COLOSSO_OVER) != 0) {
     return gTolbiInteriorsEventsAfterColosso;
   }
-  if (GameFlag_Test(FLAG_BABI_SAVED) != 0) {
+  if (GameFlag_Get(FLAG_BABI_SAVED) != 0) {
     return gTolbiInteriorsEventsFinalsDay;
   }
   return gTolbiInteriorsEventsFestival;
@@ -324,7 +324,7 @@ s32 TolbiInteriors_ApplyEntryState(void) {
 
   gFieldWork->transition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
-  if (GameFlag_Test(FLAG_COLOSSO_OVER) != 0) {
+  if (GameFlag_Get(FLAG_COLOSSO_OVER) != 0) {
     // Restore the room's changed cells and the passengers' fixed draw priority.
     MapGrid_CopyCellAttributes(51, 47, 3, 1, 51, 45);
     objectEvent = ObjectEvent_GetById(LOCALID_TOLBI_INTERIORS_ANGRY_PASSENGER);
@@ -334,7 +334,7 @@ s32 TolbiInteriors_ApplyEntryState(void) {
     objectEvent = ObjectEvent_GetById(LOCALID_TOLBI_INTERIORS_PASSENGER_WIFE);
     objectEvent->priorityFlags = clearedPriorityFlags;
     objectEvent->sprite->image.priority = 2;
-    if (GameFlag_IsSet(FLAG_TOLBI_INTERIORS_MEDAL_HIDDEN) != 0) {
+    if (Script_GetFlag(FLAG_TOLBI_INTERIORS_MEDAL_HIDDEN) != 0) {
       ObjectEvent_SetPosition(LOCALID_TOLBI_INTERIORS_MEDAL_WOMAN, PIXELS(560),
                               PIXELS(680));
       ObjectEvent_FaceDirection(LOCALID_TOLBI_INTERIORS_MEDAL_WOMAN,
@@ -343,22 +343,22 @@ s32 TolbiInteriors_ApplyEntryState(void) {
     // Each short scene plays once, only when entering its room.
     if (gGameState.warpDest ==
         TOLBI_INTERIORS_GUEST_ROOM_NORTHEAST_FROM_INN_PASSAGE) {
-      if (GameFlag_IsSet(FLAG_TOLBI_INTERIORS_MEDAL_HIDDEN) == 0) {
-        Engine_GameFlagSet(FLAG_TOLBI_INTERIORS_MEDAL_HIDDEN);
+      if (Script_GetFlag(FLAG_TOLBI_INTERIORS_MEDAL_HIDDEN) == 0) {
+        GameFlag_Set(FLAG_TOLBI_INTERIORS_MEDAL_HIDDEN);
         FieldScript_StartScreenTransition();
         TolbiInteriors_WatchWomanHideMedal();
       }
     }
     if (gGameState.warpDest ==
         TOLBI_INTERIORS_GUEST_ROOM_SOUTHEAST_FROM_INN_PASSAGE) {
-      if (GameFlag_IsSet(FLAG_TOLBI_INTERIORS_PASSENGERS_SEEN) == 0) {
-        Engine_GameFlagSet(FLAG_TOLBI_INTERIORS_PASSENGERS_SEEN);
+      if (Script_GetFlag(FLAG_TOLBI_INTERIORS_PASSENGERS_SEEN) == 0) {
+        GameFlag_Set(FLAG_TOLBI_INTERIORS_PASSENGERS_SEEN);
         FieldScript_StartScreenTransition();
         TolbiInteriors_WatchPassengersArgue();
       }
     }
     // Once the docks' confrontation (the refund) is seen, these two have left.
-    if (GameFlag_Test(FLAG_TOLBI_DOCKS_TOUR_GROUP_BLAMED) != 0) {
+    if (GameFlag_Get(FLAG_TOLBI_DOCKS_TOUR_GROUP_BLAMED) != 0) {
       Engine_ObjectEventSetPosition(LOCALID_TOLBI_INTERIORS_FELLOW_PASSENGER, 0,
                                     0);
       Engine_ObjectEventSetPosition(LOCALID_TOLBI_INTERIORS_COLOSSO_FAN, 0, 0);
@@ -374,10 +374,10 @@ static void TolbiInteriors_TalkToItemMerchant(s32 speaker) {
   struct ObjectEvent *leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   if (FACING_NEAREST_CARDINAL(leader->facing) == FACING_WEST) {
     Shop_Run(TOLBI_INTERIORS_ITEM_SHOP, speaker);
-  } else if (GameFlag_Test(FLAG_COLOSSO_OVER) != 0) {
+  } else if (GameFlag_Get(FLAG_COLOSSO_OVER) != 0) {
     FieldScript_SetMessageId(MsgTolbiRightOneWell);
     FieldScript_ShowMessageAndWait(speaker, 0);
-  } else if (GameFlag_Test(FLAG_BABI_SAVED) != 0) {
+  } else if (GameFlag_Get(FLAG_BABI_SAVED) != 0) {
     FieldScript_SetMessageId(MsgTolbiRequireLotHealing);
     FieldScript_ShowMessageAndWait(speaker, 0);
   } else {
@@ -391,9 +391,9 @@ static void TolbiInteriors_TalkToWeaponMerchant(s32 speaker) {
   struct ObjectEvent *leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   if (FACING_NEAREST_CARDINAL(leader->facing) == FACING_NORTH) {
     Shop_Run(TOLBI_INTERIORS_WEAPON_SHOP, speaker);
-  } else if (GameFlag_Test(FLAG_COLOSSO_OVER) != 0) {
+  } else if (GameFlag_Get(FLAG_COLOSSO_OVER) != 0) {
     TolbiInteriors_AskYesNo(MsgTolbiComeWayKalay, speaker);
-  } else if (GameFlag_Test(FLAG_BABI_SAVED) != 0) {
+  } else if (GameFlag_Get(FLAG_BABI_SAVED) != 0) {
     FieldScript_SetMessageId(MsgTolbiColossoFinalsFinally);
     FieldScript_ShowMessageAndWait(speaker, 0);
   } else {
@@ -412,10 +412,10 @@ static void TolbiInteriors_TalkToArmorMerchant(s32 speaker) {
   if (FACING_NEAREST_CARDINAL(leader->facing) == FACING_NORTH) {
     Shop_Run(TOLBI_INTERIORS_ARMOR_SHOP, speaker);
   } else {
-    if (GameFlag_Test(FLAG_COLOSSO_OVER) != 0) {
+    if (GameFlag_Get(FLAG_COLOSSO_OVER) != 0) {
       FieldScript_SetMessageId(MsgTolbiWasntAbleWatch);
       FieldScript_ShowMessageAndWait(speaker, 0);
-    } else if (GameFlag_Test(FLAG_BABI_SAVED) != 0) {
+    } else if (GameFlag_Get(FLAG_BABI_SAVED) != 0) {
       FieldScript_SetMessageId(MsgTolbiMaybeCloseShop);
       FieldScript_ShowMessageAndWait(speaker, 0);
     } else {
@@ -452,10 +452,10 @@ static void TolbiInteriors_TalkToHost(s32 speaker) {
 /// time, and then claims she is fine.
 static void TolbiInteriors_TalkToMedalWoman(s32 speaker) {
   FieldScript_Start();
-  if (GameFlag_IsSet(FLAG_TOLBI_INTERIORS_MEDAL_TAKEN) == 0) {
+  if (GameFlag_Get(FLAG_TOLBI_INTERIORS_MEDAL_TAKEN) == 0) {
     TolbiInteriors_AskYesNo(MsgTolbiHeeHeeLook, speaker);
   } else {
-    if (GameFlag_IsSet(FLAG_TOLBI_INTERIORS_MEDAL_WOMAN_SAID_HELLO) == 0) {
+    if (Script_GetFlag(FLAG_TOLBI_INTERIORS_MEDAL_WOMAN_SAID_HELLO) == 0) {
       GameFlag_Set(FLAG_TOLBI_INTERIORS_MEDAL_WOMAN_SAID_HELLO);
       FieldScript_SetMessageId(MsgTolbiHello);
       Script_ShowMessage(speaker, 0);
@@ -472,7 +472,7 @@ static void TolbiInteriors_TalkToMedalWoman(s32 speaker) {
 /// In Tolbi, Mind Read on the medal woman gives the hiding place away.
 static void TolbiInteriors_ReadMedalWomanMind(void) {
   FieldScript_Start();
-  if (GameFlag_Test(FLAG_TOLBI_INTERIORS_MEDAL_WOMAN_SAID_HELLO) == 0) {
+  if (GameFlag_Get(FLAG_TOLBI_INTERIORS_MEDAL_WOMAN_SAID_HELLO) == 0) {
     FieldScript_SetMessageId(MsgTolbiHehHehSheJustHid);
   } else {
     FieldScript_SetMessageId(MsgTolbiThingFoundDefinitelySameAs);
@@ -508,10 +508,10 @@ static void TolbiInteriors_TalkToHealer(s32 speaker) {
   if (FACING_NEAREST_CARDINAL(leader->facing) == FACING_NORTH) {
     Sanctum_Run(speaker);
   } else {
-    if (GameFlag_Test(FLAG_COLOSSO_OVER) != 0) {
+    if (GameFlag_Get(FLAG_COLOSSO_OVER) != 0) {
       FieldScript_SetMessageId(MsgTolbiShipsArentGoing);
       FieldScript_ShowMessageAndWait(speaker, 0);
-    } else if (GameFlag_Test(FLAG_BABI_SAVED) != 0) {
+    } else if (GameFlag_Get(FLAG_BABI_SAVED) != 0) {
       FieldScript_SetMessageId(MsgTolbiMissFinalsTolbis);
       FieldScript_ShowMessageAndWait(speaker, 0);
     } else {

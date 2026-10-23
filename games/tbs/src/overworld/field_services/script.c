@@ -113,7 +113,7 @@ void FieldScript_Start(void) {
   Task_Add(FieldScript_UpdateDebugSkip, 0xC80);
   // XXX: flag 0x132 is cleared at every script and nothing in ☀️ names it; the
   // map scripts or overlays that set or test 0x132 would settle its meaning.
-  GameFlag_ClearBitFar(0x132);
+  GameFlag_ClearFar(0x132);
   runtime->speaker = gGameState.leaderLocalId;
   runtime->messageWindow = 0;
 }
@@ -194,7 +194,7 @@ s32 FieldScript_ValidatePackedId(u32 shortcut) {
   if (member > 7)
     return -1;
   // Flags 0 to 7 say who is in the party (FLAG_IN_PARTY).
-  if (GameFlag_TestFar(member) == 0)
+  if (GameFlag_GetFar(member) == 0)
     return -2;
   if (Unit_KnowsPsynergyFar(member, ability) == 0)
     return -3;

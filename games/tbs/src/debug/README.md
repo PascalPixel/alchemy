@@ -92,7 +92,7 @@ Flint, Fizz, Forge and Gust stand as [object events](../../glossary.md#object-ev
 Djinni's flag is clear. Talking to one calls `Djinn_JoinParty`, the same call
 the game uses, which plays the element's capture effect and gives that
 element's first Djinni to the member with the fewest Djinn. The room then
-clears the flag again (`GameFlag_ClearBit`), so the Djinni is placed again
+clears the flag again (`GameFlag_Clear`), so the Djinni is placed again
 on the next visit. Those two calls are the room's whole import table. One
 Djinni's event row and script, from `rooms.c` (the script's helper written
 out):
@@ -100,7 +100,7 @@ out):
 ```c
 static void TestRoom_ReceiveFlint(void) {
   Djinn_JoinParty(LOCALID_FLINT, ELEMENT_VENUS, 0);
-  GameFlag_ClearBit(FLAG_DJINN_FIRST + ELEMENT_VENUS * DJINN_PER_ELEMENT);
+  GameFlag_Clear(FLAG_DJINN_FIRST + ELEMENT_VENUS * DJINN_PER_ELEMENT);
 }
 
 struct MapEvent gTestRoom_Events[] = {

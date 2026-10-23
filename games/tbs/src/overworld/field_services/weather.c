@@ -30,7 +30,7 @@ void Weather_UpdateRain(void) {
       continue;
     // BUG: freezing a timer of 16 indexes past the 16-frame table. Which
     // frame should be held is not established, so keep the original timing.
-    if (GameFlag_TestFar(FLAG_WEATHER_HELD))
+    if (GameFlag_GetFar(FLAG_WEATHER_HELD))
       particle->timer++;
     frame = &gFieldEffect_GroundParticleFrames[5 * particle->timer];
     x = (particle->positionX - cameraX) / 0x10000 + *frame++;
@@ -78,7 +78,7 @@ void Weather_UpdateLightning(void) {
 
   if (*timer < 0)
     return;
-  if (GameFlag_TestFar(FLAG_WEATHER_HELD))
+  if (GameFlag_GetFar(FLAG_WEATHER_HELD))
     work->timer = 128;
   switch ((*timer)--) {
   case 0:
@@ -198,7 +198,7 @@ void FieldMotes_Update(void) {
       u32 firstJitterDraw;
       u32 secondJitterDraw;
 
-      if (GameFlag_TestFar(FLAG_WEATHER_HELD)) {
+      if (GameFlag_GetFar(FLAG_WEATHER_HELD)) {
         mote->timer++;
         mote->delay--;
       }
@@ -338,7 +338,7 @@ void FieldEffect_UpdateSparkles(void) {
     if (sparkle->timer != 0) {
       cameraX = camera[0];
       cameraZ = camera[1];
-      if (GameFlag_TestFar(FLAG_WEATHER_HELD) != 0)
+      if (GameFlag_GetFar(FLAG_WEATHER_HELD) != 0)
         sparkle->timer++;
       frame = (const u16 *)&gFieldEffect_SparkleFrames[sparkle->timer >> 1];
       a = Random16();

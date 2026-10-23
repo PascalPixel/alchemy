@@ -139,7 +139,7 @@ void Warp_PrepareExitAnimation(s32 animation) {
 /// overworld/events.c, after it plays SE_STAIRS_UP.
 void Warp_StartStairsUpExit(void) {
   Warp_PrepareExitAnimation(ANIM_LEADER_LEAVE);
-  GameFlag_SetBitFar(FLAG_WARP_ARRIVAL_STAIRS_UP);
+  GameFlag_SetFar(FLAG_WARP_ARRIVAL_STAIRS_UP);
 }
 
 /// Leaves through a WARP_STYLE_STAIRS_DOWN warp
@@ -148,7 +148,7 @@ void Warp_StartStairsUpExit(void) {
 /// overworld/events.c, after it plays SE_STAIRS_DOWN.
 void Warp_StartStairsDownExit(void) {
   Warp_PrepareExitAnimation(ANIM_LEADER_LEAVE_ALTERNATE);
-  GameFlag_SetBitFar(FLAG_WARP_ARRIVAL_STAIRS_DOWN);
+  GameFlag_SetFar(FLAG_WARP_ARRIVAL_STAIRS_DOWN);
 }
 
 /// Plays the leader's arrival animation through a warp: centred on its cell
@@ -196,23 +196,23 @@ s32 Warp_PlayArrival(void) {
   s32 result = 0;
   s32 flag = FLAG_WARP_ARRIVAL_STAIRS_UP;
 
-  if (GameFlag_TestFar(flag) != 0) {
+  if (GameFlag_GetFar(flag) != 0) {
     Warp_EndArrivalAnimation(ANIM_LEADER_ARRIVE);
-    GameFlag_ClearBitFar(flag);
+    GameFlag_ClearFar(flag);
     result = 1;
   } else {
     flag = FLAG_WARP_ARRIVAL_STAIRS_DOWN;
-    if (GameFlag_TestFar(flag) != 0) {
+    if (GameFlag_GetFar(flag) != 0) {
       Warp_EndArrivalAnimation(ANIM_LEADER_ARRIVE_ALTERNATE);
-      GameFlag_ClearBitFar(flag);
+      GameFlag_ClearFar(flag);
       result = 2;
     } else {
       flag = FLAG_ARRIVE_FALLING;
-      if (GameFlag_TestFar(flag) != 0) {
+      if (GameFlag_GetFar(flag) != 0) {
         s32 leaderId;
         struct Object *leader;
 
-        GameFlag_ClearBitFar(flag);
+        GameFlag_ClearFar(flag);
         leaderId = gGameState.leaderLocalId;
         leader = ObjectEvent_GetByLocalId(leaderId);
         // FLAG_ARRIVE_FALLING is set by maps the party drops out of (the

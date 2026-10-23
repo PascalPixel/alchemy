@@ -2,7 +2,7 @@
 	.set overlay_imports, 1
 	.set import.MapGrid_CopyMetatileIndicesRect, 1
 	.set import.ObjectDispatch_SetSingleChildFlags, 1
-	.set import.GameFlag_Test, 1
+	.set import.GameFlag_Get, 1
 	.set import.FieldScript_Start, 1
 	.set import.FieldScript_End, 1
 	.set import.Map_AssignViewFlags, 1

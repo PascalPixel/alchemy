@@ -1587,6 +1587,7 @@ s32 LinkLobby_RunRoundResult(void) {
     // Entrance 9, a monster battle lost: the series ends, and a new record
     // is saved.
   } else if (gGameState.entrance == 9) {
+    u16 best;
 
     gGameState.linkTallies[LINK_TALLY_MONSTER_LOSSES]++;
     Engine_EventStart();
@@ -1594,13 +1595,10 @@ s32 LinkLobby_RunRoundResult(void) {
     Engine_EventWaitForScreen();
     LinkLobby_WriteSlotValue(LOBBY_SLOT_ALONE);
     Engine_ActorFaceActor(ACTOR_ATTENDANT, gGameState.selectedActor, 0);
-    /* FAKEMATCH(temporary): score holds the tally's address, then the tally;
-     * as gGameState.linkTallies[LINK_TALLY_MONSTER_STREAK] read at both uses,
-     * 19 of 393 instructions differ in tbs-en. */
-    score = (u32)&gGameState.linkTallies[LINK_TALLY_MONSTER_STREAK];
-    UiText_DrawQuantity(*(u16 *)score, 5);
-    score = *(u16 *)score;
-    if (gGameState.linkTallies[LINK_TALLY_MONSTER_BEST_STREAK] < score) {
+    UiText_DrawQuantity(gGameState.linkTallies[LINK_TALLY_MONSTER_STREAK], 5);
+    best = gGameState.linkTallies[LINK_TALLY_MONSTER_BEST_STREAK];
+    score = gGameState.linkTallies[LINK_TALLY_MONSTER_STREAK];
+    if (best < score) {
       gGameState.linkTallies[LINK_TALLY_MONSTER_BEST_STREAK] = score;
       Engine_EventSetMessage(MsgLobbyWonNumberBattleBroke);
       Engine_EventOpenMessage(ACTOR_ATTENDANT, 0);
@@ -1639,10 +1637,9 @@ s32 LinkLobby_RunRoundResult(void) {
       gGameState.linkTallies[LINK_TALLY_LINKED_WINS]++;
       v = gGameState.linkTallies[LINK_TALLY_LINKED_STREAK] + 1;
       gGameState.linkTallies[LINK_TALLY_LINKED_STREAK] = v;
-      /* FAKEMATCH(temporary): score holds the record's address, as in the
-       * other branches; as
-       * gGameState.linkTallies[LINK_TALLY_LINKED_BEST_STREAK] at each use, 4 of
-       * 393 instructions differ in tbs-en. */
+      /* FAKEMATCH(temporary): score holds the record's address; as
+       * gGameState.linkTallies[LINK_TALLY_LINKED_BEST_STREAK] at each use, 22
+       * of 392 instructions differ in tbs-en. */
       score = (u32)&gGameState.linkTallies[LINK_TALLY_LINKED_BEST_STREAK];
       if (*(u16 *)score < (u16)v) {
         *(u16 *)score = v;

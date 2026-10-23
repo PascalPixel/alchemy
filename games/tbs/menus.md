@@ -168,7 +168,7 @@ as it closes.
 ### The field behind the menu
 
 While a screen is open the field holds still behind it: its objects are
-suspended, and in most editions the scene's tasks, the weather, the colour
+suspended, and in most editions the map's tasks, the weather, the colour
 changes and the map's animated tiles pause too.
 
 Every screen sets the object system's `suspended` field (heap slot
@@ -211,17 +211,17 @@ menu has closed.
 ![Isaac opens the menu beside a stone pillar in Vale and picks Psynergy, himself and then Move; the menu closes, `Move` shows, the field turns blue-green as a hand appears over the pillar, and it pushes the pillar one step to the right.](https://alchemy.pascalpixel.com/guides/menu/menu-psynergy.gif)
 
 Field Psynergy needs the field running, the leader facing something and the
-scene's own events, none of which exist while the menu is open. So the
+map's own map events, none of which exist while the menu is open. So the
 Psynergy screen only writes down what was chosen and closes; once the field
 runs again, it casts the Psynergy at whatever the leader faces, and the
-scene's code decides what happens. What Move does to a given stone pillar is
-therefore decided by the scene, not the menu ([Scenes](src/map/README.md)).
+map's code decides what happens. What Move does to a given stone pillar is
+therefore decided by the map, not the menu ([Maps](src/map/README.md)).
 
 The Psynergy screen writes the field's Psynergy request (`psynergyRequest` in
 the event work, `owner << 10 | Psynergy`), and the Item screen writes the item
 request (`struct ItemPickerResult`) the same way. `Field_RunMap` hands the
 Psynergy request to `Field_UsePsynergy`, which plays the effect between the
-scene's Psynergy events (`PSYNERGY_PHASE_BEFORE_CAST` and
+map's Psynergy events (`PSYNERGY_PHASE_BEFORE_CAST` and
 `PSYNERGY_PHASE_AFTER_CAST`).
 
 [Menus](src/menu/README.md#the-screens) goes through each screen's steps,
@@ -230,7 +230,7 @@ the status panel and the item sort orders.
 ## Shops
 
 A town's counters are its shops, sanctums and inns, each opened by the
-town's scene when the player talks to the keeper.
+town's map when the player talks to the keeper.
 
 ![Each rare item has one counter for the whole game. The first time a shop that lists it is opened, its counter goes up by one; buying one takes one off; selling or dropping one puts one back. A shop's Artifacts list is every item of its kind whose counter is above zero. The party reaches Vault before Bilibin. Vault's weapon shop counts its rare item, the Magic Rod, on its first visit and lists it. Later, Bilibin's weapon shop counts its own, the Witch's Wand, and lists both: the Magic Rod is still counted from Vault unless the party bought it there.](https://alchemy.pascalpixel.com/illustrations/shop/artifacts.svg)
 
@@ -244,7 +244,7 @@ the party gives up comes back. Spending also builds a hidden shop credit that
 earns Game Tickets. A sanctum charges a fee for its service, and an inn a
 price for each member still standing.
 
-A scene opens a shop with `Shop_Run`, passing its stock row and the keeper
+A map opens a shop with `Shop_Run`, passing its stock row and the keeper
 whose portrait the lines show. The stock row is a row of `sStockTable`: up to
 24 ordinary items, then up to 8 artifacts, then the shop's type (items,
 weapons or armor), with the columns named by `SHOP_STOCK_`. A row number out
@@ -270,7 +270,7 @@ per guest for each member still standing (`sInnPricesPerGuest`).
 Every counter, and the item picker that asks which item to drop when the
 party finds one with every bag full, keeps its work in `HEAP_SLOT_MENU` as
 `struct ShopRuntime`, taken by `Shop_InitializeCursorWork` and released by
-`Shop_ReleaseCursorWork`. Scenes reach the counters through their import
+`Shop_ReleaseCursorWork`. Maps reach the counters through their import
 tables, and other banks through the far-call table
 `system/far_call/SHOP.S`.
 
@@ -295,7 +295,7 @@ The field menu's screens and the counters take turns in one heap block
 because only one of them can run at a time; the same arrangement is why a
 counter and the field menu are never open together. Field Psynergy is passed
 back as a request because it needs the field running, the leader facing
-something and the scene's events, none of which exist while the menu runs.
+something and the map's events, none of which exist while the menu runs.
 Start is a game flag rather than a variable, although the task that sets it
 and every test of it are in the menu's own code.
 

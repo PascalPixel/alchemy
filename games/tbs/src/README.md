@@ -1,14 +1,14 @@
 # The Broken Seal's source
 
-![The source is divided the way the cartridge divides the program. The main image is fourteen banks in a fixed order. The nine large banks each have a folder of their own: runtime, field, window, game, object, menu, shop, battle and effect. The five small banks after them each hold one thing, whose code sits in the folder it belongs with: the credits and the title intro in graphics, Lucky Dice in field, the slot machine in object, and the sound in sound. Separately, the code of each place is an overlay, loaded one at a time; the 96 overlays are in scene, menu and debug. Four more folders gather one kind of thing wherever it ends up: graphics, map, sound and system.](https://alchemy.pascalpixel.com/illustrations/source/folders.svg)
+![The source is divided the way the cartridge divides the program. The main image is fourteen banks in a fixed order. The nine large banks each have a folder of their own: runtime, field, window, game, object, menu, shop, battle and effect. The five small banks after them each hold one thing, whose code sits in the folder it belongs with: the credits and the title intro in graphics, Lucky Dice in field, the slot machine in object, and the sound in sound. Separately, the code of each map is an overlay, loaded one at a time; the 96 overlays are in map, menu and debug. Four more folders gather one kind of thing wherever it ends up: graphics, layout, sound and system.](https://alchemy.pascalpixel.com/illustrations/source/folders.svg)
 
 A Game Boy Advance cartridge holds the program as one long run of bytes, and
 Golden Sun's program is laid out in parts: banks of code the CPU runs straight
-from the cartridge, and the code of each place, which is copied into memory
+from the cartridge, and the code of each map, which is copied into memory
 only while the party is there. The source follows that layout, so finding a
 folder tells you where its code lies on the cartridge: one folder for each
 large bank of the main image, folders for the overlays, and four folders that
-gather one kind of thing (pictures, maps, sound, the memory layout) wherever
+gather one kind of thing (pictures, layouts, sound, the memory layout) wherever
 the link places it. The cartridge keeps no file or folder names, so every name
 here is ours, chosen for what the folder holds.
 
@@ -45,7 +45,7 @@ functions call each other directly. The runtime bank is the exception:
 every bank calls its functions directly, and its table is used by the
 overlays.
 
-`graphics`, `map`, `sound` and `system` don't follow a bank. `scene` and
+`graphics`, `layout`, `sound` and `system` don't follow a bank. `map` and
 `debug` hold overlays, and `menu` holds three overlays beside its bank.
 
 ## Objects and parts
@@ -87,45 +87,45 @@ files.
 
 ## Overlays
 
-The 201 scenes of the scene table share 96 overlays, unpacked one at a time
-into the overlay area when a scene loads.
+The 201 maps of the map table share 96 overlays, unpacked one at a time
+into the overlay area when a map loads.
 
-![Bilibin's overlay is three files. The entry table, map/entry/bilibin.s, comes first: six stubs the field code calls to start the scene and to get its entrances, exits, placements, events and exit regions. Then the place's own code and tables, map/bilibin.c. Last the import table, map/import/bilibin.s, which lists the main-image routines Bilibin's code calls, such as waiting a number of frames or setting a game flag, each reached through its far-call entry. The engine and the place meet only at these two tables.](https://alchemy.pascalpixel.com/illustrations/source/overlay-files.svg)
+![Bilibin's overlay is three files. The entry table, map/entry/bilibin.s, comes first: six stubs the field code calls to start the map and to get its warp destinations, warps, object event templates, map events and warp regions. Then the map's own code and tables, map/bilibin.c. Last the import table, map/import/bilibin.s, which lists the main-image routines Bilibin's code calls, such as waiting a number of frames or setting a game flag, each reached through its far-call entry. The engine and the map meet only at these two tables.](https://alchemy.pascalpixel.com/illustrations/source/overlay-files.svg)
 
-Each place's people, events and cutscenes are code that is needed only while
+Each map's people, scripts and cutscenes are code that is needed only while
 the party is there, so it is kept apart from the main image as an overlay and
 loaded when the party arrives
 ([System](system/README.md#how-an-overlay-reaches-the-rest-of-the-game) shows
-one place's code replacing another's). In the source an overlay is three
-files: a table the engine calls into, the place's own code, and a table of the
-engine's routines the place calls out to.
+one map's code replacing another's). In the source an overlay is three
+files: a table the engine calls into, the map's own code, and a table of the
+engine's routines the map calls out to.
 
-The scene table, `gField_MapTable` in [field/maps.s](field/maps.s),
-has 201 scenes, and they share 96 overlays: 90 under `scene/`, three under
+The map table, `gField_MapTable` in [field/maps.s](field/maps.s),
+has 201 maps, and they share 96 overlays: 90 under `map/`, three under
 `menu/` and three under `debug/`. `Map_LoadOverlay`
 ([object/object/map.c](object/object/map.c)) unpacks the overlay a
-scene's row names before `Field_RunMap` runs it; a battle or a minigame is
+map's row names before `Field_RunMap` runs it; a battle or a minigame is
 main-image code and loads none. [Engine](../engine.md) describes how an
 overlay meets the main image.
 
 Each overlay is three files in its folder:
 
-- `entry/<place>.s`, the entry table: six stubs, tiny pieces of code that
+- `entry/<map>.s`, the entry table: six stubs, tiny pieces of code that
   only jump on to a function, written with `overlay_veneer`, that the field
-  code calls to start the scene and to get
-  its entrances, exits, placements, events and regions.
-- `<place>.c`, the scene's code and tables.
-- `import/<place>.s`, the import table: the stubs the overlay calls the main
+  code calls to start the map and to get its warp destinations, warps,
+  object event templates, map events and warp regions.
+- `<map>.c`, the map's code and tables.
+- `import/<map>.s`, the import table: the stubs the overlay calls the main
   image through, chosen from the list in `system/overlay.inc`.
 
-Only one overlay is loaded at a time, so code several places use is in
-headers under `scene/common/`, and each scene that includes one compiles its
+Only one overlay is loaded at a time, so code several maps use is in
+headers under `map/common/`, and each map that includes one compiles its
 own copy. [System](system/README.md) describes the stubs and how an overlay
 is packed.
 
 | Folder | Overlays |
 | --- | --- |
-| `scene/` | 90 |
+| `map/` | 90 |
 | `menu/` | 3: the title, the file select screen and the Battle Arena's lobby |
 | `debug/` | 3: the test rooms |
 
@@ -136,15 +136,15 @@ this folder with one header for each compiled C file.
 
 [`games/tbs/include`](../include) holds what the whole game shares: types and
 structures, the flags in `flags.h`, the songs and sound effects in
-`songs.h`, and the commands scenes are written in, in `event.h`. The
+`songs.h`, and the commands scripts are written in, in `script.h`. The
 `Makefile` puts `include` and its folders `battle`, `field`, `game`,
 `graphics`, `lib`, `menu`, `sound` and `system` on the include path, so code
 includes those headers by name alone.
 
 [`include/unit`](../include/unit) mirrors this folder: each compiled C
 file has a header at the same path under `unit` that declares what it
-defines (`unit/battle/battle.h` for `battle/battle.c`; `unit/scene/` has one
-for each place). [`include/farcall`](../include/farcall) has a header for
+defines (`unit/battle/battle.h` for `battle/battle.c`; `unit/map/` has one
+for each map). [`include/farcall`](../include/farcall) has a header for
 each bank with its `Far` names. An object written as parts keeps its private
 header beside it.
 
@@ -152,7 +152,7 @@ header beside it.
 | --- | --- |
 | `include/flags.h` | the game flags |
 | `include/songs.h` | the songs and sound effects |
-| `include/script.h` | the commands scenes are written in |
+| `include/script.h` | the commands scripts are written in |
 | `include/unit/<path>.h` | what the C file at `<path>.c` defines |
 | `include/farcall/` | each bank's `Far` names |
 
@@ -191,7 +191,7 @@ library routines come from libgcc, built from alchemy-gcc's sources; two
 overlays use its double-precision arithmetic.
 
 Most `.s` files place data, not code: a picture built from the PNG beside it,
-a table from its `.tsv`, or a map, under the name the code uses.
+a table from its `.tsv`, or a layout, under the name the code uses.
 
 | Code | Compiler | Where |
 | --- | --- | --- |
@@ -205,13 +205,13 @@ a table from its `.tsv`, or a map, under the name the code uses.
 
 The field is split four ways. [Field](field/README.md) is the engine under
 every town, dungeon and the world map: the objects on the map, movement, and
-loading, scrolling and drawing the maps. [Running a place](object/README.md)
-runs one scene on that engine, from its set-up to the exit the party leaves
-by, with random encounters, field Psynergy and the commands scene scripts
-use; `Game_Run`, the loop that runs one scene after another, is there too.
-[Scenes](map/README.md) holds the places, one overlay each: placements,
-events and cutscenes. [Maps](layout/README.md) holds the maps themselves as
-data.
+loading, scrolling and drawing the map grid. [Running a map](object/README.md)
+runs one map on that engine, from its set-up to the warp the party leaves
+by, with random encounters, field Psynergy and the commands map scripts
+use; `Game_Run`, the loop that runs one map after another, is there too.
+[Maps](map/README.md) holds the maps, one overlay each: object event
+templates, map events, scripts and cutscenes. [Layouts](layout/README.md)
+holds the layouts as data.
 
 [Battles](battle/README.md) runs a fight: turn order, the enemies' choices,
 what each ability does to its targets and the spoils.
@@ -240,7 +240,7 @@ and overlays are found through, and the flash save library.
 the credits and the handwritten decoders. [Sound](sound/README.md) holds the
 cue layer and Nintendo's MusicPlayer2000 driver; the songs and samples are
 in [`games/tbs/sound`](../sound). [Debug rooms](debug/README.md) holds the three
-test scenes the ROM keeps.
+test maps the ROM keeps.
 
 ## Where to start reading
 
@@ -251,7 +251,7 @@ to read whole. [Runtime](runtime/README.md) follows the same path.
 To find the code behind something in the game, search for its English name.
 Each effect's comment names the abilities that play it, so searching
 `effect/` for Quake finds [effect/parts/quake.c](effect/parts/quake.c). Each
-place's code is the scene named for it. The game's text is in
+place's code is the map named for it. The game's text is in
 [`games/tbs/text`](../text), a PO catalog for each language, where each message
 carries its linker name: "(No saved data)" is `MsgSaveNoData`, which leads to
 the save file menu in

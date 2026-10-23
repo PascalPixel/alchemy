@@ -123,7 +123,7 @@ proof, written as comment lines (`@` starts a comment in assembly) that begin
 done only with such a proof. In a handwritten file the
 proof names the instruction, frame or pattern alchemy-gcc can't emit. The
 far-call tables, such as the `entry/` and `import/` files of the debug rooms,
-the menus and the scenes, carry one too. Each of their entries is a veneer,
+the menus and the maps, carry one too. Each of their entries is a veneer,
 a tiny piece of code that only jumps on: 8 bytes holding an `ldr r4` (load
 the target's address), a `bx r4` (jump to it) and that address, which the
 `overlay_veneer` macro writes out whole.
@@ -287,7 +287,7 @@ The field engine's spellings are about its map state and a few of its loops.
   waits until every field has one name and type that every site matches
   with.
 
-### Running a place
+### Running a map
 
 The engine keeps each system's working state in a heap block whose pointer
 sits in a numbered slot of `gWorkSlot`, and many of those slots also have a
@@ -299,7 +299,7 @@ each keeps its spelling until it is.
   `WORK_SLOT(HEAP_SLOT_EVENT)`, or `Runtime_AllocateBlock(HEAP_SLOT_EVENT,
   sizeof(struct FieldWork))`, which returns the existing block.
 - The effect scene is `gEffectWork` or `*(gWorkSlot + HEAP_SLOT_EFFECT)`.
-- The map's view is `gMapGridWork[0]` or `WORK_SLOT(HEAP_SLOT_MAP_GRID)`.
+- The map grid's view is `gMapGridWork[0]` or `WORK_SLOT(HEAP_SLOT_MAP_GRID)`.
 - The field blend work is `gFieldBlendWork[0]`,
   `WORK_SLOT(HEAP_SLOT_FIELD_BLEND)` (`ValeInteriorsInn_Initialize`), or
   `Runtime_AllocateBlock(HEAP_SLOT_FIELD_BLEND, sizeof(struct
@@ -322,14 +322,14 @@ One more spelling in the field objects has been measured:
 is `BLEND_ALPHA(blend, 16 - blend)` with its operands swapped, and the macro
 changes the registers.
 
-### Scenes
+### Maps
 
-Scene code reaches straight into actors and their tables, so many of its sites
+Map code reaches straight into object events and their tables, so many of its sites
 come down to how a struct's member is addressed.
 
 - `FixedPoint_Distance` takes the two positions as byte addresses, which its
-  callers take from whole actors. Its byte cursor steps across x, y and z, so
-  it reads the actors' own signed coordinate members without treating them as
+  callers take from whole object events. Its byte cursor steps across x, y
+  and z, so it reads the object events' own signed coordinate members without treating them as
   an array or copying them into one.
 - Some helpers in Colosso and in `MapId_KolimaForestFloodgate`, where logs
   roll, are called before they're declared. With their exact
@@ -343,7 +343,7 @@ come down to how a struct's member is addressed.
   [`map/common/mercury_lighthouse_pillar.h`](map/common/mercury_lighthouse_pillar.h),
   [`map/crossbone_isle_stepping_stones.c`](map/crossbone_isle_stepping_stones.c),
   and `Imil_MiaSaysFarewellToApprentices` in [`map/imil.c`](map/imil.c)).
-- An actor is read as `struct FieldEffect`, union FieldObject's effect view of
+- An object event is read as `struct FieldEffect`, union FieldObject's effect view of
   the same object, whose sprite pointer is a plain member. Through
   ObjectEvent's sprite union, the flags address moves after the next store
   (`SolSanctum_StartFloatingLights` in
@@ -354,17 +354,17 @@ come down to how a struct's member is addressed.
   `Imil_GetObjectEventTemplates`, where `script[10].talkFacing` adds the row's 240 first
   and stores at 22 from another base. These byte views are valid, and they
   keep the original's address bases and registers.
-- The same byte view in `Xian_SpawnTrainingParticles` keeps the actor's Z load
+- The same byte view in `Xian_SpawnTrainingParticles` keeps the object event's Z load
   ahead of the options-script store. Through the members, the load moves after
   the store and the constant load that follows it in the English build.
 - A global's member is reached through a local pointer to the global or
   through the global's own name, each where it matches. `EventScript_MovePillar`
-  ([`map/crossbone_isle.c`](map/crossbone_isle.c)) takes `&state->scene`
-  with `state = &gGameState`, because `&gGameState.scene` folds into one
+  ([`map/crossbone_isle.c`](map/crossbone_isle.c)) takes `&state->mapId`
+  with `state = &gGameState`, because `&gGameState.mapId` folds into one
   literal (1 of 78 instructions differ in tbs-en, 1 of 65 in tbs-ja). McCoy
   Palace's `Map_GetObjectEventTemplates` writes the reward rows as
   `gMcCoyPalaceObjectEventTemplates[6].talkFacing` and on, because the local
-  `placements[6].talkFacing` splits the address into base+144 and member+22
+  `templates[6].talkFacing` splits the address into base+144 and member+22
   (9 of 38 in tbs-en).
 - A table of `s16` pairs is read a word per index through a struct with an
   array member, `((struct DirectionSteps *)gVaultCave_DirectionSteps)->xz[heading]`,
@@ -374,7 +374,7 @@ come down to how a struct's member is addressed.
   `gStagedObjectEvent_FootprintBounds`
   ([`map/lunpa_fortress.c`](map/lunpa_fortress.c)) are put in read-only
   data with `__attribute__((section(".rodata")))` instead of `const`. Their
-  shared externs in `field.h` and `common/object_staged_actor.h` lack `const`,
+  shared externs in `field.h` and `common/object_staged_object_event.h` lack `const`,
   so `const` would conflict, and without the attribute they'd go to `.data`.
 - The Colosso race work (`HEAP_SLOT_COLOSSO_RACE`) is `gColossoWork`
   (`Colosso_DrawGauge`, `Colosso_UpdatePathOpponent`, `Colosso_StartOpponent`,
@@ -393,7 +393,7 @@ come down to how a struct's member is addressed.
   `.rodata`, so the constant lands where the table was.
   `GomaCavePillar_SpawnFragment` copies its named `struct EffectScripts`
   table, which sits in the middle of `.data`.
-- A command of `event.h` and the service it names are interchangeable; each
+- A command of `script.h` and the service it names are interchangeable; each
   site keeps the one it matches with.
 
 ### Windows

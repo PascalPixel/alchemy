@@ -22,20 +22,20 @@ use, and [Battle effects](src/effect/README.md) the animations.
 
 ## Starting a battle
 
-To the rest of the game a battle is one more scene: the field leaves for it
+To the rest of the game a battle is one more map: the field leaves for it
 as it would leave through a doorway, and comes back to the same place
 afterwards.
 
-In the code, a random encounter raises a field exit like any other, with
-`MAP_BATTLE` as the next scene and the enemy group in
-`gGameState.entrance`. `Game_Run` (`src/object/object/map.c`) clears what
-the last scene left running, as it does between any two scenes: the task
+In the code, a random encounter raises a field warp like any other, with
+`MAP_BATTLE` as the next map and the enemy group in
+`gGameState.warpDest`. `Game_Run` (`src/object/object/map.c`) clears what
+the last map left running, as it does between any two maps: the task
 table, the list of small jobs the game runs once a frame, and the heap, the
-pool of memory a scene borrows from. Then, instead of loading a place's
-overlay (the code for one place, loaded when the party arrives there), it
-calls `Battle_RunEncounterFar(entrance)`, which fights the whole battle
+pool of memory a map borrows from. Then, instead of loading a map's
+overlay (the code for one map, loaded when the party arrives there), it
+calls `Battle_RunEncounterFar(warpDest)`, which fights the whole battle
 before it returns; a `Far` name is the one other parts of the program use
-to call into the battle's part. Afterwards `Map_ReturnFromBattle` reloads the field scene the
+to call into the battle's part. Afterwards `Map_ReturnFromBattle` reloads the field map the
 battle started from, with the party where it was, or after a defeat goes to
 the defeat point. The debug battle menu (`DebugBattle_RunMenu`) is the only
 other way in. The battle's code is always present, in the `battle` bank of
@@ -50,12 +50,12 @@ zones in `src/object/encounter.tsv` choose the row.
 
 | Name | Value | Meaning |
 | --- | --- | --- |
-| `MAP_BATTLE` | `0x1fe` | the next scene that runs a battle instead of an overlay |
+| `MAP_BATTLE` | `0x1fe` | the next map that runs a battle instead of an overlay |
 | `FLAG_IN_BATTLE` | `0x103` | set while a battle runs |
 | `ENCOUNTER_FLED` | 999 | `Battle_RunEncounter`'s result when the party got away |
 | `ENCOUNTER_PARTY_LOST` | -1 | its result when the party was defeated |
 
-[Running a place](src/object/README.md#random-battles) covers how the field
+[Running a map](src/object/README.md#random-battles) covers how the field
 rolls the encounter, and [Battles](src/battle/README.md#rounds) what
 `Battle_RunEncounter` does from the opening to the spoils.
 

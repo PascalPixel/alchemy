@@ -7,7 +7,7 @@ sixty times a second, and the game prepares one picture for each. The engine
 is the code that keeps that beat and that the field, the battles and the
 menus are built on. It starts the console, runs every frame and hands the
 finished picture over in the screen's blank moment, lets code wait without
-the screen freezing, splits the program into banks and swaps each place's
+the screen freezing, splits the program into banks and swaps each map's
 code in and out of memory, and plays the music and sounds.
 
 ## Start-up
@@ -15,10 +15,10 @@ code in and out of memory, and plays the music and sounds.
 Start-up takes the console from the moment it is switched on to the title
 screen, and never comes back.
 
-![Start-up, in order. The cartridge's first instruction jumps to System_Entry, which sets up the stacks. System_Initialize then prepares memory: it clears IWRAM, empties the heap and copies the fast routines into IWRAM. It starts the services: the VBlank handler, the sound driver and an empty task table. It waits ten frames, then Game_Run runs one scene after another, starting with the title. Before each scene it drops the last scene's tasks and empties the heap. None of these steps returns.](https://alchemy.pascalpixel.com/illustrations/runtime/start-up.svg)
+![Start-up, in order. The cartridge's first instruction jumps to System_Entry, which sets up the stacks. System_Initialize then prepares memory: it clears IWRAM, empties the heap and copies the fast routines into IWRAM. It starts the services: the VBlank handler, the sound driver and an empty task table. It waits ten frames, then Game_Run runs one map after another, starting with the title. Before each map it drops the last map's tasks and empties the heap. None of these steps returns.](https://alchemy.pascalpixel.com/illustrations/runtime/start-up.svg)
 
 Memory is put in order and the services everything relies on are started
-once; after that one loop runs scene after scene for as long as the console
+once; after that one loop runs map after map for as long as the console
 is on.
 
 The console has two kinds of work memory: IWRAM, 32 KB inside the processor
@@ -34,7 +34,7 @@ sets up the interrupt and system stacks at the top of IWRAM and calls
 heap, copies the resident runtime (the routines that must run fast) into
 IWRAM and points the interrupt vector at its dispatcher, installs `System_VBlankHandler`, starts the sound driver,
 resets the task table, waits ten frames and calls `Game_RunFar`. Neither
-function returns. `Game_Run` loads one scene after another for as long as the
+function returns. `Game_Run` loads one map after another for as long as the
 game runs, starting with the title. A soft reset (A, B, Select and Start held
 together) sets `gResetRequested`, and the frame loop restarts the game from
 the cartridge's entry point. The title's intro, with the Nintendo and
@@ -48,7 +48,7 @@ Camelot logos before it, is code in
 Code lets time pass by calling `WaitFrames`, and work that must go on while it
 waits runs as a task the scheduler calls every frame.
 
-![Five frames of a field scene. An event's code does some work in the first frame, then calls WaitFrames to wait three frames, and carries on in the fifth. Meanwhile two tasks run once in every one of the five frames, waiting or not: the windows' task opens, closes and types the text windows, and the map's task scrolls the map's layers with the camera. WaitFrames is what runs them.](https://alchemy.pascalpixel.com/illustrations/runtime/waiting.svg)
+![Five frames of a field map. A script's code does some work in the first frame, then calls WaitFrames to wait three frames, and carries on in the fifth. Meanwhile two tasks run once in every one of the five frames, waiting or not: the windows' task opens, closes and types the text windows, and the map's task scrolls the map's layers with the camera. WaitFrames is what runs them.](https://alchemy.pascalpixel.com/illustrations/runtime/waiting.svg)
 
 When a cutscene pauses, the code that runs it simply waits; the screen keeps
 moving because a short list of jobs, the tasks, runs once every frame
@@ -66,7 +66,7 @@ The VBlank handler then copies the sprite list and the layers' scroll
 positions to the hardware, carries out
 the queued register writes and runs the VBlank tasks. A task is a routine
 added with `Scheduler_AddOrUpdateCallback`; window animation, battle event
-playback (`BattleEvent_Playback`) and a scene's callbacks are tasks.
+playback (`BattleEvent_Playback`) and a map's callbacks are tasks.
 
 This design puts a bound on the stack. The system stack is 1,792 bytes of
 IWRAM, and the interrupt handlers and the sound mixer run on it too. When the
@@ -120,28 +120,28 @@ memory map and the per-edition bank addresses.
 
 ## Overlays
 
-Each place's code is an overlay, unpacked into one fixed area of EWRAM when
-its scene loads, and it meets the main image only through two tables.
+Each map's code is an overlay, unpacked into one fixed area of EWRAM when
+the map loads, and it meets the main image only through two tables.
 
-![The cartridge holds each place's code packed, as one of 96 overlays: Vale, Vault, Bilibin, Bilibin's houses, Kolima, Imil and the rest. In RAM there is room for one, the 32 KB overlay area. While the party is in Bilibin, Bilibin's overlay is unpacked there. When the party walks into one of Bilibin's houses, the new scene's overlay, the houses', is unpacked into the same area over Bilibin's, which is gone until the party walks back out.](https://alchemy.pascalpixel.com/illustrations/system/overlays.svg)
+![The cartridge holds each map's code packed, as one of 96 overlays: Vale, Vault, Bilibin, Bilibin's houses, Kolima, Imil and the rest. In RAM there is room for one, the 32 KB overlay area. While the party is in Bilibin, Bilibin's overlay is unpacked there. When the party walks into one of Bilibin's houses, the new map's overlay, the houses', is unpacked into the same area over Bilibin's, which is gone until the party walks back out.](https://alchemy.pascalpixel.com/illustrations/system/overlays.svg)
 
-A town's people, events and cutscenes are code that is needed only while the
-party is there, and all the places' code together would not fit in RAM. So
-each place's code is packed on the cartridge and unpacked into the same
-32 KB area when the party arrives, over the place before it.
+A town's people, scripts and cutscenes are code that is needed only while the
+party is there, and all the maps' code together would not fit in RAM. So
+each map's code is packed on the cartridge and unpacked into the same
+32 KB area when the party arrives, over the map before it.
 
 An overlay is a compressed resource unpacked into `gOverlayArea`, 32 KB of
-EWRAM. There are 96 of them, listed in the scene table (`src/field/maps.s`).
+EWRAM. There are 96 of them, listed in the map table (`src/field/maps.s`).
 Only one is loaded at a time, so overlays never call each other, and code
-several scenes need is copied into each of them (`src/scene/common/`).
+several maps need is copied into each of them (`src/map/common/`).
 
 An overlay and the main image meet at two tables, each in a fixed order:
 
-- The entry table (`scene/entry/<place>.s`) opens the overlay with six stubs
-  the field code calls through `struct MapEntries`: the scene's start-up
-  and the functions that return its entrances, exits, placements, events and
-  exit regions.
-- The import table (`scene/import/<place>.s`) holds the main-image functions
+- The entry table (`map/entry/<map>.s`) opens the overlay with six stubs
+  the field code calls through `struct MapEntries`: the map's start-up
+  and the functions that return its warp destinations, warps, object event
+  templates, map events and warp regions.
+- The import table (`map/import/<map>.s`) holds the main-image functions
   the overlay calls. EWRAM is out of `bl` range of the ROM, so each call goes
   through a stub holding the address of the function's far-call entry, never
   the function itself; an overlay therefore depends only on positions in the
@@ -187,16 +187,16 @@ and [the driver's lock](src/sound/README.md#the-drivers-lock).
 
 ## Debug rooms
 
-Three test scenes kept in the ROM are reached only from the debug scene
+Three test maps kept in the ROM are reached only from the debug map
 selector.
 
-![No door, table or event of the game leads to the three test rooms. The only way in is the debug scene selector, which warps to any scene by number, and the field opens it only when the Start menu is opened with B held while debug mode is on. Debug mode is switched off at power-on, and nothing the player can reach switches it on, so in the released game the selector, and the rooms behind it, are never reached. From the selector come the Djinn room, which eight scenes share, the level room and the menu test room.](https://alchemy.pascalpixel.com/illustrations/debug/reached.svg)
+![No door, table or script of the game leads to the three test rooms. The only way in is the debug map selector, which warps to any map by number, and the field opens it only when the Start menu is opened with B held while debug mode is on. Debug mode is switched off at power-on, and nothing the player can reach switches it on, so in the released game the selector, and the rooms behind it, are never reached. From the selector come the Djinn room, which eight maps share, the level room and the menu test room.](https://alchemy.pascalpixel.com/illustrations/debug/reached.svg)
 
-The ROM keeps three test scenes: a room that hands out Djinn, a room for
+The ROM keeps three test maps: a room that hands out Djinn, a room for
 levels and for browsing items, icons and letters, and a room of shop and
-message tests. Only the debug scene selector reaches them, and only while
+message tests. Only the debug map selector reaches them, and only while
 `gDebugMode` is set, which the released game never does. Each is an ordinary
-scene overlay, so they're the smallest complete examples of how a scene is
+map overlay, so they're the smallest complete examples of how a map is
 built. [Debug rooms](src/debug/README.md#how-the-rooms-are-reached) goes
 through them.
 

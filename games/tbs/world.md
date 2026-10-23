@@ -1,65 +1,65 @@
 # World
 
-![Four parts of the field. While the party walks around a place, four parts of the program work together. The loop lets the party walk, and stops to deal with whatever comes up. The engine moves everything that moves and draws the map, every frame. The map says where the ground is, how high it is and which spots do something. The place's own code, loaded for each place, says who stands where and what happens there. The loop asks the place what to do; the engine reads the map. The loop and the engine know nothing of any one place.](https://alchemy.pascalpixel.com/illustrations/world/field-parts.svg)
+![Four parts of the field. While the party walks around a map, four parts of the program work together. The loop lets the party walk, and stops to deal with whatever comes up. The engine moves everything that moves and draws the map, every frame. The layout says where the ground is, how high it is and which spots do something. The map's own code, loaded for each map, says who stands where and what happens there. The loop asks the map what to do; the engine reads the layout. The loop and the engine know nothing of any one map.](https://alchemy.pascalpixel.com/illustrations/world/field-parts.svg)
 
 Everywhere the party walks, a town, a dungeon or the world map, is run by
 the same four parts. The loop in `src/object` lets the party walk and deals
 with whatever interrupts it. The engine in `src/field` moves everything that
-moves and draws the map. The map, in `src/layout`, says what the ground is like.
-And each place's own code, its overlay in `src/map`, says who is there and
-what happens. Only that last part knows anything about one place. How scenes
+moves and draws the map. The layout, in `src/layout`, says what the ground is like.
+And each map's own code, its overlay in `src/map`, says who is there and
+what happens. Only that last part knows anything about one map. How maps
 and overlays fit into the whole game is on [the front page](README.md).
 
-## The scene loop and its requests
+## The field loop and its requests
 
 While the party walks, the game asks once a frame whether something should
 happen. When something should, the walk stops, the game deals with it, and
 the walk starts again.
 
-![The field's loop. The party walks, and every frame the game checks the ground under the leader and the buttons. When something comes up (a doorway, a random battle, the A button, the menu, Psynergy or an item), walking stops, the game handles one thing at a time until nothing is left, and walking resumes. Leaving the scene, through a doorway or into a battle, is always handled first and ends the loop.](https://alchemy.pascalpixel.com/illustrations/field/scene-loop.svg)
+![The field's loop. The party walks, and every frame the game checks the ground under the leader and the buttons. When something comes up (a doorway, a random battle, the A button, the menu, Psynergy or an item), walking stops, the game handles one thing at a time until nothing is left, and walking resumes. Leaving the map, through a doorway or into a battle, is always handled first and ends the loop.](https://alchemy.pascalpixel.com/illustrations/field/scene-loop.svg)
 
 Stepping into a doorway, pressing A beside someone, a random battle
 starting: each only raises a flag of its own, a request. When the walk
 stops, the game deals with the raised requests one at a time, always in the
-same order, and leaving comes first, so a cutscene that ends by taking an
-exit simply ends the scene. That is why a cutscene is written as one script
+same order, and leaving comes first, so a cutscene that ends by taking a
+warp simply ends the map. That is why a cutscene is written as one script
 that runs from start to end: the walk is stopped until it is done.
 
-A random battle is a way out of the scene too. The game remembers where
-everyone stood, loads the battle as the next scene, and afterwards loads the
-place again with everyone put back.
+A random battle is a way out of the map too. The game remembers where
+everyone stood, loads the battle as the next map, and afterwards loads the
+map again with everyone put back.
 
-In the code, `Field_RunMap` runs one field scene: it loads the map, calls
+In the code, `Field_RunMap` runs one field map: it loads the layout, calls
 the overlay's entries, then lets the leader walk, calling `Field_ProcessStep`
 once a frame, until `Field_CountRequests` finds a request. The requests are
 fields of the field work, the block of memory that holds the running
-scene's state (`struct FieldWork`), so each kind holds at most one. A battle request
-saves the actors with `ObjectTable_Snapshot`, sets the next scene to
+map's state (`struct FieldWork`), so each kind holds at most one. A battle request
+saves the object events with `ObjectTable_Snapshot`, sets the next map to
 `MAP_BATTLE` and raises `WARP_NONE`; afterwards `Map_ReturnFromBattle`
-loads the field scene again with `FLAG_KEEP_PARTY_POSITION` set, and
-`ObjectTable_Restore` puts the actors back.
+loads the field map again with `FLAG_KEEP_PARTY_POSITION` set, and
+`ObjectTable_Restore` puts the object events back.
 
 | Name | Value | Meaning |
 | --- | --- | --- |
-| `MAP_BATTLE` | 510 (`0x1fe`) | the next scene a battle request writes |
-| `WARP_NONE` | 999 | the exit result that means the next scene is already set |
-| `FLAG_KEEP_PARTY_POSITION` | 265 (`0x109`) | the next field scene starts where the party was |
+| `MAP_BATTLE` | 510 (`0x1fe`) | the next map a battle request writes |
+| `WARP_NONE` | 999 | the warp result that means the next map is already set |
+| `FLAG_KEEP_PARTY_POSITION` | 265 (`0x109`) | the next field map starts where the party was |
 
 [Field](src/field/README.md#the-walk-and-what-interrupts-it) explains the
-walk, and [Running a place](src/object/README.md#the-scene-loop-handles-requests-not-events)
+walk, and [Running a map](src/object/README.md#the-scene-loop-handles-requests-not-events)
 lists all twelve requests in the order they are handled and goes through
 each one.
 
-## Scene entries
+## Map entries
 
-The engine knows a place only by asking its code six questions: what can
+The engine knows a map only by asking its code six questions: what can
 happen here, where the party arrives, who stands where, whether anything
-needs setting up, whether the leader is in an exit area, and where an exit
+needs setting up, whether the leader is in a warp region, and where a warp
 leads.
 
-![Six questions a place answers. When the party arrives the engine asks what happens here, where the party arrives, who stands where, and whether anything needs setting up first. At every step it asks whether the leader stands in an exit area. As the party leaves it asks where the exit leads. Each answer comes from a function, so a place can answer differently as the story goes on.](https://alchemy.pascalpixel.com/illustrations/scene/entries.svg)
+![Six questions a map answers. When the party arrives the engine asks what happens here, where the party arrives, who stands where, and whether anything needs setting up first. At every step it asks whether the leader stands in a warp region. As the party leaves it asks where the warp leads. Each answer comes from a function, so a map can answer differently as the story goes on.](https://alchemy.pascalpixel.com/illustrations/scene/entries.svg)
 
-Each answer comes from a function rather than a fixed table, so a place can
+Each answer comes from a function rather than a fixed table, so a map can
 answer differently as the story moves on, and the engine needs no idea of
 the story at all. Vault's `Map_GetEvents` returns
 `gVault_EventsAfterThieves` once `FLAG_VAULT_THIEVES_JAILED` is set, and
@@ -70,38 +70,38 @@ every earlier row's condition fails.
 
 The six functions are `struct MapEntries`, at the start of every overlay.
 How an overlay is loaded and how it calls back into the main image is in
-[Engine](engine.md#overlays). The front page describes [how scenes depend on
-the story](README.md#how-scenes-depend-on-the-story) across the game.
-[Scenes](src/map/README.md#the-entry-table) describes the entry table, the
-tables it returns and [how an event is
+[Engine](engine.md#overlays). The front page describes [how maps depend on
+the story](README.md#how-maps-depend-on-the-story) across the game.
+[Maps](src/map/README.md#the-entry-table) describes the entry table, the
+tables it returns and [how a map event is
 chosen](src/map/README.md#how-an-event-is-chosen), and
-[Places](src/field/maps.s) lists every scene in story order.
+[Places](src/field/maps.s) lists every map in story order.
 
-## Scene and place flags
+## Map and map section flags
 
-A scene never undoes what it changed. The game keeps two sets of flags for
-scenes to use and forgets them as the party moves on: scene flags whenever
-the party enters a scene, place flags when it enters another place.
+A map never undoes what it changed. The game keeps two sets of flags for
+maps to use and forgets them as the party moves on: map flags whenever
+the party enters a map, map section flags when it enters another map section.
 
-![What a place forgets, and when. Scene flags are forgotten every time the party enters a scene, even the one it just left: the plant Growth raised on Crossbone Isle is a sprout again. Place flags are kept while the party moves between the scenes of one place and forgotten when it enters another place: Vault's mayor remembers having welcomed Isaac back while the party stays in Vault, and welcomes him again on the next visit. Coming back from a battle forgets neither, so the room is as the party left it.](https://alchemy.pascalpixel.com/illustrations/scene/flag-reset.svg)
+![What a map forgets, and when. Map flags are forgotten every time the party enters a map, even the one it just left: the plant Growth raised on Crossbone Isle is a sprout again. Map section flags are kept while the party moves between the maps of one map section and forgotten when it enters another map section: Vault's mayor remembers having welcomed Isaac back while the party stays in Vault, and welcomes him again on the next visit. Coming back from a battle forgets neither, so the room is as the party left it.](https://alchemy.pascalpixel.com/illustrations/scene/flag-reset.svg)
 
-`Map_ResetFlagsOnEnter` clears the scene's 256 flags (`FLAG_MAP_TEMP_FIRST` to
-`FLAG_MAP_TEMP_LAST`) on every ordinary entrance, and the place's 256
+`Map_ResetFlagsOnEnter` clears the map's 256 flags (`FLAG_MAP_TEMP_FIRST` to
+`FLAG_MAP_TEMP_LAST`) on every ordinary arrival, and the map section's 256
 (`FLAG_MAPSEC_TEMP_FIRST` to `FLAG_MAPSEC_TEMP_LAST`) whenever the party enters a
-different group of scenes. A pushed pillar kept in a `FLAG_MAP_TEMP_xx` flag
+different map section. A pushed pillar kept in a `FLAG_MAP_TEMP_xx` flag
 is therefore back in place the next time the party comes in, and state that
-should last while the party is anywhere in the place goes in a
+should last while the party is anywhere in the map section goes in a
 `FLAG_MAPSEC_TEMP_xx` flag. `FLAG_KEEP_PARTY_POSITION` keeps both ranges, so
 returning from a battle restores the room as it was left.
 
 | Name | Value | Meaning |
 | --- | --- | --- |
-| `FLAG_MAP_TEMP_FIRST` | 512 (`0x200`) | the first of the scene's 256 flags |
+| `FLAG_MAP_TEMP_FIRST` | 512 (`0x200`) | the first of the map's 256 flags |
 | `FLAG_MAP_TEMP_LAST` | 767 (`0x2ff`) | the last of them |
-| `FLAG_MAPSEC_TEMP_FIRST` | 768 (`0x300`) | the first of the place's 256 flags |
+| `FLAG_MAPSEC_TEMP_FIRST` | 768 (`0x300`) | the first of the map section's 256 flags |
 | `FLAG_MAPSEC_TEMP_LAST` | 1,023 (`0x3ff`) | the last of them |
 
-[Scenes](src/map/README.md#state-that-cleans-itself-up) says how a scene
+[Maps](src/map/README.md#state-that-cleans-itself-up) says how a map
 uses them.
 
 ## Field objects and their scripts
@@ -177,41 +177,41 @@ whole pixels and the lower 16 bits sixty-five-thousandths of one, so
 map and [the ground under an
 object](src/field/README.md#how-high-a-step-can-go).
 
-## Cells and collision
+## Cells and metatile behaviors
 
-A map is a grid of 16-pixel squares, cells, and each cell says three things:
+A layout is a grid of 16-pixel squares, cells, and each cell says three things:
 what is drawn there, how high its ground is, and what standing there does.
 
-![What one cell of a map says. A map is a grid of square cells, 16 pixels on a side. Each cell says what is drawn there, one block, a 16-pixel picture made of 2 by 2 tiles, each tile an 8-pixel square; how high its ground is, flat, a slope or a step; and what standing there does: nothing, a wall, a spot this place's events name such as a door, a chest or a ladder, ground where battles start, or a ledge to jump down. The engine reads the ground to decide where the leader can step; the place's events read what standing there does to decide what happens.](https://alchemy.pascalpixel.com/illustrations/world/cell-word.svg)
+![What one cell of a layout says. A layout is a grid of square cells, 16 pixels on a side. Each cell says what is drawn there, one metatile, a 16-pixel picture made of 2 by 2 tiles, each tile an 8-pixel square; how high its ground is, flat, a slope or a step; and what standing there does: nothing, a wall, a spot this map's events name such as a door, a chest or a ladder, ground where battles start, or a ledge to jump down. The engine reads the ground to decide where the leader can step; the map's events read what standing there does to decide what happens.](https://alchemy.pascalpixel.com/illustrations/world/cell-word.svg)
 
-What standing on a cell does is its collision code, and it is what walls
-and events are keyed on. Some codes mean the same on every map: a wall,
+What standing on a cell does is its metatile behavior, and it is what walls
+and map events are keyed on. Some behaviors mean the same on every map: a wall,
 ground with battles of its own, the jars and barrels anyone can search,
-ledges and climbing spots. The rest belong to the place, and its event table
-says what each one does, so the same code is a door in one town and a chest
+ledges and climbing spots. The rest belong to the map, and its map event table
+says what each one does, so the same behavior is a door in one town and a chest
 in another. A wall need not be marked, either: the leader can step at most 8
 pixels up or 12 down, so ground that rises sharply stops him as surely as a
 wall. Goma Cave has no wall-coded cells at all; a rim of ground 32 pixels
 high runs along the foot of each cliff.
 
-The three layers of a map are windows onto one grid of 128 by 128 cells,
+The three layers of a layout are windows onto one grid of 128 by 128 cells,
 decoded into the 64 KB at `Ram_MapGridCellBuffer`. A cell is one 32-bit word,
-four bytes: its first two bytes (a halfword) hold the block in their low 12
+four bytes: its first two bytes (a halfword) hold the metatile in their low 12
 bits and, above it, the layer and priority an object standing there takes;
-its third byte is the collision code and its fourth its ground shape, from which
+its third byte is the metatile behavior and its fourth its ground shape, from which
 `MapGrid_GetTerrainHeight` computes the height. `MB_WALL` is a wall; the
-codes from `MB_EVENT_FIRST` to `MB_EVENT_LAST` belong to the
-scene.
+behaviors from `MB_EVENT_FIRST` to `MB_EVENT_LAST` belong to the
+map.
 
 | Name | Value | Meaning |
 | --- | --- | --- |
-| `MB_EVENT_FIRST` | 1 | the first collision code the scene's events name |
+| `MB_EVENT_FIRST` | 1 | the first metatile behavior the map's events name |
 | `MB_EVENT_LAST` | 239 | the last of them |
 | `MB_WALL` | 255 | a wall, whatever the heights |
 
-[Maps](src/layout/README.md#cells) gives every collision code, and goes on to the
-map's tables and [how the build makes each
-map](src/layout/README.md#how-the-build-makes-a-map) from editable tables.
+[Layouts](src/layout/README.md#cells) gives every metatile behavior, and goes on to the
+layout's tables and [how the build makes each
+layout](src/layout/README.md#how-the-build-makes-a-map) from editable tables.
 
 ## Map layers
 
@@ -231,19 +231,19 @@ The three map layers are three of the console's four background layers:
 `MAPGRID_LAYER_OVERHEAD` on `BG1`; `BG0` is the window layer, where messages and
 menus are drawn. Each layer's priority comes from the map's header, most maps
 give the three layers 3, 2 and 1, and the field draws its sprites at priority
-2. A sprite wins a tie with a background, so actors stand in front of the
+2. A sprite wins a tie with a background, so object events stand in front of the
 middle layer and behind the overhead one. A priority of 0 leaves a layer off:
 `MapGrid_LoadLayout` enables only the layers whose priority isn't zero.
 
 | Name | Value | Background | What it holds |
 | --- | --- | --- | --- |
 | `MAPGRID_LAYER_GROUND` | 0 | `BG3` | the ground, at the back |
-| `MAPGRID_LAYER_MIDDLE` | 1 | `BG2` | walls and edges, under the actors |
-| `MAPGRID_LAYER_OVERHEAD` | 2 | `BG1` | roofs and tree tops, over the actors |
+| `MAPGRID_LAYER_MIDDLE` | 1 | `BG2` | walls and edges, under the object events |
+| `MAPGRID_LAYER_OVERHEAD` | 2 | `BG1` | roofs and tree tops, over the object events |
 
 [Field](src/field/README.md#towns-and-dungeons-on-screen) shows Vale pulled
 apart into its layers and how they are put on screen, and
-[Maps](src/layout/README.md#one-grid-three-layers) how they share one grid.
+[Layouts](src/layout/README.md#one-grid-three-layers) how they share one grid.
 
 ## The world map
 
@@ -280,15 +280,15 @@ feeding each following line its own values. There are two pages, and
 alternate frames use them: the DMA reads one page throughout a frame while
 `Transform_UpdateVertices` builds the other.
 
-When a menu or event starts on the world map, `WorldMap_StartStillView` draws
+When a menu or script starts on the world map, `WorldMap_StartStillView` draws
 the current affine frame into ordinary tiles on `BG1` and switches the display
 to `DISPCNT_MODE_0`, in which no background is affine; `WorldMap_LoadAreaGraphics`
-undoes it. The world map's own scene, its places and events, is described on
+undoes it. The world map's own code, its places and map events, is described on
 [the front page](README.md#the-world-map).
 
 [Field](src/field/README.md#the-world-map-in-perspective) works through the
-scanline table, [Maps](src/layout/README.md#the-world-maps-data) the world map's
-data, and [Running a place](src/object/README.md#the-world-map-screen) the still
+scanline table, [Layouts](src/layout/README.md#the-world-maps-data) the world map's
+data, and [Running a map](src/object/README.md#the-world-map-screen) the still
 picture R brings up.
 
 ## Random encounters
@@ -308,26 +308,26 @@ by which the party's average level is above the zone's adds 5 to the rate,
 and with Avoid active such a zone has no battles at all. A random bias,
 redrawn after each battle, varies the amount. A battle starts when the
 counter reaches `work->encounterThreshold`, 16 in 16.16 fixed point, and one
-of the zone's eight enemy groups is drawn by weight. A field scene's zones come from the
+of the zone's eight enemy groups is drawn by weight. A field map's zones come from the
 first matching rule in `gBattle_LocationRules`, which assigns zones to the
 encounter grounds its cells mark; the world map's come from
 `gWorldMap_EncounterRules`, by the terrain under the leader. Each zone is a
 row of `src/object/encounter.tsv`.
 
-[Running a place](src/object/README.md#random-battles) has the roll step by
+[Running a map](src/object/README.md#random-battles) has the roll step by
 step, and [Battle](battle.md#starting-a-battle) what happens once it starts.
 
 ## Field Psynergy
 
 Using Move on a stone pillar slides it; using it on a blank wall shows the
-same hand and moves nothing. What Psynergy does to a place is decided by the
-place's own events, and the effect only draws it.
+same hand and moves nothing. What Psynergy does to a map is decided by the
+map's own map events, and the effect only draws it.
 
-![Psynergy on the field, step by step. Isaac uses Move on the stone pillar in Vale. The game checks Psynergy can be used here and takes the PP. It runs the place's event for before the cast, if there is one. The effect plays: Move's hand appears, and it pushes the pillar only because Vale has an event for Move on it. Last it runs the place's event for after the cast, which notes where the pillar now stands and makes its new cell solid.](https://alchemy.pascalpixel.com/illustrations/object/psynergy-phases.svg)
+![Psynergy on the field, step by step. Isaac uses Move on the stone pillar in Vale. The game checks Psynergy can be used here and takes the PP. It runs the map's event for before the cast, if there is one. The effect plays: Move's hand appears, and it pushes the pillar only because Vale has a map event for Move on it. Last it runs the map's event for after the cast, which notes where the pillar now stands and makes its new cell solid.](https://alchemy.pascalpixel.com/illustrations/object/psynergy-phases.svg)
 
 Choosing Psynergy from the menu or a shortcut raises the `psynergy` request,
 and `Field_UsePsynergy` checks it can be used there, pays the PP and looks up
-the scene's Psynergy events for what the leader faces. It runs the
+the map's Psynergy events for what the leader faces. It runs the
 `PSYNERGY_PHASE_BEFORE_CAST` event, plays the effect for the ability's field
 kind (`enum FieldKind`, from the `type` column of `src/game/actions.tsv`)
 through `FieldEffect_Run`, or `FieldEffect_DispatchRequestKind` when an event
@@ -339,20 +339,21 @@ Force strikes or Frost freezes.
 | --- | --- | --- |
 | `PSYNERGY_PHASE_AFTER_CAST` | 0 | after the effect |
 | `PSYNERGY_PHASE_BEFORE_CAST` | 1 | once the PP is paid, before the effect |
-| `PSYNERGY_PHASE_EFFECT_ACTS` | 5 | from inside the effect, where it acts on the place |
+| `PSYNERGY_PHASE_EFFECT_ACTS` | 5 | from inside the effect, where it acts on the map |
 
-[Running a place](src/object/README.md#how-field-psynergy-reaches-its-effect)
+[Running a map](src/object/README.md#how-field-psynergy-reaches-its-effect)
 covers the dispatch, every phase and each field kind's effect.
 
 ## Limits
 
 - 64 field objects, and 64 sprites sharing 64 animation layer records, up to
   four each.
-- 66 actor slots in the field work: the party's 8, then the placed actors.
+- 66 object event slots in the field work: the party's 8, then the ones the
+  map's object event templates place.
 - One overlay loaded at a time, in the 32 KB of `gOverlayArea`.
-- 256 scene flags and 256 place flags, each range reused by every scene or
-  place.
+- 256 map flags and 256 map section flags, each range reused by every map or
+  map section.
 - 104 encounter zones of eight enemy groups each.
 - 47 script commands, of which the last 11 act as `SC_END`; a label must lie
   within the first 1,024 words of its script.
-- A battle snapshot keeps up to 32 actors.
+- A battle snapshot keeps up to 32 object events.

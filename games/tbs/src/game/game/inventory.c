@@ -460,9 +460,9 @@ u8 Item_GetTargetMode(s32 itemId) {
 
 /// Adds `delta` to rare item counter `index`, kept between 0 and 99, and
 /// returns the new count (0 for an index past 127).
-s32 ItemCounter_Adjust(s32 index, s32 delta) {
+s32 RareItemStock_Adjust(s32 index, s32 delta) {
   s32 counter_slot = index;
-  u8 *data = gItemCounters;
+  u8 *data = gRareItemStock;
 
   index = 0;
   if (counter_slot <= 127) {
@@ -496,7 +496,7 @@ s32 Item_AdjustCounter(s32 itemId, s32 delta) {
   // ordinary item
   counter = gItem_ArtifactSlotTable[itemId & itemIdMask];
   if (counter != 0) {
-    result = ItemCounter_Adjust(counter - 1, delta);
+    result = RareItemStock_Adjust(counter - 1, delta);
   }
   return result;
 }

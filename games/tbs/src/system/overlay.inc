@@ -317,7 +317,7 @@
 	import Field_EndBusyAndReveal, Field_EndBusyAndRevealFar
 	import FieldEffect_StartMindReadWave, FieldEffect_StartMindReadWaveFar
 	import FieldEffect_FinishWaveAndReleaseHeapBlock, FieldEffect_FinishWaveAndReleaseHeapBlockFar
-	import Ui_SetBank15PaletteAndClearRenderMode, Ui_SetBank15PaletteAndClearRenderModeFar
+	import FieldEffect_RestoreMindReadPalette, FieldEffect_RestoreMindReadPaletteFar
 	import Sprite_ShareVramCacheEntry, Sprite_ShareVramCacheEntryFar
 	import Party_AddPp, Party_AddPpFar
 	import FieldYesNo_Ask, FieldYesNo_AskFar

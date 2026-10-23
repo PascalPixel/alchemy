@@ -22,8 +22,8 @@ WindowSprite_CreateWithTransform(s32 icon, struct Window *input, s32 x, s32 y);
 struct WindowSprite *WindowSprite_CreateFromTable(s32 table_entry,
                                                   struct Window *input, s32 x,
                                                   s32 y);
-struct WindowSprite *CreateSideObject(s32 character, s32 unused, s32 side,
-                                      struct Window *window, s32 x, s32 y);
+struct WindowSprite *Portrait_Create(s32 character, s32 unused, s32 side,
+                                     struct Window *window, s32 x, s32 y);
 void Portrait_Reload(u32 side, s32 character, s32 unused);
 void WindowSprite_SetMotion(struct WindowSprite *out, s32 mode);
 void WindowSprite_SetInvertedSentinel(void *sprite, s32 priority);
@@ -80,8 +80,8 @@ s32 NamingScreen_CountLetters(const u8 *name);
 void Window_CopyTilemapRegion(const struct Window *window, const void *source);
 void Window_SetTextTileRect(const struct Window *window, s32 x, s32 y,
                             s32 width, s32 height, u32 palette);
-void Resource_CopyFixedBlockB(s32 slot);
-void Resource_CopyFixedBlockA(s32 slot);
+void NamingScreen_LoadPointingHandTiles(s32 slot);
+void NamingScreen_LoadCaretTiles(s32 slot);
 s32 Text_SetString(const u8 *str);
 void Text_DrawPaddedLabel(struct Window *window, u8 *name);
 s32 NamingScreen_EditMemberName(s32 member);
@@ -90,10 +90,10 @@ void Djinn_ShowJoinedMessage(s32 member, s32 element, s32 djinn);
 s32 Party_LookupCharacterValueByFlag32(u32 index);
 void Party_ShowJoinedMessage(s32 member);
 void Party_ShowPairJoinedMessage(s32 first, s32 second);
-void Heading_Load(s32 picture, s32 slot);
-struct WindowSprite *Heading_Create(s32 picture, struct Window *window, s32 x,
-                                    s32 y);
-void Heading_Bob(struct WindowSprite *obj);
+void MenuTitle_Load(s32 picture, s32 slot);
+struct WindowSprite *MenuTitle_Create(s32 picture, struct Window *window, s32 x,
+                                      s32 y);
+void MenuTitle_Bob(struct WindowSprite *obj);
 void CommandIcon_Load(s32 icon, s32 slot, s32 remap);
 struct WindowSprite *CommandIcon_Create(s32 icon, s32 remap,
                                         struct Window *window, s32 x, s32 y);

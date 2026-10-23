@@ -232,7 +232,7 @@ LaliveroInteriors_GetObjectEventTemplates(void) {
 /// The side the leader faces: the facing rounded to the nearest of east,
 /// south, west and north. Facing north, the leader is across the counter
 /// from a shopkeeper.
-static inline u16 Leader_GetSide(void) {
+static inline u16 LaliveroInteriors_LeaderGetSide(void) {
   return (ObjectEvent_GetById(LOCALID_PARTY_LEADER)->facing + 0x2000) & ~0x3fff;
 }
 
@@ -243,8 +243,8 @@ static inline u16 Leader_GetSide(void) {
 /// tell of the rough sea.
 static void EventScript_TalkToWeaponMerchant(s32 keeper) {
   struct ObjectEvent *leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
-  // Leader_GetSide's rounding, written with the mask 0xc000, which
-  // loads from the literal pool where the helper's builds the mask.
+  // LaliveroInteriors_LeaderGetSide's rounding, written with the mask 0xc000,
+  // which loads from the literal pool where the helper's builds the mask.
   u16 side = (leader->facing + 0x2000) & 0xc000;
 
   if (side == FACING_NORTH) {
@@ -271,7 +271,7 @@ static void EventScript_TalkToWeaponMerchant(s32 keeper) {
 /// Lalivero (LaliveroShops): the armor shop across the counter; otherwise
 /// small talk.
 static void EventScript_TalkToArmorMerchant(s32 keeper) {
-  if (Leader_GetSide() == FACING_NORTH) {
+  if (LaliveroInteriors_LeaderGetSide() == FACING_NORTH) {
     Shop_Run(LALIVERO_ARMOR_STOCK, keeper);
   } else if (GameFlag_Get(FLAG_VENUS_LIGHTHOUSE_PARTY_RETURNED)) {
     FieldScript_SetMessageId(MsgLaliveroWantedSendShips);
@@ -285,7 +285,7 @@ static void EventScript_TalkToArmorMerchant(s32 keeper) {
 /// Lalivero (LaliveroShops): the item shop across the counter; otherwise
 /// small talk.
 static void EventScript_TalkToItemMerchant(s32 keeper) {
-  if (Leader_GetSide() == FACING_NORTH) {
+  if (LaliveroInteriors_LeaderGetSide() == FACING_NORTH) {
     Shop_Run(LALIVERO_ITEM_STOCK, keeper);
   } else if (GameFlag_Get(FLAG_VENUS_LIGHTHOUSE_PARTY_RETURNED)) {
     FieldScript_SetMessageId(MsgLaliveroImpossibleGoOcean);
@@ -299,7 +299,7 @@ static void EventScript_TalkToItemMerchant(s32 keeper) {
 /// Lalivero Sanctum: the healer offers the Sanctum's services across the
 /// counter; otherwise small talk of Babi's lighthouse.
 static void EventScript_TalkToHealer(s32 healer) {
-  if (Leader_GetSide() == FACING_NORTH) {
+  if (LaliveroInteriors_LeaderGetSide() == FACING_NORTH) {
     Sanctum_Run(healer);
   } else if (GameFlag_Get(FLAG_VENUS_LIGHTHOUSE_PARTY_RETURNED)) {
     FieldScript_SetMessageId(MsgLaliveroBabiLighthouseStruck);
@@ -313,7 +313,7 @@ static void EventScript_TalkToHealer(s32 healer) {
 /// Lalivero (LaliveroFaransHouse), the inn: a room for the night across the
 /// counter; otherwise small talk.
 static void EventScript_TalkToInnkeeper(s32 innkeeper) {
-  if (Leader_GetSide() == FACING_NORTH) {
+  if (LaliveroInteriors_LeaderGetSide() == FACING_NORTH) {
     Inn_CheckIn(LALIVERO_INN, innkeeper);
   } else if (GameFlag_Get(FLAG_VENUS_LIGHTHOUSE_PARTY_RETURNED)) {
     FieldScript_SetMessageId(MsgLaliveroDidntKnowTime);
@@ -331,7 +331,7 @@ static void EventScript_TalkToInnkeeper(s32 innkeeper) {
 static void EventScript_TalkToInnWorker(void) {
   s16 side;
 
-  side = Leader_GetSide();
+  side = LaliveroInteriors_LeaderGetSide();
   GameFlag_Set(FLAG_INN_WORKER_APOLOGIZED);
   FieldScript_Start();
   Field_EndBusyAndReveal();

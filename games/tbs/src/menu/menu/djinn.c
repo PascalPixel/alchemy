@@ -1915,7 +1915,7 @@ s32 DjinnMenu_DrawStatPreview(struct Window *window, s32 x, s32 y, s32 memberId,
   }
 
   if (page == 0)
-    SideObject_CreateFar(memberId, 0, side, window, 0, 0);
+    Portrait_CreateFar(memberId, 0, side, window, 0, 0);
   // None of the preview's class, stat or action changes escape this call.
   Unit_Copy(unit, originalUnit);
   Free(originalUnit);

@@ -2305,7 +2305,7 @@ static void ColosseumNavampaMatch_PushObjectEventAhead(void) {
   step <<= 16;
   position.z = subject->z.fixed + step;
 
-  target = MapData_FindSlotAtPosition(&position, subject);
+  target = ObjectEvent_FindAtPosition(&position, subject);
   if (target == 0) {
     return;
   }
@@ -2316,7 +2316,7 @@ static void ColosseumNavampaMatch_PushObjectEventAhead(void) {
   step <<= 16;
   position.z = target->z.fixed + step;
 
-  blocker = MapData_FindSlotAtPosition(&position, target);
+  blocker = ObjectEvent_FindAtPosition(&position, target);
   if (blocker != 0 && (blocker->collisionFlags & 1) != 0) {
     return;
   }
@@ -2325,7 +2325,7 @@ static void ColosseumNavampaMatch_PushObjectEventAhead(void) {
   position.y = target->y.fixed + PIXELS(16);
   position.z = target->z.fixed;
 
-  blocker = MapData_FindSlotAtPosition(&position, target);
+  blocker = ObjectEvent_FindAtPosition(&position, target);
   if (blocker != 0 && (blocker->collisionFlags & 1) != 0) {
     return;
   }

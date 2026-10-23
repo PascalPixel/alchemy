@@ -109,8 +109,8 @@ gCharacter_SpriteTable:
 	.global gCharacter_ChildSpriteTable
 gCharacter_ChildSpriteTable:
 	.2byte 18, 19, 2, 3, 36, 48, 6, 7	@ child Isaac, child Garet, ...
-	.global gHeadingBobOffsets
-gHeadingBobOffsets:
+	.global gMenuTitleBobOffsets
+gMenuTitleBobOffsets:
 	.ifdef TBS_EDITION_ES
 	.byte 0, 0, 1, 2, 3, 3, 2, 1
 	.else

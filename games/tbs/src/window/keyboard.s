@@ -26,4 +26,4 @@ NamingScreen_KeyboardTilemap3:
 	.balign 4, 0
 	.global gWindowSprite_PointerTiles
 gWindowSprite_PointerTiles:
-	.4byte gResource_FixedBlockBTiles
+	.4byte gPointingHandTiles

@@ -36,7 +36,7 @@ enum TestRoomsLocalId {
 u8 *TestRoom_GetWarpDests(void) { return (u8 *)gTestRoom_WarpDests; }
 
 /// The room has no warp regions: its regions entry returns none.
-s32 MapData_ReturnZero(void) { return 0; }
+s32 Map_GetWarpRegions(void) { return 0; }
 
 u8 *TestRoom_GetWarps(void) { return (u8 *)gTestRoom_Warps; }
 

@@ -115,7 +115,7 @@ struct WindowSprite *WindowSprite_CreateWithTransform(s32 icon,
   return sprite;
 }
 
-/// Loads the pattern at the start of gHeadingPictures into a
+/// Loads the pattern at the start of gMenuTitlePictures into a
 /// free VRAM slot and shows it as a 16x16 sprite at (x, y) in `window`.
 /// `tableEntry` is passed on to the loader, which loads that same pattern for
 /// every value. Returns NULL when no slot is free.
@@ -143,8 +143,8 @@ struct WindowSprite *WindowSprite_CreateFromTable(s32 tableEntry,
 /// the portrait and its VRAM slot (WindowWork.portraitPictures and
 /// portraitSprites); the message windows' speaker portraits come through here
 /// (window/messages.c).
-struct WindowSprite *CreateSideObject(s32 character, s32 unused, s32 side,
-                                      struct Window *window, s32 x, s32 y) {
+struct WindowSprite *Portrait_Create(s32 character, s32 unused, s32 side,
+                                     struct Window *window, s32 x, s32 y) {
   struct WindowWork *work = WINDOW_WORK;
   struct WindowSprite *portrait = NULL;
   s32 slot;

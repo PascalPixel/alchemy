@@ -560,7 +560,7 @@ s32 Portrait_GetForSpeaker(u32 value) {
 }
 
 /// Opens a portrait window at tile (x, y) showing the speaker's portrait.
-/// portraitOption is passed on through CreateSideObject to
+/// portraitOption is passed on through Portrait_Create to
 /// Icon_LoadWithPalette, which ignores it.
 /// Returns the window, or 0 when the speaker has no portrait.
 /// Portrait offsets are in pixels; the enclosing window bounds are in tiles.
@@ -589,7 +589,7 @@ struct Window *Portrait_OpenWindow(s32 speaker, s32 portraitOption, s32 x,
     window = Window_Create(x, y, 5, 5, 2);
   }
   if (window != 0) {
-    CreateSideObject(speaker, portraitOption, -1, window, offset, negativeFour);
+    Portrait_Create(speaker, portraitOption, -1, window, offset, negativeFour);
   }
   return window;
 }

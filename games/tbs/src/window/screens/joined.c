@@ -47,7 +47,7 @@ s32 ColossoMenu_Choose(s32 unused) {
   slot = VramCache_FindFreeEntry();
   row = 0;
   if (slot < VRAM_CACHE_ENTRY_COUNT) {
-    VramCache_Load(slot, 128, gResource_FixedBlockBTiles);
+    VramCache_Load(slot, 128, gPointingHandTiles);
     cursor.anchor = WindowSprite_Create(slot, OUTPUT_SIZE_16X16, window, 0, 0);
     MenuCursor_SetPositionImmediateFar(&cursor, window->x * 8 - 3,
                                        window->y * 8 + 9);

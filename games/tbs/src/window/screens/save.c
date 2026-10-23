@@ -829,7 +829,7 @@ void FileMenu_DrawSummary(struct Window *window,
 
 /// What the file menu is choosing a file for, which decides the files
 /// the cursor may stop on. Each mode also indexes the heading the menu shows
-/// (gHeadingPictures: Save, Continue, Copy, Erase, Battle,
+/// (gMenuTitlePictures: Save, Continue, Copy, Erase, Battle,
 /// Link).
 enum FileMenuMode {
   FILE_MENU_SAVE,     ///< saving: any file, empty ones too
@@ -1060,7 +1060,7 @@ s32 FileMenu_SelectFile(s32 selectedFile, s32 menuMode) {
   Window_DrawDividerLine(fileList, 0, 4, 27, 4);
   vramSlot = VramCache_FindFreeEntry();
   if (vramSlot < VRAM_CACHE_ENTRY_COUNT) {
-    VramCache_Load(vramSlot, 128, gResource_FixedBlockBTiles);
+    VramCache_Load(vramSlot, 128, gPointingHandTiles);
     x = -12;
     y = selectedFile * 16 + 4;
     cursorSprite =
@@ -1070,7 +1070,7 @@ s32 FileMenu_SelectFile(s32 selectedFile, s32 menuMode) {
   }
   cursorStyle = 1;
 #endif
-  modePicture = Heading_Create(menuMode, fileList, 72, -24);
+  modePicture = MenuTitle_Create(menuMode, fileList, 72, -24);
 
   while (1) {
     // Show the file under the cursor after it moves.
@@ -1129,7 +1129,7 @@ s32 FileMenu_SelectFile(s32 selectedFile, s32 menuMode) {
     }
     MenuCursor_AdvanceFar(&fileCursor);
 #endif
-    Heading_Bob(modePicture);
+    MenuTitle_Bob(modePicture);
     WaitFrames(1);
     // Up and down move to the previous or next file the mode allows; saving
     // allows every file, an empty one too.
@@ -1289,7 +1289,7 @@ s32 Save_LoadRecordIntoWork(s32 mode) {
   return result;
 }
 
-/// Loads the pointing hand cursor's tiles (gResource_FixedBlockBTiles, 128
+/// Loads the pointing hand cursor's tiles (gPointingHandTiles, 128
 /// bytes) into a free VRAM slot and returns the slot, which the caller frees
 /// with VramCache_FreeEntry. The slot is not checked: with the cache full
 /// the load is given VRAM_CACHE_ENTRY_COUNT. Colosso's markers
@@ -1299,6 +1299,6 @@ s32 Resource_LoadFixedBlockBIntoFreeSlot(void) {
   s32 slot;
 
   slot = VramCache_FindFreeEntry();
-  VramCache_Load(slot, 0x80, gResource_FixedBlockBTiles);
+  VramCache_Load(slot, 0x80, gPointingHandTiles);
   return slot;
 }

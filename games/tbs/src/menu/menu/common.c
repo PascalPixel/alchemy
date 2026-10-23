@@ -195,7 +195,7 @@ void StatusPanel_Draw(struct Window *unused, s32 member, s32 slot, s32 mode) {
   }
   WindowSprite_ClearListFar(window);
   if (!(mode & STATUS_PANEL_LOWER_ONLY))
-    menu->cursor = SideObject_CreateFar(member, 0, 0, window, 0, 0);
+    menu->cursor = Portrait_CreateFar(member, 0, 0, window, 0, 0);
 
   switch (mode & STATUS_PANEL_KIND_MASK) {
   case STATUS_PANEL_EXPERIENCE:

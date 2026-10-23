@@ -170,7 +170,7 @@ static void ShipGlow_CyclePalette(void) {
 /// A drop of spray rises and wobbles for its timer, then falls back by
 /// gSprayFallScript, which frees it.
 /// The update hook Ship_UpdateSwell gives each drop it creates.
-static void Spray_Update(union ObjectEventOrEffect *fieldObject) {
+static void LemurianShip_SprayUpdate(union ObjectEventOrEffect *fieldObject) {
   struct ObjectEvent *drop = (struct ObjectEvent *)fieldObject;
 
   if (drop->timer != 0) {
@@ -272,7 +272,7 @@ static void Ship_UpdateSwell(void) {
     objectEvent = ObjectEvent_Create(SPRITE_WATER_DROP, position->x,
                                      position->y, position->z);
     if (objectEvent != 0) {
-      objectEvent->update = Spray_Update;
+      objectEvent->update = LemurianShip_SprayUpdate;
       objectEvent->timer = 60;
       objectEvent->work = 1;
       objectEvent->motionFlags = 0;
@@ -288,7 +288,7 @@ static void Ship_UpdateSwell(void) {
 /// the ship.
 /// Called by gLeaderBoardsShip as he steps on deck; the other members'
 /// boarding scripts call their own copies below.
-static s32 Leader_StepOnDeck(struct Object *interpreter) {
+static s32 LemurianShip_LeaderStepOnDeck(struct Object *interpreter) {
   s32 *deckY;
   struct ObjectEvent *objectEvent;
 
@@ -299,7 +299,7 @@ static s32 Leader_StepOnDeck(struct Object *interpreter) {
 }
 
 /// Remembers Garet's boarding height for the swell callback.
-static s32 Garet_StepOnDeck(struct Object *interpreter) {
+static s32 LemurianShip_GaretStepOnDeck(struct Object *interpreter) {
   s32 *deckY;
   struct ObjectEvent *objectEvent;
 
@@ -310,7 +310,7 @@ static s32 Garet_StepOnDeck(struct Object *interpreter) {
 }
 
 /// Remembers Mia's boarding height for the swell callback.
-static s32 Mia_StepOnDeck(struct Object *interpreter) {
+static s32 LemurianShip_MiaStepOnDeck(struct Object *interpreter) {
   s32 *deckY;
   struct ObjectEvent *objectEvent;
 
@@ -594,7 +594,8 @@ struct RippleScrollWork {
 };
 
 /// One line's ripple offset.
-static __inline__ s32 Wave_Offset(s32 angle, s32 amplitude, u16 base) {
+static __inline__ s32 LemurianShip_WaveOffset(s32 angle, s32 amplitude,
+                                              u16 base) {
   return (u16)(Iwram_MulQ16(gRippleSine[(angle >> 16) & 0xff], amplitude) /
                256) +
          base;
@@ -824,7 +825,7 @@ void ScanlineEffect_BuildPage(void) {
   amplitude = work->amplitude[0];
   base = gBgScroll[3].x;
   for (i = 0; i != 160; i++) {
-    *line = Wave_Offset(angle, amplitude, base);
+    *line = LemurianShip_WaveOffset(angle, amplitude, base);
     angle += step;
     line += 2;
   }
@@ -833,7 +834,7 @@ void ScanlineEffect_BuildPage(void) {
   angle = (work->phase + y) * work->frequency[1];
   amplitude = work->amplitude[1];
   for (i = 0; i != 160; i++) {
-    *line = Wave_Offset(angle, amplitude, y);
+    *line = LemurianShip_WaveOffset(angle, amplitude, y);
     angle += step;
     line += 2;
   }
@@ -1070,7 +1071,7 @@ s32 gLeaderBoardsShip[] = {
     SC_ANIMATION(1),
     SC_SET(SW_FACING, FACING_SOUTH),
     SC_WAIT(1),
-    SC_CALL(Leader_StepOnDeck),
+    SC_CALL(LemurianShip_LeaderStepOnDeck),
     SC_END,
 };
 
@@ -1092,7 +1093,7 @@ s32 gGaretBoardsShip[] = {
     SC_ANIMATION(1),
     SC_SET(SW_FACING, FACING_SOUTH),
     SC_WAIT(1),
-    SC_CALL(Garet_StepOnDeck),
+    SC_CALL(LemurianShip_GaretStepOnDeck),
     SC_END,
 };
 
@@ -1138,6 +1139,6 @@ s32 gMiaBoardsShip[] = {
     SC_MOVE_BY(0, 0, PIXELS(-8)),
     SC_SYNC,
     SC_ANIMATION(1),
-    SC_CALL(Mia_StepOnDeck),
+    SC_CALL(LemurianShip_MiaStepOnDeck),
     SC_END,
 };

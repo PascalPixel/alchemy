@@ -8,8 +8,8 @@ gGameFlagBytes:
 	.global gSaveBlock
 gSaveBlock:
 	.space 0x00000140
-	.global gItemCounters
-gItemCounters:
+	.global gRareItemStock
+gRareItemStock:
 	.space 0x000000fc
 	.global gOverflowItem
 gOverflowItem:

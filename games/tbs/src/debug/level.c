@@ -93,7 +93,7 @@ u8 *IncreaseItemAndLevel_GetWarpDests(void) {
 }
 
 /// The room has no warp regions: its regions entry returns none.
-s32 MapData_ReturnZero(void) { return 0; }
+s32 Map_GetWarpRegions(void) { return 0; }
 
 u8 *IncreaseItemAndLevel_GetWarps(void) {
   return (u8 *)gIncreaseItemAndLevel_Warps;

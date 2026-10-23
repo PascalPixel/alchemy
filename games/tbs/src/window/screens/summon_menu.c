@@ -238,8 +238,7 @@ s32 BattleSummonMenu_Run(s32 unused0, s32 unused1, const u8 *standby) {
     cursorPosition.y = (selectedRow * 2 + window->y) * 8 + 20;
     ((u32 *)cur)[1] = MENU_SPRITE_SIZE_16;
     ((u32 *)cur)[2] = 0;
-    cur->tile =
-        VramCache_Reload((u16)cursorHandle, (s32)gResource_FixedBlockBTiles);
+    cur->tile = VramCache_Reload((u16)cursorHandle, (s32)gPointingHandTiles);
     cur->x = cursorPosition.x + ((gFrameCount & 4) >> 1) - 4;
     cur->y = cursorPosition.y - ((gFrameCount & 4) >> 2) - 8;
     /* FAKEMATCH(temporary): the cursor pushed through sprite, re-pointed at it

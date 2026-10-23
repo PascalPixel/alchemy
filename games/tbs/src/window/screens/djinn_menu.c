@@ -517,8 +517,7 @@ s32 BattleDjinnMenu_Run(s32 member, s32 unused) {
     sprite = &cursorStorage;
     ((u32 *)sprite)[1] = MENU_SPRITE_SIZE_16;
     ((u32 *)sprite)[2] = 0;
-    sprite->tile =
-        VramCache_Reload(cursorSlot, (s32)gResource_FixedBlockBTiles);
+    sprite->tile = VramCache_Reload(cursorSlot, (s32)gPointingHandTiles);
     sprite->x = cursorPos.x + ((gFrameCount & 4) >> 1) - 6;
     sprite->y = cursorPos.y - ((gFrameCount & 4) >> 2) - 8;
     if (djinnCount != 0) {

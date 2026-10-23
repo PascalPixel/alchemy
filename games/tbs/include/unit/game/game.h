@@ -62,7 +62,7 @@ s32 PartyInventory_Discard(s32 itemId);
 s32 Inventory_Break(s32 unitId, s32 slot);
 s32 Inventory_Repair(s32 unitId, s32 slot);
 u8 Item_GetTargetMode(s32 itemId);
-s32 ItemCounter_Adjust(s32 index, s32 delta);
+s32 RareItemStock_Adjust(s32 index, s32 delta);
 s32 Item_AdjustCounter(s32 itemId, s32 delta);
 s32 Inventory_CountItem(s32 unitId, s32 itemId);
 s32 PartyInventory_CountItem(s32 itemId);

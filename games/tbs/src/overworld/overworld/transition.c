@@ -778,7 +778,8 @@ void ScreenTransition_Finish(s32 mode, s32 frames) {
 ///
 /// Reached only through its unnamed far-call veneer. ScreenTransition_Start
 /// ORs these bits into DISPCNT.
-void DisplayState_ClearFlags(s32 clearBg3, s32 clearBg2, s32 clearBg1) {
+void ScreenTransition_HideBackgrounds(s32 clearBg3, s32 clearBg2,
+                                      s32 clearBg1) {
   struct ScreenTransitionWin *state;
 
   state = gMapGridWork[0];

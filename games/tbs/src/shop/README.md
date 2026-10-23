@@ -177,7 +177,7 @@ visit adds one, so its counter reaches 2 and it can be bought twice.
 Vault's weapon shop is row 4, whose only artifact is the Magic Rod, and
 Bilibin's weapon shop is row 7, whose only artifact is the Witch's Wand. The
 party reaches Vault first, so Bilibin's weapon shop lists both unless the
-party bought the Magic Rod in Vault. The counters are `gItemCounters`.
+party bought the Magic Rod in Vault. The counters are `gRareItemStock`.
 
 ## Sanctums
 

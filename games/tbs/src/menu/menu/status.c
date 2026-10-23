@@ -708,7 +708,7 @@ void SummaryScreen_ShowMemberStatus(s32 member, s32 frame) {
     window = menu->statusWindow;
   }
   if (created != 0) {
-    cursor = SideObject_CreateFar(member, 0, 0, window, 0, 0);
+    cursor = Portrait_CreateFar(member, 0, 0, window, 0, 0);
     menu->statusCursor = cursor;
     // The portrait goes to depth slot 240, as the category sprites do.
     if ((cursor->sentinel = 0xF0, menu->page) == SUMMARY_SCREEN_PAGE_CHOOSER) {

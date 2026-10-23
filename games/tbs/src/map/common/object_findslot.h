@@ -6,7 +6,7 @@
 
 /// Returns the placed object event (8 to 65) whose cell, and 16-pixel step of
 /// height, is that of the 16.16 position, or 0. self is not read.
-static void *MapData_FindSlotAtPosition(const struct FieldPosition *position,
+static void *ObjectEvent_FindAtPosition(const struct FieldPosition *position,
                                         void *self) {
   const struct FieldPosition *pos = position;
   struct FieldWork *work = gFieldWork;

@@ -5,7 +5,7 @@
 #include "map_tables.h"
 
 u8 *Title_GetWarpDests(void);
-s32 MapData_ReturnZero(void);
+s32 Map_GetWarpRegions(void);
 u8 *Title_GetWarps(void);
 u8 *Title_GetObjectEventTemplates(void);
 u8 *Title_GetEvents(void);

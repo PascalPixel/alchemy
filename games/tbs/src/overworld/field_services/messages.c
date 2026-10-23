@@ -156,7 +156,7 @@ struct Window *FieldMessage_ShowAtObject(s32 localId, s32 unused) {
     // below the message, within the screen's rows 0 to 19, and grow the
     // message to the portrait's height.
 #if TBS_PATCH_1
-    found = Localization_LookupEntryIdFar(sprite);
+    found = Portrait_GetForSpeakerFar(sprite);
     if (found != -1) {
       Text_GetMessageSizeAltFar(message, &left, &top, (u32 *)&width,
                                 (u32 *)&height);
@@ -186,7 +186,7 @@ struct Window *FieldMessage_ShowAtObject(s32 localId, s32 unused) {
       message = found;
     }
 #else
-    none = Localization_LookupEntryIdFar(sprite);
+    none = Portrait_GetForSpeakerFar(sprite);
     found = -1;
     if (none != found) {
       Text_GetMessageSizeAltFar(message, &left, &top, (u32 *)&width,

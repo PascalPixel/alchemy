@@ -156,7 +156,7 @@ restart:
       SpriteViewer_SetGridColumnPriority(i, UI_SPRITE_VIEWER_HIDDEN_PRIORITY);
     }
     SpriteViewer_SetGridColumnColorMode(i, layers[i].colorMode);
-    Ui_FillGridColumnFromMetadata(i, layers[i].animationIndex);
+    SpriteViewer_StartStaggeredAnims(i, layers[i].animationIndex);
   }
   // The copies are drawn each frame by the task below, from the ring's
   // positions.
@@ -284,8 +284,8 @@ next:
                                            layers[selectedLayer].priority);
         SpriteViewer_SetGridColumnColorMode(selectedLayer,
                                             layers[selectedLayer].colorMode);
-        Ui_FillGridColumnFromMetadata(selectedLayer,
-                                      layers[selectedLayer].animationIndex);
+        SpriteViewer_StartStaggeredAnims(selectedLayer,
+                                         layers[selectedLayer].animationIndex);
       }
       goto next;
 
@@ -354,10 +354,10 @@ next:
       if (editMode == UI_SPRITE_VIEWER_EDIT_ANIMATION) {
         if (selectedLayer != 1) {
           if (layers[selectedLayer].enabled != 0) {
-            Ui_FillGridColumnFromMetadata(selectedLayer,
-                                          layers[selectedLayer].animationIndex);
+            SpriteViewer_StartStaggeredAnims(
+                selectedLayer, layers[selectedLayer].animationIndex);
             if (selectedLayer == 0) {
-              Ui_FillGridColumnFromMetadata(1, layers[1].animationIndex);
+              SpriteViewer_StartStaggeredAnims(1, layers[1].animationIndex);
             }
           }
           goto next;
@@ -562,7 +562,7 @@ UI_DEFINE_SET_GRID_COLUMN(SpriteViewer_SetGridColumnPriority, priority)
 /// each one a frame (16 timer units) behind the last, so the copies are
 /// staggered. Also sets each copy's offsetY and clears its rotation.
 /// Called by SpriteViewer_Run.
-void Ui_FillGridColumnFromMetadata(s32 layerIndex, s32 animationIndex) {
+void SpriteViewer_StartStaggeredAnims(s32 layerIndex, s32 animationIndex) {
   s32 spriteIndex;
   struct Sprite *spriteGroup;
 

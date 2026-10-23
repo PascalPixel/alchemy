@@ -395,7 +395,7 @@ s32 BattleSummaryScreen_Run(u16 *list, s32 listCount, s32 member) {
      * instructions differ in tbs-en. */
     asm("");
     cursorSprite.oam.f.tile =
-        VramCache_Reload(cursorSlot, (s32)gResource_FixedBlockBTiles);
+        VramCache_Reload(cursorSlot, (s32)gPointingHandTiles);
     cursorSprite.oam.f.x =
         (cursorPosition.x + statusWindow->x * 8 - ((gFrameCount & 4) >> 2)) +
         16;

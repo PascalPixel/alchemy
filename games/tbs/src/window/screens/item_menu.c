@@ -215,8 +215,7 @@ s32 BattleItemMenu_Run(s32 member, u16 *entries, s32 count) {
     sprite = &cursorStorage;
     ((u32 *)sprite)[1] = MENU_SPRITE_SIZE_16;
     ((u32 *)sprite)[2] = 0;
-    sprite->tile =
-        VramCache_Reload(cursorHandle, (s32)gResource_FixedBlockBTiles);
+    sprite->tile = VramCache_Reload(cursorHandle, (s32)gPointingHandTiles);
     sprite->x = cursorPosition.x + ((gFrameCount & 4) >> 1) - 4;
     sprite->y = cursorPosition.y - ((gFrameCount & 4) >> 2) - 8;
     if (count != 0) {

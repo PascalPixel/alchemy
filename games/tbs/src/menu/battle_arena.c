@@ -271,7 +271,7 @@ static s32 sBattleArenaWaitFrames;
 u8 *BattleArena_GetWarpDests(void) { return (u8 *)gBattleArenaWarpDests; }
 
 /// The warp regions entry: the Battle Arena has no warp boxes.
-s32 MapData_ReturnZero(void) { return 0; }
+s32 Map_GetWarpRegions(void) { return 0; }
 
 /// Restarts the link with interrupts locked: removes the serial and timer 3
 /// handlers, then runs Serial_Initialize. Called when no partner

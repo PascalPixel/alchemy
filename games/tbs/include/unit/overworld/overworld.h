@@ -235,7 +235,7 @@ void ScreenTransition_SuspendCallbacks(void);
 struct ScreenTransitionState *ScreenTransition_AllocateAndClearState(void);
 void ScreenTransition_Start(s32 mode, s32 frames);
 void ScreenTransition_Finish(s32 mode, s32 frames);
-void DisplayState_ClearFlags(s32 clearBg3, s32 clearBg2, s32 clearBg1);
+void ScreenTransition_HideBackgrounds(s32 clearBg3, s32 clearBg2, s32 clearBg1);
 void ScreenTransition_Update(void);
 void ScreenTransition_UpdateFromCentre(void);
 void ScreenTransition_UpdateScanline(void);

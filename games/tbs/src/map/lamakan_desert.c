@@ -198,9 +198,11 @@ static void LamakanDesert_TalkToSmog(void) {
 // UB: calling this s32 function through a void update hook is incompatible.
 // Plain void changes 104 to 100 bytes in tbs-en.
 #ifdef UBFIX
-static void Leader_SpraySand(union ObjectEventOrEffect *fieldObject) {
+static void
+LamakanDesert_LeaderSpraySand(union ObjectEventOrEffect *fieldObject) {
 #else
-static s32 Leader_SpraySand(union ObjectEventOrEffect *fieldObject) {
+static s32
+LamakanDesert_LeaderSpraySand(union ObjectEventOrEffect *fieldObject) {
 #endif
   struct ObjectEvent *objectEvent = (struct ObjectEvent *)fieldObject;
   struct EffectOptions params;
@@ -806,9 +808,10 @@ static void LamakanDesert_FallIntoPit(void) {
   ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, 0x1999, 0xccc);
   record = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
 #ifdef UBFIX
-  record->update = Leader_SpraySand;
+  record->update = LamakanDesert_LeaderSpraySand;
 #else
-  record->update = (void (*)(union ObjectEventOrEffect *))Leader_SpraySand;
+  record->update =
+      (void (*)(union ObjectEventOrEffect *))LamakanDesert_LeaderSpraySand;
 #endif
   record = ObjectEvent_Get(best);
   if (record != 0) {

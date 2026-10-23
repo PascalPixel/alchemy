@@ -1259,7 +1259,7 @@ static void VaultInteriors_IvanJoinsRodSearch(void) {
                           0);
   FieldScript_WaitFrames(60);
   VaultInteriors_StartMindRead(LOCALID_IVAN, LOCALID_PARTY_LEADER);
-  Ui_SetBank15PaletteAndClearRenderMode();
+  FieldEffect_RestoreMindReadPalette();
   VaultInteriors_ShowMessageAndWait(LOCALID_GARET, 30);
   VaultInteriors_EndMindRead();
   ObjectEvent_LinkPair(LOCALID_IVAN, LOCALID_GARET, 0);
@@ -1901,7 +1901,7 @@ static void EventScript_ReadCorneredSuspectsMinds(void) {
   FieldScript_WaitFrames(20);
   VaultInteriors_ShowMessageAndWait(LOCALID_IVAN, 20);
   VaultInteriors_StartMindRead(LOCALID_IVAN, localId);
-  Ui_SetBank15PaletteAndClearRenderMode();
+  FieldEffect_RestoreMindReadPalette();
   FieldScript_WaitFrames(60);
   ObjectMotion_SetVarCbAndRefresh(LOCALID_SUSPECTED_LEADER, 2);
   VaultInteriors_ShowMessageAndWait(LOCALID_SUSPECTED_LEADER, 20);
@@ -2618,7 +2618,7 @@ static void VaultInteriors_DefeatThieves(void) {
   // Ivan reads Isaac's mind. Garet: "Shouldn't we stop him?" Yes: too late,
   // he's done. No: "If you say so."
   VaultInteriors_StartMindRead(LOCALID_IVAN, LOCALID_PARTY_LEADER);
-  Ui_SetBank15PaletteAndClearRenderMode();
+  FieldEffect_RestoreMindReadPalette();
   ObjectEvent_FaceObjectEvent(LOCALID_PARTY_LEADER, LOCALID_IVAN, 0);
   VaultInteriors_FaceObjectEventAndWait(LOCALID_GARET, LOCALID_IVAN, 10);
   ObjectMotion_SetVariantCallback(LOCALID_PARTY_LEADER, 1);

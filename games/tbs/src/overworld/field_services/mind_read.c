@@ -32,7 +32,7 @@ struct MindReadWork {
 ///
 /// The effect stays up until FieldEffect_FinishMindRead ends it
 /// after the after event; meanwhile the message windows show thoughts
-/// (Ui_FillBank15PaletteGrey sets the window mode).
+/// (FieldEffect_GreyMindReadPalette sets the window mode).
 void FieldEffect_StartMindReadWave(s32 x, s32 y) {
   struct MindReadWork *work;
 
@@ -47,7 +47,7 @@ void FieldEffect_StartMindReadWave(s32 x, s32 y) {
   work->sourceId = x;
   work->targetId = y;
   work->delay = 8;
-  Ui_FillBank15PaletteGrey();
+  FieldEffect_GreyMindReadPalette();
   Task_Add(FieldEffect_UpdateMindReadWave, 0xc80);
 }
 
@@ -57,7 +57,7 @@ void FieldEffect_FinishWaveAndReleaseHeapBlock(void) {
   void *work;
 
   work = *(void **)((u32)&gMindReadWork);
-  Ui_SetBank15PaletteAndClearRenderMode();
+  FieldEffect_RestoreMindReadPalette();
   Task_Remove(FieldEffect_UpdateMindReadWave);
   Anim_ApplyChildPalette((struct Object *)ObjectEvent_GetById(
                              ((struct MindReadWork *)work)->sourceId),
@@ -259,11 +259,11 @@ void FieldEffect_SetCallbackWhenTargetUnset(
 
 /// Turns colours 1 and 3 to 12 of BG palette 15 grey and starts the BG0
 /// scanline scroll (FieldEffect_ArmBg0HBlankDma) at each VBlank.
-void Ui_FillBank15PaletteGrey(void) {
+void FieldEffect_GreyMindReadPalette(void) {
   volatile u16 *p;
 
   // Window mode 1: messages show as thoughts until
-  // Ui_SetBank15PaletteAndClearRenderMode clears it.
+  // FieldEffect_RestoreMindReadPalette clears it.
   ((struct WindowWork *)gWindowWork[0])->mindRead = 1;
   p = &BG_PLTT_COLOR(15, 1);
   *p = MIND_READ_GREY;
@@ -292,7 +292,7 @@ void Ui_FillBank15PaletteGrey(void) {
 }
 
 /// Stops the BG0 scanline scroll and restores BG palette 15.
-void Ui_SetBank15PaletteAndClearRenderMode(void) {
+void FieldEffect_RestoreMindReadPalette(void) {
   void *work;
 
   work = gWindowWork[0];

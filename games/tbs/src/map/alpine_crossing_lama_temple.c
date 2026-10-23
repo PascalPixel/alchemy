@@ -222,9 +222,11 @@ static s32 ObjectEvent_DrawBehindScenery(struct Object *interpreter) {
 // UB: update hooks return void. Plain void removes the native zero result
 // and changes its return sequence (three instructions in tbs-en).
 #ifdef UBFIX
-static void Leader_FaceFeizhi(union ObjectEventOrEffect *fieldObject) {
+static void
+AlpineCrossing_LeaderFaceFeizhi(union ObjectEventOrEffect *fieldObject) {
 #else
-static s32 Leader_FaceFeizhi(union ObjectEventOrEffect *fieldObject) {
+static s32
+AlpineCrossing_LeaderFaceFeizhi(union ObjectEventOrEffect *fieldObject) {
 #endif
   struct ObjectEvent *leader = (struct ObjectEvent *)fieldObject;
   struct ObjectEvent *feizhi;
@@ -579,9 +581,10 @@ static void AlpineCrossing_FeizhiArrives(void) {
     // her row steps aside first.
     leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
 #ifdef UBFIX
-    leader->update = Leader_FaceFeizhi;
+    leader->update = AlpineCrossing_LeaderFaceFeizhi;
 #else
-    leader->update = (void (*)(union ObjectEventOrEffect *))Leader_FaceFeizhi;
+    leader->update =
+        (void (*)(union ObjectEventOrEffect *))AlpineCrossing_LeaderFaceFeizhi;
 #endif
     leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
     if ((leader->z.fixed >> 20) == 13) {

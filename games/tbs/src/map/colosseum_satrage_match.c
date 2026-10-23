@@ -1947,7 +1947,7 @@ static void ColosseumSatrageMatch_PushAdjacentObstacle(void) {
   packedOffset <<= 16;
   destination.z = pusher->z.fixed + packedOffset;
 
-  obstacle = MapData_FindSlotAtPosition(&destination, pusher);
+  obstacle = ObjectEvent_FindAtPosition(&destination, pusher);
   if (obstacle == 0) {
     return;
   }
@@ -1960,7 +1960,7 @@ static void ColosseumSatrageMatch_PushAdjacentObstacle(void) {
   packedOffset <<= 16;
   destination.z = obstacle->z.fixed + packedOffset;
 
-  blocker = MapData_FindSlotAtPosition(&destination, obstacle);
+  blocker = ObjectEvent_FindAtPosition(&destination, obstacle);
   if (blocker != 0 && (blocker->collisionFlags & 1) != 0) {
     return;
   }
@@ -1969,7 +1969,7 @@ static void ColosseumSatrageMatch_PushAdjacentObstacle(void) {
   destination.y = obstacle->y.fixed + 0x100000;
   destination.z = obstacle->z.fixed;
 
-  blocker = MapData_FindSlotAtPosition(&destination, obstacle);
+  blocker = ObjectEvent_FindAtPosition(&destination, obstacle);
   if (blocker != 0 && (blocker->collisionFlags & 1) != 0) {
     return;
   }

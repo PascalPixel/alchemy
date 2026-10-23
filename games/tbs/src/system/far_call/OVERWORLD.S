@@ -104,7 +104,7 @@ FarCall_OverworldTable:
 	overlay_veneer ScreenTransition_InitializeState
 	overlay_veneer ScreenTransition_Start
 	overlay_veneer ScreenTransition_Finish
-	overlay_veneer DisplayState_ClearFlags
+	overlay_veneer ScreenTransition_HideBackgrounds
 	overlay_veneer PaletteFade_Initialize
 	export PaletteFade_SetTargetFar, PaletteFade_SetTarget
 	export PaletteFade_SetSourceFar, PaletteFade_SetSource
@@ -147,8 +147,8 @@ FarCall_OverworldTable:
 	export Field_EndBusyAndRevealFar, Field_EndBusyAndReveal
 	export FieldEffect_StartMindReadWaveFar, FieldEffect_StartMindReadWave
 	export FieldEffect_FinishWaveAndReleaseHeapBlockFar, FieldEffect_FinishWaveAndReleaseHeapBlock
-	overlay_veneer Ui_FillBank15PaletteGrey
-	export Ui_SetBank15PaletteAndClearRenderModeFar, Ui_SetBank15PaletteAndClearRenderMode
+	overlay_veneer FieldEffect_GreyMindReadPalette
+	export FieldEffect_RestoreMindReadPaletteFar, FieldEffect_RestoreMindReadPalette
 	export FieldEffect_HasMatchingEvent5Far, FieldEffect_HasMatchingEvent5
 	export Map_HasPsynergyEventFar, Map_HasPsynergyEvent
 	export Sprite_ShareVramCacheEntryFar, Sprite_ShareVramCacheEntry

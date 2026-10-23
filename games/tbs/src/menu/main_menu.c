@@ -141,7 +141,7 @@ static u16 MainMenu_CalculatePasswordCrc16(u32 byteCount, u8 *data);
 u8 *MainMenu_GetWarpDests(void) { return (u8 *)gMainMenu_WarpDests; }
 
 /// The warp regions entry: the main menu has no warp boxes.
-s32 MapData_ReturnZero(void) { return 0; }
+s32 Map_GetWarpRegions(void) { return 0; }
 
 u8 *MainMenu_GetWarps(void) { return (u8 *)gMainMenu_Warps; }
 

@@ -270,15 +270,15 @@ A shop never runs out of Herbs, but a rare item such as the Healing Ring can
 be sold only as many times as its counter allows, and selling one back to a
 shop makes it available again. The rare item counters keep that count.
 
-`gItemCounters` holds 128 counters, each 0 to 99, for how many of each rare
+`gRareItemStock` holds 128 counters, each 0 to 99, for how many of each rare
 item the shops may still sell. `gItem_ArtifactSlotTable` gives each item id
 its counter number plus one, 0 for an ordinary item. Buying one takes one off
 and selling or discarding one puts it back (`Item_AdjustCounter`,
-`ItemCounter_Adjust`, in [game/inventory.c](game/inventory.c)).
+`RareItemStock_Adjust`, in [game/inventory.c](game/inventory.c)).
 
 | Name | Value | Meaning |
 | --- | --- | --- |
-| `gItemCounters` | 128 bytes | one counter a rare item, 0 to 99 |
+| `gRareItemStock` | 128 bytes | one counter a rare item, 0 to 99 |
 | `gItem_ArtifactSlotTable` | 512 entries | an item's counter number plus one, or 0 |
 
 ## How it fits with the rest of the game

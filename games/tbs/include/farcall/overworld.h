@@ -325,7 +325,7 @@ void FieldEffect_StartMindReadWaveFar(s32 x, s32 y);
 /// Ends Mind Read's wave, restoring the caster's colours and the palettes.
 void FieldEffect_FinishWaveAndReleaseHeapBlockFar(void);
 /// Stops BG0's scanline scroll and restores BG palette 15.
-void Ui_SetBank15PaletteAndClearRenderModeFar(void);
+void FieldEffect_RestoreMindReadPaletteFar(void);
 /// Returns whether the map has a Psynergy event of this group for what the
 /// leader faces; nothing in ☀️ calls it.
 s32 FieldEffect_HasMatchingEvent5Far(s32 group);

@@ -4,16 +4,16 @@
 
 #include "../screens_internal.h"
 
-extern const u8 *gHeadingPictures[];
+extern const u8 *gMenuTitlePictures[];
 
-/// Decompresses picture `picture` of gHeadingPictures, a 64x16
+/// Decompresses picture `picture` of gMenuTitlePictures, a 64x16
 /// heading (Save, Continue, Copy, Erase, Battle, Link, Pause, Setup) of 512
 /// bytes, into VRAM slot `slot`, through a 1 KB staging block in
 /// HEAP_SLOT_TILE_SCRATCH. The heap block is not freed when `slot` is not a
 /// valid VRAM slot.
-void Heading_Load(s32 picture, s32 slot) {
+void MenuTitle_Load(s32 picture, s32 slot) {
   void *stagingBuffer = AllocHeapSlotEwram(HEAP_SLOT_TILE_SCRATCH, 0x400);
-  const u8 *resource = gHeadingPictures[picture];
+  const u8 *resource = gMenuTitlePictures[picture];
 
   if (slot < VRAM_CACHE_ENTRY_COUNT) {
     Decompress_ByteLz(resource, stagingBuffer);
@@ -22,14 +22,14 @@ void Heading_Load(s32 picture, s32 slot) {
   }
 }
 
-/// Shows heading `picture` of gHeadingPictures as two 32x16
+/// Shows heading `picture` of gMenuTitlePictures as two 32x16
 /// sprites side by side at (x, y) in `window`, on draw layer 253, and
 /// returns the left one (the right one follows it in the window's list).
 /// Returns NULL when no VRAM slot is free. The file menu shows its
 /// mode's heading this way (FileMenu_SelectFile), and window/options.c the
 /// option menu's Setup and the pause menu's Pause.
-struct WindowSprite *Heading_Create(s32 picture, struct Window *window, s32 x,
-                                    s32 y) {
+struct WindowSprite *MenuTitle_Create(s32 picture, struct Window *window, s32 x,
+                                      s32 y) {
   s32 slot;
   struct WindowSprite *first;
   struct WindowSprite *second;
@@ -40,7 +40,7 @@ struct WindowSprite *Heading_Create(s32 picture, struct Window *window, s32 x,
 
   // 0x4000 is the wide shape of attribute 0, which with size 2 is 32x16, 8
   // tiles. Neither sprite is checked for NULL.
-  Heading_Load(picture, slot);
+  MenuTitle_Load(picture, slot);
   first = WindowSprite_Create(slot, 0x80004000, window, x, y);
   first->sentinel = 0xFD;
   second = WindowSprite_Create(slot, 0x80004000, window, x + 32, y);
@@ -50,19 +50,19 @@ struct WindowSprite *Heading_Create(s32 picture, struct Window *window, s32 x,
   return first;
 }
 
-/// Bobs the two sprites of a pair (see Heading_Create) up and down
-/// by gHeadingBobOffsets, one step every four frames.
-void Heading_Bob(struct WindowSprite *obj) {
+/// Bobs the two sprites of a pair (see MenuTitle_Create) up and down
+/// by gMenuTitleBobOffsets, one step every four frames.
+void MenuTitle_Bob(struct WindowSprite *obj) {
   s32 value;
 
-  value = (u8)obj->y + gHeadingBobOffsets[(gFrameTick >> 2) & 7];
+  value = (u8)obj->y + gMenuTitleBobOffsets[(gFrameTick >> 2) & 7];
   obj->oam.y = value;
   obj = obj->next;
   /* FAKEMATCH(volatile): gFrameTick read again for the second sprite, as the
    * bytes do; read plainly, CSE reuses the first index and 20 of 22
    * instructions differ in tbs-en. */
-  value =
-      (u8)obj->y + gHeadingBobOffsets[(*(volatile u32 *)&gFrameTick >> 2) & 7];
+  value = (u8)obj->y +
+          gMenuTitleBobOffsets[(*(volatile u32 *)&gFrameTick >> 2) & 7];
   obj->oam.y = value;
 }
 

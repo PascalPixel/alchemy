@@ -51,7 +51,7 @@ extern u8 Decompress_ByteLzCodeSize[];
 /// string, drawn by the unit summary in menu/menu/common.c.
 extern const u8 gStatusPanel_PpRowString[];
 /// A one-entry table of sprite tiles: the pointing hand cursor
-/// (gResource_FixedBlockBTiles), returned by WindowSprite_GetPointerTiles.
+/// (gPointingHandTiles), returned by WindowSprite_GetPointerTiles.
 extern s32 gWindowSprite_PointerTiles[];
 /// The Japanese status panel's HP row, "HP    /", the slash already in its
 /// cell at 48.
@@ -225,9 +225,9 @@ extern u8 Decompress_Type01CodeSize[];
 extern u8 Decompress_HalfwordsCodeSize[];
 /// The pointing hand cursor, a 16x16 sprite, shared by the battle menus, the
 /// naming screen and the talk choices.
-extern u8 gResource_FixedBlockBTiles[];
+extern u8 gPointingHandTiles[];
 /// The 16x16 sprite the naming screen shows as its name caret.
-extern const u8 gResource_FixedBlockATiles[];
+extern const u8 gNamingScreen_CaretTiles[];
 /// Decodes a credits slide's packed picture into 8bpp tiles, adding a palette
 /// offset to each pixel; it relocates its own command table wherever it's
 /// copied.
@@ -268,9 +268,9 @@ extern const u8 gTitle_PromptTiles[];
 /// The eight scales, in 1/65536, that WindowSprite_Pulse pulses the
 /// options menu's selected icon through.
 extern s32 gWindowSprite_PulseScales[];
-/// The pixel offsets Heading_Bob moves a sprite pair up and down
+/// The pixel offsets MenuTitle_Bob moves a sprite pair up and down
 /// by.
-extern const u8 gHeadingBobOffsets[];
+extern const u8 gMenuTitleBobOffsets[];
 /// The icon count's digits: 0 to 9, then the tens 1 to 3.
 extern u8 *gIcon_DigitPointers[];
 /// The three icon frames; frame 2 is the one item and Psynergy icons share.

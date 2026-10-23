@@ -346,8 +346,8 @@ s32 FieldEffect_HueChannelRamp(s32 angle, s32 low, s32 high);
 s32 FixedPoint_Remainder(s32 value, s32 divisor);
 void FieldEffect_SetCallbackWhenTargetUnset(
     union ObjectEventOrEffect *fieldObject);
-void Ui_FillBank15PaletteGrey(void);
-void Ui_SetBank15PaletteAndClearRenderMode(void);
+void FieldEffect_GreyMindReadPalette(void);
+void FieldEffect_RestoreMindReadPalette(void);
 s32 Input_GetDpadAngle(u32 unused);
 void FieldEffect_UpdateItemBreakFragment(
     union ObjectEventOrEffect *fieldObject);

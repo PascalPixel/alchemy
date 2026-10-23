@@ -53,15 +53,15 @@
 
 static void Reunion_Converse(void);
 static void WagonChoice_Run(void);
-static u8 Leader_AnswersYes(void);
-static u8 Garet_AsksIfNotRiding(void);
-static u8 Garet_AsksAboutUnfinishedBusiness(void);
+static u8 WestLunpaCave_LeaderAnswersYes(void);
+static u8 WestLunpaCave_GaretAsksIfNotRiding(void);
+static u8 WestLunpaCave_GaretAsksAboutUnfinishedBusiness(void);
 static u8 Party_ConfirmsStaying(void);
-static u8 Bunza_AsksAboutUnfinishedBusiness(void);
-static u8 Garet_ChecksNothingLeftToDo(void);
-static u8 Mia_AsksIfRidingAfterAll(void);
-static u8 Bunza_CannotWait(void);
-static u8 Garet_AsksAboutThingsToDo(void);
+static u8 WestLunpaCave_BunzaAsksAboutUnfinishedBusiness(void);
+static u8 WestLunpaCave_GaretChecksNothingLeftToDo(void);
+static u8 WestLunpaCave_MiaAsksIfRidingAfterAll(void);
+static u8 WestLunpaCave_BunzaCannotWait(void);
+static u8 WestLunpaCave_GaretAsksAboutThingsToDo(void);
 static void Party_StaysBehind(void);
 static void Party_RidesWagon(void);
 
@@ -118,7 +118,7 @@ static void EventScript_FreezeSouthPuddle(void) {
 
 /// Animates the raised gate resting on the frozen pillar, then opens the way
 /// through its metatile behaviors.
-static void Gate_DrawPropped(void) {
+static void WestLunpaCave_GateDrawPropped(void) {
   struct ObjectEvent *pillar;
 
   pillar = ObjectEvent_Get(LOCALID_GATE_PUDDLE);
@@ -155,7 +155,7 @@ static void EventScript_FreezeGatePuddle(void) {
   }
   if (Script_GetFlag(FLAG_MAP_TEMP_02) == 0) {
     Script_PlaySong(SE_GATE_MOVE);
-    Gate_DrawPropped();
+    WestLunpaCave_GateDrawPropped();
     Script_PlaySong(MUS_PUZZLE_SOLVED);
     GameFlag_Set(FLAG_MAP_TEMP_02);
   }
@@ -169,7 +169,7 @@ static void EventScript_FreezeNorthPuddle(void) {
 
 /// Lowers the gate in four-frame steps and restores the blocked cell
 /// attributes.
-static void Gate_Lower(void) {
+static void WestLunpaCave_GateLower(void) {
   if (GameFlag_Get(FLAG_MAP_TEMP_02) != 0) {
     MapGrid_CopyCells(41, 86, 2, 6, 21, 57);
     WaitFrames(4);
@@ -200,7 +200,7 @@ static void EventScript_FlipLoweringSwitch(void) {
     if (GameFlag_Get(FLAG_MAP_TEMP_00) == 0) {
       FieldMessage_Show(MsgFieldFlippedSwitch, 1);
       Script_PlaySong(SE_GATE_MOVE);
-      Gate_Lower();
+      WestLunpaCave_GateLower();
       GameFlag_Set(FLAG_MAP_TEMP_01);
       GameFlag_Clear(FLAG_MAP_TEMP_02);
     }
@@ -208,7 +208,7 @@ static void EventScript_FlipLoweringSwitch(void) {
 }
 
 /// Raises the unpropped gate and restores its passable cell attributes.
-static void Gate_Raise(void) {
+static void WestLunpaCave_GateRaise(void) {
   MapGrid_CopyCells(41, 87, 2, 5, 21, 59);
   WaitFrames(4);
   MapGrid_CopyCells(2, 93, 1, 1, 24, 62);
@@ -230,7 +230,7 @@ static void EventScript_FlipRaisingSwitch(void) {
     if (Script_GetFlag(FLAG_MAP_TEMP_02) == 0) {
       FieldMessage_Show(MsgFieldFlippedSwitch, 1);
       Script_PlaySong(SE_GATE_MOVE);
-      Gate_Raise();
+      WestLunpaCave_GateRaise();
       GameFlag_Set(FLAG_MAP_TEMP_02);
       GameFlag_Clear(FLAG_MAP_TEMP_01);
     }
@@ -698,34 +698,34 @@ static void WagonChoice_Run(void) {
   ObjectMotion_SetAngleToward(LOCALID_BUNZA, LOCALID_PARTY_LEADER, 0);
 
 ask_to_ride:
-  if (Leader_AnswersYes()) {
+  if (WestLunpaCave_LeaderAnswersYes()) {
   ask_about_business:
-    if (!Bunza_AsksAboutUnfinishedBusiness()) {
+    if (!WestLunpaCave_BunzaAsksAboutUnfinishedBusiness()) {
       goto ride;
     }
     insisted = FALSE;
-    if (!Garet_AsksAboutThingsToDo()) {
+    if (!WestLunpaCave_GaretAsksAboutThingsToDo()) {
     insist_nothing_left:
       insisted = TRUE;
     check_nothing_left:
-      Garet_ChecksNothingLeftToDo();
+      WestLunpaCave_GaretChecksNothingLeftToDo();
       if (FieldScript_AskYesNoWithObjectEventAnimation(LOCALID_PARTY_LEADER,
                                                        0) == 0) {
         goto ride;
       }
     }
-    if (Bunza_CannotWait() || !insisted) {
+    if (WestLunpaCave_BunzaCannotWait() || !insisted) {
       goto stay;
     }
     goto check_nothing_left;
   } else {
-    if (Garet_AsksIfNotRiding()) {
-      if (Garet_AsksAboutUnfinishedBusiness()) {
+    if (WestLunpaCave_GaretAsksIfNotRiding()) {
+      if (WestLunpaCave_GaretAsksAboutUnfinishedBusiness()) {
         goto stay;
       }
       goto insist_nothing_left;
     }
-    if (Mia_AsksIfRidingAfterAll()) {
+    if (WestLunpaCave_MiaAsksIfRidingAfterAll()) {
       goto ask_about_business;
     }
     confusion = MsgLunpaTotallyConfusedChanged;
@@ -744,13 +744,13 @@ stay:
 }
 
 /// The scene menu encodes Yes as zero; expose it as a Boolean to the dialogue.
-static u8 Leader_AnswersYes(void) {
+static u8 WestLunpaCave_LeaderAnswersYes(void) {
   return FieldScript_AskYesNoWithObjectEventAnimation(LOCALID_PARTY_LEADER,
                                                       0) == 0;
 }
 
 /// Asks whether the party really intends to refuse the ride.
-static u8 Garet_AsksIfNotRiding(void) {
+static u8 WestLunpaCave_GaretAsksIfNotRiding(void) {
   FieldScript_SetMessageId(MsgLunpaGaretAsksIfNotRiding);
   FieldMessage_ShowAtObject(LOCALID_GARET, 0);
   return FieldScript_AskYesNoWithObjectEventAnimation(LOCALID_PARTY_LEADER,
@@ -758,7 +758,7 @@ static u8 Garet_AsksIfNotRiding(void) {
 }
 
 /// Asks whether unfinished business explains the refusal to ride.
-static u8 Garet_AsksAboutUnfinishedBusiness(void) {
+static u8 WestLunpaCave_GaretAsksAboutUnfinishedBusiness(void) {
   FieldScript_SetMessageId(MsgLunpaGaretAsksAboutUnfinishedBusiness);
   FieldMessage_ShowAtObject(LOCALID_GARET, 0);
   return FieldScript_AskYesNoWithObjectEventAnimation(LOCALID_PARTY_LEADER,
@@ -769,7 +769,7 @@ static u8 Garet_AsksAboutUnfinishedBusiness(void) {
 static u8 Party_ConfirmsStaying(void) { return TRUE; }
 
 /// Lets Bunza check whether the party has unfinished business before leaving.
-static u8 Bunza_AsksAboutUnfinishedBusiness(void) {
+static u8 WestLunpaCave_BunzaAsksAboutUnfinishedBusiness(void) {
   FieldScript_SetMessageId(MsgLunpaBunzaAsksAboutUnfinishedBusiness);
   FieldMessage_ShowAtObject(LOCALID_BUNZA, 0);
   return FieldScript_AskYesNoWithObjectEventAnimation(LOCALID_PARTY_LEADER,
@@ -777,14 +777,14 @@ static u8 Bunza_AsksAboutUnfinishedBusiness(void) {
 }
 
 /// Opens Garet's confirmation prompt; WagonChoice_Run collects the answer.
-static u8 Garet_ChecksNothingLeftToDo(void) {
+static u8 WestLunpaCave_GaretChecksNothingLeftToDo(void) {
   FieldScript_SetMessageId(MsgLunpaGaretChecksNothingLeft);
   FieldMessage_ShowAtObject(LOCALID_GARET, 0);
   return TRUE;
 }
 
 /// Asks whether the party has changed its mind about taking the wagon.
-static u8 Mia_AsksIfRidingAfterAll(void) {
+static u8 WestLunpaCave_MiaAsksIfRidingAfterAll(void) {
   FieldScript_SetMessageId(MsgLunpaMiaAsksIfRidingAfter);
   FieldMessage_ShowAtObject(LOCALID_MIA, 0);
   return FieldScript_AskYesNoWithObjectEventAnimation(LOCALID_PARTY_LEADER,
@@ -792,7 +792,7 @@ static u8 Mia_AsksIfRidingAfterAll(void) {
 }
 
 /// Explains that Bunza cannot wait and asks again about the party's business.
-static u8 Bunza_CannotWait(void) {
+static u8 WestLunpaCave_BunzaCannotWait(void) {
   s32 warning;
 
   ObjectEvent_FaceObjectEvent(LOCALID_IVAN, LOCALID_PARTY_LEADER, 0);
@@ -813,7 +813,7 @@ static u8 Bunza_CannotWait(void) {
 }
 
 /// Asks the leader to confirm that something still needs doing here.
-static u8 Garet_AsksAboutThingsToDo(void) {
+static u8 WestLunpaCave_GaretAsksAboutThingsToDo(void) {
   FieldScript_SetMessageId(MsgLunpaGaretAsksAboutThingsTo);
   FieldMessage_ShowAtObject(LOCALID_GARET, 0);
   return FieldScript_AskYesNoWithObjectEventAnimation(LOCALID_PARTY_LEADER,
@@ -1038,13 +1038,13 @@ s32 Map_Initialize(void) {
     ObjectEvent_SetSpriteFlags(ObjectEvent_GetById(LOCALID_NORTH_PUDDLE), 0);
     ObjectEvent_GetById(LOCALID_NORTH_PUDDLE)->scaleY = 19 * Q16_ONE / 20;
     if (GameFlag_Get(FLAG_MAP_TEMP_01) != 0) {
-      Gate_Lower();
+      WestLunpaCave_GateLower();
     }
     if (GameFlag_Get(FLAG_MAP_TEMP_02) != 0) {
-      Gate_Raise();
+      WestLunpaCave_GateRaise();
     }
     if (GameFlag_Get(FLAG_MAP_TEMP_00) != 0) {
-      Gate_DrawPropped();
+      WestLunpaCave_GateDrawPropped();
     }
     if (GameFlag_Get(FLAG_MAP_TEMP_03) != 0) {
       Import_ObjectEventSetAnimation(LOCALID_NORTH_PUDDLE,

@@ -564,7 +564,7 @@ static void VenusLighthouse_PushAdjacentPillar(void) {
   targetPosition.y = leader->y.fixed;
   packedStep <<= 16;
   targetPosition.z = leader->z.fixed + packedStep;
-  pillar = MapData_FindSlotAtPosition(&targetPosition, leader);
+  pillar = ObjectEvent_FindAtPosition(&targetPosition, leader);
   if (pillar == 0)
     return;
 
@@ -573,7 +573,7 @@ static void VenusLighthouse_PushAdjacentPillar(void) {
   targetPosition.y = pillar->y.fixed;
   packedStep <<= 16;
   targetPosition.z = pillar->z.fixed + packedStep;
-  blockingObjectEvent = MapData_FindSlotAtPosition(&targetPosition, pillar);
+  blockingObjectEvent = ObjectEvent_FindAtPosition(&targetPosition, pillar);
   if (blockingObjectEvent != 0 &&
       (blockingObjectEvent->collisionFlags & 1) != 0)
     return;
@@ -581,7 +581,7 @@ static void VenusLighthouse_PushAdjacentPillar(void) {
   targetPosition.x = pillar->x.fixed;
   targetPosition.y = pillar->y.fixed + PIXELS(16);
   targetPosition.z = pillar->z.fixed;
-  blockingObjectEvent = MapData_FindSlotAtPosition(&targetPosition, pillar);
+  blockingObjectEvent = ObjectEvent_FindAtPosition(&targetPosition, pillar);
   if (blockingObjectEvent != 0 &&
       (blockingObjectEvent->collisionFlags & 1) != 0)
     return;
@@ -1063,7 +1063,7 @@ static s32 EventScript_JumpAcrossGap(void) {
   landing.z = leader->z.fixed + step;
 #endif
   if (FieldObject_CheckMovementCollision(leader, &landing) != 1 &&
-      MapData_FindSlotAtPosition(&landing, leader) == 0) {
+      ObjectEvent_FindAtPosition(&landing, leader) == 0) {
 #if TBS_PATCH_1
     landing.x = (leader->x.fixed & 0xfff00000) + PIXELS(8);
     landing.y = leader->y.fixed;
@@ -1077,7 +1077,7 @@ static s32 EventScript_JumpAcrossGap(void) {
     step <<= 17;
     landing.z = leader->z.fixed + step;
 #endif
-    if (MapData_FindSlotAtPosition(&landing, leader) == 0 &&
+    if (ObjectEvent_FindAtPosition(&landing, leader) == 0 &&
         FieldObject_CheckMovementCollision(leader, &landing) == 0) {
       FieldScript_Start();
       Object_SelectAnimation(leader, ANIM_LEADER_SPRING);
@@ -3427,7 +3427,8 @@ static void VenusLighthouse_StepObjectEventWithDust(struct Vector3 *direction) {
 }
 
 /// Chooses the particle scales and spin used by the tile-wave animations.
-static __inline__ void Rubble_SetScaleAndSpin(struct EffectOptions *options) {
+static __inline__ void
+VenusLighthouse_RubbleSetScaleAndSpin(struct EffectOptions *options) {
   options->startScaleX =
       ((u32)(Import_RandomNext() << 1) >> 16) * 0x4ccc + 0x17ffc;
   options->startScaleY =
@@ -3457,7 +3458,7 @@ static void VenusLighthouse_AnimatePairedTileWaves(void) {
   extraBursts = 0;
   // Advance the first tile wave, holding its fourth row for three extra bursts.
   for (row = 0; row < 10; row++) {
-    Rubble_SetScaleAndSpin(&options);
+    VenusLighthouse_RubbleSetScaleAndSpin(&options);
     for (;;) {
       for (particleIndex = 0; particleIndex < 4 && row < 8; particleIndex++) {
         FieldEffect_Spawn(
@@ -3478,7 +3479,7 @@ static void VenusLighthouse_AnimatePairedTileWaves(void) {
   MapGrid_CopyCellsTo(111, 7, 111, 5, 5, 2);
   MapGrid_CopyCellsTo(111, 7, 111, 10, 5, 2);
   for (row = 0; row < 10; row++) {
-    Rubble_SetScaleAndSpin(&options);
+    VenusLighthouse_RubbleSetScaleAndSpin(&options);
     for (particleIndex = 0; particleIndex < 4 && row < 8; particleIndex++) {
       FieldEffect_Spawn(
           (((u32)(Import_RandomNext() * 7) >> 16) << 19) + 0x3000000, 0,
@@ -3555,7 +3556,7 @@ static void VenusLighthouse_AnimateWestTileWave(void) {
   options = &optionsStorage;
   rowOffset = 0;
   do {
-    Rubble_SetScaleAndSpin(&optionsStorage);
+    VenusLighthouse_RubbleSetScaleAndSpin(&optionsStorage);
   // Repeat particle bursts on the fourth row before advancing the copied tiles.
   again:
     particleZ = 0xc00000;
@@ -3621,7 +3622,7 @@ static void VenusLighthouse_AnimateEastTileWave(void) {
   options = &optionsStorage;
   rowOffset = 0;
   do {
-    Rubble_SetScaleAndSpin(&optionsStorage);
+    VenusLighthouse_RubbleSetScaleAndSpin(&optionsStorage);
   // Keep this route task scheduling after each completed row.
   again:
     particleZ = 0xc00000;
@@ -3804,7 +3805,7 @@ static s32 VenusLighthouse_RouteLight(struct Object *interpreter) {
   pillarPosition.x = light->x.fixed;
   pillarPosition.y = light->y.fixed - PIXELS(16);
   pillarPosition.z = light->z.fixed;
-  pillar = MapData_FindSlotAtPosition(&pillarPosition, 0);
+  pillar = ObjectEvent_FindAtPosition(&pillarPosition, 0);
   // XXX: the paths end only on sockets, so a pillar is likely always there;
   // a light over an empty socket would read through a null pillar.
   sprite = pillar->sprite;

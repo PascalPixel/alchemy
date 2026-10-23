@@ -24,7 +24,7 @@
 /// until theirs dry (the item merchant's after the first drop, the armor
 /// merchant's after the second). A water beast, drawn with its green and blue
 /// swapped (SPRITE_COLOR_RBG), spits water at the houses, its sound and its
-/// spray (Spray_Initialize) running from Altin_ApplyWaterLevel, until the
+/// spray (Altin_SprayInitialize) running from Altin_ApplyWaterLevel, until the
 /// party
 /// steps near it (Altin_ScareOffBeast): it stops, cries out and hops away
 /// into the flood for good (FLAG_ALTIN_WATER_BEAST_LEFT). Doors (coord events 2
@@ -289,7 +289,7 @@ enum {
 
 static void Altin_ApplyWaterLevel(void);
 static void AltinInteriors_PlaceSheltering(void);
-static void Beast_SpawnSpray(void);
+static void Altin_BeastSpawnSpray(void);
 
 const struct MapWarpDest *Map_GetWarpDests(void) {
   s16 mapId = gSaveBlock.mapId;
@@ -478,7 +478,7 @@ static void AltinInteriors_AskAboutMineBeasts(void) {
 
 /// Returns whether the party leader faces north, toward a shop counter: its
 /// facing lies strictly between northwest and northeast, measured in 16 bits.
-static s32 Leader_FacesCounter(void) {
+static s32 Altin_LeaderFacesCounter(void) {
   struct ObjectEvent *leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
 
   if (ALTIN_FACES_COUNTER(leader->facing)) {
@@ -501,7 +501,7 @@ static void AltinInteriors_TalkToWeaponMerchant(void) {
     return;
   }
 
-  if (Leader_FacesCounter() != 0) {
+  if (Altin_LeaderFacesCounter() != 0) {
     Shop_Run(SHOP_ALTIN_WEAPONS, LOCALID_WEAPON_MERCHANT);
     return;
   }
@@ -528,7 +528,7 @@ static void Altin_TalkToArmorMerchant(void) {
     return;
   }
 
-  if (Leader_FacesCounter() != 0) {
+  if (Altin_LeaderFacesCounter() != 0) {
     Shop_Run(SHOP_ALTIN_ARMOR, LOCALID_ARMOR_MERCHANT);
     return;
   }
@@ -552,7 +552,7 @@ static void Altin_TalkToItemMerchant(void) {
     return;
   }
 
-  if (Leader_FacesCounter() != 0) {
+  if (Altin_LeaderFacesCounter() != 0) {
     Shop_Run(SHOP_ALTIN_ITEMS, LOCALID_ITEM_MERCHANT);
     return;
   }
@@ -689,7 +689,7 @@ static void Altin_WalkThroughDoorway(void) {
 /// Update callback of the hopping water beast in Altin's village: once a
 /// second it leaps up, falls back with a splash that shakes the screen
 /// briefly, and stands while on the ground.
-static void Beast_Hop(union ObjectEventOrEffect *fieldObject) {
+static void Altin_BeastHop(union ObjectEventOrEffect *fieldObject) {
   struct ObjectEvent *beast = &fieldObject->objectEvent;
   s16 *shakeFrames = (s16 *)&beast->work;
 
@@ -727,14 +727,14 @@ static void Beast_Hop(union ObjectEventOrEffect *fieldObject) {
 }
 
 /// The water beast hops away across the flood and dives in with a splash.
-static void Beast_HopAway(void) {
+static void Altin_BeastHopAway(void) {
   struct ObjectEvent *beast;
 
   beast = ObjectEvent_GetById(LOCALID_WATER_BEAST);
   beast->timer = 0;
   beast->work = 0;
   beast->gravity = 0x6666;
-  beast->update = Beast_Hop;
+  beast->update = Altin_BeastHop;
   ObjectEvent_SetSpeed(LOCALID_WATER_BEAST, 0x13333, 0x9999);
   ObjectEvent_MoveToAndWait(LOCALID_WATER_BEAST, 28, 460);
   ObjectEvent_MoveToAndWait(LOCALID_WATER_BEAST, 24, 448);
@@ -830,7 +830,7 @@ static void Altin_ApplyWaterLevel(void) {
     ObjectEvent_SetSpriteColorById(LOCALID_WATER_BEAST, SPRITE_COLOR_RBG);
     Import_ObjectEventSetAnimation(LOCALID_WATER_BEAST,
                                    WATER_BEAST_ANIMATION_SPIT);
-    FieldScheduler_AddCallback(Beast_SpawnSpray, TASK_PRIORITY_MAP);
+    FieldScheduler_AddCallback(Altin_BeastSpawnSpray, TASK_PRIORITY_MAP);
   }
   if (gSaveBlock.warpDest == ALTIN_FROM_SANCTUM) {
     GameFlag_Clear(FLAG_SHOW_LOCATION_NAME);
@@ -909,8 +909,8 @@ static void AltinInteriors_PlaceSheltering(void) {
 
 /// Gives a new spray particle its look: SPRITE_DUST_PUFF standing still, drawn
 /// with its red and blue swapped so the dust is water, on sprite priority 1
-/// and at 0.3 scale. Spray_Drift turns some white as they fade.
-static void Spray_Initialize(struct ObjectEvent *spray) {
+/// and at 0.3 scale. Altin_SprayDrift turns some white as they fade.
+static void Altin_SprayInitialize(struct ObjectEvent *spray) {
   spray->motionFlags = 0;
   spray->sprite->image.priority = 1;
   ObjectEvent_SetSpriteColor(spray, SPRITE_COLOR_BGR);
@@ -922,7 +922,7 @@ static void Spray_Initialize(struct ObjectEvent *spray) {
 /// Update callback of a spray particle: it drifts and grows with a random
 /// wobble, then curls upward and flattens as its movement timer runs down.
 /// The separate lifetime releases it after 20 updates.
-static void Spray_Drift(union ObjectEventOrEffect *fieldObject) {
+static void Altin_SprayDrift(union ObjectEventOrEffect *fieldObject) {
   struct ObjectEvent *spray = &fieldObject->objectEvent;
   spray->x.fixed += WATER_SPRAY_LATERAL_STEP(
       spray->timer, (s16)((s32)(((u32)Import_RandomNext() * 2) >> 16) - 1));
@@ -949,7 +949,7 @@ static void Spray_Drift(union ObjectEventOrEffect *fieldObject) {
 
 /// Task while the water beast spits: every fourth frame a spray
 /// particle starts from its spout, living 20 frames.
-static void Beast_SpawnSpray(void) {
+static void Altin_BeastSpawnSpray(void) {
   union ObjectEventOrEffect *spray;
   if ((gFrameCount & 3) == 0) {
     spray = ((union ObjectEventOrEffect *)ObjectEvent_Create(
@@ -958,8 +958,8 @@ static void Beast_SpawnSpray(void) {
       spray->objectEvent.timer = WATER_SPRAY_LIFETIME;
       spray->objectEvent.work = 0;
       spray->effect.countdown = WATER_SPRAY_LIFETIME;
-      Spray_Initialize(&spray->objectEvent);
-      spray->objectEvent.update = Spray_Drift;
+      Altin_SprayInitialize(&spray->objectEvent);
+      spray->objectEvent.update = Altin_SprayDrift;
       Object_SelectAnimation(&spray->objectEvent, 1);
     }
   }
@@ -976,7 +976,7 @@ static void Altin_ScareOffBeast(void) {
   Import_ObjectEventSetAnimation(LOCALID_WATER_BEAST, ANIM_STAND);
   // The spitting stops: its sound and its spray end.
   Map_QueueMusic(-1);
-  Task_Remove(Beast_SpawnSpray);
+  Task_Remove(Altin_BeastSpawnSpray);
   FieldScript_WaitFrames(20);
   ObjectEvent_FaceObjectEvent(LOCALID_PARTY_LEADER, LOCALID_WATER_BEAST, 0);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_SOUTH, 0);
@@ -988,7 +988,7 @@ static void Altin_ScareOffBeast(void) {
   FieldScript_WaitFrames(20);
   ObjectEvent_FaceDirection(LOCALID_WATER_BEAST, FACING_NORTHWEST + FACING_STEP,
                             40);
-  Beast_HopAway();
+  Altin_BeastHopAway();
   FieldCamera_FollowObjectEvent(LOCALID_PARTY_LEADER, 1);
   FieldCamera_WaitForArrival();
   ObjectMotion_SetAnimationAndWait(LOCALID_THIRSTY_OLD_WOMAN, ANIM_SHAKE_HEAD);

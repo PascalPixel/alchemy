@@ -5,4 +5,4 @@
 	overlay_veneer IncreaseItemAndLevel_GetWarps
 	overlay_veneer IncreaseItemAndLevel_GetObjectEventTemplates
 	overlay_veneer IncreaseItemAndLevel_GetEvents
-	overlay_veneer MapData_ReturnZero
+	overlay_veneer Map_GetWarpRegions

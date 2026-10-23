@@ -89,7 +89,7 @@
 	.set import.FieldEffect_StopCasterHook, 1
 	.set import.FieldEffect_End, 1
 	.set import.FieldEffect_StartCast, 1
-	.set import.Ui_SetBank15PaletteAndClearRenderMode, 1
+	.set import.FieldEffect_RestoreMindReadPalette, 1
 	.set import.Map_PlayMusic, 1
 	.set import.Shop_Run, 1
 	.set import.Inn_CheckIn, 1

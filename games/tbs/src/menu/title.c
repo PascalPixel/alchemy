@@ -52,7 +52,7 @@ static void Title_LoadBackground(void);
 u8 *Title_GetWarpDests(void) { return (u8 *)gTitleWarpDests; }
 
 /// The warp regions entry: the title has no warp boxes.
-s32 MapData_ReturnZero(void) { return 0; }
+s32 Map_GetWarpRegions(void) { return 0; }
 
 u8 *Title_GetWarps(void) { return (u8 *)gTitleWarps; }
 

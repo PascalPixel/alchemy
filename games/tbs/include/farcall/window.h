@@ -107,11 +107,11 @@ struct WindowSprite *WindowSprite_CreateFromResourceFar(s32 mode, s32 resource,
                                                         struct Window *input,
                                                         s32 x, s32 y);
 /// Shows a character's 32 by 32 portrait in a window, in portrait slot side or
-/// the first free one (CreateSideObject). Returns NULL when the character has
+/// the first free one (Portrait_Create). Returns NULL when the character has
 /// no portrait or both slots are taken.
-struct WindowSprite *SideObject_CreateFar(s32 object_kind, s32 position,
-                                          s32 side, struct Window *arg3,
-                                          s32 arg4, s32 arg5);
+struct WindowSprite *Portrait_CreateFar(s32 object_kind, s32 position, s32 side,
+                                        struct Window *arg3, s32 arg4,
+                                        s32 arg5);
 /// Reloads the portrait in slot so it shows character, keeping its sprite, as
 /// the field menus change a portrait already on screen.
 void Portrait_ReloadFar(u32 slot, s32 character, s32 value);
@@ -158,7 +158,7 @@ void BattleMessage_ShowAndWaitFar(s32 argument);
 void BattleMessage_OpenFar(s32 argument);
 /// Returns the portrait of a character, or the sprite of another speaker, or -1
 /// when the speaker has none.
-s32 Localization_LookupEntryIdFar(u32 value);
+s32 Portrait_GetForSpeakerFar(u32 value);
 /// Runs the field menu until the player picks a screen that leaves it, and
 /// returns that screen's result; Map_Run ignores it.
 s32 FieldMenu_RunFar(void);

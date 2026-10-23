@@ -103,7 +103,7 @@ static __inline__ void MenuTest_RecalculateParty(void) {
 u8 *MenuTest_GetWarpDests(void) { return (u8 *)gMenuTest_WarpDests; }
 
 /// The room has no warp regions: its regions entry returns none.
-s32 MapData_ReturnZero(void) { return 0; }
+s32 Map_GetWarpRegions(void) { return 0; }
 
 u8 *MenuTest_GetWarps(void) { return (u8 *)gMenuTest_Warps; }
 

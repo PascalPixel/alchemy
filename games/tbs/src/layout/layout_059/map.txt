@@ -1,0 +1,129 @@
+grid:128x128	at:0,0	fill:1:0:0
+fff 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 fff 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 fff 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2
+fff 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2
+fff 4 4 4 4 4 4 4 4 4 4 4 4 4:0:1 4:0:1 4:0:1 4 4 4 4 4 4 4:0:1 4:0:1 4:0:1 4 4 4 4 4 4 4 4 4 4 4 4 4 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 fff fff fff fff 6 fff fff a a a a a a a a a a a a 1 1 1 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2
+fff b b b b b b b b b b b b:0:1 b:0:1 b:0:2 b:ff b:0:1 b:0:1 b:0:1 b:0:1 b:0:1 b:0:1 b:ff b:0:3 b:0:1 b:0:1 b b b b b b b b b b b b 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 fff fff fff fff f fff 10 fff fff fff a a a a a a a a a a a 1 1 1 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2
+fff 14 14 14 14 14 14 14 14 14 14 14:0:1 14:0:1 14:0:2 4014 14:ff 14:0:4 14:0:5 14:0:5 14:0:5 14:0:5 14:0:6 14:ff 4014 14:0:3 14:0:1 14:0:1 14 14 14 14 14 14 14 14 14 14 14 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 fff fff 6 f fff fff fff fff 10 6 fff fff a a a a a a a a a a 1 1 1 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2
+fff 1d 1d 1d:0:1 1d:0:1 1d:0:1 1d:0:1 1d:0:1 1d:0:1 1d:0:1 1d 1d:0:1 1d:0:2 401d 401d 1d:ff:4 1d:0:5 1d:0:5 1d:0:5 1d:0:5 1d:0:5 1d:0:5 1d:ff:6 401d 401d 1d:0:3 1d:0:1 1d 1d:0:1 1d:0:1 1d:0:1 1d:0:1 1d:0:1 1d:0:1 1d:0:1 1d 1d 1d 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 5 7 fff 8 9 a 1 1 fff fff fff fff f fff fff fff fff 10 fff fff fff fff a a 1 5 7 1e 8 9 a 1 1 1 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2
+fff 2b 2b 2b:0:1 2b:0:7 2b:0:8 2b:0:8 2b:0:8 2b:0:9 2b:0:1 2b 2b:0:1 402b 402b 402b 402b:0:5 402b:0:5 2b:0:a 2b 2b 2b:0:b 402b:0:5 402b:0:5 402b 402b 402b 2b:0:1 2b 2b:0:1 402b:0:7 402b:0:8 402b:64:8 402b:0:8 402b:0:9 2b:0:1 2b 2b 2b 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 5 fff fff fff fff fff 9 1 1 fff fff 21 22 f f f 10 10 10 27 28 fff fff a a 5 2c 2d 2e 2f 30 9 1 1 1 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2
+fff 35 35 35:0:1 35:0:c 35:0:8 35:0:8 35:0:8 35:0:d 35:0:1 35 35:0:1 4035:6 35:ff 4035 4035:0:5 4035:0:5 35:0:6 35 35 35:0:4 4035:0:5 4035:0:5 4035 35:ff 4035 35:0:1 35 35:0:1 4035:0:c 4035:0:8 4035:0:8 4035:0:8 4035:0:d 35:0:1 35 35 35 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 fff fff fff fff fff fff 36 1 1 31 fff fff fff fff f f 10 10 fff fff fff 3c 34 a a 36 37 38 39 3a 3b 36 1 1 1 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2
+fff 43 43 43:0:1 43:0:1 43:0:c 43:c:8 43:0:d 43:0:1 43:0:1 43 43:0:1 43:0:e 43:ff 4043 4043:0:5 4043:0:5 4043:0:5 4043:0:5 4043:0:5 4043:0:5 4043:0:5 4043:0:5 4043 43:ff 43:0:e 43:0:1 43 43:0:1 4043:0:1 4043:0:c 4043:b:8 4043:0:d 4043:0:1 43:0:1 43 43 43 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 fff fff fff fff fff fff fff 1 1 fff 3c fff fff fff f f 10 10 fff fff fff 3c fff a a 44 45 46 47 48 49 4a 1 1 1 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2
+fff 53 53 53 53:0:1 53:0:1 53:0:1 53:0:1 53:0:1 53 53 53:0:1 53:0:f 53:0:f 4053 53:0:b 4053:0:5 4053:0:5 4053:0:5 4053:0:5 4053:0:5 4053:0:5 53:0:a 4053 53:0:f 53:0:f 53:0:1 53 53 53:0:1 53:0:1 53:0:1 53:0:1 53:0:1 53 53 53 53 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 36 fff fff fff fff fff 36 1 1 fff fff fff fff fff fff 5e fff 5f fff fff fff fff fff a a 36 54 55 56 57 58 36 1 1 1 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2
+fff 65 65 65 65 65 65:a:8 65 65:a:8 65 65:a:8 65:0:1 4065:b:8 4065:0:8 4065 4065 4065:0:5 4065:0:5 4065:0:5 4065:0:5 4065:0:5 4065:0:5 4065 4065 4065:0:8 4065:b:8 65:0:1 65:a:8 65 65:a:8 65 65:a:8 65 65 65 65 65 65 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 fff fff 38 39 3a fff 66 1 1 fff fff 5b 21 fff fff fff fff fff fff 28 62 fff fff a a 66 67 38 39 3a 68 66 1 1 1 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2
+fff 73 73 73 73 73 73 73 73 73 73 73:0:1 73:0:c 4073:0:8 4073 4073 73:0:10 73:0:10 73:0:10 73:0:10 73:0:10 73:0:10 4073 4073 4073:0:8 73:0:d 73:0:1 73 73 73 73 73 73 73 73 73 73 73 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 fff fff fff fff fff fff fff 1 1 fff fff 31 3d fff fff fff fff 7d 7e 42 34 fff fff a a 74 75 76 77 78 79 7a 1 1 1 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2
+fff 83 83 83 83 83 83 83 83 83 83 83:0:1 83:0:1 83:0:c 4083 4083 83:0:11 83:0:11 83:ff 83:ff 83:5:11 83:5:11 4083 4083 83:0:d 83:0:1 83:0:1 83 83 83 83 83 83 83 83 83 83 83 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 fff fff fff fff fff fff fff 1 1 fff fff 31 fff fff fff 3c 3c 8e 8f fff 34 fff fff a a 84 85 86 87 88 89 8a 1 1 1 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2
+fff 93 93 93 93 93 93 93 93 93 93 93 93:0:1 93:0:1 93:0:12 4093 4093 4093 93:ff 93:ff 4093 4093 93 93:0:13 93:0:1 93:0:1 93 93 93 93 93 93 93 93 93 93 93 93 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 66 fff 55 56 57 fff 66 1 1 fff fff fff fff fff fff 3c 3c fff fff fff fff fff fff a a 66 94 55 56 57 95 66 1 1 1 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2
+fff a2 a2 a2 a2 a2 a2 a2 a2 a2 a2 a2 a2 a2:0:1 a2:0:1 a2:0:12 40a2 40a2 a2:ff a2:ff 40a2 40a2 a2:0:13 a2:0:1 a2:0:1 a2 a2 a2 a2 a2 a2 a2 a2 a2 a2 a2 a2 a2 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 66 67 38 39 3a 68 66 1 1 fff 96 58 98 99 8d 3c 3c 90 9e 9f 54 a1 fff a a 66 67 38 39 3a 68 66 1 1 1 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2
+fff a5 a5 a5 a5 a5 a5 a5 a5 a5 a5 a5 a5 a5 a5:0:1 a5:0:1 a5:0:12 40a5 a5:ff a5:ff 40a5 a5:0:13 a5:0:1 a5:0:1 a5 a5 a5 a5 a5 a5 a5 a5 a5 a5 a5 a5 a5 a5 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 74 75 76 77 78 79 7a 1 1 fff 3b 95 58 98 8d 3c 3c 90 9f 54 94 37 fff a a 74 75 76 77 78 79 7a 1 1 1 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2
+fff a8 a8 a8 a8 a8 a8 a8 a8 a8 a8 a8 a8 a8 a8 a8:0:1 a8:0:1 a8:0:1 a8:0:1 a8:0:1 a8:0:1 a8:0:1 a8:0:1 a8 a8 a8 a8 a8 a8 a8 a8 a8 a8 a8 a8 a8 a8 a8 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 84 85 55 56 57 89 8a 1 1 89 79 68 95 58 36 36 36 36 54 94 67 75 85 a a 84 85 55 56 57 89 8a 1 1 1 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2
+a8 a8 a8 a8 a8 a8 a8 a8 a8 a8 a8 a8 a8 a8 a8 a8 a8 a8 a8 a8 a8 a8 a8 a8 a8 a8 a8 a8 a8 a8 a8 a8 a8 a8 a8 a8 a8 a8 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 66 94 55 56 57 95 66 1 1 fff 89 79 68 95 66 66 66 66 94 67 75 85 fff a a 66 94 55 56 57 95 66 1 1 1 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2
+a8 a8 a8 a8 a8 a8 a8 a8 a8 a8 a8 a8 a8 a8 a8 a8 a8 a8 a8 a8 a8 a8 a8 a8 a8 a8 a8 a8 a8 a8 a8 a8 a8 a8 a8 a8 a8 a8 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 66 94 55 56 57 95 66 1 1 a6 68 89 79 68 66 66 66 66 67 75 85 67 a7 a a 66 94 55 56 57 95 66 1 1 1 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2
+a8 a8 a8 a8 a8 a8 a8 a8 a8 a8 a8 a8 a8 a8 a8 a8 a8 a8 a8 a8 a8 a8 a8 a8 a8 a8 a8 a8 a8 a8 a8 a8 a8 a8 a8 a8 a8 a8 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 66 94 55 56 57 95 66 1 1 89 79 68 89 79 fff fff fff fff 75 85 67 75 85 a a 66 94 55 56 57 95 66 1 1 1 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2
+a8 a8 a8 a8 a8 a8 a8 a8 a8 a8 a8 a8 a8 a8 a8 a8 a8 a8 a8 a8 a8 a8 a8 a8 a8 a8 a8 a8 a8 a8 a8 a8 a8 a8 a8 a8 a8 a8 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 66 94 55 56 57 95 66 1 1 a9 89 79 68 89 fff fff fff fff 85 67 75 85 aa a a 66 94 55 56 57 95 66 1 1 1 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2
+a8 a8 a8 a8 a8 a8 a8 a8 a8 a8 a8 a8 a8 a8 a8 a8 a8 a8 a8 a8 a8 a8 a8 a8 a8 a8 a8 a8 a8 a8 a8 a8 a8 a8 a8 a8 a8 a8 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 66 94 55 56 57 95 66 1 1 a6 68 89 79 68 66 fff fff 66 67 75 85 67 a7 a a 66 94 55 56 57 95 66 1 1 1 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2
+a8 a8 a8 a8 a8 a8 a8 a8 a8 a8 a8 a8 a8 a8 a8 a8 a8 a8 a8 a8 a8 a8 a8 a8 a8 a8 a8 a8 a8 a8 a8 a8 a8 a8 a8 a8 a8 a8 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 66 94 55 56 57 95 66 1 1 89 79 68 89 79 ab fff fff ae 75 85 67 75 85 a a 66 94 55 56 57 95 66 1 1 1 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2
+a8 a8 a8 a8 a8 a8 a8 a8 a8 a8 a8 a8 a8 a8 a8 a8 a8 a8 a8 a8 a8 a8 a8 a8 a8 a8 a8 a8 a8 a8 a8 a8 a8 a8 a8 a8 a8 a8 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 66 94 55 56 57 95 66 1 1 a9 89 79 68 89 af b0 b1 b2 85 67 75 85 aa a a 66 94 55 56 57 95 66 1 1 1 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2
+fff b7 b7 b7 b7 b7 b7 b7 b7 b7 b7 b7 b7 b7 b7 b7 b7 b7 b7 b7 b7 b7 b7 b7 b7 b7 b7 b7 b7 b7 b7 b7 b7 b7 b7 b7 b7 b7 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 fff fff fff fff fff fff b8 1 1 fff bd fff fff bd b8 fff fff b8 b9 fff fff b9 fff fff c6 b8 b9 ba bb bc bd fff fff c8 c8 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2
+1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2
+1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2
+1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2
+1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2
+1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2
+
+
+
+
+
+
+1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1:0:14
+
+
+1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1:0:15 1:0:15 4001:0:15 4001:fd:15 4001:0:15 1:0:15 1:0:15 1:fd:15 1:0:15 1:0:15 1:0:15 1:0:15 1:0:15 1:fd:15 1:0:15 1:0:15 1:0:15 1:0:15 1:0:15 1:0:15 1:0:15
+1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1:0:15 8001:0:5 1:0:5 1:fd:5 1:0:5 1 1 1:fd 1:ff 1:0:5 1:0:5 1:0:5 1:ff 1:fd 1 1 1:0:5 1:fd:5 1:0:5 8001:0:5 8001:0:5
+1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1:0:15 8001:0:5 1 1:fd 1 1 1 1 1:ff 1:0:5 1 1:0:5 1:ff 1 1 1 1 1:fd 1 8001:0:5 8001:0:5
+1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1:0:15 1:0:5 1 c001 c001 c001 c001 c001 1:ff 1 1 1 1:ff c001 c001 c001 c001 1 1 1:0:5 1:0:5
+1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1:0:15 1:0:5 1 c001 1:0:14 1:0:14 1:0:14 c001 1:ff 1 1 1 1:ff 1:0:14 1:0:14 1:0:14 c001 1 1 1:0:5 1:0:5
+1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1:0:15 1:0:5 c001 c001 1:0:5 1:0:5 1:0:5 c001 1:ff 1 1 1 1:ff 1:0:5 1:0:5 1:0:5 c001 c001 c001 1:0:5 1:0:5
+1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1:0:15 1:0:5 1:0:14 1:0:14 1:0:5 1:0:5 1:0:5 c001 1:ff 1 1 1 1:ff 1:0:5 1:0:5 1:0:5 1:0:14 1:0:14 1:0:14 1:0:5 1:0:5
+1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1:0:15 1:0:5 1:0:5 1:0:5 1:0:5 1:0:5 1:0:5 c001 1:ff 1 1 1 1:ff 1:0:5 1:0:5 1:0:5 1:0:5 1:0:5 1:0:5 1:0:5 1:0:5
+1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1:0:15 1:0:5 1:0:5 1:0:5 1:0:5 1:0:5 1 1 1:ff 1 1 1 1 1 1:0:5 1:0:5 1:0:5 1:0:5 1:0:5 1:0:5 1:0:5
+1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1:0:15 1:0:16 1:0:16 1:0:16 1:0:16 1:0:5 1 1 1:ff 1 1 1 1 1 1:0:5 1:0:16 1:0:16 1:0:16 1:0:16 1:0:16 1:0:16
+1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1:0:15 1:0:15 1:0:15 1:0:15 1:0:15 1:0:5 1 c001 1:ff c001 c001 c001 c001 1 1:0:5 1:0:15 1:0:15 1:0:15 1:0:15 1:0:15 1:0:15
+1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1:0:15 1:0:15 1:0:15 1:0:15 1:0:15 1:0:5 1 c001 1:0:14 1:0:14 1:0:14 1:0:14 c001 1 1:0:5 1:0:15 1:0:15 1:0:15 1:0:15 1:0:15 1:0:15
+1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1:0:15 1:0:15 1:0:15 1:0:15 1:0:15 1:0:5 1 c001 1:0:5 1:0:5 1:0:5 1:0:5 c001 1 1:0:5 1:0:15 1:0:15 1:0:15 1:0:15 1:0:15 1:0:15
+1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1:0:15 1:0:15 1:0:15 1:0:15 1:0:15 1:0:5 1 c001 1:0:5 1:0:5 1:0:5 1:0:5 c001 1 1:0:5 1:0:15 1:0:15 1:0:15 1:0:15 1:fd:15 1:0:15
+1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1:ff 4001:0:5 4001:fd:5 4001:0:5 c001 c001 1:ff 1 1:ff 1 1:0:5 1:0:5 1:0:5 1:0:5 1 1 1 c001 c001 c001 4001:0:5 4001:fd:5 4001:fd:5 4001:0:5 1:ff
+1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1:ff c001 c001:fd c001 1 1 1 1 1 1 1 1:ff 1:ff 1 1 1 1 1 1 1 1 c001 c001:fd c001 1:ff
+1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1:ff 1 1 1 1 1 1 1 1 1 1 1:ff 1:ff 1 1 1 1 1 1 1 1 1 1 1 1:ff
+1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1:ff c001 c001 c001 c001 c001 c001 c001 c001 c001 c001 1:ff 1:ff c001 c001 c001 c001 c001 c001 c001 c001 c001 c001 c001 1:ff
+1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1:ff 1:ff 1:ff 1:ff 1:ff 1:ff 1:ff c001 c001 c001 1:ff 1:ff 1:ff 1:ff c001 c001 c001 1:ff 1:ff 1:ff 1:ff 1:ff 1:ff 1:ff 1:ff
+1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1:ff c001 c001 c001 1:ff 1 1 1:ff c001 c001 c001 1:ff
+1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1:ff 1:ff c001 1:ff 1:ff 1 1 1:ff 1:ff c001 1:ff 1:ff
+1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1:ff 1:ff 1:ff 1 1 1 1 1:ff 1:ff 1:ff
+
+
+1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 fff 1 1 c9 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 2
+1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 fff 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 2
+1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 ca 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 2
+1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 fff a a a a a a a a a 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 2
+1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 fff fff a a a a a a a a 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 2
+1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 2
+1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 2
+1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 2
+1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 2
+1 1 1 cb fff fff fff fff fff 1 1 1 ca 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 cb ce cf d0 d1 d2 1 1 1 ca 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 2
+1 1 1 cb fff fff fff fff fff 1 1 1 ca 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 cb d3 d4 d5 d6 d7 1 1 1 ca 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 2
+1 1 1 cb fff d3 fff d7 fff 1 1 1 ca 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 cb d8 d3 d9 d7 da 1 1 1 ca 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 2
+1 1 1 cc 1 d8 fff da 1 1 1 1 ca 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 cb 1 d8 db da 1 1 1 1 ca 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 2
+1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 2
+1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 2
+1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 2
+1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 2
+1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 2
+1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 2
+1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 2
+1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 2
+1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 2
+1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 2
+1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 2
+1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 2
+1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 2
+1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 2
+1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 2
+1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 2
+1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 2
+1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 2
+fff dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc 1 1 1 1 2
+dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc 1 1 1 1 2
+dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc 1 1 1 1 2
+dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc 1 1 1 1 2
+dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc 1 1 1 1 2
+dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc 1 1 1 1 2
+dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc 1 1 1 1 2
+dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc 1 1 1 1 2
+dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc 1 1 1 1 2
+dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc 1 1 1 1 2
+dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc 1 1 1 1 2
+dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc 1 1 1 1 2
+dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc 1 1 1 1 2
+dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc 1 1 1 1 2
+dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc 1 1 1 1 2
+dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc 1 1 1 1 2
+dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc 1 1 1 1 2
+dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc 1 1 1 1 2
+dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc 1 1 1 1 2
+dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc 1 1 1 1 2
+dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc 1 1 1 1 2
+dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc 1 1 1 1 2
+dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc 1 1 1 1 2
+dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc 1 1 1 1 2
+dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc 1 1 1 1 2
+dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc 1 1 1 1 2
+dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc 1 1 1 1 2
+dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc 1 1 1 1 2
+dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc 1 1 1 1 2
+dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc 1 1 1 1 2
+dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc 1 1 1 1 2
+dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc dc 1 1 1 1 2

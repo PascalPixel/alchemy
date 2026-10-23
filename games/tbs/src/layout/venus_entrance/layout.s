@@ -21,15 +21,15 @@ Field_VenusEntrance:
 	.balign 4, 0
 .LField_VenusEntrance_GRID:
 	.ifdef TBS_EDITION_FR
-	.incbin "games/tbs/src/layout/venus_entrance/grid_fr.parts.lz"
+	.incbin "games/tbs/src/layout/venus_entrance/map_fr.grid.lz"
 	.else
 	.ifdef TBS_EDITION_ES
-	.incbin "games/tbs/src/layout/venus_entrance/grid_es.parts.lz"
+	.incbin "games/tbs/src/layout/venus_entrance/map_es.grid.lz"
 	.else
 	.ifdef TBS_EDITION_IT
-	.incbin "games/tbs/src/layout/venus_entrance/grid_es.parts.lz"
+	.incbin "games/tbs/src/layout/venus_entrance/map_es.grid.lz"
 	.else
-	.incbin "games/tbs/src/layout/venus_entrance/grid.parts.lz"
+	.incbin "games/tbs/src/layout/venus_entrance/map.grid.lz"
 	.endif
 	.endif
 	.endif

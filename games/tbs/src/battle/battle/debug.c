@@ -23,25 +23,14 @@
 #define DEBUG_SECOND_FORM MsgDebugSecondForm
 #endif
 
-/// One row of the debug party presets (presets.tsv, built into the ROM's
-/// read-only data): a party member, the level to raise them to, the Djinn of
-/// each element to give them, the items to equip and up to two abilities to
-/// teach. A row whose member is -1 ends a preset. Read only by
-/// DebugParty_LoadPreset.
-struct DebugPartyEntry {
-  s8 unitId;                     ///< the party member, or DEBUG_PRESET_END
-  u8 level;                      ///< the level the member is raised to
-  s8 djinnCounts[ELEMENT_COUNT]; ///< Djinn of each element to give and Set
-  u16 items[4];                  ///< items to add and equip; 0 for none
-  u16 abilities[2];              ///< abilities to teach; 0 for none
-  u16 unused;                    ///< 0 in every row
-};
-
+// Declared here without const, as Camelot's code read it: with const,
+// alchemy-gcc compiles DebugParty_LoadPreset differently. debug_presets.c
+// defines it, const, in ROM.
 extern struct DebugPartyEntry gDebug_PartyPresets[];
 
-/// The last row of presets.tsv; the scan reports a missing preset past it.
+/// The last row of gDebug_PartyPresets; the scan reports a missing preset past
+/// it.
 #define DEBUG_PRESET_LAST_ROW 332
-#define DEBUG_PRESET_END -1
 
 /// Debug: replaces the party with the members of preset number preset.
 /// Each member is raised to the row's level, given the row's Djinn (Set, in
@@ -241,7 +230,7 @@ void DebugBattle_ViewMessages(void) {
 }
 
 /// The encounter the debug battle starts with (two or three Kobolds), and
-/// the Djinn tutorial's: rows of formations.tsv.
+/// the Djinn tutorial's: rows of formations.c.
 #define DEBUG_FIRST_ENCOUNTER 257
 #define DJINN_TUTORIAL_ENCOUNTER 28
 

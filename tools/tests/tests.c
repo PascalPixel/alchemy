@@ -233,6 +233,13 @@ graphics(void)
 	uint8_t expected[] = {1, 2, 255, 255, 3, 4};
 	Buffer reference = {expected, sizeof(expected), 0};
 	equal(&plane, &reference, "blank map rows retain their position");
+	textFile("grid.txt", "grid:2x2\tat:1,0\tfill:1:2:3\n5:6:7\n8\n");
+	RUN("graphics", true, "grid.txt", "grid.grid");
+	Buffer grid = readFile("grid.grid");
+	uint8_t gridBytes[] = {2, 6, 2, 0, 3, 7, 3, 0, 1, 0, 5, 0, 1, 0, 8, 0};
+	Buffer gridReference = {gridBytes, sizeof(gridBytes), 0};
+	equal(&grid, &gridReference, "a grid writes behaviors, shapes, metatiles");
+	free(grid.data);
 	textFile("records.tsv", "kind:u8\tvalue:u16\tname\n1\t0x203\tQuake\n2\t4\tSpire\n");
 	RUN("graphics", true, "records.tsv", "records.table");
 	Buffer records = readFile("records.table");

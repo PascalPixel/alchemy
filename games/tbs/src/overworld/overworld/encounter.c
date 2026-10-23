@@ -12,8 +12,8 @@ struct BattleLocationRule {
   s16 warpDest;              ///< -1 for any warp destination
   s16 flag : 15;             ///< -1, or a flag that turns the rule off once set
   s16 firstZoneOnGround : 1; ///< the first zone is for ground 0, not 1
-  /// The first of up to seven consecutive zones, rows of encounter.tsv; 0 for
-  /// none on any ground.
+  /// The first of up to seven consecutive zones, rows of encounter_zones.c; 0
+  /// for none on any ground.
   s16 firstZone;
 };
 
@@ -28,25 +28,11 @@ typedef struct WorldMapEncounterRule {
   /// BattleBackground_SelectForEnvironment), or -1 for any.
   s16 behavior;
   s16 flag; ///< -1, or a flag that turns the rule off once set
-  s16 zone; ///< a row of encounter.tsv
+  s16 zone; ///< a row of encounter_zones.c
 } WorldMapEncounterRule;
 
-/// The number of formations an encounter zone can hold.
-enum { ENCOUNTER_GROUP_COUNT = 8 };
-
-/// An encounter zone, a row of encounter.tsv (gEncounterZones): its
-/// rate, the level it is made for, and the formations that can appear with
-/// their chances. 28 bytes, the 14 halfwords Encounter_GetFormationAtSlot
-/// counts a zone as.
-struct EncounterZone {
-  /// The base encounter rate; 0 for zone 0 (no encounters) and for a zone only
-  /// scripted battles, mimics and Djinn use.
-  u16 rate;
-  u16 level; ///< the party level the zone is made for
-  /// The formations that can appear, rows of battle/formations.tsv.
-  u16 enemies[ENCOUNTER_GROUP_COUNT];
-  u8 weights[ENCOUNTER_GROUP_COUNT]; ///< each formation's relative chance
-};
+/// encounter_zones.c defines the zones; the code reads them through struct
+/// EncounterZone or as halfwords (gEncounterZones in battle.h).
 
 /// Chooses the current map's encounter zones, one for each kind of ground
 /// the party can stand on (gFieldWork->encounterZones, read by
@@ -134,7 +120,7 @@ s32 Encounter_ResolveWorldMapZoneAndBackdrop(void *pos) {
 }
 
 /// Advances the encounter counter for zone and returns the formation to fight
-/// (a row of formations.tsv), or 0 for no battle. steps (16.16) scales how far
+/// (a row of formations.c), or 0 for no battle. steps (16.16) scales how far
 /// the counter moves; a battle starts once it reaches encounterThreshold.
 /// FLAG_NO_ENCOUNTERS, FLAG_NO_ENCOUNTERS_IN_MAPSEC and gSaveBlock.cloaked
 /// (Cloak) prevent battles. FLAG_NO_ENCOUNTERS_IN_MAPSEC is set by Venus

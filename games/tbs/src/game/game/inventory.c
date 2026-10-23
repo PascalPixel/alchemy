@@ -8,7 +8,8 @@
 /// equipped and quantity bits are ignored. Every bank that shows or uses an
 /// item calls it, through GAME.S as Item_GetDirectFar.
 struct ItemDefinition *Item_GetDirect(s32 item) {
-  return gItem_DefinitionTable + (item & INVENTORY_ITEM_ID_MASK);
+  return (struct ItemDefinition *)gItem_DefinitionTable +
+         (item & INVENTORY_ITEM_ID_MASK);
 }
 
 /// Returns whether the character can equip `item`: bit classId of the item's

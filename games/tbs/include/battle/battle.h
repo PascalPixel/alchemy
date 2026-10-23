@@ -140,7 +140,8 @@ extern s32 gElementGlow_RingFrameOffsets[];
 /// The highlighted units' BLDY lightening: 15 down to 0 once, then the second
 /// sixteen (a pulse up to 8 and back) over and over.
 extern s8 gBattleHighlight_BlendRamp[];
-/// The 104 encounter zones (encounter.tsv), read as struct EncounterZone rows.
+/// The 104 encounter zones (encounter_zones.c), read as struct EncounterZone
+/// rows.
 extern u16 gEncounterZones[];
 #ifndef OWN_gMindReadWork
 /// The HEAP_SLOT_MIND_READ heap slot: Mind Read's wave work while its animation
@@ -178,9 +179,6 @@ extern const u8 gObjectMotion_LinkedActionScript[];
 extern const s16 gParty_PairResolveRules[];
 /// Isaac's weapon sprite by weapon kind (BattleUnit_LookupWeaponValueByClass).
 extern u16 gBattleUnit_WeaponAnimationsIsaac[];
-/// The 20 enemies whose defeated flags a monster battle clears before it
-/// picks a formation (BattleFormation_SelectLevelMatchedCandidate).
-extern u16 gBattleFormation_LevelMatchedEnemies[];
 /// Battle backgrounds by map: a background word (bit 31 set, resource id below)
 /// and then its maps, ended by 0; a map not listed takes the last background
 /// (BattleBackground_SelectForMap).

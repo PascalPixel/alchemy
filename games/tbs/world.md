@@ -372,7 +372,7 @@ weight. A field map's zones come from the
 first matching rule in `gBattle_LocationRules`, which assigns zones to the
 encounter grounds its cells mark; the world map's come from
 `gWorldMap_EncounterRules`, by the encounter region under the leader. Each zone is a
-row of `src/overworld/encounter.tsv`.
+row of `src/overworld/encounter_zones.c`.
 
 [Running a map](src/overworld/README.md#random-battles) has the roll step by
 step, and [Battle](battle.md#starting-a-battle) what happens once it starts.

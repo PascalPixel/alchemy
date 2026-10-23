@@ -46,9 +46,9 @@ void BattleAnim_RunGrowth(struct BattleAnimArgs *effect) {
 ///
 /// Abilities: Punji, Punji Trap, Punji Strike (BATTLE_ANIM_PUNJI).
 ///
-/// Punji Strike's row of ability_anims.tsv gives the stronger variant, as Punji
-/// Trap's does,
-/// so no ability plays BATTLE_ANIM_PUNJI's strongest variant.
+/// Punji Strike's row of gAbilityAnimations gives the stronger variant, as
+/// Punji Trap's does, so no ability plays BATTLE_ANIM_PUNJI's strongest
+/// variant.
 void BattleAnim_RunPunji(struct BattleAnimArgs *effect) {
   BattleAnim_RunGrowingColumns(effect, GROWING_COLUMNS_PILLARS);
 }

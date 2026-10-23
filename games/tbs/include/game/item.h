@@ -66,7 +66,7 @@ enum EquipmentGroup {
   EQUIPMENT_GROUP_ARMOR = 2
 };
 
-/// An item's type (struct ItemDefinition's type, items.tsv's type column).
+/// An item's type (struct ItemDefinition's type, item_table.c's type field).
 /// A unit equips one item of each type, except Psynergy items.
 enum ItemType {
   ITEM_TYPE_NONE =
@@ -78,7 +78,7 @@ enum ItemType {
   ITEM_TYPE_BOOTS = 5,  ///< Hyper Boots to Turtle Boots
   /// The items that teach Psynergy while held: Orb of Force to Catch Beads.
   ITEM_TYPE_PSYNERGY = 6,
-  ITEM_TYPE_UNUSED = 7, ///< no row of items.tsv has it; listed as equipment
+  ITEM_TYPE_UNUSED = 7, ///< no row of item_table.c has it; listed as equipment
   ITEM_TYPE_RING = 8,   ///< Adept Ring to Cleric's Ring
   ITEM_TYPE_SHIRT = 9   ///< Mythril Shirt, Silk Shirt, Running Shirt
 };

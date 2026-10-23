@@ -82,7 +82,7 @@ the next map to `RUN_BATTLE` and leaves, and the loop loads it again
 afterwards. [Running a map](src/overworld/README.md), the guide to the
 `overworld` folder, follows a field map
 from `Map_Run` to its warp, including how a battle is chosen from the
-encounter zones in `encounter.tsv`.
+encounter zones in `encounter_zones.c`.
 
 The tables on this page give each value as an ordinary number, with the
 hexadecimal form the source writes it in beside it.

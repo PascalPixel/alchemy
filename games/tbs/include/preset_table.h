@@ -18,4 +18,7 @@ struct PresetValues {
   s32 values[4];
 };
 
+/// One of PresetValues.values: an element's base power and resistance.
+#define PRESET_STATS(power, resist) (((resist) << 16) | (power))
+
 #endif

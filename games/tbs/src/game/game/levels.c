@@ -20,7 +20,7 @@ struct AbilityDefinition *Ability_GetDirect(s32 actionId) {
 #endif
     entryIndex = 0;
   }
-  return &gAbilityDefinitions[entryIndex];
+  return (struct AbilityDefinition *)&gAbilityDefinitions[entryIndex];
 }
 
 /// Returns 1 when `actionId` is in the unit's action list. Called by the
@@ -240,7 +240,7 @@ struct LevelUpResult *Unit_CheckLevelUp(s32 unitId,
 struct CharacterDefinition *Character_GetDefinition(s32 index) {
   struct CharacterDefinition *base;
 
-  base = gCharacter_DefinitionTable;
+  base = (struct CharacterDefinition *)gCharacter_DefinitionTable;
   return &base[index];
 }
 

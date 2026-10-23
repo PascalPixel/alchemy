@@ -21,7 +21,7 @@ Field_Layout148:
 	.incbin "games/tbs/src/layout/layout_148/shapes.table.lz"
 	.balign 4, 0
 .LField_Layout148_GRID:
-	.incbin "games/tbs/src/layout/layout_148/grid_ja.parts.lz"
+	.incbin "games/tbs/src/layout/layout_148/map_ja.grid.lz"
 	.balign 4, 0
 .LField_Layout148_MARKERS:
 	.incbin "games/tbs/src/layout/layout_148/treasure_spots_ja.table"
@@ -44,7 +44,7 @@ Field_Layout148:
 	.incbin "games/tbs/src/layout/layout_148/shapes.table.lz"
 	.balign 4, 0
 .LField_Layout148_GRID:
-	.incbin "games/tbs/src/layout/layout_148/grid_ja.parts.lz"
+	.incbin "games/tbs/src/layout/layout_148/map_ja.grid.lz"
 	.balign 4, 0
 .LField_Layout148_MARKERS:
 	.incbin "games/tbs/src/layout/layout_148/treasure_spots_ja.table"
@@ -66,7 +66,7 @@ Field_Layout148:
 	.incbin "games/tbs/src/layout/layout_148/shapes.table.lz"
 	.balign 4, 0
 .LField_Layout148_GRID:
-	.incbin "games/tbs/src/layout/layout_148/grid.parts.lz"
+	.incbin "games/tbs/src/layout/layout_148/map.grid.lz"
 	.balign 4, 0
 .LField_Layout148_MARKERS:
 	.incbin "games/tbs/src/layout/layout_148/treasure_spots.table"

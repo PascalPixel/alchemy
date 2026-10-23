@@ -50,42 +50,33 @@ menus).
 
 The tables and the message catalogs (the game's text, one catalog for each
 of the six languages) are therefore parallel lists tied only by position. A
-row inserted into `items.tsv` would give every later item the name of the
+row inserted into `gItem_DefinitionTable` would give every later item the name of the
 one after it unless all six catalogs gained a message at the same place.
 Rows no item uses stay in the table as placeholders, so that later ids
-don't move. The Healing Ring is on line 267 of `items.tsv` (line 1 is the
-header and line 2 is item 0), so it is item 265; its name is message 651
+don't move. The Healing Ring is the 266th entry of `item_table.c` (the first is item
+0), so it is item 265; its name is message 651
 and its line "Ring: Use to restore 70 HP".
 
-Each table is a text file of tab-separated columns (`.tsv`) that the build
-turns into the bytes the game reads. Its header line gives each column a
-name and says how much room the column takes, written `name:type`: `u8` is
-one byte holding a number from 0 up, `s8` one byte that may be negative,
-`u16` and `s16` two bytes, `u32` and `s32` four, and `strN` is text of up to
-N bytes. The build's `ags-graphics` packs each row into those bytes and
-writes the result as a `.table` beside the `.tsv`; the matching `.s` file
-places it with `.incbin` under its symbol, the name code uses for it
-(`gItem_DefinitionTable: .incbin "games/tbs/src/game/items.table"`). A
-column without a type (`item`, `ability`,
-`djinni`, `enemy`) is a label for readers and builds no bytes: the English
-name its message gives, `?` or `=` where the message marks the row unused,
-or `(no name message)` for a row past the last name. `reserved_` and `pad_`
-columns are zero in every row, and `unknown_` and `unk_` columns are fields
-whose meaning isn't known. `item_ids.h`, `ability_ids.h` and `djinn_ids.h`
-name the ids the code uses.
+Each table is a C array of the struct that reads it, written with designated
+initializers: a field left out is 0, and a field with a meaning shows its
+enum or flag names (`ITEM_TYPE_WEAPON`, `ELEMENT_VENUS`). The comment above
+each entry is the English name its message gives, `?` or `=` where the
+message marks the row unused. `reserved` and `padding` fields are zero in
+every entry. `item_ids.h`, `ability_ids.h` and `djinn_ids.h` name the ids the
+code uses.
 
-| Table | One row per | Placed as |
+| Table | One entry per | File |
 | --- | --- | --- |
-| `items.tsv` | item (324) | `gItem_DefinitionTable` (`item_table.s`) |
-| `abilities.tsv` | ability (519) | `gAbilityDefinitions` (`abilities.s`) |
-| `djinn.tsv` | Djinni, `DJINN_PER_ELEMENT` (20) to an [element](../../glossary.md#the-four-elements), Venus, Mercury, Mars, Jupiter (80) | `gDjinn_DefinitionTable` (`djinn_table.s`) |
-| `enemies.tsv` | enemy (165) | `gEnemy_Definitions` (`enemies.s`) |
-| `summons.tsv` | summon (16) | `gSummon_DefinitionTable` (`summons.s`) |
-| `classes.tsv` | class (203) | `gClass_DefinitionTable` (`classes.s`) |
-| `chars.tsv` | character (8) | `gCharacter_DefinitionTable` (`chars.s`) |
-| `elempre.tsv` | enemy element preset (44) | `gEnemy_ElementPresetTable` (`element_table.s`) |
-| `artifact_slots.tsv` | 16 item ids, columns `x0` to `xf` (32 rows, 512 ids): a rare item's counter number plus one, or 0 (artifact is the code's word for an item with a counter; [Rare item counters](#rare-item-counters) explains them) | `gItem_ArtifactSlotTable` (`artifact_slots.s`) |
-| `level_experience_0.tsv` to `_7.tsv` | level (99), with the experience it needs, one table per character | `gCharacter_LevelExpTable` (`experience_table.s`) |
+| `gItem_DefinitionTable` | item (324) | `item_table.c` |
+| `gAbilityDefinitions` | ability (519) | `abilities.c` |
+| `gDjinn_DefinitionTable` | Djinni, `DJINN_PER_ELEMENT` (20) to an [element](../../glossary.md#the-four-elements), Venus, Mercury, Mars, Jupiter (80) | `djinn_table.c` |
+| `gEnemy_Definitions` | enemy (165) | `enemies.c` |
+| `gSummon_DefinitionTable` | summon (16) | `summons.c` |
+| `gClass_DefinitionTable` | class (203) | `classes.c` |
+| `gCharacter_DefinitionTable` | character (8) | `chars.c` |
+| `gEnemy_ElementPresetTable` | enemy element preset (44) | `element_table.c` |
+| `gItem_ArtifactSlotTable` | item id (512): a rare item's counter number plus one, or 0 (artifact is the code's word for an item with a counter; [Rare item counters](#rare-item-counters) explains them) | `artifact_slots.c` |
+| `gCharacter_LevelExpTable` | level (99) of each character, with the experience it needs | `experience_table.c` |
 
 | Name | Value | Meaning |
 | --- | --- | --- |
@@ -121,7 +112,7 @@ element 4, `ELEMENT_NONE`; every other column is 0.
 | `effect0_kind`, `effect0_amount` to `effect3_` | up to four effects while equipped, `enum EquipEffectKind` (`EQUIP_EFFECT_ADD_HP`, `EQUIP_EFFECT_SCALE_ATTACK` and the rest), which `Unit_Calculate` applies |
 | `action_id` | the ability the item uses |
 
-`action_id` and `unleash_action` are rows of `abilities.tsv`. Used in battle,
+`action_id` and `unleash_action` are rows of `abilities.c`. Used in battle,
 the item command builds a turn from its `action_id` (`BattleTurn_Build`,
 [battle/battle/turn.c](../battle/battle/turn.c)), and
 [Battles](../battle/README.md#how-an-ability-resolves) follows that ability
@@ -211,7 +202,7 @@ copies the unit to the [heap](../../glossary.md#heap-and-pools), changes the rea
 unit from it. The preview is what equipping would do because it is the same
 computation. The Machete adds 6 to Attack, but the panel shows 7 less,
 because his class multiplies the sum and the result rounds down. Of the
-multipliers in the `atk` column of `classes.tsv`, only 11 tenths (the
+multipliers in the `atk` field in `classes.c`, only 11 tenths (the
 Squire's, among others) gives both numbers, from an Attack of 16 before the
 class:
 
@@ -287,14 +278,14 @@ Code in the other banks calls this one's functions by their far-call names,
 and a map's [overlay](../../glossary.md#overlay) through the list of
 outside functions it was built with (its [import table](../../glossary.md#entry-table-and-import-table)); some code reads
 `gSaveBlock`, the state of the game in progress, directly, as the save
-summary does. The battle folder reads `abilities.tsv` through
-`struct AbilityDefinition` beside its own `ability_anims.tsv` and `ability_staging.tsv`, which
+summary does. The battle folder reads `abilities.c` through
+`struct AbilityDefinition` beside its own `gAbilityAnimations` and `gAbilityStaging`, which
 choose how an ability is drawn ([Battle](../../battle.md)). The flags and the
 units are part of the save file.
 
 ## Limits
 
-- Item ids are 9 bits, 0 to 511 (`INVENTORY_ITEM_ID_MASK`); `items.tsv` has 324 rows,
+- Item ids are 9 bits, 0 to 511 (`INVENTORY_ITEM_ID_MASK`); `item_table.c` has 324 rows,
   and rows 269 to 323 have no name message.
 - A unit has 15 inventory slots, and a stack holds 30.
 - 20 Djinn to an element, 519 abilities, 165 enemies (the last with no name
@@ -312,7 +303,7 @@ units are part of the save file.
   says who is in it and `gSaveBlock.party` lists them in order.
 - **inventory entry**: one of a unit's `INVENTORY_SLOTS` (15) halfwords,
   holding an item, its state and its count.
-- **ability**: a row of `abilities.tsv`. Psynergy, a Djinni's and a summon's
+- **ability**: a row of `abilities.c`. Psynergy, a Djinni's and a summon's
   effect, an item's use and an enemy's attack are all abilities.
 - **element**: `enum Element`, `ELEMENT_VENUS` to `ELEMENT_JUPITER`, and
   `ELEMENT_NONE`. A character's **element levels** are the Djinn set on it
@@ -336,18 +327,18 @@ in them, and the item effect kinds from what `Unit_Calculate` does with each. Fl
 48 to 127 are the Djinn's found flags because `Djinn_GiveToParty`
 sets flag `FLAG_DJINN_FIRST` + 20 × element + index when a Djinni joins.
 
-The tables keep no unknown columns. `chars.tsv`'s first twenty words
-(`CharacterDefinition.reserved`) and `summons.tsv`'s two bytes after the
+The tables keep no unknown columns. `chars.c`'s first twenty words
+(`CharacterDefinition.reserved`) and `summons.c`'s two bytes after the
 ability (`SummonDefinition.reserved`) are 0 in every row and read by no code.
-The last byte of `classes.tsv`, `weak_effect3`, is the fourth weak effect,
+The last byte of `classes.c`, `weakEffects[3]`, is the fourth weak effect,
 which `BattleAbility_IsWeakToEffect` stops short of; it too is 0 in every row,
 as is the enemies' fourth (`EnemyDefinition.weakEffects`).
 
-Rows 269 to 323 of `items.tsv` are 55 copies of one row: a weapon only Isaac
+Rows 269 to 323 of `item_table.c` are 55 copies of one row: a weapon only Isaac
 can equip, priced 100 coins, with Attack 11, no icon and no name message.
 Nothing gives one: the shops' stock table (`shop/artifacts.c`) and the
 [scripts](../../glossary.md#script) name no item past `ITEM_CLERICS_RING` (268), no enemy in
-`enemies.tsv` carries or drops one, and the debug item browser covers 0 to 269
+`enemies.c` carries or drops one, and the debug item browser covers 0 to 269
 and skips items without an icon. They are filler to 324 rows.
 
 

@@ -57,8 +57,8 @@ enum WindowTransitionMode {
   WINDOW_TRANSITION_LEADER_LOW = 77
 };
 
-/// The encounter table's zones (encounter.tsv's rows) that code names: the
-/// rows no step on a map rolls.
+/// The encounter table's zones (encounter_zones.c's entries) that code names:
+/// the rows no step on a map rolls.
 enum EncounterZoneId {
   ENCOUNTER_ZONE_NONE = 0, ///< no battles
   /// The scripted battles of Vale's stormy night (its monsters, and the

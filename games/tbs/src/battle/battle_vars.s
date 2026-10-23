@@ -1,9 +1,4 @@
 	.section .rodata
-	.balign 4
-@ Debug party members, delimited by member -1.
-	.global gDebug_PartyPresets
-gDebug_PartyPresets:
-	.incbin "games/tbs/src/battle/presets.table"
 	.global gBattleObject_EmptyScript
 gBattleObject_EmptyScript:
 	.4byte 16
@@ -38,15 +33,3 @@ gBattleTransition_CurtainTiles:
 	.incbin "games/tbs/src/battle/presentation/curtain.4bpp"
 	.include "games/tbs/src/battle/presentation/highlight_ramp.s"
 	.4byte 1, 27
-@ 380 enemy formations.
-	.global gFormations
-gFormations:
-	.incbin "games/tbs/src/battle/formations.table"
-	.global gBattleFormation_LevelMatchedEnemies
-gBattleFormation_LevelMatchedEnemies:
-	.2byte 0x75, 0x7a, 0x7d, 0x85, 0x87, 0x89, 0x9e, 0x9f, 0xa0, 0xa1
-	.2byte 0xa2, 0xa3, 0xa4, 0xa5, 0xa6, 0xa7, 0xa8, 0xa9, 0xaa, 0xab
-@ 172 battle graphics.
-	.global gBattleSprites
-gBattleSprites:
-	.incbin "games/tbs/src/battle/sprites.table"

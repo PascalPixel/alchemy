@@ -7,7 +7,3 @@ gFieldEffect_SparkTiles:
 	.global gFieldEffect_ArcSparkTiles
 gFieldEffect_ArcSparkTiles:
 	.incbin "games/tbs/src/battle/effect/spark_b.4bpp32x16"
-@ The 104 encounter zones (encounter.tsv)
-	.global gEncounterZones
-gEncounterZones:
-	.incbin "games/tbs/src/overworld/encounter.table"

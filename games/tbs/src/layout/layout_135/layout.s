@@ -21,7 +21,7 @@ Field_Layout135:
 	.incbin "games/tbs/src/layout/layout_135/shapes.table.lz"
 	.balign 4, 0
 .LField_Layout135_GRID:
-	.incbin "games/tbs/src/layout/layout_135/grid_ja.parts.lz"
+	.incbin "games/tbs/src/layout/layout_135/map_ja.grid.lz"
 	.balign 4, 0
 .LField_Layout135_ANIMATION:
 	.incbin "games/tbs/src/layout/layout_133/tileset_anims.script.lz"
@@ -50,7 +50,7 @@ Field_Layout135:
 	.incbin "games/tbs/src/layout/layout_135/shapes.table.lz"
 	.balign 4, 0
 .LField_Layout135_GRID:
-	.incbin "games/tbs/src/layout/layout_135/grid_de.parts.lz"
+	.incbin "games/tbs/src/layout/layout_135/map_de.grid.lz"
 	.balign 4, 0
 .LField_Layout135_ANIMATION:
 	.incbin "games/tbs/src/layout/layout_133/tileset_anims.script.lz"
@@ -79,7 +79,7 @@ Field_Layout135:
 	.incbin "games/tbs/src/layout/layout_135/shapes.table.lz"
 	.balign 4, 0
 .LField_Layout135_GRID:
-	.incbin "games/tbs/src/layout/layout_135/grid_de.parts.lz"
+	.incbin "games/tbs/src/layout/layout_135/map_de.grid.lz"
 	.balign 4, 0
 .LField_Layout135_ANIMATION:
 	.incbin "games/tbs/src/layout/layout_133/tileset_anims.script.lz"
@@ -108,7 +108,7 @@ Field_Layout135:
 	.incbin "games/tbs/src/layout/layout_135/shapes.table.lz"
 	.balign 4, 0
 .LField_Layout135_GRID:
-	.incbin "games/tbs/src/layout/layout_135/grid_de.parts.lz"
+	.incbin "games/tbs/src/layout/layout_135/map_de.grid.lz"
 	.balign 4, 0
 .LField_Layout135_ANIMATION:
 	.incbin "games/tbs/src/layout/layout_133/tileset_anims.script.lz"
@@ -137,7 +137,7 @@ Field_Layout135:
 	.incbin "games/tbs/src/layout/layout_135/shapes.table.lz"
 	.balign 4, 0
 .LField_Layout135_GRID:
-	.incbin "games/tbs/src/layout/layout_135/grid_de.parts.lz"
+	.incbin "games/tbs/src/layout/layout_135/map_de.grid.lz"
 	.balign 4, 0
 .LField_Layout135_ANIMATION:
 	.incbin "games/tbs/src/layout/layout_133/tileset_anims.script.lz"
@@ -165,7 +165,7 @@ Field_Layout135:
 	.incbin "games/tbs/src/layout/layout_135/shapes.table.lz"
 	.balign 4, 0
 .LField_Layout135_GRID:
-	.incbin "games/tbs/src/layout/layout_135/grid.parts.lz"
+	.incbin "games/tbs/src/layout/layout_135/map.grid.lz"
 	.balign 4, 0
 .LField_Layout135_ANIMATION:
 	.incbin "games/tbs/src/layout/layout_133/tileset_anims.script.lz"

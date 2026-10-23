@@ -402,7 +402,7 @@ u8 gTargetMotes_GlintFlips[] = GLINT_FLIPS;
 /// which it only clears effect->variant.
 ///
 /// Each handler is named for the first ability, by ability id, whose entry in
-/// gAbilityAnimations (battle/ability_anims.tsv) selects its kind, with that
+/// gAbilityAnimations (battle/ability_staging.c) selects its kind, with that
 /// ability's English name (MsgAbilityName + id): BATTLE_ANIM_QUAKE is Quake,
 /// Earthquake and Quake Sphere, so BattleAnim_RunQuake. A handler several
 /// kinds share takes the name of its lowest kind's first ability, and a name

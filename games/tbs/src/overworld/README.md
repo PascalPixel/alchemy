@@ -185,8 +185,8 @@ zone to ground 1. A map no rule matches has no battles. The world map takes its 
 (`zonedata.c`) by the encounter region and battle environment under the
 leader, which also pick the battle background.
 
-A zone is a row of `encounter.tsv`: `rate` (0 for none), `level`, the
-formations `group0` to `group7` (rows of `games/tbs/src/battle/formations.tsv`), their
+A zone is a row of `encounter_zones.c`: `rate` (0 for none), `level`, the
+formations `group0` to `group7` (rows of `games/tbs/src/battle/formations.c`), their
 relative chances `weight0` to `weight7`, and `zone`, the map whose rules
 select it. Zones with rate 0 are fought only by slot, through
 `Field_RequestBattleFromEncounterTable` (the scripted battles, such as
@@ -202,7 +202,7 @@ formation's place in its zone, ended by 0. A key takes
 the last song before it, so the table stores each song once. Link battles
 always play `SONG_KEEP_BGM`.
 
-The zones are `encounter.tsv`; the rules that choose them are
+The zones are `encounter_zones.c`; the rules that choose them are
 `gBattle_LocationRules` (`location_rules.s`) and `gWorldMap_EncounterRules`
 (`zonedata.c`). The zone numbers are named in `include/unit/overworld/overworld.h`
 and the flags in `flags.h`.
@@ -430,7 +430,7 @@ effect scene's work serves the Djinn joining effects as well as Psynergy.
 The field kinds are named from the `type` column of `abilities.tsv` and the
 Psynergy the English release gives each; the requests from what the loop does
 with each; the encounter columns from what `Encounter_CountStepsAndSelectFormation`
-computes with them; the zone names in `encounter.tsv` from the maps whose
+computes with them; the zone names in `encounter_zones.c` from the maps whose
 rules select them.
 
 Random battles stop while Jenna is in the party with more than 130

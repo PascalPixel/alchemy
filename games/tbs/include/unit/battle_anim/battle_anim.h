@@ -11,7 +11,7 @@ struct ScreenPoint;
 struct Particle;
 
 /// The large animations BattleAnim_RunSummonEffect runs, by kind: the twelve
-/// summons. A summon's row of ability_anims.tsv has effect 0x8000 plus its
+/// summons. A summon's row of gAbilityAnimations has effect 0x8000 plus its
 /// kind.
 enum SummonAnimId {
   SUMMON_ANIM_NONE,     ///< no row uses it; runs Meteor's scene too
@@ -205,7 +205,7 @@ enum BattleAnimId {
 };
 
 /// An animation's variant: the strength of the ability that plays it, from bits
-/// 12 and 13 of its row of ability_anims.tsv. Most abilities come in threes
+/// 12 and 13 of its row of gAbilityAnimations. Most abilities come in threes
 /// that share an animation, such as Quake, Earthquake and Quake Sphere, and a
 /// double or triple blow adds one or two. A runner that sets its own variants
 /// names them beside it.

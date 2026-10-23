@@ -328,5 +328,3 @@ BattleAnim_WaterSparkleSheet:
 	.byte 0x11	@ PACKER: left in the buffer by BattleAnim_CrystalSheet+0x6b3
 	.balign 4, 0
 	.include "games/tbs/src/graphics/battle_anims/lightning_pillar.s"
-	.include "games/tbs/src/graphics/battle_anims/staged_particle_path.s"
-	.include "games/tbs/src/graphics/battle_anims/dual_stream_path.s"

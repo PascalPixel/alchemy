@@ -64,11 +64,11 @@ Sphere all play the same animation, at three strengths.
 
 The animation is chosen by a number, the animation kind, and the strength by
 another, the variant. The kind picks only what the player watches: the formula
-the targets take is the ability kind, in `game/abilities.tsv`, which
+the targets take is the ability kind, in `game/abilities.c`, which
 [Battles](../battle/README.md) explains. Quake's ability kind is
 `ABILITY_FORMULA_DAMAGE` and its animation kind `BATTLE_ANIM_QUAKE`.
 
-Each ability's row of [`battle/ability_anims.tsv`](../battle/ability_anims.tsv) gives
+Each ability's row of [`gAbilityAnimations`](../battle/ability_staging.c) gives
 both, packed into one number with a few bits that choose how the battle
 reaches the animation ([The animation word](#the-animation-word) gives
 its layout). Quake, Earthquake and Quake Sphere read `0x001`, `0x1001` and
@@ -187,7 +187,7 @@ spark scene at 201 to 205.
 ### The animation word
 
 Each ability, ids 0 to 518, has a row in
-[`battle/ability_anims.tsv`](../battle/ability_anims.tsv) (`gAbilityAnimations`). Its
+[`gAbilityAnimations`](../battle/ability_staging.c) (`gAbilityAnimations`). Its
 `effect` and `flags` columns are two 16-bit numbers; its `ability` column is
 a label for readers that the build skips. When `BattleTurn_Build`
 (`battle/battle/turn.c`) builds a turn, it copies the row into the turn's
@@ -964,7 +964,7 @@ handler and reports a line it cannot match:
 It starts with `Abilities: ` and ends with a full stop. Between them are one or
 more groups separated by `; `, each a list of ability names separated by `, `,
 then a space and the animation the group selects in parentheses. A name is
-written as the `ability` column of `abilities.tsv` writes it, once in its group
+written as the comment above its entry in `abilities.c` writes it, once in its group
 even where several rows share it (the three Fire Blessings). Where rows that
 share a name select different animations, like the two Blasts, the group's animation
 says which rows are meant. A group whose animation no row selects has `none` for
@@ -988,7 +988,7 @@ reached:
   being the kind less 100;
 - `FIELD_PSYNERGY_` (`enum FieldPsynergy`,
   [`field_services.h`](../../include/unit/overworld/field_services.h)): field
-  Psynergy, matched against the `type` column of `abilities.tsv`, the form the
+  Psynergy, matched against the `fieldPsynergy` field in `abilities.c`, the form the
   [field Psynergy effects](../overworld/README.md) use.
 
 Anything else that reaches the handler (an item, another animation that hands
@@ -998,7 +998,7 @@ such as a runner, has no reach line; its comment says what calls it.
 ## Evidence and open questions
 
 A handler's name comes from the abilities that reach its kind, read from
-`ability_anims.tsv` and named as the English release names them; a runner is named
+`gAbilityAnimations` and named as the English release names them; a runner is named
 from what it draws. The recordings come from
 [Alchemy Devtools](https://github.com/PascalPixel/alchemy-devtools#pictures),
 which plays an ability in a built tbs-en [edition](../../glossary.md#editions) over a plain grey background.
@@ -1007,7 +1007,7 @@ Three handlers are unused, and are named from what they draw:
 `BattleAnim_RunUnusedOrbitingSpirals` (`planet_diver.c`),
 `BattleAnim_RunUnusedTriangleStrike` (`bind.c`) and
 `BattleAnim_RunUnusedSevereBlowLeap` (`thrash.c`). The handler table is reached
-only with a kind from an `ability_anims.tsv` row, through the turn's
+only with a kind from an `gAbilityAnimations` row, through the turn's
 `animation`: building the turn changes only the variant and the staging bits,
 the auto battle passes kind 0, and a critical hit's offset applies only to
 plain attacks, which are dispatched by id range. No row names any of the three
@@ -1016,7 +1016,7 @@ row for Severe Blow names `BATTLE_ANIM_UNUSED_SEVERE_BLOW_LEAP`: there Severe Bl
 is the leap, where here it plays a casting impact.
 
 A plain attack's kind is 1 or 4 for the party (`BattleTurn_Build`) and
-1 to 5 for an enemy (`sprites.tsv`), all by id range, so the beam
+1 to 5 for an enemy (`battle_sprites.c`), all by id range, so the beam
 sequences play them. No ability uses the critical-hit effects
 (`ABILITY_EFFECT_CRITICAL_1_IN_64` to `ABILITY_EFFECT_CRITICAL_1_IN_4`), so
 only plain attacks score critical hits, and `ANIM_ID_CRITICAL_OFFSET`

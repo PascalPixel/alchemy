@@ -19,7 +19,7 @@ Field_Layout071:
 	.incbin "games/tbs/src/layout/layout_042/shapes.table.lz"
 	.balign 4, 0
 .LField_Layout071_GRID:
-	.incbin "games/tbs/src/layout/layout_071/grid.parts.lz"
+	.incbin "games/tbs/src/layout/layout_071/map.grid.lz"
 	.balign 4, 0
 .LField_Layout071_MARKERS:
 	.incbin "games/tbs/src/layout/layout_071/treasure_spots.table"

@@ -28,7 +28,7 @@ extern u8 Render_DecodeFrameCodeSize[];
 /// Four 256-byte colour tables (remap0 to remap3), indexed by pixel: the
 /// SpriteColorMode tables after gSpriteColorTables' five, the
 /// first also remapping the command icons (Runtime_RemapBytesByTable).
-extern u8 gRuntime_ByteRemapTable[];
+extern const u8 gRuntime_ByteRemapTable[];
 
 struct AbilityListEntry;
 struct BattleAnimArgs;

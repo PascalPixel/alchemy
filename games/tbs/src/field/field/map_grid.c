@@ -13,7 +13,7 @@ void Runtime_RemapBytesByTable(u8 *bytes, s32 byteCount) {
   u8 *remapTable;
 
   cursor = bytes;
-  remapTable = gRuntime_ByteRemapTable;
+  remapTable = (u8 *)gRuntime_ByteRemapTable;
   remaining = byteCount - 1;
   if (remaining != -1) {
     do {
@@ -165,16 +165,7 @@ static __inline__ void MapGrid_CopyMetatileToScreen(u32 *cell, u8 *screenMap,
   *(u32 *)(screenTile + 64) = *metatileRows;
 }
 
-/// A row of gLayouts: a layout's resources, counted from
-/// ResourceId_Layout001: its header, palette, three tilesets and layer data.
-struct LayoutResources {
-  /// Offsets from ResourceId_Layout001: the header, the palette, the
-  /// tilesets for char blocks 1, 2 and 3, and the layer data
-  /// (gMapGridLayerData).
-  u16 resources[6];
-};
-
-extern struct LayoutResources gLayouts[];
+extern const struct LayoutResources gLayouts[];
 
 /// One background layer's setup in a layout's header: its origin, its
 /// parallax and drift, and where it wraps.
@@ -240,7 +231,7 @@ s32 MapGrid_LoadLayout(s32 index) {
   REG_DISPCNT &= ~(DISPCNT_BG1_ON | DISPCNT_BG2_ON | DISPCNT_BG3_ON |
                    DISPCNT_OBJ_ON | DISPCNT_WIN0_ON);
   ScreenFade_FromBlack(0);
-  layoutResources = &gLayouts[index];
+  layoutResources = (struct LayoutResources *)&gLayouts[index];
   grid =
       AllocHeapSlotEwram(HEAP_SLOT_MAP_GRID, sizeof(struct MapGridScrollWork));
   Iwram_ClearWords(grid, sizeof(struct MapGridScrollWork));

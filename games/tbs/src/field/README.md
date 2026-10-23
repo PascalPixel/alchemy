@@ -269,8 +269,7 @@ first remap table also recolours the menus' command icons
 (`Runtime_RemapBytesByTable`).
 
 A sprite is a `struct Sprite`, and each of its anims a
-`struct SpriteAnim`; the four remap tables are `remap0.tsv` to
-`remap3.tsv`.
+`struct SpriteAnim`; the four remap tables are in `remap.c`.
 
 | Name | Value | Meaning |
 | --- | --- | --- |
@@ -461,7 +460,7 @@ layout; [Layouts](../layout/README.md#tileset-animation-and-blend-scripts) gives
 format. Only `PaletteCycle_Start` schedules palette cycles, and nothing calls
 it, so no palette cycle runs in the game.
 
-The layouts are the rows of `gLayouts` (`layouts.tsv`).
+The layouts are the rows of `gLayouts` (`layouts.c`).
 
 | Name | Value | Background | Meaning |
 | --- | --- | --- | --- |

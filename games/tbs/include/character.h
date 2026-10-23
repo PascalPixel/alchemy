@@ -31,18 +31,18 @@ struct CharacterDefinition {
   /// character's element levels (Unit_GetElementLevels).
   u8 elementBonus[4];
   u8 startingLevel;      ///< the level a new game raises the character to
-  u8 paddingBeforeItems; ///< padding in chars.tsv
+  u8 paddingBeforeItems; ///< padding
   /// The starting items, each added and equipped at a new game; the low nine
   /// bits are the item.
   u16 items[13];
-  u8 paddingAfterItems[2]; ///< padding in chars.tsv
+  u8 paddingAfterItems[2]; ///< padding
 };
 
 /// An ability a class teaches, and the level it is learned at.
 struct ClassAbility {
   u8 ability;    ///< the action taught, 0 for none
   u8 level;      ///< the level it is taught at
-  u8 padding[2]; ///< padding in classes.tsv
+  u8 padding[2]; ///< padding
 };
 
 /// A class: its series, the element levels it needs, its stat multipliers and
@@ -60,7 +60,7 @@ struct ClassDefinition {
   u8 def;                            ///< tenths of the base stat
   u8 agi;                            ///< tenths of the base stat
   u8 luck;                           ///< tenths of the base stat
-  u8 padding[2];                     ///< padding in classes.tsv
+  u8 padding[2];                     ///< padding
   struct ClassAbility abilities[16]; ///< the Psynergy the class teaches
   /// [0] to [2]: the ability effects the class is weak to
   /// (BattleAbility_IsWeakToEffect); [3] is 0 in every row and not read.
@@ -70,7 +70,7 @@ struct ClassDefinition {
 /// A Djinni: its ability and the stat bonuses it gives while set.
 struct DjinnDefinition {
   u16 abilityId;              ///< the action the Djinni unleashes
-  u8 reservedAfterAbility[2]; ///< reserved in djinn.tsv; no code names it
+  u8 reservedAfterAbility[2]; ///< reserved; no code names it
   /// Added to the base stats while the Djinni is set (Unit_Calculate), before
   /// the class multiplies them.
   ///@{
@@ -81,7 +81,7 @@ struct DjinnDefinition {
   s8 agi;
   s8 luck;
   ///@}
-  u8 reservedAfterStats[2]; ///< reserved in djinn.tsv
+  u8 reservedAfterStats[2]; ///< reserved
 };
 
 /// EnemyDefinition.targetStrategy: a single-target attacker favours the
@@ -100,7 +100,7 @@ enum EnemyTargetStrategy {
 /// EnemyDefinition.actionStrategy: how BattleAI_ChooseAction picks a
 /// place in the enemy's eight actions. The first three roll against
 /// gBattleAI_ActionWeights; the next two remember the place in
-/// Unit.aiActionIndex. No row of enemies.tsv has a strategy past
+/// Unit.aiActionIndex. No row of enemies.c has a strategy past
 /// ACTION_STRATEGY_RANDOM_START.
 enum EnemyActionStrategy {
   ACTION_STRATEGY_EVEN,           ///< 32 in 256 each
@@ -116,7 +116,7 @@ enum EnemyActionStrategy {
 /// An enemy's definition: its level and stats, items, element preset, the
 /// actions it chooses from and its rewards.
 struct EnemyDefinition {
-  /// The enemy's name: enemies.tsv's name column, 15 bytes, blank in every
+  /// The enemy's name: the name field, 15 bytes, blank in every
   /// row. BattleUnit_Set takes the name from the messages instead.
   u8 name[15];
   u8 level;
@@ -132,9 +132,9 @@ struct EnemyDefinition {
   u8 hpRegen; ///< HP restored at each round's end (Unit.baseHpRegen)
   u8 ppRegen; ///< PP restored at each round's end (Unit.basePpRegen)
   ///@}
-  u8 reservedBeforeRewards[2]; ///< reserved in enemies.tsv: 0 in every row
+  u8 reservedBeforeRewards[2]; ///< 0 in every entry
   u32 aiActionIndex;           ///< 0 in every row; copied to Unit.aiActionIndex
-  u8 reservedAfterRewards[4];  ///< reserved in enemies.tsv: 0 in every row
+  u8 reservedAfterRewards[4];  ///< 0 in every entry
   u16 items[4];                ///< items the enemy carries, 0 for none
   u8 counts[4];                ///< how many of each item it carries
   u8 elementPreset;            ///< row of gEnemy_ElementPresetTable, 0 to 43
@@ -196,9 +196,9 @@ STATIC_ASSERT(offsetof(struct EnemyDefinition, coins) == 0x4c);
 STATIC_ASSERT(offsetof(struct EnemyDefinition, experience) == 0x52);
 STATIC_ASSERT(sizeof(struct LevelUpResult) == 0x10);
 
-/// The eight characters' definitions, by character id (game/chars.tsv).
-extern struct CharacterDefinition gCharacter_DefinitionTable[];
-/// The classes, by class index (game/classes.tsv, 203 rows).
-extern struct ClassDefinition gClass_DefinitionTable[];
+/// The eight characters' definitions, by character id (game/chars.c).
+extern const struct CharacterDefinition gCharacter_DefinitionTable[];
+/// The classes, by class index (game/classes.c, 203 entries).
+extern const struct ClassDefinition gClass_DefinitionTable[];
 
 #endif

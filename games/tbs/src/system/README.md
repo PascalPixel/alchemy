@@ -253,7 +253,7 @@ its symbol follows, but every later row is renumbered, so the ROM no longer
 matches, and numbers travel without symbols in several places: the map table (`games/tbs/src/field/map_headers.s`)
 gives each map its overlay as a resource number, and the first column of
 `objects.tsv` numbers each overlay's rows the same way. The layout table
-(`games/tbs/src/field/layouts.tsv`) holds numbers counted from
+(`games/tbs/src/field/layouts.c`) holds numbers counted from
 `ResourceId_Layout001` (`MapGrid_LoadLayout`), so the rows after that one keep
 their order. Code also adds to an id to reach the rows after it: the option
 menu's marker steps through eight [frames](../../glossary.md#frame) from `ResourceId_MenuCursorFrames`
@@ -265,7 +265,7 @@ any other.
 | --- | --- |
 | the map table, `field/map_headers.s` | each map names its overlay as a resource number |
 | `objects.tsv`'s first column | each overlay's rows are numbered by resource |
-| `field/layouts.tsv` | numbers counted from `ResourceId_Layout001` |
+| `field/layouts.c` | numbers counted from `ResourceId_Layout001` |
 | `window/window/options.c` | eight frames counted from `ResourceId_MenuCursorFrames` |
 
 ## The addresses that never move

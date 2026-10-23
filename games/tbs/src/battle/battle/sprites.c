@@ -163,7 +163,7 @@ s32 BattleObject_ReleaseSlotByValue(s32 unitId) {
 #define WEAPON_KIND_SHIFT 9
 
 /// The kinds of weapon a party member's attack shows, by the rows of
-/// items.tsv gResource_SlotAssignments lists for each.
+/// item_table.c gResource_SlotAssignments lists for each.
 enum BattleWeaponKind {
   WEAPON_KIND_LONG_SWORD,  ///< Long Sword to Muramasa
   WEAPON_KIND_LIGHT_BLADE, ///< Machete to Bandit's Sword

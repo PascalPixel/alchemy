@@ -53,8 +53,8 @@ extern struct MapEvent gImilFuchinFalls_ThirdRoomEvents[];
 extern struct MapEvent gImilFuchinFalls_FourthRoomEvents[];
 extern struct MapEvent gImilFuchinFalls_KiRoomEvents[];
 extern struct MapEvent gImilFuchinFalls_DragonRoomEvents[];
-extern s32 gImilFuchinFalls_DustScript0[];
-extern s32 gImilFuchinFalls_DustScript1[];
-extern s32 gImilFuchinFalls_DustScript2[];
+extern s32 gImilFuchinFalls_ShortDustScript[];
+extern s32 gImilFuchinFalls_MediumDustScript[];
+extern s32 gImilFuchinFalls_LongDustScript[];
 
 #endif

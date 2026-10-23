@@ -198,13 +198,13 @@ const struct MapWarpDest *Map_GetWarpDests(void) {
   s16 selector = gGameState.mapId;
 
   if (selector == (s32)&MapId_SuhallaDesertNorth) {
-    return gSuhallaDesertWarpDests1;
+    return gSuhallaDesertNorthWarpDests;
   }
   if (selector == (s32)&MapId_SuhallaDesertSouth) {
-    return gSuhallaDesertWarpDests2;
+    return gSuhallaDesertSouthWarpDests;
   }
   if (selector == (s32)&MapId_SuhallaDesertCaves) {
-    return gSuhallaDesertWarpDests3;
+    return gSuhallaDesertCavesWarpDests;
   }
   return gSuhallaDesertWarpDestsOther;
 }
@@ -219,13 +219,13 @@ const struct ObjectEventTemplate *Map_GetObjectEventTemplates(void) {
   s16 selector = gGameState.mapId;
 
   if (selector == (s32)&MapId_SuhallaDesertNorth) {
-    return gSuhallaDesertObjectEventTemplates1;
+    return gSuhallaDesertNorthObjectEventTemplates;
   }
   if (selector == (s32)&MapId_SuhallaDesertSouth) {
-    return gSuhallaDesertObjectEventTemplates2;
+    return gSuhallaDesertSouthObjectEventTemplates;
   }
   if (selector == (s32)&MapId_SuhallaDesertCaves) {
-    return gSuhallaDesertObjectEventTemplates3;
+    return gSuhallaDesertCavesObjectEventTemplates;
   }
   return gSuhallaDesertObjectEventTemplatesOther;
 }
@@ -777,7 +777,7 @@ static s32 EventScript_RevealStarts(void) {
 /// first two.
 const struct MapEvent *Map_GetEvents(void) {
   if (gGameState.mapId == (s32)&MapId_SuhallaDesertCaves) {
-    return gSuhallaDesertEvents3;
+    return gSuhallaDesertCavesEvents;
   }
   return gSuhallaDesertEventsOther;
 }
@@ -953,7 +953,7 @@ struct MapWarpDest gSuhallaDesertWarpDestsOther[] = {
     {MAP_TABLE_END},
 };
 
-struct MapWarpDest gSuhallaDesertWarpDests1[] = {
+struct MapWarpDest gSuhallaDesertNorthWarpDests[] = {
     {SUHALLA_DESERT_NORTH_FROM_WORLD_MAP, CONDITION_ALWAYS, 264, 0, 56,
      FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {SUHALLA_DESERT_NORTH_FROM_SUHALLA_DESERT_SOUTH, CONDITION_ALWAYS, 24, 0,
@@ -961,7 +961,7 @@ struct MapWarpDest gSuhallaDesertWarpDests1[] = {
     {MAP_TABLE_END},
 };
 
-struct MapWarpDest gSuhallaDesertWarpDests2[] = {
+struct MapWarpDest gSuhallaDesertSouthWarpDests[] = {
     {SUHALLA_DESERT_SOUTH_FROM_SUHALLA_DESERT_NORTH, CONDITION_ALWAYS, 488, 0,
      456, FACING_WEST, 0, -1, -1, -1, -1, 0},
     {SUHALLA_DESERT_SOUTH_FROM_WORLD_MAP, CONDITION_ALWAYS, 488, 0, 1208,
@@ -973,7 +973,7 @@ struct MapWarpDest gSuhallaDesertWarpDests2[] = {
     {MAP_TABLE_END},
 };
 
-struct MapWarpDest gSuhallaDesertWarpDests3[] = {
+struct MapWarpDest gSuhallaDesertCavesWarpDests[] = {
     {SUHALLA_DESERT_CAVES_FROM_SUHALLA_DESERT_SOUTH_WEST, CONDITION_ALWAYS, 72,
      0, 248, FACING_NORTH, 0, -1, -1, -1, -1, 0},
     {SUHALLA_DESERT_CAVES_WEST_FROM_EAST, CONDITION_ALWAYS, 440, 0, 152,
@@ -1021,7 +1021,7 @@ struct ObjectEventTemplate gSuhallaDesertObjectEventTemplatesOther[] = {
 };
 
 // clang-format off
-struct ObjectEventTemplate gSuhallaDesertObjectEventTemplates1[] = {
+struct ObjectEventTemplate gSuhallaDesertNorthObjectEventTemplates[] = {
     { SPRITE_SANDSTORM, FLAG_FIRST_MAP_STORM_DOUSED, (s32)gSuhallaDesertStormScript,
         PIXELS(56), 0, PIXELS(264), FACING_SOUTH, TALK_KEEP_FACING, 0 },
     { SPRITE_SANDSTORM, FLAG_FIRST_MAP_STORM_DOUSED + 1, (s32)gSuhallaDesertStormScript,
@@ -1037,7 +1037,7 @@ struct ObjectEventTemplate gSuhallaDesertObjectEventTemplates1[] = {
     { MAP_TABLE_END },
 };
 
-struct ObjectEventTemplate gSuhallaDesertObjectEventTemplates2[] = {
+struct ObjectEventTemplate gSuhallaDesertSouthObjectEventTemplates[] = {
     { SPRITE_SANDSTORM, FLAG_SECOND_MAP_STORM_DOUSED, (s32)gSuhallaDesertStormScript,
         PIXELS(216), 0, PIXELS(328), FACING_SOUTH, TALK_KEEP_FACING, 0 },
     { SPRITE_SANDSTORM, FLAG_SECOND_MAP_STORM_DOUSED + 1, (s32)gSuhallaDesertStormScript,
@@ -1057,7 +1057,7 @@ struct ObjectEventTemplate gSuhallaDesertObjectEventTemplates2[] = {
     { MAP_TABLE_END },
 };
 
-struct ObjectEventTemplate gSuhallaDesertObjectEventTemplates3[] = {
+struct ObjectEventTemplate gSuhallaDesertCavesObjectEventTemplates[] = {
     { MAP_TABLE_END },
 };
 
@@ -1122,7 +1122,7 @@ struct MapEvent gSuhallaDesertEventsOther[] = {
 };
 // clang-format on
 
-struct MapEvent gSuhallaDesertEvents3[] = {
+struct MapEvent gSuhallaDesertCavesEvents[] = {
     {MAP_EVENT_WARP, 1, CONDITION_ALWAYS,
      SUHALLA_DESERT_CAVES_TO_SUHALLA_DESERT_SOUTH_WEST},
     {MAP_EVENT_WARP | WARP_STYLE_ANIMATED, 2, CONDITION_ALWAYS, 2},

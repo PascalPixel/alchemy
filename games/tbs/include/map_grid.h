@@ -166,4 +166,13 @@ extern u8 gBgTileBuffer[];
 /// map keeps its struct WorldMapFrameWork in the slot.
 extern u8 *gTileAnimationPages;
 
+/// A row of gLayouts: a layout's resources, counted from
+/// ResourceId_Layout001: its header, palette, three tilesets and layer data.
+struct LayoutResources {
+  /// Offsets from ResourceId_Layout001: the header, the palette, the
+  /// tilesets for char blocks 1, 2 and 3, and the layer data
+  /// (gMapGridLayerData).
+  u16 resources[6];
+};
+
 #endif

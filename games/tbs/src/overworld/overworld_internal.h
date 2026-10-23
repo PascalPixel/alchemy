@@ -91,6 +91,7 @@
 #include "macros.h"
 #include "ability_ids.h"
 #include "sprite_ids.h"
+#include "field/encounter_zone.h"
 
 /// The speakers' definitions (fxdata.c), read by Speaker_FindDefinition.
 extern struct SpeakerDefinition gSpeakerDefinitions[];

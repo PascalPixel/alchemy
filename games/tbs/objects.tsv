@@ -100,6 +100,7 @@ main	rom_main_04	games/tbs/src/system/far_call/OVERWORLD
 main	rom_main_04	games/tbs/src/overworld/overworld
 main	rom_main_04	games/tbs/src/overworld/field_services
 main	rom_main_04	games/tbs/src/overworld/arcspark
+main	rom_main_04	games/tbs/src/overworld/encounter_zones
 main	rom_main_04	games/tbs/src/overworld/location_rules
 main	rom_main_04	games/tbs/src/overworld/zonedata
 main	rom_main_04	games/tbs/src/overworld/map_rules
@@ -445,6 +446,7 @@ main	rom_tail_02	games/tbs/src/graphics/battle_bg/battle_bg
 main	rom_tail_02	games/tbs/src/graphics/lucky_wheels/lucky_wheels
 main	rom_tail_02	games/tbs/src/graphics/lucky_dice/lucky_dice
 main	rom_tail_02	games/tbs/src/graphics/battle_anims/battle_anims
+main	rom_tail_02	games/tbs/src/graphics/battle_anims/paths
 main	rom_tail_02	games/tbs/src/layout/world_map
 main	rom_tail_02	games/tbs/src/graphics/world_map/worldmap
 main	rom_tail_02	games/tbs/src/layout/colosso/colosso

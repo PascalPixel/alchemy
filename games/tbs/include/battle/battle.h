@@ -140,7 +140,8 @@ extern s32 gElementGlow_RingFrameOffsets[];
 /// The highlighted units' BLDY lightening: 15 down to 0 once, then the second
 /// sixteen (a pulse up to 8 and back) over and over.
 extern s8 gBattleHighlight_BlendRamp[];
-/// The 104 encounter zones (encounter.tsv), read as struct EncounterZone rows.
+/// The 104 encounter zones (encounter_zones.c), read as struct EncounterZone
+/// rows.
 extern u16 gEncounterZones[];
 #ifndef OWN_gMindReadWork
 /// The HEAP_SLOT_MIND_READ heap slot: Mind Read's wave work while its animation

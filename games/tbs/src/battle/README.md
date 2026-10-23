@@ -722,7 +722,7 @@ keeps that thing's prefix (`Transform_`, `Palette_`, `Party_`, `Ability_`,
 - `formations.c` has 380 formations, each of up to five kinds of enemy with
   the least and most of each (`member0` to `member4`, `minimum0` to
   `minimum4`, `maximum0` to `maximum4`). The encounter zones in
-  `../overworld/encounter.tsv` choose among them.
+  `../overworld/encounter_zones.c` choose among them.
 - The playback queue holds `BATTLE_PLAYBACK_CAPACITY` events.
 
 ## Words used here

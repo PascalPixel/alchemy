@@ -236,7 +236,7 @@ one go.
 
 Each map's row of `gMapHeaders` ([`field/map_headers.s`](../field/map_headers.s))
 gives a layout number, which picks a row of `gLayouts`
-([`field/layouts.tsv`](../field/layouts.tsv)): the layout's header, palette,
+([`field/layouts.c`](../field/layouts.c)): the layout's header, palette,
 its tileset's three sheets of tiles and layer data. `MapGrid_LoadLayout`
 ([`field/field/map_grid.c`](../field/field/map_grid.c)) decodes each part
 into a fixed buffer in [EWRAM](../../glossary.md#iwram-and-ewram): the metatiles into `gMetatiles`, the

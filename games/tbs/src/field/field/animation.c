@@ -88,7 +88,7 @@ s32 SpriteFrameCache_Load(u32 slot, u32 *buffer, s32 number, u32 variant) {
     // Values above 0xdf (palettes 14 and 15, which
     // Palette_LoadBasicSpriteColors does not load) are kept; only the basic
     // palettes' colours change.
-    colorMap = gSpriteColorTables[index];
+    colorMap = (u8 *)gSpriteColorTables[index];
     for (; pixels < end; pixels++) {
       u32 colorIndex = *pixels;
 

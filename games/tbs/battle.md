@@ -49,7 +49,7 @@ while it runs. Its result is the number of enemies defeated,
 `BATTLE_OUTCOME_FLED` or `BATTLE_OUTCOME_LOST`. The formation is a row of
 `src/battle/formations.c`, the enemy formations, which
 `src/battle/battle/formation.c` turns into enemy units; the encounter zones
-in `src/overworld/encounter.tsv` choose the row.
+in `src/overworld/encounter_zones.c` choose the row.
 
 | Name | Value | Meaning |
 | --- | --- | --- |

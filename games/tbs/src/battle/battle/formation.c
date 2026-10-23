@@ -39,7 +39,7 @@ s32 BattleFormation_AverageLevel(s32 recordId) {
 
   enemyCount = 0;
   levelTotal = 0;
-  record = &gFormations[recordId];
+  record = (struct Formation *)&gFormations[recordId];
   for (memberIndex = 0; memberIndex < 5; memberIndex++) {
     if (record->minimumCounts[memberIndex] != 0)
       break;
@@ -430,7 +430,7 @@ s32 BattleFormation_GetRandomMember(s32 recordId) {
     recordId = 1;
 
   choicesBase = choices;
-  record = &gFormations[recordId];
+  record = (struct Formation *)&gFormations[recordId];
   memberId = record->memberIds;
   maximumCount = record->maximumCounts;
   choiceCursor = choicesBase;
@@ -489,13 +489,13 @@ s32 BattleFormation_BuildEnemyList(s32 recordId) {
     recordId = BattleFormation_SelectLevelMatchedCandidate(&levelAdjustment);
   if (recordId < 0 || recordId >= FORMATION_COUNT)
     recordId = 1;
-  record = &gFormations[recordId];
+  record = (struct Formation *)&gFormations[recordId];
   for (memberIndex = 0;
        memberIndex <= 4 && record->minimumCounts[memberIndex] == 0;
        memberIndex++)
     ;
   if (memberIndex == 5)
-    record = &gFormations[1];
+    record = (struct Formation *)&gFormations[1];
 
   // The six sprite slots left once every member's minimum is placed; a
   // large enemy takes two.

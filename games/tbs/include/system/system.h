@@ -64,7 +64,7 @@ extern void *Resource_DirectoryTable[];
 /// The size of Resource_PatchThumbBranch (decode_01.s).
 extern u8 Resource_PatchThumbBranchCodeSize[];
 /// The first five 256-byte colour tables of SpriteColorMode, indexed by pixel.
-extern u8 gSpriteColorTables[][256];
+extern const u8 gSpriteColorTables[][256];
 /// The window font's 16 colours, loaded as BG palette 15
 /// (Window_LoadGraphics).
 extern const u16 gWindow_Palette[];

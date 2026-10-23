@@ -12,8 +12,8 @@
 /// The enemies the code tests by id, each named by its row of
 /// enemies.c: an enemy id is the row plus ENEMY_ID_FIRST. Where several
 /// rows share a name and each is fought in one place (its formation in
-/// formations.c, chosen from a scripted or mimic zone of encounter.tsv), each
-/// takes that place; the others take `_2` onwards in row order.
+/// formations.c, chosen from a scripted or mimic zone of encounter_zones.c),
+/// each takes that place; the others take `_2` onwards in row order.
 enum EnemyId {
   ENEMY_SLIME = 18,
   ENEMY_SLIME_2 = 19,

@@ -83,7 +83,7 @@ A map never undoes what it changed. The game keeps two sets of flags for
 maps to use and forgets them as the party moves on: map flags whenever
 the party enters a map, map section flags when it enters another map section.
 
-![What a map forgets, and when. Map flags are forgotten every time the party enters a map, even the one it just left: the plant Growth raised on Crossbone Isle is a sprout again. Map section flags are kept while the party moves between the maps of one map section and forgotten when it enters another map section: Vault's mayor remembers having welcomed Isaac back while the party stays in Vault, and welcomes him again on the next visit. Coming back from a battle forgets neither, so the room is as the party left it.](https://alchemy.pascalpixel.com/illustrations/scene/flag-reset.svg)
+![What a map forgets, and when. Map flags are forgotten every time the party enters a map, even the one it just left: the plant Growth raised on Crossbone Isle is a sprout again, as the picture of it on its cliff ledge shows. Map section flags are kept while the party moves between the maps of one map section and forgotten when it enters another map section: Vault's mayor remembers having welcomed Isaac back while the party stays in Vault, and welcomes him again on the next visit. Coming back from a battle forgets neither, so the room is as the party left it.](https://alchemy.pascalpixel.com/illustrations/scene/flag-reset.svg)
 
 `Map_ResetFlagsOnEnter` clears the map's 256 flags (`FLAG_MAP_TEMP_FIRST` to
 `FLAG_MAP_TEMP_LAST`) on every ordinary arrival, and the map section's 256

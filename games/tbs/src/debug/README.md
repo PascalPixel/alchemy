@@ -138,7 +138,7 @@ is.
 The menu test room's people run the shop, message and inventory tests with a
 ready-made party.
 
-![In the menu test room, outside the Japanese edition, Felix gives a different test depending on which way the leader faces when talking to him. Facing north, from below him, the leader gets the weapon shop's lines; facing west, from his right, the armour shop's; facing east, from his left, the item shop's; facing south, from above, the Sanctum's. Each is a separate talk event that names the facing it needs. A second Felix does the same with the Warrior's shops.](https://alchemy.pascalpixel.com/illustrations/debug/facing.svg)
+![The menu test room, where most of the people placed run a test when spoken to, among them two Felixes. Outside the Japanese edition, Felix gives a different test depending on which way the leader faces when talking to him. Facing north, from below him, the leader gets the weapon shop's lines; facing west, from his right, the armour shop's; facing east, from his left, the item shop's; facing south, from above, the Sanctum's. Each is a separate talk event that names the facing it needs. A second Felix does the same with the Warrior's shops.](https://alchemy.pascalpixel.com/illustrations/debug/facing.svg)
 
 Talking to someone on a map runs that map's talk event for them, and an
 event can also ask which way the leader is facing. The menu test room uses

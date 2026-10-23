@@ -122,7 +122,7 @@ On the stormy night in Vale, the only way to one spot runs past two others,
 and by the time the leader gets there, the event waiting on it has nothing
 left to do.
 
-![An event its own question ends. On the stormy night in Vale, every way to a third spot crosses two others first. On the first, Isaac hears Garet struggling with his things. On the second, Garet calls after him and joins the party, and the game notes that he has joined. The third spot holds an older version of Garet joining, which first asks whether Garet has joined. By the time the leader can stand there the answer is always yes, so the event ends at once, and its lines, among them "Are you trapped, too?", are never shown.](https://alchemy.pascalpixel.com/illustrations/front/unused-garet.svg)
+![An event its own question ends. On the stormy night in Vale, every way to a third spot crosses two others first. The map shows them as the game draws Vale that night, Garet still at his chest: the first spot a strip of ground just west of him, the second a strip west of that, and the third two places further north. On the first, Isaac hears Garet struggling with his things. On the second, Garet calls after him and joins the party, and the game notes that he has joined. The third spot holds an older version of Garet joining, which first asks whether Garet has joined. By the time the leader can stand there the answer is always yes, so the event ends at once, and its lines, among them "Are you trapped, too?", are never shown.](https://alchemy.pascalpixel.com/illustrations/front/unused-garet.svg)
 
 `EventScript_UnusedGaretJoinsIsaac` in [vale_storm.c](src/map/vale_storm.c) is an
 earlier version of Garet joining Isaac on the stormy night. Its row answers cell

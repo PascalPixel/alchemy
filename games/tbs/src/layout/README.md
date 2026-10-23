@@ -123,7 +123,7 @@ what sets that up: for each layer it says how fast the layer follows the
 camera, whether it drifts by itself and where it wraps, as well as how far
 the camera may go.
 
-![In the north of Suhalla Desert, when the camera moves 16 pixels, the ground layer and the middle layer move 16 pixels with it, but the overhead layer, the sand haze, moves 20, a quarter faster. The haze also drifts by itself every frame, even while the camera stands still. Its picture is a square 256 pixels on a side, repeated across the screen: the layer wraps round. The layout's header sets all of this for each layer, along with how far the camera may go.](https://alchemy.pascalpixel.com/illustrations/map/layer-scroll.svg)
+![In the north of Suhalla Desert, when the camera moves 16 pixels, the ground layer and the middle layer move 16 pixels with it, but the overhead layer, the sand haze, moves 20, a quarter faster. The haze also drifts by itself every frame, even while the camera stands still. Its picture is a square 256 pixels on a side, repeated across the screen: the layer wraps round. On screen, once a storm has risen and faded the haze in, it streams past Isaac while he stands still; on its own, the haze is a scatter of sand grains on BG1. The layout's header sets all of this for each layer, along with how far the camera may go.](https://alchemy.pascalpixel.com/illustrations/map/layer-scroll.svg)
 
 A layer that follows the camera at the camera's own pace looks as far away
 as the ground; one that moves faster looks nearer. Suhalla Desert's north

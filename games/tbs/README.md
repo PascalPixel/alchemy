@@ -1,10 +1,10 @@
 # ☀️ The Broken Seal
 
-![The game runs one map at a time, in a loop that goes round once for each map, not once a frame. At power-on the first map is the title. Each time round, the game first drops everything the last map left behind. Then it runs the next map. A field map, such as a town, a dungeon or the world map, has its code loaded and runs until the party takes a warp, and the warp names the next map. A battle or a minigame runs and then sends the party back, most often to where it stood before. Then the loop goes round again. A random battle is a map like any other: the field map ends, and is loaded again after.](https://alchemy.pascalpixel.com/illustrations/front/main-loop.svg)
+![The game runs one map at a time, in a loop that goes round once for each map, not once a frame. At power-on the title screen comes first; the game runs it as a map, with a row in the map table like any town. Each time round, the game first drops everything the last map left behind. Then it runs the next map. A field map, such as a town, a dungeon or the world map, has its code loaded and runs until the party takes a warp, and the warp names the next map. A battle or a minigame runs and then sends the party back, most often to where it stood before. Then the loop goes round again. A random battle runs from the same loop: the field map ends, and is loaded again after.](https://alchemy.pascalpixel.com/illustrations/front/main-loop.svg)
 
 The Broken Seal plays one map at a time: a room, a town, a dungeon floor,
-the world map, a battle. When the party walks through a door, the game ends
-one map and starts the next. Each map has code of its own, loaded only
+the world map, even the title screen. When the party walks through a door,
+the game ends one map and starts the next. Each map has code of its own, loaded only
 while the party is there, and a layout. Everything a map knows about how far
 the story has gone comes from the game flags, a long list of yes-or-no facts
 saved with the game. The program itself is cut into banks, and the source has
@@ -22,14 +22,14 @@ Each time round, the game first clears away everything the last map left
 behind, so nothing one map set up can leak into the next. Then it runs the
 next map. A field map runs until the party takes a warp, and the warp says
 which map comes next and the warp destination where the party arrives. A
-battle or a minigame is a map too: it runs, and then the game picks the map
-to go back to, most often the map the battle started from, with everyone
-where they stood.
+battle or a minigame runs in place of a map, under a number above the
+maps: it runs, and then the game picks the map to go back to, most often
+the map the battle started from, with everyone where they stood.
 
 `Game_Run`, in [object/map.c](src/object/object/map.c), is this loop of
 maps, and it never returns. `System_Initialize` calls it at power-on
-with `GAME_RUN_TITLE`, which makes the title (`MapId_Title`) the first
-map; the debug start modes begin at Vale's gate or the clear screen
+with `GAME_RUN_TITLE`, which makes the title screen (`MapId_Title`, a map
+like any town) the first; the debug start modes begin at Vale's gate or the clear screen
 instead, and only while `gDebugMode` is set. The current map and the
 warp destination the party arrives by are `gGameState.mapId` and
 `gGameState.warpDest`.
@@ -54,7 +54,8 @@ Then it does one of two things:
   playing, and its overlay unpacked (`Map_LoadOverlay`). `Field_RunMap`
   runs it until the party takes a warp and returns the warp's kind, and
   `Map_TakeWarp` turns that into the next map and warp destination.
-- A battle or a minigame is a map number from `MAP_BLANK` up
+- A battle or a minigame runs in place of a map, under a number from
+  `MAP_BLANK` up
   (`MAP_BATTLE`, `MAP_LUCKY_DICE`, `MAP_REEL_GAME`), with no row in the
   map table and no overlay, since its code is in the main image. It returns
   a result rather than a warp, and `Map_ReturnFromBattle` picks the map

@@ -12,7 +12,7 @@ Attack would be with another sword, and a battle what a blow does.
 [Battles](../battle/README.md) follows an ability from these tables to its
 damage.
 
-## A row's id is its position, and its name is a message at the same position
+## How one number finds a row and its name
 
 The Healing Ring costs 800 coins, heals like Cure when used, and is called
 "Healing Ring" on screen. Those facts sit in different places, the price in
@@ -20,26 +20,31 @@ the item table and the name in the game's text, and the one thing that joins
 them is a number: the ring is item 265, the 265th row of one list and the
 265th entry of the others.
 
-The definition tables have no id column: an entry's id is its row, the first
-row after the header being entry 0. The same id, added to the number of a
-message, gives the entry's name. An item's name is `MsgItemName` + id and the
+In the code, the definition tables have no id column: an entry's id is its
+row, the first row after the header being entry 0. Every line of the game's
+text is a message with a number, and the same id, added to the number of a
+table's first message, gives the entry's name. An item's name is `MsgItemName` + id and the
 line the Item screen shows about it `MsgItemPlainName` + id; an enemy's name
 is `MsgEnemyName` + id, an ability's `MsgAbilityName` + id and its
 description `MsgAbilityDescription` + id, and a Djinni's `MsgDjinnName` + its
 row, which is also its ability, `ABILITY_DJINNI_FIRST` + row. Code reaches a
 name by adding (`itemId + MsgItemName` in the shops and menus).
 
-The tables and the message catalogs are therefore parallel lists tied only by
-position. A row inserted into `items.tsv` would give every later item the
-name of the one after it unless all six catalogs gained a message at the same
-place, and rows no item uses keep their places. The Healing Ring is on line
+The tables and the message catalogs (the game's text, one catalog for each
+of the six languages) are therefore parallel lists tied only by position. A
+row inserted into `items.tsv` would give every later item the name of the
+one after it unless all six catalogs gained a message at the same place, and
+rows no item uses keep their places. The Healing Ring is on line
 267 of `items.tsv`, so it is item 265; its name is message 651 and its line
 "Ring: Use to restore 70 HP".
 
-Each `.tsv` header names its columns as `name:type`: `u8`, `s8`, `u16`,
-`s16`, `u32` and `s32` are bytes of that size and sign, and `strN` is text
-of up to N bytes. The build writes a `.table` beside each `.tsv`, and its
-`.s` places it under its symbol. A column without a type (`item`, `ability`,
+Each table is a text file of tab-separated columns (`.tsv`) that the build
+turns into the bytes the game reads. Its header line gives each column a
+name and says how much room the column takes, written `name:type`: `u8` is
+one byte holding a number from 0 up, `s8` one byte that may be negative,
+`u16` and `s16` two bytes, `u32` and `s32` four, and `strN` is text of up to
+N bytes. The build writes a `.table` beside each `.tsv`, and the matching
+`.s` file places it in the game under its symbol, the name code uses for it. A column without a type (`item`, `ability`,
 `djinni`, `enemy`) is a label for readers and builds no bytes: the English
 name its message gives, `?` or `=` where the message marks the row unused,
 or `(no name message)` for a row past the last name. `reserved_` and `pad_`
@@ -73,10 +78,14 @@ equip it, what it adds to Attack or Defense, and what using it does.
 
 ![The Long Sword's row of the item table, read column by column. Its price, 200, is what a shop asks in coins. Its type, a weapon, means a character holds one weapon at a time. Its equip mask has one bit for each of the eight characters, Isaac, Garet, Ivan, Mia, Felix, Jenna, Sheba and Piers; the bits for Isaac, Garet and Felix are set, so they can equip it, and for the others the shop says Can't equip. Its first bonus, 14, is added to Attack while it is equipped, before the character's class multiplies it.](https://alchemy.pascalpixel.com/illustrations/game/item-row.svg)
 
-The row is read as `struct ItemDefinition` (`games/tbs/include/game/item.h`).
-The picture below shows the same row at work in the game.
+In the game, Bilibin's weapon shop lists the Long Sword at 200 coins. Choosing
+who gets it, the hand on Isaac shows his Attack going from 56 with his
+Bandit's Sword to 58, and on Ivan the shop says `Can't equip`.
 
-![The Long Sword's row of `items.tsv`, price 200, type 1, a weapon, flags 0, `equip_mask` `0x13`, Isaac, Garet and Felix, icon 1, `primary_bonus` 14 and the rest 0 but element 4, beside four screens. In Bilibin's weapon shop the Buy list shows it at 200 coins; choosing who gets it, the hand on Isaac shows his Attack going from 56 with his Bandit's Sword to 58, and on Ivan the shop says `Can't equip`; once bought and equipped, the Item screen lists it among Isaac's items with its sword icon and his Attack at 58.](https://alchemy.pascalpixel.com/guides/game/item-row.png)
+In the code, the row is read as `struct ItemDefinition`
+(`games/tbs/include/game/item.h`). The Long Sword's row reads price 200, type
+1 (a weapon), flags 0, `equip_mask` `0x13`, icon 1, `primary_bonus` 14, and
+element 4, `ELEMENT_NONE`; every other column is 0.
 
 | Column | What it holds |
 | --- | --- |
@@ -118,14 +127,18 @@ The Healing Ring's row shows the pieces together: 800 coins, `type` ring,
 | `ITEM_USE_TEACHES` | 3 | never used: equipped, it teaches its `action_id` as Psynergy |
 | `ITEM_USE_EMPTIES` | 4 | it leaves an Empty Bottle |
 
-## An inventory entry is one halfword
+## What an inventory slot holds
 
 Each character carries up to 15 things, and the Item screen shows for each
 one whether it is equipped, whether it is broken, and how many there are of
 a stackable item such as Herbs. All of that fits in one 16-bit number per
 slot.
 
-![One inventory slot, sixteen bits in four parts. From the left: five bits for how many are stacked, less one; one bit set when the item is broken; one bit set when it is equipped; and nine bits for which item it is. Three Herbs: the count part holds 2, for three, neither broken nor equipped, and the item part holds 180, the Herb. A Long Sword, equipped: the count part holds 0, for just one, the equipped bit is set, and the item part holds 1, the Long Sword. An empty slot is all zeros; a stack grows to 30, and each character has 15 slots.](https://alchemy.pascalpixel.com/illustrations/game/inventory-entry.svg)
+![What an inventory slot holds. Each of a character's slots remembers four things: how many there are, whether the item is broken, whether it is equipped, and which item it is. Three Herbs: three, not broken, not equipped, the Herb. A Long Sword, equipped: one, not broken, equipped, the Long Sword. An empty slot holds nothing at all. A stack grows to 30, and each character has 15 slots.](https://alchemy.pascalpixel.com/illustrations/game/inventory-entry.svg)
+
+In the code, the slot is a halfword, a 16-bit value, split into four parts
+from its highest bit down. How many is kept as one less, so that a single
+item's count part is 0:
 
 ```
 bits 15..11   count less one   (INVENTORY_QUANTITY_SHIFT)
@@ -138,7 +151,9 @@ An item, its state and its count move in one load and one store, and an
 empty slot is 0, which `Inventory_CompactSlots` relies on to close gaps. A
 stack of an `ITEM_STACKABLE` item grows to 30 (`Inventory_AddItem`). Code
 that asks which item a slot holds masks it with `INVENTORY_ITEM_ID_MASK` first, since
-the same item equipped, broken or stacked is a different halfword. The slots
+the same item equipped, broken or stacked is a different halfword. Three
+Herbs, item 180, hold 2 in the count part; an equipped Long Sword, item 1,
+holds 0 there and has the equipped bit set. The slots
 are `BattleUnit.inventory`; `enum InventoryEncoding` in `item.h` names their
 parts, and [game/inventory.c](game/inventory.c) reads and writes them.
 
@@ -153,7 +168,7 @@ parts, and [game/inventory.c](game/inventory.c) reads and writes them.
 | `INVENTORY_QUANTITY_MASK` | `0xf800` | the count less one |
 | `INVENTORY_SLOTS` | 15 | the slots a unit has |
 
-## Stats are recomputed whole
+## Why stats are always worked out from scratch
 
 When the player points at Remove on Isaac's Machete, the status panel shows
 his Attack falling from 24 to 17 before anything is chosen. The game never
@@ -165,8 +180,9 @@ is that same calculation, run on Isaac for a moment and then undone.
 
 ![On the Item screen, the hand picks Isaac's Machete and points at Remove, and the status panel shows his Attack falling from 24 to 17](https://alchemy.pascalpixel.com/guides/game/items.gif)
 
-`Unit_Calculate` ([game/units.c](game/units.c)) works a unit's stats out again
-from its base stats, equipment, set Djinn, class and battle stat levels,
+In the code, each character's stats, HP, PP, items and Djinn are kept in a
+unit, a `struct BattleUnit`. `Unit_Calculate` ([game/units.c](game/units.c))
+works a unit's stats out again from its base stats, equipment, set Djinn, class and battle stat levels,
 clamps each and writes them back, keeping current HP and PP at the same
 fraction of their maximums. It runs after anything that changes an input:
 equipping, setting a Djinni, levelling up, a class change.
@@ -185,9 +201,11 @@ because his class multiplies the sum (in tenths, from its row of
 
 The game remembers what has happened (a chest opened, a Djinni found, a
 scene already played) as yes-or-no flags, 4,096 of them, one bit each, and
-the bytes and nibbles they make up also hold small counters.
+eight flags in a row, read together as a byte, also hold small counters.
 
 ![A flag is one bit. The 4,096 flags are kept in 512 bytes. Flag 48 is set once Flint, the first Venus Djinni, is found: 48 divided by 8 is byte 6, remainder bit 0. Byte 6 holds flags 48 to 55, Flint, Granite and the Venus Djinn after them. All 80 Djinn have flags 48 to 127, 20 to an element in order, so Fizz, the first Mercury Djinni, is flag 68. Eight flags in a row are one byte, so a byte can hold a number: the Battle Arena's wins live there.](https://alchemy.pascalpixel.com/illustrations/game/game-flags.svg)
+
+In the code, a flag's number says where it is kept:
 
 ```
 flag number   bits 11..3   its byte of gGameFlagBytes   (GAME_FLAG_BYTE)
@@ -199,7 +217,7 @@ pick its bit and the next nine its byte; `GAME_FLAG_BYTE` drops the rest, so
 a number past 4,095 wraps onto a lower flag instead of reaching other memory.
 Eight flags from a multiple of 8 are therefore also one byte, which
 `GameFlag_GetByte`, `GameFlag_SetByte` and `GameFlag_IncrementByte` read and
-write whole, and four flags one nibble (`GameFlag_GetNibble`,
+write whole, and four flags one nibble, half a byte (`GameFlag_GetNibble`,
 `GameFlag_SetNibble`). Counters live among the flags this way, such as the
 Battle Arena's win count (`FLAG_MONSTER_BATTLE_WINS`) and a link battle's
 party size (`FLAG_LINK_PARTY_COUNT`), and follow the flags' rules: one in
@@ -245,8 +263,11 @@ and selling or discarding one puts it back (`Item_AdjustCounter`,
 
 ## How it fits with the rest of the game
 
-Other banks call these functions by their `Far` names and overlays through
-their import tables; some code reads `gGameState` directly, as the save
+This code sits in its own part of the main program, the `game` bank. Code
+in the other banks calls its functions by their `Far` names, through the
+table of calls between banks, and a place's overlay through the list of
+outside functions it was built with (its import table); some code reads
+`gGameState`, the record of the game in progress, directly, as the save
 summary does. The battle folder reads `actions.tsv` through
 `struct BattleAct` beside its own `actflags.tsv` and `actstat.tsv`, which
 choose how an ability is drawn ([Battle](../../battle.md)). The flags and the
@@ -280,7 +301,7 @@ units are part of the save file.
 | [`game/djinn.c`](game/djinn.c) | the Djinn: their definitions, setting them, standby and recovery, and counting them |
 | `starting_equipment.c` | the starting items, class and level of the characters who begin a new game equipped: Isaac, Garet, Ivan, Mia and Jenna |
 | `element_curve.s` | `gElement_PowerResistCurve`, the points `Battle_GetElementMultiplier` interpolates between |
-| `*.tsv`, each with the `.s` that places it | the definition tables, listed under [their ids](#a-rows-id-is-its-position-and-its-name-is-a-message-at-the-same-position) |
+| `*.tsv`, each with the `.s` that places it | the definition tables, listed under [their ids](#how-one-number-finds-a-row-and-its-name) |
 
 The prototypes are in `games/tbs/include/unit/game/`. Code in other banks
 calls these functions through the far-call table

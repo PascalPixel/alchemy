@@ -71,9 +71,9 @@ walking resume. Whatever has to keep moving during the cutscene (someone
 walking across the screen, the camera) moves on its own, as an object script
 (below).
 
-A random battle is handled as a way out of the map. The game remembers
-where everyone stood, loads the battle as if it were the next map, and
-afterwards loads the field map again with everyone put back.
+A random battle is handled as a way out of the map, and the map is loaded
+again afterwards with everyone put back ([Running a
+map](../object/README.md#the-map-loop-handles-requests-not-scripts)).
 
 In the code, `Field_RunMap` ([`object/run_map.c`](../object/object/run_map.c))
 runs one map. Its inner loop is the walk: it waits a frame and calls
@@ -381,8 +381,6 @@ pixels and the low 16 bits a fraction, so `0x10000` is one pixel.
 | `WORLD_MAP_RUN_ACCELERATION` | `0x14000` | 1.25 pixels a frame faster each frame, running |
 | `WORLD_MAP_FAST_SPEED` | `0x40000` | 4 pixels a frame, while L repeats |
 | `WORLD_MAP_PROBE_RADIUS` | `0x80000`, `0x70000` | 8 pixels in Japanese, 7 in the international editions |
-| `FIELD_EVENT_WORLD_MAP_PICTURE` | -888 | R on the world map: the world map screen |
-| `FIELD_EVENT_WORLD_MAP_ZOOM` | -889 | L on the world map: zoom the view out |
 
 ## How high a step can go
 

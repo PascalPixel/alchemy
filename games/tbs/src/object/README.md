@@ -24,9 +24,8 @@ folder is, not after the field objects, which belong to Field.
 
 ## The map loop handles requests, not scripts
 
-While the party walks, the game asks once a [frame](../../glossary.md#frame) whether something should
-happen, and when something should, it stops the walk and deals with one
-thing at a time until nothing is left.
+The walk stops only when something asks it to, checked once a [frame](../../glossary.md#frame), and
+the loop then deals with one thing at a time until nothing is left.
 
 Each thing that can stop the walk has a flag of its own, a request: one for
 leaving, one for a battle, one for each button, and so on. Stepping onto a

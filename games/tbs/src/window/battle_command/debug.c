@@ -450,7 +450,7 @@ s32 DebugMenu_BrowseIcons(void) {
 /// Left and Right step one entry, L and R ten; a sprite map entry's portrait
 /// is its value + 128, shown in the second portrait slot's VRAM. Returns 0.
 /// The debug level menu opens it (debug/level.c).
-s32 DebugMenu_BrowseEntryGlyphs(void) {
+s32 DebugMenu_BrowsePortraits(void) {
   struct UiRenderWork *work;
   struct UiWindow *portrait;
   s32 redraw;

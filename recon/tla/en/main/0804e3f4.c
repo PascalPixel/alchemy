@@ -1,5 +1,5 @@
 // Near miss, differ 2 of 180 (one reordered pair), 2026-10-15: The Broken
-// Seal's DebugMenu_BrowseEntryGlyphs with its two devices (the count-derived
+// Seal's DebugMenu_BrowsePortraits with its two devices (the count-derived
 // cancel mask, the slot offset before the loop and the loaded temporary).
 // The name list starts at message 4930 in English ("Master Poi"; 4916 in
 // Japanese, 5433 German, 5397 Spanish, 5390 French and Italian), a pool

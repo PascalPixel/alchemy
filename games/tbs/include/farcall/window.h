@@ -276,7 +276,7 @@ s32 NameEntry_EditOwnerNameFar(s32 entry);
 s32 DebugMenu_BrowseIconsFar(void);
 /// Debug: steps through the character and sprite portrait maps, showing each
 /// entry's portrait and label. Returns 0.
-s32 DebugMenu_BrowseEntryGlyphsFar(void);
+s32 DebugMenu_BrowsePortraitsFar(void);
 /// Shows `The <element> Djinni <name> joined <member>.` while the join fanfare
 /// plays, until it ends or a button is pressed; djinn is the Djinni's number in
 /// its element.

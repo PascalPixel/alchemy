@@ -51,20 +51,38 @@
 #define BROWSER_PAGE_STEP 30 ///< R and L move thirty.
 
 /// The room's actors, numbering the rows of gItemLevelPlacements; the game
-/// names none of them, so each is named for what talking to it does
-/// (gItemLevelEvents).
+/// names none of them, so each is named for what talking to it opens
+/// (gItemLevelEvents), as a render of each talk shows it.
 enum ItemLevelActor {
-  ACTOR_ITEM_BROWSER = ACTOR_FIRST_PLACED, ///< ItemLevel_SelectItem
-  ACTOR_ICON_BROWSER,                      ///< ItemLevel_OpenIconBrowser
-  /// ItemLevel_OpenGlyphBrowser; Force cast at it runs the Force tests.
-  ACTOR_GLYPH_BROWSER,
+  /// ItemLevel_SelectItem.
+  /// ★ Named from what the player sees: `Item No:` over an item's name and
+  /// what equipping it does, with `A:Get Item  B:Return` (its render)
+  ACTOR_ITEM_BROWSER = ACTOR_FIRST_PLACED,
+  /// ItemLevel_OpenIconBrowser.
+  /// ★ Named from what the player sees: a page of 32 item icons headed
+  /// `ITEM PAGE:0` (its render)
+  ACTOR_ICON_BROWSER,
+  /// ItemLevel_OpenPortraitBrowser; Force cast at it runs the Force tests.
+  /// ★ Named from what the player sees: Isaac's portrait over `0 Isaac`, the
+  /// first of the portraits Left and Right step through (its render)
+  ACTOR_PORTRAIT_BROWSER,
   /// ItemLevel_RunLevelEditor, drawn larger than the others.
+  /// ★ Named from what the player sees: `Raise everyone's level.` over the
+  /// leader's name and level, A raising it one and Start five (its render)
   ACTOR_LEVEL_EDITOR,
   /// ItemLevel_SelectAbility; placed outside Japanese only, like the two
   /// emote testers after it.
+  /// ★ Named from what the player sees: `Psy No:` over an ability's name,
+  /// with `B:Return` (its render)
   ACTOR_ABILITY_BROWSER,
-  ACTOR_FIRST_EMOTE_TESTER, ///< ItemLevel_ShowMessageThenEmote
-  ACTOR_SECOND_EMOTE_TESTER ///< ItemLevel_ShowEmoteThenMessage
+  /// ItemLevel_ShowMessageThenEmote.
+  /// ★ Named from what the player sees: a wince over the actor, then its
+  /// message (its render)
+  ACTOR_FIRST_EMOTE_TESTER,
+  /// ItemLevel_ShowEmoteThenMessage.
+  /// ★ Named from what the player sees: an ellipsis over the first tester,
+  /// then the first tester's message (its render)
+  ACTOR_SECOND_EMOTE_TESTER
 };
 
 u8 *ItemLevel_GetEntrances(void) { return (u8 *)gItemLevelEntrances; }
@@ -468,15 +486,15 @@ s32 FieldScene_RunEntrySetup(void) {
 
 #if !TBS_PATCH_1
 /// Runs the Japanese animation test, then moves ACTOR_LEVEL_EDITOR to its test
-/// position. Force cast at ACTOR_GLYPH_BROWSER: it takes ANIMATION_WALK and
+/// position. Force cast at ACTOR_PORTRAIT_BROWSER: it takes ANIMATION_WALK and
 /// ACTOR_LEVEL_EDITOR ANIMATION_SHAKE_HEAD; once
-/// ACTOR_GLYPH_BROWSER's animation has changed, ACTOR_LEVEL_EDITOR moves to
+/// ACTOR_PORTRAIT_BROWSER's animation has changed, ACTOR_LEVEL_EDITOR moves to
 /// (312, 416).
 static void ItemLevel_RunMotionTest(void) {
   Engine_EventStart();
-  Engine_ActorSetAnimation(ACTOR_GLYPH_BROWSER, ANIMATION_WALK);
+  Engine_ActorSetAnimation(ACTOR_PORTRAIT_BROWSER, ANIMATION_WALK);
   Engine_ActorSetAnimation(ACTOR_LEVEL_EDITOR, ANIMATION_SHAKE_HEAD);
-  ObjectMotion_WaitForAnimationChange(ACTOR_GLYPH_BROWSER);
+  ObjectMotion_WaitForAnimationChange(ACTOR_PORTRAIT_BROWSER);
   Actor_SetPosition(ACTOR_LEVEL_EDITOR, PIXELS(312), PIXELS(416));
   Engine_EventEnd();
 }
@@ -484,7 +502,7 @@ static void ItemLevel_RunMotionTest(void) {
 
 #if LANGUAGE != LANGUAGE_JAPANESE
 /// Displays the three character-set caption rows in a debug window. Force cast
-/// at ACTOR_GLYPH_BROWSER, outside Japanese. The window is left open.
+/// at ACTOR_PORTRAIT_BROWSER, outside Japanese. The window is left open.
 static void ItemLevel_ShowGlyphCaptions(void) {
   struct UiWindow *window;
   /* FAKEMATCH(dead): an unread text buffer for the frame's 32 bytes; as no
@@ -498,7 +516,7 @@ static void ItemLevel_ShowGlyphCaptions(void) {
 }
 #endif
 
-/// Keeps Force from moving ACTOR_GLYPH_BROWSER: run at phase 1 of Force cast
+/// Keeps Force from moving ACTOR_PORTRAIT_BROWSER: run at phase 1 of Force cast
 /// at it, this sets the effect's childMode, and Force's shot then leaves its
 /// target where it is (object/psynergy_effects/force.c).
 static void ItemLevel_EnableEffectChildMode(void) {
@@ -511,10 +529,10 @@ static void ItemLevel_EnableEffectChildMode(void) {
 /// ACTOR_ICON_BROWSER.
 static int ItemLevel_OpenIconBrowser(void) { return DebugMenu_BrowseIcons(); }
 
-/// Returns the entry-glyph browser's status to the event dispatcher. Talking
-/// to ACTOR_GLYPH_BROWSER.
-static int ItemLevel_OpenGlyphBrowser(void) {
-  return DebugMenu_BrowseEntryGlyphs();
+/// Returns the portrait browser's status to the event dispatcher. Talking
+/// to ACTOR_PORTRAIT_BROWSER.
+static int ItemLevel_OpenPortraitBrowser(void) {
+  return DebugMenu_BrowsePortraits();
 }
 
 char gItemLevelLvLabel[4] = "Lv";
@@ -557,7 +575,7 @@ u32 gItemLevelExits[] = {
 };
 
 /// The room's actors, in the order of enum ItemLevelActor: the item, icon and
-/// glyph browsers and the level editor; outside Japanese also the ability
+/// portrait browsers and the level editor; outside Japanese also the ability
 /// browser (reachable in English and German only) and the two emote testers.
 // clang-format off
 struct ScenePlacement gItemLevelPlacements[] = {
@@ -598,12 +616,12 @@ struct SceneEvent gItemLevelEvents[] = {
      EVENT_SCRIPT(ItemLevel_SelectItem)},
     {EVENT_TALK, ACTOR_ICON_BROWSER, CONDITION_ALWAYS,
      EVENT_SCRIPT(ItemLevel_OpenIconBrowser)},
-    {EVENT_TALK, ACTOR_GLYPH_BROWSER, CONDITION_ALWAYS,
-     EVENT_SCRIPT(ItemLevel_OpenGlyphBrowser)},
+    {EVENT_TALK, ACTOR_PORTRAIT_BROWSER, CONDITION_ALWAYS,
+     EVENT_SCRIPT(ItemLevel_OpenPortraitBrowser)},
     {EVENT_TALK, ACTOR_LEVEL_EDITOR, CONDITION_ALWAYS,
      EVENT_SCRIPT(ItemLevel_RunLevelEditor)},
 #if !TBS_PATCH_1
-    {PSYNERGY_ON_ACTOR(ABILITY_FORCE), ACTOR_GLYPH_BROWSER, CONDITION_ALWAYS,
+    {PSYNERGY_ON_ACTOR(ABILITY_FORCE), ACTOR_PORTRAIT_BROWSER, CONDITION_ALWAYS,
      EVENT_SCRIPT(ItemLevel_RunMotionTest)},
 #else
 #if !TBS_PATCH_3
@@ -614,11 +632,11 @@ struct SceneEvent gItemLevelEvents[] = {
      EVENT_SCRIPT(ItemLevel_ShowMessageThenEmote)},
     {EVENT_TALK, ACTOR_SECOND_EMOTE_TESTER, CONDITION_ALWAYS,
      EVENT_SCRIPT(ItemLevel_ShowEmoteThenMessage)},
-    {PSYNERGY_ON_ACTOR(ABILITY_FORCE), ACTOR_GLYPH_BROWSER, CONDITION_ALWAYS,
+    {PSYNERGY_ON_ACTOR(ABILITY_FORCE), ACTOR_PORTRAIT_BROWSER, CONDITION_ALWAYS,
      EVENT_SCRIPT(ItemLevel_ShowGlyphCaptions)},
 #endif
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_FORCE, PSYNERGY_PHASE_BEFORE_CAST),
-     ACTOR_GLYPH_BROWSER, CONDITION_ALWAYS,
+     ACTOR_PORTRAIT_BROWSER, CONDITION_ALWAYS,
      EVENT_SCRIPT(ItemLevel_EnableEffectChildMode)},
     {SCENE_EVENTS_END},
 };

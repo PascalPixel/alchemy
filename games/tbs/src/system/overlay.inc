@@ -179,7 +179,7 @@
 	import SaveState_ScanRecordFlags, SaveState_ScanRecordFlagsFar
 	import NameEntry_EditOwnerName, NameEntry_EditOwnerNameFar
 	import DebugMenu_BrowseIcons, DebugMenu_BrowseIconsFar
-	import DebugMenu_BrowseEntryGlyphs, DebugMenu_BrowseEntryGlyphsFar
+	import DebugMenu_BrowsePortraits, DebugMenu_BrowsePortraitsFar
 	import PaletteGlow_Update, PaletteGlow_UpdateFar
 	import Menu_RunConfirmSelection, Menu_RunConfirmSelectionFar
 	import Menu_SelectCoinsOrMedals, Menu_SelectCoinsOrMedalsFar

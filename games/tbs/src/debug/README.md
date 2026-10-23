@@ -101,13 +101,13 @@ on the next visit. Those two calls are the room's whole import table.
 ## The level room
 
 The level room raises the party's levels and browses the game's items, icons,
-letters and abilities.
+portraits and abilities.
 
 The room has no map; its people are the tools. One raises the party's levels,
-others step through every item, icon, letter and ability the game has, and a
+others step through every item, icon, portrait and ability the game has, and a
 few test the emotes and Force.
 
-Actor 8 is the item browser, 9 the icon browser, 10 the glyph browser and 11
+Actor 8 is the item browser, 9 the icon browser, 10 the portrait browser and 11
 the level editor; outside Japanese, 12 is the ability browser and 13 and 14
 test emotes. The level editor shows the leader's name and level under
 `Raise everyone's level.`, and raises the party five levels with Start or
@@ -118,7 +118,7 @@ icon, and gives the chosen item to the first member with room.
 
 The room's event table differs by edition. The ability browser has an event
 only in English and German (`TBS_PATCH_1` without `TBS_PATCH_3`); French,
-Spanish and Italian keep its code and its actor. Force cast at the glyph
+Spanish and Italian keep its code and its actor. Force cast at the portrait
 browser runs a motion test in Japanese and shows the three character-set
 caption rows elsewhere. In every edition a `PSYNERGY_PHASE_BEFORE_CAST` event
 on that actor sets the effect's child mode, so Force's shot leaves it where it
@@ -188,7 +188,7 @@ palette editor that the same debug mode opens is in
 | Overlay | Files | What the room holds |
 | --- | --- | --- |
 | `0x3cc` | `rooms.c` | four Djinn, one of each element |
-| `0x3cd` | `level.c`, `level.h` | level changes for the party; item, icon, glyph and ability browsers; emote and Force tests |
+| `0x3cd` | `level.c`, `level.h` | level changes for the party; item, icon, portrait and ability browsers; emote and Force tests |
 | `0x3ce` | `test.c`, `menu_test.h` | message browsers for every shop, shop and inventory tests, test stock and the name editor |
 | | `entry/<room>.s`, `import/<room>.s` | each room's entry and import tables |
 | | `swatch.png` | the debug palette editor's colour swatches and letters |

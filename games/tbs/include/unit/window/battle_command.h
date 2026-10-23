@@ -250,6 +250,6 @@ void Menu_ReservedNoOp(void);
 void Djinn_SetFoundFlagAndAdd(s32 owner, s32 element, s32 index);
 s32 Menu_RunWorkspaceResultLoop(void);
 s32 DebugMenu_BrowseIcons(void);
-s32 DebugMenu_BrowseEntryGlyphs(void);
+s32 DebugMenu_BrowsePortraits(void);
 
 #endif

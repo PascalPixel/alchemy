@@ -109,7 +109,7 @@ FarCall_WindowTable:
 	overlay_veneer Resource_CopyFixedBlockA
 	overlay_veneer Menu_SetNodeCoordinates
 	export DebugMenu_BrowseIconsFar, DebugMenu_BrowseIcons
-	export DebugMenu_BrowseEntryGlyphsFar, DebugMenu_BrowseEntryGlyphs
+	export DebugMenu_BrowsePortraitsFar, DebugMenu_BrowsePortraits
 	overlay_veneer Item_ReturnTrue
 	export Djinn_ShowJoinedMessageFar, Djinn_ShowJoinedMessage
 	export PaletteGlow_UpdateFar, PaletteGlow_Update

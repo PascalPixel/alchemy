@@ -462,7 +462,7 @@ call the runtime's functions directly, and overlays reach them through the
 runtime bank's far-call table
 ([System](../system/README.md#why-the-program-is-cut-into-banks)), and
 `Game_Run`, which resets the runtime before every scene, is in
-[Field objects](../object/README.md).
+[Running a place](../object/README.md).
 
 ## Limits
 

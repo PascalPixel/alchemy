@@ -176,7 +176,7 @@ the real places call, through the same import tables
 ([System](../system/README.md#how-an-overlay-reaches-the-rest-of-the-game)).
 The selector that reaches them is in [Windows](../window/README.md), and the
 palette editor that the same debug mode opens is in
-[Field objects](../object/README.md).
+[Running a place](../object/README.md).
 
 ## Limits
 

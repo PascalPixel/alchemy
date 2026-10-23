@@ -6,7 +6,7 @@ Everything that makes a place itself is in its own code here: who stands
 where, what each person says, what happens when the party steps on a
 doorstep, searches a jar, or uses an item or Psynergy, and the cutscenes the
 place plays. That code is a scene overlay, loaded when the party arrives and
-replaced when it leaves. [Field objects](../object/README.md) runs the place
+replaced when it leaves. [Running a place](../object/README.md) runs the place
 and asks the overlay what to do; the overlay drives the engine back through
 its import table. Each overlay has a generated page of its own, listed in
 [Places](../field/scenes.s) in story order, with its map and its events.

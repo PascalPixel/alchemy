@@ -1,4 +1,4 @@
-# Field objects
+# Running a place
 
 ![What can stop the walk, in the order the game deals with it. Twelve things can interrupt the walk, and the game checks them from the top of the list down, dealing with the first one it finds and then starting again from the top. Leaving the scene comes first, then an event that something asked for, then a battle. Then the ground: the cell the leader stepped onto, and a ledge or climbing spot pushed against. Then the buttons: A, which becomes talking to someone, searching the spot ahead or the menu; the menu; talking; searching; Psynergy; an item; and Start. When nothing is left, walking resumes.](https://alchemy.pascalpixel.com/illustrations/object/requests.svg)
 
@@ -13,9 +13,14 @@ the world map screen R brings up. The slot machine at Tolbi's spring is here
 too, in another bank.
 
 The engine underneath, which moves everything and draws the maps, is
-[Field](../field/README.md); what happens in each place comes from its own
-code in [Scenes](../scene/README.md). [World](../../world.md) gives the whole
-layer in brief.
+[Field](../field/README.md); the field objects themselves, the 64 slots for
+everything that moves and the scripts they run, are described there under
+[everything that moves runs a
+script](../field/README.md#everything-that-moves-runs-a-script). What happens
+in each place comes from its own code in [Scenes](../scene/README.md).
+[World](../../world.md) gives the whole layer in brief. The folder is named
+`object` after the bank of the program it fills, as each large bank's
+folder is.
 
 ## The scene loop handles requests, not events
 
@@ -34,7 +39,9 @@ changes nothing, and a request an event raises waits until the event has
 finished, so a battle a cutscene asks for starts only after its last line.
 
 In the code, `Field_RunScene` ([`object/run_scene.c`](object/run_scene.c))
-runs one scene. Before the loop it allocates the field work, loads the map,
+runs one scene. Before the loop it allocates the field work (`struct
+FieldWork`, the block of memory that holds the running scene's state: its
+actors, its event table and the requests below), loads the map,
 picks the encounter zones, takes the overlay's events, entrance and
 placements, restores the actors after a battle, and calls the scene's
 initialization, which may take an exit at once. Otherwise it fades the scene
@@ -85,7 +92,9 @@ actor back, sets the saved animation and sprite flags, gives the saved priority
 to the new sprite and puts the new sprite's pointer back.
 
 The requests are fields of the field work, `struct FieldWork`
-(`field_runtime.h`), heap slot `HEAP_SLOT_EVENT`, reached as `gEventWork`.
+(`field_runtime.h`). It is a block borrowed from the heap, the memory the
+engine lends out to whatever runs, under the numbered slot
+`HEAP_SLOT_EVENT`, and is reached as `gEventWork`.
 
 | Name | Value | Meaning |
 | --- | --- | --- |
@@ -104,10 +113,14 @@ starts every so often. The game decides when by filling a counter as the
 leader moves, and which enemies by drawing one of the groups that live on
 that ground.
 
-![How a random battle starts. Each frame the leader moves, a counter fills by a step, and a battle starts when it is full. The step is bigger on ground whose zone has a higher rate, bigger when the party's level is above the zone's, and varies by a random amount drawn again after each battle. There are no battles at all while Cloak is active, on ground with no zone, while a flag turns them off, or with Avoid active where the party's level is above the zone's. When the counter is full, one of the zone's enemy groups is drawn by weight: in the Sol Sanctum's corridor, Vermin one time in six, Bats one in three, Wild Mushrooms one in three, and a mix of the three one in six.](https://alchemy.pascalpixel.com/illustrations/object/encounter-roll.svg)
+![How a random battle starts. Each frame the leader moves, a counter fills by a step, and a battle starts when it is full. Each zone sets how far the party walks between battles: the higher its rate, the smaller the steps. A party above the zone's level adds to the rate, so it meets fewer battles. A random part, drawn again after each battle, varies the gap. There are no battles at all while Cloak is active, on ground with no zone, while a flag turns them off, or with Avoid active where the party's level is above the zone's. When the counter is full, one of the zone's enemy groups is drawn by weight: in the Sol Sanctum's corridor, Vermin one time in six, Bats one in three, Wild Mushrooms one in three, and a mix of the three one in six.](https://alchemy.pascalpixel.com/illustrations/object/encounter-roll.svg)
 
-Each kind of ground belongs to a zone, and a zone says how fast the counter
-fills there and which enemy groups can appear. The step grows with the
+Each kind of ground belongs to a zone, and a zone says how far apart its
+battles are and which enemy groups can appear. A zone's rate is that
+distance: the higher it is, the smaller each step and the longer the walk
+between battles. A party whose average level is above the zone's adds to
+the rate, so a party that has outgrown a place meets its battles less
+often, and with Avoid active meets none there. The step grows with the
 leader's speed, so the counter measures distance walked rather than time. A
 random part of each step is drawn once and kept until the next battle, so
 the gap between battles varies. When the counter is full, one of the zone's
@@ -127,9 +140,13 @@ set, on zone 0, while Cloak is active, or on a zone with rate 0. Otherwise:
 2. A random bias, the halved sum of two differences of random numbers (from
    -65535 to 65535, most often near 0), is drawn once and kept in the field
    work until the next battle, so the distance between battles varies.
-3. The step, which grows with the rate and the bias and is scaled by the speed,
-   is added to `gGameState.encounterSteps`. A battle starts when that reaches
-   `work->encounterThreshold`, 16 in 16.16 fixed point.
+3. The step is `0x100000 * 0x10000` divided by `(rate << 20) + ((rate << 4) -
+   16) * bias` (`Iwram_RatioMulQ14`), so it shrinks as the rate or the bias
+   grows; scaled by the speed, it is added to `gGameState.encounterSteps`. A
+   battle starts when that reaches `work->encounterThreshold`, 16 in 16.16
+   fixed point (whole pixels in the upper 16 bits, fractions in the lower).
+   With no bias, a zone of rate r therefore starts a battle after about
+   16 × r frames of walking at one pixel a frame.
 4. One of the zone's eight enemy groups is drawn by weight, and
    `FieldEffect_SelectBattleCue` picks the music.
 
@@ -137,8 +154,7 @@ There is also no battle while flag 5 (`FLAG_IN_PARTY` for Jenna) is set and her
 experience is above 130. Jenna is in the party only from Vale to the Sol
 Sanctum's eruption, and she joins at level 1 with no experience, so the rule
 ends the Sol Sanctum's random battles once she has fought her way to just
-short of level 4 (158 experience). XXX: likely a cap on how strong the party
-can grow before the journey begins, because the rule can act nowhere else.
+short of level 4 (158 experience). Why is an open question (below).
 
 `Encounter_SelectSceneZones` gives a field scene its zones from
 `gBattle_LocationRules` (`location_rules.s`): the first rule for the scene and
@@ -296,7 +312,8 @@ view 1.6 times as far while L is held. R raises `FIELD_EVENT_WORLD_MAP_PICTURE`,
 and `Map_ShowWorldMap` shows the picture.
 
 `Map_ShowWorldMap` decodes the picture into `gMapCellBuffer`, the map cells'
-scratch memory, and copies it to VRAM; only then does
+scratch memory, and copies it to VRAM, the console's video memory; only then
+does
 [`psynergy_effects/world_map.c`](psynergy_effects/world_map.c) reuse that
 buffer for its own work: the cursor, the markers and the name window. The
 marker task releases its window and VRAM before `Map_LoadAreaGraphics`
@@ -437,6 +454,10 @@ Psynergy the English release gives each; the requests from what the loop does
 with each; the encounter columns from what `Encounter_SelectEnemyGroup`
 computes with them; the zone names in `encounter.tsv` from the places whose
 rules select them.
+
+Random battles stop while Jenna is in the party with more than 130
+experience points. XXX: likely a cap on how strong the party can grow before
+the journey begins, because the rule can act nowhere else.
 
 `Field_CountRequests` adds the requests together (`talk` twice) and tests the
 sum, so a negative event code raised with a positive request can hide both.

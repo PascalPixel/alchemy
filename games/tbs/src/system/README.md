@@ -330,7 +330,7 @@ can build from the names while the matching build keeps the numbers.
 The system folder is the ground the rest stands on. [Runtime](../runtime/README.md)
 copies the resident code into IWRAM at power-on and allocates from the two
 heaps laid out here. The field code loads each scene's overlay by the number
-the scene table gives it ([Field objects](../object/README.md)), and every
+the scene table gives it ([Running a place](../object/README.md)), and every
 overlay in [Scenes](../scene/README.md), [Menus](../menu/README.md) and
 [Debug rooms](../debug/README.md) is built from the entry and import tables
 described here. Code everywhere loads its pictures and maps through the

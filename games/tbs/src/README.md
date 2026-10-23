@@ -199,7 +199,7 @@ a table from its `.tsv`, or a map, under the name the code uses.
 
 The field is split four ways. [Field](field/README.md) is the engine under
 every town, dungeon and the world map: the objects on the map, movement, and
-loading, scrolling and drawing the maps. [Field objects](object/README.md)
+loading, scrolling and drawing the maps. [Running a place](object/README.md)
 runs one scene on that engine, from its set-up to the exit the party leaves
 by, with random encounters, field Psynergy and the commands scene scripts
 use; `Game_Run`, the loop that runs one scene after another, is there too.

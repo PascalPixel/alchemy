@@ -51,7 +51,7 @@ zones in `src/object/encounter.tsv` choose the row.
 | `ENCOUNTER_FLED` | 999 | `Battle_RunEncounter`'s result when the party got away |
 | `ENCOUNTER_PARTY_LOST` | -1 | its result when the party was defeated |
 
-[Field objects](src/object/README.md#random-battles) covers how the field
+[Running a place](src/object/README.md#random-battles) covers how the field
 rolls the encounter, and [Battles](src/battle/README.md#rounds) what
 `Battle_RunEncounter` does from the opening to the spoils.
 

@@ -5,7 +5,7 @@ engine code its scenes use: the object script interpreter (`common/script/`),
 the map's cells and animation (`common/map/`), field objects
 (`common/object/`), events, effects and the camera. In ☀️ the same code is
 spread over [Field](../../../tbs/src/field/README.md) and
-[Field objects](../../../tbs/src/object/README.md), which explain how it
+[Running a place](../../../tbs/src/object/README.md), which explain how it
 works; this page says only what differs here.
 
 ## What differs from ☀️

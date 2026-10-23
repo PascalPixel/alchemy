@@ -874,21 +874,15 @@ void PsynergyMenu_DrawPsynergyIcons(u16 *psynergies) {
 /// PSYNERGY_LIST_ALL.
 s32 PsynergyMenu_CollectActions(struct BattleUnit *unit, u16 *actions,
                                 s32 mode) {
-  /* FAKEMATCH(dead): each entry cleared twice through the byte-offset
-   * pointer, which makes loop.c replace the counter with the pointer as the
-   * ROM does; with a single store, 15 of 129 instructions differ in tbs-en. */
-  s32 clearOffset;
+  s32 clearIndex;
   s32 passCount;
   s32 actionCount;
   s32 slotIndex;
   s32 passIndex;
 
   passCount = (mode != PSYNERGY_LIST_FIELD) ? 4 : 3;
-  for (clearOffset = 62; clearOffset >= 0; clearOffset -= 2) {
-    u16 *q = (u16 *)((u8 *)actions + clearOffset);
-    *q = 0;
-    *q = 0;
-  }
+  for (clearIndex = 0; clearIndex < 32; clearIndex++)
+    actions[clearIndex] = 0;
   actionCount = 0;
 
   // type0c is the Psynergy's field effect. Passes 1 and 2 add nothing.

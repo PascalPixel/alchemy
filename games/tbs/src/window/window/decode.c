@@ -276,7 +276,7 @@ enum {
   MESSAGE_END_NOW = 30,
 };
 
-/// What the decoding effects of UiWork_SetBusyFlags put between characters.
+/// What the decoding effects of Message_SetDecodeFlags put between characters.
 /// Halting speech (haltingSpeech): a short pause before each decoded code; in
 /// English and Japanese not at a line's start or before a kana mark.
 #define ENTRY_NARROW_GAP TEXT_PAUSE_SHORT

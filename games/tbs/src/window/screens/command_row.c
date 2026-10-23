@@ -10,7 +10,7 @@ struct Window *Message_ShowAndWait(s32 message, s32 x, s32 y) {
   struct Window *result;
 
   result = Message_OpenWindow(message, x, y, 1);
-  while (UiWork_IsComplete() == 0)
+  while (TextPrinter_AllFinished() == 0)
     WaitFrames(1);
   return result;
 }

@@ -455,7 +455,7 @@ s32 MainMenu_Run(void) {
   L_ask:
     FieldMessage_Show(MsgSaveAdventureQuestion, 5);
     v7 = FieldYesNo_Ask(1);
-    UiWork_FinalizePendingCore();
+    TextPrinter_CloseFinishedWindows();
     if (v7 == 0) {
       FieldMessage_Show(MsgSaveAdventureQuestion + 1, 1);
       // Marks the file cleared (SaveFileSummary's sendFlag): its data can be
@@ -573,10 +573,10 @@ menu_top:;
       FieldMessage_Show(MsgSaveDataCorrupted, 9);
       FieldMessage_Show(MsgSaveDataCorrupted + 1, 13);
       if (YesNoMenu_Run(1, 0, 0, YES) != YES) {
-        UiWork_FinalizePendingCore();
+        TextPrinter_CloseFinishedWindows();
         goto menu_top;
       }
-      UiWork_FinalizePendingCore();
+      TextPrinter_CloseFinishedWindows();
       if (MainMenu_GetSaveRecoveryBlockMask() != 0) {
         // MsgSaveRecoveryFailed, spelled as MsgSaveDataCorrupted + 2: the ROM
         // adds 2 to the register holding the earlier message's number, and by

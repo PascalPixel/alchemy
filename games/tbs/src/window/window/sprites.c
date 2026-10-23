@@ -125,7 +125,7 @@ s32 Glyph_Draw(struct Window *window, s32 character, s32 x, s32 y, s32 mode) {
 
     if ((u8)output->motion == WINDOW_SPRITE_MOTION_PAGE_ARROW) {
       // The page arrow sits in the window's bottom-right corner. Its picture
-      // is loaded each frame (UiWork_AnimateSpriteSlots) into a VRAM cache
+      // is loaded each frame (WindowSprite_UpdateAll) into a VRAM cache
       // entry of its own, taken here when none is held.
       sprite = SPRITE_CELL(output);
       if (work->glyphResource == NO_GLYPH_RESOURCE)
@@ -166,7 +166,7 @@ done:
 }
 
 // The view is a struct of its own for matching: read through a cast of
-// WindowSprite.link instead, UiWork_AnimateSpriteSlots does not match (578
+// WindowSprite.link instead, WindowSprite_UpdateAll does not match (578
 // instructions become 605), and through WindowSprite itself Window_PutGlyph's
 // position stores move.
 
@@ -467,9 +467,9 @@ void WindowSprite_UpdateScaleAnimation(struct WindowSprite *output) {
 
 /// The per-frame sprite update: moves each sprite that an open window carries
 /// by its animation mode (UI_SPRITE_) and queues it for drawing, at its depth
-/// slot (WindowSprite.sentinel). The last step of UiWork_ProcessAll. While a
+/// slot (WindowSprite.sentinel). The last step of WindowSystem_Update. While a
 /// window swells (WINDOW_EFFECT_SWELL) all its sprites pulse.
-void UiWork_AnimateSpriteSlots(void) {
+void WindowSprite_UpdateAll(void) {
   struct WindowWork *work = WINDOW_WORK;
   struct Window *window = work->windows;
   s32 no;

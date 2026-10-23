@@ -17,7 +17,7 @@
 	.set import.ObjectDispatch_SetSingleChildFlags, 1
 	.set import.Anim_ApplyChildValues, 1
 	.set import.FieldMessage_Show, 1
-	.set import.UiWork_FinalizePendingCore, 1
+	.set import.TextPrinter_CloseFinishedWindows, 1
 	.set import.GameFlag_Test, 1
 	.set import.Engine_GameFlagSet, 1
 	.set import.GameFlag_ClearBit, 1

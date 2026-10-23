@@ -1436,13 +1436,13 @@ static s32 BattleArena_SaveBattleResults(void) {
 
   Sound_PlaySong(MUS_SAVED);
   window = Message_OpenWindow(MsgLobbySavingBattleResults, 5, 4, 1);
-  while (UiWork_IsComplete() == 0)
+  while (TextPrinter_AllFinished() == 0)
     WaitFrames(1);
   Save_ProcessSelectedFile();
   Window_Close(window, 1);
   WaitFrames(1);
   window = Message_OpenWindow(MsgLobbyBattleResultsSaved, 5, 4, 1);
-  while (UiWork_IsComplete() == 0)
+  while (TextPrinter_AllFinished() == 0)
     WaitFrames(1);
   Window_Close(window, 1);
 #ifdef UBFIX
@@ -1458,13 +1458,13 @@ static s32 BattleArena_SaveMonsterBattleResults(void) {
 
   Sound_PlaySong(MUS_SAVED);
   window = Message_OpenWindow(MsgLobbySavingMonsterBattle, 5, 4, 1);
-  while (UiWork_IsComplete() == 0)
+  while (TextPrinter_AllFinished() == 0)
     WaitFrames(1);
   Save_ProcessSelectedFile();
   Window_Close(window, 1);
   WaitFrames(1);
   window = Message_OpenWindow(MsgLobbyMonsterBattleResults, 5, 4, 1);
-  while (UiWork_IsComplete() == 0)
+  while (TextPrinter_AllFinished() == 0)
     WaitFrames(1);
   Window_Close(window, 1);
 #ifdef UBFIX

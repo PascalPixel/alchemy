@@ -60,7 +60,7 @@ s32 Field_UsePsynergy(u32 code) {
     MessageArgument_PushFar(ABILITY_RETREAT, 4);
     FieldMessage_ShowFar(MsgUseAbilityConfirm, 13);
     declined = FieldYesNo_Ask(1); // 0 is yes
-    UiWork_FinalizePendingCoreFar();
+    TextPrinter_CloseFinishedWindowsFar();
     if (declined != 0)
       return 0;
     {

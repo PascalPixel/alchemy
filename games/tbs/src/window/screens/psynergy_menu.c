@@ -109,11 +109,11 @@ s32 BattlePsynergyMenu_Run(s32 unitId, u16 *actions, s32 count) {
           sprites[i].oam.f.tile = glyph;
 
           if ((action->flags & ABILITY_USABLE_IN_BATTLE) == 0) {
-            UiWork_SetParameterNibble(4);
+            Text_SetColor(4);
           } else if (action->ppCost > unit->pp) {
-            UiWork_SetParameterNibble(2);
+            Text_SetColor(2);
           } else if (unit->psySeal != 0) {
-            UiWork_SetParameterNibble(9);
+            Text_SetColor(9);
           }
 
           // The name and cost take BG palette 5 (WindowWork.textPalette).
@@ -121,7 +121,7 @@ s32 BattlePsynergyMenu_Run(s32 unitId, u16 *actions, s32 count) {
           Text_DrawMessageAsTiles(encodedAction + MsgAbilityName, window, 16,
                                   i * 16);
           Text_DrawNumberAtOffset(action->ppCost, 2, window, 104, i * 16);
-          UiWork_SetParameterNibble(15);
+          Text_SetColor(15);
           work->textPalette = 15;
 
           // Element 4 is none: no element icon.

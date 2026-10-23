@@ -305,11 +305,11 @@ void PartyStatus_Draw(s32 flags) {
     s32 current;
 
     if (hp == 0)
-      UiWork_SetParameterNibble(2);
+      Text_SetColor(2);
     else if (hp <= hpMax / 4)
-      UiWork_SetParameterNibble(4);
+      Text_SetColor(4);
     else
-      UiWork_SetParameterNibble(15);
+      Text_SetColor(15);
     // The numbers' tiles take BG palette 14 in the field and 5 in battle
     // (WindowWork.textPalette); the name keeps palette 15.
     work->textPalette = 14;
@@ -320,7 +320,7 @@ void PartyStatus_Draw(s32 flags) {
     work->textPalette = 15;
     Text_DrawStringAtOffset(unit->name, window,
                             (x + i * PARTY_STATUS_COLUMN_WIDTH) * 8, y * 8);
-    UiWork_SetParameterNibble(15);
+    Text_SetColor(15);
     if (unit->hpMax != 0) {
       // A member with any HP left shows at least one pixel of bar.
       current = unit->hp;

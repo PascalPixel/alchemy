@@ -267,10 +267,10 @@ struct Window *BattleDjinnMenu_ShowChangePreview(struct Window *win, s32 owner,
     Window_DrawDividerLine(win, 0, 8, 19, 8);
     // "R: Psynergy Gained" stands out in colour 2 when the Psynergy changes.
     if (gained != 0 || lost != 0)
-      UiWork_SetParameterNibble(2);
+      Text_SetColor(2);
     Text_DrawMessageAsTiles(MsgBattleAdditionalPsynergyHelp, win,
                             DJINN_PREVIEW_HELP_X, 64);
-    UiWork_SetParameterNibble(15);
+    Text_SetColor(15);
   }
 
   if (page > 0) {
@@ -297,11 +297,11 @@ struct Window *BattleDjinnMenu_ShowChangePreview(struct Window *win, s32 owner,
       Ui_CreateOutputFromResourceSlot(win, 0, visibleRow * 16 - 4,
                                       changedAbilities[i] & ACTION_ID_MASK);
       if ((changedAbilities[i] & DJINN_PREVIEW_ABILITY_GAINED) != 0)
-        UiWork_SetParameterNibble(4);
+        Text_SetColor(4);
       else if ((changedAbilities[i] & DJINN_PREVIEW_ABILITY_LOST) != 0)
-        UiWork_SetParameterNibble(2);
+        Text_SetColor(2);
       else
-        UiWork_SetParameterNibble(15);
+        Text_SetColor(15);
 
       Text_DrawMessageAsTiles((changedAbilities[i] & ACTION_ID_MASK) +
                                   MsgAbilityName,
@@ -314,19 +314,19 @@ struct Window *BattleDjinnMenu_ShowChangePreview(struct Window *win, s32 owner,
     }
 
     if (gained != 0) {
-      UiWork_SetParameterNibble(4);
+      Text_SetColor(4);
       Text_DrawMessageAsTiles(MsgPsynergyGained, win, 32, 80);
       summaryRows = 1;
     }
     if (lost != 0) {
-      UiWork_SetParameterNibble(2);
+      Text_SetColor(2);
       Text_DrawMessageAsTiles(MsgPsynergyLost, win, 32, summaryRows * 8 + 80);
       summaryRows++;
     }
     if (summaryRows == 0)
       Text_DrawMessageAsTiles(MsgPsynergyUnchanged, win, 32, 80);
-    UiWork_SetParameterNibble(15);
-    UiWork_SetParameterNibble(15);
+    Text_SetColor(15);
+    Text_SetColor(15);
     Window_DrawDividerLine(win, 0, 10, 19, 10);
   }
 

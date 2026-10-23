@@ -640,7 +640,7 @@ void DjinnMenu_DrawElementList(struct DjinnListTable *table) {
         // Colour 2 when not set; colour 4 over it when it is neither set nor
         // ready to set, that is recovering (or held by a summon).
         if ((entries[listIndex] & DJINN_ENTRY_IS_SET) == 0)
-          UiWork_SetParameterNibbleFar(2);
+          Text_SetColorFar(2);
         canChangeState = 0;
         if (Djinn_CanSetFar((entries[listIndex] & DJINN_ENTRY_MEMBER) >> 8,
                             (entries[listIndex] & DJINN_ENTRY_ELEMENT) >> 5,
@@ -650,7 +650,7 @@ void DjinnMenu_DrawElementList(struct DjinnListTable *table) {
                            entries[listIndex] & DJINN_ENTRY_INDEX))
           canChangeState = 1;
         if (!canChangeState)
-          UiWork_SetParameterNibbleFar(4);
+          Text_SetColorFar(4);
         Window_SetTilemapEntryFar(
             menu->listWindow,
             ((entries[listIndex] & DJINN_ENTRY_ELEMENT) >> 5) +
@@ -663,7 +663,7 @@ void DjinnMenu_DrawElementList(struct DjinnListTable *table) {
                 (entries[listIndex] & DJINN_ENTRY_INDEX),
             menu->listWindow, row * 56 + 16, lineIndex * 8 + 16);
         lineIndex++;
-        UiWork_SetParameterNibbleFar(TEXT_COLOR_NORMAL);
+        Text_SetColorFar(TEXT_COLOR_NORMAL);
       }
     }
   }
@@ -816,7 +816,7 @@ s32 DjinnMenu_ShowHelp(void) {
         result = DJINN_RESULT_BACK;
         break;
       } else if (gKeysPressed & KEY_A) {
-        if (UiWork_IsCompleteFar()) {
+        if (TextPrinter_AllFinishedFar()) {
           selection++;
           selection = Menu_WrapIndex(selection, 7);
           Sound_PlaySongFar(SE_MENU_CONFIRM);
@@ -1170,7 +1170,7 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
           messageWindow =
               Message_OpenWindowFar(MsgDjinnTutorialRecovery, 9, 9, 1);
           gGameState.messageSpeed = MESSAGE_SPEED_NORMAL;
-          while (UiWork_IsCompleteFar() == 0)
+          while (TextPrinter_AllFinishedFar() == 0)
             WaitFrames(1);
           Window_CloseFar(messageWindow, 1);
           DjinnMenu_DrawElementList(&backdrop->list);
@@ -1178,7 +1178,7 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
           messageWindow =
               Message_OpenWindowFar(MsgDjinnTutorialSetAgain, 9, 9, 1);
           gGameState.messageSpeed = MESSAGE_SPEED_NORMAL;
-          while (UiWork_IsCompleteFar() == 0)
+          while (TextPrinter_AllFinishedFar() == 0)
             WaitFrames(1);
           Window_CloseFar(messageWindow, 1);
           DjinnMenu_DrawElementList(&backdrop->list);
@@ -1197,7 +1197,7 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
         if (backdrop->tutorialTimer == 60) {
           messageWindow = Message_OpenWindowFar(MsgDjinnTutorialGive, 9, 9, 1);
           gGameState.messageSpeed = MESSAGE_SPEED_NORMAL;
-          while (UiWork_IsCompleteFar() == 0)
+          while (TextPrinter_AllFinishedFar() == 0)
             WaitFrames(1);
           Window_CloseFar(messageWindow, 1);
           DjinnMenu_DrawElementList(&backdrop->list);
@@ -1231,7 +1231,7 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
           messageWindow =
               Message_OpenWindowFar(MsgDjinnTutorialSetAfterGive, 9, 9, 1);
           gGameState.messageSpeed = MESSAGE_SPEED_NORMAL;
-          while (UiWork_IsCompleteFar() == 0)
+          while (TextPrinter_AllFinishedFar() == 0)
             WaitFrames(1);
           Window_CloseFar(messageWindow, 1);
           DjinnMenu_DrawElementList(&backdrop->list);
@@ -1261,7 +1261,7 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
           messageWindow =
               Message_OpenWindowFar(MsgDjinnTutorialPowers, 9, 9, 1);
           MenuCursor_Slide(2, 146);
-          while (UiWork_IsCompleteFar() == 0)
+          while (TextPrinter_AllFinishedFar() == 0)
             WaitFrames(1);
           while (!(gKeysPressed & KEY_A)) {
             MenuCursor_Position(2, 146);
@@ -1272,7 +1272,7 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
           WaitFrames(1);
           messageWindow =
               Message_OpenWindowFar(MsgDjinnTutorialUnleash, 9, 9, 1);
-          while (UiWork_IsCompleteFar() == 0)
+          while (TextPrinter_AllFinishedFar() == 0)
             WaitFrames(1);
           while (!(gKeysPressed & KEY_A)) {
             MenuCursor_Position(2, 146);
@@ -1283,7 +1283,7 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
           WaitFrames(1);
           messageWindow =
               Message_OpenWindowFar(MsgDjinnTutorialDemonstrate, 9, 9, 1);
-          while (UiWork_IsCompleteFar() == 0)
+          while (TextPrinter_AllFinishedFar() == 0)
             WaitFrames(1);
           while (!(gKeysPressed & KEY_A)) {
             MenuCursor_Position(2, 146);
@@ -1874,11 +1874,11 @@ s32 DjinnMenu_DrawStatPreview(struct Window *window, s32 x, s32 y, s32 ownerId,
       Icon_CreateWithLoadedResource(window, x * 8, (y + line * 2) * 8 + 4,
                                     actions[first] & PSYNERGY_ABILITY_MASK);
       if (actions[first] & 0x8000)
-        UiWork_SetParameterNibbleFar(4);
+        Text_SetColorFar(4);
       else if (actions[first] & 0x4000)
-        UiWork_SetParameterNibbleFar(2);
+        Text_SetColorFar(2);
       else
-        UiWork_SetParameterNibbleFar(TEXT_COLOR_NORMAL);
+        Text_SetColorFar(TEXT_COLOR_NORMAL);
       Text_DrawMessageAsTilesFar(MsgAbilityName +
                                      (actions[first] & PSYNERGY_ABILITY_MASK),
                                  window, x * 8 + 16, (y + line * 2) * 8 + 8);
@@ -1886,7 +1886,7 @@ s32 DjinnMenu_DrawStatPreview(struct Window *window, s32 x, s32 y, s32 ownerId,
                                  x * 8 + 88, (y + line * 2) * 8 + 8);
       line++;
     }
-    UiWork_SetParameterNibbleFar(TEXT_COLOR_NORMAL);
+    Text_SetColorFar(TEXT_COLOR_NORMAL);
     Text_DrawMessageAsTilesFar(MsgPsynergyPp, window,
                                x * 8 + DJINN_PREVIEW_PP_X, y * 8);
     if (previewMode != 3) {
@@ -1894,13 +1894,13 @@ s32 DjinnMenu_DrawStatPreview(struct Window *window, s32 x, s32 y, s32 ownerId,
 
       lines = 0;
       if (gained) {
-        UiWork_SetParameterNibbleFar(4);
+        Text_SetColorFar(4);
         Text_DrawMessageAsTilesFar(MsgPsynergyGained, window, x * 8,
                                    y * 8 + 88);
         lines = 1;
       }
       if (lost) {
-        UiWork_SetParameterNibbleFar(2);
+        Text_SetColorFar(2);
         Text_DrawMessageAsTilesFar(MsgPsynergyLost, window, x * 8,
                                    (y + lines) * 8 + 88);
         lines++;
@@ -1908,7 +1908,7 @@ s32 DjinnMenu_DrawStatPreview(struct Window *window, s32 x, s32 y, s32 ownerId,
       if (lines == 0)
         Text_DrawMessageAsTilesFar(MsgPsynergyUnchanged, window, x * 8,
                                    y * 8 + 88);
-      UiWork_SetParameterNibbleFar(TEXT_COLOR_NORMAL);
+      Text_SetColorFar(TEXT_COLOR_NORMAL);
       Window_DrawDividerLineFar(window, 0, 11, 13, 11);
     }
     ((struct UiWork *)gWindowWork[0])->dirty = 1;

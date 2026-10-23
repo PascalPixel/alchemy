@@ -382,9 +382,9 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
             conditionWindow = Window_Create(helpColumn, 8, 9, 3, 6);
 #endif
           }
-            UiWork_SetParameterNibble(2);
+            Text_SetColor(2);
             Text_DrawMessageAsTiles(MsgTargetSetDjinni, conditionWindow, 0, 0);
-            UiWork_SetParameterNibble(15);
+            Text_SetColor(15);
             break;
           case TARGET_HINT_HP: {
             s32 anchor;
@@ -631,9 +631,9 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
             if (count != 0)
               break;
           no_condition:
-            UiWork_SetParameterNibble(2);
+            Text_SetColor(2);
             Text_DrawMessageAsTiles(MsgTargetNoEffect, conditionWindow, 0, 0);
-            UiWork_SetParameterNibble(15);
+            Text_SetColor(15);
             break;
           }
         }

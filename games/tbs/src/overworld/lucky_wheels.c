@@ -1083,7 +1083,7 @@ void LuckyWheels_Run(void) {
     Decompress_Type01(entry, tiles);
     Dma_Set(tiles, (void *)LUCKY_WHEELS_JACKPOT_TILES,
             LUCKY_WHEELS_JACKPOT_COPY, REG_DMA3);
-    UiWork_InitializeWithResourceCountersFar();
+    WindowSystem_InitFieldFar();
     LuckyWheels_InitializeTitle();
 
     for (i = 0; i != 5; i++) {

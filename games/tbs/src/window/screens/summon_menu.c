@@ -182,7 +182,7 @@ s32 BattleSummonMenu_Run(s32 unused0, s32 unused1, const u8 *standby) {
             sprites[index].oam.f.tile = glyph;
             // A summon the party cannot afford is drawn in colour 2.
             if (!affordable)
-              UiWork_SetParameterNibble(2);
+              Text_SetColor(2);
             Text_DrawMessageAsTiles(SummonDefinition_Get(id)->abilityId +
                                         MsgAbilityName,
                                     window, 16, index * 16);
@@ -197,7 +197,7 @@ s32 BattleSummonMenu_Run(s32 unused0, s32 unused1, const u8 *standby) {
                 col++;
               }
             }
-            UiWork_SetParameterNibble(15);
+            Text_SetColor(15);
             visibleSummons[index++] = 1;
             if (index <= 3 &&
                 (id = orderedSummons[firstEntry + index]) != SUMMON_END)

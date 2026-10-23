@@ -61,7 +61,7 @@ s32 Map_Run(s32 warpDest) {
   }
   work->mode = mode;
   ObjectSystem_InitializeFar(mode);
-  UiWork_InitializeWithResourceCountersFar();
+  WindowSystem_InitFieldFar();
   Field_ClearRequests();
   work->events = gOverlayArea.events();
   Map_ApplyWarpDest();

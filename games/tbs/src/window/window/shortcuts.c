@@ -349,7 +349,7 @@ UNUSED void Menu_ReleaseSelectionWorkspace(void) {
 
   state = *(struct SelectionWorkspace **)gSelectionWorkspace;
   Window_Close(state->window, 0);
-  while (UiWork_IsIdle(state->window) == 0) {
+  while (Window_IsClosed(state->window) == 0) {
     WaitFrames(1);
   }
   if (state->firstActive != 0) {

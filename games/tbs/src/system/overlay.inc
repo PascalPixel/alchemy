@@ -122,7 +122,7 @@
 	import Message_DecodeRawUnbounded, Message_DecodeRawUnboundedFar
 	import Message_OpenWindow, Message_OpenWindowFar
 	import FieldMessage_Show, FieldMessage_ShowFar
-	import UiWork_IsComplete, UiWork_IsCompleteFar
+	import TextPrinter_AllFinished, TextPrinter_AllFinishedFar
 	import WindowSprite_PrepareForRedraw, WindowSprite_PrepareForRedrawFar
 	import Window_DrawDividerLine, Window_DrawDividerLineFar
 	import Text_DrawMessage, Text_DrawMessageFar
@@ -136,7 +136,7 @@
 	import Portrait_OpenWindow, Portrait_OpenWindowFar
 	import MessageArgument_ClearAll, MessageArgument_ClearAllFar
 	import MessageArgument_Push, MessageArgument_PushFar
-	import UiWork_FinalizePendingCore, UiWork_FinalizePendingCoreFar
+	import TextPrinter_CloseFinishedWindows, TextPrinter_CloseFinishedWindowsFar
 	import FileMenu_SelectAction, FileMenu_SelectActionFar
 	import IconMenu_ChooseSendOption, IconMenu_ChooseSendOptionFar
 	import FieldMessage_ShowCentered, FieldMessage_ShowCenteredFar

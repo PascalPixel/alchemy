@@ -449,7 +449,7 @@ its cells.
   `work->records[n].kind = 0` (`SelectionScreen_Create`, entries 7 and 8).
 - A window sprite is read as `struct SpriteOutput`, whose sprite cell is the
   member `attr`, rather than as `struct WindowSprite` with a cast of `unk10`
-  (`Window_PutGlyph`, `UiWork_AnimateSpriteSlots`).
+  (`Window_PutGlyph`, `WindowSprite_UpdateAll`).
 - A menu cursor whose screens write only the output pointer is a
   `union MenuCursorRef` rather than a struct of the same size, which keeps the
   store order (`OptionMenu_Open`).

@@ -1067,7 +1067,7 @@ void SummaryScreen_DrawStatusAilments(struct Window *window, s32 ownerId,
   }
   // The four element icons, then the Djinn counts and, in mode 1, the
   // elemental levels, Power and Resist.
-  UiWork_SetParameterNibbleFar(TEXT_COLOR_NORMAL);
+  Text_SetColorFar(TEXT_COLOR_NORMAL);
   if (mode == 1 || hasDjinn == 1) {
     Window_SetTilemapEntryFar(window, 1, 15, djinnRow, 4);
     Window_SetTilemapEntryFar(window, 2, 19, djinnRow, 4);
@@ -1140,7 +1140,7 @@ void ItemMenu_DrawMemberStatus(struct Window *window, s32 ownerId, s32 flags) {
   Text_DrawStringAtOffsetFar(unit->name, window, 40, 0);
   Text_DrawMessageAsTilesFar(unit->classId + MsgClassName, window, 0, 32);
   MENU_DRAW_STATUS_LABEL(gMenu_LvString, window, 104, 0);
-  UiWork_SetParameterNibbleFar(TEXT_COLOR_NORMAL);
+  Text_SetColorFar(TEXT_COLOR_NORMAL);
   Text_DrawNumberInWindowFar(unit->level, 2, window, 128, 0);
   MENU_DRAW_STATUS_LABEL(gMenu_HpString, window, 40, 16);
   Text_DrawNumberInWindowFar(unit->hp, 4, window, 72, 16);

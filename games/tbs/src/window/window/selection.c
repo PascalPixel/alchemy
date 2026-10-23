@@ -168,7 +168,7 @@ void SelectionScreen_BuildEntries(u32 unused) {
 
 /// An empty function, reached only through a bare entry of the window
 /// far-call table (system/far_call/WINDOW.S).
-void UiWork_ReservedNoOp(void) {}
+void SelectionScreen_ReservedNoOp(void) {}
 
 /// Returns a free selection icon record of `kind` (enum SelectionIconGroup),
 /// or NULL.
@@ -1399,7 +1399,7 @@ void Resource_ResetPendingTransfer(void) {
 
 /// Runs the field menu until the player picks something that leaves it, and
 /// returns the chosen screen's result. Cancelling the menu returns an
-/// undefined value, the missing result of UiWork_CloseAndRelease (0 under
+/// undefined value, the missing result of PartyStatus_CloseWithMenu (0 under
 /// UBFIX); its one caller, Map_Run, ignores the result. Its case for
 /// command 0, which stores the trigger tile ahead in the event work's
 /// searchCell, is unreachable.
@@ -1427,10 +1427,10 @@ s32 FieldMenu_Run(void) {
 #ifdef UBFIX
     // UB: the original reads a void return. The default result is ignored by
     // the only caller, so give it a defined value after closing the window.
-    UiWork_CloseAndRelease();
+    PartyStatus_CloseWithMenu();
     ret = 0;
 #else
-    ret = UiWork_CloseAndRelease();
+    ret = PartyStatus_CloseWithMenu();
 #endif
 
     // A screen left without a choice (-1, or nonzero from the Djinn screen)
@@ -1485,7 +1485,7 @@ void PartyStatus_OpenAndWait(void) {
 
 /// Closes the party status window, kept in heap block 16 (gPartyStatusWork),
 /// and frees the block.
-void UiWork_CloseAndRelease(void) { PartyStatus_Close(); }
+void PartyStatus_CloseWithMenu(void) { PartyStatus_Close(); }
 
 /// Sets up an empty selection screen and waits a frame.
 /// Nothing calls it.

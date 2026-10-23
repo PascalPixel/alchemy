@@ -49,7 +49,7 @@ flags)` in the first free slot, with its place and size in tiles; it returns
 `NULL` when every slot is taken. Unless it has `WINDOW_FLAG_INSTANT`, it zooms open
 over `WINDOW_OPEN_FRAMES` and closed over `WINDOW_CLOSE_FRAMES`, and its
 slot stays taken until it has closed. The zoom is stepped by
-`UiWork_ProcessDirectWork`, the first step of `UiWork_ProcessAll`, the window
+`Window_UpdateZooms`, the first step of `WindowSystem_Update`, the window
 system's task, which runs once a frame.
 
 The text canvas (`WINDOW_FLAG_TEXT_CANVAS`, at `TEXT_CANVAS_VRAM`) is drawn by the
@@ -58,7 +58,7 @@ instructions; its 120 tiles are exactly the battle message window's text
 area. Tilemap text takes tiles from a run of 128, and the work block's `alt`
 adds a second run of 128 while a screen that needs more is open. Each render
 output (`struct WindowSprite`) is moved every frame by its `UI_SPRITE_` motion
-(`UiWork_AnimateSpriteSlots`), and its picture holds an entry of the VRAM
+(`WindowSprite_UpdateAll`), and its picture holds an entry of the VRAM
 cache, the video memory kept for sprite pictures, until the window code frees
 it with `VramCache_FreeEntry`.
 
@@ -104,7 +104,7 @@ window = Window_Create(x, y, width, height, flags);
 TextPrinter_Add(window, entry, 0, 0, bounds, 0);  // 3. a text printer
 
 // Shop_ShowKeeperMessage (shop/run.c)
-while (UiWork_IsCompleteFar() == 0)
+while (TextPrinter_AllFinishedFar() == 0)
   WaitFrames(1);
 ```
 
@@ -129,7 +129,7 @@ and a longer message is cut off at the ring's length.
 
 A text printer (`struct TextPrinter`) runs the control codes (`TEXT_`).
 `TextPrinter_Add` takes a free text printer and returns `NULL` when all
-three are busy. Each frame, `UiWork_ProcessAll` steps the windows, then the
+three are busy. Each frame, `WindowSystem_Update` steps the windows, then the
 text printers, then the window sprites. Outside battle a text printer types
 as many cells a frame as the player's message speed allows (`message_speed.c`); in
 battle, eight. A message window sizes and places itself to fit its text on

@@ -371,13 +371,13 @@ UNUSED s32 Save_ConfirmAndProcessSelectedFile(void) {
 #endif
 
   Message_OpenWindow(MsgOverwriteConfirm, 8, 12, 2);
-  while (UiWork_IsComplete() == 0) {
+  while (TextPrinter_AllFinished() == 0) {
     WaitFrames(1);
   }
   if (YesNoMenu_Run(1, 0, 0, 1)) {
-    UiWork_FinalizePendingCore();
+    TextPrinter_CloseFinishedWindows();
   } else {
-    UiWork_FinalizePendingCore();
+    TextPrinter_CloseFinishedWindows();
     Sound_PlaySongFar(MUS_SAVED);
     result = Save_ProcessSelectedFile();
     if (result >= 0) {
@@ -460,13 +460,13 @@ s32 Save_EraseSelectedFile(void) {
       result = file;
     } else {
       Message_OpenWindow(MsgEraseConfirm, 8, 1, 2);
-      while (UiWork_IsComplete() == 0) {
+      while (TextPrinter_AllFinished() == 0) {
         WaitFrames(1);
       }
       if (YesNoMenu_Run(1, 0, 3, 1) != 0) {
-        UiWork_FinalizePendingCore();
+        TextPrinter_CloseFinishedWindows();
       } else {
-        UiWork_FinalizePendingCore();
+        TextPrinter_CloseFinishedWindows();
         error = Save_DeleteRecord(file);
         error |= Save_DeleteRecord(file + SAVE_FILE_COUNT);
         if (error != 0) {
@@ -1215,19 +1215,19 @@ s32 Save_ToChosenFile(void) {
     } else {
       if (work->summary[file].level != 0) {
         FieldMessage_Show(MsgOverwriteConfirm, 13);
-        while (UiWork_IsComplete() == 0) {
+        while (TextPrinter_AllFinished() == 0) {
           WaitFrames(1);
         }
         if (YesNoMenu_Run(1, 0, 0, 1) != 0) {
-          UiWork_FinalizePendingCore();
+          TextPrinter_CloseFinishedWindows();
           goto done;
         }
-        UiWork_FinalizePendingCore();
+        TextPrinter_CloseFinishedWindows();
       }
       gSaveSlot = file;
       Sound_PlaySongFar(MUS_SAVED);
       FieldMessage_Show(MsgSaving, 13);
-      while (UiWork_IsComplete() == 0) {
+      while (TextPrinter_AllFinished() == 0) {
         WaitFrames(1);
       }
       Save_BuildFileSummary();
@@ -1235,7 +1235,7 @@ s32 Save_ToChosenFile(void) {
       error = Save_WriteRecord(file, gSaveBuffer);
       error |= Save_WriteRecord(file + SAVE_FILE_COUNT,
                                 gSaveBuffer + SAVE_RECORD_BYTES);
-      UiWork_FinalizePendingCore();
+      TextPrinter_CloseFinishedWindows();
       if (error != 0) {
         FieldMessage_Show(MsgSaveFailed, 1);
         result = SAVE_ERROR_WRITE;

@@ -181,7 +181,7 @@ void Shop_RepairItem(s32 unitId, s32 slot) {
   Shop_DrawMemberItems(shop->itemWindow, unitId);
   MessageArgument_PushFar(itemId, MESSAGE_ARGUMENT_ITEM);
   Shop_ShowKeeperMessageHidingCursor(messageBase + 2);
-  UiWork_FinalizePendingCoreFar();
+  TextPrinter_CloseFinishedWindowsFar();
   // The hammer blows are 110 frames apart; the item stays hidden throughout,
   // 360 frames (six seconds) from the first wait to the last.
   WaitFrames(10);

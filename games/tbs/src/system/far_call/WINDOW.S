@@ -4,8 +4,8 @@
 #include "stub.inc"
 	.global FarCall_WindowTable
 FarCall_WindowTable:
-	export UiWork_InitializeWithResourceCountersFar, UiWork_InitializeWithResourceCounters
-	export UiWork_InitializeFar, UiWork_Initialize
+	export WindowSystem_InitFieldFar, WindowSystem_InitField
+	export WindowSystem_InitBattleFar, WindowSystem_InitBattle
 	export Window_CreateFar, Window_Create
 	export Window_CloseFar, Window_Close
 	export Message_DecodeRawUnboundedFar, Message_DecodeRawUnbounded
@@ -13,9 +13,9 @@ FarCall_WindowTable:
 	export Message_CopyExpandedFar, Message_CopyExpanded
 	export Message_OpenWindowFar, Message_OpenWindow
 	export FieldMessage_ShowFar, FieldMessage_Show
-	export UiWork_IsCompleteFar, UiWork_IsComplete
-	export UiWork_IsIdleFar, UiWork_IsIdle
-	export UiWork_SetBusyFlagsFar, UiWork_SetBusyFlags
+	export TextPrinter_AllFinishedFar, TextPrinter_AllFinished
+	export Window_IsClosedFar, Window_IsClosed
+	export Message_SetDecodeFlagsFar, Message_SetDecodeFlags
 	export WindowSprite_PrepareForRedrawFar, WindowSprite_PrepareForRedraw
 	export Window_ClearInteriorTilesFar, Window_ClearInteriorTiles
 	export Window_DrawDividerLineFar, Window_DrawDividerLine
@@ -27,8 +27,8 @@ FarCall_WindowTable:
 	export Text_DrawNumberFar, Text_DrawNumber
 	export Text_DrawNumberAtOffsetFar, Text_DrawNumberAtOffset
 	export Text_DrawNumberInWindowFar, Text_DrawNumberInWindow
-	export UiWork_SetParameterNibbleFar, UiWork_SetParameterNibble
-	overlay_veneer UiWork_SetRenderWord
+	export Text_SetColorFar, Text_SetColor
+	overlay_veneer Text_SetStyle
 	export WindowSprite_CreateFar, WindowSprite_Create
 	export WindowSprite_CreateFromResourceFar, WindowSprite_CreateFromResource
 	export SideObject_CreateFar, CreateSideObject
@@ -44,8 +44,8 @@ FarCall_WindowTable:
 	export PartyStatus_CreateWindowFar, PartyStatus_CreateWindow
 	export PartyStatus_DrawFar, PartyStatus_Draw
 	export PartyStatus_CloseFar, PartyStatus_Close
-	export UiWork_FinalizePendingCoreFar, UiWork_FinalizePendingCore
-	export UiWork_DrainPendingFar, UiWork_DrainPending
+	export TextPrinter_CloseFinishedWindowsFar, TextPrinter_CloseFinishedWindows
+	export Window_CloseAllFar, Window_CloseAll
 	overlay_veneer SelectionScreen_Create
 	overlay_veneer SelectionScreen_Clear
 	overlay_veneer SelectionScreen_AddEntry
@@ -59,7 +59,7 @@ FarCall_WindowTable:
 	overlay_veneer MenuArrow_NoOpCallbackBank
 	overlay_veneer MenuArrow_NoOpCallback1
 	overlay_veneer SelectionScreen_BuildEntries
-	overlay_veneer UiWork_ReservedNoOp
+	overlay_veneer SelectionScreen_ReservedNoOp
 	export Battle_CollectPartyCommandsFar, Battle_CollectPartyCommands
 	export BattleMessage_ShowAndWaitFar, BattleMessage_ShowAndWait
 	export BattleMessage_OpenFar, BattleMessage_Open

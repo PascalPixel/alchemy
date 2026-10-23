@@ -359,13 +359,13 @@ void Ui_DrawValuePairRows(struct Unit *unit, struct Window *window) {
   Text_DrawNumberRightAligned(value, window, 88, 40);
   value = unit->hp;
   if (value < unit->hpMax >> 2) { // below a quarter of maximum HP
-    UiWork_SetParameterNibbleFar(TEXT_COLOR_LOW_HP);
+    Text_SetColorFar(TEXT_COLOR_LOW_HP);
   }
   if (value == 0) {
-    UiWork_SetParameterNibbleFar(TEXT_COLOR_NO_HP);
+    Text_SetColorFar(TEXT_COLOR_NO_HP);
   }
   Text_DrawNumberRightAligned(value, window, 48, 40);
-  UiWork_SetParameterNibbleFar(TEXT_COLOR_NORMAL);
+  Text_SetColorFar(TEXT_COLOR_NORMAL);
   Text_DrawStringAtOffsetFar(gUi_PpString, window, 0, 48);
   Text_DrawStringInWindowFar((u8 *)gUi_SlashString, window, 48, 48);
   value = unit->pp;
@@ -383,13 +383,13 @@ void Ui_DrawValuePairRows(struct Unit *unit, struct Window *window) {
   Text_DrawNumberInWindowFar(value, 4, window, 56, 40);
   value = unit->hp;
   if (value < unit->hpMax >> 2) { // below a quarter of maximum HP
-    UiWork_SetParameterNibbleFar(TEXT_COLOR_LOW_HP);
+    Text_SetColorFar(TEXT_COLOR_LOW_HP);
   }
   if (value == 0) {
-    UiWork_SetParameterNibbleFar(TEXT_COLOR_NO_HP);
+    Text_SetColorFar(TEXT_COLOR_NO_HP);
   }
   Text_DrawNumberAtOffsetFar(value, 4, window, 16, 40);
-  UiWork_SetParameterNibbleFar(TEXT_COLOR_NORMAL);
+  Text_SetColorFar(TEXT_COLOR_NORMAL);
   Text_DrawStringInWindowFar((u8 *)gUi_PpRowString, window, 0, 48);
   value = unit->pp;
   Text_DrawNumberAtOffsetFar(value, 4, window, 16, 48);
@@ -1287,20 +1287,14 @@ void Menu_EnsureCancelSound(void) {
 
 /// Makes the text drawn after it colour 15 (TEXT_COLOR_NORMAL). Nothing calls
 /// it or the two after it; the status panel sets its colours with
-/// UiWork_SetParameterNibbleFar.
-void WindowPalette_SetColor15(void) {
-  UiWork_SetParameterNibbleFar(TEXT_COLOR_NORMAL);
-}
+/// Text_SetColorFar.
+void WindowPalette_SetColor15(void) { Text_SetColorFar(TEXT_COLOR_NORMAL); }
 
 /// Makes the text drawn after it colour 2 (TEXT_COLOR_NO_HP).
-void WindowPalette_SetColor2(void) {
-  UiWork_SetParameterNibbleFar(TEXT_COLOR_NO_HP);
-}
+void WindowPalette_SetColor2(void) { Text_SetColorFar(TEXT_COLOR_NO_HP); }
 
 /// Makes the text drawn after it colour 4 (TEXT_COLOR_LOW_HP).
-void WindowPalette_SetColor4(void) {
-  UiWork_SetParameterNibbleFar(TEXT_COLOR_LOW_HP);
-}
+void WindowPalette_SetColor4(void) { Text_SetColorFar(TEXT_COLOR_LOW_HP); }
 
 #undef STATUS_PANEL_TEXT_X
 #undef STATUS_PANEL_CANNOT_EQUIP_X

@@ -196,7 +196,7 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
   // 0x296 of palette 15 between the two.
   row = (mode == DJINN_COMPARE_GIVE);
   if ((menu->pairEntries[0] & DJINN_ENTRY_IS_SET) == 0) {
-    UiWork_SetParameterNibbleFar(2);
+    Text_SetColorFar(2);
   }
   Text_DrawMessageAsTilesFar(
       DJINN_ELEMENT(menu->pairEntries[0]) * DJINN_PER_ELEMENT +
@@ -206,11 +206,11 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
                             DJINN_ELEMENT(menu->pairEntries[0]) +
                                 DJINN_ELEMENT_TILE,
                             5, row, zero = 0);
-  UiWork_SetParameterNibbleFar(TEXT_COLOR_NORMAL);
+  Text_SetColorFar(TEXT_COLOR_NORMAL);
 
   if (mode == DJINN_COMPARE_TRADE) {
     if ((menu->pairEntries[1] & DJINN_ENTRY_IS_SET) == 0) {
-      UiWork_SetParameterNibbleFar(2);
+      Text_SetColorFar(2);
     }
     Text_DrawMessageAsTilesFar(
         DJINN_ELEMENT(menu->pairEntries[1]) * DJINN_PER_ELEMENT +
@@ -219,10 +219,10 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
     Window_SetTilemapEntryFar(
         menu->helpWindow,
         DJINN_ELEMENT(menu->pairEntries[1]) + DJINN_ELEMENT_TILE, 5, 2, mode);
-    UiWork_SetParameterNibbleFar(TEXT_COLOR_NORMAL);
+    Text_SetColorFar(TEXT_COLOR_NORMAL);
   } else if (mode - 2 <= 1) {
     if ((menu->pairEntries[0] & DJINN_ENTRY_IS_SET) != 0) {
-      UiWork_SetParameterNibbleFar(2);
+      Text_SetColorFar(2);
     }
     Text_DrawMessageAsTilesFar(
         DJINN_ELEMENT(menu->pairEntries[0]) * DJINN_PER_ELEMENT +
@@ -231,7 +231,7 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
     Window_SetTilemapEntryFar(
         menu->helpWindow,
         DJINN_ELEMENT(menu->pairEntries[0]) + DJINN_ELEMENT_TILE, 5, 2, zero);
-    UiWork_SetParameterNibbleFar(TEXT_COLOR_NORMAL);
+    Text_SetColorFar(TEXT_COLOR_NORMAL);
     Window_SetTilemapEntryFar(menu->helpWindow, 0xf296, 7, 1, zero);
   }
 
@@ -282,7 +282,7 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
           } while (0);
           MenuCursor_Slide(2, 96);
           gGameState.messageSpeed = MESSAGE_SPEED_NORMAL;
-          while (UiWork_IsCompleteFar() == 0) {
+          while (TextPrinter_AllFinishedFar() == 0) {
             WaitFrames(1);
           }
           Window_CloseFar(window, 1);
@@ -315,7 +315,7 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
           } while (0);
           MenuCursor_Slide(106, 56);
           gGameState.messageSpeed = MESSAGE_SPEED_NORMAL;
-          while (UiWork_IsCompleteFar() == 0) {
+          while (TextPrinter_AllFinishedFar() == 0) {
             WaitFrames(1);
           }
           Window_CloseFar(window, 1);

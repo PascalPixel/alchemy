@@ -317,7 +317,7 @@ void Text_DrawWideStringAtOffset(u16 *text, struct Window *window, s32 x,
         text++;
         break;
       case TEXT_COLORS_RESET:
-        UiWork_ResetCounters();
+        Text_ResetStyle();
         break;
       case TEXT_NEWLINE:
         x = lineStartX;

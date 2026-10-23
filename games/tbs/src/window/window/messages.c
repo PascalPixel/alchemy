@@ -127,7 +127,7 @@ s32 *Runtime_ClearWordIfSet(s32 *p) {
 /// for. Channel references are cleared only after their windows finish
 /// closing. Reached from the debug message viewer (DebugBattle_ViewMessages,
 /// battle/battle/debug.c).
-void UiWork_DrainPending(s32 unused) {
+void Window_CloseAll(s32 unused) {
   struct WindowWork *uw;
   struct TextPrinter *ch;
   struct Window *win;
@@ -326,7 +326,7 @@ s32 Text_CheckTextDismissed(struct TextPrinter *channel) {
 /// Closes each text printer's window whose text has ended, then waits ten
 /// frames. It does not wait for the zooms to finish, and leaves windows still
 /// typing open.
-void UiWork_FinalizePendingCore(void) {
+void TextPrinter_CloseFinishedWindows(void) {
   s32 i;
   struct TextPrinter *ch;
   struct Window *work;
@@ -381,11 +381,11 @@ void FieldMessage_ShowCentered(s32 message, s32 mode, s32 yOffset) {
     if (TextPrinter_Add(messageWindow, entryIndex, 0, 0, 0, 0) == 0)
       Window_Close(messageWindow, 1);
     else {
-      while (UiWork_IsComplete() == 0)
+      while (TextPrinter_AllFinished() == 0)
         WaitFrames(1);
       if (mode != CENTERED_MESSAGE_BARE) {
         Window_Close(messageWindow, 0);
-        while (UiWork_IsIdle(messageWindow) == 0)
+        while (Window_IsClosed(messageWindow) == 0)
           WaitFrames(1);
       } else
         Window_Close(messageWindow, 1);

@@ -14,9 +14,10 @@ struct UiWindowInterpolationScratch {
 
 /// The per-frame window update: steps each window's zoom while it opens or
 /// closes, draws it in full once open, and frees its slot once closed. The
-/// first step of UiWork_ProcessAll. A window opens over 8 frames (frame 7 down
-/// to 0, then the full draw) and closes over 4 (frame 0 up to its duration).
-void UiWork_ProcessDirectWork(void) {
+/// first step of WindowSystem_Update. A window opens over 8 frames (frame 7
+/// down to 0, then the full draw) and closes over 4 (frame 0 up to its
+/// duration).
+void Window_UpdateZooms(void) {
   struct WindowWork *state = WINDOW_WORK;
   struct Window *work = state->windows;
   s32 index = 0;
@@ -229,7 +230,7 @@ void Window_MapTextCanvasTiles(s32 x, s32 y, u32 width, u32 height,
 /// and 0 while one is still typing. The message routines wait on it a frame at
 /// a time; a window whose text has ended counts as finished though it is still
 /// open.
-s32 UiWork_IsComplete(void) {
+s32 TextPrinter_AllFinished(void) {
   struct TextPrinter *ch;
   s32 i;
 
@@ -244,7 +245,7 @@ s32 UiWork_IsComplete(void) {
 /// Returns 1 when a window is fully closed (its slot free), and 0 while it is
 /// open or closing. The slot may since have been taken by a new window, which
 /// then reads as not closed.
-s32 UiWork_IsIdle(struct Window *window) {
+s32 Window_IsClosed(struct Window *window) {
   // Japanese only: a NULL window counts as closed; the other editions read
   // through it.
 #if !TBS_PATCH_1
@@ -259,7 +260,7 @@ s32 UiWork_IsIdle(struct Window *window) {
 /// Resets the text style glyphs are drawn with: colour 15, no outline, line
 /// spacing 10 and letter spacing 9. Window_Create calls it for every new
 /// window, and Text_DrawWideStringAtOffset on TEXT_COLORS_RESET.
-void UiWork_ResetCounters(void) {
+void Text_ResetStyle(void) {
   struct WindowWork *state = WINDOW_WORK;
 
   state->colour = 15;
@@ -271,9 +272,9 @@ void UiWork_ResetCounters(void) {
 
 /// Reserves the glyph sprites' tiles, resets the text style, starts the ring
 /// of decoded text from its beginning and starts the per-frame window update
-/// (UiWork_ProcessAll). Called by the field's setup,
-/// UiWork_InitializeWithResourceCounters.
-void UiWork_InitializeCountersWithResourceAndScheduleRefresh(void) {
+/// (WindowSystem_Update). Called by the field's setup,
+/// WindowSystem_InitField.
+void WindowSystem_StartFieldUpdate(void) {
   struct WindowWork *state = WINDOW_WORK;
   s32 priority;
 
@@ -289,13 +290,14 @@ void UiWork_InitializeCountersWithResourceAndScheduleRefresh(void) {
   // loop's pass.
   priority = 200;
   priority <<= 4;
-  Task_Add(UiWork_ProcessAll, priority);
+  Task_Add(WindowSystem_Update, priority);
 }
 
 /// Resets the text style and starts the per-frame window update
-/// (UiWork_ProcessAll), reserving the glyph sprites' tiles first when
-/// loadGlyphTiles is set. Called by the battle's setup, UiWork_Initialize.
-void UiWork_InitializeCountersAndScheduleRefresh(s32 loadGlyphTiles) {
+/// (WindowSystem_Update), reserving the glyph sprites' tiles first when
+/// loadGlyphTiles is set. Called by the battle's setup,
+/// WindowSystem_InitBattle.
+void WindowSystem_StartBattleUpdate(s32 loadGlyphTiles) {
   struct WindowWork *state = WINDOW_WORK;
   s32 priority;
 
@@ -309,7 +311,7 @@ void UiWork_InitializeCountersAndScheduleRefresh(s32 loadGlyphTiles) {
   state->textBufferEnd = 0;
   priority = 200;
   priority <<= 4;
-  Task_Add(UiWork_ProcessAll, priority);
+  Task_Add(WindowSystem_Update, priority);
 }
 
 /// Closes the battle message window at once, if one is open, and forgets it,
@@ -381,7 +383,7 @@ void BattleMessage_Open(s32 argument) {
 /// typed out.
 void BattleMessage_ShowAndWait(s32 argument) {
   BattleMessage_Open(argument);
-  while (UiWork_IsComplete() == 0)
+  while (TextPrinter_AllFinished() == 0)
     WaitFrames(1);
   WaitFrames(1);
 }
@@ -419,7 +421,7 @@ s32 Message_OpenDecoded(struct Window *window, s32 message) {
 /// characters in English and Japanese. Flags already set stay set: only
 /// Message_OpenWindow clears both, once it has started a message typing,
 /// so they also apply to every message decoded before that.
-void UiWork_SetBusyFlags(s32 flags) {
+void Message_SetDecodeFlags(s32 flags) {
   struct WindowWork *work;
 
   work = WINDOW_WORK;
@@ -538,7 +540,7 @@ void FieldMessage_Show(s32 message, s32 flags) {
   window = Message_OpenWindow(message, x, y, zoom);
 
   if (window != NULL) {
-    while (UiWork_IsComplete() == 0) {
+    while (TextPrinter_AllFinished() == 0) {
       WaitFrames(1);
     }
 
@@ -548,7 +550,7 @@ void FieldMessage_Show(s32 message, s32 flags) {
 
     if (!(flags & 4)) {
       Window_Close(window, zoom);
-      while (UiWork_IsIdle(window) == 0) {
+      while (Window_IsClosed(window) == 0) {
         WaitFrames(1);
       }
     }
@@ -564,8 +566,8 @@ void FieldMessage_Show(s32 message, s32 flags) {
 /// The window system's per-frame callback: windows, then text printers,
 /// then sprite animation. Both setups schedule it in the main loop's pass
 /// (0xc80); nothing here removes it.
-void UiWork_ProcessAll(void) {
-  UiWork_ProcessDirectWork();
+void WindowSystem_Update(void) {
+  Window_UpdateZooms();
   TextPrinter_RunAll();
-  UiWork_AnimateSpriteSlots();
+  WindowSprite_UpdateAll();
 }

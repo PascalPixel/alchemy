@@ -69,7 +69,7 @@ void WindowSprite_InitializeFreeList(void) {
 /// (DebugBattle_ViewMessages), Lucky Dice and Lucky Wheels (LuckyWheels_Run).
 /// The work block (heap slot HEAP_SLOT_WINDOW) lives until the slot is next
 /// allocated; nothing here frees it.
-void UiWork_InitializeWithResourceCounters(void) {
+void WindowSystem_InitField(void) {
   struct WindowWork *work;
 #if TBS_PATCH_1
   volatile u32 fill;
@@ -99,18 +99,18 @@ void UiWork_InitializeWithResourceCounters(void) {
   // upload's order, 0x480, is TASK_PRIORITY_VBLANK: it runs in vertical blank.
   WindowSprite_InitializeFreeList();
   Portrait_ClearSlots();
-  Task_Add(UiWork_UploadDirtyBlocks, 0x480);
-  UiWork_InitializeCountersWithResourceAndScheduleRefresh();
+  Task_Add(WindowSystem_UploadTilemap, 0x480);
+  WindowSystem_StartFieldUpdate();
 }
 
 /// Sets up the window system for battle, as
-/// UiWork_InitializeWithResourceCounters does for the field, and marks the work
+/// WindowSystem_InitField does for the field, and marks the work
 /// block as in battle (battleMode 1). Battle_Run's setup
 /// (battle/battle/encounter.c) passes loadGlyphTiles set only while
 /// FLAG_DJINN_LESSON is set: it reserves the glyph sprites' tiles, which
 /// only windows other than text canvases need. Unlike the field setup it does
 /// not mark the portrait slots free (999): they stay 0 from the clear.
-void UiWork_Initialize(s32 loadGlyphTiles) {
+void WindowSystem_InitBattle(s32 loadGlyphTiles) {
   struct WindowWork *work;
 #if TBS_PATCH_1
   volatile u32 fill;
@@ -120,7 +120,7 @@ void UiWork_Initialize(s32 loadGlyphTiles) {
   // Copies pixel rows 4 to 6 of UI tile src to rows 0 to 2 of tile dst and
   // clears the rest of dst. A 4bpp row is 4 bytes: the copy takes rows 4 to 7
   // (16 bytes from byte 16), and the clear then blanks rows 3 to 7.
-  s32 UiWork_CopyTileTail(u32 sourceTile, u32 destinationTile) {
+  s32 WindowSystem_CopyTileLowerRows(u32 sourceTile, u32 destinationTile) {
     sourceTile &= 0x3ff;
     destinationTile &= 0x3ff;
     Dma_Set(BG_CHAR_BLOCK(0) + sourceTile * TILE_SIZE_4BPP + 16,
@@ -152,12 +152,12 @@ void UiWork_Initialize(s32 loadGlyphTiles) {
                   WINDOW_TILE_PAIR(WINDOW_TILE_BLANK));
 #endif
   WindowSprite_InitializeFreeList();
-  Task_Add(UiWork_UploadDirtyBlocks, 0x480);
-  UiWork_InitializeCountersAndScheduleRefresh(loadGlyphTiles);
+  Task_Add(WindowSystem_UploadTilemap, 0x480);
+  WindowSystem_StartBattleUpdate(loadGlyphTiles);
   // Tiles 128 to 130 take the lower rows of the bottom frame tiles.
-  UiWork_CopyTileTail(WINDOW_TILE_FRAME_BOTTOM_LEFT, 128);
-  UiWork_CopyTileTail(WINDOW_TILE_FRAME_BOTTOM, 129);
-  UiWork_CopyTileTail(WINDOW_TILE_FRAME_BOTTOM_RIGHT, 130);
+  WindowSystem_CopyTileLowerRows(WINDOW_TILE_FRAME_BOTTOM_LEFT, 128);
+  WindowSystem_CopyTileLowerRows(WINDOW_TILE_FRAME_BOTTOM, 129);
+  WindowSystem_CopyTileLowerRows(WINDOW_TILE_FRAME_BOTTOM_RIGHT, 130);
   // Tiles 128 to 130 are also the first three text tiles. Attribute 4 is
   // neither allocated nor shown, but nonzero, so the text tile search skips
   // them and no clear of the shown bits ever frees them.
@@ -173,7 +173,7 @@ void UiWork_Initialize(s32 loadGlyphTiles) {
 /// (four tile rows) marked in the dirty bits to VRAM. Bit 0 marks the whole
 /// tilemap, bits 1 to 5 one band each. Nothing is copied while
 /// holdTilemapUpload holds the upload off.
-void UiWork_UploadDirtyBlocks(void) {
+void WindowSystem_UploadTilemap(void) {
   struct WindowWork *work = WINDOW_WORK;
   u32 bands;
   u8 *src;
@@ -326,7 +326,7 @@ struct Window *Window_Create(s32 x, s32 y, s32 width, s32 height, s32 attrs) {
     found->flags = WINDOW_FLAG_OPEN;
     // Every new window starts the shared text style afresh. The function
     // takes no arguments: x is passed and ignored.
-    UiWork_ResetCounters(x);
+    Text_ResetStyle(x);
     if (attrs & WINDOW_FLAG_TEXT_CANVAS) {
       found->flags |= WINDOW_FLAG_TEXT_CANVAS;
     }
@@ -370,7 +370,7 @@ void Window_WaitZoom(struct Window *window) {
 /// Closes a window: clears its contents and remembers its last rectangle.
 /// With instant set the window is erased and its slot freed at once; otherwise
 /// it zooms closed over four frames first, and its slot stays taken until
-/// UiWork_ProcessDirectWork frees it (UiWork_IsIdle says when). It returns
+/// Window_UpdateZooms frees it (Window_IsClosed says when). It returns
 /// without waiting. Unless the window is a text canvas, its window sprites go
 /// back to the pool at once; a text printer typing into it lets go of it
 /// once it has closed (TextPrinter_RunAll). Does nothing for NULL.
@@ -408,7 +408,7 @@ void Window_Close(struct Window *window, s32 instant) {
     window->previousWidth = zero;
     window->previousHeight = zero;
   } else {
-    // Zoom closed over four frames (UiWork_ProcessDirectWork), from frame 0:
+    // Zoom closed over four frames (Window_UpdateZooms), from frame 0:
     // instant is 0 here.
     window->frame = instant;
     window->duration = WINDOW_CLOSE_FRAMES;

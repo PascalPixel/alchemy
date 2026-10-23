@@ -91,8 +91,8 @@ enum { WINDOW_SPRITE_COUNT = 64 };
 /// printers, the 64 window sprites, and the decoded message and its arguments.
 ///
 /// It is heap slot HEAP_SLOT_WINDOW (gWindowWork), which
-/// UiWork_InitializeWithResourceCounters takes for the field and
-/// UiWork_Initialize for battle; it lasts until the next map change. Its
+/// WindowSystem_InitField takes for the field and
+/// WindowSystem_InitBattle for battle; it lasts until the next map change. Its
 /// size and offsets differ between Japanese and the other editions
 /// (tbs_edition.h's RENDER_ values).
 struct WindowWork {
@@ -148,10 +148,10 @@ struct WindowWork {
   /// pages once the sound is over.
   u8 waitingForSound;
   /// 1 for halting speech: a pause before each character, broken off with an
-  /// ellipsis after the first word (UiWork_SetBusyFlags bit 0).
+  /// ellipsis after the first word (Message_SetDecodeFlags bit 0).
   u8 haltingSpeech;
   /// 1 puts code 222 after certain characters in English and Japanese
-  /// (UiWork_SetBusyFlags bit 1).
+  /// (Message_SetDecodeFlags bit 1).
   u8 spacingAfter;
 };
 

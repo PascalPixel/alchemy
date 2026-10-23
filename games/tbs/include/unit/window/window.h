@@ -46,7 +46,7 @@ enum {
 #define TEXT_CANVAS_SIZE 0xf00
 #define TEXT_CANVAS_FIRST_TILE 0x128
 
-/// The UI tilemap in VRAM (BG screen block 4), which UiWork_UploadDirtyBlocks
+/// The UI tilemap in VRAM (BG screen block 4), which WindowSystem_UploadTilemap
 /// copies the work block's tilemap to.
 #define WINDOW_TILEMAP_VRAM ((u8 *)0x06002000)
 
@@ -101,8 +101,8 @@ enum {
       WINDOW_TILE(0x1a), ///< the left edge meeting a line
   WINDOW_TILE_FRAME_RIGHT_TEE =
       WINDOW_TILE(0x1b), ///< the right edge meeting a line
-  /// In battle, the bottom frame tiles' lower rows, which UiWork_Initialize
-  /// copies to tiles 128 to 130.
+  /// In battle, the bottom frame tiles' lower rows, which
+  /// WindowSystem_InitBattle copies to tiles 128 to 130.
   WINDOW_TILE_BATTLE_FRAME_BOTTOM_LEFT = WINDOW_TILE(0x80),
   WINDOW_TILE_BATTLE_FRAME_BOTTOM = WINDOW_TILE(0x81),
   WINDOW_TILE_BATTLE_FRAME_BOTTOM_RIGHT = WINDOW_TILE(0x82),
@@ -121,7 +121,7 @@ enum {
 #define DMA_COPY16(count) ((DMA_ENABLE << 16) | (count))
 
 /// How a window sprite moves (struct WindowSprite.motion), run each frame
-/// by UiWork_AnimateSpriteSlots. 0 is a free window sprite.
+/// by WindowSprite_UpdateAll. 0 is a free window sprite.
 enum {
   WINDOW_SPRITE_MOTION_STILL = 1,
   WINDOW_SPRITE_MOTION_PAGE_ARROW =
@@ -260,9 +260,9 @@ enum {
 struct WindowSprite *WindowSprite_AcquireFree(void);
 void WindowSprite_ReleaseFree(struct WindowSprite *out);
 void WindowSprite_InitializeFreeList(void);
-void UiWork_InitializeWithResourceCounters(void);
-void UiWork_Initialize(s32 loadGlyphTiles);
-void UiWork_UploadDirtyBlocks(void);
+void WindowSystem_InitField(void);
+void WindowSystem_InitBattle(s32 loadGlyphTiles);
+void WindowSystem_UploadTilemap(void);
 void Window_EraseBorderRect(s32 x, s32 y, u32 width, u32 height);
 void Window_DrawOpened(struct Window *window);
 struct Window *Window_Create(s32 x, s32 y, s32 width, s32 height, s32 attrs);
@@ -294,25 +294,25 @@ void Text_StartCanvasScroll(struct TextPrinter *channel);
 void Text_ScrollCanvasUp(s32 step);
 void TextPrinter_RunAll(void);
 s32 TextPrinter_Step(struct TextPrinter *ch);
-void UiWork_ProcessDirectWork(void);
+void Window_UpdateZooms(void);
 void Window_DrawZoomFrame(void *windowArg, s32 savePosition);
 u16 *Memory_FillHalfwordsDma(u16 *dst, s32 value, s32 count);
 void Window_DrawFrame(s32 x, s32 y, u32 width, u32 height);
 void Window_MapTextCanvasTiles(s32 x, s32 y, u32 width, u32 height,
                                s32 fullWidth);
-s32 UiWork_IsComplete(void);
-s32 UiWork_IsIdle(struct Window *window);
-void UiWork_ResetCounters();
-void UiWork_InitializeCountersWithResourceAndScheduleRefresh(void);
-void UiWork_InitializeCountersAndScheduleRefresh(s32 loadGlyphTiles);
+s32 TextPrinter_AllFinished(void);
+s32 Window_IsClosed(struct Window *window);
+void Text_ResetStyle();
+void WindowSystem_StartFieldUpdate(void);
+void WindowSystem_StartBattleUpdate(s32 loadGlyphTiles);
 void BattleMessage_Close(void);
 void BattleMessage_Open(s32 argument);
 void BattleMessage_ShowAndWait(s32 argument);
 s32 Message_OpenDecoded(struct Window *window, s32 argument);
-void UiWork_SetBusyFlags(s32 flags);
+void Message_SetDecodeFlags(s32 flags);
 struct Window *Message_OpenWindow(s32 message, s32 x, s32 y, u32 packed);
 void FieldMessage_Show(s32 no, s32 flags);
-void UiWork_ProcessAll(void);
+void WindowSystem_Update(void);
 #if LANGUAGE != LANGUAGE_JAPANESE
 s32 Text_DrawGlyphPair(s32 code, u32 *out);
 #else
@@ -348,19 +348,19 @@ s32 Glyph_Draw(struct Window *window, s32 character, s32 x, s32 y, s32 mode);
 void Window_SetTilemapEntry(struct Window *window, s32 value, s32 x, s32 y,
                             u32 mode);
 void WindowSprite_UpdateScaleAnimation(struct WindowSprite *output);
-void UiWork_AnimateSpriteSlots(void);
+void WindowSprite_UpdateAll(void);
 void Message_DecodeRawUnbounded(s32 message, u16 *buf);
 s32 Message_CopyExpanded(s32 key, u16 *destination, u32 capacity);
 void Message_DecodeRaw(s32 message, u16 *text, s32 capacity);
 s32 *Runtime_ClearWordIfSet(s32 *p);
-void UiWork_DrainPending(s32 unused);
+void Window_CloseAll(s32 unused);
 void Window_StepSwellEffect(struct TextPrinter *ch);
 void MessageArgument_ClearAll(void);
 void MessageArgument_Push(u32 value, u32 kind);
 u32 MessageArgument_Lookup(u32 kind, u32 clear);
 s32 Text_CheckPauseSkipped(struct TextPrinter *ch);
 s32 Text_CheckTextDismissed(struct TextPrinter *ch);
-void UiWork_FinalizePendingCore(void);
+void TextPrinter_CloseFinishedWindows(void);
 void FieldMessage_ShowCentered(s32 message, s32 mode, s32 yOffset);
 s32 Message_DecodeMode1(s32 arg0);
 void Message_Find(struct MessageReader *reader, s32 message);
@@ -418,7 +418,7 @@ void SelectionScreen_Create(void);
 void SelectionScreen_Clear(void);
 void SelectionScreen_AddEntry(u32 first, u32 second);
 void SelectionScreen_BuildEntries(u32 unused);
-void UiWork_ReservedNoOp(void);
+void SelectionScreen_ReservedNoOp(void);
 struct SelectionNode *SelectionScreen_FindFreeIcon(s32 kind);
 void SelectionScreen_StartDrawing(void);
 void SelectionScreen_StopDrawing(void);
@@ -463,7 +463,7 @@ void PartyStatus_OpenAndWait(void);
 // The matching build calls this before its void definition and uses the
 // result. FieldMenu_Run keeps that form outside UBFIX.
 #ifdef UBFIX
-void UiWork_CloseAndRelease(void);
+void PartyStatus_CloseWithMenu(void);
 #endif
 void SelectionScreen_CreateEmpty(void);
 u32 Menu_RunSelectionForValue(u32 value);
@@ -517,8 +517,8 @@ void Window_MarkVisibleTextTiles(void);
 void Text_UseExtraTiles(s32 flag);
 void UiRender_ReservedNoOp(void);
 void Window_DrawDividerLine(struct Window *win, u32 x1, u32 y1, u32 x2, u32 y2);
-void UiWork_SetParameterNibble(s32 param);
-void UiWork_SetRenderWord(u16 value);
+void Text_SetColor(s32 param);
+void Text_SetStyle(u16 value);
 void Text_DrawMessage(s32 message, struct Window *window, s32 x, s32 y);
 void Text_DrawMessageAsTiles(s32 message, const struct Window *window,
                              u32 offsetX, u32 offsetY);

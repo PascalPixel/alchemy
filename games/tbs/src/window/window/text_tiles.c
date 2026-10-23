@@ -563,7 +563,7 @@ void Window_DrawDividerLine(struct Window *win, u32 x1, u32 y1, u32 x2,
 /// Sets the text colour (0 to 15) of drawn text. The menus colour the HP
 /// figures with it (menu/menu/common.c, screens/party_status.c), and
 /// set colour 15 back after.
-void UiWork_SetParameterNibble(s32 param) {
+void Text_SetColor(s32 param) {
   struct WindowWork *work = WINDOW_WORK;
 
   work->colour = param & 15;
@@ -572,7 +572,7 @@ void UiWork_SetParameterNibble(s32 param) {
 /// Sets the text style (WindowWork.outline) of drawn text: 1 outlined, 2 to
 /// 5 a motion of glyph sprites. Reached only through a bare entry of the
 /// window far-call table.
-void UiWork_SetRenderWord(u16 value) {
+void Text_SetStyle(u16 value) {
   struct WindowWork *work = WINDOW_WORK;
 
   work->outline = value;

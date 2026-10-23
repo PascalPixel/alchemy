@@ -4,10 +4,10 @@
 /// Sets up the window system for the field and the other screens outside
 /// battle: a fresh work block, a blank tilemap and the per-frame upload and
 /// update callbacks.
-void UiWork_InitializeWithResourceCountersFar(void);
+void WindowSystem_InitFieldFar(void);
 /// Sets up the window system for battle; kind set reserves the glyph sprites'
 /// tiles, which Battle_Run asks for only during the Djinn lesson.
-void UiWork_InitializeFar(s32 kind);
+void WindowSystem_InitBattleFar(s32 kind);
 #ifndef OWN_Window_CreateFar
 /// Opens a window at tile (x, y), width by height tiles, and waits for it to
 /// zoom open unless attrs has WINDOW_FLAG_INSTANT. Returns NULL when every
@@ -15,7 +15,7 @@ void UiWork_InitializeFar(s32 kind);
 struct Window *Window_CreateFar(s32 x, s32 y, s32 width, s32 height, s32 attrs);
 #endif
 /// Clears a window and closes it, at once with release set, else over four
-/// frames without waiting; UiWork_IsIdle says when its slot is free. NULL is
+/// frames without waiting; Window_IsClosed says when its slot is free. NULL is
 /// ignored.
 void Window_CloseFar(struct Window *work, s32 release);
 /// Decodes message into buf with no length limit, so buf must hold the whole
@@ -38,14 +38,14 @@ struct Window *Message_OpenWindowFar(s32 message, s32 x, s32 y, u32 packed);
 void FieldMessage_ShowFar(s32 no, s32 flags);
 /// Returns 1 once every text printer has finished typing its text, even if
 /// its window is still open.
-s32 UiWork_IsCompleteFar(void);
+s32 TextPrinter_AllFinishedFar(void);
 /// Returns 1 once window has closed and freed its slot; a new window in that
 /// slot reads as still open.
-s32 UiWork_IsIdleFar(struct Window *window);
+s32 Window_IsClosedFar(struct Window *window);
 /// Sets the effects the next messages are decoded with until a message window
 /// starts typing: bit 0 makes halting speech, broken off with an ellipsis after
 /// the first word.
-void UiWork_SetBusyFlagsFar(s32 flags);
+void Message_SetDecodeFlagsFar(s32 flags);
 /// Redraws a window's empty frame and releases the sprites it carries, leaving
 /// a text canvas alone.
 void WindowSprite_PrepareForRedrawFar(struct Window *window);
@@ -93,7 +93,7 @@ void Text_DrawNumberInWindowFar(s32 arg0, s32 arg1, struct Window *arg2,
                                 s32 arg3, s32 arg4);
 /// Sets the colour (0 to 15) text is drawn in from now on; the menus colour HP
 /// figures with it and put colour 15 back after.
-void UiWork_SetParameterNibbleFar(s32 param);
+void Text_SetColorFar(s32 param);
 /// Shows the picture in VRAM cache slot as a sprite in a window, (offsetX,
 /// offsetY) pixels in from its inner corner. Returns NULL, releasing the slot,
 /// when every output is in use.
@@ -143,9 +143,9 @@ void PartyStatus_DrawFar(s32 flags);
 void PartyStatus_CloseFar(void);
 /// Closes each message window whose text has ended, then waits ten frames;
 /// windows still typing stay open.
-void UiWork_FinalizePendingCoreFar(void);
+void TextPrinter_CloseFinishedWindowsFar(void);
 /// Closes every window, waiting only for the message windows to finish closing.
-void UiWork_DrainPendingFar(s32 unused);
+void Window_CloseAllFar(s32 unused);
 /// Runs the party's battle commands for a round into out, one per unit in in,
 /// and returns how many it wrote: 1 when the party flees, -1 when the link
 /// fails.

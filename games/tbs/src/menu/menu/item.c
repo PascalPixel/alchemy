@@ -1934,42 +1934,42 @@ void ItemMenu_DrawCommands(const s8 *commandStates, struct Window *window) {
   s32 useState;
   u32 firstCommandMessage;
 
-  UiWork_SetParameterNibbleFar(TEXT_COLOR_NORMAL);
+  Text_SetColorFar(TEXT_COLOR_NORMAL);
   useState = commandStates[ITEM_COMMAND_USE];
   disabled = ITEM_COMMAND_STATE_DISABLED;
   if (useState == disabled)
-    UiWork_SetParameterNibbleFar(TEXT_COLOR_DISABLED);
+    Text_SetColorFar(TEXT_COLOR_DISABLED);
 
   firstCommandMessage = MsgItemCommandUse;
   Text_DrawMessageAsTilesFar(firstCommandMessage, window, 0, 24); // "Use"
-  UiWork_SetParameterNibbleFar(TEXT_COLOR_NORMAL);
+  Text_SetColorFar(TEXT_COLOR_NORMAL);
   if (commandStates[ITEM_COMMAND_EQUIP] == disabled)
-    UiWork_SetParameterNibbleFar(TEXT_COLOR_DISABLED);
+    Text_SetColorFar(TEXT_COLOR_DISABLED);
   Text_DrawMessageAsTilesFar(firstCommandMessage + 1, window,
                              ITEM_COMMAND_TEXT_X,
                              24); // "Equip"
-  UiWork_SetParameterNibbleFar(TEXT_COLOR_NORMAL);
+  Text_SetColorFar(TEXT_COLOR_NORMAL);
   if (commandStates[ITEM_COMMAND_GIVE] == disabled)
-    UiWork_SetParameterNibbleFar(TEXT_COLOR_DISABLED);
+    Text_SetColorFar(TEXT_COLOR_DISABLED);
   Text_DrawMessageAsTilesFar(firstCommandMessage + 2, window, 0,
                              32); // "Give"
-  UiWork_SetParameterNibbleFar(TEXT_COLOR_NORMAL);
+  Text_SetColorFar(TEXT_COLOR_NORMAL);
   if (commandStates[ITEM_COMMAND_DROP] == disabled)
-    UiWork_SetParameterNibbleFar(TEXT_COLOR_DISABLED);
+    Text_SetColorFar(TEXT_COLOR_DISABLED);
   Text_DrawMessageAsTilesFar(firstCommandMessage + 3, window, 80,
                              32); // "Drop"
-  UiWork_SetParameterNibbleFar(TEXT_COLOR_NORMAL);
+  Text_SetColorFar(TEXT_COLOR_NORMAL);
   if (commandStates[ITEM_COMMAND_INSPECT] == disabled)
-    UiWork_SetParameterNibbleFar(TEXT_COLOR_DISABLED);
+    Text_SetColorFar(TEXT_COLOR_DISABLED);
   Text_DrawMessageAsTilesFar(firstCommandMessage + 4, window, 80,
                              24); // "Details"
-  UiWork_SetParameterNibbleFar(TEXT_COLOR_NORMAL);
+  Text_SetColorFar(TEXT_COLOR_NORMAL);
   if (commandStates[ITEM_COMMAND_REMOVE] == disabled)
-    UiWork_SetParameterNibbleFar(TEXT_COLOR_DISABLED);
+    Text_SetColorFar(TEXT_COLOR_DISABLED);
   // "Remove"
   Text_DrawMessageAsTilesFar(firstCommandMessage + 5, window,
                              ITEM_COMMAND_TEXT_X, 32);
-  UiWork_SetParameterNibbleFar(TEXT_COLOR_NORMAL);
+  Text_SetColorFar(TEXT_COLOR_NORMAL);
 }
 
 /// Says how ownerId can use inventoryEntry from the item menu (enum

@@ -670,7 +670,7 @@ s32 PsynergyMenu_DrawShortcuts(struct Window *window, s32 ownerId) {
                                              PSYNERGY_SHORTCUT_MEMBER_SHIFT)
                                      ->name,
                                  window, 80, 8);
-    UiWork_SetParameterNibbleFar(TEXT_COLOR_NORMAL);
+    Text_SetColorFar(TEXT_COLOR_NORMAL);
   } else {
     Text_DrawMessageAsTilesFar(MsgShortcutEmptyR, window, 0, 8);
   }
@@ -746,7 +746,7 @@ s32 PsynergyMenu_DrawShortcuts(struct Window *window, s32 owner) {
         Unit_GetFar(gGameState.secondShortcut >> PSYNERGY_SHORTCUT_MEMBER_SHIFT)
             ->name,
         window, 80, 8);
-    UiWork_SetParameterNibbleFar(TEXT_COLOR_NORMAL);
+    Text_SetColorFar(TEXT_COLOR_NORMAL);
   } else {
     Text_DrawMessageAsTilesFar(MsgShortcutEmptyR, window, 24, 8);
   }
@@ -1036,19 +1036,19 @@ s32 PsynergyMenu_DrawActionPage(struct Window *window, s32 unused,
       ability = Ability_Get(PSYNERGY_ABILITY_MASK & menu->psynergies[cursor]);
 
       if (ability->ppCost > owner->pp) {
-        UiWork_SetParameterNibbleFar(TEXT_COLOR_NO_HP);
+        Text_SetColorFar(TEXT_COLOR_NO_HP);
       } else if (PsynergyMenu_IsActionRestricted(
                      PSYNERGY_ABILITY_MASK & menu->psynergies[cursor]) != 0) {
-        UiWork_SetParameterNibbleFar(TEXT_COLOR_LOW_HP);
+        Text_SetColorFar(TEXT_COLOR_LOW_HP);
       } else {
-        UiWork_SetParameterNibbleFar(TEXT_COLOR_NORMAL);
+        Text_SetColorFar(TEXT_COLOR_NORMAL);
       }
 
       Text_DrawMessageAsTilesFar(
           (PSYNERGY_ABILITY_MASK & menu->psynergies[cursor]) + MsgAbilityName,
           window, PSYNERGY_NAME_X, row * 16 + 8);
       Text_DrawNumberAtOffsetFar(ability->ppCost, 2, window, 104, row * 16 + 8);
-      UiWork_SetParameterNibbleFar(TEXT_COLOR_NORMAL);
+      Text_SetColorFar(TEXT_COLOR_NORMAL);
 
       row++;
       cursor++;

@@ -534,7 +534,7 @@ s32 Menu_AnimateSelectionToEntry(s32 start, s32 command) {
   IconMenu_Center(0x11, ANIMATE_ENTRIES_ROW, 0);
   command = IconMenu_AnimateTo(start, command - 1);
   IconMenu_Close();
-  UiWork_CloseAndRelease();
+  PartyStatus_CloseWithMenu();
   return command;
 }
 

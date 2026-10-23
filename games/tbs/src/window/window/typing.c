@@ -39,7 +39,7 @@ enum {
 /// The per-frame message update: each text printer whose window is fully
 /// open runs its window effect or types more text, and on the text's end marks
 /// the window done (state 1) or closes it. A text printer whose window has
-/// closed is freed here. UiWork_ProcessAll runs it each frame after the
+/// closed is freed here. WindowSystem_Update runs it each frame after the
 /// windows' zooms.
 void TextPrinter_RunAll(void) {
   struct TextPrinter *channel = WINDOW_WORK->printers;

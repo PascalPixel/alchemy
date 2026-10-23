@@ -253,9 +253,9 @@ s32 BattleDjinnMenu_Run(s32 owner, s32 unused) {
                                  (s32)((encodedDjinn & 0xf00) >> 8) + 0x5001, 0,
                                  j * 2, 0);
           if (encodedDjinn & DJINN_ENTRY_RECOVERY_MASK) {
-            UiWork_SetParameterNibble(4);
+            Text_SetColor(4);
           } else if (encodedDjinn & DJINN_ENTRY_STANDBY) {
-            UiWork_SetParameterNibble(2);
+            Text_SetColor(2);
           }
           Text_DrawMessageAsTiles((s32)(((encodedDjinn & 0xf00) >> 8) * 20 +
                                         (encodedDjinn & 0xff)) +
@@ -267,7 +267,7 @@ s32 BattleDjinnMenu_Run(s32 owner, s32 unused) {
                       DJINN_ENTRY_RECOVERY_SHIFT),
                 DJINN_RECOVERY_DIGITS, listWindow, DJINN_RECOVERY_X, j * 16);
           }
-          UiWork_SetParameterNibble(15);
+          Text_SetColor(15);
           j++;
           if (j >= BATTLE_LIST_ROWS) {
             break;

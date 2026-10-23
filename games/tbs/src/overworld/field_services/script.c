@@ -312,7 +312,7 @@ s32 PartyInventory_GiveItem(s32 item, s32 unused) {
       MessageArgument_PushFar(item, 2);
       FieldMessage_ShowFar(MsgWhatWillYouDrop + 1, 5);
       result = FieldYesNo_Ask(1);
-      UiWork_FinalizePendingCoreFar();
+      TextPrinter_CloseFinishedWindowsFar();
       if (result != 0)
         goto retry;
       // "Isaac drops the <item>."
@@ -430,7 +430,7 @@ s32 FieldScript_AskYesNoWithObjectEventAnimation(s32 localId, s32 forceBottom) {
   while (gKeysPressed != 0)
     WaitFrames(1);
 
-  while (UiWork_IsCompleteFar() == 0)
+  while (TextPrinter_AllFinishedFar() == 0)
     WaitFrames(1);
 
   WaitFrames(3);
@@ -454,12 +454,12 @@ s32 FieldScript_AskYesNoWithObjectEventAnimation(s32 localId, s32 forceBottom) {
   if (answer != 0) {
     ObjectEvent_SetModeById(localId, 4);
     Portrait_CloseWindowFar(sprite);
-    UiWork_FinalizePendingCoreFar();
+    TextPrinter_CloseFinishedWindowsFar();
     ObjectEvent_WaitForAnimationEnd(localId, 4);
   } else {
     ObjectEvent_SetModeById(localId, 3);
     Portrait_CloseWindowFar(sprite);
-    UiWork_FinalizePendingCoreFar();
+    TextPrinter_CloseFinishedWindowsFar();
     ObjectEvent_WaitForAnimationEnd(localId, 3);
   }
 

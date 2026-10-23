@@ -448,7 +448,7 @@
 /// (MsgAltinTheWaterBeastsLookedExactlyLike)
 #define FLAG_ALTIN_WATER_BEAST_LEFT 0x8ff
 /// Altin's stone pillar stands in column 22, where Move pushes it. Checked
-/// after every Move (Village_CheckPillarMoved), which clears it if the pillar
+/// after every Move (Altin_CheckPillarMoved), which clears it if the pillar
 /// is anywhere else; the setup puts the pillar back there while it is set.
 /// ★ Named from its area name: Altin
 #define FLAG_ALTIN_PILLAR_MOVED 0x906

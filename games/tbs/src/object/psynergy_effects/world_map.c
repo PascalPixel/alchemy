@@ -92,7 +92,7 @@ void FieldEffect_SetupResourcesAndWindow(void) {
 #endif
   u32 *markerTiles;
   struct WorldMapWork *work;
-  struct ObjectEvent *object;
+  struct ObjectEvent *objectEvent;
   s32 tileAttributes;
   u32 i;
   u32 tile;
@@ -108,7 +108,7 @@ void FieldEffect_SetupResourcesAndWindow(void) {
   // unions change tbs-en setup from 368 to 364 bytes.
   oam = (u32 *)work->markers;
 #endif
-  object = ObjectEvent_GetById(gGameState.selectedObjectEvent);
+  objectEvent = ObjectEvent_GetById(gGameState.selectedObjectEvent);
   work->markerVramBlock = Resource_FindFreeEntry();
   Dma_Fill32(0, markerTiles, WORLD_MAP_MARKER_TILE_BYTES);
   markerTiles[0] = 255;
@@ -145,12 +145,13 @@ void FieldEffect_SetupResourcesAndWindow(void) {
     work->cursorX.fixed = WORLD_MAP_SCREEN_WIDTH << 15;
     work->cursorY.fixed = WORLD_MAP_SCREEN_HEIGHT << 15;
   } else {
-    work->cursorX.fixed = (((object->x.fixed - WORLD_MAP_X_ORIGIN) >> 16) *
+    work->cursorX.fixed = (((objectEvent->x.fixed - WORLD_MAP_X_ORIGIN) >> 16) *
                            WORLD_MAP_SCREEN_WIDTH / WORLD_MAP_WORLD_SIZE)
                           << 16;
-    work->cursorY.fixed = ((object->z.part.pixel * WORLD_MAP_SCREEN_HEIGHT) /
-                           WORLD_MAP_WORLD_SIZE)
-                          << 16;
+    work->cursorY.fixed =
+        ((objectEvent->z.part.pixel * WORLD_MAP_SCREEN_HEIGHT) /
+         WORLD_MAP_WORLD_SIZE)
+        << 16;
   }
   work->cursorVramBlock = Resource_LoadFixedBlockBIntoFreeSlotFar();
   tile = gVramBlockCache[work->cursorVramBlock].offset;

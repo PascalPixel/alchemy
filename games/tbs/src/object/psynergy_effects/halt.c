@@ -180,22 +180,23 @@ void FieldEffect_UpdatePausedObject(union FieldObject *fieldObject) {
 /// Halt resumes the one it stopped before it stops another; the paused
 /// object flickers through random sprite params meanwhile.
 void FieldEffect_PauseObject(s32 objectEventId) {
-  struct ObjectEvent *object;
+  struct ObjectEvent *objectEvent;
   struct AnimationEntry *entry;
 
-  object = ObjectTable_Get(objectEventId);
-  if (object != NULL) {
-    gGameState.pausedUpdate = (u32)object->update;
+  objectEvent = ObjectTable_Get(objectEventId);
+  if (objectEvent != NULL) {
+    gGameState.pausedUpdate = (u32)objectEvent->update;
     gGameState.pausedPose = 0;
-    if (object->spriteStorageKind == 1) {
-      entry = object->sprite->entries[0];
+    if (objectEvent->spriteStorageKind == 1) {
+      entry = objectEvent->sprite->entries[0];
       if (entry != NULL) {
         gGameState.pausedPose = entry->colorMode;
       }
     }
-    object->update = FieldEffect_UpdatePausedObject;
-    object->paused = 1;
-    ObjectDispatch_SetAnimationSpeedFar((struct DispatchObject *)object, 0);
+    objectEvent->update = FieldEffect_UpdatePausedObject;
+    objectEvent->paused = 1;
+    ObjectDispatch_SetAnimationSpeedFar((struct DispatchObject *)objectEvent,
+                                        0);
   }
 }
 
@@ -206,17 +207,18 @@ void FieldEffect_PauseObject(s32 objectEventId) {
 /// object event. Clears gGameState.pausedUpdate and the object's paused field,
 /// and restarts its animation at speed 16.
 void FieldEffect_ResumeObject(s32 objectEventId) {
-  struct ObjectEvent *object = ObjectTable_Get(objectEventId);
-  if (object != 0) {
-    if (object->update == FieldEffect_UpdatePausedObject) {
+  struct ObjectEvent *objectEvent = ObjectTable_Get(objectEventId);
+  if (objectEvent != 0) {
+    if (objectEvent->update == FieldEffect_UpdatePausedObject) {
       struct GameState *state = &gGameState;
-      object->update = (void (*)(union FieldObject *))state->pausedUpdate;
+      objectEvent->update = (void (*)(union FieldObject *))state->pausedUpdate;
       state->pausedUpdate = 0;
-      Animation_ApplyChildValuesFar((struct DispatchObject *)object,
+      Animation_ApplyChildValuesFar((struct DispatchObject *)objectEvent,
                                     state->pausedPose);
     }
-    object->paused = 0;
-    ObjectDispatch_SetAnimationSpeedFar((struct DispatchObject *)object, 16);
+    objectEvent->paused = 0;
+    ObjectDispatch_SetAnimationSpeedFar((struct DispatchObject *)objectEvent,
+                                        16);
   }
 }
 

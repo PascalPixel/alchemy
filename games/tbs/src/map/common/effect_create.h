@@ -12,16 +12,16 @@ UNUSED static void SetEffectRecordMode(struct ObjectEvent *work, s32 mode) {
 
 /// A still, translucent effect in palette 14, at sprite priority 0.
 UNUSED static void *OverlayObject_PrepareObject(s32 x, s32 y, s32 z, s32 type) {
-  struct ObjectEvent *object = Engine_ObjectCreate(type, x, y, z);
+  struct ObjectEvent *objectEvent = Engine_ObjectCreate(type, x, y, z);
 
-  if (object != 0) {
-    object->sprite->image.priority = 0;
-    object->motionFlags = 0;
-    object->collisionFlags = 8;
-    Engine_ObjectEventSetSpriteFlags(object, 0);
-    ObjectGroup_SetChildValue(object, 14);
-    Engine_ObjectSetBlendMode(object, OBJECT_BLEND_TRANSLUCENT);
-    return object;
+  if (objectEvent != 0) {
+    objectEvent->sprite->image.priority = 0;
+    objectEvent->motionFlags = 0;
+    objectEvent->collisionFlags = 8;
+    Engine_ObjectEventSetSpriteFlags(objectEvent, 0);
+    ObjectGroup_SetChildValue(objectEvent, 14);
+    Engine_ObjectSetBlendMode(objectEvent, OBJECT_BLEND_TRANSLUCENT);
+    return objectEvent;
   }
   return 0;
 }
@@ -30,18 +30,18 @@ UNUSED static void *OverlayObject_PrepareObject(s32 x, s32 y, s32 z, s32 type) {
 /// events.
 UNUSED static void *OverlayObject_CreateConfiguredObject(s32 x, s32 y, s32 z,
                                                          s32 type) {
-  struct ObjectEvent *object = Engine_ObjectCreate(type, x, y, z);
+  struct ObjectEvent *objectEvent = Engine_ObjectCreate(type, x, y, z);
 
-  if (object != 0) {
-    object->sprite->image.priority = 1;
-    object->motionFlags = 0;
-    object->collisionFlags = 8;
-    Engine_ObjectEventSetSpriteFlags(object, 0);
-    ObjectGroup_SetChildValue(object, 15);
-    object->priorityFlags =
-        (object->priorityFlags & ~OBJ_EVENT_PRIORITY_AUTOMATIC) |
+  if (objectEvent != 0) {
+    objectEvent->sprite->image.priority = 1;
+    objectEvent->motionFlags = 0;
+    objectEvent->collisionFlags = 8;
+    Engine_ObjectEventSetSpriteFlags(objectEvent, 0);
+    ObjectGroup_SetChildValue(objectEvent, 15);
+    objectEvent->priorityFlags =
+        (objectEvent->priorityFlags & ~OBJ_EVENT_PRIORITY_AUTOMATIC) |
         OBJ_EVENT_PRIORITY_UNDERFOOT;
-    return object;
+    return objectEvent;
   }
   return 0;
 }

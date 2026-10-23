@@ -493,59 +493,59 @@ static s32 TolbiShipInteriors_HasArrived(struct ObjectEvent *objectEvent) {
 /// the step.
 static void
 TolbiShipInteriors_PaceCaptainsQuarters(union FieldObject *fieldObject) {
-  struct ObjectEvent *obj = (struct ObjectEvent *)fieldObject;
+  struct ObjectEvent *objectEvent = (struct ObjectEvent *)fieldObject;
   struct ObjectEvent *captain;
 
   captain = ObjectEvent_GetById(QUARTERS_CAPTAIN);
-  switch ((s16)obj->work) {
+  switch ((s16)objectEvent->work) {
   case 0:
-    obj->facing = FACING_NORTHWEST + FACING_STEP;
-    obj->work++;
-    obj->riseCounter = 0;
+    objectEvent->facing = FACING_NORTHWEST + FACING_STEP;
+    objectEvent->work++;
+    objectEvent->riseCounter = 0;
     break;
   case 2:
-    obj->facing = 0;
-    obj->work++;
-    obj->riseCounter = 0;
+    objectEvent->facing = 0;
+    objectEvent->work++;
+    objectEvent->riseCounter = 0;
     break;
   case 4:
-    ObjectEvent_SetMode(obj, 2);
-    FieldObject_SetPosition(obj, PIXELS(468), PIXELS(32), PIXELS(632));
-    obj->riseBaseY = 60;
-    obj->work++;
+    ObjectEvent_SetMode(objectEvent, 2);
+    FieldObject_SetPosition(objectEvent, PIXELS(468), PIXELS(32), PIXELS(632));
+    objectEvent->riseBaseY = 60;
+    objectEvent->work++;
     break;
   case 5:
-    if (TolbiShipInteriors_HasArrived(obj) != 0) {
-      ObjectEvent_SetMode(obj, 1);
-      obj->riseCounter = 0;
+    if (TolbiShipInteriors_HasArrived(objectEvent) != 0) {
+      ObjectEvent_SetMode(objectEvent, 1);
+      objectEvent->riseCounter = 0;
       if (captain->paused == 0) {
-        obj->riseEnabled = 1;
+        objectEvent->riseEnabled = 1;
       }
-      obj->work++;
+      objectEvent->work++;
     }
     break;
   case 7:
     if (captain->paused == 0) {
-      ObjectEvent_SetMode(obj, 3);
-      obj->riseEnabled = 2;
+      ObjectEvent_SetMode(objectEvent, 3);
+      objectEvent->riseEnabled = 2;
     }
-    obj->work++;
-    obj->riseCounter = 0;
+    objectEvent->work++;
+    objectEvent->riseCounter = 0;
     break;
   case 9:
-    ObjectEvent_SetMode(obj, 2);
-    FieldObject_SetPosition(obj, PIXELS(480), PIXELS(32), PIXELS(600));
-    obj->riseBaseY = 60;
-    obj->work++;
+    ObjectEvent_SetMode(objectEvent, 2);
+    FieldObject_SetPosition(objectEvent, PIXELS(480), PIXELS(32), PIXELS(600));
+    objectEvent->riseBaseY = 60;
+    objectEvent->work++;
     if (captain->paused == 0) {
-      obj->riseEnabled = 3;
+      objectEvent->riseEnabled = 3;
     }
     break;
   case 10:
-    if (TolbiShipInteriors_HasArrived(obj) != 0) {
-      ObjectEvent_SetMode(obj, 1);
-      obj->riseCounter = 0;
-      obj->work++;
+    if (TolbiShipInteriors_HasArrived(objectEvent) != 0) {
+      ObjectEvent_SetMode(objectEvent, 1);
+      objectEvent->riseCounter = 0;
+      objectEvent->work++;
     }
     break;
   case 1:
@@ -553,10 +553,10 @@ TolbiShipInteriors_PaceCaptainsQuarters(union FieldObject *fieldObject) {
   case 6:
   case 8:
   case 11:
-    TolbiShipInteriors_WaitThenAdvance(obj);
+    TolbiShipInteriors_WaitThenAdvance(objectEvent);
     break;
   case 12:
-    obj->work = 0;
+    objectEvent->work = 0;
     break;
   }
 }
@@ -1177,10 +1177,10 @@ enum { KAJA_ROWING_SPEAKER = SPEAKER(ROWING_KAJA, 10) };
 /// Returns 1 when the spot next to the leader in the given sixteenth of a turn
 /// holds no object event and no wall, else 0.
 static s32 TolbiShipInteriors_IsSpotFree(s32 bucket) {
-  struct ObjectEvent *obj = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
+  struct ObjectEvent *objectEvent = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   u32 offset = gTolbiShipInteriors_TurnSteps[bucket];
-  s32 x = obj->x.part.pixel + ((s32)offset >> 16);
-  s32 z = obj->z.part.pixel + (s16)offset;
+  s32 x = objectEvent->x.part.pixel + ((s32)offset >> 16);
+  s32 z = objectEvent->z.part.pixel + (s16)offset;
 
   if (TolbiShipInteriors_FindObjectEventNear(x, z) != 0) {
     return 0;
@@ -1189,10 +1189,10 @@ static s32 TolbiShipInteriors_IsSpotFree(s32 bucket) {
   {
     struct FieldPosition point;
     point.x = x << 16;
-    point.y = obj->y.fixed;
+    point.y = objectEvent->y.fixed;
     point.z = z << 16;
 
-    if (FieldObject_CheckMovementCollision(obj, &point) != 0) {
+    if (FieldObject_CheckMovementCollision(objectEvent, &point) != 0) {
       return 0;
     }
   }
@@ -3041,17 +3041,18 @@ static void TolbiShipInteriors_IntroduceReplacementOarsman(s32 seat) {
 /// it) and retains it for departure scripts.
 static struct ObjectEvent *TolbiShipInteriors_PlaceAnchorCharm(void) {
   s32 set = GameFlag_IsSet(FLAG_MAP_TEMP_00);
-  struct ObjectEvent *object;
+  struct ObjectEvent *objectEvent;
   struct AnimationObject *sprite;
   u8 *buffer;
 
   if (set != 0) {
     return gTolbiShipInteriors_AnchorObject;
   }
-  object = Engine_ObjectCreate(SPRITE_BLANK, 0x1c70000, 0x40000, 0x2200000);
-  object->motionFlags = set;
-  object->retainSpriteCache = 1;
-  sprite = object->sprite;
+  objectEvent =
+      Engine_ObjectCreate(SPRITE_BLANK, 0x1c70000, 0x40000, 0x2200000);
+  objectEvent->motionFlags = set;
+  objectEvent->retainSpriteCache = 1;
+  sprite = objectEvent->sprite;
   sprite->count = set;
   sprite->image.fullColor = 0;
   sprite->image.palette = 0;
@@ -3060,8 +3061,8 @@ static struct ObjectEvent *TolbiShipInteriors_PlaceAnchorCharm(void) {
   Engine_VramLoad(sprite->slot, 128, buffer + 0x400);
   Engine_HeapRelease(17);
   Engine_GameFlagSet(FLAG_MAP_TEMP_00);
-  gTolbiShipInteriors_AnchorObject = object;
-  return object;
+  gTolbiShipInteriors_AnchorObject = objectEvent;
+  return objectEvent;
 }
 
 /// Restores each replacement rower or the original occupant of that seat.

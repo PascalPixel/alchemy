@@ -2393,7 +2393,7 @@ static void AltinPeak_MarkObjectEventTerrainCell(s32 objectEventId) {
 
 /// The mine cart reaches the end of its run: it settles in the middle of its
 /// cell and the party leader jumps off it to the south.
-static void AltinPeak_StopCartAndJumpOff(struct ObjectEvent *object) {
+static void AltinPeak_StopCartAndJumpOff(struct ObjectEvent *objectEvent) {
   s32 x;
   s32 z;
   s32 centerZ;
@@ -2402,24 +2402,24 @@ static void AltinPeak_StopCartAndJumpOff(struct ObjectEvent *object) {
 
   Engine_AudioPlayCue(SE_STOP_SLOT3);
   Engine_AudioPlayCue(SE_232);
-  x = object->x.fixed & 0xfff00000;
+  x = objectEvent->x.fixed & 0xfff00000;
   centerZ = PIXELS(8);
-  z = object->z.fixed & 0xfff00000;
-  object->acceleration = PIXELS(2);
+  z = objectEvent->z.fixed & 0xfff00000;
+  objectEvent->acceleration = PIXELS(2);
   x += centerZ;
   centerZ += z;
-  Engine_ObjectSetPosition(object, x, object->y.fixed, centerZ);
-  FieldObject_WaitForMove(object);
-  object->terrainId = 0;
-  object->x.fixed = x;
-  object->z.fixed = centerZ;
-  object->velocityX = 0;
-  object->velocityZ = 0;
-  ObjectEvent_SetMode(object, 2);
+  Engine_ObjectSetPosition(objectEvent, x, objectEvent->y.fixed, centerZ);
+  FieldObject_WaitForMove(objectEvent);
+  objectEvent->terrainId = 0;
+  objectEvent->x.fixed = x;
+  objectEvent->z.fixed = centerZ;
+  objectEvent->velocityX = 0;
+  objectEvent->velocityZ = 0;
+  ObjectEvent_SetMode(objectEvent, 2);
   Engine_TaskWait(15);
-  ObjectEvent_SetMode(object, 1);
+  ObjectEvent_SetMode(objectEvent, 1);
   Engine_TaskWait(30);
-  sprite = object->sprite;
+  sprite = objectEvent->sprite;
   sprite->count = 1;
   ResourceMetadata_ClearRecord(sprite->entries[1]);
   sprite->entries[1] = NULL;
@@ -2443,7 +2443,7 @@ static void AltinPeak_StopCartAndJumpOff(struct ObjectEvent *object) {
 UNUSED static void AltinPeak_ReservedNoOp(void) {}
 
 /// The cart turns a quarter turn right around the corner it reaches.
-static void AltinPeak_TurnCartRight(struct ObjectEvent *object) {
+static void AltinPeak_TurnCartRight(struct ObjectEvent *objectEvent) {
   struct FieldPosition *point;
   struct FieldPosition position;
   s32 angle;
@@ -2451,14 +2451,15 @@ static void AltinPeak_TurnCartRight(struct ObjectEvent *object) {
   s32 z;
   s32 turnFrame;
 
-  angle = (object->facing + 0x4000) & 0xc000;
+  angle = (objectEvent->facing + 0x4000) & 0xc000;
   point = &position;
-  SET_POSITION(point, object->x.fixed, object->y.fixed, object->z.fixed);
+  SET_POSITION(point, objectEvent->x.fixed, objectEvent->y.fixed,
+               objectEvent->z.fixed);
   FieldVector_AddPolarOffset(PIXELS(24), angle, point);
   x = (point->x + PIXELS(8)) & 0xfff00000;
   z = (point->z + PIXELS(8)) & 0xfff00000;
   angle += 0x8000;
-  ObjectEvent_SetMode(object, 5);
+  ObjectEvent_SetMode(objectEvent, 5);
   turnFrame = 0;
   Engine_AudioPlayCue(SE_184);
   while (turnFrame < 16) {
@@ -2466,9 +2467,9 @@ static void AltinPeak_TurnCartRight(struct ObjectEvent *object) {
     point->x = x;
     point->z = z;
     FieldVector_AddPolarOffset(PIXELS(24), angle, point);
-    object->x.fixed = point->x;
-    object->z.fixed = point->z;
-    object->facing = angle + 0x4000;
+    objectEvent->x.fixed = point->x;
+    objectEvent->z.fixed = point->z;
+    objectEvent->facing = angle + 0x4000;
     Engine_TaskWait(1);
     turnFrame++;
   }
@@ -2476,7 +2477,7 @@ static void AltinPeak_TurnCartRight(struct ObjectEvent *object) {
 }
 
 /// The cart turns a quarter turn left.
-static void AltinPeak_TurnCartLeft(struct ObjectEvent *object) {
+static void AltinPeak_TurnCartLeft(struct ObjectEvent *objectEvent) {
   struct FieldPosition *point;
   struct FieldPosition position;
   s32 angle;
@@ -2484,14 +2485,15 @@ static void AltinPeak_TurnCartLeft(struct ObjectEvent *object) {
   s32 z;
   s32 turnFrame;
 
-  angle = (object->facing - 0x4000) & 0xc000;
+  angle = (objectEvent->facing - 0x4000) & 0xc000;
   point = &position;
-  SET_POSITION(point, object->x.fixed, object->y.fixed, object->z.fixed);
+  SET_POSITION(point, objectEvent->x.fixed, objectEvent->y.fixed,
+               objectEvent->z.fixed);
   FieldVector_AddPolarOffset(PIXELS(24), angle, point);
   x = (point->x + PIXELS(8)) & 0xfff00000;
   z = (point->z + PIXELS(8)) & 0xfff00000;
   angle += 0x8000;
-  ObjectEvent_SetMode(object, 6);
+  ObjectEvent_SetMode(objectEvent, 6);
   turnFrame = 0;
   Engine_AudioPlayCue(SE_184);
   while (turnFrame < 16) {
@@ -2499,9 +2501,9 @@ static void AltinPeak_TurnCartLeft(struct ObjectEvent *object) {
     point->x = x;
     point->z = z;
     FieldVector_AddPolarOffset(PIXELS(24), angle, point);
-    object->x.fixed = point->x;
-    object->z.fixed = point->z;
-    object->facing = angle - 0x4000;
+    objectEvent->x.fixed = point->x;
+    objectEvent->z.fixed = point->z;
+    objectEvent->facing = angle - 0x4000;
     Engine_TaskWait(1);
     turnFrame++;
   }
@@ -2510,14 +2512,14 @@ static void AltinPeak_TurnCartLeft(struct ObjectEvent *object) {
 
 /// The cart rolls over a marked cell: SE_STOP_SLOT3 plays, and SE_184 and
 /// SE_233 follow as its countdown runs out.
-static void AltinPeak_StartCartCountdown(struct ObjectEvent *object) {
-  object->work = 33;
+static void AltinPeak_StartCartCountdown(struct ObjectEvent *objectEvent) {
+  objectEvent->work = 33;
   Engine_AudioPlayCue(SE_STOP_SLOT3);
 }
 
 /// Rolls the cart on by a frame and picks its animation from the terrain ahead
 /// of and behind it: flat, uphill or downhill.
-static void AltinPeak_AdvanceCart(struct ObjectEvent *object) {
+static void AltinPeak_AdvanceCart(struct ObjectEvent *objectEvent) {
   s32 angle = 0xc000;
   s32 radius;
   s16 *timer;
@@ -2526,10 +2528,10 @@ static void AltinPeak_AdvanceCart(struct ObjectEvent *object) {
   s32 ahead;
   s32 behind;
 
-  angle &= object->facing;
-  radius = object->y.fixed / Q16_ONE;
-  radius = gAltinPeak_RollRadii[object->timer - radius + 16];
-  timer = (s16 *)&object->work;
+  angle &= objectEvent->facing;
+  radius = objectEvent->y.fixed / Q16_ONE;
+  radius = gAltinPeak_RollRadii[objectEvent->timer - radius + 16];
+  timer = (s16 *)&objectEvent->work;
   if (*timer != 0) {
     if (--*timer == 20) {
       Engine_AudioPlayCue(SE_184);
@@ -2539,22 +2541,23 @@ static void AltinPeak_AdvanceCart(struct ObjectEvent *object) {
     }
   }
   point = &position;
-  SET_POSITION(point, object->x.fixed, object->y.fixed, object->z.fixed);
+  SET_POSITION(point, objectEvent->x.fixed, objectEvent->y.fixed,
+               objectEvent->z.fixed);
   FieldVector_AddPolarOffset(Iwram_MulQ16(radius, 3 * Q16_ONE / 4), angle,
                              point);
-  object->x.fixed = point->x;
-  object->z.fixed = point->z;
+  objectEvent->x.fixed = point->x;
+  objectEvent->z.fixed = point->z;
   ahead = MapGrid_GetTerrainHeight(2, point->x, point->z);
   FieldVector_AddPolarOffset(-Iwram_MulQ16(radius, 3 * Q16_ONE / 2), angle,
                              point);
   behind = MapGrid_GetTerrainHeight(2, point->x, point->z);
   if (*timer <= 20) {
     if (ahead == behind) {
-      ObjectEvent_SetMode(object, 2);
+      ObjectEvent_SetMode(objectEvent, 2);
     } else if (ahead > behind) {
-      ObjectEvent_SetMode(object, 3);
+      ObjectEvent_SetMode(objectEvent, 3);
     } else {
-      ObjectEvent_SetMode(object, 4);
+      ObjectEvent_SetMode(objectEvent, 4);
     }
   }
 }
@@ -2572,7 +2575,7 @@ enum AltinPeakCartCell {
 /// roll, starting from heading (or its own facing for -1), follows the turns
 /// its route's cells mark until the end cell, and the leader jumps off.
 static void AltinPeak_RollCart(s32 id, s32 heading) {
-  struct ObjectEvent *object = ObjectEvent_GetById(id);
+  struct ObjectEvent *objectEvent = ObjectEvent_GetById(id);
   struct ObjectEvent *leader =
       Engine_ObjectEventLookup(gGameState.selectedObjectEvent);
   struct FieldPosition position;
@@ -2580,15 +2583,15 @@ static void AltinPeak_RollCart(s32 id, s32 heading) {
 
   Engine_ScriptStart();
   if (heading == -1) {
-    heading = object->facing;
+    heading = objectEvent->facing;
   }
   for (directionIndex = 0; directionIndex <= 3; directionIndex++) {
-    position.x = object->x.fixed;
-    position.y = object->y.fixed;
-    position.z = object->z.fixed;
+    position.x = objectEvent->x.fixed;
+    position.y = objectEvent->y.fixed;
+    position.z = objectEvent->z.fixed;
     FieldVector_AddPolarOffset(PIXELS(16), heading, &position);
     if (MapGrid_GetTerrainHeight(2, position.x, position.z) ==
-        object->y.fixed) {
+        objectEvent->y.fixed) {
       break;
     }
     heading += 0x4000;
@@ -2596,47 +2599,48 @@ static void AltinPeak_RollCart(s32 id, s32 heading) {
   if (directionIndex == 4) {
     return;
   }
-  object->terrainId = 2;
+  objectEvent->terrainId = 2;
   leader->x.fixed = 0;
   leader->z.fixed = 0;
-  ResourceMetadata_Register(object->sprite, 16);
+  ResourceMetadata_Register(objectEvent->sprite, 16);
   Engine_CameraFollowObjectEvent(id, 1);
   Engine_CameraWaitForMove();
   Camera_SetSpeed(PIXELS(16), PIXELS(2));
-  object->facing = heading;
-  object->speed = PIXELS(2);
-  object->acceleration = PIXELS(1) / 20;
-  object->paused = 0;
-  object->timer = object->y.fixed / Q16_ONE;
-  object->work = 0;
-  position.x = object->x.fixed;
-  position.y = object->y.fixed;
-  position.z = object->z.fixed;
+  objectEvent->facing = heading;
+  objectEvent->speed = PIXELS(2);
+  objectEvent->acceleration = PIXELS(1) / 20;
+  objectEvent->paused = 0;
+  objectEvent->timer = objectEvent->y.fixed / Q16_ONE;
+  objectEvent->work = 0;
+  position.x = objectEvent->x.fixed;
+  position.y = objectEvent->y.fixed;
+  position.z = objectEvent->z.fixed;
   FieldVector_AddPolarOffset(PIXELS(24), heading, &position);
-  Engine_ObjectSetPosition(object, position.x, object->y.fixed, position.z);
-  FieldObject_WaitForMove(object);
+  Engine_ObjectSetPosition(objectEvent, position.x, objectEvent->y.fixed,
+                           position.z);
+  FieldObject_WaitForMove(objectEvent);
   Engine_AudioPlayCue(SE_233);
   // The route cells select turns, a countdown cue, and the destination.
   for (;;) {
-    switch (
-        MapGrid_GetMetatileBehaviorAt(2, object->x.fixed, object->z.fixed)) {
+    switch (MapGrid_GetMetatileBehaviorAt(2, objectEvent->x.fixed,
+                                          objectEvent->z.fixed)) {
     case ALTIN_PEAK_CART_TURN_RIGHT:
-      AltinPeak_TurnCartRight(object);
+      AltinPeak_TurnCartRight(objectEvent);
       break;
     case ALTIN_PEAK_CART_TURN_LEFT:
-      AltinPeak_TurnCartLeft(object);
+      AltinPeak_TurnCartLeft(objectEvent);
       break;
     case ALTIN_PEAK_CART_COUNTDOWN:
-      AltinPeak_StartCartCountdown(object);
+      AltinPeak_StartCartCountdown(objectEvent);
       break;
     case ALTIN_PEAK_CART_STOP:
       goto arrived;
     }
-    AltinPeak_AdvanceCart(object);
+    AltinPeak_AdvanceCart(objectEvent);
     Engine_TaskWait(1);
   }
 arrived:
-  AltinPeak_StopCartAndJumpOff(object);
+  AltinPeak_StopCartAndJumpOff(objectEvent);
   Engine_ScriptEnd();
 }
 

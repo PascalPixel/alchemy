@@ -329,19 +329,19 @@ struct ObjectEvent *Engine_ObjectCreate(s32 type, s32 fixed_x, s32 fixed_y,
                                         s32 fixed_z);
 /// Switches every sprite of an object to an animation, the map's import name
 /// for ObjectDispatch_SelectAnimation.
-void ObjectEvent_SetMode(struct ObjectEvent *object, s32 animation);
+void ObjectEvent_SetMode(struct ObjectEvent *objectEvent, s32 animation);
 /// Gives an object a sprite script and starts it from the top
 /// (ObjectDispatch_Initialize).
-void Engine_ObjectSetScript(struct ObjectEvent *object, const s32 *script);
+void Engine_ObjectSetScript(struct ObjectEvent *objectEvent, const s32 *script);
 /// Sets a one-sprite object's OAM blend mode, an ObjectBlendMode
 /// (ObjectDispatch_SetChildBlendMode).
-void Engine_ObjectSetBlendMode(struct ObjectEvent *object, s32 mode);
+void Engine_ObjectSetBlendMode(struct ObjectEvent *objectEvent, s32 mode);
 /// Sets the colour mode (SpriteColorMode) of a one-sprite object's layers,
 /// except those drawn hidden (Animation_ApplyChildValues).
-void Engine_ObjectSetPartPalettes(struct ObjectEvent *object, s32 palette);
+void Engine_ObjectSetPartPalettes(struct ObjectEvent *objectEvent, s32 palette);
 /// Sends an object toward a point in 16.16 pixels, coasting to a stop there
 /// (Object_SetMoveTarget).
-void Engine_ObjectSetPosition(struct ObjectEvent *object, s32 fixed_x,
+void Engine_ObjectSetPosition(struct ObjectEvent *objectEvent, s32 fixed_x,
                               s32 fixed_y, s32 fixed_z);
 /// Plays a cell animation's MAPGRID_ANIMATION_STEP records onto the cell at
 /// (destinationX, destinationY), returning only after the last
@@ -485,13 +485,13 @@ void Engine_MapGridRenderWaitForValues(void);
 void Engine_ObjectMotionSetPositionAndCommit(s32 objectEvent, s32 x, s32 z);
 /// Releases an object's sprites and zeroes it, so it can be handed out again
 /// (ObjectDispatch_Release).
-void Engine_ObjectDispatchRelease(struct ObjectEvent *object);
+void Engine_ObjectDispatchRelease(struct ObjectEvent *objectEvent);
 /// The shake wait of Engine_MapGridRenderWaitForValues under the name Goma Cave
 /// Entrance imports it by (MapGrid_WaitForShakeToSettle).
 void Engine_MapGridWaitWorkValuesBelow256(void);
 /// Shows a found item's picture object; bit 0 of mode adds sparkles and bit 1
 /// raises it above the leader (ItemDisplay_ShowPicture).
-void Engine_ItemShowPicture(struct ObjectEvent *object, s32 mode);
+void Engine_ItemShowPicture(struct ObjectEvent *objectEvent, s32 mode);
 
 #ifdef FIELD_STAGED_OBJ_EVENT_IMPORTS
 /// Declared for the maps that define FIELD_STAGED_OBJ_EVENT_IMPORTS in place
@@ -675,9 +675,9 @@ static inline struct ObjectEvent *ObjectEvent_Create(s32 type, s32 fixed_x,
 }
 
 /// Starts an object on a sprite script from its first command.
-static inline void ObjectEvent_SetScript(struct ObjectEvent *object,
+static inline void ObjectEvent_SetScript(struct ObjectEvent *objectEvent,
                                          const s32 *script) {
-  Engine_ObjectSetScript(object, script);
+  Engine_ObjectSetScript(objectEvent, script);
 }
 
 /// OAM blend modes for Engine_ObjectSetBlendMode: OBJECT_BLEND_TRANSLUCENT

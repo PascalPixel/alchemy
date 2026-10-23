@@ -220,7 +220,7 @@ static void Colosso_TakePlaceForMatch(void) {
 void Colosso_AskDoneCheering(s32 id) {
   struct EventWork *work;
   s32 slot;
-  struct ObjectEvent *obj;
+  struct ObjectEvent *objectEvent;
   s32 msg;
   s32 res;
 
@@ -229,7 +229,7 @@ void Colosso_AskDoneCheering(s32 id) {
   ObjectEvent_GetById(id);
   ObjectEvent_GetById(id);
   slot = gGameState.selectedObjectEvent;
-  obj = ObjectEvent_GetById(slot);
+  objectEvent = ObjectEvent_GetById(slot);
   Engine_ScriptStart();
   msg = MsgColossoCheering;
   Engine_ScriptSetMessage(msg);
@@ -246,9 +246,9 @@ void Colosso_AskDoneCheering(s32 id) {
     Engine_ScriptCloseScreen();
     Engine_ScriptWaitForScreen();
     FieldGameFlag_SetByte(COLOSSO_CHEER_SLOT(slot) + COLOSSO_CHEER_COLUMN,
-                          obj->x.fixed >> 20);
+                          objectEvent->x.fixed >> 20);
     FieldGameFlag_SetByte(COLOSSO_CHEER_SLOT(slot) + COLOSSO_CHEER_ROW,
-                          obj->z.fixed >> 20);
+                          objectEvent->z.fixed >> 20);
     slot++;
     if (slot > MIA) {
       Engine_ScriptRequestWarp(10);

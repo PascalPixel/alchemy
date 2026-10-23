@@ -13,7 +13,7 @@
 /// It leaves the target raised and floating (motion flag bit 2), with its
 /// update set to ObjectGroup_ApplyRandomChildValues.
 void FieldEffect_RunLiftOnTarget(s32 unused) {
-  struct FieldEffectWork *work;
+  struct FieldEffectWork *effectWork;
   struct DispatchObject *caster;
   struct ObjectEvent *target;
   struct MotionObject *pair[2];
@@ -22,9 +22,9 @@ void FieldEffect_RunLiftOnTarget(s32 unused) {
   s32 handIndex;
   s32 startY;
 
-  work = gEffectWork;
-  target = work->child;
-  caster = work->mainObject;
+  effectWork = gEffectWork;
+  target = effectWork->child;
+  caster = effectWork->mainObject;
   if (target == NULL)
     return;
 
@@ -34,11 +34,11 @@ void FieldEffect_RunLiftOnTarget(s32 unused) {
   caster->argument = (s32)target;
   ObjectDispatch_InitializeFar(caster, gFieldEffect_CommonParticleScript + 3);
 
-  x = work->x;
+  x = effectWork->x;
   pos[0] = x;
-  y = work->y + 0x100000; // 16 pixels up
+  y = effectWork->y + 0x100000; // 16 pixels up
   pos[1] = y;
-  z = work->z;
+  z = effectWork->z;
   pos[2] = z;
   pair[0] = FieldEffect_SpawnItemBreakMode3(x + 0x200000, y, z, 0x8000);
   pair[1] =

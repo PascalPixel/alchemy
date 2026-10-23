@@ -258,7 +258,7 @@ static inline void FieldEffect_InitializeFallingFragment(
 /// pixels. Carry's and Lift's no-target effects are made with it.
 #define DEFINE_ITEM_BREAK_EFFECT(name, spawn)                                  \
   void name(void) {                                                            \
-    struct FieldEffectWork *work;                                              \
+    struct FieldEffectWork *effectWork;                                        \
     struct MotionObject *obj;                                                  \
     struct MotionObject *pair[2];                                              \
     struct ScatterPosition pos;                                                \
@@ -266,11 +266,11 @@ static inline void FieldEffect_InitializeFallingFragment(
     s32 n;                                                                     \
     s32 dist;                                                                  \
                                                                                \
-    work = gEffectWork;                                                        \
+    effectWork = gEffectWork;                                                  \
     FieldEffect_FadeToEffectColor();                                           \
-    pos.x = work->x;                                                           \
-    pos.y = work->y + 0x100000;                                                \
-    pos.z = work->z;                                                           \
+    pos.x = effectWork->x;                                                     \
+    pos.y = effectWork->y + 0x100000;                                          \
+    pos.z = effectWork->z;                                                     \
     pair[0] = spawn(pos.x + 0x200000, pos.y, pos.z, 0x8000);                   \
     pair[1] = spawn(pos.x - 0x200000, pos.y, pos.z, 0);                        \
                                                                                \
@@ -286,9 +286,9 @@ static inline void FieldEffect_InitializeFallingFragment(
     FieldObject_WaitForMoveFar(pair[0]);                                       \
     AudioCommand_PlayFar(SE_HEAVY_IMPACT);                                     \
     for (n = 0; n < ITEM_BREAK_SHARD_MAX; n++) {                               \
-      pos.x = work->x;                                                         \
-      pos.y = work->y + 0x100000;                                              \
-      pos.z = work->z;                                                         \
+      pos.x = effectWork->x;                                                   \
+      pos.y = effectWork->y + 0x100000;                                        \
+      pos.z = effectWork->z;                                                   \
       obj = (struct MotionObject *)Object_Spawn(SPRITE_SPARKLE, pos.x, pos.y,  \
                                                 pos.z);                        \
       if (obj != 0) {                                                          \

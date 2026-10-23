@@ -1876,7 +1876,7 @@ static void Kalay_HammetReturnsToPalace(void) {
   u8 *leaderPhase;
   u32 random;
   u32 motionPhase;
-  struct ObjectEvent *object;
+  struct ObjectEvent *objectEvent;
   struct EventWork *work;
   const s32 *motionActions;
   s32 southFacing;
@@ -1887,8 +1887,8 @@ static void Kalay_HammetReturnsToPalace(void) {
   Engine_TaskWait(1);
   ObjectEvent_SetPosition(LOCALID_PARTY_LEADER, 0, 0);
   ObjectEvent_SetPosition(LOCALID_WAGON, PIXELS(440), PIXELS(522));
-  object = ObjectEvent_Get(LOCALID_WAGON);
-  Engine_ObjectEventSetSpriteFlags(object, 0);
+  objectEvent = ObjectEvent_Get(LOCALID_WAGON);
+  Engine_ObjectEventSetSpriteFlags(objectEvent, 0);
   Camera_MoveTo(PIXELS(440), -1, PIXELS(522), 0);
   Engine_MapGridRedraw();
   Engine_TaskWait(1);
@@ -1941,17 +1941,17 @@ static void Kalay_HammetReturnsToPalace(void) {
   Engine_ScriptSetMessage(MsgKalayWeveArrivedHammet);
   Script_ShowMessageAndWait(LOCALID_BUNZA, 0, 10);
   Engine_ObjectEventSetAnimationAndWait(LOCALID_HAMMET, ANIMATION_NOD);
-  object = ObjectEvent_Get(LOCALID_PARTY_LEADER);
-  if (object != 0) {
-    ObjectEvent_SetPosition(GARET, object->x.fixed, object->z.fixed);
+  objectEvent = ObjectEvent_Get(LOCALID_PARTY_LEADER);
+  if (objectEvent != 0) {
+    ObjectEvent_SetPosition(GARET, objectEvent->x.fixed, objectEvent->z.fixed);
   }
-  object = ObjectEvent_Get(LOCALID_PARTY_LEADER);
-  if (object != 0) {
-    ObjectEvent_SetPosition(IVAN, object->x.fixed, object->z.fixed);
+  objectEvent = ObjectEvent_Get(LOCALID_PARTY_LEADER);
+  if (objectEvent != 0) {
+    ObjectEvent_SetPosition(IVAN, objectEvent->x.fixed, objectEvent->z.fixed);
   }
-  object = ObjectEvent_Get(LOCALID_PARTY_LEADER);
-  if (object != 0) {
-    ObjectEvent_SetPosition(MIA, object->x.fixed, object->z.fixed);
+  objectEvent = ObjectEvent_Get(LOCALID_PARTY_LEADER);
+  if (objectEvent != 0) {
+    ObjectEvent_SetPosition(MIA, objectEvent->x.fixed, objectEvent->z.fixed);
   }
   ObjectEvent_SetSpeed(GARET, PIXELS(4) / 5, PIXELS(2) / 5);
   ObjectEvent_SetSpeed(IVAN, PIXELS(4) / 5, PIXELS(2) / 5);
@@ -2116,9 +2116,9 @@ static void Kalay_HammetReturnsToPalace(void) {
   Engine_ScriptCloseScreen();
   Engine_ScriptWaitForScreen();
   ObjectEvent_SetPosition(LOCALID_WAGON, PIXELS(440), PIXELS(340));
-  object = ObjectEvent_Get(LOCALID_WAGON);
+  objectEvent = ObjectEvent_Get(LOCALID_WAGON);
   southFacing = FACING_SOUTH;
-  object->facing = southFacing;
+  objectEvent->facing = southFacing;
   Camera_MoveTo(PIXELS(380), -1, PIXELS(280), 0);
   Engine_MapGridRedraw();
   Engine_TaskWait(10);

@@ -124,22 +124,23 @@ void FieldEffect_CopyLinkedObjectPosition(union FieldObject *fieldObject) {
 s32 FieldEffect_CopyLinkedObjectPosition(union FieldObject *fieldObject) {
 #endif
   void *self = (void *)fieldObject;
-  struct ObjectEvent *obj = self;
+  struct ObjectEvent *objectEvent = self;
   struct ObjectEvent *host;
 
-  host = obj->linkedObject;
+  host = objectEvent->linkedObject;
   if (host != NULL) {
-    obj->motionFlags = 0;
-    obj->x.fixed = host->x.fixed;
-    obj->y.fixed =
+    objectEvent->motionFlags = 0;
+    objectEvent->x.fixed = host->x.fixed;
+    objectEvent->y.fixed =
         host->y.fixed +
         ((s8)Resource_GetMetadataRecordFar(
-             (s16)Map_FindObjectEventTemplate(*(s16 *)&obj->work)->sprite)
+             (s16)Map_FindObjectEventTemplate(*(s16 *)&objectEvent->work)
+                 ->sprite)
              ->boxX
          << 16) +
         (8 << 16);
-    obj->terrainHeight = host->terrainHeight;
-    obj->z.fixed = host->z.fixed;
+    objectEvent->terrainHeight = host->terrainHeight;
+    objectEvent->z.fixed = host->z.fixed;
   }
 #ifndef UBFIX
   return 0;

@@ -386,17 +386,17 @@ static inline void ColosseumNavampaMatch_MoveOnScales(struct ObjectEvent *pan,
 /// the scales tip, the western pan down and the eastern pan up
 /// (FLAG_SCALES_FROZEN).
 static void EventScript_FreezeOnScales(void) {
-  struct ObjectEvent *object;
+  struct ObjectEvent *objectEvent;
 
-  object = ObjectEvent_GetById(FROST_TARGET);
-  object->scaleX = Q16_ONE;
-  object->scaleY = Q16_ONE;
+  objectEvent = ObjectEvent_GetById(FROST_TARGET);
+  objectEvent->scaleX = Q16_ONE;
+  objectEvent->scaleY = Q16_ONE;
 
-  object = ObjectEvent_GetById(SCALES_EAST_PAN);
-  ColosseumNavampaMatch_MoveOnScales(object, PIXELS(32));
+  objectEvent = ObjectEvent_GetById(SCALES_EAST_PAN);
+  ColosseumNavampaMatch_MoveOnScales(objectEvent, PIXELS(32));
 
-  object = ObjectEvent_GetById(SCALES_WEST_PAN);
-  ColosseumNavampaMatch_MoveOnScales(object, PIXELS(4));
+  objectEvent = ObjectEvent_GetById(SCALES_WEST_PAN);
+  ColosseumNavampaMatch_MoveOnScales(objectEvent, PIXELS(4));
 
   Engine_GameFlagSet(FLAG_SCALES_FROZEN);
   MapGrid_CopyCellAttributes(15, 12, 1, 1, 13, 12);
@@ -445,17 +445,17 @@ static void EventScript_StepOnScales(void) {
 
 /// Stepping off the Scales of Justice's western pan: the scales swing back.
 static void EventScript_StepOffScales(void) {
-  struct ObjectEvent *object;
+  struct ObjectEvent *objectEvent;
 
   Engine_ObjectEventSetAnimation(gGameState.selectedObjectEvent, 1);
 
-  object = ObjectEvent_GetById(SCALES_EAST_PAN);
-  object->motionFlags = 0;
-  ColosseumNavampaMatch_MoveOnScales(object, PIXELS(4));
+  objectEvent = ObjectEvent_GetById(SCALES_EAST_PAN);
+  objectEvent->motionFlags = 0;
+  ColosseumNavampaMatch_MoveOnScales(objectEvent, PIXELS(4));
 
-  object = ObjectEvent_GetById(SCALES_WEST_PAN);
-  object->motionFlags = 0;
-  ColosseumNavampaMatch_MoveOnScales(object, PIXELS(32));
+  objectEvent = ObjectEvent_GetById(SCALES_WEST_PAN);
+  objectEvent->motionFlags = 0;
+  ColosseumNavampaMatch_MoveOnScales(objectEvent, PIXELS(32));
 
   Engine_ObjectEventWaitForMove(SCALES_WEST_PAN);
   {

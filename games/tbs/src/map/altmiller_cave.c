@@ -507,13 +507,13 @@ static void AltmillerCave_EndReveal(void) {
 /// Retreat's first phase: the Psynergy's first object event faces south, and
 /// its object is copied into a new one for the effect to use.
 static void AltmillerCave_StartRetreat(void) {
-  struct FieldEffectWork *work;
+  struct FieldEffectWork *effectWork;
   struct ObjectEvent *original;
   struct ObjectEvent *replacement;
 
-  work = (struct FieldEffectWork *)gEffectWork;
-  original = work->mainObject;
-  Engine_ObjectEventFaceDirection(work->firstObjectId, FACING_SOUTH, 0);
+  effectWork = (struct FieldEffectWork *)gEffectWork;
+  original = effectWork->mainObject;
+  Engine_ObjectEventFaceDirection(effectWork->firstObjectId, FACING_SOUTH, 0);
   Animation_ApplyChildValues((struct DispatchObject *)original, 0);
   Engine_ScriptWait(20);
   replacement = Engine_ObjectCreate(0, original->x.fixed, original->y.fixed,
@@ -523,7 +523,7 @@ static void AltmillerCave_StartRetreat(void) {
             (DMA_ENABLE | DMA_32BIT) << 16 | sizeof(struct ObjectEvent) / 4,
             REG_DMA3);
     original->update = 0;
-    work->mainObject = replacement;
+    effectWork->mainObject = replacement;
     original->spriteStorageKind = 0;
   }
 }
@@ -2275,19 +2275,19 @@ static void AltmillerCave_UpdateWallFragment(struct EffectSlot *fragment) {
 /// The wall bursts: 24 pieces fly out from the ring's center, the wall's
 /// cells open to the passage, and the shaking calms.
 static void AltmillerCave_ReleaseWallBurst(void) {
-  struct FieldEffectWork *work;
+  struct FieldEffectWork *effectWork;
   struct EffectVector position;
   struct EffectSlot *fragment;
   s32 fragmentIndex;
 
   FieldEffect_InitializeSlots();
-  work = (struct FieldEffectWork *)gEffectWork;
+  effectWork = (struct FieldEffectWork *)gEffectWork;
   Shop_SaveAndTintFieldPalette(0x202108);
   position.x = PIXELS(504);
   position.y = PIXELS(24);
   position.z = PIXELS(144);
   Camera_WorldToScreen(&position);
-  fragment = work->effects;
+  fragment = effectWork->effects;
   for (fragmentIndex = 23; fragmentIndex >= 0; fragmentIndex--) {
     s32 scale;
 
@@ -2311,7 +2311,8 @@ static void AltmillerCave_ReleaseWallBurst(void) {
   {
     s32 mode = 2;
     // Walk the state bytes within the complete slot array representation.
-    u8 *stateCursor = (u8 *)&work->effects + offsetof(struct EffectSlot, state);
+    u8 *stateCursor =
+        (u8 *)&effectWork->effects + offsetof(struct EffectSlot, state);
 
     for (fragmentIndex = 23; fragmentIndex >= 0; fragmentIndex--) {
       if (((s8 *)stateCursor)[offsetof(struct EffectSlot, active) -

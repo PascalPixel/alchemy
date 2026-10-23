@@ -1236,12 +1236,12 @@ static void Imil_OldManBobsAndSpeaks(void) {
 }
 
 static void Imil_MiaCastsPlyOnOldMan(void) {
-  struct FieldEffectWork *work;
+  struct FieldEffectWork *effectWork;
 
   Engine_PsynergyStart(ABILITY_PLY, 1);
-  work = gEffectWork;
+  effectWork = gEffectWork;
   Engine_PsynergySetTarget(MIA, LOCALID_OLD_MAN);
-  work->finishCallback = Imil_OldManBobsAndSpeaks;
+  effectWork->finishCallback = Imil_OldManBobsAndSpeaks;
   Engine_PsynergyRaiseHands();
   Engine_PsynergyPlayEffect(1);
   Engine_PsynergyLowerHands();

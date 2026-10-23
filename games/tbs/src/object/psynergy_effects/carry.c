@@ -53,22 +53,22 @@ FieldEffect_CheckRaisedTargetCollision(struct ObjectEvent *target,
 ///
 /// Where the way is blocked a buzzer sounds.
 void FieldEffect_SteerLiftedTarget(s32 targetId) {
-  struct FieldEffectWork *work;
+  struct FieldEffectWork *effectWork;
   struct ObjectEvent *src;
   struct ObjectEvent *target;
   struct ObjectEvent *shards[CARRY_SHARD_MAX];
   struct EffectVector pos;
   struct ObjectEvent *hands[2];
-  struct ObjectEvent *obj;
+  struct ObjectEvent *objectEvent;
   struct ObjectEvent *right;
   s32 i;
   s32 angle;
   s32 dist;
   struct EffectVector *p;
 
-  work = gEffectWork;
-  src = work->mainObject;
-  target = work->child;
+  effectWork = gEffectWork;
+  src = effectWork->mainObject;
+  target = effectWork->child;
   if (target == NULL)
     return;
   FieldEffect_FadeToEffectColor();
@@ -81,10 +81,10 @@ void FieldEffect_SteerLiftedTarget(s32 targetId) {
    * the steering loop's first part, which names it; as pos named
    * everywhere, 10 of 531 instructions differ in tbs-en. */
   p = &pos;
-  SET_POSITION(p, work->x, work->y + (16 << 16), work->z);
-  obj = (struct ObjectEvent *)FieldEffect_SpawnItemBreakMode1(
+  SET_POSITION(p, effectWork->x, effectWork->y + (16 << 16), effectWork->z);
+  objectEvent = (struct ObjectEvent *)FieldEffect_SpawnItemBreakMode1(
       p->x + (32 << 16), p->y, p->z, 0x8000);
-  hands[0] = obj;
+  hands[0] = objectEvent;
   right = (struct ObjectEvent *)FieldEffect_SpawnItemBreakMode1(
       p->x - (32 << 16), p->y, p->z, 0);
   hands[1] = right;
@@ -95,14 +95,14 @@ void FieldEffect_SteerLiftedTarget(s32 targetId) {
   WaitFrames(15);
   SET_POSITION(p, target->x.fixed, target->y.fixed + (16 << 16),
                target->z.fixed);
-  Object_SetMoveTargetFar((struct ObjectRuntime *)obj, p->x + (16 << 16), p->y,
-                          p->z);
+  Object_SetMoveTargetFar((struct ObjectRuntime *)objectEvent,
+                          p->x + (16 << 16), p->y, p->z);
   Object_SetMoveTargetFar((struct ObjectRuntime *)right, p->x - (16 << 16),
                           p->y, p->z);
-  FieldObject_WaitForMoveFar(obj);
+  FieldObject_WaitForMoveFar(objectEvent);
   FieldObject_WaitForMoveFar(right);
-  obj->x.fixed = p->x + (16 << 16);
-  obj->velocityX = 0;
+  objectEvent->x.fixed = p->x + (16 << 16);
+  objectEvent->velocityX = 0;
   right->x.fixed = p->x - (16 << 16);
   right->velocityX = 0;
 
@@ -115,7 +115,7 @@ void FieldEffect_SteerLiftedTarget(s32 targetId) {
   ObjectDispatch_SetSingleChildFlagsFar((struct DispatchObject *)target, 0);
   if (hands[0] != NULL && hands[1] != NULL) {
     while (target->y.fixed - target->terrainHeight <= 24 << 16) {
-      obj->y.fixed += 0x6000;
+      objectEvent->y.fixed += 0x6000;
       right->y.fixed += 0x6000;
       target->y.fixed += 0x6000;
       WaitFrames(1);
@@ -240,18 +240,18 @@ void FieldEffect_SteerLiftedTarget(s32 targetId) {
 
     // Shards: 2 to 3 pixels a frame, 8 to 32 pixels in a random direction.
     for (i = 0; i < CARRY_SHARD_MAX; i++) {
-      obj =
+      objectEvent =
           (struct ObjectEvent *)Object_Spawn(SPRITE_SPARKLE, p->x, p->y, p->z);
-      *walk++ = obj;
-      if (obj != NULL) {
-        ObjectDispatch_InitializeFar((struct DispatchObject *)obj,
+      *walk++ = objectEvent;
+      if (objectEvent != NULL) {
+        ObjectDispatch_InitializeFar((struct DispatchObject *)objectEvent,
                                      gFieldEffect_FragmentScript);
-        obj->speed = Random16() + (2 << 16);
-        obj->acceleration = 2 << 16;
-        obj->motionFlags = 0;
+        objectEvent->speed = Random16() + (2 << 16);
+        objectEvent->acceleration = 2 << 16;
+        objectEvent->motionFlags = 0;
         dist = Random16() * 24 + (8 << 16);
-        Motion_SetTargetPositionFromMagnitudeAngle((struct ObjectRuntime *)obj,
-                                                   dist, Random16());
+        Motion_SetTargetPositionFromMagnitudeAngle(
+            (struct ObjectRuntime *)objectEvent, dist, Random16());
       }
     }
   }
@@ -263,10 +263,10 @@ void FieldEffect_SteerLiftedTarget(s32 targetId) {
   // frame: it falls and follows the terrain again, keeping 0.2 of its speed
   // as it bounces, and reads its ground from the ground layer.
   Animation_ApplyChildValuesFar((struct DispatchObject *)target,
-                                work->savedPalette);
+                                effectWork->savedPalette);
   ObjectDispatch_InitializeFar((struct DispatchObject *)target,
-                               work->savedScript);
-  target->update = work->savedCallback;
+                               effectWork->savedScript);
+  target->update = effectWork->savedCallback;
   target->motionFlags = 3;
   target->velocityY = 10 << 16;
   target->bounce = 0x3333;
@@ -274,7 +274,7 @@ void FieldEffect_SteerLiftedTarget(s32 targetId) {
   src->update = 0;
   Animation_ApplyChildValuesFar((struct DispatchObject *)src,
                                 SPRITE_COLOR_NORMAL);
-  if (work->childOption != 0) {
+  if (effectWork->childOption != 0) {
     // Wait for it to rise and land (at most 90 frames each), then a ring.
     for (i = 0; i < 90 && target->velocityY >= 0; i++)
       WaitFrames(1);

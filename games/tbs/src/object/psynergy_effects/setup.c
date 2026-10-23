@@ -21,42 +21,43 @@ void FieldEffect_UpdateAllEffectSlots(void) { FieldEffect_UpdateEffectSlots(); }
 void FieldEffect_LoadActionEffectResources(s32 abilityId, s32 mode) {
   struct FieldWork *ev = *(gWorkSlot + HEAP_SLOT_EVENT);
   struct MapGridScrollWork *grid = *(gWorkSlot + 8);
-  struct FieldEffectWork *work;
+  struct FieldEffectWork *effectWork;
   s32 running;
 
   running = ev->resolvingAction;
   if (running == 0) {
-    work = Runtime_AllocateHeapBlock(HEAP_SLOT_EFFECT, sizeof *work);
-    Dma_Fill32(running, work, sizeof *work);
+    effectWork =
+        Runtime_AllocateHeapBlock(HEAP_SLOT_EFFECT, sizeof *effectWork);
+    Dma_Fill32(running, effectWork, sizeof *effectWork);
   } else {
-    work = *(gWorkSlot + HEAP_SLOT_EFFECT);
+    effectWork = *(gWorkSlot + HEAP_SLOT_EFFECT);
   }
-  work->action = abilityId;
-  work->fieldKind = BattleAction_Get(abilityId)->type0c;
+  effectWork->action = abilityId;
+  effectWork->fieldKind = BattleAction_Get(abilityId)->type0c;
   running = ev->resolvingAction;
   if (running != 0)
     return;
-  work->freeBlocks = 512 - ResourceTable_CountFreeBlocks();
-  work->mode = mode;
-  work->visible = 1;
-  work->enabled = 1;
-  work->active = 1;
-  work->messageMode = 1;
+  effectWork->freeBlocks = 512 - ResourceTable_CountFreeBlocks();
+  effectWork->mode = mode;
+  effectWork->visible = 1;
+  effectWork->enabled = 1;
+  effectWork->active = 1;
+  effectWork->messageMode = 1;
   // Keep the map's shake and its decay, to restore after the effect.
-  work->savedShakeX = grid->shakeX;
-  work->savedShakeY = grid->shakeY;
-  work->savedShakeDecay = grid->shakeDecay;
+  effectWork->savedShakeX = grid->shakeX;
+  effectWork->savedShakeY = grid->shakeY;
+  effectWork->savedShakeDecay = grid->shakeDecay;
   if (gGameState.layoutId == (s32)&MapId_MercuryLighthouseEntrance)
-    work->lit = 1;
+    effectWork->lit = 1;
   if (gGameState.layoutId == (s32)&MapId_MercuryLighthouseMiddle)
-    work->lit = 1;
+    effectWork->lit = 1;
   FieldEffect_SetupObjectPair(gGameState.selectedObjectEvent, -1);
   // Every effect but Reveal's own pauses Reveal's countdown (running is 0
   // here) until FieldEffect_End lets it run again.
-  if (work->fieldKind != FIELD_KIND_REVEAL)
+  if (effectWork->fieldKind != FIELD_KIND_REVEAL)
     ev->effectTimerRunning = running;
-  work->tileSlot = Resource_FindFreeEntry();
-  VramCache_Load((s16)work->tileSlot, 256, gFieldEffect_SparkTiles);
+  effectWork->tileSlot = Resource_FindFreeEntry();
+  VramCache_Load((s16)effectWork->tileSlot, 256, gFieldEffect_SparkTiles);
   // 0xc80 is SCHEDULER_KEY_MAIN_LOOP: the slots update once a frame.
   Scheduler_AddOrUpdateCallback(FieldEffect_UpdateAllEffectSlots, 0xc80);
 }
@@ -70,44 +71,44 @@ void FieldEffect_SetupObjectPair(s32 userId, s32 targetId) {
   struct ScriptMotionObject *user;
   struct ScriptMotionObject *target;
   s32 dir;
-  struct FieldEffectWork *work;
+  struct FieldEffectWork *effectWork;
 
-  work = gEffectWork;
-  work->firstObjectId = userId;
+  effectWork = gEffectWork;
+  effectWork->firstObjectId = userId;
   user = ObjectTable_Get((s16)userId);
-  work->secondObjectId = targetId;
-  work->mainObject = user;
+  effectWork->secondObjectId = targetId;
+  effectWork->mainObject = user;
   target = ObjectTable_Get((s16)targetId);
   dir = (user->facing + 0x2000) & 0xc000; // to the nearest quarter turn
-  work->child = target;
-  work->angle = dir;
+  effectWork->child = target;
+  effectWork->angle = dir;
   if (target != NULL) {
     // Keep the target's motion and colours, to restore them later.
-    work->savedCallback = target->hook;
-    work->savedScript = (const s32 *)target->script;
+    effectWork->savedCallback = target->hook;
+    effectWork->savedScript = (const s32 *)target->script;
     {
       struct AnimationObject *animation =
           ((struct ObjectRuntime *)target)->animation;
       u8 pal = animation->entries[0]->colorMode;
 
-      work->savedPalette = pal;
+      effectWork->savedPalette = pal;
     }
-    work->x = target->x;
-    work->z = target->z;
-    work->y = target->y;
+    effectWork->x = target->x;
+    effectWork->z = target->z;
+    effectWork->y = target->y;
     return;
   }
-  work->x = user->x;
-  work->z = user->z;
-  work->y = user->y;
-  Vector_AddPolarOffset(0x100000, dir, &work->x);
+  effectWork->x = user->x;
+  effectWork->z = user->z;
+  effectWork->y = user->y;
+  Vector_AddPolarOffset(0x100000, dir, &effectWork->x);
 }
 
 /// Stops the caster's per-frame hook and restores its colours (sprite param
 /// 0), then waits a frame.
 void FieldEffect_StopCasterHook(void) {
-  struct FieldEffectWork *work = gEffectWork;
-  struct ScriptMotionObject *user = work->mainObject;
+  struct FieldEffectWork *effectWork = gEffectWork;
+  struct ScriptMotionObject *user = effectWork->mainObject;
 
   user->hook = NULL;
   Animation_ApplyChildValuesFar((struct DispatchObject *)user,

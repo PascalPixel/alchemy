@@ -458,12 +458,13 @@ enum { VENUS_COLOR_MARK_TAG = 0x212 };
 static __inline__ void SetFlagBits(u8 *flags, u8 bits) { *flags |= bits; }
 
 /// Sets up a passage effect's motion, collision and child value.
-static void VenusLighthouse_ConfigurePassageEffect(struct ObjectEvent *object,
-                                                   s32 childValue) {
-  object->motionFlags = 0;
-  object->collisionFlags = 8;
-  Engine_ObjectEventSetSpriteFlags(object, 0);
-  ObjectGroup_SetChildValue(object, childValue);
+static void
+VenusLighthouse_ConfigurePassageEffect(struct ObjectEvent *objectEvent,
+                                       s32 childValue) {
+  objectEvent->motionFlags = 0;
+  objectEvent->collisionFlags = 8;
+  Engine_ObjectEventSetSpriteFlags(objectEvent, 0);
+  ObjectGroup_SetChildValue(objectEvent, childValue);
 }
 
 /// Creates a mask over a hole as the leader or a pillar falls through the
@@ -496,14 +497,14 @@ VenusLighthouse_CreateBlendedPassageEffect(s32 x, s32 y, s32 z, s32 type) {
 /// with the chest on the left and without it on the right).
 static struct ObjectEvent *
 VenusLighthouse_CreateOccludingPassageEffect(s32 x, s32 y, s32 z, s32 type) {
-  struct ObjectEvent *object;
+  struct ObjectEvent *objectEvent;
 
-  object = Engine_ObjectCreate(type, x, y, z);
-  if (object != 0) {
-    ((struct AnimationObject *)object->sprite)->image.priority = 1;
-    VenusLighthouse_ConfigurePassageEffect(object, SPRITE_COLOR_HIDDEN);
-    object->priorityFlags |= OBJ_EVENT_PRIORITY_UNDERFOOT;
-    return object;
+  objectEvent = Engine_ObjectCreate(type, x, y, z);
+  if (objectEvent != 0) {
+    ((struct AnimationObject *)objectEvent->sprite)->image.priority = 1;
+    VenusLighthouse_ConfigurePassageEffect(objectEvent, SPRITE_COLOR_HIDDEN);
+    objectEvent->priorityFlags |= OBJ_EVENT_PRIORITY_UNDERFOOT;
+    return objectEvent;
   }
   return 0;
 }

@@ -523,42 +523,42 @@ void FieldEffect_UpdateParticleLinearMotion(union FieldObject *fieldObject) {
 /// one of two animations. A nonzero param is given to its sprite parts
 /// (ObjectGroup_SetChildValue). Only ObjectEvent_JumpDownLedge calls it.
 void FieldEffect_SpawnBurstParticle(struct ObjectEvent *source, s32 param) {
-  struct ObjectEvent *object;
+  struct ObjectEvent *objectEvent;
   struct AnimationObject *child;
   s32 speed;
 
-  object = (struct ObjectEvent *)Object_CreateFar(
+  objectEvent = (struct ObjectEvent *)Object_CreateFar(
       SPRITE_DUST_PUFF, source->x.fixed, source->y.fixed, source->z.fixed);
-  if (object != 0) {
-    child = object->sprite;
+  if (objectEvent != 0) {
+    child = objectEvent->sprite;
     switch (Random16() & 1) {
     case 1:
-      ObjectDispatch_SelectAnimationFar(object, 2);
+      ObjectDispatch_SelectAnimationFar(objectEvent, 2);
       ObjectDispatch_InitializeFar(
-          (struct DispatchObject *)object,
+          (struct DispatchObject *)objectEvent,
           (const s32 *)gFieldEffect_BurstParticleScriptA);
       break;
     default:
-      ObjectDispatch_SelectAnimationFar(object, 1);
+      ObjectDispatch_SelectAnimationFar(objectEvent, 1);
       ObjectDispatch_InitializeFar(
-          (struct DispatchObject *)object,
+          (struct DispatchObject *)objectEvent,
           (const s32 *)gFieldEffect_BurstParticleScriptB);
       break;
     }
 
     if (param != 0)
-      ObjectGroup_SetChildValue(object, param);
+      ObjectGroup_SetChildValue(objectEvent, param);
 
     // speed and acceleration hold the puff's x and z velocity, in steps of
     // 0x1999 (0.1 pixel): z is -0.5 to -1.4, x -1.4 to 1.4 in steps of 0.2.
-    object->motionFlags = 0;
+    objectEvent->motionFlags = 0;
     speed = Random16() % 10 + 5;
-    object->acceleration = -0x1999 * speed;
+    objectEvent->acceleration = -0x1999 * speed;
     speed = Random16() % 15 - 7;
     speed <<= 1;
-    object->speed = 0x1999 * speed;
-    object->timer = 0;
-    object->update = FieldEffect_UpdateParticleLinearMotion;
+    objectEvent->speed = 0x1999 * speed;
+    objectEvent->timer = 0;
+    objectEvent->update = FieldEffect_UpdateParticleLinearMotion;
     child->flags = 0;
     child->image.priority = source->sprite->image.priority;
   }

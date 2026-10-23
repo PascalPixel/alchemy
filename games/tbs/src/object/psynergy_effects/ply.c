@@ -116,7 +116,7 @@ void FieldEffect_RunPlyOnTarget(s32 unused) {
 void FieldEffect_RunPly(void) {
   struct FieldEffectWork *effectWork = gEffectWork;
   struct ObjectEvent *target = effectWork->mainObject;
-  struct ObjectEvent *object;
+  struct ObjectEvent *objectEvent;
   struct AnimationObject *last;
   u8 resourceSlot;
   s32 i;
@@ -126,16 +126,16 @@ void FieldEffect_RunPly(void) {
   // The spiralling particles: one a frame, each 1/8 turn on from the last.
   last = 0;
   for (i = 0; i < 8; i++) {
-    object = (struct ObjectEvent *)Object_Spawn(
+    objectEvent = (struct ObjectEvent *)Object_Spawn(
         233, target->x.fixed, target->y.fixed + 0x200000, target->z.fixed);
-    if (object != 0) {
-      object->scaleY = 0xb333; // 0.7
-      object->scaleX = 0xb333;
-      object->update = FieldEffect_UpdateShrinkingOrbitObject;
-      object->timer = 120;
-      object->work = i << 13;
-      object->motionFlags = OBJ_EVENT_FLOATS;
-      last = Sprite_ShareVramCache(object->sprite, last);
+    if (objectEvent != 0) {
+      objectEvent->scaleY = 0xb333; // 0.7
+      objectEvent->scaleX = 0xb333;
+      objectEvent->update = FieldEffect_UpdateShrinkingOrbitObject;
+      objectEvent->timer = 120;
+      objectEvent->work = i << 13;
+      objectEvent->motionFlags = OBJ_EVENT_FLOATS;
+      last = Sprite_ShareVramCache(objectEvent->sprite, last);
     }
     WaitFrames(1);
   }
@@ -151,7 +151,7 @@ void FieldEffect_RunPly(void) {
 
   // The one in the centre.
   target = (struct ObjectEvent *)Object_Spawn(233, 0, 0, 0);
-  object = target;
+  objectEvent = target;
   if (target != 0) {
     target->scaleY = 0xb333;
     target->scaleX = 0xb333;
@@ -171,22 +171,22 @@ void FieldEffect_RunPly(void) {
       /* FAKEMATCH(temporary): a redundant copy keeps object as a second
        * register copy of the spark (r5 beside r6); without it, 129 of 177
        * instructions differ in tbs-en. */
-      target = object;
+      target = objectEvent;
       if (i & 3)
-        Animation_ApplyChildValuesFar((struct DispatchObject *)object,
+        Animation_ApplyChildValuesFar((struct DispatchObject *)objectEvent,
                                       SPRITE_COLOR_BLUE_TINT);
       else
-        Animation_ApplyChildValuesFar((struct DispatchObject *)object,
+        Animation_ApplyChildValuesFar((struct DispatchObject *)objectEvent,
                                       SPRITE_COLOR_RED_TINT);
       WaitFrames(2);
     }
   }
 
   // Sparks.
-  Animation_ApplyChildValuesFar((struct DispatchObject *)object,
+  Animation_ApplyChildValuesFar((struct DispatchObject *)objectEvent,
                                 SPRITE_COLOR_NORMAL);
   AudioCommand_PlayFar(MUS_CURE);
-  if (object != 0) {
+  if (objectEvent != 0) {
     target->update = FieldEffect_RunSparkEmitter;
     target->timer = 0;
     // Cast on a target (enabled cleared by FieldEffect_DispatchRequestKind),

@@ -320,9 +320,9 @@ s32 ObjectTable_FindLastActiveId(void) {
   struct ObjectEvent **slot = &work->objectEvents[LOCALID_FIRST_PLACED];
 
   do {
-    struct ObjectEvent *object = *slot++;
+    struct ObjectEvent *objectEvent = *slot++;
 
-    if (object != 0) {
+    if (objectEvent != 0) {
       lastObjectEventIndex = objectEventIndex;
     }
     objectEventIndex++;

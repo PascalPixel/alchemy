@@ -68,7 +68,7 @@ void FieldEffect_UpdateItemBreakFragment(union FieldObject *fieldObject) {
 void FieldEffect_SteerPushedTarget(s32 targetId) {
   struct EffectVector position;
   struct EffectVector beyond;
-  struct FieldEffectWork *work;
+  struct FieldEffectWork *effectWork;
   struct ObjectEvent *user;
   struct ObjectEvent *target;
   struct ObjectEvent *pusher;
@@ -83,12 +83,12 @@ void FieldEffect_SteerPushedTarget(s32 targetId) {
   s32 cellZ;
   struct EffectVector *candidate;
 
-  work = gEffectWork;
-  user = work->mainObject;
-  target = work->child;
+  effectWork = gEffectWork;
+  user = effectWork->mainObject;
+  target = effectWork->child;
   // work->angle is the way the caster faces; the hand's side of the target
   // is the opposite way, toward the caster.
-  angle = work->angle + 0x8000;
+  angle = effectWork->angle + 0x8000;
   moved = 0;
   if (target == NULL)
     return;
@@ -227,7 +227,7 @@ void FieldEffect_SteerPushedTarget(s32 targetId) {
     Object_SetMoveTargetFar((struct ObjectRuntime *)pusher, position.x,
                             position.y + (16 << 16), position.z);
     if (moved == 1) {
-      ObjectEvent_GetById(work->firstObjectId)->steeringFlags &= 0xfe;
+      ObjectEvent_GetById(effectWork->firstObjectId)->steeringFlags &= 0xfe;
       user->speed = 0x3333;
       user->acceleration = 0x3333;
       Object_SetMoveTargetFar((struct ObjectRuntime *)user, beyond.x, beyond.y,
@@ -244,13 +244,13 @@ void FieldEffect_SteerPushedTarget(s32 targetId) {
 
   // Restore the target's colours, script and update, and remove the hand.
   Animation_ApplyChildValuesFar((struct DispatchObject *)target,
-                                work->savedPalette);
+                                effectWork->savedPalette);
   ObjectDispatch_InitializeFar((struct DispatchObject *)target,
-                               work->savedScript);
-  target->update = work->savedCallback;
+                               effectWork->savedScript);
+  target->update = effectWork->savedCallback;
   FieldEffect_StopCasterHook();
   if (moved == 1)
-    (ObjectEvent_GetById(work->firstObjectId))->steeringFlags |= 1;
+    (ObjectEvent_GetById(effectWork->firstObjectId))->steeringFlags |= 1;
   FieldEffect_FadeFromEffectColor();
   UpdateRisingParticleBurst(pusher);
 }

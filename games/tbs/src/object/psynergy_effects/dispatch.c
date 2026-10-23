@@ -374,7 +374,7 @@ Sprite_ShareVramCache(struct AnimationObject *sourceSprite,
 /// flag bit 2) and has no shadow; its creator releases it, or its script
 /// frees it.
 struct ObjectRuntime *Object_Spawn(s32 kind, s32 x, s32 y, s32 z) {
-  struct FieldEffectWork *work = gEffectWork;
+  struct FieldEffectWork *effectWork = gEffectWork;
   struct ObjectRuntime *object;
 
   object = Object_CreateFar(kind, x, y, z);
@@ -384,7 +384,7 @@ struct ObjectRuntime *Object_Spawn(s32 kind, s32 x, s32 y, s32 z) {
       return NULL;
     }
     object->terrainHeight =
-        ((struct ObjectRuntime *)work->mainObject)->terrainHeight;
+        ((struct ObjectRuntime *)effectWork->mainObject)->terrainHeight;
     object->flags = 4;
     object->priorityFlags = 4;
     ((struct AnimationObject *)object->animation)->image.priority = 0;

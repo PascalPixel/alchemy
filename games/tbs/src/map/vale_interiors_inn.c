@@ -1248,7 +1248,7 @@ static void ValeInteriorsInn_SpawnEffectPair(union FieldObject *fieldObject) {
   struct ObjectEvent *child;
   struct AnimationObject *part;
   struct AnimationObject *sprite;
-  struct FieldEffectWork *work = gEffectWork;
+  struct FieldEffectWork *effectWork = gEffectWork;
   s32 effectIndex;
 
   for (effectIndex = 0; effectIndex < 2; ++effectIndex) {
@@ -1266,7 +1266,7 @@ static void ValeInteriorsInn_SpawnEffectPair(union FieldObject *fieldObject) {
         Object_InitializeMode(part, 0);
         sprite->flags = 0;
         Resource_ResetEntry(sprite->slot);
-        sprite->slot = work->tileSlot;
+        sprite->slot = effectWork->tileSlot;
         sprite->retainCacheEntry = 1;
         sprite->image.tile =
             (gVramBlockCache[sprite->slot].offset >> 5) & 0x3ff;

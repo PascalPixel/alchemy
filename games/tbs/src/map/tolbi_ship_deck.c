@@ -327,24 +327,26 @@ static s32 TolbiShipDeck_ShowSprite(struct ScriptInterpreter *interpreter) {
 /// Returns 1 to keep running.
 static s32
 TolbiShipDeck_HoverAndDiveAtOuranos(struct ScriptInterpreter *interpreter) {
-  struct ObjectEvent *obj = (struct ObjectEvent *)interpreter;
-  if (obj->riseCounter != 0) {
-    switch (obj->riseCounter) {
+  struct ObjectEvent *objectEvent = (struct ObjectEvent *)interpreter;
+  if (objectEvent->riseCounter != 0) {
+    switch (objectEvent->riseCounter) {
     case 1:
-      obj->speed = PIXELS(4);
-      obj->acceleration = PIXELS(2);
-      FieldObject_SetPosition(obj, PIXELS(268), PIXELS(20), PIXELS(692));
-      obj->riseCounter++;
+      objectEvent->speed = PIXELS(4);
+      objectEvent->acceleration = PIXELS(2);
+      FieldObject_SetPosition(objectEvent, PIXELS(268), PIXELS(20),
+                              PIXELS(692));
+      objectEvent->riseCounter++;
       break;
     case 2:
-      obj->riseCounter++;
+      objectEvent->riseCounter++;
       break;
     case 3:
-      if (obj->targetX == OBJ_EVENT_NO_TARGET && obj->targetY == obj->targetX &&
-          obj->targetZ == obj->targetY) {
-        obj->riseCounter++;
+      if (objectEvent->targetX == OBJ_EVENT_NO_TARGET &&
+          objectEvent->targetY == objectEvent->targetX &&
+          objectEvent->targetZ == objectEvent->targetY) {
+        objectEvent->riseCounter++;
         Script_PlayCue(SE_146);
-        if (obj->riseEnabled != 0)
+        if (objectEvent->riseEnabled != 0)
           ObjectEvent_FaceDirection(SEA_OURANOS, FACING_NORTH + FACING_STEP, 0);
         else
           ObjectEvent_FaceDirection(SEA_OURANOS, FACING_NORTHWEST + FACING_STEP,
@@ -359,83 +361,89 @@ TolbiShipDeck_HoverAndDiveAtOuranos(struct ScriptInterpreter *interpreter) {
       }
       break;
     case 4:
-      obj->riseCounter++;
+      objectEvent->riseCounter++;
       break;
     case 5:
-      if (obj->riseEnabled != 0)
-        FieldObject_SetPosition(obj, PIXELS(282), 0, PIXELS(658));
+      if (objectEvent->riseEnabled != 0)
+        FieldObject_SetPosition(objectEvent, PIXELS(282), 0, PIXELS(658));
       else
-        FieldObject_SetPosition(obj, PIXELS(254), 0, PIXELS(668));
-      obj->riseCounter++;
+        FieldObject_SetPosition(objectEvent, PIXELS(254), 0, PIXELS(668));
+      objectEvent->riseCounter++;
       break;
     case 6:
-      obj->riseCounter++;
+      objectEvent->riseCounter++;
       break;
     case 7:
-      if (obj->targetX == OBJ_EVENT_NO_TARGET && obj->targetY == obj->targetX &&
-          obj->targetZ == obj->targetY) {
-        obj->speed = PIXELS(2);
-        obj->acceleration = PIXELS(1);
-        obj->timer = 0;
-        obj->work = 0;
-        obj->riseCounter++;
-        obj->riseBaseY = 0;
+      if (objectEvent->targetX == OBJ_EVENT_NO_TARGET &&
+          objectEvent->targetY == objectEvent->targetX &&
+          objectEvent->targetZ == objectEvent->targetY) {
+        objectEvent->speed = PIXELS(2);
+        objectEvent->acceleration = PIXELS(1);
+        objectEvent->timer = 0;
+        objectEvent->work = 0;
+        objectEvent->riseCounter++;
+        objectEvent->riseBaseY = 0;
       }
       break;
     case 8:
-      obj->riseCounter = 0;
+      objectEvent->riseCounter = 0;
       break;
     }
   } else {
-    if (obj->timer != 0) {
-      obj->riseBaseY -= ((u32)Engine_RandomNext() << 12) >> 16;
-      if (obj->riseBaseY < -PIXELS(1) / 4)
-        obj->timer = 0;
+    if (objectEvent->timer != 0) {
+      objectEvent->riseBaseY -= ((u32)Engine_RandomNext() << 12) >> 16;
+      if (objectEvent->riseBaseY < -PIXELS(1) / 4)
+        objectEvent->timer = 0;
     } else {
-      obj->riseBaseY += ((u32)Engine_RandomNext() << 12) >> 16;
-      if (obj->riseBaseY > PIXELS(1) / 4)
-        obj->timer = 1;
+      objectEvent->riseBaseY += ((u32)Engine_RandomNext() << 12) >> 16;
+      if (objectEvent->riseBaseY > PIXELS(1) / 4)
+        objectEvent->timer = 1;
     }
-    if (obj->x.fixed > PIXELS(248) && obj->x.fixed < PIXELS(292))
-      obj->x.fixed += obj->riseBaseY;
-    if ((s16)obj->work != 0) {
-      obj->y.fixed = obj->y.fixed - (((u32)Engine_RandomNext() << 15) >> 16) -
-                     PIXELS(1) / 2;
-      if (obj->y.fixed < 0)
-        obj->work = 0;
+    if (objectEvent->x.fixed > PIXELS(248) &&
+        objectEvent->x.fixed < PIXELS(292))
+      objectEvent->x.fixed += objectEvent->riseBaseY;
+    if ((s16)objectEvent->work != 0) {
+      objectEvent->y.fixed = objectEvent->y.fixed -
+                             (((u32)Engine_RandomNext() << 15) >> 16) -
+                             PIXELS(1) / 2;
+      if (objectEvent->y.fixed < 0)
+        objectEvent->work = 0;
     } else {
-      obj->y.fixed = obj->y.fixed + (((u32)Engine_RandomNext() << 15) >> 16) +
-                     PIXELS(1) / 2;
-      if (obj->y.fixed > PIXELS(8))
-        obj->work = 1;
+      objectEvent->y.fixed = objectEvent->y.fixed +
+                             (((u32)Engine_RandomNext() << 15) >> 16) +
+                             PIXELS(1) / 2;
+      if (objectEvent->y.fixed > PIXELS(8))
+        objectEvent->work = 1;
     }
   }
   if (((u32)Engine_RandomNext() * 100) >> 16 == 0)
-    obj->riseCounter = 1;
+    objectEvent->riseCounter = 1;
   return 1;
 }
 
 /// The same for the monster that dives at Sean.
 static s32
 TolbiShipDeck_HoverAndDiveAtSean(struct ScriptInterpreter *interpreter) {
-  struct ObjectEvent *obj = (struct ObjectEvent *)interpreter;
-  if (obj->riseCounter != 0) {
-    switch (obj->riseCounter) {
+  struct ObjectEvent *objectEvent = (struct ObjectEvent *)interpreter;
+  if (objectEvent->riseCounter != 0) {
+    switch (objectEvent->riseCounter) {
     case 1:
-      obj->speed = PIXELS(4);
-      obj->acceleration = PIXELS(2);
-      FieldObject_SetPosition(obj, PIXELS(256), PIXELS(20), PIXELS(640));
-      obj->riseCounter++;
+      objectEvent->speed = PIXELS(4);
+      objectEvent->acceleration = PIXELS(2);
+      FieldObject_SetPosition(objectEvent, PIXELS(256), PIXELS(20),
+                              PIXELS(640));
+      objectEvent->riseCounter++;
       break;
     case 2:
-      obj->riseCounter++;
+      objectEvent->riseCounter++;
       break;
     case 3:
-      if (obj->targetX == OBJ_EVENT_NO_TARGET && obj->targetY == obj->targetX &&
-          obj->targetZ == obj->targetY) {
-        obj->riseCounter++;
+      if (objectEvent->targetX == OBJ_EVENT_NO_TARGET &&
+          objectEvent->targetY == objectEvent->targetX &&
+          objectEvent->targetZ == objectEvent->targetY) {
+        objectEvent->riseCounter++;
         Script_PlayCue(SE_146);
-        if (obj->riseEnabled != 0)
+        if (objectEvent->riseEnabled != 0)
           ObjectEvent_FaceDirection(SEA_SEAN, FACING_NORTH + FACING_STEP, 0);
         else
           ObjectEvent_FaceDirection(SEA_SEAN, FACING_NORTHWEST + FACING_STEP,
@@ -449,59 +457,63 @@ TolbiShipDeck_HoverAndDiveAtSean(struct ScriptInterpreter *interpreter) {
       }
       break;
     case 4:
-      obj->riseCounter++;
+      objectEvent->riseCounter++;
       break;
     case 5:
-      if (obj->riseEnabled != 0)
-        FieldObject_SetPosition(obj, PIXELS(264), 0, PIXELS(600));
+      if (objectEvent->riseEnabled != 0)
+        FieldObject_SetPosition(objectEvent, PIXELS(264), 0, PIXELS(600));
       else
-        FieldObject_SetPosition(obj, PIXELS(242), 0, PIXELS(604));
-      obj->riseCounter++;
+        FieldObject_SetPosition(objectEvent, PIXELS(242), 0, PIXELS(604));
+      objectEvent->riseCounter++;
       break;
     case 6:
-      obj->riseCounter++;
+      objectEvent->riseCounter++;
       break;
     case 7:
-      if (obj->targetX == OBJ_EVENT_NO_TARGET && obj->targetY == obj->targetX &&
-          obj->targetZ == obj->targetY) {
-        obj->speed = PIXELS(2);
-        obj->acceleration = PIXELS(1);
-        obj->timer = 0;
-        obj->work = 0;
-        obj->riseCounter++;
-        obj->riseBaseY = 0;
+      if (objectEvent->targetX == OBJ_EVENT_NO_TARGET &&
+          objectEvent->targetY == objectEvent->targetX &&
+          objectEvent->targetZ == objectEvent->targetY) {
+        objectEvent->speed = PIXELS(2);
+        objectEvent->acceleration = PIXELS(1);
+        objectEvent->timer = 0;
+        objectEvent->work = 0;
+        objectEvent->riseCounter++;
+        objectEvent->riseBaseY = 0;
       }
       break;
     case 8:
-      obj->riseCounter = 0;
+      objectEvent->riseCounter = 0;
       break;
     }
   } else {
-    if (obj->timer != 0) {
-      obj->riseBaseY -= ((u32)Engine_RandomNext() << 12) >> 16;
-      if (obj->riseBaseY < -PIXELS(1) / 4)
-        obj->timer = 0;
+    if (objectEvent->timer != 0) {
+      objectEvent->riseBaseY -= ((u32)Engine_RandomNext() << 12) >> 16;
+      if (objectEvent->riseBaseY < -PIXELS(1) / 4)
+        objectEvent->timer = 0;
     } else {
-      obj->riseBaseY += ((u32)Engine_RandomNext() << 12) >> 16;
-      if (obj->riseBaseY > PIXELS(1) / 4)
-        obj->timer = 1;
+      objectEvent->riseBaseY += ((u32)Engine_RandomNext() << 12) >> 16;
+      if (objectEvent->riseBaseY > PIXELS(1) / 4)
+        objectEvent->timer = 1;
     }
-    if (obj->x.fixed > PIXELS(232) && obj->x.fixed < PIXELS(272))
-      obj->x.fixed += obj->riseBaseY;
-    if ((s16)obj->work != 0) {
-      obj->y.fixed = obj->y.fixed - (((u32)Engine_RandomNext() << 15) >> 16) -
-                     PIXELS(1) / 2;
-      if (obj->y.fixed < 0)
-        obj->work = 0;
+    if (objectEvent->x.fixed > PIXELS(232) &&
+        objectEvent->x.fixed < PIXELS(272))
+      objectEvent->x.fixed += objectEvent->riseBaseY;
+    if ((s16)objectEvent->work != 0) {
+      objectEvent->y.fixed = objectEvent->y.fixed -
+                             (((u32)Engine_RandomNext() << 15) >> 16) -
+                             PIXELS(1) / 2;
+      if (objectEvent->y.fixed < 0)
+        objectEvent->work = 0;
     } else {
-      obj->y.fixed = obj->y.fixed + (((u32)Engine_RandomNext() << 15) >> 16) +
-                     PIXELS(1) / 2;
-      if (obj->y.fixed > PIXELS(8))
-        obj->work = 1;
+      objectEvent->y.fixed = objectEvent->y.fixed +
+                             (((u32)Engine_RandomNext() << 15) >> 16) +
+                             PIXELS(1) / 2;
+      if (objectEvent->y.fixed > PIXELS(8))
+        objectEvent->work = 1;
     }
   }
   if (((u32)Engine_RandomNext() * 100) >> 16 == 0)
-    obj->riseCounter = 1;
+    objectEvent->riseCounter = 1;
   return 1;
 }
 
@@ -573,32 +585,33 @@ static s32 TolbiShipDeck_LookAround(struct ScriptInterpreter *interpreter) {
 /// one of two spots chosen by riseEnabled. The object event's timer holds the
 /// step. Returns 1.
 static s32 TolbiShipDeck_LeapAtOuranos(struct ScriptInterpreter *interpreter) {
-  struct ObjectEvent *obj = (struct ObjectEvent *)interpreter;
-  switch (obj->timer) {
+  struct ObjectEvent *objectEvent = (struct ObjectEvent *)interpreter;
+  switch (objectEvent->timer) {
   case 0:
     if ((((u32)Engine_RandomNext() * 40) >> 16) == 0) {
-      obj->timer++;
+      objectEvent->timer++;
     }
     break;
   case 1:
-    obj->timer++;
+    objectEvent->timer++;
     break;
   case 2:
-    obj->velocityY = PIXELS(4);
-    obj->speed = PIXELS(4);
-    obj->acceleration = PIXELS(2);
-    FieldObject_SetPosition(obj, PIXELS(264), 0, PIXELS(662));
-    obj->timer++;
+    objectEvent->velocityY = PIXELS(4);
+    objectEvent->speed = PIXELS(4);
+    objectEvent->acceleration = PIXELS(2);
+    FieldObject_SetPosition(objectEvent, PIXELS(264), 0, PIXELS(662));
+    objectEvent->timer++;
     break;
   case 3:
-    obj->timer++;
+    objectEvent->timer++;
     break;
   case 4:
-    if (obj->targetX == OBJ_EVENT_NO_TARGET && obj->targetY == obj->targetX &&
-        obj->targetZ == obj->targetY) {
-      obj->timer++;
+    if (objectEvent->targetX == OBJ_EVENT_NO_TARGET &&
+        objectEvent->targetY == objectEvent->targetX &&
+        objectEvent->targetZ == objectEvent->targetY) {
+      objectEvent->timer++;
       Engine_AudioPlayCue(SE_JUMP);
-      if (obj->riseEnabled != 0) {
+      if (objectEvent->riseEnabled != 0) {
         ObjectEvent_FaceDirection(SEA_OURANOS, FACING_NORTHWEST + FACING_STEP,
                                   0);
       } else {
@@ -614,30 +627,31 @@ static s32 TolbiShipDeck_LeapAtOuranos(struct ScriptInterpreter *interpreter) {
     }
     break;
   case 5:
-    obj->timer++;
+    objectEvent->timer++;
     break;
   case 6:
-    obj->timer++;
-    obj->velocityY = PIXELS(4);
-    obj->speed = PIXELS(2);
-    obj->acceleration = PIXELS(1);
-    if (obj->riseEnabled != 0) {
-      FieldObject_SetPosition(obj, PIXELS(252), 0, PIXELS(646));
+    objectEvent->timer++;
+    objectEvent->velocityY = PIXELS(4);
+    objectEvent->speed = PIXELS(2);
+    objectEvent->acceleration = PIXELS(1);
+    if (objectEvent->riseEnabled != 0) {
+      FieldObject_SetPosition(objectEvent, PIXELS(252), 0, PIXELS(646));
     } else {
-      FieldObject_SetPosition(obj, PIXELS(256), 0, PIXELS(686));
+      FieldObject_SetPosition(objectEvent, PIXELS(256), 0, PIXELS(686));
     }
     break;
   case 7:
-    obj->timer++;
+    objectEvent->timer++;
     break;
   case 8:
-    if (obj->targetX == OBJ_EVENT_NO_TARGET && obj->targetY == obj->targetX &&
-        obj->targetZ == obj->targetY) {
-      obj->timer++;
+    if (objectEvent->targetX == OBJ_EVENT_NO_TARGET &&
+        objectEvent->targetY == objectEvent->targetX &&
+        objectEvent->targetZ == objectEvent->targetY) {
+      objectEvent->timer++;
     }
     break;
   case 9:
-    obj->timer = 0;
+    objectEvent->timer = 0;
     break;
   }
   return 1;
@@ -645,32 +659,33 @@ static s32 TolbiShipDeck_LeapAtOuranos(struct ScriptInterpreter *interpreter) {
 
 /// The same for the monster that leaps at Sean.
 static s32 TolbiShipDeck_LeapAtSean(struct ScriptInterpreter *interpreter) {
-  struct ObjectEvent *obj = (struct ObjectEvent *)interpreter;
-  switch (obj->timer) {
+  struct ObjectEvent *objectEvent = (struct ObjectEvent *)interpreter;
+  switch (objectEvent->timer) {
   case 0:
     if ((((u32)Engine_RandomNext() * 40) >> 16) == 0) {
-      obj->timer++;
+      objectEvent->timer++;
     }
     break;
   case 1:
-    obj->timer++;
+    objectEvent->timer++;
     break;
   case 2:
-    obj->velocityY = PIXELS(4);
-    obj->speed = PIXELS(4);
-    obj->acceleration = PIXELS(2);
-    FieldObject_SetPosition(obj, PIXELS(176), 0, PIXELS(696));
-    obj->timer++;
+    objectEvent->velocityY = PIXELS(4);
+    objectEvent->speed = PIXELS(4);
+    objectEvent->acceleration = PIXELS(2);
+    FieldObject_SetPosition(objectEvent, PIXELS(176), 0, PIXELS(696));
+    objectEvent->timer++;
     break;
   case 3:
-    obj->timer++;
+    objectEvent->timer++;
     break;
   case 4:
-    if (obj->targetX == OBJ_EVENT_NO_TARGET && obj->targetY == obj->targetX &&
-        obj->targetZ == obj->targetY) {
-      obj->timer++;
+    if (objectEvent->targetX == OBJ_EVENT_NO_TARGET &&
+        objectEvent->targetY == objectEvent->targetX &&
+        objectEvent->targetZ == objectEvent->targetY) {
+      objectEvent->timer++;
       Engine_AudioPlayCue(SE_JUMP);
-      if (obj->riseEnabled != 0) {
+      if (objectEvent->riseEnabled != 0) {
         ObjectEvent_FaceDirection(SEA_SEAN, FACING_NORTH + FACING_STEP, 0);
       } else {
         Engine_ObjectEventFaceDirection(SEA_SEAN, FACING_EAST, 0);
@@ -684,30 +699,31 @@ static s32 TolbiShipDeck_LeapAtSean(struct ScriptInterpreter *interpreter) {
     }
     break;
   case 5:
-    obj->timer++;
+    objectEvent->timer++;
     break;
   case 6:
-    obj->timer++;
-    obj->velocityY = PIXELS(4);
-    obj->speed = PIXELS(2);
-    obj->acceleration = PIXELS(1);
-    if (obj->riseEnabled != 0) {
-      FieldObject_SetPosition(obj, PIXELS(184), 0, PIXELS(672));
+    objectEvent->timer++;
+    objectEvent->velocityY = PIXELS(4);
+    objectEvent->speed = PIXELS(2);
+    objectEvent->acceleration = PIXELS(1);
+    if (objectEvent->riseEnabled != 0) {
+      FieldObject_SetPosition(objectEvent, PIXELS(184), 0, PIXELS(672));
     } else {
-      FieldObject_SetPosition(obj, PIXELS(202), 0, PIXELS(692));
+      FieldObject_SetPosition(objectEvent, PIXELS(202), 0, PIXELS(692));
     }
     break;
   case 7:
-    obj->timer++;
+    objectEvent->timer++;
     break;
   case 8:
-    if (obj->targetX == OBJ_EVENT_NO_TARGET && obj->targetY == obj->targetX &&
-        obj->targetZ == obj->targetY) {
-      obj->timer++;
+    if (objectEvent->targetX == OBJ_EVENT_NO_TARGET &&
+        objectEvent->targetY == objectEvent->targetX &&
+        objectEvent->targetZ == objectEvent->targetY) {
+      objectEvent->timer++;
     }
     break;
   case 9:
-    obj->timer = 0;
+    objectEvent->timer = 0;
     break;
   }
   return 1;

@@ -2411,22 +2411,22 @@ static void WorldMap_ShakeVenusLighthouse(void) {
 static void WorldMap_UpdateLighthouseQuake(void) {
   u32 x = (u32)Engine_RandomNext() * QUAKE_DUST_WIDTH >> 16;
   u32 z = (u32)Engine_RandomNext() * QUAKE_DUST_DEPTH >> 16;
-  struct ObjectEvent *object;
+  struct ObjectEvent *objectEvent;
 
-  object =
+  objectEvent =
       Engine_ObjectCreate(SPRITE_DUST_PUFF, PIXELS(x) + PIXELS(QUAKE_DUST_LEFT),
                           0, PIXELS(z) + PIXELS(QUAKE_DUST_TOP));
-  if (object != NULL) {
-    struct AnimationObject *sprite = object->sprite;
+  if (objectEvent != NULL) {
+    struct AnimationObject *sprite = objectEvent->sprite;
     s32 scale = (((u32)Engine_RandomNext() << 15) >> 16) + 6 * Q16_ONE / 5;
 
     sprite->flags = 0;
     sprite->image.priority = 2;
-    object->motionFlags = 0;
-    object->scaleX = scale;
-    object->scaleY = scale;
-    ObjectEvent_SetMode(object, 1);
-    Engine_ObjectSetScript(object, gQuakeDustScript);
+    objectEvent->motionFlags = 0;
+    objectEvent->scaleX = scale;
+    objectEvent->scaleY = scale;
+    ObjectEvent_SetMode(objectEvent, 1);
+    Engine_ObjectSetScript(objectEvent, gQuakeDustScript);
   }
   if (gFrameCount % 3 == 0) {
     switch (((u32)Engine_RandomNext() << 2) >> 16) {

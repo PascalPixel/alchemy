@@ -133,14 +133,14 @@ void FieldEffect_RunReveal(void) {
 /// (FieldScript_RunTypeHandler) and before Mind Read starts its own colours.
 void FieldEffect_EndReveal(void) {
 #ifdef UBFIX
-  struct FieldEffectWork *work = gEffectWork;
+  struct FieldEffectWork *effectWork = gEffectWork;
   struct DisplayTransitionState *scene = gDisplayTransition;
   struct FieldWork *state = (struct FieldWork *)gEventWork;
 #else
   // Named slots avoid stepping outside gEffectWork. They add 8 bytes to this
   // function in the forced native EN build (0xe8 -> 0xf0).
   struct FieldEffectWork **cell = &gEffectWork;
-  struct FieldEffectWork *work = *cell;
+  struct FieldEffectWork *effectWork = *cell;
   struct DisplayTransitionState *scene =
       *(struct DisplayTransitionState **)((u8 *)cell - 0x64);
   struct FieldWork *state = *(struct FieldWork **)((u8 *)cell - 0x74);
@@ -171,7 +171,7 @@ void FieldEffect_EndReveal(void) {
     if (event != NULL)
       Field_RunEventAction(event, gGameState.selectedObjectEvent, eventTarget);
 
-    if (work->childOption == 0) {
+    if (effectWork->childOption == 0) {
       scene->nextMode = 0;
       scene->duration = 1;
       scene->step = 1;

@@ -80,7 +80,7 @@ void FieldEffect_RunGrowthOnTarget(s32 unused) {
 /// The objects (217) appear 2 or 3 frames apart and each lasts 60 frames
 /// (gFieldEffect_BurstParticleObjectScript).
 void FieldEffect_RunGrowth(void) {
-  struct FieldEffectWork *work = gEffectWork;
+  struct FieldEffectWork *effectWork = gEffectWork;
   struct BurstParticleVector pos;
   struct BurstParticleVector *p;
   s32 remainingObjects;
@@ -93,11 +93,11 @@ void FieldEffect_RunGrowth(void) {
     struct ObjectEvent *particle;
     s32 radius;
 
-    p->values[0] = work->x;
-    p->values[2] = work->z;
+    p->values[0] = effectWork->x;
+    p->values[2] = effectWork->z;
     radius = (Random16() * 6) + 0x40000;
     Vector_AddPolarOffset(radius, Random16(), p);
-    p->values[1] = work->y;
+    p->values[1] = effectWork->y;
     particle = (struct ObjectEvent *)Object_Spawn(
         GROWTH_FALL_OBJECT, p->values[0], p->values[1], p->values[2]);
     if (particle != 0) {
@@ -118,13 +118,13 @@ void FieldEffect_RunGrowth(void) {
 /// flies at 1.5 pixels a frame and is freed on arrival; facing north, the
 /// points are 14 pixels further north.
 void FieldEffect_SpawnBurstParticleField(void) {
-  struct FieldEffectWork *work;
+  struct FieldEffectWork *effectWork;
   struct ObjectEvent *caster;
   s32 pos[3];
   s32 particleIndex;
 
-  work = gEffectWork;
-  caster = work->mainObject;
+  effectWork = gEffectWork;
+  caster = effectWork->mainObject;
   FieldEffect_FadeToEffectColor();
 
   for (particleIndex = 0; particleIndex < GROWTH_PARTICLE_MAX;
@@ -134,16 +134,16 @@ void FieldEffect_SpawnBurstParticleField(void) {
     struct BurstParticleVisual *child;
     s32 radius;
 
-    if (work->angle == 0x4000) {
+    if (effectWork->angle == 0x4000) {
       SET_VECTOR(pos, caster->x.fixed, caster->y.fixed + 0xa0000,
                  caster->z.fixed);
-    } else if (work->angle == 0xc000) {
+    } else if (effectWork->angle == 0xc000) {
       SET_VECTOR(pos, caster->x.fixed, caster->y.fixed + 0x180000,
                  caster->z.fixed);
     } else {
       SET_VECTOR(pos, caster->x.fixed, caster->y.fixed + 0xa0000,
                  caster->z.fixed);
-      Vector_AddPolarOffset(0xa0000, work->angle, pos);
+      Vector_AddPolarOffset(0xa0000, effectWork->angle, pos);
     }
 
     // The shadow part takes the image's colour mode, shape, size, tile and
@@ -175,9 +175,9 @@ void FieldEffect_SpawnBurstParticleField(void) {
                                             1);
 
       // Destination: 4 to 10 pixels from the effect's position.
-      SET_VECTOR(pos, work->x, work->y, work->z);
-      if (work->angle == 0xc000)
-        Vector_AddPolarOffset(0xe0000, work->angle, pos);
+      SET_VECTOR(pos, effectWork->x, effectWork->y, effectWork->z);
+      if (effectWork->angle == 0xc000)
+        Vector_AddPolarOffset(0xe0000, effectWork->angle, pos);
       radius = Random16() * 6 + 0x40000;
       Vector_AddPolarOffset(radius, Random16(), pos);
       Object_SetMoveTargetFar((struct ObjectRuntime *)particle, pos[0], pos[1],

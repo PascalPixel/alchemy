@@ -183,33 +183,33 @@ enum TolbiShipMastCell {
 /// rotates it.
 static s32
 TolbiShipMast_FollowCameraAndRotate(struct ScriptInterpreter *interpreter) {
-  struct ObjectEvent *object = (struct ObjectEvent *)interpreter;
+  struct ObjectEvent *objectEvent = (struct ObjectEvent *)interpreter;
   s32 *position = ((struct MapGridScrollWork *)gMapGridWork[0])->origin;
   s32 *origin = gTolbiShipMast_CameraOrigin;
   s32 *center = gTolbiShipMast_CameraCenter;
   s32 cameraX = *position++;
   s32 cameraY = *position;
 
-  object->x.fixed = center[0] + (cameraX - origin[0]);
-  object->y.fixed = center[1] + (cameraY - origin[1]) / 2;
-  object->sprite->rotation += 0x600;
+  objectEvent->x.fixed = center[0] + (cameraX - origin[0]);
+  objectEvent->y.fixed = center[1] + (cameraY - origin[1]) / 2;
+  objectEvent->sprite->rotation += 0x600;
   return 0;
 }
 
 /// A random sample of 6 or 9 turns the lookout to either side of north.
 static s32
 TolbiShipMast_RandomizeLookoutFacing(struct ScriptInterpreter *interpreter) {
-  struct ObjectEvent *object = (struct ObjectEvent *)interpreter;
+  struct ObjectEvent *objectEvent = (struct ObjectEvent *)interpreter;
   u32 sample = (u32)(Engine_RandomNext() << 6) >> 16;
 
   if (sample == 6) {
     s32 value = FACING_NORTH + FACING_STEP;
 
-    object->facing = value;
+    objectEvent->facing = value;
   } else if (sample == 9) {
     s32 value = FACING_NORTHWEST + FACING_STEP;
 
-    object->facing = value;
+    objectEvent->facing = value;
   }
 
   return 1;

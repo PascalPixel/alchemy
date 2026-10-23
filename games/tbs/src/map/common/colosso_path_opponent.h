@@ -44,12 +44,12 @@ STATIC_ASSERT(sizeof(struct ColossoRaceWork) == 0x7170);
 static void Colosso_UpdatePathOpponent(void) {
   struct ColossoRaceWork *work = (struct ColossoRaceWork *)gColossoWork;
   struct PathRecorder *rec = (struct PathRecorder *)gMapLocalState;
-  struct ObjectEvent *obj;
+  struct ObjectEvent *objectEvent;
   s32 x, z, d;
   u16 *itemObjectEvent;
 
-  obj = ObjectEvent_GetById(rec->objectEvent);
-  if (obj == NULL) {
+  objectEvent = ObjectEvent_GetById(rec->objectEvent);
+  if (objectEvent == NULL) {
     return;
   }
   if (rec->mode == PATH_RECORDER_PLAY) {
@@ -58,8 +58,8 @@ static void Colosso_UpdatePathOpponent(void) {
     if (x == 0 && z == 0) {
       s32 fz;
       rec->mode = PATH_RECORDER_FINISHED;
-      ObjectEvent_SetMode(obj, 1);
-      if (work->gauge.finishX < obj->x.fixed) {
+      ObjectEvent_SetMode(objectEvent, 1);
+      if (work->gauge.finishX < objectEvent->x.fixed) {
         x = work->gauge.finishX + 0xc0000;
       } else {
         x = work->gauge.finishX - 0xc0000;
@@ -71,12 +71,12 @@ static void Colosso_UpdatePathOpponent(void) {
         fz = work->gauge.finishZ - 0x100000;
         itemObjectEvent = &work->gauge.finishItemObjectEventA;
       }
-      obj->timer = *itemObjectEvent;
-      obj->acceleration = 0x4000;
-      obj->speed = 0x10000;
-      Engine_ObjectSetPosition(obj, x, 0, fz);
+      objectEvent->timer = *itemObjectEvent;
+      objectEvent->acceleration = 0x4000;
+      objectEvent->speed = 0x10000;
+      Engine_ObjectSetPosition(objectEvent, x, 0, fz);
       Engine_GameFlagSet(FLAG_MAP_TEMP_11);
-      Engine_ObjectSetScript(obj, gColosso_OpponentFinishScript);
+      Engine_ObjectSetScript(objectEvent, gColosso_OpponentFinishScript);
       return;
     }
     x <<= 16;
@@ -84,10 +84,11 @@ static void Colosso_UpdatePathOpponent(void) {
     if (rec->mirror != 0) {
       x = work->gauge.finishX * 2 - x;
     }
-    if (obj->x.fixed != x || obj->z.fixed != z) {
+    if (objectEvent->x.fixed != x || objectEvent->z.fixed != z) {
       {
-        u16 angle = Math_Atan2(z - obj->z.fixed, x - obj->x.fixed);
-        d = (s16)(angle - obj->facing);
+        u16 angle =
+            Math_Atan2(z - objectEvent->z.fixed, x - objectEvent->x.fixed);
+        d = (s16)(angle - objectEvent->facing);
       }
       if (d > 0x1000) {
         d = 0x1000;
@@ -95,21 +96,21 @@ static void Colosso_UpdatePathOpponent(void) {
       if (d < -0x1000) {
         d = -0x1000;
       }
-      obj->facing += d;
-      obj->x.fixed = x;
-      obj->z.fixed = z;
+      objectEvent->facing += d;
+      objectEvent->x.fixed = x;
+      objectEvent->z.fixed = z;
       rec->still = 0;
     } else {
       rec->still++;
     }
     if (rec->still > 2) {
-      ObjectEvent_SetMode(obj, 1);
+      ObjectEvent_SetMode(objectEvent, 1);
     } else {
-      ObjectEvent_SetMode(obj, 5);
+      ObjectEvent_SetMode(objectEvent, 5);
     }
   } else if (rec->mode == PATH_RECORDER_RECORD) {
-    x = obj->x.part.pixel;
-    z = obj->z.part.pixel;
+    x = objectEvent->x.part.pixel;
+    z = objectEvent->z.part.pixel;
     work->path[(s16)rec->pathIndex++] = x;
     work->path[(s16)rec->pathIndex++] = z;
     if ((s16)rec->pathIndex == 0x383e) {

@@ -2297,15 +2297,15 @@ static void EventScript_BoulderSweepsThemAway(void) {
 }
 
 /// Places an object event and its targets at once, x doubling as its height.
-static __inline__ void ValeStorm_PlaceObjectEvent(struct ObjectEvent *object,
-                                                  s32 horizontalPosition,
-                                                  s32 groundPosition) {
-  object->x.fixed = horizontalPosition;
-  object->y.fixed = horizontalPosition;
-  object->targetX = horizontalPosition;
-  object->targetY = horizontalPosition;
-  object->z.fixed = groundPosition;
-  object->targetZ = groundPosition;
+static __inline__ void
+ValeStorm_PlaceObjectEvent(struct ObjectEvent *objectEvent,
+                           s32 horizontalPosition, s32 groundPosition) {
+  objectEvent->x.fixed = horizontalPosition;
+  objectEvent->y.fixed = horizontalPosition;
+  objectEvent->targetX = horizontalPosition;
+  objectEvent->targetY = horizontalPosition;
+  objectEvent->z.fixed = groundPosition;
+  objectEvent->targetZ = groundPosition;
 }
 
 /// One crash of the Boulder coming down: a shake, SE_145 and a wait.
@@ -3013,7 +3013,7 @@ static void ValeStorm_SpawnEffectPair(struct ObjectEvent *parent) {
   struct ObjectEvent *pair[2];
   struct ObjectEvent *child;
   struct AnimationObject *sprite;
-  struct FieldEffectWork *work = gEffectWork;
+  struct FieldEffectWork *effectWork = gEffectWork;
   s32 i;
 
   Engine_AudioPlayCue(SE_JUMP);
@@ -3031,7 +3031,7 @@ static void ValeStorm_SpawnEffectPair(struct ObjectEvent *parent) {
         Object_InitializeMode(sprite, 0);
         sprite->flags = 0;
         Resource_ResetEntry(sprite->slot);
-        sprite->slot = work->tileSlot;
+        sprite->slot = effectWork->tileSlot;
         sprite->retainCacheEntry = 1;
         sprite->image.tile =
             (gVramBlockCache[sprite->slot].offset >> 5) & 0x3ff;

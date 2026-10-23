@@ -195,7 +195,7 @@ void MercuryLighthouse_ChargeLights(void) {
   struct MercuryLighthouseLights *state;
   struct ObjectEvent *leader;
   struct ObjectEvent *pillar;
-  struct ObjectEvent *obj;
+  struct ObjectEvent *objectEvent;
   s32 step;
 
   state = *(struct MercuryLighthouseLights **)WORK_SLOT(
@@ -207,26 +207,27 @@ void MercuryLighthouse_ChargeLights(void) {
   Engine_ScriptStart();
   pillar = state->pillar;
   if (pillar == 0) {
-    obj = Engine_ObjectCreate(26, leader->x.fixed, leader->y.fixed + 0x180000,
-                              leader->z.fixed);
-    if (obj != 0) {
-      struct AnimationObject *sprite = obj->sprite;
+    objectEvent = Engine_ObjectCreate(
+        26, leader->x.fixed, leader->y.fixed + 0x180000, leader->z.fixed);
+    if (objectEvent != 0) {
+      struct AnimationObject *sprite = objectEvent->sprite;
 
-      obj->terrainHeight = leader->terrainHeight;
-      Engine_ObjectSetScript(obj, gMercuryLighthouse_PillarScript);
-      obj->linkedObject = leader;
-      obj->motionFlags = 4;
+      objectEvent->terrainHeight = leader->terrainHeight;
+      Engine_ObjectSetScript(objectEvent, gMercuryLighthouse_PillarScript);
+      objectEvent->linkedObject = leader;
+      objectEvent->motionFlags = 4;
       // The height is written by its offset, the plain-C form of obj->y.fixed
       // this site matches with (map/README.md): as the field, the sprite's
       // reload moves after the add and store.
-      *(s32 *)((u8 *)obj + offsetof(struct ObjectEvent, y)) += -PIXELS(1) / 2;
+      *(s32 *)((u8 *)objectEvent + offsetof(struct ObjectEvent, y)) +=
+          -PIXELS(1) / 2;
       if (sprite != 0) {
         sprite->flags = 0;
         sprite->image.priority = 1;
       }
-      obj->spriteStorageKind = 0;
-      state->pillar = obj;
-      pillar = obj;
+      objectEvent->spriteStorageKind = 0;
+      state->pillar = objectEvent;
+      pillar = objectEvent;
     } else {
       pillar = state->pillar;
     }

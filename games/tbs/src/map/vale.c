@@ -3036,8 +3036,8 @@ static s32 Vale_DistanceInPixels(s32 *first_position, s32 *second_position) {
 /// riseCounter marking why) until it is out of sight again; paused without
 /// riseCounter, as Vale_SynchronizeAlephGuardPause leaves him while a menu is
 /// open, he just stands. Returns 1 when he is stopped.
-static s32 Vale_TestFacing(struct ObjectEvent *obj, struct ObjectEvent *target,
-                           s32 range, s32 force) {
+static s32 Vale_TestFacing(struct ObjectEvent *objectEvent,
+                           struct ObjectEvent *target, s32 range, s32 force) {
   s32 result;
   u32 angle;
   u32 left;
@@ -3045,34 +3045,34 @@ static s32 Vale_TestFacing(struct ObjectEvent *obj, struct ObjectEvent *target,
   u32 dir;
 
   result = 0;
-  if (obj->paused == 1) {
-    if (obj->riseCounter == 0) {
-      ObjectEvent_SetMode(obj, 1);
+  if (objectEvent->paused == 1) {
+    if (objectEvent->riseCounter == 0) {
+      ObjectEvent_SetMode(objectEvent, 1);
       return 1;
     }
   }
-  if (Vale_DistanceInPixels(&target->x.fixed, &obj->x.fixed) < range ||
+  if (Vale_DistanceInPixels(&target->x.fixed, &objectEvent->x.fixed) < range ||
       force != 0) {
-    angle = (u16)ArcTan2(target->z.fixed - obj->z.fixed,
-                         target->x.fixed - obj->x.fixed);
+    angle = (u16)ArcTan2(target->z.fixed - objectEvent->z.fixed,
+                         target->x.fixed - objectEvent->x.fixed);
     left = (angle - 0x1000) & 0xf000;
     right = (angle + 0x1000) & 0xf000;
     angle &= 0xf000;
-    dir = obj->facing & 0xf000;
+    dir = objectEvent->facing & 0xf000;
     if (angle == dir || right == dir || left == dir || force != 0) {
-      obj->paused = 1;
-      ObjectEvent_SetMode(obj, 1);
+      objectEvent->paused = 1;
+      ObjectEvent_SetMode(objectEvent, 1);
       result = 1;
-      obj->riseCounter = result;
+      objectEvent->riseCounter = result;
     } else {
-      obj->paused = 0;
-      ObjectEvent_SetMode(obj, 2);
-      obj->riseCounter = 0;
+      objectEvent->paused = 0;
+      ObjectEvent_SetMode(objectEvent, 2);
+      objectEvent->riseCounter = 0;
     }
   } else {
-    obj->paused = 0;
-    ObjectEvent_SetMode(obj, 2);
-    obj->riseCounter = 0;
+    objectEvent->paused = 0;
+    ObjectEvent_SetMode(objectEvent, 2);
+    objectEvent->riseCounter = 0;
   }
   return result;
 }

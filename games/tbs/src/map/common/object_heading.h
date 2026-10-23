@@ -8,21 +8,21 @@
 /// runs out, it turns by a random amount up to half a turn and waits a random 0
 /// to 79 frames.
 static s32 Map_LookAboutRandomly(struct ScriptInterpreter *interpreter) {
-  struct ObjectEvent *obj = (struct ObjectEvent *)interpreter;
-  s32 cnt = obj->work;
-  s32 loaded = (s16)obj->work;
+  struct ObjectEvent *objectEvent = (struct ObjectEvent *)interpreter;
+  s32 cnt = objectEvent->work;
+  s32 loaded = (s16)objectEvent->work;
   s32 amount;
 
   if (loaded == 0) {
-    obj->facing += (u32)(Engine_RandomNext() << 15) >> 16;
+    objectEvent->facing += (u32)(Engine_RandomNext() << 15) >> 16;
     amount = (u32)(Engine_RandomNext() * 80) >> 16;
-    obj->work = amount;
+    objectEvent->work = amount;
     if (amount == 0) {
       goto done;
     }
     cnt = amount;
   }
-  obj->work = cnt - 1;
+  objectEvent->work = cnt - 1;
 done:
   return 1;
 }

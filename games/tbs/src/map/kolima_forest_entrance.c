@@ -125,10 +125,10 @@ extern s32 gKolimaForestEntrance_SparkleSoundOn;
 /// takes its next pose.
 static s32 KolimaForestEntrance_FlashHitPsynergyFields(
     struct ScriptInterpreter *interpreter) {
-  struct ObjectEvent *object = (struct ObjectEvent *)interpreter;
+  struct ObjectEvent *objectEvent = (struct ObjectEvent *)interpreter;
   s32 *pending = &gKolimaForestEntrance_PsynergyFieldHit;
   if (*pending) {
-    ObjectEvent_SetMode(object, 2);
+    ObjectEvent_SetMode(objectEvent, 2);
     *pending = 0;
   }
   return 1;
@@ -139,13 +139,13 @@ static s32 KolimaForestEntrance_FlashHitPsynergyFields(
 /// before; at 1200 the timer starts over.
 static s32 KolimaForestEntrance_TwinkleGroundSparkle(
     struct ScriptInterpreter *interpreter) {
-  struct ObjectEvent *object = (struct ObjectEvent *)interpreter;
-  s16 *counter = &object->timer;
+  struct ObjectEvent *objectEvent = (struct ObjectEvent *)interpreter;
+  s16 *counter = &objectEvent->timer;
   *counter = (*counter + (((u32)Engine_RandomNext() * 100) >> 16));
   if (*counter > 1000)
-    ObjectGroup_SetChildValue(object, 7);
+    ObjectGroup_SetChildValue(objectEvent, 7);
   else
-    ObjectGroup_SetChildValue(object, 10);
+    ObjectGroup_SetChildValue(objectEvent, 10);
   if (*counter > 1200) {
     u16 z = 0;
     *counter = z;

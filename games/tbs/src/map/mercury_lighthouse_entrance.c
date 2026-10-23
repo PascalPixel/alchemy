@@ -193,13 +193,13 @@ MercuryLighthouseEntrance_MiaWatchesLeader(union FieldObject *fieldObject) {
 static s32
 MercuryLighthouseEntrance_MiaWatchesLeader(union FieldObject *fieldObject) {
 #endif
-  struct ObjectEvent *object = (struct ObjectEvent *)fieldObject;
+  struct ObjectEvent *objectEvent = (struct ObjectEvent *)fieldObject;
   struct ObjectEvent *leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
 
   if ((leader->z.fixed >> 19) <= 22) {
-    object->facing = ArcTan2(leader->z.fixed - object->z.fixed,
-                             leader->x.fixed - object->x.fixed);
-  } else if (object->facing != FACING_NORTH) {
+    objectEvent->facing = ArcTan2(leader->z.fixed - objectEvent->z.fixed,
+                                  leader->x.fixed - objectEvent->x.fixed);
+  } else if (objectEvent->facing != FACING_NORTH) {
     Engine_ObjectEventFaceDirection(MIA, FACING_NORTH, 0);
   }
 #ifndef UBFIX

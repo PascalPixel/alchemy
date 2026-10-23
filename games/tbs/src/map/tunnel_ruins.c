@@ -372,15 +372,15 @@ static void TunnelRuins_SplashDousedPillar(union FieldObject *fieldObject) {
 #else
 static s32 TunnelRuins_SplashDousedPillar(union FieldObject *fieldObject) {
 #endif
-  struct ObjectEvent *object = (struct ObjectEvent *)fieldObject;
+  struct ObjectEvent *objectEvent = (struct ObjectEvent *)fieldObject;
   struct EffectOptions options;
   s32 x;
   s32 z;
 
   if (gFrameCount & 2)
-    ObjectEvent_SetMode(object, 1);
+    ObjectEvent_SetMode(objectEvent, 1);
   else
-    ObjectEvent_SetMode(object, 2);
+    ObjectEvent_SetMode(objectEvent, 2);
   if (gFrameCount & 3)
 #ifdef UBFIX
     return;
@@ -390,9 +390,11 @@ static s32 TunnelRuins_SplashDousedPillar(union FieldObject *fieldObject) {
   options.startScaleX = 3 * Q16_ONE / 10;
   options.startScaleY = 3 * Q16_ONE / 10;
   options.palette = 5;
-  x = object->x.fixed + ((((u32)(Engine_RandomNext() * 7) >> 16) - 3) << 16);
-  z = object->z.fixed + ((((u32)(Engine_RandomNext() * 7) >> 16) - 3) << 16);
-  FieldEffect_Spawn(x, object->y.fixed + PIXELS(16), z, 0, 0, 0, 0x90001,
+  x = objectEvent->x.fixed +
+      ((((u32)(Engine_RandomNext() * 7) >> 16) - 3) << 16);
+  z = objectEvent->z.fixed +
+      ((((u32)(Engine_RandomNext() * 7) >> 16) - 3) << 16);
+  FieldEffect_Spawn(x, objectEvent->y.fixed + PIXELS(16), z, 0, 0, 0, 0x90001,
                     &options);
 #ifdef UBFIX
   return;

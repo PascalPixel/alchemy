@@ -26,7 +26,7 @@ u32 gFallingEffectState __attribute__((section(".bss")));
 /// the map view follows, with SE_246 every 64 frames. gFallingEffectState, an
 /// enum KolimaCurseDustState, shapes the fall.
 void Kolima_UpdateCurseDust(void) {
-  struct ObjectEvent *object = NULL;
+  struct ObjectEvent *objectEvent = NULL;
   s32 *origin;
   struct AnimationObject *sprite;
   s32 x, z;
@@ -54,7 +54,7 @@ void Kolima_UpdateCurseDust(void) {
     break;
   }
   if ((gFrameCount & 7) == 0 &&
-      (object = Engine_ObjectCreate(SPRITE_SPARKLE, 0, 0, 0)) != 0) {
+      (objectEvent = Engine_ObjectCreate(SPRITE_SPARKLE, 0, 0, 0)) != 0) {
     origin = ((struct MapGridScrollWork *)gMapGridWork[0])->origin;
     if ((gFrameCount & 63) == 0)
       Engine_AudioPlayCue(SE_246);
@@ -65,17 +65,17 @@ void Kolima_UpdateCurseDust(void) {
     else
       x = origin[0] + (Engine_RandomNext() << 8) - PIXELS(128);
     z = origin[2] + (Engine_RandomNext() << 8) - PIXELS(128);
-    object->motionFlags = 0;
-    object->y.fixed = PIXELS(160);
-    sprite = object->sprite;
-    object->scaleX = 9 * Q16_ONE / 10;
-    object->scaleY = 9 * Q16_ONE / 10;
-    object->x.fixed = x;
-    object->z.fixed = z;
+    objectEvent->motionFlags = 0;
+    objectEvent->y.fixed = PIXELS(160);
+    sprite = objectEvent->sprite;
+    objectEvent->scaleX = 9 * Q16_ONE / 10;
+    objectEvent->scaleY = 9 * Q16_ONE / 10;
+    objectEvent->x.fixed = x;
+    objectEvent->z.fixed = z;
     sprite->flags = 0;
-    object->priorityFlags &= ~OBJ_EVENT_PRIORITY_AUTOMATIC;
+    objectEvent->priorityFlags &= ~OBJ_EVENT_PRIORITY_AUTOMATIC;
     sprite->image.priority = 1;
-    ObjectEvent_SetMode(object, 1);
-    Engine_ObjectSetScript(object, gFallingEffectScript);
+    ObjectEvent_SetMode(objectEvent, 1);
+    Engine_ObjectSetScript(objectEvent, gFallingEffectScript);
   }
 }

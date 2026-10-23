@@ -1840,7 +1840,7 @@ static void SolSanctumEruption_SpawnEffectPair(struct ObjectEvent *parent) {
   struct ObjectEvent *pair[2];
   struct ObjectEvent *child;
   struct AnimationObject *sprite;
-  struct FieldEffectWork *work = gEffectWork;
+  struct FieldEffectWork *effectWork = gEffectWork;
   s32 effectIndex;
 
   Engine_AudioPlayCue(SE_292);
@@ -1858,7 +1858,7 @@ static void SolSanctumEruption_SpawnEffectPair(struct ObjectEvent *parent) {
         AnimationObject_SelectAnimation(sprite, 0);
         sprite->flags = 0;
         Resource_ResetEntry(sprite->slot);
-        sprite->slot = work->tileSlot;
+        sprite->slot = effectWork->tileSlot;
         sprite->retainCacheEntry = 1;
         sprite->image.tile =
             (gVramBlockCache[sprite->slot].offset >> 5) & 0x3ff;

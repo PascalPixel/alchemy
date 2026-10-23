@@ -10,13 +10,13 @@
 /// (timer counts up) until timer * 0x50 reaches 0x1000: from 1/16 turn a
 /// frame to just over 1/8 in 52 frames, as FieldEffect_AdvanceAngleWithRamp.
 void FieldEffect_UpdateSpinAngle(union FieldObject *fieldObject) {
-  struct ObjectEvent *obj = (struct ObjectEvent *)fieldObject;
+  struct ObjectEvent *objectEvent = (struct ObjectEvent *)fieldObject;
   u32 step;
 
-  step = obj->timer * 0x50;
-  obj->facing = obj->facing + step + 0x1000;
+  step = objectEvent->timer * 0x50;
+  objectEvent->facing = objectEvent->facing + step + 0x1000;
   if (step < 0x1000)
-    obj->timer = obj->timer + 1;
+    objectEvent->timer = objectEvent->timer + 1;
 }
 
 /// Per-frame update: spins 1/8 turn a frame as it shrinks by 0x280, rising a
@@ -24,16 +24,16 @@ void FieldEffect_UpdateSpinAngle(union FieldObject *fieldObject) {
 /// size) its sprites are hidden (spriteStorageKind 0), but it is not
 /// released. Retreat gives it to the caster.
 void FieldEffect_UpdateDescendingObject(union FieldObject *fieldObject) {
-  struct ObjectEvent *obj = (struct ObjectEvent *)fieldObject;
+  struct ObjectEvent *objectEvent = (struct ObjectEvent *)fieldObject;
   u32 scale;
 
-  obj->scaleY -= 0x280;
-  scale = obj->scaleX - 0x280;
-  obj->facing += 0x2000;
-  obj->y.fixed += 1 << 16;
-  obj->scaleX = scale;
+  objectEvent->scaleY -= 0x280;
+  scale = objectEvent->scaleX - 0x280;
+  objectEvent->facing += 0x2000;
+  objectEvent->y.fixed += 1 << 16;
+  objectEvent->scaleX = scale;
   if ((s32)scale < 0x3000)
-    obj->spriteStorageKind = OBJECT_SPRITE_NONE;
+    objectEvent->spriteStorageKind = OBJECT_SPRITE_NONE;
 }
 
 /// The states of a Retreat particle (FieldEffect_UpdateRadialLaunch).
@@ -107,7 +107,7 @@ void FieldEffect_UpdateRadialLaunch(struct EffectSlot *effect) {
 /// FieldEffect_Run and FieldEffect_DispatchRequestKind.
 void FieldEffect_RunRetreat(void) {
   struct FieldEffectWork *effectWork = gEffectWork;
-  struct ObjectEvent *obj = effectWork->mainObject;
+  struct ObjectEvent *objectEvent = effectWork->mainObject;
   struct EffectVector pos;
   struct EffectSlot *effect;
   u8 last;
@@ -119,28 +119,29 @@ void FieldEffect_RunRetreat(void) {
   WaitFrames(10);
   ObjectMotion_ArmCallback(effectWork->firstObjectId, 0x4000, 0);
   WaitFrames(30);
-  obj->update = ObjectGroup_ApplyRandomChildValues;
+  objectEvent->update = ObjectGroup_ApplyRandomChildValues;
   AudioCommand_PlayFar(SE_131);
-  ObjectDispatch_SelectAnimationFar(obj, 28);
+  ObjectDispatch_SelectAnimationFar(objectEvent, 28);
   WaitFrames(40);
 
   // Start spinning.
   AudioCommand_PlayFar(SE_220);
-  Animation_ApplyChildValuesFar((struct DispatchObject *)obj,
+  Animation_ApplyChildValuesFar((struct DispatchObject *)objectEvent,
                                 SPRITE_COLOR_NORMAL);
-  ObjectDispatch_SelectAnimationFar(obj, 3);
-  obj->update = FieldEffect_UpdateSpinAngle;
-  obj->timer = 0;
+  ObjectDispatch_SelectAnimationFar(objectEvent, 3);
+  objectEvent->update = FieldEffect_UpdateSpinAngle;
+  objectEvent->timer = 0;
   WaitFrames(70);
 
   // Start shrinking, and send particles from where it is on screen.
-  ObjectDispatch_SetSingleChildFlagsFar((struct DispatchObject *)obj, 0);
-  obj->motionFlags = 0;
-  obj->update = FieldEffect_UpdateDescendingObject;
-  obj->targetX = OBJ_EVENT_NO_TARGET;
-  pos.x = obj->x.fixed;
-  pos.y = obj->y.fixed;
-  pos.z = obj->z.fixed;
+  ObjectDispatch_SetSingleChildFlagsFar((struct DispatchObject *)objectEvent,
+                                        0);
+  objectEvent->motionFlags = 0;
+  objectEvent->update = FieldEffect_UpdateDescendingObject;
+  objectEvent->targetX = OBJ_EVENT_NO_TARGET;
+  pos.x = objectEvent->x.fixed;
+  pos.y = objectEvent->y.fixed;
+  pos.z = objectEvent->z.fixed;
   Camera_WorldToScreen(&pos);
   i = 0;
   effect = effectWork->effects;
@@ -282,25 +283,25 @@ void FieldEffect_SpawnDescendingArcParticles(struct ObjectEvent *arc) {
   struct FieldEffectWork *effectWork = gEffectWork;
   struct ObjectEvent *leader = effectWork->mainObject;
   struct ObjectEvent *objects[2];
-  struct ObjectEvent *object;
+  struct ObjectEvent *objectEvent;
   struct DescendingArcSprite *sprite;
   s32 arcIndex;
   u8 zero;
 
   for (arcIndex = 0; arcIndex <= 1; arcIndex++) {
-    object = (struct ObjectEvent *)Object_CreateFar(
+    objectEvent = (struct ObjectEvent *)Object_CreateFar(
         26, source->x.fixed, source->y.fixed + 0x400000, source->z.fixed);
-    objects[arcIndex] = object;
-    if (object == NULL)
+    objects[arcIndex] = objectEvent;
+    if (objectEvent == NULL)
       continue;
-    object->terrainHeight = source->terrainHeight;
-    sprite = (struct DescendingArcSprite *)object->sprite;
-    object->motionFlags = 0;
-    object->timer = 0;
+    objectEvent->terrainHeight = source->terrainHeight;
+    sprite = (struct DescendingArcSprite *)objectEvent->sprite;
+    objectEvent->motionFlags = 0;
+    objectEvent->timer = 0;
     zero = 0;
-    object->linkedObject = source;
-    object->scaleY = 0x6666;
-    object->scaleX = 0x6666;
+    objectEvent->linkedObject = source;
+    objectEvent->scaleY = 0x6666;
+    objectEvent->scaleX = 0x6666;
     if (sprite == NULL)
       continue;
     AnimationObject_SelectAnimationFar((struct AnimationObject *)sprite, 0);

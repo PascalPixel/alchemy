@@ -21,10 +21,10 @@ enum {
   TITLE_FROM_WORLD_MAP = 10,
 };
 
-/// MapId_Clear's warp destinations and warps.
+/// MapId_MainMenu's warp destinations and warps.
 enum {
-  CLEAR_FROM_SANCTUM = 1,
-  CLEAR_FROM_TITLE = 2,
+  MAIN_MENU_FROM_SANCTUM = 1,
+  MAIN_MENU_FROM_TITLE = 2,
 };
 
 /// MapId_WorldMap's warp destinations.
@@ -95,7 +95,7 @@ enum {
   WORLD_MAP_FROM_TOLBI_SHIP_INTERIORS_SAIL_TO_LAND = 69,
   WORLD_MAP_FROM_TOLBI_SHIP_DECK_REACH_TOLBI = 70,
   WORLD_MAP_FROM_KALAY_TUNNEL_ENTRANCE_SOUTH = 71,
-  WORLD_MAP_FROM_CLEAR = 72,
+  WORLD_MAP_FROM_MAIN_MENU = 72,
   /// After the look back at Venus Lighthouse, the lighthouse shakes in clouds
   /// of dust and WORLD_MAP_TO_VENUS_LIGHTHOUSE_AERIE sends the party on to
   /// Sheba's fall (WorldMap_ShakeVenusLighthouse).
@@ -469,7 +469,7 @@ enum {
   SANCTUM_TO_ALTIN = 40,
   SANCTUM_TO_BILIBIN = 41,
   SANCTUM_TO_XIAN = 42,
-  SANCTUM_TO_CLEAR = 50,
+  SANCTUM_TO_MAIN_MENU = 50,
 };
 
 /// MapId_ValeEruption's warp destinations.
@@ -6096,7 +6096,7 @@ enum {
 
 /// MapId_LinkLobby's warp destinations and warps.
 enum {
-  LINK_LOBBY_FROM_CLEAR = 1,
+  LINK_LOBBY_FROM_MAIN_MENU = 1,
 };
 
 #endif

@@ -443,7 +443,7 @@ UNUSED s32 MapGrid_GetCellHighFlags(s32 x, s32 y) {
 /// step, and as MapGrid_CheckObjectStepFar by the Psynergy effects (Move,
 /// Carry, Force, climbing). A terrainId past MAPGRID_LAYER_OVERHEAD reads the
 /// grid from its start.
-s32 MapGrid_CheckObjectStep(struct ObjectRuntime *object,
+s32 MapGrid_CheckObjectStep(struct Object *object,
                             struct FieldPosition *position) {
   struct MapGridState *gridState;
   s32 pixelX;

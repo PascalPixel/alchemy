@@ -86,7 +86,7 @@ static void Colosso_LoadLettering(s32 id) {
   u8 *buf;
   s32 off;
 
-  buf = Runtime_BumpAllocateAlternatePool(0x1c00 + COLOSSO_PALETTE_BYTES);
+  buf = AllocEwram(0x1c00 + COLOSSO_PALETTE_BYTES);
   if (gColosso_LetteringSlot == -1)
     gColosso_LetteringSlot = Resource_FindFreeEntry();
   off = gColosso_LetteringPaletteOffsets[id];

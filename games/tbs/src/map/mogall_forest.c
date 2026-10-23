@@ -1488,7 +1488,7 @@ s32 MogallForest_Initialize(void) {
   s32 column;
   s32 fixedZ;
 
-  gEventWork->startTransition =
+  gFieldWork->startTransition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   mapId = gGameState.mapId;
   if (mapId == (s32)&MapId_MogallForestSign) {

@@ -264,7 +264,7 @@ void UiWindow_FillScanlineSpans(void *spans) {
 
     RamCode_Load(routine, Tile_BuildMetatiles, Tile_BuildMetatilesCodeSize);
     routine(spans, tilemap);
-    MemFree(routine);
+    Free(routine);
   }
 }
 

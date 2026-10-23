@@ -45,7 +45,7 @@ s32 LinkBattle_ReceiveParty(void) {
   // enemy unit, as in the link lobby's twin of this function
   // (LinkLobby_ReceivePartyRecords, menu/lobby.c). XXX: likely left from a
   // receive into a buffer, because LinkBattle_SendParty does send from one.
-  buffer = Runtime_BumpAllocateAlternatePool(LINK_PARTY_UNIT_BYTES);
+  buffer = AllocEwram(LINK_PARTY_UNIT_BYTES);
   memberCount = 0;
   partySlot = 0;
   while (partySlot < LINK_PARTY_SIZE) {
@@ -85,16 +85,16 @@ s32 LinkBattle_ReceiveParty(void) {
     opponent->name[UNIT_NAME_LENGTH] = 0;
     partySlot += 1;
   }
-  MemFree(buffer);
+  Free(buffer);
 
   // The recovery packet follows all three party places.
-  buffer = Runtime_BumpAllocateAlternatePool(LINK_PARTY_OFFER_BYTES);
+  buffer = AllocEwram(LINK_PARTY_OFFER_BYTES);
   if (SerialRuntime_StartReceive(
           Djinn_GetRecoveryTableFar(DJINN_RECOVERY_OPPONENT)) != -1) {
     SerialRuntime_WaitForReceive();
     WaitFrames(2);
   }
-  MemFree(buffer);
+  Free(buffer);
   return memberCount;
 }
 
@@ -119,7 +119,7 @@ s32 LinkBattle_SendParty(void) {
   u16 owners[8];
 
   size = LINK_PARTY_UNIT_BYTES;
-  buffer = (u8 *)Runtime_BumpAllocateAlternatePool(size);
+  buffer = (u8 *)AllocEwram(size);
   noSlot = 0xff;
   battle = gBattleWork;
   for (i = 7; i >= 0; i--)
@@ -148,8 +148,8 @@ s32 LinkBattle_SendParty(void) {
 
   // The Djinn recovery list, its owners renumbered for the opponent.
   size = LINK_PARTY_OFFER_BYTES;
-  MemFree(buffer);
-  buffer = (u8 *)Runtime_BumpAllocateAlternatePool(size);
+  Free(buffer);
+  buffer = (u8 *)AllocEwram(size);
   /* FAKEMATCH(one-pass): the copy in a one-pass loop, a scheduling barrier
    * that keeps the list pointer's copy ahead of the count's load; as the plain
    * call, 1 of 152 instructions differ in tbs-en. */
@@ -165,7 +165,7 @@ s32 LinkBattle_SendParty(void) {
     WaitFrames(1);
     WaitFrames(2);
   }
-  MemFree(buffer);
+  Free(buffer);
 }
 
 /// Copies the low bytes of a name's first four characters and a terminator,

@@ -48,6 +48,6 @@
 	.set import.Engine_ScriptOpenScreen, 1
 	.set import.Engine_ScriptCloseScreen, 1
 	.set import.Engine_ScriptWaitForScreen, 1
-	.set import.Audio_PlayCueFromEventWork, 1
+	.set import.Map_PlayMusic, 1
 	.set import.Engine_AudioPlayCue, 1
 	.include "games/tbs/src/system/overlay.inc"

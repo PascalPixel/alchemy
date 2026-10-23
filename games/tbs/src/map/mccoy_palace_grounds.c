@@ -241,7 +241,7 @@ static void EventScript_TalkToEastGuard(void) {
     Engine_ScriptSetMessage(MsgBilibinLordOnlyMeet);
     Engine_ScriptOpenMessage(LOCALID_EAST_GUARD, 0);
     if (Engine_ScriptChooseYesNo(LOCALID_PARTY_LEADER, 0) == 0) {
-      gEventWork->message++;
+      gFieldWork->message++;
       Engine_ScriptShowMessageAndWait(LOCALID_EAST_GUARD, 0, 10);
       if (ObjectEvent_GetById(LOCALID_PARTY_LEADER)->z.fixed < PIXELS(270)) {
         ObjectEvent_SetSpeed(LOCALID_EAST_GUARD, 0xcccc, 0x6666);
@@ -294,7 +294,7 @@ static void EventScript_TalkToEastGuard(void) {
         Engine_GameFlagSet(FLAG_MCCOY_PALACE_ADMITTED);
       } while (0);
     guard:
-      FieldObject_SetTargetAndCallback(
+      Object_SetTargetAndCallback(
           LOCALID_EAST_GUARD, OBJ_EVENT_LINK_KEEP_MOTION | LOCALID_PARTY_LEADER,
           gGuardWatchesParty);
     } else {
@@ -314,7 +314,7 @@ static void EventScript_EnterPalace(void) {
     McCoyPalaceGrounds_OpenGate();
   }
   ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, 0x8000, 0x4000);
-  gEventWork->startTransition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+  gFieldWork->startTransition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIMATION_WALK);
   ObjectEvent_CenterAndWalk(LOCALID_PARTY_LEADER, 2, -16);
   Engine_ScriptWait(16);
@@ -325,7 +325,7 @@ static void EventScript_EnterPalace(void) {
 /// Sets up the grounds outside McCoy's Palace: the west worker drawn in
 /// front, and the guards, Lady McCoy and the arrest as the story stands.
 s32 Map_Initialize(void) {
-  struct EventWork *work = gEventWork;
+  struct EventWork *work = gFieldWork;
   struct ObjectEvent *objectEvent;
 
   work->startTransition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
@@ -357,10 +357,10 @@ static void McCoyPalaceGrounds_RestoreStory(void) {
     if (Engine_GameFlagIsSet(FLAG_MCCOY_PALACE_BARRICADE_NEEDS_NO_KEY) == 0) {
       if (Engine_GameFlagIsSet(FLAG_KOLIMA_CURSE_LIFTED) == 0) {
         Engine_ObjectEventSetPosition(LOCALID_WEST_GUARD, 0, 0);
-        FieldObject_SetTargetAndCallback(LOCALID_EAST_GUARD,
-                                         OBJ_EVENT_LINK_KEEP_MOTION |
-                                             LOCALID_PARTY_LEADER,
-                                         gGuardWatchesParty);
+        Object_SetTargetAndCallback(LOCALID_EAST_GUARD,
+                                    OBJ_EVENT_LINK_KEEP_MOTION |
+                                        LOCALID_PARTY_LEADER,
+                                    gGuardWatchesParty);
       }
     }
   }
@@ -466,7 +466,7 @@ static void EventScript_GuardsArrestParty(void) {
   Engine_ObjectEventSetPosition(LOCALID_WEST_GUARD, 0, 0);
   Engine_ObjectEventWaitForMove(LOCALID_PARTY_LEADER);
   Engine_ObjectEventSetPosition(LOCALID_PARTY_LEADER, 0, 0);
-  gEventWork->startTransition = MAP_TRANSITION(TRANSITION_WINDOW, 1);
+  gFieldWork->startTransition = MAP_TRANSITION(TRANSITION_WINDOW, 1);
   Engine_ScriptCloseScreen();
   Engine_ScriptWaitForScreen();
   Engine_ScriptRequestWarp(MCCOY_PALACE_GROUNDS_TO_MCCOY_PALACE_EAST);

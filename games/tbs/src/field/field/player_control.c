@@ -46,7 +46,7 @@ static __inline__ void Field_StoreHalfword(s16 *address, s32 value) {
 /// Unused: stores value as a word in the object's update hook.
 /// Nothing calls it.
 UNUSED void ObjectDispatch_SetUpdateValue(void *rawObject, s32 value) {
-  struct ObjectRuntime *object = rawObject;
+  struct Object *object = rawObject;
 
   if (object != NULL)
     *(s32 *)&object->update = value;
@@ -66,11 +66,11 @@ UNUSED void ObjectDispatch_SetUpdateValue(void *rawObject, s32 value) {
 u32 Field_RequestShortcut(u32 encodedAssignment) {
   u32 assignmentKind = encodedAssignment >> 14;
   u32 requestId = 0x3FFF & encodedAssignment;
-  struct FieldWork *work = (struct FieldWork *)gEventWork;
+  struct FieldWork *work = (struct FieldWork *)gFieldWork;
 
   if (GameFlag_TestFar(FLAG_MENUS_RAISE_EVENT) != 0) {
     Field_StoreHalfword(&work->event, FIELD_EVENT_MENUS_RAISED);
-  } else if (work->mode == MODE_WORLD_MAP) {
+  } else if (work->mode == OBJECT_SYSTEM_WORLD_MAP) {
     if (FIELD_SHORTCUT_KEYS & KEY_R) {
       Field_StoreHalfword(&work->event, (u16)FIELD_EVENT_WORLD_MAP_PICTURE);
     } else if (FIELD_SHORTCUT_KEYS & KEY_L) {
@@ -99,7 +99,7 @@ u32 Field_RequestShortcut(u32 encodedAssignment) {
 /// Called each frame by the leader's control commands: SC_PLAYER, SC_WORLD
 /// and SC_KEY_COUNT. Sets work->menu, examine or start.
 s32 Field_CheckConfiguredKeys(void) {
-  struct FieldWork *work = (struct FieldWork *)gEventWork;
+  struct FieldWork *work = (struct FieldWork *)gFieldWork;
   s32 result = 0;
 
   if (work == NULL)
@@ -157,10 +157,10 @@ s32 Runtime_CheckRadiusOverlap(s32 *firstPosition, s32 radiusA,
 /// (run_map.c) starts on the leader through
 /// ObjectDispatch_StartPlayerControl when it hands control back on the field.
 /// Sets the leader's speed, target, velocity, angle and action, moves the
-/// objects it pushes, counts gEventWork->blockedSteps and creates the
+/// objects it pushes, counts gFieldWork->blockedSteps and creates the
 /// footprint objects.
-s32 FieldObject_UpdatePlayerControl(struct ScriptInterpreter *interpreter) {
-  struct ObjectRuntime *object = (struct ObjectRuntime *)interpreter;
+s32 Object_UpdateLeaderControl(struct ScriptInterpreter *interpreter) {
+  struct Object *object = (struct Object *)interpreter;
 
   struct FieldPosition position;
   struct FieldPosition testPosition;
@@ -175,7 +175,7 @@ s32 FieldObject_UpdatePlayerControl(struct ScriptInterpreter *interpreter) {
   s32 footprintAngle;
   s32 angleIndex;
   s32 headingCount;
-  struct ObjectRuntime *pushedObject;
+  struct Object *pushedObject;
 
   collision = 0;
   pushed = 0;
@@ -191,7 +191,7 @@ s32 FieldObject_UpdatePlayerControl(struct ScriptInterpreter *interpreter) {
         freeBlocks++;
     }
     if (freeBlocks - 136 < 0)
-      AudioCommand_PlayFar(SE_135);
+      Sound_PlaySongFar(SE_135);
   }
   /* FAKEMATCH(volatile): the volatile read puts gDebugMode's address in r5 here
    * and at the test before it, as native; as gDebugMode != 0, 9 of 808
@@ -353,7 +353,7 @@ s32 FieldObject_UpdatePlayerControl(struct ScriptInterpreter *interpreter) {
       contact.y = object->y;
       contact.z = object->z;
       Vector_AddPolarOffset(0x40000, (u16)heading, &contact);
-      pushedObject = gObjectSlots;
+      pushedObject = gObjects;
       for (angleIndex = 63; angleIndex >= 0; angleIndex -= 1, pushedObject++) {
         s32 radius;
 
@@ -428,11 +428,11 @@ s32 FieldObject_UpdatePlayerControl(struct ScriptInterpreter *interpreter) {
   }
   // Count the blocked steps, and pick the animation: push (8), bump (9, or
   // 22 when the leader is down) or walk / run.
-  if (gEventWork != NULL) {
+  if (gFieldWork != NULL) {
     if (collision & 3)
-      gEventWork->blockedSteps++;
+      gFieldWork->blockedSteps++;
     else
-      gEventWork->blockedSteps = 0;
+      gFieldWork->blockedSteps = 0;
   }
   if (pushed != 0) {
     ObjectDispatch_SelectAnimation(object, 8);
@@ -489,9 +489,9 @@ s32 FieldObject_UpdatePlayerControl(struct ScriptInterpreter *interpreter) {
   footprintAngle = (u16)angle;
   if (((struct MapGridScrollWork *)gMapGridWork[0])->footprints != 0 &&
       object->action == 0 && collision == 0) {
-    struct ObjectRuntime *effect;
+    struct Object *effect;
 
-    effect = FieldObject_Create(FIELD_SPRITE_FOOTPRINT, object->x, object->y,
+    effect = Object_CreateField(FIELD_SPRITE_FOOTPRINT, object->x, object->y,
                                 object->z);
     if (effect != 0) {
       struct AnimationObject *animation;
@@ -541,9 +541,9 @@ s32 FieldObject_UpdatePlayerControl(struct ScriptInterpreter *interpreter) {
 /// (run_map.c) starts on the leader through
 /// ObjectDispatch_StartWorldMapControl on the world map. Sets the leader's
 /// speed, target, velocity, angle and action, turns the perspective work's
-/// yaw, counts gEventWork->blockedSteps and creates the ripple objects.
+/// yaw, counts gFieldWork->blockedSteps and creates the ripple objects.
 s32 Object_MoveOnWorldMap(struct ScriptInterpreter *interpreter) {
-  struct ObjectRuntime *object = (struct ObjectRuntime *)interpreter;
+  struct Object *object = (struct Object *)interpreter;
 
   struct FieldPosition position;
 #if TBS_PATCH_1
@@ -567,7 +567,7 @@ s32 Object_MoveOnWorldMap(struct ScriptInterpreter *interpreter) {
   struct PerspectiveWork *perspective;
   s32 yawStep;
   struct AnimationObject *playerSprite;
-  struct ObjectRuntime *ripple;
+  struct Object *ripple;
   struct AnimationObject *rippleSprite;
 
   movementAnimation = 2;
@@ -750,11 +750,11 @@ s32 Object_MoveOnWorldMap(struct ScriptInterpreter *interpreter) {
   }
 
 update_object:
-  if (gEventWork != NULL) {
+  if (gFieldWork != NULL) {
     if ((collision & 3) != 0)
-      gEventWork->blockedSteps++;
+      gFieldWork->blockedSteps++;
     else
-      gEventWork->blockedSteps = 0;
+      gFieldWork->blockedSteps = 0;
   }
   if (collision != 0)
     ObjectDispatch_SelectAnimation(object, 9);
@@ -823,7 +823,7 @@ update_object:
     // with no shadow, is drawn semi-transparent at priority 2.
     if (terrainCollision == WORLD_MAP_COLLISION_SHALLOW_WATER &&
         object->action == 0 && collision == 0) {
-      ripple = FieldObject_Create(FIELD_SPRITE_RIPPLE, object->x, object->y,
+      ripple = Object_CreateField(FIELD_SPRITE_RIPPLE, object->x, object->y,
                                   object->z);
       if (ripple != 0) {
         rippleSprite = ripple->animation;
@@ -851,7 +851,7 @@ update_object:
 /// map loop starts on the leader in LEADER_MOVEMENT_AIRBORNE, where the pad
 /// does not move it.
 s32 Field_CheckConfiguredKeysAndCount(struct ScriptInterpreter *interpreter) {
-  struct ObjectRuntime *object = (struct ObjectRuntime *)interpreter;
+  struct Object *object = (struct Object *)interpreter;
 
   Field_CheckConfiguredKeys();
   object->step++;
@@ -865,9 +865,9 @@ s32 Field_CheckConfiguredKeysAndCount(struct ScriptInterpreter *interpreter) {
 ///
 /// Run each frame by gObjectDispatch_KeysScript, which the map loop starts
 /// on the leader in LEADER_MOVEMENT_CLIMB. Sets the leader's speed,
-/// angle, target or velocity, and counts gEventWork->blockedSteps.
+/// angle, target or velocity, and counts gFieldWork->blockedSteps.
 s32 Object_MoveByKeys(struct ScriptInterpreter *interpreter) {
-  struct ObjectRuntime *object = (struct ObjectRuntime *)interpreter;
+  struct Object *object = (struct Object *)interpreter;
 
   struct FieldPosition position;
   /* FAKEMATCH(dead): an unused local for the 68 bytes of native frame no
@@ -943,11 +943,11 @@ s32 Object_MoveByKeys(struct ScriptInterpreter *interpreter) {
       }
     }
   }
-  if (gEventWork != NULL) {
+  if (gFieldWork != NULL) {
     if (collisionFlags & 3)
-      gEventWork->blockedSteps++;
+      gFieldWork->blockedSteps++;
     else
-      gEventWork->blockedSteps = 0;
+      gFieldWork->blockedSteps = 0;
   }
   ObjectDispatch_SelectAnimation(object, animation);
   if (collisionFlags != 0) {

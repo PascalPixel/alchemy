@@ -13,7 +13,7 @@
 
 /// Keys down now.
 /* FAKEMATCH(volatile): as plain u32, 18 functions differ in tbs-en, most
- * UiWork_StepChannelScript (249), Clear_CheckButtonCodes (134). */
+ * UiWork_StepChannelScript (249), MainMenu_CheckButtonCodes (134). */
 extern volatile u32 gKeysHeld;
 /// Keys that went down this frame.
 /* FAKEMATCH(volatile): as plain u32, 41 functions differ in tbs-en, most

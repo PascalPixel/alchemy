@@ -119,7 +119,7 @@ like ordinary C. Some older tags in The Lost Age's code have no kind yet
 
 `// DEAD: why` marks code the ROM keeps that can't change the result, such as
 a test that is always true or an initializer that every pass repeats
-(`Scheduler_SortTasks`). It's only used where the construct's own compare,
+(`Task_Sort`). It's only used where the construct's own compare,
 branch, load or loop is there in the ROM, which makes it the source's form
 rather than a device.
 
@@ -170,7 +170,7 @@ same thing in C, and each can still compile differently.
 The lists below are reference, grouped by the folders of the source: search
 them for a strange line you meet in the code rather than reading them
 through. They use the engine's words: a work slot is a [heap slot](../glossary.md#heap-slot), one of
-the numbered words of `gWorkSlot` that hold a system's working block, and an
+the numbered words of `gHeapSlots` that hold a system's working block, and an
 `ObjectEvent` is the struct an [object event](../glossary.md#object-event) is read through.
 
 ### Everywhere
@@ -194,7 +194,7 @@ These turn up all over the game.
   `volatile u16 *vram`, because a plain pointer moves the address adds (18 of
   1037 instructions differ in a member's row, `COMMAND_ROW_MEMBER`, and 19 in
   the party's, `COMMAND_ROW_PARTY`).
-- A work slot is written `WORK_SLOT(n)`, `gWorkSlot[n]`, or through a named
+- A work slot is written `HEAP_SLOT_BLOCK(n)`, `gHeapSlots[n]`, or through a named
   pointer indexed past it (`(void **)&gCameraWork`). The last is undefined
   behaviour, with its defined form behind `UBFIX`.
 - A member can be reached through a pointer to its own type, or to its own
@@ -230,7 +230,7 @@ These turn up all over the game.
   - a pointer read or stored as an integer: `*(s32 *)&metadata->frames`,
     which keeps the zero load ahead of it (`Animation_AllocateLayer`); the
     `u32` views of `gMapGridWork[0]` (`MapObjectEvent_MoveAndRedraw`) and of
-    `gEventWork` (`TolbiShipDeck_SightLand`, where the word may alias the
+    `gFieldWork` (`TolbiShipDeck_SightLand`, where the word may alias the
     halfword facing stores before it and so stays after them); the update
     hooks `AltmillerCave_Initialize` stores as `s32` (as `->update`, one store
     moves: 1 of 403 instructions in tbs-en); and the hooks the Goma Cave stump's
@@ -258,7 +258,7 @@ These turn up all over the game.
   `and`, so 3 instructions differ at each site. `BattleEffect_RunNeptune`,
   `BattleEffect_RunPlanetDiver`, `BattleEffect_RunRamses`, `BattleEffect_RunMoteFountain`,
   `BattleEffect_RunTitanBlade` (`0x1FF`), `BattleEffect_RunThor` (`THOR_LAUNCH_SPARKS`
-  too) and `ReelGame_Run` ([`object/colorfx.c`](object/colorfx.c)) keep it.
+  too) and `LuckyWheels_Run` ([`object/colorfx.c`](object/colorfx.c)) keep it.
 - A message that follows a named one is written as `MsgName + n`, such as
   `MsgSaveDataCorrupted + 2` for `MsgSaveRecoveryFailed`, where the ROM adds to
   the register already holding the first.
@@ -324,31 +324,31 @@ The field engine's spellings are about its map state and a few of its loops.
 ### Running a map
 
 The engine keeps each system's working state in a [heap](../glossary.md#heap-and-pools) block whose pointer
-sits in a numbered slot of `gWorkSlot`, and many of those slots also have a
-name of their own (`gEventWork`, `gEffectWork` and so on), so the same block
+sits in a numbered slot of `gHeapSlots`, and many of those slots also have a
+name of their own (`gFieldWork`, `gFieldEffectWork` and so on), so the same block
 can be reached two or three ways. Not all of these sites have been measured;
 each keeps its spelling until it is.
 
-- The field work is `(struct FieldWork *)gEventWork`,
-  `WORK_SLOT(HEAP_SLOT_EVENT)`, or `Runtime_AllocateBlock(HEAP_SLOT_EVENT,
+- The field work is `(struct FieldWork *)gFieldWork`,
+  `HEAP_SLOT_BLOCK(HEAP_SLOT_FIELD)`, or `AllocHeapSlotEwram(HEAP_SLOT_FIELD,
   sizeof(struct FieldWork))`, which returns the existing block.
-- The effect scene is `gEffectWork` or `*(gWorkSlot + HEAP_SLOT_EFFECT)`.
-- The map grid's view is `gMapGridWork[0]` or `WORK_SLOT(HEAP_SLOT_MAP_GRID)`.
-- The field blend work is `gFieldBlendWork[0]`,
-  `WORK_SLOT(HEAP_SLOT_FIELD_BLEND)` (`ValeInteriorsInn_Initialize`), or
-  `Runtime_AllocateBlock(HEAP_SLOT_FIELD_BLEND, sizeof(struct
+- The effect scene is `gFieldEffectWork` or `*(gHeapSlots + HEAP_SLOT_FIELD_EFFECT)`.
+- The map grid's view is `gMapGridWork[0]` or `HEAP_SLOT_BLOCK(HEAP_SLOT_MAP_GRID)`.
+- The field blend work is `gLightningWork[0]`,
+  `HEAP_SLOT_BLOCK(HEAP_SLOT_LIGHTNING)` (`ValeInteriorsInn_Initialize`), or
+  `AllocHeapSlotEwram(HEAP_SLOT_LIGHTNING, sizeof(struct
   FieldBlendWork))`, which returns the existing block.
-- The colour buffer is `gPaletteBufferWork`,
-  `WORK_SLOT(HEAP_SLOT_PALETTE_BUFFER)` (`TretPalette_UpdateMapTint`,
+- The colour buffer is `gPaletteFadeWork`,
+  `HEAP_SLOT_BLOCK(HEAP_SLOT_PALETTE_FADE)` (`TretPalette_UpdateMapTint`,
   `SolSanctumLunaSolRooms_ArriveAfterWiseOnesRescue`), or
-  `*(gWorkSlot + HEAP_SLOT_PALETTE_BUFFER)`
+  `*(gHeapSlots + HEAP_SLOT_PALETTE_FADE)`
   (`FieldEffect_FadeToEffectColor`). It's also reached from a
   neighbouring slot, as in Menus below: as
-  `gFieldBlendWork[HEAP_SLOT_PALETTE_BUFFER - HEAP_SLOT_FIELD_BLEND]`
+  `gLightningWork[HEAP_SLOT_PALETTE_FADE - HEAP_SLOT_LIGHTNING]`
   (`FieldEffect_UpdateLightning`), or as
-  `workCells[HEAP_SLOT_PALETTE_BUFFER - HEAP_SLOT_EVENT]` through
-  `(u32 *)&gEventWork` (`Shop_SaveAndTintFieldPalette`), which is undefined
-  behaviour with `gPaletteBufferWork` behind `UBFIX`.
+  `workCells[HEAP_SLOT_PALETTE_FADE - HEAP_SLOT_FIELD]` through
+  `(u32 *)&gFieldWork` (`Shop_SaveAndTintFieldPalette`), which is undefined
+  behaviour with `gPaletteFadeWork` behind `UBFIX`.
 
 One more spelling in the field objects has been measured:
 `((16 - blend) << 8) | blend` in
@@ -413,8 +413,8 @@ come down to how a struct's member is addressed.
 - The Colosso race work (`HEAP_SLOT_COLOSSO_RACE`) is `gColossoWork`
   (`Colosso_DrawGauge`, `Colosso_UpdatePathOpponent`, `Colosso_StartOpponent`,
   `ColosseumNavampaMatch_CollectFinishEquipment`, `ColosseumAzartMatch_CollectFinishItem`) or
-  `WORK_SLOT(HEAP_SLOT_COLOSSO_RACE)`, whose literal pool entry is
-  `gWorkSlot+236` (`Colosso_SetGaugeHold`,
+  `HEAP_SLOT_BLOCK(HEAP_SLOT_COLOSSO_RACE)`, whose literal pool entry is
+  `gHeapSlots+236` (`Colosso_SetGaugeHold`,
   `ColosseumSatrageMatch_ApproachFinishAndTakeItem`, `ColosseumSatrageMatch_StartOpponentPath`). It's
   the same address through another relocation, so no instruction or byte
   differs; it is listed so a reader knows the two are one block.
@@ -442,9 +442,9 @@ its cells.
 - A tilemap cell is `work->tilemap + y * 32 + x`, or a byte offset added to
   `(u32)work->tilemap`.
 - The save summaries are read through a signed byte cursor from
-  `summary[0].party[4]`, indexed by `i * sizeof(struct SaveSummary) +
+  `summary[0].party[4]`, indexed by `i * sizeof(struct SaveFileSummary) +
   SUMMARY_DISTANCE(party[4], field)`, for `summary[i].sendFlag` and
-  `.flagCount` (`SaveState_ScanRecordFlags` in
+  `.flagCount` (`Save_ScanRecordFlags` in
   [`window/battle_command/save.c`](window/battle_command/save.c)), which keeps
   the literal `0x1070` and the offsets 1 and 2.
 - A selection record's kind is cleared through a view from its base field,
@@ -480,9 +480,9 @@ one for reaching a heap block.
   through `_call_via_r3(..., IwramCopyWords)` (`Owner_Copy`), or through
   `Item_CopyWords` (tagged).
 - A neighbouring heap block is reached from the menu control slot as
-  `cache[HEAP_SLOT_EVENT - HEAP_SLOT_MENU_CONTROL]`.
+  `cache[HEAP_SLOT_FIELD - HEAP_SLOT_OBJECT_SYSTEM]`.
 - The menu work is read through one struct per screen
-  (`InventoryMenuState`, `PsynergyMenuState`, `CharacterMenuState`,
+  (`ItemMenuWork`, `PsynergyMenuWork`, `SummaryScreenWork`,
   `DjinnMenuWork`, `FourObjectMotionState`), as the field object's views
   are, because each is what its own screen's code matches with.
 
@@ -505,10 +505,10 @@ arithmetic and its work slots.
 The effects lean hard on their heap slots, and some of them on arithmetic and
 macros whose exact shape decides the code.
 
-- A work slot is read as `WORK_SLOT(n)` or `gWorkSlot[n]`, through a base
+- A work slot is read as `HEAP_SLOT_BLOCK(n)` or `gHeapSlots[n]`, through a base
   pointer as `slots[n - base]`, `EFFECT_SLOT` or `CANVAS_SLOT`, and when it
   holds a blitter (a drawing routine `BattleEffect_BuildBlitter` writes into a heap
-  slot) as `EFFECT_BLITTERS[n]` or `(DrawRectangle)gWorkSlot[n]`.
+  slot) as `EFFECT_BLITTERS[n]` or `(DrawRectangle)gHeapSlots[n]`.
   `BattleEffect_RunParticleStreams` reads the background and blitter slots through
   one base pointer, where two absolute reads make the function 16 bytes longer
   in tbs-en.

@@ -71,9 +71,9 @@ void BattleEffect_RunBoreas(struct BattleEffectArgument *effect) {
   struct EffectStep *trail;
   struct SpriteScale scale;
 
-  slots = (u32 *)&gWorkSlot[HEAP_SLOT_BATTLE_CANVAS];
+  slots = (u32 *)&gHeapSlots[HEAP_SLOT_BATTLE_CANVAS];
   canvas = (void *)slots[0];
-  work = (struct BattleEffectWork *)CANVAS_SLOT(slots, HEAP_SLOT_BATTLE_EFFECT);
+  work = (struct BattleEffectWork *)CANVAS_SLOT(slots, HEAP_SLOT_BATTLE_ANIM);
   puffSheet = (u8 *)CANVAS_SLOT(slots, HEAP_SLOT_BATTLE_SHEET);
   edgeSpeed = 1;
   work->effect = effect;
@@ -82,18 +82,17 @@ void BattleEffect_RunBoreas(struct BattleEffectArgument *effect) {
   PLTT_BACKDROP = 0;
   *(u16 *)&BG_PLTT[1] = 0; // background palette 0, colour 1
   work->transferMode = CANVAS_COPY;
-  Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer,
-                                EFFECT_CALLBACK_ORDER);
+  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, EFFECT_CALLBACK_ORDER);
   REG_WININ = EFFECT_WIN0_LAYERS | WININ_WIN1_BG0 | WININ_WIN1_CLR;
   BattleEffect_WipeCanvas(CANVAS_WIPE_ACROSS, CANVAS_WIPE_FILL);
   REG_WIN0H = WIN_RANGE(240, 240); // an empty window
   Resource_LoadAndDecompress((s32)&ResourceId_IceBlockSheet, work->sheet, 1, 1);
   Resource_LoadAndDecompress((s32)&ResourceId_SparkleDots, puffSheet, 0, 0);
-  EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER, EFFECT_CLIP_BOUNDS, COMPOSITE_MAX);
-  draw = (DrawRectangle)CANVAS_SLOT(slots, HEAP_SLOT_BLITTER);
-  EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER_ALTERNATE, EFFECT_CLIP_BOUNDS,
+  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, COMPOSITE_MAX);
+  draw = (DrawRectangle)CANVAS_SLOT(slots, HEAP_SLOT_RAM_CODE);
+  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, EFFECT_CLIP_BOUNDS,
                       COMPOSITE_TRANSPARENT);
-  drawAlt = (DrawRectangle)CANVAS_SLOT(slots, HEAP_SLOT_BLITTER_ALTERNATE);
+  drawAlt = (DrawRectangle)CANVAS_SLOT(slots, HEAP_SLOT_RAM_CODE_2);
   gProjection.centerY = 240;
   BattleEffect_SelectLivingTargets(work->effect);
   WaitFrames(1);
@@ -121,7 +120,7 @@ void BattleEffect_RunBoreas(struct BattleEffectArgument *effect) {
     rockPoints[i][1] = BOREAS_POINT_Y(i);
   }
 
-  AudioCommand_PlayFar(SE_RUMBLE);
+  Sound_PlaySongFar(SE_RUMBLE);
 
   //------------------------------------------------------------------
   // First half: the rocks, the big ice block and the spray (A or B skips
@@ -144,13 +143,12 @@ void BattleEffect_RunBoreas(struct BattleEffectArgument *effect) {
           inset[line] = Random16() & 63;
         }
         *edge = 0;
-        Scheduler_AddOrUpdateCallback(BattleEffect_BuildWindowEdgeTable,
-                                      EFFECT_CALLBACK_ORDER);
+        Task_Add(BattleEffect_BuildWindowEdgeTable, EFFECT_CALLBACK_ORDER);
       }
       *edge += edgeSpeed;
       edgeSpeed += 3;
       if (frame == 15) {
-        Scheduler_RemoveCallback(BattleEffect_BuildWindowEdgeTable);
+        Task_Remove(BattleEffect_BuildWindowEdgeTable);
       }
     }
 
@@ -239,19 +237,19 @@ void BattleEffect_RunBoreas(struct BattleEffectArgument *effect) {
     }
 
     if (frame == 32) {
-      AudioCommand_PlayFar(SE_HEAVY_IMPACT);
+      Sound_PlaySongFar(SE_HEAVY_IMPACT);
     }
     if (frame == 64) {
-      AudioCommand_PlayFar(SE_HEAVY_IMPACT);
+      Sound_PlaySongFar(SE_HEAVY_IMPACT);
     }
     if (frame == 104) {
-      AudioCommand_PlayFar(SE_HEAVY_IMPACT);
+      Sound_PlaySongFar(SE_HEAVY_IMPACT);
     }
     if (frame == 176) {
-      AudioCommand_PlayFar(SE_HEAVY_IMPACT);
+      Sound_PlaySongFar(SE_HEAVY_IMPACT);
     }
     if (frame == 226) {
-      AudioCommand_PlayFar(SE_145);
+      Sound_PlaySongFar(SE_145);
     }
     Render_ResetTransformState();
 
@@ -385,7 +383,7 @@ void BattleEffect_RunBoreas(struct BattleEffectArgument *effect) {
   // waiting i / 2 frames (its negative variant) before it shows.
   BattleEffect_SetupBlendedDisplay();
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
-  AudioCommand_PlayFar(AUDIO_CUE_FADE_SLOT3);
+  Sound_PlaySongFar(AUDIO_CUE_FADE_SLOT3);
 
   for (i = 0; i != 64; i++) {
     work->particles[i].x = ((Random16() & 127) + 64) << 16;
@@ -418,10 +416,10 @@ void BattleEffect_RunBoreas(struct BattleEffectArgument *effect) {
       }
     }
     if (frame >= 9 && frame < 72 && (frame & 3) == 0) {
-      AudioCommand_PlayFar(SE_132);
+      Sound_PlaySongFar(SE_132);
     }
     if (frame == 72) {
-      AudioCommand_PlayFar(SE_145);
+      Sound_PlaySongFar(SE_145);
     }
     // From frame 65 a 40x80 block falls diagonally from the top right, 7
     // pixels left and 14 down a frame.
@@ -529,7 +527,7 @@ void BattleEffect_RunBoreas(struct BattleEffectArgument *effect) {
   }
 
   EFFECT_RELEASE_BLITTERS();
-  Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
+  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   BattleEffect_EndCanvasLayer();
 }
 

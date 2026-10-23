@@ -30,7 +30,7 @@
 /// warp destination this function does not take.
 s32 LuckyDice_Start(void) {
   REG_DISPCNT = DISPCNT_OBJ_1D_MAP;
-  AudioCommand_PlayFar(MUS_009);
+  Sound_PlaySongFar(MUS_009);
   LuckyDice_Run();
   return 0;
 }
@@ -324,14 +324,14 @@ void LuckyDice_Run(void) {
   s16 affineScale;
 
   // Allocate the screen's work blocks and reset the camera and tasks.
-  Runtime_AllocateHeapBlock(HEAP_SLOT_BATTLE_SHEET, 0x60e);
-  spritePalette = Runtime_AllocateHeapBlock(HEAP_SLOT_BATTLE_CANVAS, 0x200);
-  diceWork = Runtime_AllocateBlock(HEAP_SLOT_BATTLE_EFFECT, sizeof(*diceWork));
-  sprites = Runtime_AllocateBlock(HEAP_SLOT_LUCKY_DICE_SPRITES, 0x618);
-  camera = Runtime_AllocateBlock(HEAP_SLOT_CAMERA, sizeof(*camera));
+  AllocHeapSlot(HEAP_SLOT_BATTLE_SHEET, 0x60e);
+  spritePalette = AllocHeapSlot(HEAP_SLOT_BATTLE_CANVAS, 0x200);
+  diceWork = AllocHeapSlotEwram(HEAP_SLOT_BATTLE_ANIM, sizeof(*diceWork));
+  sprites = AllocHeapSlotEwram(HEAP_SLOT_LUCKY_DICE_SPRITES, 0x618);
+  camera = AllocHeapSlotEwram(HEAP_SLOT_CAMERA, sizeof(*camera));
   RuntimeDispatch_NoOpHook((s32)&ResourceId_EffectFarCalls);
   Camera_ResetViewDefaults();
-  Scheduler_ResetTaskTable();
+  Task_ResetAll();
   gOamCopyEnabled = 0;
 
   // Fill BG1's map (screen block 6) with a 30-tile-wide picture, then load
@@ -354,9 +354,9 @@ void LuckyDice_Run(void) {
   // UB: Value2 passes integers to the decoder's two pointer parameters.
   // Plain typed calls add four bytes to LuckyDice_Run in tbs-en.
 #ifdef UBFIX
-  Resource_DecodeType01((const void *)resourceAddress, Ram_MapGridCellBuffer);
+  Decompress_Type01((const void *)resourceAddress, Ram_MapGridCellBuffer);
 #else
-  Value2(Resource_DecodeType01, resourceAddress, (s32)Ram_MapGridCellBuffer);
+  Value2(Decompress_Type01, resourceAddress, (s32)Ram_MapGridCellBuffer);
 #endif
   Dma_Set(Ram_MapGridCellBuffer, BG_SCREEN_BLOCK(8),
           (DMA_ENABLE | DMA_32BIT) << 16 | 0x2580, REG_DMA3);
@@ -368,9 +368,9 @@ void LuckyDice_Run(void) {
           (DMA_ENABLE | DMA_32BIT) << 16 | 0x80, REG_DMA3);
   resourceAddress += 0x200;
 #ifdef UBFIX
-  Resource_DecodeType01((const void *)resourceAddress, Ram_MapGridCellBuffer);
+  Decompress_Type01((const void *)resourceAddress, Ram_MapGridCellBuffer);
 #else
-  Value2(Resource_DecodeType01, resourceAddress, (s32)Ram_MapGridCellBuffer);
+  Value2(Decompress_Type01, resourceAddress, (s32)Ram_MapGridCellBuffer);
 #endif
   Dma_Set(Ram_MapGridCellBuffer, (void *)OBJ_VRAM0,
           (DMA_ENABLE | DMA_32BIT) << 16 | 0x1f00, REG_DMA3);
@@ -486,7 +486,7 @@ void LuckyDice_Run(void) {
     if (state == LUCKY_DICE_RESULT || state == LUCKY_DICE_PAYOUT) {
       for (index = 0; index != DICE_RESULT_COUNT; index++) {
         if (resultTimer == index * 5) {
-          AudioCommand_PlayFar(SE_LUCKY_DICE_NUMBER);
+          Sound_PlaySongFar(SE_LUCKY_DICE_NUMBER);
         }
         if (resultTimer >= index * 5) {
           sprites->oam[spriteCount].attr01 =
@@ -543,7 +543,7 @@ void LuckyDice_Run(void) {
         payoutTimer--;
       }
       if (resultTimer > 19 && (gKeysRepeat & KEY_A)) {
-        AudioCommand_PlayFar(SE_MENU_CONFIRM);
+        Sound_PlaySongFar(SE_MENU_CONFIRM);
         if (winnings > 0) {
           state = LUCKY_DICE_PAYOUT;
           payoutTimer = 0;
@@ -613,12 +613,12 @@ void LuckyDice_Run(void) {
         break;
       }
       if (gKeysRepeat & KEY_B) {
-        AudioCommand_PlayFar(SE_MENU_CANCEL);
+        Sound_PlaySongFar(SE_MENU_CANCEL);
         UiWork_FinalizeFar(sprites->helpWindow, 1);
         break;
       }
       if (gKeysRepeat & KEY_A) {
-        AudioCommand_PlayFar(SE_LUCKY_DICE_THROW);
+        Sound_PlaySongFar(SE_LUCKY_DICE_THROW);
         UiWork_FinalizeFar(sprites->helpWindow, 1);
         state = LUCKY_DICE_ROLL;
         bet = Party_GetAverageLevelFar() * DICE_BET_PER_LEVEL;
@@ -903,7 +903,7 @@ void LuckyDice_Run(void) {
           }
           UiText_DrawNumberInWindowFar(gGameState.coins, 6,
                                        sprites->coinsWindow, 0, 0);
-          AudioCommand_PlayFar(MUS_FANFARE_LARGE);
+          Sound_PlaySongFar(MUS_FANFARE_LARGE);
         } else {
           pairCount = 0;
           for (index = 0; index != 3; index++) {
@@ -927,7 +927,7 @@ void LuckyDice_Run(void) {
                                          sprites->coinsWindow, 0, 0);
             flashTimer[Random16() & 1] = 60;
             resultKind = 2;
-            AudioCommand_PlayFar(MUS_FANFARE_SMALL);
+            Sound_PlaySongFar(MUS_FANFARE_SMALL);
           }
           if (pairCount == 3) {
             winnings = bet * 3;
@@ -935,7 +935,7 @@ void LuckyDice_Run(void) {
                                          sprites->coinsWindow, 0, 0);
             flashTimer[Random16() & 1] = 60;
             resultKind = 1;
-            AudioCommand_PlayFar(MUS_FANFARE_MEDIUM);
+            Sound_PlaySongFar(MUS_FANFARE_MEDIUM);
           }
         }
       }
@@ -976,9 +976,9 @@ void LuckyDice_Run(void) {
     Graphics_ScaleRgb555Buffer(bgPalette, (u16 *)BG_PLTT, scale, 256);
     WaitFrames(1);
   }
-  Runtime_ReleaseHeapBlock(HEAP_SLOT_CAMERA);
-  Runtime_ReleaseHeapBlock(HEAP_SLOT_LUCKY_DICE_SPRITES);
-  Runtime_ReleaseHeapBlock(HEAP_SLOT_BATTLE_CANVAS);
-  Runtime_ReleaseHeapBlock(HEAP_SLOT_BATTLE_EFFECT);
-  Runtime_ReleaseHeapBlock(HEAP_SLOT_BATTLE_SHEET);
+  FreeHeapSlot(HEAP_SLOT_CAMERA);
+  FreeHeapSlot(HEAP_SLOT_LUCKY_DICE_SPRITES);
+  FreeHeapSlot(HEAP_SLOT_BATTLE_CANVAS);
+  FreeHeapSlot(HEAP_SLOT_BATTLE_ANIM);
+  FreeHeapSlot(HEAP_SLOT_BATTLE_SHEET);
 }

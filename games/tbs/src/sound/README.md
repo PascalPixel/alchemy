@@ -26,13 +26,13 @@ table or a control.
 
 ![Every sound starts as one call with a cue number, and the number's range decides what it is. Cues below 80 are music, played on the music player; asking for the music already chosen does nothing. Cues from 80 to 99 are fanfares, played on the fanfare player while the music is silenced. Cues from 100 up are rows of the song table, mostly sound effects, each played on the player its row names. Three cues are controls instead of sounds: cue 17 fades the music out, cue 18 keeps the music that is playing, and cue 289 fades out player 3.](https://alchemy.pascalpixel.com/illustrations/sound/cue-ranges.svg)
 
-Code anywhere in the game plays a sound by calling `AudioCommand_Play(s32
+Code anywhere in the game plays a sound by calling `Sound_PlaySong(s32
 id)` with a cue, and it returns nothing. Every caller outside the sound [bank](../../glossary.md#bank) uses its
-[far-call](../../glossary.md#far-call) name, `AudioCommand_PlayFar`, as the field does when a chest
+[far-call](../../glossary.md#far-call) name, `Sound_PlaySongFar`, as the field does when a chest
 holds a Psynergy Stone (`Field_SearchTile`):
 
 ```c
-AudioCommand_PlayFar(MUS_TREASURE_FOUND);
+Sound_PlaySongFar(MUS_TREASURE_FOUND);
 ```
 
 The cue's range picks what happens: below 80 it is music, from 80 to 99 a
@@ -69,12 +69,12 @@ the music that is playing. `AUDIO_CUE_FADE_SLOT3` fades player 3 out over
 48 frames. The three values are also rows of the song table (17, 18 and 289),
 and those rows never play, since the controls are tested first.
 
-A cue for the music already chosen, which `gMusicCue` records, does nothing.
+A cue for the music already chosen, which `gCurrentBgm` records, does nothing.
 That lets a [map](../../glossary.md#map) name its music every time the [party](../../glossary.md#the-party) enters without
 restarting it, but it also holds when that song has ended: a song that
 doesn't loop plays again only after another music cue or a fade.
 
-`AudioCommand_Play` reads the song table, `gSound_SongTable` (`games/tbs/sound/songs.s`), whose row holds the
+`Sound_PlaySong` reads the song table, `gSound_SongTable` (`games/tbs/sound/songs.s`), whose row holds the
 song's header and its player, and the players, `gSound_PlayerSlots`
 (`games/tbs/sound/players.s`). The cues are named in
 `audio_engine_symbols.h` and the songs in `songs.h`.
@@ -107,7 +107,7 @@ Once a frame the cue layer checks whether the fanfare has finished and, when
 it has, turns the music back up. The code that played the fanfare does
 nothing more.
 
-`AudioCommand_Play` sets the music's volume to 0, plays the fanfare on the
+`Sound_PlaySong` sets the music's volume to 0, plays the fanfare on the
 fanfare player and sets `gMusicRestoreDelay` to `MUSIC_RESTORE_DELAY_FRAMES`;
 the music keeps playing, silently.
 
@@ -229,7 +229,7 @@ touch it.
 
 ## How it fits with the rest of the game
 
-Every part of the game plays sound through `AudioCommand_PlayFar`: maps name
+Every part of the game plays sound through `Sound_PlaySongFar`: maps name
 their music on entry, menus click, battle effects play their impacts. The
 VBlank handler in [Runtime](../runtime/README.md#the-frame-loop) steps the
 music's ramps and enters the mixer every frame, and the mixer's resident code
@@ -266,7 +266,7 @@ driver's structures in `games/tbs/include/sound`.
 
 ## Words used here
 
-- **cue**: the number `AudioCommand_Play` takes: music, a fanfare, a song of
+- **cue**: the number `Sound_PlaySong` takes: music, a fanfare, a song of
   the song table, or a control.
 - **player** and **track**: a player (`struct SoundPlayer`) plays one song,
   whose tracks (`struct SoundTrack`) each run a stream of song commands.
@@ -294,7 +294,7 @@ driver's structures in `games/tbs/include/sound`.
 ## Evidence and open questions
 
 The driver's names follow pret's for MusicPlayer2000 where its structure is
-the same. The cue layer's come from what `AudioCommand_Play` does with each
+the same. The cue layer's come from what `Sound_PlaySong` does with each
 range of numbers, and the songs' from `songs.h`, where a song without a
 proven name keeps its number (`MUS_009`, `SE_188`).
 
@@ -319,7 +319,7 @@ over the title intro, `MUS_ENDING_LOGO` over the Golden Sun logo shown after the
 A library call is dropped only when it meets another that holds the lock, and
 library calls all run on the main thread, one after another, except from a
 VBlank [task](../../glossary.md#task). A call graph of the English edition's build finds one VBlank task that
-reaches the library: `ReelGame_RunFrame`, the slot machine's frame, which
+reaches the library: `LuckyWheels_RunFrame`, the slot machine's frame, which
 plays its sounds from the VBlank. Its sounds can be dropped only if the VBlank
 arrives while a main-loop task is inside a library call; while the slot
 machine runs, the main thread only draws and waits, and no message types, so

@@ -9,9 +9,9 @@
 /// order, not a number of frames to wait. Nothing in the game calls it.
 UNUSED void DebugMenu_ScheduleMapSelector(void) {
 #ifdef UBFIX
-  Scheduler_AddOrUpdateCallback(Menu_RunSelection, 0xC80);
+  Task_Add(Menu_RunSelection, 0xC80);
 #else
-  Scheduler_AddOrUpdateCallback((SchedulerCallback)Menu_RunSelection, 0xC80);
+  Task_Add((TaskFunc)Menu_RunSelection, 0xC80);
 #endif
 }
 
@@ -339,7 +339,7 @@ s32 Menu_RunWorkspaceResultLoop(void) {
     UiText_ShowPositionedMessageAndWait(MsgSleepMode, 1);
     gSleepRequested = result;
   } else if (result == SYSTEM_MENU_CHANGE_SETTINGS) {
-    if (Menu_RunWorkspaceOptions() == -1) {
+    if (OptionMenu_Run() == -1) {
       return Menu_RunWorkspaceResultLoop();
     }
   }
@@ -369,7 +369,7 @@ s32 DebugMenu_BrowseIcons(void) {
   page = 0;
   mode = 0;
   redraw = 1;
-  gMenuCtrlWork->suspended = redraw;
+  gObjectSystemWork->suspended = redraw;
   WaitFrames(1);
 
   while (1) {
@@ -432,7 +432,7 @@ s32 DebugMenu_BrowseIcons(void) {
     WaitFrames(1);
   }
   UiWork_Finalize(window, 2);
-  gMenuCtrlWork->suspended = 0;
+  gObjectSystemWork->suspended = 0;
   return 0;
 }
 

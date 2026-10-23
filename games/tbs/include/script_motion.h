@@ -83,7 +83,7 @@ struct ScriptMotionObject {
   s16 wait;   ///< frames left before its script runs again
   u8 refused; ///< frames in a row a solid object refused its move
   u8 frozen;  ///< nonzero skips steering, terrain, gravity and floating
-  /// ObjectEvent's two bytes map code uses and ObjectRuntime's action
+  /// ObjectEvent's two bytes map code uses and Object's action
   /// parameter, footprint side and linked object; not named here.
   ///@{
   u8 riseCounter;

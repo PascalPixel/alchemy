@@ -1519,7 +1519,7 @@ static void TunnelRuins_MarkPushPillarCells(void) {
 /// (TUNNEL_RUINS_LADY_STATUES_PATHS_SOUTHWEST and the three after it) sets
 /// FLAG_TUNNEL_RUINS_FOUR_PATHS_ROOM_ENTERED.
 s32 TunnelRuins_Initialize(void) {
-  gEventWork->startTransition =
+  gFieldWork->startTransition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   if (gGameState.mapId == (s32)&MapId_TunnelRuinsGreatStatue ||
       gGameState.mapId == (s32)&MapId_TunnelRuinsLadyStatues) {

@@ -52,19 +52,19 @@ void BattleEffect_RunPlasma(struct BattleEffectArgument *effect) {
   struct EffectStep *spark;
   struct EffectStep *sparks;
 
-  slots = &gWorkSlot[HEAP_SLOT_BATTLE_EFFECT];
+  slots = &gHeapSlots[HEAP_SLOT_BATTLE_ANIM];
   cursor = slots;
   EFFECT_GET_WORK_AND_CANVAS(cursor, work, canvas);
   sprites = EFFECT_SLOT(slots, HEAP_SLOT_BATTLE_SHEET);
   work->effect = effect;
   BattleEffect_StartCanvasLayer(1);
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
-  EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER, EFFECT_CLIP_BOUNDS,
+  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                       COMPOSITE_ADDITIVE);
-  draw[0] = (DrawRectangle)EFFECT_SLOT(slots, HEAP_SLOT_BLITTER);
-  EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER_ALTERNATE,
+  draw[0] = (DrawRectangle)EFFECT_SLOT(slots, HEAP_SLOT_RAM_CODE);
+  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
                       EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, COMPOSITE_MAX);
-  draw[1] = (DrawRectangle)EFFECT_SLOT(slots, HEAP_SLOT_BLITTER_ALTERNATE);
+  draw[1] = (DrawRectangle)EFFECT_SLOT(slots, HEAP_SLOT_RAM_CODE_2);
   Resource_LoadAndDecompress((s32)&ResourceId_LightningPillarSheet, work->sheet,
                              1, 1);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sprites, 0, 0);
@@ -112,7 +112,7 @@ void BattleEffect_RunPlasma(struct BattleEffectArgument *effect) {
       start = i * PLASMA_SPACING;
       // The flash fills the canvas with level 16.
       if (frame == start) {
-        AudioCommand_PlayFar(SE_HEAVY_IMPACT);
+        Sound_PlaySongFar(SE_HEAVY_IMPACT);
         Iwram_FillWords(canvas, CANVAS_BYTES, 0x10101010);
       }
       if (frame >= start && frame < start + 9) {
@@ -258,7 +258,7 @@ void BattleEffect_RunSparkGroups(struct BattleEffectArgument *effect,
   struct EffectStep *spark;
   struct EffectStep *sparks;
 
-  slots = gWorkSlot + HEAP_SLOT_BATTLE_EFFECT;
+  slots = gHeapSlots + HEAP_SLOT_BATTLE_ANIM;
   cursor = slots;
   EFFECT_GET_WORK_AND_CANVAS(cursor, work, canvas);
   graphics = EFFECT_SLOT(slots, HEAP_SLOT_BATTLE_SHEET);
@@ -278,11 +278,11 @@ void BattleEffect_RunSparkGroups(struct BattleEffectArgument *effect,
     originY = screenPosition.y + 48;
   }
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
-  EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER, EFFECT_CLIP_BOUNDS, COMPOSITE_MAX);
-  draw[0] = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER];
-  EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER_ALTERNATE, EFFECT_CLIP_BOUNDS,
+  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, COMPOSITE_MAX);
+  draw[0] = (DrawRectangle)gHeapSlots[HEAP_SLOT_RAM_CODE];
+  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, EFFECT_CLIP_BOUNDS,
                       COMPOSITE_ADDITIVE);
-  draw[1] = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE];
+  draw[1] = (DrawRectangle)gHeapSlots[HEAP_SLOT_RAM_CODE_2];
   Resource_LoadAndDecompress((s32)&ResourceId_FlashBurstSheet, work->sheet, 1,
                              1);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, graphics, 0, 0);
@@ -354,7 +354,7 @@ void BattleEffect_RunSparkGroups(struct BattleEffectArgument *effect,
                     56;
        frame++) {
     struct CameraWork *camera =
-        *(struct CameraWork **)(gWorkSlot + HEAP_SLOT_CAMERA);
+        *(struct CameraWork **)(gHeapSlots + HEAP_SLOT_CAMERA);
 
     // The strongest variant turns the camera's yaw 1/256 turn a frame for 52
     // frames, about a fifth of a turn.
@@ -375,7 +375,7 @@ void BattleEffect_RunSparkGroups(struct BattleEffectArgument *effect,
         EFFECT_SHOW_DAMAGE(SE_145);
     } else {
       if (frame == 2)
-        AudioCommand_PlayFar(SE_145);
+        Sound_PlaySongFar(SE_145);
       if (frame == 24)
         EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
     }

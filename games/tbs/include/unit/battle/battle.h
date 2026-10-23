@@ -66,9 +66,9 @@ s32 BattleUnit_TickSleep(s32 unitId);
 /// Moves camera yaw by 512 while L/R is held; two identical functions exist.
 #define DEFINE_ADJUST_CAMERA(name)                                             \
   void name(void) {                                                            \
-    struct BattleCamera *cam = WORK_SLOT(HEAP_SLOT_CAMERA);                    \
+    struct BattleCamera *cam = HEAP_SLOT_BLOCK(HEAP_SLOT_CAMERA);              \
     struct BattlePresentationTransition *trans =                               \
-        WORK_SLOT(HEAP_SLOT_BATTLE_BACKGROUND);                                \
+        HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_BACKGROUND);                          \
                                                                                \
     if ((gKeysHeld & KEY_L) != 0) {                                            \
       cam->yaw += 512;                                                         \
@@ -319,7 +319,7 @@ void BattlePresentation_SetPaletteLevel(s32 unused, s32 level);
 void BattlePresentation_ConfigurePaletteFade(s32 mode, s32 unusedResource,
                                              s32 fade);
 void BattlePresentation_InitializeWorkAndResetState(void);
-void Runtime_ReleaseHeapBlock10(void);
+void FreeHeapSlot10(void);
 void BattleBackground_Load(s32 mode, s32 resourceId, s32 level);
 void BattleCamera_SetRange(s32 centerX, s32 centerY, s32 offsetX, s32 offsetY,
                            s32 scale);
@@ -366,7 +366,7 @@ s32 Graphics_ScaleRgb555Clamped(u16 *source, u16 *destination, s32 scale,
 void ElementGlow_Play(s32 unitId, s32 element, s32 mode, s32 variant);
 #endif
 void BattlePresentation_RestorePalette(void);
-void Runtime_RemoveIrqHandlerSlot2(void);
+void Irq_RemoveVCountHandler(void);
 
 s32 BattleFormation_AverageLevel(s32 recordId);
 s32 BattleFormation_SelectLevelMatchedCandidate(s32 *outMargin);

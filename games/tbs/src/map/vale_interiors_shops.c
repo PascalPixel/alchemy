@@ -281,10 +281,10 @@ static void ValeInteriorsShops_GiveFarewellHerb(void) {
   if (GameFlag_IsSet(FLAG_VALE_FAREWELL_HERB_RECEIVED) != 0) {
     Engine_ScriptSetMessage(MsgValeYouMustSaveJenna);
     Script_ShowMessage(LOCALID_ITEM_MERCHANT, 0);
-    FieldObject_SetTargetAndCallback(LOCALID_ITEM_MERCHANT,
-                                     OBJ_EVENT_LINK_KEEP_MOTION |
-                                         LOCALID_PARTY_LEADER,
-                                     gValeInteriorsShops_FaceTargetScript);
+    Object_SetTargetAndCallback(LOCALID_ITEM_MERCHANT,
+                                OBJ_EVENT_LINK_KEEP_MOTION |
+                                    LOCALID_PARTY_LEADER,
+                                gValeInteriorsShops_FaceTargetScript);
   } else {
     gift = MsgValeThisIsMyFarewellGift;
     Engine_ScriptSetMessage(gift);
@@ -336,9 +336,9 @@ static void ValeInteriorsShops_RequestWindowWarp(s32 warpNumber) {
   if (Engine_GameFlagIsSet(FLAG_VALE_STORM) != 0)
     FieldEffect_StopLightning();
   Engine_AudioPlayCue(SE_MAP_EXIT);
-  gEventWork->startTransition =
+  gFieldWork->startTransition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
-  gEventWork->transitionFrames = 16;
+  gFieldWork->transitionFrames = 16;
   Engine_ScriptCloseScreen();
   Engine_ScriptWaitForScreen();
   Engine_ScriptRequestWarp(warpNumber);
@@ -409,7 +409,7 @@ static void EventScript_LeaveToValeGateNorth(void) {
 /// Vale, Jenna's grandmother lies sick in bed.
 s32 ValeInteriorsShops_Initialize(void) {
   struct ObjectEvent *objectEvent;
-  struct EventWork **eventSlot = &gEventWork;
+  struct EventWork **eventSlot = &gFieldWork;
 
   (*eventSlot)->startTransition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
@@ -582,7 +582,7 @@ static void EventScript_GaretComesHome(void) {
   struct ObjectEvent *sleepZ;
   struct ObjectEvent *objectEvent;
   s32 motionFlags;
-  SchedulerCallback timedUpdate;
+  TaskFunc timedUpdate;
   const s32 *partyScript;
 
   // The party walks in while Garet's grandfather dozes, sleep drifting up
@@ -611,7 +611,7 @@ static void EventScript_GaretComesHome(void) {
   timedUpdate = ValeInteriorsShops_SpawnSleepZ;
   FieldScheduler_AddCallback(timedUpdate, TASK_PRIORITY_MAP);
   Engine_TaskWait(1);
-  gEventWork->transitionFrames = 32;
+  gFieldWork->transitionFrames = 32;
   Engine_ScriptOpenScreen();
   Engine_ScriptWaitForScreen();
   Engine_ObjectEventWaitForMove(LOCALID_PARTY_LEADER);
@@ -634,16 +634,16 @@ static void EventScript_GaretComesHome(void) {
   Engine_ObjectEventSetAnimation(GARET, ANIMATION_STAND);
   Engine_ObjectEventSetAnimation(IVAN, ANIMATION_STAND);
   Engine_ScriptWait(10);
-  FieldObject_SetTargetAndCallback(
+  Object_SetTargetAndCallback(
       LOCALID_PARTY_LEADER, OBJ_EVENT_LINK_KEEP_MOTION | LOCALID_GARETS_FATHER,
       gValeInteriorsShops_FaceTargetScript);
-  FieldObject_SetTargetAndCallback(
+  Object_SetTargetAndCallback(
       GARET, OBJ_EVENT_LINK_KEEP_MOTION | LOCALID_GARETS_FATHER,
       gValeInteriorsShops_FaceTargetScript);
-  FieldObject_SetTargetAndCallback(
+  Object_SetTargetAndCallback(
       IVAN, OBJ_EVENT_LINK_KEEP_MOTION | LOCALID_GARETS_FATHER,
       gValeInteriorsShops_FaceTargetScript);
-  FieldObject_SetTargetAndCallback(
+  Object_SetTargetAndCallback(
       MIA, OBJ_EVENT_LINK_KEEP_MOTION | LOCALID_GARETS_FATHER,
       gValeInteriorsShops_FaceTargetScript);
   Engine_ScriptWait(300);
@@ -822,7 +822,7 @@ static void EventScript_GaretComesHome(void) {
   ObjectEvent_FaceDirection(IVAN, FACING_SOUTHWEST + FACING_STEP, 0);
   ObjectEvent_FaceDirection(MIA, FACING_NORTHWEST + FACING_STEP, 0);
   if (Engine_ScriptChooseYesNo(0, 0) == 1) {
-    gEventWork->message++;
+    gFieldWork->message++;
   }
   Camera_MoveTo(PIXELS(777), 0, PIXELS(428), 1);
   Engine_ScriptWait(20);

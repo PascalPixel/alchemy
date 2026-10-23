@@ -101,7 +101,7 @@ struct S {
 extern u8 IwramSoundPresetCode[];
 #ifndef OWN_Flash_Handler0
 /// The chip's program routine (FlashSetupInfo.handlers[0]), which
-/// SaveState_WriteWorkspaceSlot calls.
+/// Save_WriteSector calls.
 extern u32 gFlash_Handler0;
 #endif
 /// HEAP_SLOT_ANIMATION_LAYERS: the animation layer records (struct
@@ -136,7 +136,7 @@ extern const u8 Render_BuildOamListKernel[];
 /// IoWriteQueue_FlushPending.
 extern const u8 Resource_ExecuteTransfer[];
 /// The ARM routine that resolves a loaded overlay's long branches, run from a
-/// heap copy by Resource_LoadCode.
+/// heap copy by Overlay_Load.
 extern const u8 Resource_PatchThumbBranch[];
 /// The game code's last letter in the cartridge header: `J` in Japanese, `E`,
 /// `D`, `F`, `S` or `I` (System_GetLanguage).

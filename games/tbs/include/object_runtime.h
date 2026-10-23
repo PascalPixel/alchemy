@@ -2,7 +2,7 @@
 #define ALCHEMY_OBJECT_RUNTIME_H
 
 /// @file
-/// ObjectRuntime, a field object's runtime state, and the object snapshots.
+/// Object, a field object's runtime state, and the object snapshots.
 
 #include "unit/field/field.h"
 #include "object_lookup.h"
@@ -11,13 +11,13 @@
 
 union FieldObject;
 
-/// One of the 64 field objects in the object pool (HEAP_SLOT_OBJECT_POOL): its
+/// One of the 64 field objects in the object pool (HEAP_SLOT_OBJECTS): its
 /// script, position, motion toward a target, animation and update callback.
 ///
 /// ObjectSystem_Initialize takes the pool with the object system's work
-/// (HEAP_SLOT_MENU_CONTROL), so it lives until the next map change. struct
+/// (HEAP_SLOT_OBJECT_SYSTEM), so it lives until the next map change. struct
 /// ObjectEvent is the same 0x70 bytes as maps see them.
-struct ObjectRuntime {
+struct Object {
   s32 *script; ///< the object script it runs; null when the object is free
   s16 step;    ///< the script cursor, in words
   u16 angle;   ///< 1/65536 turns
@@ -41,7 +41,7 @@ struct ObjectRuntime {
   s32 targetX; ///< 16.16 fixed-point pixels; 0x80000000 when unset
   s32 targetY; ///< 16.16 fixed-point pixels; 0x80000000 when unset
   s32 targetZ; ///< 16.16 fixed-point pixels; 0x80000000 when unset
-  /// ObjectEvent's bounce and gravity, and the word FieldObject_Create zeroes
+  /// ObjectEvent's bounce and gravity, and the word Object_CreateField zeroes
   /// and map code keeps a resting height in; not named here.
   ///@{
   s32 bounce;
@@ -78,20 +78,20 @@ struct ObjectRuntime {
   s16 footprintSide; ///< the side of the player's next footprint (2 after a
                      ///< stop)
   /// The object its action script follows or faces.
-  struct ObjectRuntime *linkedObject;
+  struct Object *linkedObject;
   /// The update hook (ObjectEvent.update), which the unused
   /// ObjectDispatch_SetUpdateValue sets as a word.
   void (*update)(union FieldObject *object);
 };
 
-STATIC_ASSERT(sizeof(struct ObjectRuntime) == 0x70);
-STATIC_ASSERT(offsetof(struct ObjectRuntime, priorityFlags) == 0x23);
-STATIC_ASSERT(offsetof(struct ObjectRuntime, arrivalAxis) == 0x56);
-STATIC_ASSERT(offsetof(struct ObjectRuntime, conditionResult) == 0x57);
-STATIC_ASSERT(offsetof(struct ObjectRuntime, snapToTarget) == 0x58);
-STATIC_ASSERT(offsetof(struct ObjectRuntime, collisionFlags) == 0x59);
-STATIC_ASSERT(offsetof(struct ObjectRuntime, wait) == 0x5e);
-STATIC_ASSERT(offsetof(struct ObjectRuntime, footprintSide) == 0x66);
+STATIC_ASSERT(sizeof(struct Object) == 0x70);
+STATIC_ASSERT(offsetof(struct Object, priorityFlags) == 0x23);
+STATIC_ASSERT(offsetof(struct Object, arrivalAxis) == 0x56);
+STATIC_ASSERT(offsetof(struct Object, conditionResult) == 0x57);
+STATIC_ASSERT(offsetof(struct Object, snapToTarget) == 0x58);
+STATIC_ASSERT(offsetof(struct Object, collisionFlags) == 0x59);
+STATIC_ASSERT(offsetof(struct Object, wait) == 0x5e);
+STATIC_ASSERT(offsetof(struct Object, footprintSide) == 0x66);
 
 enum {
   OBJECT_SNAPSHOT_CAPACITY = 32, ///< object events a snapshot keeps
@@ -104,9 +104,8 @@ enum {
 struct ObjectTableSnapshot {
   u8 slots[OBJECT_SNAPSHOT_CAPACITY]; ///< local ids, or
                                       ///< OBJECT_SNAPSHOT_EMPTY
-  struct ObjectRuntime
-      objectEvents[OBJECT_SNAPSHOT_CAPACITY]; ///< copied by DMA
-  u8 animations[OBJECT_SNAPSHOT_CAPACITY];    ///< each sprite's lastNo
+  struct Object objectEvents[OBJECT_SNAPSHOT_CAPACITY]; ///< copied by DMA
+  u8 animations[OBJECT_SNAPSHOT_CAPACITY];  ///< each sprite's lastNo
   u8 spriteFlags[OBJECT_SNAPSHOT_CAPACITY]; ///< restored through the dispatcher
   u8 priorities[OBJECT_SNAPSHOT_CAPACITY];  ///< both image and shadow priority
 };

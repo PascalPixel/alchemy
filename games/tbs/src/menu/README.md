@@ -38,14 +38,14 @@ together.
 
 The block is borrowed from the [heap](../../glossary.md#heap-and-pools) under the [heap slot](../../glossary.md#heap-slot) `HEAP_SLOT_MENU`:
 `MENU_WORK_SIZE` bytes, reached as `gMenuWork`. Each screen reads it through
-its own struct, naming the fields that screen uses: `InventoryMenuState` (the
-Item screen, and the pieces the screens share), `PsynergyMenuState`,
-`CharacterMenuState`, `DjinnMenuWork` and `FourObjectMotionState`. Why they
+its own struct, naming the fields that screen uses: `ItemMenuWork` (the
+Item screen, and the pieces the screens share), `PsynergyMenuWork`,
+`SummaryScreenWork`, `DjinnMenuWork` and `FourObjectMotionState`. Why they
 stay separate structs rather than one is a question of [matching](../../glossary.md#matching-decompilation): the code
 has to compile to [the original](../../glossary.md#the-original)'s instructions, and
 [Matching](../MATCHING.md) covers how. The work has room for eight party members
 (`ownerIds`) and 32 listed entries (`entryIcons`, `items`). The counters take
-the same slot as `struct ShopRuntime`, and the save screen uses it for its
+the same slot as `struct ShopWork`, and the save screen uses it for its
 [sprites](../../glossary.md#sprite-and-oam).
 
 The Djinn and Status screens also take short-lived blocks with no slot from
@@ -117,7 +117,7 @@ The steps are `PSYNERGY_STEP_OWNER`, `_LIST`, `_CLASSIFY`
 | anything else | 0 | the field casts it, though the map has no event for it |
 
 Psynergy for the field is written as the field's Psynergy request,
-`psynergyRequest` in the event work (`gEventWork`, the running map's state),
+`psynergyRequest` in the event work (`gFieldWork`, the running map's state),
 and `PsynergyMenu_Run` returns 1. The request is one 16-bit word:
 
 ```
@@ -165,7 +165,7 @@ give back (`ITEM_STEP_TRADE`). Nothing sets `ITEM_STEP_IDLE` or
 outside the menu, with its owner, target and item id in its out parameters,
 and writes the field's item request (`struct ItemPickerResult`).
 
-Each window is a `struct UiWindow` that `struct InventoryMenuState` keeps a
+Each window is a `struct UiWindow` that `struct ItemMenuWork` keeps a
 pointer to. `ItemMenu_Initialize`, which the Psynergy and Djinn screens open
 with too, makes the party window (`UiMenu_CreateCursor`, tile (0, 0), 13 by
 5) and `infoWindow` (0, 17, 30 by 3); the screen adds `messageWindow` (13, 0,
@@ -365,8 +365,8 @@ name entry keyboard tilemap, the same as the Japanese one, that nothing reads.
 
 - **menu work**: heap slot `HEAP_SLOT_MENU`, `MENU_WORK_SIZE` (2,672) bytes,
   reached as `gMenuWork`. Each screen reads it through its own struct:
-  `InventoryMenuState` (the Item screen, and the pieces the screens share),
-  `PsynergyMenuState`, `CharacterMenuState`, `DjinnMenuWork` and
+  `ItemMenuWork` (the Item screen, and the pieces the screens share),
+  `PsynergyMenuWork`, `SummaryScreenWork`, `DjinnMenuWork` and
   `FourObjectMotionState`.
 - **owner**: a party member whose items, Psynergy or Djinn a screen shows, by
   character id; `ownerIds` lists the active party.
@@ -421,14 +421,14 @@ are the ones those renders read from memory.
 
 Every view of the menu work names what its own screen reads and writes, and
 keeps the bytes other screens' views use under those views' names with
-"not named here" (`moneyWindow`, ShopRuntime's) or as one run named for what
+"not named here" (`moneyWindow`, ShopWork's) or as one run named for what
 it holds (`itemWindows`, `figureRow`), with the view that names its fields.
 `UiWindow_InitializeWork` clears the whole work as each screen opens. Bytes
 no view names are `unused` runs: the first eight, the 36 after the category
 icons and a few more. Three window handles have no window behind them: the
-Status screen's `unopenedWindow` (`struct CharacterMenuState`), which it
+Status screen's `unopenedWindow` (`struct SummaryScreenWork`), which it
 only clears, and the Item screen's `unopenedWindow` and
-`secondUnopenedWindow` (`struct InventoryMenuState`), which it only closes, so
+`secondUnopenedWindow` (`struct ItemMenuWork`), which it only closes, so
 they stay NULL and closing them does nothing. The Djinn screen's
 `unopenedWindow`
 (`struct DjinnMenuWork`) is never given a window either, but its preview

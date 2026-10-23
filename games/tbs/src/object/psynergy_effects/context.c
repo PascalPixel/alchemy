@@ -12,7 +12,7 @@
 /// ObjectEvent_GetScreenPositionFar by the window frames to open a message
 /// window above or below the leader.
 s32 ObjectEvent_GetScreenPosition(s32 objectId, s32 *position) {
-  struct ObjectRuntime *object = ObjectTable_Get(objectId);
+  struct Object *object = ObjectTable_Get(objectId);
 #ifdef UBFIX
   struct MapGridScrollWork *grid;
 #else
@@ -58,21 +58,21 @@ UNUSED void ObjectEffect_ReservedNoOp941DC(void) {}
 // changes.
 /// Starts the transition into a random battle: plays the map's battle cue
 /// and the encounter sounds, closes the screen and flashes the backdrop white,
-/// fading it to black over 16 frames. Called by Field_RunMap when it handles
+/// fading it to black over 16 frames. Called by Map_Run when it handles
 /// work->battle; clears work->transitionActive once the screen is closed.
 #ifdef UBFIX
 void Field_StartEncounterTransition(s32 unused) {
 #else
 s32 Field_StartEncounterTransition(s32 unused) {
 #endif
-  struct FieldWork *work = (struct FieldWork *)gEventWork;
+  struct FieldWork *work = (struct FieldWork *)gFieldWork;
   s32 i;
   s32 level;
 
-  AudioCommand_PlayFar(gGameState.battleCue);
-  AudioCommand_PlayFar(SE_STOP_SLOT3);
-  AudioCommand_PlayFar(SE_147);
-  if (work->mode == MODE_WORLD_MAP) {
+  Sound_PlaySongFar(gGameState.battleMusic);
+  Sound_PlaySongFar(SE_STOP_SLOT3);
+  Sound_PlaySongFar(SE_147);
+  if (work->mode == OBJECT_SYSTEM_WORLD_MAP) {
     // On the world map the flash colours BG palette colour 243 instead, and
     // the screen closes on the flickering centre line (style 4, variant 1);
     // a field map closes with WINDOW_TRANSITION_LEADER_INVERSE. Both take
@@ -109,7 +109,7 @@ s32 Field_StartEncounterTransition(s32 unused) {
 void ObjectEffect_PrepareContextEffect(s32 animation) {
   u32 zero;
   u8 param;
-  struct ObjectRuntime *object;
+  struct Object *object;
   struct AnimationObject *context;
   struct AnimationEntry *effect;
 
@@ -160,7 +160,7 @@ void ObjectEffect_StartContextEffect25(void) {
 void ObjectEffect_EndContextEffect(s32 animation) {
   s32 zero;
   s32 mask;
-  struct ObjectRuntime *leader = ObjectTable_Get(gGameState.selectedLocalId);
+  struct Object *leader = ObjectTable_Get(gGameState.selectedLocalId);
   struct AnimationObject *spriteAnimation = leader->animation;
   struct AnimationEntry *eff =
       (struct AnimationEntry *)ResourceMetadata_RegisterFar(spriteAnimation,
@@ -183,7 +183,7 @@ void ObjectEffect_EndContextEffect(s32 animation) {
   leader->acceleration = 0x10000;
   leader->speedLimit = 0x10000;
   Object_SetMoveTargetFar(leader, leader->x, leader->y, leader->z + 0x80000);
-  FieldObject_WaitForMoveFar(leader);
+  Object_WaitForMoveFar(leader);
 }
 
 /// Plays the leader's arrival for the way the last map was left: through a
@@ -191,7 +191,7 @@ void ObjectEffect_EndContextEffect(s32 animation) {
 /// ANIMATION_LEADER_ARRIVE, returns 1) or a WARP_STYLE_ANIMATED_ALTERNATE one
 /// (FLAG_WARP_ARRIVAL_ALTERNATE, ANIMATION_LEADER_ARRIVE_ALTERNATE, returns 2),
 /// or falling in from 160 pixels above (FLAG_ARRIVE_FALLING, returns 3).
-/// Returns 0 when there is nothing to play. Called by Field_RunMap as the
+/// Returns 0 when there is nothing to play. Called by Map_Run as the
 /// map fades in, which waits out the fade itself only when this returns 0.
 /// Clears the flag it acts on.
 s32 ObjectEffect_RunPendingFlagEvent(void) {
@@ -212,7 +212,7 @@ s32 ObjectEffect_RunPendingFlagEvent(void) {
       flag = FLAG_ARRIVE_FALLING;
       if (GameFlag_TestFar(flag) != 0) {
         s32 leaderId;
-        struct ObjectRuntime *leader;
+        struct Object *leader;
 
         GameFlag_ClearBitFar(flag);
         leaderId = gGameState.selectedLocalId;
@@ -226,7 +226,7 @@ s32 ObjectEffect_RunPendingFlagEvent(void) {
         while (leader->y + leader->velocityY > leader->terrainHeight) {
           WaitFrames(1);
         }
-        AudioCommand_PlayFar(SE_159);
+        Sound_PlaySongFar(SE_159);
         leader->y = leader->terrainHeight;
         ObjectDispatch_SelectAnimationFar(leader, 22);
         FieldScript_WaitFrames(15);

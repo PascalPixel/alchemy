@@ -154,7 +154,7 @@ const struct MapEvent *TolbiInteriors_SelectEvents(void) {
 /// Unused: leaves through TRANSITION_WINDOW, a screen transition of 24
 /// frames; no event row names it.
 UNUSED static void TolbiInteriors_ExitThroughWindow(void) {
-  struct EventWork *work = gEventWork;
+  struct EventWork *work = gFieldWork;
 
   work->startTransition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_SHAPE);
@@ -172,7 +172,7 @@ static void TolbiInteriors_EnterDoor(void) {
   s16 *trigger;
   s32 doorIndex;
 
-  work = gEventWork;
+  work = gFieldWork;
   // Stop the room's object events before animating the selected doorway.
   for (localId = LOCALID_FIRST_PLACED;
        localId < TOLBI_INTERIORS_OBJ_EVENT_SLOT_END; localId++) {
@@ -322,7 +322,7 @@ s32 TolbiInteriors_ApplyEntryState(void) {
   s32 clearedPriorityFlags;
   struct ObjectEvent *objectEvent;
 
-  gEventWork->startTransition =
+  gFieldWork->startTransition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
   if (Engine_GameFlagIsSet(FLAG_COLOSSO_OVER) != 0) {
     // Restore the changed room tiles and the passengers' fixed draw priority.

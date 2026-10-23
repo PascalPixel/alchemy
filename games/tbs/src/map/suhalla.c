@@ -171,30 +171,30 @@ static void EventScript_GrowSprout(void) {
 /// leader steps through and the party leaves by that warp into the village's
 /// buildings.
 static void EventScript_EnterDoor(void) {
-  struct EventWork *work = gEventWork;
+  struct EventWork *work = gFieldWork;
   s32 warpTrigger = work->touchedTrigger;
   u16 cellX = gSuhallaDoorCells[warpTrigger][0];
   u16 cellZ = gSuhallaDoorCells[warpTrigger][1];
 
-  Script_PlayCue(SE_DOOR_OPEN);
+  Script_PlaySong(SE_DOOR_OPEN);
   MapGrid_AnimateCells(gSuhallaDoorOpenSteps, cellX, cellZ);
   // Walk through the opening while the warp transition counts down.
   ObjectEvent_WalkBy(LOCALID_PARTY_LEADER, 0, -16);
-  gEventWork->transitionFrames = 16;
+  gFieldWork->transitionFrames = 16;
   Engine_ScriptRequestWarp(warpTrigger);
 }
 
 /// The same through the wide door of SUHALLA_TO_SANCTUM, into Suhalla Sanctum.
 static void EventScript_EnterWideDoor(void) {
-  struct EventWork *work = gEventWork;
+  struct EventWork *work = gFieldWork;
   s32 warpTrigger = work->touchedTrigger;
   u16 cellX = gSuhallaDoorCells[warpTrigger][0];
   u16 cellZ = gSuhallaDoorCells[warpTrigger][1];
 
-  Script_PlayCue(SE_DOOR_OPEN);
+  Script_PlaySong(SE_DOOR_OPEN);
   MapGrid_AnimateCells(gSuhallaWideDoorOpenSteps, cellX, cellZ);
   ObjectEvent_WalkBy(LOCALID_PARTY_LEADER, 0, -16);
-  gEventWork->transitionFrames = 16;
+  gFieldWork->transitionFrames = 16;
   Engine_ScriptRequestWarp(warpTrigger);
 }
 
@@ -218,7 +218,7 @@ s32 Map_Initialize(void) {
     Engine_GameFlagSet(FLAG_BABI_SPOKE_AFTER_COLOSSO);
   }
 
-  work = gEventWork;
+  work = gFieldWork;
   work->startTransition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   work->transitionFrames = 24;
 

@@ -190,7 +190,7 @@ The name of the file the build asks for says what to make:
 - `script`: the tile animation and blend scripts below.
 
 The codec `lz` then packs each stream in the format the game's
-`Resource_DecodeType01` unpacks, and the bytes must come out identical.
+`Decompress_Type01` unpacks, and the bytes must come out identical.
 Where [the original](../../glossary.md#the-original) stream is followed by stray bytes the packer left in its
 buffer, `layout.s` places them as literal bytes with a `PACKER:` comment naming
 what wrote them. Where Camelot changed a stream after packing it, a
@@ -248,7 +248,7 @@ one go.
 
 ![A layout's grid is stored as three whole planes, one after another: what stepping on each cell does (a byte a cell, 16 KB), the shape of each cell's ground (a byte a cell, 16 KB) and the picture drawn in each cell, with its four flag bits (two bytes a cell, 32 KB). As the layout loads, a routine copied into RAM takes one value from each plane for every cell and puts them together into one four-byte word: the shape at the top, then what stepping does, then the picture. The 128 by 128 words take 64 KB.](https://alchemy.pascalpixel.com/illustrations/map/grid-weave.svg)
 
-Each map's row of `gField_MapTable` ([`field/maps.s`](../field/maps.s))
+Each map's row of `gMapHeaders` ([`field/maps.s`](../field/maps.s))
 gives a layout number, which picks a row of `gLayouts`
 ([`field/layouts.tsv`](../field/layouts.tsv)): the layout's header, palette,
 three tile sheets and layer data. `MapGrid_LoadLayout`

@@ -29,7 +29,7 @@ void BattleEffect_RunBreak(struct BattleEffectArgument *effect) {
   s32 frame;
   s32 i;
 
-  slots = &gWorkSlot[HEAP_SLOT_BATTLE_EFFECT];
+  slots = &gHeapSlots[HEAP_SLOT_BATTLE_ANIM];
   cursor = slots;
   EFFECT_GET_WORK_AND_CANVAS(cursor, work, canvas);
   sheet = EFFECT_SLOT(slots, HEAP_SLOT_BATTLE_SHEET);
@@ -39,8 +39,8 @@ void BattleEffect_RunBreak(struct BattleEffectArgument *effect) {
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
   Iwram_CopyWords((void *)BG_PLTT,
                   Resource_GetTableEntry((s32)&ResourceId_IceBlockSheet), 128);
-  EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER, EFFECT_CLIP_BOUNDS, COMPOSITE_MAX);
-  draw = (DrawRectangle)EFFECT_SLOT(slots, HEAP_SLOT_BLITTER);
+  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, COMPOSITE_MAX);
+  draw = (DrawRectangle)EFFECT_SLOT(slots, HEAP_SLOT_RAM_CODE);
 
   EFFECT_FREE_PARTICLES(i, PARTICLES, 8 * DRAIN_ICE_SHARDS_PER_TARGET);
 
@@ -92,7 +92,7 @@ void BattleEffect_RunBreak(struct BattleEffectArgument *effect) {
 
       offset = member * DRAIN_ICE_SHARDS_PER_TARGET * sizeof(struct EffectStep);
       if (frame == member * 20) {
-        AudioCommand_PlayFar(SE_143);
+        Sound_PlaySongFar(SE_143);
         ObjectGroup_UpdateMembers(work->effect->actors[member],
                                   SPRITE_COLOR_WHITE, -1, member, 20);
       }
@@ -156,11 +156,11 @@ void BattleEffect_RunDrain(struct BattleEffectArgument *effect) {
   s32 frame;
   s32 i;
 
-  slots = &gWorkSlot[HEAP_SLOT_BATTLE_EFFECT];
+  slots = &gHeapSlots[HEAP_SLOT_BATTLE_ANIM];
   cursor = slots;
   EFFECT_GET_WORK_AND_CANVAS(cursor, work, canvas);
   sheet = EFFECT_SLOT(slots, HEAP_SLOT_BATTLE_SHEET);
-  camera = ((struct BattleCamera *)WORK_SLOT(HEAP_SLOT_CAMERA));
+  camera = ((struct BattleCamera *)HEAP_SLOT_BLOCK(HEAP_SLOT_CAMERA));
   if (effect->variant == EFFECT_VARIANT_BASIC)
     alternate = 0;
   else
@@ -198,10 +198,10 @@ void BattleEffect_RunDrain(struct BattleEffectArgument *effect) {
 
   // Draw with the maximum blend, and lower every canvas pixel by 4 on each
   // transfer so the motes leave fading trails.
-  EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER, EFFECT_CLIP_BOUNDS, COMPOSITE_MAX);
-  draw = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER];
+  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, COMPOSITE_MAX);
+  draw = (DrawRectangle)gHeapSlots[HEAP_SLOT_RAM_CODE];
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_DARKEN, 0x04040404);
-  AudioCommand_PlayFar(SE_142);
+  Sound_PlaySongFar(SE_142);
 
   // Frame 0 plays the drain sound; target n bursts on frame n * 20; frame 40
   // starts the user's glow and frame 64 shows the damage. The last target's

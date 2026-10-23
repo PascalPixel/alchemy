@@ -63,8 +63,8 @@ gSerialTransfer:
 	.global gSerialReceivedSize
 gSerialReceivedSize:
 	.space 0x00000008
-	.global gSerialRuntime
-gSerialRuntime:
+	.global gSerialWork
+gSerialWork:
 	.space 0x00000160
 	.global gLinkExchangeState
 gLinkExchangeState:
@@ -111,8 +111,8 @@ gMusicVolumeTarget:
 	.global gMusicPitch
 gMusicPitch:
 	.space 0x00000004
-	.global gMusicCue
-gMusicCue:
+	.global gCurrentBgm
+gCurrentBgm:
 	.space 0x00000004
 	.global gAudio_CommandMask
 gAudio_CommandMask:

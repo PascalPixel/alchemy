@@ -96,8 +96,8 @@ struct MenuPoint {
   s32 y; ///< screen pixels
 };
 
-/// The battle command menus' work, HEAP_SLOT_BATTLE_COMMANDS (0x104 bytes),
-/// reached as gLinkCountdownWork. Battle_CollectPartyCommands allocates it each
+/// The battle command menus' work, HEAP_SLOT_BATTLE_MENU (0x104 bytes),
+/// reached as gBattleMenuWork. Battle_CollectPartyCommands allocates it each
 /// round; it holds the icons beside the command window, the camera slide, the
 /// cursor each list remembers, the link battle's timer, the Djinn tutorial's
 /// key presses and what each command has spent.
@@ -170,12 +170,12 @@ STATIC_ASSERT(offsetof(struct BattleMenuWork, chosenDjinn) == 0xe4);
  * tbs-en (ItemList_SelectEntry). */
 #define BATTLE_MENU_SET_CURSOR(page_, row_, preferred_)                        \
   do {                                                                         \
-    gLinkCountdownWork->page = (page_);                                        \
-    gLinkCountdownWork->row = (row_);                                          \
-    gLinkCountdownWork->preferredRow = (preferred_);                           \
+    gBattleMenuWork->page = (page_);                                           \
+    gBattleMenuWork->row = (row_);                                             \
+    gBattleMenuWork->preferredRow = (preferred_);                              \
   } while (0)
 
-extern struct BattleMenuWork *gLinkCountdownWork;
+extern struct BattleMenuWork *gBattleMenuWork;
 extern u8 gResource_FixedBlockBTiles[];
 extern const u8 gMenu_AnimatedCursorTiles[];
 

@@ -51,7 +51,7 @@ s32 Battle_ClassifyEntryKind(const struct BattleAct *act) {
 /// party's row. In a link battle both consoles first wait for each other
 /// ("VSST" in the link signature), publish "EDVS" when done, and wait for
 /// the partner to finish ("Waiting for opponent's input."). Its work,
-/// BattleMenuWork (gLinkCountdownWork), lives in HEAP_SLOT_BATTLE_COMMANDS
+/// BattleMenuWork (gBattleMenuWork), lives in HEAP_SLOT_BATTLE_MENU
 /// until it returns. BattlePresentation_BuildUnitEntries calls it
 /// (battle/battle/round.c).
 s32 Battle_CollectPartyCommands(struct BattleActionRecord *commands,
@@ -96,7 +96,7 @@ s32 Battle_CollectPartyCommands(struct BattleActionRecord *commands,
   parameter = 0;
   largeIconSlot = VramCache_AllocEntry(1024);
   smallIconSlot = VramCache_AllocEntry(512);
-  state = Runtime_AllocateBlock(HEAP_SLOT_BATTLE_COMMANDS, 260);
+  state = AllocHeapSlotEwram(HEAP_SLOT_BATTLE_MENU, 260);
   Resource_LoadIndexedIntoBuffer(largeIconSlot, 0);
   Graphics_ExpandVramTilesByColorTable((u16 *)0x06006000);
   Link_DrawShiftedTilePair(0x06006680);
@@ -162,7 +162,7 @@ s32 Battle_CollectPartyCommands(struct BattleActionRecord *commands,
       WaitFrames(1);
     }
   }
-  Scheduler_AddOrUpdateCallback(UpdateLinkSessionCountdown, 3200);
+  Task_Add(UpdateLinkSessionCountdown, 3200);
 
   while (1) {
     BattleMenu_ClearPartyHighlights();
@@ -186,7 +186,7 @@ s32 Battle_CollectPartyCommands(struct BattleActionRecord *commands,
       s32 selection;
       s32 handle;
 
-      block = MemAlloc(12);
+      block = Alloc(12);
       if (gDebugMode != 0 && (gKeysHeld & KEY_START) != 0) {
         selection = BATTLE_SIDE_ENEMIES;
       } else {
@@ -195,7 +195,7 @@ s32 Battle_CollectPartyCommands(struct BattleActionRecord *commands,
       handle = BattleParty_ListActorIdsFar(selection, block);
       WaitFrames(1);
       Ui_RunOwnerStatusScreen(block, handle, *(u16 *)block);
-      MemFree(block);
+      Free(block);
       continue;
     }
     // Flee, unless the battle forbids it: one COMMAND_FLEE for the party,
@@ -216,7 +216,7 @@ s32 Battle_CollectPartyCommands(struct BattleActionRecord *commands,
     if (mode != 14) {
       break;
     }
-    AudioCommand_PlayFar(SE_CAST);
+    Sound_PlaySongFar(SE_CAST);
     commandIndex = 0;
     if (commandIndex >= commandCount) {
       break;
@@ -248,9 +248,9 @@ s32 Battle_CollectPartyCommands(struct BattleActionRecord *commands,
       unit = (struct BattleUnit *)(s32)((s64 (*)(s32))Unit_GetFar)(actorId);
 #endif
       // The member's row starts on Attack; its portrait shows at the left.
-      gLinkCountdownWork->commandActor = actorId;
-      gLinkCountdownWork->commandSelection[1] = 0;
-      iconSprite = &gLinkCountdownWork->icons[2];
+      gBattleMenuWork->commandActor = actorId;
+      gBattleMenuWork->commandSelection[1] = 0;
+      iconSprite = &gBattleMenuWork->icons[2];
       iconSprite->oam.word.attr01 = 0x80000400;
       iconSprite->oam.word.attr23 = 0;
       iconSprite->oam.f.tile =
@@ -262,8 +262,8 @@ s32 Battle_CollectPartyCommands(struct BattleActionRecord *commands,
 
     mark_visible:
       UiWindow_MarkVisibleTileAttributes();
-      gLinkCountdownWork->iconShown[0] = 0;
-      gLinkCountdownWork->chosenDjinn[commandIndex] = 0x80000000;
+      gBattleMenuWork->iconShown[0] = 0;
+      gBattleMenuWork->chosenDjinn[commandIndex] = 0x80000000;
       /* FAKEMATCH(dead): twelve dead stores restore the native frame's spill
        * slots at sp+24 to sp+32; without them, 26 of 1727 instructions differ
        * in tbs-en. */
@@ -292,13 +292,13 @@ s32 Battle_CollectPartyCommands(struct BattleActionRecord *commands,
         void *block;
         s32 handle;
 
-        block = MemAlloc(12);
+        block = Alloc(12);
         handle = BattleParty_ListActorIdsFar(1, block);
         state->iconShown[2] = 0;
         WaitFrames(1);
         Ui_RunOwnerStatusScreen(block, handle, actorId);
         state->iconShown[2] = 1;
-        MemFree(block);
+        Free(block);
         continue;
       }
       BattlePresentation_SetActorModesFar(signatureHeader, 0);
@@ -312,10 +312,10 @@ s32 Battle_CollectPartyCommands(struct BattleActionRecord *commands,
       }
 
       // Out of time in a link battle: Defend.
-      if (gLinkCountdownWork->timer == 0) {
+      if (gBattleMenuWork->timer == 0) {
         mode = COMMAND_ICON_DEFEND;
       }
-      iconSprite = &gLinkCountdownWork->icons[0];
+      iconSprite = &gBattleMenuWork->icons[0];
       iconSprite->oam.word.attr23 = 0;
       iconSprite->oam.word.attr01 = 0x80002400;
       iconSprite->oam.f.tile =
@@ -337,7 +337,7 @@ s32 Battle_CollectPartyCommands(struct BattleActionRecord *commands,
         UiText_DrawCharacterAtOffset(MsgCommandName, commandWindow,
                                      BATTLE_COMMAND_NAME_X, 0);
         state->icons[0].oam.f.x = 64;
-        AudioCommand_PlayFar(SE_MENU_CONFIRM);
+        Sound_PlaySongFar(SE_MENU_CONFIRM);
         mode = BattleTarget_RunSelection(actorId, 1, 1, TARGET_HINT_NONE);
         UiWork_Finalize(commandWindow, 1);
         if (mode == -1) {
@@ -364,7 +364,7 @@ s32 Battle_CollectPartyCommands(struct BattleActionRecord *commands,
         // action slots (pick keeps each one's slot); then the ability's
         // window, colour 2 when the PP fall short and 9 while sealed, and
         // its target; COMMAND_PSYNERGY with the ability as parameter.
-        AudioCommand_PlayFar(SE_MENU_CONFIRM);
+        Sound_PlaySongFar(SE_MENU_CONFIRM);
         mode = 0;
         BATTLE_MENU_SET_CURSOR(mode, mode, mode);
       psynergy_menu:
@@ -436,7 +436,7 @@ s32 Battle_CollectPartyCommands(struct BattleActionRecord *commands,
                                    0, 0);
         }
         command->range = cost;
-        AudioCommand_PlayFar(SE_MENU_CONFIRM);
+        Sound_PlaySongFar(SE_MENU_CONFIRM);
         mode = BattleTarget_RunSelection(
             actorId, ability->targetMode, cost,
             Battle_ClassifyEntryKind((const struct BattleAct *)ability));
@@ -465,7 +465,7 @@ s32 Battle_CollectPartyCommands(struct BattleActionRecord *commands,
         // standby Djinn, the summon's window with its cost (its name in
         // colour 2 and the error sound when it cannot be paid for), and its
         // target; COMMAND_SUMMON with the summon as parameter.
-        AudioCommand_PlayFar(SE_MENU_CONFIRM);
+        Sound_PlaySongFar(SE_MENU_CONFIRM);
         BATTLE_MENU_SET_CURSOR(0, 0, 0);
       djinn_menu:
         state->icons[0].oam.f.x = BATTLE_SUMMON_ICON_X;
@@ -521,9 +521,9 @@ s32 Battle_CollectPartyCommands(struct BattleActionRecord *commands,
           }
         }
         if (ok != 0) {
-          AudioCommand_PlayFar(SE_MENU_CONFIRM);
+          Sound_PlaySongFar(SE_MENU_CONFIRM);
         } else {
-          AudioCommand_PlayFar(SE_MENU_ERROR);
+          Sound_PlaySongFar(SE_MENU_ERROR);
         }
         mode = BattleTarget_RunSelection(
             actorId, ability->targetMode, ability->range,
@@ -560,11 +560,11 @@ s32 Battle_CollectPartyCommands(struct BattleActionRecord *commands,
         // set Djinni is unleashed: its ability's target, then in the
         // tutorial a hint. A standby one is set on the member itself
         // ("Set Djinni", target mode 4, kind 7), its name in colour 2.
-        AudioCommand_PlayFar(SE_MENU_CONFIRM);
+        Sound_PlaySongFar(SE_MENU_CONFIRM);
         BATTLE_MENU_SET_CURSOR(0, 0, 0);
       summon_menu:
         state->icons[0].oam.f.x = 144;
-        gLinkCountdownWork->chosenDjinn[commandIndex] = 0x80000000;
+        gBattleMenuWork->chosenDjinn[commandIndex] = 0x80000000;
         mode = Battle_SelectAbility(actorId, 1);
         command->range = 0;
         if (mode == -1) {
@@ -572,7 +572,7 @@ s32 Battle_CollectPartyCommands(struct BattleActionRecord *commands,
         }
         commandKind = COMMAND_DJINN;
         parameter = mode;
-        gLinkCountdownWork->chosenDjinn[commandIndex] = mode;
+        gBattleMenuWork->chosenDjinn[commandIndex] = mode;
         element = (parameter >> 8) & 15;
         index = parameter & 255;
         if (Djinn_IsActiveFar(actorId, element, index) != 0) {
@@ -585,7 +585,7 @@ s32 Battle_CollectPartyCommands(struct BattleActionRecord *commands,
                                        commandWindow, 16, 0);
           command->range = cost;
           WaitFrames(1);
-          AudioCommand_PlayFar(SE_MENU_CONFIRM);
+          Sound_PlaySongFar(SE_MENU_CONFIRM);
           mode = BattleTarget_RunSelection(
               actorId, ability->targetMode, cost,
               Battle_ClassifyEntryKind((const struct BattleAct *)ability));
@@ -615,7 +615,7 @@ s32 Battle_CollectPartyCommands(struct BattleActionRecord *commands,
         UiWork_SetParameterNibble(15);
         command->range = 1;
         WaitFrames(1);
-        AudioCommand_PlayFar(SE_MENU_CONFIRM);
+        Sound_PlaySongFar(SE_MENU_CONFIRM);
         mode = BattleTarget_RunSelection(actorId, 4, 0, TARGET_HINT_SET_DJINNI);
         UiWork_Finalize(commandWindow, 1);
         if (mode == -1) {
@@ -641,7 +641,7 @@ s32 Battle_CollectPartyCommands(struct BattleActionRecord *commands,
         // and the rest after (pick keeps each one's place); then the item's
         // window and its action's target; COMMAND_ITEM with the place as
         // parameter.
-        AudioCommand_PlayFar(SE_MENU_CONFIRM);
+        Sound_PlaySongFar(SE_MENU_CONFIRM);
         mode = 0;
         BATTLE_MENU_SET_CURSOR(mode, mode, mode);
       item_menu:
@@ -710,7 +710,7 @@ s32 Battle_CollectPartyCommands(struct BattleActionRecord *commands,
                                          MsgItemName,
                                      commandWindow, 24, 0);
         command->range = cost;
-        AudioCommand_PlayFar(SE_MENU_CONFIRM);
+        Sound_PlaySongFar(SE_MENU_CONFIRM);
         mode = BattleTarget_RunSelection(
             actorId, ability->targetMode, cost,
             Battle_ClassifyEntryKind((const struct BattleAct *)ability));
@@ -731,7 +731,7 @@ s32 Battle_CollectPartyCommands(struct BattleActionRecord *commands,
         break;
       }
 
-      AudioCommand_PlayFar(SE_110);
+      Sound_PlaySongFar(SE_110);
       command->unitId = (u16)actorId;
       // Draw the priority random value once, only for a nonzero agility.
       priority = unit->agi;
@@ -776,7 +776,7 @@ s32 Battle_CollectPartyCommands(struct BattleActionRecord *commands,
   }
   Resource_ResetEntry(smallIconSlot);
   Resource_ResetEntry(largeIconSlot);
-  Scheduler_RemoveCallback(UpdateLinkSessionCountdown);
+  Task_Remove(UpdateLinkSessionCountdown);
   if (state->linkTimer != 0) {
     // Keep the completion wait visible while the peer finishes its commands.
     s32 Link_DrawWaitingForOpponent(void) {
@@ -833,6 +833,6 @@ s32 Battle_CollectPartyCommands(struct BattleActionRecord *commands,
     }
   }
   Camera_ConfigureViewFar(0);
-  Runtime_ReleaseHeapBlock(HEAP_SLOT_BATTLE_COMMANDS);
+  FreeHeapSlot(HEAP_SLOT_BATTLE_MENU);
   return commandCount;
 }

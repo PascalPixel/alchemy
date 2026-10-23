@@ -124,7 +124,7 @@ const u32 gDisplayScroll_SlideResources[] = {
 /// resource clears that half; the second half offsets its palette indices.
 /// Called by DisplayScroll_RunSlideshow for each picture. A backdrop resource
 /// is its 128 colours (256 bytes) and then its packed tiles. The decoder
-/// runs from a copy in HEAP_SLOT_TEMP_RENDERER, released before
+/// runs from a copy in HEAP_SLOT_RAM_CODE_TEMP, released before
 /// returning; the colours reach palette RAM at the next VBlank, through the
 /// I/O write queue.
 void Graphics_LoadCharacterBlockAndPalette(u32 resourceId, s32 alternate) {
@@ -149,11 +149,11 @@ void Graphics_LoadCharacterBlockAndPalette(u32 resourceId, s32 alternate) {
   }
   // Offset every pixel into the selected palette half so both backdrops
   // can remain visible throughout a crossfade.
-  RamCode_LoadSlot(HEAP_SLOT_TEMP_RENDERER, Tile_ExpandSlide,
+  RamCode_LoadSlot(HEAP_SLOT_RAM_CODE_TEMP, Tile_ExpandSlide,
                    Tile_ExpandSlideCodeSize);
-  ((PackedDecoder)gWorkSlot[HEAP_SLOT_TEMP_RENDERER])(
+  ((PackedDecoder)gHeapSlots[HEAP_SLOT_RAM_CODE_TEMP])(
       resourceData + 256, tileDestination, paletteOffset);
-  Runtime_ReleaseHeapBlock(HEAP_SLOT_TEMP_RENDERER);
+  FreeHeapSlot(HEAP_SLOT_RAM_CODE_TEMP);
 
   // Queue palette RAM writes for VBlank rather than transferring colours
   // during the active display.
@@ -215,7 +215,7 @@ void DisplayScroll_StepPositionEveryFourFrames(void) {
 /// Crossfades the credits backdrop sequence through alternating tile banks
 /// while the staff names scroll over it, then restores the display for the
 /// following screen. Reached through the scroll far-call table at the end of
-/// the game: Title_Run calls it as ScrollFar_Entry00 when the ending arrives
+/// the game: Title_Run calls it as CreditsFar_Entry00 when the ending arrives
 /// at TITLE_FROM_LEMURIAN_SHIP, MUS_ENDING playing, before the clear screen.
 /// Its waits come to 11223 frames, about 3 minutes 8 seconds, besides the
 /// loads: a 300-frame lead, then 33 slides of a 64-frame fade and a 267-frame
@@ -229,9 +229,8 @@ s32 DisplayScroll_RunSlideshow(void) {
   gCpuLoadDisplayEnabled = 0;
   gDebugTextEnabled = 0;
   gIdleSleepEnabled = 0;
-  Scheduler_ResetTaskTable();
-  Scheduler_AddOrUpdateCallback(DisplayScroll_StepPositionEveryFourFrames,
-                                SCHEDULER_KEY_VBLANK);
+  Task_ResetAll();
+  Task_Add(DisplayScroll_StepPositionEveryFourFrames, TASK_PRIORITY_VBLANK);
   // Each layer owns its map, tiles and palette half. Load the invisible
   // half while the other remains on screen.
   Io_Write16(DISPCNT_OBJ_1D_MAP, &REG_DISPCNT);
@@ -296,7 +295,7 @@ extern u16 gFlash_Handler3;
 // and borrow them while flash operations are inactive: a sprite-buffer pointer,
 // the last rendered pixel position, and a zero/-1 end-of-text latch.
 // Borrowing them is harmless because the flash library sets them again before
-// it reads them: IdentifyFlash, which SaveState_InitializeWorkspace runs before
+// it reads them: IdentifyFlash, which Save_InitializeWork runs before
 // each use of the save, writes gFlash, gFlash_Handler0 and gFlash_Handler3, and
 // each program routine sets gFlashNumRemainingBytes.
 // UB: the native casts alias the flash declarations and store a pointer through
@@ -1022,8 +1021,8 @@ void DisplayScroll_InitializeObjectTable(void) {
   u32 row;
   u32 column;
 
-  SCROLL_OBJECTS = Runtime_BumpAllocateAlternatePool(
-      CREDITS_OAM_ENTRIES * sizeof(struct DisplayScrollObject));
+  SCROLL_OBJECTS =
+      AllocEwram(CREDITS_OAM_ENTRIES * sizeof(struct DisplayScrollObject));
   // Solid border sprites immediately after the ring mask the partial text
   // rows at the top and bottom of the window.
   Dma_Fill32Cell(dmaFill, 0, (void *)OBJ_VRAM0, CREDITS_RING_BYTES);
@@ -1066,10 +1065,8 @@ void DisplayScroll_InitializeObjectTable(void) {
   gFlash_Handler3 = 0;
   CREDITS_LAST_LINE_POSITION = 0;
   CREDITS_END_OF_TEXT = 0;
-  Scheduler_AddOrUpdateCallback(DisplayScroll_UpdateObjects,
-                                SCHEDULER_KEY_VBLANK);
-  Scheduler_AddOrUpdateCallback(DisplayScroll_RenderEnteringLine,
-                                SCHEDULER_KEY_MAIN_LOOP);
+  Task_Add(DisplayScroll_UpdateObjects, TASK_PRIORITY_VBLANK);
+  Task_Add(DisplayScroll_RenderEnteringLine, TASK_PRIORITY_MAIN_LOOP);
   for (row = 0; row < CREDITS_RING_ROWS; row++)
     DisplayScroll_DrawLine(gDisplayScroll_LineTable[0],
                            row * CREDITS_LINE_TILES, 1);
@@ -1083,7 +1080,7 @@ void DisplayScroll_InitializeObjectTable(void) {
 /// value left-aligns; every caller passes 1. The glyphs are colour 15 with a
 /// colour 1 shadow a pixel down and right.
 s32 DisplayScroll_DrawLine(const u8 *text, s32 firstTile, s32 alignment) {
-  u8 *linePixels = Runtime_BumpAllocateAlternatePool(CREDITS_BUFFER_BYTES);
+  u8 *linePixels = AllocEwram(CREDITS_BUFFER_BYTES);
   s32 startX = 0;
   s32 lineWidth = CREDITS_LINE_PIXELS;
   const u8 *font = gDisplayScroll_Font;
@@ -1105,16 +1102,16 @@ s32 DisplayScroll_DrawLine(const u8 *text, s32 firstTile, s32 alignment) {
 
   if (text == NULL) {
     // BUG: the end marker is checked after allocation, leaking one line
-    // buffer. MemFree rewinds this bump pool to the allocation's start.
+    // buffer. Free rewinds this bump pool to the allocation's start.
 #ifdef BUGFIX
     if (linePixels != NULL)
-      MemFree(linePixels);
+      Free(linePixels);
 #endif
     return -1;
   }
   // The ninth raster row holds the shadow below this line. Carry it into
   // the next line before clearing the rest of the reused scratch buffer.
-  // The buffer comes back at the same address each call (MemFree rewinds the
+  // The buffer comes back at the same address each call (Free rewinds the
   // pool), so the last line's ninth row is still there. FLAG_MAP_TEMP_00,
   // here a line has been drawn, is clear on entering the map
   // (Map_ResetFlagsOnEnter), so the first line starts from a clean buffer.
@@ -1196,6 +1193,6 @@ s32 DisplayScroll_DrawLine(const u8 *text, s32 firstTile, s32 alignment) {
     *(u32 *)(0x06010018 + tileIndex * 32) = words[0x180];
     *(u32 *)(0x0601001c + tileIndex * 32) = words[0x1c0];
   }
-  MemFree(linePixels);
+  Free(linePixels);
   return 0;
 }

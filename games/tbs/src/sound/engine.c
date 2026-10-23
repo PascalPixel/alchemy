@@ -295,7 +295,7 @@ void MusicPlayer_Initialize(struct SoundPlayer *player,
 
 /// Starts a song when its priority permits, resetting its tracks and tempo.
 /// The song takes the first of the player's tracks, as many as both have;
-/// the player's other tracks are stopped. Called by AudioCommand_Play and the
+/// the player's other tracks are stopped. Called by Sound_PlaySong and the
 /// Audio_PlaySound family; does nothing while the player's lock is held.
 void MusicPlayer_StartSong(struct SoundPlayer *player,
                            const struct SequenceHeader *header) {

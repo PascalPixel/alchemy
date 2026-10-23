@@ -22,7 +22,7 @@ enum BurstShowerMode {
   BURST_SHOWER_MODE_FACES,     ///< demon faces from 16 pixels in front
 };
 
-/// Arms DMA 0 to copy one word of gBattleEffectWork's bg2xLines table into BG2X
+/// Arms DMA 0 to copy one word of gBattleAnimWork's bg2xLines table into BG2X
 /// at each horizontal blank, bending BG2 line by line.
 ///
 /// Runs each frame as a scheduler callback added by the target motes, the
@@ -30,7 +30,7 @@ enum BurstShowerMode {
 /// each of which removes it before it returns. Stops DMA 0 and restarts it
 /// from the top of the table.
 void BattleEffect_ArmBg2AffineHBlankDma(void) {
-  struct BattleEffectWork *work = WORK_SLOT(HEAP_SLOT_BATTLE_EFFECT);
+  struct BattleEffectWork *work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_ANIM);
   volatile u16 *channel = REG_DMA0;
   Dma_Stop(channel);
   Dma_Set(work->bg2xLines, (void *)&REG_BG2X, DMA_HBLANK_WORD_PER_LINE,
@@ -125,9 +125,9 @@ void BattleEffect_RunBurstShower(struct BattleEffectArgument *effect,
   s32 height;
 
   // The slots are read from the canvas's, not the work block's.
-  slots = (u32 *)&gWorkSlot[HEAP_SLOT_BATTLE_CANVAS];
+  slots = (u32 *)&gHeapSlots[HEAP_SLOT_BATTLE_CANVAS];
   canvas = (void *)slots[0];
-  work = (struct BattleEffectWork *)CANVAS_SLOT(slots, HEAP_SLOT_BATTLE_EFFECT);
+  work = (struct BattleEffectWork *)CANVAS_SLOT(slots, HEAP_SLOT_BATTLE_ANIM);
   sprites = (u8 *)CANVAS_SLOT(slots, HEAP_SLOT_BATTLE_SHEET);
   work->effect = effect;
   BattleEffect_StartCanvasLayer(0);
@@ -136,11 +136,11 @@ void BattleEffect_RunBurstShower(struct BattleEffectArgument *effect,
   // The faces are drawn facing each way by side; the others take the usual
   // pair for the side.
   if (mode == BURST_SHOWER_MODE_FACES) {
-    EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER, EFFECT_CLIP_BOUNDS, COMPOSITE_MAX);
-    draw[0] = (DrawRectangle)CANVAS_SLOT(slots, HEAP_SLOT_BLITTER);
-    EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER_ALTERNATE,
+    EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, COMPOSITE_MAX);
+    draw[0] = (DrawRectangle)CANVAS_SLOT(slots, HEAP_SLOT_RAM_CODE);
+    EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
                         EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, COMPOSITE_MAX);
-    draw[1] = (DrawRectangle)CANVAS_SLOT(slots, HEAP_SLOT_BLITTER_ALTERNATE);
+    draw[1] = (DrawRectangle)CANVAS_SLOT(slots, HEAP_SLOT_RAM_CODE_2);
   } else {
     BattleEffect_FetchRectangleBlitters(work->effect->side, draw);
   }
@@ -198,8 +198,7 @@ void BattleEffect_RunBurstShower(struct BattleEffectArgument *effect,
   } else {
     EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, 75);
   }
-  Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer,
-                                EFFECT_CALLBACK_ORDER);
+  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, EFFECT_CALLBACK_ORDER);
 
   for (i = 0; i != 64; i++) {
     work->particles[i].variant = -1;
@@ -243,7 +242,7 @@ void BattleEffect_RunBurstShower(struct BattleEffectArgument *effect,
     // The bursts aim at the targets in turn, one a frame.
     target = frame % work->effect->count;
     if (frame == 4) {
-      AudioCommand_PlayFar(SE_136);
+      Sound_PlaySongFar(SE_136);
     }
     if (mode != BURST_SHOWER_MODE_GREY) {
       if (frame == 24) {

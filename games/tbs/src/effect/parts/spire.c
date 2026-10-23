@@ -47,9 +47,9 @@ void BattleEffect_RunSpire(struct BattleEffectArgument *effect) {
   EFFECT_START_NARROW_CANVAS(1);
   REG_BLDCNT = 0;
   Resource_LoadAndDecompress((s32)&ResourceId_BoulderSheet, work->sheet, 1, 1);
-  EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER, EFFECT_CLIP_BOUNDS,
+  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                       COMPOSITE_TRANSPARENT);
-  blit = EFFECT_SLOT(slots, HEAP_SLOT_BLITTER);
+  blit = EFFECT_SLOT(slots, HEAP_SLOT_RAM_CODE);
   // BG2 is scrolled so that canvas column 64 is the middle of the row of
   // targets.
   EffectPosition_ProjectScaledBattler(work->effect->actors[0], &first);
@@ -89,7 +89,7 @@ void BattleEffect_RunSpire(struct BattleEffectArgument *effect) {
     for (i = 0; i != rockCount; i++) {
       rock = &work->particles[i];
       if (frame == gSpire_DropFrames[i] + SPIRE_FALL_FRAMES) {
-        AudioCommand_PlayFar(SE_HEAVY_IMPACT);
+        Sound_PlaySongFar(SE_HEAVY_IMPACT);
         work->shakeFrames = 4;
       }
       // From its landing on, the rock is gone and its shards fly.

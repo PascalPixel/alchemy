@@ -387,8 +387,8 @@ s32 UiText_BuildRenderEntries(s32 script, s32 clear) {
         size = (u32)Text_DecodeSymbolCodeSize;
       } while (0);
       Dma_Set((const void *)Text_DecodeSymbol,
-              Runtime_AllocateHeapBlock(TEXT_WORK_BLOCK, size),
-              DMA_COPY32(size >> 2), REG_DMA3);
+              AllocHeapSlot(TEXT_WORK_BLOCK, size), DMA_COPY32(size >> 2),
+              REG_DMA3);
     }
     // The decoder runs from a copy in RAM, one symbol at a time.
     decode = (s32 (*)(
@@ -827,7 +827,7 @@ s32 UiText_BuildRenderEntries(s32 script, s32 clear) {
     entry[writePosition] = 0;
     nextPosition = (writePosition + 1) & RENDER_ENTRY_MASK;
     work->count = (u16)nextPosition;
-    Runtime_ReleaseHeapBlock(TEXT_WORK_BLOCK);
+    FreeHeapSlot(TEXT_WORK_BLOCK);
     work->messageStart = (u16)start;
   }
 
@@ -919,8 +919,8 @@ s32 UiText_BuildRenderEntries(s32 script, s32 clear) {
         size = (u32)Text_DecodeSymbolCodeSize;
       } while (0);
       Dma_Set((const void *)Text_DecodeSymbol,
-              Runtime_AllocateHeapBlock(TEXT_WORK_BLOCK, size),
-              DMA_COPY32(size >> 2), REG_DMA3);
+              AllocHeapSlot(TEXT_WORK_BLOCK, size), DMA_COPY32(size >> 2),
+              REG_DMA3);
     }
     // The decoder runs from a copy in RAM, one symbol at a time.
     decode = (s32 (*)(
@@ -1146,7 +1146,7 @@ s32 UiText_BuildRenderEntries(s32 script, s32 clear) {
     entry[writePosition] = 0;
     nextPosition = (writePosition + 1) & RENDER_ENTRY_MASK;
     work->count = (u16)nextPosition;
-    Runtime_ReleaseHeapBlock(TEXT_WORK_BLOCK);
+    FreeHeapSlot(TEXT_WORK_BLOCK);
     work->messageStart = (u16)start;
   }
   if (clear != 0)

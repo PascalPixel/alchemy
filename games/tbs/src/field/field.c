@@ -14,11 +14,11 @@
 ///   Sprites         sprite_draw.c: Sprite_ComposeAnimationFrame,
 ///                   Render_PlaceProjectedSprite; animation.c:
 ///                   ResourceObject_Create, AnimationObject_SelectAnimation
-///   Objects         objects.c: FieldObject_Create, ObjectSystem_Initialize;
+///   Objects         objects.c: Object_CreateField, ObjectSystem_Initialize;
 ///                   object_motion.c: Object_UpdateAllThumb,
 ///                   Object_SetMoveTarget
 ///   Object scripts  script_commands.c (the SC_ commands of objcmd.h);
-///                   player_control.c: FieldObject_UpdatePlayerControl
+///                   player_control.c: Object_UpdateLeaderControl
 ///   Maps            map_layers.c: MapGrid_LoadLayout,
 ///                   MapGrid_UpdateLayerScroll; world_map.c:
 ///                   WorldMap_InitializePerspective, WorldMap_UpdateView

@@ -36,7 +36,7 @@ struct WaveEffectWork {
 void FieldEffect_StartMindReadWave(s32 x, s32 y) {
   struct WaveEffectWork *work;
 
-  work = Runtime_AllocateBlock(HEAP_SLOT_MIND_READ, 0x298);
+  work = AllocHeapSlotEwram(HEAP_SLOT_MIND_READ, 0x298);
   FieldEffect_FadeToEffectColor();
   Dma_Fill32(0, work, 0x298);
   work->hue = ((u32)(gFrameCount << 1) % (u32)360);
@@ -48,7 +48,7 @@ void FieldEffect_StartMindReadWave(s32 x, s32 y) {
   work->targetId = y;
   work->delay = 8;
   Ui_FillBank15PaletteGrey();
-  Scheduler_AddOrUpdateCallback(FieldEffect_UpdateMindReadWave, 0xc80);
+  Task_Add(FieldEffect_UpdateMindReadWave, 0xc80);
 }
 
 /// Stops the wave effect: restores the caster's colours and the palettes and
@@ -58,12 +58,12 @@ void FieldEffect_FinishWaveAndReleaseHeapBlock(void) {
 
   work = *(void **)((u32)&gBattleBgEffectWork);
   Ui_SetBank15PaletteAndClearRenderMode();
-  Scheduler_RemoveCallback(FieldEffect_UpdateMindReadWave);
+  Task_Remove(FieldEffect_UpdateMindReadWave);
   Animation_ApplyChildPalette((struct MotionObject *)ObjectEvent_GetById(
                                   ((struct WaveEffectWork *)work)->sourceId),
                               1);
   FieldEffect_FadeFromEffectColor();
-  Runtime_ReleaseHeapBlock(HEAP_SLOT_MIND_READ);
+  FreeHeapSlot(HEAP_SLOT_MIND_READ);
 }
 
 /// Scheduler callback of the wave effect: once its delay has run out, writes
@@ -134,14 +134,14 @@ void FieldEffect_UpdateMindReadWave(void) {
         // No shadow or outline, sprite priority 1.
         sprite->palette = 0;
         sprite->mode = 1;
-        Object_SetMoveTargetFar((struct ObjectRuntime *)particle, from.x,
-                                from.y, from.z);
+        Object_SetMoveTargetFar((struct Object *)particle, from.x, from.y,
+                                from.z);
       }
     }
   }
 
   if (work->counter == 0)
-    AudioCommand_PlayFar(SE_130);
+    Sound_PlaySongFar(SE_130);
   if (++work->counter > 60)
     work->counter = 0;
 }
@@ -241,7 +241,7 @@ s32 FixedPoint_Remainder(s32 value, s32 divisor) {
 /// axis), frees it: gFieldEffect_UntargetedObjectScript is a lone SC_FREE.
 /// Mind Read's particles end this way at the caster.
 void FieldEffect_SetCallbackWhenTargetUnset(union FieldObject *fieldObject) {
-  struct ObjectRuntime *object = (struct ObjectRuntime *)fieldObject;
+  struct Object *object = (struct Object *)fieldObject;
   s32 targetY;
   s32 targetX;
 
@@ -286,8 +286,8 @@ void Ui_FillBank15PaletteGrey(void) {
   *p = MIND_READ_GREY;
   p += 1;
   *p = MIND_READ_GREY;
-  // 0x480 is SCHEDULER_KEY_VBLANK.
-  Scheduler_AddOrUpdateCallback(FieldEffect_ArmBg0HBlankDma, 0x480);
+  // 0x480 is TASK_PRIORITY_VBLANK.
+  Task_Add(FieldEffect_ArmBg0HBlankDma, 0x480);
 }
 
 /// Stops the BG0 scanline scroll and restores BG palette 15.
@@ -295,7 +295,7 @@ void Ui_SetBank15PaletteAndClearRenderMode(void) {
   void *work;
 
   work = gWindowWork[0];
-  Scheduler_RemoveCallback(FieldEffect_ArmBg0HBlankDma);
+  Task_Remove(FieldEffect_ArmBg0HBlankDma);
   // Palette 15's white, black and two greys.
   BG_PLTT_COLOR(15, 1) = RGB(31, 31, 31);
   BG_PLTT_COLOR(15, 3) = 0;

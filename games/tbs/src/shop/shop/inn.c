@@ -27,7 +27,7 @@ static const s8 sInnPricesPerGuest[12] = {
 /// Returns the night's price: the inn's price per guest times the party
 /// members still standing. Called by Inn_CheckIn.
 s32 Inn_RoomPrice(s32 innId) {
-  struct ShopRuntime *shop = gMenuWork;
+  struct ShopWork *shop = gMenuWork;
   s32 guestCount = 0;
   s32 pricePerGuest = sInnPricesPerGuest[innId];
   s32 memberIndex;
@@ -46,7 +46,7 @@ s32 Inn_RoomPrice(s32 innId) {
 /// sInnPricesPerGuest, 0 to 11, which nothing checks; `objectId` is the
 /// innkeeper, whose portrait the lines show.
 s32 Inn_CheckIn(s32 innId, s32 objectId) {
-  struct InnRuntimeState *state;
+  struct InnWork *state;
   struct ObjectEvent *innkeeper;
   struct UiWindow *innkeeperWindow;
   s32 roomPrice;
@@ -130,17 +130,17 @@ void Inn_PlaySleep(s32 roomPrice) {
   // Sleep between the two screen-transition halves and the rest sound.
   // The night's fades take 60 frames each; the 16 set at the end is what
   // the field's transitions take again afterward
-  work = (struct FieldWork *)gEventWork;
+  work = (struct FieldWork *)gFieldWork;
   work->transition = 0x209;
   work->transitionFrames = 60;
   WaitFrames(20);
   FieldScript_FinishScreenTransitionFar();
   FieldScript_WaitTransitionFramesFar();
-  AudioCommand_PlayFar(MUS_086);
+  Sound_PlaySongFar(MUS_086);
   AudioCommand_WaitForStateByteClear();
   WaitFrames(10);
   FieldScript_StartScreenTransitionFar();
   FieldScript_WaitTransitionFramesFar();
   WaitFrames(30);
-  ((struct FieldWork *)gEventWork)->transitionFrames = 16;
+  ((struct FieldWork *)gFieldWork)->transitionFrames = 16;
 }

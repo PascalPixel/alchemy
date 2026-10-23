@@ -199,7 +199,7 @@ s32 BattleMenu_RunActionSelection(s32 unitId, u16 *actions, s32 count) {
     }
 
     BATTLE_MENU_SET_CURSOR(firstEntry, selectedRow, preferredRow);
-    navigation = gLinkCountdownWork;
+    navigation = gBattleMenuWork;
 
     if ((gKeysPressed & KEY_A) != 0) {
       if (count != 0) {
@@ -217,14 +217,14 @@ s32 BattleMenu_RunActionSelection(s32 unitId, u16 *actions, s32 count) {
         break;
       }
     } else if (navigation->timer == 0 || (gKeysPressed & KEY_B) != 0) {
-      AudioCommand_PlayFar(SE_MENU_CANCEL);
+      Sound_PlaySongFar(SE_MENU_CANCEL);
       result = -1;
       break;
     }
 
     if (count != 0) {
       if ((gKeysRepeat & KEY_DOWN) != 0) {
-        AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
+        Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
         selectedRow++;
         if (selectedRow == BATTLE_LIST_ROWS ||
             firstEntry + selectedRow == count) {
@@ -232,7 +232,7 @@ s32 BattleMenu_RunActionSelection(s32 unitId, u16 *actions, s32 count) {
         }
         preferredRow = selectedRow;
       } else if ((gKeysRepeat & KEY_UP) != 0) {
-        AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
+        Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
         selectedRow--;
         if (selectedRow < 0) {
           if (firstEntry == (count - 1) / BATTLE_LIST_ROWS * BATTLE_LIST_ROWS) {
@@ -243,7 +243,7 @@ s32 BattleMenu_RunActionSelection(s32 unitId, u16 *actions, s32 count) {
         }
         preferredRow = selectedRow;
       } else if ((gKeysRepeat & KEY_RIGHT) != 0) {
-        AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
+        Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
         Input_ResetKeyRepeat();
         if (firstEntry + BATTLE_LIST_ROWS >= count) {
           if (firstEntry != 0) {
@@ -261,7 +261,7 @@ s32 BattleMenu_RunActionSelection(s32 unitId, u16 *actions, s32 count) {
           }
         }
       } else if ((gKeysRepeat & KEY_LEFT) != 0) {
-        AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
+        Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
         Input_ResetKeyRepeat();
         if (firstEntry != 0) {
           selectedRow = preferredRow;

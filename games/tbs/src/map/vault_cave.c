@@ -290,7 +290,7 @@ static struct ObjectEvent *VaultCave_FindCollidableObjectEventAtCell(s32 column,
   // lookup adds four native bytes in EN; retain the original reads for
   // matching.
 #ifdef UBFIX
-  struct FieldWork *work = (struct FieldWork *)gEventWork;
+  struct FieldWork *work = (struct FieldWork *)gFieldWork;
   u32 objectEventSlot;
 
   for (objectEventSlot = LOCALID_FIRST_PLACED; objectEventSlot <= 65;
@@ -304,7 +304,7 @@ static struct ObjectEvent *VaultCave_FindCollidableObjectEventAtCell(s32 column,
     }
   }
 #else
-  s32 **slots = (s32 **)((u8 *)gEventWork + 0x14);
+  s32 **slots = (s32 **)((u8 *)gFieldWork + 0x14);
   u32 objectEventSlot;
 
   for (objectEventSlot = 8; objectEventSlot <= 65; objectEventSlot++) {
@@ -392,7 +392,7 @@ static void VaultCave_PushPillarAhead(void) {
   leader->speed = 0x3333;
   leader->acceleration = 0x3333;
   Engine_ObjectSetPosition(leader, destination.x, destination.y, destination.z);
-  FieldObject_WaitForMove(pillar);
+  Object_WaitForMove(pillar);
   Engine_AudioPlayCue(SE_STOP_SLOT3);
   pillar->x.fixed = destination.x;
   pillar->z.fixed = destination.z;
@@ -462,7 +462,7 @@ static s32 VaultCave_IsSouthernPillarOnSwitch(void) {
 static inline void VaultCave_CompleteSouthernSwitch(void) {
   if (VaultCave_IsSouthernPillarOnSwitch() != 0) {
     GameFlag_Set(FLAG_VAULT_CAVE_SOUTH_PILLAR_ON_SWITCH);
-    Script_PlayCue(MUS_PUZZLE_SOLVED);
+    Script_PlaySong(MUS_PUZZLE_SOLVED);
     VaultCave_ApplySouthernSwitchCells();
   }
 }
@@ -528,7 +528,7 @@ static inline void VaultCave_CompleteNorthernSwitch(void) {
   if (GameFlag_IsSet(FLAG_VAULT_CAVE_NORTH_PILLAR_ON_SWITCH) == 0) {
     if (VaultCave_IsNorthernPillarOnSwitch() != 0) {
       if (GameFlag_IsSet(FLAG_NORTH_PILLAR_STRUCK) == 0) {
-        Script_PlayCue(MUS_PUZZLE_SOLVED);
+        Script_PlaySong(MUS_PUZZLE_SOLVED);
         VaultCave_ApplyNorthernSwitchCells();
         GameFlag_Set(FLAG_VAULT_CAVE_NORTH_PILLAR_ON_SWITCH);
       }
@@ -711,7 +711,7 @@ static void VaultCave_RunRumble(void) {
   }
   MapGrid_SetShake(0x30000, 0x30000, 0x10000);
   MapGrid_SetShake(-1, -1, 0xe666);
-  Script_PlayCue(SE_163);
+  Script_PlaySong(SE_163);
   // Scroll and shake for 480 frames before the final fade.
   for (frame = 479; frame >= 0; frame--) {
     u32 scrollDrift = (u32)(Random_Next() << 11) >> 16;
@@ -736,7 +736,7 @@ static void VaultCave_RunRumble(void) {
   } while (frame <= 69);
   // Replace the mechanism's map cells after the fade completes.
   MapGrid_CopyCells(19, 83, 15, 8, 19, 91);
-  Script_PlayCue(SE_STOP_SLOT3);
+  Script_PlaySong(SE_STOP_SLOT3);
   Engine_MapGridRedraw();
   Engine_MapGridRenderWaitForValues();
   Engine_ScriptEnd();
@@ -757,13 +757,13 @@ static void EventScript_FlipSwitch(void) {
     // Animate the switch face before the adjacent mechanism starts.
     destinationRow = 27;
     destinationColumn = 92;
-    Script_PlayCue(SE_155);
+    Script_PlaySong(SE_155);
     MapGrid_CopyCells(107, 27, 1, 1, destinationColumn, destinationRow);
     Engine_ScriptWait(39);
     MapGrid_CopyCells(108, 27, 1, 1, destinationColumn, destinationRow);
     Engine_ScriptWait(50);
     destinationColumn = 25;
-    Script_PlayCue(SE_156);
+    Script_PlaySong(SE_156);
     MapGrid_CopyCells(1, 24, 1, 2, destinationColumn, destinationRow);
     Engine_ScriptWait(40);
     MapGrid_CopyCells(2, 24, 1, 2, destinationColumn, destinationRow);
@@ -835,7 +835,7 @@ static void VaultCave_UpdateTimedFallingObjects(void) {
           fallingObjectEvent->gravity = 0;
           fallingObjectEvent->velocityY = 0;
           fallingObjectEvent->paused = 0;
-          Script_PlayCue(SE_106);
+          Script_PlaySong(SE_106);
         }
       }
     }
@@ -845,14 +845,14 @@ static void VaultCave_UpdateTimedFallingObjects(void) {
       Engine_ObjectEventSetAnimation(LOCALID_NORTHERN_PILLAR, 1);
       if (GameFlag_IsSet(FLAG_NORTH_PILLAR_STRUCK) == 0) {
         GameFlag_Set(FLAG_NORTH_PILLAR_STRUCK);
-        Script_PlayCue(SE_204);
+        Script_PlaySong(SE_204);
       } else {
-        Script_PlayCue(SE_106);
+        Script_PlaySong(SE_106);
       }
     }
     if (VaultCave_ResetFallingObjectAtObjectEventCell(
             LOCALID_PILLAR_SOUTH_OF_NORTHERN_SWITCH) != 0) {
-      Script_PlayCue(SE_106);
+      Script_PlaySong(SE_106);
     }
   }
 }
@@ -999,7 +999,7 @@ static void VaultCave_StartTimedFalls(void) {
 /// events, then sets the Retreat destination, the foot of the ladder from
 /// Vault.
 s32 Map_Initialize(void) {
-  ((struct FieldWork *)gEventWork)->transition =
+  ((struct FieldWork *)gFieldWork)->transition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   if (gGameState.mapId == (s32)&MapId_VaultCavePassage) {
     switch (gGameState.warpDest) {

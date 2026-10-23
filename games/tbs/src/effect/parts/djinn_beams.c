@@ -56,7 +56,7 @@ void BattleEffect_RunDjinnBeams(struct BattleEffectArgument *effect,
   s32 i;
   s32 k;
 
-  cursor = gBattleEffectWork;
+  cursor = gBattleAnimWork;
   EFFECT_GET_WORK_AND_CANVAS(cursor, work, canvas);
   work->effect = effect;
   BattleEffect_StartCanvasLayer(0);
@@ -72,18 +72,18 @@ void BattleEffect_RunDjinnBeams(struct BattleEffectArgument *effect,
   palette = Resource_GetTableEntry((s32)&ResourceId_EarthWallSheet);
   Iwram_CopyWords((void *)BG_PLTT, palette, 128);
   palette += 128;
-  Resource_DecodeType01(palette, work->sheet);
+  Decompress_Type01(palette, work->sheet);
   palette = Resource_GetTableEntry((s32)&ResourceId_CrescentMoonSheet);
   Iwram_CopyWords((void *)BG_PLTT, palette, 128);
   palette += 128;
-  Resource_DecodeType01(palette, work->sheet + DJINN_BEAMS_MOTE_CELLS);
+  Decompress_Type01(palette, work->sheet + DJINN_BEAMS_MOTE_CELLS);
   if (element == ELEMENT_VENUS)
     palette = Resource_GetTableEntry((s32)&ResourceId_VenusDjinnSheet);
   else
     palette = Resource_GetTableEntry((s32)&ResourceId_MercuryDjinnSheet);
   Iwram_CopyWords((void *)BG_PLTT, palette, 128);
   palette += 128;
-  Resource_DecodeType01(palette, work->sheet + DJINN_BEAMS_DJINNI_CELLS);
+  Decompress_Type01(palette, work->sheet + DJINN_BEAMS_DJINNI_CELLS);
 
   // The motes start 80 pixels up, up to 8 pixels off in z, each at a random
   // point of its sway. Target k uses PARTICLES 64k to 64k + 7 of the 512.
@@ -121,7 +121,7 @@ void BattleEffect_RunDjinnBeams(struct BattleEffectArgument *effect,
     // The sound on 64 and the damage on 80 come at fixed frames, whatever
     // the number of targets.
     if (frame == 64)
-      AudioCommand_PlayFar(SE_212);
+      Sound_PlaySongFar(SE_212);
     if (frame == 80)
       EFFECT_SHOW_DAMAGE(0);
 
@@ -143,11 +143,11 @@ void BattleEffect_RunDjinnBeams(struct BattleEffectArgument *effect,
         draw[1](canvas, work->sheet + DJINN_BEAMS_DJINNI_CELLS, x, y, 40, 40);
       EFFECT_RELEASE_BLITTERS();
     }
-    EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER, EFFECT_CLIP_BOUNDS, COMPOSITE_MAX);
-    draw[0] = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER];
-    EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER_ALTERNATE,
+    EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, COMPOSITE_MAX);
+    draw[0] = (DrawRectangle)gHeapSlots[HEAP_SLOT_RAM_CODE];
+    EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
                         EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, COMPOSITE_MAX);
-    draw[1] = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE];
+    draw[1] = (DrawRectangle)gHeapSlots[HEAP_SLOT_RAM_CODE_2];
 
     // Motes: one every 8 frames, swaying up to 16 pixels either way (odd
     // motes mirrored) as they sink a pixel a frame; they go out 8 pixels
@@ -244,7 +244,7 @@ void BattleEffect_RunDjinnBeams(struct BattleEffectArgument *effect,
   }
 
   // Finish: the blitters were freed each frame.
-  Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
+  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   BattleEffect_EndCanvasLayer();
 }
 

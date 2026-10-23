@@ -1331,7 +1331,7 @@ static void Fuchin_RebuildArcticBladeRoomLogs(void) {
 /// once it has been started there.
 static void Fuchin_FollowLeaderWithLight(void) {
   if (gImilFuchinFalls_TrackLeader != 0) {
-    struct FadeOverlayWork *work = *(gWorkSlot + 36);
+    struct FadeOverlayWork *work = *(gHeapSlots + 36);
 
     work->objectEvent = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   }
@@ -1341,7 +1341,7 @@ static void Fuchin_FollowLeaderWithLight(void) {
 /// following the leader.
 static void Fuchin_StopLightFollowingLeader(void) {
   if (gImilFuchinFalls_TrackLeader != 0) {
-    struct FadeOverlayWork *work = *(gWorkSlot + 36);
+    struct FadeOverlayWork *work = *(gHeapSlots + 36);
 
     work->objectEvent = NULL;
   }
@@ -1351,7 +1351,7 @@ static void Fuchin_StopLightFollowingLeader(void) {
 /// Cave blocks Retreat and walks the leader toward Fever; otherwise each room
 /// of Fuchin Falls Cave restores its logs, the Dragon's Eye and its lighting.
 s32 ImilFuchinFalls_Initialize(void) {
-  gEventWork->startTransition = MAP_TRANSITION(TRANSITION_WINDOW, 4);
+  gFieldWork->startTransition = MAP_TRANSITION(TRANSITION_WINDOW, 4);
   if (Engine_GameFlagIsSet(FLAG_KEEP_PARTY_POSITION) == 0 &&
       gGameState.mapId == (s32)&MapId_ImilFallsCave) {
     Engine_GameFlagSet(FLAG_RETREAT_BLOCKED);
@@ -1416,7 +1416,7 @@ static void ImilFuchinFalls_PrepareRoom(void) {
     case FUCHIN_FALLS_CAVE_DRAGON_STATUE_NORTH_HALF_FROM_SOUTH_HALF_MIDDLE:
       FieldEffect_StartFadeOverlay(0);
       gImilFuchinFalls_TrackLeader = 1;
-      value = *(s32 *)(gWorkSlot + 36);
+      value = *(s32 *)(gHeapSlots + 36);
       ((struct FadeOverlayWork *)value)->objectEvent = NULL;
       break;
     }
@@ -1426,7 +1426,7 @@ static void ImilFuchinFalls_PrepareRoom(void) {
         MapGrid_CopyCellsTo(30, 57, 19, 57, 1, 1);
         MapGrid_CopyCellsTo(30, 8, 12, 8, 8, 7);
       } else {
-        gEventWork->startTransition =
+        gFieldWork->startTransition =
             MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
         ColorBuffer_ApplySource(PALETTE_TRANSFORM_TINT | RGB(8, 8, 12), 1);
         ColorBuffer_ApplyTarget(PALETTE_TRANSFORM_TINT | RGB(8, 8, 12), 1);
@@ -1468,7 +1468,7 @@ static void ImilFuchinFalls_RebuildLogRoom(void) {
 /// (coord events 13, 14 and 17), south in the third (coord event 25) when its
 /// first log lies at FLAG_MAPSEC_TEMP_09.
 static void ImilFuchinFalls_HopOnTrigger(void) {
-  s32 trigger = gEventWork->touchedTrigger;
+  s32 trigger = gFieldWork->touchedTrigger;
 
   if (gGameState.mapId == (s32)&MapId_FuchinFallsCaveZephyr) {
     if (trigger == 17) {
@@ -1690,7 +1690,7 @@ static void Fuchin_LightDragonWithEye(void) {
 
   Engine_GameFlagSet(FLAG_FUCHIN_FALLS_DRAGONS_EYE_SET);
   PartyInventory_Discard(ITEM_DRAGONS_EYE);
-  Audio_PlayCueFromEventWork();
+  Map_PlayMusic();
 
   Engine_ScriptEnd();
 }
@@ -1730,7 +1730,7 @@ static void Fuchin_SearchDragonStatue(void) {
   } else {
     Engine_MessageShowCentered(MsgFuchinEyelessDragon, 1);
     if (PartyInventory_FindOwner(ITEM_DRAGONS_EYE) != -1) {
-      gEventWork->requestedMenu = 1;
+      gFieldWork->requestedMenu = 1;
     }
   }
   Engine_ScriptEnd();
@@ -1744,8 +1744,8 @@ static void Fuchin_EndRevealLighting(void) {
 
   if (gGameState.warpDest <=
       FUCHIN_FALLS_CAVE_DRAGON_STATUE_NORTH_HALF_FROM_SOUTH_HALF_EAST) {
-    effectWork = *(gWorkSlot + 56);
-    state = *(gWorkSlot + 31);
+    effectWork = *(gHeapSlots + 56);
+    state = *(gHeapSlots + 31);
     effectWork->childOption = 1;
     state->nextMode = 0;
     state->duration = 1;
@@ -1839,7 +1839,7 @@ static void Imil_SlideObjectEventAcrossIce(void) {
     ObjectEvent_SetMode(objectEvent, 2);
     ObjectDispatch_SetAnimationSpeed((struct DispatchObject *)objectEvent,
                                      IMIL_SLIDE_ANIMATION_STEP);
-    FieldObject_WaitForMove(objectEvent);
+    Object_WaitForMove(objectEvent);
     objectEvent->update = Imil_TurnSkaterTowardHeldDirection;
 
     // Keep sliding through cells with the same metatile behavior.
@@ -1860,7 +1860,7 @@ static void Imil_SlideObjectEventAcrossIce(void) {
       objectEvent->speed = PIXELS(2);
       objectEvent->acceleration = PIXELS(1) / 10;
       Engine_ObjectSetPosition(objectEvent, probe.x, probe.y, probe.z);
-      FieldObject_WaitForMove(objectEvent);
+      Object_WaitForMove(objectEvent);
       if (nextCollision != startCollision) {
         goto blocked;
       }
@@ -1869,7 +1869,7 @@ static void Imil_SlideObjectEventAcrossIce(void) {
     objectEvent->speed = PIXELS(2);
     objectEvent->acceleration = PIXELS(1);
     Engine_ObjectSetPosition(objectEvent, x, objectEvent->y.fixed, z);
-    FieldObject_WaitForMove(objectEvent);
+    Object_WaitForMove(objectEvent);
     Engine_TaskWait(2);
   }
 

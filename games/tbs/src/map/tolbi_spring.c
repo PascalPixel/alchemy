@@ -342,7 +342,7 @@ s32 TolbiSpring_Initialize(void) {
   s32 item;
 
   if (gGameState.mapId == (s32)&MapId_TolbiSpring) {
-    gEventWork->startTransition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+    gFieldWork->startTransition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
     Io_Write16(0x3f42, &REG_BLDCNT);
     Io_Write16(0x80c, &REG_BLDALPHA);
     Engine_ObjectEventSetAnimation(TOLBI_SPRING_EAST_SIGN_GRASS, 2);
@@ -366,7 +366,7 @@ s32 TolbiSpring_Initialize(void) {
       Engine_ObjectEventSetPosition(TOLBI_SPRING_SOLDIER, 0, 0);
     }
     gOamCopyEnabled = 1;
-    gEventWork->startTransition = MAP_TRANSITION(TRANSITION_WINDOW, 9);
+    gFieldWork->startTransition = MAP_TRANSITION(TRANSITION_WINDOW, 9);
     if (gGameState.warpDest == TOLBI_GAME_ROOMS_LUCKY_DICE_FROM_TOLBI) {
       Engine_ObjectEventSetChildValue(TOLBI_SPRING_WHEELS_ATTENDANT, 1);
       Engine_ObjectEventSetChildValue(TOLBI_SPRING_DICE_ATTENDANT, 2);
@@ -612,7 +612,7 @@ static void TolbiSpring_OfferLuckyDice(void) {
     FieldScript_SetNextDestination((s32)&MapId_TolbiGameRooms,
                                    TOLBI_GAME_ROOMS_AFTER_OFFER_LUCKY_DICE);
   } else {
-    gEventWork->message++;
+    gFieldWork->message++;
     Engine_ScriptShowMessage(TOLBI_SPRING_DICE_ATTENDANT, 0);
   }
   Engine_ScriptEnd();
@@ -689,15 +689,15 @@ prompt:
     UiText_DrawCharacterAtOffset(text + 1, window, 0, 8);
   }
   Task_Wait(5);
-  Script_PlayCue(SE_TOLBI_SPRING_TOSS_PROMPT);
+  Script_PlaySong(SE_TOLBI_SPRING_TOSS_PROMPT);
   for (;;) {
     if (gKeysPressed & KEY_A) {
-      Script_PlayCue(SE_MENU_CONFIRM);
+      Script_PlaySong(SE_MENU_CONFIRM);
       result = 0;
       break;
     }
     if (gKeysPressed & KEY_B) {
-      Script_PlayCue(SE_MENU_CANCEL);
+      Script_PlaySong(SE_MENU_CANCEL);
       result = -1;
       break;
     }
@@ -763,15 +763,15 @@ prompt:
     UiText_DrawCharacterAtOffset(result, window, 0, 0);
     UiText_DrawCharacterAtOffset(result + 1, window, 0, 8);
     Task_Wait(5);
-    Script_PlayCue(SE_TOLBI_SPRING_TOSS_PROMPT);
+    Script_PlaySong(SE_TOLBI_SPRING_TOSS_PROMPT);
     for (;;) {
       if (gKeysPressed & KEY_A) {
-        Script_PlayCue(SE_MENU_CONFIRM);
+        Script_PlaySong(SE_MENU_CONFIRM);
         result = 0;
         break;
       }
       if (gKeysPressed & KEY_B) {
-        Script_PlayCue(SE_MENU_CANCEL);
+        Script_PlaySong(SE_MENU_CANCEL);
         result = -1;
         break;
       }
@@ -799,7 +799,7 @@ prompt:
         Party_AdjustCoins(((struct { u16 coins[1]; } *)gTolbiSpring_CoinPrizes)
                               ->coins[result]);
 #endif
-        Script_PlayCue(MUS_FANFARE_SMALL);
+        Script_PlaySong(MUS_FANFARE_SMALL);
 #ifdef UBFIX
         UiWork_PushValueSlot(gTolbiSpring_CoinPrizes[result], 5);
 #else
@@ -812,7 +812,7 @@ prompt:
         Script_SetMessage(MsgTolbiWonNumberCoin);
         Script_ShowMessage(-1, 0);
       } else {
-        Script_PlayCue(SE_MENU_CANCEL);
+        Script_PlaySong(SE_MENU_CANCEL);
         Script_Wait(10);
       }
     } else {

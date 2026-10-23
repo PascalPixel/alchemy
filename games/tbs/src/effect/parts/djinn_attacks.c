@@ -111,7 +111,7 @@ void BattleEffect_RunMercury(struct BattleEffectArgument *effect) {
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, 75);
   EFFECT_FREE_PARTICLES(i, work->particles, 8);
   EFFECT_FREE_PARTICLES(i, PARTICLES, DJINN_ATTACKS_MOTE_SLOTS);
-  AudioCommand_PlayFar(SE_162);
+  Sound_PlaySongFar(SE_162);
   frame = 0;
   do {
     if (frame == 56)
@@ -127,7 +127,7 @@ void BattleEffect_RunMercury(struct BattleEffectArgument *effect) {
         flame->x -= 12;
         flame->variant++;
         if (flame->variant == 5) {
-          AudioCommand_PlayFar(SE_IMPACT);
+          Sound_PlaySongFar(SE_IMPACT);
           work->shakeFrames = 4;
           // Each mote flies off in a random direction at 1 to 3 pixels a
           // frame, the vertical part doubled, so the burst is twice as tall
@@ -254,7 +254,7 @@ void BattleEffect_RunJupiter(struct BattleEffectArgument *effect) {
     ball->y = (Random16() & 63) - 80;
   }
   EFFECT_FREE_PARTICLES(i, PARTICLES, DJINN_ATTACKS_MOTE_SLOTS);
-  AudioCommand_PlayFar(SE_THUNDER);
+  Sound_PlaySongFar(SE_THUNDER);
   frame = 0;
   angle = 0x8000; // 180 degrees
   do {
@@ -295,7 +295,7 @@ void BattleEffect_RunJupiter(struct BattleEffectArgument *effect) {
             mote->velocityY = (Trig_Cos(direction) * speed) >> 6;
             mote->variant = (Random16() & 15) + 32; // lives 32 to 47 frames
           }
-          AudioCommand_PlayFar(SE_IMPACT);
+          Sound_PlaySongFar(SE_IMPACT);
           work->shakeFrames = 4;
           EFFECT_FOR_EACH_TARGET(j, work->effect) {
             EFFECT_STRIKE_TARGET(work->effect, j, 6, KNOCKBACK_BOUNCE);
@@ -341,7 +341,7 @@ void Resource_LoadAndDecompress(s32 id, void *dst, s32 skipPalette,
     Iwram_CopyWords((void *)BG_PLTT, data, 128);
   if (skipPalette != 0)
     data += 128;
-  Resource_DecodeType01(data, dst);
+  Decompress_Type01(data, dst);
 }
 
 #define VENUS_FRAMES 96
@@ -380,12 +380,12 @@ void BattleEffect_RunVenus(struct BattleEffectArgument *effect) {
   work->effect = effect;
   BattleEffect_StartCanvasLayer(0);
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
-  EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER, EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_Y,
+  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_Y,
                       COMPOSITE_MAX);
-  EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER_ALTERNATE, EFFECT_CLIP_BOUNDS,
+  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, EFFECT_CLIP_BOUNDS,
                       COMPOSITE_ADDITIVE);
-  draw[0] = EFFECT_SLOT(slots, HEAP_SLOT_BLITTER);
-  draw[1] = EFFECT_SLOT(slots, HEAP_SLOT_BLITTER_ALTERNATE);
+  draw[0] = EFFECT_SLOT(slots, HEAP_SLOT_RAM_CODE);
+  draw[1] = EFFECT_SLOT(slots, HEAP_SLOT_RAM_CODE_2);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_VenusDjinnSmallSheet, work->sheet,
                              1, 1);
@@ -400,7 +400,7 @@ void BattleEffect_RunVenus(struct BattleEffectArgument *effect) {
     column->y = 104;
   }
   EFFECT_FREE_PARTICLES(i, PARTICLES, DJINN_ATTACKS_MOTE_SLOTS);
-  AudioCommand_PlayFar(SE_RUMBLE);
+  Sound_PlaySongFar(SE_RUMBLE);
   frame = 0;
   angle = 0x8000;
   do {
@@ -439,7 +439,7 @@ void BattleEffect_RunVenus(struct BattleEffectArgument *effect) {
             mote->variant = (Random16() & 15) + 32;
           }
           if (i & 1)
-            AudioCommand_PlayFar(SE_IMPACT);
+            Sound_PlaySongFar(SE_IMPACT);
           work->shakeFrames = 4;
           EFFECT_FOR_EACH_TARGET(j, work->effect) {
             EFFECT_STRIKE_TARGET(work->effect, j, 6, KNOCKBACK_BOUNCE);
@@ -553,7 +553,7 @@ void BattleEffect_RunMars(struct BattleEffectArgument *effect) {
     index++;
   } while (index != MARS_FLAMES);
 
-  AudioCommand_PlayFar(SE_136);
+  Sound_PlaySongFar(SE_136);
   frame = 0;
   diveY = -172;
   do {
@@ -583,7 +583,7 @@ void BattleEffect_RunMars(struct BattleEffectArgument *effect) {
     // Djinni is no longer drawn, so the ember streaks take its place in the
     // sheet, with their palette.
     if (frame == MARS_STRIKE_FRAME) {
-      AudioCommand_PlayFar(SE_145);
+      Sound_PlaySongFar(SE_145);
       work->shakeFrames = 8;
       Resource_LoadAndDecompress((s32)&ResourceId_EmberStreakSheet, work->sheet,
                                  1, 1);

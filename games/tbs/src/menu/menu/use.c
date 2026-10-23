@@ -24,7 +24,7 @@ void Item_UseNoOpCallback(void) {}
 /// -1 when nothing changed; the result message is left in the work's
 /// messageOffset. Called by ItemMenu_Use.
 s32 Item_Use(s32 slot, s32 ownerId, s32 targetId) {
-  struct InventoryMenuState *menu;
+  struct ItemMenuWork *menu;
   s32 useResult;
   s32 itemId;
   struct BattleUnit *unit;
@@ -67,7 +67,7 @@ s32 Item_ReturnOne(void) { return 1; }
 s32 Ability_ApplyToTargets(s32 effectId, s32 sourceId, s32 targetId,
                            s32 fixedScale) {
   struct BattleAct *effect;
-  struct InventoryMenuState *menu;
+  struct ItemMenuWork *menu;
   struct BattleUnit *target;
   struct BattleUnit *caster;
   s32 partyResultShown;

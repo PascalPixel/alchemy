@@ -630,7 +630,7 @@ static void Imil_OpenDoorAndExit(void) {
   u32 i;
   s32 warp;
 
-  work = gEventWork;
+  work = gFieldWork;
   Engine_ScriptStart();
   for (i = LOCALID_FIRST_PLACED; i <= 65; i++) {
     objectEvent = ObjectEvent_GetById(i);
@@ -651,7 +651,7 @@ static void Imil_OpenDoorAndExit(void) {
     Engine_MapGridAnimateCells(gImil_DoorCellSteps[warp - 1], x, y);
   }
   ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(1) / 2, PIXELS(1) / 4);
-  gEventWork->startTransition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+  gFieldWork->startTransition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   if (warp == IMIL_TO_IMIL_INTERIORS_NORTHEAST) {
     ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(1) / 5, PIXELS(1) / 10);
     Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIMATION_WALK);
@@ -852,7 +852,7 @@ s32 Imil_Initialize(void) {
 
   if (gGameState.mapId == (s32)&MapId_Imil) {
     leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
-    gEventWork->startTransition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+    gFieldWork->startTransition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
     Engine_ObjectEventSetAnimation(LOCALID_STRONGMAN_KEEPING_IN_SHAPE,
                                    IMIL_ANIMATION_SQUATS);
     if (GameFlag_IsSet(FLAG_KEEP_PARTY_POSITION)) {
@@ -873,7 +873,7 @@ s32 Imil_Initialize(void) {
     }
   } else if (gGameState.mapId == (s32)&MapId_ImilInteriors) {
     // Restore each interior's occupants before running its arrival script.
-    gEventWork->startTransition =
+    gFieldWork->startTransition =
         MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
     warpDest = gGameState.warpDest;
     if (warpDest == IMIL_INTERIORS_HOUSE_SOUTHWEST) {
@@ -1001,7 +1001,7 @@ static void Imil_MeetMiaAtOldCouplesHouse(void) {
   Engine_TaskWait(1);
   Camera_SetSpeed(PIXELS(3) / 10, PIXELS(3) / 80);
   Camera_MoveTo(PIXELS(140), -1, PIXELS(164), 1);
-  work = gEventWork;
+  work = gFieldWork;
   work->startTransition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   work->transitionFrames = 40;
   Engine_ScriptOpenScreen();
@@ -1022,13 +1022,13 @@ static void Imil_MeetMiaAtOldCouplesHouse(void) {
   ObjectEvent_WalkTo(GARET, 150, 234);
   ObjectEvent_WalkToAndWait(IVAN, 134, 234);
   Engine_ObjectEventSetAnimation(GARET, ANIMATION_STAND);
-  FieldObject_SetTargetAndCallback(LOCALID_PARTY_LEADER,
-                                   OBJ_EVENT_LINK_KEEP_MOTION | MIA,
-                                   gImil_FaceTargetScript);
-  FieldObject_SetTargetAndCallback(GARET, OBJ_EVENT_LINK_KEEP_MOTION | MIA,
-                                   gImil_FaceTargetScript);
-  FieldObject_SetTargetAndCallback(IVAN, OBJ_EVENT_LINK_KEEP_MOTION | MIA,
-                                   gImil_FaceTargetScript);
+  Object_SetTargetAndCallback(LOCALID_PARTY_LEADER,
+                              OBJ_EVENT_LINK_KEEP_MOTION | MIA,
+                              gImil_FaceTargetScript);
+  Object_SetTargetAndCallback(GARET, OBJ_EVENT_LINK_KEEP_MOTION | MIA,
+                              gImil_FaceTargetScript);
+  Object_SetTargetAndCallback(IVAN, OBJ_EVENT_LINK_KEEP_MOTION | MIA,
+                              gImil_FaceTargetScript);
   Engine_CameraWaitForMove();
   table = gImil_BobScript;
   ObjectEvent_SetActionScript(LOCALID_OLD_MAN, table);
@@ -1098,13 +1098,13 @@ static void Imil_MeetMiaAtOldCouplesHouse(void) {
   Engine_ObjectEventRunRepeatedMotion(MIA, 1);
   Engine_ScriptWait(10);
   Script_ShowMessage(MIA, 0);
-  Script_PlayCue(SE_131);
+  Script_PlaySong(SE_131);
   // The lighthouse interrupts the visit; Mia leaves and the party follows.
   ColorBuffer_ApplySource(PALETTE_TRANSFORM_PLAIN, 0);
   ColorBuffer_ApplyTarget(PALETTE_TRANSFORM_TINT | RGB(31, 20, 31), 0);
   Engine_ColorBufferInterpolate(10);
   Engine_TaskWait(1);
-  Script_PlayCue(SE_220);
+  Script_PlaySong(SE_220);
   Engine_TaskWait(40);
   ColorBuffer_ApplyTarget(PALETTE_TRANSFORM_PLAIN, 0);
   Engine_ColorBufferInterpolate(60);
@@ -1141,7 +1141,7 @@ static void Imil_MeetMiaAtOldCouplesHouse(void) {
   ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(4), PIXELS(2));
   ObjectEvent_SetSpeed(GARET, PIXELS(4), PIXELS(2));
   ObjectEvent_SetSpeed(IVAN, PIXELS(4), PIXELS(2));
-  Script_PlayCue(SE_JUMP);
+  Script_PlaySong(SE_JUMP);
   ObjectEvent_GetById(LOCALID_PARTY_LEADER)->steeringFlags &=
       ~OBJ_EVENT_FACES_MOTION;
   ObjectEvent_GetById(GARET)->steeringFlags &= ~OBJ_EVENT_FACES_MOTION;
@@ -1162,7 +1162,7 @@ static void Imil_MeetMiaAtOldCouplesHouse(void) {
   ObjectEvent_SetActionScript(GARET, table);
   ObjectEvent_RunActionScriptAndWait(IVAN, table);
   Engine_ScriptWait(20);
-  work = gEventWork;
+  work = gFieldWork;
   work->startTransition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
   work->transitionFrames = 24;
@@ -1239,7 +1239,7 @@ static void Imil_MiaCastsPlyOnOldMan(void) {
   struct FieldEffectWork *effectWork;
 
   Engine_PsynergyStart(ABILITY_PLY, 1);
-  effectWork = gEffectWork;
+  effectWork = gFieldEffectWork;
   Engine_PsynergySetTarget(MIA, LOCALID_OLD_MAN);
   effectWork->finishCallback = Imil_OldManBobsAndSpeaks;
   Engine_PsynergyRaiseHands();
@@ -1442,7 +1442,7 @@ static void Imil_MiaSaysFarewellToApprentices(void) {
   Camera_GetScriptObject()->motionFlags = 0;
   Engine_CameraSetSpeed(PIXELS(4) / 5, PIXELS(1) / 10);
   Camera_MoveTo(PIXELS(690), 0, PIXELS(164), 1);
-  work = gEventWork;
+  work = gFieldWork;
   work->startTransition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   work->transitionFrames = 48;
   Engine_ScriptOpenScreen();
@@ -1590,10 +1590,10 @@ static void Imil_MiaSaysFarewellToApprentices(void) {
   ObjectEvent_WalkToAndWait(LOCALID_SECOND_APPRENTICE, 644, 166);
   Engine_ScriptWait(1);
   // Restore the student's steering after the farewell walk. A byte view: as
-  // the field, the next gEventWork load moves after the constant.
+  // the field, the next gFieldWork load moves after the constant.
   *((u8 *)ObjectEvent_GetById(LOCALID_SECOND_APPRENTICE) +
     offsetof(struct ObjectEvent, steeringFlags)) |= OBJ_EVENT_FACES_MOTION;
-  gEventWork->startTransition =
+  gFieldWork->startTransition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
   GameFlag_Set(FLAG_IMIL_MIA_SAID_FAREWELL);
   GameFlag_Clear(FLAG_IMIL_APPRENTICE_OFFERED_HEALING);
@@ -1684,7 +1684,7 @@ static void Imil_RunIceSlide(void) {
     Engine_ObjectSetPosition(subject, x, subject->y.fixed, z);
     ObjectEvent_SetMode(subject, 2);
     ObjectDispatch_SetAnimationSpeed((struct DispatchObject *)subject, 48);
-    FieldObject_WaitForMove(subject);
+    Object_WaitForMove(subject);
     subject->update = Imil_TurnSlidingObjectEvent;
 
     // Advance along the slide until its next cell is blocked or too high.
@@ -1704,7 +1704,7 @@ static void Imil_RunIceSlide(void) {
       subject->speed = PIXELS(2);
       subject->acceleration = PIXELS(1) / 10;
       Engine_ObjectSetPosition(subject, probe.x, probe.y, probe.z);
-      FieldObject_WaitForMove(subject);
+      Object_WaitForMove(subject);
       if (marker != goal) {
         goto blocked;
       }
@@ -1713,7 +1713,7 @@ static void Imil_RunIceSlide(void) {
     subject->speed = PIXELS(2);
     subject->acceleration = PIXELS(1);
     Engine_ObjectSetPosition(subject, x, subject->y.fixed, z);
-    FieldObject_WaitForMove(subject);
+    Object_WaitForMove(subject);
     Engine_TaskWait(2);
   }
 

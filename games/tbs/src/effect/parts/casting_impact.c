@@ -121,8 +121,8 @@ static inline void CastingImpact_EndPrelude(struct BattleEffectWork *work,
   Iwram_ClearWords(BG_CHAR_BLOCK(1), CANVAS_BYTES);
   Iwram_ClearWords(canvas, CANVAS_BYTES);
   work->effect->prelude = 0;
-  Scheduler_RemoveCallback(Palette_StepFadeTransfer);
-  Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
+  Task_Remove(Palette_StepFadeTransfer);
+  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   EFFECT_RELEASE_BLITTERS();
 }
 
@@ -282,11 +282,11 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *effect,
   BlitterPair blitters;
   struct EffectPosition projected;
 
-  slots = gWorkSlot + HEAP_SLOT_BATTLE_EFFECT;
+  slots = gHeapSlots + HEAP_SLOT_BATTLE_ANIM;
   slot = slots;
   work = (struct BattleEffectWork *)*slot++;
   canvas = *slot;
-  camera = WORK_SLOT(HEAP_SLOT_CAMERA);
+  camera = HEAP_SLOT_BLOCK(HEAP_SLOT_CAMERA);
   sprites = (u8 *)EFFECT_SLOT(slots, HEAP_SLOT_BATTLE_SHEET);
   work->effect = effect;
   if (mode == CASTING_IMPACT_IMPACT_MORTAL_DANGER ||
@@ -427,8 +427,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *effect,
   } else {
     work->transferValue = 50;
   }
-  Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer,
-                                EFFECT_CALLBACK_ORDER);
+  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, EFFECT_CALLBACK_ORDER);
   /* FAKEMATCH(temporary): the results named by pointers set inside their
    * calls; as &targetPos, &casterPos and blitters used directly, 69 of 3070
    * instructions differ in tbs-en. */
@@ -469,7 +468,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *effect,
   casterActor->verticalMotionStrength = 0;
   EffectPosition_ProjectScaledBattler(work->effect->actor, casterScreen);
   casterScreen->x = casterScreen->x / 2;
-  AudioCommand_PlayFar(SE_212);
+  Sound_PlaySongFar(SE_212);
 
   // Phase 1, the gathering (CASTING_IMPACT_GATHER_FRAMES): four more sparks
   // each frame, their radii shrinking by 4 towards the caster; a spark goes
@@ -695,8 +694,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *effect,
       mode == CASTING_IMPACT_IMPACT_HEAT_MIRAGE ||
       mode == CASTING_IMPACT_IMPACT_MURK ||
       mode == CASTING_IMPACT_IMPACT_BLINDING_SMOG) {
-    Scheduler_AddOrUpdateCallback(BattleEffect_ArmBg2AffineHBlankDma,
-                                  EFFECT_CALLBACK_ORDER);
+    Task_Add(BattleEffect_ArmBg2AffineHBlankDma, EFFECT_CALLBACK_ORDER);
   }
 
   // The impact lasts 20, 32, 40, 48, 64 or 80 frames, by mode.
@@ -957,15 +955,15 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *effect,
           imageY -= gBattleEffect_GlintCellHeights[image] / 2;
           EFFECT_RELEASE_BLITTERS();
           drawFlags = Random16();
-          EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER_ALTERNATE,
+          EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
                               gCastingImpact_GlintDrawFlags[drawFlags & 3] |
                                   EFFECT_CLIP_BOUNDS,
                               COMPOSITE_MAX);
-          ((DrawRectangle *)gWorkSlot)[HEAP_SLOT_BLITTER_ALTERNATE](
+          ((DrawRectangle *)gHeapSlots)[HEAP_SLOT_RAM_CODE_2](
               canvas, Ram_MapGridCellBuffer + gBattleEffect_GlintCells[image],
               imageX, imageY + 56, gBattleEffect_GlintCellWidths[image],
               gBattleEffect_GlintCellHeights[image]);
-          Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
+          FreeHeapSlot(HEAP_SLOT_RAM_CODE_2);
           BattleEffect_FetchRectangleBlitters(work->effect->side, blitters);
         }
       }
@@ -995,10 +993,10 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *effect,
           fall = 0;
         while (scroll > 104)
           scroll -= 104;
-        EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER_ALTERNATE, EFFECT_CLIP_BOUNDS,
+        EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, EFFECT_CLIP_BOUNDS,
                             COMPOSITE_MAX);
-        draw = (DrawRectangle *)gWorkSlot;
-        draw += HEAP_SLOT_BLITTER_ALTERNATE;
+        draw = (DrawRectangle *)gHeapSlots;
+        draw += HEAP_SLOT_RAM_CODE_2;
         columnX = originX - 8;
         columnY = fall + scroll;
         top = columnY - 104;
@@ -1011,7 +1009,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *effect,
                                         draw);
         (*draw)(canvas, Ram_MapGridCellBuffer + (17 * 104), originX - width,
                 fall + 47, width * 2, 65);
-        Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
+        FreeHeapSlot(HEAP_SLOT_RAM_CODE_2);
         if (frame == 8) {
           work->shakeFrames = frame;
         }
@@ -1041,19 +1039,18 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *effect,
       if (frame >= 4 && frame <= 23) {
         pairX = targetScreen->x / 2;
         height = 48;
-        EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER_ALTERNATE, EFFECT_CLIP_BOUNDS,
+        EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, EFFECT_CLIP_BOUNDS,
                             COMPOSITE_MAX);
-        slotDraw = (DrawRectangle *)gWorkSlot;
+        slotDraw = (DrawRectangle *)gHeapSlots;
         CastingImpact_DrawImage(canvas, Ram_MapGridCellBuffer, pairX - 24, 48,
-                                24, height,
-                                slotDraw + HEAP_SLOT_BLITTER_ALTERNATE);
-        Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
-        EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER_ALTERNATE,
+                                24, height, slotDraw + HEAP_SLOT_RAM_CODE_2);
+        FreeHeapSlot(HEAP_SLOT_RAM_CODE_2);
+        EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
                             EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
                             COMPOSITE_MAX);
         CastingImpact_DrawImage(canvas, Ram_MapGridCellBuffer, pairX, 48, 24,
-                                height, slotDraw + HEAP_SLOT_BLITTER_ALTERNATE);
-        Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
+                                height, slotDraw + HEAP_SLOT_RAM_CODE_2);
+        FreeHeapSlot(HEAP_SLOT_RAM_CODE_2);
       }
       BattleEffect_FetchRectangleBlitters(work->effect->side, blitters);
     } else if (mode == CASTING_IMPACT_IMPACT_CYCLONE_SLASH) {
@@ -1286,7 +1283,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *effect,
                         projected.x - 4, projected.y - 4, 8, 8);
             step->x -= 6;
             if (step->x < 0 && ((i & 7) == 0 || i == 63)) {
-              AudioCommand_PlayFar(SE_IMPACT);
+              Sound_PlaySongFar(SE_IMPACT);
               ObjectGroup_UpdateMembers(work->effect->actors[0],
                                         SPRITE_COLOR_WHITE, POSE_DAMAGE, 0, 4);
             }
@@ -1397,7 +1394,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *effect,
       EFFECT_SHOW_DAMAGE(-1);
     }
     if (frame == 4) {
-      AudioCommand_PlayFar(SE_HEAVY_IMPACT);
+      Sound_PlaySongFar(SE_HEAVY_IMPACT);
     }
     if (frame == 6) {
       if (mode == CASTING_IMPACT_IMPACT_FLINT ||
@@ -1443,8 +1440,8 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *effect,
     Iwram_ClearWords(BG_CHAR_BLOCK(1), CANVAS_BYTES);
     Iwram_ClearWords(canvas, CANVAS_BYTES);
     work->effect->prelude = 0;
-    Scheduler_RemoveCallback(Palette_StepFadeTransfer);
-    Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
+    Task_Remove(Palette_StepFadeTransfer);
+    Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
     EFFECT_RELEASE_BLITTERS();
     BattleEffect_RunImpair(effect);
   } else {
@@ -1454,7 +1451,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectArgument *effect,
         mode == CASTING_IMPACT_IMPACT_HEAT_MIRAGE ||
         mode == CASTING_IMPACT_IMPACT_BLINDING_SMOG ||
         mode == CASTING_IMPACT_IMPACT_MURK) {
-      Scheduler_RemoveCallback(BattleEffect_ArmBg2AffineHBlankDma);
+      Task_Remove(BattleEffect_ArmBg2AffineHBlankDma);
     }
     EFFECT_FINISH_CANVAS();
   }

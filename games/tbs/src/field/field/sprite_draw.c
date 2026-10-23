@@ -46,31 +46,31 @@ s32 Sprite_ComposeAnimationFrame(struct AnimationObject *animation, u16 dir) {
   // The object system's work and the frame decoder sit in the heap slot
   // table; load the decoder into RAM for this call if no one else has.
   mirrored = 0;
-  system = gMenuCtrlWork;
+  system = gObjectSystemWork;
   decoderWasLoaded = 1;
-  // UB: gMenuCtrlWork is one pointer, not an array reaching the decoder cell.
-  // The native form derives both cell addresses from this one base; using
-  // WORK_SLOT directly changes allocation and adds a literal-pool entry.
+  // UB: gObjectSystemWork is one pointer, not an array reaching the decoder
+  // cell. The native form derives both cell addresses from this one base; using
+  // HEAP_SLOT_BLOCK directly changes allocation and adds a literal-pool entry.
 #ifdef UBFIX
-  decodeFrame = (SpriteDrawFn)WORK_SLOT(HEAP_SLOT_FRAME_SCRATCH);
+  decodeFrame = (SpriteDrawFn)HEAP_SLOT_BLOCK(HEAP_SLOT_FRAME_SCRATCH);
 #else
-  decodeFrame =
-      (SpriteDrawFn)(*(void *(*)[]) & gMenuCtrlWork)[HEAP_SLOT_FRAME_SCRATCH -
-                                                     HEAP_SLOT_MENU_CONTROL];
+  decodeFrame = (SpriteDrawFn)(*(void *(*)[]) &
+                               gObjectSystemWork)[HEAP_SLOT_FRAME_SCRATCH -
+                                                  HEAP_SLOT_OBJECT_SYSTEM];
 #endif
   if (decodeFrame == 0) {
-    code = Runtime_AllocateHeapBlock(HEAP_SLOT_FRAME_SCRATCH,
-                                     (s32)Render_DecodeFrameCodeSize);
+    code =
+        AllocHeapSlot(HEAP_SLOT_FRAME_SCRATCH, (s32)Render_DecodeFrameCodeSize);
     Dma_Set(Render_DecodeFrame, code,
             (((u32)gRender_DecodeFrameBuffer - (u32)Render_DecodeFrame) >> 2) |
                 (DMA_ENABLE | DMA_32BIT) << 16,
             REG_DMA3);
 #ifdef UBFIX
-    decodeFrame = (SpriteDrawFn)WORK_SLOT(HEAP_SLOT_FRAME_SCRATCH);
+    decodeFrame = (SpriteDrawFn)HEAP_SLOT_BLOCK(HEAP_SLOT_FRAME_SCRATCH);
 #else
-    decodeFrame =
-        (SpriteDrawFn)(*(void *(*)[]) & gMenuCtrlWork)[HEAP_SLOT_FRAME_SCRATCH -
-                                                       HEAP_SLOT_MENU_CONTROL];
+    decodeFrame = (SpriteDrawFn)(*(void *(*)[]) &
+                                 gObjectSystemWork)[HEAP_SLOT_FRAME_SCRATCH -
+                                                    HEAP_SLOT_OBJECT_SYSTEM];
 #endif
     decoderWasLoaded = 0;
   }
@@ -197,7 +197,7 @@ s32 Sprite_ComposeAnimationFrame(struct AnimationObject *animation, u16 dir) {
 
   if (animation->dirty != 0) {
     size = animation->width * animation->height;
-    pixels = MemAlloc(size);
+    pixels = Alloc(size);
     Iwram_ClearWords(pixels, size);
 
     // Sort the visible layers by priority (0-3), then by index, with an
@@ -246,14 +246,13 @@ s32 Sprite_ComposeAnimationFrame(struct AnimationObject *animation, u16 dir) {
     for (i = 0; i < drawCount; i++) {
       layer = animation->entries[*(u8 *)&drawOrder[i]];
       if (layer->mode == SPRITE_FRAME_TYPE01) {
-        Resource_DecodeType01(layer->frames[layer->frame], pixels);
+        Decompress_Type01(layer->frames[layer->frame], pixels);
       } else if (layer->mode == SPRITE_FRAME_LZ) {
         if (layer->colorMode != 0) {
-          unpacked = MemAlloc(0x400);
-          decodeFrame(
-              Resource_DecompressLz(layer->frames[layer->frame], unpacked),
-              pixels, layer->colorMode);
-          MemFree(unpacked);
+          unpacked = Alloc(0x400);
+          decodeFrame(Decompress_Lz(layer->frames[layer->frame], unpacked),
+                      pixels, layer->colorMode);
+          Free(unpacked);
         } else {
           decoded = Iwram_Decompress(layer->frames[layer->frame], pixels);
           if (decoded != 0) {
@@ -276,7 +275,7 @@ s32 Sprite_ComposeAnimationFrame(struct AnimationObject *animation, u16 dir) {
       u8 *src;
       u8 *dst;
 
-      inside = MemAlloc(size);
+      inside = Alloc(size);
       w = animation->width;
       h = animation->height;
       edge = system->edge;
@@ -306,7 +305,7 @@ s32 Sprite_ComposeAnimationFrame(struct AnimationObject *animation, u16 dir) {
         dst++;
         src++;
       }
-      MemFree(inside);
+      Free(inside);
     }
 
     // Upload the pixels to the sprite's tiles in VRAM.
@@ -314,17 +313,17 @@ s32 Sprite_ComposeAnimationFrame(struct AnimationObject *animation, u16 dir) {
     tile = VramCache_Load(animation->slot, size, 0);
     {
       void *vram = (void *)(OBJ_VRAM0 + (tile << 5));
-      ((SpriteUploadFn)gWorkSlot[HEAP_SLOT_FRAME_UPLOADER])(
+      ((SpriteUploadFn)gHeapSlots[HEAP_SLOT_FRAME_UPLOADER])(
           pixels, animation->width, animation->height, vram);
     }
     animation->image.tile = tile;
     animation->dirty = 0;
     system->used += size;
-    MemFree(pixels);
+    Free(pixels);
   }
 
   if (decoderWasLoaded == 0) {
-    Runtime_ReleaseHeapBlock(HEAP_SLOT_FRAME_SCRATCH);
+    FreeHeapSlot(HEAP_SLOT_FRAME_SCRATCH);
   }
   return mirrored;
 }
@@ -503,7 +502,7 @@ void Render_PlaceProjectedSprite(struct AnimationObject *sprite, s32 *point,
 
   // Project first, then discard sprites beyond the padded screen bounds.
   affine = 1;
-  if (gMenuCtrlWork->suspended == 0) {
+  if (gObjectSystemWork->suspended == 0) {
     z = Render_ProjectPoint(point, screen);
     if (screen[2] != 0 && screen[0] >= -32 && screen[0] <= 272 &&
         screen[1] >= -32 && screen[1] <= 208) {

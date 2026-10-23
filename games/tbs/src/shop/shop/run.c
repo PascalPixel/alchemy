@@ -9,7 +9,7 @@
 /// list and returns how many. Called by Shop_Run when the player picks
 /// Artifacts, and by Shop_SelectBuy to refresh the list after a purchase.
 s32 Shop_ListAvailableArtifacts(void) {
-  struct ShopRuntime *shop;
+  struct ShopWork *shop;
   s16 *stockItems;
   s32 itemId;
   s32 count;
@@ -39,7 +39,7 @@ s32 Shop_ListAvailableArtifacts(void) {
 /// Advances the hand cursor one frame. Runs every frame as a scheduler task
 /// while a counter is open.
 void Shop_StepCursor(void) {
-  ShopCursor_Advance(&((struct ShopRuntime *)gMenuWork)->cursor);
+  ShopCursor_Advance(&((struct ShopWork *)gMenuWork)->cursor);
 }
 
 /// Allocates and clears the work block in the menu's heap slot, lists the
@@ -49,12 +49,12 @@ void Shop_StepCursor(void) {
 /// task last until Shop_ReleaseCursorWork; as HEAP_SLOT_MENU is the field
 /// menu's slot too, a counter and the field menu cannot be open together.
 void Shop_InitializeCursorWork(void) {
-  struct ShopRuntime *shop;
+  struct ShopWork *shop;
   s32 resourceSlot;
 
-  shop = Runtime_AllocateHeapBlock(HEAP_SLOT_MENU, sizeof(struct ShopRuntime));
+  shop = AllocHeapSlot(HEAP_SLOT_MENU, sizeof(struct ShopWork));
   Field_EndBusyAndRevealFar();
-  Dma_Fill32(0, shop, sizeof(struct ShopRuntime));
+  Dma_Fill32(0, shop, sizeof(struct ShopWork));
   // The hand cursor's glides take 12 frames until a screen changes it
   shop->mode = 12;
   shop->partyMemberCount = Party_ListActiveOwnersFar(shop->partyMemberIds);
@@ -77,16 +77,16 @@ void Shop_InitializeCursorWork(void) {
   resourceSlot = Resource_FindFreeEntry();
   shop->statUpIcon = resourceSlot;
   VramCache_Load(resourceSlot, 128, gShop_SmallUpArrowTiles);
-  Scheduler_AddOrUpdateCallback(Shop_StepCursor, SCHEDULER_KEY_MAIN_LOOP);
+  Task_Add(Shop_StepCursor, TASK_PRIORITY_MAIN_LOOP);
 }
 
 /// Stops the cursor task, frees the six cursor icons and the work block.
 /// Every counter closes with it.
 void Shop_ReleaseCursorWork(void) {
-  struct ShopRuntime *state;
+  struct ShopWork *state;
 
   state = gMenuWork;
-  Scheduler_RemoveCallback(Shop_StepCursor);
+  Task_Remove(Shop_StepCursor);
   UiWork_FinalizePendingCoreFar();
   Resource_ResetEntry(state->cursorIcon);
   Resource_ResetEntry(state->previousPageIcon);
@@ -94,7 +94,7 @@ void Shop_ReleaseCursorWork(void) {
   Resource_ResetEntry(state->gemIcon);
   Resource_ResetEntry(state->statUpIcon);
   Resource_ResetEntry(state->statDownIcon);
-  Runtime_ReleaseHeapBlock(HEAP_SLOT_MENU);
+  FreeHeapSlot(HEAP_SLOT_MENU);
 }
 
 /// Runs a shop: the shopkeeper's welcome, then buy, sell, artifacts and repair
@@ -104,7 +104,7 @@ void Shop_ReleaseCursorWork(void) {
 /// visit and holds the work block while it runs. Called by the town maps'
 /// shopkeepers through SHOP.S, and by the debug shop. Returns 0.
 s32 Shop_Run(s32 stockRow, s32 keeperId) {
-  struct ShopRuntime *shop;
+  struct ShopWork *shop;
   struct RenderOutput *anchor;
   struct UiWindow *window;
   s32 action = 0;
@@ -124,8 +124,8 @@ s32 Shop_Run(s32 stockRow, s32 keeperId) {
   if (stockRow == SHOP_STOCK_ROW_XIAN_ITEMS)
     shop->warriorShop = 1;
   shop->keeperResource =
-      ((struct AnimationObject *)((struct ObjectRuntime *)
-                                      ObjectEvent_GetByIdFar(keeperId))
+      ((struct AnimationObject *)((struct Object *)ObjectEvent_GetByIdFar(
+                                      keeperId))
            ->animation)
           ->entries[0]
           ->animationId;
@@ -224,7 +224,7 @@ struct SelectorRecord {
 void UiMessage_ShowAndWait(s32 messageId) {
   // A shared message-resolution inline added four bytes to each dialogue caller
   // in the English native build; both callers retain their direct resolution.
-  struct ShopRuntime *shop = gMenuWork;
+  struct ShopWork *shop = gMenuWork;
   s32 portraitResource = FieldEffect_GetResourceIdFar(shop->keeperResource);
   s32 resolvedMessage = messageId;
   s8 shopType;
@@ -253,7 +253,7 @@ void UiMessage_ShowAndRestoreState(s32 messageId) {
   s8 shopType;
   s8 warriorShop;
   u8 savedCursorMode;
-  struct ShopRuntime *shop;
+  struct ShopWork *shop;
   struct RenderOutput **cursorSlot;
 
   shop = gMenuWork;
@@ -289,7 +289,7 @@ void UiMessage_ShowAndRestoreState(s32 messageId) {
 /// or repair, and by the inn.
 s32 UiMessage_ShowChoice(s32 choice) {
   struct RenderOutput **cursorSlot =
-      &((struct ShopRuntime *)gMenuWork)->cursor.anchor;
+      &((struct ShopWork *)gMenuWork)->cursor.anchor;
   u8 savedCursorMode = (*cursorSlot)->active;
   UiIcon_PrepareObjectFar(*cursorSlot);
   choice = Menu_RunConfirmSelectionAtFar(SHOP_CONFIRM_MENU_X, 5, choice);
@@ -302,7 +302,7 @@ s32 UiMessage_ShowChoice(s32 choice) {
 /// Sanctum_RunPartyService.
 s32 UiMessage_ShowChoiceVariant(s32 choice) {
   struct RenderOutput **cursorSlot =
-      &((struct ShopRuntime *)gMenuWork)->cursor.anchor;
+      &((struct ShopWork *)gMenuWork)->cursor.anchor;
   u8 savedCursorMode = (*cursorSlot)->active;
   UiIcon_PrepareObjectFar(*cursorSlot);
   choice = Menu_RunConfirmSelectionAtFar(7, 7, choice);

@@ -1,15 +1,15 @@
-@ C2: Runtime_ReleaseHeapBlock branches on lsrs flags without cmp/cmn;
+@ C2: FreeHeapSlot branches on lsrs flags without cmp/cmn;
 @ agscc's Thumb cbranchsi4 and negated_cbranchsi4 always emit a compare.
-@ C2: Runtime_ReleaseHeapBlock and MemFree share the one trailing literal
+@ C2: FreeHeapSlot and Free share the one trailing literal
 @ pool; GCC's per-function arm_reorg emits and clears each function's pool.
-@ MemFree's own six instructions (ldr, movs, lsrs, ands, str, bx lr) are
+@ Free's own six instructions (ldr, movs, lsrs, ands, str, bx lr) are
 @ ordinary Thumb with no tell of their own. Its proof is that pool alone: the
-@ single word .L_heap_heads after MemFree's bx lr is loaded by MemFree's
-@ ldr r4, [pc, #8] and also by Runtime_ReleaseHeapBlock's ldr r4, [pc, #32],
-@ which reaches forward over its own bx lr and the whole of MemFree; and
-@ Runtime_ReleaseHeapBlock is the routine with the lsrs r3, r1, #22 / beq
+@ single word .L_heap_heads after Free's bx lr is loaded by Free's
+@ ldr r4, [pc, #8] and also by FreeHeapSlot's ldr r4, [pc, #32],
+@ which reaches forward over its own bx lr and the whole of Free; and
+@ FreeHeapSlot is the routine with the lsrs r3, r1, #22 / beq
 @ above.
-@ The two-byte alignment before MemFree is linker fill, outside the credited
+@ The two-byte alignment before Free is linker fill, outside the credited
 @ code.
 @ Thumb LDR cannot relocate across these sections in the stock assembler;
 @ retain the native PC-relative operands for their one shared word.
@@ -17,9 +17,9 @@
 	.section .text.release, "ax", %progbits
 	.balign 2
 	.thumb
-	.global Runtime_ReleaseHeapBlock
+	.global FreeHeapSlot
 	.thumb_func
-Runtime_ReleaseHeapBlock:
+FreeHeapSlot:
 	ldr	r4, [pc, #32]
 	lsls	r0, r0, #2
 	ldr	r1, [r0, r4]
@@ -34,9 +34,9 @@ Runtime_ReleaseHeapBlock:
 	bx	lr
 	.section .text.free, "ax", %progbits
 	.balign 4
-	.global MemFree
+	.global Free
 	.thumb_func
-MemFree:
+Free:
 	ldr	r4, [pc, #8]
 	movs	r1, #4
 	lsrs	r2, r0, #22
@@ -44,7 +44,7 @@ MemFree:
 	str	r0, [r2, r4]
 	bx	lr
 .L_heap_heads:
-	.4byte	gWorkSlot
+	.4byte	gHeapSlots
 
 @ C2: Runtime_StopOnGamePakIrq has a reachable exit with no return or
 @ interworking branch: when (IE & IF & 0x2000) is zero, its final bne falls

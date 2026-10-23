@@ -7,9 +7,9 @@
 /// Scheduler callback: updates the 24 effect slots.
 void FieldEffect_UpdateAllEffectSlots(void) { FieldEffect_UpdateEffectSlots(); }
 
-/// Prepares the work of the Psynergy effect for ability (HEAP_SLOT_EFFECT) and
-/// loads its spark tiles. Called again while an effect resolves, it only
-/// switches the ability.
+/// Prepares the work of the Psynergy effect for ability
+/// (HEAP_SLOT_FIELD_EFFECT) and loads its spark tiles. Called again while an
+/// effect resolves, it only switches the ability.
 ///
 /// Field_UsePsynergy and the item uses (object/items.c) call it before an
 /// effect and FieldEffect_End after it, which releases the
@@ -19,18 +19,17 @@ void FieldEffect_UpdateAllEffectSlots(void) { FieldEffect_UpdateEffectSlots(); }
 /// The caster is the leader, with no target until FieldEffect_SetupObjectPair
 /// names one.
 void FieldEffect_LoadActionEffectResources(s32 abilityId, s32 mode) {
-  struct FieldWork *ev = *(gWorkSlot + HEAP_SLOT_EVENT);
-  struct MapGridScrollWork *grid = *(gWorkSlot + 8);
+  struct FieldWork *ev = *(gHeapSlots + HEAP_SLOT_FIELD);
+  struct MapGridScrollWork *grid = *(gHeapSlots + 8);
   struct FieldEffectWork *effectWork;
   s32 running;
 
   running = ev->resolvingAction;
   if (running == 0) {
-    effectWork =
-        Runtime_AllocateHeapBlock(HEAP_SLOT_EFFECT, sizeof *effectWork);
+    effectWork = AllocHeapSlot(HEAP_SLOT_FIELD_EFFECT, sizeof *effectWork);
     Dma_Fill32(running, effectWork, sizeof *effectWork);
   } else {
-    effectWork = *(gWorkSlot + HEAP_SLOT_EFFECT);
+    effectWork = *(gHeapSlots + HEAP_SLOT_FIELD_EFFECT);
   }
   effectWork->action = abilityId;
   effectWork->fieldKind = BattleAction_Get(abilityId)->type0c;
@@ -58,8 +57,8 @@ void FieldEffect_LoadActionEffectResources(s32 abilityId, s32 mode) {
     ev->effectTimerRunning = running;
   effectWork->tileSlot = Resource_FindFreeEntry();
   VramCache_Load((s16)effectWork->tileSlot, 256, gFieldEffect_SparkTiles);
-  // 0xc80 is SCHEDULER_KEY_MAIN_LOOP: the slots update once a frame.
-  Scheduler_AddOrUpdateCallback(FieldEffect_UpdateAllEffectSlots, 0xc80);
+  // 0xc80 is TASK_PRIORITY_MAIN_LOOP: the slots update once a frame.
+  Task_Add(FieldEffect_UpdateAllEffectSlots, 0xc80);
 }
 
 /// Records the caster and the target of an effect. With no target, the effect
@@ -73,7 +72,7 @@ void FieldEffect_SetupObjectPair(s32 userId, s32 targetId) {
   s32 dir;
   struct FieldEffectWork *effectWork;
 
-  effectWork = gEffectWork;
+  effectWork = gFieldEffectWork;
   effectWork->firstObjectId = userId;
   user = ObjectTable_Get((s16)userId);
   effectWork->secondObjectId = targetId;
@@ -87,8 +86,7 @@ void FieldEffect_SetupObjectPair(s32 userId, s32 targetId) {
     effectWork->savedCallback = target->hook;
     effectWork->savedScript = (const s32 *)target->script;
     {
-      struct AnimationObject *animation =
-          ((struct ObjectRuntime *)target)->animation;
+      struct AnimationObject *animation = ((struct Object *)target)->animation;
       u8 pal = animation->entries[0]->colorMode;
 
       effectWork->savedPalette = pal;
@@ -107,7 +105,7 @@ void FieldEffect_SetupObjectPair(s32 userId, s32 targetId) {
 /// Stops the caster's per-frame hook and restores its colours (sprite param
 /// 0), then waits a frame.
 void FieldEffect_StopCasterHook(void) {
-  struct FieldEffectWork *effectWork = gEffectWork;
+  struct FieldEffectWork *effectWork = gFieldEffectWork;
   struct ScriptMotionObject *user = effectWork->mainObject;
 
   user->hook = NULL;
@@ -116,7 +114,7 @@ void FieldEffect_StopCasterHook(void) {
   WaitFrames(1);
 }
 
-#define SETUP_OBJECT_SLOTS ((struct ScriptMotionObject *)gObjectSlots)
+#define SETUP_OBJECT_SLOTS ((struct ScriptMotionObject *)gObjects)
 
 /// Ends a Psynergy effect: frees the effect slots still in use and, unless
 /// another effect is being resolved, waits (at most 30 frames) for the
@@ -134,13 +132,13 @@ void FieldEffect_End(void) {
   s32 remaining;
 
 #ifdef UBFIX
-  effectWork = gEffectWork;
-  runtime = (struct FieldWork *)gEventWork;
+  effectWork = gFieldEffectWork;
+  runtime = (struct FieldWork *)gFieldWork;
   grid = gMapGridWork[0];
 #else
   // Indexing beyond the scalar global is undefined in C. Named slots add
   // 8 bytes to this function in the forced native EN build (0xf8 -> 0x100).
-  effectWorkCell = (struct FieldEffectWork **)&gEffectWork;
+  effectWorkCell = (struct FieldEffectWork **)&gFieldEffectWork;
   effectWork = *effectWorkCell;
   runtime = *(struct FieldWork **)((u8 *)effectWorkCell - 116);
   grid = *(struct MapGridScrollWork **)((u8 *)effectWorkCell - 192);
@@ -184,7 +182,7 @@ void FieldEffect_End(void) {
     } while (active != 0 && waited <= 29);
 
     runtime->castStarted = 0;
-    Scheduler_RemoveCallback(FieldEffect_UpdateAllEffectSlots);
+    Task_Remove(FieldEffect_UpdateAllEffectSlots);
     Resource_ResetEntry((s16)effectWork->tileSlot);
     grid->shakeX = effectWork->savedShakeX;
     grid->shakeY = effectWork->savedShakeY;
@@ -192,7 +190,7 @@ void FieldEffect_End(void) {
     if (effectWork->fieldKind != FIELD_KIND_REVEAL)
       runtime->effectTimerRunning = 1;
     FieldEffect_PlayQueuedSound();
-    Runtime_ReleaseHeapBlock(HEAP_SLOT_EFFECT);
+    FreeHeapSlot(HEAP_SLOT_FIELD_EFFECT);
   }
 }
 
@@ -211,8 +209,8 @@ void EventObject_Initialize(void) {
   struct FieldEffectWork *effectWork;
   void *renderState;
 
-  effectWork = *(void **)Ram_EffectWork;
-  renderState = *(void **)Ram_EventWork;
+  effectWork = *(void **)Ram_FieldEffectWork;
+  renderState = *(void **)Ram_FieldWork;
   caster = effectWork->mainObject;
   ability = (s16)effectWork->action;
   announcedAbility = ability;
@@ -222,11 +220,11 @@ void EventObject_Initialize(void) {
   caster->targetZ = caster->z.fixed;
   SET_VELOCITY(caster, 0, 0, 0);
   if (effectWork->visible != 0) {
-    AudioCommand_PlayFar(SE_212);
+    Sound_PlaySongFar(SE_212);
     caster->update = FieldEffect_FlickerObjectAndTick;
   }
   if (effectWork->active != 0) {
-    ObjectGroup_SetActionForOthers((struct ObjectRuntime *)caster, 1, 0);
+    ObjectGroup_SetActionForOthers((struct Object *)caster, 1, 0);
     UiWork_PushValueSlotFar(announcedAbility, 4);
     // The mode branches currently show the same message. Merging them shrinks
     // the native English function by 32 bytes, so keep this existing form.
@@ -237,7 +235,7 @@ void EventObject_Initialize(void) {
       UiText_ShowPositionedMessageAndWaitFar(MsgAbilityAnnounce,
                                              effectWork->messageMode);
     }
-    ObjectGroup_SetActionForOthers((struct ObjectRuntime *)caster, 0, 0x10);
+    ObjectGroup_SetActionForOthers((struct Object *)caster, 0, 0x10);
   }
   if (GameFlag_TestFar(0x140) != 0) {
     if (effectWork->visible != 0) {
@@ -264,8 +262,8 @@ void FieldEffect_FadeToEffectColor(void) {
   // and, unless Reveal is active, the BG half at 0x236. While Reveal lasts
   // the BG target is its grey (reveal.c), and the field's own colours saved
   // before it must stay. Then show the targets at once.
-  scene = *(gWorkSlot + HEAP_SLOT_EVENT);
-  work = *(gWorkSlot + HEAP_SLOT_PALETTE_BUFFER);
+  scene = *(gHeapSlots + HEAP_SLOT_FIELD);
+  work = *(gHeapSlots + HEAP_SLOT_PALETTE_FADE);
   Dma_Set(&work->target[0x2a0], scene + 0x776,
           (DMA_ENABLE | DMA_32BIT) << 16 | 0x150, REG_DMA3);
   if (((struct FieldWork *)scene)->revealActive == 0)
@@ -304,7 +302,7 @@ void FieldEffect_FadeFromEffectColor(void) {
   s32 savedPalettes;
   u8 *field;
 
-  field = (u8 *)gEventWork;
+  field = (u8 *)gFieldWork;
   savedPalettes = (s32)(field + 0x236);
   ColorBuffer_SetTarget(savedPalettes, 2);
   if (((struct FieldWork *)field)->revealActive != 0) {
@@ -320,13 +318,13 @@ void FieldEffect_FadeFromEffectColor(void) {
 /// projection.
 void Camera_WorldToScreen(struct EffectVector *position) {
 #ifdef UBFIX
-  struct FieldWork *event = (struct FieldWork *)gEventWork;
+  struct FieldWork *event = (struct FieldWork *)gFieldWork;
 
-  if (event->mode == MODE_WORLD_MAP) {
+  if (event->mode == OBJECT_SYSTEM_WORLD_MAP) {
 #else
-  struct FieldWork **eventCell = (struct FieldWork **)&gEventWork;
+  struct FieldWork **eventCell = (struct FieldWork **)&gFieldWork;
 
-  if ((*eventCell)->mode == MODE_WORLD_MAP) {
+  if ((*eventCell)->mode == OBJECT_SYSTEM_WORLD_MAP) {
 #endif
     s32 result[3];
 
@@ -338,7 +336,7 @@ void Camera_WorldToScreen(struct EffectVector *position) {
 #ifdef UBFIX
     struct MapGridScrollWork *state = gMapGridWork[0];
 #else
-    // The named map slot avoids stepping outside gEventWork. In forced native
+    // The named map slot avoids stepping outside gFieldWork. In forced native
     // EN it replaces the address copy/subtract with a separate literal load
     // and changes register allocation; the extent remains 0x68 bytes.
     struct MapGridScrollWork *state =

@@ -17,7 +17,7 @@
 /// it. An artifact bought takes its stock counter down, and the list is
 /// rebuilt. Repeats until B. Called by Shop_Run.
 s32 Shop_SelectBuy(void) {
-  struct ShopRuntime *shop = gMenuWork;
+  struct ShopWork *shop = gMenuWork;
   struct UiWindow *priceWindow = 0;
   struct UiWindow *stockWindow;
   struct UiWindow *messageWindow;
@@ -73,12 +73,12 @@ next_page:
     }
     if ((gKeysPressed & KEY_A) != 0) {
       selected = selectionIndex;
-      AudioCommand_PlayFar(SE_MENU_CONFIRM);
+      Sound_PlaySongFar(SE_MENU_CONFIRM);
       selectionResult = 0;
       break;
     }
     if ((gKeysPressed & KEY_B) != 0) {
-      AudioCommand_PlayFar(SE_MENU_CANCEL);
+      Sound_PlaySongFar(SE_MENU_CANCEL);
       selectionResult = -1;
       break;
     }
@@ -87,7 +87,7 @@ next_page:
       selectionIndex--;
       selectionIndex = (selectionIndex + stockCount) % stockCount;
       if (previousIndex != selectionIndex) {
-        AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
+        Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
         redraw = 1;
       }
     }
@@ -96,7 +96,7 @@ next_page:
       selectionIndex++;
       selectionIndex = (selectionIndex + stockCount) % stockCount;
       if (previousIndex != selectionIndex) {
-        AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
+        Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
         redraw = 1;
       }
     }
@@ -162,7 +162,7 @@ next_page:
       // coins are checked; a full bag and a full stack get different lines
       capacitySlot = Inventory_AddItemFar(unitId, shop->selectedItem);
       if (capacitySlot < 0) {
-        AudioCommand_PlayFar(SE_MENU_CANCEL);
+        Sound_PlaySongFar(SE_MENU_CANCEL);
         UiWork_PushValueSlotFar(unitId, MESSAGE_ARGUMENT_ACTOR);
         UiWork_PushValueSlotFar(shop->selectedItem, MESSAGE_ARGUMENT_ITEM);
         if (Inventory_CountFar(unitId) == INVENTORY_SLOTS)
@@ -173,7 +173,7 @@ next_page:
       }
       Inventory_RemoveFar(unitId, capacitySlot);
       if ((u32)selectedDefinition->price > gGameState.coins) {
-        AudioCommand_PlayFar(SE_MENU_CANCEL);
+        Sound_PlaySongFar(SE_MENU_CANCEL);
         UiMessage_ShowAndRestoreState(MsgBuyNotEnoughMoney);
         selectionResult = -1;
         break;
@@ -186,7 +186,7 @@ next_page:
           continue;
         }
       }
-      AudioCommand_PlayFar(SE_MENU_CONFIRM);
+      Sound_PlaySongFar(SE_MENU_CONFIRM);
       WaitFrames(1);
       quantity = Shop_SelectBuyCount(unitId, shop->selectedItem);
       repromptRecipient = 1;
@@ -198,17 +198,17 @@ next_page:
       break;
     }
     if ((gKeysPressed & KEY_B) != 0) {
-      AudioCommand_PlayFar(SE_MENU_CANCEL);
+      Sound_PlaySongFar(SE_MENU_CANCEL);
       selectionResult = -1;
       break;
     }
     if ((gKeysRepeat & KEY_LEFT) != 0) {
-      AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
+      Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
       selectionIndex--;
       redraw = 1;
     }
     if ((gKeysRepeat & KEY_RIGHT) != 0) {
-      AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
+      Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
       selectionIndex++;
       redraw = 1;
     }
@@ -243,7 +243,7 @@ close:
 /// cursor moves.
 void Shop_DrawStock(struct UiWindow *window, s32 selected) {
 
-  struct ShopRuntime *shop;
+  struct ShopWork *shop;
   s16 *itemIds;
   s16 *stockCursor;
   s32 itemCount;
@@ -307,7 +307,7 @@ void Shop_DrawStock(struct UiWindow *window, s32 selected) {
 /// Draws the party's coins in the coins window, in the edition's layout.
 /// Called when a counter opens and after each purchase, sale or repair.
 void Shop_DrawMoney(void) {
-  struct ShopRuntime *shop;
+  struct ShopWork *shop;
   struct UiWindow *window;
 
   shop = gMenuWork;
@@ -385,7 +385,7 @@ void Shop_DrawMessage(struct UiWindow *window, s32 message) {
 /// fifths of their size the members who cannot equip `itemId`. Called by
 /// every counter's member choice.
 void Shop_DrawParty(struct UiWindow *window, s32 selected, s32 itemId) {
-  struct ShopRuntime *shop = gMenuWork;
+  struct ShopWork *shop = gMenuWork;
   s32 memberIndex;
 
   if (window != 0) {
@@ -410,7 +410,7 @@ void Shop_DrawParty(struct UiWindow *window, s32 selected, s32 itemId) {
 /// the name of the item it would replace. Called by Shop_SelectBuy for
 /// weapons and armor.
 void Shop_DrawEquipComparison(struct UiWindow *window, s32 unitId, s32 itemId) {
-  struct ShopRuntime *shop = gMenuWork;
+  struct ShopWork *shop = gMenuWork;
   struct BattleUnit *unit = Unit_GetFar(unitId);
   struct ItemDefinition *item = Item_GetDirectFar(itemId);
   s32 replacedItemId = -1;
@@ -550,7 +550,7 @@ void Shop_DrawUnitItem(struct UiWindow *window, s32 unitId, s32 itemId) {
 /// Returns the count (1 for other items), or -1 when cancelled. Called by
 /// Shop_SelectBuy.
 s32 Shop_SelectBuyCount(s32 unitId, s32 itemId) {
-  struct ShopRuntime *shop;
+  struct ShopWork *shop;
   struct BattleUnit *unit;
   struct ItemDefinition *item;
   s32 carriedQuantity;
@@ -627,7 +627,7 @@ s32 Shop_SelectQuantity(s32 minimum, s32 maximum, s32 price) {
   s32 unitMessageBase;
 #endif
 
-  tileBuffer = Runtime_AllocateBlock(HEAP_SLOT_TILE_SCRATCH, 0x400);
+  tileBuffer = AllocHeapSlotEwram(HEAP_SLOT_TILE_SCRATCH, 0x400);
   redraw = 1;
   maximum -= minimum;
   selectedQuantity = -1;
@@ -645,22 +645,22 @@ s32 Shop_SelectQuantity(s32 minimum, s32 maximum, s32 price) {
       quantitySprite->oam.index += 4;
       for (;;) {
         if (gKeysPressed & KEY_A) {
-          AudioCommand_PlayFar(SE_MENU_CONFIRM);
+          Sound_PlaySongFar(SE_MENU_CONFIRM);
           selectedQuantity = quantityIndex + 1;
           break;
         }
         if (gKeysPressed & KEY_B) {
-          AudioCommand_PlayFar(SE_MENU_CANCEL);
+          Sound_PlaySongFar(SE_MENU_CANCEL);
           selectedQuantity = -1;
           break;
         }
         if (gKeysRepeat & KEY_LEFT) {
-          AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
+          Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
           redraw = 1;
           quantityIndex--;
         }
         if (gKeysRepeat & KEY_RIGHT) {
-          AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
+          Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
           redraw = 1;
           quantityIndex++;
         }
@@ -699,7 +699,7 @@ s32 Shop_SelectQuantity(s32 minimum, s32 maximum, s32 price) {
       UiWork_FinalizeFar(window, 2);
     }
   }
-  Runtime_ReleaseHeapBlock(HEAP_SLOT_TILE_SCRATCH);
+  FreeHeapSlot(HEAP_SLOT_TILE_SCRATCH);
   return selectedQuantity;
 }
 
@@ -720,7 +720,7 @@ void Shop_BuyDone(s32 unitId, s32 itemId, s32 quantity) {
   replacedSlot = Inventory_FindEquippedFar(unitId, item->type);
   // Keep each inventory addition, coin debit and shop-credit increment in
   // order.
-  AudioCommand_PlayFar(SE_SHOP_PURCHASE);
+  Sound_PlaySongFar(SE_SHOP_PURCHASE);
   if (lastAddedSlot < remainingQuantity) {
     do {
       lastAddedSlot = Inventory_AddItemFar(unitId, itemId);
@@ -741,7 +741,7 @@ void Shop_BuyDone(s32 unitId, s32 itemId, s32 quantity) {
 /// on Yes, redraws the grid and warns of a curse. Returns 1 when it was
 /// equipped. Called by Shop_BuyDone.
 s32 Shop_ConfirmEquip(s32 unitId, s32 slot) {
-  struct ShopRuntime *shop = gMenuWork;
+  struct ShopWork *shop = gMenuWork;
   struct BattleUnit *unit = Unit_GetFar(unitId);
   s32 itemId = unit->inventory[slot] & INVENTORY_ITEM_ID_MASK;
   struct ItemDefinition *item = Item_GetDirectFar(itemId);
@@ -774,7 +774,7 @@ s32 Shop_ConfirmEquip(s32 unitId, s32 slot) {
     Shop_DrawUnitGrid(itemWindow, unitId);
 
   if (item->flags & ITEM_CURSED) {
-    AudioCommand_PlayFar(SE_103);
+    Sound_PlaySongFar(SE_103);
     UiWork_FinalizePendingCoreFar();
     UiText_OpenMessageWindowFar(MsgBecameCursed, 8, 4, 2);
     while (UiWork_IsCompleteFar() == 0) {

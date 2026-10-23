@@ -42,24 +42,24 @@
 //--------------------------------------------------------------------------
 
 /// The sparks of the jackpot, kept in the map cell buffer.
-#define REEL_SPARKS ((struct EffectStep *)Ram_MapGridCellBuffer)
+#define LUCKY_WHEELS_SPARKS ((struct EffectStep *)Ram_MapGridCellBuffer)
 
-/// The slot machine's own work block (struct ReelWork), beside the battle
-/// effect blocks it borrows.
-#define REEL_HEAP_SLOT 45
+/// The slot machine's own work block (struct LuckyWheelsWork), beside the
+/// battle effect blocks it borrows.
+#define LUCKY_WHEELS_HEAP_SLOT 45
 
 /// The paylines' canvas: 256 x 128 pixels of 8-bit colour, shown on BG2 from
 /// its tile 212, where the third row of its map begins.
-#define REEL_CANVAS_SIZE (256 * 128)
-#define REEL_CANVAS_TILES (BG_CHAR_BLOCK(0) + 0x3500)
+#define LUCKY_WHEELS_CANVAS_SIZE (256 * 128)
+#define LUCKY_WHEELS_CANVAS_TILES (BG_CHAR_BLOCK(0) + 0x3500)
 
 /// Plays the slot machine: blanks the screen, seeds the random numbers with the
 /// play time and runs the game. Returns 0.
-s32 ReelGame_Start(void) {
+s32 LuckyWheels_Start(void) {
   REG_DISPCNT = DISPCNT_OBJ_1D_MAP;
   gRandomSeed = gGameState.playTime;
-  AudioCommand_PlayFar(MUS_009);
-  ReelGame_Run();
+  Sound_PlaySongFar(MUS_009);
+  LuckyWheels_Run();
   return 0;
 }
 
@@ -101,30 +101,31 @@ s32 Graphics_ScaleRgb555(u16 *src, u16 *dst, s32 scale, s32 count) {
 }
 
 /// A scheduler callback: on a frame whose canvas is ready (transferPending),
-/// sends the canvas to its tiles in VRAM (REEL_CANVAS_TILES), then clears it
-/// or fades it into trails as transferMode says.
-void ReelGame_TransferCanvas(void) {
+/// sends the canvas to its tiles in VRAM (LUCKY_WHEELS_CANVAS_TILES), then
+/// clears it or fades it into trails as transferMode says.
+void LuckyWheels_TransferCanvas(void) {
   struct BattleEffectWork *work;
   u8 *buf;
 
-  work = gBattleEffectWork[0];
+  work = gBattleAnimWork[0];
   if (work->transferPending == 1) {
-    buf = gBattleEffectWork[1];
+    buf = gBattleAnimWork[1];
     switch (work->transferMode) {
     case 1:
       // Then fill the canvas with transferValue.
-      Dma_Set(buf, (void *)REEL_CANVAS_TILES,
-              (DMA_ENABLE | DMA_32BIT) << 16 | REEL_CANVAS_SIZE / 4, REG_DMA3);
-      Iwram_FillWords(buf, REEL_CANVAS_SIZE, work->transferValue);
+      Dma_Set(buf, (void *)LUCKY_WHEELS_CANVAS_TILES,
+              (DMA_ENABLE | DMA_32BIT) << 16 | LUCKY_WHEELS_CANVAS_SIZE / 4,
+              REG_DMA3);
+      Iwram_FillWords(buf, LUCKY_WHEELS_CANVAS_SIZE, work->transferValue);
       break;
     case 2:
       // Trails: fade nonzero colour numbers to 1/2 or 3/4.
       if (work->transferValue == 50)
-        ColorBuffer_BackupAndHalveNonzero(buf, REEL_CANVAS_TILES,
-                                          REEL_CANVAS_SIZE);
+        ColorBuffer_BackupAndHalveNonzero(buf, LUCKY_WHEELS_CANVAS_TILES,
+                                          LUCKY_WHEELS_CANVAS_SIZE);
       else
-        ColorBuffer_BackupAndScaleNonzeroThreeQuarters(buf, REEL_CANVAS_TILES,
-                                                       REEL_CANVAS_SIZE);
+        ColorBuffer_BackupAndScaleNonzeroThreeQuarters(
+            buf, LUCKY_WHEELS_CANVAS_TILES, LUCKY_WHEELS_CANVAS_SIZE);
       break;
     }
     work->transferPending = 0;
@@ -214,11 +215,11 @@ void Palette_StepTowardResource(s32 resource) {
 
 /// Draws a line from (x0, y0) to (x1, y1) on the 256 x 128 8bpp canvas (32
 /// tiles across), writing only over lower colour numbers.
-void ReelGame_DrawCanvasLine(s32 x0, s32 y0, s32 x1, s32 y1, s32 color) {
+void LuckyWheels_DrawCanvasLine(s32 x0, s32 y0, s32 x1, s32 y1, s32 color) {
   s32 dx = x1 - x0;
   s32 dy = y1 - y0;
   s32 frac = 0x80; // 0.5 in 8-bit fixed point
-  u8 *canvas = ((u8 **)gBattleEffectWork)[1];
+  u8 *canvas = ((u8 **)gBattleAnimWork)[1];
   s32 step;
   s32 i;
   s32 x;
@@ -297,21 +298,22 @@ struct Reel {
 
 struct UiWindow;
 
-/// The slot machine's states (ReelWork.state).
-enum ReelGameState {
-  REEL_BETTING = 0,        ///< Up and Down change the bet, A spins, B leaves
-  REEL_SPINNING = 1,       ///< the reels spin until R or time stops each
-  REEL_WON = 2,            ///< a payline won: a pause
-  REEL_SHOWING_WIN = 3,    ///< the win is shown until A
-  REEL_CHOOSING_HOLDS = 5, ///< choose reels to hold, or pull the lever
-  REEL_DONE = 10,          ///< the game ends
-  REEL_NO_WIN = 11,        ///< no payline won: A to choose holds
-  REEL_OUT_OF_SPINS = 20,  ///< the fourth spin lost: a pause, then the end
+/// The slot machine's states (LuckyWheelsWork.state).
+enum LuckyWheelsState {
+  LUCKY_WHEELS_BETTING = 0,  ///< Up and Down change the bet, A spins, B leaves
+  LUCKY_WHEELS_SPINNING = 1, ///< the reels spin until R or time stops each
+  LUCKY_WHEELS_WON = 2,      ///< a payline won: a pause
+  LUCKY_WHEELS_SHOWING_WIN = 3,    ///< the win is shown until A
+  LUCKY_WHEELS_CHOOSING_HOLDS = 5, ///< choose reels to hold, or pull the lever
+  LUCKY_WHEELS_DONE = 10,          ///< the game ends
+  LUCKY_WHEELS_NO_WIN = 11,        ///< no payline won: A to choose holds
+  LUCKY_WHEELS_OUT_OF_SPINS =
+      20, ///< the fourth spin lost: a pause, then the end
 };
 
 /// The slot machine's work in heap slot 45: its reels, state, bet and spins,
 /// keys, timer, winning lines, sprites and windows.
-struct ReelWork {
+struct LuckyWheelsWork {
   struct Reel reels[5];
   s32 state;
   s32 cursor;
@@ -335,7 +337,8 @@ struct ReelWork {
 };
 
 /// gGameState seen from +12, the base the bytes load: wonPrizes is
-/// gGameState.wonPrizes (through the field itself ReelGame_RunFrame differs 12)
+/// gGameState.wonPrizes (through the field itself LuckyWheels_RunFrame differs
+/// 12)
 struct ReelSave {
   u8 beforeWonPrizes[0x120]; ///< gGameState from summonMask to wonPrizes
   s8 wonPrizes[16];
@@ -348,11 +351,11 @@ struct ReelSave {
 /// reels to hold, showing a win) and builds all 128 sprites: the cursor, the
 /// title letters of a win, the frame, the hold lamps, the spin counter, the
 /// paylines, the reel symbols, the lever and the bottom bar.
-void ReelGame_RunFrame(void) {
+void LuckyWheels_RunFrame(void) {
   /* FAKEMATCH(volatile): struct OamShadow's volatile words (oambuf.h) keep
    * each list loop's offset givs; as plain u32 words, 1242 of 1729
    * instructions differ in tbs-en. */
-  struct ReelWork *work;
+  struct LuckyWheelsWork *work;
   struct BattleEffectWork *fx;
   volatile u16 *dma;
   s32 sprite;
@@ -370,9 +373,9 @@ void ReelGame_RunFrame(void) {
   s32 k;
   s32 i;
 
-  work = ((struct ReelWork **)
-              gBattleEffectWork)[REEL_HEAP_SLOT - HEAP_SLOT_BATTLE_EFFECT];
-  fx = gBattleEffectWork[0];
+  work = ((struct LuckyWheelsWork **)
+              gBattleAnimWork)[LUCKY_WHEELS_HEAP_SLOT - HEAP_SLOT_BATTLE_ANIM];
+  fx = gBattleAnimWork[0];
   sprite = 0;
   objMode = 0x400;
 
@@ -405,47 +408,48 @@ void ReelGame_RunFrame(void) {
   work->keys = keys;
 
   if (gDebugPaused == 0) {
-    if (work->state == REEL_BETTING) {
+    if (work->state == LUCKY_WHEELS_BETTING) {
       tickets = PartyInventory_CountItemFar(ITEM_GAME_TICKET);
-      UiText_DrawNumberInWindowFar(tickets - work->bet, REEL_COIN_DIGITS,
-                                   work->subWindow, REEL_COIN_X, 0);
+      UiText_DrawNumberInWindowFar(tickets - work->bet,
+                                   LUCKY_WHEELS_COIN_DIGITS, work->subWindow,
+                                   LUCKY_WHEELS_COIN_X, 0);
       UiText_DrawNumberInWindowFar(work->bet, 2, work->subWindow, 64, 8);
       if (work->pressed & KEY_B) {
         struct ReelSave *save = (struct ReelSave *)((u8 *)&gGameState + 12);
 
-        work->state = REEL_DONE;
+        work->state = LUCKY_WHEELS_DONE;
         save->wonPrizes[0] = -2;
         UiWork_FinalizeFar(work->window, 1);
       } else {
         if (work->pressed & KEY_UP) {
           if (work->bet <= 3 && tickets > work->bet) {
             work->bet++;
-            AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
+            Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
           } else {
-            AudioCommand_PlayFar(SE_MENU_CANCEL);
+            Sound_PlaySongFar(SE_MENU_CANCEL);
           }
         }
         if (work->pressed & KEY_DOWN) {
           if (work->bet > 1) {
             work->bet--;
-            AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
+            Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
           } else {
-            AudioCommand_PlayFar(SE_MENU_CANCEL);
+            Sound_PlaySongFar(SE_MENU_CANCEL);
           }
         }
         REG_BLDCNT = BLDCNT_TGT1_OBJ | BLDCNT_EFFECT_DARKEN | BLDCNT_TGT2_ALL;
         REG_BLDALPHA = BLEND_ALPHA(16, 0);
         if (work->pressed & KEY_A) {
-          work->state = REEL_SPINNING;
+          work->state = LUCKY_WHEELS_SPINNING;
           fx->frame = 0;
           UiWork_FinalizeFar(work->window, 1);
           for (k = 0; k != work->bet; k++)
             PartyInventory_RemoveFar(ITEM_GAME_TICKET);
           UiWork_FinalizeFar(work->subWindow, 1);
-          AudioCommand_PlayFar(SE_LUCKY_WHEELS_SPIN);
+          Sound_PlaySongFar(SE_LUCKY_WHEELS_SPIN);
         }
       }
-    } else if (work->state == REEL_CHOOSING_HOLDS) {
+    } else if (work->state == LUCKY_WHEELS_CHOOSING_HOLDS) {
       allHeld = 0;
       work->timer++;
       for (k = 0; k != 5 && work->reels[k].held != 0; k++)
@@ -458,43 +462,44 @@ void ReelGame_RunFrame(void) {
         if (work->spins == 4) {
           work->spins = 0;
           work->cursor = 0;
-          work->state = REEL_BETTING;
+          work->state = LUCKY_WHEELS_BETTING;
           for (i = 0; i != 5; i++) {
             work->reels[i].held = 0;
             work->reels[i].stop = -1;
           }
         } else if (work->cursor <= 4) {
-          AudioCommand_PlayFar(SE_LUCKY_WHEELS_HOLD);
+          Sound_PlaySongFar(SE_LUCKY_WHEELS_HOLD);
           work->reels[work->cursor].held ^= 1;
         } else if (allHeld == 0) {
-          AudioCommand_PlayFar(SE_LUCKY_WHEELS_SPIN);
-          work->state = REEL_SPINNING;
+          Sound_PlaySongFar(SE_LUCKY_WHEELS_SPIN);
+          work->state = LUCKY_WHEELS_SPINNING;
           work->cursor = 0;
           for (i = 0; i != 5; i++)
             work->reels[i].stop = -1;
           work->spins++;
         } else {
-          AudioCommand_PlayFar(SE_MENU_CANCEL);
+          Sound_PlaySongFar(SE_MENU_CANCEL);
         }
       } else {
         if (work->direction & KEY_RIGHT) {
           work->cursor = (work->cursor + 1) % 6;
-          AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
+          Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
         }
         if (work->direction & KEY_LEFT) {
           work->cursor = (work->cursor + 5) % 6;
-          AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
+          Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
         }
       }
 
-      if (work->state == REEL_CHOOSING_HOLDS) {
+      if (work->state == LUCKY_WHEELS_CHOOSING_HOLDS) {
 #if TBS_PATCH_1
         if (work->cursor == 5) {
           if (allHeld != 0) {
             if (work->phase != 1 && work->phase != 2) {
               UiWork_FinalizeFar(work->window, 1);
-              work->window = UiWindow_CreateFar(REEL_ALL_HELD_X, 0,
-                                                REEL_ALL_HELD_WIDTH, 4, 6);
+              work->window =
+                  UiWindow_CreateFar(LUCKY_WHEELS_ALL_HELD_X, 0,
+                                     LUCKY_WHEELS_ALL_HELD_WIDTH, 4, 6);
               UiText_DrawCharacterAtOffsetFar(MsgSlotsAllHeld, work->window, 0,
                                               0);
               work->phase = 1;
@@ -506,8 +511,8 @@ void ReelGame_RunFrame(void) {
           } else {
             if (work->phase != 3) {
               UiWork_FinalizeFar(work->window, 1);
-              work->window =
-                  UiWindow_CreateFar(REEL_START_X, 0, REEL_START_WIDTH, 3, 6);
+              work->window = UiWindow_CreateFar(LUCKY_WHEELS_START_X, 0,
+                                                LUCKY_WHEELS_START_WIDTH, 3, 6);
               UiText_DrawCharacterAtOffsetFar(MsgSlotsStart, work->window, 0,
                                               0);
             }
@@ -516,16 +521,16 @@ void ReelGame_RunFrame(void) {
         } else if (work->reels[work->cursor].held == 0) {
           if (work->phase != 4) {
             UiWork_FinalizeFar(work->window, 1);
-            work->window =
-                UiWindow_CreateFar(REEL_HOLD_X, 0, REEL_HOLD_WIDTH, 3, 6);
+            work->window = UiWindow_CreateFar(LUCKY_WHEELS_HOLD_X, 0,
+                                              LUCKY_WHEELS_HOLD_WIDTH, 3, 6);
             UiText_DrawCharacterAtOffsetFar(MsgSlotsHold, work->window, 0, 0);
           }
           work->phase = 4;
         } else {
           if (work->phase != 5) {
             UiWork_FinalizeFar(work->window, 1);
-            work->window =
-                UiWindow_CreateFar(REEL_RELEASE_X, 0, REEL_RELEASE_WIDTH, 3, 6);
+            work->window = UiWindow_CreateFar(LUCKY_WHEELS_RELEASE_X, 0,
+                                              LUCKY_WHEELS_RELEASE_WIDTH, 3, 6);
             UiText_DrawCharacterAtOffsetFar(MsgSlotsRelease, work->window, 0,
                                             0);
           }
@@ -554,26 +559,26 @@ void ReelGame_RunFrame(void) {
       } else {
         UiWork_FinalizeFar(work->window, 1);
       }
-    } else if (work->state == REEL_WON) {
+    } else if (work->state == LUCKY_WHEELS_WON) {
       work->timer++;
       objMode = 0;
       if (work->timer == 60) {
-        work->state = REEL_SHOWING_WIN;
-        AudioCommand_PlayFar(MUS_FANFARE_LARGE);
+        work->state = LUCKY_WHEELS_SHOWING_WIN;
+        Sound_PlaySongFar(MUS_FANFARE_LARGE);
         work->timer = 0;
         REG_BLDCNT = BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
         REG_BLDALPHA = BLEND_ALPHA(16, 16);
         fx->transferMode = CANVAS_COPY_AND_FADE;
         fx->transferValue = 75;
       }
-    } else if (work->state == REEL_SHOWING_WIN) {
+    } else if (work->state == LUCKY_WHEELS_SHOWING_WIN) {
       work->timer++;
       objMode = 0;
       if (work->pressed & KEY_A) {
-        work->state = REEL_DONE;
-        AudioCommand_PlayFar(SE_MENU_CONFIRM);
+        work->state = LUCKY_WHEELS_DONE;
+        Sound_PlaySongFar(SE_MENU_CONFIRM);
       }
-    } else if (work->state == REEL_NO_WIN) {
+    } else if (work->state == LUCKY_WHEELS_NO_WIN) {
 #if TBS_PATCH_1
       if (work->phase == 0) {
         work->phase = 1;
@@ -581,32 +586,32 @@ void ReelGame_RunFrame(void) {
       }
 #endif
       if (work->pressed & KEY_A) {
-        work->state = REEL_CHOOSING_HOLDS;
+        work->state = LUCKY_WHEELS_CHOOSING_HOLDS;
 #if TBS_PATCH_1
         work->phase = 0;
 #endif
-        AudioCommand_PlayFar(SE_MENU_CONFIRM);
+        Sound_PlaySongFar(SE_MENU_CONFIRM);
         UiWork_FinalizeFar(work->window, 1);
       }
-    } else if (work->state == REEL_OUT_OF_SPINS) {
+    } else if (work->state == LUCKY_WHEELS_OUT_OF_SPINS) {
       work->timer++;
       if (work->timer == 45)
-        work->state = REEL_DONE;
-    } else if (work->state != REEL_DONE) {
+        work->state = LUCKY_WHEELS_DONE;
+    } else if (work->state != LUCKY_WHEELS_DONE) {
       if (work->timer == 4) {
-        work->window =
-            UiWindow_CreateFar(REEL_STOP_X, 17, REEL_STOP_WIDTH, 3, 6);
+        work->window = UiWindow_CreateFar(LUCKY_WHEELS_STOP_X, 17,
+                                          LUCKY_WHEELS_STOP_WIDTH, 3, 6);
         UiText_DrawCharacterAtOffsetFar(MsgSlotsStopReels, work->window, 0, 0);
       }
       if (work->timer == 16)
-        AudioCommand_PlayFar(SE_306);
+        Sound_PlaySongFar(SE_306);
       if (work->timer > 56) {
         if (fx->frame > 31 || (work->pressed & KEY_R)) {
           fx->frame = 0;
           for (i = 0; i != 5; i++) {
             if (work->reels[i].held == 0 && work->reels[i].stop == -1) {
               work->reels[i].stop = (Random16() & 3) + 4;
-              AudioCommand_PlayFar(SE_LUCKY_WHEELS_STOP);
+              Sound_PlaySongFar(SE_LUCKY_WHEELS_STOP);
               break;
             }
           }
@@ -663,7 +668,7 @@ void ReelGame_RunFrame(void) {
             }
             if (mixed == 0) {
               work->winningLines[col] = 1;
-              save->wonPrizes[hits] = gReelGame_SymbolPrizes[found];
+              save->wonPrizes[hits] = gLuckyWheels_SymbolPrizes[found];
               hits++;
             }
           }
@@ -671,18 +676,18 @@ void ReelGame_RunFrame(void) {
         work->timer = 0;
         if (hits != 0) {
           save->wonPrizes[hits] = -1;
-          work->state = REEL_WON;
-          AudioCommand_PlayFar(SE_THUNDER);
+          work->state = LUCKY_WHEELS_WON;
+          Sound_PlaySongFar(SE_THUNDER);
           fx->transferMode = CANVAS_COPY_AND_CLEAR;
           fx->transferValue = 0;
           REG_BLDCNT = 0;
           UiWork_FinalizeFar(work->window, 1);
         } else {
-          work->state = REEL_NO_WIN;
+          work->state = LUCKY_WHEELS_NO_WIN;
 #if TBS_PATCH_1
           work->phase = 0;
           UiWork_FinalizeFar(work->window, 1);
-#if REEL_HINT_BEFORE_LAST_SPIN
+#if LUCKY_WHEELS_HINT_BEFORE_LAST_SPIN
           if (work->spins <= 3)
 #endif
           {
@@ -707,9 +712,9 @@ void ReelGame_RunFrame(void) {
             s32 message;
 
             if (left > 0)
-              work->state = REEL_OUT_OF_SPINS;
+              work->state = LUCKY_WHEELS_OUT_OF_SPINS;
             else
-              work->state = REEL_OUT_OF_SPINS;
+              work->state = LUCKY_WHEELS_OUT_OF_SPINS;
             if (work->bet > left)
               work->bet = left;
             work->spins = 0;
@@ -730,7 +735,7 @@ void ReelGame_RunFrame(void) {
         }
       }
 
-      if (work->state == REEL_SPINNING) {
+      if (work->state == LUCKY_WHEELS_SPINNING) {
         for (i = 0; i != 5; i++) {
           struct Reel *reel = &work->reels[i];
 
@@ -749,7 +754,7 @@ void ReelGame_RunFrame(void) {
     }
   }
 
-  if (work->state == REEL_CHOOSING_HOLDS) {
+  if (work->state == LUCKY_WHEELS_CHOOSING_HOLDS) {
     x = work->cursor * 36 + 36;
     y = 128;
     v = 0;
@@ -772,8 +777,8 @@ void ReelGame_RunFrame(void) {
     sprite++;
   }
 
-  if (work->state == REEL_SHOWING_WIN) {
-    for (i = 0; i != REEL_TITLE_LETTERS; i++) {
+  if (work->state == LUCKY_WHEELS_SHOWING_WIN) {
+    for (i = 0; i != LUCKY_WHEELS_TITLE_LETTERS; i++) {
       struct EffectStep *p = &fx->particles[i];
 
 #if (LANGUAGE == LANGUAGE_SPANISH)
@@ -787,7 +792,8 @@ void ReelGame_RunFrame(void) {
                                    ((*(s16 *)((u8 *)&p->y + 2) + 256) & 255) |
                                    0x80000000;
       work->oam[sprite].attr2 =
-          ((gReelGame_TitleLetterTiles[i] << 4) + REEL_TITLE_TILES) | 0xf000;
+          ((gLuckyWheels_TitleLetterTiles[i] << 4) + LUCKY_WHEELS_TITLE_TILES) |
+          0xf000;
       p->y += p->velocityY;
       p->velocityY += 0x4000;
       if (work->timer % 256 == i * 4 + 200) {
@@ -805,8 +811,8 @@ void ReelGame_RunFrame(void) {
   }
 
   for (k = 0; k != 14; k++) {
-    work->oam[sprite].attr01 = (gReelGame_FrameSpriteX[k] << 16) | objMode |
-                               gReelGame_FrameSpriteY[k] | 0x80006000;
+    work->oam[sprite].attr01 = (gLuckyWheels_FrameSpriteX[k] << 16) | objMode |
+                               gLuckyWheels_FrameSpriteY[k] | 0x80006000;
     if (k <= 3)
       work->oam[sprite].attr2 = 0x4e0;
     else
@@ -857,7 +863,7 @@ void ReelGame_RunFrame(void) {
   }
 
   lever = 40;
-  if (work->state == REEL_SPINNING) {
+  if (work->state == LUCKY_WHEELS_SPINNING) {
     if (work->timer <= 47)
       lever = ((Trig_Sin(work->timer * 682) << 6) >> 16) + 40;
     else if (work->timer <= 55)
@@ -894,8 +900,8 @@ void ReelGame_RunFrame(void) {
 
 /// Sets up the bouncing title letters of a win, the brightness wave of the
 /// screen's lines and the betting window, and starts at betting.
-void ReelGame_InitializeTitle(void) {
-  struct ReelWork *state;
+void LuckyWheels_InitializeTitle(void) {
+  struct LuckyWheelsWork *state;
   struct BattleEffectWork *work;
   struct EffectStep *letter;
   const u8 *width;
@@ -907,18 +913,18 @@ void ReelGame_InitializeTitle(void) {
   struct UiWindow *window;
   s32 message;
 
-  state = ((struct ReelWork **)
-               gBattleEffectWork)[REEL_HEAP_SLOT - HEAP_SLOT_BATTLE_EFFECT];
-  work = gBattleEffectWork[0];
+  state = ((struct LuckyWheelsWork **)
+               gBattleAnimWork)[LUCKY_WHEELS_HEAP_SLOT - HEAP_SLOT_BATTLE_ANIM];
+  work = gBattleAnimWork[0];
   left = 0;
   for (i = 0; i != 0x800; i++)
-    REEL_SPARKS[i].variant = 0;
+    LUCKY_WHEELS_SPARKS[i].variant = 0;
 
   letter = work->particles;
   y = -0x200000;
-  width = gReelGame_TitleLetterWidths;
-  for (i = 0; i != REEL_TITLE_LETTERS; i++) {
-    letter[i].x = (left + REEL_TITLE_X) << 16;
+  width = gLuckyWheels_TitleLetterWidths;
+  for (i = 0; i != LUCKY_WHEELS_TITLE_LETTERS; i++) {
+    letter[i].x = (left + LUCKY_WHEELS_TITLE_X) << 16;
     step = *width;
     width++;
     left += step;
@@ -938,7 +944,7 @@ void ReelGame_InitializeTitle(void) {
   }
 
   state->spins = 0;
-  state->state = REEL_BETTING;
+  state->state = LUCKY_WHEELS_BETTING;
   state->cursor = 0;
   work->transferMode = CANVAS_COPY_AND_CLEAR;
   work->transferValue = 0;
@@ -955,14 +961,14 @@ void ReelGame_InitializeTitle(void) {
 /// to 5), then runs until the player leaves: fading in, drawing the paylines
 /// on the canvas while betting or winning, and the jackpot's sparks and
 /// colour cycle while showing a win. Then fades out and frees its memory.
-void ReelGame_Run(void) {
+void LuckyWheels_Run(void) {
   s32 picks[8];
   s32 litLines[7];
   DrawRectangle draw[2];
   u8 *sheet;
   void *canvas;
   struct BattleEffectWork *work;
-  struct ReelWork *state;
+  struct LuckyWheelsWork *state;
   struct ReelSave *save;
   u8 *entry;
   u8 *tiles;
@@ -972,18 +978,19 @@ void ReelGame_Run(void) {
   s32 j;
   s32 k;
 
-  sheet = Runtime_AllocateHeapBlock(HEAP_SLOT_BATTLE_SHEET, 0x60e);
-  canvas = Runtime_AllocateHeapBlock(HEAP_SLOT_BATTLE_CANVAS, REEL_CANVAS_SIZE);
-  work = Runtime_AllocateBlock(HEAP_SLOT_BATTLE_EFFECT,
-                               sizeof(struct BattleEffectWork));
-  state = Runtime_AllocateBlock(REEL_HEAP_SLOT, sizeof(struct ReelWork));
+  sheet = AllocHeapSlot(HEAP_SLOT_BATTLE_SHEET, 0x60e);
+  canvas = AllocHeapSlot(HEAP_SLOT_BATTLE_CANVAS, LUCKY_WHEELS_CANVAS_SIZE);
+  work = AllocHeapSlotEwram(HEAP_SLOT_BATTLE_ANIM,
+                            sizeof(struct BattleEffectWork));
+  state = AllocHeapSlotEwram(LUCKY_WHEELS_HEAP_SLOT,
+                             sizeof(struct LuckyWheelsWork));
   tiles = Ram_MapGridCellBuffer;
   save = (struct ReelSave *)((u8 *)&gGameState + 12);
   RuntimeDispatch_NoOpHook((s32)&ResourceId_EffectFarCalls);
   save->wonPrizes[0] = -1;
   state->repeat = 0;
   state->bet = 1;
-  Scheduler_ResetTaskTable();
+  Task_ResetAll();
   gOamCopyEnabled = 0;
 
   count = 0;
@@ -1000,13 +1007,13 @@ void ReelGame_Run(void) {
       }
     }
   }
-  Resource_DecodeType01(
-      Resource_GetTableEntry((s32)&ResourceId_ParticleSpritesD), sheet);
-  entry = Resource_GetTableEntry((s32)&ResourceId_SlotsFramePicture);
+  Decompress_Type01(Resource_GetTableEntry((s32)&ResourceId_ParticleSpritesD),
+                    sheet);
+  entry = Resource_GetTableEntry((s32)&ResourceId_LuckyWheelsFramePicture);
   Dma_Set(entry, (void *)&BG_PLTT_COLOR(10, 0),
           (DMA_ENABLE | DMA_32BIT) << 16 | 8, REG_DMA3);
   entry += 32;
-  Resource_DecodeType01(entry, tiles);
+  Decompress_Type01(entry, tiles);
   j = 0;
   for (k = 0; k != 20; k++) {
     for (i = 0; i != 30; i++) {
@@ -1057,9 +1064,9 @@ void ReelGame_Run(void) {
 
   {
     u16 *shade = (u16 *)(work->sheet + 0x200);
-    s32 size = REEL_CANVAS_SIZE;
+    s32 size = LUCKY_WHEELS_CANVAS_SIZE;
 
-    state->state = REEL_BETTING;
+    state->state = LUCKY_WHEELS_BETTING;
     state->cursor = 0;
     state->spins = 0;
     work->frame = 0;
@@ -1069,21 +1076,22 @@ void ReelGame_Run(void) {
     // The paylines' two greens, colours 64 and 65 on the canvas.
     BG_PLTT_COLOR(4, 0) = RGB(11, 28, 11);
     BG_PLTT_COLOR(4, 1) = RGB(22, 31, 22);
-    entry = Resource_GetTableEntry((s32)&ResourceId_SlotsIcons);
+    entry = Resource_GetTableEntry((s32)&ResourceId_LuckyWheelsIcons);
     Dma_Set(entry, (void *)OBJ_PLTT, (DMA_ENABLE | DMA_32BIT) << 16 | 480 / 4,
             REG_DMA3);
     entry += 480;
-    Resource_DecodeType01(entry, tiles);
+    Decompress_Type01(entry, tiles);
     Dma_Set(tiles, (void *)OBJ_VRAM0, (DMA_ENABLE | DMA_32BIT) << 16 | 0x1b30,
             REG_DMA3);
-    entry = Resource_GetTableEntry((s32)&ResourceId_SlotsJackpot);
+    entry = Resource_GetTableEntry((s32)&ResourceId_LuckyWheelsJackpot);
     Dma_Set(entry, (void *)&OBJ_PLTT_COLOR(15, 0),
             (DMA_ENABLE | DMA_32BIT) << 16 | 8, REG_DMA3);
     entry += 32;
-    Resource_DecodeType01(entry, tiles);
-    Dma_Set(tiles, (void *)REEL_JACKPOT_TILES, REEL_JACKPOT_COPY, REG_DMA3);
+    Decompress_Type01(entry, tiles);
+    Dma_Set(tiles, (void *)LUCKY_WHEELS_JACKPOT_TILES,
+            LUCKY_WHEELS_JACKPOT_COPY, REG_DMA3);
     UiWork_InitializeWithResourceCountersFar();
-    ReelGame_InitializeTitle();
+    LuckyWheels_InitializeTitle();
 
     for (i = 0; i != 5; i++) {
       struct Reel *reel = &state->reels[i];
@@ -1115,13 +1123,14 @@ void ReelGame_Run(void) {
       }
     }
 
-    BattleEffect_BuildBlitterFar(HEAP_SLOT_BLITTER, 8, 7, 3, 2);
-    draw[0] = gWorkSlot[HEAP_SLOT_BLITTER];
-    BattleEffect_BuildBlitterFar(HEAP_SLOT_BLITTER_ALTERNATE, 8, 7, 3, 3);
-    draw[1] = gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE];
+    BattleEffect_BuildBlitterFar(HEAP_SLOT_RAM_CODE, 8, 7, 3, 2);
+    draw[0] = gHeapSlots[HEAP_SLOT_RAM_CODE];
+    BattleEffect_BuildBlitterFar(HEAP_SLOT_RAM_CODE_2, 8, 7, 3, 3);
+    draw[1] = gHeapSlots[HEAP_SLOT_RAM_CODE_2];
     Iwram_FillWords(canvas, size, 0);
-    Dma_Set(canvas, (void *)REEL_CANVAS_TILES,
-            (DMA_ENABLE | DMA_32BIT) << 16 | REEL_CANVAS_SIZE / 4, REG_DMA3);
+    Dma_Set(canvas, (void *)LUCKY_WHEELS_CANVAS_TILES,
+            (DMA_ENABLE | DMA_32BIT) << 16 | LUCKY_WHEELS_CANVAS_SIZE / 4,
+            REG_DMA3);
     Dma_Set((void *)BG_PLTT, work, (DMA_ENABLE | DMA_32BIT) << 16 | 0x80,
             REG_DMA3);
     Dma_Set((void *)OBJ_PLTT, shade, (DMA_ENABLE | DMA_32BIT) << 16 | 0x80,
@@ -1137,7 +1146,7 @@ void ReelGame_Run(void) {
       UiText_DrawCharacterAtOffsetFar(MsgSlotsControls, window, 0, 0);
     } else {
       struct UiWindow *window = UiWindow_CreateFar(
-          REEL_HELP_WINDOW_X, 16, REEL_HELP_WINDOW_WIDTH, 4, 6);
+          LUCKY_WHEELS_HELP_WINDOW_X, 16, LUCKY_WHEELS_HELP_WINDOW_WIDTH, 4, 6);
       s32 message;
 
       state->window = window;
@@ -1146,15 +1155,15 @@ void ReelGame_Run(void) {
       UiText_DrawCharacterAtOffsetFar(message + 1, state->window, 0, 8);
     }
     work->transferPending = 0;
-    Scheduler_AddOrUpdateCallback(ReelGame_RunFrame, 0x480);
-    Scheduler_AddOrUpdateCallback(ReelGame_TransferCanvas, 0x480);
+    Task_Add(LuckyWheels_RunFrame, 0x480);
+    Task_Add(LuckyWheels_TransferCanvas, 0x480);
 
-    for (frame = 0; state->state != REEL_DONE; frame++) {
+    for (frame = 0; state->state != LUCKY_WHEELS_DONE; frame++) {
       if (frame <= 16) {
         Graphics_ScaleRgb555(shade, (u16 *)OBJ_PLTT, frame << 12, 0x100);
         Graphics_ScaleRgb555((u16 *)work, (u16 *)BG_PLTT, frame << 12, 0x100);
       }
-      if (state->state == REEL_SHOWING_WIN) {
+      if (state->state == LUCKY_WHEELS_SHOWING_WIN) {
         s32 phase = frame % 80;
 
         if (phase <= 15)
@@ -1172,7 +1181,8 @@ void ReelGame_Run(void) {
         if (state->timer > 16 && (frame & 7) == 0) {
           s32 x = (Random16() & 127) + 56;
           s32 y = (Random16() & 31) + 48;
-          struct EffectStep *spark = &REEL_SPARKS[(frame / 8 & 3) * 256];
+          struct EffectStep *spark =
+              &LUCKY_WHEELS_SPARKS[(frame / 8 & 3) * 256];
 
           for (j = 0; j != 256; j++) {
             s32 speed;
@@ -1190,7 +1200,7 @@ void ReelGame_Run(void) {
           }
         }
         for (j = 0; j != 1024; j++) {
-          struct EffectStep *spark = &REEL_SPARKS[j];
+          struct EffectStep *spark = &LUCKY_WHEELS_SPARKS[j];
 
           if (spark->variant > 0) {
             s32 x;
@@ -1207,7 +1217,7 @@ void ReelGame_Run(void) {
                   s32 size = spark->variant / 12 + 1;
 
                   draw[j & 1](canvas,
-                              sheet + gReelGame_SparkCellOffsets[size - 1],
+                              sheet + gLuckyWheels_SparkCellOffsets[size - 1],
                               px - size, py - size, size * 2, size * 2);
                 }
               }
@@ -1219,10 +1229,11 @@ void ReelGame_Run(void) {
           }
         }
       }
-      if (state->state == REEL_BETTING || state->state == REEL_WON) {
+      if (state->state == LUCKY_WHEELS_BETTING ||
+          state->state == LUCKY_WHEELS_WON) {
         for (j = 0; j != 7; j++)
           litLines[j] = 0;
-        if (state->state == REEL_BETTING) {
+        if (state->state == LUCKY_WHEELS_BETTING) {
           litLines[3] = 1;
           if (state->bet > 1) {
             litLines[4] = 1;
@@ -1245,19 +1256,19 @@ void ReelGame_Run(void) {
 
           color = 65 - color;
           if (litLines[1])
-            ReelGame_DrawCanvasLine(20, j + 19, 200, j + 19, color);
+            LuckyWheels_DrawCanvasLine(20, j + 19, 200, j + 19, color);
           if (litLines[2])
-            ReelGame_DrawCanvasLine(28, j + 35, 200, j + 35, color);
+            LuckyWheels_DrawCanvasLine(28, j + 35, 200, j + 35, color);
           if (litLines[3])
-            ReelGame_DrawCanvasLine(20, j + 51, 200, j + 51, color);
+            LuckyWheels_DrawCanvasLine(20, j + 51, 200, j + 51, color);
           if (litLines[4])
-            ReelGame_DrawCanvasLine(28, j + 67, 200, j + 67, color);
+            LuckyWheels_DrawCanvasLine(28, j + 67, 200, j + 67, color);
           if (litLines[5])
-            ReelGame_DrawCanvasLine(20, j + 83, 200, j + 83, color);
+            LuckyWheels_DrawCanvasLine(20, j + 83, 200, j + 83, color);
           if (litLines[0])
-            ReelGame_DrawCanvasLine(28, j + 5, 200, j + 91, color);
+            LuckyWheels_DrawCanvasLine(28, j + 5, 200, j + 91, color);
           if (litLines[6])
-            ReelGame_DrawCanvasLine(28, j + 97, 200, j + 11, color);
+            LuckyWheels_DrawCanvasLine(28, j + 97, 200, j + 11, color);
         }
       }
       work->transferPending = 1;
@@ -1270,14 +1281,14 @@ void ReelGame_Run(void) {
                            0x100);
       WaitFrames(1);
     }
-    Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
-    Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
-    Scheduler_RemoveCallback(ReelGame_TransferCanvas);
-    Scheduler_RemoveCallback(ReelGame_RunFrame);
-    Runtime_ReleaseHeapBlock(REEL_HEAP_SLOT);
-    Runtime_ReleaseHeapBlock(HEAP_SLOT_BATTLE_CANVAS);
-    Runtime_ReleaseHeapBlock(HEAP_SLOT_BATTLE_EFFECT);
-    Runtime_ReleaseHeapBlock(HEAP_SLOT_BATTLE_SHEET);
+    FreeHeapSlot(HEAP_SLOT_RAM_CODE_2);
+    FreeHeapSlot(HEAP_SLOT_RAM_CODE);
+    Task_Remove(LuckyWheels_TransferCanvas);
+    Task_Remove(LuckyWheels_RunFrame);
+    FreeHeapSlot(LUCKY_WHEELS_HEAP_SLOT);
+    FreeHeapSlot(HEAP_SLOT_BATTLE_CANVAS);
+    FreeHeapSlot(HEAP_SLOT_BATTLE_ANIM);
+    FreeHeapSlot(HEAP_SLOT_BATTLE_SHEET);
   }
 }
 

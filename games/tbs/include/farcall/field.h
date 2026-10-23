@@ -63,9 +63,9 @@ void ObjectDispatch_StartMoveByKeysFar(struct DispatchObject *object);
 void ObjectDispatch_StartKeyCheckFar(struct DispatchObject *object);
 #ifndef OWN_Object_CreateFar
 /// Creates a field object at (x, y, z) in 16.16 pixels, or returns 0 when none
-/// is free (FieldObject_Create). `id / 4096` is its enum ObjectCreateKind and
+/// is free (Object_CreateField). `id / 4096` is its enum ObjectCreateKind and
 /// the low 12 bits its sprite's animation id.
-struct ObjectRuntime *Object_CreateFar(s32 id, s32 x, s32 y, s32 z);
+struct Object *Object_CreateFar(s32 id, s32 x, s32 y, s32 z);
 #endif
 /// Releases an object's sprites and zeroes it, so it can be handed out again.
 void ObjectDispatch_ReleaseFar(struct DispatchObject *object);
@@ -74,8 +74,8 @@ void ObjectDispatch_ReleaseFar(struct DispatchObject *object);
 void ObjectDispatch_StartCameraFar(struct DispatchObject *object, s32 arg);
 /// Places an object at (x, y, z) in 16.16 pixels and stops it, clearing its
 /// movement target.
-void Object_SetPositionAndResetMotionFar(struct ObjectRuntime *object, s32 x,
-                                         s32 y, s32 z);
+void Object_SetPositionAndResetMotionFar(struct Object *object, s32 x, s32 y,
+                                         s32 z);
 /// Clears one step of a sprite's pixel-by-pixel dissolve in its OBJ VRAM tiles
 /// (SpriteDissolve_Step); `pos` is the step, 0 to 127.
 void render_animated_tile_frameFar(u8 *obj, u32 pos);
@@ -108,11 +108,11 @@ void ObjectDispatch_WaitForValue16Far(void *raw);
 #ifndef OWN_Object_SetMoveTargetFar
 /// Sends an object towards (x, y, z) in 16.16 pixels, pulling the target in so
 /// it coasts to a stop there; within a pixel it arrives at once.
-void Object_SetMoveTargetFar(struct ObjectRuntime *object, s32 x, s32 y, s32 z);
+void Object_SetMoveTargetFar(struct Object *object, s32 x, s32 y, s32 z);
 #endif
 /// Waits until a field object reaches its target, giving up after 600 frames
 /// (ten seconds) with the object still moving.
-void FieldObject_WaitForMoveFar(void *fieldObject);
+void Object_WaitForMoveFar(void *fieldObject);
 /// Puts the world map's default cells back after the still view and returns to
 /// the perspective view, without reloading the area's palette or tiles.
 void WorldMap_LoadDefaultCellsAndUpdateBlockFar(void);
@@ -158,7 +158,7 @@ void MapGrid_CopyCellIndexRectFar(s32 sourceX, s32 sourceY, s32 width,
 void WorldMap_SetWindowCellTileFar(s32 x, s32 y, s32 px, s32 py);
 /// Returns whether an object can step to `position`, as an enum
 /// MapGridStepCheck: a wall there, or ground too high or too low for one step.
-s32 MapGrid_CheckObjectStepFar(struct ObjectRuntime *object,
+s32 MapGrid_CheckObjectStepFar(struct Object *object,
                                struct FieldPosition *position);
 /// Sets the flags of a one-sprite object's sprite (bit 0 draws its shadow).
 void ObjectDispatch_SetSingleChildFlagsFar(struct DispatchObject *object,

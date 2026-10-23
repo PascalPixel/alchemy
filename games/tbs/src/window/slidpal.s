@@ -1,5 +1,5 @@
 	.section .rodata
 	.balign 2
-	.global gWorkspaceOptions_SliderPalette
-gWorkspaceOptions_SliderPalette:
+	.global gOptionMenu_SliderPalette
+gOptionMenu_SliderPalette:
 	.incbin "games/tbs/src/menu/slidpal.gbapal"

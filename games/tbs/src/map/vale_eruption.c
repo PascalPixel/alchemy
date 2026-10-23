@@ -123,7 +123,7 @@ const struct MapEvent *ValeEruption_GetEvents(void) {
 
 /// Arriving in Vale during the eruption: plays the return from the mountain
 /// when the party comes by VALE_ERUPTION_FROM_SOL_ENTRANCE. Called by
-/// Field_RunMap once the object events are placed;
+/// Map_Run once the object events are placed;
 /// VALE_ERUPTION_FROM_SOL_ENTRANCE is where Sol Sanctum's approach leads after
 /// the eruption and before the party leaves Vale.
 s32 ValeEruption_Initialize(void) {
@@ -162,7 +162,7 @@ static void EventScript_ReturnFromMtAleph(void) {
   Camera_MoveTo(PIXELS(256), -1, PIXELS(612), 0);
   Engine_CameraWaitForMove();
   Engine_MapGridRedraw();
-  work = gEventWork;
+  work = gFieldWork;
   work->startTransition = 0;
   work->transitionFrames = 32;
   Engine_ScriptOpenScreen();
@@ -173,14 +173,14 @@ static void EventScript_ReturnFromMtAleph(void) {
   Engine_ScriptWait(20);
   MapGrid_SetShake(PIXELS(1), PIXELS(2), Q16_ONE);
   FieldEffect_LastLightning();
-  Script_PlayCue(SE_145);
+  Script_PlaySong(SE_145);
   Engine_ScriptWait(30);
   FieldEffect_LastLightning();
-  Script_PlayCue(SE_145);
+  Script_PlaySong(SE_145);
   Engine_CameraWaitForMove();
   MapGrid_SetShake(PIXELS(2), PIXELS(3), Q16_ONE);
   FieldEffect_LastLightning();
-  Script_PlayCue(SE_145);
+  Script_PlaySong(SE_145);
   MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
   Engine_MapGridRenderWaitForValues();
   Engine_ScriptWait(60);
@@ -228,7 +228,7 @@ static void EventScript_ReturnFromMtAleph(void) {
   Engine_ScriptWait(60);
   MapGrid_SetShake(PIXELS(2), PIXELS(3), Q16_ONE);
   FieldEffect_LastLightning();
-  Script_PlayCue(SE_145);
+  Script_PlaySong(SE_145);
   Engine_ScriptWait(60);
   Engine_ObjectEventFaceEachOther(LOCALID_GREAT_HEALER,
                                   LOCALID_GARETS_GRANDFATHER, 0);
@@ -459,7 +459,7 @@ static void EventScript_ReturnFromMtAleph(void) {
   ObjectEvent_WalkToAndWait(LOCALID_GREAT_HEALER, 255, 445);
   Engine_ScriptWait(40);
   MapGrid_AnimateCells(gValeEruption_SanctumDoorOpens, 45, 11);
-  Script_PlayCue(SE_188);
+  Script_PlaySong(SE_188);
   Engine_ScriptWait(30);
   ObjectEvent_WalkTo(LOCALID_GREAT_HEALER, 255, 390);
   Engine_ScriptWait(20);
@@ -487,9 +487,9 @@ static void EventScript_ReturnFromMtAleph(void) {
   Engine_ScriptWait(40);
   MapGrid_SetShake(PIXELS(2), PIXELS(3), Q16_ONE);
   FieldEffect_LastLightning();
-  Script_PlayCue(SE_145);
+  Script_PlaySong(SE_145);
   Engine_ScriptWait(30);
-  work = gEventWork;
+  work = gFieldWork;
   work->startTransition = 0;
   work->transitionFrames = 64;
   Engine_ScriptCloseScreen();

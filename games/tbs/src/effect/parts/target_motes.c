@@ -140,7 +140,7 @@ void BattleEffect_RunTargetMotes(struct BattleEffectArgument *effect,
   s32 *row;
   s32 i;
 
-  cursor = gBattleEffectWork;
+  cursor = gBattleAnimWork;
   EFFECT_GET_WORK_AND_CANVAS(cursor, work, canvas);
   // Motes drawn for each target: 16, but 24 for Demon Fire and 32 for Drown.
   count = 16;
@@ -201,11 +201,10 @@ void BattleEffect_RunTargetMotes(struct BattleEffectArgument *effect,
   else
     total = work->effect->count * 8 + 32;
   if (TARGET_MOTES_RIPPLE(mode))
-    Scheduler_AddOrUpdateCallback(BattleEffect_ArmBg2AffineHBlankDma,
-                                  EFFECT_CALLBACK_ORDER);
+    Task_Add(BattleEffect_ArmBg2AffineHBlankDma, EFFECT_CALLBACK_ORDER);
   // Trails keep 75% of each pixel a frame.
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, 75);
-  AudioCommand_PlayFar(SE_142);
+  Sound_PlaySongFar(SE_142);
 
   // Target n's turn starts on frame n * 8; the effect ends 64 frames (wide
   // styles) or 32 after the last one starts.
@@ -256,25 +255,25 @@ void BattleEffect_RunTargetMotes(struct BattleEffectArgument *effect,
               (gBattleEffect_GlintCellWidths[frame & 3] >> 1);
           y = base.y - ((Trig_Cos(angle) * radius) >> 16) -
               (gBattleEffect_GlintCellHeights[frame & 3] >> 1);
-          EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER_ALTERNATE,
+          EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
                               EFFECT_CLIP_BOUNDS |
                                   gTargetMotes_GlintFlips[Random16() & 3],
                               COMPOSITE_MAX);
-          ((DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE])(
+          ((DrawRectangle)gHeapSlots[HEAP_SLOT_RAM_CODE_2])(
               canvas,
               work->sheet + gBattleEffect_GlintCells[frame & 3] +
                   TARGET_MOTES_GLINT_CELLS,
               x, y + 16, gBattleEffect_GlintCellWidths[frame & 3],
               gBattleEffect_GlintCellHeights[frame & 3]);
-          Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
+          FreeHeapSlot(HEAP_SLOT_RAM_CODE_2);
         }
       }
-      EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER, EFFECT_CLIP_BOUNDS,
+      EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                           COMPOSITE_ADDITIVE);
-      draw[0] = gWorkSlot[HEAP_SLOT_BLITTER];
-      EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER_ALTERNATE, EFFECT_CLIP_BOUNDS,
+      draw[0] = gHeapSlots[HEAP_SLOT_RAM_CODE];
+      EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, EFFECT_CLIP_BOUNDS,
                           COMPOSITE_MAX);
-      draw[1] = gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE];
+      draw[1] = gHeapSlots[HEAP_SLOT_RAM_CODE_2];
       EFFECT_VIEW_FROM_CAMERA(camera);
       SET_VECTOR(point, object->x, 160 << 13, object->z);
       Transform_ApplyPosition(point);
@@ -359,9 +358,9 @@ void BattleEffect_RunTargetMotes(struct BattleEffectArgument *effect,
     EFFECT_END_FRAME(work);
   }
 
-  Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
+  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   if (TARGET_MOTES_RIPPLE(mode))
-    Scheduler_RemoveCallback(BattleEffect_ArmBg2AffineHBlankDma);
+    Task_Remove(BattleEffect_ArmBg2AffineHBlankDma);
   BattleEffect_EndCanvasLayer();
 }
 
@@ -401,13 +400,12 @@ void BattleEffect_RunSleep(struct BattleEffectArgument *effect) {
   // Drawn solid.
   REG_BLDCNT = 0;
   Resource_LoadAndDecompress((s32)&ResourceId_SheepSheet, work->sheet, 1, 1);
-  EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER, EFFECT_CLIP_BOUNDS,
+  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                       COMPOSITE_TRANSPARENT);
-  drawUpright = (DrawRectangle)EFFECT_SLOT(slots, HEAP_SLOT_BLITTER);
-  EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER_ALTERNATE,
-                      EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP,
+  drawUpright = (DrawRectangle)EFFECT_SLOT(slots, HEAP_SLOT_RAM_CODE);
+  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP,
                       COMPOSITE_TRANSPARENT);
-  drawFlipped = (DrawRectangle)EFFECT_SLOT(slots, HEAP_SLOT_BLITTER_ALTERNATE);
+  drawFlipped = (DrawRectangle)EFFECT_SLOT(slots, HEAP_SLOT_RAM_CODE_2);
 
   // Seed SLEEP_SEEDED sheep, of which SLEEP_SHEEP fall. Each starts 32
   // pixels above the canvas at a random x from 32 to 95, with a random
@@ -427,7 +425,7 @@ void BattleEffect_RunSleep(struct BattleEffectArgument *effect) {
     REG_BG2X = -0x7000;
   // Redraw from blank each frame.
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0);
-  AudioCommand_PlayFar(SE_142);
+  Sound_PlaySongFar(SE_142);
   for (frame = 0; frame != SLEEP_FRAMES; frame++) {
     struct BattleCamera *camera;
 
@@ -515,7 +513,7 @@ void BattleEffect_RunCurse(struct BattleEffectArgument *effect) {
   s32 y;
   struct EffectPosition screenPosition;
 
-  slot = &gWorkSlot[HEAP_SLOT_BATTLE_CANVAS];
+  slot = &gHeapSlots[HEAP_SLOT_BATTLE_CANVAS];
   canvas = slot[0];
   work = slot[-1];
   work->effect = effect;
@@ -529,14 +527,13 @@ void BattleEffect_RunCurse(struct BattleEffectArgument *effect) {
   if (work->effect->side == 1) {
     REG_BG2X = -0x7000;
   }
-  EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER, EFFECT_CLIP_BOUNDS,
+  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                       COMPOSITE_TRANSPARENT);
   // Redraw from blank each frame.
   work->transferMode = CANVAS_COPY_AND_CLEAR;
   work->transferValue = 0;
-  draw[0] = (DrawRectangle)CANVAS_SLOT(slot, HEAP_SLOT_BLITTER);
-  Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer,
-                                EFFECT_CALLBACK_ORDER);
+  draw[0] = (DrawRectangle)CANVAS_SLOT(slot, HEAP_SLOT_RAM_CODE);
+  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, EFFECT_CALLBACK_ORDER);
   // Each flame starts at a random point of its animation.
   EFFECT_FOR_EACH_TARGET(i, work->effect) {
     work->particles[i].variant = Random16() & 63;
@@ -552,7 +549,7 @@ void BattleEffect_RunCurse(struct BattleEffectArgument *effect) {
       do {
         start = i << 4;
         if (frame == start) {
-          AudioCommand_PlayFar(SE_143);
+          Sound_PlaySongFar(SE_143);
         }
         if (frame >= start && frame < start + 72) {
           EffectPosition_ProjectScaledBattler(work->effect->actors[i],

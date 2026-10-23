@@ -82,15 +82,15 @@ void BattleObject_UpdateSpritePriorities(void) {
       if (slot != 0) {
         object = slot->object;
 
-        switch (object->recordStorageKind & RECORDS_KIND_MASK) {
-        case RECORDS_SINGLE: {
+        switch (object->spritesKind & OBJECT_SPRITES_KIND_MASK) {
+        case OBJECT_SPRITES_ONE: {
           record = object->records;
           record->image.priority = sidePriorities[0];
           break;
         }
-        case RECORDS_TABLE: {
+        case OBJECT_SPRITES_GROUP: {
           records = (struct AnimationObject **)object->records;
-          for (recordIndex = 0; recordIndex < RECORDS_TABLE_SIZE;
+          for (recordIndex = 0; recordIndex < OBJECT_SPRITES_GROUP_SIZE;
                recordIndex++) {
             record = *records++;
             if (record != 0)
@@ -112,15 +112,15 @@ void BattleObject_UpdateSpritePriorities(void) {
       if (slot != 0) {
         object = slot->object;
 
-        switch (object->recordStorageKind & RECORDS_KIND_MASK) {
-        case RECORDS_SINGLE: {
+        switch (object->spritesKind & OBJECT_SPRITES_KIND_MASK) {
+        case OBJECT_SPRITES_ONE: {
           record = object->records;
           record->image.priority = sidePriorities[1];
           break;
         }
-        case RECORDS_TABLE: {
+        case OBJECT_SPRITES_GROUP: {
           records = (struct AnimationObject **)object->records;
-          for (recordIndex = 0; recordIndex < RECORDS_TABLE_SIZE;
+          for (recordIndex = 0; recordIndex < OBJECT_SPRITES_GROUP_SIZE;
                recordIndex++) {
             record = *records++;
             if (record != 0)
@@ -343,7 +343,7 @@ void ReleaseBattleObjectRecords(s32 unitId) {
         ResourceObject_ReleaseFar(record);
         recordIndex += 1;
       }
-      object->recordStorageKind = RECORDS_NONE;
+      object->spritesKind = OBJECT_SPRITES_NONE;
       object->records = NULL;
     }
   }
@@ -383,9 +383,9 @@ void BattleObject_SpawnObjectsForList(s16 *unitIds, s32 refreshPoses) {
     }
   }
   // A frame passes between releasing and creating sprites, except inside a
-  // main-loop task (gSchedulerStatus is set while WaitFrames runs them),
+  // main-loop task (gTaskStatus is set while WaitFrames runs them),
   // which cannot wait.
-  if (gSchedulerStatus == 0)
+  if (gTaskStatus == 0)
     WaitFrames(1);
 
   for (unitIndex = 0; unitIndex < UNIT_MAX &&
@@ -400,22 +400,22 @@ void BattleObject_SpawnObjectsForList(s16 *unitIds, s32 refreshPoses) {
     object = battleObject->object;
     if (object == 0)
       continue;
-    if (object->recordStorageKind != RECORDS_NONE)
+    if (object->spritesKind != OBJECT_SPRITES_NONE)
       continue;
     if ((battleObject->resource & SPRITE_ID_MASK) ==
             SPRITE_WITH_SECOND_PART_A ||
         (battleObject->resource & SPRITE_ID_MASK) ==
             SPRITE_WITH_SECOND_PART_B) {
       // A two-part enemy: a table of its two sprites, in the object system's
-      // next sprite group table (gMenuCtrlWork is struct ObjectSystemWork;
+      // next sprite group table (gObjectSystemWork is struct ObjectSystemWork;
       // its count is not advanced here). Its height is half the first
       // part's box.
       // BUG: a failed create leaves record null, and its flags are still
       // written.
-      records = (struct AnimationObject **)gMenuCtrlWork->spriteGroups +
-                gMenuCtrlWork->count;
+      records = (struct AnimationObject **)gObjectSystemWork->spriteGroups +
+                gObjectSystemWork->count;
       spriteId = battleObject->resource;
-      object->recordStorageKind = RECORDS_TABLE;
+      object->spritesKind = OBJECT_SPRITES_GROUP;
       object->records = records;
       Iwram_ClearWords(records, 16);
       record = ResourceObject_CreateFar(spriteId);
@@ -439,7 +439,7 @@ void BattleObject_SpawnObjectsForList(s16 *unitIds, s32 refreshPoses) {
       // (bit 0) among them, as the two-part enemies' are cleared above.
       record = ResourceObject_CreateFar(battleObject->resource);
       if (record != 0) {
-        object->recordStorageKind = RECORDS_SINGLE;
+        object->spritesKind = OBJECT_SPRITES_ONE;
         object->records = record;
         record->scale = Iwram_MulQ16(record->scale, battleObject->scale);
         entry = (struct SpriteEntry *)record->entries[0];
@@ -528,14 +528,14 @@ void ResetBattleObjectRecordGroups(struct MotionObject *object) {
   void *recordGroup;
 
   if (object != NULL) {
-    storageKind = object->recordStorageKind & RECORDS_KIND_MASK;
+    storageKind = object->spritesKind & OBJECT_SPRITES_KIND_MASK;
     switch (storageKind) {
-    case RECORDS_SINGLE:
+    case OBJECT_SPRITES_ONE:
       ResetMotionRecordGroup(object->records);
       return;
-    case RECORDS_TABLE:
+    case OBJECT_SPRITES_GROUP:
       recordGroups = object->records;
-      remaining = RECORDS_TABLE_SIZE - 1;
+      remaining = OBJECT_SPRITES_GROUP_SIZE - 1;
       do {
         recordGroup = *recordGroups++;
         if (recordGroup != NULL) {
@@ -641,12 +641,12 @@ s32 BattleMotion_ProjectPosition(s32 unitId, s32 *projected) {
 /// Returns sprite recordIndex of an object (0 only, for a single sprite), or
 /// null when it has no such sprite. Called throughout the battle parts.
 void *GetMotionRecord(struct MotionObject *object, s32 recordIndex) {
-  s32 storageKind = object->recordStorageKind & RECORDS_KIND_MASK;
-  if (storageKind == RECORDS_SINGLE) {
+  s32 storageKind = object->spritesKind & OBJECT_SPRITES_KIND_MASK;
+  if (storageKind == OBJECT_SPRITES_ONE) {
     if (recordIndex == 0) {
       return object->records;
     }
-  } else if (storageKind == RECORDS_TABLE) {
+  } else if (storageKind == OBJECT_SPRITES_GROUP) {
     return ((void **)object->records)[recordIndex];
   }
   return NULL;

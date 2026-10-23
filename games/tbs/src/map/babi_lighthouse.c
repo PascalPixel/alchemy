@@ -622,14 +622,14 @@ static void BabiLighthouse_FaranAsksPartyToOpenDoor(void) {
     Engine_ObjectEventSetAnimationAndWait(LOCALID_IODEM, ANIMATION_NOD);
     Engine_ScriptWait(30);
     Script_ShowMessage(LOCALID_IODEM, 0);
-    gEventWork->message++;
+    gFieldWork->message++;
   } else {
     Engine_ScriptWait(30);
     ObjectEvent_FaceDirection(LOCALID_IODEM, FACING_WEST, 0);
     Engine_ScriptWait(30);
     Engine_ObjectEventSetAnimationAndWait(LOCALID_IODEM, ANIMATION_SHAKE_HEAD);
     Engine_ScriptWait(20);
-    gEventWork->message++;
+    gFieldWork->message++;
     Script_ShowMessage(LOCALID_IODEM, 0);
   }
   Engine_ScriptWait(10);
@@ -665,12 +665,12 @@ static void BabiLighthouse_FaranAsksPartyToOpenDoor(void) {
     Engine_ObjectEventSetAnimationAndWait(LOCALID_FARAN, ANIMATION_SHAKE_HEAD);
     Engine_ScriptWait(20);
     Script_ShowMessage(LOCALID_FARAN, 0);
-    gEventWork->message++;
+    gFieldWork->message++;
   } else {
     Engine_ScriptWait(30);
     Engine_ObjectEventSetAnimationAndWait(LOCALID_FARAN, ANIMATION_SHAKE_HEAD);
     Engine_ScriptWait(20);
-    gEventWork->message++;
+    gFieldWork->message++;
     Script_ShowMessage(LOCALID_FARAN, 0);
   }
   Engine_ScriptWait(10);
@@ -707,12 +707,12 @@ static void BabiLighthouse_FaranAsksPartyToOpenDoor(void) {
     Engine_ObjectEventSetAnimationAndWait(LOCALID_IODEM, ANIMATION_NOD);
     Engine_ScriptWait(30);
     Script_ShowMessage(LOCALID_IODEM, 0);
-    gEventWork->message++;
+    gFieldWork->message++;
   } else {
     Engine_ScriptWait(30);
     Engine_ObjectEventSetAnimationAndWait(LOCALID_IODEM, ANIMATION_SHAKE_HEAD);
     Engine_ScriptWait(20);
-    gEventWork->message++;
+    gFieldWork->message++;
     Script_ShowMessage(LOCALID_IODEM, 0);
   }
   Engine_ScriptWait(10);
@@ -954,12 +954,12 @@ static void BabiLighthouse_ExplainTruthDoor(void) {
     Engine_ObjectEventRunRepeatedMotion(LOCALID_FARAN, 2);
     Engine_ScriptWait(20);
     Script_ShowMessage(LOCALID_FARAN, 0);
-    gEventWork->message++;
+    gFieldWork->message++;
   } else {
     Engine_ScriptWait(30);
     Engine_ObjectEventRunRepeatedMotion(LOCALID_FARAN, 2);
     Engine_ScriptWait(20);
-    gEventWork->message++;
+    gFieldWork->message++;
     Script_ShowMessage(LOCALID_FARAN, 0);
   }
   Engine_ScriptWait(10);
@@ -995,14 +995,14 @@ static void BabiLighthouse_ExplainTruthDoor(void) {
     Engine_ObjectEventSetAnimationAndWait(LOCALID_IODEM, ANIMATION_NOD);
     Engine_ScriptWait(30);
     Script_ShowMessage(LOCALID_IODEM, 0);
-    gEventWork->message++;
+    gFieldWork->message++;
   } else {
     Engine_ScriptWait(30);
     ObjectEvent_FaceDirection(LOCALID_IODEM, FACING_SOUTHEAST, 0);
     Engine_ScriptWait(20);
     Engine_ObjectEventSetAnimationAndWait(LOCALID_IODEM, ANIMATION_SHAKE_HEAD);
     Engine_ScriptWait(20);
-    gEventWork->message++;
+    gFieldWork->message++;
     Script_ShowMessage(LOCALID_IODEM, 0);
   }
   Engine_ScriptWait(10);
@@ -1120,7 +1120,7 @@ static void BabiLighthouse_CloseTruthDoor(void) {
 /// door opens; otherwise it reads an inscription. "The truth of this door is
 /// open to those seeing with their true heart."
 static void BabiLighthouse_InspectTruthDoorSwitch(void) {
-  struct FieldWork *work = (struct FieldWork *)gEventWork;
+  struct FieldWork *work = (struct FieldWork *)gFieldWork;
 
   Engine_ScriptStart();
   if (work->revealActive != 0) {
@@ -1168,7 +1168,7 @@ BabiLighthouse_FindObjectEventAhead(struct ObjectEvent *objectEvent) {
 /// effect's childOption, so that once Carry lets go the effect waits for the
 /// pillar to bounce up and land, and rings it with dust (carry.c).
 static void BabiLighthouse_LandCarriedPillarInDust(void) {
-  ((struct FieldEffectWork *)gEffectWork)->childOption = 1;
+  ((struct FieldEffectWork *)gFieldEffectWork)->childOption = 1;
 }
 
 /// After Move or Carry on the pillar on the Road to Babi Lighthouse: in its
@@ -1349,7 +1349,7 @@ s32 BabiLighthouse_SetupMap(void) {
   u8 zero;
 
   Engine_TaskWait(1);
-  gEventWork->startTransition =
+  gFieldWork->startTransition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   state = &gGameState;
   mapId = state->mapId;

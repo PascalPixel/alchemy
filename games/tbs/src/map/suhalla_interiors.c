@@ -232,7 +232,7 @@ static void EventScript_AskIfBlownHere(s32 localId) {
 /// The doors of Suhalla and Suhalla Sanctum, and the doors between the inn and
 /// its guest rooms: the party leaves by the touched warp.
 static void EventScript_LeaveByWarp(void) {
-  struct EventWork *state = gEventWork;
+  struct EventWork *state = gFieldWork;
   s16 *touchedTrigger = (s16 *)&state->touchedTrigger;
 
   Engine_ScriptRequestWarp(*touchedTrigger);
@@ -252,7 +252,7 @@ static void EventScript_IodemQuestionsWoundedSoldiers(void) {
   struct ObjectEvent *leader;
   GameFlag_Set(FLAG_IODEM_MET_WOUNDED_SOLDIERS);
   if (GameFlag_IsSet(FLAG_BABI_LIGHTHOUSE_IODEM_ARRIVED) == 0) {
-    Script_PlayCue(MUS_030);
+    Script_PlaySong(MUS_030);
     Script_Start();
     // Frame the speakers and bring the leader over before the dialogue.
     Camera_MoveTo(PIXELS(368), -1, PIXELS(104), 1);
@@ -494,10 +494,10 @@ static void EventScript_IodemQuestionsWoundedSoldiers(void) {
     if (Script_ChooseYesNo(LOCALID_PARTY_LEADER, 0) == 0) {
       Script_Wait(20);
       Script_ShowMessage(LOCALID_IODEM, 0);
-      gEventWork->message++;
+      gFieldWork->message++;
     } else {
       Script_Wait(10);
-      gEventWork->message++;
+      gFieldWork->message++;
       Script_ShowMessage(LOCALID_IODEM, 0);
     }
     Script_Wait(10);
@@ -512,7 +512,7 @@ static void EventScript_IodemQuestionsWoundedSoldiers(void) {
     Script_Wait(20);
     ObjectEvent_SetAnimationAndWait(LOCALID_IODEM, ANIMATION_NOD);
     Script_Wait(30);
-    Script_PlayCue(MUS_030);
+    Script_PlaySong(MUS_030);
     ObjectEvent_SetSpeed(LOCALID_IODEM, PIXELS(6) / 5, PIXELS(3) / 5);
     ObjectEvent_SetAnimation(LOCALID_IODEM, ANIMATION_WALK);
     // Iodem walks into the leader and is hidden: he travels in the party.
@@ -525,7 +525,7 @@ static void EventScript_IodemQuestionsWoundedSoldiers(void) {
     ObjectEvent_SetPosition(LOCALID_IODEM, 0, 0);
     Script_Wait(10);
     // Back to the map section's own music.
-    Audio_PlayCueFromEventWork();
+    Map_PlayMusic();
     Script_End();
   }
 }
@@ -547,9 +547,9 @@ s32 Map_Initialize(void) {
   struct ObjectEvent *objectEvent;
   if (gGameState.warpDest == SUHALLA_INTERIORS_AFTER_BABI_SPOKE)
     Engine_GameFlagSet(FLAG_BABI_SPOKE_AFTER_COLOSSO);
-  gEventWork->startTransition =
+  gFieldWork->startTransition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
-  gEventWork->transitionFrames = 24;
+  gFieldWork->transitionFrames = 24;
   // Nearer to talk to, across their counters.
   ObjectEvent_GetById(LOCALID_MERCHANT)->collisionFlags |= OBJ_EVENT_NEAR_TALK;
   ObjectEvent_GetById(LOCALID_INNKEEPER)->collisionFlags |= OBJ_EVENT_NEAR_TALK;

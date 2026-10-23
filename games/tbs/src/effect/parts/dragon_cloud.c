@@ -140,9 +140,9 @@ void BattleEffect_RunDragonCloud(struct BattleEffectArgument *effect) {
     if (frame == DRAGON_CLOUD_STRIKE_FRAME)
       EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
     if (frame == 0)
-      AudioCommand_PlayFar(SE_136);
+      Sound_PlaySongFar(SE_136);
     if (frame == 50)
-      AudioCommand_PlayFar(SE_136);
+      Sound_PlaySongFar(SE_136);
     // 1/256 of a turn a frame, then re-aim the turned camera at the field's
     // centre at 100% zoom, which also moves the backdrop's plane.
     if (work->effect->side == 0) {

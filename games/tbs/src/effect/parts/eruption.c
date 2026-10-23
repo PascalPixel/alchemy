@@ -64,7 +64,7 @@ void BattleEffect_RunEruption(struct BattleEffectArgument *effect, s32 mode) {
   s32 frame;
   s32 i;
 
-  cursor = gBattleEffectWork;
+  cursor = gBattleAnimWork;
   EFFECT_GET_WORK_AND_CANVAS(cursor, work, canvas);
   work->effect = effect;
   BattleEffect_StartCanvasLayer(1);
@@ -117,8 +117,8 @@ void BattleEffect_RunEruption(struct BattleEffectArgument *effect, s32 mode) {
     mote->variant = 0;
   }
 
-  EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER, EFFECT_CLIP_BOUNDS, COMPOSITE_MAX);
-  draw[0] = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER];
+  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, COMPOSITE_MAX);
+  draw[0] = (DrawRectangle)gHeapSlots[HEAP_SLOT_RAM_CODE];
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, 75);
 
   for (frame = 0; frame != gEruption_Counts[variant][ERUPTION_FIELD_FRAMES];
@@ -128,7 +128,7 @@ void BattleEffect_RunEruption(struct BattleEffectArgument *effect, s32 mode) {
     camera = gCameraWork;
     EFFECT_VIEW_FROM_CAMERA(camera);
     if (frame == 2)
-      AudioCommand_PlayFar(SE_144);
+      Sound_PlaySongFar(SE_144);
     if (frame == gEruption_Counts[variant][ERUPTION_FIELD_FRAMES] - 48)
       EFFECT_SHOW_DAMAGE(SE_IMPACT);
 
@@ -219,7 +219,7 @@ void BattleEffect_RunEruption(struct BattleEffectArgument *effect, s32 mode) {
   EFFECT_FINISH_CANVAS_ONE_BLITTER();
 }
 
-/// Creates the effect's animation objects in gBattleEffectWork's objects.
+/// Creates the effect's animation objects in gBattleAnimWork's objects.
 ///
 /// Called by the summon scenes (Ramses, Nereid, Kirin, Atalanta, Cybele,
 /// Neptune, Tiamat, Procne, Boreas, Thor), Judgment and the particle streams.
@@ -231,7 +231,7 @@ void BattleEffect_RunEruption(struct BattleEffectArgument *effect, s32 mode) {
 /// source: the resource object every one of them is made from.
 /// priority: the sprite priority they take.
 void BattleEffect_SpawnObjects(s32 entryCount, s32 source, u32 priority) {
-  struct BattleEffectWork *work = WORK_SLOT(HEAP_SLOT_BATTLE_EFFECT);
+  struct BattleEffectWork *work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_ANIM);
   s32 entryIndex = 0;
 
   if (entryCount == 0) {

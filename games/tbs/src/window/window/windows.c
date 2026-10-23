@@ -64,9 +64,9 @@ void RenderOutput_InitializeFreeList(void) {
 /// Sets up the window system for the field (and the other screens outside
 /// battle): allocates and clears the work block, blanks the tilemap, frees
 /// every render output and starts the two per-frame callbacks, the tilemap
-/// upload and the window update. Reached from Field_RunMap
+/// upload and the window update. Reached from Map_Run
 /// (object/object/run_map.c), the debug message viewer
-/// (DebugBattle_ViewMessages), Lucky Dice and the reel game (ReelGame_Run).
+/// (DebugBattle_ViewMessages), Lucky Dice and the reel game (LuckyWheels_Run).
 /// The work block (heap slot HEAP_SLOT_WINDOW) lives until the slot is next
 /// allocated; nothing here frees it.
 void UiWork_InitializeWithResourceCounters(void) {
@@ -76,7 +76,7 @@ void UiWork_InitializeWithResourceCounters(void) {
 #endif
 
   // Clear the work block before linking any of its embedded lists.
-  work = Runtime_AllocateBlock(HEAP_SLOT_WINDOW, RENDER_WORK_SIZE);
+  work = AllocHeapSlotEwram(HEAP_SLOT_WINDOW, RENDER_WORK_SIZE);
 #if TBS_PATCH_1
   fill = 0;
   Dma_Set((const void *)&fill, work, DMA_FILL32(RENDER_WORK_SIZE / 4),
@@ -95,10 +95,10 @@ void UiWork_InitializeWithResourceCounters(void) {
   Iwram_FillWords(work, sizeof(work->tilemap), UI_TILE_PAIR(UI_TILE_BLANK));
 #endif
   // Make the output and palette pools available, then start the updates. The
-  // upload's order, 0x480, is SCHEDULER_KEY_VBLANK: it runs in vertical blank.
+  // upload's order, 0x480, is TASK_PRIORITY_VBLANK: it runs in vertical blank.
   RenderOutput_InitializeFreeList();
   UiWork_ClearPortraitSlots();
-  Scheduler_AddOrUpdateCallback(UiWork_UploadDirtyBlocks, 0x480);
+  Task_Add(UiWork_UploadDirtyBlocks, 0x480);
   UiWork_InitializeCountersWithResourceAndScheduleRefresh();
 }
 
@@ -129,8 +129,8 @@ void UiWork_Initialize(s32 loadGlyphTiles) {
         BG_CHAR_BLOCK(0) + destinationTile * TILE_SIZE_4BPP + 12, 20);
   }
 
-  work = (struct UiRenderWork *)Runtime_AllocateBlock(HEAP_SLOT_WINDOW,
-                                                      RENDER_WORK_SIZE);
+  work = (struct UiRenderWork *)AllocHeapSlotEwram(HEAP_SLOT_WINDOW,
+                                                   RENDER_WORK_SIZE);
 #if TBS_PATCH_1
   fill = 0;
   Dma_Set((const void *)&fill, work, DMA_FILL32(RENDER_WORK_SIZE / 4),
@@ -150,7 +150,7 @@ void UiWork_Initialize(s32 loadGlyphTiles) {
   Iwram_FillWords(work, sizeof(work->tilemap), UI_TILE_PAIR(UI_TILE_BLANK));
 #endif
   RenderOutput_InitializeFreeList();
-  Scheduler_AddOrUpdateCallback(UiWork_UploadDirtyBlocks, 0x480);
+  Task_Add(UiWork_UploadDirtyBlocks, 0x480);
   UiWork_InitializeCountersAndScheduleRefresh(loadGlyphTiles);
   // Tiles 128 to 130 take the lower rows of the bottom frame tiles.
   UiWork_CopyTileTail(UI_TILE_FRAME_BOTTOM_LEFT, 128);

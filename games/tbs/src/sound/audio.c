@@ -149,7 +149,7 @@ void Audio_Initialize(void) {
 void AudioEngine_RunMixer(void) { AudioEngine_RunMixerTick(); }
 
 /// Starts the song on the player selected by its song-table entry. Called by
-/// AudioCommand_Play for music and fanfares; it starts sound effects (cues
+/// Sound_PlaySong for music and fanfares; it starts sound effects (cues
 /// from 100) itself, so that those naming player 7 can take a free player
 /// from 7 down to 4.
 void Audio_PlaySound(u16 songId) {
@@ -238,7 +238,7 @@ UNUSED void Audio_ResumeAllPlayers(void) {
     Audio_ResumePlayer(gSound_PlayerSlots[playerIndex].player);
 }
 
-/// Begins the standard stop-and-clear fade. Called by AudioCommand_Play's fade
+/// Begins the standard stop-and-clear fade. Called by Sound_PlaySong's fade
 /// cues.
 void MusicPlayer_FadeOut(struct SoundPlayer *player, u16 speed) {
   MusicPlayer_StartFadeOut(player, speed);

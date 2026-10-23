@@ -1,8 +1,8 @@
 @ C2: aligned 8-byte veneers: overlay_veneer emits ldr r4, bx r4 and a target word.
 	.set overlay_imports, 1
 	.set import.Engine_TaskWait, 1
-	.set import.Scheduler_AddOrUpdateCallback, 1
-	.set import.Scheduler_RemoveCallback, 1
+	.set import.Task_Add, 1
+	.set import.Task_Remove, 1
 	.set import.Engine_RandomNext, 1
 	.set import.ArcTan2, 1
 	.set import.Engine_HeapAllocate, 1
@@ -90,7 +90,7 @@
 	.set import.FieldEffect_End, 1
 	.set import.Engine_PsynergyRaiseHands, 1
 	.set import.Ui_SetBank15PaletteAndClearRenderMode, 1
-	.set import.Audio_PlayCueFromEventWork, 1
+	.set import.Map_PlayMusic, 1
 	.set import.Engine_ShopOpen, 1
 	.set import.Engine_InnOpen, 1
 	.set import.DjinnRecovery_TickTwenty, 1

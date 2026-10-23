@@ -45,14 +45,14 @@
 /// Set as a battle starts, cleared as a field map starts.
 #define FLAG_IN_BATTLE 0x103
 /// Set while the field loop handles its requests, and cleared while the party
-/// walks (Field_RunMap); the deserts' heat gauges and the Colosso's wall
+/// walks (Map_Run); the deserts' heat gauges and the Colosso's wall
 /// test it.
 #define FLAG_FIELD_HANDLING_REQUESTS 0x104
 /// Set while the field menu is open; maps hold their moving object events
 /// still.
 #define FLAG_MENU_OPEN 0x106
 /// While set, opening the field menu or the pause menu, or pressing a shortcut,
-/// raises FIELD_EVENT_MENUS_RAISED instead (Field_RunMap,
+/// raises FIELD_EVENT_MENUS_RAISED instead (Map_Run,
 /// Field_RequestShortcut); Vault's inn sets it while the party corners the
 /// suspects.
 #define FLAG_MENUS_RAISE_EVENT 0x107
@@ -122,7 +122,7 @@
 /// destination too, and Map_ResetFlagsOnEnter clears it with a new map section.
 #define FLAG_NO_ENCOUNTERS_IN_MAPSEC 0x161
 #define FLAG_DEBUG_BATTLE 0x162 ///< set before every debug battle
-/// In debug mode, steps on the field are not processed (Field_RunMap) and
+/// In debug mode, steps on the field are not processed (Map_Run) and
 /// the world map's places do not react to the leader; debug warp destinations
 /// set it.
 #define FLAG_DEBUG_STEPS_OFF 0x163
@@ -199,7 +199,7 @@
 /// menu is open (Menu_SuspendFieldTasks).
 #define FLAG_WEATHER_HELD 0x166
 /// With it set, holding B on the field walks the leader at 4 pixels a frame
-/// (FieldObject_UpdatePlayerControl). No ☀️ code sets it.
+/// (Object_UpdateLeaderControl). No ☀️ code sets it.
 #define FLAG_FAST_WALK 0x17f
 /// The map sections the party has visited, one flag for each, set by
 /// Map_ResetFlagsOnEnter as the party enters the section; the world map screen
@@ -231,8 +231,8 @@
 #define FLAG_COLOSSO_HOLDS_EQUIPMENT 0x952
 /// The next field map starts where the party was, as after a battle: the
 /// map's flags are not reset, the object events come back from their snapshot,
-/// and the music saved in gGameState.returnCue resumes if there is one (a
-/// random battle clears it, so the map's own music plays). Field_RunMap clears
+/// and the music saved in gGameState.returnMusic resumes if there is one (a
+/// random battle clears it, so the map's own music plays). Map_Run clears
 /// it once the map starts.
 #define FLAG_KEEP_PARTY_POSITION 0x109
 /// The map shows its map section's name once it is on screen; entering a new

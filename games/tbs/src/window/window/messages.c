@@ -53,11 +53,11 @@ void UiText_DecodeMessage(s32 message, u16 *text, s32 capacity) {
   // The decoder may already be in slot 50 (TEXT_WORK_BLOCK), as it is while
   // UiText_BuildRenderEntries decodes the names this is called for; then it
   // is borrowed, and freed only if loaded here.
-  original = ((union HeapState *)&gWorkSlot)->slots[50];
+  original = ((union HeapState *)&gHeapSlots)->slots[50];
   if (original == NULL)
     RamCode_LoadSlot(50, Text_DecodeSymbol, Text_DecodeSymbolCodeSize);
   decode =
-      (s32 (*)(struct TextReader *))((union HeapState *)&gWorkSlot)->slots[50];
+      (s32 (*)(struct TextReader *))((union HeapState *)&gHeapSlots)->slots[50];
   UiText_LookupMessage(&reader, message);
 #if !defined(DECODE_EUROPEAN)
   delta = 0xffff;
@@ -107,7 +107,7 @@ void UiText_DecodeMessage(s32 message, u16 *text, s32 capacity) {
   }
 done:
   if (original == NULL)
-    Runtime_ReleaseHeapBlock(TEXT_WORK_BLOCK);
+    FreeHeapSlot(TEXT_WORK_BLOCK);
   *text = 0;
 }
 
@@ -412,7 +412,7 @@ void UiText_LookupMessage(struct TextReader *reader, s32 message) {
 
   RamCode_Load(routine, UiText_LookupMessageArm, UiText_LookupMessageCodeSize);
   routine(reader, message);
-  MemFree(routine);
+  Free(routine);
 }
 
 /// Decodes the next symbol of a message. Messages are Huffman coded with one

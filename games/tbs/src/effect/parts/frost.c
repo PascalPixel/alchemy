@@ -50,7 +50,7 @@ void BattleEffect_RunFrost(struct BattleEffectArgument *effect) {
   struct EffectStep *mote;
   s32 i;
 
-  slots = &gWorkSlot[HEAP_SLOT_BATTLE_EFFECT];
+  slots = &gHeapSlots[HEAP_SLOT_BATTLE_ANIM];
   cursor = slots;
   EFFECT_GET_WORK_AND_CANVAS(cursor, work, canvas);
   puffSheet = EFFECT_SLOT(slots, HEAP_SLOT_BATTLE_SHEET);
@@ -94,11 +94,11 @@ void BattleEffect_RunFrost(struct BattleEffectArgument *effect) {
     Transform_ApplyPosition(point);
     // A chime every 4 frames while the columns spring up.
     if (frame >= 36 && frame < 64 && (frame & 3) == 0)
-      AudioCommand_PlayFar(SE_ICE);
+      Sound_PlaySongFar(SE_ICE);
     // Frame 85 is Frost's burst; Tundra and Glacier play this sound 12 and 24
     // frames before theirs.
     if (frame == 85)
-      AudioCommand_PlayFar(SE_136);
+      Sound_PlaySongFar(SE_136);
     EFFECT_FOR_EACH_TARGET(i, work->effect) {
       if (frame == i * 4 + 40)
         ObjectGroup_UpdateMembers(work->effect->actors[i],
@@ -320,6 +320,6 @@ void BattleEffect_RunFrost(struct BattleEffectArgument *effect) {
   }
 
   EFFECT_RELEASE_BLITTERS();
-  Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
+  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   BattleEffect_EndCanvasLayer();
 }

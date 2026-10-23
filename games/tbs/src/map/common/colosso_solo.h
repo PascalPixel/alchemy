@@ -129,7 +129,7 @@ void Colosso_ControlCharacterAlone(s32 id) {
 /// lend a hand): when the Psynergy request names that friend and
 /// FLAG_PSYNERGY_TARGET is set, raise map event 99, Colosso_TakePlaceForMatch.
 void Colosso_RaiseTakePlaceOnPsynergy(void) {
-  struct EventWork *work = gEventWork;
+  struct EventWork *work = gFieldWork;
   s32 selection = gGameState.selectedLocalId;
 
   if (selection != 0 && (work->psynergyRequest >> 10) == selection &&
@@ -147,7 +147,7 @@ void Colosso_RaiseTakePlaceOnPsynergy(void) {
 /// begin. Please take your places." The next friend then looks around, or,
 /// after Mia, the party leaves for the race.
 static void Colosso_TakePlaceForMatch(void) {
-  struct EventWork *work = gEventWork;
+  struct EventWork *work = gFieldWork;
   s32 speakerId = 8;
   s32 nearestDistance = 0x100000;
   s32 supporterId = gGameState.selectedLocalId;
@@ -224,7 +224,7 @@ void Colosso_AskDoneCheering(s32 id) {
   s32 msg;
   s32 res;
 
-  work = gEventWork;
+  work = gFieldWork;
   // Look up the speaker twice and discard both results (two original calls).
   ObjectEvent_GetById(id);
   ObjectEvent_GetById(id);
@@ -234,8 +234,8 @@ void Colosso_AskDoneCheering(s32 id) {
   msg = MsgColossoCheering;
   Engine_ScriptSetMessage(msg);
   Engine_ScriptOpenMessage(id, 0);
-  gEventWork->choiceMessage = MsgColossoCheeringChoices;
-  gEventWork->choiceWidth = 4;
+  gFieldWork->choiceMessage = MsgColossoCheeringChoices;
+  gFieldWork->choiceWidth = 4;
   res = Engine_ScriptChooseYesNo(slot, 0);
   if (res == 0) {
     Engine_ScriptSetMessage(msg + 1);

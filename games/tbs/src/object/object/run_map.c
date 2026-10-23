@@ -4,8 +4,8 @@
 
 #include "../object_internal.h"
 
-/// The object system's work (struct ObjectSystemWork, gMenuCtrlWork in
-/// HEAP_SLOT_MENU_CONTROL), seen as the flag that suspends sprite projection
+/// The object system's work (struct ObjectSystemWork, gObjectSystemWork in
+/// HEAP_SLOT_OBJECT_SYSTEM), seen as the flag that suspends sprite projection
 /// while the menu opens.
 struct MenuCtrl {
   u16 used;     ///< ObjectSystemWork's; not named here
@@ -26,11 +26,11 @@ struct MenuCtrl {
 ///
 /// Called from Game_Run's main loop for every map, which
 /// passes the result to Map_TakeWarp. Allocates the field work in
-/// HEAP_SLOT_EVENT, cleared, and frees it on the way out, with every
+/// HEAP_SLOT_FIELD, cleared, and frees it on the way out, with every
 /// block the map took after it from the same pool; sets gGameState's default,
 /// next and defeat destinations, and clears FLAG_IN_BATTLE and, once the map
 /// has started, FLAG_KEEP_PARTY_POSITION.
-s32 Field_RunMap(s32 warpDest) {
+s32 Map_Run(s32 warpDest) {
   struct FieldWork *work;
   struct ObjectEvent *objectEvent;
   s32 mode;
@@ -38,7 +38,7 @@ s32 Field_RunMap(s32 warpDest) {
   s32 code;
 
   // Set up the map.
-  work = Runtime_AllocateBlock(HEAP_SLOT_EVENT, sizeof(struct FieldWork));
+  work = AllocHeapSlotEwram(HEAP_SLOT_FIELD, sizeof(struct FieldWork));
   Dma_Fill32(0, work, sizeof(struct FieldWork));
   GameFlag_ClearBitFar(FLAG_IN_BATTLE);
   gGameState.defaultMap = gGameState.mapId;
@@ -47,16 +47,16 @@ s32 Field_RunMap(s32 warpDest) {
   gGameState.nextWarpDest = -1;
   gGameState.defeatMap = -1;
   gGameState.defeatWarpDest = -1;
-  Scheduler_ResetTaskTable();
+  Task_ResetAll();
   Djinn_ResolvePendingEvent(0);
-  if (gGameState.layoutId == (s32)&MapId_Clear) {
+  if (gGameState.layoutId == (s32)&MapId_MainMenu) {
     WorldMap_InitializePerspectiveFar();
     gGameState.perspectiveMap = 1;
-    mode = MODE_WORLD_MAP;
+    mode = OBJECT_SYSTEM_WORLD_MAP;
     Encounter_SelectMapZones(0);
   } else {
     MapGrid_LoadLayoutFar(gGameState.layoutId);
-    mode = MODE_LAYERED_MAP;
+    mode = OBJECT_SYSTEM_LAYOUT;
     Encounter_SelectMapZones(1);
   }
   work->mode = mode;
@@ -71,7 +71,7 @@ s32 Field_RunMap(s32 warpDest) {
     ObjectTable_Restore();
   if (gGameState.pendingDjinnEvent != 0)
     ObjectEvent_PlaceMapObjectEvents();
-  if (mode == MODE_WORLD_MAP) {
+  if (mode == OBJECT_SYSTEM_WORLD_MAP) {
     WorldMap_UpdateCurrentTileBlockFar();
     WorldMap_LoadGraphicsFar(gGameState.x, gGameState.z);
   } else {
@@ -192,7 +192,7 @@ s32 Field_RunMap(s32 warpDest) {
               } else {
                 ObjectDispatch_SelectAnimationFar(objectEvent, 19);
               }
-              AudioCommand_PlayFar(MUS_DEFEAT);
+              Sound_PlaySongFar(MUS_DEFEAT);
               UiText_ShowPositionedMessageAndWaitFar(MsgFieldPartyAnnihilated,
                                                      1);
               vitals = Unit_GetFar(gGameState.selectedLocalId);
@@ -222,7 +222,7 @@ s32 Field_RunMap(s32 warpDest) {
           // clears transitionActive, so the map ends without another fade.
           Leader_StopMoving();
           ObjectTable_Snapshot();
-          gGameState.returnCue = -1;
+          gGameState.returnMusic = -1;
           gGameState.mapId = RUN_BATTLE;
           gGameState.warpDest = work->battle;
           work->warp = WARP_NONE;
@@ -268,7 +268,7 @@ s32 Field_RunMap(s32 warpDest) {
           // The main menu (B + Select in debug mode opens the debug menu).
           UiTimedNotice_CloseIfActiveFar();
           Leader_StopMoving();
-          AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
+          Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
           WorldMap_StartScript();
           GameFlag_SetBitFar(FLAG_MENU_OPEN);
           if (gDebugMode != 0 && (gKeysHeld & KEY_B) != 0 &&
@@ -309,7 +309,7 @@ s32 Field_RunMap(s32 warpDest) {
         } else if (work->start != 0) {
           // The pause menu (in debug mode, B opens the debug menu and L the
           // palette editor).
-          AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
+          Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
           Leader_StopMoving();
           WorldMap_StartScript();
           GameFlag_SetBitFar(FLAG_MENU_OPEN);
@@ -328,13 +328,13 @@ s32 Field_RunMap(s32 warpDest) {
           } else {
             Field_EndBusyAndReveal();
             UiTimedNotice_CloseIfActiveFar();
-            gGameState.returnCue = AudioCommand_GetMusicCueFar();
+            gGameState.returnMusic = AudioCommand_GetMusicCueFar();
             if (GameFlag_TestFar(FLAG_IN_BATTLE_ARENA) == 0) {
               // With fewer than 136 of the 512 sprite VRAM blocks (64 bytes
               // each) free, sprite drawing stays suspended while the menu
               // runs, and a frame passes so that the field's sprites give
               // their VRAM back before it opens.
-              struct MenuCtrl *ctrl = (struct MenuCtrl *)gMenuCtrlWork;
+              struct MenuCtrl *ctrl = (struct MenuCtrl *)gObjectSystemWork;
               u8 *owner = gResourceBlockOwners;
               s32 free = 0;
               s32 n = 512;
@@ -371,7 +371,7 @@ s32 Field_RunMap(s32 warpDest) {
         else if (gGameState.movementMode == LEADER_MOVEMENT_CLIMB)
           ObjectDispatch_StartMoveByKeysFar(
               (struct DispatchObject *)objectEvent);
-        else if (work->mode == MODE_WORLD_MAP)
+        else if (work->mode == OBJECT_SYSTEM_WORLD_MAP)
           ObjectDispatch_StartWorldMapControlFar(
               (struct DispatchObject *)objectEvent);
         else
@@ -394,17 +394,17 @@ done:
     work->transitionActive = 0;
     WaitFrames(work->transitionFrames);
   }
-  Runtime_ReleaseHeapBlock(HEAP_SLOT_EVENT);
+  FreeHeapSlot(HEAP_SLOT_FIELD);
   return result;
 }
 
 /// An object event (struct ObjectEvent), seen with its position as one vector.
-struct Object {
+struct ObjectVectorView {
   u8 pad0[6];
   u16 angle;                    ///< 1/65536 turns
   struct EffectVector position; ///< 16.16 fixed-point pixels
   u8 pad1[14];
-  u8 kind; ///< ObjectRuntime's terrainId: the map grid layer of its ground
+  u8 kind; ///< Object's terrainId: the map grid layer of its ground
   u8 pad2[0x2d];
   struct AnimationObject *sprite;
 };
@@ -415,13 +415,13 @@ struct Object {
 /// to 64 pixels above it, or a behavior the map has a bg event for. Returns 0
 /// otherwise.
 ///
-/// Called by Field_RunMap for the A button (a non-zero result becomes
+/// Called by Map_Run for the A button (a non-zero result becomes
 /// work->tile, for Field_SearchTile), and by Menu_RunTopSelection's search
 /// entry through ObjectEvent_GetTriggerTileAheadOfCurrentFar. Changes nothing.
 s32 ObjectEvent_GetTriggerTileAheadOfCurrent(void) {
   u8 *workBytes;
   u8 *gridBytes;
-  struct Object *leader;
+  struct ObjectVectorView *leader;
   union PolarOffsetPosition probePosition;
   u8 *cell;
   u8 *cells;
@@ -431,7 +431,7 @@ s32 ObjectEvent_GetTriggerTileAheadOfCurrent(void) {
 
   result = 0;
   leader = ObjectTable_Get(gGameState.selectedLocalId);
-  workBytes = *(u8 **)Ram_EventWork;
+  workBytes = *(u8 **)Ram_FieldWork;
   gridBytes = *(u8 **)Ram_MapGridWork;
   if (leader != 0) {
     probePosition.vector.x = leader->position.x;
@@ -440,7 +440,7 @@ s32 ObjectEvent_GetTriggerTileAheadOfCurrent(void) {
     Vector_AddPolarOffset(0x100000, leader->angle, probePosition.coordinates);
     // World map metatiles are 32 pixels square, 32 to a row; map cells 16
     // pixels square, 128 to a row, four bytes each.
-    if (((struct FieldWork *)workBytes)->mode == MODE_WORLD_MAP) {
+    if (((struct FieldWork *)workBytes)->mode == OBJECT_SYSTEM_WORLD_MAP) {
       cell =
           Ram_Metatiles + ((((probePosition.vector.x / 0x200000) & 31) +
                             (((probePosition.vector.z / 0x200000) & 31) << 5))
@@ -471,7 +471,7 @@ s32 ObjectEvent_GetTriggerTileAheadOfCurrent(void) {
 /// entry, or the map's first one) unless it keeps its position, and sets the
 /// map's scroll bounds, at least a screen (240 x 160 pixels) wide and tall.
 ///
-/// Called by Field_RunMap once the map's events are set. Writes
+/// Called by Map_Run once the map's events are set. Writes
 /// gGameState's position, heading and turn, and the map's minX to maxY.
 void Map_ApplyWarpDest(void) {
   struct MapGridScrollWork *grid = gMapGridWork[0];

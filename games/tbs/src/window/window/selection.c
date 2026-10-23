@@ -14,7 +14,7 @@ struct GlyphCursor {
 
 /// Allocates and resets the selection screen: the row of icons the player picks
 /// from, with arrows at each end and a pointing hand over the chosen target.
-/// The work is HEAP_SLOT_SELECTION (gResQueueWork), which
+/// The work is HEAP_SLOT_SELECTION_SCREEN (gSelectionScreenWork), which
 /// Resource_ResetOwnerEntries frees; the hand's picture takes a VRAM cache
 /// entry for that long.
 void UiGlyph_ResetWorkState(void) {
@@ -24,8 +24,8 @@ void UiGlyph_ResetWorkState(void) {
   s32 i;
   u16 clear = 0;
 
-  work = Runtime_AllocateBlock(HEAP_SLOT_SELECTION,
-                               sizeof(struct SelectionScreen));
+  work = AllocHeapSlotEwram(HEAP_SLOT_SELECTION_SCREEN,
+                            sizeof(struct SelectionScreen));
   work->head = NULL;
   work->path = NULL;
   work->window = NULL;
@@ -76,7 +76,7 @@ void UiGlyph_ResetWorkState(void) {
 void Resource_ClearOwnerListAndCounters(void) {
   struct SelectionScreen *screen;
 
-  screen = gResQueueWork;
+  screen = gSelectionScreenWork;
   screen->head = NULL;
   screen->unread = 0;
   if (screen->cursorIndex & 0x80) {
@@ -93,7 +93,7 @@ void Resource_ClearOwnerListAndCounters(void) {
 /// ICON_KIND_YES_NO, ICON_KIND_ITEM and ICON_KIND_ABILITY; base is the
 /// command's, item's or ability's number.
 void Resource_PushPendingPair(u32 kind, u32 base) {
-  struct SelectionScreen *state = gResQueueWork;
+  struct SelectionScreen *state = gSelectionScreenWork;
   u16 entryCount = state->count;
 
   if (entryCount != UI_SELECTION_ENTRY_LIMIT) {
@@ -108,7 +108,7 @@ void Resource_PushPendingPair(u32 kind, u32 base) {
 /// Builds the linked row before placing the visible icons and loading the
 /// preview.
 void SelectionScreen_BuildEntries(u32 unused) {
-  struct SelectionScreen *screen = gResQueueWork;
+  struct SelectionScreen *screen = gSelectionScreenWork;
   u32 count = screen->count;
   u32 entryIndex = screen->top;
   struct SelectionNode *previous = 0;
@@ -172,7 +172,7 @@ void UiWork_ReservedNoOp(void) {}
 /// Returns a free selection icon record of `kind` (enum SelectionIconGroup),
 /// or NULL.
 struct SelectionNode *SelectionScreen_FindFreeIcon(s32 kind) {
-  struct SelectionScreen *state = gResQueueWork;
+  struct SelectionScreen *state = gSelectionScreenWork;
   s32 i;
 
   if (kind != SELECTION_ICON_ROW) {
@@ -192,13 +192,11 @@ struct SelectionNode *SelectionScreen_FindFreeIcon(s32 kind) {
 /// Starts drawing the selection screen each frame, in the main loop's pass
 /// (0xc80).
 void Resource_ScheduleOwnerResetDelayed(void) {
-  Scheduler_AddOrUpdateCallback(SelectionScreen_Draw, 0xC80);
+  Task_Add(SelectionScreen_Draw, 0xC80);
 }
 
 /// Stops drawing the selection screen.
-void Resource_ScheduleOwnerReset(void) {
-  Scheduler_RemoveCallback(SelectionScreen_Draw);
-}
+void Resource_ScheduleOwnerReset(void) { Task_Remove(SelectionScreen_Draw); }
 
 /// The selection screen's per-frame callback: slides and draws the row of
 /// icons, the large icon over the chosen one, the end arrows, the icons already
@@ -208,7 +206,7 @@ void Resource_ScheduleOwnerReset(void) {
 /// (OBJ mode 1) while the hand is shown, and a command's icon and the large
 /// icon always.
 void SelectionScreen_Draw(void) {
-  struct SelectionScreen *state = gResQueueWork;
+  struct SelectionScreen *state = gSelectionScreenWork;
   struct SelectionSprite *cursorEntry = &state->records[14].sprite;
   struct SelectionNode *cursor = &state->records[14];
   struct SelectionNode *transfer = &state->records[15];
@@ -441,7 +439,7 @@ void Menu_OpenSelectionWindow(s32 mode, u32 count) {
   struct UiWindow **slot;
   struct UiWindow *window;
 
-  screen = gResQueueWork;
+  screen = gSelectionScreenWork;
   node = SelectionScreen_GetCursorNode(screen);
   slot = &screen->window;
   window = *slot;
@@ -487,7 +485,7 @@ void Menu_OpenSelectionWindow(s32 mode, u32 count) {
 /// slot 18). The chosen icons go too, so the choices are only in the indexes
 /// the loops returned.
 void Resource_ResetOwnerEntries(void) {
-  struct SelectionScreen *state = gResQueueWork;
+  struct SelectionScreen *state = gSelectionScreenWork;
   struct SelectionNode *node;
 
   Resource_ScheduleOwnerReset();
@@ -519,12 +517,12 @@ void Resource_ResetOwnerEntries(void) {
     }
   }
   Resource_ResetEntry(state->records[14].slot);
-  Runtime_ReleaseHeapBlock(HEAP_SLOT_SELECTION);
+  FreeHeapSlot(HEAP_SLOT_SELECTION_SCREEN);
 }
 
 /// Moves the row of icons to start at pixel (x, y), 16 pixels apart.
 void Menu_SetNodeCoordinates(u32 x, u32 y) {
-  struct SelectionScreen *screen = gResQueueWork;
+  struct SelectionScreen *screen = gSelectionScreenWork;
   struct SelectionNode *node;
 
   screen->baseX = x;
@@ -544,7 +542,7 @@ void Menu_SetNodeCoordinates(u32 x, u32 y) {
 void Menu_SetupSelectionBothSides(void) {
   struct SelectionScreen *state;
 
-  state = gResQueueWork;
+  state = gSelectionScreenWork;
   SelectionScreen_SetupArrow(state, 0);
   SelectionScreen_SetupArrow(state, 1);
 }
@@ -626,7 +624,7 @@ SelectionScreen_GetCursorNode(struct SelectionScreen *screen) {
 /// moving or choosing; any mode but 0 allows cancelling. Reached only through
 /// a bare entry of the window far-call table.
 s32 Menu_SelectionLoop(s32 mode) {
-  struct SelectionScreen *screen = gResQueueWork;
+  struct SelectionScreen *screen = gSelectionScreenWork;
 
   SelectionScreen_HighlightIcon(screen, 0);
   for (;;) {
@@ -652,7 +650,7 @@ s32 Menu_SelectionLoop(s32 mode) {
 
 /// As Menu_SelectionLoop, with the menu sounds.
 u32 Menu_WaitForSelectionInput(u32 mode) {
-  struct SelectionScreen *screen = gResQueueWork;
+  struct SelectionScreen *screen = gSelectionScreenWork;
   u32 result;
 
   for (;;) {
@@ -663,10 +661,10 @@ u32 Menu_WaitForSelectionInput(u32 mode) {
 
     if (mode != SELECTION_FIXED) {
       if (gKeysRepeat & KEY_RIGHT) {
-        AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
+        Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
         Menu_StepRight(screen);
       } else if (gKeysRepeat & KEY_LEFT) {
-        AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
+        Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
         Menu_StepLeft(screen);
       }
 
@@ -676,18 +674,18 @@ u32 Menu_WaitForSelectionInput(u32 mode) {
         result = screen->top + screen->cursorIndex;
         if (screen->head->kind == NODE_KIND_YES_NO) {
           if (result == 0)
-            AudioCommand_PlayFar(SE_MENU_CONFIRM);
+            Sound_PlaySongFar(SE_MENU_CONFIRM);
           else
-            AudioCommand_PlayFar(SE_MENU_CANCEL);
+            Sound_PlaySongFar(SE_MENU_CANCEL);
         } else {
-          AudioCommand_PlayFar(SE_MENU_CONFIRM);
+          Sound_PlaySongFar(SE_MENU_CONFIRM);
         }
         return result;
       }
     }
 
     if (mode != 0 && (gKeysPressed & KEY_B)) {
-      AudioCommand_PlayFar(SE_MENU_CANCEL);
+      Sound_PlaySongFar(SE_MENU_CANCEL);
       return -1;
     }
   }
@@ -1347,7 +1345,7 @@ void UiTextResource_Release(s32 value) { Resource_ResetEntry(value); }
 /// Other kinds of entry show none. The icon keeps its VRAM cache entry until
 /// Resource_ResetPendingTransfer.
 void SelectionScreen_LoadLargeIcon(void) {
-  struct SelectionScreen *state = gResQueueWork;
+  struct SelectionScreen *state = gSelectionScreenWork;
   struct SelectionNode *selected = SelectionScreen_GetCursorNode(state);
   struct SelectionNode *transfer;
   GlyphTransfer *buffer;
@@ -1358,8 +1356,7 @@ void SelectionScreen_LoadLargeIcon(void) {
   if (selected->kind != ICON_KIND_COMMAND && selected->kind != ICON_KIND_YES_NO)
     return;
 
-  buffer = Runtime_AllocateHeapBlock(HEAP_SLOT_GLYPH_TRANSFER,
-                                     sizeof(GlyphTransfer));
+  buffer = AllocHeapSlot(HEAP_SLOT_GLYPH_TRANSFER, sizeof(GlyphTransfer));
   transfer = &state->records[15];
   resourceId = selected->base;
   // The resource starts with a halfword offset per command icon.
@@ -1369,7 +1366,7 @@ void SelectionScreen_LoadLargeIcon(void) {
     resource = table + *(u16 *)(table + selected->base * 2);
     *tiles = resource;
   }
-  Resource_DecodeByteLz(resource, buffer);
+  Decompress_ByteLz(resource, buffer);
 
   if (transfer->kind == ICON_KIND_NONE)
     transfer->slot = Resource_FindFreeEntry();
@@ -1379,13 +1376,13 @@ void SelectionScreen_LoadLargeIcon(void) {
   transfer->scale = 40;
   transfer->scaleStep = 40;
   transfer->scaleEnd = 240;
-  Runtime_ReleaseHeapBlock(HEAP_SLOT_GLYPH_TRANSFER);
+  FreeHeapSlot(HEAP_SLOT_GLYPH_TRANSFER);
 }
 
 /// Frees the large command icon, if it is shown.
 /// The large preview owns a cache slot independently of the visible row icons.
 void Resource_ResetPendingTransfer(void) {
-  struct SelectionNode *largeIcon = &gResQueueWork->records[15];
+  struct SelectionNode *largeIcon = &gSelectionScreenWork->records[15];
 
   if (largeIcon->kind != ICON_KIND_NONE) {
     Resource_ResetEntry(largeIcon->slot);
@@ -1401,7 +1398,7 @@ void Resource_ResetPendingTransfer(void) {
 /// Runs the field menu until the player picks something that leaves it, and
 /// returns the chosen screen's result. Cancelling the menu returns an
 /// undefined value, the missing result of UiWork_CloseAndRelease (0 under
-/// UBFIX); its one caller, Field_RunMap, ignores the result. Its case for
+/// UBFIX); its one caller, Map_Run, ignores the result. Its case for
 /// command 0, which stores the trigger tile ahead in the event work's
 /// facingTrigger, is unreachable.
 s32 Menu_RunTopSelection(void) {
@@ -1409,7 +1406,7 @@ s32 Menu_RunTopSelection(void) {
   s32 selection;
   u8 *state;
 
-  state = (u8 *)gEventWork;
+  state = (u8 *)gFieldWork;
   selection = 0;
 
   for (;;) {
@@ -1502,7 +1499,7 @@ UNUSED void SelectionScreen_CreateEmpty(void) {
 /// The caller sets up the screen and lists its entries first; this closes the
 /// screen and frees it before returning.
 u32 Menu_RunSelectionForValue(u32 initialIndex) {
-  struct SelectionScreen *screen = gResQueueWork;
+  struct SelectionScreen *screen = gSelectionScreenWork;
   u32 result;
 
   // locked 1: a yes or no row stays at the bottom. The name window is 5

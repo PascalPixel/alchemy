@@ -132,7 +132,7 @@ const struct MapEvent *Map_GetEvents(void) {
 s32 Map_Initialize(void) {
   struct ObjectEvent *stump;
 
-  gEventWork->startTransition =
+  gFieldWork->startTransition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   if (gGameState.mapId == (s32)&MapId_GomaCaveStream) {
     if (gGameState.warpDest == GOMA_CAVE_STREAM_FROM_VALE_GATE) {

@@ -38,8 +38,8 @@ void FieldEffect_Run(void) {
   s32 targetId;
   s32 nearestTargetId;
 
-  effectWork = *(gWorkSlot + HEAP_SLOT_EFFECT);
-  runtime = *(gWorkSlot + HEAP_SLOT_EVENT);
+  effectWork = *(gHeapSlots + HEAP_SLOT_FIELD_EFFECT);
+  runtime = *(gHeapSlots + HEAP_SLOT_FIELD);
   kind = effectWork->fieldKind;
   targetId = effectWork->secondObjectId;
 
@@ -124,8 +124,8 @@ void FieldEffect_Run(void) {
 /// Whirlwind, Catch) tell that a map event decides what happens to the
 /// target. Halt also moves gGameState.pausedObject to the target.
 void FieldEffect_DispatchRequestKind(void) {
-  struct FieldEffectWork *effectWork = *(gWorkSlot + HEAP_SLOT_EFFECT);
-  struct FieldWork *runtime = *(gWorkSlot + HEAP_SLOT_EVENT);
+  struct FieldEffectWork *effectWork = *(gHeapSlots + HEAP_SLOT_FIELD_EFFECT);
+  struct FieldWork *runtime = *(gHeapSlots + HEAP_SLOT_FIELD);
   s32 kind = effectWork->fieldKind;
   s32 targetId = effectWork->secondObjectId;
 
@@ -135,7 +135,7 @@ void FieldEffect_DispatchRequestKind(void) {
     if (runtime->revealActive != 0)
       FieldEffect_EndReveal();
     if (gGameState.pausedObject != effectWork->secondObjectId)
-      ((struct ObjectRuntime *)effectWork->child)->movementState = 1;
+      ((struct Object *)effectWork->child)->movementState = 1;
     FieldEffect_StartMindReadWave(effectWork->firstObjectId, targetId);
     break;
   case FIELD_KIND_MOVE:
@@ -199,12 +199,12 @@ void FieldEffect_DispatchRequestKind(void) {
 /// Field_DispatchTypeHandler(PSYNERGY_STEP_FINISH): Mind Read is the one kind
 /// whose effect stays up through the after event, the conversation it reads.
 void FieldEffect_FinishMindRead(void) {
-  struct FieldEffectWork *effectWork = gEffectWork;
+  struct FieldEffectWork *effectWork = gFieldEffectWork;
 
   if (effectWork->fieldKind == FIELD_KIND_MIND_READ) {
     FieldEffect_FinishWaveAndReleaseHeapBlock();
     if (gGameState.pausedObject != effectWork->secondObjectId) {
-      ((struct ObjectRuntime *)effectWork->child)->movementState = 0;
+      ((struct Object *)effectWork->child)->movementState = 0;
     }
   }
 }
@@ -215,7 +215,7 @@ void FieldEffect_FinishMindRead(void) {
 void FieldScript_RunTypeHandler(void) {
   u32 kind;
 
-  kind = ((struct FieldEffectWork *)gEffectWork)->fieldKind;
+  kind = ((struct FieldEffectWork *)gFieldEffectWork)->fieldKind;
   switch (kind) {
   case FIELD_KIND_REVEAL:
     FieldEffect_EndReveal();
@@ -269,7 +269,7 @@ s32 Field_RunEventAction(const void *event, s32 param, s32 target) {
 /// target they hold, Retreat to its caster. A sprite that keeps its VRAM
 /// cache entry (retainCacheEntry) is left alone.
 void ObjectGroup_ApplyRandomChildValues(union FieldObject *fieldObject) {
-  struct ObjectRuntime *owner = (struct ObjectRuntime *)fieldObject;
+  struct Object *owner = (struct Object *)fieldObject;
   s32 kind;
   struct AnimationObject *animation;
   s32 initialCount;
@@ -306,7 +306,7 @@ void ObjectGroup_ApplyRandomChildValues(union FieldObject *fieldObject) {
 /// Sends an object toward the point magnitude (16.16 pixels) away from it in
 /// direction angle: sets its move target. Carry, Lift, Douse, Move and the
 /// Djinni's hop into battle throw things this way.
-void Motion_SetTargetPositionFromMagnitudeAngle(struct ObjectRuntime *object,
+void Motion_SetTargetPositionFromMagnitudeAngle(struct Object *object,
                                                 s32 magnitude, s32 angle) {
   s32 pos[3];
 
@@ -372,9 +372,9 @@ Sprite_ShareVramCache(struct AnimationObject *sourceSprite,
 /// floats (motion flags 4), is depth-sorted as if 320 pixels lower (priority
 /// flag bit 2) and has no shadow; its creator releases it, or its script
 /// frees it.
-struct ObjectRuntime *Object_Spawn(s32 kind, s32 x, s32 y, s32 z) {
-  struct FieldEffectWork *effectWork = gEffectWork;
-  struct ObjectRuntime *object;
+struct Object *Object_Spawn(s32 kind, s32 x, s32 y, s32 z) {
+  struct FieldEffectWork *effectWork = gFieldEffectWork;
+  struct Object *object;
 
   object = Object_CreateFar(kind, x, y, z);
   if (object != NULL) {
@@ -383,7 +383,7 @@ struct ObjectRuntime *Object_Spawn(s32 kind, s32 x, s32 y, s32 z) {
       return NULL;
     }
     object->terrainHeight =
-        ((struct ObjectRuntime *)effectWork->mainObject)->terrainHeight;
+        ((struct Object *)effectWork->mainObject)->terrainHeight;
     object->flags = 4;
     object->priorityFlags = 4;
     ((struct AnimationObject *)object->animation)->image.priority = 0;
@@ -397,10 +397,10 @@ struct ObjectRuntime *Object_Spawn(s32 kind, s32 x, s32 y, s32 z) {
 /// player's and except. EventObject_Initialize pauses them
 /// (animation speed 0) while an effect plays and lets them go again at
 /// normal speed.
-void ObjectGroup_SetActionForOthers(struct ObjectRuntime *except, s32 state,
+void ObjectGroup_SetActionForOthers(struct Object *except, s32 state,
                                     s32 value) {
   s16 *player;
-  struct ObjectRuntime *object;
+  struct Object *object;
   s32 localId;
 
   localId = 0;

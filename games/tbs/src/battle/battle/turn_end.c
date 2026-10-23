@@ -355,7 +355,7 @@ s32 Battle_ProcessRoundEnd(void) {
             BattleEvent_Push(BATTLE_EVENT_DRAW_STATUS, 0);
             PUSH_MESSAGE(MsgDjinnSet);
             BattleEvent_Push(BATTLE_EVENT_REFRESH_UNIT, unitId);
-            AudioCommand_PlayFar(SE_212);
+            Sound_PlaySongFar(SE_212);
             ObjectDispatch_SelectAnimationFar(BattleObject_Get(unitId)->object,
                                               POSE_CAST);
             ObjectDispatch_SetAnimationSpeedFar(
@@ -420,7 +420,7 @@ s32 Battle_ProcessRoundEnd(void) {
             } else {
               UiText_ShowMessageAndWaitCoreFar(MsgHpRecover);
             }
-            AudioCommand_PlayFar(SE_175);
+            Sound_PlaySongFar(SE_175);
             BattlePresentation_WaitForAdvance();
           }
           if (unit->ppRegen != 0 && unit->pp != unit->ppMax) {
@@ -436,7 +436,7 @@ s32 Battle_ProcessRoundEnd(void) {
             } else {
               UiText_ShowMessageAndWaitCoreFar(MsgPpRecover);
             }
-            AudioCommand_PlayFar(SE_175);
+            Sound_PlaySongFar(SE_175);
             BattlePresentation_WaitForAdvance();
           }
         }
@@ -617,7 +617,7 @@ s32 BattleUnit_ProcessTurnEnd(struct BattlePlan *plan) {
     // many levels (elementLevels), and each element's power that Unit_Calculate
     // then raises is announced against a copy taken before.
     mostOfOneElement = 0;
-    before = Runtime_BumpAllocateAlternatePool(sizeof(struct BattleUnit));
+    before = AllocEwram(sizeof(struct BattleUnit));
     Iwram_CopyWords(before, unit, sizeof(struct BattleUnit));
     strongestElement = -1;
     for (i = 0; i < ELEMENT_COUNT; i++) {
@@ -643,7 +643,7 @@ s32 BattleUnit_ProcessTurnEnd(struct BattlePlan *plan) {
         // MsgEarthPowerUp and the next three, in enum Element order.
         PUSH_MESSAGE(MsgEarthPowerUp + i);
         BattleEvent_Push(BATTLE_EVENT_REFRESH_UNIT, unitId);
-        AudioCommand_PlayFar(SE_212);
+        Sound_PlaySongFar(SE_212);
         ObjectDispatch_SelectAnimationFar(BattleObject_Get(unitId)->object,
                                           POSE_CAST);
         ObjectDispatch_SetAnimationSpeedFar(
@@ -654,7 +654,7 @@ s32 BattleUnit_ProcessTurnEnd(struct BattlePlan *plan) {
         BattleEvent_WaitForReady();
       }
     }
-    MemFree(before);
+    Free(before);
   }
   // Damage at the turn's end, each queue played at once: the haunting
   // spirit's (the shares of its damage BattleTarget_Execute gathered),
@@ -695,9 +695,9 @@ s32 BattleUnit_ProcessTurnEnd(struct BattlePlan *plan) {
       // DEAD: *poison is nonzero here, so the hit's cue is always
       // SE_HEAVY_IMPACT; the compare and both stores are in the ROM.
       if (*poison != 0) {
-        state->events.pendingCue = SE_HEAVY_IMPACT;
+        state->events.pendingSong = SE_HEAVY_IMPACT;
       } else {
-        state->events.pendingCue = SE_IMPACT;
+        state->events.pendingSong = SE_IMPACT;
       }
       if (Unit_AddHpFar(unitId, -damage) == 0) {
         s32 text;

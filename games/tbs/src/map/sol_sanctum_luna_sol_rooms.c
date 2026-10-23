@@ -314,20 +314,20 @@ static void SolSanctumLunaSolRooms_DrawAlternateSavedStatueLights(void) {
 
 /// Flashes both tile sets of the lit quarters' lights at this pace.
 static inline void SolSanctumLunaSolRooms_FlashCurrentStatueLights(s32 frames) {
-  Script_PlayCue(SE_246);
+  Script_PlaySong(SE_246);
   SolSanctumLunaSolRooms_DrawCurrentStatueLights();
   Engine_ScriptWait(frames);
-  Script_PlayCue(SE_246);
+  Script_PlaySong(SE_246);
   SolSanctumLunaSolRooms_DrawAlternateCurrentStatueLights();
   Engine_ScriptWait(frames);
 }
 
 /// Flashes both tile sets of the lights last shown at this pace.
 static inline void SolSanctumLunaSolRooms_FlashSavedStatueLights(s32 frames) {
-  Script_PlayCue(SE_246);
+  Script_PlaySong(SE_246);
   SolSanctumLunaSolRooms_DrawSavedStatueLights();
   Engine_ScriptWait(frames);
-  Script_PlayCue(SE_246);
+  Script_PlaySong(SE_246);
   SolSanctumLunaSolRooms_DrawAlternateSavedStatueLights();
   Engine_ScriptWait(frames);
 }
@@ -676,7 +676,7 @@ static void SolSanctumLunaSolRooms_UpdateFirstFallingLight(void) {
   if ((Random_Next() & 3) != 0) {
     switch (gSolSanctumLunaSolRooms_Light1Timer) {
     case 0:
-      Script_PlayCue(SE_187);
+      Script_PlaySong(SE_187);
       MapGrid_CopyCellsTo(46, 59, 30, 33, 1, 5);
       break;
     case 1:
@@ -850,12 +850,12 @@ static void SolSanctumLunaSolRooms_OpenOnKradenInLunaRoom(void) {
   GameFlag_Set(FLAG_MAP_TEMP_01);
   GameFlag_Clear(FLAG_MAP_TEMP_00);
   GameFlag_Clear(FLAG_MAP_TEMP_02);
-  gEventWork->startTransition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
-  gEventWork->transitionFrames = 32;
+  gFieldWork->startTransition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+  gFieldWork->transitionFrames = 32;
   Engine_ScriptOpenScreen();
   Engine_ScriptWaitForScreen();
   Engine_ScriptWait(40);
-  Script_PlayCue(SE_THUNDER);
+  Script_PlaySong(SE_THUNDER);
   ColorBuffer_ApplyTarget(0x10005, 1);
   Engine_ColorBufferInterpolate(8);
   Engine_ScriptWait(32);
@@ -915,8 +915,8 @@ static void SolSanctumLunaSolRooms_FlashLightsWithTrapDisarmed(void) {
       SPEAKER_WINDOW_BELOW | LOCALID_KRADEN, 6);
   ObjectEvent_SetSpeed(LOCALID_KRADEN, PIXELS(2), PIXELS(1));
   ObjectEvent_WalkToAndWait(LOCALID_KRADEN, 576, 280);
-  gEventWork->startTransition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
-  gEventWork->transitionFrames = 32;
+  gFieldWork->startTransition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+  gFieldWork->transitionFrames = 32;
   Engine_ScriptCloseScreen();
   Engine_ScriptWaitForScreen();
   GameFlag_Set(FLAG_SOL_SANCTUM_KRADEN_SAID_FOUND_SOMETHING);
@@ -1000,8 +1000,8 @@ static void SolSanctumLunaSolRooms_SpringTrap(void) {
   Engine_TaskRemoveCallback(SolSanctumLunaSolRooms_UpdateSecondFallingLight);
   Engine_TaskRemoveCallback(SolSanctumLunaSolRooms_UpdateThirdFallingLight);
   Engine_TaskRemoveCallback(SolSanctumLunaSolRooms_UpdateFourthFallingLight);
-  gEventWork->startTransition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
-  gEventWork->transitionFrames = 32;
+  gFieldWork->startTransition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+  gFieldWork->transitionFrames = 32;
   Engine_ScriptCloseScreen();
   Engine_ScriptWaitForScreen();
   Engine_ScriptRequestWarp(
@@ -1082,7 +1082,7 @@ static void SolSanctumLunaSolRooms_UnusedAnimateSavedStatueLights(void) {
   for (twoFrameFlashes = 0; twoFrameFlashes != 12; twoFrameFlashes++) {
     SolSanctumLunaSolRooms_FlashSavedStatueLights(2);
   }
-  Script_PlayCue(SE_246);
+  Script_PlaySong(SE_246);
   SolSanctumLunaSolRooms_DrawSavedStatueLights();
   Engine_ScriptWait(6);
   // Kraden, once: "You found it, Isaac." and "Keep doing that until the light
@@ -1094,8 +1094,8 @@ static void SolSanctumLunaSolRooms_UnusedAnimateSavedStatueLights(void) {
     Engine_ObjectEventSetAnimationAndWait(LOCALID_KRADEN, ANIMATION_NOD);
     SolSanctumLunaSolRooms_ShowMessageAndWait(speaker, 6);
   }
-  gEventWork->startTransition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
-  gEventWork->transitionFrames = 32;
+  gFieldWork->startTransition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+  gFieldWork->transitionFrames = 32;
   Engine_ScriptCloseScreen();
   Engine_ScriptWaitForScreen();
   Engine_ScriptRequestWarp(
@@ -1351,9 +1351,9 @@ static void EventScript_RiseToElementalStarRoom(void) {
     } while (frame != 60);
     Engine_ObjectEventSetPosition(LOCALID_KRADEN, 0, 0);
     Engine_ScriptWait(80);
-    gEventWork->startTransition =
+    gFieldWork->startTransition =
         MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_CIRCLE);
-    gEventWork->transitionFrames = 24;
+    gFieldWork->transitionFrames = 24;
     Engine_ScriptCloseScreen();
     Engine_ScriptWaitForScreen();
     Engine_ColorBufferApplyTarget(0, 0);
@@ -1366,7 +1366,7 @@ static void EventScript_RiseToElementalStarRoom(void) {
 }
 
 /// Sets up Sol Sanctum's rooms of Sol and Luna and plays the scene this warp
-/// destination calls for. Called by Field_RunMap once the object events exist.
+/// destination calls for. Called by Map_Run once the object events exist.
 /// Blocks Retreat (FLAG_RETREAT_BLOCKED) from Kraden's find until the way up
 /// opens, before the eruption; sets FLAG_MAP_TEMP_00 at an ordinary warp
 /// destination; copies each lit quarter into its
@@ -1385,7 +1385,7 @@ s32 SolSanctumLunaSolRooms_Initialize(void) {
   s32 anyLightLit;
 
   Engine_TaskWait(1);
-  gEventWork->startTransition =
+  gFieldWork->startTransition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   playedEntrySequence = 0;
   if (Engine_GameFlagIsSet(FLAG_SOL_SANCTUM_FOUND) != 0 &&
@@ -1576,10 +1576,10 @@ static void SolSanctumLunaSolRooms_ArriveAfterWiseOnesRescue(void) {
   Engine_TaskWait(1);
   ObjectEvent_SetPosition(GARET, PIXELS(280), PIXELS(134));
   ObjectEvent_FaceDirection(GARET, FACING_NORTHWEST, 0);
-  // This script reads its work slots from one address: HEAP_SLOT_PALETTE_BUFFER
-  // is reached from HEAP_SLOT_EVENT's slot. As gEventWork and
-  // gPaletteBufferWork they would load two.
-  ((struct EventWork *)WORK_SLOT(HEAP_SLOT_EVENT))->transitionFrames = 1;
+  // This script reads its work slots from one address: HEAP_SLOT_PALETTE_FADE
+  // is reached from HEAP_SLOT_FIELD's slot. As gFieldWork and
+  // gPaletteFadeWork they would load two.
+  ((struct EventWork *)HEAP_SLOT_BLOCK(HEAP_SLOT_FIELD))->transitionFrames = 1;
   Engine_ScriptOpenScreen();
   Engine_ScriptWaitForScreen();
   Engine_ColorBufferApplyTarget(SOL_SANCTUM_BLUE_TINT, 1);
@@ -1649,7 +1649,7 @@ static void SolSanctumLunaSolRooms_ArriveAfterWiseOnesRescue(void) {
   }
   Engine_ObjectEventWaitForMove(GARET);
   Engine_ObjectEventSetPosition(GARET, 0, 0);
-  palette = WORK_SLOT(HEAP_SLOT_PALETTE_BUFFER);
+  palette = HEAP_SLOT_BLOCK(HEAP_SLOT_PALETTE_FADE);
   palette->target[0] = 0;
   palette->target[1] = 0;
   palette->target[2] = 0;
@@ -1658,9 +1658,9 @@ static void SolSanctumLunaSolRooms_ArriveAfterWiseOnesRescue(void) {
   palette->step = 1;
   palette->padding2a03 = 1;
   Io_Write16(0, &PLTT_BACKDROP);
-  ((struct EventWork *)WORK_SLOT(HEAP_SLOT_EVENT))->startTransition =
+  ((struct EventWork *)HEAP_SLOT_BLOCK(HEAP_SLOT_FIELD))->startTransition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
-  ((struct EventWork *)WORK_SLOT(HEAP_SLOT_EVENT))->transitionFrames = 16;
+  ((struct EventWork *)HEAP_SLOT_BLOCK(HEAP_SLOT_FIELD))->transitionFrames = 16;
   Engine_ScriptEnd();
 }
 

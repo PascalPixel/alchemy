@@ -3,7 +3,7 @@
 
 #include "types.h"
 
-void AudioCommand_Play(s32 id);
+void Sound_PlaySong(s32 id);
 void MusicPlayer_StepVolumeAndPitchTowardTargets(void);
 void AudioTest_RunParameterController(void);
 void Audio_InitializeRuntimeDefaults(void);

@@ -12,7 +12,7 @@ UNUSED void GraphicsPalette_ReservedNoOpC9C4(void) {}
 /// One of the seven entries of the option screen's work from offset 0x400;
 /// only its state is known, and only the unused OptionMenu_ResetEntries
 /// writes it.
-struct MenuWorkspaceEntry {
+struct OptionMenuEntry {
   u8 unused[10]; ///< no code names it
   u16 state;     ///< cleared to 0 by OptionMenu_ResetEntries; nothing reads it
   u8 unusedAfterState[40]; ///< no code names it
@@ -21,9 +21,9 @@ struct MenuWorkspaceEntry {
 /// Clears the option screen's seven entry states, its row, its tint and its
 /// cursor animation.
 /// Nothing calls it.
-UNUSED void OptionMenu_ResetEntries(struct WorkspaceWork *work) {
-  struct MenuWorkspaceEntry *entry =
-      (struct MenuWorkspaceEntry *)((u8 *)work + 0x400);
+UNUSED void OptionMenu_ResetEntries(struct OptionMenuWork *work) {
+  struct OptionMenuEntry *entry =
+      (struct OptionMenuEntry *)((u8 *)work + 0x400);
   u16 zero = 0;
 
   entry->state = zero;
@@ -52,7 +52,7 @@ UNUSED void OptionMenu_ResetEntries(struct WorkspaceWork *work) {
 /// The three wave samples are one third of the 96-step colour cycle apart.
 /// The arithmetic is PaletteGlow_Update's.
 /// Nothing calls it.
-UNUSED void WindowColor_CalculateTint(struct WorkspaceWork *work) {
+UNUSED void WindowColor_CalculateTint(struct OptionMenuWork *work) {
   s16 phase;
   s32 bias;
   s32 blue;
@@ -87,7 +87,7 @@ UNUSED void WindowColor_CalculateTint(struct WorkspaceWork *work) {
 /// Writes window colours 4 to 10 of BG palette 15, each a fixed scale of the
 /// window tint.
 /// Nothing calls it.
-UNUSED void WindowColor_WritePalette(struct WorkspaceWork *work) {
+UNUSED void WindowColor_WritePalette(struct OptionMenuWork *work) {
   *(s16 *)&BG_PLTT_COLOR(15, 4) =
       WindowColor_ScaleTint(work, 0xEEEE, 0xCCCC, 0x11110);
   *(s16 *)&BG_PLTT_COLOR(15, 5) =
@@ -106,7 +106,7 @@ UNUSED void WindowColor_WritePalette(struct WorkspaceWork *work) {
 
 /// Returns the window tint with each channel scaled (16.16 fixed point) and
 /// clamped to 0 to 31, as a BGR555 colour.
-u16 WindowColor_ScaleTint(struct WorkspaceWork *work, s32 redScale,
+u16 WindowColor_ScaleTint(struct OptionMenuWork *work, s32 redScale,
                           s32 greenScale, s32 blueScale) {
   s32 red;
   s32 green;
@@ -193,7 +193,7 @@ void PaletteGlow_Update(s32 phase, s32 brightness) {
   BG_PLTT_COLOR(15, 10) = Color_ScaleComponents(rgb, 0x13bbb, 0x10000, 0x17777);
 }
 
-/// The rows of the unused three-row settings cursor (WorkspaceWork.page).
+/// The rows of the unused three-row settings cursor (OptionMenuWork.page).
 enum OptionMenuRow {
   OPTION_ROW_MESSAGE_SPEED = 0,
   OPTION_ROW_WINDOW_HUE = 1,
@@ -202,10 +202,10 @@ enum OptionMenuRow {
 
 /// Moves the three-row settings cursor up, wrapping to the bottom. The three
 /// rows are those of OptionMenu_LowerSetting. XXX: likely left from an
-/// earlier option screen, because the five-row one Menu_RunWorkspaceOptions
+/// earlier option screen, because the five-row one OptionMenu_Run
 /// runs uses none of these four functions.
 /// Nothing calls it.
-UNUSED void OptionMenu_PreviousRow(struct WorkspaceWork *work) {
+UNUSED void OptionMenu_PreviousRow(struct OptionMenuWork *work) {
   if (work->page == OPTION_ROW_MESSAGE_SPEED)
     work->page = OPTION_ROW_WINDOW_BRIGHTNESS;
   else
@@ -214,7 +214,7 @@ UNUSED void OptionMenu_PreviousRow(struct WorkspaceWork *work) {
 
 /// Moves the three-row settings cursor down, wrapping to the top.
 /// Nothing calls it.
-UNUSED void OptionMenu_NextRow(struct WorkspaceWork *work) {
+UNUSED void OptionMenu_NextRow(struct OptionMenuWork *work) {
   if (++work->page > OPTION_ROW_WINDOW_BRIGHTNESS)
     work->page = OPTION_ROW_MESSAGE_SPEED;
 }
@@ -222,7 +222,7 @@ UNUSED void OptionMenu_NextRow(struct WorkspaceWork *work) {
 /// Lowers the setting on the three-row cursor's row: message speed, window hue
 /// or window brightness.
 /// Nothing calls it.
-UNUSED void OptionMenu_LowerSetting(struct WorkspaceWork *work) {
+UNUSED void OptionMenu_LowerSetting(struct OptionMenuWork *work) {
   switch (work->page) {
   case OPTION_ROW_MESSAGE_SPEED:
     if (gGameState.messageSpeed != 0)
@@ -242,7 +242,7 @@ UNUSED void OptionMenu_LowerSetting(struct WorkspaceWork *work) {
 /// Raises the setting on the three-row cursor's row: message speed, window hue
 /// or window brightness.
 /// Nothing calls it.
-UNUSED void OptionMenu_RaiseSetting(struct WorkspaceWork *work) {
+UNUSED void OptionMenu_RaiseSetting(struct OptionMenuWork *work) {
   switch (work->page) {
   case OPTION_ROW_MESSAGE_SPEED:
     if (gGameState.messageSpeed <= 1)
@@ -273,9 +273,9 @@ void OptionMenu_AnimateCursors(void) {
   s32 cursorResource;
   s32 markerResource;
   s32 selectedOption;
-  struct WorkspaceWork *work;
+  struct OptionMenuWork *work;
 
-  work = gSelectionWork;
+  work = gOptionMenuWork;
   selectedOption = work->page;
   ShopCursor_AdvanceFar(&work->cursor.cursor);
   ShopCursor_MoveTowardTargetFar(&work->marker[0].cursor);
@@ -307,14 +307,14 @@ void OptionMenu_AnimateCursors(void) {
 
 /// Allocates the option screen's work block, copies the settings into it with
 /// how many values each takes, and starts its per-frame callback.
-/// The copy lets cancelling discard the edits. The block is HEAP_SLOT_OPTIONS
-/// (gSelectionWork), which OptionMenu_Release frees. The rows: 0 the window
-/// hue (24 values), 1 its brightness (15), 2 the message speed (3), 3 speech
-/// (2) and 4 auto-sleep (2).
+/// The copy lets cancelling discard the edits. The block is
+/// HEAP_SLOT_OPTION_MENU (gOptionMenuWork), which OptionMenu_Release frees. The
+/// rows: 0 the window hue (24 values), 1 its brightness (15), 2 the message
+/// speed (3), 3 speech (2) and 4 auto-sleep (2).
 void OptionMenu_InitializeWork(void) {
-  struct WorkspaceWork *work;
+  struct OptionMenuWork *work;
 
-  work = Runtime_AllocateBlock(HEAP_SLOT_OPTIONS, 0x628);
+  work = AllocHeapSlotEwram(HEAP_SLOT_OPTION_MENU, 0x628);
   Dma_Fill32(0, work, 0x628);
   work->option[0] = gGameState.paletteGlow[0];
   work->optionCount[0] = 24;
@@ -326,14 +326,14 @@ void OptionMenu_InitializeWork(void) {
   work->optionCount[3] = 2;
   work->option[4] = gGameState.idleSleepEnabled;
   work->optionCount[4] = 2;
-  Scheduler_AddOrUpdateCallback(OptionMenu_AnimateCursors, 0xc80);
+  Task_Add(OptionMenu_AnimateCursors, 0xc80);
 }
 
 /// Stops the option screen's per-frame callback and frees its work block.
 /// The callback goes first, since it reads the work block.
 void OptionMenu_Release(void) {
-  Scheduler_RemoveCallback(OptionMenu_AnimateCursors);
-  Runtime_ReleaseHeapBlock(HEAP_SLOT_OPTIONS);
+  Task_Remove(OptionMenu_AnimateCursors);
+  FreeHeapSlot(HEAP_SLOT_OPTION_MENU);
 }
 
 #define SLIDER_PALETTE 14 ///< the sprite palette of the hue slider's ends
@@ -347,14 +347,14 @@ void OptionMenu_Release(void) {
 /// slider's marker stands option * 60 / count pixels right of
 /// OPTION_SLIDER_X.
 struct UiWindow *OptionMenu_Open(void) {
-  struct WorkspaceWork *work;
+  struct OptionMenuWork *work;
   struct UiWindow *window;
   struct RenderOutput *marker;
   s32 x;
   s32 y;
   s32 labelMessage;
 
-  work = gSelectionWork;
+  work = gOptionMenuWork;
   window = UiWindow_Create(OPTION_WINDOW_X, 5, OPTION_WINDOW_WIDTH, 14, 2);
   UiWindow_DrawDividerLine(window, 0, 2, OPTION_WINDOW_WIDTH - 1, 2);
   UiWindow_DrawDividerLine(window, 0, 4, OPTION_WINDOW_WIDTH - 1, 4);
@@ -390,10 +390,10 @@ struct UiWindow *OptionMenu_Open(void) {
   // palette 14, the brightness slider's in 15.
   x = Resource_FindFreeEntry();
   if (x < RESOURCE_SLOTS) {
-    Dma_Set(gWorkspaceOptions_SliderPalette,
+    Dma_Set(gOptionMenu_SliderPalette,
             (void *)&OBJ_PLTT_COLOR(SLIDER_PALETTE, 0), DMA_COPY16(32),
             REG_DMA3);
-    VramCache_Load(x, 256, gWorkspaceOptions_SliderTiles);
+    VramCache_Load(x, 256, gOptionMenu_SliderTiles);
     y = 0;
     marker = RenderOutput_Create(x, 0x40004000, window, OPTION_SLIDER_X - 6, y);
     marker->oam.palette = SLIDER_PALETTE;
@@ -464,8 +464,8 @@ struct UiWindow *OptionMenu_Open(void) {
 /// as in the link lobby) auto-sleep shows as off and is saved so. The system
 /// menu's Change settings runs it (Menu_RunWorkspaceResultLoop,
 /// battle_command/debug.c), and reopens the menu when it is cancelled.
-s32 Menu_RunWorkspaceOptions(void) {
-  struct WorkspaceWork *work;
+s32 OptionMenu_Run(void) {
+  struct OptionMenuWork *work;
   struct UiWindow *settingsWindow;
   struct UiWindow *helpWindow;
   struct RenderOutput *pair;
@@ -484,7 +484,7 @@ s32 Menu_RunWorkspaceOptions(void) {
   redraw = 1;
   selectedOption = 0;
   OptionMenu_InitializeWork();
-  work = gSelectionWork;
+  work = gOptionMenuWork;
   helpWindow = UiWindow_Create(OPTION_WINDOW_X, 2, OPTION_WINDOW_WIDTH, 3, 2);
   settingsWindow = OptionMenu_Open();
   // Picture 7 of gRenderResource_PairSourceTable, the Setup heading.
@@ -582,7 +582,7 @@ s32 Menu_RunWorkspaceOptions(void) {
 
     // SELECT steps through the six colour presets (window/scales.c).
     if (gKeysPressed & KEY_SELECT) {
-      AudioCommand_PlayFar(SE_MENU_CONFIRM);
+      Sound_PlaySongFar(SE_MENU_CONFIRM);
       work->preset++;
       redraw = 1;
       if (work->preset > 5)
@@ -593,30 +593,30 @@ s32 Menu_RunWorkspaceOptions(void) {
     }
     if (gKeysPressed & (KEY_A | KEY_START)) {
       result = 0;
-      AudioCommand_PlayFar(SE_MENU_CONFIRM);
+      Sound_PlaySongFar(SE_MENU_CONFIRM);
       break;
     }
     if (gKeysPressed & KEY_B) {
       result = -1;
-      AudioCommand_PlayFar(SE_MENU_CANCEL);
+      Sound_PlaySongFar(SE_MENU_CANCEL);
       break;
     }
     if (gKeysRepeat & KEY_UP) {
-      AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
+      Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
       selectedOption--;
       redraw = 1;
     } else if (gKeysRepeat & KEY_DOWN) {
-      AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
+      Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
       selectedOption++;
       redraw = 1;
     } else {
       if (gKeysRepeat & KEY_LEFT) {
-        AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
+        Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
         work->option[selectedOption]--;
         redraw = 1;
       }
       if (gKeysRepeat & KEY_RIGHT) {
-        AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
+        Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
         work->option[selectedOption]++;
         redraw = 1;
       }
@@ -650,7 +650,7 @@ s32 Menu_RunWorkspaceOptions(void) {
 /// The system menu's per-frame callback: moves the cursor and pulses the
 /// chosen entry's icon.
 void SystemMenu_AnimateCursor(void) {
-  struct WorkspaceWork *work = gSelectionWork;
+  struct OptionMenuWork *work = gOptionMenuWork;
   u32 index;
 
   ShopCursor_AdvanceFar(&work->cursor.cursor);
@@ -665,16 +665,16 @@ void SystemMenu_AnimateCursor(void) {
 /// main loop's pass.
 void SystemMenu_Initialize(void) {
   void *work;
-  work = Runtime_AllocateBlock(HEAP_SLOT_OPTIONS, 0x628);
+  work = AllocHeapSlotEwram(HEAP_SLOT_OPTION_MENU, 0x628);
   Dma_Fill32(0, work, 0x628);
-  Scheduler_AddOrUpdateCallback(SystemMenu_AnimateCursor, 3200);
+  Task_Add(SystemMenu_AnimateCursor, 3200);
 }
 
 /// Stops the system menu's per-frame callback and frees its work block.
 /// The callback goes first, since it reads the work block.
 void SystemMenu_Release(void) {
-  Scheduler_RemoveCallback(&SystemMenu_AnimateCursor);
-  Runtime_ReleaseHeapBlock(HEAP_SLOT_OPTIONS);
+  Task_Remove(&SystemMenu_AnimateCursor);
+  FreeHeapSlot(HEAP_SLOT_OPTION_MENU);
 }
 
 /// Opens the system menu's window with its entries (Save your quest, Sleep,
@@ -682,7 +682,7 @@ void SystemMenu_Release(void) {
 /// while FLAG_IN_BATTLE_ARENA is set), their icons and the cursor. Returns the
 /// window.
 struct UiWindow *SystemMenu_Open(void) {
-  struct WorkspaceWork *work;
+  struct OptionMenuWork *work;
   s32 rows;
   s32 first;
   s32 settingsOnly;
@@ -696,7 +696,7 @@ struct UiWindow *SystemMenu_Open(void) {
   s32 x;
 
   rows = WORKSPACE_ROWS;
-  work = gSelectionWork;
+  work = gOptionMenuWork;
   settingsOnly = GameFlag_TestFar(FLAG_IN_BATTLE_ARENA);
   first = 0;
   if (settingsOnly != 0) {
@@ -777,14 +777,14 @@ s32 Menu_RunWorkspaceSelectionLoop(void) {
   s32 top;
   const s8 *iconFrames;
   struct RenderOutput *icon;
-  struct WorkspaceWork *work;
+  struct OptionMenuWork *work;
 
   redraw = 1;
   rows = WORKSPACE_ROWS;
   settingsOnly = GameFlag_TestFar(FLAG_IN_BATTLE_ARENA);
   first = 0;
   SystemMenu_Initialize();
-  work = gSelectionWork;
+  work = gOptionMenuWork;
   window = SystemMenu_Open();
   // Picture 6 of gRenderResource_PairSourceTable, the Pause heading, above
   // the window. Outside Japanese it sits 8 pixels lower in debug mode, over
@@ -841,17 +841,17 @@ s32 Menu_RunWorkspaceSelectionLoop(void) {
     WaitFrames(1);
     if (gKeysPressed & KEY_A) {
       result = selectedEntry;
-      AudioCommand_PlayFar(SE_MENU_CONFIRM);
+      Sound_PlaySongFar(SE_MENU_CONFIRM);
     } else if (gKeysPressed & (KEY_B | KEY_START)) {
       result = -1;
-      AudioCommand_PlayFar(SE_MENU_CANCEL);
+      Sound_PlaySongFar(SE_MENU_CANCEL);
     } else {
       if (gKeysRepeat & KEY_UP) {
-        AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
+        Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
         selectedEntry -= 1;
         redraw = 1;
       } else if (gKeysRepeat & KEY_DOWN) {
-        AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
+        Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
         selectedEntry += 1;
         redraw = 1;
       }

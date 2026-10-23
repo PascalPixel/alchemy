@@ -80,9 +80,9 @@ s32 OwnerAction_RunCompareLoop(u32 mode) {
     s32 gainedCount;
     s32 size;
 
-    diffWork = Runtime_BumpAllocateAlternatePool(96);
+    diffWork = AllocEwram(96);
     size = sizeof(*originalUnit);
-    originalUnit = Runtime_BumpAllocateAlternatePool(size);
+    originalUnit = AllocEwram(size);
     secondElement = 0;
     secondIndex = 0;
     ownerId = menu->shownOwner[0];
@@ -123,8 +123,8 @@ s32 OwnerAction_RunCompareLoop(u32 mode) {
         OwnerAction_DiffSlots(originalUnit->actionSlots, unit->actionSlots,
                               diffWork, &gainedCount, &lostCount);
     Iwram_CopyWords(unit, originalUnit, size);
-    MemFree(originalUnit);
-    MemFree(diffWork);
+    Free(originalUnit);
+    Free(diffWork);
   } else if (mode == DJINN_COMPARE_STANDBY || mode == DJINN_COMPARE_SET) {
     u16 *diffWork;
     struct BattleUnit *originalUnit;
@@ -136,8 +136,8 @@ s32 OwnerAction_RunCompareLoop(u32 mode) {
     s32 lostCount;
     s32 gainedCount;
 
-    diffWork = Runtime_BumpAllocateAlternatePool(96);
-    originalUnit = Runtime_BumpAllocateAlternatePool(sizeof(*originalUnit));
+    diffWork = AllocEwram(96);
+    originalUnit = AllocEwram(sizeof(*originalUnit));
     firstOwnerId = menu->shownOwner[0];
     firstElement = menu->pairElement[0];
     firstIndex = menu->pairIndex[0] & DJINN_ENTRY_INDEX;
@@ -156,8 +156,8 @@ s32 OwnerAction_RunCompareLoop(u32 mode) {
     Iwram_CopyWords(unit, originalUnit, sizeof(*originalUnit));
     pageCounts[1] = pageCounts[0];
     page = DJINN_COMPARE_PAGE_GIVER;
-    MemFree(originalUnit);
-    MemFree(diffWork);
+    Free(originalUnit);
+    Free(diffWork);
   }
 
   // Psynergy entries to pages of five.
@@ -259,7 +259,7 @@ s32 OwnerAction_RunCompareLoop(u32 mode) {
       s32 size;
 
       size = 0x200;
-      saved = Runtime_BumpAllocateAlternatePool(size);
+      saved = AllocEwram(size);
       pressedKeys = 0;
       repeatedKeys = 0;
       backdrop->tutorialTimer += 1;
@@ -345,7 +345,7 @@ s32 OwnerAction_RunCompareLoop(u32 mode) {
       default:
         break;
       }
-      MemFree(saved);
+      Free(saved);
     }
 
     // The help names what R shows next: `R: <giver>'s Psy` on
@@ -507,36 +507,36 @@ s32 OwnerAction_RunCompareLoop(u32 mode) {
         result = DJINN_RESULT_CONFIRMED;
         break;
       }
-      AudioCommand_PlayFar(SE_MENU_CANCEL);
+      Sound_PlaySongFar(SE_MENU_CANCEL);
       result = DJINN_RESULT_BACK;
       break;
     }
     if ((pressedKeys & KEY_START) != 0) {
-      AudioCommand_PlayFar(SE_MENU_CANCEL);
+      Sound_PlaySongFar(SE_MENU_CANCEL);
       result = DJINN_RESULT_START;
       break;
     } else if ((pressedKeys & KEY_B) != 0) {
-      AudioCommand_PlayFar(SE_MENU_CANCEL);
+      Sound_PlaySongFar(SE_MENU_CANCEL);
       result = DJINN_RESULT_BACK;
       break;
     } else if ((pressedKeys & KEY_R) != 0) {
       if (mode <= DJINN_COMPARE_GIVE) {
         page = ((page + 1) % 3);
         redraw = 2;
-        AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
+        Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
       }
     } else if ((repeatedKeys & KEY_LEFT) != 0) {
       if (page <= DJINN_COMPARE_PAGE_RECEIVER) {
         selectedPages[page]--;
         selectedPages[page] =
             Menu_WrapIndex(selectedPages[page], pageCounts[page]);
-        AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
+        Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
         Input_ResetKeyRepeat();
         redraw = 1;
       }
     } else if ((repeatedKeys & KEY_RIGHT) != 0) {
       if (page <= DJINN_COMPARE_PAGE_RECEIVER) {
-        AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
+        Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
         Input_ResetKeyRepeat();
         selectedPages[page]++;
         redraw = 1;
@@ -551,7 +551,7 @@ s32 OwnerAction_RunCompareLoop(u32 mode) {
   // figures grow in again from phase 0.
   FourObjectMotion_SetSlotPhase(0, 0);
   FourObjectMotion_SetSlotPhase(1, 0);
-  Scheduler_AddOrUpdateCallback(Menu_UpdateEntryObjectTransforms, 0xc80);
+  Task_Add(Menu_UpdateEntryObjectTransforms, 0xc80);
 
   ((struct UiRenderWork *)gWindowWork[0])->menuBusy = 1;
   UiWindow_CloseIfOpen(&menu->helpWindow, 1);
@@ -616,13 +616,13 @@ s32 DjinnMenu_ShowOwnerStatus(void) {
   // taken and given back unused.
   counts = pageCounts;
   counts[1] = counts[0] = 1;
-  listedActions = Runtime_BumpAllocateAlternatePool(96);
-  saved = Runtime_BumpAllocateAlternatePool(332);
+  listedActions = AllocEwram(96);
+  saved = AllocEwram(332);
   unit = Unit_GetFar(menu->shownOwner[0]);
   counts[1] = counts[0] = OwnerAction_DiffSlots(
       unit->actionSlots, unit->actionSlots, listedActions, &gained, &lost);
-  MemFree(saved);
-  MemFree(listedActions);
+  Free(saved);
+  Free(listedActions);
   counts[0] = (counts[0] - 1) / 6 + 1;
   if (counts[0] == 0)
     counts[0] = 1;
@@ -688,31 +688,31 @@ s32 DjinnMenu_ShowOwnerStatus(void) {
         Iwram_FillWords((void *)0x060052c0, 32, 0x44444444);
     }
     if (pressedKeys & KEY_START) {
-      AudioCommand_PlayFar(SE_MENU_CANCEL);
+      Sound_PlaySongFar(SE_MENU_CANCEL);
       result = DJINN_RESULT_START;
       break;
     }
     if (pressedKeys & (KEY_A | KEY_B | KEY_R | KEY_L)) {
-      AudioCommand_PlayFar(SE_MENU_CANCEL);
+      Sound_PlaySongFar(SE_MENU_CANCEL);
       result = DJINN_RESULT_BACK;
       break;
     }
     if (repeatedKeys & KEY_LEFT) {
       selectedPages[side]--;
       selectedPages[side] = Menu_WrapIndex(selectedPages[side], counts[side]);
-      AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
+      Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
       Input_ResetKeyRepeat();
       redraw = 1;
     } else if (repeatedKeys & KEY_RIGHT) {
       selectedPages[side]++;
-      AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
+      Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
       Input_ResetKeyRepeat();
       redraw = 1;
       selectedPages[side] = Menu_WrapIndex(selectedPages[side], counts[side]);
     }
     WaitFrames(1);
   }
-  Scheduler_AddOrUpdateCallback(Menu_UpdateEntryObjectTransforms, 0xc80);
+  Task_Add(Menu_UpdateEntryObjectTransforms, 0xc80);
   ((struct UiRenderWork *)gWindowWork[0])->menuBusy = 1;
   UiWindow_CloseIfOpen(&menu->helpWindow, 1);
   WaitFrames(1);

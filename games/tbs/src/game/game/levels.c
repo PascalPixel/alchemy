@@ -174,7 +174,7 @@ s32 Unit_RefreshPsynergy(s32 owner) {
 }
 
 /// Scratch for Unit_LevelUp, which takes it from EWRAM first
-/// (Runtime_BumpAllocateAlternatePool) and frees it before returning.
+/// (AllocEwram) and frees it before returning.
 struct LevelUpWork {
   s32 classIndex; ///< the unit's class, written and not read again
   s32 level;      ///< the level before this one
@@ -338,7 +338,7 @@ struct LevelUpResult *Unit_LevelUp(s32 owner, struct LevelUpResult *gains) {
   s32 level;
 
   unit = Unit_Get(owner);
-  work = Runtime_BumpAllocateAlternatePool(sizeof(struct LevelUpWork));
+  work = AllocEwram(sizeof(struct LevelUpWork));
   work->classIndex = unit->classIndex;
   level = unit->level;
   work->level = level;
@@ -408,7 +408,7 @@ struct LevelUpResult *Unit_LevelUp(s32 owner, struct LevelUpResult *gains) {
     Unit_RefreshPsynergy(owner);
     Unit_Calculate(owner);
   }
-  MemFree(work);
+  Free(work);
   return gains;
 }
 

@@ -5,7 +5,7 @@
 
 struct BattleUnit;
 struct DjinnListTable;
-struct InventoryMenuState;
+struct ItemMenuWork;
 struct MenuResult;
 struct OwnerActionSlot;
 struct UiWindow;
@@ -101,8 +101,7 @@ s32 ItemMenu_Run(void);
 s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut);
 s32 ItemMenu_Use(void);
 void ItemMenu_Initialize(s32 x, s32 y, s32 mode, s32 columns);
-void Menu_SpawnIconEntries(struct InventoryMenuState *menu,
-                           struct UiWindow *window);
+void Menu_SpawnIconEntries(struct ItemMenuWork *menu, struct UiWindow *window);
 void ItemMenu_HideAllIcons(void);
 void ItemMenu_HidePageIcons(void);
 void ItemMenu_Close(void);

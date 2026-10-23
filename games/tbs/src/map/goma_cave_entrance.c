@@ -183,7 +183,7 @@ static void EventScript_PushWestPillar(void) {
   struct EventWork *work;
   s32 offsetX;
 
-  work = gEventWork;
+  work = gFieldWork;
   EV_START();
   OBJECT_MODE(LOCALID_PARTY_LEADER, 8);
   WAIT(20);
@@ -516,7 +516,7 @@ static void GomaCaveEntrance_WhirlwindOnStumpIvy(void) {
   struct FieldEffectWork *effectWork;
   u8 flags;
 
-  effectWork = gEffectWork;
+  effectWork = gFieldEffectWork;
   FieldEffect_LoadActionEffectResources(ABILITY_WHIRLWIND, 1);
   FieldEffect_SetupObjectPair(IVAN, LOCALID_STUMP_IVY);
   flags = (u8)effectWork->messageMode | POSITIONED_MESSAGE_LOWER;

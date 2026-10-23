@@ -46,9 +46,9 @@ void BattleEffect_RunNereid(struct BattleEffectArgument *effect) {
   u8 *graphics;
   u8 *palette;
 
-  cursor = &gWorkSlot[HEAP_SLOT_BATTLE_CANVAS];
+  cursor = &gHeapSlots[HEAP_SLOT_BATTLE_CANVAS];
   canvas = cursor[0];
-  work = cursor[HEAP_SLOT_BATTLE_EFFECT - HEAP_SLOT_BATTLE_CANVAS];
+  work = cursor[HEAP_SLOT_BATTLE_ANIM - HEAP_SLOT_BATTLE_CANVAS];
   graphics = cursor[HEAP_SLOT_BATTLE_SHEET - HEAP_SLOT_BATTLE_CANVAS];
   work->effect = effect;
   BattleEffect_StartCanvasLayer(0);
@@ -61,12 +61,12 @@ void BattleEffect_RunNereid(struct BattleEffectArgument *effect) {
   palette = Resource_GetTableEntry((s32)&ResourceId_WaterSpraySheet);
   Iwram_CopyWords((void *)BG_PLTT, palette, 128);
   palette += 128;
-  Resource_DecodeType01(palette, work->sheet);
+  Decompress_Type01(palette, work->sheet);
   palette = Resource_GetTableEntry((s32)&ResourceId_FirePillarSheetA);
   palette += 128;
-  Resource_DecodeType01(palette, work->sheet + NEREID_COLUMN_IMAGE);
-  Resource_DecodeType01(
-      Resource_GetTableEntry((s32)&ResourceId_ParticleSpritesA), graphics);
+  Decompress_Type01(palette, work->sheet + NEREID_COLUMN_IMAGE);
+  Decompress_Type01(Resource_GetTableEntry((s32)&ResourceId_ParticleSpritesA),
+                    graphics);
   // Trails keep 75% of each pixel a frame.
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, 75);
   {
@@ -169,11 +169,11 @@ void BattleEffect_RunNereid(struct BattleEffectArgument *effect) {
         }
       }
       if (frame == 0)
-        AudioCommand_PlayFar(SE_164);
+        Sound_PlaySongFar(SE_164);
       if (frame == 32)
-        AudioCommand_PlayFar(SE_145);
+        Sound_PlaySongFar(SE_145);
       if (frame == 80)
-        AudioCommand_PlayFar(SE_144);
+        Sound_PlaySongFar(SE_144);
 
       // The columns: a 104-pixel image scrolling up 16 pixels a frame,
       // drawn twice to wrap round.
@@ -266,7 +266,7 @@ void BattleEffect_RunNereid(struct BattleEffectArgument *effect) {
     }
 
     // The impact burst builds its own blitters and transfer.
-    Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
+    Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
     EFFECT_RELEASE_BLITTERS();
     BattleEffect_RunImpactBurst(SUMMON_FORMATION_NEREID, focus.x, focus.y);
     for (k = 0; k != NEREID_OBJECTS; k++)

@@ -126,10 +126,10 @@ void BattleEffect_RunBurstSequence(struct BattleEffectArgument *effect,
   s32 i;
   s32 j;
 
-  work = *(gWorkSlot + HEAP_SLOT_BATTLE_EFFECT);
-  canvas = *(gWorkSlot + HEAP_SLOT_BATTLE_CANVAS);
-  sprites = *(gWorkSlot + HEAP_SLOT_BATTLE_SHEET);
-  camera = *(gWorkSlot + HEAP_SLOT_CAMERA);
+  work = *(gHeapSlots + HEAP_SLOT_BATTLE_ANIM);
+  canvas = *(gHeapSlots + HEAP_SLOT_BATTLE_CANVAS);
+  sprites = *(gHeapSlots + HEAP_SLOT_BATTLE_SHEET);
+  camera = *(gHeapSlots + HEAP_SLOT_CAMERA);
   work->effect = effect;
   BattleEffect_StartCanvasLayer(0);
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
@@ -214,17 +214,18 @@ void BattleEffect_RunBurstSequence(struct BattleEffectArgument *effect,
     // Arcs and waves; odd strikes are drawn flipped upside down, and on
     // side 1 both are mirrored.
     if (work->effect->side == 0) {
-      EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER, EFFECT_CLIP_BOUNDS, COMPOSITE_MAX);
-      EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER_ALTERNATE,
+      EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
+                          COMPOSITE_MAX);
+      EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
                           EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_Y, COMPOSITE_MAX);
     } else {
-      EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER,
+      EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
                           EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, COMPOSITE_MAX);
-      EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER_ALTERNATE,
+      EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
                           EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP, COMPOSITE_MAX);
     }
-    draw[0] = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER];
-    draw[1] = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE];
+    draw[0] = (DrawRectangle)gHeapSlots[HEAP_SLOT_RAM_CODE];
+    draw[1] = (DrawRectangle)gHeapSlots[HEAP_SLOT_RAM_CODE_2];
     for (i = 0; i != bursts; i++) {
       s32 start = i * gBurstSequence_Records[mode][BURST_SEQUENCE_INTERVAL];
 
@@ -268,7 +269,7 @@ void BattleEffect_RunBurstSequence(struct BattleEffectArgument *effect,
             BattleMotion_ApplyVariantMotionFar(work->effect->actors[0],
                                                KNOCKBACK_JOLT);
           work->shakeFrames = 4;
-          AudioCommand_PlayFar(SE_HEAVY_IMPACT);
+          Sound_PlaySongFar(SE_HEAVY_IMPACT);
         }
         for (j = 0; j != gBurstSequence_Records[mode][BURST_SEQUENCE_MOTES];
              j++)
@@ -289,12 +290,12 @@ void BattleEffect_RunBurstSequence(struct BattleEffectArgument *effect,
     // drops below 8 pixels over the ground.
     // Only the first 512 are drawn; strikes never reach past 288.
     EFFECT_VIEW_FROM_CAMERA(camera);
-    EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER, EFFECT_CLIP_BOUNDS,
+    EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                         COMPOSITE_ADDITIVE);
-    EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER_ALTERNATE, EFFECT_CLIP_BOUNDS,
+    EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, EFFECT_CLIP_BOUNDS,
                         COMPOSITE_MAX);
-    draw[0] = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER];
-    draw[1] = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE];
+    draw[0] = (DrawRectangle)gHeapSlots[HEAP_SLOT_RAM_CODE];
+    draw[1] = (DrawRectangle)gHeapSlots[HEAP_SLOT_RAM_CODE_2];
     for (i = 0; i != 512; i++) {
       struct EffectStep *mote = &PARTICLES[i];
 
@@ -317,7 +318,7 @@ void BattleEffect_RunBurstSequence(struct BattleEffectArgument *effect,
     Camera_ApplyShake(8, 8);
     EFFECT_END_FRAME(work);
   }
-  Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
+  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   BattleEffect_EndCanvasLayer();
 }
 

@@ -6,9 +6,9 @@
 void WaitFramesFar(s32 frames);
 /// Schedules `callback` with `order`, or gives the task already running it the
 /// new order. Returns the task's index, or -1 when all 20 slots are taken.
-s32 Scheduler_AddOrUpdateCallbackFar(SchedulerCallback callback, s32 order);
+s32 Task_AddFar(TaskFunc callback, s32 order);
 /// Unschedules the task running `callback` and returns its old index, or -1.
-s32 Scheduler_RemoveCallbackFar(SchedulerCallback callback);
+s32 Task_RemoveFar(TaskFunc callback);
 /// Advances the random number generator and returns 16 bits of the new seed,
 /// 0 to 0xffff.
 u32 Random16Far(void);
@@ -26,22 +26,22 @@ void Vector_AddPolarOffsetFar(s32 radius, s32 angle, void *position);
 void Runtime_SetIrqHandlerFar(u32 irq, s32 vcount, InterruptHandler handler);
 /// Returns heap slot `kind`'s block, first allocating `size` bytes for it from
 /// IWRAM when they fit and EWRAM otherwise. Returns NULL when neither has room.
-void *Runtime_AllocateHeapBlockFar(s32 kind, s32 size);
-/// Returns heap slot `kind`'s block like Runtime_AllocateHeapBlockFar, but
+void *AllocHeapSlotFar(s32 kind, s32 size);
+/// Returns heap slot `kind`'s block like AllocHeapSlotFar, but
 /// tries EWRAM first, for blocks that need room more than speed.
-void *Runtime_AllocateBlockFar(s32 kind, s32 size);
+void *AllocHeapSlotEwramFar(s32 kind, s32 size);
 /// Allocates an uncleared short-lived buffer of `size` bytes, from IWRAM when
-/// it fits (MemAlloc); MemFree frees it and everything allocated after it.
+/// it fits (Alloc); Free frees it and everything allocated after it.
 void *Runtime_BumpAllocateFar(s32 size);
-/// Takes a short-lived buffer as MemAlloc does, but from EWRAM first, for
+/// Takes a short-lived buffer as Alloc does, but from EWRAM first, for
 /// buffers too large to want IWRAM.
-void *Runtime_BumpAllocateAlternatePoolFar(s32 size);
+void *AllocEwramFar(s32 size);
 /// Unpacks a byte-oriented LZ resource with a RAM copy of its ARM decoder, and
 /// returns the unpacked size in bytes.
-s32 Resource_DecodeByteLzFar(const void *source, void *destination);
+s32 Decompress_ByteLzFar(const void *source, void *destination);
 /// Unpacks a type-01 resource the same way and returns the unpacked size in
 /// bytes.
-s32 Resource_DecodeType01Far(const void *source, void *destination);
+s32 Decompress_Type01Far(const void *source, void *destination);
 /// Frees VRAM cache entry `no`, its sprite VRAM included, once its picture is
 /// no longer shown.
 s32 Resource_ResetEntryFar(u32 no);
@@ -95,4 +95,4 @@ s32 SerialRuntime_StartReceiveFar(void *destination);
 s32 SerialRuntime_GetActiveTransfersFar(void);
 /// Stores `mask` as the flags of the task running `callback`; bit 0 keeps it
 /// running while the overlay tasks are suspended. Returns its index, or -1.
-s32 Scheduler_SetTaskFlagsFar(SchedulerCallback callback, u32 mask);
+s32 Task_SetFlagsFar(TaskFunc callback, u32 mask);

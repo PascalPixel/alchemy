@@ -107,7 +107,7 @@ const struct MapEvent *KolimaForestGlade_GetEvents(void) {
 /// colours until the curse is lifted.
 s32 KolimaForestGlade_Initialize(void) {
 
-  gEventWork->startTransition =
+  gFieldWork->startTransition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   if (Engine_GameFlagIsSet(FLAG_KOLIMA_FOREST_NUT_CAUGHT) == 0) {
     Map_FloatNut(LOCALID_NUT);

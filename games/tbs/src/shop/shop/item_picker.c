@@ -12,7 +12,7 @@
 /// PartyInventory_GiveItem), by the Elemental Star room's Mythril Bags and by
 /// the debug menu.
 s32 Shop_PickUnitItem(s32 *selectedUnit, s32 *selectedSlot) {
-  struct ShopRuntime *shop;
+  struct ShopWork *shop;
   struct RenderOutput *cursorAnchor;
   struct UiWindow *partyWindow;
   s32 memberIndex = 0;
@@ -49,11 +49,11 @@ s32 Shop_PickUnitItem(s32 *selectedUnit, s32 *selectedSlot) {
     WaitFrames(1);
     if ((gKeysPressed & KEY_A) != 0) {
       if (Inventory_CountFar(unitId) == 0) {
-        AudioCommand_PlayFar(SE_MENU_CANCEL);
+        Sound_PlaySongFar(SE_MENU_CANCEL);
         continue;
       }
 
-      AudioCommand_PlayFar(SE_MENU_CONFIRM);
+      Sound_PlaySongFar(SE_MENU_CONFIRM);
       itemSlot = Shop_SelectUse(unitId);
       if (itemSlot == -1) {
         shop->cursor.anchor->active = UI_SPRITE_WOBBLE;
@@ -68,7 +68,7 @@ s32 Shop_PickUnitItem(s32 *selectedUnit, s32 *selectedSlot) {
     }
 
     if ((gKeysPressed & KEY_B) != 0) {
-      AudioCommand_PlayFar(SE_MENU_CANCEL);
+      Sound_PlaySongFar(SE_MENU_CANCEL);
       *selectedUnit = -1;
       *selectedSlot = -1;
       result = -1;
@@ -76,12 +76,12 @@ s32 Shop_PickUnitItem(s32 *selectedUnit, s32 *selectedSlot) {
     }
 
     if ((gKeysRepeat & KEY_LEFT) != 0) {
-      AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
+      Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
       memberIndex--;
       redraw = 1;
     }
     if ((gKeysRepeat & KEY_RIGHT) != 0) {
-      AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
+      Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
       memberIndex++;
       redraw = 1;
     }
@@ -130,7 +130,7 @@ s32 Shop_PickUnitItem(s32 *selectedUnit, s32 *selectedSlot) {
 /// SHOP_CANNOT_REMOVE_STATUS). Returns the slot, or -1 when cancelled. Called
 /// by Shop_PickUnitItem.
 s32 Shop_SelectUse(s32 unitId) {
-  struct ShopRuntime *shop = gMenuWork;
+  struct ShopWork *shop = gMenuWork;
 
   struct UiWindow *descriptionWindow;
   struct UiWindow *priceWindow;
@@ -178,7 +178,7 @@ s32 Shop_SelectUse(s32 unitId) {
     if ((gKeysPressed & KEY_A) != 0) {
       discardStatus = Inventory_CheckDiscardFar(unitId, slot);
       if (discardStatus == 0) {
-        AudioCommand_PlayFar(SE_MENU_CONFIRM);
+        Sound_PlaySongFar(SE_MENU_CONFIRM);
         selectionResult = slot;
         break;
       }
@@ -189,7 +189,7 @@ s32 Shop_SelectUse(s32 unitId) {
                  -3) {
         UiText_OpenMessageWindowFar(MsgCannotRemoveIt, 8, 1, 2);
       }
-      AudioCommand_PlayFar(SE_MENU_CANCEL);
+      Sound_PlaySongFar(SE_MENU_CANCEL);
       while (UiWork_IsCompleteFar() == 0)
         WaitFrames(1);
       UiWork_FinalizePendingCoreFar();
@@ -197,19 +197,19 @@ s32 Shop_SelectUse(s32 unitId) {
     }
 
     if ((gKeysPressed & KEY_B) != 0) {
-      AudioCommand_PlayFar(SE_MENU_CANCEL);
+      Sound_PlaySongFar(SE_MENU_CANCEL);
       selectionResult = -1;
       break;
     }
 
     if ((gKeysRepeat & KEY_LEFT) != 0) {
-      AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
+      Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
       slot -= 1;
       slot = (slot + inventoryCount) % inventoryCount;
       redraw = 1;
     }
     if ((gKeysRepeat & KEY_RIGHT) != 0) {
-      AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
+      Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
       slot += 1;
       slot = (slot + inventoryCount) % inventoryCount;
       redraw = 1;
@@ -220,7 +220,7 @@ s32 Shop_SelectUse(s32 unitId) {
         slot += INVENTORY_SLOTS;
       while (slot >= inventoryCount)
         slot -= SHOP_INVENTORY_COLUMNS;
-      AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
+      Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
       redraw = 1;
     }
     if ((gKeysRepeat & KEY_DOWN) != 0) {
@@ -229,7 +229,7 @@ s32 Shop_SelectUse(s32 unitId) {
         slot -= INVENTORY_SLOTS;
       while (slot < 0)
         slot += SHOP_INVENTORY_COLUMNS;
-      AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
+      Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
       redraw = 1;
     }
   }

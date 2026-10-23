@@ -170,7 +170,7 @@ s32 BattleTarget_Execute(struct BattlePlan *plan, s32 slot) {
   skipDamage = 0;
   affinity = 0;
   unitSize = sizeof(struct BattleUnit);
-  savedTarget = MemAlloc(unitSize);
+  savedTarget = Alloc(unitSize);
 
   actorId = plan->actorId;
   targetId = plan->targetIds[slot];
@@ -1302,7 +1302,7 @@ s32 BattleTarget_Execute(struct BattlePlan *plan, s32 slot) {
     BattleEvent_Push(BATTLE_EVENT_UNIT_NAME, targetId);
     PUSH_MESSAGE(MsgWakes);
   }
-  MemFree(savedTarget);
+  Free(savedTarget);
   Unit_CalculateFar(targetId);
   // The party's status is drawn now, not through the queue.
   PartyStatus_DrawFar(gBattleWork->partyStatus);

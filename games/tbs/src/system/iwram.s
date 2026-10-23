@@ -14,11 +14,11 @@ gSavedStackSize:
 	.global gResourceBlockOwners
 gResourceBlockOwners:
 	.space 0x00000200
-	.global gSchedulerStatus
-gSchedulerStatus:
+	.global gTaskStatus
+gTaskStatus:
 	.space 0x00000010
-	.global gSchedulerTaskTable
-gSchedulerTaskTable:
+	.global gTasks
+gTasks:
 	.space 0x000000a0
 	.global gBlendFramesLeft
 gBlendFramesLeft:
@@ -116,8 +116,8 @@ gKeysHeldLast:
 	.global gBlendLayers
 gBlendLayers:
 	.space 0x00000004
-	.global gVBlankHook
-gVBlankHook:
+	.global gVBlankCallback
+gVBlankCallback:
 	.space 0x00000004
 	.global gSpriteAffineCount
 gSpriteAffineCount:
@@ -153,8 +153,8 @@ gVBlankDone:
 	.global gTransformStackTop
 gTransformStackTop:
 	.space 0x00000008
-	.global gSchedulerReady
-gSchedulerReady:
+	.global gTasksReady
+gTasksReady:
 	.ifdef TBS_EDITION_DE
 	.space 0x00000004
 	.else
@@ -171,12 +171,12 @@ gFrameCount:
 	.global gFrameRenderPending
 gFrameRenderPending:
 	.space 0x0000000c
-	.global gWorkSlot
-gWorkSlot:
-	.global gWorkSlot
-	.type gWorkSlot, %object
-	.size gWorkSlot, 0x100
-gWorkSlot:
+	.global gHeapSlots
+gHeapSlots:
+	.global gHeapSlots
+	.type gHeapSlots, %object
+	.size gHeapSlots, 0x100
+gHeapSlots:
 	.space 0x0000000c
 	.global gAnimationObjects
 gAnimationObjects:
@@ -184,11 +184,11 @@ gAnimationObjects:
 	.global gSpriteObjects
 gSpriteObjects:
 	.space 0x00000004
-	.global gObjectSlots
-gObjectSlots:
+	.global gObjects
+gObjects:
 	.space 0x00000004
-	.global gMenuCtrlWork
-gMenuCtrlWork:
+	.global gObjectSystemWork
+gObjectSystemWork:
 	.space 0x00000004
 	.global gTileAnimationPages
 gTileAnimationPages:
@@ -213,35 +213,35 @@ gPartyStatusWork:
 	.global gGlyphWork
 gGlyphWork:
 	.space 0x00000004
-	.global gResQueueWork
-gResQueueWork:
+	.global gSelectionScreenWork
+gSelectionScreenWork:
 	.space 0x00000004
 	.global gSelectionWorkspace
 gSelectionWorkspace:
 	.space 0x00000004
-	.global gSelectionWork
-gSelectionWork:
+	.global gOptionMenuWork
+gOptionMenuWork:
 	.space 0x00000008
 	.global gBattleBgEffectWork
 gBattleBgEffectWork:
 	.space 0x00000014
-	.global gEventWork
-gEventWork:
+	.global gFieldWork
+gFieldWork:
 	.space 0x00000004
-	.global gPaletteWork
-gPaletteWork:
+	.global gPaletteCycleWork
+gPaletteCycleWork:
 	.space 0x00000004
 	.global gParticleWork
 gParticleWork:
 	.space 0x00000004
-	.global gFieldBlendWork
-gFieldBlendWork:
+	.global gLightningWork
+gLightningWork:
 	.space 0x00000004
-	.global gDisplayTransition
-gDisplayTransition:
+	.global gScreenTransitionWork
+gScreenTransitionWork:
 	.space 0x00000004
-	.global gPaletteBufferWork
-gPaletteBufferWork:
+	.global gPaletteFadeWork
+gPaletteFadeWork:
 	.space 0x00000008
 	.global gHBlankScrollWork
 gHBlankScrollWork:
@@ -249,20 +249,20 @@ gHBlankScrollWork:
 	.global gObjectEventEffectWork
 gObjectEventEffectWork:
 	.space 0x00000004
-	.global gBattleDisplayWork
-gBattleDisplayWork:
+	.global gBattleMessageWork
+gBattleMessageWork:
 	.space 0x00000008
-	.global gBattleEffectWork
-gBattleEffectWork:
+	.global gBattleAnimWork
+gBattleAnimWork:
 	.space 0x0000000c
-	.global gDisp
-gDisp:
+	.global gBattleEntryTimer
+gBattleEntryTimer:
 	.space 0x00000008
 	.global gTransitionWork
 gTransitionWork:
 	.space 0x0000001c
-	.global gSaveWorkspace
-gSaveWorkspace:
+	.global gSaveWork
+gSaveWork:
 	.space 0x0000000c
 	.global gBattleOwnerStates
 gBattleOwnerStates:
@@ -270,16 +270,16 @@ gBattleOwnerStates:
 	.global gMenuWork
 gMenuWork:
 	.space 0x00000004
-	.global gEffectWork
-gEffectWork:
-	.global gEffectWork
-gEffectWork:
+	.global gFieldEffectWork
+gFieldEffectWork:
+	.global gFieldEffectWork
+gFieldEffectWork:
 	.space 0x00000004
-	.global gLinkCountdownWork
-gLinkCountdownWork:
+	.global gBattleMenuWork
+gBattleMenuWork:
 	.space 0x00000004
-	.global gMenuSelectWork
-gMenuSelectWork:
+	.global gIconMenuWork
+gIconMenuWork:
 	.space 0x00000004
 	.global gColossoWork
 gColossoWork:

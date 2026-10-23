@@ -119,11 +119,10 @@ void WaitFrames(s32 frames) {
   }
   for (frameIndex = 0; frameIndex < frames; frameIndex++) {
     // Run the main-loop tasks and build this frame's sprites
-    gSchedulerStatus = 1;
-    Scheduler_RunPass(SCHEDULER_KEY_MAIN_LOOP);
-    gSchedulerStatus = 0;
-    Render_BuildOamList(
-        Runtime_AllocateHeapBlock(HEAP_SLOT_FRAME_SCRATCH, 0x400));
+    gTaskStatus = 1;
+    Task_RunPass(TASK_PRIORITY_MAIN_LOOP);
+    gTaskStatus = 0;
+    Render_BuildOamList(AllocHeapSlot(HEAP_SLOT_FRAME_SCRATCH, 0x400));
     gFrameRenderPending = 1;
     if (gCpuLoadDisplayEnabled) {
       // CPU load: the scanline the frame's work ended on, counted from the
@@ -197,15 +196,15 @@ void WaitFrames(s32 frames) {
     gLagFrameCount = 0;
     CAMELOT_ASM("Halt in VBlankIntrWait")
     VBlankIntrWait();
-    Runtime_ReleaseHeapBlock(HEAP_SLOT_FRAME_SCRATCH);
+    FreeHeapSlot(HEAP_SLOT_FRAME_SCRATCH);
     Render_ResetFrame();
     gFrameCount++;
     gPlayTimeFrames++;
     Input_UpdateKeyRepeatAndDirection();
     if (gSerialExchangeActive) {
       SerialRuntime_PollStatus();
-      if (gSerialRuntime.mode)
-        gSerialRuntime.transferEnabled = 1;
+      if (gSerialWork.mode)
+        gSerialWork.transferEnabled = 1;
     }
     // Sleep: after a second of white screen, Stop the CPU until L and R wake
     // it, then restore the screen. A request above 1 counts down first.
@@ -369,9 +368,9 @@ void Input_UpdateKeyRepeatAndDirection(void) {
 /// link cable payloads, steps the music fades and the screen fade, and when
 /// the frame loop has finished a frame copies its OAM list and BG scroll
 /// registers, flushes the queued register writes and clears
-/// gFrameRenderPending. Then it runs and clears the one-shot gVBlankHook, runs
-/// the VBlank tasks, reads the keypad into gKeysHeld and gKeysPressed, sets
-/// gVBlankDone and finally mixes the next sound buffer.
+/// gFrameRenderPending. Then it runs and clears the one-shot gVBlankCallback,
+/// runs the VBlank tasks, reads the keypad into gKeysHeld and gKeysPressed,
+/// sets gVBlankDone and finally mixes the next sound buffer.
 void System_VBlankHandler(void) {
   u32 keys;
   void (*hook)(void);
@@ -394,19 +393,19 @@ void System_VBlankHandler(void) {
   Fade_Update();
   if (gFrameRenderPending != 0) {
     if (gOamCopyEnabled != 0)
-      Dma_Set(((union HeapState *)gWorkSlot)->slots[HEAP_SLOT_FRAME_SCRATCH],
+      Dma_Set(((union HeapState *)gHeapSlots)->slots[HEAP_SLOT_FRAME_SCRATCH],
               OAM, DMA_COPY_WORDS(OAM_SIZE / 4), REG_DMA3);
     Dma_Set(gBgScroll, REG_BG0HOFS, DMA_COPY_WORDS(4), REG_DMA3);
     IoWriteQueue_FlushPending();
     gFrameRenderPending = 0;
   }
   // The hook runs once: it is cleared before it is called
-  hook = gVBlankHook;
+  hook = gVBlankCallback;
   if (hook != 0) {
-    gVBlankHook = 0;
+    gVBlankCallback = 0;
     hook();
   }
-  Scheduler_RunPass(SCHEDULER_KEY_VBLANK);
+  Task_RunPass(TASK_PRIORITY_VBLANK);
 
   // Read the keypad (its bits are 0 while pressed). A newly held key restarts
   // the repeat at once; letting go of all keys restarts the full delay.

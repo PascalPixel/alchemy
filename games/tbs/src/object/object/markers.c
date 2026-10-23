@@ -7,7 +7,7 @@
 /// Sets an object's y and terrainHeight to the map's height at its x and z.
 /// Called by Field_PlaceMapMarkers for each marker it places.
 void ObjectMotion_SnapToTerrain(void *object) {
-  struct ObjectRuntime *objectEvent = object;
+  struct Object *objectEvent = object;
   s32 terrainHeight;
 
   terrainHeight =
@@ -46,17 +46,17 @@ enum {
 /// shown open once its flag is set and gone once its mimic was beaten, and a
 /// Psynergy Stone for a bg event giving one, until it is
 /// taken. A marker with no such event takes no slot. The objects are kept in
-/// work->markers, not in object event slots. Called by Field_RunMap on map
+/// work->markers, not in object event slots. Called by Map_Run on map
 /// load; clears and fills work->markers.
 void Field_PlaceMapMarkers(void) {
   u32 id;
   struct MapGridMarkers *grid = gMapGridWork[0];
 #ifdef UBFIX
-  struct FieldWork *work = (struct FieldWork *)gEventWork;
+  struct FieldWork *work = (struct FieldWork *)gFieldWork;
 #else
   // UB: the event cell is a separate global, beyond gMapGridWork's one pointer.
-  // Reading gEventWork plainly grows 0x254 to 0x25c bytes in English.
-  struct FieldWork *work = gMapGridWork[HEAP_SLOT_EVENT - HEAP_SLOT_MAP_GRID];
+  // Reading gFieldWork plainly grows 0x254 to 0x25c bytes in English.
+  struct FieldWork *work = gMapGridWork[HEAP_SLOT_FIELD - HEAP_SLOT_MAP_GRID];
 #endif
   s32 markerCount = 0;
   u8 *list = grid->markers;
@@ -113,7 +113,7 @@ void Field_PlaceMapMarkers(void) {
           markerObjectEvent->priorityFlags = 1;
           markerObjectEvent->flags59 = 1;
           marker->id = event->trigger;
-          marker->object = (struct ObjectRuntime *)markerObjectEvent;
+          marker->object = (struct Object *)markerObjectEvent;
           marker->column = markerObjectEvent->x / 0x100000;
           marker->row = markerObjectEvent->z / 0x100000;
           marker++;
@@ -141,7 +141,7 @@ void Field_PlaceMapMarkers(void) {
           markerObjectEvent->homeZ = markerObjectEvent->z / 0x10000;
           markerObjectEvent->flags59 = 1;
           markerObjectEvent->priorityFlags = 1;
-          marker->object = (struct ObjectRuntime *)markerObjectEvent;
+          marker->object = (struct Object *)markerObjectEvent;
           marker->id = event->trigger;
           marker->column = markerObjectEvent->x / 0x100000;
           marker->row = markerObjectEvent->z / 0x100000;
@@ -168,7 +168,7 @@ s32 Marker_FindSlot(s32 id) {
   s32 matchingSlot;
   struct MarkerSlot *marker;
 
-  marker = ((struct FieldWork *)gEventWork)->markers;
+  marker = ((struct FieldWork *)gFieldWork)->markers;
   matchingSlot = -1;
   for (slotIndex = 0; slotIndex <= MARKER_MAX - 1; slotIndex++, marker++) {
     if (marker->id == id) {
@@ -187,15 +187,15 @@ static __inline__ void SetMarkerAnimationAndPlaySound(s32 id, s32 animation,
                                                       s32 sound) {
   s32 slotIndex;
   struct MarkerSlot *marker;
-  struct ObjectRuntime *object;
+  struct Object *object;
 
   slotIndex = Marker_FindSlot(id);
   if (slotIndex != -1) {
-    marker = &((struct FieldWork *)gEventWork)->markers[slotIndex];
+    marker = &((struct FieldWork *)gFieldWork)->markers[slotIndex];
     object = marker->object;
     if (object != NULL)
       ObjectDispatch_SelectAnimationFar(object, animation);
-    AudioCommand_PlayFar(sound);
+    Sound_PlaySongFar(sound);
     WaitFrames(12);
   }
 }
@@ -212,16 +212,16 @@ void Marker_CloseChest(s32 id) {
 void Marker_LaunchMimic(s32 id) {
   s32 slotIndex;
   struct MarkerSlot *marker;
-  struct ObjectRuntime *object;
+  struct Object *object;
 
   slotIndex = Marker_FindSlot(id);
   if (slotIndex != -1) {
-    marker = &((struct FieldWork *)gEventWork)->markers[slotIndex];
+    marker = &((struct FieldWork *)gFieldWork)->markers[slotIndex];
     object = marker->object;
     WaitFrames(18);
     if (object != NULL)
       ObjectDispatch_SelectAnimationFar(object, MARKER_CHEST_MIMIC);
-    AudioCommand_PlayFar(SE_146);
+    Sound_PlaySongFar(SE_146);
     if (object != NULL) {
       object->velocityY = 8 << 16;
       ObjectDispatch_SetSingleChildFlagsFar((struct DispatchObject *)object, 1);
@@ -240,11 +240,11 @@ void Marker_OpenChest(s32 id) {
 void Marker_ShowOpened(s32 id) {
   s32 slotIndex;
   struct MarkerSlot *marker;
-  struct ObjectRuntime *object;
+  struct Object *object;
 
   slotIndex = Marker_FindSlot(id);
   if (slotIndex != -1) {
-    marker = &((struct FieldWork *)gEventWork)->markers[slotIndex];
+    marker = &((struct FieldWork *)gFieldWork)->markers[slotIndex];
     object = marker->object;
     if (object != NULL)
       ObjectDispatch_SelectAnimationFar(object, MARKER_CHEST_OPEN);
@@ -254,13 +254,13 @@ void Marker_ShowOpened(s32 id) {
 /// Returns the object of marker id, or NULL when no slot has it. Called by
 /// Field_SearchTile, and by the world map markers (field_fx.c) to skip a
 /// marker already placed.
-struct ObjectRuntime *Marker_GetObjectEvent(s32 id) {
+struct Object *Marker_GetObjectEvent(s32 id) {
   s32 slotIndex = Marker_FindSlot(id);
   struct MarkerSlot *marker;
 
   if (slotIndex == -1)
     return NULL;
-  marker = &((struct FieldWork *)gEventWork)->markers[slotIndex];
+  marker = &((struct FieldWork *)gFieldWork)->markers[slotIndex];
   return marker->object;
 }
 
@@ -270,11 +270,11 @@ struct ObjectRuntime *Marker_GetObjectEvent(s32 id) {
 void Marker_Hide(s32 id) {
   s32 slotIndex;
   struct MarkerSlot *marker;
-  struct ObjectRuntime *object;
+  struct Object *object;
 
   slotIndex = Marker_FindSlot(id);
   if (slotIndex != -1) {
-    marker = &((struct FieldWork *)gEventWork)->markers[slotIndex];
+    marker = &((struct FieldWork *)gFieldWork)->markers[slotIndex];
     object = marker->object;
     if (object != NULL)
       object->animationKind = OBJECT_SPRITE_NONE;
@@ -290,13 +290,13 @@ void Marker_SetObjectEventPosition(s32 id, s32 x, s32 z) {
   s32 objectX;
   s32 objectZ;
   struct MarkerSlot *marker;
-  struct ObjectRuntime *object;
+  struct Object *object;
 
   objectZ = z;
   objectX = x;
   slotIndex = Marker_FindSlot(id);
   if (slotIndex != -1) {
-    marker = &((struct FieldWork *)gEventWork)->markers[slotIndex];
+    marker = &((struct FieldWork *)gFieldWork)->markers[slotIndex];
     object = marker->object;
     if (object != NULL) {
       if (objectX == -1)

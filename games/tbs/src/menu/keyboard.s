@@ -2,7 +2,7 @@
 @ Compressed tilemap; unreferenced, but retained in this overlay in all six editions.
 	.section .rodata
 	.balign 4
-	.global Clear_KeyboardTilemap
-Clear_KeyboardTilemap:
+	.global MainMenu_KeyboardTilemap
+MainMenu_KeyboardTilemap:
 	.incbin "games/tbs/src/graphics/window/keyboard_ja.table.lz"
 	.balign 4, 0

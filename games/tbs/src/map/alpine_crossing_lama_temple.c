@@ -289,11 +289,11 @@ static void LamaTemple_TalkToChiMonk(void) {
 /// it in Lama Temple slides it open and walks the leader through, into the room
 /// (LAMA_TEMPLE_TO_FUCHIN_TEMPLE_INTERIORS).
 static void LamaTemple_EnterHamasRoom(void) {
-  Script_PlayCue(SE_188);
+  Script_PlaySong(SE_188);
   MapGrid_AnimateCells(gLamaTemple_DoorOpenCells, DOOR_X, DOOR_Y);
   ObjectEvent_GetById(LOCALID_PARTY_LEADER)->motionFlags = 0;
   ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, 0xcccc, 0x6666);
-  gEventWork->startTransition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+  gFieldWork->startTransition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIMATION_WALK);
   ObjectEvent_SetDestinationOffset(LOCALID_PARTY_LEADER, 0, -16);
   Engine_ScriptWait(16);
@@ -317,7 +317,7 @@ static void LamaTemple_RunHamasFarewell(void) {
   ObjectEvent_FaceDirection(GARET, FACING_NORTHWEST, 0);
   ObjectEvent_FaceDirection(IVAN, FACING_NORTH, 0);
   ObjectEvent_FaceDirection(MIA, FACING_NORTHEAST, 0);
-  gEventWork->startTransition =
+  gFieldWork->startTransition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_SHAPE);
   Engine_ScriptOpenScreen();
   Engine_ScriptWaitForScreen();
@@ -412,12 +412,12 @@ static void LamaTemple_RunHamasFarewell(void) {
   Engine_ScriptWait(20);
   ObjectEvent_FaceDirection(LOCALID_TEMPLE_HAMA, FACING_NORTH, 30);
   // The door slides open with SE_188, Hama walks through, and it slides shut.
-  Script_PlayCue(SE_188);
+  Script_PlaySong(SE_188);
   MapGrid_AnimateCells(gLamaTemple_DoorOpenCells, DOOR_X, DOOR_Y);
   ObjectEvent_SetSpeed(LOCALID_TEMPLE_HAMA, 0xcccc, 0x6666);
   ObjectEvent_WalkToAndWait(LOCALID_TEMPLE_HAMA, 136, 136);
   ObjectEvent_SetPosition(LOCALID_TEMPLE_HAMA, 0, 0);
-  Script_PlayCue(SE_188);
+  Script_PlaySong(SE_188);
   MapGrid_AnimateCells(gLamaTemple_DoorCloseCells, DOOR_X, DOOR_Y);
   Engine_ScriptWait(60);
   FieldEffect_PlayQueuedSound();
@@ -728,7 +728,7 @@ static void AlpineCrossing_LiftBoulder(void) {
   Engine_ObjectEventSetAnimation(LOCALID_HAMA, ANIMATION_HAMA_PULL);
   Engine_ObjectEventSetAnimation(LOCALID_FEIZHI, ANIMATION_FEIZHI_PULL);
   Engine_ScriptWait(20);
-  Script_PlayCue(SE_125);
+  Script_PlaySong(SE_125);
   ObjectEvent_SetDestinationOffset(LOCALID_HAMA, 2, 0);
   ObjectEvent_SetDestinationOffset(LOCALID_HSU, 2, 0);
   ObjectEvent_SetDestinationOffset(LOCALID_FEIZHI, 2, 0);
@@ -737,7 +737,7 @@ static void AlpineCrossing_LiftBoulder(void) {
   Engine_ObjectEventSetAnimation(LOCALID_HAMA, ANIMATION_HAMA_PULL);
   Engine_ObjectEventSetAnimation(LOCALID_FEIZHI, ANIMATION_FEIZHI_PULL);
   Engine_ScriptWait(20);
-  Script_PlayCue(SE_125);
+  Script_PlaySong(SE_125);
   ObjectEvent_SetDestinationOffset(LOCALID_HAMA, 4, 0);
   ObjectEvent_SetDestinationOffset(LOCALID_HSU, 4, 0);
   ObjectEvent_SetDestinationOffset(LOCALID_FEIZHI, 4, 0);
@@ -760,7 +760,7 @@ static void AlpineCrossing_LiftBoulder(void) {
   Engine_ObjectEventSetAnimation(LOCALID_HAMA, ANIMATION_HAMA_PULL);
   Engine_ObjectEventSetAnimation(LOCALID_FEIZHI, ANIMATION_FEIZHI_PULL);
   Engine_ScriptWait(20);
-  Script_PlayCue(SE_125);
+  Script_PlaySong(SE_125);
   ObjectEvent_SetDestinationOffset(LOCALID_HAMA, 2, 0);
   ObjectEvent_SetDestinationOffset(LOCALID_HSU, 2, 0);
   ObjectEvent_SetDestinationOffset(LOCALID_FEIZHI, 2, 0);
@@ -769,7 +769,7 @@ static void AlpineCrossing_LiftBoulder(void) {
   Engine_ObjectEventSetAnimation(LOCALID_HAMA, ANIMATION_HAMA_PULL);
   Engine_ObjectEventSetAnimation(LOCALID_FEIZHI, ANIMATION_FEIZHI_PULL);
   Engine_ScriptWait(20);
-  Script_PlayCue(SE_125);
+  Script_PlaySong(SE_125);
   ObjectEvent_SetDestinationOffset(LOCALID_HAMA, 4, 0);
   ObjectEvent_SetDestinationOffset(LOCALID_HSU, 4, 0);
   ObjectEvent_SetDestinationOffset(LOCALID_FEIZHI, 4, 0);
@@ -805,7 +805,7 @@ static void AlpineCrossing_LiftBoulder(void) {
   Engine_ScriptWait(20);
   Engine_ScriptEnd();
   GameFlag_Set(FLAG_HSU_RESCUED);
-  gEventWork->startTransition =
+  gFieldWork->startTransition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_SHAPE);
   Engine_ScriptRequestWarp(ALPINE_CROSSING_TO_LAMA_TEMPLE);
 }
@@ -917,7 +917,7 @@ const struct MapEvent *Map_GetEvents(void) {
 s32 Map_Initialize(void) {
   s32 warpDest;
 
-  gEventWork->startTransition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+  gFieldWork->startTransition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   if (gGameState.mapId == MAP_LAMA_TEMPLE) {
     // Lama Temple: the temple's queued sound (SE_169) plays, two monks
     // meditate and the mossy rock stands; the rock's own cell attributes are

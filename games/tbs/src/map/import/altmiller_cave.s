@@ -4,14 +4,14 @@
 	.set import.__modsi3, 1
 	.set import.Math_DivideUnsigned, 1
 	.set import.Engine_TaskWait, 1
-	.set import.Scheduler_AddOrUpdateCallback, 1
+	.set import.Task_Add, 1
 	.set import.Engine_TaskRemoveCallback, 1
 	.set import.Engine_RandomNext, 1
 	.set import.Vector_AddPolarOffset, 1
 	.set import.ObjectEvent_SetMode, 1
 	.set import.Engine_ObjectCreate, 1
 	.set import.Engine_ObjectSetPosition, 1
-	.set import.FieldObject_WaitForMove, 1
+	.set import.Object_WaitForMove, 1
 	.set import.Engine_MapGridCopyCellAttributes, 1
 	.set import.Engine_MapGridCopyCellsLayered, 1
 	.set import.Object_CheckMovementCollision, 1
@@ -65,7 +65,7 @@
 	.set import.Engine_PsynergyLowerHands, 1
 	.set import.Engine_PsynergyRaiseHands, 1
 	.set import.Field_EndBusyAndReveal, 1
-	.set import.Audio_PlayCueFromEventWork, 1
+	.set import.Map_PlayMusic, 1
 	.set import.EffectSlot_HasPendingTarget, 1
 	.set import.EffectSlot_SetObjectMode, 1
 	.set import.EffectSlot_SetCallback, 1

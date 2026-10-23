@@ -390,7 +390,7 @@ top of the screen for a moment.
 `MapSec_GetNameIndexFar`, drawn as tiles in a window centred across the
 screen and in its top 10 rows, opened with `UI_WINDOW_INSTANT`. It keeps the
 window and a countdown of `UI_AREA_NOTICE_FRAMES` (90) in two fields of the event work
-(`gEventWork`, the running map's state), and
+(`gFieldWork`, the running map's state), and
 `UiTimedNotice_Tick`, a main-loop task, closes it when the countdown ends.
 
 | Name | Value | Meaning |

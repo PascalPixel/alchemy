@@ -23,22 +23,22 @@ void Djinn_RunJupiterJoinEffect(s32 djinniId) {
   if (djinni == NULL)
     return;
   FieldEffect_InitializeSlots();
-  effectWork = gEffectWork;
+  effectWork = gFieldEffectWork;
   // Tint the screen yellow: PALETTE_TRANSFORM_TINT | RGB(12, 12, 4).
   Shop_SaveAndTintFieldPaletteFar(0x20118c);
-  AudioCommand_PlayFar(SE_173);
+  Sound_PlaySongFar(SE_173);
   Motion_SetVarCbAndRefresh(djinniId, 1);
-  AudioCommand_PlayFar(SE_174);
+  Sound_PlaySongFar(SE_174);
   Motion_SetVarCbAndRefresh(djinniId, 1);
-  AudioCommand_PlayFar(SE_175);
+  Sound_PlaySongFar(SE_175);
   Motion_SetVarCbAndRefresh(djinniId, 1);
   WaitFrames(20);
 
   // Spin, then leap high.
-  AudioCommand_PlayFar(SE_140);
+  Sound_PlaySongFar(SE_140);
   djinni->update = FieldEffect_AdvanceSpinAngle;
   WaitFrames(40);
-  AudioCommand_PlayFar(SE_HIGH_JUMP);
+  Sound_PlaySongFar(SE_HIGH_JUMP);
   ObjectMotion_Launch(djinniId, 12, 22);
 
   // 24 light particles from where the Djinni is on screen.
@@ -47,7 +47,7 @@ void Djinn_RunJupiterJoinEffect(s32 djinniId) {
   position.z = djinni->z;
   Camera_WorldToScreen(&position);
   ObjectDispatch_ReleaseFar((struct DispatchObject *)djinni);
-  AudioCommand_PlayFar(SE_164);
+  Sound_PlaySongFar(SE_164);
   effect = effectWork->effects;
   remainingParticles = 23;
   // One a frame, each with a random sprite param of 0 to 6.
@@ -72,7 +72,7 @@ void Djinn_RunJupiterJoinEffect(s32 djinniId) {
   ObjectDispatch_SelectAnimationFar(
       ObjectEvent_GetById(gGameState.selectedLocalId), 28);
   WaitFrames(40);
-  AudioCommand_PlayFar(SE_164);
+  Sound_PlaySongFar(SE_164);
   WaitFrames(100);
   Shop_RestoreFieldPaletteFar();
   FieldEffect_ClearActiveSlotsAndScheduleUpdates();
@@ -125,11 +125,12 @@ DEFINE_SHRINK_AND_DESTROY(FieldEffect_ShrinkObjectAndDestroySlow, 0xFFFFFE40)
 /// arrives, hidden; 40 frames later it swarms to points within 4 pixels of
 /// one 20 pixels over the leader, until it is freed once it arrives.
 void FieldEffect_UpdatePhasedRadialParticle(struct EffectSlot *effect) {
-  struct Object *owner;
+  struct ObjectVectorView *owner;
   struct EffectVector position;
   s32 state;
 
-  owner = (struct Object *)ObjectEvent_GetById(gGameState.selectedLocalId);
+  owner = (struct ObjectVectorView *)ObjectEvent_GetById(
+      gGameState.selectedLocalId);
   state = effect->state;
 
   if (state == MARS_SPARK_AIM) {
@@ -156,7 +157,7 @@ void FieldEffect_UpdatePhasedRadialParticle(struct EffectSlot *effect) {
     effect->flags = 0;
     effect->age = 0;
     if ((gFrameTick & 1) != 0)
-      AudioCommand_PlayFar(SE_HEAVY_IMPACT);
+      Sound_PlaySongFar(SE_HEAVY_IMPACT);
   } else if (state == MARS_SPARK_RISING) {
     if ((s16)effect->age == 3) {
       ((struct AnimationObject *)effect->object)->image.priority = 0;
@@ -187,7 +188,7 @@ void FieldEffect_UpdatePhasedRadialParticle(struct EffectSlot *effect) {
     effect->targetZ = position.z;
     effect->state++;
     if ((gFrameTick & 1) != 0)
-      AudioCommand_PlayFar(SE_145);
+      Sound_PlaySongFar(SE_145);
   } else if (state == MARS_SPARK_SWARMING) {
     if (EffectSlot_HasPendingTarget(effect) == 0)
       effect->state--;

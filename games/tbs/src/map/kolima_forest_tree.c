@@ -181,7 +181,7 @@ KolimaForestTree_GetObjectEventTemplates(void) {
 UNUSED static void KolimaForestTree_ExitTouchedRegion(void) {
   struct EventWork *scene;
 
-  scene = gEventWork;
+  scene = gFieldWork;
   Engine_ScriptStart();
   Engine_ObjectEventWalkByAndWait(LOCALID_PARTY_LEADER, 0, 0);
   Engine_ScriptRequestWarp(scene->touchedTrigger);
@@ -253,7 +253,7 @@ static void KolimaForestTree_TalkToTret(void) {
       KolimaForestTree_PlayGesture(LOCALID_TRET_BLANK, FACE_GESTURE_CLOSE_EYES);
       waterOwner = PartyInventory_FindOwner(ITEM_HERMES_WATER);
       if (waterOwner != -1) {
-        u16 *menuRequest = &gEventWork->requestedMenu;
+        u16 *menuRequest = &gFieldWork->requestedMenu;
         u16 open = 1;
 
         *menuRequest = open;
@@ -334,7 +334,7 @@ static void KolimaForestTree_RejectHermesWater(void) {
   ColorBuffer_ApplyTarget(0x406218, 1);
   Engine_ColorBufferInterpolate(20);
   Engine_TaskWait(40);
-  Script_PlayCue(AUDIO_CUE_FADE_BGM);
+  Script_PlaySong(AUDIO_CUE_FADE_BGM);
   gKolimaForestTreePlaySparkSound = 1;
   FieldScheduler_AddCallback(KolimaForestTree_SpawnRejectionSpark,
                              TASK_PRIORITY_MAP);
@@ -346,7 +346,7 @@ static void KolimaForestTree_RejectHermesWater(void) {
       ~OBJ_EVENT_FACES_MOTION;
   Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIMATION_LEADER_STRIDE);
   ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(2), PIXELS(2));
-  Script_PlayCue(SE_IMPACT);
+  Script_PlaySong(SE_IMPACT);
   leader->velocityY = PIXELS(5);
   leader->gravity = PIXELS(1) / 4;
   leader->bounce = 5 * Q16_ONE / 8;
@@ -357,7 +357,7 @@ static void KolimaForestTree_RejectHermesWater(void) {
   do {
     Engine_TaskWait(1);
   } while (leader->velocityY <= 0);
-  Script_PlayCue(SE_161);
+  Script_PlaySong(SE_161);
   Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIMATION_COLLAPSE);
   Engine_ScriptWait(120);
   Engine_TaskRemoveCallback(KolimaForestTree_SpawnRejectionSpark);
@@ -375,7 +375,7 @@ static void KolimaForestTree_RejectHermesWater(void) {
   Engine_ObjectEventRunRepeatedMotion(LOCALID_PARTY_LEADER, 2);
   Engine_ScriptWait(20);
   Script_ShowMessage(SPEAKER_PORTRAIT_RIGHT | LOCALID_TRETS_WRATHFUL_SIDE, 0);
-  Audio_PlayCueFromEventWork();
+  Map_PlayMusic();
   ColorBuffer_ApplyTarget(PALETTE_TRANSFORM_PLAIN, 1);
   Engine_ColorBufferInterpolate(20);
   Engine_TaskWait(40);
@@ -431,7 +431,7 @@ static void KolimaForestTree_RestoreTret(void) {
   includeMia = GameFlag_IsSet(FLAG_IN_PARTY(MIA));
   ObjectEvent_WalkToAndWait(LOCALID_PARTY_LEADER, 328, 212);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_NORTH, 20);
-  Script_PlayCue(AUDIO_CUE_FADE_BGM);
+  Script_PlaySong(AUDIO_CUE_FADE_BGM);
   Engine_MessageShowCentered(MsgKolimaWaterHermesSeepedIntoTret, 1);
   ObjectEvent_SetSpeed(GARET, PIXELS(1), PIXELS(1) / 2);
   ObjectEvent_SetSpeed(IVAN, PIXELS(1), PIXELS(1) / 2);
@@ -468,18 +468,18 @@ static void KolimaForestTree_RestoreTret(void) {
   Camera_SetSpeed(PIXELS(16) / 5, PIXELS(2) / 5);
   Camera_MoveTo(PIXELS(256), -1, PIXELS(254), 1);
   Engine_CameraWaitForMove();
-  Script_PlayCue(SE_246);
+  Script_PlaySong(SE_246);
   Engine_ScriptWait(40);
   ObjectEvent_FaceDirection(IVAN, FACING_SOUTHEAST, 20);
   Camera_MoveTo(PIXELS(413), -1, PIXELS(261), 1);
   Engine_CameraWaitForMove();
-  Script_PlayCue(SE_246);
+  Script_PlaySong(SE_246);
   Engine_ScriptWait(40);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_SOUTH, 0);
   ObjectEvent_FaceDirection(MIA, FACING_SOUTH, 20);
   Camera_MoveTo(PIXELS(326), -1, PIXELS(384), 1);
   Engine_CameraWaitForMove();
-  Script_PlayCue(SE_246);
+  Script_PlaySong(SE_246);
   if (*paletteFrame != 24) {
     do {
       Engine_TaskWait(1);
@@ -506,7 +506,7 @@ static void KolimaForestTree_RestoreTret(void) {
   Engine_ScriptWait(40);
   KolimaForestTree_PlayGesture(LOCALID_TRET_BLANK, FACE_GESTURE_OPEN_EYES);
   Engine_ScriptWait(40);
-  Script_PlayCue(MUS_007);
+  Script_PlaySong(MUS_007);
   // Tret and Laurel discover that their powers have returned.
   Engine_ScriptSetMessage(MsgKolimaFeelGreatPowerSpreadingThrough);
   Script_ShowMessage(LOCALID_TRET, 0);
@@ -561,7 +561,7 @@ static void KolimaForestTree_RestoreTret(void) {
     Script_ShowMessage(SPEAKER_WINDOW_ABOVE | LOCALID_LAUREL, 0);
     Script_ShowMessage(SPEAKER_WINDOW_BELOW | LOCALID_TRET, 0);
   } else {
-    gEventWork->message += 2;
+    gFieldWork->message += 2;
     ObjectEvent_ShowEmote(MIA, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 0);
     ObjectEvent_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 0);
     ObjectEvent_ShowEmote(IVAN, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 40);
@@ -571,7 +571,7 @@ static void KolimaForestTree_RestoreTret(void) {
       Engine_ObjectEventRunRepeatedMotion(MIA, 2);
       Script_ShowMessage(MIA, 0);
     } else {
-      gEventWork->message += 1;
+      gFieldWork->message += 1;
     }
     Engine_ObjectEventSetAnimationAndWait(IVAN, ANIMATION_NOD);
     Script_ShowMessage(IVAN, 0);
@@ -623,7 +623,7 @@ static void KolimaForestTree_RestoreTret(void) {
     ObjectEvent_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
   } else {
     Engine_ObjectEventSetAnimationAndWait(GARET, ANIMATION_SHAKE_HEAD);
-    gEventWork->message += 1;
+    gFieldWork->message += 1;
   }
   Script_ShowMessage(GARET, 0);
   KolimaForestTree_PlayGesture(LOCALID_TRET_BLANK, FACE_GESTURE_BLINK);
@@ -741,7 +741,7 @@ static void KolimaForestTree_RestoreTret(void) {
   ObjectEvent_FaceDirection(MIA, FACING_NORTH, 0);
   ObjectEvent_FaceDirection(IVAN, FACING_NORTHWEST, 0);
   if (Engine_ScriptChooseYesNo(0, 0) == 1) {
-    gEventWork->message += 1;
+    gFieldWork->message += 1;
   }
   Engine_ScriptWait(10);
   KolimaForestTree_PlayGesture(LOCALID_TRET_BLANK, FACE_GESTURE_LOOK_LEFT);
@@ -756,7 +756,7 @@ static void KolimaForestTree_RestoreTret(void) {
   ObjectEvent_FaceDirection(MIA, FACING_NORTH, 0);
   ObjectEvent_FaceDirection(IVAN, FACING_WEST, 10);
   KolimaForestTree_NodTogether();
-  Script_PlayCue(AUDIO_CUE_FADE_BGM);
+  Script_PlaySong(AUDIO_CUE_FADE_BGM);
   // Rejoin the party and exchange the used water for its empty bottle.
   finalActions = gKolimaForestTree_RejoinPartyActions;
   ObjectEvent_SetActionScript(GARET, finalActions);
@@ -775,7 +775,7 @@ static void KolimaForestTree_RestoreTret(void) {
   Script_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | LOCALID_LAUREL, 0, 10);
   Engine_ObjectEventSetAnimationAndWait(LOCALID_PARTY_LEADER, ANIMATION_NOD);
   GameFlag_Set(FLAG_KOLIMA_CURSE_LIFTED);
-  Script_PlayCue(MUS_001);
+  Script_PlaySong(MUS_001);
   KolimaForestTree_ReplaceInventoryItem(ITEM_HERMES_WATER, ITEM_EMPTY_BOTTLE);
 }
 
@@ -793,7 +793,7 @@ s32 KolimaForestTree_Initialize(void) {
   laurelBlank = ObjectEvent_GetById(LOCALID_LAUREL_BLANK);
   Engine_TaskWait(1);
   Engine_ObjectEventSetChildValue(LOCALID_TRETS_WRATHFUL_SIDE, 15);
-  gEventWork->startTransition =
+  gFieldWork->startTransition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   gGameState.retreatMap = (s32)&MapId_KolimaForestEntrance;
   gGameState.retreatWarpDest = KOLIMA_FOREST_ENTRANCE_FROM_WORLD_MAP;

@@ -142,7 +142,7 @@ s32 BattleUnit_ProjectToScreen(s32 unit, s32 *screen) {
 /// XXX: what it was for; a debug build or the Lost Age's twin of this part
 /// would show whether the keys once chose an effect for enemy targets.
 void BattleEffect_ProbeKeysForExtendedActor(void) {
-  struct BattleEffectWork *work = WORK_SLOT(HEAP_SLOT_BATTLE_EFFECT);
+  struct BattleEffectWork *work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_ANIM);
   struct BattleEffectArgument *effect = work->effect;
 
   if (effect->actors[0] > 0x7f)
@@ -158,7 +158,7 @@ void BattleEffect_ProbeKeysForExtendedActor(void) {
 /// (battle/staging.c) when the plan has STAGING_BY_ID_RANGE (bit 14 of the
 /// effect word), and always from the plain attack runner and the approach
 /// action (battle/auto_battle.c). Takes heap slots
-/// HEAP_SLOT_BATTLE_SHEET (from EWRAM first), HEAP_SLOT_BATTLE_EFFECT and
+/// HEAP_SLOT_BATTLE_SHEET (from EWRAM first), HEAP_SLOT_BATTLE_ANIM and
 /// HEAP_SLOT_BATTLE_CANVAS for the effect, and releases them in the reverse
 /// order once it returns.
 void BattleEffect_DispatchByIdRange(struct BattleEffectArgument *effect) {
@@ -170,10 +170,9 @@ void BattleEffect_DispatchByIdRange(struct BattleEffectArgument *effect) {
   // ParticleSpritesD's ten flare cells, 2x2 to 20x20 pixels, 1,540 bytes
   // (2 * MOTE_SET_BYTES); the slot's last 10 bytes are never written.
   value = 0x60e;
-  Runtime_AllocateBlock(HEAP_SLOT_BATTLE_SHEET, value);
-  Runtime_AllocateHeapBlock(HEAP_SLOT_BATTLE_EFFECT,
-                            sizeof(struct BattleEffectWork));
-  Runtime_AllocateHeapBlock(HEAP_SLOT_BATTLE_CANVAS, CANVAS_BYTES);
+  AllocHeapSlotEwram(HEAP_SLOT_BATTLE_SHEET, value);
+  AllocHeapSlot(HEAP_SLOT_BATTLE_ANIM, sizeof(struct BattleEffectWork));
+  AllocHeapSlot(HEAP_SLOT_BATTLE_CANVAS, CANVAS_BYTES);
   value = effect->kind;
   kind = value;
   value = kind - 100;
@@ -185,7 +184,7 @@ void BattleEffect_DispatchByIdRange(struct BattleEffectArgument *effect) {
   } else {
     BattleEffect_RunBeamSequence(effect);
   }
-  Runtime_ReleaseHeapBlock(HEAP_SLOT_BATTLE_CANVAS);
-  Runtime_ReleaseHeapBlock(HEAP_SLOT_BATTLE_EFFECT);
-  Runtime_ReleaseHeapBlock(HEAP_SLOT_BATTLE_SHEET);
+  FreeHeapSlot(HEAP_SLOT_BATTLE_CANVAS);
+  FreeHeapSlot(HEAP_SLOT_BATTLE_ANIM);
+  FreeHeapSlot(HEAP_SLOT_BATTLE_SHEET);
 }

@@ -47,7 +47,7 @@ extern s32 gStagedObjectEvent_FootprintBounds[];
 static struct ObjectEvent *
 StagedObjectEvent_FindAtTile(const struct FieldPosition *position,
                              const struct ObjectEvent *origin) {
-  struct FieldWork *work = (struct FieldWork *)gEventWork;
+  struct FieldWork *work = (struct FieldWork *)gFieldWork;
   struct ObjectEvent **slots = work->objectEvents;
   u32 i;
 
@@ -132,7 +132,7 @@ UNUSED static void StagedObjectEvent_AdvancePair(void) {
   lead->speed = rate;
   lead->acceleration = rate;
   Engine_ObjectSetPosition(lead, dst.x, dst.y, dst.z);
-  FieldObject_WaitForMove(next);
+  Object_WaitForMove(next);
   FieldEffect_PlayQueuedSound();
   next->x.fixed = dst.x;
   next->z.fixed = dst.z;
@@ -246,7 +246,7 @@ StagedObjectEvent_StopBlockedMotion(struct ObjectEvent *objectEvent) {
 /// leader's direction, its local id and its footprint; or NULL.
 static struct ObjectEvent *Map_FindObjectEventRegion(s32 *direction, s32 *slot,
                                                      s32 *footprint) {
-  struct FieldWork *work = (struct FieldWork *)gEventWork;
+  struct FieldWork *work = (struct FieldWork *)gFieldWork;
   struct ObjectEvent *player = ObjectEvent_GetById(0);
   struct ObjectEvent **list;
   u32 i, j;
@@ -513,7 +513,7 @@ MapObjectEvent_MoveAndRedraw(struct StagedObjectEventProbe probe) {
   Engine_ObjectEventWaitForMove(0);
   Engine_ObjectEventSetAnimation(0, 1);
   ObjectEvent_GetById(0)->update = NULL;
-  FieldObject_WaitForMove(objectEvent);
+  Object_WaitForMove(objectEvent);
   Engine_AudioPlayCue(SE_STOP_SLOT3);
   Engine_AudioPlayCue(SE_HEAVY_STOP);
 

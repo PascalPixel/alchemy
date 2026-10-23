@@ -96,14 +96,14 @@ FarCall_WindowTable:
 	overlay_veneer UiIcon_BuildAbilityIconTiles
 	export RenderOutput_CreateLoadedFar, RenderOutput_CreateLoaded
 	overlay_veneer RenderOutput_CreateFromTable
-	overlay_veneer SaveState_WriteCurrentSlotPair
+	overlay_veneer Save_WriteCurrentFile
 	export Save_WriteSelectedSlotFar, SaveMenu_WriteSelectedSlot
-	export SaveState_LoadRecordIntoWorkFar, SaveState_LoadRecordIntoWork
-	export SaveState_CopySlotPairFar, SaveState_CopySlotPair
-	export SaveState_DeleteSelectedSlotFar, SaveState_DeleteSelectedSlot
-	export SaveState_ProcessSelectedSlotFar, SaveState_ProcessSelectedSlot
-	overlay_veneer SaveState_WriteSlotPair
-	export SaveState_ScanRecordFlagsFar, SaveState_ScanRecordFlags
+	export Save_LoadRecordIntoWorkFar, Save_LoadRecordIntoWork
+	export Save_CopyFileFar, Save_CopyFile
+	export Save_EraseSelectedFileFar, Save_EraseSelectedFile
+	export Save_ProcessSelectedFileFar, Save_ProcessSelectedFile
+	overlay_veneer Save_WriteFile
+	export Save_ScanRecordFlagsFar, Save_ScanRecordFlags
 	export NameEntry_EditOwnerNameFar, NameEntry_EditOwnerName
 	overlay_veneer Resource_CopyFixedBlockB
 	overlay_veneer Resource_CopyFixedBlockA
@@ -113,7 +113,7 @@ FarCall_WindowTable:
 	overlay_veneer Item_ReturnTrue
 	export Djinn_ShowJoinedMessageFar, Djinn_ShowJoinedMessage
 	export PaletteGlow_UpdateFar, PaletteGlow_Update
-	overlay_veneer Menu_RunWorkspaceOptions
+	overlay_veneer OptionMenu_Run
 	export Menu_RunWorkspaceResultLoopFar, Menu_RunWorkspaceResultLoop
 	overlay_veneer UiWindow_FillScreenBlockRect
 	export Menu_SelectShopCommandFar, Menu_SelectShopCommand
@@ -132,7 +132,7 @@ FarCall_WindowTable:
 	export Menu_AnimateSelectionToEntryFar, Menu_AnimateSelectionToEntry
 	export Ui_GetTableWordZeroFar, Ui_GetTableWordZero
 	export UiText_OpenEntryMessageFar, UiText_OpenEntryMessage
-	export SaveState_CountRecordsExcludingFlaggedFar, SaveState_CountRecordsExcludingFlagged
+	export Save_CountRecordsExcludingFlaggedFar, Save_CountRecordsExcludingFlagged
 	export UiWindow_DrawFrameFar, UiWindow_DrawFrame
 	export UiWindow_EraseBorderRectFar, UiWindow_EraseBorderRect
 	export Link_DrawShiftedTilePairFar, Link_DrawShiftedTilePair

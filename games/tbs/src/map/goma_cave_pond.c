@@ -77,7 +77,7 @@ const struct MapEvent *Map_GetEvents(void) { return gGomaCavePondEvents; }
 s32 Map_Initialize(void) {
   struct EventWork *work;
 
-  work = gEventWork;
+  work = gFieldWork;
   work->startTransition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   work->transitionFrames = 24;

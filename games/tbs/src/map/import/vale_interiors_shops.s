@@ -2,7 +2,7 @@
 	.set overlay_imports, 1
 	.set import.__umodsi3, 1
 	.set import.Engine_TaskWait, 1
-	.set import.Scheduler_AddOrUpdateCallback, 1
+	.set import.Task_Add, 1
 	.set import.Engine_TaskRemoveCallback, 1
 	.set import.ArcTan2, 1
 	.set import.TileAnimation_ResumeChannel, 1

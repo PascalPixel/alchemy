@@ -438,7 +438,7 @@ static void EventScript_KradenPlansSanctumVisit(void) {
       Engine_ObjectEventSetAnimationAndWait(JENNA, ANIMATION_NOD);
       Engine_ScriptWait(8);
       Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, 0);
-      gEventWork->message++;
+      gFieldWork->message++;
     }
     // Kraden: then it is decided.
     Engine_ObjectEventSetAnimationAndWait(LOCALID_KRADEN, ANIMATION_NOD);
@@ -483,7 +483,7 @@ static void EventScript_KradenPlansSanctumVisit(void) {
                               10);
     // Kraden opens his gate and goes in to prepare; the screen closes and the
     // party follows him through VALE_KRADEN_TO_VALE_INTERIORS_INN_MYTHRIL_BAG.
-    Script_PlayCue(SE_DOOR_OPEN);
+    Script_PlaySong(SE_DOOR_OPEN);
     MapGrid_AnimateCells(gValeKraden_GateCells, 43, 8);
     ObjectEvent_SetSpeed(LOCALID_KRADEN, PIXELS(1), PIXELS(1) / 2);
     ObjectEvent_WalkToAndWait(LOCALID_KRADEN, 232, 218);
@@ -492,7 +492,7 @@ static void EventScript_KradenPlansSanctumVisit(void) {
                           0);
     ObjectEvent_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
     ObjectEvent_ShowEmote(JENNA, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
-    gEventWork->startTransition =
+    gFieldWork->startTransition =
         MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_NOISE);
     Engine_ScriptCloseScreen();
     Engine_ScriptWaitForScreen();
@@ -523,7 +523,7 @@ static void EventScript_KradenSetsOff(void) {
   objectEvent = ObjectEvent_GetById(JENNA);
   objectEvent->facing = facing;
   MapGrid_AnimateCells(gValeKraden_GateCells, 43, 8);
-  gEventWork->startTransition =
+  gFieldWork->startTransition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_NOISE);
   Engine_ScriptOpenScreen();
   Engine_ScriptWaitForScreen();
@@ -570,7 +570,7 @@ static void EventScript_KradenSetsOff(void) {
   ObjectEvent_SetPosition(LOCALID_SATUROS, 0, 0);
   ObjectEvent_SetPosition(LOCALID_MENARDI, 0, 0);
   GameFlag_Set(FLAG_SANCTUM_VISIT_PLANNED);
-  gEventWork->startTransition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+  gFieldWork->startTransition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   ColorBuffer_ApplySource(PALETTE_TRANSFORM_PLAIN, PALETTE_HALVES_BOTH);
   GameFlag_Set(FLAG_MAP_TEMP_42);
   Engine_ScriptEnd();
@@ -608,7 +608,7 @@ static void EventScript_MeetSaturosAndMenardi(void) {
   }
 
   Engine_ScriptStart();
-  Script_PlayCue(AUDIO_CUE_FADE_BGM);
+  Script_PlaySong(AUDIO_CUE_FADE_BGM);
   GameFlag_Set(FLAG_MET_SATUROS_AND_MENARDI);
 
   // Saturos is overheard: the villagers know little of Sol Sanctum.
@@ -648,7 +648,7 @@ static void EventScript_MeetSaturosAndMenardi(void) {
   Camera_MoveTo(PIXELS(215), -1, PIXELS(345), 1);
   Engine_CameraWaitForMove();
   Engine_ScriptWait(20);
-  Script_PlayCue(MUS_061);
+  Script_PlaySong(MUS_061);
 
   // Saturos and Menardi talk of the elders and of using Kraden, stubborn
   // and cunning as he is.
@@ -802,7 +802,7 @@ static void EventScript_MeetSaturosAndMenardi(void) {
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, 1, 20);
   Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIMATION_NOD);
   Engine_ObjectEventSetAnimationAndWait(GARET, ANIMATION_NOD);
-  Script_PlayCue(AUDIO_CUE_FADE_BGM);
+  Script_PlaySong(AUDIO_CUE_FADE_BGM);
 
   ValeKraden_WalkTowardLeader(GARET);
   Engine_ObjectEventWaitForMove(GARET);
@@ -811,13 +811,13 @@ static void EventScript_MeetSaturosAndMenardi(void) {
   ValeKraden_WalkTowardLeader(JENNA);
   Engine_ObjectEventWaitForMove(JENNA);
   ObjectEvent_SetPosition(JENNA, 0, 0);
-  FieldObject_SetTargetAndCallback(
-      LOCALID_SATUROS, OBJ_EVENT_LINK_KEEP_MOTION | LOCALID_PARTY_LEADER,
-      gValeKraden_FaceTargetActions);
-  FieldObject_SetTargetAndCallback(
-      LOCALID_MENARDI, OBJ_EVENT_LINK_KEEP_MOTION | LOCALID_PARTY_LEADER,
-      gValeKraden_FaceTargetActions);
-  Audio_PlayCueFromEventWork();
+  Object_SetTargetAndCallback(LOCALID_SATUROS,
+                              OBJ_EVENT_LINK_KEEP_MOTION | LOCALID_PARTY_LEADER,
+                              gValeKraden_FaceTargetActions);
+  Object_SetTargetAndCallback(LOCALID_MENARDI,
+                              OBJ_EVENT_LINK_KEEP_MOTION | LOCALID_PARTY_LEADER,
+                              gValeKraden_FaceTargetActions);
+  Map_PlayMusic();
   Engine_ScriptEnd();
 }
 
@@ -997,10 +997,10 @@ s32 ValeKraden_Initialize(void) {
       if (Engine_GameFlagIsSet(FLAG_MET_SATUROS_AND_MENARDI) != 0) {
         ObjectEvent_SetPosition(LOCALID_SATUROS, PIXELS(392), PIXELS(376));
         ObjectEvent_SetPosition(LOCALID_MENARDI, PIXELS(376), PIXELS(376));
-        FieldObject_SetTargetAndCallback(
+        Object_SetTargetAndCallback(
             LOCALID_SATUROS, OBJ_EVENT_LINK_KEEP_MOTION | LOCALID_PARTY_LEADER,
             gValeKraden_FaceTargetActions);
-        FieldObject_SetTargetAndCallback(
+        Object_SetTargetAndCallback(
             LOCALID_MENARDI, OBJ_EVENT_LINK_KEEP_MOTION | LOCALID_PARTY_LEADER,
             gValeKraden_FaceTargetActions);
       }
@@ -1090,11 +1090,11 @@ static void EventScript_TalkToRockslideSurvivor(void) {
         Engine_ObjectEventSetAnimationAndWait(LOCALID_ROCKSLIDE_SURVIVOR,
                                               ANIMATION_NOD);
         // Follow his escape until the party can see that he is unharmed.
-        FieldObject_SetTargetAndCallback(LOCALID_PARTY_LEADER,
-                                         OBJ_EVENT_LINK_KEEP_MOTION |
-                                             LOCALID_ROCKSLIDE_SURVIVOR,
-                                         gValeKraden_FaceTargetActions);
-        FieldObject_SetTargetAndCallback(
+        Object_SetTargetAndCallback(LOCALID_PARTY_LEADER,
+                                    OBJ_EVENT_LINK_KEEP_MOTION |
+                                        LOCALID_ROCKSLIDE_SURVIVOR,
+                                    gValeKraden_FaceTargetActions);
+        Object_SetTargetAndCallback(
             GARET, OBJ_EVENT_LINK_KEEP_MOTION | LOCALID_ROCKSLIDE_SURVIVOR,
             gValeKraden_FaceTargetActions);
         ObjectEvent_RunActionScriptAndWait(
@@ -1135,7 +1135,7 @@ static void EventScript_FightFirstMonster(void) {
 
   Engine_ScriptStart();
 
-  work = gEventWork;
+  work = gFieldWork;
   work->startTransition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_BARS);
   work->transitionFrames = 64;
@@ -1156,7 +1156,7 @@ static void EventScript_FightSecondMonster(void) {
 
   Engine_ScriptStart();
 
-  work = gEventWork;
+  work = gFieldWork;
   work->startTransition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_BARS);
   work->transitionFrames = 64;

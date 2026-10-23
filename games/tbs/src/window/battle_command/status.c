@@ -165,13 +165,13 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner) {
   hasDjinn = Party_SumDjinnCountsFar(-1);
 
   navigation = ((struct BattleMenuWork *)
-                    gWindowWork[HEAP_SLOT_BATTLE_COMMANDS - HEAP_SLOT_WINDOW]);
+                    gWindowWork[HEAP_SLOT_BATTLE_MENU - HEAP_SLOT_WINDOW]);
   navigation->timerHidden = 1;
   if (navigation->timerWindow != 0) {
     UiWork_Finalize((struct UiWindow *)navigation->timerWindow, 1);
     navigation->timerWindow = 0;
   }
-  AudioCommand_PlayFar(SE_MENU_CONFIRM);
+  Sound_PlaySongFar(SE_MENU_CONFIRM);
 
   for (i = 4; i >= 0; i--) {
     cursor.groupPositions[i] = 0;
@@ -253,7 +253,7 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner) {
         groupPosition = cursor.groupPositions[cursor.group];
         if ((keys & KEY_DOWN) != 0) {
           keys = 0;
-          AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
+          Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
           groupPosition++;
           if (groupPosition >= cursor.groupSize) {
             groupPosition = 0;
@@ -264,7 +264,7 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner) {
           }
         } else if ((keys & KEY_UP) != 0) {
           keys = 0;
-          AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
+          Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
           groupPosition--;
           if (groupPosition < 0) {
             groupPosition = cursor.groupSize - 1;
@@ -275,7 +275,7 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner) {
           }
         } else if ((keys & (KEY_A | KEY_RIGHT | KEY_LEFT)) != 0) {
           keys = 0;
-          AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
+          Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
           // A, Right or Left toggles between the general group and the
           // conditions. From STATUS_CURSOR_COMBAT_STATS this makes a group
           // no branch below reads; the next frame's switch restores it.
@@ -304,7 +304,7 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner) {
             cursor.group = STATUS_CURSOR_GENERAL;
             groupPosition = cursor.groupPositions[0];
           }
-          AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
+          Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
         } else if ((keys & KEY_LEFT) != 0) {
           keys = 0;
           groupPosition--;
@@ -312,13 +312,13 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner) {
             cursor.group = STATUS_CURSOR_GENERAL;
             groupPosition = cursor.groupPositions[0];
           }
-          AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
+          Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
         } else if ((keys & (KEY_A | KEY_UP | KEY_DOWN)) != 0) {
           // A, Up or Down go back to the general group.
           keys = 0;
           cursor.group = STATUS_CURSOR_GENERAL;
           groupPosition = cursor.groupPositions[0];
-          AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
+          Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
         }
         cursor.groupPositions[cursor.group] = (s8)groupPosition;
       }
@@ -668,7 +668,7 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner) {
         }
       }
 
-      helpText = (u16 *)MemAlloc(OWNER_STATUS_TEXT_MAX * sizeof(*helpText));
+      helpText = (u16 *)Alloc(OWNER_STATUS_TEXT_MAX * sizeof(*helpText));
       if ((u32)cursor.helpEntry >= OWNER_STATUS_HELP_CONDITION) {
         statusKind =
             statusKinds[cursor.helpEntry - OWNER_STATUS_HELP_CONDITION];
@@ -680,7 +680,7 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner) {
         // what the stat stages add (the stats less those recalculated with
         // the stages cleared, after which the unit is restored from a copy),
         // or 20 for each Resistance stage.
-        savedUnit = (struct BattleUnit *)MemAlloc(sizeof(*unit));
+        savedUnit = (struct BattleUnit *)Alloc(sizeof(*unit));
         helpValue = 0;
         Iwram_CopyWords(savedUnit, unit, sizeof(*unit));
 
@@ -695,7 +695,7 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner) {
         defenseDelta -= unit->def;
         agilityDelta -= unit->agi;
         Iwram_CopyWords(unit, savedUnit, sizeof(*unit));
-        MemFree(savedUnit);
+        Free(savedUnit);
 
         switch (statusKind) {
         case OWNER_CONDITION_GRIM_REAPER:
@@ -750,7 +750,7 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner) {
 
       UiText_RenderWideStringAtOffset(helpText, (struct UiWindow *)helpWindow,
                                       0, 4);
-      MemFree(helpText);
+      Free(helpText);
       redraw = 0;
       work->dirty = 1;
     }
@@ -776,7 +776,7 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner) {
       }
     }
 
-    if (gLinkCountdownWork->timer == 0) {
+    if (gBattleMenuWork->timer == 0) {
       break;
     }
     if ((gKeysPressed & KEY_B) != 0) {
@@ -791,7 +791,7 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner) {
         }
         owner = list[ownerIndex];
         redraw = OWNER_STATUS_REDRAW_ALL;
-        AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
+        Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
       } else if ((keys & KEY_L) != 0) {
         ownerIndex--;
         if (ownerIndex < 0) {
@@ -799,7 +799,7 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner) {
         }
         owner = list[ownerIndex];
         redraw = OWNER_STATUS_REDRAW_ALL;
-        AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
+        Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
       }
     }
     WaitFrames(1);
@@ -822,13 +822,13 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner) {
   UiWork_Finalize(helpWindow, 1);
   PartyStatus_Draw(gBattleWork->partyStatus);
   // UB: the indexed scalar pointer steps outside gBattleWork to
-  // HEAP_SLOT_BATTLE_COMMANDS.
+  // HEAP_SLOT_BATTLE_MENU.
   // The named slot changes native instructions at the same 0xcf8-byte EN
-  // extent; using gWorkSlot instead adds eight bytes.
+  // extent; using gHeapSlots instead adds eight bytes.
 #ifdef UBFIX
-  gLinkCountdownWork->timerHidden = 0;
+  gBattleMenuWork->timerHidden = 0;
 #else
-  ((struct BattleMenuWork **)&gBattleWork)[HEAP_SLOT_BATTLE_COMMANDS -
+  ((struct BattleMenuWork **)&gBattleWork)[HEAP_SLOT_BATTLE_MENU -
                                            HEAP_SLOT_BATTLE]
       ->timerHidden = 0;
 #endif

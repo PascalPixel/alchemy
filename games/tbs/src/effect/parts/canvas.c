@@ -36,8 +36,8 @@ void BattleEffect_WipeCanvas(s32 direction, s32 fill) {
   s32 y;
   s32 wipePosition;
 
-  canvas = WORK_SLOT(HEAP_SLOT_BATTLE_CANVAS);
-  work = WORK_SLOT(HEAP_SLOT_BATTLE_EFFECT);
+  canvas = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
+  work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_ANIM);
   for (x = 0; x != 128; x++)
     delay[x] = Random16() & 0x3f;
 
@@ -105,7 +105,7 @@ void BattleEffect_WipeCanvas(s32 direction, s32 fill) {
 /// one more on each frame that did not. No effect reads that count;
 /// object/colorfx.c keeps the same count for its own transfer.
 void BattleEffect_ProcessPendingGraphicsTransfer(void) {
-  void **slots = gWorkSlot + HEAP_SLOT_BATTLE_EFFECT;
+  void **slots = gHeapSlots + HEAP_SLOT_BATTLE_ANIM;
   struct BattleEffectWork *work = slots[0];
   void *source;
   s32 *counter;
@@ -167,7 +167,7 @@ void BattleEffect_FlushPendingGraphicsTransfer(void) {
   void *source;
   s32 transferMode;
 
-  slots = gWorkSlot + HEAP_SLOT_BATTLE_EFFECT;
+  slots = gHeapSlots + HEAP_SLOT_BATTLE_ANIM;
   work = slots[0];
   source = Ram_MapGridCellBuffer;
   if (work->transferPending != 1)
@@ -209,7 +209,7 @@ void BattleEffect_FlushPendingGraphicsTransfer(void) {
 /// Nothing in the build calls it or takes its address. Writes WIN0H to
 /// BLDALPHA from the work block's copies.
 void Graphics_ApplyWindowBlendRegisters(void) {
-  struct BattleEffectWork *work = WORK_SLOT(HEAP_SLOT_BATTLE_EFFECT);
+  struct BattleEffectWork *work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_ANIM);
 
   REG_WIN0H = work->win0h;
   REG_WIN0V = work->win0v;
@@ -228,7 +228,7 @@ void Graphics_ApplyWindowBlendRegisters(void) {
 /// Nothing in the build calls it or takes its address;
 /// BattleEffect_AdvanceBg2OnInterval (display.c) writes the same pair itself.
 void Display_ApplyBg2Reference(void) {
-  struct BattleEffectWork *work = WORK_SLOT(HEAP_SLOT_BATTLE_EFFECT);
+  struct BattleEffectWork *work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_ANIM);
 
   REG_BG2X = work->bg2x;
   REG_BG2Y = work->bg2y;
@@ -245,8 +245,8 @@ void Display_ApplyBg2Reference(void) {
 /// sets work->fadeFrames, which it counts down while counting
 /// work->fadeStep up.
 void Palette_StepFadeTransfer(void) {
-  struct BattleWork *battle = WORK_SLOT(HEAP_SLOT_BATTLE);
-  struct BattleEffectWork *work = WORK_SLOT(HEAP_SLOT_BATTLE_EFFECT);
+  struct BattleWork *battle = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE);
+  struct BattleEffectWork *work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_ANIM);
 
   if (work->fadeFrames > 0) {
     s32 step = ++work->fadeStep;
@@ -264,7 +264,7 @@ void Palette_StepFadeTransfer(void) {
 /// BattleEffect_OpenCanvasLayer and BattleEffect_SetupCanvasTileMap, and by
 /// BattleEffect_RunShatteringOpening, which opens its own.
 void BattleEffect_ClearActorTimers(void) {
-  struct BattleEffectWork *work = WORK_SLOT(HEAP_SLOT_BATTLE_EFFECT);
+  struct BattleEffectWork *work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_ANIM);
 
   Iwram_ClearWords(work->actorTimers, sizeof work->actorTimers);
 }
@@ -280,7 +280,7 @@ void ObjectGroup_TickMemberTimers(void) {
   struct BattleEffectWork *work;
   s32 actorIndex;
 
-  work = WORK_SLOT(HEAP_SLOT_BATTLE_EFFECT);
+  work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_ANIM);
   actorIndex = 0;
   do {
     if (work->actorTimers[actorIndex] != 0) {
@@ -316,10 +316,11 @@ void ObjectGroup_TickMemberTimers(void) {
 ///
 /// bgControl : added to BG2CNT, the layer's priority (0 to 3) and so on.
 void BattleEffect_StartCanvasLayer(s32 bgControl) {
-  struct BattleEffectWork *work = WORK_SLOT(HEAP_SLOT_BATTLE_EFFECT);
-  struct BattleWork *battle = WORK_SLOT(HEAP_SLOT_BATTLE);
-  void *canvas = WORK_SLOT(HEAP_SLOT_BATTLE_CANVAS);
-  struct BattleBackgroundView *display = WORK_SLOT(HEAP_SLOT_BATTLE_BACKGROUND);
+  struct BattleEffectWork *work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_ANIM);
+  struct BattleWork *battle = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE);
+  void *canvas = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
+  struct BattleBackgroundView *display =
+      HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_BACKGROUND);
   s32 row;
   s32 column;
   s32 offset;
@@ -339,8 +340,7 @@ void BattleEffect_StartCanvasLayer(s32 bgControl) {
                                              battle->background, 0);
   work->fadeFrames = 0;
   work->fadeStep = 0;
-  Scheduler_AddOrUpdateCallback(Palette_StepFadeTransfer,
-                                EFFECT_PLAYBACK_ORDER);
+  Task_Add(Palette_StepFadeTransfer, EFFECT_PLAYBACK_ORDER);
 
   // Change BG2's settings while it is hidden (each queued DISPCNT lands two
   // frames later).
@@ -397,10 +397,11 @@ void BattleEffect_StartCanvasLayer(s32 bgControl) {
 void BattleEffect_OpenCanvasLayer(s32 bgControl) {
   // The tile-map loop is written out here and in BattleEffect_StartCanvasLayer:
   // shared, both compile 4 bytes shorter.
-  struct BattleEffectWork *work = WORK_SLOT(HEAP_SLOT_BATTLE_EFFECT);
-  struct BattleWork *battle = WORK_SLOT(HEAP_SLOT_BATTLE);
-  void *canvas = WORK_SLOT(HEAP_SLOT_BATTLE_CANVAS);
-  struct BattleBackgroundView *display = WORK_SLOT(HEAP_SLOT_BATTLE_BACKGROUND);
+  struct BattleEffectWork *work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_ANIM);
+  struct BattleWork *battle = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE);
+  void *canvas = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
+  struct BattleBackgroundView *display =
+      HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_BACKGROUND);
   s32 row;
   s32 column;
   s32 offset;
@@ -419,8 +420,7 @@ void BattleEffect_OpenCanvasLayer(s32 bgControl) {
                                              battle->background, 128);
   work->fadeFrames = 24;
   work->fadeStep = 0;
-  Scheduler_AddOrUpdateCallback(Palette_StepFadeTransfer,
-                                EFFECT_PLAYBACK_ORDER);
+  Task_Add(Palette_StepFadeTransfer, EFFECT_PLAYBACK_ORDER);
   IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT,
                       DISPCNT_MODE_1 | DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON |
                           DISPCNT_BG1_ON | DISPCNT_OBJ_ON,
@@ -495,11 +495,11 @@ void BattleEffect_StartTiledCanvas(s32 bgControl) {
 /// and BLDCNT, clears character block 1, removes Palette_StepFadeTransfer
 /// and queues two DISPCNT values.
 void BattleEffect_EndCanvasLayer(void) {
-  struct BattleEffectWork *work = WORK_SLOT(HEAP_SLOT_BATTLE_EFFECT);
-  struct BattleWork *battle = WORK_SLOT(HEAP_SLOT_BATTLE);
+  struct BattleEffectWork *work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_ANIM);
+  struct BattleWork *battle = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE);
   s32 i;
 
-  AudioCommand_PlayFar(AUDIO_CUE_FADE_SLOT3);
+  Sound_PlaySongFar(AUDIO_CUE_FADE_SLOT3);
   gBgScroll[1].x = work->savedBg1X;
   gBgScroll[1].y = work->savedBg1Y;
   // The battle's projection centre, which Camera_ApplyShake moves.
@@ -508,7 +508,7 @@ void BattleEffect_EndCanvasLayer(void) {
   REG_BG2CNT = BGCNT_PRIORITY(3) | BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS |
                BGCNT_SCREEN_BASE(7);
   Iwram_ClearWords(BG_CHAR_BLOCK(1), CANVAS_BYTES);
-  Scheduler_RemoveCallback(Palette_StepFadeTransfer);
+  Task_Remove(Palette_StepFadeTransfer);
   // This overwrites the saved y restored above before any frame passes, so
   // BG1 is always left at y 32.
   gBgScroll[1].y = 32;
@@ -547,10 +547,10 @@ void BattleEffect_HideBg1AndRestoreBackdrop(void) {
   struct BattleWork *battle;
   s32 *flag;
 
-  flag =
-      &((struct BattleBackgroundView *)WORK_SLOT(HEAP_SLOT_BATTLE_BACKGROUND))
-           ->secondMode;
-  battle = WORK_SLOT(HEAP_SLOT_BATTLE);
+  flag = &((struct BattleBackgroundView *)HEAP_SLOT_BLOCK(
+               HEAP_SLOT_BATTLE_BACKGROUND))
+              ->secondMode;
+  battle = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE);
   *flag = BATTLE_BACKGROUND_FLAT;
   IoWriteQueue_Store16((u32)&REG_DISPCNT, DISPCNT_MODE_1 | DISPCNT_OBJ_1D_MAP |
                                               DISPCNT_BG0_ON | DISPCNT_BG2_ON |
@@ -579,9 +579,10 @@ void BattleEffect_HideBg1AndRestoreBackdrop(void) {
 void BattleEffect_SetupCanvasTileMap(void) {
   // UB: indexing past gBattleWork reaches the work slots after it.
 #ifdef UBFIX
-  void *canvas = WORK_SLOT(HEAP_SLOT_BATTLE_CANVAS);
+  void *canvas = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
   struct BattleWork *screen = gBattleWork;
-  struct BattleBackgroundView *layer = WORK_SLOT(HEAP_SLOT_BATTLE_BACKGROUND);
+  struct BattleBackgroundView *layer =
+      HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_BACKGROUND);
 #else
   u8 **cells = (u8 **)&gBattleWork;
   void *canvas = cells[31];
@@ -648,7 +649,7 @@ void BattleEffect_DrawClippedCanvasLine(s32 x0, s32 y0, s32 x1, s32 y1,
   s32 dx = x1 - x0;
   s32 dy = y1 - y0;
   s32 frac = 0x80; // 0.5 in 8-bit fixed point
-  u8 *canvas = ((u8 **)gBattleEffectWork)[1];
+  u8 *canvas = ((u8 **)gBattleAnimWork)[1];
   s32 step;
   s32 i;
   s32 x;

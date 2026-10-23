@@ -143,7 +143,7 @@ void TileAnimation_StartChannels(const u16 *script) {
   }
   // A map with no channels never schedules the update.
   if (channelsStarted != 0)
-    Scheduler_AddOrUpdateCallback(TileAnimation_Update, 0xc80);
+    Task_Add(TileAnimation_Update, 0xc80);
 }
 
 /// Suspends the tile animations, unless the world map's still view is shown.
@@ -151,7 +151,7 @@ void TileAnimation_StartChannels(const u16 *script) {
 /// through TileAnimation_SuspendFar.
 void TileAnimation_Suspend(void) {
   if (((struct MapGridScrollWork *)gMapGridWork[0])->animationActive == 0)
-    Scheduler_SuspendTasks(TileAnimation_Update);
+    Task_SuspendAll(TileAnimation_Update);
 }
 
 /// Resumes the tile animations, unless the world map's still view is shown.
@@ -159,7 +159,7 @@ void TileAnimation_Suspend(void) {
 /// through TileAnimation_ResumeFar.
 void TileAnimation_Resume(void) {
   if (((struct MapGridScrollWork *)gMapGridWork[0])->animationActive == 0)
-    Scheduler_ResumeTasks(TileAnimation_Update);
+    Task_ResumeAll(TileAnimation_Update);
 }
 
 /// Each frame: runs the map's blend script. A 0x3NNN command sets BLDCNT; any
@@ -253,19 +253,17 @@ void DisplayBlend_StartScript(u16 *script) {
     hasScript = 1;
   }
   if (hasScript)
-    Scheduler_AddOrUpdateCallback(DisplayBlend_RunScript, 0xc80);
+    Task_Add(DisplayBlend_RunScript, 0xc80);
 }
 
 /// Suspends the blend script. The lighthouse maps and Vale's Babi scene
 /// reach it through DisplayBlend_SuspendScriptFar.
 void DisplayBlend_SuspendScript(void) {
-  Scheduler_SuspendTasks(DisplayBlend_RunScript);
+  Task_SuspendAll(DisplayBlend_RunScript);
 }
 
 /// Resumes the blend script, through DisplayBlend_ResumeScriptFar.
-void DisplayBlend_ResumeScript(void) {
-  Scheduler_ResumeTasks(DisplayBlend_RunScript);
-}
+void DisplayBlend_ResumeScript(void) { Task_ResumeAll(DisplayBlend_RunScript); }
 
 /// Unused: allocates the palette cycling queue (HEAP_SLOT_PALETTE_CYCLES) with
 /// its four entries cleared. Nothing calls it.
@@ -275,8 +273,8 @@ UNUSED void PaletteQueue_Initialize(void) {
   u16 cycleIndex;
   u16 colorIndex;
 
-  paletteCycles = Runtime_AllocateBlock(HEAP_SLOT_PALETTE_CYCLES,
-                                        sizeof(struct PaletteSnapshotWork));
+  paletteCycles = AllocHeapSlotEwram(HEAP_SLOT_PALETTE_CYCLES,
+                                     sizeof(struct PaletteSnapshotWork));
   cycle = paletteCycles->entries;
   // Four cycles of up to 16 saved colours each.
   for (cycleIndex = 0; cycleIndex != 4; cycleIndex++) {
@@ -306,7 +304,7 @@ UNUSED s32 PaletteQueue_Add(s16 paletteBank, s16 firstColor, s16 delay,
   u32 cycleIndex;
   u16 colorCount16;
 
-  paletteQueue = gPaletteWork;
+  paletteQueue = gPaletteCycleWork;
   cycleIndex = paletteQueue->count;
   if (cycleIndex > 3)
     return -1;
@@ -329,14 +327,14 @@ UNUSED s32 PaletteQueue_Add(s16 paletteBank, s16 firstColor, s16 delay,
 /// Unused: stops the palette cycles and frees their queue
 /// (HEAP_SLOT_PALETTE_CYCLES). Nothing calls it.
 UNUSED void PaletteQueue_Stop(void) {
-  Scheduler_RemoveCallback(PaletteQueue_StepCycles);
-  Runtime_ReleaseHeapBlock(HEAP_SLOT_PALETTE_CYCLES);
+  Task_Remove(PaletteQueue_StepCycles);
+  FreeHeapSlot(HEAP_SLOT_PALETTE_CYCLES);
 }
 
 /// Unused: starts running the palette cycles each frame.
 /// Nothing calls it.
 UNUSED void PaletteQueue_Start(void) {
-  Scheduler_AddOrUpdateCallback(PaletteQueue_StepCycles, 0xc80);
+  Task_Add(PaletteQueue_StepCycles, 0xc80);
 }
 
 /// Each frame: advances each palette cycle whose timer has run out by one
@@ -344,7 +342,7 @@ UNUSED void PaletteQueue_Start(void) {
 /// PaletteQueue_Start schedules it, and nothing calls that, so no palette
 /// cycle runs in the game.
 void PaletteQueue_StepCycles(void) {
-  struct PaletteSnapshotWork *paletteQueue = gPaletteWork;
+  struct PaletteSnapshotWork *paletteQueue = gPaletteCycleWork;
   u8 cycleIndex;
   // BUG: four queued cycles become zero here, so none advance.
   u16 activeCycles = paletteQueue->count & 3;

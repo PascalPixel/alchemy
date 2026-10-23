@@ -117,8 +117,8 @@ s32 BattlePresentation_WaitForAdvance(void) {
     // Cycle the eight frames, one every four frames.
     frameTiles = ((gFrameCount >> 2) & 7) * 128 +
                  (s32)gBattlePresentation_AdvanceArrowTiles;
-    window = gBattleDisplayWork->window;
-    offset = gBattleDisplayWork->offset;
+    window = gBattleMessageWork->window;
+    offset = gBattleMessageWork->offset;
     // Outside windows 0 and 1, sprites show (WINOUT bit 4) and BG2 does not
     // (bit 2); the semi-transparent arrow blends at full weight.
     IoWriteQueue_ClearBits16((u32)&REG_WINOUT, 4);
@@ -145,7 +145,7 @@ s32 BattlePresentation_WaitForAdvance(void) {
       break;
     WaitFrames(1);
   }
-  AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
+  Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
   Resource_ResetEntry(tileSlot);
   WaitFrames(1);
 }
@@ -194,10 +194,10 @@ s32 BattlePresentation_WaitForPromptAt(s32 x, s32 y) {
   WaitFrames(1);
 }
 
-/// Sets gBattleDisplayWork->marked, which the next message reads, as
+/// Sets gBattleMessageWork->marked, which the next message reads, as
 /// BATTLE_EVENT_MARK does.
 /// Called by BattleCommand_BuildPlan between a weapon's two unleash messages.
-void BattleEvent_MarkDisplay(void) { gBattleDisplayWork->marked = 1; }
+void BattleEvent_MarkDisplay(void) { gBattleMessageWork->marked = 1; }
 
 /// Takes an enemy out of the battle at once (one that leaves rather than
 /// falls): its HP to 0, out of the lists, and its object released.
@@ -286,7 +286,7 @@ u32 BattleEvent_DispatchQueued(void) {
                                 VALUE_ABILITY_NAME);
         break;
       case BATTLE_EVENT_MARK:
-        gBattleDisplayWork->marked = 1;
+        gBattleMessageWork->marked = 1;
         break;
       case BATTLE_EVENT_CLEAR_ARGUMENTS:
         UiWork_ClearValueNameTablesFar();
@@ -305,8 +305,8 @@ u32 BattleEvent_DispatchQueued(void) {
         UiWork_ClearValueNameTablesFar();
         break;
       case BATTLE_EVENT_HIT:
-        if (runtime->pendingCue > 0)
-          AudioCommand_PlayFar(runtime->pendingCue);
+        if (runtime->pendingSong > 0)
+          Sound_PlaySongFar(runtime->pendingSong);
         BattleMotion_FlashHit(queue->operands[eventIndex], 0, 0);
         break;
       case BATTLE_EVENT_DEFEAT:

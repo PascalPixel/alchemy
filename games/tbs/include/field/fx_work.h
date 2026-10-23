@@ -36,10 +36,10 @@ struct ArcEffectObject {
 
 /// The work of a Psynergy effect scene: its caster and target, where it takes
 /// place, the map state it restores and its 24 effect slots.
-/// It is the HEAP_SLOT_EFFECT work slot, read as gEffectWork, cleared when
-/// allocated: FieldEffect_LoadActionEffectResources takes it for a Psynergy or
-/// item use, and FieldEffect_InitializeSlots for the Djinn joining effects and
-/// Altmiller Cave's map. The effect's end releases it.
+/// It is the HEAP_SLOT_FIELD_EFFECT work slot, read as gFieldEffectWork,
+/// cleared when allocated: FieldEffect_LoadActionEffectResources takes it for a
+/// Psynergy or item use, and FieldEffect_InitializeSlots for the Djinn joining
+/// effects and Altmiller Cave's map. The effect's end releases it.
 struct FieldEffectWork {
   s32 angle;          ///< 1/65536 turns
   s32 x;              ///< 16.16 fixed-point pixels
@@ -54,7 +54,7 @@ struct FieldEffectWork {
   /// Set at the start: Force then aims in front of the caster; cleared once
   /// the target has been dispatched.
   s8 enabled;
-  u8 mode;    ///< where the effect runs; MODE_WORLD_MAP on the world map
+  u8 mode; ///< where the effect runs; OBJECT_SYSTEM_WORLD_MAP on the world map
   s8 visible; ///< set at the start: the caster flashes with a sound
   s8 active;  ///< set at the start: the ability's name is announced
   void (*finishCallback)(void); ///< run, when set, as Ply's effect ends

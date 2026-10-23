@@ -20,9 +20,9 @@ struct FadeView {
 /// callback by FieldEffect_StartFadeOverlay; reads the work in
 /// HEAP_SLOT_FADE_OVERLAY and queues the marks with Runtime_PushSlotEntry.
 void FadeOverlay_DrawMarks(void) {
-  struct FadeOverlayWork *work = WORK_SLOT(HEAP_SLOT_FADE_OVERLAY);
+  struct FadeOverlayWork *work = HEAP_SLOT_BLOCK(HEAP_SLOT_FADE_OVERLAY);
 #ifdef UBFIX
-  struct MapGridScrollWork *grid = WORK_SLOT(HEAP_SLOT_MAP_GRID);
+  struct MapGridScrollWork *grid = HEAP_SLOT_BLOCK(HEAP_SLOT_MAP_GRID);
   s32 cameraX = grid->viewX >> 16;
   s32 cameraZ = grid->viewY >> 16;
 #else
@@ -30,7 +30,8 @@ void FadeOverlay_DrawMarks(void) {
   // Named-member high halves keep 0x1da bytes but change load scheduling
   // from .text+0x6cce in English; the object event's named fields match
   // plainly.
-  s16 *camera = ((struct FadeView *)WORK_SLOT(HEAP_SLOT_MAP_GRID))->camera;
+  s16 *camera =
+      ((struct FadeView *)HEAP_SLOT_BLOCK(HEAP_SLOT_MAP_GRID))->camera;
   s32 cameraX = camera[1];
   s32 cameraZ = camera[3];
 #endif
@@ -119,13 +120,13 @@ void FieldEffect_StartFadeOverlay(void *object) {
   u8 *tiles;
   volatile u32 fill;
 
-  work = Runtime_AllocateBlock(HEAP_SLOT_FADE_OVERLAY, sizeof(*work));
+  work = AllocHeapSlotEwram(HEAP_SLOT_FADE_OVERLAY, sizeof(*work));
   // Upload the solid sprite tiles before enabling the drawing callback.
-  tiles = Runtime_AllocateHeapBlock(HEAP_SLOT_TILE_SCRATCH, 0x400);
+  tiles = AllocHeapSlot(HEAP_SLOT_TILE_SCRATCH, 0x400);
   Dma_Fill32Cell(fill, 0x11111111, tiles, 0x200);
   VramCache_Load(94, 0x200, tiles);
-  Runtime_ReleaseHeapBlock(HEAP_SLOT_TILE_SCRATCH);
-  Scheduler_AddOrUpdateCallback(FadeOverlay_DrawMarks, 0xc80);
+  FreeHeapSlot(HEAP_SLOT_TILE_SCRATCH);
+  Task_Add(FadeOverlay_DrawMarks, 0xc80);
   Io_Write16(BLDCNT_TGT1_BG1 | BLDCNT_TGT1_BG2 | BLDCNT_TGT1_BG3 |
                  BLDCNT_TGT1_OBJ | BLDCNT_EFFECT_LIGHTEN | BLDCNT_TGT2_ALL,
              &REG_BLDCNT);
@@ -140,10 +141,8 @@ void FieldEffect_StartFadeOverlay(void *object) {
 
 /// Stops drawing the fade overlay, keeping its work. Reached only through a
 /// bare far-call veneer; no ☀️ code names it.
-void FadeOverlay_Suspend(void) {
-  Scheduler_SuspendTasks(FadeOverlay_DrawMarks);
-}
+void FadeOverlay_Suspend(void) { Task_SuspendAll(FadeOverlay_DrawMarks); }
 
 /// Draws the fade overlay again after FadeOverlay_Suspend. Reached only
 /// through a bare far-call veneer.
-void FadeOverlay_Resume(void) { Scheduler_ResumeTasks(FadeOverlay_DrawMarks); }
+void FadeOverlay_Resume(void) { Task_ResumeAll(FadeOverlay_DrawMarks); }

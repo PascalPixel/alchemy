@@ -499,19 +499,19 @@ const struct MapEvent *MercuryLighthouse_GetEvents(void) {
 /// metatile behavior less 50), a sparkling passage as in
 /// MercuryLighthouseEntrance.
 static void MercuryLighthouse_LeaveUpperByPassage(void) {
-  MercuryLighthouse_LeaveThroughPassage(gEventWork->touchedTrigger - 50);
+  MercuryLighthouse_LeaveThroughPassage(gFieldWork->touchedTrigger - 50);
 }
 
 /// MercuryLighthouseUpper, walking north into metatile behavior 63: the same,
 /// through MERCURY_LIGHTHOUSE_UPPER_WATERFALLS_TO_GAP.
 static void MercuryLighthouse_LeaveUpperWaterfallsByPassage(void) {
-  MercuryLighthouse_LeaveThroughPassage(gEventWork->touchedTrigger - 50);
+  MercuryLighthouse_LeaveThroughPassage(gFieldWork->touchedTrigger - 50);
 }
 
 /// MercuryLighthouseExterior, walking north into metatile behavior 55: the
 /// same, through MERCURY_LIGHTHOUSE_EXTERIOR_WATERFALL_TO_UPPER_PATH.
 static void MercuryLighthouse_LeaveWaterfallByPassage(void) {
-  MercuryLighthouse_LeaveThroughPassage(gEventWork->touchedTrigger - 50);
+  MercuryLighthouse_LeaveThroughPassage(gFieldWork->touchedTrigger - 50);
 }
 
 /// MercuryLighthouseLower: with all three channel pipes in place the floor
@@ -528,7 +528,7 @@ static void MercuryLighthouse_ExitWhenChannelsOpen(void) {
     MapGrid_SetShake(PIXELS(1), PIXELS(1), Q16_ONE);
     Engine_AudioPlayCue(SE_RUMBLE);
     Engine_ScriptWait(60);
-    gEventWork->startTransition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+    gFieldWork->startTransition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
     Engine_ScriptCloseScreen();
     Engine_ScriptWaitForScreen();
     Engine_AudioPlayCue(AUDIO_CUE_FADE_SLOT3);
@@ -614,7 +614,7 @@ static void MercuryLighthouse_PushChannelPipes(void) {
 static void MercuryLighthouse_WalkLeaderIn(void) {
   struct EventWork *work;
 
-  work = gEventWork;
+  work = gFieldWork;
   Engine_ScriptStart();
   FieldScheduler_AddCallback(MercuryLighthouse_SparkleAroundLeader,
                              TASK_PRIORITY_MAP);
@@ -1309,7 +1309,7 @@ static void MercuryLighthouse_PushStoneDoorPipes(void) {
           Engine_ScriptWait(40);
           Engine_GameFlagSet(FLAG_MERCURY_LIGHTHOUSE_STATUE_FELL);
           Engine_ColorBufferApplySource(PALETTE_TRANSFORM_PLAIN, 0);
-          gEventWork->startTransition =
+          gFieldWork->startTransition =
               MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
           Engine_ScriptCloseScreen();
           Engine_ScriptWaitForScreen();
@@ -1486,9 +1486,9 @@ static void MercuryLighthouse_MiaSensesSomeoneInside(void) {
     Engine_ScriptWait(20);
     Engine_ObjectEventSetAnimationAndWait(MIA, ANIMATION_NOD);
     Script_ShowMessageAndWait(MIA, 0, 20);
-    gEventWork->message += 1;
+    gFieldWork->message += 1;
   } else {
-    gEventWork->message += 1;
+    gFieldWork->message += 1;
     Engine_ScriptWait(20);
     Engine_ObjectEventSetAnimationAndWait(MIA, ANIMATION_SHAKE_HEAD);
     Script_ShowMessageAndWait(MIA, 0, 20);
@@ -1583,7 +1583,7 @@ static void MercuryLighthouse_MiaOpensEntranceWithPly(void) {
     Engine_ScriptSetMessage(MsgMercuryDidThat);
     Engine_ScriptOpenMessage(MIA, 0);
     if (Engine_ScriptChooseYesNo(0, 0) == 0) {
-      gEventWork->message += 1;
+      gFieldWork->message += 1;
       Engine_ScriptWait(20);
       Engine_ObjectEventSetAnimationAndWait(MIA, ANIMATION_NOD);
       Engine_ScriptShowMessageAndWait(MIA, 0, 20);
@@ -1591,7 +1591,7 @@ static void MercuryLighthouse_MiaOpensEntranceWithPly(void) {
       Engine_ScriptWait(20);
       Engine_ObjectEventSetAnimationAndWait(MIA, ANIMATION_SHAKE_HEAD);
       Script_ShowMessageAndWait(MIA, 0, 20);
-      gEventWork->message += 1;
+      gFieldWork->message += 1;
     }
     Engine_ObjectEventShowEmote(LOCALID_PARTY_LEADER,
                                 EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 60);
@@ -1643,9 +1643,9 @@ static void MercuryLighthouse_MiaOpensEntranceWithPly(void) {
       Engine_ScriptWait(20);
       Engine_ObjectEventSetAnimationAndWait(GARET, ANIMATION_NOD);
       Engine_ScriptShowMessageAndWait(GARET, 0, 20);
-      gEventWork->message += 1;
+      gFieldWork->message += 1;
     } else {
-      gEventWork->message += 1;
+      gFieldWork->message += 1;
       Engine_ScriptWait(20);
       Engine_ObjectEventSetAnimationAndWait(GARET, ANIMATION_SHAKE_HEAD);
       Engine_ScriptShowMessageAndWait(GARET, 0, 20);
@@ -2083,7 +2083,7 @@ static void MercuryLighthouse_InspectHealingFountain(void) {
         MSGNO(MsgMercuryLighthouseFountainFlowsWithWater), 1);
   if (PartyInventory_FindOwner(ITEM_EMPTY_BOTTLE) != -1) {
     // The field loop handles this menu request after the inspection ends.
-    s16 *menuRequest = &((struct FieldWork *)gEventWork)->menu;
+    s16 *menuRequest = &((struct FieldWork *)gFieldWork)->menu;
     s32 enabled = 1;
 
     *menuRequest = enabled;
@@ -2127,7 +2127,7 @@ static void MercuryLighthouse_EnterRisingPassage(void) {
     ObjectEvent_GetById(LOCALID_PARTY_LEADER)->gravity = 0x8000;
     Engine_ObjectEventSetSpritePriority(LOCALID_PARTY_LEADER, 2);
     FieldObjectEvent_JumpDownLedge(LOCALID_PARTY_LEADER, 6, -1);
-    gEventWork->startTransition =
+    gFieldWork->startTransition =
         MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_CIRCLE);
     Engine_ScriptWait(60);
     Engine_ScriptRequestWarp(
@@ -2328,7 +2328,7 @@ s32 MercuryLighthouse_Initialize(void) {
   // Set up common lighting before restoring each map's puzzle-specific state.
   gGameState.retreatWarpDest = MERCURY_LIGHTHOUSE_EXTERIOR_FROM_WORLD_MAP;
   gGameState.retreatMap = (s32)&MapId_MercuryLighthouseExterior;
-  gEventWork->startTransition =
+  gFieldWork->startTransition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   Io_Write16(BLDCNT_TGT2_ALL | BLDCNT_EFFECT_BLEND, &REG_BLDCNT);
   {
@@ -2621,7 +2621,7 @@ s32 MercuryLighthouse_Initialize(void) {
       ObjectEvent_GetById(LOCALID_FALLEN_STATUE)->motionFlags = 0;
       ObjectEvent_GetById(LOCALID_FALLEN_STATUE)->bounce = 0;
       ObjectEvent_GetById(LOCALID_FALLEN_STATUE)->gravity = 0x4ccc;
-      gEventWork->startTransition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+      gFieldWork->startTransition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
       Engine_ScriptOpenScreen();
       Engine_ScriptWaitForScreen();
       ObjectEvent_GetById(LOCALID_FALLEN_STATUE)->motionFlags = 3;
@@ -2949,7 +2949,7 @@ static void MercuryLighthouse_MiaCastsPlyOnEntrance(void) {
   struct FieldEffectWork *effectWork;
   u8 flags;
 
-  effectWork = gEffectWork;
+  effectWork = gFieldEffectWork;
   ObjectEvent_SetPosition(LOCALID_PLY_TARGET, PIXELS(840), PIXELS(600));
   Engine_PsynergyStart(ABILITY_PLY, 1);
   Engine_PsynergySetTarget(MIA, LOCALID_PLY_TARGET);

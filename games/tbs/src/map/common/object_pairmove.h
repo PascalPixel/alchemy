@@ -39,6 +39,6 @@ static void MapObjectEvent_PlacePairAtOffset(s32 id, s32 dx, s32 dz) {
   } else {
     ObjectEvent_SetMode(other, 3);
   }
-  FieldObject_WaitForMove(objectEvent);
+  Object_WaitForMove(objectEvent);
   Engine_ScriptEnd();
 }

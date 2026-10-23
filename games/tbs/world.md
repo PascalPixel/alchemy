@@ -32,7 +32,7 @@ everyone stood, loads the battle as the next map (under a map number past
 the end of the map table, as [the front page](README.md#the-main-loop)
 explains), and afterwards loads the map again with everyone put back.
 
-In the code, `Field_RunMap` runs one field map: it loads the layout, calls
+In the code, `Map_Run` runs one field map: it loads the layout, calls
 the overlay's entries, then lets the leader walk, calling `Field_ProcessStep`
 once a frame, until `Field_CountRequests` finds a request. The running
 map's state is one block of memory, `struct FieldWork`, and each kind of
@@ -40,7 +40,7 @@ request is one member of it, so at most one of each kind can be waiting. A
 battle request saves the [object events](glossary.md#object-event) with
 `ObjectTable_Snapshot`, sets the next map to `RUN_BATTLE` and sets the warp
 the map returns to `WARP_NONE`, which tells the loop the next map is
-already chosen; afterwards `Map_ReturnFromBattle`
+already chosen; afterwards `Map_ReturnFromRun`
 loads the field map again with `FLAG_KEEP_PARTY_POSITION` set, and
 `ObjectTable_Restore` puts the object events back.
 
@@ -151,7 +151,7 @@ climbing. A footprint shows an object's whole life: every 18 frames of
 walking, or 12 of running, the leader's control creates one and starts it
 on `gWorldMap_FootprintActions`, the two words `SC_WAIT(120), SC_FREE`.
 
-The objects are the 64 slots of `gObjectSlots`, each 112 bytes. A script is
+The objects are the 64 slots of `gObjects`, each 112 bytes. A script is
 an array of 32-bit words, an `SC_` command from `objcmd.h` and then its
 operands, run through `gScriptObject_CommandTable` by
 `Object_UpdateAllThumb`. A command that returns 1 has finished and the next
@@ -163,7 +163,7 @@ when it finds none. `SC_END` leaves the object idling on
 `gScript_MainScript`; only `SC_FREE` frees the slot.
 
 Different parts of the code read an object's 112 bytes through different
-structs (`ObjectRuntime`, `ScriptMotionObject`, `ObjectEvent` and others),
+structs (`Object`, `ScriptMotionObject`, `ObjectEvent` and others),
 each naming the fields that part uses. They stay apart because the build
 must reproduce the [original](glossary.md#the-original)'s instructions, and
 reading the same bytes through one merged struct makes the compiler choose
@@ -171,7 +171,7 @@ others; [Matching](src/MATCHING.md) gives the cases.
 
 | Name | Value | Meaning |
 | --- | --- | --- |
-| `FIELD_OBJECT_COUNT` | 64 | the slots of `gObjectSlots` |
+| `OBJECT_COUNT` | 64 | the slots of `gObjects` |
 | `FIELD_SPRITE_FOOTPRINT` | 25 | a footprint's [sprite](glossary.md#sprite-and-oam), on maps that show them |
 
 [Field](src/field/README.md#everything-that-moves-runs-a-script) covers the
@@ -190,7 +190,7 @@ instead of stopping dead.
 On a town or dungeon map the leader walks at `FIELD_WALK_SPEED` and runs at
 `FIELD_RUN_SPEED` while a dash button is held. Each step needs five clear
 checks 8 pixels away: the way the pad points and 22.5 and 45 degrees either
-side. When one fails, `FieldObject_UpdatePlayerControl` tries headings 22.5,
+side. When one fails, `Object_UpdateLeaderControl` tries headings 22.5,
 45 and 67.5 degrees off, nearest first, each with five checks of its own, and
 takes the first that passes. `MapGrid_CheckObjectStep` decides each check from
 the cell there. Speeds are in 16.16 fixed point, the engine's way of

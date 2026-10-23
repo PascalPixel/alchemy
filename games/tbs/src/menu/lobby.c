@@ -266,7 +266,7 @@ static s32 sLinkLobbyWaitFrames;
 #define LOBBY_NO_RESULT
 #endif
 
-/// The lobby's warp destinations, which Field_RunMap reads through
+/// The lobby's warp destinations, which Map_Run reads through
 /// entry/lobby.s.
 u8 *LinkLobby_GetWarpDests(void) { return (u8 *)gLinkLobbyWarpDests; }
 
@@ -371,7 +371,7 @@ static s32 LinkLobby_PollPeerReady(void) {
   s32 result;
   s32 i;
 
-  work = gEventWork;
+  work = gFieldWork;
   result = 1;
   // The leader is south of z 224 (16.16 pixels), towards the way out: the
   // party stops talking about the last battle.
@@ -478,7 +478,7 @@ static s32 LinkLobby_PromptToParticipate(void) {
 /// FLAG_MAP_TEMP_00, _03 and _05. The original handler has no defined return
 /// value.
 static s32 LinkLobby_ReportDisconnection(void) {
-  struct EventWork *work = gEventWork;
+  struct EventWork *work = gFieldWork;
 
   LinkLobby_WriteSlotValue(LOBBY_SLOT_IDLE);
   Engine_GameFlagClear(FLAG_MAP_TEMP_00);
@@ -519,7 +519,7 @@ static s32 LinkLobby_ReceivePartyRecords(void) {
   s32 nameIndex;
 
   size = LOBBY_UNIT_RECORD_BYTES;
-  heap = Runtime_BumpAllocateAlternatePool(size);
+  heap = AllocEwram(size);
   result = 0;
   timeout = LOBBY_RECEIVE_TIMEOUT_FRAMES;
   slot = 0;
@@ -620,7 +620,7 @@ second:
   // Then the recovery table, into the enemy side's (unit 0x83's record).
   Runtime_BumpFree(heap);
   size = LOBBY_RECOVERY_RECORD_BYTES;
-  heap = Runtime_BumpAllocateAlternatePool(size);
+  heap = AllocEwram(size);
   tries = 0;
   if ((transferResult =
            SerialRuntime_StartReceive(Djinn_GetRecoveryTable(1))) != -1) {
@@ -697,7 +697,7 @@ static s32 LinkLobby_SendPartyRecords(void) {
   struct DjinnRecoveryList *list;
 
   size = LOBBY_UNIT_RECORD_BYTES;
-  heap = Runtime_BumpAllocateAlternatePool(size);
+  heap = AllocEwram(size);
   result = 0;
   timeout = LOBBY_SEND_TIMEOUT_FRAMES;
   ownerCount = LinkLobby_CopyPartyOwnerIds(ownerIds);
@@ -769,7 +769,7 @@ next:
   }
   Runtime_BumpFree(heap);
   size = LOBBY_RECOVERY_RECORD_BYTES;
-  heap = Runtime_BumpAllocateAlternatePool(size);
+  heap = AllocEwram(size);
   /* FAKEMATCH(one-pass): the recovery table's copy in a one-pass block, which
    * gives the copy's argument order and keeps the list base's copy first after
    * the call; as a plain call, 8 of 255 instructions differ in tbs-en. */
@@ -892,7 +892,7 @@ static s32 LinkLobby_EnterBattle(void) {
 
   failed = 0;
   window = 0;
-  work = gEventWork;
+  work = gFieldWork;
   missedFrames = 0;
   if (Engine_GameFlagIsSet(FLAG_MONSTER_BATTLE)) {
     Engine_ScriptStart();
@@ -943,8 +943,8 @@ static s32 LinkLobby_EnterBattle(void) {
     // into units 0x80 to 0x83. The copy to gActorSpriteSlots
     // (gMapGridCellBuffer
     // + 0x8000) hands them to Battle_RunEncounter, which copies them back.
-    savedWork = Runtime_AllocateBlock(HEAP_SLOT_LINK_OWNER_STATES, 0x7c8);
-    Engine_TaskRemoveCallback((SchedulerCallback)LinkLobby_PollPeerReady);
+    savedWork = AllocHeapSlotEwram(HEAP_SLOT_LINK_OWNER_STATES, 0x7c8);
+    Engine_TaskRemoveCallback((TaskFunc)LinkLobby_PollPeerReady);
     // Run the map's tile animation channel 5 for eight frames.
     TileAnimation_ResumeChannel(5);
     Engine_TaskWait(8);
@@ -977,12 +977,11 @@ static s32 LinkLobby_EnterBattle(void) {
         Engine_TaskWait(8);
         TileAnimation_PauseChannel(5);
         Engine_ObjectEventWaitForMove(LOCALID_PARTY_LEADER);
-        Runtime_ReleaseHeapBlock(HEAP_SLOT_LINK_OWNER_STATES);
+        FreeHeapSlot(HEAP_SLOT_LINK_OWNER_STATES);
         LinkLobby_WriteSlotValue(LOBBY_SLOT_SIGNATURE);
         LinkLobby_WriteSlotValue(LOBBY_SLOT_IDLE);
-        FieldScheduler_AddCallback((SchedulerCallback)LinkLobby_PollPeerReady,
-                                   0xc80);
-        Scheduler_SetTaskFlags((SchedulerCallback)LinkLobby_PollPeerReady, 1);
+        FieldScheduler_AddCallback((TaskFunc)LinkLobby_PollPeerReady, 0xc80);
+        Task_SetFlags((TaskFunc)LinkLobby_PollPeerReady, 1);
         Engine_GameFlagClear(FLAG_MAP_TEMP_01);
         Engine_GameFlagClear(FLAG_MAP_TEMP_02);
         Engine_GameFlagClear(FLAG_MAPSEC_TEMP_03);
@@ -1019,7 +1018,7 @@ static s32 LinkLobby_EnterBattle(void) {
       i++;
       *destination++ = *source++;
     } while (i <= 0x7c7);
-    Runtime_ReleaseHeapBlock(HEAP_SLOT_LINK_OWNER_STATES);
+    FreeHeapSlot(HEAP_SLOT_LINK_OWNER_STATES);
   }
   Engine_ScriptEnd();
 #ifdef UBFIX
@@ -1330,11 +1329,12 @@ static s32 LinkLobby_TalkByProgress(s32 localId) {
 }
 
 /// Coord event 1, the way out: stops the link, loads sound preset 2 and goes
-/// back to the file select screen (its warp destination CLEAR_FROM_SANCTUM).
+/// back to the file select screen (its warp destination
+/// MAIN_MENU_FROM_SANCTUM).
 static s32 LinkLobby_LeaveArena(void) {
   SerialRuntime_RemoveIrqHandlers();
   Sound_LoadPresetParameters(2);
-  FieldScript_SetDestination((s32)&MapId_Clear, CLEAR_FROM_SANCTUM);
+  FieldScript_SetDestination((s32)&MapId_MainMenu, MAIN_MENU_FROM_SANCTUM);
 #ifdef UBFIX
   return 0;
 #endif
@@ -1428,7 +1428,7 @@ static s32 LinkLobby_ReportMonsterRecord(s32 localId) {
 u8 *LinkLobby_GetEvents(void) { return (u8 *)gLinkLobbyEvents; }
 
 /// Saves the battle results between saving and saved messages, through
-/// SaveState_ProcessSelectedSlot, which writes the first 16 bytes of the save
+/// Save_ProcessSelectedFile, which writes the first 16 bytes of the save
 /// stamp (gSaveStamp) into the current file. LinkLobby_RunRoundResult calls it
 /// after each linked battle won or lost.
 static s32 LinkLobby_SaveBattleResults(void) {
@@ -1440,7 +1440,7 @@ static s32 LinkLobby_SaveBattleResults(void) {
   window = UiText_OpenMessageWindow(MsgLobbySavingBattleResults, 5, 4, 1);
   while (UiWork_IsComplete() == 0)
     Engine_TaskWait(1);
-  SaveState_ProcessSelectedSlot();
+  Save_ProcessSelectedFile();
   UiWork_Finalize(window, 1);
   Engine_TaskWait(1);
   window = UiText_OpenMessageWindow(MsgLobbyBattleResultsSaved, 5, 4, 1);
@@ -1462,7 +1462,7 @@ static s32 LinkLobby_SaveMonsterBattleResults(void) {
   window = UiText_OpenMessageWindow(MsgLobbySavingMonsterBattle, 5, 4, 1);
   while (UiWork_IsComplete() == 0)
     Engine_TaskWait(1);
-  SaveState_ProcessSelectedSlot();
+  Save_ProcessSelectedFile();
   UiWork_Finalize(window, 1);
   Engine_TaskWait(1);
   window = UiText_OpenMessageWindow(MsgLobbyMonsterBattleResults, 5, 4, 1);
@@ -1496,10 +1496,10 @@ static s32 LinkLobby_DrawThreeDigitValue(s32 value) {
 /// that brought the party here and restarts the lobby's polling. Warp
 /// destination 8 is a monster battle won, 9 one lost, 10 a linked battle won
 /// (or broken off, FLAG_MAPSEC_TEMP_E8) and 11 one lost; any other warp
-/// destination (LINK_LOBBY_FROM_CLEAR, from the file select screen) restarts
-/// the link. Updates gGameState.linkTallies, saves after linked battles and new
-/// monster records, and restores the party's HP, PP and Djinn unless a monster
-/// series goes on. Returns 0.
+/// destination (LINK_LOBBY_FROM_MAIN_MENU, from the file select screen)
+/// restarts the link. Updates gGameState.linkTallies, saves after linked
+/// battles and new monster records, and restores the party's HP, PP and Djinn
+/// unless a monster series goes on. Returns 0.
 s32 LinkLobby_RunRoundResult(void) {
   s32 i;
   struct EventWork *work;
@@ -1507,7 +1507,7 @@ s32 LinkLobby_RunRoundResult(void) {
 
   gLinkLobbyCallFrames = 0;
   sLinkLobbyWaitFrames = 0;
-  gEventWork->startTransition = MAP_TRANSITION(TRANSITION_WINDOW, 1);
+  gFieldWork->startTransition = MAP_TRANSITION(TRANSITION_WINDOW, 1);
   Sound_LoadPresetParameters(2);
   LinkLobby_DrawThreeDigitValue(
       gGameState.linkTallies[LINK_TALLY_LINKED_BEST_STREAK]);
@@ -1630,7 +1630,7 @@ s32 LinkLobby_RunRoundResult(void) {
     // The battle broke off instead (Battle_RunEncounter set
     // FLAG_MAPSEC_TEMP_E8): report the link lost and restart it.
     if (GameFlag_IsSet(FLAG_MAPSEC_TEMP_E8)) {
-      work = gEventWork;
+      work = gFieldWork;
       Engine_GameFlagClear(FLAG_MAPSEC_TEMP_E8);
       work->raisedTrigger = LOBBY_EVENT_DISCONNECTED;
       Engine_GameFlagClear(FLAG_MAPSEC_TEMP_04);
@@ -1692,9 +1692,9 @@ s32 LinkLobby_RunRoundResult(void) {
     LinkLobby_WriteSlotValue(LOBBY_SLOT_IDLE);
   }
   // Resume polling and restore the party unless continuing a monster run.
-  callback = (SchedulerCallback)LinkLobby_PollPeerReady;
+  callback = (TaskFunc)LinkLobby_PollPeerReady;
   FieldScheduler_AddCallback(callback, 0xc80);
-  Scheduler_SetTaskFlags(callback, 1);
+  Task_SetFlags(callback, 1);
   if (gGameState.warpDest != 8 || !Engine_GameFlagIsSet(FLAG_MONSTER_BATTLE)) {
     Party_RestoreHpPp(1);
     DjinnRecovery_TickTwenty();
@@ -1709,7 +1709,7 @@ u8 gLinkLobby_SlotColumns[] = {
     0, 1, 1, 1, 1, 0, 0, 0,
 };
 
-/// Where the party appears: LINK_LOBBY_FROM_CLEAR from the file select screen,
+/// Where the party appears: LINK_LOBBY_FROM_MAIN_MENU from the file select screen,
 /// 8 and 9 after a monster battle won or lost, 10 and 11 after a linked one
 /// (LinkLobby_EnterBattle).
 struct MapWarpDest gLinkLobbyWarpDests[] = {
@@ -1717,7 +1717,7 @@ struct MapWarpDest gLinkLobbyWarpDests[] = {
     { 10, CONDITION_ALWAYS, 352, 0, 148, FACING_NORTH, 0, 16, 0, 416, 310, 0 },
     { 8, CONDITION_ALWAYS, 216, 0, 200, FACING_WEST, 0, 16, 0, 416, 310, 0 },
     { 9, CONDITION_ALWAYS, 216, 0, 200, FACING_WEST, 0, 16, 0, 416, 310, 0 },
-    { LINK_LOBBY_FROM_CLEAR, CONDITION_ALWAYS, 216, 0, 288, FACING_NORTH, 0, 16, 0, 416, 310, 0 },
+    { LINK_LOBBY_FROM_MAIN_MENU, CONDITION_ALWAYS, 216, 0, 288, FACING_NORTH, 0, 16, 0, 416, 310, 0 },
     { 0, CONDITION_ALWAYS, 216, 0, 208, FACING_NORTH, 0, -1, -1, -1, -1, 0 },
     { MAP_TABLE_END },
 };

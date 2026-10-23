@@ -351,15 +351,15 @@ static void EventScript_DousePipe(void) {
   objectEvent->motionFlags = none;
   objectEvent->acceleration = PIXELS(2) / 5;
   objectEvent->speed = PIXELS(4) / 5;
-  FieldObject_SetPosition(objectEvent, objectEvent->x.fixed, PIXELS(8),
-                          objectEvent->z.fixed);
+  Object_SetPosition(objectEvent, objectEvent->x.fixed, PIXELS(8),
+                     objectEvent->z.fixed);
   objectEvent = ObjectEvent_Get(PIPE_EAST);
   objectEvent->motionFlags = none;
   objectEvent->acceleration = PIXELS(2) / 5;
   objectEvent->speed = PIXELS(4) / 5;
   Engine_ObjectSetPosition(objectEvent, objectEvent->x.fixed, PIXELS(32),
                            objectEvent->z.fixed);
-  FieldObject_WaitForMove(objectEvent);
+  Object_WaitForMove(objectEvent);
   Engine_ScriptWait(45);
   MapGrid_CopyCellAttributes(43, 12, 1, 1, 41, 12);
   Engine_ScriptEnd();
@@ -399,7 +399,7 @@ static void ColosseumAzartMatch_MoveObjectEventPairByOffset(s32 localId, s32 dx,
     ObjectEvent_SetMode(objectEvent, 3);
   }
   Engine_AudioPlayCue(SE_226);
-  FieldObject_WaitForMove(leader);
+  Object_WaitForMove(leader);
   ObjectEvent_SetMode(objectEvent, 2);
   Engine_AudioPlayCue(SE_STOP_SLOT3);
   Engine_ScriptEnd();
@@ -501,15 +501,15 @@ static void EventScript_PushPipeworksPillar(void) {
   Engine_ScriptWait(6);
   objectEvent->speed = PIXELS(1) / 2;
   objectEvent->acceleration = PIXELS(1) / 5;
-  Script_PlayCue(SE_HEAVY_MOVE);
+  Script_PlaySong(SE_HEAVY_MOVE);
   ObjectEvent_SetMode(objectEvent, 2);
   Engine_ObjectSetPosition(objectEvent, objectEvent->x.fixed - PIXELS(48), 0,
                            objectEvent->z.fixed);
   Engine_ScriptWait(6);
   Engine_ObjectEventSetAnimation(leaderId, ANIMATION_WALK);
   ObjectDispatch_StartCamera(
-      (struct DispatchObject *)((struct EventWork *)Runtime_AllocateBlock(
-                                    HEAP_SLOT_EVENT, sizeof(struct FieldWork)))
+      (struct DispatchObject *)((struct EventWork *)AllocHeapSlotEwram(
+                                    HEAP_SLOT_FIELD, sizeof(struct FieldWork)))
           ->viewCenter,
       (s32)objectEvent);
   ObjectEvent_SetSpeed(leaderId, PIXELS(3) / 10, PIXELS(1) / 5);
@@ -517,10 +517,10 @@ static void EventScript_PushPipeworksPillar(void) {
                            leader->z.fixed);
   Engine_ObjectEventWaitForMove(leaderId);
   Engine_ObjectEventSetAnimation(leaderId, ANIMATION_STAND);
-  FieldObject_WaitForMove(objectEvent);
+  Object_WaitForMove(objectEvent);
   ObjectEvent_SetMode(objectEvent, 1);
-  Script_PlayCue(SE_STOP_SLOT3);
-  Script_PlayCue(SE_HEAVY_STOP);
+  Script_PlaySong(SE_STOP_SLOT3);
+  Script_PlaySong(SE_HEAVY_STOP);
   Engine_ScriptWait(15);
   Engine_ScriptEnd();
   MapGrid_CopyCellAttributes(37, 7, 1, 4, 34, 7);
@@ -555,7 +555,7 @@ static void EventScript_PushPipeworksPillar(void) {
   objectEvent->speed = PIXELS(4) / 5;
   Engine_ObjectSetPosition(objectEvent, objectEvent->x.fixed, PIXELS(32),
                            objectEvent->z.fixed);
-  FieldObject_WaitForMove(objectEvent);
+  Object_WaitForMove(objectEvent);
   Engine_ScriptWait(15);
   Engine_ScriptEnd();
   MapGrid_CopyCellAttributes(43, 12, 1, 1, 41, 12);
@@ -697,7 +697,7 @@ s32 ColosseumAzartMatch_Initialize(void) {
   u8 zero;
   s32 col;
 
-  gEventWork->startTransition = MAP_TRANSITION(TRANSITION_FADE, 0);
+  gFieldWork->startTransition = MAP_TRANSITION(TRANSITION_FADE, 0);
   GameFlag_Set(FLAG_RETREAT_BLOCKED);
   objectEvent = ObjectEvent_GetById(ROCK_A);
   hit = MapGrid_GetTerrainHeight(0, objectEvent->x.fixed, objectEvent->z.fixed);
@@ -1060,13 +1060,13 @@ static void EventScript_TalkToPipeworksAttendant(s32 attendant) {
       ColosseumAzartMatch_SetPipeHeight(first, PIXELS(8));
       second = ObjectEvent_GetById(PIPE_EAST);
       ColosseumAzartMatch_SetPipeHeight(second, PIXELS(32));
-      FieldObject_WaitForMove(second);
+      Object_WaitForMove(second);
       Engine_ScriptWait(45);
       first = ObjectEvent_GetById(PIPE_WEST);
       ColosseumAzartMatch_SetPipeHeight(first, PIXELS(24));
       second = ObjectEvent_Get(PIPE_EAST);
       ColosseumAzartMatch_SetPipeHeight(second, 0);
-      FieldObject_WaitForMove(second);
+      Object_WaitForMove(second);
       Engine_ScriptWait(15);
       Engine_ScriptShowMessage(attendant, 0);
       Colosso_ShowPointer(56, 64, 0);
@@ -1205,7 +1205,7 @@ static inline void InitializeSelectedObjectEvent(s32 localId) {
 
 /// Advances to the next message in the current explanation.
 static __inline__ void AdvanceMessage(s32 amount) {
-  gEventWork->message += amount;
+  gFieldWork->message += amount;
 }
 
 #include "common/colosso_solo.h"
@@ -1285,7 +1285,7 @@ static void ColosseumAzartMatch_ShowRoundIntroduction(s32 round) {
     Colosso_LoadLettering(COLOSSO_PICTURE_GO);
     ColosseumAzartMatch_SelectPresentationScript(COLOSSO_SHAPE_GO, 0);
     Engine_AudioPlayCue(SE_COLOSSO_GO);
-    Audio_PlayCueFromEventWork();
+    Map_PlayMusic();
     Engine_ScriptEnd();
     Engine_GameFlagSet(FLAG_IN_TOWN);
   }
@@ -1566,7 +1566,7 @@ static void ColosseumAzartMatch_PushObjectAhead(void) {
   Engine_ObjectSetPosition(subject, position.x, position.y, position.z);
 
   Engine_AudioPlayCue(SE_238);
-  FieldObject_WaitForMove(target);
+  Object_WaitForMove(target);
   Engine_AudioPlayCue(SE_STOP_SLOT3);
 
   target->x.fixed = position.x;

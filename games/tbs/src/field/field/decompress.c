@@ -14,7 +14,7 @@
 /// bytes from the literals' start minus the distance. A zero halfword ends the
 /// stream. Called only by Sprite_ComposeAnimationFrame, for a codec 3 (LZ)
 /// layer that has a draw parameter, into a 0x400-byte scratch buffer.
-u8 *Resource_DecompressLz(const u8 *source, u8 *destination) {
+u8 *Decompress_Lz(const u8 *source, u8 *destination) {
   s32 token;
   u32 length;
   u32 control;

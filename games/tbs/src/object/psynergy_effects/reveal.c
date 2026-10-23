@@ -8,7 +8,7 @@
 /// the sprite param value, and marks it to be redrawn. Reveal sets 6 as it
 /// starts and 0 as it ends.
 void ObjectDispatch_ApplyValueToKind200Children(s32 value) {
-  struct ObjectRuntime *object = gObjectSlots;
+  struct Object *object = gObjects;
   s32 remainingObjectEvents = 63;
 
   do {
@@ -38,12 +38,12 @@ void ObjectDispatch_ApplyValueToKind200Children(s32 value) {
 /// FieldEffect_EndReveal removes it.
 void FieldEffect_WatchLeaderDistance(void) {
   struct FieldWork *work;
-  struct ObjectRuntime *objectEvent;
+  struct Object *objectEvent;
   s16 *timer;
   s32 distanceX;
   s32 distanceZ;
 
-  work = (struct FieldWork *)gEventWork;
+  work = (struct FieldWork *)gFieldWork;
   objectEvent = ObjectTable_Get(gGameState.selectedLocalId);
   if (work->effectTimerRunning != 0) {
     timer = &work->revealFrames;
@@ -86,10 +86,10 @@ void FieldEffect_RunReveal(void) {
   void *event;
   s32 frame;
 
-  work = WORK_SLOT(HEAP_SLOT_EVENT);
+  work = HEAP_SLOT_BLOCK(HEAP_SLOT_FIELD);
   ObjectDispatch_ApplyValueToKind200Children(6);
   DisplayTransition_InitializeBattleEffectState(8);
-  state = WORK_SLOT(HEAP_SLOT_TRANSITION);
+  state = HEAP_SLOT_BLOCK(HEAP_SLOT_SCREEN_TRANSITION);
   target = ObjectTable_Get(gGameState.selectedLocalId);
   state->centreX = target->x.fixed;
   state->centreY = target->z.fixed - target->y.fixed;
@@ -107,7 +107,7 @@ void FieldEffect_RunReveal(void) {
                                         FIELD_KIND_REVEAL, &eventTarget);
   if (event != NULL)
     Field_RunEventAction(event, gGameState.selectedLocalId, eventTarget);
-  AudioCommand_PlayFar(SE_131);
+  Sound_PlaySongFar(SE_131);
 
   // Record the centre (in pixels) and the time in the event work, and put
   // markers nearby.
@@ -123,7 +123,7 @@ void FieldEffect_RunReveal(void) {
     state->value = frame;
     frame++;
   } while (frame <= 18);
-  Scheduler_AddOrUpdateCallback(FieldEffect_WatchLeaderDistance, 0xc80);
+  Task_Add(FieldEffect_WatchLeaderDistance, 0xc80);
 }
 
 /// Ends Reveal if it is running: stops its watch, brings the colours back
@@ -133,13 +133,13 @@ void FieldEffect_RunReveal(void) {
 /// (FieldScript_RunTypeHandler) and before Mind Read starts its own colours.
 void FieldEffect_EndReveal(void) {
 #ifdef UBFIX
-  struct FieldEffectWork *effectWork = gEffectWork;
-  struct DisplayTransitionState *scene = gDisplayTransition;
-  struct FieldWork *state = (struct FieldWork *)gEventWork;
+  struct FieldEffectWork *effectWork = gFieldEffectWork;
+  struct DisplayTransitionState *scene = gScreenTransitionWork;
+  struct FieldWork *state = (struct FieldWork *)gFieldWork;
 #else
-  // Named slots avoid stepping outside gEffectWork. They add 8 bytes to this
-  // function in the forced native EN build (0xe8 -> 0xf0).
-  struct FieldEffectWork **cell = &gEffectWork;
+  // Named slots avoid stepping outside gFieldEffectWork. They add 8 bytes to
+  // this function in the forced native EN build (0xe8 -> 0xf0).
+  struct FieldEffectWork **cell = &gFieldEffectWork;
   struct FieldEffectWork *effectWork = *cell;
   struct DisplayTransitionState *scene =
       *(struct DisplayTransitionState **)((u8 *)cell - 0x64);
@@ -150,8 +150,8 @@ void FieldEffect_EndReveal(void) {
   void *event;
 
   if (state->revealActive != 0) {
-    AudioCommand_PlayFar(SE_MAP_TRANSITION);
-    Scheduler_RemoveCallback(FieldEffect_WatchLeaderDistance);
+    Sound_PlaySongFar(SE_MAP_TRANSITION);
+    Task_Remove(FieldEffect_WatchLeaderDistance);
 
     zero = 0;
     state->revealActive = zero;

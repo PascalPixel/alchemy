@@ -6,7 +6,7 @@
 FarCall_SoundTable:
 	export AudioEngine_RunMixerFar, AudioEngine_RunMixer
 	export Audio_InitializeRuntimeDefaultsFar, Audio_InitializeRuntimeDefaults
-	export AudioCommand_PlayFar, AudioCommand_Play
+	export Sound_PlaySongFar, Sound_PlaySong
 	export MusicPlayer_StepVolumeAndPitchTowardTargetsFar, MusicPlayer_StepVolumeAndPitchTowardTargets
 	export MusicCommand_SetPitchAndUpdateFrequencyFar, MusicCommand_SetPitchAndUpdateFrequency
 	overlay_veneer MusicCommand_SetPitch

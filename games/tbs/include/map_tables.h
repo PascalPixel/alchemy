@@ -99,12 +99,12 @@ STATIC_ASSERT(offsetof(struct MapWarpDest, cameraLeft) == 14);
 #define MAP_WARPS_END 0x1ff
 
 /// Map numbers above the field maps: what runs instead of a map
-/// (Map_Run). They have no row in gField_MapTable.
+/// (Map_Run). They have no row in gMapHeaders.
 enum {
   /// Runs nothing and returns 0; no ☀️ code sends the party there.
-  RUN_BLANK = 0x1fb,
-  RUN_REEL_GAME = 0x1fc,  ///< Lucky Wheels at Tolbi's spring (colorfx.c)
-  RUN_LUCKY_DICE = 0x1fd, ///< Lucky Dice at Tolbi's spring (lucky_dice.c)
+  RUN_NONE = 0x1fb,
+  RUN_LUCKY_WHEELS = 0x1fc, ///< Lucky Wheels at Tolbi's spring (colorfx.c)
+  RUN_LUCKY_DICE = 0x1fd,   ///< Lucky Dice at Tolbi's spring (lucky_dice.c)
   /// A battle; the warp destination is the enemy group, and the result -1 a
   /// defeat.
   RUN_BATTLE = 0x1fe

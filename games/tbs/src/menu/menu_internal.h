@@ -130,14 +130,14 @@ enum ItemUseResult {
   ITEM_USE_RESULT_DEFENSE_UP = 21  ///< "Your Defense increased!"
 };
 
-/// CharacterMenuState.page: which screen the member row belongs to.
+/// SummaryScreenWork.page: which screen the member row belongs to.
 enum CharacterMenuPage {
   CHARACTER_MENU_PAGE_STATUS = 0, ///< the Status menu (StatusMenu_Run)
   /// The member chooser (Menu_OpenCharacterSelector).
   CHARACTER_MENU_PAGE_CHOOSER = 3
 };
 
-/// PsynergyMenuState.mode: what choosing a Psynergy does.
+/// PsynergyMenuWork.mode: what choosing a Psynergy does.
 enum PsynergyMenuMode {
   PSYNERGY_MODE_USE = 0,   ///< use it
   PSYNERGY_MODE_SET_L = 1, ///< make it the L shortcut

@@ -365,7 +365,7 @@ static void EventScript_SaveMovedPillarColumns(void) {
 /// Force on the target over the Board Walk, before its effect plays: the effect
 /// takes its child mode.
 static void EventScript_PrepareForce(void) {
-  u8 *effectWork = gEffectWork;
+  u8 *effectWork = gFieldEffectWork;
 
   ((struct FieldEffectWork *)effectWork)->childMode = 1;
 }
@@ -387,20 +387,20 @@ static void EventScript_KnockDownObstacle(void) {
   obstacle->speed = 0x13333;
   Engine_AudioPlayCue(SE_TOPPLE);
   // Spin through the fall, then settle the obstacle at its final height.
-  FieldObject_SetPosition(obstacle, PIXELS(336), PIXELS(10), PIXELS(264));
+  Object_SetPosition(obstacle, PIXELS(336), PIXELS(10), PIXELS(264));
   for (rotationStep = 0, fallFrames = 9; fallFrames >= 0; fallFrames--) {
     sprite->rotation -= rotationStep;
     Engine_TaskWait(1);
     rotationStep += 36;
   }
-  FieldObject_SetPosition(obstacle, PIXELS(330), -PIXELS(16), PIXELS(264));
+  Object_SetPosition(obstacle, PIXELS(330), -PIXELS(16), PIXELS(264));
   for (settleRotationStep = 0x168, settleFrames = 21; settleFrames >= 0;
        settleFrames--) {
     sprite->rotation -= settleRotationStep;
     Engine_TaskWait(1);
     settleRotationStep += 36;
   }
-  FieldObject_WaitForMove(obstacle);
+  Object_WaitForMove(obstacle);
   Engine_ScriptWait(2);
   Engine_AudioPlayCue(SE_240);
   {
@@ -517,7 +517,7 @@ static void ColosseumSatrageMatch_MovePusherAndLog(s32 logId, s32 offsetX,
     ObjectEvent_SetMode(log, 3);
   }
   Engine_AudioPlayCue(SE_226);
-  FieldObject_WaitForMove(pusher);
+  Object_WaitForMove(pusher);
   Engine_AudioPlayCue(SE_STOP_SLOT3);
   ObjectEvent_SetMode(log, 2);
   Engine_ScriptEnd();
@@ -587,8 +587,8 @@ static void ColosseumSatrageMatch_RollLogToCell(s32 logId, s32 halfCellX,
   Engine_ObjectEventSetAnimation(pusher, ANIMATION_WALK);
   // Follow halfway behind the rolling log while its finish effect runs.
   ObjectDispatch_StartCamera(
-      (struct DispatchObject *)((struct EventWork *)Runtime_AllocateBlock(
-                                    HEAP_SLOT_EVENT, sizeof(struct FieldWork)))
+      (struct DispatchObject *)((struct EventWork *)AllocHeapSlotEwram(
+                                    HEAP_SLOT_FIELD, sizeof(struct FieldWork)))
           ->viewCenter,
       (s32)log);
   Engine_ObjectEventSetSpeed(pusher, PIXELS(1) / 2, PIXELS(1) / 5);
@@ -597,9 +597,9 @@ static void ColosseumSatrageMatch_RollLogToCell(s32 logId, s32 halfCellX,
                            pusherObjectEvent->x.fixed + offsetX, 0,
                            pusherObjectEvent->z.fixed + offsetZ);
   Engine_AudioPlayCue(SE_HEAVY_MOVE);
-  FieldObject_WaitForMove(pusherObjectEvent);
+  Object_WaitForMove(pusherObjectEvent);
   ObjectEvent_SetMode(pusherObjectEvent, 1);
-  FieldObject_WaitForMove(log);
+  Object_WaitForMove(log);
   Engine_AudioPlayCue(SE_STOP_SLOT3);
   Engine_AudioPlayCue(SE_HEAVY_STOP);
   ObjectEvent_SetMode(log, 1);
@@ -742,27 +742,27 @@ static void ColosseumSatrageMatch_UpdateLifts(void) {
     gColosseumSatrageMatch_LiftPhase ^= 1;
     if (gColosseumSatrageMatch_LiftPhase != 0) {
       liftObjectEvent = ObjectEvent_GetById(COLOSSEUM_SATRAGE_MATCH_FIRST_LIFT);
-      FieldObject_SetPosition(liftObjectEvent, PIXELS(936), 0, PIXELS(184));
+      Object_SetPosition(liftObjectEvent, PIXELS(936), 0, PIXELS(184));
       liftObjectEvent =
           ObjectEvent_GetById(COLOSSEUM_SATRAGE_MATCH_FIRST_LIFT + 1);
-      FieldObject_SetPosition(liftObjectEvent, PIXELS(968), 0, PIXELS(248));
+      Object_SetPosition(liftObjectEvent, PIXELS(968), 0, PIXELS(248));
       liftObjectEvent =
           ObjectEvent_GetById(COLOSSEUM_SATRAGE_MATCH_FIRST_LIFT + 2);
-      FieldObject_SetPosition(liftObjectEvent, PIXELS(1000), 0, PIXELS(184));
+      Object_SetPosition(liftObjectEvent, PIXELS(1000), 0, PIXELS(184));
       liftObjectEvent = ObjectEvent_GetById(COLOSSEUM_SATRAGE_MATCH_LAST_LIFT);
-      FieldObject_SetPosition(liftObjectEvent, PIXELS(1032), 0, PIXELS(248));
+      Object_SetPosition(liftObjectEvent, PIXELS(1032), 0, PIXELS(248));
       Engine_ObjectEventSetAnimation(LIFT_OPERATOR, 11);
     } else {
       liftObjectEvent = ObjectEvent_GetById(COLOSSEUM_SATRAGE_MATCH_FIRST_LIFT);
-      FieldObject_SetPosition(liftObjectEvent, PIXELS(936), 0, PIXELS(216));
+      Object_SetPosition(liftObjectEvent, PIXELS(936), 0, PIXELS(216));
       liftObjectEvent =
           ObjectEvent_GetById(COLOSSEUM_SATRAGE_MATCH_FIRST_LIFT + 1);
-      FieldObject_SetPosition(liftObjectEvent, PIXELS(968), 0, PIXELS(216));
+      Object_SetPosition(liftObjectEvent, PIXELS(968), 0, PIXELS(216));
       liftObjectEvent =
           ObjectEvent_GetById(COLOSSEUM_SATRAGE_MATCH_FIRST_LIFT + 2);
-      FieldObject_SetPosition(liftObjectEvent, PIXELS(1000), 0, PIXELS(216));
+      Object_SetPosition(liftObjectEvent, PIXELS(1000), 0, PIXELS(216));
       liftObjectEvent = ObjectEvent_GetById(COLOSSEUM_SATRAGE_MATCH_LAST_LIFT);
-      FieldObject_SetPosition(liftObjectEvent, PIXELS(1032), 0, PIXELS(216));
+      Object_SetPosition(liftObjectEvent, PIXELS(1032), 0, PIXELS(216));
       Engine_ObjectEventSetAnimation(LIFT_OPERATOR, 10);
     }
   }
@@ -944,7 +944,7 @@ s32 ColosseumSatrageMatch_Initialize(void) {
   s32 row;
   s32 zero;
 
-  gEventWork->startTransition = MAP_TRANSITION(TRANSITION_FADE, 0);
+  gFieldWork->startTransition = MAP_TRANSITION(TRANSITION_FADE, 0);
   // Restore the metatile behavior templates before applying saved puzzle
   // progress.
   Engine_GameFlagSet(FLAG_RETREAT_BLOCKED);
@@ -1059,7 +1059,7 @@ s32 ColosseumSatrageMatch_Initialize(void) {
     }
     FieldScheduler_AddCallback(ColosseumSatrageMatch_UpdateLifts,
                                TASK_PRIORITY_MAP + 5);
-    Scheduler_SetTaskFlags(ColosseumSatrageMatch_UpdateLifts, 1);
+    Task_SetFlags(ColosseumSatrageMatch_UpdateLifts, 1);
   }
   Engine_ObjectEventSetAnimation(OPPONENT, WARRIOR_ANIMATION_FIGHTING_STANCE);
   gGameState.movementMode = LEADER_MOVEMENT_WALK;
@@ -1440,9 +1440,9 @@ static void ColosseumSatrageMatch_PushObstacleToCell(s32 obstacleId, s32 column,
   Engine_ObjectSetPosition(pusherObjectEvent,
                            pusherObjectEvent->x.fixed + offsetX, 0,
                            pusherObjectEvent->z.fixed + offsetZ);
-  FieldObject_WaitForMove(pusherObjectEvent);
+  Object_WaitForMove(pusherObjectEvent);
   ObjectEvent_SetMode(pusherObjectEvent, 1);
-  FieldObject_WaitForMove(obstacle);
+  Object_WaitForMove(obstacle);
   ObjectEvent_SetMode(obstacle, 1);
   Engine_AudioPlayCue(SE_STOP_SLOT3);
   Engine_AudioPlayCue(SE_HEAVY_STOP);
@@ -1585,7 +1585,7 @@ static void ColosseumSatrageMatch_ShowRoundStartLettering(s32 mode) {
   Colosso_LoadLettering(COLOSSO_PICTURE_GO);
   ColosseumSatrageMatch_StartLetteringAnimation(COLOSSO_SHAPE_GO, 0);
   Engine_AudioPlayCue(SE_COLOSSO_GO);
-  Audio_PlayCueFromEventWork();
+  Map_PlayMusic();
   Engine_ScriptEnd();
   Engine_GameFlagSet(FLAG_IN_TOWN);
 }
@@ -1723,7 +1723,7 @@ static s32 ColosseumSatrageMatch_RaiseLinkedMapEffect(
 /// Approaches the finish item on the unused side and shows the item message.
 static s32 ColosseumSatrageMatch_ApproachFinishAndTakeItem(s32 firstItem,
                                                            s32 secondItem) {
-  struct ColossoGaugeWork *gauge = WORK_SLOT(HEAP_SLOT_COLOSSO_RACE);
+  struct ColossoGaugeWork *gauge = HEAP_SLOT_BLOCK(HEAP_SLOT_COLOSSO_RACE);
   u8 *gameState;
   struct ObjectEvent *warrior;
   s32 finishAlreadyReached;
@@ -1800,9 +1800,9 @@ void Map_BuildDescriptorAndInstallTask(s32 leaderId, s32 opponentId,
   void *graphics;
   s32 vramSlot;
 
-  work = Runtime_AllocateBlock(HEAP_SLOT_COLOSSO_RACE,
-                               sizeof(struct ColossoRaceWork));
-  graphics = Runtime_BumpAllocateAlternatePool(512);
+  work = AllocHeapSlotEwram(HEAP_SLOT_COLOSSO_RACE,
+                            sizeof(struct ColossoRaceWork));
+  graphics = AllocEwram(512);
 
   work->gauge.playerLocalId = leaderId;
   work->gauge.opponentLocalId = opponentId;
@@ -1840,7 +1840,7 @@ void Map_BuildDescriptorAndInstallTask(s32 leaderId, s32 opponentId,
 
 /// Decodes the opponent's recorded path and starts its playback task.
 static void ColosseumSatrageMatch_StartOpponentPath(s32 pathResource) {
-  struct ColossoRaceWork *work = WORK_SLOT(HEAP_SLOT_COLOSSO_RACE);
+  struct ColossoRaceWork *work = HEAP_SLOT_BLOCK(HEAP_SLOT_COLOSSO_RACE);
   struct PathRecorder *recorder = (struct PathRecorder *)gMapLocalState;
 
   FieldResource_DecodeType01(Resource_GetTableEntry(pathResource), work->path);
@@ -1935,7 +1935,7 @@ static void ColosseumSatrageMatch_PushAdjacentObstacle(void) {
   Engine_ObjectSetPosition(pusher, destination.x, destination.y, destination.z);
 
   Engine_AudioPlayCue(SE_238);
-  FieldObject_WaitForMove(obstacle);
+  Object_WaitForMove(obstacle);
   Engine_AudioPlayCue(SE_STOP_SLOT3);
 
   obstacle->x.fixed = destination.x;

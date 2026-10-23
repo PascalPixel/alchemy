@@ -86,9 +86,9 @@ Resource_DirectoryTable:
 	group Battle, AltinPeakBackdrop, TolbiShipDeckBackdrop, MercuryLighthouseBackdrop, ValeStormBackdrop, TretTreeBranchBackdrop
 	group Battle, BeachBackdrop, SnowfieldBackdrop, GrasslandBackdrop, SolSanctumBackdrop, ForestBackdrop
 	group Battle, VioletSkyBackdrop, DesertBackdrop, DuskCloudsBackdrop, AerialViewBackdrop
-	resource SlotsFramePicture, Slots_FramePicture
-	resource SlotsIcons, Slots_Icons
-	resource SlotsJackpot, Slots_Jackpot
+	resource LuckyWheelsFramePicture, LuckyWheels_FramePicture
+	resource LuckyWheelsIcons, LuckyWheels_Icons
+	resource LuckyWheelsJackpot, LuckyWheels_Jackpot
 	resource LuckyDiceBoard, LuckyDice_Board
 	resource LuckyDiceSprites, LuckyDice_Sprites
 	group BattleEffect, TileAnimationMask, CyanSparkSheet, VioletPaletteA, RedPaletteA, YellowPaletteA

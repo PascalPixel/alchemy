@@ -130,7 +130,7 @@ void Title_UpdateIntroSprites(void) {
   s32 y;
   s32 stripY;
 
-  work = WORK_SLOT(HEAP_SLOT_TITLE_INTRO);
+  work = HEAP_SLOT_BLOCK(HEAP_SLOT_TITLE_INTRO);
   spriteCount = 0;
   if (gDebugPaused == 0) {
     if ((++work->tick & 3) == 0)
@@ -193,20 +193,20 @@ void Title_LoadIntroBackgrounds(void) {
   u16 tileIndex;
   s32 blankTile;
 
-  work = WORK_SLOT(HEAP_SLOT_TITLE_INTRO);
+  work = HEAP_SLOT_BLOCK(HEAP_SLOT_TITLE_INTRO);
   REG_DISPCNT = 0;
   resourceData = Resource_GetTableEntry((s32)&ResourceId_IntroGraphicsA);
   Dma_Set(resourceData, (void *)OBJ_PLTT, DMA_COPY_WORDS(0x80), REG_DMA3);
   OBJ_PLTT[0] = 0;
   resourceData += 0x200;
-  Resource_DecodeByteLz(resourceData, Ram_MapGridCellBuffer);
+  Decompress_ByteLz(resourceData, Ram_MapGridCellBuffer);
   Dma_Set(Ram_MapGridCellBuffer, (void *)OBJ_VRAM0, DMA_ENABLE << 16 | 0xf00,
           REG_DMA3);
   resourceData = Resource_GetTableEntry((s32)&ResourceId_IntroGraphicsC);
   Dma_Set(resourceData, (void *)BG_PLTT, DMA_COPY_WORDS(0x80), REG_DMA3);
   BG_PLTT[0] = 0;
   resourceData += 0x200;
-  Resource_DecodeByteLz(resourceData, Ram_MapGridCellBuffer);
+  Decompress_ByteLz(resourceData, Ram_MapGridCellBuffer);
   Dma_Set(Ram_MapGridCellBuffer + 0x2940, BG_CHAR_BLOCK(0),
           DMA_ENABLE << 16 | 0x2760, REG_DMA3);
   Dma_Set(Ram_MapGridCellBuffer + 0xa140, (void *)0x06004ec0,
@@ -318,11 +318,11 @@ s32 Title_ShowIntro(s32 prompt) {
   result = 0;
   blankTile = 0x1ff;
   savedCpuLoadDisplay = gCpuLoadDisplayEnabled;
-  work = Runtime_AllocateHeapBlock(HEAP_SLOT_TITLE_INTRO, 224);
+  work = AllocHeapSlot(HEAP_SLOT_TITLE_INTRO, 224);
   DebugText_Clear();
   VramCache_Reset();
   WaitFrames(1);
-  Scheduler_ResetTaskTable();
+  Task_ResetAll();
   gOamCopyEnabled = result;
   gCpuLoadDisplayEnabled = result;
   Title_LoadIntroBackgrounds();
@@ -336,7 +336,7 @@ s32 Title_ShowIntro(s32 prompt) {
                           DISPCNT_WIN1_ON | DISPCNT_OBJWIN_ON,
                       IO_WRITE_16);
   PaletteFade_Start(60);
-  Scheduler_AddOrUpdateCallback(Title_UpdateIntroSprites, SCHEDULER_KEY_VBLANK);
+  Task_Add(Title_UpdateIntroSprites, TASK_PRIORITY_VBLANK);
 
   for (;;) {
     s32 frame;
@@ -411,7 +411,7 @@ s32 Title_ShowIntro(s32 prompt) {
       // Hide the background replacement behind white, and restore the
       // normal OAM uploader before drawing the title prompt.
       Fade_ToWhite(1);
-      Scheduler_RemoveCallback(Title_UpdateIntroSprites);
+      Task_Remove(Title_UpdateIntroSprites);
       gOamCopyEnabled = 1;
       WaitFrames(1);
       REG_BG2CNT = BGCNT_PRIORITY(1) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(6);
@@ -421,7 +421,7 @@ s32 Title_ShowIntro(s32 prompt) {
       Dma_Set(resourceData, (void *)BG_PLTT, DMA_COPY_WORDS(0x78), REG_DMA3);
       BG_PLTT[0] = 0;
       resourceData += 0x200;
-      Resource_DecodeByteLz(resourceData, Ram_MapGridCellBuffer);
+      Decompress_ByteLz(resourceData, Ram_MapGridCellBuffer);
       Dma_Set(Ram_MapGridCellBuffer, BG_CHAR_BLOCK(1),
               DMA_ENABLE << 16 | 0x4b00, REG_DMA3);
       tilemap = (u16 *)BG_SCREEN_BLOCK(6);
@@ -443,10 +443,10 @@ s32 Title_ShowIntro(s32 prompt) {
   Ui_LoadWindowGraphics();
   DebugText_Clear();
   if (prompt != 0) {
-    u8 *buffer = Runtime_AllocateBlock(HEAP_SLOT_TILE_SCRATCH, 0x400);
+    u8 *buffer = AllocHeapSlotEwram(HEAP_SLOT_TILE_SCRATCH, 0x400);
     struct IntroSprite *sprite = work->area.prompt.sprites;
 
-    Resource_DecodeByteLz(gTitle_PromptTiles, buffer);
+    Decompress_ByteLz(gTitle_PromptTiles, buffer);
     for (i = 0; i < PROMPT_TILES; i++) {
       s32 vramBlock =
           VramCache_Load(Resource_FindFreeEntry(), 128, buffer + (i << 8) / 2);
@@ -457,7 +457,7 @@ s32 Title_ShowIntro(s32 prompt) {
       *spriteWords++ = 0x40004000;
       *spriteWords = vramBlock;
     }
-    Runtime_ReleaseHeapBlock(HEAP_SLOT_TILE_SCRATCH);
+    FreeHeapSlot(HEAP_SLOT_TILE_SCRATCH);
   }
   Fade_FromWhite(30);
   Fade_Wait();
@@ -510,7 +510,7 @@ s32 Title_ShowIntro(s32 prompt) {
     WaitFrames(1);
   }
   gCpuLoadDisplayEnabled = savedCpuLoadDisplay;
-  Runtime_ReleaseHeapBlock(HEAP_SLOT_TITLE_INTRO);
+  FreeHeapSlot(HEAP_SLOT_TITLE_INTRO);
   REG_BLDCNT = 0;
   REG_BLDALPHA = 0;
   WaitFrames(1);
@@ -534,11 +534,11 @@ s32 Title_ShowSplashScreen(s32 mode) {
   s32 blankTile;
   s32 resourceId;
 
-  AudioCommand_PlayFar(SE_110);
+  Sound_PlaySongFar(SE_110);
   gOamCopyEnabled = 1;
   resourceId = (s32)&ResourceId_NintendoLogo;
   blankTile = 0x1ff;
-  Scheduler_ResetTaskTable();
+  Task_ResetAll();
   Fade_ToBlack(1);
   DebugText_Clear();
   WaitFrames(1);
@@ -549,7 +549,7 @@ s32 Title_ShowSplashScreen(s32 mode) {
   // The resource begins with 224 colours; its packed tiles follow them.
   resourceData = Resource_GetTableEntry(resourceId);
   Dma_Set(resourceData, (void *)BG_PLTT, DMA_COPY_WORDS(0x70), REG_DMA3);
-  Resource_DecodeType01(resourceData + 448, Ram_MapGridCellBuffer);
+  Decompress_Type01(resourceData + 448, Ram_MapGridCellBuffer);
   Dma_Set(Ram_MapGridCellBuffer, BG_CHAR_BLOCK(1), DMA_COPY_WORDS(0x2580),
           REG_DMA3);
   // Pad the 30-tile picture to the hardware map's 32-tile row width.
@@ -625,7 +625,7 @@ s32 Title_ShowAnimatedSplash(void) {
   gOamCopyEnabled = 1;
   result = 0;
   resourceId = (s32)&ResourceId_CamelotLogo;
-  Scheduler_ResetTaskTable();
+  Task_ResetAll();
   Fade_ToBlack(1);
   DebugText_Clear();
   WaitFrames(1);
@@ -637,7 +637,7 @@ s32 Title_ShowAnimatedSplash(void) {
    * counts; as resourceData set before the decode, 13 of 119 instructions
    * differ in tbs-en. */
   workIndex = (u32)Ram_MapGridCellBuffer;
-  Resource_DecodeType01(Resource_GetTableEntry(resourceId), (u8 *)workIndex);
+  Decompress_Type01(Resource_GetTableEntry(resourceId), (u8 *)workIndex);
   // The decoded resource: 224 colours, the map, the still tiles, then four
   // animation frames of 0x400 bytes each.
   resourceData = (u8 *)workIndex;
@@ -705,7 +705,7 @@ void PaletteFade_CalculateSteps(s16 *sourceComponents, s16 *targetComponents,
 /// packs the components into the spare RGB555 copy of the palettes and queues
 /// both halves for VBlank.
 void PaletteFade_Update(void) {
-  struct PaletteFade *work = (struct PaletteFade *)gPaletteBufferWork;
+  struct PaletteFade *work = (struct PaletteFade *)gPaletteFadeWork;
   u16 *componentSteps = work->delta;
   u16 *currentComponents;
   u16 *packedColors;
@@ -1017,28 +1017,28 @@ void PaletteFade_Initialize(void) {
   struct PaletteFade *buffer;
   s32 callbackPriority;
 
-  buffer = Runtime_AllocateBlock(HEAP_SLOT_PALETTE_BUFFER, sizeof(*buffer));
+  buffer = AllocHeapSlotEwram(HEAP_SLOT_PALETTE_FADE, sizeof(*buffer));
   Dma_Fill32(0, buffer, sizeof(*buffer));
   Dma_Set((void *)BG_PLTT, buffer, DMA_COPY_WORDS(0x80), REG_DMA3);
   Dma_Set((void *)OBJ_PLTT, &buffer->palette[256], DMA_COPY_WORDS(0x80),
           REG_DMA3);
   Palette_Transform(PALETTE_TRANSFORM_PLAIN, buffer->palette, buffer->target,
                     PALETTE_HALVES_BOTH);
-  callbackPriority = SCHEDULER_KEY_MAIN_LOOP;
-  Scheduler_AddOrUpdateCallback(PaletteFade_Update, callbackPriority);
+  callbackPriority = TASK_PRIORITY_MAIN_LOOP;
+  Task_Add(PaletteFade_Update, callbackPriority);
 }
 
 /// Unused: unschedules the palette fade and frees its buffers. Nothing in ☀️
 /// calls it.
 UNUSED void PaletteFade_Release(void) {
-  Scheduler_RemoveCallback(&PaletteFade_Update);
-  Runtime_ReleaseHeapBlock(HEAP_SLOT_PALETTE_BUFFER);
+  Task_Remove(&PaletteFade_Update);
+  FreeHeapSlot(HEAP_SLOT_PALETTE_FADE);
 }
 
 /// Unused: sets the fade target by transforming the saved background and/or
 /// sprite palettes through the requested mode. Nothing in ☀️ calls it.
 UNUSED void PaletteFade_SetTarget(s32 mode, s32 paletteHalf) {
-  struct PaletteFade *fade = (struct PaletteFade *)gPaletteBufferWork;
+  struct PaletteFade *fade = (struct PaletteFade *)gPaletteFadeWork;
 
   if (fade != NULL)
     Palette_Transform(mode, fade->palette, fade->target, paletteHalf);
@@ -1047,7 +1047,7 @@ UNUSED void PaletteFade_SetTarget(s32 mode, s32 paletteHalf) {
 /// Sets the colours shown now by transforming the saved palettes. Called by
 /// Title_ShowIntro.
 void PaletteFade_SetCurrent(s32 mode, s32 paletteHalf) {
-  struct PaletteFade *fade = (struct PaletteFade *)gPaletteBufferWork;
+  struct PaletteFade *fade = (struct PaletteFade *)gPaletteFadeWork;
 
   if (fade != NULL)
     Palette_Transform(mode, fade->palette, fade->current, paletteHalf);
@@ -1056,7 +1056,7 @@ void PaletteFade_SetCurrent(s32 mode, s32 paletteHalf) {
 /// Unused: replaces the first saved colour, the backdrop. Nothing in ☀️ calls
 /// it.
 UNUSED void PaletteFade_SetBackdrop(s32 color) {
-  struct PaletteFade *fade = (struct PaletteFade *)gPaletteBufferWork;
+  struct PaletteFade *fade = (struct PaletteFade *)gPaletteFadeWork;
 
   if (fade != NULL)
     fade->palette[0] = color;
@@ -1065,7 +1065,7 @@ UNUSED void PaletteFade_SetBackdrop(s32 color) {
 /// Starts fading the shown colours to the target over the requested frames.
 /// Called by Title_ShowIntro for the opening fade from black.
 void PaletteFade_Start(s32 frames) {
-  struct PaletteFade *fade = (struct PaletteFade *)gPaletteBufferWork;
+  struct PaletteFade *fade = (struct PaletteFade *)gPaletteFadeWork;
 
   if (fade != NULL) {
     fade->duration = frames;

@@ -169,7 +169,7 @@ void DebugBattle_ViewMessages(void) {
   }
   unit->name[UNIT_NAME_LENGTH] = 0;
   UiWork_InitializeWithResourceCountersFar();
-  AudioCommand_PlayFar(MUS_EMPTY);
+  Sound_PlaySongFar(MUS_EMPTY);
   for (;;) {
     index = 0;
     {
@@ -265,8 +265,8 @@ void DebugBattle_RunMenu(void) {
 restart:
   Ui_LoadWindowGraphics();
   DebugText_Clear();
-  Scheduler_ResetTaskTable();
-  Runtime_InitializeHeap();
+  Task_ResetAll();
+  InitHeap();
   VramCache_Reset();
   GameFlag_SetBitFar(FLAG_AUTO_BATTLE);
   encounter = DEBUG_FIRST_ENCOUNTER;
@@ -321,8 +321,8 @@ restart:
       // Rebuild what the battle replaced, then return to the chooser.
       Ui_LoadWindowGraphics();
       DebugText_Clear();
-      Scheduler_ResetTaskTable();
-      Runtime_InitializeHeap();
+      Task_ResetAll();
+      InitHeap();
       VramCache_Reset();
     }
   }

@@ -40,7 +40,7 @@ void BattleEffect_RunUndeadSword(struct BattleEffectArgument *effect) {
 
   EFFECT_GET_SLOTS(slots, cursor, work, canvas);
   work->effect = effect;
-  sprites = slots[HEAP_SLOT_BATTLE_SHEET - HEAP_SLOT_BATTLE_EFFECT];
+  sprites = slots[HEAP_SLOT_BATTLE_SHEET - HEAP_SLOT_BATTLE_ANIM];
   EFFECT_START_NARROW_CANVAS(0);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sprites, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_LimeColumnSheet, work->sheet, 1,
@@ -99,14 +99,14 @@ void BattleEffect_RunUndeadSword(struct BattleEffectArgument *effect) {
         }
         for (i = 0, x = 50; i != 2; i++, x += 14) {
           if (i == 0)
-            EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER, EFFECT_CLIP_BOUNDS, mode);
+            EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, mode);
           else
-            EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER,
+            EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
                                 EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, mode);
-          draw[0] = ((DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER]);
-          ((DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER])(
+          draw[0] = ((DrawRectangle)gHeapSlots[HEAP_SLOT_RAM_CODE]);
+          ((DrawRectangle)gHeapSlots[HEAP_SLOT_RAM_CODE])(
               canvas, work->sheet, x, 112 - height, 14, height);
-          Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
+          FreeHeapSlot(HEAP_SLOT_RAM_CODE);
         }
       }
     }
@@ -143,7 +143,7 @@ void BattleEffect_RunUndeadSword(struct BattleEffectArgument *effect) {
       Camera_ApplyShake(16, 16);
     EFFECT_END_FRAME(work);
   }
-  Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
+  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   BattleEffect_EndCanvasLayer();
 }
 

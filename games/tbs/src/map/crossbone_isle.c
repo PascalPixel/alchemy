@@ -360,7 +360,7 @@ s32 Map_Initialize(void) {
   s32 current;
   s32 first;
 
-  gEventWork->startTransition =
+  gFieldWork->startTransition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   // CrossboneIsleFloatingLogs's sliding logs restore their map footprints
   // alone.
@@ -817,7 +817,7 @@ static void CrossboneIsle_MoveSelectedObjectEventAndLog(s32 localId,
     ObjectEvent_SetMode(logObjectEvent, 3);
   }
   Engine_AudioPlayCue(SE_226);
-  FieldObject_WaitForMove(selectedObjectEvent);
+  Object_WaitForMove(selectedObjectEvent);
   Engine_AudioPlayCue(SE_STOP_SLOT3);
   EV_END();
 }

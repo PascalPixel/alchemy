@@ -71,9 +71,9 @@ void FieldEffect_UpdateGroundParticles(void) {
 /// for the next. FLAG_WEATHER_HELD holds the next burst back, and a timer below
 /// 0 stops the lightning.
 void FieldEffect_UpdateLightning(void) {
-  struct FieldBlendWork *work = gFieldBlendWork[0];
+  struct FieldBlendWork *work = gLightningWork[0];
   struct ColorBuffer *target =
-      gFieldBlendWork[HEAP_SLOT_PALETTE_BUFFER - HEAP_SLOT_FIELD_BLEND];
+      gLightningWork[HEAP_SLOT_PALETTE_FADE - HEAP_SLOT_LIGHTNING];
   s16 *timer = &work->timer;
 
   if (*timer < 0)
@@ -89,9 +89,9 @@ void FieldEffect_UpdateLightning(void) {
       work->timer =
           ((intervalDraw * 400) >> 16) - ((intervalJitter * 100) >> 16) + 150;
       if (work->loud != 0)
-        AudioCommand_PlayFar(SE_THUNDER_LOUD);
+        Sound_PlaySongFar(SE_THUNDER_LOUD);
       else
-        AudioCommand_PlayFar(SE_THUNDER);
+        Sound_PlaySongFar(SE_THUNDER);
     }
     // fall through
   case 5:
@@ -130,18 +130,18 @@ void FieldEffect_StartGroundParticles(void) {
   /* FAKEMATCH(temporary): words holds the fill's zero, the decode buffer and
    * each cell cursor, all in r6; as Dma_Fill32(0, work, ...), 4 of 93
    * instructions differ in tbs-en. */
-  work = Runtime_AllocateBlock(HEAP_SLOT_GROUND_PARTICLES,
-                               sizeof(struct GroundParticleWork));
+  work = AllocHeapSlotEwram(HEAP_SLOT_GROUND_PARTICLES,
+                            sizeof(struct GroundParticleWork));
   leader = ((struct MapGridScrollWork *)gMapGridWork[0])->origin;
   FieldEffect_SetQueuedSoundAndPlay(SE_170);
   words = 0;
   particle = work->particles;
   Dma_Fill32((u32)words, work, sizeof(struct GroundParticleWork));
-  words = Runtime_AllocateBlock(HEAP_SLOT_TILE_SCRATCH, 0x400);
-  Resource_DecodeByteLz(gFieldEffect_GroundParticleTiles, words);
+  words = AllocHeapSlotEwram(HEAP_SLOT_TILE_SCRATCH, 0x400);
+  Decompress_ByteLz(gFieldEffect_GroundParticleTiles, words);
   work->entry = Resource_FindFreeEntry();
   work->tileBase = VramCache_Load(work->entry, 0x300, words);
-  Runtime_ReleaseHeapBlock(HEAP_SLOT_TILE_SCRATCH);
+  FreeHeapSlot(HEAP_SLOT_TILE_SCRATCH);
   for (i = 0; i < FIELD_WEATHER_PARTICLE_COUNT; i++) {
     s32 x;
     s32 z;
@@ -163,7 +163,7 @@ void FieldEffect_StartGroundParticles(void) {
   Io_Write16(BLDCNT_TGT2_ALL, &REG_BLDCNT);
   Io_Write16(BLEND_ALPHA(8, 16), &REG_BLDALPHA);
   Io_Write16(0, &REG_BLDY);
-  Scheduler_AddOrUpdateCallback(FieldEffect_UpdateGroundParticles, 0xc80);
+  Task_Add(FieldEffect_UpdateGroundParticles, 0xc80);
 }
 
 /// A particle's first word, seen as a value or a link.
@@ -181,8 +181,8 @@ union DustWord {
 /// screen. They freeze while FLAG_WEATHER_HELD is set. Nothing in ☀️ starts them
 /// (FieldMotes_Start has only its overlay veneer).
 void FieldMotes_Update(void) {
-  struct GroundParticleWork *work = WORK_SLOT(HEAP_SLOT_GROUND_PARTICLES);
-  struct MapGridScrollWork *grid = WORK_SLOT(HEAP_SLOT_MAP_GRID);
+  struct GroundParticleWork *work = HEAP_SLOT_BLOCK(HEAP_SLOT_GROUND_PARTICLES);
+  struct MapGridScrollWork *grid = HEAP_SLOT_BLOCK(HEAP_SLOT_MAP_GRID);
   u32 spawned = 0;
   u32 i;
   struct GroundParticle *mote = work->particles;
@@ -257,18 +257,18 @@ void FieldMotes_Start(void) {
   u32 size;
 
   size = 0x410;
-  work = Runtime_AllocateBlock(HEAP_SLOT_GROUND_PARTICLES, size);
+  work = AllocHeapSlotEwram(HEAP_SLOT_GROUND_PARTICLES, size);
   mote = work->particles;
   /* FAKEMATCH(temporary): size reused for the cleared word keeps the zero in
    * r1, the register size was passed in; as Dma_Fill32(0, work, ...), 4 of
    * 83 instructions differ in tbs-en. */
   size = 0;
   Dma_Fill32(size, work, sizeof(*work));
-  tiles = Runtime_AllocateBlock(HEAP_SLOT_TILE_SCRATCH, 0x400);
-  Resource_DecodeByteLz(gFieldEffect_MoteTiles, tiles);
+  tiles = AllocHeapSlotEwram(HEAP_SLOT_TILE_SCRATCH, 0x400);
+  Decompress_ByteLz(gFieldEffect_MoteTiles, tiles);
   work->entry = Resource_FindFreeEntry();
   work->tileBase = VramCache_Load(work->entry, 0x300, tiles);
-  Runtime_ReleaseHeapBlock(HEAP_SLOT_TILE_SCRATCH);
+  FreeHeapSlot(HEAP_SLOT_TILE_SCRATCH);
   for (i = 0; i < FIELD_WEATHER_PARTICLE_COUNT; i++) {
     s32 *pos = ((struct MapGridScrollWork *)gMapGridWork[0])->origin;
     /* FAKEMATCH(temporary): one integer cursor for the attribute stores and
@@ -293,7 +293,7 @@ void FieldMotes_Start(void) {
   Io_Write16(BLDCNT_TGT2_ALL, &REG_BLDCNT);
   Io_Write16(BLEND_ALPHA(8, 16), &REG_BLDALPHA);
   Io_Write16(0, &REG_BLDY);
-  Scheduler_AddOrUpdateCallback(FieldMotes_Update, 0xc80);
+  Task_Add(FieldMotes_Update, 0xc80);
 }
 
 /// Scheduler callback: the sparkles. Now and then (1 frame in 256) a sparkle
@@ -324,9 +324,9 @@ void FieldEffect_UpdateSparkles(void) {
   u32 b;
   u32 frames;
 
-  work = WORK_SLOT(HEAP_SLOT_GROUND_PARTICLES);
+  work = HEAP_SLOT_BLOCK(HEAP_SLOT_GROUND_PARTICLES);
   spawned = 0;
-  grid = WORK_SLOT(HEAP_SLOT_MAP_GRID);
+  grid = HEAP_SLOT_BLOCK(HEAP_SLOT_MAP_GRID);
   camera = &grid->viewX;
   spawnX = 0;
   spawnZ = 0;
@@ -410,7 +410,7 @@ void FieldEffect_UpdateSparkles(void) {
 void FieldEffect_InitializeSparkles(void) {
   u32 size = 0x410;
   struct GroundParticleWork *work =
-      Runtime_AllocateBlock(HEAP_SLOT_GROUND_PARTICLES, size);
+      AllocHeapSlotEwram(HEAP_SLOT_GROUND_PARTICLES, size);
   struct GroundParticle *sparkle = work->particles;
   u8 *tiles;
   u32 i;
@@ -421,11 +421,11 @@ void FieldEffect_InitializeSparkles(void) {
    * instructions differ in tbs-en. */
   size = 0;
   Dma_Fill32(size, work, sizeof(*work));
-  tiles = Runtime_AllocateBlock(HEAP_SLOT_TILE_SCRATCH, 0x400);
-  Resource_DecodeByteLz(gFieldEffect_SparkleTiles, tiles);
+  tiles = AllocHeapSlotEwram(HEAP_SLOT_TILE_SCRATCH, 0x400);
+  Decompress_ByteLz(gFieldEffect_SparkleTiles, tiles);
   work->entry = Resource_FindFreeEntry();
   work->tileBase = VramCache_Load(work->entry, 0x200, tiles);
-  Runtime_ReleaseHeapBlock(HEAP_SLOT_TILE_SCRATCH);
+  FreeHeapSlot(HEAP_SLOT_TILE_SCRATCH);
   i = 0;
   clear = 0;
   do {
@@ -454,21 +454,20 @@ void FieldEffect_InitializeSparkles(void) {
     i++;
     sparkle++;
   } while (i < FIELD_WEATHER_PARTICLE_COUNT);
-  Scheduler_AddOrUpdateCallback(FieldEffect_UpdateSparkles, 0xc80);
+  Task_Add(FieldEffect_UpdateSparkles, 0xc80);
 }
 
 /// Starts the storm's lightning (FieldEffect_UpdateLightning): builds the dark
 /// (0x10003, PALETTE_TRANSFORM_WARM) and lit (0x10005, PALETTE_TRANSFORM_PALE)
 /// BG colours and their 12-step fade, and arms the first burst to end in 600
-/// frames, repeating. The work is heap block HEAP_SLOT_FIELD_BLEND, which the
+/// frames, repeating. The work is heap block HEAP_SLOT_LIGHTNING, which the
 /// other lightning calls look up again. Vale's storm scenes call it.
 void FieldEffect_StartLightning(void) {
   struct FieldBlendWork *work;
   struct ColorBuffer *buffers;
 
-  work = Runtime_AllocateBlock(HEAP_SLOT_FIELD_BLEND,
-                               sizeof(struct FieldBlendWork));
-  buffers = gPaletteBufferWork;
+  work = AllocHeapSlotEwram(HEAP_SLOT_LIGHTNING, sizeof(struct FieldBlendWork));
+  buffers = gPaletteFadeWork;
   Dma_Fill32(0, work, sizeof(struct FieldBlendWork));
   ColorBuffer_Build(0x10003, buffers, work, 1);
   ColorBuffer_Build(0x10005, buffers, work->to, 1);
@@ -476,13 +475,13 @@ void FieldEffect_StartLightning(void) {
   ColorBuffer_Build((s32)work, 0, buffers->target, 1);
   work->timer = 600;
   work->enabled = 1;
-  Scheduler_AddOrUpdateCallback(FieldEffect_UpdateLightning, 0xc80);
+  Task_Add(FieldEffect_UpdateLightning, 0xc80);
 }
 
 /// Stops the lightning: no flash for 0x7fff frames, and none after.
 void FieldEffect_StopLightning(void) {
-  struct FieldBlendWork *state = Runtime_AllocateBlock(
-      HEAP_SLOT_FIELD_BLEND, sizeof(struct FieldBlendWork));
+  struct FieldBlendWork *state =
+      AllocHeapSlotEwram(HEAP_SLOT_LIGHTNING, sizeof(struct FieldBlendWork));
   state->timer = 0x7FFF;
   state->enabled = 0;
 }
@@ -491,8 +490,8 @@ void FieldEffect_StopLightning(void) {
 /// 12; FieldEffect_UpdateLightning flashes at 11), then no more. Vale's storm
 /// and eruption scenes call it.
 void FieldEffect_LastLightning(void) {
-  struct FieldBlendWork *state = Runtime_AllocateBlock(
-      HEAP_SLOT_FIELD_BLEND, sizeof(struct FieldBlendWork));
+  struct FieldBlendWork *state =
+      AllocHeapSlotEwram(HEAP_SLOT_LIGHTNING, sizeof(struct FieldBlendWork));
   state->timer = 12;
   state->enabled = 0;
 }
@@ -500,8 +499,8 @@ void FieldEffect_LastLightning(void) {
 /// Restarts the lightning: the next burst ends in 128 frames, its first flash
 /// 118 frames from now, and bursts repeat.
 void FieldEffect_ResumeLightning(void) {
-  struct FieldBlendWork *state = Runtime_AllocateBlock(
-      HEAP_SLOT_FIELD_BLEND, sizeof(struct FieldBlendWork));
+  struct FieldBlendWork *state =
+      AllocHeapSlotEwram(HEAP_SLOT_LIGHTNING, sizeof(struct FieldBlendWork));
   state->timer = 128;
   state->enabled = 1;
 }
@@ -516,9 +515,8 @@ void FieldEffect_StartBufferBlend(s32 from, s32 to) {
   struct ColorBuffer *buffers;
   s16 *target;
 
-  work = Runtime_AllocateBlock(HEAP_SLOT_FIELD_BLEND,
-                               sizeof(struct FieldBlendWork));
-  buffers = gPaletteBufferWork;
+  work = AllocHeapSlotEwram(HEAP_SLOT_LIGHTNING, sizeof(struct FieldBlendWork));
+  buffers = gPaletteFadeWork;
   Dma_Fill32(0, work, sizeof(struct FieldBlendWork));
   ColorBuffer_Build(from, buffers, work, 1);
   target = work->to;
@@ -527,5 +525,5 @@ void FieldEffect_StartBufferBlend(s32 from, s32 to) {
   ColorBuffer_Build((s32)work, 0, buffers->target, 1);
   work->timer = 120;
   work->enabled = 0;
-  Scheduler_AddOrUpdateCallback(FieldEffect_UpdateLightning, 0xc80);
+  Task_Add(FieldEffect_UpdateLightning, 0xc80);
 }

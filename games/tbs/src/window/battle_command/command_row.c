@@ -53,7 +53,7 @@ s32 Menu_RunCommandRow(s32 mode) {
   iconSlot = VramCache_AllocEntry(0x400);
   stripDirty = 1;
   tradeCount = 0;
-  selectionUi = Runtime_BumpAllocateAlternatePool(sizeof(*selectionUi));
+  selectionUi = AllocEwram(sizeof(*selectionUi));
   // No icon colour placed yet; the shared palette starts at BG entry 1.
   for (i = 255; i >= 0; i--)
     selectionUi->palette.slot[i] = 255;
@@ -71,9 +71,9 @@ s32 Menu_RunCommandRow(s32 mode) {
     selectionUi->commandKinds[kindCount++] = COMMAND_ICON_FLEE;
     selectionUi->commandKinds[kindCount++] = COMMAND_ICON_STATUS;
     selectionUi->commandKinds[kindCount] = -1;
-    selectionUi->selectedIndex = gLinkCountdownWork->commandSelection[0];
+    selectionUi->selectedIndex = gBattleMenuWork->commandSelection[0];
   } else {
-    selectionUi->selectedIndex = gLinkCountdownWork->commandSelection[1];
+    selectionUi->selectedIndex = gBattleMenuWork->commandSelection[1];
     kindCount = 0;
     selectionUi->commandKinds[kindCount++] = COMMAND_ICON_ATTACK;
     selectionUi->commandKinds[kindCount++] = COMMAND_ICON_PSYNERGY;
@@ -119,7 +119,7 @@ s32 Menu_RunCommandRow(s32 mode) {
   }
   // BG1 shows the icons: behind the other layers above line 136, in front
   // from there down (Graphics_SetBg1Priority3).
-  Scheduler_AddOrUpdateCallback(Graphics_SetBg1Priority3, 0x480);
+  Task_Add(Graphics_SetBg1Priority3, 0x480);
   Runtime_SetIrqHandler(2, 136, Graphics_SetBg1Priority0);
 
   for (;;) {
@@ -251,7 +251,7 @@ s32 Menu_RunCommandRow(s32 mode) {
     // and takes it on the next press. Other members take Attack.
     keys = gKeysPressed;
     repeat = gKeysRepeat;
-    navigation = gLinkCountdownWork;
+    navigation = gBattleMenuWork;
     if (navigation->tutorialStep != 0) {
       keys = repeat = 0;
       if (navigation->tutorialDelay == 0) {
@@ -303,20 +303,20 @@ s32 Menu_RunCommandRow(s32 mode) {
       break;
     }
     if (mode != COMMAND_ROW_PARTY && (keys & KEY_B)) {
-      AudioCommand_PlayFar(SE_MENU_CANCEL);
+      Sound_PlaySongFar(SE_MENU_CANCEL);
       command = -1;
       break;
     }
     if (repeat & (KEY_DOWN | KEY_RIGHT)) {
-      AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
+      Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
       selectionUi->selectedIndex =
           (selectionUi->selectedIndex + 1) % selectionUi->iconCount;
     } else if (repeat & (KEY_UP | KEY_LEFT)) {
-      AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
+      Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
       selectionUi->selectedIndex =
           (selectionUi->selectedIndex + selectionUi->iconCount - 1) %
           selectionUi->iconCount;
-    } else if (gLinkCountdownWork->timer == 0) {
+    } else if (gBattleMenuWork->timer == 0) {
       // The link battle's time is up.
       command = selectionUi->commandKinds[0];
       break;
@@ -329,9 +329,9 @@ s32 Menu_RunCommandRow(s32 mode) {
     WaitFrames(1);
   }
   if (mode != COMMAND_ROW_PARTY)
-    gLinkCountdownWork->commandSelection[1] = selectionUi->selectedIndex;
+    gBattleMenuWork->commandSelection[1] = selectionUi->selectedIndex;
   else
-    gLinkCountdownWork->commandSelection[0] = selectionUi->selectedIndex;
+    gBattleMenuWork->commandSelection[0] = selectionUi->selectedIndex;
   // Every icon names the same entry, so it is released once per icon.
   for (entryIndex = 0; entryIndex < selectionUi->iconCount; entryIndex++)
     Resource_ResetEntry(selectionUi->entries[entryIndex].resource);
@@ -355,13 +355,13 @@ s32 Menu_RunCommandRow(s32 mode) {
   // Restore the normal BG1 handler after clearing the command strip.
   work->dirty = 1;
   WaitFrames(1);
-  Scheduler_RemoveCallback(Graphics_SetBg1Priority3);
+  Task_Remove(Graphics_SetBg1Priority3);
   Runtime_SetIrqHandler(2, 0, 0);
   IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT,
                       DISPCNT_MODE_1 | DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON |
                           DISPCNT_BG2_ON | DISPCNT_OBJ_ON,
                       0x20000);
-  MemFree(selectionUi);
+  Free(selectionUi);
   work->menuBusy = 0;
   WaitFrames(1);
   return command;

@@ -61,10 +61,10 @@ void BattleEffect_RunQuake(struct BattleEffectArgument *effect) {
   s32 col;
   s32 y;
 
-  slots = &gWorkSlot[HEAP_SLOT_BATTLE_EFFECT];
+  slots = &gHeapSlots[HEAP_SLOT_BATTLE_ANIM];
   cursor = slots;
   EFFECT_GET_WORK_AND_CANVAS(cursor, work, canvas);
-  camera = ((struct BattleCamera *)WORK_SLOT(HEAP_SLOT_CAMERA));
+  camera = ((struct BattleCamera *)HEAP_SLOT_BLOCK(HEAP_SLOT_CAMERA));
   work->effect = effect;
   BattleEffect_StartCanvasLayer(1);
   // The canvas at its own width, opaque: the pillars hide what is behind.
@@ -97,9 +97,9 @@ void BattleEffect_RunQuake(struct BattleEffectArgument *effect) {
   } else {
     xOffset = 0;
   }
-  EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER, EFFECT_CLIP_BOUNDS,
+  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                       COMPOSITE_TRANSPARENT);
-  draw = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER];
+  draw = (DrawRectangle)gHeapSlots[HEAP_SLOT_RAM_CODE];
   // particles[member].variant becomes 1 once that target has landed.
   EFFECT_FOR_EACH_TARGET(member, work->effect)
     work->particles[member].variant = 0;
@@ -111,7 +111,7 @@ void BattleEffect_RunQuake(struct BattleEffectArgument *effect) {
   // The screen shakes for 128 frames: all of Quake (80) and Earthquake (112),
   // and all but the last 16 of Quake Sphere (144).
   work->shakeFrames = 128;
-  AudioCommand_PlayFar(SE_RUMBLE);
+  Sound_PlaySongFar(SE_RUMBLE);
 
   for (frame = 0;
        frame != gQuake_Timings[work->effect->variant][QUAKE_TIMING_FRAMES];

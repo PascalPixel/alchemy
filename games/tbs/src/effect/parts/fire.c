@@ -37,10 +37,10 @@ void BattleEffect_RunFire(struct BattleEffectArgument *effect) {
   struct MotionObject *user;
   s32 i;
 
-  slots = &gWorkSlot[HEAP_SLOT_BATTLE_EFFECT];
+  slots = &gHeapSlots[HEAP_SLOT_BATTLE_ANIM];
   cursor = slots;
   EFFECT_GET_WORK_AND_CANVAS(cursor, work, canvas);
-  camera = ((struct BattleCamera *)WORK_SLOT(HEAP_SLOT_CAMERA));
+  camera = ((struct BattleCamera *)HEAP_SLOT_BLOCK(HEAP_SLOT_CAMERA));
   // The motes are in the battle sheet's slot; work->sheet holds the flares.
   sheet = EFFECT_SLOT(slots, HEAP_SLOT_BATTLE_SHEET);
   work->effect = effect;
@@ -51,12 +51,11 @@ void BattleEffect_RunFire(struct BattleEffectArgument *effect) {
   Resource_LoadAndDecompress((s32)&ResourceId_EmberStreakSheet, work->sheet, 1,
                              1);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
-  EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER, EFFECT_CLIP_BOUNDS,
+  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                       COMPOSITE_ADDITIVE);
-  draw[0] = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER];
-  EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER_ALTERNATE, EFFECT_CLIP_BOUNDS,
-                      COMPOSITE_MAX);
-  draw[1] = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE];
+  draw[0] = (DrawRectangle)gHeapSlots[HEAP_SLOT_RAM_CODE];
+  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, EFFECT_CLIP_BOUNDS, COMPOSITE_MAX);
+  draw[1] = (DrawRectangle)gHeapSlots[HEAP_SLOT_RAM_CODE_2];
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
 
   // The embers leave the top of the user's body in a random direction,
@@ -81,7 +80,7 @@ void BattleEffect_RunFire(struct BattleEffectArgument *effect) {
 
   work->cameraDelta = 0;
   work->cameraPhase = CAMERA_PHASE_IDLE;
-  Scheduler_AddOrUpdateCallback(Camera_ApplyPhasedDelta, EFFECT_CALLBACK_ORDER);
+  Task_Add(Camera_ApplyPhasedDelta, EFFECT_CALLBACK_ORDER);
   // Each transfer keeps three quarters of every level, for long trails.
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, 75);
 
@@ -150,7 +149,7 @@ void BattleEffect_RunFire(struct BattleEffectArgument *effect) {
           ember->variant = 0;
           ember->x = screen.x;
           ember->y = screen.y;
-          AudioCommand_PlayFar(SE_136);
+          Sound_PlaySongFar(SE_136);
           ObjectGroup_UpdateMembers(
               work->effect->actors[i % work->effect->count],
               SPRITE_COLOR_RED_TINT, POSE_DAMAGE, i % work->effect->count, 4);
@@ -192,8 +191,8 @@ void BattleEffect_RunFire(struct BattleEffectArgument *effect) {
     EFFECT_END_FRAME(work);
   }
 
-  Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
-  Scheduler_RemoveCallback(Camera_ApplyPhasedDelta);
+  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
+  Task_Remove(Camera_ApplyPhasedDelta);
   EFFECT_RELEASE_BLITTERS();
   BattleEffect_EndCanvasLayer();
 }

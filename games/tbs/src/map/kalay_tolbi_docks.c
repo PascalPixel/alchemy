@@ -403,7 +403,7 @@ static void KalayTolbiDocks_TalkToWomanWithAMessage(void) {
       Script_ShowMessage(LOCALID_WOMAN_WITH_A_MESSAGE, 0);
       GameFlag_Set(FLAG_KALAY_DOCKS_CARRYING_MESSAGE);
     } else {
-      gEventWork->message++;
+      gFieldWork->message++;
       Script_ShowMessage(LOCALID_WOMAN_WITH_A_MESSAGE, 0);
     }
   } else {
@@ -484,7 +484,7 @@ static void KalayTolbiDocks_TalkToTicketTaker(void) {
                                             ANIMATION_NOD);
       ObjectEvent_WalkToAndWait(LOCALID_CHECKING_TICKETS, 88, 1288);
       ObjectEvent_FaceDirection(LOCALID_CHECKING_TICKETS, FACING_SOUTH, 0);
-      gEventWork->message++;
+      gFieldWork->message++;
       Script_ShowMessage(LOCALID_CHECKING_TICKETS, 0);
       Inventory_Discard(ticketOwner, ticketSlot);
       GameFlag_Set(FLAG_KALAY_DOCKS_TICKET_HANDED_OVER);
@@ -549,7 +549,7 @@ static void KalayTolbiDocks_TalkToTicketSeller(void) {
     if (Engine_ScriptChooseYesNo(0, 0) == 1) {
       Script_ShowMessageAndWait(LOCALID_SELLING_TICKETS, 0, 10);
     } else {
-      gEventWork->message++;
+      gFieldWork->message++;
       UiWork_PushValueSlot(ticketPrice, 5);
       Script_OpenMessage(LOCALID_SELLING_TICKETS, 0);
       // Keep the balance visible while the player confirms the purchase.
@@ -581,15 +581,15 @@ static void KalayTolbiDocks_TalkToTicketSeller(void) {
         Engine_ObjectEventSetAnimationAndWait(LOCALID_PARTY_LEADER,
                                               ANIMATION_NOD);
         Engine_ScriptWait(10);
-        gEventWork->message++;
-        Script_PlayCue(SE_MENU_CANCEL);
+        gFieldWork->message++;
+        Script_PlaySong(SE_MENU_CANCEL);
         Script_ShowMessage(LOCALID_SELLING_TICKETS, 0);
       } else {
         UiWork_Finalize(coinsWindow, 2);
         Engine_ObjectEventSetAnimationAndWait(LOCALID_PARTY_LEADER,
                                               ANIMATION_NOD);
         Engine_ScriptWait(10);
-        gEventWork->message += 3;
+        gFieldWork->message += 3;
         Script_ShowMessage(LOCALID_SELLING_TICKETS, 0);
         // Complete both inventory and coin changes only after confirmation.
         Engine_PartyGiveItem(ITEM_BOAT_TICKET, 0);
@@ -652,7 +652,7 @@ static void KalayTolbiDocks_TalkToWaitingDaughter(void) {
         GameFlag_Set(FLAG_TOLBI_DOCKS_MESSAGE_DELIVERED);
       } else {
         Engine_ScriptWait(10);
-        gEventWork->message++;
+        gFieldWork->message++;
         Script_ShowMessage(LOCALID_WAITING_DAUGHTER, 0);
         Engine_ScriptWait(10);
         ObjectEvent_FaceDirection(LOCALID_WAITING_DAUGHTER, FACING_EAST, 0);
@@ -673,7 +673,7 @@ static void KalayTolbiDocks_TalkToWaitingDaughter(void) {
 /// KALAY_DOCKS_TO_KALAY_TOLBI_DOCKS_INTERIORS by the same number.
 static void KalayTolbiDocks_OpenDoorAndLeave(void) {
   Engine_ScriptStart();
-  Script_PlayCue(SE_DOOR_OPEN);
+  Script_PlaySong(SE_DOOR_OPEN);
   ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, 0x8000, 0x4000);
   Engine_ObjectEventSetSpritePriority(LOCALID_PARTY_LEADER, 3);
   if (gGameState.mapId == (s32)&MapId_KalayDocks) {
@@ -791,7 +791,7 @@ static void KalayTolbiDocks_PrepareTolbiDocks(void) {
 /// The building between the docks opens with a window transition and no area
 /// name.
 static void KalayTolbiDocks_PrepareInterior(void) {
-  gEventWork->startTransition =
+  gFieldWork->startTransition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
   Engine_GameFlagClear(FLAG_SHOW_LOCATION_NAME);
 }
@@ -978,7 +978,7 @@ static void KalayTolbiDocks_PassengersConfrontTourGuide(void) {
   ObjectEvent_GetById(LOCALID_ANGRY_YOUNG_MAN)->steeringFlags &=
       ~OBJ_EVENT_FACES_MOTION;
   ObjectEvent_WalkBy(LOCALID_ANGRY_YOUNG_MAN, -16, 0);
-  Script_PlayCue(SE_HIGH_JUMP);
+  Script_PlaySong(SE_HIGH_JUMP);
   ObjectEvent_SetSpeed(LOCALID_TOUR_GUIDE, 0x26666, 0x13333);
   ObjectEvent_WalkByAndWait(LOCALID_TOUR_GUIDE, 16, 0);
   Engine_ScriptWait(10);
@@ -988,16 +988,16 @@ static void KalayTolbiDocks_PassengersConfrontTourGuide(void) {
   ObjectEvent_SetAttachedEffect(LOCALID_TOUR_GUIDE, ATTACHED_EFFECT_IN_FRONT |
                                                         ATTACHED_EFFECT_ONCE);
   Engine_ObjectEventStartRepeatedMotion(LOCALID_TOUR_GUIDE, 2);
-  Script_PlayCue(SE_155);
+  Script_PlaySong(SE_155);
   Engine_ScriptWait(10);
-  Script_PlayCue(SE_155);
+  Script_PlaySong(SE_155);
   Engine_ScriptWait(10);
-  Script_PlayCue(SE_155);
+  Script_PlaySong(SE_155);
   Engine_ScriptWait(10);
   Engine_ScriptWait(20);
   ObjectEvent_SetSpeed(LOCALID_TOUR_GUIDE, 0x6666, 0x3333);
   Engine_ObjectEventJump(LOCALID_TOUR_GUIDE, 6, 0);
-  Script_PlayCue(SE_159);
+  Script_PlaySong(SE_159);
   ObjectEvent_WalkByAndWait(LOCALID_TOUR_GUIDE, -8, 0);
   Engine_ScriptWait(20);
   Script_ShowMessage(LOCALID_ANGRY_YOUNG_MAN, 0);
@@ -1086,7 +1086,7 @@ static void KalayTolbiDocks_PassengersConfrontTourGuide(void) {
   ObjectEvent_WalkByAndWait(LOCALID_ANGRY_YOUNG_MAN, 8, 0);
   Engine_ObjectEventJump(LOCALID_ANGRY_YOUNG_MAN, 6, 0);
   ObjectEvent_WalkByAndWait(LOCALID_ANGRY_YOUNG_MAN, 24, 0);
-  Script_PlayCue(SE_IMPACT);
+  Script_PlaySong(SE_IMPACT);
   Engine_ObjectEventJump(LOCALID_BODYGUARD, 6, 0);
   // The passenger bounces off the spinning bodyguard and lands on his back.
   ObjectEvent_SetActionScript(LOCALID_BODYGUARD,
@@ -1105,7 +1105,7 @@ static void KalayTolbiDocks_PassengersConfrontTourGuide(void) {
   ObjectEvent_FaceDirection(LOCALID_ANGRY_YOUNG_MAN, FACING_SOUTH, 0);
   ObjectEvent_GetById(LOCALID_ANGRY_YOUNG_MAN)->steeringFlags |=
       OBJ_EVENT_FACES_MOTION;
-  Script_PlayCue(SE_159);
+  Script_PlaySong(SE_159);
   Engine_ScriptWait(20);
   ObjectEvent_ShowEmote(LOCALID_STRANDED_WOMAN, EMOTE_IN_FRONT | EMOTE_WINCE,
                         50);

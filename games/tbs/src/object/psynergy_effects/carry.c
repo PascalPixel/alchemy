@@ -15,7 +15,7 @@ void FieldEffect_SpawnFallingParticles(void) {
   struct ItemBreakFragmentObject *fragment;
   u32 radius;
 
-  liftedObject = ((struct FieldEffectWork *)gEffectWork)->child;
+  liftedObject = ((struct FieldEffectWork *)gFieldEffectWork)->child;
   position.x = liftedObject->x.fixed;
   position.y = liftedObject->y.fixed - Random16() * 16 + (24 << 16);
   position.z = liftedObject->z.fixed;
@@ -39,7 +39,7 @@ FieldEffect_CheckRaisedTargetCollision(struct ObjectEvent *target,
   s32 collision;
 
   target->terrainHeight += 16 << 16;
-  collision = MapGrid_CheckObjectStepFar((struct ObjectRuntime *)target,
+  collision = MapGrid_CheckObjectStepFar((struct Object *)target,
                                          (struct FieldPosition *)position);
   target->terrainHeight -= 16 << 16;
   return collision;
@@ -66,7 +66,7 @@ void FieldEffect_SteerLiftedTarget(s32 targetId) {
   s32 dist;
   struct EffectVector *p;
 
-  effectWork = gEffectWork;
+  effectWork = gFieldEffectWork;
   src = effectWork->mainObject;
   target = effectWork->child;
   if (target == NULL)
@@ -95,12 +95,12 @@ void FieldEffect_SteerLiftedTarget(s32 targetId) {
   WaitFrames(15);
   SET_POSITION(p, target->x.fixed, target->y.fixed + (16 << 16),
                target->z.fixed);
-  Object_SetMoveTargetFar((struct ObjectRuntime *)objectEvent,
-                          p->x + (16 << 16), p->y, p->z);
-  Object_SetMoveTargetFar((struct ObjectRuntime *)right, p->x - (16 << 16),
-                          p->y, p->z);
-  FieldObject_WaitForMoveFar(objectEvent);
-  FieldObject_WaitForMoveFar(right);
+  Object_SetMoveTargetFar((struct Object *)objectEvent, p->x + (16 << 16), p->y,
+                          p->z);
+  Object_SetMoveTargetFar((struct Object *)right, p->x - (16 << 16), p->y,
+                          p->z);
+  Object_WaitForMoveFar(objectEvent);
+  Object_WaitForMoveFar(right);
   objectEvent->x.fixed = p->x + (16 << 16);
   objectEvent->velocityX = 0;
   right->x.fixed = p->x - (16 << 16);
@@ -109,8 +109,8 @@ void FieldEffect_SteerLiftedTarget(s32 targetId) {
   // Lift to 24 pixels above the ground, 3/8 pixel a frame, floating (motion
   // flag bit 2) with no shadow and its colours cycling.
   target->update = ObjectGroup_ApplyRandomChildValues;
-  Scheduler_AddOrUpdateCallback(FieldEffect_SpawnFallingParticles, 0xc80);
-  AudioCommand_PlayFar(SE_130);
+  Task_Add(FieldEffect_SpawnFallingParticles, 0xc80);
+  Sound_PlaySongFar(SE_130);
   target->motionFlags = 4;
   ObjectDispatch_SetSingleChildFlagsFar((struct DispatchObject *)target, 0);
   if (hands[0] != NULL && hands[1] != NULL) {
@@ -146,10 +146,10 @@ void FieldEffect_SteerLiftedTarget(s32 targetId) {
       pos.x = target->x.fixed;
       pos.y = target->y.fixed + (16 << 16);
       pos.z = target->z.fixed;
-      Object_SetMoveTargetFar((struct ObjectRuntime *)hands[0],
-                              pos.x + (16 << 16), pos.y, pos.z);
-      Object_SetMoveTargetFar((struct ObjectRuntime *)hands[1],
-                              pos.x - (16 << 16), pos.y, pos.z);
+      Object_SetMoveTargetFar((struct Object *)hands[0], pos.x + (16 << 16),
+                              pos.y, pos.z);
+      Object_SetMoveTargetFar((struct Object *)hands[1], pos.x - (16 << 16),
+                              pos.y, pos.z);
       ObjectDispatch_SelectAnimationFar(hands[0], 1);
       ObjectDispatch_SelectAnimationFar(hands[1], 1);
       continue;
@@ -160,12 +160,12 @@ void FieldEffect_SteerLiftedTarget(s32 targetId) {
     pos.y = target->y.fixed + (16 << 16);
     pos.z = target->z.fixed;
     Vector_AddPolarOffset(2 << 16, angle, &pos);
-    Object_SetMoveTargetFar((struct ObjectRuntime *)hands[0],
-                            pos.x + (16 << 16), pos.y, pos.z);
-    Object_SetMoveTargetFar((struct ObjectRuntime *)hands[1],
-                            pos.x - (16 << 16), pos.y, pos.z);
-    FieldObject_WaitForMoveFar(hands[0]);
-    FieldObject_WaitForMoveFar(hands[1]);
+    Object_SetMoveTargetFar((struct Object *)hands[0], pos.x + (16 << 16),
+                            pos.y, pos.z);
+    Object_SetMoveTargetFar((struct Object *)hands[1], pos.x - (16 << 16),
+                            pos.y, pos.z);
+    Object_WaitForMoveFar(hands[0]);
+    Object_WaitForMoveFar(hands[1]);
     pos.x = target->x.fixed;
     pos.y = target->terrainHeight;
     pos.z = target->z.fixed;
@@ -182,7 +182,7 @@ void FieldEffect_SteerLiftedTarget(s32 targetId) {
       ObjectDispatch_SelectAnimationFar(hands[0], 4);
       ObjectDispatch_SelectAnimationFar(hands[1], 4);
       if ((gFrameCount & 15) == 0)
-        AudioCommand_PlayFar(SE_MENU_ERROR);
+        Sound_PlaySongFar(SE_MENU_ERROR);
       continue;
     }
     // The way is free: move the target there.
@@ -191,7 +191,7 @@ void FieldEffect_SteerLiftedTarget(s32 targetId) {
       s32 x;
       s32 z;
 
-      AudioCommand_PlayFar(SE_175);
+      Sound_PlaySongFar(SE_175);
       x = p->x;
       z = p->z;
       ObjectDispatch_SelectAnimationFar(hands[0], 4);
@@ -202,17 +202,17 @@ void FieldEffect_SteerLiftedTarget(s32 targetId) {
       target->paused = i;
       target->speed = 0x3333;
       target->acceleration = 0x3333;
-      Object_SetMoveTargetFar((struct ObjectRuntime *)target, p->x, p->y, p->z);
+      Object_SetMoveTargetFar((struct Object *)target, p->x, p->y, p->z);
       hands[0]->speed = 0x3333;
       hands[0]->acceleration = 0x3333;
       second = hands[1];
       second->speed = 0x3333;
       second->acceleration = 0x3333;
-      Object_SetMoveTargetFar((struct ObjectRuntime *)hands[0],
-                              p->x + (16 << 16), p->y, p->z);
-      Object_SetMoveTargetFar((struct ObjectRuntime *)second, p->x - (16 << 16),
+      Object_SetMoveTargetFar((struct Object *)hands[0], p->x + (16 << 16),
                               p->y, p->z);
-      FieldObject_WaitForMoveFar(target);
+      Object_SetMoveTargetFar((struct Object *)second, p->x - (16 << 16), p->y,
+                              p->z);
+      Object_WaitForMoveFar(target);
       target->x.fixed = x;
       target->z.fixed = z;
       target->velocityX = i;
@@ -228,10 +228,10 @@ void FieldEffect_SteerLiftedTarget(s32 targetId) {
   //------------------------------------------------------------------
   ObjectDispatch_SelectAnimationFar(hands[0], 4);
   ObjectDispatch_SelectAnimationFar(hands[1], 4);
-  Scheduler_RemoveCallback(FieldEffect_SpawnFallingParticles);
-  AudioCommand_PlayFar(SE_135);
+  Task_Remove(FieldEffect_SpawnFallingParticles);
+  Sound_PlaySongFar(SE_135);
   WaitFrames(15);
-  AudioCommand_PlayFar(SE_135);
+  Sound_PlaySongFar(SE_135);
   WaitFrames(15);
   SET_POSITION(p, target->x.fixed, target->y.fixed + (16 << 16),
                target->z.fixed);
@@ -250,12 +250,12 @@ void FieldEffect_SteerLiftedTarget(s32 targetId) {
         objectEvent->acceleration = 2 << 16;
         objectEvent->motionFlags = 0;
         dist = Random16() * 24 + (8 << 16);
-        Motion_SetTargetPositionFromMagnitudeAngle(
-            (struct ObjectRuntime *)objectEvent, dist, Random16());
+        Motion_SetTargetPositionFromMagnitudeAngle((struct Object *)objectEvent,
+                                                   dist, Random16());
       }
     }
   }
-  AudioCommand_PlayFar(SE_131);
+  Sound_PlaySongFar(SE_131);
   ObjectDispatch_ReleaseFar((struct DispatchObject *)hands[0]);
   ObjectDispatch_ReleaseFar((struct DispatchObject *)hands[1]);
 
@@ -306,7 +306,7 @@ struct MotionObject *FieldEffect_SpawnItemBreakMode1(s32 x, s32 y, s32 z,
   struct MotionObject *fragment;
   s32 scale;
 
-  AudioCommand_PlayFar(SE_ITEM_BREAK);
+  Sound_PlaySongFar(SE_ITEM_BREAK);
   fragment = (struct MotionObject *)Object_Spawn(215, x, y, z);
   if (fragment != NULL) {
     fragment->scaleY = 0x4000;

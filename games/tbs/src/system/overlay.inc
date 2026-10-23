@@ -33,9 +33,9 @@
 	import __umodsi3, IwramUnsignedRemainder
 @ Runtime bank (far_call/RUNTIME.S)
 	import Engine_TaskWait, WaitFramesFar
-	import Scheduler_AddOrUpdateCallback, Scheduler_AddOrUpdateCallbackFar
-	import Engine_TaskRemoveCallback, Scheduler_RemoveCallbackFar
-	import Scheduler_RemoveCallback, Scheduler_RemoveCallbackFar
+	import Task_Add, Task_AddFar
+	import Engine_TaskRemoveCallback, Task_RemoveFar
+	import Task_Remove, Task_RemoveFar
 	import Engine_RandomNext, Random16Far
 	import ArcTan2, ArcTan2Far
 	import CalculateAngleFromCoordinateDelta, ArcTan2Far
@@ -48,18 +48,18 @@
 	import Trig_Cos, Trig_CosFar
 	import Vector_AddPolarOffset, Vector_AddPolarOffsetFar
 	import Runtime_SetIrqHandler, Runtime_SetIrqHandlerFar
-	import AllocateEffectTransfer, Runtime_AllocateHeapBlockFar
-	import Engine_HeapAllocate, Runtime_AllocateHeapBlockFar
-	import Runtime_AllocateHeapBlock, Runtime_AllocateHeapBlockFar
-	import Runtime_AllocateBlock, Runtime_AllocateBlockFar
-	import Engine_HeapRelease, Runtime_ReleaseHeapBlockFar
-	import Runtime_ReleaseHeapBlock, Runtime_ReleaseHeapBlockFar
-	import MemAlloc, Runtime_BumpAllocateFar
-	import Runtime_BumpAllocateAlternatePool, Runtime_BumpAllocateAlternatePoolFar
-	import MemFree, Sys_FreeFar
+	import AllocateEffectTransfer, AllocHeapSlotFar
+	import Engine_HeapAllocate, AllocHeapSlotFar
+	import AllocHeapSlot, AllocHeapSlotFar
+	import AllocHeapSlotEwram, AllocHeapSlotEwramFar
+	import Engine_HeapRelease, FreeHeapSlotFar
+	import FreeHeapSlot, FreeHeapSlotFar
+	import Alloc, Runtime_BumpAllocateFar
+	import AllocEwram, AllocEwramFar
+	import Free, Sys_FreeFar
 	import Runtime_BumpFree, Sys_FreeFar
-	import Resource_DecodeByteLz, Resource_DecodeByteLzFar
-	import Resource_DecodeType01, Resource_DecodeType01Far
+	import Decompress_ByteLz, Decompress_ByteLzFar
+	import Decompress_Type01, Decompress_Type01Far
 	import Resource_ResetEntry, Resource_ResetEntryFar
 	import VramCache_ReleaseVram, VramCache_ReleaseVramFar
 	import Engine_VramLoad, VramCache_LoadFar
@@ -82,7 +82,7 @@
 	import SerialRuntime_StartSend, SerialRuntime_StartSendFar
 	import SerialRuntime_StartReceive, SerialRuntime_StartReceiveFar
 	import SerialRuntime_GetActiveTransfers, SerialRuntime_GetActiveTransfersFar
-	import Scheduler_SetTaskFlags, Scheduler_SetTaskFlagsFar
+	import Task_SetFlags, Task_SetFlagsFar
 @ Field bank (far_call/FIELD.S)
 	import AnimationObject_SelectAnimation, AnimationObject_SelectAnimationFar
 	import Object_InitializeMode, AnimationObject_SelectAnimationFar
@@ -99,7 +99,7 @@
 	import ObjectDispatch_StartIdle, ObjectDispatch_StartIdleFar
 	import ObjectDispatch_WaitForValue16, ObjectDispatch_WaitForValue16Far
 	import Engine_ObjectSetPosition, Object_SetMoveTargetFar
-	import FieldObject_WaitForMove, FieldObject_WaitForMoveFar
+	import Object_WaitForMove, Object_WaitForMoveFar
 	import WorldMap_LoadDefaultCellsAndUpdateBlock, WorldMap_LoadDefaultCellsAndUpdateBlockFar
 	import Engine_MapGridAnimateCells, MapGrid_PlayMetatileCopySequenceFar
 	import Engine_MapGridCopyCellsTo, MapGrid_CopyMetatileIndicesRectFar
@@ -172,11 +172,11 @@
 	import Engine_DebugClearWindow, RenderOutput_ClearListFar
 	import UiWindow_SetTilemapEntry, UiWindow_SetTilemapEntryFar
 	import SaveMenu_WriteSelectedSlot, Save_WriteSelectedSlotFar
-	import SaveState_LoadRecordIntoWork, SaveState_LoadRecordIntoWorkFar
-	import SaveState_CopySlotPair, SaveState_CopySlotPairFar
-	import SaveState_DeleteSelectedSlot, SaveState_DeleteSelectedSlotFar
-	import SaveState_ProcessSelectedSlot, SaveState_ProcessSelectedSlotFar
-	import SaveState_ScanRecordFlags, SaveState_ScanRecordFlagsFar
+	import Save_LoadRecordIntoWork, Save_LoadRecordIntoWorkFar
+	import Save_CopyFile, Save_CopyFileFar
+	import Save_EraseSelectedFile, Save_EraseSelectedFileFar
+	import Save_ProcessSelectedFile, Save_ProcessSelectedFileFar
+	import Save_ScanRecordFlags, Save_ScanRecordFlagsFar
 	import NameEntry_EditOwnerName, NameEntry_EditOwnerNameFar
 	import DebugMenu_BrowseIcons, DebugMenu_BrowseIconsFar
 	import DebugMenu_BrowsePortraits, DebugMenu_BrowsePortraitsFar
@@ -187,7 +187,7 @@
 	import Resource_LoadFixedBlockBIntoFreeSlot, Resource_LoadFixedBlockBIntoFreeSlotFar
 	import Graphics_ExpandVramTilesByColorTable, Graphics_ExpandVramTilesByColorTableFar
 	import Menu_AnimateSelectionToEntry, Menu_AnimateSelectionToEntryFar
-	import SaveState_CountRecordsExcludingFlagged, SaveState_CountRecordsExcludingFlaggedFar
+	import Save_CountRecordsExcludingFlagged, Save_CountRecordsExcludingFlaggedFar
 	import Link_DrawShiftedTilePair, Link_DrawShiftedTilePairFar
 @ Game bank (far_call/GAME.S)
 	import Djinn_GetRecoveryTable, Djinn_GetRecoveryTableFar
@@ -378,7 +378,7 @@
 	import Sprite_ShareVramCache, Sprite_ShareVramCacheFar
 	import Party_AddPp, Party_AddPpFar
 	import Menu_AskYesNo, Menu_AskYesNoFar
-	import Audio_PlayCueFromEventWork, Audio_PlayCueFromEventWorkFar
+	import Map_PlayMusic, Map_PlayMusicFar
 	import Djinn_JoinParty, Djinn_JoinPartyFar
 	import Engine_DjinnJoinParty, Djinn_JoinPartyFar
 	import EffectSlot_HasPendingTarget, EffectSlot_HasPendingTargetFar
@@ -397,7 +397,7 @@
 	import Engine_ObjectEventFollow, ObjectEvent_LinkObjectAndSetCallbackFar
 	import ObjectEvent_LinkObjectAndSetCallback, ObjectEvent_LinkObjectAndSetCallbackFar
 	import FieldEffect_PauseObject, FieldEffect_PauseObjectFar
-	import ObjectTable_Snapshot, SaveState_CaptureObjectTableFar
+	import ObjectTable_Snapshot, Save_CaptureObjectEventsFar
 	import Engine_ObjectEventsRefresh, ObjectTable_RestoreFar
 	import FieldEffect_ScheduleRatioTransition, FieldEffect_ScheduleRatioTransitionFar
 	import FieldScript_WaitForZoomTransition, FieldScript_WaitForZoomTransitionFar
@@ -429,13 +429,13 @@
 	import DjinnRecovery_TickTwenty, DjinnRecovery_TickTwentyFar
 	import DebugParty_LoadPreset, DebugParty_LoadPresetFar
 @ Scroll bank (far_call/SCROLL.S)
-	import ScrollFar_Entry00, DisplayScroll_RunSlideshowFar
+	import CreditsFar_Entry00, DisplayScroll_RunSlideshowFar
 @ Palette bank (far_call/PALETTE.S)
-	import PaletteFar_Entry00, Title_ShowIntroFar
+	import TitleFar_Entry00, Title_ShowIntroFar
 	import Title_ShowSplashScreen, Title_ShowSplashScreenFar
-	import PaletteFar_Entry20, Title_ShowAnimatedSplashFar
+	import TitleFar_Entry20, Title_ShowAnimatedSplashFar
 @ Sound bank (far_call/SOUND.S)
-	import Engine_AudioPlayCue, AudioCommand_PlayFar
+	import Engine_AudioPlayCue, Sound_PlaySongFar
 	import MusicCommand_SetPitchAndUpdateFrequency, MusicCommand_SetPitchAndUpdateFrequencyFar
 	import AudioCommand_GetStateByte, AudioCommand_GetStateByteFar
 	import AudioCommand_WaitForCompletion, AudioCommand_WaitForCompletionFar

@@ -461,9 +461,9 @@ static void EventScript_FightTret(void) {
   WAIT(40);
   TretTreeInteriors_PlayGesture(TRET_GESTURE_WRATHFUL_BLINK);
   MESSAGE_PUT(SPEAKER(LOCALID_TRET), 0);
-  gEventWork->startTransition =
+  gFieldWork->startTransition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_BARS);
-  gEventWork->transitionFrames = 64;
+  gFieldWork->transitionFrames = 64;
   Battle_SetStart(BATTLE_START_SCRIPTED);
   FieldScript_SetNextDestination((s32)&MapId_TretTreeInteriors,
                                  TRET_TREE_INTERIORS_AFTER_FIGHT_TRET);
@@ -483,7 +483,7 @@ static void TretTreeInteriors_PlayPostBattleConversation(void) {
   s32 hasMia;
   struct ObjectEvent *partyObjectEvent;
   s32 openingColumn;
-  SchedulerCallback sparkTask;
+  TaskFunc sparkTask;
   const s32 *actions;
 
   // Restore the party positions before opening the post-battle conversation.
@@ -516,8 +516,8 @@ static void TretTreeInteriors_PlayPostBattleConversation(void) {
   }
   TretTreeInteriors_PlayGesture(TRET_GESTURE_CLOSE_EYES);
   Engine_TaskWait(10);
-  gEventWork->startTransition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
-  gEventWork->transitionFrames = 48;
+  gFieldWork->startTransition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+  gFieldWork->transitionFrames = 48;
   Engine_ScriptOpenScreen();
   Engine_ScriptWaitForScreen();
   WAIT(20);
@@ -753,7 +753,7 @@ s32 TretTreeInteriors_EnterRoom(void) {
   }
   if (FLAG_CHECK(FLAG_KEEP_PARTY_POSITION))
     TretTreeInteriors_ApplyFlaggedMapPatches();
-  grid = WORK_SLOT(8);
+  grid = HEAP_SLOT_BLOCK(8);
   // Match the first layer's parallax offset and scale to the room bounds.
   layer = &grid->layers[0];
   layer->offsetX += Iwram_MulQ16(grid->minX + PIXELS(160), 0x1999);
@@ -768,7 +768,7 @@ s32 TretTreeInteriors_EnterRoom(void) {
   FLAG_SET(FLAG_MAP_TEMP_13);
   Engine_TaskWait(1);
   TretTreeInteriors_ApplyPostBattleState(0);
-  work = WORK_SLOT(HEAP_SLOT_EVENT);
+  work = HEAP_SLOT_BLOCK(HEAP_SLOT_FIELD);
   work->transition = MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_NOISE);
   warpDest = gGameState.warpDest;
   selectedLocalId = gGameState.selectedLocalId;
@@ -808,7 +808,7 @@ s32 TretTreeInteriors_EnterRoom(void) {
 
 /// Saves background palettes 0 to 13 as the base for Tret's map tint.
 static void TretPalette_SaveMapColors(void) {
-  Dma_Set((const void *)BG_PLTT, gPaletteBufferWork->palette,
+  Dma_Set((const void *)BG_PLTT, gPaletteFadeWork->palette,
           (DMA_ENABLE | DMA_32BIT) << 16 | 112, REG_DMA3);
 }
 
@@ -828,8 +828,8 @@ static void TretPalette_UpdateMapTint(void) {
   struct FieldWork *work;
   struct ColorBuffer *paletteWork;
 
-  work = WORK_SLOT(HEAP_SLOT_EVENT);
-  paletteWork = WORK_SLOT(HEAP_SLOT_PALETTE_BUFFER);
+  work = HEAP_SLOT_BLOCK(HEAP_SLOT_FIELD);
+  paletteWork = HEAP_SLOT_BLOCK(HEAP_SLOT_PALETTE_FADE);
   sourceColors = paletteWork->palette;
   if (work->psynergy != 0)
     return;

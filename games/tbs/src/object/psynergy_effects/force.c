@@ -42,10 +42,10 @@ void FieldEffect_RunForce(void) {
   s32 i;
   u8 resourceSlot;
 
-  effectWork = gEffectWork;
+  effectWork = gFieldEffectWork;
   target = effectWork->child;
   FieldEffect_FadeToEffectColor();
-  AudioCommand_PlayFar(SE_130);
+  Sound_PlaySongFar(SE_130);
   effect = effectWork->effects;
 
   // 12 flashes burst from over the caster's head, one every 2 frames.
@@ -135,16 +135,14 @@ void FieldEffect_RunForce(void) {
     pos.y = effectWork->y + ABOVE;
     pos.z = effectWork->z;
   }
-  Object_SetMoveTargetFar((struct ObjectRuntime *)projectile, pos.x, pos.y,
-                          pos.z);
+  Object_SetMoveTargetFar((struct Object *)projectile, pos.x, pos.y, pos.z);
   ObjectDispatch_InitializeFar((struct DispatchObject *)projectile,
                                gFieldEffect_BurstParticleObjectScript + 4);
   for (i = 0; i < 3; i++) {
     copy = copies[i];
     if (copy != NULL) {
       WaitFrames(3);
-      Object_SetMoveTargetFar((struct ObjectRuntime *)copy, pos.x, pos.y,
-                              pos.z);
+      Object_SetMoveTargetFar((struct Object *)copy, pos.x, pos.y, pos.z);
       ObjectDispatch_InitializeFar((struct DispatchObject *)copy,
                                    gFieldEffect_CommonParticleScript + 1);
     }
@@ -167,15 +165,14 @@ void FieldEffect_RunForce(void) {
     pos.y = target->y.fixed;
     pos.z = target->z.fixed;
     Vector_AddPolarOffset(16 << 16, effectWork->angle, &pos);
-    if (MapGrid_CheckObjectStepFar((struct ObjectRuntime *)target,
+    if (MapGrid_CheckObjectStepFar((struct Object *)target,
                                    (struct FieldPosition *)&pos) ==
             MAPGRID_STEP_OPEN &&
         ScriptObject_CheckOverlapFar((struct ScriptObjectEntry *)target,
                                      (s32 *)&pos) == 0) {
       target->acceleration = 1 << 16;
       target->speed = 1 << 16;
-      Object_SetMoveTargetFar((struct ObjectRuntime *)target, pos.x, pos.y,
-                              pos.z);
+      Object_SetMoveTargetFar((struct Object *)target, pos.x, pos.y, pos.z);
     }
   }
 

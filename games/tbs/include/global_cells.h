@@ -2,7 +2,7 @@
 #define ALCHEMY_GLOBAL_CELLS_H
 
 /// @file
-/// The work slots of gWorkSlot, read through their own names.
+/// The work slots of gHeapSlots, read through their own names.
 
 #include "types.h"
 #include "effect_step.h"
@@ -16,15 +16,15 @@ extern void *gMapGridWork[];
 /// read it through their own struct while they are open.
 extern void *gMenuWork;
 
-// Read work slots in gWorkSlot order through their own names.
-/// HEAP_SLOT_FIELD_BLEND onwards.
-extern void *gFieldBlendWork[];
-/// HEAP_SLOT_TRANSITION under its own name.
-extern struct DisplayTransitionState *gDisplayTransition;
+// Read work slots in gHeapSlots order through their own names.
+/// HEAP_SLOT_LIGHTNING onwards.
+extern void *gLightningWork[];
+/// HEAP_SLOT_SCREEN_TRANSITION under its own name.
+extern struct DisplayTransitionState *gScreenTransitionWork;
 /// HEAP_SLOT_BATTLE_ENTRY_TIMER: the battle's entry transition timer in frames.
-extern s32 *gDisp;
-/// HEAP_SLOT_EFFECT: points to a map-specific structure.
-extern void *gEffectWork;
+extern s32 *gBattleEntryTimer;
+/// HEAP_SLOT_FIELD_EFFECT: points to a map-specific structure.
+extern void *gFieldEffectWork;
 
 // EWRAM buffers
 /// The map's cells at 0x02010000, 128 by 128 words: 64 KB, so while a map is

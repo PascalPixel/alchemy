@@ -39,7 +39,7 @@ s32 UiText_DrawGlyph(struct UiWindow *window, s32 character, s32 x, s32 y,
 
     font = NULL;
     if (((struct BattleDisplayWork *)
-             gWindowWork[HEAP_SLOT_BATTLE_DISPLAY - HEAP_SLOT_WINDOW])
+             gWindowWork[HEAP_SLOT_BATTLE_MESSAGE - HEAP_SLOT_WINDOW])
             ->window == window) {
       font = Resource_GetTableEntry((s32)&ResourceId_SmallFont);
       width = 3;
@@ -51,7 +51,7 @@ s32 UiText_DrawGlyph(struct UiWindow *window, s32 character, s32 x, s32 y,
     width = 4;
 #else
     if (((struct BattleDisplayWork *)
-             gWindowWork[HEAP_SLOT_BATTLE_DISPLAY - HEAP_SLOT_WINDOW])
+             gWindowWork[HEAP_SLOT_BATTLE_MESSAGE - HEAP_SLOT_WINDOW])
             ->window == window) {
       Resource_GetTableEntry((s32)&ResourceId_SmallFont);
       Resource_GetTableEntry((s32)&ResourceId_WindowTiles);
@@ -69,7 +69,7 @@ s32 UiText_DrawGlyph(struct UiWindow *window, s32 character, s32 x, s32 y,
       if ((u16)mark != 0)
         result += draw(window, (u16)mark, x + result, y, font);
 #endif
-      MemFree(draw);
+      Free(draw);
       return result;
     }
   } else if (character == ' ') {

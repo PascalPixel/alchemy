@@ -422,7 +422,7 @@ static void EventScript_LeaveToValeInteriorsShopsEast(void) {
 /// VALE_INTERIORS_SHOPS_FROM_VALE_SOUTH).
 static void EventScript_LeaveToValeInteriorsShops(void) {
   if (GameFlag_IsSet(FLAG_MAP_TEMP_06) == 0) {
-    Script_PlayCue(SE_DOOR_OPEN);
+    Script_PlaySong(SE_DOOR_OPEN);
     MapGrid_AnimateCells(gValeStorm_GrandparentsDoorOpens, 45, 39);
   }
   if (GameFlag_IsSet(FLAG_VALE_STORM_BUMPED_INTO_VILLAGER) == 0 &&
@@ -484,7 +484,7 @@ static void EventScript_LeaveToValeInteriorsShopsWest(void) {
 /// EventScript_LeaveToValeInteriorsShopsWest leads to
 /// (VALE_INTERIORS_SHOPS_FROM_VALE_WEST).
 static void EventScript_UnusedLeaveToValeInteriorsShopsWestBySecondDoor(void) {
-  Script_PlayCue(SE_DOOR_OPEN);
+  Script_PlaySong(SE_DOOR_OPEN);
   MapGrid_AnimateCells(gValeStorm_IsaacsDoorOpens, 35, 74);
   ObjectEvent_WalkTo(LOCALID_PARTY_LEADER, 102, 1206);
   Engine_ScriptWait(3);
@@ -495,7 +495,7 @@ static void EventScript_UnusedLeaveToValeInteriorsShopsWestBySecondDoor(void) {
 /// Reached by walking north into metatile behavior 12; arrives in another part
 /// of Vale at VALE_INTERIORS_INN_FROM_VALE_STORM_WEST.
 static void EventScript_LeaveToValeInteriorsInnWest(void) {
-  Script_PlayCue(SE_DOOR_OPEN);
+  Script_PlaySong(SE_DOOR_OPEN);
   MapGrid_AnimateCells(gValeStorm_IsaacsDoorOpens, 35, 73);
   ObjectEvent_WalkTo(LOCALID_PARTY_LEADER, 102, 1206);
   Engine_ScriptWait(3);
@@ -506,7 +506,7 @@ static void EventScript_LeaveToValeInteriorsInnWest(void) {
 /// Reached by walking north into metatile behavior 13; arrives in another part
 /// of Vale at VALE_INTERIORS_INN_FROM_VALE_STORM_EAST.
 static void EventScript_LeaveToValeInteriorsInnEast(void) {
-  Script_PlayCue(SE_DOOR_OPEN);
+  Script_PlaySong(SE_DOOR_OPEN);
   MapGrid_AnimateCells(gValeStorm_GrandparentsDoorOpens, 38, 72);
   ObjectEvent_WalkTo(LOCALID_PARTY_LEADER, 146, 1182);
   Engine_ScriptWait(3);
@@ -516,7 +516,7 @@ static void EventScript_LeaveToValeInteriorsInnEast(void) {
 /// Arriving in Vale on the stormy night: restores the fallen rocks, the river
 /// scene and the Boulder from their flags, starts the storm, and plays the
 /// scene with Dora and Kyle on the first arrival by
-/// VALE_STORM_FROM_VALE_INTERIORS_INN_WITH_DORA. Called by Field_RunMap once
+/// VALE_STORM_FROM_VALE_INTERIORS_INN_WITH_DORA. Called by Map_Run once
 /// the object events are placed. Sets FLAG_VALE_STORM; after a battle
 /// (FLAG_KEEP_PARTY_POSITION) the two doors close again. Garet, until he joins,
 /// is shown struggling with his things.
@@ -739,8 +739,8 @@ s32 ValeStorm_Initialize(void) {
     Engine_ObjectEventSetAnimation(LOCALID_GARETS_CHEST, ANIMATION_NOD);
     Engine_ScriptEnd();
   }
-  gEventWork->startTransition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
-  gEventWork->transitionFrames = 24;
+  gFieldWork->startTransition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+  gFieldWork->transitionFrames = 24;
   Engine_ScriptOpenScreen();
   Engine_ScriptWaitForScreen();
   FieldEffect_ResumeLightning();
@@ -768,13 +768,13 @@ static void EventScript_DoraSendsIsaacToThePlaza(void) {
   Camera_MoveTo(PIXELS(316), PIXELS(160), PIXELS(880), 1);
   ObjectEvent_SetPosition(LOCALID_KYLE, PIXELS(294), PIXELS(868));
   ObjectEvent_SetPosition(LOCALID_PARTY_LEADER, 0, 0);
-  gEventWork->startTransition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
-  gEventWork->transitionFrames = 16;
+  gFieldWork->startTransition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+  gFieldWork->transitionFrames = 16;
   Engine_ScriptOpenScreen();
   Engine_ScriptWaitForScreen();
   FieldEffect_ResumeLightning();
   // Dora and Isaac come out of the door.
-  Script_PlayCue(SE_DOOR_OPEN);
+  Script_PlaySong(SE_DOOR_OPEN);
   MapGrid_AnimateCells(gValeStorm_IsaacsDoorOpens, 50, 44);
   ObjectEvent_SetAttachedEffect(LOCALID_GARET, ATTACHED_EFFECT_IN_FRONT |
                                                    ATTACHED_EFFECT_ATTACH);
@@ -1035,9 +1035,9 @@ static void EventScript_ThirdRockFalls(void) {
       // A rumble, then the rock drops in from the west while Isaac is drawn
       // behind it.
       MapGrid_SetShake(PIXELS(4), PIXELS(4), Q16_ONE);
-      Script_PlayCue(SE_RUMBLE);
+      Script_PlaySong(SE_RUMBLE);
       Engine_TaskWait(40);
-      Script_PlayCue(SE_145);
+      Script_PlaySong(SE_145);
       Engine_ObjectEventSetSpritePriority(LOCALID_PARTY_LEADER, 3);
       ObjectEvent_Get(LOCALID_PARTY_LEADER)->priorityFlags |=
           OBJ_EVENT_PRIORITY_UNDERFOOT;
@@ -1050,7 +1050,7 @@ static void EventScript_ThirdRockFalls(void) {
       ObjectEvent_WalkToAndWait(LOCALID_FIRST_ROCK + 2, 64, 703);
       Engine_ScriptWait(40);
       // It lands: the rumble fades, and Isaac is drawn as before.
-      Script_PlayCue(AUDIO_CUE_FADE_SLOT3);
+      Script_PlaySong(AUDIO_CUE_FADE_SLOT3);
       MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
       Engine_MapGridWaitForShakeToSettle();
       FieldEffect_PlayQueuedSound();
@@ -1458,8 +1458,8 @@ static void EventScript_WatchBoulderFall(void) {
   struct ObjectEvent *movingObjectEvent;
   s32 *shakeShift;
   struct ObjectEvent *objectEvent;
-  SchedulerCallback updateEffects;
-  SchedulerCallback cycleBoulderPalette;
+  TaskFunc updateEffects;
+  TaskFunc cycleBoulderPalette;
   s32 boulderHeight;
 
   if (GameFlag_IsSet(FLAG_VALE_BOULDER_FELL) == 0) {
@@ -1467,11 +1467,11 @@ static void EventScript_WatchBoulderFall(void) {
     FieldScript_CallWithLastActiveObjectId(gValeStorm_BoulderWatchers);
     Map_StartCutscenePsynergy();
     Engine_TaskWait(1);
-    Script_PlayCue(SE_RUMBLE);
+    Script_PlaySong(SE_RUMBLE);
     MapGrid_SetShake(PIXELS(2), PIXELS(2), Q16_ONE);
     Engine_ScriptWait(30);
     MapGrid_SetShake(PIXELS(3), PIXELS(3), Q16_ONE);
-    Script_PlayCue(SE_145);
+    Script_PlaySong(SE_145);
     Engine_ScriptWait(30);
     objectEvent = ObjectEvent_Get(LOCALID_PARTY_LEADER);
     if (objectEvent != NULL) {
@@ -1490,10 +1490,10 @@ static void EventScript_WatchBoulderFall(void) {
     ObjectEvent_ShowEmote(LOCALID_GARET, EMOTE_IN_FRONT | EMOTE_EXCLAMATION,
                           30);
     MapGrid_SetShake(PIXELS(4), PIXELS(4), Q16_ONE);
-    Script_PlayCue(SE_145);
+    Script_PlaySong(SE_145);
     Engine_ScriptWait(40);
     MapGrid_SetShake(PIXELS(5), PIXELS(5), Q16_ONE);
-    Script_PlayCue(SE_145);
+    Script_PlaySong(SE_145);
     Engine_ScriptWait(20);
     ObjectEvent_SetAttachedEffect(
         LOCALID_PARTY_LEADER, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
@@ -1549,35 +1549,35 @@ static void EventScript_WatchBoulderFall(void) {
     movingObjectEvent->y.fixed = boulderHeight;
     movingObjectEvent->targetY = boulderHeight;
     ObjectEvent_SetSpeed(LOCALID_BOULDER, PIXELS(4) / 5, PIXELS(2) / 5);
-    Script_PlayCue(SE_145);
+    Script_PlaySong(SE_145);
     ObjectEvent_MoveToAndWait(LOCALID_BOULDER, 114, 333);
     Engine_ObjectEventSetAnimation(LOCALID_BOULDER, ANIMATION_WALK);
     MapGrid_SetShake(PIXELS(2), PIXELS(2), Q16_ONE);
-    Script_PlayCue(SE_145);
+    Script_PlaySong(SE_145);
     *shakeShift = 0;
     ObjectEvent_SetSpeed(LOCALID_BOULDER, PIXELS(2) / 5, PIXELS(1) / 5);
     ObjectEvent_MoveToAndWait(LOCALID_BOULDER, 114, 300);
     Engine_ObjectEventSetAnimation(LOCALID_BOULDER, ANIMATION_WALK);
     MapGrid_SetShake(PIXELS(5), PIXELS(5), Q16_ONE);
-    Script_PlayCue(SE_145);
+    Script_PlaySong(SE_145);
     *shakeShift = 2;
     ObjectEvent_SetSpeed(LOCALID_BOULDER, PIXELS(4) / 5, PIXELS(2) / 5);
     ObjectEvent_MoveToAndWait(LOCALID_BOULDER, 114, 333);
     Engine_ObjectEventSetAnimation(LOCALID_BOULDER, ANIMATION_WALK);
     MapGrid_SetShake(PIXELS(2), PIXELS(2), Q16_ONE);
-    Script_PlayCue(SE_145);
+    Script_PlaySong(SE_145);
     *shakeShift = 0;
     ObjectEvent_SetSpeed(LOCALID_BOULDER, PIXELS(2) / 5, PIXELS(1) / 5);
     ObjectEvent_MoveToAndWait(LOCALID_BOULDER, 114, 300);
     Engine_ObjectEventSetAnimation(LOCALID_BOULDER, ANIMATION_WALK);
     MapGrid_SetShake(PIXELS(4), PIXELS(4), Q16_ONE);
-    Script_PlayCue(SE_145);
+    Script_PlaySong(SE_145);
     *shakeShift = 2;
     ObjectEvent_SetSpeed(LOCALID_BOULDER, PIXELS(4) / 5, PIXELS(2) / 5);
     ObjectEvent_MoveToAndWait(LOCALID_BOULDER, 114, 333);
     Engine_ObjectEventSetAnimation(LOCALID_BOULDER, ANIMATION_WALK);
     MapGrid_SetShake(PIXELS(2), PIXELS(2), Q16_ONE);
-    Script_PlayCue(SE_145);
+    Script_PlaySong(SE_145);
     *shakeShift = 1;
     Engine_ScriptWait(20);
     ObjectEvent_SetAttachedEffect(LOCALID_ELDER_EAST, ATTACHED_EFFECT_IN_FRONT |
@@ -1613,7 +1613,7 @@ static void EventScript_WatchBoulderFall(void) {
                                    ANIMATION_YOUNG_ELDER_CALL_OUT);
     Engine_ScriptWait(10);
     Script_ShowMessageAndWait(LOCALID_ELDER_FAR_WEST, 0, 20);
-    Script_PlayCue(AUDIO_CUE_FADE_SLOT3);
+    Script_PlaySong(AUDIO_CUE_FADE_SLOT3);
     MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
     Camera_SetSpeed(PIXELS(6), PIXELS(3) / 4);
     Camera_MoveTo(PIXELS(84), -1, PIXELS(564), 1);
@@ -1624,8 +1624,8 @@ static void EventScript_WatchBoulderFall(void) {
     ObjectEvent_SetAttachedEffect(LOCALID_GARET, ATTACHED_EFFECT_IN_FRONT |
                                                      ATTACHED_EFFECT_ONCE);
     Engine_ScriptWait(30);
-    Scheduler_RemoveCallback(updateEffects);
-    Scheduler_RemoveCallback(cycleBoulderPalette);
+    Task_Remove(updateEffects);
+    Task_Remove(cycleBoulderPalette);
     Script_ShowMessage(LOCALID_GARET, 0);
     ObjectEvent_FaceObjectEvent(LOCALID_PARTY_LEADER, LOCALID_GARET, 0);
     Engine_ScriptWait(20);
@@ -1998,7 +1998,7 @@ static void ValeStorm_DoraGoesForHelp(void) {
                               gValeStorm_JennaRunsIntoRiversideHouse);
   ObjectEvent_RunActionScriptAndWait(LOCALID_DORA,
                                      gValeStorm_DoraRunsIntoRiversideHouse);
-  Script_PlayCue(SE_DOOR_OPEN);
+  Script_PlaySong(SE_DOOR_OPEN);
   MapGrid_AnimateCells(gValeStorm_GrandparentsDoorOpens, 38, 72);
   Engine_ScriptWait(10);
   ObjectEvent_WalkToAndWait(LOCALID_DORA, 149, 1175);
@@ -2030,12 +2030,12 @@ static void ValeStorm_DoraGoesForHelp(void) {
   ObjectEvent_SetActionScript(LOCALID_JENNAS_MOTHER, script);
   ObjectEvent_RefreshSelectorById(LOCALID_JENNA);
   Engine_ScriptWait(10);
-  Script_PlayCue(SE_159);
+  Script_PlaySong(SE_159);
   MapGrid_AnimateCells(gValeStorm_GrandparentsDoorCloses, 38, 72);
   Engine_ScriptWait(30);
   FieldEffect_PlayQueuedSound();
   Camera_MoveTo(PIXELS(112), -1, PIXELS(1225), 1);
-  Script_PlayCue(SE_DOOR_OPEN);
+  Script_PlaySong(SE_DOOR_OPEN);
   MapGrid_AnimateCells(gValeStorm_IsaacsDoorOpens, 35, 73);
   Engine_ScriptWait(20);
   FieldEffect_PlayQueuedSound();
@@ -2045,7 +2045,7 @@ static void ValeStorm_DoraGoesForHelp(void) {
   ObjectEvent_SetActionScript(LOCALID_JENNA,
                               gValeStorm_JennaComesOutOfRiversideHouse);
   Engine_ScriptWait(40);
-  Script_PlayCue(SE_159);
+  Script_PlaySong(SE_159);
   MapGrid_AnimateCells(gValeStorm_IsaacsDoorCloses, 35, 73);
   ObjectEvent_RefreshSelectorById(LOCALID_JENNA);
   FieldEffect_PlayQueuedSound();
@@ -2312,7 +2312,7 @@ ValeStorm_PlaceObjectEvent(struct ObjectEvent *objectEvent,
 static __inline__ void ValeStorm_PlayImpactBeat(s32 shakeAmplitude,
                                                 s32 frames) {
   MapGrid_SetShake(shakeAmplitude, shakeAmplitude, Q16_ONE);
-  Script_PlayCue(SE_145);
+  Script_PlaySong(SE_145);
   Script_Wait(frames);
 }
 
@@ -2416,7 +2416,7 @@ static void ValeStorm_ShowBoulderSweepingDownriver(void) {
   ObjectEvent_SetActionScript(LOCALID_GARET, lookAroundActions);
   ObjectEvent_SetActionScript(LOCALID_EXHAUSTED_STRONGMAN, lookAroundActions);
   Script_Wait(10);
-  Script_PlayCue(AUDIO_CUE_FADE_BGM);
+  Script_PlaySong(AUDIO_CUE_FADE_BGM);
   ValeStorm_PlayImpactBeat(PIXELS(3), 30);
   MapGrid_SetShake(PIXELS(1), PIXELS(1), Q16_ONE);
   Script_Wait(120);
@@ -2498,7 +2498,7 @@ static void ValeStorm_ShowBoulderSweepingDownriver(void) {
   currentObjectEvent->velocityY = resetValue;
   currentObjectEvent = Camera_GetScriptObject();
   currentObjectEvent->velocityZ = resetValue;
-  Scheduler_RemoveCallback(ValeStorm_UpdateBoulderShadow);
+  Task_Remove(ValeStorm_UpdateBoulderShadow);
   ObjectEvent_Stop(LOCALID_BOULDER);
   Task_Wait(1);
   ObjectEvent_SetAnimation(LOCALID_BOULDER, ANIMATION_STILL);
@@ -2602,7 +2602,7 @@ static void ValeStorm_ShowBoulderSweepingDownriver(void) {
   Engine_ColorBufferInterpolate(80);
   Script_Wait(80);
   Script_Wait(100);
-  Scheduler_RemoveCallback(ValeStorm_FlickerBoulderShadow);
+  Task_Remove(ValeStorm_FlickerBoulderShadow);
   groupVisual->scale = groupObjectEvent->scaleX;
   GameFlag_Clear(FLAG_WEATHER_HELD);
   TileAnimation_ResumeChannel(0);
@@ -2867,7 +2867,7 @@ static void ValeStorm_GaretFollowsIsaac(void) {
   Engine_ScriptStart();
   Camera_MoveTo(-1, -1, -1, 0);
   Engine_ObjectEventStop(LOCALID_GARET);
-  Scheduler_RemoveCallback(ValeStorm_CopyLeaderSpritePriority);
+  Task_Remove(ValeStorm_CopyLeaderSpritePriority);
   ObjectEvent_WalkToAndWait(LOCALID_PARTY_LEADER, 480, 1392);
   ObjectEvent_SetPosition(LOCALID_PARTY_LEADER, 0, 0);
   ObjectEvent_FaceDirection(LOCALID_GARET, FACING_SOUTHEAST + FACING_STEP, 20);
@@ -2925,7 +2925,7 @@ static void EventScript_FightThirdMonster(void) {
   struct EventWork *state;
 
   Engine_ScriptStart();
-  state = gEventWork;
+  state = gFieldWork;
   state->startTransition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_BARS);
   state->transitionFrames = 64;
@@ -2943,7 +2943,7 @@ static void EventScript_FightFourthMonster(void) {
   struct EventWork *state;
 
   Engine_ScriptStart();
-  state = gEventWork;
+  state = gFieldWork;
   state->startTransition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_BARS);
   state->transitionFrames = 64;
@@ -3013,7 +3013,7 @@ static void ValeStorm_SpawnEffectPair(struct ObjectEvent *parent) {
   struct ObjectEvent *pair[2];
   struct ObjectEvent *child;
   struct AnimationObject *sprite;
-  struct FieldEffectWork *effectWork = gEffectWork;
+  struct FieldEffectWork *effectWork = gFieldEffectWork;
   s32 i;
 
   Engine_AudioPlayCue(SE_JUMP);

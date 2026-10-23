@@ -39,7 +39,7 @@ The battle's code is not an overlay: it is always present, in the `battle`
 [bank](glossary.md#bank) of the [main image](glossary.md#main-image). Code
 in another bank calls it through a [far call](glossary.md#far-call), so the
 field calls `Battle_RunEncounterFar(warpDest)`, the entry that leads to
-`Battle_RunEncounter`. Afterwards `Map_ReturnFromBattle` reloads the field
+`Battle_RunEncounter`. Afterwards `Map_ReturnFromRun` reloads the field
 map the battle started from, with the party where it was, or after a defeat
 goes to the defeat point, the map the defeat rules in
 `src/object/map_rules.s` give for the place the party fell.
@@ -365,7 +365,7 @@ The staging runners in `src/battle/battle/staging.c` all follow the same
 pattern; `BattlePresentation_RunPsynergyCast`, simplified:
 
 ```c
-Scheduler_AddOrUpdateCallback(BattleEvent_Playback, 0xc80); /* idle task */
+Task_Add(BattleEvent_Playback, 0xc80); /* idle task */
 if (plan->presentationFlags & STAGING_BY_ID_RANGE)
   BattleEffect_DispatchByIdRangeFar(&work.effect); /* the effect's loop */
 else

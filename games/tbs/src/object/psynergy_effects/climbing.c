@@ -26,17 +26,17 @@
 s32 Field_TryJumpForward(void) {
   // A chained jump repeats both the gap and landing probes, including their
   // failure returns, before taking control of the field again.
-  struct ObjectRuntime *leader =
-      (struct ObjectRuntime *)ObjectEvent_GetById(gGameState.selectedLocalId);
+  struct Object *leader =
+      (struct Object *)ObjectEvent_GetById(gGameState.selectedLocalId);
   s32 result = -1;
   s32 angle = (leader->angle + 0x2000) & 0xc000; // to the nearest quarter
   u8 *flags = &leader->flags;
   u8 saved = *flags;
-  struct FieldWork *work = (struct FieldWork *)gEventWork;
+  struct FieldWork *work = (struct FieldWork *)gFieldWork;
   s32 spriteFlags = 1;
   struct FieldPosition positionStorage;
   struct FieldPosition *position;
-  struct ObjectRuntime *platform;
+  struct Object *platform;
 
   position = &positionStorage;
 again:
@@ -60,7 +60,7 @@ again:
     FieldScript_Start();
     ObjectDispatch_SelectAnimationFar(leader, 6);
     WaitFrames(6);
-    AudioCommand_PlayFar(SE_JUMP);
+    Sound_PlaySongFar(SE_JUMP);
     ObjectDispatch_SelectAnimationFar(leader, 7);
     leader->speedLimit = 0x30000;
     leader->acceleration = 0x20000;
@@ -125,8 +125,8 @@ again:
 /// Lighthouse, Crossbone Isle, Tolbi's ship and others). Sets
 /// gGameState.movementMode: 1 while the leader is on the wall, 0 off it.
 s32 Field_ClimbDown(void) {
-  struct ObjectRuntime *object =
-      (struct ObjectRuntime *)ObjectEvent_GetById(gGameState.selectedLocalId);
+  struct Object *object =
+      (struct Object *)ObjectEvent_GetById(gGameState.selectedLocalId);
   s32 gridX =
       8 + ((((union FieldCoordinate *)&object->x)->part.pixel) & 0xfff0);
   s32 gridZ =
@@ -207,8 +207,8 @@ failure:
 /// Lighthouse, Colosso, Crossbone Isle and others). Sets
 /// gGameState.movementMode as Field_ClimbDown does.
 s32 Field_ClimbUp(void) {
-  struct ObjectRuntime *object =
-      (struct ObjectRuntime *)ObjectEvent_GetById(gGameState.selectedLocalId);
+  struct Object *object =
+      (struct Object *)ObjectEvent_GetById(gGameState.selectedLocalId);
   s16 spriteFlags = 1;
   s32 gridX =
       8 + ((((union FieldCoordinate *)&object->x)->part.pixel) & 0xfff0);

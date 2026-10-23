@@ -22,7 +22,7 @@ void Dma_StopAllThenRunHook(void) {
 /// Reached as EFFECT_SHOW_DAMAGE(hitSound), through
 /// BattleEvent_StartPhaseFar, from the effects (see the folder README).
 /// Only while playback is idle: sets the phase to
-/// BATTLE_PLAYBACK_RESOLVE_TARGET, and a nonzero cue to pendingCue; a later
+/// BATTLE_PLAYBACK_RESOLVE_TARGET, and a nonzero cue to pendingSong; a later
 /// call before the reset does nothing.
 /// @param cue the hit's sound (an SE_ id); zero keeps the one set
 void BattleEvent_StartPhase(s32 cue) {
@@ -32,7 +32,7 @@ void BattleEvent_StartPhase(s32 cue) {
   if (events->phase == BATTLE_PLAYBACK_IDLE) {
     events->phase = BATTLE_PLAYBACK_RESOLVE_TARGET;
     if (cue != 0) {
-      events->pendingCue = cue;
+      events->pendingSong = cue;
     }
   }
 }
@@ -57,7 +57,7 @@ s32 BattleEvent_SchedulePhase(s32 frames) {
   events->timer = frames;
   events->phase = BATTLE_PLAYBACK_DISPATCH;
   gBattleWork->plan.targetCount = 0;
-  return Scheduler_AddOrUpdateCallback(BattleEvent_Playback, 0xc80);
+  return Task_Add(BattleEvent_Playback, 0xc80);
 }
 
 // BattleEvent_Playback's waits, in BattleEventState.phase beside the phases
@@ -135,7 +135,7 @@ void BattleEvent_Playback(void) {
           }
           switch (events->queue.opcodes[eventIndex]) {
           case BATTLE_EVENT_SOUND:
-            AudioCommand_PlayFar(events->queue.operands[eventIndex]);
+            Sound_PlaySongFar(events->queue.operands[eventIndex]);
             break;
           case BATTLE_EVENT_DJINN_BONUS:
             BattleEvent_GrantDjinnBonus(events,
@@ -160,7 +160,7 @@ void BattleEvent_Playback(void) {
                                     VALUE_ABILITY_NAME);
             break;
           case BATTLE_EVENT_MARK:
-            gBattleDisplayWork->marked = 1;
+            gBattleMessageWork->marked = 1;
             break;
           // A negative message shows nothing and only waits for the player.
           // The key latch is cleared so that only a press after the message
@@ -185,8 +185,8 @@ void BattleEvent_Playback(void) {
             break;
           // The hit's sound, then the damage pose and PLAY_HIT's flashes.
           case BATTLE_EVENT_HIT:
-            if (events->pendingCue > 0)
-              AudioCommand_PlayFar(events->pendingCue);
+            if (events->pendingSong > 0)
+              Sound_PlaySongFar(events->pendingSong);
             events->actorId = events->queue.operands[eventIndex];
             ObjectDispatch_SelectAnimationFar(
                 BattleObject_Get(events->actorId)->object, POSE_DAMAGE);
@@ -269,7 +269,7 @@ void BattleEvent_Playback(void) {
       struct BattlePromptSprite *prompt = &events->displayEntry;
       u8 *arrowTiles = gBattlePresentation_AdvanceArrowTiles;
       s32 frameTiles = (s32)arrowTiles + ((gFrameCount >> 2) & 7) * 128;
-      struct BattleDisplayWork *display = gBattleDisplayWork;
+      struct BattleDisplayWork *display = gBattleMessageWork;
       struct UiWindow *window = display->window;
       struct BattleDisplayOffset *offset = display->offset;
       s32 x = 0;
@@ -289,7 +289,7 @@ void BattleEvent_Playback(void) {
       if ((BATTLE_OPTIONS & KEY_B) || (gKeysPressedLatch & KEY_ADVANCE) ||
           ((u32)(gFrameTick - events->timer) > 10 &&
            (BATTLE_OPTIONS & KEY_ADVANCE))) {
-        AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
+        Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
         events->phase = BATTLE_PLAYBACK_DISPATCH;
         events->timer = 0;
       } else {
@@ -340,7 +340,7 @@ void BattleEvent_Playback(void) {
             kind--;
             if (kind < 0)
               kind = 0;
-            AudioCommand_PlayFar(SE_146 + kind);
+            Sound_PlaySongFar(SE_146 + kind);
           }
           events->timer = FELLED_FLASH;
         }
@@ -351,7 +351,7 @@ void BattleEvent_Playback(void) {
               Unit_GetFar(events->actorId)->classId);
 
           if (kind >= 0)
-            AudioCommand_PlayFar(SE_146 + kind);
+            Sound_PlaySongFar(SE_146 + kind);
         }
         if (events->timer >= FELLED_FLASH)
           colorMode = (events->timer - FELLED_FLASH) / 8 % 5 + SPRITE_COLOR_GRB;
@@ -450,7 +450,7 @@ void BattleEvent_Reset(void) {
   events->eventIndex = 0;
   events->timer = 0;
   events->queue.targetIndex = 0;
-  events->pendingCue = SE_HEAVY_IMPACT;
+  events->pendingSong = SE_HEAVY_IMPACT;
   events->flags = 0;
 }
 
@@ -478,7 +478,7 @@ s32 BattleEvent_WaitForReady(void) {
       WaitFrames(1U);
     } while (events->phase != BATTLE_PLAYBACK_READY);
   }
-  Scheduler_RemoveCallback(BattleEvent_Playback);
+  Task_Remove(BattleEvent_Playback);
   BattleEvent_Reset();
 }
 

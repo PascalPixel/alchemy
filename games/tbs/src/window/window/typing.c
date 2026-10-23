@@ -395,7 +395,7 @@ s32 UiWork_StepChannelScript(struct UiChannelSlot *channel) {
         if (work->speakerVoiceSound != 0) {
           if (work->speakerVoiceCountdown == 0) {
             if (code != TEXT_SPACE) {
-              AudioCommand_PlayFar(work->speakerVoiceSound + (code & 3));
+              Sound_PlaySongFar(work->speakerVoiceSound + (code & 3));
               work->speakerVoiceCountdown = voiceGap;
             }
           } else {

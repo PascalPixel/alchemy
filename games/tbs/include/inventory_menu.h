@@ -19,10 +19,10 @@ struct UiWindow;
 /// The item menu's work, in the HEAP_SLOT_MENU work slot: its windows, the
 /// party figures, the items listed and the two choices a command makes. The
 /// menu takes the slot as it opens and frees it as it closes.
-struct InventoryMenuState {
+struct ItemMenuWork {
   u8 unused[8];      ///< no view of the menu work names it (see menu/README.md)
   s32 selectedOwner; ///< the party member chosen
-  struct UiWindow *moneyWindow; ///< ShopRuntime's; not named here
+  struct UiWindow *moneyWindow; ///< ShopWork's; not named here
   struct UiWindow *mainWindow;
   /// The two panes: the member whose items are shown, and the one an item is
   /// given to.
@@ -77,44 +77,43 @@ struct InventoryMenuState {
   u8 listMode; ///< the command chosen last (ItemMenuCommand); 0xff for none
   u8 unusedAfterListMode[2];  ///< no view of the menu work names it
   s8 selectedIndexByOwner[8]; ///< each member's entry chosen last
-  u8 mode; ///< not named through this struct; PsynergyMenuState.mode
-  u8 shopStock[0x129];  ///< ShopRuntime's stock, party and cursor; not named
-                        ///< here
+  u8 mode;             ///< not named through this struct; PsynergyMenuWork.mode
+  u8 shopStock[0x129]; ///< ShopWork's stock, party and cursor; not named
+                       ///< here
   s16 resourceSlots[2]; ///< VRAM cache slots of two arrow pictures
 };
 
-STATIC_ASSERT(offsetof(struct InventoryMenuState, paneIcons) == 0x14);
-STATIC_ASSERT(offsetof(struct InventoryMenuState, paneIndex) == 0x1c);
-STATIC_ASSERT(offsetof(struct InventoryMenuState, paneCount) == 0x1e);
-STATIC_ASSERT(offsetof(struct InventoryMenuState, itemWindow) == 0x20);
-STATIC_ASSERT(offsetof(struct InventoryMenuState, infoWindow) == 0x2c);
-STATIC_ASSERT(offsetof(struct InventoryMenuState, gridCursor) == 0x44);
-STATIC_ASSERT(offsetof(struct InventoryMenuState, entryIcons) == 0x48);
-STATIC_ASSERT(offsetof(struct InventoryMenuState, categoryIcons) == 0xc8);
-STATIC_ASSERT(offsetof(struct InventoryMenuState, messageWindow) == 0x10c);
-STATIC_ASSERT(offsetof(struct InventoryMenuState, selectedColumn) == 0x110);
-STATIC_ASSERT(offsetof(struct InventoryMenuState, selectedRow) == 0x111);
-STATIC_ASSERT(offsetof(struct InventoryMenuState, columnCount) == 0x112);
-STATIC_ASSERT(offsetof(struct InventoryMenuState, rowCount) == 0x113);
-STATIC_ASSERT(offsetof(struct InventoryMenuState, ownerObjects) == 0x114);
-STATIC_ASSERT(offsetof(struct InventoryMenuState, ownerX) == 0x134);
-STATIC_ASSERT(offsetof(struct InventoryMenuState, ownerY) == 0x144);
-STATIC_ASSERT(offsetof(struct InventoryMenuState, ownerScale) == 0x154);
-STATIC_ASSERT(offsetof(struct InventoryMenuState, selectedSlots) == 0x174);
-STATIC_ASSERT(offsetof(struct InventoryMenuState, selectedItems) == 0x178);
-STATIC_ASSERT(offsetof(struct InventoryMenuState, cursor) == 0x17c);
-STATIC_ASSERT(offsetof(struct InventoryMenuState, items) == 0x1c8);
-STATIC_ASSERT(offsetof(struct InventoryMenuState, ownerIds) == 0x208);
-STATIC_ASSERT(offsetof(struct InventoryMenuState, itemCount) == 0x218);
-STATIC_ASSERT(offsetof(struct InventoryMenuState, paneOwner) == 0x21a);
-STATIC_ASSERT(offsetof(struct InventoryMenuState, selectedItemIcon) == 0x21c);
-STATIC_ASSERT(offsetof(struct InventoryMenuState, messageOffset) == 0x25a);
-STATIC_ASSERT(offsetof(struct InventoryMenuState, equipPreview) == 0x25c);
-STATIC_ASSERT(offsetof(struct InventoryMenuState, selectedIndexByOwner) ==
-              0x260);
-STATIC_ASSERT(offsetof(struct InventoryMenuState, mode) == 0x268);
-STATIC_ASSERT(offsetof(struct InventoryMenuState, resourceSlots) == 0x392);
-STATIC_ASSERT(sizeof(struct InventoryMenuState) == 0x398);
+STATIC_ASSERT(offsetof(struct ItemMenuWork, paneIcons) == 0x14);
+STATIC_ASSERT(offsetof(struct ItemMenuWork, paneIndex) == 0x1c);
+STATIC_ASSERT(offsetof(struct ItemMenuWork, paneCount) == 0x1e);
+STATIC_ASSERT(offsetof(struct ItemMenuWork, itemWindow) == 0x20);
+STATIC_ASSERT(offsetof(struct ItemMenuWork, infoWindow) == 0x2c);
+STATIC_ASSERT(offsetof(struct ItemMenuWork, gridCursor) == 0x44);
+STATIC_ASSERT(offsetof(struct ItemMenuWork, entryIcons) == 0x48);
+STATIC_ASSERT(offsetof(struct ItemMenuWork, categoryIcons) == 0xc8);
+STATIC_ASSERT(offsetof(struct ItemMenuWork, messageWindow) == 0x10c);
+STATIC_ASSERT(offsetof(struct ItemMenuWork, selectedColumn) == 0x110);
+STATIC_ASSERT(offsetof(struct ItemMenuWork, selectedRow) == 0x111);
+STATIC_ASSERT(offsetof(struct ItemMenuWork, columnCount) == 0x112);
+STATIC_ASSERT(offsetof(struct ItemMenuWork, rowCount) == 0x113);
+STATIC_ASSERT(offsetof(struct ItemMenuWork, ownerObjects) == 0x114);
+STATIC_ASSERT(offsetof(struct ItemMenuWork, ownerX) == 0x134);
+STATIC_ASSERT(offsetof(struct ItemMenuWork, ownerY) == 0x144);
+STATIC_ASSERT(offsetof(struct ItemMenuWork, ownerScale) == 0x154);
+STATIC_ASSERT(offsetof(struct ItemMenuWork, selectedSlots) == 0x174);
+STATIC_ASSERT(offsetof(struct ItemMenuWork, selectedItems) == 0x178);
+STATIC_ASSERT(offsetof(struct ItemMenuWork, cursor) == 0x17c);
+STATIC_ASSERT(offsetof(struct ItemMenuWork, items) == 0x1c8);
+STATIC_ASSERT(offsetof(struct ItemMenuWork, ownerIds) == 0x208);
+STATIC_ASSERT(offsetof(struct ItemMenuWork, itemCount) == 0x218);
+STATIC_ASSERT(offsetof(struct ItemMenuWork, paneOwner) == 0x21a);
+STATIC_ASSERT(offsetof(struct ItemMenuWork, selectedItemIcon) == 0x21c);
+STATIC_ASSERT(offsetof(struct ItemMenuWork, messageOffset) == 0x25a);
+STATIC_ASSERT(offsetof(struct ItemMenuWork, equipPreview) == 0x25c);
+STATIC_ASSERT(offsetof(struct ItemMenuWork, selectedIndexByOwner) == 0x260);
+STATIC_ASSERT(offsetof(struct ItemMenuWork, mode) == 0x268);
+STATIC_ASSERT(offsetof(struct ItemMenuWork, resourceSlots) == 0x392);
+STATIC_ASSERT(sizeof(struct ItemMenuWork) == 0x398);
 
 /// The item command grid, by row * 3 + column: Use, Equip and Details on top,
 /// Give, Remove and Drop below (ItemMenu_ChooseCommand).

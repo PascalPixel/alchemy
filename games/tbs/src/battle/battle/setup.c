@@ -23,7 +23,7 @@ void BattlePresentation_UpdateCamera(void) {
 #ifdef UBFIX
   struct BattleCamera *camera = gCameraWork;
   struct BattlePresentationTransition *transition =
-      WORK_SLOT(HEAP_SLOT_BATTLE_BACKGROUND);
+      HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_BACKGROUND);
   struct BattleWork *battle = gBattleWork;
 #else
   void **slot = (void **)&gCameraWork;

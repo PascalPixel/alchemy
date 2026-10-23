@@ -582,10 +582,10 @@ static void EventScript_DemonstratePsynergy(void) {
     // "...with just the two of you?", three or four: the flag numbered for a
     // character is set once that character has joined.
     if (Engine_GameFlagIsSet(FLAG_IN_PARTY(IVAN)) != 0) {
-      gEventWork->message++;
+      gFieldWork->message++;
     }
     if (Engine_GameFlagIsSet(FLAG_IN_PARTY(MIA)) != 0) {
-      gEventWork->message++;
+      gFieldWork->message++;
     }
     Engine_ScriptOpenMessage(LOCALID_STRONGMAN_SHOWING_PSYNERGY, 0);
     if (Engine_ScriptChooseYesNo(LOCALID_PARTY_LEADER, 0) == 0) {
@@ -628,7 +628,7 @@ static void EventScript_DemonstratePsynergy(void) {
     }
     // End the display and restore the strongman's ordinary appearance.
     Engine_AudioPlayCue(AUDIO_CUE_FADE_SLOT3);
-    Scheduler_RemoveCallback(ValeGate_UpdateShowingStrongmanPsynergy);
+    Task_Remove(ValeGate_UpdateShowingStrongmanPsynergy);
     Engine_TaskWait(1);
     Map_EndCutscenePsynergy();
     Engine_ObjectEventSetChildValue(LOCALID_STRONGMAN_SHOWING_PSYNERGY, 0);
@@ -655,7 +655,7 @@ static void EventScript_AskAboutJourney(void) {
     if (Engine_ScriptChooseYesNo(LOCALID_PARTY_LEADER, 0) == 1) {
       Engine_ScriptShowMessage(LOCALID_AFTER_KALAY_CURIOUS_OLD_MAN, 0);
     } else {
-      struct EventWork *work = gEventWork;
+      struct EventWork *work = gFieldWork;
 
       work->message++;
       Engine_ScriptAskYesNo(LOCALID_AFTER_KALAY_CURIOUS_OLD_MAN, 0);
@@ -743,10 +743,10 @@ static void EventScript_BoyLiftsSmallRock(void) {
     Engine_TaskWait(1);
   }
   rock->motionFlags = savedMotionFlags;
-  Scheduler_RemoveCallback(ValeGate_UpdateRockLiftingBoyPsynergy);
-  Scheduler_RemoveCallback(ValeGate_UpdateSmallRockPalette);
+  Task_Remove(ValeGate_UpdateRockLiftingBoyPsynergy);
+  Task_Remove(ValeGate_UpdateSmallRockPalette);
   Engine_TaskWait(1);
-  Script_PlayCue(SE_161);
+  Script_PlaySong(SE_161);
   ObjectEvent_SetChildValue(LOCALID_STORM_ROCK_LIFTING_BOY, 0);
   ObjectEvent_SetChildValue(LOCALID_STORM_SMALL_ROCK, 0);
   Engine_ScriptWait(40);
@@ -835,7 +835,7 @@ static void EventScript_PsynergyStoneIsGone(void) {
 /// Opens a door's map grid cells and sends the leader through its threshold.
 static inline void EventScript_OpenDoorAndWalkThrough(s32 cellX, s32 cellZ,
                                                       s32 x, s32 z) {
-  Script_PlayCue(SE_DOOR_OPEN);
+  Script_PlaySong(SE_DOOR_OPEN);
   MapGrid_AnimateCells(gValeGate_DoorOpens, cellX, cellZ);
   ObjectEvent_WalkTo(LOCALID_PARTY_LEADER, x, z);
 }
@@ -858,7 +858,7 @@ static void EventScript_OpenNorthwestDoor(void) {
 /// Reached by walking north into metatile behavior 2 after Kalay; the other
 /// tables have no such door.
 static void EventScript_OpenNortheastDoor(void) {
-  Script_PlayCue(SE_188);
+  Script_PlaySong(SE_188);
   MapGrid_CopyCellsTo(0, 63, 51, 8, 2, 2);
   Engine_TaskWait(10);
   MapGrid_CopyCellsTo(2, 63, 51, 8, 2, 2);
@@ -1010,10 +1010,10 @@ s32 ValeGate_Initialize(void) {
       if (flag != 0) {
         Engine_ObjectEventSetPosition(LOCALID_STORM_FIRST_AIDE, 0, 0);
         Engine_ObjectEventSetPosition(LOCALID_STORM_SECOND_AIDE, 0, 0);
-        FieldObject_SetTargetAndCallback(LOCALID_STORM_GARETS_GRANDFATHER,
-                                         OBJ_EVENT_LINK_KEEP_MOTION |
-                                             LOCALID_PARTY_LEADER,
-                                         gValeGate_FaceTargetActions);
+        Object_SetTargetAndCallback(LOCALID_STORM_GARETS_GRANDFATHER,
+                                    OBJ_EVENT_LINK_KEEP_MOTION |
+                                        LOCALID_PARTY_LEADER,
+                                    gValeGate_FaceTargetActions);
       }
     } else {
       if (Engine_GameFlagIsSet(FLAG_VALE_PARTY_LEFT) != 0) {
@@ -1200,12 +1200,12 @@ static void EventScript_SentToAidElders(void) {
     } else {
       Engine_ObjectEventSetAnimation(LOCALID_STORM_GARETS_GRANDFATHER,
                                      ANIMATION_NOD);
-      gEventWork->message++;
+      gFieldWork->message++;
     }
     Script_ShowMessage(SPEAKER_WINDOW_ABOVE | LOCALID_STORM_GARETS_GRANDFATHER,
                        0);
     if (skipReply != 0) {
-      gEventWork->message++;
+      gFieldWork->message++;
     }
     // The rested strongman is all charged up; everyone turns to him.
     speechFlags = SPEAKER_WINDOW_ABOVE;
@@ -1272,10 +1272,10 @@ static void EventScript_SentToAidElders(void) {
     ValeGate_RejoinParty(LOCALID_STORM_GARET);
     ValeGate_RejoinParty(LOCALID_STORM_JENNA);
     ValeGate_RejoinParty(LOCALID_STORM_CHARGED_UP_STRONGMAN);
-    FieldObject_SetTargetAndCallback(LOCALID_STORM_GARETS_GRANDFATHER,
-                                     OBJ_EVENT_LINK_KEEP_MOTION |
-                                         LOCALID_PARTY_LEADER,
-                                     gValeGate_FaceTargetActions);
+    Object_SetTargetAndCallback(LOCALID_STORM_GARETS_GRANDFATHER,
+                                OBJ_EVENT_LINK_KEEP_MOTION |
+                                    LOCALID_PARTY_LEADER,
+                                gValeGate_FaceTargetActions);
     Engine_GameFlagSet(FLAG_VALE_STORM_SENT_TO_AID_ELDERS);
     Engine_ScriptEnd();
   }
@@ -1434,9 +1434,9 @@ static void ValeGate_FightTravelers(void) {
   ValeGate_FaceDirectionAndWait(LOCALID_SECOND_TRAVELER, westFacing, 20);
   Engine_ObjectEventRunRepeatedMotion(LOCALID_STORM_GARET, 2);
   EventScript_SayThenWait(SPEAKER_PORTRAIT_LEFT | LOCALID_STORM_GARET, 10);
-  FieldObject_SetTargetAndCallback(
-      LOCALID_PARTY_LEADER, OBJ_EVENT_LINK_KEEP_MOTION | LOCALID_STORM_GARET,
-      gValeGate_FaceTargetActions);
+  Object_SetTargetAndCallback(LOCALID_PARTY_LEADER,
+                              OBJ_EVENT_LINK_KEEP_MOTION | LOCALID_STORM_GARET,
+                              gValeGate_FaceTargetActions);
   ObjectEvent_WalkToAndWait(LOCALID_STORM_GARET, 93, 361);
   ValeGate_FaceDirectionAndWait(LOCALID_STORM_GARET, northNortheastFacing, 40);
   EventScript_SayThenWait(LOCALID_STORM_GARET, 20);
@@ -1525,7 +1525,7 @@ static void EventScript_TravelersLeaveAfterBattle(void) {
   objectEvent = ObjectEvent_GetById(LOCALID_STORM_GARET);
   Engine_ObjectEventSetSpriteFlags(objectEvent, 0);
   {
-    struct EventWork *work = gEventWork;
+    struct EventWork *work = gFieldWork;
 
     work->startTransition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   }
@@ -1570,7 +1570,7 @@ static void EventScript_TravelersLeaveAfterBattle(void) {
   Engine_TaskWait(20);
   FieldEffect_StopLightning();
   Engine_ScriptWait(40);
-  gEventWork->transitionFrames = 120;
+  gFieldWork->transitionFrames = 120;
   Engine_ScriptCloseScreen();
   Engine_ScriptWaitForScreen();
   Engine_GameFlagClear(FLAG_VALE_STORM);
@@ -1671,12 +1671,12 @@ static void EventScript_DepartForQuest(void) {
                               gValeGate_FarewellDogActions);
   Engine_ScriptWait(40);
   faceActions = gValeGate_FaceTargetActions;
-  FieldObject_SetTargetAndCallback(
-      LOCALID_FAREWELL_FIRST_CHILD,
-      OBJ_EVENT_LINK_KEEP_MOTION | LOCALID_FAREWELL_DOG, faceActions);
-  FieldObject_SetTargetAndCallback(
-      LOCALID_FAREWELL_SECOND_CHILD,
-      OBJ_EVENT_LINK_KEEP_MOTION | LOCALID_FAREWELL_DOG, faceActions);
+  Object_SetTargetAndCallback(LOCALID_FAREWELL_FIRST_CHILD,
+                              OBJ_EVENT_LINK_KEEP_MOTION | LOCALID_FAREWELL_DOG,
+                              faceActions);
+  Object_SetTargetAndCallback(LOCALID_FAREWELL_SECOND_CHILD,
+                              OBJ_EVENT_LINK_KEEP_MOTION | LOCALID_FAREWELL_DOG,
+                              faceActions);
   ObjectEvent_RefreshSelectorById(LOCALID_FAREWELL_DOG);
   Engine_ObjectEventStop(LOCALID_FAREWELL_FIRST_CHILD);
   Engine_ObjectEventStop(LOCALID_FAREWELL_SECOND_CHILD);
@@ -2016,7 +2016,7 @@ static void EventScript_DepartForQuest(void) {
   ObjectEvent_SetSpeed(GARET, PIXELS(4) / 5, PIXELS(2) / 5);
   ObjectEvent_SetActionScript(GARET, departureActions);
   Engine_ScriptWait(60);
-  work = gEventWork;
+  work = gFieldWork;
   work->startTransition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   work->transitionFrames = 60;
   Engine_ScriptCloseScreen();
@@ -2081,7 +2081,7 @@ static void ValeGate_SpawnEffectPair(struct ObjectEvent *parent) {
   struct ObjectEvent *pair[2];
   struct ObjectEvent *child;
   struct AnimationObject *sprite;
-  struct FieldEffectWork *effectWork = gEffectWork;
+  struct FieldEffectWork *effectWork = gFieldEffectWork;
   s32 i;
 
   Engine_AudioPlayCue(SE_131);

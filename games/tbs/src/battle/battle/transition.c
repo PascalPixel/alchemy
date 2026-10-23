@@ -134,9 +134,10 @@ void BattlePresentation_UpdateHBlankScroll(void) {
   struct BattleAffineHdma *scanlines;
   u16 *line;
 
-  if (((struct BattleBackgroundView *)WORK_SLOT(HEAP_SLOT_BATTLE_BACKGROUND))
+  if (((struct BattleBackgroundView *)HEAP_SLOT_BLOCK(
+           HEAP_SLOT_BATTLE_BACKGROUND))
           ->mode == BATTLE_BACKGROUND_PLANE) {
-    scanlines = WORK_SLOT(HEAP_SLOT_BATTLE_SCANLINES);
+    scanlines = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_SCANLINES);
     line = scanlines->lines[scanlines->page];
     Io_Write16(line[0], &REG_BG2CNT);
     Dma_Set(line + 1, (void *)&REG_BG2CNT, DMA_HBLANK_HALFWORD_PER_LINE,
@@ -148,11 +149,11 @@ void BattlePresentation_UpdateHBlankScroll(void) {
 
 /// Copies one of eight curtain tiles from gBattlePresentation_TileVariants into
 /// CURTAIN_TILE(0), a new one every four frames while the transition timer
-/// (gDisp) runs from 1 to 32.
+/// (gBattleEntryTimer) runs from 1 to 32.
 /// XXX: no code in TBS names it; a scheduler or table entry that reaches it
 /// would show which transition used it.
 void BattlePresentation_UploadTileVariant(void) {
-  u32 variant = *gDisp - 1;
+  u32 variant = *gBattleEntryTimer - 1;
   if (variant <= 31)
     Dma_Set(gBattlePresentation_TileVariants + (variant >> 2) * 32,
             CURTAIN_TILE(0), DMA_COPY_WORDS(8), REG_DMA3);
@@ -163,7 +164,7 @@ void BattlePresentation_UploadTileVariant(void) {
 /// YAW_PARTY_TURN and zooms it from 180 to 100 percent.
 /// Runs each frame as a scheduler callback added by
 /// BattlePresentation_RunEntryTransition, which removes it once the encounter
-/// is announced. Advances the timer in gDisp's slot
+/// is announced. Advances the timer in gBattleEntryTimer's slot
 /// (HEAP_SLOT_BATTLE_ENTRY_TIMER), and writes gBgScroll[0].y and the camera's
 /// yaw.
 void BattlePresentation_AdvanceTransitionTimer(void) {
@@ -174,7 +175,7 @@ void BattlePresentation_AdvanceTransitionTimer(void) {
   u32 frame;
   u32 next;
 
-  timer = *(u32 **)Ram_Disp;
+  timer = *(u32 **)Ram_BattleEntryTimer;
   frame = *timer;
   camera = *(struct BattleCamera **)Ram_CameraWork;
   scroll = 0x34 - frame;
@@ -199,8 +200,8 @@ void BattlePresentation_AdvanceTransitionTimer(void) {
 /// from row 13 to row 4 and its vertically flipped twin down to row 20, the
 /// row's tile stepping through CURTAIN_TILE(1) to (8), the last one clear.
 /// Runs each frame as a scheduler callback added by
-/// BattlePresentation_RunEntryTransition, reading the frame from gDisp's timer;
-/// writes BG1's map in screen block 12.
+/// BattlePresentation_RunEntryTransition, reading the frame from
+/// gBattleEntryTimer's timer; writes BG1's map in screen block 12.
 void BattlePresentation_DrawTransitionRows(void) {
   u32 column;
   s32 transitionFrame;
@@ -209,7 +210,7 @@ void BattlePresentation_DrawTransitionRows(void) {
   u32 tileRow;
   u16 *tilemap;
 
-  transitionFrame = *gDisp;
+  transitionFrame = *gBattleEntryTimer;
   if (transitionFrame >= 0 && transitionFrame <= 79) {
     tileEntry = (7 & transitionFrame) + 0xf081;
     // transitionFrame / 8 as signed division rounds it; the frame is never
@@ -289,8 +290,8 @@ void BattlePresentation_RunEntryTransition(s32 enemyCount, s32 encounterId) {
   u16 *visibleUnits;
   s32 visibleCount;
 
-  view = WORK_SLOT(HEAP_SLOT_BATTLE_BACKGROUND);
-  timer = Runtime_AllocateHeapBlock(HEAP_SLOT_BATTLE_ENTRY_TIMER, 4);
+  view = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_BACKGROUND);
+  timer = AllocHeapSlot(HEAP_SLOT_BATTLE_ENTRY_TIMER, 4);
   if (encounterId != TRANSITION_STORM_FORMATION) {
     // The curtain: its seven edge tiles, and the display off while BG1 is
     // set up.
@@ -364,10 +365,8 @@ void BattlePresentation_RunEntryTransition(s32 enemyCount, s32 encounterId) {
       // VBlank pass (0x480).
       BattlePresentation_SetupTransitionView(0, 0, 0, 180);
       *timer = start;
-      Scheduler_AddOrUpdateCallback(BattlePresentation_AdvanceTransitionTimer,
-                                    3200);
-      Scheduler_AddOrUpdateCallback(BattlePresentation_DrawTransitionRows,
-                                    0x480);
+      Task_Add(BattlePresentation_AdvanceTransitionTimer, 3200);
+      Task_Add(BattlePresentation_DrawTransitionRows, 0x480);
       Runtime_SetIrqHandler(IRQ_VCOUNT, 32, Graphics_ClearBg0Vofs);
       gBgScroll[0].y = 32;
       WaitFrames(1);
@@ -379,15 +378,15 @@ void BattlePresentation_RunEntryTransition(s32 enemyCount, s32 encounterId) {
       IoWriteQueue_ClearBits16((u32)&REG_BG0CNT, 2);
       IoWriteQueue_SetBits16((u32)&REG_BG0CNT, 0);
       BattleIntro_AnnounceEncounter(enemyCount);
-      Scheduler_RemoveCallback(BattlePresentation_AdvanceTransitionTimer);
-      Scheduler_RemoveCallback(BattlePresentation_DrawTransitionRows);
+      Task_Remove(BattlePresentation_AdvanceTransitionTimer);
+      Task_Remove(BattlePresentation_DrawTransitionRows);
       gBgScroll[0].y = start;
       Runtime_SetIrqHandler(IRQ_VCOUNT, 0, 0);
     }
   } else {
     // The storm: every unit but the Fusion Dragon drawn at 0.7
     // scale (16.16), the display blank but for the windows.
-    battle = WORK_SLOT(HEAP_SLOT_BATTLE);
+    battle = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE);
     view->secondMode = BATTLE_BACKGROUND_FLAT;
     view->busy = 0;
     count = BattleParty_ListActorIds(BATTLE_SIDE_BOTH, (u16 *)unitIds);
@@ -460,7 +459,7 @@ void BattlePresentation_RunEntryTransition(s32 enemyCount, s32 encounterId) {
   gBgScroll[1].x = 8;
   REG_DISPCNT = DISPCNT_MODE_1 | DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON |
                 DISPCNT_BG2_ON | DISPCNT_OBJ_ON;
-  Runtime_ReleaseHeapBlock(HEAP_SLOT_BATTLE_ENTRY_TIMER);
+  FreeHeapSlot(HEAP_SLOT_BATTLE_ENTRY_TIMER);
 }
 
 #undef TRANSITION_CURTAIN_ENTRY

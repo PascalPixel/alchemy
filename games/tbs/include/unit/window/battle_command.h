@@ -47,36 +47,38 @@ void PartyStatus_Close(void);
 void UiWindow_SetTileAttributeBitRect(const struct UiWindow *window, s32 x,
                                       s32 y, s32 width, s32 height, u32 set);
 
-struct SaveSummary;
+struct SaveFileSummary;
 
 void *Text_FormatPlayTime(s32 value, u8 *out);
-u32 SaveState_FindFreeSummarySlot(void);
-s32 SaveState_CountRecordsExcludingFlagged(s32 flag);
-s32 SaveState_ScanRecordFlags(void);
-u32 SaveState_BuildSummaryHeader(void);
-s16 SaveState_WriteCurrentSlotPair(void);
-s32 SaveState_WriteSlotPair(s32 arg0);
-s32 SaveState_ProcessSelectedSlot(void);
-s32 SaveState_ConfirmAndProcessSelectedSlot(void);
-s32 SaveState_CopySlotPair(void);
-s32 SaveState_DeleteSelectedSlot(void);
+u32 Save_FindFreeFile(void);
+s32 Save_CountRecordsExcludingFlagged(s32 flag);
+s32 Save_ScanRecordFlags(void);
+u32 Save_BuildFileSummary(void);
+s16 Save_WriteCurrentFile(void);
+s32 Save_WriteFile(s32 arg0);
+s32 Save_ProcessSelectedFile(void);
+s32 Save_ConfirmAndProcessSelectedFile(void);
+s32 Save_CopyFile(void);
+s32 Save_EraseSelectedFile(void);
 void PaletteGlow_UpdateSine(void);
 void PaletteGlow_Start(void);
 void PaletteGlow_Stop(void);
 void UiWindow_FillTilemapRect(struct UiWindow *window, s32 x, s32 y, s32 width,
                               s32 height);
 void SaveMenu_ShowPartySprites(struct UiWindow *origin, s32 x, s32 y,
-                               struct SaveSummary *descriptor);
+                               struct SaveFileSummary *descriptor);
 void SaveMenu_HidePartySprites(void);
 void SaveMenu_PlacePartySprites(void);
 void SaveMenu_ShowDjinnSprites(struct UiWindow *origin, s32 x, s32 y);
 void SaveMenu_HideDjinnSprites(void);
 void SaveMenu_PlaceDjinnSprites(void);
-void SaveMenu_DrawDjinnCounts(struct UiWindow *win, struct SaveSummary *row);
-void SaveMenu_DrawFileSummary(struct UiWindow *win, struct SaveSummary *rec);
+void SaveMenu_DrawDjinnCounts(struct UiWindow *win,
+                              struct SaveFileSummary *row);
+void SaveMenu_DrawFileSummary(struct UiWindow *win,
+                              struct SaveFileSummary *rec);
 s32 SaveMenu_SelectSlot(s32 file, s32 mode);
 s32 SaveMenu_WriteSelectedSlot(void);
-s32 SaveState_LoadRecordIntoWork(s32 mode);
+s32 Save_LoadRecordIntoWork(s32 mode);
 s32 Resource_LoadFixedBlockBIntoFreeSlot(void);
 s32 NameEntry_AcceptsMark(s32 mark, s32 letter);
 s32 NameEntry_CountLetters(const u8 *name);

@@ -116,17 +116,17 @@ void BattleEffect_RunRushingStrike(struct BattleEffectArgument *effect,
 
   // The top half, and the bottom half flipped; mirrored on side 1.
   if (work->effect->side == 0) {
-    EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER, EFFECT_CLIP_BOUNDS, COMPOSITE_MAX);
-    EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER_ALTERNATE,
+    EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, COMPOSITE_MAX);
+    EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
                         EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_Y, COMPOSITE_MAX);
   } else {
-    EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER,
+    EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
                         EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, COMPOSITE_MAX);
-    EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER_ALTERNATE,
+    EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
                         EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP, COMPOSITE_MAX);
   }
-  draw[0] = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER];
-  draw[1] = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE];
+  draw[0] = (DrawRectangle)gHeapSlots[HEAP_SLOT_RAM_CODE];
+  draw[1] = (DrawRectangle)gHeapSlots[HEAP_SLOT_RAM_CODE_2];
 
   // Pictures and palette: the ring is the yellow orb packed to half width,
   // six 20x48 pictures, into the map grid cell buffer, so that the blue burst

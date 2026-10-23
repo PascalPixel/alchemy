@@ -6,7 +6,7 @@
 
 #ifndef UBFIX
 /// The work slots from the window work's onward, seen as the window work and,
-/// twelve slots on, the event work in HEAP_SLOT_EVENT.
+/// twelve slots on, the event work in HEAP_SLOT_FIELD.
 struct WorkPointers {
   u8 *window;
   u8 *slotsBetween[11]; ///< the eleven work slots after the window work's
@@ -40,7 +40,7 @@ struct UiWindow *UiText_OpenMessageAtObject(s32 localId, s32 unused) {
   s32 portrait;
   s32 flags;
   s32 message;
-  struct ObjectRuntime *object;
+  struct Object *object;
   s32 x;
   s32 y;
   s32 found;
@@ -51,10 +51,10 @@ struct UiWindow *UiText_OpenMessageAtObject(s32 localId, s32 unused) {
 
   win = (struct UiRenderWork *)gWindowWork[0];
   // UB: the fabricated WorkPointers aggregate reaches from the window slot
-  // into HEAP_SLOT_EVENT. Its named load adds eight bytes in native EN
+  // into HEAP_SLOT_FIELD. Its named load adds eight bytes in native EN
   // (0x344 to 0x34c).
 #ifdef UBFIX
-  work = (struct FieldWork *)gEventWork;
+  work = (struct FieldWork *)gFieldWork;
 #else
   work = (struct FieldWork *)((struct WorkPointers *)gWindowWork)->event;
 #endif
@@ -75,7 +75,7 @@ struct UiWindow *UiText_OpenMessageAtObject(s32 localId, s32 unused) {
   if (work->fastForward == 0) {
     // Find the speaker on screen, in 8-pixel tiles.
     if (object != 0) {
-      if (work->mode == MODE_WORLD_MAP) {
+      if (work->mode == OBJECT_SYSTEM_WORLD_MAP) {
         Render_ProjectPoint(&object->x, pos);
         x = pos[0] >> 3;
         y = pos[1] >> 3;
@@ -92,7 +92,7 @@ struct UiWindow *UiText_OpenMessageAtObject(s32 localId, s32 unused) {
     } else if (localId <= 7) {
       sprite = localId;
       object = ObjectTable_Get(gGameState.selectedLocalId);
-      if (work->mode == MODE_WORLD_MAP) {
+      if (work->mode == OBJECT_SYSTEM_WORLD_MAP) {
         Render_ProjectPoint(&object->x, pos);
         x = pos[0] >> 3;
         y = pos[1] >> 3;
@@ -263,7 +263,7 @@ struct UiWindow *UiText_OpenMessageAtObject(s32 localId, s32 unused) {
 /// message test call it too.
 void FieldScript_ShowMessageAndWait(s32 localId, s32 flags) {
   s32 member;
-  struct FieldWork *runtime = (struct FieldWork *)gEventWork;
+  struct FieldWork *runtime = (struct FieldWork *)gFieldWork;
   struct UiWindow *window = UiText_OpenMessageAtObject(localId, flags);
   s32 sprite;
   u32 frames;
@@ -319,10 +319,10 @@ s32 FieldScript_AskYesNoAndShowResponse(s32 localId, s32 flags) {
       FieldScript_AskYesNoWithObjectEventAnimation(save->selectedLocalId, 0);
   if (answer == 0) {
     FieldScript_ShowMessageAndWait(localId, flags);
-    runtime = (struct FieldWork *)gEventWork;
+    runtime = (struct FieldWork *)gFieldWork;
     runtime->message += 1;
   } else {
-    runtime = (struct FieldWork *)gEventWork;
+    runtime = (struct FieldWork *)gFieldWork;
     runtime->message += 1;
     FieldScript_ShowMessageAndWait(localId, flags);
   }
@@ -342,13 +342,13 @@ void FieldScript_ShowSpeakerMessage(s32 speaker) {
   // BUG: the native lookup discards its result and leaves pos unset.
 #ifdef UBFIX
   s32 pos[3];
-  struct ObjectRuntime *object;
+  struct Object *object;
 #else
   struct {
     s32 x, y;
   } pos;
 #endif
-  struct FieldWork *state = (struct FieldWork *)gEventWork;
+  struct FieldWork *state = (struct FieldWork *)gFieldWork;
 
   speaker &= 0xfff;
 #ifdef UBFIX
@@ -371,11 +371,10 @@ void FieldScript_ShowSpeakerMessage(s32 speaker) {
     // A missing object event or failed projection has no position to open
     // around; still consume the message, as the fast-forward path does.
     if (object != NULL) {
-      if (state->mode == MODE_WORLD_MAP)
+      if (state->mode == OBJECT_SYSTEM_WORLD_MAP)
         positionFound =
-            Render_ProjectPoint(
-                (const u8 *)object + offsetof(struct ObjectRuntime, x), pos) !=
-            0;
+            Render_ProjectPoint((const u8 *)object + offsetof(struct Object, x),
+                                pos) != 0;
       else
         positionFound = ObjectEvent_GetScreenPosition(speaker, pos) != -1;
     }
@@ -421,7 +420,7 @@ void FieldScript_ForwardShowMessageAtPosition(s32 unused0, s32 unused1, s32 x,
 /// script's message at (x, y), wait for it and advance the message index; its
 /// units are as unknown as FieldScript_ShowSpeakerMessage's.
 void FieldScript_ShowMessageAtPosition(s32 unused0, s32 unused1, s32 x, s32 y) {
-  struct FieldWork *state = (struct FieldWork *)gEventWork;
+  struct FieldWork *state = (struct FieldWork *)gFieldWork;
   s32 py = y;
   s32 px = x;
   s32 minX = 8;
@@ -462,7 +461,7 @@ void FieldScript_ShowTwoMessagesAndWait(s32 first, s32 firstX, s32 firstY,
                                         s32 second, s32 secondX, s32 secondY,
                                         s32 secondPortraitX,
                                         s32 secondPortraitY) {
-  struct FieldWork *work = (struct FieldWork *)gEventWork;
+  struct FieldWork *work = (struct FieldWork *)gFieldWork;
   s32 firstSprite = ObjectTable_ReadActiveValue(first);
   s32 secondSprite = ObjectTable_ReadActiveValue(second);
   s32 firstWindow;

@@ -137,8 +137,8 @@ last entry, 0, fades the screen to black. They run at the end of the game:
 1. the ending sends the party to the title screen's [warp destination](../../glossary.md#warp-destination)
    `TITLE_FROM_LEMURIAN_SHIP`, with `MUS_ENDING` playing;
 2. `Title_Run` calls the credits through the scroll bank's [far-call](../../glossary.md#far-call) table,
-   as `ScrollFar_Entry00`;
-3. after them the game goes on to `MapId_Clear`, the file select screen.
+   as `CreditsFar_Entry00`;
+3. after them the game goes on to `MapId_MainMenu`, the file select screen.
 
 The two halves split the 256-colour background tile memory and the
 background palette. `BG3` draws from tiles in half 0 with colours 0 to 127,
@@ -151,7 +151,7 @@ showing, the first into half 1, steps the blend weights between `BG2` and
 `BG3` over 16 steps of 4 frames, and holds. The halves alternate from one
 backdrop to the next, so a backdrop is never loaded while it is shown.
 `Tile_ExpandSlide` unpacks the tiles, running from a copy of the decoder
-loaded into the [heap slot](../../glossary.md#heap-slot) `HEAP_SLOT_TEMP_RENDERER` and released after each
+loaded into the [heap slot](../../glossary.md#heap-slot) `HEAP_SLOT_RAM_CODE_TEMP` and released after each
 load, and the colours reach palette RAM through the I/O
 write queue at the next VBlank. Every fourth frame a VBlank [task](../../glossary.md#task) moves both
 backdrops a pixel right; a picture is as wide as its map, 256 pixels, so it

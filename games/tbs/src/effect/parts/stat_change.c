@@ -115,7 +115,7 @@ void BattleEffect_RunStatBoost(struct BattleEffectArgument *effect, u32 mode) {
   s32 originX;
   s32 originY;
 
-  cursor = gBattleEffectWork;
+  cursor = gBattleAnimWork;
   EFFECT_GET_WORK_AND_CANVAS(cursor, work, canvas);
   work->effect = effect;
   BattleEffect_StartCanvasLayer(0);
@@ -216,16 +216,15 @@ void BattleEffect_RunStatBoost(struct BattleEffectArgument *effect, u32 mode) {
   // Each transfer keeps half of every level, so the flares leave trails.
   work->transferMode = CANVAS_COPY_AND_FADE;
   work->transferValue = 50;
-  Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer,
-                                EFFECT_CALLBACK_ORDER);
+  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, EFFECT_CALLBACK_ORDER);
   if (work->effect->side == 1)
     drawFlags = EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X;
   else
     drawFlags = EFFECT_CLIP_BOUNDS;
-  AudioCommand_PlayFar(SE_142);
+  Sound_PlaySongFar(SE_142);
 
   for (frame = 0; frame != work->effect->count * 8 + 108; frame++) {
-    struct BattleCamera *camera = WORK_SLOT(HEAP_SLOT_CAMERA);
+    struct BattleCamera *camera = HEAP_SLOT_BLOCK(HEAP_SLOT_CAMERA);
 
     // The battle plays its messages from frame 80, as the first target's
     // picture appears.
@@ -240,12 +239,12 @@ void BattleEffect_RunStatBoost(struct BattleEffectArgument *effect, u32 mode) {
           ((Trig_Sin(frame << 11) * 20) >> 16) + originX + canvasShiftX - 20;
       s32 y = ((Trig_Cos(frame << 11) * 4) >> 16) + originY - 24;
 
-      EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER, drawFlags ^ COMPOSITE_FLIP_X,
+      EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, drawFlags ^ COMPOSITE_FLIP_X,
                           COMPOSITE_MAX);
-      draw[0] = gWorkSlot[HEAP_SLOT_BLITTER];
-      EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER_ALTERNATE,
-                          drawFlags ^ COMPOSITE_FLIP_X, COMPOSITE_ADDITIVE);
-      draw[1] = gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE];
+      draw[0] = gHeapSlots[HEAP_SLOT_RAM_CODE];
+      EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, drawFlags ^ COMPOSITE_FLIP_X,
+                          COMPOSITE_ADDITIVE);
+      draw[1] = gHeapSlots[HEAP_SLOT_RAM_CODE_2];
       if (frame > 32)
         y = y - frame * 2 + 64;
       draw[0](canvas, work->sheet + STAT_BOOST_DJINNI, x, y, 40, 40);
@@ -262,7 +261,7 @@ void BattleEffect_RunStatBoost(struct BattleEffectArgument *effect, u32 mode) {
           BattleUnit_GetEffectHeightFar(work->effect->actors[member]) * 2 / 3;
 
       if (frame == member * 8 + 80)
-        AudioCommand_PlayFar(SE_212);
+        Sound_PlaySongFar(SE_212);
       EFFECT_VIEW_FROM_CAMERA(camera);
       // Centre on two thirds of the target's height.
       SET_VECTOR(point, object->x, height, object->z);
@@ -277,11 +276,11 @@ void BattleEffect_RunStatBoost(struct BattleEffectArgument *effect, u32 mode) {
       // by pitch, Guard not at all, Ward by yaw, the others by yaw and roll,
       // 1/64 turn a frame.
       if (frame > member * 8) {
-        EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER, drawFlags, COMPOSITE_MAX);
-        draw[0] = gWorkSlot[HEAP_SLOT_BLITTER];
-        EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER_ALTERNATE, drawFlags,
+        EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, drawFlags, COMPOSITE_MAX);
+        draw[0] = gHeapSlots[HEAP_SLOT_RAM_CODE];
+        EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, drawFlags,
                             COMPOSITE_ADDITIVE);
-        draw[1] = gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE];
+        draw[1] = gHeapSlots[HEAP_SLOT_RAM_CODE_2];
         if (mode == STAT_BOOST_IMPACT) {
           Transform_ApplyPitch(-frame << 10);
         } else if (mode == STAT_BOOST_GUARD) {
@@ -328,11 +327,11 @@ void BattleEffect_RunStatBoost(struct BattleEffectArgument *effect, u32 mode) {
       if (frame >= member * 8 + 52 && frame < member * 8 + 76) {
         s32 cell = (frame - member * 8 - 52) / 4 % 6;
 
-        EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER, drawFlags, COMPOSITE_MAX);
-        draw[0] = gWorkSlot[HEAP_SLOT_BLITTER];
+        EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, drawFlags, COMPOSITE_MAX);
+        draw[0] = gHeapSlots[HEAP_SLOT_RAM_CODE];
         draw[0](canvas, work->sheet + cell * (40 * 40) + STAT_BOOST_BURST,
                 screen.x - 20, screen.y - 20, 40, 40);
-        Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
+        FreeHeapSlot(HEAP_SLOT_RAM_CODE);
       }
 
       // The mode's picture, from frame 80.
@@ -341,33 +340,33 @@ void BattleEffect_RunStatBoost(struct BattleEffectArgument *effect, u32 mode) {
         if (frame >= member * 8 + 80 && frame < member * 8 + 108) {
           s32 cell = (frame - member * 8 - 80) / 4 % 7;
 
-          EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER, drawFlags, COMPOSITE_MAX);
-          draw[0] = gWorkSlot[HEAP_SLOT_BLITTER];
+          EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, drawFlags, COMPOSITE_MAX);
+          draw[0] = gHeapSlots[HEAP_SLOT_RAM_CODE];
           draw[0](canvas, work->sheet + cell * (24 * 40) + STAT_BOOST_PICTURE,
                   screen.x - 12, screen.y - 20, 24, 40);
-          Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
+          FreeHeapSlot(HEAP_SLOT_RAM_CODE);
         }
       } else if (mode == STAT_BOOST_GRANITE || mode == STAT_BOOST_FLASH) {
         // Six 32x64 frames, 4 frames each.
         if (frame >= member * 8 + 80 && frame < member * 8 + 104) {
           s32 cell = (frame - member * 8 - 80) / 4 % 6;
 
-          EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER, drawFlags, COMPOSITE_MAX);
-          draw[0] = gWorkSlot[HEAP_SLOT_BLITTER];
+          EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, drawFlags, COMPOSITE_MAX);
+          draw[0] = gHeapSlots[HEAP_SLOT_RAM_CODE];
           draw[0](canvas, work->sheet + cell * (32 * 64) + STAT_BOOST_PICTURE,
                   screen.x - 16, screen.y - 32, 32, 64);
-          Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
+          FreeHeapSlot(HEAP_SLOT_RAM_CODE);
         }
       } else if (mode == STAT_BOOST_ZEPHYR) {
         // 64x32 frames, 2 frames each, mirrored below into 64x64.
         if (frame >= member * 8 + 80 && frame < member * 8 + 104) {
           s32 cell = (frame - member * 8 - 80) / 2 % 6;
 
-          EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER, drawFlags, COMPOSITE_MAX);
-          draw[0] = gWorkSlot[HEAP_SLOT_BLITTER];
-          EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER_ALTERNATE,
+          EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, drawFlags, COMPOSITE_MAX);
+          draw[0] = gHeapSlots[HEAP_SLOT_RAM_CODE];
+          EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
                               drawFlags | COMPOSITE_FLIP_Y, COMPOSITE_MAX);
-          draw[1] = gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE];
+          draw[1] = gHeapSlots[HEAP_SLOT_RAM_CODE_2];
           draw[0](canvas, work->sheet + cell * (64 * 32) + STAT_BOOST_PICTURE,
                   screen.x - 32, screen.y - 24, 64, 32);
           draw[1](canvas, work->sheet + cell * (64 * 32) + STAT_BOOST_PICTURE,
@@ -379,18 +378,19 @@ void BattleEffect_RunStatBoost(struct BattleEffectArgument *effect, u32 mode) {
         if (frame >= member * 8 + 80 && frame < member * 8 + 104) {
           s32 cell = (frame - member * 8 - 80) / 4 % 6;
 
-          EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER, drawFlags, COMPOSITE_ADDITIVE);
-          draw[0] = gWorkSlot[HEAP_SLOT_BLITTER];
+          EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, drawFlags,
+                              COMPOSITE_ADDITIVE);
+          draw[0] = gHeapSlots[HEAP_SLOT_RAM_CODE];
           draw[0](canvas, work->sheet + cell * (40 * 40) + STAT_BOOST_PICTURE,
                   screen.x - 20, screen.y - 20, 40, 40);
-          Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
+          FreeHeapSlot(HEAP_SLOT_RAM_CODE);
         }
       }
     }
     EFFECT_END_FRAME(work);
   }
 
-  Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
+  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   BattleEffect_EndCanvasLayer();
 }
 
@@ -466,7 +466,7 @@ void BattleEffect_RunStatReduction(struct BattleEffectArgument *effect,
   s32 i;
   s32 paletteId;
 
-  cursor = gBattleEffectWork;
+  cursor = gBattleAnimWork;
   EFFECT_GET_WORK_AND_CANVAS(cursor, work, canvas);
   work->effect = effect;
   EFFECT_START_NARROW_CANVAS(0);
@@ -573,7 +573,7 @@ void BattleEffect_RunStatReduction(struct BattleEffectArgument *effect,
                     x - 20, y - 20, 40, 40);
         }
         if (targetFrame == 24)
-          AudioCommand_PlayFar(SE_143);
+          Sound_PlaySongFar(SE_143);
         // From frame 24 the picture breaks; the shards darken one copy
         // every 4 frames after frame 28.
         if (targetFrame >= 24 && targetFrame <= 60) {

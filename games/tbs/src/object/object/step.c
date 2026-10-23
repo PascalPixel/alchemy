@@ -17,12 +17,12 @@ struct StepOwner {
 
 /// Clears the field's twelve pending requests (see struct FieldWork).
 ///
-/// Called by Field_RunMap while it sets a map up.
+/// Called by Map_Run while it sets a map up.
 void Field_ClearRequests(void) {
   s16 noRequest;
   struct FieldWork *work;
   noRequest = 0;
-  work = (struct FieldWork *)gEventWork;
+  work = (struct FieldWork *)gFieldWork;
   work->action = noRequest;
   work->pushTile = 0;
   work->warp = 0;
@@ -40,9 +40,9 @@ void Field_ClearRequests(void) {
 /// Returns the sum of the field's twelve pending requests (counting the talk
 /// request twice): non-zero while any request is pending.
 ///
-/// Field_RunMap tests it to stop walking and to leave its request loop.
+/// Map_Run tests it to stop walking and to leave its request loop.
 s32 Field_CountRequests(void) {
-  struct FieldWork *work = (struct FieldWork *)gEventWork;
+  struct FieldWork *work = (struct FieldWork *)gFieldWork;
 
   // BUG: a sum can be 0 with requests pending. Field_ProcessStep raises event
   // FIELD_EVENT_PARTY_FELL (-1) on the frame a member falls to poison, and
@@ -69,18 +69,17 @@ s32 Field_CountRequests(void) {
 /// which match an item or Psynergy event to the tile the leader faces.
 s32 Field_GetCollisionAheadOfLeader(void) {
   struct FieldWork *work;
-  struct ObjectRuntime *leader;
+  struct Object *leader;
   struct MapGridState *gridState;
   union PolarOffsetPosition position;
   u8 *tile;
   s32 fixedX;
   s32 fixedZ;
 
-  work = WORK_SLOT(HEAP_SLOT_EVENT);
-  leader =
-      (struct ObjectRuntime *)work->objectEvents[gGameState.selectedLocalId];
+  work = HEAP_SLOT_BLOCK(HEAP_SLOT_FIELD);
+  leader = (struct Object *)work->objectEvents[gGameState.selectedLocalId];
 
-  gridState = WORK_SLOT(HEAP_SLOT_MAP_GRID);
+  gridState = HEAP_SLOT_BLOCK(HEAP_SLOT_MAP_GRID);
 
   if (leader == 0)
     return 0;
@@ -90,7 +89,7 @@ s32 Field_GetCollisionAheadOfLeader(void) {
   position.vector.z = leader->z;
   Vector_AddPolarOffset(0x100000, leader->angle, position.coordinates);
 
-  if (work->mode == MODE_WORLD_MAP) {
+  if (work->mode == OBJECT_SYSTEM_WORLD_MAP) {
     // World map metatiles are 32 pixels square, 32 to a row.
     u32 tileX;
     u32 tileY;
@@ -130,7 +129,7 @@ s32 Field_GetCollisionAheadOfLeader(void) {
 
 /// Takes the warp of the first of the map's warp regions that contains the
 /// position (x, y, z), in 16.16 pixels, and whose condition holds: records the
-/// region's warp value for Field_RunMap, plays the warp sound and starts
+/// region's warp value for Map_Run, plays the warp sound and starts
 /// leaving the map. A region's bounds are whole pixels, its maxima
 /// exclusive; a table whose first minX is -1, or no table, has no warps.
 ///
@@ -157,7 +156,7 @@ void Field_CheckWarpRegions(s32 positionX, s32 positionY, s32 positionZ) {
   fixedY = positionY;
   fixedZ = positionZ;
   region = gOverlayArea.regions();
-  if (region != 0 && (work = (struct FieldWork *)gEventWork,
+  if (region != 0 && (work = (struct FieldWork *)gFieldWork,
                       minX = region->minX, minX != -1)) {
   loop:
     minY = region->minY;
@@ -172,11 +171,11 @@ void Field_CheckWarpRegions(s32 positionX, s32 positionY, s32 positionZ) {
         fixedX >= REGION_FIXED(minX) && fixedX < REGION_FIXED(maxX) &&
         fixedZ >= REGION_FIXED(minZ) && fixedZ < REGION_FIXED(maxZ)) {
       work->warp = warpValue;
-      AudioCommand_PlayFar(SE_MAP_EXIT);
+      Sound_PlaySongFar(SE_MAP_EXIT);
       Leader_StopMoving();
       return;
     }
-    work = (struct FieldWork *)gEventWork;
+    work = (struct FieldWork *)gFieldWork;
     region++;
     minX = region->minX;
     if (minX != -1)
@@ -190,7 +189,7 @@ void Field_CheckWarpRegions(s32 positionX, s32 positionY, s32 positionZ) {
 /// poison and hazardous ground, and wears Avoid off. When this hurts the party,
 /// the leader flinches and characters who fall are listed in the field work.
 ///
-/// Called by Field_RunMap each frame while the party walks (in debug mode,
+/// Called by Map_Run each frame while the party walks (in debug mode,
 /// FLAG_DEBUG_STEPS_OFF skips it), so the counts below advance
 /// per frame. Sets work->action, input, battle, command and event
 /// (-1 when someone fell), work->currentTile and previousTile, walkingDistance,
@@ -199,11 +198,10 @@ void Field_ProcessStep(s32 layer, s32 x, s32 y, s32 z) {
   /* FAKEMATCH(wrapper): the party read through struct StepOwner, whose alias
    * set keeps the load order and the 44-byte frame; as struct BattleUnit, 2
    * of 472 instructions differ in tbs-en. */
-  struct FieldWork *work = WORK_SLOT(HEAP_SLOT_EVENT);
-  struct MapGridState *gridState = WORK_SLOT(HEAP_SLOT_MAP_GRID);
+  struct FieldWork *work = HEAP_SLOT_BLOCK(HEAP_SLOT_FIELD);
+  struct MapGridState *gridState = HEAP_SLOT_BLOCK(HEAP_SLOT_MAP_GRID);
   s32 leaderId = gGameState.selectedLocalId;
-  struct ObjectRuntime *leader =
-      (struct ObjectRuntime *)work->objectEvents[leaderId];
+  struct Object *leader = (struct Object *)work->objectEvents[leaderId];
   s16 previousHp[8];
   struct MapGridCell *tile;
 #ifdef UBFIX
@@ -233,7 +231,7 @@ void Field_ProcessStep(s32 layer, s32 x, s32 y, s32 z) {
   for (i = 0; i < partyCount; i++)
     previousHp[i] = Unit_GetFar(gGameState.activeOwners[i])->hp;
 
-  if (work->mode == MODE_WORLD_MAP) {
+  if (work->mode == OBJECT_SYSTEM_WORLD_MAP) {
     tile = &((struct MapGridCell *)Ram_Metatiles)[((x / 0x200000) & 31) +
                                                   (((z / 0x200000) & 31) << 5)];
   } else {
@@ -264,7 +262,7 @@ void Field_ProcessStep(s32 layer, s32 x, s32 y, s32 z) {
     encounterSpeed = leader->speedLimit;
     if (GameFlag_TestFar(FLAG_LURE_CAP))
       encounterSpeed <<= 1;
-    if (work->mode == MODE_WORLD_MAP) {
+    if (work->mode == OBJECT_SYSTEM_WORLD_MAP) {
       fullEncounterRate = 1;
       work->battle = Encounter_RollWorldMap((s32)&leader->x, encounterSpeed);
     } else if (event == MB_ENCOUNTER_GROUND_1 ||
@@ -291,7 +289,7 @@ void Field_ProcessStep(s32 layer, s32 x, s32 y, s32 z) {
       work->walkingDistance = accumulatedDistance & 0xffff;
       Party_AddPp(amount, 0);
       if (DjinnRecovery_TickFar())
-        AudioCommand_PlayFar(SE_DJINNI_SET);
+        Sound_PlaySongFar(SE_DJINNI_SET);
       FieldScript_ClearInvalidPackedValues();
       partyHurt = Party_ApplyPoisonDamage();
     }
@@ -346,7 +344,7 @@ void Field_ProcessStep(s32 layer, s32 x, s32 y, s32 z) {
   // The leader flinches (velocityY, a hop of 4 pixels a frame) and shows a
   // one-off SPRITE_ATTACHED_EFFECT; each character whose HP reached 0 on this
   // step is listed, loses its poison and raises event -1, which
-  // Field_RunMap handles.
+  // Map_Run handles.
   if (partyHurt) {
     work->fallenCount = 0;
     work->survivorCount = 0;
@@ -406,11 +404,11 @@ void Party_AddHp(s32 amount, s32 percent) {
     ColorBuffer_SetSource(0x1ff, 0);
     ColorBuffer_StartInterpolation(4);
     if (amount < -10)
-      AudioCommand_PlayFar(SE_HEAVY_IMPACT);
+      Sound_PlaySongFar(SE_HEAVY_IMPACT);
     else
-      AudioCommand_PlayFar(SE_IMPACT);
+      Sound_PlaySongFar(SE_IMPACT);
   } else {
-    AudioCommand_PlayFar(SE_RECOVERY);
+    Sound_PlaySongFar(SE_RECOVERY);
   }
 
   partyCount = Party_CountActiveOwnersFar();
@@ -472,7 +470,7 @@ s32 Party_ApplyPoisonDamage(void) {
   if (worstPoison != 0) {
     ColorBuffer_SetSource(0x1ff, 0);
     ColorBuffer_StartInterpolation(4);
-    AudioCommand_PlayFar(SE_IMPACT);
+    Sound_PlaySongFar(SE_IMPACT);
   }
 
   return worstPoison;
@@ -482,20 +480,20 @@ s32 Party_ApplyPoisonDamage(void) {
 /// in progress, pauses camera movement and freezes the perspective view as a
 /// still picture. Elsewhere it does nothing.
 ///
-/// Called by Field_RunMap around the handling of most requests, by the
+/// Called by Map_Run around the handling of most requests, by the
 /// Djinni effect and by the world map's overlay; each call is paired with
 /// WorldMap_EndScript. Changes the display transition state in
-/// HEAP_SLOT_TRANSITION only when it is running. Both allocations return the
-/// slot's block when it has one; with that slot free, the
-/// world map takes a new, uncleared block there, kept until the map ends,
-/// whose step is then leftover memory.
+/// HEAP_SLOT_SCREEN_TRANSITION only when it is running. Both allocations return
+/// the slot's block when it has one; with that slot free, the world map takes a
+/// new, uncleared block there, kept until the map ends, whose step is then
+/// leftover memory.
 void WorldMap_StartScript(void) {
   struct FieldWork *work;
   struct DisplayTransitionState *state;
 
-  work = Runtime_AllocateBlock(HEAP_SLOT_EVENT, sizeof(*work));
-  if (work->mode == MODE_WORLD_MAP) {
-    state = Runtime_AllocateBlock(HEAP_SLOT_TRANSITION, 0x540);
+  work = AllocHeapSlotEwram(HEAP_SLOT_FIELD, sizeof(*work));
+  if (work->mode == OBJECT_SYSTEM_WORLD_MAP) {
+    state = AllocHeapSlotEwram(HEAP_SLOT_SCREEN_TRANSITION, 0x540);
     if ((state != NULL) && (state->step != 0)) {
       state->start = 0;
       state->end = 0;
@@ -512,8 +510,8 @@ void WorldMap_StartScript(void) {
 void WorldMap_EndScript(void) {
   struct FieldWork *work;
 
-  work = Runtime_AllocateBlock(HEAP_SLOT_EVENT, sizeof(*work));
-  if (work->mode == MODE_WORLD_MAP) {
+  work = AllocHeapSlotEwram(HEAP_SLOT_FIELD, sizeof(*work));
+  if (work->mode == OBJECT_SYSTEM_WORLD_MAP) {
     WorldMap_LoadAreaGraphicsFar();
     work->camera->movementState = 0;
   }

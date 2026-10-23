@@ -95,10 +95,10 @@
 #define EFFECT_WINOUT (WINOUT_WIN01_BG0 | WINOUT_WIN01_CLR | WINOUT_WINOBJ_ALL)
 
 /// A work slot read through a pointer to the effect's own slot,
-/// gWorkSlot[HEAP_SLOT_BATTLE_EFFECT].
-#define EFFECT_SLOT(slots, slot) ((slots)[(slot) - HEAP_SLOT_BATTLE_EFFECT])
+/// gHeapSlots[HEAP_SLOT_BATTLE_ANIM].
+#define EFFECT_SLOT(slots, slot) ((slots)[(slot) - HEAP_SLOT_BATTLE_ANIM])
 /// A work slot read through a pointer to the canvas slot,
-/// gWorkSlot[HEAP_SLOT_BATTLE_CANVAS], just after the effect's own.
+/// gHeapSlots[HEAP_SLOT_BATTLE_CANVAS], just after the effect's own.
 #define CANVAS_SLOT(slots, slot) ((slots)[(slot) - HEAP_SLOT_BATTLE_CANVAS])
 
 /// Index of DMAxCNT_H, the control half, in a channel's 16-bit registers.
@@ -118,15 +118,15 @@ static inline void Dma_Stop(volatile u16 *channel) {
 }
 
 /// The work block and canvas occupy adjacent slots, starting at
-/// HEAP_SLOT_BATTLE_EFFECT. A cursor reads them in that order.
+/// HEAP_SLOT_BATTLE_ANIM. A cursor reads them in that order.
 #define EFFECT_GET_WORK_AND_CANVAS(cursor, work, canvas)                       \
   ((work) = *(cursor)++, (canvas) = *(cursor))
 
 /// Lets EFFECT_SLOT(slots, s) reach any slot: an earlier one such as
-/// HEAP_SLOT_CAMERA, before HEAP_SLOT_BATTLE_EFFECT, sits at a negative index
-/// that is still inside gWorkSlot.
+/// HEAP_SLOT_CAMERA, before HEAP_SLOT_BATTLE_ANIM, sits at a negative index
+/// that is still inside gHeapSlots.
 #define EFFECT_GET_SLOTS(slots, cursor, work, canvas)                          \
-  ((slots) = &gWorkSlot[HEAP_SLOT_BATTLE_EFFECT], (cursor) = (slots),          \
+  ((slots) = &gHeapSlots[HEAP_SLOT_BATTLE_ANIM], (cursor) = (slots),           \
    EFFECT_GET_WORK_AND_CANVAS(cursor, work, canvas))
 
 /// Marks particles[0] to particles[count - 1] free: a particle whose variant
@@ -185,8 +185,8 @@ static inline void Dma_Stop(volatile u16 *channel) {
 /// Sets the transfer, then starts copying the canvas to VRAM once a frame.
 #define EFFECT_START_TRANSFER(work, mode, value)                               \
   (EFFECT_SET_TRANSFER(work, mode, value),                                     \
-   Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer,  \
-                                 EFFECT_CALLBACK_ORDER))
+   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer,                       \
+            EFFECT_CALLBACK_ORDER))
 
 /// Ends a frame of a canvas effect: marks the canvas ready for the transfer
 /// callback, then waits for the next frame. Nearly every effect loop ends so.
@@ -199,19 +199,18 @@ static inline void Dma_Stop(volatile u16 *channel) {
 
 /// Frees the two blitters, the alternate first.
 #define EFFECT_RELEASE_BLITTERS()                                              \
-  (Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE),                      \
-   Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER))
+  (FreeHeapSlot(HEAP_SLOT_RAM_CODE_2), FreeHeapSlot(HEAP_SLOT_RAM_CODE))
 
 /// The usual end of a canvas effect: stops the transfer callback before
 /// freeing what it reads, then the blitters, then the canvas layer.
 #define EFFECT_FINISH_CANVAS()                                                 \
-  (Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer),      \
+  (Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer),                   \
    EFFECT_RELEASE_BLITTERS(), BattleEffect_EndCanvasLayer())
 
 /// The same for an effect that drew through one blitter.
 #define EFFECT_FINISH_CANVAS_ONE_BLITTER()                                     \
-  (Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer),      \
-   Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER), BattleEffect_EndCanvasLayer())
+  (Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer),                   \
+   FreeHeapSlot(HEAP_SLOT_RAM_CODE), BattleEffect_EndCanvasLayer())
 
 /// The bytes of one set of the ten mote cells: 2 * (1 + 4 + ... + 100).
 #define MOTE_SET_BYTES 770
@@ -246,7 +245,7 @@ static inline void Dma_Stop(volatile u16 *channel) {
 #define WINDOW_SPAN_INVERTED WIN_RANGE(1, 0)
 
 /// The scheduler order of every per-frame effect callback
-/// (Scheduler_AddOrUpdateCallback sorts the frame's callbacks by order).
+/// (Task_Add sorts the frame's callbacks by order).
 #define EFFECT_CALLBACK_ORDER 0x480
 /// The order where the battle's own playback runs, which the palette fade and
 /// the element streaks take.

@@ -36,7 +36,7 @@ void BattleEffect_ConfigureEffectDisplay(void) {
 /// remove it before they return. Counts work->scrollTimer and moves
 /// gBgScroll[1].
 void BattleEffect_AdvanceScrollOnInterval(void) {
-  struct BattleEffectWork *work = WORK_SLOT(HEAP_SLOT_BATTLE_EFFECT);
+  struct BattleEffectWork *work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_ANIM);
   u32 *timer = (u32 *)&work->scrollTimer;
 
   (*timer)++;
@@ -58,7 +58,7 @@ void BattleEffect_AdvanceBg2OnInterval(void) {
   s32 timer;
   struct BattleEffectWork *work;
 
-  work = WORK_SLOT(HEAP_SLOT_BATTLE_EFFECT);
+  work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_ANIM);
   timer = work->scrollTimer + 1;
   work->scrollTimer = timer;
   if (timer == work->scrollInterval) {

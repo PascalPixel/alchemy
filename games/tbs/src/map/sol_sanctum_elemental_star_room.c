@@ -149,14 +149,14 @@ enum SolSanctumStarRoomCell {
 
 #define NULL ((void *)0)
 
-struct ObjectRuntime;
+struct Object;
 
 #include "common/effect_create.h"
 #include "common/effect_spawn.h"
 
 /// Advances through the current dialogue's consecutive messages.
 static __inline__ void SolSanctumElementalStarRoom_SkipMessages(s32 amount) {
-  gEventWork->message += amount;
+  gFieldWork->message += amount;
 }
 
 #include "common/object_facing.h"
@@ -239,7 +239,7 @@ static void EventScript_BagVenusStar(void) {
   MapGrid_CopyCellAttributes(0, 0, 1, 1, 41, 10);
   MapGrid_CopyCellsTo(87, 42, 41, 12, 1, 2);
   Engine_ScriptWait(40);
-  gEventWork->startTransition =
+  gFieldWork->startTransition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_NOISE);
   Engine_ScriptCloseScreen();
   Engine_ScriptWaitForScreen();
@@ -296,7 +296,7 @@ static void EventScript_BagMercuryStar(void) {
   s32 message;
 
   Engine_ScriptStart();
-  Script_PlayCue(SE_RUMBLE);
+  Script_PlaySong(SE_RUMBLE);
   for (i = 0; i != 6; i++) {
     ColorBuffer_ApplyTarget(0x404a4e, 1);
     Engine_ColorBufferInterpolate(8);
@@ -316,7 +316,7 @@ static void EventScript_BagMercuryStar(void) {
   Engine_CameraWaitForMove();
   MapGrid_SetShake(PIXELS(1), PIXELS(2), Q16_ONE);
   Engine_ScriptWait(20);
-  Script_PlayCue(SE_144);
+  Script_PlaySong(SE_144);
   Engine_MapGridAnimateCells(gSolSanctumElementalStarRoom_StarCells, 84, 4);
   MapGrid_CopyCellAttributes(0, 0, 1, 1, 29, 4);
   MapGrid_CopyCellsTo(87, 42, 29, 6, 1, 2);
@@ -326,7 +326,7 @@ static void EventScript_BagMercuryStar(void) {
   Engine_CameraWaitForMove();
   MapGrid_SetShake(PIXELS(1), PIXELS(2), Q16_ONE);
   Engine_ScriptWait(20);
-  Script_PlayCue(SE_144);
+  Script_PlaySong(SE_144);
   Engine_MapGridAnimateCells(gSolSanctumElementalStarRoom_StarCells, 76, 21);
   MapGrid_CopyCellAttributes(0, 0, 1, 1, 21, 21);
   MapGrid_CopyCellsTo(87, 42, 21, 23, 1, 2);
@@ -337,12 +337,12 @@ static void EventScript_BagMercuryStar(void) {
   Engine_CameraWaitForMove();
   MapGrid_SetShake(PIXELS(1), PIXELS(2), Q16_ONE);
   Engine_ScriptWait(20);
-  Script_PlayCue(SE_144);
+  Script_PlaySong(SE_144);
   Engine_MapGridAnimateCells(gSolSanctumElementalStarRoom_StarCells, 76, 29);
   MapGrid_CopyCellAttributes(0, 0, 1, 1, 21, 29);
   MapGrid_CopyCellsTo(87, 42, 21, 31, 1, 2);
   Engine_ScriptWait(40);
-  gEventWork->startTransition =
+  gFieldWork->startTransition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_NOISE);
   Engine_ScriptCloseScreen();
   Engine_ScriptWaitForScreen();
@@ -353,7 +353,7 @@ static void EventScript_BagMercuryStar(void) {
   Engine_ScriptOpenScreen();
   Engine_ScriptWaitForScreen();
   Engine_ScriptWait(40);
-  Script_PlayCue(AUDIO_CUE_FADE_SLOT3);
+  Script_PlaySong(AUDIO_CUE_FADE_SLOT3);
   MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
   Engine_MapGridRenderWaitForValues();
   Engine_ScriptWait(20);
@@ -412,7 +412,7 @@ static void SolSanctumElementalStarRoom_BagJupiterStar(void) {
   u32 i;
   s32 itemOwner;
 
-  Script_PlayCue(SE_RUMBLE);
+  Script_PlaySong(SE_RUMBLE);
   for (i = 0; i != 6; i++) {
     ColorBuffer_ApplyTarget(0x4049d2, 1);
     Engine_ColorBufferInterpolate(8);
@@ -431,7 +431,7 @@ static void SolSanctumElementalStarRoom_BagJupiterStar(void) {
   Engine_CameraWaitForMove();
   MapGrid_SetShake(PIXELS(1), PIXELS(2), Q16_ONE);
   Engine_ScriptWait(20);
-  Script_PlayCue(SE_144);
+  Script_PlaySong(SE_144);
   Engine_MapGridAnimateCells(gSolSanctumElementalStarRoom_StarCells, 65, 31);
   MapGrid_CopyCellAttributes(0, 0, 1, 1, 10, 31);
   MapGrid_CopyCellsTo(87, 42, 10, 33, 1, 2);
@@ -442,7 +442,7 @@ static void SolSanctumElementalStarRoom_BagJupiterStar(void) {
   Engine_CameraWaitForMove();
   MapGrid_SetShake(PIXELS(1), PIXELS(2), Q16_ONE);
   Engine_ScriptWait(20);
-  Script_PlayCue(SE_144);
+  Script_PlaySong(SE_144);
   Engine_MapGridAnimateCells(gSolSanctumElementalStarRoom_StarCells, 79, 9);
   MapGrid_CopyCellAttributes(0, 0, 1, 1, 24, 9);
   MapGrid_CopyCellsTo(87, 42, 24, 11, 1, 2);
@@ -453,12 +453,12 @@ static void SolSanctumElementalStarRoom_BagJupiterStar(void) {
   Engine_CameraWaitForMove();
   MapGrid_SetShake(PIXELS(1), PIXELS(2), Q16_ONE);
   Engine_ScriptWait(20);
-  Script_PlayCue(SE_144);
+  Script_PlaySong(SE_144);
   Engine_MapGridAnimateCells(gSolSanctumElementalStarRoom_StarCells, 91, 10);
   MapGrid_CopyCellAttributes(0, 0, 1, 1, 36, 10);
   MapGrid_CopyCellsTo(87, 42, 36, 12, 1, 2);
   Engine_ScriptWait(40);
-  gEventWork->startTransition =
+  gFieldWork->startTransition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_NOISE);
   Engine_ScriptCloseScreen();
   Engine_ScriptWaitForScreen();
@@ -469,7 +469,7 @@ static void SolSanctumElementalStarRoom_BagJupiterStar(void) {
   Engine_ScriptOpenScreen();
   Engine_ScriptWaitForScreen();
   Engine_ScriptWait(40);
-  Script_PlayCue(AUDIO_CUE_FADE_SLOT3);
+  Script_PlaySong(AUDIO_CUE_FADE_SLOT3);
   MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
   Engine_MapGridRenderWaitForValues();
   Engine_ScriptWait(20);
@@ -487,7 +487,7 @@ static void SolSanctumElementalStarRoom_BagJupiterStar(void) {
 static void SolSanctumElementalStarRoom_RevealSaturosAndMenardi(void) {
   struct ObjectEvent *leader;
 
-  Script_PlayCue(AUDIO_CUE_FADE_BGM);
+  Script_PlaySong(AUDIO_CUE_FADE_BGM);
   ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(1) / 2, PIXELS(1) / 4);
   ObjectEvent_WalkToAndWait(LOCALID_PARTY_LEADER, 231, 490);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_NORTH, 30);
@@ -604,7 +604,7 @@ static void SolSanctumElementalStarRoom_DemandElementalStars(void) {
   Engine_CameraWaitForMove();
   Engine_ObjectEventSetPosition(LOCALID_PLATFORM_SHADOW, PIXELS(471),
                                 PIXELS(290));
-  Script_PlayCue(SE_190);
+  Script_PlaySong(SE_190);
   Engine_ObjectEventSetSpritePriority(LOCALID_FELIX_MASKED, 2);
   for (i = 0; i != 90; i++) {
     felix->y.fixed -= PIXELS(1) / 10;
@@ -829,7 +829,7 @@ static void SolSanctumElementalStarRoom_UnmaskFelix(void) {
   s32 messageA;
   s32 messageB;
 
-  Script_PlayCue(SE_161);
+  Script_PlaySong(SE_161);
   Engine_ObjectEventRunRepeatedMotion(LOCALID_FELIX_MASKED, 3);
   Engine_ScriptWait(40);
   other = ObjectEvent_GetById(LOCALID_FELIX_MASKED);
@@ -990,19 +990,19 @@ static void SolSanctumElementalStarRoom_UnmaskFelix(void) {
   ObjectEvent_WalkToAndWait(GARET, 278, 480);
   objectEvent->speed = PIXELS(3);
   objectEvent->acceleration = PIXELS(2);
-  Script_PlayCue(SE_HIGH_JUMP);
+  Script_PlaySong(SE_HIGH_JUMP);
   objectEvent->velocityY = PIXELS(6);
   Engine_ObjectEventSetAnimation(GARET, 7);
   ObjectEvent_MoveToAndWait(GARET, 312, 470);
   Engine_ObjectEventSetAnimation(GARET, ANIMATION_STAND);
   Engine_ScriptWait(30);
-  Script_PlayCue(SE_HIGH_JUMP);
+  Script_PlaySong(SE_HIGH_JUMP);
   objectEvent->velocityY = PIXELS(6);
   Engine_ObjectEventSetAnimation(GARET, 7);
   ObjectEvent_MoveToAndWait(GARET, 342, 470);
   Engine_ObjectEventSetAnimation(GARET, ANIMATION_STAND);
   Engine_ScriptWait(30);
-  Script_PlayCue(SE_HIGH_JUMP);
+  Script_PlaySong(SE_HIGH_JUMP);
   objectEvent->velocityY = PIXELS(6);
   Engine_ObjectEventSetAnimation(GARET, 7);
   ObjectEvent_MoveToAndWait(GARET, 376, 470);
@@ -1072,7 +1072,7 @@ static void SolSanctumElementalStarRoom_AlexTakesStars(void) {
   Engine_ObjectEventSetSpriteFlags(alex, 0);
   objectEvent = ObjectEvent_GetById(LOCALID_ALEX);
   objectEvent->motionFlags = none;
-  Script_PlayCue(SE_220);
+  Script_PlaySong(SE_220);
   for (i = 0; i != 30; i++) {
     objectEvent->y.fixed += PIXELS(1);
     Engine_ScriptWait(1);
@@ -1133,7 +1133,7 @@ static void SolSanctumElementalStarRoom_AlexTakesStars(void) {
   SolSanctumElementalStarRoom_ShowMessageAndWait(LOCALID_ALEX, 30);
   objectEvent->motionFlags = 0;
   ObjectEvent_SetSpeed(LOCALID_ALEX, PIXELS(12) / 5, PIXELS(6) / 5);
-  FieldObject_SetPosition(objectEvent, PIXELS(460), 0, PIXELS(360));
+  Object_SetPosition(objectEvent, PIXELS(460), 0, PIXELS(360));
   Engine_ObjectEventWaitForMove(LOCALID_ALEX);
   ObjectEvent_SetChildValue(LOCALID_ALEX, 0);
   alex = ObjectEvent_Get(LOCALID_ALEX);
@@ -1149,19 +1149,19 @@ static void SolSanctumElementalStarRoom_AlexTakesStars(void) {
   objectEvent->steeringFlags |= OBJ_EVENT_FACES_MOTION;
   objectEvent->speed = PIXELS(3);
   objectEvent->acceleration = PIXELS(2);
-  Script_PlayCue(SE_HIGH_JUMP);
+  Script_PlaySong(SE_HIGH_JUMP);
   objectEvent->velocityY = PIXELS(6);
   Engine_ObjectEventSetAnimation(GARET, 7);
   ObjectEvent_MoveToAndWait(GARET, 342, 470);
   Engine_ObjectEventSetAnimation(GARET, ANIMATION_STAND);
   Engine_ScriptWait(30);
-  Script_PlayCue(SE_HIGH_JUMP);
+  Script_PlaySong(SE_HIGH_JUMP);
   objectEvent->velocityY = PIXELS(6);
   Engine_ObjectEventSetAnimation(GARET, 7);
   ObjectEvent_MoveToAndWait(GARET, 312, 470);
   Engine_ObjectEventSetAnimation(GARET, ANIMATION_STAND);
   Engine_ScriptWait(30);
-  Script_PlayCue(SE_HIGH_JUMP);
+  Script_PlaySong(SE_HIGH_JUMP);
   objectEvent->velocityY = PIXELS(6);
   Engine_ObjectEventSetAnimation(GARET, 7);
   ObjectEvent_MoveToAndWait(GARET, 278, 480);
@@ -1257,7 +1257,7 @@ static void EventScript_TakeMarsStar(void) {
   struct ObjectEvent *leader;
 
   Engine_ScriptStart();
-  Script_PlayCue(SE_RUMBLE);
+  Script_PlaySong(SE_RUMBLE);
   for (pass = 0; pass != 6; pass++) {
     ColorBuffer_ApplyTarget(0x4039d2, 1);
     Engine_ColorBufferInterpolate(8);
@@ -1269,7 +1269,7 @@ static void EventScript_TakeMarsStar(void) {
       MapGrid_SetShake(PIXELS(1), PIXELS(1), Q16_ONE);
     }
   }
-  Script_PlayCue(AUDIO_CUE_FADE_SLOT3);
+  Script_PlaySong(AUDIO_CUE_FADE_SLOT3);
   MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
   MapGrid_CopyCellsTo(0, 40, 13, 46, 3, 3);
   Engine_ScriptWait(20);
@@ -1294,7 +1294,7 @@ static void EventScript_TakeMarsStar(void) {
   ObjectEvent_WalkToAndWait(GARET, 218, 172);
   Engine_ObjectEventFaceEachOther(GARET, LOCALID_PARTY_LEADER, 0);
   Engine_ScriptWait(20);
-  Script_PlayCue(SE_145);
+  Script_PlaySong(SE_145);
   MapGrid_SetShake(PIXELS(4), PIXELS(4), Q16_ONE);
   Engine_ScriptWait(20);
   MapGrid_SetShake(PIXELS(1), PIXELS(1), Q16_ONE);
@@ -1302,7 +1302,7 @@ static void EventScript_TakeMarsStar(void) {
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_NORTH + FACING_STEP,
                             0);
   ObjectEvent_FaceDirection(GARET, FACING_SOUTH + FACING_STEP, 50);
-  Script_PlayCue(SE_144);
+  Script_PlaySong(SE_144);
   MapGrid_SetShake(PIXELS(3), PIXELS(3), Q16_ONE);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_WEST, 0);
   ObjectEvent_FaceDirection(GARET, FACING_EAST, 50);
@@ -1312,14 +1312,14 @@ static void EventScript_TakeMarsStar(void) {
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER,
                             FACING_NORTHWEST + FACING_STEP, 0);
   ObjectEvent_FaceDirection(GARET, FACING_NORTH + FACING_STEP, 0);
-  Script_PlayCue(SE_144);
+  Script_PlaySong(SE_144);
   MapGrid_SetShake(PIXELS(3), PIXELS(3), Q16_ONE);
   Engine_ScriptWait(30);
   Engine_ObjectEventJump(LOCALID_PARTY_LEADER, 2, 0);
   Engine_ObjectEventJump(GARET, 2, 20);
   Engine_ObjectEventJump(LOCALID_PARTY_LEADER, 6, 0);
   Engine_ObjectEventJump(GARET, 6, 40);
-  gEventWork->startTransition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+  gFieldWork->startTransition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   Engine_ScriptCloseScreen();
   Engine_ScriptWaitForScreen();
   Engine_ScriptRequestWarp(
@@ -1465,14 +1465,14 @@ static void SolSanctumElementalStarRoom_EnterStarRoom(void) {
   leaderMotion = &rising->motionFlags;
   *leaderMotion = 0;
   rising->y.fixed = PIXELS(40);
-  gEventWork->startTransition =
+  gFieldWork->startTransition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_CIRCLE);
-  gEventWork->transitionFrames = 32;
+  gFieldWork->transitionFrames = 32;
   Engine_ScriptOpenScreen();
   Engine_ScriptWaitForScreen();
   Engine_ScriptWait(20);
   ObjectEvent_SetPosition(LOCALID_PLATFORM_SHADOW, PIXELS(471), PIXELS(290));
-  Script_PlayCue(SE_190);
+  Script_PlaySong(SE_190);
   Engine_ObjectEventSetSpritePriority(LOCALID_PARTY_LEADER, 2);
   for (i = 0; i != 90; i++) {
     rising->y.fixed += -PIXELS(1) / 10;
@@ -1611,7 +1611,7 @@ static void SolSanctumElementalStarRoom_EnterStarRoom(void) {
   Camera_MoveTo(PIXELS(471), -1, PIXELS(309), 1);
   Engine_CameraWaitForMove();
   ObjectEvent_SetPosition(LOCALID_PLATFORM_SHADOW, PIXELS(471), PIXELS(290));
-  Script_PlayCue(SE_190);
+  Script_PlaySong(SE_190);
   Engine_ObjectEventSetSpritePriority(LOCALID_KRADEN, 2);
   for (i = 0; i != 90; i++) {
     rising->y.fixed += -PIXELS(1) / 10;
@@ -1754,7 +1754,7 @@ static void SolSanctumElementalStarRoom_EnterStarRoom(void) {
   ObjectEvent_FaceDirection(JENNA, FACING_EAST, 0);
   ObjectEvent_FaceDirection(GARET, FACING_WEST, 0);
   if (Engine_ScriptChooseYesNo(0, 0) == 1) {
-    gEventWork->message++;
+    gFieldWork->message++;
   }
   ObjectEvent_FaceDirection(LOCALID_KRADEN, FACING_NORTH, 30);
   SolSanctumElementalStarRoom_ShowMessageAndWait(LOCALID_KRADEN, 30);
@@ -1847,7 +1847,7 @@ static void SolSanctumElementalStarRoom_EnterStarRoom(void) {
   Engine_ObjectEventSetAnimation(LOCALID_KRADEN, ANIMATION_SHAKE_HEAD);
   Script_OpenMessage(SPEAKER_WINDOW_BELOW | LOCALID_KRADEN, 0);
   if (Engine_ScriptChooseYesNo(0, 0) == 1) {
-    gEventWork->message++;
+    gFieldWork->message++;
   }
   Engine_ScriptWait(20);
   ObjectEvent_FaceDirection(GARET, FACING_WEST, 10);
@@ -1875,7 +1875,7 @@ static void SolSanctumElementalStarRoom_EnterStarRoom(void) {
   ObjectEvent_FaceDirection(GARET, FACING_WEST, 20);
   Script_OpenMessage(SPEAKER_WINDOW_BELOW | LOCALID_KRADEN, 0);
   if (Engine_ScriptChooseYesNo(0, 0) == 1) {
-    gEventWork->message++;
+    gFieldWork->message++;
   }
   Engine_ObjectEventRunRepeatedMotion(LOCALID_KRADEN, 1);
   Engine_ScriptWait(20);
@@ -1941,7 +1941,7 @@ static void SolSanctumElementalStarRoom_EnterStarRoom(void) {
   Engine_TaskWait(6);
   rising->speed = PIXELS(3);
   rising->acceleration = PIXELS(2);
-  Script_PlayCue(SE_HIGH_JUMP);
+  Script_PlaySong(SE_HIGH_JUMP);
   rising->velocityY = (height << 11);
   ObjectEvent_MoveToAndWait(LOCALID_KRADEN, 471, 395);
   Engine_TaskWait(6);
@@ -1985,7 +1985,7 @@ static void SolSanctumElementalStarRoom_EnterStarRoom(void) {
   Engine_TaskWait(6);
   rising->speed = PIXELS(3);
   rising->acceleration = PIXELS(2);
-  Script_PlayCue(SE_HIGH_JUMP);
+  Script_PlaySong(SE_HIGH_JUMP);
   rising->velocityY = (height << 11);
   ObjectEvent_MoveToAndWait(LOCALID_KRADEN, 471, 360);
   Engine_TaskWait(6);
@@ -2106,7 +2106,7 @@ static void SolSanctumElementalStarRoom_EnterStarRoom(void) {
   // Give out the bags and make the pedestal crossings available.
   SolSanctumElementalStarRoom_GiveMythrilBags();
   MapGrid_CopyCellAttributes(8, 0, 5, 1, 27, 17);
-  gEventWork->transitionFrames = 16;
+  gFieldWork->transitionFrames = 16;
   GameFlag_Clear(FLAG_SHOW_LOCATION_NAME);
   Engine_ScriptEnd();
 }
@@ -2224,7 +2224,7 @@ static s32 SolSanctumElementalStarRoom_PresentStar(s32 item, s32 x, s32 y,
 /// Makes room among the items and gives the party four Mythril Bags, keeping
 /// the dialogue's place.
 static void SolSanctumElementalStarRoom_GiveMythrilBags(void) {
-  struct EventWork *work = gEventWork;
+  struct EventWork *work = gFieldWork;
   s16 savedMessage = work->message;
   s32 itemSlot;
   s32 itemOwner;

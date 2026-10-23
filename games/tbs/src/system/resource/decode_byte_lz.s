@@ -1,4 +1,4 @@
-@ C2: Resource_DecodeByteLzArm:
+@ C2: Decompress_ByteLzArm:
 @ bcs/bcc consume lsls lr's carry. The decoder dispatch also enters
 @ eight-byte code slots, unlike the compiler's four-byte switch entries.
 @ Its return pops the r1 saved at entry into r0.
@@ -19,12 +19,12 @@
 @ fixes that list at r0-r3; its general ldm/stm peepholes never write back.
 @ C2: ColorBuffer_BrightenPartialKernel to ColorBuffer_KernelsEnd:
 @ push {r5-r9} saves callee-saved registers without lr.
-@ C2: Resource_DecodeHalfwordLz:
+@ C2: Decompress_HalfwordLz:
 @ bcc and adc consume lsls r3's carry; the intervening ldrh keeps flags.
 .syntax unified
 	.arm
-	.global Resource_DecodeByteLzArm
-Resource_DecodeByteLzArm:
+	.global Decompress_ByteLzArm
+Decompress_ByteLzArm:
 	push	{r1, r5, r6, r7, lr}
 .Lbyte_flags:
 	ldrb	lr, [r0], #1
@@ -187,8 +187,8 @@ AlchemyUncreditedEnd_decode_byte_lz_2:
 	pop	{r0, r5, r6, r7, ip}
 	sub	r0, r1, r0
 	bx	ip
-	.global Resource_DecodeByteLzCodeSize
-	.set Resource_DecodeByteLzCodeSize, . - Resource_DecodeByteLzArm
+	.global Decompress_ByteLzCodeSize
+	.set Decompress_ByteLzCodeSize, . - Decompress_ByteLzArm
 .syntax unified
 	.arm
 	.global Render_BuildOamListKernel
@@ -581,8 +581,8 @@ ColorBuffer_KernelsEnd:
 	.set ColorBuffer_BackupAndBrightenPartialCodeSize, ColorBuffer_KernelsEnd - ColorBuffer_BrightenPartialKernel
 .syntax unified
 	.arm
-	.global Resource_DecodeHalfwordLz
-Resource_DecodeHalfwordLz:
+	.global Decompress_HalfwordLz
+Decompress_HalfwordLz:
 	mov	r3, #0x80000000
 	b	.Lhalfword_next_flag
 .Lhalfword_literal:
@@ -609,5 +609,5 @@ Resource_DecodeHalfwordLz:
 	subs	r2, r2, #1
 	bne	.Lhalfword_copy
 	b	.Lhalfword_next_flag
-	.global Resource_DecompressHalfwordsCodeSize
-	.set Resource_DecompressHalfwordsCodeSize, . - Resource_DecodeHalfwordLz
+	.global Decompress_HalfwordsCodeSize
+	.set Decompress_HalfwordsCodeSize, . - Decompress_HalfwordLz

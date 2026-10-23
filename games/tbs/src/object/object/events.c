@@ -18,7 +18,7 @@ struct ObjectEventTemplate *Map_FindObjectEventTemplate(s32 id) {
   s32 placedLocalId = LOCALID_FIRST_PLACED;
 
   for (tableIndex = 0; tableIndex < 4; tableIndex++) {
-    template = ((struct FieldWork *)gEventWork)->tables[tableIndex];
+    template = ((struct FieldWork *)gFieldWork)->tables[tableIndex];
     if (template == NULL)
       continue;
     if (id <= 7) {
@@ -113,7 +113,7 @@ u32 Map_BgEventIgnoresCondition(s32 flags, s32 result) {
 /// Called by every lookup of a map's events in this part and by
 /// ObjectEvent_GetTriggerTileAheadOfCurrent. Changes nothing.
 struct EffectDescriptor *Map_FindEvent(s32 kind, s32 target) {
-  struct FieldWork *work = (struct FieldWork *)gEventWork;
+  struct FieldWork *work = (struct FieldWork *)gFieldWork;
   struct EffectDescriptor *event = (struct EffectDescriptor *)work->events;
   s32 flags;
   u32 facing =
@@ -179,7 +179,7 @@ UNUSED void Runtime_CallWorkBlockEntry(void) { gOverlayArea.initialize(); }
 /// the event for talking to it while it is stopped (Crossbone Isle's Bane has
 /// one).
 ///
-/// Called by Field_RunMap for the A button, to choose between talking and
+/// Called by Map_Run for the A button, to choose between talking and
 /// searching, and by the field Psynergy dispatch, which Halts only an object
 /// event with a talk event; both test the result only for non-zero.
 s32 Map_FindObjectEventTalkEvent(s32 id) {
@@ -203,16 +203,15 @@ s32 Map_FindObjectEventTalkEvent(s32 id) {
 /// comes first; without one, a talk event that is a function gives one of two
 /// lines at random instead, from MsgPonderEllipsis on (dots spoken with
 /// pauses). Returns 0 when an event ran, -1 when there was none or such a line
-/// stood in for it; Field_RunMap ignores the result.
+/// stood in for it; Map_Run ignores the result.
 ///
-/// Called by Field_RunMap for its talk request (work->talk). Resumes
+/// Called by Map_Run for its talk request (work->talk). Resumes
 /// the stopped object event and sets gGameState.pausedObject back to -1
 /// afterwards.
 s32 Map_TalkToObjectEvent(s32 id) {
   struct ObjectEventTemplate *template = Map_FindObjectEventTemplate(id);
   s32 result = -1;
-  struct ObjectRuntime *objectEvent =
-      (struct ObjectRuntime *)ObjectEvent_GetById(id);
+  struct Object *objectEvent = (struct Object *)ObjectEvent_GetById(id);
   struct EffectDescriptor *event;
   s32 objectEventPaused = 0;
   u32 savedAngle;
@@ -259,9 +258,8 @@ s32 Map_TalkToObjectEvent(s32 id) {
       savedAngle = objectEvent->angle;
       talkFacing = (u8)template->talkFacing << 24;
       if (talkFacing <= (1 << 24) || talkFacing == (3 << 24)) {
-        struct ObjectRuntime *leader =
-            (struct ObjectRuntime *)ObjectEvent_GetById(
-                gGameState.selectedLocalId);
+        struct Object *leader =
+            (struct Object *)ObjectEvent_GetById(gGameState.selectedLocalId);
 
         leader->targetX = leader->x;
         leader->targetY = leader->y;
@@ -287,8 +285,7 @@ s32 Map_TalkToObjectEvent(s32 id) {
       if (objectEvent->script[objectEvent->step] == 16) {
         if ((s8)template->talkFacing == 3) {
           objectEvent->linkedObject =
-              (struct ObjectRuntime *)ObjectEvent_GetById(
-                  gGameState.selectedLocalId);
+              (struct Object *)ObjectEvent_GetById(gGameState.selectedLocalId);
           objectEvent->actionFlags |= 1;
           ObjectMotion_SetActionCallback(objectEvent,
                                          (s32)gObjectMotion_LinkedActionScript);
@@ -318,7 +315,7 @@ finish:
 /// Runs the map's raised event (MAP_EVENT_RAISED) for value: its message or
 /// its function. Returns 0 when an event ran, -1 when there was none.
 ///
-/// Called by Field_RunMap for a positive event request (work->event).
+/// Called by Map_Run for a positive event request (work->event).
 s32 Map_RunRaisedEvent(s32 value) {
   s32 result;
   s32 handled;
@@ -349,7 +346,7 @@ s32 Map_RunRaisedEvent(s32 value) {
 /// records where it leads. Returns 0 when something ran, -1 when there was
 /// nothing.
 ///
-/// Called by Field_RunMap for its step request (work->action), which
+/// Called by Map_Run for its step request (work->action), which
 /// Field_ProcessStep raises for MB_EVENT_FIRST to MB_EVENT_LAST.
 /// Sets work->warp for a warp, and clears work->blockedSteps after a coord
 /// event that needs pushing.
@@ -362,7 +359,7 @@ s32 Map_RunCoordEventOrWarp(s32 value) {
 
   touch = Map_FindEvent(MAP_EVENT_COORD, value);
   handled = -1;
-  work = (struct FieldWork *)gEventWork;
+  work = (struct FieldWork *)gFieldWork;
   if ((touch != 0) && (touch->result != 0)) {
     if (touch->flags & COORD_EVENT_FLAG_WALKING) {
       work->blockedSteps = 0;
@@ -385,14 +382,14 @@ s32 Map_RunCoordEventOrWarp(s32 value) {
       warpId = warp->flags & WARP_STYLE_MASK;
       switch (warpId) {
       case WARP_STYLE_NORMAL:
-        AudioCommand_PlayFar(SE_MAP_EXIT);
+        Sound_PlaySongFar(SE_MAP_EXIT);
         break;
       case WARP_STYLE_ANIMATED:
-        AudioCommand_PlayFar(SE_STAIRS_UP);
+        Sound_PlaySongFar(SE_STAIRS_UP);
         ObjectEffect_StartContextEffect26();
         break;
       case WARP_STYLE_ANIMATED_ALTERNATE:
-        AudioCommand_PlayFar(SE_STAIRS_DOWN);
+        Sound_PlaySongFar(SE_STAIRS_DOWN);
         ObjectEffect_StartContextEffect25();
         break;
       }
@@ -407,11 +404,11 @@ s32 Map_RunCoordEventOrWarp(s32 value) {
 /// MB_JUMP_FORWARD, and MB_JUMP_FORWARD_UNREACHED), once it has
 /// pushed for more than 12 frames; the count then restarts.
 ///
-/// Called by Field_RunMap for its push request (work->pushTile), which
+/// Called by Map_Run for its push request (work->pushTile), which
 /// Field_ProcessStep raises for MB_LEDGE to MB_JUMP_FORWARD.
 /// Clears work->blockedSteps when it acts.
 s32 Field_RunPushTileEvent(s32 collisionCode) {
-  struct FieldWork *work = (struct FieldWork *)gEventWork;
+  struct FieldWork *work = (struct FieldWork *)gFieldWork;
   s32 leader = gGameState.selectedLocalId;
 
   switch (collisionCode) {
@@ -448,7 +445,7 @@ s32 Field_RunPushTileEvent(s32 collisionCode) {
 /// holding a Psynergy Stone, a mimic, coins or an item; with no event, "checked
 /// the ground" and "found nothing".
 ///
-/// Called by Field_RunMap for its search request (work->tile). Opening a
+/// Called by Map_Run for its search request (work->tile). Opening a
 /// chest sets its condition flag, and it may raise a mimic battle
 /// (work->battle), give coins or an item, or restore all PP.
 s32 Field_SearchTile(s32 tile) {
@@ -535,17 +532,17 @@ s32 Field_SearchTile(s32 tile) {
                 Marker_ShowOpened(tile);
               object = Marker_GetObjectEvent(tile);
               ItemDisplay_RaiseAboveLeader(object);
-              AudioCommand_PlayFar(MUS_TREASURE_FOUND);
+              Sound_PlaySongFar(MUS_TREASURE_FOUND);
               UiWork_PushValueSlotFar((u16)event->value, 5);
               UiText_ShowPositionedMessageAndWaitFar(MsgGotPsynergyStone, 3);
               Party_AddPp(999, 0);
               UiWindow_CreateWithLayoutBoundsFar(PARTY_STATUS_SHOW_PP);
-              AudioCommand_PlayFar(SE_RECOVERY);
+              Sound_PlaySongFar(SE_RECOVERY);
               UiText_ShowPositionedMessageAndWaitFar(MsgGotPsynergyStone + 1,
                                                      1);
               PartyStatus_CloseFar();
               ObjectDispatch_SelectAnimationFar(object, 2);
-              AudioCommand_PlayFar(SE_246);
+              Sound_PlaySongFar(SE_246);
               FieldScript_WaitFrames(30);
               UiText_ShowPositionedMessageAndWaitFar(MsgGotPsynergyStone + 2,
                                                      1);
@@ -554,12 +551,12 @@ s32 Field_SearchTile(s32 tile) {
                 GameFlag_SetBitFar(condition);
             } else if (rewardType == FIND_MIMIC) {
               // A mimic: a battle with its slot of ENCOUNTER_ZONE_MIMIC.
-              struct FieldWork *work = (struct FieldWork *)gEventWork;
+              struct FieldWork *work = (struct FieldWork *)gFieldWork;
 
               if ((event->control & 0x1ff) == BG_EVENT(BG_EVENT_CHEST))
                 Marker_LaunchMimic(tile);
               // The chest's flag (with 0x1000) waits in pendingDjinnEvent,
-              // which Field_RunMap resolves when the map is entered again
+              // which Map_Run resolves when the map is entered again
               // after the battle.
               if (condition != -1) {
                 condition = gGameState.pendingDjinnEvent = condition | 0x1000;
@@ -573,7 +570,7 @@ s32 Field_SearchTile(s32 tile) {
               Battle_SetStart(BATTLE_START_NO_ESCAPE);
               FieldEffect_SelectBattleCue(ENCOUNTER_ZONE_MIMIC,
                                           (u16)event->value);
-              AudioCommand_PlayFar(gGameState.battleCue);
+              Sound_PlaySongFar(gGameState.battleMusic);
               UiText_ShowPositionedMessageAndWaitFar(MsgChestWasMimic, 1);
             } else if (rewardType == FIND_COINS(0)) {
               // Coins.
@@ -585,7 +582,7 @@ s32 Field_SearchTile(s32 tile) {
               if ((event->control & 0x1ff) == BG_EVENT(BG_EVENT_CHEST))
                 Marker_ShowOpened(tile);
               ItemDisplay_RaiseAboveLeader(object);
-              AudioCommand_PlayFar(MUS_TREASURE_FOUND);
+              Sound_PlaySongFar(MUS_TREASURE_FOUND);
               UiWork_PushValueSlotFar((u16)event->value, 5);
               UiText_ShowPositionedMessageAndWaitFar(MsgGotCoins, 3);
               Party_AdjustCoinsFar((u16)event->value);
@@ -614,7 +611,7 @@ s32 Field_SearchTile(s32 tile) {
                 if ((event->control & 0x1ff) == BG_EVENT(BG_EVENT_CHEST))
                   Marker_ShowOpened(tile);
                 ItemDisplay_RaiseAboveLeader(object);
-                AudioCommand_PlayFar(MUS_TREASURE_FOUND);
+                Sound_PlaySongFar(MUS_TREASURE_FOUND);
                 UiWork_PushValueSlotFar(event->value & messageOffset, 2);
                 if (recipient == gGameState.selectedLocalId) {
                   UiText_ShowPositionedMessageAndWaitFar(MsgColossoIsaacGotItem,

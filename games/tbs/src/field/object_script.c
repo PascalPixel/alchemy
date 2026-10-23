@@ -9,7 +9,7 @@
 #include "objcmd.h"
 #include "types.h"
 
-/// The script FieldObject_Create gives every new object: it does nothing and
+/// The script Object_CreateField gives every new object: it does nothing and
 /// returns to the idle script.
 const s32 gObjectDispatch_DefaultScript[] = {
     SC_END,
@@ -94,7 +94,7 @@ const ScriptCommand gScriptObject_CommandTable[47] = {
     ActionScript_ApplyOperandSet,           // 0x15 SC_SET
     ActionScript_ApplyOperandAdd,           // 0x16 SC_ADD
     ActionScript_ApplyOperandCompare,       // 0x17 SC_CMP
-    FieldObject_UpdatePlayerControl,        // 0x18 SC_PLAYER
+    Object_UpdateLeaderControl,             // 0x18 SC_PLAYER
     Object_MoveByKeys,                      // 0x19 SC_KEYS
     Object_MoveOnWorldMap,                  // 0x1a SC_WORLD
     ActionScript_FreeObject,                // 0x1b SC_FREE

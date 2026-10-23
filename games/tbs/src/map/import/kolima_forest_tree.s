@@ -3,7 +3,7 @@
 	.set import.__divsi3, 1
 	.set import.__udivsi3, 1
 	.set import.Engine_TaskWait, 1
-	.set import.Scheduler_AddOrUpdateCallback, 1
+	.set import.Task_Add, 1
 	.set import.Engine_TaskRemoveCallback, 1
 	.set import.Vector_AddPolarOffset, 1
 	.set import.Resource_ResetEntry, 1
@@ -53,7 +53,7 @@
 	.set import.Engine_ColorBufferInterpolate, 1
 	.set import.Field_EndBusyAndReveal, 1
 	.set import.Sprite_ShareVramCache, 1
-	.set import.Audio_PlayCueFromEventWork, 1
+	.set import.Map_PlayMusic, 1
 	.set import.Engine_ObjectEventWalkByAndWait, 1
 	.set import.Engine_AudioPlayCue, 1
 	.include "games/tbs/src/system/overlay.inc"

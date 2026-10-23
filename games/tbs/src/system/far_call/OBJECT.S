@@ -4,7 +4,7 @@
 #include "stub.inc"
 	.global FarCall_ObjectTable
 FarCall_ObjectTable:
-	export Field_RunMapFar, Field_RunMap
+	export Map_RunFar, Map_Run
 	export Game_RunFar, Game_Run
 	export FieldScript_WaitFramesFar, FieldScript_WaitFrames
 	export FieldScript_StartFar, FieldScript_Start
@@ -162,7 +162,7 @@ FarCall_ObjectTable:
 	export Menu_AskYesNoFar, Menu_AskYesNo
 	overlay_veneer Encounter_GetEnemyGroupAtSlot
 	overlay_veneer Encounter_GetDjinnEnemyGroup
-	export Audio_PlayCueFromEventWorkFar, Audio_PlayCueFromEventWork
+	export Map_PlayMusicFar, Map_PlayMusic
 	export Djinn_JoinPartyFar, Djinn_JoinParty
 	export EffectSlot_UpdateFar, EffectSlot_Update
 	export EffectSlot_HasPendingTargetFar, EffectSlot_HasPendingTarget
@@ -186,7 +186,7 @@ FarCall_ObjectTable:
 	overlay_veneer FieldEffect_ResumeObject
 	overlay_veneer ObjectTable_FindActiveByValue
 	overlay_veneer ObjectTable_ReadActiveValue
-	export SaveState_CaptureObjectTableFar, ObjectTable_Snapshot
+	export Save_CaptureObjectEventsFar, ObjectTable_Snapshot
 	export ObjectTable_RestoreFar, ObjectTable_Restore
 	export FieldEffect_ScheduleRatioTransitionFar, FieldEffect_ScheduleRatioTransition
 	export FieldScript_WaitForZoomTransitionFar, FieldScript_WaitForZoomTransition

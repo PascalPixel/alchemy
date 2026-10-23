@@ -6,16 +6,16 @@
 
 /// Decompresses the halfword LZ stream at `source` to `destination`, with a
 /// copy of the ARM decoder on the stack. Called by the palette editor.
-void Resource_DecompressHalfwords(const void *source, void *destination) {
-  u32 words = (u32)Resource_DecompressHalfwordsCodeSize >> 2;
+void Decompress_Halfwords(const void *source, void *destination) {
+  u32 words = (u32)Decompress_HalfwordsCodeSize >> 2;
   u32 routine[words];
-  Dma_Set(Resource_DecodeHalfwordLz, routine, DMA_COPY_WORDS(words), REG_DMA3);
+  Dma_Set(Decompress_HalfwordLz, routine, DMA_COPY_WORDS(words), REG_DMA3);
   ((void (*)(const void *, void *))routine)(source, destination);
 }
 
 /// Each decoder copies its ARM routine `code` to RAM, runs it and frees the
-/// copy, and returns the number of bytes it decoded. The copy is a MemAlloc
-/// block, IWRAM when it fits, and MemFree puts the pool's next address back
+/// copy, and returns the number of bytes it decoded. The copy is a Alloc
+/// block, IWRAM when it fits, and Free puts the pool's next address back
 /// where it was.
 #define RESOURCE_DEFINE_DECODE(name, code, bytes)                              \
   s32 name(const void *source, void *destination) {                            \
@@ -24,19 +24,19 @@ void Resource_DecompressHalfwords(const void *source, void *destination) {
                                                                                \
     RamCode_Load(routine, code, bytes);                                        \
     result = routine(source, destination);                                     \
-    MemFree(routine);                                                          \
+    Free(routine);                                                             \
     return result;                                                             \
   }
 
 /// Decodes a type-01 resource and returns its unpacked byte count.
-RESOURCE_DEFINE_DECODE(Resource_DecodeType01, Resource_DecodeType01Arm,
-                       Resource_DecodeType01CodeSize)
+RESOURCE_DEFINE_DECODE(Decompress_Type01, Decompress_Type01Arm,
+                       Decompress_Type01CodeSize)
 /// Decodes a type-02 resource and returns its unpacked byte count.
-RESOURCE_DEFINE_DECODE(Resource_DecodeType2, Resource_Decode2,
-                       Resource_Decode2CodeSize)
+RESOURCE_DEFINE_DECODE(Decompress_Type2, Decompress_Type2Commands,
+                       Decompress_Type2CommandsCodeSize)
 /// Decodes a byte-oriented LZ resource and returns its unpacked byte count.
-RESOURCE_DEFINE_DECODE(Resource_DecodeByteLz, Resource_DecodeByteLzArm,
-                       Resource_DecodeByteLzCodeSize)
+RESOURCE_DEFINE_DECODE(Decompress_ByteLz, Decompress_ByteLzArm,
+                       Decompress_ByteLzCodeSize)
 
 // Shading of 8-bit pixel buffers whose values are steps 0 to 63 of a colour
 // ramp. Each function copies `bytes` of `buffer` to `backup`, then shades the

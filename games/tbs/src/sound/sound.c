@@ -40,10 +40,10 @@ enum {
 /// Plays a cue, the game's one way of playing a sound: a fade control, a sound
 /// effect, a fanfare or music, as the README's "What a cue number means"
 /// describes. The low 12 bits are the cue, AUDIO_CUE_START_SILENT the only flag
-/// read. Reached through the sound far-call table as AudioCommand_PlayFar from
+/// read. Reached through the sound far-call table as Sound_PlaySongFar from
 /// the whole game; it keeps the music's ramps and cue records
-/// (gMusicCue, gMusicRestoreDelay) up to date.
-void AudioCommand_Play(s32 id) {
+/// (gCurrentBgm, gMusicRestoreDelay) up to date.
+void Sound_PlaySong(s32 id) {
   s32 flags;
   s32 player;
 
@@ -58,7 +58,7 @@ void AudioCommand_Play(s32 id) {
       return;
     MusicPlayer_FadeOut(&gMusicPlayerBgm, 7);
     gMusicFadeRequested++;
-    gMusicCue = MUS_SILENCE;
+    gCurrentBgm = MUS_SILENCE;
   } else if (id == AUDIO_CUE_FADE_SLOT3) {
     // The cue is also the number of the song table's row 289, so it fades
     // player 3 out over 48 frames (16 steps of 3) and that row never plays.
@@ -95,16 +95,16 @@ void AudioCommand_Play(s32 id) {
     Audio_PlaySound(id);
     gMusicRestoreDelay = MUSIC_RESTORE_DELAY_FRAMES;
   } else {
-    // Music: the keep cue, or the music cue last chosen (gMusicCue),
+    // Music: the keep cue, or the music cue last chosen (gCurrentBgm),
     // changes nothing, so a map may name its music on every entry; a song
     // that has ended is not started again. The three songs below take mixer
     // record 3, the rest record 2 (the README's "The mixer's code is chosen per
     // song").
     if (id == AUDIO_CUE_KEEP_BGM)
       return;
-    if (id == gMusicCue)
+    if (id == gCurrentBgm)
       return;
-    gMusicCue = id;
+    gCurrentBgm = id;
     Sound_LoadPresetParameters(
         (id == MUS_TITLE || id == MUS_ENDING_LOGO || id == MUS_ENDING) ? 3 : 2);
     Audio_PlaySound(id);
@@ -236,13 +236,13 @@ void AudioTest_RunParameterController(void) {
         row++;
     }
     if (gKeysRepeat & KEY_A)
-      AudioCommand_Play(cues[row]);
+      Sound_PlaySong(cues[row]);
     if (gKeysRepeat & KEY_B)
-      AudioCommand_Play(MUS_SILENCE);
+      Sound_PlaySong(MUS_SILENCE);
     if (gKeysRepeat & KEY_START)
-      AudioCommand_Play(AUDIO_CUE_FADE_BGM);
+      Sound_PlaySong(AUDIO_CUE_FADE_BGM);
     if (gKeysRepeat & KEY_SELECT)
-      AudioCommand_Play(AUDIO_CUE_FADE_SLOT3);
+      Sound_PlaySong(AUDIO_CUE_FADE_SLOT3);
 
     WaitFrames(1);
   }
@@ -257,7 +257,7 @@ void Audio_InitializeRuntimeDefaults(void) {
 
   Audio_Initialize();
   // No music cue is 0xff, so the first music cue always plays.
-  gMusicCue = 0xff;
+  gCurrentBgm = 0xff;
   gMusicRestoreDelay = 0;
   gMusicVolumeTarget = MUSIC_UNITY_SCALE;
   gMusicVolume = MUSIC_UNITY_SCALE;
@@ -348,12 +348,12 @@ void AudioCommand_UpdateToggleMask(u32 command) {
     gAudio_CommandMask = command;
 }
 
-/// Returns the music cue AudioCommand_Play last chose: 0xff before any,
-/// MUS_SILENCE after a fade, else the last music cue. Field_RunMap saves it
-/// as gGameState.returnCue before the pause menu, so the music can be started
+/// Returns the music cue Sound_PlaySong last chose: 0xff before any,
+/// MUS_SILENCE after a fade, else the last music cue. Map_Run saves it
+/// as gGameState.returnMusic before the pause menu, so the music can be started
 /// again when the party is put back where it was (Game_Run,
 /// object/object/map.c).
-s32 AudioCommand_GetMusicCue(void) { return gMusicCue; }
+s32 AudioCommand_GetMusicCue(void) { return gCurrentBgm; }
 
 /// Waits a frame at a time for fanfare restoration, giving up after 300
 /// frames. Called only by Vale's sanctum, after the fanfare (MUS_086) for
@@ -369,7 +369,7 @@ void AudioCommand_WaitForCompletion(void) {
   } while (framesWaited < MUSIC_WAIT_TIMEOUT_FRAMES);
 }
 
-/// Unused: returns the mixer record AudioCommand_Play gives music cue
+/// Unused: returns the mixer record Sound_PlaySong gives music cue
 /// `command`: 3 for MUS_ENDING, MUS_TITLE and MUS_ENDING_LOGO, 2 for the rest.
 /// Nothing in ☀️ calls it.
 UNUSED s32 AudioCommand_GetWidth(s32 command) {

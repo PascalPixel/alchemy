@@ -13,11 +13,11 @@
 struct MapGridCell;
 struct ObjectEvent;
 
-/// A map's row in gField_MapTable: its overlay's resource, its map section,
+/// A map's row in gMapHeaders: its overlay's resource, its map section,
 /// its map type and its layout. One row per map number; field/maps.s writes
 /// them, and its MapId_ symbols are the row numbers.
-struct MapRecord {
-  s16 resourceId; ///< the overlay Resource_LoadCode loads into gOverlayArea
+struct MapHeader {
+  s16 resourceId; ///< the overlay Overlay_Load loads into gOverlayArea
   /// The map section: entering a new one clears the FLAG_MAPSEC_TEMP_ flags
   /// and the step counters and moves Retreat's destination;
   /// FLAG_MAPSEC_VISITED(mapSec) marks it visited (Map_ResetFlagsOnEnter).
@@ -30,7 +30,7 @@ struct MapRecord {
   u16 reserved;    ///< 0 in every row; not read
 };
 
-STATIC_ASSERT(sizeof(struct MapRecord) == 8);
+STATIC_ASSERT(sizeof(struct MapHeader) == 8);
 
 /// A map's warp region: the box that, while its condition holds, takes the
 /// party leader out through its warp.
@@ -67,11 +67,11 @@ STATIC_ASSERT(offsetof(struct MapEntries, regions) == 0x2c);
 
 /// A map marker placed as an object event: a chest or a Psynergy stone.
 struct MarkerSlot {
-  struct ObjectRuntime *object; ///< the object event placed for it
-  u8 id;                        ///< the trigger of its map event, 100 to 239
-  u8 unused;                    ///< cleared with the slot; no code names it
-  u8 column;                    ///< its 16-pixel cell
-  u8 row;                       ///< its 16-pixel cell
+  struct Object *object; ///< the object event placed for it
+  u8 id;                 ///< the trigger of its map event, 100 to 239
+  u8 unused;             ///< cleared with the slot; no code names it
+  u8 column;             ///< its 16-pixel cell
+  u8 row;                ///< its 16-pixel cell
 };
 
 STATIC_ASSERT(sizeof(struct MarkerSlot) == 8);
@@ -91,9 +91,9 @@ enum FieldEventCode {
   FIELD_EVENT_WORLD_MAP_ZOOM = -889
 };
 
-/// A field map's work, all of it: Field_RunMap allocates it in heap slot
-/// 27 (HEAP_SLOT_EVENT), zeroes it and frees it on the way out. The map
-/// overlays read it as struct EventWork through gEventWork. The twelve
+/// A field map's work, all of it: Map_Run allocates it in heap slot
+/// 27 (HEAP_SLOT_FIELD), zeroes it and frees it on the way out. The map
+/// overlays read it as struct EventWork through gFieldWork. The twelve
 /// requests from action to event are handled by the field loop.
 struct FieldWork {
   /// The object event template tables placed so far, recorded by
@@ -150,10 +150,10 @@ struct FieldWork {
   /// XXX: set to 0xffff by FieldScript_Start and never read (see the field
   /// README).
   u16 unk1da;
-  s16 unk1dc; ///< XXX: set to -1 by FieldScript_Start and never read
-  s16 unk1de; ///< XXX: set to -1 by FieldScript_Start and never read
-  struct ObjectRuntime *camera; ///< the object the map view follows
-  u8 unusedAfterCamera[0x10];   ///< no code names it
+  s16 unk1dc;            ///< XXX: set to -1 by FieldScript_Start and never read
+  s16 unk1de;            ///< XXX: set to -1 by FieldScript_Start and never read
+  struct Object *camera; ///< the object the map view follows
+  u8 unusedAfterCamera[0x10]; ///< no code names it
   s32 speaker;       ///< the object event speaking; the leader at each script
   s32 messageWindow; ///< the open message window, 0 for none
   s32 sideWindow;    ///< the speaker's portrait window
@@ -228,7 +228,7 @@ struct FieldPosition {
 STATIC_ASSERT(sizeof(struct FieldPosition) == 12);
 
 /// Every map's record, by map number (field/maps.s).
-extern const struct MapRecord gField_MapTable[];
+extern const struct MapHeader gMapHeaders[];
 /// The running map's overlay, loaded into these 0x8000 bytes of EWRAM at
 /// each map change; its code opens with its entry table.
 extern struct MapEntries gOverlayArea;

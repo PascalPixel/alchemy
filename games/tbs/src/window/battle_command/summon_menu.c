@@ -284,7 +284,7 @@ s32 SummonMenu_SelectSummon(s32 unused0, s32 unused1, const u8 *standby) {
     // Input
     //------------------------------------------------------------------
     BATTLE_MENU_SET_CURSOR(firstEntry, selectedRow, preferredRow);
-    navigation = gLinkCountdownWork;
+    navigation = gBattleMenuWork;
     pressed = gKeysPressed;
     repeated = gKeysRepeat;
 
@@ -306,19 +306,19 @@ s32 SummonMenu_SelectSummon(s32 unused0, s32 unused1, const u8 *standby) {
       result = orderedSummons[firstEntry + selectedRow];
       break;
     }
-    if (gLinkCountdownWork->timer == 0 || (pressed & KEY_B)) {
-      AudioCommand_PlayFar(SE_MENU_CANCEL);
+    if (gBattleMenuWork->timer == 0 || (pressed & KEY_B)) {
+      Sound_PlaySongFar(SE_MENU_CANCEL);
       result = -1;
       break;
     }
     if (repeated & KEY_DOWN) {
-      AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
+      Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
       selectedRow++;
       if (selectedRow == 4 || firstEntry + selectedRow == count)
         selectedRow = 0;
       preferredRow = selectedRow;
     } else if (repeated & KEY_UP) {
-      AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
+      Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
       selectedRow--;
       if (selectedRow < 0) {
         // On the last page the cursor goes to its last entry.
@@ -330,7 +330,7 @@ s32 SummonMenu_SelectSummon(s32 unused0, s32 unused1, const u8 *standby) {
       preferredRow = selectedRow;
     } else if (repeated & KEY_RIGHT) {
       // Next page, wrapping from last to first.
-      AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
+      Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
       Input_ResetKeyRepeat();
       if (firstEntry + 4 >= count) {
         if (firstEntry != 0) {
@@ -348,7 +348,7 @@ s32 SummonMenu_SelectSummon(s32 unused0, s32 unused1, const u8 *standby) {
       }
     } else if (repeated & KEY_LEFT) {
       // Previous page, wrapping from first to last.
-      AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
+      Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
       Input_ResetKeyRepeat();
       if (firstEntry != 0) {
         firstEntry -= 4;

@@ -13,14 +13,14 @@
 /// PSYNERGY_PHASE_EFFECT_ACTS event is not run here; it only makes
 /// the effect aim at the object event ahead, and the effects that act on it
 /// (Force, Frost, Reveal) find it themselves. An after event whose trigger has
-/// MAP_EVENT_TRIGGER_OWN_EFFECT plays the effect itself. Called by Field_RunMap
+/// MAP_EVENT_TRIGGER_OWN_EFFECT plays the effect itself. Called by Map_Run
 /// for the Psynergy request (work->psynergy); sets work->resolvingAction while
 /// the effect plays. On the world map, placed object events far from the view
 /// are destroyed for the effect, and all placed object events are placed again
-/// afterwards. Returns 0 whatever happens; Field_RunMap ignores it.
+/// afterwards. Returns 0 whatever happens; Map_Run ignores it.
 s32 Field_UsePsynergy(u32 code) {
   s32 abilityId = ABILITY_ID(code);
-  struct FieldWork *work = (struct FieldWork *)gEventWork;
+  struct FieldWork *work = (struct FieldWork *)gFieldWork;
   const struct MapEvent *before;
   const struct MapEvent *after;
   const struct MapEvent *during;
@@ -46,7 +46,7 @@ s32 Field_UsePsynergy(u32 code) {
     PSYNERGY_MESSAGE(userId, abilityId, MsgNothingHappened);
     return 0;
   }
-  if (work->mode == MODE_WORLD_MAP && abilityId == ABILITY_REVEAL) {
+  if (work->mode == OBJECT_SYSTEM_WORLD_MAP && abilityId == ABILITY_REVEAL) {
     PSYNERGY_MESSAGE(userId, ABILITY_REVEAL, MsgNothingHappened);
     return 0;
   }
@@ -115,7 +115,7 @@ s32 Field_UsePsynergy(u32 code) {
     GameFlag_ClearBitFar(FLAG_PSYNERGY_TARGET);
 
   // Play the effect.
-  if (work->mode == MODE_WORLD_MAP)
+  if (work->mode == OBJECT_SYSTEM_WORLD_MAP)
     ObjectTable_ClearOutOfBounds();
   FieldEffect_LoadActionEffectResources(abilityId, 0);
   work->resolvingAction = 1;
@@ -137,7 +137,7 @@ s32 Field_UsePsynergy(u32 code) {
   GameFlag_ClearBitFar(FLAG_PSYNERGY_TARGET);
   work->resolvingAction = 0;
   FieldEffect_End();
-  if (work->mode == MODE_WORLD_MAP)
+  if (work->mode == OBJECT_SYSTEM_WORLD_MAP)
     ObjectTable_Respawn();
   return 0;
 }

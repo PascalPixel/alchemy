@@ -68,10 +68,10 @@ void BattleEffect_RunAtalanta(struct BattleEffectArgument *effect) {
 
   // The slots are read from the background's: the effect work, the canvas
   // and the sheet come before it.
-  slots = &gWorkSlot[HEAP_SLOT_BATTLE_BACKGROUND];
+  slots = &gHeapSlots[HEAP_SLOT_BATTLE_BACKGROUND];
   view = slots[0];
   canvas = slots[HEAP_SLOT_BATTLE_CANVAS - HEAP_SLOT_BATTLE_BACKGROUND];
-  work = slots[HEAP_SLOT_BATTLE_EFFECT - HEAP_SLOT_BATTLE_BACKGROUND];
+  work = slots[HEAP_SLOT_BATTLE_ANIM - HEAP_SLOT_BATTLE_BACKGROUND];
   sheet = slots[HEAP_SLOT_BATTLE_SHEET - HEAP_SLOT_BATTLE_BACKGROUND];
   scrollX = gBgScroll[1].x;
   work->effect = effect;
@@ -82,8 +82,7 @@ void BattleEffect_RunAtalanta(struct BattleEffectArgument *effect) {
   BG_PLTT[0] = 0;
   BG_PLTT[1] = 0;
   work->transferMode = CANVAS_COPY;
-  Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer,
-                                EFFECT_CALLBACK_ORDER);
+  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, EFFECT_CALLBACK_ORDER);
   BattleEffect_WipeCanvas(CANVAS_WIPE_DOWN, CANVAS_WIPE_FILL);
   BattleEffect_SelectLivingTargets(work->effect);
   // The formation: nine objects from resource object 370, sprite priority 1.
@@ -93,11 +92,11 @@ void BattleEffect_RunAtalanta(struct BattleEffectArgument *effect) {
                   Resource_GetTableEntry((s32)&ResourceId_LimePalette), 128);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
   path = Resource_GetTableEntry((s32)&ResourceId_StagedParticlePath);
-  EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER, EFFECT_CLIP_BOUNDS, COMPOSITE_MAX);
-  EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER_ALTERNATE, EFFECT_CLIP_BOUNDS,
+  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, COMPOSITE_MAX);
+  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, EFFECT_CLIP_BOUNDS,
                       COMPOSITE_ADDITIVE);
-  draw[0] = EFFECT_BLITTERS[HEAP_SLOT_BLITTER];
-  draw[1] = EFFECT_BLITTERS[HEAP_SLOT_BLITTER_ALTERNATE];
+  draw[0] = EFFECT_BLITTERS[HEAP_SLOT_RAM_CODE];
+  draw[1] = EFFECT_BLITTERS[HEAP_SLOT_RAM_CODE_2];
   // The projection centre moves down to line 240 for the gathering;
   // BattleEffect_SetupBlendedDisplay puts it back at 120 between the parts.
   gProjection.centerY = 240;
@@ -109,8 +108,7 @@ void BattleEffect_RunAtalanta(struct BattleEffectArgument *effect) {
   work->scrollInterval = 4;
   work->scrollStepX = -1;
   work->scrollStepY = 0;
-  Scheduler_AddOrUpdateCallback(BattleEffect_AdvanceScrollOnInterval,
-                                EFFECT_CALLBACK_ORDER);
+  Task_Add(BattleEffect_AdvanceScrollOnInterval, EFFECT_CALLBACK_ORDER);
   view->busy = 1;
   BattleEffect_WipeCanvas(CANVAS_WIPE_DOWN, CANVAS_WIPE_CLEAR);
   EFFECT_SHOW_WIDE_CANVAS(16);
@@ -187,7 +185,7 @@ void BattleEffect_RunAtalanta(struct BattleEffectArgument *effect) {
         s32 y = Q_16_16_TO_INT(slash->y);
 
         if (frame == i * 8 + 84)
-          AudioCommand_PlayFar(SE_212);
+          Sound_PlaySongFar(SE_212);
         if (frame >= i * 8 + 85) {
           slash->x += slash->velocityX;
           slash->y += slash->velocityY;
@@ -275,7 +273,7 @@ void BattleEffect_RunAtalanta(struct BattleEffectArgument *effect) {
   // Between the parts: stop the scroll, give BG1 back to the battle, release
   // the formation and load the ember streak sheet into the map grid cell buffer
   // for the flames.
-  Scheduler_RemoveCallback(BattleEffect_AdvanceScrollOnInterval);
+  Task_Remove(BattleEffect_AdvanceScrollOnInterval);
   view->busy = 0;
   gBgScroll[1].x = scrollX;
   BattleEffect_SetupBlendedDisplay();
@@ -368,7 +366,7 @@ void BattleEffect_RunAtalanta(struct BattleEffectArgument *effect) {
 
             slash->variant = 0;
             work->shakeFrames = 2;
-            AudioCommand_PlayFar(SE_HEAVY_IMPACT);
+            Sound_PlaySongFar(SE_HEAVY_IMPACT);
             member = i % 6;
             if (member < work->effect->count) {
               ObjectGroup_UpdateMembers(work->effect->actors[member],

@@ -106,12 +106,12 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
   if (spread == 0)
     spread = 1;
   // UB: slot 57 is outside the scalar gBattleWork pointer. Named accesses
-  // add 12 bytes here in EN; using gWorkSlot adds 16 bytes.
+  // add 12 bytes here in EN; using gHeapSlots adds 16 bytes.
 #ifdef UBFIX
   if (mode == TARGET_MODE_ALLIES || mode == TARGET_MODE_SELF)
-    gLinkCountdownWork->targetViewOffset = -2;
+    gBattleMenuWork->targetViewOffset = -2;
   else
-    gLinkCountdownWork->targetViewOffset = 16;
+    gBattleMenuWork->targetViewOffset = 16;
 #else
   if (mode == TARGET_MODE_ALLIES || mode == TARGET_MODE_SELF)
     ((struct BattleMenuWork **)&gBattleWork)[48]->targetViewOffset = -2;
@@ -716,15 +716,15 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
     }
     pressed = gKeysPressed;
     repeated = gKeysRepeat;
-    if (gLinkCountdownWork->tutorialStep) {
+    if (gBattleMenuWork->tutorialStep) {
       repeated = 0;
       pressed = 0;
-      if (gLinkCountdownWork->tutorialDelay == 0) {
-        gLinkCountdownWork->tutorialDelay = 60;
+      if (gBattleMenuWork->tutorialDelay == 0) {
+        gBattleMenuWork->tutorialDelay = 60;
         repeated = 1;
         pressed = 1;
       } else {
-        gLinkCountdownWork->tutorialDelay--;
+        gBattleMenuWork->tutorialDelay--;
       }
     }
     // A: the aimed unit's side and place; the loop ends after this frame.
@@ -754,7 +754,7 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
       targetIndex = result;
     } else if (spread != ABILITY_RANGE_ALL) {
       if (repeated & (KEY_DOWN | KEY_RIGHT)) {
-        AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
+        Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
         do {
           targetIndex++;
           targetIndex %= candidateCount;
@@ -762,7 +762,7 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
         redraw |= 1;
       }
       if (repeated & (KEY_UP | KEY_LEFT)) {
-        AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
+        Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
         do {
           targetIndex = targetIndex + candidateCount - 1;
           targetIndex %= candidateCount;
@@ -770,8 +770,8 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
         redraw |= 1;
       }
     }
-    if (gLinkCountdownWork->timer == 0 || (pressed & KEY_B)) {
-      AudioCommand_PlayFar(SE_MENU_CANCEL);
+    if (gBattleMenuWork->timer == 0 || (pressed & KEY_B)) {
+      Sound_PlaySongFar(SE_MENU_CANCEL);
       targetIndex = -1;
       break;
     }
@@ -785,7 +785,7 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
     UiWork_Finalize(conditionWindow, 1);
   UiWork_Finalize(window, 1);
   BattlePresentation_SetActorModesFar(candidateIds, 0);
-  gLinkCountdownWork->targetViewOffset = 0;
+  gBattleMenuWork->targetViewOffset = 0;
   WaitFrames(1);
   return targetIndex;
 }

@@ -29,7 +29,7 @@ struct DjinnListTable {
 
 /// The Djinn menu's lists, the field tiles and palette it restores on closing,
 /// and the tutorial's state. The menu allocates it outside any slot, EWRAM
-/// first, as it opens, and frees it (MemFree) as it closes.
+/// first, as it opens, and frees it (Free) as it closes.
 struct DjinnMenuBackdrop {
   struct DjinnListTable list;
   u8 tiles[0x2000];  ///< BG character block 1's first 0x2000 bytes
@@ -45,14 +45,14 @@ struct DjinnMenuBackdrop {
 struct DjinnMenuWork {
   u8 unused[8]; ///< no view of the menu work names it (see menu/README.md)
   s32 owner;
-  struct UiWindow *moneyWindow; ///< ShopRuntime's; not named here
+  struct UiWindow *moneyWindow; ///< ShopWork's; not named here
   struct UiWindow *statusWindow;
   struct RenderOutput *cursor;
-  /// The second of InventoryMenuState's paneIcons; not named here.
+  /// The second of ItemMenuWork's paneIcons; not named here.
   struct RenderOutput *secondPaneIcon;
   s8 selectedColumn[2]; ///< each pane's member, in owners
-  s8 paneCount[2];      ///< InventoryMenuState's; not named here
-  /// InventoryMenuState's and ShopRuntime's itemWindow; not named here.
+  s8 paneCount[2];      ///< ItemMenuWork's; not named here
+  /// ItemMenuWork's and ShopWork's itemWindow; not named here.
   struct UiWindow *itemWindow;
   struct UiWindow *window;
   /// Never given a window, so NULL from UiWindow_InitializeWork on; the preview
@@ -60,10 +60,10 @@ struct DjinnMenuWork {
   /// the BIOS that returns the last BIOS instruction fetched, whose low half
   /// as a width is over 30, so UiWindow_DrawFrame draws nothing.
   struct UiWindow *unopenedWindow;
-  struct UiWindow *infoWindow; ///< InventoryMenuState's; not named here
+  struct UiWindow *infoWindow; ///< ItemMenuWork's; not named here
   struct UiWindow *listWindow;
   struct UiWindow *secondWindow;
-  /// InventoryMenuState's last windows and its icons; not named here.
+  /// ItemMenuWork's last windows and its icons; not named here.
   ///@{
   u8 itemWindows[0x10];
   struct RenderOutput *entryIcons[32];
@@ -71,31 +71,31 @@ struct DjinnMenuWork {
   ///@}
   u8 unusedAfterIcons[0x24]; ///< no view of the menu work names it
   struct UiWindow *helpWindow;
-  /// InventoryMenuState's cursor grid, selectedColumn to rowCount; not named
+  /// ItemMenuWork's cursor grid, selectedColumn to rowCount; not named
   /// here.
   u8 cursorGrid[4];
-  /// InventoryMenuState's party figures; not named here.
+  /// ItemMenuWork's party figures; not named here.
   struct AnimationObject *ownerObjects[8];
   s16 ownerX[8];      ///< screen pixels
   s16 ownerY[8];      ///< screen pixels
-  s32 ownerScale[8];  ///< InventoryMenuState's; not named here
+  s32 ownerScale[8];  ///< ItemMenuWork's; not named here
   u16 selection[2];   ///< each pane's Djinni row chosen
   u16 pairEntries[2]; ///< 255 at first
   struct RenderOutput *secondCursor;
   u8 unusedBeforeBackdrop[4]; ///< no view of the menu work names it
   struct DjinnMenuBackdrop *backdrop;
   u8 unusedAfterBackdrop[0x40];  ///< no view of the menu work names it
-  u16 entries[32];               ///< InventoryMenuState's items; not named here
+  u16 entries[32];               ///< ItemMenuWork's items; not named here
   u16 owners[DJINN_LIST_OWNERS]; ///< the party in order
   u8 pairCount;
   u8 ownerCount;
   u8 shownOwner[2]; ///< the member giving and the one receiving
-  /// InventoryMenuState's selectedItemIcon; not named here.
+  /// ItemMenuWork's selectedItemIcon; not named here.
   struct RenderOutput *selectedIcon;
   /// bits: 1 a give or trade awaits its confirmation | 0 a second Djinni is
   /// to be chosen
   u16 pending;
-  s16 completionFlag; ///< InventoryMenuState's; not named here
+  s16 completionFlag; ///< ItemMenuWork's; not named here
   /// FourObjectMotionState's animations, the figures the Djinn screen
   /// moves through that view.
   struct AnimationObject *figures[4];

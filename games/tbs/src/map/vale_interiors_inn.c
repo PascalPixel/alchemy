@@ -374,7 +374,7 @@ static void EventScript_AskIsaacHisBusiness(void) {
   Engine_ScriptWait(20);
   Script_OpenMessage(LOCALID_MASKED_MAN, 0);
   if (Engine_ScriptChooseYesNo(0, 0) == 1) {
-    gEventWork->message++;
+    gFieldWork->message++;
   }
   Engine_ObjectEventStartRepeatedMotion(LOCALID_MASKED_MAN, 1);
   Engine_ScriptWait(20);
@@ -397,7 +397,7 @@ static void EventScript_AskWhetherMaskedManWasFelix(void) {
   if (Engine_ScriptChooseYesNo(0, 0) == 0) {
     Engine_ScriptShowMessage(LOCALID_YOUNG_MAN_SAW_MASK, 0);
   } else {
-    work = gEventWork;
+    work = gFieldWork;
     work->message = (work->message + 1);
     Engine_ScriptAskYesNo(LOCALID_YOUNG_MAN_SAW_MASK, 0);
   }
@@ -410,7 +410,7 @@ static void ValeInteriorsInn_CloseScreenAndExit(s32 warpNumber) {
   if (Engine_GameFlagIsSet(FLAG_VALE_STORM) != 0) {
     FieldEffect_StopLightning();
   }
-  gEventWork->startTransition =
+  gFieldWork->startTransition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
   Engine_ScriptCloseScreen();
   Engine_ScriptWaitForScreen();
@@ -507,7 +507,7 @@ static void EventScript_WarpToValeStormEast(void) {
 /// Sets up these rooms for the stormy night or the story's villagers. It also
 /// plays the scenes of VALE_INTERIORS_INN_FROM_VALE_GATE_SOUTHEAST,
 /// VALE_INTERIORS_INN_ISAACS_HOUSE_FROM_UPSTAIRS_WITH_DORA and
-/// VALE_INTERIORS_INN_FROM_VALE_KRADEN_MYTHRIL_BAG. Called by Field_RunMap once
+/// VALE_INTERIORS_INN_FROM_VALE_KRADEN_MYTHRIL_BAG. Called by Map_Run once
 /// the object events are placed. VALE_INTERIORS_INN_FROM_VALE_GATE_SOUTHEAST
 /// sets FLAG_VALE_STORM before EventScript_DoraWakesIsaac; back from Kalay,
 /// Dora is put back in her sickbed unless FLAG_MAP_TEMP_03 says she got up.
@@ -516,7 +516,7 @@ s32 ValeInteriorsInn_Initialize(void) {
 
   if (gGameState.warpDest == VALE_INTERIORS_INN_FROM_BABI_PALACE) {
     Engine_GameFlagClear(FLAG_SHOW_LOCATION_NAME);
-    ((struct EventWork *)WORK_SLOT(HEAP_SLOT_EVENT))->startTransition =
+    ((struct EventWork *)HEAP_SLOT_BLOCK(HEAP_SLOT_FIELD))->startTransition =
         MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
   } else {
     if (Engine_GameFlagIsSet(FLAG_VALE_STORM) != 0) {
@@ -561,11 +561,12 @@ s32 ValeInteriorsInn_Initialize(void) {
               VALE_INTERIORS_INN_FROM_VALE_KRADEN_MYTHRIL_BAG) {
             EventScript_ShowMythrilBag();
           } else {
-            ((struct EventWork *)WORK_SLOT(HEAP_SLOT_EVENT))->startTransition =
+            ((struct EventWork *)HEAP_SLOT_BLOCK(HEAP_SLOT_FIELD))
+                ->startTransition =
                 MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
             if (Engine_GameFlagIsSet(FLAG_VALE_STORM) != 0) {
               FieldEffect_StartLightning();
-              ((struct FieldBlendWork *)WORK_SLOT(HEAP_SLOT_FIELD_BLEND))
+              ((struct FieldBlendWork *)HEAP_SLOT_BLOCK(HEAP_SLOT_LIGHTNING))
                   ->loud = 1;
               FieldEffect_LastLightning();
               Engine_TaskWait(30);
@@ -599,7 +600,7 @@ static void EventScript_DoraWakesIsaac(void) {
   struct ObjectEvent *viewCenter;
   struct EventWork **eventSlot;
 
-  eventSlot = (struct EventWork **)Ram_EventWork;
+  eventSlot = (struct EventWork **)Ram_FieldWork;
   /* FAKEMATCH(temporary): the event record read into a block-local before
      the map work and view centre; as reads in place, 11 of 430 instructions
      differ in tbs-en (13 with the view centre first). */
@@ -797,7 +798,7 @@ static void EventScript_HurryToThePlaza(void) {
   sprite->image.priority = 1;
   ObjectEvent_SetActionScript(LOCALID_FLAME,
                               gValeInteriorsInn_FlameShakesScript);
-  ((struct EventWork *)WORK_SLOT(HEAP_SLOT_EVENT))->startTransition =
+  ((struct EventWork *)HEAP_SLOT_BLOCK(HEAP_SLOT_FIELD))->startTransition =
       MAP_TRANSITION(TRANSITION_WINDOW, 1);
   MapGrid_CopyCellsTo(83, 15, 83, 19, 5, 4);
   MapGrid_CopyCellsTo(90, 16, 90, 20, 5, 4);
@@ -812,7 +813,7 @@ static void EventScript_HurryToThePlaza(void) {
   SetBlendTarget(BLDCNT_TGT1_BG1 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL);
   Io_Write16(BLEND_ALPHA(12, 16), &REG_BLDALPHA);
   FieldEffect_StartLightning();
-  ((struct FieldBlendWork *)WORK_SLOT(HEAP_SLOT_FIELD_BLEND))->loud = 1;
+  ((struct FieldBlendWork *)HEAP_SLOT_BLOCK(HEAP_SLOT_LIGHTNING))->loud = 1;
   FieldEffect_LastLightning();
   Engine_TaskWait(30);
   // Dora and Isaac run out of the house (SE_DOOR_OPEN).
@@ -898,9 +899,9 @@ ramp:
   ObjectEvent_SetActionScript(LOCALID_DORA, gValeInteriorsInn_RunToPlazaScript);
   ObjectEvent_RunActionScriptAndWait(LOCALID_PARTY_LEADER,
                                      gValeInteriorsInn_RunToPlazaScript);
-  ((struct EventWork *)WORK_SLOT(HEAP_SLOT_EVENT))->startTransition =
+  ((struct EventWork *)HEAP_SLOT_BLOCK(HEAP_SLOT_FIELD))->startTransition =
       MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
-  ((struct EventWork *)WORK_SLOT(HEAP_SLOT_EVENT))->transitionFrames = 32;
+  ((struct EventWork *)HEAP_SLOT_BLOCK(HEAP_SLOT_FIELD))->transitionFrames = 32;
   Engine_ScriptCloseScreen();
   Engine_ScriptWaitForScreen();
   Engine_ScriptRequestWarp(VALE_INTERIORS_INN_TO_VALE_STORM_WITH_DORA);
@@ -1040,7 +1041,7 @@ static void EventScript_VisitSickDora(void) {
   // Read has told Isaac of her illness.
   Engine_ScriptOpenMessage(LOCALID_DORA, 0);
   if (Engine_ScriptChooseYesNo(0, 0) == 1) {
-    gEventWork->message += 1;
+    gFieldWork->message += 1;
   }
   if (GameFlag_IsSet(FLAG_READ_THOUGHTS_ABOUT_DORA) != 0) {
     ObjectEvent_ShowEmote(LOCALID_DORA, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
@@ -1053,7 +1054,7 @@ static void EventScript_VisitSickDora(void) {
   Engine_ScriptSetMessage(firstMessage);
   Engine_ScriptOpenMessage(LOCALID_DORA, 0);
   if (Engine_ScriptChooseYesNo(0, 0) == 1) {
-    gEventWork->message += 1;
+    gFieldWork->message += 1;
   }
   if (Engine_GameFlagIsSet(FLAG_READ_THOUGHTS_ABOUT_DORA) != 0) {
     ObjectEvent_ShowEmote(LOCALID_DORA, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
@@ -1180,7 +1181,7 @@ static void EventScript_ShowMythrilBag(void) {
   Engine_ItemLoadIcon(ITEM_MYTHRIL_BAG);
   Engine_VramLoad(sprite->slot, 128, glyph->tiles);
   Engine_HeapRelease(17);
-  gEventWork->startTransition = MAP_TRANSITION(TRANSITION_WINDOW, 2);
+  gFieldWork->startTransition = MAP_TRANSITION(TRANSITION_WINDOW, 2);
   Engine_ScriptOpenScreen();
   // Walk the presenter into view, then wait for both bag scripts to finish.
   ObjectEvent_SetSpeed(LOCALID_KRADEN, PIXELS(1), PIXELS(1) / 2);
@@ -1248,7 +1249,7 @@ static void ValeInteriorsInn_SpawnEffectPair(union FieldObject *fieldObject) {
   struct ObjectEvent *child;
   struct AnimationObject *part;
   struct AnimationObject *sprite;
-  struct FieldEffectWork *effectWork = gEffectWork;
+  struct FieldEffectWork *effectWork = gFieldEffectWork;
   s32 effectIndex;
 
   for (effectIndex = 0; effectIndex < 2; ++effectIndex) {

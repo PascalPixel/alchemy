@@ -279,7 +279,7 @@ static void LamakanDesert_LeaveForTheWorldMap(void) {
       GameFlag_Set(FLAG_HSU_RESCUED);
     }
   }
-  Script_PlayCue(SE_MAP_EXIT);
+  Script_PlaySong(SE_MAP_EXIT);
   Engine_ScriptRequestWarp(LAMAKAN_DESERT_CAVE_TO_WORLD_MAP);
   Engine_ScriptEnd();
 }
@@ -491,7 +491,7 @@ static void LamakanDesert_ComplainAboutHeat(s32 mark) {
 /// the gauge drops back below it. Nothing is raised while Reveal is showing the
 /// pits.
 static void HeatGauge_RaiseQuarterTriggers(void) {
-  struct EventWork *work = gEventWork;
+  struct EventWork *work = gFieldWork;
   s32 percent = gGameState.hazardSteps * 100 / gGameState.hazardLimit;
 
   if (GameFlag_IsSet(FLAG_SECRETS_REVEALED) != 0)
@@ -572,7 +572,7 @@ static void LamakanDesert_BatheInOasis(void) {
   u16 *revealFrames;
   s32 zero;
 
-  work = (u8 *)gEventWork;
+  work = (u8 *)gFieldWork;
   frames = 60;
   best = 0xf00000;
   GameFlag_Set(FLAG_DESERT_EVENT_RUNNING);
@@ -612,14 +612,14 @@ static void LamakanDesert_BatheInOasis(void) {
     const struct LamakanDesertOasis *spot =
         (const struct LamakanDesertOasis *)&points[nearest];
 
-    FieldObject_SetPosition(objectEvent, spot->x, 0, spot->z);
+    Object_SetPosition(objectEvent, spot->x, 0, spot->z);
   }
   ObjectEvent_Get(LOCALID_PARTY_LEADER)->velocityY = 0x60000;
-  Script_PlayCue(SE_JUMP);
+  Script_PlaySong(SE_JUMP);
   leader = ObjectEvent_Get(LOCALID_PARTY_LEADER);
   MapObjectEvent_WaitBelowHeight(
       leader, ObjectEvent_Get(LOCALID_PARTY_LEADER)->y.fixed);
-  Script_PlayCue(SE_WATER_MOVE);
+  Script_PlaySong(SE_WATER_MOVE);
   {
     struct ObjectEvent *objectEvent = ObjectEvent_Get(LOCALID_PARTY_LEADER);
 
@@ -669,8 +669,8 @@ static void LamakanDesert_BatheInOasis(void) {
                           EFFECT_SCALE_TO_TARGET,
                       &puff);
   }
-  Script_PlayCue(SE_STOP_SLOT3);
-  Script_PlayCue(SE_JUMP);
+  Script_PlaySong(SE_STOP_SLOT3);
+  Script_PlaySong(SE_JUMP);
   ObjectEvent_Get(LOCALID_PARTY_LEADER)->velocityY = 0x60000;
   ObjectEvent_SetAnimation(LOCALID_PARTY_LEADER, ANIMATION_STAND);
   Script_Wait(10);
@@ -689,7 +689,7 @@ static void HeatGauge_CountStep(void) {
   s32 z;
   s32 phase;
   objectEvent = ObjectEvent_GetById(gGameState.selectedLocalId);
-  work = gEventWork;
+  work = gFieldWork;
   if (objectEvent->targetX == OBJ_EVENT_NO_TARGET) {
     return;
   }
@@ -831,7 +831,7 @@ static void LamakanDesert_SlideDownDune(void) {
 
   HeatGauge_CountStep();
   {
-    struct EventWork *work = gEventWork;
+    struct EventWork *work = gFieldWork;
 
     id = gGameState.selectedLocalId;
     center = work->viewCenter;
@@ -859,7 +859,7 @@ static void LamakanDesert_SlideDownDune(void) {
                              objectEvent->y.fixed,
                              objectEvent->z.fixed + 0x80000);
     ObjectEvent_SetMode(objectEvent, ANIMATION_LEADER_LEAP);
-    FieldObject_WaitForMove(objectEvent);
+    Object_WaitForMove(objectEvent);
     do {
       Engine_TaskWait(1);
     } while (objectEvent->y.fixed != objectEvent->terrainHeight);
@@ -904,7 +904,7 @@ static void LamakanDesert_MeetManticore(void) {
   u16 *revealFrames;
   u8 *eventBytes;
 
-  eventBytes = (u8 *)gEventWork;
+  eventBytes = (u8 *)gFieldWork;
   HeatGauge_CountStep();
   if (GameFlag_IsSet(FLAG_LAMAKAN_MANTICORE_BEATEN) == 0) {
     paused = GameFlag_IsSet(FLAG_DESERT_EVENT_RUNNING);
@@ -951,7 +951,7 @@ static void LamakanDesert_MeetManticore(void) {
       ObjectEvent_GetById(LOCALID_PARTY_LEADER)->steeringFlags |=
           OBJ_EVENT_FACES_MOTION;
       Engine_ScriptWait(30);
-      Script_PlayCue(SE_148);
+      Script_PlaySong(SE_148);
       Engine_ObjectEventRunRepeatedMotion(MANTICORE, 2);
       Engine_ScriptWait(20);
       ObjectEvent_SetSpeed(MANTICORE, 0x28000, 0x14000);
@@ -975,7 +975,7 @@ s32 LamakanDesert_Initialize(s32 a0, s32 a1) {
   gGameState.hazardDamage = HAZARD_DAMAGE_PERCENT | 25;
   if (gGameState.mapId == (s32)&MapId_LamakanDesertCave) {
   } else {
-    gEventWork->startTransition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+    gFieldWork->startTransition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
     HeatGauge_Start();
     FieldScheduler_AddCallback(HeatGauge_RaiseQuarterTriggers,
                                TASK_PRIORITY_MAP);
@@ -1079,7 +1079,7 @@ static void HeatGauge_Draw(void) {
   }
 
   // Tint the six changing palette entries before composing the gauge tiles.
-  buffer = MemAlloc(0x900);
+  buffer = Alloc(0x900);
   Dma_Set(gHeatGauge_Palette, buffer, 0x80000010, REG_DMA3);
   colors = (s16 *)(buffer + 12);
   color = colors;
@@ -1171,7 +1171,7 @@ static void HeatGauge_Draw(void) {
     offset += 12;
     x += 32;
   }
-  MemFree(buffer);
+  Free(buffer);
 }
 
 /// Loads the gauge's tiles, claims VRAM for them and starts drawing it.

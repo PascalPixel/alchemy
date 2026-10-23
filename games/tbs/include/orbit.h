@@ -56,7 +56,7 @@ typedef struct OrbitingMapObject {
   OrbitingMapObjectSprite *sprite;
   u8 padding54;
   u8 mode; ///< ObjectEvent's motionFlags; the Nut's maps zero it
-  /// ObjectRuntime.arrivalAxis, the axis watched for arrival; Map_FloatNut
+  /// Object.arrivalAxis, the axis watched for arrival; Map_FloatNut
   /// zeroes it.
   u8 state;
   u8 padding57[5];

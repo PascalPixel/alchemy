@@ -105,5 +105,5 @@ void Render_BuildOamList(void *work) {
 
   RamCode_Load(routine, Render_BuildOamListKernel, LoadedRuntime_Size);
   routine(work);
-  MemFree((void *)routine);
+  Free((void *)routine);
 }

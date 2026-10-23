@@ -72,7 +72,7 @@ struct ScriptObjectRuntime {
   /// frozen flag and two bytes map code uses.
   void *callback;
   /// Its home, in pixels: where it was created or placed. The bytes are
-  /// ObjectRuntime's action and footprintSide too.
+  /// Object's action and footprintSide too.
   ///@{
   s16 homeX;
   s16 homeZ;

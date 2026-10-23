@@ -141,11 +141,11 @@ void BattleEffect_RunGaia(struct BattleEffectArgument *effect) {
       work->animations[i]->image.priority = 1;
     }
   }
-  EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER, EFFECT_CLIP_BOUNDS, COMPOSITE_MAX);
-  draw[0] = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER];
-  EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER_ALTERNATE,
+  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, COMPOSITE_MAX);
+  draw[0] = (DrawRectangle)gHeapSlots[HEAP_SLOT_RAM_CODE];
+  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
                       EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, COMPOSITE_MAX);
-  draw[1] = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE];
+  draw[1] = (DrawRectangle)gHeapSlots[HEAP_SLOT_RAM_CODE_2];
   REG_BLDCNT =
       BLDCNT_TGT1_BG1 | BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
@@ -188,11 +188,11 @@ void BattleEffect_RunGaia(struct BattleEffectArgument *effect) {
   work->shakeFrames = 250;
   for (frame = 0; frame != GAIA_FRAMES; frame++) {
     if (frame == 0)
-      AudioCommand_PlayFar(SE_212);
+      Sound_PlaySongFar(SE_212);
     if (frame == 40)
-      AudioCommand_PlayFar(SE_RUMBLE);
+      Sound_PlaySongFar(SE_RUMBLE);
     if (frame == 96)
-      AudioCommand_PlayFar(SE_145);
+      Sound_PlaySongFar(SE_145);
     if (frame == 120)
       EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
 
@@ -355,7 +355,7 @@ void BattleEffect_RunGaia(struct BattleEffectArgument *effect) {
       Camera_ApplyShake(8, 8);
     EFFECT_END_FRAME(work);
   }
-  Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
+  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   EFFECT_RELEASE_BLITTERS();
   for (i = 0; i != GAIA_ROCKS; i++)
     ResourceObject_ReleaseFar(work->animations[i]);

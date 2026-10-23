@@ -186,13 +186,13 @@
 /// The inventory's weapon slot, for Inventory_FindEquippedFar.
 #define EQUIP_WEAPON 1
 
-// MotionObject.recordStorageKind's low four bits: no sprite, one sprite in
+// MotionObject.spritesKind's low four bits: no sprite, one sprite in
 // records, or records pointing to a table of up to four.
-#define RECORDS_NONE 0
-#define RECORDS_SINGLE 1
-#define RECORDS_TABLE 2
-#define RECORDS_KIND_MASK 15
-#define RECORDS_TABLE_SIZE 4
+#define OBJECT_SPRITES_NONE 0
+#define OBJECT_SPRITES_ONE 1
+#define OBJECT_SPRITES_GROUP 2
+#define OBJECT_SPRITES_KIND_MASK 15
+#define OBJECT_SPRITES_GROUP_SIZE 4
 
 /// BattlePlan.outcome: how BattlePresentation_DispatchAction shows the
 /// action, set by BattleCommand_BuildPlan from the ability

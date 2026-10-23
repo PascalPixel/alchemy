@@ -83,7 +83,7 @@ void FieldEffect_SteerPushedTarget(s32 targetId) {
   s32 cellZ;
   struct EffectVector *candidate;
 
-  effectWork = gEffectWork;
+  effectWork = gFieldEffectWork;
   user = effectWork->mainObject;
   target = effectWork->child;
   // work->angle is the way the caster faces; the hand's side of the target
@@ -108,8 +108,8 @@ void FieldEffect_SteerPushedTarget(s32 targetId) {
   SET_POSITION(candidate, target->x.fixed, target->y.fixed + (16 << 16),
                target->z.fixed);
   Vector_AddPolarOffset(16 << 16, angle, candidate);
-  Object_SetMoveTargetFar((struct ObjectRuntime *)pusher, candidate->x,
-                          candidate->y, candidate->z);
+  Object_SetMoveTargetFar((struct Object *)pusher, candidate->x, candidate->y,
+                          candidate->z);
   FieldEffect_SnapScaleToFull((struct MotionObject *)pusher);
   // The hand floats (motion flag bit 2) at up to 4 pixels a frame. The
   // target cycles its colours, keeps its facing while it moves, and reads
@@ -135,8 +135,8 @@ void FieldEffect_SteerPushedTarget(s32 targetId) {
       position.y = target->y.fixed + (16 << 16);
       position.z = target->z.fixed;
       Vector_AddPolarOffset(16 << 16, angle, &position);
-      Object_SetMoveTargetFar((struct ObjectRuntime *)pusher, position.x,
-                              position.y, position.z);
+      Object_SetMoveTargetFar((struct Object *)pusher, position.x, position.y,
+                              position.z);
       ObjectDispatch_SelectAnimationFar(pusher, 1);
       SET_VELOCITY(pusher, 0, 0, 0);
       continue;
@@ -149,9 +149,9 @@ void FieldEffect_SteerPushedTarget(s32 targetId) {
     position.z = target->z.fixed;
     Vector_AddPolarOffset(16 << 16, angle, &position);
     Vector_AddPolarOffset(2 << 16, direction, &position);
-    Object_SetMoveTargetFar((struct ObjectRuntime *)pusher, position.x,
-                            position.y, position.z);
-    FieldObject_WaitForMoveFar(pusher);
+    Object_SetMoveTargetFar((struct Object *)pusher, position.x, position.y,
+                            position.z);
+    Object_WaitForMoveFar(pusher);
     position.x = target->x.fixed;
     position.y = target->y.fixed;
     position.z = target->z.fixed;
@@ -162,11 +162,11 @@ void FieldEffect_SteerPushedTarget(s32 targetId) {
     Vector_AddPolarOffset(32 << 16, direction, &beyond);
     // A wall (2) or ground more than 8 pixels higher (1) stops the push;
     // level ground or a drop does not.
-    if (MapGrid_CheckObjectStepFar((struct ObjectRuntime *)target,
+    if (MapGrid_CheckObjectStepFar((struct Object *)target,
                                    (struct FieldPosition *)&position) > 0) {
       ObjectDispatch_SelectAnimationFar(pusher, 4);
       if ((gFrameCount & 15) == 0)
-        AudioCommand_PlayFar(SE_MENU_ERROR);
+        Sound_PlaySongFar(SE_MENU_ERROR);
       continue;
     }
     hit = (struct ObjectEvent *)ScriptObject_FindOverlappingEntryFar(
@@ -175,7 +175,7 @@ void FieldEffect_SteerPushedTarget(s32 targetId) {
       if (hit != user) {
         ObjectDispatch_SelectAnimationFar(pusher, 4);
         if ((gFrameCount & 15) == 0)
-          AudioCommand_PlayFar(SE_MENU_ERROR);
+          Sound_PlaySongFar(SE_MENU_ERROR);
         continue;
       }
 
@@ -188,7 +188,7 @@ void FieldEffect_SteerPushedTarget(s32 targetId) {
           cellZ == (candidate->z & MOVE_CELL_MASK)) {
         ObjectDispatch_SelectAnimationFar(pusher, 4);
         if ((gFrameCount & 15) == 0)
-          AudioCommand_PlayFar(SE_MENU_ERROR);
+          Sound_PlaySongFar(SE_MENU_ERROR);
         continue;
       }
       if (cellX == (beyond.x & MOVE_CELL_MASK) &&
@@ -198,7 +198,7 @@ void FieldEffect_SteerPushedTarget(s32 targetId) {
                                                  beyond.z) != TERRAIN_FLAT) {
           ObjectDispatch_SelectAnimationFar(pusher, 4);
           if ((gFrameCount & 15) == 0)
-            AudioCommand_PlayFar(SE_MENU_ERROR);
+            Sound_PlaySongFar(SE_MENU_ERROR);
           continue;
         }
         moved = 1;
@@ -209,7 +209,7 @@ void FieldEffect_SteerPushedTarget(s32 targetId) {
     // push (in quarter turns): 2 pushing away from its side, 3 drawing toward
     // it, 1 sideways. Target and hand then move 16 pixels at 0.2 pixels a
     // frame, and a caster in the way is carried along with them.
-    AudioCommand_PlayFar(SE_175);
+    Sound_PlaySongFar(SE_175);
     x = position.x;
     z = position.z;
     ObjectDispatch_SelectAnimationFar(
@@ -218,23 +218,23 @@ void FieldEffect_SteerPushedTarget(s32 targetId) {
     target->paused = 0;
     target->speed = 0x3333;
     target->acceleration = 0x3333;
-    Object_SetMoveTargetFar((struct ObjectRuntime *)target, position.x,
-                            position.y, position.z);
+    Object_SetMoveTargetFar((struct Object *)target, position.x, position.y,
+                            position.z);
     pusher->motionFlags = 0;
     pusher->speed = 0x3333;
     pusher->acceleration = 0x3333;
     Vector_AddPolarOffset(16 << 16, direction, &position);
-    Object_SetMoveTargetFar((struct ObjectRuntime *)pusher, position.x,
+    Object_SetMoveTargetFar((struct Object *)pusher, position.x,
                             position.y + (16 << 16), position.z);
     if (moved == 1) {
       ObjectEvent_GetById(effectWork->firstObjectId)->steeringFlags &= 0xfe;
       user->speed = 0x3333;
       user->acceleration = 0x3333;
-      Object_SetMoveTargetFar((struct ObjectRuntime *)user, beyond.x, beyond.y,
+      Object_SetMoveTargetFar((struct Object *)user, beyond.x, beyond.y,
                               beyond.z);
     }
     // Land exactly on the tile, whatever the braking left.
-    FieldObject_WaitForMoveFar(target);
+    Object_WaitForMoveFar(target);
     target->x.fixed = x;
     target->z.fixed = z;
     target->velocityX = 0;
@@ -315,7 +315,7 @@ void FieldEffect_RunMove(void) {
   struct FieldEffectWork *effectWork;
   void *object;
 
-  effectWork = gEffectWork;
+  effectWork = gFieldEffectWork;
   object = effectWork->mainObject;
 
   /* FAKEMATCH(one-pass): the call in a do { } while (0), which keeps the
@@ -361,8 +361,8 @@ void *FieldEffect_StartItemBreak(void *object) {
   parent->acceleration = 2 << 16;
   parent->motionFlags = 0;
   ObjectDispatch_SelectAnimationFar(parent, 3);
-  Motion_SetTargetPositionFromMagnitudeAngle((struct ObjectRuntime *)parent,
-                                             16 << 16, angle);
+  Motion_SetTargetPositionFromMagnitudeAngle((struct Object *)parent, 16 << 16,
+                                             angle);
 
   // Particles: 8 to 32 pixels within 1/8 turn of the way it faces, at 1 to 2
   // pixels a frame.
@@ -381,12 +381,12 @@ void *FieldEffect_StartItemBreak(void *object) {
       child->velocityY = spread - Random16();
       radius = Random16() * 24 + (8 << 16);
       jitter = Random16();
-      Motion_SetTargetPositionFromMagnitudeAngle(
-          (struct ObjectRuntime *)child, radius,
-          ((jitter - Random16()) >> 3) + source->angle);
+      Motion_SetTargetPositionFromMagnitudeAngle((struct Object *)child, radius,
+                                                 ((jitter - Random16()) >> 3) +
+                                                     source->angle);
     }
   }
-  AudioCommand_PlayFar(SE_ITEM_BREAK);
+  Sound_PlaySongFar(SE_ITEM_BREAK);
   return parent;
 }
 
@@ -408,7 +408,7 @@ void FieldEffect_SnapScaleToFull(struct MotionObject *object) {
       object->scaleX = next;
       object->scaleY = next;
     }
-    FieldObject_WaitForMoveFar(object);
+    Object_WaitForMoveFar(object);
   }
 }
 
@@ -423,7 +423,7 @@ void UpdateRisingParticleBurst(void *object) {
   s32 dist;
   u32 spread;
 
-  AudioCommand_PlayFar(SE_CAST);
+  Sound_PlaySongFar(SE_CAST);
   for (i = 30; i >= 0; i--) {
     src->y += 1 << 16;
     src->angle += 0x2000; // 1/8 turn
@@ -452,11 +452,11 @@ void UpdateRisingParticleBurst(void *object) {
       child->velocityY = spread - Random16();
       dist = Random16() * 24;
       dist += 8 << 16;
-      Motion_SetTargetPositionFromMagnitudeAngle((struct ObjectRuntime *)child,
-                                                 dist, Random16());
+      Motion_SetTargetPositionFromMagnitudeAngle((struct Object *)child, dist,
+                                                 Random16());
     }
   }
-  AudioCommand_PlayFar(SE_131);
+  Sound_PlaySongFar(SE_131);
   ObjectDispatch_ReleaseFar((struct DispatchObject *)src);
 }
 

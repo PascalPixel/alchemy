@@ -41,7 +41,7 @@ static inline void ItemGift_ShowGotItem(s32 item, s32 flags) {
 /// skips the object events' messages, which open nothing while fastForward is
 /// set (UiText_OpenMessageAtObject).
 void FieldScript_UpdateDebugSkip(void) {
-  struct FieldWork *runtime = (struct FieldWork *)gEventWork;
+  struct FieldWork *runtime = (struct FieldWork *)gFieldWork;
 
   if (gDebugMode != 0) {
     if (gKeysPressed & KEY_L) {
@@ -58,7 +58,7 @@ void FieldScript_UpdateDebugSkip(void) {
 /// Engine_ScriptWait (the WAIT command); this object's object event, message,
 /// camera and climbing commands wait through it too.
 void FieldScript_WaitFrames(s32 frames) {
-  if (((struct FieldWork *)gEventWork)->fastForward == 0 && frames != 0) {
+  if (((struct FieldWork *)gFieldWork)->fastForward == 0 && frames != 0) {
     WaitFrames(frames);
   }
 }
@@ -66,11 +66,11 @@ void FieldScript_WaitFrames(s32 frames) {
 /// Stops the leader where it stands: no horizontal velocity, the normal walking
 /// speed (1.0) and acceleration (0.5), no destination, and the standing pose,
 /// or the climbing pose (12) while the leader is on a climbable wall. Called by
-/// FieldScript_Start, by Field_RunMap before it handles several requests, by
+/// FieldScript_Start, by Map_Run before it handles several requests, by
 /// Field_UsePsynergy, Map_TalkToObjectEvent, Field_CheckWarpRegions and the
 /// world map's zoom (FieldEffect_RunVisibilityTransition).
 void Leader_StopMoving(void) {
-  struct ObjectRuntime *object;
+  struct Object *object;
 
   object = ObjectTable_Get(gGameState.selectedLocalId);
   object->speedLimit = 0x10000;
@@ -94,7 +94,7 @@ void Leader_StopMoving(void) {
 /// work's name window, fastForward and messageWindow, sets transitionFrames to
 /// 16 and the speaker to the leader.
 void FieldScript_Start(void) {
-  struct FieldWork *runtime = (struct FieldWork *)gEventWork;
+  struct FieldWork *runtime = (struct FieldWork *)gFieldWork;
 
   UiTimedNotice_CloseIfActiveFar();
   Leader_StopMoving();
@@ -110,7 +110,7 @@ void FieldScript_Start(void) {
   runtime->unk1da = 0xFFFF;
   runtime->unk1dc = -1;
   runtime->unk1de = -1;
-  Scheduler_AddOrUpdateCallback(FieldScript_UpdateDebugSkip, 0xC80);
+  Task_Add(FieldScript_UpdateDebugSkip, 0xC80);
   // XXX: flag 0x132 is cleared at every script and nothing in ☀️ names it; the
   // map scripts or overlays that set or test 0x132 would settle its meaning.
   GameFlag_ClearBitFar(0x132);
@@ -123,7 +123,7 @@ void FieldScript_Start(void) {
 /// scripts reach it as Engine_ScriptEnd (EV_END), and every script that opens
 /// with FieldScript_Start closes with it.
 void FieldScript_End(void) {
-  Scheduler_RemoveCallback(FieldScript_UpdateDebugSkip);
+  Task_Remove(FieldScript_UpdateDebugSkip);
   Camera_FollowObjectEvent(gGameState.selectedLocalId, 1);
   GameFlag_RefreshLureCapFar();
 }
@@ -158,7 +158,7 @@ void FieldScript_CallWithLastActiveObjectId(struct ObjectEventTemplate *table) {
 /// writes work->events. Altin Peak's map script calls it as
 /// FieldScript_LoadAreaScript.
 void FieldScript_SetMapEvents(const struct MapEvent *events) {
-  struct FieldWork *work = (struct FieldWork *)gEventWork;
+  struct FieldWork *work = (struct FieldWork *)gFieldWork;
 
   work->events = events;
 }
@@ -249,7 +249,7 @@ void Party_RemoveOwnerRestored(s32 unit) {
 /// most 30 of one item. When they are all full, says
 /// `Isaac's party cannot carry any more <item>s...` and
 /// `Isaac threw the <item> as far away as possible.` and returns -1; otherwise
-/// returns 0. Field_RunMap calls it before it gives gGameState.pendingItem
+/// returns 0. Map_Run calls it before it gives gGameState.pendingItem
 /// with PartyInventory_GiveItem.
 s32 Party_CheckItemLimit(s32 item) {
   s32 partyCount;
@@ -276,7 +276,7 @@ s32 Party_CheckItemLimit(s32 item) {
 /// to drop to make room, or drops the new item instead (not allowed for an
 /// indispensable one). Returns the member who received the item, or -1 when
 /// it was left behind. Map scripts reach it as Engine_PartyGiveItem (about
-/// 24 of them); Field_RunMap gives the pending item and the debug test menu
+/// 24 of them); Map_Run gives the pending item and the debug test menu
 /// gives items through it. The field work's message is restored afterwards.
 s32 PartyInventory_GiveItem(s32 item, s32 unused) {
   // A for/continue retry loop shrinks native English 0x1c4 -> 0x1a8;
@@ -290,7 +290,7 @@ s32 PartyInventory_GiveItem(s32 item, s32 unused) {
   s32 member;
   s32 slot;
 
-  work = (struct FieldWork *)gEventWork;
+  work = (struct FieldWork *)gFieldWork;
   // The messages below move the script's message on; every return puts it
   // back, so the map script continues where it was.
   savedMessage = work->message;
@@ -349,7 +349,7 @@ s32 PartyInventory_GiveItem(s32 item, s32 unused) {
       for (discardIndex = 0; discardIndex < discardQuantity; discardIndex++)
         Inventory_DiscardFar(member, slot);
       owner = PartyInventory_AddFar(item);
-      AudioCommand_PlayFar(MUS_TREASURE_FOUND);
+      Sound_PlaySongFar(MUS_TREASURE_FOUND);
       if (owner == gGameState.selectedLocalId) {
         ItemGift_ShowGotItem(item, 3);
       } else {
@@ -363,7 +363,7 @@ s32 PartyInventory_GiveItem(s32 item, s32 unused) {
   } else {
     // There was room: "Isaac got <item>.", and "Isaac gave <item> to
     // <member>." when someone other than the leader carries it.
-    AudioCommand_PlayFar(MUS_TREASURE_FOUND);
+    Sound_PlaySongFar(MUS_TREASURE_FOUND);
     ItemGift_ShowGotItem(item, 3);
     if (owner != gGameState.selectedLocalId) {
       UiWork_PushValueSlotFar(item, 2);
@@ -396,7 +396,7 @@ void Inventory_ReservedNoOp(void) {}
 /// Only object events drawn as an animation object (OBJECT_SPRITE_ONE) are
 /// waited for. Called by FieldScript_AskYesNoWithObjectEventAnimation.
 void ObjectEvent_WaitForAnimationEnd(s32 localId, s32 animation) {
-  struct ObjectRuntime *objectEventObject = ObjectTable_Get(localId);
+  struct Object *objectEventObject = ObjectTable_Get(localId);
 
   if (objectEventObject != 0 &&
       objectEventObject->animationKind == OBJECT_SPRITE_ONE) {
@@ -421,7 +421,7 @@ void ObjectEvent_WaitForAnimationEnd(s32 localId, s32 animation) {
 /// Map scripts reach it as Engine_ScriptChooseYesNo (about 54 of them); the
 /// link lobby and FieldScript_AskYesNoAndShowResponse call it too.
 s32 FieldScript_AskYesNoWithObjectEventAnimation(s32 localId, s32 forceBottom) {
-  struct FieldWork *work = (struct FieldWork *)gEventWork;
+  struct FieldWork *work = (struct FieldWork *)gFieldWork;
   s32 sprite = Map_FindObjectEventTemplate(work->speaker)->sprite;
   struct UiWindow *window = (struct UiWindow *)work->messageWindow;
   struct UiWindow *side = (struct UiWindow *)work->sideWindow;
@@ -482,7 +482,7 @@ s32 Menu_AskYesNo(s32 atBottom) {
 void Party_LearnAbility(s32 unit, s32 ability) {
   // Declared without parameters: unit and ability pass through in r0 and r1.
   Unit_LearnPsynergyFar();
-  AudioCommand_PlayFar(MUS_TREASURE_FOUND);
+  Sound_PlaySongFar(MUS_TREASURE_FOUND);
   UiWork_PushValueSlotFar(unit, 1);
   UiWork_PushValueSlotFar(ability, 4);
   UiText_ShowPositionedMessageAndWaitFar(MsgAbilityLearned, 3);
@@ -493,7 +493,7 @@ void Party_LearnAbility(s32 unit, s32 ability) {
 /// Engine_ScriptOpenScreen; the inn, the title, cleared-game and link lobby
 /// menus and WorldMap_Show call it too.
 void FieldScript_StartScreenTransition(void) {
-  struct FieldWork *runtime = (struct FieldWork *)gEventWork;
+  struct FieldWork *runtime = (struct FieldWork *)gFieldWork;
 
   DisplayTransition_Start(runtime->transition, runtime->transitionFrames);
   runtime->transitionActive = 1;
@@ -504,7 +504,7 @@ void FieldScript_StartScreenTransition(void) {
 /// Engine_ScriptCloseScreen; the inn, the cleared-game menu and
 /// WorldMap_Show call it too.
 void FieldScript_FinishScreenTransition(void) {
-  struct FieldWork *runtime = (struct FieldWork *)gEventWork;
+  struct FieldWork *runtime = (struct FieldWork *)gFieldWork;
 
   DisplayTransition_Finish(runtime->transition, runtime->transitionFrames);
   runtime->transitionActive = 0;
@@ -514,7 +514,7 @@ void FieldScript_FinishScreenTransition(void) {
 /// (work->transitionFrames). Map scripts reach it as
 /// Engine_ScriptWaitForScreen.
 void FieldScript_WaitTransitionFrames(void) {
-  WaitFrames(((struct FieldWork *)gEventWork)->transitionFrames);
+  WaitFrames(((struct FieldWork *)gFieldWork)->transitionFrames);
 }
 
 /// Makes the script leave for the given warp destination of the given map:
@@ -522,7 +522,7 @@ void FieldScript_WaitTransitionFrames(void) {
 /// by the title, cleared-game and link lobby menus, the debug battle command
 /// and five map scripts (the Lemurian ship and the world map among them).
 void FieldScript_SetDestination(s32 mapId, s32 warpDest) {
-  ((struct FieldWork *)gEventWork)->warp = 999;
+  ((struct FieldWork *)gFieldWork)->warp = 999;
   gGameState.mapId = mapId;
   gGameState.warpDest = warpDest;
 }
@@ -531,7 +531,7 @@ void FieldScript_SetDestination(s32 mapId, s32 warpDest) {
 /// destination. Reached only through an unnamed veneer in the object bank's
 /// far-call table; nothing in ☀️ names it.
 void FieldScript_SetSavedDestination(u16 mapId, u16 warpDest) {
-  struct FieldWork *state = (struct FieldWork *)gEventWork;
+  struct FieldWork *state = (struct FieldWork *)gFieldWork;
   state->warp = 999;
   gGameState.savedMap = mapId;
   gGameState.savedWarpDest = warpDest;
@@ -541,7 +541,7 @@ void FieldScript_SetSavedDestination(u16 mapId, u16 warpDest) {
 /// for gGameState's mapId and warpDest). Map scripts reach it as
 /// Engine_ScriptRequestWarp (about 61 of them).
 void FieldScript_SetWarpRequest(u16 request) {
-  struct FieldWork *state = (struct FieldWork *)gEventWork;
+  struct FieldWork *state = (struct FieldWork *)gFieldWork;
   state->warp = request;
 }
 

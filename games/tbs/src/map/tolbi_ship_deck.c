@@ -333,8 +333,7 @@ TolbiShipDeck_HoverAndDiveAtOuranos(struct ScriptInterpreter *interpreter) {
     case 1:
       objectEvent->speed = PIXELS(4);
       objectEvent->acceleration = PIXELS(2);
-      FieldObject_SetPosition(objectEvent, PIXELS(268), PIXELS(20),
-                              PIXELS(692));
+      Object_SetPosition(objectEvent, PIXELS(268), PIXELS(20), PIXELS(692));
       objectEvent->riseCounter++;
       break;
     case 2:
@@ -345,7 +344,7 @@ TolbiShipDeck_HoverAndDiveAtOuranos(struct ScriptInterpreter *interpreter) {
           objectEvent->targetY == objectEvent->targetX &&
           objectEvent->targetZ == objectEvent->targetY) {
         objectEvent->riseCounter++;
-        Script_PlayCue(SE_146);
+        Script_PlaySong(SE_146);
         if (objectEvent->riseEnabled != 0)
           ObjectEvent_FaceDirection(SEA_OURANOS, FACING_NORTH + FACING_STEP, 0);
         else
@@ -365,9 +364,9 @@ TolbiShipDeck_HoverAndDiveAtOuranos(struct ScriptInterpreter *interpreter) {
       break;
     case 5:
       if (objectEvent->riseEnabled != 0)
-        FieldObject_SetPosition(objectEvent, PIXELS(282), 0, PIXELS(658));
+        Object_SetPosition(objectEvent, PIXELS(282), 0, PIXELS(658));
       else
-        FieldObject_SetPosition(objectEvent, PIXELS(254), 0, PIXELS(668));
+        Object_SetPosition(objectEvent, PIXELS(254), 0, PIXELS(668));
       objectEvent->riseCounter++;
       break;
     case 6:
@@ -430,8 +429,7 @@ TolbiShipDeck_HoverAndDiveAtSean(struct ScriptInterpreter *interpreter) {
     case 1:
       objectEvent->speed = PIXELS(4);
       objectEvent->acceleration = PIXELS(2);
-      FieldObject_SetPosition(objectEvent, PIXELS(256), PIXELS(20),
-                              PIXELS(640));
+      Object_SetPosition(objectEvent, PIXELS(256), PIXELS(20), PIXELS(640));
       objectEvent->riseCounter++;
       break;
     case 2:
@@ -442,7 +440,7 @@ TolbiShipDeck_HoverAndDiveAtSean(struct ScriptInterpreter *interpreter) {
           objectEvent->targetY == objectEvent->targetX &&
           objectEvent->targetZ == objectEvent->targetY) {
         objectEvent->riseCounter++;
-        Script_PlayCue(SE_146);
+        Script_PlaySong(SE_146);
         if (objectEvent->riseEnabled != 0)
           ObjectEvent_FaceDirection(SEA_SEAN, FACING_NORTH + FACING_STEP, 0);
         else
@@ -461,9 +459,9 @@ TolbiShipDeck_HoverAndDiveAtSean(struct ScriptInterpreter *interpreter) {
       break;
     case 5:
       if (objectEvent->riseEnabled != 0)
-        FieldObject_SetPosition(objectEvent, PIXELS(264), 0, PIXELS(600));
+        Object_SetPosition(objectEvent, PIXELS(264), 0, PIXELS(600));
       else
-        FieldObject_SetPosition(objectEvent, PIXELS(242), 0, PIXELS(604));
+        Object_SetPosition(objectEvent, PIXELS(242), 0, PIXELS(604));
       objectEvent->riseCounter++;
       break;
     case 6:
@@ -599,7 +597,7 @@ static s32 TolbiShipDeck_LeapAtOuranos(struct ScriptInterpreter *interpreter) {
     objectEvent->velocityY = PIXELS(4);
     objectEvent->speed = PIXELS(4);
     objectEvent->acceleration = PIXELS(2);
-    FieldObject_SetPosition(objectEvent, PIXELS(264), 0, PIXELS(662));
+    Object_SetPosition(objectEvent, PIXELS(264), 0, PIXELS(662));
     objectEvent->timer++;
     break;
   case 3:
@@ -635,9 +633,9 @@ static s32 TolbiShipDeck_LeapAtOuranos(struct ScriptInterpreter *interpreter) {
     objectEvent->speed = PIXELS(2);
     objectEvent->acceleration = PIXELS(1);
     if (objectEvent->riseEnabled != 0) {
-      FieldObject_SetPosition(objectEvent, PIXELS(252), 0, PIXELS(646));
+      Object_SetPosition(objectEvent, PIXELS(252), 0, PIXELS(646));
     } else {
-      FieldObject_SetPosition(objectEvent, PIXELS(256), 0, PIXELS(686));
+      Object_SetPosition(objectEvent, PIXELS(256), 0, PIXELS(686));
     }
     break;
   case 7:
@@ -673,7 +671,7 @@ static s32 TolbiShipDeck_LeapAtSean(struct ScriptInterpreter *interpreter) {
     objectEvent->velocityY = PIXELS(4);
     objectEvent->speed = PIXELS(4);
     objectEvent->acceleration = PIXELS(2);
-    FieldObject_SetPosition(objectEvent, PIXELS(176), 0, PIXELS(696));
+    Object_SetPosition(objectEvent, PIXELS(176), 0, PIXELS(696));
     objectEvent->timer++;
     break;
   case 3:
@@ -707,9 +705,9 @@ static s32 TolbiShipDeck_LeapAtSean(struct ScriptInterpreter *interpreter) {
     objectEvent->speed = PIXELS(2);
     objectEvent->acceleration = PIXELS(1);
     if (objectEvent->riseEnabled != 0) {
-      FieldObject_SetPosition(objectEvent, PIXELS(184), 0, PIXELS(672));
+      Object_SetPosition(objectEvent, PIXELS(184), 0, PIXELS(672));
     } else {
-      FieldObject_SetPosition(objectEvent, PIXELS(202), 0, PIXELS(692));
+      Object_SetPosition(objectEvent, PIXELS(202), 0, PIXELS(692));
     }
     break;
   case 7:
@@ -905,7 +903,7 @@ static void TolbiShipDeck_AskHeadedForColosso(void) {
 /// Opens the first door to below deck, once a visit.
 static void TolbiShipDeck_OpenFirstDoor(void) {
   if (GameFlag_IsSet(FLAG_MAP_TEMP_71) == 0) {
-    Script_PlayCue(SE_DOOR_OPEN);
+    Script_PlaySong(SE_DOOR_OPEN);
     MapGrid_CopyCellsTo(30, 94, 13, 94, 1, 3);
     GameFlag_Set(FLAG_MAP_TEMP_71);
   }
@@ -914,7 +912,7 @@ static void TolbiShipDeck_OpenFirstDoor(void) {
 /// Opens the second door to below deck, once a visit.
 static void TolbiShipDeck_OpenSecondDoor(void) {
   if (GameFlag_IsSet(FLAG_MAP_TEMP_72) == 0) {
-    Script_PlayCue(SE_DOOR_OPEN);
+    Script_PlaySong(SE_DOOR_OPEN);
     MapGrid_CopyCellsTo(30, 108, 13, 108, 1, 2);
     GameFlag_Set(FLAG_MAP_TEMP_72);
   }
@@ -929,7 +927,7 @@ static void TolbiShipDeck_GoBelow(void) {
   s32 throughDoor;
   struct EventWork *work;
 
-  work = gEventWork;
+  work = gFieldWork;
   Engine_ScriptStart();
   throughDoor = 0;
   switch (work->touchedTrigger) {
@@ -1227,7 +1225,7 @@ s32 TolbiShipDeck_Initialize(void) {
       &((struct MapGridScrollWork *)base[0])->layers[MAPGRID_LAYER_GROUND];
 
   Engine_GameFlagClear(FLAG_WORLD_MAP_LEFT);
-  ((struct EventWork *)base[HEAP_SLOT_EVENT - HEAP_SLOT_MAP_GRID])
+  ((struct EventWork *)base[HEAP_SLOT_FIELD - HEAP_SLOT_MAP_GRID])
       ->startTransition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
   layer->speedY = 0;
@@ -1575,7 +1573,7 @@ static void TolbiShipDeck_DepartWithParty(void) {
 /// of the voyage. "Preparations... Ready!"
 static void TolbiShipDeck_AnnouncePreparationsReady(s32 messenger,
                                                     s32 crewMember) {
-  gEventWork->startTransition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+  gFieldWork->startTransition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   Engine_ScriptOpenScreen();
   Engine_ScriptWaitForScreen();
   Engine_ScriptWait(20);
@@ -1594,7 +1592,7 @@ static void TolbiShipDeck_AnnouncePreparationsReady(s32 messenger,
   Engine_ObjectEventStartRepeatedMotion(crewMember, 2);
   Engine_ScriptSetMessage(MsgTolbiShipPreparationsReady);
   Script_ShowMessageAndWait(crewMember, 0, 20);
-  gEventWork->startTransition =
+  gFieldWork->startTransition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_NOISE);
   Engine_ScriptCloseScreen();
   Engine_ScriptWaitForScreen();
@@ -1611,7 +1609,7 @@ static void TolbiShipDeck_SightSeaMonsters(void) {
   Engine_ObjectEventSetChildValue(LOCALID_PARTY_LEADER, 15);
   Engine_ObjectEventSetSpriteFlags(ObjectEvent_GetById(LOCALID_PARTY_LEADER),
                                    0);
-  gEventWork->startTransition =
+  gFieldWork->startTransition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_NOISE);
   Engine_ScriptOpenScreen();
   Engine_ScriptWaitForScreen();
@@ -1646,7 +1644,7 @@ static void TolbiShipDeck_MonstersBoard(void) {
   Engine_ObjectEventSetChildValue(LOCALID_PARTY_LEADER, 15);
   Engine_ObjectEventSetSpriteFlags(ObjectEvent_GetById(LOCALID_PARTY_LEADER),
                                    0);
-  gEventWork->startTransition =
+  gFieldWork->startTransition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_NOISE);
   Engine_ScriptOpenScreen();
   ObjectEvent_SetSpeed(SEA_OURANOS, PIXELS(8) / 5, PIXELS(4) / 5);
@@ -1754,7 +1752,7 @@ static void TolbiShipDeck_MonstersAttackCrew(void) {
   ObjectEvent_SetActionScript(SEA_FIRST_HOVERING_MONSTER + 3,
                               gTolbiShipDeck_HoverAndDiveAtOuranosActions);
   Engine_ObjectEventSetPosition(SEA_KAJA, 0, 0);
-  gEventWork->startTransition =
+  gFieldWork->startTransition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_NOISE);
   Engine_ScriptOpenScreen();
   Engine_ScriptWaitForScreen();
@@ -1766,7 +1764,7 @@ static void TolbiShipDeck_MonstersAttackCrew(void) {
   ObjectEvent_SetSpeed(SEA_SECOND_ATTACK_MONSTER + 1, PIXELS(8) / 5,
                        PIXELS(4) / 5);
   ObjectEvent_SetDestination(SEA_SECOND_ATTACK_MONSTER + 1, 172, 0x284);
-  FieldObject_MotionSetPositionAndCommit(SEA_SECOND_ATTACK_MONSTER, 200, 0x294);
+  Object_MotionSetPositionAndCommit(SEA_SECOND_ATTACK_MONSTER, 200, 0x294);
   ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(4), PIXELS(2));
   ObjectEvent_SetDestination(LOCALID_PARTY_LEADER, 174, 0x26c);
   Engine_ObjectMotionSetPositionAndCommit(SEA_SECOND_ATTACK_MONSTER, 180,
@@ -1878,7 +1876,7 @@ static void TolbiShipDeck_MonsterLandsOnDeck(void) {
   Engine_ObjectEventSetChildValue(SEA_FIRST_LEAPING_MONSTER + 3, 3);
   Engine_ObjectEventSetChildValue(SEA_THIRD_ATTACK_MONSTER, 3);
   Engine_ObjectEventSetChildValue(SEA_THIRD_ATTACK_MONSTER + 1, 3);
-  gEventWork->startTransition =
+  gFieldWork->startTransition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_NOISE);
   Engine_ScriptOpenScreen();
   Engine_ScriptWaitForScreen();
@@ -1916,10 +1914,8 @@ static void TolbiShipDeck_MonsterLandsOnDeck(void) {
   ObjectEvent_SetDestination(LOCALID_PARTY_LEADER, 216, 0x264);
   ObjectEvent_SetSpeed(SEA_THIRD_ATTACK_MONSTER + 2, PIXELS(8) / 5,
                        PIXELS(4) / 5);
-  FieldObject_MotionSetPositionAndCommit(SEA_THIRD_ATTACK_MONSTER + 2, 196,
-                                         0x258);
-  FieldObject_MotionSetPositionAndCommit(SEA_THIRD_ATTACK_MONSTER + 2, 216,
-                                         0x258);
+  Object_MotionSetPositionAndCommit(SEA_THIRD_ATTACK_MONSTER + 2, 196, 0x258);
+  Object_MotionSetPositionAndCommit(SEA_THIRD_ATTACK_MONSTER + 2, 216, 0x258);
   Engine_ObjectEventStop(SEA_THIRD_ATTACK_MONSTER);
   Engine_TaskWait(1);
   ObjectEvent_SetSpeed(SEA_THIRD_ATTACK_MONSTER, PIXELS(8) / 5, PIXELS(4) / 5);
@@ -1970,7 +1966,7 @@ static void TolbiShipDeck_JumpIntoKrakenBattle(void) {
   Engine_ObjectEventSetPosition(LOCALID_PARTY_LEADER, 0, 0);
   objectEvent = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   objectEvent->facing = FACING_SOUTH;
-  gEventWork->startTransition =
+  gFieldWork->startTransition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_NOISE);
   Engine_ScriptOpenScreen();
   Engine_ScriptWaitForScreen();
@@ -2094,7 +2090,7 @@ static void TolbiShipDeck_ThankForKraken(void) {
   ObjectEvent_SetSpeed(SEA_OURANOS, PIXELS(4) / 5, PIXELS(2) / 5);
   ObjectEvent_SetActionScript(SEA_OURANOS,
                               gTolbiShipDeck_OuranosPatrolsActions);
-  gEventWork->startTransition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+  gFieldWork->startTransition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   Engine_ScriptOpenScreen();
   Engine_ScriptWaitForScreen();
   Engine_ScriptWait(20);
@@ -2121,7 +2117,7 @@ static void TolbiShipDeck_ThankForKraken(void) {
   Engine_ScriptWait(10);
   ObjectEvent_WalkToAndWait(SEA_KAJA, 216, 0x244);
   ObjectEvent_SetPosition(SEA_KAJA, 0, 0);
-  gEventWork->startTransition =
+  gFieldWork->startTransition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
   GameFlag_Set(FLAG_TOLBI_SHIP_KRAKEN_DEFEATED);
   GameFlag_Clear(FLAG_TOLBI_SHIP_KRAKEN_ON_DECK);
@@ -2153,10 +2149,10 @@ static void TolbiShipDeck_SightLand(void) {
   // UB: a u32 lvalue aliases the pointer, which keeps the facing stores ahead
   // of its load; the defined build reads it directly.
 #ifdef UBFIX
-  gEventWork->startTransition =
+  gFieldWork->startTransition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_NOISE);
 #else
-  ((struct EventWork *)*(u32 *)&gEventWork)->startTransition =
+  ((struct EventWork *)*(u32 *)&gFieldWork)->startTransition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_NOISE);
 #endif
   Engine_ScriptOpenScreen();
@@ -2797,7 +2793,7 @@ static void TolbiShipDeck_SightIsland(void) {
   ObjectEvent_SetChildValue(LOCALID_PARTY_LEADER, 15);
   Engine_ObjectEventSetSpriteFlags(ObjectEvent_Get(LOCALID_PARTY_LEADER), 0);
   Engine_TaskWait(1);
-  gEventWork->startTransition =
+  gFieldWork->startTransition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_NOISE);
   Engine_ScriptOpenScreen();
   Engine_ScriptWaitForScreen();
@@ -2971,7 +2967,7 @@ static void TolbiShipDeck_ReturnFromIsland(void) {
     Engine_ScriptEnd();
     return;
   }
-  gEventWork->message++;
+  gFieldWork->message++;
   Script_AskYesNo(SPEAKER(SEA_SEAN, 2), 0);
   TolbiShipDeck_OpenFirstDoor();
   ObjectEvent_SetPosition(ANCHOR_TOUR_GUIDE, PIXELS(216), PIXELS(588));
@@ -3027,7 +3023,7 @@ static void TolbiShipDeck_ReturnFromIsland(void) {
   TolbiShipDeck_Turn(LOCALID_PARTY_LEADER, FACING_NORTHEAST);
   Engine_ObjectEventSetAnimationAndWait(LOCALID_PARTY_LEADER, ANIMATION_NOD);
   Engine_ObjectEventSetAnimationAndWait(SEA_KAJA, 3);
-  gEventWork->startTransition =
+  gFieldWork->startTransition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_SHAPE);
   Engine_ScriptCloseScreen();
   Engine_ScriptWaitForScreen();

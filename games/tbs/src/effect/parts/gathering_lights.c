@@ -69,8 +69,8 @@ void BattleEffect_RunGatheringLights(struct BattleEffectArgument *effect,
   BattleEffect_StartCanvasLayer(1);
   // Setup. The sheet is the first field of the work block, so the pictures
   // decode to `work` itself: three 20x32 lights.
-  Resource_DecodeType01(
-      Resource_GetTableEntry((s32)&ResourceId_MemberBurstImage), work);
+  Decompress_Type01(Resource_GetTableEntry((s32)&ResourceId_MemberBurstImage),
+                    work);
   if (mode == GATHERING_LIGHTS_DEMON_NIGHT)
     paletteId = (s32)&ResourceId_PinkBurstSheet;
   else if (mode == GATHERING_LIGHTS_RUMBLE)
@@ -99,11 +99,10 @@ void BattleEffect_RunGatheringLights(struct BattleEffectArgument *effect,
     }
   }
 
-  Scheduler_AddOrUpdateCallback(BattleEffect_ArmBg2AffineHBlankDma,
-                                EFFECT_CALLBACK_ORDER);
+  Task_Add(BattleEffect_ArmBg2AffineHBlankDma, EFFECT_CALLBACK_ORDER);
   // Trails keep 3/4 a frame.
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, 75);
-  AudioCommand_PlayFar(SE_146);
+  Sound_PlaySongFar(SE_146);
 
   for (frame = 0;
        frame != gGatheringLights_Counts[mode][GATHERING_LIGHTS_FRAMES] +
@@ -135,9 +134,9 @@ void BattleEffect_RunGatheringLights(struct BattleEffectArgument *effect,
 
       if (frame == k * 20 + 71) {
         if (mode == GATHERING_LIGHTS_DEMON_NIGHT)
-          AudioCommand_PlayFar(SE_HEAVY_IMPACT);
+          Sound_PlaySongFar(SE_HEAVY_IMPACT);
         else
-          AudioCommand_PlayFar(SE_IMPACT);
+          Sound_PlaySongFar(SE_IMPACT);
       }
       if (frame == k * 20 + 70)
         ObjectGroup_UpdateMembers(work->effect->actors[k], SPRITE_COLOR_WHITE,
@@ -175,9 +174,9 @@ void BattleEffect_RunGatheringLights(struct BattleEffectArgument *effect,
 
   // Finish: the transfer goes before the blitters and the DMA callback
   // before the layer closes.
-  Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
+  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   EFFECT_RELEASE_BLITTERS();
-  Scheduler_RemoveCallback(BattleEffect_ArmBg2AffineHBlankDma);
+  Task_Remove(BattleEffect_ArmBg2AffineHBlankDma);
   BattleEffect_EndCanvasLayer();
 }
 

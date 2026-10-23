@@ -71,18 +71,18 @@ void BattleEffect_RunPlanetDiver(struct BattleEffectArgument *effect) {
   sprites = EFFECT_SLOT(slots, HEAP_SLOT_BATTLE_SHEET);
   work->effect = effect;
   BattleEffect_StartCanvasLayer(0);
-  Resource_DecodeType01(
-      Resource_GetTableEntry((s32)&ResourceId_ParticleSpritesA), sprites);
+  Decompress_Type01(Resource_GetTableEntry((s32)&ResourceId_ParticleSpritesA),
+                    sprites);
   // A sheet resource is its palette followed by its packed images.
   palette = Resource_GetTableEntry((s32)&ResourceId_FlashBurstSheet);
   Iwram_CopyWords((void *)BG_PLTT, palette, 128);
   palette += 128;
-  Resource_DecodeType01(palette, work->sheet);
-  EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER, EFFECT_CLIP_BOUNDS, COMPOSITE_MAX);
-  draw[0] = EFFECT_SLOT(slots, HEAP_SLOT_BLITTER);
-  EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER_ALTERNATE,
+  Decompress_Type01(palette, work->sheet);
+  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, COMPOSITE_MAX);
+  draw[0] = EFFECT_SLOT(slots, HEAP_SLOT_RAM_CODE);
+  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
                       EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, COMPOSITE_MAX);
-  draw[1] = EFFECT_SLOT(slots, HEAP_SLOT_BLITTER_ALTERNATE);
+  draw[1] = EFFECT_SLOT(slots, HEAP_SLOT_RAM_CODE_2);
   // Trails keep 3/4 a frame.
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, 75);
 
@@ -134,12 +134,12 @@ void BattleEffect_RunPlanetDiver(struct BattleEffectArgument *effect) {
       actor->verticalMotionStrength = 0xab85;
       actor->autoFaceMotion = 0;
       actor->snapToTarget = 0;
-      Object_SetMoveTargetFar((struct ObjectRuntime *)actor, actor->x * 3, 0,
+      Object_SetMoveTargetFar((struct Object *)actor, actor->x * 3, 0,
                               actor->z);
       ObjectDispatch_SelectAnimationFar(actor, POSE_LEAP);
       // A 4-frame shake: frame is 4 here.
       work->shakeFrames = frame;
-      AudioCommand_PlayFar(SE_136);
+      Sound_PlaySongFar(SE_136);
     }
     // Frame 16: switch to the fireball images and line the user up with
     // the target's depth.
@@ -147,7 +147,7 @@ void BattleEffect_RunPlanetDiver(struct BattleEffectArgument *effect) {
       palette = Resource_GetTableEntry((s32)&ResourceId_FlameballSheet);
       Iwram_CopyWords((void *)BG_PLTT, palette, 128);
       palette += 128;
-      Resource_DecodeType01(palette, work->sheet);
+      Decompress_Type01(palette, work->sheet);
       actor->verticalMotionStrength = 0;
       actor->velocityX = 0;
       actor->velocityY = 0;
@@ -276,18 +276,17 @@ void BattleEffect_RunHaunt(struct BattleEffectArgument *effect) {
   palette = Resource_GetTableEntry((s32)&ResourceId_SkullSheet);
   Iwram_CopyWords((void *)BG_PLTT, palette, 128);
   palette += 128;
-  Resource_DecodeType01(palette, work->sheet);
+  Decompress_Type01(palette, work->sheet);
   // The skulls are drawn in the pink burst's colours, which replace the
   // skull sheet's own.
   palette = Resource_GetTableEntry((s32)&ResourceId_PinkBurstSheet);
   Iwram_CopyWords((void *)BG_PLTT, palette, 128);
-  EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER, EFFECT_CLIP_BOUNDS, COMPOSITE_MAX);
-  draw[0] = EFFECT_SLOT(slots, HEAP_SLOT_BLITTER);
-  EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER_ALTERNATE, EFFECT_CLIP_BOUNDS,
+  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, COMPOSITE_MAX);
+  draw[0] = EFFECT_SLOT(slots, HEAP_SLOT_RAM_CODE);
+  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, EFFECT_CLIP_BOUNDS,
                       COMPOSITE_ADDITIVE);
-  draw[1] = EFFECT_SLOT(slots, HEAP_SLOT_BLITTER_ALTERNATE);
-  Scheduler_AddOrUpdateCallback(BattleEffect_ArmBg2AffineHBlankDma,
-                                EFFECT_CALLBACK_ORDER);
+  draw[1] = EFFECT_SLOT(slots, HEAP_SLOT_RAM_CODE_2);
+  Task_Add(BattleEffect_ArmBg2AffineHBlankDma, EFFECT_CALLBACK_ORDER);
   // 4 off every pixel each frame.
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_DARKEN, 0x04040404);
 
@@ -297,7 +296,7 @@ void BattleEffect_RunHaunt(struct BattleEffectArgument *effect) {
     PARTICLES[i].y = ((Random16() & 255) - 127) << 15;
     PARTICLES[i].z = ((Random16() & 255) - 127) << 15;
   }
-  AudioCommand_PlayFar(SE_142);
+  Sound_PlaySongFar(SE_142);
 
   for (frame = 0; frame != work->effect->count * 32 + 96; frame++) {
     s32 *row;
@@ -369,8 +368,8 @@ void BattleEffect_RunHaunt(struct BattleEffectArgument *effect) {
   }
 
   // Finish: both callbacks before the blocks they read.
-  Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
-  Scheduler_RemoveCallback(BattleEffect_ArmBg2AffineHBlankDma);
+  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
+  Task_Remove(BattleEffect_ArmBg2AffineHBlankDma);
   EFFECT_RELEASE_BLITTERS();
   BattleEffect_EndCanvasLayer();
 }
@@ -410,14 +409,13 @@ void BattleEffect_RunUnusedOrbitingSpirals(
   EFFECT_START_NARROW_CANVAS(0);
   palette = Resource_GetTableEntry((s32)&ResourceId_SpiralSheet);
   Iwram_CopyWords((void *)BG_PLTT, palette, 128);
-  Resource_DecodeType01((u8 *)palette + 128, work->sheet);
-  EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER, EFFECT_CLIP_BOUNDS, COMPOSITE_MAX);
-  draw[0] = EFFECT_SLOT(slots, HEAP_SLOT_BLITTER);
-  EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER_ALTERNATE,
-                      EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP, COMPOSITE_MAX);
-  draw[1] = EFFECT_SLOT(slots, HEAP_SLOT_BLITTER_ALTERNATE);
-  Scheduler_AddOrUpdateCallback(BattleEffect_ArmBg2AffineHBlankDma,
-                                EFFECT_CALLBACK_ORDER);
+  Decompress_Type01((u8 *)palette + 128, work->sheet);
+  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, COMPOSITE_MAX);
+  draw[0] = EFFECT_SLOT(slots, HEAP_SLOT_RAM_CODE);
+  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP,
+                      COMPOSITE_MAX);
+  draw[1] = EFFECT_SLOT(slots, HEAP_SLOT_RAM_CODE_2);
+  Task_Add(BattleEffect_ArmBg2AffineHBlankDma, EFFECT_CALLBACK_ORDER);
   // Trails keep half a frame.
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, 50);
   // On the party's side the canvas is scrolled 104 texels (BG2X is 20.8),
@@ -502,8 +500,8 @@ void BattleEffect_RunUnusedOrbitingSpirals(
     EFFECT_PRESENT_FRAME(work);
   }
   // Finish: both callbacks before the blocks they read.
-  Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
-  Scheduler_RemoveCallback(BattleEffect_ArmBg2AffineHBlankDma);
+  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
+  Task_Remove(BattleEffect_ArmBg2AffineHBlankDma);
   EFFECT_RELEASE_BLITTERS();
   BattleEffect_EndCanvasLayer();
 }

@@ -120,7 +120,7 @@ void SpriteDissolve_RunMany(u8 **sprites, s32 count) {
 /// which the camera takes off z when it draws the sprite and its shadow. No
 /// code names it: its veneer in the field far-call table
 /// (system/far_call/FIELD.S) is unnamed.
-s32 MapGrid_GetScreenRelativePosition(struct ObjectRuntime *object,
+s32 MapGrid_GetScreenRelativePosition(struct Object *object,
                                       s32 *screenPosition) {
   struct MapGridScrollWork *grid = gMapGridWork[0];
 #ifndef UBFIX
@@ -155,41 +155,42 @@ s32 MapGrid_GetScreenRelativePosition(struct ObjectRuntime *object,
 }
 
 /// Sets up the object system: allocates and zeroes the 64 objects and
-/// registers the per-frame updates. MODE_BATTLE moves objects with
-/// Object_UpdateAllMotion, which runs no scripts; MODE_WORLD_MAP and
-/// MODE_BATTLE use the fixed camera. Both blocks are heap slots, so a later
-/// call gets the same ones back. No code releases HEAP_SLOT_OBJECT_POOL or
-/// HEAP_SLOT_MENU_CONTROL by name, but Field_RunMap takes HEAP_SLOT_EVENT
+/// registers the per-frame updates. OBJECT_SYSTEM_BATTLE moves objects with
+/// Object_UpdateAllMotion, which runs no scripts; OBJECT_SYSTEM_WORLD_MAP and
+/// OBJECT_SYSTEM_BATTLE use the fixed camera. Both blocks are heap slots, so a
+/// later call gets the same ones back. No code releases HEAP_SLOT_OBJECTS or
+/// HEAP_SLOT_OBJECT_SYSTEM by name, but Map_Run takes HEAP_SLOT_FIELD
 /// from EWRAM before them, so its release of that slot as it returns frees
-/// their memory too; Runtime_InitializeHeap clears the slots at the next
+/// their memory too; InitHeap clears the slots at the next
 /// map change.
 ///
 /// Called through ObjectSystem_InitializeFar by the field map runner
 /// (object/object/run_map.c) and the battle's encounter, and directly by
 /// the sprite viewer, each with its enum ObjectSystemMode. Allocates
-/// HEAP_SLOT_MENU_CONTROL for the ObjectSystemWork and HEAP_SLOT_OBJECT_POOL
+/// HEAP_SLOT_OBJECT_SYSTEM for the ObjectSystemWork and HEAP_SLOT_OBJECTS
 /// for the objects, and sets the sprite outline colours.
 void ObjectSystem_Initialize(s32 controlMode) {
   struct ObjectSystemWork *system;
-  struct ObjectRuntime *objectPool;
+  struct Object *objectPool;
   volatile u32 fill;
 
-  system = Runtime_AllocateBlock(HEAP_SLOT_MENU_CONTROL, sizeof(*system));
-  objectPool = Runtime_AllocateBlock(HEAP_SLOT_OBJECT_POOL,
-                                     FIELD_OBJECT_COUNT * sizeof(*objectPool));
+  system = AllocHeapSlotEwram(HEAP_SLOT_OBJECT_SYSTEM, sizeof(*system));
+  objectPool =
+      AllocHeapSlotEwram(HEAP_SLOT_OBJECTS, OBJECT_COUNT * sizeof(*objectPool));
   ObjectSystem_Configure(controlMode);
-  Dma_Fill32Cell(fill, 0, objectPool, FIELD_OBJECT_COUNT * sizeof(*objectPool));
+  Dma_Fill32Cell(fill, 0, objectPool, OBJECT_COUNT * sizeof(*objectPool));
   Dma_Fill32Cell(fill, 0, system, sizeof(*system));
   // The scheduler runs higher orders first: the objects move (0xc8a) before
   // the camera follows them (0xc80).
-  if (controlMode == MODE_BATTLE)
-    Scheduler_AddOrUpdateCallback(Object_UpdateAllMotion, 0xc8a);
+  if (controlMode == OBJECT_SYSTEM_BATTLE)
+    Task_Add(Object_UpdateAllMotion, 0xc8a);
   else
-    Scheduler_AddOrUpdateCallback(Object_UpdateAllThumb, 0xc8a);
-  if (controlMode >= MODE_WORLD_MAP && controlMode <= MODE_BATTLE) {
-    Scheduler_AddOrUpdateCallback(ObjectSystem_UpdateCameraFixed, 0xc80);
+    Task_Add(Object_UpdateAllThumb, 0xc8a);
+  if (controlMode >= OBJECT_SYSTEM_WORLD_MAP &&
+      controlMode <= OBJECT_SYSTEM_BATTLE) {
+    Task_Add(ObjectSystem_UpdateCameraFixed, 0xc80);
   } else {
-    Scheduler_AddOrUpdateCallback(ObjectSystem_UpdateCamera, 0xc80);
+    Task_Add(ObjectSystem_UpdateCamera, 0xc80);
     // XXX: nothing in the tree reads these two IWRAM words; code that reads
     // them by address would say what the scrolling camera resets here.
     gIwram_Data2 = 0;
@@ -206,13 +207,13 @@ UNUSED void ResourceTable_ReservedNoOpC0C4(void) {}
 UNUSED void ResourceTable_ReservedNoOp2(void) {}
 
 /// Returns the first of the 64 objects not in use (with no script), or 0.
-/// Called by FieldObject_Create.
+/// Called by Object_CreateField.
 void *ObjectDispatch_FindFreeObject(void) {
-  struct ObjectRuntime *object = gObjectSlots;
+  struct Object *object = gObjects;
   void *freeObject = 0;
   s32 objectIndex = 0;
 
-  while (objectIndex <= FIELD_OBJECT_COUNT - 1) {
+  while (objectIndex <= OBJECT_COUNT - 1) {
     if (object->script == 0) {
       freeObject = object;
       break;
@@ -247,7 +248,7 @@ void ObjectDispatch_Release(struct DispatchObject *object) {
       } while (--spritesRemaining >= 0);
       break;
     }
-    Dma_Fill32(0, object, sizeof(struct ObjectRuntime));
+    Dma_Fill32(0, object, sizeof(struct Object));
   }
 }
 
@@ -261,9 +262,8 @@ void ObjectDispatch_Release(struct DispatchObject *object) {
 /// Gives the object gObjectDispatch_DefaultScript (a lone SC_END), its home
 /// position and the default motion values; a group's sprite list is taken from
 /// the ObjectSystemWork's group tables.
-struct ObjectRuntime *FieldObject_Create(s32 encodedSprite, s32 x, s32 y,
-                                         s32 z) {
-  struct ObjectRuntime *object;
+struct Object *Object_CreateField(s32 encodedSprite, s32 x, s32 y, s32 z) {
+  struct Object *object;
   struct ObjectEvent *objectEvent;
   struct ScriptMotionObject *motion;
   struct ScriptObjectRuntime *scripted;
@@ -297,7 +297,7 @@ struct ObjectRuntime *FieldObject_Create(s32 encodedSprite, s32 x, s32 y,
       // second list overlaps the first and its zeroing clears count. No code
       // in the tree creates a group object to show the intended spacing.
       spriteSlots =
-          (void **)((u32 *)gMenuCtrlWork + gMenuCtrlWork->count++ + 2);
+          (void **)((u32 *)gObjectSystemWork + gObjectSystemWork->count++ + 2);
       object->animationKind = spriteStorageKind;
       object->animation = spriteSlots;
       Dma_Fill32(0, spriteSlots, 0x10);
@@ -578,8 +578,8 @@ void Animation_ApplyChildValues(struct DispatchObject *object, u32 param) {
 /// Tolbi ship, Vale, Venus Lighthouse). The scripts except Colosso's pair it
 /// with ObjectSystem_ResumeProjectionAndHideLayers.
 void ObjectSystem_SuspendProjectionAndShowSprites(void) {
-  Scheduler_SuspendTasks(ObjectSystem_UpdateCamera);
-  Scheduler_SuspendTasks(ObjectSystem_UpdateCameraFixed);
+  Task_SuspendAll(ObjectSystem_UpdateCamera);
+  Task_SuspendAll(ObjectSystem_UpdateCameraFixed);
   ColorBuffer_SetTargetFar(0x10000, 1);
   ColorBuffer_StartInterpolationFar(1);
   WaitFrames(1);
@@ -592,8 +592,8 @@ void ObjectSystem_SuspendProjectionAndShowSprites(void) {
 /// Called through ObjectSystem_ResumeProjectionAndHideLayersFar by the same
 /// scripts except Colosso's.
 void ObjectSystem_ResumeProjectionAndHideLayers(void) {
-  Scheduler_ResumeTasks(ObjectSystem_UpdateCamera);
-  Scheduler_ResumeTasks(ObjectSystem_UpdateCameraFixed);
+  Task_ResumeAll(ObjectSystem_UpdateCamera);
+  Task_ResumeAll(ObjectSystem_UpdateCameraFixed);
   REG_DISPCNT &=
       ~(DISPCNT_BG1_ON | DISPCNT_BG2_ON | DISPCNT_BG3_ON | DISPCNT_OBJ_ON);
 }

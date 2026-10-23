@@ -71,26 +71,26 @@ s32 PartyTalkMenu_Choose(s32 unused) {
     }
     ShopCursor_AdvanceFar(&cursor);
     if (gKeysRepeat & KEY_UP) {
-      AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
+      Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
       row--;
       moved = 1;
       if (row == -1)
         row = 2;
     }
     if (gKeysRepeat & KEY_DOWN) {
-      AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
+      Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
       row++;
       moved = 1;
       if (row == 3)
         row = 0;
     }
     if (gKeysRepeat & KEY_B) {
-      AudioCommand_PlayFar(SE_MENU_CANCEL);
+      Sound_PlaySongFar(SE_MENU_CANCEL);
       row = -1;
       break;
     }
     if (gKeysRepeat & KEY_A) {
-      AudioCommand_PlayFar(SE_MENU_CONFIRM);
+      Sound_PlaySongFar(SE_MENU_CONFIRM);
       break;
     }
   }
@@ -157,7 +157,7 @@ void Djinn_ShowJoinedMessage(s32 member, s32 element, s32 djinn) {
 
     JOINED_QUEUE_TEXT(window, text, 36, 2, zero);
 
-    AudioCommand_PlayFar(MUS_JOINED);
+    Sound_PlaySongFar(MUS_JOINED);
 
     do {
       Runtime_PushSlotEntry(entry, 250);
@@ -214,7 +214,7 @@ void Party_ShowJoinedMessage(s32 member) {
     UiWork_PushValueSlot(member, MESSAGE_ARGUMENT_ACTOR);
     JOINED_QUEUE_TEXT(window, UiText_BuildRenderEntriesMode1(MsgJoinedParty),
                       36, 2, 0);
-    AudioCommand_PlayFar(MUS_JOINED);
+    Sound_PlaySongFar(MUS_JOINED);
     do {
       Runtime_PushSlotEntry(entry, 250);
       WaitFrames(1);
@@ -284,7 +284,7 @@ void Party_ShowPairJoinedMessage(s32 first, s32 second) {
                       UiText_BuildRenderEntriesMode1(MsgPairJoinedParty), 68, 2,
                       zero);
 
-    AudioCommand_PlayFar(MUS_JOINED);
+    Sound_PlaySongFar(MUS_JOINED);
 
     do {
       Runtime_PushSlotEntry(entry1, 250);

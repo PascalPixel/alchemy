@@ -52,9 +52,9 @@ struct MotionObject {
   /// also scales the float.
   s32 verticalMotionStrength;
   s32 riseBaseY; ///< ObjectEvent's; not named through this view
-  void *records; ///< one sprite, or a table of up to four (recordStorageKind)
-  /// bits: 3..0 RECORDS_NONE, RECORDS_SINGLE or RECORDS_TABLE
-  u8 recordStorageKind;
+  void *records; ///< one sprite, or a table of up to four (spritesKind)
+  /// bits: 3..0 OBJECT_SPRITES_NONE, OBJECT_SPRITES_ONE or OBJECT_SPRITES_GROUP
+  u8 spritesKind;
   /// bits: 4 no terrain slowdown | 3 bigger float | 2 floats | 1 falls |
   /// 0 follows terrain
   u8 motionFlags;
@@ -104,7 +104,7 @@ STATIC_ASSERT(offsetof(struct MotionObject, velocityX) == 0x24);
 STATIC_ASSERT(offsetof(struct MotionObject, targetX) == 0x38);
 STATIC_ASSERT(offsetof(struct MotionObject, motionFlags) == 0x55);
 STATIC_ASSERT(offsetof(struct MotionObject, records) == 0x50);
-STATIC_ASSERT(offsetof(struct MotionObject, recordStorageKind) == 0x54);
+STATIC_ASSERT(offsetof(struct MotionObject, spritesKind) == 0x54);
 STATIC_ASSERT(offsetof(struct MotionObject, update) == 0x6c);
 STATIC_ASSERT(sizeof(struct SpriteEntry) == 0x08);
 STATIC_ASSERT(offsetof(struct SpriteEntry, palette) == 0x05);

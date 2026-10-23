@@ -2,7 +2,7 @@
 #define ALCHEMY_SHOP_H
 
 /// @file
-/// ShopRuntime, a shop's work, and the shop screen's tiles.
+/// ShopWork, a shop's work, and the shop screen's tiles.
 
 #include "unit/shop/shop.h"
 #include "global_cells.h"
@@ -19,7 +19,7 @@
 /// It is the HEAP_SLOT_MENU block, the same 0xa70 bytes as the field menu's
 /// work: Shop_InitializeCursorWork takes and clears it as a shop, the inn,
 /// the sanctum or the item picker opens, and Shop_ReleaseCursorWork frees it.
-struct ShopRuntime {
+struct ShopWork {
   u8 unused[8];      ///< no view of the menu work names it (see menu/README.md)
   s32 selectedOwner; ///< the menu screens' chosen member; not named here
   struct UiWindow *moneyWindow; ///< the coins window
@@ -63,22 +63,22 @@ struct ShopRuntime {
   struct EffectSlot effects[24]; ///< the sanctum service's particles
 };
 
-STATIC_ASSERT(sizeof(struct ShopRuntime) == 0xa70);
-STATIC_ASSERT(offsetof(struct ShopRuntime, moneyWindow) == 0x00c);
-STATIC_ASSERT(offsetof(struct ShopRuntime, itemWindow) == 0x020);
-STATIC_ASSERT(offsetof(struct ShopRuntime, partyMemberIcons) == 0x114);
-STATIC_ASSERT(offsetof(struct ShopRuntime, partyMemberScale) == 0x154);
-STATIC_ASSERT(offsetof(struct ShopRuntime, stockItemIds) == 0x26c);
-STATIC_ASSERT(offsetof(struct ShopRuntime, partyMemberIds) == 0x36e);
-STATIC_ASSERT(offsetof(struct ShopRuntime, cursor) == 0x380);
-STATIC_ASSERT(offsetof(struct ShopRuntime, stockCount) == 0x3a6);
-STATIC_ASSERT(offsetof(struct ShopRuntime, partyMemberCount) == 0x3a7);
-STATIC_ASSERT(offsetof(struct ShopRuntime, partyAction) == 0x3aa);
-STATIC_ASSERT(offsetof(struct ShopRuntime, partyMemberX) == 0x134);
-STATIC_ASSERT(offsetof(struct ShopRuntime, partyMemberY) == 0x144);
-STATIC_ASSERT(offsetof(struct ShopRuntime, burstMember) == 0x3ab);
-STATIC_ASSERT(offsetof(struct ShopRuntime, warriorShop) == 0x3ac);
-STATIC_ASSERT(offsetof(struct ShopRuntime, effects) == 0x3b0);
+STATIC_ASSERT(sizeof(struct ShopWork) == 0xa70);
+STATIC_ASSERT(offsetof(struct ShopWork, moneyWindow) == 0x00c);
+STATIC_ASSERT(offsetof(struct ShopWork, itemWindow) == 0x020);
+STATIC_ASSERT(offsetof(struct ShopWork, partyMemberIcons) == 0x114);
+STATIC_ASSERT(offsetof(struct ShopWork, partyMemberScale) == 0x154);
+STATIC_ASSERT(offsetof(struct ShopWork, stockItemIds) == 0x26c);
+STATIC_ASSERT(offsetof(struct ShopWork, partyMemberIds) == 0x36e);
+STATIC_ASSERT(offsetof(struct ShopWork, cursor) == 0x380);
+STATIC_ASSERT(offsetof(struct ShopWork, stockCount) == 0x3a6);
+STATIC_ASSERT(offsetof(struct ShopWork, partyMemberCount) == 0x3a7);
+STATIC_ASSERT(offsetof(struct ShopWork, partyAction) == 0x3aa);
+STATIC_ASSERT(offsetof(struct ShopWork, partyMemberX) == 0x134);
+STATIC_ASSERT(offsetof(struct ShopWork, partyMemberY) == 0x144);
+STATIC_ASSERT(offsetof(struct ShopWork, burstMember) == 0x3ab);
+STATIC_ASSERT(offsetof(struct ShopWork, warriorShop) == 0x3ac);
+STATIC_ASSERT(offsetof(struct ShopWork, effects) == 0x3b0);
 
 extern const u8 gShop_HandTiles[];
 extern const u8 gShop_GemTiles[];

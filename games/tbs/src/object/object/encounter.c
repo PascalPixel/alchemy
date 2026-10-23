@@ -49,14 +49,14 @@ struct EncounterZone {
 };
 
 /// Chooses the current map's encounter zones, one for each kind of ground
-/// the party can stand on (gEventWork->encounterGroups, read by
+/// the party can stand on (gFieldWork->encounterGroups, read by
 /// Encounter_RollTerrain), from the first rule matching the map
 /// and warp destination. Ground 0 has none, and grounds 1 to 7 take consecutive
 /// zones from the rule's first one. With useRules 0, or no matching rule, no
 /// ground has encounters. Also resets the random bias and the battle threshold
 /// (the count itself, gGameState.encounterSteps, is reset only when a random
 /// battle starts or a new map section is entered) and chooses the battle
-/// backdrop. Called by Field_RunMap on map load, with useRules 0 on the world
+/// backdrop. Called by Map_Run on map load, with useRules 0 on the world
 /// map and 1 in a map; writes work->encounterGroups, encounterBias and
 /// encounterThreshold, and gGameState.special.
 void Encounter_SelectMapZones(s32 useRules) {
@@ -69,7 +69,7 @@ void Encounter_SelectMapZones(s32 useRules) {
   s16 firstZoneOnGround;
   u32 i;
 
-  work = (struct FieldWork *)gEventWork;
+  work = (struct FieldWork *)gFieldWork;
   mapId = gGameState.mapId;
   warpDest = gGameState.warpDest;
   groundZones = work->encounterGroups;
@@ -144,7 +144,7 @@ s32 Encounter_ResolveWorldMapZoneAndBackdrop(void *pos) {
 /// sets, skips the checks and the counting and draws a group at once. Called by
 /// Encounter_RollTerrain and Encounter_RollWorldMap; adds to
 /// gGameState.encounterSteps, sets or clears work->encounterBias, and on a
-/// battle sets gGameState.battleCue.
+/// battle sets gGameState.battleMusic.
 s32 Encounter_SelectEnemyGroup(s32 zone, s32 steps) {
   struct FieldWork *work;
   struct EncounterZone *entry;
@@ -157,7 +157,7 @@ s32 Encounter_SelectEnemyGroup(s32 zone, s32 steps) {
   s32 pick;
   s32 i;
 
-  work = (struct FieldWork *)gEventWork;
+  work = (struct FieldWork *)gFieldWork;
   // UB: FLAG_IGNORE_ENCOUNTER_CHECKS reaches the draw without setting entry.
   // Hoisting the zone lookup changes native instructions at the same 440-byte
   // size in tbs-en.
@@ -210,7 +210,7 @@ s32 Encounter_SelectEnemyGroup(s32 zone, s32 steps) {
     }
     // The rate and the bias divide the step, so a higher rate (a party above
     // the zone's level) means smaller steps and fewer battles. The counter is
-    // not cleared here: Field_RunMap clears it when it starts the battle.
+    // not cleared here: Map_Run clears it when it starts the battle.
     step =
         Iwram_RatioMulQ14((rate << 20) + ((rate << 4) - 16) * bias, 0x100000);
     total = gGameState.encounterSteps += Iwram_MulQ16(step, steps);
@@ -253,7 +253,7 @@ s32 Encounter_SelectEnemyGroup(s32 zone, s32 steps) {
 s32 Encounter_RollTerrain(u32 terrain, s32 steps) {
   u8 *zone;
 
-  zone = ((struct FieldWork *)gEventWork)->encounterGroups;
+  zone = ((struct FieldWork *)gFieldWork)->encounterGroups;
   return Encounter_SelectEnemyGroup(zone[terrain], steps);
 }
 
@@ -288,9 +288,9 @@ s16 Encounter_GetDjinnEnemyGroup(s32 djinni) {
 #endif
 }
 
-/// A rule choosing a map's field music (gMap_InteractionRuleTable,
+/// A rule choosing a map's field music (gMap_MusicRules,
 /// map_rules.s), ended by id -1.
-struct MapInteractionEntry {
+struct MapMusicRule {
   s16 id;            ///< a map, or a map section
   s16 warpDest : 15; ///< -1 for any warp destination
   u16 idIsMap : 1;   ///< 1 when id is a map, 0 when it is a map section
@@ -298,18 +298,18 @@ struct MapInteractionEntry {
   s16 music;         ///< the song (songs.h's MUS_ numbers)
 };
 
-extern const struct MapInteractionEntry gMap_InteractionRuleTable[];
+extern const struct MapMusicRule gMap_MusicRules[];
 
 /// Chooses the current map's field music (gGameState.cue) from the first rule
 /// matching the map or its map section and the warp destination;
 /// AUDIO_CUE_KEEP_BGM when none does. Called by Game_Run on entering each map,
-/// before Audio_PlayCueFromEventWork plays it.
-void Map_ResolveInteractionResult(void) {
+/// before Map_PlayMusic plays it.
+void Map_ChooseMusic(void) {
   s16 music = AUDIO_CUE_KEEP_BGM;
   s16 mapId = gGameState.mapId;
   s16 warpDest = gGameState.warpDest;
   s16 group = gGameState.mapSec;
-  const struct MapInteractionEntry *rule = gMap_InteractionRuleTable;
+  const struct MapMusicRule *rule = gMap_MusicRules;
 
   for (; rule->id != -1; rule++) {
     if (rule->idIsMap) {
@@ -332,7 +332,7 @@ void Map_ResolveInteractionResult(void) {
     break;
   }
 
-  gGameState.cue = music;
+  gGameState.mapMusic = music;
 }
 
 /// A rule naming the map section a map is in (gMapSec_NameRules, map_rules.s),
@@ -385,7 +385,7 @@ s32 MapSec_GetNameIndex(s32 mapId, s32 warpDest) {
 /// and savedWarpDest), from the first rule of gParty_PairResolveRules that
 /// matches the current map and warp destination: {map, warp destination (-1
 /// for any), return map, return warp destination}, ended by map -1. Without a
-/// match the return point stays as it was. Called by Field_RunMap on map load.
+/// match the return point stays as it was. Called by Map_Run on map load.
 void Map_SetDefeatReturnPoint(void) {
   s16 mapId = gGameState.mapId;
   s16 warpDest = gGameState.warpDest;
@@ -462,7 +462,7 @@ void Battle_SelectTerrainBackdrop(s32 behavior) {
   gGameState.special = backdrop;
 }
 
-/// Chooses the battle music for slot of zone (gGameState.battleCue).
+/// Chooses the battle music for slot of zone (gGameState.battleMusic).
 /// gEncounter_BattleMusic lists each song (with bit 15 set) followed by the
 /// (zone << 4) + slot keys that use it, ended by 0; a key takes the song listed
 /// last before it. Link battles always use AUDIO_CUE_KEEP_BGM. Called by
@@ -491,5 +491,5 @@ void FieldEffect_SelectBattleCue(s32 zone, s32 slot) {
         music = value & 0xfff;
     }
   }
-  gGameState.battleCue = music;
+  gGameState.battleMusic = music;
 }

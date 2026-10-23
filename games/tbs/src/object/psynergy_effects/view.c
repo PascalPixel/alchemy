@@ -37,8 +37,8 @@ s32 FieldEffect_StepRatioTransition(void) {
   s32 delta;
 
   perspective = gMapGridWork[0];
-  if (((struct FieldWork *)Runtime_AllocateBlock(HEAP_SLOT_EVENT,
-                                                 sizeof(struct FieldWork)))
+  if (((struct FieldWork *)AllocHeapSlotEwram(HEAP_SLOT_FIELD,
+                                              sizeof(struct FieldWork)))
           ->camera->movementState != 0)
     return;
   frames = (s16 *)&perspective->zoomTransitionFrames;
@@ -57,10 +57,9 @@ s32 FieldEffect_StepRatioTransition(void) {
   if (*step == *frames) {
     *frames = 0;
 #ifdef UBFIX
-    Scheduler_RemoveCallback(FieldEffect_StepRatioTransition);
+    Task_Remove(FieldEffect_StepRatioTransition);
 #else
-    Scheduler_RemoveCallback(
-        (SchedulerCallback)FieldEffect_StepRatioTransition);
+    Task_Remove((TaskFunc)FieldEffect_StepRatioTransition);
 #endif
   }
 }
@@ -73,9 +72,9 @@ void FieldEffect_ScheduleRatioTransition(s32 zoom, s32 frames) {
   struct PerspectiveWork *perspective = gMapGridWork[0];
   s32 inverse;
 
-  if (((struct FieldWork *)Runtime_AllocateBlock(HEAP_SLOT_EVENT,
-                                                 sizeof(struct FieldWork)))
-          ->mode != MODE_WORLD_MAP)
+  if (((struct FieldWork *)AllocHeapSlotEwram(HEAP_SLOT_FIELD,
+                                              sizeof(struct FieldWork)))
+          ->mode != OBJECT_SYSTEM_WORLD_MAP)
     return;
   {
     inverse = Iwram_RatioMulQ14(zoom, 0x10000); // 1 / zoom
@@ -84,13 +83,12 @@ void FieldEffect_ScheduleRatioTransition(s32 zoom, s32 frames) {
   perspective->zoom = inverse;
   perspective->zoomTransitionFrames = frames;
   perspective->zoomTransitionStep = 0;
-  // 0xc94: a main-loop callback (high byte 0xc, as SCHEDULER_KEY_MAIN_LOOP)
+  // 0xc94: a main-loop callback (high byte 0xc, as TASK_PRIORITY_MAIN_LOOP)
   // at priority 0x94.
 #ifdef UBFIX
-  Scheduler_AddOrUpdateCallback(FieldEffect_StepRatioTransition, 0xc94);
+  Task_Add(FieldEffect_StepRatioTransition, 0xc94);
 #else
-  Scheduler_AddOrUpdateCallback(
-      (SchedulerCallback)FieldEffect_StepRatioTransition, 0xc94);
+  Task_Add((TaskFunc)FieldEffect_StepRatioTransition, 0xc94);
 #endif
 }
 
@@ -100,9 +98,9 @@ void FieldScript_WaitForZoomTransition(void) {
   s32 frames;
   struct PerspectiveWork *perspective = gMapGridWork[0];
 
-  if (((struct FieldWork *)Runtime_AllocateBlock(HEAP_SLOT_EVENT,
-                                                 sizeof(struct FieldWork)))
-          ->mode == MODE_WORLD_MAP) {
+  if (((struct FieldWork *)AllocHeapSlotEwram(HEAP_SLOT_FIELD,
+                                              sizeof(struct FieldWork)))
+          ->mode == OBJECT_SYSTEM_WORLD_MAP) {
     frames = 0;
     if (*(s16 *)&perspective->zoomTransitionFrames != 0) {
       do {
@@ -158,7 +156,7 @@ void FieldEffect_SpawnLinked(s32 localId, s32 emote, s32 wait) {
   struct ObjectEvent *target;
 
   if ((emote & 0xff) == EMOTE_LIGHT_BULB) {
-    AudioCommand_PlayFar(SE_110);
+    Sound_PlaySongFar(SE_110);
   }
 
   target = ObjectTable_Get(localId);

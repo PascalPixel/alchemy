@@ -406,7 +406,7 @@ static void MercuryLighthouseEntrance_FightLizardMan(void) {
   Engine_ScriptStart();
   Engine_ObjectEventRunRepeatedMotion(LOCALID_LIZARD_MAN, 2);
   Engine_ScriptWait(20);
-  gEventWork->startTransition =
+  gFieldWork->startTransition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_BARS);
   FieldScript_SetNextDestination(
       (s32)&MapId_MercuryLighthouseEntrance,
@@ -451,7 +451,7 @@ s32 MercuryLighthouseEntrance_Initialize(void) {
                                TASK_PRIORITY_MAP);
   else
     MercuryLighthouse_ClearPalette();
-  gEventWork->startTransition =
+  gFieldWork->startTransition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   // Each warp destination restores its route or plays its one-time arrival.
   switch (gGameState.warpDest) {
@@ -569,7 +569,7 @@ s32 MercuryLighthouseEntrance_Initialize(void) {
     Engine_ScriptStart();
     Engine_MapGridRedraw();
     Engine_TaskWait(1);
-    gEventWork->startTransition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+    gFieldWork->startTransition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
     Engine_ScriptOpenScreen();
     Engine_ScriptWaitForScreen();
     Engine_ScriptWait(120);
@@ -694,7 +694,7 @@ static void MercuryLighthouseEntrance_MiaEntersLighthouse(void) {
     objectEvent->scaleX = -Q16_ONE;
     ObjectEvent_SetPosition(MIA, PIXELS(136), PIXELS(144));
     ObjectEvent_FaceDirection(MIA, FACING_SOUTH, 10);
-    gEventWork->startTransition =
+    gFieldWork->startTransition =
         MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_SHAPE);
     Engine_ScriptOpenScreen();
     Engine_ScriptWaitForScreen();
@@ -708,7 +708,7 @@ static void MercuryLighthouseEntrance_MiaEntersLighthouse(void) {
     Engine_ObjectEventWaitForMove(MIA);
     ObjectEvent_SetPosition(MIA, 0, 0);
     GameFlag_Set(FLAG_MERCURY_LIGHTHOUSE_ENTERED_BY_MIA);
-    gEventWork->startTransition =
+    gFieldWork->startTransition =
         MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
     Engine_ScriptEnd();
   }

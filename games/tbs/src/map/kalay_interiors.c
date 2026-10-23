@@ -329,7 +329,7 @@ static void KalayInteriors_TalkToHealer(void) {
 /// (coord events 12, 13, 16 and 19): stops the room's object events, opens the
 /// door and walks the leader out.
 static void KalayInteriors_OpenDoorAndExit(void) {
-  struct EventWork *work = gEventWork;
+  struct EventWork *work = gFieldWork;
   u32 slot;
   s32 doorIndex;
   struct ObjectEvent *leader;
@@ -390,7 +390,7 @@ static void KalayInteriors_OpenDoorAndExit(void) {
 /// Sets the opening transition and restores room-specific object events and
 /// tiles.
 s32 KalayInteriors_Initialize(void) {
-  gEventWork->startTransition =
+  gFieldWork->startTransition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
   if (gGameState.mapId == (s32)&MapId_KalayInteriors) {
     KalayInteriors_ApplyRoomState();

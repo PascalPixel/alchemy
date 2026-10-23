@@ -105,9 +105,9 @@ void BattleEffect_RunThor(struct BattleEffectArgument *effect) {
   DrawRectangle *blitters; // the work slots read as blitters
   s32 dimmedOffset = THOR_DIMMED_DOTS;
 
-  slots = &gWorkSlot[HEAP_SLOT_BATTLE_BACKGROUND];
+  slots = &gHeapSlots[HEAP_SLOT_BATTLE_BACKGROUND];
   view = slots[0];
-  work = slots[HEAP_SLOT_BATTLE_EFFECT - HEAP_SLOT_BATTLE_BACKGROUND];
+  work = slots[HEAP_SLOT_BATTLE_ANIM - HEAP_SLOT_BATTLE_BACKGROUND];
   canvas = slots[HEAP_SLOT_BATTLE_CANVAS - HEAP_SLOT_BATTLE_BACKGROUND];
   sprites = slots[HEAP_SLOT_BATTLE_SHEET - HEAP_SLOT_BATTLE_BACKGROUND];
   work->effect = effect;
@@ -148,10 +148,8 @@ void BattleEffect_RunThor(struct BattleEffectArgument *effect) {
   // The dusk clouds scroll a pixel every other frame; busy keeps the battle
   // camera off BG1's scroll meanwhile.
   view->busy = 1;
-  Scheduler_AddOrUpdateCallback(BattleEffect_AdvanceScrollOnInterval,
-                                EFFECT_CALLBACK_ORDER);
-  Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer,
-                                EFFECT_CALLBACK_ORDER);
+  Task_Add(BattleEffect_AdvanceScrollOnInterval, EFFECT_CALLBACK_ORDER);
+  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, EFFECT_CALLBACK_ORDER);
   work->transferMode = CANVAS_COPY;
   BattleEffect_WipeCanvas(CANVAS_WIPE_DOWN, CANVAS_WIPE_FILL);
   BattleBackground_LoadFar(BATTLE_BACKGROUND_FLAT,
@@ -161,10 +159,10 @@ void BattleEffect_RunThor(struct BattleEffectArgument *effect) {
   gProjection.centerY = 240;
   BattleEffect_WipeCanvas(CANVAS_WIPE_DOWN, CANVAS_WIPE_CLEAR);
   REG_BG2PA = Q_8_8(0.5);
-  EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER, EFFECT_CLIP_BOUNDS,
+  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                       COMPOSITE_ADDITIVE);
-  blitters = (DrawRectangle *)gWorkSlot;
-  blit[0] = blitters[HEAP_SLOT_BLITTER];
+  blitters = (DrawRectangle *)gHeapSlots;
+  blit[0] = blitters[HEAP_SLOT_RAM_CODE];
   EFFECT_SHOW_WIDE_CANVAS(15);
   EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, 75);
 
@@ -190,13 +188,13 @@ void BattleEffect_RunThor(struct BattleEffectArgument *effect) {
     size = 2;
     count = frame * 2;
     if (frame == 16) {
-      AudioCommand_PlayFar(SE_140);
+      Sound_PlaySongFar(SE_140);
     }
     if (frame == 132) {
-      AudioCommand_PlayFar(SE_131);
+      Sound_PlaySongFar(SE_131);
     }
     if (frame == 151) {
-      AudioCommand_PlayFar(SE_145);
+      Sound_PlaySongFar(SE_145);
     }
     if (gKeysRepeat & (KEY_A | KEY_B)) {
       break;
@@ -294,13 +292,13 @@ void BattleEffect_RunThor(struct BattleEffectArgument *effect) {
         level = 7;
       }
       if (frame <= 139) {
-        EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER_ALTERNATE, EFFECT_CLIP_BOUNDS,
+        EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, EFFECT_CLIP_BOUNDS,
                             COMPOSITE_ADDITIVE);
-        drawAlt = EFFECT_BLITTERS[HEAP_SLOT_BLITTER_ALTERNATE];
+        drawAlt = EFFECT_BLITTERS[HEAP_SLOT_RAM_CODE_2];
       } else {
-        EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER_ALTERNATE, EFFECT_CLIP_BOUNDS,
+        EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, EFFECT_CLIP_BOUNDS,
                             COMPOSITE_MAX);
-        drawAlt = EFFECT_BLITTERS[HEAP_SLOT_BLITTER_ALTERNATE];
+        drawAlt = EFFECT_BLITTERS[HEAP_SLOT_RAM_CODE_2];
       }
       dotCount = count;
       if (dotCount > 128) {
@@ -321,7 +319,7 @@ void BattleEffect_RunThor(struct BattleEffectArgument *effect) {
                 screen[0].x - dotSize / 2, screen[0].y - dotSize, dotSize,
                 dotSize * 2);
       }
-      Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
+      FreeHeapSlot(HEAP_SLOT_RAM_CODE_2);
     }
 
     // The beam, frames 151 to 167: rows of the ramp narrowing at its top,
@@ -356,16 +354,16 @@ void BattleEffect_RunThor(struct BattleEffectArgument *effect) {
         blit[0](canvas, ramp + inset, inset + 48, i + 16, fullWidth - inset * 2,
                 1);
       }
-      EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER_ALTERNATE, EFFECT_CLIP_BOUNDS,
+      EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, EFFECT_CLIP_BOUNDS,
                           COMPOSITE_MAX);
-      EFFECT_BLITTERS[HEAP_SLOT_BLITTER_ALTERNATE](
-          canvas, work->sheet, 32, (frame - 151) * 20 - 12, 32, 96);
-      Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
-      EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER_ALTERNATE,
+      EFFECT_BLITTERS[HEAP_SLOT_RAM_CODE_2](canvas, work->sheet, 32,
+                                            (frame - 151) * 20 - 12, 32, 96);
+      FreeHeapSlot(HEAP_SLOT_RAM_CODE_2);
+      EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
                           EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, COMPOSITE_MAX);
-      EFFECT_BLITTERS[HEAP_SLOT_BLITTER_ALTERNATE](
-          canvas, work->sheet, 64, (frame - 151) * 20 - 12, 32, 96);
-      Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
+      EFFECT_BLITTERS[HEAP_SLOT_RAM_CODE_2](canvas, work->sheet, 64,
+                                            (frame - 151) * 20 - 12, 32, 96);
+      FreeHeapSlot(HEAP_SLOT_RAM_CODE_2);
     }
     EFFECT_PRESENT_FRAME(work);
   }
@@ -374,7 +372,7 @@ void BattleEffect_RunThor(struct BattleEffectArgument *effect) {
   // formation, throwing sparks, then violet bolts strike again and again while
   // the formation is pushed back in smoke, ending in an impact burst.
   view->busy = 0;
-  Scheduler_RemoveCallback(BattleEffect_AdvanceScrollOnInterval);
+  Task_Remove(BattleEffect_AdvanceScrollOnInterval);
   BattleEffect_SetupBlendedDisplay();
   BattleEffect_SelectLivingTargets(work->effect);
   // Nine objects of resource 0x173, the formation (SUMMON_FORMATION_THOR),
@@ -414,7 +412,7 @@ void BattleEffect_RunThor(struct BattleEffectArgument *effect) {
       work->particles[i].variant = -(Random16() & 15);
     }
     EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, 50);
-    AudioCommand_PlayFar(SE_145);
+    Sound_PlaySongFar(SE_145);
     // The pillar is 48 pixels wide at canvas x 36 and reaches from the top
     // down to line 112; its sparks start at its foot, x 60.
     pillarX = 60;
@@ -430,7 +428,7 @@ void BattleEffect_RunThor(struct BattleEffectArgument *effect) {
       // the bolts.
       stormFrame = frame - 80;
       if ((u32)stormFrame <= 59 && !(frame & 7)) {
-        AudioCommand_PlayFar(SE_HEAVY_IMPACT);
+        Sound_PlaySongFar(SE_HEAVY_IMPACT);
       }
       if (frame == 140) {
         EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
@@ -482,12 +480,12 @@ void BattleEffect_RunThor(struct BattleEffectArgument *effect) {
             if (frame < i * 2 + 82) {
               s32 boltX = (Random16() & 3) - 3;
               s32 boltY = (Random16() & 3) + 32;
-              EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER_ALTERNATE,
-                                  EFFECT_CLIP_BOUNDS, COMPOSITE_MAX);
-              EFFECT_BLITTERS[HEAP_SLOT_BLITTER_ALTERNATE](
+              EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, EFFECT_CLIP_BOUNDS,
+                                  COMPOSITE_MAX);
+              EFFECT_BLITTERS[HEAP_SLOT_RAM_CODE_2](
                   canvas, work->sheet + i % 3 * THOR_BOLT_BYTES, boltX, boltY,
                   THOR_BOLT_SIZE, THOR_BOLT_SIZE);
-              Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
+              FreeHeapSlot(HEAP_SLOT_RAM_CODE_2);
             }
             if (frame == i * 2 + 80) {
               THOR_LAUNCH_SPARKS(spark, j, 0x100000, 0x500000,
@@ -513,31 +511,31 @@ void BattleEffect_RunThor(struct BattleEffectArgument *effect) {
           mirrorX = moteX + 72;
           moteY = 32 - ((Trig_Cos(angle) * (radius + 8)) >> 16);
         }
-        EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER_ALTERNATE, EFFECT_CLIP_BOUNDS,
+        EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, EFFECT_CLIP_BOUNDS,
                             COMPOSITE_MAX);
-        EFFECT_BLITTERS[HEAP_SLOT_BLITTER_ALTERNATE](
-            canvas, work->sheet + THOR_MOTE_CELLS, moteX + 60, moteY - 24, 12,
-            24);
-        Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
-        EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER_ALTERNATE,
+        EFFECT_BLITTERS[HEAP_SLOT_RAM_CODE_2](canvas,
+                                              work->sheet + THOR_MOTE_CELLS,
+                                              moteX + 60, moteY - 24, 12, 24);
+        FreeHeapSlot(HEAP_SLOT_RAM_CODE_2);
+        EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
                             EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
                             COMPOSITE_MAX);
-        EFFECT_BLITTERS[HEAP_SLOT_BLITTER_ALTERNATE](
+        EFFECT_BLITTERS[HEAP_SLOT_RAM_CODE_2](
             canvas, work->sheet + THOR_MOTE_CELLS, mirrorX, moteY - 24, 12, 24);
-        Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
-        EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER_ALTERNATE,
+        FreeHeapSlot(HEAP_SLOT_RAM_CODE_2);
+        EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
                             EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_Y,
                             COMPOSITE_MAX);
-        EFFECT_BLITTERS[HEAP_SLOT_BLITTER_ALTERNATE](
+        EFFECT_BLITTERS[HEAP_SLOT_RAM_CODE_2](
             canvas, work->sheet + THOR_MOTE_CELLS, moteX + 60, moteY, 12, 24);
-        Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
-        EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER_ALTERNATE,
+        FreeHeapSlot(HEAP_SLOT_RAM_CODE_2);
+        EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
                             EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X |
                                 COMPOSITE_FLIP_Y,
                             COMPOSITE_MAX);
-        EFFECT_BLITTERS[HEAP_SLOT_BLITTER_ALTERNATE](
+        EFFECT_BLITTERS[HEAP_SLOT_RAM_CODE_2](
             canvas, work->sheet + THOR_MOTE_CELLS, mirrorX, moteY, 12, 24);
-        Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
+        FreeHeapSlot(HEAP_SLOT_RAM_CODE_2);
         // Four sparks a frame from the right-hand copies, in any direction,
         // at 64 to 127 128ths of a pixel a frame (twice that up and down),
         // living 16 to 23 frames.
@@ -562,7 +560,7 @@ void BattleEffect_RunThor(struct BattleEffectArgument *effect) {
         }
       }
 
-      EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER_ALTERNATE,
+      EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
                           EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X |
                               COMPOSITE_FLIP_Y,
                           COMPOSITE_MAX);
@@ -571,7 +569,7 @@ void BattleEffect_RunThor(struct BattleEffectArgument *effect) {
         // gravity, and one past the ground (y 120) bounces back at half
         // speed instead of being drawn; those on the canvas shrink from 3
         // pixels wide to 1 as their life runs out.
-        DrawRectangle draw = EFFECT_BLITTERS[HEAP_SLOT_BLITTER_ALTERNATE];
+        DrawRectangle draw = EFFECT_BLITTERS[HEAP_SLOT_RAM_CODE_2];
         struct EffectStep *spark;
         for (i = 0, spark = THOR_PARTICLES; i != THOR_PARTICLE_COUNT;
              i++, spark++) {
@@ -589,7 +587,7 @@ void BattleEffect_RunThor(struct BattleEffectArgument *effect) {
           }
         }
       }
-      Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
+      FreeHeapSlot(HEAP_SLOT_RAM_CODE_2);
 
       // The formation is placed from frame 16, its corner at (80, 64), and
       // pushed back from frame 32: right 4 pixels a frame and up 1/4, the
@@ -621,13 +619,13 @@ void BattleEffect_RunThor(struct BattleEffectArgument *effect) {
                   (gBattleEffect_GlintCellWidths[glint] >> 1);
           s32 y = ((Trig_Cos(angle) * 40) >> 16) -
                   (gBattleEffect_GlintCellHeights[glint] >> 1);
-          EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER_ALTERNATE,
+          EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
                               3 | gThor_SmokeFlips[Random16() & 3], 2);
-          EFFECT_BLITTERS[HEAP_SLOT_BLITTER_ALTERNATE](
+          EFFECT_BLITTERS[HEAP_SLOT_RAM_CODE_2](
               canvas, Ram_MapGridCellBuffer + gBattleEffect_GlintCells[glint],
               x, y + 56, gBattleEffect_GlintCellWidths[glint],
               gBattleEffect_GlintCellHeights[glint]);
-          Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
+          FreeHeapSlot(HEAP_SLOT_RAM_CODE_2);
         }
       }
       if (frame <= 31) {
@@ -638,8 +636,8 @@ void BattleEffect_RunThor(struct BattleEffectArgument *effect) {
       EFFECT_END_FRAME(work);
     }
 
-    Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
-    Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
+    FreeHeapSlot(HEAP_SLOT_RAM_CODE);
+    Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
     BattleEffect_RunImpactBurst(SUMMON_FORMATION_THOR, formationX, formationY);
   }
   for (i = 0; i != 9; i++) {

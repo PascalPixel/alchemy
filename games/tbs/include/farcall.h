@@ -42,7 +42,7 @@ struct ItemDefinition;
 struct LevelUpResult;
 struct MenuSprite;
 struct MotionObject;
-struct ObjectRuntime;
+struct Object;
 struct PolarOffsetOutput;
 struct RenderInput;
 struct RenderOutput;

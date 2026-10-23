@@ -62,20 +62,20 @@ static u16 KolimaPalette_AdjustColorChannels(u16 color, s32 adj) {
 
 /// Keeps the healthy colours: the colour buffer into gKolimaPalette_First.
 static void KolimaPalette_SaveFirst(void) {
-  Dma_Set(gPaletteBufferWork->palette, gKolimaPalette_First,
+  Dma_Set(gPaletteFadeWork->palette, gKolimaPalette_First,
           (DMA_ENABLE | DMA_32BIT) << 16 | 0xe0, REG_DMA3);
 }
 
 /// Keeps the cursed colours: the colour buffer into gKolimaPalette_Second.
 static void KolimaPalette_SaveSecond(void) {
-  Dma_Set(gPaletteBufferWork->palette, gKolimaPalette_Second,
+  Dma_Set(gPaletteFadeWork->palette, gKolimaPalette_Second,
           (DMA_ENABLE | DMA_32BIT) << 16 | 0xe0, REG_DMA3);
 }
 
 /// Copies the palettes on the screen, background and sprites, into the colour
 /// buffer as the colours to fade from.
 static void KolimaPalette_Capture(void) {
-  u16 *buf = gPaletteBufferWork->palette;
+  u16 *buf = gPaletteFadeWork->palette;
 
   Dma_Set((const void *)BG_PLTT, buf, (DMA_ENABLE | DMA_32BIT) << 16 | 0x70,
           REG_DMA3);
@@ -87,7 +87,7 @@ static void KolimaPalette_Capture(void) {
 /// Makes the healthy colours (second 0) or the cursed ones (second 1) the
 /// colours to fade to; the scene then fades with Engine_ColorBufferInterpolate.
 void KolimaPalette_Restore(s32 second) {
-  u16 *buf = gPaletteBufferWork->palette;
+  u16 *buf = gPaletteFadeWork->palette;
 
   if (second)
     Dma_Set(gKolimaPalette_Second, buf, (DMA_ENABLE | DMA_32BIT) << 16 | 0xe0,

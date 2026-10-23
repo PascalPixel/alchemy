@@ -98,7 +98,7 @@
 #include "ability_ids.h"
 #include "sprite_ids.h"
 
-/// The effect slots of a Psynergy effect's scene (gEffectWork->effects).
+/// The effect slots of a Psynergy effect's scene (gFieldEffectWork->effects).
 #define PSYNERGY_EFFECT_SLOT_COUNT 24
 
 /// gGameState.pendingDjinnEvent of Djinni 0 (requests.c, djinni.c): a Djinni
@@ -108,7 +108,7 @@
 
 /// A ObjectEvent seen with its position as one vector, to pass it whole. The
 /// gaps are ObjectEvent fields this view does not use.
-struct Object {
+struct ObjectVectorView {
   u8 pad0[6];
   u16 angle;                    ///< ObjectEvent.facing, 1/65536 turns
   struct EffectVector position; ///< 16.16 fixed-point pixels
@@ -137,7 +137,7 @@ static __inline__ void FieldEffect_UpdateEffectSlots(void) {
   struct EffectSlot *effect;
   s32 remainingSlots;
 
-  effect = ((struct FieldEffectWork *)gEffectWork)->effects;
+  effect = ((struct FieldEffectWork *)gFieldEffectWork)->effects;
   remainingSlots = PSYNERGY_EFFECT_SLOT_COUNT - 1;
   do {
     remainingSlots -= 1;
@@ -302,7 +302,7 @@ static inline void FieldEffect_InitializeFallingFragment(
     s32 n;                                                                     \
     s32 dist;                                                                  \
                                                                                \
-    effectWork = gEffectWork;                                                  \
+    effectWork = gFieldEffectWork;                                             \
     FieldEffect_FadeToEffectColor();                                           \
     pos.x = effectWork->x;                                                     \
     pos.y = effectWork->y + 0x100000;                                          \
@@ -315,12 +315,12 @@ static inline void FieldEffect_InitializeFallingFragment(
     for (n = 0; n < 2; n++) {                                                  \
       obj = *walk++;                                                           \
       if (obj != 0)                                                            \
-        Motion_SetTargetPositionFromMagnitudeAngle(                            \
-            (struct ObjectRuntime *)obj, 0x180000, obj->angle);                \
+        Motion_SetTargetPositionFromMagnitudeAngle((struct Object *)obj,       \
+                                                   0x180000, obj->angle);      \
     }                                                                          \
                                                                                \
-    FieldObject_WaitForMoveFar(pair[0]);                                       \
-    AudioCommand_PlayFar(SE_HEAVY_IMPACT);                                     \
+    Object_WaitForMoveFar(pair[0]);                                            \
+    Sound_PlaySongFar(SE_HEAVY_IMPACT);                                        \
     for (n = 0; n < ITEM_BREAK_SHARD_MAX; n++) {                               \
       pos.x = effectWork->x;                                                   \
       pos.y = effectWork->y + 0x100000;                                        \
@@ -334,8 +334,8 @@ static inline void FieldEffect_InitializeFallingFragment(
         obj->acceleration = 0x20000;                                           \
         obj->motionFlags = 0;                                                  \
         dist = Random16() * 24 + 0x80000;                                      \
-        Motion_SetTargetPositionFromMagnitudeAngle(                            \
-            (struct ObjectRuntime *)obj, dist, Random16());                    \
+        Motion_SetTargetPositionFromMagnitudeAngle((struct Object *)obj, dist, \
+                                                   Random16());                \
       }                                                                        \
     }                                                                          \
                                                                                \

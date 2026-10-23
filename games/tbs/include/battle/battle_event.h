@@ -49,7 +49,7 @@ enum BattleEventOpcode {
   BATTLE_EVENT_ABILITY_NAME = 3,    ///< an ability's name for the next message
   BATTLE_EVENT_MESSAGE = 4,         ///< a message, waiting for the player
   BATTLE_EVENT_MESSAGE_NO_WAIT = 5, ///< a message, going straight on
-  BATTLE_EVENT_MARK = 6,            ///< sets gBattleDisplayWork->marked
+  BATTLE_EVENT_MARK = 6,            ///< sets gBattleMessageWork->marked
   BATTLE_EVENT_CLEAR_ARGUMENTS = 7, ///< forgets the names and numbers pushed
   BATTLE_EVENT_HIT = 8,             ///< the unit flinches and flashes
   BATTLE_EVENT_DEFEAT = 9,          ///< the unit falls; an enemy fades out

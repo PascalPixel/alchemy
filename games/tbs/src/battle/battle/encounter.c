@@ -58,19 +58,19 @@ s32 Battle_RunEncounter(s32 enemyGroup) {
   // are taken here from EWRAM first: ObjectSystem_InitializeFar's own requests
   // for them then get these blocks, as an allocated slot is returned as it
   // is (field/field/animation.c, runtime/runtime/heap.c).
-  camera = Runtime_AllocateBlock(HEAP_SLOT_CAMERA, sizeof(struct BattleCamera));
-  battle = Runtime_AllocateBlock(HEAP_SLOT_BATTLE, sizeof(struct BattleWork));
-  ownerStates = Runtime_AllocateBlock(HEAP_SLOT_LINK_OWNER_STATES,
-                                      LINK_OWNER_STATES_SIZE);
-  transition = Runtime_AllocateBlock(HEAP_SLOT_BATTLE_BACKGROUND, 32);
-  Runtime_AllocateBlock(11, 0x280);
+  camera = AllocHeapSlotEwram(HEAP_SLOT_CAMERA, sizeof(struct BattleCamera));
+  battle = AllocHeapSlotEwram(HEAP_SLOT_BATTLE, sizeof(struct BattleWork));
+  ownerStates =
+      AllocHeapSlotEwram(HEAP_SLOT_LINK_OWNER_STATES, LINK_OWNER_STATES_SIZE);
+  transition = AllocHeapSlotEwram(HEAP_SLOT_BATTLE_BACKGROUND, 32);
+  AllocHeapSlotEwram(11, 0x280);
   focus = camera->focus;
   /* FAKEMATCH(dead): result set to 0, a store no read sees, whose register
    * CSE takes the setup's zeros from; without it, 122 of 645 instructions
    * differ in tbs-en. */
   result = 0;
   Iwram_ClearWords(ownerStates, LINK_OWNER_STATES_SIZE);
-  Scheduler_ResetTaskTable();
+  Task_ResetAll();
   // The transition owns the background (flag) until the entry transition
   // is over, the camera toward the party's view.
   transition->frames = 0;
@@ -89,13 +89,13 @@ s32 Battle_RunEncounter(s32 enemyGroup) {
   Dma_Fill32Cell(fill, 0, battle, sizeof(struct BattleWork));
   battle->promptSlot = -1;
   battle->enemyGroup = enemyGroup;
-  display = Runtime_AllocateBlock(HEAP_SLOT_BATTLE_DISPLAY,
-                                  sizeof(struct BattleDisplayWork));
+  display = AllocHeapSlotEwram(HEAP_SLOT_BATTLE_MESSAGE,
+                               sizeof(struct BattleDisplayWork));
   Dma_Fill32Cell(fill, 0, display, sizeof(struct BattleDisplayWork));
   battle->background = FieldScript_GetSpecialValueFar();
-  Runtime_AllocateBlock(HEAP_SLOT_ANIMATION_SPRITES, 0xe00);
-  Runtime_AllocateBlock(HEAP_SLOT_ANIMATION_LAYERS, 0x600);
-  ObjectSystem_InitializeFar(MODE_BATTLE);
+  AllocHeapSlotEwram(HEAP_SLOT_ANIMATION_SPRITES, 0xe00);
+  AllocHeapSlotEwram(HEAP_SLOT_ANIMATION_LAYERS, 0x600);
+  ObjectSystem_InitializeFar(OBJECT_SYSTEM_BATTLE);
   if (GameFlag_TestFar(FLAG_DJINN_LESSON) != 0)
     UiWork_InitializeFar(1);
   else
@@ -145,19 +145,19 @@ s32 Battle_RunEncounter(s32 enemyGroup) {
     BattleParty_AssignMemberSlots();
     battle->battleType = FORMATION_SHUFFLED;
   }
-  Scheduler_AddOrUpdateCallback(BattlePresentation_UpdateCamera, 0xc7f);
+  Task_Add(BattlePresentation_UpdateCamera, 0xc7f);
 
   // The battle music: the scene's own cue, or the usual battle songs.
-  cue = gGameState.battleCue;
+  cue = gGameState.battleMusic;
   if (cue != 0) {
-    AudioCommand_PlayFar(cue);
+    Sound_PlaySongFar(cue);
     if (GameFlag_TestFar(FLAG_LINK_BATTLE) != 0) {
-      AudioCommand_PlayFar(MUS_055);
+      Sound_PlaySongFar(MUS_055);
       Sound_LoadPresetParameters(4);
     }
   } else {
-    AudioCommand_PlayFar(MUS_051);
-    AudioCommand_PlayFar(MUS_COLOSSO_BATTLE);
+    Sound_PlaySongFar(MUS_051);
+    Sound_PlaySongFar(MUS_COLOSSO_BATTLE);
   }
 
   // The units, the windows and the background.
@@ -207,7 +207,7 @@ s32 Battle_RunEncounter(s32 enemyGroup) {
   BattlePresentation_RunEntryTransition(enemyCount, enemyGroup);
   transition->flag = 0;
   gCpuLoadDisplayEnabled = 0;
-  Scheduler_AddOrUpdateCallback(BattleObject_UpdateSpritePriorities, 0xc80);
+  Task_Add(BattleObject_UpdateSpritePriorities, 0xc80);
 
   // The rounds.
   for (;;) {
@@ -308,9 +308,9 @@ won:
   Battle_ClearSerialTransferPayload();
   if (GameFlag_TestFar(FLAG_DJINN_LESSON) == 0) {
     if (battle->twoSided != 0)
-      AudioCommand_PlayFar(MUS_VICTORY);
+      Sound_PlaySongFar(MUS_VICTORY);
     if (battle->spoils.defeated != 0) {
-      AudioCommand_PlayFar(MUS_VICTORY);
+      Sound_PlaySongFar(MUS_VICTORY);
       if (battle->defeatState <= DEFEAT_SEVERAL) {
         BattleUnit_SetFar(FIRST_ENEMY_UNIT,
                           battle->enemyClasses[battle->firstDefeated], 26);
@@ -322,7 +322,7 @@ won:
     }
     Battle_AwardSpoils();
   }
-  AudioCommand_PlayFar(AUDIO_CUE_FADE_BGM);
+  Sound_PlaySongFar(AUDIO_CUE_FADE_BGM);
   Fade_ToBlack(30);
   Fade_Wait();
   result = battle->spoils.defeated;
@@ -332,7 +332,7 @@ aborted:
   // The link broke, or no actions could be gathered. Flag FLAG_MAPSEC_TEMP_E8
   // tells the link lobby (LinkLobby_RunRoundResult) the battle did not finish.
   Battle_ClearSerialTransferPayload();
-  Scheduler_SuspendTasks(0);
+  Task_SuspendAll(0);
   REG_DISPCNT = DISPCNT_MODE_1;
   result = battle->spoils.defeated;
   GameFlag_SetBitFar(FLAG_MAPSEC_TEMP_E8);
@@ -342,7 +342,7 @@ party_lost:
   // "X goes down in defeat..." for a lone member, else "X's party has been
   // defeated!".
   Battle_ClearSerialTransferPayload();
-  AudioCommand_PlayFar(MUS_DEFEAT);
+  Sound_PlaySongFar(MUS_DEFEAT);
   UiWork_ClearValueNameTablesFar();
   UiWork_PushValueSlotFar(gGameState.activeOwners[0], VALUE_UNIT_NAME);
   if (BattleParty_PrepareActiveOwners(0) == 1)
@@ -350,14 +350,14 @@ party_lost:
   else
     UiText_ShowMessageAndWaitCoreFar(MsgPartyDefeated);
   BattlePresentation_WaitForAdvance();
-  AudioCommand_PlayFar(AUDIO_CUE_FADE_BGM);
+  Sound_PlaySongFar(AUDIO_CUE_FADE_BGM);
   Fade_ToBlack(30);
   result = ENCOUNTER_PARTY_LOST;
   Fade_Wait();
   goto finished;
 
 fled:
-  AudioCommand_PlayFar(AUDIO_CUE_FADE_BGM);
+  Sound_PlaySongFar(AUDIO_CUE_FADE_BGM);
   Fade_ToBlack(30);
   Fade_Wait();
   result = ENCOUNTER_FLED;
@@ -369,8 +369,8 @@ finished:
   Battle_ReservedNoOpF674();
   DjinnRecovery_Tick();
   Battle_SetStart(BATTLE_START_NORMAL);
-  Scheduler_RemoveCallback(BattleObject_UpdateSpritePriorities);
-  Runtime_ReleaseHeapBlock10();
+  Task_Remove(BattleObject_UpdateSpritePriorities);
+  FreeHeapSlot10();
   return result;
 }
 

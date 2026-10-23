@@ -206,8 +206,7 @@ void FieldEffect_ShrinkObjectScaleUntilHalf(union FieldObject *fieldObject) {
   object->scaleY = scale;
   object->scaleX = scale;
   if (scale < WHIRLWIND_TARGET_MIN_SCALE) {
-    Object_SetPositionAndResetMotionFar((struct ObjectRuntime *)object, 0, 0,
-                                        0);
+    Object_SetPositionAndResetMotionFar((struct Object *)object, 0, 0, 0);
     ((struct ScriptMotionObject *)object)->hook = 0;
   }
 }
@@ -235,7 +234,7 @@ void FieldEffect_RunWhirlwindOnTarget(s32 unused) {
 /// palettes to an effect colour and back, and gives the target its shrinking
 /// update; the orb is released at the end, the particles finish on their own.
 void FieldEffect_RunWhirlwind(void) {
-  struct FieldEffectWork *effectWork = gEffectWork;
+  struct FieldEffectWork *effectWork = gFieldEffectWork;
   struct ObjectEvent *src = effectWork->mainObject;
   struct ObjectEvent *target = effectWork->child;
   struct EffectVector pos;
@@ -274,7 +273,7 @@ void FieldEffect_RunWhirlwind(void) {
   } while (step < steps);
   ball->scaleX = 0x1b333; // 1.7 wide
   ball->scaleY = 0x14ccc; // 1.3 high
-  AudioCommand_PlayFar(SE_163);
+  Sound_PlaySongFar(SE_163);
   WaitFrames(20);
   // Cleared by FieldEffect_DispatchRequestKind: cast on a target a map event
   // names, the target is blown away.
@@ -309,7 +308,7 @@ void FieldEffect_RunWhirlwind(void) {
   }
   ObjectDispatch_SelectAnimationFar(ball, 1);
   WaitFrames(30);
-  AudioCommand_PlayFar(SE_136);
+  Sound_PlaySongFar(SE_136);
   WaitFrames(20);
   // Every particle has left its orbit by now. Its wandering callback no
   // longer reads the anchor, so the orb can be released independently.

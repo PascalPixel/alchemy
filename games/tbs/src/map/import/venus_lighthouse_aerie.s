@@ -3,8 +3,8 @@
 	.set import.__divsi3, 1
 	.set import.Math_RemainderUnsigned, 1
 	.set import.Engine_TaskWait, 1
-	.set import.Scheduler_AddOrUpdateCallback, 1
-	.set import.Scheduler_RemoveCallback, 1
+	.set import.Task_Add, 1
+	.set import.Task_Remove, 1
 	.set import.Engine_RandomNext, 1
 	.set import.Engine_MathSin, 1
 	.set import.Engine_MathCos, 1
@@ -20,7 +20,7 @@
 	.set import.Engine_ObjectDispatchRelease, 1
 	.set import.Engine_MapGridRedraw, 1
 	.set import.Engine_ObjectSetPosition, 1
-	.set import.FieldObject_WaitForMove, 1
+	.set import.Object_WaitForMove, 1
 	.set import.Engine_MapGridCopyCellsTo, 1
 	.set import.Engine_MapGridCopyCellAttributes, 1
 	.set import.Object_CheckMovementCollision, 1

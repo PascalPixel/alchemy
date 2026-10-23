@@ -176,7 +176,7 @@ static inline void SolSanctumEruption_PlaceHostageGroup(void) {
 static void SolSanctumEruption_PlayHostageScene(void) {
   void ObjectEvent_ShowEmote();
   void ColorBuffer_ApplyTarget();
-  void Script_PlayCue();
+  void Script_PlaySong();
 
   struct ObjectEvent *objectEvent;
   struct GroundParticleWork *sparkles;
@@ -194,7 +194,7 @@ static void SolSanctumEruption_PlayHostageScene(void) {
   Engine_ScriptStart();
   sparkles->stopped = 0;
   // Reopen the chamber during the first quake and stage the two groups.
-  Script_PlayCue(SE_RUMBLE);
+  Script_PlaySong(SE_RUMBLE);
   MapGrid_SetShake(PIXELS(1), PIXELS(1), Q16_ONE);
   ObjectEvent_SetPosition(LOCALID_PARTY_LEADER, PIXELS(232), PIXELS(156));
   ObjectEvent_SetPosition(GARET, PIXELS(218), PIXELS(172));
@@ -212,7 +212,7 @@ static void SolSanctumEruption_PlayHostageScene(void) {
   Camera_MoveTo(PIXELS(232), -1, PIXELS(156), 0);
   Engine_MapGridRedraw();
 #ifdef UBFIX
-  gEventWork->transitionFrames = 8;
+  gFieldWork->transitionFrames = 8;
 #else
   (*eventWorkSlot)->transitionFrames = 8;
 #endif
@@ -228,14 +228,14 @@ static void SolSanctumEruption_PlayHostageScene(void) {
   ColorBuffer_ApplyTarget(0x7fff, 0);
   Engine_ColorBufferInterpolate(4);
   Engine_ScriptWait(16);
-  Script_PlayCue(SE_144);
+  Script_PlaySong(SE_144);
   ColorBuffer_ApplyTarget(PALETTE_TRANSFORM_PLAIN, 0);
   Engine_ColorBufferInterpolate(4);
   Engine_ScriptWait(4);
   ColorBuffer_ApplyTarget(0x7fff, 0);
   Engine_ColorBufferInterpolate(4);
   Engine_ScriptWait(4);
-  Script_PlayCue(SE_144);
+  Script_PlaySong(SE_144);
   ColorBuffer_ApplyTarget(PALETTE_TRANSFORM_PLAIN, 0);
   Engine_ColorBufferInterpolate(48);
   Engine_ScriptWait(48);
@@ -275,7 +275,7 @@ static void SolSanctumEruption_PlayHostageScene(void) {
   objectEvent = ObjectEvent_GetById(LOCALID_WISE_ONE);
   objectEvent->motionFlags = 5;
   sparkles->stopped = 1;
-  Script_PlayCue(AUDIO_CUE_FADE_SLOT3);
+  Script_PlaySong(AUDIO_CUE_FADE_SLOT3);
   MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
   Engine_MapGridRenderWaitForValues();
   Engine_ScriptWait(150);
@@ -292,7 +292,7 @@ static void SolSanctumEruption_PlayHostageScene(void) {
   Camera_SetSpeed(PIXELS(32) / 5, PIXELS(4) / 5);
   Camera_MoveTo(PIXELS(328), -1, PIXELS(299), 1);
   Engine_CameraWaitForMove();
-  Script_PlayCue(SE_MAP_TRANSITION);
+  Script_PlaySong(SE_MAP_TRANSITION);
   ColorBuffer_ApplyTarget(0x205294, 2);
   Engine_ColorBufferInterpolate(20);
   Engine_TaskWait(20);
@@ -313,11 +313,11 @@ static void SolSanctumEruption_PlayHostageScene(void) {
   Script_ShowMessageAndWait(LOCALID_KRADEN, 0, 20);
   SolSanctumEruption_SetMaterializationTint(1, 20, 0);
   sparkles->stopped = 0;
-  Script_PlayCue(SE_RUMBLE);
+  Script_PlaySong(SE_RUMBLE);
   MapGrid_SetShake(PIXELS(1), PIXELS(2), Q16_ONE);
   Engine_ScriptWait(80);
   sparkles->stopped = 1;
-  Script_PlayCue(AUDIO_CUE_FADE_SLOT3);
+  Script_PlaySong(AUDIO_CUE_FADE_SLOT3);
   MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
   Engine_MapGridRenderWaitForValues();
   SolSanctumEruption_SetMaterializationTint(0, 20, 60);
@@ -601,7 +601,7 @@ static void SolSanctumEruption_RaiseAndShrinkObjectEvent(s32 localId) {
   Engine_ObjectEventSetSpriteFlags(spriteOwner, 0);
   ObjectEvent_SetChildValue(localId, 0x100);
   objectEvent->motionFlags = 0;
-  Script_PlayCue(SE_201);
+  Script_PlaySong(SE_201);
   // Rise at full size, then shrink the object event and its shadow together.
   frame = 0;
   do {
@@ -609,7 +609,7 @@ static void SolSanctumEruption_RaiseAndShrinkObjectEvent(s32 localId) {
     Engine_ScriptWait(1);
     frame++;
   } while (frame != 60);
-  Script_PlayCue(SE_190);
+  Script_PlaySong(SE_190);
   frame = 0;
   do {
     objectEvent->y.fixed += PIXELS(1) / 10;
@@ -633,7 +633,7 @@ UNUSED static void SolSanctumEruption_UnusedCallbackB(void) {}
 /// Plays the collapse after the cut from the Elemental Star Room. It plays at
 /// SOL_SANCTUM_ERUPTION_FROM_SOL_SANCTUM_ELEMENTAL_STAR_ROOM, the cut from the
 /// Elemental Star Room (MapId_SolSanctumElementalStarRoom). Called by
-/// Field_RunMap once the object events exist.
+/// Map_Run once the object events exist.
 s32 SolSanctumEruption_Initialize(void) {
   if (gGameState.warpDest ==
       SOL_SANCTUM_ERUPTION_FROM_SOL_SANCTUM_ELEMENTAL_STAR_ROOM) {
@@ -886,7 +886,7 @@ static void SolSanctumEruption_PlayWiseOneRescue(void) {
   Engine_TaskRemoveCallback(SolSanctumEruption_UpdateEmberFrequency);
   gEmberMask = 3;
   Engine_ScriptWait(80);
-  Script_PlayCue(AUDIO_CUE_FADE_BGM);
+  Script_PlaySong(AUDIO_CUE_FADE_BGM);
   ColorBuffer_ApplyTarget(0x7fff, 0);
   Engine_ColorBufferInterpolate(40);
   Engine_ScriptWait(40);
@@ -1068,7 +1068,7 @@ static void SolSanctumEruption_PlayWiseOneRescue(void) {
   Engine_ScriptWait(10);
 
   // A violent tremor throws them aside.
-  Script_PlayCue(MUS_023);
+  Script_PlaySong(MUS_023);
   SolSanctumEruption_SetMaterializationTint(1, 4, 0);
   sparkles->stopped = 0;
   MapGrid_SetShake(PIXELS(5), PIXELS(5), Q16_ONE);
@@ -1165,7 +1165,7 @@ static void SolSanctumEruption_PlayWiseOneRescue(void) {
   Engine_ScriptWait(40);
   Engine_ObjectEventStartRepeatedMotion(LOCALID_PARTY_LEADER, 2);
   Engine_ObjectEventStartRepeatedMotion(GARET, 2);
-  Script_PlayCue(AUDIO_CUE_FADE_SLOT3);
+  Script_PlaySong(AUDIO_CUE_FADE_SLOT3);
   ColorBuffer_ApplyTarget(PALETTE_TRANSFORM_PLAIN, 1);
   Engine_ColorBufferInterpolate(40);
   sparkles->stopped = 1;
@@ -1218,7 +1218,7 @@ static void SolSanctumEruption_PlayWiseOneRescue(void) {
 
   // The floor by the Wise One starts to break up; the Wise One glows and
   // holds it together with Psynergy.
-  Script_PlayCue(SE_107);
+  Script_PlaySong(SE_107);
   FieldScheduler_AddCallback(SolSanctumEruption_FlickerFirstCollapseTiles,
                              TASK_PRIORITY_MAP);
   Engine_ScriptWait(10);
@@ -1248,7 +1248,7 @@ static void SolSanctumEruption_PlayWiseOneRescue(void) {
   ColorBuffer_ApplyTarget(PALETTE_TRANSFORM_PLAIN, 1);
   Engine_ColorBufferInterpolate(60);
   Engine_ScriptWait(30);
-  Script_PlayCue(AUDIO_CUE_FADE_SLOT3);
+  Script_PlaySong(AUDIO_CUE_FADE_SLOT3);
   Engine_TaskRemoveCallback(SolSanctumEruption_FlickerFirstCollapseTiles);
   MapGrid_SetShake(PIXELS(1), PIXELS(1), Q16_ONE);
   flickerDelay = 16;
@@ -1403,7 +1403,7 @@ static void SolSanctumEruption_PlayWiseOneRescue(void) {
   Engine_ScriptWait(20);
   // The floor breaks up again in two places; the Wise One floats to each and
   // holds it together.
-  Script_PlayCue(SE_107);
+  Script_PlaySong(SE_107);
   FieldScheduler_AddCallback(SolSanctumEruption_FlickerSecondCollapseTiles,
                              TASK_PRIORITY_MAP);
   Engine_ScriptWait(20);
@@ -1435,7 +1435,7 @@ static void SolSanctumEruption_PlayWiseOneRescue(void) {
   ColorBuffer_ApplyTarget(PALETTE_TRANSFORM_PLAIN, 1);
   Engine_ColorBufferInterpolate(60);
   Engine_ScriptWait(30);
-  Script_PlayCue(AUDIO_CUE_FADE_SLOT3);
+  Script_PlaySong(AUDIO_CUE_FADE_SLOT3);
   Engine_TaskRemoveCallback(SolSanctumEruption_FlickerSecondCollapseTiles);
   MapGrid_SetShake(PIXELS(2), PIXELS(2), Q16_ONE);
   flickerDelay = 8;
@@ -1454,7 +1454,7 @@ static void SolSanctumEruption_PlayWiseOneRescue(void) {
   ColorBuffer_ApplyTarget(0x20119e, 1);
   Engine_ColorBufferInterpolate(20);
   Engine_ScriptWait(20);
-  Script_PlayCue(SE_107);
+  Script_PlaySong(SE_107);
   FieldScheduler_AddCallback(SolSanctumEruption_FlickerFirstCollapseTiles,
                              TASK_PRIORITY_MAP);
   Engine_ScriptWait(40);
@@ -1470,7 +1470,7 @@ static void SolSanctumEruption_PlayWiseOneRescue(void) {
                              TASK_PRIORITY_MAP);
   ColorBuffer_ApplyTarget(PALETTE_TRANSFORM_PLAIN, 1);
   Engine_ColorBufferInterpolate(60);
-  Script_PlayCue(AUDIO_CUE_FADE_SLOT3);
+  Script_PlaySong(AUDIO_CUE_FADE_SLOT3);
   Engine_ScriptWait(30);
   Engine_TaskRemoveCallback(SolSanctumEruption_FlickerFirstCollapseTiles);
   MapGrid_SetShake(PIXELS(2), PIXELS(2), Q16_ONE);
@@ -1483,13 +1483,13 @@ static void SolSanctumEruption_PlayWiseOneRescue(void) {
   }
   SolSanctumEruption_DrawFirstCollapseTiles(0);
   MapGrid_SetShake(PIXELS(1), PIXELS(1), Q16_ONE);
-  Script_PlayCue(SE_107);
-  Script_PlayCue(MUS_063);
+  Script_PlaySong(SE_107);
+  Script_PlaySong(MUS_063);
   MapGrid_SetShake(PIXELS(4), PIXELS(4), Q16_ONE);
   ColorBuffer_ApplyTarget(0x20119e, 1);
   Engine_ColorBufferInterpolate(20);
   Engine_ScriptWait(20);
-  Script_PlayCue(SE_107);
+  Script_PlaySong(SE_107);
   FieldScheduler_AddCallback(SolSanctumEruption_FlickerSecondCollapseTiles,
                              TASK_PRIORITY_MAP);
   SolSanctumEruption_FinishMaterialization();
@@ -1498,7 +1498,7 @@ static void SolSanctumEruption_PlayWiseOneRescue(void) {
   ObjectEvent_FaceDirection(LOCALID_WISE_ONE, FACING_SOUTH, 0);
   Engine_ScriptWait(10);
   SolSanctumEruption_FinishMaterialization();
-  Script_PlayCue(SE_RUMBLE);
+  Script_PlaySong(SE_RUMBLE);
   Engine_ScriptWait(100);
   ObjectEvent_ShowEmote(LOCALID_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
   ObjectEvent_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
@@ -1509,7 +1509,7 @@ static void SolSanctumEruption_PlayWiseOneRescue(void) {
   Engine_ObjectEventRunRepeatedMotion(GARET, 3);
   Script_ShowMessage(GARET, 0);
   Engine_ScriptWait(20);
-  Script_PlayCue(AUDIO_CUE_FADE_SLOT3);
+  Script_PlaySong(AUDIO_CUE_FADE_SLOT3);
   ObjectEvent_FaceDirection(LOCALID_WISE_ONE, FACING_SOUTHEAST + FACING_STEP,
                             0);
   Engine_ScriptWait(20);
@@ -1617,7 +1617,7 @@ static void SolSanctumEruption_FlickerSecondCollapseTiles(void) {
 static void SolSanctumEruption_RaiseElementalArcs(u32 corner) {
   void ObjectEvent_ShowEmote(s32, s32, s32);
   void ColorBuffer_ApplyTarget(s32, s32);
-  void Script_PlayCue(s32);
+  void Script_PlaySong(s32);
 
   u32 arcIndex, clear;
   s32 x, y, z;
@@ -1642,7 +1642,7 @@ static void SolSanctumEruption_RaiseElementalArcs(u32 corner) {
     break;
   }
   Engine_ColorBufferInterpolate(60);
-  Script_PlayCue(SE_214);
+  Script_PlaySong(SE_214);
   arcIndex = 0;
   clear = arcIndex;
   for (origin = &gEruption_ArcOrigins[0]; arcIndex <= 9;
@@ -1686,7 +1686,7 @@ static void SolSanctumEruption_RaiseElementalArcs(u32 corner) {
   Engine_TaskWait(20);
   FieldScheduler_AddCallback(SolSanctumEruption_UpdateElementalArcs,
                              TASK_PRIORITY_MAP);
-  Script_PlayCue(SE_246);
+  Script_PlaySong(SE_246);
   gArcEffectTimers[0] = 1;
   Engine_TaskWait(6);
   gArcEffectTimers[1] = 1;
@@ -1840,7 +1840,7 @@ static void SolSanctumEruption_SpawnEffectPair(struct ObjectEvent *parent) {
   struct ObjectEvent *pair[2];
   struct ObjectEvent *child;
   struct AnimationObject *sprite;
-  struct FieldEffectWork *effectWork = gEffectWork;
+  struct FieldEffectWork *effectWork = gFieldEffectWork;
   s32 effectIndex;
 
   Engine_AudioPlayCue(SE_292);

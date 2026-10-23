@@ -29,7 +29,7 @@ void System_Initialize(void) {
   // Clear IWRAM up to the heap's end (the stacks above it are in use), then
   // install the resident runtime before any service can use its work blocks
   Dma_Fill32(0, (void *)0x03000000, 0x7800);
-  Runtime_InitializeHeap();
+  InitHeap();
   Runtime_InstallIwramAndIrqs();
   // UB: the count and its pad are cleared with one word store
 #ifdef UBFIX
@@ -53,7 +53,7 @@ void System_Initialize(void) {
   // Start audio and frame services only after the interrupt handlers are ready.
   Audio_InitializeRuntimeDefaultsFar();
   VramCache_Reset();
-  Scheduler_ResetTaskTable();
+  Task_ResetAll();
   gCartridgeResetMarker = 0;
   gOamCopyEnabled = 1;
   gSleepDisabled = 0;
@@ -145,7 +145,7 @@ void System_CopyBuildStamp(void) {
 }
 
 /// An exported stub that does nothing with its argument. The title screen,
-/// Lucky Dice and the slot machine (ReelGame_Run) call it with a far-call
+/// Lucky Dice and the slot machine (LuckyWheels_Run) call it with a far-call
 /// resource id.
 void RuntimeDispatch_NoOpHook(s32 unused) {}
 
@@ -162,7 +162,7 @@ void *Resource_GetTableEntry(s32 index) {
 /// halfword offset. Each pair's offset is reduced by the pair's own position in
 /// the block, which turns it into the pc-relative offset the CPU expects; the
 /// pairs are rewritten in place. `byteLength` is the code size. Nothing calls
-/// it: Resource_LoadCode uses the ARM routine that does the same.
+/// it: Overlay_Load uses the ARM routine that does the same.
 UNUSED void Code_ResolveLongBranches(u16 *entries, s32 byteLength) {
   s32 entryCount;
   s32 entryIndex;
@@ -229,15 +229,15 @@ UNUSED void Code_ResolveLongBranches(u16 *entries, s32 byteLength) {
 /// Code_ResolveLongBranches does; the copy is allocated and freed again.
 /// Called by Map_LoadOverlay for each map's overlay, and through the
 /// far-call table.
-void Resource_LoadCode(u32 index, void *destination) {
+void Overlay_Load(u32 index, void *destination) {
   void (*patchBranches)(void *, s32);
   s32 codeSize;
 
-  codeSize = Resource_DecodeType01(Resource_GetTableEntry(index), destination);
+  codeSize = Decompress_Type01(Resource_GetTableEntry(index), destination);
   RamCode_Load(patchBranches, Resource_PatchThumbBranch,
                Resource_PatchThumbBranchCodeSize);
   patchBranches(destination, codeSize);
-  MemFree(patchBranches);
+  Free(patchBranches);
 }
 
 /// The handler of every interrupt nobody has claimed.

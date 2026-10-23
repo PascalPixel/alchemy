@@ -75,7 +75,7 @@
 #define ITEM_LIST_NAME_X 32
 #endif
 
-/// The field's work (heap slot HEAP_SLOT_EVENT) as the Item screen writes it:
+/// The field's work (heap slot HEAP_SLOT_FIELD) as the Item screen writes it:
 /// the item request that the field loop hands to Field_UseItem once the menu
 /// has closed. struct FieldWork (field_runtime.h) names these fields item and
 /// itemArgument.
@@ -98,7 +98,7 @@ s32 ItemMenu_Run(void) {
 #if TBS_PATCH_1
   void *backup;
 #endif
-  struct InventoryMenuState *screen;
+  struct ItemMenuWork *screen;
   s32 item;
   s32 target;
   s32 owner;
@@ -114,10 +114,10 @@ s32 ItemMenu_Run(void) {
   // and free the copy after putting the tiles back.
 #if TBS_PATCH_1
   size = 0x2000;
-  backup = Runtime_BumpAllocateAlternatePool(size);
+  backup = AllocEwram(size);
 #endif
-  screen = Runtime_AllocateHeapBlock(HEAP_SLOT_MENU, MENU_WORK_SIZE);
-  cache = &((union HeapState *)gWorkSlot)->slots[HEAP_SLOT_MENU_CONTROL];
+  screen = AllocHeapSlot(HEAP_SLOT_MENU, MENU_WORK_SIZE);
+  cache = &((union HeapState *)gHeapSlots)->slots[HEAP_SLOT_OBJECT_SYSTEM];
   ((struct ObjectSystemWork *)cache[0])->suspended = 1;
   UiWindow_DrawFrameFar(0, 0, 30, 20);
   WaitFrames(1);
@@ -143,7 +143,7 @@ s32 ItemMenu_Run(void) {
   Menu_EnsureCancelSound();
   if (result == 1) {
     struct ItemPickerResult *selection =
-        cache[HEAP_SLOT_EVENT - HEAP_SLOT_MENU_CONTROL];
+        cache[HEAP_SLOT_FIELD - HEAP_SLOT_OBJECT_SYSTEM];
 
     selection->chosenItem = (owner << 10) | (item & INVENTORY_ITEM_ID_MASK);
     selection->chosenSlot = screen->selectedSlots[0];
@@ -151,19 +151,19 @@ s32 ItemMenu_Run(void) {
 
   // Close the menu and give the screen back to the field.
   RenderOutput_ClearListFar(screen->statusWindow);
-  process = &cache[HEAP_SLOT_WINDOW - HEAP_SLOT_MENU_CONTROL];
+  process = &cache[HEAP_SLOT_WINDOW - HEAP_SLOT_OBJECT_SYSTEM];
   ((struct UiRenderWork *)*process)->menuBusy = 1;
   ItemMenu_Close();
   UiWindow_DrawFrameFar(0, 0, 30, 20);
   Menu_ResetTwoResourceEntries();
-  Runtime_ReleaseHeapBlock(HEAP_SLOT_MENU);
+  FreeHeapSlot(HEAP_SLOT_MENU);
   ((struct ObjectSystemWork *)cache[0])->suspended = 0;
 #if TBS_PATCH_1
   UiWindow_MarkVisibleTileAttributesFar();
   UiWork_SetAltFlagAndClearTableFar(0);
   Iwram_CopyWords(BG_CHAR_BLOCK(1), backup, size);
   ((struct UiRenderWork *)*process)->menuBusy = 0;
-  MemFree(backup);
+  Free(backup);
   WaitFrames(1);
   Menu_ResumeFieldTasks();
 #endif
@@ -223,7 +223,7 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
   s32 menuResult;
   struct BattleUnit *sourceUnit;
   struct BattleUnit *targetUnit;
-  struct InventoryMenuState *menu;
+  struct ItemMenuWork *menu;
   struct ItemDefinition *item;
   struct BattleUnit *sourceCopy;
   struct BattleUnit *targetCopy;
@@ -613,7 +613,7 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
           InventoryMenu_ShowModalMessage(MsgEquippedIt, 15, 14);
           item = Item_GetDirectFar(menu->selectedItems[0]);
           if ((item->flags & ITEM_CURSED) != 0) {
-            AudioCommand_PlayFar(SE_103); // the curse sound
+            Sound_PlaySongFar(SE_103); // the curse sound
             RenderOutput_ClearListFar(menu->infoWindow);
             InventoryMenu_ShowModalMessage(MsgEquippedIt +
                                                7, // "You were cursed!"
@@ -645,8 +645,8 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
       // back.
       sourceUnit = Unit_GetFar(menu->paneOwner[0]);
       targetUnit = Unit_GetFar(menu->paneOwner[1]);
-      sourceCopy = MemAlloc(BATTLE_UNIT_SIZE);
-      targetCopy = MemAlloc(BATTLE_UNIT_SIZE);
+      sourceCopy = Alloc(BATTLE_UNIT_SIZE);
+      targetCopy = Alloc(BATTLE_UNIT_SIZE);
       Item_CopyWords(ITEM_IWRAM_COPY_WORDS, sourceCopy, sourceUnit,
                      BATTLE_UNIT_SIZE);
       Item_CopyWords(ITEM_IWRAM_COPY_WORDS, targetCopy, targetUnit,
@@ -753,7 +753,7 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
             InventoryMenu_ShowModalMessage(MsgEquippedIt, 15, 14);
             item = Item_GetDirectFar(menu->selectedItems[0]);
             if ((item->flags & ITEM_CURSED) != 0) {
-              AudioCommand_PlayFar(SE_103); // the curse sound
+              Sound_PlaySongFar(SE_103); // the curse sound
               RenderOutput_ClearListFar(menu->infoWindow);
               InventoryMenu_ShowModalMessage(MsgEquippedIt +
                                                  7, // "You were cursed!"
@@ -764,8 +764,8 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
           }
         }
       }
-      MemFree(targetCopy);
-      MemFree(sourceCopy);
+      Free(targetCopy);
+      Free(sourceCopy);
       FieldScript_ClearInvalidPackedValuesFar();
       state = ITEM_STEP_OWNER;
       break;
@@ -800,7 +800,7 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
       InventoryMenu_ShowModalMessage(MsgEquippedIt, 15, 8);
       item = Item_GetDirectFar(menu->selectedItems[0]);
       if ((item->flags & ITEM_CURSED) != 0) {
-        AudioCommand_PlayFar(SE_103); // the curse sound
+        Sound_PlaySongFar(SE_103); // the curse sound
         RenderOutput_ClearListFar(menu->infoWindow);
         InventoryMenu_ShowModalMessage(MsgEquippedIt + 7, // "You were cursed!"
                                        ITEM_MODAL_SHORT_X, 8);
@@ -871,7 +871,7 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
 /// -1; otherwise plays the item's animation, recalculates both members and
 /// returns 1.
 s32 ItemMenu_Use(void) {
-  struct InventoryMenuState *menu;
+  struct ItemMenuWork *menu;
   s32 result;
 
   menu = gMenuWork;
@@ -879,7 +879,7 @@ s32 ItemMenu_Use(void) {
       Item_Use(menu->selectedSlots[0], menu->paneOwner[0], menu->paneOwner[1]);
 
   if (result == -1) {
-    AudioCommand_PlayFar(SE_MENU_ERROR);
+    Sound_PlaySongFar(SE_MENU_ERROR);
     RenderOutput_ClearListFar(menu->infoWindow);
     InventoryMenu_ShowModalMessage(menu->messageOffset + MsgItemUseResult,
                                    result, result);
@@ -900,7 +900,7 @@ s32 ItemMenu_Use(void) {
 /// figures, the info window along the bottom, and an 8 by 2 cursor grid. The
 /// Psynergy and Djinn screens open with it too. The parameters are not used.
 void ItemMenu_Initialize(s32 x, s32 y, s32 mode, s32 columns) {
-  struct InventoryMenuState *menu = gMenuWork;
+  struct ItemMenuWork *menu = gMenuWork;
   s32 ownerIndex;
 
   PsynergyMenu_InitializeEntryObjects(UiMenu_CreateCursor(menu), 2, 2, 8, 0);
@@ -929,8 +929,7 @@ void ItemMenu_Initialize(s32 x, s32 y, s32 mode, s32 columns) {
 /// slot of the same number. The item, Psynergy and Status screens call it for
 /// the window that holds their icons; the sprites are that window's render
 /// outputs and go back to the pool when it closes.
-void Menu_SpawnIconEntries(struct InventoryMenuState *menu,
-                           struct UiWindow *window) {
+void Menu_SpawnIconEntries(struct ItemMenuWork *menu, struct UiWindow *window) {
   struct RenderOutput **firstIcons;
   s32 firstSlot;
   s32 firstY;
@@ -972,8 +971,7 @@ void Menu_SpawnIconEntries(struct InventoryMenuState *menu,
 /// Hides all 32 item icons.
 void ItemMenu_HideAllIcons(void) {
   s32 hiddenState = ICON_HIDDEN;
-  struct RenderOutput **icons =
-      ((struct InventoryMenuState *)gMenuWork)->entryIcons;
+  struct RenderOutput **icons = ((struct ItemMenuWork *)gMenuWork)->entryIcons;
   s32 slot;
 
   for (slot = 31; slot >= 0; slot--) {
@@ -987,7 +985,7 @@ void ItemMenu_HideAllIcons(void) {
 #if LANGUAGE != LANGUAGE_JAPANESE
 /// Hides the item icons in the first column of the five-wide item grid.
 void ItemMenu_HidePageIcons(void) {
-  struct InventoryMenuState *menu = gMenuWork;
+  struct ItemMenuWork *menu = gMenuWork;
   s32 slot = 0;
   s32 hiddenState = ICON_HIDDEN;
   struct RenderOutput **iconSlot = menu->entryIcons;
@@ -1008,7 +1006,7 @@ void ItemMenu_HidePageIcons(void) {
 /// menu opened. Every screen's run function calls it before freeing the menu
 /// work.
 void ItemMenu_Close(void) {
-  struct InventoryMenuState *menu;
+  struct ItemMenuWork *menu;
   struct RenderOutput *cursor;
 
   menu = gMenuWork;
@@ -1034,7 +1032,7 @@ void ItemMenu_Close(void) {
 /// member chosen last. Returns the member's id, or -1 when the player backs
 /// out.
 s32 ItemMenu_SelectMember(s32 pane) {
-  struct InventoryMenuState *menu = gMenuWork;
+  struct ItemMenuWork *menu = gMenuWork;
   s32 result = 0;
   s32 ownerIndex;
   struct BattleUnit *unit;
@@ -1062,7 +1060,7 @@ s32 ItemMenu_SelectMember(s32 pane) {
 /// chooses a member who has items and B backs out. Returns the chosen member's
 /// id, or -1.
 s32 ItemMenu_RunOwnerSelection(u16 *ownerIds, u16 *items) {
-  struct InventoryMenuState *menu;
+  struct ItemMenuWork *menu;
   s32 selection;
   s32 ownerCount;
   s32 result;
@@ -1135,17 +1133,17 @@ s32 ItemMenu_RunOwnerSelection(u16 *ownerIds, u16 *items) {
         InventoryMenu_SortByListOrder(unit->inventory, sortMode);
         sortMode++;
         ItemMenu_RefreshOwner(ownerIds[selection], 0);
-        AudioCommand_PlayFar(SE_MENU_CONFIRM);
+        Sound_PlaySongFar(SE_MENU_CONFIRM);
       } else if (ItemMenu_CountItems(ownerIds[selection])) {
-        AudioCommand_PlayFar(SE_MENU_CONFIRM);
+        Sound_PlaySongFar(SE_MENU_CONFIRM);
         result = ownerIds[selection];
         break;
       } else {
-        AudioCommand_PlayFar(SE_MENU_ERROR);
+        Sound_PlaySongFar(SE_MENU_ERROR);
       }
     }
     if (gKeysPressed & KEY_B) {
-      AudioCommand_PlayFar(SE_MENU_CANCEL);
+      Sound_PlaySongFar(SE_MENU_CANCEL);
       result = -1;
       break;
     }
@@ -1158,12 +1156,12 @@ s32 ItemMenu_RunOwnerSelection(u16 *ownerIds, u16 *items) {
       redraw = 1;
     }
     if (gKeysRepeat & KEY_LEFT) {
-      AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
+      Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
       selection--;
       redraw = 1;
     }
     if (gKeysRepeat & KEY_RIGHT) {
-      AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
+      Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
       selection++;
       redraw = 1;
     }
@@ -1176,7 +1174,7 @@ s32 ItemMenu_RunOwnerSelection(u16 *ownerIds, u16 *items) {
 
 /// Shows the equipment view of member ownerId's items in the item window.
 void ItemMenu_OpenCategory(s32 ownerId) {
-  struct InventoryMenuState *menu;
+  struct ItemMenuWork *menu;
 
   menu = gMenuWork;
   ItemMenu_PositionCategory();
@@ -1193,7 +1191,7 @@ void ItemMenu_OpenCategory(s32 ownerId) {
 /// the item's owner.
 s32 ItemMenu_SelectTarget(s32 mode) {
 
-  struct InventoryMenuState *menu;
+  struct ItemMenuWork *menu;
   struct UiWindow *window;
   s32 ownerCount;
   s32 ownerIndex;
@@ -1213,8 +1211,7 @@ s32 ItemMenu_SelectTarget(s32 mode) {
   UiWindow_SetBounds(window, 13, 5, 17, 12);
   RenderOutput_RedrawSavedRectFar((void *)menu->itemWindow);
   Unit_GetFar(menu->ownerIds[menu->paneIndex[0]]);
-  Scheduler_AddOrUpdateCallback(EquipmentMenu_UpdateCompatibilityIndicators,
-                                0xc80);
+  Task_Add(EquipmentMenu_UpdateCompatibilityIndicators, 0xc80);
   while (!GameFlag_TestFar(FLAG_MENU_START_PRESSED)) {
     if (redraw) {
       redraw = 0;
@@ -1294,26 +1291,26 @@ s32 ItemMenu_SelectTarget(s32 mode) {
     WaitFrames(1);
     if (gKeysPressed & KEY_A) {
       if (mode == ITEM_TARGET_GIVE && ownerIndex == menu->paneIndex[0]) {
-        AudioCommand_PlayFar(SE_MENU_ERROR);
+        Sound_PlaySongFar(SE_MENU_ERROR);
         continue;
       }
-      AudioCommand_PlayFar(SE_MENU_CONFIRM);
+      Sound_PlaySongFar(SE_MENU_CONFIRM);
       result = menu->ownerIds[ownerIndex];
       break;
     }
     if (gKeysPressed & KEY_B) {
-      AudioCommand_PlayFar(SE_MENU_CANCEL);
+      Sound_PlaySongFar(SE_MENU_CANCEL);
       // The u8 255 is returned through (s8) as -1.
       result = 255;
       break;
     }
     if (gKeysRepeat & KEY_LEFT) {
-      AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
+      Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
       ownerIndex--;
       redraw = 1;
     }
     if (gKeysRepeat & KEY_RIGHT) {
-      AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
+      Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
       redraw = 1;
       ownerIndex++;
     }
@@ -1337,7 +1334,7 @@ s32 ItemMenu_SelectTarget(s32 mode) {
 /// equip the item (3) or not (1). EquipmentMenu_StartCompatibilityIndicators
 /// removes it.
 void EquipmentMenu_UpdateCompatibilityIndicators(void) {
-  struct InventoryMenuState *menu;
+  struct ItemMenuWork *menu;
   s8 memberIndex;
 
   menu = gMenuWork;
@@ -1363,7 +1360,7 @@ void EquipmentMenu_UpdateCompatibilityIndicators(void) {
 /// nothing; removing a callback that is not scheduled is harmless, so the
 /// command grid calls it at each cursor move.
 void EquipmentMenu_StartCompatibilityIndicators(void) {
-  struct InventoryMenuState *menu;
+  struct ItemMenuWork *menu;
   s8 memberIndex;
 
   menu = gMenuWork;
@@ -1375,7 +1372,7 @@ void EquipmentMenu_StartCompatibilityIndicators(void) {
       memberIndex++;
     } while (memberIndex < menu->partyCount);
   }
-  Scheduler_RemoveCallback(&EquipmentMenu_UpdateCompatibilityIndicators);
+  Task_Remove(&EquipmentMenu_UpdateCompatibilityIndicators);
 }
 
 /// Returns 1 for the items that raise a stat for good (Apple, Hard Nut, Mint
@@ -1393,7 +1390,7 @@ s32 ItemMenu_IsSpecial(s32 itemId) {
 
 /// Clears the message window and writes message into it.
 void ItemMenu_DrawMessage(s32 unused, s32 message) {
-  struct InventoryMenuState *menu;
+  struct ItemMenuWork *menu;
 
   menu = gMenuWork;
   RenderOutput_RedrawSavedRectFar(menu->messageWindow);
@@ -1403,7 +1400,7 @@ void ItemMenu_DrawMessage(s32 unused, s32 message) {
 /// Hides the icon of each of the 32 list entries whose item is 0. Each of the
 /// 32 icon slots must hold a sprite (Menu_SpawnIconEntries).
 void Menu_HideEmptyEntryIcons(const u16 *items) {
-  struct InventoryMenuState *menu = gMenuWork;
+  struct ItemMenuWork *menu = gMenuWork;
   s32 slot;
 
   for (slot = 0; slot < 32; slot++) {
@@ -1495,7 +1492,7 @@ void ItemMenu_DrawIcons(u16 *inventoryEntries, s32 iconStyle) {
   struct RenderOutput **icons;
   s32 itemId;
 
-  icons = ((struct InventoryMenuState *)gMenuWork)->entryIcons;
+  icons = ((struct ItemMenuWork *)gMenuWork)->entryIcons;
   entries = inventoryEntries;
   remaining = INVENTORY_SLOTS - 1;
   do {
@@ -1518,7 +1515,7 @@ void ItemMenu_DrawIcons(u16 *inventoryEntries, s32 iconStyle) {
 /// Shows member ownerId's items in the item window, laid out for layout mode
 /// (see ItemMenu_RefreshEntry), or "no items" when there are none.
 void ItemMenu_RefreshOwner(s32 ownerId, s32 mode) {
-  struct InventoryMenuState *menu;
+  struct ItemMenuWork *menu;
   struct BattleUnit *owner;
   u16 *items;
 
@@ -1547,7 +1544,7 @@ void ItemMenu_DrawEquipPreview(s32 owner, s32 slot, s32 mode, s32 target) {
   /* FAKEMATCH(temporary): the saved unit reuses owner (and buffer for
    * Psynergy items), keeping owner in r8 and panelStyle in r10; as a separate
    * void *saved, 22 of 172 instructions differ in tbs-en. */
-  struct InventoryMenuState *menu = gMenuWork;
+  struct ItemMenuWork *menu = gMenuWork;
   s32 panelStyle = 0;
   struct BattleUnit *unit = Unit_GetFar(owner);
   s32 inventoryEntry = unit->inventory[slot];
@@ -1575,7 +1572,7 @@ void ItemMenu_DrawEquipPreview(s32 owner, s32 slot, s32 mode, s32 target) {
 
       unit = Unit_GetFar(target);
       size = BATTLE_UNIT_SIZE;
-      owner = (s32)MemAlloc(size);
+      owner = (s32)Alloc(size);
       Iwram_CopyWords((void *)owner, unit, size);
       // With room made, add the item unequipped and preview it in its new
       // slot; otherwise the panel shows target's status without a preview.
@@ -1595,7 +1592,7 @@ void ItemMenu_DrawEquipPreview(s32 owner, s32 slot, s32 mode, s32 target) {
         Menu_DrawOwnerStatusPanel(menu->statusWindow, target, slot, panelStyle);
       }
       Iwram_CopyWords(unit, (void *)owner, size);
-      MemFree((void *)owner);
+      Free((void *)owner);
     }
     break;
   case ITEM_TYPE_PSYNERGY:
@@ -1608,7 +1605,7 @@ void ItemMenu_DrawEquipPreview(s32 owner, s32 slot, s32 mode, s32 target) {
 
       unit = Unit_GetFar(target);
       size = BATTLE_UNIT_SIZE;
-      owner = (s32)MemAlloc(size);
+      owner = (s32)Alloc(size);
       buffer = (void *)owner;
       Iwram_CopyWords(buffer, unit, size);
       previewSlot = Inventory_RemoveFirstUnflagged(target);
@@ -1627,7 +1624,7 @@ void ItemMenu_DrawEquipPreview(s32 owner, s32 slot, s32 mode, s32 target) {
       }
       Iwram_CopyWords(unit, (void *)owner, size);
       buffer = (void *)owner;
-      MemFree(buffer);
+      Free(buffer);
     }
     break;
   }
@@ -1703,7 +1700,7 @@ s32 ItemMenu_CommandCursorY(s32 column, s32 row) {
 /// equip it. The cursor starts on the command chosen last, or on the first
 /// available one. Returns the command chosen, or -1 when the player backs out.
 s32 ItemMenu_ChooseCommand(void) {
-  struct InventoryMenuState *menu;
+  struct ItemMenuWork *menu;
   s8 commandStorage[6];
   u16 *redrawFlag;
   s32 column;
@@ -1799,8 +1796,7 @@ s32 ItemMenu_ChooseCommand(void) {
         ItemMenu_DrawEquipPreview(menu->paneOwner[0], menu->selectedSlots[0], 0,
                                   menu->paneOwner[0]);
         if (commandIndex == ITEM_COMMAND_GIVE) {
-          Scheduler_AddOrUpdateCallback(
-              &EquipmentMenu_UpdateCompatibilityIndicators, 0xc80);
+          Task_Add(&EquipmentMenu_UpdateCompatibilityIndicators, 0xc80);
         }
       } else if (commandIndex != 0) {
         menu->equipPreview = 0;
@@ -1822,25 +1818,25 @@ s32 ItemMenu_ChooseCommand(void) {
 
     if ((gKeysPressed & KEY_A) != 0) {
       if (commandStates[commandIndex] == ITEM_COMMAND_STATE_DISABLED) {
-        AudioCommand_PlayFar(SE_MENU_ERROR);
+        Sound_PlaySongFar(SE_MENU_ERROR);
       } else {
         switch (commandIndex) {
         case ITEM_COMMAND_USE:
-          AudioCommand_PlayFar(SE_174); // Use
+          Sound_PlaySongFar(SE_174); // Use
           break;
         case ITEM_COMMAND_EQUIP:
-          AudioCommand_PlayFar(SE_175); // Equip
+          Sound_PlaySongFar(SE_175); // Equip
           break;
         case ITEM_COMMAND_INSPECT:
         case ITEM_COMMAND_GIVE:
         case ITEM_COMMAND_DROP:
-          AudioCommand_PlayFar(SE_MENU_CONFIRM);
+          Sound_PlaySongFar(SE_MENU_CONFIRM);
           break;
         case ITEM_COMMAND_REMOVE:
-          AudioCommand_PlayFar(SE_ITEM_REMOVE); // Remove
+          Sound_PlaySongFar(SE_ITEM_REMOVE); // Remove
           break;
         default:
-          AudioCommand_PlayFar(SE_MENU_CONFIRM);
+          Sound_PlaySongFar(SE_MENU_CONFIRM);
           break;
         }
         menu->listMode = commandIndex;
@@ -1848,7 +1844,7 @@ s32 ItemMenu_ChooseCommand(void) {
       }
     }
     if ((gKeysPressed & KEY_B) != 0) {
-      AudioCommand_PlayFar(SE_MENU_CANCEL);
+      Sound_PlaySongFar(SE_MENU_CANCEL);
       commandIndex = -1;
       menu->listMode = commandIndex;
       break;
@@ -1857,19 +1853,19 @@ s32 ItemMenu_ChooseCommand(void) {
     if ((gKeysRepeat & KEY_UP) != 0) {
       row -= 1;
       redraw = 1;
-      AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
+      Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
     } else if ((gKeysRepeat & KEY_DOWN) != 0) {
       row += 1;
       redraw = 1;
-      AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
+      Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
     } else if ((gKeysRepeat & KEY_RIGHT) != 0) {
       column += 1;
       redraw = 1;
-      AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
+      Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
     } else if ((gKeysRepeat & KEY_LEFT) != 0) {
       column -= 1;
       redraw = 1;
-      AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
+      Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
     }
   }
 
@@ -1886,7 +1882,7 @@ s32 ItemMenu_ChooseCommand(void) {
 /// item is indispensable, and neither for cursed equipment being worn. Details
 /// is always available. Each later test overrides the earlier ones.
 void ItemMenu_BuildCommands(s8 *commandStates) {
-  struct InventoryMenuState *menu;
+  struct ItemMenuWork *menu;
   struct ItemDefinition *item;
 
   menu = gMenuWork;
@@ -2043,7 +2039,7 @@ s32 Item_ClassifyUseMode(s32 ownerId, s32 inventoryEntry) {
 /// breaks one time in eight, with the break sound and "It broke!" in the info
 /// window. Called only after a successful use on a chosen member.
 void ItemMenu_TryBreak(void) {
-  struct InventoryMenuState *menu;
+  struct ItemMenuWork *menu;
 
   menu = gMenuWork;
   // One time in eight: 0x2000 of Random16's 0x10000 values.
@@ -2051,7 +2047,7 @@ void ItemMenu_TryBreak(void) {
            ->useType == ITEM_USE_MAY_BREAK) &&
       (Random16() < 0x2000U)) {
     Inventory_BreakFar(menu->paneOwner[0], menu->selectedSlots[0]);
-    AudioCommand_PlayFar(SE_ITEM_BREAK);
+    Sound_PlaySongFar(SE_ITEM_BREAK);
     InventoryMenu_ShowModalMessage(MsgItemBroke, 0, -1);
 #if !TBS_PATCH_1
     RenderOutput_RedrawSavedRectFar(menu->infoWindow);
@@ -2064,7 +2060,7 @@ void ItemMenu_TryBreak(void) {
 /// equipWindow, which ItemMenu_Close closes. Nothing calls it: the Details
 /// command uses Menu_SelectQuantity.
 s32 ItemMenu_OpenDetail(s32 itemIndex) {
-  struct InventoryMenuState *menu = gMenuWork;
+  struct ItemMenuWork *menu = gMenuWork;
 
   UiWindow_UpdateOrCreate(&menu->equipWindow, 0, 0, 13, 10, 2);
   Palette_CopyObjectBankToBackground14();
@@ -2083,10 +2079,10 @@ s32 ItemMenu_OpenDetail(s32 itemIndex) {
 s32 Menu_SelectQuantity(s32 value) {
 #if TBS_PATCH_1
   s32 changed = 1;
-  struct InventoryMenuState *menu = gMenuWork;
+  struct ItemMenuWork *menu = gMenuWork;
   struct RenderOutput *itemIcon = menu->selectedItemIcon;
 #else
-  struct InventoryMenuState *menu = gMenuWork;
+  struct ItemMenuWork *menu = gMenuWork;
   s32 changed = 1;
 #endif
   struct UiWindow *window;
@@ -2099,7 +2095,7 @@ s32 Menu_SelectQuantity(s32 value) {
   // Hide the party figures (without their placement callback they are not
   // drawn) and the status panel's portrait (the work's cursor), which the
   // window covers, meanwhile.
-  Scheduler_RemoveCallback(Menu_UpdateEntryObjectTransforms);
+  Task_Remove(Menu_UpdateEntryObjectTransforms);
 
   {
     struct RenderOutput *cursor = menu->cursor;
@@ -2142,12 +2138,12 @@ s32 Menu_SelectQuantity(s32 value) {
   UiWork_FinalizeFar((void *)window, 1);
   RenderOutput_RedrawSavedRectFar(menu->mainWindow);
   Palette_LightenBankHighlight(14);
-  // SCHEDULER_KEY_MAIN_LOOP, as PsynergyMenu_InitializeEntryObjects
+  // TASK_PRIORITY_MAIN_LOOP, as PsynergyMenu_InitializeEntryObjects
   // schedules it.
   {
     s32 priority = 0xc80;
 
-    Scheduler_AddOrUpdateCallback(Menu_UpdateEntryObjectTransforms, priority);
+    Task_Add(Menu_UpdateEntryObjectTransforms, priority);
   }
 
   // The Japanese window, 13 tiles wide, leaves the command grid at tile 13
@@ -2419,40 +2415,40 @@ void ItemMenu_DrawStat(s32 statChange, s32 unused, struct UiWindow *window,
 /// Moves the item window to row 5 of the right-hand side.
 void ItemMenu_SetItemWindowRow5(void) {
   UiWindow_SetBounds(
-      (struct UiWindow *)((struct InventoryMenuState *)gMenuWork)->itemWindow,
-      13, 5, 17, 10);
+      (struct UiWindow *)((struct ItemMenuWork *)gMenuWork)->itemWindow, 13, 5,
+      17, 10);
 }
 
 /// Moves the item window to row 3 of the right-hand side.
 void ItemMenu_SetItemWindowRow3(void) {
   UiWindow_SetBounds(
-      (struct UiWindow *)((struct InventoryMenuState *)gMenuWork)->itemWindow,
-      13, 3, 17, 10);
+      (struct UiWindow *)((struct ItemMenuWork *)gMenuWork)->itemWindow, 13, 3,
+      17, 10);
 }
 
 /// Makes the message window, along the top right, 5 rows tall.
 void ItemMenu_SetMessageWindowHeight5(void) {
-  UiWindow_SetBounds((struct UiWindow *)((struct InventoryMenuState *)gMenuWork)
-                         ->messageWindow,
-                     13, 0, 17, 5);
+  UiWindow_SetBounds(
+      (struct UiWindow *)((struct ItemMenuWork *)gMenuWork)->messageWindow, 13,
+      0, 17, 5);
 }
 
 void ItemMenu_SetMessageWindowHeight6(void) {
-  UiWindow_SetBounds((struct UiWindow *)((struct InventoryMenuState *)gMenuWork)
-                         ->messageWindow,
-                     13, 0, 17, 6);
+  UiWindow_SetBounds(
+      (struct UiWindow *)((struct ItemMenuWork *)gMenuWork)->messageWindow, 13,
+      0, 17, 6);
 }
 
 void ItemMenu_SetMessageWindowHeight7(void) {
-  UiWindow_SetBounds((struct UiWindow *)((struct InventoryMenuState *)gMenuWork)
-                         ->messageWindow,
-                     13, 0, 17, 7);
+  UiWindow_SetBounds(
+      (struct UiWindow *)((struct ItemMenuWork *)gMenuWork)->messageWindow, 13,
+      0, 17, 7);
 }
 
 void ItemMenu_SetMessageWindowHeight3(void) {
-  UiWindow_SetBounds((struct UiWindow *)((struct InventoryMenuState *)gMenuWork)
-                         ->messageWindow,
-                     13, 0, 17, 3);
+  UiWindow_SetBounds(
+      (struct UiWindow *)((struct ItemMenuWork *)gMenuWork)->messageWindow, 13,
+      0, 17, 3);
 }
 
 /// Asks how many of the selected item stack to give or drop: Left and Right
@@ -2468,10 +2464,10 @@ s32 ItemMenu_SelectGiveQuantity(s32 baseQuantity, s32 quantityRange,
   s32 changed;
   s32 receiverCount;
   s32 ownerCount;
-  struct InventoryMenuState *menu = gMenuWork;
+  struct ItemMenuWork *menu = gMenuWork;
   // 1 KB of HEAP_SLOT_TILE_SCRATCH to draw the dial's digits in, released
   // before returning.
-  void *tiles = Runtime_AllocateBlock(HEAP_SLOT_TILE_SCRATCH, 0x400);
+  void *tiles = AllocHeapSlotEwram(HEAP_SLOT_TILE_SCRATCH, 0x400);
   struct UiWindow *window;
   struct RenderOutput *rightDial;
 
@@ -2534,31 +2530,31 @@ s32 ItemMenu_SelectGiveQuantity(s32 baseQuantity, s32 quantityRange,
       }
       // A confirms, B backs out, Left and Right change the number.
       if (gKeysPressed & KEY_A) {
-        AudioCommand_PlayFar(SE_MENU_CONFIRM);
+        Sound_PlaySongFar(SE_MENU_CONFIRM);
         break;
       }
       if (gKeysPressed & KEY_B) {
         quantity = -1;
-        AudioCommand_PlayFar(SE_MENU_CANCEL);
+        Sound_PlaySongFar(SE_MENU_CANCEL);
         break;
       }
       UiMenu_PositionCursor(ITEM_GIVE_CURSOR_X, 40);
       if (gKeysRepeat & KEY_LEFT) {
         quantity--;
         changed = 1;
-        AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
+        Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
       }
       if (gKeysRepeat & KEY_RIGHT) {
         quantity++;
         changed = 1;
-        AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
+        Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
       }
       WaitFrames(1);
     }
   }
   RenderOutput_RedrawSavedRectFar(window);
   RenderOutput_ClearListFar((void *)window);
-  Runtime_ReleaseHeapBlock(HEAP_SLOT_TILE_SCRATCH);
+  FreeHeapSlot(HEAP_SLOT_TILE_SCRATCH);
   menu->selectedItemIcon->active = ICON_HIDDEN;
   if (GameFlag_TestFar(FLAG_MENU_START_PRESSED))
     quantity = -1;
@@ -2568,7 +2564,7 @@ s32 ItemMenu_SelectGiveQuantity(s32 baseQuantity, s32 quantityRange,
 /// Shows the selected item at the top of the message window: its icon, its
 /// owner's name and its name.
 void ItemMenu_DrawItemHead(void) {
-  struct InventoryMenuState *menu = gMenuWork;
+  struct ItemMenuWork *menu = gMenuWork;
 
   Resource_LoadByModeIntoSlotFar(ICON_KIND_ITEM, menu->selectedItems[0],
                                  (u8)menu->selectedItemIcon->index, 0);
@@ -2615,11 +2611,11 @@ s32 ItemMenu_ConfirmDrop(s32 item) {
       selection = (selection + rows) % rows;
     }
     if (gKeysPressed & KEY_A) {
-      AudioCommand_PlayFar(SE_MENU_CONFIRM);
+      Sound_PlaySongFar(SE_MENU_CONFIRM);
       break;
     }
     if (gKeysPressed & KEY_B) {
-      AudioCommand_PlayFar(SE_MENU_CANCEL);
+      Sound_PlaySongFar(SE_MENU_CANCEL);
       selection = 1;
       break;
     }
@@ -2627,12 +2623,12 @@ s32 ItemMenu_ConfirmDrop(s32 item) {
     if (gKeysRepeat & KEY_UP) {
       selection--;
       changed = 1;
-      AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
+      Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
     }
     if (gKeysRepeat & KEY_DOWN) {
       selection++;
       changed = 1;
-      AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
+      Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
     }
     WaitFrames(1);
   }
@@ -2651,7 +2647,7 @@ s32 ItemMenu_ConfirmEquip(s32 unused) {
   s32 rows = 2;
   s32 selection = 0;
   s32 changed = 1;
-  struct InventoryMenuState *menu = gMenuWork;
+  struct ItemMenuWork *menu = gMenuWork;
   struct BattleUnit *unit = Unit_GetFar(menu->paneOwner[1]);
   struct BattleUnit *saved;
   struct UiWindow *window;
@@ -2661,7 +2657,7 @@ s32 ItemMenu_ConfirmEquip(s32 unused) {
   slot = menu->selectedSlots[1];
   owner = menu->paneOwner[1];
   ItemMenu_DrawEquipPreview(owner, slot, 0, owner);
-  saved = MemAlloc(BATTLE_UNIT_SIZE);
+  saved = Alloc(BATTLE_UNIT_SIZE);
   Iwram_CopyWords(saved, unit, BATTLE_UNIT_SIZE);
   window = menu->messageWindow;
   // Equip it now; a result of -1 or -2 means it cannot be equipped.
@@ -2690,11 +2686,11 @@ s32 ItemMenu_ConfirmEquip(s32 unused) {
         selection = (selection + rows) % rows;
       }
       if (gKeysPressed & KEY_A) {
-        AudioCommand_PlayFar(SE_175); // the Equip sound
+        Sound_PlaySongFar(SE_175); // the Equip sound
         break;
       }
       if (gKeysPressed & KEY_B) {
-        AudioCommand_PlayFar(SE_MENU_CANCEL);
+        Sound_PlaySongFar(SE_MENU_CANCEL);
         selection = 1;
         break;
       }
@@ -2707,7 +2703,7 @@ s32 ItemMenu_ConfirmEquip(s32 unused) {
 #endif
         selection--;
         changed = 1;
-        AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
+        Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
       }
 #if LANGUAGE != LANGUAGE_JAPANESE
       if (gKeysRepeat & KEY_RIGHT) {
@@ -2716,7 +2712,7 @@ s32 ItemMenu_ConfirmEquip(s32 unused) {
 #endif
         selection++;
         changed = 1;
-        AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
+        Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
       }
       WaitFrames(1);
     }
@@ -2726,7 +2722,7 @@ s32 ItemMenu_ConfirmEquip(s32 unused) {
   // No: put the member back as they were.
   if (selection == 1)
     Iwram_CopyWords(unit, saved, BATTLE_UNIT_SIZE);
-  MemFree(saved);
+  Free(saved);
   Unit_CalculateFar(menu->paneOwner[1]);
   Unit_RefreshPsynergyFar(menu->paneOwner[1]);
   return selection;
@@ -2735,7 +2731,7 @@ s32 ItemMenu_ConfirmEquip(s32 unused) {
 /// Loads the stat arrows (up and down) into two free VRAM blocks, kept in the
 /// menu work's resource slots.
 void Resource_LoadPairedBlocks(void) {
-  struct InventoryMenuState *menu = gMenuWork;
+  struct ItemMenuWork *menu = gMenuWork;
   s32 block = Resource_FindFreeEntry();
 
   menu->resourceSlots[0] = block;
@@ -2750,7 +2746,7 @@ void Resource_LoadPairedBlocks(void) {
 /// them (kept within the list), five items to a page. Returns 1.
 s32 ItemMenu_PageResult(struct MenuResult *result, s32 index) {
   s32 unit;
-  struct InventoryMenuState *menu = gMenuWork;
+  struct ItemMenuWork *menu = gMenuWork;
   s32 itemCount;
   s32 row;
   s32 page;
@@ -2783,7 +2779,7 @@ s32 ItemMenu_PageResult(struct MenuResult *result, s32 index) {
 /// ownerWork are not used.
 s32 ItemMenu_DrawItemDetailPage(struct UiWindow *window, void *ownerWork,
                                 struct MenuResult *pageState) {
-  struct InventoryMenuState *menu;
+  struct ItemMenuWork *menu;
   s32 page;
   s32 index;
   s32 row;
@@ -2823,7 +2819,7 @@ s32 ItemMenu_DrawItemDetailPage(struct UiWindow *window, void *ownerWork,
 /// their icons, and the page numbers when there is more than one page.
 s32 ItemMenu_DrawNamePage(struct UiWindow *window, s32 unused,
                           const struct MenuResult *pageState) {
-  struct InventoryMenuState *menu = gMenuWork;
+  struct ItemMenuWork *menu = gMenuWork;
   u32 page;
   u32 firstEntry;
   u32 visibleCount;
@@ -2875,7 +2871,7 @@ UNUSED void InventoryMenu_ItemNamePageNoOp(void) {}
 /// and in paneIndex 0 L and R switch to the previous or next member who has
 /// items. Returns the chosen inventory entry, or -1 when the player backs out.
 s32 ItemMenu_RunList(s32 paneIndex) {
-  struct InventoryMenuState *menu;
+  struct ItemMenuWork *menu;
   struct UiWindow *window;
   s32 changed;
   s32 moved;
@@ -2974,13 +2970,13 @@ s32 ItemMenu_RunList(s32 paneIndex) {
 
       if ((gKeysPressed & KEY_A) != 0 &&
           menu->items[state.selectedIndex] != 0) {
-        AudioCommand_PlayFar(SE_173); // the item choice sound
+        Sound_PlaySongFar(SE_173); // the item choice sound
         result = menu->items[state.selectedIndex];
         done = 1;
         break;
       }
       if ((gKeysPressed & KEY_B) != 0) {
-        AudioCommand_PlayFar(SE_MENU_CANCEL);
+        Sound_PlaySongFar(SE_MENU_CANCEL);
         result = -1;
         done = 1;
         break;
@@ -2988,10 +2984,10 @@ s32 ItemMenu_RunList(s32 paneIndex) {
       // L and R: the previous or next member who has items (pane 0 only).
       if ((gKeysRepeat & KEY_R) != 0 || (gKeysRepeat & KEY_L) != 0) {
         if (paneIndex == 1) {
-          AudioCommand_PlayFar(SE_MENU_ERROR);
+          Sound_PlaySongFar(SE_MENU_ERROR);
           WaitFrames(1);
         } else {
-          AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
+          Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
           menu->selectedIndexByOwner[menu->paneOwner[paneIndex]] =
               state.selectedIndex;
           member = menu->paneIndex[paneIndex];

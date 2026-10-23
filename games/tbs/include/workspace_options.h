@@ -15,9 +15,9 @@
 /// OptionMenu_InitializeWork takes and clears it and copies the settings in;
 /// OptionMenu_Release frees it, and cancelling discards the edits. The system
 /// menu takes the same slot for its cursor, entry (page) and icons.
-struct WorkspaceWork {
+struct OptionMenuWork {
   u8 unused[0x400]; ///< no code names it
-  /// Seven 52-byte entries (struct MenuWorkspaceEntry in options.c), whose
+  /// Seven 52-byte entries (struct OptionMenuEntry in options.c), whose
   /// state only the unused OptionMenu_ResetEntries writes.
   u8 entries[7][52];
   u8 unusedAfterEntries[8]; ///< no code names it
@@ -46,7 +46,7 @@ struct WorkspaceWork {
   struct RenderOutput *icon[6];
 };
 
-/// The option screen's work, HEAP_SLOT_OPTIONS under its own name.
-extern struct WorkspaceWork *gSelectionWork;
+/// The option screen's work, HEAP_SLOT_OPTION_MENU under its own name.
+extern struct OptionMenuWork *gOptionMenuWork;
 
 #endif

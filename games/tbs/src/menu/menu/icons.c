@@ -11,7 +11,7 @@
 void Resource_LoadPairedBlocksIfAvailable(void) {
   s32 firstSlot;
   s32 secondSlot;
-  struct InventoryMenuState *activeState;
+  struct ItemMenuWork *activeState;
 
   activeState = gMenuWork;
   // Resource_FindFreeEntry returns VRAM_CACHE_ENTRY_COUNT (96), never -1,
@@ -33,7 +33,7 @@ void Resource_LoadPairedBlocksIfAvailable(void) {
 /// work's resourceSlots, which ItemMenu_Run and DjinnMenu_Run free as they
 /// close.
 void Menu_ResetTwoResourceEntries(void) {
-  struct InventoryMenuState *menu;
+  struct ItemMenuWork *menu;
 
   menu = gMenuWork;
   Resource_ResetEntry((u16)menu->resourceSlots[0]);
@@ -50,11 +50,11 @@ s32 UiIcon_LoadResourceIntoSlot(s32 resourceId, s32 slot) {
   s32 firstTile;
   s32 allocationBits;
 
-  allocationBits = (s32)Runtime_AllocateBlock(HEAP_SLOT_GLYPH_TRANSFER, 0x608);
+  allocationBits = (s32)AllocHeapSlotEwram(HEAP_SLOT_GLYPH_TRANSFER, 0x608);
   selectedSlot = slot;
   Ability_LoadGlyphFar(resourceId, 0, &selectedSlot, &decodedResource, 1);
   firstTile = VramCache_Reload(slot, allocationBits + 0x400);
-  Runtime_ReleaseHeapBlock(HEAP_SLOT_GLYPH_TRANSFER);
+  FreeHeapSlot(HEAP_SLOT_GLYPH_TRANSFER);
   return firstTile;
 }
 
@@ -88,7 +88,7 @@ s32 UiIcon_CreateStatChangeArrow(struct UiWindow *window, s32 x, s32 y,
   s32 selectedVariant = variant;
   struct UiWindow *targetWindow = window;
   s32 targetX = x;
-  struct InventoryMenuState *menu = gMenuWork;
+  struct ItemMenuWork *menu = gMenuWork;
 
   if (selectedVariant == 0)
     resource = (u16)menu->resourceSlots[0];
@@ -123,7 +123,7 @@ s32 UiIcon_DrawVariantWithTileOffset(struct UiWindow *window, s32 x, s32 y,
   s32 selectedVariant = variant;
   struct UiWindow *targetWindow = window;
   s32 targetX = x;
-  struct InventoryMenuState *menu = gMenuWork;
+  struct ItemMenuWork *menu = gMenuWork;
 
   if (selectedVariant == 0) {
     resource = (u16)menu->resourceSlots[0];

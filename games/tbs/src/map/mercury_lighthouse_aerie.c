@@ -224,7 +224,7 @@ s32 MercuryLighthouseAerie_Initialize(void) {
   struct ObjectEvent *objectEvent;
 
   Engine_GameFlagSet(FLAG_MERCURY_LIGHTHOUSE_LIT);
-  gEventWork->startTransition =
+  gFieldWork->startTransition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   if (gGameState.mapId == (s32)&MapId_MercuryLighthouseAerie) {
     Engine_GameFlagSet(FLAG_RETREAT_BLOCKED);
@@ -316,11 +316,11 @@ static void MercuryLighthouseAerie_PartyArrives(void) {
   Engine_TaskWait(1);
   Engine_MapGridRedraw();
   Engine_TaskWait(1);
-  Script_PlayCue(SE_RUMBLE);
+  Script_PlaySong(SE_RUMBLE);
   MapGrid_SetShake(PIXELS(5), PIXELS(5), Q16_ONE);
-  Script_PlayCue(AUDIO_CUE_FADE_SLOT3);
+  Script_PlaySong(AUDIO_CUE_FADE_SLOT3);
   MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
-  gEventWork->startTransition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+  gFieldWork->startTransition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   Engine_ScriptOpenScreen();
   Engine_ScriptWaitForScreen();
   Engine_MapGridRenderWaitForValues();
@@ -581,9 +581,9 @@ static void MercuryLighthouseAerie_ConfrontSaturos(void) {
     Engine_ObjectEventSetAnimationAndWait(GARET, ANIMATION_SHAKE_HEAD);
     Engine_ScriptWait(20);
     Script_ShowMessageAndWait(GARET, 0, 20);
-    gEventWork->message += 2;
+    gFieldWork->message += 2;
   } else {
-    gEventWork->message += 2;
+    gFieldWork->message += 2;
     Engine_ScriptWait(20);
     ObjectEvent_ShowEmote(MIA, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
     ObjectEvent_FaceDirection(GARET, FACING_SOUTH, 10);
@@ -616,7 +616,7 @@ static void MercuryLighthouseAerie_ConfrontSaturos(void) {
   Engine_ObjectEventSetAnimation(MIA, 0x10);
   Script_ShowMessageAndWait(MIA, 0, 60);
   // Jenna calls out: "Isaac! Garet!"
-  Script_PlayCue(AUDIO_CUE_FADE_BGM);
+  Script_PlaySong(AUDIO_CUE_FADE_BGM);
   ObjectEvent_SetPosition(JENNA, PIXELS(216), PIXELS(200));
   Script_ShowMessageAndWait(JENNA, 0, 20);
   ObjectEvent_SetPosition(JENNA, PIXELS(120), PIXELS(160));
@@ -642,7 +642,7 @@ static void MercuryLighthouseAerie_ConfrontSaturos(void) {
   Engine_ScriptWait(40);
   Engine_ObjectEventRunRepeatedMotion(LOCALID_FELIX, 1);
   Engine_ScriptWait(20);
-  Script_PlayCue(MUS_061);
+  Script_PlaySong(MUS_061);
   Script_ShowMessageAndWait(LOCALID_FELIX, 0, 20);
   Engine_ObjectEventRunRepeatedMotion(LOCALID_MENARDI, 1);
   Engine_ScriptWait(20);
@@ -828,7 +828,7 @@ static void MercuryLighthouseAerie_ConfrontSaturos(void) {
   Engine_ScriptWait(40);
   ObjectEvent_SetSpeed(LOCALID_MENARDI, PIXELS(3), PIXELS(2));
   ObjectEvent_Get(LOCALID_MENARDI)->velocityY = PIXELS(4);
-  Script_PlayCue(SE_JUMP);
+  Script_PlaySong(SE_JUMP);
   ObjectEvent_Get(LOCALID_MENARDI)->motionFlags &= 0x7e;
   Engine_ObjectEventSetSpriteFlags(ObjectEvent_GetById(LOCALID_MENARDI), 0);
   ObjectEvent_GetById(LOCALID_FIRST_LIFT_PLATFORM)->motionFlags = 4;
@@ -904,12 +904,12 @@ static void MercuryLighthouseAerie_ConfrontSaturos(void) {
     Engine_ObjectEventSetAnimationAndWait(LOCALID_SATUROS, 4);
     Engine_ScriptWait(20);
     Script_ShowMessageAndWait(LOCALID_SATUROS, 0, 20);
-    gEventWork->message++;
+    gFieldWork->message++;
   } else {
     Engine_ScriptWait(20);
     Engine_ObjectEventSetAnimationAndWait(LOCALID_SATUROS, 4);
     Engine_ScriptWait(20);
-    gEventWork->message++;
+    gFieldWork->message++;
     Script_ShowMessageAndWait(LOCALID_SATUROS, 0, 20);
   }
   Engine_ObjectEventRunRepeatedMotion(LOCALID_SATUROS, 2);
@@ -967,7 +967,7 @@ static void MercuryLighthouseAerie_AlexAppears(void) {
   Engine_MapGridRedraw();
   Engine_TaskWait(1);
 
-  gEventWork->startTransition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+  gFieldWork->startTransition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   Engine_ScriptOpenScreen();
   Engine_ScriptWaitForScreen();
   Engine_ScriptWait(60);
@@ -990,11 +990,11 @@ static void MercuryLighthouseAerie_AlexAppears(void) {
   Engine_ScriptWait(20);
   Script_ShowMessageAndWait(LOCALID_SATUROS, 0, 30);
   ObjectEvent_SetPosition(LOCALID_ALEX, PIXELS(312), PIXELS(112));
-  Script_PlayCue(SE_STOP_SLOT3);
+  Script_PlaySong(SE_STOP_SLOT3);
   Script_ShowMessageAndWait(LOCALID_ALEX, 0, 20);
   ObjectEvent_ShowEmote(MIA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 60);
   Script_ShowMessageAndWait(MIA, 0, 30);
-  Script_PlayCue(MUS_029);
+  Script_PlaySong(MUS_029);
   Camera_SetSpeed(PIXELS(4) / 5, PIXELS(1) / 10);
   Engine_ScriptGetViewCenter()->motionFlags = 0;
   Camera_MoveTo(PIXELS(336), -1, PIXELS(168), 1);
@@ -1061,9 +1061,9 @@ static void MercuryLighthouseAerie_AlexAppears(void) {
   if (Engine_ScriptChooseYesNo(0, 0) == 0) {
     Engine_ObjectEventRunRepeatedMotion(GARET, 2);
     Script_ShowMessageAndWait(GARET, 0, 20);
-    gEventWork->message++;
+    gFieldWork->message++;
   } else {
-    gEventWork->message++;
+    gFieldWork->message++;
     Engine_ObjectEventRunRepeatedMotion(GARET, 1);
     Script_ShowMessageAndWait(GARET, 0, 20);
   }
@@ -1172,11 +1172,11 @@ static void MercuryLighthouseAerie_AlexAppears(void) {
   if (Engine_ScriptChooseYesNo(0, 0) == 0) {
     Engine_ScriptWait(30);
     Script_ShowMessage(LOCALID_ALEX, 0);
-    gEventWork->message++;
+    gFieldWork->message++;
   } else {
     Engine_ScriptWait(30);
 
-    gEventWork->message++;
+    gFieldWork->message++;
     Script_ShowMessage(LOCALID_ALEX, 0);
   }
   Engine_ScriptWait(20);
@@ -1305,9 +1305,9 @@ static void MercuryLighthouseAerie_AlexAppears(void) {
     Engine_ObjectEventRunRepeatedMotion(LOCALID_ALEX, 2);
     Engine_ScriptWait(20);
     Script_ShowMessageAndWait(LOCALID_ALEX, 0, 20);
-    gEventWork->message++;
+    gFieldWork->message++;
   } else {
-    gEventWork->message++;
+    gFieldWork->message++;
     Engine_ScriptWait(20);
     Engine_ObjectEventRunRepeatedMotion(LOCALID_ALEX, 1);
     Engine_ScriptWait(20);
@@ -1334,9 +1334,9 @@ static void MercuryLighthouseAerie_AlexAppears(void) {
     Engine_ObjectEventSetAnimationAndWait(LOCALID_ALEX, 3);
     Engine_ScriptWait(20);
     Script_ShowMessageAndWait(LOCALID_ALEX, 0, 20);
-    gEventWork->message++;
+    gFieldWork->message++;
   } else {
-    gEventWork->message++;
+    gFieldWork->message++;
     Engine_ObjectEventSetAnimationAndWait(LOCALID_ALEX, 4);
     Engine_ScriptWait(20);
     Script_ShowMessageAndWait(LOCALID_ALEX, 0, 20);
@@ -1353,12 +1353,12 @@ static void MercuryLighthouseAerie_AlexAppears(void) {
   MercuryLighthouseAerie_LowerLift();
   Engine_ObjectEventSetSpritePriority(LOCALID_FIRST_LIFT_PLATFORM, 1);
   Engine_ObjectEventSetSpritePriority(LOCALID_SECOND_LIFT_PLATFORM, 1);
-  Script_PlayCue(AUDIO_CUE_FADE_BGM);
+  Script_PlaySong(AUDIO_CUE_FADE_BGM);
   Camera_MoveTo(PIXELS(336), -1, PIXELS(216), 1);
   Engine_CameraWaitForMove();
   Engine_ObjectEventSetAnimationAndWait(IVAN, ANIMATION_SHAKE_HEAD);
   Engine_ScriptWait(20);
-  Audio_PlayCueFromEventWork();
+  Map_PlayMusic();
   Script_ShowMessageAndWait(IVAN, 0, 20);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_SOUTH, 0);
   ObjectEvent_FaceDirection(GARET, FACING_SOUTHEAST + FACING_STEP, 22);
@@ -1389,9 +1389,9 @@ static void MercuryLighthouseAerie_AlexAppears(void) {
     Engine_ObjectEventSetAnimationAndWait(IVAN, ANIMATION_NOD);
     Engine_ScriptWait(20);
     Script_ShowMessageAndWait(IVAN, 0, 20);
-    gEventWork->message++;
+    gFieldWork->message++;
   } else {
-    gEventWork->message++;
+    gFieldWork->message++;
     Engine_ObjectEventRunRepeatedMotion(IVAN, 2);
     Engine_ScriptWait(20);
     Script_ShowMessageAndWait(IVAN, 0, 20);
@@ -1669,7 +1669,7 @@ static void MercuryLighthouseAerie_FindLiftRiders(s32 *out, s32 y) {
   struct FieldWork *work;
   u32 slot;
 
-  work = (struct FieldWork *)gEventWork;
+  work = (struct FieldWork *)gFieldWork;
   y = 64 - (y >> 20);
   for (slot = 0;
        slot < sizeof(work->objectEvents) / sizeof(work->objectEvents[0]);

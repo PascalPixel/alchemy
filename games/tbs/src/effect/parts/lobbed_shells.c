@@ -118,7 +118,7 @@ void BattleEffect_RunLobbedShells(struct BattleEffectArgument *effect,
   s32 i;
   s32 height;
 
-  slots = gWorkSlot + HEAP_SLOT_BATTLE_EFFECT;
+  slots = gHeapSlots + HEAP_SLOT_BATTLE_ANIM;
   cursor = slots;
   EFFECT_GET_WORK_AND_CANVAS(cursor, work, canvas);
   camera = EFFECT_SLOT(slots, HEAP_SLOT_CAMERA);
@@ -131,11 +131,11 @@ void BattleEffect_RunLobbedShells(struct BattleEffectArgument *effect,
   palette = Resource_GetTableEntry((s32)&ResourceId_GoldShellSheet);
   Iwram_CopyWords((void *)BG_PLTT, palette, 128);
   palette += 128;
-  Resource_DecodeType01(palette, work->sheet);
+  Decompress_Type01(palette, work->sheet);
   palette = Resource_GetTableEntry((s32)&ResourceId_SmokeSheet);
   Iwram_CopyWords((void *)BG_PLTT, palette, 128);
   palette += 128;
-  Resource_DecodeType01(palette, work->sheet + LOBBED_SHELLS_SMOKE_CELLS);
+  Decompress_Type01(palette, work->sheet + LOBBED_SHELLS_SMOKE_CELLS);
   if (mode == LOBBED_SHELLS_BONE_CHILLER)
     palette = Resource_GetTableEntry((s32)&ResourceId_BluePalette);
   else if (mode == LOBBED_SHELLS_STICKY_GOO)
@@ -176,29 +176,29 @@ void BattleEffect_RunLobbedShells(struct BattleEffectArgument *effect,
   // draw[0] draws the shells facing their flight; draw[1] draws the smoke
   // additively, or the shards mirrored the other way from draw[0].
   if (effect->side == 0) {
-    EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER, EFFECT_CLIP_BOUNDS, COMPOSITE_MAX);
-    draw[0] = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER];
+    EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, COMPOSITE_MAX);
+    draw[0] = (DrawRectangle)gHeapSlots[HEAP_SLOT_RAM_CODE];
     if (LOBBED_SHELLS_SHATTER(mode) == LOBBED_SHELLS_BONE_CHILLER) {
-      EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER_ALTERNATE, EFFECT_CLIP_BOUNDS,
+      EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, EFFECT_CLIP_BOUNDS,
                           COMPOSITE_ADDITIVE);
-      draw[1] = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE];
+      draw[1] = (DrawRectangle)gHeapSlots[HEAP_SLOT_RAM_CODE_2];
     } else {
-      EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER_ALTERNATE,
+      EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
                           EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, COMPOSITE_MAX);
-      draw[1] = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE];
+      draw[1] = (DrawRectangle)gHeapSlots[HEAP_SLOT_RAM_CODE_2];
     }
   } else {
-    EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER,
+    EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
                         EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, COMPOSITE_MAX);
-    draw[0] = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER];
+    draw[0] = (DrawRectangle)gHeapSlots[HEAP_SLOT_RAM_CODE];
     if (LOBBED_SHELLS_SHATTER(mode) == LOBBED_SHELLS_BONE_CHILLER) {
-      EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER_ALTERNATE, EFFECT_CLIP_BOUNDS,
+      EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, EFFECT_CLIP_BOUNDS,
                           COMPOSITE_ADDITIVE);
-      draw[1] = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE];
+      draw[1] = (DrawRectangle)gHeapSlots[HEAP_SLOT_RAM_CODE_2];
     } else {
-      EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER_ALTERNATE, EFFECT_CLIP_BOUNDS,
+      EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, EFFECT_CLIP_BOUNDS,
                           COMPOSITE_MAX);
-      draw[1] = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE];
+      draw[1] = (DrawRectangle)gHeapSlots[HEAP_SLOT_RAM_CODE_2];
     }
   }
   // Trails keep 3/4 a frame. Smoke lingers 16 frames longer than shards.
@@ -207,7 +207,7 @@ void BattleEffect_RunLobbedShells(struct BattleEffectArgument *effect,
     total = work->effect->count * 8 + 72;
   else
     total = work->effect->count * 8 + 56;
-  AudioCommand_PlayFar(SE_103);
+  Sound_PlaySongFar(SE_103);
 
   for (frame = 0; frame != total; frame++) {
     struct EffectStep *burst;

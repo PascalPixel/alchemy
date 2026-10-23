@@ -45,7 +45,7 @@ enum CanvasTransferMode {
 
 /// The running battle effect's work: its canvas image, 64 particles, the
 /// display registers it stages and its animation objects. It lives in the
-/// HEAP_SLOT_BATTLE_EFFECT work slot.
+/// HEAP_SLOT_BATTLE_ANIM work slot.
 struct BattleEffectWork {
   /// Images and scanline tables reuse the storage before the particles.
   /// The tile-animation mask extends beyond sheet into the table area.

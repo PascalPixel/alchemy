@@ -2,12 +2,12 @@
 	.set overlay_imports, 1
 	.set import.__divsi3, 1
 	.set import.Engine_TaskWait, 1
-	.set import.Scheduler_AddOrUpdateCallback, 1
+	.set import.Task_Add, 1
 	.set import.Engine_RandomNext, 1
 	.set import.Vector_AddPolarOffset, 1
-	.set import.MemAlloc, 1
-	.set import.MemFree, 1
-	.set import.Resource_DecodeType01, 1
+	.set import.Alloc, 1
+	.set import.Free, 1
+	.set import.Decompress_Type01, 1
 	.set import.VramCache_ReleaseVram, 1
 	.set import.Engine_VramLoad, 1
 	.set import.Resource_FindFreeEntry, 1
@@ -17,7 +17,7 @@
 	.set import.Engine_ObjectSetScript, 1
 	.set import.Engine_ObjectCreate, 1
 	.set import.Engine_ObjectSetPosition, 1
-	.set import.FieldObject_WaitForMove, 1
+	.set import.Object_WaitForMove, 1
 	.set import.Engine_MapGridCopyCells, 1
 	.set import.Engine_MapGridCopyCellAttributes, 1
 	.set import.Engine_MapGridCopyCellsLayered, 1

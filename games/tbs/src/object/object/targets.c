@@ -30,11 +30,11 @@ s32 Field_GetPsynergyTargetRange(s32 kind) {
 /// pixels, within 0x2fff (about 67 degrees) of the direction it faces. Object
 /// events with collision flag 8 are skipped, and those with flag 4 count as
 /// 10/13 as far, so they can be talked to from up to 41 pixels. Called with the
-/// leader by Field_RunMap for the A button, and by the item code (items.c) to
+/// leader by Map_Run for the A button, and by the item code (items.c) to
 /// find whom an item is used on.
 s32 Field_FindNearbyTalkTarget(s32 id) {
-  struct ObjectRuntime *source;
-  struct ObjectRuntime *candidate;
+  struct Object *source;
+  struct Object *candidate;
   s32 nearestLocalId;
   s32 nearestDistance;
   s32 objectEventIndex;
@@ -112,8 +112,8 @@ s32 Field_FindNearbyTalkTarget(s32 id) {
 /// by the item code (items.c) and by the Psynergy dispatch
 /// (psynergy_effects/dispatch.c).
 s32 Field_FindNearbyPsynergyTarget(s32 id, s32 kind) {
-  struct ObjectRuntime *source;
-  struct ObjectRuntime *candidate;
+  struct Object *source;
+  struct Object *candidate;
   s32 nearestLocalId;
   s32 nearestDistance;
   s32 facingQuadrant;
@@ -128,7 +128,7 @@ s32 Field_FindNearbyPsynergyTarget(s32 id, s32 kind) {
 
   nearestLocalId = -1;
   nearestDistance = Field_GetPsynergyTargetRange(kind);
-  source = (struct ObjectRuntime *)ObjectTable_Get(id);
+  source = (struct Object *)ObjectTable_Get(id);
   if (source == 0)
     return nearestLocalId;
 
@@ -139,7 +139,7 @@ s32 Field_FindNearbyPsynergyTarget(s32 id, s32 kind) {
     if (objectEventIndex == id)
       continue;
 
-    candidate = (struct ObjectRuntime *)ObjectTable_Get(objectEventIndex);
+    candidate = (struct Object *)ObjectTable_Get(objectEventIndex);
     if (candidate == 0 || (candidate->collisionFlags & 8) != 0)
       continue;
 
@@ -217,7 +217,7 @@ s32 FieldEffect_PlayCueAndStartEmitterOnTarget(s32 localId, s32 target,
   targetObjectEvent = ObjectEvent_GetById(target);
   emitter = 0;
   if (targetObjectEvent != 0) {
-    AudioCommand_PlayFar(SE_124);
+    Sound_PlaySongFar(SE_124);
     ObjectDispatch_SelectAnimationFar(targetObjectEvent, 4);
     WaitFrames(12);
     emitter = (s32)FieldEffect_StartRandomParticleEmitter(localId, itemId);
@@ -238,7 +238,7 @@ void Animation_ApplyChildPalette(struct MotionObject *object, s32 palette) {
   s32 replacement;
   u8 partCount;
 
-  if ((object->recordStorageKind & 15) == OBJECT_SPRITE_ONE) {
+  if ((object->spritesKind & 15) == OBJECT_SPRITE_ONE) {
     sprite = object->records;
     replacement = palette - 1;
     if (palette == 0)
@@ -262,10 +262,10 @@ void Animation_ApplyChildPalette(struct MotionObject *object, s32 palette) {
 
 /// Clears the field's busy flag and, while Reveal is active, ends it: Reveal
 /// used with ACT_PACKED runs its ending events. Called by FieldScript_Start
-/// when a script starts while the field is busy, by Field_RunMap before the
+/// when a script starts while the field is busy, by Map_Run before the
 /// pause menu, and by 30 map overlays.
 void Field_EndBusyAndReveal(void) {
-  struct FieldWork *work = (struct FieldWork *)gEventWork;
+  struct FieldWork *work = (struct FieldWork *)gFieldWork;
 
   work->busy = 0;
   if (work->revealActive != 0) {

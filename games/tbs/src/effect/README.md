@@ -35,8 +35,8 @@ void BattleEffect_RunBolt(struct BattleEffectArgument *effect) {
   EFFECT_GET_SLOTS(slots, cursor, work, canvas); /* the three blocks */
   work->effect = effect;
   BattleEffect_StartCanvasLayer(1);              /* BG2 shows the canvas */
-  EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER, EFFECT_CLIP_BOUNDS, COMPOSITE_MAX);
-  draw[0] = EFFECT_SLOT(slots, HEAP_SLOT_BLITTER);
+  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, COMPOSITE_MAX);
+  draw[0] = EFFECT_SLOT(slots, HEAP_SLOT_RAM_CODE);
   Resource_LoadAndDecompress((s32)&ResourceId_LightningBoltSheet,
                              work->sheet + BOLT_CELLS, 1, 1);
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, 75); /* keep 3/4 */
@@ -161,7 +161,7 @@ them in reverse:
 | Slot | Value | Holds |
 | --- | --- | --- |
 | `HEAP_SLOT_BATTLE_SHEET` | 41 | a small sheet of its own, apart from the work block's `work->sheet`: one set of the ten mote pictures, the dots 1 by 2 to 10 by 20 pixels that particles are drawn as (`MOTE_SET_BYTES`), which most effects decode from `ParticleSpritesA` |
-| `HEAP_SLOT_BATTLE_EFFECT` | 39 | the work block, `struct BattleEffectWork` |
+| `HEAP_SLOT_BATTLE_ANIM` | 39 | the work block, `struct BattleEffectWork` |
 | `HEAP_SLOT_BATTLE_CANVAS` | 40 | the canvas (`CANVAS_BYTES`) |
 
 Releasing a heap block also releases every block allocated after it
@@ -170,7 +170,7 @@ order they were taken, and an effect must remove every callback (a function
 the scheduler calls once a frame) that reads them before it returns.
 
 While it runs, an effect also has the two blitter slots
-(`HEAP_SLOT_BLITTER`, `HEAP_SLOT_BLITTER_ALTERNATE`) and the map grid [cell](../../glossary.md#cell) buffer,
+(`HEAP_SLOT_RAM_CODE`, `HEAP_SLOT_RAM_CODE_2`) and the map grid [cell](../../glossary.md#cell) buffer,
 where the field keeps the running map's cells and which a battle doesn't need
 (`PARTICLES`), to itself, and frees the blitters before it returns.
 
@@ -396,7 +396,7 @@ while the game runs. It writes it into a heap slot, which the heap places in
 IWRAM, the small fast memory inside the processor, when it fits and
 in EWRAM otherwise. `EFFECT_LOAD_BLITTER` builds one for the 128 by 128
 canvas. An effect usually holds its two as a `BlitterPair`, `[0]` in
-`HEAP_SLOT_BLITTER` and `[1]` in `HEAP_SLOT_BLITTER_ALTERNATE`;
+`HEAP_SLOT_RAM_CODE` and `[1]` in `HEAP_SLOT_RAM_CODE_2`;
 `BattleEffect_FetchRectangleBlitters` ([`mirrored_wall.c`](parts/mirrored_wall.c))
 builds the usual pair, clipped on all four sides, `[0]` using `COMPOSITE_MAX`
 and `[1]` using `COMPOSITE_ADDITIVE`, both mirrored across when it is passed the
@@ -449,8 +449,8 @@ the result.
 | `COMPOSITE_TRANSPARENT` | 1 | each pixel replaces it unless it is level 0 |
 | `COMPOSITE_MAX` | 2 | keeps the brighter of the two |
 | `COMPOSITE_ADDITIVE` | 3 | adds the two, capped at 63 |
-| `HEAP_SLOT_BLITTER` | 46 | a `BlitterPair`'s `[0]` |
-| `HEAP_SLOT_BLITTER_ALTERNATE` | 47 | a `BlitterPair`'s `[1]` |
+| `HEAP_SLOT_RAM_CODE` | 46 | a `BlitterPair`'s `[0]` |
+| `HEAP_SLOT_RAM_CODE_2` | 47 | a `BlitterPair`'s `[1]` |
 
 ## Pictures
 
@@ -958,7 +958,7 @@ The same locals have the same names in every handler:
 | Local | What it holds |
 | --- | --- |
 | `effect` | the `struct BattleEffectArgument *` the handler is passed |
-| `slots`, `cursor` | `&gWorkSlot[HEAP_SLOT_BATTLE_EFFECT]`, and the pointer that walks from it to `work` and `canvas` (`EFFECT_GET_SLOTS`) |
+| `slots`, `cursor` | `&gHeapSlots[HEAP_SLOT_BATTLE_ANIM]`, and the pointer that walks from it to `work` and `canvas` (`EFFECT_GET_SLOTS`) |
 | `work` | the effect's `struct BattleEffectWork` |
 | `canvas` | the canvas |
 | `sheet` | the decoded pictures, usually `work->sheet` |

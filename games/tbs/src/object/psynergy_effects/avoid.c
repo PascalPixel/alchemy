@@ -41,8 +41,8 @@ void FieldEffect_UpdatePairedArcSpawner(union FieldObject *fieldObject) {
   phase = caster->phase;
   elapsedFrames = caster->step++;
 
-  // MapId_Clear is the world map's map (Field_RunMap).
-  if (gGameState.layoutId == (s32)&MapId_Clear) {
+  // MapId_MainMenu is the world map's map (Map_Run).
+  if (gGameState.layoutId == (s32)&MapId_MainMenu) {
     if (elapsedFrames % 7 == 0)
       FieldEffect_SpawnDescendingArcParticles((struct ObjectEvent *)caster);
   } else if (elapsedFrames % 5 == 0) {
@@ -95,7 +95,7 @@ void FieldEffect_RunAvoid(void) {
   s32 slot;
   s32 count;
 
-  effectWork = gEffectWork;
+  effectWork = gFieldEffectWork;
   object = effectWork->mainObject;
   group = object->records;
   entry = group->entries[0];
@@ -116,7 +116,7 @@ void FieldEffect_RunAvoid(void) {
     object->phase = zero;
     object->step = zero;
   }
-  AudioCommand_PlayFar(SE_140);
+  Sound_PlaySongFar(SE_140);
   WaitFrames(15);
   object->phase = 1;
   WaitFrames(10);
@@ -132,11 +132,11 @@ void FieldEffect_RunAvoid(void) {
   }
   object->callback = NULL;
   object->angle = angle;
-  Scheduler_AddOrUpdateCallback(FieldEffect_BlinkAvoidCaster, 0xc80);
+  Task_Add(FieldEffect_BlinkAvoidCaster, 0xc80);
   WaitFrames(15);
-  AudioCommand_PlayFar(SE_174);
+  Sound_PlaySongFar(SE_174);
   WaitFrames(55);
-  Scheduler_RemoveCallback(FieldEffect_BlinkAvoidCaster);
+  Task_Remove(FieldEffect_BlinkAvoidCaster);
   // Back to the caster's own look: outlined while Cloak is on, else with its
   // shadow.
   if (gGameState.cloaked != 0)

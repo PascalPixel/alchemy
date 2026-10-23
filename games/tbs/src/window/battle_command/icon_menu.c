@@ -40,7 +40,7 @@ struct WindowBuffer {
 /// (AffineEffect_InitializeWork). Each icon is a 32x32, 256-colour sprite;
 /// the selected one is double-size affine, pulsing between 1.19 and 1.31
 /// times, on layer 246, the others on 245, and one at x 0 is not drawn.
-/// While a window transition runs (gDisplayTransition), it widens window 1
+/// While a window transition runs (gScreenTransitionWork), it widens window 1
 /// over the icon row so the icons show through: from the first icon on the
 /// row's 24 lines, keeping each line's right edge, and around the selected
 /// icon on the lines it overhangs (below a row at the top, above one at the
@@ -64,7 +64,7 @@ void AffineEffect_UpdateFrame(void) {
 #endif
   struct DisplayTransitionState *state;
 
-  work = gMenuSelectWork;
+  work = gIconMenuWork;
   entry = work->entries;
   pulseScale = gUi_BounceScales[(gFrameCount * 2) & 31];
   pulseScale = (pulseScale - 256) / 4 + 304;
@@ -137,7 +137,7 @@ void AffineEffect_UpdateFrame(void) {
 
     s32 halfWidth;
 
-    state = (struct DisplayTransitionState *)gDisplayTransition;
+    state = (struct DisplayTransitionState *)gScreenTransitionWork;
     if (state == 0 || work->count == 0)
       return;
     page = (struct WindowBuffer *)state->pages[state->page];
@@ -187,7 +187,7 @@ void AffineEffect_UpdateFrame(void) {
 
     s32 halfWidth;
 
-    state = (struct DisplayTransitionState *)gDisplayTransition;
+    state = (struct DisplayTransitionState *)gScreenTransitionWork;
     if (state == 0 || work->count == 0)
       return;
     page = (struct WindowBuffer *)state->pages[state->page];
@@ -237,13 +237,13 @@ void AffineEffect_UpdateFrame(void) {
 /// Allocates and clears the resource-menu state, then schedules its icon pulse.
 /// The work (struct ResourceMenuWork, 152 bytes) lives in HEAP_SLOT_ICON_MENU
 /// until Menu_EndResourceSelection frees it; it is returned, and also reached
-/// as gMenuSelectWork. Every command icon menu starts here.
+/// as gIconMenuWork. Every command icon menu starts here.
 void *AffineEffect_InitializeWork(void) {
   // The matching allocation size is the complete six-entry work block.
   void *work;
-  work = Runtime_AllocateBlock(HEAP_SLOT_ICON_MENU, 152);
+  work = AllocHeapSlotEwram(HEAP_SLOT_ICON_MENU, 152);
   Dma_Fill32(0, work, 152);
-  Scheduler_AddOrUpdateCallback(AffineEffect_UpdateFrame, 0xc76);
+  Task_Add(AffineEffect_UpdateFrame, 0xc76);
   return work;
 }
 
@@ -255,8 +255,8 @@ void Menu_EndResourceSelection(void) {
   s32 i;
   struct ResourceMenuWork *work;
 
-  work = gMenuSelectWork;
-  Scheduler_RemoveCallback(AffineEffect_UpdateFrame);
+  work = gIconMenuWork;
+  Task_Remove(AffineEffect_UpdateFrame);
   labelWindow = work->window;
   if (labelWindow != 0) {
     UiWork_Finalize(labelWindow, 2);
@@ -264,7 +264,7 @@ void Menu_EndResourceSelection(void) {
   for (i = 0; i < work->count; i++) {
     Resource_ResetEntry(work->entries[i].slot);
   }
-  Runtime_ReleaseHeapBlock(HEAP_SLOT_ICON_MENU);
+  FreeHeapSlot(HEAP_SLOT_ICON_MENU);
   WaitFrames(1U);
 }
 
@@ -273,7 +273,7 @@ void Menu_EndResourceSelection(void) {
 /// label is message resourceBase + position when the layout set a
 /// resourceBase, else the icon's command name (MsgCommandName + its icon).
 s32 Menu_RunResourceSelectionLoop(s32 initial) {
-  struct ResourceMenuWork *work = gMenuSelectWork;
+  struct ResourceMenuWork *work = gIconMenuWork;
   s32 resource;
 
   work->selection = initial;
@@ -290,24 +290,24 @@ redraw:
   for (;;) {
     WaitFrames(1);
     if (gKeysPressed & KEY_A) {
-      AudioCommand_PlayFar(SE_MENU_CONFIRM);
+      Sound_PlaySongFar(SE_MENU_CONFIRM);
       return work->selection;
     }
     if (gKeysPressed & KEY_B) {
-      AudioCommand_PlayFar(SE_MENU_CANCEL);
+      Sound_PlaySongFar(SE_MENU_CANCEL);
       return -1;
     }
     if (gKeysPressed & KEY_START) {
-      AudioCommand_PlayFar(SE_MENU_CANCEL);
+      Sound_PlaySongFar(SE_MENU_CANCEL);
       return -1;
     }
     if ((gKeysRepeat & KEY_LEFT) || (gKeysRepeat & KEY_UP)) {
-      AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
+      Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
       work->selection--;
       if (work->selection < 0)
         work->selection = work->count - 1;
     } else if ((gKeysRepeat & KEY_RIGHT) || (gKeysRepeat & KEY_DOWN)) {
-      AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
+      Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
       work->selection++;
       if (work->selection >= work->count)
         work->selection = 0;
@@ -342,7 +342,7 @@ s32 Menu_SelectResource(s32 start, s32 goal) {
   const u8 *stepDelays;
   struct ResourceMenuWork *state;
 
-  state = gMenuSelectWork;
+  state = gIconMenuWork;
   step = 1;
   delay = 12;
   state->selection = start;
@@ -370,13 +370,13 @@ s32 Menu_SelectResource(s32 start, s32 goal) {
       break;
 
     state->selection += step;
-    AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
+    Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
     delay = 0;
     position += step;
   }
 
   WaitFrames(48);
-  AudioCommand_PlayFar(SE_MENU_CONFIRM);
+  Sound_PlaySongFar(SE_MENU_CONFIRM);
   return goal;
 }
 
@@ -384,13 +384,12 @@ s32 Menu_SelectResource(s32 start, s32 goal) {
 /// through a 1 KB block it allocates and frees.
 void Menu_LoadResourceSlot(s32 slot, s32 index) {
   s32 size = 1024;
-  void *buffer = MemAlloc(size);
+  void *buffer = Alloc(size);
   u16 *offsetTable = Resource_GetTableEntry((s32)&ResourceId_CommandIcons);
 
-  Resource_DecodeByteLz((void *)((u32)offsetTable + offsetTable[index]),
-                        buffer);
+  Decompress_ByteLz((void *)((u32)offsetTable + offsetTable[index]), buffer);
   VramCache_Load(slot, size, buffer);
-  MemFree(buffer);
+  Free(buffer);
 }
 
 /// Appends a command icon if fewer than six are present. Its initial position
@@ -404,7 +403,7 @@ void Menu_AppendResourceEntry(s32 icon) {
   s32 slot;
   s32 y;
 
-  work = gMenuSelectWork;
+  work = gIconMenuWork;
   index = work->count;
   if (index <= 5) {
     work->count++;
@@ -425,7 +424,7 @@ void Menu_AppendResourceEntry(s32 icon) {
 /// wide and 3 tall, follows them; the centring counts two thirds of the
 /// window's width.
 void Menu_CenterResourceEntries(s32 row, s32 width, s32 resourceBase) {
-  struct ResourceMenuWork *work = gMenuSelectWork;
+  struct ResourceMenuWork *work = gIconMenuWork;
   s32 x;
   s32 i;
   s32 count;
@@ -452,7 +451,7 @@ void Menu_LayoutResourceEntries(s32 x, s32 y, s32 width, s32 resourceBase) {
   s32 i;
   struct ResourceMenuEntry *entry;
 
-  work = gMenuSelectWork;
+  work = gIconMenuWork;
   work->width = width + 2;
   work->resourceBase = resourceBase;
   work->row = y;
@@ -543,7 +542,7 @@ s32 Menu_AnimateSelectionToEntry(s32 start, s32 command) {
 /// Builds the title menu from the save summaries and optional send flags.
 /// Translates the chosen visible position back to its action (enum
 /// SaveSlotAction), or -1 when cancelled or the backup memory cannot be read.
-/// With no files it returns 0 at once. The icons, by SaveState_ScanRecordFlags'
+/// With no files it returns 0 at once. The icons, by Save_ScanRecordFlags'
 /// count: New Game, Continue, Copy and Erase for one or two files (starting on
 /// Continue); no New Game or Copy with three; with every file cleared no
 /// Continue, and only Erase with three such files. Battle and Send follow when
@@ -561,7 +560,7 @@ s32 Menu_SelectSaveSlotAction(void) {
 
   group = 0;
   initial = 0;
-  fileState = SaveState_ScanRecordFlags();
+  fileState = Save_ScanRecordFlags();
   if (fileState < 0) {
     return -1;
   }
@@ -617,7 +616,7 @@ s32 Menu_SelectSaveSlotAction(void) {
 /// "Character stats", "Items" and "Coins", Silver (1) the first three,
 /// Bronze (2) the first two.
 void Menu_DrawModeLabel(void) {
-  struct ResourceMenuWork *state = gMenuSelectWork;
+  struct ResourceMenuWork *state = gIconMenuWork;
 
   if (state->previousMode != state->selection) {
     state->previousMode = state->selection;
@@ -680,7 +679,7 @@ void Menu_DrawModeLabel(void) {
 /// Redraws password/cable transfer help when the chosen method changes. A
 /// scheduler callback of the transfer method menu: Password or Cable.
 void Menu_DrawModeIndicator(void) {
-  struct ResourceMenuWork *state = gMenuSelectWork;
+  struct ResourceMenuWork *state = gIconMenuWork;
 
   if (state->previousMode != state->selection) {
     if (state->selection == TRANSFER_METHOD_PASSWORD) {
@@ -701,7 +700,7 @@ void Menu_DrawModeIndicator(void) {
 /// Redraws password/cable transfer help when the chosen method changes. A
 /// scheduler callback of the transfer method menu: Password or Cable.
 void Menu_DrawModeIndicator(void) {
-  struct ResourceMenuWork *state = gMenuSelectWork;
+  struct ResourceMenuWork *state = gIconMenuWork;
   s16 *shown = &state->previousMode;
   s16 *current = &state->selection;
 
@@ -740,7 +739,7 @@ s32 Menu_SelectResourceLayout(s32 mode) {
   s32 result;
 
   AffineEffect_InitializeWork();
-  work = gMenuSelectWork;
+  work = gIconMenuWork;
   if (mode == RESOURCE_LAYOUT_TRANSFER_METHOD) {
     Menu_AppendResourceEntry(COMMAND_ICON_PASSWORD);
     Menu_AppendResourceEntry(COMMAND_ICON_CABLE);
@@ -762,7 +761,7 @@ s32 Menu_SelectResourceLayout(s32 mode) {
   Menu_CenterResourceEntries(17, 5, 0);
 #endif
   if (mode != RESOURCE_LAYOUT_TRANSFER_METHOD) {
-    Scheduler_AddOrUpdateCallback(Menu_DrawModeLabel, 0xc76);
+    Task_Add(Menu_DrawModeLabel, 0xc76);
     work->previousMode = 0xffff;
     window = UiWindow_Create(RESOURCE_MODE0_WINDOW_X, 0,
                              RESOURCE_MODE0_WINDOW_WIDTH, 4, 2);
@@ -786,7 +785,7 @@ s32 Menu_SelectResourceLayout(s32 mode) {
     UiText_DrawResource(message, work->lowerWindow, 0, 16);
 #endif
   } else {
-    Scheduler_AddOrUpdateCallback(Menu_DrawModeIndicator, 0xc76);
+    Task_Add(Menu_DrawModeIndicator, 0xc76);
     work->previousMode = 0xffff;
     window = UiWindow_Create(TRANSFER_METHOD_WINDOW_X, 0,
                              TRANSFER_METHOD_WINDOW_WIDTH, 4, 2);
@@ -798,9 +797,9 @@ s32 Menu_SelectResourceLayout(s32 mode) {
   }
   result = Menu_RunResourceSelectionLoop(0);
   if (mode != RESOURCE_LAYOUT_TRANSFER_METHOD)
-    Scheduler_RemoveCallback(Menu_DrawModeLabel);
+    Task_Remove(Menu_DrawModeLabel);
   else
-    Scheduler_RemoveCallback(Menu_DrawModeIndicator);
+    Task_Remove(Menu_DrawModeIndicator);
   RenderOutput_PrepareForRedraw(*upper);
   RenderOutput_PrepareForRedraw(work->lowerWindow);
   UiWork_Finalize(*upper, 2);

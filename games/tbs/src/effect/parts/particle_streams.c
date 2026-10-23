@@ -47,7 +47,7 @@ void Palette_BrightenBgEntries(s32 blueStep, s32 greenStep, s32 redStep) {
 /// rise rewrites the 160 colours, its heat lines, every frame. Stops DMA 0
 /// and sets it up again, so the table is read from line 0.
 void BattleEffect_ArmPaletteHBlankDma(void) {
-  struct BattleEffectWork *work = WORK_SLOT(HEAP_SLOT_BATTLE_EFFECT);
+  struct BattleEffectWork *work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_ANIM);
   volatile u16 *channel = REG_DMA0;
   Dma_Stop(channel);
   Dma_Set(work->sheet + 0x1f80, (void *)BG_PLTT, DMA_HBLANK_HALFWORD_PER_LINE,
@@ -161,7 +161,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectArgument *effect,
   s32 frame;
   s32 i;
 
-  cache = &gBattleEffectWork[1];
+  cache = &gBattleAnimWork[1];
   canvas = cache[0];
   work = cache[-1];
 
@@ -182,7 +182,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectArgument *effect,
     animation->velocityY = 0xa0000;
     animation->verticalMotionStrength = 0x91eb;
     ObjectGroup_UpdateMembers(work->effect->actor, -1, POSE_LEAP, -1, 0);
-    AudioCommand_PlayFar(SE_145);
+    Sound_PlaySongFar(SE_145);
     direction = work->effect->side == 1 ? mode : -1;
   } else {
     direction = -1;
@@ -193,10 +193,9 @@ void BattleEffect_RunParticleStreams(struct BattleEffectArgument *effect,
   PLTT_BACKDROP = 0;
   *(u16 *)&BG_PLTT[1] = 0;
   work->transferMode = CANVAS_COPY;
-  Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer,
-                                EFFECT_CALLBACK_ORDER);
+  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, EFFECT_CALLBACK_ORDER);
   BattleEffect_WipeCanvas(CANVAS_WIPE_DOWN, CANVAS_WIPE_FILL);
-  Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
+  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   // The rising formation: two animated objects in Outer Space, otherwise one
   // spawned object.
   if (mode == PARTICLE_STREAMS_OUTER_SPACE) {
@@ -266,9 +265,8 @@ void BattleEffect_RunParticleStreams(struct BattleEffectArgument *effect,
   work->scrollInterval = 2;
   work->scrollStepX = direction << 7;
   work->scrollStepY = 256;
-  Scheduler_AddOrUpdateCallback(BattleEffect_AdvanceBg2OnInterval, 0x4ff);
-  Scheduler_AddOrUpdateCallback(BattleEffect_FlushPendingGraphicsTransfer,
-                                EFFECT_CALLBACK_ORDER);
+  Task_Add(BattleEffect_AdvanceBg2OnInterval, 0x4ff);
+  Task_Add(BattleEffect_FlushPendingGraphicsTransfer, EFFECT_CALLBACK_ORDER);
   for (i = 0; i != 128; i++)
     offsets[i] = Random16() & 63;
   {
@@ -308,20 +306,20 @@ void BattleEffect_RunParticleStreams(struct BattleEffectArgument *effect,
   {
     s32 savedX = gBgScroll[1].x;
     s32 savedY = gBgScroll[1].y;
-    // One pointer serves both slot reads: two separate reads of gWorkSlot
+    // One pointer serves both slot reads: two separate reads of gHeapSlots
     // make the function 0xe48 bytes long, where tbs-en's is 0xe38.
-    void **slots = &gWorkSlot[HEAP_SLOT_BATTLE_BACKGROUND];
+    void **slots = &gHeapSlots[HEAP_SLOT_BATTLE_BACKGROUND];
     struct BattlePresentationTransition *transition = slots[0];
 
     gBgScroll[1].x = 0;
     gBgScroll[1].y = 32;
-    BattleEffect_BuildBlitter(HEAP_SLOT_BLITTER, 8, 7, EFFECT_CLIP_BOUNDS,
+    BattleEffect_BuildBlitter(HEAP_SLOT_RAM_CODE, 8, 7, EFFECT_CLIP_BOUNDS,
                               COMPOSITE_MAX);
-    draw = slots[HEAP_SLOT_BLITTER - HEAP_SLOT_BATTLE_BACKGROUND];
+    draw = slots[HEAP_SLOT_RAM_CODE - HEAP_SLOT_BATTLE_BACKGROUND];
     // Each copy darkens every pixel of the map by 2 levels (four bytes of 2
     // in one word, as the other darkening effects write theirs).
     EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_DARKEN, 0x02020202);
-    Scheduler_AddOrUpdateCallback(BattleEffect_ArmPaletteHBlankDma, 0x4fe);
+    Task_Add(BattleEffect_ArmPaletteHBlankDma, 0x4fe);
     EFFECT_FREE_PARTICLES(i, work->particles, 64);
     transition->active = 1;
     work->frame = 0;
@@ -363,7 +361,7 @@ void BattleEffect_RunParticleStreams(struct BattleEffectArgument *effect,
          * without it, 175 of 1532 instructions differ in tbs-en. */
         asm("" : : : "r6");
         if (frame == 0)
-          AudioCommand_PlayFar(SE_RUMBLE);
+          Sound_PlaySongFar(SE_RUMBLE);
         /* FAKEMATCH(barrier): hold's use in an empty asm, which keeps it live
          * across the call; without it, 168 of 1532 instructions differ in
          * tbs-en. */
@@ -507,13 +505,13 @@ void BattleEffect_RunParticleStreams(struct BattleEffectArgument *effect,
     } while (frame != PARTICLE_STREAMS_RISE_FRAMES);
     WaitFrames(1);
     transition->active = 0;
-    Scheduler_RemoveCallback(BattleEffect_AdvanceBg2OnInterval);
-    Scheduler_RemoveCallback(BattleEffect_ArmPaletteHBlankDma);
-    Scheduler_RemoveCallback(BattleEffect_FlushPendingGraphicsTransfer);
+    Task_Remove(BattleEffect_AdvanceBg2OnInterval);
+    Task_Remove(BattleEffect_ArmPaletteHBlankDma);
+    Task_Remove(BattleEffect_FlushPendingGraphicsTransfer);
     gBgScroll[1].x = savedX;
     gBgScroll[1].y = savedY;
   }
-  Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
+  FreeHeapSlot(HEAP_SLOT_RAM_CODE);
   // The burst, PARTICLE_STREAMS_BURST_FRAMES frames: switch to the blended
   // half-scale display, load the blast
   // sheet and seed 32 screen motes, 128 flashes and 512 embers, the flashes
@@ -525,8 +523,8 @@ void BattleEffect_RunParticleStreams(struct BattleEffectArgument *effect,
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
   REG_BG2CNT = BGCNT_PRIORITY(0) | BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS |
                BGCNT_SCREEN_BASE(7) | BGCNT_WRAP;
-  EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER, EFFECT_CLIP_BOUNDS, COMPOSITE_MAX);
-  draw = gWorkSlot[HEAP_SLOT_BLITTER];
+  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, COMPOSITE_MAX);
+  draw = gHeapSlots[HEAP_SLOT_RAM_CODE];
   Resource_LoadAndDecompress((s32)&ResourceId_BlastSheet, work->sheet, 1, 0);
   // Screen motes keep whole canvas pixels, not 16.16: x 0 to 127 and y 127
   // to 254, from the canvas's last row down, from where they rise.
@@ -572,9 +570,9 @@ void BattleEffect_RunParticleStreams(struct BattleEffectArgument *effect,
     if (elapsed > 19)
       Palette_BrightenBgEntries(2, 2, 2);
     if (frame == 0)
-      AudioCommand_PlayFar(SE_156);
+      Sound_PlaySongFar(SE_156);
     if (frame == 40)
-      AudioCommand_PlayFar(SE_145);
+      Sound_PlaySongFar(SE_145);
     if (frame == 48) {
       if (mode == PARTICLE_STREAMS_OUTER_SPACE) {
         ResourceObject_ReleaseFar(work->animations[0]);
@@ -700,8 +698,8 @@ void BattleEffect_RunParticleStreams(struct BattleEffectArgument *effect,
     Camera_ApplyShake(8, 8);
     EFFECT_PRESENT_FRAME(work);
   }
-  Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
-  Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
+  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
+  FreeHeapSlot(HEAP_SLOT_RAM_CODE);
   if (mode == PARTICLE_STREAMS_METEOR)
     ResourceObject_ReleaseFar(work->animations[0]);
   BattleEffect_EndCanvasLayer();

@@ -23,8 +23,8 @@ struct FieldEffectSpeakerSprite {
 /// An object event as the speaker lookup reads it: its kind (1 for an animated
 /// sprite) and that sprite.
 struct FieldEffectSpeakerObject {
-  u8 beforeVelocity[0x24]; ///< ObjectRuntime's fields before velocityX
-  /// ObjectRuntime's motion, target, bounce, gravity and riseBaseY; not named
+  u8 beforeVelocity[0x24]; ///< Object's fields before velocityX
+  /// Object's motion, target, bounce, gravity and riseBaseY; not named
   /// through this view.
   ///@{
   s32 velocityX;
@@ -39,8 +39,8 @@ struct FieldEffectSpeakerObject {
   s32 gravity;
   s32 riseBaseY;
   ///@}
-  struct FieldEffectSpeakerSprite *animation; ///< ObjectRuntime.animation
-  u8 kind; ///< ObjectRuntime.animationKind: 1 for one animated sprite
+  struct FieldEffectSpeakerSprite *animation; ///< Object.animation
+  u8 kind; ///< Object.animationKind: 1 for one animated sprite
 };
 
 /// A speaker definition, a row of gFieldEffect_DefinitionTable: a sprite, its
@@ -54,7 +54,7 @@ struct FieldEffectDefinition {
             ///< (FieldEffect_GetFlags)
 };
 
-/// The colour buffer, heap slot HEAP_SLOT_PALETTE_BUFFER under its own name.
-extern struct ColorBuffer *gPaletteBufferWork;
+/// The colour buffer, heap slot HEAP_SLOT_PALETTE_FADE under its own name.
+extern struct ColorBuffer *gPaletteFadeWork;
 
 #endif

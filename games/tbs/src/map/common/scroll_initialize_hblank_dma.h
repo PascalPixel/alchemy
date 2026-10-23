@@ -22,7 +22,7 @@ void DisplayScroll_InitializeHBlankDma(s32 mode, s32 freqX, s32 stepX, s32 ampX,
                                        s32 freqY, s32 stepY, s32 ampY) {
   struct DisplayScrollWork *work;
 
-  work = Runtime_AllocateBlock(34, 0xf20);
+  work = AllocHeapSlotEwram(34, 0xf20);
   Dma_Fill32(0, work, 0xf20);
   WaitDma(REG_DMA3);
   work->mode = mode;

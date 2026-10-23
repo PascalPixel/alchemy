@@ -5,12 +5,12 @@
 	.global FarCall_RuntimeTable
 FarCall_RuntimeTable:
 	export WaitFramesFar, WaitFrames
-	overlay_veneer Scheduler_ResetTaskTable
-	export Scheduler_AddOrUpdateCallbackFar, Scheduler_AddOrUpdateCallback
-	export Scheduler_RemoveCallbackFar, Scheduler_RemoveCallback
-	overlay_veneer Scheduler_SuspendTasks
-	overlay_veneer Scheduler_ResumeTasks
-	overlay_veneer Scheduler_RunPass
+	overlay_veneer Task_ResetAll
+	export Task_AddFar, Task_Add
+	export Task_RemoveFar, Task_Remove
+	overlay_veneer Task_SuspendAll
+	overlay_veneer Task_ResumeAll
+	overlay_veneer Task_RunPass
 	export Random16Far, Random16
 	export ArcTan2Far, ArcTan2
 	overlay_veneer Math_IntegerSqrt
@@ -19,21 +19,21 @@ FarCall_RuntimeTable:
 	export Trig_CosFar, Trig_Cos
 	export Vector_AddPolarOffsetFar, Vector_AddPolarOffset
 	export Runtime_SetIrqHandlerFar, Runtime_SetIrqHandler
-	overlay_veneer Runtime_InitializeHeap
-	export Runtime_AllocateHeapBlockFar, Runtime_AllocateHeapBlock
-	export Runtime_AllocateBlockFar, Runtime_AllocateBlock
-	export Runtime_ReleaseHeapBlockFar, Runtime_ReleaseHeapBlock
+	overlay_veneer InitHeap
+	export AllocHeapSlotFar, AllocHeapSlot
+	export AllocHeapSlotEwramFar, AllocHeapSlotEwram
+	export FreeHeapSlotFar, FreeHeapSlot
 	overlay_veneer Runtime_GetRemainingIwram
 	overlay_veneer Runtime_GetRemainingEwram
-	export Runtime_BumpAllocateFar, MemAlloc
-	export Runtime_BumpAllocateAlternatePoolFar, Runtime_BumpAllocateAlternatePool
-	export Sys_FreeFar, MemFree
+	export Runtime_BumpAllocateFar, Alloc
+	export AllocEwramFar, AllocEwram
+	export Sys_FreeFar, Free
 	overlay_veneer DebugText_Print
 	overlay_veneer DebugText_PrintHex
 	overlay_veneer DebugText_PrintDecimal
 	overlay_veneer DebugText_PrintBlanks
-	export Resource_DecodeByteLzFar, Resource_DecodeByteLz
-	export Resource_DecodeType01Far, Resource_DecodeType01
+	export Decompress_ByteLzFar, Decompress_ByteLz
+	export Decompress_Type01Far, Decompress_Type01
 	overlay_veneer VramCache_Reset
 	export Resource_ResetEntryFar, Resource_ResetEntry
 	export VramCache_ReleaseVramFar, VramCache_ReleaseVram
@@ -64,7 +64,7 @@ FarCall_RuntimeTable:
 	overlay_veneer RuntimeDispatch_ReturnZero
 	export Resource_GetTableEntryFar, Resource_GetTableEntry
 	export RuntimeDispatch_NoOpHookFar, RuntimeDispatch_NoOpHook
-	overlay_veneer Resource_LoadCode
+	overlay_veneer Overlay_Load
 	export Fade_ToBlackFar, Fade_ToBlack
 	overlay_veneer Fade_FromBlack
 	overlay_veneer Fade_ToWhite
@@ -99,4 +99,4 @@ FarCall_RuntimeTable:
 	overlay_veneer SerialRuntime_WaitForTransfers
 	export SerialRuntime_GetActiveTransfersFar, SerialRuntime_GetActiveTransfers
 	overlay_veneer SerialRuntime_StepBlockTransfer
-	export Scheduler_SetTaskFlagsFar, Scheduler_SetTaskFlags
+	export Task_SetFlagsFar, Task_SetFlags

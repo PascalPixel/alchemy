@@ -201,9 +201,9 @@ void BattleEffect_RunGround(struct BattleEffectArgument *effect) {
   s32 screenY;
   s32 j;
 
-  work = WORK_SLOT(HEAP_SLOT_BATTLE_EFFECT);
-  canvas = WORK_SLOT(HEAP_SLOT_BATTLE_CANVAS);
-  camera = WORK_SLOT(HEAP_SLOT_CAMERA);
+  work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_ANIM);
+  canvas = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
+  camera = HEAP_SLOT_BLOCK(HEAP_SLOT_CAMERA);
   work->effect = effect;
   BattleEffect_StartCanvasLayer(0);
   // A Venus Djinni appears over the user.
@@ -211,11 +211,11 @@ void BattleEffect_RunGround(struct BattleEffectArgument *effect) {
                                  DJINNI_ANCHOR_OVER_USER, &screenX, &screenY);
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
   if (work->effect->side == 1)
-    EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER,
+    EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
                         EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, COMPOSITE_MAX);
   else
-    EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER, EFFECT_CLIP_BOUNDS, COMPOSITE_MAX);
-  draw[0] = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER];
+    EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, COMPOSITE_MAX);
+  draw[0] = (DrawRectangle)gHeapSlots[HEAP_SLOT_RAM_CODE];
   Resource_LoadAndDecompress((s32)&ResourceId_PortalSheet, work->sheet, 1, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_VenusDjinnSmallSheet,
                              work->sheet + GROUND_DJINNI_CELLS, 1, 1);
@@ -250,16 +250,16 @@ void BattleEffect_RunGround(struct BattleEffectArgument *effect) {
       if (frame > 16)
         y = y - frame * 2 + 32;
       if (work->effect->side == 1)
-        EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER_ALTERNATE,
+        EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
                             EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
                             COMPOSITE_ADDITIVE);
       else
-        EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER_ALTERNATE, EFFECT_CLIP_BOUNDS,
+        EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, EFFECT_CLIP_BOUNDS,
                             COMPOSITE_ADDITIVE);
       if (frame <= 3)
-        ((DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE])(
+        ((DrawRectangle)gHeapSlots[HEAP_SLOT_RAM_CODE_2])(
             canvas, work->sheet + GROUND_DJINNI_CELLS, x, y, 20, 40);
-      Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
+      FreeHeapSlot(HEAP_SLOT_RAM_CODE_2);
       draw[0](canvas, work->sheet + GROUND_DJINNI_CELLS, x, y, 20, 40);
     }
     // Every 2 frames each chip takes a random picture (velocityX, chips 3
@@ -304,9 +304,9 @@ void BattleEffect_RunGround(struct BattleEffectArgument *effect) {
             s32 chipX;
             s32 chipY;
 
-            EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER_ALTERNATE, chip->velocityY,
+            EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, chip->velocityY,
                                 COMPOSITE_MAX);
-            draw[1] = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE];
+            draw[1] = (DrawRectangle)gHeapSlots[HEAP_SLOT_RAM_CODE_2];
             if (chip->velocityY & 4)
               chipX = x - gHail_ChipWidths[chip->velocityX] -
                       gHail_ChipX[chip->velocityX] + 24;
@@ -320,7 +320,7 @@ void BattleEffect_RunGround(struct BattleEffectArgument *effect) {
             draw[1](canvas, work->sheet + gHail_ChipCells[chip->velocityX],
                     chipX, chipY, gHail_ChipWidths[chip->velocityX],
                     gHail_ChipHeights[chip->velocityX]);
-            Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
+            FreeHeapSlot(HEAP_SLOT_RAM_CODE_2);
           }
           rock->x += rock->velocityX;
           rock->y += rock->velocityY;
@@ -340,7 +340,7 @@ void BattleEffect_RunGround(struct BattleEffectArgument *effect) {
           if (rock->y < 0x140000) {
             work->shakeFrames = 8;
             rock->variant = 0;
-            AudioCommand_PlayFar(SE_HEAVY_IMPACT);
+            Sound_PlaySongFar(SE_HEAVY_IMPACT);
             EFFECT_STRIKE_TARGET(work->effect, 0, 4, KNOCKBACK_HURL);
           }
         }
@@ -352,7 +352,7 @@ void BattleEffect_RunGround(struct BattleEffectArgument *effect) {
   EFFECT_FINISH_CANVAS_ONE_BLITTER();
 }
 
-/// Shakes the battle view while gBattleEffectWork's shakeFrames lasts, moving
+/// Shakes the battle view while gBattleAnimWork's shakeFrames lasts, moving
 /// BG1 and the projection centre by a random offset; once the shake runs
 /// out, BG1 returns to its saved position and the centre to (120, 120). It
 /// takes two random numbers each shaking frame, x first.
@@ -366,7 +366,7 @@ void BattleEffect_RunGround(struct BattleEffectArgument *effect) {
 /// rangeY: the vertical range, a power of two; both offsets are centred on
 ///         half of it.
 void Camera_ApplyShake(s32 rangeX, u32 rangeY) {
-  struct BattleEffectWork *work = WORK_SLOT(HEAP_SLOT_BATTLE_EFFECT);
+  struct BattleEffectWork *work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_ANIM);
 
   if (work->shakeFrames > 0) {
     s32 randomX = (rangeX - 1) & Random16();

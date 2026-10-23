@@ -94,7 +94,7 @@ void BattleEffect_RunHelmSplitter(struct BattleEffectArgument *effect) {
     object->verticalMotionPhase = 0;
     object->autoFaceMotion = 1;
     ObjectDispatch_StartIdleFar((struct DispatchObject *)object);
-    Object_SetMoveTargetFar((struct ObjectRuntime *)object, x, 0, z);
+    Object_SetMoveTargetFar((struct Object *)object, x, 0, z);
     ObjectDispatch_SelectAnimationFar(object, POSE_LEAP);
   }
 
@@ -191,7 +191,7 @@ void BattleEffect_RunHelmSplitter(struct BattleEffectArgument *effect) {
 void BattleEffect_PlaceFormationObjects(s32 formation, s32 x, s32 z) {
   static struct SpriteScale normalScale = {{{0x10000, 0x10000}}};
   static struct SpriteScale largeScale = {{{0x14000, 0x14000}}};
-  struct BattleEffectWork *work = WORK_SLOT(HEAP_SLOT_BATTLE_EFFECT);
+  struct BattleEffectWork *work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_ANIM);
   struct SpriteScale normal = normalScale;
   struct SpriteScale big = largeScale;
   struct SpritePlacement pos;
@@ -278,7 +278,7 @@ void BattleEffect_RunImpactBurst(s32 formation, s32 x, s32 y) {
   // BG2 shows the canvas at twice its width, and BG1 and BG2 blend over the
   // layers below.
   EFFECT_GET_SLOTS(slots, cursor, work, canvas);
-  sheet = slots[HEAP_SLOT_BATTLE_SHEET - HEAP_SLOT_BATTLE_EFFECT];
+  sheet = slots[HEAP_SLOT_BATTLE_SHEET - HEAP_SLOT_BATTLE_ANIM];
   orgX = x;
   x += 40 << 16;
   x /= 2;
@@ -286,11 +286,11 @@ void BattleEffect_RunImpactBurst(s32 formation, s32 x, s32 y) {
   REG_BG2X = 0;
   REG_BLDCNT =
       BLDCNT_TGT1_BG1 | BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
-  EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER, EFFECT_CLIP_BOUNDS, COMPOSITE_MAX);
-  maxBlend = slots[HEAP_SLOT_BLITTER - HEAP_SLOT_BATTLE_EFFECT];
-  EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER_ALTERNATE, EFFECT_CLIP_BOUNDS,
+  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, COMPOSITE_MAX);
+  maxBlend = slots[HEAP_SLOT_RAM_CODE - HEAP_SLOT_BATTLE_ANIM];
+  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, EFFECT_CLIP_BOUNDS,
                       COMPOSITE_ADDITIVE);
-  additive = slots[HEAP_SLOT_BLITTER_ALTERNATE - HEAP_SLOT_BATTLE_EFFECT];
+  additive = slots[HEAP_SLOT_RAM_CODE_2 - HEAP_SLOT_BATTLE_ANIM];
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_FlareSheet, work->sheet, 1, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_FlareImage,
@@ -341,9 +341,9 @@ void BattleEffect_RunImpactBurst(s32 formation, s32 x, s32 y) {
   // the fragments tumble until frame 63.
   for (frame = 0; frame != IMPACT_BURST_FRAMES; frame++) {
     if (frame == 4)
-      AudioCommand_PlayFar(SE_CAST);
+      Sound_PlaySongFar(SE_CAST);
     if (frame == 32)
-      AudioCommand_PlayFar(SE_212);
+      Sound_PlaySongFar(SE_212);
 
     // The flash: its first picture until frame 12, then the next every five
     // frames, eight in all.
@@ -437,7 +437,7 @@ void BattleEffect_RunImpactBurst(s32 formation, s32 x, s32 y) {
   }
 
   // Clear the canvas in VRAM (character block 1), so nothing is left on BG2.
-  Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
+  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   Iwram_ClearWords(BG_CHAR_BLOCK(1), CANVAS_BYTES);
   EFFECT_RELEASE_BLITTERS();
 }

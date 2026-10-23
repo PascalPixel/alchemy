@@ -43,7 +43,7 @@ void BattleEffect_RunAnnihilation(struct BattleEffectArgument *effect) {
   s32 size;
   u8 *burstPixels;
 
-  slots = &gWorkSlot[HEAP_SLOT_BATTLE_EFFECT];
+  slots = &gHeapSlots[HEAP_SLOT_BATTLE_ANIM];
   cursor = slots;
   EFFECT_GET_WORK_AND_CANVAS(cursor, work, canvas);
   particleSheet = EFFECT_SLOT(slots, HEAP_SLOT_BATTLE_SHEET);
@@ -79,35 +79,34 @@ void BattleEffect_RunAnnihilation(struct BattleEffectArgument *effect) {
   } while (i != 64);
 
   EffectPosition_ProjectScaledBattler(work->effect->actors[0], &origin);
-  Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer,
-                                EFFECT_CALLBACK_ORDER);
+  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, EFFECT_CALLBACK_ORDER);
   EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, 75);
 
   for (frame = 0; frame != ANNIHILATION_FRAMES; frame++) {
     if (frame == 8)
       EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
     if (work->effect->variant != EFFECT_VARIANT_BASIC && frame == 8)
-      AudioCommand_PlayFar(SE_212);
+      Sound_PlaySongFar(SE_212);
     EffectPosition_ProjectScaledBattler(work->effect->actor, &position);
     // The fire streak, one picture a frame in front of the user, drawn
     // additively and mirrored for side 1 with a blitter made for this one
     // drawing.
     if (frame >= 6 && frame <= 11) {
       if (work->effect->side == 0)
-        EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER, EFFECT_CLIP_BOUNDS,
+        EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                             COMPOSITE_ADDITIVE);
       else
-        EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER,
+        EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
                             EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
                             COMPOSITE_ADDITIVE);
-      blitters[0] = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER];
+      blitters[0] = (DrawRectangle)gHeapSlots[HEAP_SLOT_RAM_CODE];
       if (work->effect->side == 0)
         blitters[0](canvas, work->sheet + (frame - 6) * (48 * 72),
                     position.x / 2 - 24, position.y - 24, 48, 72);
       else
         blitters[0](canvas, work->sheet + (frame - 6) * (48 * 72),
                     position.x / 2, position.y - 24, 48, 72);
-      Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
+      FreeHeapSlot(HEAP_SLOT_RAM_CODE);
     }
     // The fire burst over the target grows a step every two frames up to
     // the third (frame 20) and holds it to frame 47; a nonzero variant takes
@@ -116,8 +115,9 @@ void BattleEffect_RunAnnihilation(struct BattleEffectArgument *effect) {
       s32 step = (frame - 16) / 2;
       s32 strip;
 
-      EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER, EFFECT_CLIP_BOUNDS, COMPOSITE_MAX);
-      blitters[0] = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER];
+      EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
+                          COMPOSITE_MAX);
+      blitters[0] = (DrawRectangle)gHeapSlots[HEAP_SLOT_RAM_CODE];
       if (step > 2)
         step = 2;
       // Each strip holds three 40x80 pictures.
@@ -131,7 +131,7 @@ void BattleEffect_RunAnnihilation(struct BattleEffectArgument *effect) {
       // XXX: why it waits, as nothing here depends on the time; the Lost
       // Age's Annihilation would show whether it is a leftover.
       BattleEffect_CallDoNothing(10000);
-      Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
+      FreeHeapSlot(HEAP_SLOT_RAM_CODE);
     }
     // The strike fills the canvas with level 63, a flash that the transfer
     // then fades.
@@ -179,7 +179,7 @@ void BattleEffect_RunAnnihilation(struct BattleEffectArgument *effect) {
     Camera_ApplyShake(16, 16);
     EFFECT_END_FRAME(work);
   }
-  Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
+  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   BattleEffect_EndCanvasLayer();
 }
 

@@ -6,8 +6,8 @@
 	.set import.CalculateFacingAngle, 1
 	.set import.Engine_MathSin, 1
 	.set import.Engine_MathCos, 1
-	.set import.Runtime_AllocateHeapBlock, 1
-	.set import.Runtime_ReleaseHeapBlock, 1
+	.set import.AllocHeapSlot, 1
+	.set import.FreeHeapSlot, 1
 	.set import.Engine_VramLoad, 1
 	.set import.Engine_ObjectSetScript, 1
 	.set import.Engine_ObjectCreate, 1
@@ -21,7 +21,7 @@
 	.set import.UiTextResource_SetPosition, 1
 	.set import.UiTextResource_Release, 1
 	.set import.Ui_PrepareTransferForItem, 1
-	.set import.SaveState_CountRecordsExcludingFlagged, 1
+	.set import.Save_CountRecordsExcludingFlagged, 1
 	.set import.Engine_GameFlagIsSet, 1
 	.set import.Engine_GameFlagSet, 1
 	.set import.Engine_GameFlagClear, 1

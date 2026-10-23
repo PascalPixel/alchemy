@@ -37,7 +37,7 @@ extern char ResourceId_NintendoLogo; ///< Shown first by Title_ShowSplashScreen.
 /// cycles.
 extern char ResourceId_CamelotLogo;
 /// The title picture on BG2, loaded by Title_LoadBackground and, for the save
-/// menu, by Clear_LoadBackground.
+/// menu, by MainMenu_LoadBackground.
 extern char ResourceId_GoldenSunLogo;
 /// The still world map WorldMap_Show shows for a
 /// FIELD_EVENT_WORLD_MAP_PICTURE event; it loads this one whatever picture
@@ -124,14 +124,14 @@ extern char ResourceId_DesertBackdrop;
 extern char ResourceId_DuskCloudsBackdrop;
 extern char ResourceId_AerialViewBackdrop; ///< Drawn only by Judgment.
 
-/// The slot machine's frame (ReelGame_Run): 16 colours for BG palette 10, then
-/// the picture.
-extern char ResourceId_SlotsFramePicture;
+/// The slot machine's frame (LuckyWheels_Run): 16 colours for BG palette 10,
+/// then the picture.
+extern char ResourceId_LuckyWheelsFramePicture;
 /// The reels' symbol sprites: 480 bytes of sprite colours, then the
 /// compressed tiles.
-extern char ResourceId_SlotsIcons;
+extern char ResourceId_LuckyWheelsIcons;
 /// The jackpot sprites, with their colours for sprite palette 15.
-extern char ResourceId_SlotsJackpot;
+extern char ResourceId_LuckyWheelsJackpot;
 /// The Lucky Dice board, with its colours, on the background (LuckyDice_Run).
 extern char ResourceId_LuckyDiceBoard;
 /// The Lucky Dice sprites and their colours.

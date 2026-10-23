@@ -33,8 +33,8 @@ void BattleMotion_ReturnToSpot(s32 unitId) {
   object->autoFaceMotion = stopped;
   object->snapToTarget = 1;
   ObjectDispatch_StartIdleFar((struct DispatchObject *)object);
-  Object_SetMoveTargetFar((struct ObjectRuntime *)object, battleObject->anchorX,
-                          0, battleObject->anchorZ);
+  Object_SetMoveTargetFar((struct Object *)object, battleObject->anchorX, 0,
+                          battleObject->anchorZ);
   // z / 8, rounded toward zero, as BattleObject_Make turns a new object.
   z = battleObject->anchorZ;
   if (z < 0)
@@ -58,8 +58,8 @@ void BattleMotion_SetupEscapeObject(s32 unitId) {
   object->verticalMotionPhase = 0;
   object->autoFaceMotion = 0;
   ObjectDispatch_StartIdleFar((struct DispatchObject *)object);
-  Object_SetMoveTargetFar((struct ObjectRuntime *)object,
-                          battleObject->anchorX * 3, 0, battleObject->anchorZ);
+  Object_SetMoveTargetFar((struct Object *)object, battleObject->anchorX * 3, 0,
+                          battleObject->anchorZ);
   ObjectDispatch_SelectAnimationFar(object, POSE_STANDING);
 }
 
@@ -91,7 +91,7 @@ void BattleMotion_InterpolatePosition(struct BattleObject *startSlot,
   start->verticalMotionStrength = 0xab85;
   start->verticalMotionPhase = 0;
   start->autoFaceMotion = 1;
-  Object_SetMoveTargetFar((struct ObjectRuntime *)start, x, 0, startZ + zStep);
+  Object_SetMoveTargetFar((struct Object *)start, x, 0, startZ + zStep);
   ObjectDispatch_SelectAnimationFar(start, POSE_LEAP);
 }
 
@@ -104,8 +104,8 @@ void BattleMotion_SetObjectPosition(struct BattleObject *battleObject) {
   object->verticalMotionStrength = 0xab85;
   object->verticalMotionPhase = 0;
   object->autoFaceMotion = 0;
-  Object_SetMoveTargetFar((struct ObjectRuntime *)object, battleObject->anchorX,
-                          0, battleObject->anchorZ);
+  Object_SetMoveTargetFar((struct Object *)object, battleObject->anchorX, 0,
+                          battleObject->anchorZ);
 }
 
 /// Sends unitId hopping out to one and a half times its spot's
@@ -127,7 +127,7 @@ void BattleMotion_ResetObjectAtScaledAnchor(s32 unitId) {
   ObjectDispatch_StartIdleFar((struct DispatchObject *)object);
   // anchorX * 3 / 2, rounded toward zero.
   scaledX = battleObject->anchorX * 3;
-  Object_SetMoveTargetFar((struct ObjectRuntime *)object,
+  Object_SetMoveTargetFar((struct Object *)object,
                           (s32)(scaledX + (scaledX >> 0x1F)) >> 1, 0,
                           battleObject->anchorZ);
 }
@@ -146,7 +146,7 @@ void BattleMotion_InitializeObject(s32 unitId) {
   object->verticalMotionPhase = 0;
   object->autoFaceMotion = 0;
   ObjectDispatch_StartIdleFar((struct DispatchObject *)object);
-  Object_SetMoveTargetFar((struct ObjectRuntime *)object,
+  Object_SetMoveTargetFar((struct Object *)object,
                           Iwram_MulQ16(battleObject->anchorX, 0x14ccc), 0,
                           battleObject->anchorZ);
   ObjectDispatch_SelectAnimationFar(object, POSE_DAMAGE);
@@ -177,7 +177,7 @@ void BattleMotion_ApplyVariantMotion(s32 unitId, s32 variant) {
     ObjectDispatch_StartIdleFar((struct DispatchObject *)object);
     anchorX = battleObject->anchorX;
     targetX = (anchorX * gBattleMotion_VariantDistancePercent[variant]) / 100;
-    Object_SetMoveTargetFar((struct ObjectRuntime *)object, targetX, 0,
+    Object_SetMoveTargetFar((struct Object *)object, targetX, 0,
                             battleObject->anchorZ);
   }
   ObjectDispatch_SelectAnimationFar(object, POSE_DAMAGE);
@@ -224,7 +224,7 @@ void BattleMotion_ApproachTarget(s32 actorId, s32 targetId, s32 travelDivisor,
   object->verticalMotionStrength = 0xab85;
   object->autoFaceMotion = 1;
   ObjectDispatch_StartIdleFar((struct DispatchObject *)object);
-  Object_SetMoveTargetFar((struct ObjectRuntime *)object, x, 0, z);
+  Object_SetMoveTargetFar((struct Object *)object, x, 0, z);
   ObjectDispatch_SelectAnimationFar(object, POSE_LEAP);
 }
 
@@ -294,8 +294,8 @@ void BattleMotion_SpawnSlotEffectAndWait(s32 unitId) {
   s32 effectHandle;
 
   object = BattleObject_Get(unitId)->object;
-  if ((object != NULL) &&
-      ((RECORDS_KIND_MASK & object->recordStorageKind) == RECORDS_SINGLE)) {
+  if ((object != NULL) && ((OBJECT_SPRITES_KIND_MASK & object->spritesKind) ==
+                           OBJECT_SPRITES_ONE)) {
     effectHandle =
         ResourceMetadata_RegisterFar(object->records, HIT_FLASH_ANIMATION);
     if (effectHandle != 0) {

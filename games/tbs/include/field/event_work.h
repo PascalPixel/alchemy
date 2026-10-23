@@ -11,13 +11,13 @@
 struct ObjectEventTemplate;
 struct MapEvent;
 struct ObjectEvent;
-struct ObjectRuntime;
+struct Object;
 struct MapGridCell;
 
 /// The running map's event work: its object event template and map event
 /// tables, its object events, the triggers and warp it has hit, encounters,
 /// transitions and the message on show. It is struct FieldWork (heap slot 27)
-/// as the maps see it, through gEventWork; each field is the FieldWork field at
+/// as the maps see it, through gFieldWork; each field is the FieldWork field at
 /// its offset.
 struct EventWork {
   struct ObjectEventTemplate

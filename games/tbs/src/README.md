@@ -149,10 +149,10 @@ Each map's people, scripts and cutscenes are code that is needed only while
 the party is there, so it is kept apart from the main image as an overlay,
 packed on the cartridge and unpacked into one 32 KB area of EWRAM when the
 party arrives ([Engine](../engine.md#overlays)). The map table,
-`gField_MapTable` in [field/maps.s](field/maps.s), has 201 maps, and the
+`gMapHeaders` in [field/maps.s](field/maps.s), has 201 maps, and the
 rooms of one dungeon often share one overlay. `Map_LoadOverlay`
 ([object/object/map.c](object/object/map.c)) unpacks the overlay a map's row
-names before `Field_RunMap` runs it; a battle or a minigame is main-image
+names before `Map_Run` runs it; a battle or a minigame is main-image
 code and loads none.
 
 In the source an overlay is three files in its folder:

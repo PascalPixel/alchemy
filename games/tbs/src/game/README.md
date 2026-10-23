@@ -260,7 +260,7 @@ the party enters a map, and a map section's, cleared when it enters another
 
 Flags `FLAG_DJINN_FIRST` (48) to 127 are the Djinn's found flags, Djinni n of
 element e being flag `FLAG_DJINN_FIRST` + 20 × e + n. The save summary counts
-how many are set (`SaveState_BuildSummaryHeader`), and the title screen
+how many are set (`Save_BuildFileSummary`), and the title screen
 offers its Battle command only when some save file has found a Djinni
 (`gTitleExtraOptionEnabled`).
 

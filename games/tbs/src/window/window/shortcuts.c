@@ -5,7 +5,7 @@
 #include "../window_internal.h"
 
 /// The area name notice's fields, which live in the event work block
-/// (gEventWork, a map's work), for as long as the map runs.
+/// (gFieldWork, a map's work), for as long as the map runs.
 struct TimedNoticeWork {
   u8 eventWork[0x230];     ///< the event work's other fields
   struct UiWindow *window; ///< the notice's window; it may since have closed
@@ -26,7 +26,7 @@ void UiTimedNotice_Create(void) {
   s32 areaMessage;
   struct UiWindow *nameWindow;
 
-  notice = (struct TimedNoticeWork *)gEventWork;
+  notice = (struct TimedNoticeWork *)gFieldWork;
   x = 8;
   y = 8;
   areaMessage = MapSec_GetNameIndexFar(gGameState.mapId, gGameState.warpDest) +
@@ -38,7 +38,7 @@ void UiTimedNotice_Create(void) {
   notice->window = nameWindow;
   UiText_DrawResource(areaMessage, nameWindow, 0, 0);
   notice->countdown = UI_AREA_NOTICE_FRAMES;
-  Scheduler_AddOrUpdateCallback(UiTimedNotice_Tick, 0xc80);
+  Task_Add(UiTimedNotice_Tick, 0xc80);
 }
 
 /// Counts the area name down, and closes it at 0.
@@ -46,12 +46,12 @@ void UiTimedNotice_Tick(void) {
   struct TimedNoticeWork *notice;
   u16 framesLeft;
 
-  notice = (struct TimedNoticeWork *)gEventWork;
+  notice = (struct TimedNoticeWork *)gFieldWork;
   // Adding 0xffff takes one off in 16 bits.
   notice->countdown = (framesLeft = notice->countdown + 0xffff);
   if ((framesLeft << 16) == 0) {
     UiWork_Finalize(notice->window, 2);
-    Scheduler_RemoveCallback(UiTimedNotice_Tick);
+    Task_Remove(UiTimedNotice_Tick);
   }
 }
 
@@ -59,10 +59,10 @@ void UiTimedNotice_Tick(void) {
 void UiTimedNotice_CloseIfActive(void) {
   struct UiWindow *window;
 
-  window = ((struct TimedNoticeWork *)gEventWork)->window;
+  window = ((struct TimedNoticeWork *)gFieldWork)->window;
   if (window != NULL && window->flags != 0) {
     UiWork_Finalize(window, 2);
-    Scheduler_RemoveCallback(UiTimedNotice_Tick);
+    Task_Remove(UiTimedNotice_Tick);
   }
 }
 
@@ -91,7 +91,7 @@ UNUSED void OptionMenu_StepWindowHue(s32 keys) {
 }
 
 /// A Psynergy the debug shortcut picker lists: its owner and the Psynergy.
-/// The picker's list is a MemAlloc block of 448 of them.
+/// The picker's list is a Alloc block of 448 of them.
 struct AbilityListEntry {
   u16 owner;   ///< the party member's unit id
   u16 ability; ///< the action id (10 bits in a shortcut)
@@ -125,7 +125,7 @@ void Debug_SelectAbilityPair(void) {
   // 0x700 bytes hold 448 entries, as many as Menu_FindShortcutEntries
   // searches. Units 0, 1, 2 and 5 are first taught action 140, unit 2 also
   // 141 and 78, and unit 3 action 93.
-  list = MemAlloc(0x700);
+  list = Alloc(0x700);
   Unit_LearnPsynergyFar(0, 140);
   Unit_LearnPsynergyFar(1, 140);
   Unit_LearnPsynergyFar(2, 140);
@@ -194,7 +194,7 @@ void Debug_SelectAbilityPair(void) {
       }
       WaitFrames(1);
       if (gKeysRepeat & KEY_LEFT) {
-        AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
+        Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
         if (row != 0)
           second--;
         else
@@ -202,7 +202,7 @@ void Debug_SelectAbilityPair(void) {
         redraw = 1;
       }
       if (gKeysRepeat & KEY_RIGHT) {
-        AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
+        Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
         if (row != 0)
           second++;
         else
@@ -210,21 +210,21 @@ void Debug_SelectAbilityPair(void) {
         redraw = 1;
       }
       if (gKeysRepeat & KEY_UP) {
-        AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
+        Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
         row--;
         redraw = 1;
       }
       if (gKeysRepeat & KEY_DOWN) {
-        AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
+        Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
         row++;
         redraw = 1;
       }
       if (gKeysPressed & KEY_A)
-        AudioCommand_PlayFar(SE_MENU_CONFIRM);
+        Sound_PlaySongFar(SE_MENU_CONFIRM);
       else if (gKeysPressed & KEY_B)
-        AudioCommand_PlayFar(SE_MENU_CANCEL);
+        Sound_PlaySongFar(SE_MENU_CANCEL);
       else if (gKeysPressed & KEY_START)
-        AudioCommand_PlayFar(SE_MENU_CANCEL);
+        Sound_PlaySongFar(SE_MENU_CANCEL);
       else
         continue;
       /* FAKEMATCH(dead): an unread flag, which forces fresh zeros for both
@@ -244,7 +244,7 @@ void Debug_SelectAbilityPair(void) {
     UiWork_Finalize(info, 1);
     WaitFrames(1);
   }
-  MemFree(list);
+  Free(list);
 }
 
 /// Lists every Psynergy of the party's active members as (owner, Psynergy)
@@ -337,7 +337,7 @@ UNUSED void Menu_AllocateSelectionWorkspace(void) {
   struct SelectionWorkspace *work;
   u32 zero;
 
-  work = Runtime_AllocateBlock(HEAP_SLOT_SELECTION_WORKSPACE, 0x1004);
+  work = AllocHeapSlotEwram(HEAP_SLOT_SELECTION_WORKSPACE, 0x1004);
   zero = 0;
   work->firstActive = zero;
   work->secondActive = zero;
@@ -359,5 +359,5 @@ UNUSED void Menu_ReleaseSelectionWorkspace(void) {
   if (state->secondActive != 0) {
     Resource_ResetEntry(state->secondResource);
   }
-  Runtime_ReleaseHeapBlock(HEAP_SLOT_SELECTION_WORKSPACE);
+  FreeHeapSlot(HEAP_SLOT_SELECTION_WORKSPACE);
 }

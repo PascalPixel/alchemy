@@ -18,7 +18,7 @@
 #define IwramRatioMulQ14                                                       \
   IWRAM_ENTRY(s32 (*)(s32 divisor, s32 value), Iwram_RatioMulQ14Offset)
 
-extern struct ScriptMotionObject *gObjectSlots;
+extern struct ScriptMotionObject *gObjects;
 
 // Far-call stubs copied to RAM together with this code (updfar.s).
 s32 ArcTan2FarArm(s32 z, s32 x);
@@ -52,7 +52,7 @@ void Object_UpdateAll(void) {
   s32 turnDelta;
   u16 travelAngle;
 
-  for (slot = 0, object = gObjectSlots; slot < OBJECT_SLOTS;
+  for (slot = 0, object = gObjects; slot < OBJECT_SLOTS;
        slot = nextSlot, object = nextObject) {
     nextSlot = slot + 1;
     nextObject = object + 1;

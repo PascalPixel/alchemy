@@ -147,7 +147,7 @@ void BattleEffect_RunTargetStrike(struct BattleEffectArgument *effect,
   DrawRectangle *lower;
 
   EFFECT_GET_SLOTS(slots, cursor, work, canvas);
-  lower = (DrawRectangle *)&EFFECT_SLOT(slots, HEAP_SLOT_BLITTER_ALTERNATE);
+  lower = (DrawRectangle *)&EFFECT_SLOT(slots, HEAP_SLOT_RAM_CODE_2);
   particleSheet = EFFECT_SLOT(slots, HEAP_SLOT_BATTLE_SHEET);
   camera = EFFECT_SLOT(slots, HEAP_SLOT_CAMERA);
   work->effect = effect;
@@ -285,32 +285,32 @@ void BattleEffect_RunTargetStrike(struct BattleEffectArgument *effect,
         // so the sweep crosses the centre; mirrored when the targets are the
         // party, its right edge stands as far to the left.
         if (work->effect->side == 1) {
-          EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER,
+          EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
                               EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
                               COMPOSITE_MAX);
-          EFFECT_BLITTERS[HEAP_SLOT_BLITTER](
+          EFFECT_BLITTERS[HEAP_SLOT_RAM_CODE](
               canvas, work->sheet + gTargetStrike_Offsets[picture],
               targetPosition.x / 2 - (gTargetStrike_Reach[picture] / 2) -
                   gTargetStrike_Widths[picture] + 8,
               targetPosition.y - (gTargetStrike_Heights[picture] / 2),
               gTargetStrike_Widths[picture], gTargetStrike_Heights[picture]);
         } else {
-          EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER, EFFECT_CLIP_BOUNDS,
+          EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                               COMPOSITE_MAX);
-          EFFECT_BLITTERS[HEAP_SLOT_BLITTER](
+          EFFECT_BLITTERS[HEAP_SLOT_RAM_CODE](
               canvas, work->sheet + gTargetStrike_Offsets[picture],
               targetPosition.x / 2 + (gTargetStrike_Reach[picture] / 2) - 8,
               targetPosition.y - (gTargetStrike_Heights[picture] / 2),
               gTargetStrike_Widths[picture], gTargetStrike_Heights[picture]);
         }
-        Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
+        FreeHeapSlot(HEAP_SLOT_RAM_CODE);
         if (frame %
                 (TARGET_STRIKE_VALUE(mode, TARGET_STRIKE_IMAGE_FRAMES) * 6) ==
             TARGET_STRIKE_VALUE(mode, TARGET_STRIKE_IMAGE_FRAMES) * 4) {
           if (mode == TARGET_STRIKE_STYLE_MARS_HEAVY_SLASH) {
             EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
           } else {
-            AudioCommand_PlayFar(SE_IMPACT);
+            Sound_PlaySongFar(SE_IMPACT);
             EFFECT_SHOW_DAMAGE(SE_IMPACT);
           }
           // A heavy hit lights every spark at once; otherwise the hit
@@ -373,19 +373,19 @@ void BattleEffect_RunTargetStrike(struct BattleEffectArgument *effect,
       } else {
         stage = 3;
       }
-      EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER, EFFECT_CLIP_BOUNDS,
+      EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                           TARGET_STRIKE_VALUE(mode, TARGET_STRIKE_COMPOSITE));
-      EFFECT_BLITTERS[HEAP_SLOT_BLITTER](
+      EFFECT_BLITTERS[HEAP_SLOT_RAM_CODE](
           canvas, work->sheet + stage * (18 * 48) + 0xc80,
           targetPosition.x / 2 - 18, 56, 18, 48);
-      Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
-      EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER,
+      FreeHeapSlot(HEAP_SLOT_RAM_CODE);
+      EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
                           EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
                           TARGET_STRIKE_VALUE(mode, TARGET_STRIKE_COMPOSITE));
-      EFFECT_BLITTERS[HEAP_SLOT_BLITTER](
+      EFFECT_BLITTERS[HEAP_SLOT_RAM_CODE](
           canvas, work->sheet + stage * (18 * 48) + 0xc80, targetPosition.x / 2,
           56, 18, 48);
-      Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
+      FreeHeapSlot(HEAP_SLOT_RAM_CODE);
       if (frame % (TARGET_STRIKE_VALUE(mode, TARGET_STRIKE_IMAGE_FRAMES) * 4) ==
           TARGET_STRIKE_VALUE(mode, TARGET_STRIKE_IMAGE_FRAMES) * 3) {
         // A hit: the target flashes; the last hit lets the battle show the
@@ -402,7 +402,7 @@ void BattleEffect_RunTargetStrike(struct BattleEffectArgument *effect,
                         TARGET_STRIKE_VALUE(mode, TARGET_STRIKE_IMAGE_FRAMES))
           EFFECT_SHOW_DAMAGE(SE_IMPACT);
         else
-          AudioCommand_PlayFar(SE_IMPACT);
+          Sound_PlaySongFar(SE_IMPACT);
         for (i = 0; i != 64; i++) {
           struct EffectStep *step =
               &TARGET_STRIKE_SPARKS[frame /
@@ -456,21 +456,21 @@ void BattleEffect_RunTargetStrike(struct BattleEffectArgument *effect,
             (gBattleEffect_GlintCellWidths[image] / 2);
         y = targetPosition.y - (Trig_Cos(angle) * (radius + 4) >> 17) -
             (gBattleEffect_GlintCellHeights[image] / 2);
-        EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER_ALTERNATE,
+        EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
                             gTargetStrike_GlintDrawFlags[Random16() & 3] |
                                 EFFECT_CLIP_BOUNDS,
                             COMPOSITE_ADDITIVE);
         (*lower)(canvas, work->sheet + gBattleEffect_GlintCells[image], x, y,
                  gBattleEffect_GlintCellWidths[image],
                  gBattleEffect_GlintCellHeights[image]);
-        Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
+        FreeHeapSlot(HEAP_SLOT_RAM_CODE_2);
       }
     }
 
     EFFECT_VIEW_FROM_CAMERA(camera);
-    EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER, EFFECT_CLIP_BOUNDS, COMPOSITE_MAX);
-    draw[0] = EFFECT_BLITTERS[HEAP_SLOT_BLITTER];
-    EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER_ALTERNATE, EFFECT_CLIP_BOUNDS,
+    EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, COMPOSITE_MAX);
+    draw[0] = EFFECT_BLITTERS[HEAP_SLOT_RAM_CODE];
+    EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, EFFECT_CLIP_BOUNDS,
                         COMPOSITE_ADDITIVE);
     draw[1] = *lower;
     // DEAD: runs once, for the user only; the ROM keeps the loop.
@@ -561,7 +561,7 @@ void BattleEffect_RunTargetStrike(struct BattleEffectArgument *effect,
   }
 
   // Finish: the blitters were freed each frame.
-  Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
+  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   BattleEffect_EndCanvasLayer();
 }
 

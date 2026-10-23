@@ -37,7 +37,7 @@ void Colosso_FadeInWarrior(s32 id, s32 x, s32 z) {
   struct AnimationObject *sprite;
   s32 i;
 
-  system = gMenuCtrlWork;
+  system = gObjectSystemWork;
   objectEvent = ObjectEvent_GetById(id);
   system->edge = 1;
   system->fill = 4;
@@ -89,7 +89,7 @@ void Colosso_RestoreWarrior(s32 id) {
   s32 zero;
   u8 *control;
 
-  system = gMenuCtrlWork;
+  system = gObjectSystemWork;
   objectEvent = ObjectEvent_GetById(id);
   if (gGameState.movementMode == 1) {
     gGameState.movementMode = 0;
@@ -118,7 +118,7 @@ void Colosso_RestoreWarrior(s32 id) {
   objectEvent->motionFlags = 3;
   objectEvent->terrainId = 0;
   objectEvent->y.fixed = zero;
-  ((struct ObjectRuntime *)objectEvent)->terrainHeight = zero;
+  ((struct Object *)objectEvent)->terrainHeight = zero;
   Engine_ObjectEventSetSpriteFlags(objectEvent, SPRITE_FLAG_SHADOW);
   ObjectEvent_SetMode(objectEvent, 0);
   ObjectEvent_SetMode(objectEvent, 1);
@@ -285,7 +285,7 @@ void Colosso_WalkObjectEventToAndStand(s32 localId, s32 x, s32 z) {
     ObjectEvent_SetMode(objectEvent, 5);
     Engine_ObjectSetPosition(objectEvent, x << 16, objectEvent->y.fixed,
                              z << 16);
-    FieldObject_WaitForMove(objectEvent);
+    Object_WaitForMove(objectEvent);
     ObjectEvent_SetMode(objectEvent, 1);
   }
 }

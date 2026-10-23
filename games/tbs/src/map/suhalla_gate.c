@@ -250,10 +250,10 @@ static void EventScript_EnterHouse(void) {
   s32 warpTrigger;
   s32 cellSize;
 
-  warpTrigger = gEventWork->touchedTrigger;
+  warpTrigger = gFieldWork->touchedTrigger;
   ObjectEvent_Get(LOCALID_PARTY_LEADER)->motionFlags = 0;
   cellSize = 2;
-  Script_PlayCue(SE_DOOR_OPEN);
+  Script_PlaySong(SE_DOOR_OPEN);
   MapGrid_CopyCellsTo(66, 36, 71, 8, cellSize, cellSize);
   Engine_TaskWait(4);
   MapGrid_CopyCellsTo(68, 36, 71, 8, cellSize, cellSize);
@@ -267,7 +267,7 @@ static void EventScript_EnterHouse(void) {
 /// or the east one (SUHALLA_GATE_CHECKPOINT_TO_WORLD_MAP_EAST), forgetting the
 /// side it came in by.
 static void EventScript_LeaveForWorldMap(void) {
-  s16 warpTrigger = gEventWork->touchedTrigger;
+  s16 warpTrigger = gFieldWork->touchedTrigger;
 
   Engine_AudioPlayCue(SE_MAP_EXIT);
   Engine_GameFlagClear(FLAG_SUHALLA_GATE_ENTERED_FROM_SOUTH);
@@ -369,7 +369,7 @@ static void EventScript_IodemQuestionsGuards(void) {
     Engine_ScriptWait(40);
     Script_ShowMessageAndWait(LOCALID_IODEM, 0, 10);
   } else {
-    gEventWork->message += 1;
+    gFieldWork->message += 1;
   }
   ObjectEvent_FaceDirection(LOCALID_IODEM, FACING_SOUTH + FACING_STEP, 10);
   Script_ShowMessageAndWait(LOCALID_IODEM, 0, 40);
@@ -445,7 +445,7 @@ static void EventScript_TalkToEastGuard(void) {
                                             ANIMATION_SHAKE_HEAD);
       Engine_ScriptShowMessage(LOCALID_EAST_GUARD, 0);
     } else {
-      gEventWork->message += 2;
+      gFieldWork->message += 2;
       Engine_ScriptShowMessage(LOCALID_EAST_GUARD, 0);
     }
   }

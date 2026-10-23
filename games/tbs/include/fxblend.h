@@ -9,7 +9,7 @@
 
 /// The storm's lightning work: the colours it flashes between and their
 /// difference, the countdown to the next flash and whether the thunder is
-/// loud. It is heap slot HEAP_SLOT_FIELD_BLEND (gFieldBlendWork), which the
+/// loud. It is heap slot HEAP_SLOT_LIGHTNING (gLightningWork), which the
 /// lightning and FieldEffect_StartBufferBlend take.
 struct FieldBlendWork {
   /// The storm's dark colours (PALETTE_TRANSFORM_WARM), as the colour buffer's

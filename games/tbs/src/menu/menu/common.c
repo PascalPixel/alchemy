@@ -38,7 +38,7 @@
 /// and as ItemMenu_Run (TBS_PATCH_1) and PsynergyMenu_Run (TBS_PATCH_2) close.
 /// Returns nothing useful; callers ignore the value.
 s32 Menu_ResumeFieldTasks(void) {
-  Scheduler_ResumeOverlayTasks();
+  Task_ResumeOverlayTasks();
   TileAnimation_ResumeFar();
   // FLAG_WEATHER_HELD freezes the field weather: its particles hold
   // their frame and the storm's lightning waits (psynergy_effects/weather.c).
@@ -53,13 +53,13 @@ s32 Menu_ResumeFieldTasks(void) {
 /// Suspends the overlay tasks and tile animations while a menu is open, and
 /// sets FLAG_PALETTE_BLEND_HELD and FLAG_WEATHER_HELD, so that the field's
 /// palette blend and weather stand still behind it (see Menu_ResumeFieldTasks,
-/// which undoes it). Returns Scheduler_SuspendOverlayTasks' result, the last
+/// which undoes it). Returns Task_SuspendOverlayTasks' result, the last
 /// task index changed or -1; callers ignore it.
 s32 Menu_SuspendFieldTasks(void) {
   GameFlag_SetBitFar(FLAG_PALETTE_BLEND_HELD);
   GameFlag_SetBitFar(FLAG_WEATHER_HELD);
   TileAnimation_SuspendFar();
-  return Scheduler_SuspendOverlayTasks();
+  return Task_SuspendOverlayTasks();
 }
 
 /// Clears the whole menu work and sets its defaults: no pane selected, one
@@ -67,7 +67,7 @@ s32 Menu_SuspendFieldTasks(void) {
 /// it once the menu work's heap block is allocated, so every window handle and
 /// icon pointer in the work starts as NULL.
 void UiWindow_InitializeWork(s32 unused) {
-  struct InventoryMenuState *work = gMenuWork;
+  struct ItemMenuWork *work = gMenuWork;
 
   Dma_Fill32(0, work, MENU_WORK_SIZE);
   work->paneIndex[0] = -1;
@@ -132,7 +132,7 @@ void Menu_DrawOwnerStatusPanel(struct UiWindow *unused, s32 owner, s32 slot,
   s32 created;
   struct ItemDefinition *def;
   u32 item;
-  struct InventoryMenuState *menu;
+  struct ItemMenuWork *menu;
   struct BattleUnit *unit;
   struct UiWindow *window;
   s32 ailmentRows;
@@ -223,7 +223,7 @@ void Menu_DrawOwnerStatusPanel(struct UiWindow *unused, s32 owner, s32 slot,
     // Equip (or, previewing a removal, unequip) the item on the real unit,
     // recalculate its stats, show them against the saved copy, then put the
     // unit back as it was.
-    backup = MemAlloc(sizeof(struct BattleUnit));
+    backup = Alloc(sizeof(struct BattleUnit));
     Owner_Copy(backup, unit);
     if (menu->equipPreview)
       unit->inventory[slot] &= ~INVENTORY_EQUIPPED;
@@ -232,7 +232,7 @@ void Menu_DrawOwnerStatusPanel(struct UiWindow *unused, s32 owner, s32 slot,
     Unit_CalculateFar(owner);
     UiText_DrawStatComparison(unit, backup, window);
     Owner_Copy(unit, backup);
-    MemFree(backup);
+    Free(backup);
     break;
   }
   case STATUS_PANEL_LEARN: {
@@ -509,7 +509,7 @@ void PsynergyMenu_CallIconRoutineWithValue(const void *unused, s32 unit) {
 /// chooser) pass on to PsynergyMenu_InitializeEntryObjects for the party
 /// figures.
 struct UiWindow *UiMenu_CreateCursor(void *source) {
-  struct PsynergyMenuState *work = source;
+  struct PsynergyMenuWork *work = source;
   struct UiWindow *window;
   s32 zero = 0;
   s32 sentinel;
@@ -546,7 +546,7 @@ struct UiWindow *UiMenu_CreateCursor(void *source) {
 void PsynergyMenu_InitializeEntryObjects(void *source, s32 originX, s32 originY,
                                          s32 spacing, s32 unused) {
   u16 ownerIds[14];
-  struct PsynergyMenuState *menu = gMenuWork;
+  struct PsynergyMenuWork *menu = gMenuWork;
   struct UiWindow *window = source;
   s32 ownerCount = (u16)Party_ListActiveOwnersFar(ownerIds);
   s32 i;
@@ -578,12 +578,12 @@ void PsynergyMenu_InitializeEntryObjects(void *source, s32 originX, s32 originY,
   for (; i < 8; i++) {
     menu->tabObjects[i] = 0;
   }
-  // 200 << 4 is 0xc80, SCHEDULER_KEY_MAIN_LOOP: once a frame in the main
+  // 200 << 4 is 0xc80, TASK_PRIORITY_MAIN_LOOP: once a frame in the main
   // loop, rank 0x80.
   {
     s32 priority = 200;
     priority <<= 4;
-    Scheduler_AddOrUpdateCallback(Menu_UpdateEntryObjectTransforms, priority);
+    Task_Add(Menu_UpdateEntryObjectTransforms, priority);
   }
 }
 
@@ -591,7 +591,7 @@ void PsynergyMenu_InitializeEntryObjects(void *source, s32 originX, s32 originY,
 /// stops their placement callback.
 void Menu_ReleaseEntryObjects(void) {
   u16 ownerIds[14];
-  struct PsynergyMenuState *menu = gMenuWork;
+  struct PsynergyMenuWork *menu = gMenuWork;
   s32 count;
   struct AnimationObject **figures;
   s32 i;
@@ -608,14 +608,14 @@ void Menu_ReleaseEntryObjects(void) {
       }
     } while (--i != 0);
   }
-  Scheduler_RemoveCallback(Menu_UpdateEntryObjectTransforms);
+  Task_Remove(Menu_UpdateEntryObjectTransforms);
 }
 
 /// Scheduler callback: each frame, places every party member sprite created by
 /// PsynergyMenu_InitializeEntryObjects at its menu position and scale, through
 /// the field's projected placement.
 void Menu_UpdateEntryObjectTransforms(void) {
-  struct PsynergyMenuState *menu = gMenuWork;
+  struct PsynergyMenuWork *menu = gMenuWork;
   struct SpriteScale scale;
   struct SpritePlacement position;
   s32 i;
@@ -649,7 +649,7 @@ void Menu_UpdateEntryObjectTransforms(void) {
 /// Places the hand cursor at (xOffset, yOffset) inside the menu's top-left
 /// window, bobbing.
 void UiMenu_PositionCursor(s32 xOffset, s32 yOffset) {
-  struct PsynergyMenuState *work = gMenuWork;
+  struct PsynergyMenuWork *work = gMenuWork;
   struct RenderOutput *cursor = work->paneIcon[0];
 
   cursor->oam.x = cursor->x = gUiMenu_CursorBobX[CURSOR_BOB_STEP()] + xOffset +
@@ -664,7 +664,7 @@ void UiMenu_PositionCursor(s32 xOffset, s32 yOffset) {
 /// after skipSlide is set.
 void UiMenu_SlideCursor(s32 x, s32 y) {
 
-  struct PsynergyMenuState *work = gMenuWork;
+  struct PsynergyMenuWork *work = gMenuWork;
   struct RenderOutput *cursor;
   s32 steps;
   s32 startX;
@@ -736,7 +736,7 @@ void PsynergyMenu_RefreshOwnerEntries(s32 originX, s32 originY, s32 columns) {
   s32 index;
 
   index = 0;
-  slot = ((struct PsynergyMenuState *)gMenuWork)->entryIcons;
+  slot = ((struct PsynergyMenuWork *)gMenuWork)->entryIcons;
   scan = slot;
   do {
     if (*scan++ != NULL) {
@@ -784,7 +784,7 @@ void ItemMenu_RefreshEntry(s32 layout) {
   struct RenderOutput *icon;
   s32 index;
   s32 originY;
-  struct InventoryMenuState *menu;
+  struct ItemMenuWork *menu;
 
   menu = gMenuWork;
   originY = 56;
@@ -812,7 +812,7 @@ void ItemMenu_RefreshEntry(s32 layout) {
 /// selection keeps it instead of drawing the item name); otherwise it waits
 /// for A, B or Start and clears it again.
 void InventoryMenu_ShowModalMessage(s32 message, s32 x, s32 y) {
-  struct InventoryMenuState *menu = gMenuWork;
+  struct ItemMenuWork *menu = gMenuWork;
   struct UiWindow *window;
   s32 height;
   s32 width;
@@ -1002,7 +1002,7 @@ s32 Menu_HandlePageInput(s32 horizontal, s32 count, s32 pageSize, s32 *cursor,
     pageForward = gKeysRepeat & KEY_RIGHT;
   }
   if (horizontal) {
-    AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
+    Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
     if (--*page < 0)
       *page = pages - 1;
     // Past the end of a shorter last page: onto its last entry.
@@ -1016,7 +1016,7 @@ s32 Menu_HandlePageInput(s32 horizontal, s32 count, s32 pageSize, s32 *cursor,
     return result;
   }
   if (pageForward) {
-    AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
+    Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
     if (++*page > pages - 1)
       *page = 0;
     if (*cursor + *page * pageSize > count - 1) {
@@ -1029,7 +1029,7 @@ s32 Menu_HandlePageInput(s32 horizontal, s32 count, s32 pageSize, s32 *cursor,
     return result;
   }
   if (previous) {
-    AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
+    Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
     // Back past the first row wraps to the page's last entry: its last row,
     // or the list's last entry on a shorter last page. The first store is
     // overwritten at once.
@@ -1047,7 +1047,7 @@ s32 Menu_HandlePageInput(s32 horizontal, s32 count, s32 pageSize, s32 *cursor,
   // Forward past the list's last entry or the page's last row wraps to the
   // first row.
   {
-    AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
+    Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
     result = 0;
     if (++*cursor == count - *page * pageSize)
       *cursor = result;
@@ -1200,7 +1200,7 @@ void Palette_CopyObjectBankToBackground14(void) {
 /// and Psynergy lists and the Status screen's lists.
 void Menu_SetPageIcons(s32 pageSize, s32 first, struct UiWindow *window, s32 x,
                        s32 y) {
-  struct InventoryMenuState *menu = gMenuWork;
+  struct ItemMenuWork *menu = gMenuWork;
   struct RenderOutput *icon;
   s32 i;
 
@@ -1258,7 +1258,7 @@ void UiWork_ClearMenuBusy(void) {
 /// Plays cue (a sound or a song) and returns 1. Called by
 /// Ability_PlayUseAnimation, which ignores the value.
 s32 Audio_PlayCueReturnOne(s32 cue) {
-  AudioCommand_PlayFar(cue);
+  Sound_PlaySongFar(cue);
   return 1;
 }
 
@@ -1266,9 +1266,9 @@ s32 Audio_PlayCueReturnOne(s32 cue) {
 /// sets FLAG_MENU_START_PRESSED and removes itself.
 void Menu_CancelSoundTick(void) {
   if (gKeysPressed & KEY_START) {
-    AudioCommand_PlayFar(SE_MENU_CANCEL);
+    Sound_PlaySongFar(SE_MENU_CANCEL);
     GameFlag_SetBitFar(FLAG_MENU_START_PRESSED);
-    Scheduler_RemoveCallback(Menu_CancelSoundTick);
+    Task_Remove(Menu_CancelSoundTick);
   }
 }
 
@@ -1277,14 +1277,14 @@ void Menu_CancelSoundTick(void) {
 /// call it before their command loops and Menu_EnsureCancelSound after them.
 void Menu_CancelSoundReset(void) {
   GameFlag_ClearBitFar(FLAG_MENU_START_PRESSED);
-  // SCHEDULER_KEY_MAIN_LOOP: once a frame in the main loop.
-  Scheduler_AddOrUpdateCallback(Menu_CancelSoundTick, 0xC80);
+  // TASK_PRIORITY_MAIN_LOOP: once a frame in the main loop.
+  Task_Add(Menu_CancelSoundTick, 0xC80);
 }
 
 /// Stops watching for Start, if Start has not removed the watch already.
 void Menu_EnsureCancelSound(void) {
   if (GameFlag_TestFar(FLAG_MENU_START_PRESSED) == 0) {
-    Scheduler_RemoveCallback(Menu_CancelSoundTick);
+    Task_Remove(Menu_CancelSoundTick);
   }
 }
 

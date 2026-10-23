@@ -18,9 +18,9 @@ s32 Object_ClearChildAndCollisionFlags(void *obj) {
 /// action of the way there, so with action 16 it heads for the linked
 /// object itself; closer, it stands (animation 1). Returns 1, so SC_CALL
 /// runs it again every frame until the object event's script is replaced.
-s32 ObjectMotion_MoveTowardTarget(struct ObjectRuntime *object) {
+s32 ObjectMotion_MoveTowardTarget(struct Object *object) {
   s32 step;
-  struct ObjectRuntime *target;
+  struct Object *target;
   s32 deltaX;
   s32 deltaZ;
   s32 pixelsX;
@@ -60,11 +60,11 @@ s32 ObjectMotion_MoveTowardTarget(struct ObjectRuntime *object) {
 /// Script step of action 6: turns the object toward its linked object, at most
 /// 1/16 turn a frame. Returns 1, so SC_CALL runs it again every frame until
 /// the object event's script is replaced.
-s32 ObjectMotion_TurnTowardLinkedTarget(struct ObjectRuntime *object) {
+s32 ObjectMotion_TurnTowardLinkedTarget(struct Object *object) {
   s16 turnStep;
   u16 currentAngle;
   s32 targetAngle;
-  struct ObjectRuntime *target;
+  struct Object *target;
 
   target = object->linkedObject;
   if (target != NULL) {
@@ -90,7 +90,7 @@ s32 ObjectMotion_TurnTowardLinkedTarget(struct ObjectRuntime *object) {
 /// (object/object_events.c), from Map_TalkToObjectEvent after a talk
 /// (object/events.c), from the object event commands and from Lalivero's
 /// interiors (Engine_ObjectEventSetActionCallback).
-void ObjectMotion_SetActionCallback(struct ObjectRuntime *object, s32 action) {
+void ObjectMotion_SetActionCallback(struct Object *object, s32 action) {
   switch (action) {
   case MOVEMENT_TYPE_STAND:
     action = (s32)gObjectMotion_ActionKind1Script;
@@ -109,7 +109,7 @@ void ObjectMotion_SetActionCallback(struct ObjectRuntime *object, s32 action) {
     break;
   case MOVEMENT_TYPE_FACE_LEADER:
     object->linkedObject =
-        (struct ObjectRuntime *)ObjectEvent_GetById(gGameState.selectedLocalId);
+        (struct Object *)ObjectEvent_GetById(gGameState.selectedLocalId);
     action = (s32)gObjectMotion_TurnTowardLinkedScript;
     break;
   case MOVEMENT_TYPE_RESET_ACTION:
@@ -129,10 +129,9 @@ void ObjectMotion_SetActionCallback(struct ObjectRuntime *object, s32 action) {
 /// another sprite hides a matching one. Field_TryJumpForward (climbing.c)
 /// asks it for a log, SPRITE_LOG_WEST_EAST or SPRITE_LOG_NORTH_SOUTH, where the
 /// leader lands.
-struct ObjectRuntime *Object_FindNearestFacingTarget(struct ObjectRuntime *self,
-                                                     s32 sprite) {
-  struct ObjectRuntime *entry;
-  struct ObjectRuntime *found;
+struct Object *Object_FindNearestFacingTarget(struct Object *self, s32 sprite) {
+  struct Object *entry;
+  struct Object *found;
   s32 slotIndex;
   s32 nearestDistance;
   s32 heightDifference;
@@ -144,7 +143,7 @@ struct ObjectRuntime *Object_FindNearestFacingTarget(struct ObjectRuntime *self,
 
   found = NULL;
   nearestDistance = 40;
-  entry = gObjectSlots;
+  entry = gObjects;
   for (slotIndex = 0; slotIndex < 64; slotIndex++, entry++) {
     if (entry->script == NULL)
       continue;

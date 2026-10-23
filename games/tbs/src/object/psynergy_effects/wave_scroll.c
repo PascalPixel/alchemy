@@ -127,8 +127,8 @@ void DisplayScroll_BuildAndSwapHBlankPage(void) {
 void DisplayScroll_DisarmHBlankDma(void) {
   volatile u16 *dma0;
 
-  Scheduler_RemoveCallback(DisplayScroll_ArmHBlankDma);
-  Scheduler_RemoveCallback(DisplayScroll_BuildAndSwapHBlankPage);
+  Task_Remove(DisplayScroll_ArmHBlankDma);
+  Task_Remove(DisplayScroll_BuildAndSwapHBlankPage);
   dma0 = REG_DMA0;
   dma0[5] = (u16)~DMA_START_TIMING_DRQ_REPEAT & dma0[5];
   dma0[5] = (u16)~DMA_ENABLE & dma0[5];

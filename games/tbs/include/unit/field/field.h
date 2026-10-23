@@ -11,7 +11,7 @@ struct DispatchObject;
 struct FieldPosition;
 struct WorldMapAffinePair;
 struct WorldMapScanline;
-struct ObjectRuntime;
+struct Object;
 struct ScriptInterpreter;
 struct ScriptObjectEntry;
 struct ScriptObjectRuntime;
@@ -22,12 +22,12 @@ struct WorldPosition;
 /// the objects and which update moves them.
 enum ObjectSystemMode {
   /// A town, a dungeon or the sprite viewer: the scrolling camera.
-  MODE_LAYERED_MAP = 2,
+  OBJECT_SYSTEM_LAYOUT = 2,
   /// The world map: the fixed camera, which projects 3D points onto the
   /// screen.
-  MODE_WORLD_MAP = 3,
+  OBJECT_SYSTEM_WORLD_MAP = 3,
   /// A battle: the fixed camera, and the battle's own motion update.
-  MODE_BATTLE = 4
+  OBJECT_SYSTEM_BATTLE = 4
 };
 
 /// AnimationEntry.kind: the facing table a layer's frames follow
@@ -65,7 +65,7 @@ enum AnimationFacingKind {
 /// are stored. Any other value is raw, for the frame decoder.
 enum SpriteFrameCodec {
   SPRITE_FRAME_RAW = 0,
-  SPRITE_FRAME_TYPE01 = 1, ///< Resource_DecodeType01's format
+  SPRITE_FRAME_TYPE01 = 1, ///< Decompress_Type01's format
   SPRITE_FRAME_LZ = 3      ///< LZ-compressed
 };
 
@@ -76,7 +76,7 @@ enum AnimationObjectFlag {
   SPRITE_FLAG_OUTLINED = 1 << 1
 };
 
-/// ObjectRuntime.animationKind (DispatchObject.kind), its low four bits: what
+/// Object.animationKind (DispatchObject.kind), its low four bits: what
 /// the object's animation pointer holds.
 enum ObjectSpriteKind {
   OBJECT_SPRITE_NONE = 0, ///< nothing drawn
@@ -84,7 +84,7 @@ enum ObjectSpriteKind {
   OBJECT_SPRITE_GROUP = 2 ///< a list of up to four sprites, empty ones null
 };
 
-/// FieldObject_Create's id / 4096: what sprites the object is made with.
+/// Object_CreateField's id / 4096: what sprites the object is made with.
 enum ObjectCreateKind {
   OBJECT_CREATE_ONE_SPRITE = 0, ///< the id's sprite (OBJECT_SPRITE_ONE)
   /// The sprites of the id and id + 1 (OBJECT_SPRITE_GROUP).
@@ -176,7 +176,7 @@ enum MapGridStepCheck {
   MAPGRID_STEP_WALL = 2      ///< the cell there is a wall (MB_WALL)
 };
 
-u8 *Resource_DecompressLz(const u8 *source, u8 *destination);
+u8 *Decompress_Lz(const u8 *source, u8 *destination);
 s32 Sprite_ComposeAnimationFrame(struct AnimationObject *animation, u16 dir);
 void Render_PlaceSpritePartPair(struct AnimationObject *sprite, s32 screenX,
                                 s32 height, s32 screenY, s32 groundHeight,
@@ -288,15 +288,14 @@ void ActionScript_SetOrCompareByte63(struct ScriptOperands *work, s32 operation,
 void Ui_SetGridColumnColorMode(s32 slot, s32 value);
 void Ui_SetGridColumnPriority(s32 slot, s32 value);
 
-s32 MapGrid_GetScreenRelativePosition(struct ObjectRuntime *object,
+s32 MapGrid_GetScreenRelativePosition(struct Object *object,
                                       s32 *screenPosition);
 void ObjectSystem_Initialize(s32 controlMode);
 void ResourceTable_ReservedNoOpC0C4(void);
 void ResourceTable_ReservedNoOp2(void);
 void *ObjectDispatch_FindFreeObject(void);
 void ObjectDispatch_Release(struct DispatchObject *object);
-struct ObjectRuntime *FieldObject_Create(s32 encodedSprite, s32 x, s32 y,
-                                         s32 z);
+struct Object *Object_CreateField(s32 encodedSprite, s32 x, s32 y, s32 z);
 void ObjectDispatch_Initialize(struct DispatchObject *object,
                                const s32 *script);
 void ObjectDispatch_SetAnimationAndSpeed(struct DispatchObject *object,
@@ -333,12 +332,12 @@ void ObjectSystem_UpdateCameraFixed(void);
 s32 ActionScript_SetBase(struct ScriptInterpreter *interpreter);
 s32 ActionScript_ClearByte54(struct ScriptInterpreter *interpreter);
 s32 ActionScript_SetByte54(struct ScriptInterpreter *interpreter);
-void FieldObject_WaitForMove(void *fieldObject);
-s32 Object_IsTargetUnset(struct ObjectRuntime *object);
+void Object_WaitForMove(void *fieldObject);
+s32 Object_IsTargetUnset(struct Object *object);
 void Object_UpdateAllThumb(void);
-void Object_SetPositionAndResetMotion(struct ObjectRuntime *object, s32 x,
-                                      s32 y, s32 z);
-void Object_SetMoveTarget(struct ObjectRuntime *object, s32 x, s32 y, s32 z);
+void Object_SetPositionAndResetMotion(struct Object *object, s32 x, s32 y,
+                                      s32 z);
+void Object_SetMoveTarget(struct Object *object, s32 x, s32 y, s32 z);
 void Object_RunUpdateAllFromHeap(void);
 void Object_UpdateAllMotion(void);
 s32 ActionScript_Wait(struct ScriptInterpreter *interpreter);
@@ -390,7 +389,7 @@ u32 Field_RequestShortcut(u32 encodedAssignment);
 s32 Field_CheckConfiguredKeys(void);
 s32 Runtime_CheckRadiusOverlap(s32 *firstPosition, s32 radiusA,
                                s32 *secondPosition, s32 radiusB);
-s32 FieldObject_UpdatePlayerControl(struct ScriptInterpreter *interpreter);
+s32 Object_UpdateLeaderControl(struct ScriptInterpreter *interpreter);
 s32 Object_MoveOnWorldMap(struct ScriptInterpreter *interpreter);
 s32 Field_CheckConfiguredKeysAndCount(struct ScriptInterpreter *interpreter);
 s32 Object_MoveByKeys(struct ScriptInterpreter *interpreter);
@@ -478,7 +477,7 @@ s32 MapGrid_GetCellAttributeLowNibble(s32 layer, s32 x, s32 y);
 s32 MapGrid_GetMetatileBehaviorAt(s32 layer, s32 x, s32 y);
 void MapGrid_SetMetatileBehaviorAt(u32 layer, s32 x, s32 y, u32 collisionCode);
 s32 MapGrid_GetCellHighFlags(s32 x, s32 y);
-s32 MapGrid_CheckObjectStep(struct ObjectRuntime *object,
+s32 MapGrid_CheckObjectStep(struct Object *object,
                             struct FieldPosition *position);
 s32 MapGrid_IsWallAt(struct WorldPosition *position);
 s32 GetWorldMapCollision(struct WorldPosition *position);

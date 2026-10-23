@@ -34,9 +34,9 @@ s32 ActionScript_SetByte54(struct ScriptInterpreter *interpreter) {
 /// Waits a frame at a time until an object event has arrived at its target, at
 /// most 600 frames (ten seconds), after which it returns with the object still
 /// on its way. It takes void * because callers pass every view of an
-/// object. Called through FieldObject_WaitForMoveFar by the Psynergy effects
+/// object. Called through Object_WaitForMoveFar by the Psynergy effects
 /// and by about 50 map overlays.
-void FieldObject_WaitForMove(void *fieldObject) {
+void Object_WaitForMove(void *fieldObject) {
   s32 waitedFrames;
 
   waitedFrames = 0;
@@ -48,9 +48,9 @@ void FieldObject_WaitForMove(void *fieldObject) {
 
 /// Returns 1 when the object has no movement target: none of its target
 /// coordinates set, or for an object moved by the ground (any motion flag)
-/// neither its target x nor z. Called by FieldObject_WaitForMove and SC_SYNC
+/// neither its target x nor z. Called by Object_WaitForMove and SC_SYNC
 /// (ActionScript_WaitForArrival).
-s32 Object_IsTargetUnset(struct ObjectRuntime *object) {
+s32 Object_IsTargetUnset(struct Object *object) {
   s32 first;
   s32 second;
 
@@ -107,8 +107,8 @@ void Object_UpdateAllThumb(void) {
   u32 command;
   u32 phase;
 
-  object = (struct ScriptMotionObject *)gObjectSlots;
-  for (objectsRemaining = FIELD_OBJECT_COUNT - 1; objectsRemaining >= 0;
+  object = (struct ScriptMotionObject *)gObjects;
+  for (objectsRemaining = OBJECT_COUNT - 1; objectsRemaining >= 0;
        objectsRemaining--, object++) {
     arrivedAtTarget = 0;
 
@@ -414,11 +414,11 @@ void Object_UpdateAllThumb(void) {
 }
 
 /// Places the object at (x, y, z), in 16.16 pixels, clears its movement target
-/// and stops it. Reached through SC_POSITION and FieldObject_Create, and as
+/// and stops it. Reached through SC_POSITION and Object_CreateField, and as
 /// Object_SetPositionAndResetMotionFar from the Psynergy effects and the
 /// field map's object events.
-void Object_SetPositionAndResetMotion(struct ObjectRuntime *object, s32 x,
-                                      s32 y, s32 z) {
+void Object_SetPositionAndResetMotion(struct Object *object, s32 x, s32 y,
+                                      s32 z) {
   object->z = z;
   object->targetX = TARGET_UNSET;
   object->targetY = TARGET_UNSET;
@@ -438,7 +438,7 @@ void Object_SetPositionAndResetMotion(struct ObjectRuntime *object, s32 x,
 /// Reached through SC_MOVE and the other move commands, the player control,
 /// and as Object_SetMoveTargetFar from the battle's motion, the battle
 /// effects and the Psynergy effects. Sets the target and arrivalAxis.
-void Object_SetMoveTarget(struct ObjectRuntime *object, s32 x, s32 y, s32 z) {
+void Object_SetMoveTarget(struct Object *object, s32 x, s32 y, s32 z) {
   s32 dx;
   s32 distance;
   s32 dz;
@@ -517,14 +517,14 @@ UNUSED void Object_RunUpdateAllFromHeap(void) {
 
   RamCode_Load(updateObjects, Object_UpdateAll, Object_UpdateAllCodeSize);
   updateObjects();
-  MemFree(updateObjects);
+  Free(updateObjects);
 }
 
 /// Advances the first 14 objects' motion by one frame, without running their
 /// scripts: steering towards a target or braking, gravity and bouncing,
 /// arrival, and turning to face the direction of travel.
 /// ObjectSystem_Initialize schedules it in place of Object_UpdateAllThumb in
-/// MODE_BATTLE.
+/// OBJECT_SYSTEM_BATTLE.
 void Object_UpdateAllMotion(void) {
   struct ScriptMotionObject *object;
   s32 objectsRemaining;
@@ -541,7 +541,7 @@ void Object_UpdateAllMotion(void) {
 
   // Fourteen objects, as many as the battle has units (UNIT_MAX in
   // battle/battle/objects.c).
-  object = (struct ScriptMotionObject *)gObjectSlots;
+  object = (struct ScriptMotionObject *)gObjects;
   for (objectsRemaining = 13; objectsRemaining >= 0;
        objectsRemaining--, object++) {
     if (object->script == 0)

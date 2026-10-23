@@ -291,7 +291,7 @@ static s32 Xian_WatchWaterCarrierPath(union FieldObject *fieldObject) {
     self->riseCounter = 0;
   }
   if (near && self->riseCounter > XIAN_CARRIER_BLOCKED_FRAMES - 1) {
-    gEventWork->raisedTrigger = XIAN_TRIGGER_CARRIER_BLOCKED;
+    gFieldWork->raisedTrigger = XIAN_TRIGGER_CARRIER_BLOCKED;
     self->riseCounter = 0;
   }
   Xian_UpdateCarrierTracking(self, leader, 18, near);
@@ -369,7 +369,7 @@ static void Xian_TalkToWaterCarrier(void) {
     Engine_ScriptWait(10);
     Engine_ScriptSetMessage(MsgXianNowMustGetWaterAgain);
     if (GameFlag_IsSet(FLAG_MAP_TEMP_00) == 0) {
-      gEventWork->message++;
+      gFieldWork->message++;
       Script_ShowMessage(LOCALID_WOMAN_CARRYING_WATER, 0);
       ObjectEvent_GetById(LOCALID_WOMAN_CARRYING_WATER)->timer = 0;
       carrier = ObjectEvent_GetById(LOCALID_WOMAN_CARRYING_WATER);
@@ -420,7 +420,7 @@ static void Xian_TalkToWaterCarrier(void) {
   Engine_ObjectEventSetAnimation(LOCALID_WOMAN_CARRYING_WATER, ANIMATION_STAND);
   Engine_ObjectEventRunRepeatedMotion(LOCALID_WOMAN_CARRYING_WATER, 2);
   Engine_ScriptWait(10);
-  Script_PlayCue(SE_228);
+  Script_PlaySong(SE_228);
   // Copy the wet terrain cell and grow the puddle into view.
   puddle->scaleX = 0x4ccc;
   puddle->scaleY = 0x4ccc;
@@ -525,7 +525,7 @@ static void Xian_FreezeSpilledWater(void) {
 static void Xian_TalkToKungFuStudent(void) {
   s32 demonstrationSeen;
   struct ObjectEvent *leader;
-  SchedulerCallback particleCallback;
+  TaskFunc particleCallback;
   s32 reboundVelocity;
   s32 stepBackOffset[3];
   struct EffectOptions effectParams;
@@ -681,7 +681,7 @@ static void Xian_WalkThroughExit(s32 warpNumber) {
   } else {
     ObjectEvent_CenterAndWalk(LOCALID_PARTY_LEADER, 2, -16);
   }
-  gEventWork->transitionFrames = 16;
+  gFieldWork->transitionFrames = 16;
   Engine_ScriptRequestWarp(warpNumber);
 }
 
@@ -690,7 +690,7 @@ static void Xian_WalkThroughExit(s32 warpNumber) {
 /// into the houses, shops and inn, XIAN_TO_SANCTUM into Xian Sanctum (SE_188)
 /// and XIAN_TO_FUCHIN_TEMPLE_INTERIORS into Master Feh's school.
 static void Xian_OpenDoorAndLeave(void) {
-  struct EventWork *work = gEventWork;
+  struct EventWork *work = gFieldWork;
 
   Engine_ScriptStart();
 
@@ -735,7 +735,7 @@ static void Xian_OpenDoorAndLeave(void) {
 /// "Wha-Wha-What happened? The tree jumped on its own!", the next time
 /// "...It jumped again... I am too tired...".
 static void Xian_StrikeTrainingTreeWithForce(void) {
-  SchedulerCallback rotationCallback;
+  TaskFunc rotationCallback;
 
   Engine_ScriptStart();
   ObjectEvent_SetActionScript(LOCALID_TRAINING_TREE, gXian_TrainingTreeJump);
@@ -759,7 +759,7 @@ static void Xian_StrikeTrainingTreeWithForce(void) {
   Engine_ScriptWait(10);
   Engine_ScriptSetMessage(MsgXianWhaWhaHappened);
   if (GameFlag_IsSet(FLAG_MAP_TEMP_03)) {
-    gEventWork->message++;
+    gFieldWork->message++;
   }
   Engine_ScriptShowMessage(LOCALID_KUNG_FU_STUDENT, 0);
   Engine_GameFlagSet(FLAG_MAP_TEMP_03);
@@ -821,7 +821,7 @@ s32 Xian_Initialize(void) {
   struct ObjectEvent *objectEvent;
   u32 crateIndex;
 
-  gEventWork->startTransition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+  gFieldWork->startTransition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   FieldEffect_SetQueuedSoundAndPlay(SE_169);
   // Back from the school (XIAN_FROM_FUCHIN_TEMPLE_INTERIORS) or the Sanctum
   // (XIAN_FROM_SANCTUM_WEST), the last two warp destinations, the name is not

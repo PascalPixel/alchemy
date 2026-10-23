@@ -150,7 +150,7 @@ extern u16 gFlashNumRemainingBytes;
 /// Programs an Atmel block in small sectors, trying each sector at most twice.
 /// Writes standard sector `sector` (4 KB) from `source` 128 bytes at a time,
 /// gFlashNumRemainingBytes counting what is left. Atmel's program routine
-/// (gFlash_Handler0), which SaveState_WriteWorkspaceSlot calls. Returns 0,
+/// (gFlash_Handler0), which Save_WriteSector calls. Returns 0,
 /// 0x80ff for a sector above 15, or the error of the small sector that failed
 /// twice.
 u16 ProgramAtmelFlashBlock(u16 sector, u8 *source) {

@@ -22,7 +22,7 @@ void FieldEffect_RunLiftOnTarget(s32 unused) {
   s32 handIndex;
   s32 startY;
 
-  effectWork = gEffectWork;
+  effectWork = gFieldEffectWork;
   target = effectWork->child;
   caster = effectWork->mainObject;
   if (target == NULL)
@@ -50,13 +50,13 @@ void FieldEffect_RunLiftOnTarget(s32 unused) {
   for (handIndex = 0; handIndex < 2; handIndex++) {
     struct MotionObject *hand = pair[handIndex];
     if (hand != NULL)
-      Motion_SetTargetPositionFromMagnitudeAngle((struct ObjectRuntime *)hand,
-                                                 0xe0000, hand->angle);
+      Motion_SetTargetPositionFromMagnitudeAngle((struct Object *)hand, 0xe0000,
+                                                 hand->angle);
   }
 
-  FieldObject_WaitForMoveFar(pair[0]);
+  Object_WaitForMoveFar(pair[0]);
   target->update = ObjectGroup_ApplyRandomChildValues;
-  AudioCommand_PlayFar(SE_130);
+  Sound_PlaySongFar(SE_130);
   target->motionFlags = OBJ_EVENT_FLOATS;
 
   // Lift 32 pixels, a quarter pixel at a time.
@@ -95,7 +95,7 @@ struct MotionObject *FieldEffect_SpawnItemBreakMode3(s32 x, s32 y, s32 z,
   struct MotionObject *fragment;
   s32 scale;
 
-  AudioCommand_PlayFar(SE_ITEM_BREAK);
+  Sound_PlaySongFar(SE_ITEM_BREAK);
   fragment = (struct MotionObject *)Object_Spawn(215, x, y, z);
   if (fragment != NULL) {
     fragment->scaleX = fragment->scaleY = 0x4000;
@@ -125,7 +125,7 @@ void FieldEffect_UpdateRadialBurst(struct EffectSlot *effect) {
   // A for/continue retry keeps the same states but grows the native English
   // callback from 0xf8 to 0xfc bytes. OUT_AND_BACK_FLYING_OUT must enter
   // OUT_AND_BACK_AIM_BACK immediately.
-  struct FieldEffectWork *effectWork = gEffectWork;
+  struct FieldEffectWork *effectWork = gFieldEffectWork;
   struct EffectVector pos;
   s32 state;
 
@@ -186,11 +186,11 @@ again:
 s32 SpawnHeavyImpactEffect(struct ScriptInterpreter *interpreter) {
   struct MotionObject *source = (struct MotionObject *)interpreter;
   struct EffectVector pos;
-  struct ObjectRuntime *impact;
-  struct ObjectRuntime *fragment;
+  struct Object *impact;
+  struct Object *fragment;
   s32 fragmentIndex;
 
-  AudioCommand_PlayFar(SE_HEAVY_IMPACT);
+  Sound_PlaySongFar(SE_HEAVY_IMPACT);
   pos.x = source->x;
   pos.y = source->y;
   pos.z = source->z;

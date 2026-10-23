@@ -93,7 +93,7 @@ void FieldEffect_PlayQueuedSound(void);
 struct DispatchObject;
 struct FacingObject;
 struct ObjectEvent;
-struct ObjectRuntime;
+struct Object;
 
 struct ObjectEvent *ObjectEvent_GetById(s32 localId);
 void ObjectMotion_SetSpeedParameters(u32 objectId, s32 speedLimit,
@@ -149,7 +149,7 @@ void ObjectGroup_ApplyIndexedChildValue(union FieldObject *fieldObject);
 void ObjectGroup_SetChildValue(struct ObjectEvent *objectEvent, s32 param);
 void ObjectEvent_SetTargetAndCallback(u32 objectId, s32 targetId,
                                       const void *script);
-s32 ObjectMotion_StepAngle(struct ObjectRuntime *object);
+s32 ObjectMotion_StepAngle(struct Object *object);
 void ObjectEvent_ResetTargetAndSetMode1(u32 objectId);
 void ObjectMotion_ArmCallback(s32 objectId, s32 angle, s32 wait);
 void ObjectMotion_SetActionVariant(s32 objectId, s32 priority);
@@ -185,7 +185,7 @@ void Camera_MoveWithinMapBounds(s32 requestedX, s32 requestedY, s32 requestedZ,
 void ObjectEvent_PlaceCurrentWithinCameraBounds(s32 localId, s32 glide);
 void Camera_WaitForArrival(void);
 struct ObjectEvent *Camera_GetScriptObject(void);
-void Camera_FollowObject(struct ObjectRuntime *target, s32 keepCurrentPosition);
+void Camera_FollowObject(struct Object *target, s32 keepCurrentPosition);
 void MapGrid_SetViewBounds(s32 minX, s32 minY, s32 maxX, s32 maxY);
 #ifdef UBFIX
 void FieldEffect_StepRatioTransition(void);
@@ -234,11 +234,10 @@ enum AttachedEffectFlag {
 };
 void FieldEffect_ConfigureLinkedObject(s32 localId, s32 flags);
 s32 Object_ClearChildAndCollisionFlags(void *obj);
-s32 ObjectMotion_MoveTowardTarget(struct ObjectRuntime *object);
-s32 ObjectMotion_TurnTowardLinkedTarget(struct ObjectRuntime *object);
-void ObjectMotion_SetActionCallback(struct ObjectRuntime *object, s32 action);
-struct ObjectRuntime *Object_FindNearestFacingTarget(struct ObjectRuntime *self,
-                                                     s32 sprite);
+s32 ObjectMotion_MoveTowardTarget(struct Object *object);
+s32 ObjectMotion_TurnTowardLinkedTarget(struct Object *object);
+void ObjectMotion_SetActionCallback(struct Object *object, s32 action);
+struct Object *Object_FindNearestFacingTarget(struct Object *self, s32 sprite);
 s32 Field_TryJumpForward(void);
 s32 Field_ClimbDown(void);
 s32 Field_ClimbUp(void);
@@ -279,7 +278,7 @@ void ObjectMotion_MoveHalfwayTowardTarget(union FieldObject *fieldObject);
 void Djinn_RunBattleStartHop(s32 djinniId);
 void Djinn_JoinParty(s32 slot, s32 element, s32 djinn);
 void ObjectEvent_PlaceMapObjectEvents(void);
-// Declared without a prototype, as Field_RunMap (object.c) calls it with
+// Declared without a prototype, as Map_Run (object.c) calls it with
 // one argument and with two. object.c comes before this unit in ROM order, so
 // in one file the calls would still come before the definition.
 void Djinn_ResolvePendingEvent();
@@ -309,14 +308,14 @@ void FieldEffect_FinishMindRead(void);
 void FieldScript_RunTypeHandler(void);
 s32 Field_RunEventAction(const void *event, s32 param, s32 target);
 void ObjectGroup_ApplyRandomChildValues(union FieldObject *fieldObject);
-void Motion_SetTargetPositionFromMagnitudeAngle(struct ObjectRuntime *object,
+void Motion_SetTargetPositionFromMagnitudeAngle(struct Object *object,
                                                 s32 magnitude, s32 angle);
 s32 VramCache_CountFreeBlocks(void);
 struct AnimationObject *
 Sprite_ShareVramCache(struct AnimationObject *sourceSprite,
                       struct AnimationObject *sharedSprite);
-struct ObjectRuntime *Object_Spawn(s32 kind, s32 x, s32 y, s32 z);
-void ObjectGroup_SetActionForOthers(struct ObjectRuntime *except, s32 state,
+struct Object *Object_Spawn(s32 kind, s32 x, s32 y, s32 z);
+void ObjectGroup_SetActionForOthers(struct Object *except, s32 state,
                                     s32 value);
 void FieldEffect_UpdateScaledArcObjectA(union FieldObject *fieldObject);
 void FieldEffect_UpdateScaledArcObjectB(union FieldObject *fieldObject);

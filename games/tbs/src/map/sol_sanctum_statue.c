@@ -316,8 +316,8 @@ static void SolSanctumStatue_ExplainTrapDisarmed(void) {
   struct ObjectEvent *leader;
 
   Engine_ScriptStart();
-  gEventWork->startTransition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
-  gEventWork->transitionFrames = 32;
+  gFieldWork->startTransition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+  gFieldWork->transitionFrames = 32;
   Engine_ScriptOpenScreen();
   Engine_ScriptWaitForScreen();
   Engine_ScriptWait(20);
@@ -361,8 +361,8 @@ static void SolSanctumStatue_ExplainTrapDisarmed(void) {
   Engine_ScriptWait(40);
   // The screen closes and opens on Kraden by the hole: "Where did that hole
   // come from?" Then back to the party.
-  gEventWork->startTransition = MAP_TRANSITION(TRANSITION_WINDOW, 2);
-  gEventWork->transitionFrames = 16;
+  gFieldWork->startTransition = MAP_TRANSITION(TRANSITION_WINDOW, 2);
+  gFieldWork->transitionFrames = 16;
   Engine_ScriptCloseScreen();
   Engine_ScriptWaitForScreen();
   Camera_MoveTo(PIXELS(287), -1, PIXELS(176), 0);
@@ -464,8 +464,8 @@ static void SolSanctumStatue_ExplainTrapDisarmed(void) {
   Engine_ObjectEventWaitForMove(JENNA);
   ObjectEvent_SetPosition(JENNA, 0, 0);
   GameFlag_Clear(FLAG_SHOW_LOCATION_NAME);
-  gEventWork->startTransition = MAP_TRANSITION(TRANSITION_WINDOW, 4);
-  gEventWork->transitionFrames = 16;
+  gFieldWork->startTransition = MAP_TRANSITION(TRANSITION_WINDOW, 4);
+  gFieldWork->transitionFrames = 16;
   Engine_ScriptEnd();
 }
 
@@ -484,7 +484,7 @@ static void SolSanctumStatue_ExplainStatuePuzzle(void) {
   struct ObjectEvent *leader;
 
   Engine_ScriptStart();
-  work = gEventWork;
+  work = gFieldWork;
   work->startTransition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   work->transitionFrames = 32;
   Engine_ScriptOpenScreen();
@@ -676,7 +676,7 @@ static void SolSanctumStatue_ExplainStatuePuzzle(void) {
   Engine_ObjectEventWaitForMove(GARET);
   Engine_ObjectEventSetPosition(GARET, 0, 0);
   GameFlag_Clear(FLAG_SHOW_LOCATION_NAME);
-  work = gEventWork;
+  work = gFieldWork;
   work->startTransition = MAP_TRANSITION(TRANSITION_WINDOW, 4);
   work->transitionFrames = 16;
   Engine_ScriptEnd();
@@ -848,7 +848,7 @@ UNUSED static void SolSanctumStatue_UnusedMoveNorthwestStatue(void) {
 }
 
 /// Restores the room's statues, beams and seals from their flags and plays
-/// Kraden's two visits. Called by Field_RunMap once the object events exist.
+/// Kraden's two visits. Called by Map_Run once the object events exist.
 /// Sets FLAG_RETREAT_BLOCKED; starts the sky's cloud rows; at
 /// SOL_SANCTUM_STATUE_FROM_SOL_SANCTUM_LUNA_SOL_ROOMS_TRAP_DISARMED plays
 /// SolSanctumStatue_ExplainTrapDisarmed and at
@@ -860,7 +860,7 @@ UNUSED static void SolSanctumStatue_UnusedMoveNorthwestStatue(void) {
 s32 SolSanctumStatue_Initialize(void) {
   struct ObjectEvent *centerEffect;
 
-  gEventWork->startTransition = MAP_TRANSITION(TRANSITION_WINDOW, 4);
+  gFieldWork->startTransition = MAP_TRANSITION(TRANSITION_WINDOW, 4);
   SolSanctumStatue_InitializeScrollingSprites();
   // Retreat does not work here (FLAG_RETREAT_BLOCKED).
   GameFlag_Set(FLAG_RETREAT_BLOCKED);
@@ -982,8 +982,8 @@ static void SolSanctumStatue_InitializeScrollingSprites(void) {
   u8 *pixels;
 
   spriteWords = sScrollingSprites.words;
-  pixels = Runtime_AllocateBlock(14, 1024);
-  Resource_DecodeByteLz(gSolSanctumStatue_SpriteRowsGraphics, pixels);
+  pixels = AllocHeapSlotEwram(14, 1024);
+  Decompress_ByteLz(gSolSanctumStatue_SpriteRowsGraphics, pixels);
   tile = Engine_VramLoad(Resource_FindFreeEntry(), 128, pixels);
   for (column = 0; column < SOL_SANCTUM_STATUE_ROW_SPRITE_COUNT; column++) {
     s32 *attributeWords = spriteWords;
@@ -1221,7 +1221,7 @@ static void EventScript_PushCenterStatueNorth(void) {
   if (movingObjectEvent != 0) {
     if ((movingObjectEvent->z.fixed >> 20) == 8) {
       Engine_ScriptStart();
-      Script_PlayCue(SE_PUSH);
+      Script_PlaySong(SE_PUSH);
       ObjectEvent_SetSpeed(LOCALID_CENTER_STATUE, PIXELS(1) / 5,
                            PIXELS(1) / 10);
       ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(1) / 5, PIXELS(1) / 10);
@@ -1683,7 +1683,7 @@ static void SolSanctumStatue_ShineLeftBeam(void) {
       Camera_SetSpeed(PIXELS(2), PIXELS(1) / 4);
       Camera_MoveTo(PIXELS(286), -1, PIXELS(146), 1);
       Engine_CameraWaitForMove();
-      Script_PlayCue(SE_SOL_SANCTUM_LIGHT_UP);
+      Script_PlaySong(SE_SOL_SANCTUM_LIGHT_UP);
       MapGrid_CopyCellsTo(0, 59, 15, 38, 4, 3);
       if (GameFlag_IsSet(FLAG_SOL_SANCTUM_RIGHT_BEAM_SHINING) != 0) {
         MapGrid_CopyCellsTo(8, 60, 17, 39, 2, 2);
@@ -1708,7 +1708,7 @@ static void SolSanctumStatue_ShineRightBeam(void) {
       Camera_SetSpeed(PIXELS(2), PIXELS(1) / 4);
       Camera_MoveTo(PIXELS(286), -1, PIXELS(146), 1);
       Engine_CameraWaitForMove();
-      Script_PlayCue(SE_SOL_SANCTUM_LIGHT_UP);
+      Script_PlaySong(SE_SOL_SANCTUM_LIGHT_UP);
       MapGrid_CopyCellsTo(4, 59, 17, 38, 4, 3);
       if (GameFlag_IsSet(FLAG_SOL_SANCTUM_LEFT_BEAM_SHINING) != 0) {
         MapGrid_CopyCellsTo(8, 60, 17, 39, 2, 2);

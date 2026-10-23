@@ -98,8 +98,7 @@ void FieldEffect_SetupResourcesAndWindow(void) {
   u32 tile;
   u32 cursorAttributes;
 
-  markerTiles =
-      Runtime_BumpAllocateAlternatePool(WORLD_MAP_MARKER_ALLOCATION_SIZE);
+  markerTiles = AllocEwram(WORLD_MAP_MARKER_ALLOCATION_SIZE);
   work = (struct WorldMapWork *)gMapGridCellBuffer;
 #ifdef UBFIX
   marker = work->markers;
@@ -140,7 +139,7 @@ void FieldEffect_SetupResourcesAndWindow(void) {
     *oam++ = tileAttributes;
 #endif
   }
-  MemFree(markerTiles);
+  Free(markerTiles);
   if (GameFlag_TestFar(FLAG_WORLD_MAP_LEFT)) {
     work->cursorX.fixed = WORLD_MAP_SCREEN_WIDTH << 15;
     work->cursorY.fixed = WORLD_MAP_SCREEN_HEIGHT << 15;
@@ -248,7 +247,7 @@ void WorldMap_UpdateMarkers(void) {
   blend = gWorldMap_MarkerBlendCycle[(gFrameCount >> 1) &
                                      (WORLD_MAP_MARKER_BLEND_STEPS - 1)];
 
-  // Field_RunMap creates the selected object event before event -888 opens this
+  // Map_Run creates the selected object event before event -888 opens this
   // screen. No object event task removes it while the marker callback runs.
   if (!GameFlag_TestFar(FLAG_WORLD_MAP_LEFT) && (gKeysHeld & KEYS_SHOULDERS)) {
     // L or R: the current map section.
@@ -435,14 +434,14 @@ void WorldMap_UpdateMarkers(void) {
 }
 
 /// Borrows the map-cell buffer for the still map until A or B closes it.
-/// Field_RunMap reaches this for event -888 in world-map mode. The marker
+/// Map_Run reaches this for event -888 in world-map mode. The marker
 /// task stops before map graphics are restored, so neither uses the other's
 /// scratch storage. The picture argument is unused; the resource is fixed.
 void WorldMap_Show(s32 picture) {
-  struct MapGridState *gridState = WORK_SLOT(HEAP_SLOT_MAP_GRID);
+  struct MapGridState *gridState = HEAP_SLOT_BLOCK(HEAP_SLOT_MAP_GRID);
   struct FieldWork *work =
-      Runtime_AllocateBlock(HEAP_SLOT_EVENT, sizeof(struct FieldWork));
-  struct ObjectSystemWork *menu = WORK_SLOT(HEAP_SLOT_MENU_CONTROL);
+      AllocHeapSlotEwram(HEAP_SLOT_FIELD, sizeof(struct FieldWork));
+  struct ObjectSystemWork *menu = HEAP_SLOT_BLOCK(HEAP_SLOT_OBJECT_SYSTEM);
   s32 resource = (s32)&ResourceId_WorldMapPicture;
   struct TileAnimation *layer;
   u8 savedFlags[sizeof(gridState->animations) /
@@ -452,7 +451,7 @@ void WorldMap_Show(s32 picture) {
   s32 savedStatus;
   s16 blend;
 
-  if (work->mode != MODE_WORLD_MAP)
+  if (work->mode != OBJECT_SYSTEM_WORLD_MAP)
     return;
   work->camera->movementState = 1;
   savedStatus = work->transitionFrames;
@@ -475,7 +474,7 @@ void WorldMap_Show(s32 picture) {
   Dma_Set(graphics, (void *)BG_PLTT,
           (u32)(DMA_ENABLE | DMA_32BIT) << 16 | (448 / 4), REG_DMA3);
   BG_PLTT[0] = 0;
-  Resource_DecodeType01(graphics + 448, gMapGridCellBuffer);
+  Decompress_Type01(graphics + 448, gMapGridCellBuffer);
   Dma_Set(gMapGridCellBuffer, BG_CHAR_BLOCK(1) + 0x2a00,
           (u32)(DMA_ENABLE | DMA_32BIT) << 16 |
               (WORLD_MAP_SCREEN_WIDTH * WORLD_MAP_SCREEN_HEIGHT / 4),
@@ -485,14 +484,13 @@ void WorldMap_Show(s32 picture) {
                  DISPCNT_OBJ_1D_MAP,
              &REG_DISPCNT);
   FieldEffect_SetupResourcesAndWindow();
-  Scheduler_AddOrUpdateCallback(WorldMap_UpdateMarkers,
-                                SCHEDULER_KEY_MAIN_LOOP);
+  Task_Add(WorldMap_UpdateMarkers, TASK_PRIORITY_MAIN_LOOP);
   if (GameFlag_TestFar(FLAG_WORLD_MAP_LEFT))
     UiText_ShowPositionedMessageAndWaitFar(MsgNotOnMap, 1);
   do {
     WaitFrames(1);
   } while ((gKeysRepeat & (KEY_A | KEY_B)) == 0);
-  Scheduler_RemoveCallback(WorldMap_UpdateMarkers);
+  Task_Remove(WorldMap_UpdateMarkers);
   FieldEffect_CleanupResourcesAndWindow();
   Io_Write16(DISPCNT_OBJ_1D_MAP, &REG_DISPCNT);
   WorldMap_LoadAreaGraphicsFar();
@@ -512,7 +510,7 @@ void WorldMap_Show(s32 picture) {
 /// On the world map, shows only the map's object events within 320 pixels
 /// sideways, 600 above and 400 below the camera.
 void Field_UpdateObjectVisibilityBounds(void) {
-  struct ObjectRuntime *object;
+  struct Object *object;
   s32 x;
   s32 y;
   s32 left;
@@ -524,7 +522,7 @@ void Field_UpdateObjectVisibilityBounds(void) {
   // The selected object event lookup has no used result; the bounds follow the
   // camera.
   ObjectEvent_GetById(gGameState.selectedLocalId);
-  object = ((struct FieldWork *)gEventWork)->camera;
+  object = ((struct FieldWork *)gFieldWork)->camera;
   x = object->x;
   left = x - (320 << 16);
   right = x + (320 << 16);
@@ -552,14 +550,14 @@ void Field_UpdateObjectVisibilityBounds(void) {
 
 /// On the world map, zooms the view out (0x9d89) while L is held, then back.
 /// Each zoom takes 6 frames; 0x9d89 is about 0.62, which sets the view 1.6
-/// times as far (FieldEffect_ScheduleRatioTransition). Field_RunMap runs it
+/// times as far (FieldEffect_ScheduleRatioTransition). Map_Run runs it
 /// for event -889; the overlay tasks are suspended meanwhile.
 void FieldEffect_RunVisibilityTransition(void) {
   struct FieldWork *work =
-      Runtime_AllocateBlock(HEAP_SLOT_EVENT, sizeof(struct FieldWork));
+      AllocHeapSlotEwram(HEAP_SLOT_FIELD, sizeof(struct FieldWork));
 
-  if (work->mode == MODE_WORLD_MAP) {
-    Scheduler_SuspendOverlayTasks();
+  if (work->mode == OBJECT_SYSTEM_WORLD_MAP) {
+    Task_SuspendOverlayTasks();
     Field_UpdateObjectVisibilityBounds();
     Leader_StopMoving();
     FieldEffect_ScheduleRatioTransition(0x9d89, 6);
@@ -569,7 +567,7 @@ void FieldEffect_RunVisibilityTransition(void) {
       } while (gKeysHeld & KEY_L);
     }
     FieldEffect_ScheduleRatioTransition(0x10000, 6);
-    Scheduler_ResumeOverlayTasks();
+    Task_ResumeOverlayTasks();
   }
 }
 

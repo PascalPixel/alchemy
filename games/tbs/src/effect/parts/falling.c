@@ -105,18 +105,18 @@ void BattleEffect_RunIce(struct BattleEffectArgument *effect) {
   // The shards fall towards the targets' side, so the blitters mirror them
   // when the targets are the party.
   if (work->effect->side == 0) {
-    EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER, COMPOSITE_CLIP_Y, COMPOSITE_MAX);
-    EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER_ALTERNATE, COMPOSITE_CLIP_Y,
+    EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, COMPOSITE_CLIP_Y, COMPOSITE_MAX);
+    EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, COMPOSITE_CLIP_Y,
                         COMPOSITE_ADDITIVE);
   } else {
-    EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER, COMPOSITE_CLIP_Y | COMPOSITE_FLIP_X,
+    EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, COMPOSITE_CLIP_Y | COMPOSITE_FLIP_X,
                         COMPOSITE_MAX);
-    EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER_ALTERNATE,
+    EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
                         COMPOSITE_CLIP_Y | COMPOSITE_FLIP_X,
                         COMPOSITE_ADDITIVE);
   }
-  draw[0] = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER];
-  draw[1] = EFFECT_BLITTERS[HEAP_SLOT_BLITTER_ALTERNATE];
+  draw[0] = (DrawRectangle)gHeapSlots[HEAP_SLOT_RAM_CODE];
+  draw[1] = EFFECT_BLITTERS[HEAP_SLOT_RAM_CODE_2];
 
   // Window 0's edges, one per scanline: a 128-pixel band slanting one pixel
   // a line the way the shards fall (on line 8 from x 104 against the
@@ -132,16 +132,14 @@ void BattleEffect_RunIce(struct BattleEffectArgument *effect) {
                                  WIN_RANGE(120, 248));
   }
 
-  Scheduler_AddOrUpdateCallback(BattleEffect_ArmWin0HBlankDma,
-                                EFFECT_CALLBACK_ORDER);
+  Task_Add(BattleEffect_ArmWin0HBlankDma, EFFECT_CALLBACK_ORDER);
   // Trails: Ice Horn keeps 75% of each pixel a frame, the others 50%.
   work->transferMode = CANVAS_COPY_AND_FADE;
   if (work->effect->variant == EFFECT_VARIANT_STRONGER)
     work->transferValue = 75;
   else
     work->transferValue = 50;
-  Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer,
-                                EFFECT_CALLBACK_ORDER);
+  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, EFFECT_CALLBACK_ORDER);
 
   for (frame = 0;
        frame != gFalling_IceCounts[work->effect->variant][ICE_FRAMES];
@@ -172,7 +170,7 @@ void BattleEffect_RunIce(struct BattleEffectArgument *effect) {
           // Landed: every fourth shard plays the impact sound, and every
           // target flashes blue in its damage pose for 8 frames.
           if ((i & 3) == 0)
-            AudioCommand_PlayFar(SE_ICE);
+            Sound_PlaySongFar(SE_ICE);
           work->shakeFrames = 2;
           shard->variant = 0;
           EFFECT_FOR_EACH_TARGET(k, work->effect)
@@ -237,8 +235,8 @@ void BattleEffect_RunIce(struct BattleEffectArgument *effect) {
 
   // Finish: the callbacks before the blocks they read, in the reverse of
   // the order they were added.
-  Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
-  Scheduler_RemoveCallback(BattleEffect_ArmWin0HBlankDma);
+  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
+  Task_Remove(BattleEffect_ArmWin0HBlankDma);
   EFFECT_RELEASE_BLITTERS();
   BattleEffect_EndCanvasLayer();
   BattleEffect_ConfigureEffectDisplay();
@@ -302,11 +300,11 @@ void BattleEffect_RunDouse(struct BattleEffectArgument *effect) {
   REG_WININ = EFFECT_WIN0_LAYERS | WININ_WIN1_BG0 | WININ_WIN1_BG1 |
               WININ_WIN1_OBJ | WININ_WIN1_CLR;
 
-  EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER, COMPOSITE_CLIP_Y, COMPOSITE_MAX);
-  drawBolt = EFFECT_SLOT(slots, HEAP_SLOT_BLITTER);
-  EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER_ALTERNATE, COMPOSITE_CLIP_Y,
+  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, COMPOSITE_CLIP_Y, COMPOSITE_MAX);
+  drawBolt = EFFECT_SLOT(slots, HEAP_SLOT_RAM_CODE);
+  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, COMPOSITE_CLIP_Y,
                       COMPOSITE_ADDITIVE);
-  drawSpark = EFFECT_SLOT(slots, HEAP_SLOT_BLITTER_ALTERNATE);
+  drawSpark = EFFECT_SLOT(slots, HEAP_SLOT_RAM_CODE_2);
 
   EFFECT_FREE_PARTICLES(i, FALLING_BOLT_SPARKS->sparks,
                         FALLING_BOLT_SPARK_COUNT);
@@ -344,8 +342,7 @@ void BattleEffect_RunDouse(struct BattleEffectArgument *effect) {
         line, i, 103, ((i / 2 + 60) << 8) | (i / 2 + 188), WIN_RANGE(112, 240));
   }
 
-  Scheduler_AddOrUpdateCallback(BattleEffect_ArmWin0HBlankDma,
-                                EFFECT_CALLBACK_ORDER);
+  Task_Add(BattleEffect_ArmWin0HBlankDma, EFFECT_CALLBACK_ORDER);
   // Douse clears the canvas every frame; Drench keeps half of each pixel and
   // Deluge three quarters, for trails.
   if (work->effect->variant == EFFECT_VARIANT_BASIC) {
@@ -355,8 +352,7 @@ void BattleEffect_RunDouse(struct BattleEffectArgument *effect) {
   } else {
     EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, 75);
   }
-  Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer,
-                                EFFECT_CALLBACK_ORDER);
+  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, EFFECT_CALLBACK_ORDER);
 
   for (frame = 0;
        frame != gFalling_Counts[work->effect->variant][FALLING_BOLT_DURATION];
@@ -411,7 +407,7 @@ void BattleEffect_RunDouse(struct BattleEffectArgument *effect) {
           // Every fourth bolt plays the hit sound, and every target
           // flashes white in its damage pose for 2 frames.
           if ((i & 3) == 0)
-            AudioCommand_PlayFar(SE_132);
+            Sound_PlaySongFar(SE_132);
           EFFECT_FOR_EACH_TARGET(k, work->effect)
             ObjectGroup_UpdateMembers(work->effect->actors[k],
                                       SPRITE_COLOR_WHITE, POSE_DAMAGE, k, 2);
@@ -447,7 +443,7 @@ void BattleEffect_RunDouse(struct BattleEffectArgument *effect) {
   }
 
   // Finish: stop both transfers before releasing the blitters and canvas.
-  Scheduler_RemoveCallback(BattleEffect_ArmWin0HBlankDma);
+  Task_Remove(BattleEffect_ArmWin0HBlankDma);
   EFFECT_FINISH_CANVAS();
   BattleEffect_ConfigureEffectDisplay();
 }

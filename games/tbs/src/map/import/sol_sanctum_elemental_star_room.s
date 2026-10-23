@@ -3,13 +3,13 @@
 	.set import.__divsi3, 1
 	.set import.__udivsi3, 1
 	.set import.Engine_TaskWait, 1
-	.set import.Scheduler_AddOrUpdateCallback, 1
+	.set import.Task_Add, 1
 	.set import.Engine_RandomNext, 1
 	.set import.ArcTan2, 1
 	.set import.Engine_MathSin, 1
 	.set import.Engine_MathCos, 1
 	.set import.Engine_HeapAllocate, 1
-	.set import.Runtime_AllocateBlock, 1
+	.set import.AllocHeapSlotEwram, 1
 	.set import.Engine_HeapRelease, 1
 	.set import.Engine_VramLoad, 1
 	.set import.ObjectEvent_SetMode, 1

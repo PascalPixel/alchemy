@@ -252,14 +252,14 @@ struct Point2D {
   s32 y; ///< 16.16 pixels
 };
 
-/// A blitter pair: [0] built in HEAP_SLOT_BLITTER and [1] in
-/// HEAP_SLOT_BLITTER_ALTERNATE (BattleEffect_FetchRectangleBlitters fills one).
+/// A blitter pair: [0] built in HEAP_SLOT_RAM_CODE and [1] in
+/// HEAP_SLOT_RAM_CODE_2 (BattleEffect_FetchRectangleBlitters fills one).
 /// Many effects keep this pair in their stack frame.
 typedef DrawRectangle BlitterPair[2];
 
-/// The work slots read as blitters: EFFECT_BLITTERS[HEAP_SLOT_BLITTER] and
-/// EFFECT_BLITTERS[HEAP_SLOT_BLITTER_ALTERNATE].
-#define EFFECT_BLITTERS ((DrawRectangle *)gWorkSlot)
+/// The work slots read as blitters: EFFECT_BLITTERS[HEAP_SLOT_RAM_CODE] and
+/// EFFECT_BLITTERS[HEAP_SLOT_RAM_CODE_2].
+#define EFFECT_BLITTERS ((DrawRectangle *)gHeapSlots)
 
 // The functions the parts of effect.c define, part by part in include order.
 

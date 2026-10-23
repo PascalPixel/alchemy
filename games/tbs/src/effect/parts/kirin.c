@@ -54,9 +54,9 @@ void BattleEffect_RunKirin(struct BattleEffectArgument *effect) {
   s32 frame;
   s32 i;
 
-  cursor = &gBattleEffectWork[1];
+  cursor = &gBattleAnimWork[1];
   canvas = cursor[0];
-  work = cursor[HEAP_SLOT_BATTLE_EFFECT - HEAP_SLOT_BATTLE_CANVAS];
+  work = cursor[HEAP_SLOT_BATTLE_ANIM - HEAP_SLOT_BATTLE_CANVAS];
   sheet = cursor[HEAP_SLOT_BATTLE_SHEET - HEAP_SLOT_BATTLE_CANVAS];
   work->effect = effect;
   BattleEffect_StartCanvasLayer(0);
@@ -68,8 +68,7 @@ void BattleEffect_RunKirin(struct BattleEffectArgument *effect) {
   PLTT_BACKDROP = 0;
   BG_PLTT_COLOR(0, 1) = 0;
   work->transferMode = CANVAS_COPY;
-  Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer,
-                                EFFECT_CALLBACK_ORDER);
+  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, EFFECT_CALLBACK_ORDER);
   // Setup: wipe the battle away from left to right, swap in the forest
   // backdrop and wipe back. Window 0 narrows to x 0 to 201; right of it only
   // window 1 applies, which shows no sprites, so the row rides in from
@@ -116,9 +115,9 @@ void BattleEffect_RunKirin(struct BattleEffectArgument *effect) {
     i++;
   } while (i != 64);
 
-  EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER, EFFECT_CLIP_BOUNDS,
+  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                       COMPOSITE_ADDITIVE);
-  blit = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER];
+  blit = (DrawRectangle)gHeapSlots[HEAP_SLOT_RAM_CODE];
   // The canvas sits behind the row until frame 28.
   REG_BG2CNT = BGCNT_PRIORITY(2) | BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS |
                BGCNT_SCREEN_BASE(7);
@@ -127,19 +126,19 @@ void BattleEffect_RunKirin(struct BattleEffectArgument *effect) {
   for (frame = 0; frame != 120; frame++) {
     wave = 0;
     if (frame == 0) {
-      AudioCommand_PlayFar(SE_136);
+      Sound_PlaySongFar(SE_136);
     }
     if (frame == 26) {
-      AudioCommand_PlayFar(SE_RUMBLE);
+      Sound_PlaySongFar(SE_RUMBLE);
     }
     if (frame == 40) {
-      AudioCommand_PlayFar(SE_CAST);
+      Sound_PlaySongFar(SE_CAST);
     }
     if (frame == 72) {
-      AudioCommand_PlayFar(SE_CAST);
+      Sound_PlaySongFar(SE_CAST);
     }
     if (frame == 104) {
-      AudioCommand_PlayFar(SE_CAST);
+      Sound_PlaySongFar(SE_CAST);
     }
     if ((gKeysRepeat & (KEY_A | KEY_B)) != 0 && frame > 16) {
       break;
@@ -378,13 +377,13 @@ void BattleEffect_RunKirin(struct BattleEffectArgument *effect) {
       // Frame 8: Camera_ApplyShake shakes the screen for 8 frames.
       if (frame == 8) {
         work->shakeFrames = frame;
-        AudioCommand_PlayFar(SE_145);
+        Sound_PlaySongFar(SE_145);
       }
       if (frame == 11) {
-        AudioCommand_PlayFar(SE_145);
+        Sound_PlaySongFar(SE_145);
       }
       if (frame == 46) {
-        AudioCommand_PlayFar(SE_KIRIN);
+        Sound_PlaySongFar(SE_KIRIN);
       }
 
       EFFECT_FOR_EACH_TARGET(i, work->effect) {
@@ -416,7 +415,7 @@ void BattleEffect_RunKirin(struct BattleEffectArgument *effect) {
             } while (k != 32);
             BattleMotion_ApplyVariantMotionFar(work->effect->actors[i],
                                                KNOCKBACK_HOP);
-            AudioCommand_PlayFar(SE_HEAVY_IMPACT);
+            Sound_PlaySongFar(SE_HEAVY_IMPACT);
           }
         }
       }
@@ -439,7 +438,7 @@ void BattleEffect_RunKirin(struct BattleEffectArgument *effect) {
       } while (i != 192);
 
       if (frame == 48) {
-        AudioCommand_PlayFar(SE_136);
+        Sound_PlaySongFar(SE_136);
       }
       // From frame 41 the fire sheet, 16 jittered rows, slides off to the
       // left 12 pixels a frame over a canvas that keeps everything; from

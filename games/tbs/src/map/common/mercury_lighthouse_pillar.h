@@ -152,7 +152,7 @@ static void MercuryLighthouse_SpawnSparkPair(void) {
   struct ObjectEvent *spark;
   struct AnimationObject *sprite;
 
-  point = gEventWork->objectEvents[gGameState.selectedLocalId];
+  point = gFieldWork->objectEvents[gGameState.selectedLocalId];
   spark =
       Engine_ObjectCreate(26, point->x.fixed, point->y.fixed, point->z.fixed);
   if (spark != NULL) {
@@ -198,9 +198,9 @@ void MercuryLighthouse_ChargeLights(void) {
   struct ObjectEvent *objectEvent;
   s32 step;
 
-  state = *(struct MercuryLighthouseLights **)WORK_SLOT(
+  state = *(struct MercuryLighthouseLights **)HEAP_SLOT_BLOCK(
       HEAP_SLOT_MERCURY_LIGHTHOUSE_LIGHTS);
-  leader = ((struct FieldWork *)WORK_SLOT(HEAP_SLOT_EVENT))
+  leader = ((struct FieldWork *)HEAP_SLOT_BLOCK(HEAP_SLOT_FIELD))
                ->objectEvents[gGameState.selectedLocalId];
   if ((u32)state->levels > 2)
     return;
@@ -251,7 +251,7 @@ void MercuryLighthouse_ChargeLights(void) {
 /// fades away.
 void MercuryLighthouse_LoseLights(void) {
   struct MercuryLighthouseLights *state =
-      *(struct MercuryLighthouseLights **)WORK_SLOT(
+      *(struct MercuryLighthouseLights **)HEAP_SLOT_BLOCK(
           HEAP_SLOT_MERCURY_LIGHTHOUSE_LIGHTS);
   struct ObjectEvent *target;
 
@@ -296,9 +296,9 @@ void MercuryLighthouse_HopAcrossPool(void) {
   u8 zero;
   union FieldCoordinate pos[3];
 
-  state = *(struct MercuryLighthouseLights **)WORK_SLOT(
+  state = *(struct MercuryLighthouseLights **)HEAP_SLOT_BLOCK(
       HEAP_SLOT_MERCURY_LIGHTHOUSE_LIGHTS);
-  work = WORK_SLOT(HEAP_SLOT_EVENT);
+  work = HEAP_SLOT_BLOCK(HEAP_SLOT_FIELD);
   objectEvent = work->objectEvents[gGameState.selectedLocalId];
   flags = &objectEvent->motionFlags;
   saved = *flags;
@@ -404,9 +404,9 @@ void MercuryLighthouse_RippleAroundLeader(void) {
   struct MercuryLighthouseLights *state;
   struct ObjectEvent *point;
 
-  state = *(struct MercuryLighthouseLights **)WORK_SLOT(
+  state = *(struct MercuryLighthouseLights **)HEAP_SLOT_BLOCK(
       HEAP_SLOT_MERCURY_LIGHTHOUSE_LIGHTS);
-  point = ((struct FieldWork *)WORK_SLOT(HEAP_SLOT_EVENT))
+  point = ((struct FieldWork *)HEAP_SLOT_BLOCK(HEAP_SLOT_FIELD))
               ->objectEvents[gGameState.selectedLocalId];
   if (state->rippleTimer != 0) {
     state->rippleTimer--;
@@ -420,7 +420,7 @@ void MercuryLighthouse_RippleAroundLeader(void) {
 /// remove the column of light.
 static void MercuryLighthouse_RemoveColumnOnRetreat(void) {
   struct MercuryLighthouseLights **published =
-      Runtime_AllocateBlock(HEAP_SLOT_MERCURY_LIGHTHOUSE_LIGHTS, 4);
+      AllocHeapSlotEwram(HEAP_SLOT_MERCURY_LIGHTHOUSE_LIGHTS, 4);
   struct MercuryLighthouseLights *state;
   struct ObjectEvent *pillar;
 

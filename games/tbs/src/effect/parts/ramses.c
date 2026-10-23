@@ -49,9 +49,9 @@ void BattleEffect_RunRamses(struct BattleEffectArgument *effect) {
   s32 i;
   s32 k;
 
-  slots = &gBattleEffectWork[1];
+  slots = &gBattleAnimWork[1];
   canvas = slots[0];
-  work = slots[HEAP_SLOT_BATTLE_EFFECT - HEAP_SLOT_BATTLE_CANVAS];
+  work = slots[HEAP_SLOT_BATTLE_ANIM - HEAP_SLOT_BATTLE_CANVAS];
   sheet = slots[HEAP_SLOT_BATTLE_SHEET - HEAP_SLOT_BATTLE_CANVAS];
   work->effect = effect;
   BattleEffect_StartCanvasLayer(0);
@@ -61,8 +61,7 @@ void BattleEffect_RunRamses(struct BattleEffectArgument *effect) {
   PLTT_BACKDROP = 0;
   *(u16 *)&BG_PLTT[1] = 0;
   work->transferMode = CANVAS_COPY;
-  Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer,
-                                EFFECT_CALLBACK_ORDER);
+  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, EFFECT_CALLBACK_ORDER);
   BattleEffect_WipeCanvas(CANVAS_WIPE_ACROSS, CANVAS_WIPE_FILL);
   BattleEffect_SelectLivingTargets(work->effect);
   // Nine objects of resource 379, the formation (0 to 6) and the orb (7 and
@@ -79,11 +78,11 @@ void BattleEffect_RunRamses(struct BattleEffectArgument *effect) {
       work->animations[9 + i]->image.priority = 1;
     }
   }
-  EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER, EFFECT_CLIP_BOUNDS, COMPOSITE_MAX);
-  draw[0] = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER];
-  EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER_ALTERNATE, EFFECT_CLIP_BOUNDS,
+  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, COMPOSITE_MAX);
+  draw[0] = (DrawRectangle)gHeapSlots[HEAP_SLOT_RAM_CODE];
+  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, EFFECT_CLIP_BOUNDS,
                       COMPOSITE_ADDITIVE);
-  draw[1] = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE];
+  draw[1] = (DrawRectangle)gHeapSlots[HEAP_SLOT_RAM_CODE_2];
   // Keep the effect between lines 16 and 136.
   REG_WININ = EFFECT_WIN0_LAYERS | WININ_WIN1_BG0 | WININ_WIN1_BG1 |
               WININ_WIN1_BG2 | WININ_WIN1_CLR;
@@ -129,13 +128,13 @@ void BattleEffect_RunRamses(struct BattleEffectArgument *effect) {
     // its drop starting on 91), the second and third 2 and 4 frames after
     // theirs land (134 and 174).
     if (frame == 94)
-      AudioCommand_PlayFar(SE_156);
+      Sound_PlaySongFar(SE_156);
     if (frame == 136)
-      AudioCommand_PlayFar(SE_156);
+      Sound_PlaySongFar(SE_156);
     if (frame == 178)
-      AudioCommand_PlayFar(SE_156);
+      Sound_PlaySongFar(SE_156);
     if (frame == RAMSES_STRIKE_FRAME)
-      AudioCommand_PlayFar(SE_145);
+      Sound_PlaySongFar(SE_145);
     scale = unitScale;
     // One frame of shake at a time, renewed each frame over frames 96 to 251
     // and 260 to 263.

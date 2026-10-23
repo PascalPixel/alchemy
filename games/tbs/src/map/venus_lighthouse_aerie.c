@@ -126,7 +126,7 @@
 #define FLAG_SHAMANS_ROD_OWNER 0x345
 
 /// Map section flags that choose the aerie's field music after each battle, by
-/// the map's field music rules (gMap_InteractionRuleTable,
+/// the map's field music rules (gMap_MusicRules,
 /// object/map_rules.s): MUS_019 before the first battle, MUS_030 once the
 /// first has begun and MUS_022 once the second has. VenusLighthouseFirstFloor
 /// and VenusLighthouseFourthFloor, in the same map section, keep their Psynergy
@@ -780,7 +780,7 @@ static void VenusLighthouseAerie_OverhearSaturosAndMenardi(void) {
                                    SPEAKER_PORTRAIT_RIGHT | LOCALID_SATUROS);
   Engine_ObjectEventSetAnimation(LOCALID_MENARDI, ANIMATION_SHAKE_HEAD);
   VenusLighthouseAerie_ShowMessage(SPEAKER_PORTRAIT_RIGHT | LOCALID_MENARDI);
-  gEventWork->startTransition = MAP_TRANSITION(TRANSITION_WINDOW, 2);
+  gFieldWork->startTransition = MAP_TRANSITION(TRANSITION_WINDOW, 2);
   Engine_ScriptCloseScreen();
   Engine_ScriptWaitForScreen();
   Engine_CameraMoveTo(PIXELS(504), -PIXELS(24), PIXELS(168), 0);
@@ -803,7 +803,7 @@ static void VenusLighthouseAerie_OverhearSaturosAndMenardi(void) {
   Engine_ObjectEventFaceDirection(IVAN, FACING_SOUTH, 0);
   ObjectEvent_FaceDirection(MIA, FACING_SOUTHEAST, 0);
   if (Engine_ScriptChooseYesNo(0, 0) == 1) {
-    gEventWork->message += 1;
+    gFieldWork->message += 1;
   }
   Engine_ScriptWait(20);
   VenusLighthouseAerie_ShowMessage(GARET);
@@ -995,7 +995,7 @@ static void EventScript_ConfrontSaturosAndMenardi(void) {
   ObjectEvent_ShowEmote(SHEBA, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 80);
   Engine_ObjectEventStartRepeatedMotion(LOCALID_MENARDI, 2);
   VenusLighthouseAerie_ShowMessage(SPEAKER_PORTRAIT_RIGHT | LOCALID_MENARDI);
-  Scheduler_RemoveCallback(VenusLighthouseAerie_UpdateShebaPalette);
+  Task_Remove(VenusLighthouseAerie_UpdateShebaPalette);
   Engine_TaskWait(1);
   ObjectEvent_SetChildValue(SHEBA, SPRITE_COLOR_NORMAL);
   Engine_TaskWait(10);
@@ -1054,12 +1054,12 @@ static void EventScript_ConfrontSaturosAndMenardi(void) {
     Engine_ScriptWait(20);
     Engine_ObjectEventSetAnimationAndWait(LOCALID_SATUROS,
                                           ANIMATION_SHAKE_HEAD);
-    gEventWork->message += 1;
+    gFieldWork->message += 1;
     answerAccepted = 0;
   }
   VenusLighthouseAerie_ShowMessage(LOCALID_SATUROS);
   if (answerAccepted != 0) {
-    gEventWork->message += 1;
+    gFieldWork->message += 1;
   }
   ObjectEvent_FaceDirection(GARET, FACING_WEST, 0);
   ObjectEvent_FaceDirection(IVAN, FACING_WEST, 0);
@@ -1076,12 +1076,12 @@ static void EventScript_ConfrontSaturosAndMenardi(void) {
   } else {
     Engine_ScriptWait(20);
     Engine_ObjectEventSetAnimation(IVAN, ANIMATION_SHAKE_HEAD);
-    gEventWork->message += 1;
+    gFieldWork->message += 1;
     answerAccepted = 0;
   }
   VenusLighthouseAerie_ShowMessage(IVAN);
   if (answerAccepted != 0) {
-    gEventWork->message += 1;
+    gFieldWork->message += 1;
   }
   Engine_ObjectEventRunRepeatedMotion(GARET, 2);
   VenusLighthouseAerie_FaceObjectEvent(GARET, FACING_SOUTH);
@@ -1151,7 +1151,7 @@ static void EventScript_ConfrontSaturosAndMenardi(void) {
   Engine_ObjectEventFaceDirection(LOCALID_FELIX, FACING_SOUTHEAST + FACING_STEP,
                                   0);
   ObjectEvent_WalkToAndWait(SHEBA, 276, 192);
-  Script_PlayCue(MUS_SILENCE);
+  Script_PlaySong(MUS_SILENCE);
   objectEvent = ObjectEvent_GetById(LOCALID_MENARDI);
   objectEvent->facing = FACING_SOUTH + FACING_STEP;
   Engine_TaskWait(1);
@@ -1173,7 +1173,7 @@ static void EventScript_ConfrontSaturosAndMenardi(void) {
                             80);
   Engine_ObjectEventFaceDirection(LOCALID_MENARDI, FACING_EAST, 0);
   Engine_ObjectEventFaceDirection(LOCALID_SATUROS, FACING_EAST, 40);
-  Script_PlayCue(MUS_029);
+  Script_PlaySong(MUS_029);
   VenusLighthouseAerie_ShowMessage(LOCALID_SATUROS);
   Engine_ObjectEventFaceDirection(LOCALID_FELIX, FACING_SOUTHEAST + FACING_STEP,
                                   0);
@@ -1320,7 +1320,7 @@ VenusLighthouseAerie_SpawnLinkedPairEffects(struct ObjectEvent *parent) {
   struct ObjectEvent *pair[2];
   struct ObjectEvent *child;
   struct AnimationObject *sprite;
-  struct FieldEffectWork *effectWork = gEffectWork;
+  struct FieldEffectWork *effectWork = gFieldEffectWork;
   s32 effectIndex;
 
   Engine_AudioPlayCue(SE_131);
@@ -1500,7 +1500,7 @@ static void VenusLighthouseAerie_CombineSaturosAndMenardi(void) {
   if (Script_ChooseYesNo(0, 0) == 0) {
     sceneStep = TRUE;
   } else {
-    gEventWork->message++;
+    gFieldWork->message++;
     sceneStep = FALSE;
   }
   Task_Wait(20);
@@ -1509,10 +1509,10 @@ static void VenusLighthouseAerie_CombineSaturosAndMenardi(void) {
   VenusLighthouseAerie_FaceObjectEvent(MIA, FACING_NORTHWEST);
   VenusLighthouseAerie_FaceObjectEvent(LOCALID_FELIX, FACING_EAST);
   Script_ShowMessage(LOCALID_FELIX, 0);
-  Script_PlayCue(AUDIO_CUE_FADE_BGM);
+  Script_PlaySong(AUDIO_CUE_FADE_BGM);
   Script_Wait(40);
   if (sceneStep) {
-    gEventWork->message++;
+    gFieldWork->message++;
   }
 
   // Saturos and Menardi recover from their defeat before using the Venus Star.
@@ -1541,7 +1541,7 @@ static void VenusLighthouseAerie_CombineSaturosAndMenardi(void) {
   ObjectEvent_RunRepeatedMotion(LOCALID_SATUROS, 2);
   Script_Wait(20);
   ObjectEvent_Get(LOCALID_SATUROS)->scaleX = -Q16_ONE;
-  Script_PlayCue(SE_161);
+  Script_PlaySong(SE_161);
   ObjectEvent_SetAnimation(LOCALID_SATUROS, SATUROS_ANIMATION_BREATHE);
   Script_Wait(20);
   ObjectEvent_SetAnimation(LOCALID_MENARDI, ANIMATION_STAND);
@@ -1554,7 +1554,7 @@ static void VenusLighthouseAerie_CombineSaturosAndMenardi(void) {
   ObjectEvent_WalkToAndWait(LOCALID_MENARDI, 292, 186);
   ObjectEvent_Get(LOCALID_MENARDI)->steeringFlags |= OBJ_EVENT_FACES_MOTION;
   ObjectEvent_Get(LOCALID_MENARDI)->scaleX = -Q16_ONE;
-  Script_PlayCue(SE_161);
+  Script_PlaySong(SE_161);
   ObjectEvent_SetAnimation(LOCALID_MENARDI, MENARDI_ANIMATION_STAND_WINDSWEPT);
   Script_Wait(20);
   ObjectEvent_RunRepeatedMotion(LOCALID_MENARDI, 2);
@@ -1625,30 +1625,30 @@ static void VenusLighthouseAerie_CombineSaturosAndMenardi(void) {
     star->effect.velocity.y = PIXELS(3) / 5;
     star->effect.velocity.x = PIXELS(4) / 5;
     star->objectEvent.velocityY = PIXELS(8);
-    FieldObject_SetPosition(&star->objectEvent, PIXELS(308), PIXELS(32),
-                            PIXELS(164));
+    Object_SetPosition(&star->objectEvent, PIXELS(308), PIXELS(32),
+                       PIXELS(164));
   }
   ObjectEvent_MoveToAndWait(LOCALID_VENUS_STAR_SHADOW, 308, 164);
   ObjectEvent_SetPosition(LOCALID_VENUS_STAR_SHADOW, 0, 0);
   ObjectEvent_SetSpritePriority(LOCALID_FELIX, 0);
   if (star != NULL) {
-    Script_PlayCue(SE_STAR_BOUNCE);
+    Script_PlaySong(SE_STAR_BOUNCE);
     ObjectEvent_SetSpriteFlags(&star->objectEvent, 0);
     star->objectEvent.velocityY = PIXELS(4);
-    FieldObject_SetPosition(&star->objectEvent, PIXELS(314), PIXELS(32),
-                            PIXELS(137));
-    FieldObject_WaitForMove(&star->objectEvent);
-    Script_PlayCue(SE_STAR_BOUNCE);
+    Object_SetPosition(&star->objectEvent, PIXELS(314), PIXELS(32),
+                       PIXELS(137));
+    Object_WaitForMove(&star->objectEvent);
+    Script_PlaySong(SE_STAR_BOUNCE);
     star->objectEvent.sprite->image.priority = 1;
     star->objectEvent.velocityY = PIXELS(6);
-    FieldObject_SetPosition(&star->objectEvent, PIXELS(285), PIXELS(32),
-                            PIXELS(146));
-    FieldObject_WaitForMove(&star->objectEvent);
-    Script_PlayCue(SE_STAR_BOUNCE);
+    Object_SetPosition(&star->objectEvent, PIXELS(285), PIXELS(32),
+                       PIXELS(146));
+    Object_WaitForMove(&star->objectEvent);
+    Script_PlaySong(SE_STAR_BOUNCE);
     star->objectEvent.velocityY = PIXELS(5);
-    FieldObject_SetPosition(&star->objectEvent, PIXELS(300), PIXELS(32),
-                            PIXELS(154));
-    FieldObject_WaitForMove(&star->objectEvent);
+    Object_SetPosition(&star->objectEvent, PIXELS(300), PIXELS(32),
+                       PIXELS(154));
+    Object_WaitForMove(&star->objectEvent);
     Task_Wait(6);
     star->objectEvent.x.fixed = 0;
     star->objectEvent.y.fixed = 0;
@@ -1684,13 +1684,13 @@ static void VenusLighthouseAerie_CombineSaturosAndMenardi(void) {
     ObjectEvent_SetAnimation(GARET, ANIMATION_NOD);
     sceneStep = TRUE;
   } else {
-    gEventWork->message++;
+    gFieldWork->message++;
     ObjectEvent_SetAnimation(GARET, ANIMATION_SHAKE_HEAD);
     sceneStep = FALSE;
   }
   VenusLighthouseAerie_ShowMessage(GARET);
   if (sceneStep) {
-    gEventWork->message++;
+    gFieldWork->message++;
   }
   Script_Wait(20);
 
@@ -1722,7 +1722,7 @@ static void VenusLighthouseAerie_CombineSaturosAndMenardi(void) {
                               gVenusLighthouseAerie_BeamOpenAction);
   ObjectEvent_SetActionScript(LOCALID_BEAM_LOWER,
                               gVenusLighthouseAerie_BeamOpenAction);
-  Script_PlayCue(SE_145);
+  Script_PlaySong(SE_145);
   MapGrid_SetShake(PIXELS(6), PIXELS(6), Q16_ONE);
   ColorBuffer_ApplyTarget(0x4063ff, 0);
   ColorBuffer_Interpolate(16);
@@ -1732,7 +1732,7 @@ static void VenusLighthouseAerie_CombineSaturosAndMenardi(void) {
   Task_Wait(60);
   Task_AddCallback(VenusLighthouseAerie_SpawnUpperOrbitParticles,
                    TASK_PRIORITY_MAP);
-  Script_PlayCue(SE_RUMBLE);
+  Script_PlaySong(SE_RUMBLE);
   MapGrid_SetShake(PIXELS(4), PIXELS(4), Q16_ONE);
   ColorBuffer_ApplyTarget(0x4063ff, 0);
   ColorBuffer_Interpolate(120);
@@ -1745,7 +1745,7 @@ static void VenusLighthouseAerie_CombineSaturosAndMenardi(void) {
   ColorBuffer_ApplyTarget(0x203210, 0);
   ColorBuffer_Interpolate(120);
   Task_Wait(120);
-  Script_PlayCue(MUS_063);
+  Script_PlaySong(MUS_063);
   MapGrid_SetShake(PIXELS(2), PIXELS(2), Q16_ONE);
   ColorBuffer_ApplyTarget(PALETTE_TRANSFORM_PLAIN, 0);
   ColorBuffer_Interpolate(120);
@@ -1879,7 +1879,7 @@ static void VenusLighthouseAerie_CombineSaturosAndMenardi(void) {
   VenusLighthouseAerie_FaceObjectEvent(GARET, FACING_SOUTHWEST);
   ObjectEvent_StartRepeatedMotion(GARET, 2);
   VenusLighthouseAerie_ShowMessage(GARET);
-  Script_PlayCue(AUDIO_CUE_FADE_BGM);
+  Script_PlaySong(AUDIO_CUE_FADE_BGM);
   // Flash Saturos and Menardi and release their matching radial bursts.
   ColorBuffer_ApplyTarget(0x40250d, 1);
   ColorBuffer_Interpolate(40);
@@ -1916,7 +1916,7 @@ static void VenusLighthouseAerie_CombineSaturosAndMenardi(void) {
                           EFFECT_USE_PALETTE,
                       &menardiBurst);
   }
-  Script_PlayCue(SE_212);
+  Script_PlaySong(SE_212);
   Task_Wait(6);
   VenusLighthouseAerie_FlashScreen();
   saturos = ObjectEvent_Get(LOCALID_SATUROS);
@@ -1932,9 +1932,9 @@ static void VenusLighthouseAerie_CombineSaturosAndMenardi(void) {
                           EFFECT_USE_PALETTE,
                       &saturosBurst);
   }
-  Script_PlayCue(SE_212);
+  Script_PlaySong(SE_212);
   ObjectEvent_Jump(IVAN, 6, 20);
-  Script_PlayCue(MUS_FUSION_DRAGON_BATTLE);
+  Script_PlaySong(MUS_FUSION_DRAGON_BATTLE);
   VenusLighthouseAerie_ShowMessage(IVAN);
   ObjectEvent_SetAnimation(LOCALID_SATUROS, ANIMATION_SHAKE_HEAD);
   VenusLighthouseAerie_ShowMessage(LOCALID_SATUROS);
@@ -2140,8 +2140,8 @@ static void VenusLighthouseAerie_ShowShebaInDanger(void) {
   VenusLighthouseAerie_TryToPreventFall();
   Engine_GameFlagSet(FLAG_KEEP_MUSIC);
 
-  gEventWork->startTransition = MAP_TRANSITION(TRANSITION_WINDOW, 0);
-  gEventWork->transitionFrames = 24;
+  gFieldWork->startTransition = MAP_TRANSITION(TRANSITION_WINDOW, 0);
+  gFieldWork->transitionFrames = 24;
 
   Engine_ScriptCloseScreen();
   Engine_ScriptWaitForScreen();
@@ -2229,8 +2229,8 @@ static void VenusLighthouseAerie_StageShebasFall(void) {
   ObjectEvent_Get(LOCALID_BEACON_ORB)->y.fixed = PIXELS(40);
   FieldScheduler_AddCallback(VenusLighthouseAerie_SpawnSideOrbitParticles,
                              TASK_PRIORITY_MAP);
-  gEventWork->startTransition = MAP_TRANSITION(TRANSITION_WINDOW, 0);
-  gEventWork->transitionFrames = 24;
+  gFieldWork->startTransition = MAP_TRANSITION(TRANSITION_WINDOW, 0);
+  gFieldWork->transitionFrames = 24;
   Engine_ScriptOpenScreen();
   Engine_ScriptWaitForScreen();
   Engine_ScriptWait(40);
@@ -2243,7 +2243,7 @@ static void VenusLighthouseAerie_StageShebasFall(void) {
 static void VenusLighthouseAerie_ShowSaturosAndMenardiFall(void) {
   struct ObjectEvent *objectEvent;
 
-  Script_PlayCue(SE_RUMBLE);
+  Script_PlaySong(SE_RUMBLE);
   MapGrid_CopyCellAttributes(17, 10, 4, 2, 17, 8);
   ObjectEvent_Get(LOCALID_PARTY_LEADER)->facing = FACING_NORTHWEST;
   ObjectEvent_Get(GARET)->facing = FACING_NORTHWEST;
@@ -2302,7 +2302,7 @@ static void VenusLighthouseAerie_ShowSaturosAndMenardiFall(void) {
   Engine_ObjectEventRunRepeatedMotion(LOCALID_MENARDI, 3);
   Engine_ScriptWait(20);
   Script_ShowMessageAndWait(LOCALID_MENARDI, 0, 40);
-  Script_PlayCue(AUDIO_CUE_FADE_BGM);
+  Script_PlaySong(AUDIO_CUE_FADE_BGM);
 
   objectEvent = ObjectEvent_Get(LOCALID_SATUROS);
   objectEvent->x.fixed = PIXELS(308);
@@ -2364,11 +2364,11 @@ static void VenusLighthouseAerie_DiscussSaturosAndMenardiDefeat(void) {
   } else {
     Engine_ScriptWait(20);
     Engine_ObjectEventRunRepeatedMotion(IVAN, 1);
-    gEventWork->message += 1;
+    gFieldWork->message += 1;
   }
   VenusLighthouseAerie_ShowMessage(IVAN);
   if (answerAccepted != 0) {
-    gEventWork->message += 1;
+    gFieldWork->message += 1;
   }
   ObjectEvent_SetSpeed(GARET, PIXELS(8) / 5, PIXELS(4) / 5);
   garetSpeaker = SPEAKER_PORTRAIT_LEFT | GARET;
@@ -2387,7 +2387,7 @@ static void VenusLighthouseAerie_DiscussSaturosAndMenardiDefeat(void) {
   Script_ShowMessageAndWait(SPEAKER_WINDOW_BELOW | GARET, 0, 40);
   ObjectEvent_FaceDirection(GARET, FACING_SOUTHEAST, 20);
   VenusLighthouseAerie_ShowMessage(garetSpeaker);
-  Script_PlayCue(AUDIO_CUE_FADE_BGM);
+  Script_PlaySong(AUDIO_CUE_FADE_BGM);
   Engine_ObjectEventSetAnimation(MIA, ANIMATION_SHAKE_HEAD);
   VenusLighthouseAerie_ShowMessage(MIA);
   ObjectEvent_FaceDirection(GARET, FACING_SOUTH, 80);
@@ -2413,7 +2413,7 @@ static void VenusLighthouseAerie_DiscussSaturosAndMenardiDefeat(void) {
   Camera_MoveTo(PIXELS(252), 0, PIXELS(190), 1);
   Engine_CameraWaitForMove();
   Engine_ScriptWait(40);
-  Script_PlayCue(MUS_023);
+  Script_PlaySong(MUS_023);
   ObjectEvent_SetAttachedEffect(LOCALID_FELIX, ATTACHED_EFFECT_IN_FRONT |
                                                    ATTACHED_EFFECT_ONCE);
   VenusLighthouseAerie_ShowMessage(LOCALID_FELIX);
@@ -2612,7 +2612,7 @@ static void VenusLighthouseAerie_EruptBeacon(void) {
   Engine_ScriptWait(20);
   ObjectEvent_RunActionScriptAndWait(LOCALID_BEAM_BOTTOM,
                                      gVenusLighthouseAerie_BeamEndAction);
-  Scheduler_RemoveCallback(VenusLighthouseAerie_SpawnUpperOrbitParticles);
+  Task_Remove(VenusLighthouseAerie_SpawnUpperOrbitParticles);
   Engine_ObjectEventJump(IVAN, 2, 20);
   VenusLighthouseAerie_ShowMessage(IVAN);
   ObjectEvent_FaceDirection(GARET, FACING_SOUTHWEST, 20);
@@ -2677,7 +2677,7 @@ static void VenusLighthouseAerie_EruptBeacon(void) {
 
     PLTT_BACKDROP = white;
   }
-  gEventWork->transitionFrames = 1;
+  gFieldWork->transitionFrames = 1;
   Engine_ScriptCloseScreen();
   Engine_ScriptWaitForScreen();
 }
@@ -2688,7 +2688,7 @@ static void VenusLighthouseAerie_RestorePartyOnBrokenAerie(void) {
 
   Engine_ObjectEventDestroy(LOCALID_SATUROS);
   Engine_ObjectEventDestroy(LOCALID_MENARDI);
-  Script_PlayCue(SE_RUMBLE);
+  Script_PlaySong(SE_RUMBLE);
   MapGrid_CopyCellAttributes(17, 10, 4, 2, 17, 8);
   MapGrid_CopyCellsTo(102, 4, 74, 4, 18, 23);
   MapGrid_CopyCellsTo(39, 72, 11, 72, 16, 21);
@@ -2701,7 +2701,7 @@ static void VenusLighthouseAerie_RestorePartyOnBrokenAerie(void) {
   Engine_ObjectEventsRefresh();
   Engine_MapGridRedraw();
   Engine_TaskWait(1);
-  Script_PlayCue(SE_ITEM_BREAK);
+  Script_PlaySong(SE_ITEM_BREAK);
   Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER,
                                  ANIMATION_LEADER_KNOCKED_DOWN);
   Engine_ObjectEventSetAnimation(GARET, ANIMATION_PARTY_KNOCKED_DOWN);
@@ -2750,7 +2750,7 @@ static void VenusLighthouseAerie_RestorePartyOnBrokenAerie(void) {
   ObjectEvent_SetChildValue(LOCALID_BEACON_ORB, SPRITE_COLOR_GBR);
   FieldScheduler_AddCallback(VenusLighthouseAerie_SpawnSideOrbitParticles,
                              TASK_PRIORITY_MAP);
-  gEventWork->transitionFrames = 1;
+  gFieldWork->transitionFrames = 1;
   Engine_ScriptOpenScreen();
   ColorBuffer_ApplySource(RGB(31, 31, 31), 0);
   ColorBuffer_ApplyTarget(PALETTE_TRANSFORM_PLAIN, 0);
@@ -2762,7 +2762,7 @@ static void VenusLighthouseAerie_RestorePartyOnBrokenAerie(void) {
 static void VenusLighthouseAerie_TryToPreventFall(void) {
   Engine_ScriptSetMessage(MsgVenusNoooo);
   VenusLighthouseAerie_ShowMessage(LOCALID_FELIX);
-  Script_PlayCue(MUS_SHEBA_HANGS_ON);
+  Script_PlaySong(MUS_SHEBA_HANGS_ON);
   MapGrid_SetShake(PIXELS(1), PIXELS(1), Q16_ONE);
   Camera_SetSpeed(PIXELS(24) / 5, PIXELS(3) / 5);
   Camera_SetSpeed(PIXELS(4), PIXELS(1) / 2);
@@ -2806,7 +2806,7 @@ static void VenusLighthouseAerie_PlayShebasFall(void) {
   Script_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | LOCALID_FELIX, 0, 40);
   Engine_ObjectEventSetAnimation(SHEBA, SHEBA_ANIMATION_SLIP);
   Script_ShowMessageAndWait(SHEBA, 0, 20);
-  Script_PlayCue(AUDIO_CUE_FADE_BGM);
+  Script_PlaySong(AUDIO_CUE_FADE_BGM);
   Engine_ObjectEventRunRepeatedMotion(SHEBA, 2);
   ObjectEvent_SetActionScript(SHEBA, gVenusLighthouseAerie_StepBackAction);
   Engine_ScriptWait(20);
@@ -2839,7 +2839,7 @@ static void VenusLighthouseAerie_PlayShebasFall(void) {
                                      gVenusLighthouseAerie_LeapAction);
   Engine_ScriptWait(120);
   VenusLighthouseAerie_ShowMessage(LOCALID_PARTY_LEADER);
-  Script_PlayCue(MUS_FELIX_LEAPS_AFTER_SHEBA);
+  Script_PlaySong(MUS_FELIX_LEAPS_AFTER_SHEBA);
   Camera_SetSpeed(PIXELS(4), PIXELS(1) / 2);
   Camera_MoveTo(PIXELS(342), PIXELS(32), PIXELS(212), 1);
   Engine_CameraWaitForMove();
@@ -2924,7 +2924,7 @@ static void VenusLighthouseAerie_PlayShebasFall(void) {
     VenusLighthouseAerie_ShowMessage(MIA);
     stepPending = 1;
   } else {
-    gEventWork->message += 3;
+    gFieldWork->message += 3;
     Engine_ScriptWait(60);
     VenusLighthouseAerie_ShowMessage(GARET);
     Engine_ObjectEventRunRepeatedMotion(IVAN, 1);
@@ -2933,13 +2933,13 @@ static void VenusLighthouseAerie_PlayShebasFall(void) {
     VenusLighthouseAerie_ShowMessage(MIA);
   }
   if (stepPending != 0) {
-    gEventWork->message += 3;
+    gFieldWork->message += 3;
   }
   VenusLighthouseAerie_FaceObjectEvent(LOCALID_PARTY_LEADER, FACING_SOUTH);
   ObjectEvent_SetAttachedEffect(LOCALID_PARTY_LEADER, ATTACHED_EFFECT_IN_FRONT |
                                                           ATTACHED_EFFECT_ONCE);
   Engine_ScriptWait(80);
-  Script_PlayCue(AUDIO_CUE_FADE_BGM);
+  Script_PlaySong(AUDIO_CUE_FADE_BGM);
   ObjectEvent_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
   ObjectEvent_FaceDirection(GARET, FACING_NORTHWEST, 20);
   ObjectEvent_FaceDirection(GARET, FACING_NORTHEAST, 40);
@@ -2958,10 +2958,10 @@ static void VenusLighthouseAerie_PlayShebasFall(void) {
                                          ATTACHED_EFFECT_ONCE);
   Engine_ScriptWait(60);
   VenusLighthouseAerie_ShowMessage(MIA);
-  Script_PlayCue(SE_RUMBLE);
+  Script_PlaySong(SE_RUMBLE);
   MapGrid_SetShake(PIXELS(6), PIXELS(6), Q16_ONE);
   Engine_ScriptWait(40);
-  Script_PlayCue(SE_145);
+  Script_PlaySong(SE_145);
   MapGrid_CopyCellsTo(110, 105, 74, 4, 18, 23);
   MapGrid_CopyCellsTo(92, 86, 83, 4, 8, 23);
   MapGrid_CopyCellsTo(75, 28, 75, 4, 8, 23);
@@ -3009,7 +3009,7 @@ static void VenusLighthouseAerie_PlayShebasFall(void) {
   Engine_ScriptWait(80);
   MapGrid_SetShake(PIXELS(6), PIXELS(6), Q16_ONE);
   Engine_ScriptWait(40);
-  Script_PlayCue(SE_145);
+  Script_PlaySong(SE_145);
   MapGrid_CopyCellAttributes(110, 106, 18, 14, 10, 5);
   MapGrid_CopyCellsTo(110, 105, 74, 4, 18, 23);
   MapGrid_CopyCellsTo(92, 86, 11, 68, 16, 20);
@@ -3054,7 +3054,7 @@ static void VenusLighthouseAerie_PlayShebasFall(void) {
   Engine_ObjectEventJump(MIA, 6, 0);
   MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
   Engine_ScriptWait(80);
-  Script_PlayCue(AUDIO_CUE_FADE_SLOT3);
+  Script_PlaySong(AUDIO_CUE_FADE_SLOT3);
   Engine_ScriptWait(40);
   Engine_ObjectEventStop(LOCALID_PARTY_LEADER);
   Engine_ObjectEventStop(GARET);
@@ -3093,16 +3093,17 @@ static void VenusLighthouseAerie_PlayShebasFall(void) {
   ObjectEvent_WalkToAndWait(LOCALID_PARTY_LEADER, 272, 216);
   ObjectEvent_WalkTo(LOCALID_PARTY_LEADER, 272, 254);
   Engine_ScriptWait(80);
-  ((struct EventWork *)WORK_SLOT(HEAP_SLOT_EVENT))->startTransition =
+  ((struct EventWork *)HEAP_SLOT_BLOCK(HEAP_SLOT_FIELD))->startTransition =
       MAP_TRANSITION(TRANSITION_WINDOW, 1);
-  ((struct EventWork *)WORK_SLOT(HEAP_SLOT_EVENT))->transitionFrames = 16;
+  ((struct EventWork *)HEAP_SLOT_BLOCK(HEAP_SLOT_FIELD))->transitionFrames = 16;
   Engine_ScriptCloseScreen();
   Engine_ScriptWaitForScreen();
   Engine_ScriptWait(80);
   ObjectSystem_SuspendProjectionAndShowSprites();
-  ((struct UiRenderWork *)WORK_SLOT(HEAP_SLOT_WINDOW))->speakerVoiceSound = 0;
-  ((struct UiRenderWork *)WORK_SLOT(HEAP_SLOT_WINDOW))->speakerVoiceCountdown =
-      0;
+  ((struct UiRenderWork *)HEAP_SLOT_BLOCK(HEAP_SLOT_WINDOW))
+      ->speakerVoiceSound = 0;
+  ((struct UiRenderWork *)HEAP_SLOT_BLOCK(HEAP_SLOT_WINDOW))
+      ->speakerVoiceCountdown = 0;
   UiText_ShowCenteredMessage(MsgVenusDespiteLongTiring, 0, 0);
   ObjectSystem_ResumeProjectionAndHideLayers();
   Engine_ScriptWait(80);
@@ -3134,7 +3135,7 @@ static void VenusLighthouseAerie_UpdateBeaconRise(void) {
   spawnParticles = 0;
   switch (sTransitionStep) {
   case 0:
-    Script_PlayCue(SE_220);
+    Script_PlaySong(SE_220);
     MapGrid_SetShake(PIXELS(6), PIXELS(6), Q16_ONE);
     ColorBuffer_ApplyTarget(0x2063ff, 1);
     Engine_ColorBufferInterpolate(8);
@@ -3172,7 +3173,7 @@ static void VenusLighthouseAerie_UpdateBeaconRise(void) {
       ObjectEvent_Get(SHEBA)->riseCounter = 1;
     } else {
       if ((gFrameCount & 7) == 0)
-        Script_PlayCue(SE_246);
+        Script_PlaySong(SE_246);
       spawnParticles = 1;
       center->y.fixed += PIXELS(9) / 4;
     }
@@ -3185,7 +3186,7 @@ static void VenusLighthouseAerie_UpdateBeaconRise(void) {
       sTransitionStep++;
     } else {
       if ((gFrameCount & 7) == 0)
-        Script_PlayCue(SE_246);
+        Script_PlaySong(SE_246);
       spawnParticles = 1;
       center->y.fixed += PIXELS(9) / 4;
     }
@@ -3201,7 +3202,7 @@ static void VenusLighthouseAerie_UpdateBeaconRise(void) {
     spawnParticles = 1;
     break;
   case 36:
-    Script_PlayCue(SE_187);
+    Script_PlaySong(SE_187);
     ColorBuffer_ApplyTarget(RGB(31, 31, 31), 0);
     Engine_ColorBufferInterpolate(12);
     break;

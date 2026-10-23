@@ -75,14 +75,14 @@ A random battle is handled as a way out of the map, and the map is loaded
 again afterwards with everyone put back ([Running a
 map](../object/README.md#the-map-loop-handles-requests-not-scripts)).
 
-In the code, `Field_RunMap` ([`object/run_map.c`](../object/object/run_map.c))
+In the code, `Map_Run` ([`object/run_map.c`](../object/object/run_map.c))
 runs one map. Its inner loop is the walk: it waits a frame and calls
 `Field_ProcessStep`, which checks the ground under the leader, until
 `Field_CountRequests` finds a request. The leader's control script reads the
 buttons through `Field_CheckConfiguredKeys`. The requests are fields of
 `struct FieldWork`; [Running a map](../object/README.md#the-map-loop-handles-requests-not-scripts)
 gives each field and how it is handled. A
-[warp](../../glossary.md#warp) is `Field_RunMap`'s result, which `Game_Run` passes to `Map_TakeWarp`
+[warp](../../glossary.md#warp) is `Map_Run`'s result, which `Game_Run` passes to `Map_TakeWarp`
 to load the next map.
 
 ## Everything that moves runs a script
@@ -190,15 +190,15 @@ flight in 3D towards its target, following the ground, floating, and solid
 objects refusing to overlap. In a battle, `Object_UpdateAllMotion` replaces
 it; it moves the first 14 objects and runs no scripts.
 
-The objects are the 64 slots of `gObjectSlots`, 112 bytes each, in a block
+The objects are the 64 slots of `gObjects`, 112 bytes each, in a block
 of memory borrowed from the [heap](../../glossary.md#heap-and-pools) under the [heap slot](../../glossary.md#heap-slot)
-`HEAP_SLOT_OBJECT_POOL`, and the
+`HEAP_SLOT_OBJECTS`, and the
 handlers are the rows of
 `gScriptObject_CommandTable` (`object_script.c`).
 
 | Name | Value | Meaning |
 | --- | --- | --- |
-| `FIELD_OBJECT_COUNT` | 64 | field objects, the slots of `gObjectSlots` |
+| `OBJECT_COUNT` | 64 | field objects, the slots of `gObjects` |
 | `SC_WAIT(n)` | `0x00`, n | end the turn and wait n frames |
 | `SC_SYNC` | `0x01` | wait until the object reaches its target |
 | `SC_CAMERA` | `0x0b` | follow the leader |
@@ -304,9 +304,9 @@ camera places them.
 
 | Mode | Started by | Object update | Camera |
 | --- | --- | --- | --- |
-| `MODE_LAYERED_MAP` (2) | the field map runner (`object/object/run_map.c`), the debug sprite viewer | `Object_UpdateAllThumb` | `ObjectSystem_UpdateCamera`, which scrolls with the map |
-| `MODE_WORLD_MAP` (3) | the field map runner | `Object_UpdateAllThumb` | `ObjectSystem_UpdateCameraFixed`, which projects 3D points onto the screen |
-| `MODE_BATTLE` (4) | the encounter (`battle/battle/encounter.c`) | `Object_UpdateAllMotion` | `ObjectSystem_UpdateCameraFixed` |
+| `OBJECT_SYSTEM_LAYOUT` (2) | the field map runner (`object/object/run_map.c`), the debug sprite viewer | `Object_UpdateAllThumb` | `ObjectSystem_UpdateCamera`, which scrolls with the map |
+| `OBJECT_SYSTEM_WORLD_MAP` (3) | the field map runner | `Object_UpdateAllThumb` | `ObjectSystem_UpdateCameraFixed`, which projects 3D points onto the screen |
+| `OBJECT_SYSTEM_BATTLE` (4) | the encounter (`battle/battle/encounter.c`) | `Object_UpdateAllMotion` | `ObjectSystem_UpdateCameraFixed` |
 
 The camera places each object's sprite and queues it by depth, and the
 frame's sprite list, the list of every sprite's position and picture that
@@ -338,7 +338,7 @@ the party is carried through the air.
 
 Each control sets the leader's `speedLimit` and `acceleration` from the
 speeds named at the top of `field/player_control.c`. On a town or dungeon
-map, `FieldObject_UpdatePlayerControl` walks at `FIELD_WALK_SPEED` (1 pixel a
+map, `Object_UpdateLeaderControl` walks at `FIELD_WALK_SPEED` (1 pixel a
 frame) and runs at `FIELD_RUN_SPEED` (1.5) while a key of
 `gGameState.dashKeys` (B) is held,
 gaining `FIELD_ACCELERATION` (a quarter pixel) a frame. With `FLAG_FAST_WALK`
@@ -537,7 +537,7 @@ The world map's graphics sets are `gWorldMap_GraphicsResources`
 ### One object, many views
 
 All 64 objects are the same 112 bytes, but each family of code reads them
-through a struct of its own: `ObjectRuntime` (`include/object_runtime.h`),
+through a struct of its own: `Object` (`include/object_runtime.h`),
 `DispatchObject` (`include/object_dispatch.h`), `ScriptInterpreter` and
 `ScriptOperands` (`include/field/action_script.h`), `ScriptMotionObject`
 (`include/script_motion.h`), `ScriptObjectRuntime`
@@ -551,10 +551,10 @@ no command reads the last 12.
 
 The views agree on the layout (the script first, then position, velocity and
 target) and differ in names and types where their readers differ. The wait is
-unsigned in `ObjectRuntime` and `ObjectEvent` and signed in
+unsigned in `Object` and `ObjectEvent` and signed in
 `ScriptMotionObject`; the routine run each frame at offset 0x6c is `hook` to
-the scripts, `update` to maps and `ObjectRuntime`. Even
-`gObjectSlots` is declared as an `ObjectRuntime *` in `include/field/field.h`
+the scripts, `update` to maps and `Object`. Even
+`gObjects` is declared as an `Object *` in `include/field/field.h`
 and as a `ScriptMotionObject *` in `update.c`.
 
 The several views come from the [matching](../../glossary.md#matching-decompilation):
@@ -591,7 +591,7 @@ handles requests; the engine supplies the objects, scripts and ground checks it
 uses. Overlays reach the engine through their [import tables](../../glossary.md#entry-table-and-import-table)
 (`src/map/import/`): nine import `MapGrid_GetTerrainHeight` and six
 `MapGrid_SetMetatileBehaviorAt`, with which a map rewrites a cell's [metatile behavior](../../glossary.md#metatile-behavior).
-The battle uses the object system in `MODE_BATTLE` for its own sprites. The
+The battle uses the object system in `OBJECT_SYSTEM_BATTLE` for its own sprites. The
 Lost Age's field code is described by [its own
 guide](../../../tla/src/field/README.md), as differences from this one.
 
@@ -622,7 +622,7 @@ guide](../../../tla/src/field/README.md), as differences from this one.
 | `lucky_dice.c` | the Lucky Dice minigame, with its camera defaults and 8.8 fixed-point helpers |
 | `layouts.tsv` | `gLayouts`: each layout's header, palette, three tile sheets and layer data, as resource numbers counted from `ResourceId_Layout001` |
 | `remap0.tsv` to `remap3.tsv` | `gRuntime_ByteRemapTable`, four 256-byte colour remap tables |
-| `maps.s` | `gField_MapTable`: each map's overlay, [map section](../../glossary.md#map-section), map type (town or field) and layout; each row also defines the map's `MapId_` |
+| `maps.s` | `gMapHeaders`: each map's overlay, [map section](../../glossary.md#map-section), map type (town or field) and layout; each row also defines the map's `MapId_` |
 | `common/effect/` | the ground particle and sparkle pictures of the field's weather, which [`scripts.s`](../object/scripts.s) places |
 
 The headers are in `games/tbs/include/unit/field/`, one for each C file but
@@ -636,7 +636,7 @@ on its own.
 
 ## Words used here
 
-- A **field object** is one of the 64 slots of `gObjectSlots`, 112 bytes
+- A **field object** is one of the 64 slots of `gObjects`, 112 bytes
   each, as the [glossary](../../glossary.md#field-object) defines it; a map
   knows its object events among them by [local id](../../glossary.md#local-id). A slot with no script is free.
 - A **sprite** is one of the 64 `struct AnimationObject`s: an image and a
@@ -682,7 +682,7 @@ and a part undefines its macros at its end.
 | `ObjectCamera_` | a camera hook that returns 1 and nothing calls (`object_camera.c`) |
 
 A few functions take the prefix of the one thing they act on
-(`Resource_DecompressLz`, `Camera_FollowLeaderInBounds`). Names other
+(`Decompress_Lz`, `Camera_FollowLeaderInBounds`). Names other
 folders or The Lost Age's copy also use change only in a rename across all of
 them.
 

@@ -150,7 +150,7 @@ static s32 Tolbi_UpdateKid(union FieldObject *fieldObject) {
   u8 **workAreas = gWindowWork;
   struct UiRenderWork *ui = (struct UiRenderWork *)workAreas[0];
   struct FieldWork *work =
-      (struct FieldWork *)workAreas[HEAP_SLOT_EVENT - HEAP_SLOT_WINDOW];
+      (struct FieldWork *)workAreas[HEAP_SLOT_FIELD - HEAP_SLOT_WINDOW];
   u16 *kidFlags = (u16 *)&self->timer;
   s32 force = 0;
   s32 range = 18;
@@ -241,7 +241,7 @@ static void Tolbi_ReadLuckyMedalSign(void) {
 /// Talking to the older brother, or reading his mind. He stops running while
 /// he speaks, then turns back the way he was going.
 static void Tolbi_TalkToOlderBrother(void) {
-  struct EventWork *work = gEventWork;
+  struct EventWork *work = gFieldWork;
   struct ObjectEvent *kid;
   s16 facing;
   s32 msg;
@@ -279,7 +279,7 @@ static void Tolbi_TalkToOlderBrother(void) {
 
 /// Talking to the younger sister, or reading her mind, as above.
 static void Tolbi_TalkToYoungerSister(void) {
-  struct EventWork *work = gEventWork;
+  struct EventWork *work = gFieldWork;
   struct ObjectEvent *kid;
   s16 facing;
   s32 msg;
@@ -409,7 +409,7 @@ static void Tolbi_TalkToSnackVendor(void) {
 /// (except at TOLBI_TO_WEAPON_AND_ARMOR_SHOP) and the map changes through the
 /// door's warp, numbered as its metatile behavior.
 static void Tolbi_EnterDoor(void) {
-  struct EventWork *work = gEventWork;
+  struct EventWork *work = gFieldWork;
   u32 localId;
   s32 door;
 
@@ -459,7 +459,7 @@ s32 Tolbi_ApplyEntryState(s32 unused) {
   void (*kidUpdate)(union FieldObject *);
   s32 clearFlags;
 
-  gEventWork->startTransition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+  gFieldWork->startTransition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
 
   // The two children run their loop south-east of the fountain.
   ObjectEvent_SetPosition(TOLBI_OLDER_BROTHER, PIXELS(352), PIXELS(352));
@@ -527,7 +527,7 @@ static void Tolbi_TalkToSpringVisitor(void) {
   Script_OpenMessage(TOLBI_SPRING_VISITOR, 0);
   if (Engine_ScriptChooseYesNo(LOCALID_PARTY_LEADER, 0) == 0) {
     // Yes: "I'll give you the chance to go first."
-    gEventWork->message++;
+    gFieldWork->message++;
     Engine_ScriptShowMessage(TOLBI_SPRING_VISITOR, 0);
     ObjectEvent_SetSpeed(TOLBI_SPRING_VISITOR, PIXELS(1), PIXELS(1) / 2);
     ObjectEvent_WalkToAndWait(TOLBI_SPRING_VISITOR, 320, 304);
@@ -549,7 +549,7 @@ static void Tolbi_EnterSpring(void) {
 
 /// Leaves by the warp numbered as the metatile behavior the party walked into.
 static void Tolbi_RequestTouchedWarp(void) {
-  s16 *trigger = &gEventWork->touchedTrigger;
+  s16 *trigger = &gFieldWork->touchedTrigger;
 
   Engine_ScriptRequestWarp(*trigger);
 }
@@ -601,7 +601,7 @@ static void Tolbi_MeetSearchingSoldiers(void) {
   Engine_ScriptWait(25);
   UiWindow_CreateWithSideObject(SPRITE_BABI, 0, 12, 7);
   UiText_OpenMessageWindow((firstMsg + 3), 11, 12, 2);
-  gEventWork->speaker = TOLBI_MISSING_PERSON_POSTER;
+  gFieldWork->speaker = TOLBI_MISSING_PERSON_POSTER;
   if (Engine_ScriptChooseYesNo(LOCALID_PARTY_LEADER, 0) == 0) {
     // Yes: "Babi must be nearby!!!" They nod and run east.
     Engine_ScriptWait(20);
@@ -644,7 +644,7 @@ static void Tolbi_MeetSearchingSoldiers(void) {
     Engine_ScriptWait(20);
     Engine_ObjectEventFaceDirection(TOLBI_SOLDIER_A, FACING_EAST, 0);
     Engine_ScriptWait(30);
-    gEventWork->message += 1;
+    gFieldWork->message += 1;
     Engine_ScriptShowMessage(TOLBI_SOLDIER_A, 0);
     Engine_ScriptWait(20);
     ObjectEvent_FaceDirection(TOLBI_SOLDIER_A, FACING_SOUTH, 0);

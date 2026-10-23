@@ -13,7 +13,7 @@ struct ObjectCameraTile {
   u32 behaviorAndCollision : 16;
 };
 
-/// An object event (one of gObjectSlots' 64, 0x70 bytes), as the cameras read
+/// An object event (one of gObjects' 64, 0x70 bytes), as the cameras read
 /// it.
 struct ObjectCameraObject {
   u32 active;       ///< zero for a free slot
@@ -93,12 +93,12 @@ void ObjectSystem_UpdateCamera(void) {
   u32 layerPlusOne;
 
   // MapGridScrollWork owns all three layer cell pointers at their 0x30-byte
-  // stride. UB: map and system work are separate globals, beyond gObjectSlots.
+  // stride. UB: map and system work are separate globals, beyond gObjects.
   // Reading their named slots adds eight bytes in the forced EN build.
 #ifdef UBFIX
   grid = gMapGridWork[0];
 #else
-  grid = *(struct MapGridScrollWork **)(((u8 *)&gObjectSlots) + 12);
+  grid = *(struct MapGridScrollWork **)(((u8 *)&gObjects) + 12);
 #endif
 #ifdef UBFIX
   viewX = grid->viewX & 0xffff0000;
@@ -109,17 +109,16 @@ void ObjectSystem_UpdateCamera(void) {
   viewZ = viewCoordinates[1] & 0xffff0000;
 #endif
 #ifdef UBFIX
-  system = gMenuCtrlWork;
+  system = gObjectSystemWork;
 #else
-  system = *(struct ObjectSystemWork **)(((u8 *)&gObjectSlots) + 4);
+  system = *(struct ObjectSystemWork **)(((u8 *)&gObjects) + 4);
 #endif
   // Copy the frame decoder (Render_DecodeFrame) into its heap slot.
   RamCode_LoadSlot(HEAP_SLOT_FRAME_SCRATCH, Render_DecodeFrame,
                    Render_DecodeFrameCodeSize);
   system->used = 0;
-  object = (struct ObjectCameraObject *)gObjectSlots;
-  for (objectIndex = 0; objectIndex < FIELD_OBJECT_COUNT;
-       objectIndex++, object++) {
+  object = (struct ObjectCameraObject *)gObjects;
+  for (objectIndex = 0; objectIndex < OBJECT_COUNT; objectIndex++, object++) {
     if (object->active == 0)
       continue;
     // An object at (x, z) = (0, 0) is not placed; only its sprite's VRAM is
@@ -209,7 +208,7 @@ void ObjectSystem_UpdateCamera(void) {
       }
     }
   }
-  Runtime_ReleaseHeapBlock(HEAP_SLOT_FRAME_SCRATCH);
+  FreeHeapSlot(HEAP_SLOT_FRAME_SCRATCH);
 }
 
 /// Unused: returns 1; nothing calls it.
@@ -219,9 +218,10 @@ UNUSED s32 ObjectCamera_ReturnTrue(void) { return 1; }
 /// 64th object down, facing them by the angle from the eye to the target.
 /// While battle commands are chosen (FLAG_CHOOSING_COMMANDS, set by
 /// BattlePresentation_BuildActions) it uses the fixed view matrix and 1.0
-/// scale. ObjectSystem_Initialize schedules it (order 0xc80) for MODE_WORLD_MAP
-/// and MODE_BATTLE; ObjectSystem_SuspendProjectionAndShowSprites
-/// suspends it. Resets the system's used count.
+/// scale. ObjectSystem_Initialize schedules it (order 0xc80) for
+/// OBJECT_SYSTEM_WORLD_MAP and OBJECT_SYSTEM_BATTLE;
+/// ObjectSystem_SuspendProjectionAndShowSprites suspends it. Resets the
+/// system's used count.
 void ObjectSystem_UpdateCameraFixed(void) {
   s32 i;
   struct ObjectCameraFixed *camera;
@@ -243,14 +243,14 @@ void ObjectSystem_UpdateCameraFixed(void) {
    * tbs-en. */
   UNUSED struct ObjectCameraPoint unusedPoints[2];
 
-  // UB: camera and system work are separate globals, beyond gObjectSlots.
+  // UB: camera and system work are separate globals, beyond gObjects.
   // Reading their named slots adds four bytes in the forced EN build.
 #ifdef UBFIX
   camera = (struct ObjectCameraFixed *)gCameraWork;
-  system = gMenuCtrlWork;
+  system = gObjectSystemWork;
 #else
-  camera = *(struct ObjectCameraFixed **)(((u8 *)&gObjectSlots) + 0x1c);
-  system = *(struct ObjectSystemWork **)(((u8 *)&gObjectSlots) + 4);
+  camera = *(struct ObjectCameraFixed **)(((u8 *)&gObjects) + 0x1c);
+  system = *(struct ObjectSystemWork **)(((u8 *)&gObjects) + 4);
 #endif
   RamCode_LoadSlot(HEAP_SLOT_FRAME_SCRATCH, Render_DecodeFrame,
                    Render_DecodeFrameCodeSize);
@@ -277,10 +277,10 @@ void ObjectSystem_UpdateCameraFixed(void) {
   }
   // The objects are placed from the last down. A sprite's layer byte is its
   // draw slot here: 0 sorts it by distance (Render_PlaceProjectedSprite).
-  object = (struct ObjectCameraObject *)gObjectSlots;
-  object += FIELD_OBJECT_COUNT - 1;
+  object = (struct ObjectCameraObject *)gObjects;
+  object += OBJECT_COUNT - 1;
   fixedScale = 0x10000;
-  for (i = FIELD_OBJECT_COUNT - 1; i >= 0; i--, object--) {
+  for (i = OBJECT_COUNT - 1; i >= 0; i--, object--) {
     if (object->active == 0)
       continue;
     kind = object->kind & 15;
@@ -318,5 +318,5 @@ void ObjectSystem_UpdateCameraFixed(void) {
       break;
     }
   }
-  Runtime_ReleaseHeapBlock(HEAP_SLOT_FRAME_SCRATCH);
+  FreeHeapSlot(HEAP_SLOT_FRAME_SCRATCH);
 }

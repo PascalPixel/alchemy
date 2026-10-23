@@ -10,15 +10,15 @@
 /// FieldScript_End calls it with the leader and keepPosition 1, so after a
 /// script the view follows the leader again from where it is, without a jump.
 void Camera_FollowObjectEvent(s32 localId, s32 keepPosition) {
-  struct ObjectRuntime *subject;
-  struct ObjectRuntime *camera;
+  struct Object *subject;
+  struct Object *camera;
   struct FieldWork *work;
   struct MapGridScrollWork *grid;
 
   subject = ObjectTable_Get(localId);
   // The slot already holds the field work, which this returns; the camera
   // commands here all find it this way.
-  work = Runtime_AllocateBlock(HEAP_SLOT_EVENT, sizeof(struct FieldWork));
+  work = AllocHeapSlotEwram(HEAP_SLOT_FIELD, sizeof(struct FieldWork));
   camera = work->camera;
   grid = gMapGridWork[0];
   if (subject != 0) {
@@ -28,7 +28,7 @@ void Camera_FollowObjectEvent(s32 localId, s32 keepPosition) {
     if (keepPosition == 0) {
       SET_POSITION(camera, subject->x, subject->y, subject->z);
       WaitFrames(1);
-      if (work->mode != MODE_WORLD_MAP) {
+      if (work->mode != OBJECT_SYSTEM_WORLD_MAP) {
         MapGrid_CenterOnFollowedPointFar();
       }
     }
@@ -39,7 +39,7 @@ void Camera_FollowObjectEvent(s32 localId, s32 keepPosition) {
 /// acceleration, 16.16 pixels per frame.
 void Camera_SetSpeedParameters(s32 speedLimit, s32 acceleration) {
   struct FieldWork *owner =
-      Runtime_AllocateBlock(HEAP_SLOT_EVENT, sizeof(struct FieldWork));
+      AllocHeapSlotEwram(HEAP_SLOT_FIELD, sizeof(struct FieldWork));
   owner->camera->speedLimit = speedLimit;
   owner->camera->acceleration = acceleration;
 }
@@ -61,14 +61,13 @@ void Camera_MoveWithinMapBounds(s32 requestedX, s32 requestedY, s32 requestedZ,
   s32 positionZ;
   s32 positionY;
   struct MapGridScrollWork *grid;
-  struct ObjectRuntime *camera;
+  struct Object *camera;
 
   positionX = requestedX;
   positionY = requestedY;
   shouldGlide = glide;
   positionZ = requestedZ;
-  runtimeBlock =
-      Runtime_AllocateBlock(HEAP_SLOT_EVENT, sizeof(struct FieldWork));
+  runtimeBlock = AllocHeapSlotEwram(HEAP_SLOT_FIELD, sizeof(struct FieldWork));
   camera = runtimeBlock->camera;
   grid = gMapGridWork[0];
 
@@ -107,7 +106,7 @@ void Camera_MoveWithinMapBounds(s32 requestedX, s32 requestedY, s32 requestedZ,
   if (shouldGlide == 0) {
     SET_POSITION(camera, positionX, positionY, positionZ);
     WaitFrames(1U);
-    if (runtimeBlock->mode != MODE_WORLD_MAP) {
+    if (runtimeBlock->mode != OBJECT_SYSTEM_WORLD_MAP) {
       MapGrid_CenterOnFollowedPointFar();
     }
   } else {
@@ -118,11 +117,11 @@ void Camera_MoveWithinMapBounds(s32 requestedX, s32 requestedY, s32 requestedZ,
 /// The script command "camera move to object event": Camera_MoveWithinMapBounds
 /// to the object event's x and z.
 void ObjectEvent_PlaceCurrentWithinCameraBounds(s32 localId, s32 glide) {
-  struct ObjectRuntime *subject;
+  struct Object *subject;
 
   subject = ObjectTable_Get(localId);
   // The field work, looked up and not used.
-  Runtime_AllocateBlock(HEAP_SLOT_EVENT, 0xCCC);
+  AllocHeapSlotEwram(HEAP_SLOT_FIELD, 0xCCC);
   if (subject != NULL) {
     Camera_MoveWithinMapBounds(subject->x, -1, subject->z, glide);
   }
@@ -131,28 +130,28 @@ void ObjectEvent_PlaceCurrentWithinCameraBounds(s32 localId, s32 glide) {
 /// The script command "camera wait for move": waits (at most 600 frames) for
 /// the camera to arrive, then 2 frames more.
 void Camera_WaitForArrival(void) {
-  FieldObject_WaitForMoveFar(((struct FieldWork *)Runtime_AllocateBlock(
-                                  HEAP_SLOT_EVENT, sizeof(struct FieldWork)))
-                                 ->camera);
+  Object_WaitForMoveFar(((struct FieldWork *)AllocHeapSlotEwram(
+                             HEAP_SLOT_FIELD, sizeof(struct FieldWork)))
+                            ->camera);
   FieldScript_WaitFrames(2);
 }
 
 /// The script command "get view centre": returns the camera object.
 struct ObjectEvent *Camera_GetScriptObject(void) {
-  return (struct ObjectEvent *)((struct FieldWork *)Runtime_AllocateBlock(
-                                    HEAP_SLOT_EVENT, sizeof(struct FieldWork)))
+  return (struct ObjectEvent *)((struct FieldWork *)AllocHeapSlotEwram(
+                                    HEAP_SLOT_FIELD, sizeof(struct FieldWork)))
       ->camera;
 }
 
 /// Unused: makes the camera follow target; unless keepCurrentPosition is set it
 /// jumps there at once.
 /// Nothing calls it.
-UNUSED void Camera_FollowObject(struct ObjectRuntime *target,
+UNUSED void Camera_FollowObject(struct Object *target,
                                 s32 keepCurrentPosition) {
-  struct ObjectRuntime *camera;
+  struct Object *camera;
 
-  camera = ((struct FieldWork *)Runtime_AllocateBlock(HEAP_SLOT_EVENT,
-                                                      sizeof(struct FieldWork)))
+  camera = ((struct FieldWork *)AllocHeapSlotEwram(HEAP_SLOT_FIELD,
+                                                   sizeof(struct FieldWork)))
                ->camera;
   if (target != NULL) {
     ObjectDispatch_StartCameraFar((struct DispatchObject *)camera, 0);

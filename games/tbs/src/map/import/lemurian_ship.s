@@ -2,12 +2,12 @@
 	.set overlay_imports, 1
 	.set import.Math_DivideUnsigned, 1
 	.set import.Engine_TaskWait, 1
-	.set import.Scheduler_AddOrUpdateCallback, 1
+	.set import.Task_Add, 1
 	.set import.Engine_TaskRemoveCallback, 1
 	.set import.Engine_RandomNext, 1
 	.set import.Engine_MathSin, 1
-	.set import.Runtime_AllocateBlock, 1
-	.set import.Runtime_BumpAllocateAlternatePool, 1
+	.set import.AllocHeapSlotEwram, 1
+	.set import.AllocEwram, 1
 	.set import.Engine_VramLoad, 1
 	.set import.Resource_FindFreeEntry, 1
 	.set import.Runtime_PushSlotEntry, 1

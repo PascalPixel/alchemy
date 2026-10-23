@@ -12,7 +12,7 @@ static void Vale_RequestBackdropWarp(s32 no) {
   if (Engine_GameFlagIsSet(FLAG_VALE_STORM) != 0) {
     FieldEffect_StopLightning();
   }
-  p = gEventWork;
+  p = gFieldWork;
   p->startTransition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   p->transitionFrames = 16;
   Engine_ScriptRequestWarp(no);

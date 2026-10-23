@@ -106,7 +106,7 @@ s32 UiText_RenderStringTiles(u16 *text, u16 *tiles, u16 *mirror, s32 x) {
   u32 bits;
 
   work = UI_WORK;
-  canvas = MemAlloc(0x800);
+  canvas = Alloc(0x800);
   glyphs = Resource_GetTableEntry((s32)&ResourceId_WindowTiles);
   paletteBits = work->level << 12;
   Iwram_ClearWords(pens, 16);
@@ -292,7 +292,7 @@ s32 UiText_RenderStringTiles(u16 *text, u16 *tiles, u16 *mirror, s32 x) {
     tiles++;
     mirror++;
   }
-  MemFree(canvas);
+  Free(canvas);
   return tileCount;
 }
 
@@ -646,16 +646,16 @@ static __inline__ void UiText_WidenByteString(const u8 *input, u16 *output) {
 /// Draws a byte string into a text canvas window at pixel (x, y).
 /// The 256-halfword scratch requires at most 255 input bytes before the
 /// terminator. The scratch comes from EWRAM, or IWRAM when EWRAM is full
-/// (Runtime_BumpAllocateAlternatePool), and is freed before returning.
+/// (AllocEwram), and is freed before returning.
 void UiText_DrawString(const u8 *text, struct UiWindow *window, s32 x, s32 y) {
   s16 *buffer;
   const u8 *input;
 
   input = text;
-  buffer = Runtime_BumpAllocateAlternatePool(UI_BYTE_STRING_BUFFER_SIZE);
+  buffer = AllocEwram(UI_BYTE_STRING_BUFFER_SIZE);
   UiText_WidenByteString(input, (u16 *)buffer);
   UiText_RenderWideStringAtOffset((u16 *)buffer, window, x, y);
-  MemFree(buffer);
+  Free(buffer);
 }
 
 /// Draws a byte string as tiles in window work at pixel (offsetX, offsetY) of
@@ -672,7 +672,7 @@ void UiText_DrawStringAtOffset(const u8 *text, const struct UiWindow *work,
   s32 dst;
   s32 phase;
 
-  buffer = Runtime_BumpAllocateAlternatePool(UI_BYTE_STRING_BUFFER_SIZE);
+  buffer = AllocEwram(UI_BYTE_STRING_BUFFER_SIZE);
   canvas = UI_WORK;
   UiText_WidenByteString(text, (u16 *)buffer);
 
@@ -688,7 +688,7 @@ void UiText_DrawStringAtOffset(const u8 *text, const struct UiWindow *work,
     UiText_RenderStringTiles((u16 *)buffer, (u16 *)src, (u16 *)dst, phase);
     // The scratch is freed only here: a place outside the tilemap leaves it
     // allocated.
-    MemFree(buffer);
+    Free(buffer);
   }
 }
 
@@ -698,12 +698,12 @@ void UiText_DrawStringAtOffset(const u8 *text, const struct UiWindow *work,
 /// coordinates.
 void UiText_DrawStringInWindow(const u8 *text, struct UiWindow *window, u32 x,
                                u32 y) {
-  u16 *buffer = Runtime_BumpAllocateAlternatePool(UI_BYTE_STRING_BUFFER_SIZE);
+  u16 *buffer = AllocEwram(UI_BYTE_STRING_BUFFER_SIZE);
   UiText_WidenByteString(text, buffer);
   x >>= 3;
   y >>= 3;
   UiText_RenderWideStringInWindow((s16 *)buffer, window, x, y);
-  MemFree(buffer);
+  Free(buffer);
 }
 
 /// Draws a number (width as UiText_FormatNumber) into a text canvas window at

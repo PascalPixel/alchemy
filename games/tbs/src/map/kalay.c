@@ -509,7 +509,7 @@ static void Kalay_AskAboutCaveAccess(void) {
                                             ANIMATION_SHAKE_HEAD);
       Engine_ScriptShowMessage(LOCALID_TUNNEL_GUARD, 0);
     } else {
-      message = &gEventWork->message;
+      message = &gFieldWork->message;
       *message = *message + 1;
       Engine_ObjectEventSetAnimationAndWait(LOCALID_TUNNEL_GUARD,
                                             ANIMATION_NOD);
@@ -595,7 +595,7 @@ static void Kalay_OpenDoorAndExit(void) {
   u32 i;
   s32 door;
 
-  work = gEventWork;
+  work = gFieldWork;
   Engine_ScriptStart();
   for (i = LOCALID_FIRST_PLACED; i <= LOCALID_LAST_SLOT; i++) {
     objectEvent = ObjectEvent_GetById(i);
@@ -626,7 +626,7 @@ static void Kalay_OpenDoorAndExit(void) {
 
 /// The palace door opens in two frames.
 static __inline__ void Kalay_AnimatePalaceDoor(void) {
-  Script_PlayCue(SE_188);
+  Script_PlaySong(SE_188);
   MapGrid_CopyCellsTo(36, 23, 43, 12, 2, 2);
   Engine_TaskWait(5);
   MapGrid_CopyCellsTo(39, 23, 43, 12, 2, 2);
@@ -670,7 +670,7 @@ static void Kalay_WatchTourGroupDeparture(void) {
   struct ObjectEvent *headHome;
   struct EventWork *work;
 
-  work = gEventWork;
+  work = gFieldWork;
   Engine_ScriptStart();
   if (GameFlag_IsSet(FLAG_KALAY_HEARD_OF_COLOSSO_TOUR) != 0 &&
       GameFlag_IsSet(FLAG_KALAY_COLOSSO_TOUR_LEFT) == 0) {
@@ -692,10 +692,10 @@ static void Kalay_WatchTourGroupDeparture(void) {
                             PIXELS(264));
     ObjectEvent_SetPosition(LOCALID_OURANOS, PIXELS(332), PIXELS(280));
     ObjectEvent_SetPosition(LOCALID_SECOND_GUIDE, PIXELS(364), PIXELS(272));
-    Script_PlayCue(AUDIO_CUE_FADE_BGM);
+    Script_PlaySong(AUDIO_CUE_FADE_BGM);
     Ui_SetMessageVoiceFromObjectEvent(LOCALID_HEAD_GUIDE);
     UiText_ShowCenteredMessage(MsgKalayOkListeningLets, 1, 0);
-    Script_PlayCue(MUS_009);
+    Script_PlaySong(MUS_009);
     Engine_ScriptWait(10);
     Engine_ObjectEventRunRepeatedMotion(LOCALID_PARTY_LEADER, 2);
     if (work->touchedTrigger == 9) {
@@ -923,7 +923,7 @@ static void Kalay_WatchTourGroupDeparture(void) {
     Engine_ObjectEventRunRepeatedMotion(LOCALID_FIRST_TOURIST + 3, 1);
     Engine_ScriptSetMessage(message + 6);
     Script_ShowMessageAndWait(LOCALID_FIRST_TOURIST + 3, 0, 10);
-    Scheduler_RemoveCallback(Kalay_AlternateGuidesPacing);
+    Task_Remove(Kalay_AlternateGuidesPacing);
     Engine_ObjectEventStop(LOCALID_HEAD_GUIDE);
     Engine_ObjectEventStop(LOCALID_SECOND_GUIDE);
     Engine_TaskWait(1);
@@ -1188,7 +1188,7 @@ static void Kalay_WatchTourGroupDeparture(void) {
     Engine_ObjectEventDestroy(LOCALID_FIRST_TOURIST + 5);
     Engine_ObjectEventDestroy(LOCALID_FIRST_TOURIST + 6);
     Engine_ObjectEventDestroy(LOCALID_OURANOS);
-    Script_PlayCue(AUDIO_CUE_FADE_BGM);
+    Script_PlaySong(AUDIO_CUE_FADE_BGM);
     if (work->touchedTrigger == 9) {
       ObjectEvent_WalkToAndWait(LOCALID_PARTY_LEADER, 224, 458);
       leader = ObjectEvent_Get(LOCALID_PARTY_LEADER);
@@ -1198,10 +1198,10 @@ static void Kalay_WatchTourGroupDeparture(void) {
       leader = ObjectEvent_Get(LOCALID_PARTY_LEADER);
       leader->facing = FACING_SOUTH;
     }
-    Audio_PlayCueFromEventWork();
+    Map_PlayMusic();
     GameFlag_Set(FLAG_KALAY_COLOSSO_TOUR_LEFT);
   } else {
-    Script_PlayCue(SE_MAP_EXIT);
+    Script_PlaySong(SE_MAP_EXIT);
     Engine_ScriptRequestWarp(work->touchedTrigger);
     Engine_ScriptCloseScreen();
     Engine_ScriptWaitForScreen();
@@ -1256,7 +1256,7 @@ static void Kalay_DisableLeaderAutomaticPriority(void) {
 
 /// Catch in Kalay pulls in the Nut circling there, until it is caught.
 static void Kalay_CatchTownNut(void) {
-  Scheduler_RemoveCallback(Kalay_UpdateNutOrbit);
+  Task_Remove(Kalay_UpdateNutOrbit);
   Engine_TaskWait(1);
   Engine_ObjectEventSetPosition(LOCALID_TOWN_NUT, 0, 0);
   Engine_GameFlagSet(FLAG_KALAY_TOWN_NUT_CAUGHT);
@@ -1386,7 +1386,7 @@ static void Kalay_PrepareTunnelEntrance(void) {
 /// from the north-east room
 /// (KALAY_TUNNEL_PASSAGE_LONG_PATH_FROM_NORTHEAST_ROOM) starts SE_170.
 static void Kalay_StartWindowTransition(void) {
-  gEventWork->startTransition =
+  gFieldWork->startTransition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   if (Engine_GameFlagIsSet(FLAG_KALAY_TUNNEL_OPEN) != 0) {
     MapGrid_CopyCellsTo(58, 5, 58, 8, 2, 3);
@@ -1416,10 +1416,10 @@ static void Kalay_PrepareTunnel(void) {
   s32 trackingValue;
   s32 column;
   struct FadeOverlayWork *effectWork;
-  // HEAP_SLOT_FADE_OVERLAY is nine slots after HEAP_SLOT_EVENT; index the
-  // actual slot array, not adjacent storage reached past the scalar gEventWork
+  // HEAP_SLOT_FADE_OVERLAY is nine slots after HEAP_SLOT_FIELD; index the
+  // actual slot array, not adjacent storage reached past the scalar gFieldWork
   // declaration.
-  void **workSlots = gWorkSlot + HEAP_SLOT_EVENT;
+  void **workSlots = gHeapSlots + HEAP_SLOT_FIELD;
 
   ((struct EventWork *)workSlots[0])->startTransition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
@@ -1427,7 +1427,7 @@ static void Kalay_PrepareTunnel(void) {
 #if TBS_PATCH_1
   resumedMap = GameFlag_IsSet(FLAG_KEEP_PARTY_POSITION);
   if (resumedMap != 0) {
-    effectWork = workSlots[HEAP_SLOT_FADE_OVERLAY - HEAP_SLOT_EVENT];
+    effectWork = workSlots[HEAP_SLOT_FADE_OVERLAY - HEAP_SLOT_FIELD];
     trackingValue = GameFlag_IsSet(FLAG_TUNNEL_OVERLAY_FOLLOWS_LEADER);
 #ifdef UBFIX
     if (trackingValue != 0) {
@@ -1448,7 +1448,7 @@ static void Kalay_PrepareTunnel(void) {
     GameFlag_Set(FLAG_TUNNEL_OVERLAY_FOLLOWS_LEADER);
     if (gGameState.warpDest == KALAY_TUNNEL_TREASURE_ROOM_FROM_KALAY) {
       ((struct FadeOverlayWork *)
-           workSlots[HEAP_SLOT_FADE_OVERLAY - HEAP_SLOT_EVENT])
+           workSlots[HEAP_SLOT_FADE_OVERLAY - HEAP_SLOT_FIELD])
           ->objectEvent = NULL;
       GameFlag_Clear(FLAG_TUNNEL_OVERLAY_FOLLOWS_LEADER);
     }
@@ -1456,7 +1456,7 @@ static void Kalay_PrepareTunnel(void) {
 #else
   GameFlag_Set(FLAG_TUNNEL_OVERLAY_FOLLOWS_LEADER);
   if (GameFlag_IsSet(FLAG_KEEP_PARTY_POSITION) != 0) {
-    effectWork = workSlots[HEAP_SLOT_FADE_OVERLAY - HEAP_SLOT_EVENT];
+    effectWork = workSlots[HEAP_SLOT_FADE_OVERLAY - HEAP_SLOT_FIELD];
     trackingValue = GameFlag_IsSet(FLAG_TUNNEL_OVERLAY_FOLLOWS_LEADER);
 #ifdef UBFIX
     if (trackingValue != 0) {
@@ -1474,7 +1474,7 @@ static void Kalay_PrepareTunnel(void) {
 #endif
   } else if (gGameState.warpDest == KALAY_TUNNEL_TREASURE_ROOM_FROM_KALAY) {
     ((struct FadeOverlayWork *)
-         workSlots[HEAP_SLOT_FADE_OVERLAY - HEAP_SLOT_EVENT])
+         workSlots[HEAP_SLOT_FADE_OVERLAY - HEAP_SLOT_FIELD])
         ->objectEvent = NULL;
     GameFlag_Clear(FLAG_TUNNEL_OVERLAY_FOLLOWS_LEADER);
   }
@@ -1671,7 +1671,7 @@ static void Kalay_IvanMeetsPalaceGuards(void) {
   Engine_TaskWait(1);
   Camera_SetSpeed(PIXELS(1) / 5, PIXELS(1) / 40);
   Camera_MoveTo(PIXELS(192), -1, PIXELS(252), 1);
-  gEventWork->transitionFrames = 40;
+  gFieldWork->transitionFrames = 40;
   Engine_ScriptOpenScreen();
   ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(4) / 5, PIXELS(2) / 5);
   ObjectEvent_WalkToAndWait(LOCALID_PARTY_LEADER, 192, 278);
@@ -1774,9 +1774,9 @@ static void Kalay_IvanMeetsPalaceGuards(void) {
   if (Engine_ScriptChooseYesNo(0, 0) == 0) {
     Engine_ObjectEventRunRepeatedMotion(IVAN, 2);
     Script_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | IVAN, 0, 10);
-    gEventWork->message++;
+    gFieldWork->message++;
   } else {
-    gEventWork->message++;
+    gFieldWork->message++;
     Engine_ObjectEventSetAnimationAndWait(IVAN, ANIMATION_SHAKE_HEAD);
     Script_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | IVAN, 0, 10);
   }
@@ -1857,8 +1857,8 @@ static void Kalay_IvanMeetsPalaceGuards(void) {
   ObjectEvent_WalkToAndWait(LOCALID_SECOND_PALACE_GUARD, 194, 212);
   ObjectEvent_SetPosition(LOCALID_PALACE_GUARD, 0, 0);
   ObjectEvent_SetPosition(LOCALID_SECOND_PALACE_GUARD, 0, 0);
-  gEventWork->transitionFrames = 24;
-  gEventWork->startTransition =
+  gFieldWork->transitionFrames = 24;
+  gFieldWork->startTransition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_SHAPE);
   Engine_ScriptCloseScreen();
   Engine_ScriptWaitForScreen();
@@ -1895,7 +1895,7 @@ static void Kalay_HammetReturnsToPalace(void) {
   Engine_ScriptOpenScreen();
   Camera_SetSpeed(PIXELS(8) / 5, PIXELS(1) / 5);
   Camera_MoveTo(PIXELS(440), -1, PIXELS(400), 1);
-  Script_PlayCue(SE_RUMBLE);
+  Script_PlaySong(SE_RUMBLE);
   ObjectEvent_SetSpeed(LOCALID_WAGON, PIXELS(8) / 5, PIXELS(4) / 5);
   ObjectEvent_WalkToAndWait(LOCALID_WAGON, 440, 400);
   Camera_SetSpeed(PIXELS(3) / 4, PIXELS(3) / 32);
@@ -1903,7 +1903,7 @@ static void Kalay_HammetReturnsToPalace(void) {
   ObjectEvent_SetSpeed(LOCALID_WAGON, PIXELS(4) / 5, PIXELS(2) / 5);
   ObjectEvent_WalkToAndWait(LOCALID_WAGON, 440, 300);
   Engine_ObjectEventSetAnimation(LOCALID_WAGON, 0);
-  Script_PlayCue(AUDIO_CUE_FADE_SLOT3);
+  Script_PlaySong(AUDIO_CUE_FADE_SLOT3);
   Engine_ScriptWait(40);
   ObjectEvent_SetSpeed(LOCALID_BUNZA, PIXELS(4) / 5, PIXELS(2) / 5);
   ObjectEvent_SetPosition(LOCALID_BUNZA, PIXELS(439), PIXELS(306));
@@ -2062,7 +2062,7 @@ static void Kalay_HammetReturnsToPalace(void) {
   ObjectEvent_FaceDirection(MIA, FACING_NORTHWEST, 0);
   if (Engine_ScriptChooseYesNo(0, 0) == 0) {
     Engine_ScriptWait(20);
-    gEventWork->message += 3;
+    gFieldWork->message += 3;
   } else {
     Engine_ScriptWait(20);
     Engine_ObjectEventRunRepeatedMotion(LOCALID_BUNZA, 2);
@@ -2095,7 +2095,7 @@ static void Kalay_HammetReturnsToPalace(void) {
   ObjectEvent_FaceDirection(LOCALID_TUNNEL_GUARD, FACING_NORTH, 10);
   Engine_ObjectEventRunRepeatedMotion(LOCALID_TUNNEL_GUARD, 2);
   // The guard opens the passage and Hammet goes in.
-  Script_PlayCue(SE_125);
+  Script_PlaySong(SE_125);
   MapGrid_CopyCellsTo(71, 60, 76, 11, 2, 1);
   MapGrid_CopyCellAttributes(71, 60, 2, 1, 16, 11);
   Engine_ScriptWait(20);
@@ -2111,7 +2111,7 @@ static void Kalay_HammetReturnsToPalace(void) {
   ObjectEvent_WalkToAndWait(LOCALID_HAMMET, 246, 148);
   ObjectEvent_WalkToAndWait(LOCALID_HAMMET, 246, 142);
   ObjectEvent_SetPosition(LOCALID_HAMMET, 0, 0);
-  gEventWork->startTransition =
+  gFieldWork->startTransition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_NOISE);
   Engine_ScriptCloseScreen();
   Engine_ScriptWaitForScreen();
@@ -2146,7 +2146,7 @@ static void Kalay_HammetReturnsToPalace(void) {
   ObjectEvent_WalkToAndWait(LOCALID_PARTY_LEADER, 439, 312);
   ObjectEvent_WalkToAndWait(LOCALID_PARTY_LEADER, 439, 306);
   ObjectEvent_SetPosition(LOCALID_PARTY_LEADER, 0, 0);
-  Script_PlayCue(SE_RUMBLE);
+  Script_PlaySong(SE_RUMBLE);
   ObjectEvent_SetSpeed(LOCALID_WAGON, PIXELS(4) / 5, PIXELS(2) / 5);
   Camera_SetSpeed(PIXELS(1), PIXELS(1) / 8);
   Camera_MoveTo(PIXELS(440), -1, PIXELS(420), 1);
@@ -2156,8 +2156,8 @@ static void Kalay_HammetReturnsToPalace(void) {
   ObjectEvent_SetSpeed(LOCALID_WAGON, PIXELS(8) / 5, PIXELS(4) / 5);
   ObjectEvent_WalkToAndWait(LOCALID_WAGON, 440, 500);
   ObjectEvent_WalkTo(LOCALID_WAGON, 440, 600);
-  Script_PlayCue(AUDIO_CUE_FADE_SLOT3);
-  work = gEventWork;
+  Script_PlaySong(AUDIO_CUE_FADE_SLOT3);
+  work = gFieldWork;
   work->transitionFrames = 24;
   work->startTransition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   Engine_ScriptCloseScreen();
@@ -2208,7 +2208,7 @@ static void Kalay_PushTunnelStatue(void) {
       leader->speed = pushSpeed;
       leader->acceleration = pushSpeed;
       Engine_ObjectSetPosition(leader, target->x, target->y, target->z);
-      FieldObject_WaitForMove(statue);
+      Object_WaitForMove(statue);
       FieldEffect_PlayQueuedSound();
       statue->x.fixed = target->x;
       statue->z.fixed = target->z;
@@ -2403,7 +2403,7 @@ static void Kalay_UpdateTunnelEmitters(void) {
              firstEmitter->x.part.pixel <= 245 && (gFrameCount & 1) == 0) {
     if (!GameFlag_IsSet(FLAG_TUNNEL_FIRST_PARTICLES_SOUNDED)) {
       FieldEffect_SetQueuedSoundAndPlay(-1);
-      Script_PlayCue(SE_230);
+      Script_PlaySong(SE_230);
       GameFlag_Set(FLAG_TUNNEL_FIRST_PARTICLES_SOUNDED);
     }
     Kalay_SpawnTunnelParticle(firstEmitter->x.fixed, firstEmitter->y.fixed,
@@ -2413,7 +2413,7 @@ static void Kalay_UpdateTunnelEmitters(void) {
       secondEmitter->x.part.pixel <= 709 && (gFrameCount & 1) == 0) {
     if (!GameFlag_IsSet(FLAG_TUNNEL_SECOND_PARTICLES_SOUNDED)) {
       FieldEffect_SetQueuedSoundAndPlay(-1);
-      Script_PlayCue(SE_230);
+      Script_PlaySong(SE_230);
       GameFlag_Set(FLAG_TUNNEL_SECOND_PARTICLES_SOUNDED);
     }
     Kalay_SpawnTunnelParticle(secondEmitter->x.fixed, secondEmitter->y.fixed,

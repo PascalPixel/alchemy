@@ -3,11 +3,11 @@
 	.set import.__divsi3, 1
 	.set import.__modsi3, 1
 	.set import.Engine_TaskWait, 1
-	.set import.Scheduler_AddOrUpdateCallback, 1
+	.set import.Task_Add, 1
 	.set import.Engine_TaskRemoveCallback, 1
-	.set import.Runtime_BumpAllocateAlternatePool, 1
+	.set import.AllocEwram, 1
 	.set import.Runtime_BumpFree, 1
-	.set import.Resource_DecodeType01, 1
+	.set import.Decompress_Type01, 1
 	.set import.Ui_LoadWindowGraphics, 1
 	.set import.Engine_ResourceGetTableEntry, 1
 	.set import.Engine_BlendSetDarkenTarget16, 1
@@ -28,10 +28,10 @@
 	.set import.UiText_ShowCenteredMessage, 1
 	.set import.UiWindow_SetTilemapEntry, 1
 	.set import.SaveMenu_WriteSelectedSlot, 1
-	.set import.SaveState_LoadRecordIntoWork, 1
-	.set import.SaveState_CopySlotPair, 1
-	.set import.SaveState_DeleteSelectedSlot, 1
-	.set import.SaveState_ScanRecordFlags, 1
+	.set import.Save_LoadRecordIntoWork, 1
+	.set import.Save_CopyFile, 1
+	.set import.Save_EraseSelectedFile, 1
+	.set import.Save_ScanRecordFlags, 1
 	.set import.NameEntry_EditOwnerName, 1
 	.set import.PaletteGlow_Update, 1
 	.set import.Menu_RunConfirmSelection, 1

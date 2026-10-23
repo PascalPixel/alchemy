@@ -504,12 +504,12 @@ static void EventScript_OfferLuckyGuess(void) {
       Engine_ScriptSetMessage(MsgColosseumWantTryOutLuckyGuess);
       Script_OpenMessage(LOCALID_LUCKY_GUESS_MAN, 0);
       if (Engine_ScriptChooseYesNo(0, 0) == 0) {
-        gEventWork->message++;
+        gFieldWork->message++;
         ObjectEvent_ShowEmote(LOCALID_LUCKY_GUESS_MAN,
                               EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
         Script_OpenMessage(LOCALID_LUCKY_GUESS_MAN, 0);
         if (Engine_ScriptChooseYesNo(0, 0) == 0) {
-          gEventWork->message++;
+          gFieldWork->message++;
         }
         Engine_ScriptWait(40);
         Script_ShowMessage(LOCALID_LUCKY_GUESS_MAN, 0);
@@ -654,7 +654,7 @@ static void EventScript_AskIfReadyForFinals(void) {
   Engine_ScriptSetMessage(MsgColosseumYouReadyForFinals);
   Engine_ScriptOpenMessage(LOCALID_FINALS_SOLDIER, 0);
   if (Engine_ScriptChooseYesNo(0, 0) != 0)
-    gEventWork->message++;
+    gFieldWork->message++;
   Engine_ScriptShowMessage(LOCALID_FINALS_SOLDIER, 0);
   Engine_ScriptEnd();
 }
@@ -816,7 +816,7 @@ static void EventScript_CrowdRecognizesIsaac(void) {
     ObjectEvent_SetActionScript(LOCALID_PARTY_LEADER,
                                 gColosseumEntrance_EnterGatesScript);
     Engine_ScriptWait(80);
-    gEventWork->transitionFrames = 40;
+    gFieldWork->transitionFrames = 40;
     Engine_ScriptCloseScreen();
     Engine_ScriptWaitForScreen();
   } else {
@@ -889,7 +889,7 @@ static void EventScript_CrowdRecognizesIsaac(void) {
       ObjectEvent_SetActionScript(LOCALID_PARTY_LEADER,
                                   gColosseumEntrance_EnterGatesScript);
       Engine_ScriptWait(80);
-      gEventWork->transitionFrames = 40;
+      gFieldWork->transitionFrames = 40;
       Engine_ScriptCloseScreen();
       Engine_ScriptWaitForScreen();
     } else {
@@ -923,7 +923,7 @@ static void EventScript_CrowdRecognizesIsaac(void) {
       ObjectEvent_SetSpeed(GARET, PIXELS(1), PIXELS(1) / 2);
       ObjectEvent_SetActionScript(GARET, gColosseumEntrance_EnterGatesScript);
       Engine_ScriptWait(80);
-      gEventWork->transitionFrames = 40;
+      gFieldWork->transitionFrames = 40;
       Engine_ScriptCloseScreen();
       Engine_ScriptWaitForScreen();
     }
@@ -1078,7 +1078,7 @@ static void EventScript_FinalsStart(void) {
       Engine_ScriptWait(80);
       Engine_ScriptRequestWarp(COLOSSEUM_WAITING_ROOM_TO_PILLARED_PASSAGE_EAST);
     } else {
-      gEventWork->message++;
+      gFieldWork->message++;
       Engine_ScriptShowMessage(SPEAKER_WINDOW_BELOW | LOCALID_FINALS_SOLDIER,
                                0);
     }
@@ -1119,8 +1119,8 @@ static void EventScript_TalkToTrialAttendant(void) {
     Camera_SetSpeed(PIXELS(32) / 5, PIXELS(4) / 5);
     Camera_MoveTo(PIXELS(540), -1, PIXELS(208), 1);
     Engine_CameraWaitForMove();
-    gEventWork->startTransition = MAP_TRANSITION(TRANSITION_WINDOW, 0);
-    gEventWork->transitionFrames = 32;
+    gFieldWork->startTransition = MAP_TRANSITION(TRANSITION_WINDOW, 0);
+    gFieldWork->transitionFrames = 32;
     Engine_ScriptCloseScreen();
     Engine_ScriptWaitForScreen();
     if (GameFlag_IsSet(FLAG_COLOSSO_FAILED_TRIAL_SEEN) != 0) {
@@ -1141,7 +1141,7 @@ static void ColosseumEntrance_ShowFailedTrial(void) {
 
   Engine_ScriptStart();
   Camera_MoveTo(-1, -1, -1, 0);
-  Script_PlayCue(SE_247);
+  Script_PlaySong(SE_247);
   Engine_ObjectEventSetAnimation(LOCALID_GROUNDS_FIRST_TORCH, ANIMATION_WALK);
   Engine_ObjectEventSetAnimation(LOCALID_GROUNDS_FIRST_TORCH + 1,
                                  ANIMATION_WALK);
@@ -1167,8 +1167,8 @@ static void ColosseumEntrance_ShowFailedTrial(void) {
   Engine_TaskWait(1);
   ObjectEvent_SetPosition(LOCALID_PARTY_LEADER, 0, 0);
   Engine_TaskWait(1);
-  gEventWork->startTransition = MAP_TRANSITION(TRANSITION_WINDOW, 0);
-  gEventWork->transitionFrames = 32;
+  gFieldWork->startTransition = MAP_TRANSITION(TRANSITION_WINDOW, 0);
+  gFieldWork->transitionFrames = 32;
   Engine_ScriptOpenScreen();
   Engine_ScriptWaitForScreen();
   Engine_ScriptWait(40);
@@ -1263,11 +1263,11 @@ static void ColosseumEntrance_ShowFailedTrial(void) {
   ObjectEvent_WalkToAndWait(LOCALID_FAILING_WARRIOR, 184, 863);
   ObjectEvent_WalkToAndWait(LOCALID_FAILING_WARRIOR, 184, 796);
   ObjectEvent_SetPosition(LOCALID_FAILING_WARRIOR, 0, 0);
-  gEventWork->startTransition = MAP_TRANSITION(TRANSITION_WINDOW, 1);
-  gEventWork->transitionFrames = 16;
+  gFieldWork->startTransition = MAP_TRANSITION(TRANSITION_WINDOW, 1);
+  gFieldWork->transitionFrames = 16;
   Engine_ScriptCloseScreen();
   Engine_ScriptWaitForScreen();
-  gEventWork->startTransition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+  gFieldWork->startTransition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   Engine_ScriptRequestWarp(COLOSSEUM_TRIAL_GROUNDS_TO_STANDS);
   Engine_ScriptEnd();
 }
@@ -1277,7 +1277,7 @@ static void ColosseumEntrance_ShowFailedTrial(void) {
 /// failed, or after the second trial that he cleared it.
 static void ColosseumEntrance_ExplainTrial(void) {
   Engine_ScriptStart();
-  gEventWork->startTransition = MAP_TRANSITION(TRANSITION_WINDOW, 1);
+  gFieldWork->startTransition = MAP_TRANSITION(TRANSITION_WINDOW, 1);
 
   Engine_ScriptOpenScreen();
   Engine_ScriptWaitForScreen();
@@ -1288,7 +1288,7 @@ static void ColosseumEntrance_ExplainTrial(void) {
   Engine_ScriptSetMessage(MsgColosseumHaveMakeThroughCountlessMatches);
 
   if (Engine_GameFlagIsSet(FLAG_COLOSSO_CLEARED_TRIAL_SEEN) != 0) {
-    gEventWork->message = (gEventWork->message + 1);
+    gFieldWork->message = (gFieldWork->message + 1);
   }
 
   ColosseumEntrance_ShowMessageAndPause(LOCALID_TRIAL_ATTENDANT);
@@ -1310,7 +1310,7 @@ static void ColosseumEntrance_ShowClearedTrial(void) {
 
   Engine_ScriptStart();
   Camera_MoveTo(-1, -1, -1, 0);
-  Script_PlayCue(SE_247);
+  Script_PlaySong(SE_247);
   Engine_ObjectEventSetAnimation(LOCALID_GROUNDS_FIRST_TORCH, ANIMATION_WALK);
   Engine_ObjectEventSetAnimation(LOCALID_GROUNDS_FIRST_TORCH + 1,
                                  ANIMATION_WALK);
@@ -1336,8 +1336,8 @@ static void ColosseumEntrance_ShowClearedTrial(void) {
   Engine_TaskWait(1);
   ObjectEvent_SetPosition(LOCALID_PARTY_LEADER, 0, 0);
   Engine_TaskWait(1);
-  gEventWork->startTransition = MAP_TRANSITION(TRANSITION_WINDOW, 0);
-  gEventWork->transitionFrames = 32;
+  gFieldWork->startTransition = MAP_TRANSITION(TRANSITION_WINDOW, 0);
+  gFieldWork->transitionFrames = 32;
   Engine_ScriptOpenScreen();
   Engine_ScriptWaitForScreen();
   Engine_ScriptWait(40);
@@ -1421,15 +1421,15 @@ static void ColosseumEntrance_ShowClearedTrial(void) {
   trialEffect->scaleX = Q16_ONE;
   trialEffect->scaleY = Q16_ONE;
   Engine_ScriptWait(10);
-  Script_PlayCue(SE_107);
+  Script_PlaySong(SE_107);
   MapGrid_SetShake(PIXELS(1), PIXELS(1), Q16_ONE);
   Engine_ScriptWait(10);
-  Script_PlayCue(AUDIO_CUE_FADE_SLOT3);
+  Script_PlaySong(AUDIO_CUE_FADE_SLOT3);
   MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
   Engine_MapGridRenderWaitForValues();
   ObjectEvent_SetSpeed(LOCALID_CLEARING_WARRIOR, PIXELS(8) / 5, PIXELS(4) / 5);
   ObjectEvent_WalkToAndWait(LOCALID_CLEARING_WARRIOR, 208, 928);
-  Script_PlayCue(MUS_FANFARE_MEDIUM);
+  Script_PlaySong(MUS_FANFARE_MEDIUM);
   ObjectEvent_FaceDirection(LOCALID_CLEARING_WARRIOR,
                             FACING_SOUTHEAST + FACING_STEP, 20);
   Engine_ObjectEventSetAnimation(LOCALID_CLEARING_WARRIOR, 9);
@@ -1440,8 +1440,8 @@ static void ColosseumEntrance_ShowClearedTrial(void) {
   Engine_ScriptWait(20);
   Engine_ObjectEventSetAnimation(LOCALID_CLEARING_WARRIOR, 10);
   Engine_ScriptWait(80);
-  gEventWork->startTransition = MAP_TRANSITION(TRANSITION_WINDOW, 1);
-  gEventWork->transitionFrames = 16;
+  gFieldWork->startTransition = MAP_TRANSITION(TRANSITION_WINDOW, 1);
+  gFieldWork->transitionFrames = 16;
   Engine_ScriptCloseScreen();
   Engine_ScriptWaitForScreen();
   GameFlag_Set(FLAG_COLOSSO_CLEARED_TRIAL_SEEN);
@@ -1594,8 +1594,8 @@ static void ColosseumEntrance_ExplainPartySupport(void) {
   ColorBuffer_ApplyTarget(0, 0);
   Engine_ColorBufferInterpolate(1);
   Engine_TaskWait(1);
-  gEventWork->startTransition = MAP_TRANSITION(TRANSITION_WINDOW, 3);
-  gEventWork->transitionFrames = 1;
+  gFieldWork->startTransition = MAP_TRANSITION(TRANSITION_WINDOW, 3);
+  gFieldWork->transitionFrames = 1;
   Engine_ScriptOpenScreen();
   Engine_ScriptWaitForScreen();
   Engine_ColorBufferApplySource(0, 0);
@@ -1723,13 +1723,13 @@ static void ColosseumEntrance_ExplainPartySupport(void) {
     ColosseumEntrance_ShowMessageAndPause(IVAN);
     flag = 1;
   } else {
-    gEventWork->message++;
+    gFieldWork->message++;
     Engine_ObjectEventSetAnimationAndWait(IVAN, ANIMATION_NOD);
     ColosseumEntrance_FaceDirection(IVAN, FACING_NORTH);
     ColosseumEntrance_ShowMessageAndPause(IVAN);
   }
   if (flag != 0) {
-    gEventWork->message++;
+    gFieldWork->message++;
   }
   ObjectEvent_FaceDirection(LOCALID_FIRST_SOLDIER, FACING_WEST, 0);
   ObjectEvent_FaceDirection(LOCALID_FIRST_SOLDIER + 1, FACING_EAST, 0);
@@ -1794,8 +1794,8 @@ static void ColosseumEntrance_ExplainPartySupport(void) {
   ObjectEvent_WalkToAndWait(LOCALID_PARTY_LEADER, 808, 164);
   ObjectEvent_WalkTo(LOCALID_PARTY_LEADER, 808, 312);
   Engine_ScriptWait(60);
-  gEventWork->startTransition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
-  gEventWork->transitionFrames = 40;
+  gFieldWork->startTransition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+  gFieldWork->transitionFrames = 40;
   Engine_ScriptCloseScreen();
   Engine_ScriptWaitForScreen();
   Engine_ScriptRequestWarp(COLOSSEUM_WAITING_ROOM_TO_LONG_PASSAGE_EAST);

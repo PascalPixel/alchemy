@@ -16,7 +16,7 @@ s32 SolSanctumRooms_Initialize(void) {
   s32 shakeY = 0x10000;
   s32 shakeDecay = 0x10000;
 
-  work = (struct FieldWork *)gEventWork;
+  work = (struct FieldWork *)gFieldWork;
   work->transition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   work->transitionFrames = 16;

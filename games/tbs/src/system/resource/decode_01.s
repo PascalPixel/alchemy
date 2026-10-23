@@ -1,10 +1,10 @@
-@ C2: Resource_DecodeType01Arm:
+@ C2: Decompress_Type01Arm:
 @ The bit reader branches on carry immediately after shifting its live
 @ bit reservoir; it also uses unshifted movs r2,r2 for copy-and-test.
-@ C2: Resource_Decode2:
+@ C2: Decompress_Type2Commands:
 @ add ip, pc, #36 followed by ldm ip, {sl, fp} loads a data block
 @ relative to pc, including r11/fp as ordinary decoder state.
-@ C2: Resource_DecodeType2Loop to Resource_RefillType2Bits:
+@ C2: Decompress_Type2Loop to Resource_RefillType2Bits:
 @ Computed add pc enters fixed-size decoder code slots; command execution
 @ also carries live reader register state across entry labels.
 @ C2: Resource_ExecuteTransfer:
@@ -14,8 +14,8 @@
 @ instructions.
 .syntax unified
 	.arm
-	.global Resource_DecodeType01Arm
-Resource_DecodeType01Arm:
+	.global Decompress_Type01Arm
+Decompress_Type01Arm:
 	push	{r5, r6, r7, r9, lr}
 	ldrb	r2, [r0], #1
 	cmp	r2, #0
@@ -220,12 +220,12 @@ Resource_DecodeType01Arm:
 	ldrb	r3, [r0], #1
 	add	r3, r3, #16
 	b	.Ltype1_copy
-	.global Resource_DecodeType01CodeSize
-	.set Resource_DecodeType01CodeSize, . - Resource_DecodeType01Arm
+	.global Decompress_Type01CodeSize
+	.set Decompress_Type01CodeSize, . - Decompress_Type01Arm
 .syntax unified
 	.arm
-	.global Resource_Decode2
-Resource_Decode2:
+	.global Decompress_Type2Commands
+Decompress_Type2Commands:
 	ldrb	r2, [r0], #1
 	cmp	r2, #2
 	movne	r0, #4
@@ -241,7 +241,7 @@ Resource_Decode2:
 	ldrbne	r2, [r0], #1
 	subs	r4, r4, #16
 	blmi	Resource_RefillType2Bits
-	b	Resource_DecodeType2Loop
+	b	Decompress_Type2Loop
 .syntax unified
 	.section .rodata,"a",%progbits
 	.arm
@@ -303,8 +303,8 @@ Resource_Decode2:
 .Ltype2_literal_store:
 	strb	r5, [r1, #1]!
 	pop	{r5, r9}
-	.global Resource_DecodeType2Loop
-Resource_DecodeType2Loop:
+	.global Decompress_Type2Loop
+Decompress_Type2Loop:
 	lsrs	r2, r2, #1
 	bcs	.Ltype2_literal
 	lsrs	r2, r2, #1
@@ -375,12 +375,12 @@ Resource_DecodeType2Loop:
 	ldrb	r7, [r1, -r6]
 	strb	r7, [r1, #1]!
 	subs	r5, r5, #1
-	beq	Resource_DecodeType2Loop
+	beq	Decompress_Type2Loop
 	ldrb	r7, [r1, -r6]
 	strb	r7, [r1, #1]!
 	subs	r5, r5, #1
 	bne	.Ltype2_copy_byte
-	b	Resource_DecodeType2Loop
+	b	Decompress_Type2Loop
 .Ltype2_distance_long:
 	sub	r6, r1, r9
 	cmp	r6, #2048

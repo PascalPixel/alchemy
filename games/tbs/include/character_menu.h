@@ -18,10 +18,10 @@ struct OwnerActionSlot;
 
 /// The work of the member chooser and the Status menu, in the HEAP_SLOT_MENU
 /// work slot, which each takes as it opens and frees before it returns.
-struct CharacterMenuState {
+struct SummaryScreenWork {
   u8 unused[8];      ///< no view of the menu work names it (see menu/README.md)
   s32 selectedOwner; ///< the party member chosen
-  struct UiWindow *moneyWindow; ///< ShopRuntime's; not named here
+  struct UiWindow *moneyWindow; ///< ShopWork's; not named here
   struct UiWindow *ownerWindow;
   struct RenderOutput *ownerCursors[2];
   s8 ownerIndex[2]; ///< each pane's member, in ownerIds
@@ -30,7 +30,7 @@ struct CharacterMenuState {
   struct UiWindow *statusWindow;
   struct UiWindow *unopenedWindow; ///< never given a window; only cleared
   struct UiWindow *helpWindow;
-  /// InventoryMenuState's equipWindow to gridCursor; not named here.
+  /// ItemMenuWork's equipWindow to gridCursor; not named here.
   u8 itemWindows[0x18];
   struct RenderOutput *entryIcons[32];
   struct RenderOutput *categoryIcons[8];
@@ -56,28 +56,28 @@ struct CharacterMenuState {
   u8 selectedIds[2]; ///< each pane's member
   struct RenderOutput *selectedIcon;
   u16 page;           ///< 3 for the member chooser, 0 for the Status menu
-  s16 completionFlag; ///< InventoryMenuState's; not named here
+  s16 completionFlag; ///< ItemMenuWork's; not named here
   struct AnimationObject *rowObjects[4];
   s16 rowX[4]; ///< screen pixels
   s16 rowY[4]; ///< screen pixels
 };
 
-STATIC_ASSERT(offsetof(struct CharacterMenuState, ownerWindow) == 0x10);
-STATIC_ASSERT(offsetof(struct CharacterMenuState, ownerCursors) == 0x14);
-STATIC_ASSERT(offsetof(struct CharacterMenuState, statusWindow) == 0x24);
-STATIC_ASSERT(offsetof(struct CharacterMenuState, entryIcons) == 0x48);
-STATIC_ASSERT(offsetof(struct CharacterMenuState, selectorWindow) == 0x10c);
-STATIC_ASSERT(offsetof(struct CharacterMenuState, selectedColumn) == 0x110);
-STATIC_ASSERT(offsetof(struct CharacterMenuState, ownerObjects) == 0x114);
-STATIC_ASSERT(offsetof(struct CharacterMenuState, ownerY) == 0x144);
-STATIC_ASSERT(offsetof(struct CharacterMenuState, selectedSlots) == 0x174);
-STATIC_ASSERT(offsetof(struct CharacterMenuState, statusCursor) == 0x17c);
-STATIC_ASSERT(offsetof(struct CharacterMenuState, ownerIds) == 0x208);
-STATIC_ASSERT(offsetof(struct CharacterMenuState, selectedIds) == 0x21a);
-STATIC_ASSERT(offsetof(struct CharacterMenuState, page) == 0x220);
-STATIC_ASSERT(offsetof(struct CharacterMenuState, rowObjects) == 0x224);
-STATIC_ASSERT(offsetof(struct CharacterMenuState, rowX) == 0x234);
-STATIC_ASSERT(sizeof(struct CharacterMenuState) == 0x244);
+STATIC_ASSERT(offsetof(struct SummaryScreenWork, ownerWindow) == 0x10);
+STATIC_ASSERT(offsetof(struct SummaryScreenWork, ownerCursors) == 0x14);
+STATIC_ASSERT(offsetof(struct SummaryScreenWork, statusWindow) == 0x24);
+STATIC_ASSERT(offsetof(struct SummaryScreenWork, entryIcons) == 0x48);
+STATIC_ASSERT(offsetof(struct SummaryScreenWork, selectorWindow) == 0x10c);
+STATIC_ASSERT(offsetof(struct SummaryScreenWork, selectedColumn) == 0x110);
+STATIC_ASSERT(offsetof(struct SummaryScreenWork, ownerObjects) == 0x114);
+STATIC_ASSERT(offsetof(struct SummaryScreenWork, ownerY) == 0x144);
+STATIC_ASSERT(offsetof(struct SummaryScreenWork, selectedSlots) == 0x174);
+STATIC_ASSERT(offsetof(struct SummaryScreenWork, statusCursor) == 0x17c);
+STATIC_ASSERT(offsetof(struct SummaryScreenWork, ownerIds) == 0x208);
+STATIC_ASSERT(offsetof(struct SummaryScreenWork, selectedIds) == 0x21a);
+STATIC_ASSERT(offsetof(struct SummaryScreenWork, page) == 0x220);
+STATIC_ASSERT(offsetof(struct SummaryScreenWork, rowObjects) == 0x224);
+STATIC_ASSERT(offsetof(struct SummaryScreenWork, rowX) == 0x234);
+STATIC_ASSERT(sizeof(struct SummaryScreenWork) == 0x244);
 
 /// The ailments the character menus show, as CharacterMenu_BuildAvailability
 /// fills them: one byte each, nonzero while the member has it.

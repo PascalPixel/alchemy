@@ -66,9 +66,9 @@ extern const u8 gMenu_QuantityTiles[];
 extern const char gDjinnMenu_TextLevel[];
 /// `/`, between the Djinn menu's numbers.
 extern const char gDjinnMenu_TextSlash[];
-#ifndef OWN_gMenuCtrlWork
+#ifndef OWN_gObjectSystemWork
 /// Work slot 6: the object system's work (struct ObjectSystemWork).
-extern struct ObjectSystemWork *gMenuCtrlWork;
+extern struct ObjectSystemWork *gObjectSystemWork;
 #endif
 /// The number text buffer: NumberText_FormatHex writes eight digits and
 /// NumberText_FormatDecimal eleven characters, right-aligned, each with a
@@ -76,7 +76,7 @@ extern struct ObjectSystemWork *gMenuCtrlWork;
 /// (UiText_FormatNumberToHalfwords) read it.
 extern u8 gNumberTextBuffer[];
 /// Work slot 18: the selection screen while it runs.
-extern struct SelectionScreen *gResQueueWork;
+extern struct SelectionScreen *gSelectionScreenWork;
 #ifndef OWN_gTitleExtraOptionEnabled
 /// Read as a halfword: nonzero offers Battle on the title menu, when a file
 /// has any of game flags 48 to 127 set.
@@ -153,16 +153,16 @@ extern u8 gWorkspace_RangeDash[];
 /// A debug window's title: `STATUS`.
 extern u8 gWorkspace_StatusTitle[];
 /// The option screen's slider colours (slidpal).
-extern const u16 gWorkspaceOptions_SliderPalette[];
+extern const u16 gOptionMenu_SliderPalette[];
 /// The option screen's slider, 32 by 8 (slider.4bpp32x8).
-extern const u8 gWorkspaceOptions_SliderTiles[];
+extern const u8 gOptionMenu_SliderTiles[];
 #ifndef OWN_Ability_GetData
 struct BattleAct *Ability_GetData(s32 actionId);
 #endif
 s32 Item_FindSlot(s32 unitId, s32 item_id);
-s32 PaletteFar_Entry00(s32 mode);
-void PaletteFar_Entry20(s32 mode);
-void ScrollFar_Entry00(s32 mode);
+s32 TitleFar_Entry00(s32 mode);
+void TitleFar_Entry20(s32 mode);
+void CreditsFar_Entry00(s32 mode);
 void UiText_DrawAt(s32, s32, s32, s32);
 void UiWindow_Clear(s32 window);
 void UiWindow_Commit(s32 window);

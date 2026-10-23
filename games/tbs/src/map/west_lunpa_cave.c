@@ -153,9 +153,9 @@ static void EventScript_FreezeGatePuddle(void) {
     pillar->priorityFlags = OBJ_EVENT_PRIORITY_AUTOMATIC;
   }
   if (GameFlag_IsSet(FLAG_MAP_TEMP_02) == 0) {
-    Script_PlayCue(SE_GATE_MOVE);
+    Script_PlaySong(SE_GATE_MOVE);
     Gate_DrawPropped();
-    Script_PlayCue(MUS_PUZZLE_SOLVED);
+    Script_PlaySong(MUS_PUZZLE_SOLVED);
     GameFlag_Set(FLAG_MAP_TEMP_02);
   }
 }
@@ -199,7 +199,7 @@ static void EventScript_FlipLoweringSwitch(void) {
   if (GameFlag_IsSet(FLAG_MAP_TEMP_01) == 0) {
     if (GameFlag_IsSet(FLAG_MAP_TEMP_00) == 0) {
       Engine_MessageShowCentered(MsgFieldFlippedSwitch, 1);
-      Script_PlayCue(SE_GATE_MOVE);
+      Script_PlaySong(SE_GATE_MOVE);
       Gate_Lower();
       GameFlag_Set(FLAG_MAP_TEMP_01);
       GameFlag_Clear(FLAG_MAP_TEMP_02);
@@ -229,7 +229,7 @@ static void EventScript_FlipRaisingSwitch(void) {
   if (GameFlag_IsSet(FLAG_MAP_TEMP_00) == 0) {
     if (GameFlag_IsSet(FLAG_MAP_TEMP_02) == 0) {
       Engine_MessageShowCentered(MsgFieldFlippedSwitch, 1);
-      Script_PlayCue(SE_GATE_MOVE);
+      Script_PlaySong(SE_GATE_MOVE);
       Gate_Raise();
       GameFlag_Set(FLAG_MAP_TEMP_02);
       GameFlag_Clear(FLAG_MAP_TEMP_01);
@@ -1017,7 +1017,7 @@ static void Party_RidesWagon(void) {
 
 /// Restores the gate and frozen puddles from the persistent puzzle flags.
 s32 Map_Initialize(void) {
-  gEventWork->startTransition =
+  gFieldWork->startTransition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   if (gGameState.mapId == (s32)&MapId_WestLunpaCave) {
     Engine_ObjectEventSetSpriteFlags(ObjectEvent_GetById(LOCALID_UNUSED_PUDDLE),

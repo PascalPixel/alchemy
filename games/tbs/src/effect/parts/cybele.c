@@ -65,7 +65,7 @@ void BattleEffect_RunCybele(struct BattleEffectArgument *effect) {
   struct EffectPosition screen;
   BlitterPair draw;
 
-  cursor = gBattleEffectWork;
+  cursor = gBattleAnimWork;
   EFFECT_GET_WORK_AND_CANVAS(cursor, work, canvas);
   work->effect = effect;
   BattleEffect_SpawnObjects(8, 0x177, 1);
@@ -92,13 +92,13 @@ void BattleEffect_RunCybele(struct BattleEffectArgument *effect) {
   REG_BLDCNT = 0;
   Resource_LoadAndDecompress((s32)&ResourceId_ThornVineSheet, work->sheet, 1,
                              1);
-  EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER, EFFECT_CLIP_BOUNDS,
+  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                       COMPOSITE_TRANSPARENT);
-  draw[0] = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER];
-  EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER_ALTERNATE,
+  draw[0] = (DrawRectangle)gHeapSlots[HEAP_SLOT_RAM_CODE];
+  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
                       EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
                       COMPOSITE_TRANSPARENT);
-  draw[1] = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE];
+  draw[1] = (DrawRectangle)gHeapSlots[HEAP_SLOT_RAM_CODE_2];
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0);
   REG_BG2X = -0x2000; // -32 in 20.8: the canvas shows 32 pixels right
 
@@ -158,15 +158,15 @@ void BattleEffect_RunCybele(struct BattleEffectArgument *effect) {
     // flinch.
     if (frame == 31) {
       work->shakeFrames = 8;
-      AudioCommand_PlayFar(SE_GATE_MOVE);
+      Sound_PlaySongFar(SE_GATE_MOVE);
       EFFECT_FOR_EACH_TARGET(i, work->effect)
         BattleMotion_ApplyVariantMotionFar(work->effect->actors[i],
                                            KNOCKBACK_BOUNCE);
     }
     if (frame == 72)
-      AudioCommand_PlayFar(SE_136);
+      Sound_PlaySongFar(SE_136);
     if (frame == 140)
-      AudioCommand_PlayFar(SE_156);
+      Sound_PlaySongFar(SE_156);
 
     // Drop the formation objects to a height of 64 pixels, and from frame
     // 48 to 96 wave objects 3 and 4 through three poses.
@@ -439,7 +439,7 @@ void BattleEffect_RunCybele(struct BattleEffectArgument *effect) {
       if (frame == i * 5 + 302) {
         ObjectGroup_UpdateMembers(work->effect->actors[i], SPRITE_COLOR_WHITE,
                                   -1, i, 8);
-        AudioCommand_PlayFar(SE_HEAVY_IMPACT);
+        Sound_PlaySongFar(SE_HEAVY_IMPACT);
         work->shakeFrames = 8;
       }
     }
@@ -454,11 +454,12 @@ void BattleEffect_RunCybele(struct BattleEffectArgument *effect) {
                                  1, 0);
       Resource_LoadAndDecompress((s32)&ResourceId_BlastSheet,
                                  work->sheet + CYBELE_BLAST_CELLS, 1, 1);
-      EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER, EFFECT_CLIP_BOUNDS, COMPOSITE_MAX);
-      draw[0] = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER];
-      EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER_ALTERNATE,
+      EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
+                          COMPOSITE_MAX);
+      draw[0] = (DrawRectangle)gHeapSlots[HEAP_SLOT_RAM_CODE];
+      EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
                           EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, COMPOSITE_MAX);
-      draw[1] = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE];
+      draw[1] = (DrawRectangle)gHeapSlots[HEAP_SLOT_RAM_CODE_2];
       REG_BLDCNT = BLDCNT_TGT1_BG1 | BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND |
                    BLDCNT_TGT2_ALL;
       REG_BG2PA = Q_8_8(0.5);
@@ -536,7 +537,7 @@ void BattleEffect_RunCybele(struct BattleEffectArgument *effect) {
 
   // The end: the impact burst builds its own blitters and starts its own
   // transfer, so the scene's are released first.
-  Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
+  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   EFFECT_RELEASE_BLITTERS();
   EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
   BattleEffect_RunImpactBurst(SUMMON_FORMATION_CYBELE, 128 << 16, height);

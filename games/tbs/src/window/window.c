@@ -24,7 +24,7 @@
 ///   Text drawing    sprites.c: UiText_DrawGlyph; text_tiles.c:
 ///                   UiText_RenderStringTiles, UiText_DrawString
 ///   Screens         selection.c: Menu_SelectionLoop, Menu_RunTopSelection;
-///                   options.c: Menu_RunWorkspaceOptions,
+///                   options.c: OptionMenu_Run,
 ///                   Menu_RunWorkspaceSelectionLoop
 
 #include "window_internal.h"

@@ -43,7 +43,7 @@ extern const struct FontGlyph gUiText_Glyphs[];
 /// unpacks encoded into input, then expands input into tiles.
 typedef struct {
   /// The icon unpacked by Tile_Decompress4bpp; a 256-colour command icon
-  /// (ResourceId_CommandIcons) is unpacked here by Resource_DecodeByteLz and
+  /// (ResourceId_CommandIcons) is unpacked here by Decompress_ByteLz and
   /// used as it is.
   u8 input[0x400];
   u8 tiles[0x200]; ///< the icon as sprite tiles, ready for VRAM

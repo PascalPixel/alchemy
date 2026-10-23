@@ -36,7 +36,7 @@ struct FacingObject {
   u8 riseCounter;
   u8 riseEnabled;
   ///@}
-  /// ObjectRuntime's action parameter (work value 0x23); not read through
+  /// Object's action parameter (work value 0x23); not read through
   /// this view.
   s16 action;
   /// The linked object (work value 0x25), or null.

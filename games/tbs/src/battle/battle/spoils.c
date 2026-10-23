@@ -221,14 +221,14 @@ void Battle_AwardSpoils(void) {
   // may gain, so that what the level brought can be read against the copy.
   unitIds = units;
   count = BattleParty_ListLivingUnits(BATTLE_SIDE_PARTY, unitIds);
-  beforeLevelUp = Runtime_BumpAllocateAlternatePool(sizeof(struct BattleUnit));
+  beforeLevelUp = AllocEwram(sizeof(struct BattleUnit));
   for (unitIndex = 0; unitIndex < count; unitIndex++) {
     unitId = unitIds[unitIndex];
     unit = Unit_GetFar(unitId);
     unit->experience += spoils->experience;
     while (Iwram_CopyWords(beforeLevelUp, unit, sizeof(struct BattleUnit)),
            Unit_TryLevelUpFar(unitId, &gains) != 0) {
-      AudioCommand_PlayFar(MUS_LEVEL_UP);
+      Sound_PlaySongFar(MUS_LEVEL_UP);
       UiWork_ClearValueNameTablesFar();
       UiWork_PushValueSlotFar(unit->classIndex, VALUE_CLASS_NAME);
       UiWork_PushValueSlotFar(unitIds[unitIndex], VALUE_UNIT_NAME);
@@ -250,7 +250,7 @@ void Battle_AwardSpoils(void) {
             UiWork_PushValueSlotFar(unitId, VALUE_UNIT_NAME);
             UiWork_PushValueSlotFar(encodedAbility & OWNER_ACTION_ID_MASK,
                                     VALUE_ABILITY_NAME);
-            AudioCommand_PlayFar(SE_CAST);
+            Sound_PlaySongFar(SE_CAST);
             UiText_ShowMessageAndWaitCoreFar(MsgAbilityMastered);
             BattlePresentation_WaitForAdvance();
           }
@@ -288,7 +288,7 @@ void Battle_AwardSpoils(void) {
       }
     }
   }
-  MemFree(beforeLevelUp);
+  Free(beforeLevelUp);
   if (spoils->coins != 0) {
     UiWork_PushValueSlotFar(spoils->coins, VALUE_NUMBER);
     UiText_ShowMessageAndWaitCoreFar(MsgCoinsGained);

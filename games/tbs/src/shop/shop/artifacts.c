@@ -32,7 +32,7 @@ const s16 gShop_GiftItemIds[21] = {
 /// takes it. Spends the credit and counts the gift, not coins. Called by
 /// Shop_SelectBuy after each purchase.
 void Shop_BuySpecialItem(struct UiWindow *window, struct UiWindow *itemWindow) {
-  struct ShopRuntime *shop = gMenuWork;
+  struct ShopWork *shop = gMenuWork;
   s32 creditCost;
   u32 savedSelectedItem;
   s32 redraw;
@@ -73,7 +73,7 @@ void Shop_BuySpecialItem(struct UiWindow *window, struct UiWindow *itemWindow) {
       // only after that line finishes.
       slot = Inventory_AddItemFar(unitId, shop->selectedItem);
       if (slot < 0) {
-        AudioCommand_PlayFar(SE_MENU_CANCEL);
+        Sound_PlaySongFar(SE_MENU_CANCEL);
         UiWork_PushValueSlotFar(unitId, MESSAGE_ARGUMENT_ACTOR);
         UiWork_PushValueSlotFar(shop->selectedItem, MESSAGE_ARGUMENT_ITEM);
         if (Inventory_CountFar(unitId) == INVENTORY_SLOTS)
@@ -83,7 +83,7 @@ void Shop_BuySpecialItem(struct UiWindow *window, struct UiWindow *itemWindow) {
         continue;
       }
       Inventory_RemoveFar(unitId, slot);
-      AudioCommand_PlayFar(SE_SHOP_PURCHASE);
+      Sound_PlaySongFar(SE_SHOP_PURCHASE);
       UiMessage_ShowAndRestoreState(MsgHereYouGo);
       Inventory_AddItemFar(unitId, shop->selectedItem);
       Party_AdjustShopCreditFar(-creditCost);
@@ -92,16 +92,16 @@ void Shop_BuySpecialItem(struct UiWindow *window, struct UiWindow *itemWindow) {
     }
     if ((gKeysPressed & KEY_B) != 0) {
       UiMessage_ShowAndRestoreState(MsgDontWantIt);
-      AudioCommand_PlayFar(SE_MENU_CANCEL);
+      Sound_PlaySongFar(SE_MENU_CANCEL);
       break;
     }
     if ((gKeysRepeat & KEY_LEFT) != 0) {
-      AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
+      Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
       memberIndex--;
       redraw = 1;
     }
     if ((gKeysRepeat & KEY_RIGHT) != 0) {
-      AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
+      Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
       memberIndex++;
       redraw = 1;
     }

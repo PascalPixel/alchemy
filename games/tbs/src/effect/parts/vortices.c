@@ -52,20 +52,20 @@ void BattleEffect_RunFroth(struct BattleEffectArgument *effect) {
 
   // Nonzero once a mote has struck.
   flags = (s8 *)Ram_MapGridCellBuffer;
-  work = WORK_SLOT(HEAP_SLOT_BATTLE_EFFECT);
-  canvas = WORK_SLOT(HEAP_SLOT_BATTLE_CANVAS);
+  work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_ANIM);
+  canvas = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
   work->effect = effect;
   BattleEffect_StartCanvasLayer(1);
   palette = Resource_GetTableEntry((s32)&ResourceId_VortexSheet);
   Iwram_CopyWords((void *)BG_PLTT, palette, 128);
   palette += 128;
-  Resource_DecodeType01(palette, work->sheet);
-  EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER, EFFECT_CLIP_BOUNDS, COMPOSITE_MAX);
-  draw[0] = (DrawRectangle) * (gWorkSlot + HEAP_SLOT_BLITTER);
-  EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER_ALTERNATE,
-                      EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP, COMPOSITE_MAX);
+  Decompress_Type01(palette, work->sheet);
+  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, COMPOSITE_MAX);
+  draw[0] = (DrawRectangle) * (gHeapSlots + HEAP_SLOT_RAM_CODE);
+  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP,
+                      COMPOSITE_MAX);
   REG_BLDALPHA = BLEND_ALPHA(15, 15);
-  draw[1] = (DrawRectangle) * (gWorkSlot + HEAP_SLOT_BLITTER_ALTERNATE);
+  draw[1] = (DrawRectangle) * (gHeapSlots + HEAP_SLOT_RAM_CODE_2);
   source = GetBattleObjectSlotFar(work->effect->actor)->object;
   y = source->y + BattleUnit_GetEffectHeightFar(work->effect->actor);
   // The motes start at the top of the user, flying out up to 4 pixels a
@@ -87,16 +87,16 @@ void BattleEffect_RunFroth(struct BattleEffectArgument *effect) {
   }
   work->cameraDelta = 0;
   work->cameraPhase = CAMERA_PHASE_IDLE;
-  Scheduler_AddOrUpdateCallback(Camera_ApplyPhasedDelta, EFFECT_CALLBACK_ORDER);
+  Task_Add(Camera_ApplyPhasedDelta, EFFECT_CALLBACK_ORDER);
   // Trails keep 75% of each pixel a frame.
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, 75);
-  AudioCommand_PlayFar(SE_164);
+  Sound_PlaySongFar(SE_164);
 
   for (frame = 0;
        frame != gVortices_Counts[work->effect->variant][FROTH_FRAMES];
        frame++) {
     // The camera swings 0x180 of yaw a frame over frames 17 to 63.
-    camera = WORK_SLOT(HEAP_SLOT_CAMERA);
+    camera = HEAP_SLOT_BLOCK(HEAP_SLOT_CAMERA);
     if (frame >= 17 && frame < 64)
       work->cameraDelta = 0x180;
     else
@@ -146,7 +146,7 @@ void BattleEffect_RunFroth(struct BattleEffectArgument *effect) {
           BattleMotion_ApplyVariantMotionFar(
               work->effect->actors[i % work->effect->count], KNOCKBACK_NUDGE);
           work->shakeFrames = 4;
-          AudioCommand_PlayFar(SE_132);
+          Sound_PlaySongFar(SE_132);
         }
       }
       // The burst where a mote struck: two mirrored halves cycling three
@@ -167,7 +167,7 @@ void BattleEffect_RunFroth(struct BattleEffectArgument *effect) {
     EFFECT_END_FRAME(work);
   }
 
-  Scheduler_RemoveCallback(Camera_ApplyPhasedDelta);
+  Task_Remove(Camera_ApplyPhasedDelta);
   EFFECT_FINISH_CANVAS();
 }
 
@@ -203,7 +203,7 @@ void BattleEffect_RunWhirlwind(struct BattleEffectArgument *effect) {
   s32 i;
   s32 j;
 
-  slots = &gWorkSlot[HEAP_SLOT_BATTLE_EFFECT];
+  slots = &gHeapSlots[HEAP_SLOT_BATTLE_ANIM];
   cursor = slots;
   EFFECT_GET_WORK_AND_CANVAS(cursor, work, canvas);
   work->effect = effect;
@@ -212,12 +212,12 @@ void BattleEffect_RunWhirlwind(struct BattleEffectArgument *effect) {
   palette = Resource_GetTableEntry((s32)&ResourceId_TornadoSheet);
   Iwram_CopyWords((void *)BG_PLTT, palette, 128);
   palette += 128;
-  Resource_DecodeType01(palette, work->sheet);
-  EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER, EFFECT_CLIP_BOUNDS, COMPOSITE_MAX);
-  draw[0] = (DrawRectangle)EFFECT_SLOT(slots, HEAP_SLOT_BLITTER);
-  EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER_ALTERNATE,
+  Decompress_Type01(palette, work->sheet);
+  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, COMPOSITE_MAX);
+  draw[0] = (DrawRectangle)EFFECT_SLOT(slots, HEAP_SLOT_RAM_CODE);
+  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
                       EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, COMPOSITE_MAX);
-  draw[1] = (DrawRectangle)EFFECT_SLOT(slots, HEAP_SLOT_BLITTER_ALTERNATE);
+  draw[1] = (DrawRectangle)EFFECT_SLOT(slots, HEAP_SLOT_RAM_CODE_2);
 
   // The glints: each waits up to 15 frames, then plays at a random spot on
   // its tornado.
@@ -231,7 +231,7 @@ void BattleEffect_RunWhirlwind(struct BattleEffectArgument *effect) {
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, 50);
   REG_BLDALPHA = BLEND_ALPHA(0, 16); // invisible to start with
   WaitFrames(1);
-  AudioCommand_PlayFar(SE_RUMBLE);
+  Sound_PlaySongFar(SE_RUMBLE);
 
   for (frame = 0; frame != 80; frame++) {
     wave = (Trig_Sin(frame << 10) * 16);
@@ -318,7 +318,7 @@ void BattleEffect_RunWhirlwind(struct BattleEffectArgument *effect) {
   }
 
   EFFECT_RELEASE_BLITTERS();
-  Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
+  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   BattleEffect_EndCanvasLayer();
 }
 

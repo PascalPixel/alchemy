@@ -371,7 +371,7 @@ static void EventScript_ExamineTreeMan(void) {
   Engine_ScriptStart();
   Engine_ScriptSetMessage(MsgBilibinItsTreeButAlmostLooks);
   if (GameFlag_IsSet(FLAG_MAPSEC_TEMP_01) != 0) {
-    gEventWork->message++;
+    gFieldWork->message++;
   }
   Script_ShowMessage(LOCALID_TREE_MAN, 0);
   GameFlag_Set(FLAG_MAPSEC_TEMP_01);
@@ -445,7 +445,7 @@ static void EventScript_OpenDoorAndLeave(void) {
   s32 row;
   struct EventWork *work;
 
-  work = gEventWork;
+  work = gFieldWork;
   Engine_ScriptStart();
   // Freeze placed object events before the warp cells start animating.
   for (objectEventSlot = LOCALID_FIRST_PLACED;
@@ -457,7 +457,7 @@ static void EventScript_OpenDoorAndLeave(void) {
   }
   warpIndex = (((u16)work->touchedTrigger - BILIBIN_TO_INN) << 16) >> 16;
   if (warpIndex == BILIBIN_TO_SANCTUM - BILIBIN_TO_INN) {
-    Script_PlayCue(SE_188);
+    Script_PlaySong(SE_188);
   } else {
     Engine_AudioPlayCue(SE_DOOR_OPEN);
   }
@@ -470,7 +470,7 @@ static void EventScript_OpenDoorAndLeave(void) {
   Engine_MapGridAnimateCells(gBilibin_DoorSteps[warpIndex], column, row);
   ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(1) / 2, PIXELS(1) / 4);
   ObjectEvent_GetById(LOCALID_PARTY_LEADER)->motionFlags = 0;
-  gEventWork->startTransition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+  gFieldWork->startTransition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   if (warpIndex == BILIBIN_TO_SANCTUM - BILIBIN_TO_INN) {
     Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIMATION_WALK);
     ObjectEvent_SetDestinationOffset(LOCALID_PARTY_LEADER, 0, -4);
@@ -637,7 +637,7 @@ static void EventScript_JillGivesHardNut(void) {
   Script_ShowMessageAndWait(LOCALID_JILL, 0, 10);
   // Show the named gift before adding it to the party's inventory.
   Engine_MessageShowCentered(MsgBilibinJillGaveIsaacSpecialGift, 1);
-  gEventWork->message++;
+  gFieldWork->message++;
   Engine_ItemShowFound(ITEM_HARD_NUT, 3);
   Engine_PartyGiveItem(ITEM_HARD_NUT, 0);
   Engine_ObjectEventSetAnimationAndWait(LOCALID_JILL, ANIMATION_NOD);
@@ -660,17 +660,15 @@ static void EventScript_JillGivesHardNut(void) {
   Engine_ObjectEventSetAnimation(LOCALID_GANG_MEMBER_WEST, ANIMATION_NOD);
   Engine_ObjectEventSetAnimationAndWait(LOCALID_JILL, ANIMATION_NOD);
   // From now on the three turn to face the leader wherever he goes.
-  FieldObject_SetTargetAndCallback(LOCALID_GANG_MEMBER_EAST,
-                                   OBJ_EVENT_LINK_KEEP_MOTION |
-                                       LOCALID_PARTY_LEADER,
-                                   gBilibin_FaceLeaderScript);
-  FieldObject_SetTargetAndCallback(LOCALID_GANG_MEMBER_WEST,
-                                   OBJ_EVENT_LINK_KEEP_MOTION |
-                                       LOCALID_PARTY_LEADER,
-                                   gBilibin_FaceLeaderScript);
-  FieldObject_SetTargetAndCallback(
-      LOCALID_JILL, OBJ_EVENT_LINK_KEEP_MOTION | LOCALID_PARTY_LEADER,
-      gBilibin_FaceLeaderScript);
+  Object_SetTargetAndCallback(LOCALID_GANG_MEMBER_EAST,
+                              OBJ_EVENT_LINK_KEEP_MOTION | LOCALID_PARTY_LEADER,
+                              gBilibin_FaceLeaderScript);
+  Object_SetTargetAndCallback(LOCALID_GANG_MEMBER_WEST,
+                              OBJ_EVENT_LINK_KEEP_MOTION | LOCALID_PARTY_LEADER,
+                              gBilibin_FaceLeaderScript);
+  Object_SetTargetAndCallback(LOCALID_JILL,
+                              OBJ_EVENT_LINK_KEEP_MOTION | LOCALID_PARTY_LEADER,
+                              gBilibin_FaceLeaderScript);
   GameFlag_Set(FLAG_BILIBIN_JILL_GIFT_RECEIVED);
   Engine_ScriptEnd();
 }
@@ -679,7 +677,7 @@ static void EventScript_JillGivesHardNut(void) {
 /// Bilibin Treasury: its object events by story flags, its metatile behaviors
 /// and its opening transition.
 s32 Bilibin_Initialize(void) {
-  gEventWork->startTransition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+  gFieldWork->startTransition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   if (gGameState.mapId == (s32)&MapId_Bilibin) {
     Bilibin_RestoreVillageObjectEvents();
   } else if (gGameState.mapId == (s32)&MapId_BilibinBarricade) {
@@ -887,7 +885,7 @@ static void Bilibin_UpdateCratesCells(void) {
 static void Bilibin_SetUpTreasury(void) {
   struct ObjectEvent *leader;
 
-  gEventWork->startTransition =
+  gFieldWork->startTransition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   Bilibin_UpdateTreasuryStatueCells();
   if (gGameState.warpDest == BILIBIN_TREASURY_UPPER_FROM_LOWER ||
@@ -940,7 +938,7 @@ static void EventScript_PushStatueOrCrates(void) {
       leader->acceleration = PIXELS(1) / 5;
       Engine_ObjectSetPosition(leader, destination.x, destination.y,
                                destination.z);
-      FieldObject_WaitForMove(pushed);
+      Object_WaitForMove(pushed);
       pushed->x.fixed = destination.x;
       pushed->z.fixed = destination.z;
       pushed->velocityX = 0;

@@ -50,7 +50,7 @@ void BattleEffect_RunVolcano(struct BattleEffectArgument *effect) {
   struct BattleCamera *camera;
   s32 i;
 
-  slots = &gWorkSlot[HEAP_SLOT_BATTLE_EFFECT];
+  slots = &gHeapSlots[HEAP_SLOT_BATTLE_ANIM];
   cursor = slots;
   EFFECT_GET_WORK_AND_CANVAS(cursor, work, canvas);
   sheet = EFFECT_SLOT(slots, HEAP_SLOT_BATTLE_SHEET);
@@ -67,11 +67,11 @@ void BattleEffect_RunVolcano(struct BattleEffectArgument *effect) {
     Iwram_CopyWords((void *)BG_PLTT,
                     Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB),
                     128);
-  EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER, EFFECT_CLIP_BOUNDS, COMPOSITE_MAX);
-  draw[0] = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER];
-  EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER_ALTERNATE,
+  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, COMPOSITE_MAX);
+  draw[0] = (DrawRectangle)gHeapSlots[HEAP_SLOT_RAM_CODE];
+  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
                       EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, COMPOSITE_MAX);
-  draw[1] = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE];
+  draw[1] = (DrawRectangle)gHeapSlots[HEAP_SLOT_RAM_CODE_2];
 
   for (i = 0; i != VOLCANO_SPARK_POOL; i++)
     PARTICLES[i].variant = 0;
@@ -112,7 +112,7 @@ void BattleEffect_RunVolcano(struct BattleEffectArgument *effect) {
         screen.x /= 2;
         screen.y -= 8;
         if (frame == gVolcano_StartFrames[pillar])
-          AudioCommand_PlayFar(SE_145);
+          Sound_PlaySongFar(SE_145);
         // From 4 frames after it starts: the column, scrolling up 16
         // pixels a frame, and a flickering flame at its foot.
         if (frame >= gVolcano_StartFrames[pillar] + 4) {
@@ -215,7 +215,7 @@ void BattleEffect_RunVolcano(struct BattleEffectArgument *effect) {
   }
 
   EFFECT_RELEASE_BLITTERS();
-  Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
+  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   BattleEffect_EndCanvasLayer();
 }
 

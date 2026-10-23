@@ -430,7 +430,7 @@ s32 KolimaForestFloodgate_Initialize(void) {
   objectEvent->radius = 8;
   objectEvent->scaleX = 0xc000;
   objectEvent->scaleY = 0xc000;
-  gEventWork->startTransition =
+  gFieldWork->startTransition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   if (Engine_GameFlagIsSet(FLAG_KOLIMA_CURSE_LIFTED) == 0)
     KolimaPalette_Curse(4);
@@ -594,13 +594,13 @@ static void KolimaForestFloodgate_RollLog(struct FloodgateLog *runs) {
   Engine_ScriptWait(6);
   objectEvent->speed = PIXELS(1) / 2;
   objectEvent->acceleration = PIXELS(1) / 5;
-  Script_PlayCue(SE_HEAVY_MOVE);
+  Script_PlaySong(SE_HEAVY_MOVE);
   ObjectEvent_SetMode(objectEvent,
                       gKolimaForestFloodgate_PushAnimations[quarter]);
   Engine_ObjectSetPosition(objectEvent, x, 0, z);
   Engine_ScriptWait(6);
   Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIMATION_WALK);
-  work = Runtime_AllocateBlock(HEAP_SLOT_EVENT, sizeof(*work));
+  work = AllocHeapSlotEwram(HEAP_SLOT_FIELD, sizeof(*work));
   ObjectDispatch_StartCamera((struct DispatchObject *)work->camera,
                              (s32)objectEvent);
   ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, 3 * PIXELS(1) / 10, PIXELS(1) / 5);
@@ -609,10 +609,10 @@ static void KolimaForestFloodgate_RollLog(struct FloodgateLog *runs) {
                                    gKolimaForestFloodgate_PushStepZ[quarter]);
   Engine_ScriptWait(24);
   Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIMATION_STAND);
-  FieldObject_WaitForMove(objectEvent);
+  Object_WaitForMove(objectEvent);
   ObjectEvent_SetMode(objectEvent, 1);
-  Script_PlayCue(SE_STOP_SLOT3);
-  Script_PlayCue(SE_HEAVY_STOP);
+  Script_PlaySong(SE_STOP_SLOT3);
+  Script_PlaySong(SE_HEAVY_STOP);
   Engine_ScriptWait(15);
   Engine_ScriptEnd();
 }

@@ -16,7 +16,7 @@ struct BattlePlan;
 struct BattleUnit;
 struct DispatchObject;
 struct EffectSlot;
-struct ObjectRuntime;
+struct Object;
 struct MapSecNameRule;
 
 /// Battlefield (x, y) pixel pairs by place: 0 to 3 the party's column at x 80,
@@ -57,11 +57,11 @@ struct SpriteScale;
 struct ItemBreakFragmentSource;
 struct LinkedCaptureObject;
 struct MotionObject;
-struct ObjectRuntime;
+struct Object;
 struct OrbitEffect;
 struct PolarOffsetOutput;
 struct RockWallHeights;
-struct MapInteractionEntry;
+struct MapMusicRule;
 struct ScriptObjectEntry;
 struct BattleSource;
 struct SparkObject;
@@ -135,7 +135,7 @@ extern u16 gBattleUnit_WeaponAnimationsMia[];
 /// Jenna's weapon sprite by weapon kind; Felix draws none.
 extern u16 gBattleUnit_WeaponAnimationsJenna[];
 /// The size of BitDecoder_DecodeImage, which BattleBackground_Load copies to
-/// HEAP_SLOT_TEMP_RENDERER; constants.ld defines it as an address equal to the
+/// HEAP_SLOT_RAM_CODE_TEMP; constants.ld defines it as an address equal to the
 /// size.
 extern u8 BitDecoder_Size[];
 /// The extra matrix the battle camera's projection applies first while
@@ -160,9 +160,9 @@ extern u16 gEncounter_EnemyGroupTable[];
 extern struct WaveEffectWork *gBattleBgEffectWork;
 #endif
 #ifndef OWN_gBattleFxWork
-/// The work slots from HEAP_SLOT_BATTLE_EFFECT, then the canvas and sheet:
+/// The work slots from HEAP_SLOT_BATTLE_ANIM, then the canvas and sheet:
 /// the running battle effect's BattleEffectWork first.
-extern void *gBattleEffectWork[];
+extern void *gBattleAnimWork[];
 #endif
 #ifndef OWN_gBattleOwnerStates
 /// The HEAP_SLOT_LINK_OWNER_STATES work slot: the six enemy battle units,

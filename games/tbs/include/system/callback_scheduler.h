@@ -8,50 +8,47 @@
 #include "types.h"
 #include "static_assert.h"
 
-enum SchedulerTaskLimits {
-  SCHEDULER_TBS_TASK_COUNT = 20,
-  SCHEDULER_TLA_TASK_COUNT = 24
-};
+enum SchedulerTaskLimits { TASK_COUNT = 20, TASK_COUNT_TLA = 24 };
 
-typedef void (*SchedulerCallback)(void);
+typedef void (*TaskFunc)(void);
 
 /// A scheduled task: its routine's address, its order (see SCHEDULER_KEY_) and
 /// its flags, where bit 0 keeps it running while overlay tasks are suspended.
-struct SchedulerTask {
+struct Task {
   u32 callback;
-  u16 state;
-  u8 mask;
+  u16 priority;
+  u8 flags;
   u8 reserved;
 };
 
-STATIC_ASSERT(sizeof(struct SchedulerTask) == 8);
-STATIC_ASSERT(offsetof(struct SchedulerTask, state) == 4);
-STATIC_ASSERT(offsetof(struct SchedulerTask, mask) == 6);
+STATIC_ASSERT(sizeof(struct Task) == 8);
+STATIC_ASSERT(offsetof(struct Task, priority) == 4);
+STATIC_ASSERT(offsetof(struct Task, flags) == 6);
 
 /// A task's order: the high byte picks the pass that runs it, the low byte
 /// ranks it within the pass (higher runs first). An odd high byte means the
 /// task is suspended, so no pass matches it.
-#define SCHEDULER_KEY_VBLANK 0x480
-#define SCHEDULER_KEY_MAIN_LOOP 0xc80
+#define TASK_PRIORITY_VBLANK 0x480
+#define TASK_PRIORITY_MAIN_LOOP 0xc80
 /// An empty slot's order, sorted last.
-#define SCHEDULER_KEY_EMPTY 0xffff
+#define TASK_PRIORITY_EMPTY 0xffff
 /// A removed task's order: its odd high byte matches no pass, and it sorts
 /// to the front of the table.
-#define SCHEDULER_KEY_REMOVED 0x7fff
+#define TASK_PRIORITY_REMOVED 0x7fff
 
-#define TASK_STATE_HIGH(task) (((u8 *)&(task)->state)[1])
+#define TASK_STATE_HIGH(task) (((u8 *)&(task)->priority)[1])
 
 /// 1 while WaitFrames runs the main-loop tasks.
-/* FAKEMATCH(volatile): the read Scheduler_AddOrUpdateCallback discards stays a
+/* FAKEMATCH(volatile): the read Task_Add discards stays a
  * load; as plain u8, 8 of 61 instructions differ in tbs-en. */
-extern volatile u8 gSchedulerStatus;
-extern u8 gSchedulerReady; ///< 1 once the task table is set up
-extern struct SchedulerTask gSchedulerTaskTable[];
+extern volatile u8 gTaskStatus;
+extern u8 gTasksReady; ///< 1 once the task table is set up
+extern struct Task gTasks[];
 
 void Runtime_CallWorkEntryWithArguments(s32 arg0, s32 arg1);
 
-void Scheduler_RunCallbacksByKey(s32 key);
-s32 Scheduler_CountCallbacksByKey(s32 key);
-void Scheduler_RunCallbacksBeforeBoundary(s32 key);
+void Task_RunByPriority(s32 key);
+s32 Task_CountByPriority(s32 key);
+void Task_RunBeforePriority(s32 key);
 
 #endif

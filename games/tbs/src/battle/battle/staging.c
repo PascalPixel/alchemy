@@ -43,12 +43,12 @@ s32 BattlePresentation_DispatchAction(struct BattleActionRecord *request,
   // BattlePresentation_SetupTransitionView sets at 100 percent (focal length
   // 510 pixels), but with its far depth at 32767 pixels where that one stops at
   // 1020.
-  transition = WORK_SLOT(HEAP_SLOT_BATTLE_BACKGROUND);
+  transition = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_BACKGROUND);
   transition->frames = 60;
-  battle = WORK_SLOT(HEAP_SLOT_BATTLE);
+  battle = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE);
   transition->flag = 0;
   battle->brightness = 0x10000;
-  camera = WORK_SLOT(HEAP_SLOT_CAMERA);
+  camera = HEAP_SLOT_BLOCK(HEAP_SLOT_CAMERA);
   Render_ResetTransformState();
   Transform_SetLookAt(camera->eye, camera->focus);
   Projection_Set(0x01fe0000, Iwram_RatioMulQ14(0x01fe0000, 0xc000), 0x7fff0000);
@@ -182,8 +182,8 @@ s32 BattlePresentation_BuildTargetList(struct BattlePlan *plan,
 /// released.
 s32 BattlePresentation_RunEscape(struct BattlePlan *plan) {
   struct BattlePresentationTransition *transition =
-      WORK_SLOT(HEAP_SLOT_BATTLE_BACKGROUND);
-  struct BattleWork *scene = WORK_SLOT(HEAP_SLOT_BATTLE);
+      HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_BACKGROUND);
+  struct BattleWork *scene = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE);
   /* FAKEMATCH(temporary): completed cleared a halfword at a time, which keeps
    * partyMode a copy of its register (adds r2, r7, #0); as an s32 set to 0, 1
    * of 105 instructions differ in tbs-en. */
@@ -283,7 +283,7 @@ s32 BattlePresentation_RunUnitTransition(struct BattlePlan *plan, s32 mode) {
     struct BattlePresentationTransition *transition;
     s32 yaw;
 #ifdef UBFIX
-    transition = WORK_SLOT(HEAP_SLOT_BATTLE_BACKGROUND);
+    transition = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_BACKGROUND);
 #else
     transition = slots[HEAP_SLOT_BATTLE_BACKGROUND - HEAP_SLOT_BATTLE];
 #endif
@@ -296,7 +296,7 @@ s32 BattlePresentation_RunUnitTransition(struct BattlePlan *plan, s32 mode) {
     struct BattlePresentationTransition *transition;
     s32 yaw;
 #ifdef UBFIX
-    transition = WORK_SLOT(HEAP_SLOT_BATTLE_BACKGROUND);
+    transition = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_BACKGROUND);
 #else
     transition = slots[HEAP_SLOT_BATTLE_BACKGROUND - HEAP_SLOT_BATTLE];
 #endif
@@ -326,7 +326,7 @@ s32 BattlePresentation_RunUnitTransition(struct BattlePlan *plan, s32 mode) {
     }
   }
   // The sound of a cast, as the caster raises its hand.
-  AudioCommand_PlayFar(SE_CAST);
+  Sound_PlaySongFar(SE_CAST);
   ElementGlow_Play(work.effect.actor, plan->element, GLOW_STAR_FIELD, 0);
   if (mode & TRANSITION_HIDE_ACTOR)
     BattlePresentation_SetActorRecordMode(actor, ACTOR_SEMI_TRANSPARENT);
@@ -395,7 +395,7 @@ s32 BattlePresentation_RunUnitTransition(struct BattlePlan *plan, s32 mode) {
       work.effect.side ^= 1;
     // The effect runs to its end while playback, a scheduler callback, plays
     // the targets' events from the frame the blow lands.
-    Scheduler_AddOrUpdateCallback(BattleEvent_Playback, 0xc80);
+    Task_Add(BattleEvent_Playback, 0xc80);
     if (plan->presentationFlags & STAGING_SUMMON)
       BattleEffect_RunSummonEffectFar(&work.effect);
     else if (plan->presentationFlags & STAGING_BY_ID_RANGE)
@@ -599,7 +599,7 @@ s32 BattlePresentation_RunAttack(struct BattlePlan *plan, s32 mode) {
       }
     }
 
-    Scheduler_AddOrUpdateCallback(BattleEvent_Playback, 0xc80);
+    Task_Add(BattleEvent_Playback, 0xc80);
     if (work.effect.kind != 0) {
       if (plan->presentationFlags & STAGING_BY_ID_RANGE)
         BattleEffect_DispatchByIdRangeFar(&work.effect);
@@ -753,7 +753,7 @@ s32 BattlePresentation_RunItem(struct BattlePlan *plan, s32 unused,
   // An item with an effect dims the background over 20 frames, to about two
   // thirds of its brightness (19 steps of 0x444 in 16.16), then plays it; one
   // with none waits a second.
-  Scheduler_AddOrUpdateCallback(BattleEvent_Playback, 0xc80);
+  Task_Add(BattleEvent_Playback, 0xc80);
   if (work.effect.kind != 0) {
     s32 fade;
 
@@ -932,7 +932,7 @@ s32 BattlePresentation_RunPsynergyCast(struct BattlePlan *plan, s32 mode) {
   object = BattleObject_Get(work.effect.actor)->object;
   ObjectDispatch_SelectAnimationFar(object, POSE_CAST);
   ObjectDispatch_SetAnimationSpeedFar((struct DispatchObject *)object, 16);
-  AudioCommand_PlayFar(SE_CAST);
+  Sound_PlaySongFar(SE_CAST);
   if (mode & CAST_ENEMY)
     ElementGlow_Play(work.effect.actor, plan->element, GLOW_STREAKS, 0);
   else if (!isDjinni)
@@ -964,7 +964,7 @@ s32 BattlePresentation_RunPsynergyCast(struct BattlePlan *plan, s32 mode) {
     BattleEvent_DispatchQueued();
     BattlePresentation_RestorePalette();
   } else {
-    Scheduler_AddOrUpdateCallback(BattleEvent_Playback, 0xc80);
+    Task_Add(BattleEvent_Playback, 0xc80);
     if (work.effect.kind) {
       if (plan->presentationFlags & STAGING_BY_ID_RANGE)
         BattleEffect_DispatchByIdRangeFar(&work.effect);

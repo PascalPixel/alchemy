@@ -68,7 +68,7 @@ struct ScriptOperands {
   u32 targetZ;       ///< SW_TARGET_Z
   u32 bounce;        ///< SW_BOUNCE, or a floating object's phase
   u32 gravity;       ///< SW_GRAVITY
-  /// Work value 0x17: the word FieldObject_Create zeroes and only map code
+  /// Work value 0x17: the word Object_CreateField zeroes and only map code
   /// reads.
   u32 mapWord;
   u32 sprite;           ///< work value 0x18: the sprite, or its list of four

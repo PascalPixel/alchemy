@@ -51,26 +51,25 @@ void BattleEffect_RunAstralBlast(struct BattleEffectArgument *effect) {
   s32 k;
   struct EffectStep *trails;
 
-  work = WORK_SLOT(HEAP_SLOT_BATTLE_EFFECT);
-  canvas = WORK_SLOT(HEAP_SLOT_BATTLE_CANVAS);
-  graphics = WORK_SLOT(HEAP_SLOT_BATTLE_SHEET);
-  camera = WORK_SLOT(HEAP_SLOT_CAMERA);
+  work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_ANIM);
+  canvas = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
+  graphics = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_SHEET);
+  camera = HEAP_SLOT_BLOCK(HEAP_SLOT_CAMERA);
   caster = GetBattleObjectSlotFar(effect->actor)->object;
   work->effect = effect;
   BattleEffect_StartCanvasLayer(1);
   Iwram_CopyWords((void *)BG_PLTT,
                   Resource_GetTableEntry((s32)&ResourceId_RuneSheet), 128);
-  Resource_DecodeType01(
-      Resource_GetTableEntry((s32)&ResourceId_ParticleSpritesA), graphics);
+  Decompress_Type01(Resource_GetTableEntry((s32)&ResourceId_ParticleSpritesA),
+                    graphics);
   ObjectDispatch_SelectAnimationFar(caster, POSE_LEAP);
   ObjectDispatch_SetAnimationSpeedFar((struct DispatchObject *)caster, 48);
-  EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER, EFFECT_CLIP_BOUNDS, COMPOSITE_MAX);
+  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, COMPOSITE_MAX);
   // Trails keep 75% of each pixel a frame.
   work->transferMode = CANVAS_COPY_AND_FADE;
   work->transferValue = 75;
-  draw[0] = (DrawRectangle) * (gWorkSlot + HEAP_SLOT_BLITTER);
-  Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer,
-                                EFFECT_CALLBACK_ORDER);
+  draw[0] = (DrawRectangle) * (gHeapSlots + HEAP_SLOT_RAM_CODE);
+  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, EFFECT_CALLBACK_ORDER);
 
   source = GetBattleObjectSlotFar(work->effect->actor)->object;
   target = GetBattleObjectSlotFar(work->effect->actors[0])->object;
@@ -93,7 +92,7 @@ void BattleEffect_RunAstralBlast(struct BattleEffectArgument *effect) {
     // Swing the camera round, slowing over frames 40 to 47: 128/65536 turn a
     // frame, 5696/65536 in all, about a twelfth of a turn.
     if (frame <= 47) {
-      struct BattleCamera *view = WORK_SLOT(HEAP_SLOT_CAMERA);
+      struct BattleCamera *view = HEAP_SLOT_BLOCK(HEAP_SLOT_CAMERA);
       s32 speed;
 
       if (frame <= 39)
@@ -182,15 +181,15 @@ void BattleEffect_RunAstralBlast(struct BattleEffectArgument *effect) {
           target->autoFaceMotion = 0;
           ObjectDispatch_StartIdleFar((struct DispatchObject *)target);
           if (target->x < 0)
-            Object_SetMoveTargetFar((struct ObjectRuntime *)target,
+            Object_SetMoveTargetFar((struct Object *)target,
                                     target->x - 0x280000, 0, target->z);
           else
-            Object_SetMoveTargetFar((struct ObjectRuntime *)target,
+            Object_SetMoveTargetFar((struct Object *)target,
                                     target->x + 0x280000, 0, target->z);
           if (i == 2) {
             EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
           } else {
-            AudioCommand_PlayFar(SE_HEAVY_IMPACT);
+            Sound_PlaySongFar(SE_HEAVY_IMPACT);
             ObjectGroup_UpdateMembers(work->effect->actors[0],
                                       SPRITE_COLOR_WHITE, POSE_DAMAGE, 0, 8);
           }
@@ -237,23 +236,22 @@ void BattleEffect_RunShiningStar(struct BattleEffectArgument *effect) {
   s32 k;
   struct EffectStep *trails;
 
-  work = WORK_SLOT(HEAP_SLOT_BATTLE_EFFECT);
-  canvas = WORK_SLOT(HEAP_SLOT_BATTLE_CANVAS);
-  graphics = WORK_SLOT(HEAP_SLOT_BATTLE_SHEET);
-  camera = WORK_SLOT(HEAP_SLOT_CAMERA);
+  work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_ANIM);
+  canvas = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
+  graphics = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_SHEET);
+  camera = HEAP_SLOT_BLOCK(HEAP_SLOT_CAMERA);
   work->effect = effect;
   BattleEffect_StartCanvasLayer(1);
   Iwram_CopyWords((void *)BG_PLTT,
                   Resource_GetTableEntry((s32)&ResourceId_RuneSheet), 128);
-  Resource_DecodeType01(
-      Resource_GetTableEntry((s32)&ResourceId_ParticleSpritesA), graphics);
-  EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER, EFFECT_CLIP_BOUNDS, COMPOSITE_MAX);
+  Decompress_Type01(Resource_GetTableEntry((s32)&ResourceId_ParticleSpritesA),
+                    graphics);
+  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, COMPOSITE_MAX);
   // Trails keep half of each pixel a frame.
   work->transferMode = CANVAS_COPY_AND_FADE;
   work->transferValue = 50;
-  draw[0] = (DrawRectangle) * (gWorkSlot + HEAP_SLOT_BLITTER);
-  Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer,
-                                EFFECT_CALLBACK_ORDER);
+  draw[0] = (DrawRectangle) * (gHeapSlots + HEAP_SLOT_RAM_CODE);
+  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, EFFECT_CALLBACK_ORDER);
 
   source = GetBattleObjectSlotFar(work->effect->actor)->object;
   target = GetBattleObjectSlotFar(work->effect->actors[0])->object;
@@ -329,7 +327,7 @@ void BattleEffect_RunShiningStar(struct BattleEffectArgument *effect) {
           step->velocityX /= 2;
           step->velocityZ /= 2;
           work->shakeFrames = 4;
-          AudioCommand_PlayFar(SE_HEAVY_IMPACT);
+          Sound_PlaySongFar(SE_HEAVY_IMPACT);
           EFFECT_FOR_EACH_TARGET(j, work->effect)
             ObjectGroup_UpdateMembers(work->effect->actors[j],
                                       SPRITE_COLOR_WHITE, POSE_DAMAGE, j, 8);

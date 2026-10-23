@@ -115,19 +115,19 @@ void BattleEffect_RunStreakVolley(struct BattleEffectArgument *effect,
   // The upper half of a streak is its image flipped vertically; on the
   // party's side both halves are mirrored as well.
   if (work->effect->side == 0) {
-    EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER,
+    EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
                         EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_Y, COMPOSITE_MAX);
-    drawUpper = EFFECT_SLOT(slots, HEAP_SLOT_BLITTER);
-    EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER_ALTERNATE, EFFECT_CLIP_BOUNDS,
+    drawUpper = EFFECT_SLOT(slots, HEAP_SLOT_RAM_CODE);
+    EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, EFFECT_CLIP_BOUNDS,
                         COMPOSITE_MAX);
-    drawLower = EFFECT_SLOT(slots, HEAP_SLOT_BLITTER_ALTERNATE);
+    drawLower = EFFECT_SLOT(slots, HEAP_SLOT_RAM_CODE_2);
   } else {
-    EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER, EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP,
+    EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP,
                         COMPOSITE_MAX);
-    drawUpper = EFFECT_SLOT(slots, HEAP_SLOT_BLITTER);
-    EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER_ALTERNATE,
+    drawUpper = EFFECT_SLOT(slots, HEAP_SLOT_RAM_CODE);
+    EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
                         EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, COMPOSITE_MAX);
-    drawLower = EFFECT_SLOT(slots, HEAP_SLOT_BLITTER_ALTERNATE);
+    drawLower = EFFECT_SLOT(slots, HEAP_SLOT_RAM_CODE_2);
   }
 
   // The streak images, and the style's colour as the first 128 bytes of the
@@ -254,7 +254,7 @@ void BattleEffect_RunStreakVolley(struct BattleEffectArgument *effect,
           // flashes again 16 frames later.
           if (STREAKS_VALUE(mode, STREAKS_HIT)) {
             if (frame == k * STREAKS_TARGET_DELAY + 24) {
-              AudioCommand_PlayFar(SE_IMPACT);
+              Sound_PlaySongFar(SE_IMPACT);
               if (k == 0) // the first hit lets the battle show the damage
                 EFFECT_SHOW_DAMAGE(-1);
               ObjectGroup_UpdateMembers(work->effect->actors[k],
@@ -335,20 +335,20 @@ void BattleEffect_RunMoteFountain(struct BattleEffectArgument *effect,
   s32 frame;
   s32 i;
 
-  work = WORK_SLOT(HEAP_SLOT_BATTLE_EFFECT);
-  canvas = WORK_SLOT(HEAP_SLOT_BATTLE_CANVAS);
-  camera = WORK_SLOT(HEAP_SLOT_CAMERA);
-  sheet = WORK_SLOT(HEAP_SLOT_BATTLE_SHEET);
+  work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_ANIM);
+  canvas = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
+  camera = HEAP_SLOT_BLOCK(HEAP_SLOT_CAMERA);
+  sheet = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_SHEET);
   work->effect = effect;
   if (mode == MOTE_FOUNTAIN_FOUNTAIN_HEALING)
     BattleEffect_StartCanvasLayer(0);
   else
     BattleEffect_StartCanvasLayer(1);
-  EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER, EFFECT_CLIP_BOUNDS, COMPOSITE_MAX);
-  draw[0] = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER];
-  EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER_ALTERNATE,
+  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, COMPOSITE_MAX);
+  draw[0] = (DrawRectangle)gHeapSlots[HEAP_SLOT_RAM_CODE];
+  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
                       EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_Y, COMPOSITE_MAX);
-  draw[1] = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE];
+  draw[1] = (DrawRectangle)gHeapSlots[HEAP_SLOT_RAM_CODE_2];
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
   if (mode == MOTE_FOUNTAIN_FOUNTAIN_HEALING)
     resource = (s32)&ResourceId_OrangePaletteA;
@@ -431,7 +431,7 @@ void BattleEffect_RunMoteFountain(struct BattleEffectArgument *effect,
     } else {
       EFFECT_FOR_EACH_TARGET(i, work->effect) {
         if (frame == i * 8 + 48) {
-          AudioCommand_PlayFar(SE_RECOVERY);
+          Sound_PlaySongFar(SE_RECOVERY);
           EFFECT_SHOW_DAMAGE(-1);
           ObjectGroup_UpdateMembers(work->effect->actors[i], SPRITE_COLOR_WHITE,
                                     -1, i, 8);

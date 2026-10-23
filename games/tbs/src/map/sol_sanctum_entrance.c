@@ -276,7 +276,7 @@ static void EventScript_OpenDoorAndEnter(void) {
   // The door opens over three frames.
   width = 3;
   height = 2;
-  Script_PlayCue(SE_181);
+  Script_PlaySong(SE_181);
   MapGrid_CopyCellsTo(16, 28, 21, 3, width, height);
   Engine_TaskWait(10);
   MapGrid_CopyCellsTo(16, 30, 21, 3, width, height);
@@ -309,7 +309,7 @@ static void EventScript_InspectFirstMinotaurRelief(void) {
   } else {
     Engine_MessageShowCentered(MsgSolSanctumMinotaurReliefOneEye, 1);
     if (Engine_GameFlagIsSet(FLAG_SOL_SANCTUM_FIRST_SMALL_JEWEL_FOUND) != 0) {
-      u16 *menuRequest = &gEventWork->requestedMenu;
+      u16 *menuRequest = &gFieldWork->requestedMenu;
       u16 open = 1;
       *menuRequest = open;
     }
@@ -354,7 +354,7 @@ static void EventScript_SetFirstSmallJewel(void) {
       Field_EndBusyAndReveal();
       // The eye sparkles, then the wall opens.
       oneCell = 1;
-      Script_PlayCue(SE_GEM_SET);
+      Script_PlaySong(SE_GEM_SET);
       MapGrid_CopyCellsTo(0, 70, 30, 42, oneCell, oneCell);
       Engine_MapGridRedraw();
       Engine_ScriptWait(40);
@@ -362,7 +362,7 @@ static void EventScript_SetFirstSmallJewel(void) {
       Engine_MessageShowCentered(message, 1);
       Engine_ScriptWait(20);
       reliefWidth = 3;
-      Script_PlayCue(SE_183);
+      Script_PlaySong(SE_183);
       MapGrid_CopyCellsTo(0, 29, 3, 1, reliefWidth, 2);
       MapGrid_CopyCellAttributes(0, 29, 3, 2, reliefWidth, oneCell);
       MapGrid_CopyCellsTo(1, 109, 4, 81, oneCell, oneCell);
@@ -389,7 +389,7 @@ static void EventScript_InspectSecondMinotaurRelief(void) {
     Engine_MessageShowCentered(MsgSolSanctumMinotaurReliefBothEyes, 1);
   } else if (Engine_GameFlagIsSet(FLAG_SOL_SANCTUM_SECOND_SMALL_JEWEL_FOUND) !=
              0) {
-    work = gEventWork;
+    work = gFieldWork;
     Engine_MessageShowCentered(MsgSolSanctumMinotaurReliefOneEye, 1);
     {
 
@@ -617,7 +617,7 @@ static void EventScript_PushStatue(void) {
       leader->acceleration = PIXELS(1) / 5;
       Engine_ObjectSetPosition(leader, destination->x, destination->y,
                                destination->z);
-      FieldObject_WaitForMove(statue);
+      Object_WaitForMove(statue);
       statue->x.fixed = destination->x;
       statue->z.fixed = destination->z;
       statue->velocityX = stoppedVelocity;
@@ -646,7 +646,7 @@ static void EventScript_PushStatue(void) {
   }
 }
 
-/// Sets up Sol Entrance or Sol Sanctum. Called by Field_RunMap once the
+/// Sets up Sol Entrance or Sol Sanctum. Called by Map_Run once the
 /// object events exist.
 s32 SolSanctumEntrance_Initialize(void) {
   s32 mapId = gGameState.mapId;
@@ -671,7 +671,7 @@ s32 SolSanctumEntrance_Initialize(void) {
 static void SolSanctumEntrance_ApplyEntryState(void) {
   // Retreat does not work here.
   GameFlag_Set(FLAG_RETREAT_BLOCKED);
-  gEventWork->startTransition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+  gFieldWork->startTransition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   if (GameFlag_IsSet(FLAG_SOL_SANCTUM_ERUPTED) != 0) {
     gSolSanctumEntrance_RumbleTimer = 0;
     Task_AddCallback(SolSanctumEntrance_UpdateEruptionRumbles, 0xc80);
@@ -703,7 +703,7 @@ static void SolSanctumEntrance_ApplyEntryState(void) {
 /// second relief's doorway shows once it is open.
 static void SolSanctumEntrance_RestoreInteriorState(void) {
   s32 warpDest;
-  gEventWork->startTransition =
+  gFieldWork->startTransition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   if (Engine_GameFlagIsSet(FLAG_SOL_SANCTUM_ERUPTED) != 0) {
     FieldEffect_SetQueuedSoundAndPlay(SE_RUMBLE);
@@ -814,7 +814,7 @@ static void SolSanctumEntrance_IntroduceSanctum(void) {
   struct ObjectEvent *leader;
 
   Engine_ScriptStart();
-  gEventWork->startTransition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+  gFieldWork->startTransition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   Engine_ScriptOpenScreen();
   Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, 0);
   Engine_ScriptWait(4);
@@ -890,7 +890,7 @@ static void SolSanctumEntrance_IntroduceSanctum(void) {
   Engine_ObjectEventSetAnimation(JENNA, ANIMATION_STAND);
   Engine_ObjectEventSetAnimation(LOCALID_KRADEN, ANIMATION_STAND);
   GameFlag_Set(FLAG_SOL_SANCTUM_ENTERED);
-  gEventWork->startTransition =
+  gFieldWork->startTransition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   GameFlag_Clear(FLAG_SHOW_LOCATION_NAME);
   Engine_ScriptEnd();
@@ -1132,7 +1132,7 @@ static void SolSanctumEntrance_KradenSeesStatuesOutOfReach(void) {
   struct ObjectEvent *leader;
 
   Engine_ScriptStart();
-  gEventWork->startTransition =
+  gFieldWork->startTransition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   Engine_ScriptOpenScreen();
   Engine_ScriptWaitForScreen();
@@ -1309,7 +1309,7 @@ static void SolSanctumEntrance_UpdateEruptionRumbles(void) {
   } else {
     randomValue = Engine_RandomNext();
     if (((u32)(((randomValue << 4) - randomValue) << 3) >> 16) == 0) {
-      Script_PlayCue(SE_ITEM_BREAK);
+      Script_PlaySong(SE_ITEM_BREAK);
       MapGrid_SetShake(PIXELS(1), PIXELS(2), Q16_ONE);
       *timer = 80;
     }

@@ -123,16 +123,16 @@ void BattleEffect_RunGrowingColumns(struct BattleEffectArgument *effect,
   if (work->effect->side == 1) {
     REG_BG2X = -0x7000; // 112 pixels right
   }
-  EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER, EFFECT_CLIP_BOUNDS,
+  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                       COMPOSITE_TRANSPARENT);
-  rectangle[0] = gWorkSlot[HEAP_SLOT_BLITTER];
-  EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER_ALTERNATE,
+  rectangle[0] = gHeapSlots[HEAP_SLOT_RAM_CODE];
+  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
                       EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
                       COMPOSITE_TRANSPARENT);
   /* FAKEMATCH(temporary): secondSlot and draw, a second pointer to the pair,
-   * order the frame's spill slots; as rectangle[1] = gWorkSlot[n] and
+   * order the frame's spill slots; as rectangle[1] = gHeapSlots[n] and
    * rectangle[side], 11 of 503 instructions differ in tbs-en. */
-  secondSlot = gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE];
+  secondSlot = gHeapSlots[HEAP_SLOT_RAM_CODE_2];
   draw = rectangle;
   draw[1] = secondSlot;
 
@@ -243,7 +243,7 @@ void BattleEffect_RunGrowingColumns(struct BattleEffectArgument *effect,
               do {
                 if (frame == reactFrame) {
                   if (!(i & 1)) {
-                    AudioCommand_PlayFar(SE_IMPACT);
+                    Sound_PlaySongFar(SE_IMPACT);
                   }
                   ObjectGroup_UpdateMembers(work->effect->actors[n],
                                             SPRITE_COLOR_WHITE, POSE_DAMAGE, n,
@@ -344,7 +344,7 @@ void BattleEffect_RunVine(struct BattleEffectArgument *effect) {
   s32 i, frame, cell, height, offset, middle;
   struct EffectStep *column;
 
-  slots = (u32 *)(gWorkSlot + HEAP_SLOT_BATTLE_EFFECT);
+  slots = (u32 *)(gHeapSlots + HEAP_SLOT_BATTLE_ANIM);
   cursor = slots;
   work = (struct BattleEffectWork *)*cursor++;
   canvas = (void *)*cursor;
@@ -367,13 +367,13 @@ void BattleEffect_RunVine(struct BattleEffectArgument *effect) {
   middle += (last.x - middle) / 2;
   first.x = middle;
   REG_BG2X = (64 - first.x) << 8;
-  EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER, EFFECT_CLIP_BOUNDS,
+  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                       COMPOSITE_TRANSPARENT);
-  draw[0] = (DrawRectangle)EFFECT_SLOT(slots, HEAP_SLOT_BLITTER);
-  EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER_ALTERNATE,
+  draw[0] = (DrawRectangle)EFFECT_SLOT(slots, HEAP_SLOT_RAM_CODE);
+  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
                       EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
                       COMPOSITE_TRANSPARENT);
-  draw[1] = (DrawRectangle)EFFECT_SLOT(slots, HEAP_SLOT_BLITTER_ALTERNATE);
+  draw[1] = (DrawRectangle)EFFECT_SLOT(slots, HEAP_SLOT_RAM_CODE_2);
   column = work->particles;
   i = 0;
   do {
@@ -386,7 +386,7 @@ void BattleEffect_RunVine(struct BattleEffectArgument *effect) {
   do {
     // No EFFECT_SHOW_DAMAGE here: the targets only flash, on frame 32.
     if (frame == 32) {
-      AudioCommand_PlayFar(SE_143);
+      Sound_PlaySongFar(SE_143);
       EFFECT_FOR_EACH_TARGET(i, work->effect)
         ObjectGroup_UpdateMembers(work->effect->actors[i], SPRITE_COLOR_WHITE,
                                   POSE_DAMAGE, i, 16);
@@ -456,7 +456,7 @@ void BattleEffect_RunThorn(struct BattleEffectArgument *effect) {
   s32 age;
   s32 start;
 
-  slots = (u32 *)(gWorkSlot + HEAP_SLOT_BATTLE_EFFECT);
+  slots = (u32 *)(gHeapSlots + HEAP_SLOT_BATTLE_ANIM);
   cursor = slots;
   work = (struct BattleEffectWork *)*cursor++;
   canvas = (void *)*cursor;
@@ -469,18 +469,17 @@ void BattleEffect_RunThorn(struct BattleEffectArgument *effect) {
   if (work->effect->side == 1) {
     REG_BG2X = -0x7000; // 112 pixels right
   }
-  EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER, EFFECT_CLIP_BOUNDS,
+  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                       COMPOSITE_TRANSPARENT);
-  draw = ((DrawRectangle *)slots)[HEAP_SLOT_BLITTER - HEAP_SLOT_BATTLE_EFFECT];
-  EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER_ALTERNATE,
+  draw = ((DrawRectangle *)slots)[HEAP_SLOT_RAM_CODE - HEAP_SLOT_BATTLE_ANIM];
+  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
                       EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
                       COMPOSITE_TRANSPARENT);
   work->transferMode = CANVAS_COPY_AND_CLEAR; // clear the canvas every frame
   work->transferValue = 0;
-  drawFlip = ((DrawRectangle *)
-                  slots)[HEAP_SLOT_BLITTER_ALTERNATE - HEAP_SLOT_BATTLE_EFFECT];
-  Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer,
-                                EFFECT_CALLBACK_ORDER);
+  drawFlip =
+      ((DrawRectangle *)slots)[HEAP_SLOT_RAM_CODE_2 - HEAP_SLOT_BATTLE_ANIM];
+  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, EFFECT_CALLBACK_ORDER);
   frameCount = gGrowth_Counts[work->effect->variant] * 8 + 56;
 
   // Mark the dust free: 1024 records, though only the first 64 are used.
@@ -568,7 +567,7 @@ void BattleEffect_RunThorn(struct BattleEffectArgument *effect) {
       }
       EFFECT_FOR_EACH_TARGET(j, work->effect) {
         if (frame == start + 4) {
-          AudioCommand_PlayFar(SE_132);
+          Sound_PlaySongFar(SE_132);
           ObjectGroup_UpdateMembers(work->effect->actors[j], SPRITE_COLOR_WHITE,
                                     POSE_DAMAGE, j, 3);
         }

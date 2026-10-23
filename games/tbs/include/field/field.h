@@ -47,7 +47,7 @@ struct MapGridCell;
 struct MenuSprite;
 struct ModeRecord;
 struct MotionObject;
-struct ObjectRuntime;
+struct Object;
 struct FieldRecord;
 struct MapWarpDest;
 struct MapEntry;
@@ -147,9 +147,9 @@ struct FloodgateLog;
 extern struct FloodgateLog *gKolimaForestFloodgateRecords;
 /// The short log's place in gMapLocalState's first halfword: 1 west, 0 east.
 extern u16 *gKolimaForestFloodgateReturned;
-#ifndef OWN_gObjectSlots
+#ifndef OWN_gObjects
 /// Work slot 5: the 64 field objects, 0x70 bytes each.
-extern struct ObjectRuntime *gObjectSlots;
+extern struct Object *gObjects;
 #endif
 /// The world map camera's yaw the scanline parameters were built for; the
 /// vertex update rebuilds them when it changes.
@@ -263,12 +263,12 @@ extern struct MenuSprite gHeatGauge_Sprites[];
 /// HEAP_SLOT_FRAME_SCRATCH.
 extern u8 Render_DecodeFrame[];
 #endif
-/// The statue map's three scrolling strips, packed (Resource_DecodeByteLz).
+/// The statue map's three scrolling strips, packed (Decompress_ByteLz).
 extern u8 gSolSanctumStatue_SpriteRowsGraphics[];
 /// The six large things' sprite animations, which pick their footprints in
 /// gStagedObjectEvent_FootprintBounds; each map with them defines its own.
 extern u32 gStagedObjectEvent_FootprintKinds[];
-/// The tilemap row drawer, run from a copy in HEAP_SLOT_TEMP_RENDERER.
+/// The tilemap row drawer, run from a copy in HEAP_SLOT_RAM_CODE_TEMP.
 extern const u8 TileMap_DrawRows[];
 /// The size of TileMap_DrawRows (decode.s).
 extern u8 TileMap_DrawRowsCodeSize[];
@@ -327,7 +327,7 @@ extern const u8 gFieldEffect_QuadrantModes[];
 /// by the FLAG_PSYNERGY_TINT flags (FieldEffect_FadeToEffectColor).
 extern const s32 gFieldEffect_TargetColors[];
 extern s16 gFieldEffect_GroundParticleFrames[];
-/// The ground particles' 16 by 16 tiles, packed (Resource_DecodeByteLz).
+/// The ground particles' 16 by 16 tiles, packed (Decompress_ByteLz).
 extern const u8 gFieldEffect_GroundParticleTiles[];
 extern const s32 gFieldEffect_RisingPulseScript[];
 

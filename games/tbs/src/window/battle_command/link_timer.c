@@ -30,7 +30,7 @@ struct LinkSignature {
 /// each whole second; at 0 the menus end as if cancelled, or take their
 /// first command. A paused link sets the timer to 0 at once.
 void UpdateLinkSessionCountdown(void) {
-  struct BattleMenuWork *state = gLinkCountdownWork;
+  struct BattleMenuWork *state = gBattleMenuWork;
   struct BattleWork *runtime;
   struct MenuSprite *entry;
   u8 *active;
@@ -125,7 +125,7 @@ void UpdateLinkSessionCountdown(void) {
     // Round remaining frames upward so zero appears only after time expires.
     seconds = (timer + FRAMES_PER_SECOND - 1) / FRAMES_PER_SECOND;
     if (seconds != 0 && seconds * FRAMES_PER_SECOND == timer)
-      AudioCommand_PlayFar(SE_TRIPLE_TONE_LOW);
+      Sound_PlaySongFar(SE_TRIPLE_TONE_LOW);
 
     if (state->timerWindow != 0)
       UiText_DrawNumberInWindow(seconds, 2,
@@ -166,7 +166,7 @@ s32 UiText_ShowLocalizedMessageAndWait(void) {
     do {
       WaitFrames(1);
     } while ((gKeysPressed & (KEY_A | KEY_B)) == 0 &&
-             gLinkCountdownWork->timer != 0);
+             gBattleMenuWork->timer != 0);
     UiWork_Finalize(work, 1);
   }
   return result;

@@ -631,11 +631,11 @@ static void BabiPalace_WakeFromFinalsDream(void) {
   ObjectEvent_FaceDirection(GARET, FACING_EAST, 0);
   ObjectEvent_FaceDirection(MIA, FACING_EAST, 0);
   ObjectEvent_FaceDirection(IVAN, FACING_NORTHEAST, 0);
-  gEventWork->transitionFrames = 60;
+  gFieldWork->transitionFrames = 60;
   Engine_ScriptOpenScreen();
   Engine_ScriptWaitForScreen();
   Script_Wait(20);
-  gEventWork->transitionFrames = 24;
+  gFieldWork->transitionFrames = 24;
   ObjectEvent_SetSpeed(MIA, PIXELS(1), PIXELS(1) / 2);
   ObjectEvent_WalkByAndWait(MIA, 16, 0);
   ObjectEvent_FaceDirection(MIA, FACING_SOUTHEAST, 0);
@@ -699,11 +699,11 @@ static void BabiPalace_WakeFromFinalsDream(void) {
     ObjectEvent_SetAnimationAndWait(GARET, ANIMATION_NOD);
     Script_Wait(20);
     Script_ShowMessage(GARET, 0);
-    gEventWork->message += 1;
+    gFieldWork->message += 1;
   } else {
     Script_Wait(10);
     ObjectEvent_SetAnimationAndWait(LOCALID_PARTY_LEADER, ANIMATION_IN_BED_NOD);
-    gEventWork->message += 2;
+    gFieldWork->message += 2;
     Script_Wait(30);
     ObjectEvent_SetAnimationAndWait(GARET, ANIMATION_NOD);
     Script_Wait(20);
@@ -822,14 +822,14 @@ static void BabiPalace_RestInPalaceBeds(void) {
     if (GameFlag_IsSet(FLAG_BABI_PALACE_FIRST_NIGHT) == 0) {
       Script_ShowMessage(GARET, 0);
     } else {
-      gEventWork->message++;
+      gFieldWork->message++;
     }
     ObjectEvent_SetAnimationAndWait(IVAN, ANIMATION_NOD);
     Script_Wait(10);
     if (GameFlag_IsSet(FLAG_BABI_PALACE_FIRST_NIGHT) == 0) {
       Script_ShowMessage(IVAN, 0);
     } else {
-      gEventWork->message++;
+      gFieldWork->message++;
     }
     Script_Wait(20);
     ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_EAST, 0);
@@ -850,14 +850,14 @@ static void BabiPalace_RestInPalaceBeds(void) {
     if (GameFlag_IsSet(FLAG_BABI_PALACE_FIRST_NIGHT) == 0) {
       Script_ShowMessage(IVAN, 0);
     } else {
-      gEventWork->message++;
+      gFieldWork->message++;
     }
     ObjectEvent_SetAnimationAndWait(MIA, ANIMATION_NOD);
     Script_Wait(10);
     if (GameFlag_IsSet(FLAG_BABI_PALACE_FIRST_NIGHT) == 0) {
       Script_ShowMessage(MIA, 0);
     } else {
-      gEventWork->message++;
+      gFieldWork->message++;
     }
     ObjectEvent_WalkByAndWait(GARET, 0, 32);
     ObjectEvent_WalkBy(GARET, -112, 0);
@@ -1174,17 +1174,17 @@ static void BabiPalace_WakeAfterFinals(void) {
   ObjectEvent_FaceDirection(GARET, FACING_SOUTH, 0);
   ObjectEvent_FaceDirection(MIA, FACING_EAST, 0);
   ObjectEvent_FaceDirection(IVAN, FACING_WEST, 0);
-  work = gEventWork;
+  work = gFieldWork;
   work->startTransition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   work->transitionFrames = 12;
   Task_Wait(1);
   DisplayTransition_InitializeBattleEffectState(WINDOW_TRANSITION_LEADER);
-  // UB: HEAP_SLOT_TRANSITION lies past scalar gEventWork. Its named load adds
-  // four bytes in the native English trial (0x82c to 0x830).
+  // UB: HEAP_SLOT_SCREEN_TRANSITION lies past scalar gFieldWork. Its named load
+  // adds four bytes in the native English trial (0x82c to 0x830).
 #ifdef UBFIX
-  state = gDisplayTransition;
+  state = gScreenTransitionWork;
 #else
-  state = (struct DisplayTransitionState *)((u8 **)&gEventWork)[4];
+  state = (struct DisplayTransitionState *)((u8 **)&gFieldWork)[4];
 #endif
   state->value = 0;
   state->mask = 0x1f1f;
@@ -1203,7 +1203,7 @@ static void BabiPalace_WakeAfterFinals(void) {
     state->value = step;
   }
   state->active = 31;
-  work = gEventWork;
+  work = gFieldWork;
   work->startTransition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
   work->transitionFrames = 24;
@@ -1255,7 +1255,7 @@ static void BabiPalace_WakeAfterFinals(void) {
     ObjectEvent_Jump(GARET, 4, 13);
     ObjectEvent_Jump(GARET, 4, 30);
     Script_ShowMessage(GARET, 0);
-    gEventWork->message++;
+    gFieldWork->message++;
   } else {
     Script_Wait(10);
     ObjectEvent_SetAnimationAndWait(LOCALID_PARTY_LEADER,
@@ -1264,7 +1264,7 @@ static void BabiPalace_WakeAfterFinals(void) {
     ObjectEvent_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 40);
     ObjectEvent_Jump(GARET, 4, 13);
     ObjectEvent_Jump(GARET, 4, 30);
-    gEventWork->message++;
+    gFieldWork->message++;
     Script_ShowMessage(GARET, 0);
   }
   Script_Wait(10);
@@ -1303,14 +1303,14 @@ static void BabiPalace_WakeAfterFinals(void) {
     ObjectEvent_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_SCOWL, 40);
     Script_ShowMessage(GARET, 0);
     pick = 0;
-    gEventWork->message++;
+    gFieldWork->message++;
   } else {
     Script_Wait(10);
     ObjectEvent_SetAnimationAndWait(LOCALID_PARTY_LEADER,
                                     ANIMATION_IN_BED_SHAKE_HEAD);
     Script_Wait(20);
     ObjectEvent_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_SCOWL, 40);
-    gEventWork->message++;
+    gFieldWork->message++;
     pick = 1;
     Script_ShowMessage(GARET, 0);
   }
@@ -1348,9 +1348,9 @@ static void BabiPalace_WakeAfterFinals(void) {
     ObjectEvent_RunRepeatedMotion(GARET, 2);
     Script_Wait(30);
     Script_ShowMessage(GARET, 0);
-    gEventWork->message += 2;
+    gFieldWork->message += 2;
   } else {
-    gEventWork->message += 2;
+    gFieldWork->message += 2;
     Script_Wait(10);
     ObjectEvent_SetAnimationAndWait(IVAN, ANIMATION_SHAKE_HEAD);
     Script_Wait(20);
@@ -1422,7 +1422,7 @@ static void BabiPalace_WakeAfterFinals(void) {
 /// Learning that the party is bound for Venus Lighthouse, he sends Iodem
 /// with it, to meet at Gondowan Passage.
 static void BabiPalace_MeetBabiAfterColosso(void) {
-  Script_PlayCue(MUS_030);
+  Script_PlaySong(MUS_030);
   Script_Start();
   Script_SetMessage(MsgTolbiWaitingCompanions);
   Engine_ScriptOpenScreen();
@@ -1514,9 +1514,9 @@ static void BabiPalace_MeetBabiAfterColosso(void) {
     ObjectEvent_RunRepeatedMotion(LOCALID_BABI, 2);
     Script_Wait(20);
     Script_OpenMessage(LOCALID_BABI, 0);
-    gEventWork->message += 2;
+    gFieldWork->message += 2;
   } else {
-    gEventWork->message += 5;
+    gFieldWork->message += 5;
     Script_Wait(10);
     ObjectEvent_SetAnimationAndWait(LOCALID_IODEM, ANIMATION_NOD);
     Script_Wait(20);
@@ -1539,12 +1539,12 @@ static void BabiPalace_MeetBabiAfterColosso(void) {
     ObjectEvent_SetAnimationAndWait(LOCALID_IODEM, ANIMATION_NOD);
     Script_Wait(20);
     Script_ShowMessage(LOCALID_IODEM, 0);
-    gEventWork->message++;
+    gFieldWork->message++;
   } else {
     Script_Wait(10);
     ObjectEvent_SetAnimationAndWait(LOCALID_IODEM, ANIMATION_NOD);
     Script_Wait(20);
-    gEventWork->message++;
+    gFieldWork->message++;
     Script_ShowMessage(LOCALID_IODEM, 0);
   }
 
@@ -1633,12 +1633,12 @@ static void BabiPalace_MeetBabiAfterColosso(void) {
     ObjectEvent_SetAnimationAndWait(LOCALID_BABI, ANIMATION_NOD);
     Script_Wait(30);
     Script_ShowMessage(LOCALID_BABI, 0);
-    gEventWork->message++;
+    gFieldWork->message++;
   } else {
     Script_Wait(10);
     ObjectEvent_SetAnimationAndWait(LOCALID_BABI, ANIMATION_SHAKE_HEAD);
     Script_Wait(20);
-    gEventWork->message++;
+    gFieldWork->message++;
     Script_ShowMessage(LOCALID_BABI, 0);
   }
 
@@ -1738,17 +1738,17 @@ static void BabiPalace_MeetBabiAfterColosso(void) {
   if (Script_ChooseYesNo(LOCALID_PARTY_LEADER, 0) == 0) {
     Script_Wait(20);
     Script_ShowMessage(GARET, 0);
-    gEventWork->message += 3;
+    gFieldWork->message += 3;
   } else {
     Script_Wait(10);
-    gEventWork->message++;
+    gFieldWork->message++;
     Script_OpenMessage(GARET, 0);
     if (Script_ChooseYesNo(LOCALID_PARTY_LEADER, 0) == 0) {
       Script_Wait(20);
       Script_ShowMessage(GARET, 0);
-      gEventWork->message++;
+      gFieldWork->message++;
     } else {
-      gEventWork->message++;
+      gFieldWork->message++;
       Script_ShowMessage(GARET, 0);
     }
   }
@@ -2077,10 +2077,10 @@ static void BabiPalace_MeetBabiAfterColosso(void) {
   if (Script_ChooseYesNo(LOCALID_BABI, 0) == 0) {
     Script_Wait(10);
     Script_ShowMessage(IVAN, 0);
-    gEventWork->message++;
+    gFieldWork->message++;
   } else {
     Script_Wait(10);
-    gEventWork->message++;
+    gFieldWork->message++;
     Script_ShowMessage(IVAN, 0);
   }
 
@@ -2141,10 +2141,10 @@ static void BabiPalace_MeetBabiAfterColosso(void) {
     Script_Wait(20);
     ObjectEvent_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
     Script_ShowMessage(GARET, 0);
-    gEventWork->message++;
+    gFieldWork->message++;
   } else {
     Script_Wait(10);
-    gEventWork->message++;
+    gFieldWork->message++;
     Script_ShowMessage(GARET, 0);
   }
 
@@ -2213,11 +2213,11 @@ static void BabiPalace_MeetBabiAfterColosso(void) {
     Script_Wait(20);
     ObjectEvent_ShowEmote(LOCALID_BABI, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
     Script_ShowMessage(LOCALID_BABI, 0);
-    gEventWork->message++;
+    gFieldWork->message++;
   } else {
     Script_Wait(10);
     ObjectEvent_ShowEmote(LOCALID_BABI, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
-    gEventWork->message++;
+    gFieldWork->message++;
     Script_ShowMessage(LOCALID_BABI, 0);
   }
 
@@ -2317,7 +2317,7 @@ static void BabiPalace_MeetBabiAfterColosso(void) {
   ObjectEvent_SetAnimation(MIA, ANIMATION_NOD);
   ObjectEvent_SetAnimationAndWait(IVAN, ANIMATION_NOD);
   Script_Wait(30);
-  Script_PlayCue(AUDIO_CUE_FADE_BGM);
+  Script_PlaySong(AUDIO_CUE_FADE_BGM);
   ObjectEvent_SetSpeed(GARET, PIXELS(6) / 5, PIXELS(3) / 5);
   ObjectEvent_SetSpeed(IVAN, PIXELS(6) / 5, PIXELS(3) / 5);
   ObjectEvent_SetSpeed(MIA, PIXELS(6) / 5, PIXELS(3) / 5);
@@ -2325,7 +2325,7 @@ static void BabiPalace_MeetBabiAfterColosso(void) {
   BabiPalace_WalkIntoLeader(IVAN);
   BabiPalace_WalkIntoLeader(MIA);
   Script_Wait(10);
-  Audio_PlayCueFromEventWork();
+  Map_PlayMusic();
   Script_End();
 }
 
@@ -2337,9 +2337,9 @@ static void BabiPalace_MeetBabiAfterColosso(void) {
 static void BabiPalace_LeaveThroughDoor(void) {
   struct EventWork *work;
 
-  work = gEventWork;
+  work = gFieldWork;
   Script_Start();
-  Script_PlayCue(SE_DOOR_OPEN);
+  Script_PlaySong(SE_DOOR_OPEN);
   ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(1) / 2, PIXELS(1) / 4);
   ObjectEvent_SetAnimation(LOCALID_PARTY_LEADER, ANIMATION_WALK);
   if (work->touchedTrigger == BABI_PALACE_CARPET_ROOM_TO_MEETING_ROOM) {
@@ -2368,7 +2368,7 @@ static void BabiPalace_LeaveThroughDoor(void) {
 static void BabiPalace_LeaveThroughAnimatedDoor(void) {
   Script_Start();
   ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(1) / 2, PIXELS(1) / 4);
-  Script_PlayCue(SE_DOOR_OPEN);
+  Script_PlaySong(SE_DOOR_OPEN);
   MapGrid_AnimateCells(gBabiPalace_DoorCells, 36, 10);
   ObjectEvent_CenterAndWalk(LOCALID_PARTY_LEADER, 2, -16);
   Script_Wait(16);
@@ -2545,7 +2545,7 @@ s32 BabiPalace_ApplyEntryState(void) {
       ObjectEvent_SetPosition(LOCALID_FINALS_ATTENDANT, PIXELS(120),
                               PIXELS(72));
     }
-    gEventWork->startTransition =
+    gFieldWork->startTransition =
         MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
     // The attendant before the rescue and after Colosso; during the finals
     // LOCALID_FINALS_HURRYING_WARRIORS_ALONG has this number.

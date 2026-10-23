@@ -81,33 +81,33 @@ void BattleEffect_RunPaletteParticles(struct BattleEffectArgument *effect,
   u8 *palette;
   s32 i;
 
-  cursor = &gWorkSlot[HEAP_SLOT_BATTLE_CANVAS];
+  cursor = &gHeapSlots[HEAP_SLOT_BATTLE_CANVAS];
   canvas = cursor[0];
   camera = cursor[HEAP_SLOT_CAMERA - HEAP_SLOT_BATTLE_CANVAS];
-  work = cursor[HEAP_SLOT_BATTLE_EFFECT - HEAP_SLOT_BATTLE_CANVAS];
+  work = cursor[HEAP_SLOT_BATTLE_ANIM - HEAP_SLOT_BATTLE_CANVAS];
   sheet = cursor[HEAP_SLOT_BATTLE_SHEET - HEAP_SLOT_BATTLE_CANVAS];
   work->effect = effect;
   BattleEffect_StartCanvasLayer(0);
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
   REG_BG2CNT = BGCNT_PRIORITY(0) | BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS |
                BGCNT_SCREEN_BASE(7);
-  EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER, EFFECT_CLIP_BOUNDS, COMPOSITE_MAX);
-  draw[0] = CANVAS_SLOT(cursor, HEAP_SLOT_BLITTER);
-  EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER_ALTERNATE, EFFECT_CLIP_BOUNDS,
+  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, COMPOSITE_MAX);
+  draw[0] = CANVAS_SLOT(cursor, HEAP_SLOT_RAM_CODE);
+  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, EFFECT_CLIP_BOUNDS,
                       COMPOSITE_ADDITIVE);
-  draw[1] = CANVAS_SLOT(cursor, HEAP_SLOT_BLITTER_ALTERNATE);
+  draw[1] = CANVAS_SLOT(cursor, HEAP_SLOT_RAM_CODE_2);
 
   // The flashes from FlashBurst, the streaks from EmberStreak (at sheet +
   // 0x3000).
   palette = Resource_GetTableEntry((s32)&ResourceId_FlashBurstSheet);
   Iwram_CopyWords((void *)BG_PLTT, palette, 128);
   palette += 128;
-  Resource_DecodeType01(palette, work->sheet);
+  Decompress_Type01(palette, work->sheet);
   palette = Resource_GetTableEntry((s32)&ResourceId_EmberStreakSheet);
   palette += 128;
-  Resource_DecodeType01(palette, work->sheet + PALETTE_PARTICLES_STREAK_IMAGES);
-  Resource_DecodeType01(
-      Resource_GetTableEntry((s32)&ResourceId_ParticleSpritesA), sheet);
+  Decompress_Type01(palette, work->sheet + PALETTE_PARTICLES_STREAK_IMAGES);
+  Decompress_Type01(Resource_GetTableEntry((s32)&ResourceId_ParticleSpritesA),
+                    sheet);
   if (mode == PALETTE_PARTICLES_DRAGON_DRIVER)
     Iwram_CopyWords((void *)BG_PLTT,
                     Resource_GetTableEntry((s32)&ResourceId_LightningBoltSheet),
@@ -263,9 +263,9 @@ void BattleEffect_RunPaletteParticles(struct BattleEffectArgument *effect,
       }
     }
     if (frame == 48)
-      AudioCommand_PlayFar(SE_RUMBLE);
+      Sound_PlaySongFar(SE_RUMBLE);
     if (frame == 128)
-      AudioCommand_PlayFar(SE_145);
+      Sound_PlaySongFar(SE_145);
     // Flashes: one a frame, thrown to the left (mirrored by dir), 65 to 110
     // degrees round from straight down, at 2 to 6 pixels a frame.
     if (frame >= 129 && frame <= 175) {
@@ -429,7 +429,7 @@ void BattleEffect_RunPaletteParticles(struct BattleEffectArgument *effect,
           streak->x -= dir * 6;
           streak->y += 6;
           if (frame <= 47 && streak->y > 55)
-            AudioCommand_PlayFar(SE_136);
+            Sound_PlaySongFar(SE_136);
           draw[0](canvas, sheet + gBattleEffect_MoteCells[size - 1],
                   streak->x - size / 2, streak->y + 30, size, size * 2);
         } else {
@@ -442,7 +442,7 @@ void BattleEffect_RunPaletteParticles(struct BattleEffectArgument *effect,
   }
 
   // The impact burst builds its own blitters and transfer.
-  Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
+  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   EFFECT_RELEASE_BLITTERS();
   if (mode == PALETTE_PARTICLES_TIAMAT) {
     BattleEffect_RunImpactBurst(SUMMON_FORMATION_TIAMAT, focus.x, focus.y);

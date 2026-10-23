@@ -15,7 +15,7 @@ typedef s32 (*BattleItemCallback)(s32 item, s32 localId, s32 slot);
 /// a direction. Called by Field_UseItem, and by FieldEffect_HasTrigger
 /// (psynergy.c) to test whether an item would do anything here.
 s32 Field_FindItemEvent(s32 item) {
-  struct FieldWork *work = (struct FieldWork *)gEventWork;
+  struct FieldWork *work = (struct FieldWork *)gFieldWork;
   const struct MapEvent *event = work->events;
   s32 facing =
       ((struct MotionObject *)ObjectTable_Get(gGameState.selectedLocalId))
@@ -63,8 +63,8 @@ s32 Field_FindItemEvent(s32 item) {
 /// (Retreat asks first and leaves the map). FLAG_NOTHING_HAPPENS still set
 /// afterwards says "But nothing happens."; FLAG_ITEM_USED_UP removes the item.
 /// Returns 0 when the map's event ran or Retreat was declined, else -1, the
-/// item's own action included; Field_RunMap ignores it.
-/// Called by Field_RunMap for the item request (work->item and
+/// item's own action included; Map_Run ignores it.
+/// Called by Map_Run for the item request (work->item and
 /// work->itemArgument). Retreat sets gGameState.mapId and .warpDest to the
 /// Retreat point and raises work->warp.
 s32 Field_UseItem(s32 packedItem, s32 slot) {
@@ -150,7 +150,7 @@ s32 Field_UseItem(s32 packedItem, s32 slot) {
     GameFlag_ClearBitFar(FLAG_ITEM_USED_UP);
     GameFlag_SetBitFar(FLAG_NOTHING_HAPPENS);
     actionId = Item_GetDirectFar(itemId)->actionId;
-    work = (struct FieldWork *)gEventWork;
+    work = (struct FieldWork *)gFieldWork;
 
     if (actionId != 0) {
       GameFlag_SetBitFar(FLAG_ITEM_USE);
@@ -211,7 +211,7 @@ s32 Field_UseItem(s32 packedItem, s32 slot) {
 /// Field_UsePsynergy for each phase, by Field_RunPsynergyEvents, and by the
 /// Force, Frost and Reveal effects (psynergy_effects/) for their own phases.
 void *FieldEffect_FindMatchingEvent(s32 eventFlags, s32 group, void *target) {
-  struct FieldWork *work = (struct FieldWork *)gEventWork;
+  struct FieldWork *work = (struct FieldWork *)gFieldWork;
   const struct MapEvent *event = work->events;
   s32 facing =
       ((struct MotionObject *)ObjectTable_Get(gGameState.selectedLocalId))

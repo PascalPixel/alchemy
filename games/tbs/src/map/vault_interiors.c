@@ -560,7 +560,7 @@ static void VaultInteriors_AskYesNoAndShowReply(s32 x) {
   VaultInteriors_FaceEachOtherAndWait(x, 0, 2);
   Engine_ScriptOpenMessage(x, 0);
   if (Engine_ScriptChooseYesNo(0, 0) != 0) {
-    gEventWork->message++;
+    gFieldWork->message++;
   }
   Engine_ScriptShowMessage(x, 0);
 }
@@ -871,7 +871,7 @@ static void EventScript_MayorGivesWaterOfLife(void) {
     VaultInteriors_FaceEachOtherAndWait(LOCALID_PARTY_LEADER, LOCALID_MAYOR,
                                         20);
     VaultInteriors_PlayAnimationAndWait(LOCALID_MAYOR, ANIMATION_NOD, 20);
-    gEventWork->message++;
+    gFieldWork->message++;
     if (PartyInventory_HasSpace() == 0) {
       Engine_ScriptSetMessage(MsgVaultYouWereSuchGreatHelp + 3);
       VaultInteriors_ShowMessageAndWait(LOCALID_MAYOR, 20);
@@ -885,7 +885,7 @@ static void EventScript_MayorGivesWaterOfLife(void) {
   Script_OpenMessage(LOCALID_MAYOR, 0);
   Engine_ScriptWait(20);
   if (Engine_ScriptChooseYesNo(0, 0) != 0) {
-    gEventWork->message++;
+    gFieldWork->message++;
   }
   Script_ShowMessage(LOCALID_MAYOR, 0);
   Engine_ScriptEnd();
@@ -926,7 +926,7 @@ static void EventScript_OfferBones(void) {
       GameFlag_Set(FLAG_VAULT_BONE_RECEIVED);
     }
   } else {
-    gEventWork->message++;
+    gFieldWork->message++;
     Engine_ScriptWait(20);
     Engine_ObjectEventSetAnimationAndWait(LOCALID_GIRL_AT_THE_INN,
                                           ANIMATION_NOD);
@@ -1027,7 +1027,7 @@ static void EventScript_MeetIvan(void) {
   ObjectEvent_SetSpeed(GARET, PIXELS(4) / 5, PIXELS(2) / 5);
   ObjectEvent_SetSpeed(IVAN, PIXELS(4) / 5, PIXELS(2) / 5);
   // Isaac steps up in front of Ivan and Garet comes out beside him.
-  Script_PlayCue(MUS_SILENCE);
+  Script_PlaySong(MUS_SILENCE);
   ObjectEvent_WalkToAndWait(LOCALID_PARTY_LEADER, 384, 408);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_NORTH, 0);
   ObjectEvent_SetPosition(GARET, PIXELS(384), PIXELS(408));
@@ -1041,7 +1041,7 @@ static void EventScript_MeetIvan(void) {
     Engine_ScriptWait(40);
     VaultInteriors_EndMindRead();
     Engine_ScriptSetMessage(MsgVaultDoPossessStrangePowers);
-    Script_PlayCue(MUS_060);
+    Script_PlaySong(MUS_060);
     Engine_ScriptWait(30);
     VaultInteriors_PlayAnimationAndWait(IVAN, ANIMATION_NOD, 30);
     VaultInteriors_ShowMessageAndWait(IVAN, 30);
@@ -1088,7 +1088,7 @@ static void EventScript_MeetIvan(void) {
     Script_OpenMessage(IVAN, 0);
   } else {
     // Asked again: "Would you really? Would you help me find the rod?"
-    Script_PlayCue(MUS_060);
+    Script_PlaySong(MUS_060);
     Engine_ScriptSetMessage(MsgVaultWouldReallyWouldHelpMe);
     Script_OpenMessage(IVAN, 0);
   }
@@ -1117,7 +1117,7 @@ static void EventScript_MeetIvan(void) {
   }
   Engine_ObjectEventWaitForMove(GARET);
   ObjectEvent_SetPosition(GARET, 0, 0);
-  Audio_PlayCueFromEventWork();
+  Map_PlayMusic();
   Engine_ScriptEnd();
 }
 
@@ -1545,7 +1545,7 @@ static void EventScript_FreeRooferAndConfrontThieves(void) {
   Engine_ScriptShowMessage(LOCALID_THIEF_LEADER, 0);
   // Preserve the return destinations before requesting the thieves' encounter.
   GameFlag_Set(FLAG_VAULT_THIEVES_ATTACKED);
-  gEventWork->startTransition =
+  gFieldWork->startTransition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_BARS);
   base = (s32)&MapId_VaultInteriors;
   FieldScript_SetNextDestination(base, 17);
@@ -1574,8 +1574,8 @@ static void EventScript_LeaveGuestsRoom(void) {
 static void EventScript_ClimbToLoft(void) {
   ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(1) / 2, PIXELS(1) / 4);
   ObjectEvent_WalkTo(LOCALID_PARTY_LEADER, 728, 408);
-  gEventWork->transitionFrames = 16;
-  Script_PlayCue(SE_MAP_EXIT);
+  gFieldWork->transitionFrames = 16;
+  Script_PlaySong(SE_MAP_EXIT);
   Engine_ScriptRequestWarp(VAULT_INTERIORS_CRATE_ROOM_TO_LOFT);
 }
 
@@ -1594,7 +1594,7 @@ static void EventScript_LeaveLoft(void) {
     Script_ShowMessage(LOCALID_TIED_UP_VILLAGER, 0);
     Engine_ScriptEnd();
   }
-  gEventWork->transitionFrames = 16;
+  gFieldWork->transitionFrames = 16;
   Engine_AudioPlayCue(SE_MAP_EXIT);
   Engine_ScriptRequestWarp(VAULT_INTERIORS_LOFT_TO_CRATE_ROOM);
 }
@@ -1674,7 +1674,7 @@ static void EventScript_DiscussSuspiciousGuests(void) {
   suspectedLeader = ObjectEvent_GetById(LOCALID_SUSPECTED_LEADER);
   suspectedThief = ObjectEvent_GetById(LOCALID_SUSPECTED_THIEF);
   Engine_ScriptStart();
-  Scheduler_RemoveCallback(VaultInteriors_FaceSuspectsTowardLeader);
+  Task_Remove(VaultInteriors_FaceSuspectsTowardLeader);
   GameFlag_Clear(FLAG_SUSPECTS_FLEEING);
   if (suspectedLeader->timer <= 3) {
     ObjectEvent_SetActionScript(LOCALID_SUSPECTED_LEADER,
@@ -1717,7 +1717,7 @@ static void EventScript_DiscussSuspiciousGuests(void) {
   // Yes: Ivan asks how he can catch them; no: there must be a way.
   Script_OpenMessage(GARET, 0);
   if (Engine_ScriptChooseYesNo(0, 0) != 0) {
-    gEventWork->message++;
+    gFieldWork->message++;
   }
   VaultInteriors_ShowMessageAndWait(GARET, 30);
   // Garet's plan: the three of them surround one of the two.
@@ -1844,9 +1844,9 @@ static void EventScript_ReadCorneredSuspectsMinds(void) {
   s32 localId;
   struct EventWork *work;
 
-  work = gEventWork;
+  work = gFieldWork;
   Engine_ScriptStart();
-  Scheduler_RemoveCallback(VaultInteriors_UpdateObjectEventStops);
+  Task_Remove(VaultInteriors_UpdateObjectEventStops);
   GameFlag_Clear(FLAG_MENUS_RAISE_EVENT);
   GameFlag_Clear(FLAG_MAP_TEMP_50);
   Engine_ObjectEventSetAnimation(LOCALID_SUSPECTED_LEADER, ANIMATION_STAND);
@@ -1917,8 +1917,8 @@ static void EventScript_ReadCorneredSuspectsMinds(void) {
   Engine_ObjectEventSetAnimationAndWait(IVAN, ANIMATION_NOD);
   Engine_ScriptWait(40);
   VaultInteriors_SetPartyImagePriority();
-  gEventWork->transitionFrames = 24;
-  gEventWork->startTransition =
+  gFieldWork->transitionFrames = 24;
+  gFieldWork->startTransition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_SHAPE);
   Engine_ScriptCloseScreen();
   Engine_ScriptWaitForScreen();
@@ -1941,7 +1941,7 @@ static void EventScript_ReadCorneredSuspectsMinds(void) {
   }
   FieldScheduler_AddCallback(VaultInteriors_FaceSuspectsTowardLeader,
                              TASK_PRIORITY_MAP);
-  gEventWork->startTransition =
+  gFieldWork->startTransition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
   Engine_ScriptEnd();
 }
@@ -1955,7 +1955,7 @@ static void VaultInteriors_DiscussMindReading(void) {
   s32 persistedWithQuestions;
 
   // Move the party outside the room and the suspects back to their table.
-  Audio_PlayCueFromEventWork();
+  Map_PlayMusic();
   Engine_ObjectEventSetSpritePriority(LOCALID_PARTY_LEADER, 1);
   {
     struct ObjectEvent *leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
@@ -1982,7 +1982,7 @@ static void VaultInteriors_DiscussMindReading(void) {
   Engine_MapGridRedraw();
   Engine_ScriptWait(30);
   {
-    struct EventWork *work = gEventWork;
+    struct EventWork *work = gFieldWork;
 
     work->transitionFrames = 24;
     work->startTransition =
@@ -2083,7 +2083,7 @@ static void VaultInteriors_DiscussMindReading(void) {
 /// Reached by stepping on one of them while FLAG_SUSPECTS_FLEEING is
 /// set.
 static void EventScript_AdvanceSuspectRoutes(void) {
-  switch (gEventWork->touchedTrigger) {
+  switch (gFieldWork->touchedTrigger) {
   case VAULT_INTERIORS_CELL_FIRST_SUSPECT_ROUTE:
     VaultInteriors_AdvanceSuspectRoute(LOCALID_SUSPECTED_LEADER, 1, 2,
                                        gVaultInteriors_SuspectToMiddleBedHead);
@@ -2178,7 +2178,7 @@ static void VaultInteriors_AdvanceSuspectRoute(s32 localId, s32 expected,
 /// FLAG_VAULT_THIEVES_JAILED through VaultInteriors_ReturnStolenGoods, which
 /// also removes Ivan from the party.
 s32 Map_Initialize(void) {
-  gEventWork->startTransition =
+  gFieldWork->startTransition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
   switch (gGameState.warpDest) {
   case VAULT_INTERIORS_FROM_VAULT_EAST_SOUTHEAST: {
@@ -2386,7 +2386,7 @@ static void VaultInteriors_LoseToThieves(void) {
   Engine_ObjectEventSetSpriteFlags(objectEvent, 0);
   ObjectEvent_FaceDirection(LOCALID_TIED_UP_VILLAGER,
                             FACING_NORTHWEST + FACING_STEP, 0);
-  gEventWork->startTransition =
+  gFieldWork->startTransition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
   Engine_CameraFollowObjectEvent(LOCALID_PARTY_LEADER, 0);
   Engine_CameraWaitForMove();
@@ -2440,13 +2440,13 @@ static void VaultInteriors_ConfrontThievesAgain(void) {
   ObjectEvent_FaceDirection(IVAN, FACING_NORTHWEST + FACING_STEP, 0);
   ObjectEvent_FaceObjectEvent(LOCALID_TIED_UP_VILLAGER, LOCALID_THIEF_LEADER,
                               0);
-  gEventWork->startTransition =
+  gFieldWork->startTransition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
   Engine_CameraFollowObjectEvent(LOCALID_PARTY_LEADER, 0);
   Engine_CameraWaitForMove();
   Engine_MapGridRedraw();
   Engine_TaskWait(1);
-  gEventWork->transitionFrames = 32;
+  gFieldWork->transitionFrames = 32;
   VaultInteriors_OpenWindowTransition();
   Engine_ScriptWait(60);
   Engine_ScriptSetMessage(MsgVaultWontGoAway);
@@ -2475,7 +2475,7 @@ static void VaultInteriors_ConfrontThievesAgain(void) {
   VaultInteriors_PlayAnimationAndWait(LOCALID_THIEF_LEADER,
                                       ANIMATION_SHAKE_HEAD, 20);
   Script_ShowMessage(LOCALID_THIEF_LEADER, 0);
-  gEventWork->startTransition =
+  gFieldWork->startTransition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_BARS);
   FieldScript_SetNextDestination((s32)&MapId_VaultInteriors, 17);
   FieldScript_SetDefeatDestination((s32)&MapId_VaultInteriors, 16);
@@ -2532,7 +2532,7 @@ static void VaultInteriors_DefeatThieves(void) {
   ObjectEvent_SetSpeed(LOCALID_TIED_UP_VILLAGER, PIXELS(4) / 5, PIXELS(2) / 5);
   ObjectEvent_FaceDirection(LOCALID_TIED_UP_VILLAGER,
                             FACING_NORTHWEST + FACING_STEP, 0);
-  gEventWork->startTransition =
+  gFieldWork->startTransition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
   Engine_CameraFollowObjectEvent(LOCALID_PARTY_LEADER, 0);
   Engine_CameraWaitForMove();
@@ -2633,7 +2633,7 @@ static void VaultInteriors_DefeatThieves(void) {
     Engine_ScriptWait(20);
     VaultInteriors_ShowMessageAndWait(GARET, 20);
   } else {
-    gEventWork->message++;
+    gFieldWork->message++;
     ObjectEvent_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
     Engine_ScriptWait(60);
     VaultInteriors_ShowMessageAndWait(GARET, 20);
@@ -2731,7 +2731,7 @@ static void VaultInteriors_DefeatThieves(void) {
   Engine_ObjectEventSetAnimation(GARET, ANIMATION_NOD);
   VaultInteriors_PlayAnimationAndWait(IVAN, ANIMATION_NOD, 50);
   // The window closes while the thieves are tied up.
-  work = gEventWork;
+  work = gFieldWork;
   work->transitionFrames = 30;
   work->startTransition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_SHAPE);
@@ -2755,7 +2755,7 @@ static void VaultInteriors_ReturnStolenGoods(void) {
   s32 rod;
   struct EventWork *work;
 
-  work = gEventWork;
+  work = gFieldWork;
   GameFlag_Set(FLAG_VAULT_THIEVES_JAILED);
   // With the screen still closed, the chests go back along the wall and the
   // thieves stand tied before the mayor.
@@ -2800,8 +2800,8 @@ static void VaultInteriors_ReturnStolenGoods(void) {
   ObjectEvent_FaceObjectEvent(LOCALID_PARTY_LEADER, LOCALID_THIEF_LEADER, 0);
   ObjectEvent_FaceObjectEvent(GARET, LOCALID_THIEF_LEADER, 0);
   ObjectEvent_FaceObjectEvent(IVAN, LOCALID_THIEF_LEADER, 0);
-  gEventWork->transitionFrames = 30;
-  gEventWork->startTransition =
+  gFieldWork->transitionFrames = 30;
+  gFieldWork->startTransition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_SHAPE);
   Engine_ScriptOpenScreen();
   Engine_ScriptWaitForScreen();
@@ -2897,7 +2897,7 @@ static void VaultInteriors_ReturnStolenGoods(void) {
   Engine_ScriptWait(20);
   // The mayor opens the first chest and his urn rises out of it.
   Engine_ObjectEventRunRepeatedMotion(LOCALID_LOFT_MAYOR, 2);
-  Script_PlayCue(SE_124);
+  Script_PlaySong(SE_124);
   Engine_ObjectEventSetAnimation(LOCALID_FIRST_CHEST, ANIMATION_SHAKE_HEAD);
   ObjectEvent_SetPosition(LOCALID_FOUND_URN, PIXELS(872), PIXELS(424));
   Engine_ObjectEventSetSpritePriority(LOCALID_FOUND_URN, 1);
@@ -2909,7 +2909,7 @@ static void VaultInteriors_ReturnStolenGoods(void) {
   Engine_MessageShowCentered((aftermath + 5), 1);
   Engine_ObjectEventSetAnimation(LOCALID_FIRST_CHEST, ANIMATION_WALK);
   ObjectEvent_SetPosition(LOCALID_FOUND_URN, 0, 0);
-  gEventWork->message++;
+  gFieldWork->message++;
   Engine_ObjectEventRunRepeatedMotion(LOCALID_STRONGMAN_OPENING_THE_CHESTS, 1);
   VaultInteriors_ShowMessageAndWait(LOCALID_STRONGMAN_OPENING_THE_CHESTS, 20);
   VaultInteriors_FaceEachOtherAndWait(LOCALID_PARTY_LEADER, GARET, 40);
@@ -2927,7 +2927,7 @@ static void VaultInteriors_ReturnStolenGoods(void) {
   // The villager opening the chests opens the second: the gold statue stolen
   // from the Sanctum.
   Engine_ObjectEventRunRepeatedMotion(LOCALID_STRONGMAN_OPENING_THE_CHESTS, 2);
-  Script_PlayCue(SE_124);
+  Script_PlaySong(SE_124);
   Engine_ObjectEventSetAnimation(LOCALID_SECOND_CHEST, ANIMATION_SHAKE_HEAD);
   ObjectEvent_GetById(LOCALID_FOUND_STATUE)->motionFlags = 0;
   Engine_ObjectEventSetSpritePriority(LOCALID_FOUND_STATUE, 1);
@@ -2940,7 +2940,7 @@ static void VaultInteriors_ReturnStolenGoods(void) {
   Engine_MessageShowCentered((aftermath + 8), 1);
   Engine_ObjectEventSetAnimation(LOCALID_SECOND_CHEST, ANIMATION_WALK);
   ObjectEvent_SetPosition(LOCALID_FOUND_STATUE, 0, 0);
-  gEventWork->message++;
+  gFieldWork->message++;
   ObjectEvent_ShowEmote(LOCALID_LOFT_MAYOR, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
   Engine_ScriptWait(60);
   VaultInteriors_ShowMessageAndWait(LOCALID_LOFT_MAYOR, 20);
@@ -3248,7 +3248,7 @@ static void VaultInteriors_ReturnStolenGoods(void) {
   ObjectEvent_SetPosition(LOCALID_FIRST_THIEF, 0, 0);
   ObjectEvent_SetPosition(LOCALID_SECOND_THIEF, 0, 0);
   ObjectEvent_SetPosition(IVAN, 0, 0);
-  gEventWork->startTransition =
+  gFieldWork->startTransition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
   Engine_ScriptEnd();
 }
@@ -3257,7 +3257,7 @@ static void VaultInteriors_ReturnStolenGoods(void) {
 static void VaultInteriors_OpenWindowTransition(void) {
   struct EventWork *state;
 
-  state = gEventWork;
+  state = gFieldWork;
   state->startTransition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
   Engine_ScriptOpenScreen();
@@ -3469,7 +3469,7 @@ static void VaultInteriors_UpdateObjectEventStops(void) {
 
   leader = Engine_ObjectEventLookup(LOCALID_PARTY_LEADER);
   blocked = 0;
-  work = gEventWork;
+  work = gFieldWork;
   objectEvent = Engine_ObjectEventLookup(IVAN);
   entry = VaultInteriors_FindStopAtPosition(&objectEvent->x.fixed);
   if (entry != NULL && objectEvent->targetX == OBJ_EVENT_NO_TARGET) {

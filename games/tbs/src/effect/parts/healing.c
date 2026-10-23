@@ -212,7 +212,7 @@ void BattleEffect_RunHealingMotes(struct BattleEffectArgument *effect,
           Resource_GetTableEntry((s32)&ResourceId_MercuryDjinnSmallSheet);
   }
   resource += 128;
-  Resource_DecodeType01(resource, work->sheet + HEALING_DJINNI_CELLS);
+  Decompress_Type01(resource, work->sheet + HEALING_DJINNI_CELLS);
   BattleEffect_FetchRectangleBlitters(work->effect->side,
                                       draw = blit); // [0] maximum, [1] additive
 
@@ -290,8 +290,7 @@ void BattleEffect_RunHealingMotes(struct BattleEffectArgument *effect,
   // trails.
   work->transferMode = CANVAS_COPY_AND_FADE;
   work->transferValue = 75;
-  Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer,
-                                EFFECT_CALLBACK_ORDER);
+  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, EFFECT_CALLBACK_ORDER);
 
   for (frame = 0; frame != frameCount; frame++) {
     struct BattleCamera *camera = gCameraWork;
@@ -334,7 +333,7 @@ void BattleEffect_RunHealingMotes(struct BattleEffectArgument *effect,
       SET_VECTOR(point, object->x, 40 << 16, object->z);
       Transform_ApplyPosition(point);
       if (frame == start + HEALING_SOUND_DELAY)
-        AudioCommand_PlayFar(SE_RECOVERY);
+        Sound_PlaySongFar(SE_RECOVERY);
       if (frame == start + HEALING_TINT_DELAY)
         ObjectGroup_UpdateMembers(work->effect->actors[member],
                                   SPRITE_COLOR_WHITE, -1, member,

@@ -52,7 +52,7 @@ s32 ActionScript_WaitForArrival(struct ScriptInterpreter *interpreter) {
     interpreter->cursor++;
     return 1;
   }
-  if (Object_IsTargetUnset((struct ObjectRuntime *)interpreter) != 0) {
+  if (Object_IsTargetUnset((struct Object *)interpreter) != 0) {
     interpreter->cursor++;
     return 1;
   }
@@ -248,7 +248,7 @@ s32 ActionScript_Nop(struct ScriptInterpreter *interpreter) {
 
 /// SC_SE(n): sends sound command n (a sound effect).
 s32 ActionScript_PlaySound(struct ScriptInterpreter *interpreter) {
-  AudioCommand_PlayFar(interpreter->script[interpreter->cursor + 1]);
+  Sound_PlaySongFar(interpreter->script[interpreter->cursor + 1]);
   interpreter->cursor += 2;
   return 1;
 }
@@ -262,13 +262,13 @@ s32 ActionScript_PlaySound(struct ScriptInterpreter *interpreter) {
 s32 ScriptObject_CheckOverlap(struct ScriptObjectEntry *object, s32 *values) {
   s32 objectIndex;
   u8 *collisionFlags;
-  struct ObjectRuntime *candidate = gObjectSlots;
+  struct Object *candidate = gObjects;
 
   collisionFlags = &candidate->collisionFlags;
-  for (objectIndex = 0; objectIndex < FIELD_OBJECT_COUNT;
+  for (objectIndex = 0; objectIndex < OBJECT_COUNT;
        objectIndex++, candidate++, collisionFlags += sizeof(*candidate)) {
     if (candidate->script != NULL && (OBJ_EVENT_SOLID & *collisionFlags) &&
-        candidate != (struct ObjectRuntime *)object) {
+        candidate != (struct Object *)object) {
       if (Runtime_CheckRadiusOverlap(
               &candidate->x, ((struct ObjectEvent *)candidate)->radius - 2,
               values, ((struct ObjectEvent *)object)->radius - 2) >= 0)
@@ -286,13 +286,13 @@ ScriptObject_FindOverlappingEntry(struct ScriptObjectEntry *object,
                                   s32 *values) {
   s32 objectIndex;
   u8 *collisionFlags;
-  struct ObjectRuntime *candidate = gObjectSlots;
+  struct Object *candidate = gObjects;
 
   collisionFlags = &candidate->collisionFlags;
-  for (objectIndex = 0; objectIndex < FIELD_OBJECT_COUNT;
+  for (objectIndex = 0; objectIndex < OBJECT_COUNT;
        objectIndex++, candidate++, collisionFlags += sizeof(*candidate)) {
     if (candidate->script != NULL && (OBJ_EVENT_SOLID & *collisionFlags) &&
-        candidate != (struct ObjectRuntime *)object) {
+        candidate != (struct Object *)object) {
       if (Runtime_CheckRadiusOverlap(
               &candidate->x, ((struct ObjectEvent *)candidate)->radius - 2,
               values, ((struct ObjectEvent *)object)->radius - 2) >= 0)
@@ -305,7 +305,7 @@ ScriptObject_FindOverlappingEntry(struct ScriptObjectEntry *object,
 /// Reads three coordinate words and applies the selected positioning operation.
 static __inline__ s32 ActionScript_ApplyPositionCommand(
     struct ScriptInterpreter *interpreter,
-    void (*applyPosition)(struct ObjectRuntime *object, s32 x, s32 y, s32 z)) {
+    void (*applyPosition)(struct Object *object, s32 x, s32 y, s32 z)) {
   s32 x;
   s32 y;
   s32 z;
@@ -318,7 +318,7 @@ static __inline__ s32 ActionScript_ApplyPositionCommand(
   y = *coordinates;
   coordinates++;
   z = *coordinates;
-  applyPosition((struct ObjectRuntime *)interpreter, x, y, z);
+  applyPosition((struct Object *)interpreter, x, y, z);
   interpreter->cursor += 4;
   return 1;
 }
@@ -346,7 +346,7 @@ s32 ActionScript_ApplyRelativePosition(struct ScriptInterpreter *interpreter) {
   s32 deltaY = *arguments++;
   s32 deltaZ = *arguments;
 
-  Object_SetMoveTarget((struct ObjectRuntime *)object, object->x + deltaX,
+  Object_SetMoveTarget((struct Object *)object, object->x + deltaX,
                        object->y + deltaY, object->z + deltaZ);
   object->scriptCursor += 4;
   return 1;
@@ -377,7 +377,7 @@ s32 ActionScript_ApplyLinkedObjectPosition(
   struct ScriptObjectRuntime *target;
 
   target = object->linkedObject;
-  Object_SetMoveTarget((struct ObjectRuntime *)object, target->x, target->y,
+  Object_SetMoveTarget((struct Object *)object, target->x, target->y,
                        target->z);
   object->scriptCursor++;
   return 1;
@@ -397,9 +397,8 @@ s32 ActionScript_ApplyLocalOffsetPosition(
 #ifdef UBFIX
   localOffset[0] = localOffset[1] = localOffset[2] = 0;
 #endif
-  Object_SetMoveTarget((struct ObjectRuntime *)object,
-                       object->x + localOffset[0], object->y + localOffset[1],
-                       object->z + localOffset[2]);
+  Object_SetMoveTarget((struct Object *)object, object->x + localOffset[0],
+                       object->y + localOffset[1], object->z + localOffset[2]);
   object->scriptCursor += 3;
   return 1;
 }
@@ -413,9 +412,9 @@ s32 ActionScript_ApplyLocalOffsetPosition(
 /// ObjectDispatch_StartCamera starts. Clears the camera's flags and target,
 /// moves its position, and counts its step.
 s32 Camera_FollowLeaderInBounds(struct ScriptInterpreter *interpreter) {
-  struct ObjectRuntime *cameraObject = (struct ObjectRuntime *)interpreter;
+  struct Object *cameraObject = (struct Object *)interpreter;
 
-  struct ObjectRuntime *leader;
+  struct Object *leader;
   struct MapGridScrollWork *bounds;
   s32 minX;
   s32 minZ;
@@ -520,7 +519,7 @@ s32 _call_via_r3(s32, s32, s32, s32);
 /// ObjectDispatch_StartApproachLink starts. Copies the linked object's speed
 /// limit and acceleration, and sets the move target.
 s32 Object_ApproachLinkedObject(struct ScriptInterpreter *interpreter) {
-  struct ObjectRuntime *object = (struct ObjectRuntime *)interpreter;
+  struct Object *object = (struct Object *)interpreter;
 
   s32 distancePixels;
   s32 moveZ;
@@ -531,7 +530,7 @@ s32 Object_ApproachLinkedObject(struct ScriptInterpreter *interpreter) {
   s32 remainingDistance;
   s32 moveX;
   s32 scaledDeltaX;
-  struct ObjectRuntime *linkedObject;
+  struct Object *linkedObject;
 
   linkedObject = object->linkedObject;
   object->speedLimit = linkedObject->speedLimit;
@@ -610,8 +609,8 @@ retry:
     Vector_AddPolarOffset(travelDistance, heading, &candidatePosition);
     if (ScriptObject_CheckOverlap((struct ScriptObjectEntry *)object,
                                   (s32 *)&candidatePosition) != 0 ||
-        MapGrid_CheckObjectStep((struct ObjectRuntime *)object,
-                                &candidatePosition) != MAPGRID_STEP_OPEN)
+        MapGrid_CheckObjectStep((struct Object *)object, &candidatePosition) !=
+            MAPGRID_STEP_OPEN)
       goto retry;
     // Probes 8 pixels past the point, ahead and at 45 degrees (0x2000)
     // either side.
@@ -622,25 +621,25 @@ retry:
     // two at 45 degrees need clear ground; SC_WANDER_HOME tests all three.
 #ifdef BUGFIX
     aheadBlocked =
-        MapGrid_CheckObjectStep((struct ObjectRuntime *)object, &probePosition);
+        MapGrid_CheckObjectStep((struct Object *)object, &probePosition);
 #endif
     SET_POSITION(&probePosition, object->x, object->y, object->z);
     Vector_AddPolarOffset(
         travelDistance, heading + SCRIPT_WANDER_DIAGONAL_ANGLE, &probePosition);
 #ifdef BUGFIX
     if (aheadBlocked != 0 ||
-        MapGrid_CheckObjectStep((struct ObjectRuntime *)object,
-                                &probePosition) != MAPGRID_STEP_OPEN)
+        MapGrid_CheckObjectStep((struct Object *)object, &probePosition) !=
+            MAPGRID_STEP_OPEN)
 #else
-    if (MapGrid_CheckObjectStep((struct ObjectRuntime *)object,
-                                &probePosition) != MAPGRID_STEP_OPEN)
+    if (MapGrid_CheckObjectStep((struct Object *)object, &probePosition) !=
+        MAPGRID_STEP_OPEN)
 #endif
       goto retry;
     SET_POSITION(&probePosition, object->x, object->y, object->z);
     Vector_AddPolarOffset(
         travelDistance, heading - SCRIPT_WANDER_DIAGONAL_ANGLE, &probePosition);
-    if (MapGrid_CheckObjectStep((struct ObjectRuntime *)object,
-                                &probePosition) != MAPGRID_STEP_OPEN)
+    if (MapGrid_CheckObjectStep((struct Object *)object, &probePosition) !=
+        MAPGRID_STEP_OPEN)
       goto retry;
     // The retry gotos stay: as for (;;) with continue, loop.c hoists the two
     // positions' addresses, which the native recomputes each try.
@@ -660,7 +659,7 @@ retry:
     object->turnedBack = 1;
     return 0;
   }
-  Object_SetMoveTarget((struct ObjectRuntime *)object, candidatePosition.x,
+  Object_SetMoveTarget((struct Object *)object, candidatePosition.x,
                        candidatePosition.y, candidatePosition.z);
   object->scriptCursor += 4;
   return 1;
@@ -717,7 +716,7 @@ s32 ScriptObject_WanderNearHome(struct ScriptInterpreter *interpreter) {
         goto roam;
       SET_POSITION(&candidatePosition, object->x, object->y, object->z);
       Vector_AddPolarOffset(travelDistance, heading, &candidatePosition);
-      if (MapGrid_CheckObjectStep((struct ObjectRuntime *)object,
+      if (MapGrid_CheckObjectStep((struct Object *)object,
                                   &candidatePosition) != MAPGRID_STEP_OPEN)
         goto roam;
       probePosition.x = object->x;
@@ -725,41 +724,41 @@ s32 ScriptObject_WanderNearHome(struct ScriptInterpreter *interpreter) {
       travelDistance += SCRIPT_WANDER_PROBE_DISTANCE;
       probePosition.z = object->z;
       Vector_AddPolarOffset(travelDistance, heading, &probePosition);
-      if (MapGrid_CheckObjectStep((struct ObjectRuntime *)object,
-                                  &probePosition) != MAPGRID_STEP_OPEN)
+      if (MapGrid_CheckObjectStep((struct Object *)object, &probePosition) !=
+          MAPGRID_STEP_OPEN)
         goto roam;
       SET_POSITION(&probePosition, object->x, object->y, object->z);
       Vector_AddPolarOffset(travelDistance,
                             heading + SCRIPT_WANDER_DIAGONAL_ANGLE,
                             &probePosition);
-      if (MapGrid_CheckObjectStep((struct ObjectRuntime *)object,
-                                  &probePosition) != MAPGRID_STEP_OPEN)
+      if (MapGrid_CheckObjectStep((struct Object *)object, &probePosition) !=
+          MAPGRID_STEP_OPEN)
         goto roam;
       SET_POSITION(&probePosition, object->x, object->y, object->z);
       Vector_AddPolarOffset(travelDistance,
                             heading - SCRIPT_WANDER_DIAGONAL_ANGLE,
                             &probePosition);
-      if (MapGrid_CheckObjectStep((struct ObjectRuntime *)object,
-                                  &probePosition) != MAPGRID_STEP_OPEN)
+      if (MapGrid_CheckObjectStep((struct Object *)object, &probePosition) !=
+          MAPGRID_STEP_OPEN)
         goto roam;
       SET_POSITION(&probePosition, object->x, object->y, object->z);
       Vector_AddPolarOffset(travelDistance, heading + SCRIPT_WANDER_SIDE_ANGLE,
                             &probePosition);
-      if (MapGrid_CheckObjectStep((struct ObjectRuntime *)object,
-                                  &probePosition) != MAPGRID_STEP_OPEN)
+      if (MapGrid_CheckObjectStep((struct Object *)object, &probePosition) !=
+          MAPGRID_STEP_OPEN)
         goto roam;
       SET_POSITION(&probePosition, object->x, object->y, object->z);
       Vector_AddPolarOffset(travelDistance, heading - SCRIPT_WANDER_SIDE_ANGLE,
                             &probePosition);
-      if (MapGrid_CheckObjectStep((struct ObjectRuntime *)object,
-                                  &probePosition) != MAPGRID_STEP_OPEN)
+      if (MapGrid_CheckObjectStep((struct Object *)object, &probePosition) !=
+          MAPGRID_STEP_OPEN)
         goto roam;
       dx = candidatePosition.x / 0x10000 - object->homeX;
       dz = candidatePosition.z / 0x10000 - object->homeZ;
       if (dx * dx + dz * dz > homeRadiusSquared)
         goto roam;
       object->flags59 |= 2;
-      Object_SetMoveTarget((struct ObjectRuntime *)object, candidatePosition.x,
+      Object_SetMoveTarget((struct Object *)object, candidatePosition.x,
                            candidatePosition.y, candidatePosition.z);
       goto done;
     }
@@ -783,11 +782,11 @@ back:
       goto back;
     SET_POSITION(&candidatePosition, object->x, object->y, object->z);
     Vector_AddPolarOffset(travelDistance, heading, &candidatePosition);
-    if (MapGrid_CheckObjectStep((struct ObjectRuntime *)object,
-                                &candidatePosition) != MAPGRID_STEP_OPEN)
+    if (MapGrid_CheckObjectStep((struct Object *)object, &candidatePosition) !=
+        MAPGRID_STEP_OPEN)
       goto back;
     object->flags59 &= ~2;
-    Object_SetMoveTarget((struct ObjectRuntime *)object, candidatePosition.x,
+    Object_SetMoveTarget((struct Object *)object, candidatePosition.x,
                          candidatePosition.y, candidatePosition.z);
   }
 done:

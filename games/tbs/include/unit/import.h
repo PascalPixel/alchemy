@@ -7,7 +7,7 @@
 #include "types.h"
 
 struct FieldPosition;
-struct ObjectRuntime;
+struct Object;
 struct MapEvent;
 struct ObjectEventTemplate;
 struct UiWindow;
@@ -35,7 +35,7 @@ void FieldScript_LoadAreaScript(const struct MapEvent *events);
 s32 GetPartyMemberCount(void);
 void InventorySnapshot_Take(void);
 s32 DjinnMenu_Open(void);
-s32 Object_CheckMovementCollision(struct ObjectRuntime *object,
+s32 Object_CheckMovementCollision(struct Object *object,
                                   struct FieldPosition *position);
 void MapEvents_UpdateInView(struct ObjectEventTemplate *entry);
 void UiText_DrawQuantity(u32 value, u32 kind);

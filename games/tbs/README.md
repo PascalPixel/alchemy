@@ -36,9 +36,9 @@ first map. The current map and the warp destination the party arrives by
 are `gGameState.mapId` and `gGameState.warpDest`.
 
 The title screen and the file select screen are the map table's first two
-rows, `MapId_Title` and `MapId_Clear`, so the loop runs them with code of
+rows, `MapId_Title` and `MapId_MainMenu`, so the loop runs them with code of
 their own the way it runs a map, though the party never walks there.
-`MapId_Clear` is named from the debug menu's name for the file select
+`MapId_MainMenu` is named from the debug menu's name for the file select
 screen, "Clear data"; the game also goes there after the credits. Two debug start modes, taken only while
 `gDebugMode` is set, begin at Vale's gate or at the file select screen
 instead of the title.
@@ -64,15 +64,15 @@ Then it does one of two things:
   2. Its music starts, unless `FLAG_KEEP_MUSIC` or `FLAG_KEEP_MUSIC_HELD`
      keeps what is playing.
   3. `Map_LoadOverlay` unpacks its code, its [overlay](glossary.md#overlay).
-  4. `Field_RunMap` runs it until the party takes a warp, and returns that
+  4. `Map_Run` runs it until the party takes a warp, and returns that
      warp (`VALE_GATE_TO_WORLD_MAP`, say).
   5. `Map_TakeWarp` looks the warp up in the map's warp table to find the
      next map and warp destination ([Warps](#warps-and-warp-destinations)).
 - A battle or a minigame runs in place of a map, under a map number from
-  `RUN_BLANK` up
-  (`RUN_BATTLE`, `RUN_LUCKY_DICE`, `RUN_REEL_GAME`), with no row in the
+  `RUN_NONE` up
+  (`RUN_BATTLE`, `RUN_LUCKY_DICE`, `RUN_LUCKY_WHEELS`), with no row in the
   map table and no overlay, since its code is in the [main image](glossary.md#main-image). It returns
-  a result rather than a warp, and `Map_ReturnFromBattle` picks the map
+  a result rather than a warp, and `Map_ReturnFromRun` picks the map
   to go back to: after a defeat, the point a [script](glossary.md#script) set for losing
   that battle, or else where the game was last saved; otherwise the
   destination a script set, or else the field map the battle started from, with
@@ -83,7 +83,7 @@ A random battle is therefore a warp like any other: the field map sets
 the next map to `RUN_BATTLE` and leaves, and the loop loads it again
 afterwards. [Running a map](src/object/README.md), the guide to the
 `object` folder, follows a field map
-from `Field_RunMap` to its warp, including how a battle is chosen from the
+from `Map_Run` to its warp, including how a battle is chosen from the
 encounter zones in `encounter.tsv`.
 
 The tables on this page give each value as an ordinary number, with the
@@ -93,9 +93,9 @@ hexadecimal form the source writes it in beside it.
 | --- | --- | --- |
 | `GAME_RUN_TITLE` | 0 | start at the title, with a fresh game state |
 | `GAME_RUN_DEBUG_VALE` | 1 | in debug mode, start at `MapId_ValeGate` |
-| `GAME_RUN_DEBUG_CLEAR` | 2 | in debug mode, start at the file select screen (`MapId_Clear`) |
-| `RUN_BLANK` | 507 (`0x1fb`) | the first map number with no row in the map table, whose rows are 0 to 200 |
-| `RUN_REEL_GAME` | 508 (`0x1fc`) | Lucky Wheels at Tolbi's spring |
+| `GAME_RUN_DEBUG_MAIN_MENU` | 2 | in debug mode, start at the file select screen (`MapId_MainMenu`) |
+| `RUN_NONE` | 507 (`0x1fb`) | the first map number with no row in the map table, whose rows are 0 to 200 |
+| `RUN_LUCKY_WHEELS` | 508 (`0x1fc`) | Lucky Wheels at Tolbi's spring |
 | `RUN_LUCKY_DICE` | 509 (`0x1fd`) | Lucky Dice at Tolbi's spring |
 | `RUN_BATTLE` | 510 (`0x1fe`) | a battle |
 
@@ -108,7 +108,7 @@ its code is unpacked from the cartridge over the last map's.
 
 The console has little memory, and most of what a map needs (who is there,
 what they say, its cutscenes) matters nowhere else. So each map's code is
-an overlay: a packed piece of code that `Resource_LoadCode` unpacks into
+an overlay: a packed piece of code that `Overlay_Load` unpacks into
 `gOverlayArea`, 32 KB of [EWRAM](glossary.md#iwram-and-ewram) (the console's larger, slower work memory,
 256 KB in all), when the map loads, over the one before.
 
@@ -142,8 +142,8 @@ the party stays inside. The two are chosen separately: the Bilibin
 Barricade runs on Bilibin's code but is a map section of its own, and
 Bilibin's houses have their own code but are part of Bilibin.
 
-The map table, `gField_MapTable` in [field/maps.s](src/field/maps.s),
-has a row for each of the 201 maps, `struct MapRecord`: the overlay to
+The map table, `gMapHeaders` in [field/maps.s](src/field/maps.s),
+has a row for each of the 201 maps, `struct MapHeader`: the overlay to
 load, the map section (`mapSec`), the map type (`mapType`) and the layout. Each row also defines the
 map's id, `MapId_<Place>`, as the row's position, so code names a map
 by a symbol the linker resolves rather than by a number. The 201 maps
@@ -158,7 +158,7 @@ the battles of zones the party has outgrown, doesn't wear off.
 
 | Name | Value | Meaning |
 | --- | --- | --- |
-| maps | 201 | rows of `gField_MapTable` |
+| maps | 201 | rows of `gMapHeaders` |
 | overlays | 96 | the maps' code, some shared by several maps |
 | map sections | 71 | groups of maps: their music, area name and kept flags |
 | `MAP_TYPE_FIELD` | 1 | every other map: dungeons, the world map |

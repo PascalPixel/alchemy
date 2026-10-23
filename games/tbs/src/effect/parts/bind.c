@@ -40,7 +40,7 @@ UNUSED void Graphics_ConvertBackgroundToBlueRamp(void) {
     *palette++ = RGB(half, half, i);
     i++;
   } while (i != 32);
-  delays = *(u8 **)&gWorkSlot[HEAP_SLOT_BATTLE_SHEET];
+  delays = *(u8 **)&gHeapSlots[HEAP_SLOT_BATTLE_SHEET];
   // The edge moves speed / 4 lines a frame, speed rising by one a frame
   // from 16.
   end = 0;
@@ -152,11 +152,11 @@ void BattleEffect_RunBind(struct BattleEffectArgument *effect) {
   s32 j;
   s32 k;
 
-  slots = &gWorkSlot[HEAP_SLOT_BATTLE_EFFECT];
+  slots = &gHeapSlots[HEAP_SLOT_BATTLE_ANIM];
   cursor = slots;
   EFFECT_GET_WORK_AND_CANVAS(cursor, work, canvas);
   graphics = EFFECT_SLOT(slots, HEAP_SLOT_BATTLE_SHEET);
-  camera = WORK_SLOT(HEAP_SLOT_CAMERA);
+  camera = HEAP_SLOT_BLOCK(HEAP_SLOT_CAMERA);
   work->effect = effect;
   BattleEffect_StartCanvasLayer(1);
   if (work->effect->prelude == 1)
@@ -170,21 +170,20 @@ void BattleEffect_RunBind(struct BattleEffectArgument *effect) {
   palette = Resource_GetTableEntry((s32)&ResourceId_RuneSheet);
   Iwram_CopyWords((void *)BG_PLTT, palette, 128);
   palette += 128;
-  Resource_DecodeType01(palette, work->sheet);
-  Resource_DecodeType01(
-      Resource_GetTableEntry((s32)&ResourceId_ParticleSpritesA), graphics);
-  Resource_DecodeType01(
-      Resource_GetTableEntry((s32)&ResourceId_ParticleSpritesD),
-      work->sheet + 0x1000);
+  Decompress_Type01(palette, work->sheet);
+  Decompress_Type01(Resource_GetTableEntry((s32)&ResourceId_ParticleSpritesA),
+                    graphics);
+  Decompress_Type01(Resource_GetTableEntry((s32)&ResourceId_ParticleSpritesD),
+                    work->sheet + 0x1000);
   palette = Resource_GetTableEntry((s32)&ResourceId_JupiterDjinnSheet);
   palette += 128;
-  Resource_DecodeType01(palette, work->sheet + 0x2000);
+  Decompress_Type01(palette, work->sheet + 0x2000);
   // 4 off every pixel each frame.
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_DARKEN, 0x04040404);
   EffectPosition_ProjectScaledBattler(work->effect->actors[0], &anchor);
   shift = 64 - anchor.x;
   REG_BG2X = shift << 8;
-  AudioCommand_PlayFar(SE_142);
+  Sound_PlaySongFar(SE_142);
 
   for (frame = 0; frame != work->effect->count * 20 + 72; frame++) {
     // Frame loop: 20 frames a target and 72 more, though only the first
@@ -213,11 +212,11 @@ void BattleEffect_RunBind(struct BattleEffectArgument *effect) {
     }
     // The blitters, plain and mirrored, keeping the brighter pixel; from
     // frame 32 the canvas darkens one level faster every 16 frames.
-    EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER, EFFECT_CLIP_BOUNDS, COMPOSITE_MAX);
-    draw[0] = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER];
-    EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER_ALTERNATE,
+    EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, COMPOSITE_MAX);
+    draw[0] = (DrawRectangle)gHeapSlots[HEAP_SLOT_RAM_CODE];
+    EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
                         EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, COMPOSITE_MAX);
-    draw[1] = (DrawRectangle)WORK_SLOT(HEAP_SLOT_BLITTER_ALTERNATE);
+    draw[1] = (DrawRectangle)HEAP_SLOT_BLOCK(HEAP_SLOT_RAM_CODE_2);
     if (frame > 16 && (frame & 15) == 0)
       work->transferValue += 0x01010101;
 
@@ -287,7 +286,7 @@ void BattleEffect_RunBind(struct BattleEffectArgument *effect) {
   }
 
   // Finish: the blitters were freed each frame.
-  Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
+  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   BattleEffect_EndCanvasLayer();
 }
 
@@ -330,11 +329,11 @@ void BattleEffect_RunUnusedTriangleStrike(struct BattleEffectArgument *effect) {
   s32 j;
   s32 k;
 
-  slots = &gWorkSlot[HEAP_SLOT_BATTLE_EFFECT];
+  slots = &gHeapSlots[HEAP_SLOT_BATTLE_ANIM];
   cursor = slots;
   EFFECT_GET_WORK_AND_CANVAS(cursor, work, canvas);
   graphics = EFFECT_SLOT(slots, HEAP_SLOT_BATTLE_SHEET);
-  camera = WORK_SLOT(HEAP_SLOT_CAMERA);
+  camera = HEAP_SLOT_BLOCK(HEAP_SLOT_CAMERA);
   work->effect = effect;
   EFFECT_START_NARROW_CANVAS(0);
 
@@ -342,17 +341,17 @@ void BattleEffect_RunUnusedTriangleStrike(struct BattleEffectArgument *effect) {
   palette = Resource_GetTableEntry((s32)&ResourceId_RuneSheet);
   Iwram_CopyWords((void *)BG_PLTT, palette, 128);
   palette += 128;
-  Resource_DecodeType01(palette, work->sheet);
-  Resource_DecodeType01(
-      Resource_GetTableEntry((s32)&ResourceId_ParticleSpritesA), graphics);
+  Decompress_Type01(palette, work->sheet);
+  Decompress_Type01(Resource_GetTableEntry((s32)&ResourceId_ParticleSpritesA),
+                    graphics);
   palette = Resource_GetTableEntry((s32)&ResourceId_ParticleSpritesD);
-  Resource_DecodeType01(palette, work->sheet + 0x1000);
+  Decompress_Type01(palette, work->sheet + 0x1000);
   // 4 off every pixel each frame.
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_DARKEN, 0x04040404);
   EffectPosition_ProjectScaledBattler(work->effect->actors[0], &anchor);
   shift = 64 - anchor.x;
   REG_BG2X = shift << 8;
-  AudioCommand_PlayFar(SE_142);
+  Sound_PlaySongFar(SE_142);
 
   for (frame = 0; frame != work->effect->count * 20 + 72; frame++) {
     // Frame loop, as in BattleEffect_RunBind.
@@ -364,11 +363,11 @@ void BattleEffect_RunUnusedTriangleStrike(struct BattleEffectArgument *effect) {
       BattleMotion_ApproachTargetFar(work->effect->actor,
                                      work->effect->actors[0], 16, 0);
     Graphics_UpdatePhasePalette(frame, 0xaaab, 0x5555, 0);
-    EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER, EFFECT_CLIP_BOUNDS, COMPOSITE_MAX);
-    draw[0] = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER];
-    EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER_ALTERNATE,
+    EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, COMPOSITE_MAX);
+    draw[0] = (DrawRectangle)gHeapSlots[HEAP_SLOT_RAM_CODE];
+    EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
                         EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, COMPOSITE_MAX);
-    draw[1] = (DrawRectangle)WORK_SLOT(HEAP_SLOT_BLITTER_ALTERNATE);
+    draw[1] = (DrawRectangle)HEAP_SLOT_BLOCK(HEAP_SLOT_RAM_CODE_2);
     if (frame > 16 && (frame & 15) == 0)
       work->transferValue += 0x01010101;
 
@@ -430,6 +429,6 @@ void BattleEffect_RunUnusedTriangleStrike(struct BattleEffectArgument *effect) {
     EFFECT_PRESENT_FRAME(work);
   }
 
-  Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
+  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   BattleEffect_EndCanvasLayer();
 }

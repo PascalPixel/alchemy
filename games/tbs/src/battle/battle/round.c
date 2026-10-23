@@ -68,7 +68,7 @@ void Camera_ConfigureView(s32 verticalOffset) {
 #ifdef UBFIX
   struct BattleCamera *camera = gCameraWork;
   struct BattlePresentationTransition *transition =
-      WORK_SLOT(HEAP_SLOT_BATTLE_BACKGROUND);
+      HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_BACKGROUND);
 #else
   void **slots = (void **)&gCameraWork;
   struct BattleCamera *camera = slots[0];
@@ -190,8 +190,8 @@ s32 BattlePresentation_BuildUnitEntries(struct BattleActionRecord *entries) {
   // Two lists, freed before the return; the allocator rounds them up to 20
   // and 12 bytes: up to eight choosers and the up to four members with their
   // end mark.
-  u16 *choosingUnits = Runtime_BumpAllocateAlternatePool(17);
-  u16 *unitIds = Runtime_BumpAllocateAlternatePool(9);
+  u16 *choosingUnits = AllocEwram(17);
+  u16 *unitIds = AllocEwram(9);
   s32 unitCount = BattleParty_ListLivingUnits(BATTLE_SIDE_PARTY, unitIds);
   s32 choosingCount = 0;
   s32 entryCount = 0;
@@ -231,8 +231,8 @@ s32 BattlePresentation_BuildUnitEntries(struct BattleActionRecord *entries) {
     } else {
       unitCount = entryCount + appended;
     }
-    MemFree(unitIds);
-    MemFree(choosingUnits);
+    Free(unitIds);
+    Free(choosingUnits);
     return unitCount;
   }
 }
@@ -410,7 +410,7 @@ s32 BattlePresentation_AppendLinkedActions(struct BattleActionRecord *actions,
   s32 result = 0;
   s32 allocationSize = LINK_ACTIONS_BYTES(count);
   struct BattleLinkedActionState *state =
-      (struct BattleLinkedActionState *)Runtime_BumpAllocateAlternatePool(40);
+      (struct BattleLinkedActionState *)AllocEwram(40);
   s32 index;
 
   // Sends the header, then this console's actions. Both transfers share one
@@ -553,14 +553,14 @@ s32 BattlePresentation_AppendLinkedActions(struct BattleActionRecord *actions,
       action->target ^= FIRST_ENEMY_UNIT;
     }
 
-    MemFree(state);
+    Free(state);
     return result;
   }
 
 fail:
   LinkBattle_ResetTransferState();
   SerialRuntime_RemoveIrqHandlers();
-  MemFree(state);
+  Free(state);
   return -1;
 }
 

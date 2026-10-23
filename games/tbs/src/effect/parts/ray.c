@@ -33,7 +33,7 @@ void BattleEffect_RunRay(struct BattleEffectArgument *effect) {
   BlitterPair draw;
   s32 i;
 
-  slots = &gWorkSlot[HEAP_SLOT_BATTLE_EFFECT];
+  slots = &gHeapSlots[HEAP_SLOT_BATTLE_ANIM];
   cursor = slots;
   EFFECT_GET_WORK_AND_CANVAS(cursor, work, canvas);
   // The motes for the sparks are in the battle sheet's slot.
@@ -47,12 +47,12 @@ void BattleEffect_RunRay(struct BattleEffectArgument *effect) {
     REG_BG2PA = Q_8_8(0.5);
   else
     REG_BG2PA = Q_8_8(1);
-  EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER, EFFECT_CLIP_BOUNDS, COMPOSITE_MAX);
-  draw[0] = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER];
-  EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER_ALTERNATE,
+  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, COMPOSITE_MAX);
+  draw[0] = (DrawRectangle)gHeapSlots[HEAP_SLOT_RAM_CODE];
+  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
                       EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
                       COMPOSITE_ADDITIVE);
-  draw[1] = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE];
+  draw[1] = (DrawRectangle)gHeapSlots[HEAP_SLOT_RAM_CODE_2];
   Resource_LoadAndDecompress((s32)&ResourceId_LightningBoltSheet,
                              work->sheet + RAY_CELLS, 1, 1);
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
@@ -83,7 +83,7 @@ void BattleEffect_RunRay(struct BattleEffectArgument *effect) {
   }
 
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, 75);
-  AudioCommand_PlayFar(SE_ITEM_BREAK);
+  Sound_PlaySongFar(SE_ITEM_BREAK);
 
   for (frame = 0; frame != 64; frame++) {
     if (frame == 20)

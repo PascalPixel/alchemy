@@ -285,11 +285,11 @@ void UiWork_InitializeCountersWithResourceAndScheduleRefresh(void) {
   state->outline = TEXT_STYLE_PLAIN;
   state->colour = 15;
   state->count = 0;
-  // 200 << 4 is 0xc80, SCHEDULER_KEY_MAIN_LOOP: the update runs in the main
+  // 200 << 4 is 0xc80, TASK_PRIORITY_MAIN_LOOP: the update runs in the main
   // loop's pass.
   priority = 200;
   priority <<= 4;
-  Scheduler_AddOrUpdateCallback(UiWork_ProcessAll, priority);
+  Task_Add(UiWork_ProcessAll, priority);
 }
 
 /// Resets the text style and starts the per-frame window update
@@ -309,13 +309,13 @@ void UiWork_InitializeCountersAndScheduleRefresh(s32 loadGlyphTiles) {
   state->count = 0;
   priority = 200;
   priority <<= 4;
-  Scheduler_AddOrUpdateCallback(UiWork_ProcessAll, priority);
+  Task_Add(UiWork_ProcessAll, priority);
 }
 
 /// Closes the battle message window at once, if one is open, and forgets it,
 /// so the next battle message (UiText_PrepareMessageWork) opens a new one.
 void UiWork_FinalizeSharedSlot(void) {
-  struct BattleDisplayWork *display = gBattleDisplayWork;
+  struct BattleDisplayWork *display = gBattleMessageWork;
   struct UiWindow *window = display->window;
 
   if (window != NULL) {
@@ -340,7 +340,7 @@ void UiText_PrepareMessageWork(s32 argument) {
 
   state = UI_WORK;
   control = (struct BattleDisplayWork *)
-      gWindowWork[HEAP_SLOT_BATTLE_DISPLAY - HEAP_SLOT_WINDOW];
+      gWindowWork[HEAP_SLOT_BATTLE_MESSAGE - HEAP_SLOT_WINDOW];
   // channel starts as NULL, though it is assigned again before it is read; the
   // same zero clears marked below
   channel = NULL;

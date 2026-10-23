@@ -42,7 +42,7 @@ extern u8 *gColossoWork;
 
 #include "object_event.h"
 
-/// The main loop pass's task key, as SCHEDULER_KEY_MAIN_LOOP: a map's
+/// The main loop pass's task key, as TASK_PRIORITY_MAIN_LOOP: a map's
 /// per-frame callbacks run once a frame with the field's own.
 enum { TASK_PRIORITY_MAP = 3200 };
 
@@ -283,7 +283,7 @@ void Engine_GameFlagSet(s32 flag);
 /// Clears a game flag (GameFlag_ClearBit).
 void Engine_GameFlagClear(s32 flag);
 /// Plays a sound effect, fanfare or music cue, or a fade control
-/// (AudioCommand_Play); the low 12 bits are the cue.
+/// (Sound_PlaySong); the low 12 bits are the cue.
 void Engine_AudioPlayCue(s32 cue);
 /// Runs a shop's counter until the player leaves (Shop_Run): shop is the row of
 /// its stock table and keeper the object whose portrait the messages show.
@@ -294,7 +294,7 @@ void Engine_InnOpen(s32 inn, s32 keeper);
 /// Runs a sanctum's welcome, services and farewell (Shop_ConfirmAct); priest
 /// is the keeper's object.
 void Engine_SanctumOpen(s32 priest);
-/// Unschedules the task running callback (Scheduler_RemoveCallback). Returns
+/// Unschedules the task running callback (Task_Remove). Returns
 /// its old index, or -1.
 s32 Engine_TaskRemoveCallback(void (*callback)(void));
 /// Advances the game's random number generator and returns 0 to 0xffff
@@ -313,17 +313,17 @@ u32 Math_RemainderUnsigned(u32 dividend, u32 divisor);
 /// routine in IWRAM (IwramSignedDivide).
 s32 __divsi3(s32 dividend, s32 divisor);
 /// Returns heap slot's block, first allocating size bytes for it when it has
-/// none (Runtime_AllocateHeapBlock). Returns NULL when no pool has room.
+/// none (AllocHeapSlot). Returns NULL when no pool has room.
 void *Engine_HeapAllocate(s32 slot, s32 size);
 /// Frees heap slot's block, and with it every later block of the same pool
-/// (Runtime_ReleaseHeapBlock).
+/// (FreeHeapSlot).
 void Engine_HeapRelease(s32 slot);
 /// Gives cache entry block size bytes of sprite VRAM and copies data there
 /// (VramCache_Load). Returns the first sprite tile number, or 0 when there was
 /// no room.
 s32 Engine_VramLoad(s32 block, s32 size, const void *data);
 /// Creates a field object at (x, y, z) in 16.16 pixels, or returns NULL when
-/// none is free (FieldObject_Create). type / 4096 is its enum ObjectCreateKind
+/// none is free (Object_CreateField). type / 4096 is its enum ObjectCreateKind
 /// and the low 12 bits the sprite's animation id.
 struct ObjectEvent *Engine_ObjectCreate(s32 type, s32 fixed_x, s32 fixed_y,
                                         s32 fixed_z);
@@ -494,7 +494,7 @@ void Engine_ItemShowPicture(struct ObjectEvent *objectEvent, s32 mode);
 
 #ifdef FIELD_STAGED_OBJ_EVENT_IMPORTS
 /// Declared for the maps that define FIELD_STAGED_OBJ_EVENT_IMPORTS in place
-/// of Script_PlayCue. Nothing calls it and no import resolves it: those maps
+/// of Script_PlaySong. Nothing calls it and no import resolves it: those maps
 /// call Engine_AudioPlayCue.
 void Audio_PlayCue(s32 cue);
 #endif
@@ -502,7 +502,7 @@ void Audio_PlayCue(s32 cue);
 /// Moves the script's message number count messages on, past lines the script
 /// doesn't show.
 static inline void Script_SkipMessages(s32 count) {
-  u16 *message = &gEventWork->message;
+  u16 *message = &gFieldWork->message;
 
   *message = *message + count;
 }
@@ -654,7 +654,7 @@ static inline void FieldScript_GameFlagClear(s32 flag) {
 
 #ifndef FIELD_STAGED_OBJ_EVENT_IMPORTS
 /// Plays a sound effect or music from a script: the SE command of script.h.
-static inline void Script_PlayCue(s32 cue) { Engine_AudioPlayCue(cue); }
+static inline void Script_PlaySong(s32 cue) { Engine_AudioPlayCue(cue); }
 #endif
 
 /// A random number from 0 to 0xffff for a script.

@@ -3,11 +3,11 @@
 	.set import.__divsi3, 1
 	.set import.__modsi3, 1
 	.set import.Engine_TaskWait, 1
-	.set import.Scheduler_AddOrUpdateCallback, 1
+	.set import.Task_Add, 1
 	.set import.Engine_TaskRemoveCallback, 1
-	.set import.Runtime_AllocateBlock, 1
-	.set import.Runtime_ReleaseHeapBlock, 1
-	.set import.Runtime_BumpAllocateAlternatePool, 1
+	.set import.AllocHeapSlotEwram, 1
+	.set import.FreeHeapSlot, 1
+	.set import.AllocEwram, 1
 	.set import.Runtime_BumpFree, 1
 	.set import.SerialRuntime_Initialize, 1
 	.set import.SerialRuntime_RemoveIrqHandlers, 1
@@ -15,7 +15,7 @@
 	.set import.SerialRuntime_StartSend, 1
 	.set import.SerialRuntime_StartReceive, 1
 	.set import.SerialRuntime_GetActiveTransfers, 1
-	.set import.Scheduler_SetTaskFlags, 1
+	.set import.Task_SetFlags, 1
 	.set import.Engine_MapGridRedraw, 1
 	.set import.Engine_MapGridCopyCellsTo, 1
 	.set import.TileAnimation_ResumeChannel, 1
@@ -30,7 +30,7 @@
 	.set import.UiText_DrawNumber, 1
 	.set import.UiWork_ClearValueNameTables, 1
 	.set import.UiText_DrawQuantity, 1
-	.set import.SaveState_ProcessSelectedSlot, 1
+	.set import.Save_ProcessSelectedFile, 1
 	.set import.Djinn_GetRecoveryTable, 1
 	.set import.Unit_Get, 1
 	.set import.Engine_GameFlagIsSet, 1

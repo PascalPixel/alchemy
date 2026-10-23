@@ -40,7 +40,7 @@ void BattleEffect_RunPrism(struct BattleEffectArgument *effect) {
   s32 j;
 
   shards = PARTICLES;
-  cursor = &gWorkSlot[HEAP_SLOT_BATTLE_EFFECT];
+  cursor = &gHeapSlots[HEAP_SLOT_BATTLE_ANIM];
   work = *cursor++;
   canvas = *cursor;
   work->effect = effect;
@@ -155,7 +155,7 @@ void BattleEffect_RunPrism(struct BattleEffectArgument *effect) {
               shard->variant = 0;
             }
             work->shakeFrames = 8;
-            AudioCommand_PlayFar(SE_144);
+            Sound_PlaySongFar(SE_144);
             EFFECT_FOR_EACH_TARGET(j, work->effect)
               ObjectGroup_UpdateMembers(work->effect->actors[j],
                                         SPRITE_COLOR_WHITE, POSE_DAMAGE, j, 4);

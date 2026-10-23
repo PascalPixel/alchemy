@@ -50,7 +50,7 @@ s32 ResourceSlot_Load(u32 slot, u32 *buffer, s32 number, u32 variant) {
 
   if (slot >= RESOURCE_SLOT_COUNT)
     return 0;
-  system = gMenuCtrlWork;
+  system = gObjectSystemWork;
   record = &system->slots[slot];
   metadata = Resource_GetMetadataRecordFar(number);
   record->tag = (slot << 12) | number;
@@ -69,7 +69,7 @@ s32 ResourceSlot_Load(u32 slot, u32 *buffer, s32 number, u32 variant) {
     if (entryNumber == number)
       break;
   }
-  size = Resource_DecodeType01(Resource_GetTableEntry(resource), buffer);
+  size = Decompress_Type01(Resource_GetTableEntry(resource), buffer);
 
   // Turn the frame-offset directory into pointers before the pixel payload.
   offset = buffer;
@@ -106,7 +106,7 @@ s32 ResourceSlot_Load(u32 slot, u32 *buffer, s32 number, u32 variant) {
 /// here; called by the layer set-up functions below.
 s32 Animation_LookupValueByKey(s32 tag) {
   u32 i;
-  struct ResourceSlot *slot = gMenuCtrlWork->slots;
+  struct ResourceSlot *slot = gObjectSystemWork->slots;
 
   for (i = 0; i < RESOURCE_SLOT_COUNT; i++, slot++) {
     if (slot->tag == tag)
@@ -412,34 +412,34 @@ void AnimationObject_SetActiveTimerSteps(struct AnimationObject *sprite,
 
 /// Allocates and zeroes the 64 sprites and 64 animation layers
 /// (HEAP_SLOT_ANIMATION_SPRITES and HEAP_SLOT_ANIMATION_LAYERS, from EWRAM
-/// first in MODE_WORLD_MAP and IWRAM first otherwise), loads the basic sprite
-/// palettes, loads the shadow tiles into VRAM cache entry 93 and puts the
-/// sprite tile uploader in RAM. Called by ObjectSystem_Initialize.
-/// Battle_RunEncounter (MODE_BATTLE) takes both slots from EWRAM, at the same
-/// sizes, before it starts the object system, so in battle this gets those
-/// blocks back.
+/// first in OBJECT_SYSTEM_WORLD_MAP and IWRAM first otherwise), loads the basic
+/// sprite palettes, loads the shadow tiles into VRAM cache entry 93 and puts
+/// the sprite tile uploader in RAM. Called by ObjectSystem_Initialize.
+/// Battle_RunEncounter (OBJECT_SYSTEM_BATTLE) takes both slots from EWRAM, at
+/// the same sizes, before it starts the object system, so in battle this gets
+/// those blocks back.
 void ObjectSystem_Configure(s32 mode) {
   void *sprites;
   void *layers;
   volatile u32 zero;
 
-  // On the world map (MODE_WORLD_MAP) the two pools are taken from EWRAM
-  // first; elsewhere from IWRAM first, though a battle has already taken
+  // On the world map (OBJECT_SYSTEM_WORLD_MAP) the two pools are taken from
+  // EWRAM first; elsewhere from IWRAM first, though a battle has already taken
   // both from EWRAM.
   if (mode == 3) {
-    sprites = Runtime_AllocateBlock(HEAP_SLOT_ANIMATION_SPRITES,
-                                    ANIMATION_OBJECT_COUNT *
-                                        sizeof(struct AnimationObject));
-    layers = Runtime_AllocateBlock(HEAP_SLOT_ANIMATION_LAYERS,
-                                   ANIMATION_OBJECT_COUNT *
-                                       sizeof(struct AnimationEntry));
+    sprites = AllocHeapSlotEwram(HEAP_SLOT_ANIMATION_SPRITES,
+                                 ANIMATION_OBJECT_COUNT *
+                                     sizeof(struct AnimationObject));
+    layers = AllocHeapSlotEwram(HEAP_SLOT_ANIMATION_LAYERS,
+                                ANIMATION_OBJECT_COUNT *
+                                    sizeof(struct AnimationEntry));
   } else {
-    sprites = Runtime_AllocateHeapBlock(HEAP_SLOT_ANIMATION_SPRITES,
-                                        ANIMATION_OBJECT_COUNT *
-                                            sizeof(struct AnimationObject));
-    layers = Runtime_AllocateHeapBlock(HEAP_SLOT_ANIMATION_LAYERS,
-                                       ANIMATION_OBJECT_COUNT *
-                                           sizeof(struct AnimationEntry));
+    sprites =
+        AllocHeapSlot(HEAP_SLOT_ANIMATION_SPRITES,
+                      ANIMATION_OBJECT_COUNT * sizeof(struct AnimationObject));
+    layers =
+        AllocHeapSlot(HEAP_SLOT_ANIMATION_LAYERS,
+                      ANIMATION_OBJECT_COUNT * sizeof(struct AnimationEntry));
   }
   // Load the sprites' basic colours, clear both pools, then load the shared
   // shadow (128 bytes: the two 8x8 tiles of a 16x8, 256-colour sprite) and
@@ -525,7 +525,7 @@ void ResourceMetadata_ClearRecord(struct AnimationEntry *record) {
 /// no room or the id has no image. The caller owns it until
 /// ResourceObject_Release. When no layer record is free the sprite is still
 /// returned, with no layer and a width of 0, so it also counts as free. Called
-/// by FieldObject_Create and the sprite viewer, and as ResourceObject_CreateFar
+/// by Object_CreateField and the sprite viewer, and as ResourceObject_CreateFar
 /// by the battle, the battle effects, the Psynergy effects and the menus.
 struct AnimationObject *ResourceObject_Create(s32 id) {
   struct AnimationMetadata *metadata;

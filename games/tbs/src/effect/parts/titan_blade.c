@@ -50,7 +50,7 @@ void BattleEffect_RunTitanBlade(struct BattleEffectArgument *effect) {
   s32 i;
 
   EFFECT_GET_SLOTS(slots, slotCursor, work, canvas);
-  sheet = slots[HEAP_SLOT_BATTLE_SHEET - HEAP_SLOT_BATTLE_EFFECT];
+  sheet = slots[HEAP_SLOT_BATTLE_SHEET - HEAP_SLOT_BATTLE_ANIM];
 
   work->effect = effect;
   BattleEffect_StartCanvasLayer(1);
@@ -58,11 +58,11 @@ void BattleEffect_RunTitanBlade(struct BattleEffectArgument *effect) {
   EffectPosition_ProjectBattler(work->effect->actors[0], &screenPosition);
   canvasCenterX = screenPosition.x / 2;
 
-  EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER, EFFECT_CLIP_BOUNDS, COMPOSITE_MAX);
-  blitters[0] = slots[HEAP_SLOT_BLITTER - HEAP_SLOT_BATTLE_EFFECT];
-  EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER_ALTERNATE, EFFECT_CLIP_BOUNDS,
+  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, COMPOSITE_MAX);
+  blitters[0] = slots[HEAP_SLOT_RAM_CODE - HEAP_SLOT_BATTLE_ANIM];
+  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, EFFECT_CLIP_BOUNDS,
                       COMPOSITE_TRANSPARENT);
-  blitters[1] = slots[HEAP_SLOT_BLITTER_ALTERNATE - HEAP_SLOT_BATTLE_EFFECT];
+  blitters[1] = slots[HEAP_SLOT_RAM_CODE_2 - HEAP_SLOT_BATTLE_ANIM];
 
   Resource_LoadAndDecompress((s32)&ResourceId_SwordSheet,
                              work->sheet + TITAN_BLADE_SWORD_IMAGE, 1, 1);
@@ -141,13 +141,13 @@ void BattleEffect_RunTitanBlade(struct BattleEffectArgument *effect) {
     }
 
     if (frame == 4) {
-      AudioCommand_PlayFar(SE_212);
+      Sound_PlaySongFar(SE_212);
     }
     if (frame == 32) {
-      AudioCommand_PlayFar(SE_164);
+      Sound_PlaySongFar(SE_164);
     }
     if (frame == 60) {
-      AudioCommand_PlayFar(SE_145);
+      Sound_PlaySongFar(SE_145);
       EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
     }
 

@@ -57,13 +57,13 @@ void UiWindow_CopyTilemapRegion(const struct UiWindow *window,
                                 const void *source) {
   struct UiRenderWork *work = UI_WORK;
   s16 *mirror = (s16 *)work->tilemap;
-  s16 *buffer = Runtime_BumpAllocateAlternatePool(0x300);
+  s16 *buffer = AllocEwram(0x300);
   s16 *input = buffer;
   u32 cell;
   s16 *vram;
   s32 row;
 
-  Resource_DecodeType01(source, buffer);
+  Decompress_Type01(source, buffer);
   cell = window->y * 32 + window->x;
   vram = (s16 *)UI_TILEMAP_VRAM + cell;
   mirror += cell;
@@ -80,7 +80,7 @@ void UiWindow_CopyTilemapRegion(const struct UiWindow *window,
     vram += 32 - window->width;
     mirror += 32 - window->width;
   }
-  MemFree(buffer);
+  Free(buffer);
 }
 
 /// Like UiWindow_SetTileAttributeBitRect, but ORs all of `palette` into the
@@ -361,7 +361,7 @@ s32 NameEntry_EditOwnerName(s32 member) {
     // The D-pad moves over the keys, skipping the gaps between groups and
     // wrapping around; Start jumps to End.
     if (gKeysRepeat & KEY_UP) {
-      AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
+      Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
       cursorDirty = 1;
       keyRow--;
       if (keyColumn != NAME_COMMAND_COLUMN) {
@@ -374,7 +374,7 @@ s32 NameEntry_EditOwnerName(s32 member) {
       }
     }
     if (gKeysRepeat & KEY_DOWN) {
-      AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
+      Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
       cursorDirty = 1;
       keyRow++;
       if (keyColumn != NAME_COMMAND_COLUMN) {
@@ -386,7 +386,7 @@ s32 NameEntry_EditOwnerName(s32 member) {
       }
     }
     if (gKeysRepeat & KEY_LEFT) {
-      AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
+      Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
       cursorDirty = 1;
       keyColumn--;
       // Left of column 0 wraps to the command column on the rows it has keys,
@@ -400,7 +400,7 @@ s32 NameEntry_EditOwnerName(s32 member) {
       }
     }
     if (gKeysRepeat & KEY_RIGHT) {
-      AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
+      Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
       cursorDirty = 1;
       keyColumn++;
       if (keyColumn == 19)
@@ -411,13 +411,13 @@ s32 NameEntry_EditOwnerName(s32 member) {
         keyColumn = 0;
     }
     if (gKeysPressed & KEY_START) {
-      AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
+      Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
       cursorDirty = 1;
       keyColumn = NAME_COMMAND_COLUMN;
       keyRow = 5;
     }
     if (gKeysRepeat & KEY_B) {
-      AudioCommand_PlayFar(SE_MENU_CANCEL);
+      Sound_PlaySongFar(SE_MENU_CANCEL);
     remove_character:
       if (letterCount != 0) {
         letterCount--;
@@ -433,7 +433,7 @@ s32 NameEntry_EditOwnerName(s32 member) {
     // A: a command key, or a letter.
     if (!(gKeysRepeat & KEY_A))
       continue;
-    AudioCommand_PlayFar(SE_MENU_CONFIRM);
+    Sound_PlaySongFar(SE_MENU_CONFIRM);
     if (keyColumn == NAME_COMMAND_COLUMN) {
       if (keyRow == 5) {
         // End: an empty name shows the old one again for 10 frames, the
@@ -633,7 +633,7 @@ s32 NameEntry_EditOwnerName(s32 member) {
     // The D-pad moves over the keys, skipping the gaps between groups and
     // wrapping around; Start jumps to End.
     if (gKeysRepeat & KEY_UP) {
-      AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
+      Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
       cursorDirty = 1;
       keyRow--;
       // Letters skip the gap row 5; the command column cycles the switch,
@@ -653,7 +653,7 @@ s32 NameEntry_EditOwnerName(s32 member) {
       }
     }
     if (gKeysRepeat & KEY_DOWN) {
-      AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
+      Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
       cursorDirty = 1;
       keyRow++;
       if (keyColumn != NAME_COMMAND_COLUMN) {
@@ -671,7 +671,7 @@ s32 NameEntry_EditOwnerName(s32 member) {
       }
     }
     if (gKeysRepeat & KEY_LEFT) {
-      AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
+      Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
       cursorDirty = 1;
       keyColumn--;
       if (keyColumn == -1) {
@@ -684,7 +684,7 @@ s32 NameEntry_EditOwnerName(s32 member) {
       }
     }
     if (gKeysRepeat & KEY_RIGHT) {
-      AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
+      Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
       cursorDirty = 1;
       keyColumn++;
       if (keyColumn == 19)
@@ -699,13 +699,13 @@ s32 NameEntry_EditOwnerName(s32 member) {
       }
     }
     if (gKeysPressed & KEY_START) {
-      AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
+      Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
       cursorDirty = 1;
       keyColumn = NAME_COMMAND_COLUMN;
       keyRow = 10;
     }
     if (gKeysPressed & KEY_SELECT) {
-      AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
+      Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
     change_keyboard:
       keyboard ^= 1;
       if (keyboard)
@@ -718,7 +718,7 @@ s32 NameEntry_EditOwnerName(s32 member) {
       continue;
     }
     if (gKeysRepeat & KEY_B) {
-      AudioCommand_PlayFar(SE_MENU_CANCEL);
+      Sound_PlaySongFar(SE_MENU_CANCEL);
     remove_character:
       // A letter with a voicing mark goes with its mark.
       if (letterCount != 0) {
@@ -742,7 +742,7 @@ s32 NameEntry_EditOwnerName(s32 member) {
     // A: a command key, or a letter.
     if (!(gKeysRepeat & KEY_A))
       continue;
-    AudioCommand_PlayFar(SE_MENU_CONFIRM);
+    Sound_PlaySongFar(SE_MENU_CONFIRM);
     if (keyColumn == NAME_COMMAND_COLUMN) {
       if (keyRow == 10) {
         if (letterCount == 0) {
@@ -806,7 +806,7 @@ s32 NameEntry_EditOwnerName(s32 member) {
         continue;
       dst = editedName + bytes;
       if (!NameEntry_AcceptsMark(letter, editedName[bytes - 1])) {
-        AudioCommand_PlayFar(SE_MENU_CANCEL);
+        Sound_PlaySongFar(SE_MENU_CANCEL);
         continue;
       }
       *dst = letter;

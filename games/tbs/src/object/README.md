@@ -37,13 +37,13 @@ takes a warp, the party simply leaves the map. Raising a flag that is already ra
 changes nothing, and a request a script raises waits until the script has
 finished, so a battle a cutscene asks for starts only after its last line.
 
-In the code, `Field_RunMap` ([`object/run_map.c`](object/run_map.c))
+In the code, `Map_Run` ([`object/run_map.c`](object/run_map.c))
 runs one map. Its state is the field work, `struct FieldWork`
 (`field_runtime.h`): the running map's object events, its event table and
 the requests. It is a block borrowed from the [heap](../../glossary.md#heap-and-pools) under the [heap
-slot](../../glossary.md#heap-slot) `HEAP_SLOT_EVENT`, and is reached through the global `gEventWork`; overlays read the same block
+slot](../../glossary.md#heap-slot) `HEAP_SLOT_FIELD`, and is reached through the global `gFieldWork`; overlays read the same block
 as `struct EventWork`, so one block goes by three names. Before the
-loop, `Field_RunMap`:
+loop, `Map_Run`:
 
 1. allocates the field work;
 2. loads the [layout](../../glossary.md#layout);
@@ -65,7 +65,7 @@ the order the loop tests them:
 
 | Order | Field | What it asks for |
 | --- | --- | --- |
-| 1 | `exit` | leave the map; its kind is `Field_RunMap`'s result |
+| 1 | `exit` | leave the map; its kind is `Map_Run`'s result |
 | 2 | `event` | run a raised event, or one of the codes below |
 | 3 | `battle` | a random or requested battle against this enemy group |
 | 4 | `action` | a [coord event](../../glossary.md#coord-event) or warp on the [cell](../../glossary.md#cell) stepped onto (`MB_EVENT_FIRST` to `MB_EVENT_LAST`) |
@@ -91,9 +91,9 @@ afterwards loads the map again with everyone put back. In the code, the
 `battle` handler calls `ObjectTable_Snapshot`, writes `RUN_BATTLE` as the
 next map with the enemy group as its warp destination, and sets the `exit`
 request to `WARP_NONE`. Despite its name, `WARP_NONE` means a warp is taken:
-the one whose next map is already set. `Map_ReturnFromBattle`
+the one whose next map is already set. `Map_ReturnFromRun`
 then loads the map again with `FLAG_KEEP_PARTY_POSITION`, and
-`Field_RunMap` calls `ObjectTable_Restore`.
+`Map_Run` calls `ObjectTable_Restore`.
 
 The snapshot (`ObjectTableSnapshot` in
 [`object_runtime.h`](../../include/object_runtime.h)) keeps up to
@@ -379,8 +379,8 @@ name from a shorter distance (`WORLD_MAP_NAME_RANGE`). The edition block of
 `Game_Run` (`object/map.c`) is the game's main loop; [the front
 page](../../README.md#the-main-loop) describes it. For a map it calls
 `Map_ResetFlagsOnEnter`, loads the overlay (`Map_LoadOverlay`) and runs
-`Field_RunMap`; for a battle or minigame it runs that and calls
-`Map_ReturnFromBattle`. The overlay supplies the map's tables and
+`Map_Run`; for a battle or minigame it runs that and calls
+`Map_ReturnFromRun`. The overlay supplies the map's tables and
 initialization, and calls back into this folder through its [import table](../../glossary.md#entry-table-and-import-table) for
 the commands of `script_layer.h` and `field_service.h`.
 
@@ -438,14 +438,14 @@ Prototypes are in `games/tbs/include/unit/object/`.
   `FIELD_KIND_AVOID` (16). Whirlwind and Gale share `FIELD_KIND_WHIRLWIND`.
 - **effect scene**: `struct FieldEffectWork` (`field/fx_work.h`), the work of
   the field effect playing: the ability, its field kind (`fieldKind`), its
-  caster and target, and 24 effect slots. It is `HEAP_SLOT_EFFECT`, reached as
-  `gEffectWork`. Local name `scene`.
+  caster and target, and 24 effect slots. It is `HEAP_SLOT_FIELD_EFFECT`, reached as
+  `gFieldEffectWork`. Local name `scene`.
 - **effect slot**: `struct EffectSlot`, one particle an effect moves and draws.
 - **marker**: a chest or Psynergy Stone the layout places at one of its marked
   cells; the field work holds up to ten, apart from the object events. The
   world map screen's markers, one for each place, are another thing.
-- **mode**: `work->mode` is `MODE_LAYERED_MAP` on a town or dungeon map and
-  `MODE_WORLD_MAP` on the world map.
+- **mode**: `work->mode` is `OBJECT_SYSTEM_LAYOUT` on a town or dungeon map and
+  `OBJECT_SYSTEM_WORLD_MAP` on the world map.
 
 ## Function prefixes
 

@@ -311,13 +311,13 @@ static void EventScript_YoungManFromKolimaAsksAboutBridge(void) {
   EV_START();
   MESSAGE_SET(MsgXianHowDidGetHereBridge);
   if (FLAG_CHECK(FLAG_FUCHIN_TEMPLE_VISITOR_HEARD_BRIDGE_OPEN) != 0) {
-    gEventWork->message += 4;
+    gFieldWork->message += 4;
   }
   Script_OpenMessage(LOCALID_YOUNG_MAN_FROM_KOLIMA, 0);
   if (Engine_ScriptChooseYesNo(0, 0) == 0) {
     FLAG_SET(FLAG_FUCHIN_TEMPLE_VISITOR_HEARD_BRIDGE_OPEN);
   } else {
-    gEventWork->message++;
+    gFieldWork->message++;
   }
   Script_ShowMessage(LOCALID_YOUNG_MAN_FROM_KOLIMA, 0);
   EV_END();
@@ -339,10 +339,10 @@ static void EventScript_BoyMonkSpeaksOfNyunpa(void) {
     MESSAGE_SET(MsgXianIsntNobleHimTrySave);
     MESSAGE_OPEN(LOCALID_ADMIRING_BOY_MONK, 0);
     if (Engine_ScriptChooseYesNo(0, 0) == 1) {
-      gEventWork->message++;
+      gFieldWork->message++;
       MESSAGE_OPEN(LOCALID_ADMIRING_BOY_MONK, 0);
       if (Engine_ScriptChooseYesNo(0, 0) == 1) {
-        gEventWork->message++;
+        gFieldWork->message++;
       }
     }
     MESSAGE_PUT(LOCALID_ADMIRING_BOY_MONK, 0);
@@ -480,7 +480,7 @@ static void EventScript_NyunpaOffersTest(void) {
       Engine_ObjectEventSetAnimationAndWait(LOCALID_NYUNPA, ANIMATION_NOD);
       Script_ShowMessage(LOCALID_NYUNPA, 0);
     } else {
-      gEventWork->message += 2;
+      gFieldWork->message += 2;
       Script_ShowMessage(LOCALID_NYUNPA, 0);
     }
     Engine_ObjectEventSetAnimationAndWait(LOCALID_NYUNPA, ANIMATION_NOD);
@@ -498,9 +498,9 @@ static void EventScript_NyunpaOffersTest(void) {
       FuchinTemple_FinishMindReadDemonstration();
       WAIT(30);
       Script_ShowMessage(LOCALID_NYUNPA, 0);
-      gEventWork->message += 1;
+      gFieldWork->message += 1;
     } else {
-      gEventWork->message += 1;
+      gFieldWork->message += 1;
       WAIT(20);
       Engine_ObjectEventSetAnimationAndWait(LOCALID_NYUNPA, ANIMATION_NOD);
       WAIT(20);
@@ -1269,7 +1269,7 @@ static void EventScript_FehAsksToSeeChi(void) {
     Engine_GameFlagSet(FLAG_FEH_WAITS_TO_SEE_CHI);
     EV_END();
   } else {
-    gEventWork->message += 1;
+    gFieldWork->message += 1;
     Engine_ScriptShowMessageAndWait(LOCALID_FEH, 0, 20);
     EV_END();
   }
@@ -1641,7 +1641,7 @@ static UNUSED void FuchinTemple_HopLeaderByOffset(s32 offsetX, s32 offsetZ) {
 /// fades, and he enters Fuchin Falls Cave.
 static void EventScript_EnterWaterfallGrotto(void) {
   struct ObjectEvent *leader;
-  SchedulerCallback particleTask;
+  TaskFunc particleTask;
 
   EV_START();
   // Keep the entry effect alive until the leader has moved into the fade.
@@ -1649,7 +1649,7 @@ static void EventScript_EnterWaterfallGrotto(void) {
   FieldScheduler_AddCallback(particleTask, TASK_PRIORITY_MAP);
   Engine_ObjectEventSetSpeed(LOCALID_PARTY_LEADER, PIXELS(1) / 5,
                              PIXELS(1) / 10);
-  gEventWork->transitionFrames = 60;
+  gFieldWork->transitionFrames = 60;
   Engine_ScriptCloseScreen();
   Engine_AudioPlayCue(SE_CAST);
   OBJECT_MODE(LOCALID_PARTY_LEADER, ANIMATION_WALK);
@@ -1658,7 +1658,7 @@ static void EventScript_EnterWaterfallGrotto(void) {
   Engine_ObjectEventSetChildValue(LOCALID_PARTY_LEADER, SPRITE_COLOR_HIDDEN);
   leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   Engine_ObjectEventSetSpriteFlags(leader, 0);
-  Scheduler_RemoveCallback(particleTask);
+  Task_Remove(particleTask);
   Engine_ScriptWaitForScreen();
   Engine_ScriptRequestWarp(FUCHIN_TEMPLE_GROUNDS_TO_FUCHIN_FALLS_CAVE_ENTRANCE);
   EV_END();
@@ -1681,7 +1681,7 @@ static void EventScript_EnterTemple(void) {
   MapGrid_AnimateCells(gFuchinTemple_TempleDoorOpens, 77, 8);
   ObjectEvent_GetById(LOCALID_PARTY_LEADER)->motionFlags = 0;
   OBJECT_SPEED(LOCALID_PARTY_LEADER, 4 * PIXELS(1) / 5, 2 * PIXELS(1) / 5);
-  gEventWork->startTransition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+  gFieldWork->startTransition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   OBJECT_MODE(LOCALID_PARTY_LEADER, ANIMATION_WALK);
   ObjectEvent_SetDestinationOffset(LOCALID_PARTY_LEADER, 0, -16);
   WAIT(16);
@@ -1700,7 +1700,7 @@ static void FuchinTemple_NyunpaTeachesKi(void) {
   EV_START();
   OBJECT_SPEED(LOCALID_PARTY_LEADER, PIXELS(1) / 2, PIXELS(1) / 4);
   OBJECT_WALK(LOCALID_PARTY_LEADER, 168, 504);
-  gEventWork->startTransition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+  gFieldWork->startTransition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   Engine_ScriptOpenScreen();
   Engine_ScriptWaitForScreen();
   Engine_ObjectEventWaitForMove(LOCALID_PARTY_LEADER);
@@ -1730,12 +1730,12 @@ static void FuchinTemple_NyunpaTeachesKi(void) {
     Engine_ObjectEventSetAnimationAndWait(LOCALID_NYUNPA, ANIMATION_NOD);
     WAIT(20);
     Script_ShowMessageAndWait(LOCALID_NYUNPA, 0, 20);
-    gEventWork->message += 2;
+    gFieldWork->message += 2;
   } else {
     WAIT(10);
     Engine_ObjectEventRunRepeatedMotion(LOCALID_NYUNPA, 2);
     WAIT(20);
-    gEventWork->message++;
+    gFieldWork->message++;
     Script_ShowMessageAndWait(LOCALID_NYUNPA, 0, 20);
     Engine_ObjectEventSetAnimationAndWait(LOCALID_NYUNPA, ANIMATION_NOD);
     WAIT(20);
@@ -1773,11 +1773,11 @@ static void FuchinTemple_NyunpaTeachesKi(void) {
     Engine_ObjectEventSetAnimationAndWait(LOCALID_PARTY_LEADER, ANIMATION_NOD);
     WAIT(20);
     Script_ShowMessageAndWait(LOCALID_NYUNPA, 0, 20);
-    gEventWork->message++;
+    gFieldWork->message++;
   } else {
     WAIT(10);
     Engine_ObjectEventRunRepeatedMotion(LOCALID_NYUNPA, 2);
-    gEventWork->message++;
+    gFieldWork->message++;
     Script_ShowMessageAndWait(LOCALID_NYUNPA, 0, 20);
   }
   Engine_ObjectEventSetAnimationAndWait(LOCALID_NYUNPA, ANIMATION_NOD);
@@ -2334,10 +2334,10 @@ static void FuchinTemple_RunHamasRevealLesson(void) {
     Engine_ObjectEventSetAnimationAndWait(GARET, ANIMATION_NOD);
     WAIT(20);
     Script_ShowMessageAndWait(GARET, 0, 20);
-    gEventWork->message++;
+    gFieldWork->message++;
   } else {
     WAIT(20);
-    gEventWork->message++;
+    gFieldWork->message++;
     Engine_ObjectEventSetAnimationAndWait(MIA, ANIMATION_NOD);
     WAIT(20);
     Script_ShowMessageAndWait(MIA, 0, 20);
@@ -2381,7 +2381,7 @@ s32 Map_Initialize(void) {
   s32 heardHsuTrapped;
 
   if (gGameState.mapId == (s32)&MapId_FuchinTempleInteriors) {
-    gEventWork->startTransition =
+    gFieldWork->startTransition =
         MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
     if (gGameState.warpDest ==
         FUCHIN_TEMPLE_INTERIORS_FROM_FUCHIN_TEMPLE_GROUNDS) {
@@ -2478,7 +2478,7 @@ static void FuchinTemple_StartMindReadDemonstration(s32 caster, s32 target) {
 
   Engine_GameFlagSet(FLAG_PSYNERGY_EFFECT);
   Engine_PsynergyStart(ABILITY_MIND_READ, 1);
-  effectWork = gEffectWork;
+  effectWork = gFieldEffectWork;
   Engine_PsynergySetTarget(caster, target);
   effectWork->active = 0;
   Engine_PsynergyRaiseHands();

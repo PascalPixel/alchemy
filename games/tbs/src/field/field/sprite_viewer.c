@@ -79,8 +79,8 @@ void Ui_RunIconMonitor(void) {
   editMode = UI_SPRITE_VIEWER_EDIT_SPRITE;
   shadowsEnabled = 1;
   selectedLayer = 0;
-  ring = Runtime_AllocateBlock(HEAP_SLOT_BATTLE,
-                               UI_SPRITE_VIEWER_COPY_COUNT * sizeof(*ring));
+  ring = AllocHeapSlotEwram(HEAP_SLOT_BATTLE,
+                            UI_SPRITE_VIEWER_COPY_COUNT * sizeof(*ring));
   gDecodeFillByte = 3;
 
   // Only the ring's first word is cleared; SpriteViewer_BuildProbeRing fills
@@ -108,12 +108,12 @@ void Ui_RunIconMonitor(void) {
   // Rebuilt from here whenever layer 0's sprite changes or Select is
   // pressed: a fresh heap, task table and VRAM cache each time.
 restart:
-  Runtime_InitializeHeap();
-  Scheduler_ResetTaskTable();
-  ring = Runtime_AllocateBlock(HEAP_SLOT_BATTLE,
-                               UI_SPRITE_VIEWER_COPY_COUNT * sizeof(*ring));
+  InitHeap();
+  Task_ResetAll();
+  ring = AllocHeapSlotEwram(HEAP_SLOT_BATTLE,
+                            UI_SPRITE_VIEWER_COPY_COUNT * sizeof(*ring));
   VramCache_Reset();
-  ObjectSystem_Initialize(MODE_LAYERED_MAP);
+  ObjectSystem_Initialize(OBJECT_SYSTEM_LAYOUT);
   // With no map loaded, the map cell buffer holds layer 0's frames; a
   // two-part sprite (ANIMATION_FACING_TWO_PART) puts its second part in the
   // actor sprite buffer, as resource slot 1.
@@ -163,7 +163,7 @@ restart:
 
   SpriteViewer_BuildProbeRing(x, y, ring);
   // Order 3200 (0xc80), where the field camera runs.
-  Scheduler_AddOrUpdateCallback(Battle_PlaceActorsByFormationKind, 3200);
+  Task_Add(Battle_PlaceActorsByFormationKind, 3200);
 
 next:
   WaitFrames(1);
@@ -372,7 +372,7 @@ next:
     // RuntimeDispatch_ReturnZero ignores its arguments, so the resource set
     // chosen here changes nothing in this build.
     if ((*repeatedKeys & KEY_SELECT) != 0) {
-      Scheduler_ResetTaskTable();
+      Task_ResetAll();
       if ((*heldKeys & KEY_B) != 0) {
         RuntimeDispatch_ReturnZero((s32)&ResourceId_ResourceFarCalls,
                                    FarCall_ResourceTable);
@@ -618,7 +618,7 @@ void Ui_SetGridColumnNumber(s32 layerIndex, s32 spriteId) {
 /// ring is the placements in HEAP_SLOT_BATTLE and its sprites the pool in
 /// HEAP_SLOT_ANIMATION_SPRITES.
 void Battle_PlaceActorsByFormationKind(void) {
-  struct AnimationObject *sprite = WORK_SLOT(HEAP_SLOT_ANIMATION_SPRITES);
+  struct AnimationObject *sprite = HEAP_SLOT_BLOCK(HEAP_SLOT_ANIMATION_SPRITES);
   u32 facingKind = sprite->entries[0]->kind;
   struct SpriteScale scale;
   struct SpritePlacement *facingPositions;
@@ -629,7 +629,7 @@ void Battle_PlaceActorsByFormationKind(void) {
   u32 spriteIndex;
 
   scale = gBattle_FormationPlacementScale;
-  facingPositions = WORK_SLOT(HEAP_SLOT_BATTLE);
+  facingPositions = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE);
 
   switch (facingKind) {
   case ANIMATION_FACING_THREE_FRAMES:

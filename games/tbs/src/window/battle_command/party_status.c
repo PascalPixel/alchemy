@@ -34,7 +34,7 @@ void UiWindow_BuildLayoutBounds(s32 flags) {
   // the actual owners grows the EN function from 0x68 to 0x6c bytes.
   // Keep the original address formation only in the matching build.
 #ifdef UBFIX
-  struct PartyStatusWindow *layout = WORK_SLOT(HEAP_SLOT_PARTY_STATUS);
+  struct PartyStatusWindow *layout = HEAP_SLOT_BLOCK(HEAP_SLOT_PARTY_STATUS);
   struct UiRenderWork *work = UI_WORK;
 #else
   void **slot = (void **)&gPartyStatusWork;
@@ -82,7 +82,7 @@ void UiWindow_CreateWithLayoutBounds(s32 flags) {
   struct PartyStatusWindow *layout;
   s8 *busy;
 
-  layout = Runtime_AllocateBlock(HEAP_SLOT_PARTY_STATUS, sizeof(*layout));
+  layout = AllocHeapSlotEwram(HEAP_SLOT_PARTY_STATUS, sizeof(*layout));
   busy = (s8 *)&UI_WORK->menuBusy;
   zero = 0;
   *busy = 1;
@@ -234,7 +234,7 @@ void PartyStatus_Draw(s32 flags) {
   // Named owners grow the EN function from 0x3d4 to 0x3dc bytes. Keep the
   // original address formation and load order in the matching build.
 #ifdef UBFIX
-  struct PartyStatusWindow *layout = WORK_SLOT(HEAP_SLOT_PARTY_STATUS);
+  struct PartyStatusWindow *layout = HEAP_SLOT_BLOCK(HEAP_SLOT_PARTY_STATUS);
   struct BattleWork *battle = gBattleWork;
   struct UiWindow *window = layout->window;
   struct UiRenderWork *work = UI_WORK;
@@ -385,7 +385,7 @@ void PartyStatus_Close(void) {
 #else
   UiWork_Finalize((struct UiWindow *)**(s32 **)(u32)&gWindowWork[1], 1);
 #endif
-  Runtime_ReleaseHeapBlock(HEAP_SLOT_PARTY_STATUS);
+  FreeHeapSlot(HEAP_SLOT_PARTY_STATUS);
 }
 
 /// Sets (`set` 1) or clears (0) bit 12 of the tilemap entries of the

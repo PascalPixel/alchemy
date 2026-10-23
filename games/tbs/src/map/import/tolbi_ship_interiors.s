@@ -1,7 +1,7 @@
 @ C2: aligned 8-byte veneers: overlay_veneer emits ldr r4, bx r4 and a target word.
 	.set overlay_imports, 1
 	.set import.Engine_TaskWait, 1
-	.set import.Scheduler_AddOrUpdateCallback, 1
+	.set import.Task_Add, 1
 	.set import.Engine_RandomNext, 1
 	.set import.Engine_HeapAllocate, 1
 	.set import.Engine_HeapRelease, 1
@@ -70,7 +70,7 @@
 	.set import.Engine_ScriptCloseScreen, 1
 	.set import.Engine_ScriptWaitForScreen, 1
 	.set import.Field_EndBusyAndReveal, 1
-	.set import.Audio_PlayCueFromEventWork, 1
+	.set import.Map_PlayMusic, 1
 	.set import.Engine_SanctumOpen, 1
 	.set import.Engine_AudioPlayCue, 1
 	.include "games/tbs/src/system/overlay.inc"

@@ -484,7 +484,7 @@ static void EventScript_TalkToArmorMerchant(void) {
 s32 Map_Initialize(void) {
   s16 warpDest;
 
-  gEventWork->startTransition =
+  gFieldWork->startTransition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
   warpDest = gGameState.warpDest;
   if (warpDest == ROOM_GATE_TO_SUHALLA) {

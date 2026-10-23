@@ -40,15 +40,14 @@ void BattleEffect_CallDoNothing(s32 count) {
 /// Each scene is named for the summon whose gBattle_ActionFlags entry selects
 /// its kind, as the handlers of gBattleEffect_EffectHandlers are;
 /// SUMMON_EFFECT_NONE, which no ability selects, runs Meteor's scene too. Takes
-/// heap slots HEAP_SLOT_BATTLE_SHEET, HEAP_SLOT_BATTLE_EFFECT and
+/// heap slots HEAP_SLOT_BATTLE_SHEET, HEAP_SLOT_BATTLE_ANIM and
 /// HEAP_SLOT_BATTLE_CANVAS and releases them in reverse, so the scene must have
 /// removed every callback that reads them. Unlike BattleEffect_RunTableEffect
 /// it does not set work->effect: each scene does that itself.
 void BattleEffect_RunSummonEffect(struct BattleEffectArgument *effect) {
-  Runtime_AllocateHeapBlock(HEAP_SLOT_BATTLE_SHEET, MOTE_SET_BYTES);
-  Runtime_AllocateHeapBlock(HEAP_SLOT_BATTLE_EFFECT,
-                            sizeof(struct BattleEffectWork));
-  Runtime_AllocateHeapBlock(HEAP_SLOT_BATTLE_CANVAS, CANVAS_BYTES);
+  AllocHeapSlot(HEAP_SLOT_BATTLE_SHEET, MOTE_SET_BYTES);
+  AllocHeapSlot(HEAP_SLOT_BATTLE_ANIM, sizeof(struct BattleEffectWork));
+  AllocHeapSlot(HEAP_SLOT_BATTLE_CANVAS, CANVAS_BYTES);
 
   if (effect->kind == SUMMON_EFFECT_NONE) {
     BattleEffect_RunMeteor(effect);
@@ -93,9 +92,9 @@ void BattleEffect_RunSummonEffect(struct BattleEffectArgument *effect) {
     }
   }
 
-  Runtime_ReleaseHeapBlock(HEAP_SLOT_BATTLE_CANVAS);
-  Runtime_ReleaseHeapBlock(HEAP_SLOT_BATTLE_EFFECT);
-  Runtime_ReleaseHeapBlock(HEAP_SLOT_BATTLE_SHEET);
+  FreeHeapSlot(HEAP_SLOT_BATTLE_CANVAS);
+  FreeHeapSlot(HEAP_SLOT_BATTLE_ANIM);
+  FreeHeapSlot(HEAP_SLOT_BATTLE_SHEET);
 }
 
 /// Runs an ordinary battle effect: takes the effect's sheet, work and
@@ -116,12 +115,11 @@ void BattleEffect_RunTableEffect(struct BattleEffectArgument *effect) {
   s32 kind;
   struct BattleEffectWork *work;
 
-  Runtime_AllocateHeapBlock(HEAP_SLOT_BATTLE_SHEET, MOTE_SET_BYTES);
-  Runtime_AllocateHeapBlock(HEAP_SLOT_BATTLE_EFFECT,
-                            sizeof(struct BattleEffectWork));
-  Runtime_AllocateHeapBlock(HEAP_SLOT_BATTLE_CANVAS, CANVAS_BYTES);
+  AllocHeapSlot(HEAP_SLOT_BATTLE_SHEET, MOTE_SET_BYTES);
+  AllocHeapSlot(HEAP_SLOT_BATTLE_ANIM, sizeof(struct BattleEffectWork));
+  AllocHeapSlot(HEAP_SLOT_BATTLE_CANVAS, CANVAS_BYTES);
 
-  work = WORK_SLOT(HEAP_SLOT_BATTLE_EFFECT);
+  work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_ANIM);
   work->effect = effect;
   kind = effect->kind;
   if (kind == BATTLE_EFFECT_NONE)
@@ -129,9 +127,9 @@ void BattleEffect_RunTableEffect(struct BattleEffectArgument *effect) {
   else
     gBattleEffect_EffectHandlers[kind - 1](effect);
 
-  Runtime_ReleaseHeapBlock(HEAP_SLOT_BATTLE_CANVAS);
-  Runtime_ReleaseHeapBlock(HEAP_SLOT_BATTLE_EFFECT);
-  Runtime_ReleaseHeapBlock(HEAP_SLOT_BATTLE_SHEET);
+  FreeHeapSlot(HEAP_SLOT_BATTLE_CANVAS);
+  FreeHeapSlot(HEAP_SLOT_BATTLE_ANIM);
+  FreeHeapSlot(HEAP_SLOT_BATTLE_SHEET);
 }
 
 /// Builds window 0's right edge for every scanline and restarts the HBlank
@@ -222,7 +220,7 @@ void BattleEffect_SelectLivingTargets(struct BattleEffectArgument *effect) {
 /// with every layer off, then writes REG_BLDALPHA, REG_BLDCNT and
 /// REG_DISPCNT and gProjection.centerY.
 void BattleEffect_SetupBlendedDisplay(void) {
-  void **slots = &gWorkSlot[HEAP_SLOT_BATTLE];
+  void **slots = &gHeapSlots[HEAP_SLOT_BATTLE];
   u8 *canvas = slots[HEAP_SLOT_BATTLE_CANVAS - HEAP_SLOT_BATTLE];
   struct BattleWork *battle = slots[0];
   volatile u32 fill;
@@ -250,7 +248,7 @@ void BattleEffect_SetupBlendedDisplay(void) {
 ///          that changes colours also restarts its frame.
 /// animation: the pose each group switches to (enum BattlePose), or -1 for
 ///            none.
-/// timerSlot: the actor timer (gBattleEffectWork's actorTimers) to set, or -1;
+/// timerSlot: the actor timer (gBattleAnimWork's actorTimers) to set, or -1;
 ///            ObjectGroup_TickMemberTimers restores the battler's palette
 ///            when it runs out.
 /// timerFrames: the frames that timer counts.
@@ -268,7 +266,7 @@ void ObjectGroup_UpdateMembers(s32 actorId, s32 palette, s32 animation,
   s32 groupIndex;
 
   slot = GetBattleObjectSlotFar(actorId);
-  work = WORK_SLOT(HEAP_SLOT_BATTLE_EFFECT);
+  work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_ANIM);
   groupIndex = 0;
 
   while ((group = GetMotionRecordFar(slot->object, groupIndex)) != NULL) {

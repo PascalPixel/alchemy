@@ -42,7 +42,7 @@ fixed order at the start of every overlay, `entry/<map>.s`. Each entry is an
 ```
 
 Six of them make 48 bytes, and the offsets in the table below are those of
-the address words, 4 bytes into each veneer. `Field_RunMap` calls
+the address words, 4 bytes into each veneer. `Map_Run` calls
 `Map_GetEvents`, then places the party at its warp destination
 (`Map_ApplyWarpDest`), creates the object events from the object event
 templates and calls `Map_Initialize`. `Field_ProcessStep` reads the regions
@@ -396,7 +396,7 @@ header.
 ## How it fits with the rest of the game
 
 `Game_Run` unpacks the overlay into `gOverlayArea` (`Map_LoadOverlay`) and
-`Field_RunMap` calls its entries; [Engine](../../engine.md#overlays)
+`Map_Run` calls its entries; [Engine](../../engine.md#overlays)
 describes the entry and import tables and how the overlay is loaded. The map
 table and how maps depend on the story are on [the front
 page](../../README.md#the-map-table-and-map-sections). The layouts the maps are
@@ -431,7 +431,7 @@ is the name the map writes (`MsgVaultWelcomeToVaultTheTownAt`).
 Each overlay is three objects in `games/tbs/objects.tsv`, linked in this order
 into the overlay area: `entry/<map>`, `<map>` and `import/<map>`; the
 rows' first column is the overlay's resource number. The map table,
-`gField_MapTable` in [`field/maps.s`](../field/maps.s), gives each
+`gMapHeaders` in [`field/maps.s`](../field/maps.s), gives each
 map its overlay, map section, map type and layout, and names it `MapId_<Map>`;
 several maps may share one overlay, and then share its file. A map overlay
 is never split into parts: its code is laid out by kind, entry points,

@@ -23,26 +23,26 @@ void FieldEffect_CheckCloakTile(void) {
   u32 slot;
 #endif
   struct FieldWork *work;
-  struct ObjectRuntime *leader;
+  struct Object *leader;
   u8 *tile;
   s32 x;
   s32 y;
 
 #ifndef UBFIX
-  slot = (u32)&gEventWork;
+  slot = (u32)&gFieldWork;
 #endif
-  work = (struct FieldWork *)gEventWork;
+  work = (struct FieldWork *)gFieldWork;
   leader = ObjectTable_Get(gGameState.selectedLocalId);
 #ifdef UBFIX
   tile = gMapGridWork[0];
 #else
-  // The named map slot avoids reading outside gEventWork. It adds 4 bytes
+  // The named map slot avoids reading outside gFieldWork. It adds 4 bytes
   // to this function in the forced native EN build (0xc0 -> 0xc4).
   tile = (u8 *)*(struct MapGridState **)(slot - 76); // gMapGridWork[0]
 #endif
 
   // Whole metatiles or cells, rounded toward zero as a division would be.
-  if (work->mode == MODE_WORLD_MAP) {
+  if (work->mode == OBJECT_SYSTEM_WORLD_MAP) {
     u32 tx;
     u32 ty;
 
@@ -89,7 +89,7 @@ void FieldEffect_CheckCloakTile(void) {
 /// frames. The leader ends with its shadow back.
 /// FieldScript_RunTypeHandler runs it when the CLOAK_END request is handled.
 void FieldEffect_EndCloak(void) {
-  struct ObjectRuntime *object;
+  struct Object *object;
   struct AnimationObject *animation;
   struct AnimationEntry *entry;
   u32 i;
@@ -98,8 +98,8 @@ void FieldEffect_EndCloak(void) {
   animation = object->animation;
   entry = animation->entries[0];
 
-  AudioCommand_PlayFar(SE_CAST);
-  Scheduler_RemoveCallback(FieldEffect_CheckCloakTile);
+  Sound_PlaySongFar(SE_CAST);
+  Task_Remove(FieldEffect_CheckCloakTile);
   ObjectDispatch_SelectAnimationFar(object, 0);
   ((struct ScriptMotionObject *)object)->hook = 0;
 
@@ -127,11 +127,11 @@ void FieldEffect_EndCloak(void) {
   gGameState.cloaked = 0;
 }
 
-/// Starts the Cloak tile check if the leader is hidden. Field_RunMap calls
+/// Starts the Cloak tile check if the leader is hidden. Map_Run calls
 /// it as a map loads, since gGameState.cloaked outlives the map.
 void FieldEffect_ResumeCloakCheck(void) {
   if (gGameState.cloaked != 0) {
-    Scheduler_AddOrUpdateCallback(FieldEffect_CheckCloakTile, 0xc80);
+    Task_Add(FieldEffect_CheckCloakTile, 0xc80);
   }
 }
 
@@ -145,14 +145,14 @@ void FieldEffect_ResumeCloakCheck(void) {
 /// (Encounter_SelectEnemyGroup). Called by FieldEffect_Run and
 /// FieldEffect_DispatchRequestKind.
 void FieldEffect_StartCloak(void) {
-  struct FieldWork *work = (struct FieldWork *)gEventWork;
-  struct ObjectRuntime *leader = ObjectTable_Get(gGameState.selectedLocalId);
+  struct FieldWork *work = (struct FieldWork *)gFieldWork;
+  struct Object *leader = ObjectTable_Get(gGameState.selectedLocalId);
   struct AnimationObject *animation = leader->animation;
   struct AnimationEntry *entry = animation->entries[0];
   u32 n;
   void (*check)(void);
 
-  AudioCommand_PlayFar(SE_130);
+  Sound_PlaySongFar(SE_130);
   ObjectDispatch_SelectAnimationFar(leader, 0);
   ((struct ScriptMotionObject *)leader)->hook = 0;
   n = 0;
@@ -173,7 +173,7 @@ void FieldEffect_StartCloak(void) {
   // Check the tile at once: off a Cloak tile, unhide and drop the request
   // the check just raised (n is 0 here).
   check = FieldEffect_CheckCloakTile;
-  Scheduler_AddOrUpdateCallback(check, 0xc80);
+  Task_Add(check, 0xc80);
   gGameState.cloaked = 1;
   check();
   if (work->psynergy == CLOAK_END) {

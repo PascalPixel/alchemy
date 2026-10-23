@@ -31,7 +31,7 @@
 ///                   helm_splitter.c: BattleEffect_PlaceFormationObjects
 ///
 /// While an effect plays, its entry point owns the sheet
-/// (HEAP_SLOT_BATTLE_SHEET), the work block (HEAP_SLOT_BATTLE_EFFECT) and the
+/// (HEAP_SLOT_BATTLE_SHEET), the work block (HEAP_SLOT_BATTLE_ANIM) and the
 /// canvas (HEAP_SLOT_BATTLE_CANVAS): each of the three entry points allocates
 /// them before the handler runs and releases them after it returns, so a
 /// handler removes every callback that reads them before it returns. The two

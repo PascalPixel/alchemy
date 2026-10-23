@@ -47,7 +47,7 @@
 static void Title_RevealScreen(s32 unused);
 static void Title_LoadBackground(void);
 
-/// The title overlay's map tables, which Field_RunMap reads through
+/// The title overlay's map tables, which Map_Run reads through
 /// entry/title.s: one warp destination row, the warp, and no object event
 /// templates or map events.
 u8 *Title_GetWarpDests(void) { return (u8 *)gTitleWarpDests; }
@@ -105,13 +105,13 @@ s32 Title_Run(void) {
     Engine_AudioPlayCue(MUS_ENDING);
     // The credits: DisplayScroll_RunSlideshow, through the scroll far-call
     // table.
-    ScrollFar_Entry00(0);
+    CreditsFar_Entry00(0);
     Engine_AudioPlayCue(AUDIO_CUE_FADE_BGM);
     Fade_ToBlack(60);
     Fade_Wait();
     Engine_ScriptWait(240);
     Engine_AudioPlayCue(MUS_SILENCE);
-    FieldScript_SetDestination((s32)&MapId_Clear, CLEAR_FROM_TITLE);
+    FieldScript_SetDestination((s32)&MapId_MainMenu, MAIN_MENU_FROM_TITLE);
     return 0;
   }
   // The stub does nothing with its argument (runtime/runtime/system.c).
@@ -124,13 +124,13 @@ s32 Title_Run(void) {
       Engine_AudioPlayCue(MUS_SILENCE);
       // The Nintendo logo, then the Camelot logo (Title_ShowAnimatedSplash).
       Title_ShowSplashScreen(0);
-      PaletteFar_Entry20(0);
+      TitleFar_Entry20(0);
       // With no save file (or no backup memory) there is no title intro.
-      if (SaveState_ScanRecordFlags() > 0) {
+      if (Save_ScanRecordFlags() > 0) {
         Engine_AudioPlayCue(MUS_TITLE);
         // Title_ShowIntro with its prompt returns 0 when a minute passes
         // without A or Start: fade out and start again from the logos.
-        if (PaletteFar_Entry00(1) == 0) {
+        if (TitleFar_Entry00(1) == 0) {
           Engine_AudioPlayCue(AUDIO_CUE_FADE_BGM);
           Fade_ToBlack(30);
           Fade_Wait();
@@ -147,11 +147,11 @@ s32 Title_Run(void) {
       }
       break;
     }
-    FieldScript_SetDestination((s32)&MapId_Clear, CLEAR_FROM_SANCTUM);
+    FieldScript_SetDestination((s32)&MapId_MainMenu, MAIN_MENU_FROM_SANCTUM);
   } else {
     // The intro without its prompt holds the title five seconds.
     Engine_AudioPlayCue(MUS_TITLE_AFTER_PROLOGUE);
-    PaletteFar_Entry00(0);
+    TitleFar_Entry00(0);
     Party_EndChildhood();
     FieldScript_SetDestination((s32)&MapId_Vale, VALE_FROM_TITLE);
     Engine_AudioPlayCue(AUDIO_CUE_FADE_BGM);
@@ -176,7 +176,7 @@ static void Title_LoadSprites(s32 unused) {
     (LANGUAGE == LANGUAGE_FRENCH) || (LANGUAGE == LANGUAGE_ITALIAN)
   u8 *encodedGraphics;
 
-  decodedSprites = Runtime_BumpAllocateAlternatePool(0x9600);
+  decodedSprites = AllocEwram(0x9600);
   encodedGraphics = Resource_GetTableEntry((s32)&ResourceId_IntroTilesB);
   if (gTitleVramBlock == -1)
     gTitleVramBlock = Resource_FindFreeEntry();
@@ -194,7 +194,7 @@ static void Title_LoadSprites(s32 unused) {
 #else
   // The decoded data opens with its 16-colour palette (8 words), then 0x500
   // bytes (40 4-bit tiles) of lettering.
-  decodedSprites = Runtime_BumpAllocateAlternatePool(0x520);
+  decodedSprites = AllocEwram(0x520);
   if (gTitleVramBlock == -1)
     gTitleVramBlock = Resource_FindFreeEntry();
   FieldResource_DecodeType01(
@@ -207,7 +207,7 @@ static void Title_LoadSprites(s32 unused) {
   dma3 = REG_DMA3;
   while (dma3[2] & (DMA_ENABLE << 16))
     ;
-  MemFree(decodedSprites);
+  Free(decodedSprites);
 }
 
 /// The scheduler callback that queues the logo's lettering sprites each frame,
@@ -326,18 +326,18 @@ static void Title_RevealScreen(s32 unused) {
   }
   // Open the screen in one frame, then set 60-frame transitions for what
   // follows.
-  gEventWork->startTransition = 0;
-  gEventWork->transitionFrames = 1;
+  gFieldWork->startTransition = 0;
+  gFieldWork->transitionFrames = 1;
   Engine_ScriptOpenScreen();
   Engine_ScriptWaitForScreen();
-  gEventWork->transitionFrames = 60;
+  gFieldWork->transitionFrames = 60;
 }
 
 /// Loads the Golden Sun logo onto BG2 (title.h's LOGO_ layout) with the
 /// screen faded to black: its 224-colour palette, its 600 256-colour tiles,
 /// decoded through Ram_MapGridCellBuffer, and a map that numbers them row by
 /// row. Zeroes the four backgrounds' scroll and leaves the map work showing
-/// only BG2 and the sprites. Clear_LoadBackground (clear.c) is its twin.
+/// only BG2 and the sprites. MainMenu_LoadBackground (clear.c) is its twin.
 static void Title_LoadBackground(void) {
   u8 *encodedGraphics;
   s32 resourceId;

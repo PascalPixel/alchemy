@@ -547,7 +547,7 @@ static void GomaCavePillar_FidgetWhileForgeFights(void) {
   struct EventWork *work;
   s32 frame;
 
-  work = gEventWork;
+  work = gFieldWork;
   frame = ++gGomaCavePillar_WitnessFrames;
   switch (frame) {
   case 60:
@@ -602,7 +602,7 @@ s32 Map_Initialize(void) {
   struct ObjectEvent *objectEvent;
   struct EventWork *work;
 
-  work = gEventWork;
+  work = gFieldWork;
   work->startTransition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   work->transitionFrames = 24;

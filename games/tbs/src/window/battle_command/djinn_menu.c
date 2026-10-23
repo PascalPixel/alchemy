@@ -82,7 +82,7 @@ s32 Battle_SelectAbility(s32 owner, s32 unused) {
   drawnRow = -1;
   cursorSlot = VramCache_AllocEntry(0x80);
   // 84 words: room for 4 elements of 20 Djinn and the end.
-  djinnEntries = Runtime_BumpAllocateAlternatePool(0xa8 * 2);
+  djinnEntries = AllocEwram(0xa8 * 2);
   djinnCount = 0;
   drawnFirstEntry = -1;
   encodedDjinn = 0;
@@ -167,7 +167,7 @@ s32 Battle_SelectAbility(s32 owner, s32 unused) {
         /* FAKEMATCH(one-pass): a loop that runs once keeps the redraw reload
          * after the selected-entry load, and none of its instructions
          * survive; as k = redraw, 3 of 1201 instructions differ in tbs-en. */
-        selected = gLinkCountdownWork->chosenDjinn[redraw];
+        selected = gBattleMenuWork->chosenDjinn[redraw];
         for (k = redraw; k == redraw;) {
           k = redraw;
           break;
@@ -182,7 +182,7 @@ s32 Battle_SelectAbility(s32 owner, s32 unused) {
             k += 1 - alreadySelected;
             if (k > 7)
               break;
-            if ((u32)gLinkCountdownWork->chosenDjinn[k] == selectedDjinn) {
+            if ((u32)gBattleMenuWork->chosenDjinn[k] == selectedDjinn) {
               alreadySelected = 1;
               break;
             }
@@ -330,7 +330,7 @@ s32 Battle_SelectAbility(s32 owner, s32 unused) {
     pressed = gKeysPressed;
     repeated = gKeysRepeat;
     held = gKeysHeld;
-    navigation = gLinkCountdownWork;
+    navigation = gBattleMenuWork;
     if (navigation->tutorialStep != 0) {
       repeated = 0;
       pressed = 0;
@@ -343,9 +343,9 @@ s32 Battle_SelectAbility(s32 owner, s32 unused) {
         navigation->tutorialDelay--;
       }
     }
-    navigation = gLinkCountdownWork;
+    navigation = gBattleMenuWork;
     if (navigation->timer == 0 || (pressed & KEY_B)) {
-      AudioCommand_PlayFar(SE_MENU_CANCEL);
+      Sound_PlaySongFar(SE_MENU_CANCEL);
       encodedDjinn = -1;
       break;
     }
@@ -375,7 +375,7 @@ s32 Battle_SelectAbility(s32 owner, s32 unused) {
                                    BATTLE_MENU_MESSAGE_CAPACITY);
           UiText_RenderWideStringAtOffset(messageText, messageWindow, 0, 4);
         }
-        AudioCommand_PlayFar(SE_MENU_ERROR);
+        Sound_PlaySongFar(SE_MENU_ERROR);
       } else {
         encodedDjinn = -1;
         break;
@@ -384,7 +384,7 @@ s32 Battle_SelectAbility(s32 owner, s32 unused) {
 
     if (djinnCount != 0) {
       if (repeated & KEY_DOWN) {
-        AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
+        Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
         selectedRow++;
         if (selectedRow == BATTLE_LIST_ROWS ||
             firstEntry + selectedRow == djinnCount) {
@@ -392,7 +392,7 @@ s32 Battle_SelectAbility(s32 owner, s32 unused) {
         }
         preferredRow = selectedRow;
       } else if (repeated & KEY_UP) {
-        AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
+        Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
         selectedRow--;
         if (selectedRow < 0) {
           if (firstEntry ==
@@ -435,14 +435,14 @@ s32 Battle_SelectAbility(s32 owner, s32 unused) {
           }
           if (previewPage != 0) {
             if (repeated & KEY_RIGHT) {
-              AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
+              Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
               previewPage++;
               if (previewPage > previewPages) {
                 previewPage = 1;
               }
               redraw = 1;
             } else if (repeated & KEY_LEFT) {
-              AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
+              Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
               previewPage--;
               if (previewPage <= 0) {
                 previewPage = previewPages;
@@ -459,7 +459,7 @@ s32 Battle_SelectAbility(s32 owner, s32 unused) {
         previewPage = 0;
         redraw = 1;
       } else if (repeated & KEY_RIGHT) {
-        AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
+        Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
         Input_ResetKeyRepeat();
         if (firstEntry + BATTLE_LIST_ROWS >= djinnCount) {
           if (firstEntry != 0) {
@@ -478,7 +478,7 @@ s32 Battle_SelectAbility(s32 owner, s32 unused) {
           }
         }
       } else if (repeated & KEY_LEFT) {
-        AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
+        Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
         Input_ResetKeyRepeat();
         if (firstEntry != 0) {
           firstEntry -= BATTLE_LIST_ROWS;
@@ -564,7 +564,7 @@ s32 Battle_SelectAbility(s32 owner, s32 unused) {
   UiWork_Finalize(listWindow, 1);
   UiWindow_MarkVisibleTileAttributes();
   UiWork_SetAltFlagAndClearTable(0);
-  MemFree(djinnEntries);
+  Free(djinnEntries);
   WaitFrames(1);
   return (s32)encodedDjinn;
 }

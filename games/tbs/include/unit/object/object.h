@@ -17,7 +17,7 @@ struct EffectObject;
 struct FacingObject;
 struct ObjectEvent;
 struct MotionObject;
-struct ObjectRuntime;
+struct Object;
 struct OrbitEffect;
 struct ObjectEventTemplate;
 struct ScriptInterpreter;
@@ -26,7 +26,7 @@ struct UiWindow;
 union FieldObject;
 
 /// gGameState.movementMode: how the map loop hands the party leader back to
-/// the player (Field_RunMap).
+/// the player (Map_Run).
 enum LeaderMovementMode {
   /// Walking: the pad moves the leader, on the world map or a layered map.
   LEADER_MOVEMENT_WALK = 0,
@@ -38,9 +38,9 @@ enum LeaderMovementMode {
 
 /// Game_Run's mode: where the game starts.
 enum GameRunMode {
-  GAME_RUN_TITLE = 0,      ///< the title screen, with a fresh game state
-  GAME_RUN_DEBUG_VALE = 1, ///< in debug mode, MapId_ValeGate
-  GAME_RUN_DEBUG_CLEAR = 2 ///< in debug mode, the file select screen
+  GAME_RUN_TITLE = 0,          ///< the title screen, with a fresh game state
+  GAME_RUN_DEBUG_VALE = 1,     ///< in debug mode, MapId_ValeGate
+  GAME_RUN_DEBUG_MAIN_MENU = 2 ///< in debug mode, the file select screen
 };
 
 /// A window transition's shape: MAP_TRANSITION(TRANSITION_WINDOW, mode)'s
@@ -103,12 +103,12 @@ enum EncounterZoneId {
 };
 
 void Map_TakeWarp(s32 warpId);
-void Map_ReturnFromBattle(s32 result);
+void Map_ReturnFromRun(s32 result);
 s32 FieldEffect_GetResourceGroup(s32 mapId);
 void Game_Run(s32 mode);
 void Map_LoadOverlay(s32 unused);
 void Map_ResetFlagsOnEnter(s32 unused, s32 keep);
-void Audio_PlayCueFromEventWork(void);
+void Map_PlayMusic(void);
 void Encounter_SelectMapZones(s32 useRules);
 s32 Encounter_ResolveWorldMapZoneAndBackdrop(void *pos);
 s32 Encounter_SelectEnemyGroup(s32 zone, s32 steps);
@@ -116,7 +116,7 @@ s32 Encounter_RollTerrain(u32 terrain, s32 steps);
 s32 Encounter_RollWorldMap(s32 pos, s32 steps);
 u16 Encounter_GetEnemyGroupAtSlot(s32 zone, s32 slot);
 s16 Encounter_GetDjinnEnemyGroup(s32 djinni);
-void Map_ResolveInteractionResult(void);
+void Map_ChooseMusic(void);
 s32 MapSec_GetNameIndex(s32 mapId, s32 warpDest);
 void Map_SetDefeatReturnPoint(void);
 s16 FieldScript_GetSpecialValue(void);
@@ -177,7 +177,7 @@ void Party_AddHp(s32 amount, s32 percent);
 s32 Party_ApplyPoisonDamage(void);
 void WorldMap_StartScript(void);
 void WorldMap_EndScript(void);
-s32 Field_RunMap(s32 warpDest);
+s32 Map_Run(s32 warpDest);
 s32 ObjectEvent_GetTriggerTileAheadOfCurrent(void);
 void Map_ApplyWarpDest(void);
 void Debug_RunPaletteEditor(void);
@@ -216,7 +216,7 @@ void Marker_CloseChest(s32 id);
 void Marker_LaunchMimic(s32 id);
 void Marker_OpenChest(s32 id);
 void Marker_ShowOpened(s32 id);
-struct ObjectRuntime *Marker_GetObjectEvent(s32 id);
+struct Object *Marker_GetObjectEvent(s32 id);
 void Marker_Hide(s32 id);
 void Marker_SetObjectEventPosition(s32 id, s32 x, s32 z);
 
@@ -225,7 +225,7 @@ void ItemDisplay_EmitSparkles(union FieldObject *fieldObject);
 struct EffectObject *FieldEffect_StartRandomParticleEmitter(s32 localId,
                                                             s32 item);
 void Object_DestroyIfPresent(void *object);
-void ItemDisplay_RaiseAboveLeader(struct ObjectRuntime *object);
+void ItemDisplay_RaiseAboveLeader(struct Object *object);
 void ItemDisplay_ShowPicture(void *object, s32 flags);
 void FieldEffect_StartEffectObject22(s32 item, s32 flags);
 void FieldEffect_ClearRandomParticles(void);

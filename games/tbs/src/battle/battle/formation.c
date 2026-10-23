@@ -103,7 +103,7 @@ struct BattleBaseStats {
 /// bypasses the defeated-enemy check.
 s32 BattleFormation_SelectLevelMatchedCandidate(s32 *outMargin) {
   s32 matchCount = 0;
-  struct FormationCandidate *pool = Runtime_BumpAllocateAlternatePool(128);
+  struct FormationCandidate *pool = AllocEwram(128);
   u16 party[8];
   s32 levelTotal = 0;
   s32 unitCount = BattleParty_PrepareActiveOwners(party);
@@ -186,7 +186,7 @@ s32 BattleFormation_SelectLevelMatchedCandidate(s32 *outMargin) {
     result = 1;
   }
 
-  MemFree(pool);
+  Free(pool);
   return result;
 }
 
@@ -209,7 +209,7 @@ s32 BattleEnemy_AdjustLevel(s32 owner, s32 levels) {
   s32 minimumStat;
   s32 element;
 
-  base = Runtime_BumpAllocateAlternatePool(sizeof(struct BattleBaseStats));
+  base = AllocEwram(sizeof(struct BattleBaseStats));
   unit = Unit_GetFar(owner);
   Iwram_CopyWords(base, &unit->baseHp, sizeof(struct BattleBaseStats));
 
@@ -255,7 +255,7 @@ s32 BattleEnemy_AdjustLevel(s32 owner, s32 levels) {
 
   unit->level += levels;
   Unit_CalculateFar(owner);
-  MemFree(base);
+  Free(base);
 }
 
 /// Gives an enemy of the class its name letter, which tells it from others of

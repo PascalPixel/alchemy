@@ -74,27 +74,27 @@ void BattleEffect_RunProcne(struct BattleEffectArgument *effect) {
   struct SpritePlacement place;
   struct SpriteScale scale;
 
-  slots = &gWorkSlot[HEAP_SLOT_BATTLE_CANVAS];
+  slots = &gHeapSlots[HEAP_SLOT_BATTLE_CANVAS];
   canvas = slots[0];
   camera = CANVAS_SLOT(slots, HEAP_SLOT_CAMERA);
-  work = slots[HEAP_SLOT_BATTLE_EFFECT - HEAP_SLOT_BATTLE_CANVAS];
+  work = slots[HEAP_SLOT_BATTLE_ANIM - HEAP_SLOT_BATTLE_CANVAS];
   graphics = slots[HEAP_SLOT_BATTLE_SHEET - HEAP_SLOT_BATTLE_CANVAS];
   work->effect = effect;
 
   BattleEffect_StartCanvasLayer(0);
-  EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER, EFFECT_CLIP_BOUNDS, COMPOSITE_MAX);
-  draw[0] = (DrawRectangle)slots[HEAP_SLOT_BLITTER - HEAP_SLOT_BATTLE_CANVAS];
-  EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER_ALTERNATE, EFFECT_CLIP_BOUNDS,
+  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, COMPOSITE_MAX);
+  draw[0] = (DrawRectangle)slots[HEAP_SLOT_RAM_CODE - HEAP_SLOT_BATTLE_CANVAS];
+  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, EFFECT_CLIP_BOUNDS,
                       COMPOSITE_ADDITIVE);
-  draw[1] = (DrawRectangle)
-      slots[HEAP_SLOT_BLITTER_ALTERNATE - HEAP_SLOT_BATTLE_CANVAS];
+  draw[1] =
+      (DrawRectangle)slots[HEAP_SLOT_RAM_CODE_2 - HEAP_SLOT_BATTLE_CANVAS];
 
   resource = Resource_GetTableEntry((s32)&ResourceId_WhirlwindSheet);
   Iwram_CopyWords((void *)BG_PLTT, resource, 0x80);
   resource += 0x80;
-  Resource_DecodeType01(resource, work->sheet);
-  Resource_DecodeType01(
-      Resource_GetTableEntry((s32)&ResourceId_ParticleSpritesA), graphics);
+  Decompress_Type01(resource, work->sheet);
+  Decompress_Type01(Resource_GetTableEntry((s32)&ResourceId_ParticleSpritesA),
+                    graphics);
 
   // Trails keep half of each pixel a frame.
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, 50);
@@ -154,17 +154,17 @@ void BattleEffect_RunProcne(struct BattleEffectArgument *effect) {
     EFFECT_VIEW_FROM_CAMERA(camera);
 
     if (frame == 16)
-      AudioCommand_PlayFar(SE_RUMBLE);
+      Sound_PlaySongFar(SE_RUMBLE);
     if (frame == 256)
-      AudioCommand_PlayFar(SE_140);
+      Sound_PlaySongFar(SE_140);
     if (frame == 334)
-      AudioCommand_PlayFar(SE_212);
+      Sound_PlaySongFar(SE_212);
     if (frame == 347)
-      AudioCommand_PlayFar(SE_212);
+      Sound_PlaySongFar(SE_212);
     if (frame == 359)
-      AudioCommand_PlayFar(SE_212);
+      Sound_PlaySongFar(SE_212);
     if (frame == 372)
-      AudioCommand_PlayFar(SE_212);
+      Sound_PlaySongFar(SE_212);
 
     // The targets, from 16i frames: spin faster round the middle and close
     // in, rising quickly once near it, until frame 160; they keep turning
@@ -306,7 +306,7 @@ void BattleEffect_RunProcne(struct BattleEffectArgument *effect) {
       resource = Resource_GetTableEntry((s32)&ResourceId_VioletCometSheet);
       Iwram_CopyWords((void *)BG_PLTT, resource, 0x80);
       resource += 0x80;
-      Resource_DecodeType01(resource, work->sheet + PROCNE_COMET_CELLS);
+      Decompress_Type01(resource, work->sheet + PROCNE_COMET_CELLS);
 
       index = 0;
       do {

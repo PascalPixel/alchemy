@@ -17,7 +17,7 @@
 /// A link cable packet: its sequence number, the consoles not yet heard from,
 /// its checksum and a 24-byte payload.
 struct SerialPacket {
-  u8 sequence; ///< SerialRuntime's sequence when the packet was built
+  u8 sequence; ///< SerialWork's sequence when the packet was built
   /// The consoles heard from before but not this frame (receivedMask ^
   /// currentMask); a receiver complements it once the checksum is good.
   u8 missingMask;
@@ -42,13 +42,13 @@ union SerialDataRegisters {
   u16 halfwords[4];
 };
 
-/// SerialRuntime.phase.
+/// SerialWork.phase.
 enum SerialPhase {
   SERIAL_PHASE_SEARCHING = 0, ///< looking for the partner
   SERIAL_PHASE_CONNECTED = 1
 };
 
-/// SerialRuntime.mode: how this console takes part in the link.
+/// SerialWork.mode: how this console takes part in the link.
 enum SerialMode {
   SERIAL_MODE_CHILD = 0,
   /// SIO_MULTI_SD alone of SIOCNT's SIO_START and SIO_MULTI_SD: this console
@@ -68,7 +68,7 @@ enum LinkStatus {
 
 /// The link cable's runtime: its mode and phase, the consoles heard from, the
 /// send position and the packet buffers the interrupt handler fills.
-struct SerialRuntime {
+struct SerialWork {
   /// An enum SerialMode; SERIAL_MODE_CLOCKING adds LINK_STATUS_CLOCKING to the
   /// link status.
   u8 mode;
@@ -108,11 +108,11 @@ struct SerialRuntime {
   u8 storage[0x100];
 };
 
-STATIC_ASSERT(sizeof(struct SerialRuntime) == 0x160);
-STATIC_ASSERT(offsetof(struct SerialRuntime, mode) == 0);
-STATIC_ASSERT(offsetof(struct SerialRuntime, transferEnabled) == 8);
-STATIC_ASSERT(offsetof(struct SerialRuntime, sendIndex) == 0x14);
-STATIC_ASSERT(offsetof(struct SerialRuntime, storage) == 0x60);
+STATIC_ASSERT(sizeof(struct SerialWork) == 0x160);
+STATIC_ASSERT(offsetof(struct SerialWork, mode) == 0);
+STATIC_ASSERT(offsetof(struct SerialWork, transferEnabled) == 8);
+STATIC_ASSERT(offsetof(struct SerialWork, sendIndex) == 0x14);
+STATIC_ASSERT(offsetof(struct SerialWork, storage) == 0x60);
 
 /// SerialTransferState.flags: how far this console's receive has got.
 enum SerialReceiveState {
@@ -149,10 +149,10 @@ STATIC_ASSERT(offsetof(struct SerialTransferState, flags) == 2);
 STATIC_ASSERT(offsetof(struct SerialTransferState, peerFlags) == 3);
 STATIC_ASSERT(offsetof(struct SerialTransferState, payload) == 4);
 
-#define SERIAL_RUNTIME (&gSerialRuntime)
+#define SERIAL_RUNTIME (&gSerialWork)
 
 extern struct SerialTransferState gSerialTransfer;
-extern struct SerialRuntime gSerialRuntime;
+extern struct SerialWork gSerialWork;
 extern u16 gSerialExchangeActive;
 extern s32 gSerialSendSource;
 /// volatile: tagged where it steers, in SerialRuntime_StepBlockTransfer (tbs
@@ -169,12 +169,12 @@ extern volatile u8 gSerialBlockSequence;
 extern u8 gLinkExchangeState;
 /// Link status, updated by the VBlank exchange handler.
 /* FAKEMATCH(volatile): each mask test loads the status on its own; as plain
- * u16, 155 of 920 instructions differ in tbs-en (SaveMenu_Run; 14 of 23 in
+ * u16, 155 of 920 instructions differ in tbs-en (MainMenu_Run; 14 of 23 in
  * SerialRuntime_WaitForStatusMask). */
 extern volatile u16 gLinkStatus;
 
 static inline s32 SerialRuntime_AddParentFlag(s32 status) {
-  if (gSerialRuntime.isParent != 0)
+  if (gSerialWork.isParent != 0)
     status |= LINK_STATUS_PARENT;
   return status;
 }

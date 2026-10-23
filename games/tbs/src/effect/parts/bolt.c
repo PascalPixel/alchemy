@@ -6,8 +6,8 @@
 
 /// The second blitter, made anew for each glint with its random flip.
 #define BOLT_GLINT_BLITTER                                                     \
-  ((DrawRectangle *)gBattleEffectWork)[HEAP_SLOT_BLITTER_ALTERNATE -           \
-                                       HEAP_SLOT_BATTLE_EFFECT]
+  ((DrawRectangle *)                                                           \
+       gBattleAnimWork)[HEAP_SLOT_RAM_CODE_2 - HEAP_SLOT_BATTLE_ANIM]
 
 /// The columns of a gBolt_Counts row.
 enum {
@@ -58,8 +58,8 @@ void BattleEffect_RunBolt(struct BattleEffectArgument *effect) {
   sprites = EFFECT_SLOT(slots, HEAP_SLOT_BATTLE_SHEET);
   work->effect = effect;
   BattleEffect_StartCanvasLayer(1);
-  EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER, EFFECT_CLIP_BOUNDS, COMPOSITE_MAX);
-  draw[0] = EFFECT_SLOT(slots, HEAP_SLOT_BLITTER);
+  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, COMPOSITE_MAX);
+  draw[0] = EFFECT_SLOT(slots, HEAP_SLOT_RAM_CODE);
   // The tornado sheet only for its glints.
   Resource_LoadAndDecompress((s32)&ResourceId_TornadoSheet, work->sheet, 1, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_LightningBoltSheet,
@@ -71,7 +71,7 @@ void BattleEffect_RunBolt(struct BattleEffectArgument *effect) {
     PARTICLES[j].variant = 0;
   EFFECT_FREE_PARTICLES(j, work->particles, 64);
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, 75);
-  AudioCommand_PlayFar(SE_ITEM_BREAK);
+  Sound_PlaySongFar(SE_ITEM_BREAK);
   for (frame = 0; frame != work->effect->count * 8 + 40; frame++) {
     if (frame == 24)
       EFFECT_SHOW_DAMAGE(SE_IMPACT);
@@ -154,7 +154,7 @@ void BattleEffect_RunBolt(struct BattleEffectArgument *effect) {
           x -= spread / 2;
           x -= (gBattleEffect_GlintCellWidths[kind] >> 1);
 
-          EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER_ALTERNATE,
+          EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
                               gBolt_GlintFlips[Random16() & 3] |
                                   EFFECT_CLIP_BOUNDS,
                               gBolt_GlintModes[work->effect->variant]);
@@ -162,7 +162,7 @@ void BattleEffect_RunBolt(struct BattleEffectArgument *effect) {
                              work->sheet + gBattleEffect_GlintCells[kind], x, y,
                              gBattleEffect_GlintCellWidths[kind],
                              gBattleEffect_GlintCellHeights[kind]);
-          Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER_ALTERNATE);
+          FreeHeapSlot(HEAP_SLOT_RAM_CODE_2);
         }
       }
     }

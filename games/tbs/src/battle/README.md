@@ -722,7 +722,7 @@ writing `void` would change the compiled code at the function's end, and
 
 A unit's figure is one of the object slots `Object_CreateFar` hands out. The
 battle reads it as a `struct MotionObject`, while the field's [far calls](../../glossary.md#far-call) take
-it as a `struct DispatchObject` or a `struct ObjectRuntime`. They describe the
+it as a `struct DispatchObject` or a `struct Object`. They describe the
 same record, with fields at the same offsets, and a call into the field casts
 to the view its prototype names. [XXX](../../glossary.md#xxx): whether these could be one struct
 depends on naming the fields only one view names so far.

@@ -20,7 +20,7 @@ void FieldEffect_UpdateRadialCamera(struct EffectSlot *effect) {
   s16 angle;
   s32 state;
 
-  effectWork = gEffectWork;
+  effectWork = gFieldEffectWork;
   statePointer = &effect->state;
 top:
   state = *statePointer;
@@ -66,7 +66,8 @@ top:
 /// FieldEffect_DispatchRequestKind for Halt on a target; sets the target's
 /// paused field.
 void FieldEffect_RunHaltOnTarget(s32 unused) {
-  struct ObjectEvent *target = ((struct FieldEffectWork *)gEffectWork)->child;
+  struct ObjectEvent *target =
+      ((struct FieldEffectWork *)gFieldEffectWork)->child;
 
   target->paused = 1;
   FieldEffect_RunHalt();
@@ -80,7 +81,7 @@ void FieldEffect_RunHaltOnTarget(s32 unused) {
 ///
 /// Abilities: Halt (FIELD_KIND_HALT).
 void FieldEffect_RunHalt(void) {
-  struct FieldEffectWork *effectWork = gEffectWork;
+  struct FieldEffectWork *effectWork = gFieldEffectWork;
   struct MotionObject *caster = effectWork->mainObject;
   struct MotionObject *orb;
   struct EffectSlot *effect;
@@ -126,13 +127,13 @@ void FieldEffect_RunHalt(void) {
   // its second animation.
   WaitFrames(5);
   ObjectDispatch_SelectAnimationFar(orb, 1);
-  AudioCommand_PlayFar(SE_TRIPLE_TONE_LOW);
+  Sound_PlaySongFar(SE_TRIPLE_TONE_LOW);
   WaitFrames(10);
-  AudioCommand_PlayFar(SE_TRIPLE_TONE_LOW);
+  Sound_PlaySongFar(SE_TRIPLE_TONE_LOW);
   WaitFrames(10);
-  AudioCommand_PlayFar(SE_TRIPLE_TONE_LOW);
+  Sound_PlaySongFar(SE_TRIPLE_TONE_LOW);
   WaitFrames(10);
-  AudioCommand_PlayFar(SE_TRIPLE_TONE_HIGH);
+  Sound_PlaySongFar(SE_TRIPLE_TONE_HIGH);
 
   // Particles 4 pixels round it fly out, then come back to the effect's
   // position.

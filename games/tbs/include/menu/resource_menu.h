@@ -26,7 +26,7 @@ struct ResourceMenuEntry {
 
 /// The resource menu: up to six command icons in a row, the windows of their
 /// labels, the icons' resource ids, the selection and the layout.
-/// It lives in heap slot 58 (gMenuSelectWork) from AffineEffect_InitializeWork
+/// It lives in heap slot 58 (gIconMenuWork) from AffineEffect_InitializeWork
 /// to Menu_EndResourceSelection.
 struct ResourceMenuWork {
   struct ResourceMenuEntry entries[6];
@@ -58,6 +58,6 @@ STATIC_ASSERT(offsetof(struct ResourceMenuWork, resourceBase) == 0x92);
 STATIC_ASSERT(offsetof(struct ResourceMenuWork, previousMode) == 0x96);
 
 /// Work slot 58: the resource menu while one is open.
-extern struct ResourceMenuWork *gMenuSelectWork;
+extern struct ResourceMenuWork *gIconMenuWork;
 
 #endif

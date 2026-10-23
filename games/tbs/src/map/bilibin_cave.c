@@ -366,7 +366,7 @@ static void BilibinCave_UpdateThirdPuddleFromTorches(void) {
     if (GameFlag_IsSet(FLAG_MAPSEC_TEMP_02) == 0) {
       Engine_ScriptStart();
       Engine_ScriptWait(40);
-      Script_PlayCue(SE_HIDDEN_PASSAGE_OPEN);
+      Script_PlaySong(SE_HIDDEN_PASSAGE_OPEN);
       destinationCellX = 36;
       Engine_ObjectEventSetAnimationAndWait(LOCALID_THIRD_PUDDLE,
                                             PUDDLE_ANIMATION_MELT);
@@ -379,7 +379,7 @@ static void BilibinCave_UpdateThirdPuddleFromTorches(void) {
     if (GameFlag_IsSet(FLAG_MAPSEC_TEMP_02) != 0) {
       Engine_ScriptStart();
       Engine_ScriptWait(40);
-      Script_PlayCue(SE_220);
+      Script_PlaySong(SE_220);
       destinationCellX = 36;
       Engine_ObjectEventSetAnimationAndWait(LOCALID_THIRD_PUDDLE,
                                             PUDDLE_ANIMATION_FREEZE);
@@ -442,7 +442,7 @@ static void BilibinCave_RestoreEntrance(void) {
 /// fire, gone once Douse has put it out.
 static void BilibinCave_RestoreRapierRoom(void) {
 
-  gEventWork->startTransition =
+  gFieldWork->startTransition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
 
   Engine_ObjectEventSetAnimation(LOCALID_RAPIER_ROOM_WEST_TORCH,
@@ -470,7 +470,7 @@ static void BilibinCave_RestoreIceRoom(void) {
   struct ObjectEvent *objectEvent;
   s32 destinationCellX;
 
-  gEventWork->startTransition =
+  gFieldWork->startTransition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   // Set up the decorative animations before restoring interactive object
   // events.
@@ -626,7 +626,7 @@ static void EventScript_PushObjectEventAhead(void) {
   Engine_ObjectSetPosition(leader, destination.x, destination.y, destination.z);
 
   // Wait for the target's movement before snapping it to the destination.
-  FieldObject_WaitForMove(target);
+  Object_WaitForMove(target);
 
   target->x.fixed = destination.x;
   target->z.fixed = destination.z;

@@ -168,7 +168,7 @@ void UiText_PrepareMessageWorkFar(s32 argument);
 /// when the speaker has none.
 s32 Localization_LookupEntryIdFar(u32 value);
 /// Runs the field menu until the player picks a screen that leaves it, and
-/// returns that screen's result; Field_RunMap ignores it.
+/// returns that screen's result; Map_Run ignores it.
 s32 Menu_RunTopSelectionFar(void);
 /// Runs the title menu built from the save files, New Game to Send, and returns
 /// the chosen SaveSlotAction, or -1 when cancelled.
@@ -254,21 +254,21 @@ s32 Save_WriteSelectedSlotFar(void);
 /// Lets the player pick a file in save menu mode arg and loads it as the
 /// current file, as the title's Continue does; it returns as the Save command
 /// does.
-s32 SaveState_LoadRecordIntoWorkFar(s32 arg);
+s32 Save_LoadRecordIntoWorkFar(s32 arg);
 /// Runs the file menu's Copy, writing a chosen file to the first empty one. Its
 /// errors are shown before it returns them.
-s32 SaveState_CopySlotPairFar(void);
+s32 Save_CopyFileFar(void);
 /// Runs the file menu's Erase, deleting a chosen file once the player confirms
 /// it. Returns 0 also when the player answers No.
-s32 SaveState_DeleteSelectedSlotFar(void);
+s32 Save_EraseSelectedFileFar(void);
 /// Writes the save stamp into the current file's first record, as the link
 /// lobby saves its battle results. Returns 0, -1 with no file chosen, or a
 /// SAVE_ERROR_.
-s32 SaveState_ProcessSelectedSlotFar(void);
+s32 Save_ProcessSelectedFileFar(void);
 /// Reads the save summaries for the title menu and returns how many files there
 /// are, plus 100 when every file has its send flag; it also decides whether
 /// Battle and Send are offered.
-s32 SaveState_ScanRecordFlagsFar(void);
+s32 Save_ScanRecordFlagsFar(void);
 /// Runs the name entry screen for member entry. Returns 0, or -1 when
 /// cancelled; the name changes only when the player ends on End.
 s32 NameEntry_EditOwnerNameFar(s32 entry);
@@ -336,7 +336,7 @@ s32 Ui_GetTableWordZeroFar(s32 no);
 s32 UiText_OpenEntryMessageFar(struct UiWindow *window, s32 argument);
 /// Returns how many save files there are, leaving out the files saved at the
 /// end of the game when flag is nonzero, or SAVE_ERROR_NO_MEMORY.
-s32 SaveState_CountRecordsExcludingFlaggedFar(s32 flag);
+s32 Save_CountRecordsExcludingFlaggedFar(s32 flag);
 /// Draws an empty window frame at tile (x, y), width by height tiles, and frees
 /// the text tiles it covers.
 void UiWindow_DrawFrameFar(s32 x, s32 y, u32 width, u32 height);

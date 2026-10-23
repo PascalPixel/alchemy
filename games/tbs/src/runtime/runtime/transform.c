@@ -18,7 +18,7 @@ typedef s32 (*Dot3Fn)(s32 ax, s32 bx, s32 ay, s32 by, s32 az, s32 bz);
 /// transform.
 void Render_ResetTransformState(void) {
   gTransformStackTop =
-      Runtime_AllocateBlock(HEAP_SLOT_TRANSFORM_STACK, sizeof(gTransform));
+      AllocHeapSlotEwram(HEAP_SLOT_TRANSFORM_STACK, sizeof(gTransform));
   gTransformStackDepth = 0;
   CAMELOT_ASM("the fixed-register identity store of transform.h")
   Transform_ResetCurrent();

@@ -14,7 +14,7 @@
 /// add for a window transition, and DisplayTransition_UpdateScanlineTable
 /// removes when it ends.
 void FieldEffect_StartWindowHBlankDma(void) {
-  struct DisplayTransitionState *work = gDisplayTransition;
+  struct DisplayTransitionState *work = gScreenTransitionWork;
   u16 *scanlineData = work->pages[work->page];
   volatile u16 *dma0 = REG_DMA0;
 
@@ -70,7 +70,7 @@ extern struct TransitionShape gDisplayTransition_Shapes[];
 /// A scheduler callback (priority 0xc80), added with
 /// FieldEffect_StartWindowHBlankDma; it removes both and stops DMA 0 when a
 /// transition with no next mode ends. Writes the hidden page of the
-/// transition state (HEAP_SLOT_TRANSITION) and then flips state->page.
+/// transition state (HEAP_SLOT_SCREEN_TRANSITION) and then flips state->page.
 void DisplayTransition_UpdateScanlineTable(void) {
   struct DisplayTransitionState *state;
   struct TransitionSpan *span;
@@ -86,7 +86,7 @@ void DisplayTransition_UpdateScanlineTable(void) {
   s32 *viewLeader;
   s32 *viewInverse7;
 #endif
-  struct ObjectRuntime *object;
+  struct Object *object;
   u32 i;
   s32 k;
   s32 lineCount;
@@ -107,7 +107,7 @@ void DisplayTransition_UpdateScanlineTable(void) {
 
   grid = gMapGridWork[0];
 #ifdef UBFIX
-  state = gDisplayTransition;
+  state = gScreenTransitionWork;
 #else
   // UB: this indexes past gMapGridWork into the separate transition-work cell.
   // The named cell grows 0x90c to 0x910 native bytes in English.
@@ -128,10 +128,8 @@ void DisplayTransition_UpdateScanlineTable(void) {
         } else {
           REG_DISPCNT &= ~(DISPCNT_WIN0_ON | DISPCNT_WIN1_ON);
         }
-        Scheduler_RemoveCallback(
-            (SchedulerCallback)FieldEffect_StartWindowHBlankDma);
-        Scheduler_RemoveCallback(
-            (SchedulerCallback)DisplayTransition_UpdateScanlineTable);
+        Task_Remove((TaskFunc)FieldEffect_StartWindowHBlankDma);
+        Task_Remove((TaskFunc)DisplayTransition_UpdateScanlineTable);
         {
           volatile u16 *dma0 = REG_DMA0;
 
@@ -560,19 +558,19 @@ void DisplayTransition_UpdateScanlineTable(void) {
 /// Called by Reveal's effect (WINDOW_TRANSITION_RIPPLE) and, through
 /// DisplayTransition_InitializeBattleEffectStateFar, by three maps (Altmiller
 /// Cave, Tret Tree's branch and Babi's palace). Allocates and clears the
-/// transition state in HEAP_SLOT_TRANSITION and adds both window callbacks;
-/// mask 0x3f3f shows every layer in both windows.
+/// transition state in HEAP_SLOT_SCREEN_TRANSITION and adds both window
+/// callbacks; mask 0x3f3f shows every layer in both windows.
 void DisplayTransition_InitializeBattleEffectState(s32 mode) {
   struct DisplayTransitionState *state =
-      Runtime_AllocateBlock(HEAP_SLOT_TRANSITION, sizeof(*state));
+      AllocHeapSlotEwram(HEAP_SLOT_SCREEN_TRANSITION, sizeof(*state));
 
   Dma_Fill32(0, state, sizeof(*state));
   state->mode = mode;
   state->value = 0;
   state->mask = 0x3f3f;
   state->active = 1;
-  Scheduler_AddOrUpdateCallback(DisplayTransition_UpdateScanlineTable, 0xc80);
-  Scheduler_AddOrUpdateCallback(FieldEffect_StartWindowHBlankDma, 0x480);
+  Task_Add(DisplayTransition_UpdateScanlineTable, 0xc80);
+  Task_Add(FieldEffect_StartWindowHBlankDma, 0x480);
 }
 
 /// Suspends the window transition's two callbacks.
@@ -580,19 +578,19 @@ void DisplayTransition_InitializeBattleEffectState(s32 mode) {
 /// XXX: nothing in ☀️ names it and it has no far-call entry, yet it is not
 /// marked UNUSED; a caller through a table or ⚓️'s twin would settle it.
 void DisplayTransition_SuspendCallbacks(void) {
-  Scheduler_SuspendTasks(&DisplayTransition_UpdateScanlineTable);
-  Scheduler_SuspendTasks(&FieldEffect_StartWindowHBlankDma);
+  Task_SuspendAll(&DisplayTransition_UpdateScanlineTable);
+  Task_SuspendAll(&FieldEffect_StartWindowHBlankDma);
 }
 
-/// Allocates the display transition state (HEAP_SLOT_TRANSITION) and clears
-/// it.
+/// Allocates the display transition state (HEAP_SLOT_SCREEN_TRANSITION) and
+/// clears it.
 ///
 /// Called by DisplayTransition_Start and DisplayTransition_Finish for every
 /// kind but the two fades.
 struct DisplayTransitionState *DisplayTransition_AllocateAndClearState(void) {
   struct DisplayTransitionState *state;
 
-  state = Runtime_AllocateBlock(HEAP_SLOT_TRANSITION, sizeof(*state));
+  state = AllocHeapSlotEwram(HEAP_SLOT_SCREEN_TRANSITION, sizeof(*state));
   Dma_Fill32(0, state, sizeof(*state));
   return state;
 }
@@ -602,9 +600,9 @@ struct DisplayTransitionState *DisplayTransition_AllocateAndClearState(void) {
 /// transition (its low byte an enum WindowTransitionMode), a dissolve (3) or
 /// opening from the centre line (4, which a non-zero low byte makes flicker).
 /// It returns after one frame while the fade runs on: a caller that must wait
-/// for it, as Field_RunMap does, waits itself.
+/// for it, as Map_Run does, waits itself.
 ///
-/// Called by Field_RunMap to fade a map in with work->transition and
+/// Called by Map_Run to fade a map in with work->transition and
 /// work->transitionFrames, and by FieldScript_StartScreenTransition for map
 /// scripts. Every style but the fades adds a scheduler callback (and the
 /// centre line the HBlank handler, IRQ 1) that runs the transition; every kind
@@ -640,8 +638,8 @@ void DisplayTransition_Start(s32 mode, s32 frames) {
     state->value = 0;
     state->mask = 63;
     state->active = 1;
-    Scheduler_AddOrUpdateCallback(DisplayTransition_UpdateScanlineTable, 0xc80);
-    Scheduler_AddOrUpdateCallback(FieldEffect_StartWindowHBlankDma, 0x480);
+    Task_Add(DisplayTransition_UpdateScanlineTable, 0xc80);
+    Task_Add(FieldEffect_StartWindowHBlankDma, 0x480);
     WaitFrames(1);
     IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT, REG_DISPCNT | display->dispcnt,
                         0x20000);
@@ -658,7 +656,7 @@ void DisplayTransition_Start(s32 mode, s32 frames) {
     state->value = 32;
     DisplayTransition_FillTilemapAndSolidTile(15);
     WaitFrames(1);
-    Scheduler_AddOrUpdateCallback(DisplayTransition_UpdateFrame, 0xc80);
+    Task_Add(DisplayTransition_UpdateFrame, 0xc80);
     IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT, REG_DISPCNT | display->dispcnt,
                         0x20000);
     state->start = 0;
@@ -676,14 +674,14 @@ void DisplayTransition_Start(s32 mode, s32 frames) {
     display->secondLine = 80;
     WaitFrames(1);
     if (variant == 0) {
-      Scheduler_AddOrUpdateCallback(DisplayTransition_Update, 0xc80);
+      Task_Add(DisplayTransition_Update, 0xc80);
       Runtime_SetIrqHandler(1, 0, DisplayTransition_UpdateScanline);
       state->start = 80;
       state->end = 0;
       state->duration = frames;
       state->step = 0;
     } else {
-      Scheduler_AddOrUpdateCallback(DisplayTransition_UpdateFromCentre, 0xc80);
+      Task_Add(DisplayTransition_UpdateFromCentre, 0xc80);
       Runtime_SetIrqHandler(1, 0, DisplayTransition_UpdateScanline);
       state->start = 80;
       state->end = 0;
@@ -700,12 +698,12 @@ void DisplayTransition_Start(s32 mode, s32 frames) {
 /// Fades the screen out over frames frames, as DisplayTransition_Start fades
 /// it in.
 ///
-/// Called by Field_RunMap as a map ends, by Field_StartEncounterTransition
+/// Called by Map_Run as a map ends, by Field_StartEncounterTransition
 /// before a battle (the flickering centre line, and the
 /// WINDOW_TRANSITION_LEADER_INVERSE window), and by
 /// FieldScript_FinishScreenTransition for map scripts. The window and
 /// dissolve kinds run from value 32 to 64, the centre line from 0 to 80. Like
-/// DisplayTransition_Start it does not wait for the fade: Field_RunMap waits
+/// DisplayTransition_Start it does not wait for the fade: Map_Run waits
 /// transitionFrames after it.
 void DisplayTransition_Finish(s32 mode, s32 frames) {
   s32 variant;
@@ -729,8 +727,8 @@ void DisplayTransition_Finish(s32 mode, s32 frames) {
     state->value = 32;
     state->mask = 63;
     state->active = 1;
-    Scheduler_AddOrUpdateCallback(DisplayTransition_UpdateScanlineTable, 0xc80);
-    Scheduler_AddOrUpdateCallback(FieldEffect_StartWindowHBlankDma, 0x480);
+    Task_Add(DisplayTransition_UpdateScanlineTable, 0xc80);
+    Task_Add(FieldEffect_StartWindowHBlankDma, 0x480);
     WaitFrames(1);
     state->start = 32;
     state->end = 64;
@@ -745,7 +743,7 @@ void DisplayTransition_Finish(s32 mode, s32 frames) {
     state->value = 32;
     DisplayTransition_FillTilemapAndSolidTile(0);
     WaitFrames(1);
-    Scheduler_AddOrUpdateCallback(DisplayTransition_UpdateFrame, 0xc80);
+    Task_Add(DisplayTransition_UpdateFrame, 0xc80);
     state->start = 32;
     state->end = 64;
     state->duration = frames;
@@ -756,14 +754,14 @@ void DisplayTransition_Finish(s32 mode, s32 frames) {
     struct DisplayTransitionState *state =
         DisplayTransition_AllocateAndClearState();
     if (variant == 0) {
-      Scheduler_AddOrUpdateCallback(DisplayTransition_Update, 0xc80);
+      Task_Add(DisplayTransition_Update, 0xc80);
       Runtime_SetIrqHandler(1, 0, DisplayTransition_UpdateScanline);
       state->start = 0;
       state->end = 80;
       state->duration = frames;
       state->step = 0;
     } else {
-      Scheduler_AddOrUpdateCallback(DisplayTransition_UpdateFromCentre, 0xc80);
+      Task_Add(DisplayTransition_UpdateFromCentre, 0xc80);
       Runtime_SetIrqHandler(1, 0, DisplayTransition_UpdateScanline);
       state->start = 0;
       state->end = 80;
@@ -815,7 +813,7 @@ void DisplayTransition_Update(void) {
 
     if (*step >= *duration) {
       *duration = 0;
-      Scheduler_RemoveCallback(DisplayTransition_Update);
+      Task_Remove(DisplayTransition_Update);
       Runtime_SetIrqHandler(1, 0, 0);
       return;
     } else {
@@ -855,7 +853,7 @@ void DisplayTransition_UpdateFromCentre(void) {
 
     if (*step >= *duration) {
       *duration = 0;
-      Scheduler_RemoveCallback(DisplayTransition_UpdateFromCentre);
+      Task_Remove(DisplayTransition_UpdateFromCentre);
       Runtime_SetIrqHandler(1, 0, 0);
       return;
     } else {
@@ -967,7 +965,7 @@ void DisplayTransition_UpdateFrame(void) {
     if (state->step >= state->duration) {
       volatile u16 *dma0;
       state->duration = 0;
-      Scheduler_RemoveCallback(DisplayTransition_UpdateFrame);
+      Task_Remove(DisplayTransition_UpdateFrame);
       dma0 = REG_DMA0;
       dma0[5] &= ~DMA_START_TIMING_DRQ_REPEAT;
       dma0[5] &= ~DMA_ENABLE;
@@ -1008,7 +1006,7 @@ void DisplayTransition_UpdateFrame(void) {
 /// Sets up the dissolve for DisplayTransition_Start (colour 15),
 /// DisplayTransition_Finish and DisplayTransition_InitializeState (colour 0).
 void DisplayTransition_FillTilemapAndSolidTile(s32 color) {
-  struct DisplayTransitionState *work = gDisplayTransition;
+  struct DisplayTransitionState *work = gScreenTransitionWork;
   Dma_Fill32(0xf000f000, BG_SCREEN_BLOCK(4), 0x500);
   if (color != -1) {
     u32 pattern = 0;
@@ -1031,11 +1029,11 @@ void DisplayTransition_FillTilemapAndSolidTile(s32 color) {
 void DisplayTransition_InitializeState(s32 value) {
   struct DisplayTransitionState *state;
 
-  state = Runtime_AllocateBlock(HEAP_SLOT_TRANSITION, sizeof(*state));
+  state = AllocHeapSlotEwram(HEAP_SLOT_SCREEN_TRANSITION, sizeof(*state));
   Dma_Fill32(0, state, sizeof(*state));
   DisplayTransition_FillTilemapAndSolidTile(0);
   state->mode = value;
   state->value = 0;
-  Scheduler_AddOrUpdateCallback(DisplayTransition_UpdateFrame, 0xc80);
+  Task_Add(DisplayTransition_UpdateFrame, 0xc80);
   WaitFrames(0x78);
 }

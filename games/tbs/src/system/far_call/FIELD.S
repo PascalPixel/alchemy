@@ -29,7 +29,7 @@ FarCall_FieldTable:
 	export ObjectDispatch_StartMoveByKeysFar, ObjectDispatch_StartMoveByKeys
 	export ObjectDispatch_StartKeyCheckFar, ObjectDispatch_StartKeyCheck
 	overlay_veneer ObjectDispatch_FindFreeObject
-	export Object_CreateFar, FieldObject_Create
+	export Object_CreateFar, Object_CreateField
 	export ObjectDispatch_ReleaseFar, ObjectDispatch_Release
 	overlay_veneer ObjectDispatch_SetChildRotation
 	export ObjectDispatch_StartCameraFar, ObjectDispatch_StartCamera
@@ -47,7 +47,7 @@ FarCall_FieldTable:
 	export ObjectDispatch_StartIdleFar, ObjectDispatch_StartIdle
 	export ObjectDispatch_WaitForValue16Far, ObjectDispatch_WaitForValue16
 	export Object_SetMoveTargetFar, Object_SetMoveTarget
-	export FieldObject_WaitForMoveFar, FieldObject_WaitForMove
+	export Object_WaitForMoveFar, Object_WaitForMove
 	overlay_veneer MapGrid_GetScreenRelativePosition
 	overlay_veneer WorldMap_UpdateView
 	export WorldMap_LoadDefaultCellsAndUpdateBlockFar, WorldMap_LoadDefaultCellsAndUpdateBlock

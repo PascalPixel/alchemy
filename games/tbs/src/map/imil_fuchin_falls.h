@@ -7,6 +7,6 @@
 #include "map_tables.h"
 #include "item_ids.h"
 
-extern void *gWorkSlot[];
+extern void *gHeapSlots[];
 
 #endif

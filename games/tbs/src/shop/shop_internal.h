@@ -82,7 +82,7 @@ enum ShopStockRow {
   SHOP_STOCK_ROW_VALE_WEAPONS = 1, ///< Vale's weapon shop
   SHOP_STOCK_ROW_VALE_ARMOR = 2,   ///< Vale's armor shop
   /// Xian's weapon, armor and item shops, the warriors' shops, which greet
-  /// the party with lines of their own (ShopRuntime.warriorShop).
+  /// the party with lines of their own (ShopWork.warriorShop).
   SHOP_STOCK_ROW_XIAN_WEAPONS = 16,
   SHOP_STOCK_ROW_XIAN_ARMOR = 17,
   SHOP_STOCK_ROW_XIAN_ITEMS = 18

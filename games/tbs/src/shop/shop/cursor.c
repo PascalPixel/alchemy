@@ -91,7 +91,7 @@ struct RenderOutput *Shop_CreatePriceSprite(s32 value, struct UiWindow *window,
   s32 resourceSlot;
   struct RenderOutput *priceSprite;
 
-  tileBuffer = Runtime_AllocateBlock(HEAP_SLOT_TILE_SCRATCH, 0x400);
+  tileBuffer = AllocHeapSlotEwram(HEAP_SLOT_TILE_SCRATCH, 0x400);
   priceSprite = 0;
   // 0x40 words: the blank price's eight tiles, 0x100 bytes of the block
   Dma_Set(gShop_PriceTiles, tileBuffer, (DMA_ENABLE | DMA_32BIT) << 16 | 0x40,
@@ -120,7 +120,7 @@ struct RenderOutput *Shop_CreatePriceSprite(s32 value, struct UiWindow *window,
     priceSprite =
         RenderOutput_CreateFar(resourceSlot, 0x80008000, window, x, y);
   }
-  Runtime_ReleaseHeapBlock(HEAP_SLOT_TILE_SCRATCH);
+  FreeHeapSlot(HEAP_SLOT_TILE_SCRATCH);
   return priceSprite;
 }
 
@@ -128,15 +128,15 @@ struct RenderOutput *Shop_CreatePriceSprite(s32 value, struct UiWindow *window,
 /// Called before sanctum and Djinn capture effects and Altmiller's wall burst;
 /// Shop_RestoreFieldPalette restores the saved colours afterward.
 void Shop_SaveAndTintFieldPalette(s32 layer) {
-  // UB: slot 32 lies past scalar gEventWork. Its named load adds eight
+  // UB: slot 32 lies past scalar gFieldWork. Its named load adds eight
   // bytes in the native EN trial (0x54 to 0x5c).
 #ifdef UBFIX
-  struct ColorBuffer *paletteBuffers = gPaletteBufferWork;
-  u8 *eventBytes = (u8 *)gEventWork;
+  struct ColorBuffer *paletteBuffers = gPaletteFadeWork;
+  u8 *eventBytes = (u8 *)gFieldWork;
 #else
-  u32 *workCells = (u32 *)&gEventWork;
-  struct ColorBuffer *paletteBuffers = (struct ColorBuffer *)
-      workCells[HEAP_SLOT_PALETTE_BUFFER - HEAP_SLOT_EVENT];
+  u32 *workCells = (u32 *)&gFieldWork;
+  struct ColorBuffer *paletteBuffers =
+      (struct ColorBuffer *)workCells[HEAP_SLOT_PALETTE_FADE - HEAP_SLOT_FIELD];
   u8 *eventBytes = (u8 *)workCells[0];
 #endif
   u16 *savedPalette = paletteBuffers->target;
@@ -153,7 +153,7 @@ void Shop_SaveAndTintFieldPalette(s32 layer) {
 /// frames. Called when the sanctum, Djinn capture or Altmiller wall effect
 /// ends.
 void Shop_RestoreFieldPalette(void) {
-  ColorBuffer_SetTargetFar((s32)gEventWork + 0x236, 1);
+  ColorBuffer_SetTargetFar((s32)gFieldWork + 0x236, 1);
   ColorBuffer_StartInterpolationFar(0x10);
 }
 
@@ -281,7 +281,7 @@ void ShopCursor_SetPositionImmediate(struct ShopCursor *cursor, s32 x, s32 y) {
 void Shop_PlaceCursor(struct UiWindow *window, s32 x, s32 y) {
   s32 cursorX;
   s32 cursorY;
-  struct ShopRuntime *shop;
+  struct ShopWork *shop;
 
   cursorX = x;
   cursorY = y;

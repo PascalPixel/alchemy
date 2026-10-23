@@ -29,7 +29,7 @@ void Runtime_RemapBytesByTable(u8 *bytes, s32 byteCount) {
 /// from byte 2. size counts the method byte too (an even size means no data).
 /// The methods are enum MetatilePacking.
 ///
-/// Called by MapGrid_LoadLayout with the size Resource_DecodeType01
+/// Called by MapGrid_LoadLayout with the size Decompress_Type01
 /// returns; the packed stream is decoded to Ram_MapGridCellBuffer + 1 so that
 /// its method byte lands at byte 1 and the halfwords at byte 2 are aligned.
 void TileMap_DecodeStagedBuffer(s32 size) {
@@ -116,13 +116,13 @@ void TileMap_ConvertBuffer(void) {
   u32 savedBytes;
 
   savedBytes = 0x8000;
-  savedCells = Runtime_BumpAllocateAlternatePool(savedBytes);
+  savedCells = AllocEwram(savedBytes);
   Iwram_CopyWords(savedCells, Ram_MapGridCellBuffer, savedBytes);
   RamCode_Load(convertGrid, Tile_ConvertMapGrid, Tile_ConvertMapGridCodeSize);
   convertGrid(((u8 *)gMapGridCellBuffer + 0x8000), Ram_MapGridCellBuffer,
               savedCells);
-  MemFree(convertGrid);
-  MemFree(savedCells);
+  Free(convertGrid);
+  Free(savedCells);
 }
 
 /// Copies one tile column of a metatile into a BG map: its top and
@@ -240,8 +240,8 @@ s32 MapGrid_LoadLayout(s32 index) {
                    DISPCNT_OBJ_ON | DISPCNT_WIN0_ON);
   Fade_FromBlack(0);
   layoutResources = &gLayouts[index];
-  grid = Runtime_AllocateBlock(HEAP_SLOT_MAP_GRID,
-                               sizeof(struct MapGridScrollWork));
+  grid =
+      AllocHeapSlotEwram(HEAP_SLOT_MAP_GRID, sizeof(struct MapGridScrollWork));
   Iwram_ClearWords(grid, sizeof(struct MapGridScrollWork));
   layoutHeader = (struct LayoutHeader *)Resource_GetTableEntry(
       layoutResources->resources[0] + (u32)&ResourceId_Layout001);
@@ -249,22 +249,22 @@ s32 MapGrid_LoadLayout(s32 index) {
   // staged in the cell buffer, which the cell planes then overwrite.
   encodedData = (u8 *)layoutHeader + layoutHeader->metatiles;
   TileMap_DecodeStagedBuffer(
-      Resource_DecodeType01(encodedData, Ram_MapGridCellBuffer + 1));
+      Decompress_Type01(encodedData, Ram_MapGridCellBuffer + 1));
   encodedData = (u8 *)layoutHeader + layoutHeader->shapes;
-  Resource_DecodeType01(encodedData, Ram_MapGridCollision);
+  Decompress_Type01(encodedData, Ram_MapGridCollision);
   encodedData = (u8 *)layoutHeader + layoutHeader->cells;
-  Resource_DecodeType01(encodedData, Ram_MapGridCellBuffer);
+  Decompress_Type01(encodedData, Ram_MapGridCellBuffer);
   TileMap_ConvertBuffer();
   // The tile animation and blend scripts are optional (offset 0), and decode
   // into the space after the shapes in Ram_MapGridCollision.
   if (layoutHeader->animation != 0) {
     encodedData = (u8 *)layoutHeader + layoutHeader->animation;
-    Resource_DecodeType01(encodedData, Ram_MapGridCollision + 0x1000);
+    Decompress_Type01(encodedData, Ram_MapGridCollision + 0x1000);
     TileAnimation_StartChannels((const u16 *)(Ram_MapGridCollision + 0x1000));
   }
   if (layoutHeader->blend != 0) {
     encodedData = (u8 *)layoutHeader + layoutHeader->blend;
-    Resource_DecodeType01(encodedData, Ram_MapGridCollision + 0x1e00);
+    Decompress_Type01(encodedData, Ram_MapGridCollision + 0x1e00);
     DisplayBlend_StartScript((u16 *)(Ram_MapGridCollision + 0x1e00));
   }
   // The marker list is not decoded: Field_PlaceMapMarkers reads it in place
@@ -344,39 +344,34 @@ s32 MapGrid_LoadLayout(s32 index) {
     // bytes, 14 of the 16 BG palettes), the three 16 KB tile sheets, and
     // last the layer data, which decodes straight to gMapGridLayerData. Without
     // the memory, nothing is loaded.
-    graphicsBuffer = MemAlloc(0x4000);
+    graphicsBuffer = Alloc(0x4000);
     if (graphicsBuffer != NULL) {
       // Colour 0 of BG palette 0 is the backdrop; it survives the new palette.
       backdrop = *(s16 *)BG_PLTT;
-      Resource_DecodeType01(
-          Resource_GetTableEntry(layoutResources->resources[1] +
-                                 (u32)&ResourceId_Layout001),
-          graphicsBuffer);
+      Decompress_Type01(Resource_GetTableEntry(layoutResources->resources[1] +
+                                               (u32)&ResourceId_Layout001),
+                        graphicsBuffer);
       *(s16 *)graphicsBuffer = backdrop;
       /* FAKEMATCH(wrapper): these four copies call the fixed entry itself, past
        * the IWRAM call layer; as Iwram_CopyWords, 103 of 349 instructions
        * differ in tbs-en. */
       Iwram_CopyWordsEntry((void *)BG_PLTT, graphicsBuffer, 0x1c0);
-      Resource_DecodeType2(
-          Resource_GetTableEntry(layoutResources->resources[2] +
-                                 (u32)&ResourceId_Layout001),
-          graphicsBuffer);
+      Decompress_Type2(Resource_GetTableEntry(layoutResources->resources[2] +
+                                              (u32)&ResourceId_Layout001),
+                       graphicsBuffer);
       Iwram_CopyWordsEntry(BG_CHAR_BLOCK(1), graphicsBuffer, 0x4000);
-      Resource_DecodeType2(
-          Resource_GetTableEntry(layoutResources->resources[3] +
-                                 (u32)&ResourceId_Layout001),
-          graphicsBuffer);
+      Decompress_Type2(Resource_GetTableEntry(layoutResources->resources[3] +
+                                              (u32)&ResourceId_Layout001),
+                       graphicsBuffer);
       Iwram_CopyWordsEntry(BG_CHAR_BLOCK(2), graphicsBuffer, 0x4000);
-      Resource_DecodeType2(
-          Resource_GetTableEntry(layoutResources->resources[4] +
-                                 (u32)&ResourceId_Layout001),
-          graphicsBuffer);
+      Decompress_Type2(Resource_GetTableEntry(layoutResources->resources[4] +
+                                              (u32)&ResourceId_Layout001),
+                       graphicsBuffer);
       Iwram_CopyWordsEntry(BG_CHAR_BLOCK(3), graphicsBuffer, 0x4000);
-      Resource_DecodeType2(
-          Resource_GetTableEntry(layoutResources->resources[5] +
-                                 (u32)&ResourceId_Layout001),
-          gMapGridLayerData);
-      MemFree(graphicsBuffer);
+      Decompress_Type2(Resource_GetTableEntry(layoutResources->resources[5] +
+                                              (u32)&ResourceId_Layout001),
+                       gMapGridLayerData);
+      Free(graphicsBuffer);
     }
   }
   // Only BG0, the windows, is shown here; DisplayTransition_Start ORs
@@ -388,13 +383,12 @@ s32 MapGrid_LoadLayout(s32 index) {
   REG_DISPCNT = displayFlags;
   // UB: the scheduler returns s32; call it through its declared type.
 #ifdef UBFIX
-  Scheduler_AddOrUpdateCallback(MapGrid_UpdateLayerScroll, 0xc85);
+  Task_Add(MapGrid_UpdateLayerScroll, 0xc85);
 #else
   /* FAKEMATCH(wrapper): called through a cast to the void call the bytes
    * show, which loads the callback before its order; as a call by its
    * prototype, 2 of 349 instructions differ in tbs-en. */
-  ((void (*)(void (*)(void), s32))Scheduler_AddOrUpdateCallback)(
-      MapGrid_UpdateLayerScroll, 0xc85);
+  ((void (*)(void (*)(void), s32))Task_Add)(MapGrid_UpdateLayerScroll, 0xc85);
 #endif
   return 2;
 }

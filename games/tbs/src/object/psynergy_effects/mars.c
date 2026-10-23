@@ -27,7 +27,7 @@ void Djinn_RunMarsJoinEffect(s32 djinniId) {
     return;
 
   FieldEffect_InitializeSlots();
-  effectWork = gEffectWork;
+  effectWork = gFieldEffectWork;
   // Tint the screen red: PALETTE_TRANSFORM_TINT | RGB(16, 4, 4), the form
   // mercury.c spells out for its blue.
   Shop_SaveAndTintFieldPaletteFar(0x201090);
@@ -36,15 +36,15 @@ void Djinn_RunMarsJoinEffect(s32 djinniId) {
   // note on each.
   ObjectMotion_ArmCallback(djinniId, 0x4000, 0);
   WaitFrames(20);
-  AudioCommand_PlayFar(SE_173);
+  Sound_PlaySongFar(SE_173);
   Motion_SetVarCbAndRefresh(djinniId, 1);
-  AudioCommand_PlayFar(SE_174);
+  Sound_PlaySongFar(SE_174);
   Motion_SetVarCbAndRefresh(djinniId, 1);
-  AudioCommand_PlayFar(SE_175);
+  Sound_PlaySongFar(SE_175);
   Motion_SetVarCbAndRefresh(djinniId, 1);
   // Spin up for 80 frames, then spin and shrink away.
   WaitFrames(20);
-  AudioCommand_PlayFar(SE_140);
+  Sound_PlaySongFar(SE_140);
   djinni->update = FieldEffect_AdvanceAngleWithRamp;
   djinni->timer = 0;
   WaitFrames(80);
@@ -176,12 +176,11 @@ void FieldEffect_UpdateDescendingOrbitObject(union FieldObject *fieldObject) {
 /// frame to at most 5, straight at its target.
 void FieldEffect_UpdateRadialSpread(struct EffectSlot *effect) {
   struct EffectVector position;
-  struct ObjectRuntime *source;
+  struct Object *source;
   s32 state;
   u32 random;
 
-  source =
-      (struct ObjectRuntime *)ObjectEvent_GetById(gGameState.selectedLocalId);
+  source = (struct Object *)ObjectEvent_GetById(gGameState.selectedLocalId);
   state = effect->state;
 
   if (state == VENUS_PARTICLE_AIM) {
@@ -209,7 +208,7 @@ void FieldEffect_UpdateRadialSpread(struct EffectSlot *effect) {
     effect->state++;
 
     if ((gFrameTick & 1) != 0)
-      AudioCommand_PlayFar(SE_144);
+      Sound_PlaySongFar(SE_144);
   } else if (state == VENUS_PARTICLE_RISING) {
     if (EffectSlot_HasPendingTarget(effect) == 0)
       effect->state--;

@@ -436,7 +436,7 @@ static void EventScript_BaneKeepsAway(void) {
   s32 zByteOffset;
   struct EventWork *work;
 
-  work = gEventWork;
+  work = gFieldWork;
   if (Engine_GameFlagIsSet(FLAG_CROSSBONE_ISLE_BANE_LAST_ESCAPE) != 0) {
     if (gGameState.pausedObject != LOCALID_BANE) {
       targetByteOffset = work->touchedTrigger;
@@ -582,7 +582,7 @@ static void EventScript_OpenThirdBlueDoor(void) {
   CrossboneIsleKeys_UseBlueKey(2);
   leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   if (leader->facing == FACING_SOUTH) {
-    blockedSteps = &gEventWork->blockedSteps;
+    blockedSteps = &gFieldWork->blockedSteps;
     if (*blockedSteps > 12) {
       Engine_LeaderCheckAhead();
       resetSteps = 0;
@@ -601,7 +601,7 @@ static void EventScript_OpenFourthBlueDoor(void) {
   CrossboneIsleKeys_UseBlueKey(3);
   leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   if (leader->facing == FACING_SOUTH) {
-    blockedSteps = &gEventWork->blockedSteps;
+    blockedSteps = &gFieldWork->blockedSteps;
     if (*blockedSteps > 12) {
       Engine_LeaderCheckAhead();
       resetSteps = 0;
@@ -676,7 +676,7 @@ static void CrossboneIsleKeys_CheckFirstPursuerTrigger(void) {
   struct ObjectEvent *leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   s32 column = leader->x.fixed / PIXELS(16);
   s32 row = leader->z.fixed / PIXELS(16);
-  struct EventWork *work = gEventWork;
+  struct EventWork *work = gFieldWork;
 
   if (!FLAG_CHECK(PURSUER_AFTER_LEADER_FLAG) && gGameState.cloaked == 0 &&
       gGameState.pausedObject != LOCALID_FIRST_STATUE &&
@@ -718,7 +718,7 @@ static void CrossboneIsleKeys_CheckSecondPursuerTrigger(void) {
   struct ObjectEvent *leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   s32 column = leader->x.fixed / PIXELS(16);
   s32 row = leader->z.fixed / PIXELS(16);
-  struct EventWork *work = gEventWork;
+  struct EventWork *work = gFieldWork;
 
   if (FLAG_CHECK(PURSUER_AFTER_LEADER_FLAG) == 0 && gGameState.cloaked == 0 &&
       gGameState.pausedObject != LOCALID_SECOND_STATUE && column == 10 &&
@@ -876,7 +876,7 @@ static void CrossboneIsleKeys_CheckFifthPursuerTrigger(void) {
   struct ObjectEvent *leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   s32 column = leader->x.fixed / PIXELS(16);
   s32 row = leader->z.fixed / PIXELS(16);
-  struct EventWork *work = gEventWork;
+  struct EventWork *work = gFieldWork;
   struct GameState *state = &gGameState;
 
   if (state->pausedObject != LOCALID_FIFTH_STATUE &&
@@ -1098,7 +1098,7 @@ static void EventScript_PushFirstPillar(void) {
 /// object event is hidden, its bg event takes its place and the ladder cell is
 /// restored.
 static void CrossboneIsleKeys_ReleaseSecondPillarChest(void) {
-  Scheduler_RemoveCallback(CrossboneIsleKeys_FollowSecondPillar);
+  Task_Remove(CrossboneIsleKeys_FollowSecondPillar);
   OBJECT_POSITION_SET(LOCALID_SECOND_PILLAR_CHEST, 0, 0);
   if (FLAG_CHECK(BANE_LOOKED_EAST_FLAG) != 0) {
     MapGrid_CopyCellAttributes(58, 36, 1, 1, 45, 43);
@@ -1291,7 +1291,7 @@ static void CrossboneIsleKeys_UpdatePillarPriorities(void) {
 /// of CrossboneIsleKeys, the pursuers of CrossboneIsleStatues,
 /// or the pillars and Bane of CrossboneIsleBane.
 s32 Map_Initialize(void) {
-  gEventWork->startTransition =
+  gFieldWork->startTransition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   if (gGameState.mapId == (s32)&MapId_CrossboneIsleKeys) {
     CrossboneIsleKeys_InitializeKeys();

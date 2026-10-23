@@ -52,7 +52,7 @@ void BattleEffect_RunBeamSequence(struct BattleEffectArgument *effect) {
   s32 frame;
   s32 i;
 
-  heapCache = &gWorkSlot[HEAP_SLOT_BATTLE_EFFECT];
+  heapCache = &gHeapSlots[HEAP_SLOT_BATTLE_ANIM];
   cursor = heapCache;
   EFFECT_GET_WORK_AND_CANVAS(cursor, work, canvas);
   sheet = EFFECT_SLOT(heapCache, HEAP_SLOT_BATTLE_SHEET);
@@ -70,38 +70,38 @@ void BattleEffect_RunBeamSequence(struct BattleEffectArgument *effect) {
   // pictures upside down, and side 1 mirrors them.
   if (kind == BEAM_ARC_A_INVERTED) {
     if (work->effect->side == 0) {
-      EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER,
+      EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
                           EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_Y,
                           COMPOSITE_ADDITIVE);
-      EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER_ALTERNATE,
+      EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
                           EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_Y, COMPOSITE_MAX);
     } else {
-      EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER,
+      EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
                           EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X |
                               COMPOSITE_FLIP_Y,
                           COMPOSITE_ADDITIVE);
-      EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER_ALTERNATE,
+      EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
                           EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X |
                               COMPOSITE_FLIP_Y,
                           COMPOSITE_MAX);
     }
   } else {
     if (work->effect->side == 0) {
-      EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER, EFFECT_CLIP_BOUNDS,
+      EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                           COMPOSITE_ADDITIVE);
-      EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER_ALTERNATE, EFFECT_CLIP_BOUNDS,
+      EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, EFFECT_CLIP_BOUNDS,
                           COMPOSITE_MAX);
     } else {
-      EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER,
+      EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
                           EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
                           COMPOSITE_ADDITIVE);
-      EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER_ALTERNATE,
+      EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
                           EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, COMPOSITE_MAX);
     }
   }
-  slots = (DrawRectangle *)gWorkSlot;
-  draw[0] = slots[HEAP_SLOT_BLITTER];
-  draw[1] = slots[HEAP_SLOT_BLITTER_ALTERNATE];
+  slots = (DrawRectangle *)gHeapSlots;
+  draw[0] = slots[HEAP_SLOT_RAM_CODE];
+  draw[1] = slots[HEAP_SLOT_RAM_CODE_2];
   WaitFrames(1);
   // The picture, by BeamKind. An enemy user (unit id above 7) takes the small
   // Mars Djinni's palette, a party member the crescent's. The sparks and the
@@ -262,7 +262,7 @@ void BattleEffect_RunBeamSequence(struct BattleEffectArgument *effect) {
     EFFECT_PRESENT_FRAME(work);
   }
 
-  Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
+  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   EFFECT_RELEASE_BLITTERS();
   gBgScroll[1].y = 32;
   BattleEffect_HideBg1AndRestoreBackdrop();
@@ -313,7 +313,7 @@ void BattleEffect_RunRingAndSparkSequence(struct BattleEffectArgument *effect) {
   s32 frame;
   s32 i;
 
-  heapCache = &gWorkSlot[HEAP_SLOT_BATTLE_EFFECT];
+  heapCache = &gHeapSlots[HEAP_SLOT_BATTLE_ANIM];
   cursor = heapCache;
   EFFECT_GET_WORK_AND_CANVAS(cursor, work, canvas);
   sheet = EFFECT_SLOT(heapCache, HEAP_SLOT_BATTLE_SHEET);
@@ -336,20 +336,20 @@ void BattleEffect_RunRingAndSparkSequence(struct BattleEffectArgument *effect) {
   REG_BG1CNT = BGCNT_PRIORITY(0) | BGCNT_CHAR_BASE(0) | BGCNT_256_COLORS |
                BGCNT_SCREEN_BASE(31);
   if (work->effect->side == 0) {
-    EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER, EFFECT_CLIP_BOUNDS,
+    EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                         COMPOSITE_ADDITIVE);
-    EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER_ALTERNATE, EFFECT_CLIP_BOUNDS,
+    EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, EFFECT_CLIP_BOUNDS,
                         COMPOSITE_MAX);
   } else {
-    EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER,
+    EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
                         EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
                         COMPOSITE_ADDITIVE);
-    EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER_ALTERNATE,
+    EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
                         EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, COMPOSITE_MAX);
   }
-  slots = (DrawRectangle *)gWorkSlot;
-  draw[0] = slots[HEAP_SLOT_BLITTER];
-  draw[1] = slots[HEAP_SLOT_BLITTER_ALTERNATE];
+  slots = (DrawRectangle *)gHeapSlots;
+  draw[0] = slots[HEAP_SLOT_RAM_CODE];
+  draw[1] = slots[HEAP_SLOT_RAM_CODE_2];
   BattlePresentation_SetupTransitionAtPairMidpointFar(
       work->effect->actor, work->effect->firstTarget, 130);
   WaitFrames(1);
@@ -404,9 +404,8 @@ void BattleEffect_RunRingAndSparkSequence(struct BattleEffectArgument *effect) {
     gBgScroll[1].y = 80;
     work->fadeFrames = 24;
     work->fadeStep = 0;
-    Scheduler_AddOrUpdateCallback(Palette_StepFadeTransfer,
-                                  EFFECT_PLAYBACK_ORDER);
-    AudioCommand_PlayFar(SE_212);
+    Task_Add(Palette_StepFadeTransfer, EFFECT_PLAYBACK_ORDER);
+    Sound_PlaySongFar(SE_212);
     for (frame = 0; frame != 32; frame++) {
       BattlePresentation_SetupTransitionAtPairMidpointFar(
           work->effect->actor, work->effect->firstTarget, 130);
@@ -433,7 +432,7 @@ void BattleEffect_RunRingAndSparkSequence(struct BattleEffectArgument *effect) {
       }
       EFFECT_PRESENT_FRAME(work);
     }
-    Scheduler_RemoveCallback(Palette_StepFadeTransfer);
+    Task_Remove(Palette_StepFadeTransfer);
     ObjectDispatch_SetAnimationSpeedFar((struct DispatchObject *)object, 16);
     SET_VELOCITY(object, velocityX, velocityY, velocityZ);
     object->acceleration = acceleration;
@@ -517,7 +516,7 @@ void BattleEffect_RunRingAndSparkSequence(struct BattleEffectArgument *effect) {
     EFFECT_PRESENT_FRAME(work);
   }
 
-  Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
+  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   EFFECT_RELEASE_BLITTERS();
   gBgScroll[1].y = 32;
   // Fade the background palette back in over 7 frames.

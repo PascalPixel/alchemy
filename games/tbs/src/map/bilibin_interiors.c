@@ -281,7 +281,7 @@ static void EventScript_TalkToHungryDiner(void) {
   Engine_ScriptWait(10);
   Script_OpenMessage(BILIBIN_HUNGRY_DINER, 0);
   if (Engine_ScriptChooseYesNo(0, 0) != 0) {
-    gEventWork->message++;
+    gFieldWork->message++;
   }
   Script_ShowMessage(BILIBIN_HUNGRY_DINER, 0);
   ObjectEvent_FaceDirection(BILIBIN_HUNGRY_DINER, FACING_SOUTH, 10);
@@ -298,7 +298,7 @@ static void EventScript_AskAboutTreeSpirit(void) {
   Engine_ScriptWait(10);
   Script_OpenMessage(BILIBIN_DINER, 0);
   if (Engine_ScriptChooseYesNo(0, 0) != 0) {
-    gEventWork->message++;
+    gFieldWork->message++;
   }
   Script_ShowMessage(BILIBIN_DINER, 0);
   ObjectEvent_FaceDirection(BILIBIN_DINER, FACING_SOUTH, 10);
@@ -429,7 +429,7 @@ static void EventScript_ReadMiaAdmirersMind(void) {
 s32 BilibinInteriors_Initialize(void) {
   struct ObjectEvent *objectEvent;
 
-  gEventWork->startTransition =
+  gFieldWork->startTransition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
   objectEvent = ObjectEvent_GetById(BILIBIN_DINER);
   objectEvent->priorityFlags = 0;

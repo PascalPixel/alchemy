@@ -3,16 +3,16 @@
 	.set import.__divsi3, 1
 	.set import.__umodsi3, 1
 	.set import.Engine_TaskWait, 1
-	.set import.Scheduler_AddOrUpdateCallback, 1
+	.set import.Task_Add, 1
 	.set import.Engine_TaskRemoveCallback, 1
 	.set import.Engine_RandomNext, 1
 	.set import.Engine_MathSin, 1
 	.set import.Vector_AddPolarOffset, 1
 	.set import.Engine_HeapAllocate, 1
 	.set import.Engine_HeapRelease, 1
-	.set import.Runtime_BumpAllocateAlternatePool, 1
-	.set import.MemFree, 1
-	.set import.Resource_DecodeType01, 1
+	.set import.AllocEwram, 1
+	.set import.Free, 1
+	.set import.Decompress_Type01, 1
 	.set import.Resource_ResetEntry, 1
 	.set import.Engine_VramLoad, 1
 	.set import.IoWriteQueue_Store16, 1
@@ -23,7 +23,7 @@
 	.set import.Engine_ObjectDispatchRelease, 1
 	.set import.ObjectDispatch_StartIdle, 1
 	.set import.Engine_ObjectSetPosition, 1
-	.set import.FieldObject_WaitForMove, 1
+	.set import.Object_WaitForMove, 1
 	.set import.WorldMap_LoadDefaultCellsAndUpdateBlock, 1
 	.set import.WorldMap_SetWindowCellTile, 1
 	.set import.Engine_ObjectEventSetSpriteFlags, 1

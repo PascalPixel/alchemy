@@ -9,9 +9,9 @@
 
 #include "event_work.h"
 
-/// The running field map's work, heap slot HEAP_SLOT_EVENT, as the maps
-/// read it; Field_RunMap takes it and frees it.
-extern struct EventWork *gEventWork;
+/// The running field map's work, heap slot HEAP_SLOT_FIELD, as the maps
+/// read it; Map_Run takes it and frees it.
+extern struct EventWork *gFieldWork;
 
 /// How a map fades in and out: MAP_TRANSITION's high byte, which
 /// DisplayTransition_Start and DisplayTransition_Finish read.
@@ -40,7 +40,7 @@ union FieldObject;
 /// toward a target, sprites and an update callback.
 struct ObjectEvent {
   const s32 *script;       ///< the object script it runs; null when it is free
-  u16 scriptCursor;        ///< in words (ObjectRuntime's step)
+  u16 scriptCursor;        ///< in words (Object's step)
   u16 facing;              ///< 1/65536 turns
   union FieldCoordinate x; ///< 16.16 fixed-point pixels
   union FieldCoordinate y; ///< 16.16 fixed-point pixels
@@ -74,7 +74,7 @@ struct ObjectEvent {
   /// ground, in 16.16 fixed-point pixels per frame (0x10000 when created);
   /// also scales a floating object's bob.
   s32 gravity;
-  /// Zeroed by FieldObject_Create and not read by the engine; map code
+  /// Zeroed by Object_CreateField and not read by the engine; map code
   /// keeps a resting height, a sway or a countdown here.
   s32 riseBaseY;
   union {

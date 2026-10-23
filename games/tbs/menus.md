@@ -178,15 +178,15 @@ icons again, while the Djinn screen always returns 1, which for it means
 
 All four screens keep their state in one block of memory, `HEAP_SLOT_MENU`
 (`MENU_WORK_SIZE`, 2,672 bytes), reached as `gMenuWork`. Each screen reads it
-through its own struct (`InventoryMenuState`, `PsynergyMenuState`,
-`CharacterMenuState`, `DjinnMenuWork`), takes it as it opens and releases it
+through its own struct (`ItemMenuWork`, `PsynergyMenuWork`,
+`SummaryScreenWork`, `DjinnMenuWork`), takes it as it opens and releases it
 as it closes.
 
 | Name | Value | Meaning |
 | --- | --- | --- |
 | `HEAP_SLOT_MENU` | 55 | the screens' and the counters' work block, `gMenuWork` |
 | `MENU_WORK_SIZE` | 2,672 bytes (`0xa70`) | its size |
-| `HEAP_SLOT_MENU_CONTROL` | 6 | the object system's work, whose `suspended` field holds the field still |
+| `HEAP_SLOT_OBJECT_SYSTEM` | 6 | the object system's work, whose `suspended` field holds the field still |
 | `FLAG_MENU_START_PRESSED` | 336 (`0x150`) | Start was pressed: every loop of the screen returns |
 | `FLAG_PALETTE_BLEND_HELD` | 338 (`0x152`) | the palette blend stops while a screen is open |
 | `FLAG_WEATHER_HELD` | 358 (`0x166`) | the weather stops while a screen is open |
@@ -201,10 +201,10 @@ changes and the map's animated tiles pause too.
 
 Every screen sets the `suspended` field of the object system's work, so the
 field's sprites that are not held stop being drawn and free their VRAM cache
-entries. That work's heap slot is named `HEAP_SLOT_MENU_CONTROL`, although it
+entries. That work's heap slot is named `HEAP_SLOT_OBJECT_SYSTEM`, although it
 belongs to the object system that runs the [field objects](glossary.md#field-object); the menus only
 set its one field. `Menu_SuspendFieldTasks` also
-suspends the [overlay](glossary.md#overlay)'s tasks (`Scheduler_SuspendOverlayTasks`) and the map's
+suspends the [overlay](glossary.md#overlay)'s tasks (`Task_SuspendOverlayTasks`) and the map's
 tile animations, and sets `FLAG_PALETTE_BLEND_HELD` and `FLAG_WEATHER_HELD`
 so that the palette blend and the weather stop; `Menu_ResumeFieldTasks`
 undoes all of it. The Djinn and Status screens call it in every edition, the
@@ -233,9 +233,9 @@ this (`menu/common.c`):
 ```c
 void Menu_CancelSoundTick(void) {
   if (gKeysPressed & KEY_START) {
-    AudioCommand_PlayFar(SE_MENU_CANCEL);
+    Sound_PlaySongFar(SE_MENU_CANCEL);
     GameFlag_SetBitFar(FLAG_MENU_START_PRESSED);
-    Scheduler_RemoveCallback(Menu_CancelSoundTick);
+    Task_Remove(Menu_CancelSoundTick);
   }
 }
 ```
@@ -262,9 +262,9 @@ therefore decided by the map, not the menu ([Maps](src/map/README.md)).
 
 The Psynergy screen writes the field's Psynergy request, one word holding
 the caster and the Psynergy ([Menus](src/menu/README.md#the-psynergy-screen)),
-into the event work (`gEventWork`, the running map's state, in the heap slot
-`HEAP_SLOT_EVENT`). The Item screen writes the item request (`struct ItemPickerResult`) the same
-way. `Field_RunMap` hands the Psynergy request to `Field_UsePsynergy`, which
+into the event work (`gFieldWork`, the running map's state, in the heap slot
+`HEAP_SLOT_FIELD`). The Item screen writes the item request (`struct ItemPickerResult`) the same
+way. `Map_Run` hands the Psynergy request to `Field_UsePsynergy`, which
 plays the effect between the map's Psynergy events
 (`PSYNERGY_PHASE_BEFORE_CAST` and `PSYNERGY_PHASE_AFTER_CAST`).
 
@@ -321,7 +321,7 @@ per guest for each member still standing (`sInnPricesPerGuest`).
 
 Every counter, and the item picker that asks which item to drop when the
 party finds one with every bag full, keeps its work in `HEAP_SLOT_MENU` as
-`struct ShopRuntime`, taken by `Shop_InitializeCursorWork` and released by
+`struct ShopWork`, taken by `Shop_InitializeCursorWork` and released by
 `Shop_ReleaseCursorWork`. Maps reach the counters through their [import
 tables](glossary.md#entry-table-and-import-table), and other banks through the far-call table
 `system/far_call/SHOP.S`.
@@ -329,7 +329,7 @@ tables](glossary.md#entry-table-and-import-table), and other banks through the f
 | Name | Value | Meaning |
 | --- | --- | --- |
 | `FLAG_SHOP_ARTIFACTS_STOCKED` | 1,024 (`0x400`) | the first of 35 game flags, one a stock row, set on a shop's first visit |
-| `HEAP_SLOT_MENU` | 55 | the counter's work, `struct ShopRuntime` |
+| `HEAP_SLOT_MENU` | 55 | the counter's work, `struct ShopWork` |
 
 [Shops](src/shop/README.md#shops) has the prices,
 [the sanctum's services](src/shop/README.md#sanctums) and

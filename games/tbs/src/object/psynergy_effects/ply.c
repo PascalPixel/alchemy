@@ -23,7 +23,7 @@ void FieldEffect_SwayParticle(union FieldObject *fieldObject) {
 /// particles; each one's work holds its starting angle.
 void FieldEffect_UpdateShrinkingOrbitObject(union FieldObject *fieldObject) {
   struct ObjectEvent *particle = (struct ObjectEvent *)fieldObject;
-  struct FieldEffectWork *effectWork = gEffectWork;
+  struct FieldEffectWork *effectWork = gFieldEffectWork;
   struct EffectVector pos;
   s16 remainingFrames;
   s32 decrementedTimer;
@@ -63,7 +63,7 @@ void FieldEffect_RunSparkEmitter(union FieldObject *fieldObject) {
   s32 pos[3];
 
   phase = &emitter->phase;
-  effectWork = gEffectWork;
+  effectWork = gFieldEffectWork;
   if (*phase != -1) {
     SET_POSITION(emitter,
                  effectWork->x + Iwram_MulQ16(6 << 16, Trig_Sin(*phase << 10)),
@@ -114,7 +114,7 @@ void FieldEffect_RunPlyOnTarget(s32 unused) {
 /// particles' shared sprite resource slot at the end and runs the effect
 /// scene's finishCallback.
 void FieldEffect_RunPly(void) {
-  struct FieldEffectWork *effectWork = gEffectWork;
+  struct FieldEffectWork *effectWork = gFieldEffectWork;
   struct ObjectEvent *target = effectWork->mainObject;
   struct ObjectEvent *objectEvent;
   struct AnimationObject *last;
@@ -144,7 +144,7 @@ void FieldEffect_RunPly(void) {
   // XXX: last is read with no check that any particle spawned; a map with
   // no free object slots would show whether this can be 0.
   resourceSlot = last->slot;
-  AudioCommand_PlayFar(SE_130);
+  Sound_PlaySongFar(SE_130);
   // The last particle spawned 7 frames ago with 120 frames to live: wait
   // until the spiral is nearly closed.
   WaitFrames(110);
@@ -163,7 +163,7 @@ void FieldEffect_RunPly(void) {
                                   SPRITE_COLOR_WHITE);
   }
 
-  AudioCommand_PlayFar(SE_131);
+  Sound_PlaySongFar(SE_131);
   WaitFrames(12);
   if (target != 0) {
     // Switch its sprite param every 2 frames (10 one time in 4).
@@ -185,7 +185,7 @@ void FieldEffect_RunPly(void) {
   // Sparks.
   Animation_ApplyChildValuesFar((struct DispatchObject *)objectEvent,
                                 SPRITE_COLOR_NORMAL);
-  AudioCommand_PlayFar(MUS_CURE);
+  Sound_PlaySongFar(MUS_CURE);
   if (objectEvent != 0) {
     target->update = FieldEffect_RunSparkEmitter;
     target->timer = 0;
@@ -205,9 +205,9 @@ void FieldEffect_RunPly(void) {
     target->speed = 0x50000;
     target->acceleration = 0x6666;
     target->steeringFlags = 0;
-    Motion_SetTargetPositionFromMagnitudeAngle((struct ObjectRuntime *)target,
+    Motion_SetTargetPositionFromMagnitudeAngle((struct Object *)target,
                                                0xc00000, 0xe800);
-    FieldObject_WaitForMoveFar(target);
+    Object_WaitForMoveFar(target);
     ObjectDispatch_ReleaseFar((struct DispatchObject *)target);
   }
   // 0x60 is the VRAM cache's entry count, the value Resource_FindFreeEntry

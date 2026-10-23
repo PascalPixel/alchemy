@@ -61,14 +61,14 @@ void BattleEffect_RunSwirlSwipe(struct BattleEffectArgument *effect, s32 mode) {
   work->effect = effect;
   EFFECT_START_NARROW_CANVAS(0);
   if (work->effect->side == 1) {
-    EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER, EFFECT_CLIP_BOUNDS,
+    EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                         COMPOSITE_TRANSPARENT);
-    draw[0] = (DrawRectangle)EFFECT_SLOT(slots, HEAP_SLOT_BLITTER);
+    draw[0] = (DrawRectangle)EFFECT_SLOT(slots, HEAP_SLOT_RAM_CODE);
   } else {
-    EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER,
+    EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
                         EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
                         COMPOSITE_TRANSPARENT);
-    draw[0] = (DrawRectangle)EFFECT_SLOT(slots, HEAP_SLOT_BLITTER);
+    draw[0] = (DrawRectangle)EFFECT_SLOT(slots, HEAP_SLOT_RAM_CODE);
   }
   Resource_LoadAndDecompress((s32)&ResourceId_MagentaSwirlSheet, work->sheet, 1,
                              1);
@@ -113,7 +113,7 @@ void BattleEffect_RunSwirlSwipe(struct BattleEffectArgument *effect, s32 mode) {
         BattleMotion_ApplyVariantMotionFar(work->effect->actors[0],
                                            KNOCKBACK_HOP);
       } else {
-        AudioCommand_PlayFar(SE_HEAVY_IMPACT);
+        Sound_PlaySongFar(SE_HEAVY_IMPACT);
         ObjectGroup_UpdateMembers(work->effect->actors[0], SPRITE_COLOR_WHITE,
                                   POSE_DAMAGE, 0, 4);
       }
@@ -170,7 +170,7 @@ void BattleEffect_RunSpiderWeb(struct BattleEffectArgument *effect) {
   /* FAKEMATCH(temporary): size and transparent first hold the slot table's
    * and REG_BLDALPHA's addresses; as plain slot reads and REG_BLDALPHA, 19 of
    * 233 instructions differ in tbs-en. */
-  size = (s32)&Ram_WorkSlot[HEAP_SLOT_BATTLE_CANVAS];
+  size = (s32)&Ram_HeapSlots[HEAP_SLOT_BATTLE_CANVAS];
   canvas = *(void **)size;
   work = *(struct BattleEffectWork **)(size - 4);
   work->effect = effect;
@@ -188,7 +188,7 @@ void BattleEffect_RunSpiderWeb(struct BattleEffectArgument *effect) {
                              1);
   // Redraw from blank each frame.
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0);
-  AudioCommand_PlayFar(SE_143);
+  Sound_PlaySongFar(SE_143);
   // transparent is COMPOSITE_TRANSPARENT, and also the 1 that marks each
   // frame's canvas for transfer.
   frame = 0;
@@ -203,21 +203,25 @@ void BattleEffect_RunSpiderWeb(struct BattleEffectArgument *effect) {
       REG_BLDALPHA = BLEND_ALPHA(frame << 1, 16);
     if (frame > 53)
       REG_BLDALPHA = BLEND_ALPHA(0x7c - (frame << 1), 16);
-    EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER, EFFECT_CLIP_BOUNDS, transparent);
-    EFFECT_BLITTERS[HEAP_SLOT_BLITTER](canvas, work->sheet, 33, 41, size, size);
-    Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
-    EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER,
+    EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, transparent);
+    EFFECT_BLITTERS[HEAP_SLOT_RAM_CODE](canvas, work->sheet, 33, 41, size,
+                                        size);
+    FreeHeapSlot(HEAP_SLOT_RAM_CODE);
+    EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
                         EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, transparent);
-    EFFECT_BLITTERS[HEAP_SLOT_BLITTER](canvas, work->sheet, 64, 41, size, size);
-    Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
-    EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER,
+    EFFECT_BLITTERS[HEAP_SLOT_RAM_CODE](canvas, work->sheet, 64, 41, size,
+                                        size);
+    FreeHeapSlot(HEAP_SLOT_RAM_CODE);
+    EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
                         EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_Y, transparent);
-    EFFECT_BLITTERS[HEAP_SLOT_BLITTER](canvas, work->sheet, 33, 72, size, size);
-    Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
-    EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER, EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP,
+    EFFECT_BLITTERS[HEAP_SLOT_RAM_CODE](canvas, work->sheet, 33, 72, size,
+                                        size);
+    FreeHeapSlot(HEAP_SLOT_RAM_CODE);
+    EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP,
                         transparent);
-    EFFECT_BLITTERS[HEAP_SLOT_BLITTER](canvas, work->sheet, 64, 72, size, size);
-    Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
+    EFFECT_BLITTERS[HEAP_SLOT_RAM_CODE](canvas, work->sheet, 64, 72, size,
+                                        size);
+    FreeHeapSlot(HEAP_SLOT_RAM_CODE);
     if (frame == 32)
       EFFECT_SHOW_DAMAGE(SE_143);
     EFFECT_FOR_EACH_TARGET(i, work->effect) {
@@ -231,7 +235,7 @@ void BattleEffect_RunSpiderWeb(struct BattleEffectArgument *effect) {
     frame++;
   } while (frame != SPIDER_WEB_FRAMES);
   // Finish: the blitter was freed each time it drew.
-  Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
+  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   BattleEffect_EndCanvasLayer();
 }
 

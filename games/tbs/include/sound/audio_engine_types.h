@@ -480,7 +480,7 @@ struct PlayerSlot {
 /// that plays it.
 struct SongEntry {
   const struct SequenceHeader *header;
-  /// Index into gSound_PlayerSlots; AudioCommand_Play gives slot 7's songs
+  /// Index into gSound_PlayerSlots; Sound_PlaySong gives slot 7's songs
   /// the first player from 7 down to 4 with no active track, else 7.
   u16 slot;
   u16 slotCopy; ///< The same value as slot in every entry; nothing reads it.

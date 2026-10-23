@@ -238,7 +238,7 @@ static void SuhallaDesert_UpdateCaptureTimer(void) {
   s32 remainingFrames;
 
   selectedObjectEvent = ObjectEvent_GetById(gGameState.selectedLocalId);
-  requests = gEventWork;
+  requests = gFieldWork;
   selectedObjectEvent->facing = (gFrameCount << 12);
 
   remainingFrames = FieldGameFlag_GetByte(FLAG_MAP_TEMP_10);
@@ -281,7 +281,7 @@ static void SuhallaDesert_CatchInStorm(s32 stormId) {
     }
     Engine_ObjectEventWaitForMove(selectedLocalId);
     // Start the capture countdown once the approach finishes.
-    Script_PlayCue(SE_SANDSTORM);
+    Script_PlaySong(SE_SANDSTORM);
     FieldScheduler_AddCallback(SuhallaDesert_UpdateCaptureTimer,
                                TASK_PRIORITY_MAP);
     selectedObjectEvent->motionFlags = captureActive;
@@ -296,7 +296,7 @@ static void SuhallaDesert_CatchInStorm(s32 stormId) {
     FieldGameFlag_SetByte(FLAG_MAP_TEMP_18, stormIdCopy);
     FieldGameFlag_SetByte(FLAG_MAP_TEMP_10, STORM_CAPTURE_FRAMES);
     Engine_ScriptEnd();
-    gEventWork->encounterEnemyGroup = 0; // drop any battle this step rolled
+    gFieldWork->encounterEnemyGroup = 0; // drop any battle this step rolled
   }
 }
 
@@ -559,7 +559,7 @@ static s32 SuhallaDesert_ChaseLeader(struct ScriptInterpreter *interpreter) {
     if (dx + (dz >= 0 ? objectEvent->z.fixed - selectedObjectEvent->z.fixed
                       : selectedObjectEvent->z.fixed - objectEvent->z.fixed) <
         PIXELS(8)) {
-      struct EventWork *work = gEventWork;
+      struct EventWork *work = gFieldWork;
 
       if (selectedObjectEvent->motionFlags != 0) {
         work->raisedTrigger = RAISED_CHASING_STORM_CATCHES;
@@ -602,7 +602,7 @@ static void EventScript_StormGivesChase(void) {
 /// pixels above the storm rather than 32 and rains on it from above
 /// (FieldEffect_RunDouse).
 static void EventScript_DouseCastAtStorm(void) {
-  u8 *state = gEffectWork;
+  u8 *state = gFieldEffectWork;
   ((struct FieldEffectWork *)state)->childOption = 1;
 }
 
@@ -614,8 +614,8 @@ static void EventScript_DouseStorm(s32 unused, s32 stormId) {
   struct GameState *state;
 
   // The storm no longer carries the party away.
-  if (gEventWork->raisedTrigger == RAISED_STORM_CARRIES_PARTY_AWAY) {
-    gEventWork->raisedTrigger = 0;
+  if (gFieldWork->raisedTrigger == RAISED_STORM_CARRIES_PARTY_AWAY) {
+    gFieldWork->raisedTrigger = 0;
   }
   Engine_GameFlagClear(FLAG_MAP_TEMP_0F);
   if (gGameState.mapId == (s32)&MapId_SuhallaDesertNorth) {
@@ -786,8 +786,8 @@ const struct MapEvent *Map_GetEvents(void) {
 s32 Map_Initialize(void) {
   struct MapGridState *gridState;
 
-  gridState = WORK_SLOT(HEAP_SLOT_MAP_GRID);
-  ((struct EventWork *)WORK_SLOT(HEAP_SLOT_EVENT))->startTransition =
+  gridState = HEAP_SLOT_BLOCK(HEAP_SLOT_MAP_GRID);
+  ((struct EventWork *)HEAP_SLOT_BLOCK(HEAP_SLOT_FIELD))->startTransition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_SHAPE);
   if (FieldGameFlag_GetByte(FLAG_MAP_TEMP_10) != 0) {
     gGameState.movementMode = LEADER_MOVEMENT_AIRBORNE;

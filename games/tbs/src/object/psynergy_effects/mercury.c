@@ -36,23 +36,23 @@ void FieldEffect_RunMercuryDjinnCapture(s32 djinniId) {
 
   // Tint the screen blue (red 4, green 4, blue 16).
   FieldEffect_InitializeSlots();
-  effectWork = gEffectWork;
+  effectWork = gFieldEffectWork;
   Shop_SaveAndTintFieldPaletteFar(PALETTE_TRANSFORM_TINT | RGB(4, 4, 16));
   WaitFrames(30);
   // Unpause the Djinni, so its script and motion run.
   djinni->paused = 0;
-  AudioCommand_PlayFar(SE_173);
+  Sound_PlaySongFar(SE_173);
   Motion_SetVarCbAndRefresh(djinniId, 1);
-  AudioCommand_PlayFar(SE_175);
+  Sound_PlaySongFar(SE_175);
   Motion_SetVarCbAndRefresh(djinniId, 1);
   WaitFrames(20);
 
   // Three hops, at 3, 5 and 7 pixels a frame.
-  AudioCommand_PlayFar(SE_JUMP);
+  Sound_PlaySongFar(SE_JUMP);
   ObjectMotion_Launch(djinniId, 3, 14);
-  AudioCommand_PlayFar(SE_JUMP);
+  Sound_PlaySongFar(SE_JUMP);
   ObjectMotion_Launch(djinniId, 5, 16);
-  AudioCommand_PlayFar(SE_JUMP);
+  Sound_PlaySongFar(SE_JUMP);
   ObjectMotion_Launch(djinniId, 7, 18);
   WaitFrames(20);
 
@@ -89,7 +89,7 @@ void FieldEffect_RunMercuryDjinnCapture(s32 djinniId) {
   // afterimages, and free their shared VRAM cache entry (96,
   // VRAM_CACHE_ENTRY_COUNT, is none).
   resourceId = resource->slot;
-  AudioCommand_PlayFar(SE_HIGH_JUMP);
+  Sound_PlaySongFar(SE_HIGH_JUMP);
   djinni->motionFlags = 0;
   for (remaining = 14; remaining >= 0; remaining--) {
     djinni->y.fixed += 8 << 16;

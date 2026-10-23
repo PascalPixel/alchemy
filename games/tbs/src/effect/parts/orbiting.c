@@ -112,7 +112,7 @@ UNUSED void BattleEffect_RunSwirlingStars(struct BattleEffectArgument *effect) {
 /// Orbiting skulls: three skulls circle each target in turn, 16 frames
 /// apart, for 64 frames each, a third of a turn apart on a circle of 8
 /// pixels around the target. Runs with the effect already in
-/// gBattleEffectWork.
+/// gBattleAnimWork.
 ///
 /// Nothing calls it. Copies the skull palette over the first 128 bytes of BG
 /// palette RAM; writes REG_BG2PA, REG_BG2X and REG_BLDALPHA; keeps each
@@ -134,21 +134,20 @@ UNUSED void BattleEffect_RunOrbitingSkulls(void) {
   s32 xOffset;
   s32 i;
 
-  work = WORK_SLOT(HEAP_SLOT_BATTLE_EFFECT);
-  canvas = WORK_SLOT(HEAP_SLOT_BATTLE_CANVAS);
-  camera = WORK_SLOT(HEAP_SLOT_CAMERA);
+  work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_ANIM);
+  canvas = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
+  camera = HEAP_SLOT_BLOCK(HEAP_SLOT_CAMERA);
   EFFECT_START_NARROW_CANVAS(1);
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
   skulls = Resource_GetTableEntry((s32)&ResourceId_SkullSheet);
   Iwram_CopyWords((void *)BG_PLTT, skulls, 128);
-  Resource_DecodeType01(skulls + 128, work->sheet);
-  EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER, EFFECT_CLIP_BOUNDS, COMPOSITE_MAX);
+  Decompress_Type01(skulls + 128, work->sheet);
+  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, COMPOSITE_MAX);
   // The first transfer mode is overwritten at once.
   EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0);
   EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, 75);
-  draw[0] = (DrawRectangle)WORK_SLOT(HEAP_SLOT_BLITTER);
-  Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer,
-                                EFFECT_CALLBACK_ORDER);
+  draw[0] = (DrawRectangle)HEAP_SLOT_BLOCK(HEAP_SLOT_RAM_CODE);
+  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, EFFECT_CALLBACK_ORDER);
   // Put the canvas on the targets' side of the screen: at one texel a pixel
   // it covers screen x 0 to 127 for enemy targets and 112 to 239 for the
   // party.
@@ -255,12 +254,11 @@ UNUSED void BattleEffect_RunTargetBursts(struct BattleEffectArgument *effect) {
                              work->sheet + TARGET_BURSTS_CELLS, 0, 0);
   palette = Resource_GetTableEntry((s32)&ResourceId_PinkBurstSheet);
   Iwram_CopyWords((void *)BG_PLTT, palette, 128);
-  EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER, EFFECT_CLIP_BOUNDS,
+  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                       COMPOSITE_ADDITIVE);
-  drawBurst = EFFECT_SLOT(slots, HEAP_SLOT_BLITTER);
-  EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER_ALTERNATE, EFFECT_CLIP_BOUNDS,
-                      COMPOSITE_MAX);
-  drawSmoke = EFFECT_SLOT(slots, HEAP_SLOT_BLITTER_ALTERNATE);
+  drawBurst = EFFECT_SLOT(slots, HEAP_SLOT_RAM_CODE);
+  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, EFFECT_CLIP_BOUNDS, COMPOSITE_MAX);
+  drawSmoke = EFFECT_SLOT(slots, HEAP_SLOT_RAM_CODE_2);
 
   // Six puffs for each target: five scatter at random, up to 2 pixels a
   // frame across and half a pixel vertically, and the sixth (the burst)

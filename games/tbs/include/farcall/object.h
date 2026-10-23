@@ -4,7 +4,7 @@
 /// Runs the field map the party entered by warp destination until it leaves,
 /// and returns the warp kind for Map_TakeWarp, or WARP_NONE when gGameState
 /// already holds the next map.
-s32 Field_RunMapFar(s32 warpDest);
+s32 Map_RunFar(s32 warpDest);
 /// The game's main loop, which never returns; mode, an enum GameRunMode,
 /// picks the first map. System_Initialize starts it at power-on with
 /// GAME_RUN_TITLE, and Game_Restart starts it again.
@@ -348,7 +348,7 @@ void Party_AddPpFar(s32 amount, s32 unused);
 /// Returns 0 for yes, 1 for no.
 s32 Menu_AskYesNoFar(s32 value);
 /// Starts the current map's field music.
-void Audio_PlayCueFromEventWorkFar(void);
+void Map_PlayMusicFar(void);
 /// A Djinni joins the member with the fewest Djinn, after its object event in
 /// slot plays its element's capture effect (none for slot -1).
 void Djinn_JoinPartyFar(s32 slot, s32 element, s32 djinn);
@@ -402,7 +402,7 @@ void ObjectEvent_LinkObjectAndSetCallbackFar(u32 objectId,
 void FieldEffect_PauseObjectFar(s32 id);
 /// Captures up to 32 object events into gObjectSnapshots, for
 /// ObjectTable_Restore (ObjectTable_Snapshot); the save menu calls it.
-void SaveState_CaptureObjectTableFar(void);
+void Save_CaptureObjectEventsFar(void);
 /// Puts back the object events ObjectTable_Snapshot saved and moves the camera
 /// to the leader's height.
 void ObjectTable_RestoreFar(void);
@@ -415,7 +415,7 @@ void FieldScript_WaitForZoomTransitionFar(void);
 s32 MapSec_GetNameIndexFar(s32 mapId, s32 warpDest);
 /// Starts an object event's action script: an enum MovementType, or the script
 /// itself.
-void ObjectMotion_SetActionCallbackFar(struct ObjectRuntime *object, s32 kind);
+void ObjectMotion_SetActionCallbackFar(struct Object *object, s32 kind);
 /// Plays SE_STOP_SLOT5 and then sound_id (AUDIO_CUE_FADE_SLOT3 for -1), and
 /// remembers sound_id to play again later.
 void FieldEffect_SetQueuedSoundAndPlayFar(s32 sound_id);

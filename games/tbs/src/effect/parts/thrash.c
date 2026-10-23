@@ -87,7 +87,7 @@ void BattleEffect_RunFlashingStrike(struct BattleEffectArgument *effect,
   DrawRectangle draw[2];
   s32 frame;
 
-  slots = gBattleEffectWork;
+  slots = gBattleAnimWork;
   EFFECT_GET_WORK_AND_CANVAS(slots, work, canvas);
   work->effect = effect;
   BattleEffect_StartCanvasLayer(0);
@@ -123,12 +123,12 @@ void BattleEffect_RunFlashingStrike(struct BattleEffectArgument *effect,
   WaitFrames(16);
 
   if (work->effect->side == 1)
-    EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER,
+    EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
                         EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, COMPOSITE_COPY);
   else
-    EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER, EFFECT_CLIP_BOUNDS, COMPOSITE_COPY);
-  draw[0] = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER];
-  AudioCommand_PlayFar(SE_212);
+    EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, COMPOSITE_COPY);
+  draw[0] = (DrawRectangle)gHeapSlots[HEAP_SLOT_RAM_CODE];
+  Sound_PlaySongFar(SE_212);
   for (frame = 0; frame != 21; frame++) {
     if (frame <= 3)
       draw[0](canvas, work->imageStorage, 0, 0, 120, 120);
@@ -154,8 +154,8 @@ void BattleEffect_RunFlashingStrike(struct BattleEffectArgument *effect,
   }
   // Releases the blitter before stopping the transfer, the other way round
   // from EFFECT_FINISH_CANVAS_ONE_BLITTER.
-  Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
-  Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
+  FreeHeapSlot(HEAP_SLOT_RAM_CODE);
+  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   BattleEffect_EndCanvasLayer();
 }
 

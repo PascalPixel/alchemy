@@ -15,13 +15,13 @@
 void Field_RequestBattleFromEncounterTable(s32 zoneNo, s32 slotNo) {
   s32 zone = zoneNo;
   s32 slot = slotNo;
-  struct FieldWork *work = (struct FieldWork *)gEventWork;
+  struct FieldWork *work = (struct FieldWork *)gFieldWork;
 
   work->battle = Encounter_GetEnemyGroupAtSlot(zone, slot);
   if (zone == ENCOUNTER_ZONE_SCRIPTED && slot == 0)
     gGameState.special = (s32)&ResourceId_VenusLighthouseAerieStormBackdrop;
-  if (work->mode == MODE_WORLD_MAP) {
-    struct ObjectRuntime *leader = ObjectTable_Get(gGameState.selectedLocalId);
+  if (work->mode == OBJECT_SYSTEM_WORLD_MAP) {
+    struct Object *leader = ObjectTable_Get(gGameState.selectedLocalId);
 
     Encounter_ResolveWorldMapZoneAndBackdrop(&leader->x);
   }
@@ -40,7 +40,7 @@ void Field_RequestDjinnBattle(s32 flag, s32 no) {
   struct GameState *state;
   s32 skipHop;
 
-  work = (struct FieldWork *)gEventWork;
+  work = (struct FieldWork *)gFieldWork;
   skipHop = flag & DJINN_NO_HOP;
   flag &= 0xff;
 
@@ -53,8 +53,8 @@ void Field_RequestDjinnBattle(s32 flag, s32 no) {
   // position.
   state->pendingDjinnEvent = (no + DJINNI_EVENT_0) | skipHop;
   work->battle = Encounter_GetDjinnEnemyGroup(no);
-  if (work->mode == MODE_WORLD_MAP) {
-    struct ObjectRuntime *leader = ObjectTable_Get(state->selectedLocalId);
+  if (work->mode == OBJECT_SYSTEM_WORLD_MAP) {
+    struct Object *leader = ObjectTable_Get(state->selectedLocalId);
 
     Encounter_ResolveWorldMapZoneAndBackdrop(&leader->x);
   }
@@ -85,7 +85,7 @@ void FieldScript_SetDefeatDestination(s32 mapId, s32 warpDest) {
 /// so the map loop leaves on its next pass. Only Tolbi's spring reaches it,
 /// through FieldScript_RequestDestinationFar.
 void FieldScript_RequestDestination(u16 mapId, u16 warpDest) {
-  struct FieldWork *work = (struct FieldWork *)gEventWork;
+  struct FieldWork *work = (struct FieldWork *)gFieldWork;
   gGameState.mapId = mapId;
   gGameState.warpDest = warpDest;
   work->warp = 999;
@@ -97,20 +97,20 @@ void FieldScript_RequestDestination(u16 mapId, u16 warpDest) {
 /// and nothing later. About 30 maps reach it through the far alias, and the
 /// ground particles (weather.c) queue SE_170 with it.
 void FieldEffect_SetQueuedSoundAndPlay(s32 soundId) {
-  ((struct FieldWork *)gEventWork)->queuedSound = soundId;
+  ((struct FieldWork *)gFieldWork)->queuedSound = soundId;
   if ((s16)soundId == -1) {
     soundId = AUDIO_CUE_FADE_SLOT3;
   }
-  AudioCommand_PlayFar(SE_STOP_SLOT5);
-  AudioCommand_PlayFar(soundId);
+  Sound_PlaySongFar(SE_STOP_SLOT5);
+  Sound_PlaySongFar(soundId);
 }
 
 /// Plays the sound FieldEffect_SetQueuedSoundAndPlay remembered, if any. Called
 /// by maps, by the event runner (object/events.c), by setup.c and by an
 /// object event's landing (object_event_commands.c).
 void FieldEffect_PlayQueuedSound(void) {
-  s16 soundId = ((struct FieldWork *)gEventWork)->queuedSound;
+  s16 soundId = ((struct FieldWork *)gFieldWork)->queuedSound;
 
   if (soundId != -1)
-    AudioCommand_PlayFar(soundId);
+    Sound_PlaySongFar(soundId);
 }

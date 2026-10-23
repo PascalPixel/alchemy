@@ -940,7 +940,7 @@ static s32 CrossboneIsleSteppingStones_UpdateObjectEventPriority(
   s32 hit;
   u32 id;
 
-  if (((struct FieldWork *)gEventWork)->castStarted == 1) {
+  if (((struct FieldWork *)gFieldWork)->castStarted == 1) {
     objectEvent->sprite->image.priority = leader->sprite->image.priority;
     objectEvent->collisionFlags |= OBJ_EVENT_SOLID;
 #ifdef UBFIX
@@ -1194,7 +1194,7 @@ static void EventScript_PushOrClimbDown(void) {
 /// follows the leader, and the leader's rise counter starts.
 static void EventScript_StartRising(void) {
   struct ObjectEvent *leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
-  ((struct FadeOverlayWork *)WORK_SLOT(36))->objectEvent = leader;
+  ((struct FadeOverlayWork *)HEAP_SLOT_BLOCK(36))->objectEvent = leader;
   leader->riseCounter = 1;
 }
 
@@ -1203,7 +1203,7 @@ static void EventScript_StartRising(void) {
 static void EventScript_StopRising(void) {
   struct ObjectEvent *leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
 
-  ((struct FadeOverlayWork *)WORK_SLOT(36))->objectEvent = NULL;
+  ((struct FadeOverlayWork *)HEAP_SLOT_BLOCK(36))->objectEvent = NULL;
   leader->riseCounter = 0;
 }
 
@@ -1276,7 +1276,7 @@ static void EventScript_FrostStartsOnThirdPuddle(void) {
 
   leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   puddle = ObjectEvent_GetById(LOCALID_THIRD_PUDDLE);
-  effects = gEffectWork;
+  effects = gFieldEffectWork;
   if (puddle->x.fixed >> 20 == leader->x.fixed >> 20 &&
       puddle->z.fixed >> 20 == leader->z.fixed >> 20) {
     Engine_GameFlagSet(LEADER_ON_THIRD_PUDDLE_FLAG);
@@ -1298,7 +1298,7 @@ static void EventScript_FrostRaisesPillar(void) {
   pillar->sprite->image.priority = 2;
   pillar->acceleration = PIXELS(2) / 5;
   pillar->speed = PIXELS(4) / 5;
-  FieldObject_SetPosition(pillar, pillar->x.fixed, PIXELS(32), pillar->z.fixed);
+  Object_SetPosition(pillar, pillar->x.fixed, PIXELS(32), pillar->z.fixed);
   Engine_ObjectEventWaitForMove(LOCALID_RISING_PILLAR);
   MapGrid_CopyCellAttributes(20, 14, 1, 1, 22, 16);
 }
@@ -1601,7 +1601,7 @@ s32 Map_Initialize(void) {
   s32 x;
   s32 z;
 
-  gEventWork->startTransition = MAP_TRANSITION(TRANSITION_WINDOW, 4);
+  gFieldWork->startTransition = MAP_TRANSITION(TRANSITION_WINDOW, 4);
   if (gGameState.mapId == (s32)&MapId_CrossboneIsleIcePillars) {
     Map_RedrawObjectEventFootprint(LOCALID_FIRST_PILLAR);
     Map_RedrawObjectEventFootprint(LOCALID_FIRST_PILLAR + 1);

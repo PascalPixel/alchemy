@@ -65,7 +65,7 @@ s32 Map_Initialize(void) {
   s32 shakeY = PIXELS(1);
   s32 decay = Q16_ONE;
 
-  gEventWork->startTransition =
+  gFieldWork->startTransition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
 
   Engine_GameFlagSet(FLAG_RETREAT_BLOCKED);

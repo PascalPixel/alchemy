@@ -41,11 +41,11 @@ extern u8 gRomShiftedTilePair[];
 /// Transform_BuildLookAt's ARM dot product, seven words it copies onto its
 /// stack to run.
 extern const u32 RelocatedQ16DotProduct[];
-/// Resource_Decode2 through its type-2 command loop, which
-/// Resource_DecodeType2 copies to the heap.
-extern u8 Resource_Decode2CodeSize[];
-/// Resource_DecodeByteLzArm: how much Resource_DecodeByteLz allocates for it.
-extern u8 Resource_DecodeByteLzCodeSize[];
+/// Decompress_Type2Commands through its type-2 command loop, which
+/// Decompress_Type2 copies to the heap.
+extern u8 Decompress_Type2CommandsCodeSize[];
+/// Decompress_ByteLzArm: how much Decompress_ByteLz allocates for it.
+extern u8 Decompress_ByteLzCodeSize[];
 /// The Japanese status panel's PP row, "EP    /": label and slash in one
 /// string, drawn by the unit summary in menu/menu/common.c.
 extern const u8 gUi_PpRowString[];
@@ -93,7 +93,7 @@ struct UiChannelSlot;
 struct UiScaleSprite;
 struct UiWindow;
 struct Vec2;
-struct WorkspaceWork;
+struct OptionMenuWork;
 
 // The pixel shading kernels and their sizes: each
 // ColorBuffer_BackupAnd... function in runtime/decompress.c copies its
@@ -172,7 +172,7 @@ extern const u8 FarCall_ResourceTable[];
 extern u8 gDecodeFillByte;
 /// HEAP_SLOT_PALETTE_CYCLES: the queue of palette cycles, which no code in
 /// the game ever starts.
-extern struct PaletteSnapshotWork *gPaletteWork;
+extern struct PaletteSnapshotWork *gPaletteCycleWork;
 /// Two 16-entry colour maps for 4bpp pixels: the first draws colour 1 as
 /// colour 10, the second leaves every colour as it is.
 extern u16 gGraphics_ExpandNibbleTable[];
@@ -207,21 +207,21 @@ extern const u8 gNameEntry_KeyboardTilemap[];
 extern const u8 gRender_DecodeFrameBuffer[];
 /// The type-2 resource decoder's ARM entry: it returns 4 unless the stream's
 /// first byte says type 2.
-extern const u8 Resource_Decode2[];
-/// The byte-oriented LZ decoder, run by Resource_DecodeByteLz from a heap
+extern const u8 Decompress_Type2Commands[];
+/// The byte-oriented LZ decoder, run by Decompress_ByteLz from a heap
 /// copy.
-extern const u8 Resource_DecodeByteLzArm[];
-/// The halfword LZ decoder that Resource_DecompressHalfwords runs from its
+extern const u8 Decompress_ByteLzArm[];
+/// The halfword LZ decoder that Decompress_Halfwords runs from its
 /// stack.
-extern const u8 Resource_DecodeHalfwordLz[];
-/// The type-01 resource decoder, run by Resource_DecodeType01 from a heap
+extern const u8 Decompress_HalfwordLz[];
+/// The type-01 resource decoder, run by Decompress_Type01 from a heap
 /// copy.
-extern const u8 Resource_DecodeType01Arm[];
-/// Resource_DecodeType01Arm, which Resource_DecodeType01 copies to the heap.
-extern u8 Resource_DecodeType01CodeSize[];
-/// Resource_DecodeHalfwordLz, copied onto the stack by
-/// Resource_DecompressHalfwords.
-extern u8 Resource_DecompressHalfwordsCodeSize[];
+extern const u8 Decompress_Type01Arm[];
+/// Decompress_Type01Arm, which Decompress_Type01 copies to the heap.
+extern u8 Decompress_Type01CodeSize[];
+/// Decompress_HalfwordLz, copied onto the stack by
+/// Decompress_Halfwords.
+extern u8 Decompress_HalfwordsCodeSize[];
 /// The pointing hand cursor, a 16x16 sprite, shared by the battle menus, the
 /// name entry and the talk choices.
 extern u8 gResource_FixedBlockBTiles[];
@@ -232,7 +232,7 @@ extern const u8 gResource_FixedBlockATiles[];
 /// copied.
 extern const u8 Tile_ExpandSlide[];
 /// Tile_ExpandSlide with its command table, copied into
-/// HEAP_SLOT_TEMP_RENDERER for each slide.
+/// HEAP_SLOT_RAM_CODE_TEMP for each slide.
 extern u8 Tile_ExpandSlideCodeSize[];
 /// Decodes one Huffman-coded symbol of a message for a struct TextReader.
 extern const u8 Text_DecodeSymbol[];
@@ -250,7 +250,7 @@ extern u8 Tile_ConvertMapGridCodeSize[];
 /// Unpacks a compressed icon into a glyph transfer's input buffer.
 extern const u8 Tile_Decompress4bpp[];
 /// Tile_Decompress4bpp, which UiIcon_Decode copies into
-/// HEAP_SLOT_TEMP_RENDERER.
+/// HEAP_SLOT_RAM_CODE_TEMP.
 extern u8 Tile_Decompress4bppCodeSize[];
 /// Packs an unpacked icon into 4bpp tiles over the layers already drawn
 /// there.

@@ -9,7 +9,7 @@
 /// Shop_SelectRepair for each member chosen until B. Called by Shop_Run for
 /// Sell and Repair.
 s32 Shop_PickUnit(void) {
-  struct ShopRuntime *shop = gMenuWork;
+  struct ShopWork *shop = gMenuWork;
   struct UiWindow *listWindow;
   s32 memberIndex = 0;
   s32 redraw = 1;
@@ -39,9 +39,9 @@ s32 Shop_PickUnit(void) {
     if ((gKeysPressed & KEY_A) != 0) {
       WaitFrames(1);
       if (Inventory_CountFar(unitId) == 0) {
-        AudioCommand_PlayFar(SE_MENU_CANCEL);
+        Sound_PlaySongFar(SE_MENU_CANCEL);
       } else {
-        AudioCommand_PlayFar(SE_MENU_CONFIRM);
+        Sound_PlaySongFar(SE_MENU_CONFIRM);
         if (shop->partyAction == SHOP_ACTION_SELL)
           Shop_SelectSell(unitId);
         else
@@ -54,7 +54,7 @@ s32 Shop_PickUnit(void) {
     }
 
     if ((gKeysPressed & KEY_B) != 0) {
-      AudioCommand_PlayFar(SE_MENU_CANCEL);
+      Sound_PlaySongFar(SE_MENU_CANCEL);
       Menu_ReleaseEntryObjectsFar();
       UiWork_FinalizeFar(listWindow, 2);
       UiWork_FinalizeFar(shop->itemWindow, 2);
@@ -64,12 +64,12 @@ s32 Shop_PickUnit(void) {
     }
 
     if ((gKeysRepeat & KEY_LEFT) != 0) {
-      AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
+      Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
       memberIndex--;
       redraw = 1;
     }
     if ((gKeysRepeat & KEY_RIGHT) != 0) {
-      AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
+      Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
       memberIndex++;
       redraw = 1;
     }
@@ -85,7 +85,7 @@ s32 Shop_SelectSell(s32 unitId) {
   // Shared previous/next-row inlines added four bytes to each sell, repair and
   // use picker in the English native build; the direct row arithmetic remains.
   struct UiWindow *descriptionWindow;
-  struct ShopRuntime *shop;
+  struct ShopWork *shop;
   struct UiWindow *priceWindow;
   struct BattleUnit *unit;
   s32 slot;
@@ -128,23 +128,23 @@ s32 Shop_SelectSell(s32 unitId) {
       }
 
       if ((gKeysPressed & KEY_A) != 0) {
-        AudioCommand_PlayFar(SE_MENU_CONFIRM);
+        Sound_PlaySongFar(SE_MENU_CONFIRM);
         result = 0;
         break;
       }
       if ((gKeysPressed & KEY_B) != 0) {
-        AudioCommand_PlayFar(SE_MENU_CANCEL);
+        Sound_PlaySongFar(SE_MENU_CANCEL);
         result = -1;
         break;
       }
       if ((gKeysRepeat & KEY_LEFT) != 0) {
-        AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
+        Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
         slot -= 1;
         slot = (slot + inventoryCount) % inventoryCount;
         redraw = 1;
       }
       if ((gKeysRepeat & KEY_RIGHT) != 0) {
-        AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
+        Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
         slot += 1;
         slot = (slot + inventoryCount) % inventoryCount;
         redraw = 1;
@@ -158,7 +158,7 @@ s32 Shop_SelectSell(s32 unitId) {
           slot += INVENTORY_SLOTS;
         while (slot >= inventoryCount)
           slot -= SHOP_INVENTORY_COLUMNS;
-        AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
+        Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
         redraw = 1;
       }
       if ((gKeysRepeat & KEY_DOWN) != 0) {
@@ -167,7 +167,7 @@ s32 Shop_SelectSell(s32 unitId) {
           slot -= INVENTORY_SLOTS;
         while (slot < 0)
           slot += SHOP_INVENTORY_COLUMNS;
-        AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
+        Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
         redraw = 1;
       }
       WaitFrames(1);
@@ -242,7 +242,7 @@ s32 Shop_SelectSellCount(s32 unitId, s32 slot) {
   s32 stackQuantity;
   s32 quantityLimit;
   struct ItemDefinition *item;
-  struct ShopRuntime *shop;
+  struct ShopWork *shop;
   struct BattleUnit *unit;
 
   shop = gMenuWork;
@@ -277,7 +277,7 @@ s32 Shop_SelectSellCount(s32 unitId, s32 slot) {
 /// Inventory_Discard, so one with a stock counter (an artifact) goes back on
 /// it, and the shops of its type may sell it again.
 void Shop_SellItem(s32 unitId, s32 slot, s32 count) {
-  struct ShopRuntime *shop = gMenuWork;
+  struct ShopWork *shop = gMenuWork;
   struct BattleUnit *unit = Unit_GetFar(unitId);
   s32 itemId = unit->inventory[slot] & INVENTORY_ITEM_ID_MASK;
   struct ItemDefinition *item = Item_GetDirectFar(itemId);
@@ -325,7 +325,7 @@ void Shop_SellItem(s32 unitId, s32 slot, s32 count) {
     return;
   }
   // Discard each item before crediting coins and rebuilding the inventory grid.
-  AudioCommand_PlayFar(SE_SHOP_SELL);
+  Sound_PlaySongFar(SE_SHOP_SELL);
   for (soldCount = 0; soldCount < count; soldCount++)
     Inventory_DiscardFar(unitId, slot);
   Party_AdjustCoinsFar(total);

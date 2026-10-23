@@ -20,7 +20,7 @@ enum AudioCommandMask {
 /// bits 23..20). Its reverb field, 0, leaves the reverb as it is.
 #define AUDIO_INITIAL_MODE 0x0097F800
 
-/// A cue for AudioCommand_Play: bits 11..0 the cue, 15..12 flags. The sound
+/// A cue for Sound_PlaySong: bits 11..0 the cue, 15..12 flags. The sound
 /// README's "What a cue number means" gives the ranges.
 enum AudioCueControl {
   AUDIO_CUE_ID_MASK = 0xfff,
@@ -46,7 +46,7 @@ enum SoundPlayerId {
   /// The first player a song on SOUND_PLAYER_EFFECT_LAST may borrow.
   SOUND_PLAYER_EFFECT_FIRST = 4,
   /// A song on it takes the first idle player from here down to
-  /// SOUND_PLAYER_EFFECT_FIRST, else this one (AudioCommand_Play).
+  /// SOUND_PLAYER_EFFECT_FIRST, else this one (Sound_PlaySong).
   SOUND_PLAYER_EFFECT_LAST = 7
 };
 
@@ -81,9 +81,9 @@ extern u16 gMusicVolumeStep;
 extern u16 gMusicPitch;
 extern u16 gMusicPitchTarget;
 extern u16 gMusicPitchStep;
-/// The music cue AudioCommand_Play last chose: 0xff before any, MUS_SILENCE
+/// The music cue Sound_PlaySong last chose: 0xff before any, MUS_SILENCE
 /// after a fade; asking for it again changes nothing.
-extern u8 gMusicCue;
+extern u8 gCurrentBgm;
 /// Set by AudioCommand_UpdateToggleMask; nothing in TBS reads it.
 extern u8 gAudio_CommandMask;
 

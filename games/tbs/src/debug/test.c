@@ -246,7 +246,7 @@ static void DebugMenu_IgnorePsynergy(void) {}
 /// this sets the effect's childMode, and Force's shot then leaves its target
 /// where it is (object/psynergy_effects/force.c).
 static void DebugMenu_EnableEffectChildMode(void) {
-  ((struct FieldEffectWork *)gEffectWork)->childMode = 1;
+  ((struct FieldEffectWork *)gFieldEffectWork)->childMode = 1;
 }
 
 #if TBS_PATCH_3
@@ -794,7 +794,7 @@ static void DebugMenu_GiveTreasureTestStock(void) {
 }
 
 /// Sets the debug party, stock counters and levels; returns zero. The room's
-/// initialize entry, which Field_RunMap runs on every entry and whose
+/// initialize entry, which Map_Run runs on every entry and whose
 /// result it ignores: so each visit adds to the shops' stock again, but
 /// Unit_LevelUpTo only raises, so a later visit changes no level unless a
 /// member is below 30 (Isaac 50 outside Japanese).

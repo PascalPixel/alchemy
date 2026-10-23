@@ -36,7 +36,7 @@ void BattleEffect_RunFlare(struct BattleEffectArgument *effect) {
   struct EffectStep *flame;
 
   // The work, the canvas, and BG1 and BG2 blended at 14:16.
-  slots = (u32 *)&gWorkSlot[HEAP_SLOT_BATTLE_EFFECT];
+  slots = (u32 *)&gHeapSlots[HEAP_SLOT_BATTLE_ANIM];
   cursor = slots;
   work = (struct BattleEffectWork *)*cursor++;
   canvas = (void *)*cursor;
@@ -47,9 +47,9 @@ void BattleEffect_RunFlare(struct BattleEffectArgument *effect) {
   REG_BLDALPHA = BLEND_ALPHA(14, 16);
   Resource_LoadAndDecompress((s32)&ResourceId_EmberStreakSheet, work->sheet, 1,
                              1);
-  EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER, EFFECT_CLIP_BOUNDS,
+  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                       COMPOSITE_ADDITIVE);
-  draw = (DrawRectangle)EFFECT_SLOT(slots, HEAP_SLOT_BLITTER);
+  draw = (DrawRectangle)EFFECT_SLOT(slots, HEAP_SLOT_RAM_CODE);
 
   // The arc: from -90 to 90 degrees in steps of 22.5, half an ellipse with
   // radii of 32 pixels across and 16 up and down, centred on x 20 (84 on the
@@ -87,9 +87,8 @@ void BattleEffect_RunFlare(struct BattleEffectArgument *effect) {
   } else {
     work->transferValue = 50;
   }
-  Scheduler_AddOrUpdateCallback(BattleEffect_ProcessPendingGraphicsTransfer,
-                                EFFECT_CALLBACK_ORDER);
-  AudioCommand_PlayFar(SE_136);
+  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, EFFECT_CALLBACK_ORDER);
+  Sound_PlaySongFar(SE_136);
   frame = 0;
   do {
     // Frame 24 lets the battle show the damage, with SE_IMPACT as the hit
@@ -167,8 +166,8 @@ void BattleEffect_RunFlare(struct BattleEffectArgument *effect) {
     EFFECT_END_FRAME(work);
     frame += 1;
   } while (frame != 80);
-  Runtime_ReleaseHeapBlock(HEAP_SLOT_BLITTER);
-  Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
+  FreeHeapSlot(HEAP_SLOT_RAM_CODE);
+  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   BattleEffect_EndCanvasLayer();
 }
 

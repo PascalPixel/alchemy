@@ -75,16 +75,16 @@ for (i = 0; i < 120; i++) {
 ```
 
 A task is a `void (*)(void)` routine, added once with an order and run every
-frame until it is removed (`Scheduler_RemoveCallback`) or the next map
+frame until it is removed (`Task_Remove`) or the next map
 empties the table. A battle adds its camera this way (`Battle_RunEncounter`):
 
 ```c
-Scheduler_AddOrUpdateCallback(BattlePresentation_UpdateCamera, 0xc7f);
+Task_Add(BattlePresentation_UpdateCamera, 0xc7f);
 ```
 
 The order's high byte picks the pass that runs the task, `0x0c` for the
-frame's work (`SCHEDULER_KEY_MAIN_LOOP`) and `0x04` for the vertical blank
-(`SCHEDULER_KEY_VBLANK`), and its low byte ranks it within the pass, higher
+frame's work (`TASK_PRIORITY_MAIN_LOOP`) and `0x04` for the vertical blank
+(`TASK_PRIORITY_VBLANK`), and its low byte ranks it within the pass, higher
 first: at `0x7f` the camera moves only after the battle's event playback
 and sprites, added at `0x80`, have run. Window animation, battle event playback
 (`BattleEvent_Playback`) and a map's callbacks are tasks too.
@@ -109,8 +109,8 @@ caller's saved stack. Nothing guards against it, and no task does.
 
 | Name | Value | Meaning |
 | --- | --- | --- |
-| `SCHEDULER_KEY_MAIN_LOOP` | `0xc80` | order of a task in the frame's work, ranked in the middle |
-| `SCHEDULER_KEY_VBLANK` | `0x480` | order of a task in the vertical blank, ranked in the middle |
+| `TASK_PRIORITY_MAIN_LOOP` | `0xc80` | order of a task in the frame's work, ranked in the middle |
+| `TASK_PRIORITY_VBLANK` | `0x480` | order of a task in the vertical blank, ranked in the middle |
 | `Ram_FrameWaitStackTop` | `0x03007a00` | the stack line `WaitFrames` runs its frames from, 512 bytes above the heap's end |
 
 [Runtime](src/runtime/README.md#the-frame-loop) has the frame's order,
@@ -123,7 +123,7 @@ The [main image](glossary.md#main-image)'s code is laid out in banks at fixed ad
 from one bank to another goes through an 8-byte jump in the callee's far-call
 table.
 
-![Two banks of the program as they lie in the cartridge, each starting at a fixed address. The sound bank starts with its far-call table, one short entry for each of its functions that other banks call, followed by its code and then empty room up to the next fixed start. A function in the field bank that plays a sound calls the table's entry, AudioCommand_PlayFar, which jumps on to AudioCommand_Play wherever it lies in the sound bank. If the sound bank's code changes size, AudioCommand_Play moves, but the table entry stays where it is, so nothing in the field bank changes.](https://alchemy.pascalpixel.com/illustrations/system/far-calls.svg)
+![Two banks of the program as they lie in the cartridge, each starting at a fixed address. The sound bank starts with its far-call table, one short entry for each of its functions that other banks call, followed by its code and then empty room up to the next fixed start. A function in the field bank that plays a sound calls the table's entry, Sound_PlaySongFar, which jumps on to Sound_PlaySong wherever it lies in the sound bank. If the sound bank's code changes size, Sound_PlaySong moves, but the table entry stays where it is, so nothing in the field bank changes.](https://alchemy.pascalpixel.com/illustrations/system/far-calls.svg)
 
 The program is cut into banks so that one bank's code can change size without
 moving anything another bank depends on. Each bank starts at a fixed address
@@ -138,10 +138,10 @@ the table entry, named after the function with `Far` added, rather than the
 function's own address:
 
 ```c
-AudioCommand_PlayFar(MUS_TREASURE_FOUND); // the field opens a chest
+Sound_PlaySongFar(MUS_TREASURE_FOUND); // the field opens a chest
 ```
 
-goes to the sound bank's table, whose entry jumps on to `AudioCommand_Play`.
+goes to the sound bank's table, whose entry jumps on to `Sound_PlaySong`.
 The runtime bank is the exception: every bank calls its functions directly,
 and its table (`WaitFramesFar` for `WaitFrames`) serves only the overlays.
 Why the runtime alone may be called directly is an open question (below).
@@ -182,12 +182,12 @@ An overlay and the main image meet at two tables, each in a fixed order:
   put while a bank's code moves.
 
 [System](src/system/README.md#how-an-overlay-reaches-the-rest-of-the-game)
-describes both tables, and how `Resource_LoadCode` rewrites the overlay's
+describes both tables, and how `Overlay_Load` rewrites the overlay's
 calls as it unpacks it.
 
 ## Sound cues
 
-Every sound is played by `AudioCommand_Play` with a cue number, whose range
+Every sound is played by `Sound_PlaySong` with a cue number, whose range
 decides whether it is music, a fanfare or a sound from the song table.
 
 ![Every sound starts as one call with a cue number, and the number's range decides what it is. Cues below 80 are music, played on the music player; asking for the music already chosen does nothing. Cues from 80 to 99 are fanfares, played on the fanfare player while the music is silenced. Cues from 100 up are rows of the song table, mostly sound effects, each played on the player its row names. Three cues are controls instead of sounds: cue 17 fades the music out, cue 18 keeps the music that is playing, and cue 289 fades out player 3.](https://alchemy.pascalpixel.com/illustrations/sound/cue-ranges.svg)

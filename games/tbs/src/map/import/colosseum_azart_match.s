@@ -2,17 +2,17 @@
 	.set overlay_imports, 1
 	.set import.__divsi3, 1
 	.set import.Engine_TaskWait, 1
-	.set import.Scheduler_AddOrUpdateCallback, 1
+	.set import.Task_Add, 1
 	.set import.Engine_TaskRemoveCallback, 1
 	.set import.Engine_RandomNext, 1
 	.set import.Math_Atan2, 1
 	.set import.Vector_AddPolarOffset, 1
-	.set import.Runtime_AllocateHeapBlock, 1
-	.set import.Runtime_AllocateBlock, 1
-	.set import.Runtime_ReleaseHeapBlock, 1
-	.set import.Runtime_BumpAllocateAlternatePool, 1
+	.set import.AllocHeapSlot, 1
+	.set import.AllocHeapSlotEwram, 1
+	.set import.FreeHeapSlot, 1
+	.set import.AllocEwram, 1
 	.set import.Runtime_BumpFree, 1
-	.set import.Resource_DecodeType01, 1
+	.set import.Decompress_Type01, 1
 	.set import.Resource_ResetEntry, 1
 	.set import.VramCache_ReleaseVram, 1
 	.set import.Engine_VramLoad, 1
@@ -28,7 +28,7 @@
 	.set import.ObjectDispatch_StartIdle, 1
 	.set import.ObjectDispatch_WaitForValue16, 1
 	.set import.Engine_ObjectSetPosition, 1
-	.set import.FieldObject_WaitForMove, 1
+	.set import.Object_WaitForMove, 1
 	.set import.MapGrid_GetTerrainHeight, 1
 	.set import.Engine_MapGridCopyCells, 1
 	.set import.Engine_MapGridCopyCellAttributes, 1
@@ -91,7 +91,7 @@
 	.set import.Engine_ScriptWaitForScreen, 1
 	.set import.Engine_ObjectEventLookup, 1
 	.set import.Field_EndBusyAndReveal, 1
-	.set import.Audio_PlayCueFromEventWork, 1
+	.set import.Map_PlayMusic, 1
 	.set import.Engine_ScriptClearInvalidPackedValues, 1
 	.set import.ObjectEvent_LinkObjectAndSetCallback, 1
 	.set import.Menu_OpenCharacterSelector, 1

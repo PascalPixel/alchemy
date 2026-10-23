@@ -40,7 +40,7 @@ void ColorBuffer_CalculateSteps(s16 *source, s16 *target, s16 *step,
 /// ColorBuffer_Initialize as a scheduler callback; the menus clear
 /// and set FLAG_PALETTE_BLEND_HELD around it (menu/common.c).
 void ColorBuffer_Update(void) {
-  struct ColorBuffer *work = gPaletteBufferWork;
+  struct ColorBuffer *work = gPaletteFadeWork;
   u16 *channelDelta = work->delta;
   s32 i;
 
@@ -365,27 +365,27 @@ void ColorBuffer_Build(u32 mode, u16 *src, u16 *dst, s32 half) {
   }
 }
 
-/// Sets up the colour buffer (gPaletteBufferWork) from the BG and OBJ palettes
+/// Sets up the colour buffer (gPaletteFadeWork) from the BG and OBJ palettes
 /// and starts updating the palettes from it each frame. Called by
-/// Field_RunMap on map load.
+/// Map_Run on map load.
 void ColorBuffer_Initialize(void) {
   struct ColorBuffer *work;
 
-  work = Runtime_AllocateBlock(HEAP_SLOT_PALETTE_BUFFER, sizeof(*work));
+  work = AllocHeapSlotEwram(HEAP_SLOT_PALETTE_FADE, sizeof(*work));
   Dma_Fill32(0, work, sizeof(*work));
   Dma_Set((void *)BG_PLTT, &work->palette[0],
           (DMA_ENABLE | DMA_32BIT) << 16 | (COLOR_HALF / 2), REG_DMA3);
   Dma_Set((void *)OBJ_PLTT, &work->palette[COLOR_HALF],
           (DMA_ENABLE | DMA_32BIT) << 16 | (COLOR_HALF / 2), REG_DMA3);
   ColorBuffer_Build(PALETTE_TRANSFORM_PLAIN, work->palette, work->target, 0);
-  Scheduler_AddOrUpdateCallback(ColorBuffer_Update, 0xc8f);
+  Task_Add(ColorBuffer_Update, 0xc8f);
 }
 
 /// Stops the colour buffer and frees it. Reached only through a bare far-call
 /// veneer; no ☀️ code names it.
 void ColorBuffer_Release(void) {
-  Scheduler_RemoveCallback(&ColorBuffer_Update);
-  Runtime_ReleaseHeapBlock(HEAP_SLOT_PALETTE_BUFFER);
+  Task_Remove(&ColorBuffer_Update);
+  FreeHeapSlot(HEAP_SLOT_PALETTE_FADE);
 }
 
 /// Sets the colours the buffer moves toward (see ColorBuffer_Build); does
@@ -393,7 +393,7 @@ void ColorBuffer_Release(void) {
 /// the map transitions, the shop cursor, and map overlays as
 /// Engine_ColorBufferApplyTarget.
 void ColorBuffer_SetTarget(s32 mode, s32 half) {
-  struct ColorBuffer *work = gPaletteBufferWork;
+  struct ColorBuffer *work = gPaletteFadeWork;
 
   if (work != NULL) {
     ColorBuffer_Build(mode, work->palette, work->target, half);
@@ -404,7 +404,7 @@ void ColorBuffer_SetTarget(s32 mode, s32 half) {
 /// Reveal, the leader's steps (step.c), the transitions, and map overlays
 /// as Engine_ColorBufferApplySource.
 void ColorBuffer_SetSource(s32 mode, s32 half) {
-  struct ColorBuffer *work = gPaletteBufferWork;
+  struct ColorBuffer *work = gPaletteFadeWork;
 
   if (work != NULL) {
     ColorBuffer_Build(mode, work->palette, work->current, half);
@@ -414,7 +414,7 @@ void ColorBuffer_SetSource(s32 mode, s32 half) {
 /// Sets the buffer's source backdrop colour (BG colour 0 of its palette
 /// copy). Called by the transitions (transition.c).
 void ColorBuffer_SetBackdrop(u32 color) {
-  struct ColorBuffer *work = gPaletteBufferWork;
+  struct ColorBuffer *work = gPaletteFadeWork;
 
   if (work != NULL) {
     work->palette[0] = color;
@@ -426,7 +426,7 @@ void ColorBuffer_SetBackdrop(u32 color) {
 /// ColorBuffer_SetTarget by the same callers, and by map
 /// overlays as Engine_ColorBufferInterpolate.
 void ColorBuffer_StartInterpolation(s32 frames) {
-  struct ColorBuffer *work = gPaletteBufferWork;
+  struct ColorBuffer *work = gPaletteFadeWork;
 
   if (work != NULL) {
     work->duration = frames;

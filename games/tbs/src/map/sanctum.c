@@ -36,7 +36,7 @@
 ///   its fated destruction...` From there the player can start again from the
 ///   Great Healer, by SANCTUM_TO_QUEST_RESTART to SANCTUM_FROM_QUEST_RESTART,
 ///   which skips the account (FLAG_MAP_TEMP_01), or leave by
-///   SANCTUM_TO_CLEAR to MapId_Clear. After the party has left Vale
+///   SANCTUM_TO_MAIN_MENU to MapId_MainMenu. After the party has left Vale
 ///   (FLAG_VALE_PARTY_LEFT), and again after it has reached Kalay
 ///   (FLAG_KALAY_REACHED), the three talk of what the eruption and the Wise One
 ///   changed.
@@ -419,7 +419,7 @@ static void EventScript_AskAboutNewAdepts(void) {
   if (Engine_ScriptChooseYesNo(0, 0) == 0) {
     Engine_ScriptShowMessage(LOCALID_WEST_HEALER, 0);
   } else {
-    gEventWork->message++;
+    gFieldWork->message++;
     Script_ShowTwoMessagesAndWait(SANCTUM_NEW_FRIENDS_SPEAKER, 16, 1, 24, 1, 3,
                                   7, 16, 1, 14, 0);
     Engine_ScriptShowMessage(LOCALID_WEST_HEALER, 0);
@@ -439,7 +439,7 @@ static void EventScript_AskAboutPsynergyChanges(void) {
   Engine_ScriptOpenMessage(LOCALID_EAST_HEALER, 0);
 
   if (Engine_ScriptChooseYesNo(0, 0) == 1) {
-    (gEventWork->message)++;
+    (gFieldWork->message)++;
   }
 
   Engine_ScriptShowMessage(LOCALID_EAST_HEALER, 0);
@@ -453,7 +453,7 @@ static void EventScript_AskAboutPsynergyChanges(void) {
 /// restore the floor and play the request, unless the party is returning after
 /// a battle.
 s32 Sanctum_Initialize(void) {
-  gEventWork->startTransition =
+  gFieldWork->startTransition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
   Engine_ColorBufferApplyTarget(PALETTE_TRANSFORM_PLAIN, PALETTE_HALVES_BOTH);
   Engine_ColorBufferInterpolate(1);
@@ -514,7 +514,7 @@ static void EventScript_WarnBeforeLeaving(void) {
 /// the game. The room turns sepia: `And so the world began drifting toward its
 /// fated destruction...` Starting again from the Great Healer takes
 /// SANCTUM_TO_QUEST_RESTART, back to SANCTUM_FROM_QUEST_RESTART; the other
-/// choices take SANCTUM_TO_CLEAR, to MapId_Clear.
+/// choices take SANCTUM_TO_MAIN_MENU, to MapId_MainMenu.
 static void EventScript_LeaveAfterRefusing(void) {
   struct ColorBuffer *paletteWork;
 
@@ -529,7 +529,7 @@ static void EventScript_LeaveAfterRefusing(void) {
   Engine_ColorBufferApplyTarget(PALETTE_TRANSFORM_SEPIA, PALETTE_HALVES_BOTH);
   Engine_ColorBufferInterpolate(120);
   Engine_ScriptWait(180);
-  paletteWork = gPaletteBufferWork;
+  paletteWork = gPaletteFadeWork;
   // Colour 15 of the BG palette fades to white rather than sepia: its blue,
   // green and red channels, target[3 * 15] to target[3 * 15 + 2], at 31.
   paletteWork->target[45] = 31 << 10;
@@ -551,7 +551,7 @@ static void EventScript_LeaveAfterRefusing(void) {
     Engine_ScriptRequestWarp(SANCTUM_TO_QUEST_RESTART);
   } else {
     Engine_ScriptEnd();
-    Engine_ScriptRequestWarp(SANCTUM_TO_CLEAR);
+    Engine_ScriptRequestWarp(SANCTUM_TO_MAIN_MENU);
   }
 }
 
@@ -629,8 +629,8 @@ static void Sanctum_RequestQuestAcceptance(void) {
     ObjectEvent_FaceObjectEvent(LOCALID_EAST_HEALER, LOCALID_PARTY_LEADER, 0);
     Camera_MoveTo(PIXELS(192), -1, PIXELS(160), 1);
     Engine_CameraWaitForMove();
-    gEventWork->startTransition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
-    gEventWork->transitionFrames = 64;
+    gFieldWork->startTransition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+    gFieldWork->transitionFrames = 64;
     Engine_ScriptOpenScreen();
     Engine_ScriptWaitForScreen();
     Engine_ScriptWait(120);
@@ -640,7 +640,7 @@ static void Sanctum_RequestQuestAcceptance(void) {
     Engine_ScriptWait(1);
     Camera_MoveTo(PIXELS(192), -1, PIXELS(160), 1);
     Engine_CameraWaitForMove();
-    gEventWork->startTransition =
+    gFieldWork->startTransition =
         MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
     Engine_ScriptOpenScreen();
     Engine_ScriptWaitForScreen();
@@ -688,12 +688,12 @@ static void Sanctum_RequestQuestAcceptance(void) {
       Engine_ObjectEventSetAnimationAndWait(LOCALID_DORA, 3);
       Engine_ScriptWait(20);
       Script_ShowMessage(LOCALID_DORA, 0);
-      gEventWork->message++;
+      gFieldWork->message++;
     } else {
       Engine_ScriptWait(20);
       Engine_ObjectEventSetAnimationAndWait(LOCALID_DORA, 4);
       Engine_ScriptWait(20);
-      gEventWork->message++;
+      gFieldWork->message++;
       Script_ShowMessage(LOCALID_DORA, 0);
     }
     Engine_ScriptWait(20);
@@ -709,12 +709,12 @@ static void Sanctum_RequestQuestAcceptance(void) {
       Engine_ObjectEventSetAnimationAndWait(LOCALID_WEST_HEALER, 3);
       Engine_ScriptWait(20);
       Script_ShowMessage(LOCALID_WEST_HEALER, 0);
-      gEventWork->message++;
+      gFieldWork->message++;
     } else {
       Engine_ScriptWait(20);
       Engine_ObjectEventSetAnimationAndWait(LOCALID_WEST_HEALER, 4);
       Engine_ScriptWait(20);
-      gEventWork->message++;
+      gFieldWork->message++;
       Script_ShowMessage(LOCALID_WEST_HEALER, 0);
     }
     Engine_ScriptWait(20);
@@ -845,7 +845,7 @@ static void Sanctum_RequestQuestAcceptance(void) {
     Engine_ObjectEventSetAnimation(LOCALID_HEALER, 0);
     ObjectEvent_SetChildValue(LOCALID_HEALER, 0x100);
     Sanctum_ShowHealerAfterimage();
-    Script_PlayCue(SE_196);
+    Script_PlaySong(SE_196);
     Sanctum_SpawnOrbitingEffect(LOCALID_HEALER, 0x1200);
     Engine_ScriptWait(32);
     Sanctum_SpawnOrbitingEffect(LOCALID_HEALER, 0x1200);
@@ -920,7 +920,7 @@ static void Sanctum_RequestQuestAcceptance(void) {
     Engine_ObjectEventSetAnimation(LOCALID_HEALER, 0);
     ObjectEvent_SetChildValue(LOCALID_HEALER, 0x100);
     Sanctum_ShowHealerAfterimage();
-    Script_PlayCue(SE_196);
+    Script_PlaySong(SE_196);
     Sanctum_SpawnOrbitingEffect(LOCALID_HEALER, 0x1200);
     Engine_ScriptWait(32);
     Sanctum_SpawnOrbitingEffect(LOCALID_HEALER, 0x1200);
@@ -1173,7 +1173,7 @@ static void Sanctum_RequestQuestAcceptance(void) {
     ColorBuffer_ApplyTarget(RGB(0, 0, 0), PALETTE_HALVES_BOTH);
     Engine_ColorBufferInterpolate(120);
     Engine_ScriptWait(120);
-    Script_PlayCue(MUS_086);
+    Script_PlaySong(MUS_086);
     AudioCommand_WaitForCompletion();
     GameFlag_Set(FLAG_SANCTUM_QUEST_ACCEPTED);
     Engine_ScriptRequestWarp(SANCTUM_TO_VALE_GATE);
@@ -1271,20 +1271,20 @@ static void Sanctum_ReceiveWiseOnesMission(void) {
   Engine_ScriptWait(30);
   Script_ShowMessage(LOCALID_HEALER, 0);
   Engine_ScriptWait(80);
-  Script_PlayCue(AUDIO_CUE_FADE_BGM);
+  Script_PlaySong(AUDIO_CUE_FADE_BGM);
   Engine_ColorBufferApplyTarget(PALETTE_TRANSFORM_PALE, PALETTE_HALF_BG);
   Engine_ColorBufferInterpolate(60);
   Engine_ScriptWait(40);
   Camera_SetSpeed(PIXELS(2) / 5, PIXELS(1) / 20);
   Camera_MoveTo(PIXELS(192), -1, PIXELS(104), 1);
   Engine_ScriptWait(120);
-  Script_PlayCue(MUS_021);
-  Script_PlayCue(SE_308);
+  Script_PlaySong(MUS_021);
+  Script_PlaySong(SE_308);
   // The Wise One enters while the healer's afterimages appear.
   ObjectEvent_SetPosition(LOCALID_WISE_ONE, PIXELS(200), PIXELS(8));
   ObjectEvent_SetSpeed(LOCALID_WISE_ONE, PIXELS(2) / 5, PIXELS(1) / 5);
   ObjectEvent_MoveToAndWait(LOCALID_WISE_ONE, 200, 72);
-  Script_PlayCue(SE_STOP_SLOT3);
+  Script_PlaySong(SE_STOP_SLOT3);
   Engine_ScriptWait(30);
   Engine_ObjectEventRunRepeatedMotion(LOCALID_HEALER, 2);
   Engine_ObjectEventSetAnimation(LOCALID_HEALER, 0);
@@ -1308,8 +1308,8 @@ static void Sanctum_ReceiveWiseOnesMission(void) {
   Script_ShowMessage(LOCALID_WISE_ONE, 0);
   Engine_ScriptWait(60);
   Engine_ObjectEventSetChildValue(LOCALID_WISE_ONE, 0x100);
-  Script_PlayCue(AUDIO_CUE_FADE_BGM);
-  Script_PlayCue(SE_308);
+  Script_PlaySong(AUDIO_CUE_FADE_BGM);
+  Script_PlaySong(SE_308);
   // Shrink the Wise One amid sparks before restoring the room.
   for (sparkIndex = 0; sparkIndex < 32; sparkIndex++) {
     Sanctum_SpawnObjectEventSpark(LOCALID_WISE_ONE);
@@ -1319,7 +1319,7 @@ static void Sanctum_ReceiveWiseOnesMission(void) {
     wiseOne = ObjectEvent_GetById(LOCALID_WISE_ONE);
     wiseOne->scaleY += -Q16_ONE / 100;
   }
-  Script_PlayCue(SE_STOP_SLOT3);
+  Script_PlaySong(SE_STOP_SLOT3);
   ObjectEvent_SetChildValue(LOCALID_WISE_ONE, 0);
   ObjectEvent_SetPosition(LOCALID_WISE_ONE, 0, 0);
   Engine_ScriptWait(40);
@@ -1330,7 +1330,7 @@ static void Sanctum_ReceiveWiseOnesMission(void) {
   Engine_ScriptWait(120);
   Sanctum_HideHealerAfterimage();
   Engine_ObjectEventSetAnimation(LOCALID_HEALER, 1);
-  Script_PlayCue(MUS_002);
+  Script_PlaySong(MUS_002);
   Engine_ScriptWait(60);
   Engine_ObjectEventRunRepeatedMotion(LOCALID_HEALER, 2);
   Engine_ScriptWait(20);
@@ -1754,7 +1754,7 @@ static s32 Sanctum_ChooseRestartOption(void) {
   window = UiWindow_Create(QUESTION_X, 7, QUESTION_WIDTH, 5, 1);
   text = MsgSanctumGreatHealer;
   UiText_DrawResource(text, window, 16, 0);
-  if (SaveState_CountRecordsExcludingFlagged(1) == 0) {
+  if (Save_CountRecordsExcludingFlagged(1) == 0) {
     UiText_DrawResource(text + 2, window, 16, 16);
   } else {
     UiText_DrawResource(text + 1, window, 16, 16);
@@ -2051,10 +2051,10 @@ static void Sanctum_RaiseItemIcon(s32 item, s32 fixedX, s32 fixedY,
     sprite->image.palette = 0;
     icon->velocityY = PIXELS(2);
     icon->gravity = PIXELS(1) / 4;
-    transferBuffer = Runtime_AllocateHeapBlock(17, 0x608);
+    transferBuffer = AllocHeapSlot(17, 0x608);
     Ui_PrepareTransferForItem(item);
     Engine_VramLoad(sprite->slot, 128, transferBuffer + 0x400);
-    Runtime_ReleaseHeapBlock(17);
+    FreeHeapSlot(17);
     for (frame = 0; frame < 60; frame++) {
       if ((u32)(icon->velocityY + 255) <= 0x1fe)
         icon->motionFlags = 0;
@@ -2383,7 +2383,7 @@ u32 gSanctum_Warps[] = {
     MAP_WARP(SANCTUM_TO_ALTIN, Altin, ALTIN_FROM_SANCTUM),
     MAP_WARP(SANCTUM_TO_BILIBIN, Bilibin, BILIBIN_FROM_SANCTUM),
     MAP_WARP(SANCTUM_TO_XIAN, Xian, XIAN_FROM_SANCTUM_WEST),
-    MAP_WARP(SANCTUM_TO_CLEAR, Clear, CLEAR_FROM_SANCTUM),
+    MAP_WARP(SANCTUM_TO_MAIN_MENU, MainMenu, MAIN_MENU_FROM_SANCTUM),
     MAP_WARPS_END,
 };
 

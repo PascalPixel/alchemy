@@ -516,7 +516,7 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *request,
         BattleEvent_Push(BATTLE_EVENT_DRAW_STATUS, 0);
         BattleEvent_Push(BATTLE_EVENT_MESSAGE, MsgDjinnSet);
         BattleEvent_Push(BATTLE_EVENT_REFRESH_UNIT, request->unitId);
-        AudioCommand_PlayFar(SE_212);
+        Sound_PlaySongFar(SE_212);
         ObjectDispatch_SelectAnimationFar(
             BattleObject_Get(request->unitId)->object, POSE_CAST);
         ObjectDispatch_SetAnimationSpeedFar(
@@ -530,7 +530,7 @@ s32 BattleCommand_BuildPlan(struct BattleActionRecord *request,
       // Recovering.
       UiWork_PushValueSlotFar(request->unitId, VALUE_UNIT_NAME);
       UiWork_PushValueSlotFar(abilityId, VALUE_ABILITY_NAME);
-      AudioCommand_PlayFar(SE_MENU_ERROR);
+      Sound_PlaySongFar(SE_MENU_ERROR);
       UiText_ShowMessageAndWaitCoreFar(MsgDjinnInRecovery);
       WaitFrames(60);
       return PLAN_REPORTED;

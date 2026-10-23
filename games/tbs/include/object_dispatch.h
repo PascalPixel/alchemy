@@ -65,7 +65,7 @@ struct DispatchObject {
   u8 riseEnabled;
   ///@}
   s16 value64;       ///< the action script's parameter; the camera clears it
-  s16 footprintSide; ///< ObjectRuntime's; not named here
+  s16 footprintSide; ///< Object's; not named here
   s32 argument;      ///< the linked object a script approaches or follows
   /// ObjectEvent's update hook; not named here.
   void (*update)(union FieldObject *object);

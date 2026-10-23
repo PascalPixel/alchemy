@@ -91,7 +91,7 @@ void BattlePresentation_ConfigurePaletteFade(s32 mode, s32 unusedResource,
       (struct BattleBackgroundView *)gTransitionWork;
 
   if (transition->mode == BATTLE_BACKGROUND_NONE) {
-    Scheduler_AddOrUpdateCallback(BattlePresentation_UpdateHBlankScroll, 0x4ff);
+    Task_Add(BattlePresentation_UpdateHBlankScroll, 0x4ff);
   }
   transition->mode = mode;
 
@@ -148,7 +148,7 @@ void BattlePresentation_ConfigurePaletteFade(s32 mode, s32 unusedResource,
 void BattlePresentation_InitializeWorkAndResetState(void) {
   struct BattleAffineHdma *work;
   struct BattleBackgroundView *state;
-  work = Runtime_AllocateBlock(HEAP_SLOT_BATTLE_SCANLINES, sizeof *work);
+  work = AllocHeapSlotEwram(HEAP_SLOT_BATTLE_SCANLINES, sizeof *work);
   state = (struct BattleBackgroundView *)gTransitionWork;
   Dma_Fill32(0, work, sizeof *work);
   state->mode = BATTLE_BACKGROUND_NONE;
@@ -156,9 +156,7 @@ void BattlePresentation_InitializeWorkAndResetState(void) {
 
 /// Frees the perspective plane's scanline work; called by
 /// Battle_RunEncounter as the battle ends.
-void Runtime_ReleaseHeapBlock10(void) {
-  Runtime_ReleaseHeapBlock(HEAP_SLOT_BATTLE_SCANLINES);
-}
+void FreeHeapSlot10(void) { FreeHeapSlot(HEAP_SLOT_BATTLE_SCANLINES); }
 
 /// The bit decoder BattleBackground_Load copies to RAM and runs.
 typedef void (*BitDecoder)(const u8 *source, void *destination);
@@ -168,18 +166,19 @@ typedef void (*BitDecoder)(const u8 *source, void *destination);
 /// 13, and both its maps.
 /// A negative level leaves the BG palettes alone. The resource is 256 bytes
 /// of palette and then the packed picture, which the RAM copy of
-/// BitDecoder_DecodeImage (HEAP_SLOT_TEMP_RENDERER) unpacks. Called with
+/// BitDecoder_DecodeImage (HEAP_SLOT_RAM_CODE_TEMP) unpacks. Called with
 /// BATTLE_BACKGROUND_FLAT by
 /// Battle_RunEncounter as the battle opens, and by the Atalanta and Boreas
 /// effects for their violet sky. Sets BattleBackgroundView.mode, and adds
 /// BattlePresentation_UpdateHBlankScroll when it was BATTLE_BACKGROUND_NONE.
 void BattleBackground_Load(s32 mode, s32 resourceId, s32 level) {
-  struct BattleBackgroundView *view = WORK_SLOT(HEAP_SLOT_BATTLE_BACKGROUND);
+  struct BattleBackgroundView *view =
+      HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_BACKGROUND);
   u8 *backgroundData = Resource_GetTableEntry(resourceId);
-  struct BattleWork *battle = WORK_SLOT(HEAP_SLOT_BATTLE);
+  struct BattleWork *battle = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE);
   u16 *palette;
 
-  RamCode_LoadSlot(HEAP_SLOT_TEMP_RENDERER, BitDecoder_DecodeImage,
+  RamCode_LoadSlot(HEAP_SLOT_RAM_CODE_TEMP, BitDecoder_DecodeImage,
                    BitDecoder_Size);
   {
     u32 offset = 0x100;
@@ -193,10 +192,10 @@ void BattleBackground_Load(s32 mode, s32 resourceId, s32 level) {
       offset--;
     }
     vram = BG_CHAR_BLOCK(2);
-    ((BitDecoder)WORK_SLOT(HEAP_SLOT_TEMP_RENDERER))(backgroundData + offset,
-                                                     vram);
+    ((BitDecoder)HEAP_SLOT_BLOCK(HEAP_SLOT_RAM_CODE_TEMP))(
+        backgroundData + offset, vram);
   }
-  Runtime_ReleaseHeapBlock(HEAP_SLOT_TEMP_RENDERER);
+  FreeHeapSlot(HEAP_SLOT_RAM_CODE_TEMP);
   palette = battle->palette;
   Dma_Set(backgroundData, palette, DMA_COPY_WORDS(64), REG_DMA3);
   if (level >= 0)
@@ -211,7 +210,7 @@ void BattleBackground_Load(s32 mode, s32 resourceId, s32 level) {
   // Clears BG1's last row, 0x7c0 bytes in, which BuildTilemap leaves.
   Iwram_ClearWords((BG_SCREEN_BLOCK(31) + 0x7c0), 64);
   if (view->mode == BATTLE_BACKGROUND_NONE)
-    Scheduler_AddOrUpdateCallback(BattlePresentation_UpdateHBlankScroll, 0x4ff);
+    Task_Add(BattlePresentation_UpdateHBlankScroll, 0x4ff);
   view->mode = mode;
   if (mode == BATTLE_BACKGROUND_FLAT)
     REG_BG1CNT = BATTLE_BG1CNT;
@@ -232,9 +231,11 @@ void BattleBackground_Load(s32 mode, s32 resourceId, s32 level) {
 /// mode is BATTLE_BACKGROUND_PLANE.
 void BattleCamera_SetRange(s32 centerX, s32 centerY, s32 offsetX, s32 offsetY,
                            s32 scale) {
-  struct BattleBackgroundView *view = WORK_SLOT(HEAP_SLOT_BATTLE_BACKGROUND);
-  struct BattleAffineHdma *scanlines = WORK_SLOT(HEAP_SLOT_BATTLE_SCANLINES);
-  struct BattleCamera *camera = WORK_SLOT(HEAP_SLOT_CAMERA);
+  struct BattleBackgroundView *view =
+      HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_BACKGROUND);
+  struct BattleAffineHdma *scanlines =
+      HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_SCANLINES);
+  struct BattleCamera *camera = HEAP_SLOT_BLOCK(HEAP_SLOT_CAMERA);
   u16 wrap;
   s32 panX;
   u16 *line;
@@ -543,14 +544,14 @@ void BattlePresentation_SetActorRecordMode(s32 actorId, s32 mode) {
   object = slot->object;
   if (object == 0)
     return;
-  switch (object->recordStorageKind & RECORDS_KIND_MASK) {
-  case RECORDS_SINGLE: {
+  switch (object->spritesKind & OBJECT_SPRITES_KIND_MASK) {
+  case OBJECT_SPRITES_ONE: {
     record = object->records;
     record->image.objectMode = mode;
     record->shadow.objectMode = mode;
     break;
   }
-  case RECORDS_TABLE: {
+  case OBJECT_SPRITES_GROUP: {
     records = object->records;
     recordIndex = 0;
     do {
@@ -560,7 +561,7 @@ void BattlePresentation_SetActorRecordMode(s32 actorId, s32 mode) {
       record->image.objectMode = mode;
       record->shadow.objectMode = mode;
       recordIndex++;
-    } while (recordIndex <= RECORDS_TABLE_SIZE - 1);
+    } while (recordIndex <= OBJECT_SPRITES_GROUP_SIZE - 1);
     break;
   }
   }
@@ -634,7 +635,7 @@ void BattlePresentation_SetActorModes(u16 *selectedUnits, s32 mode) {
   u32 unitIndex;
 
   if (mode == HIGHLIGHT_OFF) {
-    Scheduler_RemoveCallback(Graphics_AdvancePaletteCycle);
+    Task_Remove(Graphics_AdvancePaletteCycle);
     REG_BLDY = mode;
     BattlePresentation_ClearAllActorRecordModes();
     WaitFrames(1);
@@ -667,7 +668,7 @@ void BattlePresentation_SetActorModes(u16 *selectedUnits, s32 mode) {
     }
     WaitFrames(1);
     IoWriteQueue_Store16((u32)&REG_BLDCNT, 0);
-    Scheduler_AddOrUpdateCallback(Graphics_AdvancePaletteCycle, 0x480);
+    Task_Add(Graphics_AdvancePaletteCycle, 0x480);
   }
 }
 

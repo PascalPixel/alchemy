@@ -230,7 +230,7 @@ static void EventScript_WelcomeIsaacBack(void) {
   // The negative answer advances to the next message before continuing.
   Script_OpenMessage(LOCALID_MAYOR, 0);
   if (Engine_ScriptChooseYesNo(0, 0) != 0) {
-    gEventWork->message++;
+    gFieldWork->message++;
   }
   Script_ShowMessageAndWait(LOCALID_MAYOR, 0, 20);
   GameFlag_Set(FLAG_WELCOMED_BACK);
@@ -294,7 +294,7 @@ static void EventScript_OfferBones(void) {
   } else {
     // Declining selects the following line and the object event's response
     // pose.
-    gEventWork->message++;
+    gFieldWork->message++;
     Engine_ScriptWait(20);
     Engine_ObjectEventSetAnimationAndWait(LOCALID_GIRL_AT_THE_INN,
                                           ANIMATION_NOD);
@@ -428,7 +428,7 @@ s32 Map_Initialize(void) {
   s32 warpDest;
   s32 clearedState;
 
-  gEventWork->startTransition =
+  gFieldWork->startTransition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
   warpDest = gGameState.warpDest;
 

@@ -3,7 +3,7 @@
 	.set import.__modsi3, 1
 	.set import.Math_RemainderUnsigned, 1
 	.set import.Engine_TaskWait, 1
-	.set import.Scheduler_AddOrUpdateCallback, 1
+	.set import.Task_Add, 1
 	.set import.Engine_RandomNext, 1
 	.set import.Vector_AddPolarOffset, 1
 	.set import.IoWriteQueue_Store16, 1
@@ -12,7 +12,7 @@
 	.set import.Engine_ObjectCreate, 1
 	.set import.Engine_MapGridRedraw, 1
 	.set import.Engine_ObjectSetPosition, 1
-	.set import.FieldObject_WaitForMove, 1
+	.set import.Object_WaitForMove, 1
 	.set import.Engine_MapGridCopyCells, 1
 	.set import.Engine_MapGridCopyCellAttributes, 1
 	.set import.Object_CheckMovementCollision, 1

@@ -259,7 +259,7 @@ static void EventScript_IodemAsksWhyTurningBack(void) {
     } else {
       // "Then we should continue on our way to the lighthouse." He rejoins
       // the party, and Isaac steps away from the coord event.
-      gEventWork->message += 1;
+      gFieldWork->message += 1;
       Script_ShowMessage(LOCALID_IODEM, 0);
       OBJECT_MODE(LOCALID_IODEM, ANIMATION_WALK);
       leader = ObjectEvent_Get(LOCALID_PARTY_LEADER);
@@ -328,7 +328,7 @@ static void EventScript_SoldierAsksAboutCrossing(void) {
     }
     MESSAGE_PUT(LOCALID_FIRST_SOLDIER, 0);
   } else {
-    gEventWork->message++;
+    gFieldWork->message++;
     MESSAGE_PUT(LOCALID_FIRST_SOLDIER, 0);
   }
 }
@@ -353,7 +353,7 @@ static void EventScript_ReadSoldierMind(void) {
 static void EventScript_LeaveToWorldMapEast(void) {
   struct EventWork *work;
 
-  work = gEventWork;
+  work = gFieldWork;
   EV_START();
   if (FLAG_CHECK(FLAG_MAP_TEMP_04) != 0) {
     GameFlag_Clear(0x9a3);

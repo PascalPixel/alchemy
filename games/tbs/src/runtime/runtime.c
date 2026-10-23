@@ -14,14 +14,14 @@
 ///   Power-up        system.c: System_Initialize
 ///   Frames          frame.c: WaitFrames, System_VBlankHandler,
 ///                   Runtime_SetIrqHandler; scheduler.c:
-///                   Scheduler_AddOrUpdateCallback
+///                   Task_Add
 ///   Screen          fade.c: Fade_Start; render.c: Render_BuildOamList;
 ///                   vram_cache.c: VramCache_Load
-///   Memory          heap.c: Runtime_AllocateHeapBlock, MemAlloc
+///   Memory          heap.c: AllocHeapSlot, Alloc
 ///   3D              transform.c: Transform_ApplyRotationTranslation,
 ///                   Render_ProjectPoint
-///   Saving          save.c: SaveState_WriteRecord,
-///                   SaveState_ReadRecordPayload
+///   Saving          save.c: Save_WriteRecord,
+///                   Save_ReadRecord
 ///   Link cable      serial.c: SerialRuntime_Initialize,
 ///                   SerialRuntime_ExchangePayloads
 

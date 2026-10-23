@@ -9,7 +9,7 @@
 #include "static_assert.h"
 #include "battle_unit.h"
 
-/// A map's type (MapRecord.mapType, copied to GameState.mapType).
+/// A map's type (MapHeader.mapType, copied to GameState.mapType).
 enum MapType {
   MAP_TYPE_FIELD = 1, ///< every other map: dungeons, the world map
   /// Towns and their interiors, where walking restores no PP, recovers no
@@ -55,7 +55,7 @@ enum BattleStart {
 ///
 /// It is the one gGameState in EWRAM, right after the 0x200 bytes of game
 /// flags; a save file's checksum covers the 968 words from gGameFlagBytes to
-/// the end of this struct (SaveState_BuildSummaryHeader). A new game sets its
+/// the end of this struct (Save_BuildFileSummary). A new game sets its
 /// defaults (GameState_InitializeDefaults), and the field, battle, menus and
 /// maps read and write it directly.
 struct GameState {
@@ -82,7 +82,7 @@ struct GameState {
   /// awarded); 8 on the last variant given of each category.
   s8 wonPrizes[0x10];
   u8 unusedAfterPrizes[0x84]; ///< no code names it
-  /// The map being played: its index in gField_MapTable (a MapId_
+  /// The map being played: its index in gMapHeaders (a MapId_
   /// symbol), or RUN_BATTLE or another number above the field maps.
   s16 mapId;
   s16 warpDest; ///< the warp destination taken; in RUN_BATTLE, the enemy group
@@ -98,15 +98,15 @@ struct GameState {
   s16 special;        ///< the battle backdrop chosen for the map or terrain
   u8 unusedAfterSpecial[2]; ///< no code names it
   /// The map record's layout (layoutIndex); the world map's is 1, which the
-  /// code compares as (s32)&MapId_Clear.
+  /// code compares as (s32)&MapId_MainMenu.
   s16 layoutId;
   s32 x;                   ///< 16.16 fixed-point pixels
   s32 y;                   ///< 16.16 fixed-point pixels
   s32 z;                   ///< 16.16 fixed-point pixels
   u32 heading;             ///< 1/65536 turns
   u16 turn;                ///< the leader's terrainId, kept with its position
-  s16 battleCue;           ///< the battle music chosen for the encounter
-  s16 cue;                 ///< the current map's field music
+  s16 battleMusic;         ///< the battle music chosen for the encounter
+  s16 mapMusic;            ///< the current map's field music
   u8 movementMode;         ///< 1 while the leader is climbing, 0 otherwise
   u8 paddingAfterMovement; ///< up to the word selectedLocalId starts on
   s32 selectedLocalId;     ///< the leader: its unit and its object event
@@ -135,7 +135,7 @@ struct GameState {
   u16 secondShortcutKeys; ///< secondShortcut; KEY_R
   u16 dashKeys;           ///< KEY_B
   ///@}
-  s16 returnCue; ///< music playing when the field left; -1 for none
+  s16 returnMusic; ///< music playing when the field left; -1 for none
   /// The shortcuts' assignments. bits: 15..14 kind (0 Psynergy, 1 an item) |
   /// 13..0 which one.
   ///@{
@@ -150,7 +150,7 @@ struct GameState {
   /// hazardLimit the party takes hazardDamage and the count starts again. A
   /// fresh entry into a map, not a return from battle, resets them to 1 HP
   /// every 16 pixels walked on it; the desert sets 25 percent every 600
-  /// (Field_RunMap, LamakanDesert_Initialize).
+  /// (Map_Run, LamakanDesert_Initialize).
   ///@{
   s16 hazardLimit; ///< pixels walked on hazard cells, or frames, by hazardMode
   s16 hazardMode;  ///< an enum HazardMode
@@ -161,12 +161,12 @@ struct GameState {
   /// The Djinni battle pending (DJINNI_EVENT_0 plus its number, flags in bits
   /// 15 to 11), resolved on returning to the field.
   s16 pendingDjinnEvent;
-  s16 mapChangeReason; ///< the last battle's result; -1 for a defeat
-  s32 encounterSteps;  ///< the encounter count, reset with a new map section
-  u16 pendingItem; ///< given on returning to the field if the party has room
-  s16 mapType;     ///< the current map's variant from its record
-  s16 retreatMap;  ///< where Retreat goes; the map section's first warp
-                   ///< destination
+  s16 runResult;      ///< the last battle's result; -1 for a defeat
+  s32 encounterSteps; ///< the encounter count, reset with a new map section
+  u16 pendingItem;    ///< given on returning to the field if the party has room
+  s16 mapType;        ///< the current map's variant from its record
+  s16 retreatMap;     ///< where Retreat goes; the map section's first warp
+                      ///< destination
   s16 retreatWarpDest;     ///< where Retreat goes; the map section's first warp
                            ///< destination
   s32 avoidDistance;       ///< distance left of Avoid, 16.16 pixels; 0 when off

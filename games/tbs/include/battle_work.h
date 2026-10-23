@@ -54,9 +54,9 @@ STATIC_ASSERT(sizeof(struct BattleDisplayOffset) == 8);
 STATIC_ASSERT(sizeof(struct BattleDisplayWork) == 12);
 STATIC_ASSERT(offsetof(struct BattleDisplayWork, marked) == 8);
 
-/// The battle message display, in HEAP_SLOT_BATTLE_DISPLAY, which
+/// The battle message display, in HEAP_SLOT_BATTLE_MESSAGE, which
 /// Battle_RunEncounter takes and zeroes for the battle.
-extern struct BattleDisplayWork *gBattleDisplayWork;
+extern struct BattleDisplayWork *gBattleMessageWork;
 
 /// The battle event queue and the state of its playback: the phase, the event
 /// playing and the advance arrow.
@@ -68,7 +68,7 @@ struct BattleEventState {
   struct BattlePromptSprite displayEntry; ///< the advance arrow
   s32 displaySource; ///< the arrow's resource entry; -1 until it is shown
   s32 actorId;       ///< the unit of the hit or defeat being played
-  s32 pendingCue;    ///< hit sound (an SE_ id), played on the next hit
+  s32 pendingSong;   ///< hit sound (an SE_ id), played on the next hit
   /// bits: 0 Djinn bonus (EVENT_FLAG_DJINN_BONUS), for the enemies that fall
   /// during the action
   s32 flags;
@@ -166,7 +166,7 @@ STATIC_ASSERT(offsetof(struct BattleWork, events) == 0x6b8);
 STATIC_ASSERT(offsetof(struct BattleEventState, phase) == 0x148);
 STATIC_ASSERT(offsetof(struct BattleEventState, flags) == 0x16c);
 
-/// The battle's work: gWorkSlot[HEAP_SLOT_BATTLE] under its own name.
+/// The battle's work: gHeapSlots[HEAP_SLOT_BATTLE] under its own name.
 extern struct BattleWork *gBattleWork;
 
 #endif

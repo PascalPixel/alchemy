@@ -294,7 +294,7 @@ static void EventScript_AskAboutJailbreak(void) {
                                   LOCALID_PARTY_LEADER, 2);
   Engine_ScriptOpenMessage(LOCALID_STRONGMAN_ON_WATCH, 0);
   if (Engine_ScriptChooseYesNo(LOCALID_PARTY_LEADER, 0) != 0) {
-    gEventWork->message += 1;
+    gFieldWork->message += 1;
   }
   Engine_ScriptShowMessage(LOCALID_STRONGMAN_ON_WATCH, 0);
   Engine_GameFlagSet(FLAG_ASKED_ABOUT_JAIL);
@@ -402,7 +402,7 @@ static void EventScript_ReadMindOnJailKey(void) {
                                     LOCALID_PARTY_LEADER, 2);
     Script_OpenMessage(LOCALID_STRONGMAN_ON_WATCH, 0);
     if (Engine_ScriptChooseYesNo(LOCALID_PARTY_LEADER, 0) != 0) {
-      gEventWork->message++;
+      gFieldWork->message++;
     }
     Script_ShowMessage(LOCALID_STRONGMAN_ON_WATCH, 0);
     ObjectEvent_Get(LOCALID_STRONGMAN_ON_WATCH)->paused = requestHeard;
@@ -445,7 +445,7 @@ static void VaultRevisit_JumpObjectEventToAndWait(int localId, int x, int z,
 /// (408, 120), and sets FLAG_VAULT_DJINNI_CALLED_BY_BELL.
 static void EventScript_RingBell(void) {
   Engine_ScriptStart();
-  Script_PlayCue(SE_100);
+  Script_PlaySong(SE_100);
   Engine_ScriptWait(40);
   if (GameFlag_IsSet(FLAG_VAULT_DJINNI_CALLED_BY_BELL) == 0) {
     ObjectEvent_SetAttachedEffect(LOCALID_SAP, ATTACHED_EFFECT_IN_FRONT |
@@ -470,7 +470,7 @@ static void Vault_WalkThroughExit(s32 x, s32 z, s32 warpNumber) {
 
   ObjectEvent_SetSpeed(leaderId, PIXELS(1) / 2, PIXELS(1) / 4);
   ObjectEvent_WalkTo(leaderId, x, z);
-  gEventWork->transitionFrames = 16;
+  gFieldWork->transitionFrames = 16;
   Engine_ScriptRequestWarp(warpNumber);
 }
 
@@ -636,7 +636,7 @@ static void EventScript_TalkToDog(void) {
 
   if (PartyInventory_FindOwner(ITEM_BONE) != -1 &&
       Engine_GameFlagIsSet(FLAG_VAULT_DOG_SHOWN_PASSAGE) == 0) {
-    gEventWork->requestedMenu = 1;
+    gFieldWork->requestedMenu = 1;
   }
 
   Engine_ScriptEnd();

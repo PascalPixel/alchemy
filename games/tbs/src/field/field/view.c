@@ -59,7 +59,7 @@ typedef void (*TileMapRowDrawer)(const struct WorldMapAffinePair *lines,
 
 /// Draws the current affine page into the world map's still-view pixels.
 /// WorldMap_StartStillView supplies 160 pairs and a 240 by 160 byte output.
-/// The ARM kernel borrows HEAP_SLOT_TEMP_RENDERER for this synchronous call;
+/// The ARM kernel borrows HEAP_SLOT_RAM_CODE_TEMP for this synchronous call;
 /// it is released before returning, while both graphics buffers stay owned
 /// by the world map.
 void TileMap_DrawRowsFromRam(const struct WorldMapAffinePair *lines,
@@ -69,17 +69,17 @@ void TileMap_DrawRowsFromRam(const struct WorldMapAffinePair *lines,
   // The second tile and map banks are BG2. The kernel falls back to BG3's
   // preceding banks when a BG2 pixel is transparent.
   base = gDecodeBuffer;
-  RamCode_LoadSlot(HEAP_SLOT_TEMP_RENDERER, TileMap_DrawRows,
+  RamCode_LoadSlot(HEAP_SLOT_RAM_CODE_TEMP, TileMap_DrawRows,
                    TileMap_DrawRowsCodeSize);
   /* FAKEMATCH(one-pass): its loop notes keep gBgTileBuffer's address load ahead
    * of lines' move into r0, as native; as the bare call, 1 of 39 instructions
    * differs in tbs-en. */
   do {
-    ((TileMapRowDrawer)gWorkSlot[HEAP_SLOT_TEMP_RENDERER])(
+    ((TileMapRowDrawer)gHeapSlots[HEAP_SLOT_RAM_CODE_TEMP])(
         lines, pixels, gBgTileBuffer + TILEMAP_TILE_BANK_BYTES,
         base + TILEMAP_MAP_BANK_BYTES);
   } while (0);
-  Runtime_ReleaseHeapBlock(HEAP_SLOT_TEMP_RENDERER);
+  FreeHeapSlot(HEAP_SLOT_RAM_CODE_TEMP);
 }
 
 /// Rebuilds the ground plane's scanline terms when the world map pitch changes.

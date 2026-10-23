@@ -15,7 +15,7 @@ void WorldMap_CreateLinkedEffects(struct ObjectEvent *parent) {
   struct ObjectEvent *pair[2];
   struct ObjectEvent *child;
   struct AnimationObject *sprite;
-  struct FieldEffectWork *effectWork = gEffectWork;
+  struct FieldEffectWork *effectWork = gFieldEffectWork;
   s32 i;
 
   for (i = 0; i < 2; ++i) {

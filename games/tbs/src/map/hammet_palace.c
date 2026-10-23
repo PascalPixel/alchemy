@@ -131,7 +131,7 @@ static void HammetPalace_HammetsHomecoming(void);
 /// Advances within the current conversation's consecutive message block.
 static __inline__ void HammetPalace_AdvanceMessage(s32 amount) {
 
-  gEventWork->message += amount;
+  gFieldWork->message += amount;
 }
 
 /// Selects Hammet Palace's warp destinations, or the fallback table for any
@@ -216,7 +216,7 @@ static void EventScript_LeaveThroughDoor(void) {
 
   struct EventWork *work;
 
-  work = gEventWork;
+  work = gFieldWork;
   EV_START();
   WAIT(10);
   if (work->touchedTrigger == 4) {
@@ -245,7 +245,7 @@ static void EventScript_LeaveThroughDoor(void) {
 /// Opens Hammet Palace with its window transition and runs
 /// warp-destination-specific setup.
 s32 Map_Initialize(void) {
-  gEventWork->startTransition =
+  gFieldWork->startTransition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
   if (gGameState.mapId == (u32)&MapId_HammetPalace) {
     HammetPalace_SetUpWarpDest();
@@ -338,7 +338,7 @@ static void HammetPalace_IvanReportsToLayana(void) {
   ColorBuffer_ApplyTarget(PALETTE_TRANSFORM_SEPIA, PALETTE_HALVES_BOTH);
   Engine_ColorBufferInterpolate(1);
   Engine_TaskWait(1);
-  work = gEventWork;
+  work = gFieldWork;
   work->transitionFrames = 24;
   work->startTransition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_SHAPE);
@@ -507,12 +507,12 @@ static void HammetPalace_IvanReportsToLayana(void) {
   OBJECT_DIR(LOCALID_PARTY_LEADER, FACING_SOUTHWEST, 0);
   advanceAfterReply = 1;
   if (Engine_ScriptChooseYesNo(0, 0) == 1) {
-    gEventWork->message++;
+    gFieldWork->message++;
     advanceAfterReply = 0;
   }
   Script_ShowMessageAndWait(GARET, 0, 10);
   if (advanceAfterReply != 0) {
-    gEventWork->message++;
+    gFieldWork->message++;
   }
   OBJECT_DIR(IVAN, FACING_WEST, 10);
   ObjectEvent_SetAttachedEffect(IVAN, ATTACHED_EFFECT_IN_FRONT |
@@ -539,11 +539,11 @@ static void HammetPalace_IvanReportsToLayana(void) {
     WAIT(20);
     Engine_ObjectEventSetAnimationAndWait(LOCALID_LAYANA, ANIMATION_NOD);
     Script_ShowMessageAndWait(LOCALID_LAYANA, 0, 10);
-    gEventWork->message++;
+    gFieldWork->message++;
   } else {
     WAIT(20);
     Engine_ObjectEventSetAnimationAndWait(LOCALID_LAYANA, ANIMATION_SHAKE_HEAD);
-    gEventWork->message++;
+    gFieldWork->message++;
     Script_ShowMessageAndWait(LOCALID_LAYANA, 0, 10);
   }
   HammetPalace_FacePartyNorth(20);
@@ -599,11 +599,11 @@ static void HammetPalace_IvanReportsToLayana(void) {
                                                       ATTACHED_EFFECT_ONCE);
     WAIT(40);
     Script_ShowMessageAndWait(LOCALID_LAYANA, 0, 10);
-    gEventWork->message += 2;
+    gFieldWork->message += 2;
   } else {
     WAIT(20);
     Engine_ObjectEventRunRepeatedMotion(GARET, 2);
-    gEventWork->message++;
+    gFieldWork->message++;
     Script_ShowMessageAndWait(GARET, 0, 10);
     ObjectEvent_SetAttachedEffect(LOCALID_LAYANA, ATTACHED_EFFECT_IN_FRONT |
                                                       ATTACHED_EFFECT_ONCE);
@@ -754,11 +754,11 @@ static void HammetPalace_IvanReportsToLayana(void) {
     Engine_ObjectEventSetAnimationAndWait(MIA, ANIMATION_NOD);
     WAIT(10);
     Script_ShowMessageAndWait(GARET, 0, 10);
-    gEventWork->message += 2;
+    gFieldWork->message += 2;
   } else {
     WAIT(10);
     Engine_ObjectEventRunRepeatedMotion(GARET, 2);
-    gEventWork->message++;
+    gFieldWork->message++;
     Script_ShowMessageAndWait(GARET, 0, 10);
     HammetPalace_FacePartyNorth(10);
     OBJECT_MODE(GARET, ANIMATION_NOD);
@@ -802,7 +802,7 @@ static void HammetPalace_IvanReportsToLayana(void) {
   ObjectEvent_SetActionScript(GARET, partyScript);
   ObjectEvent_SetActionScript(IVAN, partyScript);
   ObjectEvent_RunActionScriptAndWait(MIA, partyScript);
-  work = gEventWork;
+  work = gFieldWork;
   work->transitionFrames = 16;
   work->startTransition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
@@ -853,8 +853,8 @@ static void HammetPalace_HammetsHomecoming(void) {
   Engine_MapGridRedraw();
   Engine_TaskWait(1);
   OBJECT_POSITION_SET(LOCALID_PARTY_LEADER, 864, 630);
-  gEventWork->startTransition = v5 = 0x100;
-  gEventWork->transitionFrames = 40;
+  gFieldWork->startTransition = v5 = 0x100;
+  gFieldWork->transitionFrames = 40;
   Engine_ScriptOpenScreen();
   Camera_SetSpeed(0x6666, 0xccc);
   Camera_MoveTo(PIXELS(864), -1, PIXELS(472), 1);
@@ -1003,7 +1003,7 @@ static void HammetPalace_HammetsHomecoming(void) {
   ObjectEvent_SetActionScript(GARET, partyScript);
   ObjectEvent_SetActionScript(IVAN, partyScript);
   ObjectEvent_RunActionScriptAndWait(MIA, partyScript);
-  work = gEventWork;
+  work = gFieldWork;
   work->transitionFrames = 16;
   work->startTransition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);

@@ -238,7 +238,7 @@ static void EventScript_LeaveForVault(void) {
 s32 Map_Initialize(void) {
   s16 warpDest;
 
-  gEventWork->startTransition =
+  gFieldWork->startTransition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
   warpDest = gGameState.warpDest;
 

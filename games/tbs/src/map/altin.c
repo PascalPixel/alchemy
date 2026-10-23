@@ -605,7 +605,7 @@ static void Village_EnterDoor(void) {
   s32 row;
   s32 rightColumn;
 
-  work = gEventWork;
+  work = gFieldWork;
   Engine_ScriptStart();
   for (localId = LOCALID_FIRST_PLACED; localId <= LOCALID_LAST_SLOT;
        localId++) {
@@ -626,7 +626,7 @@ static void Village_EnterDoor(void) {
   row = *(s16 *)(doorBytes + coordinatesByteOffset + 2);
   if (doorIndex == DOOR_SANCTUM) {
     // The Sanctum's door slides open with SE_188, as Bilibin's does.
-    Script_PlayCue(SE_188);
+    Script_PlaySong(SE_188);
     MapGrid_CopyCellsTo(42, 33, column, row, 2, 2);
     rightColumn = column + 2;
     MapGrid_CopyCellsTo(42, 35, rightColumn, row, 2, 2);
@@ -635,7 +635,7 @@ static void Village_EnterDoor(void) {
     MapGrid_CopyCellsTo(40, 35, rightColumn, row, 2, 2);
     Engine_ScriptWait(4);
   } else {
-    Script_PlayCue(SE_DOOR_OPEN);
+    Script_PlaySong(SE_DOOR_OPEN);
     // The north door's row in gAltinVillage_Doors plays its opening at
     // (39, 17), outside the village's camera box; its house stands at
     // (8, 17), above where the party comes back out
@@ -649,7 +649,7 @@ static void Village_EnterDoor(void) {
 
   // Walk the leader through.
   ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, 0x8000, 0x4000);
-  gEventWork->startTransition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+  gFieldWork->startTransition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   ObjectEvent_GetById(LOCALID_PARTY_LEADER)->motionFlags = 0;
   Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIMATION_WALK);
   if (doorIndex == DOOR_STRAIGHT_IN) {
@@ -674,10 +674,10 @@ static void Village_EnterDoor(void) {
 static void Village_WalkThroughDoorway(void) {
   struct EventWork *work;
 
-  work = gEventWork;
+  work = gFieldWork;
   Engine_ScriptStart();
   ObjectEvent_GetById(LOCALID_PARTY_LEADER)->motionFlags = 0;
-  Script_PlayCue(SE_MAP_EXIT);
+  Script_PlaySong(SE_MAP_EXIT);
   ObjectEvent_CenterAndWalk(LOCALID_PARTY_LEADER, 2, -16);
   Engine_ScriptRequestWarp(work->touchedTrigger);
   Engine_ScriptCloseScreen();
@@ -704,7 +704,7 @@ static void Beast_Hop(union FieldObject *fieldObject) {
     beast->y.fixed += -0x18000;
     if (beast->y.fixed < beast->terrainHeight) {
       if (fieldObject->effect.countdown != 0) {
-        Script_PlayCue(SE_SPLASH);
+        Script_PlaySong(SE_SPLASH);
         fieldObject->effect.countdown = 0;
         beast->work = 4;
         MapGrid_SetShake(0, 0x10000, 0x10000);
@@ -716,7 +716,7 @@ static void Beast_Hop(union FieldObject *fieldObject) {
     beast->paused = 0;
   }
   if (beast->timer == 0) {
-    Script_PlayCue(SE_JUMP);
+    Script_PlaySong(SE_JUMP);
     fieldObject->effect.countdown = 1;
     ObjectEvent_SetMode(beast, 2);
     beast->velocityY = 0x30000;
@@ -737,7 +737,7 @@ static void Beast_HopAway(void) {
   ObjectEvent_SetSpeed(LOCALID_WATER_BEAST, 0x13333, 0x9999);
   ObjectEvent_MoveToAndWait(LOCALID_WATER_BEAST, 28, 460);
   ObjectEvent_MoveToAndWait(LOCALID_WATER_BEAST, 24, 448);
-  Script_PlayCue(SE_SPLASH);
+  Script_PlaySong(SE_SPLASH);
   Engine_ObjectEventDestroy(LOCALID_WATER_BEAST);
   MapGrid_SetShake(0, 0x10000, 0x10000);
   Engine_ScriptWait(4);
@@ -983,7 +983,7 @@ static void Village_ScareOffBeast(void) {
   ObjectEvent_FaceDirection(LOCALID_WATER_BEAST, FACING_EAST, 20);
   ObjectEvent_FaceDirection(LOCALID_WATER_BEAST, FACING_NORTH + FACING_STEP,
                             40);
-  Script_PlayCue(SE_147);
+  Script_PlaySong(SE_147);
   Engine_ObjectEventRunRepeatedMotion(LOCALID_WATER_BEAST, 2);
   Engine_ScriptWait(20);
   ObjectEvent_FaceDirection(LOCALID_WATER_BEAST, FACING_NORTHWEST + FACING_STEP,

@@ -60,20 +60,19 @@ void BattleEffect_RunCondemn(struct BattleEffectArgument *effect) {
   sheet = Resource_GetTableEntry((s32)&ResourceId_CounterRevealSheet);
   Iwram_CopyWords((void *)BG_PLTT, sheet, 128);
   sheet = sheet + 128;
-  Resource_DecodeType01(sheet, work->sheet);
+  Decompress_Type01(sheet, work->sheet);
   cells = Ram_MapGridCellBuffer;
   sheet = Resource_GetTableEntry((s32)&ResourceId_RedCrescentSheetA);
   sheet = sheet + 128;
-  Resource_DecodeType01(sheet, cells);
-  EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER, EFFECT_CLIP_BOUNDS,
+  Decompress_Type01(sheet, cells);
+  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                       COMPOSITE_TRANSPARENT);
-  draw[0] = (DrawRectangle)EFFECT_SLOT(slots, HEAP_SLOT_BLITTER);
-  EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER_ALTERNATE,
+  draw[0] = (DrawRectangle)EFFECT_SLOT(slots, HEAP_SLOT_RAM_CODE);
+  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
                       EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
                       COMPOSITE_TRANSPARENT);
-  draw[1] = (DrawRectangle)EFFECT_SLOT(slots, HEAP_SLOT_BLITTER_ALTERNATE);
-  Scheduler_AddOrUpdateCallback(BattleEffect_ArmBg2AffineHBlankDma,
-                                EFFECT_CALLBACK_ORDER);
+  draw[1] = (DrawRectangle)EFFECT_SLOT(slots, HEAP_SLOT_RAM_CODE_2);
+  Task_Add(BattleEffect_ArmBg2AffineHBlankDma, EFFECT_CALLBACK_ORDER);
   // Redraw from blank each frame.
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_CLEAR, zero);
   // swing is the point the panel sways about, in 16.16 pixels: the first
@@ -101,7 +100,7 @@ void BattleEffect_RunCondemn(struct BattleEffectArgument *effect) {
     screenX = (swing[0] >> 16) + (((Trig_Sin(spin) * 16)) >> 16) + 48;
     screenY = (swing[1] >> 16) + (((Trig_Cos(spin) * 4)) >> 16) + 16;
     if (frame == CONDEMN_BREAK_FRAME) {
-      AudioCommand_PlayFar(SE_HEAVY_IMPACT);
+      Sound_PlaySongFar(SE_HEAVY_IMPACT);
     }
     // Frame 32: the second pass, lower and further across; the panel skips
     // a frame while it moves, and comes back opaque on frame 33.
@@ -234,7 +233,7 @@ void BattleEffect_RunCondemn(struct BattleEffectArgument *effect) {
       target->verticalMotionStrength = 0;
       target->autoFaceMotion = 0;
       target->snapToTarget = 0;
-      Object_SetMoveTargetFar((struct ObjectRuntime *)target, target->x << 1, 0,
+      Object_SetMoveTargetFar((struct Object *)target, target->x << 1, 0,
                               target->z);
       ObjectGroup_UpdateMembers(work->effect->actors[0], -1, POSE_DAMAGE, -1,
                                 0);
@@ -252,8 +251,8 @@ void BattleEffect_RunCondemn(struct BattleEffectArgument *effect) {
   // character blocks 2 and 3, its palettes darkened to level 24.
   // XXX: why it is reloaded, when nothing in this effect writes those
   // blocks; a VRAM view after the panel breaks would show what it repairs.
-  Scheduler_RemoveCallback(BattleEffect_ProcessPendingGraphicsTransfer);
-  Scheduler_RemoveCallback(BattleEffect_ArmBg2AffineHBlankDma);
+  Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
+  Task_Remove(BattleEffect_ArmBg2AffineHBlankDma);
   BattleBackground_LoadFar(BATTLE_BACKGROUND_FLAT, gBattleWork->background, 24);
   EFFECT_RELEASE_BLITTERS();
   BattleEffect_EndCanvasLayer();

@@ -34,7 +34,7 @@ void FourObjectMotion_InitializeTopRow(void *unused0, s32 unused1) {
     state->positionsX[index] = 0x10;
     state->positionsY[index] = 0x20;
   }
-  Scheduler_AddOrUpdateCallback(FourObjectMotion_UpdateAllPositions, 0xc80);
+  Task_Add(FourObjectMotion_UpdateAllPositions, 0xc80);
 }
 
 /// Releases the four objects and removes their scheduler callback. It defines
@@ -55,7 +55,7 @@ void FourObjectMotion_InitializeTopRow(void *unused0, s32 unused1) {
       }                                                                        \
       index++;                                                                 \
     } while (index < 4);                                                       \
-    Scheduler_RemoveCallback(update);                                          \
+    Task_Remove(update);                                                       \
   }
 
 FOUR_OBJECT_MOTION_DEFINE_RELEASE(FourObjectMotion_ClearSlotsAndSchedule,
@@ -180,7 +180,7 @@ void FourObjectMotion_InitializeBottomRow(s32 unused0, s32 unused1) {
     state->positionsX[index] = 0x10;
     state->positionsY[index] = 0xc8;
   }
-  Scheduler_AddOrUpdateCallback(FourObjectMotion_UpdateBottomRow, 0xc80);
+  Task_Add(FourObjectMotion_UpdateBottomRow, 0xc80);
 }
 
 /// Updates one object's saved position and its signed y marker: with negative
@@ -234,7 +234,7 @@ FOUR_OBJECT_MOTION_DEFINE_RELEASE(FourObjectMotion_ClearSlotsAndScheduleAlt,
 
 /// Starts the walking animation (1) of each party figure. Nothing calls it.
 UNUSED void Menu_StartPartyFiguresWalking(void) {
-  struct InventoryMenuState *menu = gMenuWork;
+  struct ItemMenuWork *menu = gMenuWork;
   s32 index;
 
   for (index = 0; index < menu->partyCount; ++index) {

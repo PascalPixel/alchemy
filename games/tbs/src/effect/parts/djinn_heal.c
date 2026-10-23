@@ -75,9 +75,9 @@ UNUSED void BattleEffect_RunDjinnHeal(struct BattleEffectArgument *effect) {
   for (frame = 0; frame != DJINN_HEAL_SWIRL_FRAMES; frame++) {
     struct BattleCamera *camera = gCameraWork;
     if (frame == 8)
-      AudioCommand_PlayFar(SE_212);
+      Sound_PlaySongFar(SE_212);
     if (frame == 80)
-      AudioCommand_PlayFar(SE_142);
+      Sound_PlaySongFar(SE_142);
     EFFECT_VIEW_FROM_CAMERA(camera);
     if (frame >= 30 && frame < 70) {
       position[0] += delta[0];
@@ -180,7 +180,7 @@ UNUSED void BattleEffect_RunDjinnHeal(struct BattleEffectArgument *effect) {
       // turns 1/128 of a circle a frame, and each sparkle steps 2 pixels
       // towards the centre (distance counts 2-pixel steps) until within 2.
       if (frame == start + 30)
-        AudioCommand_PlayFar(SE_RECOVERY);
+        Sound_PlaySongFar(SE_RECOVERY);
       if (frame == start + 40)
         ObjectGroup_UpdateMembers(work->effect->actors[member],
                                   SPRITE_COLOR_WHITE, -1, -1, 0);
@@ -244,7 +244,7 @@ UNUSED void BattleEffect_RunDjinnHeal(struct BattleEffectArgument *effect) {
 void Camera_ApplyPhasedDelta(void) {
   // Both come from the one slot table; a separate camera base compiles 4
   // bytes longer.
-  void **slots = gWorkSlot + HEAP_SLOT_BATTLE_EFFECT;
+  void **slots = gHeapSlots + HEAP_SLOT_BATTLE_ANIM;
   struct BattleEffectWork *work = slots[0];
   struct BattleCamera *camera = EFFECT_SLOT(slots, HEAP_SLOT_CAMERA);
   s32 *phase = &work->cameraPhase;

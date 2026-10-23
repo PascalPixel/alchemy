@@ -202,90 +202,90 @@
 
 // The reel game: its title's letters and where they start (nine in Spanish).
 #if (LANGUAGE == LANGUAGE_SPANISH)
-#define REEL_TITLE_LETTERS 9
-#define REEL_TITLE_X 8
+#define LUCKY_WHEELS_TITLE_LETTERS 9
+#define LUCKY_WHEELS_TITLE_X 8
 #else
-#define REEL_TITLE_LETTERS 8
-#define REEL_TITLE_X 24
+#define LUCKY_WHEELS_TITLE_LETTERS 8
+#define LUCKY_WHEELS_TITLE_X 24
 #endif
 
 // The reel game's help window, and the VRAM its jackpot and title tiles use.
 #if LANGUAGE != LANGUAGE_JAPANESE
-#define REEL_HELP_WINDOW_X 2
-#define REEL_HELP_WINDOW_WIDTH 26
-#define REEL_JACKPOT_TILES 0x06016e00
-#define REEL_JACKPOT_COPY 0x84000480
-#define REEL_TITLE_TILES 0x370
+#define LUCKY_WHEELS_HELP_WINDOW_X 2
+#define LUCKY_WHEELS_HELP_WINDOW_WIDTH 26
+#define LUCKY_WHEELS_JACKPOT_TILES 0x06016e00
+#define LUCKY_WHEELS_JACKPOT_COPY 0x84000480
+#define LUCKY_WHEELS_TITLE_TILES 0x370
 #else
-#define REEL_HELP_WINDOW_X 6
-#define REEL_HELP_WINDOW_WIDTH 18
-#define REEL_JACKPOT_TILES 0x06017000
-#define REEL_JACKPOT_COPY 0x84000400
-#define REEL_TITLE_TILES 0x380
+#define LUCKY_WHEELS_HELP_WINDOW_X 6
+#define LUCKY_WHEELS_HELP_WINDOW_WIDTH 18
+#define LUCKY_WHEELS_JACKPOT_TILES 0x06017000
+#define LUCKY_WHEELS_JACKPOT_COPY 0x84000400
+#define LUCKY_WHEELS_TITLE_TILES 0x380
 #endif
 
 // The reel game's prompt windows (stop, all held, start, hold, release),
 // placed and sized for each language's words.
 #if LANGUAGE == LANGUAGE_JAPANESE
-#define REEL_STOP_X 23
-#define REEL_STOP_WIDTH 7
+#define LUCKY_WHEELS_STOP_X 23
+#define LUCKY_WHEELS_STOP_WIDTH 7
 #elif (LANGUAGE == LANGUAGE_SPANISH)
-#define REEL_STOP_X 21
-#define REEL_STOP_WIDTH 9
-#define REEL_ALL_HELD_X 6
-#define REEL_ALL_HELD_WIDTH 24
-#define REEL_START_X 22
-#define REEL_START_WIDTH 8
-#define REEL_HOLD_X 22
-#define REEL_HOLD_WIDTH 8
-#define REEL_RELEASE_X 22
-#define REEL_RELEASE_WIDTH 8
+#define LUCKY_WHEELS_STOP_X 21
+#define LUCKY_WHEELS_STOP_WIDTH 9
+#define LUCKY_WHEELS_ALL_HELD_X 6
+#define LUCKY_WHEELS_ALL_HELD_WIDTH 24
+#define LUCKY_WHEELS_START_X 22
+#define LUCKY_WHEELS_START_WIDTH 8
+#define LUCKY_WHEELS_HOLD_X 22
+#define LUCKY_WHEELS_HOLD_WIDTH 8
+#define LUCKY_WHEELS_RELEASE_X 22
+#define LUCKY_WHEELS_RELEASE_WIDTH 8
 #elif (LANGUAGE == LANGUAGE_ITALIAN)
-#define REEL_STOP_X 18
-#define REEL_STOP_WIDTH 12
-#define REEL_ALL_HELD_X 10
-#define REEL_ALL_HELD_WIDTH 20
-#define REEL_START_X 21
-#define REEL_START_WIDTH 9
-#define REEL_HOLD_X 21
-#define REEL_HOLD_WIDTH 9
-#define REEL_RELEASE_X 21
-#define REEL_RELEASE_WIDTH 9
+#define LUCKY_WHEELS_STOP_X 18
+#define LUCKY_WHEELS_STOP_WIDTH 12
+#define LUCKY_WHEELS_ALL_HELD_X 10
+#define LUCKY_WHEELS_ALL_HELD_WIDTH 20
+#define LUCKY_WHEELS_START_X 21
+#define LUCKY_WHEELS_START_WIDTH 9
+#define LUCKY_WHEELS_HOLD_X 21
+#define LUCKY_WHEELS_HOLD_WIDTH 9
+#define LUCKY_WHEELS_RELEASE_X 21
+#define LUCKY_WHEELS_RELEASE_WIDTH 9
 #elif (LANGUAGE == LANGUAGE_GERMAN)
-#define REEL_STOP_X 18
-#define REEL_STOP_WIDTH 12
-#define REEL_ALL_HELD_X 11
-#define REEL_ALL_HELD_WIDTH 19
-#define REEL_START_X 16
-#define REEL_START_WIDTH 14
-#define REEL_HOLD_X 22
-#define REEL_HOLD_WIDTH 8
-#define REEL_RELEASE_X 21
-#define REEL_RELEASE_WIDTH 9
+#define LUCKY_WHEELS_STOP_X 18
+#define LUCKY_WHEELS_STOP_WIDTH 12
+#define LUCKY_WHEELS_ALL_HELD_X 11
+#define LUCKY_WHEELS_ALL_HELD_WIDTH 19
+#define LUCKY_WHEELS_START_X 16
+#define LUCKY_WHEELS_START_WIDTH 14
+#define LUCKY_WHEELS_HOLD_X 22
+#define LUCKY_WHEELS_HOLD_WIDTH 8
+#define LUCKY_WHEELS_RELEASE_X 21
+#define LUCKY_WHEELS_RELEASE_WIDTH 9
 #else
-#define REEL_STOP_X 18
-#define REEL_STOP_WIDTH 12
-#define REEL_ALL_HELD_X 11
-#define REEL_ALL_HELD_WIDTH 19
-#define REEL_START_X 16
-#define REEL_START_WIDTH 14
-#define REEL_HOLD_X 23
-#define REEL_HOLD_WIDTH 7
-#define REEL_RELEASE_X 23
-#define REEL_RELEASE_WIDTH 7
+#define LUCKY_WHEELS_STOP_X 18
+#define LUCKY_WHEELS_STOP_WIDTH 12
+#define LUCKY_WHEELS_ALL_HELD_X 11
+#define LUCKY_WHEELS_ALL_HELD_WIDTH 19
+#define LUCKY_WHEELS_START_X 16
+#define LUCKY_WHEELS_START_WIDTH 14
+#define LUCKY_WHEELS_HOLD_X 23
+#define LUCKY_WHEELS_HOLD_WIDTH 7
+#define LUCKY_WHEELS_RELEASE_X 23
+#define LUCKY_WHEELS_RELEASE_WIDTH 7
 #endif
 // The reel game's count of Game Tickets left after the bet takes three digits
 // from the French release on, one tile further left so that it ends where the
 // two did, and the hold hint no longer follows the fourth and last spin, after
 // which no reel can be held. Neither is about words, so both are updates.
 #if TBS_PATCH_3
-#define REEL_COIN_DIGITS 3
-#define REEL_COIN_X 56
-#define REEL_HINT_BEFORE_LAST_SPIN 1
+#define LUCKY_WHEELS_COIN_DIGITS 3
+#define LUCKY_WHEELS_COIN_X 56
+#define LUCKY_WHEELS_HINT_BEFORE_LAST_SPIN 1
 #else
-#define REEL_COIN_DIGITS 2
-#define REEL_COIN_X 64
-#define REEL_HINT_BEFORE_LAST_SPIN 0
+#define LUCKY_WHEELS_COIN_DIGITS 2
+#define LUCKY_WHEELS_COIN_X 64
+#define LUCKY_WHEELS_HINT_BEFORE_LAST_SPIN 0
 #endif
 
 // The first area name message, for the map section name shown on entering a new

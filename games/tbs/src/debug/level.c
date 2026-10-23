@@ -463,20 +463,20 @@ UNUSED static void ItemLevel_SelectAbility(void) {
 /// Unused: requests a warp through TRANSITION_WINDOW over 24 frames; no event
 /// row names it.
 UNUSED static void ItemLevel_RequestWarp(void) {
-  gEventWork->startTransition = MAP_TRANSITION(TRANSITION_WINDOW, 1);
-  gEventWork->transitionFrames = 24;
+  gFieldWork->startTransition = MAP_TRANSITION(TRANSITION_WINDOW, 1);
+  gFieldWork->transitionFrames = 24;
   Engine_ScriptRequestWarp();
 }
 
 /// Starts the window transition and edition-specific object event
 /// scale/animation setup. Returns zero through the exported map entry. The
-/// room's initialize entry, which Field_RunMap runs on entry and whose result
+/// room's initialize entry, which Map_Run runs on entry and whose result
 /// it ignores: LOCALID_LEVEL_EDITOR is drawn 1.6 times its size (1.7 in
 /// Japanese; 16.16 scales), and outside Japanese the two emote testers start
 /// animations 5 and 2.
 s32 Map_RunLevelRoomSetup(void) {
-  gEventWork->startTransition = MAP_TRANSITION(TRANSITION_WINDOW, 4);
-  gEventWork->transitionFrames = 24;
+  gFieldWork->startTransition = MAP_TRANSITION(TRANSITION_WINDOW, 4);
+  gFieldWork->transitionFrames = 24;
 #if TBS_PATCH_1
   ObjectEvent_GetById(LOCALID_LEVEL_EDITOR)->scaleY = 0x19999;
   ObjectEvent_GetById(LOCALID_LEVEL_EDITOR)->scaleX = 0x19999;
@@ -525,7 +525,8 @@ static void ItemLevel_ShowGlyphCaptions(void) {
 /// cast at it, this sets the effect's childMode, and Force's shot then leaves
 /// its target where it is (object/psynergy_effects/force.c).
 static void ItemLevel_EnableEffectChildMode(void) {
-  struct FieldEffectWork *effectWork = (struct FieldEffectWork *)gEffectWork;
+  struct FieldEffectWork *effectWork =
+      (struct FieldEffectWork *)gFieldEffectWork;
 
   effectWork->childMode = 1;
 }

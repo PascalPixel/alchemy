@@ -44,7 +44,7 @@ s32 Shop_CanServe(s32 unitId, s32 serviceKind) {
 /// Shop_ConfirmAct, which says nobody needs it when the count is 0, and by
 /// Sanctum_RunPartyService, which offers another member while any remain.
 s32 Shop_CountUnits(void) {
-  struct ShopRuntime *shop = gMenuWork;
+  struct ShopWork *shop = gMenuWork;
   s32 eligibleCount = 0;
   s32 serviceKind = shop->partyAction;
   s32 memberIndex;
@@ -61,7 +61,7 @@ s32 Shop_CountUnits(void) {
 /// are a run in the same order, from MsgReviveService, MsgCurePoisonService,
 /// MsgExorcismService and MsgRemoveCurseService.
 s32 Shop_MessageByMode(s32 messageId) {
-  s8 serviceKind = ((struct ShopRuntime *)gMenuWork)->partyAction;
+  s8 serviceKind = ((struct ShopWork *)gMenuWork)->partyAction;
 
   if (serviceKind == SANCTUM_SERVICE_CURE_POISON) {
     messageId += MsgCurePoisonService - MsgReviveService;
@@ -82,7 +82,7 @@ void UiMessage_ShowResolvedAndWait(s32 messageId) {
   s32 portraitResource;
 
   portraitResource = FieldEffect_GetResourceIdFar(
-      ((struct ShopRuntime *)gMenuWork)->keeperResource);
+      ((struct ShopWork *)gMenuWork)->keeperResource);
   UiWork_FinalizePendingCoreFar();
   messageId = Shop_MessageByMode(messageId);
   UiText_OpenMessageWindowFar(messageId, 5, 0,
@@ -97,7 +97,7 @@ void UiMessage_ShowResolvedAndWait(s32 messageId) {
 /// shows and putting back its motion after: the sanctum's
 /// UiMessage_ShowAndRestoreState.
 void UiMessage_ShowResolvedAndRestoreState(s32 messageId) {
-  struct ShopRuntime *shop;
+  struct ShopWork *shop;
   struct RenderOutput **cursorSlot;
   s32 portraitResource;
   u8 savedCursorMode;
@@ -124,7 +124,7 @@ void UiMessage_ShowResolvedAndRestoreState(s32 messageId) {
 s32 Shop_ConfirmAct(s32 unitId) {
   s32 serviceSelection = 0;
   struct UiWindow *listWindow = 0;
-  struct ShopRuntime *shop;
+  struct ShopWork *shop;
   struct RenderOutput *cursorAnchor;
 
   Shop_InitializeCursorWork();
@@ -133,7 +133,7 @@ s32 Shop_ConfirmAct(s32 unitId) {
 
   {
     s32 keeperAnimationId =
-        (u16)((struct AnimationObject *)((struct ObjectRuntime *)
+        (u16)((struct AnimationObject *)((struct Object *)
                                              ObjectEvent_GetByIdFar(unitId))
                   ->animation)
             ->entries[0]
@@ -200,7 +200,7 @@ s32 Shop_ConfirmAct(s32 unitId) {
 /// while any still need it, until B. A member who needs nothing can be
 /// pointed at, but A only buzzes. Called by Shop_ConfirmAct; returns 0.
 s32 Sanctum_RunPartyService(void) {
-  struct ShopRuntime *shop = gMenuWork;
+  struct ShopWork *shop = gMenuWork;
   struct UiWindow *priceWindow;
   s32 redraw;
   s32 serviceKind;
@@ -265,7 +265,7 @@ s32 Sanctum_RunPartyService(void) {
       WaitFrames(1);
       donation = Shop_ServicePrice(unitId, serviceKind);
       if (Shop_CanServe(unitId, serviceKind) == 0) {
-        AudioCommand_PlayFar(SE_MENU_CANCEL);
+        Sound_PlaySongFar(SE_MENU_CANCEL);
         continue;
       }
       UiWork_PushValueSlotFar(unitId, MESSAGE_ARGUMENT_ACTOR);
@@ -278,7 +278,7 @@ s32 Sanctum_RunPartyService(void) {
         continue;
       }
       if (donation > (u32)gGameState.coins) {
-        AudioCommand_PlayFar(SE_MENU_CANCEL);
+        Sound_PlaySongFar(SE_MENU_CANCEL);
         UiMessage_ShowResolvedAndRestoreState(messageBase + 1);
         chooseAgain = 1;
         continue;
@@ -300,16 +300,16 @@ s32 Sanctum_RunPartyService(void) {
       break;
     }
     if ((gKeysPressed & KEY_B) != 0) {
-      AudioCommand_PlayFar(SE_MENU_CANCEL);
+      Sound_PlaySongFar(SE_MENU_CANCEL);
       break;
     }
     if ((gKeysRepeat & KEY_LEFT) != 0) {
-      AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
+      Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
       redraw = 1;
       memberIndex -= 1;
     }
     if ((gKeysRepeat & KEY_RIGHT) != 0) {
-      AudioCommand_PlayFar(SE_MENU_CURSOR_MOVE);
+      Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
       redraw = 1;
       memberIndex += 1;
     }
@@ -359,7 +359,7 @@ void BattleUnit_ResetStateByMode(s32 unitId, s32 serviceKind) {
 /// seven tenths of their size (0xb333 in 16.16) the members who do not need
 /// the service. The sanctum's Shop_DrawParty.
 void Shop_HiliteUnit(struct UiWindow *window, s32 selected) {
-  struct ShopRuntime *shop = gMenuWork;
+  struct ShopWork *shop = gMenuWork;
   s32 memberIndex;
   s32 serviceKind = shop->partyAction;
 
@@ -385,7 +385,7 @@ void Shop_DrawSelectMessage(struct UiWindow *target, s32 unitId) {
   s32 serviceOrMessage;
   s32 donation;
 
-  serviceOrMessage = ((struct ShopRuntime *)gMenuWork)->partyAction;
+  serviceOrMessage = ((struct ShopWork *)gMenuWork)->partyAction;
   donation = Shop_ServicePrice(unitId, serviceOrMessage);
   if (target != 0) {
     RenderOutput_PrepareForRedrawFar(target);
@@ -446,7 +446,7 @@ void Shop_UpdateBurstSparkle(struct EffectSlot *effect) {
 /// random colour mode each frame: SpriteColorMode 0 to 6, normal, the channel
 /// swaps or grey.
 void Shop_ResetEffects(void) {
-  struct ShopRuntime *shop = gMenuWork;
+  struct ShopWork *shop = gMenuWork;
   struct EffectSlot *effect = shop->effects;
   s32 remainingEffects = 23;
   s8 burstMember;
@@ -481,7 +481,7 @@ static const s8 sSanctumServiceCues[4] = {
 /// the member is cured.
 void Shop_RunPartyMemberIconBurst(s32 member) {
 
-  struct ShopRuntime *shop;
+  struct ShopWork *shop;
   s8 savedCursorMode;
   struct FixedPointPosition position;
   struct EffectSlot *effect;
@@ -492,12 +492,12 @@ void Shop_RunPartyMemberIconBurst(s32 member) {
   savedCursorMode = shop->cursor.anchor->active;
   shop->burstMember = -1;
   shop->cursor.anchor->active = UI_SPRITE_HIDDEN;
-  AudioCommand_PlayFar(sSanctumServiceCues[shop->partyAction]);
+  Sound_PlaySongFar(sSanctumServiceCues[shop->partyAction]);
   Shop_SaveAndTintFieldPalette(0x00202108);
   AnimationObject_SetActiveTimerStepsFar(shop->partyMemberIcons[member], 0);
   WaitFrames(20);
-  callbackPriority = SCHEDULER_KEY_MAIN_LOOP;
-  Scheduler_AddOrUpdateCallback(Shop_ResetEffects, callbackPriority);
+  callbackPriority = TASK_PRIORITY_MAIN_LOOP;
+  Task_Add(Shop_ResetEffects, callbackPriority);
 
   // The burst's centre, in 16.16 pixels: 12 above the member's icon
   position.x = shop->partyMemberX[member] << 16;
@@ -536,7 +536,7 @@ void Shop_RunPartyMemberIconBurst(s32 member) {
   }
 
   WaitFrames(20);
-  AudioCommand_PlayFar(SE_RECOVERY);
+  Sound_PlaySongFar(SE_RECOVERY);
   shop->burstMember = -1;
   ObjectGroup_SetChildValueUnlessFifteenFar(shop->partyMemberIcons[member], 0);
   WaitFrames(20);
@@ -557,7 +557,7 @@ void Shop_RunPartyMemberIconBurst(s32 member) {
     }
   }
 
-  Scheduler_RemoveCallback(Shop_ResetEffects);
+  Task_Remove(Shop_ResetEffects);
   AnimationObject_SetActiveTimerStepsFar(shop->partyMemberIcons[member], 16);
   Shop_RestoreFieldPalette();
   WaitFrames(30);

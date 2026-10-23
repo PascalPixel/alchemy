@@ -46,7 +46,7 @@ void BattleEffect_RunTorch(struct BattleEffectArgument *effect) {
   s32 angle;
   s32 *line;
 
-  slots = gBattleEffectWork;
+  slots = gBattleAnimWork;
   EFFECT_GET_WORK_AND_CANVAS(slots, work, canvas);
   work->effect = effect;
   BattleEffect_StartCanvasLayer(BGCNT_WRAP);
@@ -117,8 +117,7 @@ void BattleEffect_RunTorch(struct BattleEffectArgument *effect) {
 
   draw[0](canvas, work->sheet, 0, 0, 128, 128);
   work->transferPending = 1;
-  Scheduler_AddOrUpdateCallback(BattleEffect_ArmBg2AffineHBlankDma,
-                                EFFECT_CALLBACK_ORDER);
+  Task_Add(BattleEffect_ArmBg2AffineHBlankDma, EFFECT_CALLBACK_ORDER);
 
   // Fade the radial picture in (frames 0 to 8), ripple each scanline, then
   // fade it out (frames 89 to 95, from 14 sixteenths down to 2).
@@ -158,7 +157,7 @@ void BattleEffect_RunTorch(struct BattleEffectArgument *effect) {
     WaitFrames(1);
   }
 
-  Scheduler_RemoveCallback(BattleEffect_ArmBg2AffineHBlankDma);
+  Task_Remove(BattleEffect_ArmBg2AffineHBlankDma);
   EFFECT_FINISH_CANVAS();
 }
 
@@ -173,7 +172,7 @@ void BattleEffect_RunKite(struct BattleEffectArgument *effect) {
   s32 originX;
   s32 originY;
 
-  work = WORK_SLOT(HEAP_SLOT_BATTLE_EFFECT);
+  work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_ANIM);
   work->effect = effect;
   BattleEffect_StartCanvasLayer(0);
   BattleEffect_RunDjinniEntrance(effect, ELEMENT_JUPITER + DJINNI_ENTRANCE_LONG,

@@ -109,7 +109,7 @@ const s16 gScript_MainScriptTail[8] = {
 /// The heading for each state of the direction pad (bits 4-7 of the keys:
 /// Right, Left, Up, Down), in 1/65536 turns: Right is 0, Down 0x4000, Left
 /// 0x8000 and Up 0xc000; 0xffff means no direction is held, or only an
-/// opposite pair. Read by FieldObject_UpdatePlayerControl,
+/// opposite pair. Read by Object_UpdateLeaderControl,
 /// Object_MoveOnWorldMap and Object_MoveByKeys.
 const u16 gWorldMap_KeyHeadings[16] = {
     0xffff, 0x0000, 0x8000, 0xffff, 0xc000, 0xe000, 0xa000, 0xc000,
@@ -117,7 +117,7 @@ const u16 gWorldMap_KeyHeadings[16] = {
 };
 
 /// Two scripts for the world map's footprint and dust effects: wait 120 or 30
-/// frames, then release the object. FieldObject_UpdatePlayerControl starts
+/// frames, then release the object. Object_UpdateLeaderControl starts
 /// the first and Object_MoveOnWorldMap the second (three words in).
 const s32 gWorldMap_FootprintActions[6] = {
     SC_WAIT(120), SC_FREE,

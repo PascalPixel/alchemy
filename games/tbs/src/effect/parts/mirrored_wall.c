@@ -21,26 +21,26 @@ enum MirroredWallMode {
 /// Called during setup by twenty effect parts, from the gathering
 /// lights and the Djinn beams to the casting impacts and Ragnarok, usually
 /// with effect->side as `flip` so pictures face the targets. Builds the
-/// blitters in heap slots HEAP_SLOT_BLITTER and HEAP_SLOT_BLITTER_ALTERNATE,
+/// blitters in heap slots HEAP_SLOT_RAM_CODE and HEAP_SLOT_RAM_CODE_2,
 /// which the caller frees (EFFECT_RELEASE_BLITTERS).
 ///
 /// flip : nonzero draws mirrored.
 /// out  : [0] keeps the higher colour index, [1] adds the colours (up to 63).
 void BattleEffect_FetchRectangleBlitters(s32 flip, BlitterPair out) {
   if (flip == 0) {
-    EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER, EFFECT_CLIP_BOUNDS, COMPOSITE_MAX);
-    out[0] = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER];
-    EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER_ALTERNATE, EFFECT_CLIP_BOUNDS,
+    EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, COMPOSITE_MAX);
+    out[0] = (DrawRectangle)gHeapSlots[HEAP_SLOT_RAM_CODE];
+    EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, EFFECT_CLIP_BOUNDS,
                         COMPOSITE_ADDITIVE);
-    out[1] = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE];
+    out[1] = (DrawRectangle)gHeapSlots[HEAP_SLOT_RAM_CODE_2];
   } else {
-    EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER,
+    EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
                         EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, COMPOSITE_MAX);
-    out[0] = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER];
-    EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER_ALTERNATE,
+    out[0] = (DrawRectangle)gHeapSlots[HEAP_SLOT_RAM_CODE];
+    EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
                         EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
                         COMPOSITE_ADDITIVE);
-    out[1] = (DrawRectangle)gWorkSlot[HEAP_SLOT_BLITTER_ALTERNATE];
+    out[1] = (DrawRectangle)gHeapSlots[HEAP_SLOT_RAM_CODE_2];
   }
 }
 
@@ -86,7 +86,7 @@ void BattleEffect_RunMirroredWall(struct BattleEffectArgument *effect,
   s32 frame;
   s32 cell;
 
-  cursor = gBattleEffectWork;
+  cursor = gBattleAnimWork;
   EFFECT_GET_WORK_AND_CANVAS(cursor, work, canvas);
   work->effect = effect;
   BattleEffect_StartCanvasLayer(0);
@@ -96,7 +96,7 @@ void BattleEffect_RunMirroredWall(struct BattleEffectArgument *effect,
   palette = Resource_GetTableEntry((s32)&ResourceId_EarthWallSheet);
   Iwram_CopyWords((void *)BG_PLTT, palette, 128);
   palette += 128;
-  Resource_DecodeType01(palette, work->sheet);
+  Decompress_Type01(palette, work->sheet);
   palette = Resource_GetTableEntry((s32)&ResourceId_MarsDjinnSheet);
   Iwram_CopyWords((void *)BG_PLTT, palette, 128);
   if (mode == MIRRORED_WALL_RECOVERY) {
@@ -119,12 +119,12 @@ void BattleEffect_RunMirroredWall(struct BattleEffectArgument *effect,
 
   // The left half as drawn, the right half mirrored, keeping the higher
   // colour.
-  EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER, EFFECT_CLIP_BOUNDS, COMPOSITE_MAX);
-  slots = gWorkSlot;
-  draw[0] = slots[HEAP_SLOT_BLITTER];
-  EFFECT_LOAD_BLITTER(HEAP_SLOT_BLITTER_ALTERNATE,
+  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, COMPOSITE_MAX);
+  slots = gHeapSlots;
+  draw[0] = slots[HEAP_SLOT_RAM_CODE];
+  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2,
                       EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, COMPOSITE_MAX);
-  draw[1] = slots[HEAP_SLOT_BLITTER_ALTERNATE];
+  draw[1] = slots[HEAP_SLOT_RAM_CODE_2];
   // Trails keep half a frame.
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, 50);
 
@@ -132,10 +132,10 @@ void BattleEffect_RunMirroredWall(struct BattleEffectArgument *effect,
   // which does nothing while shakeFrames is 0.
   if (mode == MIRRORED_WALL_RECOVERY) {
     work->shakeFrames = 0;
-    AudioCommand_PlayFar(SE_212);
+    Sound_PlaySongFar(SE_212);
   } else if (mode == MIRRORED_WALL_BERSERK) {
     work->shakeFrames = 8;
-    AudioCommand_PlayFar(SE_212);
+    Sound_PlaySongFar(SE_212);
   } else {
     work->shakeFrames = 32;
   }
@@ -154,7 +154,7 @@ void BattleEffect_RunMirroredWall(struct BattleEffectArgument *effect,
     if (frame == 24)
       EFFECT_SHOW_DAMAGE(0);
     if (frame == 8 && mode == MIRRORED_WALL_SPASM)
-      AudioCommand_PlayFar(SE_RECOVERY);
+      Sound_PlaySongFar(SE_RECOVERY);
 
     // Images 0, 1 and 2, four frames each, then 2, 1, 2 and 1, up to frame
     // 27, standing 8 pixels below the target's feet; the trail fades after

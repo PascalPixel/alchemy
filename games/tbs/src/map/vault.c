@@ -234,7 +234,7 @@ static void EventScript_IvanStaysBehind(void) {
   struct ObjectEvent *objectEvent;
   struct EventWork *work;
 
-  work = gEventWork;
+  work = gFieldWork;
   if (GameFlag_IsSet(FLAG_VAULT_THIEVES_JAILED) != 0 ||
       GameFlag_IsSet(FLAG_VAULT_IVAN_JOINED_ROD_SEARCH) == 0) {
     Engine_ScriptRequestWarp(work->touchedTrigger - (VAULT_CELL_SOUTH_GATE -
@@ -295,7 +295,7 @@ const struct MapEvent *Map_GetEvents(void) {
 static inline void Vault_AskYesNoAndShowReply(s32 speaker) {
   Engine_ScriptOpenMessage(speaker, 0);
   if (Engine_ScriptChooseYesNo(0, 0) != 0) {
-    struct EventWork *work = gEventWork;
+    struct EventWork *work = gFieldWork;
 
     ++work->message;
   }
@@ -312,7 +312,7 @@ static void EventScript_AskAboutEruption(void) {
                                2);
   Script_OpenMessage(LOCALID_ERUPTION_WITNESS, 0);
   if (Engine_ScriptChooseYesNo(0, 0) != 0) {
-    gEventWork->message++;
+    gFieldWork->message++;
   }
   Script_ShowMessage(LOCALID_ERUPTION_WITNESS, 0);
   ObjectEvent_FaceDirection(LOCALID_ERUPTION_WITNESS,
@@ -484,7 +484,7 @@ static void EventScript_TalkAboutIvan(void) {
   Engine_ScriptStart();
   Engine_ScriptSetMessage(MsgVaultTalkingAboutHammetsServantIvan);
   if (Engine_GameFlagIsSet(FLAG_IN_PARTY(IVAN)) != 0) {
-    workspace = gEventWork;
+    workspace = gFieldWork;
     ++workspace->message;
   }
   Vault_ShowStandingObjectEventMessage(LOCALID_OLD_MAN_ON_HAMMETS_SERVANT);
@@ -513,7 +513,7 @@ static void EventScript_AskWhetherIvanWentToLunpa(void) {
   Engine_ScriptStart();
   Engine_ScriptSetMessage(MsgVaultDidntGoLunpa);
   if (Engine_GameFlagIsSet(FLAG_IN_PARTY(IVAN)) != 0)
-    ++gEventWork->message;
+    ++gFieldWork->message;
   Engine_ObjectEventSetAnimation(LOCALID_BOY_ROUND_THE_WELL, 0);
   Vault_FaceObjectEventAndWait(LOCALID_BOY_ROUND_THE_WELL, LOCALID_PARTY_LEADER,
                                2);
@@ -581,7 +581,7 @@ static void EventScript_TalkToDogAfterCapture(void) {
   Engine_ObjectEventSetAnimation(LOCALID_VAULT_DOG, ANIMATION_STAND);
   if (PartyInventory_FindOwner(ITEM_BONE) != -1 &&
       Engine_GameFlagIsSet(FLAG_VAULT_DOG_SHOWN_PASSAGE) == 0) {
-    u16 *menuRequest = &gEventWork->requestedMenu;
+    u16 *menuRequest = &gFieldWork->requestedMenu;
     u16 open = 1;
 
     *menuRequest = open;
@@ -642,7 +642,7 @@ static void EventScript_ReadMindOnIvan(void) {
   } else {
     Engine_ScriptSetMessage(MsgVaultWhereDidIvanGoBy);
     if (Engine_GameFlagIsSet(FLAG_IN_PARTY(IVAN)) != 0)
-      ++gEventWork->message;
+      ++gFieldWork->message;
   }
   Vault_ShowThought(LOCALID_BOY_ROUND_THE_WELL);
   Engine_ScriptEnd();
@@ -711,7 +711,7 @@ static void EventScript_ReadWomanWantingTheRoofFixedMind(void) {
 static void Vault_WalkThroughExit(s32 x, s32 y, s32 continuation) {
   ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(1) / 2, PIXELS(1) / 4);
   ObjectEvent_WalkTo(LOCALID_PARTY_LEADER, x, y);
-  gEventWork->transitionFrames = 16;
+  gFieldWork->transitionFrames = 16;
   Engine_ScriptRequestWarp(continuation);
 }
 
@@ -830,7 +830,7 @@ static void Vault_JumpObjectEventToAndWait(s32 localId, s32 x, s32 z,
 /// it; it joins in the town's later map (vault_revisit.c).
 static void EventScript_RingBell(void) {
   Engine_ScriptStart();
-  Script_PlayCue(SE_100);
+  Script_PlaySong(SE_100);
   Engine_ScriptWait(40);
   if (GameFlag_IsSet(FLAG_VAULT_DJINNI_CALLED_BY_BELL) == 0) {
     ObjectEvent_SetAttachedEffect(LOCALID_SAP, ATTACHED_EFFECT_IN_FRONT |

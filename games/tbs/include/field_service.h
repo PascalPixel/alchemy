@@ -121,9 +121,8 @@ static inline void Script_Wait(s32 frames) { Engine_ScriptWait(frames); }
 static inline void Script_WaitForScreen(void) { Engine_ScriptWaitForScreen(); }
 
 /// Sends an object toward a point, where it coasts to a stop.
-static inline void FieldObject_SetPosition(struct ObjectEvent *objectEvent,
-                                           s32 fixed_x, s32 fixed_y,
-                                           s32 fixed_z) {
+static inline void Object_SetPosition(struct ObjectEvent *objectEvent,
+                                      s32 fixed_x, s32 fixed_y, s32 fixed_z) {
   Engine_ObjectSetPosition(objectEvent, fixed_x, fixed_y, fixed_z);
 }
 
@@ -214,13 +213,13 @@ static inline void FieldObjectMotion_ResetAndSetPosition(s32 a0, s32 a1,
 
 /// ObjectEvent_MoveToAndWait, written with ObjectMotion_SetPositionAndCommit's
 /// name.
-static inline void FieldObject_MotionSetPositionAndCommit(s32 localId, s32 x,
-                                                          s32 z) {
+static inline void Object_MotionSetPositionAndCommit(s32 localId, s32 x,
+                                                     s32 z) {
   Engine_ObjectMotionSetPositionAndCommit(localId, x, z);
 }
 
 /// FieldScheduler_AddCallback (engine_call.h) under the scheduler's own name.
-static inline s32 FieldScheduler_AddOrUpdateCallback(SchedulerCallback callback,
+static inline s32 FieldScheduler_AddOrUpdateCallback(TaskFunc callback,
                                                      s32 priority) {
   return FieldScheduler_AddCallback(callback, priority);
 }
@@ -247,8 +246,8 @@ static inline void FieldMotion_LaunchFromFocusedObject(s32 localId, s32 dx,
 
 /// Makes an object event follow another and starts a script on it
 /// (ObjectEvent_SetTargetAndCallback).
-static inline void FieldObject_SetTargetAndCallback(s32 object, s32 target,
-                                                    const s32 *actions) {
+static inline void Object_SetTargetAndCallback(s32 object, s32 target,
+                                               const s32 *actions) {
   ObjectEvent_SetTargetAndCallback(object, target, actions);
 }
 

@@ -9,7 +9,7 @@
 /// It is a habit of the whole game written once: a layer, not a
 /// compiler-steering device (AGENTS.md S2). An overlay writes
 /// `FieldScheduler_AddCallback(callback, TASK_PRIORITY_MAP)` and the inline
-/// calls Scheduler_AddOrUpdateCallback, which resolves to the overlay's import
+/// calls Task_Add, which resolves to the overlay's import
 /// stub. Main-image code calls the routines as ordinary functions; only the
 /// shared map/common/scroll_initialize_hblank_dma.h, which
 /// object/psynergy_effects.c includes as lemurian_ship.c does, reaches the
@@ -37,9 +37,8 @@ struct MenuSprite;
 /// map service layer's
 /// Task_AddCallback and FieldScheduler_AddOrUpdateCallback call it too, so
 /// overlays import the routine under one name.
-static inline s32 FieldScheduler_AddCallback(SchedulerCallback callback,
-                                             s32 priority) {
-  return Scheduler_AddOrUpdateCallback(callback, priority);
+static inline s32 FieldScheduler_AddCallback(TaskFunc callback, s32 priority) {
+  return Task_Add(callback, priority);
 }
 
 static inline void FieldUiTextResource_Initialize(struct MenuSprite *cursor,
@@ -68,8 +67,7 @@ static inline void FieldObjectEvent_JumpDownLedge(s32 localId, s32 mode,
 static inline s32
 FieldObject_CheckMovementCollision(struct ObjectEvent *objectEvent,
                                    struct FieldPosition *position) {
-  return Object_CheckMovementCollision((struct ObjectRuntime *)objectEvent,
-                                       position);
+  return Object_CheckMovementCollision((struct Object *)objectEvent, position);
 }
 
 static inline s32 FieldGameFlag_GetByte(s32 flag) {
@@ -90,11 +88,11 @@ static inline s32 FieldUnit_AddHp(s32 owner, s32 delta) {
 
 /// Decodes type-01 compressed data from `source` into `destination`. Maps
 /// and the title and clear menus reach the decoder through it; main-image code
-/// calls Resource_DecodeType01 without it, LuckyDice_Run through call.h's
+/// calls Decompress_Type01 without it, LuckyDice_Run through call.h's
 /// Value2.
 static inline s32 FieldResource_DecodeType01(const void *source,
                                              void *destination) {
-  return Resource_DecodeType01(source, destination);
+  return Decompress_Type01(source, destination);
 }
 
 static inline void DisplayScroll_StartHBlankDma(s32 mode, s32 freqX, s32 stepX,

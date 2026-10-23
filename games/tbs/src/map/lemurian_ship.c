@@ -126,7 +126,7 @@ const struct ObjectEventTemplate *LemurianShip_GetObjectEventTemplates(void) {
 /// colour. Reached by stepping on metatile behavior 1 (gLemurianShipEvents);
 /// takes LEMURIAN_SHIP_TO_LALIVERO_FARANS_HOUSE.
 static void EventScript_LeaveTheShip(void) {
-  Engine_ScriptRequestWarp(gEventWork->touchedTrigger);
+  Engine_ScriptRequestWarp(gFieldWork->touchedTrigger);
   Io_Write16(0, &PLTT_BACKDROP);
 }
 
@@ -383,11 +383,11 @@ static void LemurianShip_SetSail(void) {
     Engine_ScriptWait(30);
     ObjectEvent_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 50);
     Engine_ScriptShowMessage(GARET, 0);
-    gEventWork->message++;
+    gFieldWork->message++;
   } else {
     Engine_ScriptWait(30);
     ObjectEvent_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 50);
-    gEventWork->message++;
+    gFieldWork->message++;
     Engine_ScriptShowMessage(GARET, 0);
   }
   Engine_ScriptWait(10);
@@ -427,14 +427,14 @@ static void LemurianShip_SetSail(void) {
     Engine_ObjectEventFaceDirection(GARET, FACING_NORTHEAST, 0);
     Engine_ScriptWait(20);
     Engine_ScriptShowMessage(GARET, 0);
-    gEventWork->message++;
+    gFieldWork->message++;
   } else {
     Engine_ScriptWait(20);
     Engine_ObjectEventRunRepeatedMotion(GARET, 2);
     Engine_ScriptWait(20);
     Engine_ObjectEventFaceDirection(GARET, FACING_NORTHEAST, 0);
     Engine_ScriptWait(20);
-    gEventWork->message++;
+    gFieldWork->message++;
     Engine_ScriptShowMessage(GARET, 0);
   }
   Engine_ScriptWait(10);
@@ -467,12 +467,12 @@ static void LemurianShip_SetSail(void) {
     Engine_ObjectEventSetAnimationAndWait(MIA, ANIMATION_NOD);
     Engine_ScriptWait(20);
     Engine_ScriptShowMessage(MIA, 0);
-    gEventWork->message++;
+    gFieldWork->message++;
   } else {
     Engine_ScriptWait(30);
     Engine_ObjectEventSetAnimationAndWait(MIA, ANIMATION_NOD);
     Engine_ScriptWait(20);
-    gEventWork->message++;
+    gFieldWork->message++;
     Engine_ScriptShowMessage(MIA, 0);
   }
   Engine_ScriptWait(10);
@@ -620,7 +620,7 @@ static void EventScript_RaiseTheShip(void) {
   ObjectEvent_WalkToAndWait(LOCALID_PARTY_LEADER, 312, 232);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_NORTH, 0);
   Script_Wait(40);
-  Script_PlayCue(SE_140);
+  Script_PlaySong(SE_140);
   for (i = 0; i <= 15; i++) {
     Io_Write16(RGB(0, i, i * 2), &PLTT_BACKDROP);
     Script_Wait(10);
@@ -634,7 +634,7 @@ static void EventScript_RaiseTheShip(void) {
     u16 bright = BLEND_ALPHA(16, 16);
 
     for (flash = 0; flash < 3; flash++) {
-      Script_PlayCue(SE_212);
+      Script_PlaySong(SE_212);
       REG_BLDALPHA = bright;
       Script_Wait(3);
       Io_Write16(BLEND_ALPHA(16, 8), &REG_BLDALPHA);
@@ -648,7 +648,7 @@ static void EventScript_RaiseTheShip(void) {
   FieldScheduler_AddCallback(Ship_UpdateSwell, TASK_PRIORITY_MAP);
   gSprayActive = 1;
   Script_Wait(20);
-  Script_PlayCue(SE_163);
+  Script_PlaySong(SE_163);
   MapGrid_SetShake(0x10000, 0x10000, 0x10000);
   Script_Wait(60);
   gSprayActive = 1;
@@ -671,10 +671,10 @@ static void EventScript_RaiseTheShip(void) {
   REG_BG2CNT = cnt = (REG_BG2CNT & ~BGCNT_PRIORITY(3)) | BGCNT_PRIORITY(3);
   REG_BG1CNT = cnt = (REG_BG1CNT & ~BGCNT_PRIORITY(3)) | BGCNT_PRIORITY(2);
   gOrbGlowActive = 0;
-  Script_PlayCue(SE_STOP_SLOT3);
+  Script_PlaySong(SE_STOP_SLOT3);
   Task_Wait(1);
   // A flash of white; the swell starts as it clears.
-  Script_PlayCue(SE_145);
+  Script_PlaySong(SE_145);
   Io_Write16(BLDCNT_TGT1_ALL | BLDCNT_EFFECT_LIGHTEN, &REG_BLDCNT);
   for (white = 0; white <= 16; white++) {
     REG_BLDY = white;
@@ -690,7 +690,7 @@ static void EventScript_RaiseTheShip(void) {
     Script_Wait(8);
   }
   FieldScheduler_AddCallback(ShipGlow_CyclePalette, TASK_PRIORITY_MAP);
-  Script_PlayCue(MUS_PUZZLE_SOLVED);
+  Script_PlaySong(MUS_PUZZLE_SOLVED);
   AudioCommand_WaitForStateByteClear();
   Script_Wait(20);
   Script_End();
@@ -914,7 +914,7 @@ static void Curtain_Close(void) {
 static void Curtain_Start(void) {
   u8 *tiles;
 
-  tiles = Runtime_CallAlternatePool(Runtime_BumpAllocateAlternatePool, 0x100);
+  tiles = Runtime_CallAlternatePool(AllocEwram, 0x100);
   sCurtainVramSlot = Resource_FindFreeEntry();
   Dma_Fill32(0x11111111, tiles, 0x100);
   Engine_VramLoad(sCurtainVramSlot, 0x100, tiles);

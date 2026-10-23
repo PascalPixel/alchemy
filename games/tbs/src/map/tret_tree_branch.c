@@ -105,7 +105,7 @@ const struct ObjectEventTemplate *TretTreeBranch_GetObjectEventTemplates(void) {
 /// at the terrain height of its destination.
 static void TretTreeBranch_ShiftLeaderAndCameraByCells(s32 cellOffsetX,
                                                        s32 cellOffsetZ) {
-  struct EventWork *state = gEventWork;
+  struct EventWork *state = gFieldWork;
   struct ObjectEvent *objectEvent;
   s32 offsetX = cellOffsetX;
   s32 offsetZ = cellOffsetZ;
@@ -179,7 +179,7 @@ static void EventScript_ShiftNorthSixCells(void) {
 /// leaves by the warp touched, into Tret Tree's other map
 /// (MapId_TretTreeInteriors).
 static void EventScript_TakeTouchedWarp(void) {
-  struct EventWork *state = gEventWork;
+  struct EventWork *state = gFieldWork;
   s16 *touchedWarp;
 
   SE(SE_MAP_EXIT);
@@ -205,7 +205,7 @@ static void EventScript_CastReveal(void) {
   REG_BLDCNT = BLDCNT_TGT1_BG1 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
   REG_BLDALPHA = BLEND_ALPHA(4, 12);
 
-  state = gDisplayTransition;
+  state = gScreenTransitionWork;
   TretTreeBranch_SetRevealWindow(state);
 }
 
@@ -237,21 +237,21 @@ static void UNUSED TretTreeBranch_ExchangeInputPacket(void) {
 /// split. Returns 0 for the overlay initialization entry point.
 s32 TretTreeBranch_Initialize(void) {
 #ifndef UBFIX
-  u8 **eventSlot = (u8 **)&gEventWork;
+  u8 **eventSlot = (u8 **)&gFieldWork;
 #endif
   struct DisplayTransitionState *state;
 
-  gEventWork->startTransition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+  gFieldWork->startTransition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
 
   DisplayTransition_InitializeBattleEffectState(9);
 
   REG_BLDCNT = BLDCNT_TGT1_BG1 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
   REG_BLDALPHA = BLEND_ALPHA(4, 12);
 
-  // UB: HEAP_SLOT_TRANSITION lies past scalar gEventWork. Its named load adds
-  // six bytes in the native EN trial (0x6a to 0x70).
+  // UB: HEAP_SLOT_SCREEN_TRANSITION lies past scalar gFieldWork. Its named load
+  // adds six bytes in the native EN trial (0x6a to 0x70).
 #ifdef UBFIX
-  state = gDisplayTransition;
+  state = gScreenTransitionWork;
 #else
   state = (struct DisplayTransitionState *)eventSlot[4];
 #endif

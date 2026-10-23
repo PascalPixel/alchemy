@@ -2,7 +2,7 @@
 #define ALCHEMY_RAM_BUFFER_H
 
 /// @file
-/// The work pointers in the gWorkSlot table, by name.
+/// The work pointers in the gHeapSlots table, by name.
 
 #include "types.h"
 #include "version.h"
@@ -28,7 +28,7 @@
 
 // IWRAM variables the code reaches as constants; German moves them 16 bytes
 // up. Only BattleEffect_RunSpiderWeb takes the work slot table's address as
-// Ram_WorkSlot; other code uses gWorkSlot (MATCHING.md).
+// Ram_HeapSlots; other code uses gHeapSlots (MATCHING.md).
 // The 16 bytes are space German alone reserves before gRenderSlotHeads
 // (system/iwram.s), so the test is on the language: French, Spanish and
 // Italian, which take German's other changes, lay IWRAM out as English does.
@@ -37,23 +37,24 @@
 #if (LANGUAGE == LANGUAGE_GERMAN)
 #define Ram_BgScroll FIXED_ADDRESS((u8 *), 0x03001ae0, gBgScroll)
 #define Ram_VramBlockCache FIXED_ADDRESS((u8 *), 0x03001b20, gVramBlockCache)
-#define Ram_WorkSlot FIXED_ADDRESS((void **), 0x03001e60, gWorkSlot)
+#define Ram_HeapSlots FIXED_ADDRESS((void **), 0x03001e60, gHeapSlots)
 #else
 #define Ram_BgScroll FIXED_ADDRESS((u8 *), 0x03001ad0, gBgScroll)
 #define Ram_VramBlockCache FIXED_ADDRESS((u8 *), 0x03001b10, gVramBlockCache)
-#define Ram_WorkSlot FIXED_ADDRESS((void **), 0x03001e50, gWorkSlot)
+#define Ram_HeapSlots FIXED_ADDRESS((void **), 0x03001e50, gHeapSlots)
 #endif
 
-// Work pointers in the gWorkSlot table. Their users include heap_state.h, which
-// the sound library's include path cannot reach.
-#define Ram_MapGridWork ((void **)&gWorkSlot[HEAP_SLOT_MAP_GRID])
-#define Ram_CameraWork ((void **)&gWorkSlot[HEAP_SLOT_CAMERA])
-#define Ram_EventWork ((void **)&gWorkSlot[HEAP_SLOT_EVENT])
-#define Ram_DisplayWork ((void **)&gWorkSlot[HEAP_SLOT_TRANSITION])
-#define Ram_ObjectEventEffectWork ((void **)&gWorkSlot[HEAP_SLOT_FADE_OVERLAY])
-#define Ram_Disp ((void **)&gWorkSlot[HEAP_SLOT_BATTLE_ENTRY_TIMER])
-#define Ram_EffectWork ((void **)&gWorkSlot[HEAP_SLOT_EFFECT])
+// Work pointers in the gHeapSlots table. Their users include heap_state.h,
+// which the sound library's include path cannot reach.
+#define Ram_MapGridWork ((void **)&gHeapSlots[HEAP_SLOT_MAP_GRID])
+#define Ram_CameraWork ((void **)&gHeapSlots[HEAP_SLOT_CAMERA])
+#define Ram_FieldWork ((void **)&gHeapSlots[HEAP_SLOT_FIELD])
+#define Ram_DisplayWork ((void **)&gHeapSlots[HEAP_SLOT_SCREEN_TRANSITION])
+#define Ram_ObjectEventEffectWork ((void **)&gHeapSlots[HEAP_SLOT_FADE_OVERLAY])
+#define Ram_BattleEntryTimer                                                   \
+  ((void **)&gHeapSlots[HEAP_SLOT_BATTLE_ENTRY_TIMER])
+#define Ram_FieldEffectWork ((void **)&gHeapSlots[HEAP_SLOT_FIELD_EFFECT])
 
-#define Ram_FieldBlendWorkOffset FIXED_OFFSET(0xc, gFieldBlendWork, gEventWork)
+#define Ram_FieldBlendWorkOffset FIXED_OFFSET(0xc, gLightningWork, gFieldWork)
 
 #endif

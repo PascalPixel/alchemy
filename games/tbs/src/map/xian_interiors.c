@@ -300,7 +300,7 @@ const struct MapEvent *XianInteriors_GetEvents(void) {
 s32 XianInteriors_Initialize(void) {
   s16 warpDest;
 
-  gEventWork->startTransition =
+  gFieldWork->startTransition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
   warpDest = gGameState.warpDest;
   if (warpDest == XIAN_INTERIORS_INN_SOUTH ||

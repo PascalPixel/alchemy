@@ -2,7 +2,7 @@
 #define ALCHEMY_MAP_IDS_H
 
 /// @file
-/// Map numbers, named after their places, in the order of gField_MapTable
+/// Map numbers, named after their places, in the order of gMapHeaders
 /// (field/maps.s).
 ///
 /// Each MapId_ is an absolute symbol whose value is the map's row in the
@@ -12,7 +12,7 @@
 /// ★ Named from the game: "Title screen" (MsgDebugEntryName)
 extern char MapId_Title;
 /// ★ Named from the game: "Clear data" (MsgDebugEntryName)
-extern char MapId_Clear;
+extern char MapId_MainMenu;
 /// ★ Named from its area name: World Map
 extern char MapId_WorldMap;
 /// ★ Named from the game: "I just knew a storm like this would knock it loose!"

@@ -85,7 +85,7 @@ void FieldEffect_UpdateOrbitingParticleRight(union FieldObject *fieldObject) {
 /// The target is the object event in scene->child. With childMode the target is
 /// left as it is and only the particles appear.
 void FieldEffect_RunFrostOnTarget(s32 unused) {
-  struct FieldEffectWork *effectWork = gEffectWork;
+  struct FieldEffectWork *effectWork = gFieldEffectWork;
   struct ObjectEvent *target = effectWork->child;
 
   if (target != 0) {
@@ -119,10 +119,10 @@ void FieldEffect_RunFrost(void) {
   void *event;
   s32 remainingCycles;
 
-  effectWork = gEffectWork;
+  effectWork = gFieldEffectWork;
   target = effectWork->child;
   FieldEffect_FadeToEffectColor();
-  AudioCommand_PlayFar(SE_ICE);
+  Sound_PlaySongFar(SE_ICE);
 
   // A particle every 3 frames, 0.5 to 1 size, turning either way at random,
   // centred 2 to 6 pixels from the effect's position.
@@ -161,11 +161,11 @@ void FieldEffect_RunFrost(void) {
   } while (remainingCycles >= 0);
 
   WaitFrames(10);
-  AudioCommand_PlayFar(SE_ICE);
+  Sound_PlaySongFar(SE_ICE);
   WaitFrames(50);
 
   if (target != NULL && effectWork->enabled == 0) {
-    AudioCommand_PlayFar(SE_212);
+    Sound_PlaySongFar(SE_212);
 
     // Flash for 1 frame in every 5.
     remainingCycles = 15;
@@ -180,7 +180,7 @@ void FieldEffect_RunFrost(void) {
     } while (remainingCycles >= 0);
 
     if (effectWork->childOption == 0) {
-      AudioCommand_PlayFar(SE_220);
+      Sound_PlaySongFar(SE_220);
       ObjectDispatch_SelectAnimationFar(target, 2);
     }
 

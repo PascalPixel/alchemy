@@ -575,7 +575,7 @@ static void EventScript_KiteKeepsAway(void) {
   s32 targetZOffset;
   struct EventWork *work;
 
-  work = gEventWork;
+  work = gFieldWork;
   if (Engine_GameFlagIsSet(FLAG_VALE_CAVE_KITE_BEHIND_LEDGE) != 0) {
     if (gGameState.pausedObject != LOCALID_KITE) {
       // Preserve the speed reads before resolving this route point.
@@ -683,8 +683,8 @@ static void EventScript_PushLogOffLedge(void) {
   Engine_ScriptWait(15);
   Engine_ObjectEventSetDestinationOffset(LOCALID_PARTY_LEADER, 8, 0);
   Engine_ScriptWait(4);
-  Script_PlayCue(SE_STOP_SLOT3);
-  Script_PlayCue(SE_HEAVY_MOVE);
+  Script_PlaySong(SE_STOP_SLOT3);
+  Script_PlaySong(SE_HEAVY_MOVE);
   ObjectEvent_SetSpeed(LOCALID_WEST_LOG, PIXELS(1) / 2, PIXELS(1) / 10);
   Engine_ObjectEventSetAnimation(LOCALID_WEST_LOG, 2);
   stationaryMotion = 0;
@@ -695,8 +695,8 @@ static void EventScript_PushLogOffLedge(void) {
   Engine_ObjectEventWaitForMove(LOCALID_PARTY_LEADER);
   Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, 1);
   Engine_ObjectEventWaitForMove(LOCALID_WEST_LOG);
-  Script_PlayCue(SE_STOP_SLOT3);
-  Script_PlayCue(SE_HEAVY_STOP);
+  Script_PlaySong(SE_STOP_SLOT3);
+  Script_PlaySong(SE_HEAVY_STOP);
   Engine_ObjectEventSetAnimation(LOCALID_WEST_LOG, 3);
   ObjectEvent_GetById(LOCALID_WEST_LOG)->motionFlags =
       OBJ_EVENT_FOLLOWS_TERRAIN | OBJ_EVENT_FALLS;
@@ -709,7 +709,7 @@ static void EventScript_PushLogOffLedge(void) {
   StagedObjectEvent_FillGridAttributeRectangle(0, 12, 16, 1, 4, 0);
   StagedObjectEvent_FillGridAttributeRectangle(0, 13, 16, 1, 4, 0);
   GameFlag_Set(FLAG_MAP_TEMP_02);
-  Script_PlayCue(SE_240);
+  Script_PlaySong(SE_240);
   Engine_ScriptEnd();
 }
 
@@ -778,7 +778,7 @@ const struct MapEvent *ValeCave_GetEvents(void) {
 /// backdrop and clears FLAG_SHOW_LOCATION_NAME, so the area name is not shown
 /// again; the two rooms of Vale Cave open with the window transition.
 s32 ValeCave_Initialize(void) {
-  s32 *request = &gEventWork->startTransition;
+  s32 *request = &gFieldWork->startTransition;
 
   *request =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
@@ -800,7 +800,7 @@ s32 ValeCave_Initialize(void) {
 /// the warp of the same number (VALE_CAVE_MOUTH_TO_VALE_KRADEN_WEST,
 /// VALE_CAVE_MOUTH_TO_VALE_CAVE_KITE or VALE_CAVE_MOUTH_TO_VALE_KRADEN_EAST).
 static void EventScript_LeaveRoom(void) {
-  s32 warpNumber = gEventWork->touchedTrigger;
+  s32 warpNumber = gFieldWork->touchedTrigger;
 
   Engine_AudioPlayCue(SE_MAP_EXIT);
   Engine_ScriptRequestWarp(warpNumber);

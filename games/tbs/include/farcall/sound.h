@@ -6,10 +6,10 @@ void AudioEngine_RunMixerFar(void);
 /// Starts the sound driver and clears the music ramps and cue records, at
 /// power-on.
 void Audio_InitializeRuntimeDefaultsFar(void);
-#ifndef OWN_AudioCommand_PlayFar
+#ifndef OWN_Sound_PlaySongFar
 /// Plays a cue: a fade, a sound effect, a fanfare or music. The whole game
 /// plays its sounds this way.
-void AudioCommand_PlayFar(s32 id);
+void Sound_PlaySongFar(s32 id);
 #endif
 /// Steps the music's volume and tempo ramps once a VBlank and brings the music
 /// back after a fanfare.

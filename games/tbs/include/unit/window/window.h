@@ -14,13 +14,13 @@ struct OwnerActionSlot;
 struct UiWindow;
 struct RenderOutput;
 struct RenderOutputList;
-struct SaveSummary;
+struct SaveFileSummary;
 struct SelectionNode;
 struct SelectionScreen;
 struct SelectionWork;
 struct TextReader;
 struct UiChannelSlot;
-struct WorkspaceWork;
+struct OptionMenuWork;
 
 /// The flags of a UI window (struct UiWindow.flags), which UiWindow_Create
 /// takes as its attributes.
@@ -481,24 +481,24 @@ void Menu_ReleaseSelectionWorkspace(void);
 void GraphicsPalette_ReservedNoOpC9BC(void);
 void GraphicsPalette_ReservedNoOpC9C0(void);
 void GraphicsPalette_ReservedNoOpC9C4(void);
-void OptionMenu_ResetEntries(struct WorkspaceWork *work);
-void WindowColor_CalculateTint(struct WorkspaceWork *work);
-void WindowColor_WritePalette(struct WorkspaceWork *work);
-u16 WindowColor_ScaleTint(struct WorkspaceWork *work, s32 scale_r, s32 scale_g,
+void OptionMenu_ResetEntries(struct OptionMenuWork *work);
+void WindowColor_CalculateTint(struct OptionMenuWork *work);
+void WindowColor_WritePalette(struct OptionMenuWork *work);
+u16 WindowColor_ScaleTint(struct OptionMenuWork *work, s32 scale_r, s32 scale_g,
                           s32 scale_b);
 u16 Color_ScaleComponents(s16 *rgb, s32 red_scale, s32 green_scale,
                           s32 blue_scale);
 void PaletteGlow_Update(s32 phase, s32 brightness);
-void OptionMenu_PreviousRow(struct WorkspaceWork *work);
-void OptionMenu_NextRow(struct WorkspaceWork *work);
-void OptionMenu_LowerSetting(struct WorkspaceWork *work);
-void OptionMenu_RaiseSetting(struct WorkspaceWork *work);
+void OptionMenu_PreviousRow(struct OptionMenuWork *work);
+void OptionMenu_NextRow(struct OptionMenuWork *work);
+void OptionMenu_LowerSetting(struct OptionMenuWork *work);
+void OptionMenu_RaiseSetting(struct OptionMenuWork *work);
 void GraphicsPalette_SelectionNoOp(void);
 void OptionMenu_AnimateCursors(void);
 void OptionMenu_InitializeWork(void);
 void OptionMenu_Release(void);
 struct UiWindow *OptionMenu_Open(void);
-s32 Menu_RunWorkspaceOptions(void);
+s32 OptionMenu_Run(void);
 void SystemMenu_AnimateCursor(void);
 void SystemMenu_Initialize(void);
 void SystemMenu_Release(void);

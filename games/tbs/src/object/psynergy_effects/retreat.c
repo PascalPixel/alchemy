@@ -54,7 +54,7 @@ void FieldEffect_UpdateRadialLaunch(struct EffectSlot *effect) {
   s32 state;
   u32 spread;
 
-  main = ((struct FieldEffectWork *)gEffectWork)->mainObject;
+  main = ((struct FieldEffectWork *)gFieldEffectWork)->mainObject;
   state = effect->state;
 
   if (state == RETREAT_PARTICLE_AIM) {
@@ -83,7 +83,7 @@ void FieldEffect_UpdateRadialLaunch(struct EffectSlot *effect) {
     effect->state++;
 
     if ((gFrameCount & 2) != 0)
-      AudioCommand_PlayFar(SE_246);
+      Sound_PlaySongFar(SE_246);
   } else if (state == RETREAT_PARTICLE_FLYING) {
     if (EffectSlot_HasPendingTarget(effect) == 0)
       effect->state--;
@@ -106,7 +106,7 @@ void FieldEffect_UpdateRadialLaunch(struct EffectSlot *effect) {
 /// Field_UsePsynergy or Field_UseItem) then leaves the map. Called by
 /// FieldEffect_Run and FieldEffect_DispatchRequestKind.
 void FieldEffect_RunRetreat(void) {
-  struct FieldEffectWork *effectWork = gEffectWork;
+  struct FieldEffectWork *effectWork = gFieldEffectWork;
   struct ObjectEvent *objectEvent = effectWork->mainObject;
   struct EffectVector pos;
   struct EffectSlot *effect;
@@ -120,12 +120,12 @@ void FieldEffect_RunRetreat(void) {
   ObjectMotion_ArmCallback(effectWork->firstObjectId, 0x4000, 0);
   WaitFrames(30);
   objectEvent->update = ObjectGroup_ApplyRandomChildValues;
-  AudioCommand_PlayFar(SE_131);
+  Sound_PlaySongFar(SE_131);
   ObjectDispatch_SelectAnimationFar(objectEvent, 28);
   WaitFrames(40);
 
   // Start spinning.
-  AudioCommand_PlayFar(SE_220);
+  Sound_PlaySongFar(SE_220);
   Animation_ApplyChildValuesFar((struct DispatchObject *)objectEvent,
                                 SPRITE_COLOR_NORMAL);
   ObjectDispatch_SelectAnimationFar(objectEvent, 3);
@@ -177,7 +177,7 @@ void FieldEffect_RunRetreat(void) {
 /// Per-frame update of a falling arc: grows toward full size (0xc00 a frame)
 /// as it falls 2 pixels a frame on the object it follows, 9 pixels in front
 /// of it and up to 5 pixels further while small; released 10 pixels above
-/// the ground (4 on the world map, whose map is MapId_Clear).
+/// the ground (4 on the world map, whose map is MapId_MainMenu).
 void FieldEffect_UpdateDescendingParticlePositiveArc(
     union FieldObject *fieldObject) {
   // One shared inline kernel with constant inversion grows the positive and
@@ -190,7 +190,7 @@ void FieldEffect_UpdateDescendingParticlePositiveArc(
 
   limit = particle->terrainHeight + 0xA0000;
   source = particle->linkedObject;
-  if (gGameState.layoutId == (s32)&MapId_Clear)
+  if (gGameState.layoutId == (s32)&MapId_MainMenu)
     limit = particle->terrainHeight + 0x40000;
 
   y = particle->y.fixed;
@@ -221,7 +221,7 @@ void FieldEffect_UpdateDescendingParticleNegativeArc(
 
   limit = particle->terrainHeight + 0xA0000;
   source = particle->linkedObject;
-  if (gGameState.layoutId == (s32)&MapId_Clear)
+  if (gGameState.layoutId == (s32)&MapId_MainMenu)
     limit = particle->terrainHeight + 0x40000;
 
   y = particle->y.fixed;
@@ -280,7 +280,7 @@ struct DescendingArcSprite {
 /// FieldEffect_UpdatePairedArcSpawner, so arc is Avoid's caster.
 void FieldEffect_SpawnDescendingArcParticles(struct ObjectEvent *arc) {
   struct ObjectEvent *source = arc;
-  struct FieldEffectWork *effectWork = gEffectWork;
+  struct FieldEffectWork *effectWork = gFieldEffectWork;
   struct ObjectEvent *leader = effectWork->mainObject;
   struct ObjectEvent *objectEvents[2];
   struct ObjectEvent *objectEvent;

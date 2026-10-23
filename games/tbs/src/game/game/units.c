@@ -5,8 +5,8 @@
 #include "../game_internal.h"
 
 /// The running totals Unit_Calculate builds a unit's stats in. Each call takes
-/// a block from EWRAM first (Runtime_BumpAllocateAlternatePool) and frees it
-/// with MemFree before returning; only Unit_Calculate reads it.
+/// a block from EWRAM first (AllocEwram) and frees it
+/// with Free before returning; only Unit_Calculate reads it.
 struct StatWork {
   s32 hp;                 ///< maximum HP
   s32 pp;                 ///< maximum PP
@@ -161,7 +161,7 @@ void Unit_Calculate(s32 owner) {
   s16 previousMaximum;
 
   // Start with the unit's base stats and elemental power/resistance.
-  stats = Runtime_BumpAllocateAlternatePool(sizeof(struct StatWork));
+  stats = AllocEwram(sizeof(struct StatWork));
   unit = Unit_Get(owner);
   stats->hp = unit->baseHp;
   stats->pp = unit->basePp;
@@ -446,12 +446,12 @@ void Unit_Calculate(s32 owner) {
     unit->pp = value;
   }
 
-  MemFree(stats);
+  Free(stats);
 }
 
 /// Sets FLAG_LURE_CAP when any party member has the Lure Cap (the one item
 /// with ITEM_EFFECT_LURE) equipped, and clears it otherwise. Called on entering
-/// a map (Map_ResetFlagsOnEnter, Field_RunMap) and at the end of a field
+/// a map (Map_ResetFlagsOnEnter, Map_Run) and at the end of a field
 /// script, so the encounter rate follows the cap.
 void GameFlag_RefreshLureCap(void) {
   s32 partySize;
@@ -487,7 +487,7 @@ void GameFlag_RefreshLureCap(void) {
 /// Encodes the build-stamp time as ((hours * 16 + minutes) * 64 + seconds)
 /// with bit 12 set. Debug mode also sets bits 15..31 before the halfword cast.
 /// GameState_InitializeDefaults stores it as a new game's start stamp, and the
-/// save menu (SaveMenu_SelectSlot, SaveState_BuildSummaryHeader) and the file
+/// save menu (SaveMenu_SelectSlot, Save_BuildFileSummary) and the file
 /// select screen compare saves with it.
 u32 Runtime_GetBuildStampTime(void) {
   u8 *digits;

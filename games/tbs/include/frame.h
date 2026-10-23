@@ -47,7 +47,7 @@ extern u32 gCpuLoadPeak;
 extern volatile u32 gFrameCount;
 extern u32 gFrameTick; ///< Counted up by every VBlank.
 /// Run once by the next VBlank handler, which clears it first.
-extern void (*gVBlankHook)(void);
+extern void (*gVBlankCallback)(void);
 
 /// Nonzero: WaitFrames counts no idle time and ignores sleep requests.
 /* FAKEMATCH(volatile): as plain u8, 82 of 403 instructions differ in tbs-en

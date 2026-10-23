@@ -65,7 +65,7 @@ extern u16 *gFlash_Handler4;
 /// Macronix and Panasonic records and 1 when not; either way it installs a
 /// record's routines, timings and type (gFlash), for an unknown chip
 /// gFlash_ChipDefault's: SST's routines and timings. Called by
-/// SaveState_InitializeWorkspace, up to eight times a frame apart, before
+/// Save_InitializeWork, up to eight times a frame apart, before
 /// each use of the save. It rewrites three of the cells the credits borrow;
 /// graphics/credits/credits.c says why that borrowing is harmless.
 s32 IdentifyFlash(void) {
@@ -119,7 +119,7 @@ void FlashTimerIntr(void) {
 /// Selects a hardware timer and returns its timeout interrupt callback:
 /// FlashTimerIntr goes to *callback, for the caller to install as timer
 /// timerIndex's interrupt handler. Returns 0, or 1 for a timer above 3 and
-/// nothing changed. Called by SaveState_InitializeWorkspace with timer 2.
+/// nothing changed. Called by Save_InitializeWork with timer 2.
 s32 SetFlashTimerIntr(u8 timerIndex, void (**callback)(void)) {
   if (timerIndex > 3)
     return 1;
@@ -297,7 +297,7 @@ typedef u8 *(*FlashVerifyCore)(u8 *source, u8 *flash, u16 size);
 
 /// Copies the verifier to RAM and compares a standard flash sector with source
 /// data. Returns 0 when sector `sector` holds the 4 KB at `source`, else the
-/// address of its first differing byte. Called by SaveState_WriteWorkspaceSlot
+/// address of its first differing byte. Called by Save_WriteSector
 /// after each write.
 s32 Flash_VerifySector(u16 sector, s32 source) {
   u16 code[128];

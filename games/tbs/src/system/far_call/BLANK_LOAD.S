@@ -4,4 +4,4 @@
 #include "stub.inc"
 	.global FarCall_BlankLoadTable
 FarCall_BlankLoadTable:
-	export ReelGame_StartFar, ReelGame_Start
+	export LuckyWheels_StartFar, LuckyWheels_Start

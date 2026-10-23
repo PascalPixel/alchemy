@@ -243,15 +243,15 @@ The heap lends blocks of memory to the rest of the game from two pools,
 one in IWRAM and one in EWRAM. Each hands out memory from the bottom up,
 so blocks go back in the reverse of the order they were taken, and the
 whole heap is emptied before each map. A block from the alternate pool
-comes from `Runtime_BumpAllocateAlternatePool`, which takes a short-lived
+comes from `AllocEwram`, which takes a short-lived
 block with no slot from EWRAM first.
 [Runtime](src/runtime/README.md#the-heap) explains it.
 
 ### Heap slot
 
-One of the 62 named words of `gWorkSlot` (`HEAP_SLOT_*`), each holding a
+One of the 62 named words of `gHeapSlots` (`HEAP_SLOT_*`), each holding a
 heap block that has to be found again: the running map's state is
-`HEAP_SLOT_EVENT`, an open menu's `HEAP_SLOT_MENU`. Pages also call it a
+`HEAP_SLOT_FIELD`, an open menu's `HEAP_SLOT_MENU`. Pages also call it a
 work slot.
 
 ### Task
@@ -305,7 +305,7 @@ explains them.
 
 ### Field object
 
-One of the field engine's 64 slots, `gObjectSlots`: anything in a map that
+One of the field engine's 64 slots, `gObjects`: anything in a map that
 acts on its own, from the party and the townspeople to the
 camera and the footprints in snow. Each runs an object script.
 [World](world.md#field-objects-and-their-scripts) explains them.

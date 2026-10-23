@@ -318,10 +318,10 @@ static void EventScript_TalkToEastGuard(void) {
     Engine_ScriptSetMessage(MsgLunpaEastGuardAsksIfFrom);
     Engine_ScriptOpenMessage(LOCALID_EAST_GUARD, 0);
     if (Engine_ScriptChooseYesNo(LOCALID_PARTY_LEADER, 0) == 0) {
-      gEventWork->message++;
+      gFieldWork->message++;
       Engine_ScriptOpenMessage(LOCALID_EAST_GUARD, 0);
       if (Engine_ScriptChooseYesNo(LOCALID_PARTY_LEADER, 0) == 1) {
-        gEventWork->message++;
+        gFieldWork->message++;
       }
     }
     Engine_ScriptShowMessage(LOCALID_EAST_GUARD, 0);
@@ -446,7 +446,7 @@ static void EventScript_ReadLeftGuardsThoughts(void) {
       GameFlag_IsSet(FLAG_LUNPA_CAVE_REUNION_SEEN) == 0) {
     recognizedHammet = GameFlag_IsSet(FLAG_LUNPA_GATE_GUARD_SAW_HAMMET);
     if (recognizedHammet == 0) {
-      ((struct FieldWork *)gEventWork)->psynergy = recognizedHammet;
+      ((struct FieldWork *)gFieldWork)->psynergy = recognizedHammet;
       Engine_PsynergyCancel();
       ObjectEvent_FaceObjectEvent(LOCALID_LEFT_GUARD, LOCALID_PARTY_LEADER, 0);
       ObjectEvent_ShowEmote(LOCALID_LEFT_GUARD, EMOTE_IN_FRONT | EMOTE_QUESTION,
@@ -482,7 +482,7 @@ static void Lunpa_WatchForFortressApproach(void) {
 
   if (GameFlag_IsSet(FLAG_MAP_TEMP_43) == 0 && leaderRow == 10) {
     GameFlag_Set(FLAG_MAP_TEMP_43);
-    ((struct FieldWork *)gEventWork)->action = TRIGGER_FORTRESS_APPROACH;
+    ((struct FieldWork *)gFieldWork)->action = TRIGGER_FORTRESS_APPROACH;
   }
 }
 
@@ -512,7 +512,7 @@ static void EventScript_EnterDoor(void) {
   u32 localId;
   s32 doorIndex;
 
-  work = (struct FieldWork *)gEventWork;
+  work = (struct FieldWork *)gFieldWork;
   Engine_ScriptStart();
   // Freeze placed object events before opening the selected door and crossing
   // it.
@@ -523,7 +523,7 @@ static void EventScript_EnterDoor(void) {
       placedObjectEvent->motionFlags = 0;
     }
   }
-  Script_PlayCue(SE_DOOR_OPEN);
+  Script_PlaySong(SE_DOOR_OPEN);
   doorIndex = work->action - TRIGGER_FIRST_HOME_DOOR;
   MapGrid_AnimateCells(gLunpaDoors[doorIndex].steps, gLunpaDoors[doorIndex].x,
                        gLunpaDoors[doorIndex].y);
@@ -564,7 +564,7 @@ static void EventScript_EnterFortress(void) {
   ObjectEvent_Get(LOCALID_PARTY_LEADER)->motionFlags = 0;
   Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIMATION_WALK);
   ObjectEvent_WalkBy(LOCALID_PARTY_LEADER, 0, -8);
-  Script_PlayCue(SE_DOOR_OPEN);
+  Script_PlaySong(SE_DOOR_OPEN);
   MapGrid_CopyCells(53, 4, 2, 2, 41, 4);
   Engine_ScriptWait(10);
   MapGrid_CopyCells(53, 6, 2, 2, 41, 4);
@@ -596,7 +596,7 @@ static void EventScript_PressHiddenSwitch(void) {
   }
   // Open the passage over five map frames, then remember its final state.
   ObjectEvent_SetPosition(LOCALID_SWITCH_SPARKLE, 0, 0);
-  Script_PlayCue(SE_HIDDEN_PASSAGE_OPEN);
+  Script_PlaySong(SE_HIDDEN_PASSAGE_OPEN);
   Engine_TaskWait(1);
   Lunpa_DrawHiddenPassageFrame(32, 45);
   Engine_TaskWait(10);
@@ -729,7 +729,7 @@ static void EventScript_CloakFades(void) {
   struct ObjectEvent *leader;
 
 #if TBS_PATCH_1
-  work = (struct FieldWork *)gEventWork;
+  work = (struct FieldWork *)gFieldWork;
 #endif
   Engine_GameFlagClear(FLAG_MAP_TEMP_41);
   Engine_GameFlagClear(FLAG_MAP_TEMP_40);
@@ -753,7 +753,7 @@ static void Lunpa_WatchForUncloakedParty(void) {
   struct FieldWork *work;
   struct ObjectEvent *leader;
 
-  work = (struct FieldWork *)gEventWork;
+  work = (struct FieldWork *)gFieldWork;
   leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   if (gGameState.cloaked == 0 &&
       (u32)(leader->x.fixed - PIXELS(144)) <= PIXELS(32) &&
@@ -811,18 +811,18 @@ static void EventScript_GuardsThrowLeaderOut(void) {
   ObjectEvent_SetDestination(LOCALID_PARTY_LEADER, 160, 296);
   FieldScheduler_AddCallback(Lunpa_KickUpLeaderDust, TASK_PRIORITY_MAP);
   Engine_ScriptWait(1);
-  Script_PlayCue(SE_SCUFFLE);
+  Script_PlaySong(SE_SCUFFLE);
   Engine_ScriptWait(20);
   Engine_ObjectEventSetSpritePriority(LOCALID_LEFT_GUARD, 3);
   Engine_ObjectEventSetSpritePriority(LOCALID_RIGHT_GUARD, 3);
-  Script_PlayCue(SE_SCUFFLE);
+  Script_PlaySong(SE_SCUFFLE);
   Engine_ScriptWait(30);
   ObjectEvent_Get(LOCALID_LEFT_GUARD)->priorityFlags |=
       OBJ_EVENT_PRIORITY_AUTOMATIC;
   ObjectEvent_Get(LOCALID_RIGHT_GUARD)->priorityFlags |=
       OBJ_EVENT_PRIORITY_AUTOMATIC;
   Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIMATION_SHAKE_HEAD);
-  Script_PlayCue(SE_SCUFFLE);
+  Script_PlaySong(SE_SCUFFLE);
   Engine_ObjectEventWaitForMove(LOCALID_PARTY_LEADER);
   Engine_ObjectEventSetAnimation(LOCALID_LEFT_GUARD, ANIMATION_STAND);
   Engine_ObjectEventSetAnimation(LOCALID_RIGHT_GUARD, ANIMATION_STAND);
@@ -837,7 +837,7 @@ static void EventScript_GuardsThrowLeaderOut(void) {
   }
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_NORTH, 0);
   Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIMATION_SPRAWLED);
-  Script_PlayCue(SE_LANDING_THUD);
+  Script_PlaySong(SE_LANDING_THUD);
   ObjectEvent_SetAttachedEffect(LOCALID_PARTY_LEADER, ATTACHED_EFFECT_IN_FRONT |
                                                           ATTACHED_EFFECT_ONCE);
   FieldScheduler_AddCallback(Lunpa_KickUpLeaderDust, TASK_PRIORITY_MAP);
@@ -912,7 +912,7 @@ s32 Map_Initialize(void) {
   struct ObjectEvent *puddle;
 
   if (gGameState.mapId == (s32)&MapId_Lunpa) {
-    ((struct FieldWork *)gEventWork)->transition =
+    ((struct FieldWork *)gFieldWork)->transition =
         MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
     EventScript_HideSecrets();
     if (Engine_GameFlagIsSet(FLAG_LUNPA_NUT_CAUGHT) == 0) {
@@ -926,7 +926,7 @@ s32 Map_Initialize(void) {
   }
   // Restore the gate's arrival cutscene and active detection tasks separately.
   if (gGameState.mapId == (s32)&MapId_LunpaFortressGates) {
-    ((struct FieldWork *)gEventWork)->transition =
+    ((struct FieldWork *)gFieldWork)->transition =
         MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
     gGameState.retreatWarpDest = GATE_RETREAT_WARP_DEST;
     if (gGameState.warpDest == LUNPA_FORTRESS_GATES_AFTER_CAUGHT &&

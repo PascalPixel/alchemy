@@ -5,9 +5,9 @@
 /// Song and sound effect ids, indices into gSound_SongTable. MUS_ ids are
 /// music and SE_ ids sound effects, as their sequences in sound/sequence are
 /// named. Only the ids ☀️ plays are here: the code's own, the field music
-/// gMap_InteractionRuleTable and gEncounter_BattleMusic choose by number, and
+/// gMap_MusicRules and gEncounter_BattleMusic choose by number, and
 /// the voices and defeat sounds reached by adding to a first id. A sound whose
-/// meaning is shown has a name; the others keep their number. AudioCommand_Play
+/// meaning is shown has a name; the others keep their number. Sound_PlaySong
 /// tests the controls AUDIO_CUE_FADE_BGM and AUDIO_CUE_FADE_SLOT3 first, then
 /// the ranges: from AUDIO_SONG_FIRST on a song table player, from
 /// AUDIO_JINGLE_FIRST fanfares, below that music, where AUDIO_CUE_KEEP_BGM is

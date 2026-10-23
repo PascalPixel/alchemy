@@ -395,7 +395,7 @@ static void EventScript_TalkToIodem(void) {
 /// Both maps, a doorway out: take the touched coord event's warp with the exit
 /// sound.
 static void EventScript_LeaveBuilding(void) {
-  struct EventWork *work = gEventWork;
+  struct EventWork *work = gFieldWork;
   s16 *trigger = (s16 *)&work->touchedTrigger;
 
   Engine_ScriptRequestWarp(*trigger);
@@ -542,7 +542,7 @@ static void EventScript_ReportToFaran(void) {
     Engine_ObjectEventSetAnimationAndWait(LOCALID_FARAN, ANIMATION_NOD);
     Engine_ScriptWait(30);
     Engine_ScriptShowMessage(LOCALID_FARAN, 0);
-    (gEventWork->message)++;
+    (gFieldWork->message)++;
   } else {
     Engine_ScriptWait(20);
     ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_NORTH, 0);
@@ -552,7 +552,7 @@ static void EventScript_ReportToFaran(void) {
     Engine_ScriptWait(10);
     Engine_ObjectEventSetAnimationAndWait(LOCALID_FARAN, ANIMATION_SHAKE_HEAD);
     Engine_ScriptWait(20);
-    (gEventWork->message)++;
+    (gFieldWork->message)++;
     Script_ShowMessage(LOCALID_FARAN, 0);
   }
   Engine_ScriptWait(10);
@@ -833,7 +833,7 @@ s32 Map_Initialize(void) {
   if (gGameState.warpDest == ENTRANCE_FROM_AERIE) {
     Engine_GameFlagSet(FLAG_VENUS_LIGHTHOUSE_PARTY_RETURNED);
   }
-  gEventWork->startTransition =
+  gFieldWork->startTransition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
   mapId = gGameState.mapId;
   if (mapId == (s32)&MapId_LaliveroShops) {

@@ -284,7 +284,7 @@ while walking, so a counter and the field menu are never open together.
 ![The menu screens and the shop counters share one block of memory, 2,672 bytes. Whichever is open takes the block as it opens and gives it back as it closes, and reads it in its own way: the Item screen as its windows and the items listed, the Psynergy screen as the Psynergy listed, a shop as its stock and cursor. Over time the block passes from one to the next, never held by two at once, which is why a shop and the field menu are never open together.](https://alchemy.pascalpixel.com/illustrations/menu/menu-work.svg)
 
 Every counter and the item picker take the menu's [heap](../../glossary.md#heap-and-pools) block, under the
-[heap slot](../../glossary.md#heap-slot) `HEAP_SLOT_MENU`, as `struct ShopRuntime` with
+[heap slot](../../glossary.md#heap-slot) `HEAP_SLOT_MENU`, as `struct ShopWork` with
 `Shop_InitializeCursorWork` and give it back with `Shop_ReleaseCursorWork`;
 the struct is in [`include/shop.h`](../../include/shop.h).
 [Menus](../menu/README.md#the-menu-work) describes the block.
@@ -357,13 +357,13 @@ pieces serve other screens:
 `shop.c` includes `shop_internal.h` and then the parts in ROM order, and its
 opening comment says where each counter starts; `head -3 shop/*.c` lists what
 each part holds. Link order is in `games/tbs/objects.tsv`, from `shop`. The
-work block's layout, `struct ShopRuntime`, is in
+work block's layout, `struct ShopWork`, is in
 [`include/shop.h`](../../include/shop.h), and the prototypes are in
 `games/tbs/include/unit/shop/shop.h`.
 
 ## Words used here
 
-- **work block**: `struct ShopRuntime` in heap slot `HEAP_SLOT_MENU`, reached
+- **work block**: `struct ShopWork` in heap slot `HEAP_SLOT_MENU`, reached
   as `gMenuWork` while a counter is open.
 - **stock row**: a row of `sStockTable` in [`shop/artifacts.c`](shop/artifacts.c),
   one per shop, with its columns named by `SHOP_STOCK_`.

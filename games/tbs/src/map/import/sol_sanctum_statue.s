@@ -1,10 +1,10 @@
 @ C2: aligned 8-byte veneers: overlay_veneer emits ldr r4, bx r4 and a target word.
 	.set overlay_imports, 1
 	.set import.Engine_TaskWait, 1
-	.set import.Scheduler_AddOrUpdateCallback, 1
-	.set import.Runtime_AllocateBlock, 1
+	.set import.Task_Add, 1
+	.set import.AllocHeapSlotEwram, 1
 	.set import.Engine_HeapRelease, 1
-	.set import.Resource_DecodeByteLz, 1
+	.set import.Decompress_ByteLz, 1
 	.set import.Engine_VramLoad, 1
 	.set import.Resource_FindFreeEntry, 1
 	.set import.Runtime_PushSlotEntry, 1

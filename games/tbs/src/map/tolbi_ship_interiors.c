@@ -510,7 +510,7 @@ TolbiShipInteriors_PaceCaptainsQuarters(union FieldObject *fieldObject) {
     break;
   case 4:
     ObjectEvent_SetMode(objectEvent, 2);
-    FieldObject_SetPosition(objectEvent, PIXELS(468), PIXELS(32), PIXELS(632));
+    Object_SetPosition(objectEvent, PIXELS(468), PIXELS(32), PIXELS(632));
     objectEvent->riseBaseY = 60;
     objectEvent->work++;
     break;
@@ -534,7 +534,7 @@ TolbiShipInteriors_PaceCaptainsQuarters(union FieldObject *fieldObject) {
     break;
   case 9:
     ObjectEvent_SetMode(objectEvent, 2);
-    FieldObject_SetPosition(objectEvent, PIXELS(480), PIXELS(32), PIXELS(600));
+    Object_SetPosition(objectEvent, PIXELS(480), PIXELS(32), PIXELS(600));
     objectEvent->riseBaseY = 60;
     objectEvent->work++;
     if (captain->paused == 0) {
@@ -828,7 +828,7 @@ static void TolbiShipInteriors_TalkToCaptain(void) {
     Script_ShowMessage(QUARTERS_CAPTAIN, 0);
     if (GameFlag_IsSet(FLAG_TOLBI_SHIP_ANCHOR_CHARM_RETURNED) == 0 &&
         GameFlag_IsSet(FLAG_TOLBI_SHIP_ANCHOR_CHARM_FOUND) != 0) {
-      gEventWork->requestedMenu = 1;
+      gFieldWork->requestedMenu = 1;
     }
   } else {
     Engine_ScriptSetMessage(MsgTolbiShipItsTooLateHireMercenaries);
@@ -854,7 +854,7 @@ static void TolbiShipInteriors_TalkToWaitingWarrior(void) {
       TolbiShipInteriors_Turn(HOLD_WARRIOR, FACING_SOUTHEAST + FACING_STEP);
       Script_ShowMessage(HOLD_WARRIOR, 0);
     } else {
-      gEventWork->message += 2;
+      gFieldWork->message += 2;
       Script_ShowMessage(HOLD_WARRIOR, 0);
       ObjectEvent_FaceDirection(HOLD_WARRIOR, FACING_SOUTHEAST + FACING_STEP,
                                 0);
@@ -1000,7 +1000,7 @@ static void TolbiShipInteriors_AskStaredAtPassengerToRow(void) {
         GameFlag_Set(FLAG_TOLBI_SHIP_FIRST_SEAT_ROWERS + PASSENGER_STARED_AT);
       }
     } else {
-      gEventWork->message++;
+      gFieldWork->message++;
       TolbiShipInteriors_Say(SEA_HOLD_STARED_AT_PASSENGER);
     }
   }
@@ -1051,7 +1051,7 @@ static void TolbiShipInteriors_AskSecondGuideToRow(void) {
                      PASSENGER_SECOND_GUIDE);
       }
     } else {
-      gEventWork->message++;
+      gFieldWork->message++;
       TolbiShipInteriors_Say(SEA_HOLD_SECOND_GUIDE);
     }
   }
@@ -1101,7 +1101,7 @@ static struct ObjectEvent *TolbiShipInteriors_FindObjectEventNear(s32 x,
   s32 right;
   s32 bottom;
 
-  work = gEventWork;
+  work = gFieldWork;
   i = LOCALID_FIRST_PLACED;
   left = x - 12;
   right = x + 12;
@@ -1401,7 +1401,7 @@ static void TolbiShipInteriors_AskToRow(s32 speaker, s32 question,
     Engine_GameFlagSet(FLAG_TOLBI_SHIP_ROWER_CHOSEN);
     Engine_GameFlagSet(seatFlag);
   } else {
-    gEventWork->message++;
+    gFieldWork->message++;
     TolbiShipInteriors_Say(speaker);
   }
   Engine_ScriptEnd();
@@ -1676,7 +1676,7 @@ static void TolbiShipInteriors_DiscussLaunchingWithoutAnchor(void) {
 
   // Gather the captain's quarters's attention around the argument about
   // launching.
-  Script_PlayCue(MUS_028);
+  Script_PlaySong(MUS_028);
   Camera_SetSpeed(PIXELS(12) / 5, PIXELS(3) / 10);
   TolbiShipInteriors_MoveCameraAndWait(PIXELS(456), -1, PIXELS(648),
                                        0x10000014);
@@ -1826,7 +1826,7 @@ static void TolbiShipInteriors_DiscussLaunchingWithoutAnchor(void) {
   Engine_ObjectEventSetAnimationAndWait(QUARTERS_CAPTAIN, 3);
   TolbiShipInteriors_Say(QUARTERS_CAPTAIN);
   ObjectEvent_FaceDirection(QUARTERS_CAPTAIN, FACING_WEST, 20);
-  Script_PlayCue(MUS_SILENCE);
+  Script_PlaySong(MUS_SILENCE);
   Engine_ObjectEventStartRepeatedMotion(QUARTERS_CAPTAIN, 2);
   captainSpeech = SPEAKER(QUARTERS_CAPTAIN, 8);
   ObjectEvent_ShowEmote(QUARTERS_CAPTAIN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION,
@@ -1869,7 +1869,7 @@ static void TolbiShipInteriors_DiscussLaunchingWithoutAnchor(void) {
   Engine_ObjectEventJump(QUARTERS_CAPTAIN, 4, 0);
   ObjectEvent_FaceDirection(QUARTERS_CAPTAIN, FACING_SOUTH + FACING_STEP, 20);
   TolbiShipInteriors_Say(QUARTERS_CAPTAIN);
-  Script_PlayCue(MUS_028);
+  Script_PlaySong(MUS_028);
   Engine_ObjectEventStartRepeatedMotion(QUARTERS_CAPTAIN, 3);
   TolbiShipInteriors_Say(QUARTERS_CAPTAIN);
   ObjectEvent_ShowEmote(QUARTERS_SECOND_GUIDE, EMOTE_IN_FRONT | EMOTE_QUESTION,
@@ -1924,7 +1924,7 @@ static void TolbiShipInteriors_DiscussLaunchingWithoutAnchor(void) {
   ObjectEvent_FaceDirection(QUARTERS_SEAN, FACING_SOUTHEAST + FACING_STEP, 0);
   ObjectEvent_FaceDirection(QUARTERS_OURANOS, FACING_NORTHWEST + FACING_STEP,
                             0);
-  Script_PlayCue(AUDIO_CUE_FADE_BGM);
+  Script_PlaySong(AUDIO_CUE_FADE_BGM);
   ObjectEvent_SetSpeed(QUARTERS_CREWMAN, PIXELS(1), PIXELS(1) / 2);
   ObjectEvent_WalkToAndWait(QUARTERS_CREWMAN, 488, 686);
   ObjectEvent_FaceDirection(QUARTERS_CREWMAN, FACING_NORTHWEST + FACING_STEP,
@@ -1933,7 +1933,7 @@ static void TolbiShipInteriors_DiscussLaunchingWithoutAnchor(void) {
   Engine_ObjectEventSetAnimation(QUARTERS_SECOND_GUIDE, 1);
   ObjectEvent_FaceDirection(QUARTERS_SECOND_GUIDE, FACING_NORTH + FACING_STEP,
                             0);
-  Audio_PlayCueFromEventWork();
+  Map_PlayMusic();
   GameFlag_Set(FLAG_TOLBI_SHIP_CAPTAIN_DECIDED_TO_SAIL);
 }
 
@@ -1978,9 +1978,9 @@ static void TolbiShipInteriors_ReturnLuckyAnchor(void) {
     TolbiShipInteriors_Say(SPEAKER(QUARTERS_KAJA, 9));
     ObjectEvent_ShowEmote(QUARTERS_CAPTAIN, EMOTE_IN_FRONT | EMOTE_SMILE, 40);
     TolbiShipInteriors_Say(captainSpeech);
-    gEventWork->message += 2;
+    gFieldWork->message += 2;
   } else {
-    gEventWork->message += 2;
+    gFieldWork->message += 2;
     Engine_ObjectEventRunRepeatedMotion(QUARTERS_KAJA, 1);
     TolbiShipInteriors_Say(SPEAKER(QUARTERS_KAJA, 9));
     Engine_ObjectEventStartRepeatedMotion(QUARTERS_CAPTAIN, 2);
@@ -2081,9 +2081,9 @@ static void TolbiShipInteriors_ReturnLuckyAnchor(void) {
     TolbiShipInteriors_Say(seanSpeech);
     Engine_ObjectEventStartRepeatedMotion(QUARTERS_KAJA, 1);
     Script_ShowMessageAndWait(SPEAKER(QUARTERS_KAJA, 9), 0, 40);
-    gEventWork->message += 1;
+    gFieldWork->message += 1;
   } else {
-    gEventWork->message += 3;
+    gFieldWork->message += 3;
     Engine_ObjectEventStartRepeatedMotion(QUARTERS_CAPTAIN, 3);
     Script_ShowMessageAndWait(QUARTERS_CAPTAIN, 0, 40);
   }
@@ -2142,9 +2142,9 @@ static void TolbiShipInteriors_ReturnLuckyAnchor(void) {
   if (Engine_ScriptChooseYesNo(0, 0) == 0) {
     Engine_ObjectEventSetAnimationAndWait(QUARTERS_CAPTAIN, 3);
     TolbiShipInteriors_Say(SPEAKER(QUARTERS_CAPTAIN, 1));
-    gEventWork->message += 1;
+    gFieldWork->message += 1;
   } else {
-    gEventWork->message += 1;
+    gFieldWork->message += 1;
     TolbiShipInteriors_Say(SPEAKER(QUARTERS_CAPTAIN, 1));
   }
   Engine_ObjectEventSetAnimationAndWait(LOCALID_PARTY_LEADER, ANIMATION_NOD);
@@ -2204,7 +2204,7 @@ static void TolbiShipInteriors_ReturnLuckyAnchor(void) {
 s32 TolbiShipInteriors_ApplyEntryState(void) {
   Engine_TaskWait(1);
   Engine_GameFlagSet(FLAG_RETREAT_BLOCKED);
-  gEventWork->startTransition =
+  gFieldWork->startTransition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
   switch (gGameState.warpDest) {
   case TOLBI_SHIP_INTERIORS_PASSENGER_HOLD_FROM_TOLBI_SHIP_DECK:
@@ -2602,7 +2602,7 @@ static void TolbiShipInteriors_AskForReplacementOarsmen(void) {
   mode = 128;
   TolbiShipInteriors_PlaceObjectEvent(LOCALID_PARTY_LEADER, 440, 134,
                                       FACING_WEST);
-  gEventWork->startTransition = (mode << 1);
+  gFieldWork->startTransition = (mode << 1);
   Engine_ScriptOpenScreen();
   ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(4) / 5, PIXELS(2) / 5);
   ObjectEvent_WalkToAndWait(LOCALID_PARTY_LEADER, 408, 134);
@@ -2730,7 +2730,7 @@ static void TolbiShipInteriors_CastOff(void) {
   Engine_ObjectEventJump(QUARTERS_CAPTAIN, 4, 20);
   anchorCharm = TolbiShipInteriors_PlaceAnchorCharm();
   Engine_ScriptWait(20);
-  Script_PlayCue(SE_214);
+  Script_PlaySong(SE_214);
   Engine_ObjectSetScript(anchorCharm, gTolbiShipInteriors_AnchorCharmPulse);
   Engine_ScriptWait(40);
   Engine_ObjectEventSetAnimationAndWait(QUARTERS_CAPTAIN, 3);
@@ -2824,7 +2824,7 @@ static void TolbiShipInteriors_ShowRowing(void) {
   Engine_AudioPlayCue(SE_188);
   Engine_ScriptWait(30);
 
-  gEventWork->startTransition =
+  gFieldWork->startTransition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_CIRCLE);
 
   TolbiShipInteriors_RunSceneCommand(SHIP_CLOSE_SCREEN, 0, 0);
@@ -3263,7 +3263,7 @@ static void TolbiShipInteriors_RunSceneCommand(s32 step, u32 arg, u32 opt) {
     }
     break;
   case SHIP_OPEN_SCREEN:
-    gEventWork->startTransition =
+    gFieldWork->startTransition =
         MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_NOISE);
     Engine_ScriptOpenScreen();
     if (arg != 0) {
@@ -3379,7 +3379,7 @@ static void TolbiShipInteriors_RunSceneCommand(s32 step, u32 arg, u32 opt) {
     if (opt == 0) {
       break;
     }
-    gEventWork->startTransition =
+    gFieldWork->startTransition =
         MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_NOISE);
     Engine_ScriptOpenScreen();
     Engine_ScriptWaitForScreen();
@@ -3705,7 +3705,7 @@ static void TolbiShipInteriors_ReactToMonsterAttack(void) {
     TolbiShipInteriors_Say(ROWING_KAJA);
   } else {
     Engine_ObjectEventSetAnimationAndWait(ROWING_KAJA, 4);
-    gEventWork->message += 1;
+    gFieldWork->message += 1;
     TolbiShipInteriors_Say(ROWING_KAJA);
     TolbiShipInteriors_RunSceneCommand(SHIP_SHOW_PARTY_EMOTE, 2, 40);
     Engine_ObjectEventRunRepeatedMotion(ROWING_KAJA, 1);
@@ -3723,7 +3723,7 @@ static void TolbiShipInteriors_ReactToMonsterAttack(void) {
   ObjectEvent_WalkToAndWait(LOCALID_PARTY_LEADER, 424, 272);
   ObjectEvent_WalkTo(LOCALID_PARTY_LEADER, 424, 164);
   Engine_ScriptWait(60);
-  gEventWork->startTransition =
+  gFieldWork->startTransition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
   TolbiShipInteriors_RunSceneCommand(SHIP_CLOSE_SCREEN, 0, 0);
   GameFlag_Clear(FLAG_TOLBI_SHIP_MONSTERS_BELOWDECKS);
@@ -3821,17 +3821,17 @@ static void TolbiShipInteriors_NoticeShipRocking(void) {
   TolbiShipInteriors_InstallRowingDeckObjectEvents(16);
   TolbiShipInteriors_MoveCameraAndWait(PIXELS(438), -1, PIXELS(174), 0x1000001);
   TolbiShipInteriors_RunSceneCommand(SHIP_OPEN_SCREEN, 1, 20);
-  Script_PlayCue(MUS_SILENCE);
-  Script_PlayCue(SE_181);
+  Script_PlaySong(MUS_SILENCE);
+  Script_PlaySong(SE_181);
   MapGrid_SetShake(PIXELS(2), PIXELS(2), Q16_ONE);
   Engine_ScriptWait(10);
   MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
   Engine_ScriptWait(80);
-  Script_PlayCue(SE_181);
+  Script_PlaySong(SE_181);
   MapGrid_SetShake(PIXELS(2), PIXELS(2), Q16_ONE);
   Engine_ScriptWait(10);
   MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
-  Script_PlayCue(MUS_063);
+  Script_PlaySong(MUS_063);
   GameFlag_Set(FLAG_KEEP_MUSIC);
   ObjectEvent_SetAttachedEffect(MIA, ATTACHED_EFFECT_IN_FRONT |
                                          ATTACHED_EFFECT_ONCE);
@@ -4034,9 +4034,9 @@ static void TolbiShipInteriors_ReachIsland(void) {
   }
   Engine_ObjectEventRunRepeatedMotion(firstRower, 1);
   if (reaction == 1) {
-    gEventWork->message += 1;
+    gFieldWork->message += 1;
   } else if (reaction == 2) {
-    gEventWork->message += 2;
+    gFieldWork->message += 2;
   }
   Engine_ObjectEventStartRepeatedMotion(firstRower, 2);
   TolbiShipInteriors_Say(firstRower);
@@ -4059,11 +4059,11 @@ static void TolbiShipInteriors_ReachIsland(void) {
     reaction = 3;
   }
   if (reaction == 0) {
-    gEventWork->message += 1;
+    gFieldWork->message += 1;
   } else if (reaction == 1) {
-    gEventWork->message += 2;
+    gFieldWork->message += 2;
   } else if (reaction == 2) {
-    gEventWork->message += 3;
+    gFieldWork->message += 3;
   }
   // Send the rowers and party back through their departure scripts.
   TolbiShipInteriors_Turn(firstRower, 0);
@@ -4122,7 +4122,7 @@ static void TolbiShipInteriors_DismissReplacementRowers(void) {
                                       FACING_SOUTH + FACING_STEP);
   TolbiShipInteriors_PlaceObjectEvent(ROWING_KAJA, 408, 142,
                                       FACING_SOUTHEAST + FACING_STEP);
-  gEventWork->startTransition =
+  gFieldWork->startTransition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_SHAPE);
   Engine_ScriptOpenScreen();
   Engine_ScriptWaitForScreen();
@@ -4173,7 +4173,7 @@ static void TolbiShipInteriors_DismissReplacementRowers(void) {
   ObjectEvent_WalkToAndWait(ROWING_KAJA, 408, 132);
   ObjectEvent_WalkToAndWait(ROWING_KAJA, 444, 132);
   ObjectEvent_SetPosition(ROWING_KAJA, 0, 0);
-  gEventWork->startTransition =
+  gFieldWork->startTransition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_NOISE);
   Engine_ScriptCloseScreen();
   Engine_ScriptWaitForScreen();

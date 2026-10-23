@@ -24,7 +24,7 @@ on its own [layout](../../glossary.md#layout), and `IncreaseItemAndLevel` and `M
 The debug map selector, `Menu_RunSelection`
 ([debug.c](../window/battle_command/debug.c), among the window bank's menus,
 since it is built from windows), [warps](../../glossary.md#warp) to any map and [warp destination](../../glossary.md#warp-destination) by
-number. `Field_RunMap` opens it when the Start menu is opened with B held,
+number. `Map_Run` opens it when the Start menu is opened with B held,
 and only while `gDebugMode` is set.
 
 ### Why debug mode stays off
@@ -217,7 +217,7 @@ speaker.
 ## How it fits with the rest of the game
 
 The rooms are maps like any other: the map table names their overlays,
-`Field_RunMap` runs them, and their [scripts](../../glossary.md#script) call the same main-image code
+`Map_Run` runs them, and their [scripts](../../glossary.md#script) call the same main-image code
 the real maps call, through the same import tables
 ([System](../system/README.md#how-an-overlay-reaches-the-rest-of-the-game)).
 The selector that reaches them is in [Windows](../window/README.md), and the

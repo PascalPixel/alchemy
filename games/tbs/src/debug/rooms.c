@@ -79,7 +79,7 @@ static void TestRooms_ReceiveGust(void) {
 /// Djinni.
 u8 *TestRooms_GetEvents(void) { return (u8 *)gTestRooms_Events; }
 
-/// The room's initialize entry, which Field_RunMap runs on entry: nothing
+/// The room's initialize entry, which Map_Run runs on entry: nothing
 /// to set up.
 s32 Map_RunEmpty(void) { return 0; }
 

@@ -594,7 +594,7 @@ static void Houses_TalkToInnkeeper(void) {
 /// door opens and the party leader walks in. The Sanctum's wide door is redrawn
 /// in two halves by hand; the others play their opening pictures.
 static void Village_EnterDoor(void) {
-  u32 objectEventId;
+  u32 localId;
   struct EventWork *work;
   struct ObjectEvent *objectEvent;
   s32 doorIndex;
@@ -607,9 +607,9 @@ static void Village_EnterDoor(void) {
 
   work = gEventWork;
   Engine_ScriptStart();
-  for (objectEventId = LOCALID_FIRST_PLACED; objectEventId <= LOCALID_LAST_SLOT;
-       objectEventId++) {
-    objectEvent = ObjectEvent_GetById(objectEventId);
+  for (localId = LOCALID_FIRST_PLACED; localId <= LOCALID_LAST_SLOT;
+       localId++) {
+    objectEvent = ObjectEvent_GetById(localId);
     if (objectEvent != 0) {
       objectEvent->motionFlags = 0;
     }

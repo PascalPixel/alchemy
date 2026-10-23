@@ -134,7 +134,7 @@ void FieldEffect_StartFadeOverlay(void *object) {
   Io_Write16(31, &REG_BLDY);
   Dma_Fill32Cell(fill, 0, work, sizeof(*work));
   if (object == NULL)
-    object = ObjectTable_Get(gGameState.selectedObjectEvent);
+    object = ObjectTable_Get(gGameState.selectedLocalId);
   work->objectEvent = object;
 }
 

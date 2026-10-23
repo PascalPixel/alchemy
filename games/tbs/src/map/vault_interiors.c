@@ -266,7 +266,7 @@ enum {
 
 static void VaultInteriors_IvanJoinsRodSearch(void);
 static void VaultInteriors_DiscussMindReading(void);
-static void VaultInteriors_AdvanceSuspectRoute(s32 objectEvent, s32 expected,
+static void VaultInteriors_AdvanceSuspectRoute(s32 localId, s32 expected,
                                                s32 next, const s32 *actions);
 static void VaultInteriors_FaceSuspectsTowardLeader(void);
 static void VaultInteriors_LoseToThieves(void);
@@ -274,14 +274,13 @@ static void VaultInteriors_ConfrontThievesAgain(void);
 static void VaultInteriors_DefeatThieves(void);
 static void VaultInteriors_ReturnStolenGoods(void);
 static void VaultInteriors_OpenWindowTransition(void);
-static void VaultInteriors_ShowMessageAndWait(s32 objectEventId,
-                                              s32 waitFrames);
-static void VaultInteriors_FaceObjectEventAndWait(s32 objectEventId,
-                                                  s32 targetId, s32 waitFrames);
+static void VaultInteriors_ShowMessageAndWait(s32 localId, s32 waitFrames);
+static void VaultInteriors_FaceObjectEventAndWait(s32 localId, s32 targetId,
+                                                  s32 waitFrames);
 static void VaultInteriors_FaceEachOtherAndWait(s32 firstId, s32 secondId,
                                                 s32 waitFrames);
-static void VaultInteriors_PlayAnimationAndWait(s32 objectEventId,
-                                                s32 animation, s32 waitFrames);
+static void VaultInteriors_PlayAnimationAndWait(s32 localId, s32 animation,
+                                                s32 waitFrames);
 static void VaultInteriors_StartMindRead(s32 casterId, s32 targetId);
 static void VaultInteriors_EndMindRead(void);
 static void VaultInteriors_UpdateObjectEventStops(void);
@@ -1842,7 +1841,7 @@ static inline void VaultInteriors_SetPartyImagePriority(void) {
 /// party's talk (VaultInteriors_DiscussMindReading) and sets
 /// FLAG_VAULT_SUSPECTS_MIND_READ.
 static void EventScript_ReadCorneredSuspectsMinds(void) {
-  s32 objectEvent;
+  s32 localId;
   struct EventWork *work;
 
   work = gEventWork;
@@ -1860,7 +1859,7 @@ static void EventScript_ReadCorneredSuspectsMinds(void) {
   ObjectEvent_FaceObjectEvent(LOCALID_SUSPECTED_LEADER, IVAN, 0);
   ObjectEvent_FaceObjectEvent(LOCALID_SUSPECTED_THIEF, IVAN, 0);
   Engine_ScriptWait(10);
-  objectEvent = LOCALID_SUSPECTED_LEADER;
+  localId = LOCALID_SUSPECTED_LEADER;
   // The event identifies the suspects blocked on the last frame of the wait.
   switch (work->raisedTrigger) {
   case VAULT_INTERIORS_THIEF_CORNERED:
@@ -1872,7 +1871,7 @@ static void EventScript_ReadCorneredSuspectsMinds(void) {
     Engine_ObjectEventRunRepeatedMotion(LOCALID_SUSPECTED_THIEF, 2);
     VaultInteriors_ShowMessageAndWait(LOCALID_SUSPECTED_THIEF, 20);
     if (work->raisedTrigger == VAULT_INTERIORS_THIEF_CORNERED) {
-      objectEvent = LOCALID_SUSPECTED_THIEF;
+      localId = LOCALID_SUSPECTED_THIEF;
       break;
     }
     // When both are cornered, the leader's reaction follows the thief's.
@@ -1883,12 +1882,12 @@ static void EventScript_ReadCorneredSuspectsMinds(void) {
                                   ATTACHED_EFFECT_IN_FRONT |
                                       ATTACHED_EFFECT_ONCE);
     Engine_ObjectEventRunRepeatedMotion(LOCALID_SUSPECTED_LEADER, 2);
-    objectEvent = LOCALID_SUSPECTED_LEADER;
+    localId = LOCALID_SUSPECTED_LEADER;
     VaultInteriors_ShowMessageAndWait(LOCALID_SUSPECTED_LEADER, 20);
     break;
   }
   Engine_ObjectEventSetAnimation(IVAN, ANIMATION_STAND);
-  ObjectEvent_FaceObjectEvent(IVAN, objectEvent, 0);
+  ObjectEvent_FaceObjectEvent(IVAN, localId, 0);
   ObjectEvent_FaceObjectEvent(GARET, IVAN, 0);
   Engine_ObjectEventRunRepeatedMotion(GARET, 2);
   Engine_ScriptWait(20);
@@ -1899,7 +1898,7 @@ static void EventScript_ReadCorneredSuspectsMinds(void) {
   Engine_ObjectEventRunRepeatedMotion(IVAN, 2);
   Engine_ScriptWait(20);
   VaultInteriors_ShowMessageAndWait(IVAN, 20);
-  VaultInteriors_StartMindRead(IVAN, objectEvent);
+  VaultInteriors_StartMindRead(IVAN, localId);
   Ui_SetBank15PaletteAndClearRenderMode();
   Engine_ScriptWait(60);
   Engine_ObjectEventRunRepeatedMotion(LOCALID_SUSPECTED_LEADER, 2);
@@ -2155,12 +2154,12 @@ static void EventScript_AdvanceSuspectRoutes(void) {
 }
 
 /// Installs a route script only when the suspect is in its expected state.
-static void VaultInteriors_AdvanceSuspectRoute(s32 objectEvent, s32 expected,
+static void VaultInteriors_AdvanceSuspectRoute(s32 localId, s32 expected,
                                                s32 next, const s32 *actions) {
-  struct ObjectEvent *suspect = ObjectEvent_GetById(objectEvent);
+  struct ObjectEvent *suspect = ObjectEvent_GetById(localId);
 
   if (suspect->timer == expected) {
-    ObjectEvent_SetActionScript(objectEvent, actions);
+    ObjectEvent_SetActionScript(localId, actions);
     suspect->timer = next;
   }
 }
@@ -3266,16 +3265,14 @@ static void VaultInteriors_OpenWindowTransition(void) {
   Engine_ScriptWait(1);
 }
 
-static void VaultInteriors_ShowMessageAndWait(s32 objectEventId,
-                                              s32 waitFrames) {
-  Engine_ScriptShowMessage(objectEventId, 0);
+static void VaultInteriors_ShowMessageAndWait(s32 localId, s32 waitFrames) {
+  Engine_ScriptShowMessage(localId, 0);
   Engine_ScriptWait(waitFrames);
 }
 
-static void VaultInteriors_FaceObjectEventAndWait(s32 objectEventId,
-                                                  s32 targetId,
+static void VaultInteriors_FaceObjectEventAndWait(s32 localId, s32 targetId,
                                                   s32 waitFrames) {
-  Engine_ObjectEventFaceObjectEvent(objectEventId, targetId, 0);
+  Engine_ObjectEventFaceObjectEvent(localId, targetId, 0);
   Engine_ScriptWait(waitFrames);
 }
 
@@ -3286,10 +3283,10 @@ static void VaultInteriors_FaceEachOtherAndWait(s32 firstId, s32 secondId,
 }
 
 /// Waits for the animation to change before the following pause.
-static void VaultInteriors_PlayAnimationAndWait(s32 objectEventId,
-                                                s32 animation, s32 waitFrames) {
-  Engine_ObjectEventSetAnimation(objectEventId, animation, waitFrames);
-  ObjectMotion_WaitForAnimationChange(objectEventId);
+static void VaultInteriors_PlayAnimationAndWait(s32 localId, s32 animation,
+                                                s32 waitFrames) {
+  Engine_ObjectEventSetAnimation(localId, animation, waitFrames);
+  ObjectMotion_WaitForAnimationChange(localId);
   Engine_ScriptWait(waitFrames);
 }
 

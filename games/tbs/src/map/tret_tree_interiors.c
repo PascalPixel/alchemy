@@ -114,7 +114,7 @@ enum {
 
 /// The speaker of a message; every speaker on this map has
 /// SPEAKER_WINDOW_BELOW.
-#define SPEAKER(objectEvent) (SPEAKER_WINDOW_BELOW | (objectEvent))
+#define SPEAKER(localId) (SPEAKER_WINDOW_BELOW | (localId))
 
 // The map's temporary flags: FLAG_MAP_TEMP_00 to _14 are set the first
 // time each cocoon is stepped on, tearing it; the next step breaks through
@@ -192,14 +192,14 @@ static void TretTreeInteriors_StepOnCocoon(s32 cocoonFlag, s32 sourceColumn,
                                            s32 sourceRow, s32 warpDest) {
   s32 destinationColumn;
   s32 destinationRow;
-  s32 selectedObjectEventId;
+  s32 selectedLocalId;
   struct ObjectEvent *objectEvent;
   s32 spinFrame;
 
   destinationColumn = (gGameState.x >> 20) + 64;
   destinationRow = gGameState.z >> 20;
-  selectedObjectEventId = gGameState.selectedObjectEvent;
-  objectEvent = ObjectEvent_GetById(selectedObjectEventId);
+  selectedLocalId = gGameState.selectedLocalId;
+  objectEvent = ObjectEvent_GetById(selectedLocalId);
   if (warpDest == *sLastCocoon)
     return;
   *sLastCocoon = warpDest;
@@ -217,11 +217,10 @@ static void TretTreeInteriors_StepOnCocoon(s32 cocoonFlag, s32 sourceColumn,
   SE(SE_206);
   EV_START();
   FieldScript_SetDestination((s32)&MapId_TretTreeInteriors, warpDest);
-  OBJECT_MODE(selectedObjectEventId, ANIMATION_LEADER_SPIN_AWAY);
-  Engine_ObjectEventSetSpriteFlags(ObjectEvent_GetById(selectedObjectEventId),
-                                   0);
-  ObjectEvent_SetAttachedEffect(
-      selectedObjectEventId, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ATTACH);
+  OBJECT_MODE(selectedLocalId, ANIMATION_LEADER_SPIN_AWAY);
+  Engine_ObjectEventSetSpriteFlags(ObjectEvent_GetById(selectedLocalId), 0);
+  ObjectEvent_SetAttachedEffect(selectedLocalId, ATTACHED_EFFECT_IN_FRONT |
+                                                     ATTACHED_EFFECT_ATTACH);
   WAIT(30);
   Camera_MoveTo(-1, -1, -1, 0);
   objectEvent->motionFlags = OBJ_EVENT_FALLS;
@@ -230,7 +229,7 @@ static void TretTreeInteriors_StepOnCocoon(s32 cocoonFlag, s32 sourceColumn,
   SE(SE_204);
   WAIT(3);
   objectEvent->terrainId = 2;
-  Engine_ObjectEventSetSpritePriority(selectedObjectEventId, 3);
+  Engine_ObjectEventSetSpritePriority(selectedLocalId, 3);
   for (spinFrame = COCOON_FALL_SPIN_FRAMES - 1; spinFrame >= 0; spinFrame--) {
 
     objectEvent->facing += 2 * FACING_STEP;
@@ -730,7 +729,7 @@ s32 TretTreeInteriors_EnterRoom(void) {
   struct MapGridLayerScroll *layer;
   struct FieldWork *work;
   s32 warpDest;
-  s32 selectedObjectEventId;
+  s32 selectedLocalId;
 
   tret = ObjectEvent_GetById(LOCALID_TRET);
   // Point the cocoon latch at the map state and save the palette first.
@@ -772,20 +771,18 @@ s32 TretTreeInteriors_EnterRoom(void) {
   work = WORK_SLOT(HEAP_SLOT_EVENT);
   work->transition = MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_NOISE);
   warpDest = gGameState.warpDest;
-  selectedObjectEventId = gGameState.selectedObjectEvent;
-  objectEvent = ObjectEvent_GetById(selectedObjectEventId);
+  selectedLocalId = gGameState.selectedLocalId;
+  objectEvent = ObjectEvent_GetById(selectedLocalId);
   // Warp destinations 20, 30, 40 and 50: the leader falls on through the room,
   // to the warp destination numbered ten lower. Warp destination 10: the leader
   // lands in a cloud of dust in front of Tret.
   // TRET_TREE_INTERIORS_AFTER_FIGHT_TRET: back from the battle with Tret.
   if (warpDest == 50 || warpDest == 40 || warpDest == 30 || warpDest == 20) {
     Engine_ScriptOpenScreen();
-    OBJECT_MODE(selectedObjectEventId, ANIMATION_LEADER_SPIN_AWAY);
-    Engine_ObjectEventSetSpriteFlags(ObjectEvent_GetById(selectedObjectEventId),
-                                     0);
-    ObjectEvent_SetAttachedEffect(selectedObjectEventId,
-                                  ATTACHED_EFFECT_IN_FRONT |
-                                      ATTACHED_EFFECT_ATTACH);
+    OBJECT_MODE(selectedLocalId, ANIMATION_LEADER_SPIN_AWAY);
+    Engine_ObjectEventSetSpriteFlags(ObjectEvent_GetById(selectedLocalId), 0);
+    ObjectEvent_SetAttachedEffect(selectedLocalId, ATTACHED_EFFECT_IN_FRONT |
+                                                       ATTACHED_EFFECT_ATTACH);
     Camera_MoveTo(-1, -1, -1, 0);
     objectEvent->motionFlags = OBJ_EVENT_FALLS;
     objectEvent->y.fixed = PIXELS(100);
@@ -795,11 +792,10 @@ s32 TretTreeInteriors_EnterRoom(void) {
     FieldScript_SetDestination((s32)&MapId_TretTreeInteriors, warpDest - 10);
     WAIT(20);
     objectEvent->terrainId = 2;
-    Engine_ObjectEventSetSpritePriority(selectedObjectEventId, 3);
+    Engine_ObjectEventSetSpritePriority(selectedLocalId, 3);
     WAIT(2);
-    Engine_ObjectEventSetAttachedEffect(selectedObjectEventId,
-                                        ATTACHED_EFFECT_IN_FRONT |
-                                            ATTACHED_EFFECT_REMOVE);
+    Engine_ObjectEventSetAttachedEffect(
+        selectedLocalId, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_REMOVE);
     WAIT(8);
   } else if (warpDest == 10) {
     if (!FLAG_CHECK(FLAG_KEEP_PARTY_POSITION))

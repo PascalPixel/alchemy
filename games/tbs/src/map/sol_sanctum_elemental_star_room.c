@@ -2118,15 +2118,15 @@ static void SolSanctumElementalStarRoom_EnterStarRoom(void) {
 /// SOL_SANCTUM_ELEMENTAL_STAR_ROOM_FROM_SOL_SANCTUM_LUNA_SOL_ROOMS plays its
 /// scene.
 s32 SolSanctumElementalStarRoom_Initialize(void) {
-  s32 ringObjectEvent;
+  s32 ringLocalId;
 
   Engine_ColorBufferApplySource(PALETTE_TRANSFORM_PLAIN, 0);
   Engine_GameFlagSet(FLAG_RETREAT_BLOCKED);
-  ringObjectEvent = LOCALID_FIRST_FLOATING_LIGHT;
+  ringLocalId = LOCALID_FIRST_FLOATING_LIGHT;
   do {
-    ObjectEvent_GetById(ringObjectEvent)->collisionFlags = 0;
-    Engine_ObjectEventSetSpritePriority(ringObjectEvent++, 1);
-  } while ((u32)ringObjectEvent <= LOCALID_LAST_FLOATING_LIGHT);
+    ObjectEvent_GetById(ringLocalId)->collisionFlags = 0;
+    Engine_ObjectEventSetSpritePriority(ringLocalId++, 1);
+  } while ((u32)ringLocalId <= LOCALID_LAST_FLOATING_LIGHT);
   SolSanctum_StartFloatingLights(LOCALID_FIRST_FLOATING_LIGHT, 16);
   if (GameFlag_IsSet(FLAG_SOL_SANCTUM_STAR_ROOM_EXPLAINED) != 0) {
     ObjectEvent_SetPosition(LOCALID_KRADEN, PIXELS(456), PIXELS(360));

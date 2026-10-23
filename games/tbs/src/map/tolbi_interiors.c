@@ -166,7 +166,7 @@ UNUSED static void TolbiInteriors_ExitThroughWindow(void) {
 /// every placed object event stops, the door opens and the leader walks through
 /// it.
 static void TolbiInteriors_EnterDoor(void) {
-  u32 objectEventId;
+  u32 localId;
   struct ObjectEvent *objectEvent;
   struct EventWork *work;
   s16 *trigger;
@@ -174,9 +174,9 @@ static void TolbiInteriors_EnterDoor(void) {
 
   work = gEventWork;
   // Stop the room's object events before animating the selected doorway.
-  for (objectEventId = LOCALID_FIRST_PLACED;
-       objectEventId < TOLBI_INTERIORS_OBJ_EVENT_SLOT_END; objectEventId++) {
-    objectEvent = ObjectEvent_GetById(objectEventId);
+  for (localId = LOCALID_FIRST_PLACED;
+       localId < TOLBI_INTERIORS_OBJ_EVENT_SLOT_END; localId++) {
+    objectEvent = ObjectEvent_GetById(localId);
     if (objectEvent != 0) {
       objectEvent->motionFlags = 0;
     }

@@ -113,7 +113,7 @@ void ObjectEffect_PrepareContextEffect(s32 animation) {
   struct AnimationObject *context;
   struct AnimationEntry *effect;
 
-  object = ObjectTable_Get(gGameState.selectedObjectEvent);
+  object = ObjectTable_Get(gGameState.selectedLocalId);
   context = object->animation;
   effect = (struct AnimationEntry *)ResourceMetadata_RegisterFar(context, 27);
   zero = 0;
@@ -160,8 +160,7 @@ void ObjectEffect_StartContextEffect25(void) {
 void ObjectEffect_EndContextEffect(s32 animation) {
   s32 zero;
   s32 mask;
-  struct ObjectRuntime *leader =
-      ObjectTable_Get(gGameState.selectedObjectEvent);
+  struct ObjectRuntime *leader = ObjectTable_Get(gGameState.selectedLocalId);
   struct AnimationObject *spriteAnimation = leader->animation;
   struct AnimationEntry *eff =
       (struct AnimationEntry *)ResourceMetadata_RegisterFar(spriteAnimation,
@@ -216,7 +215,7 @@ s32 ObjectEffect_RunPendingFlagEvent(void) {
         struct ObjectRuntime *leader;
 
         GameFlag_ClearBitFar(flag);
-        leaderId = gGameState.selectedObjectEvent;
+        leaderId = gGameState.selectedLocalId;
         leader = ObjectTable_Get(leaderId);
         // FLAG_ARRIVE_FALLING is set by maps the party drops out of (the
         // Suhalla storm, a floor giving way in the Tret tree): start 160 pixels

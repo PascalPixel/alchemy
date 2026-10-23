@@ -687,7 +687,7 @@ static void HeatGauge_CountStep(void) {
   s32 dx;
   s32 z;
   s32 phase;
-  objectEvent = ObjectEvent_GetById(gGameState.selectedObjectEvent);
+  objectEvent = ObjectEvent_GetById(gGameState.selectedLocalId);
   work = gEventWork;
   if (objectEvent->targetX == OBJ_EVENT_NO_TARGET) {
     return;
@@ -742,7 +742,7 @@ static void LamakanDesert_FallIntoPit(void) {
   s32 dx;
   s32 dz;
 
-  target = ObjectEvent_Get(gGameState.selectedObjectEvent);
+  target = ObjectEvent_Get(gGameState.selectedLocalId);
   best = FIRST_PIT;
   GameFlag_Set(FLAG_DESERT_EVENT_RUNNING);
   min = 0x100000;
@@ -828,7 +828,7 @@ static void LamakanDesert_SlideDownDune(void) {
   {
     struct EventWork *work = gEventWork;
 
-    id = gGameState.selectedObjectEvent;
+    id = gGameState.selectedLocalId;
     center = work->viewCenter;
   }
   objectEvent = ObjectEvent_GetById(id);

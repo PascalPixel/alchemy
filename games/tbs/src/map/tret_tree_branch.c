@@ -111,7 +111,7 @@ static void TretTreeBranch_ShiftLeaderAndCameraByCells(s32 cellOffsetX,
   s32 offsetZ = cellOffsetZ;
   s32 terrainHeight;
 
-  objectEvent = ObjectEvent_GetById(gGameState.selectedObjectEvent);
+  objectEvent = ObjectEvent_GetById(gGameState.selectedLocalId);
   // Multiplication keeps negative cell offsets defined; every caller is within
   // six cells, so the fixed-point result fits in s32.
   offsetX *= PIXELS(16);

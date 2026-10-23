@@ -6,7 +6,7 @@
 
 /// The function a map's item event may name instead of a message, called
 /// with the item, its user and its inventory slot; its result is not read.
-typedef s32 (*BattleItemCallback)(s32 item, s32 objectEvent, s32 slot);
+typedef s32 (*BattleItemCallback)(s32 item, s32 localId, s32 slot);
 
 /// Returns the map's item event (MAP_EVENT_ITEM) for item that applies to
 /// what the leader faces, or 0 (item 0 matches any item). The event's trigger
@@ -18,10 +18,9 @@ s32 Field_FindItemEvent(s32 item) {
   struct FieldWork *work = (struct FieldWork *)gEventWork;
   const struct MapEvent *event = work->events;
   s32 facing =
-      ((struct MotionObject *)ObjectTable_Get(gGameState.selectedObjectEvent))
+      ((struct MotionObject *)ObjectTable_Get(gGameState.selectedLocalId))
           ->angle;
-  s32 objectEventAhead =
-      Field_FindNearbyTalkTarget(gGameState.selectedObjectEvent);
+  s32 objectEventAhead = Field_FindNearbyTalkTarget(gGameState.selectedLocalId);
   s32 tileAhead;
 
   item &= 0x1ff;
@@ -71,7 +70,7 @@ s32 Field_FindItemEvent(s32 item) {
 s32 Field_UseItem(s32 packedItem, s32 slot) {
   s32 result;
   s32 itemId;
-  s32 objectEvent;
+  s32 localId;
   struct BattleUnit *unit;
   const struct MapEvent *event;
   s32 inventorySlot;
@@ -83,7 +82,7 @@ s32 Field_UseItem(s32 packedItem, s32 slot) {
 
   result = -1;
   itemId = packedItem & 0x3ff;
-  objectEvent = (packedItem >> 10) & 0xf;
+  localId = (packedItem >> 10) & 0xf;
   // Count the user's slots holding the item; with no user given, the user is
   // whoever holds it in the most slots, the earlier on a tie. Nobody holding
   // it ends the use at once.
@@ -91,8 +90,8 @@ s32 Field_UseItem(s32 packedItem, s32 slot) {
     mostMatchingSlots = 0;
     partyCount = Party_CountActiveOwnersFar();
 
-    if (objectEvent == 15) {
-      objectEvent = 0;
+    if (localId == 15) {
+      localId = 0;
       for (partyIndex = 0; partyIndex < partyCount; partyIndex++) {
         unit = Unit_GetFar(gGameState.activeOwners[partyIndex]);
         matchingSlots = 0;
@@ -103,11 +102,11 @@ s32 Field_UseItem(s32 packedItem, s32 slot) {
 
         if (mostMatchingSlots < matchingSlots) {
           mostMatchingSlots = matchingSlots;
-          objectEvent = gGameState.activeOwners[partyIndex];
+          localId = gGameState.activeOwners[partyIndex];
         }
       }
     } else {
-      unit = Unit_GetFar(objectEvent);
+      unit = Unit_GetFar(localId);
       for (inventorySlot = 0; inventorySlot < 15; inventorySlot++) {
         if ((unit->inventory[inventorySlot] & 0x1ff) == itemId)
           mostMatchingSlots++;
@@ -128,19 +127,19 @@ s32 Field_UseItem(s32 packedItem, s32 slot) {
     GameFlag_ClearBitFar(FLAG_ITEM_USED_UP);
     GameFlag_ClearBitFar(FLAG_NOTHING_HAPPENS);
     if (!(event->trigger & 0x400)) {
-      UiWork_PushValueSlotFar(objectEvent, 1);
+      UiWork_PushValueSlotFar(localId, 1);
       UiWork_PushValueSlotFar(itemId, 2);
       UiText_ShowPositionedMessageAndWaitFar(MsgActorUsesItem, 1);
     }
     if ((s32)event->value < 0x10000) {
-      s32 nearbyObjectEvent =
-          Field_FindNearbyTalkTarget(gGameState.selectedObjectEvent);
+      s32 nearbyLocalId =
+          Field_FindNearbyTalkTarget(gGameState.selectedLocalId);
       FieldScript_Start();
       FieldScript_SetMessageId(event->value);
-      FieldScript_ShowMessageAndWait(nearbyObjectEvent, 0);
+      FieldScript_ShowMessageAndWait(nearbyLocalId, 0);
       FieldScript_End();
     } else {
-      ((BattleItemCallback)event->value)(itemId, objectEvent, slot);
+      ((BattleItemCallback)event->value)(itemId, localId, slot);
     }
     result = 0;
   } else {
@@ -174,7 +173,7 @@ s32 Field_UseItem(s32 packedItem, s32 slot) {
         work->warp = WARP_RETREAT;
       }
 
-      UiWork_PushValueSlotFar(objectEvent, 1);
+      UiWork_PushValueSlotFar(localId, 1);
       UiWork_PushValueSlotFar(itemId, 2);
       UiText_ShowPositionedMessageAndWaitFar(MsgActorUsesItem, 1);
       // UB: this routine returns void; call it through its declared type.
@@ -199,7 +198,7 @@ s32 Field_UseItem(s32 packedItem, s32 slot) {
   if (GameFlag_TestFar(FLAG_NOTHING_HAPPENS))
     UiText_ShowPositionedMessageAndWaitFar(MsgNothingHappens, 1);
   if (GameFlag_TestFar(FLAG_ITEM_USED_UP))
-    Inventory_RemoveFar(objectEvent, slot);
+    Inventory_RemoveFar(localId, slot);
   return result;
 }
 
@@ -215,10 +214,10 @@ void *FieldEffect_FindMatchingEvent(s32 eventFlags, s32 group, void *target) {
   struct FieldWork *work = (struct FieldWork *)gEventWork;
   const struct MapEvent *event = work->events;
   s32 facing =
-      ((struct MotionObject *)ObjectTable_Get(gGameState.selectedObjectEvent))
+      ((struct MotionObject *)ObjectTable_Get(gGameState.selectedLocalId))
           ->angle;
   s32 objectEventAhead =
-      Field_FindNearbyPsynergyTarget(gGameState.selectedObjectEvent, group);
+      Field_FindNearbyPsynergyTarget(gGameState.selectedLocalId, group);
   s32 tileAhead;
   s32 anyPhase = 0;
 
@@ -272,13 +271,13 @@ s32 Field_RunPsynergyEvents(s32 packed) {
   userId = ((u32)packed >> 10) & 0xF;
   group = BattleAction_Get(abilityId)->type0c;
   // The leader is looked up and the result is not used.
-  ObjectTable_Get(gGameState.selectedObjectEvent);
+  ObjectTable_Get(gGameState.selectedLocalId);
   beforeEvent = FieldEffect_FindMatchingEvent(
       PSYNERGY_EV(PSYNERGY_PHASE_BEFORE_END), group, &target);
   afterEvent = FieldEffect_FindMatchingEvent(
       PSYNERGY_EV(PSYNERGY_PHASE_AFTER_END), group, &target);
   FieldEffect_LoadActionEffectResources(abilityId, 0);
-  FieldEffect_SetupObjectPair(gGameState.selectedObjectEvent, target);
+  FieldEffect_SetupObjectPair(gGameState.selectedLocalId, target);
   Field_RunEventAction(beforeEvent, userId, target);
   FieldScript_RunTypeHandler();
   FieldEffect_StopCasterHook();

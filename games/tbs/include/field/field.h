@@ -82,10 +82,10 @@ struct OverlayObjectEventState {
 /// The Colosso opponent's path player, at the start of gMapLocalState: the path
 /// in ColossoRaceWork is played back or recorded by Colosso_UpdatePathOpponent.
 struct PathRecorder {
-  s16 mode;        ///< 1 plays the path, 2 records it, 9 finished
-  s16 mirror;      ///< nonzero mirrors the path across the finish
-  s16 objectEvent; ///< the local id moved along the path
-  u16 pathIndex;   ///< the next halfword of ColossoRaceWork.path, x then z
+  s16 mode;      ///< 1 plays the path, 2 records it, 9 finished
+  s16 mirror;    ///< nonzero mirrors the path across the finish
+  s16 localId;   ///< the local id moved along the path
+  u16 pathIndex; ///< the next halfword of ColossoRaceWork.path, x then z
   /// Frames the object event has not moved; from 3 it stands
   /// (ObjectEvent_SetMode 1).
   s16 still;
@@ -278,7 +278,7 @@ extern u8 Transform_UpdateVerticesSize;
 extern const s32 gWorldMap_FootprintActions[6];
 extern const s16 gWorldMap_KeyHeadings[16];
 s32 CalculateFacingAngle(s32, s32);
-void Engine_ObjectEventFollow(s32 objectEvent, s32 leader);
+void Engine_ObjectEventFollow(s32 localId, s32 leader);
 void Engine_ScriptClearInvalidPackedValues(void);
 s32 Engine_PartyRemoveItem(s32 item);
 s32 FarCall_BlankLoadTable(s32 warpDest);

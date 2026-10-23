@@ -86,7 +86,7 @@ s32 Title_Run(void) {
   // After 120 frames, the logo waits up to 3600 frames (a minute) for a key
   // press.
   if (gGameState.warpDest == 10) {
-    ObjectEvent_GetById(gGameState.selectedObjectEvent)->motionFlags = 0;
+    ObjectEvent_GetById(gGameState.selectedLocalId)->motionFlags = 0;
     Engine_AudioPlayCue(MUS_ENDING_LOGO);
     Title_RevealScreen(0);
     Engine_TaskWait(120);

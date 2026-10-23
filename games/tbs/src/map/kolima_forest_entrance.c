@@ -109,8 +109,7 @@ enum {
 
 static void KolimaForestEntrance_WitnessForestCurse(void);
 static void KolimaForestEntrance_ShowMessageAndWait(s32 speaker, s32 frames);
-static void KolimaForestEntrance_FaceObjectEventAndWait(s32 objectEventId,
-                                                        s32 facing,
+static void KolimaForestEntrance_FaceObjectEventAndWait(s32 localId, s32 facing,
                                                         s32 waitFrames);
 static void KolimaForestEntrance_SpawnCurseSparkle(void);
 static void KolimaForestEntrance_FlickerPsynergyFields(void);
@@ -1114,10 +1113,9 @@ static void KolimaForestEntrance_ShowMessageAndWait(s32 speaker, s32 frames) {
 }
 
 /// Turns an object event at once, then leaves time for the next beat.
-static void KolimaForestEntrance_FaceObjectEventAndWait(s32 objectEventId,
-                                                        s32 facing,
+static void KolimaForestEntrance_FaceObjectEventAndWait(s32 localId, s32 facing,
                                                         s32 waitFrames) {
-  Engine_ObjectEventFaceDirection(objectEventId, facing, 0);
+  Engine_ObjectEventFaceDirection(localId, facing, 0);
   Engine_ScriptWait(waitFrames);
 }
 

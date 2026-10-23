@@ -14,7 +14,7 @@ void FieldEffect_BlinkAvoidCaster(void) {
   struct AnimationEntry *entry;
   s32 phase;
 
-  caster = ObjectTable_Get(gGameState.selectedObjectEvent);
+  caster = ObjectTable_Get(gGameState.selectedLocalId);
   rec = caster->records;
   entry = rec->entries[0];
   phase = gFrameCount % 5;

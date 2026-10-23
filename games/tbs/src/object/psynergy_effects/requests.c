@@ -21,8 +21,7 @@ void Field_RequestBattleFromEncounterTable(s32 zoneNo, s32 slotNo) {
   if (zone == ENCOUNTER_ZONE_SCRIPTED && slot == 0)
     gGameState.special = (s32)&ResourceId_VenusLighthouseAerieStormBackdrop;
   if (work->mode == MODE_WORLD_MAP) {
-    struct ObjectRuntime *leader =
-        ObjectTable_Get(gGameState.selectedObjectEvent);
+    struct ObjectRuntime *leader = ObjectTable_Get(gGameState.selectedLocalId);
 
     Encounter_ResolveWorldMapZoneAndBackdrop(&leader->x);
   }
@@ -55,7 +54,7 @@ void Field_RequestDjinnBattle(s32 flag, s32 no) {
   state->pendingDjinnEvent = (no + DJINNI_EVENT_0) | skipHop;
   work->battle = Encounter_GetDjinnEnemyGroup(no);
   if (work->mode == MODE_WORLD_MAP) {
-    struct ObjectRuntime *leader = ObjectTable_Get(state->selectedObjectEvent);
+    struct ObjectRuntime *leader = ObjectTable_Get(state->selectedLocalId);
 
     Encounter_ResolveWorldMapZoneAndBackdrop(&leader->x);
   }

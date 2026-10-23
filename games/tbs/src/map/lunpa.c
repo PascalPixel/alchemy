@@ -509,16 +509,16 @@ static void EventScript_GaretTurnsLeaderBack(void) {
 static void EventScript_EnterDoor(void) {
   struct FieldWork *work;
   struct ObjectEvent *placedObjectEvent;
-  u32 objectEventId;
+  u32 localId;
   s32 doorIndex;
 
   work = (struct FieldWork *)gEventWork;
   Engine_ScriptStart();
   // Freeze placed object events before opening the selected door and crossing
   // it.
-  for (objectEventId = LOCALID_FIRST_PLACED; objectEventId <= LOCALID_LAST_SLOT;
-       objectEventId++) {
-    placedObjectEvent = ObjectEvent_Get(objectEventId);
+  for (localId = LOCALID_FIRST_PLACED; localId <= LOCALID_LAST_SLOT;
+       localId++) {
+    placedObjectEvent = ObjectEvent_Get(localId);
     if (placedObjectEvent != NULL) {
       placedObjectEvent->motionFlags = 0;
     }
@@ -1070,10 +1070,10 @@ struct ObjectEventTemplate gGateObjectEventTemplates[] = {
 };
 // clang-format on
 
-#define TALK(objectEvent, value)                                               \
-  {MAP_EVENT_TALK, (objectEvent), CONDITION_ALWAYS, (value)}
-#define MIND_READ(objectEvent, value)                                          \
-  {PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), (objectEvent), CONDITION_ALWAYS,  \
+#define TALK(localId, value)                                                   \
+  {MAP_EVENT_TALK, (localId), CONDITION_ALWAYS, (value)}
+#define MIND_READ(localId, value)                                              \
+  {PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), (localId), CONDITION_ALWAYS,      \
    (value)}
 
 #define DOOR(trigger)                                                          \

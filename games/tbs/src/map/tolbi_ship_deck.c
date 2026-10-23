@@ -124,17 +124,17 @@ static void TolbiShipDeck_RowersDisembark(void);
 static s32 TolbiShipDeck_GetRowerAtSeat(u32 seat);
 static void TolbiShipDeck_RockDeck(void);
 static void TolbiShipDeck_SetUpOars(void);
-static void TolbiShipDeck_ShowOar(s32 objectEventId);
+static void TolbiShipDeck_ShowOar(s32 localId);
 static void TolbiShipDeck_ChooseOarStrokes(void);
 static s32 TolbiShipDeck_GetSeatStroke(u32 seat);
 static void TolbiShipDeck_RowOars(void);
-static void TolbiShipDeck_AdvanceStroke(s32 objectEvent, s32 slot);
+static void TolbiShipDeck_AdvanceStroke(s32 localId, s32 slot);
 static void TolbiShipDeck_SwingOar(s32 id, s32 slot, s32 flags);
 static void TolbiShipDeck_RestOars(void);
 static void TolbiShipDeck_CopyUnderwayCells(void);
 static void TolbiShipDeck_CopyAnchoredCells(void);
 static void TolbiShipDeck_Say(s32 speaker);
-static void TolbiShipDeck_Turn(s32 objectEventId, s32 facing);
+static void TolbiShipDeck_Turn(s32 localId, s32 facing);
 static void TolbiShipDeck_SightIsland(void);
 static void TolbiShipDeck_ReturnFromIsland(void);
 static void TolbiShipDeck_PlaceLeaderOnDeck(void);
@@ -145,7 +145,7 @@ static void TolbiShipDeck_PlaceLeaderOnDeck(void);
 
 /// A speaker: the object event, and in the top four bits where the message
 /// window opens beside them (4, SPEAKER_WINDOW_ABOVE, is above).
-#define SPEAKER(objectEvent, window) ((window) << 12 | (objectEvent))
+#define SPEAKER(localId, window) ((window) << 12 | (localId))
 
 /// Who is who on deck, numbering each object event template table's rows from
 /// LOCALID_FIRST_PLACED. Every table starts with the same twelve rows of oars,
@@ -782,8 +782,8 @@ const u32 *TolbiShipDeck_GetWarps(void) { return gTolbiShipDeckWarps; }
 
 /// The talk facing of a Kalay object event's row in
 /// gTolbiShipDeckObjectEventTemplatesWaiting.
-#define KALAY_TALK_FACING(objectEvent)                                         \
-  STORE_CONST(gTolbiShipDeckObjectEventTemplatesWaiting[(objectEvent) -        \
+#define KALAY_TALK_FACING(localId)                                             \
+  STORE_CONST(gTolbiShipDeckObjectEventTemplatesWaiting[(localId) -            \
                                                         LOCALID_FIRST_PLACED]  \
                   .talkFacing)
 
@@ -2200,7 +2200,7 @@ static void TolbiShipDeck_RowersDisembark(void) {
   s32 category[4];
   u32 index;
   s32 found;
-  s32 objectEvent;
+  s32 localId;
   s32 member;
   struct ObjectEvent *record;
 
@@ -2320,61 +2320,57 @@ static void TolbiShipDeck_RowersDisembark(void) {
   Engine_ScriptWait(10);
 
   for (index = 0; index <= 3; index++) {
-    objectEvent = matched[index];
-    ObjectEvent_SetPosition(objectEvent, 216 << 16, 146 << 18);
+    localId = matched[index];
+    ObjectEvent_SetPosition(localId, 216 << 16, 146 << 18);
     if (category[index] == ROWER_REPLY_OLD_MAN) {
-      ObjectEvent_SetSpeed(objectEvent, PIXELS(4) / 5, PIXELS(2) / 5);
+      ObjectEvent_SetSpeed(localId, PIXELS(4) / 5, PIXELS(2) / 5);
     } else {
-      ObjectEvent_SetSpeed(objectEvent, 128 << 9, 128 << 8);
+      ObjectEvent_SetSpeed(localId, 128 << 9, 128 << 8);
     }
-    ObjectEvent_WalkToAndWait(objectEvent, 216, 150 << 2);
-    ObjectEvent_WalkToAndWait(objectEvent, 192, 0x26a);
-    Engine_ObjectEventWalkToAndWait(objectEvent, 192, 164 << 2);
+    ObjectEvent_WalkToAndWait(localId, 216, 150 << 2);
+    ObjectEvent_WalkToAndWait(localId, 192, 0x26a);
+    Engine_ObjectEventWalkToAndWait(localId, 192, 164 << 2);
 
     switch (category[index]) {
     case ROWER_REPLY_FINALLY_LUCKY:
-      Engine_ObjectEventShowEmote(objectEvent, EMOTE_IN_FRONT | EMOTE_WINCE,
-                                  60);
+      Engine_ObjectEventShowEmote(localId, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
       Engine_ScriptSetMessage(MsgTolbiShipMadeFinallyLucky);
       break;
     case ROWER_REPLY_OTHERS_ALREADY:
-      TolbiShipDeck_Turn(objectEvent, 208 << 8);
-      Engine_ObjectEventShowEmote(objectEvent, EMOTE_IN_FRONT | EMOTE_WINCE,
-                                  60);
+      TolbiShipDeck_Turn(localId, 208 << 8);
+      Engine_ObjectEventShowEmote(localId, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
       Engine_ScriptSetMessage(MsgTolbiShipOtherPassengersAlready);
       break;
     case ROWER_REPLY_DONE_ROWING:
-      Engine_ObjectEventShowEmote(objectEvent, EMOTE_IN_FRONT | EMOTE_ELLIPSIS,
-                                  60);
+      Engine_ObjectEventShowEmote(localId, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
       Engine_ScriptSetMessage(MsgTolbiShipDontRowAnymore);
       break;
     case ROWER_REPLY_NO_WORKOUT:
-      Engine_ObjectEventRunRepeatedMotion(objectEvent, 1);
+      Engine_ObjectEventRunRepeatedMotion(localId, 1);
       Engine_ScriptSetMessage(MsgTolbiShipOhhhHaventWorkout);
       break;
     case ROWER_REPLY_ROWING_MORE:
-      Engine_ObjectEventSetAnimationAndWait(objectEvent, 3);
+      Engine_ObjectEventSetAnimationAndWait(localId, 3);
       Engine_ScriptSetMessage(MsgTolbiShipRowingShipMore);
       break;
     case ROWER_REPLY_LOST_AT_SEA:
-      Engine_ObjectEventSetAnimation(objectEvent, 4);
+      Engine_ObjectEventSetAnimation(localId, 4);
       Engine_ScriptSetMessage(MsgTolbiShipTotallyLostOcean);
       break;
     case ROWER_REPLY_OLD_MAN:
-      Engine_ObjectEventSetAnimationAndWait(objectEvent, 4);
-      Engine_ObjectEventShowEmote(objectEvent, EMOTE_IN_FRONT | EMOTE_SCOWL,
-                                  40);
+      Engine_ObjectEventSetAnimationAndWait(localId, 4);
+      Engine_ObjectEventShowEmote(localId, EMOTE_IN_FRONT | EMOTE_SCOWL, 40);
       Engine_ScriptSetMessage(MsgTolbiShipMakeOldMan);
       break;
     default:
       break;
     }
 
-    TolbiShipDeck_Say(objectEvent);
-    ObjectEvent_SetActionScript(objectEvent, gTolbiShipDeck_RowerLeavesActions);
+    TolbiShipDeck_Say(localId);
+    ObjectEvent_SetActionScript(localId, gTolbiShipDeck_RowerLeavesActions);
   }
 
-  ObjectEvent_RefreshSelectorById(objectEvent);
+  ObjectEvent_RefreshSelectorById(localId);
   Engine_ScriptWait(40);
   Engine_ObjectEventSetPosition(LOCALID_PARTY_LEADER, 216 << 16, 146 << 18);
   Engine_TaskWait(1);
@@ -2515,11 +2511,11 @@ static void TolbiShipDeck_SetUpOars(void) {
 }
 
 /// Shows an oar drawn under the deck, with no collision.
-static void TolbiShipDeck_ShowOar(s32 objectEventId) {
-  struct ObjectEvent *oar = ObjectEvent_GetById(objectEventId);
+static void TolbiShipDeck_ShowOar(s32 localId) {
+  struct ObjectEvent *oar = ObjectEvent_GetById(localId);
 
   if (oar != 0) {
-    Engine_ObjectEventSetSpritePriority(objectEventId, 3);
+    Engine_ObjectEventSetSpritePriority(localId, 3);
     Engine_ObjectEventSetSpriteFlags(oar, 0);
     oar->collisionFlags = 0;
     {
@@ -2616,21 +2612,21 @@ static void TolbiShipDeck_RowOars(void) {
 /// Advances one stroke's phase: slowly through the catch and the finish of the
 /// stroke, quicker through the drive, quickest on the return; its stroke oar's
 /// animation follows.
-static void TolbiShipDeck_AdvanceStroke(s32 objectEvent, s32 slot) {
+static void TolbiShipDeck_AdvanceStroke(s32 localId, s32 slot) {
   u16 value = sOarAngle[slot];
 
   if (value >= 0x6801 && value <= 0x6fff) {
     sStrokePhase[slot] += 0x70;
-    Engine_ObjectEventSetAnimation(objectEvent, 3);
+    Engine_ObjectEventSetAnimation(localId, 3);
   } else if (value >= 0xe801 && value <= 0xefff) {
     sStrokePhase[slot] += 0xe0;
-    Engine_ObjectEventSetAnimation(objectEvent, 3);
+    Engine_ObjectEventSetAnimation(localId, 3);
   } else if (value >= 0x7001 && value <= 0xefff) {
     sStrokePhase[slot] += 0x1c0;
-    Engine_ObjectEventSetAnimation(objectEvent, 2);
+    Engine_ObjectEventSetAnimation(localId, 2);
   } else {
     sStrokePhase[slot] += 0x300;
-    Engine_ObjectEventSetAnimation(objectEvent, 1);
+    Engine_ObjectEventSetAnimation(localId, 1);
   }
 }
 
@@ -2774,8 +2770,8 @@ static void TolbiShipDeck_Say(s32 speaker) {
 }
 
 /// Turns an object event to a facing over 10 frames.
-static void TolbiShipDeck_Turn(s32 objectEventId, s32 facing) {
-  Engine_ObjectEventFaceDirection(objectEventId, facing, 10);
+static void TolbiShipDeck_Turn(s32 localId, s32 facing) {
+  Engine_ObjectEventFaceDirection(localId, facing, 10);
 }
 
 /// TOLBI_SHIP_DECK_FROM_TOLBI_SHIP_MAST_OFF_COURSE, after the lookout's call:

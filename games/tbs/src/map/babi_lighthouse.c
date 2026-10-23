@@ -489,17 +489,17 @@ static void BabiLighthouse_InspectLockedDoor(void) {
 
 /// A companion walks back to the leader and is moved out of sight to the map's
 /// origin, so that the party walks as the leader alone again.
-static inline void BabiLighthouse_WalkBackToLeader(s32 objectEventId) {
+static inline void BabiLighthouse_WalkBackToLeader(s32 localId) {
   struct ObjectEvent *leader;
 
-  Engine_ObjectEventSetAnimation(objectEventId, ANIMATION_WALK);
+  Engine_ObjectEventSetAnimation(localId, ANIMATION_WALK);
   leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   if (leader != 0) {
-    ObjectEvent_SetDestination(objectEventId, leader->x.part.pixel,
+    ObjectEvent_SetDestination(localId, leader->x.part.pixel,
                                leader->z.part.pixel);
   }
-  Engine_ObjectEventWaitForMove(objectEventId);
-  ObjectEvent_SetPosition(objectEventId, 0, 0);
+  Engine_ObjectEventWaitForMove(localId);
+  ObjectEvent_SetPosition(localId, 0, 0);
 }
 
 /// Walking up to the stone door in BabiLighthouseStoneDoor the first time:

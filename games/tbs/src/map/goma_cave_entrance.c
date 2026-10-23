@@ -117,8 +117,8 @@ static void GomaCaveEntrance_GiveShamansRod(void);
 #include "common/effect_spawn.h"
 
 /// Shows the next message over the speaker, then pauses.
-static void GomaCaveEntrance_SayThenWait(s32 objectEventId, s32 frames) {
-  MESSAGE_PUT(objectEventId, 0);
+static void GomaCaveEntrance_SayThenWait(s32 localId, s32 frames) {
+  MESSAGE_PUT(localId, 0);
   WAIT(frames);
 }
 

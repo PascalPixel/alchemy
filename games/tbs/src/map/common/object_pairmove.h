@@ -14,7 +14,7 @@ static void MapObjectEvent_PlacePairAtOffset(s32 id, s32 dx, s32 dz) {
   s32 x;
   s32 z;
 
-  objectEvent = ObjectEvent_GetById(gGameState.selectedObjectEvent);
+  objectEvent = ObjectEvent_GetById(gGameState.selectedLocalId);
   other = ObjectEvent_GetById(id);
   Engine_ScriptStart();
   {

@@ -237,7 +237,7 @@ static void SuhallaDesert_UpdateCaptureTimer(void) {
   struct EventWork *requests;
   s32 remainingFrames;
 
-  selectedObjectEvent = ObjectEvent_GetById(gGameState.selectedObjectEvent);
+  selectedObjectEvent = ObjectEvent_GetById(gGameState.selectedLocalId);
   requests = gEventWork;
   selectedObjectEvent->facing = (gFrameCount << 12);
 
@@ -259,28 +259,27 @@ static void SuhallaDesert_CatchInStorm(s32 stormId) {
   s32 captureActive;
   struct ObjectEvent *selectedObjectEvent;
   struct ObjectEvent *storm;
-  s32 selectedObjectEventId;
+  s32 selectedLocalId;
 
   // The event-selected object event is pulled toward the storm before being
   // lifted.
-  selectedObjectEventId = gGameState.selectedObjectEvent;
+  selectedLocalId = gGameState.selectedLocalId;
   stormIdCopy = stormId;
-  selectedObjectEvent = ObjectEvent_GetById(selectedObjectEventId);
+  selectedObjectEvent = ObjectEvent_GetById(selectedLocalId);
   ObjectEvent_Get(stormIdCopy);
   captureActive = GameFlag_IsSet(FLAG_MAP_TEMP_0F);
   if (captureActive == 0) {
     Engine_ScriptStart();
-    ObjectEvent_SetAttachedEffect(selectedObjectEventId,
-                                  ATTACHED_EFFECT_IN_FRONT |
-                                      ATTACHED_EFFECT_ATTACH);
-    Engine_ObjectEventSetAnimation(selectedObjectEventId,
+    ObjectEvent_SetAttachedEffect(selectedLocalId, ATTACHED_EFFECT_IN_FRONT |
+                                                       ATTACHED_EFFECT_ATTACH);
+    Engine_ObjectEventSetAnimation(selectedLocalId,
                                    ANIMATION_LEADER_LOOK_AROUND);
     storm = ObjectEvent_GetById(stormIdCopy);
     if (storm != 0) {
-      ObjectEvent_SetDestination(selectedObjectEventId, storm->x.part.pixel,
+      ObjectEvent_SetDestination(selectedLocalId, storm->x.part.pixel,
                                  storm->z.part.pixel);
     }
-    Engine_ObjectEventWaitForMove(selectedObjectEventId);
+    Engine_ObjectEventWaitForMove(selectedLocalId);
     // Start the capture countdown once the approach finishes.
     Script_PlayCue(SE_SANDSTORM);
     FieldScheduler_AddCallback(SuhallaDesert_UpdateCaptureTimer,
@@ -289,7 +288,7 @@ static void SuhallaDesert_CatchInStorm(s32 stormId) {
     Engine_ObjectSetPosition(selectedObjectEvent, selectedObjectEvent->x.fixed,
                              selectedObjectEvent->y.fixed + PIXELS(32),
                              selectedObjectEvent->z.fixed);
-    Engine_ObjectEventWaitForMove(selectedObjectEventId);
+    Engine_ObjectEventWaitForMove(selectedLocalId);
     selectedObjectEvent->velocityY = captureActive;
     selectedObjectEvent->motionFlags = OBJ_EVENT_FLOATS;
     gGameState.movementMode = LEADER_MOVEMENT_AIRBORNE;
@@ -352,7 +351,7 @@ static void SuhallaDesert_RaiseStorm(s32 stormId) {
   struct ObjectEvent *leader;
 
   stormIdCopy = stormId;
-  selectedObjectEvent = ObjectEvent_GetById(gGameState.selectedObjectEvent);
+  selectedObjectEvent = ObjectEvent_GetById(gGameState.selectedLocalId);
   storm = ObjectEvent_GetById(stormIdCopy);
   appearanceRestored = Engine_GameFlagIsSet(FLAG_STORMS_RISEN);
   leaderX = selectedObjectEvent->x.part.pixel;
@@ -538,7 +537,7 @@ static s32 SuhallaDesert_ChaseLeader(struct ScriptInterpreter *interpreter) {
   s32 dz;
   s32 sparkFrame;
 
-  selectedObjectEvent = ObjectEvent_GetById(gGameState.selectedObjectEvent);
+  selectedObjectEvent = ObjectEvent_GetById(gGameState.selectedLocalId);
   objectEvent->acceleration = PIXELS(1) / 4;
   objectEvent->speed = PIXELS(3) / 2;
   objectEvent->motionFlags = 0;
@@ -641,7 +640,7 @@ static void EventScript_DouseStorm(s32 unused, s32 stormId) {
       }
     }
   }
-  ObjectEvent_GetById(gGameState.selectedObjectEvent)->motionFlags =
+  ObjectEvent_GetById(gGameState.selectedLocalId)->motionFlags =
       OBJ_EVENT_FOLLOWS_TERRAIN | OBJ_EVENT_FALLS;
 }
 
@@ -657,7 +656,7 @@ static void EventScript_StormCarriesPartyAway(void) {
   s32 frame;
 
   stormId = FieldGameFlag_GetByte(FLAG_MAP_TEMP_18);
-  selectedObjectEvent = ObjectEvent_GetById(gGameState.selectedObjectEvent);
+  selectedObjectEvent = ObjectEvent_GetById(gGameState.selectedLocalId);
   storm = ObjectEvent_GetById(stormId);
   Engine_ScriptStart();
   Camera_MoveTo(-1, -1, -1, 0);
@@ -667,7 +666,7 @@ static void EventScript_StormCarriesPartyAway(void) {
   Engine_ObjectEventSetSpriteFlags(selectedObjectEvent, 0);
 #else
   Engine_ObjectEventSetSpriteFlags(
-      (struct ObjectEvent *)gGameState.selectedObjectEvent, 0);
+      (struct ObjectEvent *)gGameState.selectedLocalId, 0);
 #endif
   storm->motionFlags = 0;
   selectedObjectEvent->motionFlags = 0;

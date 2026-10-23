@@ -60,9 +60,9 @@ static inline void Field_SetViewBounds(s32 minX, s32 minY, s32 maxX, s32 maxY) {
   MapGrid_SetViewBounds(minX, minY, maxX, maxY);
 }
 
-static inline void FieldObjectEvent_JumpDownLedge(s32 objectEvent, s32 mode,
+static inline void FieldObjectEvent_JumpDownLedge(s32 localId, s32 mode,
                                                   s32 action) {
-  ObjectEvent_JumpDownLedge(objectEvent, mode, action);
+  ObjectEvent_JumpDownLedge(localId, mode, action);
 }
 
 static inline s32

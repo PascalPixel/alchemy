@@ -147,7 +147,7 @@ enum KolimaForestTreeGesture {
   FACE_GESTURE_WRATHFUL_STARE = 11 ///< as FACE_GESTURE_WRATHFUL_OPEN_EYES
 };
 
-static void KolimaForestTree_PlayGesture(s32 blankObjectEventId, s32 gesture);
+static void KolimaForestTree_PlayGesture(s32 blankLocalId, s32 gesture);
 static void KolimaForestTree_SpawnOrbitSparks(void);
 static void KolimaForestTree_ReplaceInventoryItem(s32 oldItemId, s32 newItemId);
 
@@ -888,24 +888,24 @@ static void KolimaForestTree_UpdateHealingPalette(void) {
 }
 
 /// Alternates two facial frames twice, ending on the first frame.
-static __inline__ void KolimaForestTree_AlternateFaceFrames(s32 objectEventId,
+static __inline__ void KolimaForestTree_AlternateFaceFrames(s32 localId,
                                                             s32 firstFrame,
                                                             s32 secondFrame) {
-  Engine_ObjectEventSetAnimation(objectEventId, firstFrame);
+  Engine_ObjectEventSetAnimation(localId, firstFrame);
   Engine_TaskWait(6);
-  Engine_ObjectEventSetAnimation(objectEventId, secondFrame);
+  Engine_ObjectEventSetAnimation(localId, secondFrame);
   Engine_TaskWait(6);
-  Engine_ObjectEventSetAnimation(objectEventId, firstFrame);
+  Engine_ObjectEventSetAnimation(localId, firstFrame);
   Engine_TaskWait(6);
-  Engine_ObjectEventSetAnimation(objectEventId, secondFrame);
+  Engine_ObjectEventSetAnimation(localId, secondFrame);
   Engine_TaskWait(6);
-  Engine_ObjectEventSetAnimation(objectEventId, firstFrame);
+  Engine_ObjectEventSetAnimation(localId, firstFrame);
 }
 
 /// Plays one of Tret's or Laurel's face gestures, chosen by the blank object
 /// event at their spot.
-static void KolimaForestTree_PlayGesture(s32 blankObjectEventId, s32 gesture) {
-  if (blankObjectEventId == LOCALID_TRET_BLANK) {
+static void KolimaForestTree_PlayGesture(s32 blankLocalId, s32 gesture) {
+  if (blankLocalId == LOCALID_TRET_BLANK) {
     switch (gesture) {
     case FACE_GESTURE_CLOSE_EYES:
       Engine_ObjectEventSetAnimation(LOCALID_TRET, TRET_FACE_OPEN);

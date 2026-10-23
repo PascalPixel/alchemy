@@ -1648,7 +1648,7 @@ static void Imil_RunIceSlide(void) {
   s32 x;
   u8 *terrainId;
 
-  subject = Engine_ObjectEventLookup(gGameState.selectedObjectEvent);
+  subject = Engine_ObjectEventLookup(gGameState.selectedLocalId);
 
   for (;;) {
     heading = gImil_SwayHeadings[(gKeysHeld >> 4) & 15];

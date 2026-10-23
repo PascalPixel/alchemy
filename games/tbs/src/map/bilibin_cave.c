@@ -96,7 +96,7 @@
 static void BilibinCave_RestoreEntrance(void);
 static void BilibinCave_RestoreRapierRoom(void);
 static void BilibinCave_RestoreIceRoom(void);
-static void BilibinCave_EmptyObjectEventSetupHook(s32 objectEventId);
+static void BilibinCave_EmptyObjectEventSetupHook(s32 localId);
 
 /// Object events of the Bilibin Cave Entrance (MapId_BilibinCaveEntrance).
 enum {
@@ -308,12 +308,12 @@ static void EventScript_DouseIceRoomFire(void) {
 /// Frost on a puddle in Bilibin Cave (MapId_BilibinCaveIce) that heat keeps
 /// from freezing: clears the Psynergy's child effect and plays the ice melting
 /// back into a puddle.
-static inline void BilibinCave_MeltFrostBack(s32 objectEvent) {
+static inline void BilibinCave_MeltFrostBack(s32 localId) {
   Engine_ScriptStart();
-  Engine_ObjectEventSetChildValue(objectEvent, 0);
+  Engine_ObjectEventSetChildValue(localId, 0);
   Engine_ScriptWait(40);
   Engine_AudioPlayCue(SE_HIDDEN_PASSAGE_OPEN);
-  Engine_ObjectEventSetAnimationAndWait(objectEvent, PUDDLE_ANIMATION_MELT);
+  Engine_ObjectEventSetAnimationAndWait(localId, PUDDLE_ANIMATION_MELT);
   Engine_ScriptEnd();
 }
 
@@ -459,8 +459,8 @@ static void BilibinCave_RestoreRapierRoom(void) {
 }
 
 /// Clears the drawing flags of an object event used by the cave's animations.
-static inline void BilibinCave_ClearObjectEventSpriteFlags(s32 objectEventId) {
-  struct ObjectEvent *objectEvent = ObjectEvent_Get(objectEventId);
+static inline void BilibinCave_ClearObjectEventSpriteFlags(s32 localId) {
+  struct ObjectEvent *objectEvent = ObjectEvent_Get(localId);
   Engine_ObjectEventSetSpriteFlags(objectEvent, 0);
 }
 
@@ -640,7 +640,7 @@ static void EventScript_PushObjectEventAhead(void) {
 }
 
 /// The original setup invokes this empty hook for every animated object event.
-static void BilibinCave_EmptyObjectEventSetupHook(s32 objectEventId) {}
+static void BilibinCave_EmptyObjectEventSetupHook(s32 localId) {}
 
 s32 gBilibinCave_ClearSpriteScript[] = {
     SC_CALL(BilibinCave_ClearScriptedObjectEventSpriteFlags),

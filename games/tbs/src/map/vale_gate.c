@@ -433,8 +433,7 @@ static void ValeGate_FightTravelers(void);
 static void EventScript_TravelersLeaveAfterBattle(void);
 static void EventScript_DepartForQuest(void);
 static void EventScript_SayThenWait(s32 speaker, s32 frames);
-static void ValeGate_FaceDirectionAndWait(s32 objectEventId, s32 facing,
-                                          s32 frames);
+static void ValeGate_FaceDirectionAndWait(s32 localId, s32 facing, s32 frames);
 static void ValeGate_FlashPsynergyPalette(struct ObjectEvent *objectEvent);
 static void ValeGate_SpawnEffectPair(struct ObjectEvent *parent);
 static void ValeGate_UpdateRockLiftingBoyPsynergy(void);
@@ -445,13 +444,12 @@ static void ValeGate_SetProgressFlagsAndExit(void);
 #ifdef UBFIX
 #define VALE_GATE_TURN_AND_WAIT ValeGate_FaceDirectionAndWait
 #else
-static inline s32 ValeGate_TurnAndWaitValue(s32 objectEvent, s32 facing,
+static inline s32 ValeGate_TurnAndWaitValue(s32 localId, s32 facing,
                                             s32 frames) {
   /* FAKEMATCH(wrapper): a forwarding inline that calls
    * ValeGate_FaceDirectionAndWait as returning a value; as a direct call in
    * EventScript_SentToAidElders, 15 of 455 instructions differ in tbs-en. */
-  return ((s32 (*)())ValeGate_FaceDirectionAndWait)(objectEvent, facing,
-                                                    frames);
+  return ((s32 (*)())ValeGate_FaceDirectionAndWait)(localId, facing, frames);
 }
 #define VALE_GATE_TURN_AND_WAIT ValeGate_TurnAndWaitValue
 #endif
@@ -1081,17 +1079,17 @@ s32 ValeGate_Initialize(void) {
 }
 
 /// Walks a separate map object event back to the leader, then hides it.
-static inline void ValeGate_RejoinParty(s32 objectEventId) {
+static inline void ValeGate_RejoinParty(s32 localId) {
   struct ObjectEvent *leader;
 
-  Engine_ObjectEventSetAnimation(objectEventId, ANIMATION_WALK);
+  Engine_ObjectEventSetAnimation(localId, ANIMATION_WALK);
   leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   if (leader != NULL) {
-    Engine_ObjectEventSetDestination(objectEventId, leader->x.part.pixel,
+    Engine_ObjectEventSetDestination(localId, leader->x.part.pixel,
                                      leader->z.part.pixel);
   }
-  Engine_ObjectEventWaitForMove(objectEventId);
-  Engine_ObjectEventSetPosition(objectEventId, 0, 0);
+  Engine_ObjectEventWaitForMove(localId);
+  Engine_ObjectEventSetPosition(localId, 0, 0);
 }
 
 /// The mayor sends help to the elders and the boys back to the river. In Vale's
@@ -2034,9 +2032,8 @@ static void EventScript_SayThenWait(s32 speaker, s32 frames) {
   Engine_ScriptWait(frames);
 }
 
-static void ValeGate_FaceDirectionAndWait(s32 objectEventId, s32 facing,
-                                          s32 frames) {
-  Engine_ObjectEventFaceDirection(objectEventId, facing, 0);
+static void ValeGate_FaceDirectionAndWait(s32 localId, s32 facing, s32 frames) {
+  Engine_ObjectEventFaceDirection(localId, facing, 0);
   Engine_ScriptWait(frames);
 }
 

@@ -10,13 +10,13 @@ s32 MapObjectEvent_FindNearestFloatingPlatform(void) {
   struct EventWork *work = gEventWork;
   struct ObjectEvent **slot;
   struct ObjectEvent *origin;
-  s32 nearestObjectEvent = 0;
+  s32 nearestLocalId = 0;
   s32 minDist;
-  u32 objectEventId;
+  u32 localId;
 
   minDist = 640;
   origin = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
-  objectEventId = LOCALID_FIRST_PLACED;
+  localId = LOCALID_FIRST_PLACED;
   slot = work->placedObjectEvents;
   do {
     struct ObjectEvent *objectEvent = *slot++;
@@ -28,13 +28,13 @@ s32 MapObjectEvent_FindNearestFloatingPlatform(void) {
             (const u8 *)objectEvent + offsetof(struct ObjectEvent, x));
         if (dist < minDist) {
           minDist = dist;
-          nearestObjectEvent = objectEventId;
+          nearestLocalId = localId;
         }
       }
     }
-    objectEventId++;
-  } while (objectEventId <
+    localId++;
+  } while (localId <
            LOCALID_FIRST_PLACED + sizeof(work->placedObjectEvents) /
                                       sizeof(work->placedObjectEvents[0]));
-  return nearestObjectEvent;
+  return nearestLocalId;
 }

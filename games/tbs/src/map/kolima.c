@@ -92,8 +92,8 @@
 #include "item_ids.h"
 
 static void Kolima_WitnessForestCurse(void);
-static void Kolima_ShowMessageAndWait(s32 objectEventId, s32 waitFrames);
-static void Kolima_FaceObjectEventAndWait(s32 objectEventId, s32 facing,
+static void Kolima_ShowMessageAndWait(s32 localId, s32 waitFrames);
+static void Kolima_FaceObjectEventAndWait(s32 localId, s32 facing,
                                           s32 waitFrames);
 static void Kolima_SpawnCurseSparkle(void);
 static void Kolima_RestoreBridgeState(void);
@@ -511,7 +511,7 @@ static void Kolima_LowerBridge(void) {
 /// are taken away and five more sparkles are placed.
 s32 Kolima_Initialize(void) {
   s16 mapId;
-  u32 objectEvent;
+  u32 localId;
   const s32 *table;
 
   mapId = gGameState.mapId;
@@ -543,9 +543,9 @@ s32 Kolima_Initialize(void) {
   ObjectEvent_SetActionScript(LOCALID_FIRST_SPARKLE + 3, table);
 
   if (Engine_GameFlagIsSet(FLAG_KOLIMA_CURSE_LIFTED) == 0) {
-    for (objectEvent = LOCALID_FIRST_VILLAGER;
-         objectEvent <= LOCALID_LAST_VILLAGER; objectEvent++) {
-      Engine_ObjectEventSetSpriteFlags(ObjectEvent_GetById(objectEvent), 0);
+    for (localId = LOCALID_FIRST_VILLAGER; localId <= LOCALID_LAST_VILLAGER;
+         localId++) {
+      Engine_ObjectEventSetSpriteFlags(ObjectEvent_GetById(localId), 0);
     }
     MapGrid_CopyCellAttributes(13, 9, 1, 1, 13, 8);
     MapGrid_CopyCellAttributes(13, 9, 1, 1, 15, 8);
@@ -576,9 +576,9 @@ s32 Kolima_Initialize(void) {
 
 /// Shows one of the domes of Psynergy on its frames, even or odd, and lifts it
 /// 500 pixels out of sight on the others.
-static __inline__ void Kolima_SetProtectiveFieldHeight(s32 objectEventId,
+static __inline__ void Kolima_SetProtectiveFieldHeight(s32 localId,
                                                        s32 visibleOnOddFrames) {
-  struct ObjectEvent *objectEvent = ObjectEvent_GetById(objectEventId);
+  struct ObjectEvent *objectEvent = ObjectEvent_GetById(localId);
   if (objectEvent != NULL) {
     objectEvent->motionFlags = 0;
     if (visibleOnOddFrames ? (gFrameCount & 1) : !(gFrameCount & 1)) {
@@ -598,9 +598,9 @@ static void Kolima_AlternateProtectiveFieldHeights(void) {
 }
 
 /// Begins Mind Read on one of Kolima's villagers turned into a tree.
-static void Kolima_ReadVillagerThoughts(s32 objectEventId, s32 targetId) {
+static void Kolima_ReadVillagerThoughts(s32 localId, s32 targetId) {
   Engine_PsynergyStart(ABILITY_MIND_READ, 1);
-  Engine_PsynergySetTarget(objectEventId, targetId);
+  Engine_PsynergySetTarget(localId, targetId);
   Engine_PsynergyRaiseHands();
   Engine_PsynergyPlayEffect(1);
   Engine_TaskWait(1);
@@ -1579,15 +1579,15 @@ static void Kolima_WitnessForestCurse(void) {
 
 /// Shows the selected dialogue through an object event, then holds for its
 /// reaction.
-static void Kolima_ShowMessageAndWait(s32 objectEventId, s32 waitFrames) {
-  Engine_ScriptShowMessage(objectEventId, 0);
+static void Kolima_ShowMessageAndWait(s32 localId, s32 waitFrames) {
+  Engine_ScriptShowMessage(localId, 0);
   Engine_ScriptWait(waitFrames);
 }
 
 /// Turns an object event immediately, then leaves time for the next scene beat.
-static void Kolima_FaceObjectEventAndWait(s32 objectEventId, s32 facing,
+static void Kolima_FaceObjectEventAndWait(s32 localId, s32 facing,
                                           s32 waitFrames) {
-  Engine_ObjectEventFaceDirection(objectEventId, facing, 0);
+  Engine_ObjectEventFaceDirection(localId, facing, 0);
   Engine_ScriptWait(waitFrames);
 }
 

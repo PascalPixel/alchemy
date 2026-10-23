@@ -192,35 +192,35 @@ const struct ObjectEventTemplate *Lalivero_GetObjectEventTemplates(void) {
 
 /// Lalivero, the first visit: the young man mourning Sheba stops sobbing to say
 /// she was taken to the ruins, faces north again and goes back to sobbing.
-static void EventScript_TalkToVillagerTheyTookSheba(s32 objectEvent) {
+static void EventScript_TalkToVillagerTheyTookSheba(s32 localId) {
   void ObjectEvent_FaceDirection();
 
-  struct ObjectEvent *object;
+  struct ObjectEvent *objectEvent;
 
-  object = ObjectEvent_Get(objectEvent);
-  object->scaleX = 0x10000;
-  object = ObjectEvent_Get(objectEvent);
-  object->scaleY = 0x10000;
+  objectEvent = ObjectEvent_Get(localId);
+  objectEvent->scaleX = 0x10000;
+  objectEvent = ObjectEvent_Get(localId);
+  objectEvent->scaleY = 0x10000;
   Engine_ScriptSetMessage(MsgLaliveroOhhTheyTookShebaHeaded);
-  Script_ShowMessage(objectEvent, 0);
-  ObjectEvent_FaceDirection(objectEvent, FACING_NORTH, 0);
+  Script_ShowMessage(localId, 0);
+  ObjectEvent_FaceDirection(localId, FACING_NORTH, 0);
   Engine_ScriptWait(20);
-  ObjectEvent_SetActionScript(objectEvent, gLalivero_CryingScript);
+  ObjectEvent_SetActionScript(localId, gLalivero_CryingScript);
 }
 
 /// Lalivero, after Venus Lighthouse: the woman with fair hair asks whether the
 /// party is leaving Lalivero, and wishes it well either way.
-static void EventScript_WomanAsksIfLeaving(s32 objectEvent) {
+static void EventScript_WomanAsksIfLeaving(s32 localId) {
   s32 message = MsgLaliveroLeavingLalivero;
   Engine_ScriptSetMessage(message);
-  Engine_ScriptOpenMessage(objectEvent, 0);
+  Engine_ScriptOpenMessage(localId, 0);
   if (Engine_ScriptChooseYesNo(LOCALID_PARTY_LEADER, 0) == 0) {
     Engine_ScriptWait(10);
     Engine_ScriptSetMessage(message + 1);
   } else {
     Engine_ScriptSetMessage(message + 2);
   }
-  Engine_ScriptShowMessage(objectEvent, 0);
+  Engine_ScriptShowMessage(localId, 0);
 }
 
 /// Lalivero, after Venus Lighthouse: the guard at the wharf's door ("I was

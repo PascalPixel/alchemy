@@ -17,14 +17,14 @@ struct WorkPointers {
 /// The script command "open message": opens the script's current message in a
 /// speech window next to the speaking object event, with the speaker's portrait
 /// beside it when it has one, and moves on to the next message. The low 12
-/// bits of objectEvent are the speaker (0 to 7, a party member, speaks from the
+/// bits of localId are the speaker (0 to 7, a party member, speaks from the
 /// leader); its high bits place the windows: 0x1000 portrait on the left,
 /// 0x2000 on the right, 0x4000 message above the speaker, 0x8000 never above.
 /// Returns the message window once its text is typed out; the caller waits
 /// for it to be read. Records the speaker and both windows in the field work
 /// (speaker, messageWindow, sideWindow). With the debug fastForward set
 /// nothing opens and it returns NULL, but the message still advances.
-struct UiWindow *UiText_OpenMessageAtObject(s32 objectEvent, s32 unused) {
+struct UiWindow *UiText_OpenMessageAtObject(s32 localId, s32 unused) {
   struct UiRenderWork *win;
   struct FieldWork *work;
   s32 sprite;
@@ -60,16 +60,16 @@ struct UiWindow *UiText_OpenMessageAtObject(s32 objectEvent, s32 unused) {
 #endif
   handle = 0;
   portrait = 0;
-  sprite = ObjectTable_ReadActiveValue(objectEvent);
+  sprite = ObjectTable_ReadActiveValue(localId);
   extra = 0;
   portraitTop = 0;
   margin = 4;
-  flags = objectEvent & 0xf000;
+  flags = localId & 0xf000;
   message = work->message;
-  objectEvent &= 0xfff;
+  localId &= 0xfff;
   x = 0;
-  object = ObjectTable_Get(objectEvent);
-  work->speaker = objectEvent;
+  object = ObjectTable_Get(localId);
+  work->speaker = localId;
   y = 0;
   found = 0;
   if (work->fastForward == 0) {
@@ -82,24 +82,24 @@ struct UiWindow *UiText_OpenMessageAtObject(s32 objectEvent, s32 unused) {
         found = 1;
         y -= 2;
       } else {
-        if (ObjectEvent_GetScreenPosition(objectEvent, pos) != -1)
+        if (ObjectEvent_GetScreenPosition(localId, pos) != -1)
           found = 1;
         else
           found = 0;
         x = pos[0] >> 3;
         y = pos[1] >> 3;
       }
-    } else if (objectEvent <= 7) {
-      sprite = objectEvent;
-      object = ObjectTable_Get(gGameState.selectedObjectEvent);
+    } else if (localId <= 7) {
+      sprite = localId;
+      object = ObjectTable_Get(gGameState.selectedLocalId);
       if (work->mode == MODE_WORLD_MAP) {
         Render_ProjectPoint(&object->x, pos);
         x = pos[0] >> 3;
         y = pos[1] >> 3;
         found = 1;
       } else {
-        if (ObjectEvent_GetScreenPosition(gGameState.selectedObjectEvent,
-                                          pos) != -1)
+        if (ObjectEvent_GetScreenPosition(gGameState.selectedLocalId, pos) !=
+            -1)
           found = 1;
         else
           found = 0;
@@ -252,7 +252,7 @@ struct UiWindow *UiText_OpenMessageAtObject(s32 objectEvent, s32 unused) {
   return handle;
 }
 
-/// The script command "show message": opens the current message at objectEvent
+/// The script command "show message": opens the current message at localId
 /// (UiText_OpenMessageAtObject) and waits until it has been read and its
 /// window has closed; the speaker's portrait is closed once the text is typed
 /// out. The message closes by itself after 600 frames, or at once while
@@ -261,10 +261,10 @@ struct UiWindow *UiText_OpenMessageAtObject(s32 objectEvent, s32 unused) {
 /// runner (object/events.c), Field_RunEventAction (dispatch.c), Field_UseItem
 /// for an item event that is a message (object/items.c) and the debug menu's
 /// message test call it too.
-void FieldScript_ShowMessageAndWait(s32 objectEvent, s32 flags) {
+void FieldScript_ShowMessageAndWait(s32 localId, s32 flags) {
   s32 member;
   struct FieldWork *runtime = (struct FieldWork *)gEventWork;
-  struct UiWindow *window = UiText_OpenMessageAtObject(objectEvent, flags);
+  struct UiWindow *window = UiText_OpenMessageAtObject(localId, flags);
   s32 sprite;
   u32 frames;
 
@@ -272,9 +272,9 @@ void FieldScript_ShowMessageAndWait(s32 objectEvent, s32 flags) {
   WaitFrames(1);
   // A party member the map does not place has its portrait under its
   // character id, as UiText_OpenMessageAtObject opened it.
-  sprite = ObjectTable_ReadActiveValue(objectEvent);
-  if (objectEvent <= 7) {
-    member = objectEvent & 0x0fff;
+  sprite = ObjectTable_ReadActiveValue(localId);
+  if (localId <= 7) {
+    member = localId & 0x0fff;
 
     if (Map_FindObjectEventTemplate(member) == 0) {
       sprite = member;
@@ -298,33 +298,33 @@ void FieldScript_ShowMessageAndWait(s32 objectEvent, s32 flags) {
 
 /// The script command "show message and wait": shows the message, then waits
 /// wait frames.
-void FieldScript_ShowMessageThenWait(s32 objectEvent, s32 flags, s32 wait) {
-  FieldScript_ShowMessageAndWait(objectEvent, flags);
+void FieldScript_ShowMessageThenWait(s32 localId, s32 flags, s32 wait) {
+  FieldScript_ShowMessageAndWait(localId, flags);
   FieldScript_WaitFrames(wait);
 }
 
-/// The script command "ask yes or no": opens the question at objectEvent, lets
+/// The script command "ask yes or no": opens the question at localId, lets
 /// the leader answer, then shows the next message for yes or the one after it
 /// for no. Returns 0 for yes, 1 for no. Either way the script's message number
 /// ends past both answers, so the script goes on with the same message
 /// whatever was chosen.
-s32 FieldScript_AskYesNoAndShowResponse(s32 objectEvent, s32 flags) {
+s32 FieldScript_AskYesNoAndShowResponse(s32 localId, s32 flags) {
   s32 answer;
   struct FieldWork *runtime;
   struct GameState *save;
 
-  UiText_OpenMessageAtObject(objectEvent, flags);
+  UiText_OpenMessageAtObject(localId, flags);
   save = &gGameState;
-  answer = FieldScript_AskYesNoWithObjectEventAnimation(
-      save->selectedObjectEvent, 0);
+  answer =
+      FieldScript_AskYesNoWithObjectEventAnimation(save->selectedLocalId, 0);
   if (answer == 0) {
-    FieldScript_ShowMessageAndWait(objectEvent, flags);
+    FieldScript_ShowMessageAndWait(localId, flags);
     runtime = (struct FieldWork *)gEventWork;
     runtime->message += 1;
   } else {
     runtime = (struct FieldWork *)gEventWork;
     runtime->message += 1;
-    FieldScript_ShowMessageAndWait(objectEvent, flags);
+    FieldScript_ShowMessageAndWait(localId, flags);
   }
   return answer;
 }
@@ -446,10 +446,10 @@ void FieldScript_ShowMessageAtPosition(s32 unused0, s32 unused1, s32 x, s32 y) {
 }
 
 /// Closes the portrait of an object event's sprite, if it has one.
-void ObjectTable_RunIfActive(s32 objectEvent) {
+void ObjectTable_RunIfActive(s32 localId) {
   s32 sprite;
 
-  sprite = ObjectTable_ReadActiveValue(objectEvent);
+  sprite = ObjectTable_ReadActiveValue(localId);
   if (sprite != -1)
     UiWork_FinalizeEntityMatchingLocalizedIdFar(sprite);
 }
@@ -501,21 +501,21 @@ void FieldScript_ShowTwoMessagesAndWait(s32 first, s32 firstX, s32 firstY,
   WaitFrames(1);
 }
 
-/// Sets the voice of the messages that follow to that of objectEvent's sprite,
+/// Sets the voice of the messages that follow to that of localId's sprite,
 /// at the rate the message speed option picks (gUi_RenderResultValues). With
 /// 0x80000000 the messages are silent.
-void Ui_SetMessageVoiceFromObjectEvent(s32 objectEvent) {
+void Ui_SetMessageVoiceFromObjectEvent(s32 localId) {
   struct UiRenderWork *state = (struct UiRenderWork *)gWindowWork[0];
   u8 rate;
   s32 voice;
 
   // Direct u16 stores shrink the English function from 0x58 to 0x54 bytes.
   // Keep the original signed stores; the corresponding u16 alias is legal.
-  if (objectEvent == 0x80000000) {
+  if (localId == 0x80000000) {
     *(s16 *)&state->speakerVoiceSound = (rate = 0);
     *(s16 *)&state->speakerVoiceCountdown = rate;
   } else {
-    voice = FieldEffect_GetResourceId(ObjectTable_ReadActiveValue(objectEvent));
+    voice = FieldEffect_GetResourceId(ObjectTable_ReadActiveValue(localId));
     rate = gUi_RenderResultValues[gGameState.messageSpeed];
     *(s16 *)&state->speakerVoiceSound = voice;
     *(s16 *)&state->speakerVoiceCountdown = rate;

@@ -289,16 +289,16 @@ enum {
 // The native paired patrol computes this layer offset in floating point.
 #define PAIRED_PATROL_LAYER_ORIGIN_X (136.0 * 65536)
 
-static s32 LunpaFortress_TryCollectDisplayedItem(s32 objectEventId, s32 itemId);
+static s32 LunpaFortress_TryCollectDisplayedItem(s32 localId, s32 itemId);
 static void LunpaFortress_CheckSecondEntranceSentry(void);
-static s32 LunpaFortress_CanGuardSeeLeader(s32 objectEventId);
-static s32 LunpaFortress_IsLeaderNearGuard(s32 objectEventId);
-static s32 LunpaFortress_IsGuardNearViewCenter(s32 objectEventId);
-static void LunpaFortress_GuardThrowsPartyOut(s32 objectEventId);
-static void LunpaFortress_ActOutIntruderDialogue(s32 objectEventId);
-static void LunpaFortress_ActOutWhosThereDialogue(s32 objectEventId);
-static void LunpaFortress_ActOutGuardShiftDialogue(s32 objectEventId);
-static void LunpaFortress_ActOutScoundrelDialogue(s32 objectEventId);
+static s32 LunpaFortress_CanGuardSeeLeader(s32 localId);
+static s32 LunpaFortress_IsLeaderNearGuard(s32 localId);
+static s32 LunpaFortress_IsGuardNearViewCenter(s32 localId);
+static void LunpaFortress_GuardThrowsPartyOut(s32 localId);
+static void LunpaFortress_ActOutIntruderDialogue(s32 localId);
+static void LunpaFortress_ActOutWhosThereDialogue(s32 localId);
+static void LunpaFortress_ActOutGuardShiftDialogue(s32 localId);
+static void LunpaFortress_ActOutScoundrelDialogue(s32 localId);
 static void LunpaFortress_InitializeGroundFloor(void);
 static void LunpaFortress_InitializeUpperFloor(void);
 static void LunpaFortress_InitializeCave(void);
@@ -622,20 +622,19 @@ static void UNUSED LunpaFortress_UnusedTakeShamshir(void) {
 /// Unused: called only by the four pickups above. Gives the item an object
 /// event shows, with its effect; with no room for it, the object event shows
 /// the item is left behind. Returns whether it was given.
-static s32 LunpaFortress_TryCollectDisplayedItem(s32 objectEventId,
-                                                 s32 itemId) {
+static s32 LunpaFortress_TryCollectDisplayedItem(s32 localId, s32 itemId) {
   s32 itemGiven = 0;
   s32 itemEffect;
 
   EV_START();
-  itemEffect = Engine_FieldEffectPlayCueAndStartEmitterOnTarget(
-      0, objectEventId, itemId);
+  itemEffect =
+      Engine_FieldEffectPlayCueAndStartEmitterOnTarget(0, localId, itemId);
   if (Engine_PartyGiveItem(itemId, 0) != -1) {
-    OBJECT_MODE(objectEventId, 2);
+    OBJECT_MODE(localId, 2);
     itemGiven = 1;
   } else {
     SE(SE_125);
-    OBJECT_MODE(objectEventId, 5);
+    OBJECT_MODE(localId, 5);
   }
   Engine_ObjectDispatchRelease((struct ObjectEvent *)itemEffect);
   EV_END();
@@ -1058,8 +1057,8 @@ static void LunpaFortress_CheckSecondEntranceSentry(void) {
 }
 
 /// Whether the leader is in the guard's column, up to six cells away.
-static s32 LunpaFortress_IsLeaderInGuardVerticalSight(s32 objectEventId) {
-  struct ObjectEvent *guard = ObjectEvent_GetById(objectEventId);
+static s32 LunpaFortress_IsLeaderInGuardVerticalSight(s32 localId) {
+  struct ObjectEvent *guard = ObjectEvent_GetById(localId);
   struct ObjectEvent *leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   s32 guardTileZ = guard->z.fixed / PIXELS(16);
   s32 guardTileX = guard->x.fixed / PIXELS(16);
@@ -1075,8 +1074,8 @@ static s32 LunpaFortress_IsLeaderInGuardVerticalSight(s32 objectEventId) {
 }
 
 /// Whether the leader is within a row of the guard, up to six cells away.
-static s32 LunpaFortress_IsLeaderInGuardHorizontalSight(s32 objectEventId) {
-  struct ObjectEvent *guard = ObjectEvent_GetById(objectEventId);
+static s32 LunpaFortress_IsLeaderInGuardHorizontalSight(s32 localId) {
+  struct ObjectEvent *guard = ObjectEvent_GetById(localId);
   struct ObjectEvent *leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   s32 guardTileZ = guard->z.fixed / PIXELS(16);
   s32 guardTileX = guard->x.fixed / PIXELS(16);
@@ -1094,16 +1093,16 @@ static s32 LunpaFortress_IsLeaderInGuardHorizontalSight(s32 objectEventId) {
 }
 
 /// Whether a guard on screen sees the leader along his row or column.
-static s32 LunpaFortress_CanGuardSeeLeader(s32 objectEventId) {
-  if (LunpaFortress_IsGuardNearViewCenter(objectEventId) == 0) {
+static s32 LunpaFortress_CanGuardSeeLeader(s32 localId) {
+  if (LunpaFortress_IsGuardNearViewCenter(localId) == 0) {
     return 0;
   }
-  if (LunpaFortress_IsLeaderInGuardVerticalSight(objectEventId) != 0) {
+  if (LunpaFortress_IsLeaderInGuardVerticalSight(localId) != 0) {
     return 1;
   }
   {
     s32 inHorizontalSight =
-        LunpaFortress_IsLeaderInGuardHorizontalSight(objectEventId);
+        LunpaFortress_IsLeaderInGuardHorizontalSight(localId);
 
     return (u32)(inHorizontalSight | -inHorizontalSight) >> 31;
   }
@@ -1111,8 +1110,8 @@ static s32 LunpaFortress_CanGuardSeeLeader(s32 objectEventId) {
 
 /// Whether the leader is within four cells, walking, of the cell below the
 /// guard.
-static s32 LunpaFortress_IsLeaderNearGuard(s32 objectEventId) {
-  struct ObjectEvent *guard = ObjectEvent_GetById(objectEventId);
+static s32 LunpaFortress_IsLeaderNearGuard(s32 localId) {
+  struct ObjectEvent *guard = ObjectEvent_GetById(localId);
   struct ObjectEvent *leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   s32 guardTileZ = guard->z.fixed / PIXELS(16);
   s32 guardTileX = guard->x.fixed / PIXELS(16);
@@ -1137,8 +1136,8 @@ static s32 LunpaFortress_IsLeaderNearGuard(s32 objectEventId) {
 
 /// Whether the guard is on screen: within seven columns and five rows of the
 /// view's center.
-static s32 LunpaFortress_IsGuardNearViewCenter(s32 objectEventId) {
-  struct ObjectEvent *guard = ObjectEvent_GetById(objectEventId);
+static s32 LunpaFortress_IsGuardNearViewCenter(s32 localId) {
+  struct ObjectEvent *guard = ObjectEvent_GetById(localId);
   struct ObjectEvent *viewCenter = Engine_ScriptGetViewCenter();
   s32 guardTileX = guard->x.fixed / PIXELS(16);
   s32 guardTileZ = guard->z.fixed / PIXELS(16);
@@ -1228,32 +1227,31 @@ static void UNUSED LunpaFortress_UnusedFirstPatrolThrowsPartyOut(void) {
 
 /// A guard who caught the party sends it back to the Lunpa Fortress Gates.
 /// "Who are you? How did you get in here?"
-static void LunpaFortress_GuardThrowsPartyOut(s32 objectEventId) {
+static void LunpaFortress_GuardThrowsPartyOut(s32 localId) {
   EV_START();
   EV_START();
-  Engine_ObjectEventShowEmote(objectEventId, EMOTE_IN_FRONT | EMOTE_EXCLAMATION,
-                              1);
-  Engine_ObjectEventSetDestinationOffset(objectEventId, 0, 0);
-  ObjectEvent_SetBuiltinAction(objectEventId, OBJ_EVENT_ACTION_IDLE);
-  OBJECT_MODE(objectEventId, 0);
-  OBJECT_FACE(objectEventId, LOCALID_PARTY_LEADER, 0);
+  Engine_ObjectEventShowEmote(localId, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 1);
+  Engine_ObjectEventSetDestinationOffset(localId, 0, 0);
+  ObjectEvent_SetBuiltinAction(localId, OBJ_EVENT_ACTION_IDLE);
+  OBJECT_MODE(localId, 0);
+  OBJECT_FACE(localId, LOCALID_PARTY_LEADER, 0);
   OBJECT_MODE(LOCALID_PARTY_LEADER, ANIMATION_STAND);
-  Engine_ObjectEventSetDestinationOffset(objectEventId, 0, 0);
-  ObjectEvent_SetBuiltinAction(objectEventId, OBJ_EVENT_ACTION_IDLE);
-  Engine_ObjectEventStop(objectEventId);
-  OBJECT_MODE(objectEventId, 0);
+  Engine_ObjectEventSetDestinationOffset(localId, 0, 0);
+  ObjectEvent_SetBuiltinAction(localId, OBJ_EVENT_ACTION_IDLE);
+  Engine_ObjectEventStop(localId);
+  OBJECT_MODE(localId, 0);
   ObjectEvent_SetBuiltinAction(LOCALID_PARTY_LEADER, OBJ_EVENT_ACTION_IDLE);
   {
     s32 challengeMessage = MsgLunpaWho2;
 
     MESSAGE_SET(challengeMessage);
-    MESSAGE_PUT(objectEventId, 0);
-    OBJECT_FACE(LOCALID_PARTY_LEADER, objectEventId, 0);
+    MESSAGE_PUT(localId, 0);
+    OBJECT_FACE(LOCALID_PARTY_LEADER, localId, 0);
     Engine_ObjectEventShowEmote(LOCALID_PARTY_LEADER,
                                 EMOTE_IN_FRONT | EMOTE_WINCE, 60);
     MESSAGE_SET(challengeMessage + 1);
   }
-  MESSAGE_PUT(objectEventId, 0);
+  MESSAGE_PUT(localId, 0);
   Engine_ScriptCloseScreen();
   WAIT(60);
   Engine_ScriptRequestWarp(WARP_THROWN_OUT);
@@ -1262,94 +1260,94 @@ static void LunpaFortress_GuardThrowsPartyOut(s32 objectEventId) {
 
 /// A guard faces the leader with one of four challenges, chosen at random
 /// when the map was entered.
-static void LunpaFortress_GuardChallengesParty(s32 objectEventId) {
+static void LunpaFortress_GuardChallengesParty(s32 localId) {
 
-  OBJECT_FACE(objectEventId, LOCALID_PARTY_LEADER, 0);
-  OBJECT_FACE(LOCALID_PARTY_LEADER, objectEventId, 0);
+  OBJECT_FACE(localId, LOCALID_PARTY_LEADER, 0);
+  OBJECT_FACE(LOCALID_PARTY_LEADER, localId, 0);
   switch (gLunpaFortressRandomPick & 3) {
   case 0:
-    LunpaFortress_ActOutIntruderDialogue(objectEventId);
+    LunpaFortress_ActOutIntruderDialogue(localId);
     break;
   case 1:
-    LunpaFortress_ActOutWhosThereDialogue(objectEventId);
+    LunpaFortress_ActOutWhosThereDialogue(localId);
     break;
   case 2:
-    LunpaFortress_ActOutGuardShiftDialogue(objectEventId);
+    LunpaFortress_ActOutGuardShiftDialogue(localId);
     break;
   case 3:
-    LunpaFortress_ActOutScoundrelDialogue(objectEventId);
+    LunpaFortress_ActOutScoundrelDialogue(localId);
     break;
   default:
-    LunpaFortress_ActOutWhosThereDialogue(objectEventId);
+    LunpaFortress_ActOutWhosThereDialogue(localId);
     break;
   }
 }
 
 /// A guard spots an intruder. "Hey! Intruder!"
-static void LunpaFortress_ActOutIntruderDialogue(s32 objectEventId) {
+static void LunpaFortress_ActOutIntruderDialogue(s32 localId) {
   s32 messageBase;
 
-  Engine_ObjectEventRunRepeatedMotion(objectEventId, 1);
+  Engine_ObjectEventRunRepeatedMotion(localId, 1);
   messageBase = MsgLunpaIntruder;
   MESSAGE_SET(messageBase);
-  MESSAGE_PUT(objectEventId, 0);
-  OBJECT_EMOTE(objectEventId, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
+  MESSAGE_PUT(localId, 0);
+  OBJECT_EMOTE(localId, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
   MESSAGE_SET(messageBase + 1);
-  MESSAGE_PUT(objectEventId, 0);
+  MESSAGE_PUT(localId, 0);
   messageBase += 2;
-  Engine_ObjectEventSetAnimationAndWait(objectEventId, 4);
+  Engine_ObjectEventSetAnimationAndWait(localId, 4);
   MESSAGE_SET(messageBase);
-  MESSAGE_PUT(objectEventId, 0);
+  MESSAGE_PUT(localId, 0);
 }
 
 /// A guard asks who is there. "Huh? Who's that?"
-static void LunpaFortress_ActOutWhosThereDialogue(s32 objectEventId) {
+static void LunpaFortress_ActOutWhosThereDialogue(s32 localId) {
   s32 messageBase = MsgLunpaGuardWhosThat;
 
   MESSAGE_SET(messageBase);
-  MESSAGE_PUT(objectEventId, 0);
-  Engine_ObjectEventRunRepeatedMotion(objectEventId, 1);
+  MESSAGE_PUT(localId, 0);
+  Engine_ObjectEventRunRepeatedMotion(localId, 1);
   MESSAGE_SET(messageBase + 1);
-  MESSAGE_PUT(objectEventId, 0);
-  Engine_ObjectEventSetAnimationAndWait(objectEventId, 4);
+  MESSAGE_PUT(localId, 0);
+  Engine_ObjectEventSetAnimationAndWait(localId, 4);
   MESSAGE_SET(messageBase + 2);
-  MESSAGE_PUT(objectEventId, 0);
+  MESSAGE_PUT(localId, 0);
 }
 
 /// A guard expects his relief, then sees who it is. "Is my shift up already?"
-static void LunpaFortress_ActOutGuardShiftDialogue(s32 objectEventId) {
+static void LunpaFortress_ActOutGuardShiftDialogue(s32 localId) {
   s32 messageBase;
 
   messageBase = MsgLunpaShiftAlready;
   MESSAGE_SET(messageBase);
-  MESSAGE_PUT(objectEventId, 0);
+  MESSAGE_PUT(localId, 0);
   WAIT(120);
-  OBJECT_EMOTE(objectEventId, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
+  OBJECT_EMOTE(localId, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
   MESSAGE_SET((messageBase + 1));
-  MESSAGE_PUT(objectEventId, 0);
-  Engine_ObjectEventRunRepeatedMotion(objectEventId, 1);
+  MESSAGE_PUT(localId, 0);
+  Engine_ObjectEventRunRepeatedMotion(localId, 1);
   MESSAGE_SET((messageBase + 2));
-  MESSAGE_PUT(objectEventId, 0);
-  Engine_ObjectEventSetAnimationAndWait(objectEventId, 4);
+  MESSAGE_PUT(localId, 0);
+  Engine_ObjectEventSetAnimationAndWait(localId, 4);
   MESSAGE_SET((messageBase + 3));
-  MESSAGE_PUT(objectEventId, 0);
+  MESSAGE_PUT(localId, 0);
 }
 
 /// A guard calls the party a scoundrel. "You scoundrel!"
-static void LunpaFortress_ActOutScoundrelDialogue(s32 objectEventId) {
+static void LunpaFortress_ActOutScoundrelDialogue(s32 localId) {
   s32 messageBase = MsgLunpaScoundrel;
 
   MESSAGE_SET(messageBase);
-  MESSAGE_PUT(objectEventId, 0);
-  Engine_ObjectEventSetAnimationAndWait(objectEventId, 4);
+  MESSAGE_PUT(localId, 0);
+  Engine_ObjectEventSetAnimationAndWait(localId, 4);
   MESSAGE_SET(messageBase + 1);
-  MESSAGE_PUT(objectEventId, 0);
-  Engine_ObjectEventRunRepeatedMotion(objectEventId, 1);
+  MESSAGE_PUT(localId, 0);
+  Engine_ObjectEventRunRepeatedMotion(localId, 1);
   MESSAGE_SET(messageBase + 2);
-  MESSAGE_PUT(objectEventId, 0);
-  Engine_ObjectEventSetAnimationAndWait(objectEventId, 3);
+  MESSAGE_PUT(localId, 0);
+  Engine_ObjectEventSetAnimationAndWait(localId, 3);
   MESSAGE_SET(messageBase + 3);
-  MESSAGE_PUT(objectEventId, 0);
+  MESSAGE_PUT(localId, 0);
 }
 
 /// LunpaFortressUpperFloor, coord event 33: walking up to the west guard, he

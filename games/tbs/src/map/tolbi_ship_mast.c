@@ -91,7 +91,7 @@ static void TolbiShipMast_SetupVisibleLeaderLookout(void);
 static void TolbiShipMast_AnnounceClearCourse(void);
 static void TolbiShipMast_RunAvastScene(void);
 static void TolbiShipMast_ShowMonsters(void);
-static void TolbiShipMast_InitializeDriftingObjectEvent(s32 objectEventId);
+static void TolbiShipMast_InitializeDriftingObjectEvent(s32 localId);
 static void TolbiShipMast_RunLandingSequence(void);
 static void TolbiShipMast_AnnounceLand(void);
 static void TolbiShipMast_UpdateSway(void);
@@ -695,12 +695,12 @@ static void TolbiShipMast_ShowMonsters(void) {
 
 /// Initializes a drifting object event, retaining the random draws' original
 /// order.
-static void TolbiShipMast_InitializeDriftingObjectEvent(s32 objectEventId) {
+static void TolbiShipMast_InitializeDriftingObjectEvent(s32 localId) {
   struct ObjectEvent *objectEvent;
   u32 randomValue;
 
-  objectEvent = ObjectEvent_GetById(objectEventId);
-  Engine_ObjectEventSetSpritePriority(objectEventId, 1);
+  objectEvent = ObjectEvent_GetById(localId);
+  Engine_ObjectEventSetSpritePriority(localId, 1);
   objectEvent->motionFlags = 0;
   objectEvent->timer = (u32)Engine_RandomNext() >> 15;
   objectEvent->work = (u32)Engine_RandomNext() >> 15;
@@ -714,7 +714,7 @@ static void TolbiShipMast_InitializeDriftingObjectEvent(s32 objectEventId) {
   objectEvent->riseBaseY = ((randomValue * 3 << 13) >> 16) - 3 * PIXELS(1) / 16;
   objectEvent->scaleX = 5 * Q16_ONE / 4;
   objectEvent->scaleY = 5 * Q16_ONE / 4;
-  ObjectEvent_SetActionScript(objectEventId, gTolbiShipMast_DriftActions);
+  ObjectEvent_SetActionScript(localId, gTolbiShipMast_DriftActions);
 }
 
 /// On the mast at TOLBI_SHIP_MAST_FROM_WORLD_MAP_THIRD_ATTACK, the third

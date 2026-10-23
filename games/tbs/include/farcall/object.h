@@ -42,7 +42,7 @@ void Party_RemoveOwnerRestoredFar(s32 owner);
 s32 PartyInventory_GiveItemFar(s32 item, s32 unused);
 /// Asks yes or no once the message on screen is read, with the speaker
 /// nodding at yes and shaking its head at no. Returns 0 for yes, 1 for no.
-s32 FieldScript_AskYesNoWithObjectEventAnimationFar(s32 objectEvent,
+s32 FieldScript_AskYesNoWithObjectEventAnimationFar(s32 localId,
                                                     s32 force_bottom);
 /// Teaches a character a Psynergy ability with its jingle and
 /// `<unit> learned <ability>.`

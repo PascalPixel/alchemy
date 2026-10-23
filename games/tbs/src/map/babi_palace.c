@@ -362,29 +362,28 @@ const struct ObjectEventTemplate *Map_GetObjectEventTemplates(void) {
 }
 
 /// Asks a yes or no question; the answers are the two messages after it.
-static inline void BabiPalace_ShowQuestionAnswer(s32 objectEventId,
-                                                 s32 question) {
+static inline void BabiPalace_ShowQuestionAnswer(s32 localId, s32 question) {
   Engine_ScriptSetMessage(question);
-  Engine_ScriptOpenMessage(objectEventId, 0);
+  Engine_ScriptOpenMessage(localId, 0);
   if (Engine_ScriptChooseYesNo(LOCALID_PARTY_LEADER, 0) == 0)
     Engine_ScriptSetMessage(question + 1);
   else
     Engine_ScriptSetMessage(question + 2);
-  Engine_ScriptShowMessage(objectEventId, 0);
+  Engine_ScriptShowMessage(localId, 0);
 }
 
 /// An old man with a cane asks whether the party ran into Babi's soldiers. He's
 /// one of the palace's residents, and asks while Babi is missing whether the
 /// party ran into them in town.
-static void BabiPalace_AskAboutSoldiers(s32 objectEventId) {
-  BabiPalace_ShowQuestionAnswer(objectEventId, MsgTolbiRunBabisSoldiers);
+static void BabiPalace_AskAboutSoldiers(s32 localId) {
+  BabiPalace_ShowQuestionAnswer(localId, MsgTolbiRunBabisSoldiers);
 }
 
 /// Talking to the attendant before Babi's rescue: the attendant leads the party
 /// to the beds. "We have just enough extra beds in this room for everybody.
 /// Please follow me." Talking again, the attendant asks whether the party will
 /// sleep right away and goes back.
-static void BabiPalace_ShowBeds(s32 objectEventId) {
+static void BabiPalace_ShowBeds(s32 localId) {
 
   struct ObjectEvent *leader;
   s16 roundedFacing;
@@ -399,7 +398,7 @@ static void BabiPalace_ShowBeds(s32 objectEventId) {
     GameFlag_Set(FLAG_ATTENDANT_SHOWED_BEDS);
     GameFlag_Clear(FLAG_BABI_PALACE_BEDS_OPEN);
     Script_SetMessage(MsgTolbiWeHaveJustEnoughExtra);
-    Script_ShowMessage(objectEventId, 0);
+    Script_ShowMessage(localId, 0);
     Script_Wait(10);
     facingBits = roundedFacing << 16;
     facingOrMessage = FACING_SOUTH;
@@ -407,34 +406,34 @@ static void BabiPalace_ShowBeds(s32 objectEventId) {
       ObjectEvent_WalkToAndWait(LOCALID_PARTY_LEADER, 40, 104);
       ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_EAST, 0);
     }
-    ObjectEvent_SetSpeed(objectEventId, PIXELS(1), PIXELS(1) / 2);
-    ObjectEvent_WalkByAndWait(objectEventId, 0, -48);
-    ObjectEvent_WalkByAndWait(objectEventId, 64, 0);
-    ObjectEvent_FaceDirection(objectEventId, facingOrMessage, 0);
+    ObjectEvent_SetSpeed(localId, PIXELS(1), PIXELS(1) / 2);
+    ObjectEvent_WalkByAndWait(localId, 0, -48);
+    ObjectEvent_WalkByAndWait(localId, 64, 0);
+    ObjectEvent_FaceDirection(localId, facingOrMessage, 0);
   } else {
     GameFlag_Clear(FLAG_ATTENDANT_SHOWED_BEDS);
     GameFlag_Set(FLAG_BABI_PALACE_BEDS_OPEN);
-    ObjectEvent_FaceDirection(objectEventId, FACING_SOUTH, 0);
+    ObjectEvent_FaceDirection(localId, FACING_SOUTH, 0);
     ObjectEvent_WalkToAndWait(LOCALID_PARTY_LEADER, 120, 96);
     ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_NORTH, 0);
     Script_Wait(20);
     facingOrMessage = MsgTolbiUseFourBeds;
     Script_SetMessage(facingOrMessage);
-    Script_OpenMessage(objectEventId, 0);
+    Script_OpenMessage(localId, 0);
     if (Script_ChooseYesNo(LOCALID_PARTY_LEADER, 0) == 0) {
       Script_SetMessage(facingOrMessage + 1);
-      Script_ShowMessage(objectEventId, 0);
+      Script_ShowMessage(localId, 0);
     } else {
       Script_SetMessage(facingOrMessage + 2);
-      Script_ShowMessage(objectEventId, 0);
+      Script_ShowMessage(localId, 0);
     }
     Script_Wait(10);
-    ObjectEvent_SetAnimationAndWait(objectEventId, ANIMATION_NOD);
+    ObjectEvent_SetAnimationAndWait(localId, ANIMATION_NOD);
     Script_Wait(20);
-    ObjectEvent_WalkByAndWait(objectEventId, -64, 0);
-    ObjectEvent_WalkByAndWait(objectEventId, 0, 48);
+    ObjectEvent_WalkByAndWait(localId, -64, 0);
+    ObjectEvent_WalkByAndWait(localId, 0, 48);
 #if TBS_PATCH_3
-    ObjectEvent_SetPosition(objectEventId, 56 << 16, 120 << 16);
+    ObjectEvent_SetPosition(localId, 56 << 16, 120 << 16);
 #endif
   }
   Script_End();
@@ -444,7 +443,7 @@ static void BabiPalace_ShowBeds(s32 objectEventId) {
 /// asks whether the party came to rest before the match and steps aside;
 /// afterwards, the attendant offers rest. "if you're tired, please feel free to
 /// get some rest."
-static void BabiPalace_OfferRest(s32 objectEventId) {
+static void BabiPalace_OfferRest(s32 localId) {
   s32 question;
 
   Script_Start();
@@ -452,29 +451,29 @@ static void BabiPalace_OfferRest(s32 objectEventId) {
   if (GameFlag_IsSet(FLAG_BABI_PALACE_FINALS_REST_OFFERED) == 0) {
     GameFlag_Set(FLAG_BABI_PALACE_FINALS_REST_OFFERED);
     GameFlag_Set(FLAG_BABI_PALACE_FINALS_BEDS_OPEN);
-    ObjectEvent_FaceDirection(objectEventId, FACING_SOUTH, 0);
+    ObjectEvent_FaceDirection(localId, FACING_SOUTH, 0);
     ObjectEvent_WalkToAndWait(LOCALID_PARTY_LEADER, 120, 96);
     ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_NORTH, 0);
     Script_Wait(20);
     question = MsgTolbiCameRestBefore;
     Script_SetMessage(question);
-    Script_OpenMessage(objectEventId, 0);
+    Script_OpenMessage(localId, 0);
     if (Script_ChooseYesNo(LOCALID_PARTY_LEADER, 0) == 0) {
       Script_Wait(10);
       Script_SetMessage(question + 1);
     } else {
       Script_SetMessage(question + 2);
     }
-    Script_ShowMessage(objectEventId, 0);
+    Script_ShowMessage(localId, 0);
     Script_Wait(10);
-    ObjectEvent_SetAnimationAndWait(objectEventId, ANIMATION_NOD);
+    ObjectEvent_SetAnimationAndWait(localId, ANIMATION_NOD);
     Script_Wait(20);
-    ObjectEvent_SetSpeed(objectEventId, PIXELS(1), PIXELS(1) / 2);
-    ObjectEvent_WalkByAndWait(objectEventId, -64, 0);
-    ObjectEvent_WalkByAndWait(objectEventId, 0, 48);
+    ObjectEvent_SetSpeed(localId, PIXELS(1), PIXELS(1) / 2);
+    ObjectEvent_WalkByAndWait(localId, -64, 0);
+    ObjectEvent_WalkByAndWait(localId, 0, 48);
   } else {
     Script_SetMessage(MsgTolbiTiredFeelFreeRest);
-    Script_OpenMessage(objectEventId, 0);
+    Script_OpenMessage(localId, 0);
   }
   Script_End();
 }
@@ -482,98 +481,95 @@ static void BabiPalace_OfferRest(s32 objectEventId) {
 /// A warrior asks whether the party is entering Colosso. The warrior is in the
 /// palace while Babi is missing, and either hurries the party to the trials or
 /// asks whether it got hurt too.
-static void BabiPalace_AskAboutColosso(s32 objectEventId) {
+static void BabiPalace_AskAboutColosso(s32 localId) {
   s32 question = MsgTolbiPlanningEnterColosso;
 
   Engine_ScriptSetMessage(question);
-  Engine_ScriptOpenMessage(objectEventId, 0);
+  Engine_ScriptOpenMessage(localId, 0);
   if (Engine_ScriptChooseYesNo(LOCALID_PARTY_LEADER, 0) == 0) {
     Engine_ScriptWait(10);
-    Engine_ObjectEventShowEmote(objectEventId, EMOTE_IN_FRONT | EMOTE_WINCE,
-                                0x28);
+    Engine_ObjectEventShowEmote(localId, EMOTE_IN_FRONT | EMOTE_WINCE, 0x28);
     Engine_ScriptSetMessage(question + 1);
   } else {
     Engine_ScriptWait(10);
-    Engine_ObjectEventShowEmote(objectEventId, EMOTE_IN_FRONT | EMOTE_ELLIPSIS,
-                                0x28);
+    Engine_ObjectEventShowEmote(localId, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0x28);
     Engine_ScriptSetMessage(question + 2);
   }
-  Engine_ScriptShowMessage(objectEventId, 0);
+  Engine_ScriptShowMessage(localId, 0);
 }
 
 /// A warrior with indigestion gives up on entering Colosso. The warrior is in
 /// the palace while Babi is missing, tries to shrug it off, and doubles up.
-static void BabiPalace_TalkToWarriorWithIndigestion(s32 objectEventId) {
+static void BabiPalace_TalkToWarriorWithIndigestion(s32 localId) {
   struct ObjectEvent *objectEvent;
   const s32 *indigestionScript;
 
-  objectEvent = ObjectEvent_Get(objectEventId);
+  objectEvent = ObjectEvent_Get(localId);
   Script_Start();
   indigestionScript = gBabiPalace_IndigestionScript;
-  ObjectEvent_SetActionScript(objectEventId, indigestionScript);
+  ObjectEvent_SetActionScript(localId, indigestionScript);
   Script_SetMessage(MsgTolbiCantFightBecauseLittleIndigestion);
-  Script_ShowMessage(objectEventId, 0);
-  ObjectEvent_Stop(objectEventId);
+  Script_ShowMessage(localId, 0);
+  ObjectEvent_Stop(localId);
   objectEvent->scaleY = 0x10000;
   objectEvent->scaleX = 0x10000;
   Script_Wait(30);
-  ObjectEvent_RunRepeatedMotion(objectEventId, 2);
+  ObjectEvent_RunRepeatedMotion(localId, 2);
   Script_Wait(30);
-  ObjectEvent_RunRepeatedMotion(objectEventId, 2);
+  ObjectEvent_RunRepeatedMotion(localId, 2);
   Script_Wait(60);
-  Script_ShowMessage(objectEventId, 0);
+  Script_ShowMessage(localId, 0);
   Script_Wait(20);
-  ObjectEvent_ShowEmote(objectEventId, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
-  ObjectEvent_RunRepeatedMotion(objectEventId, 2);
+  ObjectEvent_ShowEmote(localId, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
+  ObjectEvent_RunRepeatedMotion(localId, 2);
   Script_Wait(30);
-  ObjectEvent_RunRepeatedMotion(objectEventId, 2);
+  ObjectEvent_RunRepeatedMotion(localId, 2);
   Script_Wait(30);
-  ObjectEvent_RunRepeatedMotion(objectEventId, 2);
+  ObjectEvent_RunRepeatedMotion(localId, 2);
   Script_Wait(30);
-  ObjectEvent_SetActionScript(objectEventId, indigestionScript);
-  Script_ShowMessage(objectEventId, 0);
-  ObjectEvent_FaceDirection(objectEventId, FACING_NORTHEAST, 0);
+  ObjectEvent_SetActionScript(localId, indigestionScript);
+  Script_ShowMessage(localId, 0);
+  ObjectEvent_FaceDirection(localId, FACING_NORTHEAST, 0);
   Script_Wait(10);
   objectEvent->scaleY = 0x10000;
   objectEvent->scaleX = 0x10000;
-  ObjectEvent_SetActionScript(objectEventId, indigestionScript);
+  ObjectEvent_SetActionScript(localId, indigestionScript);
   Script_End();
 }
 
 /// Mind Read on Sheba in the palace, while Babi is missing: she cannot escape
 /// to Lalivero alone; the first time, she feels it, ends the Psynergy and
 /// asks about it. "Did you just..."
-static void BabiPalace_ReadShebasMind(s32 casterId, s32 objectEventId) {
+static void BabiPalace_ReadShebasMind(s32 casterId, s32 localId) {
   Script_Start();
   Script_SetMessage(MsgTolbiEvenIfEscapedBabiPalace);
-  Script_ShowMessage(objectEventId, 0);
+  Script_ShowMessage(localId, 0);
   if (GameFlag_IsSet(FLAG_SHEBA_NOTICED_MIND_READ) == 0) {
     GameFlag_Set(FLAG_SHEBA_NOTICED_MIND_READ);
     Psynergy_Cancel();
     Script_Wait(50);
-    ObjectEvent_ShowEmote(objectEventId, EMOTE_IN_FRONT | EMOTE_EXCLAMATION,
-                          70);
-    ObjectEvent_FaceObjectEvent(objectEventId, LOCALID_PARTY_LEADER, 40);
-    Script_ShowMessage(objectEventId, 0);
+    ObjectEvent_ShowEmote(localId, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 70);
+    ObjectEvent_FaceObjectEvent(localId, LOCALID_PARTY_LEADER, 40);
+    Script_ShowMessage(localId, 0);
     Script_Wait(30);
-    ObjectEvent_SetAnimationAndWait(objectEventId, ANIMATION_SHAKE_HEAD);
+    ObjectEvent_SetAnimationAndWait(localId, ANIMATION_SHAKE_HEAD);
     Script_Wait(20);
-    Script_ShowMessage(objectEventId, 0);
-    ObjectEvent_FaceDirection(objectEventId, FACING_WEST, 0);
+    Script_ShowMessage(localId, 0);
+    ObjectEvent_FaceDirection(localId, FACING_WEST, 0);
   }
   Script_End();
 }
 
 /// The same old man, after Colosso, asks whether the party has met with Babi.
-static void BabiPalace_AskAboutMeetingBabi(s32 objectEventId) {
-  BabiPalace_ShowQuestionAnswer(objectEventId, MsgTolbiMeetBabi);
+static void BabiPalace_AskAboutMeetingBabi(s32 localId) {
+  BabiPalace_ShowQuestionAnswer(localId, MsgTolbiMeetBabi);
 }
 
 /// A young man asks whether the party is going back east already. He has brown
 /// hair and is one of the palace's residents, and asks after Colosso whether
 /// the party wants to go back already to the eastern shores of the Karagol Sea.
-static void BabiPalace_AskAboutEasternShores(s32 objectEventId) {
-  BabiPalace_ShowQuestionAnswer(objectEventId, MsgTolbiEasternShoresKaragol);
+static void BabiPalace_AskAboutEasternShores(s32 localId) {
+  BabiPalace_ShowQuestionAnswer(localId, MsgTolbiEasternShoresKaragol);
 }
 
 /// Taking the Cloak Ball on show after Colosso: Babi asks whether the party
@@ -2449,17 +2445,17 @@ static void BabiPalace_ThankForSavingBabi(void) {
 /// A guard asks whether the party is leaving like the other warriors. The guard
 /// stands outside the palace after Colosso, and means the other warriors who
 /// stayed in the palace.
-static void BabiPalace_AskAboutRemainingWarriors(s32 objectEventId) {
+static void BabiPalace_AskAboutRemainingWarriors(s32 localId) {
   s32 question = MsgTolbiWarriorsWhoStayed;
 
   Engine_ScriptSetMessage(question);
-  Engine_ScriptOpenMessage(objectEventId, 0);
+  Engine_ScriptOpenMessage(localId, 0);
   if (Engine_ScriptChooseYesNo(LOCALID_PARTY_LEADER, 0) == 0) {
     Engine_ScriptSetMessage(question + 1);
-    Engine_ScriptShowMessage(objectEventId, 0);
+    Engine_ScriptShowMessage(localId, 0);
   } else {
     Engine_ScriptSetMessage(question + 2);
-    Engine_ScriptShowMessage(objectEventId, 0);
+    Engine_ScriptShowMessage(localId, 0);
   }
 }
 

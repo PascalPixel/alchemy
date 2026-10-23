@@ -13,7 +13,7 @@ void Engine_ObjectEventSetAnimation();
 void Engine_ObjectEventShowEmote();
 void Engine_ScriptStart(void);
 void Engine_ScriptEnd(void);
-void Engine_ObjectEventSetPosition(u32 objectEvent, s32 x, s32 z);
+void Engine_ObjectEventSetPosition(u32 localId, s32 x, s32 z);
 void Engine_ScriptSetMessage();
 void Engine_ScriptShowMessage();
 void Engine_ScriptRequestWarp();

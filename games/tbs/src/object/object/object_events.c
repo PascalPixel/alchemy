@@ -251,7 +251,7 @@ void ObjectTable_ResetForObject(struct ObjectEventTemplate *table) {
   s32 height;
 
   work = (struct FieldWork *)gEventWork;
-  leader = gGameState.selectedObjectEvent;
+  leader = gGameState.selectedLocalId;
   // Build the leader's temporary object event template before the map's placed
   // object events. The two-row table, the leader's row and an end row, lives in
   // the event work at 0x200 (FieldWork's unk200) and lasts with it.
@@ -601,7 +601,7 @@ void ObjectTable_Restore(void) {
   s32 animation;
   s32 priority;
   s32 y;
-  s32 *leaderId = &gGameState.selectedObjectEvent;
+  s32 *leaderId = &gGameState.selectedLocalId;
   struct EventWork **fieldWork = &gEventWork;
   struct MapGridScrollWork **grid = (struct MapGridScrollWork **)gMapGridWork;
 

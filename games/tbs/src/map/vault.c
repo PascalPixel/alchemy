@@ -159,9 +159,9 @@ enum {
   LOCALID_SAP = 23
 };
 
-static void Vault_ShowStandingObjectEventMessage(s32 objectEvent);
-static void Vault_ShowMessageAndWait(s32 objectEvent, s32 delay);
-static void Vault_FaceObjectEventAndWait(s32 objectEvent, s32 other, s32 delay);
+static void Vault_ShowStandingObjectEventMessage(s32 localId);
+static void Vault_ShowMessageAndWait(s32 localId, s32 delay);
+static void Vault_FaceObjectEventAndWait(s32 localId, s32 other, s32 delay);
 
 #include "common/effect_create.h"
 #include "common/effect_spawn.h"
@@ -446,11 +446,11 @@ static void EventScript_LookForRoofer(void) {
 }
 
 /// Stops an object event, faces the leader and shows the current message.
-static void Vault_ShowStandingObjectEventMessage(s32 objectEvent) {
+static void Vault_ShowStandingObjectEventMessage(s32 localId) {
   Engine_ScriptStart();
-  Engine_ObjectEventSetAnimation(objectEvent, ANIMATION_STAND);
-  Vault_FaceObjectEventAndWait(objectEvent, LOCALID_PARTY_LEADER, 2);
-  Engine_ScriptShowMessage(objectEvent, 0);
+  Engine_ObjectEventSetAnimation(localId, ANIMATION_STAND);
+  Vault_FaceObjectEventAndWait(localId, LOCALID_PARTY_LEADER, 2);
+  Engine_ScriptShowMessage(localId, 0);
   Engine_ScriptEnd();
 }
 
@@ -804,17 +804,17 @@ static void EventScript_EnterPassage(void) {
 
 /// Moves an object event through a jump and waits up to sixty frames for it to
 /// settle.
-static void Vault_JumpObjectEventToAndWait(s32 objectEventId, s32 x, s32 z,
+static void Vault_JumpObjectEventToAndWait(s32 localId, s32 x, s32 z,
                                            s32 verticalSpeed) {
-  struct ObjectEvent *objectEvent = ObjectEvent_GetById(objectEventId);
+  struct ObjectEvent *objectEvent = ObjectEvent_GetById(localId);
   int frames;
-  Engine_ObjectEventSetSpeed(objectEventId, PIXELS(3), PIXELS(3) / 2);
+  Engine_ObjectEventSetSpeed(localId, PIXELS(3), PIXELS(3) / 2);
   objectEvent->gravity = PIXELS(1) / 2;
   objectEvent->bounce = 0;
   objectEvent->velocityY = verticalSpeed;
   Engine_ObjectEventSetSpriteFlags(objectEvent, 0);
-  Engine_ObjectEventMoveToAndWait(objectEventId, x, z);
-  Engine_ObjectEventSetPosition(objectEventId, x << 16, z << 16);
+  Engine_ObjectEventMoveToAndWait(localId, x, z);
+  Engine_ObjectEventSetPosition(localId, x << 16, z << 16);
   for (frames = 60; frames != 0; --frames) {
     Engine_TaskWait(1);
     if ((objectEvent->velocityY >> 16) == 0)
@@ -1018,14 +1018,13 @@ s32 Map_Initialize(void) {
 #include "common/object_distance.h"
 #include "common/vault_range.h"
 
-static void Vault_ShowMessageAndWait(s32 objectEvent, s32 delay) {
-  Engine_ScriptShowMessage(objectEvent, 0);
+static void Vault_ShowMessageAndWait(s32 localId, s32 delay) {
+  Engine_ScriptShowMessage(localId, 0);
   Engine_ScriptWait(delay);
 }
 
-static void Vault_FaceObjectEventAndWait(s32 objectEvent, s32 other,
-                                         s32 delay) {
-  Engine_ObjectEventFaceEachOther(objectEvent, other, 0);
+static void Vault_FaceObjectEventAndWait(s32 localId, s32 other, s32 delay) {
+  Engine_ObjectEventFaceEachOther(localId, other, 0);
   Engine_ScriptWait(delay);
 }
 

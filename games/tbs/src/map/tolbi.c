@@ -410,13 +410,12 @@ static void Tolbi_TalkToSnackVendor(void) {
 /// door's warp, numbered as its metatile behavior.
 static void Tolbi_EnterDoor(void) {
   struct EventWork *work = gEventWork;
-  u32 objectEventId;
+  u32 localId;
   s32 door;
 
   Engine_ScriptStart();
-  for (objectEventId = LOCALID_FIRST_PLACED; objectEventId <= 65;
-       objectEventId++) {
-    struct ObjectEvent *objectEvent = ObjectEvent_GetById(objectEventId);
+  for (localId = LOCALID_FIRST_PLACED; localId <= 65; localId++) {
+    struct ObjectEvent *objectEvent = ObjectEvent_GetById(localId);
     if (objectEvent != NULL) {
       objectEvent->motionFlags = 0;
     }

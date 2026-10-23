@@ -35,7 +35,7 @@ s32 Field_GetPsynergyTargetRange(s32 kind) {
 s32 Field_FindNearbyTalkTarget(s32 id) {
   struct ObjectRuntime *source;
   struct ObjectRuntime *candidate;
-  s32 nearestObjectEvent;
+  s32 nearestLocalId;
   s32 nearestDistance;
   s32 objectEventIndex;
   s32 dx;
@@ -48,7 +48,7 @@ s32 Field_FindNearbyTalkTarget(s32 id) {
   s32 distance;
   s32 angle;
 
-  nearestObjectEvent = -1;
+  nearestLocalId = -1;
   nearestDistance = 32;
   source = ObjectTable_Get(id);
   if (source != 0) {
@@ -97,11 +97,11 @@ s32 Field_FindNearbyTalkTarget(s32 id) {
           continue;
       }
 
-      nearestObjectEvent = objectEventIndex;
+      nearestLocalId = objectEventIndex;
       nearestDistance = distance;
     }
   }
-  return nearestObjectEvent;
+  return nearestLocalId;
 }
 
 /// Returns the object event nearest in front of object event id that a field
@@ -114,7 +114,7 @@ s32 Field_FindNearbyTalkTarget(s32 id) {
 s32 Field_FindNearbyPsynergyTarget(s32 id, s32 kind) {
   struct ObjectRuntime *source;
   struct ObjectRuntime *candidate;
-  s32 nearestObjectEvent;
+  s32 nearestLocalId;
   s32 nearestDistance;
   s32 facingQuadrant;
   s32 objectEventIndex;
@@ -126,11 +126,11 @@ s32 Field_FindNearbyPsynergyTarget(s32 id, s32 kind) {
   s32 angle;
   s32 coneHalfAngle;
 
-  nearestObjectEvent = -1;
+  nearestLocalId = -1;
   nearestDistance = Field_GetPsynergyTargetRange(kind);
   source = (struct ObjectRuntime *)ObjectTable_Get(id);
   if (source == 0)
-    return nearestObjectEvent;
+    return nearestLocalId;
 
   // The facing rounded to the nearest of the four quarter turns.
   facingQuadrant = (source->angle + 0x2000) & 0xc000;
@@ -197,11 +197,11 @@ s32 Field_FindNearbyPsynergyTarget(s32 id, s32 kind) {
         continue;
     }
 
-    nearestObjectEvent = objectEventIndex;
+    nearestLocalId = objectEventIndex;
     nearestDistance = distance;
   }
 
-  return nearestObjectEvent;
+  return nearestLocalId;
 }
 
 /// If object event target exists, plays SE_124, gives it animation 4 and, 12
@@ -209,7 +209,7 @@ s32 Field_FindNearbyPsynergyTarget(s32 id, s32 kind) {
 /// the picture's encoded object event pointer, or 0 when the target or picture
 /// is absent. Called by two map overlays: McCoy's palace, when a reward chest
 /// opens, and Vault's interiors, when Ivan finds the Shaman's Rod.
-s32 FieldEffect_PlayCueAndStartEmitterOnTarget(s32 objectEvent, s32 target,
+s32 FieldEffect_PlayCueAndStartEmitterOnTarget(s32 localId, s32 target,
                                                s32 itemId) {
   void *targetObjectEvent;
   s32 emitter;
@@ -220,7 +220,7 @@ s32 FieldEffect_PlayCueAndStartEmitterOnTarget(s32 objectEvent, s32 target,
     AudioCommand_PlayFar(SE_124);
     ObjectDispatch_SelectAnimationFar(targetObjectEvent, 4);
     WaitFrames(12);
-    emitter = (s32)FieldEffect_StartRandomParticleEmitter(objectEvent, itemId);
+    emitter = (s32)FieldEffect_StartRandomParticleEmitter(localId, itemId);
   }
   return emitter;
 }

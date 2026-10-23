@@ -1799,7 +1799,7 @@ static void Imil_SlideObjectEventAcrossIce(void) {
   s32 z;
   s32 x;
 
-  objectEvent = Engine_ObjectEventLookup(gGameState.selectedObjectEvent);
+  objectEvent = Engine_ObjectEventLookup(gGameState.selectedLocalId);
 
   for (;;) {
     heading = gImilFuchinFalls_SlideHeadings[(gKeysHeld >> 4) & 15];

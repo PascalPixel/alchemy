@@ -951,7 +951,7 @@ static s32 LinkLobby_EnterBattle(void) {
     TileAnimation_PauseChannel(5);
     if (Engine_GameFlagIsSet(FLAG_MONSTER_BATTLE)) {
       Engine_ObjectEventFaceObjectEvent(LOCALID_ATTENDANT,
-                                        gGameState.selectedObjectEvent, 0);
+                                        gGameState.selectedLocalId, 0);
       Engine_ScriptSetMessage(MsgLobbyGoodLuck);
       Engine_ScriptOpenMessage(LOCALID_ATTENDANT, 0);
       Engine_TaskWait(45);
@@ -1047,7 +1047,7 @@ static s32 LinkLobby_ChooseBattleMode(void) {
   messageBase = MsgLobbyPleaseSpeakWhen;
   Engine_ScriptStart();
   Engine_ObjectEventFaceObjectEvent(LOCALID_ATTENDANT,
-                                    gGameState.selectedObjectEvent, 0);
+                                    gGameState.selectedLocalId, 0);
   // Look for the partner's signature twice, a frame apart.
   if (LinkLobby_PeerSlotMatches(LOBBY_SLOT_SIGNATURE) == 0) {
     Engine_TaskWait(1);
@@ -1145,14 +1145,13 @@ static s32 LinkLobby_ChooseBattleMode(void) {
 /// the total when the leader faces north and those won in a row otherwise;
 /// before the first, the line says it will tell them later. Like the original
 /// handler, it never ends its script (no Engine_ScriptEnd) and returns nothing.
-static s32 LinkLobby_ReportWinTallies(s32 objectEvent) {
+static s32 LinkLobby_ReportWinTallies(s32 localId) {
   u32 facing = ObjectEvent_GetById(LOCALID_PARTY_LEADER)->facing;
   u16 *tally;
   s32 messageBase;
 
   Engine_ScriptStart();
-  Engine_ObjectEventFaceObjectEvent(objectEvent, gGameState.selectedObjectEvent,
-                                    0);
+  Engine_ObjectEventFaceObjectEvent(localId, gGameState.selectedLocalId, 0);
   // FACING_IS_NORTH's test, written out: strictly between northwest and
   // northeast.
   if ((facing - 0xa001) <= 0x3ffe) {
@@ -1162,10 +1161,10 @@ static s32 LinkLobby_ReportWinTallies(s32 objectEvent) {
       UiWork_ClearValueNameTables();
       UiText_DrawQuantity(*tally, 5);
       Engine_ScriptSetMessage(messageBase + 1);
-      Engine_ScriptShowMessage(objectEvent, 0);
+      Engine_ScriptShowMessage(localId, 0);
     } else {
       Engine_ScriptSetMessage(MsgLobbyTellTotalWins);
-      Engine_ScriptShowMessage(objectEvent, 0);
+      Engine_ScriptShowMessage(localId, 0);
     }
   } else {
     messageBase = MsgLobbyLooksLikeFirstTime;
@@ -1174,10 +1173,10 @@ static s32 LinkLobby_ReportWinTallies(s32 objectEvent) {
       UiWork_ClearValueNameTables();
       UiText_DrawQuantity(*tally, 5);
       Engine_ScriptSetMessage(messageBase + 1);
-      Engine_ScriptShowMessage(objectEvent, 0);
+      Engine_ScriptShowMessage(localId, 0);
     } else {
       Engine_ScriptSetMessage(MsgLobbyTellConsecutiveWins);
-      Engine_ScriptShowMessage(objectEvent, 0);
+      Engine_ScriptShowMessage(localId, 0);
     }
   }
 #ifdef UBFIX
@@ -1188,17 +1187,16 @@ static s32 LinkLobby_ReportWinTallies(s32 objectEvent) {
 /// 0 up, A loads it (DebugParty_LoadPreset) and B cancels.
 /// LOCALID_LINKED_WINS_TELLER replies: one line for a cancel, one for a preset
 /// past the table's end (the loader's nonzero result), one for a loaded party.
-static s32 LinkLobby_ChooseDebugPartyPreset(s32 objectEventId) {
+static s32 LinkLobby_ChooseDebugPartyPreset(s32 localId) {
   struct UiWindow *window;
   s32 presetIndex;
   s32 displayedPreset;
   s32 loadResult;
 
   Engine_ScriptStart();
-  Engine_ObjectEventFaceObjectEvent(objectEventId,
-                                    gGameState.selectedObjectEvent, 0);
+  Engine_ObjectEventFaceObjectEvent(localId, gGameState.selectedLocalId, 0);
   Engine_ScriptSetMessage(MsgLobbyChooseParameters);
-  Engine_ScriptShowMessage(objectEventId, 0);
+  Engine_ScriptShowMessage(localId, 0);
   window = Engine_DebugCreateWindow(0, 0, 6, 4, 2);
   presetIndex = 0;
   displayedPreset = -1;
@@ -1249,9 +1247,9 @@ static s32 LinkLobby_ChooseDebugPartyPreset(s32 objectEventId) {
 
 /// Talking to LOCALID_HEALER, who serves as a Sanctum's healer
 /// (Engine_SanctumOpen).
-static s32 LinkLobby_OpenSanctum(s32 objectEventId) {
+static s32 LinkLobby_OpenSanctum(s32 localId) {
   Engine_ScriptStart();
-  Engine_SanctumOpen(objectEventId);
+  Engine_SanctumOpen(localId);
   Engine_ScriptEnd();
 #ifdef UBFIX
   return 0;
@@ -1293,20 +1291,19 @@ UNUSED static void State_NoOp(void) {}
 /// they fought in it, or else of whether Isaac and they are in the battle
 /// party. Each message family holds one line per character, at local id - 1;
 /// Felix's holds "?".
-static s32 LinkLobby_TalkByProgress(s32 objectEvent) {
+static s32 LinkLobby_TalkByProgress(s32 localId) {
   s32 messageBase = MsgLobbyCantWaitLets;
   s32 isaacPresent = LinkLobby_PartyContains(0);
-  s32 speakerPresent = LinkLobby_PartyContains(objectEvent);
+  s32 speakerPresent = LinkLobby_PartyContains(localId);
 
   Engine_ScriptStart();
-  Engine_ObjectEventFaceObjectEvent(objectEvent, gGameState.selectedObjectEvent,
-                                    0);
+  Engine_ObjectEventFaceObjectEvent(localId, gGameState.selectedLocalId, 0);
   if (Engine_GameFlagIsSet(FLAG_MAPSEC_TEMP_04)) {
 
     // Isaac's flag is tested and the result dropped; messageBase first
     // holds whether the speaker fought (FLAG_MAP_TEMP_F0 + local id).
     GameFlag_IsSet(FLAG_MAP_TEMP_F0);
-    messageBase = Engine_GameFlagIsSet(objectEvent + 0x2f0);
+    messageBase = Engine_GameFlagIsSet(localId + 0x2f0);
     if (Engine_GameFlagIsSet(FLAG_MAPSEC_TEMP_05)) {
       if (messageBase)
         messageBase = MsgLobbyWonToldCountOn;
@@ -1324,8 +1321,8 @@ static s32 LinkLobby_TalkByProgress(s32 objectEvent) {
   } else {
     messageBase = MsgLobbyTryingGetAway;
   }
-  Engine_ScriptSetMessage(messageBase + objectEvent - 1);
-  Engine_ScriptShowMessage(objectEvent, 0);
+  Engine_ScriptSetMessage(messageBase + localId - 1);
+  Engine_ScriptShowMessage(localId, 0);
   Engine_ScriptEnd();
 #ifdef UBFIX
   return 0;
@@ -1353,12 +1350,12 @@ static s32 LinkLobby_LeaveArena(void) {
 /// since the leader last walked south of z 224 (map section flag
 /// FLAG_MAPSEC_TEMP_04), then their second after a win or their third after a
 /// loss (FLAG_MAPSEC_TEMP_05).
-static s32 LinkLobby_TalkToVisitor(s32 objectEvent) {
+static s32 LinkLobby_TalkToVisitor(s32 localId) {
   s32 message;
   s32 step = 0;
 
   Engine_ScriptStart();
-  switch (objectEvent) {
+  switch (localId) {
   case LOCALID_TRAVELING_WARRIOR:
     message = MsgLobbyTravelingWarrior;
     break;
@@ -1370,12 +1367,11 @@ static s32 LinkLobby_TalkToVisitor(s32 objectEvent) {
     message = MsgLobbyBattleArenaOld;
     break;
   }
-  Engine_ObjectEventFaceObjectEvent(objectEvent, gGameState.selectedObjectEvent,
-                                    0);
+  Engine_ObjectEventFaceObjectEvent(localId, gGameState.selectedLocalId, 0);
   if (Engine_GameFlagIsSet(FLAG_MAPSEC_TEMP_04))
     step = 2 - (Engine_GameFlagIsSet(FLAG_MAPSEC_TEMP_05) != 0);
   Engine_ScriptSetMessage(message + step);
-  Engine_ScriptOpenMessage(objectEvent, 0);
+  Engine_ScriptOpenMessage(localId, 0);
   Engine_ScriptEnd();
 #ifdef UBFIX
   return 0;
@@ -1385,12 +1381,11 @@ static s32 LinkLobby_TalkToVisitor(s32 objectEvent) {
 /// Talking to LOCALID_PARTY_ORDER_VISITOR, who alternates, by FLAG_MAP_TEMP_04,
 /// between the linked finals' limit of three allies (worded for the party's
 /// size) and how to change the party's order.
-static s32 LinkLobby_ExplainPartyOrder(s32 objectEvent) {
+static s32 LinkLobby_ExplainPartyOrder(s32 localId) {
   s32 message;
 
   Engine_ScriptStart();
-  Engine_ObjectEventFaceObjectEvent(objectEvent, gGameState.selectedObjectEvent,
-                                    0);
+  Engine_ObjectEventFaceObjectEvent(localId, gGameState.selectedLocalId, 0);
   if (!GameFlag_IsSet(FLAG_MAP_TEMP_04)) {
     if (Party_CountActiveOwners() <= 3)
       message = MsgLobbyThreeAlliesFightLinkedFinals;
@@ -1402,7 +1397,7 @@ static s32 LinkLobby_ExplainPartyOrder(s32 objectEvent) {
     Engine_GameFlagClear(FLAG_MAP_TEMP_04);
   }
   Engine_ScriptSetMessage(message);
-  Engine_ScriptOpenMessage(objectEvent, 0);
+  Engine_ScriptOpenMessage(localId, 0);
   Engine_ScriptEnd();
 #ifdef UBFIX
   return 0;
@@ -1411,20 +1406,19 @@ static s32 LinkLobby_ExplainPartyOrder(s32 objectEvent) {
 
 /// Talking to LOCALID_MONSTER_WINS_TELLER, who reports the most monster battles
 /// won in a row (tally 2), or before any, that the speaker will count them.
-static s32 LinkLobby_ReportMonsterRecord(s32 objectEventId) {
+static s32 LinkLobby_ReportMonsterRecord(s32 localId) {
   struct GameState *state;
 
   Engine_ScriptStart();
   state = &gGameState;
-  Engine_ObjectEventFaceObjectEvent(objectEventId, state->selectedObjectEvent,
-                                    0);
+  Engine_ObjectEventFaceObjectEvent(localId, state->selectedLocalId, 0);
   if (state->linkTallies[LINK_TALLY_MONSTER_BEST_STREAK] != 0) {
     UiText_DrawQuantity(state->linkTallies[LINK_TALLY_MONSTER_BEST_STREAK], 5);
     Engine_ScriptSetMessage(MsgLobbyWonNumberConsecutive);
   } else {
     Engine_ScriptSetMessage(MsgLobbyCantWaitSee);
   }
-  Engine_ScriptOpenMessage(objectEventId, 0);
+  Engine_ScriptOpenMessage(localId, 0);
   Engine_ScriptEnd();
 #ifdef UBFIX
   return 0;
@@ -1569,7 +1563,7 @@ s32 LinkLobby_RunRoundResult(void) {
       FieldGameFlag_SetByte(FLAG_MAPSEC_TEMP_E8, v + 1);
     }
     Engine_ObjectEventFaceObjectEvent(LOCALID_ATTENDANT,
-                                      gGameState.selectedObjectEvent, 0);
+                                      gGameState.selectedLocalId, 0);
     Engine_ScriptSetMessage(MsgLobbyNotBadNextMonster + messageOffset);
     Engine_ScriptOpenMessage(LOCALID_ATTENDANT, 0);
     if (Engine_ScriptChooseYesNo(0, 0) == CONFIRM_YES) {
@@ -1605,7 +1599,7 @@ s32 LinkLobby_RunRoundResult(void) {
     Engine_ScriptWaitForScreen();
     LinkLobby_WriteSlotValue(LOBBY_SLOT_ALONE);
     Engine_ObjectEventFaceObjectEvent(LOCALID_ATTENDANT,
-                                      gGameState.selectedObjectEvent, 0);
+                                      gGameState.selectedLocalId, 0);
     UiText_DrawQuantity(gGameState.linkTallies[LINK_TALLY_MONSTER_STREAK], 5);
     if (gGameState.linkTallies[LINK_TALLY_MONSTER_BEST_STREAK] <
         gGameState.linkTallies[LINK_TALLY_MONSTER_STREAK]) {
@@ -1687,7 +1681,7 @@ s32 LinkLobby_RunRoundResult(void) {
       Engine_ScriptOpenScreen();
       Engine_ScriptWaitForScreen();
       Engine_ObjectEventFaceObjectEvent(LOCALID_ATTENDANT,
-                                        gGameState.selectedObjectEvent, 0);
+                                        gGameState.selectedLocalId, 0);
       Engine_ScriptSetMessage(MsgLobbyNoteCantUse);
       Engine_ScriptShowMessage(LOCALID_ATTENDANT, 0);
       Engine_ScriptEnd();

@@ -526,7 +526,7 @@ void UiText_ShowPositionedMessageAndWait(s32 message, s32 flags) {
 
     // The character's screen y in pixels, as a tile row. In the lower half
     // the window's top goes 5 rows above it; otherwise 4 rows below.
-    ObjectEvent_GetScreenPositionFar(gGameState.selectedObjectEvent,
+    ObjectEvent_GetScreenPositionFar(gGameState.selectedLocalId,
                                      objectEventPosition);
     objectEventTileY = objectEventPosition[1] >> 3;
     if (objectEventTileY > 9) {

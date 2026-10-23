@@ -131,7 +131,7 @@ static void EventScript_CenterStatueMoved(void);
 static void SolSanctumStatue_PushStatue(s32 statueId, s32 statueColumn,
                                         s32 statueRow, s32 leaderColumn,
                                         s32 leaderRow);
-static s32 SolSanctumStatue_IsObjectEventAtCell(s32 objectEventId, s32 column,
+static s32 SolSanctumStatue_IsObjectEventAtCell(s32 localId, s32 column,
                                                 s32 row);
 static void SolSanctumStatue_OpenNorthwestSeal(void);
 static void SolSanctumStatue_OpenNortheastSeal(void);
@@ -166,7 +166,7 @@ struct SealScene {
   s32 destinationX; ///< pixels
   s32 destinationZ; ///< pixels
   struct CellCopy stairs[3];
-  s32 objectEvent;
+  s32 localId;
   s32 objectEventX; ///< pixels
   s32 objectEventZ; ///< pixels
   s32 unused[3];    ///< never read or written; the bss keeps its 12 bytes
@@ -1360,9 +1360,9 @@ static void SolSanctumStatue_PushStatue(s32 statueId, s32 statueColumn,
 }
 
 /// Returns 1 when the object event stands in the given map cell.
-static s32 SolSanctumStatue_IsObjectEventAtCell(s32 objectEventId, s32 column,
+static s32 SolSanctumStatue_IsObjectEventAtCell(s32 localId, s32 column,
                                                 s32 row) {
-  struct ObjectEvent *objectEvent = ObjectEvent_GetById(objectEventId);
+  struct ObjectEvent *objectEvent = ObjectEvent_GetById(localId);
   if (objectEvent == NULL || (objectEvent->x.fixed >> 20) != column) {
     return 0;
   }
@@ -1421,7 +1421,7 @@ static void SolSanctumStatue_OpenNorthwestSeal(void) {
   scene->stairs[2].destinationY = 10;
   scene->stairs[2].width = 2;
   scene->stairs[2].height = 1;
-  scene->objectEvent = LOCALID_NORTHWEST_STATUE;
+  scene->localId = LOCALID_NORTHWEST_STATUE;
   scene->objectEventX = 488;
   scene->objectEventZ = 152;
   SolSanctumStatue_OpenSeal();
@@ -1476,7 +1476,7 @@ static void SolSanctumStatue_OpenNortheastSeal(void) {
   scene->stairs[2].destinationY = 10;
   scene->stairs[2].width = 2;
   scene->stairs[2].height = 1;
-  scene->objectEvent = LOCALID_NORTHEAST_STATUE;
+  scene->localId = LOCALID_NORTHEAST_STATUE;
   scene->objectEventX = 664;
   scene->objectEventZ = 152;
   SolSanctumStatue_OpenSeal();
@@ -1531,7 +1531,7 @@ static void SolSanctumStatue_OpenSouthwestSeal(void) {
   scene->stairs[2].destinationY = 11;
   scene->stairs[2].width = 2;
   scene->stairs[2].height = 1;
-  scene->objectEvent = LOCALID_SOUTHWEST_STATUE;
+  scene->localId = LOCALID_SOUTHWEST_STATUE;
   scene->objectEventX = 488;
   scene->objectEventZ = 200;
   SolSanctumStatue_OpenSeal();
@@ -1586,7 +1586,7 @@ static void SolSanctumStatue_OpenSoutheastSeal(void) {
   scene->stairs[2].destinationY = 11;
   scene->stairs[2].width = 2;
   scene->stairs[2].height = 1;
-  scene->objectEvent = LOCALID_SOUTHEAST_STATUE;
+  scene->localId = LOCALID_SOUTHEAST_STATUE;
   scene->objectEventX = 664;
   scene->objectEventZ = 200;
   SolSanctumStatue_OpenSeal();
@@ -1641,10 +1641,10 @@ static void SolSanctumStatue_OpenSeal(void) {
         COPY_CELLS(scene->stairs[0]);
         COPY_CELLS(scene->stairs[1]);
         COPY_CELLS(scene->stairs[2]);
-        ObjectEvent_GetById(scene->objectEvent)->steeringFlags &=
+        ObjectEvent_GetById(scene->localId)->steeringFlags &=
             ~OBJ_EVENT_FACES_MOTION;
         Engine_ObjectMotionSetPositionAndCommit(
-            scene->objectEvent, scene->objectEventX, scene->objectEventZ);
+            scene->localId, scene->objectEventX, scene->objectEventZ);
         ObjectEvent_GetById(LOCALID_PARTY_LEADER)->steeringFlags |=
             OBJ_EVENT_FACES_MOTION;
         Engine_GameFlagClear(scene->flag);

@@ -34,7 +34,7 @@ s32 Field_UsePsynergy(u32 code) {
   abilityGroup = BattleAction_Get(abilityId)->type0c;
   userId = ACT_UNIT(code);
   // The leader is looked up and the result is not used.
-  ObjectTable_Get(gGameState.selectedObjectEvent);
+  ObjectTable_Get(gGameState.selectedLocalId);
   retreat = 0;
   Leader_StopMoving();
   GameFlag_ClearBitFar(FLAG_ITEM_USE);
@@ -104,7 +104,7 @@ s32 Field_UsePsynergy(u32 code) {
   GameFlag_SetBitFar(FLAG_PSYNERGY_EFFECT);
   GameFlag_SetBitFar(FLAG_PSYNERGY_TARGET);
   if (before || after || during) {
-    target = Field_FindNearbyPsynergyTarget(gGameState.selectedObjectEvent,
+    target = Field_FindNearbyPsynergyTarget(gGameState.selectedLocalId,
                                             abilityGroup);
     // An event with trigger flag 0x400 plays the effect itself.
     if (after && (after->trigger & 0x400)) {
@@ -119,7 +119,7 @@ s32 Field_UsePsynergy(u32 code) {
     ObjectTable_ClearOutOfBounds();
   FieldEffect_LoadActionEffectResources(abilityId, 0);
   work->resolvingAction = 1;
-  FieldEffect_SetupObjectPair(gGameState.selectedObjectEvent, target);
+  FieldEffect_SetupObjectPair(gGameState.selectedLocalId, target);
   EventObject_Initialize();
 
   Field_RunEventAction(before, userId, target);

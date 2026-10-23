@@ -26,8 +26,8 @@
 s32 Field_TryJumpForward(void) {
   // A chained jump repeats both the gap and landing probes, including their
   // failure returns, before taking control of the field again.
-  struct ObjectRuntime *leader = (struct ObjectRuntime *)ObjectEvent_GetById(
-      gGameState.selectedObjectEvent);
+  struct ObjectRuntime *leader =
+      (struct ObjectRuntime *)ObjectEvent_GetById(gGameState.selectedLocalId);
   s32 result = -1;
   s32 angle = (leader->angle + 0x2000) & 0xc000; // to the nearest quarter
   u8 *flags = &leader->flags;
@@ -69,7 +69,7 @@ again:
     ObjectDispatch_SetSingleChildFlagsFar((struct DispatchObject *)leader,
                                           spriteFlags & 0xfe);
     ObjectMotion_SetPositionAndCommit(
-        gGameState.selectedObjectEvent,
+        gGameState.selectedLocalId,
         ((union FieldCoordinate *)&position->x)->part.pixel,
         ((union FieldCoordinate *)&position->z)->part.pixel);
     ObjectDispatch_SelectAnimationFar(leader, 6);
@@ -125,8 +125,8 @@ again:
 /// Lighthouse, Crossbone Isle, Tolbi's ship and others). Sets
 /// gGameState.movementMode: 1 while the leader is on the wall, 0 off it.
 s32 Field_ClimbDown(void) {
-  struct ObjectRuntime *object = (struct ObjectRuntime *)ObjectEvent_GetById(
-      gGameState.selectedObjectEvent);
+  struct ObjectRuntime *object =
+      (struct ObjectRuntime *)ObjectEvent_GetById(gGameState.selectedLocalId);
   s32 gridX =
       8 + ((((union FieldCoordinate *)&object->x)->part.pixel) & 0xfff0);
   s32 gridZ =
@@ -156,19 +156,18 @@ s32 Field_ClimbDown(void) {
 
       // Step to the middle of the tile, face north and climb down a tile at
       // 1 pixel a frame, in free flight (no motion flags) with no shadow.
-      ObjectMotion_SetPositionAndCommit(gGameState.selectedObjectEvent, gridX,
+      ObjectMotion_SetPositionAndCommit(gGameState.selectedLocalId, gridX,
                                         gridZ);
       object->speedLimit = 0x10000;
-      ObjectMotion_ArmCallback(gGameState.selectedObjectEvent, 0xc000, 0);
-      ObjectEvent_RefreshSelectorById(gGameState.selectedObjectEvent);
+      ObjectMotion_ArmCallback(gGameState.selectedLocalId, 0xc000, 0);
+      ObjectEvent_RefreshSelectorById(gGameState.selectedLocalId);
       object->actionFlags = OBJ_EVENT_FACES_MOTION;
       object->flags = 0;
       ObjectDispatch_SetSingleChildFlagsFar((struct DispatchObject *)object, 0);
       ObjectDispatch_SelectAnimationFar(object, 13);
       Object_SetMoveTargetFar(object, gridX << 16, object->y - 0x100000,
                               (gridZ << 16) + 0x100000);
-      ObjectMotion_CommitCurrentPositionAndActivate(
-          gGameState.selectedObjectEvent);
+      ObjectMotion_CommitCurrentPositionAndActivate(gGameState.selectedLocalId);
       gGameState.movementMode = LEADER_MOVEMENT_CLIMB;
     } else {
       goto failure;
@@ -208,8 +207,8 @@ failure:
 /// Lighthouse, Colosso, Crossbone Isle and others). Sets
 /// gGameState.movementMode as Field_ClimbDown does.
 s32 Field_ClimbUp(void) {
-  struct ObjectRuntime *object = (struct ObjectRuntime *)ObjectEvent_GetById(
-      gGameState.selectedObjectEvent);
+  struct ObjectRuntime *object =
+      (struct ObjectRuntime *)ObjectEvent_GetById(gGameState.selectedLocalId);
   s16 spriteFlags = 1;
   s32 gridX =
       8 + ((((union FieldCoordinate *)&object->x)->part.pixel) & 0xfff0);
@@ -242,7 +241,7 @@ s32 Field_ClimbUp(void) {
 
       // Step to the middle of the tile, crouch, jump and grab the wall.
       object->actionFlags = 0;
-      ObjectMotion_SetPositionAndCommit(gGameState.selectedObjectEvent, gridX,
+      ObjectMotion_SetPositionAndCommit(gGameState.selectedLocalId, gridX,
                                         gridZ);
       ObjectDispatch_SelectAnimationFar(object, 6);
       WaitFrames(4);
@@ -269,8 +268,7 @@ s32 Field_ClimbUp(void) {
     ObjectDispatch_SelectAnimationFar(object, 11);
     Object_SetMoveTargetFar(object, gridX << 16, object->y + 0x80000,
                             (gridZ << 16) - 0x100000);
-    ObjectMotion_CommitCurrentPositionAndActivate(
-        gGameState.selectedObjectEvent);
+    ObjectMotion_CommitCurrentPositionAndActivate(gGameState.selectedLocalId);
     object->flags = OBJ_EVENT_FOLLOWS_TERRAIN | OBJ_EVENT_FALLS;
     spriteFlags |= 1;
     object->terrainHeight = object->y;

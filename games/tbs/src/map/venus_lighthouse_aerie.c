@@ -140,7 +140,7 @@ enum {
 
 static void EventScript_FloatPlatforms(void);
 static void VenusLighthouseAerie_OverhearSaturosAndMenardi(void);
-static void VenusLighthouseAerie_ShowPartyMember(s32 objectEvent, s32 shown);
+static void VenusLighthouseAerie_ShowPartyMember(s32 localId, s32 shown);
 static void
 VenusLighthouseAerie_FlashObjectEventPalette(struct ObjectEvent *objectEvent);
 static void
@@ -509,8 +509,8 @@ static void VenusLighthouseAerie_ShowMessage(s32 speaker) {
 }
 
 /// Turns one object event and waits ten frames.
-static void VenusLighthouseAerie_FaceObjectEvent(s32 objectEvent, s32 facing) {
-  Engine_ObjectEventFaceDirection(objectEvent, facing, 10);
+static void VenusLighthouseAerie_FaceObjectEvent(s32 localId, s32 facing) {
+  Engine_ObjectEventFaceDirection(localId, facing, 10);
 }
 
 /// Brings the party onto the aerie and reveals the argument over Sheba.
@@ -822,17 +822,17 @@ static void VenusLighthouseAerie_OverhearSaturosAndMenardi(void) {
 }
 
 /// Shows or hides one companion, setting its movement speed when shown.
-static void VenusLighthouseAerie_ShowPartyMember(s32 objectEventId, s32 shown) {
+static void VenusLighthouseAerie_ShowPartyMember(s32 localId, s32 shown) {
   struct ObjectEvent *member;
 
   if (shown != 0) {
-    ObjectEvent_SetChildValue(objectEventId, SPRITE_COLOR_NORMAL);
-    member = ObjectEvent_Get(objectEventId);
+    ObjectEvent_SetChildValue(localId, SPRITE_COLOR_NORMAL);
+    member = ObjectEvent_Get(localId);
     Engine_ObjectEventSetSpriteFlags(member, 1);
-    ObjectEvent_SetSpeed(objectEventId, PIXELS(4) / 5, PIXELS(2) / 5);
+    ObjectEvent_SetSpeed(localId, PIXELS(4) / 5, PIXELS(2) / 5);
   } else {
-    ObjectEvent_SetChildValue(objectEventId, SPRITE_COLOR_HIDDEN);
-    member = ObjectEvent_Get(objectEventId);
+    ObjectEvent_SetChildValue(localId, SPRITE_COLOR_HIDDEN);
+    member = ObjectEvent_Get(localId);
     Engine_ObjectEventSetSpriteFlags(member, 0);
   }
 }
@@ -846,7 +846,7 @@ static void VenusLighthouseAerie_ShowPartyMember(s32 objectEventId, s32 shown) {
 /// aerie's music.
 static void EventScript_ConfrontSaturosAndMenardi(void) {
   s32 rodOwner;
-  struct ObjectEvent *object;
+  struct ObjectEvent *objectEvent;
   s32 answerAccepted;
   s32 frame;
   s32 receiptMessage;
@@ -868,17 +868,17 @@ static void EventScript_ConfrontSaturosAndMenardi(void) {
   ObjectEvent_SetSpeed(GARET, PIXELS(1), PIXELS(1) / 2);
   ObjectEvent_SetSpeed(IVAN, PIXELS(1), PIXELS(1) / 2);
   ObjectEvent_SetSpeed(MIA, PIXELS(7) / 5, PIXELS(7) / 10);
-  object = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
-  if (object != 0) {
-    ObjectEvent_SetPosition(GARET, object->x.fixed, object->z.fixed);
+  objectEvent = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
+  if (objectEvent != 0) {
+    ObjectEvent_SetPosition(GARET, objectEvent->x.fixed, objectEvent->z.fixed);
   }
-  object = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
-  if (object != 0) {
-    ObjectEvent_SetPosition(IVAN, object->x.fixed, object->z.fixed);
+  objectEvent = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
+  if (objectEvent != 0) {
+    ObjectEvent_SetPosition(IVAN, objectEvent->x.fixed, objectEvent->z.fixed);
   }
-  object = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
-  if (object != 0) {
-    ObjectEvent_SetPosition(MIA, object->x.fixed, object->z.fixed);
+  objectEvent = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
+  if (objectEvent != 0) {
+    ObjectEvent_SetPosition(MIA, objectEvent->x.fixed, objectEvent->z.fixed);
   }
   ObjectEvent_WalkTo(GARET, 328, 168);
   ObjectEvent_WalkTo(IVAN, 340, 196);
@@ -953,8 +953,8 @@ static void EventScript_ConfrontSaturosAndMenardi(void) {
   Engine_ObjectEventFaceDirection(LOCALID_FELIX, FACING_SOUTHEAST + FACING_STEP,
                                   0);
   ObjectEvent_WalkToAndWait(SHEBA, 276, 192);
-  object = ObjectEvent_GetById(LOCALID_MENARDI);
-  object->facing = FACING_SOUTH + FACING_STEP;
+  objectEvent = ObjectEvent_GetById(LOCALID_MENARDI);
+  objectEvent->facing = FACING_SOUTH + FACING_STEP;
   Engine_TaskWait(1);
   Engine_ObjectEventStartRepeatedMotion(LOCALID_MENARDI, 2);
   VenusLighthouseAerie_ShowMessage(SPEAKER_PORTRAIT_RIGHT | LOCALID_MENARDI);
@@ -972,8 +972,8 @@ static void EventScript_ConfrontSaturosAndMenardi(void) {
   Engine_TaskWait(1);
   frame = 0;
   do {
-    object = ObjectEvent_GetById(SHEBA);
-    VenusLighthouseAerie_FlashObjectEventPalette(object);
+    objectEvent = ObjectEvent_GetById(SHEBA);
+    VenusLighthouseAerie_FlashObjectEventPalette(objectEvent);
     frame = (frame + 1);
     Engine_TaskWait(1);
   } while ((u32)frame <= 39);
@@ -1152,8 +1152,8 @@ static void EventScript_ConfrontSaturosAndMenardi(void) {
                                   0);
   ObjectEvent_WalkToAndWait(SHEBA, 276, 192);
   Script_PlayCue(MUS_SILENCE);
-  object = ObjectEvent_GetById(LOCALID_MENARDI);
-  object->facing = FACING_SOUTH + FACING_STEP;
+  objectEvent = ObjectEvent_GetById(LOCALID_MENARDI);
+  objectEvent->facing = FACING_SOUTH + FACING_STEP;
   Engine_TaskWait(1);
   Engine_ObjectEventRunRepeatedMotion(LOCALID_MENARDI, 1);
   VenusLighthouseAerie_ShowMessage(LOCALID_MENARDI);
@@ -1273,11 +1273,11 @@ static void EventScript_ConfrontSaturosAndMenardi(void) {
                                      gVenusLighthouseAerie_StepBackWestAction);
   Battle_SetStart(BATTLE_START_SCRIPTED);
   {
-    s32 objectEvent = (s32)&MapId_VenusLighthouseAerie;
+    s32 localId = (s32)&MapId_VenusLighthouseAerie;
 
-    FieldScript_SetNextDestination(objectEvent,
+    FieldScript_SetNextDestination(localId,
                                    VENUS_LIGHTHOUSE_AERIE_AFTER_FIRST_BATTLE);
-    FieldScript_SetDefeatDestination(objectEvent,
+    FieldScript_SetDefeatDestination(localId,
                                      VENUS_LIGHTHOUSE_AERIE_AFTER_DEFEAT);
   }
   Field_RequestBattleFromEncounterTable(ENCOUNTER_ZONE_SCRIPTED, 1);

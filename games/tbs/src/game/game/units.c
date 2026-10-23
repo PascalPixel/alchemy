@@ -585,7 +585,7 @@ void GameState_InitializeDefaults(void) {
   gGameState.dashKeys = KEY_B;
   gGameState.firstShortcut = 0;
   gGameState.secondShortcut = 0;
-  gGameState.selectedObjectEvent = 0;
+  gGameState.selectedLocalId = 0;
   Party_AddActiveOwner(0);
   gGameState.coins = 0;
   gGameState.messageSpeed = 1;

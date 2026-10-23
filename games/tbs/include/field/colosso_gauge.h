@@ -32,16 +32,16 @@ struct ColossoGaugeWork {
   /// Nonzero keeps the gauge down (level 2); only the unused
   /// Colosso_SetGaugeHold sets it.
   s16 hold;
-  s16 playerObjectEvent; ///< the local id drawn as the player's marker
+  s16 playerLocalId; ///< the local id drawn as the player's marker
   /// The local id drawn as the opponent's marker, and the object event that
   /// runs the recorded path.
-  s16 opponentObjectEvent;
+  s16 opponentLocalId;
   /// The first finisher's prize: the object event raised over that finisher,
   /// who stops at finishZ minus 16 pixels.
-  u16 finishItemObjectEventA;
+  u16 finishItemLocalIdA;
   /// The second finisher's prize; that finisher stops at finishZ plus 16
   /// pixels.
-  u16 finishItemObjectEventB;
+  u16 finishItemLocalIdB;
   /// 16-pixel bar pieces either side of the centre: 6 in Colosseum Final 3,
   /// 4 in Final 1 and 5 in Final 2.
   s16 segments;
@@ -56,10 +56,10 @@ STATIC_ASSERT(sizeof(struct ColossoGaugeWork) == 240);
 STATIC_ASSERT(offsetof(struct ColossoGaugeWork, vramBlock) == 216);
 STATIC_ASSERT(offsetof(struct ColossoGaugeWork, level) == 218);
 STATIC_ASSERT(offsetof(struct ColossoGaugeWork, hold) == 220);
-STATIC_ASSERT(offsetof(struct ColossoGaugeWork, playerObjectEvent) == 222);
-STATIC_ASSERT(offsetof(struct ColossoGaugeWork, opponentObjectEvent) == 224);
-STATIC_ASSERT(offsetof(struct ColossoGaugeWork, finishItemObjectEventA) == 226);
-STATIC_ASSERT(offsetof(struct ColossoGaugeWork, finishItemObjectEventB) == 228);
+STATIC_ASSERT(offsetof(struct ColossoGaugeWork, playerLocalId) == 222);
+STATIC_ASSERT(offsetof(struct ColossoGaugeWork, opponentLocalId) == 224);
+STATIC_ASSERT(offsetof(struct ColossoGaugeWork, finishItemLocalIdA) == 226);
+STATIC_ASSERT(offsetof(struct ColossoGaugeWork, finishItemLocalIdB) == 228);
 STATIC_ASSERT(offsetof(struct ColossoGaugeWork, segments) == 230);
 STATIC_ASSERT(offsetof(struct ColossoGaugeWork, finishX) == 232);
 STATIC_ASSERT(offsetof(struct ColossoGaugeWork, finishZ) == 236);

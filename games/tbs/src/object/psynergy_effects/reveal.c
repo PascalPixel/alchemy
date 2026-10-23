@@ -44,7 +44,7 @@ void FieldEffect_WatchLeaderDistance(void) {
   s32 distanceZ;
 
   work = (struct FieldWork *)gEventWork;
-  objectEvent = ObjectTable_Get(gGameState.selectedObjectEvent);
+  objectEvent = ObjectTable_Get(gGameState.selectedLocalId);
   if (work->effectTimerRunning != 0) {
     timer = &work->revealFrames;
     if (*timer != 0)
@@ -90,7 +90,7 @@ void FieldEffect_RunReveal(void) {
   ObjectDispatch_ApplyValueToKind200Children(6);
   DisplayTransition_InitializeBattleEffectState(8);
   state = WORK_SLOT(HEAP_SLOT_TRANSITION);
-  target = ObjectTable_Get(gGameState.selectedObjectEvent);
+  target = ObjectTable_Get(gGameState.selectedLocalId);
   state->centreX = target->x.fixed;
   state->centreY = target->z.fixed - target->y.fixed;
   // From the plain colours (PALETTE_TRANSFORM_PLAIN, 0x10000) the BG half
@@ -106,7 +106,7 @@ void FieldEffect_RunReveal(void) {
   event = FieldEffect_FindMatchingEvent(PSYNERGY_EV(PSYNERGY_PHASE_EFFECT_ACTS),
                                         FIELD_KIND_REVEAL, &eventTarget);
   if (event != NULL)
-    Field_RunEventAction(event, gGameState.selectedObjectEvent, eventTarget);
+    Field_RunEventAction(event, gGameState.selectedLocalId, eventTarget);
   AudioCommand_PlayFar(SE_131);
 
   // Record the centre (in pixels) and the time in the event work, and put
@@ -169,7 +169,7 @@ void FieldEffect_EndReveal(void) {
         FieldEffect_FindMatchingEvent(PSYNERGY_EV(PSYNERGY_PHASE_EFFECT_ENDS),
                                       FIELD_KIND_REVEAL, &eventTarget);
     if (event != NULL)
-      Field_RunEventAction(event, gGameState.selectedObjectEvent, eventTarget);
+      Field_RunEventAction(event, gGameState.selectedLocalId, eventTarget);
 
     if (effectWork->childOption == 0) {
       scene->nextMode = 0;

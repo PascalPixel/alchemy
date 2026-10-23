@@ -189,7 +189,7 @@ void FieldEffect_RunFrost(void) {
         FieldEffect_FindMatchingEvent(PSYNERGY_EV(PSYNERGY_PHASE_EFFECT_ACTS),
                                       FIELD_KIND_FROST, &eventTarget);
     if (event != NULL) {
-      Field_RunEventAction(event, gGameState.selectedObjectEvent, eventTarget);
+      Field_RunEventAction(event, gGameState.selectedLocalId, eventTarget);
     }
     WaitFrames(20);
   }

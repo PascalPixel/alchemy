@@ -6,7 +6,7 @@
 // UB: the early calls implicitly declare an int result, but the function
 // returns void. Keep that legacy call form for the matching build.
 #ifdef UBFIX
-void Colosso_ShowItemIcon(s32 objectEventId, s32 itemId);
+void Colosso_ShowItemIcon(s32 localId, s32 itemId);
 #endif
 
 #endif

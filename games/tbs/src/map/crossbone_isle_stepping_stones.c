@@ -282,17 +282,16 @@ static s32 CrossboneIsleSteppingStones_QueryFootprint(
 /// Draws a log's footprint where it floats on CrossboneIsleFloodgate's raised
 /// water, lying across or along the room as the log does, and puts its object
 /// event under the leader.
-static s32 CrossboneIsleSteppingStones_DrawRaisedFootprint(s32 objectEventId) {
-  struct ObjectEvent *objectEvent = ObjectEvent_GetById(objectEventId);
+static s32 CrossboneIsleSteppingStones_DrawRaisedFootprint(s32 localId) {
+  struct ObjectEvent *objectEvent = ObjectEvent_GetById(localId);
   u32 width, depth;
   s32 layerOriginX, layerOriginZ;
   struct StagedObjectEventProbe probe;
   s32 cellX, cellZ;
   u8 mask;
 
-  if (CrossboneIsleSteppingStones_QueryFootprint(objectEventId, &width, &depth,
-                                                 &probe, &layerOriginX,
-                                                 &layerOriginZ) == 0) {
+  if (CrossboneIsleSteppingStones_QueryFootprint(
+          localId, &width, &depth, &probe, &layerOriginX, &layerOriginZ) == 0) {
     return 0;
   }
 
@@ -328,16 +327,14 @@ static inline void CrossboneIsleSteppingStones_DrawFloatingLogs(void) {
 
 /// Restores the ground metatiles and metatile behaviors under the object
 /// event's footprint.
-static s32
-CrossboneIsleSteppingStones_RestoreGroundFootprint(s32 objectEventId) {
-  struct ObjectEvent *objectEvent = ObjectEvent_GetById(objectEventId);
+static s32 CrossboneIsleSteppingStones_RestoreGroundFootprint(s32 localId) {
+  struct ObjectEvent *objectEvent = ObjectEvent_GetById(localId);
   u32 width, depth;
   s32 layerOriginX, layerOriginZ;
   struct StagedObjectEventProbe probe;
 
-  if (CrossboneIsleSteppingStones_QueryFootprint(objectEventId, &width, &depth,
-                                                 &probe, &layerOriginX,
-                                                 &layerOriginZ) == 0) {
+  if (CrossboneIsleSteppingStones_QueryFootprint(
+          localId, &width, &depth, &probe, &layerOriginX, &layerOriginZ) == 0) {
     return 0;
   }
 
@@ -1532,13 +1529,12 @@ static void CrossboneIsleSteppingStones_PrepLoweredObjectEvent(s32 id) {
 
 /// Restores a previously frozen pillar's mode, map cell, priority hook, and
 /// script.
-static void
-CrossboneIsleSteppingStones_RestoreFlaggedPillar(s32 objectEventId) {
+static void CrossboneIsleSteppingStones_RestoreFlaggedPillar(s32 localId) {
   struct ObjectEvent *objectEvent;
 
-  objectEvent = ObjectEvent_GetById(objectEventId);
-  if (FLAG_CHECK(FIRST_FROZEN_PUDDLE_FLAG + objectEventId -
-                 LOCALID_FIRST_PUDDLE) != 0) {
+  objectEvent = ObjectEvent_GetById(localId);
+  if (FLAG_CHECK(FIRST_FROZEN_PUDDLE_FLAG + localId - LOCALID_FIRST_PUDDLE) !=
+      0) {
     ObjectEvent_SetMode(objectEvent, 5);
 #ifdef UBFIX
     objectEvent->update =
@@ -1549,7 +1545,7 @@ CrossboneIsleSteppingStones_RestoreFlaggedPillar(s32 objectEventId) {
 #endif
     MapGrid_CopyCellAttributes(20, 14, 1, 1, objectEvent->x.fixed >> 20,
                                objectEvent->z.fixed >> 20);
-    ObjectEvent_SetActionScript(objectEventId,
+    ObjectEvent_SetActionScript(localId,
                                 gCrossboneIsleSteppingStones_ActionTable);
   }
 }

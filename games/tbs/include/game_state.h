@@ -98,20 +98,20 @@ struct GameState {
   /// The map record's layout (layoutIndex); the world map's is 1, which the
   /// code compares as (s32)&MapId_Clear.
   s16 layoutId;
-  s32 x;                   ///< 16.16 fixed-point pixels
-  s32 y;                   ///< 16.16 fixed-point pixels
-  s32 z;                   ///< 16.16 fixed-point pixels
-  u32 heading;             ///< 1/65536 turns
-  u16 turn;                ///< the leader's terrainId, kept with its position
-  s16 battleCue;           ///< the battle music chosen for the encounter
-  s16 cue;                 ///< the current map's field music
-  u8 movementMode;         ///< 1 while the leader is climbing, 0 otherwise
-  u8 unk1f3;               ///< not named by TBS code
-  s32 selectedObjectEvent; ///< the leader: its unit and its object event
-  u8 activeOwners[8];      ///< the party in order
-  u8 unk200[5];            ///< not named by TBS code
-  u8 paletteGlow[2];       ///< window hue (0 to 23), brightness (0 to 14)
-  u8 unk207[3];            ///< not named by TBS code
+  s32 x;               ///< 16.16 fixed-point pixels
+  s32 y;               ///< 16.16 fixed-point pixels
+  s32 z;               ///< 16.16 fixed-point pixels
+  u32 heading;         ///< 1/65536 turns
+  u16 turn;            ///< the leader's terrainId, kept with its position
+  s16 battleCue;       ///< the battle music chosen for the encounter
+  s16 cue;             ///< the current map's field music
+  u8 movementMode;     ///< 1 while the leader is climbing, 0 otherwise
+  u8 unk1f3;           ///< not named by TBS code
+  s32 selectedLocalId; ///< the leader: its unit and its object event
+  u8 activeOwners[8];  ///< the party in order
+  u8 unk200[5];        ///< not named by TBS code
+  u8 paletteGlow[2];   ///< window hue (0 to 23), brightness (0 to 14)
+  u8 unk207[3];        ///< not named by TBS code
   /// The voice sound option: 1, as on a new game, plays each speaker's voice
   /// sound as their message types (FieldEffect_GetResourceId).
   u8 speech;
@@ -200,7 +200,7 @@ STATIC_ASSERT(offsetof(struct GameState, warpDest) == 0x1c2);
 STATIC_ASSERT(offsetof(struct GameState, special) == 0x1d6);
 STATIC_ASSERT(offsetof(struct GameState, x) == 0x1dc);
 STATIC_ASSERT(offsetof(struct GameState, movementMode) == 0x1f2);
-STATIC_ASSERT(offsetof(struct GameState, selectedObjectEvent) == 0x1f4);
+STATIC_ASSERT(offsetof(struct GameState, selectedLocalId) == 0x1f4);
 STATIC_ASSERT(offsetof(struct GameState, activeOwners) == 0x1f8);
 STATIC_ASSERT(offsetof(struct GameState, speech) == 0x20a);
 STATIC_ASSERT(offsetof(struct GameState, messageSpeed) == 0x20c);

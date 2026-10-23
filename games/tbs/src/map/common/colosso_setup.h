@@ -8,14 +8,13 @@
 #include "flags.h"
 
 /// Starts the race gauge (struct ColossoRaceWork, in HEAP_SLOT_COLOSSO_RACE):
-/// Isaac and the opponent as playerObjectEvent and opponentObjectEvent, a bar
+/// Isaac and the opponent as playerLocalId and opponentLocalId, a bar
 /// of segments pieces either side, and the finish at pixel (finishX, finishZ)
 /// in 16.16, where the two item object events stand. Unless the party returns
 /// to where it was, the opponent is put opposite Isaac across x = finishX.
-void Colosso_StartRaceGauge(s32 playerObjectEvent, s32 opponentObjectEvent,
+void Colosso_StartRaceGauge(s32 playerLocalId, s32 opponentLocalId,
                             s32 segments, s32 finishX, s32 finishZ,
-                            s32 finishItemObjectEventA,
-                            s32 finishItemObjectEventB) {
+                            s32 finishItemLocalIdA, s32 finishItemLocalIdB) {
 
   struct ColossoRaceWork *work;
   struct ObjectEvent *player;
@@ -27,16 +26,16 @@ void Colosso_StartRaceGauge(s32 playerObjectEvent, s32 opponentObjectEvent,
                                sizeof(struct ColossoRaceWork));
   handle = (s32)Runtime_BumpAllocateAlternatePool(512);
 
-  work->gauge.playerObjectEvent = playerObjectEvent;
-  work->gauge.opponentObjectEvent = opponentObjectEvent;
-  work->gauge.finishItemObjectEventA = finishItemObjectEventA;
-  work->gauge.finishItemObjectEventB = finishItemObjectEventB;
+  work->gauge.playerLocalId = playerLocalId;
+  work->gauge.opponentLocalId = opponentLocalId;
+  work->gauge.finishItemLocalIdA = finishItemLocalIdA;
+  work->gauge.finishItemLocalIdB = finishItemLocalIdB;
   work->gauge.segments = segments;
   work->gauge.finishX = finishX;
   work->gauge.finishZ = finishZ;
 
-  player = ObjectEvent_GetById(playerObjectEvent);
-  opponent = ObjectEvent_GetById(opponentObjectEvent);
+  player = ObjectEvent_GetById(playerLocalId);
+  opponent = ObjectEvent_GetById(opponentLocalId);
 
   if (Engine_GameFlagIsSet(FLAG_KEEP_PARTY_POSITION) == 0) {
     opponent->x.fixed = (finishX << 1) - player->x.fixed;
@@ -76,7 +75,7 @@ void Colosso_StartOpponent(s32 resource) {
   if (Engine_GameFlagIsSet(FLAG_KEEP_PARTY_POSITION) == 0) {
     recorder->mode = PATH_RECORDER_PLAY;
     recorder->mirror = 1;
-    recorder->objectEvent = work->gauge.opponentObjectEvent;
+    recorder->localId = work->gauge.opponentLocalId;
     recorder->still = 0;
     recorder->pathIndex = 0;
   }

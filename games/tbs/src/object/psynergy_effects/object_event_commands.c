@@ -7,12 +7,12 @@
 /// Returns an object event, or NULL if it does not exist. Map scripts reach it
 /// through ObjectEvent_Get and OBJECT_GET; it is the far-callable form of
 /// ObjectTable_Get that the other banks use.
-struct ObjectEvent *ObjectEvent_GetById(s32 objectEvent) {
-  struct ObjectEvent *object = ObjectTable_Get(objectEvent);
+struct ObjectEvent *ObjectEvent_GetById(s32 localId) {
+  struct ObjectEvent *objectEvent = ObjectTable_Get(localId);
 
-  if (object == NULL)
+  if (objectEvent == NULL)
     return NULL;
-  return object;
+  return objectEvent;
 }
 
 /// The script command "set object event speed": its top speed and
@@ -257,8 +257,8 @@ void Motion_LaunchFromFocusedObject(u32 objectId, s32 xOffset, s32 zOffset,
     struct ObjectRuntime *leader;
 
     ObjectMotion_SetSpeedParameters(objectId, 0x9999, 0x4CCC);
-    leader = (struct ObjectRuntime *)ObjectEvent_GetById(
-        gGameState.selectedObjectEvent);
+    leader =
+        (struct ObjectRuntime *)ObjectEvent_GetById(gGameState.selectedLocalId);
     if (leader != NULL)
       ObjectMotion_SetHorizontalPositionWithTerrain(objectId, leader->x,
                                                     leader->z);
@@ -573,13 +573,13 @@ void FieldEffect_SpawnBurstParticle(struct ObjectEvent *source, s32 param) {
 /// (FieldEffect_PlayQueuedSound). Called by Field_RunPushTileEvent for a ledge
 /// (MB_LEDGE) with pose 6 and param 0, and by seven maps through
 /// FieldObjectEvent_JumpDownLedge; Mercury Lighthouse passes -1.
-void ObjectEvent_JumpDownLedge(s32 objectEvent, s32 pose, s32 param) {
+void ObjectEvent_JumpDownLedge(s32 localId, s32 pose, s32 param) {
   s32 nextY;
   s32 startZ;
   struct ObjectRuntime *object;
   u8 *objectFlags;
 
-  object = (struct ObjectRuntime *)ObjectEvent_GetById(objectEvent);
+  object = (struct ObjectRuntime *)ObjectEvent_GetById(localId);
   startZ = object->z;
   if (object != 0) {
     AudioCommand_PlayFar(AUDIO_CUE_FADE_SLOT3);
@@ -603,7 +603,7 @@ void ObjectEvent_JumpDownLedge(s32 objectEvent, s32 pose, s32 param) {
     AudioCommand_PlayFar(SE_217);
     // From here pose counts frames.
     pose = 0;
-    ObjectMotion_ArmCallback(objectEvent, 0x5000, 0);
+    ObjectMotion_ArmCallback(localId, 0x5000, 0);
     *objectFlags = 0;
     do {
       nextY = object->y + 0xFFFE0000;
@@ -955,26 +955,26 @@ void FieldScript_SetMessageId(s32 message) {
 }
 
 /// Returns the sprite (the first animation's id) of the object event in the low
-/// 12 bits of objectEvent, or -1 if there is no such animated object event. The
+/// 12 bits of localId, or -1 if there is no such animated object event. The
 /// message commands (messages.c) call it to find the speaker's portrait and
 /// voice.
-s32 ObjectTable_ReadActiveValue(s32 objectEvent) {
+s32 ObjectTable_ReadActiveValue(s32 localId) {
 #ifdef UBFIX
   struct FieldWork *state = (struct FieldWork *)gEventWork;
   s32 sprite = -1;
   struct ObjectRuntime *entry;
 
-  objectEvent &= 0x0fff;
+  localId &= 0x0fff;
   // BUG: the -1 sentinel becomes index 4095, beyond the event work. All
   // indices from 66 to 4095 lie outside the object event table.
-  if (objectEvent >= 66)
+  if (localId >= 66)
     return -1;
-  entry = (struct ObjectRuntime *)state->objectEvents[objectEvent];
+  entry = (struct ObjectRuntime *)state->objectEvents[localId];
 #else
   struct FieldWork *state = (struct FieldWork *)gEventWork;
   s32 sprite = -1;
   struct ObjectRuntime *entry =
-      (struct ObjectRuntime *)state->objectEvents[objectEvent & 0x0fff];
+      (struct ObjectRuntime *)state->objectEvents[localId & 0x0fff];
 #endif
 
   if (entry != 0 && entry->animationKind == OBJECT_SPRITE_ONE)

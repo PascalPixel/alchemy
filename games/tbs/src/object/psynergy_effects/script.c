@@ -72,7 +72,7 @@ void FieldScript_WaitFrames(s32 frames) {
 void Leader_StopMoving(void) {
   struct ObjectRuntime *object;
 
-  object = ObjectTable_Get(gGameState.selectedObjectEvent);
+  object = ObjectTable_Get(gGameState.selectedLocalId);
   object->speedLimit = 0x10000;
   object->acceleration = 0x8000;
   object->targetX = OBJ_EVENT_NO_TARGET;
@@ -114,7 +114,7 @@ void FieldScript_Start(void) {
   // XXX: flag 0x132 is cleared at every script and nothing in ☀️ names it; the
   // map scripts or overlays that set or test 0x132 would settle its meaning.
   GameFlag_ClearBitFar(0x132);
-  runtime->speaker = gGameState.selectedObjectEvent;
+  runtime->speaker = gGameState.selectedLocalId;
   runtime->messageWindow = 0;
 }
 
@@ -124,7 +124,7 @@ void FieldScript_Start(void) {
 /// with FieldScript_Start closes with it.
 void FieldScript_End(void) {
   Scheduler_RemoveCallback(FieldScript_UpdateDebugSkip);
-  Camera_FollowObjectEvent(gGameState.selectedObjectEvent, 1);
+  Camera_FollowObjectEvent(gGameState.selectedLocalId, 1);
   GameFlag_RefreshLureCapFar();
 }
 
@@ -144,7 +144,7 @@ void FieldScript_RunObjectHookAndWait(struct ObjectEventTemplate *table) {
   WaitFrames(1);
   // XXX: the leader's object is fetched and not used; a caller in an overlay
   // that reads the result would show whether this returned it once.
-  ObjectTable_Get(gGameState.selectedObjectEvent);
+  ObjectTable_Get(gGameState.selectedLocalId);
 }
 
 /// Spawns the object events of an object event template table after the last
@@ -239,7 +239,7 @@ void Party_RemoveOwnerRestored(s32 unit) {
       survivingMembers++;
   }
   if (survivingMembers == 0) {
-    vitals = Unit_GetFar(gGameState.selectedObjectEvent);
+    vitals = Unit_GetFar(gGameState.selectedLocalId);
     vitals->hp = 1;
     Unit_UpdateGauges(vitals);
   }
@@ -350,7 +350,7 @@ s32 PartyInventory_GiveItem(s32 item, s32 unused) {
         Inventory_DiscardFar(member, slot);
       owner = PartyInventory_AddFar(item);
       AudioCommand_PlayFar(MUS_TREASURE_FOUND);
-      if (owner == gGameState.selectedObjectEvent) {
+      if (owner == gGameState.selectedLocalId) {
         ItemGift_ShowGotItem(item, 3);
       } else {
         UiWork_PushValueSlotFar(item, 2);
@@ -365,7 +365,7 @@ s32 PartyInventory_GiveItem(s32 item, s32 unused) {
     // <member>." when someone other than the leader carries it.
     AudioCommand_PlayFar(MUS_TREASURE_FOUND);
     ItemGift_ShowGotItem(item, 3);
-    if (owner != gGameState.selectedObjectEvent) {
+    if (owner != gGameState.selectedLocalId) {
       UiWork_PushValueSlotFar(item, 2);
       UiWork_PushValueSlotFar(owner, 1);
       UiText_ShowPositionedMessageAndWaitFar(GIFT_RECEIVED_MESSAGE,
@@ -395,8 +395,8 @@ void Inventory_ReservedNoOp(void) {}
 /// animation: the object event has finished a one-off animation such as a nod.
 /// Only object events drawn as an animation object (OBJECT_SPRITE_ONE) are
 /// waited for. Called by FieldScript_AskYesNoWithObjectEventAnimation.
-void ObjectEvent_WaitForAnimationEnd(s32 objectEvent, s32 animation) {
-  struct ObjectRuntime *objectEventObject = ObjectTable_Get(objectEvent);
+void ObjectEvent_WaitForAnimationEnd(s32 localId, s32 animation) {
+  struct ObjectRuntime *objectEventObject = ObjectTable_Get(localId);
 
   if (objectEventObject != 0 &&
       objectEventObject->animationKind == OBJECT_SPRITE_ONE) {
@@ -420,8 +420,7 @@ void ObjectEvent_WaitForAnimationEnd(s32 objectEvent, s32 animation) {
 /// and shakes its head (animation 4) at no. Returns 0 for yes, 1 for no.
 /// Map scripts reach it as Engine_ScriptChooseYesNo (about 54 of them); the
 /// link lobby and FieldScript_AskYesNoAndShowResponse call it too.
-s32 FieldScript_AskYesNoWithObjectEventAnimation(s32 objectEvent,
-                                                 s32 forceBottom) {
+s32 FieldScript_AskYesNoWithObjectEventAnimation(s32 localId, s32 forceBottom) {
   struct FieldWork *work = (struct FieldWork *)gEventWork;
   s32 sprite = Map_FindObjectEventTemplate(work->speaker)->sprite;
   struct UiWindow *window = (struct UiWindow *)work->messageWindow;
@@ -456,15 +455,15 @@ s32 FieldScript_AskYesNoWithObjectEventAnimation(s32 objectEvent,
   answer = Menu_RunConfirmSelectionFar(useBottom, work->nameMessage,
                                        work->nameWidth, 0);
   if (answer != 0) {
-    ObjectEvent_SetModeById(objectEvent, 4);
+    ObjectEvent_SetModeById(localId, 4);
     UiWork_FinalizeEntityMatchingLocalizedIdFar(sprite);
     UiWork_FinalizePendingCoreFar();
-    ObjectEvent_WaitForAnimationEnd(objectEvent, 4);
+    ObjectEvent_WaitForAnimationEnd(localId, 4);
   } else {
-    ObjectEvent_SetModeById(objectEvent, 3);
+    ObjectEvent_SetModeById(localId, 3);
     UiWork_FinalizeEntityMatchingLocalizedIdFar(sprite);
     UiWork_FinalizePendingCoreFar();
-    ObjectEvent_WaitForAnimationEnd(objectEvent, 3);
+    ObjectEvent_WaitForAnimationEnd(localId, 3);
   }
 
   return answer;

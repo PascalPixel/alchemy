@@ -1755,7 +1755,7 @@ static void MercuryLighthouse_FadePaletteToBlack(void) {
 
 /// Raises an object event into the passage with sparks for 48 ticks, two frames
 /// each. Its upward displacement accelerates by about 0.1 pixel per tick.
-static void MercuryLighthouse_RaiseObjectEventWithSparks(s32 objectEventId) {
+static void MercuryLighthouse_RaiseObjectEventWithSparks(s32 localId) {
   struct EffectOptions optionsStorage;
   struct EffectOptions *options;
   struct ObjectEvent *objectEvent;
@@ -1764,10 +1764,10 @@ static void MercuryLighthouse_RaiseObjectEventWithSparks(s32 objectEventId) {
   s32 particleY;
   s32 riseSpeed;
 
-  objectEvent = ObjectEvent_GetById(objectEventId);
+  objectEvent = ObjectEvent_GetById(localId);
   objectEvent->motionFlags = 0;
   Engine_ObjectEventSetSpriteFlags(objectEvent, 0);
-  ObjectEvent_SetChildValue(objectEventId, 0x100);
+  ObjectEvent_SetChildValue(localId, 0x100);
   Engine_AudioPlayCue(SE_221);
   options = &optionsStorage;
   options->priority = 1;

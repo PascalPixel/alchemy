@@ -773,9 +773,8 @@ static void EventScript_FlipSwitch(void) {
 }
 
 /// Resets a low water drop sharing the subject's cell and reports a hit.
-static s32
-VaultCave_ResetFallingObjectAtObjectEventCell(s32 subjectObjectEventId) {
-  struct ObjectEvent *subject = ObjectEvent_GetById(subjectObjectEventId);
+static s32 VaultCave_ResetFallingObjectAtObjectEventCell(s32 subjectLocalId) {
+  struct ObjectEvent *subject = ObjectEvent_GetById(subjectLocalId);
   s32 fallingIndex = 0;
 
   do {

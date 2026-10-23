@@ -5,8 +5,8 @@
 /// beside a sign that reads "Do not touch Floodgate Switch!", raises and lowers
 /// the river: with the water high the logs float (26 pixels up) and can be
 /// rolled along it; with it low they lie on the riverbed. A short log slides
-/// between two places, the leader can jump south across a gap (trigger 10), and
-/// a chest holds a Fur Coat. The forest keeps its cursed colours until Tret
+/// between two places, the leader can jump south across a gap (coord event 10),
+/// and a chest holds a Fur Coat. The forest keeps its cursed colours until Tret
 /// lifts the curse (FLAG_KOLIMA_CURSE_LIFTED).
 ///
 /// The water level, the short log's place and each log's cells are kept in
@@ -63,8 +63,8 @@
 #include "item_ids.h"
 #include "heap_state.h"
 
-/// The actors, numbering gKolimaForestFloodgateObjectEventTemplates' rows from
-/// LOCALID_FIRST_PLACED.
+/// The object events, numbering gKolimaForestFloodgateObjectEventTemplates'
+/// rows from LOCALID_FIRST_PLACED.
 enum {
   /// A short log that slides between x 72 and x 104.
   /// ★ Named from what the player sees: a log lying north to south (its
@@ -80,7 +80,7 @@ enum {
   LOCALID_SIGN
 };
 
-/// The collision code of the Floodgate Switch's cell, which a search flips.
+/// The metatile behavior of the Floodgate Switch's cell, which a search flips.
 enum { CELL_FLOODGATE_SWITCH = 9 };
 
 static void KolimaForestFloodgate_MarkShortLogCells(void);
@@ -122,12 +122,12 @@ static void KolimaForestFloodgate_PushLog(void) {
 }
 
 /// Kolima Forest (MapId_KolimaForestFloodgate), walking south into the gap
-/// (trigger 10): the leader jumps across.
+/// (coord event 10): the leader jumps across.
 static void KolimaForestFloodgate_JumpSouth(void) { Field_TryJumpForward(); }
 
 #include "common/map_grid_panel.h"
 
-/// Gives the short log's column of cells its collision: column 4 at the
+/// Gives the short log's column of cells its metatile behavior: column 4 at the
 /// west place, column 6 at the east.
 static void KolimaForestFloodgate_MarkShortLogCells(void) {
   if (*(s16 *)gKolimaForestFloodgateReturned == 1) {
@@ -470,7 +470,7 @@ static void KolimaForestFloodgate_CreateLogs(struct FloodgateLog *entry) {
   }
 }
 
-/// Writes a collision code into the four cells of each log.
+/// Writes a metatile behavior into the four cells of each log.
 void KolimaForestFloodgate_StampLogCells(const struct FloodgateLog *records,
                                          s32 value) {
 

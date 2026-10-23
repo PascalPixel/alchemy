@@ -1,6 +1,6 @@
 /// @file
 /// The sites of the three Colosso finals matches (Colosseum Final 1, 2 and 3):
-/// a helper for the race gauge that no scene calls.
+/// a helper for the race gauge that no map calls.
 #include "types.h"
 #include "heap_state.h"
 #include "colosso_gauge.h"

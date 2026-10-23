@@ -1,7 +1,7 @@
-/// @file Lalivero's buildings: two scenes in one overlay, with the area name
+/// @file Lalivero's buildings: two maps in one overlay, with the area name
 /// Lalivero, and Lalivero Sanctum for the Sanctum's rooms of LaliveroShops
 /// (LALIVERO_SHOPS_FROM_LALIVERO_NORTHEAST and LALIVERO_SHOPS_SANCTUM). Each
-/// scene has tables for before and after Venus Lighthouse, chosen by
+/// map has tables for before and after Venus Lighthouse, chosen by
 /// FLAG_VENUS_LIGHTHOUSE_PARTY_RETURNED, as the town's are (lalivero.c).
 ///
 /// MapId_LaliveroShops holds the houses, the weapon, armor and item shops and
@@ -18,7 +18,7 @@
 /// her chores. The aerie of Venus Lighthouse leads in by
 /// LALIVERO_FARANS_HOUSE_FROM_VENUS_LIGHTHOUSE_AERIE, which plays
 /// EventScript_ReportToFaran: the party reports to Faran and Iodem, in one of
-/// two versions by FLAG_SAW_SHIP_AT_IDEJIMA. Trigger 51 afterwards plays
+/// two versions by FLAG_SAW_SHIP_AT_IDEJIMA. Coord event 51 afterwards plays
 /// EventScript_IodemCallsOut (FLAG_IODEM_ASKED_TO_MEET), which sends the party
 /// outside, where Iodem gives it the Black Orb (lalivero.c). A barrel holds a
 /// Lucky Medal.
@@ -55,9 +55,9 @@
 #include "flags.h"
 static void LaliveroInteriors_TellFaranAboutJenna(void);
 
-/// An entrance that sets FLAG_VENUS_LIGHTHOUSE_PARTY_RETURNED. No exit leads to
-/// it and the entrance table has no row for it: only the debug scene selector,
-/// which warps to any entrance from 0 to 99, reaches it.
+/// A warp destination that sets FLAG_VENUS_LIGHTHOUSE_PARTY_RETURNED. No warp
+/// leads to it and the warp destination table has no row for it: only the debug
+/// map selector, which warps to any warp destination from 0 to 99, reaches it.
 enum {
   ENTRANCE_FROM_AERIE = 90,
 };
@@ -71,9 +71,9 @@ enum {
   LALIVERO_INN = 11
 };
 
-/// The actors of both scenes, numbered by the rows of each scene's placement
-/// tables. The people are named by what they say before Venus Lighthouse and by
-/// what their sprites show.
+/// The object events of both maps, numbered by the rows of each map's object
+/// event template tables. The people are named by what they say before Venus
+/// Lighthouse and by what their sprites show.
 enum LaliveroInteriorsLocalId {
   // The houses, the shops and the Sanctum (LaliveroShops).
   /// A young man with brown hair in a purple shirt, in the house at
@@ -191,9 +191,9 @@ enum LaliveroInteriorsLocalId {
 /// (graphics/sprite/spr_114.tsv): one frame held, lying asleep on his side.
 enum { ANIMATION_WORKER_LIE_ASLEEP = 6 };
 
-/// The place flag FLAG_MAPSEC_TEMP_00, which lasts until the party enters
-/// another place: the inn worker has apologized.
-/// ★ Named from the game: "Oh, I'm sorry..." (MsgLaliveroImSorry)
+/// The map-section temp flag FLAG_MAPSEC_TEMP_00, which lasts until the party
+/// enters another map section: the inn worker has apologized. ★ Named from the
+/// game: "Oh, I'm sorry..." (MsgLaliveroImSorry)
 enum { FLAG_INN_WORKER_APOLOGIZED = FLAG_MAPSEC_TEMP_00 };
 
 /// LaliveroFaransHouse: the inn worker sighs between chores.
@@ -216,7 +216,7 @@ const struct MapWarpRegion *LaliveroInteriors_GetRegions(void) {
 
 const u32 *LaliveroInteriors_GetWarps(void) { return gLaliveroInteriors_Warps; }
 
-/// The people of each scene; Faran's house fills up after Venus Lighthouse.
+/// The people of each map; Faran's house fills up after Venus Lighthouse.
 const struct ObjectEventTemplate *
 LaliveroInteriors_GetObjectEventTemplates(void) {
   if (gGameState.mapId == (s32)&MapId_LaliveroFaransHouse) {
@@ -362,7 +362,7 @@ static void EventScript_TalkToInnWorker(void) {
   Engine_ScriptEnd();
 }
 
-/// Lalivero (LaliveroFaransHouse), trigger 51 in Faran's house after the
+/// Lalivero (LaliveroFaransHouse), coord event 51 in Faran's house after the
 /// report: the camera finds Iodem, who asks the party to wait for him outside.
 static void EventScript_IodemCallsOut(void) {
 
@@ -392,7 +392,7 @@ static void EventScript_TalkToIodem(void) {
   Engine_ScriptShowMessage(LOCALID_IODEM, 0);
 }
 
-/// Both scenes, a doorway out: take the touched trigger's exit with the exit
+/// Both maps, a doorway out: take the touched coord event's warp with the exit
 /// sound.
 static void EventScript_LeaveBuilding(void) {
   struct EventWork *work = gEventWork;
@@ -402,7 +402,7 @@ static void EventScript_LeaveBuilding(void) {
   Engine_AudioPlayCue(SE_MAP_EXIT);
 }
 
-/// What the party can talk to, touch and search in each scene, before and
+/// What the party can talk to, touch and search in each map, before and
 /// after Venus Lighthouse.
 const struct MapEvent *LaliveroInteriors_GetEvents(void) {
   if (gGameState.mapId == (s32)&MapId_LaliveroFaransHouse) {
@@ -821,7 +821,7 @@ static void LaliveroInteriors_TellFaranAboutJenna(void) {
   Engine_ScriptOpenMessage(IVAN | SPEAKER_PORTRAIT_RIGHT, 0);
 }
 
-/// Sets both scenes up as the party enters: shopkeepers and the innkeeper
+/// Sets both maps up as the party enters: shopkeepers and the innkeeper
 /// behind their counters, the Sanctum as the place to wake after a defeat,
 /// the inn worker back at her chores, and the report to Faran on coming back
 /// from Venus Lighthouse.
@@ -872,7 +872,8 @@ s32 Map_Initialize(void) {
     if (gGameState.warpDest ==
         LALIVERO_FARANS_HOUSE_FROM_VENUS_LIGHTHOUSE_AERIE) {
       EventScript_ReportToFaran();
-      // Iodem and Faran turn toward the leader, as their later placements do.
+      // Iodem and Faran turn toward the leader, as their later object event
+      // templates do.
       Engine_ObjectEventSetActionCallback(ObjectEvent_GetById(LOCALID_IODEM),
                                           MOVEMENT_TYPE_FACE_LEADER);
       Engine_ObjectEventSetActionCallback(ObjectEvent_GetById(LOCALID_FARAN),

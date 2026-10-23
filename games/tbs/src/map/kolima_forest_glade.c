@@ -7,11 +7,11 @@
 /// (FLAG_KOLIMA_CURSE_LIFTED), KolimaPalette_Curse gives the forest redder,
 /// darker colours.
 ///
-/// Until the third patch the Nut's placement row tested Vale's
+/// Until the third patch the Nut's object event template row tested Vale's
 /// FLAG_VALE_NUT_CAUGHT rather than FLAG_KOLIMA_FOREST_NUT_CAUGHT, so once
 /// Vale's Nut had been caught this one was never placed.
 ///
-/// The scene's name, Glade, is ours, for what sets the map apart: open grass
+/// The map's name, Glade, is ours, for what sets the map apart: open grass
 /// and stumps ringed by trees, with no cliff or river
 /// (places/kolima-forest-glade_cursed/map-0.png).
 ///
@@ -44,7 +44,7 @@
 #include "map_tables.h"
 #include "item_ids.h"
 
-/// Kolima Forest's actors, numbering the rows of
+/// Kolima Forest's object events, numbering the rows of
 /// gKolimaForestGlade_ObjectEventTemplates.
 enum KolimaForestGladeLocalId {
   /// The three logs.
@@ -166,7 +166,7 @@ u32 gKolimaForestGlade_Warps[] = {
     MAP_WARPS_END,
 };
 
-/// Until the third patch the Nut's placement tested Vale's FLAG_VALE_NUT_CAUGHT, not the flag
+/// Until the third patch the Nut's object event template tested Vale's FLAG_VALE_NUT_CAUGHT, not the flag
 /// catching it sets.
 struct ObjectEventTemplate gKolimaForestGlade_ObjectEventTemplates[] = {
     { SPRITE_LOG_NORTH_SOUTH, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,

@@ -1,13 +1,13 @@
 /// @file
 /// Kalay, the merchants' town Lord Hammet founded, the front of his palace,
-/// and the tunnel beneath them: four places in six scenes.
+/// and the tunnel beneath them: four map sections in six maps.
 ///
-/// - Kalay (MapId_Kalay), the town. Eight doors (triggers 1 to 8) open into
+/// - Kalay (MapId_Kalay), the town. Eight doors (coord events 1 to 8) open into
 /// the houses, the
 ///   weapon and armor shops, the inn and the Kalay Sanctum (kalay_interiors.c),
 ///   and KALAY_TO_WEAPON_SHOP_COUNTER and KALAY_TO_ARMOR_SHOP_COUNTER into the
 ///   same two shops from behind their counters; KALAY_TO_HAMMET_PALACE_GROUNDS
-///   leads to Hammet Palace, and triggers 9 and 10 out to the world map
+///   leads to Hammet Palace, and coord events 9 and 10 out to the world map
 ///   (KALAY_TO_WORLD_MAP and KALAY_TO_WORLD_MAP_WEST, to its
 ///   WORLD_MAP_FROM_KALAY_EAST and WORLD_MAP_FROM_KALAY_WEST). The weapon,
 ///   armor and item sellers open their shops only when spoken to across the
@@ -32,7 +32,7 @@
 ///   (HAMMET_PALACE_GROUNDS_TO_HAMMET_PALACE_LAYANAS_ROOM, to
 ///   HAMMET_PALACE_LAYANAS_ROOM_FROM_HAMMET_PALACE_GROUNDS); afterwards they
 ///   have other lines.
-///   Walking into the door (trigger 2) opens it into the palace
+///   Walking into the door (coord event 2) opens it into the palace
 ///   (HAMMET_PALACE_GROUNDS_TO_HAMMET_PALACE); HAMMET_PALACE_GROUNDS_TO_KALAY
 ///   leads back to town.
 /// - Kalay Tunnel Entrance (MapId_KalayTunnelEntrance), outside the town
@@ -58,38 +58,40 @@
 ///   is set. The treasure room (KalayTunnelTreasureRoom) holds the puzzle: two
 ///   statues, pushed by walking into them or moved with Move, each open a
 ///   passage step by step once far enough west (FLAG_TUNNEL_FIRST_PASSAGE_OPEN
-///   and FLAG_TUNNEL_SECOND_PASSAGE_OPEN, place flags, so the statues are back
-///   once the party leaves the tunnel's scenes); while a passage is closed,
-///   particles stream from its statue as it nears its place. The first passage
-///   raises a puddle (LOCALID_PUDDLE) that Frost freezes and sinks into the
-///   floor, freeing its cells; that is a temporary flag, so the puddle stands
-///   again on each entry. Scorch, a Mars Djinni, joins the party when spoken
-///   to, without a battle, and five chests hold Spirit Gloves, a Sleep Bomb, a
-///   Lucky Medal, 200 coins and a Potion. Once FLAG_KALAY_TUNNEL_OPEN is set a
-///   man (LOCALID_WAITING_MAN) waits here, thinking `The things beyond these
-///   doors belong to you all.` The fade overlay (object/object/fade_overlay.c)
-///   follows the leader through the treasure room unless he comes down from the
-///   town (KALAY_TUNNEL_TREASURE_ROOM_FROM_KALAY); triggers 10 and 11 stop and
+///   and FLAG_TUNNEL_SECOND_PASSAGE_OPEN, map-section temp flags, so the
+///   statues are back once the party leaves the tunnel's maps); while a passage
+///   is closed, particles stream from its statue as it nears its place. The
+///   first passage raises a puddle (LOCALID_PUDDLE) that Frost freezes and
+///   sinks into the floor, freeing its cells; that is a temporary flag, so the
+///   puddle stands again on each entry. Scorch, a Mars Djinni, joins the party
+///   when spoken to, without a battle, and five chests hold Spirit Gloves, a
+///   Sleep Bomb, a Lucky Medal, 200 coins and a Potion. Once
+///   FLAG_KALAY_TUNNEL_OPEN is set a man (LOCALID_WAITING_MAN) waits here,
+///   thinking `The things beyond these doors belong to you all.` The fade
+///   overlay (object/object/fade_overlay.c) follows the leader through the
+///   treasure room unless he comes down from the town
+///   (KALAY_TUNNEL_TREASURE_ROOM_FROM_KALAY); coord events 10 and 11 stop and
 ///   restart it, and 18 and 19 fix and free his depth priority.
 ///   KALAY_TUNNEL_TREASURE_ROOM_TO_HAMMET_PALACE leads into Hammet Palace
 ///   (HAMMET_PALACE_FROM_KALAY_TUNNEL_TREASURE_ROOM),
 ///   KALAY_TUNNEL_TREASURE_ROOM_TO_KALAY up into the town
 ///   (KALAY_FROM_KALAY_TUNNEL_TREASURE_ROOM).
 ///
-/// Every scene sets FLAG_KALAY_REACHED on entry. Kalay and Hammet Palace's
+/// Every map sets FLAG_KALAY_REACHED on entry. Kalay and Hammet Palace's
 /// front also catch the palace's story up with Lunpa's: hearing in Lunpa that
-/// Hammet is held there (FLAG_LUNPA_HEARD_OF_PRISONER) sets place flag
-/// FLAG_MAPSEC_TEMP_21, which changes what Layana says, and once Hammet is free
-/// (FLAG_DODONPA_LOCKED_UP, set as Donpa judges Dodonpa in Lunpa) Ivan's
-/// report and Layana's scolding count as seen and FLAG_KALAY_TUNNEL_OPEN opens
-/// the passage. The getters choose each scene's tables; the cave and the
-/// passage have no placements, and an empty set serves any other scene number.
+/// Hammet is held there (FLAG_LUNPA_HEARD_OF_PRISONER) sets map-section
+/// temp flag FLAG_MAPSEC_TEMP_21, which changes what Layana says, and once
+/// Hammet is free (FLAG_DODONPA_LOCKED_UP, set as Donpa judges Dodonpa in
+/// Lunpa) Ivan's report and Layana's scolding count as seen and
+/// FLAG_KALAY_TUNNEL_OPEN opens the passage. The getters choose each map's
+/// tables; the cave and the passage have no object event templates, and an
+/// empty set serves any other map number.
 ///
 /// Open questions:
 ///
 /// - XXX (no evidence): whether the man waiting in the treasure room
 ///   (LOCALID_WAITING_MAN) is Bunza; likely, because he is drawn with
-///   SPRITE_BUNZA, which every other scene places beside Hammet as Bunza, but
+///   SPRITE_BUNZA, which every other map places beside Hammet as Bunza, but
 ///   his lines never name him.
 
 #include "game_state.h"
@@ -139,7 +141,7 @@
 #include "songs.h"
 #include "audio_engine_symbols.h"
 
-/// Kalay's actors (Kalay), numbering the rows of
+/// Kalay's object events (Kalay), numbering the rows of
 /// gKalay_TownObjectEventTemplates from LOCALID_FIRST_PLACED, then the tour
 /// group, which Kalay_WatchTourGroupDeparture places after them
 /// (gKalay_TourGroupObjectEventTemplates).
@@ -302,7 +304,8 @@ enum KalayTunnelLocalId {
 enum { PUDDLE_ANIMATION_FROZEN = 5 };
 
 /// The Kalay Tunnel's own flags: the temporary ones last one entry, the
-/// passages (place flags) while the party stays in the tunnel's scenes.
+/// passages (map-section temp flags) while the party stays in the tunnel's
+/// maps.
 enum KalayTunnelFlag {
   /// The fade overlay follows the leader.
   /// ★ Named from its area name: Kalay Tunnel
@@ -408,7 +411,7 @@ const struct MapWarpDest *Kalay_GetWarpDests(void) {
 
 const struct MapWarpRegion *Kalay_GetRegions(void) { return NULL; }
 
-/// The numbered exits of all six scenes.
+/// The numbered warps of all six maps.
 const u32 *Kalay_GetWarps(void) { return gKalay_Warps; }
 
 /// The people of Kalay, Hammet Palace's front, the Kalay Tunnel Entrance and
@@ -450,7 +453,7 @@ static void Kalay_CatchTunnelEntranceNut(void) {
   Engine_ScriptEnd();
 }
 
-/// The conversations, exits and Psynergy targets of each scene.
+/// The conversations, warps and Psynergy targets of each map.
 const struct MapEvent *Kalay_GetEvents(void) {
   s16 mapId = gGameState.mapId;
 
@@ -582,8 +585,8 @@ static void Kalay_TalkToItemMerchant(void) {
   }
 }
 
-/// Walking north into one of Kalay's eight doors (triggers 1 to 8), into the
-/// houses, the inn or the Sanctum: everyone stops, the door opens and the
+/// Walking north into one of Kalay's eight doors (coord events 1 to 8), into
+/// the houses, the inn or the Sanctum: everyone stops, the door opens and the
 /// leader walks in.
 static void Kalay_OpenDoorAndExit(void) {
   struct EventWork *work;
@@ -630,8 +633,8 @@ static __inline__ void Kalay_AnimatePalaceDoor(void) {
   Engine_TaskWait(5);
 }
 
-/// Walking north into the door of Hammet Palace (HammetPalaceGrounds, trigger
-/// 2): it opens and the leader walks in.
+/// Walking north into the door of Hammet Palace (HammetPalaceGrounds, coord
+/// event 2): it opens and the leader walks in.
 static void Kalay_EnterPalace(void) {
   Engine_ScriptStart();
   Kalay_AnimatePalaceDoor();
@@ -646,8 +649,8 @@ static void Kalay_EnterPalace(void) {
   Engine_ScriptEnd();
 }
 
-/// Leaving Kalay (triggers 9 and 10) after hearing of the Colosso tour at the
-/// inn, until the tour has left: the party watches the tour group stop. The
+/// Leaving Kalay (coord events 9 and 10) after hearing of the Colosso tour at
+/// the inn, until the tour has left: the party watches the tour group stop. The
 /// guides count everyone, pace back and forth while the tourists grumble, give
 /// up on the missing man and lead the group off; the late tourist then runs
 /// after it. Otherwise the party leaves.
@@ -1206,8 +1209,8 @@ static void Kalay_WatchTourGroupDeparture(void) {
   Engine_ScriptEnd();
 }
 
-/// Touching trigger 10 in the Kalay Tunnel (KalayTunnelTreasureRoom) stops the
-/// fade overlay following the leader.
+/// Touching coord event 10 in the Kalay Tunnel (KalayTunnelTreasureRoom) stops
+/// the fade overlay following the leader.
 static void Kalay_StopTrackingLeader(void) {
   if (GameFlag_IsSet(FLAG_TUNNEL_OVERLAY_FOLLOWS_LEADER) != 0) {
     gObjectEventEffectWork->objectEvent = NULL;
@@ -1215,8 +1218,8 @@ static void Kalay_StopTrackingLeader(void) {
   }
 }
 
-/// Touching trigger 11 in the Kalay Tunnel (KalayTunnelTreasureRoom) makes the
-/// fade overlay follow the leader.
+/// Touching coord event 11 in the Kalay Tunnel (KalayTunnelTreasureRoom) makes
+/// the fade overlay follow the leader.
 static void Kalay_StartTrackingLeader(void) {
   struct FadeOverlayWork *work;
 
@@ -1227,8 +1230,8 @@ static void Kalay_StartTrackingLeader(void) {
   }
 }
 
-/// Trigger 19 in the Kalay Tunnel (KalayTunnelTreasureRoom): the leader's depth
-/// priority follows his position.
+/// Coord event 19 in the Kalay Tunnel (KalayTunnelTreasureRoom): the leader's
+/// depth priority follows his position.
 static void Kalay_EnableLeaderAutomaticPriority(void) {
   u8 *priorityFlags;
   s32 flags;
@@ -1239,8 +1242,8 @@ static void Kalay_EnableLeaderAutomaticPriority(void) {
   *priorityFlags = flags;
 }
 
-/// Trigger 18 in the Kalay Tunnel (KalayTunnelTreasureRoom): the leader's depth
-/// priority stays fixed.
+/// Coord event 18 in the Kalay Tunnel (KalayTunnelTreasureRoom): the leader's
+/// depth priority stays fixed.
 static void Kalay_DisableLeaderAutomaticPriority(void) {
   u8 *priorityFlags;
   s32 flags;
@@ -1261,7 +1264,7 @@ static void Kalay_CatchTownNut(void) {
   Engine_PartyGiveItem(ITEM_NUT, 0);
 }
 
-/// Every scene of the overlay sets FLAG_KALAY_REACHED, then prepares its own
+/// Every map of the overlay sets FLAG_KALAY_REACHED, then prepares its own
 /// people and cells.
 s32 Kalay_Initialize(void) {
   s32 mapId;
@@ -1282,9 +1285,9 @@ s32 Kalay_Initialize(void) {
   return 0;
 }
 
-/// Sets up Kalay. Having heard in Lunpa that Hammet is held there sets place
-/// flag FLAG_MAPSEC_TEMP_21; once Hammet is free (FLAG_DODONPA_LOCKED_UP) the
-/// palace's FLAG_IVAN_REPORTED_TO_LAYANA,
+/// Sets up Kalay. Having heard in Lunpa that Hammet is held there sets
+/// map-section temp flag FLAG_MAPSEC_TEMP_21; once Hammet is free
+/// (FLAG_DODONPA_LOCKED_UP) the palace's FLAG_IVAN_REPORTED_TO_LAYANA,
 /// FLAG_KALAY_LAYANA_SAID_LUNPA_TOO_DANGEROUS and FLAG_KALAY_TUNNEL_OPEN are
 /// set too, so its earlier scenes count as seen and the passage is open. Coming
 /// up from the Kalay Tunnel (KALAY_FROM_KALAY_TUNNEL_TREASURE_ROOM) finds its
@@ -1434,8 +1437,8 @@ static void Kalay_PrepareTunnel(void) {
     }
     effectWork->objectEvent = objectEvent;
 #else
-    // The original integer temporary carries an actor pointer too. The typed
-    // branch adds a jump and a zero load in the native English trial.
+    // The original integer temporary carries an object event pointer too. The
+    // typed branch adds a jump and a zero load in the native English trial.
     if (trackingValue != 0) {
       trackingValue = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
     }
@@ -2478,7 +2481,7 @@ static void Kalay_UpdateNutOrbit(void) {
 
 /// Frost on the puddle in the Kalay Tunnel sinks it into the floor. The puddle
 /// is in KalayTunnelTreasureRoom; sinking it clears its cells, and it stays
-/// sunk until the scene is entered again.
+/// sunk until the map is entered again.
 static void Kalay_FreezePuddle(void) {
   struct ObjectEvent *effect = ObjectEvent_GetById(LOCALID_PUDDLE);
 

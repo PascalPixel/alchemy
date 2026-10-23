@@ -4,18 +4,18 @@
 /// party to pass through on the way to Bilibin.
 ///
 /// The room is reached only from the room above (goma_cave_pillar.c): its
-/// three exits lead back up to that room's
+/// three warps lead back up to that room's
 /// GOMA_CAVE_PILLAR_FROM_GOMA_CAVE_POND_WEST, _SOUTH and _EAST. It has no
-/// events of its own. Its one placed actor is the stump the party pushes over
-/// the edge up there with Move: once it has fallen (FLAG_GOMA_CAVE_STUMP_FELL),
-/// entering finds it sunk in the pond until only its top shows
-/// (STUMP_ANIMATION_SINK), drawn underfoot with no collision flags. The five by
-/// five cells around it, open water in the room's render
+/// map events of its own. Its one placed object event is the stump the party
+/// pushes over the edge up there with Move: once it has fallen
+/// (FLAG_GOMA_CAVE_STUMP_FELL), entering finds it sunk in the pond until only
+/// its top shows (STUMP_ANIMATION_SINK), drawn underfoot with no collision
+/// flags. The five by five cells around it, open water in the room's render
 /// (places/goma-cave-pond/map-1.png), are replaced by a copy that adds
 /// MB_JUMP_FORWARD cells, so the leader can jump across the water by
 /// way of it.
-/// The flag is a place flag, so the stump is back up in the room above once
-/// the party leaves Goma Cave's four scenes.
+/// The flag is a map-section temp flag, so the stump is back up in the room
+/// above once the party leaves Goma Cave's four maps.
 ///
 /// Open questions: none.
 #include "unit/map/goma_cave_pond.h"
@@ -41,15 +41,16 @@
 #include "flags.h"
 #include "script.h"
 
-// Place flags: Map_ResetFlagsOnEnter clears 0x300 to 0x3ff when the party
-// enters another place group, and other places use the numbers for their own.
+// Map-section temp flags: Map_ResetFlagsOnEnter clears 0x300 to 0x3ff when the
+// party enters another map section, and other map sections use the numbers for
+// their own.
 
 /// The stump has been pushed over into the room below (goma_cave_pillar.c).
 /// ★ Named from what the player sees: a tree stump standing on a ledge in the
 /// room above (its render)
 #define FLAG_GOMA_CAVE_STUMP_FELL 0x300
 
-/// The room's one placed actor.
+/// The room's one placed object event.
 enum GomaCavePondLocalId {
   /// The stump the party pushes over in the room above, lying in this room.
   /// ★ Named from the game: "It's no use. Our Psynergy isn't strong enough to

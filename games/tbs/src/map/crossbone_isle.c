@@ -1,30 +1,30 @@
 /// @file
 /// Crossbone Isle, an island reached from the world map, and the main line of
-/// the cave beneath it, in three places by their area names:
+/// the cave beneath it, in three map sections by their area names:
 /// Crossbone Isle, Crossbone Isle Cave and the Pirate Ship.
 ///
 /// No one on the island speaks: it is a run of Psynergy puzzles and battles
-/// that ends with Deadbeard on the Pirate Ship. Its places are met in this
+/// that ends with Deadbeard on the Pirate Ship. Its maps are met in this
 /// order:
 ///
 /// - Crossbone Isle (MapId_CrossboneIsle), the island itself, reached
 ///   from the world map (WORLD_MAP_TO_CROSSBONE_ISLE;
 ///   CROSSBONE_ISLE_TO_WORLD_MAP leads back to it). Whirlwind blows two ivies
 ///   away for good (flags from FLAG_CROSSBONE_ISLE_FIRST_IVY_BLOWN_AWAY, the
-///   first also opening a cell; the second's and a fourth's events are
+///   first also opening a cell; the second's and a fourth's map events are
 ///   unused), Growth grows three plants so they can be crossed, for this visit
-///   only (flags from FLAG_FIRST_PLANT_GROWN; the first plant's event is
+///   only (flags from FLAG_FIRST_PLANT_GROWN; the first plant's map event is
 ///   unused), two logs can be pushed, and a Nut circles until
 ///   Catch takes it (FLAG_CROSSBONE_ISLE_NUT_CAUGHT).
 ///   CROSSBONE_ISLE_TO_CROSSBONE_ISLE_CAVE_ENTRANCE leads down into the cave.
 /// - Crossbone Isle Cave (MapId_CrossboneIsleCaveEntrance), the cave's
-///   mouth, with only its two exits.
+///   mouth, with only its two warps.
 /// - Crossbone Isle Cave (MapId_CrossboneIsleFirstFloor to
 ///   MapId_CrossboneIsleNinthFloor), the nine floors the cave descends
-///   through, all on one map, each entered from the east
+///   through, all on one layout, each entered from the east
 ///   (CORRIDOR_FROM_PREVIOUS_ROOM) and left to the west
 ///   (CORRIDOR_TO_NEXT_ROOM). Every room numbers its doors alike, and
-///   scene_links.h names them room by room
+///   map_warps.h names them room by room
 ///   (CROSSBONE_ISLE_FIRST_FLOOR_FROM_CROSSBONE_ISLE_CAVE_ENTRANCE and
 ///   CROSSBONE_ISLE_FIRST_FLOOR_TO_CROSSBONE_ISLE_SECOND_FLOOR in the first).
 ///   Each has two doors in its north wall into a side room of its own. The
@@ -47,14 +47,14 @@
 ///   hops from log to log, lead to its four chests.
 /// - Crossbone Isle Cave (MapId_CrossboneIslePier), the ledge past the
 ///   ninth floor where a wooden pier leads out to the Pirate Ship.
-/// - Pirate Ship (MapId_PirateShip), at the end. Stepping on trigger
+/// - Pirate Ship (MapId_PirateShip), at the end. Stepping on coord event
 ///   10 (EventScript_FightDeadbeard) sets off the battle with Deadbeard, the
 ///   sixth group of ENCOUNTER_ZONE_CROSSBONE_ISLE_LAST_GUARDS; when the party
 ///   comes back (WARP_DEST_AFTER_BATTLE) FLAG_CROSSBONE_ISLE_DEADBEARD_DEFEATED
 ///   is set and a chest with the Demon Mail appears. A second chest is a mimic
 ///   (FLAG_PIRATE_SHIP_MIMIC_BEATEN once beaten).
 ///
-/// Map_Initialize restores each scene as its flags say: the ivy and plants on
+/// Map_Initialize restores each map as its flags say: the ivy and plants on
 /// the island, the sliding logs' footprints, the corridor's sunk pillars and
 /// the chests the mimics leave.
 ///
@@ -102,7 +102,7 @@
 #define BG_EVENT_CHEST_FACING(facing)                                          \
   (BG_EVENT(BG_EVENT_CHEST) | MAP_EVENT_FLAG_FACING | (facing))
 
-/// Crossbone Isle's placed actors, numbered in the order of
+/// Crossbone Isle's placed object events, numbered in the order of
 /// gCrossboneIsle_IsleObjectEventTemplates.
 enum CrossboneIsleLocalId {
   /// The Nut that circles over the island until Catch takes it
@@ -124,7 +124,7 @@ enum CrossboneIsleLocalId {
   /// FLAG_CROSSBONE_ISLE_FIRST_IVY_BLOWN_AWAY. Only three rows place one, the
   /// second at the map's origin, off stage
   /// (EventScript_UnusedBlowAwaySecondIvy):
-  /// the fourth ivy's event and CrossboneIsle_RestoreIvy name
+  /// the fourth ivy's map event and CrossboneIsle_RestoreIvy name
   /// LOCALID_FIRST_IVY + 3, which the table leaves unplaced.
   /// ★ Named from what the player sees: leafy ivy growing against the cliffs
   /// (its render)
@@ -132,7 +132,7 @@ enum CrossboneIsleLocalId {
 };
 
 /// Growth has grown Crossbone Isle's first plant, until the party leaves the
-/// island's scene: four scene flags from this one, one a plant.
+/// island's map: four map temp flags from this one, one a plant.
 /// ★ Named from what the player sees: small sprouts on the cliff ledges (its
 /// render)
 enum { FLAG_FIRST_PLANT_GROWN = FLAG_MAP_TEMP_40 };
@@ -183,7 +183,7 @@ enum CrossboneIsleFloatingLogsLocalId {
   LOCALID_TWELFTH_LOG
 };
 
-/// The corridor rooms' one placed actor
+/// The corridor rooms' one placed object event
 /// (gCrossboneIsle_CorridorObjectEventTemplates).
 enum CrossboneIsleCorridorLocalId {
   /// The pillar between the doors that sinks into the floor at column 40.
@@ -192,8 +192,8 @@ enum CrossboneIsleCorridorLocalId {
   LOCALID_SINKING_PILLAR = LOCALID_FIRST_PLACED
 };
 
-/// The corridor rooms' entrances, which every room numbers alike, so the code
-/// they share names them here; scene_links.h names each room's own
+/// The corridor rooms' warp destinations, which every room numbers alike, so
+/// the code they share names them here; map_warps.h names each room's own
 /// (CROSSBONE_ISLE_FIRST_FLOOR_FROM_CROSSBONE_ISLE_CAVE_ENTRANCE to
 /// CROSSBONE_ISLE_FIRST_FLOOR_FROM_CROSSBONE_ISLE_STEPPING_STONES_WEST in the
 /// first).
@@ -208,7 +208,7 @@ enum {
   CORRIDOR_FROM_SIDE_ROOM_WEST = 4  ///< out of the side room by the west door
 };
 
-/// The corridor rooms' exits, numbered as their entrances.
+/// The corridor rooms' warps, numbered as their warp destinations.
 enum {
   CORRIDOR_TO_PREVIOUS_ROOM = 1,
   CORRIDOR_TO_NEXT_ROOM = 2,
@@ -216,9 +216,9 @@ enum {
   CORRIDOR_TO_SIDE_ROOM_WEST = 4  ///< the west door (EventScript_OpenWestDoor)
 };
 
-/// The entrance a battle returns the party to: in a corridor room after the
-/// monsters behind its east door (EventScript_OpenEastDoor), and on the Pirate
-/// Ship after Deadbeard (EventScript_FightDeadbeard).
+/// The warp destination a battle returns the party to: in a corridor room after
+/// the monsters behind its east door (EventScript_OpenEastDoor), and on the
+/// Pirate Ship after Deadbeard (EventScript_FightDeadbeard).
 enum { WARP_DEST_AFTER_BATTLE = 5 };
 
 static void CrossboneIsle_RestoreSunkPillar(void);
@@ -304,7 +304,7 @@ static void CrossboneIsle_SpawnPillarMovedBurst(s32 objectId) {
   }
 }
 
-/// Stepping on trigger 10 on the Pirate Ship: Deadbeard attacks (the sixth
+/// Stepping on coord event 10 on the Pirate Ship: Deadbeard attacks (the sixth
 /// group of ENCOUNTER_ZONE_CROSSBONE_ISLE_LAST_GUARDS), and the party comes
 /// back to the ship at WARP_DEST_AFTER_BATTLE.
 static void EventScript_FightDeadbeard(void) {
@@ -349,7 +349,7 @@ static void EventScript_CatchNut(void) {
   EV_END();
 }
 
-/// Restores each scene's puzzles from its flags: the sliding logs'
+/// Restores each map's puzzles from its flags: the sliding logs'
 /// footprints in CrossboneIsleFloatingLogs; on the Pirate Ship the mimic's
 /// chest and, after Deadbeard, the Demon Mail's; on Crossbone Isle the ivy,
 /// plants and Nut; in the corridor rooms the mimic's chest, the sunk pillars
@@ -438,7 +438,7 @@ s32 Map_Initialize(void) {
   }
   // The nine corridor rooms (CrossboneIsleFirstFloor to
   // CrossboneIsleNinthFloor) share their door battle, sunk pillar and return
-  // entrance.
+  // warp destination.
   first = (s32)&MapId_CrossboneIsleFirstFloor;
   if (current == first) {
     if (FLAG_CHECK(FLAG_CROSSBONE_ISLE_FIRST_FLOOR_MIMIC_BEATEN) == 0) {
@@ -499,8 +499,8 @@ static void EventScript_MovePillar(void) {
   }
 
 #if TBS_PATCH_1
-  // Through state, the scene's address is built as the game state's plus an
-  // offset, as the bytes have it; &gGameState.scene folds into one literal.
+  // Through state, the map's address is built as the game state's plus an
+  // offset, as the bytes have it; &gGameState.mapId folds into one literal.
   state = &gGameState;
   mapNumber = &state->mapId;
   if (Engine_GameFlagIsSet(*mapNumber +
@@ -536,8 +536,8 @@ static void EventScript_MovePillar(void) {
                                    (s32)&MapId_CrossboneIsleFirstFloor));
 }
 
-/// Walking into a corridor room's pillar in Crossbone Isle Cave (trigger 20):
-/// push it a step.
+/// Walking into a corridor room's pillar in Crossbone Isle Cave (coord event
+/// 20): push it a step.
 static void EventScript_PushPillar(void) {
   EV_START();
   StagedObjectEvent_AdvancePair();
@@ -546,17 +546,17 @@ static void EventScript_PushPillar(void) {
 }
 
 /// Walking north into a corridor room's west door in Crossbone Isle Cave
-/// (trigger 4): it opens, and the party goes through to the side room.
+/// (coord event 4): it opens, and the party goes through to the side room.
 static void EventScript_OpenWestDoor(void) {
   Engine_MapGridAnimateCells(gCrossboneIsle_EntranceCells, 37, 7);
   Engine_AudioPlayCue(SE_183);
   Engine_ScriptRequestWarp(CORRIDOR_TO_SIDE_ROOM_WEST);
 }
 
-/// Walking north into a corridor room's east door in Crossbone Isle Cave
-/// (trigger 3): the first time, the monsters behind it attack, and the party
-/// comes back at WARP_DEST_AFTER_BATTLE; once they are beaten, the door opens
-/// onto the side room.
+/// Walking north into a corridor room's east door in Crossbone Isle Cave (coord
+/// event 3): the first time, the monsters behind it attack, and the party comes
+/// back at WARP_DEST_AFTER_BATTLE; once they are beaten, the door opens onto
+/// the side room.
 static void EventScript_OpenEastDoor(void) {
   if (Engine_GameFlagIsSet(
           gGameState.mapId +
@@ -631,9 +631,9 @@ static void CrossboneIsle_OpenEastDoorAfterBattle(void) {
 }
 
 /// Unused: Growth on Crossbone Isle's first plant would grow it and let the
-/// party climb at (304, 368), but the placement table puts that plant at the
-/// map's origin, off stage in the forest's corner, where no cast can reach it
-/// and the player never sees it (its render).
+/// party climb at (304, 368), but the object event templates put that plant at
+/// the map's origin, off stage in the forest's corner, where no cast can reach
+/// it and the player never sees it (its render).
 static void EventScript_UnusedGrowFirstPlant(s32 objectEventId) {
   s32 fixedX = PIXELS(304);
   s32 fixedZ = PIXELS(368);
@@ -706,8 +706,8 @@ static void EventScript_BlowAwayFirstIvy(void) {
 }
 
 /// Unused: Whirlwind on Crossbone Isle's second ivy would blow it away for
-/// good, but the placement table puts that ivy at the map's origin, off stage,
-/// where no cast can reach it and the player never sees it (its render).
+/// good, but the object event templates put that ivy at the map's origin, off
+/// stage, where no cast can reach it and the player never sees it (its render).
 static void EventScript_UnusedBlowAwaySecondIvy(void) {
   Engine_GameFlagSet(FLAG_CROSSBONE_ISLE_FIRST_IVY_BLOWN_AWAY + 1);
 }
@@ -718,8 +718,8 @@ static void EventScript_BlowAwayThirdIvy(void) {
 }
 
 /// Unused: Whirlwind on Crossbone Isle's fourth ivy would blow it away for
-/// good, but the placement table places only three, so no actor answers its
-/// event.
+/// good, but the object event templates place only three, so no object event
+/// answers its map event.
 static void EventScript_UnusedBlowAwayFourthIvy(void) {
   Engine_GameFlagSet(FLAG_CROSSBONE_ISLE_FIRST_IVY_BLOWN_AWAY + 3);
 }
@@ -772,7 +772,7 @@ static void EventScript_PushIsleLog(void) {
   EV_END();
 }
 
-/// Moves the selected actor and puzzle log by the same pixel offset.
+/// Moves the selected object event and puzzle log by the same pixel offset.
 static void CrossboneIsle_MoveSelectedObjectEventAndLog(s32 objectEventId,
                                                         s32 xOffset,
                                                         s32 zOffset) {
@@ -797,7 +797,7 @@ static void CrossboneIsle_MoveSelectedObjectEventAndLog(s32 objectEventId,
     Engine_ObjectSetPosition(selectedObjectEvent, fixedX,
                              selectedObjectEvent->y.fixed, fixedZ);
   }
-  // Position the log on the same cell-center grid as the selected actor.
+  // Position the log on the same cell-center grid as the selected object event.
   ObjectEvent_SetMode(selectedObjectEvent, 27);
   {
     fixedX = ((logObjectEvent->x.fixed + (xOffset * PIXELS(1))) & 0xFFF00000) +
@@ -1021,7 +1021,7 @@ static s32 EventScript_HopNorth(void) {
   return CrossboneIsle_TryHop(objectEvent, &destination);
 }
 
-/// Walking south against a log's edge, or at the Pirate Ship's trigger 20.
+/// Walking south against a log's edge, or at the Pirate Ship's coord event 20.
 static s32 EventScript_HopSouth(void) {
   struct ObjectEvent *objectEvent = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   struct FieldPosition destination;
@@ -2159,8 +2159,9 @@ struct MapWarpDest gCrossboneIsle_PierWarpDests[] = {
 struct MapWarpDest gCrossboneIsle_PirateShipWarpDests[] = {
     { PIRATE_SHIP_FROM_CROSSBONE_ISLE_PIER, CONDITION_ALWAYS, 312, 0, 656, FACING_WEST, 0, -1, -1, -1, -1, 0 },
     { WARP_DEST_AFTER_BATTLE, CONDITION_ALWAYS, 216, 0, 544, FACING_NORTH, 0, -1, -1, -1, -1, 0 },
-    // The nine corridor rooms (CrossboneIsleFirstFloor to CrossboneIsleNinthFloor) enter through this
-    // shared tail, since every room numbers its entrances alike.
+    // The nine corridor rooms (CrossboneIsleFirstFloor to
+    // CrossboneIsleNinthFloor) enter through this shared tail, since every room
+    // numbers its warp destinations alike.
 
     { CORRIDOR_FROM_PREVIOUS_ROOM, CONDITION_ALWAYS, 840, 0, 176, FACING_WEST, 0, 432, 32, 880, 352, 0 },
     { CORRIDOR_FROM_NEXT_ROOM, CONDITION_ALWAYS, 488, 0, 176, FACING_EAST, 0, 432, 32, 880, 352, 0 },

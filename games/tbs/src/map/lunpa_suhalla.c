@@ -1,7 +1,7 @@
 /// @file
-/// The buildings of Lunpa and the house at Suhalla Gate: one scene
-/// (MapId_LunpaSuhalla) whose rooms are told apart by the entrance the party
-/// comes in by, and whose area name follows it:
+/// The buildings of Lunpa and the house at Suhalla Gate: one map
+/// (MapId_LunpaSuhalla) whose rooms are told apart by the warp destination the
+/// party comes in by, and whose area name follows it:
 ///
 /// - Lunpa: the three homes, the weapon and armor shop, the item shop, the inn
 ///   and the crate room, entered by the town's doors (lunpa.c) at
@@ -12,9 +12,9 @@
 ///   at ROOM_GATE_TO_SUHALLA, where a traveling Healer offers the Sanctum's
 ///   services.
 ///
-/// A room's entrance number is also its exit kind and the trigger of its door
-/// (ROOM_DOOR), so each door leads back out the way the party came in.
-/// Map_GetEvents gives the house at Suhalla Gate its own table, and Lunpa's
+/// A room's warp destination number is also its warp kind and the coord event
+/// of its door (ROOM_DOOR), so each door leads back out the way the party came
+/// in. Map_GetEvents gives the house at Suhalla Gate its own table, and Lunpa's
 /// rooms the sealed town's (gInteriorSealedEvents) until Donpa's judgment
 /// sets FLAG_DODONPA_LOCKED_UP, then the reopened town's
 /// (gInteriorReopenedEvents). While the town is sealed the merchants neither
@@ -25,14 +25,15 @@
 ///
 /// A merchant or Healer serves only a leader who faces north across the
 /// counter (FACING_IS_NORTH); otherwise they talk. The counters are blank
-/// actors in front of the merchants (LOCALID_WEAPON_COUNTER and the others),
-/// so talking across one reaches the merchant's event. Entering by
+/// object events in front of the merchants (LOCALID_WEAPON_COUNTER and the
+/// others), so talking across one reaches the merchant's map event. Entering by
 /// ROOM_GATE_TO_SUHALLA makes the house the place a defeated party wakes and
 /// hides the location name.
 ///
 /// Open questions:
-/// - XXX (no evidence): what ROOM_NINTH_UNUSED was meant for, an entrance no
-///   exit leads to; its camera box takes half the crate room and half the
+/// - XXX (no evidence): what ROOM_NINTH_UNUSED was meant for, a warp
+/// destination no
+///   warp leads to; its camera box takes half the crate room and half the
 ///   house at Suhalla Gate, and it stands the leader in the empty dark between
 ///   them (https://alchemy.pascalpixel.com/places/lunpa-suhalla/map-9.png), so
 ///   the map holds no room of its own for it.
@@ -283,12 +284,12 @@ const struct MapWarpRegion *Map_GetWarpRegions(void) { return NULL; }
 
 const u32 *Map_GetWarps(void) { return gInteriorWarps; }
 
-/// The townsfolk, shopkeepers and counters of all three places.
+/// The townsfolk, shopkeepers and counters of all three map sections.
 const struct ObjectEventTemplate *Map_GetObjectEventTemplates(void) {
   return gInteriorObjectEventTemplates;
 }
 
-/// The events of Gate to Suhalla, or those of Lunpa's buildings before and
+/// The map events of Gate to Suhalla, or those of Lunpa's buildings before and
 /// after Donpa's judgment.
 const struct MapEvent *Map_GetEvents(void) {
   if (gGameState.warpDest == ROOM_GATE_TO_SUHALLA) {
@@ -508,8 +509,8 @@ static void EventScript_TalkToTravelingHealer(void) {
   leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   if (FACING_IS_NORTH(leader->facing)) {
     // BUG: the temple's Healer, not the traveling one. The Sanctum only takes
-    // its keeper's portrait from the actor (Shop_ConfirmAct), and both Healers
-    // are placed in this scene in the same sprite, so the player sees no
+    // its keeper's portrait from the object event (Shop_ConfirmAct), and both
+    // Healers are placed in this map in the same sprite, so the player sees no
     // difference.
 #ifdef BUGFIX
     Engine_SanctumOpen(LOCALID_TRAVELING_HEALER);

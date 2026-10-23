@@ -13,14 +13,14 @@
 #include "heap_state.h"
 
 // Sol Sanctum's Elemental Star room and its eruption: the ten lights that float
-// in the room, actors in a row from the first the scene passes, each pulsing
-// and drifting on its own path from the tables gSolSanctumRing_* and
+// in the room, object events in a row from the first the map passes, each
+// pulsing and drifting on its own path from the tables gSolSanctumRing_* and
 // gSolSanctum_Ring*, by its index.
 
 enum { SOL_SANCTUM_RING_MAX = 10 };
 
-/// One floating light: its actor, its drift and its pulsing scale, and where it
-/// is while hidden.
+/// One floating light: its object event, its drift and its pulsing scale, and
+/// where it is while hidden.
 struct SolSanctumRingEntry {
   struct ObjectEvent *objectEvent;
   s32 x; ///< 16.16 fixed-point pixels
@@ -43,7 +43,7 @@ struct SolSanctumRingList {
   u16 count;
 };
 
-/// A scene callback, the lights' work in HEAP_SLOT_SOL_SANCTUM_LIGHTS. Every
+/// A map callback, the lights' work in HEAP_SLOT_SOL_SANCTUM_LIGHTS. Every
 /// third frame each light grows to its largest scale and shrinks to a tenth; at
 /// the smallest it vanishes for 24 steps while its drift carries on, and comes
 /// back where the drift has taken it. Its drift is a random speed on each axis,
@@ -175,8 +175,8 @@ static void SolSanctum_UpdateRing(void) {
   }
 }
 
-/// Starts the floating lights: count actors (at most 10) from first, each drawn
-/// translucent and starting at its largest scale.
+/// Starts the floating lights: count object events (at most 10) from first,
+/// each drawn translucent and starting at its largest scale.
 void SolSanctum_StartFloatingLights(s32 first, u32 count) {
   // Each light is read here as FieldEffect, union FieldObject's effect view of
   // the same object, the plain-C form this site matches with (MATCHING.md):

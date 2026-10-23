@@ -1,15 +1,15 @@
 /// @file
 /// Lamakan Desert (MapId_LamakanDesertEast to MapId_LamakanDesertCave):
 /// four maps that are all Lamakan Desert in the game's area names and share one
-/// event table, built around a heat gauge and the secrets Reveal uncovers.
+/// map event table, built around a heat gauge and the secrets Reveal uncovers.
 ///
 /// The heat is a count of steps on hazard ground (gGameState.hazardSteps):
 /// LamakanDesert_Initialize sets a limit of 600 on every map, at which the
 /// party loses a quarter of its HP, and on all but LamakanDesertCave starts the
 /// heat gauge, a thermometer down the screen's left edge (HeatGauge_Draw). Each
 /// moving frame on the sand adds a step (HeatGauge_CountStep,
-/// LAMAKAN_DESERT_CELL_SAND and the search cells 100 to 107). As the gauge
-/// passes a quarter, a half and three quarters,
+/// LAMAKAN_DESERT_CELL_SAND and the bg events' metatile behaviors 100 to 107).
+/// As the gauge passes a quarter, a half and three quarters,
 /// HeatGauge_RaiseQuarterTriggers sets FLAG_HEAT_QUARTER to
 /// FLAG_HEAT_THREE_QUARTERS and raises LAMAKAN_DESERT_RAISED_HEAT_QUARTER to
 /// LAMAKAN_DESERT_RAISED_HEAT_THREE_QUARTERS, and Garet, Ivan or Mia complains
@@ -18,9 +18,9 @@
 /// one and bathes until the heat has drained (LamakanDesert_BatheInOasis), and
 /// a running Reveal ends.
 ///
-/// Entry saves the map patches that hold the desert's secrets (the oases, the
-/// Ant Lions' pits, the Manticore, Smog, a Jupiter Djinni, and the chests and
-/// Psynergy Stones) and hides them under a shimmering heat haze
+/// Entry saves the patches of the map grid that hold the desert's secrets (the
+/// oases, the Ant Lions' pits, the Manticore, Smog, a Jupiter Djinni, and the
+/// chests and Psynergy Stones) and hides them under a shimmering heat haze
 /// (Reveal_HideSecrets); Reveal brings them back and stops the haze
 /// (Reveal_ShowSecrets) until it wears off. The oases' and pits' cells exist
 /// only while Reveal shines, as the monks of Lama Temple warn: `Reveal will
@@ -33,14 +33,14 @@
 ///
 /// In LamakanDesertManticore, until it is beaten
 /// (FLAG_LAMAKAN_MANTICORE_BEATEN), the Manticore rises out of the sand as the
-/// leader comes near (cell code 40, LamakanDesert_MeetManticore). Talking to it
-/// starts its battle, which ends at LamakanDesertManticore's
+/// leader comes near (coord event 40, LamakanDesert_MeetManticore). Talking to
+/// it starts its battle, which ends at LamakanDesertManticore's
 /// LAMAKAN_DESERT_MANTICORE_AFTER_FIGHT_MANTICORE, and arriving there marks it
 /// beaten.
 ///
 /// LamakanDesertEast's LAMAKAN_DESERT_EAST_TO_WORLD_MAP and LamakanDesertCave's
 /// LAMAKAN_DESERT_CAVE_TO_WORLD_MAP lead out onto the world map;
-/// LamakanDesertCave, a cave, has no heat gauge. Cell code 9 takes
+/// LamakanDesertCave, a cave, has no heat gauge. Coord event 9 takes
 /// LAMAKAN_DESERT_CAVE_TO_WORLD_MAP, and leaving that way while Hsu is still
 /// trapped (FLAG_HSU_RESCUED clear) sets FLAG_HSU_RESCUED and
 /// FLAG_HSU_RESCUED_WITHOUT_PARTY, which xian_interiors.c reads to have Feizhi
@@ -103,7 +103,7 @@
 static void HeatGauge_SetHeld(u16 held);
 
 /// The values HeatGauge_RaiseQuarterTriggers raises as the heat gauge passes
-/// each mark, and the cell codes of the desert's ground.
+/// each mark, and the metatile behaviors of the desert's ground.
 enum LamakanDesertTrigger {
   LAMAKAN_DESERT_RAISED_HEAT_QUARTER = 1,
   LAMAKAN_DESERT_RAISED_HEAT_HALF = 2,
@@ -134,7 +134,7 @@ enum {
   /// (MsgMountainNorthAltinMineWestLama)
   FLAG_HEAT_THREE_QUARTERS = FLAG_MAPSEC_TEMP_02,
   /// Who has complained since the gauge last passed a mark: one per member,
-  /// in the order of their actors.
+  /// in the order of their object events.
   /// ★ Named from the game: "My feet are burning!"
   /// (MsgMountainNorthAltinMineWestLama)
   FLAG_GARET_COMPLAINED = FLAG_MAPSEC_TEMP_03,
@@ -146,10 +146,11 @@ enum {
   FLAG_MIA_COMPLAINED = FLAG_MAPSEC_TEMP_05
 };
 
-/// The actors, numbered in the order of each map's placement table from
-/// LOCALID_FIRST_PLACED. LamakanDesertEast to LamakanDesertManticore place the
-/// Manticore, then the LamakanDesertEast and LamakanDesertManticore one pit and
-/// LamakanDesertSmog all four pits and Smog; LamakanDesertCave places none.
+/// The object events, numbered in the order of each map's object event
+/// templates from LOCALID_FIRST_PLACED. LamakanDesertEast to
+/// LamakanDesertManticore place the Manticore, then the LamakanDesertEast and
+/// LamakanDesertManticore one pit and LamakanDesertSmog all four pits and Smog;
+/// LamakanDesertCave places none.
 enum {
   MANTICORE = LOCALID_FIRST_PLACED, ///< talking to it starts its battle
   /// The first of the Ant Lions' pits Reveal shows, up to LAST_PIT.
@@ -158,8 +159,8 @@ enum {
   SMOG = LAST_PIT + 1 ///< Smog, a Jupiter Djinni
 };
 
-/// The desert's two Psynergy Stones, place flags: each is back once the
-/// party has left Lamakan Desert.
+/// The desert's two Psynergy Stones, map-section temp flags: each is back once
+/// the party has left Lamakan Desert.
 enum {
   /// ★ Named from the game: "a Psynergy Stone" (MsgGotPsynergyStone)
   FLAG_LAMAKAN_DESERT_FIRST_PSYNERGY_STONE = FLAG_MAPSEC_TEMP_50,
@@ -238,7 +239,7 @@ const struct MapWarpDest *LamakanDesert_GetWarpDests(void) {
 
 const struct MapWarpRegion *LamakanDesert_GetRegions(void) { return 0; }
 
-/// All four desert maps share the packed exit table.
+/// All four desert maps share the packed warp table.
 const u32 *LamakanDesert_GetWarps(void) { return gLamakanDesertWarps; }
 
 /// The pits, the Manticore and Smog of each map. Arriving at
@@ -266,7 +267,7 @@ const struct ObjectEventTemplate *LamakanDesert_GetObjectEventTemplates(void) {
   return gLamakanDesertObjectEventTemplatesOther;
 }
 
-/// Lamakan Desert, touching cell code 9: LAMAKAN_DESERT_CAVE_TO_WORLD_MAP. If
+/// Lamakan Desert, coord event 9: LAMAKAN_DESERT_CAVE_TO_WORLD_MAP. If
 /// Master Hsu is still trapped, he is rescued without the party (see the file
 /// comment).
 static void LamakanDesert_LeaveForTheWorldMap(void) {
@@ -282,7 +283,7 @@ static void LamakanDesert_LeaveForTheWorldMap(void) {
   Engine_ScriptEnd();
 }
 
-/// The desert's triggers, the same on every map.
+/// The desert's map events, the same on every map.
 const struct MapEvent *LamakanDesert_GetEvents(void) {
   return gLamakanDesertEvents;
 }
@@ -351,7 +352,7 @@ static s32 Reveal_HideSecrets(void) {
   Engine_ObjectEventSetPosition(FIRST_PIT + 2, 0, 0);
   Engine_ObjectEventSetPosition(LAST_PIT, 0, 0);
   Engine_ObjectEventSetPosition(SMOG, 0, 0);
-  // Hide the searchable map objects independently of the actor placements.
+  // Hide the searchable markers independently of the object event templates.
   markerId = 100;
   do {
     Engine_MarkerSetPosition(markerId, 0, 0);
@@ -677,8 +678,8 @@ static void LamakanDesert_BatheInOasis(void) {
   HeatGauge_SetHeld(0);
 }
 
-/// Lamakan Desert, walking on sand (cell codes 21 and 100 to 107): each moving
-/// frame adds a step of heat and kicks up dust, faster on the run.
+/// Lamakan Desert, walking on sand (coord events 21 and 100 to 107): each
+/// moving frame adds a step of heat and kicks up dust, faster on the run.
 static void HeatGauge_CountStep(void) {
   struct ObjectEvent *objectEvent;
   struct EventWork *work;
@@ -728,7 +729,7 @@ static void HeatGauge_CountStep(void) {
   }
 }
 
-/// Lamakan Desert, cell code 22, stepping near a hidden pit: the leader looks
+/// Lamakan Desert, coord event 22, stepping near a hidden pit: the leader looks
 /// at the nearest pit, is pulled backwards into it and a battle with an Ant
 /// Lion begins.
 static void LamakanDesert_FallIntoPit(void) {
@@ -831,7 +832,7 @@ static void LamakanDesert_SlideDownDune(void) {
     center = work->viewCenter;
   }
   objectEvent = ObjectEvent_GetById(id);
-  // First check for a ledge immediately below the sliding actor.
+  // First check for a ledge immediately below the sliding object event.
   probePosition.x = objectEvent->x.fixed;
   probePosition.y = objectEvent->y.fixed;
   probePosition.z = objectEvent->z.fixed + 0x18000;
@@ -861,7 +862,7 @@ static void LamakanDesert_SlideDownDune(void) {
     Engine_TaskWait(3);
     return;
   }
-  // Probe ahead and on both diagonals before advancing actor and camera.
+  // Probe ahead and on both diagonals before advancing object event and camera.
   probePosition.x = objectEvent->x.fixed;
   probePosition.y = objectEvent->y.fixed;
   probePosition.z = objectEvent->z.fixed + 0x80000;
@@ -887,9 +888,9 @@ static void LamakanDesert_SlideDownDune(void) {
   objectEvent->z.fixed += 0x18000;
 }
 
-/// Lamakan Desert, cell code 40 in LamakanDesertManticore, until the Manticore
-/// is beaten: the leader stops and backs away as the Manticore rises out of the
-/// sand.
+/// Lamakan Desert, coord event 40 in LamakanDesertManticore, until the
+/// Manticore is beaten: the leader stops and backs away as the Manticore rises
+/// out of the sand.
 static void LamakanDesert_MeetManticore(void) {
   s32 paused;
   struct ObjectEvent *record;
@@ -1323,8 +1324,8 @@ struct ObjectEventTemplate gLamakanDesertManticoreObjectEventTemplates[] = {
     { MAP_TABLE_END },
 };
 
-/// The four scenes' one event table. Its exit rows keep their numbers: each
-/// takes the exit of that number in whichever scene the party is in, which is a
+/// The four maps' one map event table. Its warp rows keep their numbers: each
+/// takes the warp of that number in whichever map the party is in, which is a
 /// different way out in each (LAMAKAN_DESERT_EAST_TO_WORLD_MAP,
 /// LAMAKAN_DESERT_SMOG_TO_LAMAKAN_DESERT_EAST and the others).
 struct MapEvent gLamakanDesertEvents[] = {

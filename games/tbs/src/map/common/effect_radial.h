@@ -5,8 +5,8 @@
 
 // The Tunnel Ruins and Venus Lighthouse.
 
-/// Burst nine particles out from the actor in a ring (the ninth on the first),
-/// flung a third further east and west, slowing as they go
+/// Burst nine particles out from the object event in a ring (the ninth on the
+/// first), flung a third further east and west, slowing as they go
 /// (FieldEffect_AdvanceMotion).
 static void FieldEffect_SpawnNineRadialEffects(s32 objectEvent) {
   struct ObjectEvent *object;

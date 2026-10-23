@@ -125,7 +125,7 @@ void Colosso_RestoreWarrior(s32 id) {
   Engine_TaskWait(1);
 }
 
-/// Stops the actor where it is: no velocity and no destination.
+/// Stops the object event where it is: no velocity and no destination.
 void OverlayObject_ResetMotionFields(s32 objectEvent) {
   struct ObjectEvent *o = ObjectEvent_GetById(objectEvent);
 
@@ -164,7 +164,7 @@ extern s16 gColosso_MarkerEndY;
 extern s16 gColosso_MarkerBlink;
 extern s16 gColosso_MarkerPriority;
 
-/// The pointer's scene callback: glide one step, then draw it while it blinks
+/// The pointer's map callback: glide one step, then draw it while it blinks
 /// on (a glide keeps it on).
 static void Colosso_UpdateMarker(void) {
   s32 tile;
@@ -250,8 +250,8 @@ void Colosso_HidePointer(void) {
   gColosso_MarkerSlot = -1;
 }
 
-/// Walks the actor at 2 pixels a frame towards pixel (x, z) and returns at
-/// once.
+/// Walks the object event at 2 pixels a frame towards pixel (x, z) and returns
+/// at once.
 void Colosso_WalkObjectEventTo(s32 objectEventId, s32 x, s32 z) {
   struct ObjectEvent *objectEvent = Engine_ObjectEventLookup(objectEventId);
 
@@ -269,8 +269,8 @@ void Colosso_WalkObjectEventTo(s32 objectEventId, s32 x, s32 z) {
   }
 }
 
-/// Walks the actor at 1.25 pixels a frame to pixel (x, z), waits until it
-/// arrives and stands it there.
+/// Walks the object event at 1.25 pixels a frame to pixel (x, z), waits until
+/// it arrives and stands it there.
 void Colosso_WalkObjectEventToAndStand(s32 objectEventId, s32 x, s32 z) {
   struct ObjectEvent *objectEvent = Engine_ObjectEventLookup(objectEventId);
 

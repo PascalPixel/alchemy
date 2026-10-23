@@ -1,7 +1,7 @@
-/// @file Lalivero, the town by Babi Lighthouse, one scene with the area name
+/// @file Lalivero, the town by Babi Lighthouse, one map with the area name
 /// Lalivero: MapId_Lalivero. Its buildings are lalivero_interiors.c. The
 /// story brings the party here twice, and Lalivero_GetObjectEventTemplates and
-/// Lalivero_GetEvents choose the town's people and events for each visit by
+/// Lalivero_GetEvents choose the town's people and map events for each visit by
 /// FLAG_VENUS_LIGHTHOUSE_PARTY_RETURNED, set at Venus Lighthouse's aerie.
 ///
 /// On the first visit the party comes in from the world map with Iodem, and
@@ -12,23 +12,23 @@
 /// guard at the wharf lets no one by.
 ///
 /// On the second visit the party comes back through Faran's house. Its first
-/// step onto trigger 50 plays EventScript_IodemGivesBlackOrb
+/// step onto coord event 50 plays EventScript_IodemGivesBlackOrb
 /// (FLAG_IODEM_FAREWELL_SEEN), in which Iodem comes out of the house and gives
 /// the party the Black Orb that sails Babi's ship;
 /// Lalivero_TalkAboutIdejimaShip adds a few lines when FLAG_SAW_SHIP_AT_IDEJIMA
 /// is set. The wharf's guard then lets the party through
-/// (FLAG_LALIVERO_WHARF_OPEN), trigger 51 turns it back toward the ship, and a
-/// sign and three blocked cells close the north exit.
+/// (FLAG_LALIVERO_WHARF_OPEN), coord event 51 turns it back toward the ship,
+/// and a sign and three blocked cells close the north exit.
 ///
 /// On both visits Torch, a Mars Djinni, waits until it joins;
 /// EventScript_EnterDoor opens the door or the Sanctum's gate before the leader
-/// leaves by the touched trigger's exit into MapId_LaliveroShops or
+/// leaves by the touched coord event's warp into MapId_LaliveroShops or
 /// MapId_LaliveroFaransHouse; the world map lies east and west; and a jar, a
 /// stone pillar and a chest hold a Water of Life, a Psy Crystal and a Warrior's
 /// Helm.
 ///
 /// Open questions:
-/// - XXX (no evidence): why the first visit's event table opens the Warrior's
+/// - XXX (no evidence): why the first visit's map events open the Warrior's
 ///   Helm chest only facing west, from the foot of the vine east of it, when
 ///   the second opens it from any side; the chest and the ground around it are
 ///   the same on both visits (their renders), and nothing in the ROM records
@@ -63,17 +63,17 @@
 
 static void Lalivero_TalkAboutIdejimaShip(void);
 
-/// Entrances that set up the later visit, 90 as if the party had also seen the
-/// ship at Idejima (FLAG_SAW_SHIP_AT_IDEJIMA). No exit leads to them and the
-/// entrance table has no row for them (the aerie's exit leads into Faran's
-/// house): only the debug scene selector, which warps to any entrance from 0
-/// to 99, reaches them.
+/// Warp destinations that set up the later visit, 90 as if the party had also
+/// seen the ship at Idejima (FLAG_SAW_SHIP_AT_IDEJIMA). No warp leads to them
+/// and the warp destination table has no row for them (the aerie's warp leads
+/// into Faran's house): only the debug map selector, which warps to any warp
+/// destination from 0 to 99, reaches them.
 enum { ENTRANCE_FROM_AERIE = 90, ENTRANCE_FROM_AERIE_QUIETLY = 91 };
 
-/// The placed actors, numbered in the order of gLaliveroObjectEventTemplates.
-/// gLaliveroObjectEventTemplatesAfterLighthouse, for the later visit, places
-/// the same people in the same rows, then the sign and the Black Orb; its rows
-/// for Garet, Ivan and Mia take their own actor ids
+/// The placed object events, numbered in the order of
+/// gLaliveroObjectEventTemplates. gLaliveroObjectEventTemplatesAfterLighthouse,
+/// for the later visit, places the same people in the same rows, then the sign
+/// and the Black Orb; its rows for Garet, Ivan and Mia take their own local ids
 /// (FieldScript_SpawnObjectTable).
 enum LaliveroLocalId {
   /// Tolbi's soldiers, lying beaten in the street on the first visit. "Uhhnn...
@@ -132,7 +132,7 @@ enum LaliveroLocalId {
   LOCALID_WHARF_GUARD,
   /// Three plants, SPRITE_SPROUT, the sprout Growth grows at Alpine Crossing
   /// and Suhalla Gate. Here they stand in animation 3, block nothing and no
-  /// event answers them.
+  /// map event answers them.
   /// ★ Named from what the player sees: small green sprouts on the edges of
   /// the rooftops (its render)
   LOCALID_FIRST_PLANT,
@@ -152,7 +152,8 @@ enum LaliveroLocalId {
   LOCALID_BLACK_ORB
 };
 
-/// The door at trigger 6, into the Lalivero Sanctum, is a gate two cells wide.
+/// The door at coord event 6, into the Lalivero Sanctum, is a gate two cells
+/// wide.
 enum { GATE_TRIGGER = 6 };
 
 /// A cell of the wall along the town's south edge (MB_WALL), whose
@@ -238,7 +239,7 @@ static void EventScript_WharfGuardLetsPartyThrough(void) {
 
 /// The leader walks through one of Lalivero's doors. As the leader walks into a
 /// doorway, the door (or the Sanctum's gate) swings open, the leader steps in
-/// and the exit of the touched trigger is taken.
+/// and the warp of the touched coord event is taken.
 static void EventScript_EnterDoor(void) {
   s32 door = gEventWork->touchedTrigger;
   s32 x = gLaliveroDoorCells[door][0];
@@ -258,8 +259,8 @@ static void EventScript_EnterDoor(void) {
   Engine_ScriptRequestWarp(door);
 }
 
-/// Lalivero: a doorway with no door (triggers 8 and 11); leave by the touched
-/// trigger's exit.
+/// Lalivero: a doorway with no door (coord events 8 and 11); leave by the
+/// touched coord event's warp.
 static void EventScript_TakeTouchedWarp(void) {
   struct EventWork *work = gEventWork;
   s16 *trigger = (s16 *)&work->touchedTrigger;
@@ -467,7 +468,7 @@ static void EventScript_WatchWoundedSoldiers(void) {
   Engine_ScriptEnd();
 }
 
-/// Lalivero, trigger 50 after Venus Lighthouse, until Iodem has spoken
+/// Lalivero, coord event 50 after Venus Lighthouse, until Iodem has spoken
 /// (FLAG_IODEM_FAREWELL_SEEN): Garet stops the leader, for Iodem asked them to
 /// wait. Iodem comes out of Faran's house and tells the party that the misty
 /// island they saw from the lighthouse may be Lemuria, which could save Babi's
@@ -811,7 +812,7 @@ static void Lalivero_TalkAboutIdejimaShip(void) {
   Script_ShowMessage(IVAN, 0);
 }
 
-/// Lalivero, trigger 51 after Venus Lighthouse: Garet turns the leader back
+/// Lalivero, coord event 51 after Venus Lighthouse: Garet turns the leader back
 /// toward Babi's ship and the wharf the guard was keeping.
 static void EventScript_TurnBackToTheShip(void) {
   Engine_ScriptStart();

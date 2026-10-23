@@ -22,14 +22,14 @@
 #include "types.h"
 #include "songs.h"
 
-// Seventeen scenes with things the leader pushes (Altmiller Cave, Babi
+// Seventeen maps with things the leader pushes (Altmiller Cave, Babi
 // Lighthouse, Crossbone Isle and its rooms, Goma Cave's pillar room, Gondowan
 // Cave, Kolima Forest (MapId_KolimaForestEntrance to
 // MapId_KolimaForestCliff), Lunpa's fortress, Mercury Lighthouse and its
 // entrance, Mogall Forest, the Tunnel Ruins, Vale and its cave): things
 // pushed a cell at a time, such as stone pillars, and logs and other large
-// things that roll until they meet something, redrawn into the map where they
-// stop.
+// things that roll until they meet something, redrawn into the map grid where
+// they stop.
 //
 // A large thing is one of six footprints, by its sprite's animation
 // (gStagedObjectEvent_FootprintKinds): its bounds in
@@ -42,8 +42,8 @@ extern s32 gStagedObjectEvent_FootprintBounds[];
 
 #include "object_distance.h"
 
-/// Returns the placed actor on the cell of the 16.16 position and at its height
-/// (in whole pixels), or 0. origin is not read.
+/// Returns the placed object event on the cell of the 16.16 position and at its
+/// height (in whole pixels), or 0. origin is not read.
 static struct ObjectEvent *
 StagedObjectEvent_FindAtTile(const struct FieldPosition *position,
                              const struct ObjectEvent *origin) {
@@ -147,8 +147,9 @@ UNUSED static void StagedObjectEvent_AdvancePair(void) {
   ObjectEvent_SetMode(lead, 1);
 }
 
-/// Sets the collision code of a width by height rectangle of cells, from cell
-/// (x, z), to value, on map layer 0 to 2, or (3 and up) in gMapGridCellBuffer.
+/// Sets the metatile behavior of a width by height rectangle of cells, from
+/// cell (x, z), to value, on map grid layer 0 to 2, or (3 and up) in
+/// gMapGridCellBuffer.
 static s32 StagedObjectEvent_FillGridAttributeRectangle(u32 layer, s32 x, s32 z,
                                                         u32 width, u32 height,
                                                         s32 value) {
@@ -180,13 +181,15 @@ static s32 StagedObjectEvent_FillGridAttributeRectangle(u32 layer, s32 x, s32 z,
 // void form keeps 0xa4 bytes in Altmiller English but changes the return move.
 #ifdef UBFIX
 /// The leader's movement callback while pushing a large thing: stop the leader
-/// when another actor that is not a large thing, or a wall, is in the way.
+/// when another object event that is not a large thing, or a wall, is in the
+/// way.
 static void
 StagedObjectEvent_StopBlockedMotion(union FieldObject *fieldObject) {
   struct ObjectEvent *objectEvent = (struct ObjectEvent *)fieldObject;
 #else
 /// The leader's movement callback while pushing a large thing: stop the leader
-/// when another actor that is not a large thing, or a wall, is in the way.
+/// when another object event that is not a large thing, or a wall, is in the
+/// way.
 static s32
 StagedObjectEvent_StopBlockedMotion(struct ObjectEvent *objectEvent) {
 #endif
@@ -240,7 +243,7 @@ StagedObjectEvent_StopBlockedMotion(struct ObjectEvent *objectEvent) {
 
 /// Returns the large thing whose footprint covers the cell ahead of the leader
 /// (the leader not standing in line with its first column or row), with the
-/// leader's direction, its actor number and its footprint; or NULL.
+/// leader's direction, its local id and its footprint; or NULL.
 static struct ObjectEvent *Map_FindObjectEventRegion(s32 *direction, s32 *slot,
                                                      s32 *footprint) {
   struct FieldWork *work = (struct FieldWork *)gEventWork;
@@ -401,9 +404,9 @@ found:
 /// Rolls the large thing to the position probe found: the leader pushes
 /// (animation 8), the thing rolls (animation 3 or 2 by the direction) with
 /// SE_HEAVY_MOVE while the leader follows half a cell, and it stops with
-/// SE_STOP_SLOT3 and SE_HEAVY_STOP. Its cells are blocked (collision 255) at
-/// its new place, through the map's layer 1 offset, and its old place is given
-/// back what was under it.
+/// SE_STOP_SLOT3 and SE_HEAVY_STOP. Its cells are blocked (metatile behavior
+/// 255) at its new place, through the map grid's layer 1 offset, and its old
+/// place is given back what was under it.
 UNUSED static void
 MapObjectEvent_MoveAndRedraw(struct StagedObjectEventProbe probe) {
   struct MapGridScrollWork *workspace;
@@ -571,8 +574,9 @@ MapObjectEvent_MoveAndRedraw(struct StagedObjectEventProbe probe) {
   FieldEffect_PlayQueuedSound();
 }
 
-/// Block large thing id's cells (collision 255) where it stands, through the
-/// map's layer 1 offset; returns 0 when its sprite is no large thing.
+/// Block large thing id's cells (metatile behavior 255) where it stands,
+/// through the map grid's layer 1 offset; returns 0 when its sprite is no large
+/// thing.
 UNUSED static s32 Map_RedrawObjectEventFootprint(s32 id) {
   struct MapGridScrollWork *grid = gMapGridWork[0];
   struct ObjectEvent *objectEvent = ObjectEvent_GetById(id);

@@ -4,7 +4,7 @@
 // Tunnel Ruins and Venus Lighthouse: blocks the leader can stand beside, behind
 // or on.
 
-// An update hook: draw the block under the actors
+// An update hook: draw the block under the object events
 // (OBJ_EVENT_PRIORITY_UNDERFOOT) unless the leader is north of it and no higher
 // than its height plus their distance and 4 pixels, that is, behind it rather
 // than on it.
@@ -45,8 +45,8 @@ MapObjectEvent_SetFlagBitByRelativeDepth(union FieldObject *fieldObject) {
 #endif
 }
 
-/// Unless actor first is south of actor second, swaps their positions and waits
-/// a frame.
+/// Unless object event first is south of object event second, swaps their
+/// positions and waits a frame.
 static void MapObjectEvent_SwapPositionsByDepth(s32 first, s32 second) {
   struct ObjectEvent *a = ObjectEvent_GetById(first);
   struct ObjectEvent *b = ObjectEvent_GetById(second);

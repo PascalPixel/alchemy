@@ -4,8 +4,8 @@
 #include "object_event.h"
 #include "script_layer.h"
 
-/// Shows the message already set as the actor's thought: the actor stops and
-/// stands while the thought is shown.
+/// Shows the message already set as the object event's thought: the object
+/// event stops and stands while the thought is shown.
 static void Vault_ShowThought(s32 objectEventId) {
   u8 *paused = &ObjectEvent_GetById(objectEventId)->paused;
   s32 zero = 0;

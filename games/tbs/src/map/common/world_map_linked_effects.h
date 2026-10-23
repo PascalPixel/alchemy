@@ -6,10 +6,11 @@
 #include "b5_context.h"
 #include "fx_work.h"
 
-// Vale and the world map: the particles that rise around a glowing actor.
+// Vale and the world map: the particles that rise around a glowing object
+// event.
 
-/// Attaches two rising particles to the actor, sharing the effect's cached
-/// tiles.
+/// Attaches two rising particles to the object event, sharing the effect's
+/// cached tiles.
 void WorldMap_CreateLinkedEffects(struct ObjectEvent *parent) {
   struct ObjectEvent *pair[2];
   struct ObjectEvent *child;

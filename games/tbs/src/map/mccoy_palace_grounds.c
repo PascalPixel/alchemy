@@ -8,7 +8,7 @@
 /// Talking to the east guard (EventScript_TalkToEastGuard) is the way in: on
 /// yes the guards confer, the gate opens (McCoyPalaceGrounds_OpenGate) and the
 /// west guard goes in ahead (FLAG_MCCOY_PALACE_ADMITTED). Walking north into
-/// the gate (trigger 2, EventScript_EnterPalace) takes
+/// the gate (coord event 2, EventScript_EnterPalace) takes
 /// MCCOY_PALACE_GROUNDS_TO_MCCOY_PALACE into the palace. The guard's scolding
 /// for keeping McCoy waiting is unused (EventScript_TalkToEastGuard).
 ///
@@ -24,7 +24,7 @@
 /// MCCOY_PALACE_GROUNDS_TO_BILIBIN leads back to Bilibin. From TBS_PATCH_3 on
 /// a patch of ivy (SPRITE_IVY) stands at (132, 388), over a dark opening at the
 /// foot of the cliff on the grounds' south edge, which the earlier editions
-/// show bare (renders of tbs-en and tbs-fr); no exit or event answers that
+/// show bare (renders of tbs-en and tbs-fr); no warp or map event answers that
 /// opening, so the ivy only hides a way in that leads nowhere.
 ///
 /// Open questions: none.
@@ -67,7 +67,7 @@
   ((s32 (*)())Engine_ObjectEventSetPosition)
 #endif
 
-/// The placed actors, numbered in the order of
+/// The placed object events, numbered in the order of
 /// gMcCoyPalaceGroundsObjectEventTemplates.
 enum McCoyPalaceGroundsLocalId {
   /// A worker with a pickaxe by the new palace, drawn in front. "The lumber I
@@ -103,7 +103,7 @@ enum McCoyPalaceGroundsLocalId {
 
 /// The grounds' temporary flags.
 enum {
-  /// The palace gate stands open (McCoyPalaceGrounds_OpenGate), until the scene
+  /// The palace gate stands open (McCoyPalaceGrounds_OpenGate), until the map
   /// is left.
   /// ★ Named from its area name: McCoy's Palace
   FLAG_GATE_OPEN = FLAG_MAP_TEMP_00,
@@ -111,7 +111,7 @@ enum {
   /// ★ Named from the game: "Where were you?" (MsgBilibinWhere)
   FLAG_GUARD_SCOLDED = FLAG_MAP_TEMP_01,
   /// Set by Bilibin (bilibin.c) while the guards have let the party in but it
-  /// has not yet entered the palace. The grounds are another group of scenes
+  /// has not yet entered the palace. The grounds are in another map section
   /// than Bilibin, so entering them clears it before the guard can read it.
   /// ★ Named from the game: "The master can be quite cranky. Hurry along,
   /// now!" (MsgBilibinMasterQuiteCranky)
@@ -306,8 +306,8 @@ static void EventScript_TalkToEastGuard(void) {
   Engine_ScriptEnd();
 }
 
-/// McCoy's Palace, outside, trigger 2: walking north into the palace gate opens
-/// it if it is still shut, and the leader walks into the palace.
+/// McCoy's Palace, outside, coord event 2: walking north into the palace gate
+/// opens it if it is still shut, and the leader walks into the palace.
 static void EventScript_EnterPalace(void) {
   Engine_ScriptStart();
   if (GameFlag_IsSet(FLAG_GATE_OPEN) == 0) {
@@ -508,7 +508,7 @@ u32 gMcCoyPalaceGroundsWarps[] = {
     MAP_WARPS_END,
 };
 
-/// Unused: the getters return it for any scene but MapId_McCoyPalaceGrounds,
+/// Unused: the getters return it for any map but MapId_McCoyPalaceGrounds,
 /// and the overlay serves no other.
 struct ObjectEventTemplate gMcCoyPalaceGroundsNoObjectEventTemplates[] = {
     { MAP_TABLE_END },

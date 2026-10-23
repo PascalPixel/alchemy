@@ -3,7 +3,7 @@
 /// comes in from the grounds by MCCOY_PALACE_FROM_MCCOY_PALACE_GROUNDS_WEST,
 /// or straight into McCoy's room by
 /// MCCOY_PALACE_FROM_MCCOY_PALACE_GROUNDS_EAST, which the red carpet's door
-/// (trigger 9) also reaches. Its people follow three story flags,
+/// (coord event 9) also reaches. Its people follow three story flags,
 /// FLAG_MCCOY_PALACE_BARRICADE_NEEDS_NO_KEY, FLAG_KOLIMA_CURSE_LIFTED and
 /// FLAG_MCCOY_PALACE_REWARD_TAKEN, in what they say and how they turn when
 /// talked to (Map_GetObjectEventTemplates).
@@ -23,10 +23,10 @@
 /// (FLAG_REWARD_OFFERED), where EventScript_PresentRewardChests shows four
 /// chests: a search of one gives its Vial, Potion, Psy Crystal or Water of Life
 /// (McCoyPalace_ClaimReward), and the others are then locked. The chest taken
-/// from is kept only in scene flags (FLAG_TOOK_VIAL and the others), so once
+/// from is kept only in map temp flags (FLAG_TOOK_VIAL and the others), so once
 /// the party has left the palace all four search as locked. Leaving without
-/// a reward (trigger 51), the captain walks the leader back; with it (trigger
-/// 50) he sees the party off (FLAG_PARTY_SEEN_OFF).
+/// a reward (coord event 51), the captain walks the leader back; with it (coord
+/// event 50) he sees the party off (FLAG_PARTY_SEEN_OFF).
 ///
 /// Two barrels hold an Elixir and a Smoke Bomb, a wardrobe a silk negligee
 /// and a bookcase the list of McCoy's gifts to his wife. McCoy speaks with his
@@ -153,8 +153,8 @@ enum {
   CHEST_ANIMATION_PEEK_AND_SHUT = 5
 };
 
-/// The palace's temporary flags: the scene flags last until the party leaves
-/// the palace's scene, the place flags until it leaves McCoy's Palace.
+/// The palace's temporary flags: the map temp flags last until the party leaves
+/// the palace's map, the map-section temp flags until it leaves McCoy's Palace.
 enum {
   /// The captain has opened McCoy's door, so walking through it is silent.
   /// ★ Named from its area name: McCoy's Palace
@@ -201,7 +201,7 @@ static void EventScript_CaptainHintsAtBarricade(void);
 static void EventScript_McCoyRewardsParty(void);
 static void EventScript_PresentRewardChests(void);
 
-// The shared facing callback precedes the scene's entry points.
+// The shared facing callback precedes the map's entry points.
 #include "common/object_facing.h"
 
 const struct MapWarpDest *Map_GetWarpDests(void) {
@@ -362,9 +362,9 @@ static void EventScript_ReadRewardSoldiersThoughts(void) {
   Engine_ScriptEnd();
 }
 
-/// McCoy's Palace, triggers 9, 12 and 13: walking north through a door opens
-/// it with a sound, the leader walks through and the next room loads.
-/// McCoy's door (trigger 9) makes no sound once the captain has opened it.
+/// McCoy's Palace, coord events 9, 12 and 13: walking north through a door
+/// opens it with a sound, the leader walks through and the next room loads.
+/// McCoy's door (coord event 9) makes no sound once the captain has opened it.
 static void EventScript_WalkThroughDoor(void) {
   struct EventWork *work;
   s32 hideDoorLayers;
@@ -494,8 +494,8 @@ static void McCoyPalace_ClaimReward(s32 chestObjectEventId, s32 itemId,
   Engine_ScriptEnd();
 }
 
-/// McCoy's Palace, trigger 51, leaving the treasure room without a reward: the
-/// captain walks the leader back. "Please take your reward before your
+/// McCoy's Palace, coord event 51, leaving the treasure room without a reward:
+/// the captain walks the leader back. "Please take your reward before your
 /// depart!"
 static void EventScript_CaptainAsksPartyToChoose(void) {
   if (GameFlag_IsSet(FLAG_MCCOY_PALACE_REWARD_TAKEN) == 0) {
@@ -518,7 +518,7 @@ static void EventScript_CaptainAsksPartyToChoose(void) {
   }
 }
 
-/// McCoy's Palace, trigger 50, leaving the treasure room with a reward: the
+/// McCoy's Palace, coord event 50, leaving the treasure room with a reward: the
 /// captain sees the party off. "You are always welcome in the palace of Lord
 /// McCoy."
 static void EventScript_CaptainSeesPartyOff(void) {
@@ -580,7 +580,7 @@ s32 Map_Initialize(void) {
   if (Engine_GameFlagIsSet(FLAG_KEEP_PARTY_POSITION) != 0) {
     Engine_GameFlagClear(FLAG_MCCOYS_DOOR_OPEN);
   }
-  // A first audience and a return to the entrance have different greetings.
+  // A first audience and a return visit have different greetings.
   if (Engine_GameFlagIsSet(FLAG_MCCOY_PALACE_BARRICADE_NEEDS_NO_KEY) == 0 &&
       Engine_GameFlagIsSet(FLAG_KOLIMA_CURSE_LIFTED) == 0) {
     if (gGameState.warpDest == MCCOY_PALACE_FROM_MCCOY_PALACE_GROUNDS_EAST) {
@@ -1515,7 +1515,8 @@ static void EventScript_PresentRewardChests(void) {
   struct ObjectEvent *objectEvent;
 
   Engine_ScriptStart();
-  // Restore the chest-row collision patches before presenting the reward.
+  // Restore the chest-row metatile behavior patches before presenting the
+  // reward.
   Camera_MoveTo(-1, -1, -1, 0);
   Engine_ScriptGetViewCenter()->motionFlags = 0;
   Engine_CameraMoveTo(PIXELS(628), -1, PIXELS(748), 0);
@@ -1718,7 +1719,7 @@ u32 gMcCoyPalaceWarps[] = {
     MAP_WARPS_END,
 };
 
-/// Unused: the getters return it for any scene but MapId_McCoyPalace, and the
+/// Unused: the getters return it for any map but MapId_McCoyPalace, and the
 /// overlay serves no other.
 struct ObjectEventTemplate gMcCoyPalaceNoObjectEventTemplates[] = {
     {MAP_TABLE_END},

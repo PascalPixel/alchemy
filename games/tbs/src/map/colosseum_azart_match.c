@@ -7,11 +7,12 @@
 /// Ivan and Mia help from the stages. The stages, by their attendants'
 /// names, are the Rock Challenge, the Pipeworks, the Broken Bridge and the
 /// Lumber Water Crossing Area. Isaac comes here three times, each time at its
-/// own entrance, and ColosseumAzartMatch_Initialize blocks Retreat and sets up
-/// the visit that entrance stands for after restoring the stages from their
-/// temporary flags (FLAG_PIPES_MOVED, FLAG_PIPEWORKS_PIPE_PUSHED,
-/// FLAG_PLANT_GROWN and the rock's column in FLAG_SECOND_ROCK_COLUMN), so that
-/// what the friends changed stays changed for the race.
+/// own warp destination, and ColosseumAzartMatch_Initialize blocks Retreat and
+/// sets up the visit that warp destination stands for after restoring the
+/// stages from their temporary flags (FLAG_PIPES_MOVED,
+/// FLAG_PIPEWORKS_PIPE_PUSHED, FLAG_PLANT_GROWN and the rock's column in
+/// FLAG_SECOND_ROCK_COLUMN), so that what the friends changed stays changed for
+/// the race.
 ///
 /// - COLOSSEUM_AZART_MATCH_FROM_COLOSSEUM, the tour, from the Colosseum's east
 ///   passage. The guide (ColosseumAzartMatch_ExplainFinalsRules) tells the
@@ -148,7 +149,7 @@ static void ColosseumAzartMatch_PushObjectAhead(void);
 
 typedef void (*MapTask)(void);
 
-/// The first finals match's actors, by the guide's and attendants'
+/// The first finals match's object events, by the guide's and attendants'
 /// explanations: four stages (the Rock Challenge, the Pipeworks, the Broken
 /// Bridge and the Lumber Water Crossing Area) lead to the arena where the two
 /// warriors fight.
@@ -215,7 +216,8 @@ ColosseumAzartMatch_GetObjectEventTemplates(void) {
   return gColosseumAzartMatch_ObjectEventTemplates;
 }
 
-/// Advances the bridge animation and its walkable collision cells.
+/// Advances the bridge animation and the metatile behaviors that make it
+/// walkable.
 static void ColosseumAzartMatch_UpdateBrokenBridge(void) {
   switch ((u32)gColosseumAzartMatch_Countdown) {
   case 66:
@@ -567,8 +569,8 @@ UNUSED static void ColosseumAzartMatch_SetCourseFlag(void) {
 /// Reaching Colosseum Final 1's arena: the leader takes a prize (the Iron
 /// Shield if first, the Padded Gloves if second), and he and Azart face off and
 /// fight; the battle's group follows who took the shield.
-/// The arena's touch row, in all three finals stages, waits on
-/// FLAG_MAP_TEMP_10 being clear, and nothing in the game sets it: no scene
+/// The arena's coord event row, in all three finals stages, waits on
+/// FLAG_MAP_TEMP_10 being clear, and nothing in the game sets it: no map
 /// code, no object script (none uses SC_FLAG_ON) and none of the main image's
 /// flag writers reaches it, so the arena is never closed.
 static void EventScript_ReachArena(void) {
@@ -616,7 +618,7 @@ static void EventScript_ReachArena(void) {
   GameFlag_Set(FLAG_KEEP_MUSIC);
 }
 
-/// Walking into something in the Rock Challenge (trigger 90): a rock is
+/// Walking into something in the Rock Challenge (coord event 90): a rock is
 /// pushed, anything else is checked.
 static void EventScript_PushRockOrCheckAhead(void) {
 
@@ -642,7 +644,8 @@ static void ColosseumAzartMatch_RestoreMatchResult(s32 result) {
   ObjectEvent_SetPosition(OPPONENT, PIXELS(1320), PIXELS(192));
   ObjectEvent_SetPosition(LOCALID_PARTY_LEADER, PIXELS(1288), PIXELS(192));
   // BUG: 0x4000 is FACING_SOUTH, passed where ObjectEvent_FaceObjectEvent takes
-  // an actor number; ObjectTable_Get has no actor past 0xbf, so neither turns.
+  // a local id; ObjectTable_Get has no object event past 0xbf, so neither
+  // turns.
 #ifdef BUGFIX
   ObjectEvent_FaceDirection(OPPONENT, FACING_SOUTH, 0);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_SOUTH, 0);
@@ -665,7 +668,7 @@ static void ColosseumAzartMatch_RestoreMatchResult(s32 result) {
   Engine_ScriptEnd();
 }
 
-/// Marks actors standing in the stages' finish terrain.
+/// Marks object events standing in the stages' finish terrain.
 static void ColosseumAzartMatch_MarkFinishTerrain(s32 objectEvent) {
   struct ObjectEvent *target;
   s32 column;
@@ -1012,7 +1015,8 @@ static void EventScript_TalkToRockAttendant(s32 scene) {
   }
 }
 
-/// Moves a Pipeworks actor with the speed used throughout its demonstration.
+/// Moves a Pipeworks object event with the speed used throughout its
+/// demonstration.
 static inline void
 ColosseumAzartMatch_SetPipeHeight(struct ObjectEvent *objectEvent, s32 height) {
   objectEvent->motionFlags = 0;
@@ -1350,7 +1354,7 @@ UNUSED static void Text_WriteU32AsHex(u8 *buf, u32 value) {
 
 static void ColosseumAzartMatch_NoOp(void) {}
 
-/// Unused: marks the shared stage state ready for the waiting event; nothing
+/// Unused: marks the shared stage state ready for the waiting script; nothing
 /// calls it.
 UNUSED static void ColosseumAzartMatch_MarkStageReady(void) {
   s16 *ready = (s16 *)gMapLocalState;

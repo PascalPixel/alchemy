@@ -11,7 +11,7 @@
 /// Sidewalk Stage and another log-rolling area.
 /// ColosseumNavampaMatch_Initialize restores the stages from their temporary
 /// flags (FLAG_PLANT_GROWN to FLAG_LONG_LOG_IN_PLACE, and the stone's column
-/// from FLAG_STONE_COLUMN) and sets up the visit its entrance
+/// from FLAG_STONE_COLUMN) and sets up the visit its warp destination
 /// stands for:
 ///
 /// - COLOSSEUM_NAVAMPA_MATCH_FROM_COLOSSEUM_NORTH, the tour
@@ -33,10 +33,10 @@
 ///   the Hunter's Sword, and the battle is ENCOUNTER_ZONE_COLOSSO's fifth or
 ///   sixth group, the Navampa with or without the Claymore.
 ///
-/// Stepping onto the Scales of Justice's western pan (touch 15,
+/// Stepping onto the Scales of Justice's western pan (coord event 15,
 /// EventScript_StepOnScales) sends it, with the rider, down towards 4 pixels
-/// high and the eastern pan up towards 32, and stepping off (touch 16) swings
-/// them back; the weight Move sets on the western pan does the same
+/// high and the eastern pan up towards 32, and stepping off (coord event 16)
+/// swings them back; the weight Move sets on the western pan does the same
 /// (https://alchemy.pascalpixel.com/places/colosseum-navampa-match/scales.gif:
 /// the leader stepping on, each pan labelled with its height in whole
 /// pixels).
@@ -46,7 +46,7 @@
 /// a win also FLAG_WON_COLOSSO. In the scene that follows
 /// (ColosseumNavampaMatch_PlayPostBattleReunion), Garet, Ivan and Mia run to
 /// Isaac in the arena, but he falls asleep, exhausted, and they leave him to
-/// sleep; both exits lead to Babi's Palace, where he wakes long after the
+/// sleep; both warps lead to Babi's Palace, where he wakes long after the
 /// finals.
 ///
 /// Open questions:
@@ -141,14 +141,15 @@ static void ColosseumNavampaMatch_PushObjectEventAhead(void);
 
 typedef void (*MapTaskEntry)(void);
 
-/// The third finals match's actors, numbered in the order of
+/// The third finals match's object events, numbered in the order of
 /// gColosseumNavampaMatchObjectEventTemplates from LOCALID_FIRST_PLACED; the
-/// rows of Isaac, Garet, Ivan and Mia take their own actors. By the guide's and
-/// attendants' explanations, the Scales of Justice, the Stepping-Stone Stage,
-/// the Wall Wedge, the Free-Climb Area, the Moving Sidewalk Stage and another
-/// log-rolling area lead to the arena. SCALES_WEIGHT to LOG_AREA_STONE_C are
-/// all drawn as the rocks of Colosseum Final 1's Rock Challenge; the
-/// attendant of this match's log-rolling area calls the ones there stones.
+/// rows of Isaac, Garet, Ivan and Mia take their own object events. By the
+/// guide's and attendants' explanations, the Scales of Justice, the
+/// Stepping-Stone Stage, the Wall Wedge, the Free-Climb Area, the Moving
+/// Sidewalk Stage and another log-rolling area lead to the arena. SCALES_WEIGHT
+/// to LOG_AREA_STONE_C are all drawn as the rocks of Colosseum Final 1's Rock
+/// Challenge; the attendant of this match's log-rolling area calls the ones
+/// there stones.
 enum {
   OPPONENT = 8,         ///< Navampa, racing Isaac to the arena
   FROST_TARGET = 9,     ///< on the eastern pan
@@ -167,7 +168,7 @@ enum {
   LOG_AREA_STONE_B = 16,
   LOG_AREA_STONE_C = 17,
   /// The Wall Wedge's five pistons, west to east, "The pistons move back and
-  /// forth."; each is drawn by two actors, FIRST_PISTON + n and
+  /// forth."; each is drawn by two object events, FIRST_PISTON + n and
   /// FIRST_PISTON + PISTON_COUNT + n.
   FIRST_PISTON = 18,
   LAST_PISTON = 22,
@@ -346,9 +347,9 @@ static void ColosseumNavampaMatch_WaitForWallWedgeOpening(void) {
   }
 }
 
-/// The Moving Sidewalk Stage's belt carries the party west. It's touch 11, and
-/// until FLAG_SIDEWALK_BLOCK_KNOCKED_OFF is set the belt carries the controlled
-/// actor and the camera west.
+/// The Moving Sidewalk Stage's belt carries the party west. It's coord event
+/// 11, and until FLAG_SIDEWALK_BLOCK_KNOCKED_OFF is set the belt carries the
+/// controlled object event and the camera west.
 static void EventScript_RideMovingSidewalk(void) {
   struct EventWork *work = gEventWork;
   struct GameState *state = &gGameState;
@@ -520,7 +521,8 @@ static void EventScript_MoveStone(void) {
 /// Move on ROCK in Colosseum Final 3 needs nothing more.
 static void EventScript_IgnoreMove(void) {}
 
-/// Walking into a rock on Colosseum Final 3's stages (trigger 22) pushes it.
+/// Walking into a rock on Colosseum Final 3's stages (coord event 22) pushes
+/// it.
 static void EventScript_PushRock(void) {
   ColosseumNavampaMatch_PushObjectEventAhead();
 }
@@ -611,9 +613,9 @@ static s32 ColosseumNavampaMatch_CheckLongLogPath(s32 x, s32 z) {
 }
 
 /// The long log carries the leader until something stops it. Walking into the
-/// log-rolling area's long log (trigger 23) rolls it, with the leader, the way
-/// the pad is held; at the east end it drops into place and the path is made
-/// (FLAG_LONG_LOG_IN_PLACE). Away from the log, a stone ahead is pushed
+/// log-rolling area's long log (coord event 23) rolls it, with the leader, the
+/// way the pad is held; at the east end it drops into place and the path is
+/// made (FLAG_LONG_LOG_IN_PLACE). Away from the log, a stone ahead is pushed
 /// instead.
 static void EventScript_RollLongLog(void) {
   struct ObjectEvent *rider;
@@ -641,7 +643,8 @@ static void EventScript_RollLongLog(void) {
   Vector_AddPolarOffset(PIXELS(16), angle, ahead);
   x = log->x.fixed;
   z = log->z.fixed;
-  // Only a nearby rider rolls the log; other interactions push the actor ahead.
+  // Only a nearby rider rolls the log; other interactions push the object event
+  // ahead.
   if ((ahead[0] - x >= 0 ? ahead[0] - x : x - ahead[0]) > PIXELS(8) ||
       (ahead[2] - z >= 0 ? ahead[2] - z : z - ahead[2]) > PIXELS(32)) {
     goto far;
@@ -884,7 +887,7 @@ UNUSED static void ColosseumNavampaMatch_UnusedWarriorTalk(s32 warriorId) {
 /// Reaching Colosseum Final 3's arena: the leader takes a prize (the Claymore
 /// if first, the Hunter's Sword if second), and he and Navampa face off and
 /// fight; the battle's group follows who took the Claymore.
-/// The arena's touch row waits on FLAG_MAP_TEMP_10 being clear, which
+/// The arena's coord event row waits on FLAG_MAP_TEMP_10 being clear, which
 /// nothing in the game sets (colosseum_azart_match.c's EventScript_ReachArena).
 static void EventScript_ReachArena(void) {
   s32 place;
@@ -929,16 +932,16 @@ static void EventScript_ReachArena(void) {
   Engine_GameFlagSet(FLAG_KEEP_MUSIC);
 }
 
-/// Walking into something on Colosseum Final 3's stages (trigger 90): unless it
-/// is an actor, it is checked.
+/// Walking into something on Colosseum Final 3's stages (coord event 90):
+/// unless it is an object event, it is checked.
 static void EventScript_CheckAhead(void) {
   if (Colosso_FindObjectEventAhead() == 0) {
     Engine_LeaderCheckAhead();
   }
 }
 
-/// Walking into something by the Scales of Justice (trigger 91): the weight is
-/// pushed, anything else is checked.
+/// Walking into something by the Scales of Justice (coord event 91): the weight
+/// is pushed, anything else is checked.
 static void EventScript_PushWeightOrCheckAhead(void) {
   if (Colosso_FindObjectEventAhead() == 0) {
     Engine_LeaderCheckAhead();
@@ -965,7 +968,7 @@ s32 ColosseumNavampaMatch_Initialize(void) {
 
   gEventWork->startTransition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   Engine_GameFlagSet(FLAG_RETREAT_BLOCKED);
-  // Restore the scale pans, movable weight and supporting collision cells.
+  // Restore the scale pans, movable weight and supporting metatile behaviors.
   FieldScheduler_AddCallback(ColosseumNavampaMatch_UpdateEastEndCollision,
                              TASK_PRIORITY_MAP);
   MapGrid_CopyCellAttributes(74, 60, 8, 6, 120, 60);
@@ -1114,8 +1117,8 @@ s32 ColosseumNavampaMatch_Initialize(void) {
   Colosso_ShowItemIcon(PRIZE_B, ITEM_HUNTERS_SWORD);
   Engine_ObjectEventSetChildValue(OPPONENT, 2);
 
-  // Entrances: the race (1), the friends' turns, the tour, and the end of
-  // Colosso after a win (4) or a loss (5).
+  // Warp destinations: the race (1), the friends' turns, the tour, and the end
+  // of Colosso after a win (4) or a loss (5).
   switch (gGameState.warpDest) {
   case COLOSSEUM_NAVAMPA_MATCH_RACE_FROM_LEND_A_HAND:
     Colosso_StartRaceGauge(LOCALID_PARTY_LEADER, OPPONENT, 6, PIXELS(1512),
@@ -1784,9 +1787,11 @@ static void EventScript_TalkToFreeClimbAttendant(s32 guideId) {
   }
 }
 
-// DispatchObject is the engine's script-control view of these same actors.
+// DispatchObject is the engine's script-control view of these same object
+// events.
 
-/// Starts a scripted pixel destination while preserving the actor height.
+/// Starts a scripted pixel destination while preserving the object event's
+/// height.
 static void ColosseumNavampaMatch_PositionObjectEvent(s32 selector, s32 x,
                                                       s32 z) {
   struct ObjectEvent *objectEvent;
@@ -2216,8 +2221,8 @@ static s32 ColosseumNavampaMatch_CollectFinishEquipment(s32 firstItem,
 #include "common/colosso_map_state.h"
 #include "common/object_findslot.h"
 
-/// Pushes a neighboring actor one cell when its destination and overhead are
-/// clear.
+/// Pushes a neighboring object event one cell when its destination and overhead
+/// are clear.
 static void ColosseumNavampaMatch_PushObjectEventAhead(void) {
   struct ObjectEvent *subject;
   struct ObjectEvent *target;

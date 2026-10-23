@@ -4,10 +4,10 @@
 #include "types.h"
 #include "object_event.h"
 
-/// Stops the actor (paused, standing) when the target is nearer than range
-/// pixels and lies ahead of it, within a sixteenth of a turn either side of its
-/// heading; force stops it regardless. Returns 1 when it stopped. A target out
-/// of range sets it walking again.
+/// Stops the object event (paused, standing) when the target is nearer than
+/// range pixels and lies ahead of it, within a sixteenth of a turn either side
+/// of its heading; force stops it regardless. Returns 1 when it stopped. A
+/// target out of range sets it walking again.
 s32 Vault_StopIfFacingNear(struct ObjectEvent *objectEvent,
                            struct ObjectEvent *target, s32 range, s32 force) {
   s32 result = 0;

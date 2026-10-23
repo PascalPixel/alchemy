@@ -1,10 +1,10 @@
-/// @file Babi Lighthouse and the road up to it: four scenes in one overlay, in
+/// @file Babi Lighthouse and the road up to it: four maps in one overlay, in
 /// three of the game's areas. MapId_RoadToBabiLighthouse is the Road to Babi
 /// Lighthouse, entered from the world map; MapId_BabiLighthouseEntry is the
 /// Babi Lighthouse Entry; MapId_BabiLighthouseLuff and
 /// MapId_BabiLighthouseStoneDoor are both Babi Lighthouse. The four share one
-/// exit table, the other getters choose by gGameState.scene with the road as
-/// the fallback, and BabiLighthouse_SetupMap restores the scene being
+/// warp table, the other getters choose by gGameState.mapId with the road as
+/// the fallback, and BabiLighthouse_SetupMap restores the map being
 /// entered. Retreat anywhere but on the road leads back to the Entry.
 ///
 /// The Road to Babi Lighthouse has four workers and a carved stone pillar. Move
@@ -20,13 +20,13 @@
 /// sprout into a vine (FLAG_GROWTH_PASSAGE_OPEN). Two of Babi's soldiers, a
 /// strongman and a bald, muscular man lie trembling on the ground
 /// (gBabiLighthouse_TrembleScript), knocked down by the group the party is
-/// following. Three exit regions drop the party to the floor below,
+/// following. Three warp regions drop the party to the floor below,
 /// TunnelRuinsLadyStatues (tunnel_ruins.c), and the way back up comes out
 /// beside the same holes.
 ///
 /// BabiLighthouseLuff is three rooms joined by steps and a fourth behind a
-/// locked door. Walking south into one of the pits at touches 25 to 28, the
-/// leader jumps in and drops from above into a lower room, where he either
+/// locked door. Walking south into one of the pits at coord events 25 to 28,
+/// the leader jumps in and drops from above into a lower room, where he either
 /// lands in dust (BabiLighthouse_LandWithParticles) or falls on through
 /// another hole to the room below that (BabiLighthouse_FallToWarp). Luff, a
 /// Jupiter Djinni, starts its battle when spoken to.
@@ -197,10 +197,10 @@ enum {
 
 /// What OverlayObject_PrepareObject places at the far edge of a pit: a crate
 /// drawn solid black (SPRITE_COLOR_BLACK) and translucent in front of the
-/// actors, which shows the background through the leader where they overlap,
-/// so that he vanishes below the edge as he drops over it.
-/// ★ Named from what the player sees: the leader's body hidden as he drops into
-/// a pit, and shown when the mask is left out (its render)
+/// object events, which shows the background through the leader where they
+/// overlap, so that he vanishes below the edge as he drops over it. ★ Named
+/// from what the player sees: the leader's body hidden as he drops into a pit,
+/// and shown when the mask is left out (its render)
 enum { PIT_MASK = SPRITE_CRATE };
 
 /// A chest searched while facing the given way.
@@ -284,8 +284,8 @@ static void BabiLighthouse_LandWithParticles(void) {
   Engine_ScriptEnd();
 }
 
-/// Arriving at one of the drop entrances of BabiLighthouseLuff: the
-/// leader drops in and falls on, out through the given exit.
+/// Arriving at one of the drop warp destinations of BabiLighthouseLuff: the
+/// leader drops in and falls on, out through the given warp.
 static void BabiLighthouse_FallToWarp(s32 warp) {
   struct ObjectEvent *leader;
 
@@ -340,7 +340,7 @@ const struct MapWarpRegion *Map_GetWarpRegions(void) {
   return 0;
 }
 
-/// The four scenes share one exit table.
+/// The four maps share one warp table.
 const u32 *BabiLighthouse_GetWarps(void) { return gBabiLighthouse_Warps; }
 
 const struct ObjectEventTemplate *Map_GetObjectEventTemplates(void) {
@@ -1141,8 +1141,8 @@ static void BabiLighthouse_InspectTruthDoorSwitch(void) {
   Engine_ScriptEnd();
 }
 
-/// Finds the staged actor one direction-table step ahead, including terrain
-/// height.
+/// Finds the staged object event one direction-table step ahead, including
+/// terrain height.
 static struct ObjectEvent *
 BabiLighthouse_FindObjectEventAhead(struct ObjectEvent *objectEvent) {
   struct FieldPosition position;
@@ -1334,7 +1334,7 @@ static void BabiLighthouse_MatchLeaderPriority(union FieldObject *fieldObject) {
 }
 #endif
 
-/// Sets up the scene being entered: Retreat leads back to the Entry; the road's
+/// Sets up the map being entered: Retreat leads back to the Entry; the road's
 /// pillar, the Entry's pillars, vine and the four lying on the ground,
 /// BabiLighthouseLuff's arrivals by falling, and BabiLighthouseStoneDoor's door
 /// and onlookers are restored. Returns 0.
@@ -1358,7 +1358,7 @@ s32 BabiLighthouse_SetupMap(void) {
     state->retreatMap = (s32)&MapId_BabiLighthouseEntry;
     mapCopy = state->mapId;
   }
-  // The road: the moved pillar's collision where it stands.
+  // The road: the moved pillar's metatile behavior where it stands.
   if (mapId == (s32)&MapId_RoadToBabiLighthouse) {
     placedObjectEvent = ObjectEvent_GetById(LOCALID_ROAD_PILLAR);
     x = placedObjectEvent->x.fixed >> 20;
@@ -1369,7 +1369,8 @@ s32 BabiLighthouse_SetupMap(void) {
       }
     }
   } else if (mapCopy == (s32)&MapId_BabiLighthouseEntry) {
-    // Set up the movable ledge pillars and the staggered actor animations.
+    // Set up the movable ledge pillars and the staggered object event
+    // animations.
     ObjectEvent_SetChildValue(LOCALID_LEFT_PILLAR, 6);
     ObjectEvent_SetChildValue(LOCALID_RIGHT_PILLAR, 6);
 #if TBS_PATCH_2
@@ -1429,11 +1430,12 @@ s32 BabiLighthouse_SetupMap(void) {
     placedObjectEvent->sprite->rotation = 0x8000;
     Engine_ObjectEventSetAnimation(LOCALID_FALLEN_MAN_SCORCHED_GROUND, 0);
   } else if (mapCopy == (s32)&MapId_BabiLighthouseLuff) {
-    // Match the arrival effect and fall to the entrance used in this room.
+    // Match the arrival effect and fall to the warp destination used in this
+    // room.
     switch (state->warpDest) {
     case BABI_LIGHTHOUSE_LUFF_FROM_BABI_LIGHTHOUSE_STONE_DOOR_WEST:
       GameFlag_Set(FLAG_BABI_LIGHTHOUSE_BACK_FROM_STONE_DOOR);
-      // Both entrances restore the same remembered tile changes.
+      // Both warp destinations restore the same remembered tile changes.
       // fall through
     case BABI_LIGHTHOUSE_LUFF_LOCKED_DOOR_ROOM_FROM_SOUTH_ROOM:
       if (GameFlag_IsSet(FLAG_BABI_LIGHTHOUSE_BACK_FROM_STONE_DOOR) != 0) {
@@ -1783,7 +1785,7 @@ u32 gBabiLighthouse_Warps[] = {
     MAP_WARPS_END,
 };
 
-/// Unused: an empty placement table nothing returns.
+/// Unused: an empty object event template table nothing returns.
 struct ObjectEventTemplate gBabiLighthouse_NoObjectEventTemplates[] = {
     {MAP_TABLE_END},
 };

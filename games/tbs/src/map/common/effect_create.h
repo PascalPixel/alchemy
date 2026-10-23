@@ -1,10 +1,11 @@
 #include "types.h"
 #include "object_event.h"
 
-// Twenty-three scenes, most of those that spawn effects (effect_spawn.h): two
+// Twenty-three maps, most of those that spawn effects (effect_spawn.h): two
 // ways to place a still effect object of a given type at a 16.16 position.
 
-/// Sets the actor's sprite priority (0 in front of the backgrounds, 3 behind).
+/// Sets the object event's sprite priority (0 in front of the backgrounds, 3
+/// behind).
 UNUSED static void SetEffectRecordMode(struct ObjectEvent *work, s32 mode) {
   work->sprite->image.priority = mode;
 }
@@ -25,7 +26,8 @@ UNUSED static void *OverlayObject_PrepareObject(s32 x, s32 y, s32 z, s32 type) {
   return 0;
 }
 
-/// A still effect in palette 15, at sprite priority 1, drawn under the actors.
+/// A still effect in palette 15, at sprite priority 1, drawn under the object
+/// events.
 UNUSED static void *OverlayObject_CreateConfiguredObject(s32 x, s32 y, s32 z,
                                                          s32 type) {
   struct ObjectEvent *object = Engine_ObjectCreate(type, x, y, z);

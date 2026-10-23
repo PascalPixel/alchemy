@@ -22,7 +22,7 @@
 ///   leader are drawn over the room's render in
 ///   https://alchemy.pascalpixel.com/places/crossbone-isle-statues/stretches.png:
 ///   the first, second and fifth start from per-frame checks of the leader's
-///   cell, the third and fourth from touch triggers in the three cells around
+///   cell, the third and fourth from coord events in the three cells around
 ///   their homes and the three south of them.
 /// - MapId_CrossboneIsleBane, off the sixth, where Bane, a Venus Djinni,
 ///   hides. Five pillars to push or move with Move, a ladder and a puddle that
@@ -81,8 +81,9 @@
 #include "songs.h"
 #include "script.h"
 
-// Place flags: Map_ResetFlagsOnEnter clears 0x300 to 0x3ff when the party
-// enters another place group, and other places use the numbers for their own.
+// Map-section temp flags: Map_ResetFlagsOnEnter clears 0x300 to 0x3ff when the
+// party enters another map section, and other map sections use the numbers for
+// their own.
 /// CrossboneIsleBane's third stone pillar has come down to two cells high or
 /// less.
 /// ★ Named from the game: "It's just a stone pillar." (MsgValeWoodenBoxEmpty)
@@ -103,7 +104,7 @@ static void CrossboneIsleKeys_InitializeKeys(void);
 static void CrossboneIsleKeys_InitializeStatues(void);
 static void CrossboneIsleKeys_InitializeBane(void);
 
-/// CrossboneIsleKeys's placed actors, numbered in the order of
+/// CrossboneIsleKeys's placed object events, numbered in the order of
 /// gCrossboneIsleKeysRoomObjectEventTemplates: the keys, drawn as their item
 /// icons (Colosso_ShowItemIcon) until Catch takes them.
 enum CrossboneIsleKeysLocalId {
@@ -121,7 +122,7 @@ enum CrossboneIsleKeysLocalId {
   LOCALID_RED_KEY
 };
 
-/// CrossboneIsleStatues's placed actors, numbered in the order of
+/// CrossboneIsleStatues's placed object events, numbered in the order of
 /// gCrossboneIsleStatuesObjectEventTemplates: the five statues that pursue the
 /// leader, all of one sprite, each waiting at its home for the leader to cross
 /// its stretch of the room.
@@ -145,14 +146,14 @@ enum CrossboneIsleStatuesLocalId {
 
 /// The events CrossboneIsleStatues's per-frame checks raise when the
 /// leader crosses the first, second or fifth pursuer's stretch of the room.
-/// The third and fourth chases start from touch events instead.
+/// The third and fourth chases start from coord events instead.
 enum CrossboneIsleStatuesTrigger {
   TRIGGER_FIRST_CHASE = 91,
   TRIGGER_SECOND_CHASE = 92,
   TRIGGER_FIFTH_CHASE = 96
 };
 
-/// CrossboneIsleBane's placed actors, numbered in the order of
+/// CrossboneIsleBane's placed object events, numbered in the order of
 /// gCrossboneIsleBaneObjectEventTemplates.
 enum CrossboneIsleBaneLocalId {
   /// The five pillars, in Goma Cave's pillar sprite, pushed by walking into
@@ -178,7 +179,7 @@ enum CrossboneIsleBaneLocalId {
   LOCALID_PUDDLE,
   /// The chest on top of the second pillar, in the sprite of McCoy's Palace's
   /// chests, holding the Demon Axe: it follows the pillar until the pillar
-  /// reaches the ladder, where the chest's search marker 107 takes its place,
+  /// reaches the ladder, where the chest's bg event 107 takes its place,
   /// and it is drawn open once FLAG_CROSSBONE_ISLE_DEMON_AXE is set.
   /// ★ Named from what the player sees: a red chest standing on the second
   /// pillar (its render)
@@ -195,7 +196,7 @@ enum { PASSAGE_INDEX_MASK = 0xff, PASSAGE_PLAY_OPENING = 0x100 };
 /// CrossboneIsleBane: the chest on the second pillar has reached the ladder.
 #define BANE_CHEST_AT_LADDER_FLAG FLAG_MAP_TEMP_06
 /// CrossboneIsleBane: the leader last looked east from the ladder, which gives
-/// the ladder cell its other attributes.
+/// the ladder cell its other metatile behaviors.
 #define BANE_LOOKED_EAST_FLAG FLAG_MAP_TEMP_07
 // The Move events of CrossboneIsleBane's pillars also test FLAG_MAP_TEMP_01
 // and 03 to 05, which nothing sets.
@@ -289,7 +290,7 @@ CrossboneIsleKeys_FaceBaneTowardLeader(union FieldObject *fieldObject) {
 }
 
 /// In CrossboneIsleBane, the first time the party comes near
-/// (trigger 20): Bane notices them and hops away.
+/// (coord event 20): Bane notices them and hops away.
 static void EventScript_BaneFirstEscape(void) {
   struct ObjectEvent *djinni;
 
@@ -313,7 +314,7 @@ static void EventScript_BaneFirstEscape(void) {
   }
 }
 
-/// In CrossboneIsleBane, coming near again (trigger 21): Bane hops,
+/// In CrossboneIsleBane, coming near again (coord event 21): Bane hops,
 /// dashes across the platforms and crashes into the far wall, shaking the room,
 /// and is left squashing and stretching.
 static void EventScript_BaneSecondEscape(void) {
@@ -370,7 +371,7 @@ static void EventScript_BaneSecondEscape(void) {
   }
 }
 
-/// In CrossboneIsleBane, the third time (trigger 22): Bane recovers,
+/// In CrossboneIsleBane, the third time (coord event 22): Bane recovers,
 /// hops down a winding path to the room's last corner and keeps watching the
 /// leader.
 static void EventScript_BaneLastEscape(void) {
@@ -424,7 +425,7 @@ static void EventScript_BaneLastEscape(void) {
   }
 }
 
-/// In CrossboneIsleBane, stepping on the triggers around Bane's
+/// In CrossboneIsleBane, stepping on the coord events around Bane's
 /// corner (30 to 41): Bane runs to the matching spot, as fast as the leader,
 /// unless Halt holds it.
 static void EventScript_BaneKeepsAway(void) {
@@ -482,10 +483,10 @@ const struct MapEvent *Map_GetEvents(void) {
 /// Unused: walking south into CrossboneIsleKeys's third or fourth blue door
 /// looks at what is ahead.
 ///
-/// Both rows that name it follow a plain touch row for the same door
+/// Both rows that name it follow a plain coord event row for the same door
 /// (EventScript_OpenThirdBlueDoor, EventScript_OpenFourthBlueDoor), which
-/// Map_FindEvent always finds first; those events look ahead themselves after a
-/// dozen steps pressed south against the door, so the player sees the same
+/// Map_FindEvent always finds first; those scripts look ahead themselves after
+/// a dozen steps pressed south against the door, so the player sees the same
 /// thing.
 static void EventScript_UnusedCheckLeaderAhead(void) {
   Engine_LeaderCheckAhead();
@@ -523,7 +524,7 @@ static void CrossboneIsleKeys_OpenRedDoor(s32 passageInfo) {
   MapGrid_CopyCellAttributes(6, 49, 1, 1, 6, 51);
 }
 
-/// Facing CrossboneIsleKeys's red door with the Red Key (trigger
+/// Facing CrossboneIsleKeys's red door with the Red Key (coord event
 /// 50): the door rumbles open, and the key is used up.
 static void EventScript_UseRedKey(void) {
   struct ObjectEvent *leader;
@@ -561,17 +562,17 @@ static void CrossboneIsleKeys_UseBlueKey(s32 doorIndex) {
   PartyInventory_Remove(ITEM_BLUE_KEY);
 }
 
-/// Touching CrossboneIsleKeys's first blue door (trigger 51).
+/// Touching CrossboneIsleKeys's first blue door (coord event 51).
 static void EventScript_OpenFirstBlueDoor(void) {
   CrossboneIsleKeys_UseBlueKey(0);
 }
 
-/// Touching CrossboneIsleKeys's second blue door (trigger 52).
+/// Touching CrossboneIsleKeys's second blue door (coord event 52).
 static void EventScript_OpenSecondBlueDoor(void) {
   CrossboneIsleKeys_UseBlueKey(1);
 }
 
-/// Touching CrossboneIsleKeys's third blue door (trigger 53);
+/// Touching CrossboneIsleKeys's third blue door (coord event 53);
 /// pressing on it from the north looks ahead every dozen blocked steps.
 static void EventScript_OpenThirdBlueDoor(void) {
   struct ObjectEvent *leader;
@@ -590,7 +591,7 @@ static void EventScript_OpenThirdBlueDoor(void) {
   }
 }
 
-/// Touching CrossboneIsleKeys's fourth blue door (trigger 54);
+/// Touching CrossboneIsleKeys's fourth blue door (coord event 54);
 /// pressing on it from the north looks ahead every dozen blocked steps.
 static void EventScript_OpenFourthBlueDoor(void) {
   struct ObjectEvent *leader;
@@ -629,7 +630,8 @@ static void EventScript_HideRedKey(void) {
   OBJECT_POSITION_SET(LOCALID_RED_KEY, 8, 8);
 }
 
-/// Collects the selected key, hides its actor and remembers it was taken.
+/// Collects the selected key, hides its object event and remembers it was
+/// taken.
 static inline void CrossboneIsleKeys_CollectKey(s32 objectEventId, s32 itemId,
                                                 s32 collectedFlag) {
   Engine_ItemShowFound(itemId, 3);
@@ -778,13 +780,13 @@ static void CrossboneIsleKeys_TrackPursuerColumn(s32 pursuerIndex) {
   Engine_ObjectEventWaitForMove(LOCALID_PARTY_LEADER);
 }
 
-/// Touching trigger 53 in CrossboneIsleStatues: the third pursuer keeps
+/// Touching coord event 53 in CrossboneIsleStatues: the third pursuer keeps
 /// to the leader's column.
 static void EventScript_TrackThirdPursuerColumn(void) {
   CrossboneIsleKeys_TrackPursuerColumn(0);
 }
 
-/// Touching trigger 54 in CrossboneIsleStatues: the fourth pursuer
+/// Touching coord event 54 in CrossboneIsleStatues: the fourth pursuer
 /// keeps to the leader's column.
 static void EventScript_TrackFourthPursuerColumn(void) {
   CrossboneIsleKeys_TrackPursuerColumn(1);
@@ -795,7 +797,7 @@ UNUSED static void CrossboneIsleKeys_TrackFifthPursuerColumn(void) {
   CrossboneIsleKeys_TrackPursuerColumn(2);
 }
 
-/// Touching trigger 61 in CrossboneIsleStatues: the third pursuer
+/// Touching coord event 61 in CrossboneIsleStatues: the third pursuer
 /// follows the leader, then goes back home.
 static void EventScript_DodgeThirdPursuer(void) {
   struct ObjectEvent *leader;
@@ -824,7 +826,7 @@ static void EventScript_DodgeThirdPursuer(void) {
   }
 }
 
-/// Touching trigger 62 in CrossboneIsleStatues: the fourth pursuer lines
+/// Touching coord event 62 in CrossboneIsleStatues: the fourth pursuer lines
 /// up and goes after the leader.
 static void EventScript_DodgeFourthPursuer(void) {
   struct ObjectEvent *leader;
@@ -928,7 +930,7 @@ static void EventScript_EndRevealBlend(void) {
   REG_BLDALPHA = value;
 }
 
-/// At CrossboneIsleBane's ladder by the second pillar (trigger 60):
+/// At CrossboneIsleBane's ladder by the second pillar (coord event 60):
 /// climb up or down, look ahead to the east, or push the first pillar from the
 /// floor to the west.
 static void EventScript_UseLadder(void) {
@@ -988,7 +990,7 @@ static void EventScript_FreezePuddle(void) {
 }
 
 /// Walking into CrossboneIsleBane's first pillar from the ladder side
-/// (trigger 70): facing east, look ahead; otherwise push the pillar.
+/// (coord event 70): facing east, look ahead; otherwise push the pillar.
 static void EventScript_LookAheadOrPushFirstPillar(void) {
   struct ObjectEvent *leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
 
@@ -1066,7 +1068,7 @@ static void EventScript_UpdateFirstPillarTerrain(void) {
   }
 }
 
-/// Pushing CrossboneIsleBane's first pillar (trigger 51); standing at
+/// Pushing CrossboneIsleBane's first pillar (coord event 51); standing at
 /// the ladder in column 38, the leader climbs instead.
 static void EventScript_PushFirstPillar(void) {
   struct ObjectEvent *leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
@@ -1093,7 +1095,7 @@ static void EventScript_PushFirstPillar(void) {
 }
 
 /// Leaves the chest where the second pillar has reached the ladder: the chest's
-/// actor is hidden, its search marker takes its place and the ladder cell is
+/// object event is hidden, its bg event takes its place and the ladder cell is
 /// restored.
 static void CrossboneIsleKeys_ReleaseSecondPillarChest(void) {
   Scheduler_RemoveCallback(CrossboneIsleKeys_FollowSecondPillar);
@@ -1119,8 +1121,8 @@ static void EventScript_UpdateSecondPillarTerrain(void) {
   }
 }
 
-/// Pushing CrossboneIsleBane's second pillar (trigger 52); at the ladder, the
-/// chest on top of it stays there.
+/// Pushing CrossboneIsleBane's second pillar (coord event 52); at the ladder,
+/// the chest on top of it stays there.
 static void EventScript_PushSecondPillar(void) {
   StagedObjectEvent_AdvancePair();
   EventScript_UpdateSecondPillarTerrain();
@@ -1172,14 +1174,14 @@ static void EventScript_UpdateThirdPillarTerrain(void) {
   }
 }
 
-/// Pushing CrossboneIsleBane's third pillar (trigger 50).
+/// Pushing CrossboneIsleBane's third pillar (coord event 50).
 static void EventScript_PushThirdPillar(void) {
   CrossboneIsleKeys_RestoreThirdPillarTerrain();
   StagedObjectEvent_AdvancePair();
   EventScript_UpdateThirdPillarTerrain();
 }
 
-/// Walking into CrossboneIsleBane's third pillar (trigger 54): facing
+/// Walking into CrossboneIsleBane's third pillar (coord event 54): facing
 /// south, the rising sequence plays; otherwise the pillar is pushed.
 static void EventScript_TouchThirdPillar(void) {
   struct ObjectEvent *leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
@@ -1221,7 +1223,7 @@ static void EventScript_UpdateFourthPillarTerrain(void) {
   CrossboneIsleKeys_RepaintFourthAndFifthPillarCells();
 }
 
-/// Pushing CrossboneIsleBane's fourth pillar (trigger 53).
+/// Pushing CrossboneIsleBane's fourth pillar (coord event 53).
 static void EventScript_PushFourthPillar(void) {
   CrossboneIsleKeys_RestoreFourthAndFifthPillarTerrain();
   StagedObjectEvent_AdvancePair();
@@ -1252,7 +1254,7 @@ static void CrossboneIsleKeys_FollowSecondPillar(void) {
   target->z.fixed = source->z.fixed + PIXELS(1);
 }
 
-/// Puts the chest's search marker 107 where the second pillar stands.
+/// Puts the chest's bg event 107 where the second pillar stands.
 static void CrossboneIsleKeys_PositionSecondPillarMarker(void) {
   struct ObjectEvent *frame = ObjectEvent_GetById(LOCALID_SECOND_PILLAR);
 
@@ -1637,7 +1639,7 @@ struct MapEvent gCrossboneIsleKeysRoomEvents[] = {
     { MAP_EVENT_COORD, 52, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_OpenSecondBlueDoor) },
     { MAP_EVENT_COORD, 53, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_OpenThirdBlueDoor) },
     { MAP_EVENT_COORD, 54, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_OpenFourthBlueDoor) },
-    // Unused: the plain touch rows above answer codes 53 and 54 first.
+    // Unused: the plain coord event rows above answer codes 53 and 54 first.
     { COORD_EVENT_WALKING_INTO(FACING_SOUTH), 53, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_UnusedCheckLeaderAhead) },
     { COORD_EVENT_WALKING_INTO(FACING_SOUTH), 54, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_UnusedCheckLeaderAhead) },
     { BG_EVENT(BG_EVENT_CHEST), 100, FLAG_CROSSBONE_ISLE_KEYS_333_COINS, FIND_COINS(333) },

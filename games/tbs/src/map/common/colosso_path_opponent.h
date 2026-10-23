@@ -27,19 +27,20 @@
 struct ColossoRaceWork {
   struct ColossoGaugeWork gauge;
   /// Pixels, as pairs of x and z, one pair a frame, ending with (0, 0):
-  /// decoded from the scene's resource, or recorded (PATH_RECORDER_RECORD).
+  /// decoded from the map's resource, or recorded (PATH_RECORDER_RECORD).
   s16 path[0x3840];
 };
 
 STATIC_ASSERT(sizeof(struct ColossoRaceWork) == 0x7170);
 
-/// The opponent's scene callback. PATH_RECORDER_PLAY plays the path back: each
+/// The opponent's map callback. PATH_RECORDER_PLAY plays the path back: each
 /// frame the opponent steps to the next point (mirrored across the finish when
 /// asked), turning by at most a sixteenth of a turn, and stands once still for
 /// three frames. At the path's end the opponent walks to the finish, beside the
-/// first finisher's item actor or the second's, and sets FLAG_MAP_TEMP_11 (a
-/// racer has finished). PATH_RECORDER_RECORD records the actor's own path
-/// instead, up to 0x383e halfwords, then plays it back with the opponent.
+/// first finisher's item object event or the second's, and sets
+/// FLAG_MAP_TEMP_11 (a racer has finished). PATH_RECORDER_RECORD records the
+/// object event's own path instead, up to 0x383e halfwords, then plays it back
+/// with the opponent.
 static void Colosso_UpdatePathOpponent(void) {
   struct ColossoRaceWork *work = (struct ColossoRaceWork *)gColossoWork;
   struct PathRecorder *rec = (struct PathRecorder *)gMapLocalState;
@@ -123,7 +124,7 @@ static void Colosso_UpdatePathOpponent(void) {
 
 extern u8 gColosso_GaugeGraphics[];
 
-/// The race gauge's scene callback: a bar across the top of the screen, with
+/// The race gauge's map callback: a bar across the top of the screen, with
 /// the finish at its centre and blinking marks for the opponent and Isaac at
 /// their distances from it (a pixel of bar for 14 of course). It slides down
 /// when the race starts and back up while FLAG_MENU_OPEN is set; hold keeps it

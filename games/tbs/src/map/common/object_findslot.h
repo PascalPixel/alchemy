@@ -4,14 +4,14 @@
 
 // Colosseum Final 1, 2 and 3, and Venus Lighthouse.
 
-/// Returns the placed actor (8 to 65) whose cell, and 16-pixel step of height,
-/// is that of the 16.16 position, or 0. self is not read.
+/// Returns the placed object event (8 to 65) whose cell, and 16-pixel step of
+/// height, is that of the 16.16 position, or 0. self is not read.
 static void *MapData_FindSlotAtPosition(const struct FieldPosition *position,
                                         void *self) {
   const struct FieldPosition *pos = position;
-  // Field_RunMap owns all 66 slots. EventWork's actors view holds only the
-  // first eight; the placed actors follow in its separate placedObjectEvents
-  // array.
+  // Field_RunMap owns all 66 slots. EventWork's object events view holds only
+  // the first eight; the placed object events follow in its separate
+  // placedObjectEvents array.
   struct FieldWork *work = (struct FieldWork *)gEventWork;
   struct ObjectEvent **slots = work->objectEvents;
   u32 i;

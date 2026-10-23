@@ -21,7 +21,7 @@ s32 gFallingEffectOffset __attribute__((section(".bss")));
 s32 gFallingEffectWidth __attribute__((section(".bss")));
 u32 gFallingEffectState __attribute__((section(".bss")));
 
-/// A scene callback: every eighth frame a speck (its script
+/// A map callback: every eighth frame a speck (its script
 /// gFallingEffectScript) starts 160 pixels up at a random point near the point
 /// the map view follows, with SE_246 every 64 frames. gFallingEffectState, an
 /// enum KolimaCurseDustState, shapes the fall.

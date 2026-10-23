@@ -1,7 +1,7 @@
 /// @file
 /// Lunpa, the town of the noble thief's family, sealed by Dodonpa's men while
-/// he holds Hammet for ransom in Lunpa Fortress. Two places share this
-/// overlay, each a scene of its own:
+/// he holds Hammet for ransom in Lunpa Fortress. Two map sections share this
+/// overlay, each a map of its own:
 ///
 /// - Lunpa (MapId_Lunpa, area name Lunpa): the town. Two guards keep the
 ///   road in from the world map; doors lead into the homes, shops, inn and
@@ -12,7 +12,7 @@
 ///   Fortress Gates): the steps up to the fortress door, kept by two guards
 ///   whom the party gets past under Cloak.
 ///
-/// The getters choose by gGameState.scene, and the town's events also by
+/// The getters choose by gGameState.mapId, and the town's map events also by
 /// FLAG_DODONPA_LOCKED_UP, which Donpa's judgment in the fortress sets: before
 /// it the townspeople live under Dodonpa's men (gLunpaSealedEvents), after it
 /// they talk of the intruders (gLunpaReopenedEvents). Both tables share the
@@ -24,7 +24,7 @@
 /// (EventScript_HideSecrets): a Psynergy Stone, a puddle that Frost freezes
 /// into a pillar to stand on, and the sparkle of a switch. Searching the switch
 /// opens the passage to the jail, which can be walked through only while Reveal
-/// shows it (EventScript_EnterHiddenPassage). Its scene flags:
+/// shows it (EventScript_EnterHiddenPassage). Its map temp flags:
 ///
 /// - FLAG_MAP_TEMP_00: Frost has frozen the puddle.
 /// - FLAG_MAP_TEMP_01: the secrets are hidden, Reveal not shining.
@@ -41,7 +41,7 @@
 /// Cloak. Every entry clears the fortress's puzzle and beaten-guard flags, so
 /// the fortress starts over. Between Donpa's judgment and the reunion in West
 /// Lunpa Cave (FLAG_LUNPA_CAVE_REUNION_SEEN), Garet stops the leader from
-/// going back up (TRIGGER_FORTRESS_APPROACH). Its scene flags:
+/// going back up (TRIGGER_FORTRESS_APPROACH). Its map temp flags:
 ///
 /// - FLAG_MAP_TEMP_40: the guards stand before the door.
 /// - FLAG_MAP_TEMP_41: Cloak has been cast at the gates.
@@ -52,8 +52,8 @@
 /// Open questions:
 /// - XXX (no evidence): where GATE_WARP_THIRD, the gates' third road, was
 ///   meant to lead; gGateWarps has no row for it, so the engine's fallback
-///   sends it to LunpaFortressGroundFloor's default entrance, and nothing else
-///   in the ROM names a destination for it.
+///   sends it to LunpaFortressGroundFloor's default warp destination, and
+///   nothing else in the ROM names a destination for it.
 
 #include "game_state.h"
 #include "version.h"
@@ -157,7 +157,8 @@ static void EventScript_CatchFloatingNut(void) {
   Engine_ScriptEnd();
 }
 
-/// Restores the frozen pillar's three collision cells, including its sides.
+/// Restores the metatile behaviors of the frozen pillar's three cells,
+/// including its sides.
 static inline void Lunpa_ApplyFrozenPuddleCollision(void) {
   MapGrid_CopyCellAttributes(17, 4, 1, 1, 14, 4);
   MapGrid_CopyCellAttributes(15, 3, 1, 1, 15, 4);
@@ -192,7 +193,7 @@ static void Lunpa_UpdateIcePillarDrawOrder(void) {
   }
 }
 
-/// Draws the three map regions that make one frame of the hidden passage.
+/// Draws the three map grid regions that make one frame of the hidden passage.
 static inline void Lunpa_DrawHiddenPassageFrame(s32 sourceColumn,
                                                 s32 sourceRow) {
   MapGrid_CopyCells(sourceColumn, sourceRow, 3, 4, 1, 14);
@@ -278,7 +279,7 @@ static void EventScript_SearchWell(void) {
   Engine_ScriptEnd();
 }
 
-/// The events of the Lunpa Fortress Gates, or the town's before and after
+/// The map events of the Lunpa Fortress Gates, or the town's before and after
 /// Donpa's judgment.
 const struct MapEvent *Map_GetEvents(void) {
   s32 mapId = gGameState.mapId;
@@ -513,7 +514,8 @@ static void EventScript_EnterDoor(void) {
 
   work = (struct FieldWork *)gEventWork;
   Engine_ScriptStart();
-  // Freeze placed actors before opening the selected door and crossing it.
+  // Freeze placed object events before opening the selected door and crossing
+  // it.
   for (objectEventId = LOCALID_FIRST_PLACED; objectEventId <= LOCALID_LAST_SLOT;
        objectEventId++) {
     placedObjectEvent = ObjectEvent_Get(objectEventId);
@@ -791,7 +793,7 @@ static void EventScript_GuardsThrowLeaderOut(void) {
                             0);
   ObjectEvent_FaceDirection(LOCALID_RIGHT_GUARD, FACING_SOUTH + FACING_STEP, 0);
 #else
-  // BUG: the town's guards, whose actor numbers no actor at the gates holds,
+  // BUG: the town's guards, whose local ids no object event at the gates holds,
   // so the gates' guards keep their headings.
   ObjectEvent_FaceDirection(LOCALID_WEST_GUARD, FACING_SOUTHEAST + FACING_STEP,
                             0);
@@ -905,7 +907,7 @@ static void EventScript_LeaderSneaksOut(void) {
 
 /// Sets Lunpa or the Lunpa Fortress Gates up: in the town, Reveal's secrets
 /// hidden and the floating Nut; at the gates, the thrown-out or sneaking-out
-/// scene, the watchers, and the fortress's puzzle and guard flags cleared.
+/// cutscene, the watchers, and the fortress's puzzle and guard flags cleared.
 s32 Map_Initialize(void) {
   struct ObjectEvent *puddle;
 
@@ -922,7 +924,7 @@ s32 Map_Initialize(void) {
     }
     Engine_GameFlagSet(FLAG_MAP_TEMP_01);
   }
-  // Restore the gate's arrival scene and active detection tasks separately.
+  // Restore the gate's arrival cutscene and active detection tasks separately.
   if (gGameState.mapId == (s32)&MapId_LunpaFortressGates) {
     ((struct FieldWork *)gEventWork)->transition =
         MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
@@ -1240,8 +1242,8 @@ u16 gLunpaDoorSteps[DOOR_COUNT][11] = {
      MAPGRID_ANIM_STEPS_END},
 };
 
-/// Each door's opening animation and the map cell it plays at, by its
-/// trigger from TRIGGER_FIRST_HOME_DOOR.
+/// Each door's opening animation and the map grid cell it plays at, by its
+/// coord event from TRIGGER_FIRST_HOME_DOOR.
 struct MapGridCellAnimation gLunpaDoors[] = {
     {gLunpaDoorSteps[0], 46, 9},  {gLunpaDoorSteps[1], 52, 12},
     {gLunpaDoorSteps[2], 52, 18}, {gLunpaDoorSteps[3], 45, 20},

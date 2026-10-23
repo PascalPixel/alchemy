@@ -3,13 +3,13 @@
 /// maps, between MapId_KolimaForestGlade and MapId_KolimaForestFloodgate.
 /// Of its three logs, rolled by walking into them, the one pushed west to the
 /// water's edge tips into the river and floats there, cells the party can cross
-/// to the far side, and from the bank the leader can hop east (trigger 11,
+/// to the far side, and from the bank the leader can hop east (coord event 11,
 /// KolimaForest_HopEast). The forest keeps its cursed colours until Tret lifts
 /// the curse (FLAG_KOLIMA_CURSE_LIFTED).
 ///
 /// FLAG_MAP_TEMP_01: the log is in the river, until the party next comes in.
 ///
-/// The scene's name, Cliff, is ours, for what sets the map apart: a rock cliff
+/// The map's name, Cliff, is ours, for what sets the map apart: a rock cliff
 /// runs across its north side above the river and the logs
 /// (places/kolima-forest-cliff_cursed/map-0.png).
 ///
@@ -43,7 +43,7 @@
 #include "map_tables.h"
 #include "songs.h"
 
-/// The map's actors, numbering the rows of
+/// The map's object events, numbering the rows of
 /// gKolimaForestCliffObjectEventTemplates.
 enum {
   /// The three logs; the third is the one that can reach the river.

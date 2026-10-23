@@ -1,23 +1,23 @@
 /// @file
-/// The Bilibin Cave Entrance and Bilibin Cave, two places between Bilibin and
-/// Imil that share this overlay: the Bilibin Cave Entrance is
+/// The Bilibin Cave Entrance and Bilibin Cave, two map sections between Bilibin
+/// and Imil that share this overlay: the Bilibin Cave Entrance is
 /// MapId_BilibinCaveEntrance, and Bilibin Cave is MapId_BilibinCaveRapier
 /// and, beyond it, MapId_BilibinCaveIce, whose far end opens onto the world
-/// map farther north. No one speaks here: each scene is a run of Psynergy
-/// puzzles, the getters pick its tables by gGameState.scene, and
+/// map farther north. No one speaks here: each map is a run of Psynergy
+/// puzzles, the getters pick its tables by gGameState.mapId, and
 /// BilibinCave_Initialize restores what the party has already solved in the
-/// scene being entered.
+/// map being entered.
 ///
 /// At the Bilibin Cave Entrance, entered from the world map, Growth on a
-/// sprout (LOCALID_SPROUT) grows it into a vine and changes the collision of
-/// its cell (EventScript_GrowPlant); FLAG_MAPSEC_TEMP_05 keeps it grown until
-/// the party leaves the Bilibin Cave Entrance, into the cave beyond or out to
-/// the world map, since both are other place groups. Two exits lead on into
-/// Bilibin Cave. The south one's exit cell, at the cave mouth, lies under the
-/// ledge path that runs above the mouth, since the collision grid has one cell
-/// for both: touch 10, the ledge cells either side of it, turns the exit off so
-/// the leader can walk the ledge across it, and touch 11, a step further out,
-/// turns it back on (EventScript_DisableWarpToCave,
+/// sprout (LOCALID_SPROUT) grows it into a vine and changes the metatile
+/// behavior of its cell (EventScript_GrowPlant); FLAG_MAPSEC_TEMP_05 keeps it
+/// grown until the party leaves the Bilibin Cave Entrance, into the cave beyond
+/// or out to the world map, since both are other map sections. Two warps lead
+/// on into Bilibin Cave. The south one's warp cell, at the cave mouth, lies
+/// under the ledge path that runs above the mouth, since the map grid has one
+/// cell for both: coord event 10, the ledge cells either side of it, turns the
+/// warp off so the leader can walk the ledge across it, and coord event 11, a
+/// step further out, turns it back on (EventScript_DisableWarpToCave,
 /// EventScript_EnableWarpToCave; its recording,
 /// places/bilibin-cave-entrance/events/EventScript_DisableWarpToCave.gif).
 ///
@@ -40,9 +40,9 @@
 /// Move, and while either stands beside the pillar, on cell (35, 23), the
 /// pillar melts into a puddle and the cells north and south of it change with
 /// it; when both leave it freezes again
-/// (BilibinCave_UpdateThirdPuddleFromTorches). Melting turns the collision
-/// codes of cells (36, 22) and (36, 24), north and south of the puddle, from
-/// MB_ENCOUNTER_GROUND_1 to MB_JUMP_FORWARD
+/// (BilibinCave_UpdateThirdPuddleFromTorches). Melting turns the metatile
+/// behaviors of cells (36, 22) and (36, 24), north and south of the puddle,
+/// from MB_ENCOUNTER_GROUND_1 to MB_JUMP_FORWARD
 /// (https://alchemy.pascalpixel.com/places/bilibin-cave-ice/third-puddle-melt.gif:
 /// the fourth torch, put a cell west of (35, 23), moved onto it with Move, its
 /// cell outlined in yellow and the two rewritten cells in red, each labelled
@@ -52,9 +52,9 @@
 /// from MapId_BilibinCaveRapier puts the torches and the pillar back; leaving
 /// Bilibin Cave resets them. Nine more pieces of ice only stand there: five
 /// pillars from LOCALID_FIRST_ICE_PILLAR and four lower pieces from
-/// LOCALID_FIRST_LOW_ICE. Touch 20 covers the snow blown in at the cave's mouth
-/// to the world map, around BILIBIN_CAVE_ICE_FROM_WORLD_MAP, and makes the
-/// leader leave footprints; touch 21, rimming it, stops them
+/// LOCALID_FIRST_LOW_ICE. Coord event 20 covers the snow blown in at the cave's
+/// mouth to the world map, around BILIBIN_CAVE_ICE_FROM_WORLD_MAP, and makes
+/// the leader leave footprints; coord event 21, rimming it, stops them
 /// (EventScript_StartFootprints, EventScript_StopFootprints; the snow is in
 /// places/bilibin-cave-ice/map-1.png). Its chests hold a Vial, a Psy Crystal
 /// and Water of Life.
@@ -92,13 +92,13 @@
 #include "songs.h"
 #include "map_grid_scroll.h"
 
-// BilibinCave_Initialize calls one of these for the scene being entered.
+// BilibinCave_Initialize calls one of these for the map being entered.
 static void BilibinCave_RestoreEntrance(void);
 static void BilibinCave_RestoreRapierRoom(void);
 static void BilibinCave_RestoreIceRoom(void);
 static void BilibinCave_EmptyObjectEventSetupHook(s32 objectEventId);
 
-/// Actors of the Bilibin Cave Entrance (MapId_BilibinCaveEntrance).
+/// Object events of the Bilibin Cave Entrance (MapId_BilibinCaveEntrance).
 enum {
   /// The sprout Growth grows into a vine.
   /// ★ Named from what the player sees: a green sprout, SPRITE_SPROUT (its
@@ -106,7 +106,7 @@ enum {
   LOCALID_SPROUT = 8
 };
 
-/// Actors of MapId_BilibinCaveRapier, numbered by the rows of
+/// Object events of MapId_BilibinCaveRapier, numbered by the rows of
 /// gBilibinCaveRapierObjectEventTemplates.
 enum {
   /// A torch west of the fire, cold (TORCH_ANIMATION_UNLIT) where its twin
@@ -124,7 +124,7 @@ enum {
   LOCALID_RAPIER_ROOM_EAST_TORCH = 10
 };
 
-/// Actors of MapId_BilibinCaveIce, numbered by the rows of
+/// Object events of MapId_BilibinCaveIce, numbered by the rows of
 /// gBilibinCaveIceObjectEventTemplates.
 enum {
   /// A fire beside the first puddle, which Douse puts out.
@@ -169,7 +169,8 @@ enum {
   LOCALID_FIRST_LOW_ICE = 23
 };
 
-/// Clears the scripted actor's sprite flags and completes this script command.
+/// Clears the scripted object event's sprite flags and completes this script
+/// command.
 static s32 BilibinCave_ClearScriptedObjectEventSpriteFlags(
     struct ScriptInterpreter *interpreter) {
   struct ObjectEvent *objectEvent = (struct ObjectEvent *)interpreter;
@@ -226,16 +227,16 @@ const struct MapEvent *BilibinCave_GetEvents(void) {
   return gBilibinCaveEventsOther;
 }
 
-/// Stepping on touch 10 at the Bilibin Cave Entrance, on either side of the
-/// way into Bilibin Cave: the way's cell (21, 14), the exit cell of
+/// Stepping on coord event 10 at the Bilibin Cave Entrance, on either side of
+/// the way into Bilibin Cave: the way's cell (21, 14), the warp cell of
 /// BILIBIN_CAVE_ENTRANCE_TO_BILIBIN_CAVE_RAPIER_SOUTH, takes the
-/// attributes of source cell (1, 0), which has none.
+/// metatile behavior of source cell (1, 0), which has none.
 static void EventScript_DisableWarpToCave(void) {
   MapGrid_CopyCellAttributes(1, 0, 1, 1, 21, 14);
 }
 
-/// Stepping on touch 11 at the Bilibin Cave Entrance, a cell further out: the
-/// way's cell (21, 14) takes back the exit, from source cell (0, 0).
+/// Stepping on coord event 11 at the Bilibin Cave Entrance, a cell further out:
+/// the way's cell (21, 14) takes back the warp, from source cell (0, 0).
 static void EventScript_EnableWarpToCave(void) {
   MapGrid_CopyCellAttributes(0, 0, 1, 1, 21, 14);
 }
@@ -293,7 +294,7 @@ static void EventScript_DouseIceRoomFire(void) {
   ObjectEvent_SetPosition(LOCALID_ICE_ROOM_FIRE, 0, 0);
   GameFlag_Set(FLAG_BILIBIN_CAVE_FIRST_FIRE_DOUSED);
   Engine_ScriptWait(40);
-  // Match the replacement's drawing priority to its collision cell.
+  // Match the replacement's drawing priority to its metatile behavior.
   Engine_ObjectEventSetAnimationAndWait(LOCALID_FIRST_PUDDLE,
                                         PUDDLE_ANIMATION_FREEZE);
   ObjectEvent_Get(LOCALID_FIRST_PUDDLE)->motionFlags = 0;
@@ -344,7 +345,8 @@ static void BilibinCave_UpdateThirdPuddleFromTorches(void) {
   struct ObjectEvent *secondObjectEvent;
   s32 destinationCellX;
 
-  // Track each movable actor independently before changing the Frost target.
+  // Track each movable object event independently before changing the Frost
+  // target.
   firstObjectEvent = ObjectEvent_GetById(LOCALID_THIRD_TORCH);
   secondObjectEvent = ObjectEvent_Get(LOCALID_FOURTH_TORCH);
   if ((firstObjectEvent->x.fixed >> 20) == 35 &&
@@ -390,29 +392,29 @@ static void BilibinCave_UpdateThirdPuddleFromTorches(void) {
 }
 
 /// Growth on the sprout at the Bilibin Cave Entrance, until it has grown: it
-/// grows into a vine and its cell's collision changes; FLAG_MAPSEC_TEMP_05
-/// keeps it grown.
+/// grows into a vine and its cell's metatile behavior changes;
+/// FLAG_MAPSEC_TEMP_05 keeps it grown.
 static void EventScript_GrowPlant(void) {
 
   MapGrid_CopyCellAttributes(31, 0, 1, 1, 8, 13);
   Engine_GameFlagSet(FLAG_MAPSEC_TEMP_05);
 }
 
-/// Stepping on touch 20 in Bilibin Cave (MapId_BilibinCaveIce): from here on
-/// the leader leaves footprints.
+/// Stepping on coord event 20 in Bilibin Cave (MapId_BilibinCaveIce): from here
+/// on the leader leaves footprints.
 static void EventScript_StartFootprints(void) {
   struct MapGridScrollWork *grid = gMapGridWork[0];
   grid->footprints = 1;
 }
 
-/// Stepping on touch 21 in Bilibin Cave (MapId_BilibinCaveIce): the leader
-/// leaves no more footprints.
+/// Stepping on coord event 21 in Bilibin Cave (MapId_BilibinCaveIce): the
+/// leader leaves no more footprints.
 static void EventScript_StopFootprints(void) {
   struct MapGridScrollWork *grid = gMapGridWork[0];
   grid->footprints = 0;
 }
 
-/// Sets up the scene being entered, with its puzzles already solved. The scene
+/// Sets up the map being entered, with its puzzles already solved. The map
 /// is the Bilibin Cave Entrance or one of Bilibin Cave's two.
 s32 BilibinCave_Initialize(void) {
   s16 variant = gGameState.mapId;
@@ -456,7 +458,7 @@ static void BilibinCave_RestoreRapierRoom(void) {
   }
 }
 
-/// Clears the drawing flags of an actor used by the cave's animations.
+/// Clears the drawing flags of an object event used by the cave's animations.
 static inline void BilibinCave_ClearObjectEventSpriteFlags(s32 objectEventId) {
   struct ObjectEvent *objectEvent = ObjectEvent_Get(objectEventId);
   Engine_ObjectEventSetSpriteFlags(objectEvent, 0);
@@ -470,7 +472,8 @@ static void BilibinCave_RestoreIceRoom(void) {
 
   gEventWork->startTransition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
-  // Set up the decorative animations before restoring interactive actors.
+  // Set up the decorative animations before restoring interactive object
+  // events.
   BilibinCave_ClearObjectEventSpriteFlags(LOCALID_FIRST_ICE_PILLAR);
   BilibinCave_ClearObjectEventSpriteFlags(LOCALID_FIRST_ICE_PILLAR + 1);
   BilibinCave_ClearObjectEventSpriteFlags(LOCALID_FIRST_ICE_PILLAR + 2);
@@ -519,7 +522,8 @@ static void BilibinCave_RestoreIceRoom(void) {
   BilibinCave_EmptyObjectEventSetupHook(LOCALID_FIRST_TORCH + 3);
   BilibinCave_EmptyObjectEventSetupHook(LOCALID_FIRST_TORCH + 4);
   BilibinCave_EmptyObjectEventSetupHook(LOCALID_FIRST_TORCH + 5);
-  // Restore the surface exposed by Douse, including its collision and priority.
+  // Restore the surface exposed by Douse, including its metatile behavior and
+  // priority.
   if (GameFlag_IsSet(FLAG_BILIBIN_CAVE_FIRST_FIRE_DOUSED) != 0) {
     ObjectEvent_SetPosition(LOCALID_ICE_ROOM_FIRE, 0, 0);
     Engine_ObjectEventSetAnimation(LOCALID_FIRST_PUDDLE,
@@ -537,7 +541,8 @@ static void BilibinCave_RestoreIceRoom(void) {
     Engine_ObjectEventSetAnimation(LOCALID_FIRST_PUDDLE,
                                    PUDDLE_ANIMATION_PUDDLE);
   }
-  // Rebuild the Frost target and return moved actors to their saved cells.
+  // Rebuild the Frost target and return moved object events to their saved
+  // cells.
   Engine_ObjectEventSetAnimation(LOCALID_SECOND_PUDDLE,
                                  PUDDLE_ANIMATION_PUDDLE);
   if (GameFlag_IsSet(FLAG_MAPSEC_TEMP_02) != 0) {
@@ -595,7 +600,8 @@ static void EventScript_PushObjectEventAhead(void) {
   if (blocker != 0)
     return;
 
-  // Check the destination before moving both actors into their push states.
+  // Check the destination before moving both object events into their push
+  // states.
   target->terrainId = 2;
 
   destination.x =
@@ -627,12 +633,13 @@ static void EventScript_PushObjectEventAhead(void) {
   target->velocityX = (s32)blocker;
   target->velocityZ = (s32)blocker;
 
-  // Resume the leader and refresh the mechanism affected by the moved actor.
+  // Resume the leader and refresh the mechanism affected by the moved object
+  // event.
   ObjectEvent_SetMode(leader, ANIMATION_STAND);
   BilibinCave_UpdateThirdPuddleFromTorches();
 }
 
-/// The original setup invokes this empty hook for every animated actor.
+/// The original setup invokes this empty hook for every animated object event.
 static void BilibinCave_EmptyObjectEventSetupHook(s32 objectEventId) {}
 
 s32 gBilibinCave_ClearSpriteScript[] = {

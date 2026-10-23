@@ -1,6 +1,6 @@
 /// @file
 /// Kolima (MapId_KolimaInteriors): the village's houses, shops and inn, all
-/// in one map. Some of its exits join its own rooms by the stairs up the inn
+/// in one map. Some of its warps join its own rooms by the stairs up the inn
 /// and the weapon and armor shop, five lead back out to the village
 /// (MapId_Kolima) and one into Kolima Tunnel (MapId_KolimaTunnel,
 /// KOLIMA_INTERIORS_TO_KOLIMA_TUNNEL).
@@ -173,7 +173,7 @@ const struct MapWarpDest *KolimaInteriors_GetWarpDests(void) {
 
 const struct MapWarpRegion *KolimaInteriors_GetRegions(void) { return NULL; }
 
-/// The exits between the rooms, back to the village and into Kolima Tunnel.
+/// The warps between the rooms, back to the village and into Kolima Tunnel.
 const u32 *KolimaInteriors_GetWarps(void) { return gKolimaInteriors_Warps; }
 
 /// Kolima's residents, turned into trees first while the curse lasts.
@@ -255,7 +255,7 @@ static void KolimaInteriors_TalkToInnkeeper(void) {
   Engine_ScriptEnd();
 }
 
-/// The exits, the residents' words and thoughts, the shops, the bookcases, the
+/// The warps, the residents' words and thoughts, the shops, the bookcases, the
 /// jar and the barrel.
 const struct MapEvent *KolimaInteriors_GetEvents(void) {
   return gKolimaInteriors_Events;

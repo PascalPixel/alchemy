@@ -41,10 +41,11 @@
 /// Switch's map (MapId_KolimaForestFloodgate).
 ///
 /// Open questions:
-/// - XXX (no evidence): why Tret and Laurel each have a blank actor that only
+/// - XXX (no evidence): why Tret and Laurel each have a blank object event that
+/// only
 ///   selects whose face KolimaForestTree_PlayGesture moves, likely left from a
-///   version where those actors were drawn; the ROM keeps no such version, and
-///   nothing reads the actors but that function.
+///   version where those object events were drawn; the ROM keeps no such
+///   version, and nothing reads the object events but that function.
 
 #include "battle_effect_runtime.h"
 #include "game_state.h"
@@ -87,8 +88,8 @@
 #include "songs.h"
 #include "audio_engine_symbols.h"
 
-/// The actors, numbering gKolimaForestTreeObjectEventTemplates' rows from
-/// LOCALID_FIRST_PLACED.
+/// The object events, numbering gKolimaForestTreeObjectEventTemplates' rows
+/// from LOCALID_FIRST_PLACED.
 enum {
   /// Tret's face, drawn in SPRITE_TRET_RAISED; its animations are his face's
   /// gestures (KolimaForestTree_PlayGesture).
@@ -98,19 +99,21 @@ enum {
   /// ★ Named from the game: "Oh! Laurel, you were given powers, too?"
   /// (MsgKolimaWasIndeedAngryPeopleHad)
   LOCALID_LAUREL,
-  /// Blank actors 28 pixels up at Tret's and Laurel's spots, never targeted;
+  /// Blank object events 28 pixels up at Tret's and Laurel's spots, never
+  /// targeted;
   /// nothing addresses them but KolimaForestTree_PlayGesture, which takes one
   /// to say whose face to move.
   /// ★ Named from the game: "Tret" (MsgEnemyName)
   LOCALID_TRET_BLANK,
   /// ★ Named from the game: "Laurel" (MsgDebugGlyphName)
   LOCALID_LAUREL_BLANK,
-  /// An invisible actor on Tret's spot that answers for him:
+  /// An invisible object event on Tret's spot that answers for him:
   /// talking to it, Mind Read on it and Hermes' Water used on it reach Tret.
   /// ★ Named from the game: "The Water of Hermes seeped into Tret."
   /// (MsgKolimaWaterHermesSeepedIntoTret)
   LOCALID_TRET_STAND_IN,
-  /// The invisible actor on Laurel's spot that answers for her when she is
+  /// The invisible object event on Laurel's spot that answers for her when she
+  /// is
   /// talked to or her mind is read.
   /// ★ Named from the game: "I am sorry to have worried you so, Laurel."
   /// (MsgKolimaFeelGreatPowerSpreadingThrough)
@@ -166,15 +169,15 @@ const struct MapWarpRegion *KolimaForestTree_GetRegions(void) {
 /// (MapId_TretTreeInteriors).
 const u32 *KolimaForestTree_GetWarps(void) { return gKolimaForestTreeWarps; }
 
-/// Tret and Laurel, the blank actors at their spots, the ones the party talks
-/// to, Tret's wrathful side, and Garet, Ivan and Mia for the healing.
+/// Tret and Laurel, the blank object events at their spots, the ones the party
+/// talks to, Tret's wrathful side, and Garet, Ivan and Mia for the healing.
 const struct ObjectEventTemplate *
 KolimaForestTree_GetObjectEventTemplates(void) {
   return gKolimaForestTreeObjectEventTemplates;
 }
 
-/// Unused: takes the touched exit after the leader's current movement; no
-/// event row names it.
+/// Unused: takes the touched warp after the leader's current movement; no
+/// map event row names it.
 UNUSED static void KolimaForestTree_ExitTouchedRegion(void) {
   struct EventWork *scene;
 
@@ -899,8 +902,8 @@ static __inline__ void KolimaForestTree_AlternateFaceFrames(s32 objectEventId,
   Engine_ObjectEventSetAnimation(objectEventId, firstFrame);
 }
 
-/// Plays one of Tret's or Laurel's face gestures, chosen by the blank actor at
-/// their spot.
+/// Plays one of Tret's or Laurel's face gestures, chosen by the blank object
+/// event at their spot.
 static void KolimaForestTree_PlayGesture(s32 blankObjectEventId, s32 gesture) {
   if (blankObjectEventId == LOCALID_TRET_BLANK) {
     switch (gesture) {

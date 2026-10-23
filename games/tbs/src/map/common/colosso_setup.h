@@ -10,8 +10,8 @@
 /// Starts the race gauge (struct ColossoRaceWork, in HEAP_SLOT_COLOSSO_RACE):
 /// Isaac and the opponent as playerObjectEvent and opponentObjectEvent, a bar
 /// of segments pieces either side, and the finish at pixel (finishX, finishZ)
-/// in 16.16, where the two item actors stand. Unless the party returns to where
-/// it was, the opponent is put opposite Isaac across x = finishX.
+/// in 16.16, where the two item object events stand. Unless the party returns
+/// to where it was, the opponent is put opposite Isaac across x = finishX.
 void Colosso_StartRaceGauge(s32 playerObjectEvent, s32 opponentObjectEvent,
                             s32 segments, s32 finishX, s32 finishZ,
                             s32 finishItemObjectEventA,

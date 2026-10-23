@@ -1,9 +1,9 @@
 /// @file
 /// Hammet Palace (MapId_HammetPalace), the rooms of Lord Hammet's palace
-/// in Kalay. The scene before its door, also Hammet Palace in the game's area
+/// in Kalay. The map before its door, also Hammet Palace in the game's area
 /// names, is kalay.c's HammetPalaceGrounds.
 ///
-/// Two scripted scenes in the room where Lady Layana stands frame the party's
+/// Two cutscenes in the room where Lady Layana stands frame the party's
 /// part in Hammet's rescue from Lunpa, and between them three flags pick where
 /// she stands and what she says:
 ///
@@ -11,11 +11,12 @@
 ///   when the guards at the door bring the party in (kalay.c); it ends by
 ///   setting FLAG_IVAN_REPORTED_TO_LAYANA.
 /// - Between the two, until the party has heard in Lunpa that Hammet is held
-///   there (place flag FLAG_MAPSEC_TEMP_21, set by kalay.c's scenes), Layana
-///   talks of Dodonpa's spies. Afterwards she stands elsewhere in her room,
-///   and the first time they speak she scolds `Isaac, you sneaked into Lunpa?
-///   That's far too dangerous!` (FLAG_KALAY_LAYANA_SAID_LUNPA_TOO_DANGEROUS);
-///   from then on she talks of Dodonpa's greed.
+///   there (map-section temp flag FLAG_MAPSEC_TEMP_21, set by kalay.c's
+///   cutscenes), Layana talks of Dodonpa's spies. Afterwards she stands
+///   elsewhere in her room, and the first time they speak she scolds `Isaac,
+///   you sneaked into Lunpa? That's far too dangerous!`
+///   (FLAG_KALAY_LAYANA_SAID_LUNPA_TOO_DANGEROUS); from then on she talks of
+///   Dodonpa's greed.
 /// - Hammet's homecoming (HAMMET_PALACE_LAYANAS_ROOM_FROM_ENTRANCE_ROOM, the
 ///   first time once Hammet is free, FLAG_DODONPA_LOCKED_UP;
 ///   FLAG_HAMMET_BACK_HOME_SEEN), in which Hammet sends the party on to
@@ -27,8 +28,8 @@
 ///
 /// The people of the palace (LOCALID_WORRIED_ABOUT_THE_TOWNSFOLK to
 /// LOCALID_ASKING_ABOUT_THE_SILK_TRADE) have one line before Hammet is free and
-/// another after. Walking north into a door (triggers 2, 3, 4 and 14) opens it;
-/// the other exits join the rooms plainly.
+/// another after. Walking north into a door (coord events 2, 3, 4 and 14) opens
+/// it; the other warps join the rooms plainly.
 /// HAMMET_PALACE_TO_HAMMET_PALACE_GROUNDS leads out to the front of the palace
 /// (HAMMET_PALACE_GROUNDS_FROM_HAMMET_PALACE), and
 /// HAMMET_PALACE_TO_KALAY_TUNNEL_TREASURE_ROOM down into the Kalay Tunnel
@@ -64,7 +65,7 @@
 #include "script.h"
 #include "palbuf.h"
 
-/// The palace's actors, numbered in the order of
+/// The palace's object events, numbered in the order of
 /// gHammetPalaceObjectEventTemplates from LOCALID_FIRST_PLACED; its rows for
 /// Garet, Ivan and Mia keep the party's own slots.
 enum HammetPalaceLocalId {
@@ -120,7 +121,7 @@ enum HammetPalaceLocalId {
   LOCALID_ASKING_ABOUT_THE_SILK_TRADE
 };
 
-// Entrance setup and the two long conversations use the helpers below.
+// Warp destination setup and the two long conversations use the helpers below.
 static void HammetPalace_SetUpWarpDest(void);
 static void HammetPalace_IvanReportsToLayana(void);
 static void HammetPalace_FacePartyOutward(s32 waitFrames);
@@ -133,8 +134,8 @@ static __inline__ void HammetPalace_AdvanceMessage(s32 amount) {
   gEventWork->message += amount;
 }
 
-/// Selects Hammet Palace's entrances, or the fallback table for any other
-/// scene number.
+/// Selects Hammet Palace's warp destinations, or the fallback table for any
+/// other map number.
 const struct MapWarpDest *Map_GetWarpDests(void) {
   s16 mapId = gGameState.mapId;
 
@@ -148,7 +149,8 @@ const struct MapWarpRegion *Map_GetWarpRegions(void) { return NULL; }
 
 const u32 *Map_GetWarps(void) { return gHammetPalaceWarps; }
 
-/// Applies placement clipping before returning Hammet Palace's actor rows.
+/// Applies object event template clipping before returning Hammet Palace's
+/// object event rows.
 const struct ObjectEventTemplate *Map_GetObjectEventTemplates(void) {
   if (gGameState.mapId == (s32)&MapId_HammetPalace) {
     Map_PrepareObjectEvents(gHammetPalaceObjectEventTemplates);
@@ -188,9 +190,9 @@ static void EventScript_AskWhetherSilkTradeHasEnded(void) {
 
 /// Layana scolds Isaac for sneaking into Lunpa. It's the first talk with her in
 /// Hammet Palace after the party has heard in Lunpa that Hammet is held there
-/// (place flag FLAG_MAPSEC_TEMP_21). `Isaac, you sneaked into Lunpa? That's far
-/// too dangerous!` She is glad Hammet is unhurt, but asks the party not to go
-/// back, and to fulfill their quest.
+/// (map-section temp flag FLAG_MAPSEC_TEMP_21). `Isaac, you sneaked into Lunpa?
+/// That's far too dangerous!` She is glad Hammet is unhurt, but asks the party
+/// not to go back, and to fulfill their quest.
 static void EventScript_LayanaScoldsLunpaVisit(void) {
 
   EV_START();
@@ -208,7 +210,7 @@ static void EventScript_LayanaScoldsLunpaVisit(void) {
   EV_END();
 }
 
-/// Walking north into a door of Hammet Palace (triggers 2, 3, 4 and 14): it
+/// Walking north into a door of Hammet Palace (coord events 2, 3, 4 and 14): it
 /// opens, and the leader walks through it to the next room.
 static void EventScript_LeaveThroughDoor(void) {
 
@@ -240,8 +242,8 @@ static void EventScript_LeaveThroughDoor(void) {
   EV_END();
 }
 
-/// Opens Hammet Palace with its window transition and runs entrance-specific
-/// setup.
+/// Opens Hammet Palace with its window transition and runs
+/// warp-destination-specific setup.
 s32 Map_Initialize(void) {
   gEventWork->startTransition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);

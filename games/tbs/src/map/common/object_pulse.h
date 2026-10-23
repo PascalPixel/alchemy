@@ -4,8 +4,8 @@
 
 // Tolbi's ship deck and Vale's storm.
 
-/// An object script call, each frame: every 60 to 149 frames the actor squashes
-/// and stretches back to its own shape over six frames.
+/// An object script call, each frame: every 60 to 149 frames the object event
+/// squashes and stretches back to its own shape over six frames.
 static s32 Map_SquashAndStretch(struct ScriptInterpreter *interpreter) {
   struct ObjectEvent *state = (struct ObjectEvent *)interpreter;
   switch (state->timer) {

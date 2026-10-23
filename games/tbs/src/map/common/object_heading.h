@@ -2,11 +2,11 @@
 #include "types.h"
 #include "object_event.h"
 
-// Kalay and Venus Lighthouse's aerie: actors that look about.
+// Kalay and Venus Lighthouse's aerie: object events that look about.
 
-/// An object script call, each frame: when the actor's countdown (work) runs
-/// out, it turns by a random amount up to half a turn and waits a random 0 to
-/// 79 frames.
+/// An object script call, each frame: when the object event's countdown (work)
+/// runs out, it turns by a random amount up to half a turn and waits a random 0
+/// to 79 frames.
 static s32 Map_LookAboutRandomly(struct ScriptInterpreter *interpreter) {
   struct ObjectEvent *obj = (struct ObjectEvent *)interpreter;
   s32 cnt = obj->work;

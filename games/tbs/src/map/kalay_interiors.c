@@ -2,29 +2,28 @@
 /// Inside Kalay: the houses and the inn, and the Kalay Sanctum.
 ///
 /// - Kalay (MapId_KalayInteriors), one map holding every house and the
-///   inn, each entered from its own door in the town (kalay.c) at an entrance
-///   of its own, and left by the matching exit. The inn's entrances,
-///   KALAY_INTERIORS_INN_FROM_INN_PASSAGE to
+///   inn, each entered from its own door in the town (kalay.c) at a warp
+///   destination of its own, and left by the matching warp. The inn's warp
+///   destinations, KALAY_INTERIORS_INN_FROM_INN_PASSAGE to
 ///   KALAY_INTERIORS_INN_PASSAGE_FROM_GUEST_ROOM_SOUTHEAST and
 ///   KALAY_INTERIORS_GUEST_ROOM_NORTHWEST_FROM_INN_PASSAGE, take the inn's
-///   placements and events; every other
-///   entrance takes the houses'. The inn is full of tourists on their way to
-///   see Colosso in Tolbi. The innkeeper offers a room when spoken to across
-///   the counter; from elsewhere he asks `Are you going to Tolbi also?`, and
-///   the tour's guide in the dining room says `Please finish eating if you
+///   object event templates and map events; every other
+///   warp destination takes the houses'. The inn is full of tourists on their
+///   way to see Colosso in Tolbi. The innkeeper offers a room when spoken to
+///   across the counter; from elsewhere he asks `Are you going to Tolbi also?`,
+///   and the tour's guide in the dining room says `Please finish eating if you
 ///   are taking the tour!` Either sets FLAG_KALAY_HEARD_OF_COLOSSO_TOUR, after
 ///   which leaving the town plays the tour group's departure. Once the tour
 ///   has left (FLAG_KALAY_COLOSSO_TOUR_LEFT), its guests are gone from the
 ///   inn, two people are gone from the houses, one of whom was about to join
 ///   it, and those who stay say so. Searching the ovens shows what the cooks
 ///   are making, except that the oven with roasted eggplant gives a Smoke
-///   Bomb: its find comes first in the table under the same trigger, and a
-///   named search ignores its condition, so it answers every time and the
-///   eggplant line is unused. Barrels hold
-///   11 coins and an Elixir. The inn's table and the houses' both carry these
-///   searches.
+///   Bomb: its find comes first in the table under the same metatile behavior,
+///   and a named bg event ignores its condition, so it answers every time and
+///   the eggplant line is unused. Barrels hold 11 coins and an Elixir. The
+///   inn's table and the houses' both carry these bg events.
 /// - Kalay Sanctum (MapId_KalaySanctum), whose healer offers the
-///   Sanctum's services when spoken to across the counter. Its exit leads
+///   Sanctum's services when spoken to across the counter. Its warp leads
 ///   back into the town (KALAY_FROM_KALAY_SANCTUM).
 ///
 /// Open questions: none.
@@ -55,10 +54,10 @@
 
 /// Each table numbers its own rows from LOCALID_FIRST_PLACED: the houses'
 /// (gKalayInteriors_HouseObjectEventTemplates), the inn's, whose rooms are
-/// entered through the inn's entrances
+/// entered through the inn's warp destinations
 /// (gKalayInteriors_InnObjectEventTemplates), and the Kalay Sanctum's
 /// (gKalayInteriors_SanctumObjectEventTemplates). Unless a note says otherwise,
-/// it quotes what its actor says before the Colosso tour leaves.
+/// it quotes what its object event says before the Colosso tour leaves.
 enum KalayInteriorsLocalId {
   // Kalay's houses
   /// A young man with brown hair (SPRITE_YOUNG_MAN_WITH_BROWN_HAIR).
@@ -184,8 +183,8 @@ enum { KALAY_INN = 7 };
 
 static void KalayInteriors_ApplyRoomState(void);
 
-/// Selects the entrance table of Kalay's houses and inn, or of the Kalay
-/// Sanctum.
+/// Selects the warp destination table of Kalay's houses and inn, or of the
+/// Kalay Sanctum.
 const struct MapWarpDest *KalayInteriors_GetWarpDests(void) {
   s16 mapId = gGameState.mapId;
 
@@ -202,8 +201,8 @@ const struct MapWarpRegion *KalayInteriors_GetRegions(void) { return NULL; }
 
 const u32 *KalayInteriors_GetWarps(void) { return gKalayInteriors_Warps; }
 
-/// The inn's rooms share one placement table and the houses another, chosen
-/// by entrance and clipped to the current view.
+/// The inn's rooms share one object event template table and the houses
+/// another, chosen by warp destination and clipped to the current view.
 const struct ObjectEventTemplate *KalayInteriors_GetObjectEventTemplates(void) {
   s32 mapId = gGameState.mapId;
 
@@ -235,7 +234,8 @@ const struct ObjectEventTemplate *KalayInteriors_GetObjectEventTemplates(void) {
   return gKalayInteriors_NoObjectEventTemplates;
 }
 
-/// Selects room dialogue with the same entrance grouping as the placements.
+/// Selects room dialogue with the same warp destination grouping as the object
+/// event templates.
 const struct MapEvent *KalayInteriors_GetEvents(void) {
   s32 mapId = gGameState.mapId;
 
@@ -326,8 +326,8 @@ static void KalayInteriors_TalkToHealer(void) {
 }
 
 /// Walking north into one of four doors inside Kalay's houses and inn
-/// (triggers 12, 13, 16 and 19): stops the room's actors, opens the door and
-/// walks the leader out.
+/// (coord events 12, 13, 16 and 19): stops the room's object events, opens the
+/// door and walks the leader out.
 static void KalayInteriors_OpenDoorAndExit(void) {
   struct EventWork *work = gEventWork;
   u32 slot;
@@ -387,7 +387,8 @@ static void KalayInteriors_OpenDoorAndExit(void) {
   Engine_ScriptEnd();
 }
 
-/// Sets the opening transition and restores room-specific actors and tiles.
+/// Sets the opening transition and restores room-specific object events and
+/// tiles.
 s32 KalayInteriors_Initialize(void) {
   gEventWork->startTransition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
@@ -672,7 +673,7 @@ struct MapEvent gKalayInteriors_HouseEvents[] = {
     { BG_EVENT(BG_EVENT_BARREL), 102, FLAG_KALAY_INTERIORS_ELIXIR_BARREL, FIND_ITEM(ITEM_ELIXIR) },
     { BG_EVENT(BG_EVENT_OVEN), 200, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgKalayInteriorsShesToastingSomeBreadItSmells)) },
     { BG_EVENT(BG_EVENT_OVEN), 201, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgKalayInteriorsHesMakingCurryItsSpicyScent)) },
-    // Unused: this oven's item row answers first (see the scenes README).
+    // Unused: this oven's item row answers first (see the maps README).
     { BG_EVENT(BG_EVENT_OVEN), 101, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgKalayInteriorsHesMakingRoastedEggplantWithCheese)) },
     { BG_EVENT(BG_EVENT_OVEN), 203, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgKalayInteriorsItsAKalaySaladWithCucumber)) },
     { BG_EVENT(BG_EVENT_OVEN), 204, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgKalayInteriorsItsPicklesWithGarlicThePickle)) },
@@ -722,7 +723,7 @@ struct MapEvent gKalayInteriors_InnEvents[] = {
     { BG_EVENT(BG_EVENT_BARREL), 102, FLAG_KALAY_INTERIORS_ELIXIR_BARREL, FIND_ITEM(ITEM_ELIXIR) },
     { BG_EVENT(BG_EVENT_OVEN), 200, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgKalayInteriorsShesToastingSomeBreadItSmells)) },
     { BG_EVENT(BG_EVENT_OVEN), 201, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgKalayInteriorsHesMakingCurryItsSpicyScent)) },
-    // Unused: this oven's item row answers first (see the scenes README).
+    // Unused: this oven's item row answers first (see the maps README).
     { BG_EVENT(BG_EVENT_OVEN), 101, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgKalayInteriorsHesMakingRoastedEggplantWithCheese)) },
     { BG_EVENT(BG_EVENT_OVEN), 203, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgKalayInteriorsItsAKalaySaladWithCucumber)) },
     { BG_EVENT(BG_EVENT_OVEN), 204, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgKalayInteriorsItsPicklesWithGarlicThePickle)) },

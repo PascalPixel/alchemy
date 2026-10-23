@@ -1,7 +1,7 @@
 /// @file
 /// Gondowan Passage and Gondowan Cave, the guarded bridge into Gondowan and the
 /// cave east of it, which the party crosses on the way from Tolbi to Babi
-/// Lighthouse. Three scenes share this overlay:
+/// Lighthouse. Three maps share this overlay:
 ///
 /// - Gondowan Passage (MapId_GondowanPassage, area name Gondowan Passage):
 ///   three soldiers guard the bridge, and Iodem waits there to go on to Babi
@@ -14,35 +14,35 @@
 /// - GondowanCaveRiver (MapId_GondowanCaveRiver): the river between the
 ///   cave's two halves, with a boulder for Lift and two chests.
 ///
-/// One exit table serves every scene; the other getters choose by
-/// gGameState.scene, Gondowan Passage's placements and events also by
-/// FLAG_BABI_SPOKE_AFTER_COLOSSO, and an empty set answers any other scene
-/// number. Every scene's event table carries GondowanCaveRiver's two chests.
+/// One warp table serves every map; the other getters choose by
+/// gGameState.mapId, Gondowan Passage's object event templates and map events
+/// also by FLAG_BABI_SPOKE_AFTER_COLOSSO, and an empty set answers any other
+/// map number. Every map's event table carries GondowanCaveRiver's two chests.
 ///
 /// Gondowan Passage sets FLAG_RETREAT_BLOCKED on every entry. While Iodem
-/// travels with the party (FLAG_IODEM_FOLLOWING_PARTY) his actor is kept out
-/// of sight; talking to him or walking up to him while he waits (touch cell
-/// 11) makes him come along (EventScript_IodemRejoins), and until he has
+/// travels with the party (FLAG_IODEM_FOLLOWING_PARTY) his object event is kept
+/// out of sight; talking to him or walking up to him while he waits (coord
+/// event 11) makes him come along (EventScript_IodemRejoins), and until he has
 /// reached Babi Lighthouse (FLAG_BABI_LIGHTHOUSE_IODEM_ARRIVED) turning back
-/// (touch cell 10) brings him out to ask why
+/// (coord event 10) brings him out to ask why
 /// (EventScript_IodemAsksWhyTurningBack). If he stays to wait, the saved place
 /// becomes the Tolbi Sanctum, so a defeat returns the party there.
 ///
 /// GondowanCave's way across the water is two things that float in it, and
-/// touch cells 10 and 11 jump the leader across them (EventScript_JumpAcross).
+/// coord events 10 and 11 jump the leader across them (EventScript_JumpAcross).
 /// Both are kept in story flags, so the cave stays solved and Map_Initialize
 /// puts them back: FLAG_GONDOWAN_CAVE_STUMP_MOVED once the stump has leapt in,
 /// and FLAG_GONDOWAN_CAVE_PILLAR_DROPPED once the pillar has gone in past
 /// column 42, shown from then on by LOCALID_DROPPED_PILLAR.
 ///
-/// Cell (107, 17) of the map's cell grid is cell (43, 17) of map layer 2,
+/// Cell (107, 17) of the map grid is cell (43, 17) of layout layer 2,
 /// whose window starts 64 columns in: the crevice east of the pillar,
-/// where it drops. The map loads that cell with ground 6, as the two cells
+/// where it drops. The layout loads that cell with ground 6, as the two cells
 /// west of it; copying (108, 17) over it gives it ground 0, as its east
 /// neighbour. The drop makes that copy, and so does every arrival by
 /// GONDOWAN_CAVE_FROM_WORLD_MAP_EAST, solved or not. Nothing the player sees
 /// depends on it: in tbs-en the screen is the same either way, the leader
-/// jumps the crevice at row 17 (touch cells 10 and 11) from either side
+/// jumps the crevice at row 17 (coord events 10 and 11) from either side
 /// either way, and the pillar settles at the same height in each of columns
 /// 41 to 44 either way.
 ///
@@ -85,7 +85,7 @@
 #include "songs.h"
 #include "script.h"
 
-/// Gondowan Passage's placed actors, numbered in the order of
+/// Gondowan Passage's placed object events, numbered in the order of
 /// gGondowanPassageObjectEventTemplates and
 /// gGondowanPassageObjectEventTemplatesWithIodem from LOCALID_FIRST_PLACED: the
 /// soldiers who guard the bridge, and in the second table Iodem after them.
@@ -107,8 +107,8 @@ enum GondowanPassageLocalId {
   LOCALID_IODEM
 };
 
-/// GondowanCaveRiver's placed actor, the one row of
-/// gGondowanCaveRiverObjectEventTemplates that an event names.
+/// GondowanCaveRiver's placed object event, the one row of
+/// gGondowanCaveRiverObjectEventTemplates that a map event names.
 enum GondowanCaveRiverLocalId {
   /// Raised by Lift.
   /// ★ Named from what the player sees: a round grey boulder by the river
@@ -116,13 +116,13 @@ enum GondowanCaveRiverLocalId {
   LOCALID_RIVER_BOULDER = LOCALID_FIRST_PLACED
 };
 
-/// GondowanCave's placed actors, numbered in the order of
+/// GondowanCave's placed object events, numbered in the order of
 /// gGondowanCaveObjectEventTemplates from LOCALID_FIRST_PLACED.
 enum GondowanCaveLocalId {
   /// Moved with Move, in the sprite of the Goma Cave stump.
   /// ★ Named from the game: "that stump" (MsgGomaNoUsePsynergy)
   LOCALID_STUMP = LOCALID_FIRST_PLACED,
-  /// Pushed or moved with Move, in the sprite the stone pillars of other scenes
+  /// Pushed or moved with Move, in the sprite the stone pillars of other maps
   /// use (crossbone_isle_stepping_stones.c).
   /// ★ Named from what the player sees: a tall tan stone pillar standing on
   /// the cave floor (its render)
@@ -138,7 +138,8 @@ enum GondowanCaveLocalId {
   /// ★ Named from what the player sees: a round boulder in the cave passage,
   /// which floats up under Lift (its render)
   LOCALID_BOULDER,
-  /// An invisible actor (SPRITE_BLANK, its shadow turned off) 16 pixels west
+  /// An invisible object event (SPRITE_BLANK, its shadow turned off) 16 pixels
+  /// west
   /// of the boulder. It fills the gap between the boulder and the passage's
   /// west wall, so the boulder blocks the passage until Lift takes both away
   /// (https://alchemy.pascalpixel.com/places/gondowan-cave/map-4.png shows
@@ -148,14 +149,14 @@ enum GondowanCaveLocalId {
   LOCALID_BOULDER_GAP
 };
 
-// The leap event also runs after the shared staged-actor movement.
+// The leap script also runs after the shared staged object event movement.
 static void EventScript_MovePillar(void);
 static void GondowanCave_RunSpinningLeap(s32 objectEventId);
 
-// Shared effect routines retain their position before the scene handlers.
+// Shared effect routines retain their position before the map's scripts.
 #include "common/effect_create.h"
 
-// Particle and movable-object routines precede this scene's entry points.
+// Particle and movable-object routines precede this map's entry points.
 #include "common/effect_spawn.h"
 #include "common/object_staged_object_event.h"
 #include "ability_ids.h"
@@ -179,7 +180,7 @@ const struct MapWarpDest *Map_GetWarpDests(void) {
 
 const struct MapWarpRegion *Map_GetWarpRegions(void) { return NULL; }
 
-/// Every scene of the overlay shares one exit table.
+/// Every map of the overlay shares one warp table.
 const u32 *Map_GetWarps(void) { return gGondowanCaveWarps; }
 
 /// Iodem waits in Gondowan Passage once Babi has spoken to the party after
@@ -202,7 +203,8 @@ const struct ObjectEventTemplate *Map_GetObjectEventTemplates(void) {
   return gGondowanCaveObjectEventTemplatesOther;
 }
 
-/// Each scene's events, with Iodem's in Gondowan Passage when he is there.
+/// The map events of each map, with Iodem's in Gondowan Passage when he is
+/// there.
 const struct MapEvent *Map_GetEvents(void) {
   s16 mapId = gGameState.mapId;
 
@@ -221,10 +223,10 @@ const struct MapEvent *Map_GetEvents(void) {
   return gGondowanCaveEventsOther;
 }
 
-/// Turning back in Gondowan Passage (trigger 10) with Iodem in the party,
+/// Turning back in Gondowan Passage (coord event 10) with Iodem in the party,
 /// until he has reached Babi Lighthouse: he steps out and asks why Isaac is
 /// going back. Yes: he waits here for the party's return. No: he rejoins the
-/// party and Isaac steps away from the trigger.
+/// party and Isaac steps away from the coord event.
 static void EventScript_IodemAsksWhyTurningBack(void) {
   struct ObjectEvent *leader;
 
@@ -256,7 +258,7 @@ static void EventScript_IodemAsksWhyTurningBack(void) {
       gGameState.savedWarpDest = TOLBI_INTERIORS_SANCTUM_NORTH;
     } else {
       // "Then we should continue on our way to the lighthouse." He rejoins
-      // the party, and Isaac steps away from the trigger.
+      // the party, and Isaac steps away from the coord event.
       gEventWork->message += 1;
       Script_ShowMessage(LOCALID_IODEM, 0);
       OBJECT_MODE(LOCALID_IODEM, ANIMATION_WALK);
@@ -278,9 +280,9 @@ static void EventScript_IodemAsksWhyTurningBack(void) {
 }
 
 /// Iodem comes along with the party from Gondowan Passage, where he waits. He
-/// comes along when he's talked to, or walked up to (trigger 11) while he isn't
-/// with the party. `I've been waiting for you, Isaac! We should go to Babi
-/// Lighthouse soon.`
+/// comes along when he's talked to, or walked up to (coord event 11) while he
+/// isn't with the party. `I've been waiting for you, Isaac! We should go to
+/// Babi Lighthouse soon.`
 static void EventScript_IodemRejoins(void) {
   EV_START();
   OBJECT_FACE(LOCALID_IODEM, LOCALID_PARTY_LEADER, 0);
@@ -344,7 +346,7 @@ static void EventScript_ReadSoldierMind(void) {
   MESSAGE_PUT(LOCALID_SECOND_SOLDIER, 0);
 }
 
-/// Leaving GondowanCave by GONDOWAN_CAVE_TO_WORLD_MAP_EAST (collision code 1),
+/// Leaving GondowanCave by GONDOWAN_CAVE_TO_WORLD_MAP_EAST (warp 1),
 /// out to the world map. With FLAG_MAP_TEMP_04 set, which nothing in the
 /// game sets, three unnamed flags and the pillar's are first put into one
 /// arrangement.
@@ -367,7 +369,7 @@ static void EventScript_LeaveToWorldMapEast(void) {
   EV_END();
 }
 
-/// Walking west or east into touch cells 10 and 11 in GondowanCave: the leader
+/// Walking west or east into coord events 10 and 11 in GondowanCave: the leader
 /// jumps two cells forward where the map allows (Field_TryJumpForward), across
 /// the stump and the pillar once they float in the water.
 static void EventScript_JumpAcross(void) { Engine_LeaderCheckAhead(); }
@@ -389,14 +391,15 @@ static void EventScript_MoveStump(void) {
   EV_END();
 }
 
-/// Pushing the pillar in GondowanCave (trigger 50): it moves a
+/// Pushing the pillar in GondowanCave (coord event 50): it moves a
 /// step, then may have reached its place.
 static void EventScript_PushPillar(void) {
   StagedObjectEvent_AdvancePair();
   EventScript_MovePillar();
 }
 
-/// Hides the pillar and shows the actor that stands in for it in its place.
+/// Hides the pillar and shows the object event that stands in for it in its
+/// place.
 static inline void GondowanCave_PlaceDroppedPillar(s32 animation) {
   OBJECT_POSITION_SET(LOCALID_PILLAR, 0, 0);
   OBJECT_POSITION_SET(LOCALID_DROPPED_PILLAR, 696, 288);
@@ -429,7 +432,8 @@ static void GondowanCave_RotateLeapingObject(union FieldObject *fieldObject) {
   fieldObject->objectEvent.sprite->rotation -= 0x400;
 }
 
-/// Waits at most forty frames for the actor to descend to the height limit.
+/// Waits at most forty frames for the object event to descend to the height
+/// limit.
 static void GondowanCave_WaitForDescent(struct ObjectEvent *objectEvent,
                                         s32 heightLimit) {
   s32 framesRemaining = 40;
@@ -501,12 +505,12 @@ static void GondowanCave_RunSpinningLeap(s32 objectEventId) {
 static UNUSED void GondowanCave_UnusedMapCallback(void) {}
 
 /// Lift on the boulder in GondowanCave also takes away the
-/// invisible actor beside it.
+/// invisible object event beside it.
 static void EventScript_LiftBoulder(void) {
   Engine_ObjectEventSetPosition(LOCALID_BOULDER_GAP, 0, 0);
 }
 
-/// Sets up the scene as the party enters. Gondowan Passage blocks Retreat and
+/// Sets up the map as the party enters. Gondowan Passage blocks Retreat and
 /// keeps Iodem out of sight while he travels with the party; Gondowan Cave's
 /// GondowanCave puts the stump and the pillar where the party left them.
 s32 Map_Initialize(void) {

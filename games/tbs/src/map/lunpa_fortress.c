@@ -1,6 +1,6 @@
 /// @file
 /// Lunpa Fortress, Dodonpa's fortress above Lunpa, where he holds Hammet for
-/// ransom, and the cave below it. Four scenes share this overlay and the area
+/// ransom, and the cave below it. Four maps share this overlay and the area
 /// name Lunpa Fortress:
 ///
 /// - LunpaFortressGroundFloor (MapId_LunpaFortressGroundFloor): inside the
@@ -20,24 +20,25 @@
 ///   Donpa judges him after the battle (EventScript_DonpaJudgesDodonpa), which
 ///   sets FLAG_DODONPA_LOCKED_UP and changes all of Lunpa.
 ///
-/// The getters choose by gGameState.scene; LunpaFortressCave and
-/// LunpaFortressToadonpa share one exit table. Every return through the Lunpa
+/// The getters choose by gGameState.mapId; LunpaFortressCave and
+/// LunpaFortressToadonpa share one warp table. Every return through the Lunpa
 /// Fortress Gates (lunpa.c) clears the fortress's puzzle and beaten-guard
 /// flags, so the fortress starts over.
 ///
 /// The guards are the fortress's mechanism. A guard on screen sees the leader
 /// along his row or column, within six cells (LunpaFortress_CanGuardSeeLeader),
 /// unless Cloak is on, and each guard has a watcher, a callback that the
-/// entrance the party arrives by starts (LunpaFortress_InitializeGroundFloor,
-/// LunpaFortress_InitializeUpperFloor). A watcher that sees the leader raises
-/// one of the TRIGGER_*_SPOTTED events, whose script has the guard challenge
-/// the party and throw it out to the gates (LunpaFortress_GuardThrowsPartyOut,
-/// WARP_THROWN_OUT). A cloaked leader within four cells of a patrolling guard
-/// makes the watcher request CLOAK_NEAR_GUARD. The patrolling guards walk
-/// action scripts (gFirstPatrolRoute and the others), stop while a menu,
-/// Psynergy or an item is in use, and drag MAPGRID_LAYER_OVERHEAD along with
-/// them, shaking it by a pixel every frame: in the dark corridors that layer
-/// holds the circles of light the patrols carry, which flicker as they shake
+/// warp destination the party arrives by starts
+/// (LunpaFortress_InitializeGroundFloor, LunpaFortress_InitializeUpperFloor). A
+/// watcher that sees the leader raises one of the TRIGGER_*_SPOTTED map events,
+/// whose script has the guard challenge the party and throw it out to the gates
+/// (LunpaFortress_GuardThrowsPartyOut, WARP_THROWN_OUT). A cloaked leader
+/// within four cells of a patrolling guard makes the watcher request
+/// CLOAK_NEAR_GUARD. The patrolling guards walk action scripts
+/// (gFirstPatrolRoute and the others), stop while a menu, Psynergy or an item
+/// is in use, and drag MAPGRID_LAYER_OVERHEAD along with them, shaking it by a
+/// pixel every frame: in the dark corridors that layer holds the circles of
+/// light the patrols carry, which flicker as they shake
 /// (https://alchemy.pascalpixel.com/places/lunpa-fortress-upper-floor/map-1.png
 /// shows the pair's two circles). Each has stretches of its rounds where
 /// it cannot see the leader. On the upper floor the pair walk east and west
@@ -50,16 +51,16 @@
 /// the west passage with the pair's rounds in yellow, every cell either
 /// guard sees from some point of his round in red, and the cells they never
 /// look at in green). The guards who fight instead pick one of four
-/// challenges, by gLunpaFortressRandomPick, drawn on every entrance.
+/// challenges, by gLunpaFortressRandomPick, drawn on every arrival.
 ///
-/// The Cell Key opens the cell doors of all four scenes, facing each door
-/// with it in the party, and each opened door is remembered in a place flag
-/// from FLAG_MAPSEC_TEMP_50 (TOADONPA_DOOR_FLAG and the others). In
+/// The Cell Key opens the cell doors of all four maps, facing each door
+/// with it in the party, and each opened door is remembered in a map-section
+/// temp flag from FLAG_MAPSEC_TEMP_50 (TOADONPA_DOOR_FLAG and the others). In
 /// LunpaFortressCave, Whirlwind blows away the plants that hide two switches
 /// and a passage; the switches show in the wall only while Reveal lasts, and
 /// searching one opens its passage.
 ///
-/// Scene flags:
+/// Map temp flags:
 /// - FLAG_MAP_TEMP_14: a guard has spotted the party; FLAG_MAP_TEMP_15 is
 ///   set beside it and never read.
 /// - FLAG_MAP_TEMP_17 and FLAG_MAP_TEMP_18: LunpaFortressCave's first and
@@ -70,15 +71,15 @@
 ///   promised to keep quiet, and has been startled.
 /// - FLAG_MAP_TEMP_70: EventScript_FindHammet is under way.
 ///
-/// Place flags: FLAG_MAPSEC_TEMP_01 once Donpa has judged Dodonpa,
+/// Map-section temp flags: FLAG_MAPSEC_TEMP_01 once Donpa has judged Dodonpa,
 /// FLAG_MAPSEC_TEMP_13 once his attendant has told of him, FLAG_MAPSEC_TEMP_14
 /// once she has shown his reward, and FLAG_MAPSEC_TEMP_50 to
 /// FLAG_MAPSEC_TEMP_5C for the opened cell doors.
 ///
 /// Unused: four item pickups that set out an Arctic Blade, a Masamune, a
 /// Silver Blade and a Shamshir on LunpaFortressGroundFloor's first four rows,
-/// and copies of West Lunpa Cave's exits and placements, which these scenes
-/// never read.
+/// and copies of West Lunpa Cave's warps and object event templates, which
+/// these maps never read.
 ///
 /// Open questions: none.
 
@@ -198,11 +199,12 @@ enum {
   CAVE_FIRST_SWITCH_COVER = LOCALID_FIRST_PLACED,
   CAVE_PASSAGE_COVER,
   CAVE_SECOND_SWITCH_COVER,
-  /// An invisible solid actor (SPRITE_BLANK, OBJ_EVENT_SOLID) at (504, 168)
-  /// that makes the jar the map draws there, in the cell behind the cave's
-  /// eastern door, stop the leader: the map's collision lets him walk onto the
-  /// jar, and with this actor he stops 14 pixels short of it. A blank sprite
-  /// draws only its shadow, which LunpaFortress_InitializeCave turns off.
+  /// An invisible solid object event (SPRITE_BLANK, OBJ_EVENT_SOLID) at (504,
+  /// 168) that makes the jar the layout draws there, in the cell behind the
+  /// cave's eastern door, stop the leader: the layout's metatile behavior lets
+  /// him walk onto the jar, and with this object event he stops 14 pixels short
+  /// of it. A blank sprite draws only its shadow, which
+  /// LunpaFortress_InitializeCave turns off.
   CAVE_JAR_BLOCKER,
   /// A stack of wooden crates (the sprite of the crates at the Bilibin
   /// Barricade and on Tolbi Docks), pushed or moved with Move onto its hole.
@@ -213,12 +215,14 @@ enum {
 /// gLunpaFortressToadonpaObjectEventTemplates from LOCALID_FIRST_PLACED; its
 /// rows for Ivan, Mia and Garet keep the party's own slots.
 enum {
-  /// Three invisible solid actors (SPRITE_BLANK, OBJ_EVENT_SOLID) at (56, 72),
+  /// Three invisible solid object events (SPRITE_BLANK, OBJ_EVENT_SOLID) at
+  /// (56, 72),
   /// (136, 72) and (216, 72), in line with the cell doors
   /// gLunpaFortressToadonpaDoorCells lists third, second and first, that make
-  /// the jar, chest and jar the map draws in those cells stop the leader. The
-  /// map's collision lets him walk onto the two jars; the chest's own cells
-  /// already stop him, so the middle actor changes nothing. Map_Initialize
+  /// the jar, chest and jar the layout draws in those cells stop the leader.
+  /// The layout's metatile behaviors let him walk onto the two jars; the
+  /// chest's own cells already stop him, so the middle object event changes
+  /// nothing. Map_Initialize
   /// turns off the shadows their blank sprites would draw and lays them
   /// underfoot.
   TOADONPA_WEST_JAR_BLOCKER = LOCALID_FIRST_PLACED,
@@ -236,7 +240,7 @@ enum {
   /// "The merchant from Kalay is in here somewhere." Read with Mind Read:
   /// "Actually, Dodonpa's in here, but only a few people know that."
   TOADONPA_CELL_GUARD,
-  /// An invisible actor that stands before Dodonpa's cell after Donpa's
+  /// An invisible object event that stands before Dodonpa's cell after Donpa's
   /// judgment; talking to it or reading its mind reaches Dodonpa.
   TOADONPA_DODONPA_STAND_IN
 };
@@ -272,11 +276,13 @@ enum {
   GROUND_FLOOR_DOOR_FLAG = FLAG_MAPSEC_TEMP_5A
 };
 
-/// The map layers the dark passages show (Engine_MapGridSetWorkFlagBits9To11):
-/// BG1 to BG3, BG1 being MAPGRID_LAYER_OVERHEAD and its circles of light.
+/// The map grid layers the dark passages show
+/// (Engine_MapGridSetWorkFlagBits9To11): BG1 to BG3, BG1 being
+/// MAPGRID_LAYER_OVERHEAD and its circles of light.
 #define LUNPA_FORTRESS_PASSAGE_LAYERS                                          \
   (DISPCNT_BG1_ON | DISPCNT_BG2_ON | DISPCNT_BG3_ON)
-/// The map layers the lit rooms show: BG2 and BG3, without the overhead layer.
+/// The map grid layers the lit rooms show: BG2 and BG3, without the overhead
+/// layer.
 #define LUNPA_FORTRESS_ROOM_LAYERS (DISPCNT_BG2_ON | DISPCNT_BG3_ON)
 
 /// The paired patrol's layer origin across: 136 pixels, in 16.16 fixed point.
@@ -387,12 +393,12 @@ static void LunpaFortress_LowerCrates(void) {
   }
 }
 
-/// LunpaFortressCave, trigger 70: pushing the crates slides them one cell
+/// LunpaFortressCave, coord event 70: pushing the crates slides them one cell
 /// along.
 static void EventScript_PushCrates(void) { StagedObjectEvent_AdvancePair(); }
 
-/// LunpaFortressCave, trigger 50: the crates, pushed onto their hole, slide in
-/// and sink.
+/// LunpaFortressCave, coord event 50: the crates, pushed onto their hole, slide
+/// in and sink.
 static void EventScript_CratesSink(void) {
   OBJECT_SPEED(CAVE_CRATES, PIXELS(1), PIXELS(1) / 2);
   ObjectEvent_SetDestination(CAVE_CRATES, 248, 376);
@@ -557,7 +563,7 @@ static void EventScript_UnlockGroundFloorDoor(void) {
   }
 }
 
-/// Lunpa Fortress, every scene: searching a cell door without the Cell Key,
+/// Lunpa Fortress, every map: searching a cell door without the Cell Key,
 /// it stays shut.
 /// "The door is tightly locked."
 static void EventScript_SearchLockedDoor(void) {
@@ -571,16 +577,17 @@ static void EventScript_SearchSealedDoor(void) {
   Engine_MessageShowCentered(MsgFieldDoorTightlyLocked, 1);
 }
 
-/// The four actors from LOCALID_FIRST_ITEM_DISPLAY that the unused item pickups
-/// below show their items on, in a scene they do not name. XXX: likely
+/// The four object events from LOCALID_FIRST_ITEM_DISPLAY that the unused item
+/// pickups below show their items on, in a map they do not name. XXX: likely
 /// LunpaFortressGroundFloor's first four rows (in a chest's sprite, at the
 /// map's origin), because nothing else uses them.
 enum { LOCALID_FIRST_ITEM_DISPLAY = LOCALID_FIRST_PLACED };
 
 /// Unused: nothing calls this pickup or the three after it. Together they
 /// would set out an Arctic Blade, a Masamune, a Silver Blade and a Shamshir on
-/// the four display actors, each taken once (FLAG_LUNPA_FORTRESS_ARCTIC_BLADE
-/// to FLAG_LUNPA_FORTRESS_SHAMSHIR); this one takes the Arctic Blade.
+/// the four display object events, each taken once
+/// (FLAG_LUNPA_FORTRESS_ARCTIC_BLADE to FLAG_LUNPA_FORTRESS_SHAMSHIR); this one
+/// takes the Arctic Blade.
 static void UNUSED LunpaFortress_UnusedTakeArcticBlade(void) {
   if (LunpaFortress_TryCollectDisplayedItem(LOCALID_FIRST_ITEM_DISPLAY,
                                             ITEM_ARCTIC_BLADE) != 0) {
@@ -588,7 +595,7 @@ static void UNUSED LunpaFortress_UnusedTakeArcticBlade(void) {
   }
 }
 
-/// Unused: the Masamune, on the second display actor.
+/// Unused: the Masamune, on the second display object event.
 static void UNUSED LunpaFortress_UnusedTakeMasamune(void) {
   if (LunpaFortress_TryCollectDisplayedItem(LOCALID_FIRST_ITEM_DISPLAY + 1,
                                             ITEM_MASAMUNE) != 0) {
@@ -596,7 +603,7 @@ static void UNUSED LunpaFortress_UnusedTakeMasamune(void) {
   }
 }
 
-/// Unused: the Silver Blade, on the third display actor.
+/// Unused: the Silver Blade, on the third display object event.
 static void UNUSED LunpaFortress_UnusedTakeSilverBlade(void) {
   if (LunpaFortress_TryCollectDisplayedItem(LOCALID_FIRST_ITEM_DISPLAY + 2,
                                             ITEM_SILVER_BLADE) != 0) {
@@ -604,7 +611,7 @@ static void UNUSED LunpaFortress_UnusedTakeSilverBlade(void) {
   }
 }
 
-/// Unused: the Shamshir, on the fourth display actor.
+/// Unused: the Shamshir, on the fourth display object event.
 static void UNUSED LunpaFortress_UnusedTakeShamshir(void) {
   if (LunpaFortress_TryCollectDisplayedItem(LOCALID_FIRST_ITEM_DISPLAY + 3,
                                             ITEM_SHAMSHIR) != 0) {
@@ -612,9 +619,9 @@ static void UNUSED LunpaFortress_UnusedTakeShamshir(void) {
   }
 }
 
-/// Unused: called only by the four pickups above. Gives the item an actor
-/// shows, with its effect; with no room for it, the actor shows the item is
-/// left behind. Returns whether it was given.
+/// Unused: called only by the four pickups above. Gives the item an object
+/// event shows, with its effect; with no room for it, the object event shows
+/// the item is left behind. Returns whether it was given.
 static s32 LunpaFortress_TryCollectDisplayedItem(s32 objectEventId,
                                                  s32 itemId) {
   s32 itemGiven = 0;
@@ -993,8 +1000,9 @@ static void EventScript_UpperHallGuardThrowsPartyOut(void) {
   EV_END();
 }
 
-/// Every frame past LunpaFortressGroundFloor's entrance: the guard who sees the
-/// uncloaked leader raises TRIGGER_ENTRANCE_GUARD_SPOTTED, once.
+/// Every frame after the party arrives in LunpaFortressGroundFloor's entrance
+/// or main passage: the guard who sees the uncloaked leader raises
+/// TRIGGER_ENTRANCE_GUARD_SPOTTED, once.
 static void LunpaFortress_CheckEntranceGuard(void) {
 
   struct EventWork *fieldWork = gEventWork;
@@ -1011,8 +1019,9 @@ static void LunpaFortress_CheckEntranceGuard(void) {
   }
 }
 
-/// Every frame past LunpaFortressGroundFloor's entrance: either sentry who sees
-/// the uncloaked leader raises TRIGGER_SENTRIES_SPOTTED, once for both.
+/// Every frame after the party arrives in LunpaFortressGroundFloor's entrance
+/// or main passage: either sentry who sees the uncloaked leader raises
+/// TRIGGER_SENTRIES_SPOTTED, once for both.
 static void LunpaFortress_CheckFirstEntranceSentry(void) {
 
   struct EventWork *fieldWork;
@@ -1343,7 +1352,7 @@ static void LunpaFortress_ActOutScoundrelDialogue(s32 objectEventId) {
   MESSAGE_PUT(objectEventId, 0);
 }
 
-/// LunpaFortressUpperFloor, trigger 33: walking up to the west guard, he
+/// LunpaFortressUpperFloor, coord event 33: walking up to the west guard, he
 /// challenges the party to a battle with a Brigand, and is gone after it.
 static void EventScript_FightWestGuard(void) {
 
@@ -1361,7 +1370,7 @@ static void EventScript_FightWestGuard(void) {
   Engine_GameFlagSet(FLAG_LUNPA_FORTRESS_WEST_GUARD_BEATEN);
 }
 
-/// LunpaFortressUpperFloor, trigger 30: walking up to the hall guard, he
+/// LunpaFortressUpperFloor, coord event 30: walking up to the hall guard, he
 /// challenges the party to a battle with a Brigand, and is gone after it.
 static void EventScript_FightHallGuard(void) {
 
@@ -1379,8 +1388,8 @@ static void EventScript_FightHallGuard(void) {
   Engine_GameFlagSet(FLAG_LUNPA_FORTRESS_MIDDLE_GUARD_BEATEN);
 }
 
-/// LunpaFortressUpperFloor, trigger 31: walking up to the three guards, they
-/// argue, then fight the party together as three Brigands. "Who are you!?"
+/// LunpaFortressUpperFloor, coord event 31: walking up to the three guards,
+/// they argue, then fight the party together as three Brigands. "Who are you!?"
 /// After the battle the party comes back here.
 static void EventScript_FightThreeGuards(void) {
   s32 messageBase;
@@ -1459,7 +1468,7 @@ static void LunpaFortress_PlaceThreeBeatenGuards(void) {
   Engine_ScriptOpenScreen();
 }
 
-/// LunpaFortressUpperFloor, trigger 32: walking up to the east guard, he
+/// LunpaFortressUpperFloor, coord event 32: walking up to the east guard, he
 /// challenges the party to a battle with a Brigand, and is gone after it.
 static void EventScript_FightEastGuard(void) {
 
@@ -1477,7 +1486,7 @@ static void EventScript_FightEastGuard(void) {
   Engine_GameFlagSet(FLAG_LUNPA_FORTRESS_EAST_GUARD_BEATEN);
 }
 
-/// LunpaFortressGroundFloor, trigger 50 or seen by the entrance guard: the
+/// LunpaFortressGroundFloor, coord event 50 or seen by the entrance guard: the
 /// party is sent back to the Lunpa Fortress Gates. "Who are you?"
 static void EventScript_EntranceGuardThrowsPartyOut(void) {
   EV_START();
@@ -1505,8 +1514,8 @@ static void EventScript_EntranceGuardThrowsPartyOut(void) {
   Engine_GameFlagSet(FLAG_MAP_TEMP_24);
 }
 
-/// LunpaFortressGroundFloor, trigger 51 between the sentries or seen by them:
-/// the party is sent back to the Lunpa Fortress Gates. "Who are you?"
+/// LunpaFortressGroundFloor, coord event 51 between the sentries or seen by
+/// them: the party is sent back to the Lunpa Fortress Gates. "Who are you?"
 static void EventScript_SentriesThrowPartyOut(void) {
   s32 challengeMessage;
 
@@ -1563,7 +1572,7 @@ LunpaFortress_FlipHiddenSwitch(s32 cellX, s32 cellY,
   openPassage();
 }
 
-/// LunpaFortressCave, trigger 52 once uncovered: searching the first switch
+/// LunpaFortressCave, bg event 52 once uncovered: searching the first switch
 /// while Reveal shows it flips it, and its passage opens. "You flipped the
 /// switch."
 static void EventScript_FlipFirstSwitch(void) {
@@ -1579,7 +1588,7 @@ static void EventScript_FlipFirstSwitch(void) {
   }
 }
 
-/// LunpaFortressCave, trigger 51 once uncovered: searching the second switch
+/// LunpaFortressCave, bg event 51 once uncovered: searching the second switch
 /// while Reveal shows it flips it, and its passage opens. "You flipped the
 /// switch."
 static void EventScript_FlipSecondSwitch(void) {
@@ -1722,7 +1731,7 @@ static void LunpaFortress_PositionPartyForMonster(void) {
   OBJECT_DIR(LOCALID_PARTY_LEADER, FACING_NORTH, 0);
 }
 
-/// LunpaFortressToadonpa, trigger 20: walking into Hammet's cell. The first
+/// LunpaFortressToadonpa, coord event 20: walking into Hammet's cell. The first
 /// time, Hammet hears the party out and recognizes Ivan, then Dodonpa arrives,
 /// gloats, pulls a lever and frees Toadonpa on them; after a lost battle, the
 /// scene goes straight to the trap. Either way, the battle follows.
@@ -2668,7 +2677,7 @@ static void EventScript_DonpaJudgesDodonpa(void) {
 }
 
 /// LunpaFortressGroundFloor: Mind Read on the second sentry reads his thoughts.
-/// He has one of eight thoughts, chosen at random when the scene was entered;
+/// He has one of eight thoughts, chosen at random when the map was entered;
 /// in one he looks around first.
 static void EventScript_ReadSentrysThoughts(void) {
 
@@ -3018,8 +3027,8 @@ static void EventScript_ReadJailedDodonpasThoughts(void) {
   MESSAGE_PUT(TOADONPA_DODONPA, 0);
 }
 
-/// Sets each scene up: a random pick for the guards' lines, the doors already
-/// opened, the watching guards and, in LunpaFortressToadonpa, the scene after
+/// Sets each map up: a random pick for the guards' lines, the doors already
+/// opened, the watching guards and, in LunpaFortressToadonpa, the room after
 /// the battle with Toadonpa or Dodonpa jailed.
 s32 Map_Initialize(void) {
   struct ObjectEvent *mapObjectEvent;
@@ -3080,8 +3089,8 @@ s32 Map_Initialize(void) {
   return 0;
 }
 
-/// Sets LunpaFortressGroundFloor up by entrance: the guards that watch each
-/// part, and the cell doors already opened.
+/// Sets LunpaFortressGroundFloor up by warp destination: the guards that watch
+/// each part, and the cell doors already opened.
 static void LunpaFortress_InitializeGroundFloor(void) {
   LunpaFortress_RestoreGroundFloorDoors();
   switch (gGameState.warpDest) {
@@ -3142,8 +3151,8 @@ static void LunpaFortress_InitializeGroundFloor(void) {
 }
 
 /// Sets LunpaFortressUpperFloor up: beaten guards gone or lying where they
-/// fell, the Cell Key gone once taken, the patrols by entrance and Donpa's
-/// attendant by his reward's place.
+/// fell, the Cell Key gone once taken, the patrols by warp destination and
+/// Donpa's attendant by his reward's place.
 static void LunpaFortress_InitializeUpperFloor(void) {
   struct ObjectEvent *keyObjectEvent;
 
@@ -3349,8 +3358,8 @@ static void LunpaFortress_RestoreToadonpaDoors(void) {
 #define DIRECTION_STEP(dx, dz) (((u32)(dx) << 16) | ((u32)(dz) & 0xffff))
 
 // The ROM keeps these three tables in .rodata, but the shared declarations in
-// field.h and object_staged_actor.h lack const, so a section attribute places
-// each one.
+// field.h and object_staged_object_event.h lack const, so a section attribute
+// places each one.
 s32 gStagedObjectEvent_DirectionSteps[] __attribute__((section(".rodata"))) = {
     DIRECTION_STEP(16, 0),  DIRECTION_STEP(16, 0),  DIRECTION_STEP(16, 0),
     DIRECTION_STEP(0, 16),  DIRECTION_STEP(0, 16),  DIRECTION_STEP(0, 16),
@@ -3549,8 +3558,8 @@ struct MapWarpDest gLunpaFortressWarpDestsOther[] = {
     { MAP_TABLE_END },
 };
 
-/// LunpaFortressGroundFloor's exits. Unused: its rows first copy West Lunpa
-/// Cave's, which no scene of this overlay reads.
+/// LunpaFortressGroundFloor's warps. Unused: its rows first copy West Lunpa
+/// Cave's, which no map of this overlay reads.
 u32 gLunpaFortressWarpsOther[] = {
     MAP_WARPS(WestLunpaCave),
     MAP_WARP(WEST_LUNPA_CAVE_TO_WORLD_MAP, WorldMap, WORLD_MAP_FROM_WEST_LUNPA_CAVE),
@@ -3633,8 +3642,8 @@ struct ObjectEventTemplate gLunpaFortressObjectEventTemplatesOther[] = {
     { MAP_TABLE_END },
 };
 
-/// Unused: a copy of West Lunpa Cave's placements, taken only by a scene this
-/// overlay never runs for.
+/// Unused: a copy of West Lunpa Cave's object event templates, taken only by
+/// a map this overlay never runs for.
 struct ObjectEventTemplate gLunpaFortressUnusedWestLunpaCaveObjectEventTemplates[] = {
     { SPRITE_PUDDLE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(184), 0, PIXELS(328), FACING_SOUTH, TALK_FACE_PARTY, 0 },
@@ -3658,7 +3667,7 @@ struct ObjectEventTemplate gLunpaFortressUnusedWestLunpaCaveObjectEventTemplates
 };
 
 struct ObjectEventTemplate gLunpaFortressGroundFloorObjectEventTemplates[] = {
-    // Unused: four chests at the map's origin, the display actors of the
+    // Unused: four chests at the map's origin, the display object events of the
     // unused sword pickups (LOCALID_FIRST_ITEM_DISPLAY).
     { SPRITE_CHEST, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         0, 0, 0, FACING_SOUTH, TALK_KEEP_FACING, 0 },
@@ -3777,7 +3786,7 @@ struct ObjectEventTemplate gLunpaFortressToadonpaObjectEventTemplates[] = {
     { MAP_TABLE_END },
 };
 
-/// Unused: an empty event table nothing returns.
+/// Unused: an empty map event table nothing returns.
 struct MapEvent gLunpaFortressNoEvents[] = {
     { MAP_EVENTS_END },
 };

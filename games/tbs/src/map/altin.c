@@ -1,23 +1,23 @@
 /// @file
-/// Altin, the mining village north of the Alpine Crossing, in two scenes that
+/// Altin, the mining village north of the Alpine Crossing, in two maps that
 /// share this overlay and the area name Altin: MapId_Altin, the village
 /// outdoors, and MapId_AltinInteriors, inside its houses, shops and inn.
-/// The getters pick each scene's tables by gGameState.scene, both share one
-/// exit table, and a third, empty set of tables serves any other scene.
+/// The getters pick each map's tables by gGameState.mapId, both share one
+/// warp table, and a third, empty set of tables serves any other map.
 ///
-/// The village is flooded by the water beasts of its mine, whose scenes the
+/// The village is flooded by the water beasts of its mine, whose maps the
 /// area names call Altin Peak (altin_peak.c), and two things in Altin's code
 /// follow the party's work down there. The water drops in three stages with the
 /// three drains it opens by beating the mine's water beasts
 /// (FLAG_ALTIN_MINE_FIRST_DRAIN to _THIRD_DRAIN): Map_Initialize turns them
-/// into three scene flags, the water dropped once, twice, or drained (the
-/// second and third drains both), and Village_ApplyWaterLevel copies the map
-/// block for that level over the village, with its collision, and leaves out
-/// whoever would be standing in the water. And every villager has two sets of
-/// lines and thoughts, before and after FLAG_HYDROS_STATUES_DEFEATED, whether
-/// the party has beaten the hydros statues at the bottom of the mine; the row
-/// that needs the flag clear comes first in each table, so the first row that
-/// matches picks the time.
+/// into three map temp flags, the water dropped once, twice, or drained (the
+/// second and third drains both), and Village_ApplyWaterLevel copies the layout
+/// area for that level over the village, with its metatile behaviors, and
+/// leaves out whoever would be standing in the water. And every villager has
+/// two sets of lines and thoughts, before and after
+/// FLAG_HYDROS_STATUES_DEFEATED, whether the party has beaten the hydros
+/// statues at the bottom of the mine; the row that needs the flag clear comes
+/// first in each table, so the first row that matches picks the time.
 ///
 /// In the village (Altin), three villagers come home one by one as the water
 /// drops, and the armor and item merchants wait outside their flooded shops
@@ -27,12 +27,12 @@
 /// spray (Spray_Initialize) running from Village_ApplyWaterLevel, until the
 /// party
 /// steps near it (Village_ScareOffBeast): it stops, cries out and hops away
-/// into the flood for good (FLAG_ALTIN_WATER_BEAST_LEFT). Doors (touches 2 to
-/// 9, Village_EnterDoor, each leaving by the exit of its number) lead into
+/// into the flood for good (FLAG_ALTIN_WATER_BEAST_LEFT). Doors (coord events 2
+/// to 9, Village_EnterDoor, each leaving by the warp of its number) lead into
 /// AltinInteriors and into the Altin Sanctum (ALTIN_TO_SANCTUM), whose wide
 /// door is redrawn by hand; coming back out of the Sanctum (ALTIN_FROM_SANCTUM)
-/// the area name is not shown again. Three doorways (touches 10 to 12,
-/// Village_WalkThroughDoorway) and the exit ALTIN_TO_ALTIN_PEAK_SPRITZ lead
+/// the area name is not shown again. Three doorways (coord events 10 to
+/// 12, Village_WalkThroughDoorway) and the warp ALTIN_TO_ALTIN_PEAK_SPRITZ lead
 /// into the mine, to Altin Peak's AltinPeakFirstWaterBeast,
 /// AltinPeakSouthEntrance, AltinPeakJunction and AltinPeakSpritz. A pillar that
 /// Move pushes to column 22 stays there (FLAG_ALTIN_PILLAR_MOVED).
@@ -82,7 +82,7 @@
 #define MAP_ALTIN_VILLAGE ((s32)&MapId_Altin)
 #define MAP_ALTIN_HOUSES ((s32)&MapId_AltinInteriors)
 
-/// The village's actors, numbering the rows of
+/// The village's object events, numbering the rows of
 /// gAltinVillage_ObjectEventTemplates. The people without a scene of their own
 /// are named by their sprite and by what they say before the hydros statues are
 /// beaten.
@@ -150,10 +150,10 @@ enum AltinVillageLocalId {
   /// soaked?" (MsgAltinWillDoIfMyMerchandise)
   LOCALID_FLOODED_ITEM_MERCHANT,
   /// Three crates placed with SPRITE_CRATE, which Village_ApplyWaterLevel hides
-  /// (SPRITE_COLOR_HIDDEN) but leaves solid, as placed actors are: invisible
-  /// blocks at the top of the ladder on the east cliff and, two of them, on
-  /// the rails below the doorway into the mine (the drained village's render
-  /// with them drawn).
+  /// (SPRITE_COLOR_HIDDEN) but leaves solid, as placed object events are:
+  /// invisible blocks at the top of the ladder on the east cliff and, two of
+  /// them, on the rails below the doorway into the mine (the drained village's
+  /// render with them drawn).
   /// ★ Named from the game: "Strange... I don't remember all these crates being
   /// up here before!" (MsgVaultVaultCutFree)
   LOCALID_FIRST_CRATE,
@@ -165,8 +165,8 @@ enum AltinVillageLocalId {
   LOCALID_THIRD_CRATE
 };
 
-/// The houses' actors, numbering the rows of gAltinHouses_ObjectEventTemplates,
-/// named as the village's are.
+/// The houses' object events, numbering the rows of
+/// gAltinHouses_ObjectEventTemplates, named as the village's are.
 enum AltinHouseLocalId {
   /// The family sheltering in the inn's Room One until the first drop: this
   /// man with brown hair (SPRITE_YOUNG_MAN_WITH_BROWN_HAIR) and a woman with
@@ -252,8 +252,8 @@ enum { ALTIN_INN = 6 };
 
 /// The doors of the village, by their index in gAltinVillage_Doors.
 enum {
-  /// The door triggers are numbered from 2 in the village's event table, and
-  /// each takes the exit of its own number.
+  /// The doors' coord events are numbered from 2 in the village's map events,
+  /// and each takes the warp of its own number.
   FIRST_DOOR_TRIGGER = 2,
   /// The Sanctum's door, which leads to SANCTUM_FROM_ALTIN.
   DOOR_SANCTUM = ALTIN_TO_SANCTUM - FIRST_DOOR_TRIGGER,
@@ -273,7 +273,7 @@ enum {
 #endif
 
 // UB: the random wobble can be negative. Both factors fit in signed32 bits
-// for the actor's signed16-bit timer and wobble values.
+// for the object event's signed16-bit timer and wobble values.
 #ifdef UBFIX
 #define WATER_SPRAY_LATERAL_STEP(timer, wobble)                                \
   ((timer) * 0x1000 + (wobble) * 0x8000)
@@ -302,7 +302,7 @@ const struct MapWarpDest *Map_GetWarpDests(void) {
 
 const struct MapWarpRegion *Map_GetWarpRegions(void) { return 0; }
 
-/// Both scenes share one exit table.
+/// Both maps share one warp table.
 const u32 *Map_GetWarps(void) { return gAltin_Warps; }
 
 /// Some villagers only turn back after talking once the flood is over or
@@ -400,7 +400,7 @@ static void Village_TalkToThirstyOldWoman(void) {
       Camera_GetScriptObject()->motionFlags = 0;
       Camera_SetSpeed(0x10000, 0x2000);
       Camera_MoveTo(beast->x.fixed, beast->y.fixed, beast->z.fixed, 1);
-      // BUG: FACING_SOUTH's value is passed as an actor number. No actor has
+      // BUG: FACING_SOUTH's value is passed as a local id. No object event has
       // it, so the leader does not turn south toward the beast.
 #ifdef BUGFIX
       ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_SOUTH, 0);
@@ -513,7 +513,7 @@ static void Houses_TalkToWeaponMerchant(void) {
   Engine_ScriptEnd();
 }
 
-/// Altin's armor merchant, in either scene: outside, while his shop is under
+/// Altin's armor merchant, in either map: outside, while his shop is under
 /// water, he laments; once it has dried after the second drop, he sells across
 /// his counter in the houses.
 static void Altin_TalkToArmorMerchant(void) {
@@ -758,7 +758,7 @@ static void Village_CheckPillarMoved(void) {
   }
 }
 
-/// Sets up the scene being entered, at the village's water level. It works out
+/// Sets up the map being entered, at the village's water level. It works out
 /// the water level from the mine's drain flags first. Returns 0.
 s32 Map_Initialize(void) {
   s16 mapId;
@@ -787,15 +787,16 @@ s32 Map_Initialize(void) {
   return 0;
 }
 
-/// Sets up Altin's village (Altin): the map block for the current water
-/// level (one of four 32 by 32 cell blocks kept on the map), the villagers and
-/// merchants present at that level, the water beast with its spray while it
-/// remains, and the pushed pillar. Then redraws the map around the leader.
+/// Sets up Altin's village (Altin): the layout area for the current water
+/// level (one of four 32 by 32 cell areas kept in the layout), the villagers
+/// and merchants present at that level, the water beast with its spray while
+/// it remains, and the pushed pillar. Then redraws the map around the leader.
 static void Village_ApplyWaterLevel(void) {
   struct ObjectEvent *leader;
 
   leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
-  // Select the water-level map and remove villagers whose areas are flooded.
+  // Select the water-level layout area and remove villagers whose areas are
+  // flooded.
   if (GameFlag_IsSet(FLAG_WATER_DRAINED) != 0) {
     MapGrid_CopyCellsTo(64, 32, 0, 32, 32, 32);
     MapGrid_CopyCellAttributes(64, 32, 32, 32, 0, 0);
@@ -839,7 +840,8 @@ static void Village_ApplyWaterLevel(void) {
   }
   Engine_ObjectEventSetSpriteFlags(ObjectEvent_GetById(LOCALID_STONE_STATUE),
                                    0);
-  // Hide the three crates, which stay solid, and draw them under the actors.
+  // Hide the three crates, which stay solid, and draw them under the object
+  // events.
   ObjectEvent_SetChildValue(LOCALID_FIRST_CRATE, SPRITE_COLOR_HIDDEN);
   Engine_ObjectEventSetChildValue(LOCALID_SECOND_CRATE, SPRITE_COLOR_HIDDEN);
   ObjectEvent_SetChildValue(LOCALID_THIRD_CRATE, SPRITE_COLOR_HIDDEN);
@@ -1466,7 +1468,7 @@ u16 gAltinVillage_NortheastDoorCells[] = {
     MAPGRID_ANIM_STEPS_END,
 };
 
-/// Each door trigger's opening picture and cell, from trigger 2.
+/// Each door coord event's opening picture and cell, from coord event 2.
 struct MapGridCellAnimation gAltinVillage_Doors[] = {
     {gAltinVillage_SouthwestDoorCells, 41, 5},
     {gAltinVillage_SanctumDoorCells, 51, 6},

@@ -22,8 +22,8 @@ static s32 Map_UpdateFloatingNut(s32 *p) {
   return 0;
 }
 
-/// Draws actor id as the Nut's icon and starts it floating, 32 pixels up unless
-/// the party returns to where it was.
+/// Draws object event id as the Nut's icon and starts it floating, 32 pixels up
+/// unless the party returns to where it was.
 void Map_FloatNut(s32 id) {
   OrbitingMapObject *objectEvent;
   OrbitingMapObjectSprite *sprite;

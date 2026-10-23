@@ -4,13 +4,13 @@
 #include "map_tables.h"
 #include "fixed_math.h"
 
-// Vale and its home, storm and Babi scenes, Sol Sanctum's eruption, the world
+// Vale and its home, storm and Babi maps, Sol Sanctum's eruption, the world
 // map and Venus Lighthouse's aerie: the pair of rising particles that
-// WorldMap_CreateLinkedEffects attaches to a glowing actor, each an update
-// hook that lives 32 frames.
+// WorldMap_CreateLinkedEffects attaches to a glowing object event, each an
+// update hook that lives 32 frames.
 
-/// Rises beside the linked actor, expanding and shrinking over half a sine
-/// wave.
+/// Rises beside the linked object event, expanding and shrinking over half a
+/// sine wave.
 static void
 FieldEffect_AnimateVerticalPositive(union FieldObject *fieldObject) {
   struct ObjectEvent *self = &fieldObject->objectEvent;
@@ -35,7 +35,8 @@ FieldEffect_AnimateVerticalPositive(union FieldObject *fieldObject) {
   self->z.fixed = anchor->z.fixed + (Q16_ONE - amplitude) * 5 + PIXELS(8);
 }
 
-/// Mirrors the rising particle vertically and passes behind the linked actor.
+/// Mirrors the rising particle vertically and passes behind the linked object
+/// event.
 static void
 FieldEffect_AnimateVerticalNegative(union FieldObject *fieldObject) {
   struct ObjectEvent *self = &fieldObject->objectEvent;

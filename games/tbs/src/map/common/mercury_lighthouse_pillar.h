@@ -23,11 +23,11 @@
 #include "songs.h"
 
 // Mercury Lighthouse and its entrance, once the pool is woken: standing at the
-// pool's heart (touch trigger 11) gives the leader three lights, shown as a
+// pool's heart (coord event 11) gives the leader three lights, shown as a
 // column of light over them. Each hop into the pool (the floor's region, its
-// collision code) spends one, and a light comes to hold the leader up where
+// metatile behavior) spends one, and a light comes to hold the leader up where
 // they land. A hop within the pool with no light left sinks the leader, who is
-// put back at the heart. Touch trigger 31 takes the lights away, and Retreat
+// put back at the heart. Coord event 31 takes the lights away, and Retreat
 // removes the column.
 
 /// Raises the spark while its scale follows a half-sine pulse.
@@ -81,7 +81,8 @@ OverlayObject_AdvanceScaleCounter(struct ScriptInterpreter *interpreter) {
   return 1;
 }
 
-/// Follows the linked actor and alternates the light's animation parameter.
+/// Follows the linked object event and alternates the light's animation
+/// parameter.
 static s32
 MercuryLighthouse_FollowLeader(struct ScriptInterpreter *interpreter) {
   struct ObjectEvent *objectEvent = (struct ObjectEvent *)interpreter;
@@ -130,9 +131,9 @@ MercuryLighthouse_FollowLeader(struct ScriptInterpreter *interpreter) {
   }
 
   // Alternate the light's draw parameter every two frames and redraw it.
-  // The sprite slot is read by its offset, the plain-C form of actor->sprite
-  // this site matches with (map/README.md): through ObjectEvent's
-  // single/group union the movs r0, #1 and the sprite load swap.
+  // The sprite slot is read by its offset, the plain-C form of
+  // objectEvent->sprite this site matches with (map/README.md): through
+  // ObjectEvent's single/group union the movs r0, #1 and the sprite load swap.
   {
     struct AnimationObject *sprite =
         *(struct AnimationObject **)((u8 *)objectEvent +
@@ -145,7 +146,7 @@ MercuryLighthouse_FollowLeader(struct ScriptInterpreter *interpreter) {
   return 1;
 }
 
-/// Places the two spark animations on the selected actor.
+/// Places the two spark animations on the selected object event.
 static void MercuryLighthouse_SpawnSparkPair(void) {
   struct ObjectEvent *point;
   struct ObjectEvent *spark;
@@ -185,7 +186,7 @@ static void MercuryLighthouse_SpawnSparkPair(void) {
   Engine_AudioPlayCue(SE_130);
 }
 
-/// Touch trigger 11, the pool's heart: the column of light appears over the
+/// Coord event 11, the pool's heart: the column of light appears over the
 /// leader if it is not there, and grows a stage with each pair of sparks, half
 /// a second apart, up to three lights. The column's cell is where a sinking
 /// leader comes back to; FLAG_NO_ENCOUNTERS_IN_MAPSEC is set while the leader
@@ -245,7 +246,7 @@ void MercuryLighthouse_ChargeLights(void) {
 
 #define MAPGRID_CELLS ((struct MapGridCell *)Ram_MapGridCellBuffer)
 
-/// Touch trigger 31: the leader loses their lights, and the column swells and
+/// Coord event 31: the leader loses their lights, and the column swells and
 /// fades away.
 void MercuryLighthouse_LoseLights(void) {
   struct MercuryLighthouseLights *state =
@@ -269,12 +270,13 @@ void MercuryLighthouse_LoseLights(void) {
   }
 }
 
-/// Pushing against the pool's edge (triggers 11, 21 and 31): the leader hops
-/// two cells the way the pad points, unless the hop leads into the pool without
-/// a light or is blocked. A hop into the pool spends a light, which flies ahead
-/// to the landing cell; the column shrinks a stage, or goes with the last
-/// light. Landing in the pool with no light under them, the leader sinks until
-/// a key is pressed after half a second, and is put back at the heart.
+/// Pushing against the pool's edge (coord events 11, 21 and 31): the leader
+/// hops two cells the way the pad points, unless the hop leads into the pool
+/// without a light or is blocked. A hop into the pool spends a light, which
+/// flies ahead to the landing cell; the column shrinks a stage, or goes with
+/// the last light. Landing in the pool with no light under them, the leader
+/// sinks until a key is pressed after half a second, and is put back at the
+/// heart.
 void MercuryLighthouse_HopAcrossPool(void) {
   struct FieldWork *work;
   struct MercuryLighthouseLights *state;
@@ -395,7 +397,7 @@ void MercuryLighthouse_HopAcrossPool(void) {
   work->walkingDistance += Iwram_MulQ16(work->walkingDistanceScale, 0x200000);
 }
 
-/// Touch trigger 21: while the leader stands there, a blue ripple spreads from
+/// Coord event 21: while the leader stands there, a blue ripple spreads from
 /// him every 10 to 39 frames.
 void MercuryLighthouse_RippleAroundLeader(void) {
   struct MercuryLighthouseLights *state;

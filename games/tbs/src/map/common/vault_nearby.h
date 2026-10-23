@@ -1,7 +1,7 @@
 /// @file
 /// Vault, before and after the thieves are caught: the two villagers who walk
 /// about together (LOCALID_BOY_ROUND_THE_WELL and LOCALID_GIRL_ROUND_THE_WELL,
-/// as both scenes name them).
+/// as both maps name them).
 #include "types.h"
 #include "object_event.h"
 

@@ -2,9 +2,9 @@
 /// Five of the side rooms of Crossbone Isle Cave, the cave beneath Crossbone
 /// Isle. Each opens off one of the nine floors the cave descends through
 /// (crossbone_isle.c) through two doors, east and west: the floor's
-/// east door leads in at the room's `_EAST` entrance
+/// east door leads in at the room's `_EAST` warp destination
 /// (CROSSBONE_ISLE_STEPPING_STONES_FROM_CROSSBONE_ISLE_FIRST_FLOOR_EAST in the
-/// first) and its west door at the `_WEST` one, and the exits of the same names
+/// first) and its west door at the `_WEST` one, and the warps of the same names
 /// lead back out. Each is a puzzle with four chests, and all five take the area
 /// name Crossbone Isle Cave. In the order the party meets them:
 ///
@@ -89,12 +89,12 @@
 #define BG_EVENT_CHEST_FACING(facing)                                          \
   (BG_EVENT(BG_EVENT_CHEST) | MAP_EVENT_FLAG_FACING | (facing))
 
-/// The placed actors, numbered in the order of each room's placement table
-/// (Map_GetObjectEventTemplates).
+/// The placed object events, numbered in the order of each room's object event
+/// templates (Map_GetObjectEventTemplates).
 enum CrossboneIsleSteppingStonesLocalId {
   /// The pillars of CrossboneIsleSteppingStones (four, SPRITE_STONE_PILLAR),
   /// CrossboneIsleIcePillars (five) and CrossboneIsleStackedPillars (four,
-  /// sprite 0x100), the only actors those rooms place.
+  /// sprite 0x100), the only object events those rooms place.
   /// ★ Named from what the player sees: tan stone pillars over the pit,
   /// pillars of ice on the spikes, and grey carved pillars stacked two high
   /// (its render)
@@ -191,8 +191,8 @@ static void CrossboneIsleSteppingStones_SettleObjectEventOnGround(
   objectEvent->y.fixed = objectEvent->terrainHeight;
 }
 
-/// Waits until the actor reaches the ground or height limit, then stops its
-/// descent.
+/// Waits until the object event reaches the ground or height limit, then stops
+/// its descent.
 static void CrossboneIsleSteppingStones_StopAtGroundOrHeight(
     struct ObjectEvent *objectEvent, s32 limit) {
   s32 remainingFrames = 60;
@@ -215,7 +215,8 @@ static void CrossboneIsleSteppingStones_StopAtGroundOrHeight(
   objectEvent->targetY = OBJ_EVENT_NO_TARGET;
 }
 
-/// Finds the actor's footprint dimensions, grid position, and map-layer origin.
+/// Finds the object event's footprint dimensions, grid position, and map-layer
+/// origin.
 static s32 CrossboneIsleSteppingStones_QueryFootprint(
     s32 id, u32 *width, u32 *depth, struct StagedObjectEventProbe *probe,
     s32 *layerOriginX, s32 *layerOriginZ) {
@@ -259,7 +260,7 @@ static s32 CrossboneIsleSteppingStones_QueryFootprint(
     farExtent = -farExtent;
   }
   *width = (coordinate + farExtent) >> 4;
-  // Move from the actor's center to the footprint's top-left cell.
+  // Move from the object event's center to the footprint's top-left cell.
   probe->position.x +=
       gStagedObjectEvent_FootprintBounds[probe->footprintIndex * 4] * PIXELS(1);
   {
@@ -279,8 +280,8 @@ static s32 CrossboneIsleSteppingStones_QueryFootprint(
 }
 
 /// Draws a log's footprint where it floats on CrossboneIsleFloodgate's raised
-/// water, lying across or along the room as the log does, and puts its actor
-/// under the leader.
+/// water, lying across or along the room as the log does, and puts its object
+/// event under the leader.
 static s32 CrossboneIsleSteppingStones_DrawRaisedFootprint(s32 objectEventId) {
   struct ObjectEvent *objectEvent = ObjectEvent_GetById(objectEventId);
   u32 width, depth;
@@ -325,8 +326,8 @@ static inline void CrossboneIsleSteppingStones_DrawFloatingLogs(void) {
   CrossboneIsleSteppingStones_DrawRaisedFootprint(LOCALID_FIRST_LOG + 7);
 }
 
-/// Restores the ground tiles and collision attributes under the actor's
-/// footprint.
+/// Restores the ground metatiles and metatile behaviors under the object
+/// event's footprint.
 static s32
 CrossboneIsleSteppingStones_RestoreGroundFootprint(s32 objectEventId) {
   struct ObjectEvent *objectEvent = ObjectEvent_GetById(objectEventId);
@@ -377,7 +378,8 @@ static void CrossboneIsleSteppingStones_ReadMapGridCell(
   }
 }
 
-/// Copies the cell's flags and collision attributes without replacing its tile.
+/// Copies the cell's flags and metatile behavior without replacing its
+/// metatile.
 static void CrossboneIsleSteppingStones_SetCellAttributes(
     s32 layer, s32 x, s32 y, const union CrossboneIslePillarCell *source) {
   struct MapGridScrollWork *grid = gMapGridWork[0];
@@ -406,8 +408,8 @@ static void CrossboneIsleSteppingStones_SetCellAttributes(
   }
 }
 
-/// Finds the next terrain ledge and stops the falling actor at its projected
-/// height.
+/// Finds the next terrain ledge and stops the falling object event at its
+/// projected height.
 static s32 CrossboneIsleSteppingStones_LowerObjectEventToLedge(s32 id,
                                                                s32 far) {
   struct ObjectEvent *objectEvent = ObjectEvent_GetById(id);
@@ -625,8 +627,8 @@ static void CrossboneIsleSteppingStones_UpdateDampedParticle(
   fieldObject->effect.sprite->rotation += fieldObject->effect.spin;
 }
 
-/// Sets the actor's sprite to the colour mode (enum SpriteColorMode) in the
-/// low four bits of its timer.
+/// Sets the object event's sprite to the colour mode (enum SpriteColorMode) in
+/// the low four bits of its timer.
 static s32 CrossboneIsleSteppingStones_SetChildValueFromTimer(
     struct ScriptInterpreter *interpreter) {
   struct ObjectEvent *objectEvent = (struct ObjectEvent *)interpreter;
@@ -657,7 +659,7 @@ const struct MapWarpDest *Map_GetWarpDests(void) {
 
 const struct MapWarpRegion *Map_GetWarpRegions(void) { return 0; }
 
-/// Returns the exits the five rooms share.
+/// Returns the warps the five rooms share.
 const u32 *Map_GetWarps(void) { return gCrossboneIsleSteppingStonesWarps; }
 
 const struct ObjectEventTemplate *Map_GetObjectEventTemplates(void) {
@@ -870,8 +872,8 @@ static void EventScript_FlipWaterSwitch(void) {
   EV_END();
 }
 
-/// Matches a nearby actor's draw priority when it is behind the comparison
-/// actor.
+/// Matches a nearby object event's draw priority when it is behind the
+/// comparison object event.
 static s32 CrossboneIsleSteppingStones_SyncPriorityIfBehind(
     struct ObjectEvent *objectEvent, struct ObjectEvent *front) {
   s32 result = 0;
@@ -896,8 +898,8 @@ static s32 CrossboneIsleSteppingStones_SyncPriorityIfBehind(
   return result;
 }
 
-/// Matches the comparison actor's draw priority when it overlaps the actor in
-/// front.
+/// Matches the comparison object event's draw priority when it overlaps the
+/// object event in front.
 static s32 CrossboneIsleSteppingStones_SyncPriorityIfAhead(
     struct ObjectEvent *front, struct ObjectEvent *objectEvent) {
   s32 result = 0;
@@ -1190,7 +1192,7 @@ static void EventScript_PushOrClimbDown(void) {
   }
 }
 
-/// Stepping on trigger 40 in CrossboneIsleStackedPillars: the fade overlay
+/// Stepping on coord event 40 in CrossboneIsleStackedPillars: the fade overlay
 /// follows the leader, and the leader's rise counter starts.
 static void EventScript_StartRising(void) {
   struct ObjectEvent *leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
@@ -1198,8 +1200,8 @@ static void EventScript_StartRising(void) {
   leader->riseCounter = 1;
 }
 
-/// Stepping on trigger 41 in CrossboneIsleStackedPillars: the overlay lets the
-/// leader go, and the rise counter stops.
+/// Stepping on coord event 41 in CrossboneIsleStackedPillars: the overlay lets
+/// the leader go, and the rise counter stops.
 static void EventScript_StopRising(void) {
   struct ObjectEvent *leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
 
@@ -1516,7 +1518,8 @@ const struct MapEvent *Map_GetEvents(void) {
   return gCrossboneIsleSteppingStonesEventsOther;
 }
 
-/// Prepares the lowered actor's collision and draw priority below the leader.
+/// Prepares the lowered object event's collision and draw priority below the
+/// leader.
 static void CrossboneIsleSteppingStones_PrepLoweredObjectEvent(s32 id) {
   struct ObjectEvent *objectEvent = ObjectEvent_GetById(id);
 
@@ -1753,8 +1756,9 @@ const s32 *gEffectScripts[] = {
 };
 
 /// The glint of a puddle Frost has frozen in CrossboneIsleDragonStatue: the
-/// timer carries a colour mode to CrossboneIsleSteppingStones_SetChildValueFromTimer,
-/// green and blue swapped for two frames in every eight.
+/// timer carries a colour mode to
+/// CrossboneIsleSteppingStones_SetChildValueFromTimer, green and blue swapped
+/// for two frames in every eight.
 s32 gCrossboneIsleSteppingStones_ActionTable[] = {
     SC_SET(SW_TIMER, SPRITE_COLOR_RBG),
     SC_CALL(CrossboneIsleSteppingStones_SetChildValueFromTimer),
@@ -1765,8 +1769,8 @@ s32 gCrossboneIsleSteppingStones_ActionTable[] = {
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
-/// The floodgate's switch flipping as EventScript_FlipWaterSwitch closes the gate,
-/// and flipping back as it opens it.
+/// The floodgate's switch flipping as EventScript_FlipWaterSwitch closes the
+/// gate, and flipping back as it opens it.
 u16 gCrossboneIsleSteppingStones_SwitchCloseSteps[] = {
     MAPGRID_ANIM_STEP(76, 34, 1, 2, 4), MAPGRID_ANIM_STEP(77, 34, 1, 2, 4), MAPGRID_ANIM_STEP(78, 34, 1, 2, 4), MAPGRID_ANIM_STEP(79, 34, 1, 2, 4), MAPGRID_ANIM_STEPS_END,
 };
@@ -1845,7 +1849,7 @@ u32 gCrossboneIsleSteppingStonesWarps[] = {
     MAP_WARPS_END,
 };
 
-/// Unused: an empty placement table nothing returns.
+/// Unused: an empty object event template table nothing returns.
 struct ObjectEventTemplate gCrossboneIsleSteppingStonesNoObjectEventTemplates[] = {
     { MAP_TABLE_END },
 };

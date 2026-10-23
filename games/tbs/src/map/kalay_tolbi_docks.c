@@ -1,8 +1,8 @@
 /// @file
 /// Kalay Docks and Tolbi Docks, the two ends of the ship's crossing of the
-/// Karagol Sea, in three scenes that share one overlay: MapId_KalayDocks,
+/// Karagol Sea, in three maps that share one overlay: MapId_KalayDocks,
 /// MapId_KalayTolbiDocksInteriors and MapId_TolbiDocks. The getters pick
-/// each scene's tables by gGameState.scene, and three story flags choose among
+/// each map's tables by gGameState.mapId, and three story flags choose among
 /// them: FLAG_TOLBI_SHIP_REACHED_TOLBI, whether the ship has made its crossing
 /// (set on the world map, WorldMap_CompleteTransfer);
 /// FLAG_KALAY_COLOSSO_TOUR_LEFT, whether the Colosso Tour's group has left
@@ -30,7 +30,7 @@
 /// lead to the world map (KALAY_DOCKS_TO_WORLD_MAP_SOUTH and
 /// KALAY_DOCKS_TO_WORLD_MAP_NORTH), onto the ship
 /// (KALAY_DOCKS_TO_TOLBI_SHIP_DECK, the Tolbi-bound Ship,
-/// MapId_TolbiShipDeck) and through a door (trigger 10) into the building
+/// MapId_TolbiShipDeck) and through a door (coord event 10) into the building
 /// beside them.
 ///
 /// That building (KalayTolbiDocksInteriors) has a room at each dock: entered
@@ -42,22 +42,22 @@
 /// the Tolbi room no tickets are sold at all, the sea being too dangerous.
 ///
 /// Tolbi Docks (TolbiDocks) is where the ship lands after the crossing.
-/// Stepping off (trigger 20, FLAG_TOLBI_DOCKS_ARRIVALS_GREETED) the party is
-/// met by a man on the docks who asks about the monster, with a reply for each
-/// answer. The woman's
-/// daughter (LOCALID_WAITING_DAUGHTER) watches the sea for her parents and
-/// takes the message (FLAG_TOLBI_DOCKS_MESSAGE_DELIVERED). Two stacks of crates
-/// slide along the pier under Move, a chest holds a Potion and a box 35 coins,
-/// and the docks lead to the world map toward Tolbi (TOLBI_DOCKS_TO_WORLD_MAP),
-/// back onto the ship (TOLBI_DOCKS_TO_TOLBI_SHIP_DECK) and into the building
-/// (trigger 10). After Colosso the Colosso Tour's passengers are stranded
-/// here, the ships not sailing, and the first time the party comes (trigger
-/// 50, FLAG_TOLBI_DOCKS_TOUR_GROUP_BLAMED) it watches them demand to be taken
-/// home and the tour guide's hired bodyguard knock the angriest flat;
-/// KalayTolbiDocks_PrepareTolbiDocks keeps them where the scene left them.
-/// Only the debug menus' scene selector, which warps to any scene and
-/// entrance by number, reaches KALAY_TOLBI_DOCKS_WARP_DEST_AFTER_COLOSSO, which
-/// sets FLAG_COLOSSO_OVER as Babi Palace's BABI_PALACE_AFTER_COLOSSO does.
+/// Stepping off (coord event 20, FLAG_TOLBI_DOCKS_ARRIVALS_GREETED) the party
+/// is met by a man on the docks who asks about the monster, with a reply for
+/// each answer. The woman's daughter (LOCALID_WAITING_DAUGHTER) watches the sea
+/// for her parents and takes the message (FLAG_TOLBI_DOCKS_MESSAGE_DELIVERED).
+/// Two stacks of crates slide along the pier under Move, a chest holds a Potion
+/// and a box 35 coins, and the docks lead to the world map toward Tolbi
+/// (TOLBI_DOCKS_TO_WORLD_MAP), back onto the ship
+/// (TOLBI_DOCKS_TO_TOLBI_SHIP_DECK) and into the building (coord event 10).
+/// After Colosso the Colosso Tour's passengers are stranded here, the ships not
+/// sailing, and the first time the party comes (coord event 50,
+/// FLAG_TOLBI_DOCKS_TOUR_GROUP_BLAMED) it watches them demand to be taken home
+/// and the tour guide's hired bodyguard knock the angriest flat;
+/// KalayTolbiDocks_PrepareTolbiDocks keeps them where the scene left them. Only
+/// the debug menus' map selector, which warps to any map and warp destination
+/// by number, reaches KALAY_TOLBI_DOCKS_WARP_DEST_AFTER_COLOSSO, which sets
+/// FLAG_COLOSSO_OVER as Babi Palace's BABI_PALACE_AFTER_COLOSSO does.
 ///
 /// Open questions: none.
 
@@ -97,7 +97,7 @@
 
 /// Kalay Docks' people, numbering the rows of
 /// gKalayTolbiDocks_KalayObjectEventTemplates from LOCALID_FIRST_PLACED;
-/// Garet's row takes his own actor slot. Once the ship has crossed
+/// Garet's row takes his own object event slot. Once the ship has crossed
 /// (gKalayTolbiDocks_KalayObjectEventTemplatesShipGone) the first four stand
 /// off the map.
 enum KalayDocksLocalId {
@@ -274,7 +274,8 @@ static void KalayTolbiDocks_GroundJoins(void) {
   Djinn_JoinParty(LOCALID_GROUND, ELEMENT_VENUS, DJINNI_INDEX(DJINNI_GROUND));
 }
 
-/// Selects the entrances of Kalay Docks, Tolbi Docks or the building between.
+/// Selects the warp destinations of Kalay Docks, Tolbi Docks or the building
+/// between.
 const struct MapWarpDest *KalayTolbiDocks_GetWarpDests(void) {
   s16 mapId = gGameState.mapId;
 
@@ -292,13 +293,13 @@ const struct MapWarpDest *KalayTolbiDocks_GetWarpDests(void) {
 
 const struct MapWarpRegion *KalayTolbiDocks_GetRegions(void) { return NULL; }
 
-/// The exits of the three scenes, each scene's after its header word (an exit
-/// of kind 0): both docks lead to the world map, onto the ship
+/// The warps of the three maps, each map's after its header word (a warp of
+/// kind 0): both docks lead to the world map, onto the ship
 /// (MapId_TolbiShipDeck) and into the building
 /// (MapId_KalayTolbiDocksInteriors), whose rooms lead back to their docks.
 const u32 *KalayTolbiDocks_GetWarps(void) { return gKalayTolbiDocks_Warps; }
 
-/// Each scene's people before the crossing, once the ship has crossed and not
+/// Each map's people before the crossing, once the ship has crossed and not
 /// come back (FLAG_TOLBI_SHIP_REACHED_TOLBI), and once the Colosso Tour's
 /// passengers are stranded after Colosso (FLAG_COLOSSO_OVER).
 const struct ObjectEventTemplate *
@@ -332,7 +333,7 @@ KalayTolbiDocks_GetObjectEventTemplates(void) {
   return gKalayTolbiDocks_NoObjectEventTemplates;
 }
 
-/// Tolbi Docks, stepping off the ship (trigger 20, until
+/// Tolbi Docks, stepping off the ship (coord event 20, until
 /// FLAG_TOLBI_DOCKS_ARRIVALS_GREETED, which coming off the ship by
 /// TOLBI_DOCKS_FROM_TOLBI_SHIP_DECK clears): the leader walks a few steps and
 /// a man on the docks hurries over to stand beside the party.
@@ -348,7 +349,7 @@ static void KalayTolbiDocks_GreetArrivals(void) {
   Engine_ScriptEnd();
 }
 
-/// Selects each scene's events for the same three times as its people.
+/// Selects each map's events for the same three times as its people.
 const struct MapEvent *KalayTolbiDocks_GetEvents(void) {
   s16 mapId = gGameState.mapId;
 
@@ -666,8 +667,8 @@ static void KalayTolbiDocks_TalkToWaitingDaughter(void) {
   }
 }
 
-/// Kalay Docks or Tolbi Docks: walking north into the door (trigger 10) of the
-/// building beside them, the door opens and the leader walks in by
+/// Kalay Docks or Tolbi Docks: walking north into the door (coord event 10) of
+/// the building beside them, the door opens and the leader walks in by
 /// TOLBI_DOCKS_TO_KALAY_TOLBI_DOCKS_INTERIORS, which in Kalay Docks is
 /// KALAY_DOCKS_TO_KALAY_TOLBI_DOCKS_INTERIORS by the same number.
 static void KalayTolbiDocks_OpenDoorAndLeave(void) {
@@ -689,11 +690,11 @@ static void KalayTolbiDocks_OpenDoorAndLeave(void) {
   Engine_ScriptEnd();
 }
 
-/// An entrance no exit, table or code leads to, whose arrival sets
-/// FLAG_COLOSSO_OVER; the debug menus' scene selector reaches it.
+/// A warp destination no warp, table or code leads to, whose arrival sets
+/// FLAG_COLOSSO_OVER; the debug menus' map selector reaches it.
 enum { KALAY_TOLBI_DOCKS_WARP_DEST_AFTER_COLOSSO = 90 };
 
-/// Prepares whichever of the three scenes is entered. Arriving by
+/// Prepares whichever of the three maps is entered. Arriving by
 /// KALAY_TOLBI_DOCKS_WARP_DEST_AFTER_COLOSSO sets FLAG_COLOSSO_OVER, which
 /// leaves the tour's passengers stranded on the Tolbi Docks.
 s32 KalayTolbiDocks_Initialize(void) {
@@ -926,13 +927,12 @@ static void KalayTolbiDocks_GaretSeesTheKaragol(void) {
   Engine_ScriptEnd();
 }
 
-/// Tolbi Docks after Colosso, the first time the party comes to the pier
-/// (trigger 50, until FLAG_TOLBI_DOCKS_TOUR_GROUP_BLAMED): it watches the tour
-/// guide tell an angry young man his ticket was refunded. The passengers
-/// demand to be taken home, the ships being stuck and the road blocked; when
-/// the angry one charges, the guides' hired bodyguard steps in, and after a
-/// second try the passenger is knocked flat and the bodyguard spins on the
-/// spot.
+/// Tolbi Docks after Colosso, the first time the party comes to the pier (coord
+/// event 50, until FLAG_TOLBI_DOCKS_TOUR_GROUP_BLAMED): it watches the tour
+/// guide tell an angry young man his ticket was refunded. The passengers demand
+/// to be taken home, the ships being stuck and the road blocked; when the angry
+/// one charges, the guides' hired bodyguard steps in, and after a second try
+/// the passenger is knocked flat and the bodyguard spins on the spot.
 static void KalayTolbiDocks_PassengersConfrontTourGuide(void) {
   struct ObjectEvent *objectEvent;
 
@@ -1194,8 +1194,8 @@ struct MapWarpDest gKalayTolbiDocks_TolbiWarpDests[] = {
     {MAP_TABLE_END},
 };
 
-/// The building's entrances, each into the room at the dock it is entered
-/// from.
+/// The building's warp destinations, each into the room at the dock it is
+/// entered from.
 struct MapWarpDest gKalayTolbiDocks_InteriorWarpDests[] = {
     {0, CONDITION_ALWAYS, 96, 0, 248, FACING_NORTH, 0, -1, -1, -1, -1, 0},
     {KALAY_TOLBI_DOCKS_INTERIORS_FROM_KALAY_DOCKS, CONDITION_ALWAYS, 96, 0, 248,
@@ -1205,8 +1205,8 @@ struct MapWarpDest gKalayTolbiDocks_InteriorWarpDests[] = {
     {MAP_TABLE_END},
 };
 
-/// Kalay Docks' exits, then Tolbi Docks' and the building's, each after the
-/// header word (an exit of kind 0) for its scene.
+/// Kalay Docks' warps, then Tolbi Docks' and the building's, each after the
+/// header word (a warp of kind 0) for its map.
 u32 gKalayTolbiDocks_Warps[] = {
     MAP_WARPS(KalayDocks),
     MAP_WARP(KALAY_DOCKS_TO_WORLD_MAP_SOUTH, WorldMap,

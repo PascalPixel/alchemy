@@ -5,9 +5,9 @@
 
 // Imil and Fuchin Falls, and Vale's cave.
 
-/// Moves the character the player controls (in animation 27) and actor id
-/// together by (dx, dz) pixels to the centres of their cells, at a pixel a
-/// frame, as when pushing it; the actor faces the way it goes.
+/// Moves the character the player controls (in animation 27) and object event
+/// id together by (dx, dz) pixels to the centres of their cells, at a pixel a
+/// frame, as when pushing it; the object event faces the way it goes.
 static void MapObjectEvent_PlacePairAtOffset(s32 id, s32 dx, s32 dz) {
   struct ObjectEvent *objectEvent;
   struct ObjectEvent *other;

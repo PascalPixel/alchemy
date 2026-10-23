@@ -21,9 +21,9 @@
 // own and choose where to cheer from, and the guide at each stage describes it
 // and offers a friend's cheering there.
 //
-// The three match scenes number their ways out alike, so the requests here
-// keep the numbers: exit 10 is each scene's way from lending a hand to the
-// race (COLOSSEUM_AZART_MATCH_LEND_A_HAND_TO_RACE and its twins), and exit 11
+// The three match maps number their ways out alike, so the requests here
+// keep the numbers: warp 10 is each map's way from lending a hand to the
+// race (COLOSSEUM_AZART_MATCH_LEND_A_HAND_TO_RACE and its twins), and warp 11
 // its way back out to the Colosseum (COLOSSEUM_AZART_MATCH_TO_COLOSSEUM_WEST,
 // COLOSSEUM_SATRAGE_MATCH_TO_COLOSSEUM_SOUTH,
 // COLOSSEUM_NAVAMPA_MATCH_TO_COLOSSEUM).
@@ -35,7 +35,7 @@
 #define COLOSSO_CHEER_ROW FLAG_MAPSEC_TEMP_78
 #define COLOSSO_CHEER_SLOT(character) ((character) << 4)
 
-/// Scene flags, by stage number: a friend cheers at the stage, and its
+/// Map temp flags, by stage number: a friend cheers at the stage, and its
 /// description was heard. When a friend cheers there, the guide says
 /// "Unfortunately, we have a full house."
 #define COLOSSO_STAGE_CHEERED 0x200
@@ -125,9 +125,9 @@ void Colosso_ControlCharacterAlone(s32 id) {
   Engine_ScriptClearInvalidPackedValues();
 }
 
-/// A scene callback while a friend looks around the stages alone (the visit to
+/// A map callback while a friend looks around the stages alone (the visit to
 /// lend a hand): when the Psynergy request names that friend and
-/// FLAG_PSYNERGY_TARGET is set, raise event 99, Colosso_TakePlaceForMatch.
+/// FLAG_PSYNERGY_TARGET is set, raise map event 99, Colosso_TakePlaceForMatch.
 void Colosso_RaiseTakePlaceOnPsynergy(void) {
   struct EventWork *work = gEventWork;
   s32 selection = gGameState.selectedObjectEvent;
@@ -141,8 +141,8 @@ void Colosso_RaiseTakePlaceOnPsynergy(void) {
   }
 }
 
-/// Raised event 99: the nearest actor with animation 165 level with or below
-/// the friend on the map calls the warriors to their places, and the
+/// Raised map event 99: the nearest object event with animation 165 level with
+/// or below the friend on the map calls the warriors to their places, and the
 /// friend's cell becomes their place to cheer from. "The match is about to
 /// begin. Please take your places." The next friend then looks around, or,
 /// after Mia, the party leaves for the race.

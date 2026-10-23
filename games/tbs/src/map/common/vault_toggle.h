@@ -6,7 +6,7 @@
 /// bridge, and VAULT_CELL_WEST_OF_BRIDGE gives them back the path's ground, so
 /// he walks under it (render probe vault-bridge: crossing either way he stays
 /// 32 pixels up, and walking the path he stays on the ground).
-/// FLAG_MAP_TEMP_00 remembers the deck, which each scene restores on a
+/// FLAG_MAP_TEMP_00 remembers the deck, which each map restores on a
 /// kept-position return, such as after battle.
 #include "types.h"
 #include "object_event.h"

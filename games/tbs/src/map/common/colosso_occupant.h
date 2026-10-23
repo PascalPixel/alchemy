@@ -5,9 +5,9 @@
 
 // The sites of the three Colosso finals matches (Colosseum Final 1, 2 and 3).
 
-/// Returns the placed actor standing one cell, or else two cells, ahead of the
-/// actor the player moves (straight ahead in the nearest of the four
-/// directions), or 0 when there is none.
+/// Returns the placed object event standing one cell, or else two cells, ahead
+/// of the object event the player moves (straight ahead in the nearest of the
+/// four directions), or 0 when there is none.
 void *Colosso_FindObjectEventAhead(void) {
   struct ObjectEvent *record;
   s32 facing;

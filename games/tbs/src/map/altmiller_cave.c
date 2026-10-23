@@ -1,6 +1,6 @@
 /// @file
 /// Altmiller Cave, where the party finds Babi while Tolbi searches for him
-/// during Colosso (babi_palace.c). Its six scenes share this overlay and the
+/// during Colosso (babi_palace.c). Its six maps share this overlay and the
 /// area name Altmiller Cave:
 ///
 /// - AltmillerCaveEntrance (MapId_AltmillerCaveEntrance): the dark passage
@@ -18,13 +18,13 @@
 ///   columns, the rock puzzle (AltmillerCave_TurnRock) and the chest that
 ///   holds the Mystic Draught behind the wall the puzzle opens.
 ///
-/// The rooms share one entrance table and one exit table, and the other
-/// getters choose by gGameState.scene. AltmillerCave_Initialize sends an entry
-/// from outside the cave (entrance 0) to the room's first entrance, darkens the
-/// dark rooms and puts back what the party has done. Saving Babi
-/// (FLAG_BABI_SAVED) is the story flag the rest of Tolbi waits on; the
-/// overlay's own state is in scene flags and gMapLocalState, so it starts over
-/// on every ordinary entrance.
+/// The rooms share one warp destination table and one warp table, and the
+/// other getters choose by gGameState.mapId. AltmillerCave_Initialize sends an
+/// entry from outside the cave (warp destination 0) to the room's first warp
+/// destination, darkens the dark rooms and puts back what the party has done.
+/// Saving Babi (FLAG_BABI_SAVED) is the story flag the rest of Tolbi waits on;
+/// the overlay's own state is in map temp flags and gMapLocalState, so it
+/// starts over on every ordinary arrival.
 ///
 /// Every room but the two lit ones is dark (FLAG_DARK): BG1 is blended over
 /// the rest (ALTMILLER_CAVE_DARKNESS_BLEND), and the light around the party is
@@ -32,7 +32,7 @@
 /// drawn differently (AltmillerCave_InitializeDarkness). In an evenly dark
 /// room BG1 covers everything outside it and is only blended inside it.
 /// AltmillerCaveEntrance darkens by steps instead
-/// (FLAG_DARKNESS_BY_STEPS): touch cells 60 to 65 each set a level, kept in
+/// (FLAG_DARKNESS_BY_STEPS): coord events 60 to 65 each set a level, kept in
 /// gMapLocalState byte 4, from the lightest at the mouth to the darkest by the
 /// inner chamber, and blends outside the light while BG1 is left out inside
 /// it. AltmillerCave_ApplyFadeBlend gives BG1 no weight and the layers under
@@ -105,8 +105,8 @@
 #include "songs.h"
 #include "audio_engine_symbols.h"
 
-/// AltmillerCaveBabi's actors: Babi while invisible and once seen, and the two
-/// men from Tolbi who come looking for him.
+/// AltmillerCaveBabi's object events: Babi while invisible and once seen, and
+/// the two men from Tolbi who come looking for him.
 enum {
   /// Babi's second sheet, SPRITE_INVISIBLE_BABI: the old man with
   /// long pink hair and a cane, standing unseen in the cave.
@@ -197,7 +197,7 @@ enum {
   COLOR_NONE = 6
 };
 
-/// The scene flags the cave keeps.
+/// The map temp flags the cave keeps.
 enum {
   /// The cave is dark: set on entry everywhere but AltmillerCaveSquall and
   /// AltmillerCaveDraught.
@@ -306,7 +306,7 @@ static void AltmillerCave_StartDjinnBattle(void) {
   Field_RequestDjinnBattle(LOCALID_SQUALL, DJINNI_SQUALL);
 }
 
-/// The six rooms share one entrance table.
+/// The six rooms share one warp destination table.
 const struct MapWarpDest *AltmillerCave_GetWarpDests(void) {
   return gAltmillerCave_WarpDests;
 }
@@ -377,33 +377,35 @@ static void AltmillerCave_SetFadeLevel(s32 level) {
 }
 
 /// Crossing the first darkness boundary sets the cave's lightest level.
-/// AltmillerCaveEntrance's boundaries are touch cells 60 to 65:
+/// AltmillerCaveEntrance's boundaries are coord events 60 to 65:
 /// crossing one sets its level, 0 to 5, each a step darker than the last.
 static void AltmillerCave_DarkenToLevel0(void) {
   AltmillerCave_SetFadeLevel(0);
 }
 
-/// Crossing the second darkness boundary (touch cell 61) sets darkness level 1.
+/// Crossing the second darkness boundary (coord event 61) sets darkness level
+/// 1.
 static void AltmillerCave_DarkenToLevel1(void) {
   AltmillerCave_SetFadeLevel(1);
 }
 
-/// Crossing the third darkness boundary (touch cell 62) sets darkness level 2.
+/// Crossing the third darkness boundary (coord event 62) sets darkness level 2.
 static void AltmillerCave_DarkenToLevel2(void) {
   AltmillerCave_SetFadeLevel(2);
 }
 
-/// Crossing the fourth darkness boundary (touch cell 63) sets darkness level 3.
+/// Crossing the fourth darkness boundary (coord event 63) sets darkness level
+/// 3.
 static void AltmillerCave_DarkenToLevel3(void) {
   AltmillerCave_SetFadeLevel(3);
 }
 
-/// Crossing the fifth darkness boundary (touch cell 64) sets darkness level 4.
+/// Crossing the fifth darkness boundary (coord event 64) sets darkness level 4.
 static void AltmillerCave_DarkenToLevel4(void) {
   AltmillerCave_SetFadeLevel(4);
 }
 
-/// Crossing the sixth darkness boundary (touch cell 65) sets darkness level 5.
+/// Crossing the sixth darkness boundary (coord event 65) sets darkness level 5.
 static void AltmillerCave_DarkenToLevel5(void) {
   AltmillerCave_SetFadeLevel(5);
 }
@@ -502,8 +504,8 @@ static void AltmillerCave_EndReveal(void) {
   }
 }
 
-/// Retreat's first phase: the Psynergy's first actor faces south, and its
-/// object is copied into a new one for the effect to use.
+/// Retreat's first phase: the Psynergy's first object event faces south, and
+/// its object is copied into a new one for the effect to use.
 static void AltmillerCave_StartRetreat(void) {
   struct FieldEffectWork *work;
   struct ObjectEvent *original;
@@ -2012,7 +2014,7 @@ static void AltmillerCave_RepeatRockOrder(void) {
   Engine_ScriptEnd();
 }
 
-/// In AltmillerCaveBabi, walking away from Babi (touch cell 19) the first
+/// In AltmillerCaveBabi, walking away from Babi (coord event 19) the first
 /// time after meeting him: he calls the party back and says where the draught
 /// is. "Wait... The draught is... on a table behind the door."
 static void AltmillerCave_BabiCallsPartyBack(void) {
@@ -2077,8 +2079,8 @@ static __inline__ void AltmillerCave_RedrawObstacleFootprints(void) {
 }
 
 /// Sets up the room being entered: an entry from outside the cave takes the
-/// room's first entrance; AltmillerCaveEntrance picks its darkness from the
-/// entrance; AltmillerCaveBabi's Babi is invisible until rescued;
+/// room's first warp destination; AltmillerCaveEntrance picks its darkness from
+/// the warp destination; AltmillerCaveBabi's Babi is invisible until rescued;
 /// AltmillerCaveSquall's obstacles and pillar and AltmillerCaveDraught's
 /// obstacles, lights and rocks are restored. Returns 0.
 s32 AltmillerCave_Initialize(void) {
@@ -2157,7 +2159,7 @@ s32 AltmillerCave_Initialize(void) {
     Engine_GameFlagClear(FLAG_DARK);
     AltmillerCave_RedrawObstacleFootprints();
     // UB: the callbacks are stored through an s32 view of update, which keeps
-    // the entrance read below the last store.
+    // the warp destination read below the last store.
 #ifdef UBFIX
     ObjectEvent_GetById(LOCALID_FIRST_OBSTACLE)->update =
         AltmillerCave_MatchLeaderPriority;

@@ -1,13 +1,13 @@
 /// @file
 /// Altin Peak, the mine below Altin that its villagers and the Alpine
-/// Crossing's signpost call Altin Mine: eleven scenes,
+/// Crossing's signpost call Altin Mine: eleven maps,
 /// MapId_AltinPeakFirstWaterBeast to MapId_AltinPeakWestExit, whose area
 /// name is Altin Peak, except that the international editions call
 /// AltinPeakSouthEntrance the Alpine Crossing when the party comes in from
 /// there (ALTIN_PEAK_SOUTH_ENTRANCE_FROM_ALPINE_CROSSING_WEST and
-/// ALTIN_PEAK_SOUTH_ENTRANCE_FROM_ALPINE_CROSSING_EAST). Each scene is a room
-/// of the mine, and the getters pick each room's tables by gGameState.scene,
-/// all the rooms share one exit table, and Map_Initialize calls the setup of
+/// ALTIN_PEAK_SOUTH_ENTRANCE_FROM_ALPINE_CROSSING_EAST). Each map is a room
+/// of the mine, and the getters pick each room's tables by gGameState.mapId,
+/// all the rooms share one warp table, and Map_Initialize calls the setup of
 /// the room being entered (AltinPeak_RestoreFirstWaterBeastRoom and so on),
 /// which puts back what the party has already done there.
 ///
@@ -17,34 +17,35 @@
 /// blue swapped, SPRITE_COLOR_RBG) waits in AltinPeakFirstWaterBeast,
 /// AltinPeakSecondWaterBeast and AltinPeakThirdWaterBeast. In
 /// AltinPeakFirstWaterBeast the first one shows the way: stepping near it
-/// (touch 10, AltinPeak_ShowFirstBeastRoute) it cries out, hops around the
-/// room, freezes the second puddle with Frost and hops across, and stepping
-/// near it again (touch 11) it hops back and settles down to spit. Talking to a
-/// beast, or reading its mind, starts its battle, and the party comes back to
-/// the room by WARP_DEST_AFTER_BATTLE, where the room's setup runs a drain: the
-/// water layer sinks and flickers away (AltinPeak_DrainFirstWater and the two
-/// after it), and FLAG_ALTIN_MINE_FIRST_DRAIN to _THIRD_DRAIN remember the
-/// three drains, which Altin's code reads to lower the water in the village
-/// too. Back from the first battle, in AltinPeakFirstWaterBeast, the party
-/// finds the Frost Jewel before the water drains, and from then on Frost
-/// freezes the mine's puddles into ice pillars to stand on (scene flags keep
-/// them frozen only within one visit). AltinPeakSouthEntrance's water stands
-/// until the second drain and AltinPeakPool's until the third.
+/// (coord event 10, AltinPeak_ShowFirstBeastRoute) it cries out, hops around
+/// the room, freezes the second puddle with Frost and hops across, and stepping
+/// near it again (coord event 11) it hops back and settles down to spit.
+/// Talking to a beast, or reading its mind, starts its battle, and the party
+/// comes back to the room by WARP_DEST_AFTER_BATTLE, where the room's setup
+/// runs a drain: the water layer sinks and flickers away
+/// (AltinPeak_DrainFirstWater and the two after it), and
+/// FLAG_ALTIN_MINE_FIRST_DRAIN to _THIRD_DRAIN remember the three drains, which
+/// Altin's code reads to lower the water in the village too. Back from the
+/// first battle, in AltinPeakFirstWaterBeast, the party finds the Frost Jewel
+/// before the water drains, and from then on Frost freezes the mine's puddles
+/// into ice pillars to stand on (map temp flags keep them frozen only within
+/// one visit). AltinPeakSouthEntrance's water stands until the second drain and
+/// AltinPeakPool's until the third.
 ///
 /// The rooms between are built from a few mechanisms: mine carts the party
 /// rides (talking to one, AltinPeak_RollCart), which roll along the turns their
 /// route's cells mark; floor switches in AltinPeakSecondWaterBeast,
 /// AltinPeakThirdWaterBeast, AltinPeakPool and AltinPeakSpritz, each remembered
-/// by a place flag (FLAG_ALTIN_PEAK_SECOND_WATER_BEAST_ROOM_SWITCH and the
-/// three after it) and redrawn on entry; and a
-/// stone pillar in AltinPeakSpritz that Move or a push slides along. Spritz, a
-/// Mercury Djinni, waits there too, placed until it has joined, and talking to
-/// it starts its battle. In AltinPeakFallingRocks a sign warns `Watch for
-/// falling rocks! Do not strike the wall! Rocks may fall!` at what looks like a
-/// dead end: while the party has no Orb of Force, Garet steps out and strikes
-/// the wall anyway, and with it Force does the same (AltinPeak_ForceLogOver);
-/// either way a boulder rolls after the leader down the path and crashes into
-/// the wall at the bottom, leaving rubble (FLAG_ALTIN_PEAK_BOULDER_FALLEN).
+/// by a map-section temp flag (FLAG_ALTIN_PEAK_SECOND_WATER_BEAST_ROOM_SWITCH
+/// and the three after it) and redrawn on entry; and a stone pillar in
+/// AltinPeakSpritz that Move or a push slides along. Spritz, a Mercury Djinni,
+/// waits there too, placed until it has joined, and talking to it starts its
+/// battle. In AltinPeakFallingRocks a sign warns `Watch for falling rocks! Do
+/// not strike the wall! Rocks may fall!` at what looks like a dead end: while
+/// the party has no Orb of Force, Garet steps out and strikes the wall anyway,
+/// and with it Force does the same (AltinPeak_ForceLogOver); either way a
+/// boulder rolls after the leader down the path and crashes into the wall at
+/// the bottom, leaving rubble (FLAG_ALTIN_PEAK_BOULDER_FALLEN).
 ///
 /// AltinPeakHydrosStatue, at the bottom, is a tiled room of carved stone, part
 /// of ruins buried in the mine. Stepping toward its guardian statue
@@ -61,8 +62,8 @@
 /// ALTIN_PEAK_SOUTH_ENTRANCE_TO_ALPINE_CROSSING_EAST) and AltinPeakWestExit
 /// onto the world map (ALTIN_PEAK_WEST_EXIT_TO_WORLD_MAP).
 ///
-/// The falling boulder is SPRITE_ROCK, its shadow a SPRITE_BLANK_LARGE actor,
-/// and its pieces in the crash SPRITE_ROCK again, scaled down
+/// The falling boulder is SPRITE_ROCK, its shadow a SPRITE_BLANK_LARGE object
+/// event, and its pieces in the crash SPRITE_ROCK again, scaled down
 /// (AltinPeak_SpawnDebris); the beasts' spray is SPRITE_DUST_PUFF recoloured,
 /// as in Altin.
 ///
@@ -121,7 +122,7 @@
 #include "audio_engine_symbols.h"
 
 // The rooms' floor switches, each set once flipped from its first position;
-// they are place flags, kept until the party leaves the mine.
+// they are map-section temp flags, kept until the party leaves the mine.
 
 /// ★ Named from the game: "flipped the switch." (MsgFieldFlippedSwitch)
 #define FLAG_ALTIN_PEAK_SECOND_WATER_BEAST_ROOM_SWITCH FLAG_MAPSEC_TEMP_23
@@ -155,12 +156,12 @@ static void AltinPeak_MarkObjectEventTerrainCell(s32 objectEventId);
 static void AltinPeak_RollCart(s32 id, s32 heading);
 static void AltinPeak_StartPaletteAnimation(void);
 
-/// Each room's water beast fight returns the party to this entrance.
+/// Each room's water beast fight returns the party to this warp destination.
 enum { WARP_DEST_AFTER_BATTLE = 99 };
 
-/// The rooms' actors, from their placement tables. AltinPeakSecondWaterBeast,
-/// AltinPeakThirdWaterBeast, AltinPeakPool and AltinPeakSpritz place the mine
-/// cart the party rides first.
+/// The rooms' object events, from their object event templates.
+/// AltinPeakSecondWaterBeast, AltinPeakThirdWaterBeast, AltinPeakPool and
+/// AltinPeakSpritz place the mine cart the party rides first.
 enum {
   /// ★ Named from what the player sees: a wooden mine cart on the rails (its
   /// render)
@@ -220,8 +221,8 @@ enum {
   /// render)
   LOCALID_SPRITZ_ROOM_THIRD_PUDDLE,
   /// Unused: a round boulder at (520, 632), outside both of the room's camera
-  /// boxes (gAltinPeak_SpritzWarpDests': one ends at z 568, the one below it
-  /// at x 384), so the player never sees it, and no event names it. It stands
+  /// boxes (gAltinPeak_SpritzWarpDests': one ends at z 568, the one below it at
+  /// x 384), so the player never sees it, and no map event names it. It stands
   /// almost where AltinPeakJunction places its own boulder, (536, 636).
   /// ★ Named from the game: "Mother, look!! A boulder blocking the road!!"
   /// (MsgGomaNoUsePsynergy)
@@ -237,7 +238,7 @@ enum {
 };
 
 /// AltinPeakFallingRocks: the boulder that falls and its shadow, the log that
-/// topples as it comes down, the actor Force is cast on, and the sign.
+/// topples as it comes down, the object event Force is cast on, and the sign.
 enum {
   /// ★ Named from what the player sees: its sprite, a grey boulder (its
   /// render)
@@ -253,9 +254,8 @@ enum {
   /// (MsgAltinWatchFallingRocks)
   LOCALID_WALL,
   /// The falling-rock sign, drawn with the sprite of Lalivero's sign and the
-  /// Kolima Forest floodgate's (SPRITE_SIGNPOST); it is read by searching cell
-  /// code 12
-  /// (AltinPeak_ReadFallingRockSign).
+  /// Kolima Forest floodgate's (SPRITE_SIGNPOST); it is read by searching
+  /// metatile behavior 12 (AltinPeak_ReadFallingRockSign).
   /// ★ Named from the game: "Watch for falling rocks!"
   /// (MsgAltinWatchFallingRocks)
   LOCALID_FALLING_ROCK_SIGN
@@ -279,7 +279,7 @@ enum {
   LOCALID_WEST_EXIT_ROOM_PILLAR
 };
 
-/// The rooms' frozen puddles and Garet at the sign: scene flags, kept within
+/// The rooms' frozen puddles and Garet at the sign: map temp flags, kept within
 /// one visit to a room, across its battles.
 enum {
   /// Frost has frozen the room's first puddle.
@@ -413,7 +413,7 @@ const struct MapWarpRegion *Map_GetWarpRegions(void) {
   return 0;
 }
 
-/// All the rooms share one exit table.
+/// All the rooms share one warp table.
 const u32 *Map_GetWarps(void) { return gAltinPeak_Warps; }
 
 const struct ObjectEventTemplate *Map_GetObjectEventTemplates(void) {
@@ -492,7 +492,7 @@ static void AltinPeak_RideCart(s32 log) {
 
 /// The party fights the first water beast. Talking to (or reading the mind of)
 /// a room's water beast starts its battle; afterwards the party returns to the
-/// room's battle entrance.
+/// room's warp destination after battle.
 static void AltinPeak_FightFirstWaterBeast(void) {
   Battle_SetStart(BATTLE_START_SCRIPTED);
   FieldScript_SetNextDestination((s32)&MapId_AltinPeakFirstWaterBeast,
@@ -547,7 +547,7 @@ static void AltinPeak_SettleSpritzRoomPillar(void) {
 /// Frost on a puddle freezes it into an ice pillar the party can stand on:
 /// the puddle's cell takes the pillar's attributes, kept elsewhere on the
 /// map, and the pillar is drawn 32 pixels lower, under the party. Each
-/// room's puddle has its own copy, setting its own scene flag.
+/// room's puddle has its own copy, setting its own map temp flag.
 static void AltinPeak_FreezeFirstWaterBeastRoomPuddle(void) {
   struct ObjectEvent *puddle;
 
@@ -1088,7 +1088,7 @@ static void AltinPeak_RunBoulderChase(s32 boulderDelay) {
   MapGrid_CopyCellAttributes(25, 35, 10, 5, 43, 35);
   ObjectEvent_SetPosition(LOCALID_FALLING_BOULDER, 0, 0);
   ObjectEvent_SetPosition(LOCALID_BOULDER_SHADOW, 0, 0);
-  // Hide the rolling actors and animate the falling debris.
+  // Hide the rolling object events and animate the falling debris.
   FieldScheduler_AddCallback(AltinPeak_SpawnDebris, TASK_PRIORITY_MAP);
   Engine_ScriptWait(80);
   Engine_TaskRemoveCallback(AltinPeak_SpawnDebris);
@@ -1223,8 +1223,8 @@ static void AltinPeak_ReadFallingRockSign(void) {
   Engine_ScriptEnd();
 }
 
-/// AltinPeakFirstWaterBeast has its own events once the first drain has lowered
-/// its water.
+/// AltinPeakFirstWaterBeast has its own map events once the first drain has
+/// lowered its water.
 const struct MapEvent *Map_GetEvents(void) {
   const struct MapEvent *table;
 
@@ -1709,7 +1709,7 @@ static void AltinPeak_RestoreSecondWaterBeastRoom(void) {
 
 /// AltinPeakSouthEntrance: its water is up until the second drain. Arriving
 /// from the Alpine Crossing, at
-/// ALTIN_PEAK_SOUTH_ENTRANCE_FROM_ALPINE_CROSSING_WEST or _EAST, shows no place
+/// ALTIN_PEAK_SOUTH_ENTRANCE_FROM_ALPINE_CROSSING_WEST or _EAST, shows no area
 /// name.
 static void AltinPeak_RestoreSouthEntranceRoom(void) {
   if (GameFlag_IsSet(FLAG_ALTIN_MINE_SECOND_DRAIN) != 0) {
@@ -1718,8 +1718,8 @@ static void AltinPeak_RestoreSouthEntranceRoom(void) {
     MapGrid_CopyCellAttributes(52, 42, 1, 1, 53, 42);
   }
   {
-    // Either entrance from the Alpine Crossing: _EAST is the number after
-    // ALTIN_PEAK_SOUTH_ENTRANCE_FROM_ALPINE_CROSSING_WEST.
+    // Either warp destination from the Alpine Crossing: _EAST is the number
+    // after ALTIN_PEAK_SOUTH_ENTRANCE_FROM_ALPINE_CROSSING_WEST.
     if ((u32)(((u16)gGameState.warpDest -
                ALTIN_PEAK_SOUTH_ENTRANCE_FROM_ALPINE_CROSSING_WEST)
               << 16) <= 0x10000) {
@@ -2380,7 +2380,7 @@ static void AltinPeak_UpdateFrostPillarPriority(void) {
   }
 }
 
-/// Makes a puddle walkable to the actor checks and marks its map cell.
+/// Makes a puddle walkable to the object event checks and marks its map cell.
 static void AltinPeak_MarkObjectEventTerrainCell(s32 objectEventId) {
   struct ObjectEvent *objectEvent;
 
@@ -2559,7 +2559,7 @@ static void AltinPeak_AdvanceCart(struct ObjectEvent *object) {
   }
 }
 
-/// The collision codes that mark the mine cart's route, on map layer 2.
+/// The metatile behaviors that mark the mine cart's route, on map layer 2.
 enum AltinPeakCartCell {
   ALTIN_PEAK_CART_COUNTDOWN = 96, ///< AltinPeak_StartCartCountdown
   ALTIN_PEAK_CART_TURN_LEFT = 97,
@@ -2696,7 +2696,8 @@ s32 gAltinPeak_PuddleGrowScript[] = {
     SC_END,
 };
 
-/// AltinPeakFallingRocks's boulder rolls straight down the path, and marks its arrival.
+/// AltinPeakFallingRocks's boulder rolls straight down the path, and marks its
+/// arrival.
 s32 gAltinPeak_BoulderPath[] = {
     SC_MOVE(PIXELS(786), 0, PIXELS(220)),
     SC_SYNC,
@@ -3149,9 +3150,9 @@ struct MapEvent gAltinPeak_SecondWaterBeastEvents[] = {
     {BG_EVENT(BG_EVENT_CHEST), 100, FLAG_ALTIN_PEAK_COOKIE, FIND_ITEM(ITEM_COOKIE)},
     {MAP_EVENTS_END},
     // Unused: two rows past the end marker, which no lookup reaches: a second
-    // ALTIN_PEAK_SECOND_WATER_BEAST_CHEST_ROOM_TO_LAKE exit and a chest on code
-    // 100 holding a Herb under FLAG_ALTIN_PEAK_UNUSED_HERB, the spot where the
-    // Cookie chest above already stands.
+    // ALTIN_PEAK_SECOND_WATER_BEAST_CHEST_ROOM_TO_LAKE warp and a chest on
+    // trigger 100 holding a Herb under FLAG_ALTIN_PEAK_UNUSED_HERB, the spot
+    // where the Cookie chest above already stands.
     {MAP_EVENT_WARP, 3, CONDITION_ALWAYS, ALTIN_PEAK_SECOND_WATER_BEAST_CHEST_ROOM_TO_LAKE},
     {BG_EVENT(BG_EVENT_CHEST), 100, FLAG_ALTIN_PEAK_UNUSED_HERB, FIND_ITEM(ITEM_HERB)},
     {MAP_EVENTS_END},

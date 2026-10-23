@@ -5,7 +5,7 @@
 #include "script_layer.h"
 #include "flags.h"
 
-/// Takes exit no in the backdrop fade over 16 frames, first stopping the
+/// Takes warp no in the backdrop fade over 16 frames, first stopping the
 /// storm's lightning while the storm rages (FLAG_VALE_STORM).
 static void Vale_RequestBackdropWarp(s32 no) {
   struct EventWork *p;

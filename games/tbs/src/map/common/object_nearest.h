@@ -4,8 +4,8 @@
 
 // Mercury and Venus Lighthouses' aeries.
 
-/// Returns the placed actor drawn as SPRITE_FLOATING_PLATFORM nearest the
-/// leader, within 640 pixels, or 0.
+/// Returns the placed object event drawn as SPRITE_FLOATING_PLATFORM nearest
+/// the leader, within 640 pixels, or 0.
 s32 MapObjectEvent_FindNearestFloatingPlatform(void) {
   struct EventWork *work = gEventWork;
   struct ObjectEvent **slot;

@@ -22,13 +22,13 @@
 /// pillar, moved with Move to its last column, settles into the floor so it can
 /// be walked over (FLAG_GOMA_CAVE_ENTRANCE_EAST_PILLAR_IN_PLACE). Whirlwind
 /// blows the second ivy away for good (FLAG_GOMA_CAVE_ENTRANCE_IVY_BLOWN_AWAY);
-/// its placement row is then skipped, though it keeps its actor number.
+/// its object event template row is then skipped, though it keeps its local id.
 ///
 /// Map_Initialize blocks Retreat and puts everything back as these flags say:
-/// the stump where it landed, the pillars on their columns and the map cells
-/// that go with them. GOMA_CAVE_ENTRANCE_TO_GOMA_CAVE_STREAM leads into Goma
-/// Cave (MapId_GomaCaveStream) and GOMA_CAVE_ENTRANCE_TO_WORLD_MAP out to the
-/// world map.
+/// the stump where it landed, the pillars on their columns and the map grid
+/// cells that go with them. GOMA_CAVE_ENTRANCE_TO_GOMA_CAVE_STREAM leads into
+/// Goma Cave (MapId_GomaCaveStream) and GOMA_CAVE_ENTRANCE_TO_WORLD_MAP out to
+/// the world map.
 ///
 /// Open questions: none.
 #include "unit/map/goma_cave_entrance.h"
@@ -70,8 +70,8 @@
 #include "fx_work.h"
 #include "fixed_math.h"
 
-/// The room's actors. Garet's and Ivan's rows go to their party slots, and the
-/// rows after them number from LOCALID_FIRST_PLACED.
+/// The room's object events. Garet's and Ivan's rows go to their party slots,
+/// and the rows after them number from LOCALID_FIRST_PLACED.
 enum GomaCaveEntranceLocalId {
   /// The stump caught in ivy that blocks the way on.
   /// ★ Named from the game: "It's no use. Our Psynergy isn't strong enough to
@@ -107,7 +107,7 @@ enum GomaCaveEntranceLocalId {
   LOCALID_IVY
 };
 
-// Private scene actions used by the reunion sequence.
+// Private cutscene actions used by the reunion sequence.
 static void GomaCaveEntrance_WhirlwindOnStumpIvy(void);
 static void GomaCaveEntrance_LeapStump(s32 stumpId);
 static void GomaCaveEntrance_GiveShamansRod(void);
@@ -135,8 +135,8 @@ const struct ObjectEventTemplate *Map_GetObjectEventTemplates(void) {
 }
 
 /// Move on the west pillar at Goma Cave Entrance, and after each push: the
-/// pillar stands on one of three columns, and the map cells and flags follow
-/// it.
+/// pillar stands on one of three columns, and the map grid cells and flags
+/// follow it.
 static void EventScript_MoveWestPillar(void) {
   struct ObjectEvent *pillar;
   s32 column;
@@ -176,8 +176,9 @@ static void EventScript_MoveEastPillar(void) {
   }
 }
 
-/// Walking into the west pillar at Goma Cave Entrance from the west (trigger 5)
-/// or the east (trigger 6): the leader leans on it and pushes it one step.
+/// Walking into the west pillar at Goma Cave Entrance from the west (coord
+/// event 5) or the east (coord event 6): the leader leans on it and pushes it
+/// one step.
 static void EventScript_PushWestPillar(void) {
   struct EventWork *work;
   s32 offsetX;
@@ -189,7 +190,7 @@ static void EventScript_PushWestPillar(void) {
   OBJECT_SPEED(LOCALID_PARTY_LEADER, PIXELS(1) / 5, PIXELS(1) / 10);
   OBJECT_SPEED(LOCALID_WEST_PILLAR, PIXELS(1) / 5, PIXELS(1) / 10);
   SE(SE_PUSH);
-  // 16 pixels east from trigger 5, west from trigger 6.
+  // 16 pixels east from coord event 5, west from coord event 6.
   offsetX = (11 - (work->touchedTrigger << 1)) << 4;
   ObjectEvent_SetDestinationOffset(LOCALID_PARTY_LEADER, offsetX, 0);
   ObjectEvent_SetDestinationOffset(LOCALID_WEST_PILLAR, offsetX, 0);
@@ -508,7 +509,7 @@ static void EventScript_MoveStump(void) {
   EV_END();
 }
 
-/// Ivan casts Whirlwind on the stump's ivy, and the scene waits for it. The
+/// Ivan casts Whirlwind on the stump's ivy, and the cutscene waits for it. The
 /// announcement is lowered to a fixed place (POSITIONED_MESSAGE_LOWER), since
 /// it would otherwise be placed by where the leader, not Ivan, stands.
 static void GomaCaveEntrance_WhirlwindOnStumpIvy(void) {

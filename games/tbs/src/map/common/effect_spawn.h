@@ -4,7 +4,7 @@
 #include "map_tables.h"
 #include "fixed_math.h"
 
-// Twenty-four scenes, and the main image's Psynergy effects (whirlwind.c, with
+// Twenty-four maps, and the main image's Psynergy effects (whirlwind.c, with
 // EFFECT_SPAWN_RESIDENT): FieldEffect_Spawn, which places a small effect moving
 // at a velocity, its script one of gEffectScripts and its options chosen by the
 // EFFECT_USE_ flags.

@@ -8,8 +8,8 @@
 /// (BILIBIN_INTERIORS_INN_TO_INN_UPSTAIRS and
 /// BILIBIN_INTERIORS_INN_UPSTAIRS_TO_INN) join it to its upstairs
 /// rooms; three other buildings hold villagers.
-/// BilibinInteriors_GetObjectEventTemplates leaves out the actors of the rooms
-/// not in view.
+/// BilibinInteriors_GetObjectEventTemplates leaves out the object events of the
+/// rooms not in view.
 ///
 /// Everyone has a line for while Kolima's curse holds (FLAG_KOLIMA_CURSE_LIFTED
 /// clear) and one for after. Before, the townsfolk explain the tree at the
@@ -32,7 +32,7 @@
 /// BilibinInteriors_Initialize opens the rooms with a window around the leader
 /// and draws one diner, BILIBIN_DINER, at a fixed sprite priority. He stands
 /// at the north edge of the restaurant's table, on cell (7, 49), which alone
-/// of the diners' cells gives an object standing on it priority 3 (map_032's
+/// of the diners' cells gives an object standing on it priority 3 (layout_032's
 /// grid_metatile.tsv). Taken from that cell, his priority would put him behind
 /// the middle layer (`BG2`, priority 2 in this map); the fixed priority 2
 /// draws him in front of it, as the other diners are.
@@ -69,9 +69,9 @@ enum {
   BILIBIN_INN = 2
 };
 
-/// The placed actors, numbered in the order of
+/// The placed object events, numbered in the order of
 /// gBilibinInteriorsObjectEventTemplates from LOCALID_FIRST_PLACED. Each room's
-/// actors are together: two in each house, then the shops' customers and
+/// object events are together: two in each house, then the shops' customers and
 /// keepers, the inn and its restaurant, and the room behind the inn's inner
 /// door.
 enum BilibinInteriorsLocalId {
@@ -173,7 +173,8 @@ const struct MapWarpRegion *BilibinInteriors_GetRegions(void) { return 0; }
 
 const u32 *BilibinInteriors_GetWarps(void) { return gBilibinInteriorsWarps; }
 
-/// Marks placements outside the current room's view before actors are spawned.
+/// Marks object event templates outside the current room's view before object
+/// events are spawned.
 const struct ObjectEventTemplate *
 BilibinInteriors_GetObjectEventTemplates(void) {
   ObjectEventTemplate_ClipToView(gBilibinInteriorsObjectEventTemplates);
@@ -226,7 +227,8 @@ static void EventScript_TalkToItemMerchant(void) {
   Engine_ScriptEnd();
 }
 
-/// Returns both story stages' events; conditions choose the current dialogue.
+/// Returns both story stages' map events; conditions choose the current
+/// dialogue.
 const struct MapEvent *BilibinInteriors_GetEvents(void) {
   return gBilibinInteriorsEvents;
 }

@@ -6,8 +6,9 @@
 #include "script_layer.h"
 #include "songs.h"
 
-/// Touch a passage: the leader moves north with the trail of sparks, vanishes,
-/// and after half a second the screen fades and the party takes exit.
+/// Stepping into a passage: the leader moves north with the trail of sparks,
+/// vanishes, and after half a second the screen fades and the party takes that
+/// warp.
 static void MercuryLighthouse_LeaveThroughPassage(s32 warp) {
   struct ObjectEvent *v = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   Engine_ScriptStart();
@@ -33,8 +34,8 @@ static void MercuryLighthouse_LeaveThroughPassage(s32 warp) {
 }
 
 /// Unused: the leader steps 8 pixels north with the passages' sound and
-/// vanishes, then is put at x 8 * column + 8, z 0, with no exit and no end to
-/// the event; nothing in either overlay calls it. XXX: likely an early form of
+/// vanishes, then is put at x 8 * column + 8, z 0, with no warp and no end to
+/// the script; nothing in either overlay calls it. XXX: likely an early form of
 /// LeaveThroughPassage, because it plays the same sound and steps the same way.
 static void UNUSED MercuryLighthouse_DropLeaderToColumn(s32 column) {
   struct ObjectEvent *record;

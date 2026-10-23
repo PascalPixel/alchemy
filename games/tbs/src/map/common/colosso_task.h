@@ -102,7 +102,7 @@ static void Colosso_LoadLettering(s32 id) {
   Runtime_BumpFree(buf);
 }
 
-/// The lettering's scene callback: run its script, move, scale and fade it, and
+/// The lettering's map callback: run its script, move, scale and fade it, and
 /// draw it as double-size affine sprites blended over the screen, in the shape
 /// of gColosso_LetteringMode.
 static void Colosso_UpdateLettering(void) {

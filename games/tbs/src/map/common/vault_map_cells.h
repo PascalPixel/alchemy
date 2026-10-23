@@ -1,7 +1,7 @@
 /// @file
 /// Vault, before and after the thieves are caught: the doorway to the Sanctum,
 /// which opens in two frames as the leader walks into it facing north. Both
-/// scenes number that exit 11 (VAULT_TO_SANCTUM and VAULT_REVISIT_TO_SANCTUM),
+/// maps number that warp 11 (VAULT_TO_SANCTUM and VAULT_REVISIT_TO_SANCTUM),
 /// so the shared code keeps the number.
 #include "battle.h"
 #include "debug.h"
@@ -22,7 +22,8 @@ enum {
   VAULT_DOOR_HALF_SIZE = 2
 };
 
-/// The two square halves are stacked in the source map and drawn side by side.
+/// The two square halves are stacked in the source layout and drawn side by
+/// side.
 static inline void Vault_DrawDoorwayFrame(s32 sourceColumn) {
   MapGrid_CopyCellsTo(sourceColumn, 33, 34, 16, VAULT_DOOR_HALF_SIZE,
                       VAULT_DOOR_HALF_SIZE);
@@ -32,7 +33,7 @@ static inline void Vault_DrawDoorwayFrame(s32 sourceColumn) {
 
 /// Walking north into VAULT_CELL_SANCTUM_DOORWAY opens the doorway to the
 /// Sanctum.
-/// The leader passes behind the doorframe through the exit.
+/// The leader passes behind the doorframe through the warp.
 static void Vault_OpenDoorwayAndEnter(void) {
   struct ObjectEvent *objectEvent = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   struct AnimationObject *sprite = objectEvent->sprite;

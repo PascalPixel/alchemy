@@ -7,31 +7,31 @@
 /// An epidemic has struck the village. Until the party has beaten Saturos at
 /// Mercury Lighthouse (FLAG_SATUROS_BEATEN_AT_MERCURY), by which time the
 /// lighthouse is lit and the fountain at its foot flows again, the villagers
-/// are sick or waiting for Mia; afterwards both scenes take their cured
-/// placements and lines, and the villagers talk of Mia leaving with the
+/// are sick or waiting for Mia; afterwards both maps take their cured object
+/// event templates and lines, and the villagers talk of Mia leaving with the
 /// party. Some lines also change while she travels with them
 /// (FLAG_IN_PARTY(MIA)).
 ///
 /// - Imil (MapId_Imil), the village. A young man shivers and sneezes in the
 ///   snow, waiting for Mia, and a strongman counts out his exercises against
-///   the cold. Six doors (triggers 51 to 56) open into the houses, the shops,
-///   the inn and the Sanctum (MapId_ImilInteriors), IMIL_TO_WORLD_MAP_SOUTH
-///   and IMIL_TO_WORLD_MAP_NORTH lead out to the world map, and the way north
-///   (trigger 4) leads into Imil Falls Cave; coming back out of it
-///   (IMIL_FROM_IMIL_FALLS_CAVE) the leader walks down into the village. Two
-///   callbacks run while the party is here: one makes smoke rise from the
-///   five houses' chimneys, staggered over each second, and one turns the
-///   leader's footprints in the snow off on the frozen river that runs down
+///   the cold. Six doors (coord events 51 to 56) open into the houses, the
+///   shops, the inn and the Sanctum (MapId_ImilInteriors),
+///   IMIL_TO_WORLD_MAP_SOUTH and IMIL_TO_WORLD_MAP_NORTH lead out to the world
+///   map, and the way north (coord event 4) leads into Imil Falls Cave; coming
+///   back out of it (IMIL_FROM_IMIL_FALLS_CAVE) the leader walks down into the
+///   village. Two callbacks run while the party is here: one makes smoke rise
+///   from the five houses' chimneys, staggered over each second, and one turns
+///   the leader's footprints in the snow off on the frozen river that runs down
 ///   from the falls and on the raised ground under the big tree, and on
 ///   elsewhere (both drawn on places/imil/footprints.png). Stepping onto ice
-///   (collision code 90) slides the leader in the held direction, turning
-///   toward it as he goes, until a blocked cell or one too high stops him.
-///   Move pushes the snowman only when cast from the snow, not from the river's
-///   ice or the raised ground, and once it lands at cell (15, 7) it stays
-///   there for the rest of the visit (a temporary flag). Searching finds 9
-///   coins, a Vial and a Lucky Medal.
+///   (metatile behavior 90) slides the leader in the held direction, turning
+///   toward it as he goes, until a blocked cell or one too high stops him. Move
+///   pushes the snowman only when cast from the snow, not from the river's ice
+///   or the raised ground, and once it lands at cell (15, 7) it stays there for
+///   the rest of the visit (a temporary flag). Searching finds 9 coins, a Vial
+///   and a Lucky Medal.
 /// - Imil (MapId_ImilInteriors), inside the houses, the shops and the inn; by
-///   IMIL_INTERIORS_FROM_IMIL_EAST_NORTHEAST the same scene is the Imil
+///   IMIL_INTERIORS_FROM_IMIL_EAST_NORTHEAST the same map is the Imil
 ///   Sanctum. While the epidemic lasts the weapon and armor sellers are sick:
 ///   searching their counters pans the camera to them, and they say the shop is
 ///   closed. The item seller's daughter minds that shop for her mother. In the
@@ -45,7 +45,7 @@
 ///   FLAG_IMIL_MIA_SENT_FOR, which changes the couple's lines and where they
 ///   stand.
 ///
-///   Mia's healing is this scene's first scripted sequence. Entering the old
+///   Mia's healing is this map's first script. Entering the old
 ///   couple's house once the apprentice has told the party where Mia went,
 ///   before they have met her, finds her at the old man's bedside: she heals
 ///   him with Ply, asks who the party are, and the Mercury Lighthouse flashes.
@@ -55,7 +55,7 @@
 ///   across the bed (LOCALID_OLD_MANS_BED) reaches him.
 ///
 ///   Once Saturos is beaten the sellers are well and open their shops across
-///   the counters. The second sequence is Mia's farewell, the first time the
+///   the counters. The second script is Mia's farewell, the first time the
 ///   party then enters the Sanctum (FLAG_IMIL_MIA_SAID_FAREWELL): her
 ///   apprentices tell her the lighthouse has been lit, and Mia tells them she
 ///   will join Isaac's quest to protect the world. They promise to protect
@@ -65,9 +65,9 @@
 ///   stew, whose find always answers first, so the stew's line is unused.
 ///
 /// Open questions:
-/// - XXX (no evidence): what Imil_UpdateCountdownArc and Imil_SwayAndSpark
-///   were for; nothing in the game gives them to an actor, so neither the
-///   ROM nor a render shows them in use.
+/// - XXX (no evidence): what Imil_UpdateCountdownArc and Imil_SwayAndSpark were
+///   for; nothing in the game gives them to an object event, so neither the ROM
+///   nor a render shows them in use.
 /// - XXX (no evidence): which apprentice is Megan and which Justin; the boy
 ///   (LOCALID_APPRENTICE) and the girl (LOCALID_SECOND_APPRENTICE) speak in
 ///   turn, but Mia names them together in every edition ("Megan, Justin...", in
@@ -120,8 +120,9 @@
 #include "character_ids.h"
 #include "songs.h"
 
-/// The village's actors (Imil), numbering gImil_TownObjectEventTemplates' rows,
-/// and gImil_TownObjectEventTemplatesCured's, from LOCALID_FIRST_PLACED.
+/// The village's object events (Imil), numbering
+/// gImil_TownObjectEventTemplates' rows, and
+/// gImil_TownObjectEventTemplatesCured's, from LOCALID_FIRST_PLACED.
 enum ImilVillageLocalId {
   /// A young man, shivering and sneezing.
   /// ★ Named from the game: "Brrrrr... Ah-choo!!! I'm freezing!"
@@ -140,7 +141,7 @@ enum ImilVillageLocalId {
   LOCALID_SNOWMAN
 };
 
-/// The actors of the houses and the Sanctum (ImilInteriors), numbering
+/// The object events of the houses and the Sanctum (ImilInteriors), numbering
 /// gImil_InteriorObjectEventTemplates' rows from LOCALID_FIRST_PLACED; the rows
 /// of Garet, Ivan and Mia take those characters' own slots.
 enum ImilInteriorsLocalId {
@@ -151,8 +152,8 @@ enum ImilInteriorsLocalId {
   /// ★ Named from the game: "Have you visited the old couple who live near the
   /// entrance of town?" (MsgImilHaveVisitedOldCoupleWho)
   LOCALID_OLD_MAN,
-  /// An unseen actor on the old man's bed: once Mia has healed him, talking or
-  /// Mind Read here reaches him.
+  /// An unseen object event on the old man's bed: once Mia has healed him,
+  /// talking or Mind Read here reaches him.
   /// ★ Named from what the player sees: the bed in the old couple's house
   /// (its render)
   LOCALID_OLD_MANS_BED,
@@ -206,7 +207,7 @@ enum ImilInteriorsLocalId {
 };
 
 /// The village's own temporary flags, which last until the party leaves the
-/// scene.
+/// map.
 enum ImilTownFlag {
   /// Whether the leader leaves footprints in the snow, from where he stands
   /// (Imil_UpdateFootprints); the one set says which he last did.
@@ -226,8 +227,8 @@ enum { SHOP_IMIL_WEAPONS = 10, SHOP_IMIL_ARMOR = 11, SHOP_IMIL_ITEMS = 12 };
 /// Imil's inn, as Engine_InnOpen numbers the inns.
 enum { IMIL_INN = 4 };
 
-/// The weapon and armor counters' trigger cells in the houses: searching one
-/// facing north reaches its seller.
+/// The weapon and armor counters' bg event triggers in the houses: searching
+/// one facing north reaches its seller.
 enum { TRIGGER_WEAPON_COUNTER = 10, TRIGGER_ARMOR_COUNTER = 11 };
 
 // The leader faces a counter: FACING_IS_NORTH, in the two spellings the sites
@@ -251,7 +252,7 @@ enum { TRIGGER_WEAPON_COUNTER = 10, TRIGGER_ARMOR_COUNTER = 11 };
 #define IMIL_OPEN_SHOP ((s32 (*)())Engine_ShopOpen)
 #endif
 
-/// The townsfolk's own animations the scenes play, as their sheets draw them.
+/// The townsfolk's own animations the scripts play, as their sheets draw them.
 enum ImilAnimation {
   /// Lying in bed, only the head above the covers: the old man
   /// (SPRITE_OLD_MAN_WITH_CANE, spr_103.png) and the sick sellers.
@@ -309,7 +310,7 @@ static s32 Imil_UpdateShiver(struct ScriptInterpreter *interpreter) {
 
 #include "common/object_facing.h"
 
-/// Imil is two scenes: the village, and its houses and Sanctum.
+/// Imil is two maps: the village, and its houses and Sanctum.
 const struct MapWarpDest *Imil_GetWarpDests(void) {
   if (gGameState.mapId == (s32)&MapId_ImilInteriors) {
     return gImil_InteriorWarpDests;
@@ -351,7 +352,7 @@ const struct ObjectEventTemplate *Imil_GetObjectEventTemplates(void) {
   return gImil_TownObjectEventTemplates;
 }
 
-/// Stepping onto the ice in Imil (collision code 90) starts a slide.
+/// Stepping onto the ice in Imil (metatile behavior 90) starts a slide.
 static void Imil_StartIceSlide(void) { Imil_RunIceSlide(); }
 
 /// The village's, or the houses' and the Sanctum's, conversations and
@@ -620,7 +621,7 @@ static void Imil_ReadApprenticeMind(void) {
   Engine_ScriptEnd();
 }
 
-/// Walking north into one of Imil's six doors (triggers 51 to 56): everyone
+/// Walking north into one of Imil's six doors (coord events 51 to 56): everyone
 /// stops, the door opens and the leader walks in; the Sanctum's door
 /// (IMIL_TO_IMIL_INTERIORS_NORTHEAST) has its own sound and a slower walk.
 static void Imil_OpenDoorAndExit(void) {
@@ -841,7 +842,7 @@ static void Imil_TalkToApprentice(void) {
   }
 }
 
-/// Sets up the scene as the party enters. The village gets its rising puffs,
+/// Sets up the map as the party enters. The village gets its rising puffs,
 /// map layers and snowman, and coming from Imil Falls Cave the leader walks
 /// in; inside, each room restores its people for the village's state, and the
 /// old couple's house and the Sanctum start Mia's healing and her farewell.
@@ -871,7 +872,7 @@ s32 Imil_Initialize(void) {
       Imil_ArriveFromFallsCave();
     }
   } else if (gGameState.mapId == (s32)&MapId_ImilInteriors) {
-    // Restore each interior's occupants before running its arrival event.
+    // Restore each interior's occupants before running its arrival script.
     gEventWork->startTransition =
         MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
     warpDest = gGameState.warpDest;
@@ -1170,7 +1171,7 @@ static void Imil_MeetMiaAtOldCouplesHouse(void) {
 }
 
 /// Unused: an update hook that moves an effect around its stored origin until
-/// its timer runs out; no actor is given it.
+/// its timer runs out; no object event is given it.
 UNUSED static void Imil_UpdateCountdownArc(struct ObjectEvent *objectEvent) {
   s32 buf[3];
   s32 *b;
@@ -1196,8 +1197,8 @@ UNUSED static void Imil_UpdateCountdownArc(struct ObjectEvent *objectEvent) {
   }
 }
 
-/// Unused: an update hook that sways an actor and now and then gives off a
-/// rising spark; no actor is given it.
+/// Unused: an update hook that sways an object event and now and then gives
+/// off a rising spark; no object event is given it.
 UNUSED static void Imil_SwayAndSpark(struct ObjectEvent *objectEvent) {
   s32 pos[3];
   struct ObjectEvent *spark;
@@ -1401,8 +1402,8 @@ static void Imil_PlaceMovedSnowman(void) {
   MapGrid_CopyCellAttributes(15, 6, 1, 1, a, b);
 }
 
-/// Walking into the way north out of Imil (trigger 4): the leader faces north
-/// and goes into Imil Falls Cave (IMIL_TO_IMIL_FALLS_CAVE).
+/// Walking into the way north out of Imil (coord event 4): the leader faces
+/// north and goes into Imil Falls Cave (IMIL_TO_IMIL_FALLS_CAVE).
 static void Imil_LeaveNorth(void) {
   struct ObjectEvent *work;
 
@@ -2058,7 +2059,7 @@ struct MapEvent gImil_InteriorEvents[] = {
     { BG_EVENT(BG_EVENT_BARREL), 101, 0xf62, FIND_ITEM(ITEM_SLEEP_BOMB) },
     { BG_EVENT(BG_EVENT_OVEN), 102, 0xf63, FIND_ITEM(ITEM_LUCKY_PEPPER) },
     { BG_EVENT(BG_EVENT_OVEN), 200, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgImilItLooksLikePorridgeItIs)) },
-    // Unused: this oven's item row answers first (see the scenes README).
+    // Unused: this oven's item row answers first (see the maps README).
     { BG_EVENT(BG_EVENT_OVEN), 102, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgImilItsSomeHotStewItWarms)) },
     { MAP_EVENT_WARP, 1, CONDITION_ALWAYS, IMIL_INTERIORS_HOUSE_WEST_TO_IMIL },
     { MAP_EVENT_WARP, 2, CONDITION_ALWAYS, IMIL_INTERIORS_TO_IMIL_WEST_SOUTHWEST },
@@ -2105,7 +2106,7 @@ u16 *gImil_DoorCellSteps[] = {
     gImil_DoorCellSteps5,
 };
 
-/// Cell position (x, y) for each exit.
+/// Cell position (x, y) for each warp.
 s16 gImil_DoorCellPoints[][2] = {
     { 50, 24 }, { 57, 22 }, { 59, 13 }, { 54, 10 }, { 38, 8 }, { 34, 19 },
 };

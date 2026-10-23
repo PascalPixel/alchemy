@@ -1,6 +1,6 @@
 /// @file
 /// Vault's interiors, before and after the thieves are caught: whether the
-/// leader stands beside the Bone on the floor, which the scenes' event tables
+/// leader stands beside the Bone on the floor, which the maps' event tables
 /// test through FLAG_MAP_TEMP_50.
 #include "types.h"
 #include "object_event.h"
@@ -9,9 +9,9 @@
 
 /// Keeps the girl at the inn from offering another Bone too soon.
 /// She doesn't offer one while the leader stands beside the one on the floor.
-/// Each scene adds this callback in the girl at the inn's house after the
-/// thieves are jailed. FLAG_MAP_TEMP_50 records proximity for the talk-event
-/// table.
+/// Each map adds this callback in the girl at the inn's house after the
+/// thieves are jailed. FLAG_MAP_TEMP_50 records proximity for the object event
+/// talk table.
 static void Vault_UpdateBoneProximityFlag(void) {
   struct ObjectEvent *leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   s32 fixedX = leader->x.fixed;

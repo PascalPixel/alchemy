@@ -1,6 +1,6 @@
 /// @file
 /// Kolima Forest (MapId_KolimaForestEntrance and MapId_KolimaForestCliff):
-/// the hop east onto the scene's third placed actor.
+/// the hop east onto the map's third placed object event.
 #include "types.h"
 #include "engine_call.h"
 #include "object_event.h"
@@ -10,9 +10,9 @@
 
 /// Hops the leader to the pixel of the 16.16 position request, unless something
 /// blocks the way: the leader crouches, jumps (3 pixels a frame, rising at 4)
-/// and lands while that actor plays its animation 7; the leader then dips a
-/// pixel twice, its height and its ground height together, and rises back.
-/// Returns 1 after a hop.
+/// and lands while that object event plays its animation 7; the leader then
+/// dips a pixel twice, its height and its ground height together, and rises
+/// back. Returns 1 after a hop.
 static s32 StagedObjectEvent_RunStepEffect(struct FieldPosition *request) {
   struct ObjectEvent *objectEvent = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   u8 *flags = &objectEvent->motionFlags;
@@ -56,7 +56,7 @@ static s32 StagedObjectEvent_RunStepEffect(struct FieldPosition *request) {
   return 0;
 }
 
-/// Touch trigger 11, walking east: hop 30 pixels east of the leader. The
+/// Coord event 11, walking east: hop 30 pixels east of the leader. The
 /// patched editions hop from the centre of the moving character's cell, 40
 /// pixels.
 static void KolimaForest_HopEast(void) {

@@ -1,8 +1,8 @@
 /// @file
-/// Fuchin Temple, and two masters' rooms in other places that share its
+/// Fuchin Temple, and two masters' rooms in other map sections that share its
 /// overlay: Master Feh's school in Xian and Master Hama's room in Lama Temple.
-/// Two scenes hold four places, by their area names; in each, story flags pick
-/// where the people stand and which scripted scene plays on entry.
+/// Two maps hold four map sections, by their area names; in each, story flags
+/// pick where the people stand and which script plays on entry.
 ///
 /// - Fuchin Temple (MapId_FuchinTempleGrounds), outside the temple, reached
 ///   from the world map (FUCHIN_TEMPLE_GROUNDS_FROM_WORLD_MAP). A defeat
@@ -15,8 +15,8 @@
 ///   the Orb of Force (FLAG_FUCHIN_FALLS_ORB_OF_FORCE_FOUND), he sends the
 ///   party on to Nyunpa (FLAG_FUCHIN_FALLS_MONK_ASKED_ABOUT_TEST).
 /// - Fuchin Temple (MapId_FuchinTempleInteriors, by
-///   FUCHIN_TEMPLE_INTERIORS_FROM_FUCHIN_TEMPLE_GROUNDS or the default
-///   entrance), inside, where Nyunpa meditates. Mind Read on him offers the
+///   FUCHIN_TEMPLE_INTERIORS_FROM_FUCHIN_TEMPLE_GROUNDS or the default warp
+///   destination), inside, where Nyunpa meditates. Mind Read on him offers the
 ///   test (EventScript_NyunpaOffersTest, again after
 ///   FLAG_NYUNPA_TEST_DECLINED); back with the Orb, Map_Initialize plays his
 ///   lesson on Ki (FuchinTemple_NyunpaTeachesKi, FLAG_NYUNPA_TAUGHT_FORCE).
@@ -85,8 +85,9 @@
 #include "palbuf.h"
 #include "io_reg.h"
 
-// Fuchin Temple's place flags, which last until the party enters another place;
-// FLAG_MAPSEC_TEMP_50 is the Psynergy Stone outside, which then refills.
+// Fuchin Temple's map-section temp flags, which last until the party enters
+// another map section; FLAG_MAPSEC_TEMP_50 is the Psynergy Stone outside,
+// which then refills.
 
 /// The party refused Nyunpa's test, so talking to him offers it again.
 /// ★ Named from the game: "Then I cannot tell you. Give up and go back from
@@ -96,8 +97,8 @@
 /// ★ Named from the game: "Look! The tree fell." (MsgXianLookTreeFell)
 #define FLAG_FEH_SCHOOL_SAW_TREE_FALL FLAG_MAPSEC_TEMP_01
 
-/// The placed actors outside Fuchin Temple (FuchinTempleGrounds), numbered in
-/// the order of gFuchinTempleGroundsObjectEventTemplates.
+/// The placed object events outside Fuchin Temple (FuchinTempleGrounds),
+/// numbered in the order of gFuchinTempleGroundsObjectEventTemplates.
 enum FuchinTempleOutsideLocalId {
   /// A young man from Kolima.
   /// ★ Named from the game: "How did you get here? Is the bridge open again?"
@@ -125,8 +126,8 @@ enum FuchinTempleOutsideLocalId {
   LOCALID_HEALER
 };
 
-/// The placed actors inside Fuchin Temple and in Master Feh's school in Xian
-/// (FuchinTempleInteriors), numbered in the order of
+/// The placed object events inside Fuchin Temple and in Master Feh's school in
+/// Xian (FuchinTempleInteriors), numbered in the order of
 /// gFuchinTempleObjectEventTemplates: Nyunpa, Feh's students, Feizhi and Feh,
 /// and the training tree.
 enum FuchinTempleInsideLocalId {
@@ -181,7 +182,7 @@ enum FuchinTempleInsideLocalId {
   LOCALID_TRAINING_TREE_TARGET
 };
 
-/// The placed actors in Master Hama's room in Lama Temple
+/// The placed object events in Master Hama's room in Lama Temple
 /// (FuchinTempleInteriors by FUCHIN_TEMPLE_INTERIORS_FROM_LAMA_TEMPLE),
 /// numbered in the order of gFuchinTempleObjectEventTemplatesFromLamaTemple;
 /// Garet, Ivan and Mia, placed first, keep their own slots.
@@ -199,7 +200,7 @@ enum HamasRoomLocalId {
   LOCALID_FEIZHI_IN_LAMA_TEMPLE
 };
 
-/// Animations of these scenes' own sprites beyond enum ObjectEventAnimation.
+/// Animations of these maps' own sprites beyond enum ObjectEventAnimation.
 enum {
   /// Seated cross-legged with his eyes shut (spr_051.png's frame 33).
   ANIMATION_NYUNPA_MEDITATE = 5,
@@ -225,14 +226,16 @@ static void FuchinTemple_AnimateRevealLesson(void);
 #include "common/effect_create.h"
 #include "common/effect_spawn.h"
 
-/// Clears the scripted actor's sprite flags and completes the script command.
+/// Clears the scripted object event's sprite flags and completes the script
+/// command.
 static s32 FuchinTemple_ClearScriptedObjectEventSpriteFlags(
     struct ScriptInterpreter *interpreter) {
   Engine_ObjectEventSetSpriteFlags((struct ObjectEvent *)interpreter, 0);
   return 0;
 }
 
-// Keep an actor facing the party leader while the conversation is staged.
+// Keep an object event facing the party leader while the conversation is
+// staged.
 // UB: update hooks return void. The native produces an unused zero result;
 // plain void changes five instructions in the English build.
 #ifdef UBFIX
@@ -249,7 +252,8 @@ static s32 FuchinTemple_FaceLeader(union FieldObject *fieldObject) {
 #endif
 }
 
-/// Chooses the outside entrance table or the shared interior entrances.
+/// Chooses the outside warp destination table or the shared interior warp
+/// destinations.
 const struct MapWarpDest *Map_GetWarpDests(void) {
   s16 mapId = gGameState.mapId;
 
@@ -263,7 +267,8 @@ const struct MapWarpRegion *Map_GetWarpRegions(void) { return NULL; }
 
 const u32 *Map_GetWarps(void) { return gFuchinTempleWarps; }
 
-/// Selects the room's actors and applies the post-lesson placement changes.
+/// Selects the room's object events and applies the post-lesson object event
+/// template changes.
 const struct ObjectEventTemplate *Map_GetObjectEventTemplates(void) {
   if (gGameState.mapId == (s32)&MapId_FuchinTempleGrounds) {
     return gFuchinTempleGroundsObjectEventTemplates;
@@ -390,8 +395,8 @@ static void EventScript_MonkLetsPartyIntoGrotto(void) {
 }
 
 /// Isaac comes back out of the grotto with the Orb of Force. At Fuchin Temple
-/// (FuchinTempleGrounds, trigger 5) the monk sends him on to Nyunpa, and the
-/// way back is open again. "Young master, did you complete the test?" Then
+/// (FuchinTempleGrounds, coord event 5) the monk sends him on to Nyunpa, and
+/// the way back is open again. "Young master, did you complete the test?" Then
 /// "Master Nyunpa is waiting for you... Proceed to the temple."
 static void EventScript_MonkAsksWhetherTestIsDone(void) {
   EV_START();
@@ -1505,7 +1510,7 @@ static void EventScript_StudentAsksAboutAltin(void) {
 }
 
 /// Walking north into the door Feh and Feizhi came out of, in Master Feh's
-/// school in Xian (trigger 3): it is locked until Feizhi has left; then it
+/// school in Xian (coord event 3): it is locked until Feizhi has left; then it
 /// opens and Isaac walks through (FUCHIN_TEMPLE_INTERIORS_TO_HOUSE). "It is
 /// locked."
 static void EventScript_OpenLockedDoor(void) {
@@ -1558,7 +1563,7 @@ static void EventScript_ReadNyunpasLastWish(void) {
   EV_END();
 }
 
-/// Selects the outdoor, school, or lesson event table.
+/// Selects the outdoor, school, or lesson map event table.
 const struct MapEvent *Map_GetEvents(void) {
   if (gGameState.mapId == (s32)&MapId_FuchinTempleGrounds) {
     return gFuchinTempleGroundsEvents;
@@ -1632,7 +1637,7 @@ static UNUSED void FuchinTemple_HopLeaderByOffset(s32 offsetX, s32 offsetZ) {
 }
 
 /// Stepping into the waterfall grotto's entrance at Fuchin Temple
-/// (FuchinTempleGrounds, trigger 3): spray falls over Isaac as the screen
+/// (FuchinTempleGrounds, coord event 3): spray falls over Isaac as the screen
 /// fades, and he enters Fuchin Falls Cave.
 static void EventScript_EnterWaterfallGrotto(void) {
   struct ObjectEvent *leader;
@@ -1659,8 +1664,9 @@ static void EventScript_EnterWaterfallGrotto(void) {
   EV_END();
 }
 
-/// Stepping south onto trigger 1 inside Fuchin Temple (FuchinTempleInteriors):
-/// the party leaves by FUCHIN_TEMPLE_INTERIORS_TO_FUCHIN_TEMPLE_GROUNDS, out to
+/// Stepping south onto coord event 1 inside Fuchin Temple
+/// (FuchinTempleInteriors): the party leaves by
+/// FUCHIN_TEMPLE_INTERIORS_TO_FUCHIN_TEMPLE_GROUNDS, out to
 /// FuchinTempleGrounds.
 static void EventScript_LeaveTemple(void) {
   Engine_AudioPlayCue(SE_MAP_EXIT);
@@ -1668,7 +1674,7 @@ static void EventScript_LeaveTemple(void) {
 }
 
 /// Walking north into the temple door at Fuchin Temple (FuchinTempleGrounds,
-/// trigger 2): it opens, and Isaac walks inside, where Nyunpa meditates.
+/// coord event 2): it opens, and Isaac walks inside, where Nyunpa meditates.
 static void EventScript_EnterTemple(void) {
   EV_START();
   SE(SE_188);
@@ -2175,7 +2181,7 @@ static void FuchinTemple_RunHamasRevealLesson(void) {
   OBJECT_EMOTE(LOCALID_HAMA, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
   Script_ShowMessageAndWait(LOCALID_HAMA, 0, 20);
   // BUG: LOCALID_FEIZHI is Feizhi's number in the school's table. Hama's room
-  // places no actor at that number, so Feizhi does not bounce before she
+  // places no object event at that number, so Feizhi does not bounce before she
   // speaks.
 #ifdef BUGFIX
   Engine_ObjectEventStartRepeatedMotion(LOCALID_FEIZHI_IN_LAMA_TEMPLE, 1);
@@ -2465,7 +2471,7 @@ s32 Map_Initialize(void) {
 }
 
 /// Starts Mind Read from caster on target as part of a cutscene, without the
-/// window that announces its name. Nyunpa's Mind Read events carry
+/// window that announces its name. Nyunpa's Mind Read map events carry
 /// PSYNERGY_SCRIPT_PLAYS_EFFECT, so the field plays nothing of its own.
 static void FuchinTemple_StartMindReadDemonstration(s32 caster, s32 target) {
   struct FieldEffectWork *effectWork;

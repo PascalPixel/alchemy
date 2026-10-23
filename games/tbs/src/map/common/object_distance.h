@@ -1,13 +1,13 @@
 #include "types.h"
 #include "iwram_call.h"
 
-// Several scenes (Mercury and Venus Lighthouses' aeries, Tolbi, Vault, Venus
-// Lighthouse, Xian, and every scene with object_staged_actor.h): the distance
-// between two actors.
+// Several maps (Mercury and Venus Lighthouses' aeries, Tolbi, Vault, Venus
+// Lighthouse, Xian, and every map with object_staged_object_event.h): the
+// distance between two object events.
 
 /// The distance in whole pixels between two 16.16 positions of x, y and z.
-/// Callers take byte views of complete actors; their coordinate members do
-/// not form an array.
+/// Callers take byte views of complete object events; their coordinate members
+/// do not form an array.
 UNUSED static s32 FixedPoint_Distance(const u8 *firstPosition,
                                       const u8 *secondPosition) {
   s32 deltaX =

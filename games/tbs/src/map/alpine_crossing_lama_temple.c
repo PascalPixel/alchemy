@@ -1,8 +1,8 @@
 /// @file
 /// The Alpine Crossing (MapId_AlpineCrossing) and Lama Temple
-/// (MapId_LamaTemple), two places on Silk Road west of Xian that share this
-/// overlay. The getters pick each scene's tables by gGameState.scene, both
-/// scenes share one exit table, and Map_Initialize sets up the scene being
+/// (MapId_LamaTemple), two maps on Silk Road west of Xian that share this
+/// overlay. The getters pick each map's tables by gGameState.mapId, both
+/// maps share one warp table, and Map_Initialize sets up the map being
 /// entered from the story flags of Hsu's rescue, which runs through both.
 ///
 /// At the Alpine Crossing boulders block Silk Road. Once Feizhi has left Xian
@@ -13,7 +13,7 @@
 /// Crossing opens onto the world map to the east, north and west, and by
 /// ALPINE_CROSSING_TO_ALTIN_PEAK_SOUTH_ENTRANCE_WEST and
 /// ALPINE_CROSSING_TO_ALTIN_PEAK_SOUTH_ENTRANCE_EAST into Altin Peak's
-/// AltinPeakSouthEntrance, whose entrances from here the international
+/// AltinPeakSouthEntrance, whose warp destinations from here the international
 /// editions also call Alpine Crossing. Coming back from the mine
 /// (ALPINE_CROSSING_FROM_ALTIN_PEAK_SOUTH_ENTRANCE_WEST and _EAST) the area
 /// name is not shown again.
@@ -28,10 +28,10 @@
 /// out (LAMA_TEMPLE_FROM_FUCHIN_TEMPLE_INTERIORS) the area name is not shown
 /// again. Writing on a wall hints at Reveal, which shows a passage behind a
 /// mossy rock (LamaTemple_RevealPassage); LamaTemple_ShowFalseWall puts the
-/// rock back when Reveal wears off and on entry, the rock cell's own
-/// attributes saved at (21, 73). The temple also holds a Psynergy Stone
-/// (FLAG_LAMA_TEMPLE_PSYNERGY_STONE, a place flag) and a chest with Water of
-/// Life.
+/// rock back when Reveal wears off and on entry, the rock cell's own attributes
+/// saved at (21, 73). The temple also holds a Psynergy Stone
+/// (FLAG_LAMA_TEMPLE_PSYNERGY_STONE, a map-section temp flag) and a chest with
+/// Water of Life.
 ///
 /// Back at the Alpine Crossing after the lesson, until Hsu is freed, Hama and
 /// Feizhi stand by him, pinned between two boulders. Arriving beside him from
@@ -47,7 +47,7 @@
 /// can set too), and Hama and Feizhi are gone. Once he is free, two workers
 /// from Xian stand by the road they have cleared, and Map_Initialize copies
 /// the cleared cells over the rocks. The Crossing's other puzzles are kept
-/// only within one visit (scene flags): Reveal shows a hidden path, Frost
+/// only within one visit (map temp flags): Reveal shows a hidden path, Frost
 /// freezes a puddle into a pillar the party can climb, and Growth grows a
 /// sprout into a vine; a chest holds Power Bread.
 ///
@@ -81,16 +81,16 @@
 #include "field_effect.h"
 #include "songs.h"
 
-/// The temple's Psynergy Stone, a place flag: it refills once the party has
-/// been to another place.
+/// The temple's Psynergy Stone, a map-section temp flag: it refills once the
+/// party has been to another map section.
 /// ★ Named from the game: "a Psynergy Stone" (MsgGotPsynergyStone)
 #define FLAG_LAMA_TEMPLE_PSYNERGY_STONE FLAG_MAPSEC_TEMP_50
 
 #define MAP_ALPINE_CROSSING ((s32)&MapId_AlpineCrossing)
 #define MAP_LAMA_TEMPLE ((s32)&MapId_LamaTemple)
 
-/// Lama Temple's actors. Garet, Ivan and Mia are placed in their own party
-/// slots for Hama's farewell; the others count from LOCALID_FIRST_PLACED.
+/// Lama Temple's object events. Garet, Ivan and Mia are placed in their own
+/// party slots for Hama's farewell; the others count from LOCALID_FIRST_PLACED.
 enum LamaTempleLocalId {
   /// Hama, back in her temple for her farewell.
   /// ★ Named from the game: "No, Master Hama"
@@ -120,7 +120,7 @@ enum LamaTempleLocalId {
   LOCALID_TRAVELING_HEALER
 };
 
-/// Alpine Crossing's actors.
+/// Alpine Crossing's object events.
 enum AlpineCrossingLocalId {
   /// ★ Named from the game: "Master Hama, I am okay." (MsgMountainHsuOkay)
   LOCALID_HAMA = LOCALID_FIRST_PLACED,
@@ -162,8 +162,8 @@ enum {
   FLAG_SPROUT_GROWN = FLAG_MAP_TEMP_01
 };
 
-/// Animations of these scenes' own sprites beyond enum ObjectEventAnimation,
-/// named by when the scenes play them.
+/// Animations of these maps' own sprites beyond enum ObjectEventAnimation,
+/// named by when the scripts play them.
 enum {
   ANIMATION_HAMA_PULL = 5,
   ANIMATION_FEIZHI_PULL = 6,
@@ -179,7 +179,7 @@ enum {
   SPROUT_ANIMATION_GROWN = 4
 };
 
-/// Map triggers that the events below refer to.
+/// Triggers that the map events below refer to.
 enum {
   TRIGGER_TEMPLE_DOOR = 2,
   TRIGGER_TEMPLE_WALL_WRITING = 5,
@@ -196,9 +196,9 @@ enum { DOOR_X = 67, DOOR_Y = 6 };
 /// The map object that draws the passage behind the mossy rock.
 enum { MARKER_PASSAGE = 100 };
 
-/// Draws the actor behind the background, on sprite priority 3 with automatic
-/// priority off. The first worker from Xian at the Alpine Crossing runs it
-/// from his placement.
+/// Draws the object event behind the background, on sprite priority 3 with
+/// automatic priority off. The first worker from Xian at the Alpine Crossing
+/// runs it from his object event template.
 static s32
 ObjectEvent_DrawBehindScenery(struct ScriptInterpreter *interpreter) {
   union FieldObject *fieldObject = (union FieldObject *)interpreter;
@@ -237,7 +237,7 @@ const struct MapWarpDest *Map_GetWarpDests(void) {
 
 const struct MapWarpRegion *Map_GetWarpRegions(void) { return 0; }
 
-/// Both scenes share one exit table.
+/// Both maps share one warp table.
 const u32 *Map_GetWarps(void) { return gAlpineCrossingLamaTemple_Warps; }
 
 const struct ObjectEventTemplate *Map_GetObjectEventTemplates(void) {
@@ -515,7 +515,7 @@ static void LamaTemple_ReadWallWriting(void) {
 
 /// Puts Lama Temple's mossy rock back when Reveal wears off (and on entry):
 /// the wall's cell blocks the way again, the passage's map object is hidden and
-/// the rock actor stands in front of it.
+/// the rock object event stands in front of it.
 static void LamaTemple_ShowFalseWall(void) {
 
   MapGrid_CopyCellAttributes(85, 9, 1, 1, 21, 9);
@@ -525,7 +525,7 @@ static void LamaTemple_ShowFalseWall(void) {
 
 /// Reveal in Lama Temple shows the passage behind the mossy rock: the cell's
 /// original attributes (saved at (21, 73) on entry) come back, the passage's
-/// map object returns to its place and the rock actor is put away.
+/// map object returns to its place and the rock object event is put away.
 static void LamaTemple_RevealPassage(void) {
   MapGrid_CopyCellAttributes(21, 73, 1, 1, 21, 9);
   Marker_SetPosition(MARKER_PASSAGE, -1, -1);
@@ -913,7 +913,7 @@ const struct MapEvent *Map_GetEvents(void) {
   return gLamaTemple_Events;
 }
 
-/// Sets up whichever scene is being entered and runs its arrival events.
+/// Sets up whichever map is being entered and runs its arrival scripts.
 s32 Map_Initialize(void) {
   s32 warpDest;
 
@@ -1021,7 +1021,8 @@ s32 Map_Initialize(void) {
   return 0;
 }
 
-/// The first worker's placement script: draw him behind the background.
+/// The first worker's object event template script: draw him behind the
+/// background.
 s32 gAlpineCrossing_WorkerObjectEventTemplateScript[] = {
     SC_CALL(ObjectEvent_DrawBehindScenery),
     SC_END,

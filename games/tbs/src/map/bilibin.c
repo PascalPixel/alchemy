@@ -1,9 +1,9 @@
 /// @file
-/// Bilibin, the Bilibin Treasury and the Bilibin Barricade, three places that
-/// share one overlay, each a scene of its own: MapId_Bilibin,
+/// Bilibin, the Bilibin Treasury and the Bilibin Barricade, three maps that
+/// share one overlay: MapId_Bilibin,
 /// MapId_BilibinTreasury and MapId_BilibinBarricade. The getters pick
-/// each scene's tables by gGameState.scene, Bilibin_Initialize sets up the
-/// scene being entered, and EventScript_PushStatueOrCrates serves all three.
+/// each map's tables by gGameState.mapId, Bilibin_Initialize sets up the
+/// map being entered, and EventScript_PushStatueOrCrates serves all three.
 ///
 /// Bilibin (MapId_Bilibin) is the town past Goma Cave, whose chief, Lord
 /// McCoy, has closed the road to Kolima. Almost everything here turns on
@@ -21,11 +21,11 @@
 /// that matches picks the time; a few ask a yes-or-no question (the
 /// EventScript_AskAbout functions).
 ///
-/// Bilibin's doors (touches 3 to 9, the numbers of the exits they take) open
-/// before the party walks in (EventScript_OpenDoorAndLeave): six lead into
+/// Bilibin's doors (coord events 3 to 9, the numbers of the warps they take)
+/// open before the party walks in (EventScript_OpenDoorAndLeave): six lead into
 /// Bilibin's buildings (MapId_BilibinInteriors) and the seventh into the
 /// Bilibin Sanctum, out of which (BILIBIN_FROM_SANCTUM) the area name is not
-/// shown again. The other exits lead to the world map, to the garden of McCoy's
+/// shown again. The other warps lead to the world map, to the garden of McCoy's
 /// Palace and, two ways, into the Treasury: past the ivy at the west edge
 /// (LOCALID_IVY), gone when the party comes back out that way
 /// (BILIBIN_FROM_BILIBIN_TREASURY_WEST); its Whirlwind row runs no script, so
@@ -39,7 +39,7 @@
 /// FLAG_MAPSEC_TEMP_04 is set while McCoy's gate guards have let the party in
 /// (FLAG_MCCOY_PALACE_ADMITTED) but it has not yet entered the palace
 /// (FLAG_MCCOY_PALACE_VISITED), for the garden's east guard to scold the party
-/// for keeping McCoy waiting. The garden is another place group (scenes.s
+/// for keeping McCoy waiting. The garden is another map section (maps.s
 /// gives Bilibin 8 and the garden 9), so Map_ResetFlagsOnEnter clears the
 /// flag on the way in and the guard never sees it set.
 ///
@@ -50,7 +50,7 @@
 /// Bilibin_UpdateTreasuryStatueCells keeps the two cells it can stand on in
 /// step. Arriving by BILIBIN_TREASURY_UPPER_FROM_LOWER or
 /// BILIBIN_TREASURY_FROM_BILIBIN_NORTH the leader starts 16 pixels above the
-/// floor; two exit regions (Bilibin_GetRegions) lead down its west ladder to
+/// floor; two warp regions (Bilibin_GetRegions) lead down its west ladder to
 /// the lower room and back to Bilibin by the statue.
 ///
 /// The Bilibin Barricade (MapId_BilibinBarricade) is the road east to Kolima
@@ -69,17 +69,18 @@
 /// (FLAG_SATUROS_BEATEN_AT_MERCURY), while the curse holds, the travelers from
 /// Imil have crossed the river by pushing the trees down:
 /// Bilibin_RestoreRiverObjectEvents lays the middle tree on its side, with an
-/// invisible actor (LOCALID_FALLEN_TREE_STAND_IN) that answers for it, and puts
-/// Jill's tree in the water. Move on her (EventScript_PullJillFromRiver) works
-/// once she is in cell column 6, by the bank: the leader pulls her ashore in
-/// three tugs, and FLAG_BILIBIN_JILL_RESCUED keeps her there. While whoever the
-/// player controls wades in the river, Bilibin_UpdateWadingRipples spreads a
-/// ripple from their feet every 30 frames.
+/// invisible object event (LOCALID_FALLEN_TREE_STAND_IN) that answers for it,
+/// and puts Jill's tree in the water. Move on her
+/// (EventScript_PullJillFromRiver) works once she is in cell column 6, by the
+/// bank: the leader pulls her ashore in three tugs, and
+/// FLAG_BILIBIN_JILL_RESCUED keeps her there. While whoever the player controls
+/// wades in the river, Bilibin_UpdateWadingRipples spreads a ripple from their
+/// feet every 30 frames.
 ///
 /// Once the curse is lifted the trees are gone, and the Gang of Three are
 /// children again on the bank (LOCALID_GANG_MEMBER_EAST,
 /// LOCALID_GANG_MEMBER_WEST and LOCALID_JILL). If Jill was never pulled out she
-/// is missing. If she was, stepping up to them (touch 13) plays
+/// is missing. If she was, stepping up to them (coord event 13) plays
 /// EventScript_JillGivesHardNut, which gives the leader a Hard Nut
 /// (FLAG_BILIBIN_JILL_GIFT_RECEIVED); from then on the three turn to watch him.
 ///
@@ -128,7 +129,7 @@ static void Bilibin_UpdateWadingRipples(void);
 static void Bilibin_SpawnRipple(struct ObjectEvent *objectEvent);
 static void Bilibin_UpdateTreasuryStatueCells(void);
 
-/// Actors of Bilibin, numbering its placement rows from
+/// Object events of Bilibin, numbering its object event templates from
 /// LOCALID_FIRST_PLACED. The ten villagers are named by what they say before
 /// the curse is lifted.
 enum BilibinLocalId {
@@ -193,12 +194,12 @@ enum BilibinLocalId {
   LOCALID_FORMER_TREE_MAN
 };
 
-/// The actor slots EventScript_OpenDoorAndLeave stills, the party's and the
-/// placed ones'.
+/// The object event slots EventScript_OpenDoorAndLeave stills, the party's and
+/// the placed ones'.
 enum { BILIBIN_OBJ_EVENT_SLOT_COUNT = 66 };
 
-/// Actors of the Bilibin Barricade (BilibinBarricade), numbering its placement
-/// rows from LOCALID_FIRST_PLACED.
+/// Object events of the Bilibin Barricade (BilibinBarricade), numbering its
+/// object event templates from LOCALID_FIRST_PLACED.
 enum BilibinBarricadeLocalId {
   /// A stack of crates that slides a cell under Move or a push.
   /// ★ Named from what the player sees: a stack of two wooden crates,
@@ -231,18 +232,20 @@ enum BilibinBarricadeLocalId {
   /// ★ Named from the game: "Jill, are these the people who saved you?"
   /// (MsgBilibinYoureGuy)
   LOCALID_JILL,
-  /// Unused: a blank actor (SPRITE_BLANK_32) placed at the map's origin; no
-  /// code or event row addresses it, so it never shows or answers anything.
+  /// Unused: a blank object event (SPRITE_BLANK_32) placed at the map's origin;
+  /// no
+  /// code or map event addresses it, so it never shows or answers anything.
   LOCALID_BLANK_AT_ORIGIN,
-  /// The invisible actor (SPRITE_BLANK) that stands where the middle tree lies
+  /// The invisible object event (SPRITE_BLANK) that stands where the middle
+  /// tree lies
   /// pushed down and answers for it.
   /// ★ Named from the game: "Oh, it looks like she is okay."
   /// (MsgBilibinOhItLooksLikeSheIs)
   LOCALID_FALLEN_TREE_STAND_IN
 };
 
-/// Actors of the Bilibin Treasury (BilibinTreasury), numbering its placement
-/// rows from LOCALID_FIRST_PLACED.
+/// Object events of the Bilibin Treasury (BilibinTreasury), numbering its
+/// object event templates from LOCALID_FIRST_PLACED.
 enum BilibinTreasuryLocalId {
   /// A statue that slides along one column under Move or a push.
   /// ★ Named from what the player sees: a golden statue of a figure in a long
@@ -277,7 +280,7 @@ const struct MapWarpDest *Bilibin_GetWarpDests(void) {
   return (const struct MapWarpDest *)gBilibinWarpDestsOther;
 }
 
-/// Only the Bilibin Treasury has exit regions.
+/// Only the Bilibin Treasury has warp regions.
 const struct MapWarpRegion *Bilibin_GetRegions(void) {
   if (gGameState.mapId == (s32)&MapId_BilibinTreasury) {
     return (const struct MapWarpRegion *)gBilibinTreasuryRegions;
@@ -285,7 +288,7 @@ const struct MapWarpRegion *Bilibin_GetRegions(void) {
   return 0;
 }
 
-/// Returns the packed exit destinations shared by the three maps.
+/// Returns the packed warps shared by the three maps.
 const u32 *Bilibin_GetWarps(void) { return gBilibinWarps; }
 
 /// Talking to Gust in the Bilibin Treasury: Gust, a Jupiter Djinni, joins the
@@ -294,7 +297,7 @@ static void EventScript_GustJoins(void) {
   Djinn_JoinParty(LOCALID_GUST, ELEMENT_JUPITER, DJINNI_INDEX(DJINNI_GUST));
 }
 
-/// Selects the actors of Bilibin, the Bilibin Barricade or the Bilibin
+/// Selects the object events of Bilibin, the Bilibin Barricade or the Bilibin
 /// Treasury.
 const struct ObjectEventTemplate *Bilibin_GetObjectEventTemplates(void) {
   s16 mapId = gGameState.mapId;
@@ -352,9 +355,8 @@ static void EventScript_ReadWarehouseSign(void) {
 }
 
 /// The Gang of Three's trees at the Bilibin Barricade look like people.
-/// Talking to one, standing or pushed down, or to the actor that answers for
-/// the fallen one, says so.
-/// `There is a tree that looks like a person.`
+/// Talking to one, standing or pushed down, or to the object event that answers
+/// for the fallen one, says so. `There is a tree that looks like a person.`
 static void EventScript_InspectHumanShapedTree(void) {
   Engine_ScriptStart();
   Engine_MessageShowCentered(MsgBilibinThereTreeLooksLikePerson, 1);
@@ -362,9 +364,9 @@ static void EventScript_InspectHumanShapedTree(void) {
 }
 
 /// Talking to the tree at Bilibin's entrance, before the curse is lifted: it
-/// almost looks like a man and, looked at again, like a living person. Place
-/// flag FLAG_MAPSEC_TEMP_01 remembers the first look until the party leaves
-/// Bilibin's group of scenes.
+/// almost looks like a man and, looked at again, like a living person.
+/// Map-section temp flag FLAG_MAPSEC_TEMP_01 remembers the first look until the
+/// party leaves Bilibin's map section.
 static void EventScript_ExamineTreeMan(void) {
   Engine_ScriptStart();
   Engine_ScriptSetMessage(MsgBilibinItsTreeButAlmostLooks);
@@ -427,8 +429,8 @@ static void EventScript_AskAboutImil(void) {
 }
 
 /// Walking into one of Bilibin's doors: everyone stops, the door opens and the
-/// leader walks through it. The doors' touch codes, 3 to 9, are the numbers of
-/// the exits they take: BILIBIN_TO_INN to BILIBIN_TO_WEAPON_AND_ARMOR_SHOP lead
+/// leader walks through it. The doors' coord events, 3 to 9, are the numbers of
+/// the warps they take: BILIBIN_TO_INN to BILIBIN_TO_WEAPON_AND_ARMOR_SHOP lead
 /// into Bilibin's buildings, and BILIBIN_TO_SANCTUM into the Bilibin Sanctum,
 /// whose door sounds and is stepped through differently.
 static void EventScript_OpenDoorAndLeave(void) {
@@ -445,7 +447,7 @@ static void EventScript_OpenDoorAndLeave(void) {
 
   work = gEventWork;
   Engine_ScriptStart();
-  // Freeze placed actors before the exit cells start animating.
+  // Freeze placed object events before the warp cells start animating.
   for (objectEventSlot = LOCALID_FIRST_PLACED;
        objectEventSlot < BILIBIN_OBJ_EVENT_SLOT_COUNT; objectEventSlot++) {
     objectEvent = ObjectEvent_GetById(objectEventSlot);
@@ -673,9 +675,9 @@ static void EventScript_JillGivesHardNut(void) {
   Engine_ScriptEnd();
 }
 
-/// Sets up the scene being entered, Bilibin, the Bilibin Barricade or the
-/// Bilibin Treasury: its actors by story flags, its collision cells and its
-/// opening transition.
+/// Sets up the map being entered, Bilibin, the Bilibin Barricade or the
+/// Bilibin Treasury: its object events by story flags, its metatile behaviors
+/// and its opening transition.
 s32 Bilibin_Initialize(void) {
   gEventWork->startTransition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   if (gGameState.mapId == (s32)&MapId_Bilibin) {
@@ -690,8 +692,8 @@ s32 Bilibin_Initialize(void) {
 }
 
 /// Sets up Bilibin: the tree or the man by FLAG_KOLIMA_CURSE_LIFTED, the ivy
-/// and the statue by the entrance used, and place flag FLAG_MAPSEC_TEMP_04 for
-/// McCoy's garden guard.
+/// and the statue by the warp destination used, and map-section temp flag
+/// FLAG_MAPSEC_TEMP_04 for McCoy's garden guard.
 static void Bilibin_RestoreVillageObjectEvents(void) {
 
   struct ObjectEvent *objectEvent;
@@ -731,9 +733,9 @@ static void Bilibin_RestoreVillageObjectEvents(void) {
 }
 
 /// Updates the cells around the statue in Bilibin after it moves. It runs after
-/// Move, a push, or entry: it updates the collision cells of the statue's lane,
-/// opens its home cell (16, 13) once it has left it, and moves the leader clear
-/// if it has landed on him.
+/// Move, a push, or entry: it updates the metatile behaviors of the statue's
+/// lane, opens its home cell (16, 13) once it has left it, and moves the leader
+/// clear if it has landed on him.
 static void Bilibin_UpdateVillageStatueCells(void) {
   s32 leaderRow;
   s32 leaderColumn;
@@ -756,7 +758,7 @@ static void Bilibin_UpdateVillageStatueCells(void) {
   if ((statueX >> 20) != 16 || statueRow != 13) {
     MapGrid_CopyCellAttributes(0, 0, 1, 1, 16, 13);
   }
-  // The statue may have moved onto the leader while this event was running.
+  // The statue may have moved onto the leader while this script was running.
   if (leaderColumn == 16) {
     if (leaderRow == 13) {
       Engine_ScriptStart();
@@ -944,7 +946,8 @@ static void EventScript_PushStatueOrCrates(void) {
       pushed->velocityX = 0;
       pushed->velocityZ = 0;
       ObjectEvent_SetMode(leader, ANIMATION_STAND);
-      // Each map derives its collision cells from this same moved actor.
+      // Each map derives its metatile behaviors from this same moved object
+      // event.
       if (gGameState.mapId == (s32)&MapId_BilibinBarricade)
         Bilibin_UpdateCratesCells();
       else if (gGameState.mapId == (s32)&MapId_Bilibin)
@@ -1024,8 +1027,9 @@ s32 gBilibin_FaceLeaderScript[] = {
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
-/// Unused: the entrances for a scene other than the three, which never loads
-/// this overlay. Its words read as a MAPGRID_ANIM_STEP list, not as entrances.
+/// Unused: the warp destinations for a map other than the three, which never
+/// loads this overlay. Its words read as a MAPGRID_ANIM_STEP list, not as warp
+/// destinations.
 u16 gBilibinWarpDestsOther[] = {
     MAPGRID_ANIM_STEP(0, 65535, 168, 0, 168),
     MAPGRID_ANIM_STEP(16384, 0, 65535, 65535, 65535),

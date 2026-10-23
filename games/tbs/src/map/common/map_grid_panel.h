@@ -6,12 +6,12 @@
 // Crossbone Isle Cave (MapId_CrossboneIsleSteppingStones to
 // MapId_CrossboneIsleDragonStatue) and Kolima Forest
 // (MapId_KolimaForestFloodgate): drawing a stretch of
-// the map, in one of the states kept elsewhere in it (such as the water raised
-// or not), straight into the background's tile map.
+// the layout, in one of the states kept elsewhere in it (such as the water
+// raised or not), straight into the background's tile map.
 
-/// Draws the width by height cells at cell (x, y) of the map into screen block
-/// 5 from cell (destinationX, destinationY), wrapped to 16 by 16 cells, in band
-/// plane (16 cell rows each): each cell is its block's tiles from
+/// Draws the width by height cells at cell (x, y) of the layout into screen
+/// block 5 from cell (destinationX, destinationY), wrapped to 16 by 16 cells,
+/// in band plane (16 cell rows each): each cell is its metatile's tiles from
 /// Ram_Metatiles.
 static void MapGrid_DrawCellPanel(s32 x, s32 y, s32 width, s32 height,
                                   s32 plane, s32 destinationX,

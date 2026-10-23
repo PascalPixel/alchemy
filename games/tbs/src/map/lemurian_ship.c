@@ -1,17 +1,17 @@
 /// @file The wharf at the edge of Lalivero where Babi's ship lies sunk, the
-/// game's last scene: MapId_LemurianShip, with the area name Lemurian ship.
+/// game's last map: MapId_LemurianShip, with the area name Lemurian ship.
 /// It is entered from Faran's house (lalivero_interiors.c) once Iodem has given
-/// the party the Black Orb, and stepping back on cell code 1
+/// the party the Black Orb, and stepping back on metatile behavior 1
 /// (EventScript_LeaveTheShip) returns there.
 ///
 /// LemurianShip_SetupMap sinks the ship's two map layers 90 pixels, puts the
 /// two pieces of the gangway and the party at sprite priority 1, and starts the
 /// water's ripple (Ripple_Start), an HBlank DMA of per-line scroll offsets for
-/// BG3 that Reveal stops while it shows the scene. Arriving by
-/// LEMURIAN_SHIP_WITH_BLACK_ORB, which only the debug scene selector reaches,
+/// BG3 that Reveal stops while it shows the map. Arriving by
+/// LEMURIAN_SHIP_WITH_BLACK_ORB, which only the debug map selector reaches,
 /// first gives the leader the Black Orb.
 ///
-/// Using the Black Orb at the water's edge (cell code 10) plays
+/// Using the Black Orb at the water's edge (metatile behavior 10) plays
 /// EventScript_RaiseTheShip: the orb glows, spray rises and the ship comes up
 /// out of the water 90 pixels. It adds Ship_UpdateSwell and
 /// ShipGlow_CyclePalette, which run to the end of the game, and then
@@ -89,17 +89,18 @@ enum {
 /// (Ship_UpdateSwell) moves only those who have.
 #define SHIP_NOT_ON_DECK (-0x10000)
 
-/// The sprite of a gangway piece or a party actor.
-// OBJ_EVENT_SPRITE reads actor->sprite through an s32, so each store reloads it
-// as the native does; read as the field, the two stores share one load. UB: the
-// s32 read aliases the pointer field. UBFIX reads the field itself.
+/// The sprite of a gangway piece or a party object event.
+// OBJ_EVENT_SPRITE reads objectEvent->sprite through an s32, so each store
+// reloads it as the native does; read as the field, the two stores share one
+// load. UB: the s32 read aliases the pointer field. UBFIX reads the field
+// itself.
 #ifdef UBFIX
 #define OBJ_EVENT_SPRITE(objectEvent) ((objectEvent)->sprite)
 #else
 #define OBJ_EVENT_SPRITE(objectEvent)                                          \
   ((struct AnimationObject *)*(s32 *)&(objectEvent)->sprite)
 #endif
-/// The sprite priority of an actor's picture and of its shadow.
+/// The sprite priority of an object event's picture and of its shadow.
 #define SET_IMAGE_PRIORITY(objectEvent, level)                                 \
   ((void)(OBJ_EVENT_SPRITE(objectEvent)->image.priority = (level)))
 #define SET_SHADOW_PRIORITY(objectEvent, level)                                \
@@ -115,21 +116,22 @@ const struct MapWarpRegion *LemurianShip_GetRegions(void) { return NULL; }
 
 const u32 *LemurianShip_GetWarps(void) { return gLemurianShipWarps; }
 
-/// The gangway's two pieces; the party's own actors fill the first three rows.
+/// The gangway's two pieces; the party's own object events fill the first three
+/// rows.
 const struct ObjectEventTemplate *LemurianShip_GetObjectEventTemplates(void) {
   return gLemurianShipObjectEventTemplates;
 }
 
 /// Lemurian ship, the way back to Lalivero: leaves and clears the backdrop
-/// colour. Reached by stepping on cell code 1 (gLemurianShipEvents); takes
-/// LEMURIAN_SHIP_TO_LALIVERO_FARANS_HOUSE.
+/// colour. Reached by stepping on metatile behavior 1 (gLemurianShipEvents);
+/// takes LEMURIAN_SHIP_TO_LALIVERO_FARANS_HOUSE.
 static void EventScript_LeaveTheShip(void) {
   Engine_ScriptRequestWarp(gEventWork->touchedTrigger);
   Io_Write16(0, &PLTT_BACKDROP);
 }
 
-/// Lemurian ship: stops the water's ripple while Reveal shows the scene.
-/// Reached by Reveal anywhere in the scene; Ripple_Start, as Reveal's light
+/// Lemurian ship: stops the water's ripple while Reveal shows the map.
+/// Reached by Reveal anywhere in the map; Ripple_Start, as Reveal's light
 /// fades, starts the ripple again.
 static void Ripple_StopForReveal(void) { Ripple_Stop(); }
 
@@ -140,7 +142,8 @@ static void Ripple_Start(void) {
                                     0x8000, 0x4000);
 }
 
-/// The exit, Reveal and the Black Orb at the water's edge (cell code 10).
+/// The warp, Reveal and the Black Orb at the water's edge (metatile behavior
+/// 10).
 const struct MapEvent *LemurianShip_GetEvents(void) {
   return gLemurianShipEvents;
 }
@@ -570,7 +573,7 @@ static void LemurianShip_SetSail(void) {
   FieldScript_SetDestination((s32)&MapId_Title, TITLE_FROM_LEMURIAN_SHIP);
 }
 
-/// The water's ripple, this scene's view of the HBlank scroll work
+/// The water's ripple, this map's view of the HBlank scroll work
 /// (gHBlankScrollWork, struct DisplayScrollWork): two pages of per-line
 /// scroll offsets, swapped each frame, built from a sine table. Here a line
 /// is one word, BG3's x and y, where DisplayScrollWork has three.
@@ -594,9 +597,9 @@ static __inline__ s32 Wave_Offset(s32 angle, s32 amplitude, u16 base) {
 
 /// Lemurian ship: the Black Orb glows, the water lights up, spray rises and
 /// the ship comes up out of the sea 90 pixels; then the party sets sail.
-/// Reached by using the Black Orb at the water's edge (cell code 10). Adds
-/// the swell and glow callbacks, which run to the end of the game, and calls
-/// LemurianShip_SetSail.
+/// Reached by using the Black Orb at the water's edge (metatile behavior 10).
+/// Adds the swell and glow callbacks, which run to the end of the game, and
+/// calls LemurianShip_SetSail.
 static void EventScript_RaiseTheShip(void) {
   struct MapGridScrollWork *grid;
   s32 i;
@@ -694,7 +697,7 @@ static void EventScript_RaiseTheShip(void) {
   LemurianShip_SetSail();
 }
 
-/// Sets the Lemurian ship's scene up: the ship sunk 90 pixels, the gangway and
+/// Sets the Lemurian ship's map up: the ship sunk 90 pixels, the gangway and
 /// the party at sprite priority 1 over the layers' new priorities, and the
 /// ripple running. Arriving by LEMURIAN_SHIP_WITH_BLACK_ORB first gives the
 /// leader the Black Orb.

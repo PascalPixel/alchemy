@@ -5,7 +5,7 @@
 ///
 /// The party comes in from the cave's first room (goma_cave_waterway.c), and
 /// the room's puzzle is Move on three things. The west pillar slides between
-/// two places a step apart, and the map cells along its track follow it
+/// two places a step apart, and the map grid cells along its track follow it
 /// (FLAG_GOMA_CAVE_WEST_PILLAR_MOVED says which). The stump is pushed a step
 /// at a time; once it reaches the edge at column 25 it teeters, shedding
 /// dust, tips over and falls into the room below (goma_cave_pond.c) with a
@@ -17,15 +17,15 @@
 /// the first room or from the room below
 /// (GOMA_CAVE_PILLAR_FROM_GOMA_CAVE_STREAM_EAST,
 /// GOMA_CAVE_PILLAR_FROM_GOMA_CAVE_POND_EAST), the party finds it set into the
-/// floor underfoot, with the cells along it changed. All three are place flags,
-/// so the room is as it started again once the party leaves Goma Cave's four
-/// scenes. Walking west into a gap (collision code 20) jumps the leader across
-/// it, and a chest holds a Lucky Medal.
+/// floor underfoot, with the cells along it changed. All three are map-section
+/// temp flags, so the room is as it started again once the party leaves Goma
+/// Cave's four maps. Walking west into a gap (metatile behavior 20) jumps the
+/// leader across it, and a chest holds a Lucky Medal.
 ///
 /// Forge, a Mars Djinni, waits here beside a man who once fought it: `Did you
 /// see something strange over there? I fought it, but it fled.` Talking to
 /// Forge makes him jump in surprise, and the Djinni's battle begins. After a
-/// win the room reloads with the Djinni's event still pending, so the man
+/// win the room reloads with the Djinni's script still pending, so the man
 /// fidgets on a timer while Forge joins the party; once it has, the timer
 /// raises TRIGGER_FORGE_JOINED, and the man is amazed and walks away for good
 /// (FLAG_GOMA_CAVE_WITNESS_LEFT). After a loss or an escape Forge hides until
@@ -38,7 +38,7 @@
 /// below (GOMA_CAVE_PILLAR_TO_GOMA_CAVE_POND_WEST,
 /// GOMA_CAVE_PILLAR_TO_GOMA_CAVE_POND_SOUTH and
 /// GOMA_CAVE_PILLAR_TO_GOMA_CAVE_POND_EAST).
-/// WARP_DEST_STUMP_FALL, which no exit names and only the debug scene selector
+/// WARP_DEST_STUMP_FALL, which no warp names and only the debug map selector
 /// reaches, plays the stump being pushed to the edge and falling.
 ///
 /// Open questions:
@@ -87,8 +87,9 @@
 #include "songs.h"
 #include "script.h"
 
-// Place flags: Map_ResetFlagsOnEnter clears 0x300 to 0x3ff when the party
-// enters another place group, and other places use the numbers for their own.
+// Map-section temp flags: Map_ResetFlagsOnEnter clears 0x300 to 0x3ff when the
+// party enters another map section, and other map sections use the numbers for
+// their own.
 /// The stump has been pushed over into the room below.
 /// ★ Named from what the player sees: a tree stump standing on a ledge (its
 /// render)
@@ -104,7 +105,7 @@
 
 enum GomaCavePillarFragmentPlane { PLANE_XY = 0, PLANE_XZ = 1, PLANE_YZ = 2 };
 
-/// The room's actors, numbered in the order of
+/// The room's object events, numbered in the order of
 /// gGomaCavePillar_ObjectEventTemplates.
 enum GomaCavePillarLocalId {
   /// Slides between two places.
@@ -135,11 +136,12 @@ enum GomaCavePillarLocalId {
   LOCALID_WITNESS
 };
 
-/// The entrance no exit names, which plays the stump being pushed to the edge
-/// and falling into the room below; only the debug scene selector reaches it.
+/// The warp destination no warp names, which plays the stump being pushed to
+/// the edge and falling into the room below; only the debug map selector
+/// reaches it.
 enum { WARP_DEST_STUMP_FALL = 99 };
 
-/// The event the man's timer raises once Forge has joined the party
+/// The map event the man's timer raises once Forge has joined the party
 /// (GomaCavePillar_FidgetWhileForgeFights).
 enum { TRIGGER_FORGE_JOINED = 99 };
 
@@ -158,7 +160,8 @@ static void EventScript_FightForge(void) {
 /// step.
 static void GomaCavePillar_UpdateFragment(union FieldObject *fieldObject) {
   struct ObjectEvent *fragment = (struct ObjectEvent *)fieldObject;
-  // The actor's speed and acceleration slots carry the two selected axis steps.
+  // The object event's speed and acceleration slots carry the two selected axis
+  // steps.
   s16 plane = (s16)fragment->work;
 
   switch (plane) {
@@ -243,13 +246,13 @@ const struct ObjectEventTemplate *Map_GetObjectEventTemplates(void) {
   return gGomaCavePillar_ObjectEventTemplates;
 }
 
-/// Copies the map cells for the west pillar on either side of its track.
+/// Copies the map grid cells for the west pillar on either side of its track.
 static inline void GomaCavePillar_CopyWestPillarCells(s32 sourceColumn) {
   MapGrid_CopyCellAttributes(sourceColumn, 40, 6, 3, 18, 6);
 }
 
 /// Move on the west pillar in Goma Cave: it slides between its two places,
-/// and the map cells follow it.
+/// and the map grid cells follow it.
 static void EventScript_MoveWestPillar(void) {
   struct ObjectEvent *objectEvent;
   s32 x;
@@ -417,7 +420,7 @@ static void EventScript_PushStumpOver(void) {
     GomaCavePillar_SpawnFragment(fixedX, heightSource->y.fixed, fixedZ, zero,
                                  fallingSpeed, style, zero);
     WAIT(20);
-    // It lands below; the shake dies down before the map cells change.
+    // It lands below; the shake dies down before the map grid cells change.
     Engine_AudioPlayCue(SE_CAST);
     MapGrid_SetShake(PIXELS(5), PIXELS(5), Q16_ONE);
     MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
@@ -494,7 +497,7 @@ static void EventScript_PushEastPillar(void) {
   EV_END();
 }
 
-/// Walking west into the gap in Goma Cave (collision code 20): the leader
+/// Walking west into the gap in Goma Cave (metatile behavior 20): the leader
 /// jumps across it. Later patches use the shared forward jump.
 static void EventScript_JumpGapWest(void) {
 #if TBS_PATCH_1
@@ -538,7 +541,7 @@ static void EventScript_JumpGapWest(void) {
 const struct MapEvent *Map_GetEvents(void) { return gGomaCavePillar_Events; }
 
 /// Back from a won battle with Forge, the man reacts on a timer while the
-/// Djinni joins the party; once the Djinni event is over, it raises
+/// Djinni joins the party; once the Djinni's script is over, it raises
 /// TRIGGER_FORGE_JOINED.
 static void GomaCavePillar_FidgetWhileForgeFights(void) {
   struct EventWork *work;

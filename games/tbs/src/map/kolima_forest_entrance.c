@@ -1,7 +1,7 @@
 /// @file
 /// Kolima Forest (MapId_KolimaForestEntrance), the first of the forest's five
 /// maps, entered from the world map (KOLIMA_FOREST_ENTRANCE_FROM_WORLD_MAP).
-/// If the party comes here before it has been to Kolima, the curse's scene
+/// If the party comes here before it has been to Kolima, the curse's cutscene
 /// plays here instead of in the village
 /// (KolimaForestEntrance_WitnessForestCurse, until
 /// FLAG_KOLIMA_CURSE_WITNESSED): sparkles of Tret's glamour rain down, fields
@@ -21,12 +21,12 @@
 ///
 /// Three logs lie here, rolled by walking into them; the one pushed west to the
 /// water's edge tips into the river and floats there, cells the party can
-/// cross, and from the bank the leader can hop east (trigger 11,
+/// cross, and from the bank the leader can hop east (coord event 11,
 /// KolimaForest_HopEast). KOLIMA_FOREST_ENTRANCE_TO_KOLIMA_FOREST_GLADE leads
 /// on into the forest (MapId_KolimaForestGlade),
 /// KOLIMA_FOREST_ENTRANCE_TO_WORLD_MAP back to the world map.
 ///
-/// FLAG_MAP_TEMP_00: the log is in the river. Like every scene flag it is
+/// FLAG_MAP_TEMP_00: the log is in the river. Like every map temp flag it is
 /// cleared when the party next comes in, so the log is back on the bank, but a
 /// battle keeps it.
 ///
@@ -65,8 +65,8 @@
 #include "audio_engine_symbols.h"
 #include "fixed_math.h"
 
-/// The map's actors after Garet's, Ivan's and Mia's party slots, numbering the
-/// rows of gKolimaForestEntrance_ObjectEventTemplates from
+/// The map's object events after Garet's, Ivan's and Mia's party slots,
+/// numbering the rows of gKolimaForestEntrance_ObjectEventTemplates from
 /// LOCALID_FIRST_PLACED.
 enum {
   /// The three logs; the last is the one that can reach the river.
@@ -246,7 +246,7 @@ s32 KolimaForestEntrance_Initialize(void) {
 
 /// Kolima Forest, the first entry from the world map before the curse has been
 /// seen in Kolima (FLAG_KOLIMA_CURSE_WITNESSED clear): the party sees the
-/// curse fall, the same scene as Kolima_WitnessForestCurse without the trees
+/// curse fall, the same cutscene as Kolima_WitnessForestCurse without the trees
 /// that were people. Ivan notices sparkly stuff on the ground; sparkles rain
 /// from the sky, the party sinks under them, and fields of Psynergy rise around
 /// each member before the sparkles reach them. They argue over whether it was
@@ -1113,7 +1113,7 @@ static void KolimaForestEntrance_ShowMessageAndWait(s32 speaker, s32 frames) {
   Engine_ScriptWait(frames);
 }
 
-/// Turns an actor at once, then leaves time for the next beat.
+/// Turns an object event at once, then leaves time for the next beat.
 static void KolimaForestEntrance_FaceObjectEventAndWait(s32 objectEventId,
                                                         s32 facing,
                                                         s32 waitFrames) {
@@ -1357,7 +1357,7 @@ struct MapWarpDest gKolimaForestEntrance_WarpDests[] = {
 };
 
 /// On into the forest (MapId_KolimaForestGlade) and out to the world map
-/// (MapId_WorldMap), with two exits no event uses back into this map.
+/// (MapId_WorldMap), with two warps no map event uses back into this map.
 u32 gKolimaForestEntrance_Warps[] = {
     MAP_WARPS(KolimaForestEntrance),
     MAP_WARP(KOLIMA_FOREST_ENTRANCE_TO_KOLIMA_FOREST_GLADE, KolimaForestGlade,

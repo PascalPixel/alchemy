@@ -1,5 +1,5 @@
 /// @file
-/// Tolbi's colosseum, where Colosso is fought, in three places: the Colosseum
+/// Tolbi's colosseum, where Colosso is fought, in three maps: the Colosseum
 /// Entrance outside its gates, the Colosseum Tunnel from Babi's Palace, and the
 /// Colosseum itself, whose stands, waiting room and passages lead to the sites
 /// of the three finals matches.
@@ -7,7 +7,7 @@
 /// Colosso has two parts, and the code tells them apart by FLAG_BABI_SAVED.
 /// While warriors fight their trials, Babi, the ruler of Tolbi, is missing.
 /// Once the party has saved his life in Altmiller Cave, the trials are over and
-/// Babi has picked Isaac for the finals himself: every scene here then plays
+/// Babi has picked Isaac for the finals himself: every map here then plays
 /// the finals day. FLAG_COLOSSO_OVER, set after the third finals match, closes
 /// the colosseum until next year.
 ///
@@ -16,8 +16,8 @@
 ///   talk of the heats and of the Lucky Guess, a bet on which warrior will win
 ///   the finals, and Mind Read hears what they hope for. On the finals day
 ///   ColosseumEntrance_GetObjectEventTemplates places a second crowd, with
-///   Isaac's companions and four of the colosseum's soldiers, and the event
-///   table's flag conditions give everyone new lines: the scalpers sell seats,
+///   Isaac's companions and four of the colosseum's soldiers, and the map
+///   events' flag conditions give everyone new lines: the scalpers sell seats,
 ///   and the Lucky Guess man recognizes Isaac and will not let a finalist play
 ///   (FLAG_LUCKY_GUESS_REFUSED_ISAAC remembers that he said so). Stepping
 ///   toward the gates (EventScript_CrowdRecognizesIsaac) plays the soldiers'
@@ -25,21 +25,21 @@
 ///   will not go, they and his companions talk him round, Garet leading the way
 ///   if he still refuses. The party arrives at the Colosseum's
 ///   COLOSSEUM_FROM_COLOSSEUM_ENTRANCE. Once Colosso is over,
-///   ColosseumEntrance_UpdateEntranceCells changes the map's cells before the
-///   gates, and two people linger to say the colosseum is closed until next
+///   ColosseumEntrance_UpdateEntranceCells changes the layout's cells before
+///   the gates, and two people linger to say the colosseum is closed until next
 ///   year. COLOSSEUM_ENTRANCE_TO_TOLBI leads back to Tolbi.
 /// - Colosseum Tunnel (MapId_ColosseumTunnel), the passage from Babi's
 ///   Palace (BABI_PALACE_TO_COLOSSEUM_TUNNEL) into the Colosseum, whose end
 ///   of the tunnel (COLOSSEUM_TUNNEL_FROM_COLOSSEUM and
 ///   COLOSSEUM_FROM_COLOSSEUM_TUNNEL) takes the same area name. It has only its
-///   two exits.
+///   two warps.
 /// - Colosseum (MapId_Colosseum), one map that holds the stands, the trial
 ///   grounds, the finals' waiting room and the passages to the finals stages,
-///   each an entrance's camera box on it
+///   each a warp destination's camera box on it
 ///   (https://alchemy.pascalpixel.com/places/colosseum/camera-boxes.png).
-///   Every arrival is an entrance of its own, and
-///   ColosseumEntrance_ApplyArrivalState plays the cutscene that entrance
-///   stands for. During the trials the stands' entrances
+///   Every arrival is a warp destination of its own, and
+///   ColosseumEntrance_ApplyArrivalState plays the cutscene that warp
+///   destination stands for. During the trials the stands' warp destinations
 ///   (COLOSSEUM_STANDS_FROM_STONE_PASSAGE_WEST,
 ///   COLOSSEUM_STANDS_FROM_TRIAL_GROUNDS) alternate with the two trial
 ///   cutscenes (COLOSSEUM_FAILED_TRIAL_FROM_STANDS,
@@ -48,21 +48,22 @@
 ///   COLOSSEUM_FROM_COLOSSEUM_ENTRANCE keeps the party's items
 ///   (InventorySnapshot_Take) for Babi's Palace to give back, and the waiting
 ///   room's line asks whether Isaac is ready (EventScript_FinalsStart). Each
-///   finals stage returns to its own entrance here
+///   finals stage returns to its own warp destination here
 ///   (COLOSSEUM_FROM_COLOSSEUM_*_MATCH_*), and FLAG_COLOSSO_FIRST_MATCH_WON and
 ///   FLAG_COLOSSO_SECOND_MATCH_WON choose which stage the long passages lead to
 ///   next; the stages themselves are colosseum_azart_match.c,
 ///   colosseum_satrage_match.c and colosseum_navampa_match.c.
 ///
-/// The three scenes share one exit table, a run of exits for each scene, and
-/// the Colosseum's exits are how its arrivals chain into one another and into
+/// The three maps share one warp table, a run of warps for each map, and
+/// the Colosseum's warps are how its arrivals chain into one another and into
 /// the finals stages.
 ///
 /// Open questions:
-/// - XXX (no evidence): what the Colosseum's entrances 3 and 8 were made for;
-///   no exit or code enters by them, only the debug scene selector can, and
-///   ColosseumEntrance_GetObjectEventTemplates gives entrance 8 the soldiers'
-///   table, as it gives the arrivals of the finals day.
+/// - XXX (no evidence): what the Colosseum's warp destinations 3 and 8 were
+/// made
+///   for; no warp or code enters by them, only the debug map selector can, and
+///   ColosseumEntrance_GetObjectEventTemplates gives warp destination 8 the
+///   soldiers' table, as it gives the arrivals of the finals day.
 
 #include "game_state.h"
 #include "map_ids.h"
@@ -117,10 +118,10 @@ static inline void ColosseumEntrance_Turn(s32 objectEvent, s32 facing) {
 /// The Colosseum Entrance's people, numbered by the rows of
 /// gColosseumEntranceObjectEventTemplates;
 /// gColosseumEntranceObjectEventTemplatesFinalsDay places the same people in
-/// its first nine rows after Isaac's companions, who take their own actor
-/// slots, and gColosseumEntranceObjectEventTemplatesAfterColosso keeps the
-/// first two. They are named by what they say during the trials, except where
-/// the finals day says more about who they are.
+/// its first nine rows after Isaac's companions, who take their own object
+/// event slots, and gColosseumEntranceObjectEventTemplatesAfterColosso keeps
+/// the first two. They are named by what they say during the trials, except
+/// where the finals day says more about who they are.
 enum ColosseumEntranceLocalId {
   /// A young man with brown hair in a purple shirt who talks of the heats.
   /// "They're holding the preliminary Colosso heats right now."
@@ -257,7 +258,7 @@ enum FlagBearerAnimation {
 /// The four soldiers of gColosseumSoldiersObjectEventTemplates
 /// (SPRITE_SOLDIER), who brief the party at COLOSSEUM_FROM_COLOSSEUM_ENTRANCE,
 /// congratulate Isaac after his wins and lead him through the passages; Isaac's
-/// companions take their own actor slots.
+/// companions take their own object event slots.
 enum ColosseumSoldierLocalId {
   /// ★ Named from what the player sees: soldiers in helmets with spears
   /// (its render)
@@ -315,7 +316,8 @@ enum ColosseumWaitingRoomLocalId {
   LOCALID_BUFORD
 };
 
-/// The touch triggers the event tables answer, as the map's collision codes.
+/// The coord event triggers the map event tables answer, as the map's
+/// metatile behaviors.
 enum ColosseumEntranceTrigger {
   /// Before the gates at the Colosseum Entrance
   /// (EventScript_CrowdRecognizesIsaac).
@@ -326,7 +328,7 @@ enum ColosseumEntranceTrigger {
   TRIGGER_BEHIND_FINALS_LINE = 13
 };
 
-/// The temporary flags the colosseum's scenes keep.
+/// The temporary flags the colosseum's maps keep.
 enum {
   /// The Lucky Guess man has refused Isaac as a finalist
   /// (EventScript_OfferLuckyGuess).
@@ -343,7 +345,7 @@ enum {
   /// ★ Named from the game: "If you win there, you advance to the finals."
   /// (MsgTolbiTheTrialsAreStartingAtThe)
   FLAG_FINALS_LINE_ARMED = FLAG_MAP_TEMP_34,
-  /// The leader has stepped onto the line since; its touch is off.
+  /// The leader has stepped onto the line since; its coord event is off.
   /// ★ Named from the game: "If you win there, you advance to the finals."
   /// (MsgTolbiTheTrialsAreStartingAtThe)
   FLAG_FINALS_LINE_REACHED = FLAG_MAP_TEMP_35
@@ -363,10 +365,11 @@ const struct MapWarpDest *ColosseumEntrance_GetWarpDests(void) {
 
 const struct MapWarpRegion *ColosseumEntrance_GetRegions(void) { return 0; }
 
-/// Returns the shared colosseum exits.
+/// Returns the shared colosseum warps.
 const u32 *ColosseumEntrance_GetWarps(void) { return gColosseumEntranceWarps; }
 
-/// Selects the actors: in the Colosseum by the entrance the party arrives at
+/// Selects the object events: in the Colosseum by the warp destination the
+/// party arrives at
 /// (the stands, the trial grounds, the passages, the waiting room or the
 /// soldiers' briefing), at the Colosseum Entrance by how far Colosso has gone.
 const struct ObjectEventTemplate *
@@ -383,8 +386,8 @@ ColosseumEntrance_GetObjectEventTemplates(void) {
     case COLOSSEUM_CLEARED_TRIAL_FROM_STANDS:
       table = gColosseumTrialGroundsObjectEventTemplates;
       break;
-    // Entrance 8 has a table row but no exit leads to it (see the open
-    // questions).
+    // Warp destination 8 has a table row but no warp leads to it (see the
+    // open questions).
     case 8:
     case COLOSSEUM_FROM_COLOSSEUM_AZART_MATCH_EAST:
     case COLOSSEUM_FROM_COLOSSEUM_SATRAGE_MATCH_NORTH:
@@ -663,7 +666,8 @@ static void EventScript_AskIfReadyForFinals(void) {
 /// insist and Ivan, Mia and Garet talk him round; if he still refuses, Garet
 /// leads the way in. Before Babi is saved it does nothing.
 static void EventScript_CrowdRecognizesIsaac(void) {
-  // The native sequence reuses this word for actor handles and the reply.
+  // The native sequence reuses this word for object event handles and the
+  // reply.
   s32 objectEventOrAnswer;
 
   if (Engine_GameFlagIsSet(FLAG_BABI_SAVED) == 0) {
@@ -1446,8 +1450,8 @@ static void ColosseumEntrance_ShowClearedTrial(void) {
 }
 
 /// Sets up the Colosseum or its entrance as the party arrives. The Colosseum is
-/// set up by the entrance the party arrives at, and the Colosseum Entrance by
-/// how far Colosso has gone.
+/// set up by the warp destination the party arrives at, and the Colosseum
+/// Entrance by how far Colosso has gone.
 s32 ColosseumEntrance_Initialize(void) {
   s32 mapId = gGameState.mapId;
 
@@ -1539,7 +1543,7 @@ static void ColosseumEntrance_ShowMessageAndPause(s32 speaker) {
   Engine_ScriptWait(10);
 }
 
-/// Turns an actor to the given facing over ten frames.
+/// Turns an object event to the given facing over ten frames.
 static void ColosseumEntrance_FaceDirection(s32 objectEvent, s32 facing) {
   Engine_ObjectEventFaceDirection(objectEvent, (u16)facing, 10);
 }

@@ -1,5 +1,5 @@
 /// @file
-/// Kolima's overlay, which holds three places, each a scene of its own. The
+/// Kolima's overlay, which holds three maps. The
 /// village's houses and shops are another overlay (kolima_interiors.c), and so
 /// is each map of Kolima Forest.
 ///
@@ -30,20 +30,20 @@
 /// - Kolima Tunnel (MapId_KolimaTunnel), a passage with no one in it from
 ///   one of the houses (KOLIMA_INTERIORS_FROM_KOLIMA_TUNNEL) to the village
 ///   (KOLIMA_FROM_KOLIMA_TUNNEL). It shares the village's event table, whose
-///   exits KOLIMA_TO_WORLD_MAP and KOLIMA_TO_WORLD_MAP_EAST are, by the same
+///   warps KOLIMA_TO_WORLD_MAP and KOLIMA_TO_WORLD_MAP_EAST are, by the same
 ///   numbers, its two ways out (KOLIMA_TUNNEL_TO_KOLIMA_INTERIORS and
 ///   KOLIMA_TUNNEL_TO_KOLIMA). That table's two jars, an Apple and an Herb
-///   (search events 100 and 101), are in the village: only Kolima's map
-///   (map_037's markers.tsv) places them, at cells (23, 8) and (13, 23).
+///   (bg events 100 and 101), are in the village: only Kolima's layout
+///   (layout_037's markers.tsv) places them, at cells (23, 8) and (13, 23).
 /// - Kolima Bridge (MapId_KolimaBridge), "the grand bridge across the
 ///   river" and "the pride of Kolima" to the village's armor seller, with the
 ///   world map at both ends. It is a drawbridge, standing raised between its
 ///   posts. A villager stands beside it, a tree while the curse lasts
 ///   (LOCALID_BRIDGE_VILLAGER_AS_TREE) and a man afterwards
 ///   (LOCALID_BRIDGE_VILLAGER). The first time the party then steps up to the
-///   bridge (trigger 10), Kolima_LowerBridge plays: he asks whether they are
-///   going to cross, hops aside and lets the drawbridge down across the river
-///   in front of the leader (FLAG_KOLIMA_BRIDGE_LOWERED; its recording,
+///   bridge (coord event 10), Kolima_LowerBridge plays: he asks whether they
+///   are going to cross, hops aside and lets the drawbridge down across the
+///   river in front of the leader (FLAG_KOLIMA_BRIDGE_LOWERED; its recording,
 ///   places/kolima-bridge/events/Kolima_LowerBridge.gif). From then on
 ///   he says that for a while he thought no one would ever cross it again,
 ///   Kolima_RestoreBridgeState draws it down on every later visit, and the
@@ -98,10 +98,10 @@ static void Kolima_FaceObjectEventAndWait(s32 objectEventId, s32 facing,
 static void Kolima_SpawnCurseSparkle(void);
 static void Kolima_RestoreBridgeState(void);
 
-/// Actors of Kolima, numbering the rows of gKolimaObjectEventTemplates from
-/// LOCALID_FIRST_PLACED: Garet, Ivan and Mia, who stand by for the curse, take
-/// their own actor slots. The nine villagers are named by what they say once
-/// the curse is lifted.
+/// Object events of Kolima, numbering the rows of gKolimaObjectEventTemplates
+/// from LOCALID_FIRST_PLACED: Garet, Ivan and Mia, who stand by for the curse,
+/// take their own object event slots. The nine villagers are named by what they
+/// say once the curse is lifted.
 enum KolimaLocalId {
   /// A young man with brown hair.
   /// ★ Named from the game: "This is Kolima, village of lumberjacks!"
@@ -224,8 +224,8 @@ static s32 Kolima_UpdateTimedAppearance(struct ScriptInterpreter *interpreter) {
   return 1;
 }
 
-/// While the curse lasts, gives Kolima's nine villagers (placement rows 3 to
-/// 11, LOCALID_FIRST_VILLAGER to LOCALID_LAST_VILLAGER) tree sprites,
+/// While the curse lasts, gives Kolima's nine villagers (object event template
+/// rows 3 to 11, LOCALID_FIRST_VILLAGER to LOCALID_LAST_VILLAGER) tree sprites,
 /// SPRITE_TREE or, for rows 9 and 10 (LOCALID_BOY_DID_NOT_MIND_BEING_A_TREE and
 /// LOCALID_GIRL_SLEEPY_TREES), SPRITE_SMALL_TREE; they stand still and keep
 /// their facing when spoken to.
@@ -271,7 +271,7 @@ static s32 Kolima_UpdateFallingDebris(struct ScriptInterpreter *interpreter) {
 
 #include "common/object_facing.h"
 
-/// Selects the entrances of Kolima, Kolima Tunnel or Kolima Bridge.
+/// Selects the warp destinations of Kolima, Kolima Tunnel or Kolima Bridge.
 const struct MapWarpDest *Kolima_GetWarpDests(void) {
   s16 mapId = gGameState.mapId;
 
@@ -293,7 +293,7 @@ const struct MapWarpRegion *Kolima_GetRegions(void) {
   return 0;
 }
 
-/// The exits of all three scenes, each scene's after its header word (an exit
+/// The warps of all three maps, each map's after its header word (a warp
 /// of kind 0): Kolima's to the world map, the houses (MapId_KolimaInteriors)
 /// and Kolima
 /// Tunnel, Kolima Bridge's to the world map, and Kolima Tunnel's to a house
@@ -339,7 +339,8 @@ static void Kolima_GraniteJoins(void) {
   Djinn_JoinParty(LOCALID_GRANITE, ELEMENT_VENUS, DJINNI_INDEX(DJINNI_GRANITE));
 }
 
-/// Selects Kolima Bridge's events, or the table Kolima and Kolima Tunnel share.
+/// Selects Kolima Bridge's map events, or the table Kolima and Kolima Tunnel
+/// share.
 const struct MapEvent *Kolima_GetEvents(void) {
   if (gGameState.mapId == (s32)&MapId_KolimaBridge) {
     return gKolimaBridgeEvents;
@@ -347,7 +348,7 @@ const struct MapEvent *Kolima_GetEvents(void) {
   return gKolimaEvents;
 }
 
-/// Walks the leader north through a door of Kolima into the exit of the same
+/// Walks the leader north through a door of Kolima into the warp of the same
 /// number.
 static void Kolima_WalkThroughExit(s32 warpNumber) {
   ObjectEvent_GetById(LOCALID_PARTY_LEADER)->motionFlags = 0;
@@ -359,7 +360,7 @@ static void Kolima_WalkThroughExit(s32 warpNumber) {
 }
 
 /// Kolima: walking into one of the five doorways into the houses and shops,
-/// whose triggers are the numbers of the exits they take (KOLIMA_TO_INN to
+/// whose coord events are the numbers of the warps they take (KOLIMA_TO_INN to
 /// KOLIMA_TO_HOUSE_NORTH). The door sound plays; the four entered walking
 /// north open their door (gKolima_DoorCells) and the leader walks in, while
 /// KOLIMA_TO_HOUSE_NORTH, entered walking south, has no door to draw.
@@ -401,15 +402,15 @@ static void Kolima_EnterDoor(void) {
   Engine_ScriptEnd();
 }
 
-/// Kolima Bridge, the first time the party steps up to it (trigger 10, until
-/// FLAG_KOLIMA_BRIDGE_LOWERED): the villager beside it
+/// Kolima Bridge, the first time the party steps up to it (coord event 10,
+/// until FLAG_KOLIMA_BRIDGE_LOWERED): the villager beside it
 /// (LOCALID_BRIDGE_VILLAGER) asks whether they are going to cross, and at the
 /// leader's nod says "Go right ahead!" and hops aside to the post. The
 /// drawbridge then comes down across the river in front of the leader in four
 /// ever quicker steps of map cells, ten puffs of dust fly up where it lands,
 /// the screen shakes and the leader jumps back. The last cells copied also
-/// open the bridge's collision. From then on the villager keeps turning to
-/// face the leader. Sets FLAG_KOLIMA_BRIDGE_LOWERED.
+/// give the bridge the metatile behaviors that open it. From then on the
+/// villager keeps turning to face the leader. Sets FLAG_KOLIMA_BRIDGE_LOWERED.
 static void Kolima_LowerBridge(void) {
   u32 debrisIndex;
 
@@ -500,14 +501,14 @@ static void Kolima_LowerBridge(void) {
   Engine_ScriptEnd();
 }
 
-/// Sets up whichever scene is entered: Kolima Bridge as the curse and the
+/// Sets up whichever map is entered: Kolima Bridge as the curse and the
 /// bridge leave it (Kolima_RestoreBridgeState), Kolima Tunnel with a window
 /// transition, and Kolima itself. There the four sparkles twinkle, the
 /// villagers stand as trees while the curse lasts (and three cells around
-/// (14, 8) take the attributes of cell (13, 9)), and the first entry from the
-/// world map plays Kolima_WitnessForestCurse. Once that has been seen, here or
-/// in Kolima Forest, Garet, Ivan and Mia, the two voices and the domes are
-/// taken away and five more sparkles are placed.
+/// (14, 8) take the metatile behavior of cell (13, 9)), and the first entry
+/// from the world map plays Kolima_WitnessForestCurse. Once that has been seen,
+/// here or in Kolima Forest, Garet, Ivan and Mia, the two voices and the domes
+/// are taken away and five more sparkles are placed.
 s32 Kolima_Initialize(void) {
   s16 mapId;
   u32 objectEvent;
@@ -612,7 +613,7 @@ static void Kolima_FinishReadingThoughts(void) {
   FieldEffect_End();
 }
 
-/// Gives the four companions the same nod, waiting on the final actor.
+/// Gives the four companions the same nod, waiting on the final object event.
 static __inline__ void Kolima_NodTogether(void) {
   Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIMATION_NOD);
   Engine_ObjectEventSetAnimation(GARET, ANIMATION_NOD);
@@ -1576,13 +1577,14 @@ static void Kolima_WitnessForestCurse(void) {
   Engine_ScriptEnd();
 }
 
-/// Shows the selected dialogue through an actor, then holds for its reaction.
+/// Shows the selected dialogue through an object event, then holds for its
+/// reaction.
 static void Kolima_ShowMessageAndWait(s32 objectEventId, s32 waitFrames) {
   Engine_ScriptShowMessage(objectEventId, 0);
   Engine_ScriptWait(waitFrames);
 }
 
-/// Turns an actor immediately, then leaves time for the next scene beat.
+/// Turns an object event immediately, then leaves time for the next scene beat.
 static void Kolima_FaceObjectEventAndWait(s32 objectEventId, s32 facing,
                                           s32 waitFrames) {
   Engine_ObjectEventFaceDirection(objectEventId, facing, 0);
@@ -1675,10 +1677,10 @@ s32 gKolima_EffectActive __attribute__((section(".bss")));
 /// Sets up Kolima Bridge. While the curse lasts, the villager as a man
 /// (LOCALID_BRIDGE_VILLAGER) is put out of sight, leaving him a tree
 /// (LOCALID_BRIDGE_VILLAGER_AS_TREE), and the row of cells at (9, 18) takes the
-/// attributes of the row above it; afterwards the tree is put out of sight
-/// instead. Once the bridge is down (FLAG_KOLIMA_BRIDGE_LOWERED), it is
+/// metatile behaviors of the row above it; afterwards the tree is put out of
+/// sight instead. Once the bridge is down (FLAG_KOLIMA_BRIDGE_LOWERED), it is
 /// drawn down and its cells changed to match. XXX: the row likely closes the
-/// bridge while the curse lasts, because the bridge's one event (trigger 10)
+/// bridge while the curse lasts, because the bridge's one coord event (10)
 /// needs the man who is a tree until then.
 static void Kolima_RestoreBridgeState(void) {
   if (Engine_GameFlagIsSet(FLAG_KOLIMA_CURSE_LIFTED) == 0) {
@@ -1800,8 +1802,8 @@ u16 gKolima_DoorCells[] = {
     MAPGRID_ANIM_STEPS_END,
 };
 
-/// Kolima's entrances. No exit leads to entrances 2, 10 and 12; entrance 10
-/// puts the party where KOLIMA_FROM_WORLD_MAP does.
+/// Kolima's warp destinations. No warp leads to warp destinations 2, 10 and 12;
+/// warp destination 10 puts the party where KOLIMA_FROM_WORLD_MAP does.
 struct MapWarpDest gKolimaWarpDests[] = {
     {0, CONDITION_ALWAYS, 232, 0, 120, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {KOLIMA_FROM_WORLD_MAP, CONDITION_ALWAYS, 44, 0, 267, FACING_EAST, 0, -1,
@@ -1847,7 +1849,7 @@ struct MapWarpRegion gKolimaTunnelRegions[] = {
     {-1, 0, 0, 0, 0, 0, 0, 0},
 };
 
-/// Kolima's exits, then Kolima Bridge's (from the header word for MapId_KolimaBridge)
+/// Kolima's warps, then Kolima Bridge's (from the header word for MapId_KolimaBridge)
 /// and Kolima Tunnel's (from the one for MapId_KolimaTunnel).
 u32 gKolimaWarps[] = {
     MAP_WARPS(Kolima),
@@ -1953,10 +1955,10 @@ struct ObjectEventTemplate gKolimaBridgeObjectEventTemplates[] = {
     { MAP_TABLE_END },
 };
 
-/// The events Kolima and Kolima Tunnel share: the exits and doorways, the
+/// The map events Kolima and Kolima Tunnel share: the warps and doorways, the
 /// villagers' words once the curse is lifted and their thoughts before and
-/// after, the healer, Granite and two jars. Exits 1 and 2, which cell 99 takes
-/// too, keep their numbers, since each scene's exit table gives them its own
+/// after, the healer, Granite and two jars. Warps 1 and 2, which cell 99 takes
+/// too, keep their numbers, since each map's warp table gives them its own
 /// doors: KOLIMA_TO_WORLD_MAP and KOLIMA_TO_WORLD_MAP_EAST in Kolima,
 /// KOLIMA_TUNNEL_TO_KOLIMA_INTERIORS and KOLIMA_TUNNEL_TO_KOLIMA in Kolima
 /// Tunnel.
@@ -2003,7 +2005,7 @@ struct MapEvent gKolimaEvents[] = {
     { MAP_EVENTS_END },
 };
 
-/// Kolima Bridge's events: its two ends, the bridge's fall and the villager.
+/// Kolima Bridge's map events: its two ends, the bridge's fall and the villager.
 struct MapEvent gKolimaBridgeEvents[] = {
     { MAP_EVENT_WARP, 1, CONDITION_ALWAYS, KOLIMA_BRIDGE_TO_WORLD_MAP_SOUTH },
     { MAP_EVENT_WARP, 2, CONDITION_ALWAYS, KOLIMA_BRIDGE_TO_WORLD_MAP_NORTH },

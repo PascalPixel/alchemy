@@ -2,8 +2,8 @@
 /// The first and last rooms of Goma Cave, the cave in the Goma Range between
 /// Vault and Bilibin: MapId_GomaCaveStream and MapId_GomaCaveBridge, both
 /// under the area name Goma Cave. The getters give MapId_GomaCaveBridge its
-/// own tables and any other scene MapId_GomaCaveStream's; the two share one
-/// exit table.
+/// own tables and any other map MapId_GomaCaveStream's; the two share one
+/// warp table.
 ///
 /// - MapId_GomaCaveStream, the room a stream runs the length of. The party
 ///   walks in from the Goma Cave Entrance
@@ -12,19 +12,19 @@
 ///   shake and a ring of dust, then hops on into the water with a splash and
 ///   sinks until its top shows, and the cells where it lies change
 ///   (FLAG_GOMA_CAVE_STREAM_STUMP_MOVED, a story flag, so it stays there for
-///   good). A chest holds Power Bread. Exits lead back to the Goma Cave
+///   good). A chest holds Power Bread. Warps lead back to the Goma Cave
 ///   Entrance, into the room of two pillars (goma_cave_pillar.c;
 ///   GOMA_CAVE_STREAM_TO_GOMA_CAVE_PILLAR_WEST and _EAST) and north into
 ///   MapId_GomaCaveBridge. Vale's VALE_GATE_TO_GOMA_CAVE_STREAM leads in at
-///   GOMA_CAVE_STREAM_FROM_VALE_GATE, which arrives without the place name in
+///   GOMA_CAVE_STREAM_FROM_VALE_GATE, which arrives without the area name in
 ///   a passage walled off from the rest of the room, its own camera box with
 ///   a chest at its north end (its render,
-///   places/goma-cave-stream/map-5.png). Its only way out is the collision
-///   code 1 cell at its south tip, cell (38, 55) in map_023's
+///   places/goma-cave-stream/map-5.png). Its only way out is the metatile
+///   behavior 1 cell at its south tip, cell (38, 55) in layout_023's
 ///   grid_collision.tsv, two cells south of the arrival, which leads back to
 ///   Vale (GOMA_CAVE_STREAM_TO_VALE_GATE).
 /// - MapId_GomaCaveBridge, the way out, where a wooden bridge crosses the
-///   river. It has no actors and only its two exits: back south into
+///   river. It has no object events and only its two warps: back south into
 ///   MapId_GomaCaveStream and out onto the world map toward Bilibin
 ///   (GOMA_CAVE_BRIDGE_TO_WORLD_MAP).
 ///
@@ -60,8 +60,8 @@
 #include "ability_ids.h"
 #include "vector3.h"
 
-/// MapId_GomaCaveStream's actors, numbering its placement rows from
-/// LOCALID_FIRST_PLACED.
+/// MapId_GomaCaveStream's object events, numbering its object event template
+/// rows from LOCALID_FIRST_PLACED.
 enum GomaCaveWaterwayLocalId {
   /// The stump Move pushes, as Garet calls the one at the Goma Cave Entrance.
   /// ★ Named from the game: "It's no use. Our Psynergy isn't strong enough to
@@ -69,9 +69,9 @@ enum GomaCaveWaterwayLocalId {
   LOCALID_STUMP = LOCALID_FIRST_PLACED
 };
 
-/// MapId_GomaCaveStream's entrance that no exit names, standing the leader
-/// just east of the stump, facing it. Only the debug scene selector, which
-/// warps to any entrance by number, reaches it.
+/// MapId_GomaCaveStream's warp destination that no warp names, standing the
+/// leader just east of the stump, facing it. Only the debug map selector, which
+/// warps to any warp destination by number, reaches it.
 enum { WARP_DEST_BESIDE_STUMP = 99 };
 
 static void GomaCaveWaterway_LeapStump(s32 stumpId);
@@ -127,7 +127,7 @@ const struct MapEvent *Map_GetEvents(void) {
 
 /// Sets up MapId_GomaCaveStream as the party enters (MapId_GomaCaveBridge
 /// needs nothing).
-/// Arriving from Vale (GOMA_CAVE_STREAM_FROM_VALE_GATE) shows no place
+/// Arriving from Vale (GOMA_CAVE_STREAM_FROM_VALE_GATE) shows no area
 /// name; otherwise the stump lies where the party moved it.
 s32 Map_Initialize(void) {
   struct ObjectEvent *stump;

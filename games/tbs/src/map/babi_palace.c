@@ -1,23 +1,23 @@
 /// @file
-/// Babi's Palace in Tolbi, two scenes under the area name Babi's Palace that
-/// share this overlay and one exit table:
+/// Babi's Palace in Tolbi, two maps under the area name Babi's Palace that
+/// share this overlay and one warp table:
 ///
 /// - MapId_BabiPalaceEntrance, the court between the town and the palace
 ///   door, with two guards and a well. Its door opens by a cell animation
 ///   (gBabiPalace_DoorCells, BabiPalace_LeaveThroughAnimatedDoor).
-/// - MapId_BabiPalace, the palace's rooms on one map, joined by exits into
-///   the same scene and by doors that open by the map's tile animation
+/// - MapId_BabiPalace, the palace's rooms on one map, joined by warps into
+///   the same map and by doors that open by the map's tile animation
 ///   channels (enum BabiPalaceDoorAnimation, BabiPalace_LeaveThroughDoor). One
 ///   door leads to Babi's scholars (BABI_PALACE_TO_VALE_INTERIORS_INN, held by
 ///   vale_interiors_inn.c) and one into the Colosseum Tunnel
 ///   (BABI_PALACE_TO_COLOSSEUM_TUNNEL).
 ///
-/// Each scene has three placement and event tables, and
-/// Map_GetObjectEventTemplates and Map_GetEvents choose between them by two
+/// Each map has three object event template tables and three map event tables,
+/// and Map_GetObjectEventTemplates and Map_GetEvents choose between them by two
 /// story flags: while Babi is missing, during the finals (FLAG_BABI_SAVED, set
 /// when the party saves him in Altmiller Cave) and after Colosso
-/// (FLAG_COLOSSO_OVER). The people inside stand in all three under other actor
-/// numbers, so each table has its own actor enum.
+/// (FLAG_COLOSSO_OVER). The people inside stand in all three under other local
+/// ids, so each table has its own local id enum.
 ///
 /// While Babi is missing, the attendant shows the party four beds
 /// (BabiPalace_ShowBeds), which a search then sleeps in
@@ -31,9 +31,10 @@
 /// During the finals the guards outside pass on Babi's word once
 /// (BabiPalace_PassOnBabisWord, FLAG_BABI_PALACE_GUARD_GAVE_WORD) and the
 /// attendant offers a rest (BabiPalace_OfferRest). The finals send the party
-/// back here by two entrances, which BabiPalace_ApplyEntryState answers by
-/// restoring the party and its inventory (BabiPalace_RestorePartyAndInventory)
-/// and playing a waking in the big bedroom: a lost first or second match by
+/// back here by two warp destinations, which BabiPalace_ApplyEntryState answers
+/// by restoring the party and its inventory
+/// (BabiPalace_RestorePartyAndInventory) and playing a waking in the big
+/// bedroom: a lost first or second match by
 /// BABI_PALACE_FROM_COLOSSEUM_AZART_MATCH (BabiPalace_WakeFromFinalsDream),
 /// the third match by BABI_PALACE_FROM_COLOSSEUM_NAVAMPA_MATCH
 /// (BabiPalace_WakeAfterFinals).
@@ -43,14 +44,14 @@
 /// audience (BabiPalace_MeetBabiAfterColosso, FLAG_BABI_SPOKE_AFTER_COLOSSO),
 /// which gives the victor's prize when FLAG_WON_COLOSSO is set and ends with
 /// Babi sending Iodem with the party, to meet at Gondowan Passage. The Cloak
-/// Ball on show is an actor drawn from the item's icon until the party takes it
-/// (BabiPalace_OfferCloakBall, FLAG_BABI_PALACE_CLOAK_BALL).
+/// Ball on show is an object event drawn from the item's icon until the party
+/// takes it (BabiPalace_OfferCloakBall, FLAG_BABI_PALACE_CLOAK_BALL).
 ///
 /// Open questions:
 /// - XXX (no evidence): what BABI_PALACE_AFTER_BABI_SAVED and
-///   BABI_PALACE_AFTER_COLOSSO were made for; only the debug scene selector,
-///   which enters any scene by entrance number, reaches them, and nothing in
-///   the ROM says why they set the story flags they set.
+///   BABI_PALACE_AFTER_COLOSSO were made for; only the debug map selector,
+///   which enters any map by warp destination number, reaches them, and nothing
+///   in the ROM says why they set the story flags they set.
 
 #include "game_state.h"
 #include "heap_state.h"
@@ -89,9 +90,10 @@
 #include "songs.h"
 #include "audio_engine_symbols.h"
 
-/// The palace's actors are placed by one of three tables, as the story goes on:
-/// before Babi is rescued (gBabiPalace_ObjectEventTemplatesBabiMissing), during
-/// the finals (gBabiPalace_ObjectEventTemplatesFinals) and after Colosso
+/// The palace's object events are placed by one of three tables, as the story
+/// goes on: before Babi is rescued
+/// (gBabiPalace_ObjectEventTemplatesBabiMissing), during the finals
+/// (gBabiPalace_ObjectEventTemplatesFinals) and after Colosso
 /// (gBabiPalace_ObjectEventTemplatesAfterColosso). Each numbers its rows from
 /// LOCALID_FIRST_PLACED, with Garet, Ivan, Mia and Sheba in their own party
 /// slots, and most of the people stand in all three under other numbers. The
@@ -257,7 +259,7 @@ enum { FLAG_ATTENDANT_SHOWED_BEDS = FLAG_MAP_TEMP_00 };
 
 /// The palace map's tile animation channels that open its doors, for
 /// TileAnimation_ResumeChannel (play) and TileAnimation_PauseChannel (pause).
-/// Each scene entry pauses them, so every door is drawn shut; the recording of
+/// Each map entry pauses them, so every door is drawn shut; the recording of
 /// BabiPalace_LeaveThroughDoor shows one swing open
 /// (https://alchemy.pascalpixel.com/places/babi-palace/events/BabiPalace_LeaveThroughDoor.gif).
 enum BabiPalaceDoorAnimation {
@@ -277,8 +279,8 @@ enum BabiPalaceBedAnimation {
   ANIMATION_IN_BED_SHAKE_HEAD = 34
 };
 
-/// Collision codes the event tables answer besides the exits, whose codes are
-/// their exits' numbers.
+/// Metatile behaviors the map events answer besides the warps, whose metatile
+/// behaviors are their warps' numbers.
 enum BabiPalaceTrigger {
   /// The cells beside Iodem, while Babi is missing
   /// (BabiPalace_HearSoldiersReport).
@@ -336,15 +338,15 @@ const struct MapWarpDest *Map_GetWarpDests(void) {
   return gBabiPalace_WarpDests;
 }
 
-/// The palace has no regions; the table is empty.
+/// The palace has no warp regions; the table is empty.
 const struct MapWarpRegion *BabiPalace_GetRegions(void) {
   return gBabiPalace_Regions;
 }
 
-/// Both scenes share one exit table.
+/// Both maps share one warp table.
 const u32 *BabiPalace_GetWarps(void) { return gBabiPalace_Warps; }
 
-/// Returns the actor placements for the scene and the story: before Babi's
+/// Returns the object event templates for the map and the story: before Babi's
 /// rescue, during the finals or after Colosso.
 const struct ObjectEventTemplate *Map_GetObjectEventTemplates(void) {
   if (gGameState.mapId == (s32)&MapId_BabiPalaceEntrance) {
@@ -2332,9 +2334,9 @@ static void BabiPalace_MeetBabiAfterColosso(void) {
 }
 
 /// Walking north into one of the palace's doors: it opens (SE_DOOR_OPEN) and
-/// the leader walks through. The door's touch trigger is the number of the exit
-/// it leads to, so the event table names each by its exit and the trigger is
-/// passed on as the exit. The throne room's door walks the leader straight
+/// the leader walks through. The door's coord event is the number of the warp
+/// it leads to, so the map events name each by its warp and the trigger is
+/// passed on as the warp. The throne room's door walks the leader straight
 /// north; the others first center the leader on the door.
 static void BabiPalace_LeaveThroughDoor(void) {
   struct EventWork *work;
@@ -2470,7 +2472,8 @@ static void BabiPalace_ExamineWell(void) {
   Engine_ScriptEnd();
 }
 
-/// Returns the event table for the scene and the story, as the placements.
+/// Returns the map events for the map and the story, as for the object event
+/// templates.
 const struct MapEvent *Map_GetEvents(void) {
   if (gGameState.mapId == (s32)&MapId_BabiPalaceEntrance) {
     if (Engine_GameFlagIsSet(FLAG_COLOSSO_OVER) != 0) {
@@ -2490,7 +2493,7 @@ const struct MapEvent *Map_GetEvents(void) {
   return gBabiPalace_EventsBabiMissing;
 }
 
-/// Sets up the scene being entered: the doors, the Cloak Ball on show, and
+/// Sets up the map being entered: the doors, the Cloak Ball on show, and
 /// the scenes that play on arrival (Babi after Colosso, the attendant during
 /// the finals, waking after a night's rest). Returns 0.
 s32 BabiPalace_ApplyEntryState(void) {
@@ -2555,8 +2558,8 @@ s32 BabiPalace_ApplyEntryState(void) {
     if (gGameState.warpDest == BABI_PALACE_FROM_COLOSSEUM_NAVAMPA_MATCH) {
       BabiPalace_RestorePartyAndInventory();
       BabiPalace_WakeAfterFinals();
-      // XXX: likely so that reloading the scene does not play the waking again,
-      // because only this entrance chooses it.
+      // XXX: likely so that reloading the map does not play the waking again,
+      // because only this warp destination chooses it.
       gGameState.warpDest = BABI_PALACE_BIG_BEDROOM_FROM_STATUE_ROOM_WEST;
     }
     if (gGameState.warpDest == BABI_PALACE_FROM_COLOSSEUM_AZART_MATCH) {

@@ -1,8 +1,8 @@
 /// @file
 /// The three Colosseum finals matches, and three of Crossbone Isle Cave's side
 /// rooms (CrossboneIsleKeys, CrossboneIsleStatues and CrossboneIsleBane): an
-/// actor drawn as an item's menu icon, such as the two prizes at a finals
-/// match's arena or the keys in CrossboneIsleKeys.
+/// object event drawn as an item's menu icon, such as the two prizes at a
+/// finals match's arena or the keys in CrossboneIsleKeys.
 #include "battle.h"
 #include "debug.h"
 #include "field.h"
@@ -20,9 +20,9 @@
 #include "dma.h"
 #include "io_reg.h"
 
-/// Replaces the picture of actor id, when it has a sprite of its own, with the
-/// icon of item: the icon's tiles, decoded into heap block 17, are loaded into
-/// the sprite's VRAM block and its animation is stopped.
+/// Replaces the picture of object event id, when it has a sprite of its own,
+/// with the icon of item: the icon's tiles, decoded into heap block 17, are
+/// loaded into the sprite's VRAM block and its animation is stopped.
 void Colosso_ShowItemIcon(s32 id, s32 item) {
   struct ObjectEvent *obj;
   s32 one;

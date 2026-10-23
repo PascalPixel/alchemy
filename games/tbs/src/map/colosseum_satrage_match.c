@@ -7,11 +7,11 @@
 /// It works as Colosseum Final 1 does (colosseum_azart_match.c), and is reached
 /// by the Colosseum's west passage. The stages run from east to west, through
 /// the Mini-Maze, the shifting floor stage, the Log-Rolling Stage, The Wall and
-/// the Board Walk. Isaac comes here three times, each at its own entrance, and
-/// ColosseumSatrageMatch_Initialize restores the stages from their temporary
-/// flags (FLAG_OBSTACLE_KNOCKED_DOWN to FLAG_WALL_PILLAR_MOVED, and the
-/// Mini-Maze pillars' columns from FLAG_MINI_MAZE_FIRST_PILLAR_COLUMN) before
-/// setting up the visit its entrance stands for:
+/// the Board Walk. Isaac comes here three times, each at its own warp
+/// destination, and ColosseumSatrageMatch_Initialize restores the stages from
+/// their temporary flags (FLAG_OBSTACLE_KNOCKED_DOWN to FLAG_WALL_PILLAR_MOVED,
+/// and the Mini-Maze pillars' columns from FLAG_MINI_MAZE_FIRST_PILLAR_COLUMN)
+/// before setting up the visit its warp destination stands for:
 ///
 /// - COLOSSEUM_SATRAGE_MATCH_FROM_COLOSSEUM_WEST, the tour
 ///   (ColosseumSatrageMatch_IntroduceSecondFinals). The guide only greets the
@@ -44,7 +44,7 @@
 /// (ColosseumSatrageMatch_UpdateLifts): every
 /// COLOSSEUM_SATRAGE_MATCH_LIFT_CYCLE_FRAMES the phase flips, all four lifts
 /// lined up across the water in one phase and two up and two down, by turns,
-/// in the other. Each frame the task copies collision into row 13 from
+/// in the other. Each frame the task copies metatile behaviors into row 13 from
 /// column 58 and into cell (58, 11): one pair of copies by phase once the
 /// last lift has stopped, another while it moves
 /// (https://alchemy.pascalpixel.com/places/colosseum-satrage-match/lifts.gif:
@@ -181,12 +181,12 @@ static s32 ColosseumSatrageMatch_ApproachFinishAndTakeItem(s32 firstItem,
 static void ColosseumSatrageMatch_StartOpponentPath(s32 pathResource);
 static void ColosseumSatrageMatch_PushAdjacentObstacle(void);
 
-/// The second finals match's actors, numbered in the order of
+/// The second finals match's object events, numbered in the order of
 /// gColosseumSatrageMatchObjectEventTemplates from LOCALID_FIRST_PLACED; the
-/// rows of Isaac, Garet, Ivan and Mia take their own actors. By the guide's and
-/// attendants' explanations, the Mini-Maze, the shifting floor stage, the
-/// Log-Rolling Stage, The Wall and the Board Walk lead to the arena. The stone
-/// pillars are drawn as the stone pillars Move pushes elsewhere.
+/// rows of Isaac, Garet, Ivan and Mia take their own object events. By the
+/// guide's and attendants' explanations, the Mini-Maze, the shifting floor
+/// stage, the Log-Rolling Stage, The Wall and the Board Walk lead to the arena.
+/// The stone pillars are drawn as the stone pillars Move pushes elsewhere.
 enum ColosseumSatrageMatchLocalId {
   OPPONENT = LOCALID_FIRST_PLACED, ///< Satrage, racing Isaac to the arena
   /// The Board Walk's two stone pillars, on which Move does nothing.
@@ -279,7 +279,7 @@ static inline void InitializeObjectEventZero(void) {
   Engine_ObjectEventSetSpeed(LOCALID_PARTY_LEADER, PIXELS(1), PIXELS(1) / 2);
 }
 
-/// Sets the specified actor's walking speed and acceleration.
+/// Sets the specified object event's walking speed and acceleration.
 static inline void InitializeSelectedObjectEvent(s32 objectEventId) {
   Engine_ObjectEventSetSpeed(objectEventId, PIXELS(1), PIXELS(1) / 2);
 }
@@ -290,7 +290,7 @@ const struct MapWarpDest *Map_GetWarpDests(void) {
 
 const struct MapWarpRegion *Map_GetWarpRegions(void) { return 0; }
 
-/// Returns the packed stage and battle-result exits.
+/// Returns the packed stage and battle-result warps.
 const u32 *Map_GetWarps(void) { return gColosseumSatrageMatchWarps; }
 
 /// Returns Colosseum Final 2's warriors, obstacles and attendants.
@@ -302,8 +302,8 @@ const struct ObjectEventTemplate *Map_GetObjectEventTemplates(void) {
 static void EventScript_IgnoreMove(void) {}
 
 /// Walking into a stone pillar pushes it. In Colosseum Final 2, walking into
-/// one at trigger 21 pushes the obstacle immediately ahead of the selected
-/// actor.
+/// one at coord event 21 pushes the obstacle immediately ahead of the selected
+/// object event.
 static void EventScript_PushPillar(void) {
   ColosseumSatrageMatch_PushAdjacentObstacle();
 }
@@ -329,8 +329,8 @@ static void EventScript_UpdateMovedPillarCell(void) {
   }
 }
 
-/// Walking into the stone pillar by The Wall (triggers 20 and 26) pushes it,
-/// then updates its cell.
+/// Walking into the stone pillar by The Wall (coord events 20 and 26) pushes
+/// it, then updates its cell.
 static void EventScript_PushPillarAndUpdateCells(void) {
   ColosseumSatrageMatch_PushAdjacentObstacle();
   EventScript_UpdateMovedPillarCell();
@@ -414,7 +414,7 @@ static void EventScript_KnockDownObstacle(void) {
   obstacle->z.fixed = PIXELS(264);
   obstacle->velocityY = 0;
   obstacle->velocityX = 0;
-  // Keep both the stage and its saved collision strip in the new state.
+  // Keep both the stage and its saved metatile behavior strip in the new state.
   MapGrid_CopyCellAttributes(19, 16, 1, 1, 20, 16);
   MapGrid_CopyCellAttributes(20, 80, 1, 1, 21, 80);
 }
@@ -457,15 +457,15 @@ static void EventScript_GrowPlant(void) {
   }
 }
 
-/// The selected actor jumps down off the ledge by an obstacle. Walking south
-/// into the obstacle at trigger 30 in Colosseum Final 2 plays the hop the field
-/// plays at any ledge (FieldObjectEvent_JumpDownLedge) for the actor touching
-/// it.
+/// The selected object event jumps down off the ledge by an obstacle. Walking
+/// south into the obstacle at coord event 30 in Colosseum Final 2 plays the hop
+/// the field plays at any ledge (FieldObjectEvent_JumpDownLedge) for the object
+/// event touching it.
 static void EventScript_JumpDownLedge(void) {
   FieldObjectEvent_JumpDownLedge(gGameState.selectedObjectEvent, 6, 0);
 }
 
-/// Walking west into the obstacle at trigger 30 in Colosseum Final 2 only
+/// Walking west into the obstacle at coord event 30 in Colosseum Final 2 only
 /// checks what is ahead.
 static void EventScript_CheckAhead(void) { Engine_LeaderCheckAhead(); }
 
@@ -523,8 +523,8 @@ static void ColosseumSatrageMatch_MovePusherAndLog(s32 logId, s32 offsetX,
   Engine_ScriptEnd();
 }
 
-/// Standing on one of the Log-Rolling Stage's logs (trigger 22): it carries the
-/// rider across the water the way the player holds.
+/// Standing on one of the Log-Rolling Stage's logs (coord event 22): it carries
+/// the rider across the water the way the player holds.
 static void EventScript_RideLog(void) {
   struct ObjectEvent *pusher =
       ObjectEvent_GetById(gGameState.selectedObjectEvent);
@@ -608,7 +608,8 @@ static void ColosseumSatrageMatch_RollLogToCell(s32 logId, s32 halfCellX,
   Engine_ScriptEnd();
 }
 
-/// Rebuilds the three rolling logs' collision rectangles at their positions.
+/// Rebuilds the metatile behaviors under the three rolling logs at their
+/// positions.
 static void ColosseumSatrageMatch_UpdateRollingLogCollision(void) {
   s32 cell;
 
@@ -625,7 +626,7 @@ static void ColosseumSatrageMatch_UpdateRollingLogCollision(void) {
 }
 
 /// Walking west into the Board Walk's western log rolls it west. Walking into
-/// the western log from the east (trigger 24) or the west (25), or into the
+/// the western log from the east (coord event 24) or the west (25), or into the
 /// eastern one from the east (28) or the west (27), rolls it the way the leader
 /// walks.
 static void EventScript_RollWestLogWest(void) {
@@ -633,25 +634,28 @@ static void EventScript_RollWestLogWest(void) {
   ColosseumSatrageMatch_UpdateRollingLogCollision();
 }
 
-/// Walking east into the Board Walk's western log (trigger 25) rolls it east.
+/// Walking east into the Board Walk's western log (coord event 25) rolls it
+/// east.
 static void EventScript_RollWestLogEast(void) {
   ColosseumSatrageMatch_RollLogToCell(ROLLING_LOG_WEST, 33, 26);
   ColosseumSatrageMatch_UpdateRollingLogCollision();
 }
 
-/// Walking west into the Board Walk's eastern log (trigger 28) rolls it west.
+/// Walking west into the Board Walk's eastern log (coord event 28) rolls it
+/// west.
 static void EventScript_RollEastLogWest(void) {
   ColosseumSatrageMatch_RollLogToCell(ROLLING_LOG_EAST, 45, 26);
   ColosseumSatrageMatch_UpdateRollingLogCollision();
 }
 
-/// Walking east into the Board Walk's eastern log (trigger 27) rolls it east.
+/// Walking east into the Board Walk's eastern log (coord event 27) rolls it
+/// east.
 static void EventScript_RollEastLogEast(void) {
   ColosseumSatrageMatch_RollLogToCell(ROLLING_LOG_EAST, 49, 26);
   ColosseumSatrageMatch_UpdateRollingLogCollision();
 }
 
-/// Unused: no event table row calls it, so the Board Walk's center log never
+/// Unused: no map event row calls it, so the Board Walk's center log never
 /// rolls. Walking into it would have rolled it north, as the western and
 /// eastern logs roll west and east (EventScript_RollWestLogWest and the rest).
 static UNUSED void ColosseumSatrageMatch_UnusedRollCenterLogNorth(void) {
@@ -666,8 +670,9 @@ static UNUSED void ColosseumSatrageMatch_UnusedRollCenterLogSouth(void) {
   ColosseumSatrageMatch_UpdateRollingLogCollision();
 }
 
-/// The shifting floor's callback: carries the selected actor on the lifts and
-/// alternates their routes every two seconds, until Halt stops the operator.
+/// The shifting floor's callback: carries the selected object event on the
+/// lifts and alternates their routes every two seconds, until Halt stops the
+/// operator.
 static void ColosseumSatrageMatch_UpdateLifts(void) {
   s32 liftId;
   struct ObjectEvent *rider;
@@ -722,7 +727,7 @@ static void ColosseumSatrageMatch_UpdateLifts(void) {
     }
     rider->z.fixed = riderZ;
   }
-  // The final lift's destination selects the collision tiles for the row.
+  // The final lift's destination selects the metatile behaviors for the row.
   if (gColosseumSatrageMatch_LiftTimer != 0 && lift->targetX == 0x80000000) {
     if (gColosseumSatrageMatch_LiftPhase == 0) {
       MapGrid_CopyCellAttributes(58, 28, 7, 1, 58, 13);
@@ -834,7 +839,7 @@ static void EventScript_HaltLifts(void) {
 /// Reaching Colosseum Final 2's arena: the leader takes a prize (the Chain Mail
 /// if first, the Cotton Shirt if second), and he and Satrage face off and
 /// fight; the battle's group follows who took the mail.
-/// The arena's touch row waits on FLAG_MAP_TEMP_10 being clear, which
+/// The arena's coord event row waits on FLAG_MAP_TEMP_10 being clear, which
 /// nothing in the game sets (colosseum_azart_match.c's EventScript_ReachArena).
 static void EventScript_ReachArena(void) {
   s32 opponentFinishedFirst;
@@ -900,7 +905,8 @@ static void ColosseumSatrageMatch_StageBattleResult(s32 result) {
   ObjectEvent_SetPosition(OPPONENT, PIXELS(88), PIXELS(256));
   ObjectEvent_SetPosition(LOCALID_PARTY_LEADER, PIXELS(120), PIXELS(256));
   // BUG: 0x4000 is FACING_SOUTH, passed where ObjectEvent_FaceObjectEvent takes
-  // an actor number; ObjectTable_Get has no actor past 0xbf, so neither turns.
+  // a local id; ObjectTable_Get has no object event past 0xbf, so neither
+  // turns.
 #ifdef BUGFIX
   ObjectEvent_FaceDirection(OPPONENT, FACING_SOUTH, 0);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_SOUTH, 0);
@@ -940,7 +946,8 @@ s32 ColosseumSatrageMatch_Initialize(void) {
   s32 zero;
 
   gEventWork->startTransition = MAP_TRANSITION(TRANSITION_FADE, 0);
-  // Restore the collision templates before applying saved puzzle progress.
+  // Restore the metatile behavior templates before applying saved puzzle
+  // progress.
   Engine_GameFlagSet(FLAG_RETREAT_BLOCKED);
   MapGrid_CopyCellAttributes(14, 11, 12, 4, 100, 11);
   MapGrid_CopyCellAttributes(48, 10, 5, 6, 120, 10);
@@ -997,7 +1004,8 @@ s32 ColosseumSatrageMatch_Initialize(void) {
   objectEvent->priorityFlags = 2;
   MapGrid_CopyCellAttributes(52, 28, 1, 3, column, 13);
 
-  // Each Mini-Maze pillar returns to the column its place flag byte keeps.
+  // Each Mini-Maze pillar returns to the column its map-section temp flag byte
+  // keeps.
   x = FieldGameFlag_GetByte(FLAG_MINI_MAZE_FIRST_PILLAR_COLUMN);
   if (x == 0) {
     x = 73;
@@ -1808,7 +1816,8 @@ void Map_BuildDescriptorAndInstallTask(s32 leaderId, s32 opponentId,
   leader = ObjectEvent_GetById(leaderId);
   opponent = ObjectEvent_GetById(opponentId);
 
-  // Mirror the recorded opponent start when this is a fresh race entrance.
+  // Mirror the recorded opponent start when this is a fresh arrival at the
+  // race.
   if (Engine_GameFlagIsSet(FLAG_KEEP_PARTY_POSITION) == 0) {
     opponent->x.fixed = (finishX << 1) - leader->x.fixed;
     opponent->z.fixed = leader->z.fixed;

@@ -161,7 +161,10 @@ markers.
 
 `UNUSED` marks a function nothing calls, kept because its bytes are on the
 cartridge. A comment that opens with `Unused:` marks something the game
-can never reach, and says why. [Unused](unused.md) collects them.
+can never reach, and says why; a thing the player would have seen also
+carries `Unused` in its name (`EventScript_UnusedGaretJoinsIsaac`). What only
+the debug menus reach is not unused: its comment says so instead.
+[Unused](https://alchemy.pascalpixel.com/tbs/unused) collects them.
 
 ### XXX
 

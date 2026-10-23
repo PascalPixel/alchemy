@@ -11,9 +11,9 @@ const struct ObjectEventTemplate *
 MercuryLighthouseEntrance_GetObjectEventTemplates(void);
 const struct MapEvent *MercuryLighthouseEntrance_GetEvents(void);
 s32 MercuryLighthouseEntrance_Initialize(void);
-extern s32 gEffectScript0[];
-extern s32 gEffectScript1[];
-extern s32 gEffectScript2[];
+extern s32 gShortEffectScript[];
+extern s32 gMediumEffectScript[];
+extern s32 gLongEffectScript[];
 extern s32 gStagedObjectEvent_DirectionSteps[];
 extern u32 gStagedObjectEvent_FootprintKinds[];
 extern s32 gStagedObjectEvent_FootprintBounds[];

@@ -120,7 +120,7 @@
 	import RunOverlayObjectCommand1, ObjectDispatch_SetChildBlendModeFar
 	import Engine_WorkSetValuesIfNonNegative, MapGrid_SetScreenShakeFar
 	import Engine_MapGridRenderWaitForValues, MapGrid_WaitForShakeToSettleFar
-	import Engine_MapGridWaitWorkValuesBelow256, MapGrid_WaitForShakeToSettleFar
+	import Engine_MapGridWaitForShakeToSettle, MapGrid_WaitForShakeToSettleFar
 	import MapGrid_WaitForShakeToSettle, MapGrid_WaitForShakeToSettleFar
 	import ObjectSystem_SuspendProjectionAndShowSprites, ObjectSystem_SuspendProjectionAndShowSpritesFar
 	import ObjectSystem_ResumeProjectionAndHideLayers, ObjectSystem_ResumeProjectionAndHideLayersFar
@@ -130,7 +130,7 @@
 	import Animation_ApplyChildValues, Animation_ApplyChildValuesFar
 	import Engine_ObjectSetPartPalettes, Animation_ApplyChildValuesFar
 	import ObjectGroup_SetChildValueUnlessFifteen, ObjectGroup_SetChildValueUnlessFifteenFar
-	import Engine_MapGridSetWorkFlagBits9To11, MapGrid_SetShownLayersFar
+	import Engine_MapGridSetShownLayers, MapGrid_SetShownLayersFar
 	import MapGrid_SetMetatileBehaviorAt, MapGrid_SetMetatileBehaviorAtFar
 @ Window bank (far_call/WINDOW.S)
 	import Engine_DebugCreateWindow, UiWindow_CreateFar

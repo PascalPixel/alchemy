@@ -118,7 +118,8 @@ void FieldScript_SpawnObjectTable(struct ObjectEventTemplate *entry, s32 slot) {
       continue;
     // Djinn_ResolvePendingEvent hides a Djinni after a loss or escape.
     // Map_ResetFlagsOnEnter clears these temporary flags on a normal entry.
-    if ((u32)(condition - FLAG_DJINNI_0) <= OBJ_EVENT_DJINNI_FLAG_COUNT - 1 &&
+    if ((u32)(condition - FLAG_DJINN_FIRST) <=
+            OBJ_EVENT_DJINNI_FLAG_COUNT - 1 &&
         work->mode != MODE_WORLD_MAP &&
         !GameFlag_IsConditionActive(condition + OBJ_EVENT_DJINNI_FLAG_COUNT))
       continue;

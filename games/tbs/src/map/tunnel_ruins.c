@@ -394,7 +394,9 @@ static s32 TunnelRuins_SplashDousedPillar(union FieldObject *fieldObject) {
       ((((u32)(Engine_RandomNext() * 7) >> 16) - 3) << 16);
   z = objectEvent->z.fixed +
       ((((u32)(Engine_RandomNext() * 7) >> 16) - 3) << 16);
-  FieldEffect_Spawn(x, objectEvent->y.fixed + PIXELS(16), z, 0, 0, 0, 0x90001,
+  FieldEffect_Spawn(x, objectEvent->y.fixed + PIXELS(16), z, 0, 0, 0,
+                    EFFECT_USE_START_SCALE | EFFECT_USE_PALETTE |
+                        EFFECT_SCRIPT_MEDIUM,
                     &options);
 #ifdef UBFIX
   return;
@@ -498,7 +500,8 @@ static void EventScript_HopDownStep(void) {
 
       velocityZ = (u32)Engine_RandomNext() % 10 * -0x1999 - 0x7ffd;
       FieldEffect_Spawn(leader->x.fixed, leader->y.fixed, leader->z.fixed,
-                        velocityX, 0, velocityZ, 0x1000001, &options);
+                        velocityX, 0, velocityZ,
+                        EFFECT_USE_UPDATE | EFFECT_SCRIPT_MEDIUM, &options);
     }
   }
   Engine_ObjectEventSetSpriteFlags(leader, 1);
@@ -758,7 +761,7 @@ static void EventScript_SinkPillarA(void) {
           randomX, 0,
           ((((u32)(((randomZ << 3) + randomZ) << 1) >> 16) << 16) +
            PIXELS(128)),
-          0, 0, 0, 0x90000, options);
+          0, 0, 0, EFFECT_USE_START_SCALE | EFFECT_USE_PALETTE, options);
     }
     MapGrid_CopyCellAttributes(51, 8, 1, 1, 49, 8);
     WAIT(30);
@@ -837,7 +840,8 @@ static void EventScript_SinkPillarB(void) {
         randomZ = Engine_RandomNext();
         effectZ = ((((u32)(((randomZ << 3) + randomZ) << 1) >> 16) << 16) +
                    PIXELS(224));
-        FieldEffect_Spawn(effectX, 0, effectZ, 0, 0, 0, 0x90000, options);
+        FieldEffect_Spawn(effectX, 0, effectZ, 0, 0, 0,
+                          EFFECT_USE_START_SCALE | EFFECT_USE_PALETTE, options);
       }
       MapGrid_CopyCellAttributes(51, 8, 1, 1, 45, 14);
       WAIT(30);
@@ -1860,17 +1864,17 @@ s32 gStagedObjectEvent_FootprintBounds[] = {
     -8,  -32, 8,  32, -32, -8,  32, 8,  -8,  -32, 8,  32,
 };
 
-s32 gEffectScript0[] = {
+s32 gShortEffectScript[] = {
     SC_WAIT(1),           SC_LOOP(22, SC_TOP), SC_WAIT(1),
     SC_POSITION(0, 0, 0), SC_WAIT(1),          SC_FREE,
 };
 
-s32 gEffectScript1[] = {
+s32 gMediumEffectScript[] = {
     SC_WAIT(1),           SC_LOOP(44, SC_TOP), SC_WAIT(1),
     SC_POSITION(0, 0, 0), SC_WAIT(1),          SC_FREE,
 };
 
-s32 gEffectScript2[] = {
+s32 gLongEffectScript[] = {
     SC_WAIT(1),           SC_LOOP(126, SC_TOP), SC_WAIT(1),
     SC_POSITION(0, 0, 0), SC_WAIT(1),           SC_FREE,
 };
@@ -1883,9 +1887,9 @@ u32 gTunnelRuins_BalanceHeights[] = {
 };
 
 const s32 *gEffectScripts[] = {
-    gEffectScript0,
-    gEffectScript1,
-    gEffectScript2,
+    gShortEffectScript,
+    gMediumEffectScript,
+    gLongEffectScript,
 };
 
 s32 gTunnelRuins_ShrinkScript[] = {

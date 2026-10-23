@@ -77,7 +77,8 @@ union FieldObject {
 /// map/common/effect_spawn.h): a script number in the low bits and which of
 /// struct EffectOptions' fields to use.
 enum EffectSpawnFlags {
-  /// Picks one of gEffectScripts; the object's mode is this plus 1.
+  /// An EffectScript, picking one of gEffectScripts; the object's mode is this
+  /// plus 1.
   EFFECT_SCRIPT_MASK = 0x0f,
   EFFECT_USE_PALETTE = 0x10000,  ///< options.palette, as its group child value
   EFFECT_USE_PRIORITY = 0x20000, ///< options.priority, as the sprite's priority
@@ -90,6 +91,16 @@ enum EffectSpawnFlags {
   EFFECT_USE_ROTATION = 0x400000,   ///< options.rotation, as the sprite's
   EFFECT_USE_SPIN = 0x800000,       ///< options.spin
   EFFECT_USE_UPDATE = 0x1000000     ///< options.update
+};
+
+/// The scripts EFFECT_SCRIPT_MASK picks from gEffectScripts, in a map's
+/// spawner and the resident one alike: each holds the effect for a while, then
+/// frees it.
+enum EffectScript {
+  EFFECT_SCRIPT_SHORT =
+      0, ///< 22 one-frame repeats in a map, 24 frames resident
+  EFFECT_SCRIPT_MEDIUM = 1, ///< 44 repeats in a map, 46 frames resident
+  EFFECT_SCRIPT_LONG = 2    ///< 126 repeats in a map, 128 frames resident
 };
 
 /// The three scripts a map's own effect spawner picks from by

@@ -473,7 +473,7 @@ cell's behavior may have replaced the action. It is marked `// BUG:`, and
 
 `Map_ResetFlagsOnEnter` clears flags `0x80` to `0xdf` on every ordinary
 entry to a map, even within a map section: the Djinn's hiding flags
-(`FLAG_DJINNI_HIDING_0` and the 79 after it), which keep a Djinni that got
+(`FLAG_DJINN_HIDING_FIRST` and the 79 after it), which keep a Djinni that got
 away out of its room until the room is entered again, and 16 more after them
 that nothing else uses.
 

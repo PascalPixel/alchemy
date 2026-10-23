@@ -563,9 +563,9 @@ static void Xian_TalkToKungFuStudent(void) {
     Engine_ObjectEventRunRepeatedMotion(LOCALID_KUNG_FU_STUDENT, 2);
     effectParams.priority = 1;
     FieldEffect_Spawn(PIXELS(192), 0, PIXELS(312), 0x1999, 0x3333, 0,
-                      EFFECT_USE_PRIORITY | 1, 0);
+                      EFFECT_USE_PRIORITY | EFFECT_SCRIPT_MEDIUM, 0);
     FieldEffect_Spawn(PIXELS(192), 0, PIXELS(312), 0x3333, 0x1999, 0,
-                      EFFECT_USE_PRIORITY | 1, 0);
+                      EFFECT_USE_PRIORITY | EFFECT_SCRIPT_MEDIUM, 0);
     Engine_AudioPlayCue(SE_132);
     particleCallback = Xian_SpawnTrainingParticles;
     Task_AddCallback(particleCallback, TASK_PRIORITY_MAP);
@@ -590,20 +590,20 @@ static void Xian_TalkToKungFuStudent(void) {
     // Finish the impact effects and leave the student in the final pose.
     Engine_TaskRemoveCallback((void (*)(void))particleCallback);
     FieldEffect_Spawn(PIXELS(144), 0, PIXELS(312), 0, 0, 0,
-                      EFFECT_USE_PRIORITY | 1, 0);
+                      EFFECT_USE_PRIORITY | EFFECT_SCRIPT_MEDIUM, 0);
     FieldEffect_Spawn(PIXELS(144), 0, PIXELS(312), -0x3333, 0x1999, 0,
-                      EFFECT_USE_PRIORITY | 1, 0);
+                      EFFECT_USE_PRIORITY | EFFECT_SCRIPT_MEDIUM, 0);
     reboundVelocity = -0x8000;
     FieldEffect_Spawn(PIXELS(144), 0, PIXELS(312), reboundVelocity, 0, 0,
-                      EFFECT_USE_PRIORITY | 1, 0);
+                      EFFECT_USE_PRIORITY | EFFECT_SCRIPT_MEDIUM, 0);
     ObjectEvent_RefreshSelectorById(LOCALID_TRAINING_TREE);
     Engine_AudioPlayCue(SE_124);
     FieldEffect_Spawn(PIXELS(168), PIXELS(8), PIXELS(312), 0, 0, 0,
-                      EFFECT_USE_PRIORITY | 1, 0);
+                      EFFECT_USE_PRIORITY | EFFECT_SCRIPT_MEDIUM, 0);
     FieldEffect_Spawn(PIXELS(168), PIXELS(8), PIXELS(312), 0x3333, 0, 0,
-                      EFFECT_USE_PRIORITY | 1, 0);
+                      EFFECT_USE_PRIORITY | EFFECT_SCRIPT_MEDIUM, 0);
     FieldEffect_Spawn(PIXELS(168), PIXELS(8), PIXELS(312), -0x3333, 0, 0,
-                      EFFECT_USE_PRIORITY | 1, 0);
+                      EFFECT_USE_PRIORITY | EFFECT_SCRIPT_MEDIUM, 0);
     Engine_TaskRemoveCallback(Xian_RotateTrainingTree);
     ObjectEvent_GetById(LOCALID_TRAINING_TREE)->sprite->rotation =
         reboundVelocity;
@@ -744,11 +744,11 @@ static void Xian_StrikeTrainingTreeWithForce(void) {
   ObjectEvent_RefreshSelectorById(LOCALID_TRAINING_TREE);
   Engine_AudioPlayCue(SE_124);
   FieldEffect_Spawn(PIXELS(168), PIXELS(8), PIXELS(312), 0, 0, 0,
-                    EFFECT_USE_PRIORITY | 1, 0);
+                    EFFECT_USE_PRIORITY | EFFECT_SCRIPT_MEDIUM, 0);
   FieldEffect_Spawn(PIXELS(168), PIXELS(8), PIXELS(312), 0x3333, 0, 0,
-                    EFFECT_USE_PRIORITY | 1, 0);
+                    EFFECT_USE_PRIORITY | EFFECT_SCRIPT_MEDIUM, 0);
   FieldEffect_Spawn(PIXELS(168), PIXELS(8), PIXELS(312), -0x3333, 0, 0,
-                    EFFECT_USE_PRIORITY | 1, 0);
+                    EFFECT_USE_PRIORITY | EFFECT_SCRIPT_MEDIUM, 0);
   Engine_TaskRemoveCallback(rotationCallback);
   ObjectEvent_GetById(LOCALID_TRAINING_TREE)->sprite->rotation = 0x8000;
   Engine_ObjectEventSetPosition(LOCALID_FORCE_TARGET, PIXELS(168), PIXELS(312));
@@ -893,25 +893,25 @@ s32 Xian_Initialize(void) {
   return 0;
 }
 
-s32 gEffectScript0[] = {
+s32 gShortEffectScript[] = {
     SC_WAIT(1),           SC_LOOP(22, SC_TOP), SC_WAIT(1),
     SC_POSITION(0, 0, 0), SC_WAIT(1),          SC_FREE,
 };
 
-s32 gEffectScript1[] = {
+s32 gMediumEffectScript[] = {
     SC_WAIT(1),           SC_LOOP(44, SC_TOP), SC_WAIT(1),
     SC_POSITION(0, 0, 0), SC_WAIT(1),          SC_FREE,
 };
 
-s32 gEffectScript2[] = {
+s32 gLongEffectScript[] = {
     SC_WAIT(1),           SC_LOOP(126, SC_TOP), SC_WAIT(1),
     SC_POSITION(0, 0, 0), SC_WAIT(1),           SC_FREE,
 };
 
 const s32 *gEffectScripts[] = {
-    gEffectScript0,
-    gEffectScript1,
-    gEffectScript2,
+    gShortEffectScript,
+    gMediumEffectScript,
+    gLongEffectScript,
 };
 
 /// The water carrier's round: from (280, 232) east to (424, 232), up to
@@ -1070,7 +1070,7 @@ struct ObjectEventTemplate gXian_ObjectEventTemplates[] = {
         0, 0, 0, FACING_WEST, TALK_FACE_PARTY, 0 },
     { SPRITE_BLANK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(168), 0, PIXELS(312), FACING_WEST, TALK_FACE_PARTY, 0 },
-    { MERCURY_DJINNI, FLAG_DJINNI_0 + DJINNI_MIST, MOVEMENT_TYPE_STAND,
+    { MERCURY_DJINNI, FLAG_DJINNI(DJINNI_MIST), MOVEMENT_TYPE_STAND,
         PIXELS(448), 0, PIXELS(328), FACING_WEST, TALK_FACE_PARTY, 0 },
     { SPRITE_CRATE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(426), 0, PIXELS(428), FACING_WEST, TALK_FACE_PARTY, 0 },

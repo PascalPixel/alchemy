@@ -16,7 +16,7 @@
 /// or six cells north or south in one step, up or down its vine, with no walk.
 /// Each vine has metatile behaviors of its own, so 12 and 13 repeat 10's and
 /// 11's events for the second vine. Breeze, a Jupiter Djinni, stands here until
-/// it has joined the party: its own flag (FLAG_DJINNI_0 + DJINNI_BREEZE)
+/// it has joined the party: its own flag (FLAG_DJINNI(DJINNI_BREEZE))
 /// removes its object event template. Talking to it starts a battle with it.
 ///
 /// The setup opens the map with a backdrop fade, blends BG1 over the rest of
@@ -67,7 +67,7 @@
 #include "script.h"
 
 /// Breeze, a Jupiter Djinni (DJINNI_BREEZE), the only placed object event; its
-/// object event template is gone once its flag (FLAG_DJINNI_0 + DJINNI_BREEZE)
+/// object event template is gone once its flag (FLAG_DJINNI(DJINNI_BREEZE))
 /// is set.
 enum {
   /// ★ Named from the game: "Breeze" (MsgDjinnName)
@@ -347,7 +347,7 @@ u32 gTretTreeBranch_Warps[] = {
 
 // clang-format off
 struct ObjectEventTemplate gTretTreeBranch_ObjectEventTemplates[] = {
-    { JUPITER_DJINNI, FLAG_DJINNI_0 + DJINNI_BREEZE, MOVEMENT_TYPE_STAND,
+    { JUPITER_DJINNI, FLAG_DJINNI(DJINNI_BREEZE), MOVEMENT_TYPE_STAND,
         PIXELS(648), 0, PIXELS(88), FACING_WEST, TALK_FACE_PARTY, 0 },
     { MAP_TABLE_END },
 };

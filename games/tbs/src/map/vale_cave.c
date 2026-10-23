@@ -182,7 +182,7 @@ enum ValeCaveLogsLocalId {
 
 /// The flag of Kite, set once it is caught.
 /// ★ Named from the game: "Kite" (MsgDjinnName)
-#define FLAG_KITE (FLAG_DJINNI_0 + DJINNI_KITE)
+#define FLAG_KITE (FLAG_DJINNI(DJINNI_KITE))
 
 // The cave's map flags:
 // - FLAG_MAP_TEMP_00 and _01: in the second room, the western and eastern

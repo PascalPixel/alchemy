@@ -522,7 +522,8 @@ UNUSED static void CrossboneIsleSteppingStones_SpawnUnusedLeaderParticle(void) {
     velocityY = Math_Divide(
         (((u32)((drawY << 2) + drawY) >> 16) << 16) + PIXELS(3), 10);
     FieldEffect_Spawn(x, leader->y.fixed, z, 0, velocityY, cycleFrame,
-                      EFFECT_USE_START_SCALE | EFFECT_USE_PALETTE | 1,
+                      EFFECT_USE_START_SCALE | EFFECT_USE_PALETTE |
+                          EFFECT_SCRIPT_MEDIUM,
                       settings);
   }
 }
@@ -1382,7 +1383,9 @@ CrossboneIsleSteppingStones_SpawnThawParticle(union FieldObject *fieldObject) {
       (((u32)Engine_RandomNext() * 5) >> 16) * PIXELS(1) + PIXELS(3), 10);
 
   FieldEffect_Spawn(x, y, z, 0, scale, phase,
-                    EFFECT_USE_START_SCALE | EFFECT_USE_PALETTE | 1, settings);
+                    EFFECT_USE_START_SCALE | EFFECT_USE_PALETTE |
+                        EFFECT_SCRIPT_MEDIUM,
+                    settings);
 #ifdef UBFIX
   return;
 #else
@@ -1704,17 +1707,17 @@ s32 Map_Initialize(void) {
   return 0;
 }
 
-s32 gEffectScript0[] = {
+s32 gShortEffectScript[] = {
     SC_WAIT(1),           SC_LOOP(22, SC_TOP), SC_WAIT(1),
     SC_POSITION(0, 0, 0), SC_WAIT(1),          SC_FREE,
 };
 
-s32 gEffectScript1[] = {
+s32 gMediumEffectScript[] = {
     SC_WAIT(1),           SC_LOOP(44, SC_TOP), SC_WAIT(1),
     SC_POSITION(0, 0, 0), SC_WAIT(1),          SC_FREE,
 };
 
-s32 gEffectScript2[] = {
+s32 gLongEffectScript[] = {
     SC_WAIT(1),           SC_LOOP(126, SC_TOP), SC_WAIT(1),
     SC_POSITION(0, 0, 0), SC_WAIT(1),           SC_FREE,
 };
@@ -1746,9 +1749,9 @@ s32 gStagedObjectEvent_FootprintBounds[] = {
 };
 
 const s32 *gEffectScripts[] = {
-    gEffectScript0,
-    gEffectScript1,
-    gEffectScript2,
+    gShortEffectScript,
+    gMediumEffectScript,
+    gLongEffectScript,
 };
 
 /// The glint of a puddle Frost has frozen in CrossboneIsleDragonStatue: the

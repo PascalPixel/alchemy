@@ -24,7 +24,7 @@ void Engine_DisplayScrollStartHBlankDma(s32 mode, s32 freqX, s32 stepX,
                                         s32 ampY);
 s32 Engine_InnCheckIn(s32 mode, s32 objectId);
 void Engine_InventorySnapshotRestore(void);
-void Engine_MapGridSetWorkFlagBits9To11(u32 v);
+void Engine_MapGridSetShownLayers(u32 layerFlags);
 void Engine_OwnerRecalculateRatios(s32 owner_id);
 s32 Engine_PartyInventoryFindOwner(s32 item_id);
 void Engine_ScriptSetNextDestination(s32 first, s32 second);

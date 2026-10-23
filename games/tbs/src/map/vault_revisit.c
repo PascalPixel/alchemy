@@ -715,11 +715,11 @@ s32 Map_Initialize(void) {
   if (Engine_GameFlagIsSet(FLAG_VAULT_DOG_SHOWN_PASSAGE))
     ObjectEvent_SetPosition(LOCALID_VAULT_DOG, PIXELS(216), PIXELS(392));
   if (gGameState.warpDest <= VAULT_REVISIT_NORTH_UNUSED &&
-      !Engine_GameFlagIsSet(FLAG_DJINNI_0 + DJINNI_SAP) &&
+      !Engine_GameFlagIsSet(FLAG_DJINNI(DJINNI_SAP)) &&
       !VaultRevisit_ShouldKeepBellDjinniPosition())
     Engine_GameFlagClear(FLAG_VAULT_DJINNI_CALLED_BY_BELL);
   if (Engine_GameFlagIsSet(FLAG_VAULT_DJINNI_CALLED_BY_BELL) &&
-      !Engine_GameFlagIsSet(FLAG_DJINNI_0 + DJINNI_SAP))
+      !Engine_GameFlagIsSet(FLAG_DJINNI(DJINNI_SAP)))
     ObjectEvent_SetPosition(LOCALID_SAP, PIXELS(408), PIXELS(120));
   if (gGameState.warpDest == VAULT_REVISIT_FROM_SANCTUM)
     Engine_GameFlagClear(FLAG_SHOW_LOCATION_NAME);

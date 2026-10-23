@@ -16,9 +16,9 @@ const struct ObjectEventTemplate *
 MercuryLighthouseAerie_GetObjectEventTemplates(void);
 const struct MapEvent *MercuryLighthouseAerie_GetEvents(void);
 s32 MercuryLighthouseAerie_Initialize(void);
-extern s32 gEffectScript0[];
-extern s32 gEffectScript1[];
-extern s32 gEffectScript2[];
+extern s32 gShortEffectScript[];
+extern s32 gMediumEffectScript[];
+extern s32 gLongEffectScript[];
 extern const s32 *gEffectScripts[];
 extern struct MapWarpDest gMercuryLighthouseAerieWarpDests[];
 extern u32 gMercuryLighthouseAerieWarps[];

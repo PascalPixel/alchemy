@@ -1319,9 +1319,9 @@ static void Kalay_PrepareTown(void) {
   } else {
     nut = (OrbitingMapObject *)ObjectEvent_GetById(LOCALID_TOWN_NUT);
     sprite = nut->sprite;
-    sprite->flags09Mode = 1;
-    sprite->flags05Bit5 = 0;
-    sprite->flags09High = 0;
+    sprite->priority = 1;
+    sprite->fullColor = 0;
+    sprite->paletteNumber = 0;
     sprite->state = found;
     nut->active = 1;
     nut->mode = found;
@@ -2955,7 +2955,7 @@ struct ObjectEventTemplate gKalay_TunnelObjectEventTemplates[] = {
         0, 0, 0, FACING_SOUTH, TALK_FACE_PARTY, 0 },
     { SPRITE_PUDDLE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         0, 0, 0, FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { MARS_DJINNI, FLAG_DJINNI_0 + DJINNI_SCORCH, MOVEMENT_TYPE_STAND,
+    { MARS_DJINNI, FLAG_DJINNI(DJINNI_SCORCH), MOVEMENT_TYPE_STAND,
         PIXELS(632), 0, PIXELS(712), FACING_SOUTH, TALK_FACE_PARTY, 0 },
     { MAP_TABLE_END },
 };

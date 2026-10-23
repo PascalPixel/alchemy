@@ -11,7 +11,7 @@
 	.set import.Engine_ObjectEventSetSpriteFlags, 1
 	.set import.Engine_ObjectSetBlendMode, 1
 	.set import.Engine_WorkSetValuesIfNonNegative, 1
-	.set import.Engine_MapGridWaitWorkValuesBelow256, 1
+	.set import.Engine_MapGridWaitForShakeToSettle, 1
 	.set import.Unit_Get, 1
 	.set import.Item_Get, 1
 	.set import.Inventory_AddItem, 1

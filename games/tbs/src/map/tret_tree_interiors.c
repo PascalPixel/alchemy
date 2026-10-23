@@ -1106,7 +1106,7 @@ static void TretTreeInteriors_RunLandingDustScene(void) {
     FieldEffect_Spawn(leader->x.fixed, leader->y.fixed, leader->z.fixed,
                       velocityX, particleVelocity->y, velocityZ,
                       EFFECT_USE_UPDATE | EFFECT_USE_START_SCALE |
-                          EFFECT_USE_PALETTE | 1,
+                          EFFECT_USE_PALETTE | EFFECT_SCRIPT_MEDIUM,
                       particleOptions);
   }
   SE(SE_188);
@@ -1115,7 +1115,7 @@ static void TretTreeInteriors_RunLandingDustScene(void) {
   OBJECT_MODE(LOCALID_PARTY_LEADER, 22);
   MapGrid_SetShake(0x50000, 0x50000, 0x10000);
   MapGrid_SetShake(-1, -1, 0xe666);
-  Engine_MapGridWaitWorkValuesBelow256();
+  Engine_MapGridWaitForShakeToSettle();
   Engine_ObjectEventSetAttachedEffect(
       LOCALID_PARTY_LEADER, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_REMOVE);
   ObjectEvent_GetById(LOCALID_PARTY_LEADER)->gravity = 0x10000;
@@ -1123,17 +1123,17 @@ static void TretTreeInteriors_RunLandingDustScene(void) {
   EV_END();
 }
 
-s32 gEffectScript0[] = {
+s32 gShortEffectScript[] = {
     SC_WAIT(1),           SC_LOOP(22, SC_TOP), SC_WAIT(1),
     SC_POSITION(0, 0, 0), SC_WAIT(1),          SC_FREE,
 };
 
-s32 gEffectScript1[] = {
+s32 gMediumEffectScript[] = {
     SC_WAIT(1),           SC_LOOP(44, SC_TOP), SC_WAIT(1),
     SC_POSITION(0, 0, 0), SC_WAIT(1),          SC_FREE,
 };
 
-s32 gEffectScript2[] = {
+s32 gLongEffectScript[] = {
     SC_WAIT(1),           SC_LOOP(126, SC_TOP), SC_WAIT(1),
     SC_POSITION(0, 0, 0), SC_WAIT(1),           SC_FREE,
 };
@@ -1168,9 +1168,9 @@ s16 gTretTreeInteriors_MapPatches[] = {
 };
 
 const s32 *gEffectScripts[] = {
-    gEffectScript0,
-    gEffectScript1,
-    gEffectScript2,
+    gShortEffectScript,
+    gMediumEffectScript,
+    gLongEffectScript,
 };
 
 /// The party gathers in front of Tret before the battle (EventScript_FightTret),

@@ -277,7 +277,7 @@ enum {
 };
 
 /// The map grid layers the dark passages show
-/// (Engine_MapGridSetWorkFlagBits9To11): BG1 to BG3, BG1 being
+/// (Engine_MapGridSetShownLayers): BG1 to BG3, BG1 being
 /// MAPGRID_LAYER_OVERHEAD and its circles of light.
 #define LUNPA_FORTRESS_PASSAGE_LAYERS                                          \
   (DISPCNT_BG1_ON | DISPCNT_BG2_ON | DISPCNT_BG3_ON)
@@ -3033,7 +3033,7 @@ s32 Map_Initialize(void) {
 
   gLunpaFortressRandomPick = (u32)Engine_RandomNext() * 7 >> 16;
   if (gGameState.mapId == (s32)&MapId_LunpaFortressGroundFloor) {
-    Engine_MapGridSetWorkFlagBits9To11(LUNPA_FORTRESS_PASSAGE_LAYERS);
+    Engine_MapGridSetShownLayers(LUNPA_FORTRESS_PASSAGE_LAYERS);
     LunpaFortress_InitializeGroundFloor();
   }
   if (gGameState.mapId == (s32)&MapId_LunpaFortressUpperFloor)
@@ -3059,14 +3059,14 @@ s32 Map_Initialize(void) {
     if (mapObjectEvent != 0)
       Engine_ObjectEventSetSpriteFlags(mapObjectEvent, 0);
     mapObjectEvent->priorityFlags = OBJ_EVENT_PRIORITY_UNDERFOOT;
-    Engine_MapGridSetWorkFlagBits9To11(LUNPA_FORTRESS_PASSAGE_LAYERS);
+    Engine_MapGridSetShownLayers(LUNPA_FORTRESS_PASSAGE_LAYERS);
     if (gGameState.warpDest == LUNPA_FORTRESS_TOADONPA_AFTER_BATTLE) {
-      Engine_MapGridSetWorkFlagBits9To11(LUNPA_FORTRESS_ROOM_LAYERS);
+      Engine_MapGridSetShownLayers(LUNPA_FORTRESS_ROOM_LAYERS);
       EventScript_DonpaJudgesDodonpa();
     }
     if (gGameState.warpDest ==
         LUNPA_FORTRESS_TOADONPA_FROM_LUNPA_FORTRESS_CAVE_NORTHWEST) {
-      Engine_MapGridSetWorkFlagBits9To11(LUNPA_FORTRESS_ROOM_LAYERS);
+      Engine_MapGridSetShownLayers(LUNPA_FORTRESS_ROOM_LAYERS);
       if (FLAG_CHECK(FLAG_DODONPA_LOCKED_UP) != 0) {
         OBJECT_POSITION_SET(TOADONPA_HAMMET, 0, 0);
         OBJECT_POSITION_SET(TOADONPA_CELL_GUARD, 432, 344);
@@ -3104,13 +3104,13 @@ static void LunpaFortress_InitializeGroundFloor(void) {
     Task_AddCallback(LunpaFortress_CheckFirstEntranceSentry, TASK_PRIORITY_MAP);
     Task_AddCallback(LunpaFortress_CheckSecondEntranceSentry,
                      TASK_PRIORITY_MAP);
-    Engine_MapGridSetWorkFlagBits9To11(LUNPA_FORTRESS_PASSAGE_LAYERS);
+    Engine_MapGridSetShownLayers(LUNPA_FORTRESS_PASSAGE_LAYERS);
     break;
   case LUNPA_FORTRESS_GROUND_FLOOR_FEAST_ROOM_FROM_MAIN_PASSAGE:
   case LUNPA_FORTRESS_GROUND_FLOOR_BARREL_ROOM_FROM_NORTHEAST_PASSAGE:
     gEventWork->startTransition =
         MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
-    Engine_MapGridSetWorkFlagBits9To11(LUNPA_FORTRESS_ROOM_LAYERS);
+    Engine_MapGridSetShownLayers(LUNPA_FORTRESS_ROOM_LAYERS);
     break;
   case LUNPA_FORTRESS_GROUND_FLOOR_EAST_PASSAGE_FROM_MAIN_PASSAGE:
   case LUNPA_FORTRESS_GROUND_FLOOR_EAST_PASSAGE_FROM_NORTHEAST_PASSAGE:
@@ -3125,7 +3125,7 @@ static void LunpaFortress_InitializeGroundFloor(void) {
     Engine_MapGridRedraw();
     Engine_TaskWait(1);
     MapGrid_CopyCells(101, 9, 10, 8, 110, 9);
-    Engine_MapGridSetWorkFlagBits9To11(LUNPA_FORTRESS_PASSAGE_LAYERS);
+    Engine_MapGridSetShownLayers(LUNPA_FORTRESS_PASSAGE_LAYERS);
     break;
   case LUNPA_FORTRESS_GROUND_FLOOR_NORTHEAST_PASSAGE_FROM_MAIN_PASSAGE:
   case LUNPA_FORTRESS_GROUND_FLOOR_NORTHEAST_PASSAGE_FROM_EAST_PASSAGE:
@@ -3137,7 +3137,7 @@ static void LunpaFortress_InitializeGroundFloor(void) {
   default:
     gEventWork->startTransition =
         MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_BARS);
-    Engine_MapGridSetWorkFlagBits9To11(LUNPA_FORTRESS_PASSAGE_LAYERS);
+    Engine_MapGridSetShownLayers(LUNPA_FORTRESS_PASSAGE_LAYERS);
     break;
   }
   Engine_ObjectEventSetChildValue(GROUND_FLOOR_PATROL_GUARD, 1);
@@ -3176,7 +3176,7 @@ static void LunpaFortress_InitializeUpperFloor(void) {
   case LUNPA_FORTRESS_UPPER_FLOOR_WEST_PASSAGE_FROM_MIDDLE_PASSAGE:
     gEventWork->startTransition =
         MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_BARS);
-    Engine_MapGridSetWorkFlagBits9To11(LUNPA_FORTRESS_PASSAGE_LAYERS);
+    Engine_MapGridSetShownLayers(LUNPA_FORTRESS_PASSAGE_LAYERS);
     Task_AddCallback(LunpaFortress_UpdatePairedGuardDetection,
                      TASK_PRIORITY_MAP);
     Engine_TaskWait(1);
@@ -3190,7 +3190,7 @@ static void LunpaFortress_InitializeUpperFloor(void) {
   case LUNPA_FORTRESS_UPPER_FLOOR_DONPAS_ROOM_FROM_TONIC_ROOM:
     gEventWork->startTransition =
         MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
-    Engine_MapGridSetWorkFlagBits9To11(LUNPA_FORTRESS_ROOM_LAYERS);
+    Engine_MapGridSetShownLayers(LUNPA_FORTRESS_ROOM_LAYERS);
     Engine_ObjectEventSetSpriteFlags(ObjectEvent_Get(UPPER_FLOOR_DONPA), 0);
     if (FLAG_CHECK(FLAG_MAPSEC_TEMP_14)) {
       OBJECT_POSITION_SET(UPPER_FLOOR_ATTENDANT, 872, 120);
@@ -3200,7 +3200,7 @@ static void LunpaFortress_InitializeUpperFloor(void) {
   case LUNPA_FORTRESS_UPPER_FLOOR_EAST_PASSAGE_FROM_SOUTH_PASSAGE:
     gEventWork->startTransition =
         MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_BARS);
-    Engine_MapGridSetWorkFlagBits9To11(LUNPA_FORTRESS_PASSAGE_LAYERS);
+    Engine_MapGridSetShownLayers(LUNPA_FORTRESS_PASSAGE_LAYERS);
     Task_AddCallback(LunpaFortress_UpdateHallGuardDetection, TASK_PRIORITY_MAP);
     Engine_TaskWait(1);
     Engine_MapGridRedraw();
@@ -3228,7 +3228,7 @@ static void LunpaFortress_InitializeUpperFloor(void) {
   default:
     gEventWork->startTransition =
         MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_BARS);
-    Engine_MapGridSetWorkFlagBits9To11(LUNPA_FORTRESS_PASSAGE_LAYERS);
+    Engine_MapGridSetShownLayers(LUNPA_FORTRESS_PASSAGE_LAYERS);
     break;
   }
   keyObjectEvent = ObjectEvent_Get(UPPER_FLOOR_CELL_KEY);
@@ -3293,7 +3293,7 @@ static void LunpaFortress_InitializeCave(void) {
   }
   Engine_ObjectEventSetSpriteFlags(ObjectEvent_Get(CAVE_JAR_BLOCKER), 0);
   EV_END();
-  Engine_MapGridSetWorkFlagBits9To11(LUNPA_FORTRESS_PASSAGE_LAYERS);
+  Engine_MapGridSetShownLayers(LUNPA_FORTRESS_PASSAGE_LAYERS);
 }
 
 /// LunpaFortressGroundFloor's opened cell doors stay open.
@@ -3735,7 +3735,7 @@ struct ObjectEventTemplate gLunpaFortressUpperFloorObjectEventTemplates[] = {
         PIXELS(944), 0, PIXELS(122), FACING_SOUTH, TALK_KEEP_FACING, 0 },
     { SPRITE_WOMAN_IN_GREEN_DRESS, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(904), 0, PIXELS(120), FACING_SOUTHEAST + FACING_STEP, TALK_FACE_PARTY, 0 },
-    { MERCURY_DJINNI, FLAG_DJINNI_0 + DJINNI_TONIC, MOVEMENT_TYPE_STAND,
+    { MERCURY_DJINNI, FLAG_DJINNI(DJINNI_TONIC), MOVEMENT_TYPE_STAND,
         PIXELS(872), 0, PIXELS(336), FACING_SOUTH, TALK_FACE_PARTY, 0 },
     { MAP_TABLE_END },
 };

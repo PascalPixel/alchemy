@@ -590,7 +590,8 @@ static void MogallForest_FirstArea_NorthApeShowsWay(void) {
                                 PIXELS(6));
 
   FieldEffect_Spawn(creature->x.fixed, creature->y.fixed,
-                    creature->z.fixed + PIXELS(24), 0, 0, 0, 1, 0);
+                    creature->z.fixed + PIXELS(24), 0, 0, 0,
+                    EFFECT_SCRIPT_MEDIUM, 0);
 
   MogallForest_ApePointsTheWay(LOCALID_FIRST_AREA_NORTH_APE);
 
@@ -635,7 +636,8 @@ static void MogallForest_FirstArea_ApeAttacks(void) {
                                 PIXELS(6));
 
   FieldEffect_Spawn(creature->x.fixed, creature->y.fixed,
-                    creature->z.fixed + PIXELS(24), 0, 0, 0, 1, 0);
+                    creature->z.fixed + PIXELS(24), 0, 0, 0,
+                    EFFECT_SCRIPT_MEDIUM, 0);
 
   Engine_CameraFollowObjectEvent(LOCALID_FIRST_AREA_ATTACKING_APE, 1);
   Engine_ObjectEventFaceEachOther(LOCALID_FIRST_AREA_ATTACKING_APE,
@@ -678,7 +680,8 @@ static void MogallForest_FirstArea_EastApeShowsWay(void) {
                                 PIXELS(7));
 
   FieldEffect_Spawn(creature->x.fixed, creature->y.fixed,
-                    creature->z.fixed + PIXELS(16), 0, 0, 0, 1, 0);
+                    creature->z.fixed + PIXELS(16), 0, 0, 0,
+                    EFFECT_SCRIPT_MEDIUM, 0);
 
   MogallForest_ApePointsTheWay(LOCALID_FIRST_AREA_EAST_APE);
 
@@ -813,7 +816,8 @@ static void MogallForest_SecondArea_NorthApeShowsWay(void) {
                                 PIXELS(7));
   Engine_ScriptWait(10);
   FieldEffect_Spawn(creature->x.fixed, creature->y.fixed,
-                    (creature->z.fixed + PIXELS(4)), 0, 0, 0, 1, 0);
+                    (creature->z.fixed + PIXELS(4)), 0, 0, 0,
+                    EFFECT_SCRIPT_MEDIUM, 0);
   MogallForest_ApePointsTheWay(LOCALID_SECOND_AREA_NORTH_APE);
   MogallForest_HopObjectEventTo(LOCALID_SECOND_AREA_NORTH_APE, 424, 120,
                                 PIXELS(3));
@@ -856,7 +860,8 @@ static void MogallForest_SecondArea_EastApeShowsWay(void) {
   Engine_ScriptWait(10);
 
   FieldEffect_Spawn(creature->x.fixed, creature->y.fixed,
-                    creature->z.fixed + PIXELS(4), 0, 0, 0, 1, 0);
+                    creature->z.fixed + PIXELS(4), 0, 0, 0,
+                    EFFECT_SCRIPT_MEDIUM, 0);
 
   MogallForest_ApePointsTheWay(LOCALID_SECOND_AREA_EAST_APE);
 
@@ -927,7 +932,8 @@ static void MogallForest_SecondArea_SouthApeShowsWay(void) {
   Engine_ScriptWait(10);
 
   FieldEffect_Spawn(creature->x.fixed, creature->y.fixed,
-                    creature->z.fixed + PIXELS(4), 0, 0, 0, 1, 0);
+                    creature->z.fixed + PIXELS(4), 0, 0, 0,
+                    EFFECT_SCRIPT_MEDIUM, 0);
 
   MogallForest_ApePointsTheWay(LOCALID_SECOND_AREA_SOUTH_APE);
 
@@ -1132,7 +1138,8 @@ static void MogallForest_ThirdArea_ApeAttacks(void) {
                                 jumpSpeed);
   Engine_ScriptWait(10);
   FieldEffect_Spawn(creature->x.fixed, creature->y.fixed,
-                    (creature->z.fixed + jumpSpeed), 0, 0, 0, 1, 0);
+                    (creature->z.fixed + jumpSpeed), 0, 0, 0,
+                    EFFECT_SCRIPT_MEDIUM, 0);
   Engine_CameraFollowObjectEvent(LOCALID_THIRD_AREA_ATTACKING_APE, 1);
   Engine_ObjectEventFaceEachOther(LOCALID_THIRD_AREA_ATTACKING_APE,
                                   LOCALID_PARTY_LEADER, 0);
@@ -1170,7 +1177,8 @@ static void MogallForest_ThirdArea_MiddleApeShowsWay(void) {
   Engine_ScriptWait(10);
 
   FieldEffect_Spawn(creature->x.fixed, creature->y.fixed,
-                    creature->z.fixed + PIXELS(4), 0, 0, 0, 1, 0);
+                    creature->z.fixed + PIXELS(4), 0, 0, 0,
+                    EFFECT_SCRIPT_MEDIUM, 0);
 
   MogallForest_ApePointsTheWay(LOCALID_THIRD_AREA_MIDDLE_APE);
 
@@ -1216,7 +1224,8 @@ static void MogallForest_ThirdArea_WestApeShowsWay(void) {
   Engine_ScriptWait(10);
 
   FieldEffect_Spawn(creature->x.fixed, creature->y.fixed,
-                    creature->z.fixed + PIXELS(4), 0, 0, 0, 1, 0);
+                    creature->z.fixed + PIXELS(4), 0, 0, 0,
+                    EFFECT_SCRIPT_MEDIUM, 0);
 
   MogallForest_ApePointsTheWay(LOCALID_THIRD_AREA_WEST_APE);
 
@@ -1283,7 +1292,8 @@ static void MogallForest_ThirdArea_EastApeShowsWay(void) {
   Engine_ScriptWait(10);
 
   FieldEffect_Spawn(creature->x.fixed, creature->y.fixed,
-                    creature->z.fixed + PIXELS(4), 0, 0, 0, 1, 0);
+                    creature->z.fixed + PIXELS(4), 0, 0, 0,
+                    EFFECT_SCRIPT_MEDIUM, 0);
 
   MogallForest_ApePointsTheWay(LOCALID_THIRD_AREA_EAST_APE);
 
@@ -1334,7 +1344,8 @@ static void MogallForest_ApeLeadsToKillerApe(void) {
                                 PIXELS(8));
   Engine_ScriptWait(10);
   FieldEffect_Spawn(creature->x.fixed, creature->y.fixed,
-                    (creature->z.fixed + PIXELS(4)), 0, 0, 0, 1, 0);
+                    (creature->z.fixed + PIXELS(4)), 0, 0, 0,
+                    EFFECT_SCRIPT_MEDIUM, 0);
   ObjectEvent_FaceDirection(LOCALID_THIRD_AREA_EAST_APE, FACING_NORTH, 40);
   ObjectEvent_SetAttachedEffect(LOCALID_THIRD_AREA_EAST_APE,
                                 ATTACHED_EFFECT_IN_FRONT |
@@ -1393,13 +1404,13 @@ static void MogallForest_KillerApeAttacks(void) {
   MogallForest_SpawnPuffRing(LOCALID_THIRD_AREA_EAST_APE);
   Engine_ObjectEventStartRepeatedMotion(LOCALID_PARTY_LEADER, 2);
   MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
-  Engine_MapGridWaitWorkValuesBelow256();
+  Engine_MapGridWaitForShakeToSettle();
   Engine_ObjectEventFaceDirection(LOCALID_PARTY_LEADER, FACING_NORTH, 20);
   Engine_ScriptWait(40);
   MapGrid_SetShake(PIXELS(5), PIXELS(5), Q16_ONE);
   MogallForest_SpawnPuffRing(LOCALID_THIRD_AREA_EAST_APE);
   MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
-  Engine_MapGridWaitWorkValuesBelow256();
+  Engine_MapGridWaitForShakeToSettle();
   Engine_ScriptWait(40);
   MogallForest_SpawnPuffRing(LOCALID_THIRD_AREA_EAST_APE);
   objectEvent->scaleX = 6 * Q16_ONE / 5;
@@ -1421,11 +1432,11 @@ static void MogallForest_KillerApeAttacks(void) {
     x += x / 2;
     emissionVelocity->x = x;
     FieldEffect_Spawn(objectEvent->x.fixed, 0, objectEvent->z.fixed, x,
-                      emissionVelocity->y, z, 1, NULL);
+                      emissionVelocity->y, z, EFFECT_SCRIPT_MEDIUM, NULL);
   }
   Engine_ScriptWait(30);
   MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
-  Engine_MapGridWaitWorkValuesBelow256();
+  Engine_MapGridWaitForShakeToSettle();
   Engine_AudioPlayCue(SE_148);
   Engine_ObjectEventRunRepeatedMotion(LOCALID_THIRD_AREA_EAST_APE, 2);
   Engine_ScriptWait(20);
@@ -1815,7 +1826,7 @@ s32 gStagedObjectEvent_FootprintBounds[] = {
     -8, -32, 8, 32,
 };
 
-s32 gEffectScript0[] = {
+s32 gShortEffectScript[] = {
     SC_WAIT(1),
     SC_LOOP(22, SC_TOP),
     SC_WAIT(1),
@@ -1824,7 +1835,7 @@ s32 gEffectScript0[] = {
     SC_FREE,
 };
 
-s32 gEffectScript1[] = {
+s32 gMediumEffectScript[] = {
     SC_WAIT(1),
     SC_LOOP(44, SC_TOP),
     SC_WAIT(1),
@@ -1833,7 +1844,7 @@ s32 gEffectScript1[] = {
     SC_FREE,
 };
 
-s32 gEffectScript2[] = {
+s32 gLongEffectScript[] = {
     SC_WAIT(1),
     SC_LOOP(126, SC_TOP),
     SC_WAIT(1),
@@ -1843,9 +1854,9 @@ s32 gEffectScript2[] = {
 };
 
 const s32 *gEffectScripts[] = {
-    gEffectScript0,
-    gEffectScript1,
-    gEffectScript2,
+    gShortEffectScript,
+    gMediumEffectScript,
+    gLongEffectScript,
 };
 
 /// The script of each rock moved with Move: it is drawn in greys.
@@ -2043,7 +2054,7 @@ struct ObjectEventTemplate gMogallForestQuartz_ObjectEventTemplates[] = {
         PIXELS(488), 0, PIXELS(80), FACING_SOUTH, TALK_KEEP_FACING, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
     { SPRITE_BLANK, FLAG_SECOND_AREA_SOUTH_APE_OUT, (s32)gMogallForest_HidingPlaceScript,
         PIXELS(504), 0, PIXELS(480), FACING_SOUTH, TALK_KEEP_FACING, OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE },
-    { VENUS_DJINNI, FLAG_DJINNI_0 + DJINNI_QUARTZ, MOVEMENT_TYPE_STAND,
+    { VENUS_DJINNI, FLAG_DJINNI(DJINNI_QUARTZ), MOVEMENT_TYPE_STAND,
         PIXELS(488), 0, PIXELS(568), FACING_EAST, TALK_FACE_PARTY, 0 },
     { MAP_TABLE_END },
 };

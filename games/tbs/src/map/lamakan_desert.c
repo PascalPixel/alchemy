@@ -208,9 +208,10 @@ static s32 Leader_SpraySand(union FieldObject *fieldObject) {
   params.startScaleX = 0xcccc;
   params.startScaleY = 0xcccc;
   params.spin = ((u32)(Engine_RandomNext() << 12) >> 16) + 0xf800;
-  FieldEffect_Spawn(objectEvent->x.fixed, objectEvent->y.fixed,
-                    objectEvent->z.fixed, 0, phase, phase,
-                    EFFECT_USE_SPIN | EFFECT_USE_START_SCALE | 1, &params);
+  FieldEffect_Spawn(
+      objectEvent->x.fixed, objectEvent->y.fixed, objectEvent->z.fixed, 0,
+      phase, phase,
+      EFFECT_USE_SPIN | EFFECT_USE_START_SCALE | EFFECT_SCRIPT_MEDIUM, &params);
 #ifdef UBFIX
   return;
 #else
@@ -710,8 +711,10 @@ static void HeatGauge_CountStep(void) {
     } else {
       z = objectEvent->z.fixed;
     }
-    FieldEffect_Spawn(objectEvent->x.fixed + dx, objectEvent->y.fixed, z, 0, 0,
-                      0, EFFECT_USE_SPIN | EFFECT_USE_START_SCALE | 1, &params);
+    FieldEffect_Spawn(
+        objectEvent->x.fixed + dx, objectEvent->y.fixed, z, 0, 0, 0,
+        EFFECT_USE_SPIN | EFFECT_USE_START_SCALE | EFFECT_SCRIPT_MEDIUM,
+        &params);
   } else {
     phase = gFrameCount & 7;
     if (phase != 0) {
@@ -725,7 +728,9 @@ static void HeatGauge_CountStep(void) {
     FieldEffect_Spawn(objectEvent->x.fixed, objectEvent->y.fixed + 0x20000,
                       objectEvent->z.fixed, 0,
                       ((u32)(Engine_RandomNext() * 5) >> 16) * 0x1999, phase,
-                      EFFECT_USE_SPIN | EFFECT_USE_START_SCALE | 1, &params);
+                      EFFECT_USE_SPIN | EFFECT_USE_START_SCALE |
+                          EFFECT_SCRIPT_MEDIUM,
+                      &params);
   }
 }
 
@@ -1187,17 +1192,17 @@ void HeatGauge_Start(void) {
 /// While held (1), the gauge stays on screen.
 static void HeatGauge_SetHeld(u16 value) { gHeatGauge_Held = value; }
 
-const s32 gEffectScript0[] = {
+const s32 gShortEffectScript[] = {
     SC_WAIT(1),           SC_LOOP(22, SC_TOP), SC_WAIT(1),
     SC_POSITION(0, 0, 0), SC_WAIT(1),          SC_FREE,
 };
 
-const s32 gEffectScript1[] = {
+const s32 gMediumEffectScript[] = {
     SC_WAIT(1),           SC_LOOP(44, SC_TOP), SC_WAIT(1),
     SC_POSITION(0, 0, 0), SC_WAIT(1),          SC_FREE,
 };
 
-const s32 gEffectScript2[] = {
+const s32 gLongEffectScript[] = {
     SC_WAIT(1),           SC_LOOP(126, SC_TOP), SC_WAIT(1),
     SC_POSITION(0, 0, 0), SC_WAIT(1),           SC_FREE,
 };
@@ -1224,9 +1229,9 @@ const s32 gLamakanDesertOasesOther[] = {
 };
 
 const s32 *gEffectScripts[] = {
-    gEffectScript0,
-    gEffectScript1,
-    gEffectScript2,
+    gShortEffectScript,
+    gMediumEffectScript,
+    gLongEffectScript,
 };
 
 struct MapWarpDest gLamakanDesertWarpDestsOther[] = {
@@ -1311,7 +1316,7 @@ struct ObjectEventTemplate gLamakanDesertSmogObjectEventTemplates[] = {
         PIXELS(144), 0, PIXELS(380), FACING_SOUTH, TALK_FACE_PARTY, 0 },
     { 0xc1, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(576), 0, PIXELS(716), FACING_SOUTH, TALK_FACE_PARTY, 0 },
-    { JUPITER_DJINNI, FLAG_DJINNI_0 + DJINNI_SMOG, MOVEMENT_TYPE_STAND,
+    { JUPITER_DJINNI, FLAG_DJINNI(DJINNI_SMOG), MOVEMENT_TYPE_STAND,
         0, 0, 0, FACING_EAST, TALK_FACE_PARTY, 0 },
     { MAP_TABLE_END },
 };

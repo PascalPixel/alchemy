@@ -17,7 +17,7 @@
 	.set import.Object_CheckMovementCollision, 1
 	.set import.Engine_ObjectEventSetSpriteFlags, 1
 	.set import.Engine_WorkSetValuesIfNonNegative, 1
-	.set import.Engine_MapGridWaitWorkValuesBelow256, 1
+	.set import.Engine_MapGridWaitForShakeToSettle, 1
 	.set import.Animation_ApplyChildValues, 1
 	.set import.ObjectGroup_SetChildValueUnlessFifteen, 1
 	.set import.Engine_GameFlagIsSet, 1

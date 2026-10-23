@@ -209,7 +209,7 @@ why. [Unused](unused.md) collects every such case.
 
 | Name | Value | Meaning |
 | --- | --- | --- |
-| `FLAG_DJINNI_0` | 48 | Flint's flag; each Djinni's is this plus its `DjinniId` |
+| `FLAG_DJINN_FIRST` | 48 | Flint's flag, the first Djinn flag; `FLAG_DJINNI(djinni)` is this plus its `DjinniId` |
 | `FLAG_KEEP_PARTY_POSITION` | 265 (`0x109`) | keeps both cleared ranges, and the party where it was |
 | `FLAG_KEEP_MUSIC` | 282 (`0x11a`) | keeps the music for one map change |
 | `FLAG_KEEP_MUSIC_HELD` | 283 (`0x11b`) | keeps the music for as long as it is set |

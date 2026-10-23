@@ -899,7 +899,7 @@ static void VenusLighthouse_LandWithRadialDust(void) {
     FieldEffect_Spawn(leader->x.fixed, leader->y.fixed, leader->z.fixed,
                       velocity[0], velocity[1], velocity[2],
                       EFFECT_USE_PALETTE | EFFECT_USE_START_SCALE |
-                          EFFECT_USE_UPDATE | 1,
+                          EFFECT_USE_UPDATE | EFFECT_SCRIPT_MEDIUM,
                       &options);
   }
   Script_PlayCue(SE_188);
@@ -960,11 +960,12 @@ static s32 VenusLighthouse_TrailLight(union FieldObject *fieldObject) {
   velocityX = Math_Divide(((((u32)(random * 9)) >> 16) - 4) << 16, 10);
   random = Engine_RandomNext();
   velocityZ = Math_Divide(((((u32)(random * 9)) >> 16) - 4) << 16, 10);
-  FieldEffect_Spawn(
-      objectEvent->x.fixed, objectEvent->y.fixed,
-      objectEvent->z.fixed - PIXELS(1), velocityX, velocityY, velocityZ,
-      EFFECT_SCALE_TO_TARGET | EFFECT_USE_START_SCALE | EFFECT_USE_TYPE | 1,
-      &options);
+  FieldEffect_Spawn(objectEvent->x.fixed, objectEvent->y.fixed,
+                    objectEvent->z.fixed - PIXELS(1), velocityX, velocityY,
+                    velocityZ,
+                    EFFECT_SCALE_TO_TARGET | EFFECT_USE_START_SCALE |
+                        EFFECT_USE_TYPE | EFFECT_SCRIPT_MEDIUM,
+                    &options);
 #ifdef UBFIX
   return;
 #else
@@ -3869,17 +3870,17 @@ static s32 VenusLighthouse_RouteLight(struct ScriptInterpreter *interpreter) {
   return 0;
 }
 
-s32 gEffectScript0[] = {
+s32 gShortEffectScript[] = {
     SC_WAIT(1),           SC_LOOP(22, SC_TOP), SC_WAIT(1),
     SC_POSITION(0, 0, 0), SC_WAIT(1),          SC_FREE,
 };
 
-s32 gEffectScript1[] = {
+s32 gMediumEffectScript[] = {
     SC_WAIT(1),           SC_LOOP(44, SC_TOP), SC_WAIT(1),
     SC_POSITION(0, 0, 0), SC_WAIT(1),          SC_FREE,
 };
 
-s32 gEffectScript2[] = {
+s32 gLongEffectScript[] = {
     SC_WAIT(1),           SC_LOOP(126, SC_TOP), SC_WAIT(1),
     SC_POSITION(0, 0, 0), SC_WAIT(1),           SC_FREE,
 };
@@ -3973,9 +3974,9 @@ u8 gVenusFourthFloorTrackLists[] = {
 };
 
 const s32 *gEffectScripts[] = {
-    gEffectScript0,
-    gEffectScript1,
-    gEffectScript2,
+    gShortEffectScript,
+    gMediumEffectScript,
+    gLongEffectScript,
 };
 
 /// The lady statues' object script: drawn grey (VENUS_COLOR_MARK), and never

@@ -361,11 +361,11 @@ s32 DjinnMenu_ShowCurrentList(void) {
     for (djinn = 0; djinn < 7; djinn++) {
       s32 id = element * DJINN_PER_ELEMENT + djinn;
 
-      // FLAG_DJINNI_0 on: one per Djinni found, DJINN_PER_ELEMENT to an
+      // FLAG_DJINN_FIRST on: one per Djinni found, DJINN_PER_ELEMENT to an
       // element. Each name
       // follows its element's icon: window tile 1 + element in palette 1
       // (0x1000).
-      if (GameFlag_TestFar(FLAG_DJINNI_0 + id)) {
+      if (GameFlag_TestFar(FLAG_DJINNI(id))) {
         UiWindow_SetTilemapEntryFar(window, 0x1001 + element, element * 7 + 1,
                                     djinn + 3, 0);
         UiText_DrawCharacterAtOffsetFar(MsgDjinnName + id, window,
@@ -416,10 +416,10 @@ CharacterMenu_SetSelectedOwnerRow(struct CharacterMenuState *menu,
 
 /// The Status menu's party row: Left and Right choose a member, showing their
 /// status; L and R move the member one place along the party order; Select
-/// lists the Djinn found (once the first is caught, FLAG_DJINNI_0); A chooses
-/// the member and B backs out. Returns 1 or -1, or 0 when Start ends it, with
-/// the member in the work's ownerIndex[0] and selectedIds[0]. Moving a member
-/// changes the party order for good (CharacterSelector_MoveEntry).
+/// lists the Djinn found (once the first is caught, FLAG_DJINN_FIRST); A
+/// chooses the member and B backs out. Returns 1 or -1, or 0 when Start ends
+/// it, with the member in the work's ownerIndex[0] and selectedIds[0]. Moving a
+/// member changes the party order for good (CharacterSelector_MoveEntry).
 s32 CharacterSelector_RunRearrange(void) {
   struct CharacterMenuState *menu;
   s32 ownerIndex;
@@ -457,7 +457,7 @@ s32 CharacterSelector_RunRearrange(void) {
       RenderOutput_RedrawSavedRectFar(menu->selectorWindow);
       UiText_DrawCharacterAtOffsetFar(MsgRearrangeHelp, menu->selectorWindow, 0,
                                       0);
-      if (GameFlag_TestFar(FLAG_DJINNI_0))
+      if (GameFlag_TestFar(FLAG_DJINN_FIRST))
         UiText_DrawCharacterAtOffsetFar(MsgDjinnListHelp, menu->selectorWindow,
                                         0, 16);
       UiText_DrawCharacterAtOffsetFar(MsgRearrangeHelp - 3, // "A: Details"
@@ -504,7 +504,8 @@ s32 CharacterSelector_RunRearrange(void) {
         AudioCommand_PlayFar(SE_MENU_ERROR);
       }
       WaitFrames(1);
-    } else if ((gKeysPressed & KEY_SELECT) && GameFlag_TestFar(FLAG_DJINNI_0)) {
+    } else if ((gKeysPressed & KEY_SELECT) &&
+               GameFlag_TestFar(FLAG_DJINN_FIRST)) {
       DjinnMenu_ShowCurrentList();
       redraw = 1;
     } else {

@@ -225,8 +225,8 @@ a map's range is cleared with that range, and all are saved.
 [The front page](../../README.md) gives the ranges and when they are
 cleared.
 
-Flags `FLAG_DJINNI_0` (48) to 127 are the Djinn's found flags, Djinni n of
-element e being flag `FLAG_DJINNI_0` + 20 × e + n. The save summary counts
+Flags `FLAG_DJINN_FIRST` (48) to 127 are the Djinn's found flags, Djinni n of
+element e being flag `FLAG_DJINN_FIRST` + 20 × e + n. The save summary counts
 how many are set (`SaveState_BuildSummaryHeader`), the title offers Battle
 only when some file has found a Djinni (`gTitleExtraOptionEnabled`), and the
 save menu's `SAVE_MENU_EXTRA` mode lists only those files
@@ -238,7 +238,7 @@ The flag functions are in [game/flags.c](game/flags.c), `GAME_FLAG_BYTE` in
 | Name | Value | Meaning |
 | --- | --- | --- |
 | `GAME_FLAG_BYTE(flag)` | bits 3 to 11 of `flag` | the byte of `gGameFlagBytes` that holds the flag |
-| `FLAG_DJINNI_0` | 48 | the first Djinni's found flag; the 80 run to 127 |
+| `FLAG_DJINN_FIRST` | 48 | the first Djinni's found flag; the 80 run to 127 |
 | `FLAG_LINK_PARTY_COUNT` | `0x3f0` | a byte: the members the linked opponent sent |
 | `FLAG_MONSTER_BATTLE_WINS` | `0x3f8` | a byte: the Battle Arena's win count |
 
@@ -354,7 +354,7 @@ The label columns are the English names from `games/tbs/text/en.po`, by the
 message each row's id reaches. The columns are named from what the code reads
 in them, and the item effect kinds from what `Unit_Calculate` does with each. Flags
 48 to 127 are the Djinn's found flags because `Djinn_AddToLeastLoadedOwner`
-sets flag `FLAG_DJINNI_0` + 20 × element + index when a Djinni joins.
+sets flag `FLAG_DJINN_FIRST` + 20 × element + index when a Djinni joins.
 
 The tables keep no unknown columns. `chars.tsv`'s first twenty words
 (`CharacterDefinition.reserved`) and `summons.tsv`'s two bytes after the

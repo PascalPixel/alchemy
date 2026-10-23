@@ -33,7 +33,7 @@ static void FieldEffect_SpawnNineRadialEffects(s32 localId) {
     FieldEffect_Spawn(objectEvent->x.fixed, objectEvent->y.fixed,
                       objectEvent->z.fixed, x, vec.y, z,
                       EFFECT_USE_UPDATE | EFFECT_USE_PRIORITY |
-                          EFFECT_USE_PALETTE | 1,
+                          EFFECT_USE_PALETTE | EFFECT_SCRIPT_MEDIUM,
                       &params);
   }
 }

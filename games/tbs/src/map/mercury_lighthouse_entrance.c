@@ -341,7 +341,7 @@ static void MercuryLighthouseEntrance_ActivateWithPly(void) {
           Math_Divide((((speedRoll << 4) - speedRoll) << 16) + 0x3c0000, 100);
       FieldEffect_Spawn(sparkX << 16, 0, sparkZ << 16, 0, velocityY, velocityZ,
                         EFFECT_USE_PRIORITY | EFFECT_USE_TYPE |
-                            EFFECT_USE_SCRIPT | 1,
+                            EFFECT_USE_SCRIPT | EFFECT_SCRIPT_MEDIUM,
                         effectData);
       Engine_ScriptWait(4);
       sparkIndex++;
@@ -524,7 +524,8 @@ s32 MercuryLighthouseEntrance_Initialize(void) {
       velocity[2] -= velocity[2] / 2;
       FieldEffect_Spawn(objectEvent->x.fixed, objectEvent->y.fixed,
                         objectEvent->z.fixed, velocity[0], velocity[1],
-                        velocity[2], EFFECT_USE_PALETTE | 1, &options);
+                        velocity[2], EFFECT_USE_PALETTE | EFFECT_SCRIPT_MEDIUM,
+                        &options);
     }
     Engine_AudioPlayCue(SE_188);
     ObjectEvent_SetAttachedEffect(LOCALID_PARTY_LEADER,
@@ -737,17 +738,17 @@ static void MercuryLighthouse_SpawnRipple(struct ObjectEvent *source) {
 
 #include "common/mercury_lighthouse_pillar.h"
 
-s32 gEffectScript0[] = {
+s32 gShortEffectScript[] = {
     SC_WAIT(1),           SC_LOOP(22, SC_TOP), SC_WAIT(1),
     SC_POSITION(0, 0, 0), SC_WAIT(1),          SC_FREE,
 };
 
-s32 gEffectScript1[] = {
+s32 gMediumEffectScript[] = {
     SC_WAIT(1),           SC_LOOP(44, SC_TOP), SC_WAIT(1),
     SC_POSITION(0, 0, 0), SC_WAIT(1),          SC_FREE,
 };
 
-s32 gEffectScript2[] = {
+s32 gLongEffectScript[] = {
     SC_WAIT(1),           SC_LOOP(126, SC_TOP), SC_WAIT(1),
     SC_POSITION(0, 0, 0), SC_WAIT(1),           SC_FREE,
 };
@@ -809,9 +810,9 @@ u16 gMercuryLighthouse_MoveAngles[] = {
 };
 
 const s32 *gEffectScripts[] = {
-    gEffectScript0,
-    gEffectScript1,
-    gEffectScript2,
+    gShortEffectScript,
+    gMediumEffectScript,
+    gLongEffectScript,
 };
 
 s32 gMercuryLighthouseEntrance_LizardManStepCentre[] = {

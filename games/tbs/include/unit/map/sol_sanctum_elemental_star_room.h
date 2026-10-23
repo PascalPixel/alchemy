@@ -11,9 +11,9 @@ const struct ObjectEventTemplate *
 SolSanctumElementalStarRoom_GetObjectEventTemplates(void);
 const struct MapEvent *SolSanctumElementalStarRoom_GetEvents(void);
 s32 SolSanctumElementalStarRoom_Initialize(void);
-extern s32 gEffectScript0[];
-extern s32 gEffectScript1[];
-extern s32 gEffectScript2[];
+extern s32 gShortEffectScript[];
+extern s32 gMediumEffectScript[];
+extern s32 gLongEffectScript[];
 extern const s32 *gEffectScripts[];
 extern s32 gSolSanctumElementalStarRoom_AngleScript[];
 extern s32 gSolSanctumElementalStarRoom_PresentItemScript[];

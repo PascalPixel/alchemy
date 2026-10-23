@@ -1176,7 +1176,7 @@ struct ObjectEventTemplate gBilibinBarricadeObjectEventTemplates[] = {
 struct ObjectEventTemplate gBilibinTreasuryObjectEventTemplates[] = {
     { SPRITE_GOLDEN_STATUE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(232), 0, PIXELS(100), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { JUPITER_DJINNI, FLAG_DJINNI_0 + DJINNI_GUST, MOVEMENT_TYPE_STAND,
+    { JUPITER_DJINNI, FLAG_DJINNI(DJINNI_GUST), MOVEMENT_TYPE_STAND,
         PIXELS(328), 0, PIXELS(152), FACING_SOUTH, TALK_FACE_PARTY, 0 },
     { MAP_TABLE_END },
 };
@@ -1350,8 +1350,9 @@ u32 gBilibin_DoorCells[] = {
 };
 
 /// Two cells as the bytes column, row, column, row.
-#define CELL_PAIR(column0, row0, column1, row1)                                 \
-  (((u32)(row1) << 24) | ((column1) << 16) | ((row0) << 8) | (column0))
+#define CELL_PAIR(firstColumn, firstRow, secondColumn, secondRow) \
+  (((u32)(secondRow) << 24) | ((secondColumn) << 16) | ((firstRow) << 8) | \
+   (firstColumn))
 
 /// The ten cells of the crates' lane at the Bilibin Barricade.
 u32 gBilibin_CratesLaneCells[] = {

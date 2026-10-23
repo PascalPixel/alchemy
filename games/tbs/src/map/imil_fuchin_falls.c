@@ -1574,9 +1574,9 @@ void ImilFuchinFalls_SpawnDust(s32 x, s32 y, s32 z, s32 velocityX,
   struct AnimationObject *sprite;
   const s32 *script;
   const s32 *scripts[3] = {
-      gImilFuchinFalls_DustScript0,
-      gImilFuchinFalls_DustScript1,
-      gImilFuchinFalls_DustScript2,
+      gImilFuchinFalls_ShortDustScript,
+      gImilFuchinFalls_MediumDustScript,
+      gImilFuchinFalls_LongDustScript,
   };
 
   effect = (struct FieldEffect *)Engine_ObjectCreate(SPRITE_DUST_PUFF, x, y, z);
@@ -2024,7 +2024,7 @@ struct ObjectEventTemplate gImilFuchinFalls_NoObjectEventTemplates[] = {
 };
 
 struct ObjectEventTemplate gImilFuchinFalls_ImilFallsCaveObjectEventTemplates[] = {
-    { MARS_DJINNI, FLAG_DJINNI_0 + DJINNI_FEVER, MOVEMENT_TYPE_STAND,
+    { MARS_DJINNI, FLAG_DJINNI(DJINNI_FEVER), MOVEMENT_TYPE_STAND,
         PIXELS(263), 0, PIXELS(204), FACING_SOUTH, TALK_FACE_PARTY, 0 },
     { MAP_TABLE_END },
 };
@@ -2046,7 +2046,7 @@ struct ObjectEventTemplate gImilFuchinFalls_SecondRoomObjectEventTemplates[] = {
         PIXELS(248), 0, PIXELS(280), FACING_SOUTH, TALK_KEEP_FACING, 0 },
     { SPRITE_FLOATING_LOG_WEST_EAST, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
         PIXELS(312), 0, PIXELS(408), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { JUPITER_DJINNI, FLAG_DJINNI_0 + DJINNI_ZEPHYR, MOVEMENT_TYPE_STAND,
+    { JUPITER_DJINNI, FLAG_DJINNI(DJINNI_ZEPHYR), MOVEMENT_TYPE_STAND,
         PIXELS(344), 0, PIXELS(280), FACING_SOUTH, TALK_FACE_PARTY, 0 },
     { MAP_TABLE_END },
 };
@@ -2285,19 +2285,19 @@ struct MapEvent gImilFuchinFalls_DragonRoomEvents[] = {
     {MAP_EVENTS_END},
 };
 
-s32 gImilFuchinFalls_DustScript0[] = {
+s32 gImilFuchinFalls_ShortDustScript[] = {
     SC_WAIT(1), SC_LOOP(22, SC_TOP),  SC_CALL(Fuchin_SetDustPalette),
     SC_WAIT(1), SC_POSITION(0, 0, 0), SC_WAIT(1),
     SC_FREE,
 };
 
-s32 gImilFuchinFalls_DustScript1[] = {
+s32 gImilFuchinFalls_MediumDustScript[] = {
     SC_WAIT(1), SC_LOOP(44, SC_TOP),  SC_CALL(Fuchin_SetDustPalette),
     SC_WAIT(1), SC_POSITION(0, 0, 0), SC_WAIT(1),
     SC_FREE,
 };
 
-s32 gImilFuchinFalls_DustScript2[] = {
+s32 gImilFuchinFalls_LongDustScript[] = {
     SC_WAIT(1), SC_LOOP(126, SC_TOP), SC_CALL(Fuchin_SetDustPalette),
     SC_WAIT(1), SC_POSITION(0, 0, 0), SC_WAIT(1),
     SC_FREE,

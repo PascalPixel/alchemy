@@ -1,6 +1,6 @@
 # Menus, windows and shops
 
-![The console draws four background layers and the sprites in front of them. The map uses three of the layers: the ground, the middle and the overhead layer. Every window, however many are open, is drawn on the fourth layer, in front of the map. What a window carries, its letters, icons, portraits and the pointing hand, are sprites, in front of everything. Because all the windows share one layer, the map keeps its three whatever menus are open.](https://alchemy.pascalpixel.com/illustrations/menus/layers.svg)
+![A shop's layers. Bilibin's item shop asking "What would you like?" comes apart into the six sheets the console stacks to draw it, then closes again. The room keeps the map's three layers: the floor and walls on `BG3`, the counter, shelves and furniture on `BG2` with the people as sprites level with it, and a glow of light on `BG1`, blended over the room. Every window is on `BG0`, the one layer they share, and what is drawn into them all at once, the Herb's name and price, the coins and the description, is tiles of that layer too. In front are sprites: the letters of the shopkeeper's question, typed one by one, his portrait, the item icons and the pointing hand.](https://alchemy.pascalpixel.com/illustrations/menus/layers.svg)
 
 Everything the player reads or chooses outside the map itself comes in a
 framed box: what people say, the field menu and its screens, the shop and
@@ -10,9 +10,10 @@ field menu's four screens (Psynergy, Djinn, Item and Status), and runs the
 counters where the party spends its coins: shops, sanctums and inns.
 
 All the windows share one background layer, in front of the three the map
-uses, so the map looks the same however many windows are open. What a window
-carries, its letters, icons and portraits, are sprites in front of
-everything.
+uses, so the map looks the same however many windows are open. Text drawn
+into a window all at once, such as a menu's names and prices, is tiles of that
+layer too; a message's typed letters, icons, portraits and the pointing hand
+are sprites in front of everything.
 
 ## Windows
 

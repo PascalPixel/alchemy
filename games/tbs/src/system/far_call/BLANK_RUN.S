@@ -4,4 +4,4 @@
 #include "stub.inc"
 	.global FarCall_BlankRunTable
 FarCall_BlankRunTable:
-	export Runtime_BlankDisplayAndRunFar, Runtime_BlankDisplayAndRun
+	export LuckyDice_StartFar, LuckyDice_Start

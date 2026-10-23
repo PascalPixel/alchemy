@@ -42,7 +42,7 @@ enum {
 /// describes. The low 12 bits are the cue, AUDIO_CUE_START_SILENT the only flag
 /// read. Reached through the sound far-call table as AudioCommand_PlayFar from
 /// the whole game; it keeps the music's ramps and cue records
-/// (gAudioSecondaryState, gMusicRestoreDelay) up to date.
+/// (gMusicCue, gMusicRestoreDelay) up to date.
 void AudioCommand_Play(s32 id) {
   s32 flags;
   s32 player;
@@ -58,7 +58,7 @@ void AudioCommand_Play(s32 id) {
       return;
     MusicPlayer_FadeOut(&gMusicPlayerBgm, 7);
     gMusicFadeRequested++;
-    gAudioSecondaryState = MUS_SILENCE;
+    gMusicCue = MUS_SILENCE;
   } else if (id == AUDIO_CUE_FADE_SLOT3) {
     // The cue is also the number of the song table's row 289, so it fades
     // player 3 out over 48 frames (16 steps of 3) and that row never plays.
@@ -95,16 +95,16 @@ void AudioCommand_Play(s32 id) {
     Audio_PlaySound(id);
     gMusicRestoreDelay = MUSIC_RESTORE_DELAY_FRAMES;
   } else {
-    // Music: the keep cue, or the music cue last chosen (gAudioSecondaryState),
+    // Music: the keep cue, or the music cue last chosen (gMusicCue),
     // changes nothing, so a map may name its music on every entry; a song
     // that has ended is not started again. The three songs below take mixer
     // record 3, the rest record 2 (the README's "The mixer's code is chosen per
     // song").
     if (id == AUDIO_CUE_KEEP_BGM)
       return;
-    if (id == gAudioSecondaryState)
+    if (id == gMusicCue)
       return;
-    gAudioSecondaryState = id;
+    gMusicCue = id;
     Sound_LoadPresetParameters(
         (id == MUS_TITLE || id == MUS_ENDING_LOGO || id == MUS_ENDING) ? 3 : 2);
     Audio_PlaySound(id);
@@ -257,7 +257,7 @@ void Audio_InitializeRuntimeDefaults(void) {
 
   Audio_Initialize();
   // No music cue is 0xff, so the first music cue always plays.
-  gAudioSecondaryState = 0xff;
+  gMusicCue = 0xff;
   gMusicRestoreDelay = 0;
   gMusicVolumeTarget = MUSIC_UNITY_SCALE;
   gMusicVolume = MUSIC_UNITY_SCALE;
@@ -353,7 +353,7 @@ void AudioCommand_UpdateToggleMask(u32 command) {
 /// as gGameState.returnCue before the pause menu, so the music can be started
 /// again when the party is put back where it was (Game_Run,
 /// object/object/map.c).
-s32 AudioCommand_GetSecondaryStateByte(void) { return gAudioSecondaryState; }
+s32 AudioCommand_GetMusicCue(void) { return gMusicCue; }
 
 /// Waits a frame at a time for fanfare restoration, giving up after 300
 /// frames. Called only by Vale's sanctum, after the fanfare (MUS_086) for

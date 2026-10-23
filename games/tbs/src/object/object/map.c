@@ -179,7 +179,7 @@ static __inline__ s32 RunLuckyDice(s32 warpDest) {
   Dma_Set(palette, saved,
           (DMA_ENABLE | DMA_32BIT) << 16 | (MINIGAME_PALETTE_BYTES / 4),
           REG_DMA3);
-  result = Runtime_BlankDisplayAndRunFar(warpDest);
+  result = LuckyDice_StartFar(warpDest);
   Dma_Set(saved, palette,
           (DMA_ENABLE | DMA_32BIT) << 16 | (MINIGAME_PALETTE_BYTES / 4),
           REG_DMA3);

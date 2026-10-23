@@ -61,7 +61,7 @@ the music that is playing. `AUDIO_CUE_FADE_SLOT3` fades player 3 out over
 48 frames. The three values are also rows of the song table (17, 18 and 289),
 and those rows never play, since the controls are tested first.
 
-A cue for the music already chosen (`gAudioSecondaryState`) does nothing,
+A cue for the music already chosen (`gMusicCue`) does nothing,
 even when that song has ended.
 
 `AudioCommand_Play` does all of this, reached from the whole game through

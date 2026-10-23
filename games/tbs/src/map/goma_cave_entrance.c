@@ -601,7 +601,7 @@ static void GomaCaveEntrance_LeapStump(s32 stumpId) {
       EFFECT_USE_TYPE | EFFECT_USE_START_SCALE | EFFECT_SCALE_TO_TARGET, p);
   Engine_AudioPlayCue(SE_CAST);
   OBJECT_MODE(stumpId, STUMP_ANIMATION_SPLASH);
-  Engine_MapGridWaitWorkValuesBelow256();
+  Engine_MapGridWaitForShakeToSettle();
 }
 
 // Shared inventory equipment code stays at its native overlay position.

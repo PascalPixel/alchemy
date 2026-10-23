@@ -2322,7 +2322,7 @@ static void AltmillerCave_ReleaseWallBurst(void) {
       stateCursor += sizeof(struct EffectSlot);
     }
   }
-  Engine_MapGridWaitWorkValuesBelow256();
+  Engine_MapGridWaitForShakeToSettle();
   Shop_RestoreFieldPalette();
   FieldEffect_ClearActiveSlotsAndScheduleUpdates();
 }

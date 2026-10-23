@@ -1393,13 +1393,13 @@ static void MogallForest_KillerApeAttacks(void) {
   MogallForest_SpawnPuffRing(LOCALID_THIRD_AREA_EAST_APE);
   Engine_ObjectEventStartRepeatedMotion(LOCALID_PARTY_LEADER, 2);
   MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
-  Engine_MapGridWaitWorkValuesBelow256();
+  Engine_MapGridWaitForShakeToSettle();
   Engine_ObjectEventFaceDirection(LOCALID_PARTY_LEADER, FACING_NORTH, 20);
   Engine_ScriptWait(40);
   MapGrid_SetShake(PIXELS(5), PIXELS(5), Q16_ONE);
   MogallForest_SpawnPuffRing(LOCALID_THIRD_AREA_EAST_APE);
   MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
-  Engine_MapGridWaitWorkValuesBelow256();
+  Engine_MapGridWaitForShakeToSettle();
   Engine_ScriptWait(40);
   MogallForest_SpawnPuffRing(LOCALID_THIRD_AREA_EAST_APE);
   objectEvent->scaleX = 6 * Q16_ONE / 5;
@@ -1425,7 +1425,7 @@ static void MogallForest_KillerApeAttacks(void) {
   }
   Engine_ScriptWait(30);
   MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
-  Engine_MapGridWaitWorkValuesBelow256();
+  Engine_MapGridWaitForShakeToSettle();
   Engine_AudioPlayCue(SE_148);
   Engine_ObjectEventRunRepeatedMotion(LOCALID_THIRD_AREA_EAST_APE, 2);
   Engine_ScriptWait(20);

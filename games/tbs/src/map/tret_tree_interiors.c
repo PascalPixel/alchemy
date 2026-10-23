@@ -1119,7 +1119,7 @@ static void TretTreeInteriors_RunLandingDustScene(void) {
   OBJECT_MODE(LOCALID_PARTY_LEADER, 22);
   MapGrid_SetShake(0x50000, 0x50000, 0x10000);
   MapGrid_SetShake(-1, -1, 0xe666);
-  Engine_MapGridWaitWorkValuesBelow256();
+  Engine_MapGridWaitForShakeToSettle();
   Engine_ObjectEventSetAttachedEffect(
       LOCALID_PARTY_LEADER, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_REMOVE);
   ObjectEvent_GetById(LOCALID_PARTY_LEADER)->gravity = 0x10000;

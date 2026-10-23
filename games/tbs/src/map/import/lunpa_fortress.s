@@ -14,7 +14,7 @@
 	.set import.Object_CheckMovementCollision, 1
 	.set import.Engine_ObjectEventSetSpriteFlags, 1
 	.set import.Engine_WorkSetValuesIfNonNegative, 1
-	.set import.Engine_MapGridSetWorkFlagBits9To11, 1
+	.set import.Engine_MapGridSetShownLayers, 1
 	.set import.Engine_MessageShowCentered, 1
 	.set import.Engine_PartyInventoryFindOwner, 1
 	.set import.Engine_GameFlagIsSet, 1

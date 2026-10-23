@@ -902,7 +902,7 @@ static void EventScript_FirstRockFalls(void) {
       // It lands: the rumble on player 3 fades and the shaking dies down.
       Engine_AudioPlayCue(AUDIO_CUE_FADE_SLOT3);
       MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
-      Engine_MapGridWaitWorkValuesBelow256();
+      Engine_MapGridWaitForShakeToSettle();
       FieldEffect_PlayQueuedSound();
       Engine_GameFlagSet(FLAG_VALE_STORM_FIRST_ROCK_FELL);
     }
@@ -977,7 +977,7 @@ static void EventScript_SecondRockFalls(void) {
       // It lands: the rumble on player 3 fades and the shaking dies down.
       Engine_AudioPlayCue(AUDIO_CUE_FADE_SLOT3);
       MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
-      Engine_MapGridWaitWorkValuesBelow256();
+      Engine_MapGridWaitForShakeToSettle();
       FieldEffect_PlayQueuedSound();
       Engine_GameFlagSet(FLAG_VALE_STORM_SECOND_ROCK_FELL);
     }
@@ -1052,7 +1052,7 @@ static void EventScript_ThirdRockFalls(void) {
       // It lands: the rumble fades, and Isaac is drawn as before.
       Script_PlayCue(AUDIO_CUE_FADE_SLOT3);
       MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
-      Engine_MapGridWaitWorkValuesBelow256();
+      Engine_MapGridWaitForShakeToSettle();
       FieldEffect_PlayQueuedSound();
       GameFlag_Set(FLAG_VALE_STORM_THIRD_ROCK_FELL);
       Engine_ObjectEventSetSpritePriority(LOCALID_PARTY_LEADER, priority);
@@ -1125,7 +1125,7 @@ static void EventScript_FourthRockFalls(void) {
       // It lands: the rumble on player 3 fades and the shaking dies down.
       Engine_AudioPlayCue(AUDIO_CUE_FADE_SLOT3);
       MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
-      Engine_MapGridWaitWorkValuesBelow256();
+      Engine_MapGridWaitForShakeToSettle();
       FieldEffect_PlayQueuedSound();
       Engine_GameFlagSet(FLAG_VALE_STORM_FOURTH_ROCK_FELL);
     }
@@ -2484,7 +2484,7 @@ static void ValeStorm_ShowBoulderSweepingDownriver(void) {
   ColorBuffer_ApplyTarget(RGB(0, 0, 0), PALETTE_HALVES_BOTH);
   Engine_ColorBufferInterpolate(60);
   Task_Wait(60);
-  Engine_MapGridWaitWorkValuesBelow256();
+  Engine_MapGridWaitForShakeToSettle();
   currentObjectEvent = Camera_GetScriptObject();
   currentObjectEvent->targetX = OBJ_EVENT_NO_TARGET;
   currentObjectEvent = Camera_GetScriptObject();

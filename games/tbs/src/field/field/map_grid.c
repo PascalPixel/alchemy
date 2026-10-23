@@ -1083,7 +1083,7 @@ void MapGrid_CopyCellIndexRect(s32 sourceX, s32 sourceY, s32 width, s32 height,
 /// Sets which of BG1-BG3 the map shows (bits 9-11 of its display flags, as in
 /// REG_DISPCNT) from layerFlags, keeping its other flags. Called by Lunpa
 /// Fortress's map script through MapGrid_SetShownLayersFar
-/// (Engine_MapGridSetWorkFlagBits9To11).
+/// (Engine_MapGridSetShownLayers).
 void MapGrid_SetShownLayers(u32 layerFlags) {
   struct MapGridState *gridState = gMapGridWork[0];
   u32 mask = layerFlags & (DISPCNT_BG1_ON | DISPCNT_BG2_ON | DISPCNT_BG3_ON);

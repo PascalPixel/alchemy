@@ -486,9 +486,9 @@ void Engine_ObjectMotionSetPositionAndCommit(s32 objectEvent, s32 x, s32 z);
 /// Releases an object's sprites and zeroes it, so it can be handed out again
 /// (ObjectDispatch_Release).
 void Engine_ObjectDispatchRelease(struct ObjectEvent *objectEvent);
-/// The shake wait of Engine_MapGridRenderWaitForValues under the name Goma Cave
-/// Entrance imports it by (MapGrid_WaitForShakeToSettle).
-void Engine_MapGridWaitWorkValuesBelow256(void);
+/// The shake wait of Engine_MapGridRenderWaitForValues under the import name
+/// five maps call it by (MapGrid_WaitForShakeToSettle).
+void Engine_MapGridWaitForShakeToSettle(void);
 /// Shows a found item's picture object; bit 0 of mode adds sparkles and bit 1
 /// raises it above the leader (ItemDisplay_ShowPicture).
 void Engine_ItemShowPicture(struct ObjectEvent *objectEvent, s32 mode);

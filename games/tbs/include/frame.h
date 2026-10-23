@@ -6,8 +6,10 @@
 /// flags.
 ///
 /// WaitFrames (runtime/frame.c) and the VBlank handler share these cells.
-/// Several are volatile, a device: each tag names the function that differs
-/// without it.
+/// gVBlankDone and gFrameCount are volatile because an interrupt handler uses
+/// them too; the other volatiles are only ever read and written by the main
+/// loop, so they are devices, and each tag names the function that differs
+/// without one.
 
 #include "types.h"
 
@@ -31,16 +33,17 @@ extern u16 gLagFrameCount;
 extern volatile u16 gLagFramesShown;
 /// Bit 0 is set by the VBlank handler; WaitFrames clears it and halts until
 /// it is set again.
-/* FAKEMATCH(volatile): as plain u16, 119 of 403 instructions differ in tbs-en
- * (WaitFrames). */
+// volatile: the VBlank handler sets it while WaitFrames halts on it, so it is
+// no device.
 extern volatile u16 gVBlankDone;
 extern u32 gCpuLoadTimer; ///< Frames gCpuLoadPeak is still held.
 /// The highest CPU load in the last 30 frames: the scanline the frame's work
 /// ended on, plus 256 for each frame it overran.
 extern u32 gCpuLoadPeak;
 /// Frames WaitFrames has finished.
-/* FAKEMATCH(volatile): as plain u32, 27 functions differ in tbs-en, most
- * Ui_RunOwnerStatusScreen (529), ItemList_SelectEntry (346). */
+// volatile: the VBlank pass reads it (MapAnimation_ApplyAffineFrame picks
+// the world map's affine page by it) while WaitFrames counts it, so it is no
+// device.
 extern volatile u32 gFrameCount;
 extern u32 gFrameTick; ///< Counted up by every VBlank.
 /// Run once by the next VBlank handler, which clears it first.

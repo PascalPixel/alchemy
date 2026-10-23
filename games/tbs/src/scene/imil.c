@@ -1245,8 +1245,8 @@ static inline void Imil_StartRisingEffect(union FieldObject *fieldObject) {
 /// Smoke rises from the chimneys of Imil's five houses, staggered over each
 /// second (places/imil/footprints.png rings the chimneys).
 static void Imil_SpawnAmbientEffects(void) {
-  // volatile: the type of &gFrameCount (tagged in frame.h); the six editions
-  // build the same bytes without it
+  // volatile: the type of &gFrameCount (frame.h); the six editions build the
+  // same bytes without it
   volatile u32 *frame;
   union FieldObject *fieldObject;
 

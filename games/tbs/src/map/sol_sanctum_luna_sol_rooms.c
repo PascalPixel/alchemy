@@ -77,7 +77,7 @@
 #include "iowrite.h"
 #include "fixed_math.h"
 #include "palbuf.h"
-#include "heap_state.h"
+#include "heap.h"
 #include "flags.h"
 #include "songs.h"
 #include "audio_engine_symbols.h"

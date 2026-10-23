@@ -85,7 +85,7 @@
 #include "mem.h"
 #include "edition.h"
 #include "types.h"
-#include "callback_scheduler.h"
+#include "task.h"
 #include "item_ids.h"
 #include "script_layer.h"
 #include "map_tables.h"

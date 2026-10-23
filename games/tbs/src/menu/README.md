@@ -339,7 +339,7 @@ overlays, which the object list names by their [resource](../system/README.md#th
 for the menu object and [`title.h`](../../include/unit/menu/title.h),
 `clear.h` and `lobby.h` for the overlays. The structs the screens read their
 work through are in the shared headers under `games/tbs/include`, such as
-`inventory_menu.h`.
+`item_menu.h`.
 
 Each picture is an indexed PNG that the build encodes beside it: `.gbapal` is
 a palette, and the tile formats name their depth and, for a sprite, its shape

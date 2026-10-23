@@ -9,7 +9,7 @@
 
 #include "unit/window/glyph_arm.h"
 #include "types.h"
-#include "uiwindow.h"
+#include "window.h"
 #include "glyph.h"
 #include "text_font.h"
 #include "edition.h"

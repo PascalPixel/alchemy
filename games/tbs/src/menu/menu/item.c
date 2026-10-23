@@ -77,7 +77,7 @@
 
 /// The field's work (heap slot HEAP_SLOT_FIELD) as the Item screen writes it:
 /// the item request that the field loop hands to Field_UseItem once the menu
-/// has closed. struct FieldWork (field_runtime.h) names these fields item and
+/// has closed. struct FieldWork (map_header.h) names these fields item and
 /// itemArgument.
 struct ItemPickerResult {
   s32 fieldWorkHead[0x60];  ///< FieldWork up to its item request

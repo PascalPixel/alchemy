@@ -7,7 +7,7 @@
 #include "types.h"
 #include "static_assert.h"
 
-#include "event_work.h"
+#include "field_work.h"
 
 /// The running field map's work, heap slot HEAP_SLOT_FIELD, as the maps
 /// read it; Map_Run takes it and frees it.

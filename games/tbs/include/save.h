@@ -1,5 +1,5 @@
-#ifndef GUARD_SAVE_STATE_H
-#define GUARD_SAVE_STATE_H
+#ifndef ALCHEMY_SAVE_H
+#define ALCHEMY_SAVE_H
 
 /// @file
 /// The save workspace: sector headers and file summaries.
@@ -9,7 +9,7 @@
 #include "types.h"
 #include "static_assert.h"
 #include "dma.h"
-#include "global_cells.h"
+#include "heap_slots.h"
 #include "fixed_math.h"
 #include "flash.h"
 

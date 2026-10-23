@@ -10,7 +10,7 @@
 #include "mem.h"
 #include "dma.h"
 #include "io_reg.h"
-#include "heap_state.h"
+#include "heap.h"
 
 // Sol Sanctum's Elemental Star room and its eruption: the ten lights that float
 // in the room, object events in a row from the first the map passes, each

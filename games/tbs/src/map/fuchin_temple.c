@@ -83,7 +83,7 @@
 #include "script.h"
 #include "item_ids.h"
 #include "objcmd.h"
-#include "global_cells.h"
+#include "heap_slots.h"
 #include "fx_work.h"
 #include "palbuf.h"
 #include "io_reg.h"

@@ -2,7 +2,7 @@
 #include "types.h"
 #include "animspr.h"
 #include "field_effect.h"
-#include "vram_block.h"
+#include "vram_cache.h"
 #include "b5_context.h"
 #include "fx_work.h"
 

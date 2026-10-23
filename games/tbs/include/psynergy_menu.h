@@ -5,9 +5,9 @@
 /// The Psynergy menu's state.
 
 #include "unit/menu/menu.h"
-#include "global_cells.h"
+#include "heap_slots.h"
 #include "static_assert.h"
-#include "menu_result.h"
+#include "paged_list.h"
 #include "render_input.h"
 #include "text/msg_ids.h"
 

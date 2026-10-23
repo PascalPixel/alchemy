@@ -1,10 +1,10 @@
-#ifndef ALCHEMY_INN_RUNTIME_H
-#define ALCHEMY_INN_RUNTIME_H
+#ifndef ALCHEMY_INN_H
+#define ALCHEMY_INN_H
 
 /// @file
 /// InnWork, an inn's work.
 
-#include "global_cells.h"
+#include "heap_slots.h"
 #include "static_assert.h"
 #include "types.h"
 

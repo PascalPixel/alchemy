@@ -48,7 +48,7 @@
 ///   so only the original source could.
 #include "action_script.h"
 #include "version.h"
-#include "global_cells.h"
+#include "heap_slots.h"
 #include "unit/import.h"
 #include "unit/map/goma_cave_pillar.h"
 #include "unit/overworld/overworld.h"
@@ -69,7 +69,7 @@
 #include "script_layer.h"
 #include "map_tables.h"
 #include "djinn_ids.h"
-#include "staged_object_event.h"
+#include "pushed_object.h"
 #include "b5_context.h"
 #include "edition.h"
 #include "tbs_edition.h"

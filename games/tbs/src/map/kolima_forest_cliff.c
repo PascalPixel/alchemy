@@ -15,9 +15,9 @@
 ///
 /// Open questions: none.
 
-#include "battle_effect_runtime.h"
+#include "speaker.h"
 #include "flags.h"
-#include "global_cells.h"
+#include "heap_slots.h"
 #include "unit/import.h"
 #include "unit/map/kolima_forest_cliff.h"
 #include "unit/map/common/kolima_palette.h"
@@ -36,7 +36,7 @@
 #include "types.h"
 #include "tbs_edition.h"
 
-#include "staged_object_event.h"
+#include "pushed_object.h"
 #include "object_event.h"
 #include "game_state.h"
 #include "script_layer.h"

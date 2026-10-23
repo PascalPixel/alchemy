@@ -6,7 +6,7 @@
 
 #include "types.h"
 #include "static_assert.h"
-#include "heap_state.h"
+#include "heap.h"
 
 /// One sprite of the race gauge's list: a link word, its position and shape
 /// attributes, and its tile.

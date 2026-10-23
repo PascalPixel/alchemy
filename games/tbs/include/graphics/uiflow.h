@@ -2,6 +2,6 @@
 #define ALCHEMY_UIFLOW_H
 
 #include "edition.h"
-#include "uiwindow.h"
+#include "window.h"
 
 #endif

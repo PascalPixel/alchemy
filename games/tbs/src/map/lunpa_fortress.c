@@ -99,7 +99,7 @@
 #include "minigame.h"
 #include "sound.h"
 #include "system.h"
-#include "global_cells.h"
+#include "heap_slots.h"
 #include "edition.h"
 #include "lunpa_fortress_staging.h"
 #include "script.h"

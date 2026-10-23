@@ -56,7 +56,7 @@
 ///   way), so neither the ROM nor a render can show what it was for.
 
 #include "game_state.h"
-#include "global_cells.h"
+#include "heap_slots.h"
 #include "map_ids.h"
 #include "unit/import.h"
 #include "unit/map/gondowan_cave.h"
@@ -76,7 +76,7 @@
 #include "types.h"
 #include "script_layer.h"
 #include "map_tables.h"
-#include "staged_object_event.h"
+#include "pushed_object.h"
 #include "field_effect.h"
 #include "text/msg_ids.h"
 #include "object_event.h"

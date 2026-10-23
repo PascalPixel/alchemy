@@ -66,7 +66,7 @@ the story at all. Vault's `Map_GetEvents` returns
 
 The six functions are `struct MapEntries`, at the start of every overlay,
 each behind a [veneer](glossary.md#veneer) word the engine calls through
-([field_runtime.h](include/field_runtime.h)):
+([map_header.h](include/map_header.h)):
 
 ```c
 struct MapEntries {

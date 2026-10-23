@@ -5,7 +5,7 @@
 /// DjinnFigures, the row of four figures the Status and Djinn menus show.
 
 #include "types.h"
-#include "global_cells.h"
+#include "heap_slots.h"
 #include "static_assert.h"
 
 struct Sprite;

@@ -4,7 +4,7 @@
 /// @file
 /// BattleAnimWork, the running battle animation's work, and its sprites.
 
-#include "effect_step.h"
+#include "particle.h"
 #include "battle_anim_args.h"
 #include "static_assert.h"
 #include "types.h"

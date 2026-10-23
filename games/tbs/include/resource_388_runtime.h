@@ -5,7 +5,7 @@
 /// The views a map overlay takes of its runtime work and slots; most fields
 /// are still unnamed.
 
-#include "global_cells.h"
+#include "heap_slots.h"
 #include "static_assert.h"
 
 /// A view of a work block that nothing in TBS reads; Goma Cave's pond map

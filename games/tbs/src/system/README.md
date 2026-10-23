@@ -187,7 +187,7 @@ rule). It is three objects:
   words hold the map's start-up function and the functions that return its
   [warp destinations](../../glossary.md#warp-destination), [warps](../../glossary.md#warp), [object event](../../glossary.md#object-event) templates, [map events](../../glossary.md#map-event) and warp
   regions (boxes on the map that take a warp). The field code reads them
-  through `struct MapEntries` (`include/field_runtime.h`), calling
+  through `struct MapEntries` (`include/map_header.h`), calling
   `gOverlayArea.initialize()`, `gOverlayArea.events()` and so on.
 - The overlay's code and data.
 - The import table (`map/import/<map>.s`). EWRAM is out of `bl` range of

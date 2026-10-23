@@ -69,7 +69,7 @@
 #include "minigame.h"
 #include "sound.h"
 #include "system.h"
-#include "global_cells.h"
+#include "heap_slots.h"
 #include "item_ids.h"
 #include "flags.h"
 #include "songs.h"
@@ -82,7 +82,7 @@
 #include "objcmd.h"
 #include "fixed_math.h"
 #include "map_grid_scroll.h"
-#include "heap_state.h"
+#include "heap.h"
 #include "macros.h"
 
 // Scene sequences and the mast's per-frame updates.

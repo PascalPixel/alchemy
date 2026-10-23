@@ -12,7 +12,7 @@
 #include "ram_buffer.h"
 #include "script_layer.h"
 #include "map_tables.h"
-#include "object_runtime.h"
+#include "object.h"
 #include "animspr.h"
 #include "map_grid.h"
 #include "io_reg.h"

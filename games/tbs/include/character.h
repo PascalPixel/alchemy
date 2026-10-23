@@ -7,7 +7,7 @@
 
 #include "unit/game/game.h"
 #include "types.h"
-#include "owner_value.h"
+#include "unit.h"
 #include "static_assert.h"
 
 struct Unit;

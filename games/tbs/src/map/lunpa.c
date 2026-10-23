@@ -68,7 +68,7 @@
 #include "script_layer.h"
 #include "engine_call.h"
 #include "map_tables.h"
-#include "field_runtime.h"
+#include "map_header.h"
 #include "edition.h"
 #include "lunpa.h"
 #include "text/msg_ids.h"

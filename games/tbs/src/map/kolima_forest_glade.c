@@ -17,10 +17,10 @@
 ///
 /// Open questions: none.
 
-#include "battle_effect_runtime.h"
+#include "speaker.h"
 #include "flags.h"
 #include "version.h"
-#include "global_cells.h"
+#include "heap_slots.h"
 #include "unit/import.h"
 #include "unit/map/kolima_forest_glade.h"
 #include "unit/map/common/object_orbit.h"
@@ -38,7 +38,7 @@
 #include "system.h"
 #include "types.h"
 #include "script_layer.h"
-#include "staged_object_event.h"
+#include "pushed_object.h"
 #include "io_reg.h"
 #include "ability_ids.h"
 #include "map_tables.h"

@@ -1,5 +1,5 @@
-#ifndef ALCHEMY_CHARACTER_MENU_H
-#define ALCHEMY_CHARACTER_MENU_H
+#ifndef ALCHEMY_SUMMARY_SCREEN_H
+#define ALCHEMY_SUMMARY_SCREEN_H
 
 /// @file
 /// The summary screen's state, and the statuses it shows.
@@ -8,7 +8,7 @@
 #include "unit/window/battle_command.h"
 #include "unit/menu/menu.h"
 #include "types.h"
-#include "global_cells.h"
+#include "heap_slots.h"
 #include "static_assert.h"
 #include "animspr.h"
 #include "window.h"

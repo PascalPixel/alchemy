@@ -1,4 +1,4 @@
-#include "global_cells.h"
+#include "heap_slots.h"
 #ifndef LUNPA_FORTRESS_H
 #define LUNPA_FORTRESS_H
 

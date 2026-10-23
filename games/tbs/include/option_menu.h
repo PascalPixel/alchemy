@@ -1,5 +1,5 @@
-#ifndef ALCHEMY_WORKSPACE_OPTIONS_H
-#define ALCHEMY_WORKSPACE_OPTIONS_H
+#ifndef ALCHEMY_OPTION_MENU_H
+#define ALCHEMY_OPTION_MENU_H
 
 /// @file
 /// The option menu's work and the selection work.

@@ -45,7 +45,7 @@
 #define Ram_HeapSlots FIXED_ADDRESS((void **), 0x03001e50, gHeapSlots)
 #endif
 
-// Work pointers in the gHeapSlots table. Their users include heap_state.h,
+// Work pointers in the gHeapSlots table. Their users include heap.h,
 // which the sound library's include path cannot reach.
 #define Ram_MapGridWork ((void **)&gHeapSlots[HEAP_SLOT_MAP_GRID])
 #define Ram_CameraWork ((void **)&gHeapSlots[HEAP_SLOT_CAMERA])

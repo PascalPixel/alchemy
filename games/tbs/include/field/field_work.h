@@ -1,5 +1,5 @@
-#ifndef ALCHEMY_EVENT_WORK_H
-#define ALCHEMY_EVENT_WORK_H
+#ifndef ALCHEMY_FIELD_WORK_H
+#define ALCHEMY_FIELD_WORK_H
 
 /// @file
 /// EventWork, the running map's event work.

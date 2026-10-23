@@ -37,7 +37,7 @@ finished, so a battle a cutscene asks for starts only after its last line.
 
 In the code, `Map_Run` ([`overworld/run_map.c`](overworld/run_map.c))
 runs one map. Its state is the field work, `struct FieldWork`
-(`field_runtime.h`): the running map's object events, its event table and
+(`map_header.h`): the running map's object events, its event table and
 the requests. It is a block borrowed from the [heap](../../glossary.md#heap-and-pools) under the [heap
 slot](../../glossary.md#heap-slot) `HEAP_SLOT_FIELD`, and is reached through the global `gFieldWork`; overlays read the same block
 as `struct EventWork`, so one block goes by three names. Before the
@@ -94,7 +94,7 @@ then loads the map again with `FLAG_KEEP_PARTY_POSITION`, and
 `Map_Run` calls `ObjectEvent_Restore`.
 
 The snapshot (`ObjectEventSnapshot` in
-[`object_runtime.h`](../../include/object_runtime.h)) keeps up to
+[`object.h`](../../include/object.h)) keeps up to
 `OBJECT_EVENT_SNAPSHOT_CAPACITY` (32) object events in parallel arrays of slots, runtime
 copies, animations, [sprite](../../glossary.md#sprite-and-oam) flags and priorities, its slot list ending at an
 empty entry. The map's object event templates have already made new
@@ -204,7 +204,7 @@ always play `SONG_KEEP_BGM`.
 
 The zones are `encounter.tsv`; the rules that choose them are
 `gBattle_LocationRules` (`location_rules.s`) and `gWorldMap_EncounterRules`
-(`zonedata.c`). The zone numbers are named in `unit/overworld/overworld.h`
+(`zonedata.c`). The zone numbers are named in `include/unit/overworld/overworld.h`
 and the flags in `flags.h`.
 
 | Name | Value | Meaning |

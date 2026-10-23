@@ -1,5 +1,5 @@
-#ifndef ALCHEMY_CALLBACK_SCHEDULER_H
-#define ALCHEMY_CALLBACK_SCHEDULER_H
+#ifndef ALCHEMY_TASK_H
+#define ALCHEMY_TASK_H
 
 /// @file
 /// Tasks, their priorities and the task runner's state.

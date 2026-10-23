@@ -2,7 +2,7 @@
 /// Effect tables: object scripts, curves and lookup tables of the overworld
 /// bank.
 
-#include "battle_effect_runtime.h"
+#include "speaker.h"
 #include "unit/overworld/overworld.h"
 #include "unit/overworld/psynergy_effects.h"
 #include "objcmd.h"

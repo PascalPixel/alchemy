@@ -2,12 +2,12 @@
 #define ALCHEMY_DEBUG_LEVEL_H
 
 #include "types.h"
-#include "owner_state.h"
+#include "unit.h"
 
 #include "window.h"
 
 extern struct EventWork *gFieldWork;
-#include "global_cells.h"
+#include "heap_slots.h"
 
 void Engine_ObjectEventSetAnimation();
 void Engine_ObjectEventShowEmote();

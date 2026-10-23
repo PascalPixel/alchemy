@@ -79,7 +79,7 @@
 #include "minigame.h"
 #include "sound.h"
 #include "system.h"
-#include "global_cells.h"
+#include "heap_slots.h"
 #include "map_grid.h"
 #include "types.h"
 #include "script_layer.h"

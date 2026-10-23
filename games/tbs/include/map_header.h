@@ -1,5 +1,5 @@
-#ifndef ALCHEMY_FIELD_RUNTIME_H
-#define ALCHEMY_FIELD_RUNTIME_H
+#ifndef ALCHEMY_MAP_HEADER_H
+#define ALCHEMY_MAP_HEADER_H
 
 /// @file
 /// The field's runtime work: map grid cells, map headers and warp regions,
@@ -7,7 +7,7 @@
 
 #include "types.h"
 #include "static_assert.h"
-#include "object_runtime.h"
+#include "object.h"
 #include "map_tables.h"
 
 struct MapGridCell;

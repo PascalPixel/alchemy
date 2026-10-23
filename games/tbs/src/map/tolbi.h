@@ -8,8 +8,8 @@
 #include "field_effect.h"
 #include "tbs_edition.h"
 #include "window.h"
-#include "field_runtime.h"
-#include "heap_state.h"
+#include "map_header.h"
+#include "heap.h"
 
 #define NULL ((void *)0)
 

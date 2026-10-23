@@ -15,10 +15,10 @@
 #include "types.h"
 #include "call.h"
 #include "animspr.h"
-#include "object_runtime.h"
+#include "object.h"
 #include "object_event.h"
-#include "callback_scheduler.h"
-#include "vram_block.h"
+#include "task.h"
+#include "vram_cache.h"
 #include "songs.h"
 
 // The sites of the three Colosso finals matches (Colosseum Final 1, 2 and 3):

@@ -1,5 +1,5 @@
-#ifndef ALCHEMY_RESOURCE_MENU_H
-#define ALCHEMY_RESOURCE_MENU_H
+#ifndef ALCHEMY_ICON_MENU_H
+#define ALCHEMY_ICON_MENU_H
 
 /// @file
 /// The icon menu's entries and work.

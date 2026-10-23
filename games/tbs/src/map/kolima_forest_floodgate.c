@@ -25,7 +25,7 @@
 ///
 /// Open questions: none.
 
-#include "battle_effect_runtime.h"
+#include "speaker.h"
 #include "flags.h"
 #include "unit/import.h"
 #include "unit/map/kolima_forest_floodgate.h"
@@ -61,7 +61,7 @@
 #include "songs.h"
 #include "audio_engine_symbols.h"
 #include "item_ids.h"
-#include "heap_state.h"
+#include "heap.h"
 
 /// The object events, numbering gKolimaForestFloodgateObjectEventTemplates'
 /// rows from LOCALID_FIRST_PLACED.

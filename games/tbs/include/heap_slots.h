@@ -1,11 +1,11 @@
-#ifndef ALCHEMY_GLOBAL_CELLS_H
-#define ALCHEMY_GLOBAL_CELLS_H
+#ifndef ALCHEMY_HEAP_SLOTS_H
+#define ALCHEMY_HEAP_SLOTS_H
 
 /// @file
 /// The heap slots of gHeapSlots, read through their own names.
 
 #include "types.h"
-#include "effect_step.h"
+#include "particle.h"
 
 struct ScreenTransitionState;
 

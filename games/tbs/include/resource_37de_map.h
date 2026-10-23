@@ -5,7 +5,7 @@
 /// A map overlay's imports: queueing a map sound and setting up its record
 /// buffer.
 
-#include "global_cells.h"
+#include "heap_slots.h"
 #include "static_assert.h"
 
 void QueueMapSound(s32);

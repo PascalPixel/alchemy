@@ -81,14 +81,14 @@
 #include "map_tables.h"
 #include "call.h"
 #include "field_service.h"
-#include "global_cells.h"
+#include "heap_slots.h"
 #include "edition.h"
 #include "map_ids.h"
 #include "text/msg_ids.h"
 #include "ability_ids.h"
 #include "objcmd.h"
 #include "map_grid_scroll.h"
-#include "heap_state.h"
+#include "heap.h"
 #include "fixed_math.h"
 
 // Map section flags: Map_ResetFlagsOnEnter clears 0x300 to 0x3ff when the party

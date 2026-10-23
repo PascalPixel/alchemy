@@ -2,12 +2,12 @@ name	kind	source	evidence
 Work (struct FooWork, gFooWork)	word	pret	a running system's block, as pret's sWork; one suffix for every block
 Alloc, Free, InitHeap	prefix	pret	pokeemerald include/malloc.h; runtime/runtime/heap.c
 AllocHeapSlot, AllocHeapSlotEwram, FreeHeapSlot, AllocEwram	prefix	common	heap.c: blocks kept in a heap slot; AllocEwram takes the EWRAM pool first
-heap slot (gHeapSlots, HEAP_SLOT_*, HEAP_SLOT_BLOCK)	word	common	include/heap_state.h enum HeapSlot; one global per slot, g<Slot>Work
+heap slot (gHeapSlots, HEAP_SLOT_*, HEAP_SLOT_BLOCK)	word	common	include/heap.h enum HeapSlot; one global per slot, g<Slot>Work
 gFieldWork, HEAP_SLOT_FIELD	global	common	the running map's block Map_Run allocates (overworld/overworld/run_map.c)
 gObjectSystemWork, HEAP_SLOT_OBJECT_SYSTEM	global	common	ObjectSystem_Initialize allocates the slot (field/field/objects.c)
 gBattleEntryTimer	global	common	the battle's entry transition timer in frames (battle/battle/transition.c)
 task (struct Task, TaskFunc, gTasks, Task_, TASK_PRIORITY_*)	word	pret	pokeemerald include/task.h (gTasks, TaskFunc, priority); runtime/runtime/scheduler.c
-Object, gObjects, OBJECT_COUNT, HEAP_SLOT_OBJECTS	struct	common	the 64 records of 0x70 bytes for field and battle figures (include/object_runtime.h); pret's ObjectEvent is field-only
+Object, gObjects, OBJECT_COUNT, HEAP_SLOT_OBJECTS	struct	common	the 64 records of 0x70 bytes for field and battle figures (include/object.h); pret's ObjectEvent is field-only
 OBJECT_SYSTEM_LAYOUT, _WORLD_MAP, _BATTLE	constant	pret	enum ObjectSystemMode; layout is pret's word for what the first mode runs
 MapHeader, gMapHeaders, MAP_HEADER, map_header	struct	pret	pokeemerald include/global.fieldmap.h struct MapHeader (layout, map section, map type); field/maps.s
 main menu (MapId_MainMenu, MainMenu_)	word	pret	pokeemerald src/main_menu.c (New Game, Continue); the debug map list calls it "Clear data" (MsgDebugEntryName)
@@ -39,7 +39,7 @@ metatile behavior (MapGridCell.behavior)	field	pret	pokeemerald metatile_behavio
 shape (MapGridCell.shape, gMapGridShapes)	field	common	terrain.c reads the shape table through it
 Terrain_ (height functions)	prefix	common	field/terrain.c gMapGrid_TerrainHeightFunctions
 groundHeight	field	common	MapGrid_GetTerrainHeight result stored on the object
-layer (object's map layer)	field	common	object_runtime.h terrainId comment "map layer"
+layer (object's map layer)	field	common	object.h terrainId comment "map layer"
 BattleEnvironment, BATTLE_ENVIRONMENT_	enum	pret	pokeemerald include/constants/battle.h BATTLE_ENVIRONMENT_
 WorldMapEncounterRule	struct	common	world map encounter rules (gWorldMap_EncounterRules)
 WorldMapView	struct	common	world map tilted view in HEAP_SLOT_MAP_GRID
@@ -70,7 +70,7 @@ ObjectMotion_	prefix	common	object motion toward targets, gravity
 OBJECT_ANIMATION	constant	common	the script macro sets an animation
 ObjectSystem_PlaceSprites/ProjectSprites	prefix	common	object_camera.c places every object's sprite on screen
 FieldCamera_	prefix	pret	pokeemerald field_camera.c
-Speaker_, SpeakerDefinition	prefix	common	its own header calls it a speaker definition (battle_effect_runtime.h)
+Speaker_, SpeakerDefinition	prefix	common	its own header calls it a speaker definition (speaker.h)
 field effect (FieldEffect_)	prefix	pret	pokeemerald field_effect.c FLDEFF_
 FieldPsynergy, FIELD_PSYNERGY_	enum	game	the game's Psynergy (en.po); field Psynergy kinds
 FieldEffect_StartCast	function	game	Psynergy cast on the field

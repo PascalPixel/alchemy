@@ -1,5 +1,5 @@
-#ifndef ALCHEMY_BATTLE_EFFECT_RUNTIME_H
-#define ALCHEMY_BATTLE_EFFECT_RUNTIME_H
+#ifndef ALCHEMY_SPEAKER_H
+#define ALCHEMY_SPEAKER_H
 
 /// @file
 /// The speaker lookup's views of an object event and its sprite, the speaker

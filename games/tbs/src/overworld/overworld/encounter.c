@@ -355,7 +355,7 @@ extern const struct MapSecNameRule gMapSec_NameRules[];
 /// reader treats 0 apart. Called by the save, debug and
 /// location windows through MapSec_GetNameIndexFar, and by
 /// RegionMap_UpdateMarkers; most add it to MsgDebugEntryName for the
-/// message. The save stores it as its area (save_state.h).
+/// message. The save stores it as its area (save.h).
 s32 MapSec_GetNameIndex(s32 mapId, s32 warpDest) {
   const struct MapSecNameRule *rule = gMapSec_NameRules;
   s32 name = 0;

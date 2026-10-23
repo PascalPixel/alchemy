@@ -3,8 +3,7 @@
 
 #include "types.h"
 #include "keystate.h"
-#include "owner_state.h"
-#include "owner_value.h"
+#include "unit.h"
 #include "game_state.h"
 #include "fx_work.h"
 #include "object_event.h"
@@ -12,7 +11,7 @@
 
 #include "character.h"
 
-#include "global_cells.h"
+#include "heap_slots.h"
 
 void Engine_TaskWait(s32 frames);
 

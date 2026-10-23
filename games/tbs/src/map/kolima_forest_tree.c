@@ -47,7 +47,7 @@
 ///   version where those object events were drawn; the ROM keeps no such
 ///   version, and nothing reads the object events but that function.
 
-#include "battle_effect_runtime.h"
+#include "speaker.h"
 #include "game_state.h"
 #include "unit/map/kolima_forest_tree.h"
 #include "unit/map/common/kolima_palette.h"

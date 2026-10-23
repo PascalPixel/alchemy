@@ -1,13 +1,13 @@
-#ifndef ALCHEMY_INVENTORY_MENU_H
-#define ALCHEMY_INVENTORY_MENU_H
+#ifndef ALCHEMY_ITEM_MENU_H
+#define ALCHEMY_ITEM_MENU_H
 
 /// @file
 /// The item menu's state and commands.
 
 #include "unit/menu/menu.h"
-#include "global_cells.h"
+#include "heap_slots.h"
 #include "static_assert.h"
-#include "menu_result.h"
+#include "paged_list.h"
 #include "render_input.h"
 #include "text/msg_ids.h"
 #include "farcall.h"

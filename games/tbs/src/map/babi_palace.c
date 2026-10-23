@@ -54,7 +54,7 @@
 ///   in the ROM says why they set the story flags they set.
 
 #include "game_state.h"
-#include "heap_state.h"
+#include "heap.h"
 #include "version.h"
 #include "keystate.h"
 #include "map_ids.h"
@@ -84,7 +84,7 @@
 #include "script_layer.h"
 #include "item_ids.h"
 #include "objcmd.h"
-#include "global_cells.h"
+#include "heap_slots.h"
 #include "display_transition.h"
 #include "flags.h"
 #include "songs.h"

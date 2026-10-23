@@ -245,7 +245,7 @@ The heap hands out memory from two pools, one in IWRAM from `gIwramHeap` up to
 `Ram_IwramHeapEnd` and one in EWRAM from `gEwramHeap` up to the end of EWRAM.
 Each pool is a bump allocator: a block starts at the pool's next free address,
 which moves up past it. The two next-free addresses are the first two words of
-`gHeapSlots` (`union HeapState`, `games/tbs/include/heap_state.h`), and the
+`gHeapSlots` (`union HeapState`, `games/tbs/include/heap.h`), and the
 other 62 words are the heap slots, which hold the blocks that have to be
 found again later. `AllocHeapSlot` and `Alloc` take IWRAM first
 and fall back to EWRAM; `AllocHeapSlotEwram` and
@@ -336,7 +336,7 @@ which can shift the tasks after it by one; whether the game ever does is an
 open question.
 
 The code is `runtime/scheduler.c`, its names in
-`games/tbs/include/system/callback_scheduler.h`.
+`games/tbs/include/system/task.h`.
 
 | Name | Value | Meaning |
 | --- | --- | --- |

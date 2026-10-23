@@ -1,5 +1,5 @@
-#ifndef ALCHEMY_TEXT_READER_H
-#define ALCHEMY_TEXT_READER_H
+#ifndef ALCHEMY_MESSAGE_READER_H
+#define ALCHEMY_MESSAGE_READER_H
 
 /// @file
 /// MessageReader, a cursor through message text.

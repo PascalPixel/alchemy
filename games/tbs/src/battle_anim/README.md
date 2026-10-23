@@ -327,7 +327,7 @@ fireballs in the small pool and flashes, sparks and trails in the large one)
 and reuses a finished particle's place for the next, so a pool never grows.
 
 A particle is a `struct Particle`
-([`effect_step.h`](../../include/field/effect_step.h)): a position and a
+([`particle.h`](../../include/field/particle.h)): a position and a
 velocity on three axes, in 16.16 fixed-point pixels (65,536 is one pixel), and
 one spare word, `variant`, that each animation uses for a life, a frame or a
 picture. `ANIM_FREE_PARTICLES` marks particles free with a `variant` of -1,

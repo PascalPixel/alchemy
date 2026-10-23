@@ -58,7 +58,7 @@
 ///
 /// Open questions: none.
 
-#include "battle_effect_runtime.h"
+#include "speaker.h"
 #include "version.h"
 #include "game_state.h"
 #include "map_ids.h"
@@ -84,13 +84,13 @@
 #include "sound.h"
 #include "system.h"
 #include "resource.h"
-#include "global_cells.h"
+#include "heap_slots.h"
 #include "iwram_call.h"
 #include "dma.h"
 #include "field_service.h"
 #include "io_reg.h"
 #include "text/msg_ids.h"
-#include "heap_state.h"
+#include "heap.h"
 #include "field_effect.h"
 #include "flags.h"
 #include "character_ids.h"

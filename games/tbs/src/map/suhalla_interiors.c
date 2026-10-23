@@ -50,7 +50,7 @@
 #include "item_ids.h"
 #include "flags.h"
 #include "songs.h"
-#include "field_runtime.h"
+#include "map_header.h"
 
 /// The object events, numbering the rows of
 /// gSuhallaInteriorsObjectEventTemplates and of

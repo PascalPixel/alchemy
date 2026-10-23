@@ -5,7 +5,7 @@
 /// gOverflowItem, an item slot the spoils code uses when items are handed out.
 
 #include "item.h"
-#include "owner_state.h"
+#include "game/unit.h"
 #include "party_state.h"
 #include "farcall.h"
 

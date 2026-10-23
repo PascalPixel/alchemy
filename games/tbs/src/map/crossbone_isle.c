@@ -62,7 +62,7 @@
 
 #include "game_state.h"
 #include "version.h"
-#include "global_cells.h"
+#include "heap_slots.h"
 #include "unit/import.h"
 #include "unit/map/crossbone_isle.h"
 #include "unit/map/common/object_orbit.h"
@@ -78,7 +78,7 @@
 #include "types.h"
 #include "script_layer.h"
 #include "map_tables.h"
-#include "staged_object_event.h"
+#include "pushed_object.h"
 #include "field_effect.h"
 #include "debug.h"
 #include "game.h"

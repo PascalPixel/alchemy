@@ -533,7 +533,7 @@ The world map's graphics sets are `gWorldMap_GraphicsResources`
 ### One object, many views
 
 All 64 objects are the same 112 bytes, but each family of code reads them
-through a struct of its own: `Object` (`include/object_runtime.h`),
+through a struct of its own: `Object` (`include/object.h`),
 `DispatchObject` (`include/object_dispatch.h`), `ObjectScriptContext` and
 `ScriptOperands` (`include/field/action_script.h`), `ScriptMotionObject`
 (`include/script_motion.h`), `ScriptObjectRuntime`

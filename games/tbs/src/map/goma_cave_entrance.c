@@ -59,7 +59,7 @@
 #include "inventory.h"
 #include "text/msg_ids.h"
 #include "objcmd.h"
-#include "global_cells.h"
+#include "heap_slots.h"
 #include "ability_ids.h"
 #include "macros.h"
 #include "flags.h"

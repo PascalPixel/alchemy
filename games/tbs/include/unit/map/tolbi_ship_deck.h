@@ -3,7 +3,7 @@
 
 #include "types.h"
 #include "map_tables.h"
-#include "field_runtime.h"
+#include "map_header.h"
 
 const struct MapWarpDest *TolbiShipDeck_GetWarpDests(void);
 const struct MapWarpRegion *TolbiShipDeck_GetRegions(void);

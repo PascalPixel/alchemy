@@ -1,12 +1,12 @@
-#ifndef ALCHEMY_STAGED_OBJECT_EVENT_H
-#define ALCHEMY_STAGED_OBJECT_EVENT_H
+#ifndef ALCHEMY_PUSHED_OBJECT_H
+#define ALCHEMY_PUSHED_OBJECT_H
 
 /// @file
 /// The pushed objects' movement probes and footprint bounds.
 
 #include "types.h"
 #include "object_event.h"
-#include "field_runtime.h"
+#include "map_header.h"
 #include "static_assert.h"
 
 /// Where a pushed object ahead of the leader would roll to: its footprint, its

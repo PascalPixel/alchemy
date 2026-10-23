@@ -1,5 +1,5 @@
-#ifndef ALCHEMY_OBJECT_RUNTIME_H
-#define ALCHEMY_OBJECT_RUNTIME_H
+#ifndef ALCHEMY_OBJECT_H
+#define ALCHEMY_OBJECT_H
 
 /// @file
 /// Object, an object's runtime state, and the object snapshots.

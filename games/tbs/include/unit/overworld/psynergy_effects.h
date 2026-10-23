@@ -2,7 +2,7 @@
 #define ALCHEMY_UNIT_OVERWORLD_PSYNERGY_EFFECTS_H
 
 #include "types.h"
-#include "effect_slot.h"
+#include "field_effect_sprite.h"
 #include "unit/overworld/overworld.h"
 
 struct Sprite;

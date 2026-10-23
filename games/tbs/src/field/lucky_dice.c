@@ -16,7 +16,7 @@
 #include "iwram_call.h"
 #include "field_offset.h"
 #include "edition.h"
-#include "callback_scheduler.h"
+#include "task.h"
 #include "call.h"
 #include "frame.h"
 #include "oambuf.h"
@@ -124,7 +124,7 @@ UNUSED s16 FixedPoint_Reciprocal(s16 value) { return 0x10000 / value; }
 #include "resource_ids.h"
 #include "text/msg_ids.h"
 #include "songs.h"
-#include "heap_state.h"
+#include "heap.h"
 
 // Lucky Dice window layout, in tiles (and pixels for text), by edition: the
 // coins window at the top, the help window (Throw / Quit) and the winnings

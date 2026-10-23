@@ -66,7 +66,7 @@
 #include "map_ids.h"
 #include "io_reg.h"
 #include "text/msg_ids.h"
-#include "global_cells.h"
+#include "heap_slots.h"
 #include "edition.h"
 #include "field_service.h"
 #include "game_state.h"

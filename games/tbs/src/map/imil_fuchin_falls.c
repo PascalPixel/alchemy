@@ -110,7 +110,7 @@
 #include "battle_party.h"
 #include "field_effect.h"
 #include "field_offset.h"
-#include "field_runtime.h"
+#include "map_header.h"
 #include "display_transition.h"
 #include "fx_work.h"
 #include "text/msg_ids.h"

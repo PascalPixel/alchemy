@@ -6,7 +6,7 @@
 /// Djinni's list entry.
 
 #include "types.h"
-#include "global_cells.h"
+#include "heap_slots.h"
 #include "render_input.h"
 #include "djinn_ids.h"
 

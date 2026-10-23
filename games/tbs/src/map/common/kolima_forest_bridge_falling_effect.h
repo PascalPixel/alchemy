@@ -7,7 +7,7 @@
 #include "minigame.h"
 #include "sound.h"
 #include "system.h"
-#include "global_cells.h"
+#include "heap_slots.h"
 #include "types.h"
 #include "script_layer.h"
 #include "map_grid_scroll.h"

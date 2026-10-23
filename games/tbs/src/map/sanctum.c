@@ -62,7 +62,7 @@
 ///
 /// Open questions: none.
 
-#include "battle_effect_runtime.h"
+#include "speaker.h"
 #include "flags.h"
 #include "game_state.h"
 #include "unit/map/sanctum.h"
@@ -92,7 +92,7 @@
 #include "facing_object.h"
 #include "text/msg_ids.h"
 #include "io_reg.h"
-#include "save_state.h"
+#include "save.h"
 #include "field_service.h"
 #include "window.h"
 #include "uiflow.h"

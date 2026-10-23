@@ -1,5 +1,5 @@
-#ifndef ALCHEMY_MENU_RESULT_H
-#define ALCHEMY_MENU_RESULT_H
+#ifndef ALCHEMY_PAGED_LIST_H
+#define ALCHEMY_PAGED_LIST_H
 
 /// @file
 /// PagedList, what a menu returns.

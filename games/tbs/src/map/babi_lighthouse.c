@@ -50,7 +50,7 @@
 
 #include "game_state.h"
 #include "version.h"
-#include "global_cells.h"
+#include "heap_slots.h"
 #include "map_ids.h"
 #include "unit/import.h"
 #include "unit/map/babi_lighthouse.h"
@@ -67,7 +67,7 @@
 #include "map_tables.h"
 #include "djinn_ids.h"
 #include "field_effect.h"
-#include "staged_object_event.h"
+#include "pushed_object.h"
 #include "select_overlay_data_by_runtime_selector.h"
 #include "battle.h"
 #include "debug.h"

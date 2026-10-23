@@ -123,14 +123,14 @@
 #include "system.h"
 #include "field_service.h"
 #include "text/msg_ids.h"
-#include "callback_scheduler.h"
+#include "task.h"
 #include "map_ids.h"
 #include "inventory.h"
 #include "ability_ids.h"
 #include "item_ids.h"
 #include "objcmd.h"
 #include "fixed_math.h"
-#include "field_runtime.h"
+#include "map_header.h"
 
 // Map section flags: Map_ResetFlagsOnEnter clears 0x300 to 0x3ff when the party
 // enters another map section, and other map sections use the numbers for their

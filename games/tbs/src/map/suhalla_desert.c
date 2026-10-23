@@ -78,7 +78,7 @@
 #include "sound.h"
 #include "system.h"
 #include "fx_work.h"
-#include "global_cells.h"
+#include "heap_slots.h"
 #include "io_write_queue.h"
 #include "io_reg.h"
 #include "call.h"
@@ -91,7 +91,7 @@
 #include "objcmd.h"
 #include "iowrite.h"
 #include "songs.h"
-#include "heap_state.h"
+#include "heap.h"
 #include "map_grid.h"
 #include "fixed_math.h"
 

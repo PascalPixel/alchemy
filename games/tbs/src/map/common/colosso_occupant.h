@@ -1,6 +1,6 @@
 #include "types.h"
 #include "object_event.h"
-#include "field_runtime.h"
+#include "map_header.h"
 #include "game_state.h"
 
 // The sites of the three Colosso finals matches (Colosseum Final 1, 2 and 3).

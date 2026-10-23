@@ -76,7 +76,7 @@
 /// Open questions: none.
 
 #include "game_state.h"
-#include "vram_tab.h"
+#include "vram_cache.h"
 #include "unit/import.h"
 #include "unit/map/vale.h"
 #include "unit/map/common/object_orbit.h"
@@ -98,7 +98,7 @@
 #include "sound.h"
 #include "system.h"
 #include "mem.h"
-#include "global_cells.h"
+#include "heap_slots.h"
 #include "edition.h"
 #include "vale.h"
 #include "types.h"

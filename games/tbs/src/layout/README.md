@@ -343,7 +343,7 @@ row.
 | --- | --- | --- |
 | a treasure spot's id | 100 to 239 | the trigger of the map event that places it |
 | the end row | column 255, row 255 | ends the list |
-| `TREASURE_SPOT_MAX` | 10 | treasure spots placed on a map (`unit/overworld/overworld.h`) |
+| `TREASURE_SPOT_MAX` | 10 | treasure spots placed on a map (`include/unit/overworld/overworld.h`) |
 
 ### Tileset animation and blend scripts
 

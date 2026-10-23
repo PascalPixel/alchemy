@@ -4,17 +4,17 @@
 
 #include "types.h"
 #include "animspr.h"
-#include "vram_block.h"
-#include "callback_scheduler.h"
+#include "vram_cache.h"
+#include "task.h"
 
 #include "script_layer.h"
 #include "map_tables.h"
 #include "facing_object.h"
 #include "field_effect.h"
 
-#include "battle_effect_runtime.h"
+#include "speaker.h"
 #include "fx_work.h"
 
-#include "global_cells.h"
+#include "heap_slots.h"
 
 #endif

@@ -34,7 +34,7 @@
 #include "mem.h"
 #include "tbs_edition.h"
 #include "text/msg_ids.h"
-#include "callback_scheduler.h"
+#include "task.h"
 #include "map_ids.h"
 #include "game_state.h"
 #include "battle_party.h"
@@ -42,9 +42,9 @@
 #include "map_tables.h"
 #include "frame.h"
 #include "flags.h"
-#include "global_cells.h"
+#include "heap_slots.h"
 #include "songs.h"
-#include "heap_state.h"
+#include "heap.h"
 
 // Link transfers use three unit records followed by one recovery-table record.
 /// The bytes sent for each member: a Unit (BATTLE_UNIT_SIZE, 0x14c)

@@ -7,7 +7,7 @@
 
 #include "types.h"
 #include "static_assert.h"
-#include "effect_slot.h"
+#include "field_effect_sprite.h"
 
 struct Sprite;
 union FieldObject;

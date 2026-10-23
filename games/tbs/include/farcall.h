@@ -14,8 +14,8 @@
 /// mechanism. A file with a local declaration defines `OWN_<name>` before
 /// including this header to keep that declaration in scope.
 
-#include "callback_scheduler.h"
-#include "effect_slot.h"
+#include "task.h"
+#include "field_effect_sprite.h"
 #include "irq.h"
 #include "types.h"
 #include "edition.h"

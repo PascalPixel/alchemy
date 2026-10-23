@@ -3,7 +3,7 @@
 
 #include "types.h"
 #include "map_tables.h"
-#include "field_runtime.h"
+#include "map_header.h"
 #include "static_assert.h"
 
 struct MapEvent;

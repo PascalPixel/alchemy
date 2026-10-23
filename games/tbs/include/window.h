@@ -2,14 +2,85 @@
 #define ALCHEMY_WINDOW_H
 
 /// @file
-/// The window renderer's work.
+/// Windows, the text printers that type into them, and the window renderer's
+/// work.
 
 #include "unit/window/window.h"
 #include "unit/window/battle_command.h"
 #include "types.h"
 #include "tbs_edition.h"
 #include "static_assert.h"
-#include "uiflow.h"
+#include "render_input.h"
+
+/// A window: a framed rectangle of the tilemap with its window sprites, its
+/// opening or closing animation and the rectangle it last drew.
+struct Window {
+  struct WindowSpriteList sprites; ///< the sprites the window carries
+  u16 width;                       ///< tiles
+  u16 height;                      ///< tiles
+  u16 x;                           ///< tiles
+  u16 y;                           ///< tiles
+  u16 opened; ///< 1 once opened, 0 once freed; nothing reads it
+  /// The effect a message's TEXT_WINDOW_STATE code sets. Only
+  /// WINDOW_EFFECT_SWELL is acted on; its text printer types nothing more
+  /// until the swell ends and clears it.
+  u16 effect;
+  /// 0 while a text printer is typing into the window; 1 once its text has
+  /// ended or closed the window, which frees the printer for the next text.
+  u16 state;
+  u16 flags; ///< UI_WINDOW_ flags; 0 once closing or free
+  /// The zoom's step: counts down from 7 to 0 while opening, and up from 0 to
+  /// duration while closing.
+  u16 frame;
+  s16 duration;       ///< frames of the zoom under way; 0 when none
+  u16 previousX;      ///< tiles
+  u16 previousY;      ///< tiles
+  u16 previousWidth;  ///< tiles
+  u16 previousHeight; ///< tiles
+};
+
+STATIC_ASSERT(sizeof(struct Window) == 0x24);
+STATIC_ASSERT(offsetof(struct Window, width) == 8);
+STATIC_ASSERT(offsetof(struct Window, frame) == 0x18);
+STATIC_ASSERT(offsetof(struct Window, previousHeight) == 0x22);
+
+/// A text printer, one of three, which types decoded text into a window a few
+/// characters a frame and runs its control codes.
+struct TextPrinter {
+  struct Window *window; ///< the window typed into; NULL when free
+  u16 x;                 ///< pen, 8.8 fixed-point pixels
+  u16 y;                 ///< pen, 8.8 fixed-point pixels
+  /// Extra advance per line, in 1/256 pixels: after every character in
+  /// Japanese, after a space in the other editions.
+  u16 spacing[4];
+  u16 line;        ///< line of the page, indexes spacing; at most 3
+  u16 textIndex;   ///< next code in WindowWork.textBuffer
+  u16 countdown;   ///< frames left of a pause, a page wait or a swell
+  u16 colour;      ///< text colour; 15 by default
+  u16 outline;     ///< outline colour; 0 for none
+  u16 lineSpacing; ///< 10 by default
+  u16 transition;  ///< frames left of the canvas scrolling up a line
+  u16 startX;      ///< pen x each new line returns to, 8.8 fixed-point pixels
+  u16 ended;       ///< 1 once a TEXT_END code is reached
+  u16 glyphDelay;  ///< frames to wait after a glyph while no button is held
+  u16 flags;       ///< nonzero keeps the window's size from page to page
+  u16 unused;      ///< no code names it
+};
+
+STATIC_ASSERT(sizeof(struct TextPrinter) == 0x28);
+STATIC_ASSERT(offsetof(struct TextPrinter, textIndex) == 0x12);
+STATIC_ASSERT(offsetof(struct TextPrinter, countdown) == 0x14);
+STATIC_ASSERT(offsetof(struct TextPrinter, transition) == 0x1c);
+STATIC_ASSERT(offsetof(struct TextPrinter, flags) == 0x24);
+
+/// Requests transfer of the four-row tilemap band containing window row y.
+// A statement macro (S2: a layer, 10 sites): the dirty-row store stays where it
+// is written at every use; as a plain expression, tbs-en differs.
+#define Window_MarkTilemapRow(render, y)                                       \
+  do {                                                                         \
+    (render)->dirty |= 2 << ((u32)(y) >> 2);                                   \
+  } while (0)
+
 #include "output.h"
 
 /// Window sprites in the shared pool: every sprite the windows show at once,

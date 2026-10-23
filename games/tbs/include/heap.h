@@ -1,5 +1,5 @@
-#ifndef ALCHEMY_HEAP_STATE_H
-#define ALCHEMY_HEAP_STATE_H
+#ifndef ALCHEMY_HEAP_H
+#define ALCHEMY_HEAP_H
 
 /// @file
 /// The heap's slots and HeapState.

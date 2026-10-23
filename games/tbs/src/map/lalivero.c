@@ -59,7 +59,7 @@
 #include "objcmd.h"
 #include "songs.h"
 #include "flags.h"
-#include "heap_state.h"
+#include "heap.h"
 
 static void Lalivero_TalkAboutIdejimaShip(void);
 

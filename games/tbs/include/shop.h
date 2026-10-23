@@ -5,11 +5,11 @@
 /// ShopWork, a shop's work, and the shop screen's tiles.
 
 #include "unit/shop/shop.h"
-#include "global_cells.h"
+#include "heap_slots.h"
 #include "item.h"
 #include "static_assert.h"
 #include "render_input.h"
-#include "effect_slot.h"
+#include "field_effect_sprite.h"
 #include "animspr.h"
 #include "cursor.h"
 

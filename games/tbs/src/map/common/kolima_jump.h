@@ -4,7 +4,7 @@
 #include "types.h"
 #include "engine_call.h"
 #include "object_event.h"
-#include "field_runtime.h"
+#include "map_header.h"
 #include "game_state.h"
 #include "songs.h"
 

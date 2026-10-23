@@ -2,7 +2,7 @@
 #define ALCHEMY_UNIT_OVERWORLD_OVERWORLD_H
 
 #include "types.h"
-#include "effect_slot.h"
+#include "field_effect_sprite.h"
 
 struct ArcEffectObject;
 struct SpeakerDefinition;

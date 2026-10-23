@@ -7,7 +7,7 @@
 #include "types.h"
 #include "edition.h"
 #include "vector3.h"
-#include "battle_effect_runtime.h"
+#include "speaker.h"
 #include "farcall.h"
 
 struct BattleAction;

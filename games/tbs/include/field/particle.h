@@ -1,5 +1,5 @@
-#ifndef ALCHEMY_EFFECT_STEP_H
-#define ALCHEMY_EFFECT_STEP_H
+#ifndef ALCHEMY_PARTICLE_H
+#define ALCHEMY_PARTICLE_H
 
 /// @file
 /// Particle and ScreenPoint, the positions animations move through.

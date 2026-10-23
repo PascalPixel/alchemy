@@ -30,7 +30,7 @@ callbacks, or plays an arrival cutscene; it may take a warp at once. It
 skips arrival cutscenes when `FLAG_KEEP_PARTY_POSITION` says the party is
 returning to where it stood, as after a battle.
 
-In the code, the six are `struct MapEntries` in `field_runtime.h`, in a
+In the code, the six are `struct MapEntries` in `map_header.h`, in a
 fixed order at the start of every overlay, `entry/<map>.s`. Each entry is an
 8-byte [veneer](../../glossary.md#veneer):
 

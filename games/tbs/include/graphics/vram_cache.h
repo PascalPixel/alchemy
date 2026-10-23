@@ -1,5 +1,5 @@
-#ifndef ALCHEMY_VRAM_TAB_H
-#define ALCHEMY_VRAM_TAB_H
+#ifndef ALCHEMY_VRAM_CACHE_H
+#define ALCHEMY_VRAM_CACHE_H
 
 /// @file
 /// The sprite VRAM block cache and its owners.

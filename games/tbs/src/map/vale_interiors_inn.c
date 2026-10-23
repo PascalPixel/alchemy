@@ -75,7 +75,7 @@
 ///   was intended.
 
 #include "game_state.h"
-#include "vram_tab.h"
+#include "vram_cache.h"
 #include "unit/map/vale_interiors_inn.h"
 #include "unit/map/common/effect_psynergy.h"
 #include "unit/overworld/overworld.h"
@@ -104,12 +104,11 @@
 #include "resource.h"
 #include "glyph.h"
 #include "animspr.h"
-#include "vram_block.h"
 #include "b5_context.h"
 #include "io_reg.h"
 #include "call.h"
 #include "field_effect.h"
-#include "heap_state.h"
+#include "heap.h"
 #include "ability_ids.h"
 #include "songs.h"
 #include "item_ids.h"

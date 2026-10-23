@@ -6,8 +6,8 @@
 
 #include "types.h"
 #include "edition.h"
-#include "object_runtime.h"
-#include "field_runtime.h"
+#include "object.h"
+#include "map_header.h"
 #include "map_tables.h"
 #include "menu_list.h"
 #include "farcall.h"

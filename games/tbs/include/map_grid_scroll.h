@@ -5,7 +5,7 @@
 /// The map layers' scroll work and the background scroll values.
 
 #include "types.h"
-#include "global_cells.h"
+#include "heap_slots.h"
 #include "static_assert.h"
 #include "map_grid.h"
 

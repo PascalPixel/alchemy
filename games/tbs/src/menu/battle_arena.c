@@ -38,6 +38,7 @@
 #include "game_state.h"
 #include "battle_party.h"
 #include "irqlock.h"
+#include "audio_engine_symbols.h"
 #include "map_tables.h"
 #include "frame.h"
 #include "flags.h"
@@ -1328,12 +1329,11 @@ static s32 BattleArena_TalkByProgress(s32 localId) {
 #endif
 }
 
-/// Coord event 1, the way out: stops the link, loads sound preset 2 and goes
-/// back to the main menu (its warp destination
-/// MAIN_MENU_FROM_SANCTUM).
+/// Coord event 1, the way out: stops the link, loads the normal reverb code and
+/// goes back to the main menu (its warp destination MAIN_MENU_FROM_SANCTUM).
 static s32 BattleArena_LeaveArena(void) {
   SerialRuntime_RemoveIrqHandlers();
-  Sound_LoadPresetParameters(2);
+  Sound_LoadReverbCode(SOUND_REVERB_NORMAL);
   FieldScript_SetDestination((s32)&MapId_MainMenu, MAIN_MENU_FROM_SANCTUM);
 #ifdef UBFIX
   return 0;
@@ -1508,7 +1508,7 @@ s32 BattleArena_RunRoundResult(void) {
   gBattleArenaCallFrames = 0;
   sBattleArenaWaitFrames = 0;
   gFieldWork->transition = MAP_TRANSITION(TRANSITION_WINDOW, 1);
-  Sound_LoadPresetParameters(2);
+  Sound_LoadReverbCode(SOUND_REVERB_NORMAL);
   BattleArena_DrawThreeDigitValue(
       gGameState.linkTallies[LINK_TALLY_LINKED_BEST_STREAK]);
   MapGrid_CopyCellAttributes(11, 11, 1, 1, 13, 10);

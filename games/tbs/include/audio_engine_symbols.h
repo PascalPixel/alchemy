@@ -14,7 +14,7 @@ enum AudioCommandMask {
   SOUND_COMMAND_MASK_BITS = 0x7f
 };
 
-/// The sound driver's mode at start (Audio_Initialize, AudioEngine_SetMode):
+/// The sound driver's mode at start (m4aSoundInit, m4aSoundMode):
 /// 8 PCM notes (bits 11..8), volume 15 (15..12), frame length 7 (19..16),
 /// 352 samples a frame or 21024 a second, and sound bias resolution 1 (from
 /// bits 23..20). Its reverb field, 0, leaves the reverb as it is.
@@ -35,37 +35,53 @@ enum SongControl {
   /// but for SONG_FADE_OUT_BGM and SONG_KEEP_BGM.
   SONG_FANFARE_FIRST = 80,
   /// Songs from here but SONG_FADE_OUT_ACTION_SE each play on the player
-  /// gSound_SongTable names for them.
+  /// gSongTable names for them.
   SONG_SE_FIRST = 100
 };
 
-/// The players by their place in gSound_PlayerSlots
-/// (sound/music_player_table.s).
-enum SoundPlayerId {
-  SOUND_PLAYER_FANFARE = 0, ///< gMusicPlayerFanfare
-  SOUND_PLAYER_MUSIC = 1,   ///< gMusicPlayerBgm
-  /// The first player a song on SOUND_PLAYER_EFFECT_LAST may borrow.
-  SOUND_PLAYER_EFFECT_FIRST = 4,
-  /// A song on it takes the first idle player from here down to
-  /// SOUND_PLAYER_EFFECT_FIRST, else this one (Sound_PlaySong).
-  SOUND_PLAYER_EFFECT_LAST = 7
+/// The music players by their row in gMPlayTable (sound/music_player_table.s),
+/// as a song table row names them (Song.ms).
+enum MusicPlayerId {
+  MUSIC_PLAYER_FANFARE = 0,   ///< gMPlayInfo_Fanfare
+  MUSIC_PLAYER_BGM = 1,       ///< gMPlayInfo_BGM
+  MUSIC_PLAYER_MENU_SE = 2,   ///< gMPlayInfo_MenuSE: the interface's sounds
+  MUSIC_PLAYER_ACTION_SE = 3, ///< gMPlayInfo_ActionSE: field and battle actions
+  /// The first music player a song on MUSIC_PLAYER_SE_LAST may borrow.
+  MUSIC_PLAYER_SE_FIRST = 4,
+  /// A song on it takes the first idle music player from here down to
+  /// MUSIC_PLAYER_SE_FIRST, else this one (Sound_PlaySong).
+  MUSIC_PLAYER_SE_LAST = 7
 };
 
-s32 Sound_LoadPresetParameters(s32 preset);
+/// The five versions of the IWRAM mixer's last step Sound_LoadReverbCode
+/// copies into place, each carrying a different share of a frame's sound into
+/// the next: the song's reverb, as MusicPlayer2000 calls it. The sound
+/// README's "The mixer's code is chosen per song" says what each keeps.
+enum SoundReverbCode {
+  SOUND_REVERB_MONO,    ///< one value for both channels; the audio test only
+  SOUND_REVERB_CROSSED, ///< each channel's old samples crossed with the other's
+  SOUND_REVERB_NORMAL,  ///< most music and the Battle Arena
+  /// More of what has played carries over: MUS_TITLE, MUS_ENDING_LOGO and
+  /// MUS_ENDING.
+  SOUND_REVERB_LONG,
+  SOUND_REVERB_NONE ///< nothing carries over: a link battle
+};
+
+s32 Sound_LoadReverbCode(s32 code);
 
 void Bios_CpuSet(const void *source, void *destination, u32 control);
 
-struct SoundPlayer;
+struct MusicPlayerInfo;
 struct LzPackWork;
 /// A flash library cell the LZ packer borrows as its work pointer (lzpack.h);
 /// IdentifyFlash sets it again before the flash code reads it.
 extern struct LzPackWork *gFlash_Handler3;
 /// Plays music; song 17 fades it and a fanfare silences it until it ends.
-extern struct SoundPlayer gMusicPlayerBgm;
+extern struct MusicPlayerInfo gMPlayInfo_BGM;
 /// Plays fanfares; the music returns once it stops.
-extern struct SoundPlayer gMusicPlayerFanfare;
-extern struct SoundPlayer
-    gSound_Player3; ///< the player SONG_FADE_OUT_ACTION_SE fades
+extern struct MusicPlayerInfo gMPlayInfo_Fanfare;
+extern struct MusicPlayerInfo
+    gMPlayInfo_ActionSE; ///< the music player SONG_FADE_OUT_ACTION_SE fades
 /// The song from SONG_SE_FIRST up each player last started, by player, not
 /// a volume: songs below it are not recorded, and SONG_FADE_OUT_ACTION_SE
 /// clears entry 3. Nothing in TBS reads it.

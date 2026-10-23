@@ -2,55 +2,55 @@
 #include "types.h"
 #include "../../include/system/io_reg.h"
 
-/// Detaches a note through the command table entry installed by the driver.
-/// Called by the song player (MusicPlayer_Tick, MusicTrack_HandleNote).
-void AudioCommand_InvokeSlot34(struct SoundNote *note) {
+/// Detaches a note through the jump table entry installed by the driver
+/// (RealClearChain). Called by MPlayMain and ply_note.
+void ClearChain(struct SoundChannel *note) {
   // Taking the entry address folds its slot into a literal address. Direct
   // indexing adds an address-adjustment instruction with the library compiler.
-  void (*detachNote)(struct SoundNote *) =
-      SOUND_COMMAND_CAST(void (*)(struct SoundNote *),
-                         *(&gSound_CommandTable[SOUND_COMMAND_DETACH_NOTE]));
+  void (*detachNote)(struct SoundChannel *) =
+      MPLAY_FUNC_CAST(void (*)(struct SoundChannel *),
+                      *(&gMPlayJumpTable[MPLAY_JUMP_CLEAR_CHAIN]));
 
   detachNote(note);
 }
 
-/// Clears a 64-byte player or track prefix through the driver command table.
-/// Called by the song player and MusicPlayer_ResetActiveTracks.
-void AudioCommand_InvokeSlot35(void *block) {
-  void (*clearWork)(void *) = SOUND_COMMAND_CAST(
-      void (*)(void *), *(&gSound_CommandTable[SOUND_COMMAND_CLEAR_WORK]));
+/// Clears a 64-byte music player or track prefix through the driver's jump
+/// table (SoundMainBTM). Called by MPlayOpen and m4aMPlayImmInit.
+void Clear64byte(void *block) {
+  void (*clearWork)(void *) = MPLAY_FUNC_CAST(
+      void (*)(void *), *(&gMPlayJumpTable[MPLAY_JUMP_CLEAR_64BYTE]));
 
   clearWork(block);
 }
 
 s32 __divsi3(s32 numerator, s32 denominator);
-void Sound_LoadCommandTable(SoundCommand *table);
-void MusicTrack_HandleNote(u32 command, struct SoundPlayer *player,
-                           struct SoundTrack *track);
-void Audio_EmptyCallback(void);
-void AudioEngine_SetPcmRate(u32 mode);
-void AudioEngine_SuspendDirectSound(void);
-void AudioEngine_ResumeDirectSound(void);
-extern const u16 gSound_FrameLengths[];
-extern SoundCommand gSound_CommandTable[36];
+void MPlayJumpTableCopy(MPlayFunc *table);
+void ply_note(u32 command, struct MusicPlayerInfo *player,
+              struct MusicPlayerTrack *track);
+void DummyFunc(void);
+void SampleFreqSet(u32 mode);
+void m4aSoundVSyncOff(void);
+void m4aSoundVSyncOn(void);
+extern const u16 gPcmSamplesPerVBlankTable[];
+extern MPlayFunc gMPlayJumpTable[36];
 
-void MusicPlayer_Tick(struct SoundPlayer *player);
-void MusicTrack_Stop(struct SoundPlayer *player, struct SoundTrack *track);
-void AudioEngine_SetMode(u32 mode);
+void MPlayMain(struct MusicPlayerInfo *player);
+void TrackStop(struct MusicPlayerInfo *player, struct MusicPlayerTrack *track);
+void m4aSoundMode(u32 mode);
 
-struct SoundPlayer;
+struct MusicPlayerInfo;
 
-extern const u8 gSound_CgbPitchCodes[];
-extern const s16 gSound_CgbFrequencySteps[];
-extern const u8 gSound_NoisePitchCodes[];
+extern const u8 gCgbScaleTable[];
+extern const s16 gCgbFreqTable[];
+extern const u8 gNoiseTable[];
 
-void CgbChannel_Mute(u8 channel);
+void CgbOscOff(u8 channel);
 
-extern const u8 gSound_Cgb3LevelCodes[];
+extern const u8 gCgb3Vol[];
 
 /// The PCM buffer's size in samples. It holds transferPeriod whole frames
 /// (0x630 / frameSamples, rounded down: 4 of 352 at the game's rate), after
-/// which Sound_TickDmaRestartTimer starts the DMAs again from its start.
+/// which m4aSoundVSync starts the DMAs again from its start.
 #define SOUND_PCM_BUFFER_SIZE 0x630
 /// The display's frame rate in ten-thousandths of a hertz: 59.7275 frames a
 /// second.
@@ -59,14 +59,15 @@ extern const u8 gSound_Cgb3LevelCodes[];
 #define SOUND_CYCLES_PER_FRAME (228 * 1232)
 
 /// Resets the sound hardware, clears the whole sound work block and installs
-/// the default PCM driver: stores `work` in SOUND_WORK, points the FIFO DMAs at
-/// its two buffers, fills in the driver callbacks and command table, sets the
-/// default rate and finally sets the work's lock. Called by Audio_Initialize.
-void AudioEngine_Initialize(struct SoundWork *work) {
+/// the default PCM driver: stores `work` in SOUND_INFO_PTR, points the FIFO
+/// DMAs at its two buffers, fills in the driver callbacks and command table,
+/// sets the default rate and finally sets the work's ident to ID_NUMBER.
+/// Called by m4aSoundInit.
+void SoundInit(struct SoundInfo *work) {
   u32 zero;
 
   // Stop repeat transfers before configuring the stereo FIFO outputs.
-  work->lock = 0;
+  work->ident = 0;
   if (REG_DMA1CNT & (DMA_REPEAT << 16))
     REG_DMA1CNT = (DMA_ENABLE | DMA_32BIT | DMA_DEST_FIXED) << 16 | 4;
   if (REG_DMA2CNT & (DMA_REPEAT << 16))
@@ -82,39 +83,39 @@ void AudioEngine_Initialize(struct SoundWork *work) {
   REG_DMA1DAD = (u32)&REG_FIFO_A;
   REG_DMA2SAD = (u32)work->buffers[1];
   REG_DMA2DAD = (u32)&REG_FIFO_B;
-  // Clear the complete work block (0x3ec words, sizeof(struct SoundWork)),
+  // Clear the complete work block (0x3ec words, sizeof(struct SoundInfo)),
   // then install the PCM driver entries.
-  SOUND_WORK = work;
+  SOUND_INFO_PTR = work;
   zero = 0;
   Bios_CpuSet(&zero, work, CPU_SET_SRC_FIXED | CPU_SET_32BIT | 0x3EC);
   work->pcmNoteCount = 8;
   work->volume = 15;
-  work->noteOn = MusicTrack_HandleNote;
-  work->cgbUpdate = Audio_EmptyCallback;
-  work->cgbMute = (void (*)(u8))Audio_EmptyCallback;
-  work->cgbFrequency = (s32 (*)(u8, u8, u8))Audio_EmptyCallback;
-  work->externalVolumePitch = Audio_EmptyCallback;
-  Sound_LoadCommandTable(gSound_CommandTable);
-  work->commands = gSound_CommandTable;
-  // Frame length 4 (224 samples, 13379 a second) until Audio_Initialize sets
+  work->noteOn = ply_note;
+  work->cgbUpdate = DummyFunc;
+  work->cgbMute = (void (*)(u8))DummyFunc;
+  work->cgbFrequency = (s32 (*)(u8, u8, u8))DummyFunc;
+  work->externalVolumePitch = DummyFunc;
+  MPlayJumpTableCopy(gMPlayJumpTable);
+  work->commands = gMPlayJumpTable;
+  // Frame length 4 (224 samples, 13379 a second) until m4aSoundInit sets
   // the game's mode.
-  AudioEngine_SetPcmRate(0x40000);
-  work->lock = SOUND_LOCK;
+  SampleFreqSet(0x40000);
+  work->ident = ID_NUMBER;
 }
 
-/// Sets the PCM frame length (`mode` bits 16 to 19 pick a gSound_FrameLengths
-/// entry) and the rates derived from it, and Timer 0's reload, starting
-/// playback at scanline 159. Called by AudioEngine_Initialize and
-/// AudioEngine_SetMode, and by songs through the command table.
-void AudioEngine_SetPcmRate(u32 mode) {
-  struct SoundWork *work = SOUND_WORK;
+/// Sets the PCM frame length (`mode` bits 16 to 19 pick a
+/// gPcmSamplesPerVBlankTable entry) and the rates derived from it, and Timer
+/// 0's reload, starting playback at scanline 159. Called by SoundInit and
+/// m4aSoundMode, and by songs through the command table.
+void SampleFreqSet(u32 mode) {
+  struct SoundInfo *work = SOUND_INFO_PTR;
   u32 frameSamples;
   volatile u16 *timer;
 
   // Convert the selected frame length into mixer and timer increments.
   mode = (mode & 0xF0000) >> 16;
   work->rate = mode;
-  frameSamples = gSound_FrameLengths[mode - 1];
+  frameSamples = gPcmSamplesPerVBlankTable[mode - 1];
   work->frameSamples = frameSamples;
   // Frames the DMA plays before the buffer wraps, and the sample rate in hertz
   // (rounded), and half its reciprocal in 24-bit fixed point
@@ -127,7 +128,7 @@ void AudioEngine_SetPcmRate(u32 mode) {
   REG_TM0CNT_H = 0;
   timer = &REG_TM0CNT_L;
   *timer = -__divsi3(SOUND_CYCLES_PER_FRAME, frameSamples);
-  AudioEngine_ResumeDirectSound();
+  m4aSoundVSyncOn();
   // Wait out a line 159 already begun, then for the next one to begin.
   while (*(volatile u8 *)&REG_VCOUNT == 159)
     ;
@@ -137,18 +138,18 @@ void AudioEngine_SetPcmRate(u32 mode) {
 }
 
 /// Applies the reverb, channel-count, volume, bias and sample-rate fields of
-/// `mode` to the sound work, under its lock. Called by Audio_Initialize with
-/// AUDIO_INITIAL_MODE, and by MusicPlayer_StartSong with a song's mode byte
+/// `mode` to the sound work, with its ident raised. Called by m4aSoundInit with
+/// AUDIO_INITIAL_MODE, and by MPlayStart with a song's mode byte
 /// when its bit 7 is set, which can change only the reverb: the songs' 0xb2
 /// sets it to 50 and 0x80 to 0, and a song with bit 7 clear leaves it.
-void AudioEngine_SetMode(u32 mode) {
-  struct SoundWork *work = SOUND_WORK;
+void m4aSoundMode(u32 mode) {
+  struct SoundInfo *work = SOUND_INFO_PTR;
   u32 modeField;
-  struct SoundNote *note;
+  struct SoundChannel *note;
 
-  if (work->lock != SOUND_LOCK)
+  if (work->ident != ID_NUMBER)
     return;
-  work->lock++;
+  work->ident++;
 
   // A zero field leaves the corresponding setting unchanged.
   modeField = mode & 0xFF;
@@ -157,7 +158,7 @@ void AudioEngine_SetMode(u32 mode) {
   modeField = mode & 0xF00;
   if (modeField != 0) {
     work->pcmNoteCount = modeField >> 8;
-    modeField = SOUND_PCM_NOTE_CAPACITY;
+    modeField = MAX_DIRECTSOUND_CHANNELS;
     note = work->pcmNotes;
     do {
       note->state = 0;
@@ -177,31 +178,31 @@ void AudioEngine_SetMode(u32 mode) {
   }
   modeField = mode & 0xF0000;
   if (modeField != 0) {
-    AudioEngine_SuspendDirectSound();
-    AudioEngine_SetPcmRate(modeField);
+    m4aSoundVSyncOff();
+    SampleFreqSet(modeField);
   }
-  work->lock = SOUND_LOCK;
+  work->ident = ID_NUMBER;
 }
 
-/// Unused: silences every PCM and CGB note while holding the sound work lock.
-/// Nothing in ☀️ calls it.
-UNUSED void AudioEngine_StopAllChannels(void) {
+/// Unused: silences every PCM and CGB channel with the sound work's ident
+/// raised. Nothing in ☀️ calls it.
+UNUSED void SoundClear(void) {
   // Splitting the counter or typed iterators changes the native EN registers.
-  struct SoundWork *work = SOUND_WORK;
+  struct SoundInfo *work = SOUND_INFO_PTR;
   s32 channelCounter;
   void *channel;
 
-  if (work->lock != SOUND_LOCK)
+  if (work->ident != ID_NUMBER)
     return;
-  work->lock++;
+  work->ident++;
 
   // Clear every PCM slot, including slots beyond the active note count.
-  channelCounter = SOUND_PCM_NOTE_CAPACITY;
+  channelCounter = MAX_DIRECTSOUND_CHANNELS;
   channel = work->pcmNotes;
   while (channelCounter > 0) {
-    ((struct SoundNote *)channel)->state = 0;
+    ((struct SoundChannel *)channel)->state = 0;
     channelCounter--;
-    channel = (void *)((s32)channel + sizeof(struct SoundNote));
+    channel = (void *)((s32)channel + sizeof(struct SoundChannel));
   }
   // Reuse the counter as the hardware channel number for the CGB path.
   channel = work->cgbNotes;
@@ -209,26 +210,26 @@ UNUSED void AudioEngine_StopAllChannels(void) {
     channelCounter = 1;
     while (channelCounter <= SOUND_CGB_CHANNEL_COUNT) {
       work->cgbMute(channelCounter);
-      ((struct CgbNote *)channel)->state = 0;
+      ((struct CgbChannel *)channel)->state = 0;
       channelCounter++;
-      channel = (void *)((s32)channel + sizeof(struct CgbNote));
+      channel = (void *)((s32)channel + sizeof(struct CgbChannel));
     }
   }
-  work->lock = SOUND_LOCK;
+  work->ident = ID_NUMBER;
 }
 
 /// Stops both FIFO transfers and clears their sample buffers, raising the
-/// work's lock until AudioEngine_ResumeDirectSound. Called by
-/// AudioEngine_SetMode around a rate change.
-void AudioEngine_SuspendDirectSound(void) {
-  struct SoundWork *work = SOUND_WORK;
+/// work's ident by 10 until m4aSoundVSyncOn. Called by m4aSoundMode around a
+/// rate change.
+void m4aSoundVSyncOff(void) {
+  struct SoundInfo *work = SOUND_INFO_PTR;
   u32 zero;
 
-  // Only a free lock, or one held once (AudioEngine_SetMode's), may be
+  // Only a free driver, or one raised once (m4aSoundMode's), may be
   // suspended; a suspended or uninitialized driver is left as it is.
-  if (work->lock - SOUND_LOCK > 1)
+  if (work->ident - ID_NUMBER > 1)
     return;
-  work->lock += 10;
+  work->ident += 10;
   if (REG_DMA1CNT & (DMA_REPEAT << 16))
     REG_DMA1CNT = (DMA_ENABLE | DMA_32BIT | DMA_DEST_FIXED) << 16 | 4;
   if (REG_DMA2CNT & (DMA_REPEAT << 16))
@@ -240,86 +241,86 @@ void AudioEngine_SuspendDirectSound(void) {
   Bios_CpuSet(&zero, work->buffers, CPU_SET_SRC_FIXED | CPU_SET_32BIT | 0x318);
 }
 
-/// Restarts both FIFO transfers and releases the suspended-work lock. Called
-/// by AudioEngine_SetPcmRate.
-void AudioEngine_ResumeDirectSound(void) {
-  struct SoundWork *work = SOUND_WORK;
-  u32 lock = work->lock;
+/// Restarts both FIFO transfers and takes the 10 m4aSoundVSyncOff added off
+/// the work's ident. Called by SampleFreqSet.
+void m4aSoundVSyncOn(void) {
+  struct SoundInfo *work = SOUND_INFO_PTR;
+  u32 ident = work->ident;
 
-  if (lock == SOUND_LOCK)
+  if (ident == ID_NUMBER)
     return;
   REG_DMA1CNT_H = DMA_ENABLE | DMA_START_SPECIAL | DMA_REPEAT | DMA_32BIT;
   REG_DMA2CNT_H = DMA_ENABLE | DMA_START_SPECIAL | DMA_REPEAT | DMA_32BIT;
   work->transferCountdown = 0;
-  work->lock = lock - 10;
+  work->ident = ident - 10;
 }
 
-/// Deactivates up to sixteen tracks and links the player into the mixer tick
-/// chain. Called by Audio_Initialize for each row of gSound_PlayerSlots; does
-/// nothing for no tracks or while the driver's lock is held, and leaves the
-/// player paused with its lock free (SOUND_LOCK).
-void MusicPlayer_Initialize(struct SoundPlayer *player,
-                            struct SoundTrack *tracks, u8 trackCount) {
-  struct SoundWork *work;
+/// Deactivates up to sixteen tracks and links the music player into the mixer
+/// tick chain. Called by m4aSoundInit for each row of gMPlayTable; does nothing
+/// for no tracks or while the driver's ident is raised, and leaves the music
+/// player paused with its ident free (ID_NUMBER).
+void MPlayOpen(struct MusicPlayerInfo *player, struct MusicPlayerTrack *tracks,
+               u8 trackCount) {
+  struct SoundInfo *work;
 
   if (trackCount == 0)
     return;
-  if (trackCount > SOUND_PLAYER_TRACK_LIMIT)
-    trackCount = SOUND_PLAYER_TRACK_LIMIT;
-  work = SOUND_WORK;
-  if (work->lock != SOUND_LOCK)
+  if (trackCount > MAX_MUSICPLAYER_TRACKS)
+    trackCount = MAX_MUSICPLAYER_TRACKS;
+  work = SOUND_INFO_PTR;
+  if (work->ident != ID_NUMBER)
     return;
-  work->lock++;
+  work->ident++;
 
-  // Clear the player's state and deactivate the supplied track slots.
-  AudioCommand_InvokeSlot35(player);
+  // Clear the music player's state and deactivate its tracks.
+  Clear64byte(player);
   player->tracks = tracks;
   player->trackCount = trackCount;
-  player->status = SOUND_PLAYER_PAUSED;
+  player->status = MUSICPLAYER_STATUS_PAUSE;
   while (trackCount != 0) {
     tracks->flags = 0;
     trackCount--;
     tracks++;
   }
-  // Prepend this player to the existing mixer tick chain.
+  // Prepend this music player to the existing mixer tick chain.
   if (work->tick != NULL) {
     player->nextTick = work->tick;
     player->nextTickPlayer = work->tickPlayer;
     work->tick = NULL;
   }
   work->tickPlayer = player;
-  work->tick = MusicPlayer_Tick;
-  work->lock = SOUND_LOCK;
-  player->lock = SOUND_LOCK;
+  work->tick = MPlayMain;
+  work->ident = ID_NUMBER;
+  player->ident = ID_NUMBER;
 }
 
 /// Starts a song when its priority permits, resetting its tracks and tempo.
-/// The song takes the first of the player's tracks, as many as both have;
-/// the player's other tracks are stopped. Called by Sound_PlaySong and the
-/// Audio_PlaySound family; does nothing while the player's lock is held.
-void MusicPlayer_StartSong(struct SoundPlayer *player,
-                           const struct SequenceHeader *header) {
+/// The song takes the first of the music player's tracks, as many as both
+/// have; the other tracks are stopped. Called by Sound_PlaySong and the
+/// m4aSongNumStart family; does nothing while the music player's ident is
+/// raised.
+void MPlayStart(struct MusicPlayerInfo *player,
+                const struct SongHeader *header) {
   s32 trackIndex;
-  struct SoundTrack *track;
+  struct MusicPlayerTrack *track;
 
-  if (player->lock != SOUND_LOCK)
+  if (player->ident != ID_NUMBER)
     return;
 
-  // Preserve a higher-priority song unless the player is idle. checkPriority
-  // is 0 for every player (sound/music_player_table.s), so in ☀️ a new song
-  // always replaces the one playing.
+  // Preserve a higher-priority song unless the music player is idle.
+  // checkPriority is 0 for every music player (sound/music_player_table.s), so
+  // in ☀️ a new song always replaces the one playing.
   if (player->checkPriority != 0) {
-    if (player->header == NULL ||
-        !(player->tracks[0].flags & SOUND_TRACK_RESET)) {
-      if ((player->status & 0xFFFF) == 0 ||
-          (player->status & SOUND_PLAYER_PAUSED))
+    if (player->header == NULL || !(player->tracks[0].flags & MPT_FLG_START)) {
+      if ((player->status & MUSICPLAYER_STATUS_TRACK) == 0 ||
+          (player->status & MUSICPLAYER_STATUS_PAUSE))
         goto start;
     }
     if (player->priority > header->priority)
       return;
   }
 start:
-  player->lock++;
+  player->ident++;
   // Reset song timing and fade state before assigning track streams: tempo
   // 150 runs a tick a frame until the song's tempo command.
   player->status = 0;
@@ -336,51 +337,51 @@ start:
   trackIndex = 0;
   track = player->tracks;
   while (trackIndex < header->trackCount && trackIndex < player->trackCount) {
-    MusicTrack_Stop(player, track);
-    track->flags = SOUND_TRACK_ACTIVE | SOUND_TRACK_RESET;
+    TrackStop(player, track);
+    track->flags = MPT_FLG_EXIST | MPT_FLG_START;
     track->notes = NULL;
     track->cursor = header->tracks[trackIndex];
     trackIndex++;
     track++;
   }
-  // Stop leftover slots that the new song does not use.
+  // Stop leftover tracks that the new song does not use.
   while (trackIndex < player->trackCount) {
-    MusicTrack_Stop(player, track);
+    TrackStop(player, track);
     track->flags = 0;
     trackIndex++;
     track++;
   }
   if (header->mode & 0x80)
-    AudioEngine_SetMode(header->mode);
-  player->lock = SOUND_LOCK;
+    m4aSoundMode(header->mode);
+  player->ident = ID_NUMBER;
 }
 
-/// Pauses this player and stops all of its tracks, under the player's lock.
-/// Called by Audio_StopSound and Audio_StopAllPlayers.
-void MusicPlayer_Stop(struct SoundPlayer *player) {
+/// Pauses this music player and stops all of its tracks, with its ident
+/// raised. Called by m4aSongNumStop and m4aMPlayAllStop.
+void m4aMPlayStop(struct MusicPlayerInfo *player) {
   s32 tracksRemaining;
-  struct SoundTrack *track;
+  struct MusicPlayerTrack *track;
 
-  if (player->lock != SOUND_LOCK)
+  if (player->ident != ID_NUMBER)
     return;
-  player->lock++;
-  player->status |= SOUND_PLAYER_PAUSED;
+  player->ident++;
+  player->status |= MUSICPLAYER_STATUS_PAUSE;
   tracksRemaining = player->trackCount;
   track = player->tracks;
   while (tracksRemaining > 0) {
-    MusicTrack_Stop(player, track);
+    TrackStop(player, track);
     tracksRemaining--;
     track++;
   }
-  player->lock = SOUND_LOCK;
+  player->ident = ID_NUMBER;
 }
 
 /// Advances a due fade step, updating active track volumes, or at the end of a
-/// fade out stops (or pauses) the player. Called by the song player each tick
-/// through the command table.
-void MusicPlayer_StepFade(struct SoundPlayer *player) {
+/// fade out stops (or pauses) the music player. Called by MPlayMain each tick
+/// through the jump table.
+void FadeOutBody(struct MusicPlayerInfo *player) {
   s32 tracksRemaining;
-  struct SoundTrack *track;
+  struct MusicPlayerTrack *track;
 
   if (player->fadePeriod == 0)
     return;
@@ -389,7 +390,7 @@ void MusicPlayer_StepFade(struct SoundPlayer *player) {
   player->fadeCounter = player->fadePeriod;
 
   // Advance the volume while retaining its low-bit fade flags.
-  if (player->fadeVolume & SOUND_FADE_IN) {
+  if (player->fadeVolume & FADE_IN) {
     if ((player->fadeVolume += SOUND_FADE_STEP) >= SOUND_FADE_FULL_VOLUME) {
       player->fadeVolume = SOUND_FADE_FULL_VOLUME;
       player->fadePeriod = 0;
@@ -399,16 +400,16 @@ void MusicPlayer_StepFade(struct SoundPlayer *player) {
       tracksRemaining = player->trackCount;
       track = player->tracks;
       while (tracksRemaining > 0) {
-        MusicTrack_Stop(player, track);
-        if (!(player->fadeVolume & SOUND_FADE_PAUSE))
+        TrackStop(player, track);
+        if (!(player->fadeVolume & TEMPORARY_FADE))
           track->flags = 0;
         tracksRemaining--;
         track++;
       }
-      if (player->fadeVolume & SOUND_FADE_PAUSE)
-        player->status |= SOUND_PLAYER_PAUSED;
+      if (player->fadeVolume & TEMPORARY_FADE)
+        player->status |= MUSICPLAYER_STATUS_PAUSE;
       else
-        player->status = SOUND_PLAYER_PAUSED;
+        player->status = MUSICPLAYER_STATUS_PAUSE;
       player->fadePeriod = 0;
       return;
     }
@@ -418,9 +419,9 @@ void MusicPlayer_StepFade(struct SoundPlayer *player) {
   tracksRemaining = player->trackCount;
   track = player->tracks;
   while (tracksRemaining > 0) {
-    if (track->flags & SOUND_TRACK_ACTIVE) {
+    if (track->flags & MPT_FLG_EXIST) {
       track->volumeScale = player->fadeVolume >> 2;
-      track->flags |= SOUND_TRACK_UPDATE_VOLUME;
+      track->flags |= MPT_FLG_VOLCHG;
     }
     tracksRemaining--;
     track++;
@@ -428,9 +429,9 @@ void MusicPlayer_StepFade(struct SoundPlayer *player) {
 }
 
 /// Recalculates dirty stereo volumes and pitch from track settings and
-/// modulation.
-void MusicTrack_CalculateOutput(struct SoundPlayer *player,
-                                struct SoundTrack *track) {
+/// modulation. Called by MPlayMain through the jump table.
+void TrkVolPitSet(struct MusicPlayerInfo *player,
+                  struct MusicPlayerTrack *track) {
   u32 volume;
   s32 pan;
   s32 pitch;
@@ -439,7 +440,7 @@ void MusicTrack_CalculateOutput(struct SoundPlayer *player,
   // Mix the volume modulation and clamped stereo pan: the song's volume
   // times volumeScale (0 to 64) / 32, then shared between the speakers by
   // pan, -128 (left) to 127 (right).
-  if (track->flags & SOUND_TRACK_VOLUME_DIRTY) {
+  if (track->flags & MPT_FLG_VOLSET) {
     volume = (u32)(track->volume * track->volumeScale) >> 5;
     if (track->modTarget == SOUND_MODULATION_VOLUME)
       volume = ((track->modAmount + 128) * volume) >> 7;
@@ -456,7 +457,7 @@ void MusicTrack_CalculateOutput(struct SoundPlayer *player,
   // The pitch in 1/256 semitone: tune and bend * bendRange are in 1/64
   // semitone, the key offsets in semitones and the LFO in 1/16. The signed
   // offsets are multiplied rather than shifted.
-  if (track->flags & SOUND_TRACK_PITCH_DIRTY) {
+  if (track->flags & MPT_FLG_PITSET) {
     bend = track->bend * track->bendRange;
     pitch = (track->tune + bend) * 4 + (track->keyOffsetA * 256) +
             (track->keyOffsetB * 256) + track->fine;
@@ -465,18 +466,18 @@ void MusicTrack_CalculateOutput(struct SoundPlayer *player,
     track->pitchHi = pitch >> 8;
     track->pitchLo = pitch;
   }
-  track->flags &= ~(SOUND_TRACK_VOLUME_DIRTY | SOUND_TRACK_PITCH_DIRTY);
+  track->flags &= ~(MPT_FLG_VOLSET | MPT_FLG_PITSET);
 }
 
 /// Converts a key and fractional pitch to a CGB tone or noise-register value.
-/// Installed as the work's cgbFrequency callback by CgbAudio_Initialize. For
+/// Installed as the work's cgbFrequency callback by MPlayExtender. For
 /// the noise channel (CGB_CHANNEL_NOISE) it returns an NR43 value for keys 21
 /// to 80 (others play the nearer end) and ignores fine. For a tone channel it
 /// returns the 11-bit frequency value, 2048 minus the period, for keys 36 to
 /// 166, with fine (0 to 255) moving it towards the next key; keys below 36
 /// play key 36 and keys above 166 play key 166 at fine 255: key 36 gives 44,
 /// a period of 2004.
-s32 Cgb_KeyToFrequency(u8 kind, u8 key, u8 fine) {
+s32 MidiKeyToCgbFreq(u8 kind, u8 key, u8 fine) {
   s32 lowerFrequency;
   s32 upperFrequency;
 
@@ -488,7 +489,7 @@ s32 Cgb_KeyToFrequency(u8 kind, u8 key, u8 fine) {
       if (key > 59)
         key = 59;
     }
-    return gSound_NoisePitchCodes[key];
+    return gNoiseTable[key];
   }
 
   if (key <= 35) {
@@ -502,20 +503,18 @@ s32 Cgb_KeyToFrequency(u8 kind, u8 key, u8 fine) {
     }
   }
   // A key's code: the low four bits pick the semitone's negative period in
-  // gSound_CgbFrequencySteps, the high four bits the octaves to halve it.
-  lowerFrequency = gSound_CgbPitchCodes[key];
-  lowerFrequency =
-      gSound_CgbFrequencySteps[lowerFrequency & 15] >> (lowerFrequency >> 4);
-  upperFrequency = gSound_CgbPitchCodes[key + 1];
-  upperFrequency =
-      gSound_CgbFrequencySteps[upperFrequency & 15] >> (upperFrequency >> 4);
+  // gCgbFreqTable, the high four bits the octaves to halve it.
+  lowerFrequency = gCgbScaleTable[key];
+  lowerFrequency = gCgbFreqTable[lowerFrequency & 15] >> (lowerFrequency >> 4);
+  upperFrequency = gCgbScaleTable[key + 1];
+  upperFrequency = gCgbFreqTable[upperFrequency & 15] >> (upperFrequency >> 4);
   return lowerFrequency + ((fine * (upperFrequency - lowerFrequency)) >> 8) +
          2048;
 }
 
 /// Disables one CGB channel using its envelope or wave-control register.
-/// Called by Cgb_UpdateChannels, and installed as the work's cgbMute callback.
-void CgbChannel_Mute(u8 channel) {
+/// Called by CgbSound, and installed as the work's cgbMute callback.
+void CgbOscOff(u8 channel) {
   switch (channel) {
   case CGB_CHANNEL_SQUARE_1:
     REG_NR12 = 8;
@@ -539,9 +538,9 @@ void CgbChannel_Mute(u8 channel) {
 /// writing them into `note`: a note at least twice as loud on one side plays
 /// on that side only (NR51 bits 0x0f right, 0xf0 left), any other on both.
 /// peak is the two levels' sum / 16, at most 15 on one side; sustainLevel is
-/// peak * sustain / 16, rounded up. Called by Cgb_UpdateChannels when a note
+/// peak * sustain / 16, rounded up. Called by CgbSound when a note
 /// starts and at each envelope step.
-void CgbNote_UpdatePanEnvelope(struct CgbNote *note) {
+void CgbModVol(struct CgbChannel *note) {
   u32 right = note->outRight;
   u32 left = note->outLeft;
 
@@ -570,12 +569,12 @@ scale:
 
 /// Steps CGB note envelopes and writes changed pitch, volume and trigger
 /// registers, once a frame. Installed as the work's cgbUpdate callback by
-/// CgbAudio_Initialize; the mixer calls it.
-void Cgb_UpdateChannels(void) {
+/// MPlayExtender; the mixer calls it.
+void CgbSound(void) {
   s32 channel;
   s32 extraEnvelopeTick;
-  struct SoundWork *work = SOUND_WORK;
-  struct CgbNote *note;
+  struct SoundInfo *work = SOUND_INFO_PTR;
+  struct CgbChannel *note;
   volatile u8 *sweepOrWaveControl;
   volatile u8 *lengthDutyRegister;
   volatile u8 *volumeEnvelopeRegister;
@@ -595,7 +594,7 @@ void Cgb_UpdateChannels(void) {
 
   for (channel = CGB_CHANNEL_SQUARE_1, note = work->cgbNotes;
        channel <= SOUND_CGB_CHANNEL_COUNT; channel++, note++) {
-    if (!(note->state & CGB_NOTE_ON))
+    if (!(note->state & SOUND_CHANNEL_SF_ON))
       continue;
 
     // Select this channel's sweep, length, envelope and frequency registers.
@@ -634,11 +633,11 @@ void Cgb_UpdateChannels(void) {
     envelopeControl = *volumeEnvelopeRegister;
 
     // A new note initializes its waveform and enters the attack phase.
-    if (note->state & CGB_NOTE_START) {
-      if (!(note->state & CGB_NOTE_STOP)) {
-        note->state = CGB_PHASE_ATTACK;
-        note->modified = CGB_NOTE_VOLUME_DIRTY | CGB_NOTE_PITCH_DIRTY;
-        CgbNote_UpdatePanEnvelope(note);
+    if (note->state & SOUND_CHANNEL_SF_START) {
+      if (!(note->state & SOUND_CHANNEL_SF_STOP)) {
+        note->state = SOUND_CHANNEL_SF_ENV_ATTACK;
+        note->modified = CGB_CHANNEL_MO_VOL | CGB_CHANNEL_MO_PIT;
+        CgbModVol(note);
         switch (channel) {
         case CGB_CHANNEL_SQUARE_1:
           *sweepOrWaveControl = note->sweep;
@@ -689,20 +688,20 @@ void Cgb_UpdateChannels(void) {
       }
       goto off;
       // Tail notes expire; stopped notes enter release before their tail.
-    } else if (note->state & CGB_NOTE_ECHO) {
+    } else if (note->state & SOUND_CHANNEL_SF_IEC) {
       note->echoLength--;
       if ((s8)(note->echoLength & byteMask) > 0)
         goto write;
     off:
-      CgbChannel_Mute(channel);
+      CgbOscOff(channel);
       note->state = 0;
       goto done;
-    } else if ((note->state & CGB_NOTE_STOP) &&
-               (note->state & CGB_NOTE_PHASE)) {
-      note->state &= ~CGB_NOTE_PHASE;
+    } else if ((note->state & SOUND_CHANNEL_SF_STOP) &&
+               (note->state & SOUND_CHANNEL_SF_ENV)) {
+      note->state &= ~SOUND_CHANNEL_SF_ENV;
       note->counter = note->release;
       if ((s8)(note->counter & byteMask)) {
-        note->modified |= CGB_NOTE_VOLUME_DIRTY;
+        note->modified |= CGB_CHANNEL_MO_VOL;
         if (channel != CGB_CHANNEL_WAVE)
           envelopeControl = note->release;
         goto count_down;
@@ -713,16 +712,17 @@ void Cgb_UpdateChannels(void) {
     step:
       if (note->counter == 0) {
         if (channel == CGB_CHANNEL_WAVE)
-          note->modified |= CGB_NOTE_VOLUME_DIRTY;
-        CgbNote_UpdatePanEnvelope(note);
-        if ((note->state & CGB_NOTE_PHASE) == CGB_PHASE_RELEASE) {
+          note->modified |= CGB_CHANNEL_MO_VOL;
+        CgbModVol(note);
+        if ((note->state & SOUND_CHANNEL_SF_ENV) ==
+            SOUND_CHANNEL_SF_ENV_RELEASE) {
           note->level--;
           if ((s8)(note->level & byteMask) <= 0) {
           echo:
             note->level = ((note->peak * note->echoLevel) + 0xff) >> 8;
             if (note->level) {
-              note->state |= CGB_NOTE_ECHO;
-              note->modified |= CGB_NOTE_VOLUME_DIRTY;
+              note->state |= SOUND_CHANNEL_SF_IEC;
+              note->modified |= CGB_CHANNEL_MO_VOL;
               if (channel != CGB_CHANNEL_WAVE)
                 envelopeControl = 8;
               goto write;
@@ -730,20 +730,22 @@ void Cgb_UpdateChannels(void) {
             goto off;
           }
           note->counter = note->release;
-        } else if ((note->state & CGB_NOTE_PHASE) == CGB_PHASE_SUSTAIN) {
+        } else if ((note->state & SOUND_CHANNEL_SF_ENV) ==
+                   SOUND_CHANNEL_SF_ENV_SUSTAIN) {
         sustain:
           note->level = note->sustainLevel;
           note->counter = 7;
-        } else if ((note->state & CGB_NOTE_PHASE) == CGB_PHASE_DECAY) {
+        } else if ((note->state & SOUND_CHANNEL_SF_ENV) ==
+                   SOUND_CHANNEL_SF_ENV_DECAY) {
           note->level--;
           if ((s8)(note->level & byteMask) <= (s8)note->sustainLevel) {
           sustain_or_release:
             if (note->sustain == 0) {
-              note->state &= ~CGB_NOTE_PHASE;
+              note->state &= ~SOUND_CHANNEL_SF_ENV;
               goto echo;
             }
             note->state--;
-            note->modified |= CGB_NOTE_VOLUME_DIRTY;
+            note->modified |= CGB_CHANNEL_MO_VOL;
             if (channel != CGB_CHANNEL_WAVE)
               envelopeControl = 8;
             goto sustain;
@@ -757,7 +759,7 @@ void Cgb_UpdateChannels(void) {
             note->counter = note->decay;
             if ((s8)(note->counter & byteMask) == 0)
               goto sustain_or_release;
-            note->modified |= CGB_NOTE_VOLUME_DIRTY;
+            note->modified |= CGB_CHANNEL_MO_VOL;
             note->level = note->peak;
             if (channel != CGB_CHANNEL_WAVE)
               envelopeControl = note->decay;
@@ -776,7 +778,7 @@ void Cgb_UpdateChannels(void) {
 
   // Only changed pitch and volume settings reach the hardware.
   write:
-    if (note->modified & CGB_NOTE_PITCH_DIRTY) {
+    if (note->modified & CGB_CHANNEL_MO_PIT) {
       if (channel < CGB_CHANNEL_NOISE && (note->kind & 8)) {
         s32 bias = REG_SOUNDBIAS_H;
 
@@ -798,13 +800,13 @@ void Cgb_UpdateChannels(void) {
       *triggerRegister = (s8)(note->trigger & byteMask);
     }
 
-    if (note->modified & CGB_NOTE_VOLUME_DIRTY) {
+    if (note->modified & CGB_CHANNEL_MO_VOL) {
       // NR51 routes each channel to the left and right speakers
       REG_NR51 = (REG_NR51 & ~note->channelBits) | note->panBits;
       if (channel == CGB_CHANNEL_WAVE) {
         // CGB_CHANNEL_WAVE has no envelope: its level maps to an NR32 volume
         // code
-        *volumeEnvelopeRegister = gSound_Cgb3LevelCodes[note->level];
+        *volumeEnvelopeRegister = gCgb3Vol[note->level];
         if (note->trigger & 0x80) {
           *sweepOrWaveControl = 0x80;
           *triggerRegister = note->trigger;
@@ -831,15 +833,14 @@ void Cgb_UpdateChannels(void) {
 
 /// Sets the tempo multiplier (0x100 the song's own tempo) and updates the
 /// number of ticks advanced per frame. Called by the music layer's tempo and
-/// pitch ramp and Sound_SetBgmTempo (sound.c); does
-/// nothing while the player's lock is held.
-void MusicPlayer_SetPitchAndUpdateFrequency(struct SoundPlayer *player,
-                                            u16 scale) {
-  if (player->lock == SOUND_LOCK) {
-    player->lock++;
+/// pitch ramp and Sound_SetBgmTempo (sound.c); does nothing while the music
+/// player's ident is raised.
+void m4aMPlayTempoControl(struct MusicPlayerInfo *player, u16 scale) {
+  if (player->ident == ID_NUMBER) {
+    player->ident++;
     player->tempoScale = scale;
     player->tempoStep = (player->tempo * player->tempoScale) >> 8;
-    player->lock = SOUND_LOCK;
+    player->ident = ID_NUMBER;
   }
 }
 
@@ -847,175 +848,177 @@ void MusicPlayer_SetPitchAndUpdateFrequency(struct SoundPlayer *player,
 /// their output for recalculation. `volume` runs 0 to 0x100 (full) and is
 /// kept as volumeScale, a quarter of it. Called by the music layer's volume
 /// ramps and commands (sound.c).
-void MusicPlayer_SetVolume(struct SoundPlayer *player, u16 mask, u16 volume) {
+void m4aMPlayVolumeControl(struct MusicPlayerInfo *player, u16 mask,
+                           u16 volume) {
   s32 tracksRemaining;
-  struct SoundTrack *track;
+  struct MusicPlayerTrack *track;
   u32 trackBit;
 
-  if (player->lock != SOUND_LOCK)
+  if (player->ident != ID_NUMBER)
     return;
-  player->lock++;
+  player->ident++;
   tracksRemaining = player->trackCount;
   track = player->tracks;
   trackBit = 1;
   while (tracksRemaining > 0) {
     if (mask & trackBit) {
-      if (track->flags & SOUND_TRACK_ACTIVE) {
+      if (track->flags & MPT_FLG_EXIST) {
         track->volumeScale = volume >> 2;
-        track->flags |= SOUND_TRACK_UPDATE_VOLUME;
+        track->flags |= MPT_FLG_VOLCHG;
       }
     }
     tracksRemaining--;
     track++;
     trackBit <<= 1;
   }
-  player->lock = SOUND_LOCK;
+  player->ident = ID_NUMBER;
 }
 
 /// Sets the semitone and fractional pitch offsets of selected active tracks
 /// and marks their pitch for recalculation. `pitch` is in 1/256 semitone: its
 /// high byte becomes keyOffsetB and its low byte fine. Called by the music
 /// layer's pitch ramps and commands (sound.c).
-void MusicPlayer_SetPitch(struct SoundPlayer *player, u16 mask, s16 pitch) {
+void m4aMPlayPitchControl(struct MusicPlayerInfo *player, u16 mask, s16 pitch) {
   s32 tracksRemaining;
-  struct SoundTrack *track;
+  struct MusicPlayerTrack *track;
   u32 trackBit;
 
-  if (player->lock != SOUND_LOCK)
+  if (player->ident != ID_NUMBER)
     return;
-  player->lock++;
+  player->ident++;
   tracksRemaining = player->trackCount;
   track = player->tracks;
   trackBit = 1;
   while (tracksRemaining > 0) {
     if (mask & trackBit) {
-      if (track->flags & SOUND_TRACK_ACTIVE) {
+      if (track->flags & MPT_FLG_EXIST) {
         track->keyOffsetB = pitch >> 8;
         track->fine = pitch;
-        track->flags |= SOUND_TRACK_UPDATE_PITCH;
+        track->flags |= MPT_FLG_PITCHG;
       }
     }
     tracksRemaining--;
     track++;
     trackBit <<= 1;
   }
-  player->lock = SOUND_LOCK;
+  player->ident = ID_NUMBER;
 }
 
 /// Unused: sets the stereo pan offset of selected active tracks. Nothing in ☀️
 /// calls it.
-UNUSED void MusicPlayer_SetPan(struct SoundPlayer *player, u16 mask, s8 pan) {
+UNUSED void m4aMPlayPanpotControl(struct MusicPlayerInfo *player, u16 mask,
+                                  s8 pan) {
   s32 tracksRemaining;
-  struct SoundTrack *track;
+  struct MusicPlayerTrack *track;
   u32 trackBit;
 
-  if (player->lock != SOUND_LOCK)
+  if (player->ident != ID_NUMBER)
     return;
-  player->lock++;
+  player->ident++;
   tracksRemaining = player->trackCount;
   track = player->tracks;
   trackBit = 1;
   while (tracksRemaining > 0) {
     if (mask & trackBit) {
-      if (track->flags & SOUND_TRACK_ACTIVE) {
+      if (track->flags & MPT_FLG_EXIST) {
         track->panOffset = pan;
-        track->flags |= SOUND_TRACK_UPDATE_VOLUME;
+        track->flags |= MPT_FLG_VOLCHG;
       }
     }
     tracksRemaining--;
     track++;
     trackBit <<= 1;
   }
-  player->lock = SOUND_LOCK;
+  player->ident = ID_NUMBER;
 }
 
 /// Resets the LFO phase and amount, marking the affected output for
-/// recalculation. Called by MusicPlayer_SetModulationDepth and
-/// MusicPlayer_SetLfoSpeed when they set 0.
-void MusicTrack_ClearModulation(struct SoundTrack *track) {
+/// recalculation. Called by m4aMPlayModDepthSet and
+/// m4aMPlayLFOSpeedSet when they set 0.
+void ClearModM(struct MusicPlayerTrack *track) {
   track->lfoPhase = 0;
   track->modAmount = 0;
   if (track->modTarget == SOUND_MODULATION_PITCH)
-    track->flags |= SOUND_TRACK_UPDATE_PITCH;
+    track->flags |= MPT_FLG_PITCHG;
   else
-    track->flags |= SOUND_TRACK_UPDATE_VOLUME;
+    track->flags |= MPT_FLG_VOLCHG;
 }
 
 /// Sets modulation depth on selected active tracks, resetting zero-depth
 /// modulation. Nothing in ☀️ calls it; songs set the depth with their own
-/// command (MusicTrack_SetModulationFromCommand).
-void MusicPlayer_SetModulationDepth(struct SoundPlayer *player,
-                                    s32 selectedTracks, s32 depthArgument) {
+/// command (ply_mod).
+void m4aMPlayModDepthSet(struct MusicPlayerInfo *player, s32 selectedTracks,
+                         s32 depthArgument) {
   u16 mask = selectedTracks;
   u8 depth = depthArgument;
   s32 tracksRemaining;
-  struct SoundTrack *track;
+  struct MusicPlayerTrack *track;
   u32 trackBit;
 
-  if (player->lock != SOUND_LOCK)
+  if (player->ident != ID_NUMBER)
     return;
 
-  player->lock++;
+  player->ident++;
   tracksRemaining = player->trackCount;
   track = player->tracks;
   trackBit = 1;
   while (tracksRemaining > 0) {
     if (mask & trackBit) {
-      if (track->flags & SOUND_TRACK_ACTIVE) {
+      if (track->flags & MPT_FLG_EXIST) {
         track->modDepth = depth;
         if (!track->modDepth)
-          MusicTrack_ClearModulation(track);
+          ClearModM(track);
       }
     }
     tracksRemaining--;
     track++;
     trackBit <<= 1;
   }
-  player->lock = SOUND_LOCK;
+  player->ident = ID_NUMBER;
 }
 
 /// Sets LFO speed on selected active tracks, resetting modulation when stopped.
 /// Nothing in ☀️ calls it; songs set the speed with their own command
-/// (MusicTrack_SetLfoSpeedFromCommand).
-void MusicPlayer_SetLfoSpeed(struct SoundPlayer *player, u32 selectedTracks,
-                             u32 speedArgument) {
+/// (ply_lfos).
+void m4aMPlayLFOSpeedSet(struct MusicPlayerInfo *player, u32 selectedTracks,
+                         u32 speedArgument) {
   u16 mask = selectedTracks;
   u8 speed = speedArgument;
   s32 tracksRemaining;
-  struct SoundTrack *track;
+  struct MusicPlayerTrack *track;
   u32 trackBit;
 
-  if (player->lock != SOUND_LOCK)
+  if (player->ident != ID_NUMBER)
     return;
 
-  player->lock++;
+  player->ident++;
   tracksRemaining = player->trackCount;
   track = player->tracks;
   trackBit = 1;
   while (tracksRemaining > 0) {
     if (mask & trackBit) {
-      if (track->flags & SOUND_TRACK_ACTIVE) {
+      if (track->flags & MPT_FLG_EXIST) {
         track->lfoSpeed = speed;
         if (!track->lfoSpeed)
-          MusicTrack_ClearModulation(track);
+          ClearModM(track);
       }
     }
     tracksRemaining--;
     track++;
     trackBit <<= 1;
   }
-  player->lock = SOUND_LOCK;
+  player->ident = ID_NUMBER;
 }
 
-/// Executes a work-byte operation and consumes a branch address for
-/// comparisons. Song byte 0xB9 (SOUND_COMMAND_WORK_BYTE): an operation, the
-/// index of a byte in the player's workBytes and an operand, which COPY and
-/// the _BYTE operations read as the index of a second byte. A comparison that
-/// holds jumps like GOTO to the address that follows; one that fails skips it.
-/// Every player shares gSound_WorkBytes (Audio_Initialize), so one song can
-/// test what another has set.
-void MusicTrack_OperateWorkByte(struct SoundPlayer *player,
-                                struct SoundTrack *track) {
+/// Executes a memacc operation and consumes a branch address for comparisons.
+/// Song byte 0xB9 (MPLAY_JUMP_MEMACC): an operation (MemAccOp), the index of
+/// a byte in the music player's workBytes and an operand, which the MEMACC_MEM_
+/// operations read as the index of a second byte. A comparison that holds
+/// jumps like GOTO to the address that follows; one that fails skips it. Every
+/// music player shares gMPlayMemAccArea (m4aSoundInit), so one song can test
+/// what another has set.
+void ply_memacc(struct MusicPlayerInfo *player,
+                struct MusicPlayerTrack *track) {
   u32 operation;
   u8 *workByte;
   u8 operand;
@@ -1028,69 +1031,69 @@ void MusicTrack_OperateWorkByte(struct SoundPlayer *player,
   track->cursor++;
 
   switch (operation) {
-  case SOUND_WORK_SET:
+  case MEMACC_SET:
     *workByte = operand;
     return;
-  case SOUND_WORK_ADD:
+  case MEMACC_ADD:
     *workByte += operand;
     return;
-  case SOUND_WORK_SUBTRACT:
+  case MEMACC_SUB:
     *workByte -= operand;
     return;
-  case SOUND_WORK_COPY:
+  case MEMACC_MEM_SET:
     *workByte = player->workBytes[operand];
     return;
-  case SOUND_WORK_ADD_BYTE:
+  case MEMACC_MEM_ADD:
     *workByte += player->workBytes[operand];
     return;
-  case SOUND_WORK_SUBTRACT_BYTE:
+  case MEMACC_MEM_SUB:
     *workByte -= player->workBytes[operand];
     return;
-  case SOUND_WORK_EQUAL:
+  case MEMACC_BEQ:
     if (*workByte == operand)
       goto jump;
     goto skip;
-  case SOUND_WORK_NOT_EQUAL:
+  case MEMACC_BNE:
     if (*workByte != operand)
       goto jump;
     goto skip;
-  case SOUND_WORK_GREATER:
+  case MEMACC_BHI:
     if (*workByte > operand)
       goto jump;
     goto skip;
-  case SOUND_WORK_GREATER_EQUAL:
+  case MEMACC_BHS:
     if (*workByte >= operand)
       goto jump;
     goto skip;
-  case SOUND_WORK_LESS_EQUAL:
+  case MEMACC_BLS:
     if (*workByte <= operand)
       goto jump;
     goto skip;
-  case SOUND_WORK_LESS:
+  case MEMACC_BLO:
     if (*workByte < operand)
       goto jump;
     goto skip;
-  case SOUND_WORK_EQUAL_BYTE:
+  case MEMACC_MEM_BEQ:
     if (*workByte == player->workBytes[operand])
       goto jump;
     goto skip;
-  case SOUND_WORK_NOT_EQUAL_BYTE:
+  case MEMACC_MEM_BNE:
     if (*workByte != player->workBytes[operand])
       goto jump;
     goto skip;
-  case SOUND_WORK_GREATER_BYTE:
+  case MEMACC_MEM_BHI:
     if (*workByte > player->workBytes[operand])
       goto jump;
     goto skip;
-  case SOUND_WORK_GREATER_EQUAL_BYTE:
+  case MEMACC_MEM_BHS:
     if (*workByte >= player->workBytes[operand])
       goto jump;
     goto skip;
-  case SOUND_WORK_LESS_EQUAL_BYTE:
+  case MEMACC_MEM_BLS:
     if (*workByte <= player->workBytes[operand])
       goto jump;
     goto skip;
-  case SOUND_WORK_LESS_BYTE:
+  case MEMACC_MEM_BLO:
     if (*workByte < player->workBytes[operand])
       goto jump;
     goto skip;
@@ -1099,22 +1102,21 @@ void MusicTrack_OperateWorkByte(struct SoundPlayer *player,
   }
 
 jump:
-  (*(&gSound_CommandTable[SOUND_COMMAND_GOTO]))(player, track);
+  (*(&gMPlayJumpTable[MPLAY_JUMP_GOTO]))(player, track);
   return;
 skip:
   track->cursor += 4;
 }
 
 /// Reads an extended-command index and invokes its handler. Song byte 0xCD
-/// (SOUND_COMMAND_EXTENDED); the index is not checked against the 12 entries
-/// of gSound_ExtendedCommandTable.
-void MusicTrack_DispatchStreamCommand(struct SoundPlayer *player,
-                                      struct SoundTrack *track) {
+/// (MPLAY_JUMP_XCMD); the index is not checked against the 12 entries
+/// of gXcmdTable.
+void ply_xcmd(struct MusicPlayerInfo *player, struct MusicPlayerTrack *track) {
   s32 command;
 
   command = *track->cursor;
   track->cursor++;
-  gSound_ExtendedCommandTable[command](player, track);
+  gXcmdTable[command](player, track);
 }
 
 /// A word put together from its four bytes, lowest first.
@@ -1128,18 +1130,17 @@ union PackedWord {
   } part;
 };
 
-/// Finishes a track through the base command table entry. Extended commands
-/// 0 and 3: they end the track as the finish command (0xB1) does.
-void Runtime_CallWorkEntryWithArguments(struct SoundPlayer *player,
-                                        struct SoundTrack *track) {
-  SoundCommand finishSequence = *(&gSound_CommandTable[SOUND_COMMAND_FINISH]);
+/// Finishes a track through the jump table's ply_fine entry. Extended
+/// commands 0 and 3: they end the track as the finish command (0xB1) does.
+void ply_xxx(struct MusicPlayerInfo *player, struct MusicPlayerTrack *track) {
+  MPlayFunc finishSequence = *(&gMPlayJumpTable[MPLAY_JUMP_FINE]);
 
   finishSequence(player, track);
 }
 
-/// Reads an unaligned little-endian voice target address from the sequence.
-void MusicTrack_ReadVoiceTarget(struct SoundPlayer *player,
-                                struct SoundTrack *track) {
+/// Reads an unaligned little-endian voice target address from the sequence
+/// (extended command 1).
+void ply_xwave(struct MusicPlayerInfo *player, struct MusicPlayerTrack *track) {
   const u8 *source = track->cursor;
   union PackedWord targetAddress;
 
@@ -1151,65 +1152,59 @@ void MusicTrack_ReadVoiceTarget(struct SoundPlayer *player,
   track->cursor = source + 4;
 }
 
-/// Reads the voice kind from the sequence.
-void MusicTrack_SetVoiceKind(struct SoundPlayer *player,
-                             struct SoundTrack *track) {
+/// Reads the voice kind from the sequence (extended command 2).
+void ply_xtype(struct MusicPlayerInfo *player, struct MusicPlayerTrack *track) {
   track->voice.kind = *track->cursor;
   track->cursor++;
 }
 
-/// Reads the voice attack rate from the sequence.
-void MusicTrack_SetVoiceAttack(struct SoundPlayer *player,
-                               struct SoundTrack *track) {
+/// Reads the voice attack rate from the sequence (extended command 4).
+void ply_xatta(struct MusicPlayerInfo *player, struct MusicPlayerTrack *track) {
   track->voice.attack = *track->cursor;
   track->cursor++;
 }
 
-/// Reads the voice decay rate from the sequence.
-void MusicTrack_SetVoiceDecay(struct SoundPlayer *player,
-                              struct SoundTrack *track) {
+/// Reads the voice decay rate from the sequence (extended command 5).
+void ply_xdeca(struct MusicPlayerInfo *player, struct MusicPlayerTrack *track) {
   track->voice.decay = *track->cursor;
   track->cursor++;
 }
 
-/// Reads the voice sustain level from the sequence.
-void MusicTrack_SetVoiceSustain(struct SoundPlayer *player,
-                                struct SoundTrack *track) {
+/// Reads the voice sustain level from the sequence (extended command 6).
+void ply_xsust(struct MusicPlayerInfo *player, struct MusicPlayerTrack *track) {
   track->voice.sustain = *track->cursor;
   track->cursor++;
 }
 
-/// Reads the voice release rate from the sequence.
-void MusicTrack_SetVoiceRelease(struct SoundPlayer *player,
-                                struct SoundTrack *track) {
+/// Reads the voice release rate from the sequence (extended command 7).
+void ply_xrele(struct MusicPlayerInfo *player, struct MusicPlayerTrack *track) {
   track->voice.release = *track->cursor;
   track->cursor++;
 }
 
-/// Reads the note tail volume from the sequence.
-void MusicTrack_SetTailLevel(struct SoundPlayer *player,
-                             struct SoundTrack *track) {
+/// Reads each new note's echo level from the sequence (extended command 8,
+/// MPlayDef's xIECV).
+void ply_xiecv(struct MusicPlayerInfo *player, struct MusicPlayerTrack *track) {
   track->tailLevel = *track->cursor;
   track->cursor++;
 }
 
-/// Reads the note tail duration from the sequence.
-void MusicTrack_SetTailLength(struct SoundPlayer *player,
-                              struct SoundTrack *track) {
+/// Reads each new note's echo length from the sequence (extended command 9,
+/// MPlayDef's xIECL).
+void ply_xiecl(struct MusicPlayerInfo *player, struct MusicPlayerTrack *track) {
   track->tailLength = *track->cursor;
   track->cursor++;
 }
 
-/// Reads the hardware note length from the sequence.
-void MusicTrack_SetVoiceLength(struct SoundPlayer *player,
-                               struct SoundTrack *track) {
+/// Reads the hardware note length from the sequence (extended command 10).
+void ply_xleng(struct MusicPlayerInfo *player, struct MusicPlayerTrack *track) {
   track->voice.length = *track->cursor;
   track->cursor++;
 }
 
-/// Reads the voice pan or CGB sweep setting from the sequence.
-void MusicTrack_SetVoicePanOrSweep(struct SoundPlayer *player,
-                                   struct SoundTrack *track) {
+/// Reads the voice pan or CGB sweep setting from the sequence (extended
+/// command 11).
+void ply_xswee(struct MusicPlayerInfo *player, struct MusicPlayerTrack *track) {
   track->voice.panOrSweep = *track->cursor;
   track->cursor++;
 }

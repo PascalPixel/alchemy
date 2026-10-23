@@ -1,28 +1,32 @@
 @ C2: MusicPlayer2000's shared call_r3 helper supplies the bx r3 hook entry.
 @ Mixer-frame setup transfers into a shared live-stack IWRAM mixer rather
 @ than returning through an ordinary call frame.
+@ Mixer_Enter is Camelot's copy of SoundMain's entry (src/sound/umul_high.s)
+@ for the VBlank handler: it neither raises the ident nor sets up the mixer's
+@ line limit, and it jumps to the game's own IWRAM mixer, IwramSoundMixEntry,
+@ instead of SoundMainRAM; Mixer_EnterCallViaR3 is its own call_r3.
 .syntax unified
 .text
 	.thumb
-	.global SoundDriver_EnterMixer
+	.global Mixer_Enter
 	.thumb_func
-SoundDriver_EnterMixer:
+Mixer_Enter:
 	ldr	r0, [pc, #108]
 	ldr	r0, [r0, #0]
 	ldr	r2, [pc, #100]
 	ldr	r3, [r0, #0]
 	cmp	r2, r3
-	beq SoundDriver_StartMixFrame
+	beq Mixer_StartFrame
 	bx	lr
-	.global MusicDriver_CallHook
+	.global Mixer_EnterCallViaR3
 	.thumb_func
-MusicDriver_CallHook:
+Mixer_EnterCallViaR3:
 	bx	r3
 .syntax unified
 	.thumb
-	.global SoundDriver_StartMixFrame
+	.global Mixer_StartFrame
 	.thumb_func
-SoundDriver_StartMixFrame:
+Mixer_StartFrame:
 	push	{r5, r6, r7, lr}
 	mov	r1, r8
 	mov	r2, r9
@@ -34,11 +38,11 @@ SoundDriver_StartMixFrame:
 	cmp	r3, #0
 	beq.n	.L0
 	ldr	r0, [r0, #36]
-	bl	MusicDriver_CallHook
+	bl	Mixer_EnterCallViaR3
 	ldr	r0, [sp, #24]
 .L0:
 	ldr	r3, [r0, #40]
-	bl	MusicDriver_CallHook
+	bl	Mixer_EnterCallViaR3
 	ldr	r0, [sp, #24]
 	ldr	r3, [r0, #16]
 	str	r3, [sp, #0]

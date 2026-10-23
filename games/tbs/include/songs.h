@@ -2,7 +2,7 @@
 #define ALCHEMY_SONGS_H
 
 /// @file
-/// Song and sound effect ids, indices into gSound_SongTable. MUS_ ids are
+/// Song and sound effect ids, indices into gSongTable. MUS_ ids are
 /// music and SE_ ids sound effects, as their sequences in sound/songs are
 /// named. Only the ids ☀️ plays are here: the code's own, the field music
 /// gMap_MusicRules and gEncounter_BattleMusic choose by number, and
@@ -170,7 +170,7 @@
 /// ★ Named from what the player sees: the title screen and its "Press Start"
 /// prompt (its render)
 #define MUS_TITLE 70
-/// A row of the song table that holds the empty song (Sound_EmptySong), so
+/// A row of the song table that holds the empty song (dummy_song_header), so
 /// nothing plays; only the debug battle message viewer starts it, to silence
 /// the music.
 #define MUS_EMPTY 71

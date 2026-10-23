@@ -2,9 +2,9 @@
 @ fp as a volume accumulator.
 .syntax unified
 	.thumb
-	.global SoundDriver_Mixer
+	.global SoundMainRAM
 	.thumb_func
-SoundDriver_Mixer:
+SoundMainRAM:
 	ldrb	r3, [r0, #5]
 	cmp	r3, #0
 	beq .Lclear

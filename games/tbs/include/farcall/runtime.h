@@ -82,9 +82,9 @@ void SerialRuntime_InitializeFar(void);
 s32 SerialRuntime_PollAndTransferFar(void *send, void *receive);
 /// Stops the per-frame link exchange and removes the link interrupt handlers.
 void SerialRuntime_RemoveIrqHandlersFar(void);
-/// Copies sound preset `preset`'s mixer code (0 to 4, anything else 0) into
-/// IWRAM. Always returns 0.
-s32 Sound_LoadPresetParametersFar(s32 preset);
+/// Copies reverb code `code`'s mixer code (enum SoundReverbCode, anything
+/// else SOUND_REVERB_MONO) into IWRAM. Always returns 0.
+s32 Sound_LoadReverbCodeFar(s32 code);
 /// Starts sending `transferValue` bytes from `source` to the partner in 20-byte
 /// blocks; the size must be a multiple of 20. Returns -1 when a send is
 /// running.

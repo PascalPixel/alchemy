@@ -361,8 +361,8 @@ void Input_UpdateKeyRepeatAndDirection(void) {
   gKeysHeldLast = gKeysHeld;
 }
 
-#define SOUND_PRESET_COUNT 5  ///< presets in IwramCodeRecords
-#define SOUND_PRESET_SIZE 152 ///< bytes in each preset
+#define SOUND_REVERB_CODE_COUNT 5  ///< reverb codes in IwramSoundReverbCodes
+#define SOUND_REVERB_CODE_SIZE 152 ///< bytes in each reverb code
 
 /// The VBlank interrupt handler, installed by System_Initialize. It trades the
 /// link cable payloads, steps the music fades and the screen fade, and when
@@ -430,21 +430,23 @@ void System_VBlankHandler(void) {
   gFrameTick++;
   gLagFrameCount++;
   gVBlankDone = 1;
-  SoundDriver_EnterMixer();
+  Mixer_Enter();
 }
 
-/// Copies the mixer code for sound preset `preset` (0 to 4; anything else is 0)
-/// from ROM into IwramSoundPresetCode. Called by the battle and the Battle
-/// Arena for their music, and by the audio test. Always returns 0.
-s32 Sound_LoadPresetParameters(s32 preset) {
+/// Copies the mixer code for reverb code `code` (enum SoundReverbCode; anything
+/// else loads SOUND_REVERB_MONO) from ROM into IwramSoundReverbCode. Called by
+/// Sound_PlaySong for music, the battle and the Battle Arena for theirs, and
+/// the audio test. Always returns 0.
+s32 Sound_LoadReverbCode(s32 code) {
   s32 index;
 
-  index = preset;
-  if ((u32)preset > SOUND_PRESET_COUNT - 1) {
+  index = code;
+  if ((u32)code > SOUND_REVERB_CODE_COUNT - 1) {
     index = 0;
   }
-  Dma_Set(IwramCodeRecords + index * SOUND_PRESET_SIZE, IwramSoundPresetCode,
-          DMA_COPY_WORDS(SOUND_PRESET_SIZE / 4), REG_DMA3);
+  Dma_Set(IwramSoundReverbCodes + index * SOUND_REVERB_CODE_SIZE,
+          IwramSoundReverbCode, DMA_COPY_WORDS(SOUND_REVERB_CODE_SIZE / 4),
+          REG_DMA3);
   return 0;
 }
 
@@ -467,5 +469,5 @@ void Input_HandleKeyInterrupt(void) {
 #undef VBlankIntrWait
 #undef INPUT_KEY_REPEAT_FIRST
 #undef INPUT_KEY_REPEAT_NEXT
-#undef SOUND_PRESET_COUNT
-#undef SOUND_PRESET_SIZE
+#undef SOUND_REVERB_CODE_COUNT
+#undef SOUND_REVERB_CODE_SIZE

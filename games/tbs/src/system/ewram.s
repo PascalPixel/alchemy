@@ -117,65 +117,65 @@ gCurrentBgm:
 	.global gSoundCommandMask
 gSoundCommandMask:
 	.space 0x00000010
-	.global gSound_Work
-gSound_Work:
+	.global gSoundInfo
+gSoundInfo:
 	.space 0x00000fb0
-	.global gSound_CommandTable
-gSound_CommandTable:
+	.global gMPlayJumpTable
+gMPlayJumpTable:
 	.space 0x00000090
-	.global gSound_CgbNotes
-gSound_CgbNotes:
+	.global gCgbChans
+gCgbChans:
 	.space 0x00000100
-	.global gSound_Player5
-gSound_Player5:
+	.global gMPlayInfo_SE5
+gMPlayInfo_SE5:
 	.space 0x00000040
-	.global Sound_Player6
-Sound_Player6:
+	.global gMPlayInfo_SE6
+gMPlayInfo_SE6:
 	.space 0x00000040
-	.global gMusicPlayerFanfare
-gMusicPlayerFanfare:
+	.global gMPlayInfo_Fanfare
+gMPlayInfo_Fanfare:
 	.space 0x00000040
-	.global Sound_Player7
-Sound_Player7:
+	.global gMPlayInfo_SE7
+gMPlayInfo_SE7:
 	.space 0x00000040
-	.global gMusicPlayerBgm
-gMusicPlayerBgm:
+	.global gMPlayInfo_BGM
+gMPlayInfo_BGM:
 	.space 0x00000040
-	.global Sound_Player2
-Sound_Player2:
+	.global gMPlayInfo_MenuSE
+gMPlayInfo_MenuSE:
 	.space 0x00000040
-	.global Sound_Player4
-Sound_Player4:
+	.global gMPlayInfo_SE4
+gMPlayInfo_SE4:
 	.space 0x00000040
-	.global gSound_WorkBytes
-gSound_WorkBytes:
+	.global gMPlayMemAccArea
+gMPlayMemAccArea:
 	.space 0x00000010
-	.global gSound_Player3
-gSound_Player3:
+	.global gMPlayInfo_ActionSE
+gMPlayInfo_ActionSE:
 	.space 0x00000040
-	.global Sound_Tracks0
-Sound_Tracks0:
+	.global gMPlayTrack_Fanfare
+gMPlayTrack_Fanfare:
 	.space 0x00000140
-	.global Sound_Tracks1
-Sound_Tracks1:
+	.global gMPlayTrack_BGM
+gMPlayTrack_BGM:
 	.space 0x00000320
-	.global Sound_Tracks2
-Sound_Tracks2:
+	.global gMPlayTrack_MenuSE
+gMPlayTrack_MenuSE:
 	.space 0x000000a0
-	.global Sound_Tracks3
-Sound_Tracks3:
+	.global gMPlayTrack_ActionSE
+gMPlayTrack_ActionSE:
 	.space 0x000000a0
-	.global Sound_Tracks4
-Sound_Tracks4:
+	.global gMPlayTrack_SE4
+gMPlayTrack_SE4:
 	.space 0x000000a0
-	.global Sound_Tracks5
-Sound_Tracks5:
+	.global gMPlayTrack_SE5
+gMPlayTrack_SE5:
 	.space 0x000000a0
-	.global Sound_Tracks6
-Sound_Tracks6:
+	.global gMPlayTrack_SE6
+gMPlayTrack_SE6:
 	.space 0x000000a0
-	.global Sound_Tracks7
-Sound_Tracks7:
+	.global gMPlayTrack_SE7
+gMPlayTrack_SE7:
 	.space 0x000000a0
 	.space 0x00000040
 	.global gFlash_Handler3

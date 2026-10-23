@@ -11,7 +11,7 @@
 	.set import.Runtime_BumpFree, 1
 	.set import.SerialRuntime_Initialize, 1
 	.set import.SerialRuntime_RemoveIrqHandlers, 1
-	.set import.Sound_LoadPresetParameters, 1
+	.set import.Sound_LoadReverbCode, 1
 	.set import.SerialRuntime_StartSend, 1
 	.set import.SerialRuntime_StartReceive, 1
 	.set import.SerialRuntime_GetActiveTransfers, 1

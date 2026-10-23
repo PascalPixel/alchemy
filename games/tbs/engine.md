@@ -189,18 +189,18 @@ Every sound is played by `Sound_PlaySong` with a song number, whose range
 decides whether it is music, a fanfare or a sound from the song table.
 
 The game asks for every sound the same way, with one number, and the number
-says what kind of sound it is. The sound driver has eight players, and each
-kind of sound has players of its own, so a sound effect never stops the
+says what kind of sound it is. The sound driver has eight music players, and
+each kind of sound has music players of its own, so a sound effect never stops the
 music.
 
 Below 80 a song is music; from 80 to 99 (`SONG_FANFARE_FIRST`) a fanfare;
 from 100 (`SONG_SE_FIRST`) an entry of the song table, played on the
-player its row names, which is how sound effects play. Songs 17, 18 and 289
+music player its row names, which is how sound effects play. Songs 17, 18 and 289
 are controls rather than sounds. Asking for the music already chosen does
 nothing.
 
 A fanfare doesn't stop the music. The music's volume drops to 0 while it keeps
-playing, the fanfare plays on player 0, and once that player stops the music
+playing, the fanfare plays on music player 0, and once it stops the music
 fades back in over 64 frames, so the code that asked for the fanfare doesn't
 have to track it: opening a chest is the one call above. The driver
 underneath is Nintendo's MusicPlayer2000, the sound library many Game Boy
@@ -212,11 +212,11 @@ Advance games ship ([pret](glossary.md#pret)'s decompilations call it m4a).
 | `SONG_KEEP_BGM` | 18 | keep the music that is playing |
 | `SONG_FANFARE_FIRST` | 80 | first fanfare; below it, music |
 | `SONG_SE_FIRST` | 100 | first song that is a song table row |
-| `SONG_FADE_OUT_ACTION_SE` | `0x121` (289) | fade player 3 out over 48 frames |
+| `SONG_FADE_OUT_ACTION_SE` | `0x121` (289) | fade music player 3 out over 48 frames |
 
-[Sound](src/sound/README.md#what-a-song-number-means) covers the players,
+[Sound](src/sound/README.md#what-a-song-number-means) covers the music players,
 [the fanfare's return](src/sound/README.md#the-fanfares-return-to-the-music)
-and [the driver's lock](src/sound/README.md#the-drivers-lock).
+and [the driver's ident](src/sound/README.md#the-drivers-ident).
 
 ## Debug rooms
 

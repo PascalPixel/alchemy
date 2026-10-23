@@ -96,9 +96,9 @@ struct S {
   struct T *f50;
 };
 /// The 152 bytes of IWRAM-resident sound code (0x03000bd8, not the mixer at
-/// 0x03007000) that Sound_LoadPresetParameters overwrites with a preset from
-/// IwramCodeRecords.
-extern u8 IwramSoundPresetCode[];
+/// 0x03007000) that Sound_LoadReverbCode overwrites with a reverb code
+/// from IwramSoundReverbCodes.
+extern u8 IwramSoundReverbCode[];
 #ifndef OWN_Flash_Handler0
 /// The chip's program routine (FlashSetupInfo.handlers[0]), which
 /// Save_WriteSector calls.
@@ -121,8 +121,8 @@ extern u16 gFlashNumRemainingBytes;
 extern u8 gSaveBuffer[];
 /// The current save file, or -1 for none (a new game).
 extern s16 gSaveSlot;
-/// The five sound presets' mixer code, SOUND_PRESET_SIZE bytes each.
-extern u8 IwramCodeRecords[];
+/// The five reverb codes' mixer code, SOUND_REVERB_CODE_SIZE bytes each.
+extern u8 IwramSoundReverbCodes[];
 /// The size of Oam_BuildBufferKernel (decode_byte_lz.s).
 extern u8 LoadedRuntime_Size[];
 /// No code in the tree defines or reads it.
@@ -189,6 +189,6 @@ extern u8 Tile_CopyStridedCodeSize[];
 extern u8 TransferCommandExecutor_Size[];
 void _call_via_r2(s32 arg0, s32 arg1, s32 target);
 void Iwram_Halt(void);
-void SoundDriver_EnterMixer(void);
+void Mixer_Enter(void);
 
 #endif

@@ -244,7 +244,19 @@ BGM, gBgm*	global	pret	the BGM player's volume and tempo-pitch ramps (pret gMPla
 TRACKS_ALL	constant	pret	pret m4a TRACKS_ALL (pret's is 0xFFFF, this one 0xFF: tracks 0 to 7)
 gMusicPlayerLastSong	global	common	Sound_PlaySong stores each effect player's last song number; nothing reads it
 SoundTest_	prefix	pret	pret's sound test screen; the debug screen plays songs by row
-CgbChannelId	enum	common	the four CGB channel numbers; frees CgbChannel for pret's struct (phase B)
+CgbChannelId	enum	common	the four CGB channel numbers; CgbChannel is pret's struct for one
+SoundInfo, MusicPlayerInfo, MusicPlayerTrack, SoundChannel, CgbChannel, ToneData, SongHeader, MusicPlayer, Song	struct	pret	the m4a sound driver's structures, field for field pret's (include/gba/m4a_internal.h); include/sound/audio_engine_types.h
+m4a, MPlay, ply_, SoundInit, SoundMain, CgbSound	prefix	pret	the m4a driver keeps pret's spellings (m4aSongNumStart, MPlayStart, ply_note), each routine checked against pret's src/m4a.c and src/m4a_1.s
+gSoundInfo, gMPlayTable, gSongTable, gMPlayJumpTable, gXcmdTable, gMPlayMemAccArea, gCgbChans, gScaleTable, gFreqTable, gClockTable	global	pret	the m4a driver's work and tables (pret src/m4a.c, src/m4a_tables.c)
+gMPlayInfo_BGM, gMPlayTrack_BGM	global	pret	the BGM's music player and its tracks (pret sound/music_player_table.inc)
+gMPlayInfo_Fanfare, gMPlayInfo_MenuSE, gMPlayInfo_ActionSE, gMPlayInfo_SE4 to SE7	global	common	the other music players in pret's gMPlayInfo_ form, named by the songs the song table gives them
+MusicPlayerId, MUSIC_PLAYER_*	enum	pret	rows of gMPlayTable as Song.ms names them (pret MUSIC_PLAYER_BGM, MUSIC_PLAYER_SE1)
+ident, ID_NUMBER	word	pret	the driver's and each music player's signature and lock word; never "lock", which is the slots' word
+MPT_FLG_*, MUSICPLAYER_STATUS_*, SOUND_CHANNEL_SF_*, CGB_CHANNEL_MO_*, FADE_IN, TEMPORARY_FADE	constant	pret	pret's m4a_internal.h flags, same values
+MPLAY_JUMP_*	constant	pret	gMPlayJumpTable's rows, named after the MPlayDef.s commands they run (FINE, GOTO, MEMACC, XCMD, EOT) and the helpers pret's MPlayExtender installs
+MemAccOp, MEMACC_*	enum	pret	the memacc command's operations as MPlayDef.s spells them (mem_set to mem_mem_blo)
+Mixer_	prefix	common	Camelot's own way from the VBlank into the game's IWRAM mixer (Mixer_Enter), beside pret's SoundMainRAM
+reverb code (Sound_LoadReverbCode, SoundReverbCode, SOUND_REVERB_*, IwramSoundReverbCode)	word	pret	the IWRAM mixer's last step, one of five copied in per song; MusicPlayer2000 calls the echo reverb (SoundInfo.reverb); never 'preset'
 PaletteCycle, PaletteCycle_	struct	pret	a run of BG colours rotated every few frames (pret palette cycling)
 PaletteFade, PaletteFade_	struct	pret	the field's palette fade (; pret palette.c BeginNormalPaletteFade)
 TitlePaletteFade, TitlePaletteFade_	struct	pret	the title intro's 512-colour copy of the palette fade (graphics/title/intro.c)

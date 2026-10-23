@@ -196,7 +196,7 @@ s32 SummaryScreen_Run(void) {
     menu->rowX[index] = 130 + index * 32;
     menu->rowY[index] = 128;
   }
-  Link_DrawShiftedTilePairFar(PAGE_ARROW_VRAM);
+  Link_DrawPageArrowsFar(PAGE_ARROW_VRAM);
   // Run the pages.
   Menu_CancelSoundReset();
   menu->page = SUMMARY_SCREEN_PAGE_STATUS;

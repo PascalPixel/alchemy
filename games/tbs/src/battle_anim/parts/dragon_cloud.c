@@ -136,7 +136,7 @@ void BattleAnim_RunDragonCloud(struct BattleAnimArgs *effect) {
   path = Resource_GetTableEntry((s32)&ResourceId_DualStreamPath);
 
   for (frame = 0; frame != DRAGON_CLOUD_FRAMES; frame++) {
-    camera = gCameraWork;
+    camera = gBattleCamera;
     if (frame == DRAGON_CLOUD_STRIKE_FRAME)
       ANIM_SHOW_DAMAGE(SE_HEAVY_IMPACT);
     if (frame == 0)

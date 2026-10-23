@@ -116,7 +116,7 @@ int Window_DrawThreeTileColumn(struct Window *window, s32 arg1, s32 arg2,
 #endif
 void Graphics_MergeShiftedTileRows(u32 *first, u32 *second, u32 *output,
                                    s32 shift);
-void Link_DrawShiftedTilePair(s32 offset);
+void Link_DrawPageArrows(s32 offset);
 void Graphics_ExpandVramTilesByColorTable(u16 *dst);
 s32 Resource_LoadTableEntryToBuffer(s32 resource, s32 index);
 s32 ItemIcon_LoadIntoSlot(s32 resource, s32 index);

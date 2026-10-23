@@ -1153,9 +1153,9 @@ UNUSED static void Vault_SpawnDriftingEffect(s32 flags) {
   sprite->image.priority = anchor->sprite->image.priority;
 }
 
-// The three scripts of gEffectScripts, which FieldEffect_Spawn picks by the low
-// bits of its flags: each holds its effect for about 24, 46 or 128 frames,
-// then frees it.
+// The three scripts of gFieldEffect_DurationScripts, which FieldEffect_Spawn
+// picks by the low bits of its flags: each holds its effect for about 24, 46 or
+// 128 frames, then frees it.
 s32 gVault_ShortEffectScript[] = {
     SC_WAIT(1),           SC_LOOP(22, SC_TOP), SC_WAIT(1),
     SC_POSITION(0, 0, 0), SC_WAIT(1),          SC_FREE,
@@ -1171,7 +1171,7 @@ s32 gVault_LongEffectScript[] = {
     SC_POSITION(0, 0, 0), SC_WAIT(1),           SC_FREE,
 };
 
-const s32 *gEffectScripts[] = {
+const s32 *gFieldEffect_DurationScripts[] = {
     gVault_ShortEffectScript,
     gVault_MediumEffectScript,
     gVault_LongEffectScript,

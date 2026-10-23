@@ -242,7 +242,7 @@ void Anim_ApplyChildPalette(struct Object *object, s32 palette) {
     sprite = object->sprite;
     replacement = palette - 1;
     if (palette == 0)
-      replacement = gAnim_ChildPaletteCycle[(gFrameCount >> 1) & 7];
+      replacement = gMindRead_CasterPaletteCycle[(gFrameCount >> 1) & 7];
 
     partCount = sprite->count;
     if (partCount != 0) {

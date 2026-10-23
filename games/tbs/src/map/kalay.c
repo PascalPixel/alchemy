@@ -1198,7 +1198,7 @@ static void Kalay_WatchTourGroupDeparture(void) {
 /// the fade overlay following the leader.
 static void Kalay_StopTrackingLeader(void) {
   if (Script_GetFlag(FLAG_TUNNEL_OVERLAY_FOLLOWS_LEADER) != 0) {
-    gObjectEventEffectWork->objectEvent = NULL;
+    gFadeOverlayWork->objectEvent = NULL;
     GameFlag_Clear(FLAG_TUNNEL_OVERLAY_FOLLOWS_LEADER);
   }
 }
@@ -1209,7 +1209,7 @@ static void Kalay_StartTrackingLeader(void) {
   struct FadeOverlayWork *work;
 
   if (Script_GetFlag(FLAG_TUNNEL_OVERLAY_FOLLOWS_LEADER) == 0) {
-    work = gObjectEventEffectWork;
+    work = gFadeOverlayWork;
     work->objectEvent = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
     GameFlag_Set(FLAG_TUNNEL_OVERLAY_FOLLOWS_LEADER);
   }

@@ -41,8 +41,8 @@ STATIC_ASSERT(offsetof(struct Task, flags) == 6);
 /// 1 while WaitFrames runs the main-loop tasks.
 /* FAKEMATCH(volatile): the read Task_Add discards stays a
  * load; as plain u8, 8 of 61 instructions differ in tbs-en. */
-extern volatile u8 gTaskStatus;
-extern u8 gTasksReady; ///< 1 once the task table is set up
+extern volatile u8 gTasksRunning;
+extern u8 gTasksInitialized; ///< 1 once the task table is set up
 extern struct Task gTasks[];
 
 void Task_RunByPriority(s32 key);

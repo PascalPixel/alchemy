@@ -11,7 +11,7 @@
 // Their readers declare them in battle.h, field.h, graphics.h, scroll.h and
 // object_effect_scripts.h, and overworld.c declares the colour curves. Some
 // readers declare their table without const: battle.h's
-// gFieldEffect_TargetRangeByMode, gAnim_ChildPaletteCycle,
+// gFieldEffect_TargetRangeByMode, gMindRead_CasterPaletteCycle,
 // gSpeakerDefinitions, gFieldEffect_GroundParticleFrames,
 // gFieldEffect_PulseScales, gFieldEffect_CyclePatternWords and
 // gFieldEffect_RandomChildValues, graphics.h's gScreenTransition_NoiseWidths
@@ -54,7 +54,7 @@ const s16 gFieldEffect_TargetRangeByMode[25] = {
 
 /// The palette cycle of Mind Read's caster (Anim_ApplyChildPalette,
 /// (gFrameCount >> 1) & 7): palettes 1 to 4 and back to 0, two frames each.
-const u8 gAnim_ChildPaletteCycle[8] = {1, 2, 3, 4, 3, 2, 1, 0};
+const u8 gMindRead_CasterPaletteCycle[8] = {1, 2, 3, 4, 3, 2, 1, 0};
 
 /// Grows from half size to full size, a step every 2 frames.
 const s32 gFieldEffect_ParticleEmitterScript[] = {
@@ -460,7 +460,7 @@ const struct SparkleFrame gFieldEffect_SparkleFrames[32] = {
     {-120, 0},
 };
 
-/// Two scales that alternate ((gFrameTick >> 2) & 1): full size and 0.97 of
+/// Two scales that alternate ((gVBlankCount >> 2) & 1): full size and 0.97 of
 /// it (FieldEffect_SetObjectAlternatingWords, jupiter.c); nothing reads the
 /// third word.
 const u32 gFieldEffect_PulseScales[3] = {0x10000, 0xf851, 16};
@@ -525,7 +525,7 @@ const s32 gFieldEffect_HeavyImpactScript[] = {
     SC_FREE,
 };
 
-/// The three scripts of gEffectScripts.
+/// The three scripts of gFieldEffect_DurationScripts.
 const s32 gFieldEffect_ShortEffectScript[] = {
     SC_WAIT(24),
     SC_FREE,

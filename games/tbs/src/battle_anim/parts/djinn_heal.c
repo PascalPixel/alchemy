@@ -73,7 +73,7 @@ UNUSED void BattleAnim_RunDjinnHeal(struct BattleAnimArgs *effect) {
   SET_VECTOR(delta, (target[0] - position[0]) / 40,
              (target[1] - position[1]) / 40, (target[2] - position[2]) / 40);
   for (frame = 0; frame != DJINN_HEAL_SWIRL_FRAMES; frame++) {
-    struct BattleCamera *camera = gCameraWork;
+    struct BattleCamera *camera = gBattleCamera;
     if (frame == 8)
       Sound_PlaySongFar(SE_212);
     if (frame == 80)
@@ -155,7 +155,7 @@ UNUSED void BattleAnim_RunDjinnHeal(struct BattleAnimArgs *effect) {
   }
   Resource_LoadAndDecompress((s32)&ResourceId_SparkleDots, sheet, 0, 0);
   for (frame = 0; frame != work->effect->targetCount * 8 + 72; frame++) {
-    struct BattleCamera *camera = gCameraWork;
+    struct BattleCamera *camera = gBattleCamera;
     ANIM_VIEW_FROM_CAMERA(camera);
     // The Djinni sways 40 pixels either way in depth every 32 frames, and
     // flies up 4 pixels a frame for the last 32.

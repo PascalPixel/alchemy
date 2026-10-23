@@ -204,7 +204,7 @@ void Credits_BuildBackgroundTilemap(u32 *destination) {
 /// value), moving the pictures a pixel right; a picture is as wide as its
 /// map, 256 pixels, so it wraps without a seam.
 void Credits_ScrollBackgrounds(void) {
-  if ((gFrameTick & 3) == 0) {
+  if ((gVBlankCount & 3) == 0) {
     u32 decrement = 0xffff;
 
     gBgScroll[2].x += decrement;
@@ -978,7 +978,7 @@ void Credits_UpdateTextSprites(void) {
     }
   }
   Dma_Set(SCROLL_OBJECTS, OAM, DMA_COPY_WORDS(OAM_SIZE / 4), REG_DMA3);
-  if (CREDITS_END_OF_TEXT == 0 && (gFrameTick & 3) == 0)
+  if (CREDITS_END_OF_TEXT == 0 && (gVBlankCount & 3) == 0)
     gFlash_Handler3++;
 }
 

@@ -36,7 +36,7 @@
 	.set import.WindowColor_Apply, 1
 	.set import.YesNoMenu_Run, 1
 	.set import.Graphics_ExpandVramTilesByColorTable, 1
-	.set import.Link_DrawShiftedTilePair, 1
+	.set import.Link_DrawPageArrows, 1
 	.set import.Unit_Get, 1
 	.set import.Item_GetDirect, 1
 	.set import.SaveBlock_InitializeDefaults, 1

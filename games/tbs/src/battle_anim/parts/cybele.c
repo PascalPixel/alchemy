@@ -141,7 +141,7 @@ void BattleAnim_RunCybele(struct BattleAnimArgs *effect) {
   height = -(64 << 16);
   speed = 0;
   for (frame = 0; frame != CYBELE_FRAMES; frame++) {
-    struct BattleCamera *camera = gCameraWork;
+    struct BattleCamera *camera = gBattleCamera;
 
     // A or B skips the vines straight to the drop.
     if ((gKeysRepeat & (KEY_A | KEY_B)) != 0 && frame > 190 && frame <= 285) {

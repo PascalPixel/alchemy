@@ -170,7 +170,7 @@ The script continues after the label. A label it cannot find, and `SC_TOP`
 (0), restart the script.
 
 `SC_END` does not free the object: it points the script at
-`gScript_MainScript`, a lone `SC_END`, so the object idles until something
+`gObjectScript_EndScript`, a lone `SC_END`, so the object idles until something
 gives it another script. `SC_FREE` frees the slot. A footprint is an object of
 `FIELD_SPRITE_FOOTPRINT` that the player's control starts on
 `gWorldMap_FootprintActions`, `SC_WAIT(120), SC_FREE`.
@@ -201,7 +201,7 @@ handlers are the rows of
 | `SC_SYNC` | `0x01` | wait until the object reaches its target |
 | `SC_CAMERA` | `0x0b` | follow the leader |
 | `SC_LOOP(n, to)` | `0x0c`, n, to | jump to label `to` n - 1 times, so what lies between runs n times |
-| `SC_END` | `0x10` | return to `gScript_MainScript` and idle |
+| `SC_END` | `0x10` | return to `gObjectScript_EndScript` and idle |
 | `SC_PLAYER` | `0x18` | the player's control on a town or dungeon map |
 | `SC_KEYS` | `0x19` | move 8 pixels a step by the direction pad |
 | `SC_WORLD` | `0x1a` | the player's control on the world map |

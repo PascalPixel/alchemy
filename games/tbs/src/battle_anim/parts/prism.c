@@ -79,7 +79,7 @@ void BattleAnim_RunPrism(struct BattleAnimArgs *effect) {
     if (work->effect->variant == ANIM_VARIANT_STRONGEST && frame <= 103) {
       // Swing the camera round, slowing from frame 96: 192/65536 turn a
       // frame, 19296/65536 in all, under a third of a turn.
-      struct BattleCamera *camera = gCameraWork;
+      struct BattleCamera *camera = gBattleCamera;
       s32 speed;
 
       if (frame <= 95)

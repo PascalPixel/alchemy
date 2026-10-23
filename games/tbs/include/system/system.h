@@ -165,7 +165,7 @@ extern const u32 BattleAnim_CopyReverse[];
 extern const u32 BattleAnim_CopyForward[];
 /// The basic sprite palettes 0 to 13, 224 colours
 /// (Palette_LoadBasicSpriteColors).
-extern const u8 gSystem_BasicColorPalette[];
+extern const u8 gBasicSpritePalettes[];
 /// The sprite tile uploader, run from HEAP_SLOT_FRAME_UPLOADER.
 extern u8 Tile_CopyStrided[];
 /// The size of Tile_CopyStrided (convert_map.s).

@@ -14,6 +14,6 @@ extern const s32 gObject_PlayerScript[];
 extern const s32 gObject_WorldMapScript[];
 extern const s32 gObject_CameraScript[];
 extern const s32 gObject_ApproachLinkScript[];
-extern const s32 gObject_EndScript[];
+extern const s32 gObject_IdleScript[];
 
 #endif

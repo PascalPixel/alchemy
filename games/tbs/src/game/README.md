@@ -252,7 +252,7 @@ Flags `FLAG_DJINN_FIRST` (48) to 127 are the Djinn's found flags, Djinni n of
 element e being flag `FLAG_DJINN_FIRST` + 20 × e + n. The save summary counts
 how many are set (`Save_BuildFileSummary`), and the title screen
 offers its Battle command only when some save file has found a Djinni
-(`gTitleExtraOptionEnabled`).
+(`gTitleBattleOptionEnabled`).
 
 The flag functions are in [game/flags.c](game/flags.c), `GAME_FLAG_BYTE` in
 `game_flags.h` and the named flags in `flags.h`.

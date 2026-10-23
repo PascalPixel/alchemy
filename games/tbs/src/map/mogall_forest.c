@@ -1824,7 +1824,7 @@ s32 gPushedObject_FootprintBounds[] = {
     -8, -32, 8, 32,
 };
 
-s32 gShortEffectScript[] = {
+s32 gFieldEffect_ShortScript[] = {
     SC_WAIT(1),
     SC_LOOP(22, SC_TOP),
     SC_WAIT(1),
@@ -1833,7 +1833,7 @@ s32 gShortEffectScript[] = {
     SC_FREE,
 };
 
-s32 gMediumEffectScript[] = {
+s32 gFieldEffect_MediumScript[] = {
     SC_WAIT(1),
     SC_LOOP(44, SC_TOP),
     SC_WAIT(1),
@@ -1842,7 +1842,7 @@ s32 gMediumEffectScript[] = {
     SC_FREE,
 };
 
-s32 gLongEffectScript[] = {
+s32 gFieldEffect_LongScript[] = {
     SC_WAIT(1),
     SC_LOOP(126, SC_TOP),
     SC_WAIT(1),
@@ -1851,10 +1851,10 @@ s32 gLongEffectScript[] = {
     SC_FREE,
 };
 
-const s32 *gEffectScripts[] = {
-    gShortEffectScript,
-    gMediumEffectScript,
-    gLongEffectScript,
+const s32 *gFieldEffect_DurationScripts[] = {
+    gFieldEffect_ShortScript,
+    gFieldEffect_MediumScript,
+    gFieldEffect_LongScript,
 };
 
 /// The script of each rock moved with Move: it is drawn in greys.

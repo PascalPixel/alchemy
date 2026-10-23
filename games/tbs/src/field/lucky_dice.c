@@ -38,9 +38,9 @@ s32 LuckyDice_Start(void) {
 /// pitched to 152 and 510 units away, following nothing. Recomputes the eye
 /// and sets the projection's focal length (250), near plane and far plane.
 /// Called only by LuckyDice_Run, once the camera's heap block is allocated;
-/// writes gCameraWork's fields and gProjection.
+/// writes gBattleCamera's fields and gProjection.
 void Camera_ResetViewDefaults(void) {
-  struct BattleCamera *camera = gCameraWork;
+  struct BattleCamera *camera = gBattleCamera;
   s32 offset[3];
   u32 nearPlane;
   u32 focalLength;

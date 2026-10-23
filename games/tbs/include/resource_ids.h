@@ -266,7 +266,7 @@ extern char ResourceId_DefaultMetatileAttributes;
 
 // The world map's two graphics sets (gWorldMap_GraphicsResources), each a
 // palette and five tilesets: WorldMap_LoadGraphics decodes the first four
-// into char blocks 2 and 3 and the fifth into gMapGridLayerData for the
+// into char blocks 2 and 3 and the fifth into gMapGridAnimTiles for the
 // tileset animation. The second set is for
 // WORLD_MAP_ENCOUNTER_REGION_SNOWFIELD.
 

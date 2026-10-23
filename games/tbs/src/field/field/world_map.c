@@ -321,7 +321,7 @@ void WorldMap_SetWindowCellTile(s32 x, s32 y, s32 px, s32 py) {
 /// Called through WorldMap_LoadGraphicsFar when the world map starts,
 /// with the party's position (run_map.c). Sets perspective->resources,
 /// which WorldMap_LoadAreaGraphics reloads from; writes BG palette colours 1 to
-/// 223 (keeping the backdrop), char blocks 2 and 3, gMapGridLayerData and
+/// 223 (keeping the backdrop), char blocks 2 and 3, gMapGridAnimTiles and
 /// screen blocks 5 and 6.
 void WorldMap_LoadGraphics(s32 x, s32 z) {
   struct WorldMapView *perspective;
@@ -365,7 +365,7 @@ void WorldMap_LoadGraphics(s32 x, s32 z) {
                     Ram_BgTileBuffer + 0x6000);
   Dma_Set(Ram_BgTileBuffer + 0x6000, BG_CHAR_BLOCK(3) + 0x2000,
           (DMA_ENABLE | DMA_32BIT) << 16 | 0x800, REG_DMA3);
-  Decompress_Type01(Resource_GetTableEntry(resources[5]), gMapGridLayerData);
+  Decompress_Type01(Resource_GetTableEntry(resources[5]), gMapGridAnimTiles);
   // BG1's map (screen block 5) is filled with tile 0x7f of palette 15, and
   // screen block 6 numbers a 30 by 20 tile picture from tile 0x1a8, two
   // tile numbers a word, for the still view WorldMap_StartStillView shows.

@@ -185,9 +185,9 @@ static void SolSanctumEruption_PlayHostageScene(void) {
 #endif
 
 #ifdef UBFIX
-  sparkles = gParticleWork;
+  sparkles = gWeatherWork;
 #else
-  particleWorkSlot = &gParticleWork;
+  particleWorkSlot = &gWeatherWork;
   sparkles = *particleWorkSlot;
 #endif
   FieldScript_Start();
@@ -734,7 +734,7 @@ static void SolSanctumEruption_StepEmbers(void) {
   s32 x;
   s32 z;
 
-  sparkles = gParticleWork;
+  sparkles = gWeatherWork;
   shakePixels = (u32)gEmberTimer / 10;
   if (shakePixels != 0) {
     sparkles->stopped = 0;
@@ -878,7 +878,7 @@ static void SolSanctumEruption_PlayWiseOneRescue(void) {
   u32 frame;
   s32 flickerDelay;
 
-  sparkles = gParticleWork;
+  sparkles = gWeatherWork;
   wiseOne = ObjectEvent_Get(LOCALID_WISE_ONE);
   // Clear the ember object events and bring Isaac and Garet back into view.
   Task_Remove(SolSanctumEruption_UpdateEmberFrequency);

@@ -55,14 +55,14 @@ struct WindowSprite *MenuTitle_Create(s32 picture, struct Window *window, s32 x,
 void MenuTitle_Bob(struct WindowSprite *obj) {
   s32 value;
 
-  value = (u8)obj->y + gMenuTitleBobOffsets[(gFrameTick >> 2) & 7];
+  value = (u8)obj->y + gMenuTitleBobOffsets[(gVBlankCount >> 2) & 7];
   obj->oam.y = value;
   obj = obj->next;
-  /* FAKEMATCH(volatile): gFrameTick read again for the second sprite, as the
+  /* FAKEMATCH(volatile): gVBlankCount read again for the second sprite, as the
    * bytes do; read plainly, CSE reuses the first index and 20 of 22
    * instructions differ in tbs-en. */
   value = (u8)obj->y +
-          gMenuTitleBobOffsets[(*(volatile u32 *)&gFrameTick >> 2) & 7];
+          gMenuTitleBobOffsets[(*(volatile u32 *)&gVBlankCount >> 2) & 7];
   obj->oam.y = value;
 }
 
@@ -109,7 +109,7 @@ struct WindowSprite *CommandIcon_Create(s32 icon, s32 remap,
 /// The option menu pulses its selected icon with it each frame
 /// (window/options.c).
 void WindowSprite_Pulse(struct WindowSprite *obj) {
-  s32 scale = gWindowSprite_PulseScales[(gFrameTick >> 1) & 7];
+  s32 scale = gWindowSprite_PulseScales[(gVBlankCount >> 1) & 7];
   struct AffineTransform effect;
 
   if (scale < 0)
@@ -255,7 +255,7 @@ void Graphics_MergeShiftedTileRows(u32 *first, u32 *second, u32 *output,
   } while (row <= 7);
 }
 
-/// Draws the two page arrows (gRomShiftedTilePair) into the two tiles at
+/// Draws the two page arrows (gPageArrowTiles) into the two tiles at
 /// VRAM address `offset`, sliding outward: the left arrow 2 or 3 pixels to
 /// the left, the right one as far to the right, eight frames each. They are
 /// drawn over the window frame's top edge tile (0x11) and top-right corner
@@ -263,7 +263,7 @@ void Graphics_MergeShiftedTileRows(u32 *first, u32 *second, u32 *output,
 /// 0x335 (LIST_TILE_PAGES_LEFT); the field menus (menu/menu, by far call)
 /// and the password pages of the title's Send (menu/main_menu.c) call it for
 /// PAGE_ARROW_VRAM.
-void Link_DrawShiftedTilePair(s32 offset) {
+void Link_DrawPageArrows(s32 offset) {
   s32 phase = (gFrameCount >> 2) & 3;
 
   // Phases 0 to 3 of a 16-frame cycle become shifts 2, 2, 3, 3.
@@ -274,10 +274,10 @@ void Link_DrawShiftedTilePair(s32 offset) {
     phase = 1;
   }
   phase++;
-  Graphics_MergeShiftedTileRows((u32 *)0x06000220, (u32 *)gRomShiftedTilePair,
+  Graphics_MergeShiftedTileRows((u32 *)0x06000220, (u32 *)gPageArrowTiles,
                                 (u32 *)offset, -phase);
   Graphics_MergeShiftedTileRows((u32 *)0x06000240,
-                                (u32 *)(gRomShiftedTilePair + 32),
+                                (u32 *)(gPageArrowTiles + 32),
                                 (u32 *)(offset + 32), phase);
 }
 

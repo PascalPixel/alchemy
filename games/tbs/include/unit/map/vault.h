@@ -13,7 +13,7 @@ s32 Map_Initialize(void);
 extern s32 gVault_ShortEffectScript[];
 extern s32 gVault_MediumEffectScript[];
 extern s32 gVault_LongEffectScript[];
-extern const s32 *gEffectScripts[];
+extern const s32 *gFieldEffect_DurationScripts[];
 extern s32 gVault_WomanWantingTheRoofFixedRoute[];
 extern s32 gVault_BoyRoundTheWellRoute[];
 extern s32 gVault_GirlRoundTheWellRoute[];

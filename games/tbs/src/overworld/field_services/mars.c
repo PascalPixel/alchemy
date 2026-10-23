@@ -207,7 +207,7 @@ void FieldEffect_UpdateRadialSpread(struct FieldEffectSprite *effect) {
     effect->turnStepLimited = state;
     effect->state++;
 
-    if ((gFrameTick & 1) != 0)
+    if ((gVBlankCount & 1) != 0)
       Sound_PlaySongFar(SE_144);
   } else if (state == VENUS_PARTICLE_RISING) {
     if (FieldEffectSprite_HasPendingTarget(effect) == 0)

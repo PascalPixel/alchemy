@@ -36,9 +36,9 @@ extern u8 gScreenFadeStartLevel;
 /* FAKEMATCH(volatile): ScreenFade_Update loads the target twice, for the level
  * and for the delta; as plain u8, 11 of 46 instructions differ in tbs-en. */
 extern volatile u8 gScreenFadeTargetLevel; ///< the brightness the fade ends at
-/// The two page arrow tiles, 4bpp, that Link_DrawShiftedTilePair slides
+/// The two page arrow tiles, 4bpp, that Link_DrawPageArrows slides
 /// outward over the window frame's top edge.
-extern u8 gRomShiftedTilePair[];
+extern u8 gPageArrowTiles[];
 /// Transform_BuildLookAt's ARM dot product, seven words it copies onto its
 /// stack to run.
 extern const u32 RelocatedQ16DotProduct[];
@@ -205,7 +205,7 @@ extern const u8 gNamingScreen_SemivoicedMarkRanges[];
 extern const u8 gNamingScreen_KeyboardTilemap[];
 /// 224 zeroed bytes right after Render_DecodeFrame's code and tables; its
 /// address ends the stretch the field sprites' draw copies to RAM.
-extern const u8 gRender_DecodeFrameBuffer[];
+extern const u8 gRender_DecodeFrameEnd[];
 /// The type-2 resource decoder's ARM entry: it returns 4 unless the stream's
 /// first byte says type 2.
 extern const u8 Decompress_Type2Commands[];
@@ -290,7 +290,7 @@ extern const u8 gWindowSprite_CursorFrameTiles[];
 extern const s8 gWindowSprite_WobbleOffsets[][2];
 /// For each of the 16 text colours, the pen the font's light shade takes in
 /// the UI palette.
-extern const u8 gText_ColorPens[];
+extern const u8 gFont_ColorPens[];
 /// Glyph_DrawArm, copied to the heap for each character drawn.
 extern u8 Glyph_DrawCodeSize[];
 /// Each main font glyph's width in pixels, from the space (0x20) on.

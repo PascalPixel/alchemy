@@ -814,7 +814,7 @@ different row of settings each.
 These attacks, such as Cannibal Fang, Poison Tail and Twin Beaks, are styles
 of `BattleAnim_RunTargetStrike` ([`target_strike.c`](parts/target_strike.c)).
 A style (`enum TargetStrikeStyle`, twelve of them) is a row of
-`gTargetStrike_Records`: its strike kind (`STRIKE_KIND_SLASH`, six pictures
+`gTargetStrike_Styles`: its strike kind (`STRIKE_KIND_SLASH`, six pictures
 sweeping across the target once per hit, or `STRIKE_KIND_COLUMN`, a column of
 light rising through its stages), its number of hits, its extras
 (`STRIKE_SMOKE`, `STRIKE_ABSORB`, `STRIKE_GLINTS`, `STRIKE_SPARKS`,

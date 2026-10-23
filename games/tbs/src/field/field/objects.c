@@ -193,8 +193,8 @@ void ObjectSystem_Initialize(s32 controlMode) {
     Task_Add(ObjectSystem_PlaceSprites, 0xc80);
     // XXX: nothing in the tree reads these two IWRAM words; code that reads
     // them by address would say what the scrolling camera resets here.
-    gIwram_Data2 = 0;
-    gIwram_Data1 = 0;
+    gCamera_UnreadWord2 = 0;
+    gCamera_UnreadWord1 = 0;
   }
   system->edge = 15;
   system->fill = 0;
@@ -490,7 +490,7 @@ void Object_StartWorldMapControl(struct Object *object) {
 
 /// Starts an object on the idle script (a lone SC_END).
 void Object_StartIdle(struct Object *object) {
-  Object_Initialize(object, gObject_EndScript);
+  Object_Initialize(object, gObject_IdleScript);
 }
 
 /// Starts an object on the camera script (SC_CAMERA). With a leader to

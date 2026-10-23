@@ -217,7 +217,7 @@ start with 512 bytes above the heap, however deep the code that waits.
 `WaitFrames` must not be called from inside a task: the nested call would find
 its stack below the top again and overwrite `gSavedStack` and
 `gSavedStackSize`, which still hold the outer caller's frames. `WaitFrames`
-itself doesn't check, but it sets `gTaskStatus` while it runs the
+itself doesn't check, but it sets `gTasksRunning` while it runs the
 main-loop tasks, and code a task may reach tests it before waiting
 (`BattleObject_SpawnObjectsForList`). No task waits
 ([Evidence and open questions](#evidence-and-open-questions)).
@@ -574,7 +574,7 @@ hook and each `SC_CALL` callback, finds nine tasks with a path of calls to
 (`ObjectMotion_ArmCallback`), the world map's lighthouse jitter moves the
 camera with a glide, Lucky Wheels and the link countdown open instant
 windows (`WINDOW_FLAG_INSTANT`), and battle playback's sprite respawn tests
-`gTaskStatus`. The tenth path is the debug map selector, which only
+`gTasksRunning`. The tenth path is the debug map selector, which only
 the unused `DebugMapSelect_Schedule` would add as a task.
 
 - XXX (no evidence): what the five empty exports after the screen fades

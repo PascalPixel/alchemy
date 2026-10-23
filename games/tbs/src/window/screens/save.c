@@ -107,7 +107,7 @@ s32 Save_CountRecordsExcludingFlagged(s32 excludeSent) {
 /// Loads the save file summaries for the title menu and returns how many files
 /// there are: plus 100 when every file has its send flag set, or
 /// SAVE_ERROR_NO_MEMORY when the backup memory cannot be read. Sets
-/// gTitleExtraOptionEnabled, which offers Battle, when a file has any of game
+/// gTitleBattleOptionEnabled, which offers Battle, when a file has any of game
 /// flags 48-127 set, and gTitleSendOptionEnabled, which offers Send, when a
 /// file has its send flag set and R and Left are held.
 /// FileMenu_SelectAction reads all three.
@@ -128,7 +128,7 @@ s32 Save_ScanRecordFlags(void) {
     // 0x1070 and flag offsets 1 and 2.
     flags = (s8 *)&gSaveWork->summary[0].party[4];
     gTitleSendOptionEnabled = 0;
-    (*(s16 *)&gTitleExtraOptionEnabled) = 0;
+    (*(s16 *)&gTitleBattleOptionEnabled) = 0;
     for (i = 0; i < SAVE_FILE_COUNT; i++) {
       if (flags[i * sizeof(struct SaveFileSummary) +
                 SUMMARY_DISTANCE(party[4], sendFlag)] != 0) {
@@ -137,7 +137,7 @@ s32 Save_ScanRecordFlags(void) {
       }
       if (flags[i * sizeof(struct SaveFileSummary) +
                 SUMMARY_DISTANCE(party[4], flagCount)] != 0) {
-        (*(s16 *)&gTitleExtraOptionEnabled) = 1;
+        (*(s16 *)&gTitleBattleOptionEnabled) = 1;
       }
     }
 
@@ -313,10 +313,10 @@ s32 Save_WriteFile(s32 file) {
   return result;
 }
 
-/// Writes the 64-byte save stamp (gSaveStamp, which lies in the first half of
-/// the save buffer) into the current file's first record, leaving the rest of
-/// the record as it was saved. Returns 0, -1 when no file is chosen, or a
-/// SAVE_ERROR_* after showing its message. The Battle Arena saves its battle
+/// Writes the 64-byte save stamp (gBattleArenaRecord, which lies in the first
+/// half of the save buffer) into the current file's first record, leaving the
+/// rest of the record as it was saved. Returns 0, -1 when no file is chosen, or
+/// a SAVE_ERROR_* after showing its message. The Battle Arena saves its battle
 /// results this way (BattleArena_SaveBattleResults). The record's 4 KB buffer
 /// is taken from the EWRAM pool and freed before it returns, except when
 /// no file is chosen.
@@ -344,9 +344,9 @@ s32 Save_ProcessSelectedFile(void) {
       result = SAVE_ERROR_READ;
     }
     // The stamp's place in the record is its place in the save buffer.
-    stamp = (u8 *)record + (s32)gSaveStamp;
+    stamp = (u8 *)record + (s32)gBattleArenaRecord;
     stamp -= (s32)gSaveBuffer;
-    Iwram_CopyWords(stamp, gSaveStamp, 16);
+    Iwram_CopyWords(stamp, gBattleArenaRecord, 16);
     error = Save_WriteRecord(gSaveSlot, record);
     if (error != 0) {
       FieldMessage_Show(MsgSaveFailed, 1);
@@ -498,7 +498,7 @@ void FileMenu_UpdatePulse(void) {
   s32 sine;
   s32 i;
 
-  tick = (s32 *)&gFrameTick;
+  tick = (s32 *)&gVBlankCount;
   palette = &BG_PLTT_COLOR(14, 8);
   i = 0;
   do {

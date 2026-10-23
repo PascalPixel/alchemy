@@ -108,7 +108,7 @@ s32 DjinnMenu_Run(void) {
   }
   Menu_SuspendFieldTasks();
   Text_UseExtraTilesFar(1);
-  Link_DrawShiftedTilePairFar(PAGE_ARROW_VRAM);
+  Link_DrawPageArrowsFar(PAGE_ARROW_VRAM);
   menu->memberCount = Party_ListMembersFar(menu->members);
   Resource_LoadPairedBlocksIfAvailable();
   ItemMenu_Initialize(0, 3, 0, 7);

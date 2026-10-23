@@ -147,10 +147,10 @@ struct WorldPosition {
 /// its four tile entries. MapGrid_LoadLayout decodes them in.
 extern u32 gMetatiles[];
 
-/// The map's layer data, 16 KB of EWRAM at 0x02028000. A tileset
+/// The tileset animations' tiles, 16 KB of EWRAM at 0x02028000. A tileset
 /// animation's source tiles numbered 0x600 and up (0x200 and up for 64-byte
 /// tiles) are read from here, tile 0x600 (0x200) at its first byte.
-extern u8 gMapGridLayerData[];
+extern u8 gMapGridAnimTiles[];
 
 /// The map's shape table, 16 KB of EWRAM at 0x0202c000: 4-byte entries
 /// that MapGridCell.shape indexes.
@@ -164,6 +164,6 @@ extern u8 gBgTileBuffer[];
 
 /// HEAP_SLOT_WORLD_MAP_FRAME under its own name, which no code reads; the world
 /// map keeps its struct WorldMapFrameWork in the slot.
-extern u8 *gTileAnimationPages;
+extern u8 *gWorldMapFrameWork;
 
 #endif

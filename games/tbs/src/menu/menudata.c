@@ -86,5 +86,5 @@ u8 gSummaryScreen_CursorWidths[5] = {6, 7, 7, 6, 6};
 
 /// The sprites of the four Djinn DjinnFigures shows: a Venus, a Mercury,
 /// a Mars and a Jupiter Djinni.
-s32 gFourObjectMotion_ResourceIds[4] = {VENUS_DJINNI, MERCURY_DJINNI,
-                                        MARS_DJINNI, JUPITER_DJINNI};
+s32 gDjinnFigures_SpriteIds[4] = {VENUS_DJINNI, MERCURY_DJINNI, MARS_DJINNI,
+                                  JUPITER_DJINNI};

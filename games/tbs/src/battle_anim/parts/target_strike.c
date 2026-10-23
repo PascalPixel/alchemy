@@ -16,10 +16,10 @@
 /// The smoke pictures in the sheet: six 24x48 puffs.
 #define TARGET_STRIKE_SMOKE_CELLS 0x3200
 
-/// Column `field` of style `mode`'s row of gTargetStrike_Records.
-#define TARGET_STRIKE_VALUE(mode, field) gTargetStrike_Records[(mode)][(field)]
+/// Column `field` of style `mode`'s row of gTargetStrike_Styles.
+#define TARGET_STRIKE_VALUE(mode, field) gTargetStrike_Styles[(mode)][(field)]
 
-/// The columns of gTargetStrike_Records.
+/// The columns of gTargetStrike_Styles.
 enum {
   TARGET_STRIKE_KIND,         ///< STRIKE_KIND_SLASH or STRIKE_KIND_COLUMN
   TARGET_STRIKE_HITS,         ///< how many times the target is struck
@@ -122,7 +122,7 @@ void BattleAnim_RunDrainFang(struct BattleAnimArgs *effect) {
 /// blitters in both slots every frame, sets work->shakeFrames on each hit and
 /// lights the user while an absorb runs. Leaves the canvas layer closed.
 ///
-/// mode: the style (enum TargetStrikeStyle), a row of gTargetStrike_Records.
+/// mode: the style (enum TargetStrikeStyle), a row of gTargetStrike_Styles.
 void BattleAnim_RunTargetStrike(struct BattleAnimArgs *effect, s32 mode) {
   struct ScreenPoint ground;
   struct ScreenPoint targetPosition;

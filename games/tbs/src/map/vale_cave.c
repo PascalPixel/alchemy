@@ -973,10 +973,11 @@ static void EventScript_TouchRidingLog(void) {
   Import_ObjectEventSetAnimation(LOCALID_RIDING_LOG, 2);
 }
 
-// The lifetimes FieldEffect_Spawn gives its effects through gEffectScripts: an
-// effect waits 23, 45 or 127 frames, then is put away and freed.
-// FieldEffect_Spawn divides a change of scale by the loop count in each one's
-// fourth word, so that the effect reaches its scale as its time runs out.
+// The lifetimes FieldEffect_Spawn gives its effects through
+// gFieldEffect_DurationScripts: an effect waits 23, 45 or 127 frames, then is
+// put away and freed. FieldEffect_Spawn divides a change of scale by the loop
+// count in each one's fourth word, so that the effect reaches its scale as its
+// time runs out.
 
 s32 gValeCave_ShortEffectScript[] = {
     SC_WAIT(1),           SC_LOOP(22, SC_TOP), SC_WAIT(1),
@@ -1041,7 +1042,7 @@ s32 gValeCave_WalkTargets[] = {
     760, 312,
 };
 
-const s32 *gEffectScripts[] = {
+const s32 *gFieldEffect_DurationScripts[] = {
     gValeCave_ShortEffectScript,
     gValeCave_MediumEffectScript,
     gValeCave_LongEffectScript,

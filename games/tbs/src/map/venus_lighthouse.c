@@ -872,14 +872,13 @@ static void VenusLighthouse_ArriveThroughSparkPassage(void) {
 /// again (EventScript_ClearEffectTarget), and walking into a pillar from either
 /// pushes it (EventScript_PushDepthPillar).
 static void EventScript_SetLeaderAsEffectTarget(void) {
-  gObjectEventEffectWork->objectEvent =
-      ObjectEvent_GetById(LOCALID_PARTY_LEADER);
+  gFadeOverlayWork->objectEvent = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
 }
 
 /// Stepping onto metatile behavior 31 of VenusLighthouseFirstFloor, in the rows
 /// that bound the capped pillars': the fade overlay follows no one.
 static void EventScript_ClearEffectTarget(void) {
-  gObjectEventEffectWork->objectEvent = NULL;
+  gFadeOverlayWork->objectEvent = NULL;
 }
 
 #include "common/object_depth.h"
@@ -3886,17 +3885,17 @@ static s32 VenusLighthouse_RouteLight(struct Object *interpreter) {
   return 0;
 }
 
-s32 gShortEffectScript[] = {
+s32 gFieldEffect_ShortScript[] = {
     SC_WAIT(1),           SC_LOOP(22, SC_TOP), SC_WAIT(1),
     SC_POSITION(0, 0, 0), SC_WAIT(1),          SC_FREE,
 };
 
-s32 gMediumEffectScript[] = {
+s32 gFieldEffect_MediumScript[] = {
     SC_WAIT(1),           SC_LOOP(44, SC_TOP), SC_WAIT(1),
     SC_POSITION(0, 0, 0), SC_WAIT(1),          SC_FREE,
 };
 
-s32 gLongEffectScript[] = {
+s32 gFieldEffect_LongScript[] = {
     SC_WAIT(1),           SC_LOOP(126, SC_TOP), SC_WAIT(1),
     SC_POSITION(0, 0, 0), SC_WAIT(1),           SC_FREE,
 };
@@ -3989,10 +3988,10 @@ u8 gVenusFourthFloorTrackLists[] = {
     VENUS_TRACK_NORTH_SOUTH, VENUS_TRACK_END, // southeast
 };
 
-const s32 *gEffectScripts[] = {
-    gShortEffectScript,
-    gMediumEffectScript,
-    gLongEffectScript,
+const s32 *gFieldEffect_DurationScripts[] = {
+    gFieldEffect_ShortScript,
+    gFieldEffect_MediumScript,
+    gFieldEffect_LongScript,
 };
 
 /// The lady statues' object script: drawn grey (VENUS_COLOR_MARK), and never

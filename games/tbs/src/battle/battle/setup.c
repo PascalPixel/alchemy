@@ -18,15 +18,15 @@
 /// the camera's yaw and gBattleBackgroundWork's frame count, the transform
 /// state, and through BattleCamera_SetRange the background's affine page.
 void BattleCamera_Update(void) {
-  // UB: indexing past scalar gCameraWork reaches other heap slots. Named
+  // UB: indexing past scalar gBattleCamera reaches other heap slots. Named
   // slots add four bytes in the native EN trial (0xf8 to 0xfc).
 #ifdef UBFIX
-  struct BattleCamera *camera = gCameraWork;
+  struct BattleCamera *camera = gBattleCamera;
   struct BattleBackgroundWork *view =
       HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_BACKGROUND);
   struct BattleWork *battle = gBattleWork;
 #else
-  void **slot = (void **)&gCameraWork;
+  void **slot = (void **)&gBattleCamera;
   struct BattleCamera *camera = slot[0];
   struct BattleBackgroundWork *view =
       slot[HEAP_SLOT_BATTLE_BACKGROUND - HEAP_SLOT_CAMERA];

@@ -237,7 +237,7 @@ one go.
 Each map's row of `gMapHeaders` ([`field/map_headers.s`](../field/map_headers.s))
 gives a layout number, which picks a row of `gLayouts`
 ([`field/layouts.tsv`](../field/layouts.tsv)): the layout's header, palette,
-its tileset's three sheets of tiles and layer data. `MapGrid_LoadLayout`
+its tileset's three sheets of tiles and its tileset animations' tiles. `MapGrid_LoadLayout`
 ([`field/field/map_grid.c`](../field/field/map_grid.c)) decodes each part
 into a fixed buffer in [EWRAM](../../glossary.md#iwram-and-ewram): the metatiles into `gMetatiles`, the
 shapes into `gMapGridShapes`, the grid into `Ram_MapGridCellBuffer`, and
@@ -368,7 +368,7 @@ the channel's script, `stop` (`0xfeff`) halts the channel, and `end`
 (`0xffff`) loops it to its start. A source tile below a threshold is copied from
 elsewhere in video memory, and one from the threshold on from RAM, at
 `Ram_DecodeBuffer` plus the tile's offset, which lands in
-`gMapGridLayerData`. The threshold is tile 1,536 for 16-colour tiles, 32
+`gMapGridAnimTiles`. The threshold is tile 1,536 for 16-colour tiles, 32
 bytes each, and tile 512 for a layout whose animations copy 256-colour
 tiles, 64 bytes each (`MapGridScrollAnimView.wideTiles`).
 

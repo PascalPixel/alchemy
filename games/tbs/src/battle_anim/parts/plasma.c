@@ -90,7 +90,7 @@ void BattleAnim_RunPlasma(struct BattleAnimArgs *effect) {
     // its yaw turns 1/256 turn a frame, easing off over the last seven,
     // 16160/65536 in all, nearly a quarter turn.
     if (work->effect->variant == ANIM_VARIANT_STRONGEST && frame <= 63) {
-      struct BattleCamera *camera = gCameraWork;
+      struct BattleCamera *camera = gBattleCamera;
       s32 speed;
 
       if (frame <= 55)

@@ -5,7 +5,7 @@
 #include "render_placement.h"
 #include "vector3.h"
 
-// The two kinds of target strike (gTargetStrike_Records).
+// The two kinds of target strike (gTargetStrike_Styles).
 #define STRIKE_KIND_SLASH 0  ///< sideways slashes
 #define STRIKE_KIND_COLUMN 1 ///< columns of light
 
@@ -24,7 +24,7 @@
 #define STRIKE_COLOR_MARS 4      ///< MarsDjinnSheet's
 #define STRIKE_COLOR_LIGHTNING 5 ///< LightningBoltSheet's
 
-/// The twelve target strike styles, rows of gTargetStrike_Records.
+/// The twelve target strike styles, rows of gTargetStrike_Styles.
 enum TargetStrikeStyle {
   TARGET_STRIKE_STYLE_BLUE_SPARK_COLUMNS,
   TARGET_STRIKE_STYLE_LIME_SMOKE_COLUMN,
@@ -70,9 +70,9 @@ enum {
 };
 extern u8 gFalling_Counts[][4];
 
-extern s8 gStreaks_Records[][4];
+extern s8 gStreaks_Styles[][4];
 extern s8 gStreaks_Tremble[];
-extern u8 gTargetStrike_Records[][7];
+extern u8 gTargetStrike_Styles[][7];
 extern u8 gTargetStrike_Widths[];
 extern u8 gTargetStrike_Heights[];
 extern u16 gTargetStrike_Offsets[];
@@ -118,7 +118,7 @@ extern u8 gDjinnBeams_MotePictures[];
 extern u16 gDjinnBeams_HeadOffsets[];
 extern u8 gDjinnBeams_HeadWidths[];
 extern u8 gDjinnBeams_HeadHeights[];
-extern s8 gLobbedShells_Records[];
+extern s8 gLobbedShells_Styles[];
 extern u8 gLobbedShells_ShardWidths[];
 extern u8 gLobbedShells_ShardHeights[];
 extern u16 gLobbedShells_ShardOffsets[];
@@ -375,7 +375,7 @@ extern u8 gSpire_ShardWidths[];
 extern u8 gSpire_ShardHeights[];
 extern u16 gSpire_ShardCells[];
 /// The burst sequence's modes (BattleAnim_RunBurstSequence), its rows of
-/// gBurstSequence_Records: Gust and Flying Attack take one, two or three
+/// gBurstSequence_Styles: Gust and Flying Attack take one, two or three
 /// strikes as a double or triple blow raises their variant.
 enum BurstSequenceMode {
   BURST_SEQUENCE_BEAR_CLAW,            ///< five strikes; also Ransack
@@ -401,7 +401,7 @@ enum BurstSequencePalette {
   BURST_SEQUENCE_PALETTE_BLUE_ARC,    ///< blue arc B's
   BURST_SEQUENCE_PALETTE_EMBER        ///< the ember streak sheet's
 };
-extern u8 gBurstSequence_Records[][7];
+extern u8 gBurstSequence_Styles[][7];
 extern u16 gGaia_RowCells[];
 extern u8 gGaia_RowWidths[];
 extern u16 gGaia_MoundCells[];

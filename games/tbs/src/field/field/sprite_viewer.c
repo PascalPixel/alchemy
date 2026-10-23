@@ -436,7 +436,7 @@ void SpriteViewer_BuildProbeRing(s32 centerX, s32 centerY,
   // With B held the ring starts at an angle that turns with the frame
   // counter, a full turn every 256 frames.
   if ((gKeysHeld & KEY_B) != 0)
-    angle = (s16)(gFrameTick << 8);
+    angle = (s16)(gVBlankCount << 8);
   // 0x2aaa, 0x2000, 0x1999 and 0x4000 are a sixth, an eighth, a tenth and
   // a quarter of a turn; 0x380000 is 56 pixels. Unused positions of the ten
   // are skipped.

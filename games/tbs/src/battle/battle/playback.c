@@ -253,7 +253,7 @@ void BattlePlayback_Run(void) {
       } else {
         events->phase = PLAY_ADVANCE;
         events->arrowResource = -1;
-        events->timer = gFrameTick;
+        events->timer = gVBlankCount;
       }
     } else if (events->phase == PLAY_ADVANCE) {
       // Show the arrow, as BattleMessage_WaitForAdvance does, and wait
@@ -284,7 +284,7 @@ void BattlePlayback_Run(void) {
       prompt->y = Trig_Sin(gFrameCount << 12) / 32768 + window->y * 8 +
                   (offset->y >> 8) + 6;
       if ((BATTLE_OPTIONS & KEY_B) || (gKeysPressedLatch & KEY_ADVANCE) ||
-          ((u32)(gFrameTick - events->timer) > 10 &&
+          ((u32)(gVBlankCount - events->timer) > 10 &&
            (BATTLE_OPTIONS & KEY_ADVANCE))) {
         Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
         events->phase = BATTLE_PLAYBACK_PHASE_DISPATCH;

@@ -94,7 +94,7 @@ void BattleAnim_RunVolcano(struct BattleAnimArgs *effect) {
   ANIM_START_TRANSFER(work, CANVAS_COPY_AND_FADE, 50);
 
   for (frame = 0; frame != VOLCANO_FRAMES; frame++) {
-    camera = gCameraWork;
+    camera = gBattleCamera;
     if (work->effect->variant == ANIM_VARIANT_STRONGEST && frame < 64) {
       if (work->effect->side == 0)
         camera->yaw = camera->yaw + 192;

@@ -17,9 +17,9 @@ struct ScreenPoint;
 
 /// An IWRAM word the scrolling camera's setup clears; nothing in the tree
 /// reads it (see ObjectSystem_Initialize's XXX).
-extern s32 gIwram_Data1;
+extern s32 gCamera_UnreadWord1;
 /// The second IWRAM word the scrolling camera's setup clears; also unread.
-extern s32 gIwram_Data2;
+extern s32 gCamera_UnreadWord2;
 extern const s32 gObject_DefaultScript[];
 extern const u8 gWorldMap_BattleEnvironments[];
 /// The size of Render_DecodeFrame, copied to HEAP_SLOT_FRAME_SCRATCH; an
@@ -88,7 +88,7 @@ extern const u8 gFieldEffect_SparkleTiles[];
 extern const u8 gField_BgEventMessageOffsets[];
 /// The motes of light's 16 by 16 tiles, packed (FieldMotes_Start).
 extern const u8 gFieldEffect_MoteTiles[];
-extern s32 gFourObjectMotion_ResourceIds[];
+extern s32 gDjinnFigures_SpriteIds[];
 extern s32 gTolbiShipInteriors_ShakeTimer;
 /// The bend's water level in gMapLocalState's second halfword: 1 high (the logs
 /// float), 0 low; the floodgate switch flips it.
@@ -126,11 +126,11 @@ extern u32 gKolimaForestFloodgate_ShakeChance;
 /// The background scroll words captured each frame for the shaken lines.
 extern u32 gKolimaForestFloodgate_ShakeScroll[];
 /// The healthy colours: the first 448 colours (896 bytes) of the colour
-/// buffer, kept by KolimaPalette_SaveFirst; the array is 1792 bytes.
+/// buffer, kept by KolimaPalette_SaveHealthy; the array is 1792 bytes.
 /// MapId_KolimaForestGlade and MapId_KolimaForestCliff each define one.
-extern u8 gKolimaPalette_First[];
-/// The cursed colours, kept by KolimaPalette_SaveSecond.
-extern u8 gKolimaPalette_Second[];
+extern u8 gKolimaPalette_Healthy[];
+/// The cursed colours, kept by KolimaPalette_SaveCursed.
+extern u8 gKolimaPalette_Cursed[];
 /// Isaac's facing before Colosso_FadeInWarrior, which
 /// Colosso_RestoreWarrior puts back.
 extern s32 gColosso_WarriorStartAngle;

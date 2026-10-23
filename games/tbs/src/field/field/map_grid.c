@@ -166,11 +166,12 @@ static __inline__ void MapGrid_CopyMetatileToScreen(u32 *cell, u8 *screenMap,
 }
 
 /// A row of gLayouts: a layout's resources, counted from
-/// ResourceId_Layout001: its header, palette, three tilesets and layer data.
+/// ResourceId_Layout001: its header, palette, three tilesets and the tileset
+/// animations' tiles.
 struct LayoutResources {
   /// Offsets from ResourceId_Layout001: the header, the palette, the
-  /// tilesets for char blocks 1, 2 and 3, and the layer data
-  /// (gMapGridLayerData).
+  /// tilesets for char blocks 1, 2 and 3, and the tileset animations' tiles
+  /// (gMapGridAnimTiles).
   u16 resources[6];
 };
 
@@ -219,7 +220,7 @@ struct LayoutHeader {
 /// Called through MapGrid_LoadLayoutFar when a map with a layout
 /// starts (index is gSaveBlock.map). Allocates and clears the map work in
 /// HEAP_SLOT_MAP_GRID; writes the BG palette (keeping the backdrop colour),
-/// char blocks 1 to 3, gMapGridLayerData, BG1CNT to BG3CNT, REG_MOSAIC,
+/// char blocks 1 to 3, gMapGridAnimTiles, BG1CNT to BG3CNT, REG_MOSAIC,
 /// REG_BLDCNT and REG_DISPCNT; and adds MapGrid_UpdateLayerScroll as a
 /// task.
 s32 MapGrid_LoadLayout(s32 index) {
@@ -343,8 +344,8 @@ s32 MapGrid_LoadLayout(s32 index) {
   } else {
     // One 16 KB buffer takes each resource in turn: the palette (0x1c0
     // bytes, 14 of the 16 BG palettes), the three 16 KB tilesets, and
-    // last the layer data, which decodes straight to gMapGridLayerData. Without
-    // the memory, nothing is loaded.
+    // last the tileset animations' tiles, which decode straight to
+    // gMapGridAnimTiles. Without the memory, nothing is loaded.
     graphicsBuffer = Alloc(0x4000);
     if (graphicsBuffer != NULL) {
       // Colour 0 of BG palette 0 is the backdrop; it survives the new palette.
@@ -371,7 +372,7 @@ s32 MapGrid_LoadLayout(s32 index) {
       Iwram_CopyWordsEntry(BG_CHAR_BLOCK(3), graphicsBuffer, 0x4000);
       Decompress_Type2(Resource_GetTableEntry(layoutResources->resources[5] +
                                               (u32)&ResourceId_Layout001),
-                       gMapGridLayerData);
+                       gMapGridAnimTiles);
       Free(graphicsBuffer);
     }
   }

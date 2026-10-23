@@ -341,11 +341,13 @@ static void ColosseumNavampaMatch_UpdateWallWedge(void) {
   s32 i;
   s32 kind;
 
-  if (gColossoMapTaskState == 0) {
-    gColossoMapTaskStatus = (gColossoMapTaskStatus + 1) & 3;
+  if (gColosseumNavampaMatch_WallWedgeTimer == 0) {
+    gColosseumNavampaMatch_WallWedgePatternIndex =
+        (gColosseumNavampaMatch_WallWedgePatternIndex + 1) & 3;
     for (i = LOCALID_FIRST_PISTON; i <= LOCALID_LAST_PISTON; i++) {
-      kind = gColosseumNavampaMatch_WallWedgePattern[gColossoMapTaskStatus]
-                                                    [i - LOCALID_FIRST_PISTON];
+      kind = gColosseumNavampaMatch_WallWedgePattern
+          [gColosseumNavampaMatch_WallWedgePatternIndex]
+          [i - LOCALID_FIRST_PISTON];
       Import_ObjectEventSetAnimation(i, kind);
       Import_ObjectEventSetAnimation(i + PISTON_COUNT, kind + 8);
       MapGrid_CopyCellAttributeRect(32, 11, 1, 2,
@@ -357,12 +359,13 @@ static void ColosseumNavampaMatch_UpdateWallWedge(void) {
     }
     Import_ObjectEventSetAnimation(
         LOCALID_WALL_OPERATOR,
-        gColosseumNavampaMatch_WallWedgePattern[gColossoMapTaskStatus]
-                                               [PISTON_COUNT]);
+        gColosseumNavampaMatch_WallWedgePattern
+            [gColosseumNavampaMatch_WallWedgePatternIndex][PISTON_COUNT]);
   } else {
     for (i = LOCALID_FIRST_PISTON; i <= LOCALID_LAST_PISTON; i++) {
-      kind = gColosseumNavampaMatch_WallWedgePattern[gColossoMapTaskStatus]
-                                                    [i - LOCALID_FIRST_PISTON];
+      kind = gColosseumNavampaMatch_WallWedgePattern
+          [gColosseumNavampaMatch_WallWedgePatternIndex]
+          [i - LOCALID_FIRST_PISTON];
       if ((u32)(objectEvent->x.fixed - (i << 21) + 0x31ffff) <= 0x13fffe) {
         if (row == 11 && kind == 4)
           work->raisedEvent = kind;
@@ -371,8 +374,8 @@ static void ColosseumNavampaMatch_UpdateWallWedge(void) {
       }
     }
   }
-  if ((u32)++gColossoMapTaskState > 17) {
-    gColossoMapTaskState = 0;
+  if ((u32)++gColosseumNavampaMatch_WallWedgeTimer > 17) {
+    gColosseumNavampaMatch_WallWedgeTimer = 0;
   }
 }
 
@@ -382,9 +385,9 @@ static void ColosseumNavampaMatch_UpdateWallWedge(void) {
 static void ColosseumNavampaMatch_ResetWallWedge(void) {
   MapTaskEntry entry;
 
-  gColossoMapTaskState = 0;
+  gColosseumNavampaMatch_WallWedgeTimer = 0;
   entry = ColosseumNavampaMatch_UpdateWallWedge;
-  gColossoMapTaskStatus = 0;
+  gColosseumNavampaMatch_WallWedgePatternIndex = 0;
   Task_Remove(entry);
   entry();
 }
@@ -403,7 +406,8 @@ static void ColosseumNavampaMatch_WaitForWallWedgeOpening(void) {
   WaitFrames(10);
 
   polls = 0;
-  while (gColossoMapTaskStatus != 3 || gColossoMapTaskState != 1) {
+  while (gColosseumNavampaMatch_WallWedgePatternIndex != 3 ||
+         gColosseumNavampaMatch_WallWedgeTimer != 1) {
     WaitFrames(1);
     polls++;
     if (polls > 119) {
@@ -702,7 +706,7 @@ static void EventScript_RollLongLog(void) {
   rider = ObjectEvent_GetById(gSaveBlock.leaderLocalId);
   log = ObjectEvent_GetById(LOCALID_LONG_LOG);
   steps = 0;
-  angle = gColossoEarlySequenceData[rider->facing >> 13];
+  angle = gColosseumNavampaMatch_FacingAngles[rider->facing >> 13];
   localId = gSaveBlock.leaderLocalId;
   SET_VECTOR(ahead, (rider->x.fixed & -0x100000) + PIXELS(8), rider->y.fixed,
              (rider->z.fixed & -0x100000) + PIXELS(8));
@@ -821,7 +825,7 @@ static void EventScript_ForceSidewalkLog(void) {
   effect->acceleration = moveRate;
   effect->speed = moveRate;
   Object_SelectAnimation(effect, 2);
-  ObjectEvent_SetScript(effect, gColossoMapEventEffect);
+  ObjectEvent_SetScript(effect, gColosseumNavampaMatch_SidewalkLogScript);
   GameFlag_Set(FLAG_SIDEWALK_LOG_KNOCKED_OFF);
 }
 
@@ -831,7 +835,8 @@ static void EventScript_HaltWall(void) {
   FieldEffect_PauseObject(LOCALID_WALL_OPERATOR);
   GameFlag_Set(FLAG_WALL_WEDGE_HALTED);
   WaitFrames(10);
-  while (gColossoMapTaskStatus != 1 && gColossoMapTaskStatus != 3)
+  while (gColosseumNavampaMatch_WallWedgePatternIndex != 1 &&
+         gColosseumNavampaMatch_WallWedgePatternIndex != 3)
     WaitFrames(1);
   WaitFrames(1);
   Task_Remove(ColosseumNavampaMatch_UpdateWallWedge);
@@ -1379,7 +1384,7 @@ static void ColosseumNavampaMatch_PlayPostBattleReunion(s32 battleResult) {
   FieldScript_WaitTransitionFrames();
   FieldScript_SetMessageId(MsgColossoIsaac);
   FieldScript_WaitFrames(60);
-  leaderScaleScript = gColossoMultiPhaseData;
+  leaderScaleScript = gColosseumNavampaMatch_LeaderScaleScript;
   ObjectEvent_SetActionScript(LOCALID_PARTY_LEADER, leaderScaleScript);
   objectEvent = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   objectEvent->scaleX = Q16_ONE;
@@ -2144,7 +2149,7 @@ UNUSED static void WriteU32AsHex(u8 *hexText, u32 value) {
   *hexText = 0;
   hexText--;
   for (digitIndex = 7; digitIndex >= 0; digitIndex--) {
-    *hexText = gColossoHexChars[value & 15];
+    *hexText = gHexDigits[value & 15];
     value >>= 4;
     hexText--;
   }
@@ -2200,7 +2205,7 @@ static void ColosseumNavampaMatch_SpawnRandomFinishEffect(
     if (effect != 0) {
       effect->motionFlags = 0;
       ObjectEvent_SetSpriteFlags(effect, 0);
-      ObjectEvent_SetScript(effect, gColossoRandomEffect);
+      ObjectEvent_SetScript(effect, gColosseumNavampaMatch_PrizeEffectScript);
       Object_SelectAnimation(effect, 1);
       Object_SelectAnimation(effect, 0);
     }
@@ -2218,7 +2223,7 @@ static s32 ColosseumNavampaMatch_PlaceFinishItemAboveObjectEvent(
   Object_SetPosition(effect, source->x.fixed, source->y.fixed + PIXELS(36),
                      source->z.fixed);
   effect->motionFlags = 0;
-  ObjectEvent_SetScript(effect, gColossoLinkedEffect);
+  ObjectEvent_SetScript(effect, gColosseumNavampaMatch_PrizeScript);
   Sound_PlaySong(MUS_TREASURE_FOUND);
   source->timer = 0;
   return 0;
@@ -2385,11 +2390,11 @@ const s8 gColosseumNavampaMatch_WallWedgePattern[][6] = {
 };
 
 // clang-format off
-const u16 gColossoEarlySequenceData[] = {
+const u16 gColosseumNavampaMatch_FacingAngles[] = {
     0, 0, 0x4000, 0x8000, 0x8000, 0x8000, 0xc000, 0,
 };
 
-const s32 gColossoMapEventEffect[] = {
+const s32 gColosseumNavampaMatch_SidewalkLogScript[] = {
     SC_MOVE(PIXELS(1088), 0, PIXELS(184)),
     SC_SYNC,
     SC_MOVE(PIXELS(1130), 0, PIXELS(184)),
@@ -2428,16 +2433,16 @@ const s16 gColossoLetteringScriptLose[] = {
     6, 0x1000, 320, 6, 0x7fff, 6, -1,
 };
 
-char gColossoHexChars[20] = "0123456789ABCDEF";
+char gHexDigits[20] = "0123456789ABCDEF";
 
-s32 gColossoRandomEffect[] = {
+s32 gColosseumNavampaMatch_PrizeEffectScript[] = {
     SC_ADD(SW_Y, -(PIXELS(1) / 4)),
     SC_WAIT(1),
     SC_LOOP(60, SC_TOP),
     SC_FREE,
 };
 
-s32 gColossoLinkedEffect[] = {
+s32 gColosseumNavampaMatch_PrizeScript[] = {
     SC_SET(SW_HOOK, (s32)ColosseumNavampaMatch_SpawnRandomFinishEffect),
     SC_LABEL(1),
     SC_WAIT(10),
@@ -2596,9 +2601,9 @@ struct ObjectEventTemplate gColosseumNavampaMatchObjectEventTemplates[] = {
     { MAP_TABLE_END },
 };
 
-s32 gColossoMapTaskStatus = 0;
+s32 gColosseumNavampaMatch_WallWedgePatternIndex = 0;
 
-s32 gColossoMapTaskState = 0;
+s32 gColosseumNavampaMatch_WallWedgeTimer = 0;
 
 struct MapEvent gColosseumNavampaMatchEvents[] = {
     { COORD_EVENT_WALKING, 90, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_CheckAhead) },
@@ -2731,7 +2736,7 @@ s32 gColosseumNavampaMatch_LeaderActionC[] = {
     SC_END,
 };
 
-s32 gColossoMultiPhaseData[] = {
+s32 gColosseumNavampaMatch_LeaderScaleScript[] = {
     SC_SET(SW_SCALE_X, Q16_ONE),
     SC_SET(SW_SCALE_Y, Q16_ONE),
     SC_END,

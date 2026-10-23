@@ -156,14 +156,14 @@ s32 BattleObject_ReleaseSlotByValue(s32 unitId) {
   }
 }
 
-// gResource_SlotAssignments: each entry is a weapon's item id in the low nine
+// gBattleUnit_WeaponKinds: each entry is a weapon's item id in the low nine
 // bits and its kind above them; the list ends with -1. Each class's table of
 // weapon sprites has one entry a kind.
 #define WEAPON_ITEM_MASK 0x1ff
 #define WEAPON_KIND_SHIFT 9
 
 /// The kinds of weapon a party member's attack shows, by the rows of
-/// items.tsv gResource_SlotAssignments lists for each.
+/// items.tsv gBattleUnit_WeaponKinds lists for each.
 enum BattleWeaponKind {
   WEAPON_KIND_LONG_SWORD,  ///< Long Sword to Muramasa
   WEAPON_KIND_LIGHT_BLADE, ///< Machete to Bandit's Sword
@@ -185,12 +185,12 @@ s32 BattleUnit_GetWeaponKind(s32 itemId) {
 
   for (assignmentIndex = 0;; assignmentIndex++) {
     if (itemId ==
-        (gResource_SlotAssignments[assignmentIndex] & WEAPON_ITEM_MASK)) {
-      assignment = gResource_SlotAssignments[assignmentIndex];
+        (gBattleUnit_WeaponKinds[assignmentIndex] & WEAPON_ITEM_MASK)) {
+      assignment = gBattleUnit_WeaponKinds[assignmentIndex];
       weaponKind = assignment >> WEAPON_KIND_SHIFT;
       break;
     }
-    if ((s16)gResource_SlotAssignments[assignmentIndex] == -1) {
+    if ((s16)gBattleUnit_WeaponKinds[assignmentIndex] == -1) {
       weaponKind = WEAPON_KIND_NONE;
       break;
     }

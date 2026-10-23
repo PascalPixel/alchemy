@@ -336,7 +336,7 @@ void Window_DrawFrameFar(s32 x, s32 y, u32 width, u32 height);
 void Window_EraseBorderRectFar(s32 x, s32 y, u32 width, u32 height);
 /// Draws the menus' two page arrows into the tiles at VRAM offset, sliding
 /// outward and back over eight frames.
-void Link_DrawShiftedTilePairFar(s32 offset);
+void Link_DrawPageArrowsFar(s32 offset);
 /// Shows `<member> joined your party.` with the member's portrait while the
 /// join fanfare plays, until it ends or a button is pressed.
 void Party_ShowJoinedMessageFar();

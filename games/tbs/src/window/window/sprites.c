@@ -487,7 +487,7 @@ void WindowSprite_UpdateAll(void) {
       continue;
     windowSprite = (struct WindowSpriteCellView *)window->sprites.head;
     // The page arrow's frame: one of 8, each shown for 4 frames.
-    phase = (gFrameTick >> 2) & 7;
+    phase = (gVBlankCount >> 2) & 7;
     while (windowSprite != NULL) {
       struct CursorSprite *sprite = &windowSprite->attr;
 
@@ -511,7 +511,7 @@ void WindowSprite_UpdateAll(void) {
           sprite->size = 0;
           sprite->shape = 2;
           sprite->y = windowSprite->y +
-                      gWindowSprite_CursorBobOffsets[gFrameTick % 80] + 2;
+                      gWindowSprite_CursorBobOffsets[gVBlankCount % 80] + 2;
           sprite->affine = 0;
           sprite->affineIndex = 0;
         }
@@ -519,7 +519,7 @@ void WindowSprite_UpdateAll(void) {
       case WINDOW_SPRITE_MOTION_SHAKE:
         // Every other frame each axis moves -1 to 1 pixels from its place:
         // half the sum of two random 0 to 2, less 1.
-        if (gFrameTick & 1) {
+        if (gVBlankCount & 1) {
           sprite->x =
               windowSprite->x +
               (s32)(((Random16() * 3 >> 16) + (Random16() * 3 >> 16)) >> 1) - 1;
@@ -563,7 +563,7 @@ void WindowSprite_UpdateAll(void) {
         break;
       case WINDOW_SPRITE_MOTION_WOBBLE:
         // One step of the 20 of gWindowSprite_WobbleOffsets every other frame.
-        if (gFrameTick & 1)
+        if (gVBlankCount & 1)
           windowSprite->animationStep++;
         sprite->x =
             windowSprite->x +
@@ -629,7 +629,7 @@ void WindowSprite_UpdateAll(void) {
         Oam_AddSpriteAtDepth(sprite, windowSprite->sentinel);
       }
       windowSprite = windowSprite->next;
-      phase = (gFrameTick >> 2) & 7;
+      phase = (gVBlankCount >> 2) & 7;
     }
   }
 }

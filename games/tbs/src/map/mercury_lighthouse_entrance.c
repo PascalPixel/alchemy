@@ -736,17 +736,17 @@ static void MercuryLighthouse_SpawnRipple(struct ObjectEvent *source) {
 
 #include "common/mercury_lighthouse_pillar.h"
 
-s32 gShortEffectScript[] = {
+s32 gFieldEffect_ShortScript[] = {
     SC_WAIT(1),           SC_LOOP(22, SC_TOP), SC_WAIT(1),
     SC_POSITION(0, 0, 0), SC_WAIT(1),          SC_FREE,
 };
 
-s32 gMediumEffectScript[] = {
+s32 gFieldEffect_MediumScript[] = {
     SC_WAIT(1),           SC_LOOP(44, SC_TOP), SC_WAIT(1),
     SC_POSITION(0, 0, 0), SC_WAIT(1),          SC_FREE,
 };
 
-s32 gLongEffectScript[] = {
+s32 gFieldEffect_LongScript[] = {
     SC_WAIT(1),           SC_LOOP(126, SC_TOP), SC_WAIT(1),
     SC_POSITION(0, 0, 0), SC_WAIT(1),           SC_FREE,
 };
@@ -807,10 +807,10 @@ u16 gMercuryLighthouse_MoveAngles[] = {
     FACING_SOUTH, 0xffff, 0xffff, FACING_SOUTH, 0xffff, FACING_EAST, FACING_WEST, 0xffff,
 };
 
-const s32 *gEffectScripts[] = {
-    gShortEffectScript,
-    gMediumEffectScript,
-    gLongEffectScript,
+const s32 *gFieldEffect_DurationScripts[] = {
+    gFieldEffect_ShortScript,
+    gFieldEffect_MediumScript,
+    gFieldEffect_LongScript,
 };
 
 s32 gMercuryLighthouseEntrance_LizardManStepCentre[] = {

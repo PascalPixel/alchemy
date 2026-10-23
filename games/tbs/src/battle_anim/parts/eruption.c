@@ -125,7 +125,7 @@ void BattleAnim_RunEruption(struct BattleAnimArgs *effect, s32 mode) {
        frame++) {
     struct BattleCamera *camera;
 
-    camera = gCameraWork;
+    camera = gBattleCamera;
     ANIM_VIEW_FROM_CAMERA(camera);
     if (frame == 2)
       Sound_PlaySongFar(SE_144);

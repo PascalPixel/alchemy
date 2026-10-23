@@ -207,7 +207,7 @@ void BattleAnim_RunTargetMotes(struct BattleAnimArgs *effect, u32 mode) {
   // Target n's turn starts on frame n * 8; the animation ends 64 frames (wide
   // styles) or 32 after the last one starts.
   for (frame = 0; frame != total; frame++) {
-    struct BattleCamera *camera = gCameraWork;
+    struct BattleCamera *camera = gBattleCamera;
 
     // Demon Fire: the user steps up to the first target 46 frames before the
     // end and strikes it 32 frames before the end, shaking the screen.
@@ -424,7 +424,7 @@ void BattleAnim_RunSleep(struct BattleAnimArgs *effect) {
   for (frame = 0; frame != SLEEP_FRAMES; frame++) {
     struct BattleCamera *camera;
 
-    camera = gCameraWork;
+    camera = gBattleCamera;
     if (frame == 80)
       ANIM_SHOW_DAMAGE(0);
     ANIM_FOR_EACH_TARGET(targetIndex, work->effect) {

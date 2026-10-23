@@ -6,8 +6,8 @@
 
 // Twenty-four maps, and the main image's Psynergy effects (whirlwind.c, with
 // EFFECT_SPAWN_RESIDENT): FieldEffect_Spawn, which places a small effect moving
-// at a velocity, its script one of gEffectScripts and its options chosen by the
-// EFFECT_USE_ flags.
+// at a velocity, its script one of gFieldEffect_DurationScripts and its options
+// chosen by the EFFECT_USE_ flags.
 
 /// Integrates linear motion, scale changes and rotation once per effect frame.
 void FieldEffect_UpdateMotionScaleAndSpin(
@@ -23,7 +23,7 @@ void FieldEffect_UpdateMotionScaleAndSpin(
 // Compile the effect-spawning body once for the resident far-call version
 // and once for each overlay's direct-call version.
 
-extern const s32 *gEffectScripts[];
+extern const s32 *gFieldEffect_DurationScripts[];
 
 enum {
   EFFECT_DEFAULT_TYPE = 222,
@@ -69,7 +69,8 @@ static inline void FieldEffect_InitializeMotion(struct FieldEffect *effect,
                                                                                \
     sprite = effect->sprite;                                                   \
     set_mode((struct ObjectEvent *)effect, (flags + 1) & EFFECT_SCRIPT_MASK);  \
-    set_script((void *)effect, gEffectScripts[flags & EFFECT_SCRIPT_MASK]);    \
+    set_script((void *)effect,                                                 \
+               gFieldEffect_DurationScripts[flags & EFFECT_SCRIPT_MASK]);      \
     effect->motionFlags = 0;                                                   \
     sprite->flags = 0;                                                         \
     effect->update = FieldEffect_UpdateMotionScaleAndSpin;                     \
@@ -90,7 +91,7 @@ static inline void FieldEffect_InitializeMotion(struct FieldEffect *effect,
       effect->scaleY = options->startScaleY;                                   \
     }                                                                          \
     if ((flags & EFFECT_SCALE_TO_TARGET) != 0) {                               \
-      script = gEffectScripts[flags & EFFECT_SCRIPT_MASK];                     \
+      script = gFieldEffect_DurationScripts[flags & EFFECT_SCRIPT_MASK];       \
       if ((flags & EFFECT_USE_START_SCALE) != 0) {                             \
         effect->scaleRateX = (options->targetScaleX - effect->scaleX) /        \
                              script[EFFECT_SCRIPT_REPEAT_COUNT];               \

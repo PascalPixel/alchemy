@@ -1763,7 +1763,7 @@ static s32 Sanctum_ChooseRestartOption(void) {
     if (gKeysRepeat & KEYS_VERTICAL) {
       choice ^= 1;
     }
-    x = gSanctum_CursorBob[(gFrameTick >> 1) & 15] + CURSOR_X;
+    x = gSanctum_CursorBob[(gVBlankCount >> 1) & 15] + CURSOR_X;
     FieldMenuArrow_SetPosition(&cursor, x, (choice << 4) + 60);
     FieldScript_WaitFrames(1);
   }

@@ -6,7 +6,7 @@
 #include "../menu_internal.h"
 
 /// Replaces the four displayed objects and starts their projected-position
-/// task: one Djinni figure of each element (gFourObjectMotion_ResourceIds) in
+/// task: one Djinni figure of each element (gDjinnFigures_SpriteIds) in
 /// animation 2, at (16, 32) until the screen moves them, placed each frame by
 /// DjinnFigures_UpdateAllPositions. The Status menu calls it when the
 /// party has Djinn; DjinnFigures_ClearSlotsAndSchedule releases them.
@@ -24,8 +24,7 @@ void DjinnFigures_InitializeTopRow(void *unused0, s32 unused1) {
   }
 
   for (index = 0; index < 4; index++) {
-    struct Sprite *animation =
-        Sprite_CreateFar(gFourObjectMotion_ResourceIds[index]);
+    struct Sprite *animation = Sprite_CreateFar(gDjinnFigures_SpriteIds[index]);
 
     if (animation != NULL) {
       Sprite_StartAnimFar(animation, 2);
@@ -111,7 +110,7 @@ void DjinnFigures_UpdateBottomRow(void) {
   struct SpriteScale scale;
   struct SpritePlacement placement;
 
-  Link_DrawShiftedTilePairFar(PAGE_ARROW_VRAM);
+  Link_DrawPageArrowsFar(PAGE_ARROW_VRAM);
   objectIndex = 0;
   do {
     struct Sprite *animation = menu->animations[objectIndex];
@@ -170,8 +169,7 @@ void DjinnFigures_InitializeBottomRow(s32 unused0, s32 unused1) {
     }
   }
   for (index = 0; index < 4; index++) {
-    struct Sprite *animation =
-        Sprite_CreateFar(gFourObjectMotion_ResourceIds[index]);
+    struct Sprite *animation = Sprite_CreateFar(gDjinnFigures_SpriteIds[index]);
 
     if (animation != NULL)
       Sprite_StartAnimFar(animation, 2);
@@ -210,7 +208,7 @@ s32 DjinnFigures_SetSlotPhase(s32 index, s32 phase) {
 
 /// Replaces one displayed object and selects its animation: figure index
 /// becomes the Djinni figure of element resourceKind
-/// (gFourObjectMotion_ResourceIds) in animation value. Returns 1.
+/// (gDjinnFigures_SpriteIds) in animation value. Returns 1.
 s32 DjinnFigures_ReplaceSlot(s32 index, s32 resourceKind, s32 value) {
   struct ItemMenuFiguresView *state = gMenuWork;
 
@@ -220,7 +218,7 @@ s32 DjinnFigures_ReplaceSlot(s32 index, s32 resourceKind, s32 value) {
   }
   {
     struct Sprite *animation =
-        Sprite_CreateFar(gFourObjectMotion_ResourceIds[resourceKind]);
+        Sprite_CreateFar(gDjinnFigures_SpriteIds[resourceKind]);
 
     if (animation != NULL)
       Sprite_StartAnimFar(animation, value);

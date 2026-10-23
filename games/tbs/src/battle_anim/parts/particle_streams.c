@@ -558,7 +558,7 @@ void BattleAnim_RunParticleStreams(struct BattleAnimArgs *effect, s32 mode) {
   // released and the battle shows the damage.
   for (frame = 0; frame != PARTICLE_STREAMS_BURST_FRAMES; frame++) {
     s32 size = (frame + 0x1d0) << 8;
-    struct BattleCamera *camera = gCameraWork;
+    struct BattleCamera *camera = gBattleCamera;
     s32 elapsed = frame - 16;
     struct SpriteScale scale;
     s32 x;

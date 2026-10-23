@@ -2269,7 +2269,7 @@ AltmillerCave_UpdateWallFragment(struct FieldEffectSprite *fragment) {
     fragment->speedMax = PIXELS(5);
     fragment->turnStepLimited = currentPhase;
     (*phase)++;
-    if ((gFrameTick & 3) == 0)
+    if ((gVBlankCount & 3) == 0)
       Sound_PlaySong(SE_HEAVY_IMPACT);
   } else if (currentPhase == 1) {
     if (FieldEffectSprite_HasPendingTarget(fragment) == 0) {

@@ -17,8 +17,8 @@ extern void *gMapGridWork[];
 extern void *gMenuWork;
 
 // Read heap slots in gHeapSlots order through their own names.
-/// HEAP_SLOT_LIGHTNING onwards.
-extern void *gLightningWork[];
+/// HEAP_SLOT_FIELD_BLEND onwards.
+extern void *gFieldBlendWork[];
 /// HEAP_SLOT_SCREEN_TRANSITION under its own name.
 extern struct ScreenTransitionState *gScreenTransitionWork;
 /// HEAP_SLOT_BATTLE_ENTRY_TIMER: the battle's entry transition timer in frames.

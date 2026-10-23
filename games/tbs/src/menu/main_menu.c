@@ -804,7 +804,7 @@ menu_top:;
       // turn back and forth, wrapping round; B goes back to the level choice.
       // v7 is 1 when the page must be drawn again.
       for (;;) {
-        Link_DrawShiftedTilePair(PAGE_ARROW_VRAM);
+        Link_DrawPageArrows(PAGE_ARROW_VRAM);
         if ((gKeysPressed & KEY_B) != 0) {
           Sound_PlaySong(SE_MENU_CANCEL);
           WindowSprite_PrepareForRedraw(pageWindow);

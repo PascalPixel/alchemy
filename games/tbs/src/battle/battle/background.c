@@ -314,7 +314,7 @@ UNUSED void BattleCamera_SetViewAtDepth(s32 x, s32 depth, s32 y) {
 #ifndef UBFIX
   s32 zoom;
 #endif
-  struct BattleCamera *camera = gCameraWork;
+  struct BattleCamera *camera = gBattleCamera;
   s32 *focus = camera->focus;
   s32 scale = (zoom << 16) / 100;
   s32 renderBounds[3];
@@ -366,7 +366,7 @@ UNUSED void BattleCamera_SetViewAtDepth(s32 x, s32 depth, s32 y) {
 /// effects. Writes the camera's pos and eye, gProjection, and the plane's
 /// next page.
 void BattleCamera_SetView(s32 x, s32 depth, s32 y, s32 zoom) {
-  struct BattleCamera *camera = gCameraWork;
+  struct BattleCamera *camera = gBattleCamera;
   s32 *focus = camera->focus;
   s32 scale = (zoom << 16) / 100;
   s32 renderBounds[3];

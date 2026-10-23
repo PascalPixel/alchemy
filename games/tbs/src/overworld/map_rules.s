@@ -301,8 +301,8 @@ gMapSec_NameRules:
 	.2byte 0, 0	@ a row of zeros after the end
 	.4byte 0
 
-	.global gParty_PairResolveRules
-gParty_PairResolveRules:
+	.global gDefeatReturnPoints
+gDefeatReturnPoints:
 	return_to ValeStorm, 15, ValeInteriorsInn, 16
 	return_to Vale, 16, Sanctum, 2
 	return_to Vault, 1, Sanctum, 12

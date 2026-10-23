@@ -586,7 +586,7 @@ s32 FileMenu_SelectAction(void) {
     IconMenu_AddIcon(COMMAND_ICON_COPY);
   }
   IconMenu_AddIcon(COMMAND_ICON_ERASE);
-  if ((*(s16 *)gTitleExtraOptionEnabled) != 0) {
+  if ((*(s16 *)gTitleBattleOptionEnabled) != 0) {
     IconMenu_AddIcon(COMMAND_ICON_BATTLE);
   }
   if (gTitleSendOptionEnabled != 0) {

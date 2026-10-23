@@ -400,16 +400,16 @@ s32 DebugBrowser_Icons(void) {
       Window_Close(window, 2);
       window = Window_Create(10, 0, 18, 12, 2);
       if (mode == 0)
-        Text_DrawStringInWindow(gWorkspace_ItemTitle, window, 0, 0);
+        Text_DrawStringInWindow(gDebugMenu_ItemTitle, window, 0, 0);
       else if (mode == 1)
-        Text_DrawStringInWindow(gWorkspace_EnergyTitle, window, 0, 0);
+        Text_DrawStringInWindow(gDebugMenu_EnergyTitle, window, 0, 0);
       else
-        Text_DrawStringInWindow(gWorkspace_StatusTitle, window, 0, 0);
-      Text_DrawStringInWindow(gWorkspace_PageLabel, window, 0, 8);
+        Text_DrawStringInWindow(gDebugMenu_StatusTitle, window, 0, 0);
+      Text_DrawStringInWindow(gDebugMenu_PageLabel, window, 0, 8);
       Text_DrawNumberInWindow(page, 0, window, 40, 8);
       base = page << 5;
       Text_DrawNumberInWindow(base, 3, window, 64, 8);
-      Text_DrawStringInWindow(gWorkspace_RangeDash, window, 88, 8);
+      Text_DrawStringInWindow(gDebugMenu_RangeDash, window, 88, 8);
       Text_DrawNumberInWindow(base + 31, 3, window, 96, 8);
       for (i = 0; i <= 31; i++) {
         slot = -1;

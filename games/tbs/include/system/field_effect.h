@@ -103,7 +103,8 @@ union ObjectEventOrEffect {
 /// map/common/effect_spawn.h): a script number in the low bits and which of
 /// struct EffectOptions' fields to use.
 enum EffectSpawnFlags {
-  /// An EffectDuration, picking one of gEffectScripts; the object's mode is
+  /// An EffectDuration, picking one of gFieldEffect_DurationScripts; the
+  /// object's mode is
   /// this
   /// plus 1.
   EFFECT_SCRIPT_MASK = 0x0f,
@@ -120,9 +121,9 @@ enum EffectSpawnFlags {
   EFFECT_USE_UPDATE = 0x1000000     ///< options.update
 };
 
-/// The scripts EFFECT_SCRIPT_MASK picks from gEffectScripts, in a map's
-/// spawner and the resident one alike: each holds the effect for a while, then
-/// frees it.
+/// The scripts EFFECT_SCRIPT_MASK picks from gFieldEffect_DurationScripts, in a
+/// map's spawner and the resident one alike: each holds the effect for a while,
+/// then frees it.
 enum EffectDuration {
   EFFECT_SCRIPT_SHORT =
       0, ///< 22 one-frame repeats in a map, 24 frames resident

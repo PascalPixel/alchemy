@@ -2078,7 +2078,7 @@ s32 gPushedObject_FootprintBounds[] = {
     -8, -32, 8, 32,
 };
 
-s32 gShortEffectScript[] = {
+s32 gFieldEffect_ShortScript[] = {
     SC_WAIT(1),
     SC_LOOP(22, SC_TOP),
     SC_WAIT(1),
@@ -2087,7 +2087,7 @@ s32 gShortEffectScript[] = {
     SC_FREE,
 };
 
-s32 gMediumEffectScript[] = {
+s32 gFieldEffect_MediumScript[] = {
     SC_WAIT(1),
     SC_LOOP(44, SC_TOP),
     SC_WAIT(1),
@@ -2096,7 +2096,7 @@ s32 gMediumEffectScript[] = {
     SC_FREE,
 };
 
-s32 gLongEffectScript[] = {
+s32 gFieldEffect_LongScript[] = {
     SC_WAIT(1),
     SC_LOOP(126, SC_TOP),
     SC_WAIT(1),
@@ -2109,10 +2109,10 @@ u16 gCrossboneIsle_EntranceCells[] = {
     MAPGRID_ANIMATION_STEP(58, 23, 1, 2, 5), MAPGRID_ANIMATION_STEP(59, 23, 1, 2, 5), MAPGRID_ANIMATION_STEPS_END,
 };
 
-const s32 *gEffectScripts[] = {
-    gShortEffectScript,
-    gMediumEffectScript,
-    gLongEffectScript,
+const s32 *gFieldEffect_DurationScripts[] = {
+    gFieldEffect_ShortScript,
+    gFieldEffect_MediumScript,
+    gFieldEffect_LongScript,
     (const s32 *)0xffff0000,
     (const s32 *)120,
     (const s32 *)0x40000098,

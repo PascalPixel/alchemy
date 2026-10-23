@@ -383,14 +383,14 @@ s32 MapSec_GetNameIndex(s32 mapId, s32 warpDest) {
 }
 
 /// Sets the map the party returns to after a defeat (gSaveBlock.savedMap
-/// and savedWarpDest), from the first rule of gParty_PairResolveRules that
+/// and savedWarpDest), from the first rule of gDefeatReturnPoints that
 /// matches the current map and warp destination: {map, warp destination (-1
 /// for any), return map, return warp destination}, ended by map -1. Without a
 /// match the return point stays as it was. Called by Map_Run on map load.
 void Map_SetDefeatReturnPoint(void) {
   s16 mapId = gSaveBlock.mapId;
   s16 warpDest = gSaveBlock.warpDest;
-  const s16 *rule = gParty_PairResolveRules;
+  const s16 *rule = gDefeatReturnPoints;
 
   while (rule[0] != -1) {
     if (rule[0] == mapId && (rule[1] == -1 || rule[1] == warpDest)) {

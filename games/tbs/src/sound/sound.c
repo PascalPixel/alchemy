@@ -204,16 +204,16 @@ void SoundTest_Run(void) {
   timer = 20;
 
   for (;;) {
-    // XXX: timer counts down from 20 and restarts while gSoundClipFlag is
-    // set, but nothing reads it, and no code but this test names the flag;
+    // XXX: timer counts down from 20 and restarts while gSoundTestRestartTimer
+    // is set, but nothing reads it, and no code but this test names the flag;
     // what sets it, and what both were for, is not known. ⚓️'s copy of this
     // test (games/tla/src/sound/audio_test.c) only clears its flag too, so a
     // writer of the flag in either game would settle it.
     if (timer != 0)
       timer--;
 
-    if (gSoundClipFlag != 0) {
-      gSoundClipFlag = 0;
+    if (gSoundTestRestartTimer != 0) {
+      gSoundTestRestartTimer = 0;
       timer = 20;
     }
 
@@ -270,11 +270,11 @@ void Sound_Initialize(void) {
   gBgmFadeRequested = 0;
   gSoundCommandMask = 0;
   playerVolume = gMusicPlayerLastSong;
-  // XXX: gEwram_Data1 is cleared here and named nowhere else in ☀️; what it
+  // XXX: gSound_UnreadByte is cleared here and named nowhere else in ☀️; what it
   // holds is not known. ⚓️'s twin (gData_02005804, also after
   // gBgmRestoreDelay) is only cleared as well; a read of either byte
   // would settle it.
-  gEwram_Data1 = 0;
+  gSound_UnreadByte = 0;
   remaining = MUSIC_PLAYER_COUNT - 1;
   do {
     remaining--;

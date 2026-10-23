@@ -9,10 +9,10 @@ struct MapEvent;
 struct ObjectEventTemplate;
 struct MapWarpRegion;
 
-extern s32 gShortEffectScript[];
-extern s32 gMediumEffectScript[];
-extern s32 gLongEffectScript[];
-extern const s32 *gEffectScripts[];
+extern s32 gFieldEffect_ShortScript[];
+extern s32 gFieldEffect_MediumScript[];
+extern s32 gFieldEffect_LongScript[];
+extern const s32 *gFieldEffect_DurationScripts[];
 const struct MapWarpDest *Map_GetWarpDests(void);
 const struct MapWarpRegion *Map_GetWarpRegions(void);
 const u32 *Map_GetWarps(void);

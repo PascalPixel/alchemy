@@ -63,14 +63,14 @@ void Palette_UpdatePulseBrightness(void) {
 /// callback leaves the background alone), gProjection and the background's
 /// affine page.
 void BattleCamera_SetCommandView(s32 verticalOffset) {
-  // UB: indexing past scalar gCameraWork reaches another heap slot. Named
+  // UB: indexing past scalar gBattleCamera reaches another heap slot. Named
   // slots add four bytes in the native EN trial (0xd8 to 0xdc).
 #ifdef UBFIX
-  struct BattleCamera *camera = gCameraWork;
+  struct BattleCamera *camera = gBattleCamera;
   struct BattleBackgroundWork *view =
       HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_BACKGROUND);
 #else
-  void **slots = (void **)&gCameraWork;
+  void **slots = (void **)&gBattleCamera;
   struct BattleCamera *camera = slots[0];
   struct BattleBackgroundWork *view =
       slots[HEAP_SLOT_BATTLE_BACKGROUND - HEAP_SLOT_CAMERA];

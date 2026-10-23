@@ -17,8 +17,8 @@ extern const u8 gSpriteDissolve_PixelOrder[64];
 extern const u16 gSpriteDissolve_PixelOrderTail;
 extern const s32 gCamera_FixedViewMatrix[12];
 extern const s32 gScriptObject_CycleTable[32];
-extern const s32 gScript_MainScript[1];
-extern const s16 gScript_MainScriptTail[8];
+extern const s32 gObjectScript_EndScript[1];
+extern const s16 gObjectScript_EndScriptTail[8];
 
 extern const s32 gWorldMap_KeyYaws[16];
 

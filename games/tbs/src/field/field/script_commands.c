@@ -169,13 +169,13 @@ s32 ObjectScript_JumpIfFalse(struct Object *interpreter) {
   return 1;
 }
 
-/// SC_END: hands the object back to the idle script, gScript_MainScript,
+/// SC_END: hands the object back to the idle script, gObjectScript_EndScript,
 /// whose lone SC_END runs again each frame. Returns 0. The table's unused
 /// command numbers from 0x24 also point here.
 s32 ObjectScript_End(struct Object *interpreter) {
   s32 result;
 
-  interpreter->script = gScript_MainScript;
+  interpreter->script = gObjectScript_EndScript;
   interpreter->scriptCursor = (result = 0);
   return result;
 }

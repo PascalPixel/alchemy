@@ -428,7 +428,7 @@ s32 ValeInteriorsShops_Initialize(void) {
     Import_ObjectEventSetPosition(LOCALID_WEAPON_MERCHANT, 0, 0);
     Import_ObjectEventSetPosition(LOCALID_ARMOR_MERCHANT, 0, 0);
     Weather_StartLightning();
-    (*(struct LightningWork **)((u8 *)eventSlot + Ram_LightningWorkOffset))
+    (*(struct FieldBlendWork **)((u8 *)eventSlot + Ram_FieldBlendWorkOffset))
         ->loud = 1;
     Weather_LastLightning();
     WaitFrames(30);

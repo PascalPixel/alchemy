@@ -126,7 +126,7 @@ void BattleAnim_RunDjinniEntrance(struct BattleAnimArgs *effect, s32 element,
   SET_VECTOR(step, (goal[0] - center[0]) / 40, (goal[1] - center[1]) / 40,
              (goal[2] - center[2]) / 40);
   for (frame = 0; frame != frameCount; frame++) {
-    struct BattleCamera *camera = gCameraWork;
+    struct BattleCamera *camera = gBattleCamera;
 
     // The long version fades the canvas out over its last 8 frames; the sound
     // plays on frame 8.

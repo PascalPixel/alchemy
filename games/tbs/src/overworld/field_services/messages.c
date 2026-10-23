@@ -492,7 +492,7 @@ void FieldScript_ShowTwoMessagesAndWait(s32 first, s32 firstX, s32 firstY,
 }
 
 /// Sets the voice of the messages that follow to that of localId's sprite,
-/// at the rate the message speed option picks (gUi_RenderResultValues). With
+/// at the rate the message speed option picks (gMessageSpeed_VoiceRates). With
 /// 0x80000000 the messages are silent.
 void Message_SetVoiceFromObjectEvent(s32 localId) {
   struct WindowWork *state = (struct WindowWork *)gWindowWork[0];
@@ -506,7 +506,7 @@ void Message_SetVoiceFromObjectEvent(s32 localId) {
     *(s16 *)&state->voiceCountdown = rate;
   } else {
     voice = Speaker_GetVoice(ObjectEvent_ReadActiveValue(localId));
-    rate = gUi_RenderResultValues[gSaveBlock.messageSpeed];
+    rate = gMessageSpeed_VoiceRates[gSaveBlock.messageSpeed];
     *(s16 *)&state->voiceSound = voice;
     *(s16 *)&state->voiceCountdown = rate;
   }

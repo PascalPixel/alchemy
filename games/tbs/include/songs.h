@@ -444,7 +444,7 @@
 /// (its render)
 #define SE_THUNDER 171
 /// The louder thunderclap lightning on the field plays in place of SE_THUNDER
-/// (struct LightningWork's loud).
+/// (struct FieldBlendWork's loud).
 /// ★ Named from what the player sees: lightning flashing over the stormy night
 /// (its render)
 #define SE_THUNDER_LOUD 172

@@ -316,7 +316,7 @@ enum {
   LIST_TILE_PAGE_NUMBER = 0xf301,
   /// The current page's number, the same digits in their own colours.
   LIST_TILE_PAGE_NUMBER_LIT = 0xf30b,
-  /// Left arrow, tile 0x334, which Link_DrawShiftedTilePair slides.
+  /// Left arrow, tile 0x334, which Link_DrawPageArrows slides.
   LIST_TILE_PAGES_LEFT = 0xf334,
   LIST_TILE_PAGES_RIGHT = 0xf335 ///< Right arrow, tile 0x335
 };

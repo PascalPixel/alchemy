@@ -149,10 +149,8 @@ s32 Math_IntegerSqrt(s32 value) {
 /// the raw value is the result in 8.8, so the low eight bits are always 0.
 s32 FixedSqrt(s32 value) { return Iwram_Sqrt(value) << 8; }
 
-/// Returns the address of the basic sprite palettes (gSystem_BasicColorPalette)
+/// Returns the address of the basic sprite palettes (gBasicSpritePalettes)
 /// as a number. Called by the Djinn menu and the battle party status, which
 /// copy its first 16 colours into a background palette themselves (BG palette
 /// 5 and 14).
-s32 Palette_GetBasicSpriteColors(void) {
-  return (s32)gSystem_BasicColorPalette;
-}
+s32 Palette_GetBasicSpriteColors(void) { return (s32)gBasicSpritePalettes; }

@@ -111,7 +111,7 @@ void Projection_Unit(s32 id, struct ScreenPoint *position) {
 /// transform an animation has left behind.
 ///
 /// Called only by Projection_Sprite. Leaves the render transform
-/// looking from gCameraWork's eye to its position, and always returns 0.
+/// looking from gBattleCamera's eye to its position, and always returns 0.
 ///
 /// screen: receives x and y.
 s32 BattleUnit_ProjectToScreen(s32 unit, s32 *screen) {
@@ -123,7 +123,7 @@ s32 BattleUnit_ProjectToScreen(s32 unit, s32 *screen) {
    * of 52 instructions differ in tbs-en. */
   UNUSED s32 unused[3];
 
-  camera = gCameraWork;
+  camera = gBattleCamera;
   object = GetBattleObjectSlotFar(unit)->object;
   info = GetMotionRecordFar(object, 0);
   ANIM_VIEW_FROM_CAMERA(camera);

@@ -59,7 +59,7 @@ const s32 gObject_ApproachLinkScript[] = {
 };
 
 /// The idle script Object_StartIdle gives an object.
-const s32 gObject_EndScript[] = {
+const s32 gObject_IdleScript[] = {
     SC_END,
 };
 

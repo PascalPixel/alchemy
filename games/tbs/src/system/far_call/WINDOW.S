@@ -135,6 +135,6 @@ FarCall_WindowTable:
 	export Save_CountRecordsExcludingFlaggedFar, Save_CountRecordsExcludingFlagged
 	export Window_DrawFrameFar, Window_DrawFrame
 	export Window_EraseBorderRectFar, Window_EraseBorderRect
-	export Link_DrawShiftedTilePairFar, Link_DrawShiftedTilePair
+	export Link_DrawPageArrowsFar, Link_DrawPageArrows
 	export Party_ShowJoinedMessageFar, Party_ShowJoinedMessage
 	export Party_ShowPairJoinedMessageFar, Party_ShowPairJoinedMessage

@@ -58,7 +58,7 @@ void TilesetAnim_Update(void) {
       (gridState->animations + channelIndex)->timer = commands[1];
       // A source tile from 0x600 (0x200 for 64-byte tiles) is read from
       // RAM: both bases put tile 0x600 (0x200) at 0x02028000, the start of
-      // gMapGridLayerData. A lower one is copied within VRAM. The count is in
+      // gMapGridAnimTiles. A lower one is copied within VRAM. The count is in
       // tiles, eight words each (16 when wide).
       if (gridState->wideTiles == 0) {
         if (sourceTileOrOpcode >= 0x600)

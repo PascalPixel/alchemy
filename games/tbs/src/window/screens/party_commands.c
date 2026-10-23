@@ -99,7 +99,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
   state = AllocHeapSlotEwram(HEAP_SLOT_BATTLE_MENU, 260);
   Resource_LoadIndexedIntoBuffer(largeIconSlot, 0);
   Graphics_ExpandVramTilesByColorTable((u16 *)0x06006000);
-  Link_DrawShiftedTilePair(0x06006680);
+  Link_DrawPageArrows(0x06006680);
   Menu_BuildLocalizedPatternTiles();
   battle = gBattleWork;
   for (k = 0; k < 8; k++) {

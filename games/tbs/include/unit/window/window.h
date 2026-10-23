@@ -58,7 +58,7 @@ enum {
 
 // The two page arrows beside a paged list's page numbers, in the menus and
 // the main menu: tiles 0x128 and 0x129 of character block 0, which
-// Link_DrawShiftedTilePair slides back and forth each frame, and their
+// Link_DrawPageArrows slides back and forth each frame, and their
 // tilemap entries.
 #define PAGE_ARROW_TILE 0x128
 #define PAGE_ARROW_VRAM                                                        \

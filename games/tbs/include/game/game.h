@@ -65,7 +65,7 @@ extern u16 gInventorySnapshot[];
 extern u8 gRareItemStock[128];
 /// The 64-byte save stamp, in the first half of the save buffer, that the
 /// Battle Arena writes into the current file alone.
-extern u8 gSaveStamp[];
+extern u8 gBattleArenaRecord[];
 /// Each item's rare item counter number plus one, or 0 for an ordinary item
 /// (Item_AdjustCounter).
 extern u8 gItem_ArtifactSlotTable[];

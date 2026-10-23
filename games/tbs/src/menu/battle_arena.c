@@ -1426,8 +1426,8 @@ u8 *BattleArena_GetEvents(void) { return (u8 *)gBattleArenaEvents; }
 
 /// Saves the battle results between saving and saved messages, through
 /// Save_ProcessSelectedFile, which writes the first 16 bytes of the save
-/// stamp (gSaveStamp) into the current file. BattleArena_RunRoundResult calls
-/// it after each linked battle won or lost.
+/// stamp (gBattleArenaRecord) into the current file. BattleArena_RunRoundResult
+/// calls it after each linked battle won or lost.
 static s32 BattleArena_SaveBattleResults(void) {
   // A shared inline message-pair helper grows each save routine from 0x6c to
   // 0x70 in the native build, so retain the two sequences.

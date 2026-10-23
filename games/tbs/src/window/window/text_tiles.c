@@ -112,12 +112,12 @@ s32 Text_DrawStringAsTiles(u16 *text, u16 *tiles, u16 *mirror, s32 x) {
   Iwram_ClearWords(pens, 16);
   // pens maps a font pixel, 1 or 3 (the font's two shades), to a colour; 0
   // leaves the background. In the UI palette (15) shade 1 takes the colour's
-  // pen (gText_ColorPens) and shade 3 colour 3, over the window
+  // pen (gFont_ColorPens) and shade 3 colour 3, over the window
   // background, colour 4; in another palette (WindowWork.textPalette, as the
   // party status window sets for its numbers) shade 1 takes the colour itself
   // and shade 3 colour 1, over colour 14.
   if (paletteBits == 0xF000) {
-    pens[1] = gText_ColorPens[work->colour & 15];
+    pens[1] = gFont_ColorPens[work->colour & 15];
     pens[3] = 3;
     Iwram_FillWords(canvas, 0x800, 0x04040404);
   } else {
@@ -136,7 +136,7 @@ s32 Text_DrawStringAsTiles(u16 *text, u16 *tiles, u16 *mirror, s32 x) {
         switch (glyphCode) {
         case TEXT_COLOR:
           work->colour = *text++;
-          pens[1] = gText_ColorPens[work->colour & 15];
+          pens[1] = gFont_ColorPens[work->colour & 15];
           break;
         // TEXT_COLORS_RESET, TEXT_OUTLINE and TEXT_LINE_SPACING all reset the
         // colour here, and the last two leave their operand to be read as the
@@ -145,7 +145,7 @@ s32 Text_DrawStringAsTiles(u16 *text, u16 *tiles, u16 *mirror, s32 x) {
         case TEXT_OUTLINE:
         case TEXT_LINE_SPACING:
           work->colour = 15;
-          pens[1] = gText_ColorPens[work->colour];
+          pens[1] = gFont_ColorPens[work->colour];
           break;
         // A new line is a space's width: tile text is one line.
         case TEXT_NEWLINE:

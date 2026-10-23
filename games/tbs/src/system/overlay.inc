@@ -164,7 +164,7 @@
 	import Graphics_ExpandVramTilesByColorTable, Graphics_ExpandVramTilesByColorTableFar
 	import Menu_AnimateSelectionToEntry, Menu_AnimateSelectionToEntryFar
 	import Save_CountRecordsExcludingFlagged, Save_CountRecordsExcludingFlaggedFar
-	import Link_DrawShiftedTilePair, Link_DrawShiftedTilePairFar
+	import Link_DrawPageArrows, Link_DrawPageArrowsFar
 @ Game bank (far_call/GAME.S)
 	import Djinn_GetRecoveryTable, Djinn_GetRecoveryTableFar
 	import Unit_Get, Unit_GetFar

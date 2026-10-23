@@ -333,7 +333,7 @@ static void TunnelRuins_UpdateTrackedObjectEvent(void) {
   s32 depthLimit;
 
   leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
-  effectWork = gObjectEventEffectWork;
+  effectWork = gFadeOverlayWork;
   depthLimit = 0;
   // Each tracked warp destination measures depth in eight-pixel steps.
   if (gSaveBlock.mapId == (s32)&MapId_TunnelRuinsGreatStatue) {
@@ -1877,17 +1877,17 @@ s32 gPushedObject_FootprintBounds[] = {
     -8,  -32, 8,  32, -32, -8,  32, 8,  -8,  -32, 8,  32,
 };
 
-s32 gShortEffectScript[] = {
+s32 gFieldEffect_ShortScript[] = {
     SC_WAIT(1),           SC_LOOP(22, SC_TOP), SC_WAIT(1),
     SC_POSITION(0, 0, 0), SC_WAIT(1),          SC_FREE,
 };
 
-s32 gMediumEffectScript[] = {
+s32 gFieldEffect_MediumScript[] = {
     SC_WAIT(1),           SC_LOOP(44, SC_TOP), SC_WAIT(1),
     SC_POSITION(0, 0, 0), SC_WAIT(1),          SC_FREE,
 };
 
-s32 gLongEffectScript[] = {
+s32 gFieldEffect_LongScript[] = {
     SC_WAIT(1),           SC_LOOP(126, SC_TOP), SC_WAIT(1),
     SC_POSITION(0, 0, 0), SC_WAIT(1),           SC_FREE,
 };
@@ -1899,10 +1899,10 @@ u32 gTunnelRuins_BalanceHeights[] = {
     -PIXELS(64), -PIXELS(80), -PIXELS(80),
 };
 
-const s32 *gEffectScripts[] = {
-    gShortEffectScript,
-    gMediumEffectScript,
-    gLongEffectScript,
+const s32 *gFieldEffect_DurationScripts[] = {
+    gFieldEffect_ShortScript,
+    gFieldEffect_MediumScript,
+    gFieldEffect_LongScript,
 };
 
 s32 gTunnelRuins_ShrinkScript[] = {

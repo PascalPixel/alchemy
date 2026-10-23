@@ -69,7 +69,7 @@ void BattleAnim_RunFlyingAttack(struct BattleAnimArgs *effect) {
   BattleAnim_RunBurstSequence(effect, BURST_SEQUENCE_FLYING_ATTACK_TRIPLE);
 }
 
-/// The bytes of a gBurstSequence_Records row, one row a mode.
+/// The bytes of a gBurstSequence_Styles row, one row a mode.
 enum BurstSequenceColumn {
   BURST_SEQUENCE_ARC_SHEET, ///< the arcs (enum BurstSequenceArcs)
   BURST_SEQUENCE_PALETTE,   ///< whose palette (enum BurstSequencePalette)
@@ -104,7 +104,7 @@ enum BurstSequenceColumn {
 /// effect: the user and the targets; prelude 1 first brings in a Jupiter
 ///         Djinni over the user, the 84-frame entrance
 ///         (DJINNI_ENTRANCE_LONG).
-/// mode: the row of gBurstSequence_Records (enum BurstSequenceMode).
+/// mode: the row of gBurstSequence_Styles (enum BurstSequenceMode).
 void BattleAnim_RunBurstSequence(struct BattleAnimArgs *effect, s32 mode) {
   struct ScreenPoint actorPos;
   struct ScreenPoint targetPos;
@@ -151,7 +151,7 @@ void BattleAnim_RunBurstSequence(struct BattleAnimArgs *effect, s32 mode) {
       work->sheet[dst] = work->sheet[src];
     }
   }
-  if (gBurstSequence_Records[mode][BURST_SEQUENCE_ARC_SHEET] ==
+  if (gBurstSequence_Styles[mode][BURST_SEQUENCE_ARC_SHEET] ==
       BURST_SEQUENCE_ARCS_AND_WAVES)
     Resource_LoadAndDecompress((s32)&ResourceId_BlueArcSheetA, work->sheet, 1,
                                1);
@@ -160,7 +160,7 @@ void BattleAnim_RunBurstSequence(struct BattleAnimArgs *effect, s32 mode) {
                                1);
   Resource_LoadAndDecompress((s32)&ResourceId_WaveSheet,
                              BURST_SEQUENCE_WAVE_CELLS, 1, 0);
-  switch (gBurstSequence_Records[mode][BURST_SEQUENCE_PALETTE]) {
+  switch (gBurstSequence_Styles[mode][BURST_SEQUENCE_PALETTE]) {
   case BURST_SEQUENCE_PALETTE_MARS_DJINNI:
     paletteId = (s32)&ResourceId_MarsDjinnSheet;
     break;
@@ -203,9 +203,9 @@ void BattleAnim_RunBurstSequence(struct BattleAnimArgs *effect, s32 mode) {
   // Each frame draws the strikes in progress, then the motes. Strike i
   // starts on frame i * interval: its arc or wave plays for 6 frames, it
   // hits on its third frame, and its flash plays for the 12 after that.
-  for (frame = 0; frame != gBurstSequence_Records[mode][BURST_SEQUENCE_FRAMES];
+  for (frame = 0; frame != gBurstSequence_Styles[mode][BURST_SEQUENCE_FRAMES];
        frame++) {
-    s32 bursts = gBurstSequence_Records[mode][BURST_SEQUENCE_STRIKES];
+    s32 bursts = gBurstSequence_Styles[mode][BURST_SEQUENCE_STRIKES];
 
     Projection_ScaledUnit(work->effect->user, &actorPos);
     actorPos.x /= 2;
@@ -225,13 +225,13 @@ void BattleAnim_RunBurstSequence(struct BattleAnimArgs *effect, s32 mode) {
     draw[0] = (DrawRectangle)gHeapSlots[HEAP_SLOT_RAM_CODE];
     draw[1] = (DrawRectangle)gHeapSlots[HEAP_SLOT_RAM_CODE_2];
     for (i = 0; i != bursts; i++) {
-      s32 start = i * gBurstSequence_Records[mode][BURST_SEQUENCE_INTERVAL];
+      s32 start = i * gBurstSequence_Styles[mode][BURST_SEQUENCE_INTERVAL];
 
       if (frame >= start && frame < start + 6) {
         s32 step = frame - start;
 
         if ((i & 3) <= 1 ||
-            gBurstSequence_Records[mode][BURST_SEQUENCE_ARC_SHEET] ==
+            gBurstSequence_Styles[mode][BURST_SEQUENCE_ARC_SHEET] ==
                 BURST_SEQUENCE_ARCS) {
           // The arc: six 48x72 frames.
           if (work->effect->side == 0)
@@ -253,7 +253,7 @@ void BattleAnim_RunBurstSequence(struct BattleAnimArgs *effect, s32 mode) {
       if (frame == start + 2) {
         // The hit; the last strike ends the attack.
         // A flash row fills the canvas with level 47.
-        if (gBurstSequence_Records[mode][BURST_SEQUENCE_FLASH] == 1)
+        if (gBurstSequence_Styles[mode][BURST_SEQUENCE_FLASH] == 1)
           Iwram_FillWords(canvas, CANVAS_BYTES, 0x2f2f2f2f);
         BattleAnim_TintBattler(work->effect->targets[0], SPRITE_COLOR_WHITE,
                                POSE_DAMAGE, 0, 4);
@@ -269,8 +269,7 @@ void BattleAnim_RunBurstSequence(struct BattleAnimArgs *effect, s32 mode) {
           work->shakeFrames = 4;
           Sound_PlaySongFar(SE_HEAVY_IMPACT);
         }
-        for (j = 0; j != gBurstSequence_Records[mode][BURST_SEQUENCE_MOTES];
-             j++)
+        for (j = 0; j != gBurstSequence_Styles[mode][BURST_SEQUENCE_MOTES]; j++)
           PARTICLES[i * 32 + j].variant = (Random16() & 7) + 15;
       }
       // The flash: six 20x48 frames, 2 frames each.

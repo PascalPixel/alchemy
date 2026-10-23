@@ -121,9 +121,9 @@ void WaitFrames(s32 frames) {
   }
   for (frameIndex = 0; frameIndex < frames; frameIndex++) {
     // Run the main-loop tasks and build this frame's sprites
-    gTaskStatus = 1;
+    gTasksRunning = 1;
     Task_RunPass(TASK_PRIORITY_MAIN_LOOP);
-    gTaskStatus = 0;
+    gTasksRunning = 0;
     Oam_BuildBuffer(AllocHeapSlot(HEAP_SLOT_FRAME_SCRATCH, 0x400));
     gFrameRenderPending = 1;
     if (gCpuLoadDisplayEnabled) {
@@ -429,7 +429,7 @@ void System_VBlankHandler(void) {
     gKeyRepeatTimer--;
   }
   gKeysHeldAtVBlank = keys;
-  gFrameTick++;
+  gVBlankCount++;
   gLagFrameCount++;
   gVBlankDone = 1;
   Mixer_Enter();

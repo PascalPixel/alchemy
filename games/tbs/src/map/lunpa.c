@@ -85,28 +85,28 @@ enum { PALETTE_TRANSLUCENT_EFFECT = 14, PALETTE_EFFECT = 15 };
 
 /// How long an effect of common/effect_spawn.h lasts: 22, 44 or 126
 /// frames, then it moves away and is freed.
-s32 gShortEffectScript[] = {
+s32 gFieldEffect_ShortScript[] = {
     SCRIPT_WAIT(1), SCRIPT_REPEAT(22, 0),
     SCRIPT_WAIT(1), SCRIPT_SET_POSITION(0, 0, 0),
     SCRIPT_WAIT(1), SCRIPT_DELETE,
 };
 
-s32 gMediumEffectScript[] = {
+s32 gFieldEffect_MediumScript[] = {
     SCRIPT_WAIT(1), SCRIPT_REPEAT(44, 0),
     SCRIPT_WAIT(1), SCRIPT_SET_POSITION(0, 0, 0),
     SCRIPT_WAIT(1), SCRIPT_DELETE,
 };
 
-s32 gLongEffectScript[] = {
+s32 gFieldEffect_LongScript[] = {
     SCRIPT_WAIT(1), SCRIPT_REPEAT(126, 0),
     SCRIPT_WAIT(1), SCRIPT_SET_POSITION(0, 0, 0),
     SCRIPT_WAIT(1), SCRIPT_DELETE,
 };
 
-const s32 *gEffectScripts[] = {
-    gShortEffectScript,
-    gMediumEffectScript,
-    gLongEffectScript,
+const s32 *gFieldEffect_DurationScripts[] = {
+    gFieldEffect_ShortScript,
+    gFieldEffect_MediumScript,
+    gFieldEffect_LongScript,
 };
 
 const struct MapWarpDest *Map_GetWarpDests(void) {

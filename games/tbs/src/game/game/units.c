@@ -576,7 +576,7 @@ void SaveBlock_InitializeDefaults(void) {
   ((struct MapLocalStateSnapshotView *)gMapLocalState)->firstSnapshotSlot =
       0xff;
   zero = 0;
-  START_DMA(&zero, gSaveStamp + 0x1c,
+  START_DMA(&zero, gBattleArenaRecord + 0x1c,
             (DMA_ENABLE | DMA_32BIT | DMA_SRC_FIXED) << 16 | 0x298);
   // Build the characters, then install input and message defaults.
   Party_InitializeCharacters();

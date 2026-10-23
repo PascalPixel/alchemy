@@ -9,11 +9,11 @@ gKolimaForestFloodgateReturned:
 	.global gKolimaForestFloodgateLayout
 gKolimaForestFloodgateLayout:
 	.space 8
-	.global gKolimaPalette_First
-gKolimaPalette_First:
+	.global gKolimaPalette_Healthy
+gKolimaPalette_Healthy:
 	.space 1792
-	.global gKolimaPalette_Second
-gKolimaPalette_Second:
+	.global gKolimaPalette_Cursed
+gKolimaPalette_Cursed:
 	.space 896
 	.space 896
 	.global gKolimaForestFloodgate_ShakeScroll

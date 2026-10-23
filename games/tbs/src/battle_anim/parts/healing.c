@@ -290,7 +290,7 @@ void BattleAnim_RunHealingMotes(struct BattleAnimArgs *effect, u32 mode) {
   Task_Add(BattleAnim_ProcessPendingGraphicsTransfer, ANIM_CALLBACK_ORDER);
 
   for (frame = 0; frame != frameCount; frame++) {
-    struct BattleCamera *camera = gCameraWork;
+    struct BattleCamera *camera = gBattleCamera;
 
     if (frame == HEALING_DAMAGE_FRAME)
       ANIM_SHOW_DAMAGE(0);

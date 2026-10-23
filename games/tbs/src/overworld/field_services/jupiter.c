@@ -84,7 +84,7 @@ void FieldEffect_SetObjectAlternatingWords(
     union ObjectEventOrEffect *fieldObject) {
   u8 *object = (u8 *)fieldObject;
   u32 *table = gFieldEffect_PulseScales;
-  u32 index = ((u32)gFrameTick >> 2) & 1;
+  u32 index = ((u32)gVBlankCount >> 2) & 1;
   u32 scale = table[index];
   ((struct Object *)object)->scaleX = scale;
   ((struct Object *)object)->scaleY = scale;
@@ -146,7 +146,7 @@ void FieldEffect_UpdatePhasedRadialParticle(struct FieldEffectSprite *effect) {
         owner->sprite->image.priority;
     effect->flags = 0;
     effect->age = 0;
-    if ((gFrameTick & 1) != 0)
+    if ((gVBlankCount & 1) != 0)
       Sound_PlaySongFar(SE_HEAVY_IMPACT);
   } else if (state == MARS_SPARK_RISING) {
     if ((s16)effect->age == 3) {
@@ -177,7 +177,7 @@ void FieldEffect_UpdatePhasedRadialParticle(struct FieldEffectSprite *effect) {
     effect->targetX = position.x;
     effect->targetZ = position.z;
     effect->state++;
-    if ((gFrameTick & 1) != 0)
+    if ((gVBlankCount & 1) != 0)
       Sound_PlaySongFar(SE_145);
   } else if (state == MARS_SPARK_SWARMING) {
     if (FieldEffectSprite_HasPendingTarget(effect) == 0)

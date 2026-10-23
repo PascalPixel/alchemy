@@ -350,7 +350,7 @@ s32 NamingScreen_EditMemberName(s32 member) {
     MenuCursor_AdvanceFar(&keyCursor.cursor);
     MenuCursor_MoveTowardTargetFar(&nameCaret.cursor);
     {
-      u32 frame = (gFrameTick >> 1) & 7;
+      u32 frame = (gVBlankCount >> 1) & 7;
 
       sprite = nameCaret.sprite;
       sprite->oam.x = sprite->x + gNamingScreen_CaretWave[frame];
@@ -621,7 +621,7 @@ s32 NamingScreen_EditMemberName(s32 member) {
     MenuCursor_AdvanceFar(&keyCursor.cursor);
     MenuCursor_MoveTowardTargetFar(&nameCaret.cursor);
     {
-      u32 frame = (gFrameTick >> 1) & 7;
+      u32 frame = (gVBlankCount >> 1) & 7;
 
       sprite = nameCaret.sprite;
       sprite->oam.x = sprite->x + gNamingScreen_CaretWave[frame];

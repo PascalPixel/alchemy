@@ -98,7 +98,7 @@ void BattleAnim_RunPlanetDiver(struct BattleAnimArgs *effect) {
     dx = 15 << 16;
 
   for (frame = 0; frame != PLANET_DIVER_FRAMES; frame++) {
-    struct BattleCamera *camera = gCameraWork;
+    struct BattleCamera *camera = gBattleCamera;
 
     ANIM_VIEW_FROM_CAMERA(camera);
     // Frame loop. The user's screen position is taken on frame 0 and from
@@ -302,7 +302,7 @@ void BattleAnim_RunHaunt(struct BattleAnimArgs *effect) {
   for (frame = 0; frame != work->effect->targetCount * 32 + 96; frame++) {
     s32 *row;
 
-    camera = gCameraWork;
+    camera = gBattleCamera;
     // Frame loop: 32 frames a target, then 96 more. The battle shows the
     // damage on frame 96, whatever the number of targets.
     if (frame == 96)
@@ -438,7 +438,7 @@ void BattleAnim_RunUnusedOrbitingSpirals(struct BattleAnimArgs *effect) {
     // way (16.16 >> 10 is a quarter in BG2X's 20.8; the products keep the
     // signed sine out of a left shift). The wave is 64 lines long (1/64 turn
     // a line) and moves up a line each frame.
-    camera = gCameraWork;
+    camera = gBattleCamera;
     row = work->bg2xLines;
     if (work->effect->side == 0) {
       s32 angle;

@@ -89,7 +89,7 @@ void BattleAnim_RunDeathPlunge(struct BattleAnimArgs *effect) {
   for (frame = 0; frame != DEATH_PLUNGE_FRAMES; frame++) {
     struct BattleCamera *camera;
 
-    camera = gCameraWork;
+    camera = gBattleCamera;
     ANIM_VIEW_FROM_CAMERA(camera);
 
     // Frame 0: both leap at 15 pixels a frame. Frame 11: both turn upside
@@ -379,7 +379,7 @@ void BattleAnim_RunElementPillar(struct BattleAnimArgs *effect) {
                                                 sizeof *work);
   canvas = (void *)AllocHeapSlot(HEAP_SLOT_BATTLE_CANVAS, CANVAS_BYTES);
   sheet = (u8 *)AllocHeapSlot(HEAP_SLOT_BATTLE_SHEET, 0x60e);
-  camera = gCameraWork;
+  camera = gBattleCamera;
   work->effect = effect;
   BattleAnim_StartCanvasLayer(0);
   // Palette_StepFadeTransfer darkens the battle background for 24 frames.

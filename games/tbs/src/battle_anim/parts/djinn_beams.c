@@ -112,7 +112,7 @@ void BattleAnim_RunDjinnBeams(struct BattleAnimArgs *effect, s32 element) {
   ANIM_START_TRANSFER(work, CANVAS_COPY_AND_FADE, 50);
 
   for (frame = 0; frame != work->effect->targetCount * 16 + 116; frame++) {
-    struct BattleCamera *camera = gCameraWork;
+    struct BattleCamera *camera = gBattleCamera;
 
     // Frame loop. The last target's column is gone by frame count * 16 +
     // 88, and the loop runs 28 frames past that, while that target's last

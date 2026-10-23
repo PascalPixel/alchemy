@@ -563,9 +563,9 @@ s32 ValeInteriorsInn_Initialize(void) {
                 MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
             if (GameFlag_Get(FLAG_VALE_STORM) != 0) {
               Weather_StartLightning();
-              // Through its heap slot rather than gLightningWork, the spelling
+              // Through its heap slot rather than gFieldBlendWork, the spelling
               // this site matched with; the other is not measured.
-              ((struct LightningWork *)HEAP_SLOT_BLOCK(HEAP_SLOT_LIGHTNING))
+              ((struct FieldBlendWork *)HEAP_SLOT_BLOCK(HEAP_SLOT_FIELD_BLEND))
                   ->loud = 1;
               Weather_LastLightning();
               WaitFrames(30);
@@ -652,7 +652,7 @@ static void EventScript_DoraWakesIsaac(void) {
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
   (*eventSlot)->transitionFrames = 64;
   Weather_StartLightning();
-  (*(struct LightningWork **)((u8 *)eventSlot + Ram_LightningWorkOffset))
+  (*(struct FieldBlendWork **)((u8 *)eventSlot + Ram_FieldBlendWorkOffset))
       ->loud = 1;
   Weather_LastLightning();
   WaitFrames(30);
@@ -809,7 +809,7 @@ static void EventScript_HurryToThePlaza(void) {
   SetBlendTarget(BLDCNT_TGT1_BG1 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL);
   Io_Write16(BLEND_ALPHA(12, 16), &REG_BLDALPHA);
   Weather_StartLightning();
-  ((struct LightningWork *)HEAP_SLOT_BLOCK(HEAP_SLOT_LIGHTNING))->loud = 1;
+  ((struct FieldBlendWork *)HEAP_SLOT_BLOCK(HEAP_SLOT_FIELD_BLEND))->loud = 1;
   Weather_LastLightning();
   WaitFrames(30);
   // Dora and Isaac run out of the house (SE_DOOR_OPEN).

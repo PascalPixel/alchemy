@@ -727,7 +727,7 @@ s32 Map_Initialize(void) {
   return 0;
 }
 
-// The three scripts of gEffectScripts, as in vault.c.
+// The three scripts of gFieldEffect_DurationScripts, as in vault.c.
 s32 gVaultRevisit_ShortEffectScript[] = {
     SC_WAIT(1),           SC_LOOP(22, SC_TOP), SC_WAIT(1),
     SC_POSITION(0, 0, 0), SC_WAIT(1),          SC_FREE,
@@ -743,7 +743,7 @@ s32 gVaultRevisit_LongEffectScript[] = {
     SC_POSITION(0, 0, 0), SC_WAIT(1),           SC_FREE,
 };
 
-const s32 *gEffectScripts[] = {
+const s32 *gFieldEffect_DurationScripts[] = {
     gVaultRevisit_ShortEffectScript,
     gVaultRevisit_MediumEffectScript,
     gVaultRevisit_LongEffectScript,

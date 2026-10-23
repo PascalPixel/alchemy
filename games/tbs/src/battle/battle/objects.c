@@ -65,7 +65,7 @@ void BattleObject_UpdateSpritePriorities(void) {
 
   // The camera's turn decides which side is in front: with the yaw in the
   // first half turn (as a signed halfword), the party.
-  if ((s16)gCameraWork->yaw >= 0) {
+  if ((s16)gBattleCamera->yaw >= 0) {
     sidePriorities[0] = 1;
     sidePriorities[1] = 2;
   } else {
@@ -381,9 +381,9 @@ void BattleObject_SpawnObjectsForList(s16 *unitIds, s32 refreshPoses) {
     }
   }
   // A frame passes between releasing and creating sprites, except inside a
-  // main-loop task (gTaskStatus is set while WaitFrames runs them),
+  // main-loop task (gTasksRunning is set while WaitFrames runs them),
   // which cannot wait.
-  if (gTaskStatus == 0)
+  if (gTasksRunning == 0)
     WaitFrames(1);
 
   for (unitIndex = 0; unitIndex < UNIT_MAX &&
@@ -608,7 +608,7 @@ void BattleCamera_ApplyTransform(void) {
 #else
 s32 BattleCamera_ApplyTransform(void) {
 #endif
-  struct BattleCamera *camera = gCameraWork;
+  struct BattleCamera *camera = gBattleCamera;
   Transform_Reset();
   if (GameFlag_GetFar(FLAG_CHOOSING_COMMANDS) != 0) {
     Iwram_TransformMatrix((s32 *)gBattleCamera_CommandMatrix);
@@ -655,7 +655,7 @@ void *GetMotionRecord(struct Object *object, s32 recordIndex) {
 /// Battle_GatherActions. Writes the camera's yaw, pitch,
 /// distance, position and eye, and the transform state.
 void BattleCamera_SetDefaultView(void) {
-  struct BattleCamera *camera = gCameraWork;
+  struct BattleCamera *camera = gBattleCamera;
   struct FixedPointPosition eyeOffset;
 
   // Yaw 0x3000 (in 1/65536 turns), pitch 0xfe00, and 510 pixels away

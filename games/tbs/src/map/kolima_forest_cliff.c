@@ -202,5 +202,5 @@ struct MapEvent gKolimaForestCliffEvents[] = {
 };
 
 // The .bss order follows the first declarations (externs in field.h).
-u8 gKolimaPalette_First[1792] __attribute__((section(".bss")));
-u8 gKolimaPalette_Second[896] __attribute__((section(".bss")));
+u8 gKolimaPalette_Healthy[1792] __attribute__((section(".bss")));
+u8 gKolimaPalette_Cursed[896] __attribute__((section(".bss")));

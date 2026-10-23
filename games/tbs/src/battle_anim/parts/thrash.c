@@ -31,7 +31,7 @@ void BattleAnim_RunThrash(struct BattleAnimArgs *effect) {
   BattleAnim_RunSparkGroups(effect, SPARK_GROUPS_RISING);
 }
 
-/// Unused: no row of actflags.tsv names its kind, and the handler table is
+/// Unused: no row of ability_anims.tsv names its kind, and the handler table is
 /// reached with no other kind (BattleAnim_RunTableEffect). The user would
 /// leap at the first target, then a burst of 340 sparks would rise beneath it
 /// and the canvas flash. It is Severe Blow's animation in The Lost Age, whose

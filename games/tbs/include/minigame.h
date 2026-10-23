@@ -10,7 +10,7 @@
 
 extern const u8 gLuckyWheels_TitleLetterTiles[];
 /// Each title letter's advance, LUCKY_WHEELS_TITLE_LETTERS of them
-/// (graphics/slots/reel_tables.h).
+/// (graphics/lucky_wheels/reel_tables.h).
 extern const u8 gLuckyWheels_TitleLetterWidths[];
 
 #endif

@@ -43,7 +43,7 @@ struct EncounterZone {
   /// scripted battles, mimics and Djinn use.
   u16 rate;
   u16 level; ///< the party level the zone is made for
-  /// The formations that can appear, rows of battle/formatn.tsv.
+  /// The formations that can appear, rows of battle/formations.tsv.
   u16 enemies[ENCOUNTER_GROUP_COUNT];
   u8 weights[ENCOUNTER_GROUP_COUNT]; ///< each formation's relative chance
 };
@@ -134,8 +134,8 @@ s32 Encounter_ResolveWorldMapZoneAndBackdrop(void *pos) {
 }
 
 /// Advances the encounter counter for zone and returns the formation to fight
-/// (a row of formatn.tsv), or 0 for no battle. steps (16.16) scales how far the
-/// counter moves; a battle starts once it reaches encounterThreshold.
+/// (a row of formations.tsv), or 0 for no battle. steps (16.16) scales how far
+/// the counter moves; a battle starts once it reaches encounterThreshold.
 /// FLAG_NO_ENCOUNTERS, FLAG_NO_ENCOUNTERS_IN_MAPSEC and gGameState.cloaked
 /// (Cloak) prevent battles. FLAG_NO_ENCOUNTERS_IN_MAPSEC is set by Venus
 /// Lighthouse while its Reveal path is shown (the international editions), by

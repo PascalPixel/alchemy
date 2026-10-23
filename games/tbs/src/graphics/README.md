@@ -36,7 +36,7 @@ code uses. That `.s` usually sits beside the picture; the tilesets in
 [Menus](../menu/README.md). A picture loaded by number rather than by label is
 an entry of the resource directory (`system/resource/directory.s`): the
 grassland battle background is `Battle_GrasslandBackdrop`, placed by
-`backdrop/grassland.s`, and `ResourceId_GrasslandBackdrop` in the directory,
+`battle_bg/grassland.s`, and `ResourceId_GrasslandBackdrop` in the directory,
 which `BattleBackground_SelectForEnvironment` and the credits ask for.
 
 Some packed pictures are followed by a few bytes [Camelot](../../glossary.md#camelot)'s packing tool left
@@ -271,7 +271,7 @@ the code that loads them: battle animations, maps, layouts, windows and menus.
 | `title/` | the title picture, the logos, the "Press Start" prompt and the "To be continued" lettering |
 | `render/labels.s` | the 64-by-16 text headings, each two 32-by-16 sprites |
 | `credits/font.s` | the credits font, with its glyph widths in `credits/glyph_widths.h` |
-| `backdrop/`, `monster/`, `sprite/`, `colosso/`, `lamakan/`, `lucky_dice/`, `slots/`, `sol_sanctum_statue/` | the pictures of the map or screen they name |
+| `battle_bg/`, `monster/`, `sprite/`, `colosso/`, `lamakan/`, `lucky_dice/`, `lucky_wheels/`, `sol_sanctum_statue/` | the pictures of the map or screen they name |
 | `animref*.s` | animation slot tables, whose entries point back at their own table |
 
 The unit headers are in `games/tbs/include/unit/graphics/`. The credits are

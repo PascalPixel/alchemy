@@ -23,13 +23,13 @@ Field_Layout115:
 	.incbin "games/tbs/src/layout/layout_115/grid_es.parts.lz"
 	.balign 4, 0
 .LField_Layout115_ANIMATION:
-	.incbin "games/tbs/src/layout/layout_033/animation.script.lz"
+	.incbin "games/tbs/src/layout/layout_033/tileset_anims.script.lz"
 	.balign 4, 0
 .LField_Layout115_BLEND:
 	.incbin "games/tbs/src/layout/layout_033/blend.script.lz"
 	.balign 4, 0
 .LField_Layout115_MARKERS:
-	.incbin "games/tbs/src/layout/layout_115/markers_es.table"
+	.incbin "games/tbs/src/layout/layout_115/treasure_spots_es.table"
 	.else
 	.ifdef TBS_EDITION_FR
 	layout_header 0, 0, 80, 94, 3, 2, 1, 0, 2, 2, 0, 0
@@ -52,13 +52,13 @@ Field_Layout115:
 	.incbin "games/tbs/src/layout/layout_115/grid_es.parts.lz"
 	.balign 4, 0
 .LField_Layout115_ANIMATION:
-	.incbin "games/tbs/src/layout/layout_033/animation.script.lz"
+	.incbin "games/tbs/src/layout/layout_033/tileset_anims.script.lz"
 	.balign 4, 0
 .LField_Layout115_BLEND:
 	.incbin "games/tbs/src/layout/layout_033/blend.script.lz"
 	.balign 4, 0
 .LField_Layout115_MARKERS:
-	.incbin "games/tbs/src/layout/layout_115/markers_es.table"
+	.incbin "games/tbs/src/layout/layout_115/treasure_spots_es.table"
 	.else
 	.ifdef TBS_EDITION_IT
 	layout_header 0, 0, 80, 94, 3, 2, 1, 0, 2, 2, 0, 0
@@ -81,13 +81,13 @@ Field_Layout115:
 	.incbin "games/tbs/src/layout/layout_115/grid_es.parts.lz"
 	.balign 4, 0
 .LField_Layout115_ANIMATION:
-	.incbin "games/tbs/src/layout/layout_033/animation.script.lz"
+	.incbin "games/tbs/src/layout/layout_033/tileset_anims.script.lz"
 	.balign 4, 0
 .LField_Layout115_BLEND:
 	.incbin "games/tbs/src/layout/layout_033/blend.script.lz"
 	.balign 4, 0
 .LField_Layout115_MARKERS:
-	.incbin "games/tbs/src/layout/layout_115/markers_es.table"
+	.incbin "games/tbs/src/layout/layout_115/treasure_spots_es.table"
 	.else
 	layout_header 0, 0, 80, 94, 3, 2, 1, 0, 2, 2, 0, 0
 	layout_layer 0, 0, 16, 16, 0, 0, 0xff, 0xff
@@ -109,13 +109,13 @@ Field_Layout115:
 	.incbin "games/tbs/src/layout/layout_115/grid.parts.lz"
 	.balign 4, 0
 .LField_Layout115_ANIMATION:
-	.incbin "games/tbs/src/layout/layout_033/animation.script.lz"
+	.incbin "games/tbs/src/layout/layout_033/tileset_anims.script.lz"
 	.balign 4, 0
 .LField_Layout115_BLEND:
 	.incbin "games/tbs/src/layout/layout_033/blend.script.lz"
 	.balign 4, 0
 .LField_Layout115_MARKERS:
-	.incbin "games/tbs/src/layout/layout_115/markers.table"
+	.incbin "games/tbs/src/layout/layout_115/treasure_spots.table"
 	.endif
 	.endif
 	.endif

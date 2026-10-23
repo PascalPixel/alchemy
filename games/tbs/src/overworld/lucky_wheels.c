@@ -344,7 +344,7 @@ struct ReelSave {
   s8 wonPrizes[16];
 };
 
-#include "../graphics/slots/reel_tables.h"
+#include "../graphics/lucky_wheels/reel_tables.h"
 
 /// Lucky Wheels' frame callback: reads the keys, runs the game's state
 /// (betting, spinning and stopping the wheels, scoring the paylines, choosing

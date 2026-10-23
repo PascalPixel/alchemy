@@ -22,10 +22,10 @@ Field_Layout147:
 	.incbin "games/tbs/src/layout/layout_147/grid.parts.lz"
 	.balign 4, 0
 .LField_Layout147_ANIMATION:
-	.incbin "games/tbs/src/layout/layout_147/animation.script.lz"
+	.incbin "games/tbs/src/layout/layout_147/tileset_anims.script.lz"
 	.balign 4, 0
 .LField_Layout147_MARKERS:
-	.incbin "games/tbs/src/layout/layout_147/markers.table"
+	.incbin "games/tbs/src/layout/layout_147/treasure_spots.table"
 	.balign 4, 0
 	.global Tileset_Palette39
 Tileset_Palette39:

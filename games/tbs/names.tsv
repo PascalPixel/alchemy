@@ -96,7 +96,7 @@ unit id	word	common	Unit_Get takes ids 0-7 characters, 128-133 enemies (battle.h
 party member	word	game	en.po party; pret party (Party_AddMember)
 BattleUnits_	prefix	common	encounter.c:518 lists of the units in a battle
 BattleSide	enum	pret	pret B_SIDE_PLAYER/B_SIDE_OPPONENT (include/constants/battle.h)
-AbilityDefinition	struct	common	actions.tsv rows; *Definition form as ItemDefinition
+AbilityDefinition	struct	common	abilities.tsv rows; *Definition form as ItemDefinition
 ability	word	game	the game's Psynergy, Djinn, summons and items all act as abilities; pret's move is the Psynergy Move
 PsynergyEntry	struct	game	game/game/levels.c:51 a learned Psynergy with its class/item origin bits
 AbilityFormula	enum	common	battle_unit.h:59 the formula a power goes through
@@ -148,7 +148,7 @@ class	word	game	keep: a character's class
 character	word	game	keep: CharacterDefinition
 EnemyDefinition	struct	common	keep
 BattleAI_	prefix	pret	pret battle_ai_main.c
-formation	word	common	an enemy line-up (formatn.tsv)
+formation	word	common	an enemy line-up (formations.tsv)
 BattleType	enum	pret	pret gBattleTypeFlags
 BattleFirstStrike	enum	common	who strikes first as a battle opens
 BATTLE_OUTCOME_	constant	pret	pret gBattleOutcome

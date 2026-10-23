@@ -3,7 +3,7 @@
 
 /// @file
 /// Song and sound effect ids, indices into gSound_SongTable. MUS_ ids are
-/// music and SE_ ids sound effects, as their sequences in sound/sequence are
+/// music and SE_ ids sound effects, as their sequences in sound/songs are
 /// named. Only the ids ☀️ plays are here: the code's own, the field music
 /// gMap_MusicRules and gEncounter_BattleMusic choose by number, and
 /// the voices and defeat sounds reached by adding to a first id. A sound whose

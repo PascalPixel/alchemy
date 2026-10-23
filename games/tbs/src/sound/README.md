@@ -70,9 +70,9 @@ That lets a [map](../../glossary.md#map) name its music every time the [party](.
 restarting it, but it also holds when that song has ended: a song that
 doesn't loop plays again only after another piece of music or a fade.
 
-`Sound_PlaySong` reads the song table, `gSound_SongTable` (`games/tbs/sound/songs.s`), whose row holds the
+`Sound_PlaySong` reads the song table, `gSound_SongTable` (`games/tbs/sound/song_table.s`), whose row holds the
 song's header and its player, and the players, `gSound_PlayerSlots`
-(`games/tbs/sound/players.s`). The ranges and controls are named in
+(`games/tbs/sound/music_player_table.s`). The ranges and controls are named in
 `audio_engine_symbols.h` and the songs in `songs.h`.
 
 | Name | Value | Meaning |
@@ -252,7 +252,7 @@ are data in `games/tbs/sound`.
 with the game's compiler. The song layer's code is the sound bank; the
 driver follows the banks in the ROM's tail, with `mixer.s` loaded into IWRAM.
 The songs and samples are in `games/tbs/sound`, with the players in
-`games/tbs/sound/players.s`, and the songs' names in `songs.h` (`MUS_`,
+`games/tbs/sound/music_player_table.s`, and the songs' names in `songs.h` (`MUS_`,
 `SE_`). The unit headers are in `games/tbs/include/unit/sound/`, the
 driver's structures in `games/tbs/include/sound`.
 

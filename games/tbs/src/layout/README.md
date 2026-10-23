@@ -98,10 +98,10 @@ layout's `layout.s` puts the parts together behind its header.
 | `metatiles.tsv` | the metatiles; a metatile's number is its row, from 0 | `metatiles.delta0.lz`, `.delta1.lz` or `.delta2.lz` |
 | `shapes.tsv` | the shapes | `shapes.table.lz` |
 | `grid.tsv` | the three planes, in order | `grid.parts.lz` |
-| `grid_collision.tsv`, `grid_shape.tsv`, `grid_metatile.tsv` | each cell's metatile behavior, shape and metatile | parts of the grid |
-| `animation.tsv` | the tileset animation script | `animation.script.lz` |
+| `grid_behavior.tsv`, `grid_shape.tsv`, `grid_metatile.tsv` | each cell's metatile behavior, shape and metatile | parts of the grid |
+| `tileset_anims.tsv` | the tileset animation script | `tileset_anims.script.lz` |
 | `blend.tsv` | the blend [script](../../glossary.md#script) | `blend.script.lz` |
-| `markers.tsv` | the treasure spots | `markers.table` |
+| `treasure_spots.tsv` | the treasure spots | `treasure_spots.table` |
 | `*_ja.tsv`, `*_de.tsv`, `*_es.tsv` and so on | an [edition](../../glossary.md#editions)'s own version of a table | chosen in `layout.s` |
 | `*_patch.tsv` | bytes [Camelot](../../glossary.md#camelot) changed after packing | read by the packer |
 
@@ -200,7 +200,7 @@ copied from an earlier one says `copy of` that row's position. Only Gondowan
 Passage's grid and Venus Lighthouse's entrance's grid, with its Spanish and
 French versions, have patches.
 
-An edition's own version of a table (`grid_es.tsv`, `markers_ja.tsv`) is
+An edition's own version of a table (`grid_es.tsv`, `treasure_spots_ja.tsv`) is
 chosen in `layout.s` with `.ifdef` on the edition's name (`TBS_EDITION_ES`),
 and editions that agree share
 one file: Venus Lighthouse's entrance has a French grid and a Spanish one, and
@@ -336,7 +336,7 @@ object at each treasure spot whose id (100 to 239) the map has an event for, up 
 `TREASURE_SPOT_MAX` (10): a chest for a chest event, shown open once its flag is set
 and gone once its mimic has been beaten, and a Psynergy Stone for a search
 event that gives one, until it is taken. A treasure spot the map has no event for
-takes none of the ten. 76 layouts place `layout_000/markers.table`, which holds only the end
+takes none of the ten. 76 layouts place `layout_000/treasure_spots.table`, which holds only the end
 row.
 
 | Name | Value | Meaning |
@@ -378,7 +378,7 @@ mode is not alpha blending, and waits its second value in frames. `jump`,
 `stop` and `end` act as in the tileset animation.
 
 The words are tested in `TilesetAnim_Update` and `BlendScript_Run`,
-which have no names for them; the names are the tables' (`animation.tsv`,
+which have no names for them; the names are the tables' (`tileset_anims.tsv`,
 `blend.tsv`).
 
 | Word | Value | Meaning |

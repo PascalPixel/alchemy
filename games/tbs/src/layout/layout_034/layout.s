@@ -23,10 +23,10 @@ Field_Layout034:
 	.incbin "games/tbs/src/layout/layout_034/grid_es.parts.lz"
 	.balign 4, 0
 .LField_Layout034_ANIMATION:
-	.incbin "games/tbs/src/layout/layout_034/animation.script.lz"
+	.incbin "games/tbs/src/layout/layout_034/tileset_anims.script.lz"
 	.balign 4, 0
 .LField_Layout034_MARKERS:
-	.incbin "games/tbs/src/layout/layout_000/markers.table"
+	.incbin "games/tbs/src/layout/layout_000/treasure_spots.table"
 	.else
 	.ifdef TBS_EDITION_FR
 	layout_header 0, 0, 128, 128, 3, 2, 1, 0, 2, 2, 0, 0
@@ -49,10 +49,10 @@ Field_Layout034:
 	.incbin "games/tbs/src/layout/layout_034/grid_es.parts.lz"
 	.balign 4, 0
 .LField_Layout034_ANIMATION:
-	.incbin "games/tbs/src/layout/layout_034/animation.script.lz"
+	.incbin "games/tbs/src/layout/layout_034/tileset_anims.script.lz"
 	.balign 4, 0
 .LField_Layout034_MARKERS:
-	.incbin "games/tbs/src/layout/layout_000/markers.table"
+	.incbin "games/tbs/src/layout/layout_000/treasure_spots.table"
 	.else
 	.ifdef TBS_EDITION_IT
 	layout_header 0, 0, 128, 128, 3, 2, 1, 0, 2, 2, 0, 0
@@ -75,10 +75,10 @@ Field_Layout034:
 	.incbin "games/tbs/src/layout/layout_034/grid_es.parts.lz"
 	.balign 4, 0
 .LField_Layout034_ANIMATION:
-	.incbin "games/tbs/src/layout/layout_034/animation.script.lz"
+	.incbin "games/tbs/src/layout/layout_034/tileset_anims.script.lz"
 	.balign 4, 0
 .LField_Layout034_MARKERS:
-	.incbin "games/tbs/src/layout/layout_000/markers.table"
+	.incbin "games/tbs/src/layout/layout_000/treasure_spots.table"
 	.else
 	layout_header 0, 0, 128, 128, 3, 2, 1, 0, 2, 2, 0, 0
 	layout_layer 0, 0, 16, 16, 0, 0, 0xff, 0xff
@@ -100,10 +100,10 @@ Field_Layout034:
 	.incbin "games/tbs/src/layout/layout_034/grid.parts.lz"
 	.balign 4, 0
 .LField_Layout034_ANIMATION:
-	.incbin "games/tbs/src/layout/layout_034/animation.script.lz"
+	.incbin "games/tbs/src/layout/layout_034/tileset_anims.script.lz"
 	.balign 4, 0
 .LField_Layout034_MARKERS:
-	.incbin "games/tbs/src/layout/layout_000/markers.table"
+	.incbin "games/tbs/src/layout/layout_000/treasure_spots.table"
 	.endif
 	.endif
 	.endif

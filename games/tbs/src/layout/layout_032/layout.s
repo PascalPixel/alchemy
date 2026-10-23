@@ -22,13 +22,13 @@ Field_Layout032:
 	.incbin "games/tbs/src/layout/layout_032/grid.parts.lz"
 	.balign 4, 0
 .LField_Layout032_ANIMATION:
-	.incbin "games/tbs/src/layout/layout_032/animation.script.lz"
+	.incbin "games/tbs/src/layout/layout_032/tileset_anims.script.lz"
 	.balign 4, 0
 .LField_Layout032_BLEND:
 	.incbin "games/tbs/src/layout/layout_005/blend.script.lz"
 	.balign 4, 0
 .LField_Layout032_MARKERS:
-	.incbin "games/tbs/src/layout/layout_032/markers.table"
+	.incbin "games/tbs/src/layout/layout_032/treasure_spots.table"
 	.balign 4, 0
 	.global Tileset_Set24Palette
 Tileset_Set24Palette:

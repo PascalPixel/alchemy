@@ -19,10 +19,10 @@
 #define BATTLE_OPTIONS gKeysHeld
 
 /// Each ability's staging bits (BattleTurn.animation), by ability id
-/// 0 to 518 (battle/actflags.tsv).
+/// 0 to 518 (battle/ability_anims.tsv).
 extern const u32 gAbilityAnimations[];
 /// Each ability's outcome staging (BattleTurn.staging), 0 for the default, by
-/// ability id 0 to 517 (battle/actstat.tsv).
+/// ability id 0 to 517 (battle/ability_staging.tsv).
 extern const u8 gAbilityStaging[];
 
 #endif

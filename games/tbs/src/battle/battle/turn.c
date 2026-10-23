@@ -745,10 +745,10 @@ s32 BattleTurn_Build(struct BattleAction *request, struct BattleTurn *plan) {
             Battle_RollEffectSuccessFar(request->unitId, plan->targetIds[index],
                                         ability->element, ability->effect, 100);
     }
-    // How it is staged: the ability's row of actflags.tsv, its variant
+    // How it is staged: the ability's row of ability_anims.tsv, its variant
     // raised to the first target's multiplier less one (a double or triple
-    // blow); then the staging, from actstat.tsv where it gives one. The two
-    // tables end at ABILITY_THRASH and ABILITY_SEVERE_BLOW.
+    // blow); then the staging, from ability_staging.tsv where it gives one. The
+    // two tables end at ABILITY_THRASH and ABILITY_SEVERE_BLOW.
     if (abilityId >= 0 && abilityId <= ABILITY_THRASH) {
       plan->animation = gAbilityAnimations[abilityId];
       if (plan->targetMultiplier[0] > 1)

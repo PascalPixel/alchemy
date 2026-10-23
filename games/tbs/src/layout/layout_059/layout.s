@@ -22,8 +22,8 @@ Field_Layout059:
 	.incbin "games/tbs/src/layout/layout_059/grid.parts.lz"
 	.balign 4, 0
 .LField_Layout059_ANIMATION:
-	.incbin "games/tbs/src/layout/layout_054/animation.script.lz"
+	.incbin "games/tbs/src/layout/layout_054/tileset_anims.script.lz"
 	.balign 4, 0
 .LField_Layout059_MARKERS:
-	.incbin "games/tbs/src/layout/layout_059/markers.table"
+	.incbin "games/tbs/src/layout/layout_059/treasure_spots.table"
 	.balign 4, 0

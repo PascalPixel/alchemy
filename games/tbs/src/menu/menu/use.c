@@ -230,7 +230,7 @@ s32 Ability_ApplyToTargets(s32 effectId, s32 sourceId, s32 targetId,
     }
 
     // Then the ability's effect (enum AbilityEffect). The first two cases are
-    // an HP and a PP restore no ability has (actions.tsv).
+    // an HP and a PP restore no ability has (abilities.tsv).
     switch (effect->effect) {
     case ABILITY_EFFECT_RESTORE_HP:
       if (target->hp <= 0 || target->hp == target->hpMax) {
@@ -376,7 +376,7 @@ void Ability_PlayUseAnimation(s32 action) {
     default:
       Audio_PlayCueReturnOne(MUS_FANFARE_SMALL);
 
-    // The HP and PP restores no ability has (actions.tsv).
+    // The HP and PP restores no ability has (abilities.tsv).
     case ABILITY_EFFECT_RESTORE_HP:
     case ABILITY_EFFECT_RESTORE_PP:
     case ABILITY_EFFECT_DRAIN_HP:

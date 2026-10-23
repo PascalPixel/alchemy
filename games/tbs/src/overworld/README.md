@@ -186,7 +186,7 @@ zone to ground 1. A map no rule matches has no battles. The world map takes its 
 leader, which also pick the battle background.
 
 A zone is a row of `encounter.tsv`: `rate` (0 for none), `level`, the
-formations `group0` to `group7` (rows of `games/tbs/src/battle/formatn.tsv`), their
+formations `group0` to `group7` (rows of `games/tbs/src/battle/formations.tsv`), their
 relative chances `weight0` to `weight7`, and `zone`, the map whose rules
 select it. Zones with rate 0 are fought only by slot, through
 `Field_RequestBattleFromEncounterTable` (the scripted battles, such as
@@ -282,7 +282,7 @@ animations](../battle_anim/README.md) do:
 Halt is dispatched in `dispatch.c` itself: only one object event is held at a time
 (`gGameState.pausedObject`), so casting it again frees the one held before.
 
-The field kind is the `type` column of `games/tbs/src/game/actions.tsv`,
+The field kind is the `type` column of `games/tbs/src/game/abilities.tsv`,
 named by `enum FieldPsynergy` (`unit/overworld/field_services.h`); the phases are
 `enum PsynergyPhase` (`map_tables.h`), bits 30 to 28 of a map event's control
 word, the word that holds its kind ([Maps](../map/README.md#what-a-map-event-row-says)).
@@ -428,7 +428,7 @@ Prototypes are in `games/tbs/include/unit/overworld/`.
 - **request**: a field of the field work that something sets to interrupt the
   walk (above).
 - **field kind**: what an ability does on the field, the `type` column of
-  `games/tbs/src/game/actions.tsv`, named by `enum FieldPsynergy`
+  `games/tbs/src/game/abilities.tsv`, named by `enum FieldPsynergy`
   (`unit/overworld/field_services.h`), `FIELD_PSYNERGY_MOVE` (1) to
   `FIELD_PSYNERGY_AVOID` (16). Whirlwind and Gale share `FIELD_PSYNERGY_WHIRLWIND`.
 - **effect scene**: `struct FieldEffectWork` (`field/fx_work.h`), the work of
@@ -474,7 +474,7 @@ matches with; [Matching](../MATCHING.md) lists them.
 
 ## Evidence and open questions
 
-The field kinds are named from the `type` column of `actions.tsv` and the
+The field kinds are named from the `type` column of `abilities.tsv` and the
 Psynergy the English release gives each; the requests from what the loop does
 with each; the encounter columns from what `Encounter_CountStepsAndSelectFormation`
 computes with them; the zone names in `encounter.tsv` from the maps whose

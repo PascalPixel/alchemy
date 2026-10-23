@@ -34,7 +34,8 @@
 ///   numbers, its two ways out (KOLIMA_TUNNEL_TO_KOLIMA_INTERIORS and
 ///   KOLIMA_TUNNEL_TO_KOLIMA). That table's two jars, an Apple and an Herb
 ///   (bg events 100 and 101), are in the village: only Kolima's layout
-///   (layout_037's markers.tsv) places them, at cells (23, 8) and (13, 23).
+///   (layout_037's treasure_spots.tsv) places them, at cells (23, 8) and (13,
+///   23).
 /// - Kolima Bridge (MapId_KolimaBridge), "the grand bridge across the
 ///   river" and "the pride of Kolima" to the village's armor seller, with the
 ///   world map at both ends. It is a drawbridge, standing raised between its

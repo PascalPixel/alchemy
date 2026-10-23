@@ -377,7 +377,7 @@ void BattleAnim_RunHaunt(struct BattleAnimArgs *effect) {
 /// the 59 frames between.
 #define ORBITING_SPIRALS_LIFE 60
 
-/// Unused: no row of actflags.tsv in either game names its kind, and the
+/// Unused: no row of ability_anims.tsv in either game names its kind, and the
 /// handler table is reached with no other kind (BattleAnim_RunTableEffect),
 /// so the player never sees it. Four spirals would circle 40 pixels above each
 /// target in turn, 16 frames apart, for 59 frames each, 16 pixels out from

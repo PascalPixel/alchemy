@@ -77,7 +77,7 @@ name the ids the code uses.
 | Table | One row per | Placed as |
 | --- | --- | --- |
 | `items.tsv` | item (324) | `gItem_DefinitionTable` (`item_table.s`) |
-| `actions.tsv` | ability (519) | `gAbilityDefinitions` (`actions.s`) |
+| `abilities.tsv` | ability (519) | `gAbilityDefinitions` (`abilities.s`) |
 | `djinn.tsv` | Djinni, `DJINN_PER_ELEMENT` (20) to an [element](../../glossary.md#the-four-elements), Venus, Mercury, Mars, Jupiter (80) | `gDjinn_DefinitionTable` (`djinn_table.s`) |
 | `enemies.tsv` | enemy (165) | `gEnemy_Definitions` (`enemies.s`) |
 | `summons.tsv` | summon (16) | `gSummon_DefinitionTable` (`summons.s`) |
@@ -121,7 +121,7 @@ element 4, `ELEMENT_NONE`; every other column is 0.
 | `effect0_kind`, `effect0_amount` to `effect3_` | up to four effects while equipped, `enum EquipEffectKind` (`EQUIP_EFFECT_ADD_HP`, `EQUIP_EFFECT_SCALE_ATTACK` and the rest), which `Unit_Calculate` applies |
 | `action_id` | the ability the item uses |
 
-`action_id` and `unleash_action` are rows of `actions.tsv`. Used in battle,
+`action_id` and `unleash_action` are rows of `abilities.tsv`. Used in battle,
 the item command builds a turn from its `action_id` (`BattleTurn_Build`,
 [battle/battle/turn.c](../battle/battle/turn.c)), and
 [Battles](../battle/README.md#how-an-ability-resolves) follows that ability
@@ -287,8 +287,8 @@ Code in the other banks calls this one's functions by their far-call names,
 and a map's [overlay](../../glossary.md#overlay) through the list of
 outside functions it was built with (its [import table](../../glossary.md#entry-table-and-import-table)); some code reads
 `gGameState`, the state of the game in progress, directly, as the save
-summary does. The battle folder reads `actions.tsv` through
-`struct AbilityDefinition` beside its own `actflags.tsv` and `actstat.tsv`, which
+summary does. The battle folder reads `abilities.tsv` through
+`struct AbilityDefinition` beside its own `ability_anims.tsv` and `ability_staging.tsv`, which
 choose how an ability is drawn ([Battle](../../battle.md)). The flags and the
 units are part of the save file.
 
@@ -334,7 +334,7 @@ far-call table is `games/tbs/src/system/far_call/GAME.S`.
   says who is in it and `gGameState.party` lists them in order.
 - **inventory entry**: one of a unit's `INVENTORY_SLOTS` (15) halfwords,
   holding an item, its state and its count.
-- **ability**: a row of `actions.tsv`. Psynergy, a Djinni's and a summon's
+- **ability**: a row of `abilities.tsv`. Psynergy, a Djinni's and a summon's
   effect, an item's use and an enemy's attack are all abilities.
 - **element**: `enum Element`, `ELEMENT_VENUS` to `ELEMENT_JUPITER`, and
   `ELEMENT_NONE`. A character's **element levels** are the Djinn set on it

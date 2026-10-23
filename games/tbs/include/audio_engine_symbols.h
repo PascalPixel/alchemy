@@ -39,7 +39,8 @@ enum SongControl {
   SONG_SE_FIRST = 100
 };
 
-/// The players by their place in gSound_PlayerSlots (sound/players.s).
+/// The players by their place in gSound_PlayerSlots
+/// (sound/music_player_table.s).
 enum SoundPlayerId {
   SOUND_PLAYER_FANFARE = 0, ///< gMusicPlayerFanfare
   SOUND_PLAYER_MUSIC = 1,   ///< gMusicPlayerBgm

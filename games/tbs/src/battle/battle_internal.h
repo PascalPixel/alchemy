@@ -204,12 +204,12 @@ enum BattleStaging {
   STAGING_DJINNI = 6,   ///< a Djinni with no attack (Granite, Quartz...)
   STAGING_FLEE = 7,     ///< a unit runs
   /// The action plays as a cast, the caster showing its element's streaks in
-  /// place of the gathering star field. Where actstat.tsv gives no staging,
-  /// it's how an enemy's ability plays when the ability isn't Psynergy
-  /// (Ability_IsPsynergy) and its row of actflags.tsv isn't 0; an enemy's
-  /// Psynergy plays as STAGING_CAST. actstat.tsv gives it to Slice and to
-  /// seven weapon unleashes: Blizzard, Drown, Demon Fire, Vorpal Slash, Rapid
-  /// Smash, Sonic Smash and Titan Blade.
+  /// place of the gathering star field. Where ability_staging.tsv gives no
+  /// staging, it's how an enemy's ability plays when the ability isn't Psynergy
+  /// (Ability_IsPsynergy) and its row of ability_anims.tsv isn't 0; an enemy's
+  /// Psynergy plays as STAGING_CAST. ability_staging.tsv gives it to Slice and
+  /// to seven weapon unleashes: Blizzard, Drown, Demon Fire, Vorpal Slash,
+  /// Rapid Smash, Sonic Smash and Titan Blade.
   STAGING_ENEMY_CAST = 8,
   STAGING_FULL_SCREEN = 9 ///< Gaia, Rockfall, Procne and their kin
 };
@@ -224,7 +224,7 @@ enum BattleStaging {
 #define ANIM_SUMMON 0x8000      ///< BattleAnim_RunSummonEffectFar, actor's view
 #define ANIM_ON_DOWNED 0x10000  ///< shown on downed targets too (revivals)
 /// Plays the animation on the side opposite its targets. Unused: no row of
-/// actflags.tsv in either game sets it and no code adds it, so the flip in
+/// ability_anims.tsv in either game sets it and no code adds it, so the flip in
 /// BattleStaging_HideField never happens.
 #define ANIM_OTHER_SIDE 0x20000
 

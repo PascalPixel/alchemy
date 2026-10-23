@@ -23,10 +23,10 @@ Field_Layout002:
 	.incbin "games/tbs/src/layout/layout_002/grid_es.parts.lz"
 	.balign 4, 0
 .LField_Layout002_ANIMATION:
-	.incbin "games/tbs/src/layout/layout_002/animation.script.lz"
+	.incbin "games/tbs/src/layout/layout_002/tileset_anims.script.lz"
 	.balign 4, 0
 .LField_Layout002_MARKERS:
-	.incbin "games/tbs/src/layout/layout_002/markers_es.table"
+	.incbin "games/tbs/src/layout/layout_002/treasure_spots_es.table"
 	.else
 	.ifdef TBS_EDITION_FR
 	layout_header 0, 0, 60, 188, 3, 2, 1, 1, 2, 2, 0, 0
@@ -49,10 +49,10 @@ Field_Layout002:
 	.incbin "games/tbs/src/layout/layout_002/grid_es.parts.lz"
 	.balign 4, 0
 .LField_Layout002_ANIMATION:
-	.incbin "games/tbs/src/layout/layout_002/animation.script.lz"
+	.incbin "games/tbs/src/layout/layout_002/tileset_anims.script.lz"
 	.balign 4, 0
 .LField_Layout002_MARKERS:
-	.incbin "games/tbs/src/layout/layout_002/markers_es.table"
+	.incbin "games/tbs/src/layout/layout_002/treasure_spots_es.table"
 	.else
 	.ifdef TBS_EDITION_IT
 	layout_header 0, 0, 60, 188, 3, 2, 1, 1, 2, 2, 0, 0
@@ -75,10 +75,10 @@ Field_Layout002:
 	.incbin "games/tbs/src/layout/layout_002/grid_it.parts.lz"
 	.balign 4, 0
 .LField_Layout002_ANIMATION:
-	.incbin "games/tbs/src/layout/layout_002/animation.script.lz"
+	.incbin "games/tbs/src/layout/layout_002/tileset_anims.script.lz"
 	.balign 4, 0
 .LField_Layout002_MARKERS:
-	.incbin "games/tbs/src/layout/layout_002/markers_es.table"
+	.incbin "games/tbs/src/layout/layout_002/treasure_spots_es.table"
 	.else
 	layout_header 0, 0, 60, 188, 3, 2, 1, 1, 2, 2, 0, 0
 	layout_layer 0, 0, 16, 16, 0, 0, 0xff, 0xff
@@ -100,10 +100,10 @@ Field_Layout002:
 	.incbin "games/tbs/src/layout/layout_002/grid.parts.lz"
 	.balign 4, 0
 .LField_Layout002_ANIMATION:
-	.incbin "games/tbs/src/layout/layout_002/animation.script.lz"
+	.incbin "games/tbs/src/layout/layout_002/tileset_anims.script.lz"
 	.balign 4, 0
 .LField_Layout002_MARKERS:
-	.incbin "games/tbs/src/layout/layout_002/markers.table"
+	.incbin "games/tbs/src/layout/layout_002/treasure_spots.table"
 	.endif
 	.endif
 	.endif

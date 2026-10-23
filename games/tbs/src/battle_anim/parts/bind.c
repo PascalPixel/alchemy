@@ -289,7 +289,7 @@ void BattleAnim_RunBind(struct BattleAnimArgs *effect) {
   BattleAnim_EndCanvasLayer();
 }
 
-/// Unused: no row of actflags.tsv in either game names its kind, and the
+/// Unused: no row of ability_anims.tsv in either game names its kind, and the
 /// handler table is reached with no other kind (BattleAnim_RunTableEffect),
 /// so the player never sees it. It would show the spinning triangle and rune of
 /// BattleAnim_RunBind without the Djinni, with the user stepping up to the

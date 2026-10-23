@@ -122,7 +122,7 @@ the Gryphon's first action, Wing Flutter, takes rolls 0 to 52, Tornado 53 to
 | `ACTION_STRATEGY_SAME` | 6 | the entry last picked |
 
 An ability whose added effect (what it does besides damage or healing, the
-`effect` column of `actions.tsv`) is Defend, Total Defense or Flee is never used
+`effect` column of `abilities.tsv`) is Defend, Total Defense or Flee is never used
 as an ability. `BattleAI_ChooseAction` turns it into the command
 `COMMAND_DEFEND`, `COMMAND_TOTAL_DEFENSE` or `COMMAND_FLEE`, aimed at the enemy itself, so the
 guard is raised with the party's before anyone acts.
@@ -188,7 +188,7 @@ struct BattleTurn {
   s32 abilityId;
   s32 element;
   s32 outcome;               /* enum BattleStaging */
-  u32 animation;     /* actflags.tsv's row: STAGING_ */
+  u32 animation;     /* ability_anims.tsv's row: STAGING_ */
   s32 failure;
   u32 hauntDamage;
 };
@@ -319,8 +319,8 @@ effect is rolled per target in `BattleAbility_ApplyToTarget`.
 
 ### Staging and announcement
 
-The turn records how its action is staged, from `actflags.tsv` and
-`actstat.tsv`, and the announcement the player reads before it plays. Three
+The turn records how its action is staged, from `ability_anims.tsv` and
+`ability_staging.tsv`, and the announcement the player reads before it plays. Three
 words name the parts of how it looks:
 
 - the **outcome** (`BattleTurn.staging`) is the staging around the
@@ -330,19 +330,19 @@ words name the parts of how it looks:
 
 ![A test recording: Isaac casts Quake at Garet, Ivan and Mia seven times, frame for frame, with the turn's outcome forced to a different value each time, from `STAGING_CAST`, Quake's own, to `STAGING_FULL_SCREEN`. As a cast, a summon or a full-screen move, rings of light gather round Isaac before the rock pillars rise. As an item or a Djinni, the pillars rise with no gathering. As an enemy's cast, yellow streaks burst round Isaac instead of the rings. Staged as fleeing, Isaac turns and runs and the battle ends. The six that cast deal the same damage: `Garet takes 14 damage!!!`, `Ivan takes 15 damage!` and `Mia takes 12 damage!`.](https://alchemy.pascalpixel.com/guides/battle/staging.gif)
 
-`actflags.tsv` gives the turn's animation word: the animation id in the
+`ability_anims.tsv` gives the turn's animation word: the animation id in the
 low twelve bits (`ANIM_ID_MASK`), the variant above them, and the bits
 that choose the animation's entry point (`ANIM_BY_ID_RANGE`,
 `ANIM_SUMMON`). [Battle animations](../battle_anim/README.md#how-a-move-picks-its-animation)
 gives the whole bit layout.
 
-The outcome comes from `actstat.tsv` where its row is not 0. Otherwise an
+The outcome comes from `ability_staging.tsv` where its row is not 0. Otherwise an
 ability that costs PP, or Psy Drain (`Ability_IsPsynergy`), is a cast
 (`STAGING_CAST`); another ability with an animation to draw is a cast too, or
 `STAGING_ENEMY_CAST` for an enemy; and one with nothing to draw shows only
 its messages (`STAGING_MESSAGES`). An item's use is staged as
 `STAGING_ITEM` unless its outcome is a summon or full screen.
-`actstat.tsv` gives `STAGING_FULL_SCREEN` to Gaia, Mother Gaia, Grand Gaia,
+`ability_staging.tsv` gives `STAGING_FULL_SCREEN` to Gaia, Mother Gaia, Grand Gaia,
 Rockfall, Rockslide, Avalanche and Procne: the camera turns, the side that
 isn't targeted fades out, and only the actor and the target side stay on the
 field while the animation plays (`BattleStaging_HideField`). It
@@ -707,14 +707,14 @@ depends on naming the fields only one view names so far.
 
 ## Limits
 
-- There are 519 abilities. The turn reads `actflags.tsv` only up to
-  `ABILITY_THRASH`, and `actstat.tsv`, a row shorter, up to
+- There are 519 abilities. The turn reads `ability_anims.tsv` only up to
+  `ABILITY_THRASH`, and `ability_staging.tsv`, a row shorter, up to
   `ABILITY_SEVERE_BLOW`.
 - A turn reaches at most `TARGET_MAX` targets.
 - The party fights `PARTY_BATTLE_SIZE` at a time and the enemies
   `ENEMY_BATTLE_SIZE` at most; in a link battle each console sends
   `LINK_PARTY_SIZE`.
-- `formatn.tsv` has 380 formations, each of up to five kinds of enemy with
+- `formations.tsv` has 380 formations, each of up to five kinds of enemy with
   the least and most of each (`member0` to `member4`, `minimum0` to
   `minimum4`, `maximum0` to `maximum4`). The encounter zones in
   `../overworld/encounter.tsv` choose among them.
@@ -729,9 +729,9 @@ depends on naming the fields only one view names so far.
 | `battle/*.c` | the code, in 24 parts |
 | `battle_data.s`, `battle_vars.s` | the smaller tables and pictures in ROM order, including where the `.tsv` tables below are placed |
 | `battle_calc.s` | the fall-off tables: the share of damage, healing or an added effect's chance a target gets by its distance from the aimed place |
-| `actflags.tsv` | each ability's animation id and staging bits (`gAbilityAnimations`) |
-| `actstat.tsv` | each ability's staging, where it overrides the turn's choice (`gAbilityStaging`) |
-| `formatn.tsv` | the formations |
+| `ability_anims.tsv` | each ability's animation id and staging bits (`gAbilityAnimations`) |
+| `ability_staging.tsv` | each ability's staging, where it overrides the turn's choice (`gAbilityStaging`) |
+| `formations.tsv` | the formations |
 | [`sprites.tsv`](sprites.tsv) | each enemy's battle sprite |
 | `presets.tsv` | the debug party presets |
 | `advarrow.s` | the arrow beside a battle message that waits for the player, built from `advarrow.png`: sixteen 8 by 16 frames, of which the code cycles through the first eight, one every four frames |
@@ -754,17 +754,17 @@ form a table of contents. The functions are declared in
   element (`Unit.element`).
 - **ability**, **ability id**: anything a unit does on its turn, from Attack
   to Quake, a Djinni, a summon, an item's use or an enemy's move. The id is a
-  row number in three tables: `../game/actions.tsv` (`struct AbilityDefinition`, read
-  with `Ability_Get`), `actflags.tsv` and `actstat.tsv`.
+  row number in three tables: `../game/abilities.tsv` (`struct AbilityDefinition`, read
+  with `Ability_Get`), `ability_anims.tsv` and `ability_staging.tsv`.
 - **ability kind**: the low four bits of the ability's `flags`
   (`ABILITY_FORMULA_MASK`, `enum AbilityFormula`). It chooses the formula each
-  target goes through. The **animation id** in `actflags.tsv` is unrelated and
+  target goes through. The **animation id** in `ability_anims.tsv` is unrelated and
   chooses only the animation (`enum BattleAnimId`).
-- **power**: the `power` column of `actions.tsv`. What it counts depends on
+- **power**: the `power` column of `abilities.tsv`. What it counts depends on
   the ability kind. A unit's **Power** and **Resist**, capitalized as the
   summary screen writes them, are its per-element stats.
 - **added effect**: what an ability does besides damage or healing, the
-  `effect` column of `actions.tsv` (`enum AbilityEffect`).
+  `effect` column of `abilities.tsv` (`enum AbilityEffect`).
 - **element level**: the level the summary screen shows under each element
   (`Unit_GetElementLevel`). A character's Power and Resist start from it, and
   it moves the chance of an added effect.
@@ -777,7 +777,7 @@ form a table of contents. The functions are declared in
 - **turn**: the action under way (`struct BattleTurn`): the actor, the
   ability, its element, its targets with their distances and rolls, its
   **outcome** (`enum BattleStaging`, how it is staged) and its
-  **animation word** (the `actflags.tsv` row: `STAGING_*`).
+  **animation word** (the `ability_anims.tsv` row: `STAGING_*`).
 - **battle object**: a unit's figure on the battlefield (`struct BattleObject`,
   `BattleObject_Get`). It has one sprite; the Kraken and the Fusion
   Dragon are drawn in two parts and have two (`SPRITE_WITH_SECOND_PART_A`,
@@ -852,7 +852,7 @@ Isaac's copy at 30 behind and 0.85, and for an attack on Ivan, 8 behind and
 turns left while both Defense changes ran their 7 turns. Aiming Quake along
 four large enemies moved the cursor from the last place round to the first.
 
-Bits 0 and 1 of the `flags` column of `actflags.tsv` (`ANIM_ON_DOWNED`,
+Bits 0 and 1 of the `flags` column of `ability_anims.tsv` (`ANIM_ON_DOWNED`,
 `ANIM_OTHER_SIDE`) are read, but no row in either game sets them. The turn
 adds the first itself for the revive effects; nothing adds the second, so the
 side flip it asks for is unused. `BattlePlacement_LayoutEnemies` lays out the

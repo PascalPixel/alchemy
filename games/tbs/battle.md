@@ -47,7 +47,7 @@ The debug battle menu (`DebugBattle_RunMenu`) is the only other way in.
 battle's [heap slots](glossary.md#heap-slot), `gBattleWork` among them, and sets `FLAG_IN_BATTLE`
 while it runs. Its result is the number of enemies defeated,
 `BATTLE_OUTCOME_FLED` or `BATTLE_OUTCOME_LOST`. The formation is a row of
-`src/battle/formatn.tsv`, the enemy formations, which
+`src/battle/formations.tsv`, the enemy formations, which
 `src/battle/battle/formation.c` turns into enemy units; the encounter zones
 in `src/overworld/encounter.tsv` choose the row.
 
@@ -77,11 +77,11 @@ it:
 
 | Table | Read through | What its row says |
 | --- | --- | --- |
-| `src/game/actions.tsv` | `struct AbilityDefinition`, `Ability_Get` | what the ability does: its targets, element, range, PP cost, power, added effect and ability kind |
-| `src/battle/actflags.tsv` | `gAbilityAnimations` | the animation that draws it (its animation kind) and how strong a version |
-| `src/battle/actstat.tsv` | `gAbilityStaging` | what happens around the animation, where the default won't do |
+| `src/game/abilities.tsv` | `struct AbilityDefinition`, `Ability_Get` | what the ability does: its targets, element, range, PP cost, power, added effect and ability kind |
+| `src/battle/ability_anims.tsv` | `gAbilityAnimations` | the animation that draws it (its animation kind) and how strong a version |
+| `src/battle/ability_staging.tsv` | `gAbilityStaging` | what happens around the animation, where the default won't do |
 
-Quake is row 3. Its row of `actions.tsv` has element `ELEMENT_VENUS`, range 2,
+Quake is row 3. Its row of `abilities.tsv` has element `ELEMENT_VENUS`, range 2,
 a PP cost of 4 and a power of 12. Its `flags` column holds two things at
 once:
 
@@ -91,10 +91,10 @@ once:
 
 The ability kind, the low four bits of `flags` (`ABILITY_FORMULA_MASK`),
 chooses the formula the targets go through. The animation kind in
-`actflags.tsv` is an unrelated number that chooses only the animation, so
+`ability_anims.tsv` is an unrelated number that chooses only the animation, so
 the arithmetic and the picture can be changed independently.
 
-`actstat.tsv` is 0 for most abilities, and the battle then picks the
+`ability_staging.tsv` is 0 for most abilities, and the battle then picks the
 staging itself: a cast for Psynergy or anything else with an animation, and
 only the messages for an ability with none. Its 86 other rows choose the
 staging: Terra Strike's, `STAGING_ATTACK`, has the actor run up and
@@ -276,7 +276,7 @@ when it is over, while the battle waits.
 
 `BattleStaging_DispatchAction` starts the animation through one of three
 entry points, chosen by bits of the turn's `animation`, which are the
-ability's `actflags.tsv` row:
+ability's `ability_anims.tsv` row:
 
 | Entry point | Chosen by | What it runs |
 | --- | --- | --- |
@@ -399,11 +399,11 @@ takes one target's queue apart, entry by entry.
 
 ## Limits
 
-- There are 519 abilities, ids 0 to 518; `actstat.tsv` is one row shorter.
+- There are 519 abilities, ids 0 to 518; `ability_staging.tsv` is one row shorter.
 - A turn reaches at most `TARGET_MAX` (14) targets.
 - The party fights four at a time and the enemies six at most
   (`PARTY_BATTLE_SIZE`, `ENEMY_BATTLE_SIZE`).
-- `formatn.tsv` has 380 formations, each of up to five kinds of enemy.
+- `formations.tsv` has 380 formations, each of up to five kinds of enemy.
 - The playback queue holds `BATTLE_PLAYBACK_CAPACITY` (64) entries; `BattlePlayback_Push`
   doesn't check it.
 - The canvas is 128 by 128 pixels, the work block holds 64 particles, and

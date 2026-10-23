@@ -22,7 +22,7 @@ Field_Layout004:
 	.incbin "games/tbs/src/layout/layout_004/grid.parts.lz"
 	.balign 4, 0
 .LField_Layout004_MARKERS:
-	.incbin "games/tbs/src/layout/layout_004/markers.table"
+	.incbin "games/tbs/src/layout/layout_004/treasure_spots.table"
 	.balign 4, 0
 	.global Tileset_Set03Palette
 Tileset_Set03Palette:

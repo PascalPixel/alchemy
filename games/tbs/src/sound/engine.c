@@ -306,8 +306,8 @@ void MusicPlayer_StartSong(struct SoundPlayer *player,
     return;
 
   // Preserve a higher-priority song unless the player is idle. checkPriority
-  // is 0 for every player (sound/players.s), so in ☀️ a new song always
-  // replaces the one playing.
+  // is 0 for every player (sound/music_player_table.s), so in ☀️ a new song
+  // always replaces the one playing.
   if (player->checkPriority != 0) {
     if (player->header == NULL ||
         !(player->tracks[0].flags & SOUND_TRACK_RESET)) {

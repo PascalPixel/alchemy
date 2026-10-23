@@ -392,7 +392,7 @@ and `Field_UsePsynergy` handles it:
    map's Psynergy events for what the leader faces.
 2. It runs the `PSYNERGY_PHASE_BEFORE_CAST` event.
 3. It plays the effect for the ability's field kind (`enum FieldPsynergy`, from
-   the `type` column of `src/game/actions.tsv`, so Move's hand or Frost's
+   the `type` column of `src/game/abilities.tsv`, so Move's hand or Frost's
    ice) through `FieldEffect_Run`, or `FieldEffect_DispatchRequestKind` when
    an event names the target. An event in the `PSYNERGY_PHASE_EFFECT_ACTS`
    phase runs from inside the effect, at the moment Force strikes or Frost

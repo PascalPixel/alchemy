@@ -21,7 +21,7 @@
 ///   a chest at its north end (its render,
 ///   places/goma-cave-stream/map-5.png). Its only way out is the metatile
 ///   behavior 1 cell at its south tip, cell (38, 55) in layout_023's
-///   grid_collision.tsv, two cells south of the arrival, which leads back to
+///   grid_behavior.tsv, two cells south of the arrival, which leads back to
 ///   Vale (GOMA_CAVE_STREAM_TO_VALE_GATE).
 /// - MapId_GomaCaveBridge, the way out, where a wooden bridge crosses the
 ///   river. It has no object events and only its two warps: back south into

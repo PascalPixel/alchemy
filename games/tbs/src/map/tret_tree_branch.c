@@ -12,7 +12,7 @@
 /// Coord events on metatile behaviors 10 to 15 lie in pairs at the top and
 /// bottom of the vines that hang from one branch to the one below (cells
 /// (7, 12) and (8, 17), (37, 11) and (36, 16), (41, 20) and (40, 26) in
-/// layout_047's grid_collision.tsv): each moves the leader and the camera five
+/// layout_047's grid_behavior.tsv): each moves the leader and the camera five
 /// or six cells north or south in one step, up or down its vine, with no walk.
 /// Each vine has metatile behaviors of its own, so 12 and 13 repeat 10's and
 /// 11's events for the second vine. Breeze, a Jupiter Djinni, stands here until

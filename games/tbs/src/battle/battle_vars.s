@@ -41,7 +41,7 @@ gBattleTransition_CurtainTiles:
 @ 380 enemy formations.
 	.global gFormations
 gFormations:
-	.incbin "games/tbs/src/battle/formatn.table"
+	.incbin "games/tbs/src/battle/formations.table"
 	.global gBattleFormation_LevelMatchedEnemies
 gBattleFormation_LevelMatchedEnemies:
 	.2byte 0x75, 0x7a, 0x7d, 0x85, 0x87, 0x89, 0x9e, 0x9f, 0xa0, 0xa1

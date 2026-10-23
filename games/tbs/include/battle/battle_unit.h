@@ -88,7 +88,7 @@ enum AbilityFormula {
 
 /// AbilityDefinition.effect: what an ability does besides its damage or
 /// healing, applied by BattleAbility_ApplyToTarget unless noted. Each is named
-/// for the abilities that have it (actions.tsv, with their English names and
+/// for the abilities that have it (abilities.tsv, with their English names and
 /// descriptions). ABILITY_EFFECT_SIDESTEP and ABILITY_EFFECT_CRAZY_VOICE are
 /// read by no code here, and no row has ABILITY_EFFECT_RESTORE_HP or
 /// ABILITY_EFFECT_RESTORE_PP. A stat change whose name ends in `_2` moves its
@@ -173,9 +173,9 @@ enum AbilityEffect {
 /// AbilityDefinition.targetMode: whom an ability may target, from its user's
 /// view. The party's cursor (BattleTarget_RunSelection) shows the enemies for
 /// every mode but ABILITY_TARGET_ALLIES and ABILITY_TARGET_SELF. No row of
-/// actions.tsv has a mode between ABILITY_TARGET_ALLIES and ABILITY_TARGET_SELF
-/// or above it; BattleTurn_SetTargets would walk such a mode's range as it does
-/// ABILITY_TARGET_FOES'.
+/// abilities.tsv has a mode between ABILITY_TARGET_ALLIES and
+/// ABILITY_TARGET_SELF or above it; BattleTurn_SetTargets would walk such a
+/// mode's range as it does ABILITY_TARGET_FOES'.
 enum AbilityTarget {
   /// The ability takes one target, the aimed unit, whatever its range
   /// (BattleTurn_SetTargets), and an enemy aims it at itself. The field

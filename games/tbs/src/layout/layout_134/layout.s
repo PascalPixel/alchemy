@@ -23,13 +23,13 @@ Field_Layout134:
 	.incbin "games/tbs/src/layout/layout_134/grid_de.parts.lz"
 	.balign 4, 0
 .LField_Layout134_ANIMATION:
-	.incbin "games/tbs/src/layout/layout_134/animation.script.lz"
+	.incbin "games/tbs/src/layout/layout_134/tileset_anims.script.lz"
 	.balign 4, 0
 .LField_Layout134_BLEND:
 	.incbin "games/tbs/src/layout/layout_020/blend.script.lz"
 	.balign 4, 0
 .LField_Layout134_MARKERS:
-	.incbin "games/tbs/src/layout/layout_134/markers_de.table"
+	.incbin "games/tbs/src/layout/layout_134/treasure_spots_de.table"
 	.else
 	.ifdef TBS_EDITION_ES
 	layout_header 0, 0, 96, 96, 3, 2, 1, 0, 2, 2, 0, 0
@@ -52,13 +52,13 @@ Field_Layout134:
 	.incbin "games/tbs/src/layout/layout_134/grid_de.parts.lz"
 	.balign 4, 0
 .LField_Layout134_ANIMATION:
-	.incbin "games/tbs/src/layout/layout_134/animation.script.lz"
+	.incbin "games/tbs/src/layout/layout_134/tileset_anims.script.lz"
 	.balign 4, 0
 .LField_Layout134_BLEND:
 	.incbin "games/tbs/src/layout/layout_020/blend.script.lz"
 	.balign 4, 0
 .LField_Layout134_MARKERS:
-	.incbin "games/tbs/src/layout/layout_134/markers_de.table"
+	.incbin "games/tbs/src/layout/layout_134/treasure_spots_de.table"
 	.else
 	.ifdef TBS_EDITION_FR
 	layout_header 0, 0, 96, 96, 3, 2, 1, 0, 2, 2, 0, 0
@@ -81,13 +81,13 @@ Field_Layout134:
 	.incbin "games/tbs/src/layout/layout_134/grid_de.parts.lz"
 	.balign 4, 0
 .LField_Layout134_ANIMATION:
-	.incbin "games/tbs/src/layout/layout_134/animation.script.lz"
+	.incbin "games/tbs/src/layout/layout_134/tileset_anims.script.lz"
 	.balign 4, 0
 .LField_Layout134_BLEND:
 	.incbin "games/tbs/src/layout/layout_020/blend.script.lz"
 	.balign 4, 0
 .LField_Layout134_MARKERS:
-	.incbin "games/tbs/src/layout/layout_134/markers_de.table"
+	.incbin "games/tbs/src/layout/layout_134/treasure_spots_de.table"
 	.else
 	.ifdef TBS_EDITION_IT
 	layout_header 0, 0, 96, 96, 3, 2, 1, 0, 2, 2, 0, 0
@@ -110,13 +110,13 @@ Field_Layout134:
 	.incbin "games/tbs/src/layout/layout_134/grid_de.parts.lz"
 	.balign 4, 0
 .LField_Layout134_ANIMATION:
-	.incbin "games/tbs/src/layout/layout_134/animation.script.lz"
+	.incbin "games/tbs/src/layout/layout_134/tileset_anims.script.lz"
 	.balign 4, 0
 .LField_Layout134_BLEND:
 	.incbin "games/tbs/src/layout/layout_020/blend.script.lz"
 	.balign 4, 0
 .LField_Layout134_MARKERS:
-	.incbin "games/tbs/src/layout/layout_134/markers_de.table"
+	.incbin "games/tbs/src/layout/layout_134/treasure_spots_de.table"
 	.else
 	layout_header 0, 0, 96, 96, 3, 2, 1, 0, 2, 2, 0, 0
 	layout_layer 0, 0, 16, 16, 0, 0, 0xff, 0xff
@@ -138,13 +138,13 @@ Field_Layout134:
 	.incbin "games/tbs/src/layout/layout_134/grid.parts.lz"
 	.balign 4, 0
 .LField_Layout134_ANIMATION:
-	.incbin "games/tbs/src/layout/layout_134/animation.script.lz"
+	.incbin "games/tbs/src/layout/layout_134/tileset_anims.script.lz"
 	.balign 4, 0
 .LField_Layout134_BLEND:
 	.incbin "games/tbs/src/layout/layout_020/blend.script.lz"
 	.balign 4, 0
 .LField_Layout134_MARKERS:
-	.incbin "games/tbs/src/layout/layout_134/markers.table"
+	.incbin "games/tbs/src/layout/layout_134/treasure_spots.table"
 	.endif
 	.endif
 	.endif

@@ -22,7 +22,7 @@ Field_Layout172:
 	.incbin "games/tbs/src/layout/layout_001/grid.parts.lz"
 	.balign 4, 0
 .LField_Layout172_MARKERS:
-	.incbin "games/tbs/src/layout/layout_000/markers.table"
+	.incbin "games/tbs/src/layout/layout_000/treasure_spots.table"
 	.balign 4, 0
 @ Tilesets 68 to 75 belong to the test rooms (Field_Layout172 to Field_Layout179) and
 @ are one blank set: fourteen black palettes, two tiles in colour 1 and three

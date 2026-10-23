@@ -53,12 +53,12 @@ gBattleAI_ActionWeights:
 @ Resulting states by ability.
 	.global gAbilityStaging
 gAbilityStaging:
-	.incbin "games/tbs/src/battle/actstat.table"
+	.incbin "games/tbs/src/battle/ability_staging.table"
 	.balign 4, 0
 @ Ability animations: animation id, phase and flags.
 	.global gAbilityAnimations
 gAbilityAnimations:
-	.incbin "games/tbs/src/battle/actflags.table"
+	.incbin "games/tbs/src/battle/ability_anims.table"
 	.global gBattleParty_RoundEndSideOrder
 gBattleParty_RoundEndSideOrder:
 	.4byte 1, 2

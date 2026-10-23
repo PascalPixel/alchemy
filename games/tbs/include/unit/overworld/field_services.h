@@ -20,7 +20,7 @@ enum PsynergyEffectStep {
 };
 
 /// A field Psynergy's effect, as the field kind: the type column of
-/// games/tbs/src/game/actions.tsv, named for the abilities that have it. The
+/// games/tbs/src/game/abilities.tsv, named for the abilities that have it. The
 /// effect scene keeps it as its animation.
 enum FieldPsynergy {
   FIELD_PSYNERGY_MOVE = 1,

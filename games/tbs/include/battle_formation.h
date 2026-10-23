@@ -20,7 +20,7 @@ struct Formation {
   u8 maximumCounts[5];
 };
 
-/// The 380 formations, by formation id (battle/formatn.tsv).
+/// The 380 formations, by formation id (battle/formations.tsv).
 extern struct Formation gFormations[];
 
 #endif

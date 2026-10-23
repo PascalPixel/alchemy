@@ -241,7 +241,7 @@ void DebugBattle_ViewMessages(void) {
 }
 
 /// The encounter the debug battle starts with (two or three Kobolds), and
-/// the Djinn tutorial's: rows of formatn.tsv.
+/// the Djinn tutorial's: rows of formations.tsv.
 #define DEBUG_FIRST_ENCOUNTER 257
 #define DJINN_TUTORIAL_ENCOUNTER 28
 

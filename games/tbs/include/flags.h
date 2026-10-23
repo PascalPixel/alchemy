@@ -270,12 +270,12 @@
 /// both eyes sparkling, and the passage stays open on later visits.
 /// ★ Named from the game: "set the small gem into the empty socket."
 /// (MsgSolSanctumSetSmallGem)
-#define FLAG_SOL_SANCTUM_FIRST_GEM_PLACED 0x81a
-/// As FLAG_SOL_SANCTUM_FIRST_GEM_PLACED, for the second Small Jewel and the
-/// second minotaur relief, whose doorway it opened.
+#define FLAG_SOL_SANCTUM_FIRST_SMALL_JEWEL_SET 0x81a
+/// As FLAG_SOL_SANCTUM_FIRST_SMALL_JEWEL_SET, for the second Small Jewel and
+/// the second minotaur relief, whose doorway it opened.
 /// ★ Named from the game: "set the small gem into the empty socket."
 /// (MsgSolSanctumSetSmallGem)
-#define FLAG_SOL_SANCTUM_SECOND_GEM_PLACED 0x821
+#define FLAG_SOL_SANCTUM_SECOND_SMALL_JEWEL_SET 0x821
 /// The party has beaten the evil within Tret in Tret Tree and he has spoken
 /// with it since, too weak to free Kolima. Set only once that talk ends; from
 /// then on his room's passage stays open, and in Kolima Forest Hermes' Water
@@ -316,7 +316,7 @@
 #define FLAG_VAULT_BONE_RECEIVED 0x85b
 /// Ringing Vault's bell has called Sap out of hiding.
 /// ★ Named from the game: "Sap" (MsgDjinnName)
-#define FLAG_VAULT_DJINNI_CALLED_BY_BELL 0x867
+#define FLAG_VAULT_SAP_CALLED_BY_BELL 0x867
 /// Douse has put out the fire between two torches in BilibinCaveRapier.
 /// ★ Named from what the player sees: a small fire burning between two torches
 /// before a doorway (its render)
@@ -1069,11 +1069,11 @@
 /// Saturos is beaten in the Lighthouse Aerie and Alex has come for him; set
 /// with FLAG_SATUROS_BEATEN_AT_MERCURY.
 /// ★ Named from the game: "Alex!" (MsgMercuryGot)
-#define FLAG_MERCURY_AERIE_ALEX_APPEARED 0x880
+#define FLAG_MERCURY_LIGHTHOUSE_AERIE_ALEX_APPEARED 0x880
 /// The party has beaten Saturos in the Lighthouse Aerie, and Alex has come for
-/// him; set with FLAG_MERCURY_AERIE_ALEX_APPEARED. The Fountain of Healing at
-/// the lighthouse's foot flows again and people come to drink from it, and
-/// Imil and Bilibin talk of what has changed.
+/// him; set with FLAG_MERCURY_LIGHTHOUSE_AERIE_ALEX_APPEARED. The Fountain of
+/// Healing at the lighthouse's foot flows again and people come to drink from
+/// it, and Imil and Bilibin talk of what has changed.
 /// ★ Named from the game: "we got him!" (MsgMercuryGot)
 #define FLAG_SATUROS_BEATEN_AT_MERCURY 0x881
 /// The Psynergy Armor in the entrance's chest is taken.
@@ -1648,17 +1648,17 @@
 
 // Vault Jail: its chests, set once each is opened
 /// ★ Named from the game: "Water of Life" (MsgItemName)
-#define FLAG_JAIL_CHEST_WATER_OF_LIFE 0xf8c
+#define FLAG_VAULT_JAIL_CHEST_WATER_OF_LIFE 0xf8c
 /// ★ Named from the game: "Smoke Bomb" (MsgItemName)
-#define FLAG_JAIL_CHEST_SMOKE_BOMB 0xf8d
+#define FLAG_VAULT_JAIL_CHEST_SMOKE_BOMB 0xf8d
 /// ★ Named from the game: "Lucky Medal" (MsgItemName)
-#define FLAG_JAIL_CHEST_LUCKY_MEDAL 0xf8e
+#define FLAG_VAULT_JAIL_CHEST_LUCKY_MEDAL 0xf8e
 /// ★ Named from the game: "Antidote" (MsgItemName)
-#define FLAG_JAIL_CHEST_ANTIDOTE 0xf8f
+#define FLAG_VAULT_JAIL_CHEST_ANTIDOTE 0xf8f
 /// ★ Named from the game: "coin" (MsgGotCoins)
-#define FLAG_JAIL_CHEST_COINS 0xf90
+#define FLAG_VAULT_JAIL_CHEST_COINS 0xf90
 /// ★ Named from the game: "Elixir" (MsgItemName)
-#define FLAG_JAIL_CHEST_ELIXIR 0xf91
+#define FLAG_VAULT_JAIL_CHEST_ELIXIR 0xf91
 /// Xian: set once the jar's Lucky Medal is taken.
 /// ★ Named from the game: "Lucky Medal" (MsgItemName)
 #define FLAG_XIAN_LUCKY_MEDAL_JAR 0xf6e

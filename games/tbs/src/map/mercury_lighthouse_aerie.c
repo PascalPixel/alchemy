@@ -26,7 +26,7 @@
 ///   the party still holds the Mars Star, and the two warp over to the lift
 ///   and ride it down. Mia means to go with the party, since with the
 ///   lighthouse lit the fountain will run over with healing water again
-///   (FLAG_MERCURY_AERIE_ALEX_APPEARED, and
+///   (FLAG_MERCURY_LIGHTHOUSE_AERIE_ALEX_APPEARED, and
 ///   FLAG_SATUROS_BEATEN_AT_MERCURY, which Imil, Bilibin and the lighthouse
 ///   test).
 /// - Getting about. Six platforms dip under the leader, who jumps two cells
@@ -945,7 +945,7 @@ static void MercuryLighthouseAerie_ConfrontSaturos(void) {
 /// for long. "Isaac, we got him!" Alex appears and explains that the
 /// lighthouse bound Saturos' fire Psynergy and lent Mia endless power. Saturos
 /// stands again; the two warp over to the lift and ride it down, and the party
-/// regroups on the leader. Sets FLAG_MERCURY_AERIE_ALEX_APPEARED and
+/// regroups on the leader. Sets FLAG_MERCURY_LIGHTHOUSE_AERIE_ALEX_APPEARED and
 /// FLAG_SATUROS_BEATEN_AT_MERCURY.
 static void MercuryLighthouseAerie_AlexAppears(void) {
 
@@ -1490,7 +1490,7 @@ static void MercuryLighthouseAerie_AlexAppears(void) {
   Engine_MapGridRedraw();
   Engine_TaskWait(1);
   MapGrid_CopyCellsTo(4, 0x46, 4, 0x4A, 5, 4);
-  GameFlag_Set(FLAG_MERCURY_AERIE_ALEX_APPEARED);
+  GameFlag_Set(FLAG_MERCURY_LIGHTHOUSE_AERIE_ALEX_APPEARED);
   GameFlag_Set(FLAG_SATUROS_BEATEN_AT_MERCURY);
   Engine_ScriptEnd();
 }
@@ -1950,7 +1950,7 @@ struct ObjectEventTemplate gMercuryLighthouseAerieObjectEventTemplates[] = {
 // clang-format on
 
 struct MapEvent gMercuryLighthouseAerieEvents[] = {
-    {MAP_EVENT_COORD, 5, FLAG_MERCURY_AERIE_ALEX_APPEARED,
+    {MAP_EVENT_COORD, 5, FLAG_MERCURY_LIGHTHOUSE_AERIE_ALEX_APPEARED,
      EVENT_SCRIPT(MercuryLighthouseAerie_ConfrontSaturos)},
     {MAP_EVENT_COORD, 6, FLAG_LIFT_UP,
      EVENT_SCRIPT(MercuryLighthouseAerie_CallLift)},

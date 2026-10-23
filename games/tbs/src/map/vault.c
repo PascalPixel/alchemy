@@ -27,7 +27,7 @@
 ///   the passage it shows opens only in the later map.
 ///
 /// Sap, a Venus Djinni, hides near the bell, and the first ring since the party
-/// came in by a gate (FLAG_VAULT_DJINNI_CALLED_BY_BELL) calls it out to stand
+/// came in by a gate (FLAG_VAULT_SAP_CALLED_BY_BELL) calls it out to stand
 /// beside the bell; it joins only in the later map. The well rumbles with
 /// water and a wooden box holds a Nut. The doors open with an animation
 /// (gVault_*DoorCells) and lead into the houses, shops and inn
@@ -826,13 +826,13 @@ static void Vault_JumpObjectEventToAndWait(s32 localId, s32 x, s32 z,
 
 /// In Vault, Isaac rings the bell; the first time since the party came in by a
 /// gate, Sap, the Venus Djinni hiding nearby, jumps out and comes to the bell
-/// (FLAG_VAULT_DJINNI_CALLED_BY_BELL). No event here lets the party talk to
+/// (FLAG_VAULT_SAP_CALLED_BY_BELL). No event here lets the party talk to
 /// it; it joins in the town's later map (vault_revisit.c).
 static void EventScript_RingBell(void) {
   Engine_ScriptStart();
   Script_PlayCue(SE_100);
   Engine_ScriptWait(40);
-  if (GameFlag_IsSet(FLAG_VAULT_DJINNI_CALLED_BY_BELL) == 0) {
+  if (GameFlag_IsSet(FLAG_VAULT_SAP_CALLED_BY_BELL) == 0) {
     ObjectEvent_SetAttachedEffect(LOCALID_SAP, ATTACHED_EFFECT_IN_FRONT |
                                                    ATTACHED_EFFECT_ONCE);
     Engine_ObjectEventJump(LOCALID_SAP, 4, 0);
@@ -843,7 +843,7 @@ static void EventScript_RingBell(void) {
     Engine_ScriptWait(20);
     ObjectEvent_WalkToAndWait(LOCALID_SAP, 408, 104);
     ObjectEvent_WalkToAndWait(LOCALID_SAP, 408, 120);
-    GameFlag_Set(FLAG_VAULT_DJINNI_CALLED_BY_BELL);
+    GameFlag_Set(FLAG_VAULT_SAP_CALLED_BY_BELL);
   }
   Engine_ScriptEnd();
 }
@@ -933,7 +933,7 @@ s32 Map_Initialize(void) {
   // Let's go find the rod!"
   if (gGameState.warpDest <= VAULT_NORTH_UNUSED) {
     if (Engine_GameFlagIsSet(FLAG_KEEP_PARTY_POSITION) == 0) {
-      Engine_GameFlagClear(FLAG_VAULT_DJINNI_CALLED_BY_BELL);
+      Engine_GameFlagClear(FLAG_VAULT_SAP_CALLED_BY_BELL);
       if (Engine_GameFlagIsSet(FLAG_VAULT_THIEVES_JAILED) == 0) {
         if (Engine_GameFlagIsSet(FLAG_VAULT_IVAN_JOINED_ROD_SEARCH) != 0) {
           Engine_ScriptStart();
@@ -971,7 +971,7 @@ s32 Map_Initialize(void) {
       }
     }
   }
-  if (Engine_GameFlagIsSet(FLAG_VAULT_DJINNI_CALLED_BY_BELL) != 0) {
+  if (Engine_GameFlagIsSet(FLAG_VAULT_SAP_CALLED_BY_BELL) != 0) {
     ObjectEvent_SetPosition(LOCALID_SAP, PIXELS(408), PIXELS(120));
   }
   // The same welcome out of the Vault Sanctum while Ivan is out of the party.

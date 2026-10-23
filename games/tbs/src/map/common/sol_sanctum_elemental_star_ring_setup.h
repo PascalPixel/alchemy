@@ -56,7 +56,7 @@ static void SolSanctum_UpdateRing(void) {
 
   i = 0;
   while (i != list->count) {
-    struct ObjectEvent *obj;
+    struct ObjectEvent *objectEvent;
     s32 speedX;
     s32 speedY;
     s32 speedZ;
@@ -68,7 +68,7 @@ static void SolSanctum_UpdateRing(void) {
     s32 z;
     u8 hold;
 
-    obj = entry->objectEvent;
+    objectEvent = entry->objectEvent;
     speedX = entry->speedX;
     speedY = entry->speedY;
     speedZ = entry->speedZ;
@@ -95,15 +95,15 @@ static void SolSanctum_UpdateRing(void) {
           step = gSolSanctumRing_ScaleSteps[i];
           scale = 0x1999;
           hold = 24;
-          x = obj->x.fixed;
-          y = obj->y.fixed;
-          z = obj->z.fixed;
-          obj->x.fixed = 0;
-          obj->y.fixed = 0;
-          obj->z.fixed = 0;
+          x = objectEvent->x.fixed;
+          y = objectEvent->y.fixed;
+          z = objectEvent->z.fixed;
+          objectEvent->x.fixed = 0;
+          objectEvent->y.fixed = 0;
+          objectEvent->z.fixed = 0;
         }
-        obj->scaleX = scale;
-        obj->scaleY = scale;
+        objectEvent->scaleX = scale;
+        objectEvent->scaleY = scale;
       }
       rx = (gSolSanctum_RingDrift[i][0] * (u32)Engine_RandomNext()) >> 16;
       ry = (gSolSanctum_RingDrift[i][1] * (u32)Engine_RandomNext()) >> 16;
@@ -139,24 +139,24 @@ static void SolSanctum_UpdateRing(void) {
           y += dy;
           z += dz;
           if (--hold == 0) {
-            obj->x.fixed = x;
-            obj->targetX = x;
+            objectEvent->x.fixed = x;
+            objectEvent->targetX = x;
             if (ry != 0) {
-              obj->y.fixed = y;
-              obj->targetY = y;
+              objectEvent->y.fixed = y;
+              objectEvent->targetY = y;
             }
-            obj->z.fixed = z;
-            obj->targetZ = z;
+            objectEvent->z.fixed = z;
+            objectEvent->targetZ = z;
           }
         } else {
-          obj->x.fixed += dx;
-          obj->targetX = obj->x.fixed;
+          objectEvent->x.fixed += dx;
+          objectEvent->targetX = objectEvent->x.fixed;
           if (ry != 0) {
-            obj->y.fixed += dy;
-            obj->targetY = obj->y.fixed;
+            objectEvent->y.fixed += dy;
+            objectEvent->targetY = objectEvent->y.fixed;
           }
-          obj->z.fixed += dz;
-          obj->targetZ = obj->z.fixed;
+          objectEvent->z.fixed += dz;
+          objectEvent->targetZ = objectEvent->z.fixed;
         }
       }
     }

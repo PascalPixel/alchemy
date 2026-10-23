@@ -18,49 +18,50 @@ struct GlyphCursor {
 /// SelectionScreen_Close frees; the hand's picture takes a VRAM cache
 /// entry for that long.
 void SelectionScreen_Create(void) {
-  struct SelectionScreenWork *work;
+  struct SelectionScreenWork *screen;
   struct SelectionSprite *visual;
   const u8 *table;
   s32 i;
   u16 clear = 0;
 
-  work = AllocHeapSlotEwram(HEAP_SLOT_SELECTION_SCREEN,
-                            sizeof(struct SelectionScreenWork));
-  work->head = NULL;
-  work->path = NULL;
-  work->window = NULL;
-  work->unread = clear;
-  work->top = clear;
+  screen = AllocHeapSlotEwram(HEAP_SLOT_SELECTION_SCREEN,
+                              sizeof(struct SelectionScreenWork));
+  screen->head = NULL;
+  screen->path = NULL;
+  screen->window = NULL;
+  screen->unread = clear;
+  screen->top = clear;
   // Bit 7: the first list starts from its first entry. Until the list is
   // first cleared the row is drawn 32 pixels lower and takes no input.
-  work->cursorIndex = 128;
-  work->verticalScroll = 32;
-  work->count = clear;
-  work->locked = 999;
+  screen->cursorIndex = 128;
+  screen->verticalScroll = 32;
+  screen->count = clear;
+  screen->locked = 999;
   // The records: 0 and 1 the end arrows, 2 to 8 the row's icons, 9 to 13 the
   // chosen icons, 14 the pointing hand and 15 the large icon.
   i = 0;
   do {
-    work->records[i + 2].kind = ICON_KIND_NONE;
-    work->records[i + 9].kind = ICON_KIND_NONE;
+    screen->records[i + 2].kind = ICON_KIND_NONE;
+    screen->records[i + 9].kind = ICON_KIND_NONE;
     i++;
   } while (i != 5);
   // Cleared through a view from each record's base field, which forms
-  // work + 372 and stores at #2; through kind the address differs.
-  ((struct GlyphCursor *)&work->records[7].base)->cursor = 0;
-  ((struct GlyphCursor *)&work->records[8].base)->cursor = 0;
-  work->records[0].kind = 0;
-  work->records[1].kind = 0;
-  work->records[0].y = 0;
-  work->records[1].y = 0;
+  // screen + 372 and stores at #2; through kind the address differs.
+  ((struct GlyphCursor *)&screen->records[7].base)->cursor = 0;
+  ((struct GlyphCursor *)&screen->records[8].base)->cursor = 0;
+  screen->records[0].kind = 0;
+  screen->records[1].kind = 0;
+  screen->records[0].y = 0;
+  screen->records[1].y = 0;
   // The hand: a 16x16 sprite of 256 colours, 256 bytes a frame.
   table = gMenu_AnimatedCursorTiles;
-  work->records[14].slot = VramCache_FindFreeEntry();
-  work->records[14].tile = VramCache_Load(work->records[14].slot, 256, table);
-  work->records[14].kind = 0;
-  work->records[14].scale = 0;
-  work->records[15].kind = ICON_KIND_NONE;
-  visual = &work->records[14].sprite;
+  screen->records[14].slot = VramCache_FindFreeEntry();
+  screen->records[14].tile =
+      VramCache_Load(screen->records[14].slot, 256, table);
+  screen->records[14].kind = 0;
+  screen->records[14].scale = 0;
+  screen->records[15].kind = ICON_KIND_NONE;
+  visual = &screen->records[14].sprite;
   visual->mode = 0;
   visual->mosaic = 0;
   visual->colors = 1;

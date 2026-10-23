@@ -1199,7 +1199,7 @@ s32 Save_ToChosenFile(void) {
   s32 result;
   s32 file;
   s32 error;
-  struct SaveWork *save;
+  struct SaveWork *work;
 
   result = 0;
   error = Save_InitializeWork();
@@ -1208,12 +1208,12 @@ s32 Save_ToChosenFile(void) {
     result = SAVE_ERROR_NO_MEMORY;
   } else {
     Save_LoadFileSummaries();
-    save = gSaveWork;
+    work = gSaveWork;
     file = FileMenu_SelectFile(gSaveSlot, FILE_MENU_SAVE);
     if (file == -1) {
       result = file;
     } else {
-      if (save->summary[file].level != 0) {
+      if (work->summary[file].level != 0) {
         FieldMessage_Show(MsgOverwriteConfirm, 13);
         while (UiWork_IsComplete() == 0) {
           WaitFrames(1);

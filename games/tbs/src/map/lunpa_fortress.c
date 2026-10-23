@@ -790,9 +790,9 @@ static void LunpaFortress_UpdatePairedGuardDetection(void) {
       &((struct MapGridScrollWork *)gMapGridWork[0])
            ->layers[MAPGRID_LAYER_OVERHEAD];
 #ifdef UBFIX
-  struct FieldWork *fieldWork = (struct FieldWork *)gFieldWork;
+  struct FieldWork *work = (struct FieldWork *)gFieldWork;
 #else
-  s16 *fieldWork = *(s16 **)&gMapGridWork[19];
+  s16 *work = *(s16 **)&gMapGridWork[19];
 #endif
 
   if (gFrameCount & 1) {
@@ -802,8 +802,8 @@ static void LunpaFortress_UpdatePairedGuardDetection(void) {
     patrolLayer->speedX = -1;
     patrolLayer->speedY = -1;
   }
-  if (FLAG_CHECK(FLAG_MENU_OPEN) || PATROL_PSYNERGY_REQUEST(fieldWork) != 0 ||
-      PATROL_ITEM_REQUEST(fieldWork) != 0) {
+  if (FLAG_CHECK(FLAG_MENU_OPEN) || PATROL_PSYNERGY_REQUEST(work) != 0 ||
+      PATROL_ITEM_REQUEST(work) != 0) {
     firstGuard->paused = 1;
     secondGuard->paused = 1;
   } else if (!FLAG_CHECK(FLAG_MAP_TEMP_14)) {
@@ -816,15 +816,13 @@ static void LunpaFortress_UpdatePairedGuardDetection(void) {
       if (gGameState.cloaked != 0) {
         if (LunpaFortress_IsLeaderNearGuard(LOCALID_UPPER_FLOOR_FIRST_PATROL) &&
             gGameState.cloaked != 0) {
-          SetFieldWorkValue(&PATROL_PSYNERGY_REQUEST(fieldWork),
-                            CLOAK_NEAR_GUARD);
+          SetFieldWorkValue(&PATROL_PSYNERGY_REQUEST(work), CLOAK_NEAR_GUARD);
           return;
         }
         if (LunpaFortress_IsLeaderNearGuard(
                 LOCALID_UPPER_FLOOR_SECOND_PATROL) &&
             gGameState.cloaked != 0) {
-          SetFieldWorkValue(&PATROL_PSYNERGY_REQUEST(fieldWork),
-                            CLOAK_NEAR_GUARD);
+          SetFieldWorkValue(&PATROL_PSYNERGY_REQUEST(work), CLOAK_NEAR_GUARD);
           return;
         }
       }
@@ -840,7 +838,7 @@ static void LunpaFortress_UpdatePairedGuardDetection(void) {
         }
       }
       if (FLAG_CHECK(FLAG_MAP_TEMP_14)) {
-        SetFieldWorkValue(&PATROL_RAISED_TRIGGER(fieldWork),
+        SetFieldWorkValue(&PATROL_RAISED_TRIGGER(work),
                           TRIGGER_PATROL_PAIR_SPOTTED);
       }
     }

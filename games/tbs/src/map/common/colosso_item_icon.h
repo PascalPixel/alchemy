@@ -26,7 +26,7 @@
 void Colosso_ShowItemIcon(s32 id, s32 item) {
   struct ObjectEvent *objectEvent;
   s32 one;
-  struct Sprite *spr;
+  struct Sprite *sprite;
   s32 base;
   s32 tile;
   s32 none;
@@ -35,22 +35,22 @@ void Colosso_ShowItemIcon(s32 id, s32 item) {
   if (objectEvent != 0) {
     one = objectEvent->spriteStorageKind;
     if (one == 1) {
-      spr = (struct Sprite *)objectEvent->sprite;
+      sprite = (struct Sprite *)objectEvent->sprite;
       base = (s32)AllocHeapSlot(17, 0x608);
       none = 0;
       base += 0x400;
       Dma_Fill32(none, (void *)base, 0x80);
       ItemIcon_LoadTilesFar(item);
-      tile = Engine_VramLoad(spr->slot, 128, (const void *)base);
+      tile = Engine_VramLoad(sprite->slot, 128, (const void *)base);
       FreeHeapSlot(17);
       objectEvent->retainSpriteCache = one;
-      SpriteAnim_Clear(spr->entries[0]);
-      spr->entries[0] = (void *)none;
-      spr->count = none;
-      spr->image.fullColor = none;
-      spr->image.tile = tile;
-      spr->dirty = none;
-      spr->flags = none;
+      SpriteAnim_Clear(sprite->entries[0]);
+      sprite->entries[0] = (void *)none;
+      sprite->count = none;
+      sprite->image.fullColor = none;
+      sprite->image.tile = tile;
+      sprite->dirty = none;
+      sprite->flags = none;
     }
   }
 }

@@ -319,10 +319,10 @@ void Motion_SetTargetPositionFromMagnitudeAngle(struct ObjectRuntime *object,
 
 // From here on objects are passed in each function's own view of them.
 
-/// Counts the free blocks (owner 0xff) of the 512 resource blocks.
+/// Counts the free blocks (owner 0xff) of the sprite VRAM cache's 512 blocks.
 /// FieldEffect_LoadActionEffectResources subtracts this from VRAM_BLOCK_COUNT
 /// to record the blocks already occupied before the effect starts.
-s32 ResourceTable_CountFreeBlocks(void) {
+s32 VramCache_CountFreeBlocks(void) {
   u8 *marker = gResourceBlockOwners;
   s32 freeCount = 0;
   s32 remaining = VRAM_BLOCK_COUNT;

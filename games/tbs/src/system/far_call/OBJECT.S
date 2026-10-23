@@ -158,7 +158,7 @@ FarCall_ObjectTable:
 	overlay_veneer UpdateRisingParticleBurst
 	export Party_AddPpFar, Party_AddPp
 	overlay_veneer Party_AddHp
-	overlay_veneer ResourceTable_CountFreeBlocks
+	overlay_veneer VramCache_CountFreeBlocks
 	export Menu_AskYesNoFar, Menu_AskYesNo
 	overlay_veneer Encounter_GetEnemyGroupAtSlot
 	overlay_veneer Encounter_GetDjinnEnemyGroup

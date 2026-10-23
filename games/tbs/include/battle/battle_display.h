@@ -80,7 +80,9 @@ enum BattleBackgroundMode {
   /// The flat picture on BG1 (BATTLE_BG1CNT), its scroll following the
   /// camera, BG2 left to an effect.
   BATTLE_BACKGROUND_FLAT,
-  /// The affine perspective plane on BG2, a line at a time by HBlank DMA.
+  /// The picture zoomed and panned on BG2, an affine layer; HBlank DMA sets
+  /// each line's BG2CNT to the half of the picture it reads. The code's
+  /// "perspective plane" is this plain zoom: the depth is in the picture.
   BATTLE_BACKGROUND_PLANE
 };
 

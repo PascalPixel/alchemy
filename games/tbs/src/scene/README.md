@@ -32,8 +32,10 @@ skips arrival cutscenes when `FLAG_KEEP_PARTY_POSITION` says the party is
 returning to where it stood, as after a battle.
 
 In the code, the six are `struct SceneEntries` in `field_runtime.h`, in a
-fixed order at the start of every overlay, `entry/<place>.s`: 48 bytes, a
-veneer word before each function pointer. `Field_RunScene` calls
+fixed order at the start of every overlay, `entry/<place>.s`: 48 bytes, each
+entry a veneer, a tiny piece of code that only jumps on: one word holding
+two instructions (load the address that follows, jump to it), then the
+address of the function. `Field_RunScene` calls
 `Scene_GetEvents`, then places the party at its entrance
 (`Scene_ApplyEntrance`), creates the actors from the placements and calls
 `Scene_Initialize`. `Field_ProcessStep` reads the regions at every step, and
@@ -54,7 +56,9 @@ several scenes chooses by `gGameState.scene`, as Babi Lighthouse's
 ## The tables
 
 The answers are tables: where the party can arrive and leave, who stands
-where, and what answers each thing the player does.
+where, and what answers each thing the player does. A position in them is
+in pixels (x east, y up, z south) and a facing one of eight headings
+(`enum Facing`); [Words used here](#words-used-here) gives the units.
 
 - **Entrances** (`struct SceneEntrance`): for each entrance number, a flag
   that must be set (or -1), a position, a facing and the camera's limits.
@@ -74,7 +78,8 @@ where, and what answers each thing the player does.
 ### Who stands where
 
 Each row of a place's placement table puts one person or thing on the map,
-and each row owns an actor slot of its own, whether or not it appears.
+an actor, and each row owns an actor slot of its own, a numbered place for
+it in the scene's state, whether or not it appears.
 
 ![Every placement row owns an actor slot. The placement table of Mercury Lighthouse's upper floor, row by row, and the actor slot each row fills before and after the blue statue falls from its ledge. The party's eight slots come first. The first row, the statue fallen to the floor below, appears only once it has fallen; the second, the statue on its ledge, only until then. The rows after them, two pipe sections, three pipe ends and six stone statues, always appear. A row whose condition fails leaves its slot empty rather than handing it to the next row, so every actor keeps the same slot whatever the story has done, and the pipes are always the third and fourth placed actors.](https://alchemy.pascalpixel.com/illustrations/scene/placements.svg)
 
@@ -113,7 +118,7 @@ ladder beside Isaac's house (`Event_ClimbLadderOntoRoof` up,
 back when the leader steps off it (`Event_ClearPathCellOverride`). Three
 cells of the path at the top carry a code no row answers.
 
-![A screen of Vale on the day the story begins, drawn from its map at twice the GBA's size, with each cell that carries one of the scene's own codes tinted and joined by a line to a label beside the picture saying what it does: in magenta, for touch rows, a door into a house and the door into Isaac's house (walk north into them), the ladder up onto the roof of Isaac's house (walk north into it) and down from the roof (walk south into it), and the cell where stepping off the upper path changes its cells back; in grey, three cells on the path at the top labelled no event. A key under it says what each colour stands for.](https://alchemy.pascalpixel.com/guides/scene/event-cells.png)
+![Which cells start events in Vale. A screen of Vale on the day the story begins, drawn from its map, with each cell that carries one of the scene's own collision codes tinted and numbered. In pink, cells a touch row answers: 1, a door into a house, walking north into it; 2, the door into Isaac's house, walking north; 3, the ladder up onto the roof of Isaac's house, walking north; 4, the ladder down from the roof, walking south; 5, the cell where stepping off the upper path changes its cells back. In grey, 6: three cells of the path at the top with a code of the scene's own that no row answers.](https://alchemy.pascalpixel.com/illustrations/scene/event-cells.svg)
 
 Stepping on or walking into a cell runs the first touch row whose trigger is
 its code and whose condition holds, or failing one the first such exit row
@@ -219,7 +224,9 @@ walking somewhere, waits inside itself, so the next line starts only when it
 is done, and the walk resumes only after the last line. Steps that take no
 time, such as starting the shake, follow each other within one frame.
 Whatever has to keep moving during a cutscene, like a villager walking past,
-runs on its own as an object script, a callback or an update hook.
+runs on its own: as an object script (the steps a field object runs each
+frame), a callback (a function the scene adds to run once a frame) or an
+update hook (a function an actor runs each frame with itself).
 
 A function an event names is a script: straight-line code written in the
 commands of `event.h` over the engine calls of `field_event.h`.

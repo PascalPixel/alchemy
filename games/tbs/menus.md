@@ -21,9 +21,13 @@ icons for as long as it is needed, and zooms shut.
 
 ![A message window opening at the top of the screen in Vale, seen in five moments: first a thin bar, then a bigger box each frame, growing outwards from its centre, until it is full size; only then does the text begin, "Yo". A window takes 8 frames to open and 4 to close, shrinking back towards its centre, and it keeps its place among the window slots until it has closed. A window can also be asked to open and close at once, with no zoom.](https://alchemy.pascalpixel.com/illustrations/window/zoom.svg)
 
-Every window is drawn into one picture of the screen, 32 tiles wide and 20
-tall, which the console shows on the background layer in front of the map's
-three ([Field](src/field/README.md) describes those). A window takes 8 frames
+Every window is drawn into one picture of the screen made of tiles, 8-pixel
+squares, which the console shows on the background layer in front of the
+map's three ([Field](src/field/README.md) describes those). The picture is 32
+tiles wide and 20 tall, because the console's background layers are drawn
+32 tiles wide, but the screen shows only 30 of them, its 240 by 160 pixels;
+the last two columns are drawn and never seen, and windows are placed on
+the 30 by 20 that show. A window takes 8 frames
 to grow open and 4 to shrink shut, and the code that opened it waits while it
 does. Its letters go on in one of three ways: as sprites riding on the window
 (a message on the field), painted into one shared picture (a battle message),
@@ -31,9 +35,13 @@ or as tiles of the window layer itself (labels and names). The sprites a
 window carries are its render outputs, and they go when it closes.
 
 All of the window system's state is one block of memory, `struct
-UiRenderWork` in heap slot `HEAP_SLOT_WINDOW`: the tilemap (`work->tilemap`,
-copied to `UI_TILEMAP_VRAM` and shown on `BG0`), the window slots, the
-message channels, the render outputs and the decoded text. A window is a
+UiRenderWork`, borrowed from the heap (the memory the engine lends out to
+whatever runs) under the numbered slot `HEAP_SLOT_WINDOW`. It holds the
+tilemap, the grid of tile numbers that is the picture of the screen
+(`work->tilemap`, copied to `UI_TILEMAP_VRAM` in video memory and shown on
+the background layer `BG0`), the window slots, the message channels (the
+typists below), the render outputs (the sprites windows carry) and the
+decoded text. A window is a
 `struct UiWindow` slot, opened by `UiWindow_Create(x, y, width, height,
 flags)` in the first free slot, with its place and size in 8-pixel tiles on
 the 30 by 20 tile screen. Unless it has `UI_WINDOW_INSTANT`, it zooms open
@@ -43,13 +51,15 @@ slot stays taken until it has closed. The zoom is stepped by
 system's task, which runs once a frame.
 
 The three ways of drawing text are the text canvas (`UI_WINDOW_TEXT_CANVAS`,
-at `UI_CANVAS_VRAM`, drawn by the ARM renderer in `glyph_arm.c`; 120 tiles,
+at `UI_CANVAS_VRAM`, drawn by the renderer in `glyph_arm.c`, written in the
+processor's fast 32-bit ARM instructions; 120 tiles,
 exactly the battle message window's text area, so it serves one window at a
 time), one 16 by 16 sprite a letter cell, and tiles of the tilemap itself,
 taken from a run of 128 tiles (256 when the work block's `alt` is set).
 `UiWork_AnimateSpriteSlots` moves each render output (`struct RenderOutput`)
 every frame by its `UI_SPRITE_` motion, and its picture occupies a slot of the
-sprite VRAM cache until `Resource_ResetEntry` frees it.
+sprite VRAM cache, the video memory kept for sprite pictures, until
+`Resource_ResetEntry` frees it.
 
 | Name | Value | Meaning |
 | --- | --- | --- |
@@ -83,9 +93,11 @@ different code:
    a pause or a colour, with the speaker's voice blip as it goes.
 
 `UiText_BuildRenderEntries` decodes the whole message. Messages are stored as
-Huffman codes with a separate tree for each previous symbol
-(`Text_MessageContexts`), and the ARM routine that walks the trees is copied
-into heap slot `TEXT_WORK_BLOCK` for the decode and released after it. The
+Huffman codes, which give common letters short codes and rare ones long
+codes, read through a tree of choices, with a separate tree for each previous
+symbol (`Text_MessageContexts`). The routine that walks the trees, in the
+processor's fast 32-bit ARM instructions, is copied into the heap block
+`TEXT_WORK_BLOCK` for the decode and released after it. The
 decoder writes out names, numbers, and item and ability names from the
 argument table (`MESSAGE_ARGUMENT_`, `UiWork_PushValueSlot`), and each
 language's articles and possessives (`articles.c`). Style codes are kept with
@@ -107,7 +119,7 @@ the screen (`UiWindow_FitOnScreen`).
 
 The text itself is in the PO catalogs under `games/tbs/text`, one per
 language, and the code names each message by its linker symbol
-(`MsgGameSaved`). XXX: why there are three channels is not known.
+(`MsgGameSaved`). Why there are three channels is an open question (below).
 
 | Name | Value | Meaning |
 | --- | --- | --- |
@@ -147,11 +159,11 @@ as it closes.
 | Name | Value | Meaning |
 | --- | --- | --- |
 | `HEAP_SLOT_MENU` | 55 | the screens' and the counters' work block, `gMenuWork` |
-| `MENU_WORK_SIZE` | `0xa70` (2,672 bytes) | its size |
+| `MENU_WORK_SIZE` | 2,672 bytes (`0xa70`) | its size |
 | `HEAP_SLOT_MENU_CONTROL` | 6 | the object system's work, whose `suspended` field holds the field still |
-| `FLAG_MENU_START_PRESSED` | `0x150` | Start was pressed: every loop of the screen returns |
-| `FLAG_PALETTE_BLEND_HELD` | `0x152` | the palette blend stops while a screen is open |
-| `FLAG_WEATHER_HELD` | `0x166` | the weather stops while a screen is open |
+| `FLAG_MENU_START_PRESSED` | 336 (`0x150`) | Start was pressed: every loop of the screen returns |
+| `FLAG_PALETTE_BLEND_HELD` | 338 (`0x152`) | the palette blend stops while a screen is open |
+| `FLAG_WEATHER_HELD` | 358 (`0x166`) | the weather stops while a screen is open |
 
 ### The field behind the menu
 
@@ -167,9 +179,8 @@ tile animations, and sets `FLAG_PALETTE_BLEND_HELD` and `FLAG_WEATHER_HELD`
 so that the palette blend and the weather stop; `Menu_ResumeFieldTasks`
 undoes all of it. The Djinn and Status screens call it in every edition, the
 Item screen under `TBS_PATCH_1` (every edition but Japanese) and the Psynergy
-screen under `TBS_PATCH_2` (German, French, Spanish and Italian). XXX: why the
-earlier editions leave the field's tasks running behind those two screens is
-not known.
+screen under `TBS_PATCH_2` (German, French, Spanish and Italian), so the
+earlier editions leave the field's tasks running behind those two screens.
 
 ### Start
 
@@ -221,7 +232,7 @@ the status panel and the item sort orders.
 A town's counters are its shops, sanctums and inns, each opened by the
 town's scene when the player talks to the keeper.
 
-![Each rare item has one counter for the whole game. The first time a shop that lists it is opened, its counter goes up by one; buying one takes one off; selling or dropping one puts one back. A shop's Artifacts list is every item of its kind whose counter is above zero. On a new game, Bilibin's weapon shop lists the Witch's Wand alone, which its first visit has just counted. If Vault's weapon shop was opened first, the Magic Rod is already counted, and Bilibin's Artifacts list shows the Magic Rod as well.](https://alchemy.pascalpixel.com/illustrations/shop/artifacts.svg)
+![Each rare item has one counter for the whole game. The first time a shop that lists it is opened, its counter goes up by one; buying one takes one off; selling or dropping one puts one back. A shop's Artifacts list is every item of its kind whose counter is above zero. The party reaches Vault before Bilibin. Vault's weapon shop counts its rare item, the Magic Rod, on its first visit and lists it. Later, Bilibin's weapon shop counts its own, the Witch's Wand, and lists both: the Magic Rod is still counted from Vault unless the party bought it there.](https://alchemy.pascalpixel.com/illustrations/shop/artifacts.svg)
 
 A shop sells the ordinary items of its row of the stock table, and its
 Artifacts list sells rare items. A rare item is not stocked by one shop: it
@@ -265,7 +276,7 @@ tables, and other banks through the far-call table
 
 | Name | Value | Meaning |
 | --- | --- | --- |
-| `FLAG_SHOP_ARTIFACTS_STOCKED` | `0x400` | the first of the flags, one a stock row, set on a shop's first visit |
+| `FLAG_SHOP_ARTIFACTS_STOCKED` | 1,024 (`0x400`) | the first of the flags, one a stock row, set on a shop's first visit |
 | `HEAP_SLOT_MENU` | 55 | the counter's work, `struct ShopRuntime` |
 
 [Shops](src/shop/README.md#shops) has the prices,
@@ -286,8 +297,7 @@ counter and the field menu are never open together. Field Psynergy is passed
 back as a request because it needs the field running, the leader facing
 something and the scene's events, none of which exist while the menu runs.
 Start is a game flag rather than a variable, although the task that sets it
-and every test of it are in the menu's own code. XXX: why; nothing in the ROM
-needs it to be a flag.
+and every test of it are in the menu's own code.
 
 ## Limits
 
@@ -303,3 +313,12 @@ needs it to be a flag.
 - A shop row lists at most 24 items and 8 artifacts. Shop credit stops at
   999,999 and the Game Ticket count at 28 (`Party_AdjustShopCredit`,
   `Party_AdjustShopGifts`).
+
+## Open questions
+
+- XXX: why there are three message channels is not known.
+- XXX: why the Japanese edition leaves the field's tasks running behind the
+  Item and Psynergy screens, and the English one behind the Psynergy screen,
+  is not known.
+- XXX: why Start is a game flag (`FLAG_MENU_START_PRESSED`) rather than a
+  variable; nothing in the ROM needs it to be a flag.

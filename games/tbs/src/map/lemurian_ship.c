@@ -98,7 +98,7 @@ enum {
 #define OBJ_EVENT_SPRITE(objectEvent) ((objectEvent)->sprite)
 #else
 #define OBJ_EVENT_SPRITE(objectEvent)                                          \
-  ((struct AnimationObject *)*(s32 *)&(objectEvent)->sprite)
+  ((struct Sprite *)*(s32 *)&(objectEvent)->sprite)
 #endif
 /// The sprite priority of an object event's picture and of its shadow.
 #define SET_IMAGE_PRIORITY(objectEvent, level)                                 \
@@ -138,8 +138,7 @@ static void Ripple_StopForReveal(void) { Ripple_Stop(); }
 /// Starts the two-axis ripple with its original frequencies and amplitudes.
 /// Called by LemurianShip_SetupMap, and reached by Reveal as the spell ends.
 static void Ripple_Start(void) {
-  DisplayScroll_InitializeHBlankDma(0, 0x40000, 0x10000, 0x2000, 0x10000,
-                                    0x8000, 0x4000);
+  ScanlineEffect_InitWave(0, 0x40000, 0x10000, 0x2000, 0x10000, 0x8000, 0x4000);
 }
 
 /// The warp, Reveal and the Black Orb at the water's edge (metatile behavior
@@ -494,7 +493,7 @@ static void LemurianShip_SetSail(void) {
   Engine_ObjectEventSetAnimationAndWait(MIA, ANIMATION_NOD);
   Engine_ScriptWait(20);
   Engine_ScriptShowMessage(MIA, 0);
-  Engine_AudioPlayCue(AUDIO_CUE_FADE_BGM);
+  Engine_AudioPlayCue(SONG_FADE_OUT_BGM);
   Engine_ScriptWait(10);
   Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIMATION_NOD);
   Engine_ObjectEventSetAnimation(GARET, ANIMATION_NOD);
@@ -545,7 +544,7 @@ static void LemurianShip_SetSail(void) {
   // faster while the gangway's north piece moves off with the ship, and the
   // camera follows.
   Engine_AudioPlayCue(MUS_ENDING);
-  MusicCommand_SetPitchAndUpdateFrequency(240);
+  Sound_SetBgmTempo(240);
   Curtain_Start();
   Engine_ScriptWait(LEMURIAN_SHIP_DEPARTURE_DELAY_FRAMES);
   grid = gMapGridWork[0];
@@ -574,9 +573,9 @@ static void LemurianShip_SetSail(void) {
 }
 
 /// The water's ripple, this map's view of the HBlank scroll work
-/// (gHBlankScrollWork, struct DisplayScrollWork): two pages of per-line
+/// (gScanlineEffect, struct ScanlineEffectWork): two pages of per-line
 /// scroll offsets, swapped each frame, built from a sine table. Here a line
-/// is one word, BG3's x and y, where DisplayScrollWork has three.
+/// is one word, BG3's x and y, where ScanlineEffectWork has three.
 struct RippleScrollWork {
   u16 pages[2][0x3c0]; ///< per page: 160 lines of BG3 x, y; the rest unused
   u8 page;             ///< the page the HBlank DMA shows; the other is built
@@ -691,7 +690,7 @@ static void EventScript_RaiseTheShip(void) {
   }
   FieldScheduler_AddCallback(ShipGlow_CyclePalette, TASK_PRIORITY_MAP);
   Script_PlaySong(MUS_PUZZLE_SOLVED);
-  AudioCommand_WaitForStateByteClear();
+  Sound_WaitForFanfare();
   Script_Wait(20);
   Script_End();
   LemurianShip_SetSail();
@@ -774,15 +773,15 @@ s32 LemurianShip_SetupMap(void) {
 
 /// Arms DMA 0 to copy the shown ripple page, a line each HBlank, into
 /// background 3's scroll registers, writing the first line itself.
-/// Run each frame; DisplayScroll_InitializeHBlankDma adds it and Ripple_Stop
+/// Run each frame; ScanlineEffect_InitWave adds it and Ripple_Stop
 /// removes it.
-void DisplayScroll_ArmHBlankDma(void) {
+void ScanlineEffect_ArmDma(void) {
   struct RippleScrollWork *work;
   u32 *source;
   volatile u16 *dma0;
   volatile u32 *destination;
 
-  work = (struct RippleScrollWork *)gHBlankScrollWork;
+  work = (struct RippleScrollWork *)gScanlineEffect;
   source = (u32 *)work->pages[work->page];
 
   dma0 = REG_DMA0;
@@ -797,9 +796,9 @@ void DisplayScroll_ArmHBlankDma(void) {
 }
 
 /// Builds the other ripple page and swaps it in.
-/// Run each frame; DisplayScroll_InitializeHBlankDma adds it and Ripple_Stop
+/// Run each frame; ScanlineEffect_InitWave adds it and Ripple_Stop
 /// removes it.
-void DisplayScroll_BuildAndSwapHBlankPage(void) {
+void ScanlineEffect_BuildPage(void) {
   struct RippleScrollWork *work;
   u16 *line;
   s32 angle;
@@ -809,7 +808,7 @@ void DisplayScroll_BuildAndSwapHBlankPage(void) {
   u16 y;
   s32 i;
 
-  work = (struct RippleScrollWork *)gHBlankScrollWork;
+  work = (struct RippleScrollWork *)gScanlineEffect;
   y = gBgScroll[3].y;
   line = work->pages[work->page ^ 1];
   step = work->step[0];
@@ -841,8 +840,8 @@ void DisplayScroll_BuildAndSwapHBlankPage(void) {
 static void Ripple_Stop(void) {
   volatile u16 *reg;
 
-  Engine_TaskRemoveCallback(DisplayScroll_ArmHBlankDma);
-  Engine_TaskRemoveCallback(DisplayScroll_BuildAndSwapHBlankPage);
+  Engine_TaskRemoveCallback(ScanlineEffect_ArmDma);
+  Engine_TaskRemoveCallback(ScanlineEffect_BuildPage);
   reg = REG_DMA0;
   reg[5] = ~DMA_START_TIMING_DRQ_REPEAT & reg[5];
   reg[5] = ~DMA_ENABLE & reg[5];
@@ -867,7 +866,7 @@ static void Curtain_Close(void) {
   s32 x;
   u32 i;
 
-  tile = gVramBlockCache[sCurtainVramSlot].offset >> 5;
+  tile = gVramCacheEntries[sCurtainVramSlot].offset >> 5;
   // Each part is written whole as three words: the queue link, attributes 0
   // and 1, and attribute 2.
   // UB: the native word cursor crosses the parts' members. UBFIX builds the
@@ -905,7 +904,7 @@ static void Curtain_Close(void) {
   memcpy(sCurtainSprites, words, sizeof(words));
 #endif
   for (i = 0; i < 24; i++)
-    Runtime_PushSlotEntry(&sCurtainSprites[i], 255);
+    Oam_AddSpriteAtDepth(&sCurtainSprites[i], 255);
 }
 
 /// Fills a 256-byte tile with colour 1 and starts the curtains 48 pixels
@@ -915,7 +914,7 @@ static void Curtain_Start(void) {
   u8 *tiles;
 
   tiles = Runtime_CallAlternatePool(AllocEwram, 0x100);
-  sCurtainVramSlot = Resource_FindFreeEntry();
+  sCurtainVramSlot = VramCache_FindFreeEntry();
   Dma_Fill32(0x11111111, tiles, 0x100);
   Engine_VramLoad(sCurtainVramSlot, 0x100, tiles);
 

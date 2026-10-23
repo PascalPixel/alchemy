@@ -73,8 +73,8 @@ gColosso_MarkerStartX:
 	.global gColosso_ModeBlendDuration
 gColosso_ModeBlendDuration:
 	.space 8
-	.global gColosso_MarkerOam
-gColosso_MarkerOam:
+	.global gColosso_PointerOam
+gColosso_PointerOam:
 	.space 12
 	.global gColosso_MarkerStartY
 gColosso_MarkerStartY:

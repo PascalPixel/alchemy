@@ -35,16 +35,16 @@ FarCall_RuntimeTable:
 	export Decompress_ByteLzFar, Decompress_ByteLz
 	export Decompress_Type01Far, Decompress_Type01
 	overlay_veneer VramCache_Reset
-	export Resource_ResetEntryFar, Resource_ResetEntry
+	export VramCache_FreeEntryFar, VramCache_FreeEntry
 	export VramCache_ReleaseVramFar, VramCache_ReleaseVram
 	export VramCache_LoadFar, VramCache_Load
-	export Resource_FindFreeEntryFar, Resource_FindFreeEntry
+	export VramCache_FindFreeEntryFar, VramCache_FindFreeEntry
 	overlay_veneer DebugText_Clear
-	export AffineMatrix_BuildForEffectFar, AffineMatrix_BuildForEffect
-	export Runtime_PushSlotEntryFar, Runtime_PushSlotEntry
+	export OamMatrix_AllocFromTransformFar, OamMatrix_AllocFromTransform
+	export Oam_AddSpriteAtDepthFar, Oam_AddSpriteAtDepth
 	export Window_LoadGraphicsFar, Window_LoadGraphics
 	overlay_veneer Palette_LoadBasicSpriteColors
-	overlay_veneer Render_ResetTransformState
+	overlay_veneer Transform_Reset
 	overlay_veneer Transform_ResetMatrix
 	overlay_veneer Transform_Push
 	overlay_veneer Transform_Pop
@@ -57,7 +57,7 @@ FarCall_RuntimeTable:
 	overlay_veneer Transform_ApplyRotationTranslation
 	overlay_veneer Transform_ApplyScaledRotation
 	overlay_veneer Transform_SetLookAt
-	overlay_veneer Render_ProjectPoint
+	overlay_veneer Transform_ProjectPoint
 	overlay_veneer Projection_SetFieldOfView
 	overlay_veneer Projection_Set
 	overlay_veneer System_CopyBuildStamp
@@ -65,12 +65,12 @@ FarCall_RuntimeTable:
 	export Resource_GetTableEntryFar, Resource_GetTableEntry
 	export RuntimeDispatch_NoOpHookFar, RuntimeDispatch_NoOpHook
 	overlay_veneer Overlay_Load
-	export Fade_ToBlackFar, Fade_ToBlack
-	overlay_veneer Fade_FromBlack
-	overlay_veneer Fade_ToWhite
-	overlay_veneer Fade_FromWhite
-	overlay_veneer Fade_Start
-	export Fade_WaitFar, Fade_Wait
+	export ScreenFade_ToBlackFar, ScreenFade_ToBlack
+	overlay_veneer ScreenFade_FromBlack
+	overlay_veneer ScreenFade_ToWhite
+	overlay_veneer ScreenFade_FromWhite
+	overlay_veneer ScreenFade_Start
+	export ScreenFade_WaitFar, ScreenFade_Wait
 	overlay_veneer RuntimeDispatch_ReservedNoOpA
 	overlay_veneer RuntimeDispatch_ReservedNoOpB
 	overlay_veneer RuntimeDispatch_ReservedNoOpC

@@ -9,11 +9,11 @@ extern u8 IwramClearWords[];
 /// Starts a new frame of sprites: frees the affine matrices and empties the
 /// 256 depth slots sprites are linked into. Called by WaitFrames after each
 /// VBlank.
-void Render_ResetFrame(void) {
-  gSpriteAffineCount = 0;
+void Oam_ResetFrame(void) {
+  gOamMatrixCount = 0;
   // IwramClearWords(destination, bytes): 0x400 bytes are the 256 slot heads.
   // It zeroes r2 itself, so the third argument is never read.
-  _call_via_r3(((u32)&gRenderSlotHeads), 0x400, ((u32)&gSpriteAffineCount),
+  _call_via_r3(((u32)&gOamDepthLists), 0x400, ((u32)&gOamMatrixCount),
                (u32)IwramClearWords);
 }
 
@@ -29,22 +29,22 @@ enum {
 /// windows' scaled sprites. Returns the matrix number, 0 to 31. When all 32
 /// are taken it fills nothing and still returns 0, which a caller cannot tell
 /// from matrix 0: the sprite is drawn with whatever matrix 0 holds.
-s32 AffineMatrix_BuildForEffect(struct AffineTransform *source) {
-  union AffineMatrix *matrix;
+s32 OamMatrix_AllocFromTransform(struct AffineTransform *source) {
+  union OamMatrix *matrix;
   s16 *coefficient;
   s32 xScale;
   s32 yScale;
   s32 angle;
   u8 index;
 
-  index = gSpriteAffineCount;
+  index = gOamMatrixCount;
   xScale = (s16)source->scaleX;
   yScale = (s16)source->scaleY;
   angle = source->angle;
   if (index >= OBJ_AFFINE_MATRIX_COUNT)
     return 0;
 
-  matrix = &gSpriteAffineMatrices[index];
+  matrix = &gOamMatrices[index];
   coefficient = matrix->coefficients;
   if ((xScale == yScale || -xScale == yScale) && angle == 0) {
     // Unrotated and evenly scaled (or mirrored): only the diagonal is set.
@@ -76,14 +76,14 @@ s32 AffineMatrix_BuildForEffect(struct AffineTransform *source) {
     *coefficient = cosine / yScale;
   }
 
-  gSpriteAffineCount = index + 1;
+  gOamMatrixCount = index + 1;
   return index;
 }
 
 /// Links a sprite entry into depth slot `slot` (clamped to 0..255) for this
 /// frame. The entry's first word becomes its link to the next entry. Called
 /// by everything that draws a sprite, before WaitFrames builds the OAM list.
-void Runtime_PushSlotEntry(void *slotEntry, s32 slot) {
+void Oam_AddSpriteAtDepth(void *slotEntry, s32 slot) {
   void **head;
   void *previousHead;
 
@@ -91,7 +91,7 @@ void Runtime_PushSlotEntry(void *slotEntry, s32 slot) {
     slot = RENDER_DEPTH_SLOT_COUNT - 1;
   if (slot < 0)
     slot = 0;
-  head = &gRenderSlotHeads[slot];
+  head = &gOamDepthLists[slot];
   previousHead = *head;
   *head = slotEntry;
   *(void **)slotEntry = previousHead;
@@ -100,10 +100,10 @@ void Runtime_PushSlotEntry(void *slotEntry, s32 slot) {
 /// Builds this frame's OAM list in `work` from the sprites linked into the
 /// depth slots, with a RAM copy of the ARM builder. Called by WaitFrames into
 /// the frame scratch heap slot.
-void Render_BuildOamList(void *work) {
+void Oam_BuildBuffer(void *work) {
   OamBuildRoutine routine;
 
-  RamCode_Load(routine, Render_BuildOamListKernel, LoadedRuntime_Size);
+  RamCode_Load(routine, Oam_BuildBufferKernel, LoadedRuntime_Size);
   routine(work);
   Free((void *)routine);
 }

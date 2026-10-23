@@ -3,4 +3,4 @@
 
 /// Plays the ending's credits, about three minutes of crossfading backdrops
 /// under the scrolling staff names. Returns 0.
-s32 DisplayScroll_RunSlideshowFar(void);
+s32 Credits_RunFar(void);

@@ -115,8 +115,8 @@ s32 EnemySprite_LoadIntoSlots(s32 unitId) {
       // Each slot owns 16 KB of sprite buffer.
       s32 spriteBuffer = (slot << 14) + (s32)Ram_EnemySpriteSlots;
 
-      if (ResourceSlot_LoadFar(slot, (u32 *)spriteBuffer, sprite + spritePart,
-                               palette) == 0)
+      if (SpriteFrameCache_LoadFar(slot, (u32 *)spriteBuffer,
+                                   sprite + spritePart, palette) == 0)
         return 0;
     }
 
@@ -152,7 +152,7 @@ s32 BattleObject_ReleaseSlotByValue(s32 unitId) {
 
   for (spriteSlot = 0; spriteSlot < ENEMY_SPRITE_SLOTS; spriteSlot++) {
     if (battle->spriteSlots[spriteSlot] == unitId) {
-      ResourceSlot_LoadFar(spriteSlot, 0, 0, 0);
+      SpriteFrameCache_LoadFar(spriteSlot, 0, 0, 0);
       battle->spriteSlots[spriteSlot] = 0;
     }
   }

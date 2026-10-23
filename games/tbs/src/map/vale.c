@@ -1908,7 +1908,7 @@ static void Vale_MoveObjectEventAlongLowerZPath(s32 localId,
   s32 approachAnimation;
   s32 restoreMotion;
   struct ObjectEvent *objectEvent;
-  struct AnimationObject *sprite;
+  struct Sprite *sprite;
 
   restoreMotion = resumeMotion;
   approachAnimation = approachAnimationId;
@@ -1945,7 +1945,7 @@ static void Vale_MoveObjectEventAlongHigherZPath(s32 localId,
   s32 approachAnimation;
   s32 restoreMotion;
   struct ObjectEvent *objectEvent;
-  struct AnimationObject *sprite;
+  struct Sprite *sprite;
 
   restoreMotion = resumeMotion;
   approachAnimation = approachAnimationId;
@@ -3126,7 +3126,7 @@ static void Vale_TrailSparkles(union FieldObject *fieldObject) {
     ObjectEvent_SetMode(particle, 0);
     Engine_ObjectSetScript(particle, gVale_SparkleScript);
     {
-      struct AnimationObject *record = particle->sprite;
+      struct Sprite *record = particle->sprite;
       s32 priorityFlags = ~12;
       priorityFlags &= ((u8 *)&record->image)[9];
       priorityFlags |= 4;

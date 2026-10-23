@@ -526,7 +526,7 @@ void WindowSprite_AppendToList(struct WindowSpriteList *list,
 void WindowSprite_Release(struct WindowSprite *entry) {
   WindowSprite_ReleaseFree(entry);
   if ((u8)entry->kind != WINDOW_SPRITE_GLYPH) {
-    Resource_ResetEntry((u8)entry->index);
+    VramCache_FreeEntry((u8)entry->index);
     if ((u8)entry->kind == WINDOW_SPRITE_PORTRAIT) {
       u8 *work = gWindowWork[0];
       s32 offset = entry->oam.palette * 2 + WINDOW_WORK_PALETTE_TABLE_OFFSET;

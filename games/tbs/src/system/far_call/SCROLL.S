@@ -4,4 +4,4 @@
 #include "stub.inc"
 	.global FarCall_ScrollTable
 FarCall_ScrollTable:
-	export DisplayScroll_RunSlideshowFar, DisplayScroll_RunSlideshow
+	export Credits_RunFar, Credits_Run

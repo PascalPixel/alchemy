@@ -27,7 +27,7 @@
 	.set import.Engine_DebugRedrawWindow, 1
 	.set import.Engine_DebugClearWindow, 1
 	.set import.NamingScreen_EditMemberName, 1
-	.set import.DebugMenu_BrowseIcons, 1
+	.set import.DebugBrowser_Icons, 1
 	.set import.Unit_Get, 1
 	.set import.Unit_Calculate, 1
 	.set import.Engine_DebugGetItem, 1

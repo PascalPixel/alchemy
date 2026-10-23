@@ -204,7 +204,7 @@ the `battle` request, so the battle starts when the script returns.
 set), then the `(zone << 4) + slot` keys that use it, where the slot is the
 enemy group's place in its zone,, ended by 0. A key takes
 the last song before it, so the table stores each song once. Link battles
-always play `AUDIO_CUE_KEEP_BGM`.
+always play `SONG_KEEP_BGM`.
 
 The zones are `encounter.tsv`; the rules that choose them are
 `gBattle_LocationRules` (`location_rules.s`) and `gWorldMap_EncounterRules`
@@ -469,7 +469,7 @@ Prototypes are in `games/tbs/include/unit/object/`.
 | `ObjectEvent_`, `Leader_`, `Motion_`, `FacingObject_`, `ObjectVisual_` | the object event commands map scripts call (`object_event_commands.c`): placing, walking, turning and posing an object event or the leader |
 | `EventObject_`, `ObjectEffect_` | the caster's casting pose and the context effects a Psynergy starts |
 | `ItemGift_` | the message for an item the party has just received |
-| `FadeOverlay_`, `RevealMarker_`, `FieldMotes_` | the fade overlay's marks beside the object event, a Reveal marker's sparkles and the floating motes |
+| `FadeOverlay_`, `Reveal_`, `FieldMotes_` | the fade overlay's marks beside the object event, a Reveal marker's sparkles and the floating motes |
 | `DisplayState_` | clearing the background bits `DisplayTransition_` turns on |
 
 Other functions keep the prefixes of the families they belong to elsewhere.

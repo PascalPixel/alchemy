@@ -16,13 +16,13 @@
 #define STRIKE_SPARKS 8 ///< each hit scatters sparks
 #define STRIKE_HEAVY 16 ///< one heavy hit: a big shake and the target recoils
 
-// The palettes a target strike's background takes (TARGET_STRIKE_COLOUR).
-#define STRIKE_COLOUR_BLUE 0      ///< BlueBeamSheet's
-#define STRIKE_COLOUR_LIME 1      ///< LimePalette
-#define STRIKE_COLOUR_PINK 2      ///< PinkPalette
-#define STRIKE_COLOUR_EMBER 3     ///< EmberStreakSheet's
-#define STRIKE_COLOUR_MARS 4      ///< MarsDjinnSheet's
-#define STRIKE_COLOUR_LIGHTNING 5 ///< LightningBoltSheet's
+// The palettes a target strike's background takes (TARGET_STRIKE_COLOR).
+#define STRIKE_COLOR_BLUE 0      ///< BlueBeamSheet's
+#define STRIKE_COLOR_LIME 1      ///< LimePalette
+#define STRIKE_COLOR_PINK 2      ///< PinkPalette
+#define STRIKE_COLOR_EMBER 3     ///< EmberStreakSheet's
+#define STRIKE_COLOR_MARS 4      ///< MarsDjinnSheet's
+#define STRIKE_COLOR_LIGHTNING 5 ///< LightningBoltSheet's
 
 /// The twelve target strike styles, rows of gTargetStrike_Records.
 enum TargetStrikeStyle {

@@ -619,12 +619,11 @@ void FileMenu_ShowPartySprites(struct Window *window, s32 x, s32 y,
   s32 priority;
 
   for (i = 0; i < 4 && summary->party[i] != -1; i++) {
-    struct AnimationObject *sprite =
-        ResourceObject_CreateFar(Party_RemapCharacterIdIfEnabledFar(
-            summary->party[i], (s8)summary->hasFlag20));
+    struct Sprite *sprite = Sprite_CreateFar(Party_RemapCharacterIdIfEnabledFar(
+        summary->party[i], (s8)summary->hasFlag20));
 
     if (sprite != NULL) {
-      AnimationObject_SelectAnimationFar(sprite, 1);
+      Sprite_StartAnimFar(sprite, 1);
       sprite->flags = 0;
       sprite->image.priority = 0;
     }
@@ -650,7 +649,7 @@ void FileMenu_HidePartySprites(void) {
   Task_Remove(FileMenu_PlacePartySprites);
   for (i = 0; i < 4; i++) {
     if (menu->partyMemberIcons[i] != NULL) {
-      ResourceObject_ReleaseFar(menu->partyMemberIcons[i]);
+      Sprite_DestroyFar(menu->partyMemberIcons[i]);
       menu->partyMemberIcons[i] = NULL;
     }
   }
@@ -663,7 +662,7 @@ void FileMenu_PlacePartySprites(void) {
   struct SpriteScale scale;
   struct SpritePlacement position;
   s32 index = 0;
-  struct AnimationObject *sprite;
+  struct Sprite *sprite;
 
   while (1) {
     sprite = menu->partyMemberIcons[index];
@@ -693,11 +692,10 @@ void FileMenu_ShowDjinnSprites(struct Window *window, s32 x, s32 y) {
 
   if (window != NULL) {
     for (i = 0; i < 4; i++) {
-      struct AnimationObject *sprite =
-          ResourceObject_CreateFar(gMenu_PartySpriteResourceIds[i]);
+      struct Sprite *sprite = Sprite_CreateFar(gMenu_PartySpriteResourceIds[i]);
 
       if (sprite != NULL) {
-        AnimationObject_SelectAnimationFar(sprite, 2);
+        Sprite_StartAnimFar(sprite, 2);
         sprite->flags = 0;
         sprite->image.priority = 0;
       }
@@ -720,7 +718,7 @@ void FileMenu_HideDjinnSprites(void) {
   Task_Remove(FileMenu_PlaceDjinnSprites);
   for (i = 0; i < 4; i++) {
     if (menu->animations[i] != NULL) {
-      ResourceObject_ReleaseFar(menu->animations[i]);
+      Sprite_DestroyFar(menu->animations[i]);
       menu->animations[i] = NULL;
     }
   }
@@ -736,7 +734,7 @@ void FileMenu_PlaceDjinnSprites(void) {
 
   index = 0;
   do {
-    struct AnimationObject *sprite = menu->animations[index];
+    struct Sprite *sprite = menu->animations[index];
 
     if (sprite != NULL) {
       s32 one = 0x10000;
@@ -1061,7 +1059,7 @@ s32 FileMenu_SelectFile(s32 selectedFile, s32 menuMode) {
   }
   Window_DrawDividerLine(fileList, 0, 2, 27, 2);
   Window_DrawDividerLine(fileList, 0, 4, 27, 4);
-  vramSlot = Resource_FindFreeEntry();
+  vramSlot = VramCache_FindFreeEntry();
   if (vramSlot < VRAM_CACHE_ENTRY_COUNT) {
     VramCache_Load(vramSlot, 128, gResource_FixedBlockBTiles);
     x = -12;
@@ -1294,14 +1292,14 @@ s32 Save_LoadRecordIntoWork(s32 mode) {
 
 /// Loads the pointing hand cursor's tiles (gResource_FixedBlockBTiles, 128
 /// bytes) into a free VRAM slot and returns the slot, which the caller frees
-/// with Resource_ResetEntry. The slot is not checked: with the cache full
+/// with VramCache_FreeEntry. The slot is not checked: with the cache full
 /// the load is given VRAM_CACHE_ENTRY_COUNT. Colosso's markers
 /// (map/common/colosso_marker.h) and, by far call, the world map's cursor
 /// (object/psynergy_effects/world_map.c) use it.
 s32 Resource_LoadFixedBlockBIntoFreeSlot(void) {
   s32 slot;
 
-  slot = Resource_FindFreeEntry();
+  slot = VramCache_FindFreeEntry();
   VramCache_Load(slot, 0x80, gResource_FixedBlockBTiles);
   return slot;
 }

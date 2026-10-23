@@ -302,7 +302,7 @@ void BattleAnim_RunKirin(struct BattleAnimArgs *effect) {
 
   i = 0;
   do {
-    struct AnimationObject *animation = work->animations[i];
+    struct Sprite *animation = work->animations[i];
 
     animation->image.priority = 3;
     i++;
@@ -479,7 +479,7 @@ void BattleAnim_RunKirin(struct BattleAnimArgs *effect) {
   ANIM_SHOW_DAMAGE(SE_HEAVY_IMPACT);
   i = 0;
   do {
-    ResourceObject_ReleaseFar(work->animations[i]);
+    Sprite_DestroyFar(work->animations[i]);
     i++;
   } while (i != KIRIN_OBJECTS);
   ANIM_FINISH_CANVAS_ONE_BLITTER();

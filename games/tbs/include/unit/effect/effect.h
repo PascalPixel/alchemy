@@ -320,7 +320,7 @@ void BattleAnim_RunSpiderWeb(struct BattleAnimArgs *effect);
 void BattleAnim_WipeCanvas(s32 direction, s32 fill);
 void BattleAnim_ProcessPendingGraphicsTransfer(void);
 void BattleAnim_FlushPendingGraphicsTransfer(void);
-void Graphics_ApplyWindowBlendRegisters(void);
+void BattleAnim_ApplyWindowBlendRegisters(void);
 void Display_ApplyBg2Reference(void);
 void Palette_StepFadeTransfer(void);
 void BattleAnim_ClearActorTimers(void);
@@ -371,7 +371,7 @@ void BattleAnim_RunLobbedShells(struct BattleAnimArgs *effect, s32 mode);
 void BattleAnim_RunCondemn(struct BattleAnimArgs *effect);
 
 // bind.c
-void Graphics_ConvertBackgroundToBlueRamp(void);
+void BattleAnim_ConvertBackgroundToBlueRamp(void);
 void BattleAnim_RunBind(struct BattleAnimArgs *effect);
 void BattleAnim_RunUnusedTriangleStrike(struct BattleAnimArgs *effect);
 
@@ -396,8 +396,8 @@ void BattleAnim_RunWhirlwind(struct BattleAnimArgs *effect);
 
 // prism.c
 void BattleAnim_RunPrism(struct BattleAnimArgs *effect);
-void Graphics_UpdatePhasePalette(s32 frame, s32 redPhase, s32 greenPhase,
-                                 s32 bluePhase);
+void BattleAnim_UpdatePhasePalette(s32 frame, s32 redPhase, s32 greenPhase,
+                                   s32 bluePhase);
 
 // plasma.c
 void BattleAnim_RunPlasma(struct BattleAnimArgs *effect);
@@ -542,7 +542,7 @@ void BattleAnim_InitializeRisingObject(s32 id);
 void BattleAnim_SetApproachMotion(s32 id, s32 targetId, s32 frames);
 
 // rushing_strike.c
-void Graphics_PackTileRows(u8 *src, u8 *dst, s32 stride, s32 rowCount);
+void BattleAnim_PackTileRows(u8 *src, u8 *dst, s32 stride, s32 rowCount);
 void BattleAnim_RunBoneCharge(struct BattleAnimArgs *effect);
 void BattleAnim_RunBruteForce(struct BattleAnimArgs *effect);
 void BattleAnim_RunOnslaught(struct BattleAnimArgs *effect);
@@ -550,7 +550,7 @@ void BattleAnim_RunHeadbutt(struct BattleAnimArgs *effect);
 void BattleAnim_RunRushingStrike(struct BattleAnimArgs *effect, s32 mode);
 
 // djinn_attacks.c
-void Graphics_TransposeCopy(const u8 *src, u8 *dst, s32 w, s32 h);
+void BattleAnim_TransposeCopy(const u8 *src, u8 *dst, s32 w, s32 h);
 void BattleAnim_RunMercury(struct BattleAnimArgs *effect);
 void BattleAnim_RunJupiter(struct BattleAnimArgs *effect);
 void Resource_LoadAndDecompress(s32 id, void *dst, s32 skipPalette,
@@ -640,8 +640,8 @@ void BattleAnim_RunJudgment(struct BattleAnimArgs *effect);
 void BattleAnim_RunKirin(struct BattleAnimArgs *effect);
 
 // neptune.c
-void Graphics_ResetBg2Pa(void);
-void Graphics_SetBg2AffineScaleHalf(void);
+void BattleAnim_ResetBg2Pa(void);
+void BattleAnim_SetBg2AffineScaleHalf(void);
 void BattleAnim_RunNeptune(struct BattleAnimArgs *effect);
 
 // thrash.c

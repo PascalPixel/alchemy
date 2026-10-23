@@ -790,7 +790,7 @@ static void CrossboneIsleSteppingStones_AnimateWaterLevel(void) {
     Engine_TaskWait(1);
   } while (++sShakeChance <= 100);
   // Commit the water tiles, then remove both scroll callbacks.
-  Engine_AudioPlayCue(AUDIO_CUE_FADE_SLOT3);
+  Engine_AudioPlayCue(SONG_FADE_OUT_ACTION_SE);
   if (Engine_GameFlagIsSet(WATER_RAISED_FLAG) == 0) {
     MapGrid_CopyCellsTo(0, 32, 32, 0, 32, 32);
     MapGrid_CopyCellsTo(32, 32, 64, 0, 32, 32);

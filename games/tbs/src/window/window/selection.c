@@ -55,7 +55,7 @@ void SelectionScreen_Create(void) {
   work->records[1].y = 0;
   // The hand: a 16x16 sprite of 256 colours, 256 bytes a frame.
   table = gMenu_AnimatedCursorTiles;
-  work->records[14].slot = Resource_FindFreeEntry();
+  work->records[14].slot = VramCache_FindFreeEntry();
   work->records[14].tile = VramCache_Load(work->records[14].slot, 256, table);
   work->records[14].kind = 0;
   work->records[14].scale = 0;
@@ -272,7 +272,7 @@ void SelectionScreen_Draw(void) {
           sprite->mode = 1;
         }
       }
-      Runtime_PushSlotEntry(sprite, slot);
+      Oam_AddSpriteAtDepth(sprite, slot);
     }
     node = node->next;
     entryIndex++;
@@ -300,7 +300,7 @@ void SelectionScreen_Draw(void) {
       state->transform.scaleX = transfer->scale;
       state->transform.scaleY = transfer->scale;
       state->transform.angle = 0;
-      commandSprite->matrix = AffineMatrix_BuildForEffect(&state->transform);
+      commandSprite->matrix = OamMatrix_AllocFromTransform(&state->transform);
       commandSprite->affine = 3;
       commandSprite->x += 0xfff0;
       commandSprite->y += 0xf0;
@@ -309,7 +309,7 @@ void SelectionScreen_Draw(void) {
     if (GameFlag_TestFar(FLAG_IN_BATTLE) != 0) {
       commandSprite->mode = 1;
     }
-    Runtime_PushSlotEntry(commandSprite, 248);
+    Oam_AddSpriteAtDepth(commandSprite, 248);
   }
   SelectionScreen_DrawArrow(state, 0);
   SelectionScreen_DrawArrow(state, 1);
@@ -330,7 +330,7 @@ void SelectionScreen_Draw(void) {
       state->transform.scaleX = node->scale;
       state->transform.scaleY = node->scale;
       state->transform.angle = 0;
-      sprite->matrix = AffineMatrix_BuildForEffect(&state->transform);
+      sprite->matrix = OamMatrix_AllocFromTransform(&state->transform);
       sprite->affine = 3;
       sprite->x += 0xfff8;
       sprite->y += 0xf8;
@@ -348,7 +348,7 @@ void SelectionScreen_Draw(void) {
         sprite->mode = 1;
       }
     }
-    Runtime_PushSlotEntry(sprite, 240);
+    Oam_AddSpriteAtDepth(sprite, 240);
     node = node->next;
   }
   // Point at the selected battle target, smoothing each axis separately: the
@@ -386,7 +386,7 @@ void SelectionScreen_Draw(void) {
         cursorEntry->mode = 0;
       }
     }
-    Runtime_PushSlotEntry(cursorEntry, 248);
+    Oam_AddSpriteAtDepth(cursorEntry, 248);
   }
   state->status += 1;
 }
@@ -422,7 +422,7 @@ void SelectionScreen_DrawArrow(struct SelectionScreenWork *state, s32 side) {
     else
       arrow->mode = 0;
   }
-  Runtime_PushSlotEntry(arrow, 238);
+  Oam_AddSpriteAtDepth(arrow, 238);
   if (state->records[side].base != 0)
     state->records[side].base--;
 }
@@ -494,7 +494,7 @@ void SelectionScreen_Close(void) {
   node = state->head;
   while (node != 0) {
     if (node->kind != ICON_KIND_NONE) {
-      Resource_ResetEntry(node->slot);
+      VramCache_FreeEntry(node->slot);
       node->kind = ICON_KIND_NONE;
     }
     node = node->next;
@@ -502,7 +502,7 @@ void SelectionScreen_Close(void) {
   node = state->path;
   while (node != 0) {
     if (node->kind != ICON_KIND_NONE) {
-      Resource_ResetEntry(node->slot);
+      VramCache_FreeEntry(node->slot);
       node->kind = ICON_KIND_NONE;
     }
     node = node->next;
@@ -511,12 +511,12 @@ void SelectionScreen_Close(void) {
   // An arrow's y is nonzero once SelectionScreen_SetupArrow has given it a
   // slot. The right arrow's slot is freed on the left arrow's y, read twice.
   if (state->records[0].y != 0) {
-    Resource_ResetEntry(state->records[0].slot);
+    VramCache_FreeEntry(state->records[0].slot);
     if (state->records[0].y != 0) {
-      Resource_ResetEntry(state->records[1].slot);
+      VramCache_FreeEntry(state->records[1].slot);
     }
   }
-  Resource_ResetEntry(state->records[14].slot);
+  VramCache_FreeEntry(state->records[14].slot);
   FreeHeapSlot(HEAP_SLOT_SELECTION_SCREEN);
 }
 
@@ -580,7 +580,7 @@ void SelectionScreen_SetupArrow(struct SelectionScreenWork *state, s32 side) {
       state->records[0].kind = 1;
   }
   if (state->records[side].y == 0) {
-    state->records[side].slot = Resource_FindFreeEntry();
+    state->records[side].slot = VramCache_FindFreeEntry();
     state->records[side].tile =
         VramCache_Load(state->records[side].slot, 128, arrowTiles);
     state->records[side].y = state->baseY;
@@ -1016,7 +1016,7 @@ void SelectionScreen_Scroll(struct SelectionScreenWork *screen, s32 forward) {
       WaitFrames(1);
     } while (node->scale != 0);
     screen->head = node->next;
-    Resource_ResetEntry(node->slot);
+    VramCache_FreeEntry(node->slot);
     node->kind = ICON_KIND_NONE;
     node = node->next;
     node->previous = NULL;
@@ -1058,7 +1058,7 @@ void SelectionScreen_Scroll(struct SelectionScreenWork *screen, s32 forward) {
     } while (node->scale != 256);
     while (node->next != NULL)
       node = node->next;
-    Resource_ResetEntry(node->slot);
+    VramCache_FreeEntry(node->slot);
     node->kind = ICON_KIND_NONE;
     node->previous->next = NULL;
   }
@@ -1079,14 +1079,14 @@ s32 Resource_LoadByMode(s32 mode, s32 value) {
     Ui_BuildPairedPatternsToSlot(value, 0, &result, &output, 0);
     break;
   case ICON_KIND_ITEM:
-    result = Resource_FindFreeEntry();
+    result = VramCache_FindFreeEntry();
     if (result == VRAM_CACHE_ENTRY_COUNT)
       return -1;
     Icon_CopyResourceToSlot(
         value, ICON_COUNT_ABOVE_ONE | ICON_EQUIPPED | ICON_BROKEN, result);
     break;
   case ICON_KIND_TABLE_ENTRY:
-    result = Resource_FindFreeEntry();
+    result = VramCache_FindFreeEntry();
     if (result == VRAM_CACHE_ENTRY_COUNT)
       return -1;
     RenderResource_LoadTableEntry(value, 0, result);
@@ -1109,7 +1109,7 @@ s32 Resource_LoadByModeIntoSlot(s32 mode, s32 value, s32 result, s32 option) {
   s32 original = result;
 
   if (result == -1) {
-    result = Resource_FindFreeEntry();
+    result = VramCache_FindFreeEntry();
     if (result == VRAM_CACHE_ENTRY_COUNT)
       return original;
   }
@@ -1237,7 +1237,7 @@ u32 Menu_ConfirmSelection(struct SelectionScreenWork *screen) {
   WaitFrames(2);
   for (other = screen->head; other != NULL; other = other->next) {
     if (other != node) {
-      Resource_ResetEntry(other->slot);
+      VramCache_FreeEntry(other->slot);
       other->kind = ICON_KIND_NONE;
     }
   }
@@ -1315,7 +1315,7 @@ void MenuArrow_NoOpCallback4(void) {}
 /// MenuArrow_Release.
 void MenuArrow_Create(struct MenuSprite *sprite, s32 *slot) {
   const void *data = gMenu_CursorObjectTiles;
-  s32 cacheSlot = Resource_FindFreeEntry();
+  s32 cacheSlot = VramCache_FindFreeEntry();
 
   *slot = cacheSlot;
   sprite->oam.f.tile = VramCache_Load(cacheSlot, 0x80, data);
@@ -1334,11 +1334,11 @@ void MenuArrow_Create(struct MenuSprite *sprite, s32 *slot) {
 void MenuArrow_SetPosition(struct MenuSprite *sprite, s32 x, s32 y) {
   sprite->oam.f.x = x;
   sprite->oam.f.y = y;
-  Runtime_PushSlotEntry(sprite, 0xFC);
+  Oam_AddSpriteAtDepth(sprite, 0xFC);
 }
 
 /// Frees an arrow sprite's tile slot.
-void MenuArrow_Release(s32 value) { Resource_ResetEntry(value); }
+void MenuArrow_Release(s32 value) { VramCache_FreeEntry(value); }
 
 /// Loads the large icon of the command under the cursor, zooming in: 32x32 in
 /// 256 colours (0x400 bytes, record 15), its scale stepping from 40 to 240 by
@@ -1370,7 +1370,7 @@ void SelectionScreen_LoadLargeIcon(void) {
   Decompress_ByteLz(resource, buffer);
 
   if (transfer->kind == ICON_KIND_NONE)
-    transfer->slot = Resource_FindFreeEntry();
+    transfer->slot = VramCache_FindFreeEntry();
   transfer->tile = VramCache_Load(transfer->slot, 0x400, buffer);
   transfer->kind = ICON_KIND_COMMAND;
   transfer->base = resourceId;
@@ -1386,7 +1386,7 @@ void Resource_ResetPendingTransfer(void) {
   struct SelectionNode *largeIcon = &gSelectionScreenWork->records[15];
 
   if (largeIcon->kind != ICON_KIND_NONE) {
-    Resource_ResetEntry(largeIcon->slot);
+    VramCache_FreeEntry(largeIcon->slot);
     largeIcon->kind = ICON_KIND_NONE;
   }
 }

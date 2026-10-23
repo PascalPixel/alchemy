@@ -80,7 +80,7 @@ FarCall_WindowTable:
 	overlay_veneer Item_RemoveFromInventory
 	export Ui_PrepareTransferForItemFar, Ui_PrepareTransferForItem
 	export Text_DrawWideStringAtOffsetFar, Text_DrawWideStringAtOffset
-	overlay_veneer GraphicsPalette_SelectionNoOp
+	overlay_veneer OptionMenu_SelectionNoOp
 	export Win_FillScanlineSpansFar, Win_FillScanlineSpans
 	export WindowSprite_RedrawSavedRectFar, WindowSprite_RedrawSavedRect
 	export WindowSprite_ClearListFar, WindowSprite_ClearList
@@ -108,8 +108,8 @@ FarCall_WindowTable:
 	overlay_veneer Resource_CopyFixedBlockB
 	overlay_veneer Resource_CopyFixedBlockA
 	overlay_veneer SelectionScreen_SetPosition
-	export DebugMenu_BrowseIconsFar, DebugMenu_BrowseIcons
-	export DebugMenu_BrowsePortraitsFar, DebugMenu_BrowsePortraits
+	export DebugBrowser_IconsFar, DebugBrowser_Icons
+	export DebugBrowser_PortraitsFar, DebugBrowser_Portraits
 	overlay_veneer Item_ReturnTrue
 	export Djinn_ShowJoinedMessageFar, Djinn_ShowJoinedMessage
 	export WindowColor_ApplyFar, WindowColor_Apply

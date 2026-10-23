@@ -270,7 +270,7 @@ void BattleAnim_RunNereid(struct BattleAnimArgs *effect) {
     ANIM_RELEASE_BLITTERS();
     BattleAnim_RunImpactBurst(SUMMON_FORMATION_NEREID, focus.x, focus.y);
     for (k = 0; k != NEREID_OBJECTS; k++)
-      ResourceObject_ReleaseFar(work->animations[k]);
+      Sprite_DestroyFar(work->animations[k]);
   }
   BattleAnim_EndCanvasLayer();
 }

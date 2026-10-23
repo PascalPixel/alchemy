@@ -39,7 +39,7 @@ void Shop_RestoreFieldPaletteFar(void);
 s32 ItemPicker_RunFar(s32 *selected_unit, s32 *selectedItem);
 /// Waits a frame at a time until the sound driver has finished its last
 /// command, such as a fanfare.
-void AudioCommand_WaitForStateByteClearFar(void);
+void Sound_WaitForFanfareFar(void);
 /// Charges room_price, heals every member still standing and plays the night at
 /// the inn.
 void Inn_PlaySleepFar(s32 room_price);

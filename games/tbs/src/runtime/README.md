@@ -82,12 +82,12 @@ a wait for the blank in which everything lands.
 `WaitFrames(n)` (`runtime/frame.c`) runs `n` frames and returns. If the
 caller's stack has grown below `Ram_FrameWaitStackTop`, the stack is first
 moved ([below](#the-stack-switch-in-waitframes)). During a frame, code links
-each sprite it wants shown into one of 256 depth slots (`gRenderSlotHeads`),
+each sprite it wants shown into one of 256 depth slots (`gOamDepthLists`),
 lists by depth that decide which sprite is drawn in front. Each frame then:
 
 1. runs the main-loop tasks (`Task_RunPass(TASK_PRIORITY_MAIN_LOOP)`);
 2. allocates the [heap slot](../../glossary.md#heap-slot) `HEAP_SLOT_FRAME_SCRATCH` (1 KB), builds the OAM
-   list in it by walking the depth slots in order (`Render_BuildOamList`) and
+   list in it by walking the depth slots in order (`Oam_BuildBuffer`) and
    sets `gFrameRenderPending`, which marks the frame finished;
 3. measures CPU load for the debug display when it is on, and counts the
    frames toward sleep;
@@ -515,7 +515,7 @@ runtime bank's far-call table
 - 96 sprite VRAM cache entries over 512 blocks of 64 bytes, and at most 8 KB
   (128 blocks, a quarter of sprite VRAM) for one entry.
 - 256 depth slots and 32 affine matrices a frame; once all 32 are taken,
-  `AffineMatrix_BuildForEffect` returns 0 and the sprite uses whatever matrix
+  `OamMatrix_AllocFromTransform` returns 0 and the sprite uses whatever matrix
   0 holds.
 - 512 bytes of stack for the frame loop, its tasks and the VBlank work.
 - 16 flash sectors for the three save files' six records.
@@ -587,7 +587,7 @@ Frame, VBlank, IWRAM, EWRAM, heap slot, task, sprite and OAM are in the
 | `Input_` | key repeat and the keypad interrupt |
 | `IoWriteQueue_` | the register write queue |
 | `Fade_` | screen fades through the blend registers |
-| `Render_`, `AffineMatrix_` | the frame's sprite lists and affine matrices |
+| `Render_`, `OamMatrix_` | the frame's sprite lists and affine matrices |
 | `VramCache_` | the sprite VRAM cache |
 | `Scheduler_` | the task scheduler |
 | `Math_`, `Vector_` | square roots and polar offsets beside `Random16` and `ArcTan2` |

@@ -124,19 +124,19 @@ void BattleAnim_ProcessPendingGraphicsTransfer(void) {
     case CANVAS_COPY_AND_FADE:
       // Any value but 50 keeps three quarters.
       if (work->transferValue == 50) {
-        ColorBuffer_BackupAndHalve(source, (void *)BG_CHAR_BLOCK(1),
+        PaletteFade_BackupAndHalve(source, (void *)BG_CHAR_BLOCK(1),
                                    CANVAS_BYTES);
       } else {
-        ColorBuffer_BackupAndScaleThreeQuarters(
+        PaletteFade_BackupAndScaleThreeQuarters(
             source, (void *)BG_CHAR_BLOCK(1), CANVAS_BYTES);
       }
       break;
     case CANVAS_COPY_AND_DARKEN:
-      ColorBuffer_BackupAndDarken(source, work->transferValue,
+      PaletteFade_BackupAndDarken(source, work->transferValue,
                                   (void *)BG_CHAR_BLOCK(1), CANVAS_BYTES);
       break;
     case CANVAS_COPY_AND_BRIGHTEN:
-      ColorBuffer_BackupAndBrighten(source, work->transferValue,
+      PaletteFade_BackupAndBrighten(source, work->transferValue,
                                     (void *)BG_CHAR_BLOCK(1), CANVAS_BYTES);
       break;
     }
@@ -184,14 +184,14 @@ void BattleAnim_FlushPendingGraphicsTransfer(void) {
     break;
   case CANVAS_COPY_AND_FADE:
     if (work->transferValue == 50) {
-      ColorBuffer_BackupAndHalve(source, (void *)BG_CHAR_BLOCK(2), 0x7800);
+      PaletteFade_BackupAndHalve(source, (void *)BG_CHAR_BLOCK(2), 0x7800);
     } else {
-      ColorBuffer_BackupAndScaleThreeQuarters(source, (void *)BG_CHAR_BLOCK(2),
+      PaletteFade_BackupAndScaleThreeQuarters(source, (void *)BG_CHAR_BLOCK(2),
                                               0x7800);
     }
     break;
   case CANVAS_COPY_AND_DARKEN:
-    ColorBuffer_BackupAndDarken(source, work->transferValue,
+    PaletteFade_BackupAndDarken(source, work->transferValue,
                                 (void *)BG_CHAR_BLOCK(2), 0x7800);
     break;
   }
@@ -208,7 +208,7 @@ void BattleAnim_FlushPendingGraphicsTransfer(void) {
 ///
 /// Nothing in the build calls it or takes its address. Writes WIN0H to
 /// BLDALPHA from the work block's copies.
-void Graphics_ApplyWindowBlendRegisters(void) {
+void BattleAnim_ApplyWindowBlendRegisters(void) {
   struct BattleAnimWork *work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_ANIM);
 
   REG_WIN0H = work->win0h;
@@ -499,7 +499,7 @@ void BattleAnim_EndCanvasLayer(void) {
   struct BattleWork *battle = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE);
   s32 i;
 
-  Sound_PlaySongFar(AUDIO_CUE_FADE_SLOT3);
+  Sound_PlaySongFar(SONG_FADE_OUT_ACTION_SE);
   gBgScroll[1].x = work->savedBg1X;
   gBgScroll[1].y = work->savedBg1Y;
   // The battle's projection centre, which Camera_ApplyShake moves.

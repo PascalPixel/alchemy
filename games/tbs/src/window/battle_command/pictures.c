@@ -34,7 +34,7 @@ struct WindowSprite *Heading_Create(s32 picture, struct Window *window, s32 x,
   struct WindowSprite *first;
   struct WindowSprite *second;
 
-  slot = Resource_FindFreeEntry();
+  slot = VramCache_FindFreeEntry();
   if (slot >= VRAM_CACHE_ENTRY_COUNT)
     return NULL;
 
@@ -92,7 +92,7 @@ struct WindowSprite *CommandIcon_Create(s32 icon, s32 remap,
   s32 slot;
   struct WindowSprite *output;
 
-  slot = Resource_FindFreeEntry();
+  slot = VramCache_FindFreeEntry();
   output = NULL;
   if (slot != VRAM_CACHE_ENTRY_COUNT) {
     CommandIcon_Load(icon, slot, remap);
@@ -120,7 +120,7 @@ void Ui_ApplyTableScaleToObject(struct WindowSprite *obj) {
     effect.scaleX = scale;
     effect.scaleY = scale;
     effect.angle = 0;
-    obj->oam.matrix = AffineMatrix_BuildForEffect(&effect);
+    obj->oam.matrix = OamMatrix_AllocFromTransform(&effect);
     // Affine mode 3 doubles the sprite's box, so it moves up and left by 16
     // pixels (0xfff0 and 0xf0 wrap to -16) to keep its centre.
     obj->oam.affineMode = 3;

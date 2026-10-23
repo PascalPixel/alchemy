@@ -326,8 +326,8 @@ s32 Title_ShowIntro(s32 prompt) {
   gOamCopyEnabled = result;
   gCpuLoadDisplayEnabled = result;
   Title_LoadIntroBackgrounds();
-  PaletteFade_Initialize();
-  PaletteFade_SetCurrent(RGB(2, 0, 0), PALETTE_HALVES_BOTH);
+  TitlePaletteFade_Initialize();
+  TitlePaletteFade_SetCurrent(RGB(2, 0, 0), PALETTES_ALL);
   // This screen supplies its own OAM list in VBlank. Keep the normal OAM
   // copy disabled until its sprite callback is removed at the white flash.
   IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT,
@@ -335,7 +335,7 @@ s32 Title_ShowIntro(s32 prompt) {
                           DISPCNT_BG2_ON | DISPCNT_OBJ_ON | DISPCNT_WIN0_ON |
                           DISPCNT_WIN1_ON | DISPCNT_OBJWIN_ON,
                       IO_WRITE_16);
-  PaletteFade_Start(60);
+  TitlePaletteFade_Start(60);
   Task_Add(Title_UpdateIntroSprites, TASK_PRIORITY_VBLANK);
 
   for (;;) {
@@ -410,7 +410,7 @@ s32 Title_ShowIntro(s32 prompt) {
     } else if (nextFrame == 280) {
       // Hide the background replacement behind white, and restore the
       // normal OAM uploader before drawing the title prompt.
-      Fade_ToWhite(1);
+      ScreenFade_ToWhite(1);
       Task_Remove(Title_UpdateIntroSprites);
       gOamCopyEnabled = 1;
       WaitFrames(1);
@@ -449,7 +449,7 @@ s32 Title_ShowIntro(s32 prompt) {
     Decompress_ByteLz(gTitle_PromptTiles, buffer);
     for (i = 0; i < PROMPT_TILES; i++) {
       s32 vramBlock =
-          VramCache_Load(Resource_FindFreeEntry(), 128, buffer + (i << 8) / 2);
+          VramCache_Load(VramCache_FindFreeEntry(), 128, buffer + (i << 8) / 2);
       u32 *spriteWords = (u32 *)sprite;
 
       *spriteWords++ = 0;
@@ -459,8 +459,8 @@ s32 Title_ShowIntro(s32 prompt) {
     }
     FreeHeapSlot(HEAP_SLOT_TILE_SCRATCH);
   }
-  Fade_FromWhite(30);
-  Fade_Wait();
+  ScreenFade_FromWhite(30);
+  ScreenFade_Wait();
   REG_DISPCNT =
       DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON | DISPCNT_BG2_ON | DISPCNT_OBJ_ON;
   if (prompt != 0)
@@ -480,7 +480,7 @@ s32 Title_ShowIntro(s32 prompt) {
         for (j = 0, x = PROMPT_X; j < PROMPT_SPRITES; j++) {
           sprite->x = x;
           sprite->y = y;
-          Runtime_PushSlotEntry(sprite, 0);
+          Oam_AddSpriteAtDepth(sprite, 0);
           x += 32;
           sprite++;
         }
@@ -490,7 +490,7 @@ s32 Title_ShowIntro(s32 prompt) {
       for (j = 0, x = PROMPT_X; j < PROMPT_SPRITES; j++) {
         sprite->x = x;
         sprite->y = PROMPT_Y;
-        Runtime_PushSlotEntry(sprite, 0);
+        Oam_AddSpriteAtDepth(sprite, 0);
         x += 32;
         sprite++;
       }
@@ -524,7 +524,7 @@ UNUSED void Title_NoOpPalette(void) {}
 /// holds two seconds; otherwise it waits a second, fades in, holds three
 /// seconds and fades out, faster once skipped. Called by Title_Run. Returns -1
 /// when A or Start skipped it.
-s32 Title_ShowSplashScreen(s32 mode) {
+s32 Title_ShowNintendoLogo(s32 mode) {
   s32 result;
   u8 *resourceData;
   u16 *tilemap;
@@ -539,7 +539,7 @@ s32 Title_ShowSplashScreen(s32 mode) {
   resourceId = (s32)&ResourceId_NintendoLogo;
   blankTile = 0x1ff;
   Task_ResetAll();
-  Fade_ToBlack(1);
+  ScreenFade_ToBlack(1);
   DebugText_Clear();
   WaitFrames(1);
   REG_BG2CNT = BGCNT_PRIORITY(1) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(6);
@@ -571,8 +571,8 @@ s32 Title_ShowSplashScreen(s32 mode) {
   REG_DISPCNT =
       DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON | DISPCNT_BG2_ON | DISPCNT_OBJ_ON;
   if (mode == 0) {
-    Fade_FromBlack(1);
-    Fade_Wait();
+    ScreenFade_FromBlack(1);
+    ScreenFade_Wait();
     for (rowOrHoldFrame = 0; rowOrHoldFrame < 120; rowOrHoldFrame++) {
       if (gKeysPressed & (KEY_A | KEY_START)) {
         result = -1;
@@ -592,10 +592,10 @@ s32 Title_ShowSplashScreen(s32 mode) {
     WaitFrames(1);
   }
   if (result != 0)
-    Fade_FromBlack(8);
+    ScreenFade_FromBlack(8);
   else
-    Fade_FromBlack(60);
-  Fade_Wait();
+    ScreenFade_FromBlack(60);
+  ScreenFade_Wait();
   if (result == 0) {
     for (rowOrHoldFrame = 0; rowOrHoldFrame < 180; rowOrHoldFrame++) {
       if (gKeysPressed & (KEY_A | KEY_START)) {
@@ -606,17 +606,17 @@ s32 Title_ShowSplashScreen(s32 mode) {
     }
   }
   if (result != 0)
-    Fade_ToBlack(8);
+    ScreenFade_ToBlack(8);
   else
-    Fade_ToBlack(60);
-  Fade_Wait();
+    ScreenFade_ToBlack(60);
+  ScreenFade_Wait();
   return result;
 }
 
 /// Shows the Camelot logo for two seconds, cycling its four frames of tiles.
 /// A or Start ends it early. Reached through the palette far-call table from
 /// the title sequence. Returns 0.
-s32 Title_ShowAnimatedSplash(void) {
+s32 Title_ShowCamelotLogo(void) {
   s32 result;
   u32 workIndex;
   u8 *resourceData;
@@ -626,7 +626,7 @@ s32 Title_ShowAnimatedSplash(void) {
   result = 0;
   resourceId = (s32)&ResourceId_CamelotLogo;
   Task_ResetAll();
-  Fade_ToBlack(1);
+  ScreenFade_ToBlack(1);
   DebugText_Clear();
   WaitFrames(1);
   REG_BG2CNT = BGCNT_PRIORITY(1) | BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS |
@@ -655,8 +655,8 @@ s32 Title_ShowAnimatedSplash(void) {
   Dma_Set(gBgScroll, REG_BG0HOFS, DMA_COPY_WORDS(4), REG_DMA3);
   Window_LoadGraphics();
   DebugText_Clear();
-  Fade_FromWhite(1);
-  Fade_Wait();
+  ScreenFade_FromWhite(1);
+  ScreenFade_Wait();
   REG_DISPCNT =
       DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON | DISPCNT_BG2_ON | DISPCNT_OBJ_ON;
   // Replace only the animated tiles; the rest of the decoded logo stays
@@ -672,16 +672,17 @@ s32 Title_ShowAnimatedSplash(void) {
 }
 
 /// Unused: color entry retained in the far-call table.
-UNUSED void Graphics_NoOpColor(void) {}
+UNUSED void Title_NoOpColor(void) {}
 
-// The palette fade (struct PaletteFade) keeps the saved palettes, the
+// The palette fade (struct TitlePaletteFade) keeps the saved palettes, the
 // colour components shown now, the target components and each one's step.
 
 /// Computes each of the 1536 colour components' change per frame from the
 /// current components to the target (nothing when `frames` is not
-/// positive). Called by PaletteFade_Start.
-void PaletteFade_CalculateSteps(s16 *sourceComponents, s16 *targetComponents,
-                                s16 *componentSteps, s32 frames) {
+/// positive). Called by TitlePaletteFade_Start.
+void TitlePaletteFade_CalculateSteps(s16 *sourceComponents,
+                                     s16 *targetComponents, s16 *componentSteps,
+                                     s32 frames) {
   s32 remaining;
   s32 sourceValue;
   s32 targetValue;
@@ -700,12 +701,12 @@ void PaletteFade_CalculateSteps(s16 *sourceComponents, s16 *targetComponents,
   }
 }
 
-/// A task scheduled by PaletteFade_Initialize: steps the palette fade each
+/// A task scheduled by TitlePaletteFade_Initialize: steps the palette fade each
 /// frame, adding the step to every colour component until the fade is done,
 /// packs the components into the spare RGB555 copy of the palettes and queues
 /// both halves for VBlank.
-void PaletteFade_Update(void) {
-  struct PaletteFade *work = (struct PaletteFade *)gPaletteFadeWork;
+void TitlePaletteFade_Update(void) {
+  struct TitlePaletteFade *work = (struct TitlePaletteFade *)gPaletteFadeWork;
   u16 *componentSteps = work->delta;
   u16 *currentComponents;
   u16 *packedColors;
@@ -749,15 +750,15 @@ void PaletteFade_Update(void) {
 
 /// Transforms 512 source colours into destination components (three
 /// per colour, each in the high bits of a halfword). `mode` picks the
-/// transform: a colour below PALETTE_TRANSFORM_FROM_SOURCE fills every colour
-/// with it; PALETTE_TRANSFORM_FROM_SOURCE takes that colour from source[0];
-/// PALETTE_TRANSFORM_PLAIN to PALETTE_TRANSFORM_WARM2 are the whole-palette
+/// transform: a colour below PALETTE_TINT_FROM_SOURCE fills every colour
+/// with it; PALETTE_TINT_FROM_SOURCE takes that colour from source[0];
+/// PALETTE_TINT_NONE to PALETTE_TINT_WARM2 are the whole-palette
 /// filters; the TINT, BLEND and SPLIT flags carry
 /// a colour in their low bits; anything else is the address of components to
-/// copy. `paletteHalf` is an enum PaletteHalf.
-/// Called by PaletteFade_Initialize and the palette fade's setters.
-void Palette_Transform(u32 mode, u16 *source, u16 *destination,
-                       s32 paletteHalf) {
+/// copy. `selectedPalettes` is an enum PaletteSelection.
+/// Called by TitlePaletteFade_Initialize and the palette fade's setters.
+void TitlePaletteFade_BuildColors(u32 mode, u16 *source, u16 *destination,
+                                  s32 selectedPalettes) {
   u32 colorIndex;
   u32 colorCount = 512;
   s32 red;
@@ -765,25 +766,25 @@ void Palette_Transform(u32 mode, u16 *source, u16 *destination,
   u32 colorWork;
   s32 green;
 
-  if (mode == PALETTE_TRANSFORM_FROM_SOURCE)
+  if (mode == PALETTE_TINT_FROM_SOURCE)
     mode = *source;
-  if (paletteHalf == PALETTE_HALF_BG) {
+  if (selectedPalettes == PALETTES_BG) {
     colorCount = 256;
-  } else if (paletteHalf == PALETTE_HALF_OBJ) {
+  } else if (selectedPalettes == PALETTES_OBJECTS) {
     destination += 768;
     source += 256;
     colorCount = 256;
   }
 
-  if (mode < PALETTE_TRANSFORM_FROM_SOURCE) {
+  if (mode < PALETTE_TINT_FROM_SOURCE) {
     *destination++ = mode & 0x7c00;
     *destination++ = (mode & 0x03e0) << 5;
     *destination++ = (mode & 0x001f) << 10;
     Dma_Set(destination - 3, destination,
             DMA_ENABLE << 16 | (((colorCount - 1) * 6) >> 1), REG_DMA3);
-  } else if (mode < PALETTE_TRANSFORM_FLAGS) {
+  } else if (mode < PALETTE_TINT_FLAGS) {
     switch (mode) {
-    case PALETTE_TRANSFORM_GREY:
+    case PALETTE_TINT_GRAYSCALE:
       for (colorIndex = 0; colorIndex < colorCount; colorIndex++) {
         colorWork = *source++;
         red = ((colorWork << 11) & 0xf800);
@@ -795,7 +796,7 @@ void Palette_Transform(u32 mode, u16 *source, u16 *destination,
         *destination++ = colorWork;
       }
       break;
-    case PALETTE_TRANSFORM_SEPIA:
+    case PALETTE_TINT_SEPIA:
       for (colorIndex = 0; colorIndex < colorCount; colorIndex++) {
         colorWork = *source++;
         red = colorWork & 31;
@@ -826,12 +827,12 @@ void Palette_Transform(u32 mode, u16 *source, u16 *destination,
           green = 28;
         if (blue > 28)
           blue = 28;
-        *destination++ = gPalette_ChannelCurveLight[blue];
-        *destination++ = gPalette_ChannelCurveLight[green];
-        *destination++ = gPalette_ChannelCurveLight[red];
+        *destination++ = gPalette_ComponentCurveLight[blue];
+        *destination++ = gPalette_ComponentCurveLight[green];
+        *destination++ = gPalette_ComponentCurveLight[red];
       }
       break;
-    case PALETTE_TRANSFORM_WARM:
+    case PALETTE_TINT_WARM:
       for (colorIndex = 0; colorIndex < colorCount; colorIndex++) {
         colorWork = *source++;
         red = colorWork & 31;
@@ -842,16 +843,16 @@ void Palette_Transform(u32 mode, u16 *source, u16 *destination,
         red += 6;
         green += 4;
         blue -= 6;
-        red = Graphics_ClampRgb555Channel(red);
-        green = Graphics_ClampRgb555Channel(green);
-        blue = Graphics_ClampRgb555Channel(blue);
-        SET_VECTOR(destination, gPalette_ChannelCurveContrast[blue],
-                   gPalette_ChannelCurveLight[green],
-                   gPalette_ChannelCurve[red]);
+        red = TitlePaletteFade_ClampComponent(red);
+        green = TitlePaletteFade_ClampComponent(green);
+        blue = TitlePaletteFade_ClampComponent(blue);
+        SET_VECTOR(destination, gPalette_ComponentCurveContrast[blue],
+                   gPalette_ComponentCurveLight[green],
+                   gPalette_ComponentCurve[red]);
         destination += 3;
       }
       break;
-    case PALETTE_TRANSFORM_MUTED:
+    case PALETTE_TINT_MUTED:
       for (colorIndex = 0; colorIndex < colorCount; colorIndex++) {
         colorWork = *source++;
         red = colorWork & 31;
@@ -871,15 +872,15 @@ void Palette_Transform(u32 mode, u16 *source, u16 *destination,
           blue = 26;
         green += 2;
         blue += 2;
-        red = Graphics_ClampRgb555Channel(red);
-        green = Graphics_ClampRgb555Channel(green);
-        blue = Graphics_ClampRgb555Channel(blue);
-        *destination++ = gPalette_ChannelCurve[blue];
-        *destination++ = gPalette_ChannelCurve[green];
-        *destination++ = gPalette_ChannelCurve[red];
+        red = TitlePaletteFade_ClampComponent(red);
+        green = TitlePaletteFade_ClampComponent(green);
+        blue = TitlePaletteFade_ClampComponent(blue);
+        *destination++ = gPalette_ComponentCurve[blue];
+        *destination++ = gPalette_ComponentCurve[green];
+        *destination++ = gPalette_ComponentCurve[red];
       }
       break;
-    case PALETTE_TRANSFORM_PALE:
+    case PALETTE_TINT_PALE:
       for (colorIndex = 0; colorIndex < colorCount; colorIndex++) {
         s32 mean;
 
@@ -887,36 +888,36 @@ void Palette_Transform(u32 mode, u16 *source, u16 *destination,
         red = colorWork & 31;
         green = (colorWork >> 5) & 31;
         blue = (colorWork >> 10) & 31;
-        mean = Graphics_ClampRgb555Channel((red + green + blue) / 3);
+        mean = TitlePaletteFade_ClampComponent((red + green + blue) / 3);
         red = (red >> 1) + mean;
         green = (green >> 1) + mean;
         blue = (blue >> 1) + mean;
-        red = Graphics_ClampRgb555Channel(red);
-        green = Graphics_ClampRgb555Channel(green);
-        blue = Graphics_ClampRgb555Channel(blue);
-        SET_VECTOR(destination, gPalette_ChannelCurveContrast[blue],
-                   gPalette_ChannelCurveContrast[green],
-                   gPalette_ChannelCurveContrast[red]);
+        red = TitlePaletteFade_ClampComponent(red);
+        green = TitlePaletteFade_ClampComponent(green);
+        blue = TitlePaletteFade_ClampComponent(blue);
+        SET_VECTOR(destination, gPalette_ComponentCurveContrast[blue],
+                   gPalette_ComponentCurveContrast[green],
+                   gPalette_ComponentCurveContrast[red]);
         destination += 3;
       }
       break;
-    case PALETTE_TRANSFORM_RED:
+    case PALETTE_TINT_RED:
       for (colorIndex = 0; colorIndex < colorCount; colorIndex++) {
         colorWork = *source++;
         red = colorWork & 31;
         green = (colorWork >> 5) & 31;
         blue = (colorWork >> 10) & 31;
         red += ((green >> 3) + (blue >> 3));
-        red = Graphics_ClampRgb555Channel(red);
+        red = TitlePaletteFade_ClampComponent(red);
         green -= green / 3;
         blue -= blue / 3;
-        SET_VECTOR(destination, gPalette_ChannelCurve[blue],
-                   gPalette_ChannelCurve[green],
-                   gPalette_ChannelCurveLight[red]);
+        SET_VECTOR(destination, gPalette_ComponentCurve[blue],
+                   gPalette_ComponentCurve[green],
+                   gPalette_ComponentCurveLight[red]);
         destination += 3;
       }
       break;
-    case PALETTE_TRANSFORM_WARM2:
+    case PALETTE_TINT_WARM2:
       for (colorIndex = 0; colorIndex < colorCount; colorIndex++) {
         colorWork = *source++;
         red = colorWork & 31;
@@ -927,12 +928,12 @@ void Palette_Transform(u32 mode, u16 *source, u16 *destination,
         red += 6;
         green += 4;
         blue -= 6;
-        red = Graphics_ClampRgb555Channel(red);
-        green = Graphics_ClampRgb555Channel(green);
-        blue = Graphics_ClampRgb555Channel(blue);
-        SET_VECTOR(destination, gPalette_ChannelCurveContrast[blue],
-                   gPalette_ChannelCurveLight[green],
-                   gPalette_ChannelCurve[red]);
+        red = TitlePaletteFade_ClampComponent(red);
+        green = TitlePaletteFade_ClampComponent(green);
+        blue = TitlePaletteFade_ClampComponent(blue);
+        SET_VECTOR(destination, gPalette_ComponentCurveContrast[blue],
+                   gPalette_ComponentCurveLight[green],
+                   gPalette_ComponentCurve[red]);
         destination += 3;
       }
       break;
@@ -945,7 +946,7 @@ void Palette_Transform(u32 mode, u16 *source, u16 *destination,
       }
       break;
     }
-  } else if (mode & PALETTE_TRANSFORM_TINT) {
+  } else if (mode & PALETTE_TINT_CUSTOM) {
     u32 tintRed;
     u32 tintGreen;
     u32 tintBlue;
@@ -962,13 +963,13 @@ void Palette_Transform(u32 mode, u16 *source, u16 *destination,
       red = colorWork * tintRed;
       green = colorWork * tintGreen;
       blue = colorWork * tintBlue;
-      red = Graphics_ClampRgb555Component(red);
-      green = Graphics_ClampRgb555Component(green);
-      blue = Graphics_ClampRgb555Component(blue);
+      red = TitlePaletteFade_ClampShiftedComponent(red);
+      green = TitlePaletteFade_ClampShiftedComponent(green);
+      blue = TitlePaletteFade_ClampShiftedComponent(blue);
       SET_VECTOR(destination, blue, green, red);
       destination += 3;
     }
-  } else if (mode & PALETTE_TRANSFORM_BLEND) {
+  } else if (mode & PALETTE_TINT_BLEND) {
     u32 tintRed;
     u32 tintGreen;
     u32 tintBlue;
@@ -988,14 +989,14 @@ void Palette_Transform(u32 mode, u16 *source, u16 *destination,
                            (s32)(tintGreen << 16) >> 4);
       blue = Iwram_MulQ16(((colorWork * tintBlue) >> 4) << 16,
                           (s32)(tintBlue << 16) >> 4);
-      red = Graphics_ClampRgb555Channel((u32)red >> 16);
-      green = Graphics_ClampRgb555Channel((u32)green >> 16);
-      blue = Graphics_ClampRgb555Channel((u32)blue >> 16);
-      *destination++ = gPalette_ChannelCurve[blue];
-      *destination++ = gPalette_ChannelCurve[green];
-      *destination++ = gPalette_ChannelCurve[red];
+      red = TitlePaletteFade_ClampComponent((u32)red >> 16);
+      green = TitlePaletteFade_ClampComponent((u32)green >> 16);
+      blue = TitlePaletteFade_ClampComponent((u32)blue >> 16);
+      *destination++ = gPalette_ComponentCurve[blue];
+      *destination++ = gPalette_ComponentCurve[green];
+      *destination++ = gPalette_ComponentCurve[red];
     }
-  } else if (mode & PALETTE_TRANSFORM_SPLIT) {
+  } else if (mode & PALETTE_TINT_SPLIT) {
     for (colorIndex = 0; colorIndex < colorCount; colorIndex++) {
       colorWork = *source++;
       destination[colorIndex * 3 + 0] = colorWork & 0x7c00;
@@ -1003,7 +1004,7 @@ void Palette_Transform(u32 mode, u16 *source, u16 *destination,
       destination[colorIndex * 3 + 2] = (colorWork & 0x001f) << 10;
     }
   } else {
-    if (paletteHalf == PALETTE_HALF_OBJ)
+    if (selectedPalettes == PALETTES_OBJECTS)
       mode += 0x600;
     Dma_Set((const void *)mode, destination,
             DMA_COPY_WORDS((colorCount * 6) >> 2), REG_DMA3);
@@ -1011,10 +1012,10 @@ void Palette_Transform(u32 mode, u16 *source, u16 *destination,
 }
 
 /// Allocates the palette fade, saves both hardware palettes in it as the
-/// starting colours and schedules PaletteFade_Update. Called by
+/// starting colours and schedules TitlePaletteFade_Update. Called by
 /// Title_ShowIntro.
-void PaletteFade_Initialize(void) {
-  struct PaletteFade *buffer;
+void TitlePaletteFade_Initialize(void) {
+  struct TitlePaletteFade *buffer;
   s32 callbackPriority;
 
   buffer = AllocHeapSlotEwram(HEAP_SLOT_PALETTE_FADE, sizeof(*buffer));
@@ -1022,41 +1023,43 @@ void PaletteFade_Initialize(void) {
   Dma_Set((void *)BG_PLTT, buffer, DMA_COPY_WORDS(0x80), REG_DMA3);
   Dma_Set((void *)OBJ_PLTT, &buffer->palette[256], DMA_COPY_WORDS(0x80),
           REG_DMA3);
-  Palette_Transform(PALETTE_TRANSFORM_PLAIN, buffer->palette, buffer->target,
-                    PALETTE_HALVES_BOTH);
+  TitlePaletteFade_BuildColors(PALETTE_TINT_NONE, buffer->palette,
+                               buffer->target, PALETTES_ALL);
   callbackPriority = TASK_PRIORITY_MAIN_LOOP;
-  Task_Add(PaletteFade_Update, callbackPriority);
+  Task_Add(TitlePaletteFade_Update, callbackPriority);
 }
 
 /// Unused: unschedules the palette fade and frees its buffers. Nothing in ☀️
 /// calls it.
-UNUSED void PaletteFade_Release(void) {
-  Task_Remove(&PaletteFade_Update);
+UNUSED void TitlePaletteFade_Release(void) {
+  Task_Remove(&TitlePaletteFade_Update);
   FreeHeapSlot(HEAP_SLOT_PALETTE_FADE);
 }
 
 /// Unused: sets the fade target by transforming the saved background and/or
 /// sprite palettes through the requested mode. Nothing in ☀️ calls it.
-UNUSED void PaletteFade_SetTarget(s32 mode, s32 paletteHalf) {
-  struct PaletteFade *fade = (struct PaletteFade *)gPaletteFadeWork;
+UNUSED void TitlePaletteFade_SetTarget(s32 mode, s32 selectedPalettes) {
+  struct TitlePaletteFade *fade = (struct TitlePaletteFade *)gPaletteFadeWork;
 
   if (fade != NULL)
-    Palette_Transform(mode, fade->palette, fade->target, paletteHalf);
+    TitlePaletteFade_BuildColors(mode, fade->palette, fade->target,
+                                 selectedPalettes);
 }
 
 /// Sets the colours shown now by transforming the saved palettes. Called by
 /// Title_ShowIntro.
-void PaletteFade_SetCurrent(s32 mode, s32 paletteHalf) {
-  struct PaletteFade *fade = (struct PaletteFade *)gPaletteFadeWork;
+void TitlePaletteFade_SetCurrent(s32 mode, s32 selectedPalettes) {
+  struct TitlePaletteFade *fade = (struct TitlePaletteFade *)gPaletteFadeWork;
 
   if (fade != NULL)
-    Palette_Transform(mode, fade->palette, fade->current, paletteHalf);
+    TitlePaletteFade_BuildColors(mode, fade->palette, fade->current,
+                                 selectedPalettes);
 }
 
 /// Unused: replaces the first saved colour, the backdrop. Nothing in ☀️ calls
 /// it.
-UNUSED void PaletteFade_SetBackdrop(s32 color) {
-  struct PaletteFade *fade = (struct PaletteFade *)gPaletteFadeWork;
+UNUSED void TitlePaletteFade_SetBackdrop(s32 color) {
+  struct TitlePaletteFade *fade = (struct TitlePaletteFade *)gPaletteFadeWork;
 
   if (fade != NULL)
     fade->palette[0] = color;
@@ -1064,19 +1067,20 @@ UNUSED void PaletteFade_SetBackdrop(s32 color) {
 
 /// Starts fading the shown colours to the target over the requested frames.
 /// Called by Title_ShowIntro for the opening fade from black.
-void PaletteFade_Start(s32 frames) {
-  struct PaletteFade *fade = (struct PaletteFade *)gPaletteFadeWork;
+void TitlePaletteFade_Start(s32 frames) {
+  struct TitlePaletteFade *fade = (struct TitlePaletteFade *)gPaletteFadeWork;
 
   if (fade != NULL) {
     fade->duration = frames;
     fade->step = 0;
-    PaletteFade_CalculateSteps((s16 *)fade->current, (s16 *)fade->target,
-                               (s16 *)fade->delta, frames);
+    TitlePaletteFade_CalculateSteps((s16 *)fade->current, (s16 *)fade->target,
+                                    (s16 *)fade->delta, frames);
   }
 }
 
-/// Clamps a five-bit colour channel to 0..31. Called by Palette_Transform.
-s32 Graphics_ClampRgb555Channel(s32 value) {
+/// Clamps a five-bit colour channel to 0..31. Called by
+/// TitlePaletteFade_BuildColors.
+s32 TitlePaletteFade_ClampComponent(s32 value) {
   if (value > 31)
     return 31;
   if (value < 0)
@@ -1086,19 +1090,19 @@ s32 Graphics_ClampRgb555Channel(s32 value) {
 
 /// Caps a colour component at 0x7c00, the largest a five-bit channel shifted
 /// into the high bits reaches. There is no lower bound. Called by
-/// Palette_Transform.
-s32 Graphics_ClampRgb555Component(s32 value) {
+/// TitlePaletteFade_BuildColors.
+s32 TitlePaletteFade_ClampShiftedComponent(s32 value) {
   if (value > 0x7c00)
     value = 0x7c00;
   return value;
 }
 
-// The response curves of Palette_Transform's filters. Like the
+// The response curves of TitlePaletteFade_BuildColors's filters. Like the
 // declarations in palbuf.h they are not const: as const the code differs.
 
 /// Maps a channel (0..31) to a component (0..31 << 10)
 // clang-format off
-u16 gPalette_ChannelCurve[32] = {
+u16 gPalette_ComponentCurve[32] = {
     0, 524, 1071, 1643, 2240, 2863, 3513, 4191,
     4898, 5635, 6403, 7202, 8035, 8901, 9803, 10740,
     11715, 12729, 13783, 14877, 16014, 17195, 18422, 19694,
@@ -1106,7 +1110,7 @@ u16 gPalette_ChannelCurve[32] = {
 };
 
 /// A brighter curve
-u16 gPalette_ChannelCurveLight[32] = {
+u16 gPalette_ComponentCurveLight[32] = {
     0, 613, 1247, 1902, 2580, 3281, 4005, 4753,
     5526, 6324, 7148, 7999, 8876, 9782, 10716, 11680,
     12674, 13699, 14755, 15843, 16965, 18121, 19312, 20538,
@@ -1114,7 +1118,7 @@ u16 gPalette_ChannelCurveLight[32] = {
 };
 
 /// A high-contrast curve (25 and above are full)
-u16 gPalette_ChannelCurveContrast[32] = {
+u16 gPalette_ComponentCurveContrast[32] = {
     0, 360, 759, 1201, 1689, 2226, 2817, 3466,
     4178, 4957, 5808, 6738, 7752, 8856, 10058, 11365,
     12784, 14325, 15996, 17806, 19767, 21888, 24183, 26662,

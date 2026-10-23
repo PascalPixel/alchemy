@@ -76,7 +76,7 @@ struct Window *FieldMessage_ShowAtObject(s32 localId, s32 unused) {
     // Find the speaker on screen, in 8-pixel tiles.
     if (object != 0) {
       if (work->mode == OBJECT_SYSTEM_WORLD_MAP) {
-        Render_ProjectPoint(&object->x, pos);
+        Transform_ProjectPoint(&object->x, pos);
         x = pos[0] >> 3;
         y = pos[1] >> 3;
         found = 1;
@@ -93,7 +93,7 @@ struct Window *FieldMessage_ShowAtObject(s32 localId, s32 unused) {
       sprite = localId;
       object = ObjectEvent_GetByLocalId(gGameState.leaderLocalId);
       if (work->mode == OBJECT_SYSTEM_WORLD_MAP) {
-        Render_ProjectPoint(&object->x, pos);
+        Transform_ProjectPoint(&object->x, pos);
         x = pos[0] >> 3;
         y = pos[1] >> 3;
         found = 1;
@@ -368,8 +368,8 @@ void FieldScript_ShowSpeakerMessage(s32 speaker) {
     if (object != NULL) {
       if (state->mode == OBJECT_SYSTEM_WORLD_MAP)
         positionFound =
-            Render_ProjectPoint((const u8 *)object + offsetof(struct Object, x),
-                                pos) != 0;
+            Transform_ProjectPoint(
+                (const u8 *)object + offsetof(struct Object, x), pos) != 0;
       else
         positionFound = ObjectEvent_GetScreenPosition(speaker, pos) != -1;
     }

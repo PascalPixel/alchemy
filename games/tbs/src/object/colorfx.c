@@ -65,7 +65,7 @@ s32 LuckyWheels_Start(void) {
 
 /// Writes count RGB555 colours from src to dst scaled by scale (16.16, 0x10000
 /// keeps them). Returns 0.
-s32 Graphics_ScaleRgb555(u16 *src, u16 *dst, s32 scale, s32 count) {
+s32 LuckyWheels_ScaleRgb555(u16 *src, u16 *dst, s32 scale, s32 count) {
   s32 n;
   u32 redMask;
   u32 greenMask;
@@ -121,10 +121,10 @@ void LuckyWheels_TransferCanvas(void) {
     case 2:
       // Trails: fade nonzero colour numbers to 1/2 or 3/4.
       if (work->transferValue == 50)
-        ColorBuffer_BackupAndHalveNonzero(buf, LUCKY_WHEELS_CANVAS_TILES,
+        PaletteFade_BackupAndHalveNonzero(buf, LUCKY_WHEELS_CANVAS_TILES,
                                           LUCKY_WHEELS_CANVAS_SIZE);
       else
-        ColorBuffer_BackupAndScaleNonzeroThreeQuarters(
+        PaletteFade_BackupAndScaleNonzeroThreeQuarters(
             buf, LUCKY_WHEELS_CANVAS_TILES, LUCKY_WHEELS_CANVAS_SIZE);
       break;
     }
@@ -1128,8 +1128,8 @@ void LuckyWheels_Run(void) {
             REG_DMA3);
     Dma_Set((void *)OBJ_PLTT, shade, (DMA_ENABLE | DMA_32BIT) << 16 | 0x80,
             REG_DMA3);
-    Graphics_ScaleRgb555(shade, (u16 *)OBJ_PLTT, 0, 0x100);
-    Graphics_ScaleRgb555((u16 *)work, (u16 *)BG_PLTT, 0, 0x100);
+    LuckyWheels_ScaleRgb555(shade, (u16 *)OBJ_PLTT, 0, 0x100);
+    LuckyWheels_ScaleRgb555((u16 *)work, (u16 *)BG_PLTT, 0, 0x100);
     REG_DISPCNT = DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON | DISPCNT_BG1_ON |
                   DISPCNT_BG2_ON | DISPCNT_OBJ_ON | DISPCNT_WIN0_ON;
     if (PartyInventory_CountItemFar(ITEM_GAME_TICKET) == 1) {
@@ -1153,8 +1153,9 @@ void LuckyWheels_Run(void) {
 
     for (frame = 0; state->state != LUCKY_WHEELS_DONE; frame++) {
       if (frame <= 16) {
-        Graphics_ScaleRgb555(shade, (u16 *)OBJ_PLTT, frame << 12, 0x100);
-        Graphics_ScaleRgb555((u16 *)work, (u16 *)BG_PLTT, frame << 12, 0x100);
+        LuckyWheels_ScaleRgb555(shade, (u16 *)OBJ_PLTT, frame << 12, 0x100);
+        LuckyWheels_ScaleRgb555((u16 *)work, (u16 *)BG_PLTT, frame << 12,
+                                0x100);
       }
       if (state->state == LUCKY_WHEELS_SHOWING_WIN) {
         s32 phase = frame % 80;
@@ -1268,9 +1269,10 @@ void LuckyWheels_Run(void) {
     }
 
     for (j = 0; j != 17; j++) {
-      Graphics_ScaleRgb555(shade, (u16 *)OBJ_PLTT, 0x10000 - (j << 12), 0x100);
-      Graphics_ScaleRgb555((u16 *)work, (u16 *)BG_PLTT, 0x10000 - (j << 12),
-                           0x100);
+      LuckyWheels_ScaleRgb555(shade, (u16 *)OBJ_PLTT, 0x10000 - (j << 12),
+                              0x100);
+      LuckyWheels_ScaleRgb555((u16 *)work, (u16 *)BG_PLTT, 0x10000 - (j << 12),
+                              0x100);
       WaitFrames(1);
     }
     FreeHeapSlot(HEAP_SLOT_RAM_CODE_2);

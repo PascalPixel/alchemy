@@ -271,16 +271,16 @@ void BattleAnim_RunJudgment(struct BattleAnimArgs *effect) {
     // while its radius shrinks by 2 a frame to nothing, and nearer motes are
     // drawn larger. The radius is a plain integer, at most 87, below the near
     // depth of the projection BattleAnim_StartCanvasLayer sets (96 in the
-    // same units), so Render_ProjectPoint does not project the rotated point:
-    // its x, its y less 16 and its depth, which grows towards the viewer, are
-    // used as pixels.
+    // same units), so Transform_ProjectPoint does not project the rotated
+    // point: its x, its y less 16 and its depth, which grows towards the
+    // viewer, are used as pixels.
     anchor[2] = 0;
     anchor[1] = 0;
     for (i = 0; i != 64; i++) {
       if (frame > i / 4 + 80 && PARTICLES[i].x > 0) {
         s32 size;
 
-        Render_ResetTransformState();
+        Transform_Reset();
         Transform_ApplyRoll(PARTICLES[i].velocityY);
         Transform_ApplyPitch(PARTICLES[i].velocityX);
         Transform_ApplyYaw(PARTICLES[i].velocityY + (frame << 9));
@@ -335,12 +335,12 @@ void BattleAnim_RunJudgment(struct BattleAnimArgs *effect) {
 
     if (frame == 72) {
       for (i = 0; i != JUDGMENT_FORMATION_OBJECTS; i++) {
-        AnimationObject_SelectAnimationFar(work->animations[i], i + 16);
+        Sprite_StartAnimFar(work->animations[i], i + 16);
       }
     }
     if (frame == 76) {
       for (i = 0; i != JUDGMENT_FORMATION_OBJECTS; i++) {
-        AnimationObject_SelectAnimationFar(work->animations[i], i + 32);
+        Sprite_StartAnimFar(work->animations[i], i + 32);
       }
     }
 
@@ -443,15 +443,15 @@ void BattleAnim_RunJudgment(struct BattleAnimArgs *effect) {
   Iwram_FillWords(canvas, CANVAS_BYTES, 0);
 
   for (i = 0; i != JUDGMENT_FORMATION_OBJECTS; i++) {
-    ResourceObject_ReleaseFar(work->animations[i]);
+    Sprite_DestroyFar(work->animations[i]);
   }
 
   for (i = 0; i != JUDGMENT_DEBRIS_OBJECTS; i++) {
-    struct AnimationObject *animation = ResourceObject_CreateFar(390);
+    struct Sprite *animation = Sprite_CreateFar(390);
     work->animations[i] = animation;
     if (animation != 0) {
       animation->flags = 0;
-      AnimationObject_SelectAnimationFar(animation, (i % 3));
+      Sprite_StartAnimFar(animation, (i % 3));
       work->animations[i]->image.priority = 0;
     }
   }
@@ -1013,7 +1013,7 @@ void BattleAnim_RunJudgment(struct BattleAnimArgs *effect) {
 
   // The finish: release the debris objects, then the canvas and its blitter.
   for (i = 0; i != JUDGMENT_DEBRIS_OBJECTS; i++) {
-    ResourceObject_ReleaseFar(work->animations[i]);
+    Sprite_DestroyFar(work->animations[i]);
   }
 
   ANIM_FINISH_CANVAS_ONE_BLITTER();

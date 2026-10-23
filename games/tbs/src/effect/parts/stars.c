@@ -211,7 +211,7 @@ void BattleAnim_RunAstralBlast(struct BattleAnimArgs *effect) {
 ///
 /// It lasts 128 frames. work->particles 0 to 7 are the stars, battle positions
 /// in 16.16, each variant the frame it starts. Rebuilds the background ramp
-/// each frame (Graphics_UpdatePhasePalette, after loading the rune palette)
+/// each frame (BattleAnim_UpdatePhasePalette, after loading the rune palette)
 /// and sets work->shakeFrames at each bounce.
 void BattleAnim_RunShiningStar(struct BattleAnimArgs *effect) {
   struct BattleAnimWork *work;
@@ -274,7 +274,7 @@ void BattleAnim_RunShiningStar(struct BattleAnimArgs *effect) {
   trails = PARTICLES;
   for (frame = 0; frame != 128; frame++) {
     // The three channels sway a third of a turn apart.
-    Graphics_UpdatePhasePalette(frame, 0xaaab, 0x5555, 0);
+    BattleAnim_UpdatePhasePalette(frame, 0xaaab, 0x5555, 0);
     if (frame == 96)
       ANIM_SHOW_DAMAGE(SE_HEAVY_IMPACT);
     for (i = 0; i != 8; i++) {

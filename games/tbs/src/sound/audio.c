@@ -122,7 +122,7 @@ void MusicPlayer_StartFadeOut(struct SoundPlayer *player, u16 speed) {
 
 /// Copies the RAM mixer to IWRAM, initializes the PCM and CGB paths and
 /// configures every player from gSound_PlayerSlots. Called by
-/// Audio_InitializeRuntimeDefaults at power-on.
+/// Sound_Initialize at power-on.
 void Audio_Initialize(void) {
   s32 playerIndex;
 
@@ -215,7 +215,7 @@ UNUSED void Audio_ResumeSound(u16 songId) {
     Audio_ResumePlayer(player);
 }
 
-/// Unused: stops every player. Only AudioCommand_StopAllPlayers calls it, and
+/// Unused: stops every player. Only Sound_StopAllMusicPlayers calls it, and
 /// only a bare far-call veneer, which no ☀️ code names, leads there.
 UNUSED void Audio_StopAllPlayers(void) {
   s32 playerIndex;
@@ -229,7 +229,7 @@ UNUSED void MusicPlayer_Resume(struct SoundPlayer *player) {
   Audio_ResumePlayer(player);
 }
 
-/// Unused: resumes every player. Only AudioCommand_ResumeAllPlayers calls it,
+/// Unused: resumes every player. Only Sound_ResumeAllMusicPlayers calls it,
 /// and only a bare far-call veneer, which no ☀️ code names, leads there.
 UNUSED void Audio_ResumeAllPlayers(void) {
   s32 playerIndex;

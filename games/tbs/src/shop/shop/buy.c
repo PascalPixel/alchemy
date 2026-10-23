@@ -390,11 +390,9 @@ void Shop_DrawParty(struct Window *window, s32 selected, s32 itemId) {
   if (window != 0) {
     for (memberIndex = 0; memberIndex < shop->partyMemberCount; memberIndex++) {
       if (memberIndex == selected)
-        AnimationObject_SelectAnimationFar(shop->partyMemberIcons[memberIndex],
-                                           30);
+        Sprite_StartAnimFar(shop->partyMemberIcons[memberIndex], 30);
       else
-        AnimationObject_SelectAnimationFar(shop->partyMemberIcons[memberIndex],
-                                           1);
+        Sprite_StartAnimFar(shop->partyMemberIcons[memberIndex], 1);
       shop->partyMemberScale[memberIndex] = 0x10000;
       if (!Item_IsCompatibleWithUnitFar(shop->partyMemberIds[memberIndex],
                                         itemId))
@@ -631,7 +629,7 @@ s32 Shop_SelectQuantity(s32 minimum, s32 maximum, s32 price) {
   quantityIndex = 0;
   window = Window_CreateFar(7, 4, 23, 3, WINDOW_FLAG_INSTANT);
   if (window != 0) {
-    resourceSlot = Resource_FindFreeEntry();
+    resourceSlot = VramCache_FindFreeEntry();
     if (resourceSlot != VRAM_CACHE_ENTRY_COUNT) {
       // The bar is one 8-tile entry shown as two 32x8 sprites (shape and size
       // bits 0x40004000); the second starts at the entry's tile 4

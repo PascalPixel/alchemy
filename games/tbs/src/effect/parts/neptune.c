@@ -5,14 +5,14 @@
 #include "../effect_internal.h"
 
 /// Sets BG2's horizontal scale back to one texel a pixel, for the lines above
-/// Graphics_SetBg2AffineScaleHalf's interrupt. BattleAnim_RunNeptune
+/// BattleAnim_SetBg2AffineScaleHalf's interrupt. BattleAnim_RunNeptune
 /// schedules it as a frame callback for its first stage.
-void Graphics_ResetBg2Pa(void) { REG_BG2PA = Q_8_8(1); }
+void BattleAnim_ResetBg2Pa(void) { REG_BG2PA = Q_8_8(1); }
 
 /// Stretches BG2 to twice its width from the current line down.
 /// BattleAnim_RunNeptune installs it as the VCount interrupt handler, on line
 /// 0 and from frame 152 on line 96, for its first stage.
-void Graphics_SetBg2AffineScaleHalf(void) { REG_BG2PA = Q_8_8(0.5); }
+void BattleAnim_SetBg2AffineScaleHalf(void) { REG_BG2PA = Q_8_8(0.5); }
 
 #define NEPTUNE_FLAME_GROUND 112   ///< where the blue flames throw sparks
 #define NEPTUNE_OBJECTS 8          ///< objects in the formation
@@ -100,8 +100,8 @@ void BattleAnim_RunNeptune(struct BattleAnimArgs *effect) {
   *(u16 *)&BG_PLTT[1] = 0;
   // BG2's scale per frame: one texel a pixel until the VCount line (0 here),
   // twice the width from it down.
-  Task_Add(Graphics_ResetBg2Pa, ANIM_CALLBACK_ORDER);
-  Runtime_SetIrqHandler(IRQ_VCOUNT, 0, Graphics_SetBg2AffineScaleHalf);
+  Task_Add(BattleAnim_ResetBg2Pa, ANIM_CALLBACK_ORDER);
+  Runtime_SetIrqHandler(IRQ_VCOUNT, 0, BattleAnim_SetBg2AffineScaleHalf);
   work->transferMode = CANVAS_COPY;
   Task_Add(BattleAnim_ProcessPendingGraphicsTransfer, ANIM_CALLBACK_ORDER);
   // Setup: wipe the battle away and close window 0 (its edge opens over the
@@ -271,7 +271,7 @@ void BattleAnim_RunNeptune(struct BattleAnimArgs *effect) {
     // Frame 152: only the lines from 96 down stay stretched, and the battle
     // backdrop's colours darken over 24 frames.
     if (frame == 152) {
-      Runtime_SetIrqHandler(IRQ_VCOUNT, 96, Graphics_SetBg2AffineScaleHalf);
+      Runtime_SetIrqHandler(IRQ_VCOUNT, 96, BattleAnim_SetBg2AffineScaleHalf);
       work->fadeFrames = 24;
       work->fadeStep = 0;
     }
@@ -476,7 +476,7 @@ void BattleAnim_RunNeptune(struct BattleAnimArgs *effect) {
   view->busy = 0;
   Runtime_SetIrqHandler(IRQ_VCOUNT, 0, 0);
   BattleAnim_SetupBlendedDisplay();
-  Task_Remove(Graphics_ResetBg2Pa);
+  Task_Remove(BattleAnim_ResetBg2Pa);
   REG_WIN0H = WIN_RANGE(0, 240);
   ANIM_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, 75);
   for (i = 0; i != NEPTUNE_PARTICLES; i++) {
@@ -493,7 +493,7 @@ void BattleAnim_RunNeptune(struct BattleAnimArgs *effect) {
   }
   Resource_LoadAndDecompress((s32)&ResourceId_BlueFlameSheet, work->sheet, 1,
                              1);
-  Sound_PlaySongFar(AUDIO_CUE_FADE_SLOT3);
+  Sound_PlaySongFar(SONG_FADE_OUT_ACTION_SE);
   REG_BG2PA = Q_8_8(0.5);
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
 
@@ -588,7 +588,7 @@ void BattleAnim_RunNeptune(struct BattleAnimArgs *effect) {
 
   // The finish: release the formation's objects, then the canvas.
   for (i = 0; i != NEPTUNE_OBJECTS; i++) {
-    ResourceObject_ReleaseFar(work->animations[i]);
+    Sprite_DestroyFar(work->animations[i]);
   }
   ANIM_FINISH_CANVAS();
 }

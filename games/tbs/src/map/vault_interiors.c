@@ -1816,16 +1816,15 @@ static void VaultInteriors_ResetSuspectRoutes(void) {
 /// scene.
 static inline void VaultInteriors_SetPartyImagePriority(void) {
   {
-    struct AnimationObject *sprite =
-        ObjectEvent_GetById(LOCALID_PARTY_LEADER)->sprite;
+    struct Sprite *sprite = ObjectEvent_GetById(LOCALID_PARTY_LEADER)->sprite;
     sprite->image.priority = 1;
   }
   {
-    struct AnimationObject *sprite = ObjectEvent_GetById(GARET)->sprite;
+    struct Sprite *sprite = ObjectEvent_GetById(GARET)->sprite;
     sprite->image.priority = 1;
   }
   {
-    struct AnimationObject *sprite = ObjectEvent_GetById(IVAN)->sprite;
+    struct Sprite *sprite = ObjectEvent_GetById(IVAN)->sprite;
     sprite->image.priority = 1;
   }
 }
@@ -2277,7 +2276,7 @@ s32 Map_Initialize(void) {
     MapGrid_CopyCellsTo(54, 2, 44, 81, 2, 8);
     Engine_ScriptStart();
     // The loft: emptied chests after the thieves are jailed; else the tied-up
-    // villager lies tied, groaning to AUDIO_CUE_FADE_BGM, or the thieves wait
+    // villager lies tied, groaning to SONG_FADE_OUT_BGM, or the thieves wait
     // for a rematch.
     if (Engine_GameFlagIsSet(FLAG_VAULT_THIEVES_JAILED) != 0) {
       Engine_ObjectEventSetAnimation(LOCALID_FIRST_CHEST, ANIMATION_WALK);
@@ -2295,7 +2294,7 @@ s32 Map_Initialize(void) {
     }
     Engine_ObjectEventSetAnimation(LOCALID_TIED_UP_VILLAGER, 7);
     VaultInteriors_OpenWindowTransition();
-    Engine_AudioPlayCue(AUDIO_CUE_FADE_BGM);
+    Engine_AudioPlayCue(SONG_FADE_OUT_BGM);
     Engine_ScriptSetMessage(MsgVaultUhnnUhnn);
     VaultInteriors_ShowMessageAndWait(LOCALID_TIED_UP_VILLAGER, 10);
     Engine_ScriptEnd();
@@ -2500,7 +2499,7 @@ static void VaultInteriors_DefeatThieves(void) {
   struct ObjectEvent *objectEvent;
   struct EventWork *work;
   const s32 *actions;
-  struct AnimationObject *thirdThiefSprite;
+  struct Sprite *thirdThiefSprite;
 
   objectEvent = ObjectEvent_GetById(LOCALID_SECOND_THIEF);
   thirdThiefSprite = objectEvent->sprite;

@@ -102,7 +102,7 @@ void Djinn_RunBattleStartHop(s32 djinniId) {
       Animation_ApplyChildValuesFar((struct DispatchObject *)copy, tint);
       ObjectDispatch_SelectAnimationFar(copy, 0);
       ObjectDispatch_SetSingleChildFlagsFar((struct DispatchObject *)copy, 0);
-      sharedSprite = Sprite_ShareVramCache(copy->sprite, sharedSprite);
+      sharedSprite = Sprite_ShareVramCacheEntry(copy->sprite, sharedSprite);
       copy->linkedObject = prev;
       prev = copy;
     }

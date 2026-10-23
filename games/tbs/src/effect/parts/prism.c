@@ -192,8 +192,8 @@ void BattleAnim_RunPrism(struct BattleAnimArgs *effect) {
 ///
 /// frame      : the effect's frame; the sway turns 1/64 of a circle a frame
 /// redPhase, greenPhase, bluePhase : each channel's offset in the sway
-void Graphics_UpdatePhasePalette(s32 frame, s32 redPhase, s32 greenPhase,
-                                 s32 bluePhase) {
+void BattleAnim_UpdatePhasePalette(s32 frame, s32 redPhase, s32 greenPhase,
+                                   s32 bluePhase) {
   u16 palette[64];
   u16 *output;
   s32 phase;

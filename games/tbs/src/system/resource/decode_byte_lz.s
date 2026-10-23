@@ -2,22 +2,22 @@
 @ bcs/bcc consume lsls lr's carry. The decoder dispatch also enters
 @ eight-byte code slots, unlike the compiler's four-byte switch entries.
 @ Its return pops the r1 saved at entry into r0.
-@ C2: Render_BuildOamListKernel:
+@ C2: Oam_BuildBufferKernel:
 @ unshifted movs r6, r6/r5/r4/r3 copy and test; ldmdb r2! also loads
 @ a four-register list outside the block-copy patterns.
-@ C2: ColorBuffer_ScaleThreeQuartersKernel to ColorBuffer_HalveKernel:
+@ C2: PaletteFade_ScaleThreeQuartersKernel to PaletteFade_HalveKernel:
 @ both kernels save callee-saved r5/r6 without lr, and write modified
 @ words back with stmia r0!, {r3-r6}, beyond their initial block copy.
-@ C2: ColorBuffer_DarkenKernel to ColorBuffer_BackupKernelsEnd:
+@ C2: PaletteFade_DarkenKernel to PaletteFade_BackupKernelsEnd:
 @ stmia r0!, {r4-r7} writes arithmetic-modified words, not a block copy.
-@ C2: ColorBuffer_BrightenKernel to ColorBuffer_HalveNonzeroKernel:
+@ C2: PaletteFade_BrightenKernel to PaletteFade_HalveNonzeroKernel:
 @ all three kernels save callee-saved r5/r6 (and further registers in
 @ BrightenKernel) without saving lr.
-@ C2: ColorBuffer_DarkenPartialKernel:
+@ C2: PaletteFade_DarkenPartialKernel:
 @ ldm r0!, {r4-r7} and stmia r2!, {r4-r7} write back through a
 @ four-register list starting at r4. GCC 2.95.2's block-copy expander
 @ fixes that list at r0-r3; its general ldm/stm peepholes never write back.
-@ C2: ColorBuffer_BrightenPartialKernel to ColorBuffer_KernelsEnd:
+@ C2: PaletteFade_BrightenPartialKernel to PaletteFade_KernelsEnd:
 @ push {r5-r9} saves callee-saved registers without lr.
 @ C2: Decompress_HalfwordLz:
 @ bcc and adc consume lsls r3's carry; the intervening ldrh keeps flags.
@@ -191,8 +191,8 @@ AlchemyUncreditedEnd_decode_byte_lz_2:
 	.set Decompress_ByteLzCodeSize, . - Decompress_ByteLzArm
 .syntax unified
 	.arm
-	.global Render_BuildOamListKernel
-Render_BuildOamListKernel:
+	.global Oam_BuildBufferKernel
+Oam_BuildBufferKernel:
 	push	{r5, r6, r7, r8, r9, lr}
 	ldr	r2, [pc, #196]
 	mov	ip, #64
@@ -252,14 +252,14 @@ Render_BuildOamListKernel:
 	bx	lr
 	.4byte	gFrameTick
 	.4byte	IwramFillWords
-	.4byte	gSpriteAffineCount
-	.4byte	gSpriteAffineMatrices
+	.4byte	gOamMatrixCount
+	.4byte	gOamMatrices
 	.global LoadedRuntime_Size
-	.set LoadedRuntime_Size, . - Render_BuildOamListKernel
+	.set LoadedRuntime_Size, . - Oam_BuildBufferKernel
 .syntax unified
 	.arm
-	.global ColorBuffer_ScaleThreeQuartersKernel
-ColorBuffer_ScaleThreeQuartersKernel:
+	.global PaletteFade_ScaleThreeQuartersKernel
+PaletteFade_ScaleThreeQuartersKernel:
 	push	{r5, r6}
 	add	r2, r2, r0
 	mov	ip, #0x3f00
@@ -281,8 +281,8 @@ ColorBuffer_ScaleThreeQuartersKernel:
 	bne	.Lthree_quarters_next
 	pop	{r5, r6}
 	bx	lr
-	.global ColorBuffer_HalveKernel
-ColorBuffer_HalveKernel:
+	.global PaletteFade_HalveKernel
+PaletteFade_HalveKernel:
 	push	{r5, r6}
 	add	r2, r2, r0
 	mov	ip, #0x3f00
@@ -301,14 +301,14 @@ ColorBuffer_HalveKernel:
 	pop	{r5, r6}
 	bx	lr
 .L_halve_end:
-	.global ColorBuffer_BackupAndScaleThreeQuartersCodeSize
-	.set ColorBuffer_BackupAndScaleThreeQuartersCodeSize, ColorBuffer_HalveKernel - ColorBuffer_ScaleThreeQuartersKernel
-	.global ColorBuffer_BackupAndHalveCodeSize
-	.set ColorBuffer_BackupAndHalveCodeSize, .L_halve_end - ColorBuffer_HalveKernel
+	.global PaletteFade_BackupAndScaleThreeQuartersCodeSize
+	.set PaletteFade_BackupAndScaleThreeQuartersCodeSize, PaletteFade_HalveKernel - PaletteFade_ScaleThreeQuartersKernel
+	.global PaletteFade_BackupAndHalveCodeSize
+	.set PaletteFade_BackupAndHalveCodeSize, .L_halve_end - PaletteFade_HalveKernel
 .syntax unified
 	.arm
-	.global ColorBuffer_DarkenKernel
-ColorBuffer_DarkenKernel:
+	.global PaletteFade_DarkenKernel
+PaletteFade_DarkenKernel:
 	rsb	ip, r1, #0x80000000
 	add	ip, ip, #0x800000
 	add	ip, ip, #0x8000
@@ -342,13 +342,13 @@ ColorBuffer_DarkenKernel:
 	bne	.Ldarken_next
 	pop	{r5, r6, r7, r8, ip}
 	bx	ip
-ColorBuffer_BackupKernelsEnd:
-	.global ColorBuffer_BackupAndDarkenCodeSize
-	.set ColorBuffer_BackupAndDarkenCodeSize, ColorBuffer_BackupKernelsEnd - ColorBuffer_DarkenKernel
+PaletteFade_BackupKernelsEnd:
+	.global PaletteFade_BackupAndDarkenCodeSize
+	.set PaletteFade_BackupAndDarkenCodeSize, PaletteFade_BackupKernelsEnd - PaletteFade_DarkenKernel
 .syntax unified
 	.arm
-	.global ColorBuffer_BrightenKernel
-ColorBuffer_BrightenKernel:
+	.global PaletteFade_BrightenKernel
+PaletteFade_BrightenKernel:
 	push	{r5, r6, r7, r8, r9}
 	mov	r8, #64
 	orr	r8, r8, r8, lsl #8
@@ -383,8 +383,8 @@ ColorBuffer_BrightenKernel:
 	bne	.Lbrighten_next
 	pop	{r5, r6, r7, r8, r9}
 	bx	lr
-	.global ColorBuffer_ScaleNonzeroThreeQuartersKernel
-ColorBuffer_ScaleNonzeroThreeQuartersKernel:
+	.global PaletteFade_ScaleNonzeroThreeQuartersKernel
+PaletteFade_ScaleNonzeroThreeQuartersKernel:
 	push	{r5, r6}
 	add	r2, r2, r0
 	mov	ip, #0x3f00
@@ -409,8 +409,8 @@ ColorBuffer_ScaleNonzeroThreeQuartersKernel:
 	bne	.Lnonzero_three_quarters_next
 	pop	{r5, r6}
 	bx	lr
-	.global ColorBuffer_HalveNonzeroKernel
-ColorBuffer_HalveNonzeroKernel:
+	.global PaletteFade_HalveNonzeroKernel
+PaletteFade_HalveNonzeroKernel:
 	push	{r5, r6}
 	add	r2, r2, r0
 	mov	ip, #0x3f00
@@ -436,16 +436,16 @@ ColorBuffer_HalveNonzeroKernel:
 	pop	{r5, r6}
 	bx	lr
 .L_halve_nonzero_end:
-	.global ColorBuffer_BackupAndBrightenCodeSize
-	.set ColorBuffer_BackupAndBrightenCodeSize, ColorBuffer_ScaleNonzeroThreeQuartersKernel - ColorBuffer_BrightenKernel
-	.global ColorBuffer_BackupAndScaleNonzeroThreeQuartersCodeSize
-	.set ColorBuffer_BackupAndScaleNonzeroThreeQuartersCodeSize, ColorBuffer_HalveNonzeroKernel - ColorBuffer_ScaleNonzeroThreeQuartersKernel
-	.global ColorBuffer_BackupAndHalveNonzeroCodeSize
-	.set ColorBuffer_BackupAndHalveNonzeroCodeSize, .L_halve_nonzero_end - ColorBuffer_HalveNonzeroKernel
+	.global PaletteFade_BackupAndBrightenCodeSize
+	.set PaletteFade_BackupAndBrightenCodeSize, PaletteFade_ScaleNonzeroThreeQuartersKernel - PaletteFade_BrightenKernel
+	.global PaletteFade_BackupAndScaleNonzeroThreeQuartersCodeSize
+	.set PaletteFade_BackupAndScaleNonzeroThreeQuartersCodeSize, PaletteFade_HalveNonzeroKernel - PaletteFade_ScaleNonzeroThreeQuartersKernel
+	.global PaletteFade_BackupAndHalveNonzeroCodeSize
+	.set PaletteFade_BackupAndHalveNonzeroCodeSize, .L_halve_nonzero_end - PaletteFade_HalveNonzeroKernel
 .syntax unified
 	.arm
-	.global ColorBuffer_DarkenPartialKernel
-ColorBuffer_DarkenPartialKernel:
+	.global PaletteFade_DarkenPartialKernel
+PaletteFade_DarkenPartialKernel:
 	rsb	ip, r1, #0x80000000
 	add	ip, ip, #0x800000
 	add	ip, ip, #0x8000
@@ -508,12 +508,12 @@ ColorBuffer_DarkenPartialKernel:
 	pop	{r5, r6, r7, r8, ip}
 	bx	ip
 .L_darken_partial_end:
-	.global ColorBuffer_BackupAndDarkenPartialCodeSize
-	.set ColorBuffer_BackupAndDarkenPartialCodeSize, .L_darken_partial_end - ColorBuffer_DarkenPartialKernel
+	.global PaletteFade_BackupAndDarkenPartialCodeSize
+	.set PaletteFade_BackupAndDarkenPartialCodeSize, .L_darken_partial_end - PaletteFade_DarkenPartialKernel
 .syntax unified
 	.arm
-	.global ColorBuffer_BrightenPartialKernel
-ColorBuffer_BrightenPartialKernel:
+	.global PaletteFade_BrightenPartialKernel
+PaletteFade_BrightenPartialKernel:
 	push	{r5, r6, r7, r8, r9}
 	mov	r8, #64
 	orr	r8, r8, r8, lsl #8
@@ -576,9 +576,9 @@ ColorBuffer_BrightenPartialKernel:
 .Lbrighten_partial_done:
 	pop	{r5, r6, r7, r8, r9}
 	bx	lr
-ColorBuffer_KernelsEnd:
-	.global ColorBuffer_BackupAndBrightenPartialCodeSize
-	.set ColorBuffer_BackupAndBrightenPartialCodeSize, ColorBuffer_KernelsEnd - ColorBuffer_BrightenPartialKernel
+PaletteFade_KernelsEnd:
+	.global PaletteFade_BackupAndBrightenPartialCodeSize
+	.set PaletteFade_BackupAndBrightenPartialCodeSize, PaletteFade_KernelsEnd - PaletteFade_BrightenPartialKernel
 .syntax unified
 	.arm
 	.global Decompress_HalfwordLz

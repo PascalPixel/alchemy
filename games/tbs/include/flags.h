@@ -192,7 +192,7 @@
 /// ★ Named from the game: "Welcome to Battle Arena"
 /// (MsgFieldWelcomeToBattleArenaWherePeople)
 #define FLAG_IN_BATTLE_ARENA 0x17e
-/// Holds the field's palette blend still (ColorBuffer_Update), while a
+/// Holds the field's palette blend still (PaletteFade_Update), while a
 /// menu is open (Menu_SuspendFieldTasks).
 #define FLAG_PALETTE_BLEND_HELD 0x152
 /// Holds the field's weather still, its particles and its next burst, while a

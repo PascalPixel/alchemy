@@ -136,7 +136,7 @@ s32 WorldMap_InitializePerspective(void) {
   // Hide the backgrounds and sprites while their memory is replaced.
   REG_DISPCNT &= ~(DISPCNT_BG1_ON | DISPCNT_BG2_ON | DISPCNT_BG3_ON |
                    DISPCNT_OBJ_ON | DISPCNT_WIN0_ON);
-  Fade_FromBlack(0);
+  ScreenFade_FromBlack(0);
   perspective = AllocHeapSlot(HEAP_SLOT_MAP_GRID, sizeof(struct WorldMapView));
   Dma_Fill32Cell(fill, 0, perspective, sizeof(struct WorldMapView));
   perspective->viewX = 0;
@@ -210,7 +210,7 @@ s32 WorldMap_InitializePerspective(void) {
   gProjection.centerY = 96;
   Projection_Set(farPlane, farPlane >> 1, farPlane << 1);
   SET_VECTOR(cameraPosition, 0, 0, 0);
-  Render_ResetTransformState();
+  Transform_Reset();
   Transform_ApplyPosition(cameraPosition);
   yaw = &perspective->yaw;
   Transform_ApplyYaw(*yaw);
@@ -220,7 +220,7 @@ s32 WorldMap_InitializePerspective(void) {
   eyeOffset.y = 0;
   eyeOffset.z = farPlane;
   Iwram_TransformVector(&eyeOffset, (s32 *)camera);
-  Render_ResetTransformState();
+  Transform_Reset();
   Transform_SetLookAt(camera->eye, cameraPosition);
   RamCode_LoadSlot(HEAP_SLOT_RAM_CODE, Transform_UpdateVertices,
                    &Transform_UpdateVerticesSize);
@@ -235,10 +235,10 @@ s32 WorldMap_InitializePerspective(void) {
   // Then the world map's own view: pitch 0xe000 (minus an eighth of a
   // turn) and yaw 0, with the eye one pixel beyond the distance.
   SET_VECTOR(cameraPosition, 0, 0, 0);
-  Render_ResetTransformState();
+  Transform_Reset();
   Io_Put16(pitch, 0xe000);
   *yaw = 0;
-  Render_ResetTransformState();
+  Transform_Reset();
   Transform_ApplyPosition(cameraPosition);
   Transform_ApplyYaw(*yaw);
   Transform_ApplyPitch(*pitch);
@@ -583,7 +583,7 @@ void WorldMap_UpdateView(void) {
   gProjection.centerY = 96;
   Projection_Set(distance, height / 2, height * 2);
   SET_VECTOR(cameraPosition, *followedPosition++, 0, followedPosition[1]);
-  Render_ResetTransformState();
+  Transform_Reset();
   Transform_ApplyPosition(cameraPosition);
   Transform_ApplyYaw(perspective->yaw);
   Transform_ApplyPitch(perspective->pitch);
@@ -591,7 +591,7 @@ void WorldMap_UpdateView(void) {
   eyeOffset.y = 0;
   eyeOffset.z = height + 0x10000;
   Iwram_TransformVector(&eyeOffset, (s32 *)camera);
-  Render_ResetTransformState();
+  Transform_Reset();
   Transform_SetLookAt(camera->eye, cameraPosition);
   // The scanline table depends only on the pitch, so it is rebuilt only when
   // the pitch has changed.

@@ -200,7 +200,7 @@ void BattleAnim_RunThor(struct BattleAnimArgs *effect) {
     }
     // Red, green and blue sway a third of a turn apart, so the canvas
     // colours cycle through the hues.
-    Graphics_UpdatePhasePalette(frame * 2, 0xaaab, 0x5555, 0);
+    BattleAnim_UpdatePhasePalette(frame * 2, 0xaaab, 0x5555, 0);
     // The frame before the beam fills the canvas with level 26 (0x1a in each
     // byte) instead of fading it.
     if (frame == 150) {
@@ -213,7 +213,7 @@ void BattleAnim_RunThor(struct BattleAnimArgs *effect) {
     // frames the sink holds at 20, not 22); after frame 150 they grow
     // again, with dots of size 5.
     Projection_Set(0x1fe0000, Iwram_RatioMulQ14(0x1fe0000, 0xc000), 0x7fff0000);
-    Render_ResetTransformState();
+    Transform_Reset();
     if (frame > 128) {
       s32 sinkFrame = frame - 128;
       if (sinkFrame > 22) {
@@ -634,7 +634,7 @@ void BattleAnim_RunThor(struct BattleAnimArgs *effect) {
     BattleAnim_RunImpactBurst(SUMMON_FORMATION_THOR, formationX, formationY);
   }
   for (i = 0; i != 9; i++) {
-    ResourceObject_ReleaseFar(work->animations[i]);
+    Sprite_DestroyFar(work->animations[i]);
   }
   BattleAnim_EndCanvasLayer();
 }

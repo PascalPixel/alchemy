@@ -11,7 +11,7 @@
 	.set import.Engine_MathCos, 1
 	.set import.Vector_AddPolarOffset, 1
 	.set import.AllocHeapSlotEwram, 1
-	.set import.AnimationObject_SelectAnimation, 1
+	.set import.Sprite_StartAnim, 1
 	.set import.ObjectEvent_SetMode, 1
 	.set import.Engine_ObjectSetScript, 1
 	.set import.Engine_ObjectCreate, 1

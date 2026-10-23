@@ -872,7 +872,7 @@ static void EventScript_FirstRockFalls(void) {
   struct ObjectEvent *leader;
   s32 targetHeight;
   s32 walkZ;
-  struct AnimationObject *rockSprite;
+  struct Sprite *rockSprite;
 
   if (GameFlag_IsSet(FLAG_VALE_STORM_FIRST_ROCK_PASSED) != 0) {
   } else {
@@ -900,7 +900,7 @@ static void EventScript_FirstRockFalls(void) {
       rock->priorityFlags |= OBJ_EVENT_PRIORITY_AUTOMATIC;
       Engine_ScriptWait(40);
       // It lands: the rumble on player 3 fades and the shaking dies down.
-      Engine_AudioPlayCue(AUDIO_CUE_FADE_SLOT3);
+      Engine_AudioPlayCue(SONG_FADE_OUT_ACTION_SE);
       MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
       Engine_MapGridWaitForShakeToSettle();
       Map_PlayQueuedMusic();
@@ -975,7 +975,7 @@ static void EventScript_SecondRockFalls(void) {
       ObjectEvent_WalkToAndWait(LOCALID_FIRST_ROCK + 1, 224, 872);
       Engine_ScriptWait(40);
       // It lands: the rumble on player 3 fades and the shaking dies down.
-      Engine_AudioPlayCue(AUDIO_CUE_FADE_SLOT3);
+      Engine_AudioPlayCue(SONG_FADE_OUT_ACTION_SE);
       MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
       Engine_MapGridWaitForShakeToSettle();
       Map_PlayQueuedMusic();
@@ -1050,7 +1050,7 @@ static void EventScript_ThirdRockFalls(void) {
       ObjectEvent_WalkToAndWait(LOCALID_FIRST_ROCK + 2, 64, 703);
       Engine_ScriptWait(40);
       // It lands: the rumble fades, and Isaac is drawn as before.
-      Script_PlaySong(AUDIO_CUE_FADE_SLOT3);
+      Script_PlaySong(SONG_FADE_OUT_ACTION_SE);
       MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
       Engine_MapGridWaitForShakeToSettle();
       Map_PlayQueuedMusic();
@@ -1123,7 +1123,7 @@ static void EventScript_FourthRockFalls(void) {
       Engine_ObjectEventWalkToAndWait(LOCALID_FIRST_ROCK + 3, 432, 1147);
       Engine_ScriptWait(40);
       // It lands: the rumble on player 3 fades and the shaking dies down.
-      Engine_AudioPlayCue(AUDIO_CUE_FADE_SLOT3);
+      Engine_AudioPlayCue(SONG_FADE_OUT_ACTION_SE);
       MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
       Engine_MapGridWaitForShakeToSettle();
       Map_PlayQueuedMusic();
@@ -1613,7 +1613,7 @@ static void EventScript_WatchBoulderFall(void) {
                                    ANIMATION_YOUNG_ELDER_CALL_OUT);
     Engine_ScriptWait(10);
     Script_ShowMessageAndWait(LOCALID_ELDER_FAR_WEST, 0, 20);
-    Script_PlaySong(AUDIO_CUE_FADE_SLOT3);
+    Script_PlaySong(SONG_FADE_OUT_ACTION_SE);
     MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
     FieldCamera_SetSpeed(PIXELS(6), PIXELS(3) / 4);
     FieldCamera_MoveTo(PIXELS(84), -1, PIXELS(564), 1);
@@ -1658,7 +1658,7 @@ static void EventScript_WatchBoulderFall(void) {
 static void ValeStorm_SetObjectEventFrameMode(struct ObjectEvent *objectEvent,
                                               s32 mode) {
   if ((objectEvent->spriteStorageKind & 0xf) == 1) {
-    struct AnimationObject *animation = objectEvent->sprite;
+    struct Sprite *animation = objectEvent->sprite;
     s32 animationParameter = mode - 1;
     u8 count;
     if (mode == 0) {
@@ -1668,10 +1668,10 @@ static void ValeStorm_SetObjectEventFrameMode(struct ObjectEvent *objectEvent,
     }
     count = animation->count;
     if (count != 0) {
-      struct AnimationEntry **entries = animation->entries;
+      struct SpriteAnim **entries = animation->entries;
       s32 remainingEntries = count;
       do {
-        struct AnimationEntry *entry = *entries++;
+        struct SpriteAnim *entry = *entries++;
         if (entry != NULL && entry->script != NULL) {
           entry->colorMode = animationParameter;
         }
@@ -2170,7 +2170,7 @@ static void EventScript_BoulderSweepsThemAway(void) {
   struct ObjectEvent *leader;
   struct ObjectEvent *objectEvent;
   s32 automaticPriority;
-  struct AnimationObject *sprite;
+  struct Sprite *sprite;
 
   if (Engine_GameFlagIsSet(FLAG_VALE_STORM_SENT_TO_AID_ELDERS) == 0) {
   } else {
@@ -2327,8 +2327,8 @@ static __inline__ void ValeStorm_PlayImpactBeat(s32 shakeAmplitude,
 /// (places/vale-storm/events/EventScript_BoulderSweepsThemAway.gif) shows the
 /// descent.
 static void ValeStorm_ShowBoulderSweepingDownriver(void) {
-  struct AnimationObject *objectEventVisual;
-  struct AnimationObject *groupVisual;
+  struct Sprite *objectEventVisual;
+  struct Sprite *groupVisual;
   struct ObjectEvent *objectEvent;
   struct ObjectEvent *lookingObjectEvent;
   struct ObjectEvent *groupObjectEvent;
@@ -2416,7 +2416,7 @@ static void ValeStorm_ShowBoulderSweepingDownriver(void) {
   ObjectEvent_SetActionScript(LOCALID_GARET, lookAroundActions);
   ObjectEvent_SetActionScript(LOCALID_EXHAUSTED_STRONGMAN, lookAroundActions);
   Script_Wait(10);
-  Script_PlaySong(AUDIO_CUE_FADE_BGM);
+  Script_PlaySong(SONG_FADE_OUT_BGM);
   ValeStorm_PlayImpactBeat(PIXELS(3), 30);
   MapGrid_SetShake(PIXELS(1), PIXELS(1), Q16_ONE);
   Script_Wait(120);
@@ -2435,7 +2435,7 @@ static void ValeStorm_ShowBoulderSweepingDownriver(void) {
   MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
   FieldCamera_SetSpeed(PIXELS(8), PIXELS(8));
   FieldCamera_MoveTo(PIXELS(217), -1, PIXELS(1084), 1);
-  ColorBuffer_ApplyTarget(RGB(0, 0, 0), PALETTE_HALVES_BOTH);
+  PaletteFade_ApplyTarget(RGB(0, 0, 0), PALETTES_ALL);
   Engine_ColorBufferInterpolate(40);
   Task_Wait(40);
   // Stage the boulder and its shadow for the downriver camera shot.
@@ -2468,8 +2468,8 @@ static void ValeStorm_ShowBoulderSweepingDownriver(void) {
   FieldCamera_MoveTo(PIXELS(247), PIXELS(128), PIXELS(917), 0);
   Engine_MapGridRedraw();
   Task_Wait(1);
-  ColorBuffer_ApplyTarget(PALETTE_TRANSFORM_WARM, PALETTE_HALF_BG);
-  ColorBuffer_ApplyTarget(PALETTE_TRANSFORM_PLAIN, PALETTE_HALF_OBJ);
+  PaletteFade_ApplyTarget(PALETTE_TINT_WARM, PALETTES_BG);
+  PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_OBJECTS);
   Engine_ColorBufferInterpolate(30);
   Task_Wait(30);
   // Follow the boulder script until its eighth movement phase.
@@ -2481,7 +2481,7 @@ static void ValeStorm_ShowBoulderSweepingDownriver(void) {
   do {
     Task_Wait(1);
   } while ((s16)objectEvent->work != 8);
-  ColorBuffer_ApplyTarget(RGB(0, 0, 0), PALETTE_HALVES_BOTH);
+  PaletteFade_ApplyTarget(RGB(0, 0, 0), PALETTES_ALL);
   Engine_ColorBufferInterpolate(60);
   Task_Wait(60);
   Engine_MapGridWaitForShakeToSettle();
@@ -2593,12 +2593,12 @@ static void ValeStorm_ShowBoulderSweepingDownriver(void) {
   TilesetAnim_Pause(3);
   TilesetAnim_Pause(4);
   TilesetAnim_Pause(5);
-  ColorBuffer_ApplyTarget(PALETTE_TRANSFORM_WARM, PALETTE_HALF_BG);
-  ColorBuffer_ApplyTarget(PALETTE_TRANSFORM_PLAIN, PALETTE_HALF_OBJ);
+  PaletteFade_ApplyTarget(PALETTE_TINT_WARM, PALETTES_BG);
+  PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_OBJECTS);
   Engine_ColorBufferInterpolate(120);
   Task_Wait(160);
-  ColorBuffer_ApplyTarget(RGB(31, 31, 31), PALETTE_HALF_BG);
-  ColorBuffer_ApplyTarget(RGB(31, 31, 31), PALETTE_HALF_OBJ);
+  PaletteFade_ApplyTarget(RGB(31, 31, 31), PALETTES_BG);
+  PaletteFade_ApplyTarget(RGB(31, 31, 31), PALETTES_OBJECTS);
   Engine_ColorBufferInterpolate(80);
   Script_Wait(80);
   Script_Wait(100);
@@ -2669,8 +2669,8 @@ static void ValeStorm_ShowBoulderSweepingDownriver(void) {
   ObjectEvent_SetPosition(LOCALID_FIRST_ROCK + 6, PIXELS(144), PIXELS(1070));
   ObjectEvent_SetPosition(LOCALID_FIRST_ROCK + 7, PIXELS(276), PIXELS(1270));
   Task_Wait(60);
-  ColorBuffer_ApplyTarget(PALETTE_TRANSFORM_WARM, PALETTE_HALF_BG);
-  ColorBuffer_ApplyTarget(PALETTE_TRANSFORM_PLAIN, PALETTE_HALF_OBJ);
+  PaletteFade_ApplyTarget(PALETTE_TINT_WARM, PALETTES_BG);
+  PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_OBJECTS);
   Engine_ColorBufferInterpolate(80);
   Script_Wait(60);
   Map_PlayQueuedMusic();
@@ -2681,7 +2681,7 @@ static void ValeStorm_ShowBoulderSweepingDownriver(void) {
 
 /// A lightning flash that freezes the picture: holds the rain
 /// (FLAG_WEATHER_HELD) and pauses the map's tile animation channels 0 to 5,
-/// shows the scene in PALETTE_TRANSFORM_WARM for two seconds, fades it to
+/// shows the scene in PALETTE_TINT_WARM for two seconds, fades it to
 /// black, then lets the rain and the animations run again.
 static void ValeStorm_FlashLightning(void) {
   Engine_TaskWait(20);
@@ -2692,11 +2692,11 @@ static void ValeStorm_FlashLightning(void) {
   TilesetAnim_Pause(3);
   TilesetAnim_Pause(4);
   TilesetAnim_Pause(5);
-  ColorBuffer_ApplyTarget(PALETTE_TRANSFORM_WARM, PALETTE_HALF_BG);
-  ColorBuffer_ApplyTarget(PALETTE_TRANSFORM_PLAIN, PALETTE_HALF_OBJ);
+  PaletteFade_ApplyTarget(PALETTE_TINT_WARM, PALETTES_BG);
+  PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_OBJECTS);
   Engine_ColorBufferInterpolate(1);
   Engine_TaskWait(120);
-  ColorBuffer_ApplyTarget(RGB(0, 0, 0), PALETTE_HALVES_BOTH);
+  PaletteFade_ApplyTarget(RGB(0, 0, 0), PALETTES_ALL);
   Engine_ColorBufferInterpolate(60);
   Engine_TaskWait(60);
   GameFlag_Clear(FLAG_WEATHER_HELD);
@@ -2715,7 +2715,7 @@ static void ValeStorm_FlashLightning(void) {
 static void ValeStorm_UpdateBoulderShadow(void) {
   struct ObjectEvent *source;
   struct ObjectEvent *shadow;
-  struct AnimationObject *sprite;
+  struct Sprite *sprite;
   s16 *timer;
 
   source = ObjectEvent_GetById(LOCALID_BOULDER);
@@ -2773,7 +2773,7 @@ static void ValeStorm_UpdateBoulderShadow(void) {
 static void ValeStorm_FlickerBoulderShadow(void) {
   struct ObjectEvent *objectEvent = ObjectEvent_GetById(LOCALID_BOULDER_SHADOW);
   u32 frame = gFrameCount;
-  struct AnimationObject *sprite = objectEvent->sprite;
+  struct Sprite *sprite = objectEvent->sprite;
 
   if (frame & 1) {
     sprite->offsetY = 2;
@@ -3010,7 +3010,7 @@ static void ValeStorm_CycleObjectPalettes(struct ObjectEvent *objectEvent) {
 static void ValeStorm_SpawnEffectPair(struct ObjectEvent *parent) {
   struct ObjectEvent *pair[2];
   struct ObjectEvent *child;
-  struct AnimationObject *sprite;
+  struct Sprite *sprite;
   struct FieldEffectWork *effectWork = gFieldEffectWork;
   s32 i;
 
@@ -3028,11 +3028,11 @@ static void ValeStorm_SpawnEffectPair(struct ObjectEvent *parent) {
       if (sprite != NULL) {
         Object_InitializeMode(sprite, 0);
         sprite->flags = 0;
-        Resource_ResetEntry(sprite->slot);
+        VramCache_FreeEntry(sprite->slot);
         sprite->slot = effectWork->tileSlot;
         sprite->retainCacheEntry = 1;
         sprite->image.tile =
-            (gVramBlockCache[sprite->slot].offset >> 5) & 0x3ff;
+            (gVramCacheEntries[sprite->slot].offset >> 5) & 0x3ff;
         sprite->image.fullColor = 0;
         sprite->image.shape = 1;
         sprite->image.size = 2;
@@ -3042,14 +3042,14 @@ static void ValeStorm_SpawnEffectPair(struct ObjectEvent *parent) {
   }
   {
     struct ObjectEvent *effect = pair[0];
-    struct AnimationObject *effectSprite = effect->sprite;
+    struct Sprite *effectSprite = effect->sprite;
 
     effect->update = FieldEffect_AnimateVerticalNegative;
     effectSprite->image.priority = parent->sprite->image.priority;
   }
   {
     struct ObjectEvent *effect = pair[1];
-    struct AnimationObject *effectSprite = effect->sprite;
+    struct Sprite *effectSprite = effect->sprite;
 
     effectSprite->image.priority = parent->sprite->image.priority;
     effect->update = FieldEffect_AnimateVerticalPositive;
@@ -3082,10 +3082,10 @@ static void ValeStorm_CycleBoulderPalette(void) {
 /// Keeps Garet and the man who came to help (LOCALID_EXHAUSTED_STRONGMAN) at
 /// the leader's sprite priority while they stand by the river.
 static void ValeStorm_CopyLeaderSpritePriority(void) {
-  struct AnimationObject *sourceSprite;
+  struct Sprite *sourceSprite;
 #if !TBS_PATCH_3
-  struct AnimationObject *targetSprite;
-  struct AnimationObject *secondTargetSprite;
+  struct Sprite *targetSprite;
+  struct Sprite *secondTargetSprite;
 #endif
 
   sourceSprite = ObjectEvent_GetById(LOCALID_PARTY_LEADER)->sprite;

@@ -13,14 +13,14 @@
 	.set import.AllocEwram, 1
 	.set import.Runtime_BumpFree, 1
 	.set import.Decompress_Type01, 1
-	.set import.Resource_ResetEntry, 1
+	.set import.VramCache_FreeEntry, 1
 	.set import.VramCache_ReleaseVram, 1
 	.set import.Engine_VramLoad, 1
-	.set import.Resource_FindFreeEntry, 1
-	.set import.AffineMatrix_BuildForEffect, 1
-	.set import.Runtime_PushSlotEntry, 1
+	.set import.VramCache_FindFreeEntry, 1
+	.set import.OamMatrix_AllocFromTransform, 1
+	.set import.Oam_AddSpriteAtDepth, 1
 	.set import.Resource_GetTableEntry, 1
-	.set import.ResourceMetadata_ClearRecord, 1
+	.set import.SpriteAnim_Clear, 1
 	.set import.ObjectEvent_SetMode, 1
 	.set import.Engine_ObjectSetScript, 1
 	.set import.Engine_ObjectCreate, 1
@@ -96,5 +96,5 @@
 	.set import.ObjectEvent_LinkObjectAndSetCallback, 1
 	.set import.MemberChooser_Open, 1
 	.set import.Engine_AudioPlayCue, 1
-	.set import.AudioCommand_GetStateByte, 1
+	.set import.Sound_GetBgmRestoreDelay, 1
 	.include "games/tbs/src/system/overlay.inc"

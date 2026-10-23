@@ -91,15 +91,15 @@ void FieldScript_RequestDestination(u16 mapId, u16 warpDest) {
   work->warp = 999;
 }
 
-/// Plays SE_STOP_SLOT5, then soundId (AUDIO_CUE_FADE_SLOT3 for -1), and
+/// Plays SE_STOP_SLOT5, then soundId (SONG_FADE_OUT_ACTION_SE for -1), and
 /// remembers soundId for Map_PlayQueuedMusic in the field work's
-/// queuedSound; -1 is remembered as none, so it plays AUDIO_CUE_FADE_SLOT3 now
-/// and nothing later. About 30 maps reach it through the far alias, and the
+/// queuedSound; -1 is remembered as none, so it plays SONG_FADE_OUT_ACTION_SE
+/// now and nothing later. About 30 maps reach it through the far alias, and the
 /// ground particles (weather.c) queue SE_170 with it.
 void Map_QueueMusic(s32 soundId) {
   ((struct FieldWork *)gFieldWork)->queuedSound = soundId;
   if ((s16)soundId == -1) {
-    soundId = AUDIO_CUE_FADE_SLOT3;
+    soundId = SONG_FADE_OUT_ACTION_SE;
   }
   Sound_PlaySongFar(SE_STOP_SLOT5);
   Sound_PlaySongFar(soundId);

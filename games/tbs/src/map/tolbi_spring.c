@@ -395,7 +395,7 @@ s32 TolbiSpring_Initialize(void) {
         Engine_ScriptSetMessage(MsgTolbiYaWonNumber);
         MessageArgument_Push(coinChange, 5);
         Engine_ScriptShowMessage(TOLBI_SPRING_DICE_ATTENDANT, 0);
-        AudioCommand_WaitForStateByteClear();
+        Sound_WaitForFanfare();
       } else if (coinChange < 0) {
         Engine_ScriptSetMessage(MsgTolbiYaLostNumber);
         MessageArgument_Push(-coinChange, 5);
@@ -899,7 +899,7 @@ static void TolbiSpring_SetObjectEventAppearance(s32 localId,
                                                  s32 facing, s32 colorVariant,
                                                  s32 childValue) {
   struct ObjectEvent *objectEvent = ObjectEvent_GetById(localId);
-  struct AnimationObject *sprite;
+  struct Sprite *sprite;
   u32 entryCount;
 
   if (objectEvent != 0) {
@@ -918,11 +918,11 @@ static void TolbiSpring_SetObjectEventAppearance(s32 localId,
   entryCount = sprite->count;
   if (entryCount != 0) {
     u32 invalidFrame = 255;
-    struct AnimationEntry **entries = sprite->entries;
+    struct SpriteAnim **entries = sprite->entries;
     u32 entriesLeft = entryCount;
 
     do {
-      struct AnimationEntry *entry = *entries++;
+      struct SpriteAnim *entry = *entries++;
 
       if (entry->colorMode != colorVariant) {
         entry->colorMode = colorVariant;

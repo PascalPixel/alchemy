@@ -316,10 +316,10 @@ static void MercuryLighthouseEntrance_ActivateWithPly(void) {
   if (leaderColumn == 12 && leaderRow == 32) {
     Engine_ScriptStart();
     // Fade the scene before releasing fifteen sparks above the pool.
-    ColorBuffer_ApplyTarget(PALETTE_TRANSFORM_PLAIN, 0);
+    PaletteFade_ApplyTarget(PALETTE_TINT_NONE, 0);
     Engine_ColorBufferInterpolate(60);
     Engine_ScriptWait(120);
-    ColorBuffer_ApplyTarget(PALETTE_TRANSFORM_PALE, 1);
+    PaletteFade_ApplyTarget(PALETTE_TINT_PALE, 1);
     Engine_ColorBufferInterpolate(60);
     Engine_ScriptWait(40);
     sparkIndex = 0;
@@ -354,7 +354,7 @@ static void MercuryLighthouseEntrance_ActivateWithPly(void) {
                                TASK_PRIORITY_MAP);
     MapGrid_CopyCellsTo(37, 98, 10, 97, 5, 3);
     MapGrid_CopyCellAttributes(70, 32, 13, 7, 6, 32);
-    ColorBuffer_ApplyTarget(PALETTE_TRANSFORM_PLAIN, 0);
+    PaletteFade_ApplyTarget(PALETTE_TINT_NONE, 0);
     Engine_ColorBufferInterpolate(60);
     Engine_ScriptWait(120);
     Engine_ScriptEnd();
@@ -542,14 +542,14 @@ s32 MercuryLighthouseEntrance_Initialize(void) {
     ObjectEvent_Get(LOCALID_PARTY_LEADER)->gravity = 0x10000;
     ObjectEvent_Get(LOCALID_PARTY_LEADER)->bounce = 0x4000;
     if (!GameFlag_IsSet(FLAG_MERCURY_LIGHTHOUSE_HEART_HONORED)) {
-      ColorBuffer_ApplySource(PALETTE_TRANSFORM_PLAIN, 0);
-      ColorBuffer_ApplyTarget(PALETTE_TRANSFORM_WARM, 1);
+      PaletteFade_ApplySource(PALETTE_TINT_NONE, 0);
+      PaletteFade_ApplyTarget(PALETTE_TINT_WARM, 1);
       Engine_ColorBufferInterpolate(30);
       Engine_ScriptWaitForScreen();
       Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIMATION_STAND);
       Engine_ScriptWait(30);
       FieldMessage_ShowCentered(MsgMercuryWhoHonorsHeart, 0, 0);
-      ColorBuffer_ApplyTarget(PALETTE_TRANSFORM_PLAIN, 0);
+      PaletteFade_ApplyTarget(PALETTE_TINT_NONE, 0);
       Engine_ColorBufferInterpolate(30);
     }
     Engine_ScriptEnd();
@@ -722,14 +722,14 @@ static void MercuryLighthouse_SpawnRipple(struct ObjectEvent *source) {
       SPRITE_RIPPLE, source->x.fixed, source->y.fixed, source->z.fixed);
 
   if (effect != 0) {
-    struct AnimationObject *sprite = (struct AnimationObject *)effect->sprite;
+    struct Sprite *sprite = (struct Sprite *)effect->sprite;
 
     Engine_ObjectSetScript(effect, gMercuryLighthouseEntrance_RippleScript);
     effect->motionFlags = 0;
     effect->layer = 1;
     effect->priorityFlags = 2;
     if (sprite != 0) {
-      AnimationObject_SelectAnimation(sprite, 2);
+      Sprite_StartAnim(sprite, 2);
       sprite->flags = 0;
       sprite->image.priority = 3;
     }

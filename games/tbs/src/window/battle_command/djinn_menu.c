@@ -522,7 +522,7 @@ s32 BattleDjinnMenu_Run(s32 owner, s32 unused) {
     sprite->x = cursorPos.x + ((gFrameCount & 4) >> 1) - 6;
     sprite->y = cursorPos.y - ((gFrameCount & 4) >> 2) - 8;
     if (djinnCount != 0) {
-      Runtime_PushSlotEntry(sprite, 242);
+      Oam_AddSpriteAtDepth(sprite, 242);
     }
     // In the party status window's Djinn column (PARTY_STATUS_SHOW_DJINN),
     // the element of a ready standby Djinni under the cursor blinks between
@@ -557,7 +557,7 @@ s32 BattleDjinnMenu_Run(s32 owner, s32 unused) {
                         CURSOR_OWNER->window->y + 1, 4, 4, 15);
   }
   // Restore the party strip before releasing the Djinn menu's resources.
-  Resource_ResetEntry(cursorSlot);
+  VramCache_FreeEntry(cursorSlot);
   Window_Close(messageWindow, 1);
   Window_Close(previewWindow, 1);
   Window_Close(listWindow, 1);

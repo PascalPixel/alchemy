@@ -7,7 +7,7 @@
 	.set import.AllocHeapSlot, 1
 	.set import.FreeHeapSlot, 1
 	.set import.Engine_VramLoad, 1
-	.set import.ResourceMetadata_ClearRecord, 1
+	.set import.SpriteAnim_Clear, 1
 	.set import.ObjectEvent_SetMode, 1
 	.set import.ObjectDispatch_SetAnimationSpeed, 1
 	.set import.Engine_ObjectSetScript, 1

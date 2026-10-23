@@ -20,53 +20,53 @@
 enum {
   /// Full volume, and the song's own tempo and pitch: 1.0 in the ramps' 8.8
   /// fixed point.
-  MUSIC_UNITY_SCALE = 0x100,
+  BGM_UNITY_SCALE = 0x100,
   /// A ramp's step a VBlank: a full fade in or out takes 64 frames.
-  MUSIC_DEFAULT_RAMP_STEP = 4,
+  BGM_DEFAULT_RAMP_STEP = 4,
   /// The track mask of every music command here. It selects tracks 0 to 7
   /// only, though the music player has 10 (sound/players.s) and MUS_006,
   /// MUS_022, MUS_028, MUS_029, MUS_040, MUS_041, MUS_WORLD_MAP,
   /// MUS_VENUS_LIGHTHOUSE and MUS_074 use 9 or more: their tracks 8 and 9
   /// keep their volume and pitch through the ramps and under a fanfare.
-  MUSIC_ALL_TRACKS = 0xff,
-  MUSIC_PLAYER_COUNT = 8, ///< gMusicPlayerVolumes' entries, one a player.
+  TRACKS_ALL = 0xff,
+  MUSIC_PLAYER_COUNT = 8, ///< gMusicPlayerLastSong' entries, one a player.
   /// VBlanks after a fanfare starts before the music waits for it to end.
-  MUSIC_RESTORE_DELAY_FRAMES = 10,
-  /// AudioCommand_WaitForCompletion gives up after this many frames, about
+  BGM_RESTORE_DELAY_FRAMES = 10,
+  /// Sound_WaitForSong gives up after this many frames, about
   /// five seconds.
-  MUSIC_WAIT_TIMEOUT_FRAMES = 300
+  BGM_WAIT_TIMEOUT_FRAMES = 300
 };
 
 /// Plays a cue, the game's one way of playing a sound: a fade control, a sound
 /// effect, a fanfare or music, as the README's "What a cue number means"
-/// describes. The low 12 bits are the cue, AUDIO_CUE_START_SILENT the only flag
+/// describes. The low 12 bits are the cue, SONG_FLAG_FADE_IN the only flag
 /// read. Reached through the sound far-call table as Sound_PlaySongFar from
 /// the whole game; it keeps the music's ramps and cue records
-/// (gCurrentBgm, gMusicRestoreDelay) up to date.
+/// (gCurrentBgm, gBgmRestoreDelay) up to date.
 void Sound_PlaySong(s32 id) {
   s32 flags;
   s32 player;
 
-  flags = id & AUDIO_CUE_FLAGS_MASK;
-  id &= AUDIO_CUE_ID_MASK;
+  flags = id & SONG_FLAGS_MASK;
+  id &= SONG_NUM_MASK;
 
-  if (id == AUDIO_CUE_FADE_BGM) {
+  if (id == SONG_FADE_OUT_BGM) {
     // Fade the music out, once until the next music starts: 16 steps 7
     // frames apart, 112 frames. MUS_SILENCE is a song with no tracks,
     // so a later cue for the faded music starts it again.
-    if (gMusicFadeRequested != 0)
+    if (gBgmFadeRequested != 0)
       return;
     MusicPlayer_FadeOut(&gMusicPlayerBgm, 7);
-    gMusicFadeRequested++;
+    gBgmFadeRequested++;
     gCurrentBgm = MUS_SILENCE;
-  } else if (id == AUDIO_CUE_FADE_SLOT3) {
+  } else if (id == SONG_FADE_OUT_ACTION_SE) {
     // The cue is also the number of the song table's row 289, so it fades
     // player 3 out over 48 frames (16 steps of 3) and that row never plays.
-    // Only sound effects record their cue in gMusicPlayerVolumes; player 3's
+    // Only sound effects record their cue in gMusicPlayerLastSong; player 3's
     // is 0 after this fade.
-    gMusicPlayerVolumes[3] = 0;
+    gMusicPlayerLastSong[3] = 0;
     MusicPlayer_FadeOut(&gSound_Player3, 3);
-  } else if (id >= AUDIO_SONG_FIRST) {
+  } else if (id >= SONG_SE_FIRST) {
     // A song on SOUND_PLAYER_EFFECT_LAST borrows a free effect player,
     // searching back to SOUND_PLAYER_EFFECT_FIRST.
     // A player is busy while the low byte of its status, the active bits of
@@ -84,23 +84,23 @@ void Sound_PlaySong(s32 id) {
     }
     MusicPlayer_StartSong(gSound_PlayerSlots[player].player,
                           gSound_SongTable[id].header);
-    gMusicPlayerVolumes[player] = id;
-  } else if (id >= AUDIO_JINGLE_FIRST) {
+    gMusicPlayerLastSong[player] = id;
+  } else if (id >= SONG_FANFARE_FIRST) {
     // A fanfare, on its own player (SOUND_PLAYER_FANFARE): the music's tracks 0
     // to 7 go silent at once but keep playing, and fade back in once the
-    // fanfare has ended (MusicPlayer_StepVolumeAndPitchTowardTargets).
+    // fanfare has ended (Sound_UpdateBgmRamps).
     MusicPlayer_SetVolume(&gMusicPlayerBgm, 255, 0);
-    gMusicVolumeTarget = 0;
-    gMusicVolume = 0;
+    gBgmVolumeTarget = 0;
+    gBgmVolume = 0;
     Audio_PlaySound(id);
-    gMusicRestoreDelay = MUSIC_RESTORE_DELAY_FRAMES;
+    gBgmRestoreDelay = BGM_RESTORE_DELAY_FRAMES;
   } else {
     // Music: the keep cue, or the music cue last chosen (gCurrentBgm),
     // changes nothing, so a map may name its music on every entry; a song
     // that has ended is not started again. The three songs below take mixer
     // record 3, the rest record 2 (the README's "The mixer's code is chosen per
     // song").
-    if (id == AUDIO_CUE_KEEP_BGM)
+    if (id == SONG_KEEP_BGM)
       return;
     if (id == gCurrentBgm)
       return;
@@ -109,13 +109,13 @@ void Sound_PlaySong(s32 id) {
         (id == MUS_TITLE || id == MUS_ENDING_LOGO || id == MUS_ENDING) ? 3 : 2);
     Audio_PlaySound(id);
     // A silent start fades the new music in over 64 frames.
-    if (flags & AUDIO_CUE_START_SILENT)
-      gMusicVolume = 0;
+    if (flags & SONG_FLAG_FADE_IN)
+      gBgmVolume = 0;
     else
-      gMusicVolume = MUSIC_UNITY_SCALE;
-    gMusicVolumeTarget = MUSIC_UNITY_SCALE;
-    gMusicVolumeStep = MUSIC_DEFAULT_RAMP_STEP;
-    gMusicFadeRequested = 0;
+      gBgmVolume = BGM_UNITY_SCALE;
+    gBgmVolumeTarget = BGM_UNITY_SCALE;
+    gBgmVolumeStep = BGM_DEFAULT_RAMP_STEP;
+    gBgmFadeRequested = 0;
   }
 }
 
@@ -123,52 +123,52 @@ void Sound_PlaySong(s32 id) {
 /// ramps once per VBlank, clamping each ramp when it crosses its target.
 /// Called by System_VBlankHandler through the sound far-call table; it also
 /// runs the PCM buffer's DMA restart count (Sound_TickDmaRestartTimer).
-void MusicPlayer_StepVolumeAndPitchTowardTargets(void) {
+void Sound_UpdateBgmRamps(void) {
   s32 delta;
 
   // After a fanfare starts, count down to 1, then hold there until the
   // fanfare's player has no track left and let the music fade back in.
-  if (gMusicRestoreDelay != 0) {
-    if (gMusicRestoreDelay == 1) {
+  if (gBgmRestoreDelay != 0) {
+    if (gBgmRestoreDelay == 1) {
       if ((u8)gMusicPlayerFanfare.status == 0) {
-        gMusicRestoreDelay = 0;
-        gMusicVolumeTarget = MUSIC_UNITY_SCALE;
+        gBgmRestoreDelay = 0;
+        gBgmVolumeTarget = BGM_UNITY_SCALE;
       }
     } else {
-      gMusicRestoreDelay -= 1;
+      gBgmRestoreDelay -= 1;
     }
   }
   // A step that changes the sign of target - value has crossed the target,
   // and the value stops on it.
-  if ((s16)gMusicVolumeTarget != (s16)gMusicVolume) {
-    delta = (s16)gMusicVolumeTarget - (s16)gMusicVolume;
+  if ((s16)gBgmVolumeTarget != (s16)gBgmVolume) {
+    delta = (s16)gBgmVolumeTarget - (s16)gBgmVolume;
     if (delta > 0) {
-      gMusicVolume += gMusicVolumeStep;
+      gBgmVolume += gBgmVolumeStep;
     } else {
-      gMusicVolume -= gMusicVolumeStep;
+      gBgmVolume -= gBgmVolumeStep;
     }
-    if ((((s16)gMusicVolumeTarget - (s16)gMusicVolume) ^ delta) < 0) {
-      gMusicVolume = gMusicVolumeTarget;
+    if ((((s16)gBgmVolumeTarget - (s16)gBgmVolume) ^ delta) < 0) {
+      gBgmVolume = gBgmVolumeTarget;
     }
-    MusicPlayer_SetVolume(&gMusicPlayerBgm, MUSIC_ALL_TRACKS, gMusicVolume);
+    MusicPlayer_SetVolume(&gMusicPlayerBgm, TRACKS_ALL, gBgmVolume);
   }
-  if ((s16)gMusicPitchTarget != (s16)gMusicPitch) {
-    delta = (s16)gMusicPitchTarget - (s16)gMusicPitch;
+  if ((s16)gBgmTempoPitchTarget != (s16)gBgmTempoPitch) {
+    delta = (s16)gBgmTempoPitchTarget - (s16)gBgmTempoPitch;
     if (delta > 0) {
-      gMusicPitch += gMusicPitchStep;
+      gBgmTempoPitch += gBgmTempoPitchStep;
     } else {
-      gMusicPitch -= gMusicPitchStep;
+      gBgmTempoPitch -= gBgmTempoPitchStep;
     }
-    if ((((s16)gMusicPitchTarget - (s16)gMusicPitch) ^ delta) < 0) {
-      gMusicPitch = gMusicPitchTarget;
+    if ((((s16)gBgmTempoPitchTarget - (s16)gBgmTempoPitch) ^ delta) < 0) {
+      gBgmTempoPitch = gBgmTempoPitchTarget;
     }
     // The tempo scale and the pitch move together, like a record played at
     // another speed, but in a straight line: 12 semitones for each 0x100 of
     // scale (pitch is in 1/256 semitone), so 0x200 plays an octave up and
     // 0x80 half an octave down.
-    MusicPlayer_SetPitchAndUpdateFrequency(&gMusicPlayerBgm, gMusicPitch);
-    MusicPlayer_SetPitch(&gMusicPlayerBgm, MUSIC_ALL_TRACKS,
-                         (s16)gMusicPitch * 12 - 12 * MUSIC_UNITY_SCALE);
+    MusicPlayer_SetPitchAndUpdateFrequency(&gMusicPlayerBgm, gBgmTempoPitch);
+    MusicPlayer_SetPitch(&gMusicPlayerBgm, TRACKS_ALL,
+                         (s16)gBgmTempoPitch * 12 - 12 * BGM_UNITY_SCALE);
   }
   // Count the PCM buffer's frames down and restart the FIFO DMAs from its
   // start when they run out (SoundWork.transferCountdown).
@@ -181,9 +181,9 @@ void MusicPlayer_StepVolumeAndPitchTowardTargets(void) {
 /// and Select both steps the mixer preset (0 to 4, 2 at first) and fades player
 /// 3. Never returns. Reached only through the sound far-call table's veneer;
 /// nothing in ☀️ names it.
-void AudioTest_RunParameterController(void) {
-  // One row each for music, fanfares (from AUDIO_JINGLE_FIRST) and sound
-  // effects (from AUDIO_SONG_FIRST).
+void SoundTest_Run(void) {
+  // One row each for music, fanfares (from SONG_FANFARE_FIRST) and sound
+  // effects (from SONG_SE_FIRST).
   s32 cues[3] = {0, 80, 100};
   s32 preset;
   s32 row;
@@ -240,37 +240,37 @@ void AudioTest_RunParameterController(void) {
     if (gKeysRepeat & KEY_B)
       Sound_PlaySong(MUS_SILENCE);
     if (gKeysRepeat & KEY_START)
-      Sound_PlaySong(AUDIO_CUE_FADE_BGM);
+      Sound_PlaySong(SONG_FADE_OUT_BGM);
     if (gKeysRepeat & KEY_SELECT)
-      Sound_PlaySong(AUDIO_CUE_FADE_SLOT3);
+      Sound_PlaySong(SONG_FADE_OUT_ACTION_SE);
 
     WaitFrames(1);
   }
 }
 
-/// Starts the sound driver, resets the BGM ramps (gMusicVolume and its kin)
+/// Starts the sound driver, resets the BGM ramps (gBgmVolume and its kin)
 /// and clears all player cue records. Called by System_Initialize through the
 /// sound far-call table.
-void Audio_InitializeRuntimeDefaults(void) {
+void Sound_Initialize(void) {
   s16 *playerVolume;
   s32 remaining;
 
   Audio_Initialize();
   // No music cue is 0xff, so the first music cue always plays.
   gCurrentBgm = 0xff;
-  gMusicRestoreDelay = 0;
-  gMusicVolumeTarget = MUSIC_UNITY_SCALE;
-  gMusicVolume = MUSIC_UNITY_SCALE;
-  gMusicVolumeStep = MUSIC_DEFAULT_RAMP_STEP;
-  gMusicPitchTarget = MUSIC_UNITY_SCALE;
-  gMusicPitch = MUSIC_UNITY_SCALE;
-  gMusicPitchStep = MUSIC_DEFAULT_RAMP_STEP;
-  gMusicFadeRequested = 0;
-  gAudio_CommandMask = 0;
-  playerVolume = gMusicPlayerVolumes;
+  gBgmRestoreDelay = 0;
+  gBgmVolumeTarget = BGM_UNITY_SCALE;
+  gBgmVolume = BGM_UNITY_SCALE;
+  gBgmVolumeStep = BGM_DEFAULT_RAMP_STEP;
+  gBgmTempoPitchTarget = BGM_UNITY_SCALE;
+  gBgmTempoPitch = BGM_UNITY_SCALE;
+  gBgmTempoPitchStep = BGM_DEFAULT_RAMP_STEP;
+  gBgmFadeRequested = 0;
+  gSoundCommandMask = 0;
+  playerVolume = gMusicPlayerLastSong;
   // XXX: gEwram_Data1 is cleared here and named nowhere else in ☀️; what it
   // holds is not known. ⚓️'s twin (gData_02005804, also after
-  // gMusicRestoreDelay) is only cleared as well; a read of either byte
+  // gBgmRestoreDelay) is only cleared as well; a read of either byte
   // would settle it.
   gEwram_Data1 = 0;
   remaining = MUSIC_PLAYER_COUNT - 1;
@@ -285,67 +285,67 @@ void Audio_InitializeRuntimeDefaults(void) {
 /// scale lasts until the next song starts (MusicPlayer_StartSong sets 0x100)
 /// or the tempo and pitch ramp moves. Called only by the Lemurian ship scene,
 /// which plays MUS_ENDING at 240 (0.94 of its tempo) as the ship sails off.
-void MusicCommand_SetPitchAndUpdateFrequency(u16 tempoScale) {
+void Sound_SetBgmTempo(u16 tempoScale) {
   MusicPlayer_SetPitchAndUpdateFrequency(&gMusicPlayerBgm, tempoScale);
 }
 
 /// Applies a pitch offset, in 1/256 semitone, to the music's active tracks 0
-/// to 7 (MUSIC_ALL_TRACKS). Reached only through the sound far-call table's
+/// to 7 (TRACKS_ALL). Reached only through the sound far-call table's
 /// veneer.
-void MusicCommand_SetPitch(u16 pitch) {
-  MusicPlayer_SetPitch(&gMusicPlayerBgm, MUSIC_ALL_TRACKS, pitch);
+void Sound_SetBgmPitch(u16 pitch) {
+  MusicPlayer_SetPitch(&gMusicPlayerBgm, TRACKS_ALL, pitch);
 }
 
 /// Sets the target and per-frame step of the combined BGM tempo/pitch ramp
 /// (0x100 the song's own). Reached only through the sound far-call table's
 /// veneer.
-void Audio_SetWorkPairB(u16 targetScale, u16 step) {
-  gMusicPitchTarget = targetScale;
-  gMusicPitchStep = step;
+void Sound_SetBgmTempoPitchTarget(u16 targetScale, u16 step) {
+  gBgmTempoPitchTarget = targetScale;
+  gBgmTempoPitchStep = step;
 }
 
 /// Sets BGM volume (0x100 full) immediately and cancels any outstanding
 /// volume ramp. Reached only through the sound far-call table's veneer.
-void MusicCommand_SetVolume(s16 volume) {
-  MusicPlayer_SetVolume(&gMusicPlayerBgm, MUSIC_ALL_TRACKS, volume);
-  gMusicVolumeTarget = volume;
-  gMusicVolume = volume;
+void Sound_SetBgmVolume(s16 volume) {
+  MusicPlayer_SetVolume(&gMusicPlayerBgm, TRACKS_ALL, volume);
+  gBgmVolumeTarget = volume;
+  gBgmVolume = volume;
 }
 
 /// Sets the BGM volume target (0x100 full) and its per-frame step. Reached
 /// only through the sound far-call table's veneer.
-void Audio_SetMusicVolumeTargetAndStep(u16 targetVolume, u16 step) {
-  gMusicVolumeTarget = targetVolume;
-  gMusicVolumeStep = step;
+void Sound_SetBgmVolumeTarget(u16 targetVolume, u16 step) {
+  gBgmVolumeTarget = targetVolume;
+  gBgmVolumeStep = step;
 }
 
 /// Returns nonzero while a fanfare holds the music: from its start until its
 /// player falls silent and the music begins to fade back in. Polled by the
 /// Colosso maps, the Djinni-joined messages (window/battle_command/joined.c),
 /// the message windows' pause skip (window/window/messages.c) and
-/// AudioCommand_WaitForStateByteClear (shop/shop/run.c), which the inn, the
+/// Sound_WaitForFanfare (shop/shop/run.c), which the inn, the
 /// sanctum, the Lemurian ship and Tolbi's spring use.
-s32 AudioCommand_GetStateByte(void) { return gMusicRestoreDelay; }
+s32 Sound_GetBgmRestoreDelay(void) { return gBgmRestoreDelay; }
 
 /// Stops every sound player while preserving its state for a later resume.
 /// Reached only through the sound far-call table's veneer.
-void AudioCommand_StopAllPlayers(void) { Audio_StopAllPlayers(); }
+void Sound_StopAllMusicPlayers(void) { Audio_StopAllPlayers(); }
 
 /// Resumes every player, each from where Audio_StopAllPlayers stopped it.
 /// Reached only through the sound far-call table's veneer.
-void AudioCommand_ResumeAllPlayers(void) { Audio_ResumeAllPlayers(); }
+void Sound_ResumeAllMusicPlayers(void) { Audio_ResumeAllPlayers(); }
 
 /// Replaces the audio command mask, or toggles its requested bits when
 /// flagged. Reached only through the sound far-call table's veneer; nothing
-/// in ☀️ reads gAudio_CommandMask by name.
-void AudioCommand_UpdateToggleMask(u32 command) {
-  u32 toggle = command & AUDIO_COMMAND_TOGGLE;
+/// in ☀️ reads gSoundCommandMask by name.
+void Sound_UpdateCommandMask(u32 command) {
+  u32 toggle = command & SOUND_COMMAND_MASK_TOGGLE;
 
-  command &= AUDIO_COMMAND_MASK;
+  command &= SOUND_COMMAND_MASK_BITS;
   if (toggle != 0)
-    gAudio_CommandMask ^= command;
+    gSoundCommandMask ^= command;
   else
-    gAudio_CommandMask = command;
+    gSoundCommandMask = command;
 }
 
 /// Returns the music cue Sound_PlaySong last chose: 0xff before any,
@@ -353,26 +353,26 @@ void AudioCommand_UpdateToggleMask(u32 command) {
 /// as gGameState.returnMusic before the pause menu, so the music can be started
 /// again when the party is put back where it was (Game_Run,
 /// object/object/map.c).
-s32 AudioCommand_GetMusicCue(void) { return gCurrentBgm; }
+s32 Sound_GetCurrentBgm(void) { return gCurrentBgm; }
 
 /// Waits a frame at a time for fanfare restoration, giving up after 300
 /// frames. Called only by Vale's sanctum, after the fanfare (MUS_086) for
 /// accepting the Great Healer's quest.
-void AudioCommand_WaitForCompletion(void) {
+void Sound_WaitForSong(void) {
   s32 framesWaited = 0;
 
   do {
-    if (gMusicRestoreDelay == 0)
+    if (gBgmRestoreDelay == 0)
       break;
     WaitFrames(1);
     framesWaited++;
-  } while (framesWaited < MUSIC_WAIT_TIMEOUT_FRAMES);
+  } while (framesWaited < BGM_WAIT_TIMEOUT_FRAMES);
 }
 
 /// Unused: returns the mixer record Sound_PlaySong gives music cue
 /// `command`: 3 for MUS_ENDING, MUS_TITLE and MUS_ENDING_LOGO, 2 for the rest.
 /// Nothing in ☀️ calls it.
-UNUSED s32 AudioCommand_GetWidth(s32 command) {
+UNUSED s32 Sound_GetReverbCode(s32 command) {
   if (command == MUS_TITLE || command == MUS_ENDING_LOGO ||
       command == MUS_ENDING)
     return 3;

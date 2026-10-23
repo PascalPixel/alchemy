@@ -165,10 +165,10 @@ void BattleAnim_RunPaletteParticles(struct BattleAnimArgs *effect, s32 mode) {
       // when the skip comes before frame 128, that frame's sound, shake and
       // shorter trails are skipped with it.
       if (mode == PALETTE_PARTICLES_TIAMAT) {
-        AnimationObject_SelectAnimationFar(work->animations[0], 8);
-        AnimationObject_SelectAnimationFar(work->animations[1], 9);
-        AnimationObject_SelectAnimationFar(work->animations[3], 10);
-        AnimationObject_SelectAnimationFar(work->animations[4], 11);
+        Sprite_StartAnimFar(work->animations[0], 8);
+        Sprite_StartAnimFar(work->animations[1], 9);
+        Sprite_StartAnimFar(work->animations[3], 10);
+        Sprite_StartAnimFar(work->animations[4], 11);
       }
       ANIM_FOR_EACH_TARGET(i, work->effect) {
         ObjectGroup_UpdateMembers(work->effect->targets[i],
@@ -377,16 +377,16 @@ void BattleAnim_RunPaletteParticles(struct BattleAnimArgs *effect, s32 mode) {
     }
     if (mode == PALETTE_PARTICLES_TIAMAT) {
       if (frame == 128) {
-        AnimationObject_SelectAnimationFar(work->animations[0], 8);
-        AnimationObject_SelectAnimationFar(work->animations[1], 9);
-        AnimationObject_SelectAnimationFar(work->animations[3], 10);
-        AnimationObject_SelectAnimationFar(work->animations[4], 11);
+        Sprite_StartAnimFar(work->animations[0], 8);
+        Sprite_StartAnimFar(work->animations[1], 9);
+        Sprite_StartAnimFar(work->animations[3], 10);
+        Sprite_StartAnimFar(work->animations[4], 11);
       }
       if (frame == 176) {
-        AnimationObject_SelectAnimationFar(work->animations[0], 0);
-        AnimationObject_SelectAnimationFar(work->animations[1], 1);
-        AnimationObject_SelectAnimationFar(work->animations[3], 3);
-        AnimationObject_SelectAnimationFar(work->animations[4], 4);
+        Sprite_StartAnimFar(work->animations[0], 0);
+        Sprite_StartAnimFar(work->animations[1], 1);
+        Sprite_StartAnimFar(work->animations[3], 3);
+        Sprite_StartAnimFar(work->animations[4], 4);
       }
       BattleAnim_PlaceFormationObjects(SUMMON_FORMATION_TIAMAT, focus.x,
                                        focus.y);
@@ -445,7 +445,7 @@ void BattleAnim_RunPaletteParticles(struct BattleAnimArgs *effect, s32 mode) {
   if (mode == PALETTE_PARTICLES_TIAMAT) {
     BattleAnim_RunImpactBurst(SUMMON_FORMATION_TIAMAT, focus.x, focus.y);
     for (i = 0; i != 8; i++)
-      ResourceObject_ReleaseFar(work->animations[i]);
+      Sprite_DestroyFar(work->animations[i]);
   }
   BattleAnim_EndCanvasLayer();
 }

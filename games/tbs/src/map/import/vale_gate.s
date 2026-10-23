@@ -6,8 +6,8 @@
 	.set import.Task_Remove, 1
 	.set import.ArcTan2, 1
 	.set import.Engine_MathSin, 1
-	.set import.Resource_ResetEntry, 1
-	.set import.AnimationObject_SelectAnimation, 1
+	.set import.VramCache_FreeEntry, 1
+	.set import.Sprite_StartAnim, 1
 	.set import.Engine_ObjectCreate, 1
 	.set import.Engine_ObjectDispatchRelease, 1
 	.set import.Engine_MapGridRedraw, 1

@@ -9,7 +9,7 @@
 ///
 /// Called twice by BattleAnim_RunMercury, to lay its blue flames on their
 /// side. Writes only dst.
-void Graphics_TransposeCopy(const u8 *src, u8 *dst, s32 w, s32 h) {
+void BattleAnim_TransposeCopy(const u8 *src, u8 *dst, s32 w, s32 h) {
   s32 y;
   s32 x;
   s32 column;
@@ -103,10 +103,10 @@ void BattleAnim_RunMercury(struct BattleAnimArgs *effect) {
   Resource_LoadAndDecompress((s32)&ResourceId_MercuryDjinnSmallSheet,
                              work->sheet, 1, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_BlueFlameSheet, cells, 1, 1);
-  Graphics_TransposeCopy(cells, work->sheet + MERCURY_TALL_FLAME_CELLS, 17,
-                         104);
-  Graphics_TransposeCopy(cells + DJINN_ATTACKS_FLAME2_CELLS,
-                         work->sheet + MERCURY_FLAME_CELLS, 34, 65);
+  BattleAnim_TransposeCopy(cells, work->sheet + MERCURY_TALL_FLAME_CELLS, 17,
+                           104);
+  BattleAnim_TransposeCopy(cells + DJINN_ATTACKS_FLAME2_CELLS,
+                           work->sheet + MERCURY_FLAME_CELLS, 34, 65);
   // Each transfer keeps three quarters of every level, for trails.
   ANIM_START_TRANSFER(work, CANVAS_COPY_AND_FADE, 75);
   ANIM_FREE_PARTICLES(i, work->particles, 8);

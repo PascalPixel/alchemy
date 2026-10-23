@@ -479,7 +479,7 @@ VenusLighthouse_CreateBlendedPassageEffect(s32 x, s32 y, s32 z, s32 type) {
 
   effect = Engine_ObjectCreate(type, x, y, z);
   if (effect != 0) {
-    ((struct AnimationObject *)effect->sprite)->image.priority = 0;
+    ((struct Sprite *)effect->sprite)->image.priority = 0;
     VenusLighthouse_ConfigurePassageEffect(effect, SPRITE_COLOR_BLACK);
     Engine_ObjectSetBlendMode(effect, OBJECT_BLEND_TRANSLUCENT);
     return effect;
@@ -501,7 +501,7 @@ VenusLighthouse_CreateOccludingPassageEffect(s32 x, s32 y, s32 z, s32 type) {
 
   objectEvent = Engine_ObjectCreate(type, x, y, z);
   if (objectEvent != 0) {
-    ((struct AnimationObject *)objectEvent->sprite)->image.priority = 1;
+    ((struct Sprite *)objectEvent->sprite)->image.priority = 1;
     VenusLighthouse_ConfigurePassageEffect(objectEvent, SPRITE_COLOR_HIDDEN);
     objectEvent->priorityFlags |= OBJ_EVENT_PRIORITY_UNDERFOOT;
     return objectEvent;
@@ -1378,13 +1378,13 @@ static void EventScript_SearchStatue(void) {
   Engine_ScriptStart();
   Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIMATION_STAND);
   Engine_MessageShowCentered(MsgVenusStatueSpeaksIsaacSoulYe, 1);
-  ColorBuffer_ApplySource(PALETTE_TRANSFORM_PLAIN, 0);
-  ColorBuffer_ApplyTarget(PALETTE_TRANSFORM_PALE, 0);
+  PaletteFade_ApplySource(PALETTE_TINT_NONE, 0);
+  PaletteFade_ApplyTarget(PALETTE_TINT_PALE, 0);
   Engine_ColorBufferInterpolate(120);
   Engine_ScriptWait(100);
   Script_PlaySong(SE_142);
   Engine_ScriptWait(30);
-  ColorBuffer_ApplyTarget(RGB(31, 31, 31), 0);
+  PaletteFade_ApplyTarget(RGB(31, 31, 31), 0);
   Engine_ColorBufferInterpolate(60);
   Engine_ScriptWait(70);
   // The first consultation selects a route; later consultations alternate it.
@@ -1406,7 +1406,7 @@ static void EventScript_SearchStatue(void) {
     GameFlag_Clear(FLAG_VENUS_LIGHTHOUSE_FIRST_PATH);
     VenusLighthouse_DrawSecondPath();
   }
-  ColorBuffer_ApplyTarget(PALETTE_TRANSFORM_PLAIN, 0);
+  PaletteFade_ApplyTarget(PALETTE_TINT_NONE, 0);
   Engine_ColorBufferInterpolate(20);
   Engine_ScriptWait(40);
   // Follow the revealed path after the statue and color effect have finished.
@@ -1740,7 +1740,7 @@ static void VenusLighthouse_FixPillarAtDestination(struct ObjectEvent *pillar) {
 /// pillars.
 static void
 VenusLighthouse_ReleaseFallenCarryPillar(struct ObjectEvent *pillar) {
-  struct AnimationObject *sprite;
+  struct Sprite *sprite;
   s32 zero;
   struct ObjectEvent *passageEffect;
 
@@ -2155,7 +2155,7 @@ static void VenusLighthouse_LowerFloatingPillars(s32 waitFrames) {
   westSupport->y.fixed = gVenusBalancePlatformHeights[westSupport->timer];
   eastSupport->y.fixed = gVenusBalancePlatformHeights[eastSupport->timer];
   if (waitFrames != 0) {
-    Engine_AudioPlayCue(AUDIO_CUE_FADE_SLOT3);
+    Engine_AudioPlayCue(SONG_FADE_OUT_ACTION_SE);
   }
   for (pillarIndex = 0; pillarIndex < 5; pillarIndex++) {
     struct ObjectEvent *objectEvent =
@@ -3474,7 +3474,7 @@ static void VenusLighthouse_AnimatePairedTileWaves(void) {
     Engine_TaskWait(3);
     MapGrid_CopyCellsTo(55, row + 26, 48, row + 3, 3, 1);
   }
-  Engine_AudioPlayCue(AUDIO_CUE_FADE_SLOT3);
+  Engine_AudioPlayCue(SONG_FADE_OUT_ACTION_SE);
   Engine_ScriptWait(60);
   Engine_ScriptRequestWarp(
       VENUS_LIGHTHOUSE_FIRST_FLOOR_TO_VENUS_LIGHTHOUSE_SECOND_FLOOR_SOUTH);
@@ -3747,7 +3747,7 @@ static void VenusLighthouse_RaiseLeaderWithSpray(void) {
   Engine_ScriptWait(60);
   Engine_ObjectEventSetSpritePriority(LOCALID_PARTY_LEADER, 1);
   Engine_ObjectEventSetSpritePriority(LOCALID_RISING_PLATFORM, 1);
-  Script_PlaySong(AUDIO_CUE_FADE_BGM);
+  Script_PlaySong(SONG_FADE_OUT_BGM);
   Script_PlaySong(SE_308);
   GameFlag_Set(FLAG_SKIP_MAP_CHANGE_SOUND);
   // Raise the leader, terrain contact and platform by the same pixel each
@@ -3781,7 +3781,7 @@ static s32 VenusLighthouse_RouteLight(struct ObjectScriptContext *interpreter) {
   struct ObjectEvent *light = (struct ObjectEvent *)interpreter;
   struct FieldPosition pillarPosition;
   struct ObjectEvent *pillar;
-  struct AnimationObject *sprite;
+  struct Sprite *sprite;
   const u8 *allowedTracks;
   u8 track;
   u32 socket;

@@ -47,7 +47,7 @@ void Colosso_StartRaceGauge(s32 playerLocalId, s32 opponentLocalId,
 
   FieldResource_DecodeType01(gColosso_GaugeGraphics, (void *)handle);
 
-  pal = Resource_FindFreeEntry();
+  pal = VramCache_FindFreeEntry();
   work->gauge.vramBlock = pal;
   Engine_VramLoad((s16)pal, 512, (const void *)handle);
 

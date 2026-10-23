@@ -788,7 +788,7 @@ static void SolSanctumStatue_UpdateScrollingSprites(void) {
     for (column = 0; column < SOL_SANCTUM_STATUE_ROW_SPRITE_COUNT; column++) {
       sprite->x = scrollX;
       sprite->y = screenY;
-      Runtime_PushSlotEntry(sprite, 0);
+      Oam_AddSpriteAtDepth(sprite, 0);
       scrollX += SOL_SANCTUM_STATUE_SPRITE_WIDTH;
       sprite++;
     }
@@ -797,7 +797,7 @@ static void SolSanctumStatue_UpdateScrollingSprites(void) {
     for (column = 0; column < SOL_SANCTUM_STATUE_ROW_SPRITE_COUNT; column++) {
       sprite->x = scrollX;
       sprite->y = screenY;
-      Runtime_PushSlotEntry(sprite, 0);
+      Oam_AddSpriteAtDepth(sprite, 0);
       scrollX += SOL_SANCTUM_STATUE_SPRITE_WIDTH;
       sprite++;
     }
@@ -806,7 +806,7 @@ static void SolSanctumStatue_UpdateScrollingSprites(void) {
     for (column = 0; column < SOL_SANCTUM_STATUE_ROW_SPRITE_COUNT; column++) {
       sprite->x = scrollX;
       sprite->y = screenY + SOL_SANCTUM_STATUE_BACK_SCROLL_ROW_Y_OFFSET;
-      Runtime_PushSlotEntry(sprite, 0);
+      Oam_AddSpriteAtDepth(sprite, 0);
       scrollX += SOL_SANCTUM_STATUE_SPRITE_WIDTH;
       sprite++;
     }
@@ -984,7 +984,7 @@ static void SolSanctumStatue_InitializeScrollingSprites(void) {
   spriteWords = sScrollingSprites.words;
   pixels = AllocHeapSlotEwram(14, 1024);
   Decompress_ByteLz(gSolSanctumStatue_SpriteRowsGraphics, pixels);
-  tile = Engine_VramLoad(Resource_FindFreeEntry(), 128, pixels);
+  tile = Engine_VramLoad(VramCache_FindFreeEntry(), 128, pixels);
   for (column = 0; column < SOL_SANCTUM_STATUE_ROW_SPRITE_COUNT; column++) {
     s32 *attributeWords = spriteWords;
 
@@ -993,7 +993,7 @@ static void SolSanctumStatue_InitializeScrollingSprites(void) {
     spriteWords += 3;
     *attributeWords = tile | 0xac00;
   }
-  tile = Engine_VramLoad(Resource_FindFreeEntry(), 128, pixels + 128);
+  tile = Engine_VramLoad(VramCache_FindFreeEntry(), 128, pixels + 128);
   for (column = 0; column < SOL_SANCTUM_STATUE_ROW_SPRITE_COUNT; column++) {
     s32 *attributeWords = spriteWords;
 
@@ -1002,7 +1002,7 @@ static void SolSanctumStatue_InitializeScrollingSprites(void) {
     spriteWords += 3;
     *attributeWords = tile | 0xdc00;
   }
-  tile = Engine_VramLoad(Resource_FindFreeEntry(), 128, pixels + 256);
+  tile = Engine_VramLoad(VramCache_FindFreeEntry(), 128, pixels + 256);
   for (column = 0; column < SOL_SANCTUM_STATUE_ROW_SPRITE_COUNT; column++) {
     s32 *attributeWords = spriteWords;
 
@@ -1189,7 +1189,7 @@ static void EventScript_CenterStatueMoved(void) {
         Engine_ScriptWait(30);
         MapGrid_SetShake(PIXELS(2), PIXELS(2), Q16_ONE);
         Engine_ScriptWait(40);
-        Engine_AudioPlayCue(AUDIO_CUE_FADE_SLOT3);
+        Engine_AudioPlayCue(SONG_FADE_OUT_ACTION_SE);
         MapGrid_SetShake(PIXELS(1), PIXELS(1), Q16_ONE);
         Engine_ScriptWait(10);
         MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);

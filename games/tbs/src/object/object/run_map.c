@@ -78,8 +78,8 @@ s32 Map_Run(s32 warpDest) {
     MapGrid_CenterOnFollowedPointFar();
   }
   Field_PlaceTreasureSpots();
-  ColorBuffer_Initialize();
-  ColorBuffer_SetTarget(0x10000, 0);
+  PaletteFade_Initialize();
+  PaletteFade_SetTarget(0x10000, 0);
   // The default fade is from the backdrop colour over 16 frames; the map's
   // initialization may choose another.
   work->transition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
@@ -319,21 +319,21 @@ s32 Map_Run(s32 warpDest) {
              instructions differ in tbs-en. */
           else if (*(volatile u8 *)&gDebugMode != 0 &&
                    (gKeysHeld & KEY_L) != 0) {
-            Debug_RunPaletteEditor();
+            PaletteEditor_Run();
           } else if (GameFlag_TestFar(FLAG_MENUS_RAISE_EVENT) != 0) {
             // As for the main menu above.
             work->raisedEvent = FIELD_RAISED_EVENT_MENUS;
           } else {
             Field_EndBusyAndReveal();
             MapNamePopup_HideFar();
-            gGameState.returnMusic = AudioCommand_GetMusicCueFar();
+            gGameState.returnMusic = Sound_GetCurrentBgmFar();
             if (GameFlag_TestFar(FLAG_IN_BATTLE_ARENA) == 0) {
               // With fewer than 136 of the 512 sprite VRAM blocks (64 bytes
               // each) free, sprite drawing stays suspended while the menu
               // runs, and a frame passes so that the field's sprites give
               // their VRAM back before it opens.
               struct MenuCtrl *ctrl = (struct MenuCtrl *)gObjectSystemWork;
-              u8 *owner = gResourceBlockOwners;
+              u8 *owner = gVramCacheBlockOwners;
               s32 free = 0;
               s32 n = 512;
 
@@ -403,7 +403,7 @@ struct ObjectVectorView {
   u8 pad1[14];
   u8 kind; ///< Object's layer: the map grid layer of its ground
   u8 pad2[0x2d];
-  struct AnimationObject *sprite;
+  struct Sprite *sprite;
 };
 
 /// Returns the metatile behavior of the map cell 16 pixels ahead of the party

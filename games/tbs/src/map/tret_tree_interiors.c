@@ -391,7 +391,7 @@ static void EventScript_FightTret(void) {
 
   hasMia = FLAG_CHECK(FLAG_IN_PARTY(MIA));
   SCRIPT_START();
-  SE(AUDIO_CUE_FADE_BGM);
+  SE(SONG_FADE_OUT_BGM);
   MESSAGE_SET(MsgTretHmHrooom);
   Engine_ScriptShowMessageAndWait(SPEAKER(LOCALID_SECOND_TRET), 0, 20);
   SE(MUS_029);
@@ -494,7 +494,7 @@ static void TretTreeInteriors_PlayPostBattleConversation(void) {
       ~OBJ_EVENT_PRIORITY_AUTOMATIC;
   Engine_ObjectEventSetSpritePriority(LOCALID_PARTY_LEADER, 2);
   PartyInventory_FindMember(ITEM_HERMES_WATER);
-  SE(AUDIO_CUE_FADE_BGM);
+  SE(SONG_FADE_OUT_BGM);
   SCRIPT_START();
   OBJECT_SPEED(LOCALID_PARTY_LEADER, 0xcccc, 0x6666);
   OBJECT_SPEED(GARET, 0xcccc, 0x6666);
@@ -621,8 +621,8 @@ static void TretTreeInteriors_PlayPostBattleConversation(void) {
   WAIT(20);
   // Tret tries to release the people of Kolima: the colours shift and sparks
   // swirl out from his face, then fade.
-  ColorBuffer_ApplySource(0x10000, 0);
-  ColorBuffer_ApplyTarget(0x406218, 1);
+  PaletteFade_ApplySource(0x10000, 0);
+  PaletteFade_ApplyTarget(0x406218, 1);
   Engine_ColorBufferInterpolate(20);
   Engine_TaskWait(40);
   Engine_ObjectEventStartRepeatedMotion(LOCALID_PARTY_LEADER, 2);
@@ -643,7 +643,7 @@ static void TretTreeInteriors_PlayPostBattleConversation(void) {
   Task_AddCallback(sparkTask, TASK_PRIORITY_MAP);
   WAIT(220);
   Engine_TaskRemoveCallback(sparkTask);
-  ColorBuffer_ApplyTarget(0x10000, 1);
+  PaletteFade_ApplyTarget(0x10000, 1);
   Engine_ColorBufferInterpolate(20);
   Engine_TaskWait(40);
   TretTreeInteriors_PlayGesture(TRET_GESTURE_BLINK);
@@ -826,7 +826,7 @@ static void TretPalette_UpdateMapTint(void) {
   s32 blue;
   u32 color;
   struct FieldWork *work;
-  struct ColorBuffer *paletteWork;
+  struct PaletteFade *paletteWork;
 
   work = HEAP_SLOT_BLOCK(HEAP_SLOT_FIELD);
   paletteWork = HEAP_SLOT_BLOCK(HEAP_SLOT_PALETTE_FADE);
@@ -981,7 +981,7 @@ static void TretTreeInteriors_UpdateSwirlSpark(union FieldObject *fieldObject) {
     }
     spark->timer++;
   } else {
-    Resource_ResetEntry(spark->sprite->slot);
+    VramCache_FreeEntry(spark->sprite->slot);
     Engine_ObjectDispatchRelease(spark);
   }
 }
@@ -1011,7 +1011,7 @@ static void TretTreeInteriors_SpawnSwirlSparks(void) {
                                   sSparkOrigin.y, sSparkOrigin.z);
       if (spark != 0) {
         previousResourceEntry =
-            Sprite_ShareVramCache(spark->sprite, previousResourceEntry);
+            Sprite_ShareVramCacheEntry(spark->sprite, previousResourceEntry);
         spark->motionFlags = 0;
         spark->sprite->image.priority = 0;
         Engine_ObjectEventSetSpriteFlags(spark, 0);
@@ -1028,7 +1028,7 @@ static void TretTreeInteriors_SpawnSwirlSparks(void) {
     // Each wave also plays the closing sound.
     // fall through
   case 44:
-    SE(AUDIO_CUE_FADE_SLOT3);
+    SE(SONG_FADE_OUT_ACTION_SE);
     break;
   }
   if (++sSparkFrame > 120) {

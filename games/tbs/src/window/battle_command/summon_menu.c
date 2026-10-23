@@ -230,7 +230,7 @@ s32 BattleSummonMenu_Run(s32 unused0, s32 unused1, const u8 *standby) {
     //------------------------------------------------------------------
     for (index = 0; index <= 3; index++) {
       if (visibleSummons[index] != 0)
-        Runtime_PushSlotEntry((s32 *)&sprites[index], 240);
+        Oam_AddSpriteAtDepth((s32 *)&sprites[index], 240);
     }
 
     // The cursor wobbles every four frames.
@@ -246,7 +246,7 @@ s32 BattleSummonMenu_Run(s32 unused0, s32 unused1, const u8 *standby) {
      * here, keeps the frame loop's registers; as &cursor or cur pushed
      * directly, 41 of 946 instructions differ in tbs-en. */
     sprite = (struct MenuSprite *)&cursorStorage;
-    Runtime_PushSlotEntry(sprite, 242);
+    Oam_AddSpriteAtDepth(sprite, 242);
 
     // Blink required elements' standby counts every eight frames.
     {
@@ -367,8 +367,8 @@ s32 BattleSummonMenu_Run(s32 unused0, s32 unused1, const u8 *standby) {
   // Cleanup
   WaitFrames(1);
   for (index = 0; index < 4; index++)
-    Resource_ResetEntry(iconSlots[index]);
-  Resource_ResetEntry((u16)cursorHandle);
+    VramCache_FreeEntry(iconSlots[index]);
+  VramCache_FreeEntry((u16)cursorHandle);
   Window_Close(counts, 1);
   Window_Close(description, 1);
   Window_Close(window, 1);

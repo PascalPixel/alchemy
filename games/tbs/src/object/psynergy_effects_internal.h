@@ -115,7 +115,7 @@ struct ObjectVectorView {
   u8 pad1[14];
   u8 kind; ///< ObjectEvent.layer; not read through this view
   u8 pad2[0x2d];
-  struct AnimationObject *sprite; ///< ObjectEvent.sprite
+  struct Sprite *sprite; ///< ObjectEvent.sprite
 };
 
 /// Per-frame update of an afterimage: closes half the distance to the object
@@ -244,8 +244,8 @@ struct CaptureObject {
     }                                                                          \
   }
 
-/// A particle's sprite (struct AnimationObject), seen as the two fields
-/// Douse and Mind Read set on it; the notes give the AnimationObject fields
+/// A particle's sprite (struct Sprite), seen as the two fields
+/// Douse and Mind Read set on it; the notes give the Sprite fields
 /// at the same offsets.
 struct WaveEffectSprite {
   u32 linkAndPosition[2]; ///< image.link and its first two attributes

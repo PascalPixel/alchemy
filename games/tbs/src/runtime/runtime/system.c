@@ -51,7 +51,7 @@ void System_Initialize(void) {
 #endif
   Io_Write16(KEYCNT_SOFT_RESET, &REG_KEYCNT);
   // Start audio and frame services only after the interrupt handlers are ready.
-  Audio_InitializeRuntimeDefaultsFar();
+  Sound_InitializeFar();
   VramCache_Reset();
   Task_ResetAll();
   gCartridgeResetMarker = 0;

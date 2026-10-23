@@ -36,7 +36,7 @@ void FieldEffect_RunForce(void) {
   struct ObjectEvent *caster;
   struct FieldEffectWork *effectWork;
   struct FieldEffectSprite *effect;
-  struct AnimationObject *sharedAnimation;
+  struct Sprite *sharedAnimation;
   void *event;
   s32 scale;
   s32 i;
@@ -56,8 +56,7 @@ void FieldEffect_RunForce(void) {
     FieldEffectSprite_Initialize(effect, SPRITE_PARTICLE, pos.x, pos.z);
     FieldEffectSprite_SetCallback(effect, FieldEffect_UpdateRadialBurst);
     FieldEffectSprite_SetObjectMode(effect, 7);
-    ObjectGroup_SetChildValueUnlessFifteenFar(effect->object,
-                                              SPRITE_COLOR_BLUE_TINT);
+    Sprite_SetAnimColorModesFar(effect->object, SPRITE_COLOR_BLUE_TINT);
     effect->scaleY = 0xb333; // 0.7
     effect->scaleX = 0xb333;
     WaitFrames(2);
@@ -112,8 +111,8 @@ void FieldEffect_RunForce(void) {
       ObjectDispatch_SelectAnimationFar(copy, 5);
       Animation_ApplyChildValuesFar((struct DispatchObject *)copy,
                                     SPRITE_COLOR_RBG);
-      sharedAnimation = Sprite_ShareVramCache(
-          (struct AnimationObject *)copy->sprite, sharedAnimation);
+      sharedAnimation = Sprite_ShareVramCacheEntry(
+          (struct Sprite *)copy->sprite, sharedAnimation);
     }
   }
   resourceSlot = sharedAnimation->slot;
@@ -186,5 +185,5 @@ void FieldEffect_RunForce(void) {
   WaitFrames(20);
   // 96 (0x60), the VRAM cache's entry count, means no entry to free.
   if (resourceSlot != 96)
-    Resource_ResetEntry(resourceSlot);
+    VramCache_FreeEntry(resourceSlot);
 }

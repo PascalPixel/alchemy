@@ -1128,7 +1128,7 @@ s32 ColosseumNavampaMatch_Initialize(void) {
     Engine_ObjectEventDestroy(MOVING_SIDEWALK_ATTENDANT);
     Engine_ObjectEventDestroy(LOG_ROLLING_ATTENDANT);
     if (Engine_GameFlagIsSet(FLAG_KEEP_PARTY_POSITION) == 0) {
-      Engine_AudioPlayCue(AUDIO_CUE_FADE_BGM);
+      Engine_AudioPlayCue(SONG_FADE_OUT_BGM);
       Colosso_ControlCharacterAlone(ISAAC);
       Colosso_PlaceFriendsAtCheeringSpots();
       ObjectEvent_LinkObjectAndSetCallback(GARET, LOCALID_PARTY_LEADER);
@@ -1255,7 +1255,7 @@ static void ColosseumNavampaMatch_PlayPostBattleReunion(s32 battleResult) {
   Engine_ObjectEventDestroy(PRIZE_A);
   Engine_ObjectEventDestroy(PRIZE_B);
   Party_RestoreHpPp(1);
-  Engine_AudioPlayCue(AUDIO_CUE_FADE_BGM);
+  Engine_AudioPlayCue(SONG_FADE_OUT_BGM);
   Engine_ScriptStart();
   ObjectEvent_SetPosition(OPPONENT, PIXELS(1544), PIXELS(192));
   if (battleResult < 0) {
@@ -1302,7 +1302,7 @@ static void ColosseumNavampaMatch_PlayPostBattleReunion(s32 battleResult) {
   Engine_TaskWait(1);
   Engine_CameraFollowObjectEvent(LOCALID_PARTY_LEADER, 0);
   gFieldWork->transition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
-  ColorBuffer_ApplyTarget(PALETTE_TRANSFORM_GREY, 1);
+  PaletteFade_ApplyTarget(PALETTE_TINT_GRAYSCALE, 1);
   Engine_ScriptOpenScreen();
   Engine_ScriptWaitForScreen();
   Engine_ScriptSetMessage(MsgColossoIsaac);
@@ -1442,7 +1442,7 @@ static void ColosseumNavampaMatch_PlayPostBattleReunion(s32 battleResult) {
   ObjectEvent_SetPosition(IVAN, PIXELS(1464), PIXELS(192));
   ObjectEvent_SetPosition(MIA, PIXELS(1560), PIXELS(200));
   ObjectSystem_SuspendProjectionAndShowSprites();
-  ColorBuffer_ApplyTarget(PALETTE_TRANSFORM_PLAIN, 2);
+  PaletteFade_ApplyTarget(PALETTE_TINT_NONE, 2);
   Engine_ColorBufferInterpolate(1);
   Engine_ScriptSetMessage(MsgColossoIsaacFellAsleep);
   Script_ShowMessage(GARET, 0);
@@ -2000,11 +2000,11 @@ static void ColosseumNavampaMatch_ShowRoundStartLettering(s32 mode) {
   ColosseumNavampaMatch_StartLetteringAnimation(COLOSSO_SHAPE_TITLE, 0);
   Engine_ScriptWait(120);
 
-  while (AudioCommand_GetStateByte() != 0) {
+  while (Sound_GetBgmRestoreDelay() != 0) {
     Engine_TaskWait(1);
   }
 
-  Engine_AudioPlayCue(AUDIO_CUE_FADE_SLOT3);
+  Engine_AudioPlayCue(SONG_FADE_OUT_ACTION_SE);
   Colosso_LoadLettering(COLOSSO_PICTURE_COUNT_3_2);
   ColosseumNavampaMatch_StartLetteringAnimation(COLOSSO_SHAPE_DIGIT, 0);
   Engine_AudioPlayCue(SE_COLOSSO_COUNTDOWN);
@@ -2056,12 +2056,12 @@ UNUSED static void ColosseumNavampaMatch_UnusedCountdown(s32 countdown) {
     localId = OPPONENT;
   }
   Engine_ObjectEventShowEmote(localId, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
-  while (AudioCommand_GetStateByte() != 0) {
+  while (Sound_GetBgmRestoreDelay() != 0) {
     Engine_TaskWait(1);
   }
   Engine_AudioPlayCue(MUS_SILENCE);
   Engine_ScriptWait(30);
-  Engine_AudioPlayCue(AUDIO_CUE_FADE_SLOT3);
+  Engine_AudioPlayCue(SONG_FADE_OUT_ACTION_SE);
   Engine_ScriptCloseScreen();
   Engine_ScriptWaitForScreen();
 }

@@ -15,11 +15,11 @@
 ///   Frames          frame.c: WaitFrames, System_VBlankHandler,
 ///                   Runtime_SetIrqHandler; scheduler.c:
 ///                   Task_Add
-///   Screen          fade.c: Fade_Start; render.c: Render_BuildOamList;
+///   Screen          fade.c: ScreenFade_Start; render.c: Oam_BuildBuffer;
 ///                   vram_cache.c: VramCache_Load
 ///   Memory          heap.c: AllocHeapSlot, Alloc
 ///   3D              transform.c: Transform_ApplyRotationTranslation,
-///                   Render_ProjectPoint
+///                   Transform_ProjectPoint
 ///   Saving          save.c: Save_WriteRecord,
 ///                   Save_ReadRecord
 ///   Link cable      serial.c: SerialRuntime_Initialize,

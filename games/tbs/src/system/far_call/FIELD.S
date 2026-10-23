@@ -7,18 +7,18 @@ FarCall_FieldTable:
 	export ObjectSystem_ConfigureFar, ObjectSystem_Configure
 	export Object_ApplyProjectedPlacementFar, Render_ApplyProjectedPlacement
 	overlay_veneer Render_PlaceProjectedSprite
-	overlay_veneer Animation_InitializeObjects
-	export AnimationObject_SelectAnimationFar, AnimationObject_SelectAnimation
-	overlay_veneer AnimationObject_SetActiveFrameTimers
-	export ResourceObject_CreateFar, ResourceObject_Create
-	export ResourceObject_ReleaseFar, ResourceObject_Release
+	overlay_veneer Sprite_ResetAnims
+	export Sprite_StartAnimFar, Sprite_StartAnim
+	overlay_veneer Sprite_SetAnimTimers
+	export Sprite_CreateFar, Sprite_Create
+	export Sprite_DestroyFar, Sprite_Destroy
 	overlay_veneer Render_PlaceSpritePartPair
-	export ResourceMetadata_RegisterFar, ResourceMetadata_Register
-	export ResourceMetadata_UnregisterFar, ResourceMetadata_Unregister
-	overlay_veneer ResourceMetadata_ReleaseSlot
-	export ResourceMetadata_ClearRecordFar, ResourceMetadata_ClearRecord
-	overlay_veneer Animation_InitializeWorkFromMetadata
-	export Animation_SetWorkEntryFar, Animation_SetWorkEntry
+	export Sprite_AddAnimFar, Sprite_AddAnim
+	export Sprite_RemoveAnimFar, Sprite_RemoveAnim
+	overlay_veneer Sprite_RemoveAnimAt
+	export SpriteAnim_ClearFar, SpriteAnim_Clear
+	overlay_veneer SpriteAnim_Reset
+	export SpriteAnim_StartFar, SpriteAnim_Start
 	export ObjectSystem_InitializeFar, ObjectSystem_Initialize
 	export ObjectDispatch_SelectAnimationFar, ObjectDispatch_SelectAnimation
 	export ObjectDispatch_SetAnimationSpeedFar, ObjectDispatch_SetAnimationSpeed
@@ -77,17 +77,17 @@ FarCall_FieldTable:
 	export WorldMap_StartStillViewFar, WorldMap_StartStillView
 	export WorldMap_LoadAreaGraphicsFar, WorldMap_LoadAreaGraphics
 	export Animation_ApplyChildValuesFar, Animation_ApplyChildValues
-	export ObjectGroup_SetChildValueUnlessFifteenFar, ObjectGroup_SetChildValueUnlessFifteen
+	export Sprite_SetAnimColorModesFar, Sprite_SetAnimColorModes
 	export ObjectScript_CheckOverlapFar, ObjectScript_CheckOverlap
 	export MapGrid_SetShownLayersFar, MapGrid_SetShownLayers
-	export ResourceMetadata_SumCommandLengthsFar, ResourceMetadata_SumCommandLengths
+	export SpriteAnim_SumCommandLengthsFar, SpriteAnim_SumCommandLengths
 	export WorldMap_GetBattleEnvironmentFar, WorldMap_GetBattleEnvironment
-	export ResourceSlot_LoadFar, ResourceSlot_Load
+	export SpriteFrameCache_LoadFar, SpriteFrameCache_Load
 	export MapGrid_SetMetatileBehaviorAtFar, MapGrid_SetMetatileBehaviorAt
-	export AnimationObject_SetActiveTimerStepsFar, AnimationObject_SetActiveTimerSteps
+	export Sprite_SetAnimSpeedFar, Sprite_SetAnimSpeed
 	export Runtime_RemapBytesByTableFar, Runtime_RemapBytesByTable
 	export TilesetAnim_SuspendAllFar, TilesetAnim_SuspendAll
 	export TilesetAnim_ResumeAllFar, TilesetAnim_ResumeAll
 	export ObjectScript_FindOverlappingEntryFar, ObjectScript_FindOverlappingEntry
 	export MapGrid_GetCellAttributeLowNibbleFar, MapGrid_GetCellAttributeLowNibble
-	overlay_veneer Ui_RunIconMonitor
+	overlay_veneer SpriteViewer_Run

@@ -75,7 +75,7 @@ struct DjinnMenuWork {
   /// here.
   u8 cursorGrid[4];
   /// ItemMenuWork's party figures; not named here.
-  struct AnimationObject *ownerObjects[8];
+  struct Sprite *ownerObjects[8];
   s16 ownerX[8];      ///< screen pixels
   s16 ownerY[8];      ///< screen pixels
   s32 ownerScale[8];  ///< ItemMenuWork's; not named here
@@ -98,7 +98,7 @@ struct DjinnMenuWork {
   s16 completionFlag; ///< ItemMenuWork's; not named here
   /// DjinnFiguresWork's animations, the figures the Djinn screen
   /// moves through that view.
-  struct AnimationObject *figures[4];
+  struct Sprite *figures[4];
   u16 slotX[4];
   u16 slotY[4];
   s32 figurePhases[4]; ///< DjinnFiguresWork's phases; not named here

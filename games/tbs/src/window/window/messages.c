@@ -285,7 +285,7 @@ s32 Text_CheckPauseSkipped(struct TextPrinter *channel) {
   s32 cancelKeys = 0;
   s32 zero;
 
-  if (work->waitingForSound != 0 && AudioCommand_GetStateByteFar() == 0)
+  if (work->waitingForSound != 0 && Sound_GetBgmRestoreDelayFar() == 0)
     cancelKeys = 1;
   zero = 0;
   if (gKeysHeld & (KEY_A | KEY_B | KEYS_SHOULDERS))
@@ -308,7 +308,7 @@ s32 Text_CheckTextDismissed(struct TextPrinter *channel) {
   s32 cancelKeys = 0;
   u8 zero;
 
-  if (work->waitingForSound != 0 && AudioCommand_GetStateByteFar() == 0)
+  if (work->waitingForSound != 0 && Sound_GetBgmRestoreDelayFar() == 0)
     cancelKeys = 1;
   pressedKeys = gKeysPressed;
   zero = 0;

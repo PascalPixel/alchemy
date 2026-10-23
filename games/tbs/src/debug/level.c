@@ -51,56 +51,62 @@
 #define BROWSER_PAGE_STEP 30 ///< R and L move thirty.
 
 /// The room's object events, numbering the rows of
-/// gItemLevelObjectEventTemplates; the game names none of them, so each is
-/// named for what talking to it opens (gItemLevelEvents), as a render of each
-/// talk shows it.
-enum ItemLevelLocalId {
-  /// ItemLevel_SelectItem.
+/// gIncreaseItemAndLevel_ObjectEventTemplates; the game names none of them, so
+/// each is named for what talking to it opens (gIncreaseItemAndLevel_Events),
+/// as a render of each talk shows it.
+enum IncreaseItemAndLevelLocalId {
+  /// IncreaseItemAndLevel_SelectItem.
   /// ★ Named from what the player sees: `Item No:` over an item's name and
   /// what equipping it does, with `A:Get Item  B:Return` (its render)
   LOCALID_ITEM_BROWSER = LOCALID_FIRST_PLACED,
-  /// ItemLevel_OpenIconBrowser.
+  /// IncreaseItemAndLevel_OpenIconBrowser.
   /// ★ Named from what the player sees: a page of 32 item icons headed
   /// `ITEM PAGE:0` (its render)
   LOCALID_ICON_BROWSER,
-  /// ItemLevel_OpenPortraitBrowser; Force cast at it runs the Force tests.
+  /// IncreaseItemAndLevel_OpenPortraitBrowser; Force cast at it runs the Force
+  /// tests.
   /// ★ Named from what the player sees: Isaac's portrait over `0 Isaac`, the
   /// first of the portraits Left and Right step through (its render)
   LOCALID_PORTRAIT_BROWSER,
-  /// ItemLevel_RunLevelEditor, drawn larger than the others.
+  /// IncreaseItemAndLevel_RunLevelEditor, drawn larger than the others.
   /// ★ Named from what the player sees: `Raise everyone's level.` over the
   /// leader's name and level, A raising it one and Start five (its render)
   LOCALID_LEVEL_EDITOR,
-  /// ItemLevel_SelectAbility; placed outside Japanese only, like the two
+  /// IncreaseItemAndLevel_SelectAbility; placed outside Japanese only, like the
+  /// two
   /// emote testers after it.
   /// ★ Named from what the player sees: `Psy No:` over an ability's name,
   /// with `B:Return` (its render)
   LOCALID_ABILITY_BROWSER,
-  /// ItemLevel_ShowMessageThenEmote.
+  /// IncreaseItemAndLevel_ShowMessageThenEmote.
   /// ★ Named from what the player sees: a wince over the object event, then its
   /// message (its render)
   LOCALID_FIRST_EMOTE_TESTER,
-  /// ItemLevel_ShowEmoteThenMessage.
+  /// IncreaseItemAndLevel_ShowEmoteThenMessage.
   /// ★ Named from what the player sees: an ellipsis over the first tester,
   /// then the first tester's message (its render)
   LOCALID_SECOND_EMOTE_TESTER
 };
 
-u8 *ItemLevel_GetWarpDests(void) { return (u8 *)gItemLevelWarpDests; }
+u8 *IncreaseItemAndLevel_GetWarpDests(void) {
+  return (u8 *)gIncreaseItemAndLevel_WarpDests;
+}
 
 /// The room has no warp regions: its regions entry returns none.
 s32 MapData_ReturnZero(void) { return 0; }
 
-u8 *ItemLevel_GetWarps(void) { return (u8 *)gItemLevelWarps; }
+u8 *IncreaseItemAndLevel_GetWarps(void) {
+  return (u8 *)gIncreaseItemAndLevel_Warps;
+}
 
-u8 *ItemLevel_GetObjectEventTemplates(void) {
-  return (u8 *)gItemLevelObjectEventTemplates;
+u8 *IncreaseItemAndLevel_GetObjectEventTemplates(void) {
+  return (u8 *)gIncreaseItemAndLevel_ObjectEventTemplates;
 }
 
 #if TBS_PATCH_1
 /// Sets the test message before displaying the first emote on the object event
 /// spoken to, LOCALID_FIRST_EMOTE_TESTER.
-static void ItemLevel_ShowMessageThenEmote(void) {
+static void IncreaseItemAndLevel_ShowMessageThenEmote(void) {
   Engine_ScriptSetMessage(MsgDebugWontStopYou);
   ObjectEvent_ShowEmote(LOCALID_FIRST_EMOTE_TESTER,
                         EMOTE_IN_FRONT | EMOTE_WINCE, 0);
@@ -111,7 +117,7 @@ static void ItemLevel_ShowMessageThenEmote(void) {
 /// message. Talking to
 /// LOCALID_SECOND_EMOTE_TESTER, though the emote and the message are
 /// LOCALID_FIRST_EMOTE_TESTER's.
-static void ItemLevel_ShowEmoteThenMessage(void) {
+static void IncreaseItemAndLevel_ShowEmoteThenMessage(void) {
   ObjectEvent_ShowEmote(LOCALID_FIRST_EMOTE_TESTER,
                         EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
   Engine_ScriptSetMessage(MsgDebugWontStopYou);
@@ -119,10 +125,12 @@ static void ItemLevel_ShowEmoteThenMessage(void) {
 }
 #endif
 
-u8 *ItemLevel_GetEvents(void) { return (u8 *)gItemLevelEvents; }
+u8 *IncreaseItemAndLevel_GetEvents(void) {
+  return (u8 *)gIncreaseItemAndLevel_Events;
+}
 
 /// Raises one owner's level by amount, then recalculates that unit.
-static void ItemLevel_AdjustOwnerLevel(s32 ownerId, s32 amount) {
+static void IncreaseItemAndLevel_AdjustOwnerLevel(s32 ownerId, s32 amount) {
   struct Unit *unit = Unit_Get(ownerId);
 
   Unit_LevelUpTo(ownerId, unit->level + amount);
@@ -131,7 +139,7 @@ static void ItemLevel_AdjustOwnerLevel(s32 ownerId, s32 amount) {
 
 /// Applies the level change to the owners returned by the active-party service
 /// (FieldParty_ListMembers): every member of the party.
-static void ItemLevel_AdjustPartyLevels(s32 amount) {
+static void IncreaseItemAndLevel_AdjustPartyLevels(s32 amount) {
   u16 ownerIds[16];
   u16 *owner;
   s32 ownerCount;
@@ -142,7 +150,7 @@ static void ItemLevel_AdjustPartyLevels(s32 amount) {
     owner = ownerIds;
     remaining = ownerCount;
     do {
-      ItemLevel_AdjustOwnerLevel(*owner++, amount);
+      IncreaseItemAndLevel_AdjustOwnerLevel(*owner++, amount);
     } while (--remaining != 0);
   }
 }
@@ -152,7 +160,7 @@ static void ItemLevel_AdjustPartyLevels(s32 amount) {
 /// LOCALID_LEVEL_EDITOR: under `Raise everyone's level.` it shows the leader's
 /// name and level; Start or Select raises the whole party five levels with
 /// fanfare MUS_FANFARE_LARGE, A one level with MUS_FANFARE_SMALL.
-static void ItemLevel_RunLevelEditor(void) {
+static void IncreaseItemAndLevel_RunLevelEditor(void) {
   struct Unit *unit;
   struct Window *window;
   s32 redraw;
@@ -172,20 +180,20 @@ static void ItemLevel_RunLevelEditor(void) {
     if (redraw != 0) {
       WindowSprite_RedrawSavedRect(window);
       Text_DrawStringAtOffset(unit->name, window, 0, 48);
-      Text_DrawStringInWindow(gItemLevelLvLabel, window, 48, 48);
+      Text_DrawStringInWindow(gIncreaseItemAndLevel_LvLabel, window, 48, 48);
       redraw = 0;
       Text_DrawNumberInWindow(unit->level, 0, window, 72, 48);
     }
 
     // Start/Select add five levels; A adds one. Tests remain independent.
     if ((gKeysPressed & KEY_START) != 0 || (gKeysPressed & KEY_SELECT) != 0) {
-      ItemLevel_AdjustPartyLevels(5);
+      IncreaseItemAndLevel_AdjustPartyLevels(5);
       Engine_AudioPlayCue(MUS_FANFARE_LARGE);
       redraw = 1;
     }
 
     if ((gKeysPressed & KEY_A) != 0) {
-      ItemLevel_AdjustPartyLevels(1);
+      IncreaseItemAndLevel_AdjustPartyLevels(1);
       Engine_AudioPlayCue(MUS_FANFARE_SMALL);
       redraw = 1;
     }
@@ -212,7 +220,7 @@ static void ItemLevel_RunLevelEditor(void) {
 /// ten, R and L thirty, passing over numbers whose item has no icon; A gives
 /// the item to the first member with room (SE_175), and B, or A with every bag
 /// full, closes the browser.
-static void ItemLevel_SelectItem(void) {
+static void IncreaseItemAndLevel_SelectItem(void) {
   // Preserve independent key tests and the direction-specific empty-icon scans.
   // Ordinary while scans grow the native function from 0x29c to 0x2a0; retain
   // its current polling edges.
@@ -247,10 +255,10 @@ static void ItemLevel_SelectItem(void) {
       selectedItemId = (selectedItemId + ITEM_COUNT) % entryCount;
       WindowSprite_RedrawSavedRect(window);
       Engine_DebugClearWindow(window);
-      Text_DrawStringInWindow(gItemLevelItemPrompt, window, 0, 0);
+      Text_DrawStringInWindow(gIncreaseItemAndLevel_ItemPrompt, window, 0, 0);
       Text_DrawNumberAtOffset(selectedItemId, 0, window, 80, 0);
       if (PartyInventory_HasSpace()) {
-        Text_DrawStringInWindow(gItemLevelItemHelp, window, 0, 32);
+        Text_DrawStringInWindow(gIncreaseItemAndLevel_ItemHelp, window, 0, 32);
         messageOrDefinitionId = selectedItemId & 0x1ff;
         Engine_DebugGetItem(messageOrDefinitionId);
         Text_DrawMessageAsTiles(messageOrDefinitionId + MsgItemName, window,
@@ -260,7 +268,7 @@ static void ItemLevel_SelectItem(void) {
         WindowSprite_RedrawSavedRect(details);
         Engine_DebugDrawItemDetails(details, selectedItemId);
       } else {
-        Text_DrawStringInWindow(gItemLevelItemFull, window, 0, 32);
+        Text_DrawStringInWindow(gIncreaseItemAndLevel_ItemFull, window, 0, 32);
       }
     }
     if (gKeysPressed & KEY_A) {
@@ -345,7 +353,7 @@ static void ItemLevel_SelectItem(void) {
 /// LOCALID_ABILITY_BROWSER in English and German; in French, Spanish and
 /// Italian the room keeps the function and the object event but no event, and
 /// moves the object event to x 80.
-UNUSED static void ItemLevel_SelectAbility(void) {
+UNUSED static void IncreaseItemAndLevel_SelectAbility(void) {
   // Ordinary while scans grow the native function from 0x248 to 0x260; retain
   // the original polling edges.
   struct Window *window;
@@ -376,9 +384,9 @@ UNUSED static void ItemLevel_SelectAbility(void) {
       selectedAbilityId = (selectedAbilityId + ABILITY_COUNT) % entryCount;
       WindowSprite_RedrawSavedRect(window);
       Engine_DebugClearWindow(window);
-      Text_DrawStringInWindow(gItemLevelPsyPrompt, window, 0, 0);
+      Text_DrawStringInWindow(gIncreaseItemAndLevel_PsyPrompt, window, 0, 0);
       Text_DrawNumberAtOffset(selectedAbilityId, 0, window, 80, 0);
-      Text_DrawStringInWindow(gItemLevelPsyHelp, window, 0, 72);
+      Text_DrawStringInWindow(gIncreaseItemAndLevel_PsyHelp, window, 0, 72);
       messageOrDefinitionId = selectedAbilityId & 0x3fff;
       Text_DrawMessageAsTiles(messageOrDefinitionId + MsgAbilityName, window,
                               120, 0);
@@ -462,7 +470,7 @@ UNUSED static void ItemLevel_SelectAbility(void) {
 
 /// Unused: requests a warp through TRANSITION_WINDOW over 24 frames; no event
 /// row names it.
-UNUSED static void ItemLevel_RequestWarp(void) {
+UNUSED static void IncreaseItemAndLevel_RequestWarp(void) {
   gFieldWork->transition = MAP_TRANSITION(TRANSITION_WINDOW, 1);
   gFieldWork->transitionFrames = 24;
   Engine_ScriptRequestWarp();
@@ -474,7 +482,7 @@ UNUSED static void ItemLevel_RequestWarp(void) {
 /// it ignores: LOCALID_LEVEL_EDITOR is drawn 1.6 times its size (1.7 in
 /// Japanese; 16.16 scales), and outside Japanese the two emote testers start
 /// animations 5 and 2.
-s32 Map_RunLevelRoomSetup(void) {
+s32 IncreaseItemAndLevel_Initialize(void) {
   gFieldWork->transition = MAP_TRANSITION(TRANSITION_WINDOW, 4);
   gFieldWork->transitionFrames = 24;
 #if TBS_PATCH_1
@@ -495,7 +503,7 @@ s32 Map_RunLevelRoomSetup(void) {
 /// ANIMATION_WALK and LOCALID_LEVEL_EDITOR ANIMATION_SHAKE_HEAD; once
 /// LOCALID_PORTRAIT_BROWSER's animation has changed, LOCALID_LEVEL_EDITOR moves
 /// to (312, 416).
-static void ItemLevel_RunMotionTest(void) {
+static void IncreaseItemAndLevel_RunMotionTest(void) {
   Engine_ScriptStart();
   Engine_ObjectEventSetAnimation(LOCALID_PORTRAIT_BROWSER, ANIMATION_WALK);
   Engine_ObjectEventSetAnimation(LOCALID_LEVEL_EDITOR, ANIMATION_SHAKE_HEAD);
@@ -508,23 +516,23 @@ static void ItemLevel_RunMotionTest(void) {
 #if LANGUAGE != LANGUAGE_JAPANESE
 /// Displays the three character-set caption rows in a debug window. Force cast
 /// at LOCALID_PORTRAIT_BROWSER, outside Japanese. The window is left open.
-static void ItemLevel_ShowGlyphCaptions(void) {
+static void IncreaseItemAndLevel_ShowGlyphCaptions(void) {
   struct Window *window;
   /* FAKEMATCH(dead): an unread text buffer for the frame's 32 bytes; as no
    * buffer, 2 of 29 instructions differ in tbs-en. */
   UNUSED u8 text[32];
 
   window = Window_Create(0, 13, 30, 6, 2);
-  Text_DrawStringInWindow(gItemLevelGlyphsUpper, window, 0, 0);
-  Text_DrawStringInWindow(gItemLevelGlyphsLower, window, 0, 8);
-  Text_DrawStringInWindow(gItemLevelGlyphsMarks, window, 0, 16);
+  Text_DrawStringInWindow(gIncreaseItemAndLevel_GlyphsUpper, window, 0, 0);
+  Text_DrawStringInWindow(gIncreaseItemAndLevel_GlyphsLower, window, 0, 8);
+  Text_DrawStringInWindow(gIncreaseItemAndLevel_GlyphsMarks, window, 0, 16);
 }
 #endif
 
 /// Keeps Force from moving LOCALID_PORTRAIT_BROWSER: run at phase 1 of Force
 /// cast at it, this sets the effect's childMode, and Force's shot then leaves
 /// its target where it is (object/psynergy_effects/force.c).
-static void ItemLevel_EnableEffectChildMode(void) {
+static void IncreaseItemAndLevel_EnableEffectChildMode(void) {
   struct FieldEffectWork *effectWork =
       (struct FieldEffectWork *)gFieldEffectWork;
 
@@ -533,59 +541,61 @@ static void ItemLevel_EnableEffectChildMode(void) {
 
 /// Returns the icon browser's status to the event dispatcher. Talking to
 /// LOCALID_ICON_BROWSER.
-static int ItemLevel_OpenIconBrowser(void) { return DebugMenu_BrowseIcons(); }
+static int IncreaseItemAndLevel_OpenIconBrowser(void) {
+  return DebugBrowser_Icons();
+}
 
 /// Returns the portrait browser's status to the event dispatcher. Talking
 /// to LOCALID_PORTRAIT_BROWSER.
-static int ItemLevel_OpenPortraitBrowser(void) {
-  return DebugMenu_BrowsePortraits();
+static int IncreaseItemAndLevel_OpenPortraitBrowser(void) {
+  return DebugBrowser_Portraits();
 }
 
-char gItemLevelLvLabel[4] = "Lv";
+char gIncreaseItemAndLevel_LvLabel[4] = "Lv";
 
-char gItemLevelItemPrompt[12] = "Item No:";
+char gIncreaseItemAndLevel_ItemPrompt[12] = "Item No:";
 
-char gItemLevelItemHelp[24] = "A:Get Item  B:Return";
+char gIncreaseItemAndLevel_ItemHelp[24] = "A:Get Item  B:Return";
 
-char gItemLevelItemFull[20] = "ITEM FULL........";
+char gIncreaseItemAndLevel_ItemFull[20] = "ITEM FULL........";
 
 #if (LANGUAGE != LANGUAGE_JAPANESE)
-char gItemLevelPsyPrompt[8] = "Psy No:";
+char gIncreaseItemAndLevel_PsyPrompt[8] = "Psy No:";
 #endif
 
 #if (LANGUAGE != LANGUAGE_JAPANESE)
-char gItemLevelPsyHelp[12] = "B:Return";
+char gIncreaseItemAndLevel_PsyHelp[12] = "B:Return";
 #endif
 
 #if (LANGUAGE != LANGUAGE_JAPANESE)
 /// The glyph captions' first row; it has no I.
-char gItemLevelGlyphsUpper[28] = "A B C D E F G H J K L M N O";
+char gIncreaseItemAndLevel_GlyphsUpper[28] = "A B C D E F G H J K L M N O";
 #endif
 
 #if (LANGUAGE != LANGUAGE_JAPANESE)
-char gItemLevelGlyphsLower[28] = "P Q R S T U V W X Y Z a b c";
+char gIncreaseItemAndLevel_GlyphsLower[28] = "P Q R S T U V W X Y Z a b c";
 #endif
 
 #if (LANGUAGE != LANGUAGE_JAPANESE)
-char gItemLevelGlyphsMarks[12] = "! ? # $ %";
+char gIncreaseItemAndLevel_GlyphsMarks[12] = "! ? # $ %";
 #endif
 
-struct MapWarpDest gItemLevelWarpDests[] = {
+struct MapWarpDest gIncreaseItemAndLevel_WarpDests[] = {
     {0, CONDITION_ALWAYS, 824, 0, 864, FACING_NORTH, 0, 280, 504, 912, 896, 0},
     {MAP_TABLE_END},
 };
 
 /// No warps: 511 is MAP_WARPS_END's value.
-u32 gItemLevelWarps[] = {
+u32 gIncreaseItemAndLevel_Warps[] = {
     MAP_WARPS_END,
 };
 
-/// The room's object events, in the order of enum ItemLevelLocalId: the item,
-/// icon and portrait browsers and the level editor; outside Japanese also the
-/// ability browser (reachable in English and German only) and the two emote
-/// testers.
+/// The room's object events, in the order of enum IncreaseItemAndLevelLocalId:
+/// the item, icon and portrait browsers and the level editor; outside Japanese
+/// also the ability browser (reachable in English and German only) and the two
+/// emote testers.
 // clang-format off
-struct ObjectEventTemplate gItemLevelObjectEventTemplates[] = {
+struct ObjectEventTemplate gIncreaseItemAndLevel_ObjectEventTemplates[] = {
     {0x1f4, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, PIXELS(792), 0, PIXELS(864), FACING_SOUTHEAST,
         TALK_FACING_PARTY, 0},
     {0x20, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, PIXELS(792), 0, PIXELS(480), FACING_SOUTHEAST,
@@ -618,32 +628,32 @@ struct ObjectEventTemplate gItemLevelObjectEventTemplates[] = {
 };
 // clang-format on
 
-struct MapEvent gItemLevelEvents[] = {
+struct MapEvent gIncreaseItemAndLevel_Events[] = {
     {MAP_EVENT_TALK, LOCALID_ITEM_BROWSER, CONDITION_ALWAYS,
-     EVENT_SCRIPT(ItemLevel_SelectItem)},
+     EVENT_SCRIPT(IncreaseItemAndLevel_SelectItem)},
     {MAP_EVENT_TALK, LOCALID_ICON_BROWSER, CONDITION_ALWAYS,
-     EVENT_SCRIPT(ItemLevel_OpenIconBrowser)},
+     EVENT_SCRIPT(IncreaseItemAndLevel_OpenIconBrowser)},
     {MAP_EVENT_TALK, LOCALID_PORTRAIT_BROWSER, CONDITION_ALWAYS,
-     EVENT_SCRIPT(ItemLevel_OpenPortraitBrowser)},
+     EVENT_SCRIPT(IncreaseItemAndLevel_OpenPortraitBrowser)},
     {MAP_EVENT_TALK, LOCALID_LEVEL_EDITOR, CONDITION_ALWAYS,
-     EVENT_SCRIPT(ItemLevel_RunLevelEditor)},
+     EVENT_SCRIPT(IncreaseItemAndLevel_RunLevelEditor)},
 #if !TBS_PATCH_1
     {PSYNERGY_ON_OBJ_EVENT(ABILITY_FORCE), LOCALID_PORTRAIT_BROWSER,
-     CONDITION_ALWAYS, EVENT_SCRIPT(ItemLevel_RunMotionTest)},
+     CONDITION_ALWAYS, EVENT_SCRIPT(IncreaseItemAndLevel_RunMotionTest)},
 #else
 #if !TBS_PATCH_3
     {MAP_EVENT_TALK, LOCALID_ABILITY_BROWSER, CONDITION_ALWAYS,
-     EVENT_SCRIPT(ItemLevel_SelectAbility)},
+     EVENT_SCRIPT(IncreaseItemAndLevel_SelectAbility)},
 #endif
     {MAP_EVENT_TALK, LOCALID_FIRST_EMOTE_TESTER, CONDITION_ALWAYS,
-     EVENT_SCRIPT(ItemLevel_ShowMessageThenEmote)},
+     EVENT_SCRIPT(IncreaseItemAndLevel_ShowMessageThenEmote)},
     {MAP_EVENT_TALK, LOCALID_SECOND_EMOTE_TESTER, CONDITION_ALWAYS,
-     EVENT_SCRIPT(ItemLevel_ShowEmoteThenMessage)},
+     EVENT_SCRIPT(IncreaseItemAndLevel_ShowEmoteThenMessage)},
     {PSYNERGY_ON_OBJ_EVENT(ABILITY_FORCE), LOCALID_PORTRAIT_BROWSER,
-     CONDITION_ALWAYS, EVENT_SCRIPT(ItemLevel_ShowGlyphCaptions)},
+     CONDITION_ALWAYS, EVENT_SCRIPT(IncreaseItemAndLevel_ShowGlyphCaptions)},
 #endif
     {PSYNERGY_PHASE_ON_OBJ_EVENT(ABILITY_FORCE, PSYNERGY_PHASE_BEFORE_CAST),
      LOCALID_PORTRAIT_BROWSER, CONDITION_ALWAYS,
-     EVENT_SCRIPT(ItemLevel_EnableEffectChildMode)},
+     EVENT_SCRIPT(IncreaseItemAndLevel_EnableEffectChildMode)},
     {MAP_EVENTS_END},
 };

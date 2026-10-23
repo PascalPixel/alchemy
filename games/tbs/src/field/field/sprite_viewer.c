@@ -10,7 +10,7 @@ enum {
   UI_SPRITE_VIEWER_COPY_COUNT = 10,
   UI_SPRITE_VIEWER_SPRITE_LIMIT = 512,    ///< sprite ids 0 to 511 are offered
   UI_SPRITE_VIEWER_ANIMATION_LIMIT = 100, ///< animations 0 to 99
-  /// A layer priority above 3, which Sprite_ComposeAnimationFrame skips.
+  /// A layer priority above 3, which Sprite_ComposeFrame skips.
   UI_SPRITE_VIEWER_HIDDEN_PRIORITY = 8
 };
 
@@ -46,10 +46,10 @@ struct UiSpriteViewerLayer {
 /// It has a bare veneer in the field far-call table, and no caller names it.
 /// Takes HEAP_SLOT_BATTLE for the ring of ten positions and runs
 /// Battle_PlaceActorsByFormationKind each frame to draw the copies.
-void Ui_RunIconMonitor(void) {
+void SpriteViewer_Run(void) {
   struct UiSpriteViewerLayer layers[ANIMATION_LAYER_COUNT];
   struct AnimationMetadata *spriteMetadata;
-  struct AnimationObject *sprites;
+  struct Sprite *sprites;
   volatile s32 fillWord;
   s32 spriteId;
   s32 x;
@@ -62,7 +62,7 @@ void Ui_RunIconMonitor(void) {
   // The selected resource offset becomes its sprite, then its flags address.
   union {
     s32 resourceOffset;
-    struct AnimationObject *sprite;
+    struct Sprite *sprite;
     u8 *flags;
   } spriteWork;
   s32 changed;
@@ -90,7 +90,7 @@ void Ui_RunIconMonitor(void) {
 
   // All four layers start on the first sprite with an image, animation 1,
   // priority 1; only layer 0 is shown.
-  spriteId = Ui_FindNextSpriteWithImage(-1, 1);
+  spriteId = SpriteViewer_FindNextSpriteWithImage(-1, 1);
   for (i = 0; i < ANIMATION_LAYER_COUNT; i++) {
     layers[i].animationIndex = 1;
     layers[i].priority = 1;
@@ -103,7 +103,7 @@ void Ui_RunIconMonitor(void) {
   // A green backdrop (BGR555 green 15).
   PLTT_BACKDROP = 0x01E0;
   REG_DISPCNT = DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON | DISPCNT_OBJ_ON;
-  Fade_FromBlack(1);
+  ScreenFade_FromBlack(1);
 
   // Rebuilt from here whenever layer 0's sprite changes or Select is
   // pressed: a fresh heap, task table and VRAM cache each time.
@@ -117,11 +117,11 @@ restart:
   // With no map loaded, the map cell buffer holds layer 0's frames; a
   // two-part sprite (ANIMATION_FACING_TWO_PART) puts its second part in the
   // actor sprite buffer, as resource slot 1.
-  ResourceSlot_Load(0, (u32 *)Ram_MapGridCellBuffer, layers[0].spriteId, 0);
+  SpriteFrameCache_Load(0, (u32 *)Ram_MapGridCellBuffer, layers[0].spriteId, 0);
   spriteMetadata = Resource_GetMetadataRecordFar(layers[0].spriteId);
   if (spriteMetadata->drawKind == ANIMATION_FACING_TWO_PART) {
-    ResourceSlot_Load(1, (u32 *)Ram_EnemySpriteSlots, layers[0].spriteId + 1,
-                      0);
+    SpriteFrameCache_Load(1, (u32 *)Ram_EnemySpriteSlots,
+                          layers[0].spriteId + 1, 0);
   }
 
   // Ten copies of the sprite; for a two-part sprite every other copy
@@ -133,13 +133,13 @@ restart:
       spriteWork.resourceOffset = 1;
     }
     spriteWork.sprite =
-        ResourceObject_Create(layers[0].spriteId + spriteWork.resourceOffset +
-                              (spriteWork.resourceOffset << 12));
+        Sprite_Create(layers[0].spriteId + spriteWork.resourceOffset +
+                      (spriteWork.resourceOffset << 12));
     // Layers 1 to 3 are added to every copy whether shown or not; a hidden
     // layer is kept out of the drawing by its priority below.
-    ResourceMetadata_Register(spriteWork.sprite, layers[1].spriteId);
-    ResourceMetadata_Register(spriteWork.sprite, layers[2].spriteId);
-    ResourceMetadata_Register(spriteWork.sprite, layers[3].spriteId);
+    Sprite_AddAnim(spriteWork.sprite, layers[1].spriteId);
+    Sprite_AddAnim(spriteWork.sprite, layers[2].spriteId);
+    Sprite_AddAnim(spriteWork.sprite, layers[3].spriteId);
     /* FAKEMATCH(temporary): the native adds the flags offset to the sprite's
      * own register (r5) in place; as spriteWork.sprite->flags = shadowsEnabled,
      * 21 of 672 instructions differ in tbs-en. */
@@ -147,15 +147,15 @@ restart:
     *spriteWork.flags = shadowsEnabled;
   }
 
-  // Priority 8 hides a layer: Sprite_ComposeAnimationFrame draws only
+  // Priority 8 hides a layer: Sprite_ComposeFrame draws only
   // priorities 0 to 3.
   for (i = 0; i < ANIMATION_LAYER_COUNT; i++) {
     if (layers[i].enabled != 0) {
-      Ui_SetGridColumnPriority(i, layers[i].priority);
+      SpriteViewer_SetGridColumnPriority(i, layers[i].priority);
     } else {
-      Ui_SetGridColumnPriority(i, UI_SPRITE_VIEWER_HIDDEN_PRIORITY);
+      SpriteViewer_SetGridColumnPriority(i, UI_SPRITE_VIEWER_HIDDEN_PRIORITY);
     }
-    Ui_SetGridColumnColorMode(i, layers[i].colorMode);
+    SpriteViewer_SetGridColumnColorMode(i, layers[i].colorMode);
     Ui_FillGridColumnFromMetadata(i, layers[i].animationIndex);
   }
   // The copies are drawn each frame by the task below, from the ring's
@@ -208,7 +208,7 @@ next:
     // A press of Start also toggles the shadows (SPRITE_FLAG_SHADOW) of the
     // ten copies.
     if ((gKeysPressed & KEY_START) != 0) {
-      sprites = gSpriteObjects;
+      sprites = gSprites;
       shadowsEnabled ^= 1;
       for (i = 0; i < UI_SPRITE_VIEWER_COPY_COUNT; i++) {
         sprites->flags = shadowsEnabled;
@@ -257,15 +257,15 @@ next:
       }
       if ((*repeatedKeys & KEY_L) != 0) {
         for (i = 0; i < spriteSteps; i++) {
-          layers[selectedLayer].spriteId =
-              Ui_FindNextSpriteWithImage(layers[selectedLayer].spriteId, -1);
+          layers[selectedLayer].spriteId = SpriteViewer_FindNextSpriteWithImage(
+              layers[selectedLayer].spriteId, -1);
         }
         changed = 1;
       }
       if ((*repeatedKeys & KEY_R) != 0) {
         for (i = 0; i < spriteSteps; i++) {
-          layers[selectedLayer].spriteId =
-              Ui_FindNextSpriteWithImage(layers[selectedLayer].spriteId, 1);
+          layers[selectedLayer].spriteId = SpriteViewer_FindNextSpriteWithImage(
+              layers[selectedLayer].spriteId, 1);
         }
         changed = 1;
       }
@@ -278,10 +278,12 @@ next:
       }
       // A hidden layer only remembers the number until it is shown again.
       if (layers[selectedLayer].enabled != 0) {
-        Ui_SetGridColumnNumber(selectedLayer, layers[selectedLayer].spriteId);
-        Ui_SetGridColumnPriority(selectedLayer, layers[selectedLayer].priority);
-        Ui_SetGridColumnColorMode(selectedLayer,
-                                  layers[selectedLayer].colorMode);
+        SpriteViewer_SetGridColumnNumber(selectedLayer,
+                                         layers[selectedLayer].spriteId);
+        SpriteViewer_SetGridColumnPriority(selectedLayer,
+                                           layers[selectedLayer].priority);
+        SpriteViewer_SetGridColumnColorMode(selectedLayer,
+                                            layers[selectedLayer].colorMode);
         Ui_FillGridColumnFromMetadata(selectedLayer,
                                       layers[selectedLayer].animationIndex);
       }
@@ -308,12 +310,13 @@ next:
         break;
       }
       if (layers[selectedLayer].enabled != 0) {
-        Ui_SetGridColumnPriority(selectedLayer, layers[selectedLayer].priority);
+        SpriteViewer_SetGridColumnPriority(selectedLayer,
+                                           layers[selectedLayer].priority);
       }
       goto next;
 
     // The draw parameter (SpriteColorMode), 0 to 15 and wrapping;
-    // SPRITE_COLOR_HIDDEN is the value ObjectGroup_SetChildValueUnlessFifteen
+    // SPRITE_COLOR_HIDDEN is the value Sprite_SetAnimColorModes
     // leaves alone.
     case UI_SPRITE_VIEWER_EDIT_COLOR:
       changed = 0;
@@ -335,8 +338,8 @@ next:
         break;
       }
       if (layers[selectedLayer].enabled != 0) {
-        Ui_SetGridColumnColorMode(selectedLayer,
-                                  layers[selectedLayer].colorMode);
+        SpriteViewer_SetGridColumnColorMode(selectedLayer,
+                                            layers[selectedLayer].colorMode);
       }
       goto next;
 
@@ -361,10 +364,10 @@ next:
         }
       } else if (selectedLayer != 0) {
         layers[selectedLayer].enabled ^= 1;
-        Ui_SetGridColumnPriority(selectedLayer,
-                                 layers[selectedLayer].enabled != 0
-                                     ? layers[selectedLayer].priority
-                                     : UI_SPRITE_VIEWER_HIDDEN_PRIORITY);
+        SpriteViewer_SetGridColumnPriority(
+            selectedLayer, layers[selectedLayer].enabled != 0
+                               ? layers[selectedLayer].priority
+                               : UI_SPRITE_VIEWER_HIDDEN_PRIORITY);
         goto next;
       }
     }
@@ -388,8 +391,8 @@ next:
 
 /// Returns the next sprite id after spriteId, stepping by direction (1 or
 /// -1) and wrapping within 0-511, whose metadata has an image (a nonzero
-/// width). Called by Ui_RunIconMonitor.
-s32 Ui_FindNextSpriteWithImage(s32 spriteId, s32 direction) {
+/// width). Called by SpriteViewer_Run.
+s32 SpriteViewer_FindNextSpriteWithImage(s32 spriteId, s32 direction) {
   for (;;) {
     spriteId += direction;
     // Past either end, jump to just beyond the other, so the next step
@@ -417,7 +420,7 @@ s32 Ui_FindNextSpriteWithImage(s32 spriteId, s32 direction) {
 /// Lays out the sprite viewer's ring around pixel (x, z): one position per
 /// facing of the first sprite's facing kind (6, 8, 10 or 4, or two opposite
 /// pairs for ANIMATION_FACING_TWO_PART), 56 pixels out (40 for a two-part
-/// sprite). B held turns the ring. Called by Ui_RunIconMonitor when it starts
+/// sprite). B held turns the ring. Called by SpriteViewer_Run when it starts
 /// and while Start moves the ring.
 void SpriteViewer_BuildProbeRing(s32 centerX, s32 centerY,
                                  struct SpritePlacement *positions) {
@@ -429,7 +432,7 @@ void SpriteViewer_BuildProbeRing(s32 centerX, s32 centerY,
 
   angle = 0;
   // Select the viewer sprite's formation; headings wrap as 16-bit turns.
-  facingKind = gSpriteObjects->entries[0]->kind;
+  facingKind = gSprites->entries[0]->kind;
   // With B held the ring starts at an angle that turns with the frame
   // counter, a full turn every 256 frames.
   if ((gKeysHeld & KEY_B) != 0)
@@ -539,7 +542,7 @@ void SpriteViewer_BuildProbeRing(s32 centerX, s32 centerY,
 /// the first ten sprites to value.
 #define UI_DEFINE_SET_GRID_COLUMN(name, field)                                 \
   void name(s32 layerIndex, s32 value) {                                       \
-    struct AnimationObject *spriteGroup = gSpriteObjects;                      \
+    struct Sprite *spriteGroup = gSprites;                                     \
     s32 spriteIndex;                                                           \
                                                                                \
     layerIndex &= ANIMATION_LAYER_COUNT - 1;                                   \
@@ -552,21 +555,21 @@ void SpriteViewer_BuildProbeRing(s32 centerX, s32 centerY,
 
 /// Sets the colour mode (SpriteColorMode, the layer's draw parameter) or the
 /// priority of one layer of the viewer's ten sprites.
-UI_DEFINE_SET_GRID_COLUMN(Ui_SetGridColumnColorMode, colorMode)
-UI_DEFINE_SET_GRID_COLUMN(Ui_SetGridColumnPriority, priority)
+UI_DEFINE_SET_GRID_COLUMN(SpriteViewer_SetGridColumnColorMode, colorMode)
+UI_DEFINE_SET_GRID_COLUMN(SpriteViewer_SetGridColumnPriority, priority)
 
 /// Starts animationIndex on layerIndex of each of the viewer's ten sprites,
 /// each one a frame (16 timer units) behind the last, so the copies are
 /// staggered. Also sets each copy's offsetY and clears its rotation.
-/// Called by Ui_RunIconMonitor.
+/// Called by SpriteViewer_Run.
 void Ui_FillGridColumnFromMetadata(s32 layerIndex, s32 animationIndex) {
   s32 spriteIndex;
-  struct AnimationObject *spriteGroup;
+  struct Sprite *spriteGroup;
 
-  spriteGroup = gSpriteObjects;
+  spriteGroup = gSprites;
   spriteIndex = 0;
   do {
-    struct AnimationEntry *entry =
+    struct SpriteAnim *entry =
         spriteGroup->entries[layerIndex & (ANIMATION_LAYER_COUNT - 1)];
     struct AnimationMetadata *metadata;
     s32 initialFrame = 0;
@@ -593,10 +596,10 @@ void Ui_FillGridColumnFromMetadata(s32 layerIndex, s32 animationIndex) {
 }
 
 /// Sets spriteId on layerIndex of each of the viewer's ten sprites.
-/// Resets each layer from its new metadata. Called by Ui_RunIconMonitor when
+/// Resets each layer from its new metadata. Called by SpriteViewer_Run when
 /// a layer other than 0 gets a new sprite.
-void Ui_SetGridColumnNumber(s32 layerIndex, s32 spriteId) {
-  struct AnimationObject *spriteGroup = gSpriteObjects;
+void SpriteViewer_SetGridColumnNumber(s32 layerIndex, s32 spriteId) {
+  struct Sprite *spriteGroup = gSprites;
   s32 spriteIndex;
 
   // The ROM looks the metadata up here and drops the result.
@@ -604,10 +607,10 @@ void Ui_SetGridColumnNumber(s32 layerIndex, s32 spriteId) {
   layerIndex &= ANIMATION_LAYER_COUNT - 1;
   for (spriteIndex = 0; spriteIndex < UI_SPRITE_VIEWER_COPY_COUNT;
        spriteIndex++) {
-    struct AnimationEntry *entry = spriteGroup->entries[layerIndex];
+    struct SpriteAnim *entry = spriteGroup->entries[layerIndex];
 
     entry->animationId = spriteId;
-    Animation_InitializeWorkFromMetadata(entry);
+    SpriteAnim_Reset(entry);
     spriteGroup++;
   }
 }
@@ -616,9 +619,9 @@ void Ui_SetGridColumnNumber(s32 layerIndex, s32 spriteId) {
 /// ring position, facing the way that position stands for.
 /// Despite its name it belongs to the sprite viewer, which schedules it; its
 /// ring is the placements in HEAP_SLOT_BATTLE and its sprites the pool in
-/// HEAP_SLOT_ANIMATION_SPRITES.
+/// HEAP_SLOT_SPRITES.
 void Battle_PlaceActorsByFormationKind(void) {
-  struct AnimationObject *sprite = HEAP_SLOT_BLOCK(HEAP_SLOT_ANIMATION_SPRITES);
+  struct Sprite *sprite = HEAP_SLOT_BLOCK(HEAP_SLOT_SPRITES);
   u32 facingKind = sprite->entries[0]->kind;
   struct SpriteScale scale;
   struct SpritePlacement *facingPositions;

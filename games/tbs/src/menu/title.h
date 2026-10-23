@@ -3,10 +3,10 @@
 
 #include "types.h"
 
-/// One sprite of the logo's lettering, as Runtime_PushSlotEntry queues it.
+/// One sprite of the logo's lettering, as Oam_AddSpriteAtDepth queues it.
 /// Title_UpdateSpriteReveal rewrites every record each frame.
 struct TitleSprite {
-  /// [0] the queue link Runtime_PushSlotEntry writes; [1] OAM attribute 0
+  /// [0] the queue link Oam_AddSpriteAtDepth writes; [1] OAM attribute 0
   /// (y, mode and shape) in the low half and attribute 1 (x) in the high
   /// half; [2] attribute 2 (the tile, and the palette).
   u32 attr[3];

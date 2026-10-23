@@ -415,7 +415,7 @@ s32 DjinnMenu_RunScreen(void) {
 /// Palette 7's copy is 12 darker instead. Menu_OpenBackdropScreen calls it
 /// with 8: 14 becomes the row highlight, 4 the highlighted element icons and
 /// 6 the dimmed text behind the help (DjinnMenu_ShowHelp).
-void Graphics_AdjustPaletteBank(s32 brightnessDelta) {
+void DjinnMenu_AdjustPaletteBank(s32 brightnessDelta) {
   s32 bankIndex;
   s32 bank;
   s32 colorIndex;
@@ -483,7 +483,7 @@ void Graphics_AdjustPaletteBank(s32 brightnessDelta) {
 /// in the backdrop, which DjinnMenu_Run puts back as the menu closes. Palette
 /// 5 gets the basic sprite colours, with the window background as colour 14,
 /// for the element icons (DJINN_ELEMENT_TILE); palette 7 a copy of 15; then
-/// Graphics_AdjustPaletteBank(8) makes 14, 4 and 6 from 15, 5 and 7.
+/// DjinnMenu_AdjustPaletteBank(8) makes 14, 4 and 6 from 15, 5 and 7.
 MenuBackdropResult Menu_OpenBackdropScreen(void) {
   // UB: the implicit int call conflicts with DrawElementList's void definition.
   // The sole caller ignores this wrapper's result. Plain void changes the
@@ -505,7 +505,7 @@ MenuBackdropResult Menu_OpenBackdropScreen(void) {
   BG_PLTT_COLOR(5, 14) = BG_PLTT_COLOR(15, 4);
   Dma_Set((void *)&BG_PLTT_COLOR(15, 0), (void *)&BG_PLTT_COLOR(7, 0),
           DMA_ENABLE << 16 | 16, REG_DMA3);
-  Graphics_AdjustPaletteBank(8);
+  DjinnMenu_AdjustPaletteBank(8);
   BG_PLTT_COLOR(7, 4) = BG_PLTT_COLOR(15, 4);
   BG_PLTT_COLOR(6, 4) = BG_PLTT_COLOR(15, 4);
 #ifdef UBFIX
@@ -828,7 +828,7 @@ s32 DjinnMenu_ShowHelp(void) {
     // Before the next topic: free the page arrow's VRAM slot the text took
     // (99: none), and stop the text's channel typing.
     if (work->glyphResource != 99) {
-      Resource_ResetEntry(work->glyphResource);
+      VramCache_FreeEntry(work->glyphResource);
       work->glyphResource = 99;
     }
     ((struct WindowWork *)gWindowWork[0])->pageArrowShown = 0;

@@ -202,7 +202,7 @@ static void GomaCavePillar_SpawnFragment(s32 x, s32 y, s32 z, s32 firstRate,
   struct EffectScripts table;
   struct ObjectEvent *leader;
   struct ObjectEvent *fragment;
-  struct AnimationObject *sprite;
+  struct Sprite *sprite;
   u32 priority;
 
   leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);

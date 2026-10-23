@@ -47,11 +47,11 @@ STATIC_ASSERT(offsetof(union HeapState, heap.blocks) == 8);
 /// the same pool.
 enum HeapSlot {
   HEAP_SLOT_TRANSFORM_STACK = 2, ///< The 3D transform's one saved level.
-  /// The animation layer records (struct AnimationEntry) of the object
-  /// system's sprites (gAnimationObjects).
-  HEAP_SLOT_ANIMATION_LAYERS = 3,
-  /// The object system's sprite pool (struct AnimationObject).
-  HEAP_SLOT_ANIMATION_SPRITES = 4,
+  /// The animation layer records (struct SpriteAnim) of the object
+  /// system's sprites (gSpriteAnims).
+  HEAP_SLOT_SPRITE_ANIMS = 3,
+  /// The object system's sprite pool (struct Sprite).
+  HEAP_SLOT_SPRITES = 4,
   /// The 64 field objects of the object pool (struct Object).
   HEAP_SLOT_OBJECTS = 5,
   /// The object system's work (struct ObjectSystemWork, gObjectSystemWork),
@@ -92,7 +92,7 @@ enum HeapSlot {
   /// A field map's struct FieldWork, which maps read as struct EventWork
   /// (gFieldWork); Map_Run takes it and frees it on the way out.
   HEAP_SLOT_FIELD = 27,
-  /// The palette cycling queue (struct PaletteSnapshotWork).
+  /// The palette cycling queue (struct PaletteCycleWork).
   HEAP_SLOT_PALETTE_CYCLES = 28,
   /// The running ground particles, motes or sparkles (struct
   /// WeatherWork).
@@ -105,15 +105,15 @@ enum HeapSlot {
   /// gScreenTransitionWork): the window edges and dissolve of a map change.
   HEAP_SLOT_SCREEN_TRANSITION = 31,
   /// The colour buffer (gPaletteFadeWork) that moves the BG and OBJ palettes
-  /// toward target colours: the struct ColorBuffer
-  /// ColorBuffer_Initialize allocates on map load, or the title
-  /// intro's struct PaletteFade.
+  /// toward target colours: the struct PaletteFade
+  /// PaletteFade_Initialize allocates on map load, or the title
+  /// intro's struct TitlePaletteFade.
   HEAP_SLOT_PALETTE_FADE = 32,
   /// The floating lights of Sol Sanctum's Elemental Star room (struct
   /// SolSanctumRingList, sol_sanctum_elemental_star_ring_setup.h).
   HEAP_SLOT_SOL_SANCTUM_LIGHTS = 33,
-  /// The wavy background's work (struct DisplayScrollWork).
-  HEAP_SLOT_WAVY_BACKGROUND = 34,
+  /// The wavy background's work (struct ScanlineEffectWork).
+  HEAP_SLOT_SCANLINE_EFFECT = 34,
   /// Where Mercury Lighthouse keeps a pointer to the state of the lights that
   /// carry the leader over its pools (struct MercuryLighthouseLights).
   HEAP_SLOT_MERCURY_LIGHTHOUSE_LIGHTS = 35,

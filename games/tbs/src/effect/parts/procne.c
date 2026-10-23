@@ -369,7 +369,7 @@ void BattleAnim_RunProcne(struct BattleAnimArgs *effect) {
       // Object i is placed 64i pixels lower and raised 64i pixels higher,
       // which cancel on the screen but give it a draw slot 32i later
       // (Render_ApplyProjectedPlacement takes the slot from y / 2, and
-      // Runtime_PushSlotEntry stops at 255).
+      // Oam_AddSpriteAtDepth stops at 255).
       index = 0;
       do {
         place.x = (gProcne_GridX[index] << 16) + wave.x + 0x280000;
@@ -384,7 +384,7 @@ void BattleAnim_RunProcne(struct BattleAnimArgs *effect) {
       // into the scene.
       // XXX: likely none of these points projects, because each result is
       // read back as a 16.16 point (x >> 17 for the canvas, y and depth
-      // >> 16): Render_ProjectPoint leaves the transformed point for a depth
+      // >> 16): Transform_ProjectPoint leaves the transformed point for a depth
       // outside gProjection's range, and from the reset transform these
       // points lie at depths near -256, below the battle's near depth.
       if (frame > 255) {
@@ -394,7 +394,7 @@ void BattleAnim_RunProcne(struct BattleAnimArgs *effect) {
         alive = 0;
         depthOffset.x = 0;
         depthOffset.y = 0;
-        Render_ResetTransformState();
+        Transform_Reset();
         Transform_ApplyPosition(Vector3_Coordinates(&depthOffset));
 
         // Frames 256 to 329: the motes close in on the middle of the
@@ -596,7 +596,7 @@ void BattleAnim_RunProcne(struct BattleAnimArgs *effect) {
 
   index = 0;
   do {
-    ResourceObject_ReleaseFar(work->animations[index]);
+    Sprite_DestroyFar(work->animations[index]);
     index++;
   } while (index != 9);
 

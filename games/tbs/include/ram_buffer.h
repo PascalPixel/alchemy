@@ -28,18 +28,20 @@
 // IWRAM variables the code reaches as constants; German moves them 16 bytes
 // up. Only BattleAnim_RunSpiderWeb takes the work slot table's address as
 // Ram_HeapSlots; other code uses gHeapSlots (MATCHING.md).
-// The 16 bytes are space German alone reserves before gRenderSlotHeads
+// The 16 bytes are space German alone reserves before gOamDepthLists
 // (system/iwram.s), so the test is on the language: French, Spanish and
 // Italian, which take German's other changes, lay IWRAM out as English does.
 // XXX: likely a German-only variable nothing reads, because no matched code
 // names an address in those 16 bytes; a reader of them would settle it.
 #if (LANGUAGE == LANGUAGE_GERMAN)
 #define Ram_BgScroll FIXED_ADDRESS((u8 *), 0x03001ae0, gBgScroll)
-#define Ram_VramBlockCache FIXED_ADDRESS((u8 *), 0x03001b20, gVramBlockCache)
+#define Ram_VramCacheEntries                                                   \
+  FIXED_ADDRESS((u8 *), 0x03001b20, gVramCacheEntries)
 #define Ram_HeapSlots FIXED_ADDRESS((void **), 0x03001e60, gHeapSlots)
 #else
 #define Ram_BgScroll FIXED_ADDRESS((u8 *), 0x03001ad0, gBgScroll)
-#define Ram_VramBlockCache FIXED_ADDRESS((u8 *), 0x03001b10, gVramBlockCache)
+#define Ram_VramCacheEntries                                                   \
+  FIXED_ADDRESS((u8 *), 0x03001b10, gVramCacheEntries)
 #define Ram_HeapSlots FIXED_ADDRESS((void **), 0x03001e50, gHeapSlots)
 #endif
 

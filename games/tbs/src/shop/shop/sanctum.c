@@ -132,8 +132,7 @@ s32 Sanctum_Run(s32 unitId) {
 
   {
     s32 keeperAnimationId =
-        (u16)((struct AnimationObject *)((struct Object *)
-                                             ObjectEvent_GetByIdFar(unitId))
+        (u16)((struct Sprite *)((struct Object *)ObjectEvent_GetByIdFar(unitId))
                   ->animation)
             ->entries[0]
             ->animationId;
@@ -365,11 +364,9 @@ void Sanctum_HighlightMembers(struct Window *window, s32 selected) {
   if (window != 0) {
     for (memberIndex = 0; memberIndex < shop->partyMemberCount; memberIndex++) {
       if (memberIndex == selected)
-        AnimationObject_SelectAnimationFar(shop->partyMemberIcons[memberIndex],
-                                           30);
+        Sprite_StartAnimFar(shop->partyMemberIcons[memberIndex], 30);
       else
-        AnimationObject_SelectAnimationFar(shop->partyMemberIcons[memberIndex],
-                                           1);
+        Sprite_StartAnimFar(shop->partyMemberIcons[memberIndex], 1);
       shop->partyMemberScale[memberIndex] = 0x10000;
       if (!Sanctum_NeedsService(shop->partyMemberIds[memberIndex], serviceKind))
         shop->partyMemberScale[memberIndex] = 0xb333;
@@ -457,12 +454,12 @@ void Shop_ResetEffects(void) {
   } while (remainingEffects >= 0);
   burstMember = shop->burstMember;
   if (burstMember != -1)
-    ObjectGroup_SetChildValueUnlessFifteenFar(
-        shop->partyMemberIcons[burstMember], (Random16() * 7) >> 16);
+    Sprite_SetAnimColorModesFar(shop->partyMemberIcons[burstMember],
+                                (Random16() * 7) >> 16);
 }
 
 /// The tune each service's burst plays, by enum SanctumService; the burst
-/// waits for the sound driver (AudioCommand_WaitForStateByteClear) before
+/// waits for the sound driver (Sound_WaitForFanfare) before
 /// freeing its sparkles.
 static const s8 sSanctumServiceCues[4] = {
     [SANCTUM_SERVICE_REVIVE] = MUS_REVIVE,
@@ -493,7 +490,7 @@ void Sanctum_RunMemberIconBurst(s32 member) {
   shop->cursor.anchor->motion = WINDOW_SPRITE_MOTION_HIDDEN;
   Sound_PlaySongFar(sSanctumServiceCues[shop->action]);
   Shop_SaveAndTintFieldPalette(0x00202108);
-  AnimationObject_SetActiveTimerStepsFar(shop->partyMemberIcons[member], 0);
+  Sprite_SetAnimSpeedFar(shop->partyMemberIcons[member], 0);
   WaitFrames(20);
   callbackPriority = TASK_PRIORITY_MAIN_LOOP;
   Task_Add(Shop_ResetEffects, callbackPriority);
@@ -509,8 +506,7 @@ void Sanctum_RunMemberIconBurst(s32 member) {
     FieldEffectSprite_InitializeFar(effect, 0x11c, position.x, position.z);
     FieldEffectSprite_SetCallbackFar(effect, Sanctum_UpdateBurstSparkle);
     FieldEffectSprite_SetObjectModeFar(effect, 7);
-    ObjectGroup_SetChildValueUnlessFifteenFar(effect->object,
-                                              (Random16() * 7) >> 16);
+    Sprite_SetAnimColorModesFar(effect->object, (Random16() * 7) >> 16);
     effect->scaleY = 0xb333;
     effect->scaleX = 0xb333;
     WaitFrames(3);
@@ -522,7 +518,7 @@ void Sanctum_RunMemberIconBurst(s32 member) {
   } while (effectIndex <= 17);
 
   // Let active particles finish, then release remaining slots and restore UI.
-  AudioCommand_WaitForStateByteClear();
+  Sound_WaitForFanfare();
   {
     u8 activeMode = SANCTUM_SPARKLE_LAST_FLIGHT;
     u8 *entry = (u8 *)&shop->effects[0].state;
@@ -537,7 +533,7 @@ void Sanctum_RunMemberIconBurst(s32 member) {
   WaitFrames(20);
   Sound_PlaySongFar(SE_RECOVERY);
   shop->burstMember = -1;
-  ObjectGroup_SetChildValueUnlessFifteenFar(shop->partyMemberIcons[member], 0);
+  Sprite_SetAnimColorModesFar(shop->partyMemberIcons[member], 0);
   WaitFrames(20);
 
   {
@@ -557,7 +553,7 @@ void Sanctum_RunMemberIconBurst(s32 member) {
   }
 
   Task_Remove(Shop_ResetEffects);
-  AnimationObject_SetActiveTimerStepsFar(shop->partyMemberIcons[member], 16);
+  Sprite_SetAnimSpeedFar(shop->partyMemberIcons[member], 16);
   Shop_RestoreFieldPalette();
   WaitFrames(30);
   shop->cursor.anchor->motion = savedCursorMode;

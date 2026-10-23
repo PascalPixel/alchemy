@@ -6,7 +6,7 @@
 	.set import.Task_Add, 1
 	.set import.Engine_TaskRemoveCallback, 1
 	.set import.Vector_AddPolarOffset, 1
-	.set import.Resource_ResetEntry, 1
+	.set import.VramCache_FreeEntry, 1
 	.set import.ObjectEvent_SetMode, 1
 	.set import.Engine_ObjectSetScript, 1
 	.set import.Engine_ObjectCreate, 1
@@ -52,7 +52,7 @@
 	.set import.Engine_ColorBufferApplySource, 1
 	.set import.Engine_ColorBufferInterpolate, 1
 	.set import.Field_EndBusyAndReveal, 1
-	.set import.Sprite_ShareVramCache, 1
+	.set import.Sprite_ShareVramCacheEntry, 1
 	.set import.Map_PlayMusic, 1
 	.set import.Engine_ObjectEventWalkByAndWait, 1
 	.set import.Engine_AudioPlayCue, 1

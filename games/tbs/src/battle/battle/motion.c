@@ -291,17 +291,16 @@ void BattleMotion_ApplyPairMidpoint(s32 firstId, s32 secondId) {
 /// single-sprite object takes it. Nothing in the source calls it.
 void BattleMotion_SpawnSlotEffectAndWait(s32 unitId) {
   struct MotionObject *object;
-  struct AnimationEntry *effect;
+  struct SpriteAnim *effect;
   s32 effectHandle;
 
   object = BattleObject_Get(unitId)->object;
   if ((object != NULL) && ((OBJECT_SPRITES_KIND_MASK & object->spritesKind) ==
                            OBJECT_SPRITES_ONE)) {
-    effectHandle =
-        ResourceMetadata_RegisterFar(object->records, HIT_FLASH_ANIMATION);
+    effectHandle = Sprite_AddAnimFar(object->records, HIT_FLASH_ANIMATION);
     if (effectHandle != 0) {
-      effect = (struct AnimationEntry *)effectHandle;
-      Animation_SetWorkEntryFar(effect, 1);
+      effect = (struct SpriteAnim *)effectHandle;
+      SpriteAnim_StartFar(effect, 1);
       effect->priority = 3;
     }
     WaitFrames(0xA);
@@ -315,7 +314,7 @@ void BattleMotion_SpawnSlotEffectAndWait(s32 unitId) {
 /// Projection_ScaledUnit and SelectionScreen_Draw.
 s32 BattleMotion_ProjectScaledPosition(s32 unitId, s32 *projected) {
   struct MotionObject *object = BattleObject_Get(unitId)->object;
-  struct AnimationObject *record = GetMotionRecord(object, 0);
+  struct Sprite *record = GetMotionRecord(object, 0);
   s32 projectionScale;
   s32 spriteScale;
   /* FAKEMATCH(dead): an unused position for the frame's 12 bytes; without it,
@@ -323,7 +322,7 @@ s32 BattleMotion_ProjectScaledPosition(s32 unitId, s32 *projected) {
   UNUSED struct ScreenPoint input;
 
   Camera_ApplyTransformByFlag();
-  projectionScale = Render_ProjectPoint(&object->x, projected);
+  projectionScale = Transform_ProjectPoint(&object->x, projected);
   spriteScale = Iwram_MulQ16(projectionScale, record->scale);
   projectionScale =
       Iwram_MulQ16(spriteScale, (s32)BattleUnit_GetEffectHeight(unitId) >> 16);
@@ -337,12 +336,12 @@ s32 BattleMotion_ProjectScaledPosition(s32 unitId, s32 *projected) {
 /// place the target cursor.
 s32 BattleMotion_ProjectConditionalPosition(s32 unitId, s32 *projected) {
   struct MotionObject *object = BattleObject_Get(unitId)->object;
-  struct AnimationObject *record = GetMotionRecord(object, 0);
+  struct Sprite *record = GetMotionRecord(object, 0);
   s32 projectedHeight;
   s32 spriteScale;
 
   Camera_ApplyTransformByFlag();
-  projectedHeight = Render_ProjectPoint(&object->x, projected);
+  projectedHeight = Transform_ProjectPoint(&object->x, projected);
   spriteScale = Iwram_MulQ16(projectedHeight, record->scale);
   if (BattleSprite_IsSmall(Unit_GetFar(unitId)->id) != 0)
     projectedHeight = Iwram_MulQ16(spriteScale, 24);

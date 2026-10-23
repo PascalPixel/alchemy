@@ -69,12 +69,12 @@ void BattleAnim_RunRamses(struct BattleAnimArgs *effect) {
   // animations.
   BattleAnim_SpawnObjects(9, 379, 2);
   for (i = 0; i != RAMSES_ROCKS; i++) {
-    struct AnimationObject *animation = ResourceObject_CreateFar(390);
+    struct Sprite *animation = Sprite_CreateFar(390);
 
     work->animations[9 + i] = animation;
     if (animation != 0) {
       animation->flags = 0;
-      AnimationObject_SelectAnimationFar(animation, i % 3);
+      Sprite_StartAnimFar(animation, i % 3);
       work->animations[9 + i]->image.priority = 1;
     }
   }
@@ -313,7 +313,7 @@ void BattleAnim_RunRamses(struct BattleAnimArgs *effect) {
   ANIM_SHOW_DAMAGE(SE_HEAVY_IMPACT);
   BattleAnim_SetupBlendedDisplay();
   for (i = 0; i != 15; i++)
-    ResourceObject_ReleaseFar(work->animations[i]);
+    Sprite_DestroyFar(work->animations[i]);
   ANIM_FINISH_CANVAS();
 }
 

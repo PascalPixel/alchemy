@@ -199,7 +199,7 @@ static void EventScript_BagVenusStar(void) {
     Engine_ColorBufferApplyTarget(0x403a52, 1);
     Engine_ColorBufferInterpolate(8);
     Engine_ScriptWait(8);
-    Engine_ColorBufferApplyTarget(PALETTE_TRANSFORM_PLAIN, 1);
+    Engine_ColorBufferApplyTarget(PALETTE_TINT_NONE, 1);
     Engine_ColorBufferInterpolate(8);
     Engine_ScriptWait(8);
     if (i == 1) {
@@ -250,7 +250,7 @@ static void EventScript_BagVenusStar(void) {
   Engine_ScriptOpenScreen();
   Engine_ScriptWaitForScreen();
   Engine_ScriptWait(40);
-  Engine_AudioPlayCue(AUDIO_CUE_FADE_SLOT3);
+  Engine_AudioPlayCue(SONG_FADE_OUT_ACTION_SE);
   MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
   Engine_MapGridRenderWaitForValues();
   Engine_ScriptWait(20);
@@ -298,10 +298,10 @@ static void EventScript_BagMercuryStar(void) {
   Engine_ScriptStart();
   Script_PlaySong(SE_RUMBLE);
   for (i = 0; i != 6; i++) {
-    ColorBuffer_ApplyTarget(0x404a4e, 1);
+    PaletteFade_ApplyTarget(0x404a4e, 1);
     Engine_ColorBufferInterpolate(8);
     Engine_ScriptWait(8);
-    ColorBuffer_ApplyTarget(PALETTE_TRANSFORM_PLAIN, 1);
+    PaletteFade_ApplyTarget(PALETTE_TINT_NONE, 1);
     Engine_ColorBufferInterpolate(8);
     Engine_ScriptWait(8);
     if (i == 1) {
@@ -353,7 +353,7 @@ static void EventScript_BagMercuryStar(void) {
   Engine_ScriptOpenScreen();
   Engine_ScriptWaitForScreen();
   Engine_ScriptWait(40);
-  Script_PlaySong(AUDIO_CUE_FADE_SLOT3);
+  Script_PlaySong(SONG_FADE_OUT_ACTION_SE);
   MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
   Engine_MapGridRenderWaitForValues();
   Engine_ScriptWait(20);
@@ -414,10 +414,10 @@ static void SolSanctumElementalStarRoom_BagJupiterStar(void) {
 
   Script_PlaySong(SE_RUMBLE);
   for (i = 0; i != 6; i++) {
-    ColorBuffer_ApplyTarget(0x4049d2, 1);
+    PaletteFade_ApplyTarget(0x4049d2, 1);
     Engine_ColorBufferInterpolate(8);
     Engine_ScriptWait(8);
-    ColorBuffer_ApplyTarget(PALETTE_TRANSFORM_PLAIN, 1);
+    PaletteFade_ApplyTarget(PALETTE_TINT_NONE, 1);
     Engine_ColorBufferInterpolate(8);
     Engine_ScriptWait(8);
     if (i == 1) {
@@ -469,7 +469,7 @@ static void SolSanctumElementalStarRoom_BagJupiterStar(void) {
   Engine_ScriptOpenScreen();
   Engine_ScriptWaitForScreen();
   Engine_ScriptWait(40);
-  Script_PlaySong(AUDIO_CUE_FADE_SLOT3);
+  Script_PlaySong(SONG_FADE_OUT_ACTION_SE);
   MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
   Engine_MapGridRenderWaitForValues();
   Engine_ScriptWait(20);
@@ -487,7 +487,7 @@ static void SolSanctumElementalStarRoom_BagJupiterStar(void) {
 static void SolSanctumElementalStarRoom_RevealSaturosAndMenardi(void) {
   struct ObjectEvent *leader;
 
-  Script_PlaySong(AUDIO_CUE_FADE_BGM);
+  Script_PlaySong(SONG_FADE_OUT_BGM);
   ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(1) / 2, PIXELS(1) / 4);
   ObjectEvent_WalkToAndWait(LOCALID_PARTY_LEADER, 231, 490);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_NORTH, 30);
@@ -1259,17 +1259,17 @@ static void EventScript_TakeMarsStar(void) {
   Engine_ScriptStart();
   Script_PlaySong(SE_RUMBLE);
   for (pass = 0; pass != 6; pass++) {
-    ColorBuffer_ApplyTarget(0x4039d2, 1);
+    PaletteFade_ApplyTarget(0x4039d2, 1);
     Engine_ColorBufferInterpolate(8);
     Engine_ScriptWait(8);
-    ColorBuffer_ApplyTarget(PALETTE_TRANSFORM_PLAIN, 1);
+    PaletteFade_ApplyTarget(PALETTE_TINT_NONE, 1);
     Engine_ColorBufferInterpolate(8);
     Engine_ScriptWait(8);
     if (pass == 1) {
       MapGrid_SetShake(PIXELS(1), PIXELS(1), Q16_ONE);
     }
   }
-  Script_PlaySong(AUDIO_CUE_FADE_SLOT3);
+  Script_PlaySong(SONG_FADE_OUT_ACTION_SE);
   MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
   MapGrid_CopyCellsTo(0, 40, 13, 46, 3, 3);
   Engine_ScriptWait(20);
@@ -2120,7 +2120,7 @@ static void SolSanctumElementalStarRoom_EnterStarRoom(void) {
 s32 SolSanctumElementalStarRoom_Initialize(void) {
   s32 ringLocalId;
 
-  Engine_ColorBufferApplySource(PALETTE_TRANSFORM_PLAIN, 0);
+  Engine_ColorBufferApplySource(PALETTE_TINT_NONE, 0);
   Engine_GameFlagSet(FLAG_RETREAT_BLOCKED);
   ringLocalId = LOCALID_FIRST_FLOATING_LIGHT;
   do {
@@ -2189,7 +2189,7 @@ static s32 SolSanctumElementalStarRoom_PresentStar(s32 item, s32 x, s32 y,
                                                    s32 z) {
   GlyphTransfer *glyph;
   struct ObjectEvent *objectEvent;
-  struct AnimationObject *sprite;
+  struct Sprite *sprite;
   s32 owner;
   s32 slot;
 

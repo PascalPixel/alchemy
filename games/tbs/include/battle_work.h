@@ -13,10 +13,10 @@
 
 /// One OAM entry in a sprite list: the arrow that waits for the player to
 /// advance a battle message. The playback pushes it each frame it waits
-/// (Runtime_PushSlotEntry), and the three halfwords after the link are OAM
+/// (Oam_AddSpriteAtDepth), and the three halfwords after the link are OAM
 /// attributes 0 to 2 as bit-fields.
 struct AdvanceArrowSprite {
-  /// The depth slot's next entry, set by Runtime_PushSlotEntry.
+  /// The depth slot's next entry, set by Oam_AddSpriteAtDepth.
   struct AdvanceArrowSprite *next;
   u16 y : 8;     ///< pixels; bobs with a sine of the frame count
   u16 flags : 8; ///< attribute 0's high byte: 0xa0, a tall 256-colour sprite

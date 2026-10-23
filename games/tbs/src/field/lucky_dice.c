@@ -56,7 +56,7 @@ void Camera_ResetViewDefaults(void) {
   camera->unk18 = 0;
 
   // The eye sits `distance` behind the target along the camera's view.
-  Render_ResetTransformState();
+  Transform_Reset();
   Transform_ApplyPosition(&camera->focus[0]);
   Transform_ApplyYaw((s16)camera->yaw);
   Transform_ApplyPitch((s16)camera->pitch);
@@ -207,8 +207,8 @@ enum LuckyDiceState {
 /// Copies count RGB555 colours from source to destination with each channel
 /// multiplied by scale (16.16: 0 is black, 0x10000 unchanged), for fades.
 /// Returns 0. Called only by LuckyDice_Run, to fade both palettes in and out.
-s32 Graphics_ScaleRgb555Buffer(u16 *source, u16 *destination, s32 scale,
-                               s32 count) {
+s32 LuckyDice_ScaleRgb555Buffer(u16 *source, u16 *destination, s32 scale,
+                                s32 count) {
   s32 remaining;
   u32 redMask;
   u32 greenMask;
@@ -374,8 +374,8 @@ void LuckyDice_Run(void) {
 #endif
   Dma_Set(Ram_MapGridCellBuffer, (void *)OBJ_VRAM0,
           (DMA_ENABLE | DMA_32BIT) << 16 | 0x1f00, REG_DMA3);
-  Graphics_ScaleRgb555Buffer(spritePalette, (u16 *)OBJ_PLTT, 0, 256);
-  Graphics_ScaleRgb555Buffer(bgPalette, (u16 *)BG_PLTT, 0, 256);
+  LuckyDice_ScaleRgb555Buffer(spritePalette, (u16 *)OBJ_PLTT, 0, 256);
+  LuckyDice_ScaleRgb555Buffer(bgPalette, (u16 *)BG_PLTT, 0, 256);
 
   // Show the board on BG1, sprites and windows, with the board blended.
   REG_BG1CNT = BGCNT_PRIORITY(2) | BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS |
@@ -450,11 +450,11 @@ void LuckyDice_Run(void) {
     resetDice = 0;
     // Fade in over the first 16 frames.
     if (frame <= 16) {
-      Graphics_ScaleRgb555Buffer(spritePalette, (u16 *)OBJ_PLTT, frame << 12,
-                                 256);
-      Graphics_ScaleRgb555Buffer(bgPalette, (u16 *)BG_PLTT, frame << 12, 256);
+      LuckyDice_ScaleRgb555Buffer(spritePalette, (u16 *)OBJ_PLTT, frame << 12,
+                                  256);
+      LuckyDice_ScaleRgb555Buffer(bgPalette, (u16 *)BG_PLTT, frame << 12, 256);
     }
-    Render_ResetTransformState();
+    Transform_Reset();
     Transform_SetLookAt(camera->eye, camera->focus);
 
     // The fixed sprites: the board frame and the two lucky numbers.
@@ -681,7 +681,7 @@ void LuckyDice_Run(void) {
       rollingDie = &diceWork->particles[drawOrder[index]];
       // Projection reads the record's three coordinate words directly.
       // Copying them to an array grows native EN from 0x1274 to 0x1294 bytes.
-      Render_ProjectPoint(rollingDie, screen);
+      Transform_ProjectPoint(rollingDie, screen);
       // Depth is clamped to 350..650; the nearer, the larger the die.
       if (screen[2] < 0x15e) {
         screen[2] = 0x15e;
@@ -710,7 +710,7 @@ void LuckyDice_Run(void) {
     // While aiming, a marker under each die.
     if (state == LUCKY_DICE_AIM) {
       for (index = 0; index != DICE_COUNT; index++) {
-        Render_ProjectPoint(&diceWork->particles[index], screen);
+        Transform_ProjectPoint(&diceWork->particles[index], screen);
         x = screen[0] - 0x800 / (spriteDepth[drawOrder[index]] / 2 + 128);
         y = screen[1] + 0x300 / (spriteDepth[drawOrder[index]] / 2 + 128);
         sprites->oam[spriteCount].attr01 =
@@ -730,7 +730,7 @@ void LuckyDice_Run(void) {
       // Each die's shadow on the board below it.
       SET_VECTOR(groundPoint, diceWork->particles[index].x, 0,
                  diceWork->particles[index].z);
-      Render_ProjectPoint(groundPoint, screen);
+      Transform_ProjectPoint(groundPoint, screen);
       // A shadow shrinks as its die rises.
       if (screen[2] < 0x15e) {
         screen[2] = 0x15e;
@@ -971,8 +971,8 @@ void LuckyDice_Run(void) {
   // Fade out over 17 frames and free the work blocks.
   for (index = 0; index != 17; index++) {
     scale = 0x10000 - (index << 12);
-    Graphics_ScaleRgb555Buffer(spritePalette, (u16 *)OBJ_PLTT, scale, 256);
-    Graphics_ScaleRgb555Buffer(bgPalette, (u16 *)BG_PLTT, scale, 256);
+    LuckyDice_ScaleRgb555Buffer(spritePalette, (u16 *)OBJ_PLTT, scale, 256);
+    LuckyDice_ScaleRgb555Buffer(bgPalette, (u16 *)BG_PLTT, scale, 256);
     WaitFrames(1);
   }
   FreeHeapSlot(HEAP_SLOT_CAMERA);

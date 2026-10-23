@@ -265,14 +265,14 @@ void BlendScript_Resume(void) { Task_ResumeAll(BlendScript_Run); }
 
 /// Unused: allocates the palette cycling queue (HEAP_SLOT_PALETTE_CYCLES) with
 /// its four entries cleared. Nothing calls it.
-UNUSED void PaletteQueue_Initialize(void) {
-  struct PaletteSnapshotWork *paletteCycles;
-  struct PaletteSnapshot *cycle;
+UNUSED void PaletteCycle_Initialize(void) {
+  struct PaletteCycleWork *paletteCycles;
+  struct PaletteCycle *cycle;
   u16 cycleIndex;
   u16 colorIndex;
 
   paletteCycles = AllocHeapSlotEwram(HEAP_SLOT_PALETTE_CYCLES,
-                                     sizeof(struct PaletteSnapshotWork));
+                                     sizeof(struct PaletteCycleWork));
   cycle = paletteCycles->entries;
   // Four cycles of up to 16 saved colours each.
   for (cycleIndex = 0; cycleIndex != 4; cycleIndex++) {
@@ -294,10 +294,10 @@ UNUSED void PaletteQueue_Initialize(void) {
 /// 0, or -1 when all four cycles are taken. The cycle keeps a copy of the
 /// colours as they were, which every step rotates from.
 /// Nothing calls it.
-UNUSED s32 PaletteQueue_Add(s16 paletteBank, s16 firstColor, s16 delay,
+UNUSED s32 PaletteCycle_Add(s16 paletteBank, s16 firstColor, s16 delay,
                             s16 colorCount) {
-  struct PaletteSnapshotWork *paletteQueue;
-  struct PaletteSnapshot *cycle;
+  struct PaletteCycleWork *paletteQueue;
+  struct PaletteCycle *cycle;
   u16 *paletteColors;
   u32 cycleIndex;
   u16 colorCount16;
@@ -324,30 +324,28 @@ UNUSED s32 PaletteQueue_Add(s16 paletteBank, s16 firstColor, s16 delay,
 
 /// Unused: stops the palette cycles and frees their queue
 /// (HEAP_SLOT_PALETTE_CYCLES). Nothing calls it.
-UNUSED void PaletteQueue_Stop(void) {
-  Task_Remove(PaletteQueue_StepCycles);
+UNUSED void PaletteCycle_Stop(void) {
+  Task_Remove(PaletteCycle_Step);
   FreeHeapSlot(HEAP_SLOT_PALETTE_CYCLES);
 }
 
 /// Unused: starts running the palette cycles each frame.
 /// Nothing calls it.
-UNUSED void PaletteQueue_Start(void) {
-  Task_Add(PaletteQueue_StepCycles, 0xc80);
-}
+UNUSED void PaletteCycle_Start(void) { Task_Add(PaletteCycle_Step, 0xc80); }
 
 /// Each frame: advances each palette cycle whose timer has run out by one
 /// colour, writing the rotated colours back to the palette. Only
-/// PaletteQueue_Start schedules it, and nothing calls that, so no palette
+/// PaletteCycle_Start schedules it, and nothing calls that, so no palette
 /// cycle runs in the game.
-void PaletteQueue_StepCycles(void) {
-  struct PaletteSnapshotWork *paletteQueue = gPaletteCycleWork;
+void PaletteCycle_Step(void) {
+  struct PaletteCycleWork *paletteQueue = gPaletteCycleWork;
   u8 cycleIndex;
   // BUG: four queued cycles become zero here, so none advance.
   u16 activeCycles = paletteQueue->count & 3;
   u16 rotatedColors[16];
 
   for (cycleIndex = 0; cycleIndex < activeCycles; cycleIndex++) {
-    struct PaletteSnapshot *cycle = &paletteQueue->entries[cycleIndex];
+    struct PaletteCycle *cycle = &paletteQueue->entries[cycleIndex];
     if (cycle->timer == 0) {
       u16 rotationOffset = cycle->position;
       u16 colorCount = cycle->count;

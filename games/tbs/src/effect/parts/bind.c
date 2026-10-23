@@ -24,7 +24,7 @@
 /// and then 96 to 127, the 0x7800 bytes of BG character block 2 (the
 /// backdrop's picture) and Ram_MapGridCellBuffer, keeps its delays in the sheet
 /// slot, and waits a frame for each step of the edge.
-UNUSED void Graphics_ConvertBackgroundToBlueRamp(void) {
+UNUSED void BattleAnim_ConvertBackgroundToBlueRamp(void) {
   s32 i, x, y, row, end, speed;
   s32 red, green, blue;
   u16 color;
@@ -120,7 +120,7 @@ UNUSED void Graphics_ConvertBackgroundToBlueRamp(void) {
 ///
 /// Runs BattleAnim_RunDjinniEntrance first when effect->prelude is 1. Moves
 /// BG2X so the canvas's x 64 is on the first target, cycles the palette
-/// each frame through Graphics_UpdatePhasePalette, raises
+/// each frame through BattleAnim_UpdatePhasePalette, raises
 /// work->transferValue every 16 frames, keeps the triangle's corners in
 /// work->particles 0 to 2, and builds and frees its blitters every frame.
 void BattleAnim_RunBind(struct BattleAnimArgs *effect) {
@@ -190,7 +190,7 @@ void BattleAnim_RunBind(struct BattleAnimArgs *effect) {
     if (frame == 64)
       ANIM_SHOW_DAMAGE(0);
     // Red, green and blue sway a third of a turn apart.
-    Graphics_UpdatePhasePalette(frame, 0xaaab, 0x5555, 0);
+    BattleAnim_UpdatePhasePalette(frame, 0xaaab, 0x5555, 0);
 
     // The Djinni sways 20 pixels either way, once every 32 frames, and from
     // frame 33 rises 2 pixels a frame. For its first four frames it is drawn
@@ -241,7 +241,7 @@ void BattleAnim_RunBind(struct BattleAnimArgs *effect) {
         if (tick <= 67) {
           for (j = 0; j != 3; j++) {
             point = &work->particles[member * 32 + j];
-            Render_ResetTransformState();
+            Transform_Reset();
             if (tick <= 63) {
               scale.x = 0x2a000 - (tick * 3 << 9);
               scale.y = 0x2a000 - (tick * 3 << 9);
@@ -361,7 +361,7 @@ void BattleAnim_RunUnusedTriangleStrike(struct BattleAnimArgs *effect) {
     if (frame == 46)
       BattleMotion_ApproachTargetFar(work->effect->user,
                                      work->effect->targets[0], 16, 0);
-    Graphics_UpdatePhasePalette(frame, 0xaaab, 0x5555, 0);
+    BattleAnim_UpdatePhasePalette(frame, 0xaaab, 0x5555, 0);
     ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, ANIM_CLIP_BOUNDS, BLITTER_MAX);
     draw[0] = (DrawRectangle)gHeapSlots[HEAP_SLOT_RAM_CODE];
     ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, ANIM_CLIP_BOUNDS | COMPOSITE_FLIP_X,
@@ -385,7 +385,7 @@ void BattleAnim_RunUnusedTriangleStrike(struct BattleAnimArgs *effect) {
         if (tick <= 67) {
           for (j = 0; j != 3; j++) {
             point = &work->particles[member * 32 + j];
-            Render_ResetTransformState();
+            Transform_Reset();
             if (tick <= 63) {
               scale.x = 0x2a000 - (tick * 3 << 9);
               scale.y = 0x2a000 - (tick * 3 << 9);

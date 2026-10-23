@@ -56,7 +56,7 @@ again:
     // airborne: 4 pixels a frame up, 3 a frame across. Restore the original
     // motion and sprite flags after landing, before returning field control.
     if (leader->animationKind == OBJECT_SPRITE_ONE)
-      spriteFlags = ((struct AnimationObject *)leader->animation)->flags;
+      spriteFlags = ((struct Sprite *)leader->animation)->flags;
     FieldScript_Start();
     ObjectDispatch_SelectAnimationFar(leader, 6);
     WaitFrames(6);
@@ -217,7 +217,7 @@ s32 Field_ClimbUp(void) {
   FieldScript_Start();
 
   if (object->animationKind == OBJECT_SPRITE_ONE)
-    spriteFlags = ((struct AnimationObject *)object->animation)->flags;
+    spriteFlags = ((struct Sprite *)object->animation)->flags;
 
   if (gGameState.movementMode == LEADER_MOVEMENT_WALK) {
     s32 index = gridX / 16 + (gridZ / 16) * 128;

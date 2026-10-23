@@ -132,12 +132,12 @@ void BattleAnim_RunGaia(struct BattleAnimArgs *effect) {
   // The rock objects, made from resource 390: objects 0 to 3 play animation
   // 0, 4 to 7 animation 1 and 8 to 10 animation 2.
   for (i = 0; i != GAIA_ROCKS; i++) {
-    struct AnimationObject *rock = ResourceObject_CreateFar(390);
+    struct Sprite *rock = Sprite_CreateFar(390);
 
     work->animations[i] = rock;
     if (rock != 0) {
       rock->flags = 0;
-      AnimationObject_SelectAnimationFar(rock, i / 4);
+      Sprite_StartAnimFar(rock, i / 4);
       work->animations[i]->image.priority = 1;
     }
   }
@@ -358,7 +358,7 @@ void BattleAnim_RunGaia(struct BattleAnimArgs *effect) {
   Task_Remove(BattleAnim_ProcessPendingGraphicsTransfer);
   ANIM_RELEASE_BLITTERS();
   for (i = 0; i != GAIA_ROCKS; i++)
-    ResourceObject_ReleaseFar(work->animations[i]);
+    Sprite_DestroyFar(work->animations[i]);
   BattleAnim_EndCanvasLayer();
 }
 

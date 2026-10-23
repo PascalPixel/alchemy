@@ -374,17 +374,17 @@ static void KolimaForestEntrance_WitnessForestCurse(void) {
   KolimaForestEntrance_FaceObjectEventAndWait(LOCALID_PARTY_LEADER,
                                               FACING_SOUTHWEST, 20);
   KolimaForestEntrance_FaceObjectEventAndWait(IVAN, FACING_NORTH, 10);
-  Script_PlaySong(AUDIO_CUE_FADE_BGM);
+  Script_PlaySong(SONG_FADE_OUT_BGM);
   Script_PlaySong(SE_206);
-  ColorBuffer_ApplyTarget(0x7fff, 0);
+  PaletteFade_ApplyTarget(0x7fff, 0);
   Engine_ColorBufferInterpolate(1);
   Engine_TaskWait(1);
   gKolimaForestEntrance_SparkleSoundOn = 1;
   FieldScheduler_AddCallback(KolimaForestEntrance_SpawnCurseSparkle,
                              TASK_PRIORITY_MAP);
   Engine_TaskWait(20);
-  ColorBuffer_ApplyTarget(0x405210, 1);
-  ColorBuffer_ApplyTarget(0x10000, 2);
+  PaletteFade_ApplyTarget(0x405210, 1);
+  PaletteFade_ApplyTarget(0x10000, 2);
   Engine_ColorBufferInterpolate(120);
   Engine_TaskWait(60);
   squashAction = gKolimaForestEntrance_SquashAction;
@@ -446,7 +446,7 @@ static void KolimaForestEntrance_WitnessForestCurse(void) {
   Engine_ScriptWait(160);
   Engine_TaskRemoveCallback(KolimaForestEntrance_SpawnCurseSparkle);
   Engine_ScriptWait(120);
-  ColorBuffer_ApplyTarget(0x406218, 1);
+  PaletteFade_ApplyTarget(0x406218, 1);
   Engine_ColorBufferInterpolate(60);
   Engine_TaskWait(60);
   gFallingEffectWidth = 0;
@@ -530,8 +530,8 @@ static void KolimaForestEntrance_WitnessForestCurse(void) {
   Engine_ScriptWait(300);
   Engine_TaskRemoveCallback(Kolima_UpdateCurseDust);
   Engine_ScriptWait(120);
-  Script_PlaySong(AUDIO_CUE_FADE_BGM);
-  ColorBuffer_ApplyTarget(0x10000, 1);
+  Script_PlaySong(SONG_FADE_OUT_BGM);
+  PaletteFade_ApplyTarget(0x10000, 1);
   Engine_ColorBufferInterpolate(60);
   Engine_TaskWait(60);
   Engine_ObjectEventStop(LOCALID_LEADER_PSYNERGY_FIELD);
@@ -749,7 +749,7 @@ static void KolimaForestEntrance_WitnessForestCurse(void) {
   }
   Script_ShowMessage(GARET, 0);
   Script_PlaySong(MUS_021);
-  ColorBuffer_ApplyTarget(0x406218, 1);
+  PaletteFade_ApplyTarget(0x406218, 1);
   Engine_ColorBufferInterpolate(60);
   Engine_TaskWait(60);
   gFallingEffectWidth = 0;
@@ -900,7 +900,7 @@ static void KolimaForestEntrance_WitnessForestCurse(void) {
   Script_ShowMessage(LOCALID_TRET, 0);
   Engine_TaskRemoveCallback(Kolima_UpdateCurseDust);
   Engine_ScriptWait(80);
-  ColorBuffer_ApplyTarget(0x10000, 1);
+  PaletteFade_ApplyTarget(0x10000, 1);
   Engine_ColorBufferInterpolate(60);
   Engine_TaskWait(80);
   Engine_ObjectEventStop(LOCALID_LEADER_PSYNERGY_FIELD);
@@ -1061,7 +1061,7 @@ static void KolimaForestEntrance_WitnessForestCurse(void) {
       KolimaForestEntrance_ShowMessageAndWait(IVAN, 20);
     }
   }
-  Script_PlaySong(AUDIO_CUE_FADE_BGM);
+  Script_PlaySong(SONG_FADE_OUT_BGM);
   ObjectEvent_SetSpeed(GARET, PIXELS(6) / 5, PIXELS(3) / 5);
   ObjectEvent_SetSpeed(IVAN, PIXELS(6) / 5, PIXELS(3) / 5);
   ObjectEvent_SetSpeed(MIA, PIXELS(6) / 5, PIXELS(3) / 5);
@@ -1125,7 +1125,7 @@ static void KolimaForestEntrance_FaceObjectEventAndWait(s32 localId, s32 facing,
 /// toward the party, with its tinkle while the rain is at its height.
 static void KolimaForestEntrance_SpawnCurseSparkle(void) {
   struct ObjectEvent *sparkle;
-  struct AnimationObject *sprite;
+  struct Sprite *sprite;
   s32 framePhase;
   s32 priorityFlags;
   s32 spawnX = PIXELS(231);

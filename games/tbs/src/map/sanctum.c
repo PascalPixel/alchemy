@@ -15,8 +15,8 @@
 ///   from Vale (vale_eruption.c) to SANCTUM_FROM_VALE_ERUPTION, where Dora, the
 ///   Mayor and the healers hear what happened on the mountain, acted out in
 ///   sepia (Sanctum_ReenactSolSanctum): the colour buffer turns every
-///   background and sprite palette to PALETTE_TRANSFORM_SEPIA for the account
-///   and fades back to PALETTE_TRANSFORM_PLAIN over 60 frames after it
+///   background and sprite palette to PALETTE_TINT_SEPIA for the account
+///   and fades back to PALETTE_TINT_NONE over 60 frames after it
 ///   (https://alchemy.pascalpixel.com/places/sanctum/account-sepia.gif: the
 ///   account's first ten seconds and its last five, beside the 16 background
 ///   and 16 sprite palettes). The Great Healer asks Isaac to take on the Wise
@@ -384,11 +384,11 @@ static void EventScript_ReconsiderQuest(void) {
           Engine_ObjectEventWaitForMove(LOCALID_PARTY_LEADER);
         }
         Sanctum_ReceiveWiseOnesMission();
-        Engine_ColorBufferApplyTarget(RGB(0, 0, 0), PALETTE_HALVES_BOTH);
+        Engine_ColorBufferApplyTarget(RGB(0, 0, 0), PALETTES_ALL);
         Engine_ColorBufferInterpolate(120);
         Engine_ScriptWait(120);
         Engine_AudioPlayCue(MUS_086);
-        AudioCommand_WaitForCompletion();
+        Sound_WaitForSong();
         Engine_GameFlagSet(FLAG_SANCTUM_QUEST_ACCEPTED);
         Engine_ScriptRequestWarp(SANCTUM_TO_VALE_GATE);
       }
@@ -455,7 +455,7 @@ static void EventScript_AskAboutPsynergyChanges(void) {
 s32 Sanctum_Initialize(void) {
   gFieldWork->transition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
-  Engine_ColorBufferApplyTarget(PALETTE_TRANSFORM_PLAIN, PALETTE_HALVES_BOTH);
+  Engine_ColorBufferApplyTarget(PALETTE_TINT_NONE, PALETTES_ALL);
   Engine_ColorBufferInterpolate(1);
   Engine_ScriptWait(1);
   switch (gGameState.warpDest) {
@@ -516,7 +516,7 @@ static void EventScript_WarnBeforeLeaving(void) {
 /// SANCTUM_TO_QUEST_RESTART, back to SANCTUM_FROM_QUEST_RESTART; the other
 /// choices take SANCTUM_TO_MAIN_MENU, to MapId_MainMenu.
 static void EventScript_LeaveAfterRefusing(void) {
-  struct ColorBuffer *paletteWork;
+  struct PaletteFade *paletteWork;
 
   Engine_ScriptStart();
   Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, 0);
@@ -526,7 +526,7 @@ static void EventScript_LeaveAfterRefusing(void) {
   Engine_ObjectEventSetAnimation(LOCALID_HEALER, 0);
   Engine_ObjectEventSetAnimation(LOCALID_WEST_HEALER, 0);
   Engine_ObjectEventSetAnimation(LOCALID_EAST_HEALER, 0);
-  Engine_ColorBufferApplyTarget(PALETTE_TRANSFORM_SEPIA, PALETTE_HALVES_BOTH);
+  Engine_ColorBufferApplyTarget(PALETTE_TINT_SEPIA, PALETTES_ALL);
   Engine_ColorBufferInterpolate(120);
   Engine_ScriptWait(180);
   paletteWork = gPaletteFadeWork;
@@ -542,7 +542,7 @@ static void EventScript_LeaveAfterRefusing(void) {
   paletteWork->padding2a03 = 1;
   Engine_ScriptWait(1);
   FieldMessage_ShowCentered(MsgSanctumWorldBeganDrifting, 1, 0);
-  Engine_ColorBufferApplyTarget(RGB(0, 0, 0), PALETTE_HALVES_BOTH);
+  Engine_ColorBufferApplyTarget(RGB(0, 0, 0), PALETTES_ALL);
   Engine_ColorBufferInterpolate(120);
   Engine_ScriptWait(120);
   Engine_ScriptWait(60);
@@ -635,7 +635,7 @@ static void Sanctum_RequestQuestAcceptance(void) {
     Engine_ScriptWaitForScreen();
     Engine_ScriptWait(120);
   } else {
-    ColorBuffer_ApplyTarget(PALETTE_TRANSFORM_SEPIA, PALETTE_HALVES_BOTH);
+    PaletteFade_ApplyTarget(PALETTE_TINT_SEPIA, PALETTES_ALL);
     Engine_ColorBufferInterpolate(1);
     Engine_ScriptWait(1);
     FieldCamera_MoveTo(PIXELS(192), -1, PIXELS(160), 1);
@@ -646,7 +646,7 @@ static void Sanctum_RequestQuestAcceptance(void) {
     Engine_ScriptWaitForScreen();
     // Reenact the journey before explaining the quest.
     Sanctum_ReenactSolSanctum();
-    ColorBuffer_ApplyTarget(PALETTE_TRANSFORM_PLAIN, PALETTE_HALVES_BOTH);
+    PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_ALL);
     Engine_ColorBufferInterpolate(60);
     Engine_ScriptWait(100);
     Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIMATION_STAND);
@@ -1170,11 +1170,11 @@ static void Sanctum_RequestQuestAcceptance(void) {
   Script_OpenMessage(LOCALID_HEALER, 0);
   if (Engine_ScriptChooseYesNo(0, 0) == 0) {
     Sanctum_ReceiveWiseOnesMission();
-    ColorBuffer_ApplyTarget(RGB(0, 0, 0), PALETTE_HALVES_BOTH);
+    PaletteFade_ApplyTarget(RGB(0, 0, 0), PALETTES_ALL);
     Engine_ColorBufferInterpolate(120);
     Engine_ScriptWait(120);
     Script_PlaySong(MUS_086);
-    AudioCommand_WaitForCompletion();
+    Sound_WaitForSong();
     GameFlag_Set(FLAG_SANCTUM_QUEST_ACCEPTED);
     Engine_ScriptRequestWarp(SANCTUM_TO_VALE_GATE);
   } else {
@@ -1271,8 +1271,8 @@ static void Sanctum_ReceiveWiseOnesMission(void) {
   Engine_ScriptWait(30);
   Script_ShowMessage(LOCALID_HEALER, 0);
   Engine_ScriptWait(80);
-  Script_PlaySong(AUDIO_CUE_FADE_BGM);
-  Engine_ColorBufferApplyTarget(PALETTE_TRANSFORM_PALE, PALETTE_HALF_BG);
+  Script_PlaySong(SONG_FADE_OUT_BGM);
+  Engine_ColorBufferApplyTarget(PALETTE_TINT_PALE, PALETTES_BG);
   Engine_ColorBufferInterpolate(60);
   Engine_ScriptWait(40);
   FieldCamera_SetSpeed(PIXELS(2) / 5, PIXELS(1) / 20);
@@ -1308,7 +1308,7 @@ static void Sanctum_ReceiveWiseOnesMission(void) {
   Script_ShowMessage(LOCALID_WISE_ONE, 0);
   Engine_ScriptWait(60);
   Engine_ObjectEventSetChildValue(LOCALID_WISE_ONE, 0x100);
-  Script_PlaySong(AUDIO_CUE_FADE_BGM);
+  Script_PlaySong(SONG_FADE_OUT_BGM);
   Script_PlaySong(SE_308);
   // Shrink the Wise One amid sparks before restoring the room.
   for (sparkIndex = 0; sparkIndex < 32; sparkIndex++) {
@@ -1325,7 +1325,7 @@ static void Sanctum_ReceiveWiseOnesMission(void) {
   Engine_ScriptWait(40);
   FieldCamera_MoveTo(PIXELS(192), -1, PIXELS(160), 1);
   Engine_CameraWaitForMove();
-  Engine_ColorBufferApplyTarget(PALETTE_TRANSFORM_PLAIN, PALETTE_HALVES_BOTH);
+  Engine_ColorBufferApplyTarget(PALETTE_TINT_NONE, PALETTES_ALL);
   Engine_ColorBufferInterpolate(60);
   Engine_ScriptWait(120);
   Sanctum_HideHealerAfterimage();
@@ -1604,7 +1604,7 @@ static void Sanctum_ShowHealerAfterimage(void) {
   u32 entryIndex;
   struct ObjectEvent *afterimage;
   struct ObjectEvent *objectEvent;
-  struct AnimationObject *sprite;
+  struct Sprite *sprite;
 
   objectEvent = ObjectEvent_GetById(LOCALID_HEALER);
   if (objectEvent != 0) {
@@ -1621,7 +1621,7 @@ static void Sanctum_ShowHealerAfterimage(void) {
   sprite = objectEvent->sprite;
   {
     for (entryIndex = 0; entryIndex < sprite->count; entryIndex++) {
-      struct AnimationEntry *entry = sprite->entries[entryIndex];
+      struct SpriteAnim *entry = sprite->entries[entryIndex];
 
       if (entry != 0 && entry->script != 0) {
         entry->colorMode = SPRITE_COLOR_RED_TINT;
@@ -1693,8 +1693,8 @@ static void Sanctum_SpawnOrbitingEffect(s32 ownerId, s32 angleStep) {
   s32 orbitStep;
   struct ObjectEvent *owner;
   struct ObjectEvent *effect;
-  struct AnimationObject *sprite;
-  struct AnimationObject *sourceSprite;
+  struct Sprite *sprite;
+  struct Sprite *sourceSprite;
 
   orbitStep = angleStep;
   owner = ObjectEvent_GetById(ownerId);
@@ -1748,7 +1748,7 @@ static s32 Sanctum_ChooseRestartOption(void) {
   Engine_ObjectEventSetPosition(LOCALID_DORA, 0, 0);
   Engine_ObjectEventSetPosition(LOCALID_GARETS_GRANDFATHER, 0, 0);
   Engine_ObjectEventSetPosition(LOCALID_PARTY_LEADER, 0, 0);
-  Engine_ColorBufferApplyTarget(PALETTE_TRANSFORM_PLAIN, PALETTE_HALF_OBJ);
+  Engine_ColorBufferApplyTarget(PALETTE_TINT_NONE, PALETTES_OBJECTS);
   Engine_ColorBufferInterpolate(1);
   Engine_ScriptWait(1);
   window = Window_Create(QUESTION_X, 7, QUESTION_WIDTH, 5, 1);
@@ -2035,7 +2035,7 @@ static void Sanctum_ReenactSolSanctum(void) {
 static void Sanctum_RaiseItemIcon(s32 item, s32 fixedX, s32 fixedY,
                                   s32 fixedZ) {
   struct ObjectEvent *icon;
-  struct AnimationObject *sprite;
+  struct Sprite *sprite;
   u8 *transferBuffer;
   u32 frame;
   u8 zero;
@@ -2098,7 +2098,7 @@ static void Sanctum_UpdateRisingSpark(union FieldObject *fieldObject) {
 static void Sanctum_SpawnObjectEventSpark(s32 id) {
   struct ObjectEvent *objectEvent;
   struct ObjectEvent *spark;
-  struct AnimationObject *sprite;
+  struct Sprite *sprite;
   s32 x;
   s32 randomOffset;
 

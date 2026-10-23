@@ -835,17 +835,17 @@ static void Kolima_WitnessForestCurse(void) {
   ObjectEvent_FaceDirection(GARET, FACING_SOUTH, 0);
   Kolima_FaceObjectEventAndWait(LOCALID_PARTY_LEADER, FACING_SOUTHWEST, 20);
   Kolima_FaceObjectEventAndWait(IVAN, FACING_NORTH, 10);
-  Script_PlaySong(AUDIO_CUE_FADE_BGM);
+  Script_PlaySong(SONG_FADE_OUT_BGM);
   Script_PlaySong(SE_206);
-  ColorBuffer_ApplyTarget(0x7fff, 0);
+  PaletteFade_ApplyTarget(0x7fff, 0);
   Engine_ColorBufferInterpolate(1);
   Engine_TaskWait(1);
   // The falling sparkles threaten to turn the party into trees as well.
   gKolima_EffectActive = 1;
   FieldScheduler_AddCallback(Kolima_SpawnCurseSparkle, TASK_PRIORITY_MAP);
   Engine_TaskWait(20);
-  ColorBuffer_ApplyTarget(0x405210, 1);
-  ColorBuffer_ApplyTarget(PALETTE_TRANSFORM_PLAIN, 2);
+  PaletteFade_ApplyTarget(0x405210, 1);
+  PaletteFade_ApplyTarget(PALETTE_TINT_NONE, 2);
   Engine_ColorBufferInterpolate(120);
   Engine_TaskWait(60);
   squashActions = gKolima_PartySquashActions;
@@ -911,7 +911,7 @@ static void Kolima_WitnessForestCurse(void) {
   Engine_ScriptWait(160);
   Engine_TaskRemoveCallback(Kolima_SpawnCurseSparkle);
   Engine_ScriptWait(120);
-  ColorBuffer_ApplyTarget(0x406218, 1);
+  PaletteFade_ApplyTarget(0x406218, 1);
   Engine_ColorBufferInterpolate(60);
   Engine_TaskWait(60);
   // Bring the falling curtain over the party and reveal their protective
@@ -1006,8 +1006,8 @@ static void Kolima_WitnessForestCurse(void) {
   Engine_ScriptWait(300);
   Engine_TaskRemoveCallback(Kolima_UpdateCurseDust);
   Engine_ScriptWait(120);
-  Script_PlaySong(AUDIO_CUE_FADE_BGM);
-  ColorBuffer_ApplyTarget(PALETTE_TRANSFORM_PLAIN, 1);
+  Script_PlaySong(SONG_FADE_OUT_BGM);
+  PaletteFade_ApplyTarget(PALETTE_TINT_NONE, 1);
   Engine_ColorBufferInterpolate(60);
   Engine_TaskWait(60);
   Engine_ObjectEventStop(LOCALID_LEADERS_PSYNERGY_FIELD);
@@ -1223,7 +1223,7 @@ static void Kolima_WitnessForestCurse(void) {
   }
   Script_ShowMessage(GARET, 0);
   Script_PlaySong(MUS_021);
-  ColorBuffer_ApplyTarget(0x406218, 1);
+  PaletteFade_ApplyTarget(0x406218, 1);
   Engine_ColorBufferInterpolate(60);
   Engine_TaskWait(60);
   gFallingEffectWidth = 0;
@@ -1373,7 +1373,7 @@ static void Kolima_WitnessForestCurse(void) {
   Script_ShowMessage(LOCALID_TRET, 0);
   Engine_TaskRemoveCallback(Kolima_UpdateCurseDust);
   Engine_ScriptWait(80);
-  ColorBuffer_ApplyTarget(PALETTE_TRANSFORM_PLAIN, 1);
+  PaletteFade_ApplyTarget(PALETTE_TINT_NONE, 1);
   Engine_ColorBufferInterpolate(60);
   Engine_TaskWait(80);
   Engine_ObjectEventStop(LOCALID_LEADERS_PSYNERGY_FIELD);
@@ -1540,7 +1540,7 @@ static void Kolima_WitnessForestCurse(void) {
     }
   }
   // Reunite the party and remember that the first visit has played.
-  Script_PlaySong(AUDIO_CUE_FADE_BGM);
+  Script_PlaySong(SONG_FADE_OUT_BGM);
   ObjectEvent_SetSpeed(GARET, PIXELS(6) / 5, PIXELS(3) / 5);
   ObjectEvent_SetSpeed(IVAN, PIXELS(6) / 5, PIXELS(3) / 5);
   ObjectEvent_SetSpeed(MIA, PIXELS(6) / 5, PIXELS(3) / 5);
@@ -1596,7 +1596,7 @@ static void Kolima_FaceObjectEventAndWait(s32 localId, s32 facing,
 /// Spawns a moving curse sparkle every eighth frame.
 static void Kolima_SpawnCurseSparkle(void) {
   struct ObjectEvent *sparkle;
-  struct AnimationObject *sprite;
+  struct Sprite *sprite;
   s32 framePhase;
   s32 priorityFlags;
   s32 spawnX = PIXELS(98);

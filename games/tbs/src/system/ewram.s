@@ -81,41 +81,41 @@ gSerialReceiveDestination:
 	.global gSavedStack
 gSavedStack:
 	.space 0x00000c50
-	.global gMusicRestoreDelay
-gMusicRestoreDelay:
+	.global gBgmRestoreDelay
+gBgmRestoreDelay:
 	.space 0x00000004
 	.global gEwram_Data1
 gEwram_Data1:
 	.space 0x00000004
-	.global gMusicVolume
-gMusicVolume:
+	.global gBgmVolume
+gBgmVolume:
 	.space 0x00000004
-	.global gMusicPitchStep
-gMusicPitchStep:
+	.global gBgmTempoPitchStep
+gBgmTempoPitchStep:
 	.space 0x00000004
-	.global gMusicVolumeStep
-gMusicVolumeStep:
+	.global gBgmVolumeStep
+gBgmVolumeStep:
 	.space 0x00000004
-	.global gMusicFadeRequested
-gMusicFadeRequested:
+	.global gBgmFadeRequested
+gBgmFadeRequested:
 	.space 0x0000000c
-	.global gMusicPlayerVolumes
-gMusicPlayerVolumes:
+	.global gMusicPlayerLastSong
+gMusicPlayerLastSong:
 	.space 0x00000010
-	.global gMusicPitchTarget
-gMusicPitchTarget:
+	.global gBgmTempoPitchTarget
+gBgmTempoPitchTarget:
 	.space 0x00000004
-	.global gMusicVolumeTarget
-gMusicVolumeTarget:
+	.global gBgmVolumeTarget
+gBgmVolumeTarget:
 	.space 0x00000004
-	.global gMusicPitch
-gMusicPitch:
+	.global gBgmTempoPitch
+gBgmTempoPitch:
 	.space 0x00000004
 	.global gCurrentBgm
 gCurrentBgm:
 	.space 0x00000004
-	.global gAudio_CommandMask
-gAudio_CommandMask:
+	.global gSoundCommandMask
+gSoundCommandMask:
 	.space 0x00000010
 	.global gSound_Work
 gSound_Work:

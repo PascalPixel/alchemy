@@ -5,9 +5,9 @@
 #include "../window_internal.h"
 
 /// Nothing calls them.
-UNUSED void GraphicsPalette_ReservedNoOpC9BC(void) {}
-UNUSED void GraphicsPalette_ReservedNoOpC9C0(void) {}
-UNUSED void GraphicsPalette_ReservedNoOpC9C4(void) {}
+UNUSED void OptionMenu_ReservedNoOpC9BC(void) {}
+UNUSED void OptionMenu_ReservedNoOpC9C0(void) {}
+UNUSED void OptionMenu_ReservedNoOpC9C4(void) {}
 
 /// One of the seven entries of the option screen's work from offset 0x400;
 /// only its state is known, and only the unused OptionMenu_ResetEntries
@@ -261,7 +261,7 @@ UNUSED void OptionMenu_RaiseSetting(struct OptionMenuWork *work) {
 
 /// An empty function, reached only through a bare entry of the window
 /// far-call table.
-void GraphicsPalette_SelectionNoOp(void) {}
+void OptionMenu_SelectionNoOp(void) {}
 
 /// The option screen's per-frame callback: moves the cursor and the two slider
 /// markers, animates the marker of the slider in use, and pulses the chosen
@@ -337,7 +337,7 @@ void OptionMenu_Release(void) {
 }
 
 #define SLIDER_PALETTE 14 ///< the sprite palette of the hue slider's ends
-/// VRAM_CACHE_ENTRY_COUNT, which Resource_FindFreeEntry returns when no entry
+/// VRAM_CACHE_ENTRY_COUNT, which VramCache_FindFreeEntry returns when no entry
 /// is free.
 #define RESOURCE_SLOTS 96
 
@@ -375,7 +375,7 @@ struct Window *OptionMenu_Open(void) {
   Text_DrawMessageAsTiles(MsgSpeechLabel, window, 8, 64);
   Text_DrawMessageAsTiles(MsgAutoSleepLabel, window, 8, 88);
 
-  x = Resource_FindFreeEntry();
+  x = VramCache_FindFreeEntry();
   if (x < RESOURCE_SLOTS) {
     VramCache_Load(x, 128, gResource_FixedBlockBTiles);
     marker = WindowSprite_Create(x, 0x40000000, window, 0, 0);
@@ -388,7 +388,7 @@ struct Window *OptionMenu_Open(void) {
   // The ends of both sliders: 32x16 sprites (0x40004000, the wide shape at
   // size 1), the right end 4 tiles into the picture; the hue slider's in
   // palette 14, the brightness slider's in 15.
-  x = Resource_FindFreeEntry();
+  x = VramCache_FindFreeEntry();
   if (x < RESOURCE_SLOTS) {
     Dma_Set(gOptionMenu_SliderPalette,
             (void *)&OBJ_PLTT_COLOR(SLIDER_PALETTE, 0), DMA_COPY16(32),
@@ -412,7 +412,7 @@ struct Window *OptionMenu_Open(void) {
 
   // The two markers: 16x16 sprites of 256 colours, whose 256 bytes
   // OptionMenu_AnimateCursors fills each frame.
-  x = Resource_FindFreeEntry();
+  x = VramCache_FindFreeEntry();
   if (x < RESOURCE_SLOTS) {
     VramCache_Load(x, 256, 0);
     marker = WindowSprite_Create(x, 0x40000000, window, 0, 0);
@@ -424,7 +424,7 @@ struct Window *OptionMenu_Open(void) {
     MenuCursor_SetPositionImmediateFar(&work->marker[0].cursor, x, y);
   }
 
-  x = Resource_FindFreeEntry();
+  x = VramCache_FindFreeEntry();
   if (x < RESOURCE_SLOTS) {
     VramCache_Load(x, 256, 0);
     marker = WindowSprite_Create(x, 0x40000000, window, 0, 0);
@@ -733,7 +733,7 @@ struct Window *PauseMenu_Open(void) {
     labelMessage += 2;
     Text_DrawMessage(labelMessage, window, PAUSE_MENU_TEXT_X, y);
   }
-  cacheSlot = Resource_FindFreeEntry();
+  cacheSlot = VramCache_FindFreeEntry();
   if (cacheSlot < RESOURCE_SLOTS) {
     VramCache_Load(cacheSlot, 128, gResource_FixedBlockBTiles);
     work->cursor.output =

@@ -1298,7 +1298,7 @@ static void BabiLighthouse_RedrawLedgePillarCells(void) {
 /// later): each is drawn in front of the leader when nearer the screen, and
 /// on its layer otherwise.
 static void BabiLighthouse_MatchLeaderPriority(union FieldObject *fieldObject) {
-  struct AnimationObject *sprite;
+  struct Sprite *sprite;
   struct ObjectEvent *objectEvent;
   s32 priority;
 

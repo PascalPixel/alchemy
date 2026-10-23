@@ -7,7 +7,7 @@
 /// One step of dissolving a sprite pixel by pixel. In each 8x8 tile (256
 /// colours) one pixel is cleared, in gSpriteDissolve_PixelOrder's order; each
 /// tile runs one step ahead of the last, and only tiles whose step is 64-127
-/// clear a pixel. obj is the sprite (struct AnimationObject), pos the step
+/// clear a pixel. obj is the sprite (struct Sprite), pos the step
 /// (0-127). Writes the sprite's tiles in OBJ VRAM. Called by the two
 /// functions below and, as render_animated_tile_frameFar, by the battle's
 /// playback (battle/battle/playback.c).
@@ -20,10 +20,10 @@ void SpriteDissolve_Step(u8 *obj, u32 pos) {
   u32 indexMask;
   u8 offsetMask;
 
-  struct AnimationObject *sprite = (struct AnimationObject *)obj;
+  struct Sprite *sprite = (struct Sprite *)obj;
 
   // The sprite's tiles in OBJ VRAM.
-  tile = (u16 *)(OBJ_VRAM0 + gVramBlockCache[sprite->slot].offset);
+  tile = (u16 *)(OBJ_VRAM0 + gVramCacheEntries[sprite->slot].offset);
   tileCount = (sprite->width * sprite->height) / 64;
   i = 0;
 
@@ -236,15 +236,15 @@ void ObjectDispatch_Release(struct DispatchObject *object) {
   if (object) {
     switch (object->kind & 15) {
     case OBJECT_SPRITE_ONE:
-      ResourceObject_Release(object->target.child);
+      Sprite_Destroy(object->target.child);
       break;
     case OBJECT_SPRITE_GROUP:
       sprites = object->target.children;
       spritesRemaining = 3;
       do {
-        struct AnimationObject *sprite = *sprites++;
+        struct Sprite *sprite = *sprites++;
         if (sprite)
-          ResourceObject_Release(sprite);
+          Sprite_Destroy(sprite);
       } while (--spritesRemaining >= 0);
       break;
     }
@@ -267,7 +267,7 @@ struct Object *Object_CreateField(s32 encodedSprite, s32 x, s32 y, s32 z) {
   struct ObjectEvent *objectEvent;
   struct ScriptMotionObject *motion;
   struct ScriptObjectRuntime *scripted;
-  struct AnimationObject *sprite;
+  struct Sprite *sprite;
   s32 spriteStorageKind;
   void **spriteSlots;
 
@@ -281,7 +281,7 @@ struct Object *Object_CreateField(s32 encodedSprite, s32 x, s32 y, s32 z) {
     objectEvent->radius = 16;
     switch (spriteStorageKind) {
     case OBJECT_CREATE_ONE_SPRITE:
-      sprite = ResourceObject_Create(encodedSprite);
+      sprite = Sprite_Create(encodedSprite);
       if (sprite != NULL) {
         object->animationKind = OBJECT_SPRITE_ONE;
         object->animation = sprite;
@@ -301,13 +301,13 @@ struct Object *Object_CreateField(s32 encodedSprite, s32 x, s32 y, s32 z) {
       object->animationKind = spriteStorageKind;
       object->animation = spriteSlots;
       Dma_Fill32(0, spriteSlots, 0x10);
-      sprite = ResourceObject_Create(encodedSprite);
+      sprite = Sprite_Create(encodedSprite);
       if (sprite != NULL) {
         objectEvent->radius =
             Resource_GetMetadataRecordFar(encodedSprite)->boxY >> 1;
         *spriteSlots++ = sprite;
       }
-      sprite = ResourceObject_Create(encodedSprite + 1);
+      sprite = Sprite_Create(encodedSprite + 1);
       if (sprite != NULL)
         *spriteSlots = sprite;
       break;
@@ -388,12 +388,11 @@ void ObjectDispatch_Initialize(struct DispatchObject *object,
 
 /// Switches all of an object's sprites to animation value.
 OBJECT_DISPATCH_DEFINE_APPLY(ObjectDispatch_SelectAnimation, void *,
-                             AnimationObject_SelectAnimation)
+                             Sprite_StartAnim)
 
 /// Sets the animation speed (timer step) of all of an object's sprites.
 OBJECT_DISPATCH_DEFINE_APPLY(ObjectDispatch_SetAnimationSpeed,
-                             struct DispatchObject *,
-                             AnimationObject_SetActiveTimerSteps)
+                             struct DispatchObject *, Sprite_SetAnimSpeed)
 
 /// Both of the above: switches all of an object's sprites to animation and
 /// sets their timer step to step.
@@ -406,16 +405,16 @@ void ObjectDispatch_SetAnimationAndSpeed(struct DispatchObject *object,
   if (object != 0) {
     switch (object->kind & 15) {
     case OBJECT_SPRITE_ONE:
-      AnimationObject_SelectAnimation(object->target.child, animation);
-      AnimationObject_SetActiveTimerSteps(object->target.child, step);
+      Sprite_StartAnim(object->target.child, animation);
+      Sprite_SetAnimSpeed(object->target.child, step);
       break;
     case OBJECT_SPRITE_GROUP:
       sprites = object->target.children;
       for (spritesRemaining = 3; spritesRemaining >= 0; spritesRemaining--) {
         sprite = *sprites++;
         if (sprite != 0) {
-          AnimationObject_SelectAnimation(sprite, animation);
-          AnimationObject_SetActiveTimerSteps(sprite, step);
+          Sprite_StartAnim(sprite, animation);
+          Sprite_SetAnimSpeed(sprite, step);
         }
       }
       break;
@@ -436,13 +435,13 @@ void ObjectDispatch_SetChildRotation(struct DispatchObject *object,
 void Animation_SetIndexAndInitializeObjects(void *rawDispatchObject,
                                             s32 animationId) {
   struct DispatchObject *object = rawDispatchObject;
-  struct AnimationObject *sprite;
+  struct Sprite *sprite;
 
   if (object != NULL && (object->kind & 0xf) == OBJECT_SPRITE_ONE) {
     sprite = object->target.child;
     if (animationId >= 0) {
       sprite->entries[0]->animationId = animationId;
-      Animation_InitializeObjects(sprite);
+      Sprite_ResetAnims(sprite);
     }
   }
 }
@@ -452,9 +451,9 @@ void Animation_SetIndexAndInitializeObjects(void *rawDispatchObject,
 void ObjectDispatch_RegisterChildMetadata(struct DispatchObject *object,
                                           s32 animationId) {
   if (object != 0 && (object->kind & 0xf) == OBJECT_SPRITE_ONE) {
-    struct AnimationObject *sprite = object->target.child;
+    struct Sprite *sprite = object->target.child;
     if (animationId >= 0)
-      ResourceMetadata_Register(sprite, animationId);
+      Sprite_AddAnim(sprite, animationId);
   }
 }
 
@@ -549,7 +548,7 @@ void ObjectDispatch_SetSingleChildFlags(struct DispatchObject *object,
 /// bits, so an object with high kind bits set is left alone.
 void ObjectDispatch_SetChildBlendMode(struct DispatchObject *object, u32 mode) {
   if (object != 0 && object->kind == OBJECT_SPRITE_ONE) {
-    struct AnimationObject *sprite = object->target.child;
+    struct Sprite *sprite = object->target.child;
     sprite->image.objectMode = mode;
   }
 }
@@ -559,16 +558,16 @@ void ObjectDispatch_SetChildBlendMode(struct DispatchObject *object, u32 mode) {
 void ObjectDispatch_SetChildFixedScale(struct DispatchObject *object,
                                        u32 fixedScale) {
   if (object != 0 && object->kind == OBJECT_SPRITE_ONE) {
-    struct AnimationObject *sprite = object->target.child;
+    struct Sprite *sprite = object->target.child;
     sprite->useOwnScale = fixedScale;
   }
 }
 
 /// Sets the colour mode (SpriteColorMode) of a one-sprite object's layers,
-/// except those drawn hidden (see ObjectGroup_SetChildValueUnlessFifteen).
+/// except those drawn hidden (see Sprite_SetAnimColorModes).
 void Animation_ApplyChildValues(struct DispatchObject *object, u32 param) {
   if (object != NULL && object->kind == OBJECT_SPRITE_ONE)
-    ObjectGroup_SetChildValueUnlessFifteen(object->target.child, param);
+    Sprite_SetAnimColorModes(object->target.child, param);
 }
 
 /// Suspends the object camera updates, starts the palette back to normal and,
@@ -580,8 +579,8 @@ void Animation_ApplyChildValues(struct DispatchObject *object, u32 param) {
 void ObjectSystem_SuspendProjectionAndShowSprites(void) {
   Task_SuspendAll(ObjectSystem_PlaceSprites);
   Task_SuspendAll(ObjectSystem_ProjectSprites);
-  ColorBuffer_SetTargetFar(0x10000, 1);
-  ColorBuffer_StartInterpolationFar(1);
+  PaletteFade_SetTargetFar(0x10000, 1);
+  PaletteFade_StartInterpolationFar(1);
   WaitFrames(1);
   REG_DISPCNT =
       (REG_DISPCNT & ~(DISPCNT_BG1_ON | DISPCNT_BG2_ON | DISPCNT_BG3_ON)) |

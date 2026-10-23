@@ -31,7 +31,7 @@ extern u8 gShop_GlyphBytes[];
 /// The level label of a save summary: `L`; `Nv.` in Spanish, `Niv` in French.
 extern u8 gSummaryScreen_LevelLetterString[];
 
-struct AnimationObject;
+struct Sprite;
 struct AbilityDefinition;
 struct DjinnListTable;
 struct FieldEffectSprite;

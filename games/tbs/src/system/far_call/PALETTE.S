@@ -5,7 +5,7 @@
 	.global FarCall_PaletteTable
 FarCall_PaletteTable:
 	export Title_ShowIntroFar, Title_ShowIntro
-	overlay_veneer Graphics_NoOpColor
+	overlay_veneer Title_NoOpColor
 	overlay_veneer Title_NoOpPalette
-	export Title_ShowSplashScreenFar, Title_ShowSplashScreen
-	export Title_ShowAnimatedSplashFar, Title_ShowAnimatedSplash
+	export Title_ShowNintendoLogoFar, Title_ShowNintendoLogo
+	export Title_ShowCamelotLogoFar, Title_ShowCamelotLogo

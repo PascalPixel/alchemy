@@ -190,7 +190,7 @@ s32 Object_UpdateLeaderControl(struct ObjectScriptContext *interpreter) {
 
     freeBlocks = 0;
     for (blockIndex = 0; blockIndex < 512; blockIndex++) {
-      if (gResourceBlockOwners[blockIndex] == 0xff)
+      if (gVramCacheBlockOwners[blockIndex] == 0xff)
         freeBlocks++;
     }
     if (freeBlocks - 136 < 0)
@@ -495,7 +495,7 @@ s32 Object_UpdateLeaderControl(struct ObjectScriptContext *interpreter) {
     effect = Object_CreateField(FIELD_SPRITE_FOOTPRINT, object->x, object->y,
                                 object->z);
     if (effect != 0) {
-      struct AnimationObject *animation;
+      struct Sprite *animation;
 
       // collision is 0 here: the footprint takes no motion flags (it stays
       // where it is laid) and its sprite no shadow. It lasts 120 frames,
@@ -509,7 +509,7 @@ s32 Object_UpdateLeaderControl(struct ObjectScriptContext *interpreter) {
       effect->priorityFlags = OBJ_EVENT_PRIORITY_UNDERFOOT;
       effect->flags = collision;
       if (animation != 0) {
-        AnimationObject_SelectAnimation(animation, 1);
+        Sprite_StartAnim(animation, 1);
         animation->flags = collision;
         animation->rotation = footprintAngle + 0x4000;
         animation->image.priority = 3;
@@ -517,7 +517,7 @@ s32 Object_UpdateLeaderControl(struct ObjectScriptContext *interpreter) {
       // The first footprint after a stop takes animation 2 and restarts the
       // sides; each second one faces a half turn round.
       if (object->footprintSide == 2) {
-        AnimationObject_SelectAnimation(animation, 2);
+        Sprite_StartAnim(animation, 2);
         object->footprintSide = collision;
       }
       if (object->footprintSide != 0)
@@ -567,9 +567,9 @@ s32 Object_MoveOnWorldMap(struct ObjectScriptContext *interpreter) {
   s32 targetCameraYaw;
   struct WorldMapView *perspective;
   s32 yawStep;
-  struct AnimationObject *playerSprite;
+  struct Sprite *playerSprite;
   struct Object *ripple;
-  struct AnimationObject *rippleSprite;
+  struct Sprite *rippleSprite;
 
   movementAnimation = 2;
   collision = 0;
@@ -833,7 +833,7 @@ update_object:
         ripple->flags = collision;
         ripple->layer = 1;
         if (rippleSprite != 0) {
-          AnimationObject_SelectAnimation(rippleSprite, 1);
+          Sprite_StartAnim(rippleSprite, 1);
           rippleSprite->flags = collision;
           rippleSprite->image.objectMode = OBJ_MODE_SEMI_TRANSPARENT;
           rippleSprite->image.priority = 2;

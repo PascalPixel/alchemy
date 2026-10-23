@@ -511,7 +511,7 @@ static void EventScript_EnterInn(void) {
 /// cells at (23, 12), is replaced so he can pass.
 static void EventScript_EnterItemShop(void) {
   struct ObjectEvent *objectEvent = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
-  struct AnimationObject *sprite = objectEvent->sprite;
+  struct Sprite *sprite = objectEvent->sprite;
 
   Engine_AudioPlayCue(SE_DOOR_OPEN);
   Engine_MapGridAnimateCells(gVaultRevisit_ItemShopDoorCells, 54, 13);
@@ -527,7 +527,7 @@ static void EventScript_EnterItemShop(void) {
 /// shop's.
 static void EventScript_EnterWeaponAndArmorShop(void) {
   struct ObjectEvent *objectEvent = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
-  struct AnimationObject *sprite = objectEvent->sprite;
+  struct Sprite *sprite = objectEvent->sprite;
 
   Engine_AudioPlayCue(SE_DOOR_OPEN);
   Engine_MapGridAnimateCells(gVaultRevisit_WeaponAndArmorShopDoorCells, 49, 10);
@@ -558,7 +558,7 @@ static void EventScript_EnterMayorsHouse(void) {
 /// VAULT_JAIL_FROM_VAULT_REVISIT, where the lone prisoner sits.
 static void EventScript_EnterJail(void) {
   struct ObjectEvent *objectEvent = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
-  struct AnimationObject *sprite = objectEvent->sprite;
+  struct Sprite *sprite = objectEvent->sprite;
 
   Engine_AudioPlayCue(SE_DOOR_OPEN);
   Engine_MapGridAnimateCells(gVaultRevisit_JailDoorCells, 35, 9);

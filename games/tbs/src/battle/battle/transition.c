@@ -46,7 +46,7 @@ s32 BattleTransition_RunMosaicFadeOut(void) {
                     BLDCNT_TGT2_BG2 | BLDCNT_TGT2_BG3 | BLDCNT_TGT2_OBJ |
                     BLDCNT_TGT2_BD;
 
-  Fade_ToBlack(16);
+  ScreenFade_ToBlack(16);
   for (mosaicSize = 0; mosaicSize <= 15; mosaicSize++) {
     Random16();
     Random16();

@@ -2317,7 +2317,7 @@ static void BabiPalace_MeetBabiAfterColosso(void) {
   ObjectEvent_SetAnimation(MIA, ANIMATION_NOD);
   ObjectEvent_SetAnimationAndWait(IVAN, ANIMATION_NOD);
   Script_Wait(30);
-  Script_PlaySong(AUDIO_CUE_FADE_BGM);
+  Script_PlaySong(SONG_FADE_OUT_BGM);
   ObjectEvent_SetSpeed(GARET, PIXELS(6) / 5, PIXELS(3) / 5);
   ObjectEvent_SetSpeed(IVAN, PIXELS(6) / 5, PIXELS(3) / 5);
   ObjectEvent_SetSpeed(MIA, PIXELS(6) / 5, PIXELS(3) / 5);
@@ -2494,7 +2494,7 @@ const struct MapEvent *Map_GetEvents(void) {
 /// the finals, waking after a night's rest). Returns 0.
 s32 BabiPalace_ApplyEntryState(void) {
   struct ObjectEvent *objectEvent;
-  struct AnimationObject *sprite;
+  struct Sprite *sprite;
   u8 *buf;
   s32 set;
 

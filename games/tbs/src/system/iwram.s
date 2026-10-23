@@ -2,8 +2,8 @@
 	.ifdef TBS_EDITION_DE
 	.space 0x00000010
 	.endif
-	.global gRenderSlotHeads
-gRenderSlotHeads:
+	.global gOamDepthLists
+gOamDepthLists:
 	.space 0x00000400
 	.global gFrameTick
 gFrameTick:
@@ -11,8 +11,8 @@ gFrameTick:
 	.global gSavedStackSize
 gSavedStackSize:
 	.space 0x0000000c
-	.global gResourceBlockOwners
-gResourceBlockOwners:
+	.global gVramCacheBlockOwners
+gVramCacheBlockOwners:
 	.space 0x00000200
 	.global gTaskStatus
 gTaskStatus:
@@ -20,8 +20,8 @@ gTaskStatus:
 	.global gTasks
 gTasks:
 	.space 0x000000a0
-	.global gBlendFramesLeft
-gBlendFramesLeft:
+	.global gScreenFadeFramesLeft
+gScreenFadeFramesLeft:
 	.space 0x00000004
 	.global gDebugTextEnabled
 gDebugTextEnabled:
@@ -32,8 +32,8 @@ gBgScroll:
 	.global gKeysHeld
 gKeysHeld:
 	.space 0x00000004
-	.global gBlendStartLevel
-gBlendStartLevel:
+	.global gScreenFadeStartLevel
+gScreenFadeStartLevel:
 	.space 0x00000004
 	.global gCpuLoadTimer
 gCpuLoadTimer:
@@ -53,8 +53,8 @@ gKeyRepeatTimer:
 	.global gKeysRepeat
 gKeysRepeat:
 	.space 0x0000000c
-	.global gVramBlockCache
-gVramBlockCache:
+	.global gVramCacheEntries
+gVramCacheEntries:
 	.space 0x00000180
 	.global gDecodeFillByte
 gDecodeFillByte:
@@ -62,8 +62,8 @@ gDecodeFillByte:
 	.global gKeysPressed
 gKeysPressed:
 	.space 0x00000004
-	.global gBlendDuration
-gBlendDuration:
+	.global gScreenFadeFrames
+gScreenFadeFrames:
 	.space 0x00000004
 	.global gPlayTimeFrames
 gPlayTimeFrames:
@@ -74,8 +74,8 @@ gSleepDisabled:
 	.global gCpuLoadPeak
 gCpuLoadPeak:
 	.space 0x00000004
-	.global gBlendTargetLevel
-gBlendTargetLevel:
+	.global gScreenFadeTargetLevel
+gScreenFadeTargetLevel:
 	.space 0x00000008
 	.global gSerialExchangeActive
 gSerialExchangeActive:
@@ -104,8 +104,8 @@ gLagFrameCount:
 	.global gLagFramesShown
 gLagFramesShown:
 	.space 0x00000004
-	.global gBlendBrighten
-gBlendBrighten:
+	.global gScreenFadeToWhite
+gScreenFadeToWhite:
 	.space 0x0000000c
 	.global gProjection
 gProjection:
@@ -113,14 +113,14 @@ gProjection:
 	.global gKeysHeldLast
 gKeysHeldLast:
 	.space 0x00000004
-	.global gBlendLayers
-gBlendLayers:
+	.global gScreenFadeLayers
+gScreenFadeLayers:
 	.space 0x00000004
 	.global gVBlankCallback
 gVBlankCallback:
 	.space 0x00000004
-	.global gSpriteAffineCount
-gSpriteAffineCount:
+	.global gOamMatrixCount
+gOamMatrixCount:
 	.space 0x00000004
 	.global gKeysDirection
 gKeysDirection:
@@ -160,8 +160,8 @@ gTasksReady:
 	.else
 	.space 0x0000000c
 	.endif
-	.global gSpriteAffineMatrices
-gSpriteAffineMatrices:
+	.global gOamMatrices
+gOamMatrices:
 	.space 0x00000100
 	.global gFrameCount
 gFrameCount:
@@ -178,11 +178,11 @@ gHeapSlots:
 	.size gHeapSlots, 0x100
 gHeapSlots:
 	.space 0x0000000c
-	.global gAnimationObjects
-gAnimationObjects:
+	.global gSpriteAnims
+gSpriteAnims:
 	.space 0x00000004
-	.global gSpriteObjects
-gSpriteObjects:
+	.global gSprites
+gSprites:
 	.space 0x00000004
 	.global gObjects
 gObjects:
@@ -243,8 +243,8 @@ gScreenTransitionWork:
 	.global gPaletteFadeWork
 gPaletteFadeWork:
 	.space 0x00000008
-	.global gHBlankScrollWork
-gHBlankScrollWork:
+	.global gScanlineEffect
+gScanlineEffect:
 	.space 0x00000008
 	.global gObjectEventEffectWork
 gObjectEventEffectWork:

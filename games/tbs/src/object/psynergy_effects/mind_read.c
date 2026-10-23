@@ -41,9 +41,9 @@ void FieldEffect_StartMindReadWave(s32 x, s32 y) {
   Dma_Fill32(0, work, 0x298);
   work->hue = ((u32)(gFrameCount << 1) % (u32)360);
   FieldEffect_AdvanceHueCycle();
-  // 0x200000 is PALETTE_TRANSFORM_TINT: the BG colours tinted by the hue.
-  ColorBuffer_SetTarget(RGB(work->red, work->green, work->blue) | 0x200000, 1);
-  ColorBuffer_StartInterpolation(8);
+  // 0x200000 is PALETTE_TINT_CUSTOM: the BG colours tinted by the hue.
+  PaletteFade_SetTarget(RGB(work->red, work->green, work->blue) | 0x200000, 1);
+  PaletteFade_StartInterpolation(8);
   work->sourceId = x;
   work->targetId = y;
   work->delay = 8;
@@ -98,9 +98,9 @@ void FieldEffect_UpdateMindReadWave(void) {
   work->page ^= 1;
   // Every other frame the tint takes the next hue, in one frame.
   if (work->page != 0) {
-    ColorBuffer_SetTarget(RGB(work->red, work->green, work->blue) | 0x200000,
+    PaletteFade_SetTarget(RGB(work->red, work->green, work->blue) | 0x200000,
                           1);
-    ColorBuffer_StartInterpolation(1);
+    PaletteFade_StartInterpolation(1);
     FieldEffect_AdvanceHueCycle();
   }
   Animation_ApplyChildPalette(

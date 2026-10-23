@@ -6,7 +6,7 @@
 	.set import.Task_Remove, 1
 	.set import.Engine_RandomNext, 1
 	.set import.Engine_MathSin, 1
-	.set import.Resource_ResetEntry, 1
+	.set import.VramCache_FreeEntry, 1
 	.set import.Object_InitializeMode, 1
 	.set import.Engine_ObjectCreate, 1
 	.set import.Engine_ObjectDispatchRelease, 1

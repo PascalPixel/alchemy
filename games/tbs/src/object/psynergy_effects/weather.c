@@ -44,7 +44,7 @@ void Weather_UpdateRain(void) {
       frame++;
       particle->shape = *(u8 *)frame;
       particle->size = *(u8 *)(frame + 1);
-      Runtime_PushSlotEntry(particle, 240);
+      Oam_AddSpriteAtDepth(particle, 240);
     }
     if (particle->timer == 0) {
       s32 *leader = view->origin;
@@ -72,7 +72,7 @@ void Weather_UpdateRain(void) {
 /// 0 stops the lightning.
 void Weather_UpdateLightning(void) {
   struct LightningWork *work = gLightningWork[0];
-  struct ColorBuffer *target =
+  struct PaletteFade *target =
       gLightningWork[HEAP_SLOT_PALETTE_FADE - HEAP_SLOT_LIGHTNING];
   s16 *timer = &work->timer;
 
@@ -97,7 +97,7 @@ void Weather_UpdateLightning(void) {
   case 5:
   case 10:
     // A frame after each flash: fade back to the dark colours over 12 frames.
-    ColorBuffer_SetTarget((s32)work, 1);
+    PaletteFade_SetTarget((s32)work, 1);
     Dma_Set(work->delta, target->delta, (DMA_ENABLE | DMA_32BIT) << 16 | 0x2a0,
             REG_DMA3);
     target->duration = 12;
@@ -107,7 +107,7 @@ void Weather_UpdateLightning(void) {
   case 6:
   case 11:
     // The flash: the lit colours, in one frame.
-    ColorBuffer_SetTarget((s32)work->to, 1);
+    PaletteFade_SetTarget((s32)work->to, 1);
     target->duration = 1;
     target->step = 0;
     break;
@@ -138,7 +138,7 @@ void Weather_StartRain(void) {
   Dma_Fill32((u32)words, work, sizeof(struct WeatherWork));
   words = AllocHeapSlotEwram(HEAP_SLOT_TILE_SCRATCH, 0x400);
   Decompress_ByteLz(gFieldEffect_GroundParticleTiles, words);
-  work->entry = Resource_FindFreeEntry();
+  work->entry = VramCache_FindFreeEntry();
   work->tileBase = VramCache_Load(work->entry, 0x300, words);
   FreeHeapSlot(HEAP_SLOT_TILE_SCRATCH);
   for (i = 0; i < WEATHER_PARTICLE_COUNT; i++) {
@@ -226,7 +226,7 @@ void FieldMotes_Update(void) {
         mote->y = y - (mote->delay >> 2);
         mote->shape = 0;
         mote->size = 1;
-        Runtime_PushSlotEntry(mote, 240);
+        Oam_AddSpriteAtDepth(mote, 240);
       } else {
         mote->timer = 0;
       }
@@ -265,7 +265,7 @@ void FieldMotes_Start(void) {
   Dma_Fill32(size, work, sizeof(*work));
   tiles = AllocHeapSlotEwram(HEAP_SLOT_TILE_SCRATCH, 0x400);
   Decompress_ByteLz(gFieldEffect_MoteTiles, tiles);
-  work->entry = Resource_FindFreeEntry();
+  work->entry = VramCache_FindFreeEntry();
   work->tileBase = VramCache_Load(work->entry, 0x300, tiles);
   FreeHeapSlot(HEAP_SLOT_TILE_SCRATCH);
   for (i = 0; i < WEATHER_PARTICLE_COUNT; i++) {
@@ -364,7 +364,7 @@ void FieldEffect_UpdateSparkles(void) {
 #endif
         sparkle->y = sy;
         sparkle->affineIndex = ((frames >> 1) & 1) << 3;
-        Runtime_PushSlotEntry(sparkle, 240);
+        Oam_AddSpriteAtDepth(sparkle, 240);
       }
       sparkle->timer--;
     }
@@ -421,7 +421,7 @@ void FieldEffect_InitializeSparkles(void) {
   Dma_Fill32(size, work, sizeof(*work));
   tiles = AllocHeapSlotEwram(HEAP_SLOT_TILE_SCRATCH, 0x400);
   Decompress_ByteLz(gFieldEffect_SparkleTiles, tiles);
-  work->entry = Resource_FindFreeEntry();
+  work->entry = VramCache_FindFreeEntry();
   work->tileBase = VramCache_Load(work->entry, 0x200, tiles);
   FreeHeapSlot(HEAP_SLOT_TILE_SCRATCH);
   i = 0;
@@ -456,21 +456,21 @@ void FieldEffect_InitializeSparkles(void) {
 }
 
 /// Starts the storm's lightning (Weather_UpdateLightning): builds the dark
-/// (0x10003, PALETTE_TRANSFORM_WARM) and lit (0x10005, PALETTE_TRANSFORM_PALE)
+/// (0x10003, PALETTE_TINT_WARM) and lit (0x10005, PALETTE_TINT_PALE)
 /// BG colours and their 12-step fade, and arms the first burst to end in 600
 /// frames, repeating. The work is heap block HEAP_SLOT_LIGHTNING, which the
 /// other lightning calls look up again. Vale's storm scenes call it.
 void Weather_StartLightning(void) {
   struct LightningWork *work;
-  struct ColorBuffer *buffers;
+  struct PaletteFade *buffers;
 
   work = AllocHeapSlotEwram(HEAP_SLOT_LIGHTNING, sizeof(struct LightningWork));
   buffers = gPaletteFadeWork;
   Dma_Fill32(0, work, sizeof(struct LightningWork));
-  ColorBuffer_Build(0x10003, buffers, work, 1);
-  ColorBuffer_Build(0x10005, buffers, work->to, 1);
-  ColorBuffer_CalculateSteps(work->to, work->from, work->delta, 12);
-  ColorBuffer_Build((s32)work, 0, buffers->target, 1);
+  PaletteFade_Build(0x10003, buffers, work, 1);
+  PaletteFade_Build(0x10005, buffers, work->to, 1);
+  PaletteFade_CalculateSteps(work->to, work->from, work->delta, 12);
+  PaletteFade_Build((s32)work, 0, buffers->target, 1);
   work->timer = 600;
   work->enabled = 1;
   Task_Add(Weather_UpdateLightning, 0xc80);
@@ -504,23 +504,23 @@ void Weather_ResumeLightning(void) {
 }
 
 /// Flashes the palette with the storm's callback: one burst of three flashes
-/// of palette to, each fading back to palette from (ColorBuffer_Build
+/// of palette to, each fading back to palette from (PaletteFade_Build
 /// modes) on the BG colours, ending 120 frames from now, and no more after.
 /// Vale's eruption calls it with the warm and red transforms
 /// (vale_eruption.c).
 void Weather_StartLightningFlash(s32 from, s32 to) {
   struct LightningWork *work;
-  struct ColorBuffer *buffers;
+  struct PaletteFade *buffers;
   s16 *target;
 
   work = AllocHeapSlotEwram(HEAP_SLOT_LIGHTNING, sizeof(struct LightningWork));
   buffers = gPaletteFadeWork;
   Dma_Fill32(0, work, sizeof(struct LightningWork));
-  ColorBuffer_Build(from, buffers, work, 1);
+  PaletteFade_Build(from, buffers, work, 1);
   target = work->to;
-  ColorBuffer_Build(to, buffers, target, 1);
-  ColorBuffer_CalculateSteps(target, work->from, work->delta, 12);
-  ColorBuffer_Build((s32)work, 0, buffers->target, 1);
+  PaletteFade_Build(to, buffers, target, 1);
+  PaletteFade_CalculateSteps(target, work->from, work->delta, 12);
+  PaletteFade_Build((s32)work, 0, buffers->target, 1);
   work->timer = 120;
   work->enabled = 0;
   Task_Add(Weather_UpdateLightning, 0xc80);

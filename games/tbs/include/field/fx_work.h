@@ -9,7 +9,7 @@
 #include "static_assert.h"
 #include "effect_slot.h"
 
-struct AnimationObject;
+struct Sprite;
 union FieldObject;
 
 /// A field object as Avoid's caster: its facing, its animation records and
@@ -23,7 +23,7 @@ struct ArcEffectObject {
   u16 angle; ///< 1/65536 turns
   /// ObjectEvent's x to riseBaseY; not named through this view.
   u8 positionToRise[0x48];
-  struct AnimationObject *records; ///< the caster's sprite
+  struct Sprite *records; ///< the caster's sprite
   /// ObjectEvent's spriteStorageKind to riseEnabled; not named through this
   /// view.
   u8 kindToRise[0x10];

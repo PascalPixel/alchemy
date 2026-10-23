@@ -9,7 +9,7 @@
 
 /// The wavy background's work: two pages of BG1 to BG3 scroll offsets for each
 /// of the 160 scanlines, and the sine wave that bends them on each axis.
-struct DisplayScrollWork {
+struct ScanlineEffectWork {
   struct BgScroll rows[2][160][3]; ///< per page and scanline: BG3, BG2, BG1
   u8 page;      ///< the page the HBlank DMA shows; the other is built
   u8 mode;      ///< set at the start; not read by name
@@ -23,14 +23,14 @@ struct DisplayScrollWork {
   s32 ampY;     ///< 16.16 scale on the sine entry, which is then divided by 256
 };
 
-STATIC_ASSERT(sizeof(struct DisplayScrollWork) == 0xf20);
-STATIC_ASSERT(offsetof(struct DisplayScrollWork, page) == 0xf00);
-STATIC_ASSERT(offsetof(struct DisplayScrollWork, freqX) == 0xf08);
+STATIC_ASSERT(sizeof(struct ScanlineEffectWork) == 0xf20);
+STATIC_ASSERT(offsetof(struct ScanlineEffectWork, page) == 0xf00);
+STATIC_ASSERT(offsetof(struct ScanlineEffectWork, freqX) == 0xf08);
 
-/// The wavy background's work, HEAP_SLOT_WAVY_BACKGROUND under its own name,
-/// which DisplayScroll_InitializeHBlankDma takes for a map's ripple.
-extern struct DisplayScrollWork *gHBlankScrollWork;
+/// The wavy background's work, HEAP_SLOT_SCANLINE_EFFECT under its own name,
+/// which ScanlineEffect_InitWave takes for a map's ripple.
+extern struct ScanlineEffectWork *gScanlineEffect;
 /// One cycle of sine in 256 entries, 4.12 fixed point (4096 at the peak).
-extern const s16 gDisplayScroll_WaveSine[];
+extern const s16 gScanlineEffect_WaveSine[];
 
 #endif

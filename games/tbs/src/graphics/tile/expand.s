@@ -1,11 +1,11 @@
-@ The command decoder Tile_ExpandSlide (dot_product.s) calls: ExpandRead
-@ takes the next packed value and jumps, through Tile_ExpandSlideCaseTable,
+@ The command decoder Credits_DecodeBackground (dot_product.s) calls: ExpandRead
+@ takes the next packed value and jumps, through Credits_DecodeBackgroundCaseTable,
 @ to one of the case commands below, which update the running pixel value in
 @ r5. They share the decoder's registers (r0 source, r2 and r3 read state,
 @ r5 value, r11 the mask 7) and have no frames of their own.
 @
 @ Why assembly:
-@ C2: Tile_ExpandSlideRead:
+@ C2: Credits_DecodeBackgroundRead:
 @ Shared decoder commands reuse live r0/r2/r3, change unsaved r5 and use
 @ fp as a mask. ldr pc jumps into those commands, below in this file
 @ and in its .text.battle_effect_expand_commands section.
@@ -15,7 +15,7 @@
 @ no bounds test, where the compiler's casesi always emits cmp, ldrls pc and a
 @ default branch; the table it indexes starts after the nop, in the next
 @ object.
-@ C2: Tile_ExpandSlideCase2 to Tile_ExpandSlideCase10:
+@ C2: Credits_DecodeBackgroundCase2 to Credits_DecodeBackgroundCase10:
 @ entries share live r0/r2/r3 decoder state with their caller; delta
 @ entries update unsaved r5 and use r11/fp as a data mask.
 .syntax unified
@@ -24,12 +24,12 @@
 .L_bias:
 	.4byte 0x80808080
 .L_dispatch_base:
-	.4byte Tile_ExpandSlideCaseTable
+	.4byte Credits_DecodeBackgroundCaseTable
 .syntax unified
 .text
 	.arm
-	.global Tile_ExpandSlideRead
-Tile_ExpandSlideRead:
+	.global Credits_DecodeBackgroundRead
+Credits_DecodeBackgroundRead:
 	and	ip, r3, #7
 	ldr	pc, [pc, ip, lsl #2]
 AlchemyUncredited_battle_effect_expand_1:
@@ -40,21 +40,21 @@ AlchemyUncreditedEnd_battle_effect_expand_1:
 	.arm
 .L_dispatch_runtime:
 	.space 32, 0
-	.global Tile_ExpandSlideCaseTable
-Tile_ExpandSlideCaseTable:
-	.4byte Tile_ExpandSlideCase2
-	.4byte Tile_ExpandSlideCase4Plus
-	.4byte Tile_ExpandSlideCase8
-	.4byte Tile_ExpandSlideCase6Plus
-	.4byte Tile_ExpandSlideCase2
-	.4byte Tile_ExpandSlideCase4Minus
-	.4byte Tile_ExpandSlideCase10
-	.4byte Tile_ExpandSlideCase6Minus
+	.global Credits_DecodeBackgroundCaseTable
+Credits_DecodeBackgroundCaseTable:
+	.4byte Credits_DecodeBackgroundCase2
+	.4byte Credits_DecodeBackgroundCase4Plus
+	.4byte Credits_DecodeBackgroundCase8
+	.4byte Credits_DecodeBackgroundCase6Plus
+	.4byte Credits_DecodeBackgroundCase2
+	.4byte Credits_DecodeBackgroundCase4Minus
+	.4byte Credits_DecodeBackgroundCase10
+	.4byte Credits_DecodeBackgroundCase6Minus
 .syntax unified
 	.section .text.battle_effect_expand_commands,"ax",%progbits
 	.arm
-	.global Tile_ExpandSlideCase2
-Tile_ExpandSlideCase2:
+	.global Credits_DecodeBackgroundCase2
+Credits_DecodeBackgroundCase2:
 	lsr	r3, r3, #2
 	subs	r2, r2, #2
 	movpl	pc, lr
@@ -62,8 +62,8 @@ Tile_ExpandSlideCase2:
 	add	r2, r2, #16
 	orr	r3, r3, ip, lsl r2
 	mov	pc, lr
-	.global Tile_ExpandSlideCase4Plus
-Tile_ExpandSlideCase4Plus:
+	.global Credits_DecodeBackgroundCase4Plus
+Credits_DecodeBackgroundCase4Plus:
 	and	ip, r3, #8
 	lsrs	r3, r3, #4
 	add	ip, ip, #8
@@ -74,8 +74,8 @@ Tile_ExpandSlideCase4Plus:
 	add	r2, r2, #16
 	orr	r3, r3, ip, lsl r2
 	mov	pc, lr
-	.global Tile_ExpandSlideCase4Minus
-Tile_ExpandSlideCase4Minus:
+	.global Credits_DecodeBackgroundCase4Minus
+Credits_DecodeBackgroundCase4Minus:
 	and	ip, r3, #8
 	lsrs	r3, r3, #4
 	add	ip, ip, #8
@@ -86,8 +86,8 @@ Tile_ExpandSlideCase4Minus:
 	add	r2, r2, #16
 	orr	r3, r3, ip, lsl r2
 	mov	pc, lr
-	.global Tile_ExpandSlideCase6Plus
-Tile_ExpandSlideCase6Plus:
+	.global Credits_DecodeBackgroundCase6Plus
+Credits_DecodeBackgroundCase6Plus:
 	and	ip, fp, r3, lsr #3
 	lsr	r3, r3, #6
 	add	ip, ip, #3
@@ -98,8 +98,8 @@ Tile_ExpandSlideCase6Plus:
 	add	r2, r2, #16
 	orr	r3, r3, ip, lsl r2
 	mov	pc, lr
-	.global Tile_ExpandSlideCase6Minus
-Tile_ExpandSlideCase6Minus:
+	.global Credits_DecodeBackgroundCase6Minus
+Credits_DecodeBackgroundCase6Minus:
 	and	ip, fp, r3, lsr #3
 	lsr	r3, r3, #6
 	add	ip, ip, #3
@@ -110,8 +110,8 @@ Tile_ExpandSlideCase6Minus:
 	add	r2, r2, #16
 	orr	r3, r3, ip, lsl r2
 	mov	pc, lr
-	.global Tile_ExpandSlideCase8
-Tile_ExpandSlideCase8:
+	.global Credits_DecodeBackgroundCase8
+Credits_DecodeBackgroundCase8:
 	mov	ip, #15
 	ands	ip, ip, r3, lsr #4
 	add	ip, ip, #11
@@ -124,8 +124,8 @@ Tile_ExpandSlideCase8:
 	add	r2, r2, #16
 	orr	r3, r3, ip, lsl r2
 	mov	pc, lr
-	.global Tile_ExpandSlideCase10
-Tile_ExpandSlideCase10:
+	.global Credits_DecodeBackgroundCase10
+Credits_DecodeBackgroundCase10:
 	ror	r5, r3, #10
 	and	r5, r5, #-33554432
 	lsr	r3, r3, #10

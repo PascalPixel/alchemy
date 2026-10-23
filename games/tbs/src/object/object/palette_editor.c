@@ -18,7 +18,7 @@
 /// request when L is held in debug mode. Writes the edited colours straight to
 /// BG palette RAM and draws over screen block 4; on leaving it reloads the
 /// window graphics and clears the debug text.
-void Debug_RunPaletteEditor(void) {
+void PaletteEditor_Run(void) {
   s32 palette = 0;
   s32 channel = 1;
   s32 color = 1;

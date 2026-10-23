@@ -55,13 +55,13 @@ static inline void CastingImpact_LoadResource(const void *id, void *dest,
   Resource_LoadAndDecompress((s32)id, dest, skip, copy);
 }
 
-/// Packs a casting impact's picture rows (Graphics_PackTileRows).
+/// Packs a casting impact's picture rows (BattleAnim_PackTileRows).
 static inline void CastingImpact_PackRows(void *src, void *dest, s32 width,
                                           s32 height) {
   /* FAKEMATCH(wrapper): the orb's packing through this helper, which loads
    * the buffer's address last; as a direct call in
    * BattleAnim_RunCastingImpact, 72 of 3070 instructions differ in tbs-en. */
-  Graphics_PackTileRows(src, dest, width, height);
+  BattleAnim_PackTileRows(src, dest, width, height);
 }
 
 /// Draws one casting impact image with the given blitter.
@@ -480,7 +480,7 @@ void BattleAnim_RunCastingImpact(struct BattleAnimArgs *effect, s32 mode) {
         if (frame >= i / 4) {
           {
             s32 size = 5;
-            Render_ResetTransformState();
+            Transform_Reset();
             Transform_ApplyRoll(step->velocityZ);
             Transform_ApplyPitch(step->velocityX);
             Transform_ApplyYaw(step->velocityY);
@@ -1264,7 +1264,7 @@ void BattleAnim_RunCastingImpact(struct BattleAnimArgs *effect, s32 mode) {
         for (i = 0; i != CASTING_IMPACT_IMPACT_PARTICLE_COUNT; i++, step++) {
           if (step->x >= 0 && frame >= i / 2) {
             s32 image = i & 3;
-            Render_ResetTransformState();
+            Transform_Reset();
             Transform_ApplyPitch(step->velocityX);
             Transform_ApplyYaw(step->velocityY);
             Projection_Point(step, &projected);

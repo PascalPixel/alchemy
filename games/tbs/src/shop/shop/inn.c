@@ -62,7 +62,7 @@ s32 Inn_CheckIn(s32 innId, s32 objectId) {
 
   innkeeper = ObjectEvent_GetByIdFar(objectId);
   state->resourceId =
-      ((struct AnimationObject *)innkeeper->sprite)->entries[0]->animationId;
+      ((struct Sprite *)innkeeper->sprite)->entries[0]->animationId;
   innkeeperWindow = Portrait_OpenWindowFar(state->resourceId, 0, 0, 0);
 
   roomPrice = Inn_RoomPrice(innId);
@@ -90,7 +90,7 @@ s32 Inn_CheckIn(s32 innId, s32 objectId) {
 
     innkeeper = ObjectEvent_GetByIdFar(objectId);
     state->resourceId =
-        ((struct AnimationObject *)innkeeper->sprite)->entries[0]->animationId;
+        ((struct Sprite *)innkeeper->sprite)->entries[0]->animationId;
     innkeeperWindow = Portrait_OpenWindowFar(state->resourceId, 0, 0, 0);
     Shop_ShowKeeperMessage(messageBase +
                            (INN_MESSAGE_REST_COMPLETE - INN_MESSAGE_WELCOME));
@@ -135,7 +135,7 @@ void Inn_PlaySleep(s32 roomPrice) {
   FieldScript_FinishScreenTransitionFar();
   FieldScript_WaitTransitionFramesFar();
   Sound_PlaySongFar(MUS_086);
-  AudioCommand_WaitForStateByteClear();
+  Sound_WaitForFanfare();
   WaitFrames(10);
   FieldScript_StartScreenTransitionFar();
   FieldScript_WaitTransitionFramesFar();

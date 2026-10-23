@@ -352,7 +352,7 @@ s32 PauseMenu_Run(void) {
 /// (item and Psynergy icons page * 32 on; the status patterns are 0 to 31 on
 /// every page, whatever the heading says), A or B closes it. Returns 0. The
 /// debug menus open it (debug/test.c, debug/level.c).
-s32 DebugMenu_BrowseIcons(void) {
+s32 DebugBrowser_Icons(void) {
   s32 redraw;
   s32 tile;
   s32 page;
@@ -423,7 +423,7 @@ s32 DebugMenu_BrowseIcons(void) {
           Icon_BuildAbilityIconTiles(base + i, 1, &slot, &tile, 0);
           WindowSprite_Create(slot, OUTPUT_SIZE_16X16, window, x, y);
         } else {
-          slot = Resource_FindFreeEntry();
+          slot = VramCache_FindFreeEntry();
           Ui_BuildPatternToSlot(i, 0, slot);
           WindowSprite_Create(slot, OUTPUT_SIZE_16X16, window, x, y);
         }
@@ -449,7 +449,7 @@ s32 DebugMenu_BrowseIcons(void) {
 /// Left and Right step one entry, L and R ten; a sprite map entry's portrait
 /// is its value + 128, shown in the second portrait slot's VRAM. Returns 0.
 /// The debug level menu opens it (debug/level.c).
-s32 DebugMenu_BrowsePortraits(void) {
+s32 DebugBrowser_Portraits(void) {
   struct WindowWork *work;
   struct Window *portrait;
   s32 redraw;

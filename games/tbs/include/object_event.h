@@ -78,8 +78,8 @@ struct ObjectEvent {
   /// keeps a resting height, a sway or a countdown here.
   s32 riseBaseY;
   union {
-    struct AnimationObject *sprite; ///< OBJECT_SPRITE_ONE
-    void **sprites; ///< OBJECT_SPRITE_GROUP: four, empty ones null
+    struct Sprite *sprite; ///< OBJECT_SPRITE_ONE
+    void **sprites;        ///< OBJECT_SPRITE_GROUP: four, empty ones null
   };
   /// Zero hides sprites; one draws a single sprite, two draws a group.
   /// The engine reads the low four bits; SC_SHOW_SPRITE and SC_HIDE_SPRITES set

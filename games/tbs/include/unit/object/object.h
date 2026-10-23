@@ -181,7 +181,7 @@ void WorldMap_EndScript(void);
 s32 Map_Run(s32 warpDest);
 s32 ObjectEvent_GetTriggerTileAheadOfCurrent(void);
 void Map_ApplyWarpDest(void);
-void Debug_RunPaletteEditor(void);
+void PaletteEditor_Run(void);
 
 struct ObjectEventTemplate *Map_FindObjectEventTemplate(s32 id);
 s32 GameFlag_IsConditionActive(s32 condition);
@@ -230,7 +230,7 @@ void ItemDisplay_RaiseAboveLeader(struct Object *object);
 void ItemDisplay_ShowPicture(void *object, s32 flags);
 void FieldEffect_StartEffectObject22(s32 item, s32 flags);
 void FieldEffect_ClearRandomParticles(void);
-void RevealMarker_EmitSparkles(union FieldObject *fieldObject);
+void Reveal_EmitSparkles(union FieldObject *fieldObject);
 s32 Field_IsRevealActive(struct ObjectScriptContext *interpreter);
 void FieldEffect_SpawnNearbyMarkers(void);
 
@@ -249,10 +249,10 @@ void ScreenTransition_UpdateFrame(void);
 void ScreenTransition_FillTilemapAndSolidTile(s32 color);
 void ScreenTransition_InitializeState(s32 value);
 
-void ColorBuffer_CalculateSteps(s16 *source, s16 *target, s16 *step,
+void PaletteFade_CalculateSteps(s16 *source, s16 *target, s16 *step,
                                 s32 frames);
-void ColorBuffer_Update(void);
-// UB: psynergy_effects.c calls ColorBuffer_Build with no declaration in
+void PaletteFade_Update(void);
+// UB: psynergy_effects.c calls PaletteFade_Build with no declaration in
 // scope, as a function returning int. With its prototype in scope (as in one
 // file with its definition) Weather_StartLightning and
 // Weather_StartLightningFlash change, 6 of 67 and 6 of 74 instructions in
@@ -260,16 +260,16 @@ void ColorBuffer_Update(void);
 // in tbs-ja: evidence that object.c and psynergy_effects.c were separate
 // files. UBFIX declares it.
 #ifdef UBFIX
-void ColorBuffer_Build();
+void PaletteFade_Build();
 #endif
-void ColorBuffer_Initialize(void);
-void ColorBuffer_Release(void);
-void ColorBuffer_SetTarget(s32 mode, s32 half);
-void ColorBuffer_SetSource(s32 mode, s32 half);
-void ColorBuffer_SetBackdrop(u32 color);
-void ColorBuffer_StartInterpolation(s32 frames);
-s32 ColorBuffer_ClampChannel(s32 value);
-s32 ColorBuffer_ClampShiftedChannel(s32 value);
+void PaletteFade_Initialize(void);
+void PaletteFade_Release(void);
+void PaletteFade_SetTarget(s32 mode, s32 half);
+void PaletteFade_SetSource(s32 mode, s32 half);
+void PaletteFade_SetBackdrop(u32 color);
+void PaletteFade_StartInterpolation(s32 frames);
+s32 PaletteFade_ClampComponent(s32 value);
+s32 PaletteFade_ClampShiftedComponent(s32 value);
 void FadeOverlay_DrawMarks(void);
 void FieldEffect_StartFadeOverlay(void *object);
 void FadeOverlay_Suspend(void);

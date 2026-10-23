@@ -253,12 +253,12 @@ void FieldEffect_InitializeSparklesFar(void);
 /// Reveal and three maps use it.
 void ScreenTransition_InitializeBattleEffectStateFar(s32 mode);
 /// Sets the colours the colour buffer moves toward.
-void ColorBuffer_SetTargetFar(s32 mode, s32 half);
+void PaletteFade_SetTargetFar(s32 mode, s32 half);
 /// Sets the colours the colour buffer shows now.
-void ColorBuffer_SetSourceFar(s32 mode, s32 half);
+void PaletteFade_SetSourceFar(s32 mode, s32 half);
 /// Moves the shown colours to the target colours over the given number of
 /// frames.
-void ColorBuffer_StartInterpolationFar(s32 frames);
+void PaletteFade_StartInterpolationFar(s32 frames);
 /// Starts the script's screen transition.
 void FieldScript_StartScreenTransitionFar(void);
 /// Finishes the script's screen transition.
@@ -268,11 +268,10 @@ void FieldScript_WaitTransitionFramesFar(void);
 /// Starts a wave in each axis of the background's scroll, changed line by
 /// line in the horizontal blank; Lamakan Desert starts it everywhere but its
 /// cave.
-void DisplayScroll_InitializeHBlankDmaFar(s32 mode, s32 freqX, s32 stepX,
-                                          s32 ampX, s32 freqY, s32 stepY,
-                                          s32 ampY);
+void ScanlineEffect_InitWaveFar(s32 mode, s32 freqX, s32 stepX, s32 ampX,
+                                s32 freqY, s32 stepY, s32 ampY);
 /// Stops the wavy background: removes its two callbacks and stops DMA 0.
-void DisplayScroll_DisarmHBlankDmaFar(void);
+void ScanlineEffect_StopFar(void);
 /// Has the target object event present an item: SE_124, animation 4, then the
 /// item's picture with sparkles. Returns the picture, or 0 when either is
 /// missing.
@@ -336,9 +335,8 @@ u32 Map_HasPsynergyEventFar(u16 item);
 /// Makes a sprite share another's VRAM block, so a chain of afterimages draws
 /// from one copy. Returns the sprite whose block is shared from now on, or
 /// NULL for no source.
-struct AnimationObject *
-Sprite_ShareVramCacheFar(struct AnimationObject *sourceSprite,
-                         struct AnimationObject *sharedSprite);
+struct Sprite *Sprite_ShareVramCacheEntryFar(struct Sprite *sourceSprite,
+                                             struct Sprite *sharedSprite);
 /// Returns the battle backdrop chosen for the current map, which the
 /// battle setup reads.
 s16 FieldScript_GetSpecialValueFar(void);
@@ -419,7 +417,7 @@ s32 MapSec_GetNameIndexFar(s32 mapId, s32 warpDest);
 /// Starts an object event's action script: an enum MovementType, or the script
 /// itself.
 void ObjectEvent_SetMovementTypeFar(struct Object *object, s32 kind);
-/// Plays SE_STOP_SLOT5 and then sound_id (AUDIO_CUE_FADE_SLOT3 for -1), and
+/// Plays SE_STOP_SLOT5 and then sound_id (SONG_FADE_OUT_ACTION_SE for -1), and
 /// remembers sound_id to play again later.
 void Map_QueueMusicFar(s32 sound_id);
 /// Plays the sound Map_QueueMusic remembered, if any.

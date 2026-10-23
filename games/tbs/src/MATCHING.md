@@ -223,12 +223,12 @@ These turn up all over the game.
     decrement `ObjectEvent.work` as a signed halfword and reset it through
     the declared unsigned member;
   - the turns of the stump that leaps out of the way at Goma Cave's entrance
-    (`map/goma_cave_entrance.c`), which read `AnimationObject.rotation` as a
+    (`map/goma_cave_entrance.c`), which read `Sprite.rotation` as a
     signed halfword, keeping the negative literal.
 - A value can be reached through a view of another type. That is undefined
   behaviour, marked `// UB:`, with the declared access behind `UBFIX`:
   - a pointer read or stored as an integer: `*(s32 *)&metadata->frames`,
-    which keeps the zero load ahead of it (`Animation_AllocateLayer`); the
+    which keeps the zero load ahead of it (`SpriteAnim_Alloc`); the
     `u32` views of `gMapGridWork[0]` (`ObjectEvent_MoveAndRedraw`) and of
     `gFieldWork` (`TolbiShipDeck_SightLand`, where the word may alias the
     halfword facing stores before it and so stays after them); the update
@@ -306,8 +306,8 @@ The field engine's spellings are about its map state and a few of its loops.
 - `(gridState->anim + channelIndex)->` stands for `gridState->anim[channelIndex].`
   (`TilesetAnim_Update`).
 - `(u16)~(...)` makes a halfword mask (`MapGrid_SetShownLayers`).
-- Three loops are written with `goto` (`Sprite_ComposeAnimationFrame`,
-  `AnimationObject_SelectAnimation`), and the comments beside them give the
+- Three loops are written with `goto` (`Sprite_ComposeFrame`,
+  `Sprite_StartAnim`), and the comments beside them give the
   measured cost of their loop forms. The other `goto`s (the wander retries,
   the step searches, the map effects' [script](../glossary.md#script) loops and the debug loops) stay
   until someone finds their loops.

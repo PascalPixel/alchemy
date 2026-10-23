@@ -21,20 +21,21 @@
 struct Window;
 
 /// Which way the screen fade goes: 0 towards black, 1 towards white.
-extern u8 gBlendBrighten;
+extern u8 gScreenFadeToWhite;
 /* FAKEMATCH(volatile): the fades load the duration back after storing it; as
- * plain u8, 13 of 29 instructions differ in tbs-en (Fade_Start). */
-extern volatile u8 gBlendDuration; ///< the fade's length in frames, 0 when idle
-/// Frames until the running fade reaches its target; Fade_Update counts it
-/// down.
-extern u8 gBlendFramesLeft;
+ * plain u8, 13 of 29 instructions differ in tbs-en (ScreenFade_Start). */
+extern volatile u8
+    gScreenFadeFrames; ///< the fade's length in frames, 0 when idle
+/// Frames until the running fade reaches its target; ScreenFade_Update counts
+/// it down.
+extern u8 gScreenFadeFramesLeft;
 /// The BLDCNT first-target layers the screen fade covers (the low six bits).
-extern u16 gBlendLayers;
+extern u16 gScreenFadeLayers;
 /// The brightness the running fade started from, 0 to 16.
-extern u8 gBlendStartLevel;
-/* FAKEMATCH(volatile): Fade_Update loads the target twice, for the level and
- * for the delta; as plain u8, 11 of 46 instructions differ in tbs-en. */
-extern volatile u8 gBlendTargetLevel; ///< the brightness the fade ends at
+extern u8 gScreenFadeStartLevel;
+/* FAKEMATCH(volatile): ScreenFade_Update loads the target twice, for the level
+ * and for the delta; as plain u8, 11 of 46 instructions differ in tbs-en. */
+extern volatile u8 gScreenFadeTargetLevel; ///< the brightness the fade ends at
 /// The two page arrow tiles, 4bpp, that Link_DrawShiftedTilePair slides
 /// outward over the window frame's top edge.
 extern u8 gRomShiftedTilePair[];
@@ -76,13 +77,13 @@ extern u8 *gPsynergyIcons[];
 /// The end of gPsynergyIcons, for Icon_CountPsynergyIcons.
 extern u8 *gPsynergyIconsEnd[];
 
-struct AnimationObject;
+struct Sprite;
 struct ArticleTable;
 struct Unit;
 struct EffectLaunch;
 struct GlyphPalette;
 struct NumberRow;
-struct PaletteSnapshotWork;
+struct PaletteCycleWork;
 struct RenderInput;
 struct WindowSprite;
 struct MenuCursor;
@@ -96,52 +97,52 @@ struct Vec2;
 struct OptionMenuWork;
 
 // The pixel shading kernels and their sizes: each
-// ColorBuffer_BackupAnd... function in runtime/decompress.c copies its
+// PaletteFade_BackupAnd... function in runtime/decompress.c copies its
 // kernel onto its own stack and runs it there.
-/// ColorBuffer_BrightenKernel, for ColorBuffer_BackupAndBrighten.
-extern u8 ColorBuffer_BackupAndBrightenCodeSize[];
-/// ColorBuffer_BrightenPartialKernel, for
-/// ColorBuffer_BackupAndBrightenPartial.
-extern u8 ColorBuffer_BackupAndBrightenPartialCodeSize[];
-/// ColorBuffer_DarkenKernel, for ColorBuffer_BackupAndDarken.
-extern u8 ColorBuffer_BackupAndDarkenCodeSize[];
-/// ColorBuffer_DarkenPartialKernel, for ColorBuffer_BackupAndDarkenPartial.
-extern u8 ColorBuffer_BackupAndDarkenPartialCodeSize[];
-/// ColorBuffer_HalveKernel, for ColorBuffer_BackupAndHalve.
-extern u8 ColorBuffer_BackupAndHalveCodeSize[];
-/// ColorBuffer_HalveNonzeroKernel, for ColorBuffer_BackupAndHalveNonzero.
-extern u8 ColorBuffer_BackupAndHalveNonzeroCodeSize[];
-/// ColorBuffer_ScaleNonzeroThreeQuartersKernel, for
-/// ColorBuffer_BackupAndScaleNonzeroThreeQuarters.
-extern u8 ColorBuffer_BackupAndScaleNonzeroThreeQuartersCodeSize[];
-/// ColorBuffer_ScaleThreeQuartersKernel, for
-/// ColorBuffer_BackupAndScaleThreeQuarters.
-extern u8 ColorBuffer_BackupAndScaleThreeQuartersCodeSize[];
+/// PaletteFade_BrightenKernel, for PaletteFade_BackupAndBrighten.
+extern u8 PaletteFade_BackupAndBrightenCodeSize[];
+/// PaletteFade_BrightenPartialKernel, for
+/// PaletteFade_BackupAndBrightenPartial.
+extern u8 PaletteFade_BackupAndBrightenPartialCodeSize[];
+/// PaletteFade_DarkenKernel, for PaletteFade_BackupAndDarken.
+extern u8 PaletteFade_BackupAndDarkenCodeSize[];
+/// PaletteFade_DarkenPartialKernel, for PaletteFade_BackupAndDarkenPartial.
+extern u8 PaletteFade_BackupAndDarkenPartialCodeSize[];
+/// PaletteFade_HalveKernel, for PaletteFade_BackupAndHalve.
+extern u8 PaletteFade_BackupAndHalveCodeSize[];
+/// PaletteFade_HalveNonzeroKernel, for PaletteFade_BackupAndHalveNonzero.
+extern u8 PaletteFade_BackupAndHalveNonzeroCodeSize[];
+/// PaletteFade_ScaleNonzeroThreeQuartersKernel, for
+/// PaletteFade_BackupAndScaleNonzeroThreeQuarters.
+extern u8 PaletteFade_BackupAndScaleNonzeroThreeQuartersCodeSize[];
+/// PaletteFade_ScaleThreeQuartersKernel, for
+/// PaletteFade_BackupAndScaleThreeQuarters.
+extern u8 PaletteFade_BackupAndScaleThreeQuartersCodeSize[];
 /// Raises each pixel step by an amount, capped at 63, after backing the
 /// buffer up.
-extern const u8 ColorBuffer_BrightenKernel[];
-/// Brightens as ColorBuffer_BrightenKernel, writing back only groups of four
+extern const u8 PaletteFade_BrightenKernel[];
+/// Brightens as PaletteFade_BrightenKernel, writing back only groups of four
 /// pixels not all at 63 already.
-extern const u8 ColorBuffer_BrightenPartialKernel[];
+extern const u8 PaletteFade_BrightenPartialKernel[];
 /// Lowers each pixel step by an amount, stopping at 0, after backing the
 /// buffer up.
-extern const u8 ColorBuffer_DarkenKernel[];
-/// Darkens as ColorBuffer_DarkenKernel, writing back only groups of four
+extern const u8 PaletteFade_DarkenKernel[];
+/// Darkens as PaletteFade_DarkenKernel, writing back only groups of four
 /// pixels not all 0 already.
-extern const u8 ColorBuffer_DarkenPartialKernel[];
+extern const u8 PaletteFade_DarkenPartialKernel[];
 /// Halves each pixel step; the battle effect canvas's transfers use it.
-extern const u8 ColorBuffer_HalveKernel[];
+extern const u8 PaletteFade_HalveKernel[];
 /// Halves each pixel step, skipping all-zero groups; the slot reels' canvas
 /// uses it.
-extern const u8 ColorBuffer_HalveNonzeroKernel[];
+extern const u8 PaletteFade_HalveNonzeroKernel[];
 /// Scales each pixel step to three quarters, skipping all-zero groups.
-extern const u8 ColorBuffer_ScaleNonzeroThreeQuartersKernel[];
+extern const u8 PaletteFade_ScaleNonzeroThreeQuartersKernel[];
 /// Scales each pixel step to three quarters.
-extern const u8 ColorBuffer_ScaleThreeQuartersKernel[];
-#ifndef OWN_gRenderSlotHeads
+extern const u8 PaletteFade_ScaleThreeQuartersKernel[];
+#ifndef OWN_gOamDepthLists
 /// The 256 depth slots' list heads that every drawn sprite is linked into
-/// (Runtime_PushSlotEntry); Render_ResetFrame empties them each frame.
-extern void *gRenderSlotHeads[];
+/// (Oam_AddSpriteAtDepth); Oam_ResetFrame empties them each frame.
+extern void *gOamDepthLists[];
 #endif
 /// HEAP_SLOT_PARTY_STATUS: the party status window's layout (struct
 /// PartyStatusWindow), right after gWindowWork in IWRAM.
@@ -160,7 +161,7 @@ struct TileMask {
 /// over a colour-4 fill, read by Menu_BuildLocalizedPatternTiles.
 extern const struct TileMask gMenu_BarPatternRows[];
 /// The credits' 8x8 one-bit font, ASCII 0x20 to 0x7f.
-extern const u8 gDisplayScroll_Font[];
+extern const u8 gCredits_Font[];
 extern const u8 gScreenTransition_DitherTable[];
 extern s8 gScreenTransition_EdgeOffsets[];
 extern u8 gScreenTransition_NoiseWidths[];
@@ -172,13 +173,13 @@ extern const u8 FarCall_ResourceTable[];
 extern u8 gDecodeFillByte;
 /// HEAP_SLOT_PALETTE_CYCLES: the queue of palette cycles, which no code in
 /// the game ever starts.
-extern struct PaletteSnapshotWork *gPaletteCycleWork;
+extern struct PaletteCycleWork *gPaletteCycleWork;
 /// Two 16-entry colour maps for 4bpp pixels: the first draws colour 1 as
 /// colour 10, the second leaves every colour as it is.
 extern u16 gGraphics_ExpandNibbleTable[];
-/// HEAP_SLOT_ANIMATION_SPRITES: the object system's sprite pool, which the
+/// HEAP_SLOT_SPRITES: the object system's sprite pool, which the
 /// field animation and the sprite viewer walk.
-extern struct AnimationObject *gSpriteObjects;
+extern struct Sprite *gSprites;
 #ifndef OWN_Menu_CursorObjectTiles
 /// The right-pointing arrow cursor, an 8x16 sprite of 256 colours, beside
 /// its left-pointing twin.
@@ -230,10 +231,10 @@ extern const u8 gResource_FixedBlockATiles[];
 /// Decodes a credits slide's packed picture into 8bpp tiles, adding a palette
 /// offset to each pixel; it relocates its own command table wherever it's
 /// copied.
-extern const u8 Tile_ExpandSlide[];
-/// Tile_ExpandSlide with its command table, copied into
+extern const u8 Credits_DecodeBackground[];
+/// Credits_DecodeBackground with its command table, copied into
 /// HEAP_SLOT_RAM_CODE_TEMP for each slide.
-extern u8 Tile_ExpandSlideCodeSize[];
+extern u8 Credits_DecodeBackgroundCodeSize[];
 /// Decodes one Huffman-coded symbol of a message for a struct MessageReader.
 extern const u8 Text_DecodeSymbol[];
 /// Text_DecodeSymbol, which the message decoders copy into heap slot

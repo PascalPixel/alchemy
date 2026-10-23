@@ -44,7 +44,7 @@ s32 ColossoMenu_Choose(s32 unused) {
   Text_DrawMessageAsTiles(MsgTalkChoice, window, 8, 0);
   Text_DrawMessageAsTiles(MsgTalkChoice + 1, window, 8, 16);
   Text_DrawMessageAsTiles(MsgTalkChoice + 2, window, 8, 32);
-  slot = Resource_FindFreeEntry();
+  slot = VramCache_FindFreeEntry();
   row = 0;
   if (slot < VRAM_CACHE_ENTRY_COUNT) {
     VramCache_Load(slot, 128, gResource_FixedBlockBTiles);
@@ -94,7 +94,7 @@ s32 ColossoMenu_Choose(s32 unused) {
   }
   Window_Close(window, 2);
   WaitFrames(1);
-  Resource_ResetEntry(slot);
+  VramCache_FreeEntry(slot);
   return row;
 }
 
@@ -158,14 +158,14 @@ void Djinn_ShowJoinedMessage(s32 member, s32 element, s32 djinn) {
     Sound_PlaySongFar(MUS_JOINED);
 
     do {
-      Runtime_PushSlotEntry(entry, 250);
+      Oam_AddSpriteAtDepth(entry, 250);
       WaitFrames(1);
-    } while (AudioCommand_GetStateByteFar() != 0 &&
+    } while (Sound_GetBgmRestoreDelayFar() != 0 &&
              (gKeysPressed & (KEY_A | KEY_B | KEYS_SHOULDERS)) == 0);
 
     Window_Close(window, 2);
     WaitFrames(1);
-    Resource_ResetEntry(handle);
+    VramCache_FreeEntry(handle);
   }
 }
 
@@ -213,13 +213,13 @@ void Party_ShowJoinedMessage(s32 member) {
     JOINED_QUEUE_TEXT(window, Message_DecodeMode1(MsgJoinedParty), 36, 2, 0);
     Sound_PlaySongFar(MUS_JOINED);
     do {
-      Runtime_PushSlotEntry(entry, 250);
+      Oam_AddSpriteAtDepth(entry, 250);
       WaitFrames(1);
-    } while (AudioCommand_GetStateByteFar() != 0 &&
+    } while (Sound_GetBgmRestoreDelayFar() != 0 &&
              (gKeysPressed & (KEY_A | KEY_B | KEYS_SHOULDERS)) == 0);
     Window_Close(window, 2);
     WaitFrames(1);
-    Resource_ResetEntry(handle);
+    VramCache_FreeEntry(handle);
   }
 }
 
@@ -283,16 +283,16 @@ void Party_ShowPairJoinedMessage(s32 first, s32 second) {
     Sound_PlaySongFar(MUS_JOINED);
 
     do {
-      Runtime_PushSlotEntry(entry1, 250);
-      Runtime_PushSlotEntry(entry2, 250);
+      Oam_AddSpriteAtDepth(entry1, 250);
+      Oam_AddSpriteAtDepth(entry2, 250);
       WaitFrames(1);
-    } while (AudioCommand_GetStateByteFar() != 0 &&
+    } while (Sound_GetBgmRestoreDelayFar() != 0 &&
              (gKeysPressed & (KEY_A | KEY_B | KEYS_SHOULDERS)) == 0);
 
     Window_Close(window, 2);
     WaitFrames(1);
-    Resource_ResetEntry(handle1);
-    Resource_ResetEntry(handle2);
+    VramCache_FreeEntry(handle1);
+    VramCache_FreeEntry(handle2);
   }
 }
 

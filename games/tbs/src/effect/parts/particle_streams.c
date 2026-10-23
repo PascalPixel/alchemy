@@ -199,13 +199,12 @@ void BattleAnim_RunParticleStreams(struct BattleAnimArgs *effect, s32 mode) {
   // spawned object.
   if (mode == PARTICLE_STREAMS_OUTER_SPACE) {
     for (i = 0; i != 2; i++) {
-      struct AnimationObject *animation =
-          ResourceObject_CreateFar(483 + i * SPRITE_SECOND_PART);
+      struct Sprite *animation = Sprite_CreateFar(483 + i * SPRITE_SECOND_PART);
 
       work->animations[i] = animation;
       if (animation != 0) {
         animation->flags = 0;
-        AnimationObject_SelectAnimationFar(animation, 2);
+        Sprite_StartAnimFar(animation, 2);
         work->animations[i]->image.priority = 3;
       }
     }
@@ -445,12 +444,12 @@ void BattleAnim_RunParticleStreams(struct BattleAnimArgs *effect, s32 mode) {
       // and turns once every 256 frames.
       // XXX: likely the sparks lie outside the projection's depth range,
       // because each result is read back as a 16.16 point and centred by hand;
-      // Render_ProjectPoint leaves the transformed point when it cannot
+      // Transform_ProjectPoint leaves the transformed point when it cannot
       // project.
       point.x = 0;
       point.y = 0;
       point.depth = 0x2000000;
-      Render_ResetTransformState();
+      Transform_Reset();
       Transform_ApplyPosition(ScreenPoint_Coordinates(&point));
       Transform_ApplyRoll(0x800);
       Transform_ApplyYaw(frame << 8);
@@ -574,8 +573,8 @@ void BattleAnim_RunParticleStreams(struct BattleAnimArgs *effect, s32 mode) {
       Sound_PlaySongFar(SE_145);
     if (frame == 48) {
       if (mode == PARTICLE_STREAMS_OUTER_SPACE) {
-        ResourceObject_ReleaseFar(work->animations[0]);
-        ResourceObject_ReleaseFar(work->animations[1]);
+        Sprite_DestroyFar(work->animations[0]);
+        Sprite_DestroyFar(work->animations[1]);
         BattleObject_PutFar();
       }
       ANIM_SHOW_DAMAGE(SE_HEAVY_IMPACT);
@@ -699,7 +698,7 @@ void BattleAnim_RunParticleStreams(struct BattleAnimArgs *effect, s32 mode) {
   Task_Remove(BattleAnim_ProcessPendingGraphicsTransfer);
   FreeHeapSlot(HEAP_SLOT_RAM_CODE);
   if (mode == PARTICLE_STREAMS_METEOR)
-    ResourceObject_ReleaseFar(work->animations[0]);
+    Sprite_DestroyFar(work->animations[0]);
   BattleAnim_EndCanvasLayer();
 }
 

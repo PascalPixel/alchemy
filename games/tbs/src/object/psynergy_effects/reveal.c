@@ -16,8 +16,8 @@ void ObjectDispatch_ApplyValueToKind200Children(s32 value) {
       u8 kind = object->animationKind;
 
       if (kind == OBJECT_SPRITE_ONE) {
-        struct AnimationObject *animation = object->animation;
-        struct AnimationEntry *entry = animation->entries[0];
+        struct Sprite *animation = object->animation;
+        struct SpriteAnim *entry = animation->entries[0];
 
         if (entry->animationId == 200) {
           entry->colorMode = value;
@@ -93,11 +93,11 @@ void FieldEffect_RunReveal(void) {
   target = ObjectEvent_GetByLocalId(gGameState.leaderLocalId);
   state->centreX = target->x.fixed;
   state->centreY = target->z.fixed - target->y.fixed;
-  // From the plain colours (PALETTE_TRANSFORM_PLAIN, 0x10000) the BG half
-  // turns grey (PALETTE_TRANSFORM_GREY, 0x10001) in one frame.
-  ColorBuffer_SetSource(0x10000, 0);
-  ColorBuffer_SetTarget(0x10001, 1);
-  ColorBuffer_StartInterpolation(1);
+  // From the plain colours (PALETTE_TINT_NONE, 0x10000) the BG half
+  // turns grey (PALETTE_TINT_GRAYSCALE, 0x10001) in one frame.
+  PaletteFade_SetSource(0x10000, 0);
+  PaletteFade_SetTarget(0x10001, 1);
+  PaletteFade_StartInterpolation(1);
   // Not in the English release.
 #if !(TBS_PATCH_1 && !TBS_PATCH_2)
   work->revealActive = 0;
@@ -158,11 +158,11 @@ void FieldEffect_EndReveal(void) {
     state->revealFrames = zero;
     ObjectDispatch_ApplyValueToKind200Children(0);
 
-    ColorBuffer_SetTarget(PALETTE_TRANSFORM_PLAIN, 1);
-    ColorBuffer_StartInterpolation(1);
-    ColorBuffer_SetSource(0, 0);
-    ColorBuffer_SetTarget(PALETTE_TRANSFORM_PLAIN, 0);
-    ColorBuffer_StartInterpolation(30);
+    PaletteFade_SetTarget(PALETTE_TINT_NONE, 1);
+    PaletteFade_StartInterpolation(1);
+    PaletteFade_SetSource(0, 0);
+    PaletteFade_SetTarget(PALETTE_TINT_NONE, 0);
+    PaletteFade_StartInterpolation(30);
     WaitFrames(1);
 
     event = Map_FindPsynergyEvent(PSYNERGY_EVENT(PSYNERGY_PHASE_EFFECT_ENDS),

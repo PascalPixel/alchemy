@@ -32,8 +32,8 @@ extern char ResourceId_WindowTiles;
 /// window; the other editions look it up there and then draw from
 /// WindowTiles.
 extern char ResourceId_SmallFont;
-extern char ResourceId_NintendoLogo; ///< Shown first by Title_ShowSplashScreen.
-/// The Camelot logo's four frames of tiles, which Title_ShowAnimatedSplash
+extern char ResourceId_NintendoLogo; ///< Shown first by Title_ShowNintendoLogo.
+/// The Camelot logo's four frames of tiles, which Title_ShowCamelotLogo
 /// cycles.
 extern char ResourceId_CamelotLogo;
 /// The title picture on BG2, loaded by Title_LoadBackground and, for the save
@@ -52,7 +52,7 @@ extern char ResourceId_IntroTilesB;
 // map from gBattleBackground_Maps (object/map_rules.s), and on the world
 // map BattleBackground_SelectForEnvironment picks one by terrain; either leaves
 // it in gGameState.special for the battle. The credits slideshow
-// (gDisplayScroll_SlideResources) shows every one but DesertBackdrop and
+// (gCredits_Backgrounds) shows every one but DesertBackdrop and
 // AerialViewBackdrop, and some summons draw one as their sky.
 
 /// Suhalla Gate's checkpoint and Dew rooms. The debug battle menu fights on it

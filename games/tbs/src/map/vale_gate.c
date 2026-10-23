@@ -627,7 +627,7 @@ static void EventScript_DemonstratePsynergy(void) {
       Engine_ScriptWait(1);
     }
     // End the display and restore the strongman's ordinary appearance.
-    Engine_AudioPlayCue(AUDIO_CUE_FADE_SLOT3);
+    Engine_AudioPlayCue(SONG_FADE_OUT_ACTION_SE);
     Task_Remove(ValeGate_UpdateShowingStrongmanPsynergy);
     Engine_TaskWait(1);
     Map_EndCutscenePsynergy();
@@ -1302,7 +1302,7 @@ static void EventScript_MeetSurvivingTravelers(void) {
   Engine_TaskWait(1);
   FieldScript_PrepareObjectAndApplyValue(1, 0);
   Engine_ScriptOpenScreen();
-  Engine_AudioPlayCue(AUDIO_CUE_FADE_BGM);
+  Engine_AudioPlayCue(SONG_FADE_OUT_BGM);
   Weather_ResumeLightning();
   Engine_ObjectEventSetPosition(LOCALID_FIRST_TRAVELER, PIXELS(105),
                                 PIXELS(267));
@@ -1501,7 +1501,7 @@ static void EventScript_TravelersLeaveAfterBattle(void) {
 
   // The screen opens on Isaac and Garet lying beaten in the storm, the
   // travelers standing over them.
-  Engine_AudioPlayCue(AUDIO_CUE_FADE_BGM);
+  Engine_AudioPlayCue(SONG_FADE_OUT_BGM);
   Engine_ScriptStart();
   FieldCamera_MoveTo(-1, -1, -1, 0);
   Engine_TaskWait(1);
@@ -2080,7 +2080,7 @@ static void ValeGate_CyclePsynergyPalette(struct ObjectEvent *objectEvent) {
 static void ValeGate_SpawnEffectPair(struct ObjectEvent *parent) {
   struct ObjectEvent *pair[2];
   struct ObjectEvent *child;
-  struct AnimationObject *sprite;
+  struct Sprite *sprite;
   struct FieldEffectWork *effectWork = gFieldEffectWork;
   s32 i;
 
@@ -2096,13 +2096,13 @@ static void ValeGate_SpawnEffectPair(struct ObjectEvent *parent) {
       child->timer = 0;
       child->linkedObject = parent;
       if (sprite != NULL) {
-        AnimationObject_SelectAnimation(sprite, 0);
+        Sprite_StartAnim(sprite, 0);
         sprite->flags = 0;
-        Resource_ResetEntry(sprite->slot);
+        VramCache_FreeEntry(sprite->slot);
         sprite->slot = effectWork->tileSlot;
         sprite->retainCacheEntry = 1;
         sprite->image.tile =
-            (gVramBlockCache[sprite->slot].offset >> 5) & 0x3ff;
+            (gVramCacheEntries[sprite->slot].offset >> 5) & 0x3ff;
         sprite->image.fullColor = 0;
         sprite->image.shape = 1;
         sprite->image.size = 2;
@@ -2112,14 +2112,14 @@ static void ValeGate_SpawnEffectPair(struct ObjectEvent *parent) {
   }
   {
     struct ObjectEvent *effect = pair[0];
-    struct AnimationObject *effectSprite = effect->sprite;
+    struct Sprite *effectSprite = effect->sprite;
 
     effect->update = FieldEffect_AnimateVerticalNegative;
     effectSprite->image.priority = 2;
   }
   {
     struct ObjectEvent *effect = pair[1];
-    struct AnimationObject *effectSprite = effect->sprite;
+    struct Sprite *effectSprite = effect->sprite;
 
     effectSprite->image.priority = 2;
     effect->update = FieldEffect_AnimateVerticalPositive;

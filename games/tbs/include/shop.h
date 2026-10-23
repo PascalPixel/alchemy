@@ -28,10 +28,10 @@ struct ShopWork {
   struct Window *itemWindow;
   /// The menu screens' windows, icons and cursor grid; not named here.
   u8 menuWindows[0xf0];
-  struct AnimationObject *partyMemberIcons[8]; ///< the party row's sprites
-  s16 partyMemberX[8];                         ///< pixels
-  s16 partyMemberY[8];                         ///< pixels
-  s32 partyMemberScale[8]; ///< 16.16 fixed point, 0x10000 full size
+  struct Sprite *partyMemberIcons[8]; ///< the party row's sprites
+  s16 partyMemberX[8];                ///< pixels
+  s16 partyMemberY[8];                ///< pixels
+  s32 partyMemberScale[8];            ///< 16.16 fixed point, 0x10000 full size
   /// The menu screens' choices, entries and party and the row of four
   /// figures; not named here.
   u8 menuLists[0xf8];

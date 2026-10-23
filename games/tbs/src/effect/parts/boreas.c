@@ -202,8 +202,8 @@ void BattleAnim_RunBoreas(struct BattleAnimArgs *effect) {
       }
     }
     if (frame > 208) {
-      AnimationObject_SelectAnimationFar(work->animations[2],
-                                         gBoreas_Animations[(frame / 4) & 3]);
+      Sprite_StartAnimFar(work->animations[2],
+                          gBoreas_Animations[(frame / 4) & 3]);
     }
 
     scale.x = 0x10000;
@@ -251,7 +251,7 @@ void BattleAnim_RunBoreas(struct BattleAnimArgs *effect) {
     if (frame == 226) {
       Sound_PlaySongFar(SE_145);
     }
-    Render_ResetTransformState();
+    Transform_Reset();
 
     // Each time rocks crumble, throw up 32 chips: the first and third waves
     // reuse chips 0 to 31, the second takes 32 to 63, and all fall at 1/8
@@ -376,14 +376,14 @@ void BattleAnim_RunBoreas(struct BattleAnimArgs *effect) {
   // into bouncing chips.
   //------------------------------------------------------------------
   for (i = 0; i != 9; i++) {
-    ResourceObject_ReleaseFar(work->animations[i]);
+    Sprite_DestroyFar(work->animations[i]);
   }
   // Blend the canvas fully over the battle background, set the ice blocks
   // above the canvas to the right, and stagger the smoke puffs, puff i
   // waiting i / 2 frames (its negative variant) before it shows.
   BattleAnim_SetupBlendedDisplay();
   REG_BLDALPHA = BLEND_ALPHA(16, 16);
-  Sound_PlaySongFar(AUDIO_CUE_FADE_SLOT3);
+  Sound_PlaySongFar(SONG_FADE_OUT_ACTION_SE);
 
   for (i = 0; i != 64; i++) {
     work->particles[i].x = ((Random16() & 127) + 64) << 16;

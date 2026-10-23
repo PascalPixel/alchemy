@@ -29,7 +29,7 @@ void FieldEffectSprite_Update(struct FieldEffectSprite *effect) {
 /// it is placed at y 508 pixels and raised back to z, so it shows at the
 /// same point but sorts as if at 508.
 void FieldEffect_DrawScaledObject(struct FieldEffectSprite *object) {
-  struct AnimationObject *sprite;
+  struct Sprite *sprite;
   s32 offset;
   struct SpriteScale scale;
   struct SpritePlacement position;
@@ -136,7 +136,7 @@ void FieldEffectSprite_SetPosition(struct FieldEffectSprite *effect, s32 x,
 /// Sets the animation of an effect slot's sprite.
 void FieldEffectSprite_SetObjectMode(struct FieldEffectSprite *effect,
                                      s32 mode) {
-  AnimationObject_SelectAnimationFar(effect->object, mode);
+  Sprite_StartAnimFar(effect->object, mode);
 }
 
 /// Gives an effect slot its per-frame callback, starting at state 0.
@@ -156,10 +156,10 @@ void FieldEffectSprite_SetCallback(struct FieldEffectSprite *effect,
 /// steer to a target do.
 void FieldEffectSprite_Initialize(struct FieldEffectSprite *effect, s32 kind,
                                   s32 x, s32 z) {
-  struct AnimationObject *animation;
+  struct Sprite *animation;
 
   Dma_Fill32(0, effect, sizeof *effect);
-  animation = ResourceObject_CreateFar(kind);
+  animation = Sprite_CreateFar(kind);
   effect->object = animation;
   if (animation != NULL)
     animation->image.priority = 0;
@@ -170,11 +170,11 @@ void FieldEffectSprite_Initialize(struct FieldEffectSprite *effect, s32 kind,
   effect->acceleration = 0x10000;
   effect->originX = x;
   effect->originZ = z;
-  // BUG: ResourceObject_CreateFar can return NULL, but this and the animation
+  // BUG: Sprite_CreateFar can return NULL, but this and the animation
   // setup below still require a sprite. Callers also immediately use it, so
   // guarding this store alone would not establish allocation-failure recovery.
   {
-    struct AnimationObject *sprite = effect->object;
+    struct Sprite *sprite = effect->object;
     sprite->flags = 0;
   }
   effect->stopAtTarget = 1;
@@ -192,6 +192,6 @@ void FieldEffectSprite_Initialize(struct FieldEffectSprite *effect, s32 kind,
 /// update then neither moves nor draws it.
 void FieldEffect_ClearOwnedSlot(struct FieldEffectSprite *effect) {
   if (effect->object)
-    ResourceObject_ReleaseFar(effect->object);
+    Sprite_DestroyFar(effect->object);
   Dma_Fill32(0, effect, sizeof *effect);
 }

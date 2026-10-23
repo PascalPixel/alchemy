@@ -4,8 +4,8 @@ gObject_ShadowTiles:
 	.incbin "games/tbs/src/system/resource/shadow.8bpp"
 
 @ Enemy sprite resource IDs and enemy IDs
-	.global gResourceSlot_NumberTable
-gResourceSlot_NumberTable:
+	.global gSpriteFrameCache_Sources
+gSpriteFrameCache_Sources:
 	.2byte ResourceId_AxeGoblinSprites, 400
 	.2byte ResourceId_GhoulSprites, 401
 	.2byte ResourceId_HarpySprites, 402

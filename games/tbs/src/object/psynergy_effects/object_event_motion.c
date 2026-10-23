@@ -178,8 +178,7 @@ struct Object *Object_FindNearestFacingTarget(struct Object *self, s32 sprite) {
   }
   if (found == NULL)
     return NULL;
-  if (((struct AnimationObject *)found->animation)->entries[0]->animationId !=
-      sprite)
+  if (((struct Sprite *)found->animation)->entries[0]->animationId != sprite)
     return NULL;
   return found;
 }

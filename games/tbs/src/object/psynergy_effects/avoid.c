@@ -10,8 +10,8 @@
 /// removes it again.
 void FieldEffect_BlinkAvoidCaster(void) {
   struct ArcEffectObject *caster;
-  struct AnimationObject *rec;
-  struct AnimationEntry *entry;
+  struct Sprite *rec;
+  struct SpriteAnim *entry;
   s32 phase;
 
   caster = ObjectEvent_GetByLocalId(gGameState.leaderLocalId);
@@ -89,8 +89,8 @@ void FieldScript_ShowStatusMessage(void) {
 void FieldEffect_RunAvoid(void) {
   struct FieldEffectWork *effectWork;
   struct ArcEffectObject *object;
-  struct AnimationObject *group;
-  struct AnimationEntry *entry;
+  struct Sprite *group;
+  struct SpriteAnim *entry;
   u32 angle;
   s32 slot;
   s32 count;
@@ -100,7 +100,7 @@ void FieldEffect_RunAvoid(void) {
   group = object->records;
   entry = group->entries[0];
   angle = object->angle;
-  slot = Resource_FindFreeEntry();
+  slot = VramCache_FindFreeEntry();
   {
     s16 *tileSlot = &effectWork->arcTileSlot;
     s32 zero = 0;
@@ -147,6 +147,6 @@ void FieldEffect_RunAvoid(void) {
                                           SPRITE_FLAG_SHADOW);
   Animation_ApplyChildValuesFar((struct DispatchObject *)object,
                                 SPRITE_COLOR_NORMAL);
-  Resource_ResetEntry(effectWork->arcTileSlot);
+  VramCache_FreeEntry(effectWork->arcTileSlot);
   FieldMessage_ShowFar(MsgMonstersAttackLess, 1);
 }

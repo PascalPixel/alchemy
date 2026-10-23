@@ -40,10 +40,10 @@ s32 Sound_LoadPresetParameters(s32 preset);
 void Sound_ReservedNoOpA(void);
 void Sound_ReservedNoOpB(void);
 void Input_HandleKeyInterrupt(void);
-void Fade_ToBlack(s32 frames);
-void Fade_FromBlack(s32 frames);
-void Fade_ToWhite(s32 frames);
-void Fade_FromWhite(s32 frames);
+void ScreenFade_ToBlack(s32 frames);
+void ScreenFade_FromBlack(s32 frames);
+void ScreenFade_ToWhite(s32 frames);
+void ScreenFade_FromWhite(s32 frames);
 s32 Decompress_Type01(const void *source, void *destination);
 s32 Decompress_Type2(const void *source, void *destination);
 s32 Decompress_ByteLz(const void *source, void *destination);
@@ -52,23 +52,23 @@ void SerialRuntime_WaitForReceive(void);
 
 void IoWriteQueue_FlushPending(void);
 
-void Fade_Update(void);
-void Fade_Start(s8 bright, s32 layer, u32 start, s32 target, s32 frames);
-void Fade_Wait(void);
+void ScreenFade_Update(void);
+void ScreenFade_Start(s8 bright, s32 layer, u32 start, s32 target, s32 frames);
+void ScreenFade_Wait(void);
 
-void Render_ResetFrame(void);
-s32 AffineMatrix_BuildForEffect(struct AffineTransform *source);
-void Runtime_PushSlotEntry(void *slotEntry, s32 slot);
-void Render_BuildOamList(void *work);
+void Oam_ResetFrame(void);
+s32 OamMatrix_AllocFromTransform(struct AffineTransform *source);
+void Oam_AddSpriteAtDepth(void *slotEntry, s32 slot);
+void Oam_BuildBuffer(void *work);
 
 s32 VramCache_AllocateBlocks(u32 id, u32 size);
 s32 VramCache_GetLongestFreeRun(void);
 s32 VramCache_FreeBlocks(s32 id);
-s32 Resource_ResetEntry(u32 no);
+s32 VramCache_FreeEntry(u32 no);
 s32 VramCache_ReleaseVram(u32 no);
 s32 VramCache_Load(u32 no, u32 size, const void *src);
 void VramCache_Reset(void);
-s32 Resource_FindFreeEntry(void);
+s32 VramCache_FindFreeEntry(void);
 s32 VramCache_AllocEntry(s32 size);
 s32 VramCache_Reload(s32 no, s32 src);
 
@@ -114,7 +114,7 @@ void *Alloc(s32 size);
 void *AllocEwram(s32 size);
 void Runtime_ReservedNoOp(void);
 
-void Render_ResetTransformState(void);
+void Transform_Reset(void);
 void Transform_Push(void);
 void Transform_Store(void *dst);
 void Transform_Load(const void *src);
@@ -133,21 +133,21 @@ void Transform_SetLookAt(s32 *eye, s32 *target);
 void Transform_ApplyLookAt(s32 *eye, s32 *target);
 void Projection_SetFieldOfView(u32 fieldOfView, s32 nearDepth, s32 farDepth);
 void Projection_Set(u32 focal, u32 nearDepth, u32 farDepth);
-s32 Render_ProjectPoint(const void *point, s32 *screen);
+s32 Transform_ProjectPoint(const void *point, s32 *screen);
 
 void Decompress_Halfwords(const void *source, void *destination);
-void ColorBuffer_BackupAndBrighten(u8 *buffer, u32 amount, u8 *backup,
+void PaletteFade_BackupAndBrighten(u8 *buffer, u32 amount, u8 *backup,
                                    u32 bytes);
-void ColorBuffer_BackupAndDarken(u8 *buffer, u32 amount, u8 *backup, u32 bytes);
-void ColorBuffer_BackupAndScaleThreeQuarters(u8 *buffer, u8 *backup, u32 bytes);
-void ColorBuffer_BackupAndHalve(u8 *buffer, u8 *backup, u32 bytes);
-void ColorBuffer_BackupAndBrightenPartial(u8 *buffer, u32 amount, u8 *backup,
+void PaletteFade_BackupAndDarken(u8 *buffer, u32 amount, u8 *backup, u32 bytes);
+void PaletteFade_BackupAndScaleThreeQuarters(u8 *buffer, u8 *backup, u32 bytes);
+void PaletteFade_BackupAndHalve(u8 *buffer, u8 *backup, u32 bytes);
+void PaletteFade_BackupAndBrightenPartial(u8 *buffer, u32 amount, u8 *backup,
                                           u32 bytes);
-void ColorBuffer_BackupAndDarkenPartial(u8 *buffer, u32 amount, u8 *backup,
+void PaletteFade_BackupAndDarkenPartial(u8 *buffer, u32 amount, u8 *backup,
                                         u32 bytes);
-void ColorBuffer_BackupAndScaleNonzeroThreeQuarters(u8 *buffer, u8 *backup,
+void PaletteFade_BackupAndScaleNonzeroThreeQuarters(u8 *buffer, u8 *backup,
                                                     u32 bytes);
-void ColorBuffer_BackupAndHalveNonzero(u8 *buffer, u8 *backup, u32 bytes);
+void PaletteFade_BackupAndHalveNonzero(u8 *buffer, u8 *backup, u32 bytes);
 s32 Save_InitializeWork(void);
 u32 Save_SelectWriteSector(s32 mode);
 u32 Save_WriteSector(s32 sector);

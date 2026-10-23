@@ -108,7 +108,7 @@ void FieldEffect_SetupResourcesAndWindow(void) {
   oam = (u32 *)work->markers;
 #endif
   objectEvent = ObjectEvent_GetById(gGameState.leaderLocalId);
-  work->markerVramBlock = Resource_FindFreeEntry();
+  work->markerVramBlock = VramCache_FindFreeEntry();
   Dma_Fill32(0, markerTiles, WORLD_MAP_MARKER_TILE_BYTES);
   markerTiles[0] = 255;
   markerTiles[1] = 0x1ff;
@@ -153,7 +153,7 @@ void FieldEffect_SetupResourcesAndWindow(void) {
         << 16;
   }
   work->cursorVramBlock = Resource_LoadFixedBlockBIntoFreeSlotFar();
-  tile = gVramBlockCache[work->cursorVramBlock].offset;
+  tile = gVramCacheEntries[work->cursorVramBlock].offset;
   work->nameWindow = Window_CreateFar(0, 0, 0, 0, 2);
   work->namedMarker = -1;
   work->cursorSpeed = WORLD_MAP_CURSOR_MIN_SPEED;
@@ -190,8 +190,8 @@ void FieldEffect_SetupResourcesAndWindow(void) {
 void FieldEffect_CleanupResourcesAndWindow(void) {
   struct RegionMapWork *work = (struct RegionMapWork *)gMapGridCellBuffer;
 
-  Resource_ResetEntry(work->markerVramBlock);
-  Resource_ResetEntry(work->cursorVramBlock);
+  VramCache_FreeEntry(work->markerVramBlock);
+  VramCache_FreeEntry(work->cursorVramBlock);
   Window_CloseFar(work->nameWindow, 2);
 }
 
@@ -235,12 +235,12 @@ void RegionMap_UpdateMarkers(void) {
   work = (struct RegionMapWork *)Ram_MapGridCellBuffer;
   marker = work->markers;
   place = gRegionMap_MapSecMarkers;
-  tileBase = gVramBlockCache[work->markerVramBlock].offset >> 5;
+  tileBase = gVramCacheEntries[work->markerVramBlock].offset >> 5;
 #else
   work = (struct RegionMapWork *)Ram_MapGridCellBuffer;
   leader = gGameState.leaderLocalId;
   place = gRegionMap_MapSecMarkers;
-  tileBase = gVramBlockCache[work->markerVramBlock].offset >> 5;
+  tileBase = gVramCacheEntries[work->markerVramBlock].offset >> 5;
   marker = work->markers;
 #endif
   nearestMarker = -1;
@@ -355,7 +355,7 @@ void RegionMap_UpdateMarkers(void) {
     }
     // Blink the current map section for eight frames out of sixteen.
     if (markerIndex != 0 || (gFrameCount & 15) <= 7)
-      Runtime_PushSlotEntry(&WORLD_MAP_MARKER_VIEW(marker++), y);
+      Oam_AddSpriteAtDepth(&WORLD_MAP_MARKER_VIEW(marker++), y);
   }
 #if REGION_MAP_CURSOR_SNAPS
   // With the d-pad released, the cursor moves onto the nearest marker.
@@ -392,7 +392,7 @@ void RegionMap_UpdateMarkers(void) {
     WORLD_MAP_MARKER_VIEW(marker).tile = tileBase + 3;
     WORLD_MAP_MARKER_VIEW(marker).x = nearestX - 2;
     WORLD_MAP_MARKER_VIEW(marker).y = nearestY - 2;
-    Runtime_PushSlotEntry(&WORLD_MAP_MARKER_VIEW(marker), nearestY);
+    Oam_AddSpriteAtDepth(&WORLD_MAP_MARKER_VIEW(marker), nearestY);
   }
 
   // The cursor.
@@ -400,7 +400,7 @@ void RegionMap_UpdateMarkers(void) {
   WORLD_MAP_MARKER_VIEW(marker).affineIndex = 0;
   WORLD_MAP_MARKER_VIEW(marker).x = cursorX - 17;
   WORLD_MAP_MARKER_VIEW(marker).y = cursorY + 1;
-  Runtime_PushSlotEntry(&WORLD_MAP_MARKER_VIEW(marker), 246);
+  Oam_AddSpriteAtDepth(&WORLD_MAP_MARKER_VIEW(marker), 246);
 
   // Redraw only when the selected marker changes, including to no marker.
   if (work->namedMarker != nearestMarker) {

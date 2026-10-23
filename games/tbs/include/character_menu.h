@@ -40,7 +40,7 @@ struct SummaryScreenWork {
   u8 selectedRow;
   u8 columnCount;
   u8 rowCount;
-  struct AnimationObject *ownerObjects[8];
+  struct Sprite *ownerObjects[8];
   s16 ownerX[8];     ///< screen pixels
   s16 ownerY[8];     ///< screen pixels
   s32 ownerScale[8]; ///< 16.16 fixed point, 0x10000 full size
@@ -57,7 +57,7 @@ struct SummaryScreenWork {
   struct WindowSprite *selectedIcon;
   u16 page;           ///< 3 for the member chooser, 0 for the Status menu
   s16 completionFlag; ///< ItemMenuWork's; not named here
-  struct AnimationObject *rowObjects[4];
+  struct Sprite *rowObjects[4];
   s16 rowX[4]; ///< screen pixels
   s16 rowY[4]; ///< screen pixels
 };

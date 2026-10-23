@@ -594,7 +594,7 @@ s32 ValeInteriorsInn_Initialize(void) {
 /// EventScript_HurryToThePlaza follows.
 static void EventScript_DoraWakesIsaac(void) {
   s32 firstMessage;
-  struct AnimationObject *sprite;
+  struct Sprite *sprite;
   struct MapGridScrollWork *grid;
   struct ObjectEvent *viewCenter;
   struct EventWork **eventSlot;
@@ -775,7 +775,7 @@ static __inline__ void SetBlendAlpha(u32 value) { REG_BLDALPHA = value; }
 /// EventScript_DoraSendsIsaacToThePlaza follows.
 static void EventScript_HurryToThePlaza(void) {
   struct ObjectEvent *objectEvent;
-  struct AnimationObject *sprite;
+  struct Sprite *sprite;
   u32 i;
   volatile u16 *alpha;
 
@@ -1154,7 +1154,7 @@ static void ValeInteriorsInn_RestoreRoomPatch(void) {
 /// EventScript_KradenSetsOff gathers the party.
 static void EventScript_ShowMythrilBag(void) {
   struct ObjectEvent *objectEvent;
-  struct AnimationObject *sprite;
+  struct Sprite *sprite;
   GlyphTransfer *glyph;
   u8 clear;
 
@@ -1246,8 +1246,8 @@ static void ValeInteriorsInn_SpawnEffectPair(union FieldObject *fieldObject) {
   struct ObjectEvent *parent = &fieldObject->objectEvent;
   struct ObjectEvent *pair[2];
   struct ObjectEvent *child;
-  struct AnimationObject *part;
-  struct AnimationObject *sprite;
+  struct Sprite *part;
+  struct Sprite *sprite;
   struct FieldEffectWork *effectWork = gFieldEffectWork;
   s32 effectIndex;
 
@@ -1265,11 +1265,11 @@ static void ValeInteriorsInn_SpawnEffectPair(union FieldObject *fieldObject) {
         sprite = part;
         Object_InitializeMode(part, 0);
         sprite->flags = 0;
-        Resource_ResetEntry(sprite->slot);
+        VramCache_FreeEntry(sprite->slot);
         sprite->slot = effectWork->tileSlot;
         sprite->retainCacheEntry = 1;
         sprite->image.tile =
-            (gVramBlockCache[sprite->slot].offset >> 5) & 0x3ff;
+            (gVramCacheEntries[sprite->slot].offset >> 5) & 0x3ff;
         sprite->image.fullColor = 0;
         sprite->image.shape = 1;
         part->image.size = 2;
@@ -1279,14 +1279,14 @@ static void ValeInteriorsInn_SpawnEffectPair(union FieldObject *fieldObject) {
   }
   {
     struct ObjectEvent *effectObjectEvent = pair[0];
-    struct AnimationObject *effectSprite = effectObjectEvent->sprite;
+    struct Sprite *effectSprite = effectObjectEvent->sprite;
 
     effectObjectEvent->update = FieldEffect_AnimateVerticalNegative;
     effectSprite->image.priority = 2;
   }
   {
     struct ObjectEvent *effectObjectEvent = pair[1];
-    struct AnimationObject *effectSprite = effectObjectEvent->sprite;
+    struct Sprite *effectSprite = effectObjectEvent->sprite;
 
     effectSprite->image.priority = 2;
     effectObjectEvent->update = FieldEffect_AnimateVerticalPositive;

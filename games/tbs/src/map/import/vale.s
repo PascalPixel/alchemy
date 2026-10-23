@@ -11,9 +11,9 @@
 	.set import.Vector_AddPolarOffset, 1
 	.set import.Engine_HeapAllocate, 1
 	.set import.Engine_HeapRelease, 1
-	.set import.Resource_ResetEntry, 1
+	.set import.VramCache_FreeEntry, 1
 	.set import.Engine_VramLoad, 1
-	.set import.AnimationObject_SelectAnimation, 1
+	.set import.Sprite_StartAnim, 1
 	.set import.ObjectEvent_SetMode, 1
 	.set import.Engine_ObjectSetScript, 1
 	.set import.Engine_ObjectCreate, 1

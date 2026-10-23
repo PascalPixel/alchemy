@@ -97,7 +97,7 @@ enum ObjectEventAnimation {
   ANIMATION_LEADER_LEAVE_ALTERNATE = 25,
   ANIMATION_LEADER_LEAVE = 26,
   ///@}
-  /// Spinning round once, then drawn blank (ANIMATION_COMMAND_BLANK).
+  /// Spinning round once, then drawn blank (ANIMCMD_BLANK).
   ANIMATION_LEADER_SPIN_AWAY = 27,
   ANIMATION_LEADER_ARMS_RAISED = 28, ///< both arms raised over his head
   /// Held in ANIMATION_LEADER_SPRING's crouch, knees bent, as after a lost
@@ -179,9 +179,9 @@ void Engine_ScriptCloseScreen(void);
 /// Waits as long as the script's screen transition runs
 /// (FieldScript_WaitTransitionFrames).
 void Engine_ScriptWaitForScreen(void);
-/// Fades the game's layers to black (Fade_ToBlack). The argument is the fade's
-/// length in frames: the cleared-game menu passes 0 to black the screen at
-/// once.
+/// Fades the game's layers to black (ScreenFade_ToBlack). The argument is the
+/// fade's length in frames: the cleared-game menu passes 0 to black the screen
+/// at once.
 void Engine_BlendSetDarkenTarget16(s32 target);
 /// Returns the ROM address of a resource, from the resource directory
 /// (Resource_GetTableEntry).
@@ -444,15 +444,15 @@ void Engine_MapGridCopyCellsTo(s32 sourceX, s32 sourceY, s32 destinationX,
 /// parameter names here do not.
 void Engine_MapGridCopyCellsLayered(s32 sourceX, s32 sourceY, s32 destinationX,
                                     s32 destinationY, s32 width, s32 height);
-/// Sets the colours the colour buffer shows now (ColorBuffer_SetSource): value
-/// is one colour, a PALETTE_TRANSFORM_ value or a ready buffer, and mode picks
+/// Sets the colours the colour buffer shows now (PaletteFade_SetSource): value
+/// is one colour, a PALETTE_TINT_ value or a ready buffer, and mode picks
 /// all palettes (0), the BG's (1) or the OBJ's (2).
 void Engine_ColorBufferApplySource(s32 value, s32 mode);
 /// Sets the colours the colour buffer moves toward, value and mode as for
-/// Engine_ColorBufferApplySource (ColorBuffer_SetTarget).
+/// Engine_ColorBufferApplySource (PaletteFade_SetTarget).
 void Engine_ColorBufferApplyTarget(s32 value, s32 mode);
 /// Starts moving the shown colours to the target colours over frames
-/// (ColorBuffer_StartInterpolation).
+/// (PaletteFade_StartInterpolation).
 void Engine_ColorBufferInterpolate(s32 frames);
 /// Sends an object event toward (x, z) as Engine_ObjectEventSetDestination
 /// does, then waits for it, giving up after 600 frames
@@ -741,12 +741,12 @@ static inline void MapGrid_CopyCellsLayered(s32 sourceX, s32 sourceY,
 }
 
 /// Sets the colours the screen shows now, where a script's colour fade starts.
-static inline void ColorBuffer_ApplySource(s32 value, s32 mode) {
+static inline void PaletteFade_ApplySource(s32 value, s32 mode) {
   Engine_ColorBufferApplySource(value, mode);
 }
 
 /// Sets the colours a script's colour fade ends on.
-static inline void ColorBuffer_ApplyTarget(s32 value, s32 mode) {
+static inline void PaletteFade_ApplyTarget(s32 value, s32 mode) {
   Engine_ColorBufferApplyTarget(value, mode);
 }
 

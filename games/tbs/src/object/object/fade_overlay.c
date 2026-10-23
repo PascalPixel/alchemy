@@ -18,7 +18,7 @@ struct FadeView {
 /// above the object event's floor, draws a semi-transparent 16-pixel-wide
 /// sprite of colour 1 at the height of that ground. Registered as a scheduler
 /// callback by FieldEffect_StartFadeOverlay; reads the work in
-/// HEAP_SLOT_FADE_OVERLAY and queues the marks with Runtime_PushSlotEntry.
+/// HEAP_SLOT_FADE_OVERLAY and queues the marks with Oam_AddSpriteAtDepth.
 void FadeOverlay_DrawMarks(void) {
   struct FadeOverlayWork *work = HEAP_SLOT_BLOCK(HEAP_SLOT_FADE_OVERLAY);
 #ifdef UBFIX
@@ -58,7 +58,7 @@ void FadeOverlay_DrawMarks(void) {
   terrainLayer = objectEvent->layer;
   // The first tile of the solid block FieldEffect_StartFadeOverlay loaded (VRAM
   // cache block 94; tiles are 32 bytes).
-  tile = gVramBlockCache[94].offset >> 5;
+  tile = gVramCacheEntries[94].offset >> 5;
   // The left cell, 8 pixels left of the object event. The ground is read one
   // and two cells (16 and 32 pixels) south, the further one counting 16 pixels
   // lower, and the higher of the two is used.
@@ -82,7 +82,7 @@ void FadeOverlay_DrawMarks(void) {
     mark->x = ((u32)(x >> 16) & 0xfff0) - cameraX;
     screenRow = (z >> 16) & 0xf0;
     mark->y = screenRow - cameraZ - height + 16;
-    Runtime_PushSlotEntry(mark, 0);
+    Oam_AddSpriteAtDepth(mark, 0);
   }
   // The right cell, 8 pixels right of the object event, read the same way.
   x += 0x100000;
@@ -101,7 +101,7 @@ void FadeOverlay_DrawMarks(void) {
     mark->x = ((u32)(x >> 16) & 0xfff0) - cameraX;
     screenRow = (z >> 16) & 0xf0;
     mark->y = screenRow - cameraZ - height + 16;
-    Runtime_PushSlotEntry(mark, 0);
+    Oam_AddSpriteAtDepth(mark, 0);
   }
 }
 

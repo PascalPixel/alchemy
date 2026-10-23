@@ -59,22 +59,22 @@ void Shop_InitializeWork(void) {
   shop->mode = 12;
   shop->partyMemberCount = Party_ListMembersFar(shop->partyMemberIds);
   // Each icon is 128 bytes: four tiles of 4 bits a pixel, a 16x16 sprite
-  resourceSlot = Resource_FindFreeEntry();
+  resourceSlot = VramCache_FindFreeEntry();
   shop->cursorIcon = resourceSlot;
   VramCache_Load(resourceSlot, 128, gMenuCursor_HandTiles);
-  resourceSlot = Resource_FindFreeEntry();
+  resourceSlot = VramCache_FindFreeEntry();
   shop->previousPageIcon = resourceSlot;
   VramCache_Load(resourceSlot, 128, gShop_UpArrowTiles);
-  resourceSlot = Resource_FindFreeEntry();
+  resourceSlot = VramCache_FindFreeEntry();
   shop->nextPageIcon = resourceSlot;
   VramCache_Load(resourceSlot, 128, gShop_DownArrowTiles);
-  resourceSlot = Resource_FindFreeEntry();
+  resourceSlot = VramCache_FindFreeEntry();
   shop->gemIcon = resourceSlot;
   VramCache_Load(resourceSlot, 128, gShop_GemTiles);
-  resourceSlot = Resource_FindFreeEntry();
+  resourceSlot = VramCache_FindFreeEntry();
   shop->statDownIcon = resourceSlot;
   VramCache_Load(resourceSlot, 128, gShop_SmallDownArrowTiles);
-  resourceSlot = Resource_FindFreeEntry();
+  resourceSlot = VramCache_FindFreeEntry();
   shop->statUpIcon = resourceSlot;
   VramCache_Load(resourceSlot, 128, gShop_SmallUpArrowTiles);
   Task_Add(MenuCursor_Step, TASK_PRIORITY_MAIN_LOOP);
@@ -88,12 +88,12 @@ void Shop_ReleaseWork(void) {
   state = gMenuWork;
   Task_Remove(MenuCursor_Step);
   UiWork_FinalizePendingCoreFar();
-  Resource_ResetEntry(state->cursorIcon);
-  Resource_ResetEntry(state->previousPageIcon);
-  Resource_ResetEntry(state->nextPageIcon);
-  Resource_ResetEntry(state->gemIcon);
-  Resource_ResetEntry(state->statUpIcon);
-  Resource_ResetEntry(state->statDownIcon);
+  VramCache_FreeEntry(state->cursorIcon);
+  VramCache_FreeEntry(state->previousPageIcon);
+  VramCache_FreeEntry(state->nextPageIcon);
+  VramCache_FreeEntry(state->gemIcon);
+  VramCache_FreeEntry(state->statUpIcon);
+  VramCache_FreeEntry(state->statDownIcon);
   FreeHeapSlot(HEAP_SLOT_MENU);
 }
 
@@ -124,8 +124,7 @@ s32 Shop_Run(s32 stockRow, s32 keeperId) {
   if (stockRow == SHOP_STOCK_ROW_XIAN_ITEMS)
     shop->warriorShop = 1;
   shop->keeperGraphics =
-      ((struct AnimationObject *)((struct Object *)ObjectEvent_GetByIdFar(
-                                      keeperId))
+      ((struct Sprite *)((struct Object *)ObjectEvent_GetByIdFar(keeperId))
            ->animation)
           ->entries[0]
           ->animationId;
@@ -203,8 +202,8 @@ s32 Shop_OpenDebugShop(s32 unused) {
 /// Waits one frame at a time until the sound driver has finished the last
 /// command. Called by the inn's sleep, the sanctum and two scripts that wait
 /// for a fanfare.
-void AudioCommand_WaitForStateByteClear(void) {
-  while (AudioCommand_GetStateByteFar() != 0) {
+void Sound_WaitForFanfare(void) {
+  while (Sound_GetBgmRestoreDelayFar() != 0) {
     WaitFrames(1);
   }
 }

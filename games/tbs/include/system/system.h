@@ -64,7 +64,7 @@ extern void *Resource_DirectoryTable[];
 /// The size of Resource_PatchThumbBranch (decode_01.s).
 extern u8 Resource_PatchThumbBranchCodeSize[];
 /// The first five 256-byte colour tables of SpriteColorMode, indexed by pixel.
-extern u8 gResourceSlot_ConversionTables[][256];
+extern u8 gSpriteColorTables[][256];
 /// The window font's 16 colours, loaded as BG palette 15
 /// (Window_LoadGraphics).
 extern const u16 gWindow_Palette[];
@@ -76,8 +76,8 @@ s32 RunFlashEraseVerifier(u8 *, u8 *);
 void StartFlashTimer(u8 index);
 #endif
 
-struct AnimationEntry;
-struct AnimationObject;
+struct SpriteAnim;
+struct Sprite;
 struct SelectionNode;
 struct T;
 
@@ -104,9 +104,9 @@ extern u8 IwramSoundPresetCode[];
 /// Save_WriteSector calls.
 extern u32 gFlash_Handler0;
 #endif
-/// HEAP_SLOT_ANIMATION_LAYERS: the animation layer records (struct
-/// AnimationEntry) that Animation_AllocateLayer takes from.
-extern struct AnimationEntry *gAnimationObjects[];
+/// HEAP_SLOT_SPRITE_ANIMS: the animation layer records (struct
+/// SpriteAnim) that SpriteAnim_Alloc takes from.
+extern struct SpriteAnim *gSpriteAnims[];
 /// Where the debug text writes next on its 32 by 20 screen in BG0.
 extern u16 *gDebugTextCursor;
 /// Nonzero lets DebugText_Print write; the power-on set-up and the credits
@@ -123,15 +123,15 @@ extern u8 gSaveBuffer[];
 extern s16 gSaveSlot;
 /// The five sound presets' mixer code, SOUND_PRESET_SIZE bytes each.
 extern u8 IwramCodeRecords[];
-/// The size of Render_BuildOamListKernel (decode_byte_lz.s).
+/// The size of Oam_BuildBufferKernel (decode_byte_lz.s).
 extern u8 LoadedRuntime_Size[];
 /// No code in the tree defines or reads it.
 extern const u16 gMath_ArcTanTable[];
 /// The sprites' shadow, 16 by 8 at 256 colours, loaded into VRAM cache entry
 /// 93.
 extern const u8 gObject_ShadowTiles[];
-/// The ARM OAM list builder, run from a heap copy by Render_BuildOamList.
-extern const u8 Render_BuildOamListKernel[];
+/// The ARM OAM list builder, run from a heap copy by Oam_BuildBuffer.
+extern const u8 Oam_BuildBufferKernel[];
 /// The ARM register-write executor, run from a stack copy by
 /// IoWriteQueue_FlushPending.
 extern const u8 Resource_ExecuteTransfer[];

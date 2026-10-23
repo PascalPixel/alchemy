@@ -440,7 +440,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
             Battle_ClassifyEntryKind(
                 (const struct AbilityDefinition *)ability));
         state->iconShown[1] = 0;
-        Resource_ResetEntry(handle);
+        VramCache_FreeEntry(handle);
         Window_Close(commandWindow, 1);
         if (mode == -1) {
           goto psynergy_menu;
@@ -528,7 +528,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
                 (const struct AbilityDefinition *)ability));
         command->range = ability->range;
         state->iconShown[1] = 0;
-        Resource_ResetEntry(handle);
+        VramCache_FreeEntry(handle);
         Window_Close(commandWindow, 1);
         if (mode == -1) {
           goto djinn_menu;
@@ -714,7 +714,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
             Battle_ClassifyEntryKind(
                 (const struct AbilityDefinition *)ability));
         state->iconShown[1] = 0;
-        Resource_ResetEntry(handle);
+        VramCache_FreeEntry(handle);
         Window_Close(commandWindow, 1);
         if (mode == -1) {
           goto item_menu;
@@ -773,8 +773,8 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
   if (state->timerWindow != 0) {
     Window_Close((struct Window *)state->timerWindow, 1);
   }
-  Resource_ResetEntry(smallIconSlot);
-  Resource_ResetEntry(largeIconSlot);
+  VramCache_FreeEntry(smallIconSlot);
+  VramCache_FreeEntry(largeIconSlot);
   Task_Remove(UpdateLinkSessionCountdown);
   if (state->linkTimer != 0) {
     // Keep the completion wait visible while the peer finishes its commands.

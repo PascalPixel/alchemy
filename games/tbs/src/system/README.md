@@ -101,7 +101,7 @@ The hardware addresses video memory in fixed blocks (`games/tbs/include/system/i
   blocks 1 to 3 ([Layouts](../layout/README.md)).
 - Screens that load two pictures in turn split the background in halves: the
   first 32 KB with background colours 0 to 127, the second with colours 128 to
-  255 (`Graphics_LoadCharacterBlockAndPalette`,
+  255 (`Credits_LoadBackground`,
   `games/tbs/src/graphics/credits/credits.c`).
 - Sprite tiles take the last 32 KB (`OBJ_VRAM0`), which the sprite VRAM cache
   hands out as 512 blocks of 64 bytes
@@ -306,7 +306,7 @@ itself, the layout has to keep every one:
 | The sound driver's mixer, `SoundDriver_Mixer` (932 bytes) | `0x03007000`, inside the IWRAM heap's range | `Audio_Initialize` copies the mixer to that number (`Ram_SoundMixer`), and the driver runs it there. The copy is 1 KB at once (`SOUND_MIXER_CODE_SIZE`), so the 92 bytes after the mixer in the ROM land just after it. |
 | The frame wait's stack top, `Ram_FrameWaitStackTop` | `0x03007a00` | The 512 bytes between it and the heap's end are what the frame loop, its [tasks](../../glossary.md#task) and the VBlank work always have ([Runtime](../runtime/README.md)). |
 | The stacks and the interrupt vector, `gIrqVector` | the top of IWRAM | `System_Entry` sets the system and IRQ stacks there, and the BIOS jumps through `gIrqVector` on an interrupt. |
-| `gBgScroll`, `gVramBlockCache` and `gHeapSlots` (`Ram_HeapSlots`) | among the main image's IWRAM variables | The code reaches them as constants. German moves all three 16 bytes up, so `ram_buffer.h` chooses them per edition. |
+| `gBgScroll`, `gVramCacheEntries` and `gHeapSlots` (`Ram_HeapSlots`) | among the main image's IWRAM variables | The code reaches them as constants. German moves all three 16 bytes up, so `ram_buffer.h` chooses them per edition. |
 
 ## How far the heaps run past their space
 
@@ -323,7 +323,7 @@ screen, field [Psynergy](../../glossary.md#psynergy-and-pp) cast from the menu a
 talk, the world map and its still picture, the credits and sleep mode.
 
 - In battle the IWRAM heap runs into the sound driver's mixer. With the
-  heap's next address at `0x0300667c`, `Sprite_ComposeAnimationFrame` takes
+  heap's next address at `0x0300667c`, `Sprite_ComposeFrame` takes
   the 4 KB pixel buffer of a 64 by 64 sprite from `Alloc`, 1,660 bytes of
   it over `SoundDriver_Mixer`, and clearing the buffer overwrites the mixer
   from its first word. Nothing copies the mixer back, and nothing needs it:

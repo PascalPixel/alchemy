@@ -29,7 +29,7 @@ void MercuryLighthouse_RestoreLights(s32 region,
                                      struct MercuryLighthouseLights *st) {
   struct ObjectEvent *objectEvent;
   struct ObjectEvent *obj;
-  struct AnimationObject *animation;
+  struct Sprite *animation;
   struct MapGridCell *cell;
   s32 z;
   s32 flag;
@@ -57,7 +57,7 @@ void MercuryLighthouse_RestoreLights(s32 region,
       obj->motionFlags = 4;
       obj->y.fixed += -0x8000;
       if (animation != 0) {
-        AnimationObject_SelectAnimation(animation, 6 - st->levels);
+        Sprite_StartAnim(animation, 6 - st->levels);
         animation->flags = 0;
         animation->image.priority = 1;
       }
@@ -79,7 +79,7 @@ void MercuryLighthouse_RestoreLights(s32 region,
     obj->priorityFlags = 2;
     obj->speed = 0x40000;
     if (animation != 0) {
-      AnimationObject_SelectAnimation(animation, 6);
+      Sprite_StartAnim(animation, 6);
       animation->flags = 0;
     }
     st->stepEffect = obj;

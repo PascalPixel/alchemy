@@ -16,5 +16,5 @@ FarCall_ShopTable:
 	export Shop_SaveAndTintFieldPaletteFar, Shop_SaveAndTintFieldPalette
 	export Shop_RestoreFieldPaletteFar, Shop_RestoreFieldPalette
 	export ItemPicker_RunFar, ItemPicker_Run
-	export AudioCommand_WaitForStateByteClearFar, AudioCommand_WaitForStateByteClear
+	export Sound_WaitForFanfareFar, Sound_WaitForFanfare
 	export Inn_PlaySleepFar, Inn_PlaySleep

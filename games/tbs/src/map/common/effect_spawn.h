@@ -33,7 +33,7 @@ enum {
 /// Starts with linear motion and the leader's draw order; options can override
 /// it.
 static inline void FieldEffect_InitializeMotion(struct FieldEffect *effect,
-                                                struct AnimationObject *sprite,
+                                                struct Sprite *sprite,
                                                 struct ObjectEvent *leader,
                                                 s32 velocityX, s32 velocityY,
                                                 s32 velocityZ) {
@@ -44,8 +44,7 @@ static inline void FieldEffect_InitializeMotion(struct FieldEffect *effect,
   // this site matches with (map/README.md): as the field, the pointer's
   // reload moves after the velocity.z store.
   sprite->image.priority =
-      (*(struct AnimationObject **)((u8 *)leader +
-                                    offsetof(struct ObjectEvent, sprite)))
+      (*(struct Sprite **)((u8 *)leader + offsetof(struct ObjectEvent, sprite)))
           ->image.priority;
   effect->scaleRateX = 0;
   effect->scaleRateY = 0;
@@ -57,7 +56,7 @@ static inline void FieldEffect_InitializeMotion(struct FieldEffect *effect,
             u32 flags, const struct EffectOptions *options) {                  \
     struct ObjectEvent *party = ObjectEvent_Get(LOCALID_PARTY_LEADER);         \
     struct FieldEffect *effect;                                                \
-    struct AnimationObject *sprite;                                            \
+    struct Sprite *sprite;                                                     \
     const s32 *script;                                                         \
                                                                                \
     if ((flags & EFFECT_USE_TYPE) != 0 && options != 0)                        \

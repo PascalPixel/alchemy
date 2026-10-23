@@ -9,25 +9,26 @@ void Title_UpdateIntroSprites(void);
 void Title_LoadIntroBackgrounds(void);
 s32 Title_ShowIntro(s32 prompt);
 void Title_NoOpPalette(void);
-s32 Title_ShowSplashScreen(s32 mode);
-s32 Title_ShowAnimatedSplash(void);
-void Graphics_NoOpColor(void);
-void PaletteFade_CalculateSteps(s16 *sourceComponents, s16 *targetComponents,
-                                s16 *componentSteps, s32 frames);
-void PaletteFade_Update(void);
-void Palette_Transform(u32 mode, u16 *source, u16 *destination,
-                       s32 paletteHalf);
-void PaletteFade_Initialize(void);
-void PaletteFade_Release(void);
-void PaletteFade_SetTarget(s32 mode, s32 paletteHalf);
+s32 Title_ShowNintendoLogo(s32 mode);
+s32 Title_ShowCamelotLogo(void);
+void Title_NoOpColor(void);
+void TitlePaletteFade_CalculateSteps(s16 *sourceComponents,
+                                     s16 *targetComponents, s16 *componentSteps,
+                                     s32 frames);
+void TitlePaletteFade_Update(void);
+void TitlePaletteFade_BuildColors(u32 mode, u16 *source, u16 *destination,
+                                  s32 selectedPalettes);
+void TitlePaletteFade_Initialize(void);
+void TitlePaletteFade_Release(void);
+void TitlePaletteFade_SetTarget(s32 mode, s32 selectedPalettes);
 // UB: the early call implicitly returns int, but the definition returns void.
 // A plain prototype reverses the two argument moves in Title_ShowIntro (EN).
 #ifdef UBFIX
-void PaletteFade_SetCurrent(s32 mode, s32 paletteHalf);
+void TitlePaletteFade_SetCurrent(s32 mode, s32 selectedPalettes);
 #endif
-void PaletteFade_SetBackdrop(s32 color);
-void PaletteFade_Start(s32 frames);
-s32 Graphics_ClampRgb555Channel(s32 value);
-s32 Graphics_ClampRgb555Component(s32 value);
+void TitlePaletteFade_SetBackdrop(s32 color);
+void TitlePaletteFade_Start(s32 frames);
+s32 TitlePaletteFade_ClampComponent(s32 value);
+s32 TitlePaletteFade_ClampShiftedComponent(s32 value);
 
 #endif

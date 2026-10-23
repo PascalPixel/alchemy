@@ -66,7 +66,7 @@ void UpdateLinkSessionCountdown(void) {
     i = 2;
     do {
       if (*active++ != 0)
-        Runtime_PushSlotEntry(entry, 240);
+        Oam_AddSpriteAtDepth(entry, 240);
       i--;
       entry++;
     } while (i >= 0);

@@ -114,7 +114,7 @@ struct WindowSprite *Shop_CreatePriceSprite(s32 value, struct Window *window,
       }
     }
   }
-  resourceSlot = Resource_FindFreeEntry();
+  resourceSlot = VramCache_FindFreeEntry();
   if (resourceSlot != VRAM_CACHE_ENTRY_COUNT) {
     VramCache_Load(resourceSlot, 0x100, tileBuffer);
     priceSprite =
@@ -131,12 +131,12 @@ void Shop_SaveAndTintFieldPalette(s32 layer) {
   // UB: slot 32 lies past scalar gFieldWork. Its named load adds eight
   // bytes in the native EN trial (0x54 to 0x5c).
 #ifdef UBFIX
-  struct ColorBuffer *paletteBuffers = gPaletteFadeWork;
+  struct PaletteFade *paletteBuffers = gPaletteFadeWork;
   u8 *eventBytes = (u8 *)gFieldWork;
 #else
   u32 *workCells = (u32 *)&gFieldWork;
-  struct ColorBuffer *paletteBuffers =
-      (struct ColorBuffer *)workCells[HEAP_SLOT_PALETTE_FADE - HEAP_SLOT_FIELD];
+  struct PaletteFade *paletteBuffers =
+      (struct PaletteFade *)workCells[HEAP_SLOT_PALETTE_FADE - HEAP_SLOT_FIELD];
   u8 *eventBytes = (u8 *)workCells[0];
 #endif
   u16 *savedPalette = paletteBuffers->target;
@@ -145,16 +145,16 @@ void Shop_SaveAndTintFieldPalette(s32 layer) {
           (DMA_ENABLE | DMA_32BIT) << 16 | 0x150, REG_DMA3);
   Dma_Set(savedPalette, paletteBuffers->current,
           (DMA_ENABLE | DMA_32BIT) << 16 | 0x2a0, REG_DMA3);
-  ColorBuffer_SetTargetFar(layer, 1);
-  ColorBuffer_StartInterpolationFar(16);
+  PaletteFade_SetTargetFar(layer, 1);
+  PaletteFade_StartInterpolationFar(16);
 }
 
 /// Fades back to the colours Shop_SaveAndTintFieldPalette saved, over 16
 /// frames. Called when the sanctum, Djinn capture or Altmiller wall effect
 /// ends.
 void Shop_RestoreFieldPalette(void) {
-  ColorBuffer_SetTargetFar((s32)gFieldWork + 0x236, 1);
-  ColorBuffer_StartInterpolationFar(0x10);
+  PaletteFade_SetTargetFar((s32)gFieldWork + 0x236, 1);
+  PaletteFade_StartInterpolationFar(0x10);
 }
 
 /// Moves the cursor from its saved position toward its target, in a straight

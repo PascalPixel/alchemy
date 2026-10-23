@@ -64,7 +64,7 @@ adds a second run of 128 while a screen that needs more is open. Each render
 output (`struct WindowSprite`) is moved every frame by its `UI_SPRITE_` motion
 (`UiWork_AnimateSpriteSlots`), and its picture holds an entry of the VRAM
 cache, the video memory kept for sprite pictures, until the window code frees
-it with `Resource_ResetEntry`.
+it with `VramCache_FreeEntry`.
 
 | Name | Value | Meaning |
 | --- | --- | --- |

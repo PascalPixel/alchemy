@@ -437,7 +437,7 @@ s32 BattlePresentation_RunUnitAction(struct BattleAction *action) {
 
   // Keep each target's sprite entries' parameters for the effect.
   for (targetIndex = 0; targetIndex != work.effect.targetCount; targetIndex++) {
-    struct AnimationObject *animation =
+    struct Sprite *animation =
         BattleObject_Get(work.effect.targets[targetIndex])->object->records;
     s32 entryIndex;
 
@@ -533,12 +533,12 @@ void BattlePresentation_ApplyUnitDamage(u32 unitId, s32 damage, s32 showMessage,
 /// frame and marks its object for release (BattleObject_MarkForRelease).
 /// Called by BattlePresentation_ApplyUnitDamage.
 void BattleMotion_SetMode5AndActivateSlot(s32 unitId) {
-  struct AnimationEntry *actorData;
-  struct AnimationObject *animation;
+  struct SpriteAnim *actorData;
+  struct Sprite *animation;
   if (Unit_GetFar(unitId)->hp <= 0) {
     // POSE_DAMAGE in grey, its first entry set to frame 0xff, past its last.
     animation = BattleObject_Get(unitId)->object->records;
-    AnimationObject_SelectAnimationFar(animation, POSE_DAMAGE);
+    Sprite_StartAnimFar(animation, POSE_DAMAGE);
     actorData = animation->entries[0];
     actorData->colorMode = SPRITE_COLOR_GREY;
     actorData->frame = 0xFF;

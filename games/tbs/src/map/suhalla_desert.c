@@ -863,7 +863,7 @@ static void SuhallaDesert_SetUpSecondMapStorms(void) {
   // Trial: the same blend-tail inline shrinks this function from 0x158 to 0x14c
   // bytes in tbs-en; retain the original body.
   struct ObjectEvent *objectEvent;
-  struct AnimationObject *sprite;
+  struct Sprite *sprite;
   s32 stormId;
   s32 stormAlpha = 0;
 
@@ -890,7 +890,7 @@ static void SuhallaDesert_SetUpSecondMapStorms(void) {
   }
   objectEvent = ObjectEvent_GetById(LOCALID_FOURTH_STORM);
   if (objectEvent != 0) {
-    struct AnimationEntry *part;
+    struct SpriteAnim *part;
 
     sprite = objectEvent->sprite;
     part = sprite->entries[0];

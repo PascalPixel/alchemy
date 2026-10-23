@@ -40,9 +40,9 @@ fanfare, and from 100 up a row of the song table, which is how sound effects
 play. A few numbers are controls rather than sounds, such as the one that
 fades the music out.
 
-Only a cue's low 16 bits count: the low 12 (`AUDIO_CUE_ID_MASK`) are the cue,
+Only a cue's low 16 bits count: the low 12 (`SONG_NUM_MASK`) are the cue,
 0 to 4,095, and the four above them are flags, of which only
-`AUDIO_CUE_START_SILENT` is read; it starts music at volume 0 and fades it
+`SONG_FLAG_FADE_IN` is read; it starts music at volume 0 and fades it
 in over 64 frames.
 
 The driver has eight players (`gSound_PlayerSlots`):
@@ -50,22 +50,22 @@ The driver has eight players (`gSound_PlayerSlots`):
 ten, and players 2 to 7 with two each. What a cue plays depends on its
 range:
 
-- From `AUDIO_SONG_FIRST` (100) up, a cue is a row of the song table
+- From `SONG_SE_FIRST` (100) up, a cue is a row of the song table
   (`gSound_SongTable`), played on the player the row names; sound effects
   such as `SE_SHOP_PURCHASE` and `SE_MENU_CURSOR_MOVE` are rows. A row that
   names player 7, `SOUND_PLAYER_EFFECT_LAST`, means any free player from 7
   down to 4 (`SOUND_PLAYER_EFFECT_FIRST`): a floating effect. It takes the
   first idle one counting down, and player 7 again if none is idle, so four
   floating effects play at once and a fifth cuts off the one on player 7.
-- From `AUDIO_JINGLE_FIRST` (80) to 99, a cue is a fanfare, such as
+- From `SONG_FANFARE_FIRST` (80) to 99, a cue is a fanfare, such as
   `MUS_TREASURE_FOUND` or `MUS_PUZZLE_SOLVED`, played on the fanfare player.
 - Below 80, a cue is music, played on the music player.
 
-Three cues are controls. `AUDIO_CUE_FADE_BGM` fades the music out over 112
+Three cues are controls. `SONG_FADE_OUT_BGM` fades the music out over 112
 frames (16 steps 7 frames apart); a second fade cue does nothing until new
 music has started. The fade records `MUS_SILENCE`, a song with no tracks, as
-the music chosen, so a later cue for the faded music starts it again. `AUDIO_CUE_KEEP_BGM` keeps
-the music that is playing. `AUDIO_CUE_FADE_SLOT3` fades player 3 out over
+the music chosen, so a later cue for the faded music starts it again. `SONG_KEEP_BGM` keeps
+the music that is playing. `SONG_FADE_OUT_ACTION_SE` fades player 3 out over
 48 frames. The three values are also rows of the song table (17, 18 and 289),
 and those rows never play, since the controls are tested first.
 
@@ -81,13 +81,13 @@ song's header and its player, and the players, `gSound_PlayerSlots`
 
 | Name | Value | Meaning |
 | --- | --- | --- |
-| `AUDIO_CUE_ID_MASK` | `0xfff` | the bits that are the cue |
-| `AUDIO_CUE_START_SILENT` | `0x1000` | flag: music starts at volume 0 and fades in over 64 frames |
-| `AUDIO_CUE_FADE_BGM` | 17 | fade the music out over 112 frames, once |
-| `AUDIO_CUE_KEEP_BGM` | 18 | keep the music that is playing |
-| `AUDIO_JINGLE_FIRST` | 80 | first fanfare cue; below it, music |
-| `AUDIO_SONG_FIRST` | 100 | first cue that is a song table row |
-| `AUDIO_CUE_FADE_SLOT3` | `0x121` (289) | fade player 3 out over 48 frames |
+| `SONG_NUM_MASK` | `0xfff` | the bits that are the cue |
+| `SONG_FLAG_FADE_IN` | `0x1000` | flag: music starts at volume 0 and fades in over 64 frames |
+| `SONG_FADE_OUT_BGM` | 17 | fade the music out over 112 frames, once |
+| `SONG_KEEP_BGM` | 18 | keep the music that is playing |
+| `SONG_FANFARE_FIRST` | 80 | first fanfare cue; below it, music |
+| `SONG_SE_FIRST` | 100 | first cue that is a song table row |
+| `SONG_FADE_OUT_ACTION_SE` | `0x121` (289) | fade player 3 out over 48 frames |
 | `SOUND_PLAYER_FANFARE` | 0 | the fanfare player, 4 tracks |
 | `SOUND_PLAYER_MUSIC` | 1 | the music player, 10 tracks |
 | `SOUND_PLAYER_EFFECT_FIRST` | 4 | the lowest player a floating effect may take |
@@ -108,39 +108,39 @@ it has, turns the music back up. The code that played the fanfare does
 nothing more.
 
 `Sound_PlaySong` sets the music's volume to 0, plays the fanfare on the
-fanfare player and sets `gMusicRestoreDelay` to `MUSIC_RESTORE_DELAY_FRAMES`;
+fanfare player and sets `gBgmRestoreDelay` to `BGM_RESTORE_DELAY_FRAMES`;
 the music keeps playing, silently.
 
-Once a VBlank, `MusicPlayer_StepVolumeAndPitchTowardTargets` (called from
+Once a VBlank, `Sound_UpdateBgmRamps` (called from
 `System_VBlankHandler`) counts the delay down to 1, then waits until the
 fanfare player has no track playing and sets the music's target volume back
 to full. The same routine steps the volume, and the combined tempo and
 pitch, towards their targets by a fixed step each VBlank, and stops on the
 target when a step would cross it. Nothing in this game moves the tempo and
-pitch target: its setter, `Audio_SetWorkPairB`, is reached only through a
-far-call entry no code names. Full volume is `MUSIC_UNITY_SCALE`, 1.0
+pitch target: its setter, `Sound_SetBgmTempoPitchTarget`, is reached only through a
+far-call entry no code names. Full volume is `BGM_UNITY_SCALE`, 1.0
 in the ramps' 8.8 fixed point (a number whose low 8 bits are a fraction in
-256ths, so 1.0 is 256), and the usual step `MUSIC_DEFAULT_RAMP_STEP`
+256ths, so 1.0 is 256), and the usual step `BGM_DEFAULT_RAMP_STEP`
 is 4, so a full fade takes 64 frames.
 
 Songs with more than eight tracks are not fully silenced by a fanfare. The
-music commands here select only tracks 0 to 7 (`MUSIC_ALL_TRACKS`, one bit a
+music commands here select only tracks 0 to 7 (`TRACKS_ALL`, one bit a
 track), though the music player has 10, so tracks 8 and 9 keep their volume
 and pitch through the ramps and under a fanfare. Nine songs use them: music
 6, 22, 28, 29, 40 to 43 (`MUS_040` to `MUS_VENUS_LIGHTHOUSE`) and 74. The
 original game does the same, since this is its code.
 
-The ramps are globals of the cue layer: `gMusicVolume`, `gMusicVolumeTarget`
-and `gMusicVolumeStep`, and `gMusicPitch`, `gMusicPitchTarget` and
-`gMusicPitchStep` for tempo and pitch together.
+The ramps are globals of the cue layer: `gBgmVolume`, `gBgmVolumeTarget`
+and `gBgmVolumeStep`, and `gBgmTempoPitch`, `gBgmTempoPitchTarget` and
+`gBgmTempoPitchStep` for tempo and pitch together.
 
 | Name | Value | Meaning |
 | --- | --- | --- |
-| `MUSIC_RESTORE_DELAY_FRAMES` | 10 | VBlanks after a fanfare starts before the music waits for it to end |
-| `MUSIC_UNITY_SCALE` | `0x100` | full volume, and the song's own tempo and pitch: 1.0 in 8.8 fixed point |
-| `MUSIC_DEFAULT_RAMP_STEP` | 4 | a ramp's step a VBlank: a full fade takes 64 frames |
-| `MUSIC_ALL_TRACKS` | `0xff` | the track mask of every music command: tracks 0 to 7 |
-| `MUSIC_WAIT_TIMEOUT_FRAMES` | 300 | frames `AudioCommand_WaitForCompletion` waits before giving up, about five seconds |
+| `BGM_RESTORE_DELAY_FRAMES` | 10 | VBlanks after a fanfare starts before the music waits for it to end |
+| `BGM_UNITY_SCALE` | `0x100` | full volume, and the song's own tempo and pitch: 1.0 in 8.8 fixed point |
+| `BGM_DEFAULT_RAMP_STEP` | 4 | a ramp's step a VBlank: a full fade takes 64 frames |
+| `TRACKS_ALL` | `0xff` | the track mask of every music command: tracks 0 to 7 |
+| `BGM_WAIT_TIMEOUT_FRAMES` | 300 | frames `Sound_WaitForSong` waits before giving up, about five seconds |
 
 ## The driver's lock
 

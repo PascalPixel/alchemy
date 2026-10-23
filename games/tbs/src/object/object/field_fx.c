@@ -20,7 +20,7 @@ struct EffectObject {
   /// falls (motion bit 1); 0x10000 when created.
   s32 gravity;
   u8 pad2[4];
-  struct AnimationObject *animation;
+  struct Sprite *animation;
   u8 pad3[24];
   void (*updateHook)(
       union FieldObject *fieldObject); ///< frame hook at offset 0x6c
@@ -94,7 +94,7 @@ static inline void Object_InitializeSparkle(struct Object *object) {
     ObjectDispatch_InitializeFar((struct DispatchObject *)object,
                                  gFieldEffect_ParticleScript);
     ObjectDispatch_SelectAnimationFar(object, 0);
-    ((struct AnimationObject *)object->animation)->image.priority = 1;
+    ((struct Sprite *)object->animation)->image.priority = 1;
   }
 }
 
@@ -171,7 +171,7 @@ struct EffectObject *FieldEffect_StartRandomParticleEmitter(s32 localId,
 
     do {
       if (effect->scriptWord != 0) {
-        if (effect->updateHook == RevealMarker_EmitSparkles) {
+        if (effect->updateHook == Reveal_EmitSparkles) {
           ObjectDispatch_ReleaseFar((struct DispatchObject *)effect);
         }
         if (effect->scriptWord == (s32)gFieldEffect_ParticleScript) {
@@ -192,7 +192,7 @@ struct EffectObject *FieldEffect_StartRandomParticleEmitter(s32 localId,
   ObjectDispatch_InitializeFar((struct DispatchObject *)picture,
                                gFieldEffect_ParticleEmitterScript);
   {
-    struct AnimationObject *sprite = picture->animation;
+    struct Sprite *sprite = picture->animation;
     void *iconBuffer;
 
     // No shadow, outline or animation layers: a 16-colour sprite in OBJ
@@ -296,7 +296,7 @@ void FieldEffect_StartEffectObject22(s32 item, s32 flags) {
       22, leader->x.fixed, leader->y.fixed + (36 << 16), leader->z.fixed);
 
   if (object != 0) {
-    struct AnimationObject *sprite = object->animation;
+    struct Sprite *sprite = object->animation;
 
     sprite->flags = 0;
     sprite->count = 0;
@@ -356,7 +356,7 @@ void FieldEffect_ClearRandomParticles(void) {
 /// Each frame of a Reveal marker: one time in ten, a sparkle appears within 16
 /// pixels of it. Installed as the marker's updateHook by
 /// FieldEffect_SpawnNearbyMarkers.
-void RevealMarker_EmitSparkles(union FieldObject *fieldObject) {
+void Reveal_EmitSparkles(union FieldObject *fieldObject) {
   const struct ObjectEvent *source = (const struct ObjectEvent *)fieldObject;
   union PolarOffsetPosition position;
   struct Object *object;
@@ -461,7 +461,7 @@ void FieldEffect_SpawnNearbyMarkers(void) {
                 ObjectDispatch_SetSingleChildFlagsFar(
                     (struct DispatchObject *)objectEvent, 0);
                 ((struct EffectObject *)objectEvent)->updateHook =
-                    RevealMarker_EmitSparkles;
+                    Reveal_EmitSparkles;
               }
             }
             break;

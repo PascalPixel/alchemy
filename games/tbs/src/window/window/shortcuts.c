@@ -141,10 +141,10 @@ void Debug_SelectAbilityPair(void) {
     win = Window_Create(4, 6, 20, 7, 2);
     title = Window_Create(4, 3, 20, 3, 2);
     info = Window_Create(4, 14, 20, 5, 2);
-    // Resource_FindFreeEntry reports no free entry as VRAM_CACHE_ENTRY_COUNT,
+    // VramCache_FindFreeEntry reports no free entry as VRAM_CACHE_ENTRY_COUNT,
     // not 0: this test lets that through, and with entry 0 it leaves cursor
     // NULL for the writes below. 0x40000000 is a 16x16 sprite.
-    slot = Resource_FindFreeEntry();
+    slot = VramCache_FindFreeEntry();
     if (slot != 0) {
       VramCache_Load(slot, 128, gResource_FixedBlockBTiles);
       cursor = WindowSprite_Create(slot, 0x40000000, win, 0, 0);
@@ -353,10 +353,10 @@ UNUSED void Menu_ReleaseSelectionWorkspace(void) {
     WaitFrames(1);
   }
   if (state->firstActive != 0) {
-    Resource_ResetEntry(state->firstResource);
+    VramCache_FreeEntry(state->firstResource);
   }
   if (state->secondActive != 0) {
-    Resource_ResetEntry(state->secondResource);
+    VramCache_FreeEntry(state->secondResource);
   }
   FreeHeapSlot(HEAP_SLOT_SELECTION_WORKSPACE);
 }

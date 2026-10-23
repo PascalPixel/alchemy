@@ -36,7 +36,7 @@ static inline void Vault_DrawDoorwayFrame(s32 sourceColumn) {
 /// The leader passes behind the doorframe through the warp.
 static void Vault_OpenDoorwayAndEnter(void) {
   struct ObjectEvent *objectEvent = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
-  struct AnimationObject *sprite = objectEvent->sprite;
+  struct Sprite *sprite = objectEvent->sprite;
 
   Engine_AudioPlayCue(SE_188);
   Vault_DrawDoorwayFrame(VAULT_DOOR_OPENING_FRAME_COLUMN);

@@ -579,7 +579,7 @@ static s32 WorldMap_SetUpKolimaBridge(struct ObjectScriptContext *interpreter) {
 static s32 WorldMap_AlignToMap(struct ObjectScriptContext *interpreter) {
   struct ObjectEvent *objectEvent = (struct ObjectEvent *)interpreter;
   struct WorldMapRenderWork *work = gMapGridWork[0];
-  struct AnimationObject *sprite = objectEvent->sprite;
+  struct Sprite *sprite = objectEvent->sprite;
 
   sprite->rotation = work->rotation;
   sprite->flags = 0;
@@ -591,7 +591,7 @@ static s32 WorldMap_AlignToMap(struct ObjectScriptContext *interpreter) {
 static s32 WorldMap_SetUpIodem(struct ObjectScriptContext *interpreter) {
   struct ObjectEvent *objectEvent = (struct ObjectEvent *)interpreter;
   struct WorldMapRenderWork *work = gMapGridWork[0];
-  struct AnimationObject *sprite = objectEvent->sprite;
+  struct Sprite *sprite = objectEvent->sprite;
 
   objectEvent->collisionFlags |= 1;
   sprite->rotation = work->rotation;
@@ -1103,7 +1103,7 @@ static void WorldMap_ShowHammetsCaravan(void) {
   Engine_ScriptWait(20);
   ObjectEvent_RunActionScriptAndWait(LOCALID_CARAVAN_FIRST_WAGON + 3,
                                      gCaravanFourthWagonArrives);
-  Script_PlaySong(AUDIO_CUE_FADE_SLOT3);
+  Script_PlaySong(SONG_FADE_OUT_ACTION_SE);
   spriteObjectEvent = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   if (spriteObjectEvent != 0) {
     ObjectEvent_SetPosition(GARET, spriteObjectEvent->x.fixed,
@@ -1140,7 +1140,7 @@ static void WorldMap_ShowHammetsCaravan(void) {
   ObjectEvent_FaceDirection(GARET, FACING_SOUTH, 10);
   ObjectEvent_RunActionScriptAndWait(LOCALID_CARAVAN_FIRST_WAGON + 3,
                                      gCaravanFourthWagonDeparts);
-  Script_PlaySong(AUDIO_CUE_FADE_SLOT3);
+  Script_PlaySong(SONG_FADE_OUT_ACTION_SE);
   Engine_ScriptWait(20);
   WorldMap_EndScript();
   Engine_ObjectEventSetAnimation(LOCALID_CARAVAN_FIRST_WAGON, ANIMATION_STAND);
@@ -1216,7 +1216,7 @@ static void WorldMap_ShowHammetsCaravan(void) {
   FieldCamera_SetSpeed(PIXELS(4), PIXELS(4));
   // The ground shakes, and a rock falls beside Hammet and his man.
   WorldMap_ShakeCameraOverCaravan();
-  Script_PlaySong(AUDIO_CUE_FADE_SLOT3);
+  Script_PlaySong(SONG_FADE_OUT_ACTION_SE);
   ObjectEvent_ShowEmote(LOCALID_CARAVAN_HAMMET,
                         EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   ObjectEvent_ShowEmote(LOCALID_CARAVAN_MAN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION,
@@ -1342,7 +1342,7 @@ static void WorldMap_ShowHammetsCaravan(void) {
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_NORTH, 0);
   ObjectEvent_FaceDirection(GARET, FACING_NORTH, 0);
   ObjectEvent_RefreshSelectorById(LOCALID_CARAVAN_FIRST_WAGON + 3);
-  Script_PlaySong(AUDIO_CUE_FADE_SLOT3);
+  Script_PlaySong(SONG_FADE_OUT_ACTION_SE);
   FieldCamera_SetSpeed(PIXELS(4), PIXELS(1) / 2);
   FieldCamera_MoveTo(PIXELS(5880), -1, PIXELS(1608), 1);
   Engine_CameraWaitForMove();
@@ -1865,7 +1865,7 @@ static void WorldMap_StepDownFromBunzasWagon(void) {
   ObjectEvent_MoveToAndWait(LOCALID_KALAY_WAGON, 5544, 2158);
   ObjectEvent_MoveToAndWait(LOCALID_KALAY_WAGON, 5608, 2168);
   Engine_ObjectEventSetAnimation(LOCALID_KALAY_WAGON, ANIMATION_STAND);
-  Script_PlaySong(AUDIO_CUE_FADE_SLOT3);
+  Script_PlaySong(SONG_FADE_OUT_ACTION_SE);
   Engine_ScriptWait(20);
   ObjectEvent_SetPosition(LOCALID_PARTY_LEADER, PIXELS(5592), PIXELS(2168));
   Engine_TaskWait(1);
@@ -1885,7 +1885,7 @@ static void WorldMap_StepDownFromBunzasWagon(void) {
   ObjectEvent_MoveToAndWait(LOCALID_KALAY_WAGON, 5490, 2136);
   ObjectEvent_MoveToAndWait(LOCALID_KALAY_WAGON, 5480, 2104);
   ObjectEvent_SetPosition(LOCALID_KALAY_WAGON, 0, 0);
-  Script_PlaySong(AUDIO_CUE_FADE_SLOT3);
+  Script_PlaySong(SONG_FADE_OUT_ACTION_SE);
   Engine_ScriptWait(40);
   FieldCamera_MoveTo(PIXELS(5592), -1, PIXELS(2136), 1);
   ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(4) / 5, PIXELS(2) / 5);
@@ -2097,7 +2097,7 @@ static void EventScript_UseBlackOrb(void) {
   struct ObjectEvent *leader;
   struct ObjectEvent *objectEvent;
   s32 message;
-  struct AnimationObject *sprite;
+  struct Sprite *sprite;
   u8 *buffer;
 
   leader = ObjectEvent_Get(LOCALID_PARTY_LEADER);
@@ -2256,7 +2256,7 @@ static void WorldMap_ShowEndingScene(void) {
   Engine_TaskWait(1);
   FieldEffect_ScheduleRatioTransition(3 * Q16_ONE / 2, 16);
   gFieldWork->transition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
-  ColorBuffer_ApplyTarget(PALETTE_TRANSFORM_WARM, 1);
+  PaletteFade_ApplyTarget(PALETTE_TINT_WARM, 1);
   gFieldWork->transitionFrames = 16;
   Engine_ScriptOpenScreen();
   FieldScript_WaitForZoomTransition();
@@ -2358,8 +2358,8 @@ static void WorldMap_ShowEndingScene(void) {
   Engine_ObjectEventStartRepeatedMotion(LOCALID_KRADEN, 2);
   Script_ShowMessageAndWait(LOCALID_KRADEN, 0, 60);
   WorldMap_LoadDefaultCellsAndUpdateBlock();
-  Script_PlaySong(AUDIO_CUE_FADE_BGM);
-  ColorBuffer_ApplyTarget(0, 0);
+  Script_PlaySong(SONG_FADE_OUT_BGM);
+  PaletteFade_ApplyTarget(0, 0);
   Engine_ColorBufferInterpolate(120);
   Engine_TaskWait(120);
   FieldScript_SetDestination((s32)&MapId_Title, TITLE_FROM_WORLD_MAP);
@@ -2392,8 +2392,8 @@ static void WorldMap_ShakeVenusLighthouse(void) {
     FieldScheduler_AddCallback(callback, priority);
   }
   Engine_ColorBufferApplySource(0, 0);
-  Engine_ColorBufferApplyTarget(PALETTE_TRANSFORM_MUTED, 1);
-  Engine_ColorBufferApplyTarget(PALETTE_TRANSFORM_PLAIN, 2);
+  Engine_ColorBufferApplyTarget(PALETTE_TINT_MUTED, 1);
+  Engine_ColorBufferApplyTarget(PALETTE_TINT_NONE, 2);
   Engine_ColorBufferInterpolate(40);
   Engine_ScriptWait(240);
   Engine_ColorBufferApplyTarget(0, 0);
@@ -2416,7 +2416,7 @@ static void WorldMap_UpdateLighthouseQuake(void) {
       Engine_ObjectCreate(SPRITE_DUST_PUFF, PIXELS(x) + PIXELS(QUAKE_DUST_LEFT),
                           0, PIXELS(z) + PIXELS(QUAKE_DUST_TOP));
   if (objectEvent != NULL) {
-    struct AnimationObject *sprite = objectEvent->sprite;
+    struct Sprite *sprite = objectEvent->sprite;
     s32 scale = (((u32)Engine_RandomNext() << 15) >> 16) + 6 * Q16_ONE / 5;
 
     sprite->flags = 0;
@@ -2533,7 +2533,7 @@ static s32 WorldMap_GetSeatRowValue(u32 seat) {
 static void WorldMap_SpawnIslandWake(void) {
   struct ObjectEvent *leader;
   struct ObjectEvent *objectEvent;
-  struct AnimationObject *sprite;
+  struct Sprite *sprite;
   u32 value;
 
   if ((*(s32 *)&gFrameCount & 15) != 0)
@@ -2594,7 +2594,7 @@ static void WorldMap_ShowIslandDrifting(void) {
   ObjectEvent_SetActionScript(LOCALID_DRIFTING_ISLAND, gIslandDriftsEast);
   FieldScheduler_AddCallback(WorldMap_SpawnIslandWake, TASK_PRIORITY_MAP);
   gFieldWork->transition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
-  ColorBuffer_ApplyTarget(PALETTE_TRANSFORM_WARM, 1);
+  PaletteFade_ApplyTarget(PALETTE_TINT_WARM, 1);
   gFieldWork->transitionFrames = 32;
   Engine_ScriptOpenScreen();
   Engine_ScriptWait(120);

@@ -10,30 +10,30 @@
 
 /// The sprite VRAM cache's sizes and its free marks. Sprite tile memory, from
 /// 0x06010000, is split into blocks that the cache entries own.
-enum VramBlockLimits {
-  /// Cache entries; Resource_FindFreeEntry returns this when none is free.
+enum VramCacheLimits {
+  /// Cache entries; VramCache_FindFreeEntry returns this when none is free.
   VRAM_CACHE_ENTRY_COUNT = 96,
   VRAM_BLOCK_COUNT = 512, ///< blocks of sprite VRAM
   VRAM_BLOCK_BYTES = 64,
-  VRAM_BLOCK_OWNER_FREE = 0xff, ///< gResourceBlockOwners of a free block
-  /// VramBlockCacheEntry.offset of a free entry.
+  VRAM_BLOCK_OWNER_FREE = 0xff, ///< gVramCacheBlockOwners of a free block
+  /// VramCacheEntry.offset of a free entry.
   VRAM_CACHE_OFFSET_FREE = 0xffff
 };
 
 /// The cache entry that owns each block, or VRAM_BLOCK_OWNER_FREE.
-extern u8 gResourceBlockOwners[VRAM_BLOCK_COUNT];
+extern u8 gVramCacheBlockOwners[VRAM_BLOCK_COUNT];
 
 /// A sprite slot of the VRAM cache: the size of its block and where the block
 /// starts in OBJ VRAM.
-struct VramBlockCacheEntry {
+struct VramCacheEntry {
   u16 size;   ///< bytes
   u16 offset; ///< bytes from the start of OBJ VRAM
 };
 
-STATIC_ASSERT(sizeof(struct VramBlockCacheEntry) == 4);
-STATIC_ASSERT(offsetof(struct VramBlockCacheEntry, offset) == 2);
+STATIC_ASSERT(sizeof(struct VramCacheEntry) == 4);
+STATIC_ASSERT(offsetof(struct VramCacheEntry, offset) == 2);
 
 /// The cache entries by number: the slot a sprite or loaded picture holds.
-extern struct VramBlockCacheEntry gVramBlockCache[];
+extern struct VramCacheEntry gVramCacheEntries[];
 
 #endif

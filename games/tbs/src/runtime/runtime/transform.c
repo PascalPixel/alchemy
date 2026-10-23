@@ -16,7 +16,7 @@ typedef s32 (*Dot3Fn)(s32 ax, s32 bx, s32 ay, s32 by, s32 az, s32 bz);
 /// clears gTransformStackDepth and resets gTransform to identity. Called by
 /// the battle scene setup and the field camera before a scene's first
 /// transform.
-void Render_ResetTransformState(void) {
+void Transform_Reset(void) {
   gTransformStackTop =
       AllocHeapSlotEwram(HEAP_SLOT_TRANSFORM_STACK, sizeof(gTransform));
   gTransformStackDepth = 0;
@@ -363,7 +363,7 @@ void Projection_Set(u32 focal, u32 nearDepth, u32 farDepth) {
 /// projection scale (16.16), or 0 when the point is outside the depth range,
 /// when only the transformed point is written. Called by the battle and field
 /// code that places sprites in 3D.
-s32 Render_ProjectPoint(const void *point, s32 *screen) {
+s32 Transform_ProjectPoint(const void *point, s32 *screen) {
   struct Projection *projection;
   s32 depth;
   s32 scale;

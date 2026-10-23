@@ -3,7 +3,7 @@
 	.set import.Engine_TaskWait, 1
 	.set import.Task_Add, 1
 	.set import.ArcTan2, 1
-	.set import.AnimationObject_SelectAnimation, 1
+	.set import.Sprite_StartAnim, 1
 	.set import.ObjectEvent_SetMode, 1
 	.set import.Engine_ObjectSetScript, 1
 	.set import.Engine_ObjectCreate, 1

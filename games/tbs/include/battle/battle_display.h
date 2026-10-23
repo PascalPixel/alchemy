@@ -62,7 +62,7 @@ struct BattlePresentationTransition {
 /// keep one as a local.
 struct BattleStagingWork {
   struct BattleAnimArgs effect;
-  /// Each target's layers' SpriteColorMode (AnimationEntry.colorMode), all but
+  /// Each target's layers' SpriteColorMode (SpriteAnim.colorMode), all but
   /// its last layer, saved before the effect; no code reads them back by name.
   u8 savedAnimationParameters[8][4];
 };

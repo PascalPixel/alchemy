@@ -8,7 +8,7 @@
 #include "global_cells.h"
 #include "static_assert.h"
 
-struct AnimationObject;
+struct Sprite;
 
 /// The menu work (HEAP_SLOT_MENU) as the row of four figures reads it: each
 /// figure's object, screen position and scale.
@@ -21,7 +21,7 @@ struct DjinnFiguresWork {
   /// ItemMenuWork's fields from ownerY[4] to completionFlag; not
   /// named here.
   u8 beforeFigures[0xd8];
-  struct AnimationObject *animations[4];
+  struct Sprite *animations[4];
   s16 positionsX[4]; ///< screen pixels
   /// Screen pixels; negative marks a recovering Djinni, which faces 0x8000.
   s16 positionsY[4];

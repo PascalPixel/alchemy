@@ -117,7 +117,7 @@ void FieldEffect_RunPly(void) {
   struct FieldEffectWork *effectWork = gFieldEffectWork;
   struct ObjectEvent *target = effectWork->mainObject;
   struct ObjectEvent *objectEvent;
-  struct AnimationObject *last;
+  struct Sprite *last;
   u8 resourceSlot;
   s32 i;
 
@@ -135,7 +135,7 @@ void FieldEffect_RunPly(void) {
       objectEvent->timer = 120;
       objectEvent->work = i << 13;
       objectEvent->motionFlags = OBJ_EVENT_FLOATS;
-      last = Sprite_ShareVramCache(objectEvent->sprite, last);
+      last = Sprite_ShareVramCacheEntry(objectEvent->sprite, last);
     }
     WaitFrames(1);
   }
@@ -210,10 +210,10 @@ void FieldEffect_RunPly(void) {
     Object_WaitForMoveFar(target);
     ObjectDispatch_ReleaseFar((struct DispatchObject *)target);
   }
-  // 0x60 is the VRAM cache's entry count, the value Resource_FindFreeEntry
+  // 0x60 is the VRAM cache's entry count, the value VramCache_FindFreeEntry
   // returns for no entry.
   if (resourceSlot != 0x60)
-    Resource_ResetEntry(resourceSlot);
+    VramCache_FreeEntry(resourceSlot);
   if (effectWork->finishCallback != 0)
     effectWork->finishCallback();
   FieldEffect_FadeFromEffectColor();

@@ -10,8 +10,8 @@
 	.set import.Engine_MathCos, 1
 	.set import.Vector_AddPolarOffset, 1
 	.set import.Runtime_SetIrqHandler, 1
-	.set import.ResourceMetadata_Register, 1
-	.set import.ResourceMetadata_ClearRecord, 1
+	.set import.Sprite_AddAnim, 1
+	.set import.SpriteAnim_Clear, 1
 	.set import.ObjectEvent_SetMode, 1
 	.set import.Engine_ObjectSetScript, 1
 	.set import.Engine_ObjectCreate, 1

@@ -19,7 +19,7 @@ struct WindowSprite *WindowSprite_Create(s32 slot, s32 oamFlags,
 
   output = WindowSprite_AcquireFree();
   if (output == NULL) {
-    Resource_ResetEntry(slot);
+    VramCache_FreeEntry(slot);
     return NULL;
   }
 
@@ -37,14 +37,14 @@ struct WindowSprite *WindowSprite_Create(s32 slot, s32 oamFlags,
     words[0] = (x << 16) | y | oamFlags;
     // Attribute 2: the first tile of the slot's VRAM block (32 bytes a tile).
     words[1] =
-        ((struct VramBlockCacheEntry *)Ram_VramBlockCache)[slot].offset >> 5;
+        ((struct VramCacheEntry *)Ram_VramCacheEntries)[slot].offset >> 5;
     __builtin_memcpy(&output->oam, words, sizeof(words));
   }
 #else
   *(u32 *)&output->oam = (x << 16) | y | oamFlags;
   // Attribute 2: the first tile of the slot's VRAM block (32 bytes a tile).
   ((u32 *)&output->oam)[1] =
-      ((struct VramBlockCacheEntry *)Ram_VramBlockCache)[slot].offset >> 5;
+      ((struct VramCacheEntry *)Ram_VramCacheEntries)[slot].offset >> 5;
 #endif
   output->sentinel = 0xff;
   output->next = NULL;
@@ -85,7 +85,7 @@ struct WindowSprite *WindowSprite_CreateLoaded(s32 icon, s32 layers,
   s32 slot;
   struct WindowSprite *output;
 
-  slot = Resource_FindFreeEntry();
+  slot = VramCache_FindFreeEntry();
   output = NULL;
   if (slot != VRAM_CACHE_ENTRY_COUNT) {
     Icon_CopyResourceToSlot(icon, layers, slot);
@@ -104,7 +104,7 @@ struct WindowSprite *WindowSprite_CreateWithTransform(s32 icon,
   s32 unusedTile;
   struct WindowSprite *output;
 
-  slot = Resource_FindFreeEntry();
+  slot = VramCache_FindFreeEntry();
   if (slot == VRAM_CACHE_ENTRY_COUNT) {
     return NULL;
   }
@@ -125,7 +125,7 @@ struct WindowSprite *WindowSprite_CreateFromTable(s32 tableEntry,
   s32 slot;
   struct WindowSprite *output;
 
-  slot = Resource_FindFreeEntry();
+  slot = VramCache_FindFreeEntry();
   output = NULL;
   if (slot != VRAM_CACHE_ENTRY_COUNT) {
     RenderResource_LoadTableEntry(tableEntry, 0, slot);

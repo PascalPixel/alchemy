@@ -81,7 +81,7 @@ static inline void FieldCamera_WaitForMove(void) { Engine_CameraWaitForMove(); }
 
 /// Runs a script's colour fade, from the source colours to the target ones,
 /// over frames.
-static inline void ColorBuffer_Interpolate(s32 frames) {
+static inline void PaletteFade_Interpolate(s32 frames) {
   Engine_ColorBufferInterpolate(frames);
 }
 

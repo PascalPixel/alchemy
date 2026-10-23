@@ -272,11 +272,11 @@ s32 Field_RunEventAction(const void *event, s32 param, s32 target) {
 void ObjectGroup_ApplyRandomChildValues(union FieldObject *fieldObject) {
   struct Object *owner = (struct Object *)fieldObject;
   s32 kind;
-  struct AnimationObject *animation;
+  struct Sprite *animation;
   s32 initialCount;
   s32 remainingParts;
-  struct AnimationEntry **parts;
-  struct AnimationEntry *spritePart;
+  struct SpriteAnim **parts;
+  struct SpriteAnim *spritePart;
   /* FAKEMATCH(temporary): a pointer local to gFrameCount, volatile as it is
    * declared, read on each pass; as gFrameCount read in the loop, 6 of 46
    * instructions differ in tbs-en. */
@@ -325,7 +325,7 @@ void ObjectMotion_SetTargetPositionFromMagnitudeAngle(struct Object *object,
 /// FieldEffect_LoadActionEffectResources subtracts this from VRAM_BLOCK_COUNT
 /// to record the blocks already occupied before the effect starts.
 s32 VramCache_CountFreeBlocks(void) {
-  u8 *marker = gResourceBlockOwners;
+  u8 *marker = gVramCacheBlockOwners;
   s32 freeCount = 0;
   s32 remaining = VRAM_BLOCK_COUNT;
 
@@ -345,11 +345,10 @@ s32 VramCache_CountFreeBlocks(void) {
 /// afterimages pass one block along this way. Each sprite retains the entry
 /// so releasing an afterimage cannot free graphics still used by the others.
 /// Sprite teardown leaves the shared entry for the caller to release.
-struct AnimationObject *
-Sprite_ShareVramCache(struct AnimationObject *sourceSprite,
-                      struct AnimationObject *sharedSprite) {
-  struct AnimationObject *shared;
-  struct AnimationObject *sprite;
+struct Sprite *Sprite_ShareVramCacheEntry(struct Sprite *sourceSprite,
+                                          struct Sprite *sharedSprite) {
+  struct Sprite *shared;
+  struct Sprite *sprite;
 
   sprite = sourceSprite;
   shared = NULL;
@@ -357,7 +356,7 @@ Sprite_ShareVramCache(struct AnimationObject *sourceSprite,
     if (sharedSprite == NULL) {
       sprite->retainCacheEntry = 1;
     } else {
-      Resource_ResetEntry(sprite->slot);
+      VramCache_FreeEntry(sprite->slot);
       sprite->slot = sharedSprite->slot;
       sprite->retainCacheEntry = 1;
       sprite = sharedSprite;
@@ -388,7 +387,7 @@ struct Object *Object_Spawn(s32 kind, s32 x, s32 y, s32 z) {
         ((struct Object *)effectWork->mainObject)->groundHeight;
     object->flags = 4;
     object->priorityFlags = 4;
-    ((struct AnimationObject *)object->animation)->image.priority = 0;
+    ((struct Sprite *)object->animation)->image.priority = 0;
     ObjectDispatch_SetSingleChildFlagsFar((struct DispatchObject *)object, 0);
     ObjectDispatch_SelectAnimationFar(object, 1);
   }

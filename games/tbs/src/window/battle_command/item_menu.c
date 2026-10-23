@@ -204,7 +204,7 @@ s32 BattleItemMenu_Run(s32 owner, u16 *entries, s32 count) {
 
     for (i = 0; i < iconCount; i++) {
       iconSprite = &sprites[i];
-      Runtime_PushSlotEntry(iconSprite, 240);
+      Oam_AddSpriteAtDepth(iconSprite, 240);
     }
 
     cursorPosition.x = window->x * 8 - 2;
@@ -220,7 +220,7 @@ s32 BattleItemMenu_Run(s32 owner, u16 *entries, s32 count) {
     sprite->x = cursorPosition.x + ((gFrameCount & 4) >> 1) - 4;
     sprite->y = cursorPosition.y - ((gFrameCount & 4) >> 2) - 8;
     if (count != 0) {
-      Runtime_PushSlotEntry(sprite, 242);
+      Oam_AddSpriteAtDepth(sprite, 242);
     }
 
     BATTLE_MENU_SET_CURSOR(firstEntry, selectedRow, preferredRow);
@@ -324,9 +324,9 @@ s32 BattleItemMenu_Run(s32 owner, u16 *entries, s32 count) {
   Window_Close(messageWindow, 1);
   Window_Close(window, 1);
   WaitFrames(1);
-  Resource_ResetEntry(cursorHandle);
+  VramCache_FreeEntry(cursorHandle);
   for (i = 0; i < BATTLE_LIST_ROWS; i++) {
-    Resource_ResetEntry(iconSlots[i]);
+    VramCache_FreeEntry(iconSlots[i]);
   }
   WaitFrames(1);
   return result;

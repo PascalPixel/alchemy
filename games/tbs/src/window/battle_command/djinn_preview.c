@@ -106,7 +106,7 @@ s32 Ui_CreateOutputFromResourceSlot(struct Window *window, s32 x, s32 y,
 #endif
   s32 iconSlot;
 
-  iconSlot = Resource_FindFreeEntry();
+  iconSlot = VramCache_FindFreeEntry();
   if (iconSlot != VRAM_CACHE_ENTRY_COUNT) {
     Resource_LoadIndexedEntryToBuffer(abilityId, iconSlot);
     // If the output pool is full, the creator releases iconSlot itself.

@@ -87,14 +87,14 @@ s32 BattlePlayback_SchedulePhase(s32 frames) {
 /// one phase; a phase that has to wait for a later frame returns.
 void BattlePlayback_Run(void) {
   u16 selection[8];
-  struct AnimationObject *records[4];
+  struct Sprite *records[4];
   struct BattleWork *battle = gBattleWork;
   struct BattlePlaybackWork *events = &battle->playback;
 
   /// Clears a sprite's tiles in OBJ VRAM, at its VRAM cache entry's offset;
   /// the last step of a fallen enemy's dissolve.
-  void BattleSprite_ClearTiles(struct AnimationObject * record, s32 unused) {
-    u8 *tiles = (u8 *)OBJ_VRAM0 + gVramBlockCache[record->slot].offset;
+  void BattleSprite_ClearTiles(struct Sprite * record, s32 unused) {
+    u8 *tiles = (u8 *)OBJ_VRAM0 + gVramCacheEntries[record->slot].offset;
 
     Iwram_ClearWords(tiles, record->width * record->height);
   }
@@ -196,7 +196,7 @@ void BattlePlayback_Run(void) {
           // down, an enemy keeps its damage pose and falls in PLAY_FELLED.
           case PLAYBACK_DEFEAT: {
             struct Unit *unit;
-            struct AnimationObject *record;
+            struct Sprite *record;
             s32 recordIndex;
 
             events->actorId = events->queue.operands[eventIndex];
@@ -209,9 +209,9 @@ void BattlePlayback_Run(void) {
                                       recordIndex)) != 0;
                  recordIndex++) {
               if (unit->side != BATTLE_SIDE_ENEMY)
-                AnimationObject_SelectAnimationFar(record, POSE_PARTY_HELD);
+                Sprite_StartAnimFar(record, POSE_PARTY_HELD);
               else
-                AnimationObject_SelectAnimationFar(record, POSE_ENEMY_DOWN);
+                Sprite_StartAnimFar(record, POSE_ENEMY_DOWN);
             }
             if (unit->side == BATTLE_SIDE_ENEMY) {
               events->phase = PLAY_FELLED;
@@ -292,7 +292,7 @@ void BattlePlayback_Run(void) {
         events->phase = BATTLE_PLAYBACK_PHASE_DISPATCH;
         events->timer = 0;
       } else {
-        Runtime_PushSlotEntry(prompt, 240);
+        Oam_AddSpriteAtDepth(prompt, 240);
         return;
       }
     } else if (events->phase == PLAY_HIT) {
@@ -356,9 +356,9 @@ void BattlePlayback_Run(void) {
           colorMode = (events->timer - FELLED_FLASH) / 8 % 5 + SPRITE_COLOR_GRB;
         // Recolour every layer's first entry and redraw its frame (255).
         if (colorMode == SPRITE_COLOR_GREY || (events->timer & 7) == 0) {
-          struct AnimationObject *record;
+          struct Sprite *record;
           s32 recordIndex;
-          struct AnimationObject **slot;
+          struct Sprite **slot;
           s32 lastFrameMask;
 
           for (recordIndex = 0, slot = records, lastFrameMask = 0xff;
@@ -366,7 +366,7 @@ void BattlePlayback_Run(void) {
                     GetMotionRecord(BattleObject_Get(events->actorId)->object,
                                     recordIndex)) != 0;
                recordIndex++) {
-            struct AnimationEntry *child;
+            struct SpriteAnim *child;
             u8 previousFrame;
 
             *slot++ = record;
@@ -389,7 +389,7 @@ void BattlePlayback_Run(void) {
         // frame from timer 5 to 36; at 37 the tiles are cleared, the object
         // released, and the queue goes on.
         struct BattleObject *slot;
-        struct AnimationObject *record;
+        struct Sprite *record;
         s32 count;
         s32 step;
         s32 base;

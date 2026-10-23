@@ -89,8 +89,8 @@ void FieldEffect_CheckCloakTile(void) {
 /// FieldScript_RunTypeHandler runs it when the CLOAK_END request is handled.
 void FieldEffect_EndCloak(void) {
   struct Object *object;
-  struct AnimationObject *animation;
-  struct AnimationEntry *entry;
+  struct Sprite *animation;
+  struct SpriteAnim *entry;
   u32 i;
 
   object = ObjectEvent_GetByLocalId(gGameState.leaderLocalId);
@@ -146,8 +146,8 @@ void FieldEffect_ResumeCloakCheck(void) {
 void FieldEffect_StartCloak(void) {
   struct FieldWork *work = (struct FieldWork *)gFieldWork;
   struct Object *leader = ObjectEvent_GetByLocalId(gGameState.leaderLocalId);
-  struct AnimationObject *animation = leader->animation;
-  struct AnimationEntry *entry = animation->entries[0];
+  struct Sprite *animation = leader->animation;
+  struct SpriteAnim *entry = animation->entries[0];
   u32 n;
   void (*check)(void);
 

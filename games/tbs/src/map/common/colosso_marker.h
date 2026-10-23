@@ -34,7 +34,7 @@
 void Colosso_FadeInWarrior(s32 id, s32 x, s32 z) {
   struct ObjectSystemWork *system;
   struct ObjectEvent *objectEvent;
-  struct AnimationObject *sprite;
+  struct Sprite *sprite;
   s32 i;
 
   system = gObjectSystemWork;
@@ -43,7 +43,7 @@ void Colosso_FadeInWarrior(s32 id, s32 x, s32 z) {
   system->fill = 4;
   gColosso_WarriorStartX = objectEvent->x.fixed;
   gColosso_WarriorStartZ = objectEvent->z.fixed;
-  sprite = (struct AnimationObject *)objectEvent->sprite;
+  sprite = (struct Sprite *)objectEvent->sprite;
   gColosso_WarriorStartAngle = objectEvent->facing;
   Engine_ObjectEventSetSpritePriority(id, 2);
   objectEvent->priorityFlags |= OBJ_EVENT_PRIORITY_AUTOMATIC;
@@ -180,8 +180,8 @@ static void Colosso_UpdateMarker(void) {
   s16 *py;
   union MarkerCoordinate *sy;
 
-  oam = gColosso_MarkerOam;
-  tile = gVramBlockCache[gColosso_MarkerSlot].offset >> 5;
+  oam = gColosso_PointerOam;
+  tile = gVramCacheEntries[gColosso_MarkerSlot].offset >> 5;
   steps = &gColosso_MarkerSteps;
   total = *steps;
   if (total != 0) {
@@ -211,7 +211,7 @@ static void Colosso_UpdateMarker(void) {
     *dst++ = 0;
     *dst++ = (y - 8) | ((x - 8) << 16) | size | (gColosso_MarkerPriority << 28);
     *dst = tile | 0x400;
-    Runtime_PushSlotEntry(oam, 255);
+    Oam_AddSpriteAtDepth(oam, 255);
   } else if (gColosso_MarkerBlink > 19) {
     gColosso_MarkerBlink = 0;
   }
@@ -246,7 +246,7 @@ void Colosso_MovePointer(u32 x, u32 y, u32 duration) {
 void Colosso_HidePointer(void) {
 
   Engine_TaskRemoveCallback(Colosso_UpdateMarker);
-  Resource_ResetEntry(gColosso_MarkerSlot);
+  VramCache_FreeEntry(gColosso_MarkerSlot);
   gColosso_MarkerSlot = -1;
 }
 

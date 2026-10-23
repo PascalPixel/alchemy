@@ -10,8 +10,8 @@
 	.set import.Decompress_Type01, 1
 	.set import.VramCache_ReleaseVram, 1
 	.set import.Engine_VramLoad, 1
-	.set import.Resource_FindFreeEntry, 1
-	.set import.Runtime_PushSlotEntry, 1
+	.set import.VramCache_FindFreeEntry, 1
+	.set import.Oam_AddSpriteAtDepth, 1
 	.set import.IoWriteQueue_Store32, 1
 	.set import.ObjectEvent_SetMode, 1
 	.set import.Engine_ObjectSetScript, 1
@@ -51,7 +51,7 @@
 	.set import.Field_RequestBattleFromEncounterTable, 1
 	.set import.FieldScript_SetNextDestination, 1
 	.set import.Engine_DisplayScrollStartHBlankDma, 1
-	.set import.DisplayScroll_DisarmHBlankDma, 1
+	.set import.ScanlineEffect_Stop, 1
 	.set import.Engine_MarkerSetPosition, 1
 	.set import.TreasureSpot_MoveLeaderAway, 1
 	.set import.Djinn_JoinParty, 1

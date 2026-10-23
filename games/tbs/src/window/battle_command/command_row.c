@@ -225,7 +225,7 @@ s32 BattleCommandRow_Run(s32 mode) {
                          selectionUi->commandKinds[selectionUi->selectedIndex]);
     }
     selectionUi->affineIndex =
-        AffineMatrix_BuildForEffect(&selectionUi->affine);
+        OamMatrix_AllocFromTransform(&selectionUi->affine);
     // Only the selected icon is drawn as a sprite: double-size affine (mode
     // 3), on layer 0xf1, moved with the pulse. The others are BG1 tiles.
     for (entryIndex = 0; entryIndex < selectionUi->iconCount; entryIndex++) {
@@ -235,7 +235,7 @@ s32 BattleCommandRow_Run(s32 mode) {
         entry->sprite.oam.f.affine = 3;
         entry->sprite.oam.f.x = entry->positionX + pulseScale * 7 / 512 - 14;
         entry->sprite.oam.f.y = entry->positionY + pulseScale * 3 / 256 - 20;
-        Runtime_PushSlotEntry(entry, 0xf1);
+        Oam_AddSpriteAtDepth(entry, 0xf1);
       } else {
         entry->sprite.oam.f.x = entry->positionX;
         entry->sprite.oam.f.y = entry->positionY;
@@ -332,7 +332,7 @@ s32 BattleCommandRow_Run(s32 mode) {
     gBattleMenuWork->commandSelection[0] = selectionUi->selectedIndex;
   // Every icon names the same entry, so it is released once per icon.
   for (entryIndex = 0; entryIndex < selectionUi->iconCount; entryIndex++)
-    Resource_ResetEntry(selectionUi->entries[entryIndex].resource);
+    VramCache_FreeEntry(selectionUi->entries[entryIndex].resource);
   work->holdTilemapUpload = 1;
   Window_Close(selectionUi->window, 1);
   // Cover the strip again: seven panels of WINDOW_TILE(0x7f) from column 5.

@@ -14,15 +14,15 @@ void Resource_LoadPairedBlocksIfAvailable(void) {
   struct ItemMenuWork *activeState;
 
   activeState = gMenuWork;
-  // Resource_FindFreeEntry returns VRAM_CACHE_ENTRY_COUNT (96), never -1,
+  // VramCache_FindFreeEntry returns VRAM_CACHE_ENTRY_COUNT (96), never -1,
   // when no slot is free, so these tests always pass; VramCache_Load refuses
   // slot 96 itself.
-  firstSlot = Resource_FindFreeEntry();
+  firstSlot = VramCache_FindFreeEntry();
   activeState->resourceSlots[0] = firstSlot;
   if (firstSlot != -1) {
     VramCache_Load(firstSlot, 0x80, gMenu_PairSpriteATiles);
   }
-  secondSlot = Resource_FindFreeEntry();
+  secondSlot = VramCache_FindFreeEntry();
   activeState->resourceSlots[1] = secondSlot;
   if (secondSlot != -1) {
     VramCache_Load(secondSlot, 0x80, gMenu_PairSpriteBTiles);
@@ -36,8 +36,8 @@ void IconMenu_ReleaseArrows(void) {
   struct ItemMenuWork *menu;
 
   menu = gMenuWork;
-  Resource_ResetEntry((u16)menu->resourceSlots[0]);
-  Resource_ResetEntry((u16)menu->resourceSlots[1]);
+  VramCache_FreeEntry((u16)menu->resourceSlots[0]);
+  VramCache_FreeEntry((u16)menu->resourceSlots[1]);
 }
 
 /// Decodes one icon into a temporary buffer and reloads its VRAM slot: the
@@ -65,7 +65,7 @@ s32 Icon_CreateWithLoadedResource(struct Window *window, s32 x, s32 y,
                                   s32 resourceId) {
   s32 slot;
 
-  slot = Resource_FindFreeEntry();
+  slot = VramCache_FindFreeEntry();
   // 0x60 is VRAM_CACHE_ENTRY_COUNT: no slot free.
   if (slot != 0x60) {
     Icon_LoadResourceIntoSlot(resourceId, slot);

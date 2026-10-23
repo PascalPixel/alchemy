@@ -6,12 +6,12 @@
 	.set import.Free, 1
 	.set import.Decompress_Type01, 1
 	.set import.Engine_VramLoad, 1
-	.set import.Resource_FindFreeEntry, 1
-	.set import.Runtime_PushSlotEntry, 1
+	.set import.VramCache_FindFreeEntry, 1
+	.set import.Oam_AddSpriteAtDepth, 1
 	.set import.Resource_GetTableEntry, 1
 	.set import.RuntimeDispatch_NoOpHook, 1
-	.set import.Fade_ToBlack, 1
-	.set import.Fade_Wait, 1
+	.set import.ScreenFade_ToBlack, 1
+	.set import.ScreenFade_Wait, 1
 	.set import.Save_ScanRecordFlags, 1
 	.set import.Party_EndChildhood, 1
 	.set import.Engine_ScriptWait, 1
@@ -21,7 +21,7 @@
 	.set import.Engine_ScriptWaitForScreen, 1
 	.set import.CreditsFar_Entry00, 1
 	.set import.TitleFar_Entry00, 1
-	.set import.Title_ShowSplashScreen, 1
+	.set import.Title_ShowNintendoLogo, 1
 	.set import.TitleFar_Entry20, 1
 	.set import.Engine_AudioPlayCue, 1
 	.include "games/tbs/src/system/overlay.inc"

@@ -79,23 +79,23 @@
 
 /// Animation script commands. A script is pairs of bytes, a command and its
 /// argument; a command below 239 shows that frame for `arg` frames at normal
-/// speed (the timer counts sixteenths, less AnimationEntry.step each frame).
+/// speed (the timer counts sixteenths, less SpriteAnim.step each frame).
 enum AnimationCommand {
-  ANIMATION_COMMAND_END = 239,      ///< blank the layer and stop its script
-  ANIMATION_COMMAND_SET_KIND = 240, ///< use facing table `arg`
-  ANIMATION_COMMAND_HOLD = 241,     ///< stay on this command and frame for good
-  ANIMATION_COMMAND_WAIT = 245, ///< keep the current frame `arg` frames longer
-  ANIMATION_COMMAND_JUMP = 253, ///< continue at script position `arg`
-  ANIMATION_COMMAND_PLAY = 254, ///< switch to animation `arg`
-  ANIMATION_COMMAND_BLANK = 255 ///< show nothing for `arg`
+  ANIMCMD_END = 239,      ///< blank the layer and stop its script
+  ANIMCMD_SET_KIND = 240, ///< use facing table `arg`
+  ANIMCMD_HOLD = 241,     ///< stay on this command and frame for good
+  ANIMCMD_WAIT = 245,     ///< keep the current frame `arg` frames longer
+  ANIMCMD_JUMP = 253,     ///< continue at script position `arg`
+  ANIMCMD_PLAY = 254,     ///< switch to animation `arg`
+  ANIMCMD_BLANK = 255     ///< show nothing for `arg`
 };
 
 /// The engine's pool sizes, and the layer timer's step at normal speed.
 enum {
-  RESOURCE_SLOT_COUNT = 8,     ///< ObjectSystemWork.slots
+  RESOURCE_SLOT_COUNT = 8,     ///< ObjectSystemWork.frameCaches
   OBJECT_COUNT = 64,           ///< gObjects, HEAP_SLOT_OBJECTS
   ANIMATION_OBJECT_COUNT = 64, ///< sprites and layer records
-  ANIMATION_LAYER_COUNT = 4,   ///< AnimationObject.entries
+  ANIMATION_LAYER_COUNT = 4,   ///< Sprite.entries
   /// Sixteenths of a frame taken off a layer's timer each frame: one frame.
   ANIMATION_NORMAL_STEP = 16
 };

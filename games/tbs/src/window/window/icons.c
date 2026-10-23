@@ -38,7 +38,7 @@ void Ui_BuildPairedPatternsToSlot(s32 overlayIcon, s32 frameIcon, s32 *slot,
   work->height = 2;
   Icon_Decode(work, 1);
   if (reuse == 0) {
-    *slot = Resource_FindFreeEntry();
+    *slot = VramCache_FindFreeEntry();
   }
   *tileOut = VramCache_Load(*slot, 0x80, work->tiles);
   FreeHeapSlot(HEAP_SLOT_GLYPH_TRANSFER);
@@ -82,7 +82,7 @@ void Icon_BuildItemIconTiles(u32 glyph, s32 withBase, s32 *cacheSlot,
   Icon_Decode(work, overlay);
 
   if (reuse == 0)
-    *cacheSlot = Resource_FindFreeEntry();
+    *cacheSlot = VramCache_FindFreeEntry();
 
   *tileOut = VramCache_Load(*cacheSlot, 0x80, work->tiles);
   FreeHeapSlot(HEAP_SLOT_GLYPH_TRANSFER);
@@ -293,7 +293,7 @@ void Icon_BuildAbilityIconTiles(u32 glyph, s32 withBase, s32 *cacheSlot,
   Icon_Decode(work, overlay);
 
   if (reuse == 0)
-    *cacheSlot = Resource_FindFreeEntry();
+    *cacheSlot = VramCache_FindFreeEntry();
 
   *tileOut = VramCache_Load(*cacheSlot, 0x80, work->tiles);
   FreeHeapSlot(HEAP_SLOT_GLYPH_TRANSFER);
@@ -335,7 +335,7 @@ void UiGlyph_LoadEntryWithPalette(u32 icon, s32 unused, s32 *slot, s32 *tile,
   work->height = 4;
   Icon_Decode(work, 0);
   if (reuse == 0)
-    *slot = Resource_FindFreeEntry();
+    *slot = VramCache_FindFreeEntry();
   *tile = VramCache_Load(*slot, 0x200, work->tiles);
   FreeHeapSlot(HEAP_SLOT_GLYPH_TRANSFER);
   Dma_Set(encodedEntry, (void *)&OBJ_PLTT_COLOR(palette, 0), DMA_COPY16(16),

@@ -12,7 +12,7 @@
 #include "text/msg_ids.h"
 #include "farcall.h"
 
-struct AnimationObject;
+struct Sprite;
 
 struct Window;
 
@@ -52,12 +52,12 @@ struct ItemMenuWork {
   u8 columnCount;
   u8 rowCount;
   ///@}
-  struct AnimationObject *ownerObjects[8]; ///< the party members' figures
-  s16 ownerX[8];                           ///< screen pixels
-  s16 ownerY[8];                           ///< screen pixels
-  s32 ownerScale[8];    ///< 16.16 fixed point, 0x10000 full size
-  u16 selectedSlots[2]; ///< each pane's inventory slot chosen
-  u16 selectedItems[2]; ///< each pane's inventory entry chosen
+  struct Sprite *ownerObjects[8]; ///< the party members' figures
+  s16 ownerX[8];                  ///< screen pixels
+  s16 ownerY[8];                  ///< screen pixels
+  s32 ownerScale[8];              ///< 16.16 fixed point, 0x10000 full size
+  u16 selectedSlots[2];           ///< each pane's inventory slot chosen
+  u16 selectedItems[2];           ///< each pane's inventory entry chosen
   struct WindowSprite *cursor;
   /// DjinnMenuWork's backdrop pointer at 0x184; no view names the rest.
   u8 aroundBackdrop[0x48];

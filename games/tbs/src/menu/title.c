@@ -103,12 +103,12 @@ s32 Title_Run(void) {
   }
   if (gGameState.warpDest == 9) {
     Engine_AudioPlayCue(MUS_ENDING);
-    // The credits: DisplayScroll_RunSlideshow, through the scroll far-call
+    // The credits: Credits_Run, through the scroll far-call
     // table.
     CreditsFar_Entry00(0);
-    Engine_AudioPlayCue(AUDIO_CUE_FADE_BGM);
-    Fade_ToBlack(60);
-    Fade_Wait();
+    Engine_AudioPlayCue(SONG_FADE_OUT_BGM);
+    ScreenFade_ToBlack(60);
+    ScreenFade_Wait();
     Engine_ScriptWait(240);
     Engine_AudioPlayCue(MUS_SILENCE);
     FieldScript_SetDestination((s32)&MapId_MainMenu, MAIN_MENU_FROM_TITLE);
@@ -122,8 +122,8 @@ s32 Title_Run(void) {
   if (gGameState.warpDest == 2) {
     for (;;) {
       Engine_AudioPlayCue(MUS_SILENCE);
-      // The Nintendo logo, then the Camelot logo (Title_ShowAnimatedSplash).
-      Title_ShowSplashScreen(0);
+      // The Nintendo logo, then the Camelot logo (Title_ShowCamelotLogo).
+      Title_ShowNintendoLogo(0);
       TitleFar_Entry20(0);
       // With no save file (or no backup memory) there is no title intro.
       if (Save_ScanRecordFlags() > 0) {
@@ -131,9 +131,9 @@ s32 Title_Run(void) {
         // Title_ShowIntro with its prompt returns 0 when a minute passes
         // without A or Start: fade out and start again from the logos.
         if (TitleFar_Entry00(1) == 0) {
-          Engine_AudioPlayCue(AUDIO_CUE_FADE_BGM);
-          Fade_ToBlack(30);
-          Fade_Wait();
+          Engine_AudioPlayCue(SONG_FADE_OUT_BGM);
+          ScreenFade_ToBlack(30);
+          ScreenFade_Wait();
           waitFrames = 0;
           if (gKeysHeld == 0) {
             do {
@@ -154,11 +154,11 @@ s32 Title_Run(void) {
     TitleFar_Entry00(0);
     Party_EndChildhood();
     FieldScript_SetDestination((s32)&MapId_Vale, VALE_FROM_TITLE);
-    Engine_AudioPlayCue(AUDIO_CUE_FADE_BGM);
+    Engine_AudioPlayCue(SONG_FADE_OUT_BGM);
   }
-  Engine_AudioPlayCue(AUDIO_CUE_FADE_BGM);
-  Fade_ToBlack(30);
-  Fade_Wait();
+  Engine_AudioPlayCue(SONG_FADE_OUT_BGM);
+  ScreenFade_ToBlack(30);
+  ScreenFade_Wait();
   Engine_ScriptWait(60);
   Engine_AudioPlayCue(MUS_SILENCE);
   return 0;
@@ -179,7 +179,7 @@ static void Title_LoadSprites(s32 unused) {
   decodedSprites = AllocEwram(0x9600);
   encodedGraphics = Resource_GetTableEntry((s32)&ResourceId_IntroTilesB);
   if (gTitleVramBlock == -1)
-    gTitleVramBlock = Resource_FindFreeEntry();
+    gTitleVramBlock = VramCache_FindFreeEntry();
   // The resource opens with 0x1c0 bytes of palette (0x70 words, 224 colours)
   // before its compressed data.
   Dma_Set(encodedGraphics, (void *)OBJ_PLTT,
@@ -196,7 +196,7 @@ static void Title_LoadSprites(s32 unused) {
   // bytes (40 4-bit tiles) of lettering.
   decodedSprites = AllocEwram(0x520);
   if (gTitleVramBlock == -1)
-    gTitleVramBlock = Resource_FindFreeEntry();
+    gTitleVramBlock = VramCache_FindFreeEntry();
   FieldResource_DecodeType01(
       Resource_GetTableEntry((s32)&ResourceId_IntroTilesB), decodedSprites);
   Dma_Set(decodedSprites, (void *)&OBJ_PLTT_COLOR(15, 0),
@@ -234,7 +234,7 @@ static void Title_UpdateSpriteReveal(void) {
   // the 32-byte tile numbers the cache offset counts in.
   sprite = gTitleSprites;
   attributes = gTitleSprites[0].attr;
-  tileIndex = gVramBlockCache[gTitleVramBlock].offset >> 5;
+  tileIndex = gVramCacheEntries[gTitleVramBlock].offset >> 5;
   row = 0;
   screenY = 128;
   for (; row <= 3; row++) {
@@ -253,7 +253,7 @@ static void Title_UpdateSpriteReveal(void) {
       if (revealAge <= 2 && (gFrameCount & 1))
         revealAge = 0;
       if (revealAge != 0)
-        Runtime_PushSlotEntry(sprite, 255);
+        Oam_AddSpriteAtDepth(sprite, 255);
       sprite++;
       tileIndex += 2;
     }
@@ -265,7 +265,7 @@ static void Title_UpdateSpriteReveal(void) {
   // is the tall shape and semi-transparent, 0xf000 palette 15.
   sprite = gTitleSprites;
   attributes = gTitleSprites[0].attr;
-  tileIndex = gVramBlockCache[gTitleVramBlock].offset >> 5;
+  tileIndex = gVramCacheEntries[gTitleVramBlock].offset >> 5;
   column = 0;
   screenY = 0x88;
   do {
@@ -282,7 +282,7 @@ static void Title_UpdateSpriteReveal(void) {
     if (revealAge <= 2 && (gFrameCount & 1))
       revealAge = 0;
     if (revealAge != 0)
-      Runtime_PushSlotEntry(sprite++, 255);
+      Oam_AddSpriteAtDepth(sprite++, 255);
     tileIndex += 2;
   } while (++column <= 17);
 #endif
@@ -349,7 +349,7 @@ static void Title_LoadBackground(void) {
   s32 blankTile;
 
   resourceId = (s32)&ResourceId_GoldenSunLogo;
-  Fade_ToBlack(0);
+  ScreenFade_ToBlack(0);
   REG_BG2CNT = LOGO_BGCNT;
   gBgScroll[2].y = 0;
   blankTile = LOGO_BLANK_TILE;

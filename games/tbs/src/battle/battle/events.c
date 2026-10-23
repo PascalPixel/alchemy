@@ -64,7 +64,7 @@ s32 BattleObject_ResetRuntimeFields(s32 unitId) {
 
 /// The advance arrow's OAM entry, as plain halfwords: a second view of struct
 /// AdvanceArrowSprite. BattleMessage_WaitForAdvance keeps it on its
-/// stack and rebuilds it each frame before Runtime_PushSlotEntry queues it.
+/// stack and rebuilds it each frame before Oam_AddSpriteAtDepth queues it.
 struct AdvanceSprite {
   struct AdvanceSprite *next; ///< never set here
   union {
@@ -137,7 +137,7 @@ s32 BattleMessage_WaitForAdvance(void) {
     // of a turn a frame).
     prompt->attributes.bytes[0] = Trig_Sin(gFrameCount << 12) / 32768 +
                                   window->y * 8 + (offset->y >> 8) + 6;
-    Runtime_PushSlotEntry(prompt, 240);
+    Oam_AddSpriteAtDepth(prompt, 240);
     // A held advance key counts only after 16 frames, so one still held from
     // the previous message does not skip this one; B held goes on at once.
     if ((gKeysHeld & KEY_B) || (gKeysPressed & KEY_ADVANCE) ||
@@ -146,7 +146,7 @@ s32 BattleMessage_WaitForAdvance(void) {
     WaitFrames(1);
   }
   Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
-  Resource_ResetEntry(tileSlot);
+  VramCache_FreeEntry(tileSlot);
   WaitFrames(1);
 }
 
@@ -185,12 +185,12 @@ s32 BattleMessage_WaitForAdvanceAt(s32 x, s32 y) {
     // Nudge it up and right every four frames.
     prompt->x = position.x + ((gFrameCount & 4) >> 1) - 4;
     prompt->y = position.y - ((gFrameCount & 4) >> 2) - 8;
-    Runtime_PushSlotEntry(prompt, 240);
+    Oam_AddSpriteAtDepth(prompt, 240);
     if (gKeysPressed & KEY_ADVANCE)
       break;
     WaitFrames(1);
   }
-  Resource_ResetEntry(tileSlot);
+  VramCache_FreeEntry(tileSlot);
   WaitFrames(1);
 }
 

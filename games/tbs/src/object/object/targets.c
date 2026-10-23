@@ -231,9 +231,9 @@ s32 FieldEffect_PlayCueAndStartEmitterOnTarget(s32 localId, s32 target,
 /// Mind Read's wave effect (psynergy_effects/mind_read.c) on the caster: each
 /// frame with 0 to cycle its colours, and with 1 (palette 0) when it ends.
 void Animation_ApplyChildPalette(struct MotionObject *object, s32 palette) {
-  struct AnimationObject *sprite;
-  struct AnimationEntry **entrySlot;
-  struct AnimationEntry *entry;
+  struct Sprite *sprite;
+  struct SpriteAnim **entrySlot;
+  struct SpriteAnim *entry;
   s32 remainingParts;
   s32 replacement;
   u8 partCount;

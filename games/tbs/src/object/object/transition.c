@@ -617,17 +617,17 @@ void ScreenTransition_Start(s32 mode, s32 frames) {
   variant = mode & 0xff;
   switch (transitionKind) {
   case TRANSITION_FADE:
-    Fade_ToBlack(0);
-    Fade_FromBlack(frames);
+    ScreenFade_ToBlack(0);
+    ScreenFade_FromBlack(frames);
     WaitFrames(1);
     break;
   case TRANSITION_BACKDROP_FADE:
-    ColorBuffer_SetSource(0x8000, PLTT_BACKDROP);
-    ColorBuffer_StartInterpolation(frames);
+    PaletteFade_SetSource(0x8000, PLTT_BACKDROP);
+    PaletteFade_StartInterpolation(frames);
     WaitFrames(1);
     IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT, REG_DISPCNT | display->dispcnt,
                         0x20000);
-    ColorBuffer_SetBackdrop(0);
+    PaletteFade_SetBackdrop(0);
     return;
   // The window, dissolve and centre-line kinds open from value 0 (closed) to
   // 32 (open), or for the centre line from 80 to 0, over frames frames.
@@ -713,12 +713,12 @@ void ScreenTransition_Finish(s32 mode, s32 frames) {
   variant = mode & 0xff;
   switch (transitionKind) {
   case TRANSITION_FADE:
-    Fade_FromBlack(0);
-    Fade_ToBlack(frames);
+    ScreenFade_FromBlack(0);
+    ScreenFade_ToBlack(frames);
     break;
   case TRANSITION_BACKDROP_FADE:
-    ColorBuffer_SetTarget(0x8000, 0);
-    ColorBuffer_StartInterpolation(frames);
+    PaletteFade_SetTarget(0x8000, 0);
+    PaletteFade_StartInterpolation(frames);
     break;
   case TRANSITION_WINDOW: {
     struct ScreenTransitionState *state =

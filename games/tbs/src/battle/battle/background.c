@@ -335,7 +335,7 @@ UNUSED void BattleCamera_SetViewAtDepth(s32 x, s32 depth, s32 y) {
 
   result = Iwram_RatioMulQ14(span, alpha);
   Projection_Set(span, result, span * 2);
-  Render_ResetTransformState();
+  Transform_Reset();
   Transform_ApplyPosition(focus);
   Transform_ApplyYaw((s16)camera->yaw);
   Transform_ApplyPitch((s16)camera->pitch);
@@ -345,9 +345,9 @@ UNUSED void BattleCamera_SetViewAtDepth(s32 x, s32 depth, s32 y) {
   Iwram_TransformVector(renderBounds, (s32 *)camera);
   gProjection.centerX = 120;
   gProjection.centerY = 120;
-  Render_ResetTransformState();
+  Transform_Reset();
   Transform_SetLookAt(camera->eye, focus);
-  Render_ProjectPoint(sourceBounds, measuredBounds);
+  Transform_ProjectPoint(sourceBounds, measuredBounds);
 
   BattleCamera_SetRange(0x780000, 0x780000, (120 - measuredBounds[0]) << 8,
                         (120 - measuredBounds[1]) << 8, scale);
@@ -390,7 +390,7 @@ void BattleCamera_SetView(s32 x, s32 depth, s32 y, s32 zoom) {
   // pixels back from the focus along the camera's yaw and pitch.
   result = Iwram_RatioMulQ14(span, alpha);
   Projection_Set(span, result, span * 2);
-  Render_ResetTransformState();
+  Transform_Reset();
   Transform_ApplyPosition(focus);
   Transform_ApplyYaw((s16)camera->yaw);
   Transform_ApplyPitch((s16)camera->pitch);
@@ -402,9 +402,9 @@ void BattleCamera_SetView(s32 x, s32 depth, s32 y, s32 zoom) {
   // shifts the plane by as much, in 8.8 pixels.
   gProjection.centerX = 120;
   gProjection.centerY = 120;
-  Render_ResetTransformState();
+  Transform_Reset();
   Transform_SetLookAt(camera->eye, focus);
-  Render_ProjectPoint(sourceBounds, measuredBounds);
+  Transform_ProjectPoint(sourceBounds, measuredBounds);
 
   BattleCamera_SetRange(0x780000, 0x780000, (120 - measuredBounds[0]) << 8,
                         (120 - measuredBounds[1]) << 8, scale);
@@ -438,7 +438,7 @@ void BattleCamera_SetViewAtPairMidpoint(s32 firstUnitId, s32 secondUnitId,
 /// by 2 a frame from 15, while the backdrop's stays 16.
 /// Reached only through its entry in FarCall_BattleTable, which no code in
 /// TBS names. Leaves REG_BLDCNT blending BG2 over the backdrop.
-void Graphics_FadeAlphaOut(void) {
+void BattleBackground_FadeAlphaOut(void) {
   s32 alphaStep;
 
   REG_BLDCNT = BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_BD;
@@ -452,7 +452,7 @@ void Graphics_FadeAlphaOut(void) {
 /// 2 a frame from 1, while the backdrop's stays 16.
 /// Reached only through its entry in FarCall_BattleTable, which no code in
 /// TBS names. Leaves REG_BLDCNT blending BG2 over the backdrop.
-void Graphics_FadeAlphaIn(void) {
+void BattleBackground_FadeAlphaIn(void) {
   s32 step;
 
   REG_BLDCNT = BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_BD;
@@ -472,7 +472,7 @@ struct BattleTransitionEntry {
 };
 
 /// Sets REG_BLDCNT to lighten every layer by REG_BLDY; nothing calls it.
-void Graphics_SetBlendControl(void) {
+void BattleBackground_SetBlendControl(void) {
   REG_BLDCNT = BLDCNT_TGT1_ALL | BLDCNT_EFFECT_LIGHTEN;
 }
 
@@ -531,8 +531,8 @@ s32 Runtime_AdjustDebugValueWithButtons(s32 selectedValue) {
 void BattleHighlight_SetSpriteMode(s32 actorId, s32 mode) {
   struct BattleObject *slot = BattleObject_Get(actorId);
   struct MotionObject *object;
-  struct AnimationObject *record;
-  struct AnimationObject **records;
+  struct Sprite *record;
+  struct Sprite **records;
   s32 recordIndex;
 
   if (slot == 0)
@@ -595,7 +595,7 @@ void BattleHighlight_ClearAllSpriteModes(void) {
 /// (order 0x480), added by BattleHighlight_SetModes while
 /// BattleWork.highlightMode is set; writes REG_BLDCNT, REG_BLDALPHA,
 /// REG_BLDY and BattleWork.highlightStep.
-void Graphics_AdvancePaletteCycle(void) {
+void BattleBackground_StepHighlightBlend(void) {
   struct BattleWork *battle = gBattleWork;
   s8 *blendRamp;
   u16 rampIndex;
@@ -619,11 +619,11 @@ void Graphics_AdvancePaletteCycle(void) {
 /// BATTLE_UNIT_LIST_END, or with HIGHLIGHT_OFF stops the highlight.
 /// With HIGHLIGHT_SELECTED (any odd mode) every other unit's sprites turn
 /// semi-transparent and the selected units' stay opaque, so only they take the
-/// pulsing lightening of Graphics_AdvancePaletteCycle. Called with the acting
-/// unit by BattleStaging_DispatchAction, with the targets being chosen by
-/// the command menu (party_commands.c, targets.c, selection.c), and with 0 when
-/// either is done. Sets BattleWork.highlightMode and highlightStep, and adds
-/// or removes the callback.
+/// pulsing lightening of BattleBackground_StepHighlightBlend. Called with the
+/// acting unit by BattleStaging_DispatchAction, with the targets being chosen
+/// by the command menu (party_commands.c, targets.c, selection.c), and with 0
+/// when either is done. Sets BattleWork.highlightMode and highlightStep, and
+/// adds or removes the callback.
 void BattleHighlight_SetModes(u16 *selectedUnits, s32 mode) {
   s16 unitIds[14];
   struct BattleWork *battle = gBattleWork;
@@ -631,7 +631,7 @@ void BattleHighlight_SetModes(u16 *selectedUnits, s32 mode) {
   u32 unitIndex;
 
   if (mode == HIGHLIGHT_OFF) {
-    Task_Remove(Graphics_AdvancePaletteCycle);
+    Task_Remove(BattleBackground_StepHighlightBlend);
     REG_BLDY = mode;
     BattleHighlight_ClearAllSpriteModes();
     WaitFrames(1);
@@ -664,7 +664,7 @@ void BattleHighlight_SetModes(u16 *selectedUnits, s32 mode) {
     }
     WaitFrames(1);
     IoWriteQueue_Store16((u32)&REG_BLDCNT, 0);
-    Task_Add(Graphics_AdvancePaletteCycle, 0x480);
+    Task_Add(BattleBackground_StepHighlightBlend, 0x480);
   }
 }
 

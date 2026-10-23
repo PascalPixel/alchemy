@@ -289,7 +289,7 @@ s32 NamingScreen_EditMemberName(s32 member) {
   }
   editedName[NAME_MAX_BYTES] = 0;
   Text_DrawPaddedLabel(nameWindow, originalName);
-  vramSlot = Resource_FindFreeEntry();
+  vramSlot = VramCache_FindFreeEntry();
   // The cursor starts on End. 95 is the last of the VRAM_CACHE_ENTRY_COUNT
   // slots; without a free one a sprite is not made, though the loop below
   // still uses it.
@@ -304,7 +304,7 @@ s32 NamingScreen_EditMemberName(s32 member) {
                                        keyboardWindow->x * 8 + 140,
                                        keyboardWindow->y * 8 + 52);
   }
-  vramSlot = Resource_FindFreeEntry();
+  vramSlot = VramCache_FindFreeEntry();
   if (vramSlot <= 95) {
     VramCache_Load(vramSlot, 128, gResource_FixedBlockATiles);
     output =
@@ -563,7 +563,7 @@ s32 NamingScreen_EditMemberName(s32 member) {
   editedName[NAME_MAX_BYTES] = 0;
   Text_DrawString(originalName, nameWindow, 0, 0);
   keyColumn = NAME_COMMAND_COLUMN;
-  vramSlot = Resource_FindFreeEntry();
+  vramSlot = VramCache_FindFreeEntry();
   keyRow = 10;
   if (vramSlot <= 95) {
     VramCache_Load(vramSlot, 128, gResource_FixedBlockBTiles);
@@ -574,7 +574,7 @@ s32 NamingScreen_EditMemberName(s32 member) {
                                        keyboardWindow->x * 8 + 140,
                                        keyboardWindow->y * 8 + 92);
   }
-  vramSlot = Resource_FindFreeEntry();
+  vramSlot = VramCache_FindFreeEntry();
   if (vramSlot <= 95) {
     VramCache_Load(vramSlot, 128, gResource_FixedBlockATiles);
     output =

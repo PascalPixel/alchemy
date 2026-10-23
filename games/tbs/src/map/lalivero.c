@@ -836,7 +836,7 @@ const struct MapEvent *Lalivero_GetEvents(void) {
 /// the north exit after Venus Lighthouse.
 s32 Lalivero_Initialize(void) {
   union FieldObject *fieldObject;
-  struct AnimationObject *sprite;
+  struct Sprite *sprite;
   GlyphTransfer *icon;
 
   // Coming back from the lighthouse switches the town to its later state.

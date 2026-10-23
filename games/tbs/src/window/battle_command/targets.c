@@ -266,7 +266,7 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
     }
     firstSprite->x = selectedPosition.x - 8;
     firstSprite->y = (u8)(selectedPosition.y - 16);
-    Runtime_PushSlotEntry((s32 *)firstSprite, 240);
+    Oam_AddSpriteAtDepth((s32 *)firstSprite, 240);
     // The other markers' scale in 8.8: 176 (0.69 times) beside an aimed one,
     // full size when the action takes every unit.
     if (spread == ABILITY_RANGE_ALL) {
@@ -299,7 +299,7 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
     effect.angle = 0;
     effect.angle = 0;
 #endif
-    matrix = AffineMatrix_BuildForEffect(&effect);
+    matrix = OamMatrix_AllocFromTransform(&effect);
     // The aim moved: list the units the range covers, the aimed one first,
     // mark them, and redraw the window for the aimed one.
     if (redraw & 1) {
@@ -706,7 +706,7 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
         else
           marker->affine = 1;
         marker->matrix = matrix;
-        Runtime_PushSlotEntry((s32 *)marker, 240);
+        Oam_AddSpriteAtDepth((s32 *)marker, 240);
       }
     }
     pressed = gKeysPressed;
@@ -775,7 +775,7 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
       break;
   }
   WaitFrames(1);
-  Resource_ResetEntry(cursorSlot);
+  VramCache_FreeEntry(cursorSlot);
   if (conditionWindow != 0)
     Window_Close(conditionWindow, 1);
   Window_Close(window, 1);

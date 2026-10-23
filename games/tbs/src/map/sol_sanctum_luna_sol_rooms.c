@@ -91,10 +91,10 @@
 /// (MsgSolSanctumFloatingEyeThing)
 #define FLAG_SOL_SANCTUM_RESCUE_ARRIVAL_SEEN 0x309
 
-/// The blue tint the rooms fade to (PaletteTransform's TINT form).
-#define SOL_SANCTUM_BLUE_TINT (PALETTE_TRANSFORM_TINT | RGB(12, 14, 20))
+/// The blue tint the rooms fade to (PaletteTint's TINT form).
+#define SOL_SANCTUM_BLUE_TINT (PALETTE_TINT_CUSTOM | RGB(12, 14, 20))
 /// The dim red tint the rooms fade to.
-#define SOL_SANCTUM_WARM_TINT (PALETTE_TRANSFORM_TINT | RGB(17, 13, 11))
+#define SOL_SANCTUM_WARM_TINT (PALETTE_TINT_CUSTOM | RGB(17, 13, 11))
 
 /// The metatile behaviors of the floor cells the events answer; behaviors 1
 /// and 2 are the warps.
@@ -123,7 +123,7 @@ enum SolSanctumLunaSolRoomsCell {
 // Map flags, cleared at every ordinary warp destination; one of the three is
 // set at a time, for the colours the rooms show, so a return after a battle
 // keeps them:
-// - FLAG_MAP_TEMP_00: the plain colours (PALETTE_TRANSFORM_PLAIN);
+// - FLAG_MAP_TEMP_00: the plain colours (PALETTE_TINT_NONE);
 // - FLAG_MAP_TEMP_01: SOL_SANCTUM_BLUE_TINT;
 // - FLAG_MAP_TEMP_02: SOL_SANCTUM_WARM_TINT.
 
@@ -176,7 +176,7 @@ static void EventScript_UpdateRoomTint(void) {
     paletteActive = GameFlag_IsSet(FLAG_MAP_TEMP_01);
     if (paletteActive == 0) {
       Engine_ScriptStart();
-      ColorBuffer_ApplyTarget(SOL_SANCTUM_BLUE_TINT, 1);
+      PaletteFade_ApplyTarget(SOL_SANCTUM_BLUE_TINT, 1);
       Engine_ColorBufferInterpolate(20);
       GameFlag_Set(FLAG_MAP_TEMP_01);
       GameFlag_Clear(FLAG_MAP_TEMP_00);
@@ -194,7 +194,7 @@ static void EventScript_UpdateRoomTint(void) {
   } else {
     if (GameFlag_IsSet(FLAG_MAP_TEMP_00) == 0) {
       Engine_ScriptStart();
-      ColorBuffer_ApplyTarget(PALETTE_TRANSFORM_PLAIN, 1);
+      PaletteFade_ApplyTarget(PALETTE_TINT_NONE, 1);
       Engine_ColorBufferInterpolate(20);
       GameFlag_Set(FLAG_MAP_TEMP_00);
       GameFlag_Clear(FLAG_MAP_TEMP_01);
@@ -210,7 +210,7 @@ static void EventScript_UpdateRoomTint(void) {
 static void EventScript_RestorePlainTint(void) {
   if (GameFlag_IsSet(FLAG_MAP_TEMP_00) == 0) {
     Engine_ScriptStart();
-    ColorBuffer_ApplyTarget(PALETTE_TRANSFORM_PLAIN, 1);
+    PaletteFade_ApplyTarget(PALETTE_TINT_NONE, 1);
     Engine_ColorBufferInterpolate(20);
     GameFlag_Set(FLAG_MAP_TEMP_00);
     GameFlag_Clear(FLAG_MAP_TEMP_01);
@@ -231,7 +231,7 @@ static void EventScript_UpdateRoomTintInverse(void) {
     paletteActive = GameFlag_IsSet(FLAG_MAP_TEMP_00);
     if (paletteActive == 0) {
       Engine_ScriptStart();
-      ColorBuffer_ApplyTarget(PALETTE_TRANSFORM_PLAIN, 1);
+      PaletteFade_ApplyTarget(PALETTE_TINT_NONE, 1);
       Engine_ColorBufferInterpolate(20);
       GameFlag_Set(FLAG_MAP_TEMP_00);
       GameFlag_Clear(FLAG_MAP_TEMP_01);
@@ -241,7 +241,7 @@ static void EventScript_UpdateRoomTintInverse(void) {
   } else {
     if (GameFlag_IsSet(FLAG_MAP_TEMP_01) == 0) {
       Engine_ScriptStart();
-      ColorBuffer_ApplyTarget(SOL_SANCTUM_BLUE_TINT, 1);
+      PaletteFade_ApplyTarget(SOL_SANCTUM_BLUE_TINT, 1);
       Engine_ColorBufferInterpolate(20);
       GameFlag_Set(FLAG_MAP_TEMP_01);
       GameFlag_Clear(FLAG_MAP_TEMP_00);
@@ -258,7 +258,7 @@ static void EventScript_UpdateRoomTintInverse(void) {
 /// SOL_SANCTUM_WARM_TINT. Sets FLAG_MAP_TEMP_02 and clears _00 and _01.
 static void EventScript_ApplySecondRoomTint(void) {
   if (GameFlag_IsSet(FLAG_MAP_TEMP_02) == 0) {
-    ColorBuffer_ApplyTarget(SOL_SANCTUM_WARM_TINT, 1);
+    PaletteFade_ApplyTarget(SOL_SANCTUM_WARM_TINT, 1);
     Engine_ColorBufferInterpolate(20);
     GameFlag_Set(FLAG_MAP_TEMP_02);
     GameFlag_Clear(FLAG_MAP_TEMP_00);
@@ -348,7 +348,7 @@ static void EventScript_KradenFindsHeartOfSanctum(void) {
     Engine_ScriptStart();
     // The leader walks in as the music changes.
     Engine_ScriptSetMessage(MsgSolSanctumFound);
-    Engine_AudioPlayCue(AUDIO_CUE_FADE_BGM);
+    Engine_AudioPlayCue(SONG_FADE_OUT_BGM);
     ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(1), PIXELS(1) / 2);
     ObjectEvent_WalkToAndWait(LOCALID_PARTY_LEADER, 288, 232);
     Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, 0);
@@ -845,7 +845,7 @@ static void SolSanctumLunaSolRooms_OpenOnKradenInLunaRoom(void) {
   ObjectEvent_SetPosition(LOCALID_KRADEN, PIXELS(574), PIXELS(120));
   ObjectEvent_SetPosition(LOCALID_PARTY_LEADER, 0, 0);
   Engine_TaskWait(1);
-  ColorBuffer_ApplyTarget(SOL_SANCTUM_BLUE_TINT, 1);
+  PaletteFade_ApplyTarget(SOL_SANCTUM_BLUE_TINT, 1);
   Engine_ColorBufferInterpolate(20);
   GameFlag_Set(FLAG_MAP_TEMP_01);
   GameFlag_Clear(FLAG_MAP_TEMP_00);
@@ -856,7 +856,7 @@ static void SolSanctumLunaSolRooms_OpenOnKradenInLunaRoom(void) {
   Engine_ScriptWaitForScreen();
   Engine_ScriptWait(40);
   Script_PlaySong(SE_THUNDER);
-  ColorBuffer_ApplyTarget(0x10005, 1);
+  PaletteFade_ApplyTarget(0x10005, 1);
   Engine_ColorBufferInterpolate(8);
   Engine_ScriptWait(32);
   Engine_ColorBufferApplyTarget(SOL_SANCTUM_BLUE_TINT, 1);
@@ -1209,7 +1209,7 @@ static void SolSanctumLunaSolRooms_DiscussFloorSymbolChangingToLuna(void) {
 static void EventScript_RiseToElementalStarRoom(void) {
   struct ObjectEvent *objectEvent;
   s32 frame;
-  struct AnimationObject *sprite;
+  struct Sprite *sprite;
 
   if (Engine_GameFlagIsSet(FLAG_SOL_SANCTUM_FLOOR_SYMBOL_SEEN) == 0) {
   } else {
@@ -1393,7 +1393,7 @@ s32 SolSanctumLunaSolRooms_Initialize(void) {
       Engine_GameFlagIsSet(FLAG_SOL_SANCTUM_STAR_ROOM_PASSAGE_OPEN) == 0) {
     Engine_GameFlagSet(FLAG_RETREAT_BLOCKED);
   }
-  Engine_ColorBufferApplySource(PALETTE_TRANSFORM_PLAIN, 0);
+  Engine_ColorBufferApplySource(PALETTE_TINT_NONE, 0);
   if (Engine_GameFlagIsSet(FLAG_KEEP_PARTY_POSITION) != 0) {
     if (Engine_GameFlagIsSet(FLAG_MAP_TEMP_01) != 0) {
       Engine_ColorBufferApplyTarget(SOL_SANCTUM_BLUE_TINT, 1);
@@ -1563,14 +1563,14 @@ static void SolSanctumLunaSolRooms_ShowMessageAndWait(s32 speaker,
 /// FLAG_MAP_TEMP_01 and clears _00 and _02.
 static void SolSanctumLunaSolRooms_ArriveAfterWiseOnesRescue(void) {
   struct ObjectEvent *leader;
-  struct ColorBuffer *palette;
+  struct PaletteFade *palette;
 
   Engine_ScriptStart();
   // The screen opens all white on Isaac and Garet, then fades to the tint.
   FieldCamera_MoveTo(PIXELS(286), -1, PIXELS(134), 0);
   Engine_MapGridRedraw();
   Engine_TaskWait(1);
-  ColorBuffer_ApplySource(0x7fff, 0);
+  PaletteFade_ApplySource(0x7fff, 0);
   Engine_ColorBufferApplyTarget(0x7fff, 0);
   Engine_ColorBufferInterpolate(1);
   Engine_TaskWait(1);
@@ -1588,7 +1588,7 @@ static void SolSanctumLunaSolRooms_ArriveAfterWiseOnesRescue(void) {
   Engine_GameFlagSet(FLAG_MAP_TEMP_01);
   Engine_GameFlagClear(FLAG_MAP_TEMP_00);
   Engine_GameFlagClear(FLAG_MAP_TEMP_02);
-  ColorBuffer_ApplyTarget(PALETTE_TRANSFORM_PLAIN, 2);
+  PaletteFade_ApplyTarget(PALETTE_TINT_NONE, 2);
   Engine_ColorBufferInterpolate(60);
   Engine_TaskWait(100);
   // Both look around, bewildered, as the rooms give a jolt.

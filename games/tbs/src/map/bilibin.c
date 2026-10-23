@@ -979,7 +979,7 @@ static void Bilibin_UpdateWadingRipples(void) {
 /// wader, which frees itself after 30 frames.
 static void Bilibin_SpawnRipple(struct ObjectEvent *objectEvent) {
   struct ObjectEvent *effect;
-  struct AnimationObject *sprite;
+  struct Sprite *sprite;
 
   effect = Engine_ObjectCreate(SPRITE_RIPPLE, objectEvent->x.fixed,
                                objectEvent->y.fixed, objectEvent->z.fixed);
@@ -994,7 +994,7 @@ static void Bilibin_SpawnRipple(struct ObjectEvent *objectEvent) {
   if (sprite == NULL)
     return;
 
-  AnimationObject_SelectAnimation(sprite, 2);
+  Sprite_StartAnim(sprite, 2);
   sprite->flags = 0;
   sprite->image.objectMode = 1;
   sprite->image.priority = 3;

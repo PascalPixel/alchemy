@@ -11,12 +11,12 @@
 #include "static_assert.h"
 #include "palbuf.h"
 
-/// An object event's animated sprite (struct AnimationObject), as far as the
+/// An object event's animated sprite (struct Sprite), as far as the
 /// pointer to its sprite id.
 struct SpeakerSprite {
-  u8 beforeEntries[0x28]; ///< AnimationObject's fields before its layers
-  /// AnimationObject.entries[0], its first layer, whose first halfword is the
-  /// sprite id it shows (AnimationEntry.animationId); null for none.
+  u8 beforeEntries[0x28]; ///< Sprite's fields before its layers
+  /// Sprite.entries[0], its first layer, whose first halfword is the
+  /// sprite id it shows (SpriteAnim.animationId); null for none.
   s16 *value28;
 };
 
@@ -55,6 +55,6 @@ struct SpeakerDefinition {
 };
 
 /// The colour buffer, heap slot HEAP_SLOT_PALETTE_FADE under its own name.
-extern struct ColorBuffer *gPaletteFadeWork;
+extern struct PaletteFade *gPaletteFadeWork;
 
 #endif

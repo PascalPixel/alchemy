@@ -85,7 +85,7 @@ void FieldScript_SpawnObjectEventTemplates(struct ObjectEventTemplate *entry,
   struct FieldWork *work;
   struct Object *object;
   struct Object *previous;
-  struct AnimationObject *sprite;
+  struct Sprite *sprite;
   s32 tableIndex;
   s32 objectEventIndex;
   s32 spriteId;
@@ -141,7 +141,7 @@ void FieldScript_SpawnObjectEventTemplates(struct ObjectEventTemplate *entry,
           spriteSlot = sprite->slot;
           sprite = object->animation;
           sprite->retainCacheEntry = 1;
-          Resource_ResetEntry(sprite->slot);
+          VramCache_FreeEntry(sprite->slot);
           sprite->slot = spriteSlot;
         }
       }
@@ -299,9 +299,8 @@ void ObjectEvent_ResetForObject(struct ObjectEventTemplate *table) {
   camera->groundHeight = object->groundHeight;
   ObjectDispatch_StartCameraFar((struct DispatchObject *)camera, (s32)object);
   if (work->mode == OBJECT_SYSTEM_WORLD_MAP) {
-    struct AnimationEntry *meta =
-        (struct AnimationEntry *)ResourceMetadata_RegisterFar(object->animation,
-                                                              23);
+    struct SpriteAnim *meta =
+        (struct SpriteAnim *)Sprite_AddAnimFar(object->animation, 23);
     meta->colorMode = SPRITE_COLOR_HIDDEN;
     meta->priority = 9;
   }
@@ -561,7 +560,7 @@ void ObjectEvent_Snapshot(void) {
             (DMA_ENABLE | DMA_32BIT) << 16 | (sizeof(struct Object) / 4),
             REG_DMA3);
     if (object->animationKind == OBJECT_SPRITE_ONE) {
-      struct AnimationObject *sprite = object->animation;
+      struct Sprite *sprite = object->animation;
       animation = sprite->lastNo;
       spriteFlagBits = sprite->flags;
       priority = sprite->image.priority;
@@ -598,7 +597,7 @@ void ObjectEvent_Restore(void) {
   u8 *priorities = gObjectEventSnapshot.priorities;
   s32 restoredCount;
   struct Object *object;
-  struct AnimationObject *sprite;
+  struct Sprite *sprite;
   struct Object *camera;
   s32 *cameraPosition;
   s32 objectEventIndex;

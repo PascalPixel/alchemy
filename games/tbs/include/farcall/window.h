@@ -265,10 +265,10 @@ s32 Save_ScanRecordFlagsFar(void);
 /// cancelled; the name changes only when the player ends on End.
 s32 NamingScreen_EditMemberNameFar(s32 entry);
 /// Debug: pages through the item, Psynergy and status icons. Returns 0.
-s32 DebugMenu_BrowseIconsFar(void);
+s32 DebugBrowser_IconsFar(void);
 /// Debug: steps through the character and sprite portrait maps, showing each
 /// entry's portrait and label. Returns 0.
-s32 DebugMenu_BrowsePortraitsFar(void);
+s32 DebugBrowser_PortraitsFar(void);
 /// Shows `The <element> Djinni <name> joined <member>.` while the join fanfare
 /// plays, until it ends or a button is pressed; djinn is the Djinni's number in
 /// its element.
@@ -299,7 +299,7 @@ s32 ColossoMenu_ChooseFar(s32 unused);
 /// cancelling answers NO.
 s32 YesNoMenu_RunAtFar(s32 x, s32 y, s32 selection);
 /// Loads the pointing hand cursor's tiles into a free VRAM slot, unchecked, and
-/// returns the slot for Resource_ResetEntry to free.
+/// returns the slot for VramCache_FreeEntry to free.
 s32 Resource_LoadFixedBlockBIntoFreeSlotFar(void);
 /// Decodes message no and returns its text's width and height in pixels,
 /// leaving its arguments for the message to be shown.

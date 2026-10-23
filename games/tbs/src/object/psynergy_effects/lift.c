@@ -100,7 +100,7 @@ struct MotionObject *FieldEffect_SpawnItemBreakMode3(s32 x, s32 y, s32 z,
   if (fragment != NULL) {
     fragment->scaleX = fragment->scaleY = 0x4000;
     fragment->acceleration = fragment->speedLimit = 0x30000; // 3 pixels a frame
-    ((struct AnimationObject *)fragment->records)->image.priority = 0;
+    ((struct Sprite *)fragment->records)->image.priority = 0;
     ObjectDispatch_SelectAnimationFar(fragment, 3);
     scale = fragment->scaleX;
     if (scale < 0x10000) {

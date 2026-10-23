@@ -242,7 +242,7 @@ s32 DebugFlagEditor_HandleInput(struct Window *window, s32 *page, s32 *cursor);
 void Menu_ReservedNoOp(void);
 void Djinn_SetFoundFlagAndAdd(s32 owner, s32 element, s32 index);
 s32 PauseMenu_Run(void);
-s32 DebugMenu_BrowseIcons(void);
-s32 DebugMenu_BrowsePortraits(void);
+s32 DebugBrowser_Icons(void);
+s32 DebugBrowser_Portraits(void);
 
 #endif

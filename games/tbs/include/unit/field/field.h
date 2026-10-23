@@ -5,8 +5,8 @@
 
 #include "types.h"
 
-struct AnimationEntry;
-struct AnimationObject;
+struct SpriteAnim;
+struct Sprite;
 struct DispatchObject;
 struct FieldPosition;
 struct WorldMapAffinePair;
@@ -30,8 +30,8 @@ enum ObjectSystemMode {
   OBJECT_SYSTEM_BATTLE = 4
 };
 
-/// AnimationEntry.kind: the facing table a layer's frames follow
-/// (Sprite_ComposeAnimationFrame, facing.c). Each cuts the facing angle into
+/// SpriteAnim.kind: the facing table a layer's frames follow
+/// (Sprite_ComposeFrame, facing.c). Each cuts the facing angle into
 /// sectors and gives each sector a frame and whether it is mirrored.
 enum AnimationFacingKind {
   /// The script's own frame whatever the facing; zero also marks a free
@@ -53,7 +53,7 @@ enum AnimationFacingKind {
   /// way.
   ANIMATION_FACING_FRONT_BACK_SWAPPED = 22,
   /// Ringed as eight facings by the sprite viewer, but with no facing table:
-  /// Sprite_ComposeAnimationFrame draws it as ANIMATION_FACING_NONE.
+  /// Sprite_ComposeFrame draws it as ANIMATION_FACING_NONE.
   /// XXX: likely an older eight-direction kind, because the viewer still
   /// lists it; a sprite of this kind would settle it.
   ANIMATION_FACING_EIGHT_NO_TABLE = 44,
@@ -61,7 +61,7 @@ enum AnimationFacingKind {
   ANIMATION_FACING_EIGHT_FRAMES_MIRRORED = 88
 };
 
-/// AnimationEntry.mode, from the metadata's frameCodec: how a layer's frames
+/// SpriteAnim.mode, from the metadata's frameCodec: how a layer's frames
 /// are stored. Any other value is raw, for the frame decoder.
 enum SpriteFrameCodec {
   SPRITE_FRAME_RAW = 0,
@@ -69,8 +69,8 @@ enum SpriteFrameCodec {
   SPRITE_FRAME_LZ = 3      ///< LZ-compressed
 };
 
-/// AnimationObject.flags.
-enum AnimationObjectFlag {
+/// Sprite.flags.
+enum SpriteFlag {
   SPRITE_FLAG_SHADOW = 1 << 0, ///< its shadow is drawn; set when created
   /// Drawn as an outline, in ObjectSystemWork's edge and fill colours.
   SPRITE_FLAG_OUTLINED = 1 << 1
@@ -177,37 +177,33 @@ enum Collision {
 };
 
 u8 *Decompress_Lz(const u8 *source, u8 *destination);
-s32 Sprite_ComposeAnimationFrame(struct AnimationObject *animation, u16 dir);
-void Render_PlaceSpritePartPair(struct AnimationObject *sprite, s32 screenX,
-                                s32 height, s32 screenY, s32 groundHeight,
-                                s32 *scale);
-void Render_ApplyProjectedPlacement(struct AnimationObject *sprite,
+s32 Sprite_ComposeFrame(struct Sprite *animation, u16 dir);
+void Render_PlaceSpritePartPair(struct Sprite *sprite, s32 screenX, s32 height,
+                                s32 screenY, s32 groundHeight, s32 *scale);
+void Render_ApplyProjectedPlacement(struct Sprite *sprite,
                                     const struct SpritePlacement *position,
                                     const struct SpriteScale *scale,
                                     s32 facing);
-void Render_PlaceProjectedSprite(struct AnimationObject *sprite, s32 *point,
-                                 s32 *scale, s32 facing, s32 depth);
-void ObjectGroup_SetChildValueUnlessFifteen(void *rawSprite, u32 value);
-s32 ResourceSlot_Load(u32 slot, u32 *buffer, s32 number, u32 variant);
-s32 Animation_LookupValueByKey(s32 tag);
-s32 Animation_InitializeObjects(struct AnimationObject *sprite);
-void Animation_InitializeWorkFromMetadata(struct AnimationEntry *layer);
-s32 ResourceMetadata_Register(struct AnimationObject *sprite, s32 id);
-void ResourceMetadata_Unregister(struct AnimationObject *sprite, s32 layer);
-void ResourceMetadata_ReleaseSlot(struct AnimationObject *sprite, u32 index);
-void Animation_SetWorkEntry(struct AnimationEntry *layer, s32 animation);
-s32 AnimationObject_SelectAnimation(struct AnimationObject *sprite,
-                                    s32 animation);
-s32 AnimationObject_SetActiveFrameTimers(struct AnimationObject *sprite,
-                                         s32 frames);
-void AnimationObject_SetActiveTimerSteps(struct AnimationObject *sprite,
-                                         s32 step);
+void Render_PlaceProjectedSprite(struct Sprite *sprite, s32 *point, s32 *scale,
+                                 s32 facing, s32 depth);
+void Sprite_SetAnimColorModes(void *rawSprite, u32 value);
+s32 SpriteFrameCache_Load(u32 slot, u32 *buffer, s32 number, u32 variant);
+s32 SpriteFrameCache_FindByTag(s32 tag);
+s32 Sprite_ResetAnims(struct Sprite *sprite);
+void SpriteAnim_Reset(struct SpriteAnim *layer);
+s32 Sprite_AddAnim(struct Sprite *sprite, s32 id);
+void Sprite_RemoveAnim(struct Sprite *sprite, s32 layer);
+void Sprite_RemoveAnimAt(struct Sprite *sprite, u32 index);
+void SpriteAnim_Start(struct SpriteAnim *layer, s32 animation);
+s32 Sprite_StartAnim(struct Sprite *sprite, s32 animation);
+s32 Sprite_SetAnimTimers(struct Sprite *sprite, s32 frames);
+void Sprite_SetAnimSpeed(struct Sprite *sprite, s32 step);
 void ObjectSystem_Configure(s32 mode);
-struct AnimationEntry *Animation_AllocateLayer(s32 id);
-void ResourceMetadata_ClearRecord(struct AnimationEntry *record);
-struct AnimationObject *ResourceObject_Create(s32 id);
-void ResourceObject_Release(struct AnimationObject *sprite);
-s32 ResourceMetadata_SumCommandLengths(s32 id, u32 animation, s32 frameCount);
+struct SpriteAnim *SpriteAnim_Alloc(s32 id);
+void SpriteAnim_Clear(struct SpriteAnim *record);
+struct Sprite *Sprite_Create(s32 id);
+void Sprite_Destroy(struct Sprite *sprite);
+s32 SpriteAnim_SumCommandLengths(s32 id, u32 animation, s32 frameCount);
 void SpriteDissolve_Step(u8 *obj, u32 pos);
 void SpriteDissolve_Run(u8 *sprite);
 void SpriteDissolve_RunMany(u8 **sprites, s32 count);
@@ -285,8 +281,8 @@ void ObjectScript_SetOrCompareByte62(struct ScriptOperands *work, s32 operation,
                                      s32 value);
 void ObjectScript_SetOrCompareByte63(struct ScriptOperands *work, s32 operation,
                                      s32 value);
-void Ui_SetGridColumnColorMode(s32 slot, s32 value);
-void Ui_SetGridColumnPriority(s32 slot, s32 value);
+void SpriteViewer_SetGridColumnColorMode(s32 slot, s32 value);
+void SpriteViewer_SetGridColumnPriority(s32 slot, s32 value);
 
 s32 MapGrid_GetScreenRelativePosition(struct Object *object,
                                       s32 *screenPosition);
@@ -447,12 +443,12 @@ void BlendScript_Start(u16 *script);
 void BlendScript_Suspend(void);
 void BlendScript_Resume(void);
 
-void PaletteQueue_Initialize(void);
-s32 PaletteQueue_Add(s16 paletteBank, s16 firstColor, s16 delay,
+void PaletteCycle_Initialize(void);
+s32 PaletteCycle_Add(s16 paletteBank, s16 firstColor, s16 delay,
                      s16 colorCount);
-void PaletteQueue_Stop(void);
-void PaletteQueue_Start(void);
-void PaletteQueue_StepCycles(void);
+void PaletteCycle_Stop(void);
+void PaletteCycle_Start(void);
+void PaletteCycle_Step(void);
 
 s32 Terrain_GetFirstSampleA(const u8 *heightBytes, s32 pixelX, s32 pixelY);
 s32 Terrain_LerpTwoSamples(const u8 *heightBytes, s32 pixelX, s32 pixelY);
@@ -493,12 +489,12 @@ void TileMap_DrawRowsFromRam(const struct WorldMapAffinePair *lines,
 void WorldMap_BuildScanlineTable(s32 depth, s32 *position,
                                  struct WorldMapScanline *scanline);
 
-void Ui_RunIconMonitor(void);
-s32 Ui_FindNextSpriteWithImage(s32 spriteId, s32 direction);
+void SpriteViewer_Run(void);
+s32 SpriteViewer_FindNextSpriteWithImage(s32 spriteId, s32 direction);
 void SpriteViewer_BuildProbeRing(s32 centerX, s32 centerY,
                                  struct SpritePlacement *positions);
 void Ui_FillGridColumnFromMetadata(s32 layerIndex, s32 animationIndex);
-void Ui_SetGridColumnNumber(s32 layerIndex, s32 spriteId);
+void SpriteViewer_SetGridColumnNumber(s32 layerIndex, s32 spriteId);
 void Battle_PlaceActorsByFormationKind(void);
 
 #endif

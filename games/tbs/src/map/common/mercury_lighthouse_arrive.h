@@ -14,7 +14,7 @@ static void MercuryLighthouse_ArriveWithSparks(void) {
   struct ObjectEvent *objectEvent;
   s32 flag;
   struct ObjectEvent *record;
-  struct AnimationObject *sprite;
+  struct Sprite *sprite;
 
   objectEvent = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   flag = GameFlag_IsSet(FLAG_KEEP_PARTY_POSITION);

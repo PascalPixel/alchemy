@@ -242,7 +242,7 @@ void BattleAnim_RunBeamSequence(struct BattleAnimArgs *effect) {
         s32 size = spark->variant;
 
         if (size > 0) {
-          Render_ProjectPoint(&spark->x, ScreenPoint_Coordinates(&point));
+          Transform_ProjectPoint(&spark->x, ScreenPoint_Coordinates(&point));
           point.x += scrollX;
           size >>= 3;
           size += 2;
@@ -405,7 +405,7 @@ void BattleAnim_RunRingAndSparkSequence(struct BattleAnimArgs *effect) {
         if (mote->x >= 0 && frame >= i / 4) {
           s32 size = (i & 1) + 5;
 
-          Render_ResetTransformState();
+          Transform_Reset();
           Transform_ApplyRoll(mote->velocityZ);
           Transform_ApplyPitch(mote->velocityX);
           Transform_ApplyYaw(mote->velocityY);

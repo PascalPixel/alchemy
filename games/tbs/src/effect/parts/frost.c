@@ -90,7 +90,7 @@ void BattleAnim_RunFrost(struct BattleAnimArgs *effect) {
     // The motes turn about (0, 0, 512), not about a target. That point is
     // behind the eye, so they are never projected (see the motes below).
     SET_VECTOR(point, 0, 0, 512 << 16);
-    Render_ResetTransformState();
+    Transform_Reset();
     Transform_ApplyPosition(point);
     // A chime every 4 frames while the columns spring up.
     if (frame >= 36 && frame < 64 && (frame & 3) == 0)
@@ -112,7 +112,7 @@ void BattleAnim_RunFrost(struct BattleAnimArgs *effect) {
     // their heights is kept; none is drawn from 35 frames after it. A mote
     // is drawn only while y is between -48 and 48 - i / 2, so they go out at
     // staggered rows as they sink. The point lies behind the eye
-    // (Render_ProjectPoint looks down -z), so the projection is skipped and
+    // (Transform_ProjectPoint looks down -z), so the projection is skipped and
     // position keeps the translated point in 16.16, with no perspective: y
     // grows down the canvas, and x is halved (>> 17) as on the wide canvas,
     // though this canvas is shown at its own width, so the spiral's

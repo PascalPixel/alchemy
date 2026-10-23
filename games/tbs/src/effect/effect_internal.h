@@ -139,8 +139,7 @@ static inline void Dma_Stop(volatile u16 *channel) {
 /// transform, then looks from camera->eye towards camera->focus. Effects that
 /// place pictures at battle positions do this before projecting them.
 #define ANIM_VIEW_FROM_CAMERA(camera)                                          \
-  (Render_ResetTransformState(),                                               \
-   Transform_SetLookAt((camera)->eye, (camera)->focus))
+  (Transform_Reset(), Transform_SetLookAt((camera)->eye, (camera)->focus))
 
 /// Strikes target `i`: it flashes white in its damage pose for `frames`
 /// frames, counted by actor timer `i`, and is knocked back by `motion`, an enum
@@ -250,7 +249,7 @@ static inline void Dma_Stop(volatile u16 *channel) {
 /// the element streaks take.
 #define ANIM_PLAYBACK_ORDER 0xc80
 
-/// Ram_MapGridCellBuffer as the unused Graphics_ConvertBackgroundToBlueRamp
+/// Ram_MapGridCellBuffer as the unused BattleAnim_ConvertBackgroundToBlueRamp
 /// (bind.c) uses it: a working copy of the backdrop's picture, the 0x7800
 /// bytes of BG character block 2.
 #define BLUE_RAMP_PIXELS Ram_MapGridCellBuffer

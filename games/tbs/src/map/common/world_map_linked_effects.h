@@ -14,7 +14,7 @@
 void WorldMap_CreateLinkedEffects(struct ObjectEvent *parent) {
   struct ObjectEvent *pair[2];
   struct ObjectEvent *child;
-  struct AnimationObject *sprite;
+  struct Sprite *sprite;
   struct FieldEffectWork *effectWork = gFieldEffectWork;
   s32 i;
 
@@ -29,13 +29,13 @@ void WorldMap_CreateLinkedEffects(struct ObjectEvent *parent) {
       child->timer = 0;
       child->linkedObject = parent;
       if (sprite != NULL) {
-        AnimationObject_SelectAnimation(sprite, 0);
+        Sprite_StartAnim(sprite, 0);
         sprite->flags = 0;
-        Resource_ResetEntry(sprite->slot);
+        VramCache_FreeEntry(sprite->slot);
         sprite->slot = effectWork->tileSlot;
         sprite->retainCacheEntry = 1;
         sprite->image.tile =
-            (gVramBlockCache[sprite->slot].offset >> 5) & 0x3ff;
+            (gVramCacheEntries[sprite->slot].offset >> 5) & 0x3ff;
         sprite->image.fullColor = 0;
         sprite->image.shape = 1;
         sprite->image.size = 2;
@@ -45,14 +45,14 @@ void WorldMap_CreateLinkedEffects(struct ObjectEvent *parent) {
   }
   {
     struct ObjectEvent *effect = pair[0];
-    struct AnimationObject *effectSprite = effect->sprite;
+    struct Sprite *effectSprite = effect->sprite;
 
     effect->update = FieldEffect_AnimateVerticalNegative;
     effectSprite->image.priority = 1;
   }
   {
     struct ObjectEvent *effect = pair[1];
-    struct AnimationObject *effectSprite = effect->sprite;
+    struct Sprite *effectSprite = effect->sprite;
 
     effectSprite->image.priority = 1;
     effect->update = FieldEffect_AnimateVerticalPositive;

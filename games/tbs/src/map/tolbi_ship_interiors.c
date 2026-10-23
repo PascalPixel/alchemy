@@ -590,7 +590,7 @@ static void TolbiShipInteriors_WatchPacer(union FieldObject *fieldObject) {
 /// underfoot at priority 1 with its parts hidden. Returns 1.
 static s32 TolbiShipInteriors_LayFlat(struct ObjectScriptContext *interpreter) {
   struct ObjectEvent *work = (struct ObjectEvent *)interpreter;
-  struct AnimationObject *sprite = work->sprite;
+  struct Sprite *sprite = work->sprite;
 
   work->collisionFlags = 8;
   Engine_ObjectEventSetSpriteFlags(work, 0);
@@ -1924,7 +1924,7 @@ static void TolbiShipInteriors_DiscussLaunchingWithoutAnchor(void) {
   ObjectEvent_FaceDirection(QUARTERS_SEAN, FACING_SOUTHEAST + FACING_STEP, 0);
   ObjectEvent_FaceDirection(QUARTERS_OURANOS, FACING_NORTHWEST + FACING_STEP,
                             0);
-  Script_PlaySong(AUDIO_CUE_FADE_BGM);
+  Script_PlaySong(SONG_FADE_OUT_BGM);
   ObjectEvent_SetSpeed(QUARTERS_CREWMAN, PIXELS(1), PIXELS(1) / 2);
   ObjectEvent_WalkToAndWait(QUARTERS_CREWMAN, 488, 686);
   ObjectEvent_FaceDirection(QUARTERS_CREWMAN, FACING_NORTHWEST + FACING_STEP,
@@ -3040,7 +3040,7 @@ static void TolbiShipInteriors_IntroduceReplacementOarsman(s32 seat) {
 static struct ObjectEvent *TolbiShipInteriors_PlaceAnchorCharm(void) {
   s32 set = GameFlag_IsSet(FLAG_MAP_TEMP_00);
   struct ObjectEvent *objectEvent;
-  struct AnimationObject *sprite;
+  struct Sprite *sprite;
   u8 *buffer;
 
   if (set != 0) {

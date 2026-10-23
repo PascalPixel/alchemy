@@ -146,8 +146,7 @@ void FieldEffect_RunHalt(void) {
     Vector_AddPolarOffset(4 << 16, Random16(), &pos.x);
     FieldEffectSprite_Initialize(effect, SPRITE_SPARKLE, pos.x, pos.z);
     FieldEffectSprite_SetCallback(effect, FieldEffect_UpdateRadialCamera);
-    ObjectGroup_SetChildValueUnlessFifteenFar(effect->object,
-                                              SPRITE_COLOR_WHITE);
+    Sprite_SetAnimColorModesFar(effect->object, SPRITE_COLOR_WHITE);
     effect++;
   }
 
@@ -182,7 +181,7 @@ void FieldEffect_UpdatePausedObject(union FieldObject *fieldObject) {
 /// object flickers through random sprite params meanwhile.
 void FieldEffect_PauseObject(s32 localId) {
   struct ObjectEvent *objectEvent;
-  struct AnimationEntry *entry;
+  struct SpriteAnim *entry;
 
   objectEvent = ObjectEvent_GetByLocalId(localId);
   if (objectEvent != NULL) {

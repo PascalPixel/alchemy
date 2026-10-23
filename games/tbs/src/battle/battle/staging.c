@@ -48,7 +48,7 @@ s32 BattleStaging_DispatchAction(struct BattleAction *request, s32 delay) {
   transition->flag = 0;
   battle->brightness = 0x10000;
   camera = HEAP_SLOT_BLOCK(HEAP_SLOT_CAMERA);
-  Render_ResetTransformState();
+  Transform_Reset();
   Transform_SetLookAt(camera->eye, camera->focus);
   Projection_Set(0x01fe0000, Iwram_RatioMulQ14(0x01fe0000, 0xc000), 0x7fff0000);
   if (delay != 0) {
@@ -368,7 +368,7 @@ s32 BattleStaging_HideField(struct BattleTurn *plan, s32 mode) {
     // reads past its command into BattleStagingWork would settle what
     // they are kept for.
     for (i = 0; i != work.effect.targetCount; i++) {
-      struct AnimationObject *animation;
+      struct Sprite *animation;
       u32 child;
 
       animation =
@@ -462,7 +462,7 @@ s32 BattleStaging_RunActorEntries(struct BattleTurn *plan, s32 unused) {
 s32 BattleStaging_RunAttack(struct BattleTurn *plan, s32 mode) {
   struct BattleStagingWork work;
   struct MotionObject *object;
-  struct AnimationObject *animation;
+  struct Sprite *animation;
   struct Unit *unit;
   s16 criticalPair[3];
   s32 critical;
@@ -525,8 +525,8 @@ s32 BattleStaging_RunAttack(struct BattleTurn *plan, s32 mode) {
   // The run up: as long as the attacker's POSE_LEAP, with its class's hop
   // height (16.16).
   animation = GetMotionRecord(BattleObject_Get(plan->actorId)->object, 0);
-  frames = ResourceMetadata_SumCommandLengthsFar(
-      animation->entries[0]->animationId, 2, 1);
+  frames =
+      SpriteAnim_SumCommandLengthsFar(animation->entries[0]->animationId, 2, 1);
   BattleMotion_ApproachTarget(work.effect.user, work.effect.targets[0], frames,
                               BattleSprite_GetAttackHop(unit->id) << 16);
   ObjectDispatch_SetAnimationSpeedFar(
@@ -629,7 +629,7 @@ UNUSED s32 BattlePresentation_RunPlainAttack(struct BattleTurn *input,
   struct BattleStagingWork work;
   struct BattleTurn *savedInput;
   struct MotionObject *object;
-  struct AnimationObject *animation;
+  struct Sprite *animation;
   struct BattlePresentationTransition *transition;
   s32 angle;
   s32 adjusted;
@@ -666,8 +666,8 @@ UNUSED s32 BattlePresentation_RunPlainAttack(struct BattleTurn *input,
 
   missed = flags & 2;
   animation = GetMotionRecord(BattleObject_Get(savedInput->actorId)->object, 0);
-  frames = ResourceMetadata_SumCommandLengthsFar(
-      animation->entries[0]->animationId, 2, 1);
+  frames =
+      SpriteAnim_SumCommandLengthsFar(animation->entries[0]->animationId, 2, 1);
   BattleMotion_ApproachTarget(work.effect.user, savedInput->targetIds[0],
                               frames, 0);
   ObjectDispatch_SetAnimationSpeedFar(
@@ -739,7 +739,7 @@ s32 BattleStaging_RunItem(struct BattleTurn *plan, s32 unused,
 
   for (targetOrFadeIndex = 0; targetOrFadeIndex != work.effect.targetCount;
        targetOrFadeIndex++) {
-    struct AnimationObject *animation = GetMotionRecord(
+    struct Sprite *animation = GetMotionRecord(
         BattleObject_Get(work.effect.targets[targetOrFadeIndex])->object, 0);
     s32 entryIndex;
 
@@ -841,9 +841,9 @@ s32 BattleMotion_SetRecordChildValues(struct MotionObject *object,
   s32 recordIndex = 0;
   s32 childIndex;
   s32 entryCount;
-  struct AnimationObject *record;
-  struct AnimationEntry *child;
-  struct AnimationEntry **children;
+  struct Sprite *record;
+  struct SpriteAnim *child;
+  struct SpriteAnim **children;
   /* FAKEMATCH(temporary): the mask in a variable and the frame read into
    * another, so 255 stays in a register across the calls and is or-ed in;
    * as child->frame |= 0xff, 10 of 46 instructions differ in tbs-en. */
@@ -941,7 +941,7 @@ s32 BattleStaging_RunPsynergyCast(struct BattleTurn *plan, s32 mode) {
     work.effect.side = ANIM_SIDE_ENEMIES;
 
   for (targetIndex = 0; targetIndex != work.effect.targetCount; targetIndex++) {
-    struct AnimationObject *animation = GetMotionRecord(
+    struct Sprite *animation = GetMotionRecord(
         BattleObject_Get(work.effect.targets[targetIndex])->object, 0);
     s32 entryIndex;
 
@@ -1083,8 +1083,8 @@ removed:
 void BattleMotion_ShowDowned(s32 unitId) {
   void *records[4];
   struct Unit *unit;
-  struct AnimationObject *record;
-  struct AnimationEntry *entry;
+  struct Sprite *record;
+  struct SpriteAnim *entry;
   s32 recordCount;
 
   unit = Unit_GetFar(unitId);
@@ -1092,9 +1092,9 @@ void BattleMotion_ShowDowned(s32 unitId) {
   while ((record = GetMotionRecord(BattleObject_Get(unitId)->object,
                                    recordCount)) != 0) {
     if (unit->side != BATTLE_SIDE_ENEMY)
-      AnimationObject_SelectAnimationFar(record, POSE_PARTY_HELD);
+      Sprite_StartAnimFar(record, POSE_PARTY_HELD);
     else
-      AnimationObject_SelectAnimationFar(record, POSE_ENEMY_DOWN);
+      Sprite_StartAnimFar(record, POSE_ENEMY_DOWN);
     recordCount++;
   }
 

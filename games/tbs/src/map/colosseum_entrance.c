@@ -1424,7 +1424,7 @@ static void ColosseumEntrance_ShowClearedTrial(void) {
   Script_PlaySong(SE_107);
   MapGrid_SetShake(PIXELS(1), PIXELS(1), Q16_ONE);
   Engine_ScriptWait(10);
-  Script_PlaySong(AUDIO_CUE_FADE_SLOT3);
+  Script_PlaySong(SONG_FADE_OUT_ACTION_SE);
   MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
   Engine_MapGridRenderWaitForValues();
   ObjectEvent_SetSpeed(LOCALID_CLEARING_WARRIOR, PIXELS(8) / 5, PIXELS(4) / 5);
@@ -1591,7 +1591,7 @@ static void ColosseumEntrance_ExplainPartySupport(void) {
   Engine_TaskWait(1);
   FieldCamera_MoveTo(-1, -1, -1, 0);
   Engine_ColorBufferApplySource(0, 0);
-  ColorBuffer_ApplyTarget(0, 0);
+  PaletteFade_ApplyTarget(0, 0);
   Engine_ColorBufferInterpolate(1);
   Engine_TaskWait(1);
   gFieldWork->transition = MAP_TRANSITION(TRANSITION_WINDOW, 3);
@@ -1599,7 +1599,7 @@ static void ColosseumEntrance_ExplainPartySupport(void) {
   Engine_ScriptOpenScreen();
   Engine_ScriptWaitForScreen();
   Engine_ColorBufferApplySource(0, 0);
-  ColorBuffer_ApplyTarget(0x10002, 0);
+  PaletteFade_ApplyTarget(0x10002, 0);
   Engine_ColorBufferInterpolate(40);
   Engine_ScriptWait(80);
   Engine_ObjectEventRunRepeatedMotion(LOCALID_FIRST_SOLDIER, 1);
@@ -1610,7 +1610,7 @@ static void ColosseumEntrance_ExplainPartySupport(void) {
                                   FACING_SOUTHEAST + FACING_STEP);
   Engine_ObjectEventRunRepeatedMotion(LOCALID_FIRST_SOLDIER, 2);
   Engine_ScriptWait(20);
-  ColorBuffer_ApplyTarget(0x10000, 0);
+  PaletteFade_ApplyTarget(0x10000, 0);
   Engine_ColorBufferInterpolate(40);
   Engine_ScriptWait(80);
   ObjectEvent_ShowEmote(IVAN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);

@@ -28,7 +28,7 @@ void Djinn_RunMarsJoinEffect(s32 djinniId) {
 
   FieldEffect_InitializeSlots();
   effectWork = gFieldEffectWork;
-  // Tint the screen red: PALETTE_TRANSFORM_TINT | RGB(16, 4, 4), the form
+  // Tint the screen red: PALETTE_TINT_CUSTOM | RGB(16, 4, 4), the form
   // mercury.c spells out for its blue.
   Shop_SaveAndTintFieldPaletteFar(0x201090);
   WaitFrames(30);
@@ -66,8 +66,7 @@ void Djinn_RunMarsJoinEffect(s32 djinniId) {
     FieldEffectSprite_SetCallback(effect,
                                   FieldEffect_UpdatePhasedRadialParticle);
     FieldEffectSprite_SetObjectMode(effect, 7);
-    ObjectGroup_SetChildValueUnlessFifteenFar(effect->object,
-                                              SPRITE_COLOR_RED_TINT);
+    Sprite_SetAnimColorModesFar(effect->object, SPRITE_COLOR_RED_TINT);
     scale = Random16() / 3 + 0x10000; // 1.0 to 1.33
     effect->scaleY = scale;
     effect->scaleX = scale;

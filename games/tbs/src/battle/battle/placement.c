@@ -15,7 +15,7 @@
 /// bottom edge, NARROW_EFFECT_SPRITE's a 16 by 3 one.
 /// XXX: likely the unit's shadow on the ground rather than an effect, because
 /// of that picture, because adding it also clears the sprite's own shadow
-/// (AnimationObject.flags bit 0), and because
+/// (Sprite.flags bit 0), and because
 /// BattleObject_UpdateSpritePriorities changes the layer's priority while the
 /// unit is off the ground.
 #define BATTLE_OBJ_NO_EFFECT 0x1fe

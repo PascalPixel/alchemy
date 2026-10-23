@@ -324,16 +324,16 @@ void BattleCamera_SetViewAtDepth(s32 x, s32 depth, s32 y);
 void BattleCamera_SetView(s32 x, s32 depth, s32 y, s32 zoom);
 void BattleCamera_SetViewAtPairMidpoint(s32 firstUnitId, s32 secondUnitId,
                                         s32 zoom);
-void Graphics_FadeAlphaOut(void);
-void Graphics_FadeAlphaIn(void);
-void Graphics_SetBlendControl(void);
+void BattleBackground_FadeAlphaOut(void);
+void BattleBackground_FadeAlphaIn(void);
+void BattleBackground_SetBlendControl(void);
 void BattleTransition_InitializeEntries(struct BattleTransitionEntry *entries);
 s32 BattlePresentation_DivideBy16(s32 value);
 s32 Runtime_AdjustDebugValueWithButtons(s32 selectedValue);
 void BattleHighlight_SetSpriteMode(s32 actorId, s32 mode);
 void BattleHighlight_SetOtherSpriteModes(s32 selectedUnitId);
 void BattleHighlight_ClearAllSpriteModes(void);
-void Graphics_AdvancePaletteCycle(void);
+void BattleBackground_StepHighlightBlend(void);
 void BattleHighlight_SetModes(u16 *selectedUnits, s32 mode);
 
 #ifdef UBFIX
@@ -347,7 +347,7 @@ void ElementGlow_UploadStarField(void);
 u32 ElementGlow_UploadStarField(void);
 #endif
 s32 ElementGlow_InitializeStarField(s32 mode);
-s32 Graphics_ResetVramBlockAndReleaseHeapBlocks(s32 unused);
+s32 ElementGlow_ReleaseVramAndHeapBlocks(s32 unused);
 s32 Graphics_ScaleRgb555Clamped(u16 *source, u16 *destination, s32 scale,
                                 s32 count);
 // The native implicit-int declaration disagrees with the later void definition.

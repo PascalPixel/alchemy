@@ -9,34 +9,33 @@ void ObjectSystem_ConfigureFar(s32 mode);
 /// a draw slot by depth (Render_ApplyProjectedPlacement). `position` is in
 /// 16.16 pixels; an affine matrix is built when the sprite is mirrored, scaled
 /// or rotated.
-void Object_ApplyProjectedPlacementFar(struct AnimationObject *sprite,
+void Object_ApplyProjectedPlacementFar(struct Sprite *sprite,
                                        const struct SpritePlacement *position,
                                        const struct SpriteScale *scale,
                                        s32 facing);
 /// Starts animation `flags & 0x7f` on every layer of a sprite unless it plays
 /// it already; bit 7 keeps each layer's place and timer. Returns 0.
-s32 AnimationObject_SelectAnimationFar(struct AnimationObject *state,
-                                       s32 flags);
+s32 Sprite_StartAnimFar(struct Sprite *state, s32 flags);
 /// Creates a sprite for animation `id` with a VRAM cache entry for its tiles,
 /// or returns NULL when there's no room or the id has no image. The caller
-/// keeps it until ResourceObject_ReleaseFar.
-struct AnimationObject *ResourceObject_CreateFar(s32 id);
+/// keeps it until Sprite_DestroyFar.
+struct Sprite *Sprite_CreateFar(s32 id);
 /// Gives back a sprite's VRAM cache entry and its four animation layers, then
 /// zeroes it so it's free again.
-void ResourceObject_ReleaseFar(struct AnimationObject *sprite);
+void Sprite_DestroyFar(struct Sprite *sprite);
 /// Adds a layer playing animation `id` to a sprite, in its first free layer of
 /// four. Returns the layer, 0 when no record is free, or -1 when all four are
 /// taken.
-s32 ResourceMetadata_RegisterFar(struct AnimationObject *state, s32 id);
+s32 Sprite_AddAnimFar(struct Sprite *state, s32 id);
 /// Takes layer `handle` off a sprite and clears it; the battle's objects use it
 /// to drop an extra layer.
-void ResourceMetadata_UnregisterFar(struct AnimationObject *state, s32 handle);
+void Sprite_RemoveAnimFar(struct Sprite *state, s32 handle);
 /// Zeroes one animation layer, which frees its record; NULL is ignored.
-void ResourceMetadata_ClearRecordFar(struct AnimationEntry *layer);
+void SpriteAnim_ClearFar(struct SpriteAnim *layer);
 /// Starts animation `no` on one layer when the layer's metadata has it. Bit 7
 /// keeps the command cursor and timer, and unlike the sprite-wide form it stays
 /// part of the index.
-void Animation_SetWorkEntryFar(struct AnimationEntry *work, s32 no);
+void SpriteAnim_StartFar(struct SpriteAnim *work, s32 no);
 /// Allocates the 64 field objects and registers their per-frame updates;
 /// `mode` picks the battle's script-less motion and the world map's fixed
 /// camera.
@@ -198,7 +197,7 @@ void WorldMap_LoadAreaGraphicsFar(void);
 void Animation_ApplyChildValuesFar(struct DispatchObject *object, u32 val);
 /// Sets every layer of a sprite to colour mode `value`, skipping those drawn
 /// hidden (SPRITE_COLOR_HIDDEN), and marks the sprite for redrawing.
-void ObjectGroup_SetChildValueUnlessFifteenFar(void *raw_parent, u32 value);
+void Sprite_SetAnimColorModesFar(void *raw_parent, u32 value);
 /// Returns -1 when an object at `values` would overlap a solid object
 /// (OBJ_EVENT_SOLID), each radius less 2 pixels, else 0.
 s32 ObjectScript_CheckOverlapFar(struct ScriptObjectEntry *object, s32 *values);
@@ -207,22 +206,21 @@ s32 ObjectScript_CheckOverlapFar(struct ScriptObjectEntry *object, s32 *values);
 void MapGrid_SetShownLayersFar(u32 v);
 /// Returns how many frames the first `cnt` frames of animation `no` of `id`
 /// last, stopping at its first play, hold, jump or end command.
-s32 ResourceMetadata_SumCommandLengthsFar(s32 id, u32 no, s32 cnt);
+s32 SpriteAnim_SumCommandLengthsFar(s32 id, u32 no, s32 cnt);
 /// Returns the world map's terrain behaviour at `position` and stores the
 /// block's terrain kind in `terrain_kind`, for the world map's encounters.
 s32 WorldMap_GetBattleEnvironmentFar(struct WorldPosition *position,
                                      s32 *terrain_kind);
 /// Decodes the frames of animation `number` into resource slot `slot`'s
 /// `buffer`, remapping its colours for `variant` 1 to 5.
-s32 ResourceSlot_LoadFar(u32 slot, u32 *buffer, s32 number, u32 variant);
+s32 SpriteFrameCache_LoadFar(u32 slot, u32 *buffer, s32 number, u32 variant);
 /// Writes `behavior` into the cell of `layer` under (x, y), given in 16.16
 /// pixels; before the map is set up it does nothing.
 void MapGrid_SetMetatileBehaviorAtFar(u32 layer, s32 x, s32 y,
                                       u32 collisionCode);
 /// Sets the timer step of a sprite's animated layers: 16 plays at normal
 /// speed, 0 stops them.
-void AnimationObject_SetActiveTimerStepsFar(struct AnimationObject *group,
-                                            s32 val);
+void Sprite_SetAnimSpeedFar(struct Sprite *group, s32 val);
 /// Remaps `cnt` bytes of `buf` in place through gRuntime_ByteRemapTable, as
 /// the command icons' colours are.
 void Runtime_RemapBytesByTableFar(u8 *buf, s32 cnt);

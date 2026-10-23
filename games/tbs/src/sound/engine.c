@@ -831,7 +831,7 @@ void Cgb_UpdateChannels(void) {
 
 /// Sets the tempo multiplier (0x100 the song's own tempo) and updates the
 /// number of ticks advanced per frame. Called by the music layer's tempo and
-/// pitch ramp and MusicCommand_SetPitchAndUpdateFrequency (sound.c); does
+/// pitch ramp and Sound_SetBgmTempo (sound.c); does
 /// nothing while the player's lock is held.
 void MusicPlayer_SetPitchAndUpdateFrequency(struct SoundPlayer *player,
                                             u16 scale) {

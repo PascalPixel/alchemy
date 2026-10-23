@@ -64,11 +64,11 @@ void Particle_AdvanceWithGravity2D(struct Particle *step, s32 damping,
 /// Returns the scale in 16.16, with position's x and y in screen pixels and
 /// its depth in whole units. A point outside gProjection's depth range
 /// returns 0 and leaves the transformed point in position, still in 16.16
-/// (Render_ProjectPoint); the 16 is taken off its y all the same.
+/// (Transform_ProjectPoint); the 16 is taken off its y all the same.
 ///
 /// point: three s32s in 16.16, x, y and z (an Particle's position).
 s32 Projection_Point(const void *point, struct ScreenPoint *position) {
-  s32 result = Render_ProjectPoint(point, ScreenPoint_Coordinates(position));
+  s32 result = Transform_ProjectPoint(point, ScreenPoint_Coordinates(position));
   position->y -= 16;
   return result;
 }
@@ -117,7 +117,7 @@ void Projection_Unit(s32 id, struct ScreenPoint *position) {
 s32 BattleUnit_ProjectToScreen(s32 unit, s32 *screen) {
   struct BattleCamera *camera;
   struct MotionObject *object;
-  struct AnimationObject *info;
+  struct Sprite *info;
   s32 scale;
   /* FAKEMATCH(dead): an unused vector for the frame's 12 bytes; without it, 1
    * of 52 instructions differ in tbs-en. */
@@ -127,7 +127,7 @@ s32 BattleUnit_ProjectToScreen(s32 unit, s32 *screen) {
   object = GetBattleObjectSlotFar(unit)->object;
   info = GetMotionRecordFar(object, 0);
   ANIM_VIEW_FROM_CAMERA(camera);
-  scale = Iwram_MulQ16(Render_ProjectPoint(&object->x, screen), info->scale);
+  scale = Iwram_MulQ16(Transform_ProjectPoint(&object->x, screen), info->scale);
   // The table height is 16.16: >> 17 takes half of it in whole pixels.
   screen[1] -= Iwram_MulQ16(scale, BattleUnit_GetEffectHeightFar(unit) >> 17);
   return 0;

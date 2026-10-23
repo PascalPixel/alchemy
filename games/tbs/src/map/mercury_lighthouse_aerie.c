@@ -318,7 +318,7 @@ static void MercuryLighthouseAerie_PartyArrives(void) {
   Engine_TaskWait(1);
   Script_PlaySong(SE_RUMBLE);
   MapGrid_SetShake(PIXELS(5), PIXELS(5), Q16_ONE);
-  Script_PlaySong(AUDIO_CUE_FADE_SLOT3);
+  Script_PlaySong(SONG_FADE_OUT_ACTION_SE);
   MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
   gFieldWork->transition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   Engine_ScriptOpenScreen();
@@ -329,11 +329,11 @@ static void MercuryLighthouseAerie_PartyArrives(void) {
   FieldCamera_SetSpeed(PIXELS(4) / 5, PIXELS(1) / 10);
   FieldCamera_MoveTo(PIXELS(512), -PIXELS(24), PIXELS(160), 1);
   Engine_CameraWaitForMove();
-  ColorBuffer_ApplySource(PALETTE_TRANSFORM_PLAIN, 0);
-  ColorBuffer_ApplyTarget(PALETTE_TRANSFORM_PALE, 0);
+  PaletteFade_ApplySource(PALETTE_TINT_NONE, 0);
+  PaletteFade_ApplyTarget(PALETTE_TINT_PALE, 0);
   Engine_ColorBufferInterpolate(50);
   Engine_ScriptWait(50);
-  ColorBuffer_ApplyTarget(RGB(31, 31, 31), 0);
+  PaletteFade_ApplyTarget(RGB(31, 31, 31), 0);
   Engine_ColorBufferInterpolate(30);
   Engine_ScriptWait(30);
   ObjectEvent_SetPosition(LOCALID_PARTY_LEADER, PIXELS(504), PIXELS(168));
@@ -345,7 +345,7 @@ static void MercuryLighthouseAerie_PartyArrives(void) {
   Engine_ObjectEventSetAnimation(IVAN, 19);
   Engine_ObjectEventSetAnimation(MIA, 19);
   Engine_ScriptWait(10);
-  ColorBuffer_ApplyTarget(PALETTE_TRANSFORM_PLAIN, 0);
+  PaletteFade_ApplyTarget(PALETTE_TINT_NONE, 0);
   Engine_ColorBufferInterpolate(30);
   Engine_ScriptWait(30);
   Engine_ScriptWait(80);
@@ -616,7 +616,7 @@ static void MercuryLighthouseAerie_ConfrontSaturos(void) {
   Engine_ObjectEventSetAnimation(MIA, 0x10);
   Script_ShowMessageAndWait(MIA, 0, 60);
   // Jenna calls out: "Isaac! Garet!"
-  Script_PlaySong(AUDIO_CUE_FADE_BGM);
+  Script_PlaySong(SONG_FADE_OUT_BGM);
   ObjectEvent_SetPosition(JENNA, PIXELS(216), PIXELS(200));
   Script_ShowMessageAndWait(JENNA, 0, 20);
   ObjectEvent_SetPosition(JENNA, PIXELS(120), PIXELS(160));
@@ -1353,7 +1353,7 @@ static void MercuryLighthouseAerie_AlexAppears(void) {
   MercuryLighthouseAerie_LowerLift();
   Engine_ObjectEventSetSpritePriority(LOCALID_FIRST_LIFT_PLATFORM, 1);
   Engine_ObjectEventSetSpritePriority(LOCALID_SECOND_LIFT_PLATFORM, 1);
-  Script_PlaySong(AUDIO_CUE_FADE_BGM);
+  Script_PlaySong(SONG_FADE_OUT_BGM);
   FieldCamera_MoveTo(PIXELS(336), -1, PIXELS(216), 1);
   Engine_CameraWaitForMove();
   Engine_ObjectEventSetAnimationAndWait(IVAN, ANIMATION_SHAKE_HEAD);
@@ -1806,7 +1806,7 @@ MercuryLighthouseAerie_UpdateBeaconSpark(union FieldObject *fieldObject) {
 static void MercuryLighthouseAerie_FlickerBeacon(void) {
   struct ObjectEvent *beacon;
   struct ObjectEvent *spark;
-  struct AnimationObject *sprite;
+  struct Sprite *sprite;
   struct MapGridScrollWork *grid;
   s32 height;
   s32 scale;

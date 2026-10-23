@@ -769,7 +769,7 @@ s32 ColosseumAzartMatch_Initialize(void) {
     Engine_ObjectEventDestroy(BRIDGE_ATTENDANT);
     Engine_ObjectEventDestroy(LUMBER_ATTENDANT);
     if (!Engine_GameFlagIsSet(FLAG_KEEP_PARTY_POSITION)) {
-      Engine_AudioPlayCue(AUDIO_CUE_FADE_BGM);
+      Engine_AudioPlayCue(SONG_FADE_OUT_BGM);
       Colosso_ControlCharacterAlone(ISAAC);
       Colosso_PlaceFriendsAtCheeringSpots();
       ColosseumAzartMatch_MarkFinishTerrain(GARET);
@@ -1267,10 +1267,10 @@ static void ColosseumAzartMatch_ShowRoundIntroduction(s32 round) {
     Colosso_LoadLettering(round);
     ColosseumAzartMatch_SelectPresentationScript(COLOSSO_SHAPE_TITLE, 0);
     Engine_ScriptWait(120);
-    while (AudioCommand_GetStateByte() != 0) {
+    while (Sound_GetBgmRestoreDelay() != 0) {
       Engine_TaskWait(1);
     }
-    Engine_AudioPlayCue(AUDIO_CUE_FADE_SLOT3);
+    Engine_AudioPlayCue(SONG_FADE_OUT_ACTION_SE);
     Colosso_LoadLettering(COLOSSO_PICTURE_COUNT_3_2);
     ColosseumAzartMatch_SelectPresentationScript(COLOSSO_SHAPE_DIGIT, 0);
     Engine_AudioPlayCue(SE_COLOSSO_COUNTDOWN);
@@ -1324,12 +1324,12 @@ static void ColosseumAzartMatch_ShowMatchResult(s32 result) {
     loser = OPPONENT;
   }
   Engine_ObjectEventShowEmote(loser, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
-  while (AudioCommand_GetStateByte() != 0) {
+  while (Sound_GetBgmRestoreDelay() != 0) {
     Engine_TaskWait(1);
   }
   Engine_AudioPlayCue(MUS_SILENCE);
   Engine_ScriptWait(30);
-  Engine_AudioPlayCue(AUDIO_CUE_FADE_SLOT3);
+  Engine_AudioPlayCue(SONG_FADE_OUT_ACTION_SE);
   Engine_ScriptCloseScreen();
   Engine_ScriptWaitForScreen();
 }

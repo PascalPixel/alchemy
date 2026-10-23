@@ -59,34 +59,34 @@ where it starts towards where it should end, so they all arrive together. The
 start and the target can be one colour everywhere, the picture's own colours
 or a filtered version of them, such as grey or sepia.
 
-`PaletteFade_Initialize` saves both palettes, 512 colours, as the starting
+`TitlePaletteFade_Initialize` saves both palettes, 512 colours, as the starting
 components in the colour buffer's [heap](../../glossary.md#heap-and-pools) block and schedules
-`PaletteFade_Update`. `PaletteFade_Start` divides each component's distance
+`TitlePaletteFade_Update`. `TitlePaletteFade_Start` divides each component's distance
 to the target by the number of frames, keeping the remainder in the
 component's low ten bits. Each frame the update adds the steps to all 1,536
 components, packs them into colours and queues both palettes for the next
 VBlank, the pause after the screen's last line when the hardware can be
 changed without showing half a change. The queue holds a pointer to the colours until then, so the update
 packs each frame into the spare one of two copies, and a frame's packing
-never overwrites colours the queue has yet to send. A `paletteHalf` of
-`PALETTE_HALVES_BOTH`, `PALETTE_HALF_BG` or `PALETTE_HALF_OBJ` chooses which
+never overwrites colours the queue has yet to send. A `selectedPalettes` of
+`PALETTES_ALL`, `PALETTES_BG` or `PALETTES_OBJECTS` chooses which
 palettes a setter changes.
 
-`Palette_Transform` builds the colours a fade starts from or heads for: one
+`TitlePaletteFade_BuildColors` builds the colours a fade starts from or heads for: one
 colour everywhere, a whole-palette filter (plain, grey, sepia and the
 others), a tint, blend or split carrying a colour, or a copy. In [The Broken Seal](../../glossary.md#the-two-games)
 only `Title_ShowIntro` uses the fade, for its 60-frame fade from near-black
 (`RGB(2, 0, 0)`, a dark red) to the picture's own colours;
-`PaletteFade_Release`, `PaletteFade_SetTarget` and `PaletteFade_SetBackdrop`
+`TitlePaletteFade_Release`, `TitlePaletteFade_SetTarget` and `TitlePaletteFade_SetBackdrop`
 are [`UNUSED`](../../glossary.md#unused).
 
 The halves are named in `include/graphics/palbuf.h`.
 
 | Name | Value | Meaning |
 | --- | --- | --- |
-| `PALETTE_HALVES_BOTH` | 0 | a setter changes both palettes |
-| `PALETTE_HALF_BG` | 1 | the background palette only |
-| `PALETTE_HALF_OBJ` | 2 | the sprite palette only |
+| `PALETTES_ALL` | 0 | a setter changes both palettes |
+| `PALETTES_BG` | 1 | the background palette only |
+| `PALETTES_OBJECTS` | 2 | the sprite palette only |
 
 ## The title sequence
 
@@ -98,8 +98,8 @@ into the title picture and waits for Start.
 The title [overlay](../../glossary.md#overlay), `Title_Run` in [Menus](../menu/README.md), decides what
 runs; the code is here, in the palette [bank](../../glossary.md#bank), named after the palette fade it
 holds. At power-on
-`Title_ShowSplashScreen` shows the Nintendo logo with its jingle and
-`Title_ShowAnimatedSplash` the Camelot logo for two seconds, cycling its four
+`Title_ShowNintendoLogo` shows the Nintendo logo with its jingle and
+`Title_ShowCamelotLogo` the Camelot logo for two seconds, cycling its four
 frames of tiles. When a save file exists, `Title_ShowIntro` then scrolls the
 backgrounds down while the sprites rise along the slope until frame 278, and
 flashes white into the title picture, where "Press Start" pulses for up to a
@@ -131,7 +131,7 @@ halves. One half shows while the next backdrop is loaded into the other, the
 screen blends across, and the halves swap roles.
 
 The credits roll over a slideshow of 32 battle backdrops
-(`gDisplayScroll_SlideResources`), each crossfading into the next, and its
+(`gCredits_Backgrounds`), each crossfading into the next, and its
 last entry, 0, fades the screen to black. They run at the end of the game:
 
 1. the ending sends the party to the title screen's [warp destination](../../glossary.md#warp-destination)
@@ -143,14 +143,14 @@ last entry, 0, fades the screen to black. They run at the end of the game:
 The two halves split the 256-colour background tile memory and the
 background palette. `BG3` draws from tiles in half 0 with colours 0 to 127,
 and `BG2` from tiles in half 1 with colours 128 to 255. A backdrop has 128
-colours, and `Graphics_LoadCharacterBlockAndPalette` adds 128 to every pixel
+colours, and `Credits_LoadBackground` adds 128 to every pixel
 it unpacks into half 1, so the same picture works in either.
 
-`DisplayScroll_RunSlideshow` loads each backdrop into the half that isn't
+`Credits_Run` loads each backdrop into the half that isn't
 showing, the first into half 1, steps the blend weights between `BG2` and
 `BG3` over 16 steps of 4 frames, and holds. The halves alternate from one
 backdrop to the next, so a backdrop is never loaded while it is shown.
-`Tile_ExpandSlide` unpacks the tiles, running from a copy of the decoder
+`Credits_DecodeBackground` unpacks the tiles, running from a copy of the decoder
 loaded into the [heap slot](../../glossary.md#heap-slot) `HEAP_SLOT_RAM_CODE_TEMP` and released after each
 load, and the colours reach palette RAM through the I/O
 write queue at the next VBlank. Every fourth frame a VBlank [task](../../glossary.md#task) moves both
@@ -179,7 +179,7 @@ memory never grows, however many names there are.
 The names are sprites, not a background: six 32-by-8 sprites across each
 192-pixel line, drawing from the tile ring. They move up a pixel every
 fourth frame, so a new line arrives every 32 frames. Each time the scroll
-enters a new line, `DisplayScroll_RenderEnteringLine` draws the next line of
+enters a new line, `Credits_DrawEnteringLine` draws the next line of
 text into the ring row `CREDITS_VISIBLE_ROWS` below the top visible row, the
 first hidden one. Opaque border sprites over the top 16 and bottom 24 pixels
 hide the rows that are only partly on screen; they come first in OAM, and the
@@ -187,7 +187,7 @@ hardware draws a lower entry over a higher one, so they cover the text.
 
 ![The staff names scroll up over a backdrop of Vale's houses in the rain, which fades into a stone hall lit by torches while the names keep moving.](https://alchemy.pascalpixel.com/guides/graphics/credits.gif)
 
-`DisplayScroll_DrawLine` draws each glyph in colour 15 with a colour 1
+`Credits_DrawLine` draws each glyph in colour 15 with a colour 1
 shadow a pixel down and to the right. It takes its line buffer before
 checking for the end of the text, so the last call leaks the buffer
 ([`// BUG:`](../../glossary.md#bug-bugfix-and-ubfix), fixed behind `BUGFIX`).
@@ -246,7 +246,7 @@ the flash library's declarations, which is undefined behaviour (`// UB:`);
 The title intro and the credits are main-image code the title overlay
 calls through their banks' [far-call](../../glossary.md#far-call) tables. The decoders are called by the
 code that loads pictures everywhere else, many of them from a copy in a heap
-slot (`RamCode_LoadSlot`), as `Tile_ExpandSlide` is. The pictures belong to
+slot (`RamCode_LoadSlot`), as `Credits_DecodeBackground` is. The pictures belong to
 the code that loads them: effects, maps, layouts, windows and menus.
 
 ## Limits
@@ -305,10 +305,10 @@ are, as `games/tbs/objects.tsv` lists.
 | Prefix | What it acts on |
 | --- | --- |
 | `Title_` | the title intro and the logos |
-| `PaletteFade_`, `Palette_` | the palette fade, and `Palette_Transform`, which builds its colours |
-| `DisplayScroll_` | the credits |
+| `PaletteFade_`, `Palette_` | the palette fade, and `TitlePaletteFade_BuildColors`, which builds its colours |
+| `Credits_` | the credits |
 | `Graphics_` | tile memory and palettes, as the engine names them elsewhere |
-| `Tile_`, `TileMap_`, `BitDecoder_`, `Render_`, `Text_` | the handwritten decoders, among them `Tile_ExpandSlide`, which unpacks the credits' backdrops |
+| `Tile_`, `TileMap_`, `BitDecoder_`, `Render_`, `Text_` | the handwritten decoders, among them `Credits_DecodeBackground`, which unpacks the credits' backdrops |
 | `Vector_` | `Vector_DotProduct`, a 16.16 dot product in `tile/dot_product.s` that nothing calls |
 
 `Message_FindArm` carries the text window's prefix, though it sits

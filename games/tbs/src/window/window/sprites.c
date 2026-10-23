@@ -129,7 +129,7 @@ s32 Glyph_Draw(struct Window *window, s32 character, s32 x, s32 y, s32 mode) {
       // entry of its own, taken here when none is held.
       sprite = SPRITE_CELL(output);
       if (work->glyphResource == NO_GLYPH_RESOURCE)
-        work->glyphResource = Resource_FindFreeEntry();
+        work->glyphResource = VramCache_FindFreeEntry();
       sprite->x = (window->x << 3) + ((window->width - 2) << 3) + 4;
 #if (LANGUAGE == LANGUAGE_JAPANESE)
       sprite->y = (window->y << 3) + ((window->height - 2) << 3) + 1;
@@ -232,7 +232,7 @@ void Window_PutGlyph(struct Window *win, u32 tile, u32 x, u32 y, s32 mode) {
     attr = &out->attr;
     slot = &((struct WindowWork *)base)->glyphResource;
     if (*slot == NO_GLYPH_RESOURCE)
-      *slot = Resource_FindFreeEntry();
+      *slot = VramCache_FindFreeEntry();
     // 0xfffe and 254 are -2: the arrow sits on the interior's last tile, 4
     // pixels right and 1 up.
     column = 0xfffe;
@@ -297,7 +297,7 @@ void Window_PutGlyph(struct Window *win, u32 tile, u32 x, u32 y, s32 mode) {
     attr = &out->attr;
     slot = &((struct WindowWork *)base)->glyphResource;
     if (*slot == NO_GLYPH_RESOURCE)
-      *slot = Resource_FindFreeEntry();
+      *slot = VramCache_FindFreeEntry();
     column = 0xfffe;
     left = win->x;
     attr->x = (left + (column + *(u16 *)&win->width)) * 8 + 4;
@@ -448,7 +448,7 @@ void WindowSprite_UpdateScaleAnimation(struct WindowSprite *output) {
     effect.scaleX = scale;
     effect.scaleY = scale;
     effect.angle = 0;
-    sprite->affineIndex = AffineMatrix_BuildForEffect(&effect);
+    sprite->affineIndex = OamMatrix_AllocFromTransform(&effect);
     // Larger than its size the sprite needs the double-size affine mode (3),
     // whose 32x32 area starts 8 pixels up and left; smaller, plain affine (1).
     if (scale > 256) {
@@ -537,7 +537,7 @@ void UiWork_AnimateSpriteSlots(void) {
         effect.scaleX = 512;
         effect.scaleY = 512;
         effect.angle = 0;
-        sprite->affineIndex = AffineMatrix_BuildForEffect(&effect);
+        sprite->affineIndex = OamMatrix_AllocFromTransform(&effect);
         sprite->affine = 3;
         sprite->x = output->x - 5;
         sprite->y = output->y - 5;
@@ -550,7 +550,7 @@ void UiWork_AnimateSpriteSlots(void) {
         effect.scaleY = 256;
         output->animationStep += 768;
         effect.angle = output->animationStep;
-        sprite->affineIndex = AffineMatrix_BuildForEffect(&effect);
+        sprite->affineIndex = OamMatrix_AllocFromTransform(&effect);
         sprite->affine = 1;
         sprite->x = output->x - (Trig_Sin(effect.angle + 0xe800) >> 14) - 2;
         sprite->y = output->y - (Trig_Cos(effect.angle + 0x6800) >> 14) - 2;
@@ -590,7 +590,7 @@ void UiWork_AnimateSpriteSlots(void) {
           effect.scaleX = 320;
           effect.scaleY = 320;
           effect.angle = 0;
-          sprite->affineIndex = AffineMatrix_BuildForEffect(&effect);
+          sprite->affineIndex = OamMatrix_AllocFromTransform(&effect);
           sprite->affine = 3;
           sprite->x = output->x - 8;
           sprite->y = output->y - 8;
@@ -612,9 +612,9 @@ void UiWork_AnimateSpriteSlots(void) {
       // Queue it unless it is hidden, or an arrow with no picture.
       if (output->active == WINDOW_SPRITE_MOTION_PAGE_ARROW) {
         if (work->glyphResource != 0x60)
-          Runtime_PushSlotEntry(sprite, output->sentinel);
+          Oam_AddSpriteAtDepth(sprite, output->sentinel);
       } else if (output->active != WINDOW_SPRITE_MOTION_HIDDEN) {
-        Runtime_PushSlotEntry(sprite, output->sentinel);
+        Oam_AddSpriteAtDepth(sprite, output->sentinel);
       }
       output = output->next;
       phase = (gFrameTick >> 2) & 7;

@@ -238,7 +238,7 @@ s32 MapGrid_LoadLayout(s32 index) {
   // Hide the map layers and sprites while their memory is replaced.
   REG_DISPCNT &= ~(DISPCNT_BG1_ON | DISPCNT_BG2_ON | DISPCNT_BG3_ON |
                    DISPCNT_OBJ_ON | DISPCNT_WIN0_ON);
-  Fade_FromBlack(0);
+  ScreenFade_FromBlack(0);
   layoutResources = &gLayouts[index];
   grid =
       AllocHeapSlotEwram(HEAP_SLOT_MAP_GRID, sizeof(struct MapGridScrollWork));

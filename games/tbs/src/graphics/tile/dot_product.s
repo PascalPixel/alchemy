@@ -4,10 +4,10 @@
 @ ax*bx + ay*by + az*bz, the last two arguments on the stack, summed in 64
 @ bits and returned shifted right 16. Nothing in the game calls it.
 @
-@ Tile_ExpandSlide(source, destination, offset): decodes a credits slide's
+@ Credits_DecodeBackground(source, destination, offset): decodes a credits slide's
 @ packed picture (r0) into 8bpp tiles (r1), 15 bands of 8 tiles of 32 rows,
 @ adding offset (r2, the same palette offset in every byte) to each pixel.
-@ Graphics_LoadCharacterBlockAndPalette (credits.c) copies it into a heap slot
+@ Credits_LoadBackground (credits.c) copies it into a heap slot
 @ and calls it there, so its first loop relocates the table of decoder
 @ commands (expand.s) for wherever the copy landed.
 @
@@ -25,7 +25,7 @@
 @ ldm sp, {r2, r3}, which reloads the two stack arguments into argument
 @ registers already consumed, has no writeback and is within the compiler's
 @ load-multiple patterns.
-@ C2: Tile_ExpandSlide:
+@ C2: Credits_DecodeBackground:
 @ r11/fp is the mask 7 passed through the command linkage; the opening
 @ str loop rewrites the command table used by ldr pc in its dispatcher.
 .syntax unified
@@ -43,8 +43,8 @@ Vector_DotProduct:
 .syntax unified
 .text
 	.arm
-	.global Tile_ExpandSlide
-Tile_ExpandSlide:
+	.global Credits_DecodeBackground
+Credits_DecodeBackground:
 	push	{r5, r6, r7, r8, r9, sl, fp, lr}
 	mov	sl, r2
 	ldr	r2, [pc, #192]
@@ -68,23 +68,23 @@ Tile_ExpandSlide:
 .Lcolumn:
 	mov	r7, #32
 .Lrow:
-	bl Tile_ExpandSlideRead
+	bl Credits_DecodeBackgroundRead
 	lsr	r6, r5, #25
-	bl Tile_ExpandSlideRead
+	bl Credits_DecodeBackgroundRead
 	orr	r6, r6, r5, lsr #17
-	bl Tile_ExpandSlideRead
+	bl Credits_DecodeBackgroundRead
 	orr	r6, r6, r5, lsr #9
-	bl Tile_ExpandSlideRead
+	bl Credits_DecodeBackgroundRead
 	orr	r6, r6, r5, lsr #1
 	add	r6, r6, sl
 	str	r6, [r1], #4
-	bl Tile_ExpandSlideRead
+	bl Credits_DecodeBackgroundRead
 	lsr	r6, r5, #25
-	bl Tile_ExpandSlideRead
+	bl Credits_DecodeBackgroundRead
 	orr	r6, r6, r5, lsr #17
-	bl Tile_ExpandSlideRead
+	bl Credits_DecodeBackgroundRead
 	orr	r6, r6, r5, lsr #9
-	bl Tile_ExpandSlideRead
+	bl Credits_DecodeBackgroundRead
 	orr	r6, r6, r5, lsr #1
 	add	r6, r6, sl
 	str	r6, [r1], #60

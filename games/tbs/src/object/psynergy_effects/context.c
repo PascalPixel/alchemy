@@ -43,11 +43,10 @@ s32 ObjectEvent_GetScreenPosition(s32 objectId, s32 *position) {
   *position++ = x / 0x10000;
   *position = z / 0x10000;
   if ((object->animationKind & 15) == OBJECT_SPRITE_ONE)
-    *position -= (s8)Resource_GetMetadataRecordFar(
-                     ((struct AnimationObject *)object->animation)
-                         ->entries[0]
-                         ->animationId)
-                     ->boxX;
+    *position -=
+        (s8)Resource_GetMetadataRecordFar(
+            ((struct Sprite *)object->animation)->entries[0]->animationId)
+            ->boxX;
   return 0;
 }
 
@@ -110,12 +109,12 @@ void Warp_PrepareExitAnimation(s32 animation) {
   u32 zero;
   u8 param;
   struct Object *object;
-  struct AnimationObject *context;
-  struct AnimationEntry *effect;
+  struct Sprite *context;
+  struct SpriteAnim *effect;
 
   object = ObjectEvent_GetByLocalId(gGameState.leaderLocalId);
   context = object->animation;
-  effect = (struct AnimationEntry *)ResourceMetadata_RegisterFar(context, 27);
+  effect = (struct SpriteAnim *)Sprite_AddAnimFar(context, 27);
   zero = 0;
   param = SPRITE_COLOR_HIDDEN;
 
@@ -161,10 +160,9 @@ void Warp_EndArrivalAnimation(s32 animation) {
   s32 zero;
   s32 mask;
   struct Object *leader = ObjectEvent_GetByLocalId(gGameState.leaderLocalId);
-  struct AnimationObject *spriteAnimation = leader->animation;
-  struct AnimationEntry *eff =
-      (struct AnimationEntry *)ResourceMetadata_RegisterFar(spriteAnimation,
-                                                            27);
+  struct Sprite *spriteAnimation = leader->animation;
+  struct SpriteAnim *eff =
+      (struct SpriteAnim *)Sprite_AddAnimFar(spriteAnimation, 27);
 
   zero = 0;
   mask = 0xfff00000;
@@ -177,7 +175,7 @@ void Warp_EndArrivalAnimation(s32 animation) {
   // Back to one sprite part, with its shadow, walking 8 pixels south at 1
   // pixel a frame.
   spriteAnimation->count = 1;
-  ResourceMetadata_ClearRecordFar(spriteAnimation->entries[1]);
+  SpriteAnim_ClearFar(spriteAnimation->entries[1]);
   spriteAnimation->entries[1] = (void *)zero;
   spriteAnimation->flags = SPRITE_FLAG_SHADOW;
   leader->acceleration = 0x10000;

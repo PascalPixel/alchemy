@@ -378,7 +378,7 @@ static void EventScript_KnockDownObstacle(void) {
   s32 rotationStep;
   s32 settleFrames;
   s32 settleRotationStep;
-  struct AnimationObject *sprite;
+  struct Sprite *sprite;
 
   obstacle = ObjectEvent_GetById(FALLING_OBSTACLE);
   sprite = obstacle->sprite;
@@ -1080,7 +1080,7 @@ s32 ColosseumSatrageMatch_Initialize(void) {
     Engine_ObjectEventDestroy(WALL_ATTENDANT);
     Engine_ObjectEventDestroy(BOARD_WALK_ATTENDANT);
     if (!Engine_GameFlagIsSet(FLAG_KEEP_PARTY_POSITION)) {
-      Engine_AudioPlayCue(AUDIO_CUE_FADE_BGM);
+      Engine_AudioPlayCue(SONG_FADE_OUT_BGM);
       Colosso_ControlCharacterAlone(ISAAC);
       Colosso_PlaceFriendsAtCheeringSpots();
       ColosseumSatrageMatch_ShowRoundStartLettering(2);
@@ -1566,11 +1566,11 @@ static void ColosseumSatrageMatch_ShowRoundStartLettering(s32 mode) {
   Engine_ScriptWait(120);
 
   // Finish the opening cue before the final lettering pulses and start signal.
-  while (AudioCommand_GetStateByte() != 0) {
+  while (Sound_GetBgmRestoreDelay() != 0) {
     Engine_TaskWait(1);
   }
 
-  Engine_AudioPlayCue(AUDIO_CUE_FADE_SLOT3);
+  Engine_AudioPlayCue(SONG_FADE_OUT_ACTION_SE);
   Colosso_LoadLettering(COLOSSO_PICTURE_COUNT_3_2);
   ColosseumSatrageMatch_StartLetteringAnimation(COLOSSO_SHAPE_DIGIT, 0);
   Engine_AudioPlayCue(SE_COLOSSO_COUNTDOWN);
@@ -1623,12 +1623,12 @@ static void ColosseumSatrageMatch_ShowBattleResultLettering(s32 result) {
   }
   Engine_ObjectEventShowEmote(reactingLocalId, EMOTE_IN_FRONT | EMOTE_ELLIPSIS,
                               0);
-  while (AudioCommand_GetStateByte() != 0) {
+  while (Sound_GetBgmRestoreDelay() != 0) {
     Engine_TaskWait(1);
   }
   Engine_AudioPlayCue(MUS_SILENCE);
   Engine_ScriptWait(30);
-  Engine_AudioPlayCue(AUDIO_CUE_FADE_SLOT3);
+  Engine_AudioPlayCue(SONG_FADE_OUT_ACTION_SE);
   Engine_ScriptCloseScreen();
   Engine_ScriptWaitForScreen();
 }
@@ -1828,7 +1828,7 @@ void Map_BuildDescriptorAndInstallTask(s32 leaderId, s32 opponentId,
   // scratch.
   FieldResource_DecodeType01(gColosso_GaugeGraphics, graphics);
 
-  vramSlot = Resource_FindFreeEntry();
+  vramSlot = VramCache_FindFreeEntry();
   work->gauge.vramBlock = vramSlot;
   Engine_VramLoad((s16)vramSlot, 512, graphics);
 

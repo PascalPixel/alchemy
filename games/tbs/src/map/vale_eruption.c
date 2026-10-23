@@ -156,7 +156,7 @@ static void EventScript_ReturnFromMtAleph(void) {
   ObjectEvent_WalkToAndWait(LOCALID_GARETS_BROTHER, 256, 500);
   ObjectEvent_FaceDirection(LOCALID_GARETS_BROTHER, FACING_NORTHWEST, 0);
   // A lightning flash, then the screen opens on the villagers below.
-  Weather_StartLightningFlash(PALETTE_TRANSFORM_WARM, PALETTE_TRANSFORM_RED);
+  Weather_StartLightningFlash(PALETTE_TINT_WARM, PALETTE_TINT_RED);
   Weather_LastLightning();
   Engine_TaskWait(60);
   FieldCamera_MoveTo(PIXELS(256), -1, PIXELS(612), 0);

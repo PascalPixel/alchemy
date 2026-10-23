@@ -531,7 +531,7 @@ static void MercuryLighthouse_ExitWhenChannelsOpen(void) {
     gFieldWork->transition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
     Engine_ScriptCloseScreen();
     Engine_ScriptWaitForScreen();
-    Engine_AudioPlayCue(AUDIO_CUE_FADE_SLOT3);
+    Engine_AudioPlayCue(SONG_FADE_OUT_ACTION_SE);
     MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
     Engine_MapGridRenderWaitForValues();
     Engine_ScriptRequestWarp(
@@ -1137,7 +1137,7 @@ static void MercuryLighthouse_CloseStoneDoor(s32 side) {
   MapGrid_CopyCellsTo(0x70, 0x39, 0x71, 0x2a, 1, 1);
   MapGrid_CopyCellsTo(0x75, 0x3a, 0x70, 0x2e, 1, 1);
   MapGrid_CopyCellsTo(0x75, 0x39, 0x74, 0x2c, 1, 1);
-  Engine_AudioPlayCue(AUDIO_CUE_FADE_SLOT3);
+  Engine_AudioPlayCue(SONG_FADE_OUT_ACTION_SE);
   options.palette = 5;
   options.startScaleX = Q16_ONE / 2;
   options.startScaleY = Q16_ONE / 2;
@@ -1308,7 +1308,7 @@ static void MercuryLighthouse_PushStoneDoorPipes(void) {
           Engine_ObjectEventWaitForMove(LOCALID_SLIDING_STATUE);
           Engine_ScriptWait(40);
           Engine_GameFlagSet(FLAG_MERCURY_LIGHTHOUSE_STATUE_FELL);
-          Engine_ColorBufferApplySource(PALETTE_TRANSFORM_PLAIN, 0);
+          Engine_ColorBufferApplySource(PALETTE_TINT_NONE, 0);
           gFieldWork->transition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
           Engine_ScriptCloseScreen();
           Engine_ScriptWaitForScreen();
@@ -1665,13 +1665,13 @@ static void MercuryLighthouse_MiaOpensEntranceWithPly(void) {
     MercuryLighthouse_MiaCastsPlyOnEntrance();
     Engine_ScriptWait(50);
     Engine_AudioPlayCue(SE_131);
-    ColorBuffer_ApplySource(PALETTE_TRANSFORM_PLAIN, 0);
-    ColorBuffer_ApplyTarget(PALETTE_TRANSFORM_TINT | RGB(31, 20, 31), 0);
+    PaletteFade_ApplySource(PALETTE_TINT_NONE, 0);
+    PaletteFade_ApplyTarget(PALETTE_TINT_CUSTOM | RGB(31, 20, 31), 0);
     Engine_ColorBufferInterpolate(10);
     Engine_TaskWait(1);
     Engine_AudioPlayCue(SE_220);
     Engine_TaskWait(40);
-    Engine_ColorBufferApplyTarget(PALETTE_TRANSFORM_PLAIN, 0);
+    Engine_ColorBufferApplyTarget(PALETTE_TINT_NONE, 0);
     Engine_ColorBufferInterpolate(60);
     Engine_TaskWait(60);
     Engine_AudioPlayCue(SE_MERCURY_LIGHTHOUSE_DOOR_OPEN);
@@ -1934,7 +1934,7 @@ static void MercuryLighthouse_PlyOpensWaterfallPassage(void) {
     } while ((u32)particleIndex <= 31);
     wave = (wave + 1);
   } while ((u32)wave <= 3);
-  Engine_AudioPlayCue(AUDIO_CUE_FADE_SLOT3);
+  Engine_AudioPlayCue(SONG_FADE_OUT_ACTION_SE);
   MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
   Engine_MapGridRenderWaitForValues();
   Map_PlayQueuedMusic();
@@ -1953,11 +1953,11 @@ static void MercuryLighthouse_PlyOpensWaterfallPassage(void) {
     MercuryLighthouse_RaiseObjectEventWithSparks(LOCALID_PARTY_LEADER);
     Engine_ScriptWait(60);
     Engine_TaskRemoveCallback(MercuryLighthouse_CycleWaterfallPalette);
-    ColorBuffer_ApplySource(PALETTE_TRANSFORM_PLAIN, 0);
-    ColorBuffer_ApplyTarget(PALETTE_TRANSFORM_PALE, 0);
+    PaletteFade_ApplySource(PALETTE_TINT_NONE, 0);
+    PaletteFade_ApplyTarget(PALETTE_TINT_PALE, 0);
     Engine_ColorBufferInterpolate(120);
     Engine_ScriptWait(120);
-    ColorBuffer_ApplyTarget(0x7fff, 0);
+    PaletteFade_ApplyTarget(0x7fff, 0);
     Engine_ColorBufferInterpolate(60);
     Engine_ScriptWait(60);
     Engine_ScriptRequestWarp(
@@ -2035,12 +2035,12 @@ static void MercuryLighthouse_PlyOpensWaterfallPassage(void) {
     ObjectEvent_WalkToAndWait(IVAN, 792, 200);
     Engine_ScriptWait(30);
     MercuryLighthouse_RaiseObjectEventWithSparks(IVAN);
-    ColorBuffer_ApplySource(PALETTE_TRANSFORM_PLAIN, 0);
+    PaletteFade_ApplySource(PALETTE_TINT_NONE, 0);
     Engine_TaskRemoveCallback(MercuryLighthouse_CycleWaterfallPalette);
-    ColorBuffer_ApplyTarget(PALETTE_TRANSFORM_PALE, 0);
+    PaletteFade_ApplyTarget(PALETTE_TINT_PALE, 0);
     Engine_ColorBufferInterpolate(120);
     Engine_ScriptWait(120);
-    ColorBuffer_ApplyTarget(0x7fff, 0);
+    PaletteFade_ApplyTarget(0x7fff, 0);
     Engine_ColorBufferInterpolate(60);
     Engine_ScriptWait(60);
     Engine_ScriptEnd();
@@ -2648,7 +2648,7 @@ s32 MercuryLighthouse_Initialize(void) {
         break;
       MercuryLighthouse_ArriveWithSparks();
       Map_QueueMusic(SE_170);
-      ColorBuffer_ApplySource(128 << 9, 0);
+      PaletteFade_ApplySource(128 << 9, 0);
       Engine_ColorBufferApplyTarget(0x10003, 1);
       Engine_ColorBufferInterpolate(30);
       Engine_ScriptWaitForScreen();
@@ -2978,7 +2978,7 @@ static void MercuryLighthouse_ReplaceInventoryItem(s32 oldItem, s32 newItem) {
 /// frames.
 static void MercuryLighthouse_SpawnRipple(struct ObjectEvent *source) {
   struct ObjectEvent *effect;
-  struct AnimationObject *sprite;
+  struct Sprite *sprite;
 
   effect = Engine_ObjectCreate(SPRITE_RIPPLE, source->x.fixed, source->y.fixed,
                                source->z.fixed);
@@ -2994,7 +2994,7 @@ static void MercuryLighthouse_SpawnRipple(struct ObjectEvent *source) {
   effect->priorityFlags = 2;
 
   if (sprite != 0) {
-    AnimationObject_SelectAnimation(sprite, 2);
+    Sprite_StartAnim(sprite, 2);
     sprite->flags = 0;
     sprite->image.priority = 3;
   }

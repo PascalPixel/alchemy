@@ -16,7 +16,7 @@ void Shop_InitializeWork(void);
 void Shop_ReleaseWork(void);
 s32 Shop_Run(s32 stockRow, s32 keeperId);
 s32 Shop_OpenDebugShop(s32 unused);
-void AudioCommand_WaitForStateByteClear(void);
+void Sound_WaitForFanfare(void);
 void Shop_ShowKeeperMessage(s32 messageId);
 void Shop_ShowKeeperMessageHidingCursor(s32 messageId);
 s32 Shop_AskYesNo(s32 choice);

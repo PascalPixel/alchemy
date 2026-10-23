@@ -31,8 +31,8 @@ extern u8 gPlayerObjectId[];
 extern u16 gResource_SlotAssignments[];
 struct BattleObject;
 
-struct AnimationEntry;
-struct AnimationObject;
+struct SpriteAnim;
+struct Sprite;
 struct ArcEffectObject;
 struct ArcObject;
 struct ArcParticle;
@@ -216,10 +216,10 @@ void _call_via_r0(u32 routine);
 void Animation_ApplyChildArgumentFar(void *, s32);
 void BitDecoder_DecodeImage(void);
 void FarCall_WindowTable(void);
-struct AnimationObject *GetBattleEffectObject(s32 kind);
+struct Sprite *GetBattleEffectObject(s32 kind);
 void ItemIcon_LoadTilesFar(s32 item);
 #ifndef OWN_Object_InitializeMode
-s32 Object_InitializeMode(struct AnimationObject *state, s32 flags);
+s32 Object_InitializeMode(struct Sprite *state, s32 flags);
 #endif
 
 /// BattleMotion_ApplyKnockback's knockbacks, the columns of the
@@ -242,7 +242,7 @@ enum BattleKnockback {
   KNOCKBACK_JOLT    ///< the spot itself, a hop of 5.5
 };
 
-/// The battle sprites' animations (AnimationObject_SelectAnimation numbers)
+/// The battle sprites' animations (Sprite_StartAnim numbers)
 /// that the battle code picks by name.
 enum BattlePose {
   POSE_ENEMY_HELD = 0, ///< an enemy asleep, stunned or held

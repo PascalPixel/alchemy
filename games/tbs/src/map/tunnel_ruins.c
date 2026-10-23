@@ -1044,7 +1044,7 @@ static void TunnelRuins_SettleBalance(s32 wait) {
       gTunnelRuins_BalanceHeights[ObjectEvent_GetById(LOCALID_BALANCE_EAST)
                                       ->timer];
   if (wait != 0) {
-    Engine_AudioPlayCue(AUDIO_CUE_FADE_SLOT3);
+    Engine_AudioPlayCue(SONG_FADE_OUT_ACTION_SE);
   }
   for (i = 0; i < 5; i++) {
     if (ObjectEvent_GetById(i + LOCALID_BALANCE_WEST)->y.fixed / Q16_ONE < 0 &&

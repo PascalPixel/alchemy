@@ -261,7 +261,7 @@ void BattleAnim_SetupBlendedDisplay(void) {
 void ObjectGroup_UpdateMembers(s32 actorId, s32 palette, s32 animation,
                                s32 timerSlot, s32 timerFrames) {
   struct BattleObject *slot;
-  struct AnimationObject *group;
+  struct Sprite *group;
   struct BattleAnimWork *work;
   s32 groupIndex;
 
@@ -280,17 +280,17 @@ void ObjectGroup_UpdateMembers(s32 actorId, s32 palette, s32 animation,
 
         partIndex = 0;
         if (group->count != 0) {
-          struct AnimationEntry **parts;
+          struct SpriteAnim **parts;
 
           parts = group->entries;
           do {
-            struct AnimationEntry *part;
+            struct SpriteAnim *part;
 
             // Every part but the battler's effect and animation entries.
             part = *parts++;
             if (part != NULL &&
-                part != (struct AnimationEntry *)slot->effectEntry &&
-                part != (struct AnimationEntry *)slot->animationEntry) {
+                part != (struct SpriteAnim *)slot->effectEntry &&
+                part != (struct SpriteAnim *)slot->animationEntry) {
               if (palette == 0)
                 part->colorMode = BattleMotion_GetSlotPaletteFar(actorId);
               else
@@ -302,7 +302,7 @@ void ObjectGroup_UpdateMembers(s32 actorId, s32 palette, s32 animation,
         }
       }
       if (animation != -1)
-        AnimationObject_SelectAnimationFar(group, animation);
+        Sprite_StartAnimFar(group, animation);
     }
     groupIndex++;
   }

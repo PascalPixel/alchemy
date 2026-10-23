@@ -1100,13 +1100,13 @@ static void Imil_MeetMiaAtOldCouplesHouse(void) {
   Script_ShowMessage(MIA, 0);
   Script_PlaySong(SE_131);
   // The lighthouse interrupts the visit; Mia leaves and the party follows.
-  ColorBuffer_ApplySource(PALETTE_TRANSFORM_PLAIN, 0);
-  ColorBuffer_ApplyTarget(PALETTE_TRANSFORM_TINT | RGB(31, 20, 31), 0);
+  PaletteFade_ApplySource(PALETTE_TINT_NONE, 0);
+  PaletteFade_ApplyTarget(PALETTE_TINT_CUSTOM | RGB(31, 20, 31), 0);
   Engine_ColorBufferInterpolate(10);
   Engine_TaskWait(1);
   Script_PlaySong(SE_220);
   Engine_TaskWait(40);
-  ColorBuffer_ApplyTarget(PALETTE_TRANSFORM_PLAIN, 0);
+  PaletteFade_ApplyTarget(PALETTE_TINT_NONE, 0);
   Engine_ColorBufferInterpolate(60);
   Engine_TaskWait(60);
   ObjectEvent_SetAttachedEffect(MIA, ATTACHED_EFFECT_IN_FRONT |
@@ -1250,7 +1250,7 @@ static void Imil_MiaCastsPlyOnOldMan(void) {
 
 /// Resets a rising effect's motion, sprite priority, and initial scale.
 static void Imil_InitializeRisingEffect(struct ObjectEvent *work) {
-  struct AnimationObject *sprite;
+  struct Sprite *sprite;
 
   work->motionFlags = 0;
   work->timer = 0;

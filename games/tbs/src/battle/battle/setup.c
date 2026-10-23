@@ -68,7 +68,7 @@ void BattleCamera_Update(void) {
     focus = camera->followPosition;
   }
 
-  Render_ResetTransformState();
+  Transform_Reset();
   Transform_ApplyPosition(focus);
   Transform_ApplyYaw((s16)camera->yaw);
   Transform_ApplyPitch((s16)camera->pitch);

@@ -374,8 +374,8 @@ Each window keeps a list of its outputs, taken from the pool's free list and
 returned when the window closes. `UiWork_AnimateSpriteSlots` moves each
 output every frame by its `UI_SPRITE_` motion and queues it for drawing. An
 output's picture occupies an entry of the VRAM cache, loaded into a free one
-(`Resource_FindFreeEntry`, `VramCache_Load`) and freed by
-`Resource_ResetEntry`. The two portrait slots record which picture each shows
+(`VramCache_FindFreeEntry`, `VramCache_Load`) and freed by
+`VramCache_FreeEntry`. The two portrait slots record which picture each shows
 (`portraitPictures`, 999 when free) and its cache entry. In Japanese, a character
 that finds no free output closes its window.
 

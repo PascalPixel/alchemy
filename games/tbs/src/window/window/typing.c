@@ -252,7 +252,7 @@ s32 TextPrinter_Step(struct TextPrinter *channel) {
         channel->lineSpacing = 10;
         TextPrinter_ApplyStyle(channel);
 #endif
-        Resource_ResetEntry(work->glyphResource);
+        VramCache_FreeEntry(work->glyphResource);
         work->glyphResource = NO_GLYPH_RESOURCE;
         break;
 

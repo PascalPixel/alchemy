@@ -61,7 +61,7 @@ whatever that code is doing. There is no main loop that calls each part of
 the game once a frame. A menu screen, a cutscene or a battle effect is an
 ordinary function with a loop of its own, and when time has to pass it calls
 `WaitFrames(n)`, which runs `n` frames itself and then returns. The Camelot
-logo at power-on is such a loop (`Title_ShowAnimatedSplash`, simplified):
+logo at power-on is such a loop (`Title_ShowCamelotLogo`, simplified):
 
 ```c
 for (i = 0; i < 120; i++) {
@@ -92,7 +92,7 @@ and sprites, added at `0x80`, have run. Window animation, battle event playback
 Each frame, `WaitFrames`:
 
 1. runs the main-loop tasks;
-2. builds the frame's [sprite](glossary.md#sprite-and-oam) list (`Render_BuildOamList`);
+2. builds the frame's [sprite](glossary.md#sprite-and-oam) list (`Oam_BuildBuffer`);
 3. halts the CPU until VBlank.
 
 The VBlank handler then copies the sprite list, the layers' scroll positions
@@ -197,8 +197,8 @@ says what kind of sound it is. The sound driver has eight players, and each
 kind of sound has players of its own, so a sound effect never stops the
 music.
 
-Below 80 a cue is music; from 80 to 99 (`AUDIO_JINGLE_FIRST`) a fanfare;
-from 100 (`AUDIO_SONG_FIRST`) an entry of the song table, played on the
+Below 80 a cue is music; from 80 to 99 (`SONG_FANFARE_FIRST`) a fanfare;
+from 100 (`SONG_SE_FIRST`) an entry of the song table, played on the
 player its row names, which is how sound effects play. Cues 17, 18 and 289
 are controls rather than sounds.
 
@@ -211,11 +211,11 @@ Advance games ship ([pret](glossary.md#pret)'s decompilations call it m4a).
 
 | Name | Value | Meaning |
 | --- | --- | --- |
-| `AUDIO_CUE_FADE_BGM` | 17 | fade the music out over 112 frames |
-| `AUDIO_CUE_KEEP_BGM` | 18 | keep the music that is playing |
-| `AUDIO_JINGLE_FIRST` | 80 | first fanfare cue; below it, music |
-| `AUDIO_SONG_FIRST` | 100 | first cue that is a song table row |
-| `AUDIO_CUE_FADE_SLOT3` | `0x121` (289) | fade player 3 out over 48 frames |
+| `SONG_FADE_OUT_BGM` | 17 | fade the music out over 112 frames |
+| `SONG_KEEP_BGM` | 18 | keep the music that is playing |
+| `SONG_FANFARE_FIRST` | 80 | first fanfare cue; below it, music |
+| `SONG_SE_FIRST` | 100 | first cue that is a song table row |
+| `SONG_FADE_OUT_ACTION_SE` | `0x121` (289) | fade player 3 out over 48 frames |
 
 [Sound](src/sound/README.md#what-a-cue-number-means) covers the players,
 [the fanfare's return](src/sound/README.md#the-fanfares-return-to-the-music)

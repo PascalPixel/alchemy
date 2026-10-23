@@ -150,8 +150,7 @@ void FieldEffect_RunRetreat(void) {
     FieldEffectSprite_Initialize(effect, SPRITE_PARTICLE, pos.x, pos.z);
     FieldEffectSprite_SetCallback(effect, FieldEffect_UpdateRadialLaunch);
     FieldEffectSprite_SetObjectMode(effect, 7);
-    ObjectGroup_SetChildValueUnlessFifteenFar(effect->object,
-                                              (Random16() * 7) >> 16);
+    Sprite_SetAnimColorModesFar(effect->object, (Random16() * 7) >> 16);
     scale = (Random16() >> 1) + 0x13333; // 1.2 to 1.7
     effect->scaleY = scale;
     effect->scaleX = scale;
@@ -240,9 +239,9 @@ void FieldEffect_UpdateDescendingParticleNegativeArc(
   particle->z.fixed = source->z.fixed - ((0x10000 - scale) * 5) + 0x100000;
 }
 
-/// A falling arc's sprite (struct AnimationObject), seen as the attribute
+/// A falling arc's sprite (struct Sprite), seen as the attribute
 /// bits, resource slot and animation that Avoid's arcs set on it; the notes
-/// give the AnimationObject fields, some under other names here.
+/// give the Sprite fields, some under other names here.
 struct DescendingArcSprite {
   u8 padding00[5];
   u8 flags05_0 : 5;
@@ -270,7 +269,7 @@ struct DescendingArcSprite {
   u8 padding1e[8];
   u8 animation; ///< flags, despite the name: 0 drops the shadow
   u8 padding27;
-  struct AnimationEntry *frame; ///< entries[0], its first layer
+  struct SpriteAnim *frame; ///< entries[0], its first layer
 };
 
 /// Spawns a pair of falling arcs (one upside down) on arc, 64 pixels above
@@ -304,12 +303,12 @@ void FieldEffect_SpawnDescendingArcParticles(struct ObjectEvent *arc) {
     objectEvent->scaleX = 0x6666;
     if (sprite == NULL)
       continue;
-    AnimationObject_SelectAnimationFar((struct AnimationObject *)sprite, 0);
+    Sprite_StartAnimFar((struct Sprite *)sprite, 0);
     sprite->animation = zero;
-    Resource_ResetEntry(sprite->resource);
+    VramCache_FreeEntry(sprite->resource);
     sprite->resource = effectWork->arcTileSlot;
     sprite->active = 1;
-    sprite->attr.half.tile = gVramBlockCache[sprite->resource].offset >> 5;
+    sprite->attr.half.tile = gVramCacheEntries[sprite->resource].offset >> 5;
     sprite->flags05_5 = 0;
     sprite->layer = 1;
     sprite->size = 2;

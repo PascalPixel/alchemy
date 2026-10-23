@@ -44,7 +44,7 @@ s32 Decompress_ByteLzFar(const void *source, void *destination);
 s32 Decompress_Type01Far(const void *source, void *destination);
 /// Frees VRAM cache entry `no`, its sprite VRAM included, once its picture is
 /// no longer shown.
-s32 Resource_ResetEntryFar(u32 no);
+s32 VramCache_FreeEntryFar(u32 no);
 /// Gives back entry `no`'s sprite VRAM but keeps the entry taken, so a later
 /// VramCache_LoadFar can refill it.
 s32 VramCache_ReleaseVramFar(u32 no);
@@ -53,13 +53,13 @@ s32 VramCache_ReleaseVramFar(u32 no);
 s32 VramCache_LoadFar(u32 no, u32 size, const void *src);
 /// Returns the first free VRAM cache entry, or VRAM_CACHE_ENTRY_COUNT when all
 /// are taken.
-s32 Resource_FindFreeEntryFar(void);
+s32 VramCache_FindFreeEntryFar(void);
 /// Fills the next of the 32 OAM affine matrices with `source`'s scale and
 /// rotation and returns its number. When none is left it returns 0 unfilled.
-s32 AffineMatrix_BuildForEffectFar(struct AffineTransform *source);
+s32 OamMatrix_AllocFromTransformFar(struct AffineTransform *source);
 /// Links a sprite entry into depth slot `slot` (0 to 255) for this frame's OAM
 /// list; the entry's first word becomes its link.
-void Runtime_PushSlotEntryFar(void *slot_entry, s32 slot);
+void Oam_AddSpriteAtDepthFar(void *slot_entry, s32 slot);
 /// Loads the window font, frame tiles and palette, and the basic sprite
 /// palettes, as modes that replace them must put them back.
 void Window_LoadGraphicsFar(void);
@@ -70,9 +70,9 @@ void *Resource_GetTableEntryFar(s32 index);
 void RuntimeDispatch_NoOpHookFar(s32 unused);
 /// Fades BG1 to BG3, the sprites and the backdrop out to black over `frames`
 /// frames; it only starts the fade.
-void Fade_ToBlackFar(s32 frames);
+void ScreenFade_ToBlackFar(s32 frames);
 /// Waits a frame at a time until the running fade finishes.
-void Fade_WaitFar(void);
+void ScreenFade_WaitFar(void);
 /// Puts the serial port in multiplayer mode, installs the link interrupts and
 /// starts the per-frame exchange with a link partner.
 void SerialRuntime_InitializeFar(void);

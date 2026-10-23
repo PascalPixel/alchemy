@@ -43,7 +43,7 @@ s32 Menu_ResumeFieldTasks(void) {
   // FLAG_WEATHER_HELD freezes the field weather: its particles hold
   // their frame and the storm's lightning waits (psynergy_effects/weather.c).
   GameFlag_ClearBitFar(FLAG_WEATHER_HELD);
-  // FLAG_PALETTE_BLEND_HELD stops ColorBuffer_Update.
+  // FLAG_PALETTE_BLEND_HELD stops PaletteFade_Update.
   GameFlag_ClearBitFar(FLAG_PALETTE_BLEND_HELD);
 #ifdef UBFIX
   return 0;
@@ -451,7 +451,7 @@ UNUSED s32 Icon_CreateWithResource(struct Window *window, s32 unused, s32 x,
   s32 block;
   s32 icon;
   icon = 0;
-  block = Resource_FindFreeEntry();
+  block = VramCache_FindFreeEntry();
   if (block != 0) {
     VramCache_Load(block, ICON_TILE_BYTES, gIcon_ResourceTiles);
     icon = (s32)WindowSprite_CreateFar(block, ICON_SPRITE_16X16, window, x, y);
@@ -469,9 +469,9 @@ s32 Icon_CreateWithResourceVariant(struct Window *window, s32 x, s32 y) {
   s32 icon;
 
   icon = 0;
-  block = Resource_FindFreeEntry();
+  block = VramCache_FindFreeEntry();
   // XXX: likely meant as the no-free-block test, because 0 is a valid block:
-  // Resource_FindFreeEntry returns VRAM_CACHE_ENTRY_COUNT (96) when none is
+  // VramCache_FindFreeEntry returns VRAM_CACHE_ENTRY_COUNT (96) when none is
   // free, which ItemMenu_SelectGiveQuantity tests. With none free, the sprite
   // is created on block 96, which VramCache_Load refuses.
   if (block != 0) {
@@ -551,8 +551,8 @@ void PsynergyMenu_InitializeEntryObjects(void *source, s32 originX, s32 originY,
   menu->tabCounts[0] = ownerCount;
   // Create and position the figures before scheduling their updates.
   for (i = 0; i < ownerCount; i++) {
-    struct AnimationObject *figure =
-        ResourceObject_CreateFar(Party_RemapCharacterIdByFlagsFar(ownerIds[i]));
+    struct Sprite *figure =
+        Sprite_CreateFar(Party_RemapCharacterIdByFlagsFar(ownerIds[i]));
     if (figure != 0) {
       s32 offsetX;
       s32 windowX;
@@ -568,7 +568,7 @@ void PsynergyMenu_InitializeEntryObjects(void *source, s32 originX, s32 originY,
       menu->ownerScale[i] = 0x10000; // 1.0 in 16.16
       figure->image.priority = 0;
       figure->flags = 0;
-      AnimationObject_SelectAnimationFar(figure, 1);
+      Sprite_StartAnimFar(figure, 1);
     }
   }
   // Clear the unused party slots so the callback can skip them.
@@ -590,7 +590,7 @@ void Menu_ReleaseEntryObjects(void) {
   u16 ownerIds[14];
   struct PsynergyMenuWork *menu = gMenuWork;
   s32 count;
-  struct AnimationObject **figures;
+  struct Sprite **figures;
   s32 i;
 
   count = (u16)Party_ListMembersFar(ownerIds);
@@ -598,10 +598,10 @@ void Menu_ReleaseEntryObjects(void) {
     figures = menu->tabObjects;
     i = count;
     do {
-      struct AnimationObject *figure = *figures++;
+      struct Sprite *figure = *figures++;
 
       if (figure != 0) {
-        ResourceObject_ReleaseFar(figure);
+        Sprite_DestroyFar(figure);
       }
     } while (--i != 0);
   }
@@ -620,7 +620,7 @@ void Menu_UpdateEntryObjectTransforms(void) {
 
   count = (u16)Party_CountMembersFar();
   for (i = 0; i < count; i++) {
-    struct AnimationObject *figure = menu->tabObjects[i];
+    struct Sprite *figure = menu->tabObjects[i];
     // 482 less the row's screen y, in 16.16. The ground y is always 482,
     // which puts every figure in the same depth slot ((482 >> 1) + 10 = 251,
     // Render_ApplyProjectedPlacement), and raising the image by this height

@@ -8,9 +8,9 @@
 /// gMap_MusicRules and gEncounter_BattleMusic choose by number, and
 /// the voices and defeat sounds reached by adding to a first id. A sound whose
 /// meaning is shown has a name; the others keep their number. Sound_PlaySong
-/// tests the controls AUDIO_CUE_FADE_BGM and AUDIO_CUE_FADE_SLOT3 first, then
-/// the ranges: from AUDIO_SONG_FIRST on a song table player, from
-/// AUDIO_JINGLE_FIRST fanfares, below that music, where AUDIO_CUE_KEEP_BGM is
+/// tests the controls SONG_FADE_OUT_BGM and SONG_FADE_OUT_ACTION_SE first, then
+/// the ranges: from SONG_SE_FIRST on a song table player, from
+/// SONG_FANFARE_FIRST fanfares, below that music, where SONG_KEEP_BGM is
 /// also a control (audio_engine_symbols.h).
 
 /// Field music of Vale, of Vault, and of Altin once
@@ -92,7 +92,7 @@
 /// there; it also plays as Babi meets the party in Altmiller Cave and after the
 /// Colosso, and as Iodem questions the wounded soldiers in Suhalla.
 #define MUS_030 30
-/// Unused: nothing in ☀️ plays it; MUSIC_ALL_TRACKS names it among the songs of
+/// Unused: nothing in ☀️ plays it; TRACKS_ALL names it among the songs of
 /// nine or more tracks.
 #define MUS_040 40
 /// Field music of the Tolbi-bound ship, and of the world map reached from seven
@@ -614,7 +614,7 @@
 /// A log pushed over: Kolima Forest, Mogall Forest, Vale Cave, the Colosso,
 /// Crossbone Isle, and monsters attacking the Tolbi-bound ship.
 #define SE_240 240
-/// Something moving in water, on player 3 until AUDIO_CUE_FADE_SLOT3 fades
+/// Something moving in water, on player 3 until SONG_FADE_OUT_ACTION_SE fades
 /// it: the logs floated across Fuchin Falls Cave, the riding log in Vale Cave,
 /// the leader sinking in Mercury Lighthouse's pool and bathing in a Lamakan
 /// Desert oasis.

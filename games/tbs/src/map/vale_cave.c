@@ -834,7 +834,7 @@ static void EventScript_RideLogEast(void) {
   Engine_GameFlagSet(FLAG_VALE_CAVE_RIDING_LOG_EAST);
   Engine_TaskWait(2);
   ValeCave_UpdateRidingLogPassage();
-  Engine_AudioPlayCue(AUDIO_CUE_FADE_SLOT3);
+  Engine_AudioPlayCue(SONG_FADE_OUT_ACTION_SE);
 }
 
 /// In Vale Cave's second room, walking west onto the riding log: it carries
@@ -850,7 +850,7 @@ static void EventScript_RideLogWest(void) {
   Engine_GameFlagClear(FLAG_VALE_CAVE_RIDING_LOG_EAST);
   Engine_TaskWait(2);
   ValeCave_UpdateRidingLogPassage();
-  Engine_AudioPlayCue(AUDIO_CUE_FADE_SLOT3);
+  Engine_AudioPlayCue(SONG_FADE_OUT_ACTION_SE);
 }
 
 /// Centers an object event on a map cell and gives it underfoot priority.

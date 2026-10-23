@@ -246,7 +246,7 @@ s32 Menu_WrapIndex(s32 value, s32 modulus);
 s32 Menu_SetFirstObjectRowCoordinates(s32 yOffset);
 s32 DjinnMenu_Run(void);
 s32 DjinnMenu_RunScreen(void);
-void Graphics_AdjustPaletteBank(s32 brightnessDelta);
+void DjinnMenu_AdjustPaletteBank(s32 brightnessDelta);
 #ifdef UBFIX
 typedef void MenuBackdropResult;
 #else

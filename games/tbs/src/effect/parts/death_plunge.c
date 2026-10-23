@@ -1102,7 +1102,7 @@ void BattleAnim_DrawStreaks(void) {
     if (frame > i / 4 && streak->head > 0) {
       s32 fade;
 
-      Render_ResetTransformState();
+      Transform_Reset();
       Transform_ApplyRoll(streak->roll);
       Transform_ApplyPitch(streak->pitch);
       Transform_ApplyYaw(streak->yaw);

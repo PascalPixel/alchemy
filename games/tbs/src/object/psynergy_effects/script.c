@@ -400,7 +400,7 @@ void ObjectEvent_WaitForAnimationEnd(s32 localId, s32 animation) {
       objectEventObject->animationKind == OBJECT_SPRITE_ONE) {
     s32 frames = 0;
     u8 *animationNumber =
-        &((struct AnimationObject *)objectEventObject->animation)->lastNo;
+        &((struct Sprite *)objectEventObject->animation)->lastNo;
 
     while (frames <= 89) {
       WaitFrames(1);

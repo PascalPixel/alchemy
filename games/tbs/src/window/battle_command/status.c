@@ -220,7 +220,7 @@ s32 BattleSummaryScreen_Run(u16 *list, s32 listCount, s32 owner) {
     nameSprite.oam.f.x = 8;
     nameSprite.oam.f.y = 24;
     nameSprite.oam.f.palette = 14;
-    Runtime_PushSlotEntry((s32 *)&nameSprite, 240);
+    Oam_AddSpriteAtDepth((s32 *)&nameSprite, 240);
 
     // The group follows the help shown: the general rows have 9 stops with
     // Djinn, 7 without.
@@ -384,7 +384,7 @@ s32 BattleSummaryScreen_Run(u16 *list, s32 listCount, s32 owner) {
       portraitSprite.oam.f.tile = face->oam.f.tile;
       portraitSprite.oam.f.x = 0xAC;
       portraitSprite.oam.f.y = 56;
-      Runtime_PushSlotEntry((s32 *)&portraitSprite, 240);
+      Oam_AddSpriteAtDepth((s32 *)&portraitSprite, 240);
     }
 
     cursorSprite.oam.word.attr01 = 0x40000400;
@@ -404,7 +404,7 @@ s32 BattleSummaryScreen_Run(u16 *list, s32 listCount, s32 owner) {
     // 8 sets attribute 1's bit 12, a sprite's horizontal flip when it is not
     // affine: the hand is mirrored.
     cursorSprite.oam.f.affineIndex = 8;
-    Runtime_PushSlotEntry((s32 *)&cursorSprite, 241);
+    Oam_AddSpriteAtDepth((s32 *)&cursorSprite, 241);
 
     if (redraw != 0) {
       unit = Unit_GetFar(owner);
@@ -755,16 +755,16 @@ s32 BattleSummaryScreen_Run(u16 *list, s32 listCount, s32 owner) {
     statusSprite = statusSprites;
     statusSlot = statusSlots;
     {
-      struct VramBlockCacheEntry *entry;
+      struct VramCacheEntry *entry;
 
-      for (i = 0, entry = gVramBlockCache, iconX = 112; i <= 10; i++) {
+      for (i = 0, entry = gVramCacheEntries, iconX = 112; i <= 10; i++) {
         statusSprite->oam.word.attr01 = 0x40000400;
         statusSprite->oam.word.attr23 = 0;
         statusSprite->oam.f.tile = entry[*statusSlot++].offset >> 5;
         statusSprite->oam.f.x = iconX;
         statusSprite->oam.f.y = (u8)(statusWindow->y * 8 + 8);
         if (statusKinds[i] > OWNER_CONDITION_NORMAL) {
-          Runtime_PushSlotEntry((s32 *)statusSprite, 240);
+          Oam_AddSpriteAtDepth((s32 *)statusSprite, 240);
         }
         iconX += 15;
         statusSprite++;
@@ -804,11 +804,11 @@ s32 BattleSummaryScreen_Run(u16 *list, s32 listCount, s32 owner) {
     s32 *statusSlotCursor = statusSlots;
 
     for (i = 10; i >= 0; i--) {
-      Resource_ResetEntry(*statusSlotCursor++);
+      VramCache_FreeEntry(*statusSlotCursor++);
     }
   }
-  Resource_ResetEntry(portraitSlot);
-  Resource_ResetEntry(cursorSlot);
+  VramCache_FreeEntry(portraitSlot);
+  VramCache_FreeEntry(cursorSlot);
   WaitFrames(1);
 #if TBS_PATCH_1
   Window_MarkVisibleTextTiles();

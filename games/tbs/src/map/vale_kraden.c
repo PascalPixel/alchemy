@@ -571,7 +571,7 @@ static void EventScript_KradenSetsOff(void) {
   ObjectEvent_SetPosition(LOCALID_MENARDI, 0, 0);
   GameFlag_Set(FLAG_SANCTUM_VISIT_PLANNED);
   gFieldWork->transition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
-  ColorBuffer_ApplySource(PALETTE_TRANSFORM_PLAIN, PALETTE_HALVES_BOTH);
+  PaletteFade_ApplySource(PALETTE_TINT_NONE, PALETTES_ALL);
   GameFlag_Set(FLAG_MAP_TEMP_42);
   Engine_ScriptEnd();
 }
@@ -608,7 +608,7 @@ static void EventScript_MeetSaturosAndMenardi(void) {
   }
 
   Engine_ScriptStart();
-  Script_PlaySong(AUDIO_CUE_FADE_BGM);
+  Script_PlaySong(SONG_FADE_OUT_BGM);
   GameFlag_Set(FLAG_MET_SATUROS_AND_MENARDI);
 
   // Saturos is overheard: the villagers know little of Sol Sanctum.
@@ -802,7 +802,7 @@ static void EventScript_MeetSaturosAndMenardi(void) {
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, 1, 20);
   Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIMATION_NOD);
   Engine_ObjectEventSetAnimationAndWait(GARET, ANIMATION_NOD);
-  Script_PlaySong(AUDIO_CUE_FADE_BGM);
+  Script_PlaySong(SONG_FADE_OUT_BGM);
 
   ValeKraden_WalkTowardLeader(GARET);
   Engine_ObjectEventWaitForMove(GARET);

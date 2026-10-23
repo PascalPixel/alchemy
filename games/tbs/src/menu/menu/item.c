@@ -1333,11 +1333,11 @@ void EquipmentMenu_UpdateCompatibilityIndicators(void) {
       if (Item_CanUnitEquip(menu->ownerIds[memberIndex],
                             menu->selectedItems[0] & INVENTORY_ITEM_ID_MASK) !=
           0) {
-        struct AnimationObject *partyFigure = menu->ownerObjects[memberIndex];
-        AnimationObject_SelectAnimationFar(partyFigure, 3);
+        struct Sprite *partyFigure = menu->ownerObjects[memberIndex];
+        Sprite_StartAnimFar(partyFigure, 3);
       } else {
-        struct AnimationObject *partyFigure = menu->ownerObjects[memberIndex];
-        AnimationObject_SelectAnimationFar(partyFigure, 1);
+        struct Sprite *partyFigure = menu->ownerObjects[memberIndex];
+        Sprite_StartAnimFar(partyFigure, 1);
       }
       memberIndex++;
     } while (memberIndex < menu->partyCount);
@@ -1356,8 +1356,8 @@ void EquipmentMenu_StartCompatibilityIndicators(void) {
   if (menu->partyCount != 0) {
     memberIndex = 0;
     do {
-      struct AnimationObject *partyFigure = menu->ownerObjects[memberIndex];
-      AnimationObject_SelectAnimationFar(partyFigure, 1);
+      struct Sprite *partyFigure = menu->ownerObjects[memberIndex];
+      Sprite_StartAnimFar(partyFigure, 1);
       memberIndex++;
     } while (memberIndex < menu->partyCount);
   }
@@ -2468,7 +2468,7 @@ s32 ItemMenu_SelectGiveQuantity(s32 baseQuantity, s32 quantityRange,
   ownerCount = ItemMenu_GetItemQuantity(
       menu->sideMember[0], menu->selectedItems[0] & INVENTORY_ITEM_ID_MASK);
   // Two dial sprites, left and right of the number.
-  block = Resource_FindFreeEntry();
+  block = VramCache_FindFreeEntry();
   if (block != 96) { // 96 (VRAM_CACHE_ENTRY_COUNT): no free VRAM block
     VramCache_Load(block, 256, 0);
     WindowSprite_CreateFar(block, 0x40004000, window, 48, 32);
@@ -2717,11 +2717,11 @@ s32 ItemMenu_ConfirmEquip(s32 unused) {
 /// menu work's resource slots.
 void Resource_LoadPairedBlocks(void) {
   struct ItemMenuWork *menu = gMenuWork;
-  s32 block = Resource_FindFreeEntry();
+  s32 block = VramCache_FindFreeEntry();
 
   menu->resourceSlots[0] = block;
   VramCache_Load(block, 128, gMenu_ArrowTiles);
-  block = Resource_FindFreeEntry();
+  block = VramCache_FindFreeEntry();
   menu->resourceSlots[1] = block;
   VramCache_Load(block, 128, gMenu_SmallDownArrowTiles);
 }
@@ -2924,7 +2924,7 @@ s32 ItemMenu_RunList(s32 sideIndex) {
           icon->sentinel = 250;
         }
         for (i = 0; i < menu->partyCount; i++) {
-          AnimationObject_SelectAnimationFar(menu->ownerObjects[i], 1);
+          Sprite_StartAnimFar(menu->ownerObjects[i], 1);
         }
       }
 
@@ -2934,7 +2934,7 @@ s32 ItemMenu_RunList(s32 sideIndex) {
           if (Item_CanUnitEquip(menu->ownerIds[i],
                                 INVENTORY_ITEM_ID_MASK &
                                     menu->items[state.selectedIndex]) != 0) {
-            AnimationObject_SelectAnimationFar(menu->ownerObjects[i], 3);
+            Sprite_StartAnimFar(menu->ownerObjects[i], 3);
           }
         }
       }

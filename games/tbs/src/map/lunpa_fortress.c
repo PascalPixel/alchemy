@@ -1797,7 +1797,7 @@ static void EventScript_FindHammet(void) {
     Engine_EncounterRequestBattle(ENCOUNTER_ZONE_SCRIPTED, 4);
   } else {
     OBJECT_ANIMATION(LOCALID_PARTY_LEADER, ANIMATION_STAND);
-    SE(AUDIO_CUE_FADE_BGM);
+    SE(SONG_FADE_OUT_BGM);
     WAIT(30);
     // Ivan recognizes Hammet before Dodonpa interrupts the reunion.
     messageBase = MsgLunpaTimeEat;
@@ -2664,7 +2664,7 @@ static void EventScript_DonpaJudgesDodonpa(void) {
   Engine_ObjectEventWaitForMove(TOADONPA_HAMMET);
   OBJECT_WALK(TOADONPA_HAMMET, 352, 360);
   WAIT(20);
-  SE(AUDIO_CUE_FADE_BGM);
+  SE(SONG_FADE_OUT_BGM);
   gFieldWork->transition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_CIRCLE);
   Engine_ScriptCloseScreen();

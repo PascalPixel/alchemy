@@ -3,7 +3,7 @@
 #include "objcmd.h"
 
 /// Facing tables: for each enum AnimationFacingKind, the frame to draw for
-/// each sector of the facing angle. Sprite_ComposeAnimationFrame adds the low
+/// each sector of the facing angle. Sprite_ComposeFrame adds the low
 /// three bits to the animation's base frame, and bit 7 (0x80) mirrors the
 /// sprite. ANIMATION_FACING_TWO_PART uses ANIMATION_FACING_FRONT_BACK's table.
 /// gAnimationFacing_OneFrame has 16 entries, but a 16-bit angle shifted down

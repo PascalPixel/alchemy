@@ -24,13 +24,13 @@ enum {
   TARGET_STRIKE_KIND,         ///< STRIKE_KIND_SLASH or STRIKE_KIND_COLUMN
   TARGET_STRIKE_HITS,         ///< how many times the target is struck
   TARGET_STRIKE_FLAGS,        ///< STRIKE_SMOKE and so on
-  TARGET_STRIKE_COLOUR,       ///< background palette, a STRIKE_COLOUR_
+  TARGET_STRIKE_COLOR,        ///< background palette, a STRIKE_COLOR_
   TARGET_STRIKE_IMAGE_FRAMES, ///< frames each strike image is shown
   TARGET_STRIKE_COMPOSITE,    ///< how the columns are drawn (BLITTER_MAX or
                               ///< _ADDITIVE)
   TARGET_STRIKE_FRAMES        ///< length of the effect in frames
 };
-// STRIKE_KIND_*, the STRIKE_SMOKE flags, the STRIKE_COLOUR_ palettes and enum
+// STRIKE_KIND_*, the STRIKE_SMOKE flags, the STRIKE_COLOR_ palettes and enum
 // TargetStrikeStyle are in effect_table.h.
 
 /// One slash strikes the first target among glints, in lightning colours.
@@ -168,23 +168,23 @@ void BattleAnim_RunTargetStrike(struct BattleAnimArgs *effect, s32 mode) {
   else
     Resource_LoadAndDecompress((s32)&ResourceId_TwelveModeImage,
                                work->sheet + 0xc80, 0, 0);
-  switch (TARGET_STRIKE_VALUE(mode, TARGET_STRIKE_COLOUR)) {
-  case STRIKE_COLOUR_BLUE:
+  switch (TARGET_STRIKE_VALUE(mode, TARGET_STRIKE_COLOR)) {
+  case STRIKE_COLOR_BLUE:
     resource = (s32)&ResourceId_BlueBeamSheet;
     break;
-  case STRIKE_COLOUR_LIME:
+  case STRIKE_COLOR_LIME:
     resource = (s32)&ResourceId_LimePalette;
     break;
-  case STRIKE_COLOUR_PINK:
+  case STRIKE_COLOR_PINK:
     resource = (s32)&ResourceId_PinkPalette;
     break;
-  case STRIKE_COLOUR_EMBER:
+  case STRIKE_COLOR_EMBER:
     resource = (s32)&ResourceId_EmberStreakSheet;
     break;
-  case STRIKE_COLOUR_MARS:
+  case STRIKE_COLOR_MARS:
     resource = (s32)&ResourceId_MarsDjinnSheet;
     break;
-  case STRIKE_COLOUR_LIGHTNING:
+  case STRIKE_COLOR_LIGHTNING:
   default:
     resource = (s32)&ResourceId_LightningBoltSheet;
     break;

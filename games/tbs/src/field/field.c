@@ -11,9 +11,9 @@
 /// README.md in this folder gives the words, prefixes and spellings the parts
 /// use. Where to start:
 ///
-///   Sprites         sprite_draw.c: Sprite_ComposeAnimationFrame,
+///   Sprites         sprite_draw.c: Sprite_ComposeFrame,
 ///                   Render_PlaceProjectedSprite; animation.c:
-///                   ResourceObject_Create, AnimationObject_SelectAnimation
+///                   Sprite_Create, Sprite_StartAnim
 ///   Objects         objects.c: Object_CreateField, ObjectSystem_Initialize;
 ///                   object_motion.c: Object_UpdateAllThumb,
 ///                   Object_SetMoveTarget

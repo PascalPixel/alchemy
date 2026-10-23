@@ -360,8 +360,8 @@ static s32 Reveal_HideSecrets(void) {
     markerId = markerId + 1;
   } while (markerId <= 107);
   if (gGameState.mapId != (s32)&MapId_LamakanDesertCave) {
-    DisplayScroll_StartHBlankDma(0, 0x40000, 0x10000, 0x2000, 0x10000, 0x8000,
-                                 0x4000);
+    ScanlineEffect_StartWave(0, 0x40000, 0x10000, 0x2000, 0x10000, 0x8000,
+                             0x4000);
   }
 }
 
@@ -435,7 +435,7 @@ static s32 Reveal_ShowSecrets(void) {
   }
   TreasureSpot_MoveLeaderAway();
   if (gGameState.mapId != (s32)&MapId_LamakanDesertCave) {
-    DisplayScroll_DisarmHBlankDma();
+    ScanlineEffect_Stop();
   }
 }
 
@@ -1049,7 +1049,7 @@ static void HeatGauge_Draw(void) {
   s32 x;
   u32 offset;
 
-  tile = gVramBlockCache[(*(s16 *)&gHeatGauge_VramSlot)].offset >> 5;
+  tile = gVramCacheEntries[(*(s16 *)&gHeatGauge_VramSlot)].offset >> 5;
   if ((*(s16 *)&gHeatGauge_Held) != 0) {
     gHeatGaugeSlide = 2;
   } else if (Engine_GameFlagIsSet(FLAG_FIELD_HANDLING_REQUESTS) != 0) {
@@ -1165,7 +1165,7 @@ static void HeatGauge_Draw(void) {
     sprite->next = NULL;
     sprite->oam.word.attr01 = (y << 16) | x | attributes;
     sprite->oam.word.attr23 = 0xe400 | tile;
-    Runtime_PushSlotEntry(((u8 *)gHeatGauge_Sprites + offset), 255);
+    Oam_AddSpriteAtDepth(((u8 *)gHeatGauge_Sprites + offset), 255);
     sprite++;
     tile += 8;
     offset += 12;
@@ -1181,7 +1181,7 @@ void HeatGauge_Start(void) {
 
   FieldResource_DecodeType01(gHeatGauge_Tiles, gHeatGauge_TileBuffer);
   slotAddress = &gHeatGauge_VramSlot;
-  slot = Resource_FindFreeEntry();
+  slot = VramCache_FindFreeEntry();
   *slotAddress = slot;
   Engine_VramLoad((s16)slot, 0x480, 0);
   gHeatGaugeSlide = 0;

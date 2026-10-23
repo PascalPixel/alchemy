@@ -332,10 +332,10 @@ static void HammetPalace_IvanReportsToLayana(void) {
   SCRIPT_START();
   FieldCamera_MoveTo(-1, -1, -1, 0);
   Engine_TaskWait(1);
-  ColorBuffer_ApplySource(PALETTE_TRANSFORM_SEPIA, PALETTE_HALVES_BOTH);
+  PaletteFade_ApplySource(PALETTE_TINT_SEPIA, PALETTES_ALL);
   // The report opens in sepia, with the party placed under the closed screen;
   // the colours come back after the silent exchange of nods that opens it.
-  ColorBuffer_ApplyTarget(PALETTE_TRANSFORM_SEPIA, PALETTE_HALVES_BOTH);
+  PaletteFade_ApplyTarget(PALETTE_TINT_SEPIA, PALETTES_ALL);
   Engine_ColorBufferInterpolate(1);
   Engine_TaskWait(1);
   work = gFieldWork;
@@ -396,7 +396,7 @@ static void HammetPalace_IvanReportsToLayana(void) {
                                         ANIMATION_SHAKE_HEAD);
   Engine_ObjectEventSetAnimationAndWait(LOCALID_SECOND_SOLDIER,
                                         ANIMATION_SHAKE_HEAD);
-  ColorBuffer_ApplyTarget(PALETTE_TRANSFORM_PLAIN, PALETTE_HALVES_BOTH);
+  PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_ALL);
   Engine_ColorBufferInterpolate(40);
   Engine_TaskWait(60);
   OBJECT_EMOTE(LOCALID_LAYANA, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);

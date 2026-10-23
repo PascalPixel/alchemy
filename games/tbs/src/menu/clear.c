@@ -470,7 +470,7 @@ s32 MainMenu_Run(void) {
     }
     Engine_ScriptWait(60);
     Engine_ScriptCloseScreen();
-    Engine_AudioPlayCue(AUDIO_CUE_FADE_BGM);
+    Engine_AudioPlayCue(SONG_FADE_OUT_BGM);
     Engine_ScriptWait(0x12c);
     FieldScript_SetDestination((s32)&MapId_WorldMap, WORLD_MAP_FROM_MAIN_MENU);
     return 0;
@@ -931,7 +931,7 @@ menu_top:;
 leave:;
   gFieldWork->warp = 0x3e7;
   Engine_ScriptWait(30);
-  Engine_AudioPlayCue(AUDIO_CUE_FADE_BGM);
+  Engine_AudioPlayCue(SONG_FADE_OUT_BGM);
   Engine_ScriptCloseScreen();
   Engine_ScriptWaitForScreen();
   Engine_ScriptWait(60);

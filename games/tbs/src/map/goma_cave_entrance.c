@@ -529,7 +529,7 @@ static void GomaCaveEntrance_WhirlwindOnStumpIvy(void) {
 /// The leaping stump's update hook turns its sprite a fixed amount per frame.
 static void GomaCaveEntrance_SpinStump(union FieldObject *fieldObject) {
   struct ObjectEvent *objectEvent = &fieldObject->objectEvent;
-  struct AnimationObject *state = objectEvent->sprite;
+  struct Sprite *state = objectEvent->sprite;
   s32 v = state->rotation - 0x800;
 
   state->rotation = v;

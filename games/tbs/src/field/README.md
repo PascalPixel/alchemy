@@ -226,18 +226,18 @@ battle, Isaac's body, his sword and the shadow under his feet are three layers
 of one sprite, and as he swings, the body and the sword change frame together.
 
 Each layer of a sprite plays an animation script of byte pairs. A first byte
-below `ANIMATION_COMMAND_END` (239) is a frame to show and the second byte how
+below `ANIMCMD_END` (239) is a frame to show and the second byte how
 long. The layer's timer counts sixteenths of a frame and loses
-`AnimationEntry.step` each frame, `ANIMATION_NORMAL_STEP` (16) at normal
+`SpriteAnim.step` each frame, `ANIMATION_NORMAL_STEP` (16) at normal
 speed, so a layer can be made to play slower or faster. From 239 up, the
 first byte is a command (`enum AnimationCommand` in `field_internal.h`):
-`ANIMATION_COMMAND_END`, `ANIMATION_COMMAND_SET_KIND` (choose a facing
-table, below), `ANIMATION_COMMAND_HOLD`, `ANIMATION_COMMAND_WAIT`,
-`ANIMATION_COMMAND_JUMP`, `ANIMATION_COMMAND_PLAY` (switch animation) and
-`ANIMATION_COMMAND_BLANK`. The drawing code skips 242 to 244, 246 to 250 and
+`ANIMCMD_END`, `ANIMCMD_SET_KIND` (choose a facing
+table, below), `ANIMCMD_HOLD`, `ANIMCMD_WAIT`,
+`ANIMCMD_JUMP`, `ANIMCMD_PLAY` (switch animation) and
+`ANIMCMD_BLANK`. The drawing code skips 242 to 244, 246 to 250 and
 252 as unused, and shows 251 as an ordinary frame.
 
-When any layer's frame changes, `Sprite_ComposeAnimationFrame` redraws the
+When any layer's frame changes, `Sprite_ComposeFrame` redraws the
 sprite: it decodes each layer's frame into one pixel buffer in priority order,
 adds an outline if asked, and uploads the result to the sprite's tiles in
 video memory. A layer's frames come from the sprite's data on the cartridge,
@@ -262,32 +262,32 @@ table adds 1 to each frame a script names: the script of his swing names
 frames 12, 14 and 16, and the sheets' frames 13, 15 and 17 are drawn. The
 picture composes those frames from the sprite sheets themselves (`spr_300.png`,
 `spr_320.png` and `spr_510.png` in [`graphics/sprite`](../graphics/sprite))
-in the order `Sprite_ComposeAnimationFrame` uses.
+in the order `Sprite_ComposeFrame` uses.
 
 A layer can also be recoloured as it is drawn: its colour mode
-(`AnimationEntry.colorMode`, `enum SpriteColorMode`) either picks one of nine
+(`SpriteAnim.colorMode`, `enum SpriteColorMode`) either picks one of nine
 256-byte tables that map each pixel to another colour (the five
-`gResourceSlot_ConversionTables`, then the four of `gRuntime_ByteRemapTable`,
+`gSpriteColorTables`, then the four of `gRuntime_ByteRemapTable`,
 which lie one after another), or paints every drawn pixel one colour. The
 first remap table also recolours the menus' command icons
 (`Runtime_RemapBytesByTable`).
 
-A sprite is a `struct AnimationObject`, and each of its layers a
-`struct AnimationEntry`; the four remap tables are `remap0.tsv` to
+A sprite is a `struct Sprite`, and each of its layers a
+`struct SpriteAnim`; the four remap tables are `remap0.tsv` to
 `remap3.tsv`.
 
 | Name | Value | Meaning |
 | --- | --- | --- |
 | `ANIMATION_OBJECT_COUNT` | 64 | sprites, and the layer records they share |
-| `ANIMATION_LAYER_COUNT` | 4 | layers a sprite composes, `AnimationObject.entries` |
+| `ANIMATION_LAYER_COUNT` | 4 | layers a sprite composes, `Sprite.entries` |
 | `ANIMATION_NORMAL_STEP` | 16 | sixteenths of a frame off a layer's timer each frame: normal speed |
-| `ANIMATION_COMMAND_END` | 239 | blank the layer and stop its script |
-| `ANIMATION_COMMAND_SET_KIND` | 240 | use facing table `arg` |
-| `ANIMATION_COMMAND_HOLD` | 241 | stay on this command and frame for good |
-| `ANIMATION_COMMAND_WAIT` | 245 | keep the current frame `arg` frames longer |
-| `ANIMATION_COMMAND_JUMP` | 253 | continue at script position `arg` |
-| `ANIMATION_COMMAND_PLAY` | 254 | switch to animation `arg` |
-| `ANIMATION_COMMAND_BLANK` | 255 | show nothing for `arg` |
+| `ANIMCMD_END` | 239 | blank the layer and stop its script |
+| `ANIMCMD_SET_KIND` | 240 | use facing table `arg` |
+| `ANIMCMD_HOLD` | 241 | stay on this command and frame for good |
+| `ANIMCMD_WAIT` | 245 | keep the current frame `arg` frames longer |
+| `ANIMCMD_JUMP` | 253 | continue at script position `arg` |
+| `ANIMCMD_PLAY` | 254 | switch to animation `arg` |
+| `ANIMCMD_BLANK` | 255 | show nothing for `arg` |
 
 ## Objects move first, then the camera draws them
 
@@ -464,7 +464,7 @@ Three timed effects run as tasks while a map is shown
 on up to 16 channels, the blend script writes the blend registers over time,
 and palette cycles rotate colours. The scripts for the first two come from the
 layout; [Layouts](../layout/README.md#tile-animation-and-blend-scripts) gives their
-format. Only `PaletteQueue_Start` schedules palette cycles, and nothing calls
+format. Only `PaletteCycle_Start` schedules palette cycles, and nothing calls
 it, so no palette cycle runs in the game.
 
 The layouts are the rows of `gLayouts` (`layouts.tsv`).
@@ -639,9 +639,9 @@ on its own.
 - A **field object** is one of the 64 slots of `gObjects`, 112 bytes
   each, as the [glossary](../../glossary.md#field-object) defines it; a map
   knows its object events among them by [local id](../../glossary.md#local-id). A slot with no script is free.
-- A **sprite** is one of the 64 `struct AnimationObject`s: an image and a
+- A **sprite** is one of the 64 `struct Sprite`s: an image and a
   shadow, two entries of OAM (the hardware's sprite list), and up to four
-  animation **layers** (`struct AnimationEntry`) composed into one picture.
+  animation **layers** (`struct SpriteAnim`) composed into one picture.
 - An **object script** is a list of 32-bit words: `SC_` commands of
   [`objcmd.h`](../../include/objcmd.h) and their operands. An **animation
   script** is a list of byte pairs that a sprite layer plays.
@@ -667,14 +667,14 @@ and a part undefines its macros at its end.
 | --- | --- |
 | `Sprite_`, `Render_` | drawing sprites |
 | `SpriteDissolve_` | dissolving a sprite into or out of view, pixel by pixel |
-| `Animation_`, `AnimationObject_`, `ResourceMetadata_`, `ResourceObject_`, `ResourceSlot_` | sprites, their layers and the resource slots they draw from |
+| `Animation_`, `AnimationObject_`, `SpriteAnim_`, `Sprite_`, `SpriteFrameCache_` | sprites, their layers and the resource slots they draw from |
 | `ObjectSystem_`, `ObjectDispatch_`, `FieldObject_`, `Object_` | keeping and moving objects |
 | `ActionScript_` | object script commands |
 | `Field_` | the configured keys |
 | `MapGrid_`, `TileMap_` | layered maps, their cells and the BG maps built from them |
 | `WorldMap_` | the world map |
 | `GetWorldMap`, `CheckWorldMap` | the ground under a point on the world map; `MapGrid_GetMetatileBehaviorAt`, `MapGrid_SetMetatileBehaviorAt` and `MapGrid_IsWallAt` ask the same of a layered map |
-| `TileAnimation_`, `DisplayBlend_`, `PaletteQueue_` | tile animation, the blend script and palette cycles |
+| `TileAnimation_`, `DisplayBlend_`, `PaletteCycle_` | tile animation, the blend script and palette cycles |
 | `Curve_` | ground height functions |
 | `Ui_`, `SpriteViewer_` | the debug sprite viewer |
 | `LuckyDice_` | the Lucky Dice minigame |
@@ -705,8 +705,8 @@ Bilibin's item shop and inn, Imil, Goma Cave, Xian, Tolbi and the world map)
 have none: the leader on the world map has a second layer,
 `SPRITE_BLANK_32`, which draws nothing even in a forest, where the player
 control gives it priority 1. The picture of a sprite's layers is therefore of
-a battle unit, whose sprite is the same `struct AnimationObject`
-composed by the same `Sprite_ComposeAnimationFrame`.
+a battle unit, whose sprite is the same `struct Sprite`
+composed by the same `Sprite_ComposeFrame`.
 
 
 - XXX: what `FieldWork`'s `unk1da`, `unk1dc` and `unk1de` hold;

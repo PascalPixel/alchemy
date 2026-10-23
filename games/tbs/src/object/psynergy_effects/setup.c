@@ -55,7 +55,7 @@ void FieldEffect_LoadActionEffectResources(s32 abilityId, s32 mode) {
   // here) until FieldEffect_End lets it run again.
   if (effectWork->fieldPsynergy != FIELD_PSYNERGY_REVEAL)
     ev->effectTimerRunning = running;
-  effectWork->tileSlot = Resource_FindFreeEntry();
+  effectWork->tileSlot = VramCache_FindFreeEntry();
   VramCache_Load((s16)effectWork->tileSlot, 256, gFieldEffect_SparkTiles);
   // 0xc80 is TASK_PRIORITY_MAIN_LOOP: the slots update once a frame.
   Task_Add(FieldEffect_UpdateAllEffectSlots, 0xc80);
@@ -86,7 +86,7 @@ void FieldEffect_SetupObjectPair(s32 userId, s32 targetId) {
     effectWork->savedCallback = target->hook;
     effectWork->savedScript = (const s32 *)target->script;
     {
-      struct AnimationObject *animation = ((struct Object *)target)->animation;
+      struct Sprite *animation = ((struct Object *)target)->animation;
       u8 pal = animation->entries[0]->colorMode;
 
       effectWork->savedPalette = pal;
@@ -183,7 +183,7 @@ void FieldEffect_End(void) {
 
     runtime->castStarted = 0;
     Task_Remove(FieldEffect_UpdateAllEffectSlots);
-    Resource_ResetEntry((s16)effectWork->tileSlot);
+    VramCache_FreeEntry((s16)effectWork->tileSlot);
     grid->shakeX = effectWork->savedShakeX;
     grid->shakeY = effectWork->savedShakeY;
     grid->shakeDecay = effectWork->savedShakeDecay;
@@ -252,7 +252,7 @@ void FieldEffect_StartCast(void) {
 /// effects open with it, and FieldEffect_FadeFromEffectColor fades back.
 void FieldEffect_FadeToEffectColor(void) {
   u8 *scene;
-  struct ColorBuffer *work;
+  struct PaletteFade *work;
   s32 no;
 
   // Save the colours the buffer moves toward into the field work, 224
@@ -289,26 +289,26 @@ void FieldEffect_FadeToEffectColor(void) {
     no = 6;
   if (GameFlag_TestFar(FLAG_PSYNERGY_TINT(7)))
     no = 7;
-  ColorBuffer_SetTarget(gFieldEffect_TargetColors[no], 1);
-  ColorBuffer_StartInterpolation(8);
+  PaletteFade_SetTarget(gFieldEffect_TargetColors[no], 1);
+  PaletteFade_StartInterpolation(8);
 }
 
 /// Fades the palettes back from an effect's colours to the saved ones over 8
 /// frames; while Reveal is active the BG half fades to Reveal's grey
-/// instead (PALETTE_TRANSFORM_GREY, 0x10001).
+/// instead (PALETTE_TINT_GRAYSCALE, 0x10001).
 void FieldEffect_FadeFromEffectColor(void) {
   s32 savedPalettes;
   u8 *field;
 
   field = (u8 *)gFieldWork;
   savedPalettes = (s32)(field + 0x236);
-  ColorBuffer_SetTarget(savedPalettes, 2);
+  PaletteFade_SetTarget(savedPalettes, 2);
   if (((struct FieldWork *)field)->revealActive != 0) {
-    ColorBuffer_SetTarget(0x10001, 1);
+    PaletteFade_SetTarget(0x10001, 1);
   } else {
-    ColorBuffer_SetTarget(savedPalettes, 1);
+    PaletteFade_SetTarget(savedPalettes, 1);
   }
-  ColorBuffer_StartInterpolation(8);
+  PaletteFade_StartInterpolation(8);
 }
 
 /// Converts a world position (16.16 pixels) to the screen: x and z receive
@@ -326,7 +326,7 @@ void Camera_WorldToScreen(struct EffectVector *position) {
 #endif
     s32 result[3];
 
-    Render_ProjectPoint(position, result);
+    Transform_ProjectPoint(position, result);
     position->x = result[0] << 16;
     position->z = result[1] << 16;
     position->y = 0;

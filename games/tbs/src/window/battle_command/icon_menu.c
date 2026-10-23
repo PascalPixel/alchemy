@@ -71,7 +71,7 @@ void IconMenu_DrawIcons(void) {
   transform.scaleX = pulseScale;
   transform.scaleY = pulseScale;
   transform.angle = 0;
-  affineIndex = AffineMatrix_BuildForEffect(&transform);
+  affineIndex = OamMatrix_AllocFromTransform(&transform);
   // Pulse only the selection; the other icons keep their normal OAM shape.
   for (index = 0; index < work->count; index++, entry++) {
 #ifndef UBFIX
@@ -95,13 +95,13 @@ void IconMenu_DrawIcons(void) {
 #ifdef UBFIX
       entry->link = 0;
       entry->attr01 = (affineIndex << 25) | spriteY | (left << 16) | 0x80002300;
-      entry->attr2 = gVramBlockCache[entry->slot].offset >> 5;
+      entry->attr2 = gVramCacheEntries[entry->slot].offset >> 5;
 #else
       nativeAttributes = &entry->link;
       *nativeAttributes++ = 0;
       *nativeAttributes++ =
           (affineIndex << 25) | spriteY | (left << 16) | 0x80002300;
-      *nativeAttributes = gVramBlockCache[entry->slot].offset >> 5;
+      *nativeAttributes = gVramCacheEntries[entry->slot].offset >> 5;
 #endif
       drawLayer = 246;
     } else {
@@ -119,7 +119,7 @@ void IconMenu_DrawIcons(void) {
       entry->link = 0;
 #endif
       packedAttributes = spriteY | (x << 16) | 0x80002000;
-      vramOffset = gVramBlockCache[entry->slot].offset;
+      vramOffset = gVramCacheEntries[entry->slot].offset;
 #ifdef UBFIX
       entry->attr01 = packedAttributes;
       entry->attr2 = vramOffset >> 5;
@@ -129,7 +129,7 @@ void IconMenu_DrawIcons(void) {
 #endif
       drawLayer = 245;
     }
-    Runtime_PushSlotEntry(entry, drawLayer);
+    Oam_AddSpriteAtDepth(entry, drawLayer);
   }
   // The top and bottom rows reveal opposite sides of the selected icon.
   if (work->row == 0) {
@@ -262,7 +262,7 @@ void IconMenu_Close(void) {
     Window_Close(labelWindow, 2);
   }
   for (i = 0; i < work->count; i++) {
-    Resource_ResetEntry(work->entries[i].slot);
+    VramCache_FreeEntry(work->entries[i].slot);
   }
   FreeHeapSlot(HEAP_SLOT_ICON_MENU);
   WaitFrames(1U);
@@ -408,7 +408,7 @@ void IconMenu_AddIcon(s32 icon) {
   if (index <= 5) {
     work->count++;
     entry = &work->entries[index];
-    slot = Resource_FindFreeEntry();
+    slot = VramCache_FindFreeEntry();
     CommandIcon_LoadIntoSlot(slot, icon);
     entry->x = index * 24 + 32;
     y = 136;

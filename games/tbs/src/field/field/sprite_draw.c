@@ -22,13 +22,13 @@ typedef void (*SpriteUploadFn)(const void *src, u32 w, u32 h, void *vram);
 /// and the ObjectSystemWork's count of bytes composed; takes heap slot
 /// HEAP_SLOT_FRAME_SCRATCH for the decoder when no caller holds it, and frees
 /// it again.
-s32 Sprite_ComposeAnimationFrame(struct AnimationObject *animation, u16 dir) {
+s32 Sprite_ComposeFrame(struct Sprite *animation, u16 dir) {
   s32 mirrored;
   u32 size;
   struct ObjectSystemWork *system;
   SpriteDrawFn decodeFrame;
   s32 decoderWasLoaded;
-  struct AnimationEntry *layer;
+  struct SpriteAnim *layer;
   void *code;
   u8 *pixels;
   u8 *unpacked;
@@ -92,28 +92,28 @@ s32 Sprite_ComposeAnimationFrame(struct AnimationObject *animation, u16 dir) {
       frame = layer->script[layer->scriptOffset++];
       arg = layer->script[layer->scriptOffset++];
       switch (frame) {
-      case ANIMATION_COMMAND_PLAY:
-        Animation_SetWorkEntry(layer, arg);
+      case ANIMCMD_PLAY:
+        SpriteAnim_Start(layer, arg);
         animation->lastNo = arg;
         break;
-      case ANIMATION_COMMAND_JUMP:
+      case ANIMCMD_JUMP:
         layer->scriptOffset = arg;
         break;
-      case ANIMATION_COMMAND_WAIT:
+      case ANIMCMD_WAIT:
         layer->timer += arg << 4;
         break;
-      case ANIMATION_COMMAND_HOLD:
+      case ANIMCMD_HOLD:
         layer->scriptOffset -= 2;
         goto framed;
-      case ANIMATION_COMMAND_SET_KIND:
+      case ANIMCMD_SET_KIND:
         layer->kind = arg;
         break;
-      case ANIMATION_COMMAND_BLANK:
+      case ANIMCMD_BLANK:
         layer->frameBase = 255;
         frame = 255;
         layer->timer += arg << 4;
         goto select_direction;
-      case ANIMATION_COMMAND_END:
+      case ANIMCMD_END:
         layer->frameBase = 255;
         layer->script = 0;
         frame = 255;
@@ -333,9 +333,8 @@ s32 Sprite_ComposeAnimationFrame(struct AnimationObject *animation, u16 dir) {
 /// groundHeight. scale is the sprite's (x, y) scale (16.16); above 1.0 both
 /// parts use the double-size affine mode. It has a bare veneer in the field
 /// far-call table, and no caller names it.
-void Render_PlaceSpritePartPair(struct AnimationObject *sprite, s32 screenX,
-                                s32 height, s32 screenY, s32 groundHeight,
-                                s32 *scale) {
+void Render_PlaceSpritePartPair(struct Sprite *sprite, s32 screenX, s32 height,
+                                s32 screenY, s32 groundHeight, s32 *scale) {
   u32 halfWidth = sprite->width >> 1;
   u32 halfHeight = sprite->height >> 1;
   s32 marginX = 8;
@@ -385,7 +384,7 @@ void Render_PlaceSpritePartPair(struct AnimationObject *sprite, s32 screenX,
 /// Called by ObjectSystem_PlaceSprites for each one-sprite object on a
 /// layered map, by the sprite viewer, and as Object_ApplyProjectedPlacementFar
 /// by the battle effects, the Psynergy effects and the menus.
-void Render_ApplyProjectedPlacement(struct AnimationObject *sprite,
+void Render_ApplyProjectedPlacement(struct Sprite *sprite,
                                     const struct SpritePlacement *position,
                                     const struct SpriteScale *scale,
                                     s32 facing) {
@@ -416,7 +415,7 @@ void Render_ApplyProjectedPlacement(struct AnimationObject *sprite,
   struct AnimationSpritePart *part;
 
   // Reuse an untransformed sprite when mirroring, scale and rotation allow it.
-  flip = Sprite_ComposeAnimationFrame(sprite, facing);
+  flip = Sprite_ComposeFrame(sprite, facing);
   if (flip == 0 && scaleX == 0x10000 && scaleY == scaleX &&
       sprite->rotation == 0) {
     affine = 0;
@@ -428,7 +427,7 @@ void Render_ApplyProjectedPlacement(struct AnimationObject *sprite,
     effect.scaleY = scaleY >> 8;
     if (flip != 0)
       effect.scaleX = -effect.scaleX;
-    matrix = AffineMatrix_BuildForEffect(&effect);
+    matrix = OamMatrix_AllocFromTransform(&effect);
   }
   if (scaleX > 0x10000 || scaleY > 0x10000) {
     affine = 3;
@@ -454,7 +453,7 @@ void Render_ApplyProjectedPlacement(struct AnimationObject *sprite,
       part->affineIndex = matrix;
       part->x = (screenX >> 16) - shadowHalfWidth;
       part->y = y;
-      Runtime_PushSlotEntry(part, depth);
+      Oam_AddSpriteAtDepth(part, depth);
     }
   }
   x = (screenX >> 16) - halfWidth + ((sprite->offsetX * scaleX + 0xffff) >> 16);
@@ -468,7 +467,7 @@ void Render_ApplyProjectedPlacement(struct AnimationObject *sprite,
     part->y = y;
     part->affine = affine;
     part->affineIndex = matrix;
-    Runtime_PushSlotEntry(part, slot);
+    Oam_AddSpriteAtDepth(part, slot);
   }
 }
 
@@ -482,8 +481,8 @@ void Render_ApplyProjectedPlacement(struct AnimationObject *sprite,
 /// Called by ObjectSystem_ProjectSprites for each object on the world map
 /// and in the battle; while a menu suspends projection
 /// (ObjectSystemWork.suspended) every sprite is treated as off screen.
-void Render_PlaceProjectedSprite(struct AnimationObject *sprite, s32 *point,
-                                 s32 *scale, s32 facing, s32 depth) {
+void Render_PlaceProjectedSprite(struct Sprite *sprite, s32 *point, s32 *scale,
+                                 s32 facing, s32 depth) {
   s32 flip;
   u32 halfHeight;
   u32 size;
@@ -503,7 +502,7 @@ void Render_PlaceProjectedSprite(struct AnimationObject *sprite, s32 *point,
   // Project first, then discard sprites beyond the padded screen bounds.
   affine = 1;
   if (gObjectSystemWork->suspended == 0) {
-    z = Render_ProjectPoint(point, screen);
+    z = Transform_ProjectPoint(point, screen);
     if (screen[2] != 0 && screen[0] >= -32 && screen[0] <= 272 &&
         screen[1] >= -32 && screen[1] <= 208) {
       if (sprite->useOwnScale)
@@ -513,7 +512,7 @@ void Render_PlaceProjectedSprite(struct AnimationObject *sprite, s32 *point,
       halfWidth = sprite->width >> 1;
       halfHeight = sprite->height >> 1;
       size = 8;
-      flip = Sprite_ComposeAnimationFrame(sprite, facing);
+      flip = Sprite_ComposeFrame(sprite, facing);
       // Round the perspective scale to the nearest 1/32 (0x800) before
       // combining it with the sprite's own scale.
       roundedScale = (z + 0x400) & -0x800;
@@ -546,7 +545,7 @@ void Render_PlaceProjectedSprite(struct AnimationObject *sprite, s32 *point,
           offsetX = -offsetX;
         }
         effect.scaleY = scaleY >> 8;
-        z = AffineMatrix_BuildForEffect(&effect);
+        z = OamMatrix_AllocFromTransform(&effect);
       } else if (flip != 0) {
         // A plain sprite has no matrix: 8 in the matrix field is OAM's
         // horizontal flip bit.
@@ -569,9 +568,9 @@ void Render_PlaceProjectedSprite(struct AnimationObject *sprite, s32 *point,
         slot = (0x200 - screen[2]) / 2 + 128;
         if (slot <= 0)
           slot = 1;
-        Runtime_PushSlotEntry(sprite, slot);
+        Oam_AddSpriteAtDepth(sprite, slot);
       } else {
-        Runtime_PushSlotEntry(sprite, depth);
+        Oam_AddSpriteAtDepth(sprite, depth);
       }
       // Project the ground point separately so jumping does not lift the
       // shadow.
@@ -579,16 +578,16 @@ void Render_PlaceProjectedSprite(struct AnimationObject *sprite, s32 *point,
         struct AnimationSpritePart *shadow;
 
         SET_VECTOR(ground, point[0], 0, point[2]);
-        Render_ProjectPoint(ground, screen);
+        Transform_ProjectPoint(ground, screen);
         shadow = &sprite->shadow;
         shadow->x = screen[0] - size;
         shadow->y = screen[1] - (size >> 1) + 2;
         shadow->affine = affine;
         shadow->affineIndex = z;
         if (depth == 0)
-          Runtime_PushSlotEntry(shadow, 0);
+          Oam_AddSpriteAtDepth(shadow, 0);
         else
-          Runtime_PushSlotEntry(shadow, depth);
+          Oam_AddSpriteAtDepth(shadow, depth);
       }
       return;
     }
@@ -607,18 +606,18 @@ void Render_PlaceProjectedSprite(struct AnimationObject *sprite, s32 *point,
 /// sprite for redrawing. The sprite's first count layers must all be present:
 /// it does not test them for null.
 /// Called by Animation_ApplyChildValues and, as
-/// ObjectGroup_SetChildValueUnlessFifteenFar, by the Psynergy effects, the
+/// Sprite_SetAnimColorModesFar, by the Psynergy effects, the
 /// Sanctum and the Altmiller Cave map.
-void ObjectGroup_SetChildValueUnlessFifteen(void *rawSprite, u32 value) {
-  struct AnimationObject *sprite = rawSprite;
+void Sprite_SetAnimColorModes(void *rawSprite, u32 value) {
+  struct Sprite *sprite = rawSprite;
   if (sprite != 0) {
     u32 count = sprite->count;
 
     if (count != 0) {
-      struct AnimationEntry **entry = sprite->entries;
+      struct SpriteAnim **entry = sprite->entries;
       u32 remaining = count;
       do {
-        struct AnimationEntry *layer = *entry++;
+        struct SpriteAnim *layer = *entry++;
         if (layer->colorMode != SPRITE_COLOR_HIDDEN)
           layer->colorMode = value;
         remaining--;

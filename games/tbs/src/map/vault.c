@@ -747,7 +747,7 @@ static void EventScript_EnterInn(void) {
 /// foreground tiles.
 static void EventScript_EnterItemShop(void) {
   struct ObjectEvent *objectEvent = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
-  struct AnimationObject *sprite = objectEvent->sprite;
+  struct Sprite *sprite = objectEvent->sprite;
 
   Engine_AudioPlayCue(SE_DOOR_OPEN);
   Engine_MapGridAnimateCells(gVault_ItemShopDoorCells, 54, 13);
@@ -761,7 +761,7 @@ static void EventScript_EnterItemShop(void) {
 /// It's VAULT_TO_VAULT_INTERIORS_NORTH_NORTHEAST, entered as the item shop is.
 static void EventScript_EnterWeaponAndArmorShop(void) {
   struct ObjectEvent *objectEvent = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
-  struct AnimationObject *sprite = objectEvent->sprite;
+  struct Sprite *sprite = objectEvent->sprite;
 
   Engine_AudioPlayCue(SE_DOOR_OPEN);
   Engine_MapGridAnimateCells(gVault_WeaponAndArmorShopDoorCells, 49, 10);
@@ -785,7 +785,7 @@ static void EventScript_EnterMayorsHouse(void) {
 /// doorway (VAULT_TO_VAULT_JAIL, the jail's VAULT_JAIL_FROM_VAULT).
 static void EventScript_EnterJail(void) {
   struct ObjectEvent *objectEvent = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
-  struct AnimationObject *sprite = objectEvent->sprite;
+  struct Sprite *sprite = objectEvent->sprite;
 
   Engine_AudioPlayCue(SE_DOOR_OPEN);
   Engine_MapGridAnimateCells(gVault_JailDoorCells, 35, 9);
@@ -1060,7 +1060,7 @@ static void Vault_UpdateDriftingEffect(union FieldObject *fieldObject) {
 UNUSED static void Vault_SpawnDriftingEffect(s32 flags) {
   struct ObjectEvent *anchor;
   struct ObjectEvent *effect;
-  struct AnimationObject *sprite;
+  struct Sprite *sprite;
   s32 x;
   s32 z;
   u8 zero;

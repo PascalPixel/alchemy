@@ -39,7 +39,7 @@ struct BurstParticleVisual {
 
 /// A particle's sprite, seen as its two parts' attributes, which Growth copies
 /// from the first to the second: the image and the shadow
-/// (AnimationObject.image and shadow).
+/// (Sprite.image and shadow).
 struct BurstParticleVisualGroup {
   struct BurstParticleVisual primary;
   struct BurstParticleVisual child;

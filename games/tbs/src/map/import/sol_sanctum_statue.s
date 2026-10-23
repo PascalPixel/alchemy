@@ -6,8 +6,8 @@
 	.set import.Engine_HeapRelease, 1
 	.set import.Decompress_ByteLz, 1
 	.set import.Engine_VramLoad, 1
-	.set import.Resource_FindFreeEntry, 1
-	.set import.Runtime_PushSlotEntry, 1
+	.set import.VramCache_FindFreeEntry, 1
+	.set import.Oam_AddSpriteAtDepth, 1
 	.set import.Engine_MapGridRedraw, 1
 	.set import.Engine_MapGridCopyCellsTo, 1
 	.set import.Engine_MapGridCopyCellAttributes, 1

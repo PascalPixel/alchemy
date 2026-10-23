@@ -9,8 +9,8 @@
 	.set import.AllocHeapSlotEwram, 1
 	.set import.AllocEwram, 1
 	.set import.Engine_VramLoad, 1
-	.set import.Resource_FindFreeEntry, 1
-	.set import.Runtime_PushSlotEntry, 1
+	.set import.VramCache_FindFreeEntry, 1
+	.set import.Oam_AddSpriteAtDepth, 1
 	.set import.ObjectEvent_SetMode, 1
 	.set import.Engine_ObjectSetScript, 1
 	.set import.Engine_ObjectCreate, 1
@@ -48,7 +48,7 @@
 	.set import.Field_EndBusyAndReveal, 1
 	.set import.ObjectMotion_LaunchFromFocusedObject, 1
 	.set import.ObjectMotion_CommitPositionAndActivate, 1
-	.set import.AudioCommand_WaitForStateByteClear, 1
+	.set import.Sound_WaitForFanfare, 1
 	.set import.Engine_AudioPlayCue, 1
-	.set import.MusicCommand_SetPitchAndUpdateFrequency, 1
+	.set import.Sound_SetBgmTempo, 1
 	.include "games/tbs/src/system/overlay.inc"

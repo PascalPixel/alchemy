@@ -12,10 +12,10 @@
 /// loud. It is heap slot HEAP_SLOT_LIGHTNING (gLightningWork), which the
 /// lightning and Weather_StartLightningFlash take.
 struct LightningWork {
-  /// The storm's dark colours (PALETTE_TRANSFORM_WARM), as the colour buffer's
+  /// The storm's dark colours (PALETTE_TINT_WARM), as the colour buffer's
   /// B, G and R channels: each flash fades back to them.
   s16 from[0x540];
-  s16 to[0x540];    ///< the lit colours (PALETTE_TRANSFORM_PALE), as from
+  s16 to[0x540];    ///< the lit colours (PALETTE_TINT_PALE), as from
   s16 delta[0x540]; ///< the 12-frame steps from to back to from
   /// Frames to the next flash, which comes in three, 5 frames apart; below 0
   /// stops the lightning.

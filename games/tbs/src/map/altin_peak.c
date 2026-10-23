@@ -704,7 +704,7 @@ static void AltinPeak_DrainFirstWater(void) {
   } while ((u32)(timer << 16) <= 0x640000);
   Engine_TaskWait(1);
   Runtime_SetIrqHandler(1, 0, 0);
-  Script_PlaySong(AUDIO_CUE_FADE_SLOT3);
+  Script_PlaySong(SONG_FADE_OUT_ACTION_SE);
   MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
   Engine_ScriptWait(30);
   MapGrid_CopyCellAttributes(0, 0, 1, 2, 3, 14);
@@ -740,7 +740,7 @@ static void AltinPeak_DrainSecondWater(void) {
   } while ((u32)(timer << 16) <= 0x640000);
   Engine_TaskWait(1);
   Runtime_SetIrqHandler(1, 0, 0);
-  Script_PlaySong(AUDIO_CUE_FADE_SLOT3);
+  Script_PlaySong(SONG_FADE_OUT_ACTION_SE);
   MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
   Engine_ScriptWait(30);
   MapGrid_CopyCells(77, 41, 16, 4, 77, 28);
@@ -777,7 +777,7 @@ static void AltinPeak_DrainThirdWater(void) {
   } while ((u32)(timer << 16) <= 0x640000);
   Engine_TaskWait(1);
   Runtime_SetIrqHandler(1, 0, 0);
-  Script_PlaySong(AUDIO_CUE_FADE_SLOT3);
+  Script_PlaySong(SONG_FADE_OUT_ACTION_SE);
   MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
   Engine_ScriptWait(30);
   MapGrid_CopyCellsTo(103, 14, 103, 17, 4, 3);
@@ -908,7 +908,7 @@ static void AltinPeak_PushSpritzRoomPillar(void) {
 /// way and back, then topples with a crash, and the rockfall follows.
 static void AltinPeak_ForceLogOver(void) {
   struct ObjectEvent *objectEvent;
-  struct AnimationObject *sprite;
+  struct Sprite *sprite;
   s32 originX;
   s32 originHeight;
   s32 cosine;
@@ -923,7 +923,7 @@ static void AltinPeak_ForceLogOver(void) {
   Script_PlaySong(SE_RUMBLE);
   MapGrid_SetShake(PIXELS(2), PIXELS(1), Q16_ONE);
   Script_Wait(10);
-  Script_PlaySong(AUDIO_CUE_FADE_SLOT3);
+  Script_PlaySong(SONG_FADE_OUT_ACTION_SE);
   MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
   Script_Wait(20);
 
@@ -970,7 +970,7 @@ static void AltinPeak_ForceLogOver(void) {
   Script_PlaySong(SE_183);
   MapGrid_SetShake(PIXELS(3), PIXELS(3), Q16_ONE);
   Script_Wait(20);
-  Script_PlaySong(AUDIO_CUE_FADE_SLOT3);
+  Script_PlaySong(SONG_FADE_OUT_ACTION_SE);
   MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
   AltinPeak_RunBoulderChase(5);
   Script_End();
@@ -1068,7 +1068,7 @@ static void AltinPeak_RunBoulderChase(s32 boulderDelay) {
   Engine_ObjectEventSetSpritePriority(LOCALID_PARTY_LEADER, 2);
   ObjectEvent_Get(LOCALID_PARTY_LEADER)->priorityFlags |=
       OBJ_EVENT_PRIORITY_AUTOMATIC;
-  Script_PlaySong(AUDIO_CUE_FADE_SLOT3);
+  Script_PlaySong(SONG_FADE_OUT_ACTION_SE);
   MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
   shadow->x.fixed = PIXELS(786);
   shadow->update = NULL;
@@ -1093,7 +1093,7 @@ static void AltinPeak_RunBoulderChase(s32 boulderDelay) {
   Engine_ScriptWait(80);
   Engine_TaskRemoveCallback(AltinPeak_SpawnDebris);
   Engine_ScriptWait(60);
-  Script_PlaySong(AUDIO_CUE_FADE_BGM);
+  Script_PlaySong(SONG_FADE_OUT_BGM);
   MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
   // Return Garet to the party if the warning sign brought him into the scene.
   Engine_ScriptWait(120);
@@ -2301,7 +2301,7 @@ static void AltinPeak_CelebrateHydrosVictory(void) {
   Script_PlaySong(SE_190);
   ObjectEvent_SetChildValue(LOCALID_STATUE, SPRITE_COLOR_WHITE);
   Engine_ScriptWait(10);
-  Script_PlaySong(AUDIO_CUE_FADE_SLOT3);
+  Script_PlaySong(SONG_FADE_OUT_ACTION_SE);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_NORTH, 0);
   ObjectEvent_FaceDirection(GARET, FACING_NORTH, 0);
   ObjectEvent_FaceDirection(IVAN, FACING_NORTH, 0);
@@ -2396,7 +2396,7 @@ static void AltinPeak_StopCartAndJumpOff(struct ObjectEvent *objectEvent) {
   s32 x;
   s32 z;
   s32 centerZ;
-  struct AnimationObject *sprite;
+  struct Sprite *sprite;
   struct ObjectEvent *leader;
 
   Engine_AudioPlayCue(SE_STOP_SLOT3);
@@ -2420,7 +2420,7 @@ static void AltinPeak_StopCartAndJumpOff(struct ObjectEvent *objectEvent) {
   Engine_TaskWait(30);
   sprite = objectEvent->sprite;
   sprite->count = 1;
-  ResourceMetadata_ClearRecord(sprite->entries[1]);
+  SpriteAnim_Clear(sprite->entries[1]);
   sprite->entries[1] = NULL;
   sprite->dirty = 1;
   leader = Engine_ObjectEventLookup(gGameState.leaderLocalId);
@@ -2601,7 +2601,7 @@ static void AltinPeak_RollCart(s32 id, s32 heading) {
   objectEvent->layer = 2;
   leader->x.fixed = 0;
   leader->z.fixed = 0;
-  ResourceMetadata_Register(objectEvent->sprite, 16);
+  Sprite_AddAnim(objectEvent->sprite, 16);
   Engine_CameraFollowObjectEvent(id, 1);
   Engine_CameraWaitForMove();
   FieldCamera_SetSpeed(PIXELS(16), PIXELS(2));

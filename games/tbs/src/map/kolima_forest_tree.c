@@ -261,7 +261,7 @@ static void KolimaForestTree_TalkToTret(void) {
     } else {
       Engine_ScriptSetMessage(MsgKolimaSilence);
       Script_ShowMessage(LOCALID_TRET, 0);
-      ColorBuffer_ApplyTarget(0x406218, 1);
+      PaletteFade_ApplyTarget(0x406218, 1);
       Engine_ColorBufferInterpolate(20);
       Engine_TaskWait(40);
       Script_ShowMessageAndWait(
@@ -269,7 +269,7 @@ static void KolimaForestTree_TalkToTret(void) {
       Engine_ObjectEventRunRepeatedMotion(LOCALID_PARTY_LEADER, 2);
       Script_ShowMessage(SPEAKER_PORTRAIT_RIGHT | LOCALID_TRETS_WRATHFUL_SIDE,
                          0);
-      ColorBuffer_ApplyTarget(PALETTE_TRANSFORM_PLAIN, 1);
+      PaletteFade_ApplyTarget(PALETTE_TINT_NONE, 1);
       Engine_ColorBufferInterpolate(20);
       Engine_TaskWait(40);
     }
@@ -331,10 +331,10 @@ static void KolimaForestTree_RejectHermesWater(void) {
   // The wrathful side throws the leader back before the water can heal Tret.
   leader = ObjectEvent_Get(LOCALID_PARTY_LEADER);
   Engine_ObjectEventFaceDirection(LOCALID_PARTY_LEADER, FACING_NORTH, 0);
-  ColorBuffer_ApplyTarget(0x406218, 1);
+  PaletteFade_ApplyTarget(0x406218, 1);
   Engine_ColorBufferInterpolate(20);
   Engine_TaskWait(40);
-  Script_PlaySong(AUDIO_CUE_FADE_BGM);
+  Script_PlaySong(SONG_FADE_OUT_BGM);
   gKolimaForestTreePlaySparkSound = 1;
   FieldScheduler_AddCallback(KolimaForestTree_SpawnRejectionSpark,
                              TASK_PRIORITY_MAP);
@@ -376,7 +376,7 @@ static void KolimaForestTree_RejectHermesWater(void) {
   Engine_ScriptWait(20);
   Script_ShowMessage(SPEAKER_PORTRAIT_RIGHT | LOCALID_TRETS_WRATHFUL_SIDE, 0);
   Map_PlayMusic();
-  ColorBuffer_ApplyTarget(PALETTE_TRANSFORM_PLAIN, 1);
+  PaletteFade_ApplyTarget(PALETTE_TINT_NONE, 1);
   Engine_ColorBufferInterpolate(20);
   Engine_TaskWait(40);
   {
@@ -431,7 +431,7 @@ static void KolimaForestTree_RestoreTret(void) {
   includeMia = GameFlag_IsSet(FLAG_IN_PARTY(MIA));
   ObjectEvent_WalkToAndWait(LOCALID_PARTY_LEADER, 328, 212);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_NORTH, 20);
-  Script_PlaySong(AUDIO_CUE_FADE_BGM);
+  Script_PlaySong(SONG_FADE_OUT_BGM);
   Engine_MessageShowCentered(MsgKolimaWaterHermesSeepedIntoTret, 1);
   ObjectEvent_SetSpeed(GARET, PIXELS(1), PIXELS(1) / 2);
   ObjectEvent_SetSpeed(IVAN, PIXELS(1), PIXELS(1) / 2);
@@ -587,7 +587,7 @@ static void KolimaForestTree_RestoreTret(void) {
   KolimaPalette_Restore(0);
   Engine_ColorBufferInterpolate(1);
   Engine_TaskWait(1);
-  ColorBuffer_ApplyTarget(0x406218, 1);
+  PaletteFade_ApplyTarget(0x406218, 1);
   Engine_ColorBufferInterpolate(40);
   Engine_ScriptWait(60);
   gKolimaForestTreeSparkFrame = 0;
@@ -599,7 +599,7 @@ static void KolimaForestTree_RestoreTret(void) {
   FieldScheduler_AddCallback(spawnOrbitSparks, TASK_PRIORITY_MAP);
   Engine_ScriptWait(100);
   Engine_TaskRemoveCallback(spawnOrbitSparks);
-  ColorBuffer_ApplyTarget(0x7fff, 0);
+  PaletteFade_ApplyTarget(0x7fff, 0);
   Engine_ColorBufferInterpolate(60);
   Engine_ScriptWait(100);
   KolimaPalette_Restore(0);
@@ -686,7 +686,7 @@ static void KolimaForestTree_RestoreTret(void) {
   KolimaPalette_Restore(0);
   Engine_ColorBufferInterpolate(1);
   Engine_TaskWait(1);
-  ColorBuffer_ApplyTarget(0x406218, 1);
+  PaletteFade_ApplyTarget(0x406218, 1);
   Engine_ColorBufferInterpolate(40);
   Engine_ScriptWait(60);
   gKolimaForestTreeSparkFrame = 0;
@@ -756,7 +756,7 @@ static void KolimaForestTree_RestoreTret(void) {
   ObjectEvent_FaceDirection(MIA, FACING_NORTH, 0);
   ObjectEvent_FaceDirection(IVAN, FACING_WEST, 10);
   KolimaForestTree_NodTogether();
-  Script_PlaySong(AUDIO_CUE_FADE_BGM);
+  Script_PlaySong(SONG_FADE_OUT_BGM);
   // Rejoin the party and exchange the used water for its empty bottle.
   finalActions = gKolimaForestTree_RejoinPartyActions;
   ObjectEvent_SetActionScript(GARET, finalActions);
@@ -837,7 +837,7 @@ s32 KolimaForestTree_Initialize(void) {
 /// Spawns the growing sparks that repel the party leader.
 static void KolimaForestTree_SpawnRejectionSpark(void) {
   struct ObjectEvent *effect;
-  struct AnimationObject *sprite;
+  struct Sprite *sprite;
   s32 phase;
   s32 effectFlags;
   s32 spawnX = PIXELS(326);
@@ -1013,7 +1013,7 @@ static void KolimaForestTree_UpdateOrbitSpark(union FieldObject *fieldObject) {
     spark->scaleY += Q16_ONE / 200;
     spark->timer++;
   } else {
-    Resource_ResetEntry(spark->sprite->slot);
+    VramCache_FreeEntry(spark->sprite->slot);
     Engine_ObjectDispatchRelease(spark);
   }
 }
@@ -1021,7 +1021,7 @@ static void KolimaForestTree_UpdateOrbitSpark(union FieldObject *fieldObject) {
 /// Emits six-spark rings at ten-frame intervals during each burst.
 static void KolimaForestTree_SpawnOrbitSparks(void) {
   struct ObjectEvent *spark;
-  struct AnimationObject *previousSprite;
+  struct Sprite *previousSprite;
   u32 sparkIndex;
 
   previousSprite = NULL;
@@ -1037,7 +1037,8 @@ static void KolimaForestTree_SpawnOrbitSparks(void) {
           SPRITE_SPARKLE, gKolimaForestTreeSparkOrigin[0],
           gKolimaForestTreeSparkOrigin[1], gKolimaForestTreeSparkOrigin[2]);
       if (spark != 0) {
-        previousSprite = Sprite_ShareVramCache(spark->sprite, previousSprite);
+        previousSprite =
+            Sprite_ShareVramCacheEntry(spark->sprite, previousSprite);
         spark->motionFlags = 0;
         spark->sprite->image.priority = 1;
         Engine_ObjectEventSetSpriteFlags(spark, 0);

@@ -282,7 +282,7 @@ TolbiShipMast_SwayObjectEvent(struct ObjectScriptContext *interpreter) {
 static s32 TolbiShipMast_ShrinkAndStopObjectEvent(
     struct ObjectScriptContext *interpreter) {
   struct ObjectEvent *objectEvent = (struct ObjectEvent *)interpreter;
-  struct AnimationObject *sprite = objectEvent->sprite;
+  struct Sprite *sprite = objectEvent->sprite;
 
   sprite->image.priority = 3;
   objectEvent->speed = PIXELS(2);

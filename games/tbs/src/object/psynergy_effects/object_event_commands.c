@@ -380,7 +380,7 @@ void ObjectEvent_SetModeById(u32 objectId, s32 animation) {
 }
 
 /// Sets the animation timer steps of each of an object event's sprites
-/// (AnimationObject_SetActiveTimerSteps). Called by the Tolbi ship and
+/// (Sprite_SetAnimSpeed). Called by the Tolbi ship and
 /// Lamakan Desert map scripts.
 void ObjectEvent_SetActionById(u32 objectId, s32 steps) {
   struct Object *object = ObjectEvent_GetByLocalId(objectId);
@@ -395,7 +395,7 @@ void ObjectEvent_SetActionById(u32 objectId, s32 steps) {
 /// level screen.
 void ObjectMotion_WaitForAnimationChange(u32 objectId) {
   struct Object *object;
-  struct AnimationObject *sprite;
+  struct Sprite *sprite;
   /* FAKEMATCH(volatile): saved lives in a 4-byte frame, stored once and
    * loaded again for each compare, as the bytes have it; as a plain s32, 29
    * of 31 instructions differ in tbs-en. */
@@ -521,7 +521,7 @@ void FieldEffect_UpdateParticleLinearMotion(union FieldObject *fieldObject) {
 /// (ObjectGroup_SetChildValue). Only ObjectEvent_JumpDownLedge calls it.
 void FieldEffect_SpawnBurstParticle(struct ObjectEvent *source, s32 param) {
   struct ObjectEvent *objectEvent;
-  struct AnimationObject *child;
+  struct Sprite *child;
   s32 speed;
 
   objectEvent = (struct ObjectEvent *)Object_CreateFar(
@@ -579,7 +579,7 @@ void ObjectEvent_JumpDownLedge(s32 localId, s32 pose, s32 param) {
   object = (struct Object *)ObjectEvent_GetById(localId);
   startZ = object->z;
   if (object != 0) {
-    Sound_PlaySongFar(AUDIO_CUE_FADE_SLOT3);
+    Sound_PlaySongFar(SONG_FADE_OUT_ACTION_SE);
     ObjectDispatch_SelectAnimationFar(object, pose);
     WaitFrames(10);
 
@@ -776,7 +776,7 @@ void ObjectGroup_ApplyIndexedChildValue(union FieldObject *fieldObject) {
 
   if ((object->kind & 0xf) == 1) {
     u8 param;
-    struct AnimationObject *container;
+    struct Sprite *container;
     u8 partCount;
 
     // The table's four entries each last two frames.
@@ -784,10 +784,10 @@ void ObjectGroup_ApplyIndexedChildValue(union FieldObject *fieldObject) {
     container = object->target.child;
     partCount = container->count;
     if (partCount != 0) {
-      struct AnimationEntry **entries = container->entries;
+      struct SpriteAnim **entries = container->entries;
       s32 remaining = partCount;
       do {
-        struct AnimationEntry *entry = *entries++;
+        struct SpriteAnim *entry = *entries++;
         if (entry != 0 && entry->script != 0) {
           entry->colorMode = param;
         }
@@ -806,14 +806,14 @@ void ObjectGroup_SetChildValue(struct ObjectEvent *objectEvent, s32 param) {
   struct DispatchObject *object = (struct DispatchObject *)objectEvent;
 
   if ((object->kind & 0xf) == 1) {
-    struct AnimationObject *container = object->target.child;
+    struct Sprite *container = object->target.child;
     u8 partCount = container->count;
 
     if (partCount != 0) {
-      struct AnimationEntry **entry = container->entries;
+      struct SpriteAnim **entry = container->entries;
       u32 count = partCount;
       do {
-        struct AnimationEntry *part = *entry++;
+        struct SpriteAnim *part = *entry++;
         if (part != NULL && part->script != 0) {
           part->colorMode = param;
         }
@@ -912,7 +912,7 @@ void ObjectMotion_SetActionVariant(s32 objectId, s32 priority) {
   struct Object *object = ObjectEvent_GetByLocalId(objectId);
 
   if (object != NULL && (object->animationKind & 0xF) == OBJECT_SPRITE_ONE) {
-    struct AnimationObject *sprite = object->animation;
+    struct Sprite *sprite = object->animation;
 
     sprite->image.priority = priority;
     sprite->shadow.priority = priority;
@@ -925,7 +925,7 @@ void ObjectMotion_SetActionVariant(s32 objectId, s32 priority) {
 /// NULL. Called by the Tolbi ship deck's map script.
 void ObjectVisual_CopyAttributes(u32 targetId, u32 sourceId) {
   struct Object *object;
-  struct AnimationObject *sprite;
+  struct Sprite *sprite;
   u8 vramBlock;
   u32 tile;
 
@@ -974,8 +974,7 @@ s32 ObjectEvent_ReadActiveValue(s32 localId) {
 #endif
 
   if (entry != 0 && entry->animationKind == OBJECT_SPRITE_ONE)
-    sprite =
-        ((struct AnimationObject *)entry->animation)->entries[0]->animationId;
+    sprite = ((struct Sprite *)entry->animation)->entries[0]->animationId;
   return sprite;
 }
 
@@ -991,9 +990,8 @@ s32 ObjectEvent_FindActiveByValue(s32 sprite) {
   for (index = 8; index <= 65; index++) {
     object = (struct Object *)state->objectEvents[index];
     if (object != 0 && object->animationKind == OBJECT_SPRITE_ONE &&
-        ((struct AnimationObject *)object->animation)
-                ->entries[0]
-                ->animationId == sprite) {
+        ((struct Sprite *)object->animation)->entries[0]->animationId ==
+            sprite) {
       result = index;
       break;
     }

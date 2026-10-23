@@ -126,7 +126,7 @@ void BattleAnim_RunAtalanta(struct BattleAnimArgs *effect) {
     slash->variant = 0;
     for (j = 0; j != 24; j++) {
       PARTICLES[i * 24 + j].x = (Random16() & 15) + 48;
-      Render_ResetTransformState();
+      Transform_Reset();
       Transform_ApplyRoll(Random16() & 0xffff);
       Transform_ApplyPitch(Random16() & 0xffff);
       Transform_ApplyYaw(Random16() & 0xffff);
@@ -277,7 +277,7 @@ void BattleAnim_RunAtalanta(struct BattleAnimArgs *effect) {
   gBgScroll[1].x = scrollX;
   BattleAnim_SetupBlendedDisplay();
   for (i = 0; i != 9; i++)
-    ResourceObject_ReleaseFar(work->animations[i]);
+    Sprite_DestroyFar(work->animations[i]);
   REG_BG2PA = Q_8_8(0.5);
   REG_DISPCNT = ANIM_DISPCNT;
   Resource_LoadAndDecompress((s32)&ResourceId_EmberStreakSheet,

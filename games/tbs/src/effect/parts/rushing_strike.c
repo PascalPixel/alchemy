@@ -16,7 +16,7 @@
 /// dst: receives the packed rows, half the stride apart.
 /// stride: the bytes in one row of src.
 /// rowCount: ignored; 288 rows are always packed.
-void Graphics_PackTileRows(u8 *src, u8 *dst, s32 stride, s32 rowCount) {
+void BattleAnim_PackTileRows(u8 *src, u8 *dst, s32 stride, s32 rowCount) {
   s32 row = 0;
   s32 rows = 288;
   s32 offset = 0;
@@ -133,7 +133,7 @@ void BattleAnim_RunRushingStrike(struct BattleAnimArgs *effect, s32 mode) {
   Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
   Resource_LoadAndDecompress((s32)&ResourceId_YellowOrbSheet, work->sheet, 1,
                              0);
-  Graphics_PackTileRows(work->sheet, (u8 *)cells, 40, 288);
+  BattleAnim_PackTileRows(work->sheet, (u8 *)cells, 40, 288);
   Resource_LoadAndDecompress((s32)&ResourceId_BlueBurstSheet, work->sheet, 1,
                              1);
   switch (mode) {

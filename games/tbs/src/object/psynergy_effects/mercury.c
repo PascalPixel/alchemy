@@ -18,7 +18,7 @@ void FieldEffect_RunMercuryDjinnCapture(s32 djinniId) {
   struct ObjectEvent *djinni;
   struct ObjectEvent *copy;
   struct ObjectEvent *previous;
-  struct AnimationObject *resource;
+  struct Sprite *resource;
   struct FieldEffectWork *effectWork;
   struct ObjectEvent **cursor;
   struct ObjectEvent **list;
@@ -37,7 +37,7 @@ void FieldEffect_RunMercuryDjinnCapture(s32 djinniId) {
   // Tint the screen blue (red 4, green 4, blue 16).
   FieldEffect_InitializeSlots();
   effectWork = gFieldEffectWork;
-  Shop_SaveAndTintFieldPaletteFar(PALETTE_TRANSFORM_TINT | RGB(4, 4, 16));
+  Shop_SaveAndTintFieldPaletteFar(PALETTE_TINT_CUSTOM | RGB(4, 4, 16));
   WaitFrames(30);
   // Unpause the Djinni, so its script and motion run.
   djinni->paused = 0;
@@ -79,7 +79,7 @@ void FieldEffect_RunMercuryDjinnCapture(s32 djinniId) {
                                     SPRITE_COLOR_BLUE_TINT);
       ObjectDispatch_SelectAnimationFar(copy, 0);
       ObjectDispatch_SetSingleChildFlagsFar((struct DispatchObject *)copy, 0);
-      resource = Sprite_ShareVramCache(copy->sprite, resource);
+      resource = Sprite_ShareVramCacheEntry(copy->sprite, resource);
       copy->linkedObject = previous;
       previous = copy;
     }
@@ -100,7 +100,7 @@ void FieldEffect_RunMercuryDjinnCapture(s32 djinniId) {
   for (remaining = MERCURY_AFTERIMAGE_MAX - 1; remaining >= 0; remaining--)
     ObjectDispatch_ReleaseFar((struct DispatchObject *)(*list++));
   if (resourceId != 96)
-    Resource_ResetEntry(resourceId);
+    VramCache_FreeEntry(resourceId);
   WaitFrames(10);
   ObjectMotion_ArmCallback(gGameState.leaderLocalId, 0x4000, 0);
   WaitFrames(20);
@@ -122,8 +122,7 @@ void FieldEffect_RunMercuryDjinnCapture(s32 djinniId) {
     FieldEffectSprite_SetCallback(effect,
                                   FieldEffect_UpdateRandomTargetParticle);
     FieldEffectSprite_SetObjectMode(effect, 7);
-    ObjectGroup_SetChildValueUnlessFifteenFar(effect->object,
-                                              SPRITE_COLOR_BLUE_TINT);
+    Sprite_SetAnimColorModesFar(effect->object, SPRITE_COLOR_BLUE_TINT);
     remaining--;
     WaitFrames(1);
     effect++;

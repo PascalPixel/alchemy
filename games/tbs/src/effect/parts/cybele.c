@@ -178,10 +178,10 @@ void BattleAnim_RunCybele(struct BattleAnimArgs *effect) {
     if (frame >= 48 && frame <= 96) {
       s32 pose = (frame - 48) / 24 % 3;
 
-      AnimationObject_SelectAnimationFar(
-          work->animations[3], gCybele_ObjectPoses[pose][CYBELE_POSE_OBJECT3]);
-      AnimationObject_SelectAnimationFar(
-          work->animations[4], gCybele_ObjectPoses[pose][CYBELE_POSE_OBJECT4]);
+      Sprite_StartAnimFar(work->animations[3],
+                          gCybele_ObjectPoses[pose][CYBELE_POSE_OBJECT3]);
+      Sprite_StartAnimFar(work->animations[4],
+                          gCybele_ObjectPoses[pose][CYBELE_POSE_OBJECT4]);
     }
 
     // Frames 72 to 127: thorn i flies from frame 72 + i until it reaches
@@ -419,7 +419,7 @@ void BattleAnim_RunCybele(struct BattleAnimArgs *effect) {
             object->y = 128 << 16;
           object->verticalMotionStrength = 0;
           for (n = 0; (record = GetMotionRecordFar(slot->object, n)) != 0; n++)
-            AnimationObject_SelectAnimationFar(record, 5);
+            Sprite_StartAnimFar(record, 5);
         }
       }
     }
@@ -540,7 +540,7 @@ void BattleAnim_RunCybele(struct BattleAnimArgs *effect) {
   ANIM_SHOW_DAMAGE(SE_HEAVY_IMPACT);
   BattleAnim_RunImpactBurst(SUMMON_FORMATION_CYBELE, 128 << 16, height);
   for (i = 0; i != 8; i++)
-    ResourceObject_ReleaseFar(work->animations[i]);
+    Sprite_DestroyFar(work->animations[i]);
   BattleAnim_EndCanvasLayer();
 }
 

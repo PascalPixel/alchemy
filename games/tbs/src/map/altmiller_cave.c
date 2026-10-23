@@ -955,7 +955,7 @@ static void AltmillerCave_RestoreBabiAndInviteParty(void) {
   Engine_ScriptWait(30);
   Engine_ObjectEventRunRepeatedMotion(LOCALID_INVISIBLE_BABI, 2);
   Engine_ScriptWait(60);
-  Script_PlaySong(AUDIO_CUE_FADE_BGM);
+  Script_PlaySong(SONG_FADE_OUT_BGM);
   objectEvent->sprite->rotation = 0;
   Engine_ObjectEventJump(LOCALID_INVISIBLE_BABI, 10, 70);
   // Flicker between sprite priorities before replacing invisible Babi.
@@ -1674,7 +1674,7 @@ static void AltmillerCave_RestoreBabiAndInviteParty(void) {
     Engine_ScriptWait(30);
     ObjectEvent_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 70);
   }
-  Script_PlaySong(AUDIO_CUE_FADE_BGM);
+  Script_PlaySong(SONG_FADE_OUT_BGM);
   ObjectEvent_SetSpeed(GARET, PIXELS(6) / 5, PIXELS(3) / 5);
   ObjectEvent_SetSpeed(IVAN, PIXELS(6) / 5, PIXELS(3) / 5);
   ObjectEvent_SetSpeed(MIA, PIXELS(6) / 5, PIXELS(3) / 5);
@@ -1963,7 +1963,7 @@ static void AltmillerCave_MeetInvisibleBabi(void) {
   Engine_ObjectEventSetAnimation(GARET, ANIMATION_NOD);
   Engine_ObjectEventSetAnimationAndWait(IVAN, ANIMATION_NOD);
   Engine_ScriptWait(30);
-  Engine_AudioPlayCue(AUDIO_CUE_FADE_BGM);
+  Engine_AudioPlayCue(SONG_FADE_OUT_BGM);
   ObjectEvent_SetSpeed(GARET, PIXELS(6) / 5, PIXELS(3) / 5);
   ObjectEvent_SetSpeed(IVAN, PIXELS(6) / 5, PIXELS(3) / 5);
   ObjectEvent_SetSpeed(MIA, PIXELS(6) / 5, PIXELS(3) / 5);
@@ -2299,8 +2299,8 @@ static void AltmillerCave_ReleaseWallBurst(void) {
                                  position.z);
     FieldEffectSprite_SetCallback(fragment, AltmillerCave_UpdateWallFragment);
     FieldEffectSprite_SetObjectMode(fragment, 7);
-    ObjectGroup_SetChildValueUnlessFifteen(
-        fragment->object, (u32)(Engine_RandomNext() * 7) >> 16);
+    Sprite_SetAnimColorModes(fragment->object,
+                             (u32)(Engine_RandomNext() * 7) >> 16);
     scale = Math_DivideUnsigned(Engine_RandomNext(), 3) + 3 * Q16_ONE / 2;
     fragment->scaleY = scale;
     fragment->scaleX = scale;

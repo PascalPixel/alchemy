@@ -78,7 +78,7 @@ void ObjectSystem_PlaceSprites(void) {
   s32 viewZ;
   struct ObjectSystemWork *system;
   struct ObjectCameraObject *object;
-  struct AnimationObject *sprite;
+  struct Sprite *sprite;
 #ifndef UBFIX
   s32 *viewCoordinates;
 #endif
@@ -133,7 +133,7 @@ void ObjectSystem_PlaceSprites(void) {
       // While a menu has sprite projection suspended, only held objects are
       // drawn.
       if (system->suspended != 0 && object->held == 0) {
-        struct AnimationObject *frozen = object->sprite;
+        struct Sprite *frozen = object->sprite;
 
         VramCache_ReleaseVram(frozen->slot);
         frozen->dirty = kind;
@@ -265,7 +265,7 @@ void ObjectSystem_ProjectSprites(void) {
   // a sprite keeps its world heading as the camera turns.
   angle = (s16)ArcTan2((eye->x - target->x) >> 16, (eye->z - target->z) >> 16);
   system->used = 0;
-  Render_ResetTransformState();
+  Transform_Reset();
   // Under the fixed view matrix every sprite also faces an eighth of a turn
   // (0x2000) further back.
   if (GameFlag_TestFar(FLAG_CHOOSING_COMMANDS)) {

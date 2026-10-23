@@ -5,7 +5,7 @@
 #include "effect_slot.h"
 #include "unit/object/object.h"
 
-struct AnimationObject;
+struct Sprite;
 struct MapEvent;
 struct ObjectEventTemplate;
 union FieldObject;
@@ -254,9 +254,9 @@ void Warp_StartStairsDownExit(void);
 void Warp_EndArrivalAnimation(s32 animation);
 s32 Warp_PlayArrival(void);
 
-void DisplayScroll_ArmHBlankDma(void);
-void DisplayScroll_BuildAndSwapHBlankPage(void);
-void DisplayScroll_DisarmHBlankDma(void);
+void ScanlineEffect_ArmDma(void);
+void ScanlineEffect_BuildPage(void);
+void ScanlineEffect_Stop(void);
 void Weather_UpdateRain(void);
 void Weather_UpdateLightning(void);
 void Weather_StartRain(void);
@@ -311,9 +311,8 @@ void ObjectGroup_ApplyRandomChildValues(union FieldObject *fieldObject);
 void ObjectMotion_SetTargetPositionFromMagnitudeAngle(struct Object *object,
                                                       s32 magnitude, s32 angle);
 s32 VramCache_CountFreeBlocks(void);
-struct AnimationObject *
-Sprite_ShareVramCache(struct AnimationObject *sourceSprite,
-                      struct AnimationObject *sharedSprite);
+struct Sprite *Sprite_ShareVramCacheEntry(struct Sprite *sourceSprite,
+                                          struct Sprite *sharedSprite);
 struct Object *Object_Spawn(s32 kind, s32 x, s32 y, s32 z);
 void ObjectGroup_SetActionForOthers(struct Object *except, s32 state,
                                     s32 value);

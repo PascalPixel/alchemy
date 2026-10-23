@@ -11,7 +11,7 @@
 #include "render_input.h"
 #include "text/msg_ids.h"
 
-struct AnimationObject;
+struct Sprite;
 
 struct Unit;
 
@@ -47,11 +47,11 @@ struct PsynergyMenuWork {
   u8 columnCount;
   u8 rowCount;
   ///@}
-  struct AnimationObject *tabObjects[8]; ///< the party members' figures
-  s16 tabX[8];                           ///< screen pixels
-  s16 rowPositions[8];                   ///< screen pixels
-  s32 ownerScale[8]; ///< 16.16 fixed point, 0x10000 full size
-  u16 paneRow[2];    ///< each pane's Psynergy row chosen
+  struct Sprite *tabObjects[8]; ///< the party members' figures
+  s16 tabX[8];                  ///< screen pixels
+  s16 rowPositions[8];          ///< screen pixels
+  s32 ownerScale[8];            ///< 16.16 fixed point, 0x10000 full size
+  u16 paneRow[2];               ///< each pane's Psynergy row chosen
   u16 paneAction[2]; ///< each pane's Psynergy chosen, as an owner action entry
   struct WindowSprite *cursor; ///< ItemMenuWork's; not named here
   /// DjinnMenuWork's backdrop pointer at 0x184; no view names the rest.

@@ -26,7 +26,7 @@ extern const u8 gWorldMap_BattleEnvironments[];
 /// address equal to the size (constants.ld).
 extern u8 Render_DecodeFrameCodeSize[];
 /// Four 256-byte colour tables (remap0 to remap3), indexed by pixel: the
-/// SpriteColorMode tables after gResourceSlot_ConversionTables' five, the
+/// SpriteColorMode tables after gSpriteColorTables' five, the
 /// first also remapping the command icons (Runtime_RemapBytesByTable).
 extern u8 gRuntime_ByteRemapTable[];
 
@@ -190,7 +190,7 @@ extern s32 gColosso_WarriorStartZ;
 /// The race gauge's 16 colours, loaded as OBJ palette 14 (Colosso_DrawGauge).
 extern u16 gColosso_GaugePalette[];
 /// The blinking pointer's sprite part: the queue link and attributes 0 to 2.
-extern s32 gColosso_MarkerOam[3];
+extern s32 gColosso_PointerOam[3];
 // The lettering's three eases (Colosso_UpdateLettering): each value goes from
 // Start to Target over Duration frames, Step counting them; Duration 0 holds
 // Target. Blend is the lettering's BLDALPHA weight out of 16, Scale its size
@@ -322,7 +322,7 @@ extern const s32 gFieldEffect_UntargetedObjectScript[];
 /// bits a pixel; FieldEffect_LoadActionEffectResources loads it.
 extern const u8 gFieldEffect_SparkTiles[];
 extern const u8 gFieldEffect_QuadrantModes[];
-/// The eight tints (PALETTE_TRANSFORM_TINT and an RGB555 colour) a field
+/// The eight tints (PALETTE_TINT_CUSTOM and an RGB555 colour) a field
 /// Psynergy effect fades the palettes toward, picked by the frame counter or
 /// by the FLAG_PSYNERGY_TINT flags (FieldEffect_FadeToEffectColor).
 extern const s32 gFieldEffect_TargetColors[];

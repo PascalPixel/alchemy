@@ -24,7 +24,7 @@ void Djinn_RunJupiterJoinEffect(s32 djinniId) {
     return;
   FieldEffect_InitializeSlots();
   effectWork = gFieldEffectWork;
-  // Tint the screen yellow: PALETTE_TRANSFORM_TINT | RGB(12, 12, 4).
+  // Tint the screen yellow: PALETTE_TINT_CUSTOM | RGB(12, 12, 4).
   Shop_SaveAndTintFieldPaletteFar(0x20118c);
   Sound_PlaySongFar(SE_173);
   ObjectMotion_SetVarCbAndRefresh(djinniId, 1);
@@ -56,8 +56,7 @@ void Djinn_RunJupiterJoinEffect(s32 djinniId) {
                                  position.z);
     FieldEffectSprite_SetCallback(effect, FieldEffect_RunAngledApproachPhases);
     FieldEffectSprite_SetObjectMode(effect, 7);
-    ObjectGroup_SetChildValueUnlessFifteenFar(effect->object,
-                                              (Random16() * 7) >> 16);
+    Sprite_SetAnimColorModesFar(effect->object, (Random16() * 7) >> 16);
     scale = Random16() / 3 + 0x10000; // 1.0 to 1.33
     effect->scaleY = scale;
     effect->scaleX = scale;
@@ -153,7 +152,7 @@ void FieldEffect_UpdatePhasedRadialParticle(struct FieldEffectSprite *effect) {
     // At the leader's sprite priority, until MARS_SPARK_RISING brings it in
     // front
     // (priority 0, z lifting the sprite) after 3 frames.
-    ((struct AnimationObject *)effect->object)->image.priority =
+    ((struct Sprite *)effect->object)->image.priority =
         owner->sprite->image.priority;
     effect->flags = 0;
     effect->age = 0;
@@ -161,7 +160,7 @@ void FieldEffect_UpdatePhasedRadialParticle(struct FieldEffectSprite *effect) {
       Sound_PlaySongFar(SE_HEAVY_IMPACT);
   } else if (state == MARS_SPARK_RISING) {
     if ((s16)effect->age == 3) {
-      ((struct AnimationObject *)effect->object)->image.priority = 0;
+      ((struct Sprite *)effect->object)->image.priority = 0;
       effect->flags = 4;
     }
     if (FieldEffectSprite_HasPendingTarget(effect) == 0)
@@ -170,7 +169,7 @@ void FieldEffect_UpdatePhasedRadialParticle(struct FieldEffectSprite *effect) {
     if (FieldEffectSprite_HasPendingTarget(effect) == 0) {
       effect->originX = effect->x;
       effect->originZ = effect->z;
-      ((struct AnimationObject *)effect->object)->image.priority = 0;
+      ((struct Sprite *)effect->object)->image.priority = 0;
       effect->flags = 4;
       effect->render = 0;
       effect->state++;

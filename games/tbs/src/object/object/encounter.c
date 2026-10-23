@@ -303,10 +303,10 @@ extern const struct MapMusicRule gMap_MusicRules[];
 
 /// Chooses the current map's field music (gGameState.cue) from the first rule
 /// matching the map or its map section and the warp destination;
-/// AUDIO_CUE_KEEP_BGM when none does. Called by Game_Run on entering each map,
+/// SONG_KEEP_BGM when none does. Called by Game_Run on entering each map,
 /// before Map_PlayMusic plays it.
 void Map_ChooseMusic(void) {
-  s16 music = AUDIO_CUE_KEEP_BGM;
+  s16 music = SONG_KEEP_BGM;
   s16 mapId = gGameState.mapId;
   s16 warpDest = gGameState.warpDest;
   s16 group = gGameState.mapSec;
@@ -466,7 +466,7 @@ void BattleBackground_SelectForEnvironment(s32 behavior) {
 /// Chooses the battle music for slot of zone (gGameState.battleMusic).
 /// gEncounter_BattleMusic lists each song (with bit 15 set) followed by the
 /// (zone << 4) + slot keys that use it, ended by 0; a key takes the song listed
-/// last before it. Link battles always use AUDIO_CUE_KEEP_BGM. Called by
+/// last before it. Link battles always use SONG_KEEP_BGM. Called by
 /// Encounter_CountStepsAndSelectFormation for a random battle, by the battle
 /// requests (Field_RequestBattleFromEncounterTable, Field_RequestDjinnBattle
 /// with zone 0) and by the map event runner (events.c).
@@ -479,7 +479,7 @@ void Encounter_SelectBattleMusic(s32 zone, s32 slot) {
   u16 value;
 
   if (GameFlag_TestFar(FLAG_LINK_BATTLE)) {
-    music = AUDIO_CUE_KEEP_BGM;
+    music = SONG_KEEP_BGM;
   } else {
     for (;;) {
       value = *table++;

@@ -324,7 +324,7 @@ static void KolimaForestFloodgate_FlipFloodgateSwitch(void) {
     nextShakeChance = (gKolimaForestFloodgate_ShakeChance + 1);
     gKolimaForestFloodgate_ShakeChance += 1;
   } while (nextShakeChance <= 100);
-  Engine_AudioPlayCue(AUDIO_CUE_FADE_SLOT3);
+  Engine_AudioPlayCue(SONG_FADE_OUT_ACTION_SE);
   if (*gKolimaForestFloodgateLayout == 0) {
     MapGrid_DrawCellPanel(9, 19, 16, 5, *gKolimaForestFloodgateLayout, 9, 19);
     MapGrid_DrawCellPanel(9, 51, 16, 5, 1, 9, 19);

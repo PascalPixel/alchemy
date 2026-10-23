@@ -90,7 +90,7 @@ void Camera_ConfigureView(s32 verticalOffset) {
   camera->distance = 0x02ee0000;
   camera->unk18 = 0;
 
-  Render_ResetTransformState();
+  Transform_Reset();
   Transform_ApplyPosition(&camera->focus[0]);
   Transform_ApplyYaw((s16)camera->yaw);
   Transform_ApplyPitch((s16)camera->pitch);

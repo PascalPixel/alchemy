@@ -165,7 +165,7 @@ void FieldEffect_SpawnLinked(s32 localId, s32 emote, s32 wait) {
         21, target->x.fixed, target->y.fixed, target->z.fixed);
 
     if (bubble != 0) {
-      struct AnimationObject *sprite;
+      struct Sprite *sprite;
 
       ObjectDispatch_InitializeFar((struct DispatchObject *)bubble,
                                    gFieldEffect_LinkedObjectScript);
@@ -222,7 +222,7 @@ void FieldEffect_SpawnLinked(s32 localId, s32 emote, s32 wait) {
 void FieldEffect_ConfigureLinkedObject(s32 localId, s32 flags) {
   struct ObjectEvent *objectEvent = ObjectEvent_GetByLocalId(localId);
   struct ObjectEvent *effect;
-  struct AnimationObject *visual;
+  struct Sprite *visual;
   s32 mode;
 
   effect = 0;

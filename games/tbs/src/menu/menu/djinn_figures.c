@@ -15,20 +15,20 @@ void DjinnFigures_InitializeTopRow(void *unused0, s32 unused1) {
   s32 index;
 
   for (index = 0; index < 4; index++) {
-    struct AnimationObject *animation = state->animations[index];
+    struct Sprite *animation = state->animations[index];
 
     if (animation != NULL) {
-      ResourceObject_ReleaseFar(animation);
+      Sprite_DestroyFar(animation);
       state->animations[index] = NULL;
     }
   }
 
   for (index = 0; index < 4; index++) {
-    struct AnimationObject *animation =
-        ResourceObject_CreateFar(gFourObjectMotion_ResourceIds[index]);
+    struct Sprite *animation =
+        Sprite_CreateFar(gFourObjectMotion_ResourceIds[index]);
 
     if (animation != NULL) {
-      AnimationObject_SelectAnimationFar(animation, 2);
+      Sprite_StartAnimFar(animation, 2);
     }
     state->animations[index] = animation;
     state->positionsX[index] = 0x10;
@@ -47,10 +47,10 @@ void DjinnFigures_InitializeTopRow(void *unused0, s32 unused1) {
     s32 index = 0;                                                             \
                                                                                \
     do {                                                                       \
-      struct AnimationObject *object = state->animations[index];               \
+      struct Sprite *object = state->animations[index];                        \
                                                                                \
       if (object != NULL) {                                                    \
-        ResourceObject_ReleaseFar(object);                                     \
+        Sprite_DestroyFar(object);                                             \
         state->animations[index] = NULL;                                       \
       }                                                                        \
       index++;                                                                 \
@@ -80,7 +80,7 @@ void DjinnFigures_UpdateAllPositions(void) {
 
   index = 0;
   while (1) {
-    struct AnimationObject *animation = state->animations[index];
+    struct Sprite *animation = state->animations[index];
 
     if (animation != 0) {
       u32 vertical = FOUR_OBJECT_MOTION_ORIGIN_Y -
@@ -114,7 +114,7 @@ void DjinnFigures_UpdateBottomRow(void) {
   Link_DrawShiftedTilePairFar(PAGE_ARROW_VRAM);
   objectIndex = 0;
   do {
-    struct AnimationObject *animation = menu->animations[objectIndex];
+    struct Sprite *animation = menu->animations[objectIndex];
 
     if (animation != 0) {
       u32 projectedY =
@@ -162,19 +162,19 @@ void DjinnFigures_InitializeBottomRow(s32 unused0, s32 unused1) {
   s32 index;
 
   for (index = 0; index < 4; index++) {
-    struct AnimationObject *animation = state->animations[index];
+    struct Sprite *animation = state->animations[index];
 
     if (animation != NULL) {
-      ResourceObject_ReleaseFar(animation);
+      Sprite_DestroyFar(animation);
       state->animations[index] = NULL;
     }
   }
   for (index = 0; index < 4; index++) {
-    struct AnimationObject *animation =
-        ResourceObject_CreateFar(gFourObjectMotion_ResourceIds[index]);
+    struct Sprite *animation =
+        Sprite_CreateFar(gFourObjectMotion_ResourceIds[index]);
 
     if (animation != NULL)
-      AnimationObject_SelectAnimationFar(animation, 2);
+      Sprite_StartAnimFar(animation, 2);
     state->animations[index] = animation;
     state->phases[index] = 0x10000;
     state->positionsX[index] = 0x10;
@@ -215,15 +215,15 @@ s32 DjinnFigures_ReplaceSlot(s32 index, s32 resourceKind, s32 value) {
   struct DjinnFiguresWork *state = gMenuWork;
 
   if (state->animations[index] != NULL) {
-    ResourceObject_ReleaseFar(state->animations[index]);
+    Sprite_DestroyFar(state->animations[index]);
     state->animations[index] = NULL;
   }
   {
-    struct AnimationObject *animation =
-        ResourceObject_CreateFar(gFourObjectMotion_ResourceIds[resourceKind]);
+    struct Sprite *animation =
+        Sprite_CreateFar(gFourObjectMotion_ResourceIds[resourceKind]);
 
     if (animation != NULL)
-      AnimationObject_SelectAnimationFar(animation, value);
+      Sprite_StartAnimFar(animation, value);
     state->animations[index] = animation;
   }
   return 1;
@@ -238,7 +238,7 @@ UNUSED void Menu_StartPartyFiguresWalking(void) {
   s32 index;
 
   for (index = 0; index < menu->partyCount; ++index) {
-    AnimationObject_SelectAnimationFar(menu->ownerObjects[index], 1);
+    Sprite_StartAnimFar(menu->ownerObjects[index], 1);
   }
 }
 

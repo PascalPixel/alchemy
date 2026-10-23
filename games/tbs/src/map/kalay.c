@@ -692,7 +692,7 @@ static void Kalay_WatchTourGroupDeparture(void) {
                             PIXELS(264));
     ObjectEvent_SetPosition(LOCALID_OURANOS, PIXELS(332), PIXELS(280));
     ObjectEvent_SetPosition(LOCALID_SECOND_GUIDE, PIXELS(364), PIXELS(272));
-    Script_PlaySong(AUDIO_CUE_FADE_BGM);
+    Script_PlaySong(SONG_FADE_OUT_BGM);
     Message_SetVoiceFromObjectEvent(LOCALID_HEAD_GUIDE);
     FieldMessage_ShowCentered(MsgKalayOkListeningLets, 1, 0);
     Script_PlaySong(MUS_009);
@@ -1188,7 +1188,7 @@ static void Kalay_WatchTourGroupDeparture(void) {
     Engine_ObjectEventDestroy(LOCALID_FIRST_TOURIST + 5);
     Engine_ObjectEventDestroy(LOCALID_FIRST_TOURIST + 6);
     Engine_ObjectEventDestroy(LOCALID_OURANOS);
-    Script_PlaySong(AUDIO_CUE_FADE_BGM);
+    Script_PlaySong(SONG_FADE_OUT_BGM);
     if (work->coordEvent == 9) {
       ObjectEvent_WalkToAndWait(LOCALID_PARTY_LEADER, 224, 458);
       leader = ObjectEvent_Get(LOCALID_PARTY_LEADER);
@@ -1903,7 +1903,7 @@ static void Kalay_HammetReturnsToPalace(void) {
   ObjectEvent_SetSpeed(LOCALID_WAGON, PIXELS(4) / 5, PIXELS(2) / 5);
   ObjectEvent_WalkToAndWait(LOCALID_WAGON, 440, 300);
   Engine_ObjectEventSetAnimation(LOCALID_WAGON, 0);
-  Script_PlaySong(AUDIO_CUE_FADE_SLOT3);
+  Script_PlaySong(SONG_FADE_OUT_ACTION_SE);
   Engine_ScriptWait(40);
   ObjectEvent_SetSpeed(LOCALID_BUNZA, PIXELS(4) / 5, PIXELS(2) / 5);
   ObjectEvent_SetPosition(LOCALID_BUNZA, PIXELS(439), PIXELS(306));
@@ -2156,7 +2156,7 @@ static void Kalay_HammetReturnsToPalace(void) {
   ObjectEvent_SetSpeed(LOCALID_WAGON, PIXELS(8) / 5, PIXELS(4) / 5);
   ObjectEvent_WalkToAndWait(LOCALID_WAGON, 440, 500);
   ObjectEvent_WalkTo(LOCALID_WAGON, 440, 600);
-  Script_PlaySong(AUDIO_CUE_FADE_SLOT3);
+  Script_PlaySong(SONG_FADE_OUT_ACTION_SE);
   work = gFieldWork;
   work->transitionFrames = 24;
   work->transition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
@@ -2464,7 +2464,7 @@ static void Kalay_SpawnTunnelParticle(s32 x, s32 height, s32 z) {
 static void Kalay_UpdateNutOrbit(void) {
   OrbitingMapObject *effect =
       (OrbitingMapObject *)ObjectEvent_GetById(LOCALID_TOWN_NUT);
-  struct AnimationObject *sprite = (struct AnimationObject *)effect->sprite;
+  struct Sprite *sprite = (struct Sprite *)effect->sprite;
   s32 offset = Engine_MathSin(effect->orbitAngle) * 2;
   s32 first;
 

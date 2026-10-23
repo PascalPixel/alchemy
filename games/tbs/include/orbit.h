@@ -9,8 +9,8 @@
 /// A floating Nut's sprite, seen as the attribute bits, palette and state its
 /// maps set.
 typedef struct OrbitingMapObjectSprite {
-  u8 padding00[5]; ///< AnimationObject's queue link and attribute 0's y
-  /// AnimationObject's attribute 0 high byte.
+  u8 padding00[5]; ///< Sprite's queue link and attribute 0's y
+  /// Sprite's attribute 0 high byte.
   /// bits: 7..6 shape | 5 full colour | 4 mosaic | 3..2 object mode |
   /// 1..0 affine
   ///@{
@@ -19,7 +19,7 @@ typedef struct OrbitingMapObjectSprite {
   u8 shape : 2;            ///< the maps leave it
   ///@}
   u8 padding06[3]; ///< attribute 1 and the low byte of attribute 2
-  /// AnimationObject's attribute 2 high byte.
+  /// Sprite's attribute 2 high byte.
   /// bits: 7..4 palette | 3..2 priority | 1..0 tile bits 9..8
   ///@{
   u8 tileHigh : 2;      ///< tile number bits 9..8; the maps leave them
@@ -27,11 +27,11 @@ typedef struct OrbitingMapObjectSprite {
   u8 paletteNumber : 4; ///< the Nut's maps set 0
   ///@}
   u8 padding0a[18];
-  /// AnimationObject's slot: the VRAM cache entry the Nut's icon is loaded
+  /// Sprite's slot: the VRAM cache entry the Nut's icon is loaded
   /// into.
   u8 palette;
   u8 padding1d[10];
-  u8 state; ///< AnimationObject's count of layers; the Nut's maps zero it
+  u8 state; ///< Sprite's count of layers; the Nut's maps zero it
 } OrbitingMapObjectSprite;
 
 /// A floating Nut's object event: its position, the spot it sways around and

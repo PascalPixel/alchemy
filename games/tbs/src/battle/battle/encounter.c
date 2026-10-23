@@ -83,7 +83,7 @@ s32 Battle_Run(s32 enemyGroup) {
   // XXX: what flag 0x169 marks; nothing in the source reads it by number,
   // so a reader through another name or a script would settle it.
   GameFlag_SetBitFar(0x169);
-  Render_ResetTransformState();
+  Transform_Reset();
 
   Dma_Fill32Cell(fill, 0, camera, sizeof(struct BattleCamera));
   Dma_Fill32Cell(fill, 0, battle, sizeof(struct BattleWork));
@@ -93,8 +93,8 @@ s32 Battle_Run(s32 enemyGroup) {
                                sizeof(struct BattleMessageWork));
   Dma_Fill32Cell(fill, 0, display, sizeof(struct BattleMessageWork));
   battle->background = FieldScript_GetSpecialValueFar();
-  AllocHeapSlotEwram(HEAP_SLOT_ANIMATION_SPRITES, 0xe00);
-  AllocHeapSlotEwram(HEAP_SLOT_ANIMATION_LAYERS, 0x600);
+  AllocHeapSlotEwram(HEAP_SLOT_SPRITES, 0xe00);
+  AllocHeapSlotEwram(HEAP_SLOT_SPRITE_ANIMS, 0x600);
   ObjectSystem_InitializeFar(OBJECT_SYSTEM_BATTLE);
   if (GameFlag_TestFar(FLAG_DJINN_LESSON) != 0)
     UiWork_InitializeFar(1);
@@ -227,7 +227,7 @@ s32 Battle_Run(s32 enemyGroup) {
 
     // Every unit's action for the round, in turn order.
     Iwram_ClearWords(battle->actions, sizeof(battle->actions));
-    Resource_ResetEntry(battle->arrowTiles);
+    VramCache_FreeEntry(battle->arrowTiles);
     if (GameFlag_TestFar(FLAG_AUTO_BATTLE) == 0) {
       // XXX: likely free-memory probes left from debugging, because no
       // caller here reads their results.
@@ -322,9 +322,9 @@ won:
     }
     Battle_AwardSpoils();
   }
-  Sound_PlaySongFar(AUDIO_CUE_FADE_BGM);
-  Fade_ToBlack(30);
-  Fade_Wait();
+  Sound_PlaySongFar(SONG_FADE_OUT_BGM);
+  ScreenFade_ToBlack(30);
+  ScreenFade_Wait();
   result = battle->spoils.defeated;
   goto finished;
 
@@ -351,16 +351,16 @@ party_lost:
   else
     BattleMessage_ShowAndWaitFar(MsgPartyDefeated);
   BattleMessage_WaitForAdvance();
-  Sound_PlaySongFar(AUDIO_CUE_FADE_BGM);
-  Fade_ToBlack(30);
+  Sound_PlaySongFar(SONG_FADE_OUT_BGM);
+  ScreenFade_ToBlack(30);
   result = BATTLE_OUTCOME_LOST;
-  Fade_Wait();
+  ScreenFade_Wait();
   goto finished;
 
 fled:
-  Sound_PlaySongFar(AUDIO_CUE_FADE_BGM);
-  Fade_ToBlack(30);
-  Fade_Wait();
+  Sound_PlaySongFar(SONG_FADE_OUT_BGM);
+  ScreenFade_ToBlack(30);
+  ScreenFade_Wait();
   result = BATTLE_OUTCOME_FLED;
 
 finished:

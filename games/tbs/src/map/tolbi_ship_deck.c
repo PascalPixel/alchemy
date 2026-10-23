@@ -2631,7 +2631,7 @@ static void TolbiShipDeck_AdvanceStroke(s32 localId, s32 slot) {
 /// oar's tilt (its sprite's rotation) and depth follow the angle.
 static void TolbiShipDeck_SwingOar(s32 id, s32 slot, s32 flags) {
   struct ObjectEvent *objectEvent = ObjectEvent_GetById(id);
-  struct AnimationObject *sprite = objectEvent->sprite;
+  struct Sprite *sprite = objectEvent->sprite;
   s32 sine;
 
   if ((flags & 2) == 0) {

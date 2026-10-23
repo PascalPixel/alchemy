@@ -81,18 +81,18 @@ struct MotionObject {
 };
 
 /// A sprite of an animation record, as battle objects set its palette and
-/// drawing priority: the start of an AnimationEntry.
+/// drawing priority: the start of an SpriteAnim.
 struct SpriteEntry {
-  /// AnimationEntry's animationId, timer and kind; not named through this
+  /// SpriteAnim's animationId, timer and kind; not named through this
   /// view.
   ///@{
   s16 animationId;
   u16 timer;
   u8 kind;
   ///@}
-  u8 palette; ///< AnimationEntry.colorMode, the SpriteColorMode;
+  u8 palette; ///< SpriteAnim.colorMode, the SpriteColorMode;
               ///< BattleObject.palette
-  /// AnimationEntry.priority: the body and weapon 1, the status icon 3, and
+  /// SpriteAnim.priority: the body and weapon 1, the status icon 3, and
   /// the effect sprite 0, or 9 to hide it while the unit is off the ground.
   u8 priority;
 };

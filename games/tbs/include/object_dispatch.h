@@ -42,8 +42,8 @@ struct DispatchObject {
   s32 riseBaseY;
   ///@}
   union {
-    struct AnimationObject *child; ///< OBJECT_SPRITE_ONE
-    void **children; ///< OBJECT_SPRITE_GROUP: four, empty ones null
+    struct Sprite *child; ///< OBJECT_SPRITE_ONE
+    void **children;      ///< OBJECT_SPRITE_GROUP: four, empty ones null
   } target;
   u8 kind;           ///< low four bits: an OBJECT_SPRITE_ kind
   u8 motionFlags;    ///< ObjectEvent's; not named here

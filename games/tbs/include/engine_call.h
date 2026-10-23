@@ -94,9 +94,9 @@ static inline s32 FieldResource_DecodeType01(const void *source,
   return Decompress_Type01(source, destination);
 }
 
-static inline void DisplayScroll_StartHBlankDma(s32 mode, s32 freqX, s32 stepX,
-                                                s32 ampX, s32 freqY, s32 stepY,
-                                                s32 ampY) {
+static inline void ScanlineEffect_StartWave(s32 mode, s32 freqX, s32 stepX,
+                                            s32 ampX, s32 freqY, s32 stepY,
+                                            s32 ampY) {
   Engine_DisplayScrollStartHBlankDma(mode, freqX, stepX, ampX, freqY, stepY,
                                      ampY);
 }

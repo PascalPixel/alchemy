@@ -122,7 +122,7 @@ void WaitFrames(s32 frames) {
     gTaskStatus = 1;
     Task_RunPass(TASK_PRIORITY_MAIN_LOOP);
     gTaskStatus = 0;
-    Render_BuildOamList(AllocHeapSlot(HEAP_SLOT_FRAME_SCRATCH, 0x400));
+    Oam_BuildBuffer(AllocHeapSlot(HEAP_SLOT_FRAME_SCRATCH, 0x400));
     gFrameRenderPending = 1;
     if (gCpuLoadDisplayEnabled) {
       // CPU load: the scanline the frame's work ended on, counted from the
@@ -197,7 +197,7 @@ void WaitFrames(s32 frames) {
     CAMELOT_ASM("Halt in VBlankIntrWait")
     VBlankIntrWait();
     FreeHeapSlot(HEAP_SLOT_FRAME_SCRATCH);
-    Render_ResetFrame();
+    Oam_ResetFrame();
     gFrameCount++;
     gPlayTimeFrames++;
     Input_UpdateKeyRepeatAndDirection();
@@ -389,8 +389,8 @@ void System_VBlankHandler(void) {
                                              gSerialPeerPayloads);
     SerialRuntime_StepBlockTransfer();
   }
-  MusicPlayer_StepVolumeAndPitchTowardTargetsFar();
-  Fade_Update();
+  Sound_UpdateBgmRampsFar();
+  ScreenFade_Update();
   if (gFrameRenderPending != 0) {
     if (gOamCopyEnabled != 0)
       Dma_Set(((union HeapState *)gHeapSlots)->slots[HEAP_SLOT_FRAME_SCRATCH],

@@ -10,7 +10,7 @@
 #include "static_assert.h"
 #include "types.h"
 
-struct AnimationObject;
+struct Sprite;
 
 /// Two adjacent affine background coordinates, queued together for BG2X/BG2Y.
 struct BattleCanvasOrigin {
@@ -87,7 +87,7 @@ struct BattleAnimWork {
   s32 fadeFrames; ///< backdrop fade frames left (Palette_StepFadeTransfer)
   s32 fadeStep;   ///< CANVAS_FADE_STEPs the backdrop has darkened so far
   /// Window, display and blend registers, which
-  /// Graphics_ApplyWindowBlendRegisters writes all at once.
+  /// BattleAnim_ApplyWindowBlendRegisters writes all at once.
   ///@{
   u16 win0h;
   u16 win0v;
@@ -106,7 +106,7 @@ struct BattleAnimWork {
   s32 bg2x;
   s32 bg2y;
   ///@}
-  struct AnimationObject *animations[16]; ///< the effect's animation objects
+  struct Sprite *animations[16]; ///< the effect's animation objects
   /// Each target's flash timer in frames, for effect->actors[n]: set by
   /// ObjectGroup_UpdateMembers, counted down by ObjectGroup_TickMemberTimers.
   u8 actorTimers[8];

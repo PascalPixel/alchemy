@@ -537,13 +537,13 @@ static void EventScript_NyunpaOffersTest(void) {
     WAIT(20);
     FieldCamera_SetSpeed(0x8000, 0x1000);
     Engine_CameraMoveToObjectEvent(LOCALID_NYUNPA, 1);
-    ColorBuffer_ApplySource(PALETTE_TRANSFORM_PLAIN, PALETTE_HALVES_BOTH);
-    ColorBuffer_ApplyTarget(PALETTE_TRANSFORM_WARM, PALETTE_HALF_BG);
+    PaletteFade_ApplySource(PALETTE_TINT_NONE, PALETTES_ALL);
+    PaletteFade_ApplyTarget(PALETTE_TINT_WARM, PALETTES_BG);
     Engine_ColorBufferInterpolate(30);
     Engine_ScriptWaitForScreen();
     Engine_CameraWaitForMove();
     FuchinTemple_SpawnNyunpasParticles();
-    ColorBuffer_ApplyTarget(PALETTE_TRANSFORM_PLAIN, PALETTE_HALVES_BOTH);
+    PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_ALL);
     Engine_ColorBufferInterpolate(30);
     Script_ShowMessage(LOCALID_NYUNPA, 0);
     Engine_ObjectEventRunRepeatedMotion(LOCALID_NYUNPA, 2);
@@ -871,7 +871,7 @@ static void FuchinTemple_StudentsSeeTreeFall(void) {
   tree->scaleX = 0xcccc;
   tree = ObjectEvent_GetById(LOCALID_TRAINING_TREE);
   {
-    struct AnimationObject *sprite = tree->sprite;
+    struct Sprite *sprite = tree->sprite;
     s32 rotation = 0x8000;
 
     sprite->rotation = rotation;
@@ -1187,7 +1187,7 @@ static void FuchinTemple_FeizhiLeavesForHsu(void) {
   objectEvent->scaleX = 0xcccc;
   objectEvent = ObjectEvent_Get(LOCALID_TRAINING_TREE);
   {
-    struct AnimationObject *sprite = objectEvent->sprite;
+    struct Sprite *sprite = objectEvent->sprite;
     s32 rotation = 0x8000;
 
     sprite->rotation = rotation;
@@ -1486,7 +1486,7 @@ static void FuchinTemple_FehSeesChi(void) {
   objectEvent->targetY = OBJ_EVENT_NO_TARGET;
   objectEvent = ObjectEvent_Get(LOCALID_TRAINING_TREE);
   {
-    struct AnimationObject *sprite = objectEvent->sprite;
+    struct Sprite *sprite = objectEvent->sprite;
     s32 rotation = 0x8000;
 
     sprite->rotation = rotation;
@@ -2547,9 +2547,9 @@ static void FuchinTemple_AnimateRevealLesson(void) {
   ObjectEvent_GetById(LOCALID_HAMA)->update =
       FuchinTemple_AlternateLessonChildEffect;
   WAIT(40);
-  Engine_ColorBufferApplySource(PALETTE_TRANSFORM_PLAIN, PALETTE_HALVES_BOTH);
-  Engine_ColorBufferApplyTarget(PALETTE_TRANSFORM_TINT | RGB(20, 2, 23),
-                                PALETTE_HALF_BG);
+  Engine_ColorBufferApplySource(PALETTE_TINT_NONE, PALETTES_ALL);
+  Engine_ColorBufferApplyTarget(PALETTE_TINT_CUSTOM | RGB(20, 2, 23),
+                                PALETTES_BG);
   Engine_ColorBufferInterpolate(60);
   WAIT(40);
   Engine_AudioPlayCue(SE_131);
@@ -2578,7 +2578,7 @@ static void FuchinTemple_AnimateRevealLesson(void) {
   Engine_AudioPlayCue(SE_220);
   WAIT(30);
   // Fade back and remove both hooks before the conversation resumes.
-  Engine_ColorBufferApplyTarget(PALETTE_TRANSFORM_PLAIN, PALETTE_HALF_BG);
+  Engine_ColorBufferApplyTarget(PALETTE_TINT_NONE, PALETTES_BG);
   Engine_ColorBufferInterpolate(60);
   WAIT(40);
   ObjectEvent_GetById(LOCALID_HAMA)->update = NULL;

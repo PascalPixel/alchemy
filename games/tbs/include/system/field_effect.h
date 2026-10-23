@@ -44,9 +44,9 @@ struct FieldEffect {
   /// Added to x, y and z each frame by the update hooks, in 16.16 fixed-point
   /// pixels per frame; ObjectEvent's bounce, gravity and riseBaseY.
   struct Vector3 velocity;
-  struct AnimationObject *sprite; ///< the sprite spin turns
-  u8 spriteStorageKind;           ///< ObjectEvent's; not named by this view
-  u8 motionFlags; ///< ObjectEventMotionFlag bits; zeroed by the spawner
+  struct Sprite *sprite; ///< the sprite spin turns
+  u8 spriteStorageKind;  ///< ObjectEvent's; not named by this view
+  u8 motionFlags;        ///< ObjectEventMotionFlag bits; zeroed by the spawner
   /// ObjectEvent's arrival axis, last flag test and snap flag; not named by
   /// this view.
   ///@{

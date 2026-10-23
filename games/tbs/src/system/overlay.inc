@@ -60,19 +60,19 @@
 	import Runtime_BumpFree, Sys_FreeFar
 	import Decompress_ByteLz, Decompress_ByteLzFar
 	import Decompress_Type01, Decompress_Type01Far
-	import Resource_ResetEntry, Resource_ResetEntryFar
+	import VramCache_FreeEntry, VramCache_FreeEntryFar
 	import VramCache_ReleaseVram, VramCache_ReleaseVramFar
 	import Engine_VramLoad, VramCache_LoadFar
-	import Resource_FindFreeEntry, Resource_FindFreeEntryFar
-	import AffineMatrix_BuildForEffect, AffineMatrix_BuildForEffectFar
-	import Runtime_PushSlotEntry, Runtime_PushSlotEntryFar
+	import VramCache_FindFreeEntry, VramCache_FindFreeEntryFar
+	import OamMatrix_AllocFromTransform, OamMatrix_AllocFromTransformFar
+	import Oam_AddSpriteAtDepth, Oam_AddSpriteAtDepthFar
 	import Window_LoadGraphics, Window_LoadGraphicsFar
 	import Engine_ResourceGetTableEntry, Resource_GetTableEntryFar
 	import Resource_GetTableEntry, Resource_GetTableEntryFar
 	import RuntimeDispatch_NoOpHook, RuntimeDispatch_NoOpHookFar
-	import Fade_ToBlack, Fade_ToBlackFar
-	import Engine_BlendSetDarkenTarget16, Fade_ToBlackFar
-	import Fade_Wait, Fade_WaitFar
+	import ScreenFade_ToBlack, ScreenFade_ToBlackFar
+	import Engine_BlendSetDarkenTarget16, ScreenFade_ToBlackFar
+	import ScreenFade_Wait, ScreenFade_WaitFar
 	import SerialRuntime_Initialize, SerialRuntime_InitializeFar
 	import SerialRuntime_PollAndTransfer, SerialRuntime_PollAndTransferFar
 	import IoWriteQueue_Store16, IoWriteQueue_Store16Far
@@ -84,10 +84,10 @@
 	import SerialRuntime_GetActiveTransfers, SerialRuntime_GetActiveTransfersFar
 	import Task_SetFlags, Task_SetFlagsFar
 @ Field bank (far_call/FIELD.S)
-	import AnimationObject_SelectAnimation, AnimationObject_SelectAnimationFar
-	import Object_InitializeMode, AnimationObject_SelectAnimationFar
-	import ResourceMetadata_Register, ResourceMetadata_RegisterFar
-	import ResourceMetadata_ClearRecord, ResourceMetadata_ClearRecordFar
+	import Sprite_StartAnim, Sprite_StartAnimFar
+	import Object_InitializeMode, Sprite_StartAnimFar
+	import Sprite_AddAnim, Sprite_AddAnimFar
+	import SpriteAnim_Clear, SpriteAnim_ClearFar
 	import ObjectEvent_SetMode, ObjectDispatch_SelectAnimationFar
 	import ObjectDispatch_SetAnimationSpeed, ObjectDispatch_SetAnimationSpeedFar
 	import Engine_ObjectSetScript, ObjectDispatch_InitializeFar
@@ -129,7 +129,7 @@
 	import WorldMap_LoadAreaGraphics, WorldMap_LoadAreaGraphicsFar
 	import Animation_ApplyChildValues, Animation_ApplyChildValuesFar
 	import Engine_ObjectSetPartPalettes, Animation_ApplyChildValuesFar
-	import ObjectGroup_SetChildValueUnlessFifteen, ObjectGroup_SetChildValueUnlessFifteenFar
+	import Sprite_SetAnimColorModes, Sprite_SetAnimColorModesFar
 	import Engine_MapGridSetShownLayers, MapGrid_SetShownLayersFar
 	import MapGrid_SetMetatileBehaviorAt, MapGrid_SetMetatileBehaviorAtFar
 @ Window bank (far_call/WINDOW.S)
@@ -178,8 +178,8 @@
 	import Save_ProcessSelectedFile, Save_ProcessSelectedFileFar
 	import Save_ScanRecordFlags, Save_ScanRecordFlagsFar
 	import NamingScreen_EditMemberName, NamingScreen_EditMemberNameFar
-	import DebugMenu_BrowseIcons, DebugMenu_BrowseIconsFar
-	import DebugMenu_BrowsePortraits, DebugMenu_BrowsePortraitsFar
+	import DebugBrowser_Icons, DebugBrowser_IconsFar
+	import DebugBrowser_Portraits, DebugBrowser_PortraitsFar
 	import WindowColor_Apply, WindowColor_ApplyFar
 	import YesNoMenu_Run, YesNoMenu_RunFar
 	import Menu_SelectCoinsOrMedals, Menu_SelectCoinsOrMedalsFar
@@ -341,14 +341,14 @@
 	import InitializeSparkleRecordBuffer, FieldEffect_InitializeSparklesFar
 	import Resource37c_FinalizeSetup, FieldEffect_InitializeSparklesFar
 	import ScreenTransition_InitializeBattleEffectState, ScreenTransition_InitializeBattleEffectStateFar
-	import Engine_ColorBufferApplyTarget, ColorBuffer_SetTargetFar
-	import Engine_ColorBufferApplySource, ColorBuffer_SetSourceFar
-	import Engine_ColorBufferInterpolate, ColorBuffer_StartInterpolationFar
+	import Engine_ColorBufferApplyTarget, PaletteFade_SetTargetFar
+	import Engine_ColorBufferApplySource, PaletteFade_SetSourceFar
+	import Engine_ColorBufferInterpolate, PaletteFade_StartInterpolationFar
 	import Engine_ScriptOpenScreen, FieldScript_StartScreenTransitionFar
 	import Engine_ScriptCloseScreen, FieldScript_FinishScreenTransitionFar
 	import Engine_ScriptWaitForScreen, FieldScript_WaitTransitionFramesFar
-	import Engine_DisplayScrollStartHBlankDma, DisplayScroll_InitializeHBlankDmaFar
-	import DisplayScroll_DisarmHBlankDma, DisplayScroll_DisarmHBlankDmaFar
+	import Engine_DisplayScrollStartHBlankDma, ScanlineEffect_InitWaveFar
+	import ScanlineEffect_Stop, ScanlineEffect_StopFar
 	import FieldEffect_PlayCueAndStartEmitterOnTarget, FieldEffect_PlayCueAndStartEmitterOnTargetFar
 	import Engine_FieldEffectPlayCueAndStartEmitterOnTarget, FieldEffect_PlayCueAndStartEmitterOnTargetFar
 	import Engine_ItemShowPicture, ItemDisplay_ShowPictureFar
@@ -375,7 +375,7 @@
 	import FieldEffect_StartMindReadWave, FieldEffect_StartMindReadWaveFar
 	import Engine_PsynergyCancel, FieldEffect_FinishWaveAndReleaseHeapBlockFar
 	import Ui_SetBank15PaletteAndClearRenderMode, Ui_SetBank15PaletteAndClearRenderModeFar
-	import Sprite_ShareVramCache, Sprite_ShareVramCacheFar
+	import Sprite_ShareVramCacheEntry, Sprite_ShareVramCacheEntryFar
 	import Party_AddPp, Party_AddPpFar
 	import FieldYesNo_Ask, FieldYesNo_AskFar
 	import Map_PlayMusic, Map_PlayMusicFar
@@ -423,20 +423,20 @@
 	import Shop_SaveAndTintFieldPalette, Shop_SaveAndTintFieldPaletteFar
 	import Shop_RestoreFieldPalette, Shop_RestoreFieldPaletteFar
 	import ItemPicker_Run, ItemPicker_RunFar
-	import AudioCommand_WaitForStateByteClear, AudioCommand_WaitForStateByteClearFar
+	import Sound_WaitForFanfare, Sound_WaitForFanfareFar
 	import Inn_PlaySleep, Inn_PlaySleepFar
 @ Battle bank (far_call/BATTLE.S)
 	import DjinnRecovery_TickTwenty, DjinnRecovery_TickTwentyFar
 	import DebugParty_LoadPreset, DebugParty_LoadPresetFar
 @ Scroll bank (far_call/SCROLL.S)
-	import CreditsFar_Entry00, DisplayScroll_RunSlideshowFar
+	import CreditsFar_Entry00, Credits_RunFar
 @ Palette bank (far_call/PALETTE.S)
 	import TitleFar_Entry00, Title_ShowIntroFar
-	import Title_ShowSplashScreen, Title_ShowSplashScreenFar
-	import TitleFar_Entry20, Title_ShowAnimatedSplashFar
+	import Title_ShowNintendoLogo, Title_ShowNintendoLogoFar
+	import TitleFar_Entry20, Title_ShowCamelotLogoFar
 @ Sound bank (far_call/SOUND.S)
 	import Engine_AudioPlayCue, Sound_PlaySongFar
-	import MusicCommand_SetPitchAndUpdateFrequency, MusicCommand_SetPitchAndUpdateFrequencyFar
-	import AudioCommand_GetStateByte, AudioCommand_GetStateByteFar
-	import AudioCommand_WaitForCompletion, AudioCommand_WaitForCompletionFar
+	import Sound_SetBgmTempo, Sound_SetBgmTempoFar
+	import Sound_GetBgmRestoreDelay, Sound_GetBgmRestoreDelayFar
+	import Sound_WaitForSong, Sound_WaitForSongFar
 	.endif

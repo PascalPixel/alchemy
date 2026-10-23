@@ -46,77 +46,77 @@ RESOURCE_DEFINE_DECODE(Decompress_ByteLz, Decompress_ByteLzArm,
 // can change: not all zero, or not all at the limit already.
 
 /// Raises every pixel by `amount`, stopping at 63.
-void ColorBuffer_BackupAndBrighten(u8 *buffer, u32 amount, u8 *backup,
+void PaletteFade_BackupAndBrighten(u8 *buffer, u32 amount, u8 *backup,
                                    u32 bytes) {
-  u32 words = (u32)ColorBuffer_BackupAndBrightenCodeSize >> 2;
+  u32 words = (u32)PaletteFade_BackupAndBrightenCodeSize >> 2;
   u32 routine[words];
-  Dma_Set(ColorBuffer_BrightenKernel, routine, DMA_COPY_WORDS(words), REG_DMA3);
+  Dma_Set(PaletteFade_BrightenKernel, routine, DMA_COPY_WORDS(words), REG_DMA3);
   ((void (*)(u8 *, u32, u8 *, u32))routine)(buffer, amount, backup, bytes);
 }
 
 /// Lowers every pixel by `amount`, stopping at 0.
-void ColorBuffer_BackupAndDarken(u8 *buffer, u32 amount, u8 *backup,
+void PaletteFade_BackupAndDarken(u8 *buffer, u32 amount, u8 *backup,
                                  u32 bytes) {
-  u32 words = (u32)ColorBuffer_BackupAndDarkenCodeSize >> 2;
+  u32 words = (u32)PaletteFade_BackupAndDarkenCodeSize >> 2;
   u32 routine[words];
-  Dma_Set(ColorBuffer_DarkenKernel, routine, DMA_COPY_WORDS(words), REG_DMA3);
+  Dma_Set(PaletteFade_DarkenKernel, routine, DMA_COPY_WORDS(words), REG_DMA3);
   ((void (*)(u8 *, u32, u8 *, u32))routine)(buffer, amount, backup, bytes);
 }
 
 /// Scales every pixel to three quarters.
-void ColorBuffer_BackupAndScaleThreeQuarters(u8 *buffer, u8 *backup,
+void PaletteFade_BackupAndScaleThreeQuarters(u8 *buffer, u8 *backup,
                                              u32 bytes) {
-  u32 words = (u32)ColorBuffer_BackupAndScaleThreeQuartersCodeSize >> 2;
+  u32 words = (u32)PaletteFade_BackupAndScaleThreeQuartersCodeSize >> 2;
   u32 routine[words];
-  Dma_Set(ColorBuffer_ScaleThreeQuartersKernel, routine, DMA_COPY_WORDS(words),
+  Dma_Set(PaletteFade_ScaleThreeQuartersKernel, routine, DMA_COPY_WORDS(words),
           REG_DMA3);
   ((void (*)(u8 *, u8 *, u32))routine)(buffer, backup, bytes);
 }
 
 /// Halves every pixel. Called by the battle effect canvas's transfers.
-void ColorBuffer_BackupAndHalve(u8 *buffer, u8 *backup, u32 bytes) {
-  u32 words = (u32)ColorBuffer_BackupAndHalveCodeSize >> 2;
+void PaletteFade_BackupAndHalve(u8 *buffer, u8 *backup, u32 bytes) {
+  u32 words = (u32)PaletteFade_BackupAndHalveCodeSize >> 2;
   u32 routine[words];
-  Dma_Set(ColorBuffer_HalveKernel, routine, DMA_COPY_WORDS(words), REG_DMA3);
+  Dma_Set(PaletteFade_HalveKernel, routine, DMA_COPY_WORDS(words), REG_DMA3);
   ((void (*)(u8 *, u8 *, u32))routine)(buffer, backup, bytes);
 }
 
-/// As ColorBuffer_BackupAndBrighten, skipping groups already all at 63.
-void ColorBuffer_BackupAndBrightenPartial(u8 *buffer, u32 amount, u8 *backup,
+/// As PaletteFade_BackupAndBrighten, skipping groups already all at 63.
+void PaletteFade_BackupAndBrightenPartial(u8 *buffer, u32 amount, u8 *backup,
                                           u32 bytes) {
-  u32 words = (u32)ColorBuffer_BackupAndBrightenPartialCodeSize >> 2;
+  u32 words = (u32)PaletteFade_BackupAndBrightenPartialCodeSize >> 2;
   u32 routine[words];
-  Dma_Set(ColorBuffer_BrightenPartialKernel, routine, DMA_COPY_WORDS(words),
+  Dma_Set(PaletteFade_BrightenPartialKernel, routine, DMA_COPY_WORDS(words),
           REG_DMA3);
   ((void (*)(u8 *, u32, u8 *, u32))routine)(buffer, amount, backup, bytes);
 }
 
-/// As ColorBuffer_BackupAndDarken, skipping groups already all at 0.
-void ColorBuffer_BackupAndDarkenPartial(u8 *buffer, u32 amount, u8 *backup,
+/// As PaletteFade_BackupAndDarken, skipping groups already all at 0.
+void PaletteFade_BackupAndDarkenPartial(u8 *buffer, u32 amount, u8 *backup,
                                         u32 bytes) {
-  u32 words = (u32)ColorBuffer_BackupAndDarkenPartialCodeSize >> 2;
+  u32 words = (u32)PaletteFade_BackupAndDarkenPartialCodeSize >> 2;
   u32 routine[words];
-  Dma_Set(ColorBuffer_DarkenPartialKernel, routine, DMA_COPY_WORDS(words),
+  Dma_Set(PaletteFade_DarkenPartialKernel, routine, DMA_COPY_WORDS(words),
           REG_DMA3);
   ((void (*)(u8 *, u32, u8 *, u32))routine)(buffer, amount, backup, bytes);
 }
 
 /// Scales every pixel to three quarters, skipping all-zero groups.
-void ColorBuffer_BackupAndScaleNonzeroThreeQuarters(u8 *buffer, u8 *backup,
+void PaletteFade_BackupAndScaleNonzeroThreeQuarters(u8 *buffer, u8 *backup,
                                                     u32 bytes) {
-  u32 words = (u32)ColorBuffer_BackupAndScaleNonzeroThreeQuartersCodeSize >> 2;
+  u32 words = (u32)PaletteFade_BackupAndScaleNonzeroThreeQuartersCodeSize >> 2;
   u32 routine[words];
-  Dma_Set(ColorBuffer_ScaleNonzeroThreeQuartersKernel, routine,
+  Dma_Set(PaletteFade_ScaleNonzeroThreeQuartersKernel, routine,
           DMA_COPY_WORDS(words), REG_DMA3);
   ((void (*)(u8 *, u8 *, u32))routine)(buffer, backup, bytes);
 }
 
 /// Halves every pixel, skipping all-zero groups. Called by the slot reels'
 /// canvas transfer.
-void ColorBuffer_BackupAndHalveNonzero(u8 *buffer, u8 *backup, u32 bytes) {
-  u32 words = (u32)ColorBuffer_BackupAndHalveNonzeroCodeSize >> 2;
+void PaletteFade_BackupAndHalveNonzero(u8 *buffer, u8 *backup, u32 bytes) {
+  u32 words = (u32)PaletteFade_BackupAndHalveNonzeroCodeSize >> 2;
   u32 routine[words];
-  Dma_Set(ColorBuffer_HalveNonzeroKernel, routine, DMA_COPY_WORDS(words),
+  Dma_Set(PaletteFade_HalveNonzeroKernel, routine, DMA_COPY_WORDS(words),
           REG_DMA3);
   ((void (*)(u8 *, u8 *, u32))routine)(buffer, backup, bytes);
 }

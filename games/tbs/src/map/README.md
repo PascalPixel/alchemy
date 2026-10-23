@@ -364,7 +364,7 @@ Each overlay is three objects in `games/tbs/objects.tsv`, linked in this order
 into the overlay area: `entry/<map>`, `<map>` and `import/<map>`; the
 rows' first column is the overlay's resource number. The map table,
 `gField_MapTable` in [`field/maps.s`](../field/maps.s), gives each
-map its overlay, map section, variant and layout, and names it `MapId_<Map>`;
+map its overlay, map section, map type and layout, and names it `MapId_<Map>`;
 several maps may share one overlay, and then share its file. A map overlay
 is never split into parts: its code is laid out by kind, entry points,
 then handlers, then tables, not by map.

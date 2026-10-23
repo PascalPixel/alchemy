@@ -1,10 +1,10 @@
-	.macro map_record name, code:req, area:req, kind:req, layout_index:req
+	.macro map_record name, code:req, mapsec:req, maptype:req, layout_index:req
 	.ifnb \name
 	.global MapId_\name
 	.equiv MapId_\name, (. - gField_MapTable) / 8
 	.endif
 	.2byte \code
-	.byte \area, \kind
+	.byte \mapsec, \maptype
 	.2byte \layout_index, 0
 	.endm
 

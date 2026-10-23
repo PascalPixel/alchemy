@@ -13,20 +13,19 @@
 struct MapGridCell;
 struct ObjectEvent;
 
-/// A map's row in gField_MapTable: its overlay's resource, its group
-/// (the map section it belongs to), a variant and its layout. One row per map
-/// number; field/maps.s writes them, and its MapId_ symbols are the row
-/// numbers.
+/// A map's row in gField_MapTable: its overlay's resource, its map section,
+/// its map type and its layout. One row per map number; field/maps.s writes
+/// them, and its MapId_ symbols are the row numbers.
 struct MapRecord {
   s16 resourceId; ///< the overlay Resource_LoadCode loads into gOverlayArea
-  /// The map section: entering a new group clears the FLAG_MAPSEC_TEMP_ flags
+  /// The map section: entering a new one clears the FLAG_MAPSEC_TEMP_ flags
   /// and the step counters and moves Retreat's destination;
-  /// FLAG_MAPSEC_VISITED(group) marks it visited (Map_ResetFlagsOnEnter).
-  s8 group;
+  /// FLAG_MAPSEC_VISITED(mapSec) marks it visited (Map_ResetFlagsOnEnter).
+  s8 mapSec;
   /// An enum MapType, copied to gGameState.mapType:
   /// MAP_TYPE_TOWN for towns and their interiors (53 rows: Vale,
   /// Bilibin, Kalay, Tolbi and others), MAP_TYPE_FIELD for the rest.
-  s8 variant;
+  s8 mapType;
   u16 layoutIndex; ///< the layout loaded for it, copied to gGameState.layoutId
   u16 reserved;    ///< 0 in every row; not read
 };

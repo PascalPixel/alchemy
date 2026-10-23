@@ -25,7 +25,7 @@ which scene comes next and where the party arrives. A battle or a minigame is
 a scene too: it runs, and then the game picks the scene to go back to, most
 often the place the battle started from, with everyone where they stood.
 
-`Game_Run`, in [object/scene.c](src/object/object/scene.c), is this loop of
+`Game_Run`, in [object/scene.c](src/object/object/map.c), is this loop of
 scenes, and it never returns. `System_Initialize` calls it at power-on
 with `GAME_RUN_TITLE`, which makes the title (`SceneId_Title`) the first
 scene; the debug start modes begin at Vale's gate or the clear screen
@@ -104,7 +104,7 @@ jump table at the start of the bank that holds it ([How the code is
 organised](#how-the-code-is-organised) explains banks); overlays never call
 each other, and code several scenes need is
 compiled into each of them from `scene/common/`.
-[Scenes](src/scene/README.md) describes the tables and how to find an event,
+[Scenes](src/map/README.md) describes the tables and how to find an event,
 and [Engine](engine.md#overlays) the overlay's two tables.
 
 The other half of a scene is its map: three background layers with the
@@ -125,7 +125,7 @@ the party stays inside. The two are chosen separately: the Bilibin
 Barricade runs on Bilibin's code but is a place of its own, and Bilibin's
 houses have their own code but are part of Bilibin.
 
-The scene table, `gField_SceneTable` in [field/scenes.s](src/field/scenes.s),
+The scene table, `gField_SceneTable` in [field/maps.s](src/field/maps.s),
 has a row for each of the 201 scenes, `struct SceneRecord`: the overlay's
 resource, the group, the variant and the map. Each row also defines the
 scene's id, `SceneId_<Place>`, as the row's position, so code names a scene
@@ -153,7 +153,7 @@ places at different points in the story.
 
 ![One way out, three destinations. The way down from Sol Sanctum's entrance has three rows in the exit table, read from the top. The first leads to Vale, and is taken until the sanctum erupts. The second leads to Vale during the eruption, and is taken until the party leaves Vale. The third leads to Vale, always. The first row whose condition still holds is taken, so the same path leads to Vale, then to Vale erupting, then to Vale again for the rest of the game.](https://alchemy.pascalpixel.com/illustrations/front/exits.svg)
 
-[scene_links.h](include/scene_links.h) names every way between scenes. Each
+[scene_links.h](include/map_warps.h) names every way between scenes. Each
 scene's entrances are named by where the party arrives from
 (`VALE_GATE_FROM_SANCTUM`) and its exits by where they lead
 (`VALE_GATE_TO_WORLD_MAP`), and a door is named the same from both sides.
@@ -227,11 +227,11 @@ The story is the order the flags are set in, and these scenes show the forms
 that dependence takes, in story order.
 
 - **One scene per point in the story.** The prologue's stormy night in Vale
-  is a scene of its own, [vale_storm.c](src/scene/vale_storm.c), on its own
+  is a scene of its own, [vale_storm.c](src/map/vale_storm.c), on its own
   map, and it sets `FLAG_VALE_STORM` when it starts. A place that changes
   completely gets a scene; a place whose people change reads the flags.
 - **One scene that reads the flags.** Vale's town gate,
-  [vale_gate.c](src/scene/vale_gate.c), is one scene for the whole game.
+  [vale_gate.c](src/map/vale_gate.c), is one scene for the whole game.
   `ValeGate_GetEvents` returns one of five event tables, tested in order:
   after `FLAG_KALAY_REACHED`, after `FLAG_VALE_PARTY_LEFT`, the farewell
   when the party arrives by `VALE_GATE_FROM_SANCTUM`, the storm while
@@ -239,18 +239,18 @@ that dependence takes, in story order.
   and placements are chosen the same way. The storm ends here: the battle
   against the two strangers returns to `VALE_GATE_AFTER_TRAVELERS_BATTLE`,
   which clears `FLAG_VALE_STORM` and leaves by `VALE_GATE_TO_TITLE`.
-- **A scene with no events.** [vale_eruption.c](src/scene/vale_eruption.c),
+- **A scene with no events.** [vale_eruption.c](src/map/vale_eruption.c),
   the ground before the sanctum while Mt. Aleph erupts, plays its whole
   sequence from its initialization on arrival and leaves by its one exit.
 - **A row that lasts until its flag is set.** In the Elemental Star room,
-  [sol_sanctum_elemental_star_room.c](src/scene/sol_sanctum_elemental_star_room.c),
+  [sol_sanctum_elemental_star_room.c](src/map/sol_sanctum_elemental_star_room.c),
   each pedestal's search row lasts until that star's flag is set, so each
   star is taken once.
 - **A flag set by an entrance.** The World Map's initialization sets
   `FLAG_VALE_PARTY_LEFT` the first time the party arrives by
   `WORLD_MAP_FROM_VALE_GATE`, and the gate's tables change from then on.
 - **One sequence cut into parts by entrances.**
-  [venus_lighthouse_aerie.c](src/scene/venus_lighthouse_aerie.c), the
+  [venus_lighthouse_aerie.c](src/map/venus_lighthouse_aerie.c), the
   Lighthouse Aerie, is one scripted sequence interrupted by two battles and
   two trips to the World Map. Each part starts in its initialization from
   the entrance the part before sent the party to; arriving at
@@ -258,16 +258,16 @@ that dependence takes, in story order.
   lighthouse transition and sends the party straight back to
   `VENUS_LIGHTHOUSE_AERIE_AFTER_BEACON_LIT`. Mercury Lighthouse uses the same
   transition from `WORLD_MAP_AFTER_MERCURY_LIGHTHOUSE_LIT`.
-- **The last scene.** [lemurian_ship.c](src/scene/lemurian_ship.c), at the
+- **The last scene.** [lemurian_ship.c](src/map/lemurian_ship.c), at the
   edge of Lalivero, ends the game by leaving for the title scene by
   `TITLE_FROM_LEMURIAN_SHIP` with `FLAG_KEEP_MUSIC` set.
 
-[Places](src/field/scenes.s) lists every scene in story order with what
+[Places](src/field/maps.s) lists every scene in story order with what
 happens there.
 
 ## The world map
 
-The World Map, [world_map.c](src/scene/world_map.c), is a scene like the
+The World Map, [world_map.c](src/map/world_map.c), is a scene like the
 others but drawn in perspective, on the two background layers the hardware
 can scale and rotate. The world is stored as a grid of squares, 512 pixels
 on a side, and only the 2 by 2 squares around the party are unpacked at a
@@ -322,7 +322,7 @@ and bank it goes in, and [Source](src/README.md) goes through every folder.
   the windows text is drawn in.
 - [Engine](engine.md): start-up, frame timing and tasks, banks and far
   calls, overlays and sound cues.
-- [Places](src/field/scenes.s): every scene in story order, with its
+- [Places](src/field/maps.s): every scene in story order, with its
   placements and events.
 - [Game rules](src/game/README.md): stats, items, Djinn, classes, levels and
   the flags.

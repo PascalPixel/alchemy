@@ -11,7 +11,7 @@
 /// `FieldScheduler_AddCallback(callback, TASK_PRIORITY_SCENE)` and the inline
 /// calls Scheduler_AddOrUpdateCallback, which resolves to the overlay's import
 /// stub. Main-image code calls the routines as ordinary functions; only the
-/// shared scene/common/scroll_initialize_hblank_dma.h, which
+/// shared map/common/scroll_initialize_hblank_dma.h, which
 /// object/psynergy_effects.c includes as lemurian_ship.c does, reaches the
 /// layer there. field_service.h includes this layer; rooms without the scene
 /// command layer use it directly.

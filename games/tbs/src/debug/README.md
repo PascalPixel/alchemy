@@ -6,7 +6,7 @@ The cartridge still holds three rooms the developers used to test the game,
 though no player can walk into them: one that hands out Djinn, one for
 raising levels and browsing items, icons and letters, and one of shop and
 message tests. Each is an ordinary scene overlay, built exactly as
-[Scenes](../scene/README.md) describes, with the same entry, import and event
+[Scenes](../map/README.md) describes, with the same entry, import and event
 tables, so they are the smallest complete examples of a scene in the game.
 
 ## How the rooms are reached
@@ -19,7 +19,7 @@ tester could open a menu that warps to any scene by number; that menu is
 still in the game, but it opens only in debug mode, and nothing the player
 can do turns debug mode on.
 
-Ten rows at the end of the scene table (`games/tbs/src/field/scenes.s`) run
+Ten rows at the end of the scene table (`games/tbs/src/field/maps.s`) run
 the rooms: `TestRoom0` to `TestRoom7` all run the Djinn room's overlay, each
 on its own map, and `IncreaseItemAndLevel` and `MenuTest` run the other two.
 The only way in is the debug scene selector, `Menu_RunSelection`

@@ -298,7 +298,7 @@ channel's old samples with the other's, and record 4 clears the mix buffer, so
 nothing carries over. Record 3 is the title's music and the ending's: `MUS_TITLE`
 over the title intro, `MUS_ENDING_LOGO` over the Golden Sun logo shown after the ending, and
 `MUS_ENDING` through the credits and as the Lemurian ship sails off
-(`menu/title.c`, `scene/lemurian_ship.c`). Record 4 is the link battle's.
+(`menu/title.c`, `map/lemurian_ship.c`). Record 4 is the link battle's.
 
 A library call is dropped only when it meets another that holds the lock, and
 library calls all run on the main thread, one after another, except from a

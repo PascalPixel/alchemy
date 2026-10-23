@@ -90,7 +90,7 @@ files.
 The 201 scenes of the scene table share 96 overlays, unpacked one at a time
 into the overlay area when a scene loads.
 
-![Bilibin's overlay is three files. The entry table, scene/entry/bilibin.s, comes first: six stubs the field code calls to start the scene and to get its entrances, exits, placements, events and exit regions. Then the place's own code and tables, scene/bilibin.c. Last the import table, scene/import/bilibin.s, which lists the main-image routines Bilibin's code calls, such as waiting a number of frames or setting a game flag, each reached through its far-call entry. The engine and the place meet only at these two tables.](https://alchemy.pascalpixel.com/illustrations/source/overlay-files.svg)
+![Bilibin's overlay is three files. The entry table, map/entry/bilibin.s, comes first: six stubs the field code calls to start the scene and to get its entrances, exits, placements, events and exit regions. Then the place's own code and tables, map/bilibin.c. Last the import table, map/import/bilibin.s, which lists the main-image routines Bilibin's code calls, such as waiting a number of frames or setting a game flag, each reached through its far-call entry. The engine and the place meet only at these two tables.](https://alchemy.pascalpixel.com/illustrations/source/overlay-files.svg)
 
 Each place's people, events and cutscenes are code that is needed only while
 the party is there, so it is kept apart from the main image as an overlay and
@@ -100,10 +100,10 @@ one place's code replacing another's). In the source an overlay is three
 files: a table the engine calls into, the place's own code, and a table of the
 engine's routines the place calls out to.
 
-The scene table, `gField_SceneTable` in [field/scenes.s](field/scenes.s),
+The scene table, `gField_SceneTable` in [field/maps.s](field/maps.s),
 has 201 scenes, and they share 96 overlays: 90 under `scene/`, three under
 `menu/` and three under `debug/`. `Scene_LoadOverlay`
-([object/object/scene.c](object/object/scene.c)) unpacks the overlay a
+([object/object/map.c](object/object/map.c)) unpacks the overlay a
 scene's row names before `Field_RunScene` runs it; a battle or a minigame is
 main-image code and loads none. [Engine](../engine.md) describes how an
 overlay meets the main image.
@@ -152,7 +152,7 @@ header beside it.
 | --- | --- |
 | `include/flags.h` | the game flags |
 | `include/songs.h` | the songs and sound effects |
-| `include/event.h` | the commands scenes are written in |
+| `include/script.h` | the commands scenes are written in |
 | `include/unit/<path>.h` | what the C file at `<path>.c` defines |
 | `include/farcall/` | each bank's `Far` names |
 
@@ -209,8 +209,8 @@ loading, scrolling and drawing the maps. [Running a place](object/README.md)
 runs one scene on that engine, from its set-up to the exit the party leaves
 by, with random encounters, field Psynergy and the commands scene scripts
 use; `Game_Run`, the loop that runs one scene after another, is there too.
-[Scenes](scene/README.md) holds the places, one overlay each: placements,
-events and cutscenes. [Maps](map/README.md) holds the maps themselves as
+[Scenes](map/README.md) holds the places, one overlay each: placements,
+events and cutscenes. [Maps](layout/README.md) holds the maps themselves as
 data.
 
 [Battles](battle/README.md) runs a fight: turn order, the enemies' choices,

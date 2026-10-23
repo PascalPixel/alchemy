@@ -121,7 +121,7 @@ void DisplayScroll_BuildAndSwapHBlankPage(void) {
 }
 
 // The shared source that starts the wavy background, at its place in the ROM.
-#include "../../scene/common/scroll_initialize_hblank_dma.h"
+#include "../../map/common/scroll_initialize_hblank_dma.h"
 
 /// Stops the wavy background: removes its two callbacks and stops DMA 0.
 void DisplayScroll_DisarmHBlankDma(void) {

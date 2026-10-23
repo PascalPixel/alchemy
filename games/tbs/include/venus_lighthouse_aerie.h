@@ -5,7 +5,7 @@
 /// The Lighthouse Aerie's actors; its entrances and exits are in
 /// scene_links.h.
 
-#include "field_scene.h"
+#include "map_tables.h"
 #include "types.h"
 
 /// The aerie's actors, in the order of its placements; Garet, Ivan, Mia and

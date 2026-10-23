@@ -3,7 +3,7 @@
 /// continue, copy and delete), the door to the Battle Arena and the transfer of
 /// a save's data, by link or as a password.
 
-#include "scene_ids.h"
+#include "map_ids.h"
 #include "unit/menu/clear.h"
 #include "unit/object/object.h"
 #include "unit/object/psynergy_effects.h"
@@ -27,15 +27,15 @@
 #include "tbs_edition.h"
 #include "text_font.h"
 #include "types.h"
-#include "scene.h"
+#include "field_offset.h"
 #include "dma.h"
 #include "ram_buffer.h"
-#include "field_event.h"
+#include "script_layer.h"
 #include "engine_call.h"
 #include "resource_ids.h"
 #include "io_write_queue.h"
 #include "io_reg.h"
-#include "field_scene.h"
+#include "map_tables.h"
 #include "serial_runtime.h"
 #include "mem.h"
 #include "window.h"
@@ -46,7 +46,7 @@
 #include "songs.h"
 #include "audio_engine_symbols.h"
 #include "frame.h"
-#include "map_scroll.h"
+#include "map_grid_scroll.h"
 #include "flags.h"
 #include "title.h"
 

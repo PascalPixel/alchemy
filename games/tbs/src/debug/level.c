@@ -17,7 +17,7 @@
 #include "system.h"
 #include "level.h"
 #include "field_service.h"
-#include "field_obj.h"
+#include "object_event.h"
 #include "party_state.h"
 #include "types.h"
 #include "io_reg.h"
@@ -29,8 +29,8 @@
 #include "uiflow.h"
 #include "text/msg_ids.h"
 #include "ability_ids.h"
-#include "field_scene.h"
-#include "fx_scene.h"
+#include "map_tables.h"
+#include "fx_work.h"
 #include "songs.h"
 
 // Edition-specific text and window layout values: outside Japanese the item

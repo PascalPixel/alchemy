@@ -37,7 +37,7 @@ enum BattleStart {
   BATTLE_START_NORMAL = 0,
   /// A battle the party cannot run from: a Mimic's (object/object/events.c)
   /// and the travelers' fight in Vale (ValeGate_FightTravelers,
-  /// scene/vale_gate.c).
+  /// map/vale_gate.c).
   BATTLE_START_NO_ESCAPE = 2,
   /// The battles a scene starts. Here and in a link battle the command menu
   /// itself refuses to run, with MsgNoTimeToRun ("This is no time to be

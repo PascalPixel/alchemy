@@ -2,7 +2,7 @@
 #define ALCHEMY_UNIT_MENU_LOBBY_H
 
 #include "types.h"
-#include "field_scene.h"
+#include "map_tables.h"
 
 extern const s32 gLinkLobby_SlotValues[];
 u8 *LinkLobby_GetEntrances(void);

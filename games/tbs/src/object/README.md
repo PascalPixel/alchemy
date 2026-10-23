@@ -17,7 +17,7 @@ The engine underneath, which moves everything and draws the maps, is
 everything that moves and the scripts they run, are described there under
 [everything that moves runs a
 script](../field/README.md#everything-that-moves-runs-a-script). What happens
-in each place comes from its own code in [Scenes](../scene/README.md).
+in each place comes from its own code in [Scenes](../map/README.md).
 [World](../../world.md) gives the whole layer in brief. The folder is named
 `object` after the bank of the program it fills, as each large bank's
 folder is.
@@ -38,7 +38,7 @@ takes an exit, the scene simply ends. Raising a flag that is already raised
 changes nothing, and a request an event raises waits until the event has
 finished, so a battle a cutscene asks for starts only after its last line.
 
-In the code, `Field_RunScene` ([`object/run_scene.c`](object/run_scene.c))
+In the code, `Field_RunScene` ([`object/run_map.c`](object/run_map.c))
 runs one scene. Before the loop it allocates the field work (`struct
 FieldWork`, the block of memory that holds the running scene's state: its
 actors, its event table and the requests below), loads the map,
@@ -343,7 +343,7 @@ name from a shorter distance (`WORLD_MAP_NAME_RANGE`). The edition block of
 
 ## How it fits with the rest of the game
 
-`Game_Run` (`object/scene.c`) is the game's main loop; [the front
+`Game_Run` (`object/map.c`) is the game's main loop; [the front
 page](../../README.md#the-main-loop) describes it. For a field scene it calls
 `Scene_ResetFlagsOnEnter`, loads the overlay (`Scene_LoadOverlay`) and runs
 `Field_RunScene`; for a battle or minigame it runs that and calls
@@ -401,13 +401,13 @@ Prototypes are in `games/tbs/include/unit/object/`.
 - **request**: a field of the field work that something sets to interrupt the
   walk (above).
 - **scene event**: a row of the scene's event table (`struct SceneEvent`); its
-  kind says what it answers. [Scenes](../scene/README.md#the-tables) gives the
+  kind says what it answers. [Scenes](../map/README.md#the-tables) gives the
   kinds.
 - **field kind**: what an ability does on the field, the `type` column of
   `games/tbs/src/game/actions.tsv`, named by `enum FieldKind`
   (`unit/object/psynergy_effects.h`), `FIELD_KIND_MOVE` (1) to
   `FIELD_KIND_AVOID` (16). Whirlwind and Gale share `FIELD_KIND_WHIRLWIND`.
-- **effect scene**: `struct FieldEffectScene` (`field/fx_scene.h`), the work of
+- **effect scene**: `struct FieldEffectScene` (`field/fx_work.h`), the work of
   the field effect playing: the ability, its field kind (`fieldKind`), its
   caster and target, and 24 effect slots. It is `HEAP_SLOT_EFFECT`, reached as
   `gEffectWork`. Local name `scene`.

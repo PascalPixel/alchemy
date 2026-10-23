@@ -49,7 +49,7 @@ extern char ResourceId_WorldMapPicture;
 extern char ResourceId_IntroTilesB;
 
 // Battle backdrops. Battle_SelectSceneBackdrop picks one for the current
-// scene from gBattle_BackdropScenes (object/scene_rules.s), and on the world
+// scene from gBattle_BackdropScenes (object/map_rules.s), and on the world
 // map Battle_SelectTerrainBackdrop picks one by terrain; either leaves it in
 // gGameState.special for the battle. The credits slideshow
 // (gDisplayScroll_SlideResources) shows every one but DesertBackdrop and

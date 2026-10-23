@@ -1,0 +1,51 @@
+/// @file
+/// Mercury Lighthouse and its entrance: leaving a floor through one of its
+/// sparkling passages.
+#include "types.h"
+#include "object_event.h"
+#include "script_layer.h"
+#include "songs.h"
+
+/// Touch a passage: the leader moves north with the trail of sparks, vanishes,
+/// and after half a second the screen fades and the party takes exit.
+static void MercuryLighthouse_LeaveThroughPassage(s32 exit) {
+  struct FieldActor *v = Object_GetById(ACTOR_PARTY_LEADER);
+  Engine_EventStart();
+  Engine_AudioPlayCue(SE_228);
+#ifdef UBFIX
+  v->update = MercuryLighthouse_TrailSparks;
+#else
+  v->update = (void (*)(union FieldObject *))MercuryLighthouse_TrailSparks;
+#endif
+  v->speed = PIXELS(1) / 5;
+  Engine_ActorSetAnimation(ACTOR_PARTY_LEADER, ANIMATION_WALK);
+  Engine_ActorSetDestinationOffset(ACTOR_PARTY_LEADER, 0, -6);
+  Engine_ActorWaitForMove(ACTOR_PARTY_LEADER);
+  Engine_ActorSetChildValue(ACTOR_PARTY_LEADER, 15);
+  Engine_ActorSetSpriteFlags(Object_GetById(ACTOR_PARTY_LEADER), 0);
+  v->update = 0;
+  Engine_EventWait(30);
+  Engine_EventCloseScreen();
+  Engine_EventWaitForScreen();
+  Engine_EventRequestExit(exit);
+  Engine_EventEnd();
+}
+
+/// Unused: the leader steps 8 pixels north with the passages' sound and
+/// vanishes, then is put at x 8 * column + 8, z 0, with no exit and no end to
+/// the event; nothing in either overlay calls it. XXX: likely an early form of
+/// LeaveThroughPassage, because it plays the same sound and steps the same way.
+static void UNUSED MercuryLighthouse_DropLeaderToColumn(s32 column) {
+  struct FieldActor *record;
+
+  Engine_EventStart();
+  Engine_AudioPlayCue(SE_228);
+  Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(2) / 5, PIXELS(1) / 5);
+  Engine_ActorSetSpritePriority(ACTOR_PARTY_LEADER, 2);
+  Engine_ActorSetDestinationOffset(ACTOR_PARTY_LEADER, 0, -8);
+  record = Actor_Get(ACTOR_PARTY_LEADER);
+  Engine_ActorSetSpriteFlags(record, 0);
+  Engine_EventWait(8);
+  Actor_SetPosition(ACTOR_PARTY_LEADER, ((column << 19) + PIXELS(8)), 0);
+  Engine_EventWait(30);
+}

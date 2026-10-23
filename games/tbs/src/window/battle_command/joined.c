@@ -29,7 +29,7 @@
 
 /// The Colosso choice of what to do: "Descriptions", "Cheer" or "Nothing",
 /// chosen with a pointing hand. Returns the choice (0-2), or -1 when
-/// cancelled with B. The Colosso scenes ask it (scene/common/colosso_solo.h).
+/// cancelled with B. The Colosso scenes ask it (map/common/colosso_solo.h).
 /// It takes a VRAM slot for the hand and frees it before returning.
 s32 PartyTalkMenu_Choose(s32 unused) {
   struct UiWindow *window;
@@ -187,7 +187,7 @@ s32 Party_LookupCharacterValueByFlag32(u32 index) {
 /// Shows that a member joined the party while the join fanfare (sound 81)
 /// plays, until it ends or A, B, L or R is pressed. The message is
 /// `<member> joined your party.`, with the member's portrait. The field's
-/// party events reach it by far call (object/psynergy_effects/events.c).
+/// party events reach it by far call (object/psynergy_effects/script.c).
 void Party_ShowJoinedMessage(s32 member) {
   struct UiRenderWork *work = (struct UiRenderWork *)*gWindowWork;
   struct UiWindow *window = NULL;

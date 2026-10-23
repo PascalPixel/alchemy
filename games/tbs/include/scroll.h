@@ -4,7 +4,7 @@
 /// @file
 /// The display scroll work, the HBlank scroll work and its wave.
 
-#include "map_scroll.h"
+#include "map_grid_scroll.h"
 #include "static_assert.h"
 
 /// The wavy background's work: two pages of BG1 to BG3 scroll offsets for each

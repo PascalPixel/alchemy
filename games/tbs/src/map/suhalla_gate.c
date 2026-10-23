@@ -1,0 +1,701 @@
+/// @file
+/// Suhalla Gate and Gateway Cave, the pass Babi's soldiers guard on the way
+/// from the Suhalla Desert to Babi Lighthouse. Three scenes share this overlay,
+/// in the order the pass is crossed:
+///
+/// - SuhallaGateCheckpoint (SceneId_SuhallaGateCheckpoint, area name Suhalla
+///   Gate): the gate itself, entered from the world map from the south and
+///   from the east, each into its own part of the map, with the house beside
+///   it (Gate to Suhalla, lunpa_suhalla.c). Two soldiers keep the passage
+///   north.
+/// - SuhallaGateDew (SceneId_SuhallaGateDew, area name Suhalla Gate): beyond
+///   the passage, in a west part and an east part, with Dew, a Mercury
+///   Djinni, and a chest.
+/// - Gateway Cave (SceneId_GatewayCave, area name Gateway Cave): two caves
+///   out onto the world map, with a Psynergy Stone.
+///
+/// One exit table serves the three scenes; the other getters choose by
+/// gGameState.scene, and SuhallaGateCheckpoint's placements also by
+/// FLAG_BABI_SPOKE_AFTER_COLOSSO. Its event table answers any scene not
+/// otherwise named.
+///
+/// Before Babi's audience after Colosso the guards turn the party away for
+/// want of travel papers, and touch cell 10 before the passage brings them
+/// together in front of it (Event_GuardsBlockPassage). After it they lie
+/// wounded, a third soldier lies east of the gate, and Iodem, who travels with
+/// the party, has an actor out of sight: touch cell 10 then plays
+/// Event_IodemQuestionsGuards once (FLAG_SUHALLA_GATE_ATTACK_SEEN), after
+/// which a defeat returns the party to the house beside the gate. The third
+/// soldier, talked to or read, warns of the attack on Venus Lighthouse and
+/// vanishes for good (Event_SoldierVanishes,
+/// FLAG_SUHALLA_GATE_SOLDIER_VANISHED).
+///
+/// Scene_Initialize remembers which side of the gate the party came in by
+/// (FLAG_SUHALLA_GATE_ENTERED_FROM_SOUTH, FLAG_SUHALLA_GATE_ENTERED_FROM_EAST),
+/// so that Retreat from the house leads back out that way, and leaving for the
+/// world map forgets it. From TBS_PATCH_3 on, the editions lay the wounded
+/// soldiers out without collision and patch the gate's cells around them, and
+/// Retreat always leads back to SuhallaGateCheckpoint. Gateway Cave's
+/// Psynergy Stone is kept in a place flag (FLAG_PLACE_TEMP_50), so it is back
+/// whenever the party returns from another place.
+///
+/// Open questions: none.
+
+#include "game_state.h"
+#include "version.h"
+#include "unit/map/suhalla_gate.h"
+#include "unit/object/object.h"
+#include "unit/object/psynergy_effects.h"
+#include "battle.h"
+#include "debug.h"
+#include "field.h"
+#include "game.h"
+#include "graphics.h"
+#include "menu.h"
+#include "minigame.h"
+#include "sound.h"
+#include "system.h"
+#include "suhalla_gate.h"
+#include "map_tables.h"
+#include "djinn_ids.h"
+#include "types.h"
+#include "script_layer.h"
+#include "map_ids.h"
+#include "text/msg_ids.h"
+#include "ability_ids.h"
+#include "objcmd.h"
+#include "flags.h"
+#include "songs.h"
+#include "item_ids.h"
+#include "fixed_math.h"
+
+#if TBS_PATCH_3
+#define SUHALLA_GATE_RETREAT_SCENE(currentScene)                               \
+  ((s32)&SceneId_SuhallaGateCheckpoint)
+#else
+#define SUHALLA_GATE_RETREAT_SCENE(currentScene) (currentScene)
+#endif
+
+/// The actors of the gate itself (SuhallaGateCheckpoint), numbered in the order
+/// of gSuhallaGateCheckpointPlacements and, after Babi's audience, of
+/// gSuhallaGateCheckpointPlacementsAfterAudience.
+enum SuhallaGateCheckpointActor {
+  /// The two of Babi's soldiers who keep the passage north, standing before
+  /// Babi's audience and lying wounded after it.
+  /// ★ Named from the game: "Only those with travel papers may pass through."
+  /// (MsgSuhallaTravelPapersRequired)
+  ACTOR_WEST_GUARD = ACTOR_FIRST_PLACED,
+  /// Asks whether the party wants to go to Babi Lighthouse.
+  /// ★ Named from the game: "Only those with travel papers may pass through."
+  /// (MsgSuhallaTravelPapersRequired)
+  ACTOR_EAST_GUARD,
+  /// After Babi's audience, the soldier east of the gate who tells of the
+  /// attack on Venus Lighthouse and vanishes.
+  /// ★ Named from what the player sees: a wounded soldier lying east of the
+  /// gate, who flickers and vanishes (its render)
+  ACTOR_VANISHING_SOLDIER,
+  /// After Babi's audience, out of sight until Event_IodemQuestionsGuards
+  /// brings him out of the party.
+  /// ★ Named from the game: "Iodem..." (MsgSuhallaIodem)
+  ACTOR_IODEM
+};
+
+/// The actors of the second scene (SuhallaGateDew), numbered in the order of
+/// gSuhallaGateDewPlacements.
+enum SuhallaGateDewActor {
+  /// Five sprouts (SPRITE_SPROUT, the sprout Growth grows in Suhalla), each
+  /// drawn in the frame Scene_Initialize gives it.
+  /// ★ Named from what the player sees: small green sprouts on the grassy
+  /// ledges (its render)
+  ACTOR_FIRST_SPROUT = ACTOR_FIRST_PLACED,
+  /// A Mercury Djinni.
+  /// ★ Named from the game: "Dew" (MsgDjinnName)
+  ACTOR_DEW = ACTOR_FIRST_SPROUT + 5
+};
+
+/// SPRITE_SPROUT's animations as the sprouts here stand: half grown or fully
+/// grown (spr_238's frames 3 and 6).
+enum { SPROUT_ANIMATION_HALF_GROWN = 3, SPROUT_ANIMATION_GROWN = 4 };
+
+/// Suhalla Gate's second scene (SceneId_SuhallaGateDew): talking to Dew, a
+/// Mercury Djinni, starts its battle.
+static void Event_FightDjinni(void) {
+  Field_RequestDjinnBattle(ACTOR_DEW, DJINNI_DEW);
+}
+
+const struct SceneEntrance *Scene_GetEntrances(void) {
+  s16 scene = gGameState.scene;
+
+  if (scene == (s32)&SceneId_SuhallaGateDew) {
+    return gSuhallaGateDewEntrances;
+  }
+  if (scene == (s32)&SceneId_GatewayCave) {
+    return gGatewayCaveEntrances;
+  }
+  return gSuhallaGateEntrancesOther;
+}
+
+const struct SceneRegion *Scene_GetRegions(void) { return NULL; }
+
+const u32 *Scene_GetExits(void) { return gSuhallaGateExits; }
+
+/// Suhalla Gate's guards, standing or, after Babi's audience, lying wounded
+/// beside the vanishing soldier and Iodem; Dew and the second scene's sprouts.
+const struct ScenePlacement *Scene_GetPlacements(void) {
+  s16 scene = gGameState.scene;
+
+  if (scene == (s32)&SceneId_SuhallaGateDew) {
+    return gSuhallaGateDewPlacements;
+  }
+  if (scene == (s32)&SceneId_SuhallaGateCheckpoint) {
+    if (Engine_GameFlagIsSet(FLAG_BABI_SPOKE_AFTER_COLOSSO) != 0) {
+      return gSuhallaGateCheckpointPlacementsAfterAudience;
+    }
+    return gSuhallaGateCheckpointPlacements;
+  }
+  return gSuhallaGatePlacementsOther;
+}
+
+/// The events of Suhalla Gate's second scene (SceneId_SuhallaGateDew), of
+/// Gateway Cave (SceneId_GatewayCave), or of the gate itself
+/// (SceneId_SuhallaGateCheckpoint) for any other scene.
+const struct SceneEvent *Scene_GetEvents(void) {
+  s16 scene = gGameState.scene;
+
+  if (scene == (s32)&SceneId_SuhallaGateDew) {
+    return gSuhallaGateDewEvents;
+  }
+  if (scene == (s32)&SceneId_GatewayCave) {
+    return gGatewayCaveEvents;
+  }
+  return gSuhallaGateEventsOther;
+}
+
+/// Sets up whichever of the pass's scenes is entered. Once Iodem has
+/// questioned the guards, a defeat returns the party to the house beside the
+/// gate. In Suhalla Gate (SceneId_SuhallaGateCheckpoint) the vanished soldier
+/// stays hidden, the side the party came in by is remembered for Retreat, and
+/// arriving from the south before Babi's audience changes cells by the passage;
+/// the Spanish, French and Italian editions also change cells around the
+/// wounded guards. In the second scene (SceneId_SuhallaGateDew) the five
+/// sprouts take their frames and one cell changes; its stretch of actor 15
+/// does nothing, as the comment at it says.
+s32 Scene_Initialize(void) {
+  s32 scene;
+
+  if (Engine_GameFlagIsSet(FLAG_SUHALLA_GATE_ATTACK_SEEN)) {
+    gGameState.savedScene = (s32)&SceneId_LunpaSuhalla;
+    gGameState.savedEntrance = LUNPA_SUHALLA_FROM_SUHALLA_GATE_CHECKPOINT;
+  }
+  scene = gGameState.scene;
+  if (scene == (s32)&SceneId_SuhallaGateCheckpoint) {
+    if (Engine_GameFlagIsSet(FLAG_SUHALLA_GATE_SOLDIER_VANISHED))
+      Engine_ActorSetPosition(ACTOR_VANISHING_SOLDIER, 0, 0);
+#if TBS_PATCH_3
+    else if (Engine_GameFlagIsSet(FLAG_BABI_SPOKE_AFTER_COLOSSO))
+      Map_CopyCellAttributes(0, 0, 2, 1, 29, 18);
+    if (Engine_GameFlagIsSet(FLAG_BABI_SPOKE_AFTER_COLOSSO)) {
+      Map_CopyCellAttributes(0, 0, 2, 1, 8, 25);
+      Map_CopyCellAttributes(0, 0, 2, 1, 9, 26);
+    }
+#endif
+    // Out of the house, Retreat leads back to the side the party came in by,
+    // and the place's name is not shown again.
+    if (gGameState.entrance == SUHALLA_GATE_CHECKPOINT_FROM_LUNPA_SUHALLA) {
+      if (Engine_GameFlagIsSet(FLAG_SUHALLA_GATE_ENTERED_FROM_SOUTH)) {
+        gGameState.retreatScene = SUHALLA_GATE_RETREAT_SCENE(scene);
+        gGameState.retreatEntrance =
+            SUHALLA_GATE_CHECKPOINT_FROM_WORLD_MAP_SOUTH;
+      }
+      if (Engine_GameFlagIsSet(FLAG_SUHALLA_GATE_ENTERED_FROM_EAST)) {
+        gGameState.retreatScene = SUHALLA_GATE_RETREAT_SCENE(scene);
+        gGameState.retreatEntrance =
+            SUHALLA_GATE_CHECKPOINT_FROM_WORLD_MAP_EAST;
+      }
+      Engine_GameFlagClear(FLAG_SHOW_LOCATION_NAME);
+    }
+    if (gGameState.entrance == SUHALLA_GATE_CHECKPOINT_FROM_WORLD_MAP_SOUTH) {
+      Engine_GameFlagSet(FLAG_SUHALLA_GATE_ENTERED_FROM_SOUTH);
+      if (!Engine_GameFlagIsSet(FLAG_BABI_SPOKE_AFTER_COLOSSO))
+        Map_CopyCellAttributes(6, 0, 2, 1, 8, 27);
+    }
+    if (gGameState.entrance == SUHALLA_GATE_CHECKPOINT_FROM_WORLD_MAP_EAST)
+      Engine_GameFlagSet(FLAG_SUHALLA_GATE_ENTERED_FROM_EAST);
+  } else if (scene == (s32)&SceneId_SuhallaGateDew) {
+    Engine_ActorSetAnimation(ACTOR_FIRST_SPROUT, SPROUT_ANIMATION_GROWN);
+    Engine_ActorSetAnimation(ACTOR_FIRST_SPROUT + 1, SPROUT_ANIMATION_GROWN);
+    Engine_ActorSetAnimation(ACTOR_FIRST_SPROUT + 2,
+                             SPROUT_ANIMATION_HALF_GROWN);
+    Engine_ActorSetAnimation(ACTOR_FIRST_SPROUT + 3, SPROUT_ANIMATION_GROWN);
+    Engine_ActorSetAnimation(ACTOR_FIRST_SPROUT + 4,
+                             SPROUT_ANIMATION_HALF_GROWN);
+    // UB: the scene places only actors up to ACTOR_DEW, so there is no actor
+    // 15 and Object_GetById returns NULL (watched in tbs-en as the scene
+    // loads from each of its entrances); the store goes to the BIOS, which
+    // ignores it.
+#ifndef UBFIX
+    Object_GetById(15)->scaleY = 8 * Q16_ONE / 5;
+#endif
+    Map_CopyCellAttributes(108, 38, 1, 1, 102, 56);
+  }
+  return 0;
+}
+
+/// In Suhalla Gate (SceneId_SuhallaGateCheckpoint), walking north into the door
+/// of the house beside it: the door opens in two frames and the leader steps
+/// into Gate to Suhalla.
+static void Event_EnterHouse(void) {
+  s32 exitTrigger;
+  s32 cellSize;
+
+  exitTrigger = gEventWork->touchedTrigger;
+  Actor_Get(ACTOR_PARTY_LEADER)->motionFlags = 0;
+  cellSize = 2;
+  Event_PlayCue(SE_DOOR_OPEN);
+  Map_CopyCellsTo(66, 36, 71, 8, cellSize, cellSize);
+  Engine_TaskWait(4);
+  Map_CopyCellsTo(68, 36, 71, 8, cellSize, cellSize);
+  Engine_TaskWait(4);
+  Actor_CenterAndWalk(ACTOR_PARTY_LEADER, 3, -16);
+  Engine_EventRequestExit(exitTrigger);
+}
+
+/// The party leaves the checkpoint for the world map. In SuhallaGateCheckpoint
+/// it leaves by the south way out (SUHALLA_GATE_CHECKPOINT_TO_WORLD_MAP_SOUTH)
+/// or the east one (SUHALLA_GATE_CHECKPOINT_TO_WORLD_MAP_EAST), forgetting the
+/// side it came in by.
+static void Event_LeaveForWorldMap(void) {
+  s16 exitTrigger = gEventWork->touchedTrigger;
+
+  Engine_AudioPlayCue(SE_MAP_EXIT);
+  Engine_GameFlagClear(FLAG_SUHALLA_GATE_ENTERED_FROM_SOUTH);
+  Engine_GameFlagClear(FLAG_SUHALLA_GATE_ENTERED_FROM_EAST);
+  Engine_EventRequestExit(exitTrigger);
+}
+
+/// In Suhalla Gate (SceneId_SuhallaGateCheckpoint) before Babi's audience, each
+/// time the party nears the passage north (cell code 10): the two guards step
+/// together in front of it, and the map cells around them change.
+static void Event_GuardsBlockPassage(void) {
+  Engine_EventStart();
+  Actor_SetSpeed(ACTOR_WEST_GUARD, PIXELS(1), PIXELS(1) / 2);
+  Actor_SetSpeed(ACTOR_EAST_GUARD, PIXELS(1), PIXELS(1) / 2);
+  Actor_WalkTo(ACTOR_WEST_GUARD, 136, 384);
+  Actor_WalkToAndWait(ACTOR_EAST_GUARD, 152, 384);
+  Actor_FaceDirection(ACTOR_WEST_GUARD, FACING_SOUTH, 0);
+  Actor_FaceDirection(ACTOR_EAST_GUARD, FACING_SOUTH, 0);
+  Engine_ActorSetAnimation(ACTOR_WEST_GUARD, ANIMATION_STAND);
+  Map_CopyCellAttributes(6, 27, 1, 1, 7, 27);
+#if TBS_PATCH_3
+  Map_CopyCellAttributes(11, 26, 1, 1, 7, 26);
+  Map_CopyCellAttributes(11, 26, 1, 1, 8, 26);
+#else
+  Map_CopyCellAttributes(9, 26, 2, 1, 7, 26);
+#endif
+  Engine_EventEnd();
+}
+
+/// In Suhalla Gate (SceneId_SuhallaGateCheckpoint) after Babi's audience, on
+/// reaching the passage (cell code 10), once: Iodem steps out of the party and
+/// demands to know what happened. "What is the meaning of this!?" The wounded
+/// guards tell of a strange group without papers whose strange powers beat
+/// them; Iodem asks whether it was Felix, the party's foe, and the guards send
+/// the party on after the attackers, toward Babi Lighthouse. Iodem rejoins the
+/// party. Sets FLAG_SUHALLA_GATE_ATTACK_SEEN.
+static void Event_IodemQuestionsGuards(void) {
+  struct FieldActor *leader;
+#if !TBS_PATCH_3
+  s32 destinationColumn;
+#endif
+
+  Engine_EventStart();
+  Actor_SetSpeed(ACTOR_PARTY_LEADER, PIXELS(8) / 5, PIXELS(4) / 5);
+  Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 120, 438);
+  Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
+  leader = Actor_Get(ACTOR_PARTY_LEADER);
+  if (leader != 0) {
+    Actor_SetPosition(ACTOR_IODEM, leader->x.fixed, leader->z.fixed);
+  }
+  Engine_TaskWait(1);
+  Actor_SetSpeed(ACTOR_IODEM, PIXELS(8) / 5, PIXELS(4) / 5);
+  Actor_WalkToAndWait(ACTOR_IODEM, 108, 431);
+  Actor_FaceDirection(ACTOR_IODEM, FACING_NORTH + FACING_STEP, 10);
+  Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
+  Actor_FaceDirection(ACTOR_IODEM, FACING_NORTH + FACING_STEP, 20);
+  Actor_FaceDirection(ACTOR_IODEM, FACING_EAST, 40);
+  Actor_FaceDirection(ACTOR_IODEM, FACING_NORTH + FACING_STEP, 40);
+  Actor_FaceDirection(ACTOR_IODEM, FACING_EAST, 20);
+  Engine_ActorStartRepeatedMotion(ACTOR_IODEM, 2);
+  Engine_EventSetMessage(MsgSuhallaMeaning);
+  Event_ShowMessageAndWait(ACTOR_IODEM, 0, 40);
+  // The guards describe the attack before Iodem asks who was responsible.
+  Actor_ShowEmote(ACTOR_WEST_GUARD, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+  Engine_ActorRunRepeatedMotion(ACTOR_WEST_GUARD, 2);
+  Event_ShowMessageAndWait(ACTOR_WEST_GUARD, 0, 10);
+  Actor_WalkToAndWait(ACTOR_IODEM, 132, 420);
+  Actor_FaceDirection(ACTOR_IODEM, FACING_NORTH + FACING_STEP, 0);
+  Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTHEAST, 0);
+  Actor_WalkToAndWait(ACTOR_IODEM, 138, 416);
+  Actor_FaceDirection(ACTOR_IODEM, FACING_NORTHWEST + FACING_STEP, 10);
+  Engine_ActorStartRepeatedMotion(ACTOR_IODEM, 2);
+  Event_ShowMessageAndWait(ACTOR_IODEM, 0, 40);
+  Engine_ActorRunRepeatedMotion(ACTOR_WEST_GUARD, 2);
+  Event_ShowMessageAndWait(ACTOR_WEST_GUARD, 0, 40);
+  Actor_ShowEmote(ACTOR_EAST_GUARD, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
+  Engine_ActorRunRepeatedMotion(ACTOR_EAST_GUARD, 2);
+  Event_ShowMessageAndWait(ACTOR_EAST_GUARD, 0, 20);
+  Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
+  Actor_WalkToAndWait(ACTOR_IODEM, 144, 420);
+  Engine_EventWait(20);
+  Engine_ActorRunRepeatedMotion(ACTOR_EAST_GUARD, 2);
+  Event_ShowMessageAndWait(ACTOR_EAST_GUARD, 0, 20);
+  Actor_SetAttachedEffect(ACTOR_EAST_GUARD,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+  Engine_ActorStartRepeatedMotion(ACTOR_EAST_GUARD, 3);
+  Event_ShowMessageAndWait(ACTOR_EAST_GUARD, 0, 20);
+  Actor_FaceDirection(ACTOR_IODEM, FACING_SOUTH + FACING_STEP, 20);
+  // Iodem: "It must have been Felix!", and the party answers yes or no. Once he
+  // has heard the wounded soldiers in Suhalla he adds that they must find
+  // Sheba, then track down the monsters that did this.
+  Event_AskYesNo(ACTOR_IODEM, 0);
+  if (GameFlag_IsSet(FLAG_IODEM_MET_WOUNDED_SOLDIERS) != 0) {
+    Actor_FaceDirection(ACTOR_IODEM, FACING_NORTH + FACING_STEP, 40);
+    Actor_SetAttachedEffect(ACTOR_IODEM,
+                            ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+    Engine_EventWait(40);
+    Event_ShowMessageAndWait(ACTOR_IODEM, 0, 10);
+  } else {
+    gEventWork->message += 1;
+  }
+  Actor_FaceDirection(ACTOR_IODEM, FACING_SOUTH + FACING_STEP, 10);
+  Event_ShowMessageAndWait(ACTOR_IODEM, 0, 40);
+  Actor_ShowEmote(ACTOR_IODEM, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
+  Actor_FaceDirection(ACTOR_IODEM, FACING_NORTHWEST + FACING_STEP, 10);
+  Event_ShowMessageAndWait(ACTOR_IODEM, 0, 10);
+  Actor_WalkToAndWait(ACTOR_IODEM, 138, 416);
+  Actor_FaceDirection(ACTOR_IODEM, FACING_NORTHWEST + FACING_STEP, 20);
+  Engine_ActorStartRepeatedMotion(ACTOR_WEST_GUARD, 2);
+  Event_ShowMessageAndWait(ACTOR_WEST_GUARD, 0, 10);
+  Actor_SetAttachedEffect(ACTOR_IODEM,
+                          ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+  Engine_ActorRunRepeatedMotion(ACTOR_IODEM, 1);
+  Engine_EventWait(20);
+  Event_ShowMessageAndWait(ACTOR_IODEM, 0, 20);
+  Engine_ActorRunRepeatedMotion(ACTOR_EAST_GUARD, 2);
+  Engine_EventWait(20);
+  Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTHEAST, 10);
+  Engine_ActorRunRepeatedMotion(ACTOR_EAST_GUARD, 1);
+  Engine_EventWait(20);
+  Event_ShowMessageAndWait(ACTOR_EAST_GUARD, 0, 10);
+  Engine_ActorRunRepeatedMotion(ACTOR_WEST_GUARD, 2);
+  Event_ShowMessageAndWait(ACTOR_WEST_GUARD, 0, 20);
+  Engine_ActorRunRepeatedMotion(ACTOR_IODEM, 1);
+  Engine_EventWait(20);
+  Event_ShowMessageAndWait(ACTOR_IODEM, 0, 20);
+  Actor_FaceDirection(ACTOR_IODEM, FACING_SOUTH + FACING_STEP, 10);
+  Event_ShowMessageAndWait(ACTOR_IODEM, 0, 10);
+  Engine_ActorSetAnimation(ACTOR_IODEM, ANIMATION_WALK);
+  leader = Actor_Get(ACTOR_PARTY_LEADER);
+  if (leader != 0) {
+    Actor_SetDestination(ACTOR_IODEM, leader->x.part.pixel,
+                         leader->z.part.pixel);
+  }
+  Engine_ActorWaitForMove(ACTOR_IODEM);
+  Actor_SetPosition(ACTOR_IODEM, 0, 0);
+#if TBS_PATCH_3
+  Map_CopyCellAttributes(6, 27, 1, 1, 7, 27);
+  Map_CopyCellAttributes(11, 26, 1, 1, 7, 26);
+  Map_CopyCellAttributes(11, 26, 1, 1, 8, 26);
+#else
+  destinationColumn = 7;
+  Map_CopyCellAttributes(6, 27, 1, 1, destinationColumn, 27);
+  Map_CopyCellAttributes(9, 26, 2, 1, destinationColumn, 26);
+#endif
+  GameFlag_Set(FLAG_SUHALLA_GATE_ATTACK_SEEN);
+  Engine_EventEnd();
+}
+
+/// In Suhalla Gate (SceneId_SuhallaGateCheckpoint), talking to the east guard.
+/// Until Iodem has questioned the guards he asks whether the party is bound for
+/// Babi Lighthouse, `Do you want to go to Babi Lighthouse?`: yes, and the party
+/// must show travel papers it does not have; no, and he calls them strange.
+/// Afterwards, wounded, he vows to settle the score.
+static void Event_TalkToEastGuard(void) {
+  Engine_EventStart();
+
+  if (Engine_GameFlagIsSet(FLAG_SUHALLA_GATE_ATTACK_SEEN) != 0) {
+    Engine_EventSetMessage(MsgSuhallaPityColossoVictor);
+    Engine_EventShowMessage(ACTOR_EAST_GUARD, 0);
+  } else {
+    Engine_EventSetMessage(MsgSuhallaWantGoBabi);
+    {
+      s32 mode = 0;
+      s32 no = ACTOR_EAST_GUARD;
+
+      Engine_EventOpenMessage(no, mode);
+    }
+
+    if (Engine_EventChooseYesNo(ACTOR_PARTY_LEADER, 0) == 0) {
+      Engine_EventShowMessage(ACTOR_EAST_GUARD, 0);
+      Engine_ActorSetAnimationAndWait(ACTOR_EAST_GUARD, ANIMATION_SHAKE_HEAD);
+      Engine_EventShowMessage(ACTOR_EAST_GUARD, 0);
+    } else {
+      gEventWork->message += 2;
+      Engine_EventShowMessage(ACTOR_EAST_GUARD, 0);
+    }
+  }
+
+  Engine_EventEnd();
+}
+
+/// The soldier east of the gate gasps out a warning and vanishes. In Suhalla
+/// Gate (SceneId_SuhallaGateCheckpoint) after Babi's audience, this plays on
+/// talking to him or reading his mind, until he has vanished: he gasps that
+/// Venus Lighthouse was attacked by strange wanderers, then flickers, slowly
+/// and then fast, and vanishes. Sets FLAG_SUHALLA_GATE_SOLDIER_VANISHED.
+static void Event_SoldierVanishes(void) {
+  unsigned int beat;
+
+  Engine_EventStart();
+
+  Engine_EventSetMessage(MsgFieldVenusLighthouseWasAttackedBy);
+  Event_ShowMessageAndWait(ACTOR_VANISHING_SOLDIER, 0, 10);
+
+  beat = 0;
+  // Six slow blinks are followed by twelve fast ones.
+  do {
+    Actor_SetChildValue(ACTOR_VANISHING_SOLDIER, 0);
+    Engine_ActorSetSpriteFlags(Actor_Get(ACTOR_VANISHING_SOLDIER), 1);
+    Engine_TaskWait(4);
+
+    Actor_SetChildValue(ACTOR_VANISHING_SOLDIER, 15);
+    Engine_ActorSetSpriteFlags(Actor_Get(ACTOR_VANISHING_SOLDIER), 0);
+    beat++;
+    Engine_TaskWait(4);
+  } while (beat <= 5);
+
+  beat = 0;
+  do {
+    Actor_SetChildValue(ACTOR_VANISHING_SOLDIER, 0);
+    Engine_ActorSetSpriteFlags(Actor_Get(ACTOR_VANISHING_SOLDIER), 1);
+    Engine_TaskWait(2);
+
+    Actor_SetChildValue(ACTOR_VANISHING_SOLDIER, 15);
+    Engine_ActorSetSpriteFlags(Actor_Get(ACTOR_VANISHING_SOLDIER), 0);
+    beat++;
+    Engine_TaskWait(2);
+  } while (beat <= 11);
+
+  Actor_SetPosition(ACTOR_VANISHING_SOLDIER, 0, 0);
+
+  GameFlag_Set(FLAG_SUHALLA_GATE_SOLDIER_VANISHED);
+
+#if TBS_PATCH_3
+  Map_CopyCellAttributes(29, 19, 2, 1, 29, 18);
+#endif
+  Engine_EventEnd();
+}
+
+// How the wounded soldiers lie: animation argument 5, the west guard
+// mirrored. In the Spanish, French and Italian editions each script first
+// turns collision off and runs on into the one after it.
+#if TBS_PATCH_3
+s32 gSuhallaGateWoundedNoCollision[] = {
+    SC_SET(SW_COLLISION, 0),
+};
+#endif
+
+s32 gSuhallaGateWounded[] = {
+    SC_ANIMATION(5),
+    SC_END,
+};
+
+#if TBS_PATCH_3
+s32 gSuhallaGateWoundedFlippedNoCollision[] = {
+    SC_SET(SW_COLLISION, 0),
+};
+#endif
+
+s32 gSuhallaGateWoundedFlipped[] = {
+    SC_SET(SW_SCALE_X, -Q16_ONE),
+    SC_ANIMATION(5),
+    SC_END,
+};
+
+struct SceneEntrance gSuhallaGateEntrancesOther[] = {
+    {0, CONDITION_ALWAYS, 152, 0, 504, FACING_SOUTH, 0, 32, 32, 272, 544, 0},
+    {SUHALLA_GATE_CHECKPOINT_FROM_WORLD_MAP_SOUTH, CONDITION_ALWAYS, 152, 0,
+     520, FACING_NORTH, 0, 32, 32, 272, 544, 0},
+    {SUHALLA_GATE_CHECKPOINT_FROM_SUHALLA_GATE_DEW_WEST, CONDITION_ALWAYS, 248,
+     0, 280, FACING_WEST, 0, 32, 32, 272, 544, 0},
+    {SUHALLA_GATE_CHECKPOINT_FROM_LUNPA_SUHALLA, CONDITION_ALWAYS, 136, 0, 304,
+     FACING_SOUTH, 0, 32, 32, 272, 544, 0},
+    {SUHALLA_GATE_CHECKPOINT_FROM_SUHALLA_GATE_DEW_EAST, CONDITION_ALWAYS, 360,
+     0, 296, FACING_EAST, 0, 336, 32, 736, 496, 0},
+    {SUHALLA_GATE_CHECKPOINT_FROM_WORLD_MAP_EAST, CONDITION_ALWAYS, 664, 0, 424,
+     FACING_WEST, 0, 336, 32, 736, 496, 0},
+    {SCENE_TABLE_END},
+};
+
+struct SceneEntrance gSuhallaGateDewEntrances[] = {
+    {SUHALLA_GATE_DEW_FROM_SUHALLA_GATE_CHECKPOINT_WEST, CONDITION_ALWAYS, 40,
+     0, 304, FACING_EAST, 0, 16, 32, 416, 480, 0},
+    {SUHALLA_GATE_DEW_WEST_FROM_EAST, CONDITION_ALWAYS, 392, 0, 368,
+     FACING_WEST, 0, 16, 32, 416, 480, 0},
+    {SUHALLA_GATE_DEW_EAST_FROM_WEST, CONDITION_ALWAYS, 40, 0, 912, FACING_EAST,
+     0, 16, 608, 720, 1008, 0},
+    {SUHALLA_GATE_DEW_FROM_SUHALLA_GATE_CHECKPOINT_EAST, CONDITION_ALWAYS, 680,
+     0, 904, FACING_WEST, 0, 16, 608, 720, 1008, 0},
+    {SUHALLA_GATE_DEW_FROM_GATEWAY_CAVE, CONDITION_ALWAYS, 616, 0, 920,
+     FACING_SOUTH, 0, 16, 608, 720, 1008, 0},
+    {SCENE_TABLE_END},
+};
+
+struct SceneEntrance gGatewayCaveEntrances[] = {
+    {GATEWAY_CAVE_FROM_SUHALLA_GATE_DEW, CONDITION_ALWAYS, 72, 0, 264,
+     FACING_NORTH, 0, 24, 24, 280, 256, 0},
+    {GATEWAY_CAVE_NORTH_FROM_SOUTH, CONDITION_ALWAYS, 184, 0, 168, FACING_SOUTH,
+     0, 24, 24, 280, 256, 0},
+    {GATEWAY_CAVE_SOUTH_FROM_NORTH, CONDITION_ALWAYS, 280, 0, 344, FACING_SOUTH,
+     0, 208, 288, 704, 640, 0},
+    {GATEWAY_CAVE_FROM_WORLD_MAP, CONDITION_ALWAYS, 664, 0, 616, FACING_NORTH,
+     0, 208, 288, 704, 640, 0},
+    {SCENE_TABLE_END},
+};
+
+u32 gSuhallaGateExits[] = {
+    SCENE_EXITS(SuhallaGateCheckpoint),
+    SCENE_EXIT(SUHALLA_GATE_CHECKPOINT_TO_WORLD_MAP_SOUTH, WorldMap,
+               WORLD_MAP_FROM_SUHALLA_GATE_CHECKPOINT_SOUTH),
+    SCENE_EXIT(SUHALLA_GATE_CHECKPOINT_TO_SUHALLA_GATE_DEW_WEST, SuhallaGateDew,
+               SUHALLA_GATE_DEW_FROM_SUHALLA_GATE_CHECKPOINT_WEST),
+    SCENE_EXIT(SUHALLA_GATE_CHECKPOINT_TO_LUNPA_SUHALLA, LunpaSuhalla,
+               LUNPA_SUHALLA_FROM_SUHALLA_GATE_CHECKPOINT),
+    SCENE_EXIT(SUHALLA_GATE_CHECKPOINT_TO_SUHALLA_GATE_DEW_EAST, SuhallaGateDew,
+               SUHALLA_GATE_DEW_FROM_SUHALLA_GATE_CHECKPOINT_EAST),
+    SCENE_EXIT(SUHALLA_GATE_CHECKPOINT_TO_WORLD_MAP_EAST, WorldMap,
+               WORLD_MAP_FROM_SUHALLA_GATE_CHECKPOINT_EAST),
+    SCENE_EXITS(SuhallaGateDew),
+    SCENE_EXIT(SUHALLA_GATE_DEW_TO_SUHALLA_GATE_CHECKPOINT_WEST,
+               SuhallaGateCheckpoint,
+               SUHALLA_GATE_CHECKPOINT_FROM_SUHALLA_GATE_DEW_WEST),
+    SCENE_EXIT(SUHALLA_GATE_DEW_WEST_TO_EAST, SuhallaGateDew,
+               SUHALLA_GATE_DEW_EAST_FROM_WEST),
+    SCENE_EXIT(SUHALLA_GATE_DEW_EAST_TO_WEST, SuhallaGateDew,
+               SUHALLA_GATE_DEW_WEST_FROM_EAST),
+    SCENE_EXIT(SUHALLA_GATE_DEW_TO_SUHALLA_GATE_CHECKPOINT_EAST,
+               SuhallaGateCheckpoint,
+               SUHALLA_GATE_CHECKPOINT_FROM_SUHALLA_GATE_DEW_EAST),
+    SCENE_EXIT(SUHALLA_GATE_DEW_TO_GATEWAY_CAVE, GatewayCave,
+               GATEWAY_CAVE_FROM_SUHALLA_GATE_DEW),
+    SCENE_EXITS(GatewayCave),
+    SCENE_EXIT(GATEWAY_CAVE_TO_SUHALLA_GATE_DEW, SuhallaGateDew,
+               SUHALLA_GATE_DEW_FROM_GATEWAY_CAVE),
+    SCENE_EXIT(GATEWAY_CAVE_NORTH_TO_SOUTH, GatewayCave,
+               GATEWAY_CAVE_SOUTH_FROM_NORTH),
+    SCENE_EXIT(GATEWAY_CAVE_SOUTH_TO_NORTH, GatewayCave,
+               GATEWAY_CAVE_NORTH_FROM_SOUTH),
+    SCENE_EXIT(GATEWAY_CAVE_TO_WORLD_MAP, WorldMap,
+               WORLD_MAP_FROM_GATEWAY_CAVE),
+    SCENE_EXITS_END,
+};
+
+struct ScenePlacement gSuhallaGatePlacementsOther[] = {
+    {SCENE_TABLE_END},
+};
+
+// clang-format off
+struct ScenePlacement gSuhallaGateDewPlacements[] = {
+    { SPRITE_SPROUT, CONDITION_ALWAYS, ACTOR_RESET_ACTION,
+        PIXELS(264), 0, PIXELS(400), FACING_SOUTH + FACING_STEP, TALK_KEEP_FACING, 0 },
+    { SPRITE_SPROUT, CONDITION_ALWAYS, ACTOR_RESET_ACTION,
+        PIXELS(280), 0, PIXELS(368), FACING_SOUTH + FACING_STEP, TALK_KEEP_FACING, 0 },
+    { SPRITE_SPROUT, CONDITION_ALWAYS, ACTOR_RESET_ACTION,
+        PIXELS(472), 0, PIXELS(912), FACING_SOUTH + FACING_STEP, TALK_KEEP_FACING, 0 },
+    { SPRITE_SPROUT, CONDITION_ALWAYS, ACTOR_RESET_ACTION,
+        PIXELS(536), 0, PIXELS(912), FACING_SOUTH + FACING_STEP, TALK_KEEP_FACING, 0 },
+    { SPRITE_SPROUT, CONDITION_ALWAYS, ACTOR_RESET_ACTION,
+        PIXELS(552), 0, PIXELS(880), FACING_SOUTH + FACING_STEP, TALK_KEEP_FACING, 0 },
+    { MERCURY_DJINNI, FLAG_DJINNI_0 + DJINNI_DEW, ACTOR_STAND,
+        PIXELS(264), 0, PIXELS(888), FACING_SOUTHEAST, TALK_FACE_PARTY, 0 },
+    { SCENE_TABLE_END },
+};
+
+struct ScenePlacement gSuhallaGateCheckpointPlacements[] = {
+    { SPRITE_SOLDIER, CONDITION_ALWAYS, ACTOR_STAND,
+        PIXELS(120), 0, PIXELS(384), FACING_SOUTH, TALK_FACE_PARTY_AND_BACK, 0 },
+    { SPRITE_SOLDIER, CONDITION_ALWAYS, ACTOR_STAND,
+        PIXELS(168), 0, PIXELS(384), FACING_SOUTH, TALK_FACE_PARTY_AND_BACK, 0 },
+    { SCENE_TABLE_END },
+};
+
+struct ScenePlacement gSuhallaGateCheckpointPlacementsAfterAudience[] = {
+#if !TBS_PATCH_3
+    { SPRITE_SOLDIER, CONDITION_ALWAYS, (s32)gSuhallaGateWoundedFlipped,
+        PIXELS(136), 0, PIXELS(408), FACING_SOUTH, TALK_FACE_PARTY, 0 },
+    { SPRITE_SOLDIER, CONDITION_ALWAYS, (s32)gSuhallaGateWounded,
+        PIXELS(168), 0, PIXELS(424), FACING_SOUTH, TALK_FACE_PARTY, 0 },
+    { SPRITE_SOLDIER, CONDITION_ALWAYS, (s32)gSuhallaGateWounded,
+        PIXELS(472), 0, PIXELS(304), FACING_SOUTH, TALK_FACE_PARTY, 0 },
+#else
+    { SPRITE_SOLDIER, CONDITION_ALWAYS, (s32)gSuhallaGateWoundedFlippedNoCollision,
+        PIXELS(140), 0, PIXELS(408), FACING_SOUTH, TALK_FACE_PARTY, 0 },
+    { SPRITE_SOLDIER, CONDITION_ALWAYS, (s32)gSuhallaGateWoundedNoCollision,
+        PIXELS(164), 0, PIXELS(424), FACING_SOUTH, TALK_FACE_PARTY, 0 },
+    { SPRITE_SOLDIER, CONDITION_ALWAYS, (s32)gSuhallaGateWoundedNoCollision,
+        PIXELS(476), 0, PIXELS(300), FACING_SOUTH, TALK_FACE_PARTY, 0 },
+#endif
+    { SPRITE_IODEM, CONDITION_ALWAYS, ACTOR_STAND,
+        0, 0, 0, FACING_EAST, TALK_KEEP_FACING, 0 },
+    { SCENE_TABLE_END },
+};
+
+struct SceneEvent gSuhallaGateEventsOther[] = {
+    { EVENT_TOUCH, 1, CONDITION_ALWAYS, EVENT_SCRIPT(Event_LeaveForWorldMap) },
+    { EVENT_EXIT, 2, CONDITION_ALWAYS, SUHALLA_GATE_CHECKPOINT_TO_SUHALLA_GATE_DEW_WEST },
+    { EVENT_EXIT, 4, CONDITION_ALWAYS, SUHALLA_GATE_CHECKPOINT_TO_SUHALLA_GATE_DEW_EAST },
+    { EVENT_TOUCH, 5, CONDITION_ALWAYS, EVENT_SCRIPT(Event_LeaveForWorldMap) },
+    { TOUCH_WALKING_INTO(FACING_NORTH), 3, CONDITION_ALWAYS, EVENT_SCRIPT(Event_EnterHouse) },
+    { EVENT_TOUCH, 10, FLAG_BABI_SPOKE_AFTER_COLOSSO, EVENT_SCRIPT(Event_GuardsBlockPassage) },
+    { EVENT_TOUCH, 10, FLAG_SUHALLA_GATE_ATTACK_SEEN, EVENT_SCRIPT(Event_IodemQuestionsGuards) },
+    { EVENT_TALK, ACTOR_WEST_GUARD, FLAG_SUHALLA_GATE_ATTACK_SEEN, MSGNO(MsgSuhallaTravelPapersRequired) },
+    { EVENT_TALK, ACTOR_WEST_GUARD, CONDITION_ALWAYS, MSGNO(MsgSuhallaSendHelpFromTower) },
+    { EVENT_TALK, ACTOR_EAST_GUARD, CONDITION_ALWAYS, EVENT_SCRIPT(Event_TalkToEastGuard) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WEST_GUARD, FLAG_SUHALLA_GATE_ATTACK_SEEN, MSGNO(MsgSuhallaObeyBabiOrders) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WEST_GUARD, CONDITION_ALWAYS, MSGNO(MsgSuhallaAshamedBeforeIodem) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_EAST_GUARD, FLAG_SUHALLA_GATE_ATTACK_SEEN, MSGNO(MsgSuhallaSeeColossoNextYear) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_EAST_GUARD, CONDITION_ALWAYS, MSGNO(MsgSuhallaSurvivedAttack) },
+    { EVENT_TALK, ACTOR_VANISHING_SOLDIER, FLAG_SUHALLA_GATE_SOLDIER_VANISHED, EVENT_SCRIPT(Event_SoldierVanishes) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), EVENT_TRIGGER_OWN_EFFECT | ACTOR_VANISHING_SOLDIER, FLAG_SUHALLA_GATE_SOLDIER_VANISHED, EVENT_SCRIPT(Event_SoldierVanishes) },
+    { SCENE_EVENTS_END },
+};
+// clang-format on
+
+struct SceneEvent gSuhallaGateDewEvents[] = {
+    {EVENT_EXIT, 1, CONDITION_ALWAYS,
+     SUHALLA_GATE_DEW_TO_SUHALLA_GATE_CHECKPOINT_WEST},
+    {EVENT_EXIT, 2, CONDITION_ALWAYS, SUHALLA_GATE_DEW_WEST_TO_EAST},
+    {EVENT_EXIT, 3, CONDITION_ALWAYS, SUHALLA_GATE_DEW_EAST_TO_WEST},
+    {EVENT_EXIT, 4, CONDITION_ALWAYS,
+     SUHALLA_GATE_DEW_TO_SUHALLA_GATE_CHECKPOINT_EAST},
+    {EVENT_EXIT, 5, CONDITION_ALWAYS, SUHALLA_GATE_DEW_TO_GATEWAY_CAVE},
+    {EVENT_TALK, ACTOR_DEW, CONDITION_ALWAYS, EVENT_SCRIPT(Event_FightDjinni)},
+    {SEARCH(SEARCH_CHEST) | EVENT_TOUCH_FACING | FACING_NORTH, 100,
+     FLAG_SUHALLA_GATE_MINT, FIND_ITEM(ITEM_MINT)},
+    {SEARCH(SEARCH_CHEST) | EVENT_TOUCH_FACING | FACING_EAST, 100,
+     FLAG_SUHALLA_GATE_MINT, FIND_ITEM(ITEM_MINT)},
+    {SEARCH(SEARCH_CHEST) | EVENT_TOUCH_FACING | FACING_WEST, 100,
+     FLAG_SUHALLA_GATE_MINT, FIND_ITEM(ITEM_MINT)},
+    {SCENE_EVENTS_END},
+};
+
+struct SceneEvent gGatewayCaveEvents[] = {
+    {EVENT_EXIT, 1, CONDITION_ALWAYS, GATEWAY_CAVE_TO_SUHALLA_GATE_DEW},
+    {EVENT_EXIT | EXIT_STYLE_ANIMATED_ALTERNATE, 2, CONDITION_ALWAYS,
+     GATEWAY_CAVE_NORTH_TO_SOUTH},
+    {EVENT_EXIT | EXIT_STYLE_ANIMATED, 3, CONDITION_ALWAYS,
+     GATEWAY_CAVE_SOUTH_TO_NORTH},
+    {EVENT_EXIT, 4, CONDITION_ALWAYS, GATEWAY_CAVE_TO_WORLD_MAP},
+    {SEARCH(SEARCH_UNNAMED), 100, FLAG_PLACE_TEMP_50, FIND_PSYNERGY_STONE},
+    {SCENE_EVENTS_END},
+};

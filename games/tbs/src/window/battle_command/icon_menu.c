@@ -525,7 +525,7 @@ s32 Menu_SelectTopEntry(s32 selection) {
 /// Returns the final icon position after closing the menu. The Djinn icon is
 /// always shown, so `command` (enum FieldMenuCommand, as Menu_SelectTopEntry
 /// gives it) is position command - 1. The world map's scenes show it picking
-/// Djinn (scene/world_map.c).
+/// Djinn (map/world_map.c).
 s32 Menu_AnimateSelectionToEntry(s32 start, s32 command) {
   UiWindow_OpenMode1AndWaitFrame();
   AffineEffect_InitializeWork();
@@ -908,7 +908,7 @@ s32 Menu_RunConfirmSelectionAt(s32 x, s32 y, s32 selection) {
 
 /// Selects Coins or Lucky Medals, centered on row 17,
 /// starting on position `selection`. Returns the position chosen, or -1 when
-/// cancelled. Tolbi's spring asks it (scene/tolbi_spring.c).
+/// cancelled. Tolbi's spring asks it (map/tolbi_spring.c).
 s32 Menu_SelectCoinsOrMedals(s32 selection) {
   s32 result;
 

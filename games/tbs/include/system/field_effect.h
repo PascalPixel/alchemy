@@ -5,7 +5,7 @@
 /// Field effects, their scripts and the flags that spawn them.
 
 #include "edition.h"
-#include "field_event.h"
+#include "script_layer.h"
 #include "vector3.h"
 
 /// A field effect: a small object on the field that moves at its velocity and
@@ -73,7 +73,7 @@ union FieldObject {
 #define SCRIPT_DELETE 27
 
 /// The flags of a scene's effect spawner (EFFECT_SPAWN in
-/// scene/common/effect_spawn.h): a script number in the low bits and which of
+/// map/common/effect_spawn.h): a script number in the low bits and which of
 /// struct EffectOptions' fields to use.
 enum EffectSpawnFlags {
   /// Picks one of gEffectScripts; the object's mode is this plus 1.

@@ -344,7 +344,7 @@ work block's layout, `struct ShopRuntime`, is in
 | `Inn_` | the inn |
 | `BattleUnit_`, `AudioCommand_`, `NodeChain_` | things the engine names elsewhere |
 
-Scene overlays import these functions by name (`games/tbs/src/scene/import/`),
+Scene overlays import these functions by name (`games/tbs/src/map/import/`),
 and code in other banks calls them through the far-call table
 `system/far_call/SHOP.S` (the `...Far` names), so renaming one changes those
 folders too. [Matching](../MATCHING.md) explains the comment markers.

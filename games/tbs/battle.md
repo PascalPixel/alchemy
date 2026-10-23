@@ -28,7 +28,7 @@ afterwards.
 
 In the code, a random encounter raises a field exit like any other, with
 `SCENE_BATTLE` as the next scene and the enemy group in
-`gGameState.entrance`. `Game_Run` (`src/object/object/scene.c`) clears what
+`gGameState.entrance`. `Game_Run` (`src/object/object/map.c`) clears what
 the last scene left running, as it does between any two scenes: the task
 table, the list of small jobs the game runs once a frame, and the heap, the
 pool of memory a scene borrows from. Then, instead of loading a place's

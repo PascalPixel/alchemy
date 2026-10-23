@@ -40,7 +40,7 @@
 #include "lib.h"
 #include "psynergy_menu.h"
 #include "animspr.h"
-#include "scene.h"
+#include "field_offset.h"
 #include "m7_interfaces.h"
 #include "global_cells.h"
 #include "keystate.h"

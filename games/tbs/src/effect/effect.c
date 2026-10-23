@@ -92,7 +92,7 @@
 #include "parts/hail.c"
 #include "parts/thor.c"
 #include "parts/spire.c"
-#include "parts/burst_scene.c"
+#include "parts/burst_sequence.c"
 #include "parts/gaia.c"
 #include "parts/positions.c"
 #include "parts/beams.c"

@@ -17,11 +17,11 @@
 // The object's code, in ROM order. Each part is compiled here, as part of
 // this one object, never on its own: the order of these includes is the
 // order of the code in the ROM.
-#include "object/scene.c"
+#include "object/map.c"
 #include "object/encounter.c"
-#include "object/actors.c"
+#include "object/object_events.c"
 #include "object/step.c"
-#include "object/run_scene.c"
+#include "object/run_map.c"
 #include "object/palette_editor.c"
 #include "object/events.c"
 #include "object/targets.c"

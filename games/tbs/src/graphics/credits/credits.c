@@ -24,7 +24,7 @@
 #include "callback_scheduler.h"
 #include "io_write_queue.h"
 #include "iowrite.h"
-#include "map_scroll.h"
+#include "map_grid_scroll.h"
 #include "heap_state.h"
 #include "resource_ids.h"
 #include "edition.h"

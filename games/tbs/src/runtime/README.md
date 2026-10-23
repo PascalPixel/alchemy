@@ -54,7 +54,7 @@ waits ten frames and calls `Game_RunFar`. The German, French, Spanish and
 Italian editions (`TBS_PATCH_2`) also install `Iwram_Halt` for the
 cartridge-removed interrupt.
 
-Neither function returns. `Game_Run` (`games/tbs/src/object/object/scene.c`)
+Neither function returns. `Game_Run` (`games/tbs/src/object/object/map.c`)
 runs one scene after another, starting at the title, and before each one it
 resets the task table, removes the HBlank and VCount handlers, empties the heap
 and resets the VRAM cache.

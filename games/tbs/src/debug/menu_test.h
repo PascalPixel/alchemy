@@ -6,8 +6,8 @@
 #include "owner_state.h"
 #include "owner_value.h"
 #include "game_state.h"
-#include "fx_scene.h"
-#include "field_obj.h"
+#include "fx_work.h"
+#include "object_event.h"
 #include "text/msg_ids.h"
 
 #include "character.h"

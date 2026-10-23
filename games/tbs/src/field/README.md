@@ -15,8 +15,8 @@ footprints), moves each of them a little every frame, decides whether the
 ground ahead can be walked on, and draws the map: a town as three flat layers,
 or the world map tilted into perspective. It decides nothing about any one
 place. The loop itself is in [Running a place](../object/README.md), each
-place's events come from its overlay in [Scenes](../scene/README.md), and the
-maps are in [Maps](../map/README.md). [World](../../world.md) gives the whole
+place's events come from its overlay in [Scenes](../map/README.md), and the
+maps are in [Maps](../layout/README.md). [World](../../world.md) gives the whole
 layer in brief.
 
 ## The walk and what interrupts it
@@ -54,7 +54,7 @@ A random battle is handled as a way out of the scene. The game remembers
 where everyone stood, loads the battle as if it were the next scene, and
 afterwards loads the field scene again with everyone put back.
 
-In the code, `Field_RunScene` ([`object/run_scene.c`](../object/object/run_scene.c))
+In the code, `Field_RunScene` ([`object/run_scene.c`](../object/object/run_map.c))
 runs one scene. Its inner loop is the walk: it waits a frame and calls
 `Field_ProcessStep`, which checks the ground under the leader, until
 `Field_CountRequests` finds a request. The leader's control script reads the
@@ -235,7 +235,7 @@ camera places them.
 
 | Mode | Started by | Object update | Camera |
 | --- | --- | --- | --- |
-| `MODE_LAYERED_MAP` (2) | the field scene runner (`object/object/run_scene.c`), the debug sprite viewer | `Object_UpdateAllThumb` | `ObjectSystem_UpdateCamera`, which scrolls with the map |
+| `MODE_LAYERED_MAP` (2) | the field scene runner (`object/object/run_map.c`), the debug sprite viewer | `Object_UpdateAllThumb` | `ObjectSystem_UpdateCamera`, which scrolls with the map |
 | `MODE_WORLD_MAP` (3) | the field scene runner | `Object_UpdateAllThumb` | `ObjectSystem_UpdateCameraFixed`, which projects 3D points onto the screen |
 | `MODE_BATTLE` (4) | the encounter (`battle/battle/encounter.c`) | `Object_UpdateAllMotion` | `ObjectSystem_UpdateCameraFixed` |
 
@@ -319,7 +319,7 @@ Every spot on a map has a height. The leader can step up onto ground at most
 steeper blocks the way as surely as a wall. Most of the game's walls are made
 this way, by height, rather than by marking a spot as a wall: Goma Cave has no
 wall marks at all, only ridges of ground 32 pixels high at the foot of each
-cliff. [Maps](../map/README.md#cells) draws the rule from the side.
+cliff. [Maps](../layout/README.md#cells) draws the rule from the side.
 
 A map is a grid of 16-pixel squares, its cells, and each cell has a shape
 that gives the height of every point in it. An object's `terrainId` names the
@@ -339,7 +339,7 @@ below, and `MAP_STEP_OPEN` otherwise. On the world map,
 has one, else the lower.
 
 The height functions are `gMap_TerrainHeightFunctions` (`curve_data.c`); the
-cells and their shapes are the map's, as [Maps](../map/README.md#cells)
+cells and their shapes are the map's, as [Maps](../layout/README.md#cells)
 describes.
 
 | Name | Value | Meaning |
@@ -364,7 +364,7 @@ layer of roofs and treetops. On most maps the characters are drawn between
 the middle and overhead layers, which is how Isaac can walk behind a roof.
 
 `Map_LoadLayeredScene` loads a map from its row of `gMap_LayeredScenes`;
-[Maps](../map/README.md) describes the data and where each part is decoded.
+[Maps](../layout/README.md) describes the data and where each part is decoded.
 The console has four background layers, and the three map layers are drawn on
 three of them: `MAP_LAYER_GROUND` on `BG3`, `MAP_LAYER_MIDDLE` on `BG2` and
 `MAP_LAYER_OVERHEAD` on `BG1`. `BG0` is left for the windows, where messages
@@ -387,10 +387,10 @@ can move at its own rate as the view moves or drift while it stands still.
 into view from the cells and their blocks.
 
 Three timed effects run as tasks while a map is shown
-(`field/map_animation.c`): the tile animation copies tiles into video memory
+(`field/tile_animation.c`): the tile animation copies tiles into video memory
 on up to 16 channels, the blend script writes the blend registers over time,
 and palette cycles rotate colours. The scripts for the first two come from the
-map; [Maps](../map/README.md#tile-animation-and-blend-scripts) gives their
+map; [Maps](../layout/README.md#tile-animation-and-blend-scripts) gives their
 format. Only `PaletteQueue_Start` schedules palette cycles, and nothing calls
 it, so no palette cycle runs in the game.
 
@@ -449,7 +449,7 @@ returns to the moving view.
 
 The world map's graphics sets are `gWorldMap_GraphicsResources`
 (`world_map_resources.c`); its own data is described in
-[Maps](../map/README.md#the-world-maps-data).
+[Maps](../layout/README.md#the-world-maps-data).
 
 | Name | Value | Meaning |
 | --- | --- | --- |
@@ -462,10 +462,10 @@ The world map's graphics sets are `gWorldMap_GraphicsResources`
 All 64 objects are the same 112 bytes, but each family of code reads them
 through a struct of its own: `ObjectRuntime` (`include/object_runtime.h`),
 `DispatchObject` (`include/object_dispatch.h`), `ScriptInterpreter` and
-`ScriptOperands` (`include/field/script.h`), `ScriptMotionObject`
+`ScriptOperands` (`include/field/action_script.h`), `ScriptMotionObject`
 (`include/script_motion.h`), `ScriptObjectRuntime`
 (`include/field/script_object_runtime.h`), `ScriptObjectEntry`
-(`include/script_object_entry.h`) and `FieldActor` (`include/field_obj.h`).
+(`include/script_object_entry.h`) and `FieldActor` (`include/object_event.h`).
 Other folders add more, such as the battle's `MotionObject` and the field
 effects' `FieldEffect`. Each view was written from the code that reads it and
 names only what that code uses: `ScriptInterpreter` is 100 bytes, since no
@@ -568,7 +568,7 @@ on its own.
 - A **work value** (`SW_`) is a field of the object as `SC_SET`, `SC_ADD` and
   `SC_CMP` number it.
 - A **cell** is one 16 by 16 pixel square of a layered map, and a map
-  **layer** one of its three backgrounds; [Maps](../map/README.md) defines
+  **layer** one of its three backgrounds; [Maps](../layout/README.md) defines
   both. A map's layers have nothing to do with a sprite's.
 - Positions are 16.16 fixed-point pixels: x across the map, y up, z down the
   map. Angles are 16-bit fractions of a turn (`FACING_EAST` is 0,

@@ -21,7 +21,7 @@
 #include "mem.h"
 #include "edition.h"
 #include "types.h"
-#include "scene.h"
+#include "field_offset.h"
 #include "global_cells.h"
 #include "party_state.h"
 #include "battle_system.h"
@@ -48,7 +48,7 @@
 #include "inn_runtime.h"
 #include "field_runtime.h"
 #include "battle_calc.h"
-#include "field_obj.h"
+#include "object_event.h"
 #include "heap_state.h"
 #include "flags.h"
 

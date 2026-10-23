@@ -215,7 +215,7 @@ scene's own events, none of which exist while the menu is open. So the
 Psynergy screen only writes down what was chosen and closes; once the field
 runs again, it casts the Psynergy at whatever the leader faces, and the
 scene's code decides what happens. What Move does to a given stone pillar is
-therefore decided by the scene, not the menu ([Scenes](src/scene/README.md)).
+therefore decided by the scene, not the menu ([Scenes](src/map/README.md)).
 
 The Psynergy screen writes the field's Psynergy request (`psynergyRequest` in
 the event work, `owner << 10 | Psynergy`), and the Item screen writes the item

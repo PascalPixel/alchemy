@@ -2,7 +2,7 @@
 #define ALCHEMY_UNIT_DEBUG_TEST_H
 
 #include "types.h"
-#include "field_scene.h"
+#include "map_tables.h"
 
 u8 *MenuTest_GetEntrances(void);
 s32 SceneData_ReturnZero(void);

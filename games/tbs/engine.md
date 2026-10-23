@@ -131,7 +131,7 @@ each place's code is packed on the cartridge and unpacked into the same
 32 KB area when the party arrives, over the place before it.
 
 An overlay is a compressed resource unpacked into `gOverlayArea`, 32 KB of
-EWRAM. There are 96 of them, listed in the scene table (`src/field/scenes.s`).
+EWRAM. There are 96 of them, listed in the scene table (`src/field/maps.s`).
 Only one is loaded at a time, so overlays never call each other, and code
 several scenes need is copied into each of them (`src/scene/common/`).
 

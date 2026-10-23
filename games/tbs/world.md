@@ -5,8 +5,8 @@
 Everywhere the party walks, a town, a dungeon or the world map, is run by
 the same four parts. The loop in `src/object` lets the party walk and deals
 with whatever interrupts it. The engine in `src/field` moves everything that
-moves and draws the map. The map, in `src/map`, says what the ground is like.
-And each place's own code, its overlay in `src/scene`, says who is there and
+moves and draws the map. The map, in `src/layout`, says what the ground is like.
+And each place's own code, its overlay in `src/map`, says who is there and
 what happens. Only that last part knows anything about one place. How scenes
 and overlays fit into the whole game is on [the front page](README.md).
 
@@ -72,10 +72,10 @@ The six functions are `struct SceneEntries`, at the start of every overlay.
 How an overlay is loaded and how it calls back into the main image is in
 [Engine](engine.md#overlays). The front page describes [how scenes depend on
 the story](README.md#how-scenes-depend-on-the-story) across the game.
-[Scenes](src/scene/README.md#the-entry-table) describes the entry table, the
+[Scenes](src/map/README.md#the-entry-table) describes the entry table, the
 tables it returns and [how an event is
-chosen](src/scene/README.md#how-an-event-is-chosen), and
-[Places](src/field/scenes.s) lists every scene in story order.
+chosen](src/map/README.md#how-an-event-is-chosen), and
+[Places](src/field/maps.s) lists every scene in story order.
 
 ## Scene and place flags
 
@@ -101,7 +101,7 @@ returning from a battle restores the room as it was left.
 | `FLAG_PLACE_FIRST` | 768 (`0x300`) | the first of the place's 256 flags |
 | `FLAG_PLACE_LAST` | 1,023 (`0x3ff`) | the last of them |
 
-[Scenes](src/scene/README.md#state-that-cleans-itself-up) says how a scene
+[Scenes](src/map/README.md#state-that-cleans-itself-up) says how a scene
 uses them.
 
 ## Field objects and their scripts
@@ -209,9 +209,9 @@ scene.
 | `MAP_CELL_EVENT_LAST` | 239 | the last of them |
 | `MAP_CELL_WALL` | 255 | a wall, whatever the heights |
 
-[Maps](src/map/README.md#cells) gives every collision code, and goes on to the
+[Maps](src/layout/README.md#cells) gives every collision code, and goes on to the
 map's tables and [how the build makes each
-map](src/map/README.md#how-the-build-makes-a-map) from editable tables.
+map](src/layout/README.md#how-the-build-makes-a-map) from editable tables.
 
 ## Map layers
 
@@ -243,7 +243,7 @@ middle layer and behind the overhead one. A priority of 0 leaves a layer off:
 
 [Field](src/field/README.md#towns-and-dungeons-on-screen) shows Vale pulled
 apart into its layers and how they are put on screen, and
-[Maps](src/map/README.md#one-grid-three-layers) how they share one grid.
+[Maps](src/layout/README.md#one-grid-three-layers) how they share one grid.
 
 ## The world map
 
@@ -287,7 +287,7 @@ undoes it. The world map's own scene, its places and events, is described on
 [the front page](README.md#the-world-map).
 
 [Field](src/field/README.md#the-world-map-in-perspective) works through the
-scanline table, [Maps](src/map/README.md#the-world-maps-data) the world map's
+scanline table, [Maps](src/layout/README.md#the-world-maps-data) the world map's
 data, and [Running a place](src/object/README.md#the-world-map-screen) the still
 picture R brings up.
 

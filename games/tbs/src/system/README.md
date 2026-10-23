@@ -18,7 +18,7 @@ each place's code, the resource directory every picture, table and overlay is
 found through, and the flash library that writes saves. Nearly all of it is
 assembly: code no C compiler emits, each file saying in its header what proves
 it, and tables the linker lays out. [Runtime](../runtime/README.md) builds
-directly on it, and [Scenes](../scene/README.md) are the main users of its
+directly on it, and [Scenes](../map/README.md) are the main users of its
 overlays.
 
 ## Memory map
@@ -52,7 +52,7 @@ IWRAM variables ([below](#the-addresses-that-never-move)).
 | 64 KB | `0x02010000` | 32 KB | `gMapCellBuffer`; battle effects also use it for particles | `Ram_MapCellBuffer` |
 | 96 KB | `0x02018000` | 16 KB | `gActorSpriteSlots` | `Ram_ActorSpriteSlots` |
 | 112 KB | `0x0201c000` | 16 KB | `gDecodeBuffer` | `Ram_DecodeBuffer` |
-| 128 KB | `0x02020000` | 32 KB | `gMapBlocks`, the map's blocks (`games/tbs/src/field/field/map_layers.c`) | `Ram_MapBlocks` |
+| 128 KB | `0x02020000` | 32 KB | `gMapBlocks`, the map's blocks (`games/tbs/src/field/field/map_grid.c`) | `Ram_MapBlocks` |
 | 160 KB | `0x02028000` | 16 KB | `gMapLayerData` | `ewram.s` |
 | 176 KB | `0x0202c000` | 16 KB | `gMapCollision` | `Ram_MapCollision` |
 | 192 KB | `0x02030000` | 32 KB | `gEwramHeap`; `heap.c` allocates from it up to `0x02040000`, the end of EWRAM, so past its 32 KB it runs into `gBgTileBuffer` | `ewram.s`, `games/tbs/src/runtime/runtime/heap.c` |
@@ -95,7 +95,7 @@ The hardware addresses video memory in fixed blocks (`games/tbs/include/system/i
   [`unit/window/window.h`](../../include/unit/window/window.h)).
   `Map_LoadLayeredScene` puts the ground, middle and overhead layers' maps in
   screen blocks 5, 6 and 7 and the map's three tile sheets in character blocks
-  1 to 3 ([Maps](../map/README.md)).
+  1 to 3 ([Maps](../layout/README.md)).
 - Screens that load two pictures in turn split the background in halves: the
   first 32 KB with background colours 0 to 127, the second with colours 128 to
   255 (`Graphics_LoadCharacterBlockAndPalette`,
@@ -168,7 +168,7 @@ over whatever place was there before. Every overlay is built to run at that
 one address, so only one is ever loaded.
 
 There are 96 overlays, placed by `overlay/overlays.s` and listed in the scene
-table (`field/scenes.s`), each a compressed resource unpacked into
+table (`field/maps.s`), each a compressed resource unpacked into
 `gOverlayArea`. Some places share one (the three `VaultCave` scenes load the
 same overlay), and the title screen and a few other screens that are mostly
 menus are overlays too.
@@ -201,7 +201,7 @@ routine by different names.
 
 Only one overlay is loaded at a time, since all are linked to the same 32 KB,
 so an overlay never calls another. Code several scenes need is copied into
-each of them (`games/tbs/src/scene/common/`).
+each of them (`games/tbs/src/map/common/`).
 
 `Resource_LoadCode` (`../runtime/runtime/system.c`) unpacks an overlay and
 runs `Resource_PatchThumbBranch` over it. In the packed stream each `bl` holds
@@ -259,10 +259,10 @@ after it still shifts.
 
 In the directory, a row added in the middle renumbers every row after it.
 Code that names a resource by its symbol follows, but numbers travel without
-symbols in several places: the scene table (`games/tbs/src/field/scenes.s`)
+symbols in several places: the scene table (`games/tbs/src/field/maps.s`)
 gives each scene its overlay as a resource number, and the first column of
 `objects.tsv` numbers each overlay's rows the same way. The layered map table
-(`games/tbs/src/field/layered.tsv`) holds numbers counted from
+(`games/tbs/src/field/layouts.tsv`) holds numbers counted from
 `ResourceId_Map001` (`Map_LoadLayeredScene`), so the rows after that one keep
 their order. Code also adds to an id to reach the rows after it: the option
 menu's marker steps through eight frames from `ResourceId_ShopCursorFrames`
@@ -272,9 +272,9 @@ any other.
 
 | Where a number travels without its symbol | Why its rows keep their order |
 | --- | --- |
-| the scene table, `field/scenes.s` | each scene names its overlay as a resource number |
+| the scene table, `field/maps.s` | each scene names its overlay as a resource number |
 | `objects.tsv`'s first column | each overlay's rows are numbered by resource |
-| `field/layered.tsv` | numbers counted from `ResourceId_Map001` |
+| `field/layouts.tsv` | numbers counted from `ResourceId_Map001` |
 | `window/window/options.c` | eight frames counted from `ResourceId_ShopCursorFrames` |
 | `field/vertices.c` | `FarCall_RuntimeTable` read at byte offsets 64, 88 and 96 |
 
@@ -301,7 +301,7 @@ itself, the layout has to keep every one:
 | The cartridge restart entry, `Cart_Restart` | `0x08000000`, the start of the ROM | The soft reset in `WaitFrames` jumps there, and `SerialTest_Run`, a link cable test nothing reaches, sends the first 640 bytes from there over the cable. So the header and `System_Entry` stay at the start of the ROM. |
 | The resident runtime, `.iwram_runtime` (5 KB, copied by `Runtime_InstallIwramAndIrqs`) | `0x03000000`, the start of IWRAM | C calls its routines at their addresses (`IwramSqrt` and the rest), and the ARM code that runs from RAM reaches them as offsets from `IwramIrqMain` (`IWRAM_ENTRY`, `games/tbs/src/field/update.c`). |
 | The overlay area, `gOverlayArea` | `0x02008000`, 32 KB of EWRAM | Every overlay is linked to run there and has to fit. Its first 48 bytes are the entry table, which the field object calls by member. |
-| The map and decode buffers: `Ram_MapCellBuffer`, `Ram_ActorSpriteSlots`, `Ram_DecodeBuffer`, `Ram_MapBlocks`, `Ram_MapCollision`, `Ram_BgTileBuffer` | after the overlay area, as the EWRAM table lists | Code reaches across their boundaries by arithmetic: the map's cells fill 64 KB from the start of `Ram_MapCellBuffer`, through the sprite slots and the decode buffer, and the tile animation reads tiles from `Ram_DecodeBuffer` that land in `gMapLayerData` ([Maps](../map/README.md)). So `ewram.s` can't reorder or resize them. |
+| The map and decode buffers: `Ram_MapCellBuffer`, `Ram_ActorSpriteSlots`, `Ram_DecodeBuffer`, `Ram_MapBlocks`, `Ram_MapCollision`, `Ram_BgTileBuffer` | after the overlay area, as the EWRAM table lists | Code reaches across their boundaries by arithmetic: the map's cells fill 64 KB from the start of `Ram_MapCellBuffer`, through the sprite slots and the decode buffer, and the tile animation reads tiles from `Ram_DecodeBuffer` that land in `gMapLayerData` ([Maps](../layout/README.md)). So `ewram.s` can't reorder or resize them. |
 | The ends of the two heaps | `0x03007800` in IWRAM and `0x02040000`, the end of EWRAM | The allocators test against these numbers (`heap.c`). `gCartridgeResetMarker` sits at the first, and the system stack lives above it. |
 | The sound driver's mixer, `SoundDriver_Mixer` (932 bytes) | `0x03007000`, inside the IWRAM heap's range | `Audio_Initialize` copies 1 KB at once (`SOUND_MIXER_CODE_SIZE`), so the 92 bytes after the mixer in the ROM land just after it. `Sound_LoadPresetParameters` copies its 152-byte presets elsewhere, into the resident code at `IwramSoundPresetCode`. |
 | The frame wait's stack top, `Ram_FrameWaitStackTop` | `0x03007a00` | The 512 bytes between it and the heap's end are what the frame loop, its tasks and the VBlank work always have ([Runtime](../runtime/README.md)). |
@@ -335,7 +335,7 @@ The system folder is the ground the rest stands on. [Runtime](../runtime/README.
 copies the resident code into IWRAM at power-on and allocates from the two
 heaps laid out here. The field code loads each scene's overlay by the number
 the scene table gives it ([Running a place](../object/README.md)), and every
-overlay in [Scenes](../scene/README.md), [Menus](../menu/README.md) and
+overlay in [Scenes](../map/README.md), [Menus](../menu/README.md) and
 [Debug rooms](../debug/README.md) is built from the entry and import tables
 described here. Code everywhere loads its pictures and maps through the
 resource directory, and [saving](../runtime/README.md#saving) writes through

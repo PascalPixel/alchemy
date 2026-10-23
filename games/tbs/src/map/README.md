@@ -1,513 +1,444 @@
-# Maps
+# Scenes
 
-![A layered map is one square grid of 128 by 128 cells, each 16 pixels square. Each of its three layers is a rectangle cut from that grid, and the map's header says where each rectangle starts. In Goma Cave's entrance room the ground layer starts at cell 0, 0 and holds the cave floor and its pool; the middle layer starts at cell 0, 34, below it, and holds the rock walls; the overhead layer starts at cell 50, 0, to the right, and holds only the glow of the torches. The rest of the grid is unused.](https://alchemy.pascalpixel.com/illustrations/map/grid-windows.svg)
+![Six questions a place answers. The field engine knows a place only through six questions it asks the place's own code. When the party arrives it asks, in order: what happens here (the events, kept for the whole visit), where the party arrives (the entrances), who stands where (the placements), and whether anything needs setting up first (the initialization, which can play an arrival cutscene). At every step it asks whether the leader stands in an exit area. As the party leaves it asks where the exit leads. Each answer comes from a function, so a place can answer differently as the story goes on.](https://alchemy.pascalpixel.com/illustrations/scene/entries.svg)
 
-A town or dungeon map is one big square grid of 16-pixel cells, 128 on a
-side, and each of its three layers is a rectangle cut from that grid; the
-map's header says where each one starts, and the rest of the grid goes
-unused.
+Everything that makes a place itself is in its own code here: who stands
+where, what each person says, what happens when the party steps on a
+doorstep, searches a jar, or uses an item or Psynergy, and the cutscenes the
+place plays. That code is a scene overlay, loaded when the party arrives and
+replaced when it leaves. [Running a place](../object/README.md) runs the place
+and asks the overlay what to do; the overlay drives the engine back through
+its import table. Each overlay has a generated page of its own, listed in
+[Places](../field/maps.s) in story order, with its map and its events.
 
-The map data is kept as editable tables: 182 layered maps for the towns,
-dungeons and interiors, the world map's ground and default cells, and the
-opponents' recorded paths in the Colosso finals. There is no code here. Each
-scene's row of `gField_SceneTable` ([`field/scenes.s`](../field/scenes.s))
-gives a map number, which picks a row of `gMap_LayeredScenes`
-([`field/layered.tsv`](../field/layered.tsv)): the map's header, palette,
-three tile sheets and layer data. `Map_LoadLayeredScene`
-([`field/field/map_layers.c`](../field/field/map_layers.c)) loads it, and
-[Field](../field/README.md) describes how the engine draws and scrolls it.
+## The entry table
 
-## Cells
+The engine knows nothing about any one place. It asks the place's code six
+questions, always the same ones, and the answers are the place.
 
-A cell is one 16 by 16 pixel square of a layered map, a 32-bit word once
-loaded, which says what is drawn there, what the ground is shaped like and
-what standing on it does.
+When the party arrives, the engine asks what can happen here (the events,
+kept for the whole visit), where the party arrives (the entrances), who
+stands where (the placements), and whether anything needs setting up
+(the initialization). At every step it asks whether the leader is standing
+in an exit area, and as the party leaves, where the exit leads. Each answer
+comes from a function rather than a fixed table, so a place can answer
+differently as the story goes on ([World](../../world.md#scene-entries) gives
+Vault's example), and an overlay that serves several scenes can answer for
+each.
 
-![The ground seen from the side, with the leader standing on it. A band around the leader's feet reaches 8 pixels up and 12 pixels down. Ground ahead whose height falls inside the band can be stepped onto: a ledge 8 pixels up and a dip 8 pixels down. Ground outside it blocks the leader as a wall would: a rim 32 pixels high, like the ones at the foot of Goma Cave's cliffs, and a drop of 16 pixels. Each cell is 16 pixels wide.](https://alchemy.pascalpixel.com/illustrations/map/step-heights.svg)
+The initialization restores what the flags say has happened, starts
+callbacks, or plays an arrival cutscene; it may take an exit at once. It
+skips arrival cutscenes when `FLAG_KEEP_PARTY_POSITION` says the party is
+returning to where it stood, as after a battle.
 
-Every cell has a height, and a height can stop the leader just as a wall
-mark does: the leader can step up at most 8 pixels and down at most 12, so a
-sharp rise or drop blocks the way. A cell's word says how its ground is
-shaped as well as what is drawn there and what stepping on it does.
+In the code, the six are `struct SceneEntries` in `field_runtime.h`, in a
+fixed order at the start of every overlay, `entry/<place>.s`: 48 bytes, each
+entry a veneer, a tiny piece of code that only jumps on: one word holding
+two instructions (load the address that follows, jump to it), then the
+address of the function. `Field_RunScene` calls
+`Scene_GetEvents`, then places the party at its entrance
+(`Scene_ApplyEntrance`), creates the actors from the placements and calls
+`Scene_Initialize`. `Field_ProcessStep` reads the regions at every step, and
+`Scene_TakeExit` reads the exits as the party leaves. An overlay that serves
+several scenes chooses by `gGameState.scene`, as Babi Lighthouse's
+`Scene_GetRegions` does. Some overlays give the entries names of their own
+(`BabiLighthouse_GetExits`); only the order is fixed.
 
-A loaded cell is one word, four bytes. Its first two bytes (a halfword) hold
-the block number in their low 12 bits and four flag bits above, the layer and priority an object standing
-there takes; its third byte is the collision code, and its fourth the shape's
-number in the map's shape table.
-
-A shape is four bytes, a row of `shapes.tsv`. The low four bits of the first
-pick one of the 16 terrain kinds (flat ground, slopes, steps, ground shaped
-through three heights and others), and the other three are height samples in
-steps of 8 pixels, which the kind's height function interpolates
-(`Map_GetTerrainHeight`, through `gMap_TerrainHeightFunctions`).
-
-The collision code is what walls and events are keyed on. `MAP_CELL_WALL`
-blocks movement whatever the heights. The codes from `MAP_CELL_EVENT_FIRST`
-to `MAP_CELL_EVENT_LAST` belong to the scene: a touch event fires when the
-leader steps onto or pushes against a cell with its code, and a search event
-when the player presses A facing one. The codes above them mean the same on
-every map: `MAP_CELL_ENCOUNTER_GROUND_1` and `_2` for ground with encounters
-of its own, `MAP_CELL_JAR` to `MAP_CELL_WELL` for search spots with shared
-lines, `MAP_CELL_HAZARD` for the Lamakan Desert's sand, and `MAP_CELL_LEDGE`,
-`MAP_CELL_CLIMB` and `MAP_CELL_JUMP_FORWARD`, which `Field_RunPushTileEvent`
-acts on when the leader pushes against them.
-
-A wall need not be coded. `Map_CheckObjectStep` lets an object step at most
-8 pixels up or 12 down, so ground that rises sharply stops the leader as
-surely as `MAP_CELL_WALL`. Goma Cave has no wall-coded cells at all: a rim of
-ground 32 pixels high runs along the foot of each cliff, some of it cut along
-a cell's diagonal.
-
-Collision and height belong to a layer: code that asks about the ground
-reads the cell in the window of the layer the object follows, so an object
-stands in one layer at a time ([Field](../field/README.md#how-high-a-step-can-go)).
-
-A cell is `struct MapCell` in [`map.h`](../../include/map.h), and its code an
-`enum MapCellCode`.
-
-| Bits of the cell word | Field | Meaning |
+| Entry, as Vault names it | Offset in `struct SceneEntries` | Returns or does |
 | --- | --- | --- |
-| 0 to 11 | `metatileAndFlags` | the block drawn in the cell |
-| 12 to 15 | `metatileAndFlags` | flags: the layer and priority an object standing there takes (15 and 14 read by `Map_GetCellHighFlags`) |
-| 16 to 23 | `collisionCode` | the collision code |
-| 24 to 31 | `attributeB` | the shape, a row of the map's shape table |
+| `Scene_Initialize` | `0x04` | the scene's setup, run once its actors exist |
+| `Scene_GetEntrances` | `0x0c` | `struct SceneEntrance` rows |
+| `Scene_GetExits` | `0x14` | the exit table |
+| `Scene_GetPlacements` | `0x1c` | `struct ScenePlacement` rows |
+| `Scene_GetEvents` | `0x24` | `struct SceneEvent` rows |
+| `Scene_GetRegions` | `0x2c` | `struct SceneRegion` boxes, or `NULL` |
+
+## The tables
+
+The answers are tables: where the party can arrive and leave, who stands
+where, and what answers each thing the player does. A position in them is
+in pixels (x east, y up, z south) and a facing one of eight headings
+(`enum Facing`); [Words used here](#words-used-here) gives the units.
+
+- **Entrances** (`struct SceneEntrance`): for each entrance number, a flag
+  that must be set (or -1), a position, a facing and the camera's limits.
+- **Exits**: a header word per scene (`SCENE_EXITS(Place)`), then rows of
+  `SCENE_EXIT(exit, scene, entrance)` mapping an exit kind to a scene and
+  entrance named in `scene_links.h`, ended by `SCENE_EXITS_END`.
+  `SCENE_EXIT_IF` adds a flag, and the row is taken only while that flag is
+  clear. `SCENE_EXIT_TO_BATTLE` leads into a battle.
+- **Placements** (`struct ScenePlacement`): a sprite, a condition, a behaviour
+  (an `enum ActorBehavior` such as `ACTOR_STAND` or `ACTOR_WANDER`, or an
+  object script), a position, a facing and how the actor turns when spoken to.
+- **Regions** (`struct SceneRegion`): boxes in which the leader takes an exit
+  kind, each with a condition. Most scenes have none.
+- **Events** (`struct SceneEvent`): a control word (the kind and its detail), a
+  trigger, a condition and a value, ended by `SCENE_EVENTS_END`.
+
+### Who stands where
+
+Each row of a place's placement table puts one person or thing on the map,
+an actor, and each row owns an actor slot of its own, a numbered place for
+it in the scene's state, whether or not it appears.
+
+![Every placement row owns an actor slot. The placement table of Mercury Lighthouse's upper floor, row by row, and the actor slot each row fills before and after the blue statue falls from its ledge. The party's eight slots come first. The first row, the statue fallen to the floor below, appears only once it has fallen; the second, the statue on its ledge, only until then. The rows after them, two pipe sections, three pipe ends and six stone statues, always appear. A row whose condition fails leaves its slot empty rather than handing it to the next row, so every actor keeps the same slot whatever the story has done, and the pipes are always the third and fourth placed actors.](https://alchemy.pascalpixel.com/illustrations/scene/placements.svg)
+
+A row can carry a condition, a story flag that must be set or clear, and a
+row whose condition fails puts nobody on the map. Its slot stays empty
+rather than going to the next row, so every actor keeps one number all game
+and the scene's code can name it once: on Mercury Lighthouse's upper floor
+the blue statue has one row for its place on the ledge and another for where
+it lands after it falls, and only one of the two appears.
+
+The party takes slots 0 to 7, the leader the one the player moves
+(`ACTOR_PARTY_LEADER`), and the table's rows take the slots from
+`ACTOR_FIRST_PLACED` in order: actor `ACTOR_FIRST_PLACED + n` is always row n
+(`Event_SpawnObjectTable`). A row whose sprite is one of the party's
+characters (sprites 0 to 7) takes that character's own slot instead. A
+condition of 0 is no flag: `Scene_AssignViewFlags` replaces it with whether
+the actor lies within the view. Each scene names its actors in an enum in
+row order (`ACTOR_FALLEN_STATUE = ACTOR_FIRST_PLACED`).
+
+### Which events a cell starts
+
+Some spots on a map do something when the leader reaches them: a doorstep
+leads into a house when the leader walks into it, the edge of a village
+leads on to the next scene, a ladder climbs to a roof, and a chest or a
+bookcase answers the A button. The map marks each spot by the collision code
+of its cell, and the scene's event table says what that code does. The same
+code means different things in different places.
+
+On the screen of Vale below, on the day the story begins, each door is a
+touch row rather than an exit row: walking north into the doorstep runs a
+script, `Event_EnterIsaacsHouse` for Isaac's house, that opens the door,
+walks the leader in and only then asks for the exit, and that can refuse
+instead, as Dora does once the party has left Vale. Touch rows also climb the
+ladder beside Isaac's house (`Event_ClimbLadderOntoRoof` up,
+`Event_ClimbDownFromRoof` down) and put the upper path's cells
+back when the leader steps off it (`Event_ClearPathCellOverride`). Three
+cells of the path at the top carry a code no row answers.
+
+![Which cells start events in Vale. A screen of Vale on the day the story begins, drawn from its map, with each cell that carries one of the scene's own collision codes tinted and numbered. In pink, cells a touch row answers: 1, a door into a house, walking north into it; 2, the door into Isaac's house, walking north; 3, the ladder up onto the roof of Isaac's house, walking north; 4, the ladder down from the roof, walking south; 5, the cell where stepping off the upper path changes its cells back. In grey, 6: three cells of the path at the top with a code of the scene's own that no row answers.](https://alchemy.pascalpixel.com/illustrations/scene/event-cells.svg)
+
+Stepping on or walking into a cell runs the first touch row whose trigger is
+its code and whose condition holds, or failing one the first such exit row
+(`Scene_RunTouchOrExit`); pressing A facing it runs the first such search
+row. A code with no row does nothing. The scene's own codes are
+`MAP_CELL_EVENT_FIRST` to `MAP_CELL_EVENT_LAST`; the codes above them mean
+the same on every map ([Maps](../layout/README.md#cells)).
+
+### What an event row says
+
+An event's kind says what starts it and what its trigger is:
+
+| Kind | Started by | Trigger |
+| --- | --- | --- |
+| `EVENT_TALK` | the A button on an actor | the actor's number |
+| `EVENT_TALK_HALTED` | talking to an actor Halt has stopped | the actor's number |
+| `EVENT_TOUCH`, `TOUCH_FACING(f)`, `TOUCH_WALKING_INTO(f)` | stepping onto a cell, facing a way, or pushing against it | the cell's collision code |
+| `EVENT_EXIT` | stepping onto a cell no touch event answers | the cell's collision code |
+| `SEARCH(target)` | the A button on what is ahead, when it is no actor | the cell's collision code |
+| `USE_ITEM(item)`, `USE_ITEM_ON_ACTOR(item)` | using an item | the cell's code or the actor's number |
+| `PSYNERGY_ON_ACTOR(ability)`, `PSYNERGY_IN_AREA(ability, phase)` | using Psynergy on an actor, or anywhere | the actor's number, or 0 |
+| `EVENT_RAISED` | the scene's code raising a value | the value |
+
+A Psynergy event's phase (`enum PsynergyPhase`) says when it runs around the
+effect: `PSYNERGY_PHASE_BEFORE_CAST` before it plays,
+`PSYNERGY_PHASE_AFTER_CAST` after, and `PSYNERGY_PHASE_EFFECT_ACTS` from inside
+the effect, as Force strikes, Frost freezes or Reveal shows what is hidden.
+Reveal's scenes pair that row with a `PSYNERGY_PHASE_EFFECT_ENDS` one that
+hides it all again as the colours come back, and `PSYNERGY_PHASE_AFTER_END`
+runs when a Psynergy that runs out by itself, such as Cloak, has ended. [Field
+objects](../object/README.md#how-field-psynergy-reaches-its-effect) follows a
+cast through these and lists the phases' values.
+
+An event's value is a message (`MSGNO(name)`), a function
+(`EVENT_SCRIPT(function)`), the exit kind for an exit, or for a search what is
+found: `FIND_ITEM`, `FIND_COINS`, `FIND_PSYNERGY_STONE`, `FIND_MESSAGE` or
+`FIND_MIMIC`. Functions live above `0x10000` and messages below, which is how
+one word holds either.
+
+The formats are in `games/tbs/include/map_tables.h`, the door names in
+`scene_links.h`.
 
 | Name | Value | Meaning |
 | --- | --- | --- |
-| (open ground) | 0 | nothing happens |
-| `MAP_CELL_EVENT_FIRST` to `MAP_CELL_EVENT_LAST` | 1 to 239 | the scene's own touch, exit and search events |
-| `MAP_CELL_ENCOUNTER_GROUND_1`, `_2` | 240, 241 | ground with encounters of its own: grounds 1 and 2 of the scene's zones |
-| `MAP_CELL_JAR` | 242 | a search spot with lines of its own |
-| `MAP_CELL_BARREL` | 243 | a search spot with lines of its own |
-| `MAP_CELL_WOODEN_BOX` | 244 | a search spot with lines of its own |
-| `MAP_CELL_GRAVE` | 245 | a search spot with lines of its own |
-| `MAP_CELL_BOOKS` | 246 | a search spot with lines of its own |
-| `MAP_CELL_WELL` | 247 | a search spot with lines of its own |
-| `MAP_CELL_JUMP_FORWARD_UNREACHED` | 249 | jumps forward like `MAP_CELL_JUMP_FORWARD`, but never reaches `Field_RunPushTileEvent` |
-| `MAP_CELL_HAZARD` | 250 | ground that hurts the party over time: the Lamakan Desert's sand |
-| `MAP_CELL_LEDGE` | 252 | jumped down with Down held |
-| `MAP_CELL_CLIMB` | 253 | climbed up or down with Up or Down held |
-| `MAP_CELL_JUMP_FORWARD` | 254 | jumped across |
-| `MAP_CELL_WALL` | 255 | blocks whatever the heights |
+| `ACTOR_PARTY_LEADER` | 0 | the actor the player moves |
+| `ACTOR_FIRST_PLACED` | 8 | the slot of a placement table's first row |
+| `CONDITION_ALWAYS` | -1 | a row that always holds |
+| `CONDITION_IN_VIEW` | 0 | a placement shown only while within the view (`Scene_AssignViewFlags`) |
+| `CONDITION_FLAG_SET` | `0x1000` | with a flag (`IF_FLAG_SET`): the flag must be set, not clear |
+| `SCENE_EXITS_END` | `0x1ff` | ends an exit table |
+| `SCENE_EVENTS_END` | `0xffffffff` | ends an event table |
+| `EVENT_TALK` | 0 | event kind: talking to an actor |
+| `EVENT_EXIT` | 1 | event kind: an exit cell |
+| `EVENT_TOUCH` | 2 | event kind: stepping onto or pushing against a cell |
+| `EVENT_SEARCH` | 3 | event kind: a search |
+| `EVENT_ITEM` | 4 | event kind: an item used on a cell or an actor |
+| `EVENT_PSYNERGY` | 5 | event kind: Psynergy |
+| `EVENT_RAISED` | 6 | event kind: raised by code |
+| `EVENT_TALK_HALTED` | 7 | event kind: talking to an actor Halt has stopped |
+| `EVENT_TRIGGER_OWN_EFFECT` | `0x400` | trigger bit: a Psynergy event runs in place of the effect, a search shows no checking message |
+| `FIND_ITEM(item)` | `0x00100000` + item | a search finds an item |
+| `FIND_COINS(coins)` | `0x00200000` + coins | a search finds coins |
+| `FIND_PSYNERGY_STONE` | `0x00300000` | a search finds a Psynergy Stone |
+| `FIND_MESSAGE(message)` | `0x00400000` + message | a search shows a message |
+| `FIND_MIMIC` | `0x00500000` | a search starts a mimic's battle |
 
-## A map's tables
+## How an event is chosen
 
-Everything that makes one town or dungeon map, from the pictures of its
-squares to where its chests stand, is kept as a handful of plain tables in
-the map's own folder. Each table holds one part of the map, and the map's
-`map.s` puts the parts together behind the map's header.
+When the player talks to someone, the game reads the place's event table
+from the top and runs the first row that fits. That one rule is how a person
+says something new as the story moves on.
 
-| File | What it is | Built as |
-| --- | --- | --- |
-| `map.s` | the header, three layers and six offsets, then the parts; in 129 maps a tile set's palette and tile sheets follow (from `games/tbs/src/graphics/tileset`) | assembled |
-| `metatiles.tsv` | the blocks; a block's number is its row, from 0 | `metatiles.delta0.lz`, `.delta1.lz` or `.delta2.lz` |
-| `shapes.tsv` | the shapes | `shapes.table.lz` |
-| `grid.tsv` | the three planes, in order | `grid.parts.lz` |
-| `grid_collision.tsv`, `grid_shape.tsv`, `grid_metatile.tsv` | each cell's collision code, shape and block | parts of the grid |
-| `animation.tsv` | the tile animation script | `animation.script.lz` |
-| `blend.tsv` | the blend script | `blend.script.lz` |
-| `markers.tsv` | the markers | `markers.table` |
-| `*_ja.tsv`, `*_de.tsv`, `*_es.tsv` and so on | an edition's own version of a table | chosen in `map.s` |
-| `*_patch.tsv` | bytes Camelot changed after packing | read by the packer |
+![The first row that fits answers. Four talk rows from Vault's houses once the party is back from Kalay, in table order. The mayor's first row holds until he has welcomed Isaac back, and it runs the first time the player talks to him. His second row holds always, and it answers the later talks on that visit: he warns of the thieves' revenge. The cook's first row holds always and answers every talk with "We don't get a lot of travelers in winter." The cook's second row, in which he would offer his leftover bones, is never reached, because the row above it always fits first.](https://alchemy.pascalpixel.com/illustrations/scene/first-row.svg)
 
-A plane's first line describes it: `cell:u8	grid:128x128	fill:0	at:2,3`
-gives the size of each value, the grid, the value of every cell the table
-leaves out, and the cell its first row starts at, column then row. The rows
-are hexadecimal, one row of the grid per line.
+A place lists its rows from the latest point in the story down to the
+default. In Vault's houses after Kalay, the mayor has a row that holds until
+he has welcomed Isaac back, and below it one that always holds: the first
+talk welcomes Isaac, and every later one warns of the thieves. A row behind
+one that always fits is never reached, as the cook's second row shows.
 
-### The header
-
-In the north of Suhalla Desert a haze of sand streams across the screen
-faster than the ground moves, and wraps round as it goes. The map's header is
-what sets that up: for each layer it says how fast the layer follows the
-camera, whether it drifts by itself and where it wraps, as well as how far
-the camera may go.
-
-![In the north of Suhalla Desert, when the camera moves 16 pixels, the ground layer and the middle layer move 16 pixels with it, but the overhead layer, the sand haze, moves 20, a quarter faster. The haze also drifts by itself every frame, even while the camera stands still. Its picture is a square 256 pixels on a side, repeated across the screen: the layer wraps round. The map's header sets all of this for each layer, along with how far the camera may go.](https://alchemy.pascalpixel.com/illustrations/map/layer-scroll.svg)
-
-A layer that follows the camera at the camera's own pace looks as far away
-as the ground; one that moves faster looks nearer. Suhalla Desert's north
-(`map_147`) moves its ground and middle layers with the camera and its
-overhead haze a quarter faster, drifts the haze by -121 and 35 sixteenths of
-a pixel a frame, and wraps it every 32 tiles, 256 pixels.
-
-The header is one `map_header` line and three `map_layer` lines in `map.s`,
-read as `struct LayeredSceneHeader`. It gives the camera's bounds in 8-pixel
-tiles, each layer's priority (0 leaves the layer off) and the char block its
-tiles come from, and for each layer its origin in 8-pixel tiles (the
-picture at the top of this page), its parallax (in sixteenths of the view's
-motion), its drift (sixteenths of a pixel a frame) and its wrap.
-
-Six offsets from the header's start follow: the blocks, the shapes, the cell
-grid, the tile animation, the blend script and the markers. An offset of 0
-means the map has none of that part.
-
-`struct LayeredSceneHeader` and `struct LayeredSceneLayer` are defined in
-`field/field/map_layers.c`, and the `map_header` and `map_layer` macros that
-write them in `map.inc`.
-
-| Field | Unit | Meaning |
-| --- | --- | --- |
-| `origin[4]` | 8-pixel tiles | the camera's bounds: left, top, right and bottom |
-| `priority[3]` | | each layer's BG priority, 1 to 3; 0 leaves the layer off |
-| `charBase[3]` | | each layer's BG char block |
-| `reserved` | | 0 in every map; nothing reads it |
-| `layers[n].x`, `.y` | 8-pixel tiles | the layer's origin |
-| `layers[n].scrollX`, `.scrollY` | sixteenths of the view's motion | the layer's parallax |
-| `layers[n].speedX`, `.speedY` | sixteenths of a pixel a frame | the layer's drift |
-| `layers[n].periodX`, `.periodY` | 8-pixel tiles, less one | where the layer wraps, as a mask: `0x1f` wraps every 32 tiles |
-| `tiles` | bytes from the header | the blocks |
-| `collision` | bytes from the header | the shapes |
-| `tilemap` | bytes from the header | the cell grid |
-| `animation` | bytes from the header | the tile animation script, or 0 for none |
-| `blend` | bytes from the header | the blend script, or 0 for none |
-| `markers` | bytes from the header | the marker list, read in place |
-
-## How the build makes a map
-
-The tables are for people to read and edit; the game wants packed bytes. The
-build turns each table into the bytes the game reads and packs them exactly as
-Camelot's packer did, so the result is the same, byte for byte, as the
-cartridge.
-
-![How the build turns one of a map's tables into what the game reads, using Suhalla Desert's shapes as the example. The file shapes.tsv is a table anyone can edit, one shape a row: its kind and three heights. The build tool writes the bytes the game reads, shapes.table, one record a row. Then it packs them, shapes.table.lz, exactly as Camelot's packer did, so the packed bytes are the same as on the cartridge. Last, the map's map.s places them behind the map's header. The name of each file says what to make: the table's name, then its form, then the packing.](https://alchemy.pascalpixel.com/illustrations/map/build-steps.svg)
-
-The name of the file the build asks for says what to make:
-`NAME.FORM[.CODEC]`, from `NAME.tsv`. `tools/ags-graphics` makes it (the
-`Makefile`'s asset rules), and a map uses these forms:
-
-- `table`: the shapes and markers, one record per row, each column's type
-  giving its size.
-- `plane`: a grid plane, written out whole, row by row, with `fill` in every
-  cell the table leaves out.
-- `parts`: the grid, the encodings of the files it lists one after another.
-- `delta0`, `delta1`, `delta2`: the blocks, halfwords behind a method byte
-  (`enum MapBlockPacking`) that `TileMap_DecodeStagedBuffer` undoes. Method 0
-  stores them as they are, 2 XORs each with the one before, and 1 does the
-  same with all the high bytes stored before all the low bytes. Each `map.s`
-  names the method its stream uses.
-- `script`: the tile animation and blend scripts below.
-
-The codec `lz` then packs each stream, and the bytes must come out identical.
-Where the original stream is followed by stray bytes the packer left in its
-buffer, `map.s` places them as literal bytes with a `PACKER:` comment naming
-what wrote them. Where Camelot changed a stream after packing it, a
-`_patch.tsv` lists each changed byte: its position, the byte the packer saw,
-the byte that shipped, and the proof. The table holds what shipped, and the
-patch gives the packer the byte it packed, so the packer makes the same
-choices and the stream still decodes to the edited map. Only Gondowan
-Passage's grid and Venus Lighthouse's entrance's grid, with its Spanish and
-French versions, have patches.
-
-An edition's own version of a table (`grid_es.tsv`, `markers_ja.tsv`) is
-chosen in `map.s` with `.ifdef TBS_EDITION_*`, and editions that agree share
-one file: Venus Lighthouse's entrance has a French grid and a Spanish one, and
-the Italian edition uses the Spanish. A map whose whole data differs by
-edition has a block of its `map.s` for each. A map that uses another map's
-table names that map's file.
-
-`enum MapBlockPacking` is in `field/field_internal.h`.
-
-| Name | Value | Form | Meaning |
-| --- | --- | --- | --- |
-| `MAP_BLOCKS_RAW` | 0 | `delta0` | the blocks as they are |
-| `MAP_BLOCKS_SPLIT_DELTA` | 1 | `delta1` | all the high bytes, then all the low bytes, each value XORed with the one before |
-| `MAP_BLOCKS_DELTA` | 2 | `delta2` | each value XORed with the one before |
-
-## Loading a map
-
-When the party enters a town or dungeon, the map's layers and sprites are
-hidden while the map is unpacked into working memory. Most of what is
-unpacked is the grid, which is stored in three separate pieces and put together into one
-word per cell as it loads, so that everything about a cell can be read in
-one go.
-
-![A map's grid is stored as three whole planes, one after another: what stepping on each cell does (a byte a cell, 16 KB), the shape of each cell's ground (a byte a cell, 16 KB) and the picture drawn in each cell, with the layer an object standing there takes (two bytes a cell, 32 KB). As the map loads, a routine copied into RAM takes one value from each plane for every cell and puts them together into one four-byte word: the shape at the top, then what stepping does, then the picture. The 128 by 128 words take 64 KB.](https://alchemy.pascalpixel.com/illustrations/map/grid-weave.svg)
-
-`Map_LoadLayeredScene` decodes each part into a fixed buffer in EWRAM, the
-console's 256 KB of work memory: the
-blocks into `gMapBlocks`, the shapes into `gMapCollision`, the grid into
-`Ram_MapCellBuffer`, and the two scripts into the space after the shapes. The
-markers are not decoded: the loader keeps a pointer to them in the map work.
-
-The grid is stored as three whole planes: collision codes, then shapes, then
-blocks (16 KB, 16 KB and 32 KB, since the block plane has a halfword per
-cell). `TileMap_ConvertBuffer` then runs `Tile_ConvertMap`, a routine in the
-processor's fast 32-bit ARM instructions copied into RAM, which weaves them into 128 by 128 cell words, 64 KB from the
-start of `Ram_MapCellBuffer`, and numbers the placeholder blocks as it goes.
-The first two planes are saved to a temporary buffer first, since the cell
-words overwrite them.
-
-`gMapCellBuffer` itself is 32 KB, so the cells run on through
-`gActorSpriteSlots` and `gDecodeBuffer`, and neither can hold anything else
-while a map is loaded. Only code that reloads the cells afterwards writes
-there: a battle, after which the scene's map is loaded again; the link lobby,
-which leaves the partner's party in `gActorSpriteSlots` for the link battle
-that follows; and the world map's still view, which saves `BG1`'s tiles to
-`gDecodeBuffer` and draws into the cells, which
-`Map_LoadDefaultCellsAndUpdateBlock` then puts back. The debug sprite viewer
-also loads sprites there. The tile animation only reads from
-`Ram_DecodeBuffer`, at offsets that land past it. [System](../system/README.md) has the
-EWRAM layout.
-
-| Plane, in stored order | Size | Values |
-| --- | --- | --- |
-| collision codes | 16 KB | a byte a cell |
-| shapes | 16 KB | a byte a cell |
-| blocks | 32 KB | a halfword a cell |
-| the woven cell words | 64 KB | a word a cell, from the start of `Ram_MapCellBuffer` |
-
-### One grid, three layers
-
-All three layers are windows onto the one grid, as the picture at the top of
-this page shows for Goma Cave. Each layer's origin in the header picks the
-cell its window starts at (half its tile position, since a cell is 2 by 2
-tiles), so a map lays its layers out side by side or one above another:
-`map_000`'s start at tiles 0, 60 and 120 across, and Venus Lighthouse's
-entrance puts them at (0, 0), (64, 0) and (0, 68).
-
-The ground layer shows on `BG3`, the middle layer on `BG2` and the overhead
-layer on `BG1`; [Field](../field/README.md#towns-and-dungeons-on-screen) explains
-how their priorities put actors between them.
-
-### Placeholder blocks
-
-A map's grid doesn't store the number of every cell's picture from the
-start. The first time a picture appears in the grid, the cell holds a
-placeholder instead, and the game hands out block numbers in order as it
-loads the map.
-
-![Eight cells of a map's grid, in the order the game reads them, showing grass, grass, water, grass, rock, water, rock and grass. Where a picture appears for the first time, the grid stores a placeholder, the number 4,095, and as the map loads the game gives it the next block number: the first grass becomes block 0, the first water block 1, the first rock block 2. Every later cell with the same picture already stores its number. So a map has as many placeholders as it has blocks.](https://alchemy.pascalpixel.com/illustrations/map/placeholders.svg)
-
-A placeholder is a cell whose block is 4,095, the highest 12 bits can hold.
-As the map is converted, `Tile_ConvertMap` gives each placeholder a fresh
-block number, counting up from 0 in grid order. The ROM also keeps an unused
-C version of that numbering, `TileMap_NumberPlaceholderBlocks`.
-
-Each map's block table is ordered by where its blocks first appear in the
-grid, and the grid writes that first appearance as 4,095 and every later one
-by number, so a map has exactly as many placeholders as blocks (`map_003` has
-1,331 of each). Every map follows the rule but Venus Lighthouse's entrance,
-whose grid names 170 cells' blocks before their placeholders; those cells
-still get the right blocks, since the numbering depends only on the
-placeholders.
-
-### Chests and Psynergy Stones
-
-Several scenes can share one map, and each puts its own chests in it. The map
-lists the spots where a chest or a Psynergy Stone can stand, each with the
-event that would place one there, and a scene places one only where it has
-that event.
-
-![Two scenes on Crossbone Isle, CrossboneIsleKeys and CrossboneIsleBane, use the same map, and the map lists eight spots where a chest can stand, each with the event that would place one there. CrossboneIsleKeys has events for four of them, in a row along the room's north side: 333 coins, a Fairy Ring, a Cookie and a Smoke Bomb. CrossboneIsleBane has events for the other four: 666 coins and an Elixir on its raised floor, a Water of Life below them, and the Demon Axe, whose chest is carried on a stone pillar. A spot a scene has no event for stays empty.](https://alchemy.pascalpixel.com/illustrations/map/markers.svg)
-
-CrossboneIsleKeys and CrossboneIsleBane share `map_110`, whose eight markers
-carry the triggers 100 to 107: CrossboneIsleKeys has chest events for 100 to
-103, and CrossboneIsleBane for 104 to 107 (`scene/crossbone_isle_keys.c`).
-CrossboneIsleBane moves the Demon Axe's chest to 0, 0 until the stone pillar
-carrying it reaches the ladder, since its marker's cell lies past the room's
-east wall.
-
-The marker list is (column, row, id) triples, a cell and the trigger of a
-scene event, ended by 255, 255. When a scene loads, `Field_PlaceMapMarkers`
-([`object/object/markers.c`](../object/object/markers.c)) places an
-object at each marker whose id (100 to 239) the scene has an event for, up to
-`MARKER_MAX` (10): a chest for a chest event, shown open once its flag is set
-and gone once its mimic has been beaten, and a Psynergy Stone for a search
-event that gives one, until it is taken. A marker the scene has no event for
-takes no slot. 76 maps place `map_000/markers.table`, which holds only the end
-marker.
+`Scene_FindEvent` returns the first row whose kind, trigger and condition
+fit. A search on a named target (everything but `SEARCH_UNNAMED`) is
+returned whatever its condition, unless it finds a mimic, and
+`Field_SearchTile` tests the condition afterwards, so that an opened chest
+still says it is empty. Rows these rules make unreachable keep a
+`// Unused:` tag in their table, and [Unused](../../unused.md) describes every
+such case.
 
 | Name | Value | Meaning |
 | --- | --- | --- |
-| a marker's id | 100 to 239 | the trigger of the scene event that places it |
-| the end marker | column 255, row 255 | ends the list |
-| `MARKER_MAX` | 10 | markers placed on a map (`include/unit/object/object.h`) |
+| `SEARCH_UNNAMED` | 0 | a search that shows nothing as the leader checks |
+| `SEARCH_CHEST` | 1 | the first named target; target n shows `MsgTileChecked` + n |
 
-### Tile animation and blend scripts
+## Scripts
 
-Some parts of a map move by themselves without anything on the map moving:
-the game simply swaps the pictures of a few tiles on a timer. A
-map's tile animation script says which pictures to copy over which tiles and
-how long to wait between them; its blend script changes, in the same way, how
-the layers mix.
+A cutscene is written as a list of what happens, one step to a line, and the
+game plays it from top to bottom while the party waits.
 
-![One channel of a map's tile animation. Several pictures of the same patch of the map are stored apart from the tiles on screen. The channel copies the first over the patch's tiles, waits a few frames, copies the second, waits, and so on, then goes back to the first. Nothing else changes: every cell that uses those tiles shows the new picture at once. A map can run up to 16 channels, each on its own timer.](https://alchemy.pascalpixel.com/illustrations/map/tile-animation.svg)
+![A cutscene runs from top to bottom. The script a woman in Vale runs when Isaac talks to her after Kalay, one step to a line with how long each step holds the scene. The player loses control. The view starts to shake, and the script waits ten frames. The shake is set to die away. She says "Aghh! I felt another one!", which holds until the player answers it and then twenty frames more. She turns to face Isaac and the scene holds twenty frames. She says the next line, which holds until the player answers it. Then the player has control again.](https://alchemy.pascalpixel.com/illustrations/scene/script-steps.svg)
 
-Suhalla Desert's north shows the usual shape: its channel 0 copies four rows
-of four tiles from one of four stored pictures, waits 15 frames, takes the
-next picture, and jumps back to the first after the fourth.
+A step that takes time, such as a wait, a line of dialogue or someone
+walking somewhere, waits inside itself, so the next line starts only when it
+is done, and the walk resumes only after the last line. Steps that take no
+time, such as starting the shake, follow each other within one frame.
+Whatever has to keep moving during a cutscene, like a villager walking past,
+runs on its own: as an object script (the steps a field object runs each
+frame), a callback (a function the scene adds to run once a frame) or an
+update hook (a function an actor runs each frame with itself).
 
-Both scripts are runs of halfwords, run each frame as tasks
-(`field/map_animation.c`). In the tile animation's table, `channel n`
-(`0xfd00 + n`) starts channel n of the 16 at the next halfword; only the low
-four bits pick the channel, and a marker with bit 7 set starts it paused.
-Each `frame` is four values: the source tile, how many tiles, the destination
-tile and the frames to wait. `jump n` (`0xfe00 + n`) goes to halfword 2n of
-the channel's script, `stop` (`0xfeff`) halts the channel, and `end`
-(`0xffff`) loops it to its start. A source tile from 1,536 on is copied from
-RAM at `Ram_DecodeBuffer` plus its offset, which lands in `gMapLayerData`,
-and a lower one from elsewhere in video memory; the line is 512 for a map
-whose animations copy 64-byte tiles (`MapState.wideTiles`).
+A function an event names is a script: straight-line code written in the
+commands of `event.h` over the engine calls of `field_event.h`.
 
-The blend script changes how the layers blend over time. `control` sets
-`REG_BLDCNT`; `level` sets `REG_BLDALPHA`, or `REG_BLDY` when the control's
-mode is not alpha blending, and waits its second value in frames. `jump`,
-`stop` and `end` act as in the tile animation.
+```c
+/// LunpaFortressUpperFloor, raised when the patrolling pair spots the leader:
+/// the first stops and stares, and the second throws the party out.
+static void Event_PatrolPairThrowsPartyOut(void) {
+  EV_START();
+  Engine_ActorStop(UPPER_FLOOR_FIRST_PATROL);
+  Engine_ActorSetDestinationOffset(UPPER_FLOOR_FIRST_PATROL, 0, 0);
+  OBJECT_MODE(UPPER_FLOOR_FIRST_PATROL, 0);
+  OBJECT_FACE(UPPER_FLOOR_FIRST_PATROL, ACTOR_PARTY_LEADER, 0);
+  Engine_ActorShowEmote(UPPER_FLOOR_FIRST_PATROL,
+                        EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+  LunpaFortress_GuardThrowsPartyOut(UPPER_FLOOR_SECOND_PATROL);
+  EV_END();
+}
+```
 
-The words are tested in `MapAnimation_Update` and `DisplayBlend_RunScript`,
-which have no names for them; the names are the tables' (`animation.tsv`,
-`blend.tsv`).
+`EV_START` stops the leader and makes it the speaker, and `EV_END` returns the
+camera to it. `WAIT(n)` waits `n` frames, about 59.73 a second.
+`MESSAGE_SET` chooses a message and `MESSAGE_PUT` shows it spoken by an actor.
+`OBJECT_POSITION_SET`, `OBJECT_WALK`, `OBJECT_SPEED`, `OBJECT_DIR`, `OBJECT_FACE` and `OBJECT_MODE`
+move, turn and animate actors by number (`OBJECT_MODE` takes an `enum
+ActorAnimation` such as `ANIMATION_NOD`). `FLAG_CHECK` and `FLAG_SET` test and set
+game flags, and `SE(n)` plays a sound from `songs.h`. Callbacks are added with
+`FieldScheduler_AddCallback` at `TASK_PRIORITY_SCENE`.
 
-| Word | Value | Meaning |
+| Name | Value | Meaning |
 | --- | --- | --- |
-| `channel n` | `0xfd00 + n` | the tile animation's channel n starts at the next halfword |
-| `frame` | four values below `0xfd00` | source tile, tile count, destination tile, frames to wait |
-| `jump n` | `0xfe00 + n` | continue at halfword 2n of the channel's script |
-| `stop` | `0xfeff` | halt the channel |
-| `end` | `0xffff` | loop back to the channel's start |
-| a source tile from RAM | 1,536 on (512 for 64-byte tiles) | copied from `Ram_DecodeBuffer` plus its offset, rather than from video memory |
+| `TASK_PRIORITY_SCENE` | 3200 | the task priority a scene's callbacks run at |
 
-## The world map's data
+## State that cleans itself up
 
-The world map is far too big to unpack at once, so its ground is cut into
-squares that are packed one by one, and the game unpacks only the few around
-the party, bringing in new ones as the party walks.
+A scene never undoes what it changed. Instead the game keeps two sets of
+flags for scenes to use, and forgets them for it as the party moves on.
 
-![The world map's ground is a grid of 16 by 16 squares, each 512 pixels on a side, and each square is packed on its own, once for each of the world map's two ground layers. Only the 2 by 2 squares around the party are unpacked at any time; the rest stay packed. As the party walks half a square further, the 2 by 2 moves with it, and the squares it now covers are unpacked, one a frame.](https://alchemy.pascalpixel.com/illustrations/map/world-squares.svg)
+![What a place forgets, and when. Scene flags are forgotten every time the party enters a scene, even the one it just left: the plant Growth raised on Crossbone Isle is a sprout again. Place flags are kept while the party moves between the scenes of one place and forgotten when it enters another place: Vault's mayor remembers having welcomed Isaac back while the party stays in Vault, and welcomes him again on the next visit. Coming back from a battle forgets neither, so the room is as the party left it.](https://alchemy.pascalpixel.com/illustrations/scene/flag-reset.svg)
 
-The world is 16 by 16 squares of 512 pixels, and a table in the world map's
-work (`PerspectiveWork.tileIds`) says which stored square shows at each of
-them. `Map_UpdateCurrentTileBlock` unpacks the 2 by 2 squares whose top left
-holds the point 256 pixels left of the party and 320 above, in each of the
-two ground layers (`Map_WriteLayerCellTile`), and
-`Map_PreloadCurrentTileBlock` brings in at most one new square a frame as the
-party walks.
+Scene flags last until the party next enters a scene, so a scene keeps a
+pushed stone pillar or an opened door in one and finds it back in place next
+time. Place flags last while the party stays anywhere in the place, so they
+hold what must survive moving between its rooms, as Fuchin Falls Cave keeps
+where its logs float. Coming back from a battle forgets neither.
 
-The ground's data, `world/blocks.tsv` (`Field_PerspectiveDataA`), is one grid
-of 32-bit values in hexadecimal, 512 across and 320 down. The `blocks` form
-cuts it into 640 squares of 16 by 16 values and packs each separately behind
-a table of offsets; a square written all as `-` would be left out with an
-offset of 0, and the world map leaves none out. The second ground layer's
-squares are numbered 320 on from the first's.
+`Scene_ResetFlagsOnEnter` clears the scene's 256 flags on every ordinary
+entrance and the place's 256 when the party enters another group ([the front
+page](../../README.md#game-flags) explains the ranges). Because the numbers
+are reused everywhere, each scene says near its top (or beside a single use)
+what it keeps in them, and names those it gives a meaning in its own file
+(`FLAG_FIRST_PLANT_GROWN = FLAG_SCENE_TEMP_40` in Crossbone Isle,
+`FLAG_WELCOMED_BACK = FLAG_PLACE_TEMP_00` in Vault's houses).
 
-The tables in `default/` are the world map's too.
-`Map_InitializePerspectiveScene` loads the default cells, block attributes and
-tile animation when the world map scene starts, and
-`Map_LoadDefaultCellsAndUpdateBlock` puts the cells back after the world map's
-still view ([Field](../field/README.md#the-world-map-in-perspective)).
+The flags are in `games/tbs/include/flags.h`.
 
-| Part | Size |
-| --- | --- |
-| the world | 16 by 16 squares of 512 pixels |
-| the ground's grid | 512 by 320 values, 32 bits each |
-| a square | 16 by 16 values |
-| squares | 640, each packed on its own, 320 for each ground layer |
-| unpacked at once | the 2 by 2 squares around the party, in each of two ground layers |
-
-## The Colosso paths
-
-In each Colosso final Isaac races an opponent through an obstacle course. The
-opponent isn't steered by any rule: it replays a run that was recorded once,
-one point of ground a frame.
-
-![In each of the three Colosso finals, the opponent racing Isaac replays a run recorded as one point of ground a frame, drawn here from the three tables at one scale, seen from above. Azart's run is 3,918 points, about 65 seconds; Satrage's is 4,380, about 73 seconds, and runs the other way; Navampa's is 5,048, about 84 seconds. The game can also play a run mirrored across the finish line. A dot marks every 300 frames, about five seconds. Each frame the opponent steps to the next point, turning by at most a sixteenth of a turn, and when the points run out it walks to the finish.](https://alchemy.pascalpixel.com/illustrations/map/colosso-path.svg)
-
-`colosso/` holds the three runs, each 7,200 points of ground in pixels, the
-size of the race's path buffer (`ColossoRaceWork.path`), with a row of two
-zeros where the run ends. The tables call the columns x and y; the race code
-reads each pair as x and z. The Azart match runs path A, the Satrage match
-path B and the Navampa match path C (`Colosso_StartOpponent`,
-`ColosseumSatrageMatch_StartOpponentPath`).
-
-Each frame `Colosso_UpdatePathOpponent` steps the opponent to the next point,
-mirrored across the finish when asked, turning at most a sixteenth of a turn,
-and at the end walks it to the finish. Its recording mode writes down where
-an actor stands every frame and then plays it back with the opponent. The
-Colosso lettering, which differs by edition, is placed after the paths.
-
-| Table | Match | Points |
+| Name | Value | Meaning |
 | --- | --- | --- |
-| `opponent_path_a.tsv` | Azart | 3,918 |
-| `opponent_path_b.tsv` | Satrage | 4,380 |
-| `opponent_path_c.tsv` | Navampa | 5,048 |
+| `FLAG_SCENE_TEMP_00` to `FLAG_SCENE_TEMP_FF` | `0x200` to `0x2ff` | cleared on every ordinary entrance to a scene |
+| `FLAG_PLACE_TEMP_00` to `FLAG_PLACE_TEMP_FF` | `0x300` to `0x3ff` | cleared on entering another group |
 
-## Design
+## Code shared between overlays
 
-The grid is stored as whole planes rather than as cell words, which keeps
-each plane's long runs of one value together for the packer; that is an
-inference, since the bytes show only the layout.
+Two places that need the same piece of code each carry their own copy of
+it, because a place's code can call only the main program, never another
+place's.
 
-The markers are the one part stored unpacked, and the loader reads them in
-place rather than copying them, likely because only `Field_PlaceMapMarkers`
-reads them, once as the scene loads.
+![Code two places share is copied into both. Two overlays side by side: Vault's town and Vault's houses. Each holds its own code, and each also holds a copy of the same two pieces: showing a villager's thought read with Mind Read, and Ivan handing back Isaac's Djinni before he leaves the party. Below them is the main program, which is always loaded and which both call. Only one place's code is loaded at a time, and it can call only the main program, so shared code is written once and copied in.](https://alchemy.pascalpixel.com/illustrations/scene/shared-code.svg)
 
-One grid serves all three layers, so every map takes the same 64 KB of cells,
-and a layer's window can sit anywhere in the grid.
+Only one overlay is loaded at a time, so the code several places need is
+written once in `common/` and compiled into each of them. The ROM holds a
+copy in each overlay, alike but for the addresses they hold (their calls
+into the overlay's import table and their pointers to its data). Each scene
+includes the header at the point its bytes take in that overlay. A header in
+`common/` is code, not declarations: including it twice in one scene would
+place it twice.
+
+| Headers | Included by | What they hold |
+| --- | --- | --- |
+| `colosso_*.h`, `item_equip.h` | the three Colosso final matches (`colosseum_*_match.c`); `item_equip.h` also Goma Cave's entrance | the friends' cheering spots, the stage guides, the race gauge, the opponent's recorded path, the start lettering |
+| `vault_*.h` | Vault and its interiors | the walking villagers, the Bone, the doorway, Ivan's farewell |
+| `mercury_lighthouse_*.h` | Mercury Lighthouse and its entrance | the pool's lights that carry the leader over it, the passages between floors, the pool's shimmer |
+| `kolima_*.h` | Kolima Forest's scenes | the cursed forest's colours, the dust of Tret's curse, the hop onto the river's actor |
+| `sol_sanctum_*.h` | Sol Sanctum's rooms | the Elemental Star room's floating lights, the corridor's and maze's entry |
+| `vale.h`, `world_map_linked_effects.h` | Vale's gate and storm; Vale and the world map | the storm's door exits; the particles around a glowing actor |
+| `effect_*.h` | many | `FieldEffect_Spawn` and the small effects it places, cutscene Psynergy |
+| `object_*.h` | many | actors: staged actors, lookups by cell and distance, turning and waiting |
+| `map_panel.h`, `scroll_initialize_hblank_dma.h` | Crossbone Isle's stepping stones and Kolima Forest's floodgate; the Lemurian ship | a stretch of map drawn into the tile map; the water's ripple |
+
+A header named after one place may be shared further: `colosso_item_icon.h`
+also draws Crossbone Isle's Red Key. A helper that some of the scenes including
+its header never call is `UNUSED`, so that a current GCC does not warn there.
+Renaming a function in `common/` renames it in every scene that includes the
+header.
+
+## How it fits with the rest of the game
+
+`Game_Run` unpacks the overlay into `gOverlayArea` (`Scene_LoadOverlay`) and
+`Field_RunScene` calls its entries; [Engine](../../engine.md#overlays)
+describes the entry and import tables and how the overlay is loaded. The scene
+table and how scenes depend on the story are on [the front
+page](../../README.md#the-scene-table-and-places). The maps the scenes are set
+on are in [Maps](../layout/README.md), and the debug rooms, built the same way,
+in [Debug rooms](../debug/README.md).
+
+To find the code for a place, find its row in `field/maps.s`: the overlay's
+resource number begins the rows of `objects.tsv` that name its files. To find
+what someone says, search `games/tbs/text/en.po` for the line; its `msgctxt`
+is the name the scene writes (`MsgVaultWelcomeToVaultTheTownAt`).
 
 ## Limits
 
-- 128 by 128 cells, for all three layers together.
-- 4,095 blocks a map: a cell's block number has 12 bits, and 4,095 is the
-  placeholder.
-- 256 shapes a map, since a cell names its shape in one byte.
-- 16 tile animation channels (`struct MapState`).
-- `MARKER_MAX` (10) chests and Psynergy Stones placed on a map.
+- An overlay's code, tables and RAM variables must fit in `gOverlayArea`,
+  32 KB of EWRAM.
+- An overlay calls the main image only through its import table, never another
+  overlay.
+- 66 actor slots: the party's 8, then the placed actors.
+- 256 scene flags and 256 place flags, reused by every scene and place.
 
 ## Files
 
-| Path | What it holds |
+| File | What it holds |
 | --- | --- |
-| `map_000/` to `map_179/` | one layered map each: its `map.s` and the tables it places |
-| `gondowan_passage/`, `venus_entrance/` | two more layered maps, Gondowan Passage and Venus Lighthouse's entrance, built like the others |
-| `world/blocks.tsv` | the world map's ground (`Field_PerspectiveDataA`) |
-| `default/` | the world map's default cells, tile animation and block attributes (`Field_DefaultMapCells` and the tables after it) |
-| `colosso/` | the opponents' recorded paths, with the Colosso lettering placed after them |
-| `map.s` | places `world/` and `default/` |
-| `map.inc` | the `map_header`, `map_layer` and `map_block` macros every `map.s` uses |
+| `<place>.c` | one scene overlay: its code, then its tables |
+| `<place>.h` | the overlay's own names (actors, flags, structures), where it has any |
+| `entry/<place>.s` | the entry table: six veneers the engine calls |
+| `import/<place>.s` | the import table: the main-image functions the overlay calls |
+| `common/*.h` | code that several overlays carry, each in its own copy |
 
-The map numbers are the order of the directories, not numbers the game gives
-its maps.
+Each overlay is three objects in `games/tbs/objects.tsv`, linked in this order
+into the overlay area: `entry/<place>`, `<place>` and `import/<place>`; the
+rows' first column is the overlay's resource number. The scene table,
+`gField_SceneTable` in [`field/maps.s`](../field/maps.s), gives each
+scene its overlay, group, variant and map, and names it `SceneId_<Place>`;
+several scenes may share one overlay, and then share its file. A scene overlay
+is never split into parts (S3): its code is laid out by kind, entry points,
+then handlers, then tables, not by place.
+
+The table formats are in `games/tbs/include/map_tables.h`, the script
+commands in `event.h`, and the engine calls they are written over in
+`field_event.h`, `field_service.h` and `engine_call.h`. Prototypes other files
+see are in `games/tbs/include/unit/map/`.
 
 ## Words used here
 
-- A **cell** is a 16 by 16 pixel square, one 32-bit word once loaded
-  (`struct MapCell` in [`map.h`](../../include/map.h)).
-- A **block** (a metatile) is the picture of a cell: 2 by 2 of the 8-pixel
-  tiles, stored as the four BG map entries that draw them, top left, top
-  right, bottom left, bottom right.
-- A **shape** is the form of the ground in a cell: a terrain kind and three
-  height samples.
-- A **collision code** says what standing on, pushing against or searching a
-  cell does (`enum MapCellCode`).
-- A **layer** is one of the map's three backgrounds, each a window onto the
-  one cell grid.
-- A **plane** is one value per cell over the whole 128 by 128 grid.
-- A **marker** is a cell where a chest or a Psynergy Stone can stand.
+- **actor**: a field object a scene addresses by number. 0 to 7 are the party
+  (`ACTOR_PARTY_LEADER` is 0, the one the player moves), and the placed actors
+  start at `ACTOR_FIRST_PLACED` (8). Each scene names its own in an enum.
+- **position**: pixels, x east, y up and z south; the engine keeps them in
+  16.16 fixed point (`PIXELS(n)`), and a cell is 16 by 16 pixels.
+- **facing**: `enum Facing`, eight headings in 1/65536 turns from `FACING_EAST`
+  through `FACING_SOUTH` to `FACING_NORTHEAST`.
+- **condition**: a table row's test: `CONDITION_ALWAYS`, a flag that must be
+  clear, or `IF_FLAG_SET(flag)`.
+- **scene flags** and **place flags**: `FLAG_SCENE_TEMP_xx` and
+  `FLAG_PLACE_TEMP_xx`, the two ranges cleared for scene code
+  ([above](#state-that-cleans-itself-up)). A place flag with a proven meaning
+  takes a name in the scene's own file, never in `flags.h`.
+- **messages**: linker symbols written by bare name, `MSGNO(name)` their
+  number. A message's `msgctxt` in `games/tbs/text/en.po` is its name;
+  `MESSAGE_PUT` chooses the next message after showing one, so a line that
+  follows a named one has no name of its own.
+- **callback**: a function a scene adds with `FieldScheduler_AddCallback` at
+  `TASK_PRIORITY_SCENE`, run once a frame until removed.
+- **update hook**: an actor's `update`, run each frame with the actor.
+
+## Function prefixes
+
+A scene's functions take its place's name (`Vault_`, `VaultRevisit_`,
+`ColosseumNavampaMatch_`) and say what the player sees; most functions an
+event table names are `Event_` instead. Shared helpers take their family's
+prefix (`Colosso_`, `MercuryLighthouse_`, `KolimaPalette_`, `StagedActor_`, and
+`FieldEffect_` for the field effects). Some keep older descriptive names
+(`SceneActor_`, `OverlayObject_`, `FieldScene_`) until the scenes that call
+them are humanized. The spellings some sites keep to match (fields reached
+through `offsetof`, another struct's view of an actor, update hooks returning
+`s32`) are in [Matching](../MATCHING.md).
+
+A run of functions inside one overlay that is about one thing takes that
+thing's name, and a party member's or the leader's part in an event takes
+that character's (`Garet_`, `Mia_`, `Ivan_`, `Leader_`):
+
+| Prefix | Overlay | What it acts on |
+| --- | --- | --- |
+| `Pillar_` | `alpine_crossing_lama_temple.c` | the pillar drawn in front of or behind the leader |
+| `Village_`, `Houses_` | `altin.c` | Altin's village outside, and its houses and inn inside |
+| `Beast_`, `Spray_` | `altin.c` | the hopping water beast and its spray |
+| `Water_` | `altin_peak.c` | the water layer flickering away |
+| `Entrance_` | `babi_lighthouse.c` | an unused division |
+| `SceneState_` | `colosseum_satrage_match.c`, `crossbone_isle_keys.c` | storing a raised-event trigger, and an empty hook |
+| `InnWorker_` | `lalivero_interiors.c` | the inn worker's sigh |
+| `Reveal_`, `HeatGauge_`, `Manticore_` | `lamakan_desert.c` | the secrets Reveal shows, the heat gauge and the Manticore |
+| `Ship_`, `ShipGlow_`, `OrbGlow_`, `Ripple_`, `Wave_`, `Curtain_` | `lemurian_ship.c` | the ship's swell and glows, the water's ripple and the closing curtains |
+| `TretPalette_` | `tret_tree_interiors.c` | the scene's tint |
+| `FloatingPillar_`, `Rubble_` | `venus_lighthouse.c` | the floating pillars and the rubble particles |
+| `Reunion_`, `WagonChoice_`, `Bunza_` | `west_lunpa_cave.c` | the reunion and the choice to ride Bunza's wagon |
 
 ## Evidence and open questions
 
-The game keeps no names for any of this, so each part is named for what the
-code does with it: the blocks become BG map entries, so they are `metatiles`;
-the shapes feed the height functions; and the markers are where
-`Field_PlaceMapMarkers` puts chests and Psynergy Stones. The sixth offset is
-called the marker list because that function is the only code that reads the
-pointer the loader stores to it, although `MapScrollWork`
-(`include/map_scroll.h`) still names the field `script`.
+A scene's name is its place's area name from `gScene_AreaNameRules`, or for a
+room the game leaves unnamed, what the player sees there (H3); its functions
+are named for what the player sees; its messages are linker symbols made from
+their English text. Overlay numbers are their rows of the resource directory.
 
-XXX: that the grid is stored as planes to keep long runs together for the
-packer is an inference; the bytes show only the layout. XXX: likely the
-markers are stored unpacked because only `Field_PlaceMapMarkers` reads them,
-once as the scene loads; nothing else shows why.
+Many functions in `common/` keep older descriptive names (`SceneActor_`,
+`OverlayObject_`, `FieldScene_`); each takes its name with the places that
+call it, as those places are humanized. A sound without a proven name keeps
+its number (`SE_188`), as `songs.h` says.
 
-The pictures are drawn from the tables themselves: the haze from
-`map_147`'s header, the shapes from its `shapes.tsv`, the chests from
-`map_110`'s markers and the chest events of `scene/crossbone_isle_keys.c`,
-and the Colosso runs from the three path tables, point by point. The
-placeholder and tile animation pictures stand for any map: their grass, water
-and rock are drawings, not the game's blocks.
-
-The header's last two bytes (`pad0` and `pad1` in `map.inc`, `reserved` in
-`struct LayeredSceneHeader`) are 0 in every map of both games, and nothing
-reads them: the loader is the only code that reads the header.
-
+The animated exits of `enum ExitStyle` play the leader's leaving and arrival
+animations, named in `enum ActorAnimation` from Isaac's sprite
+(`spr_000.tsv`, animations 23 to 26): an arrival grows from a small figure
+seen side-on to full size facing the player, and a leaving turns from his
+back to side-on as he shrinks and is then hidden. The alternate pair, which
+goes with `SE_STAIRS_DOWN`, has its own drawings of the same turns.

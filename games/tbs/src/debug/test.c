@@ -32,7 +32,7 @@
 #include "tbs_edition.h"
 #include "text/msg_ids.h"
 #include "ability_ids.h"
-#include "field_scene.h"
+#include "map_tables.h"
 #include "songs.h"
 
 void Engine_EventSetMessage(s16 message);

@@ -21,13 +21,13 @@
 // The object's code, in ROM order. Each part is compiled here, as part of
 // this one object, never on its own: the order of these includes is the
 // order of the code in the ROM.
-#include "psynergy_effects/events.c"
+#include "psynergy_effects/script.c"
 #include "psynergy_effects/requests.c"
-#include "psynergy_effects/actor_commands.c"
+#include "psynergy_effects/object_event_commands.c"
 #include "psynergy_effects/messages.c"
 #include "psynergy_effects/camera.c"
 #include "psynergy_effects/view.c"
-#include "psynergy_effects/actor_motion.c"
+#include "psynergy_effects/object_event_motion.c"
 #include "psynergy_effects/climbing.c"
 #include "psynergy_effects/context.c"
 #include "psynergy_effects/wave_scroll.c"

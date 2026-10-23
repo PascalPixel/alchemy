@@ -178,7 +178,7 @@ s32 Encounter_SelectEnemyGroup(s32 zone, s32 steps) {
       return 0;
     // Flag 5 is FLAG_IN_PARTY(JENNA): with Jenna in the party, there are no
     // encounters while she has more than 130 experience points. She is in
-    // the party only from Vale (Event_RoofMended, scene/vale.c) to the Sol
+    // the party only from Vale (Event_RoofMended, map/vale.c) to the Sol
     // Sanctum's eruption, starting at level 1 with none, so this ends random
     // battles in the Sol Sanctum once she nears level 4 (158). XXX: likely a
     // cap on training before the journey, because it can act nowhere else.

@@ -14,7 +14,7 @@
 #include "project.h"
 #include "types.h"
 #include "iwram_call.h"
-#include "scene.h"
+#include "field_offset.h"
 #include "edition.h"
 #include "callback_scheduler.h"
 #include "call.h"
@@ -25,7 +25,7 @@
 
 /// Starts the Lucky Dice minigame: leaves only the backdrop on screen, starts
 /// song MUS_009 and plays until the player quits. Returns 0. Reached through
-/// Runtime_BlankDisplayAndRunFar from RunLuckyDice (object/object/scene.c),
+/// Runtime_BlankDisplayAndRunFar from RunLuckyDice (object/object/map.c),
 /// which saves background palettes 14 and 15 around it and passes an
 /// entrance this function does not take.
 s32 Runtime_BlankDisplayAndRun(void) {
@@ -118,7 +118,7 @@ UNUSED s16 FixedPoint_Reciprocal(s16 value) { return 0x10000 / value; }
 #include "fixed_math.h"
 #include "ui.h"
 #include "game_state.h"
-#include "map_scroll.h"
+#include "map_grid_scroll.h"
 #include "battle_effect_work.h"
 #include "transform.h"
 #include "resource_ids.h"

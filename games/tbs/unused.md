@@ -31,7 +31,7 @@ why, and the name is left alone too.
 ## How is unreachability established?
 
 What happens in a place is a list of rows in its tables (see
-[Scenes](src/scene/README.md)), and a row runs only when the game picks it.
+[Scenes](src/map/README.md)), and a row runs only when the game picks it.
 Three habits of how the game picks a row, and of how the party moves through
 a map, account for nearly every unused row on this page: the first row that
 fits answers, a named search answers with its first row whatever its
@@ -70,16 +70,16 @@ earlier row with an equal or weaker condition always answers first.
 
 **Vault's cook.** After the party has reached Kalay, Vault's inn has a cook in
 its upstairs room with two talk rows in
-[vault_interiors_revisit.c](src/scene/vault_interiors_revisit.c). The first
+[vault_interiors_revisit.c](src/map/vault_interiors_revisit.c). The first
 shows `MsgVaultWeDontGetALotOf` under `CONDITION_ALWAYS`. The second runs
 `Event_UnusedOfferLeftoverBones`, which would have shown
 `I did some cooking, so now I've got all these useless bones.` and
 `...You want some?`, and gives nothing. The girl at the inn has her own
 `Event_OfferBones`, which does run.
 
-**Ovens with an item.** In [imil.c](src/scene/imil.c),
-[kalay_interiors.c](src/scene/kalay_interiors.c) and
-[suhalla_interiors.c](src/scene/suhalla_interiors.c), an oven that hides an
+**Ovens with an item.** In [imil.c](src/map/imil.c),
+[kalay_interiors.c](src/map/kalay_interiors.c) and
+[suhalla_interiors.c](src/map/suhalla_interiors.c), an oven that hides an
 item has its `FIND_ITEM` row first and a `FIND_MESSAGE` row for its dish under
 the same trigger after it. Because a named search ignores its condition during
 the lookup, the item row answers every time; once the item is taken,
@@ -95,11 +95,11 @@ three messages:
 
 **Copied talk rows.** Two rows are exact copies of the row above them and
 change nothing: the young man from Kolima at Fuchin Temple
-([fuchin_temple.c](src/scene/fuchin_temple.c)), and the healer in the Sanctum
-by Altin ([sanctum.c](src/scene/sanctum.c)).
+([fuchin_temple.c](src/map/fuchin_temple.c)), and the healer in the Sanctum
+by Altin ([sanctum.c](src/map/sanctum.c)).
 
 **Crossbone Isle's blue doors.** In
-[crossbone_isle_keys.c](src/scene/crossbone_isle_keys.c), cell codes 53 and 54
+[crossbone_isle_keys.c](src/map/crossbone_isle_keys.c), cell codes 53 and 54
 (the third and fourth blue doors) each have a plain `EVENT_TOUCH` row, then a
 `TOUCH_WALKING_INTO(FACING_SOUTH)` row running `Event_UnusedCheckLeaderAhead`.
 The plain row has no push or facing requirement, so it always matches first.
@@ -109,7 +109,7 @@ player sees the same result either way.
 
 ## Rows after the end marker
 
-[altin_peak.c](src/scene/altin_peak.c)'s `gAltinPeak_SecondWaterBeastEvents`
+[altin_peak.c](src/map/altin_peak.c)'s `gAltinPeak_SecondWaterBeastEvents`
 has two rows after its `SCENE_EVENTS_END`, followed by a second end marker: a
 second copy of the `ALTIN_PEAK_SECOND_WATER_BEAST_CHEST_ROOM_TO_LAKE` exit, and
 a chest on code 100 holding a Herb under flag `0xf05`. Code 100 is also the
@@ -124,7 +124,7 @@ left to do.
 
 ![An event its own question ends. On the stormy night in Vale, every way to a third spot crosses two others first. On the first, Isaac hears Garet struggling with his things. On the second, Garet calls after him and joins the party, and the game notes that he has joined. The third spot holds an older version of Garet joining, which first asks whether Garet has joined. By the time the leader can stand there the answer is always yes, so the event ends at once, and its lines, among them "Are you trapped, too?", are never shown.](https://alchemy.pascalpixel.com/illustrations/front/unused-garet.svg)
 
-`Event_UnusedGaretJoinsIsaac` in [vale_storm.c](src/scene/vale_storm.c) is an
+`Event_UnusedGaretJoinsIsaac` in [vale_storm.c](src/map/vale_storm.c) is an
 earlier version of Garet joining Isaac on the stormy night. Its row answers cell
 code 32. Every route to that cell crosses code 30
 (`Event_HearGaretStruggling`) and code 31 (`Event_GaretCallsAfterIsaac`), so
@@ -142,18 +142,18 @@ appear in no other event.
 These are declared `UNUSED`. Each holds something the player would have seen,
 so its name carries `Unused`. In story order:
 
-- `ValeStorm_UnusedOpenSanctumDoor` ([vale_storm.c](src/scene/vale_storm.c))
+- `ValeStorm_UnusedOpenSanctumDoor` ([vale_storm.c](src/map/vale_storm.c))
   plays the door sound, animates the door's cells and walks the leader into a
   house of Vale through `VALE_STORM_TO_VALE_INTERIORS_SHOPS_WEST_SANCTUM_DOOR`.
   The storm's exit table has a row for that exit, but no event row names the
   function and nothing else takes the exit. It leads to
   `VALE_INTERIORS_SHOPS_FROM_VALE_WEST`, the same entrance as the house's two
   doors that are used.
-- `Event_UnusedRoofMended` ([vale.c](src/scene/vale.c)) is another version of
+- `Event_UnusedRoofMended` ([vale.c](src/map/vale.c)) is another version of
   `Event_RoofMended`, the end of the morning the story begins. It shows the
   same messages, `Good job, Garet.` and `I was devastated when Kyle died...`
   among them, with its own camera moves and map cells.
-- `Event_UnusedWaterBurstsByTheRiver` ([vale.c](src/scene/vale.c)) runs in
+- `Event_UnusedWaterBurstsByTheRiver` ([vale.c](src/map/vale.c)) runs in
   Vale after Kalay. It shakes the map and has water grow up three times
   (`gVale_UnusedWaterGrows`) north of `ACTOR_STRONGMAN_REMEMBERING_FELIX`,
   who then shows `MsgValeIUsedToPlayHere`
@@ -162,22 +162,22 @@ so its name carries `Unused`. In story order:
   from `ACTOR_FIRST_WATER` are placed in Vale's actor table and nothing else
   shows them. His talk and Mind Read rows show the same two lines.
 - `SolSanctumStatue_UnusedMoveNorthwestStatue`
-  ([sol_sanctum_statue.c](src/scene/sol_sanctum_statue.c)) slides the
+  ([sol_sanctum_statue.c](src/map/sol_sanctum_statue.c)) slides the
   northwest statue by itself to (504, 152), where it opens its seal. The player
   moves the statue there with Move instead.
 - `MercuryLighthouseAerie_UnusedAlexCastsPly`
-  ([mercury_lighthouse_aerie.c](src/scene/mercury_lighthouse_aerie.c)) has
+  ([mercury_lighthouse_aerie.c](src/map/mercury_lighthouse_aerie.c)) has
   Alex raise his hands and cast Ply on the lift's statue. The scene the game
   plays, `MercuryLighthouseAerie_AlexAppears`, has Alex and Saturos warp to the
   lift and ride it down without it.
-- `Manticore_UnusedReturn` ([lamakan_desert.c](src/scene/lamakan_desert.c))
+- `Manticore_UnusedReturn` ([lamakan_desert.c](src/map/lamakan_desert.c))
   walks the Manticore back to its spot at (168, 96) and settles it.
 - `CrossboneIsleKeys_UnusedUpdateKeyIcons`
-  ([crossbone_isle_keys.c](src/scene/crossbone_isle_keys.c)) would show the
+  ([crossbone_isle_keys.c](src/map/crossbone_isle_keys.c)) would show the
   item icons of the Blue Keys still lying in the room one after another, every
   16 frames. Nothing adds it as a callback.
 - `ColosseumNavampaMatch_UnusedCountdown`
-  ([colosseum_navampa_match.c](src/scene/colosseum_navampa_match.c)) is a
+  ([colosseum_navampa_match.c](src/map/colosseum_navampa_match.c)) is a
   countdown before the match at the third finals site, with its own Colosso
   lettering and sounds.
 - `ColosseumNavampaMatch_UnusedWarriorTalk`, in the same file, asks a yes
@@ -201,7 +201,7 @@ tables: `gSolSanctumEruption_UnusedStarCells` and
 
 `SceneId_UnusedMercuryLighthouseAerieCopy` loads the overlay and map of
 Mercury Lighthouse's aerie
-([mercury_lighthouse_aerie.c](src/scene/mercury_lighthouse_aerie.c)), and the area names call it Mercury Lighthouse. The overlay's setup does
+([mercury_lighthouse_aerie.c](src/map/mercury_lighthouse_aerie.c)), and the area names call it Mercury Lighthouse. The overlay's setup does
 nothing for it, and no exit, table or code leads there; only the debug scene
 selector, which reaches every scene, can. Its label in the debug scene list,
 the message `MsgDebugCategoryName` shows for each scene, is `MTO07NG`, after
@@ -229,7 +229,7 @@ catalog, and no row or code shows them:
 - `The prices drop once Colosso ends, so buying now would be foolish!`
 - `They said they'd buy it after Colosso ended, but I wonder...`
 
-A comment in [tolbi.c](src/scene/tolbi.c), above the family's rows in
+A comment in [tolbi.c](src/map/tolbi.c), above the family's rows in
 `gTolbiEventsFinalsDay`, gives the likely reading: the father, the mother and
 the crying boy had finals-day lines of their own, because these speak of
 waiting for Colosso to end and of buying once prices drop, and the family

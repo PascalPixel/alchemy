@@ -10,7 +10,7 @@ folder also holds the code of the two screens that are mostly pictures, the
 title intro and the credits, and the handwritten decoders that unpack tiles
 and animation frames for the rest of the game. The
 [Battle effects](../effect/README.md) load their sheets from `battle_fx/`, and
-each map's `map.s` in [Maps](../map/README.md) places its tile set from
+each map's `map.s` in [Maps](../layout/README.md) places its tile set from
 `tileset/`.
 
 ## How a picture is built and placed

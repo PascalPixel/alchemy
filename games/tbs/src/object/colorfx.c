@@ -26,7 +26,7 @@
 #include "effect_step.h"
 #include "battle_effect.h"
 #include "callback_scheduler.h"
-#include "map_scroll.h"
+#include "map_grid_scroll.h"
 #include "ram_buffer.h"
 #include "resource_ids.h"
 #include "tbs_edition.h"

@@ -8,14 +8,14 @@
 #include "types.h"
 #include "static_assert.h"
 #include "object_runtime.h"
-#include "field_scene.h"
+#include "map_tables.h"
 
 struct MapCell;
 struct FieldActor;
 
 /// A scene's row in gField_SceneTable: its overlay's resource, its group
 /// (the place it belongs to), a variant and its map. One row per scene
-/// number; field/scenes.s writes them, and its SceneId_ symbols are the row
+/// number; field/maps.s writes them, and its SceneId_ symbols are the row
 /// numbers.
 struct SceneRecord {
   s16 resourceId; ///< the overlay Resource_LoadCode loads into gOverlayArea
@@ -223,7 +223,7 @@ struct FieldPosition {
 
 STATIC_ASSERT(sizeof(struct FieldPosition) == 12);
 
-/// Every scene's record, by scene number (field/scenes.s).
+/// Every scene's record, by scene number (field/maps.s).
 extern const struct SceneRecord gField_SceneTable[];
 /// The running scene's overlay, loaded into these 0x8000 bytes of EWRAM at
 /// each scene change; its code opens with its entry table.

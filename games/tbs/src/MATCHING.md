@@ -241,7 +241,7 @@ interrupts and calls into RAM.
 - A register write is either `Io_Write16(value, &REG_X)`, which builds the
   value in a word first and keeps the store where it's written, or plain
   `REG_X = value`. `Scene_RunEntrySetup`
-  ([`scene/venus_lighthouse.c`](scene/venus_lighthouse.c)) clears
+  ([`map/venus_lighthouse.c`](map/venus_lighthouse.c)) clears
   `REG_BLDCNT` with `Io_Write16(zero, &REG_BLDCNT)`, where `REG_BLDCNT = 0`
   doesn't match. `Map_InitializePerspectiveScene`
   ([`field/field/world_map.c`](field/field/world_map.c)) writes the affine
@@ -339,15 +339,15 @@ come down to how a struct's member is addressed.
 - A field is read or written through its offset,
   `*(T *)((u8 *)p + offsetof(struct FieldActor, field))`, where `p->field`
   goes through FieldActor's single/group union and moves a load
-  ([`scene/common/effect_spawn.h`](scene/common/effect_spawn.h),
-  [`scene/common/mercury_lighthouse_pillar.h`](scene/common/mercury_lighthouse_pillar.h),
-  [`scene/crossbone_isle_stepping_stones.c`](scene/crossbone_isle_stepping_stones.c),
-  and `Imil_MiaSaysFarewellToApprentices` in [`scene/imil.c`](scene/imil.c)).
+  ([`map/common/effect_spawn.h`](map/common/effect_spawn.h),
+  [`map/common/mercury_lighthouse_pillar.h`](map/common/mercury_lighthouse_pillar.h),
+  [`map/crossbone_isle_stepping_stones.c`](map/crossbone_isle_stepping_stones.c),
+  and `Imil_MiaSaysFarewellToApprentices` in [`map/imil.c`](map/imil.c)).
 - An actor is read as `struct FieldEffect`, union FieldObject's effect view of
   the same object, whose sprite pointer is a plain member. Through
   FieldActor's sprite union, the flags address moves after the next store
   (`SolSanctum_StartFloatingLights` in
-  [`scene/common/sol_sanctum_elemental_star_ring_setup.h`](scene/common/sol_sanctum_elemental_star_ring_setup.h)).
+  [`map/common/sol_sanctum_elemental_star_ring_setup.h`](map/common/sol_sanctum_elemental_star_ring_setup.h)).
 - Field stores are byte-addressed with `sizeof` and `offsetof` rather than
   made through the struct members in `Colosso_RestoreWarrior`,
   `TolbiShipInteriors_SelectPlacements`, and for row 10's talk facing in
@@ -359,7 +359,7 @@ come down to how a struct's member is addressed.
   the store and the constant load that follows it in the English build.
 - A global's member is reached through a local pointer to the global or
   through the global's own name, each where it matches. `Event_MovePillar`
-  ([`scene/crossbone_isle.c`](scene/crossbone_isle.c)) takes `&state->scene`
+  ([`map/crossbone_isle.c`](map/crossbone_isle.c)) takes `&state->scene`
   with `state = &gGameState`, because `&gGameState.scene` folds into one
   literal (1 of 78 instructions differ in tbs-en, 1 of 65 in tbs-ja). McCoy
   Palace's `Scene_GetPlacements` writes the reward rows as
@@ -372,7 +372,7 @@ come down to how a struct's member is addressed.
   (`VaultCave_PushPillarAhead`); `UBFIX` builds the word from its halfwords.
 - `gStagedActor_DirectionSteps`, `gStagedActor_FootprintKinds` and
   `gStagedActor_FootprintBounds`
-  ([`scene/lunpa_fortress.c`](scene/lunpa_fortress.c)) are put in read-only
+  ([`map/lunpa_fortress.c`](map/lunpa_fortress.c)) are put in read-only
   data with `__attribute__((section(".rodata")))` instead of `const`. Their
   shared externs in `field.h` and `common/object_staged_actor.h` lack `const`,
   so `const` would conflict, and without the attribute they'd go to `.data`.

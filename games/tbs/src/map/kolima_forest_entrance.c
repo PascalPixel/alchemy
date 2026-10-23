@@ -1165,34 +1165,37 @@ static void KolimaForestEntrance_SpawnCurseSparkle(void) {
 /// are told.
 static s32 KolimaForestEntrance_BurstOnPsynergyField(
     struct ScriptInterpreter *interpreter) {
-  struct ObjectEvent *arg0 = (struct ObjectEvent *)interpreter;
+  struct ObjectEvent *sparkle = (struct ObjectEvent *)interpreter;
   s32 x;
 
   if (!(gKolimaForestEntrance_MiaInParty != 0
-            ? (x = arg0->x.fixed,
-               (x > 0xc00000 && x < 0x1120000 && arg0->z.fixed > 0x2360000 &&
-                arg0->z.fixed < 0x2640000) ||
-                   (x > 0xca0000 && x < 0xff0000 && arg0->z.fixed > 0x2250000 &&
-                    arg0->z.fixed < 0x2780000))
-            : (x = arg0->x.fixed,
-               (x > 0xc00000 && x < 0xf40000 && arg0->z.fixed > 0x2250000 &&
-                arg0->z.fixed <= 0x248ffff) ||
+            ? (x = sparkle->x.fixed,
+               (x > 0xc00000 && x < 0x1120000 && sparkle->z.fixed > 0x2360000 &&
+                sparkle->z.fixed < 0x2640000) ||
+                   (x > 0xca0000 && x < 0xff0000 &&
+                    sparkle->z.fixed > 0x2250000 &&
+                    sparkle->z.fixed < 0x2780000))
+            : (x = sparkle->x.fixed,
+               (x > 0xc00000 && x < 0xf40000 && sparkle->z.fixed > 0x2250000 &&
+                sparkle->z.fixed <= 0x248ffff) ||
                    (x > 0xf40000 && x < 0x1120000 &&
-                    arg0->z.fixed > 0x23b0000 && arg0->z.fixed <= 0x25cffff) ||
-                   (x > 0xd30000 && x < 0xff0000 && arg0->z.fixed > 0x2540000 &&
-                    arg0->z.fixed < 0x2780000)))) {
+                    sparkle->z.fixed > 0x23b0000 &&
+                    sparkle->z.fixed <= 0x25cffff) ||
+                   (x > 0xd30000 && x < 0xff0000 &&
+                    sparkle->z.fixed > 0x2540000 &&
+                    sparkle->z.fixed < 0x2780000)))) {
     return 0;
   }
   Engine_AudioPlayCue(SE_106);
   // UB: this routine returns void; call it through its declared type.
 #ifdef UBFIX
-  Engine_ObjectSetScript(arg0, gKolimaForestEntrance_SparkleBurstScript);
+  Engine_ObjectSetScript(sparkle, gKolimaForestEntrance_SparkleBurstScript);
 #else
   /* FAKEMATCH(wrapper): called through a cast to the unprototyped call the
    * bytes show, which loads the script before r0; as a call by its prototype,
    * 1 of 79 instructions differ in tbs-en. */
   ((s32 (*)())Engine_ObjectSetScript)(
-      (s32)arg0, (s32)gKolimaForestEntrance_SparkleBurstScript);
+      (s32)sparkle, (s32)gKolimaForestEntrance_SparkleBurstScript);
 #endif
   gKolimaForestEntrance_PsynergyFieldHit = 1;
   return 0;

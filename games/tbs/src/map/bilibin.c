@@ -1350,8 +1350,9 @@ u32 gBilibin_DoorCells[] = {
 };
 
 /// Two cells as the bytes column, row, column, row.
-#define CELL_PAIR(column0, row0, column1, row1)                                 \
-  (((u32)(row1) << 24) | ((column1) << 16) | ((row0) << 8) | (column0))
+#define CELL_PAIR(firstColumn, firstRow, secondColumn, secondRow) \
+  (((u32)(secondRow) << 24) | ((secondColumn) << 16) | ((firstRow) << 8) | \
+   (firstColumn))
 
 /// The ten cells of the crates' lane at the Bilibin Barricade.
 u32 gBilibin_CratesLaneCells[] = {

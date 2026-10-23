@@ -5,9 +5,9 @@
 Everything the player sees moves to one beat: the screen is redrawn about
 sixty times a second, and the game prepares one picture for each. The engine
 is the code that keeps that beat and that the field, the battles and the
-menus are built on. It starts the console, runs every frame and hands the
+menus are built on. It starts the console, runs every [frame](glossary.md#frame) and hands the
 finished picture over in the screen's blank moment, lets code wait without
-the screen freezing, splits the program into banks and swaps each map's
+the screen freezing, splits the program into [banks](glossary.md#bank) and swaps each [map](glossary.md#map)'s
 code in and out of memory, and plays the music and sounds.
 
 ## Start-up
@@ -21,9 +21,9 @@ Memory is put in order and the services everything relies on are started
 once; after that one loop runs map after map for as long as the console
 is on.
 
-The console has two kinds of work memory: IWRAM, 32 KB inside the processor
+The console has two kinds of work memory: [IWRAM](glossary.md#iwram-and-ewram), 32 KB inside the processor
 chip and the fastest memory it has, and EWRAM, 256 KB beside it and slower.
-The heap is the part of that memory from which code borrows blocks for its
+The [heap](glossary.md#heap-and-pools) is the part of that memory from which code borrows blocks for its
 state and gives them back. A stack is the memory a function's local values
 live in while it runs, and an interrupt is the hardware stopping the
 program to run a handler, as it does at the end of every frame.
@@ -33,14 +33,14 @@ sets up the interrupt and system stacks at the top of IWRAM and calls
 `System_Initialize`. That function clears IWRAM below the stacks, empties the
 heap, copies the resident runtime (the routines that must run fast) into
 IWRAM and points the interrupt vector at its dispatcher, installs `System_VBlankHandler`, starts the sound driver,
-resets the task table, waits ten frames and calls `Game_RunFar`, the jump in
-the object bank's far-call table that leads to `Game_Run`
+resets the [task](glossary.md#task) table, waits ten frames and calls `Game_RunFar`, the jump in
+the object bank's [far-call](glossary.md#far-call) table that leads to `Game_Run`
 ([Banks and far calls](#banks-and-far-calls) explains them). Neither
 function returns. `Game_Run` loads one map after another for as long as the
 game runs, starting with the title. A soft reset (A, B, Select and Start held
 together) sets `gResetRequested`, and the frame loop restarts the game from
 the cartridge's entry point. The title's intro, with the Nintendo and
-Camelot logos before it, is code in
+[Camelot](glossary.md#camelot) logos before it, is code in
 [Graphics](src/graphics/README.md#the-title-sequence).
 
 [Runtime](src/runtime/README.md#start-up) goes through start-up step by step.
@@ -60,7 +60,7 @@ ordinary function with a loop of its own, and when time has to pass it calls
 `WaitFrames(n)` and continues after `n` frames.
 
 Each frame, `WaitFrames` runs the main-loop tasks
-(`Scheduler_RunPass(SCHEDULER_KEY_MAIN_LOOP)`), builds the sprite list
+(`Scheduler_RunPass(SCHEDULER_KEY_MAIN_LOOP)`), builds the [sprite](glossary.md#sprite-and-oam) list
 (`Render_BuildOamList`: the position, size and picture of every sprite to
 draw, which the hardware keeps in its OAM, the object attribute memory) and
 halts the CPU until VBlank, the pause after the last line of the picture.
@@ -92,7 +92,7 @@ saved stack. Nothing guards against it, and no task does.
 
 ## Banks and far calls
 
-The main image's code is laid out in banks at fixed addresses, and a call
+The [main image](glossary.md#main-image)'s code is laid out in banks at fixed addresses, and a call
 from one bank to another goes through an 8-byte jump in the callee's far-call
 table.
 
@@ -105,12 +105,12 @@ function other banks call. A call from another bank goes to the jump, and the
 jump goes on to the function wherever it is.
 
 `main.ld` places the main image's code in banks (`runtime`, `field`,
-`window`, `game` and the rest), each at an address fixed per edition, with
+`window`, `game` and the rest), each at an address fixed per [edition](glossary.md#editions), with
 unused space after it. A caller in another bank calls the table entry
 (`AudioCommand_PlayFar` for `AudioCommand_Play`) rather than the function's
 own address. The runtime bank is the exception: every bank calls its
 functions directly, and its table (`WaitFramesFar` for `WaitFrames`) serves
-the overlays.
+the [overlays](glossary.md#overlay).
 
 Distance isn't the reason. The processor's call instruction (a Thumb `bl`)
 reaches 4 MB either way, and the farthest call in the program, from the
@@ -127,8 +127,8 @@ the map loads, and it meets the main image only through two tables.
 
 ![The cartridge holds each map's code packed, as one of 96 overlays: Vale, Vault, Bilibin, Bilibin's houses, Kolima, Imil and the rest. In RAM there is room for one, the 32 KB overlay area. While the party is in Bilibin, Bilibin's overlay is unpacked there. When the party walks into one of Bilibin's houses, the new map's overlay, the houses', is unpacked into the same area over Bilibin's, which is gone until the party walks back out.](https://alchemy.pascalpixel.com/illustrations/system/overlays.svg)
 
-A town's people, scripts and cutscenes are code that is needed only while the
-party is there, and all the maps' code together would not fit in RAM. So
+A town's people, [scripts](glossary.md#script) and cutscenes are code that is needed only while the
+[party](glossary.md#the-party) is there, and all the maps' code together would not fit in RAM. So
 each map's code is packed on the cartridge and unpacked into the same
 32 KB area when the party arrives, over the map before it.
 
@@ -139,10 +139,10 @@ several maps need is copied into each of them (`src/map/common/`).
 
 An overlay and the main image meet at two tables, each in a fixed order:
 
-- The entry table (`map/entry/<map>.s`) opens the overlay with six stubs
+- The [entry table](glossary.md#entry-table-and-import-table) (`map/entry/<map>.s`) opens the overlay with six stubs
   the field code calls through `struct MapEntries`: the map's start-up
-  and the functions that return its warp destinations, warps, object event
-  templates, map events and warp regions.
+  and the functions that return its [warp destinations](glossary.md#warp-destination), [warps](glossary.md#warp), [object event](glossary.md#object-event)
+  templates, [map events](glossary.md#map-event) and warp regions.
 - The import table (`map/import/<map>.s`) holds the main-image functions
   the overlay calls. EWRAM is out of `bl` range of the ROM, so each call goes
   through a stub holding the address of the function's far-call entry, never
@@ -194,7 +194,7 @@ selector.
 
 ![No door, table or script of the game leads to the three test rooms. The only way in is the debug map selector, which warps to any map by number, and the field opens it only when the Start menu is opened with B held while debug mode is on. Debug mode is switched off at power-on, and nothing the player can reach switches it on, so in the released game the selector, and the rooms behind it, are never reached. From the selector come the Djinn room, which eight maps share, the level room and the menu test room.](https://alchemy.pascalpixel.com/illustrations/debug/reached.svg)
 
-The ROM keeps three test maps: a room that hands out Djinn, a room for
+The ROM keeps three test maps: a room that hands out [Djinn](glossary.md#djinn), a room for
 levels and for browsing items, icons and letters, and a room of shop and
 message tests. Only the debug map selector reaches them, and only while
 `gDebugMode` is set, which the released game never does. Each is an ordinary

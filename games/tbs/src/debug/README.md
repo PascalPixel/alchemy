@@ -3,9 +3,9 @@
 ![No door, table or event of the game leads to the three test rooms. The only way in is the debug map selector, which warps to any map by number, and the field opens it only when the Start menu is opened with B held while debug mode is on. Debug mode is switched off at power-on, and nothing the player can reach switches it on, so in the released game the selector, and the rooms behind it, are never reached. From the selector come the Djinn room, which eight maps share, the level room and the menu test room.](https://alchemy.pascalpixel.com/illustrations/debug/reached.svg)
 
 The cartridge still holds three rooms the developers used to test the game,
-though no player can walk into them: one that hands out Djinn, one for
+though no player can walk into them: one that hands out [Djinn](../../glossary.md#djinn), one for
 raising levels and browsing items, icons and letters, and one of shop and
-message tests. Each is an ordinary map overlay, built exactly as
+message tests. Each is an ordinary [map](../../glossary.md#map) [overlay](../../glossary.md#overlay), built exactly as
 [Maps](../map/README.md) describes, with the same entry, import and event
 tables, so they are the smallest complete examples of a map in the game.
 
@@ -15,23 +15,23 @@ Only the debug map selector leads to the rooms, and only the debug mode the
 retail game never turns on opens it.
 
 No door, table or event of the game leads to the rooms. During development a
-tester could open a menu that warps to any map by number; that menu is
+tester could open a menu that [warps](../../glossary.md#warp) to any map by number; that menu is
 still in the game, but it opens only in debug mode, and nothing the player
 can do turns debug mode on.
 
 Ten rows at the end of the map table (`games/tbs/src/field/maps.s`) run
 the rooms: `TestRoom0` to `TestRoom7` all run the Djinn room's overlay, each
-on its own layout, and `IncreaseItemAndLevel` and `MenuTest` run the other two.
+on its own [layout](../../glossary.md#layout), and `IncreaseItemAndLevel` and `MenuTest` run the other two.
 The only way in is the debug map selector, `Menu_RunSelection`
 ([debug.c](../window/battle_command/debug.c)), which warps to any map and
-warp destination by number. `Field_RunMap` opens it when the Start menu is opened
+[warp destination](../../glossary.md#warp-destination) by number. `Field_RunMap` opens it when the Start menu is opened
 with B held, and only while `gDebugMode` is set.
 
 Nothing but start-up (`gDebugMode = 0` in `runtime/runtime/system.c`) and the
-sprite viewer, `Ui_RunIconMonitor` (`field/field/sprite_viewer.c`), writes
-`gDebugMode`, and the sprite viewer is reached only through a far-call veneer
+[sprite](../../glossary.md#sprite-and-oam) viewer, `Ui_RunIconMonitor` (`field/field/sprite_viewer.c`), writes
+`gDebugMode`, and the sprite viewer is reached only through a [far-call](../../glossary.md#far-call) [veneer](../../glossary.md#veneer)
 at the end of `system/far_call/FIELD.S` that no code names. A far call is a
-call from one bank of the program into another, and it goes through a
+call from one [bank](../../glossary.md#bank) of the program into another, and it goes through a
 veneer, a tiny piece of code at the start of the called bank that only jumps
 on to the function. A bare veneer, one with no name of its own, has no
 symbol, so no code can branch to it, and the far-call table's own
@@ -47,7 +47,7 @@ rooms count as reachable rather than unused.
 
 ## Setup on every visit
 
-Each room's first entry sets the room up every time the party walks in, so a
+Each room's first entry sets the room up every time the [party](../../glossary.md#the-party) walks in, so a
 second visit repeats what the first did.
 
 ![The menu test room's setup runs every time the party walks in, in the English edition. Before the first visit, in Vale, the party is Isaac and Garet at level 1, and the shops' counters for their rare items are all 0. After the first visit, Isaac is level 50 and Garet, Ivan and Mia level 30, and the counters read 3 Shamshirs, 2 Silver Blades and 1 of each of the nine other rare items. After a second visit the levels are unchanged, since a level is only ever raised to its target, but every counter has gone up again: 6 Shamshirs, 4 Silver Blades and 2 of each of the others.](https://alchemy.pascalpixel.com/illustrations/debug/setup-every-visit.svg)
@@ -78,7 +78,7 @@ warp regions, so each answers that entry with `MapData_ReturnZero`.
 
 ## The Djinn room
 
-The Djinn room places one Djinni of each element and lets the party take it
+The Djinn room places one Djinni of each [element](../../glossary.md#the-four-elements) and lets the party take it
 again on every visit.
 
 ![In the Djinn test room, which draws no map, Isaac talks to Flint: the Djinni hops, streaks of light fall around Isaac and a ring of light closes over him, and a message reads `The Venus Djinni Flint joined Isaac.`](https://alchemy.pascalpixel.com/guides/debug/djinn-room.gif)
@@ -87,12 +87,12 @@ Talking to one of the four Djinn plays the same capture the game plays
 anywhere else, and the room then forgets the Djinni was taken, so it stands
 there again next time.
 
-Flint, Fizz, Forge and Gust stand as object events 8 to 11, each placed only while its
+Flint, Fizz, Forge and Gust stand as [object events](../../glossary.md#object-event) 8 to 11, each placed only while its
 Djinni's flag is clear. Talking to one calls `Djinn_JoinParty`, the same call
 the game uses, which plays the element's capture effect and gives that
 element's first Djinni to the member with the fewest Djinn. The room then
 clears the flag again (`Engine_GameFlagClear`), so the Djinni is placed again
-on the next visit. Those two calls are the room's whole import table.
+on the next visit. Those two calls are the room's whole [import table](../../glossary.md#entry-table-and-import-table).
 
 | Local id | Name | Djinni |
 | --- | --- | --- |
@@ -119,7 +119,7 @@ Select, one with A. The item browser steps through `ITEM_COUNT` item numbers,
 and `BROWSER_PAGE_STEP` with R and L, skips numbers whose item has no
 icon, and gives the chosen item to the first member with room.
 
-The room's event table differs by edition. The ability browser has an event
+The room's event table differs by [edition](../../glossary.md#editions). The ability browser has an event
 only in English and German (`TBS_PATCH_1` without `TBS_PATCH_3`); French,
 Spanish and Italian keep its code and its object event. Force cast at the portrait
 browser runs a motion test in Japanese and shows the three character-set
@@ -174,7 +174,7 @@ speaker.
 ## How it fits with the rest of the game
 
 The rooms are maps like any other: the map table names their overlays,
-`Field_RunMap` runs them, and their scripts call the same main-image code
+`Field_RunMap` runs them, and their [scripts](../../glossary.md#script) call the same main-image code
 the real maps call, through the same import tables
 ([System](../system/README.md#how-an-overlay-reaches-the-rest-of-the-game)).
 The selector that reaches them is in [Windows](../window/README.md), and the
@@ -196,8 +196,8 @@ palette editor that the same debug mode opens is in
 | | `entry/<room>.s`, `import/<room>.s` | each room's entry and import tables |
 | | `swatch.png` | the debug palette editor's colour swatches and letters |
 
-`swatch.png` is not part of a room: `object/swatch.s` places it in the main
-image as `gDebug_PaletteSwatchTiles` for `Debug_RunPaletteEditor`
+`swatch.png` is not part of a room: `object/swatch.s` places it in the [main
+image](../../glossary.md#main-image) as `gDebug_PaletteSwatchTiles` for `Debug_RunPaletteEditor`
 (`object/object/palette_editor.c`), which opens with L on the Start menu in
 debug mode. Link order is in `games/tbs/objects.tsv`; prototypes are in
 `games/tbs/include/unit/debug/`.
@@ -216,12 +216,12 @@ debug mode. Link order is in `games/tbs/objects.tsv`; prototypes are in
 The game gives the rooms no names, so their map ids (`TestRoom0` to
 `TestRoom7`, `IncreaseItemAndLevel` and `MenuTest`) and functions are named for what they let a tester do, going by the messages they
 show. `test.c` keeps one empty function nothing calls, `DebugMenu_NoOp`, marked
-`UNUSED`.
+[`UNUSED`](../../glossary.md#unused).
 
 The eight Djinn room maps, `TestRoom0` to `TestRoom7`, use layouts 172 to
 179, which no other map uses. The eight layouts are one placeholder copied
-eight times: each `layout.s` places the same 64 by 64 cell header, layout 1's
-metatiles, shapes and grid, layout 0's markers and tile set 68's sheets, and differs only in
+eight times: each `layout.s` places the same 64 by 64 [cell](../../glossary.md#cell) header, layout 1's
+[metatiles](../../glossary.md#metatile), shapes and grid, layout 0's markers and tile set 68's sheets, and differs only in
 its labels. The rooms are reserved slots that were never given their own
 content, which is why one overlay serves them all.
 

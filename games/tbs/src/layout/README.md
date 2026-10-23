@@ -2,7 +2,7 @@
 
 ![A layout is one square grid of 128 by 128 cells, each 16 pixels square. Each of its three layers is a rectangle cut from that grid, and the layout's header says where each rectangle starts. In Goma Cave's entrance room the ground layer starts at cell 0, 0 and holds the cave floor and its pool; the middle layer starts at cell 0, 34, below it, and holds the rock walls; the overhead layer starts at cell 50, 0, to the right, and holds only the glow of the torches. The rest of the grid is unused.](https://alchemy.pascalpixel.com/illustrations/map/grid-windows.svg)
 
-A town or dungeon layout is one big square grid of 16-pixel cells, 128 on
+A town or dungeon [layout](../../glossary.md#layout) is one big square grid of 16-pixel [cells](../../glossary.md#cell), 128 on
 a side, and each of its three layers is a rectangle cut from that grid; the
 layout's header says where each one starts, and the rest of the grid goes
 unused.
@@ -10,7 +10,7 @@ unused.
 The layout data is kept as editable tables: 182 layouts for the towns,
 dungeons and interiors, the world map's ground and default cells, and the
 opponents' recorded paths in the Colosso finals. There is no code here. Each
-map's row of `gField_MapTable` ([`field/maps.s`](../field/maps.s))
+[map](../../glossary.md#map)'s row of `gField_MapTable` ([`field/maps.s`](../field/maps.s))
 gives a layout number, which picks a row of `gLayouts`
 ([`field/layouts.tsv`](../field/layouts.tsv)): the layout's header, palette,
 three tile sheets and layer data. `MapGrid_LoadLayout`
@@ -31,8 +31,8 @@ sharp rise or drop blocks the way. A cell's word says how its ground is
 shaped as well as what is drawn there and what stepping on it does.
 
 A loaded cell is one word, four bytes. Its first two bytes (a halfword) hold
-the metatile number in their low 12 bits and four flag bits above, the layer and priority an object standing
-there takes; its third byte is the metatile behavior, and its fourth the
+the [metatile](../../glossary.md#metatile) number in their low 12 bits and four flag bits above, the layer and priority an object standing
+there takes; its third byte is the [metatile behavior](../../glossary.md#metatile-behavior), and its fourth the
 shape's number in the layout's shape table.
 
 A shape is four bytes, a row of `shapes.tsv`. The low four bits of the first
@@ -41,10 +41,10 @@ through three heights and others), and the other three are height samples in
 steps of 8 pixels, which the kind's height function interpolates
 (`MapGrid_GetTerrainHeight`, through `gMapGrid_TerrainHeightFunctions`).
 
-The metatile behavior is what walls and map events are keyed on. `MB_WALL`
+The metatile behavior is what walls and [map events](../../glossary.md#map-event) are keyed on. `MB_WALL`
 blocks movement whatever the heights. The behaviors from `MB_EVENT_FIRST`
-to `MB_EVENT_LAST` belong to the map: a coord event fires when the leader
-steps onto or pushes against a cell with its behavior, and a bg event when
+to `MB_EVENT_LAST` belong to the map: a [coord event](../../glossary.md#coord-event) fires when the leader
+steps onto or pushes against a cell with its behavior, and a [bg event](../../glossary.md#bg-event) when
 the player presses A facing one. The behaviors above them mean the same on
 every map: `MB_ENCOUNTER_GROUND_1` and `_2` for ground with encounters
 of its own, `MB_JAR` to `MB_WELL` for search spots with shared
@@ -75,7 +75,7 @@ behavior an `enum MetatileBehavior`.
 | Name | Value | Meaning |
 | --- | --- | --- |
 | (open ground) | 0 | nothing happens |
-| `MB_EVENT_FIRST` to `MB_EVENT_LAST` | 1 to 239 | the map's own coord events, warps and bg events |
+| `MB_EVENT_FIRST` to `MB_EVENT_LAST` | 1 to 239 | the map's own coord events, [warps](../../glossary.md#warp) and bg events |
 | `MB_ENCOUNTER_GROUND_1`, `_2` | 240, 241 | ground with encounters of its own: grounds 1 and 2 of the map's zones |
 | `MB_JAR` | 242 | a search spot with lines of its own |
 | `MB_BARREL` | 243 | a search spot with lines of its own |
@@ -84,7 +84,7 @@ behavior an `enum MetatileBehavior`.
 | `MB_BOOKS` | 246 | a search spot with lines of its own |
 | `MB_WELL` | 247 | a search spot with lines of its own |
 | `MB_JUMP_FORWARD_UNREACHED` | 249 | jumps forward like `MB_JUMP_FORWARD`, but never reaches `Field_RunPushTileEvent` |
-| `MB_DESERT_SAND` | 250 | ground that hurts the party over time: the Lamakan Desert's sand |
+| `MB_DESERT_SAND` | 250 | ground that hurts the [party](../../glossary.md#the-party) over time: the Lamakan Desert's sand |
 | `MB_LEDGE` | 252 | jumped down with Down held |
 | `MB_CLIMB` | 253 | climbed up or down with Up or Down held |
 | `MB_JUMP_FORWARD` | 254 | jumped across |
@@ -105,10 +105,10 @@ layout's `layout.s` puts the parts together behind its header.
 | `grid.tsv` | the three planes, in order | `grid.parts.lz` |
 | `grid_collision.tsv`, `grid_shape.tsv`, `grid_metatile.tsv` | each cell's metatile behavior, shape and metatile | parts of the grid |
 | `animation.tsv` | the tile animation script | `animation.script.lz` |
-| `blend.tsv` | the blend script | `blend.script.lz` |
+| `blend.tsv` | the blend [script](../../glossary.md#script) | `blend.script.lz` |
 | `markers.tsv` | the markers | `markers.table` |
-| `*_ja.tsv`, `*_de.tsv`, `*_es.tsv` and so on | an edition's own version of a table | chosen in `layout.s` |
-| `*_patch.tsv` | bytes Camelot changed after packing | read by the packer |
+| `*_ja.tsv`, `*_de.tsv`, `*_es.tsv` and so on | an [edition](../../glossary.md#editions)'s own version of a table | chosen in `layout.s` |
+| `*_patch.tsv` | bytes [Camelot](../../glossary.md#camelot) changed after packing | read by the packer |
 
 A plane's first line describes it: `cell:u8	grid:128x128	fill:0	at:2,3`
 gives the size of each value, the grid, the value of every cell the table
@@ -129,7 +129,7 @@ A layer that follows the camera at the camera's own pace looks as far away
 as the ground; one that moves faster looks nearer. Suhalla Desert's north
 (`layout_147`) moves its ground and middle layers with the camera and its
 overhead haze a quarter faster, drifts the haze by -121 and 35 sixteenths of
-a pixel a frame, and wraps it every 32 tiles, 256 pixels.
+a pixel a [frame](../../glossary.md#frame), and wraps it every 32 tiles, 256 pixels.
 
 The header is one `layout_header` line and three `layout_layer` lines in `layout.s`,
 read as `struct LayoutHeader`. It gives the camera's bounds in 8-pixel
@@ -189,7 +189,7 @@ The name of the file the build asks for says what to make:
 - `script`: the tile animation and blend scripts below.
 
 The codec `lz` then packs each stream, and the bytes must come out identical.
-Where the original stream is followed by stray bytes the packer left in its
+Where [the original](../../glossary.md#the-original) stream is followed by stray bytes the packer left in its
 buffer, `layout.s` places them as literal bytes with a `PACKER:` comment naming
 what wrote them. Where Camelot changed a stream after packing it, a
 `_patch.tsv` lists each changed byte: its position, the byte the packer saw,
@@ -216,7 +216,7 @@ layout's table names that layout's file.
 
 ## Loading a layout
 
-When the party enters a town or dungeon, the map's layers and sprites are
+When the party enters a town or dungeon, the map's layers and [sprites](../../glossary.md#sprite-and-oam) are
 hidden while its layout is unpacked into working memory. Most of what is
 unpacked is the grid, which is stored in three separate pieces and put together into one
 word per cell as it loads, so that everything about a cell can be read in
@@ -224,7 +224,7 @@ one go.
 
 ![A layout's grid is stored as three whole planes, one after another: what stepping on each cell does (a byte a cell, 16 KB), the shape of each cell's ground (a byte a cell, 16 KB) and the picture drawn in each cell, with the layer an object standing there takes (two bytes a cell, 32 KB). As the layout loads, a routine copied into RAM takes one value from each plane for every cell and puts them together into one four-byte word: the shape at the top, then what stepping does, then the picture. The 128 by 128 words take 64 KB.](https://alchemy.pascalpixel.com/illustrations/map/grid-weave.svg)
 
-`MapGrid_LoadLayout` decodes each part into a fixed buffer in EWRAM, the
+`MapGrid_LoadLayout` decodes each part into a fixed buffer in [EWRAM](../../glossary.md#iwram-and-ewram), the
 console's 256 KB of work memory: the
 metatiles into `gMetatiles`, the shapes into `gMapGridCollision`, the grid into
 `Ram_MapGridCellBuffer`, and the two scripts into the space after the shapes. The
@@ -268,7 +268,7 @@ entrance puts them at (0, 0), (64, 0) and (0, 68).
 
 The ground layer shows on `BG3`, the middle layer on `BG2` and the overhead
 layer on `BG1`; [Field](../field/README.md#towns-and-dungeons-on-screen) explains
-how their priorities put object events between them.
+how their priorities put [object events](../../glossary.md#object-event) between them.
 
 ### Placeholder metatiles
 
@@ -295,14 +295,14 @@ depends only on the placeholders.
 ### Chests and Psynergy Stones
 
 Several maps can share one layout, and each puts its own chests in it. The
-layout lists the spots where a chest or a Psynergy Stone can stand, each with
+layout lists the spots where a chest or a [Psynergy](../../glossary.md#psynergy-and-pp) Stone can stand, each with
 the event that would place one there, and a map places one only where it has
 that event.
 
 ![Two maps on Crossbone Isle, CrossboneIsleKeys and CrossboneIsleBane, use the same layout, and the layout lists eight spots where a chest can stand, each with the event that would place one there. CrossboneIsleKeys has events for four of them, in a row along the room's north side: 333 coins, a Fairy Ring, a Cookie and a Smoke Bomb. CrossboneIsleBane has events for the other four: 666 coins and an Elixir on its raised floor, a Water of Life below them, and the Demon Axe, whose chest is carried on a stone pillar. A spot a map has no event for stays empty.](https://alchemy.pascalpixel.com/illustrations/map/markers.svg)
 
 CrossboneIsleKeys and CrossboneIsleBane share `layout_110`, whose eight markers
-carry the triggers 100 to 107: CrossboneIsleKeys has chest events for 100 to
+carry the [triggers](../../glossary.md#trigger) 100 to 107: CrossboneIsleKeys has chest events for 100 to
 103, and CrossboneIsleBane for 104 to 107 (`map/crossbone_isle_keys.c`).
 CrossboneIsleBane moves the Demon Axe's chest to 0, 0 until the stone pillar
 carrying it reaches the ladder, since its marker's cell lies past the room's
@@ -338,7 +338,7 @@ Suhalla Desert's north shows the usual shape: its channel 0 copies four rows
 of four tiles from one of four stored pictures, waits 15 frames, takes the
 next picture, and jumps back to the first after the fourth.
 
-Both scripts are runs of halfwords, run each frame as tasks
+Both scripts are runs of halfwords, run each frame as [tasks](../../glossary.md#task)
 ([`field/field/tile_animation.c`](../field/field/tile_animation.c)). In the
 tile animation's table, `channel n` (`0xfd00 + n`) starts channel n of the 16 at the next halfword; only the low
 four bits pick the channel, and a marker with bit 7 set starts it paused.
@@ -495,7 +495,7 @@ called the marker list because that function is the only code that reads the
 pointer the loader stores to it, although `MapGridScrollWork`
 (`include/map_grid_scroll.h`) still names the field `script`.
 
-XXX: that the grid is stored as planes to keep long runs together for the
+[XXX](../../glossary.md#xxx): that the grid is stored as planes to keep long runs together for the
 packer is an inference; the bytes show only the layout. XXX: likely the
 markers are stored unpacked because only `Field_PlaceMapMarkers` reads them,
 once as the map loads; nothing else shows why.

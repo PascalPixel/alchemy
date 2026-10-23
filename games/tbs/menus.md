@@ -2,18 +2,18 @@
 
 ![A shop's layers. Bilibin's item shop asking "What would you like?" comes apart into the six sheets the console stacks to draw it, then closes again. The room keeps the map's three layers: the floor and walls on `BG3`, the counter, shelves and furniture on `BG2` with the people as sprites level with it, and a glow of light on `BG1`, blended over the room. Every window is on `BG0`, the one layer they share, and what is drawn into them all at once, the Herb's name and price, the coins and the description, is tiles of that layer too. In front are sprites: the letters of the shopkeeper's question, typed one by one, his portrait, the item icons and the pointing hand.](https://alchemy.pascalpixel.com/illustrations/menus/layers.svg)
 
-Everything the player reads or chooses outside the map itself comes in a
+Everything the player reads or chooses outside the [map](glossary.md#map) itself comes in a
 framed box: what people say, the field menu and its screens, the shop and
 inn counters, the battle commands. This layer of the game draws those boxes
 (windows), unpacks the game's stored text and types it into them, runs the
-field menu's four screens (Psynergy, Djinn, Item and Status), and runs the
-counters where the party spends its coins: shops, sanctums and inns.
+field menu's four screens ([Psynergy](glossary.md#psynergy-and-pp), [Djinn](glossary.md#djinn), Item and Status), and runs the
+counters where the [party](glossary.md#the-party) spends its coins: shops, sanctums and inns.
 
-All the windows share one background layer, in front of the three the map
+All the windows share one [background layer](glossary.md#background-layer), in front of the three the map
 uses, so the map looks the same however many windows are open. Text drawn
 into a window all at once, such as a menu's names and prices, is tiles of that
 layer too; a message's typed letters, icons, portraits and the pointing hand
-are sprites in front of everything.
+are [sprites](glossary.md#sprite-and-oam) in front of everything.
 
 ## Windows
 
@@ -28,7 +28,7 @@ map's three ([Field](src/field/README.md) describes those). The picture is 32
 tiles wide and 20 tall, because the console's background layers are drawn
 32 tiles wide, but the screen shows only 30 of them, its 240 by 160 pixels;
 the last two columns are drawn and never seen, and windows are placed on
-the 30 by 20 that show. A window takes 8 frames
+the 30 by 20 that show. A window takes 8 [frames](glossary.md#frame)
 to grow open and 4 to shrink shut, and the code that opened it waits while it
 does. Its letters go on in one of three ways: as sprites riding on the window
 (a message on the field), painted into one shared picture (a battle message),
@@ -36,7 +36,7 @@ or as tiles of the window layer itself (labels and names). The sprites a
 window carries are its render outputs, and they go when it closes.
 
 All of the window system's state is one block of memory, `struct
-UiRenderWork`, borrowed from the heap (the memory the engine lends out to
+UiRenderWork`, borrowed from the [heap](glossary.md#heap-and-pools) (the memory the engine lends out to
 whatever runs) under the numbered slot `HEAP_SLOT_WINDOW`. It holds the
 tilemap, the grid of tile numbers that is the picture of the screen
 (`work->tilemap`, copied to `UI_TILEMAP_VRAM` in video memory and shown on
@@ -49,7 +49,7 @@ the 30 by 20 tile screen. Unless it has `UI_WINDOW_INSTANT`, it zooms open
 over `UI_WINDOW_OPEN_FRAMES` and closed over `UI_WINDOW_CLOSE_FRAMES`, and its
 slot stays taken until it has closed. The zoom is stepped by
 `UiWork_ProcessDirectWork`, the first step of `UiWork_ProcessAll`, the window
-system's task, which runs once a frame.
+system's [task](glossary.md#task), which runs once a frame.
 
 The three ways of drawing text are the text canvas (`UI_WINDOW_TEXT_CANVAS`,
 at `UI_CANVAS_VRAM`, drawn by the renderer in `glyph_arm.c`, written in the
@@ -64,8 +64,8 @@ sprite VRAM cache, the video memory kept for sprite pictures, until
 
 | Name | Value | Meaning |
 | --- | --- | --- |
-| `HEAP_SLOT_WINDOW` | 15 | the heap slot of the window system's work block |
-| `WINDOW_COUNT` | 12, or 8 | window slots: 12 in the Japanese edition, 8 in the others |
+| `HEAP_SLOT_WINDOW` | 15 | the [heap slot](glossary.md#heap-slot) of the window system's work block |
+| `WINDOW_COUNT` | 12, or 8 | window slots: 12 in the Japanese [edition](glossary.md#editions), 8 in the others |
 | `UI_WINDOW_OPEN_FRAMES` | 8 | frames a window takes to zoom open |
 | `UI_WINDOW_CLOSE_FRAMES` | 4 | frames a window takes to zoom closed |
 | `UI_OUTPUT_COUNT` | 64 | render outputs at a time |
@@ -147,7 +147,7 @@ the player backs out, the screen returns and the icons come up again.
 
 The row of icons is drawn by `Menu_RunTopSelection` in the window code;
 `Menu_SelectTopEntry` leaves out the Djinn icon while the party owns no
-Djinni. `Menu_RunTopSelection` calls the chosen screen through the far-call
+Djinni. `Menu_RunTopSelection` calls the chosen screen through the [far-call](glossary.md#far-call)
 table `system/far_call/MENU.S`: `PsynergyMenu_Run`, `DjinnMenu_Run`,
 `ItemMenu_Run` or `StatusMenu_Run`.
 
@@ -177,7 +177,7 @@ changes and the map's animated tiles pause too.
 Every screen sets the object system's `suspended` field (heap slot
 `HEAP_SLOT_MENU_CONTROL`), so the field's sprites that are not held stop being
 drawn and free their VRAM cache entries. `Menu_SuspendFieldTasks` also
-suspends the overlay's tasks (`Scheduler_SuspendOverlayTasks`) and the map's
+suspends the [overlay](glossary.md#overlay)'s tasks (`Scheduler_SuspendOverlayTasks`) and the map's
 tile animations, and sets `FLAG_PALETTE_BLEND_HELD` and `FLAG_WEATHER_HELD`
 so that the palette blend and the weather stop; `Menu_ResumeFieldTasks`
 undoes all of it. The Djinn and Status screens call it in every edition, the
@@ -214,7 +214,7 @@ menu has closed.
 ![Isaac opens the menu beside a stone pillar in Vale and picks Psynergy, himself and then Move; the menu closes, `Move` shows, the field turns blue-green as a hand appears over the pillar, and it pushes the pillar one step to the right.](https://alchemy.pascalpixel.com/guides/menu/menu-psynergy.gif)
 
 Field Psynergy needs the field running, the leader facing something and the
-map's own map events, none of which exist while the menu is open. So the
+map's own [map events](glossary.md#map-event), none of which exist while the menu is open. So the
 Psynergy screen only writes down what was chosen and closes; once the field
 runs again, it casts the Psynergy at whatever the leader faces, and the
 map's code decides what happens. What Move does to a given stone pillar is
@@ -273,8 +273,8 @@ per guest for each member still standing (`sInnPricesPerGuest`).
 Every counter, and the item picker that asks which item to drop when the
 party finds one with every bag full, keeps its work in `HEAP_SLOT_MENU` as
 `struct ShopRuntime`, taken by `Shop_InitializeCursorWork` and released by
-`Shop_ReleaseCursorWork`. Maps reach the counters through their import
-tables, and other banks through the far-call table
+`Shop_ReleaseCursorWork`. Maps reach the counters through their [import
+tables](glossary.md#entry-table-and-import-table), and other [banks](glossary.md#bank) through the far-call table
 `system/far_call/SHOP.S`.
 
 | Name | Value | Meaning |
@@ -299,7 +299,7 @@ because only one of them can run at a time; the same arrangement is why a
 counter and the field menu are never open together. Field Psynergy is passed
 back as a request because it needs the field running, the leader facing
 something and the map's events, none of which exist while the menu runs.
-Start is a game flag rather than a variable, although the task that sets it
+Start is a [game flag](glossary.md#game-flag) rather than a variable, although the task that sets it
 and every test of it are in the menu's own code.
 
 ## Limits

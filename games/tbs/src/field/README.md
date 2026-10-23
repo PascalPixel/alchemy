@@ -2,8 +2,8 @@
 
 ![The field's loop. The party walks, and every frame the game checks the ground under the leader and the buttons. When something comes up (a doorway, a random battle, the A button, the menu, Psynergy or an item), walking stops, the game handles one thing at a time until nothing is left, and walking resumes. Leaving the map, through a doorway or into a battle, is always handled first and ends the loop.](https://alchemy.pascalpixel.com/illustrations/field/scene-loop.svg)
 
-While the party walks around a town, a dungeon or the world map, the game
-asks once a frame whether something should happen. Has the leader stepped
+While the [party](../../glossary.md#the-party) walks around a town, a dungeon or the world map, the game
+asks once a [frame](../../glossary.md#frame) whether something should happen. Has the leader stepped
 into a doorway? Has a random battle started? Has the player pressed A beside
 someone, or opened the menu? When something has, the walking stops, the game
 deals with that one thing, and the walking starts again. Nearly everything
@@ -12,11 +12,11 @@ that happens outside a battle passes through that loop.
 Under the loop is the field engine, the code in this folder. It keeps track
 of everything that moves (the party, the townspeople, the camera, even
 footprints), moves each of them a little every frame, decides whether the
-ground ahead can be walked on, and draws the map: a town as three flat layers,
+ground ahead can be walked on, and draws the [map](../../glossary.md#map): a town as three flat layers,
 or the world map tilted into perspective. It decides nothing about any one
 map. The loop itself is in [Running a map](../object/README.md), each
-map's scripts come from its overlay in [Maps](../map/README.md), and the
-layouts are in [Layouts](../layout/README.md). [World](../../world.md) gives the whole
+map's [scripts](../../glossary.md#script) come from its [overlay](../../glossary.md#overlay) in [Maps](../map/README.md), and the
+[layouts](../../glossary.md#layout) are in [Layouts](../layout/README.md). [World](../../world.md) gives the whole
 layer in brief.
 
 ## The walk and what interrupts it
@@ -33,7 +33,7 @@ Three kinds of thing can interrupt the walk:
   battle until one starts.
 - The buttons: A to talk to someone or search something ahead (with nothing
   there, A opens the menu), the menu button, Start, and the two shortcut
-  buttons, which use the Psynergy or item the player assigned to them.
+  buttons, which use the [Psynergy](../../glossary.md#psynergy-and-pp) or item the player assigned to them.
 - A script that is already running, which can ask for another script or a
   battle of its own.
 
@@ -61,18 +61,18 @@ runs one map. Its inner loop is the walk: it waits a frame and calls
 buttons through `Field_CheckConfiguredKeys`. The requests are fields of
 `struct FieldWork`; [Running a map](../object/README.md#the-map-loop-handles-requests-not-scripts)
 lists all twelve in the order they are handled and goes through each one. A
-warp is `Field_RunMap`'s result, which `Game_Run` passes to `Map_TakeWarp`
+[warp](../../glossary.md#warp) is `Field_RunMap`'s result, which `Game_Run` passes to `Map_TakeWarp`
 to load the next map.
 
 ## Everything that moves runs a script
 
-Everything on the field that moves or changes by itself is a field object,
+Everything on the field that moves or changes by itself is a [field object](../../glossary.md#field-object),
 and each one runs a small script of steps.
 
 ![Three field objects and their scripts. The leader moves by the direction pad, waits one frame and repeats, for good. The camera follows the leader, waits one frame and repeats. A footprint waits 120 frames and then disappears. Each frame every object runs its steps in order until one says to wait, which ends its turn until the next frame. Below, Isaac in Imil's snow as the game draws him, with the footprints his steps left beside him.](https://alchemy.pascalpixel.com/illustrations/field/object-scripts.svg)
 
 The field objects are the party, the people and things a map places (its
-object events), the camera, even the footprints the leader leaves, and there
+[object events](../../glossary.md#object-event)), the camera, even the footprints the leader leaves, and there
 are 64 slots for them. Every frame each object takes a turn: it runs its steps in order until
 one says to wait, which ends its turn until a later frame. A step that only
 tests something or jumps to another part of the script takes no time, so a
@@ -133,7 +133,7 @@ objects refusing to overlap. In a battle, `Object_UpdateAllMotion` replaces
 it; it moves the first 14 objects and runs no scripts.
 
 The objects are the 64 slots of `gObjectSlots`, 112 bytes each, in a block
-of memory borrowed from the heap (the memory the engine lends out to
+of memory borrowed from the [heap](../../glossary.md#heap-and-pools) (the memory the engine lends out to
 whatever runs) under the numbered slot `HEAP_SLOT_OBJECT_POOL`, and the
 handlers are the rows of
 `gScriptObject_CommandTable` (`object_script.c`).
@@ -158,7 +158,7 @@ handlers are the rows of
 
 ## Sprites and their animation
 
-What the player sees of an object is its sprite, built from up to four
+What the player sees of an object is its [sprite](../../glossary.md#sprite-and-oam), built from up to four
 pictures laid over each other, each playing its own animation.
 
 ![Isaac's sprite in a battle is three pictures laid over each other: a dark shadow, drawn first, then his body, then his sword on top. The game combines them into one picture and redraws it whenever any layer moves on to another frame. As he attacks, his body and his sword change frame together, so each pose shows the sword in his hand, while the shadow stays the same.](https://alchemy.pascalpixel.com/illustrations/field/sprite-layers.svg)
@@ -227,7 +227,7 @@ each one appears on the screen and what it is in front of or behind. Because
 that order never changes, each sprite is drawn where its object has just
 moved to.
 
-The two steps are two tasks of the scheduler, the list of jobs the game runs
+The two steps are two [tasks](../../glossary.md#task) of the scheduler, the list of jobs the game runs
 once a frame. `ObjectSystem_Initialize` sets the engine up for one kind of
 map and schedules both: the object update at order 3210 (`0xc8a`) and a camera at
 3200 (`0xc80`). The scheduler runs higher orders first, so objects move before the
@@ -245,7 +245,7 @@ the console keeps in its OAM (object attribute memory), is built from that
 queue. The battle effects, the
 Psynergy effects and the menus place their own sprites through the same
 routine, `Object_ApplyProjectedPlacementFar`. While the item, Psynergy,
-Status, Djinn or debug menu is open, `ObjectSystemWork.suspended` is set, so
+Status, [Djinn](../../glossary.md#djinn) or debug menu is open, `ObjectSystemWork.suspended` is set, so
 sprites that are not held are not drawn and give up their video memory.
 
 ## Walking and running
@@ -272,8 +272,8 @@ speeds named at the top of `field/player_control.c`. On a town or dungeon
 map, `FieldObject_UpdatePlayerControl` walks at `FIELD_WALK_SPEED` (1 pixel a
 frame) and runs at `FIELD_RUN_SPEED` (1.5) while a dash button is held,
 gaining `FIELD_ACCELERATION` (a quarter pixel) a frame. With `FLAG_FAST_WALK`
-set, holding B moves at `FIELD_FAST_WALK_SPEED` (4); no code in The Broken
-Seal sets that flag. On the world map, `Object_MoveOnWorldMap` walks at
+set, holding B moves at `FIELD_FAST_WALK_SPEED` (4); no code in [The Broken
+Seal](../../glossary.md#the-two-games) sets that flag. On the world map, `Object_MoveOnWorldMap` walks at
 `WORLD_MAP_WALK_SPEED` (half a pixel a frame) and runs at
 `WORLD_MAP_RUN_SPEED` (1), and L raises the limit to `WORLD_MAP_FAST_SPEED`
 (4) while it repeats.
@@ -281,7 +281,7 @@ Seal sets that flag. On the world map, `Object_MoveOnWorldMap` walks at
 Before each step the control tests the ground ahead with the checks below. On
 a town or dungeon map it tries 8 pixels the way the pad points and the
 headings 22.5 and 45 degrees either side, then headings up to 67.5 degrees
-off. On the world map the test reaches `WORLD_MAP_PROBE_RADIUS`. The edition
+off. On the world map the test reaches `WORLD_MAP_PROBE_RADIUS`. The [edition](../../glossary.md#editions)
 block at the top of `field/player_control.c` chooses what differs:
 
 | | Japanese | English and later |
@@ -321,7 +321,7 @@ this way, by height, rather than by marking a spot as a wall: Goma Cave has no
 wall marks at all, only ridges of ground 32 pixels high at the foot of each
 cliff. [Layouts](../layout/README.md#cells) draws the rule from the side.
 
-A map is a grid of 16-pixel squares, its cells, and each cell has a shape
+A map is a grid of 16-pixel squares, its [cells](../../glossary.md#cell), and each cell has a shape
 that gives the height of every point in it. An object's `terrainId` names the
 map layer whose ground it follows. Code that asks about the ground at a point
 reads the cell there in that layer and looks up its shape: the low four bits
@@ -363,7 +363,7 @@ the middle and overhead layers, which is how Isaac can walk behind a roof.
 
 `MapGrid_LoadLayout` loads a layout from its row of `gLayouts`;
 [Layouts](../layout/README.md) describes the data and where each part is decoded.
-The console has four background layers, and the three map layers are drawn on
+The console has four [background layers](../../glossary.md#background-layer), and the three map layers are drawn on
 three of them: `MAPGRID_LAYER_GROUND` on `BG3`, `MAPGRID_LAYER_MIDDLE` on `BG2` and
 `MAPGRID_LAYER_OVERHEAD` on `BG1`. `BG0` is left for the windows, where messages
 and menus are drawn.
@@ -382,7 +382,7 @@ nine layouts show only their ground.
 Each layer scrolls by its own parallax and drift from the header, so a layer
 can move at its own rate as the view moves or drift while it stands still.
 `MapGrid_UpdateLayerScroll` redraws the rows and columns of the BG maps that come
-into view from the cells and their metatiles.
+into view from the cells and their [metatiles](../../glossary.md#metatile).
 
 Three timed effects run as tasks while a map is shown
 (`field/tile_animation.c`): the tile animation copies tiles into video memory
@@ -481,8 +481,8 @@ the scripts, `update` to maps and `ObjectRuntime`. Even
 and as a `ScriptMotionObject *` in `update.c`.
 
 Why the code keeps several views rather than one struct is a question of
-rebuilding the original bytes exactly, which [Matching](../MATCHING.md#field)
-covers; Camelot's source likely had one, since every view describes the
+rebuilding [the original](../../glossary.md#the-original) bytes exactly, which [Matching](../MATCHING.md#field)
+covers; [Camelot](../../glossary.md#camelot)'s source likely had one, since every view describes the
 same 112 bytes.
 
 ### Scripts without addresses
@@ -510,9 +510,9 @@ so it could not stand in for the Thumb update.
 [Running a map](../object/README.md) owns the map loop: it starts the
 object system, loads the map and the overlay, places the object events and
 handles requests; the engine supplies the objects, scripts and ground checks it
-uses. Overlays reach the engine through their import tables
+uses. Overlays reach the engine through their [import tables](../../glossary.md#entry-table-and-import-table)
 (`src/map/import/`): nine import `MapGrid_GetTerrainHeight` and six
-`MapGrid_SetMetatileBehaviorAt`, with which a map rewrites a cell's metatile behavior.
+`MapGrid_SetMetatileBehaviorAt`, with which a map rewrites a cell's [metatile behavior](../../glossary.md#metatile-behavior).
 The battle uses the object system in `MODE_BATTLE` for its own sprites. The
 Lost Age's field code is described by [its own
 guide](../../../tla/src/field/README.md), as differences from this one.
@@ -543,7 +543,7 @@ guide](../../../tla/src/field/README.md), as differences from this one.
 | `lucky_dice.c` | the Lucky Dice minigame, with its camera defaults and 8.8 fixed-point helpers |
 | `layouts.tsv` | `gLayouts`: each layout's header, palette, three tile sheets and layer data, as resource numbers counted from `ResourceId_Layout001` |
 | `remap0.tsv` to `remap3.tsv` | `gRuntime_ByteRemapTable`, four 256-byte colour remap tables |
-| `maps.s` | `gField_MapTable`: each map's overlay, map section group, variant (town or field) and layout; each row also defines the map's `MapId_` |
+| `maps.s` | `gField_MapTable`: each map's overlay, [map section](../../glossary.md#map-section) group, variant (town or field) and layout; each row also defines the map's `MapId_` |
 | `common/effect/` | the ground particle and sparkle pictures of the field's weather, which [`scripts.s`](../object/scripts.s) places |
 
 The headers are in `games/tbs/include/unit/field/`, one for each C file but
@@ -559,7 +559,7 @@ on its own.
 
 - A **field object** is one of the 64 slots of `gObjectSlots`, 112 bytes
   each. The party, the people and things a map places (the object events,
-  which a map knows by local id), the camera and the footprints are all
+  which a map knows by [local id](../../glossary.md#local-id)), the camera and the footprints are all
   field objects. A slot with no script is free.
 - A **sprite** is one of the 64 `struct AnimationObject`s: an image and a
   shadow, two entries of OAM (the hardware's sprite list), and up to four

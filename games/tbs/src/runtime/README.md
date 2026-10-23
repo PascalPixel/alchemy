@@ -3,20 +3,20 @@
 ![Five frames on a map. A script's code does some work in the first frame, then calls WaitFrames to wait three frames, and carries on in the fifth. Meanwhile two tasks run once in every one of the five frames, waiting or not: the windows' task opens, closes and types the text windows, and the map's task scrolls the map's layers with the camera. WaitFrames is what runs them.](https://alchemy.pascalpixel.com/illustrations/runtime/waiting.svg)
 
 When a cutscene pauses for half a second, the code that runs it simply stops
-and waits, yet the screen keeps moving: windows still type their text, the map
+and waits, yet the screen keeps moving: windows still type their text, the [map](../../glossary.md#map)
 still scrolls with the camera. Everything in the game waits the same way,
 through one function, `WaitFrames`, and while it waits `WaitFrames` keeps a
-short list of jobs, the tasks, running once a frame. That function, and what
+short list of jobs, the [tasks](../../glossary.md#task), running once a [frame](../../glossary.md#frame). That function, and what
 it needs around it, is the runtime: the layer every other part of the game
 runs on.
 
 The runtime starts the console, runs every frame and hands the finished
-picture to the screen at the right moment. Around that it keeps the heap,
+picture to the screen at the right moment. Around that it keeps the [heap](../../glossary.md#heap-and-pools),
 which lends memory to the rest of the game, the task scheduler, the queue of
 hardware writes that wait for the screen's blank moment, the buttons, sleep
-mode, screen fades, the frame's sprite list, the 3D transform, saving and the
+mode, screen fades, the frame's [sprite](../../glossary.md#sprite-and-oam) list, the 3D transform, saving and the
 link cable. The memory map it works in, and the fast code it copies into
-IWRAM, are in [System](../system/README.md).
+[IWRAM](../../glossary.md#iwram-and-ewram), are in [System](../system/README.md).
 
 ## Start-up
 
@@ -51,7 +51,7 @@ IWRAM and points the interrupt vector at its dispatcher
 graphics. It then installs `System_VBlankHandler`, arms the soft-reset keys,
 starts the sound driver, resets the sprite VRAM cache and the task table,
 waits ten frames and calls `Game_RunFar`. The German, French, Spanish and
-Italian editions (`TBS_PATCH_2`) also install `Iwram_Halt` for the
+Italian [editions](../../glossary.md#editions) (`TBS_PATCH_2`) also install `Iwram_Halt` for the
 cartridge-removed interrupt.
 
 Neither function returns. `Game_Run` (`games/tbs/src/object/object/map.c`)
@@ -126,7 +126,7 @@ outlined:
 | --- | --- | --- |
 | `SCHEDULER_KEY_MAIN_LOOP` | `0xc80` | the pass `WaitFrames` runs each frame |
 | `SCHEDULER_KEY_VBLANK` | `0x480` | the pass the VBlank handler runs |
-| `HEAP_SLOT_FRAME_SCRATCH` | 52 | the heap slot the frame's OAM list is built in |
+| `HEAP_SLOT_FRAME_SCRATCH` | 52 | the [heap slot](../../glossary.md#heap-slot) the frame's OAM list is built in |
 | `RENDER_DEPTH_SLOT_COUNT` | 256 | depth slots a sprite is linked into |
 | `OBJ_AFFINE_MATRIX_COUNT` | 32 | the OAM's rotation-scaling matrices a frame |
 | `CPU_LOAD_PEAK_FRAMES` | 30 | frames the debug display holds a CPU load peak |
@@ -291,7 +291,7 @@ table by order, highest first, comparing orders as signed halfwords
 task whose high byte equals the pass's.
 
 The sort stops one pass short, so the tasks in the first two slots can stay
-out of order (`// BUG:` in the code). It swaps only on strictly greater, so
+out of order ([`// BUG:`](../../glossary.md#bug-bugfix-and-ubfix) in the code). It swaps only on strictly greater, so
 tasks of equal order keep their table order, which depends on the free slot
 each was given; code that needs an order gives its tasks different orders.
 
@@ -301,7 +301,7 @@ so it keeps its rank. An empty slot's order is `SCHEDULER_KEY_EMPTY` and a
 removed task's `SCHEDULER_KEY_REMOVED`; both high bytes are odd, and as signed
 halfwords a removed slot sorts first and an empty one last.
 `Scheduler_SuspendOverlayTasks` suspends the tasks whose routine is in EWRAM,
-where overlays run, except those whose flag bit 0 is set; the link lobby and
+where [overlays](../../glossary.md#overlay) run, except those whose flag bit 0 is set; the link lobby and
 the Colosso maps set it (`Scheduler_SetTaskFlags`) for tasks that must keep
 running under a menu.
 
@@ -403,7 +403,7 @@ taken for the length of one save screen operation.
 ## The link cable
 
 Two consoles joined by a cable trade a little data every frame, and anything
-larger, such as a party for a link battle, is sent in numbered pieces that
+larger, such as a [party](../../glossary.md#the-party) for a link battle, is sent in numbered pieces that
 are sent again when one is lost.
 
 ![Two linked consoles, one sending a run of three numbered blocks to the other, one block each frame. The first block arrives and is stored. The second is lost on the cable. The third arrives, but the receiver is still waiting for the second, so it does not store it and asks for the second again. The sender goes back and sends the second and then the third once more, and the receiver stores both. Because the sender may have to go back, the data it sends must not change until the whole run is over.](https://alchemy.pascalpixel.com/illustrations/runtime/link-blocks.svg)
@@ -463,9 +463,9 @@ in the code needs it.
 Every other folder runs on the runtime. The field, the battles and the menus
 let time pass through `WaitFrames` and keep their per-frame work as tasks;
 their memory comes from the heap's named slots; their changes to the screen
-go through the depth slots, `gBgScroll` and the write queue. The other banks
+go through the depth slots, `gBgScroll` and the write queue. The other [banks](../../glossary.md#bank)
 call the runtime's functions directly, and overlays reach them through the
-runtime bank's far-call table
+runtime bank's [far-call](../../glossary.md#far-call) table
 ([System](../system/README.md#why-the-program-is-cut-into-banks)), and
 `Game_Run`, which resets the runtime before every map, is in
 [Running a map](../object/README.md).
@@ -493,7 +493,7 @@ runtime bank's far-call table
 | `runtime/*.c` | the parts, one family of functions each |
 | `math_table.c` | a quarter-wave sine table with the same values as `Trig_SineTable` in `trig.s`, the copy `Trig_Sin` reads; nothing reads this one by name |
 | `numtext.c` | the hexadecimal digits and the powers of ten that number text uses |
-| `trig.s`, `q16_dot_product.s` | the sine and cosine, and a 16.16 dot product, in assembly; each header gives its evidence: `trig.s` branches on a shift's carry, and `q16_dot_product.s` has a multiply sequence no compiler pattern emits, which its header notes does not alone prove the whole file handwritten |
+| `trig.s`, `q16_dot_product.s` | the sine and cosine, and a 16.16 dot product, in assembly; each header gives its evidence: `trig.s` branches on a shift's carry, and `q16_dot_product.s` has a multiply sequence no [compiler](../../glossary.md#the-compilers) pattern emits, which its header notes does not alone prove the whole file handwritten |
 
 The parts are [`decompress.c`](runtime/decompress.c), [`fade.c`](runtime/fade.c),
 [`frame.c`](runtime/frame.c), [`heap.c`](runtime/heap.c),
@@ -583,7 +583,7 @@ The names come from what the code does: `WaitFrames` from its loop,
 slots, the save code's from the flash records it writes. Constants such as
 `SCHEDULER_KEY_MAIN_LOOP` are the values the callers pass.
 
-XXX: likely the VBlank handler's display writes come first so that they land
+[XXX](../../glossary.md#xxx): likely the VBlank handler's display writes come first so that they land
 inside the vertical blank, and the mixer last because it is long and need
 only finish within the frame; the bytes don't say so.
 
@@ -604,10 +604,10 @@ above the heap's end is at most 512. `ewram.s` lays EWRAM out in 4 KB groups
 fourth), and `gSavedStack` is the last cell of the third, sized to reach the
 fourth. It could hold a stack that had run 2,640 bytes into the heap.
 
-No task waits. A call graph of the tbs-en build's objects, main image and
+No task waits. A call graph of the tbs-en build's objects, [main image](../../glossary.md#main-image) and
 overlays, from each function the code hands to the scheduler, each object
 hook and each `SC_CALL` callback, finds nine tasks with a path of calls to
-`WaitFrames`, and none takes it: the map tasks turn object events with a wait of 0
+`WaitFrames`, and none takes it: the map tasks turn [object events](../../glossary.md#object-event) with a wait of 0
 (`Engine_ObjectEventFaceDirection`), the world map's lighthouse jitter moves the
 camera with a glide, the slot machine and the link countdown open instant
 windows (`UI_WINDOW_INSTANT`), and battle playback's sprite respawn tests

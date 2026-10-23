@@ -3,14 +3,14 @@
 ![How one picture, the grassland battle backdrop, gets into the game. It is kept as an ordinary picture file, grassland.png, whose pixels are numbers into its own list of 128 colours. The build packs it into the two forms the game reads: the list of colours, and the pixels, compressed. A small assembly file places both on the cartridge under the name the code uses, Battle_GrasslandBackdrop, and the resource directory gives it a number. A battle on the world map's grassland, and the credits, ask for it by that number.](https://alchemy.pascalpixel.com/illustrations/graphics/picture-build.svg)
 
 The grassy field behind a battle on the world map, the monsters, the fonts,
-the map tiles and the title screen are all kept here as ordinary picture
+the [map](../../glossary.md#map) tiles and the title screen are all kept here as ordinary picture
 files that anyone can open and edit. Every build packs them into the forms the
 game reads, so the same files serve both the reader and the cartridge. The
 folder also holds the code of the two screens that are mostly pictures, the
 title intro and the credits, and the handwritten decoders that unpack tiles
-and animation frames for the rest of the game. The
+and animation [frames](../../glossary.md#frame) for the rest of the game. The
 [Battle effects](../effect/README.md) load their sheets from `battle_fx/`, and
-each layout's `layout.s` in [Layouts](../layout/README.md) places its tile set from
+each [layout](../../glossary.md#layout)'s `layout.s` in [Layouts](../layout/README.md) places its tile set from
 `tileset/`.
 
 ## How a picture is built and placed
@@ -38,13 +38,13 @@ grassland backdrop above is `Battle_GrasslandBackdrop`, placed by
 `backdrop/grassland.s`, and `ResourceId_GrasslandBackdrop` in the directory,
 which `Battle_SelectTerrainBackdrop` and the credits ask for.
 
-Some packed pictures are followed by a few bytes Camelot's packing tool left
+Some packed pictures are followed by a few bytes [Camelot](../../glossary.md#camelot)'s packing tool left
 behind. The `.s` keeps them beside the picture they follow, as literal bytes
 marked `@ PACKER:`.
 
 ## The palette fade
 
-The palette fade moves every background and sprite colour a step a frame
+The palette fade moves every background and [sprite](../../glossary.md#sprite-and-oam) colour a step a frame
 towards a target, as when the title intro fades in from black.
 
 ![The title intro's fade-in, shown on three of its colours: the sky's blue, a cloud's pale lilac and the mountain's purple. At the start every colour is the same near-black, a very dark red. Each frame every colour moves an equal step towards its own colour in the picture, so after 20 frames each is a third of the way there, after 40 two thirds, and after 60 frames each has reached the picture's colour. All 512 background and sprite colours move this way together.](https://alchemy.pascalpixel.com/illustrations/graphics/palette-fade.svg)
@@ -56,7 +56,7 @@ start and the target can be one colour everywhere, the picture's own colours
 or a filtered version of them, such as grey or sepia.
 
 `PaletteFade_Initialize` saves both palettes, 512 colours, as the starting
-components in the colour buffer's heap block (memory borrowed from the
+components in the colour buffer's [heap](../../glossary.md#heap-and-pools) block (memory borrowed from the
 engine's heap, which lends memory out to whatever runs) and schedules
 `PaletteFade_Update`. `PaletteFade_Start` divides each component's distance
 to the target by the number of frames, keeping the remainder in the
@@ -71,11 +71,11 @@ palettes a setter changes.
 
 `Palette_Transform` builds the colours a fade starts from or heads for: one
 colour everywhere, a whole-palette filter (plain, grey, sepia and the
-others), a tint, blend or split carrying a colour, or a copy. In The Broken Seal
+others), a tint, blend or split carrying a colour, or a copy. In [The Broken Seal](../../glossary.md#the-two-games)
 only `Title_ShowIntro` uses the fade, for its 60-frame fade from near-black
 (`RGB(2, 0, 0)`, a dark red) to the picture's own colours;
 `PaletteFade_Release`, `PaletteFade_SetTarget` and `PaletteFade_SetBackdrop`
-are `UNUSED`.
+are [`UNUSED`](../../glossary.md#unused).
 
 The halves are named in `include/graphics/palbuf.h`.
 
@@ -92,8 +92,8 @@ into the title picture and waits for Start.
 
 ![The title sequence at power-on. At the top, the two logos as the game shows them. First the Nintendo logo with its jingle, then the Camelot logo for two seconds. If a save file exists, the title intro follows: the backgrounds scroll down while the sun rises, a white flash brings up the title picture, and Press Start pulses. Pressing A or Start goes on to the file select screen. If a minute passes with nothing pressed, the screen fades out and the sequence starts again from the Nintendo logo. With no save file, the logos lead straight to the file select screen.](https://alchemy.pascalpixel.com/illustrations/graphics/title-sequence.svg)
 
-The title overlay, `Title_Run` in [Menus](../menu/README.md), decides what
-runs; the code is here, in the palette bank. At power-on
+The title [overlay](../../glossary.md#overlay), `Title_Run` in [Menus](../menu/README.md), decides what
+runs; the code is here, in the palette [bank](../../glossary.md#bank). At power-on
 `Title_ShowSplashScreen` shows the Nintendo logo with its jingle and
 `Title_ShowAnimatedSplash` the Camelot logo for two seconds, cycling its four
 frames of tiles. When a save file exists, `Title_ShowIntro` then scrolls the
@@ -130,7 +130,7 @@ The credits roll over a slideshow of 32 battle backdrops
 (`gDisplayScroll_SlideResources`), each crossfading into the next, and its
 last entry, 0, fades the screen to black.
 `Title_Run` reaches them through the scroll bank as `ScrollFar_Entry00`, at
-the title screen's warp destination 9, with `MUS_ENDING` playing, before the clear
+the title screen's [warp destination](../../glossary.md#warp-destination) 9, with `MUS_ENDING` playing, before the clear
 screen. Their waits come to 11,223 frames: a 300-frame lead, then for each
 of the 33 entries a 64-frame fade and a 267-frame hold.
 
@@ -146,7 +146,7 @@ showing, the first into half 1, steps the blend weights between `BG2` and
 backdrop to the next, so a backdrop is never loaded while it is shown.
 `Tile_ExpandSlide` unpacks the tiles from a copy in `HEAP_SLOT_TEMP_RENDERER`,
 released after each load, and the colours reach palette RAM through the I/O
-write queue at the next VBlank. Every fourth frame a VBlank task moves both
+write queue at the next VBlank. Every fourth frame a VBlank [task](../../glossary.md#task) moves both
 backdrops a pixel right; a picture is as wide as its map, 256 pixels, so it
 wraps without a seam.
 
@@ -182,7 +182,7 @@ first in OAM, hide the rows that are only partly on screen.
 `DisplayScroll_DrawLine` draws each glyph in colour 15 with a colour 1
 shadow a pixel down and to the right. It takes its line buffer before
 checking for the end of the text, so the last call leaks the buffer
-(`// BUG:`, fixed behind `BUGFIX`).
+([`// BUG:`](../../glossary.md#bug-bugfix-and-ubfix), fixed behind `BUGFIX`).
 
 The sizes are macros at the top of `credits/credits.c`.
 
@@ -221,7 +221,7 @@ the last line drawn and `gFlash_Handler0` the end-of-text latch. The borrow
 is safe because the flash library sets each cell before it reads it:
 `IdentifyFlash`, which runs before each use of the save, writes `gFlash`,
 `gFlash_Handler0` and `gFlash_Handler3`, and each program routine sets
-`gFlashNumRemainingBytes`. The original reaches the cells through casts of
+`gFlashNumRemainingBytes`. [The original](../../glossary.md#the-original) reaches the cells through casts of
 the flash library's declarations, which is undefined behaviour (`// UB:`);
 `UBFIX` gives them the credits' own types.
 
@@ -235,9 +235,9 @@ the flash library's declarations, which is undefined behaviour (`// UB:`);
 ## How it fits with the rest of the game
 
 The title intro and the credits are main-image code the title overlay
-calls through their banks' far-call tables. The decoders are called by the
-code that loads pictures everywhere else, many of them from a copy in a heap
-slot (`RamCode_LoadSlot`), as `Tile_ExpandSlide` is. The pictures belong to
+calls through their banks' [far-call](../../glossary.md#far-call) tables. The decoders are called by the
+code that loads pictures everywhere else, many of them from a copy in a [heap
+slot](../../glossary.md#heap-slot) (`RamCode_LoadSlot`), as `Tile_ExpandSlide` is. The pictures belong to
 the code that loads them: effects, maps, layouts, windows and menus.
 
 ## Limits
@@ -255,7 +255,7 @@ the code that loads them: effects, maps, layouts, windows and menus.
 | `title/intro.c` | the title intro, the Nintendo and Camelot logos, and the palette fade |
 | `credits/credits.c` | the credits: the backdrops that slide and crossfade, and the scrolling text |
 | `text/numwords.c` | the counted nouns the German message decoder writes after a number |
-| `text/genders.s` | the grammatical gender of each item name, for the German and Italian editions |
+| `text/genders.s` | the grammatical gender of each item name, for the German and Italian [editions](../../glossary.md#editions) |
 | `text/decode_symbol.s`, [`render/decode.s`](render/decode.s), `tile/*.s` | handwritten ARM and Thumb decoders, copiers and a dot product, each proven in its header |
 | `battle_fx/` | the battle effects' sheets and masks, loaded by resource id |
 | `ui/` | window tiles, the small font, icons and menu sprites |

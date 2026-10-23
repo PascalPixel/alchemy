@@ -2,11 +2,11 @@
 
 ![One number, three lists. The Healing Ring is item 265, and that one number finds it in three lists kept in the same order: row 265 of the item table, 800 coins, a ring, uses Cure; entry 265 of the item names, Healing Ring; and entry 265 of the Item screen's lines, Ring: Use to restore 70 HP. The Sleep Ring at 264 and the Unicorn Ring at 266 line up the same way. Only the position ties the lists together, so a row put into one list would shift all the later names.](https://alchemy.pascalpixel.com/illustrations/game/row-id.svg)
 
-Everything the game needs to know about the party lives here: who is in it,
-each character's level, HP and stats, the items each one carries, the Djinn
+Everything the game needs to know about the [party](../../glossary.md#the-party) lives here: who is in it,
+each character's level, HP and stats, the items each one carries, the [Djinn](../../glossary.md#djinn)
 they hold, and the flags that remember what has happened in the story. So do
-the tables that describe every item, ability, Djinni, enemy, summon and
-class. The rest of the game asks this code its questions: a map whether a
+the tables that describe every item, ability, Djinni, enemy, [summon](../../glossary.md#summons) and
+class. The rest of the game asks this code its questions: a [map](../../glossary.md#map) whether a
 chest has been opened, a shop what an item costs, a menu what a character's
 Attack would be with another sword, and a battle what a blow does.
 [Battles](../battle/README.md) follows an ability from these tables to its
@@ -56,7 +56,7 @@ name the ids the code uses.
 | --- | --- | --- |
 | `items.tsv` | item (324) | `gItem_DefinitionTable` (`item_table.s`) |
 | `actions.tsv` | ability (519) | `gBattleAction_DefinitionTable` (`actions.s`) |
-| `djinn.tsv` | Djinni, `DJINN_PER_ELEMENT` (20) to an element, Venus, Mercury, Mars, Jupiter (80) | `gDjinn_DefinitionTable` (`djinn_table.s`) |
+| `djinn.tsv` | Djinni, `DJINN_PER_ELEMENT` (20) to an [element](../../glossary.md#the-four-elements), Venus, Mercury, Mars, Jupiter (80) | `gDjinn_DefinitionTable` (`djinn_table.s`) |
 | `enemies.tsv` | enemy (165) | `gEnemy_Definitions` (`enemies.s`) |
 | `summons.tsv` | summon (16) | `gSummon_DefinitionTable` (`summons.s`) |
 | `classes.tsv` | class (203) | `gClass_DefinitionTable` (`classes.s`) |
@@ -90,7 +90,7 @@ element 4, `ELEMENT_NONE`; every other column is 0.
 | Column | What it holds |
 | --- | --- |
 | `price` | the price in coins |
-| `type` | `enum ItemType`: `ITEM_TYPE_NONE` for anything that isn't equipment, then weapons, armor, shields, helms, boots, `ITEM_TYPE_PSYNERGY`, rings and shirts; a unit equips one of each type but Psynergy items |
+| `type` | `enum ItemType`: `ITEM_TYPE_NONE` for anything that isn't equipment, then weapons, armor, shields, helms, boots, `ITEM_TYPE_PSYNERGY`, rings and shirts; a unit equips one of each type but [Psynergy](../../glossary.md#psynergy-and-pp) items |
 | `flags` | `enum ItemFlags`: `ITEM_CURSED`, `ITEM_CANNOT_UNEQUIP`, `ITEM_RARE`, `ITEM_INDISPENSABLE` and `ITEM_STACKABLE` |
 | `equip_mask` | one bit per character who can equip it, bit 0 for Isaac: the Long Sword's `0x13` is Isaac, Garet and Felix |
 | `icon` | its menu icon (`gUiIcon_ItemIconPointers`) |
@@ -190,7 +190,7 @@ equipping, setting a Djinni, levelling up, a class change.
 A menu that previews a change uses the same path. To show Attack without the
 Machete, `Menu_DrawOwnerStatusPanel`
 ([menu/menu/common.c](../menu/menu/common.c))
-copies the unit to the heap, changes the real unit's equipment, lets
+copies the unit to the [heap](../../glossary.md#heap-and-pools), changes the real unit's equipment, lets
 `Unit_Calculate` run, draws the new numbers against the copy and restores the
 unit from it. The preview is what equipping would do because it is the same
 computation. The Machete adds 6 to Attack, but the panel shows 7 less,
@@ -263,10 +263,10 @@ and selling or discarding one puts it back (`Item_AdjustCounter`,
 
 ## How it fits with the rest of the game
 
-This code sits in its own part of the main program, the `game` bank. Code
+This code sits in its own part of the main program, the `game` [bank](../../glossary.md#bank). Code
 in the other banks calls its functions by their `Far` names, through the
-table of calls between banks, and a map's overlay through the list of
-outside functions it was built with (its import table); some code reads
+table of calls between banks, and a map's [overlay](../../glossary.md#overlay) through the list of
+outside functions it was built with (its [import table](../../glossary.md#entry-table-and-import-table)); some code reads
 `gGameState`, the record of the game in progress, directly, as the save
 summary does. The battle folder reads `actions.tsv` through
 `struct BattleAct` beside its own `actflags.tsv` and `actstat.tsv`, which
@@ -280,7 +280,7 @@ units are part of the save file.
 - A unit has 15 inventory slots, and a stack holds 30.
 - 20 Djinn to an element, 519 abilities, 165 enemies (the last with no name
   message), 203 classes.
-- 4,096 game flags.
+- 4,096 [game flags](../../glossary.md#game-flag).
 - Levels go up to 99.
 - 128 rare item counters, each 0 to 99.
 
@@ -304,7 +304,7 @@ units are part of the save file.
 | `*.tsv`, each with the `.s` that places it | the definition tables, listed under [their ids](#how-one-number-finds-a-row-and-its-name) |
 
 The prototypes are in `games/tbs/include/unit/game/`. Code in other banks
-calls these functions through the far-call table
+calls these functions through the [far-call](../../glossary.md#far-call) table
 `games/tbs/src/system/far_call/GAME.S`, by their `Far` names.
 
 ## Words used here
@@ -366,7 +366,7 @@ as is the enemies' fourth (`EnemyDefinition.weakEffects`).
 Rows 269 to 323 of `items.tsv` are 55 copies of one row: a weapon only Isaac
 can equip, priced 100 coins, with Attack 11, no icon and no name message.
 Nothing gives one: the shops' stock table (`shop/artifacts.c`) and the
-scripts name no item past `ITEM_CLERICS_RING` (268), no enemy in
+[scripts](../../glossary.md#script) name no item past `ITEM_CLERICS_RING` (268), no enemy in
 `enemies.tsv` carries or drops one, and the debug item browser covers 0 to 269
 and skips items without an icon. They are filler to 324 rows.
 

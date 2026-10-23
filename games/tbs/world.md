@@ -2,17 +2,17 @@
 
 ![Four parts of the field. While the party walks around a map, four parts of the program work together. The loop lets the party walk, and stops to deal with whatever comes up. The engine moves everything that moves and draws the map, every frame. The layout says where the ground is, how high it is and which spots do something. The map's own code, loaded for each map, says who stands where and what happens there. The loop asks the map what to do; the engine reads the layout. The loop and the engine know nothing of any one map.](https://alchemy.pascalpixel.com/illustrations/world/field-parts.svg)
 
-Everywhere the party walks, a town, a dungeon or the world map, is run by
+Everywhere the [party](glossary.md#the-party) walks, a town, a dungeon or the world map, is run by
 the same four parts. The loop in `src/object` lets the party walk and deals
 with whatever interrupts it. The engine in `src/field` moves everything that
-moves and draws the map. The layout, in `src/layout`, says what the ground is like.
-And each map's own code, its overlay in `src/map`, says who is there and
+moves and draws the [map](glossary.md#map). The [layout](glossary.md#layout), in `src/layout`, says what the ground is like.
+And each map's own code, its [overlay](glossary.md#overlay) in `src/map`, says who is there and
 what happens. Only that last part knows anything about one map. How maps
 and overlays fit into the whole game is on [the front page](README.md).
 
 ## The field loop and its requests
 
-While the party walks, the game asks once a frame whether something should
+While the party walks, the game asks once a [frame](glossary.md#frame) whether something should
 happen. When something should, the walk stops, the game deals with it, and
 the walk starts again.
 
@@ -22,7 +22,7 @@ Stepping into a doorway, pressing A beside someone, a random battle
 starting: each only raises a flag of its own, a request. When the walk
 stops, the game deals with the raised requests one at a time, always in the
 same order, and leaving comes first, so a cutscene that ends by taking a
-warp simply ends the map. That is why a cutscene is written as one script
+[warp](glossary.md#warp) simply ends the map. That is why a cutscene is written as one [script](glossary.md#script)
 that runs from start to end: the walk is stopped until it is done.
 
 A random battle is a way out of the map too. The game remembers where
@@ -34,7 +34,7 @@ the overlay's entries, then lets the leader walk, calling `Field_ProcessStep`
 once a frame, until `Field_CountRequests` finds a request. The requests are
 fields of the field work, the block of memory that holds the running
 map's state (`struct FieldWork`), so each kind holds at most one. A battle request
-saves the object events with `ObjectTable_Snapshot`, sets the next map to
+saves the [object events](glossary.md#object-event) with `ObjectTable_Snapshot`, sets the next map to
 `RUN_BATTLE` and raises `WARP_NONE`; afterwards `Map_ReturnFromBattle`
 loads the field map again with `FLAG_KEEP_PARTY_POSITION` set, and
 `ObjectTable_Restore` puts the object events back.
@@ -64,24 +64,24 @@ answer differently as the story moves on, and the engine needs no idea of
 the story at all. Vault's `Map_GetEvents` returns
 `gVault_EventsAfterThieves` once `FLAG_VAULT_THIEVES_JAILED` is set, and
 `gVault_Events` before. The rows of a table carry conditions of their own as
-well, and `Map_FindEvent` runs the first row whose kind, trigger and
-condition fit, so a later row for the same person or cell runs only where
+well, and `Map_FindEvent` runs the first row whose kind, [trigger](glossary.md#trigger) and
+condition fit, so a later row for the same person or [cell](glossary.md#cell) runs only where
 every earlier row's condition fails.
 
 The six functions are `struct MapEntries`, at the start of every overlay.
-How an overlay is loaded and how it calls back into the main image is in
+How an overlay is loaded and how it calls back into the [main image](glossary.md#main-image) is in
 [Engine](engine.md#overlays). The front page describes [how maps depend on
 the story](README.md#how-maps-depend-on-the-story) across the game.
-[Maps](src/map/README.md#the-entry-table) describes the entry table, the
+[Maps](src/map/README.md#the-entry-table) describes the [entry table](glossary.md#entry-table-and-import-table), the
 tables it returns and [how a map event is
 chosen](src/map/README.md#how-an-event-is-chosen), and
-[Places](src/field/maps.s) lists every map in story order.
+[Places](src/field/maps.s) lists every map in [story order](glossary.md#the-places-in-story-order).
 
 ## Map and map section flags
 
 A map never undoes what it changed. The game keeps two sets of flags for
 maps to use and forgets them as the party moves on: map flags whenever
-the party enters a map, map section flags when it enters another map section.
+the party enters a map, [map section](glossary.md#map-section) flags when it enters another map section.
 
 ![What a map forgets, and when. Map flags are forgotten every time the party enters a map, even the one it just left: the plant Growth raised on Crossbone Isle is a sprout again, as the picture of it on its cliff ledge shows. Map section flags are kept while the party moves between the maps of one map section and forgotten when it enters another map section: Vault's mayor remembers having welcomed Isaac back while the party stays in Vault, and welcomes him again on the next visit. Coming back from a battle forgets neither, so the room is as the party left it.](https://alchemy.pascalpixel.com/illustrations/scene/flag-reset.svg)
 
@@ -108,7 +108,7 @@ uses them.
 
 Everything on the field that moves or changes by itself, the party, the
 townspeople, the camera, even the footprints the leader leaves in snow, is a
-field object, and each one runs a small script.
+[field object](glossary.md#field-object), and each one runs a small script.
 
 ![Three field objects and their scripts. The leader moves by the direction pad, waits one frame and repeats, for good. The camera follows the leader, waits one frame and repeats. A footprint waits 120 frames and then disappears. Each frame every object runs its steps in order until one says to wait, which ends its turn until the next frame. Below, Isaac in Imil's snow as the game draws him, with the footprints his steps left beside him.](https://alchemy.pascalpixel.com/illustrations/field/object-scripts.svg)
 
@@ -138,7 +138,7 @@ they are kept apart.
 | Name | Value | Meaning |
 | --- | --- | --- |
 | `FIELD_OBJECT_COUNT` | 64 | the slots of `gObjectSlots` |
-| `FIELD_SPRITE_FOOTPRINT` | 25 | a footprint's sprite, on maps that show them |
+| `FIELD_SPRITE_FOOTPRINT` | 25 | a footprint's [sprite](glossary.md#sprite-and-oam), on maps that show them |
 
 [Field](src/field/README.md#everything-that-moves-runs-a-script) covers the
 scripts and their commands, the sprites and [the views of one
@@ -184,8 +184,8 @@ what is drawn there, how high its ground is, and what standing there does.
 
 ![What one cell of a layout says. Nine cells of Vale, a grass corner against a cliff, as the game draws them, with the middle cell outlined and its four tiles dotted. A layout is a grid of square cells, 16 pixels on a side. Each cell says what is drawn there, one metatile, a 16-pixel picture made of 2 by 2 tiles, each tile an 8-pixel square; how high its ground is, flat, a slope or a step; and what standing there does: nothing, a wall, a spot this map's events name such as a door, a chest or a ladder, ground where battles start, or a ledge to jump down. The engine reads the ground to decide where the leader can step; the map's events read what standing there does to decide what happens.](https://alchemy.pascalpixel.com/illustrations/world/cell-word.svg)
 
-What standing on a cell does is its metatile behavior, and it is what walls
-and map events are keyed on. Some behaviors mean the same on every map: a wall,
+What standing on a cell does is its [metatile behavior](glossary.md#metatile-behavior), and it is what walls
+and [map events](glossary.md#map-event) are keyed on. Some behaviors mean the same on every map: a wall,
 ground with battles of its own, the jars and barrels anyone can search,
 ledges and climbing spots. The rest belong to the map, and its map event table
 says what each one does, so the same behavior is a door in one town and a chest
@@ -196,7 +196,7 @@ high runs along the foot of each cliff.
 
 The three layers of a layout are windows onto one grid of 128 by 128 cells,
 decoded into the 64 KB at `Ram_MapGridCellBuffer`. A cell is one 32-bit word,
-four bytes: its first two bytes (a halfword) hold the metatile in their low 12
+four bytes: its first two bytes (a halfword) hold the [metatile](glossary.md#metatile) in their low 12
 bits and, above it, the layer and priority an object standing there takes;
 its third byte is the metatile behavior and its fourth its ground shape, from which
 `MapGrid_GetTerrainHeight` computes the height. `MB_WALL` is a wall; the
@@ -222,7 +222,7 @@ and treetops in front. That is how Isaac can walk behind a roof.
 ![A town is drawn in four sheets, stacked from back to front: the ground, then the middle layer of walls and edges, then the characters, then the overhead layer of roofs and treetops. The console stacks them in this order on most maps, and a map can give its layers another order. No code works out whether Isaac is hidden behind a roof: he is drawn between two layers of the same map.](https://alchemy.pascalpixel.com/illustrations/world/layer-order.svg)
 
 No code works out whether someone is hidden behind a roof or a tree. The
-console draws its background layers and sprites in an order set by their
+console draws its [background layers](glossary.md#background-layer) and sprites in an order set by their
 priorities, and the characters are simply drawn between two layers of the
 same map.
 
@@ -271,7 +271,7 @@ flat over both.
 scale and a ground distance when the world map is set up, and again only if
 the camera's pitch changes, which nothing in the game does. Each frame
 `Transform_UpdateVertices` turns them into a page of affine values. It is ARM
-code, the processor's full 32-bit instructions, run from IWRAM, its fast
+code, the processor's full 32-bit instructions, run from [IWRAM](glossary.md#iwram-and-ewram), its fast
 internal memory, since that is where such code runs quickest; the rest of
 the game is in the compact 16-bit Thumb form. `WorldMap_ApplyAffineFrame`
 sets the first line's values and starts an HBlank DMA: a copy the console
@@ -320,7 +320,7 @@ step, and [Battle](battle.md#starting-a-battle) what happens once it starts.
 ## Field Psynergy
 
 Using Move on a stone pillar slides it; using it on a blank wall shows the
-same hand and moves nothing. What Psynergy does to a map is decided by the
+same hand and moves nothing. What [Psynergy](glossary.md#psynergy-and-pp) does to a map is decided by the
 map's own map events, and the effect only draws it.
 
 ![Psynergy on the field, step by step. At the top, the cast as the game plays it: the screen tints, Move's hand pushes the pillar, and the colours come back. Isaac uses Move on the stone pillar in Vale. The game checks Psynergy can be used here and takes the PP. It runs the map's event for before the cast, if there is one. The effect plays: Move's hand appears, and it pushes the pillar only because Vale has a map event for Move on it. Last it runs the map's event for after the cast, which notes where the pillar now stands and makes its new cell solid.](https://alchemy.pascalpixel.com/illustrations/object/psynergy-phases.svg)

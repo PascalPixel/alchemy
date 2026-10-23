@@ -9,15 +9,15 @@ bytes are part of the cartridge, and the source marks them so that a reader
 knows they never run.
 
 Something is unused when nothing the player can do brings the game to it: no
-cell, event table, exit, flag or other code leads there. The source marks it
+[cell](glossary.md#cell), event table, exit, flag or other code leads there. The source marks it
 in three ways:
 
-- A function nothing refers to at all is declared `UNUSED`.
+- A function nothing refers to at all is declared [`UNUSED`](glossary.md#unused).
 - Anything the game can never reach, whether a function, a table row or a
   scene, has a comment that opens with `Unused:` and says why, and what the
   player would have seen.
 - Where it holds something the player would have seen (an event, a scene, its
-  scripts and tables), its name carries `Unused` after its family prefix, as in
+  [scripts](glossary.md#script) and tables), its name carries `Unused` after its family prefix, as in
   `EventScript_UnusedGaretJoinsIsaac`. A helper or an empty function keeps its name,
   since `UNUSED` already says nothing calls it.
 
@@ -32,8 +32,8 @@ why, and the name is left alone too.
 
 What happens in a place is a list of rows in its tables (see
 [Scenes](src/map/README.md)), and a row runs only when the game picks it.
-Three habits of how the game picks a row, and of how the party moves through
-a map, account for nearly every unused row on this page: the first row that
+Three habits of how the game picks a row, and of how the [party](glossary.md#the-party) moves through
+a [map](glossary.md#map), account for nearly every unused row on this page: the first row that
 fits answers, a named search answers with its first row whatever its
 condition, and a spot the party can reach only by crossing other spots finds
 their events already run.
@@ -49,7 +49,7 @@ A search on a named spot (a chest, a jar, an oven, everything but
 mimic battle; `Map_BgEventIgnoresCondition` decides this. `Field_SearchTile`
 tests the condition afterwards, so that an opened chest still reports that it
 is empty. The consequence is that a named spot with two rows under the same
-trigger always answers with the first.
+[trigger](glossary.md#trigger) always answers with the first.
 
 A cell's event fires only when the leader stands on it. Where every route to
 a cell crosses other cells first, their events have already run, and any flag
@@ -133,14 +133,14 @@ Garet has always joined by the time the leader stands on it, and joining sets
 ends at once.
 
 Run, it would have Garet run up (`gValeStorm_UnusedGaretRunsUpScript`), pant
-`*Hah* *Hah*` while `gValeStorm_UnusedGaretPantingScript` scales his sprite,
+`*Hah* *Hah*` while `gValeStorm_UnusedGaretPantingScript` scales his [sprite](glossary.md#sprite-and-oam),
 and ask `Are you trapped, too?` before the two go on together. Those lines
 appear in no other event.
 
 ## Functions nothing calls
 
 These are declared `UNUSED`. Each holds something the player would have seen,
-so its name carries `Unused`. In story order:
+so its name carries `Unused`. In [story order](glossary.md#the-places-in-story-order):
 
 - `ValeStorm_UnusedOpenSanctumDoor` ([vale_storm.c](src/map/vale_storm.c))
   plays the door sound, animates the door's cells and walks the leader into a
@@ -168,26 +168,26 @@ so its name carries `Unused`. In story order:
 - `MercuryLighthouseAerie_UnusedAlexCastsPly`
   ([mercury_lighthouse_aerie.c](src/map/mercury_lighthouse_aerie.c)) has
   Alex raise his hands and cast Ply on the lift's statue. The scene the game
-  plays, `MercuryLighthouseAerie_AlexAppears`, has Alex and Saturos warp to the
+  plays, `MercuryLighthouseAerie_AlexAppears`, has Alex and Saturos [warp](glossary.md#warp) to the
   lift and ride it down without it.
 - `Manticore_UnusedReturn` ([lamakan_desert.c](src/map/lamakan_desert.c))
   walks the Manticore back to its spot at (168, 96) and settles it.
 - `CrossboneIsleKeys_UnusedUpdateKeyIcons`
   ([crossbone_isle_keys.c](src/map/crossbone_isle_keys.c)) would show the
   item icons of the Blue Keys still lying in the room one after another, every
-  16 frames. Nothing adds it as a callback.
+  16 [frames](glossary.md#frame). Nothing adds it as a callback.
 - `ColosseumNavampaMatch_UnusedCountdown`
   ([colosseum_navampa_match.c](src/map/colosseum_navampa_match.c)) is a
   countdown before the match at the third finals site, with its own Colosso
   lettering and sounds.
 - `ColosseumNavampaMatch_UnusedWarriorTalk`, in the same file, asks a yes
   or no question and on yes makes the character it names the one the player
-  moves alone, as the friends' turns do. XXX: likely its message numbers date
+  moves alone, as the friends' turns do. [XXX](glossary.md#xxx): likely its message numbers date
   from an earlier catalog, because the lines it would show, three apart per
   character from `MsgColossoDidntThinkBattles`, are a spectator's thought and
   the stage announcements.
 
-Most other `UNUSED` functions, in the overlays and in the main image, are
+Most other `UNUSED` functions, in the [overlays](glossary.md#overlay) and in the [main image](glossary.md#main-image), are
 helpers and empty functions, and they keep their names. Lunpa Fortress
 holds two that the player would see:
 `LunpaFortress_UnusedFirstPatrolThrowsPartyOut` (the first patrol asking who

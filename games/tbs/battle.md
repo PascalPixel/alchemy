@@ -3,7 +3,7 @@
 ![A battle, round by round. At the start of each round everyone chooses an action: the party in the command menu, each enemy from its own list. The actions line up fastest first, by Agility. Then each action plays in turn: it is announced, its animation plays and each target is hit, and the unit's turn ends. After any action, if one side is down or the party ran, the battle ends, with coins, experience and items after a win. When everyone has acted, the next round begins.](https://alchemy.pascalpixel.com/illustrations/battle/round.svg)
 
 When a random battle starts, the field gives way to a battlefield where the
-party faces the enemies. From then on the battle runs in
+[party](glossary.md#the-party) faces the enemies. From then on the battle runs in
 rounds. At the start of a round the player picks a command for each party
 member and every enemy picks one of its own. The game lines the actions up,
 fastest first, and plays them one after another: an announcement such as
@@ -13,7 +13,7 @@ battle ends and the field comes back.
 
 Two kinds of code share the work. The rules decide what happens: who acts
 when, who is hit and for how much, which statuses take hold. The effects
-draw it: the rock that rises, the flash of a critical hit, a summon's whole
+draw it: the rock that rises, the flash of a critical hit, a [summon](glossary.md#summons)'s whole
 scene. They are kept apart so cleanly that a later target's damage is worked
 out while the animation is still on screen. This page explains the battle as
 a whole; [Battles](src/battle/README.md) goes through the rules in detail,
@@ -22,27 +22,27 @@ use, and [Battle effects](src/effect/README.md) the animations.
 
 ## Starting a battle
 
-To the rest of the game a battle is one more map: the field leaves for it
+To the rest of the game a battle is one more [map](glossary.md#map): the field leaves for it
 as it would leave through a doorway, and comes back to the same place
 afterwards.
 
-In the code, a random encounter raises a field warp like any other, with
+In the code, a random encounter raises a field [warp](glossary.md#warp) like any other, with
 `RUN_BATTLE` as the next map and the enemy group in
 `gGameState.warpDest`. `Game_Run` (`src/object/object/map.c`) clears what
-the last map left running, as it does between any two maps: the task
-table, the list of small jobs the game runs once a frame, and the heap, the
+the last map left running, as it does between any two maps: the [task](glossary.md#task)
+table, the list of small jobs the game runs once a [frame](glossary.md#frame), and the [heap](glossary.md#heap-and-pools), the
 pool of memory a map borrows from. Then, instead of loading a map's
-overlay (the code for one map, loaded when the party arrives there), it
+[overlay](glossary.md#overlay) (the code for one map, loaded when the party arrives there), it
 calls `Battle_RunEncounterFar(warpDest)`, which fights the whole battle
 before it returns; a `Far` name is the one other parts of the program use
 to call into the battle's part. Afterwards `Map_ReturnFromBattle` reloads the field map the
 battle started from, with the party where it was, or after a defeat goes to
 the defeat point. The debug battle menu (`DebugBattle_RunMenu`) is the only
-other way in. The battle's code is always present, in the `battle` bank of
+other way in. The battle's code is always present, in the `battle` [bank](glossary.md#bank) of
 the main program, rather than loaded as an overlay.
 
 `Battle_RunEncounter` (`src/battle/battle/encounter.c`) allocates the
-battle's work slots, `gBattleWork` among them, and sets `FLAG_IN_BATTLE`
+battle's [work slots](glossary.md#heap-slot), `gBattleWork` among them, and sets `FLAG_IN_BATTLE`
 while it runs. Its result is the number of enemies defeated,
 `ENCOUNTER_FLED` or `ENCOUNTER_PARTY_LOST`. The enemy group is a row of
 `formatn.tsv`, which `formation.c` turns into enemy units; the encounter
@@ -62,12 +62,12 @@ rolls the encounter, and [Battles](src/battle/README.md#rounds) what
 ## Units and abilities
 
 Everyone in a fight, party member or enemy, is a unit, and everything a unit
-can do on its turn is an ability: Attack, Quake, a Djinni, a summon, using an
+can do on its turn is an ability: Attack, Quake, a [Djinni](glossary.md#djinn), a summon, using an
 item, an enemy's special move.
 
 Party members keep their character numbers as unit ids, and enemies take ids
 from `FIRST_ENEMY_UNIT`. `Unit_GetFar` returns a unit's `struct BattleUnit`,
-with its HP, PP, stats, statuses and a Power and a Resist in each element.
+with its HP, [PP](glossary.md#psynergy-and-pp), stats, statuses and a [Power](glossary.md#power-and-resist) and a Resist in each [element](glossary.md#the-four-elements).
 
 An ability's id is the same row in three tables, each saying one thing about
 it:
@@ -183,8 +183,8 @@ Avalanche, Cure and Ragnarok.
 
 The battlefield the player sees tilts away into the distance and turns as
 the camera swings round, while the status window and the messages stay flat
-in front. That takes three of the console's background layers and its
-sprites, each with its own job.
+in front. That takes three of the console's [background layers](glossary.md#background-layer) and its
+[sprites](glossary.md#sprite-and-oam), each with its own job.
 
 ![A battle pulled apart into its layers. A battle in Goma Cave as it opens comes apart into the sheets the console stacks to draw it, then closes again. From the back: the cave tilted into a floor on `BG2`; the party and the enemies, sprites; the status window and the message on `BG0`; and in front the arrow that waits for a button, a sprite. `BG1` draws nothing here.](https://alchemy.pascalpixel.com/illustrations/battle/battle-layers.svg)
 
@@ -324,7 +324,7 @@ or short of PP.
 
 The invariant is that the effect decides only when the damage appears, and
 the rules alone decide how much it is. A later target's arithmetic runs while
-the effect is still drawing. XXX: what starts playback for the effect parts
+the effect is still drawing. [XXX](glossary.md#xxx): what starts playback for the effect parts
 that never call `EFFECT_SHOW_DAMAGE`, beyond the wait after the effect, is not
 known.
 

@@ -3,12 +3,12 @@
 ![The source is divided the way the cartridge divides the program. The main image is fourteen banks in a fixed order. The nine large banks each have a folder of their own: runtime, field, window, game, object, menu, shop, battle and effect. The five small banks after them each hold one thing, whose code sits in the folder it belongs with: the credits and the title intro in graphics, Lucky Dice in field, the slot machine in object, and the sound in sound. Separately, the code of each map is an overlay, loaded one at a time; the 96 overlays are in map, menu and debug. Four more folders gather one kind of thing wherever it ends up: graphics, layout, sound and system.](https://alchemy.pascalpixel.com/illustrations/source/folders.svg)
 
 A Game Boy Advance cartridge holds the program as one long run of bytes, and
-Golden Sun's program is laid out in parts: banks of code the CPU runs straight
-from the cartridge, and the code of each map, which is copied into memory
-only while the party is there. The source follows that layout, so finding a
+Golden Sun's program is laid out in parts: [banks](../glossary.md#bank) of code the CPU runs straight
+from the cartridge, and the code of each [map](../glossary.md#map), which is copied into memory
+only while the [party](../glossary.md#the-party) is there. The source follows that layout, so finding a
 folder tells you where its code lies on the cartridge: one folder for each
-large bank of the main image, folders for the overlays, and four folders that
-gather one kind of thing (pictures, layouts, sound, the memory layout) wherever
+large bank of the [main image](../glossary.md#main-image), folders for the [overlays](../glossary.md#overlay), and four folders that
+gather one kind of thing (pictures, [layouts](../glossary.md#layout), sound, the memory layout) wherever
 the link places it. The cartridge keeps no file or folder names, so every name
 here is ours, chosen for what the folder holds.
 
@@ -24,7 +24,7 @@ them). Each large bank's code is one folder here, so a folder's code always
 lies together on the cartridge.
 
 `main.ld` lays the main image out in fourteen banks, each starting at an
-address fixed per edition and opening with a far-call table
+address fixed per [edition](../glossary.md#editions) and opening with a [far-call](../glossary.md#far-call) table
 ([Engine](../engine.md) explains why). The nine large banks each have a
 folder, in link order: `runtime`, `field`, `window`, `game`, `object`,
 `menu`, `shop`, `battle` and `effect`. The five small banks hold one
@@ -55,7 +55,7 @@ long to read as one file is written as parts that only its `.c` compiles.
 
 ![The battle code is one object in the cartridge, too long to read as a single file, so it is written as parts. battle.c is the only file the build compiles. It first includes its private header, battle_internal.h, which holds what the parts share and places no bytes, and then the parts under battle/ one after another in the order their code lies in the cartridge: debug.c, setup.c, link.c, encounter.c and so on to spoils.c, 24 in all. The compiler sees one long file and produces one object, which objects.tsv puts in its place in the battle bank.](https://alchemy.pascalpixel.com/illustrations/source/parts.svg)
 
-The original program was built from pieces, objects, laid one after another in
+[The original](../glossary.md#the-original) program was built from pieces, objects, laid one after another in
 a fixed order, and within an object the code lies in the order it was
 written. Some objects are huge: the battle code runs to some 13,000 lines. Rather
 than one enormous file, such an object is written as parts, each holding one
@@ -74,7 +74,7 @@ An object too long to read as one file is written as parts.
 the files under `battle/battle/` in ROM order; only `battle.c` is compiled.
 The guide comment at the top of such a `.c` says where each family starts,
 and each part's first line says what it holds, so the tops of a folder's
-files read as its table of contents. The parts are ours, not Camelot's
+files read as its table of contents. The parts are ours, not [Camelot](../glossary.md#camelot)'s
 files.
 
 | File | What it says |
@@ -92,7 +92,7 @@ into the overlay area when a map loads.
 
 ![Bilibin's overlay is three files. The entry table, map/entry/bilibin.s, comes first: six stubs the field code calls to start the map and to get its warp destinations, warps, object event templates, map events and warp regions. Then the map's own code and tables, map/bilibin.c. Last the import table, map/import/bilibin.s, which lists the main-image routines Bilibin's code calls, such as waiting a number of frames or setting a game flag, each reached through its far-call entry. The engine and the map meet only at these two tables.](https://alchemy.pascalpixel.com/illustrations/source/overlay-files.svg)
 
-Each map's people, scripts and cutscenes are code that is needed only while
+Each map's people, [scripts](../glossary.md#script) and cutscenes are code that is needed only while
 the party is there, so it is kept apart from the main image as an overlay and
 loaded when the party arrives
 ([System](system/README.md#how-an-overlay-reaches-the-rest-of-the-game) shows
@@ -110,10 +110,10 @@ overlay meets the main image.
 
 Each overlay is three files in its folder:
 
-- `entry/<map>.s`, the entry table: six stubs, tiny pieces of code that
+- `entry/<map>.s`, the [entry table](../glossary.md#entry-table-and-import-table): six stubs, tiny pieces of code that
   only jump on to a function, written with `overlay_veneer`, that the field
-  code calls to start the map and to get its warp destinations, warps,
-  object event templates, map events and warp regions.
+  code calls to start the map and to get its [warp destinations](../glossary.md#warp-destination), [warps](../glossary.md#warp),
+  [object event](../glossary.md#object-event) templates, [map events](../glossary.md#map-event) and warp regions.
 - `<map>.c`, the map's code and tables.
 - `import/<map>.s`, the import table: the stubs the overlay calls the main
   image through, chosen from the list in `system/overlay.inc`.
@@ -150,7 +150,7 @@ header beside it.
 
 | Header | What it holds |
 | --- | --- |
-| `include/flags.h` | the game flags |
+| `include/flags.h` | the [game flags](../glossary.md#game-flag) |
 | `include/songs.h` | the songs and sound effects |
 | `include/script.h` | the commands scripts are written in |
 | `include/unit/<path>.h` | what the C file at `<path>.c` defines |
@@ -158,7 +158,7 @@ header beside it.
 
 ## C and assembly
 
-Nearly all the code is C from one of three compilers; assembly stays only
+Nearly all the code is C from one of three [compilers](../glossary.md#the-compilers); assembly stays only
 where its instructions prove no compiler wrote it, and for the stubs.
 
 In tbs-en, 95% of the bytes of code come from C. The processor has two
@@ -167,7 +167,7 @@ game is written, and ARM, its full 32-bit instructions, used where speed
 matters. alchemy-gcc, a GCC of July 2000, compiles the game's Thumb C. Three
 files written for ARM
 (`window/glyph_arm.c`, `field/update.c` and `field/vertices.c`) are compiled
-by GCC 2.95.2, and the sound driver's C and the flash save library by pret's
+by GCC 2.95.2, and the sound driver's C and the flash save library by [pret](../glossary.md#pret)'s
 `old_agbcc`. `make modern` also builds the C with a current GCC.
 [Matching](MATCHING.md) explains how a build is judged against the
 cartridge and why some of the C is written as it is.
@@ -181,7 +181,7 @@ branch on a shift's carry (`runtime/trig.s`,
 rewrites (`graphics/tile/decode.s`), a switch from Thumb to ARM inside a
 routine (`sound/mixer.s`), a write to the processor's mode
 (`system/entry.s`). This handwritten code is about 16 KB, mostly decoders,
-the sound mixing and the routines copied into IWRAM. The few handwritten
+the sound mixing and the routines copied into [IWRAM](../glossary.md#iwram-and-ewram). The few handwritten
 helpers inside the C are each marked `CAMELOT_ASM` with their proof.
 
 The rest of the assembly, about 50 KB, is stubs: the 8-byte entries of the
@@ -207,7 +207,7 @@ The field is split four ways. [Field](field/README.md) is the engine under
 every town, dungeon and the world map: the objects on the map, movement, and
 loading, scrolling and drawing the map grid. [Running a map](object/README.md)
 runs one map on that engine, from its set-up to the warp the party leaves
-by, with random encounters, field Psynergy and the commands map scripts
+by, with random encounters, field [Psynergy](../glossary.md#psynergy-and-pp) and the commands map scripts
 use; `Game_Run`, the loop that runs one map after another, is there too.
 [Maps](map/README.md) holds the maps, one overlay each: object event
 templates, map events, scripts and cutscenes. [Layouts](layout/README.md)
@@ -221,7 +221,7 @@ one function for each effect.
 [Windows](window/README.md) draws the framed boxes text appears in, decodes
 the compressed messages and types them out, and holds the screens built from
 windows, among them the battle menus, the save file menu and name entry.
-[Menus](menu/README.md) holds the field menu's Psynergy, Djinn, Item and
+[Menus](menu/README.md) holds the field menu's Psynergy, [Djinn](../glossary.md#djinn), Item and
 Status screens, and three overlays: the title, the file select screen and the
 Battle Arena's lobby. [Shops](shop/README.md) holds every counter that buys,
 sells, repairs or heals.
@@ -229,10 +229,10 @@ sells, repairs or heals.
 [Game rules](game/README.md) holds the party's state and the rules other
 code asks about: units and their stats, items and inventories, levels,
 classes, Djinn and the game flags, with the `.tsv` tables that define every
-item, ability, Djinni, enemy, summon and class.
+item, ability, Djinni, enemy, [summon](../glossary.md#summons) and class.
 
-[Runtime](runtime/README.md) starts the console and runs every frame
-through `WaitFrames`, with the keypad, the heap, fades, sprites, saving and
+[Runtime](runtime/README.md) starts the console and runs every [frame](../glossary.md#frame)
+through `WaitFrames`, with the keypad, the [heap](../glossary.md#heap-and-pools), fades, [sprites](../glossary.md#sprite-and-oam), saving and
 the link cable. [System](system/README.md) holds the memory map, the
 far-call tables, the overlay stubs, the resource directory pictures, tables
 and overlays are found through, and the flash save library.

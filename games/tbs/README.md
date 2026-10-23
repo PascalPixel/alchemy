@@ -2,25 +2,25 @@
 
 ![The game runs one map at a time, in a loop that goes round once for each map, not once a frame. At power-on the title screen comes first. Each time round, the game first drops everything the last map left behind. Then it runs the next map. A field map, such as a town, a dungeon or the world map, has its code loaded and runs until the party takes a warp, and the warp names the next map. A battle or a minigame runs and then sends the party back, most often to where it stood before. Then the loop goes round again. A random battle runs from the same loop: the field map ends, and is loaded again after.](https://alchemy.pascalpixel.com/illustrations/front/main-loop.svg)
 
-The Broken Seal plays one map at a time: a room, a town, a dungeon floor,
-the world map. When the party walks through a door, the game ends one map and starts the next. Each map has code of its own, loaded only
-while the party is there, and a layout. Everything a map knows about how far
-the story has gone comes from the game flags, a long list of yes-or-no facts
-saved with the game. The program itself is cut into banks, and the source has
+[The Broken Seal](glossary.md#the-two-games) plays one [map](glossary.md#map) at a time: a room, a town, a dungeon floor,
+the world map. When the [party](glossary.md#the-party) walks through a door, the game ends one map and starts the next. Each map has code of its own, loaded only
+while the party is there, and a [layout](glossary.md#layout). Everything a map knows about how far
+the story has gone comes from the [game flags](glossary.md#game-flag), a long list of yes-or-no facts
+saved with the game. The program itself is cut into [banks](glossary.md#bank), and the source has
 one folder for each large bank.
 
 ## The main loop
 
 The game runs one map, then the next, for as long as it is on. This loop
-goes round once for each map, not once a frame: a map can last for
+goes round once for each map, not once a [frame](glossary.md#frame): a map can last for
 minutes, and while it runs, its own code waits frame by frame and the
 engine keeps the screen moving, as [Engine](engine.md#waiting-and-tasks)
 explains.
 
 Each time round, the game first clears away everything the last map left
 behind, so nothing one map set up can leak into the next. Then it runs the
-next map. A field map runs until the party takes a warp, and the warp says
-which map comes next and the warp destination where the party arrives. A
+next map. A field map runs until the party takes a [warp](glossary.md#warp), and the warp says
+which map comes next and the [warp destination](glossary.md#warp-destination) where the party arrives. A
 battle or a minigame runs in place of a map, under a number above the
 maps: it runs, and then the game picks the map to go back to, most often
 the map the battle started from, with everyone where they stood.
@@ -42,28 +42,28 @@ Each pass of the loop first clears away what the last map left running:
   console that copies memory by itself, and a map can set one to change a
   display setting during every HBlank, the short pause after each line of
   the screen is drawn, for a wave or a tilt.
-- Every task, the functions the engine calls once a frame for a map (one
+- Every [task](glossary.md#task), the functions the engine calls once a frame for a map (one
   types out text, another scrolls the map grid).
 - The HBlank and VCount handlers, functions the hardware calls after each
   line, or when it reaches one chosen line.
-- The heap, the memory from which maps borrow blocks for their state; it
+- The [heap](glossary.md#heap-and-pools), the memory from which maps borrow blocks for their state; it
   is emptied, so every block the last map held is free again.
 
 Then it does one of two things:
 
 - A field map has its flags updated (`Map_ResetFlagsOnEnter`), its music
   started unless `FLAG_KEEP_MUSIC` or `FLAG_KEEP_MUSIC_HELD` keeps what is
-  playing, and its overlay unpacked (`Map_LoadOverlay`). `Field_RunMap`
+  playing, and its [overlay](glossary.md#overlay) unpacked (`Map_LoadOverlay`). `Field_RunMap`
   runs it until the party takes a warp and returns the warp's kind, and
   `Map_TakeWarp` turns that into the next map and warp destination.
 - A battle or a minigame runs in place of a map, under a number from
   `RUN_BLANK` up
   (`RUN_BATTLE`, `RUN_LUCKY_DICE`, `RUN_REEL_GAME`), with no row in the
-  map table and no overlay, since its code is in the main image. It returns
+  map table and no overlay, since its code is in the [main image](glossary.md#main-image). It returns
   a result rather than a warp, and `Map_ReturnFromBattle` picks the map
-  to go back to: the defeat point after a defeat, the destination a script
+  to go back to: the defeat point after a defeat, the destination a [script](glossary.md#script)
   set, or else the field map the battle started from, with
-  `FLAG_KEEP_PARTY_POSITION` set so that the party and the object events
+  `FLAG_KEEP_PARTY_POSITION` set so that the party and the [object events](glossary.md#object-event)
   come back where they were.
 
 A random battle is therefore a warp like any other: the field map sets
@@ -95,15 +95,15 @@ its code is unpacked from the cartridge over the last map's.
 The console has little memory, and most of what a map needs (who is there,
 what they say, its cutscenes) matters nowhere else. So each map's code is
 an overlay: a packed piece of code that `Resource_LoadCode` unpacks into
-`gOverlayArea`, 32 KB of EWRAM (the console's larger, slower work memory,
+`gOverlayArea`, 32 KB of [EWRAM](glossary.md#iwram-and-ewram) (the console's larger, slower work memory,
 256 KB in all), when the map loads, over the one before.
 
 The field engine knows a map only through six entry points, short jumps
 at the start of its overlay (`struct MapEntries`): its initialization, and the functions
-that return its warp destinations, warps, object event templates, map events
+that return its warp destinations, warps, object event templates, [map events](glossary.md#map-event)
 and warp regions. They are functions rather than pointers to tables so that
 a map can return a different table as the story moves on. Each overlay also
-ends in an import table of the main program's functions it calls, each
+ends in an [import table](glossary.md#entry-table-and-import-table) of the main program's functions it calls, each
 reached through the jump table at the start of the bank that holds it ([How
 the code is organised](#how-the-code-is-organised) explains banks); overlays
 never call each other, and code several maps need is compiled into each of
@@ -111,15 +111,15 @@ them from `map/common/`.
 [Maps](src/map/README.md) describes the tables and how to find a map event,
 and [Engine](engine.md#overlays) the overlay's two tables.
 
-The other half of a map is its layout: three background layers with the
-object events drawn between them, and a grid of cells under them that says
+The other half of a map is its layout: three [background layers](glossary.md#background-layer) with the
+object events drawn between them, and a grid of [cells](glossary.md#cell) under them that says
 how high the ground is, where it can be walked and which cells raise map
 events. [World](world.md) explains both.
 
 ## The map table and map sections
 
 One table lists every map the game has, and for each says which code it
-runs, which map section it belongs to and which layout it shows.
+runs, which [map section](glossary.md#map-section) it belongs to and which layout it shows.
 
 ![Each map's code and map section. Four maps and what the map table gives each. Bilibin's town, its treasury and the Bilibin Barricade all run on Bilibin's code; Bilibin's houses have code of their own. Bilibin's town, houses and treasury are one map section, Bilibin, which chooses their music, the area name shown on arrival and the flags kept while the party is inside. The Bilibin Barricade shares Bilibin's code but is a map section of its own. Which code a map runs and which map section it belongs to are chosen separately.](https://alchemy.pascalpixel.com/illustrations/front/scene-parts.svg)
 
@@ -138,7 +138,7 @@ share 96 overlays and 71 map sections. Vale is eight maps in one map
 section, and the World Map is a map section of one.
 
 The variant marks towns. A `MAP_TYPE_TOWN` map, a town or one of its
-interiors, restores no PP, recovers no Djinn and does no poison damage as
+interiors, restores no [PP](glossary.md#psynergy-and-pp), recovers no [Djinn](glossary.md#djinn) and does no poison damage as
 the party walks, Retreat is blocked there and Avoid doesn't wear off.
 
 | Name | Value | Meaning |
@@ -202,9 +202,9 @@ map screen.
 A map reads the story flags in three places. Its entry functions choose
 which table to return; its map event, object event template and warp rows
 each carry a condition, and `Map_FindEvent` runs the first map event row
-whose kind, trigger and condition fit; and its initialization restores what
+whose kind, [trigger](glossary.md#trigger) and condition fit; and its initialization restores what
 the flags say has already happened. Because rows and flags interact this
-way, some code can never run, and its comment opens with `Unused:` and says
+way, some code can never run, and its comment opens with [`Unused:`](glossary.md#unused) and says
 why. [Unused](unused.md) collects every such case.
 
 | Name | Value | Meaning |
@@ -229,7 +229,7 @@ which version of itself to be.
 ![One map, five moments in the story. Vale's town gate is one map for the whole game, and each time the party arrives it asks the story which set of map events to use, testing in order. Has the party reached Kalay? Then the map events after Kalay. Has the party left Vale? Then the map events after leaving. Has the party come from the Sanctum? Then the farewell. Is it the stormy night? Then the storm. Otherwise, the map events of the day the story begins. Below, the same map on the day the story begins and on the stormy night, as the game draws them: Isaac grown, in the sun, and Isaac as a child, in the rain.](https://alchemy.pascalpixel.com/illustrations/front/vale-gate.svg)
 
 The story is the order the flags are set in, and these maps show the forms
-that dependence takes, in story order.
+that dependence takes, in [story order](glossary.md#the-places-in-story-order).
 
 - **One map per point in the story.** The prologue's stormy night in Vale
   is a map of its own, [vale_storm.c](src/map/vale_storm.c), on its own
@@ -250,7 +250,7 @@ that dependence takes, in story order.
   sequence from its initialization on arrival and leaves by its one warp.
 - **A row that lasts until its flag is set.** In the Elemental Star room,
   [sol_sanctum_elemental_star_room.c](src/map/sol_sanctum_elemental_star_room.c),
-  each pedestal's bg event row lasts until that star's flag is set, so each
+  each pedestal's [bg event](glossary.md#bg-event) row lasts until that star's flag is set, so each
   star is taken once.
 - **A flag set by a warp destination.** The World Map's initialization sets
   `FLAG_VALE_PARTY_LEFT` the first time the party arrives by
@@ -300,9 +300,9 @@ folder for each large bank, in the order the cartridge holds them.
 
 The main image is the program the processor runs from the cartridge.
 `main.ld` lays out its code in fourteen banks, each starting at an address
-fixed per edition; together they take about 1 MB of the English cartridge,
+fixed per [edition](glossary.md#editions); together they take about 1 MB of the English cartridge,
 and the sound code, the music and the game's packed data follow them. A
-call from one bank into another is a far call. Each bank begins with a
+call from one bank into another is a [far call](glossary.md#far-call). Each bank begins with a
 far-call table, one 8-byte jump for each of its functions that another bank
 calls, and a caller in another bank calls that jump, written as the
 function's name with `Far` added: `Game_Run`, in the `object` bank, starts
@@ -335,3 +335,5 @@ and bank it goes in, and [Source](src/README.md) goes through every folder.
 - [Unused](unused.md): the maps, scripts and lines the game keeps but never
   plays, and why each never runs.
 - [Source](src/README.md): every file of the code, with its comments.
+- [Glossary](glossary.md): the words every page uses, from Psynergy and
+  Djinn to banks, overlays and bg events.

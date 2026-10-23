@@ -13,7 +13,7 @@ this game links it.
 
 The driver has eight players, each of which plays one song at a time, and
 each kind of sound has players of its own, so a sound effect never stops the
-music. The cue layer and the driver meet once a frame in the VBlank handler,
+music. The cue layer and the driver meet once a [frame](../../glossary.md#frame) in the VBlank handler,
 which steps the music's volume towards its target and then runs the mixer
 ([Runtime](../runtime/README.md#the-frame-loop)).
 
@@ -29,7 +29,7 @@ cue. The cue's range picks what happens: below 80 it is music, from 80 to 99 a
 fanfare, and from 100 up a row of the song table, which is how sound effects
 play. A few numbers are controls rather than sounds, such as the one that
 fades the music out. Asking for the music that is already chosen does
-nothing, so a map can name its music every time the party enters without
+nothing, so a [map](../../glossary.md#map) can name its music every time the [party](../../glossary.md#the-party) enters without
 restarting it.
 
 Only a cue's low 16 bits count: the low 12 (`AUDIO_CUE_ID_MASK`) are the cue,
@@ -65,7 +65,7 @@ A cue for the music already chosen (`gAudioSecondaryState`) does nothing,
 even when that song has ended.
 
 `AudioCommand_Play` does all of this, reached from the whole game through
-the sound bank's far-call table as `AudioCommand_PlayFar`: the program is
+the sound [bank](../../glossary.md#bank)'s [far-call](../../glossary.md#far-call) table as `AudioCommand_PlayFar`: the program is
 cut into banks, and a call from another bank goes to a jump at the start of
 the sound bank that leads on to the function. It reads the song
 table, `gSound_SongTable` (`games/tbs/sound/songs.s`), whose row holds the
@@ -188,7 +188,7 @@ most music another, a link battle a third.
 Each keeps a different share of what has already played.
 
 Each VBlank, `SoundDriver_EnterMixer` jumps into the resident sound code at
-`IwramSoundMixEntry`, which start-up copies to IWRAM, the console's small,
+`IwramSoundMixEntry`, which start-up copies to [IWRAM](../../glossary.md#iwram-and-ewram), the console's small,
 fast memory inside the processor, with the rest of the resident runtime
 ([System](../system/README.md)).
 
@@ -241,7 +241,7 @@ are data in `games/tbs/sound`.
 | `empty_callback.c` | the driver's do-nothing callback |
 | `mixer.s`, `channel_update_entry.s`, `clear_buffer.s`, `umul_high.s` | the driver's handwritten ARM and Thumb routines, each proven in its header |
 
-`engine.c`, `audio.c` and `tables.c` are compiled with pret's `old_agbcc`
+`engine.c`, `audio.c` and `tables.c` are compiled with [pret](../../glossary.md#pret)'s [`old_agbcc`](../../glossary.md#the-compilers)
 (the Makefile's `SOUND_C`), as pret builds its MusicPlayer2000 C; the rest
 with the game's compiler. The cue layer's code is the sound bank; the
 driver follows the banks in the ROM's tail, with `mixer.s` loaded into IWRAM.
@@ -302,7 +302,7 @@ over the title intro, `MUS_ENDING_LOGO` over the Golden Sun logo shown after the
 
 A library call is dropped only when it meets another that holds the lock, and
 library calls all run on the main thread, one after another, except from a
-VBlank task. A call graph of the tbs-en build finds one VBlank task that
+VBlank [task](../../glossary.md#task). A call graph of the tbs-en build finds one VBlank task that
 reaches the library: `ReelGame_RunFrame`, the slot machine's frame, which
 plays its sounds from the VBlank. Its sounds can be dropped only if the VBlank
 arrives while a main-loop task is inside a library call; while the slot

@@ -2,16 +2,16 @@
 
 ![Where the party spends coins, a town has three kinds of counter. A shop, for weapons, armor or items, offers four things: Buy, Sell, its rare items (Artifacts) and Repair. Above them, the four as Bilibin's item shop shows them when it opens, Buy chosen. A sanctum serves one member at a time: it revives, cures poison, drives out a haunting or takes off cursed equipment, for a fee. An inn charges for each member still standing and gives them back their HP and PP overnight. Each is opened by its town's map script, when the player talks to the keeper.](https://alchemy.pascalpixel.com/illustrations/shop/counters.svg)
 
-In a town the party spends its coins at three kinds of counter. At a shop it
+In a town the [party](../../glossary.md#the-party) spends its coins at three kinds of counter. At a shop it
 buys and sells weapons, armor or items, has broken equipment mended, and
 finds the rare items the game calls artifacts. At a sanctum a priest revives
 a fallen member or lifts poison, a haunting or a curse. At an inn the party
-sleeps and wakes with full HP and PP. The shop code runs all three, and two
+sleeps and wakes with full HP and [PP](../../glossary.md#psynergy-and-pp). The shop code runs all three, and two
 smaller things that share their screens: the Game Tickets a shopkeeper gives
 for spending, and the item picker, which asks what to drop when the party is
 given an item with every bag full.
 
-Each counter is opened by its town's map script when the player talks to the
+Each counter is opened by its town's [map](../../glossary.md#map) [script](../../glossary.md#script) when the player talks to the
 keeper. [Menus, windows and shops](../../menus.md#shops) gives the counters in
 brief; this page gives the prices, the services and the work behind each one.
 The windows and messages the counters draw with are in
@@ -25,16 +25,16 @@ the field menu are never open together.
 
 ![The menu screens and the shop counters share one block of memory, 2,672 bytes. Whichever is open takes the block as it opens and gives it back as it closes, and reads it in its own way: the Item screen as its windows and the items listed, the Psynergy screen as the Psynergy listed, a shop as its stock and cursor. Over time the block passes from one to the next, never held by two at once, which is why a shop and the field menu are never open together.](https://alchemy.pascalpixel.com/illustrations/menu/menu-work.svg)
 
-Every counter and the item picker take the menu's heap block (memory the
+Every counter and the item picker take the menu's [heap](../../glossary.md#heap-and-pools) block (memory the
 engine lends out, under the numbered slot `HEAP_SLOT_MENU`) as
 `struct ShopRuntime` with `Shop_InitializeCursorWork` and give it back with
-`Shop_ReleaseCursorWork`; the layout is in
+`Shop_ReleaseCursorWork`; the [layout](../../glossary.md#layout) is in
 [`include/shop.h`](../../include/shop.h). Some of the shop's pieces are used
 elsewhere: `ShopCursor_Advance` also moves the cursors of the option, name
 entry and save menus and the joined-party choice, the Item screen draws its
 quantity bar with `Shop_FillSelector`, and `Shop_SaveAndTintFieldPalette`,
-which saves the field's colours and fades them over 16 frames, also runs
-before a Djinni joins the party and before Altmiller's wall bursts.
+which saves the field's colours and fades them over 16 [frames](../../glossary.md#frame), also runs
+before a [Djinni](../../glossary.md#djinn) joins the party and before Altmiller's wall bursts.
 
 ## Shops
 
@@ -246,9 +246,9 @@ worn.
 command that gives an item, opens it when every bag is full, as do the
 Elemental Star room when it gives the four Mythril Bags and the debug test.
 `Shop_SelectUse` refuses an indispensable item with a message and an
-equipped cursed one with only the cancel sound. The silence is a bug in the
-original, which tests its selection result rather than the discard error;
-built with `BUGFIX`, `SHOP_CANNOT_REMOVE_STATUS` tests the error and the
+equipped cursed one with only the cancel sound. The silence is a bug in [the
+original](../../glossary.md#the-original), which tests its selection result rather than the discard error;
+built with [`BUGFIX`](../../glossary.md#bug-bugfix-and-ubfix), `SHOP_CANNOT_REMOVE_STATUS` tests the error and the
 message shows.
 
 ## Design
@@ -261,7 +261,7 @@ the weapon shop's version, so one call site serves every shop type.
 
 ### Editions
 
-The counters' layout differs by edition where longer words need room. Each
+The counters' layout differs by [edition](../../glossary.md#editions) where longer words need room. Each
 value is a named macro chosen in one `#if` block in `shop_internal.h`: the
 Yes/No menu is one column further left in German (`SHOP_CONFIRM_MENU_X`),
 French and Spanish move the price and the word after it
@@ -301,7 +301,7 @@ tiles, text positions in pixels.
 | `shop.c` | the shop object, written as parts in `shop/` in ROM order |
 | `shop_internal.h` | the object's includes, the shop actions, shop types and sanctum services, and the values that differ by edition |
 | `shop/*.c` | the parts: [`run.c`](shop/run.c), [`artifacts.c`](shop/artifacts.c), [`buy.c`](shop/buy.c), [`sell.c`](shop/sell.c), [`repair.c`](shop/repair.c), [`cursor.c`](shop/cursor.c), [`sanctum.c`](shop/sanctum.c), [`inn.c`](shop/inn.c) and [`item_picker.c`](shop/item_picker.c) |
-| `shopspr.s` | the hand, gem, arrow, price and quantity sprite tiles |
+| `shopspr.s` | the hand, gem, arrow, price and quantity [sprite](../../glossary.md#sprite-and-oam) tiles |
 
 `shop.c` includes `shop_internal.h` and then the parts in ROM order, and its
 opening comment says where each counter starts; `head -3 shop/*.c` lists what
@@ -312,7 +312,7 @@ work block's layout, `struct ShopRuntime`, is in
 
 ## Words used here
 
-- **work block**: `struct ShopRuntime` in heap slot `HEAP_SLOT_MENU`, reached
+- **work block**: `struct ShopRuntime` in [heap slot](../../glossary.md#heap-slot) `HEAP_SLOT_MENU`, reached
   as `gMenuWork` while a counter is open.
 - **stock row**: a row of `sStockTable` in [`shop/artifacts.c`](shop/artifacts.c),
   one per shop, with its columns named by `SHOP_STOCK_`.
@@ -344,8 +344,8 @@ work block's layout, `struct ShopRuntime`, is in
 | `Inn_` | the inn |
 | `BattleUnit_`, `AudioCommand_`, `NodeChain_` | things the engine names elsewhere |
 
-Map overlays import these functions by name (`games/tbs/src/map/import/`),
-and code in other banks calls them through the far-call table
+Map [overlays](../../glossary.md#overlay) import these functions by name (`games/tbs/src/map/import/`),
+and code in other [banks](../../glossary.md#bank) calls them through the [far-call](../../glossary.md#far-call) table
 `system/far_call/SHOP.S` (the `...Far` names), so renaming one changes those
 folders too. [Matching](../MATCHING.md) explains the comment markers.
 

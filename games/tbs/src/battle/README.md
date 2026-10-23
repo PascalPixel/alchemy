@@ -14,7 +14,7 @@ the units, gathers each round's actions and sorts them into turns, plans each
 action, stages it, and applies the ability to every target. Three other
 folders share the work. [Battle effects](../effect/README.md) draws the
 animations, [Windows](../window/README.md) holds the command menu and the
-party's status window, and [Game rules](../game/README.md) holds the ability, item and enemy
+[party](../../glossary.md#the-party)'s status window, and [Game rules](../game/README.md) holds the ability, item and enemy
 tables and the arithmetic in `game/battle_calc.c`. [Battle](../../battle.md)
 explains a battle as a whole, how it is entered from the field and how the
 rules and the effects run at the same time; this page explains the rules
@@ -30,7 +30,7 @@ side has no unit standing or the party gets away.
 the top of this page is the order inside one round.
 
 Who acts first is decided by Agility, highest first, with three twists. A
-Djinni that guards or holds an enemy (Granite, Flash and Ground) goes before
+[Djinni](../../glossary.md#djinn) that guards or holds an enemy (Granite, Flash and Ground) goes before
 everyone. A party member's Agility gains up to a sixteenth more at random
 each round, so two members of nearly equal speed may swap places from one
 round to the next; an enemy's Agility counts as it is, and enemies of equal Agility go in a
@@ -71,7 +71,7 @@ standing or the party gets away:
 5. `turn_end.c` closes the actor's turn and then the round: stat changes and
    statuses count down, Djinn recover, poison takes a tenth of the maximum HP
    (deadly poison a fifth), the Grim Reaper takes a unit whose countdown has
-   run out, and a summon's boost is applied.
+   run out, and a [summon](../../glossary.md#summons)'s boost is applied.
 
 | Name | Value | Meaning |
 | --- | --- | --- |
@@ -100,7 +100,7 @@ remember their place between turns.
 built (`retry` 0) it draws once and keeps the pick only if it is a guard, so
 that the guard is raised with the party's before anyone acts. At the enemy's
 turn (`retry` 1) it draws again for anything else, and a guard drawn then is
-refused. A pick the enemy cannot use (too little PP, a seal, no target worth
+refused. A pick the enemy cannot use (too little [PP](../../glossary.md#psynergy-and-pp), a seal, no target worth
 it) is drawn again, and after 18 failed picks the enemy defends. A roll is a
 number from 0 to 255, so a chance of 53 in 256 is the 53 rolls from 0 to 52:
 the Gryphon's first action, Wing Flutter, takes rolls 0 to 52, Tornado 53 to
@@ -152,7 +152,7 @@ of the round into one the enemies began.
 | `BATTLE_ENCOUNTER_ENEMIES_FIRST` | 2 | the enemies strike first |
 | `BATTLE_START_NORMAL` | 0 | a random encounter: the first-strike rolls are made |
 | `BATTLE_START_NO_ESCAPE` | 2 | a battle the party cannot run from, such as a Mimic's |
-| `BATTLE_START_SCRIPTED` | 3 | a battle a script starts; the command menu refuses to run |
+| `BATTLE_START_SCRIPTED` | 3 | a battle a [script](../../glossary.md#script) starts; the command menu refuses to run |
 | `BATTLE_START_LINK` | 4 | a link battle |
 | `BATTLE_START_DEBUG` | 5 | the debug battle menu's battle; the party may run |
 
@@ -196,7 +196,7 @@ The command the actor chose decides which ability id the plan carries.
   marks the standby Djinn it uses.
 - `COMMAND_ABILITY` is an enemy's ability, chosen as above.
 
-The plan takes its element from the ability's row, except that a plain
+The plan takes its [element](../../glossary.md#the-four-elements) from the ability's row, except that a plain
 Attack strikes with the weapon's element, or an enemy's with its own
 (`Item_GetEquippedElement`).
 
@@ -361,7 +361,7 @@ player sees them. It runs in seven phases, marked in its body:
 
 1. It copies the target, to measure stat changes later; finds the target's
    distance from the aimed place; finds the element's affinity; and takes the
-   actor's Power in the ability's element, or 100 for an item's user.
+   actor's [Power](../../glossary.md#power-and-resist) in the ability's element, or 100 for an item's user.
 2. It rolls the Djinn bonus and whether the added effect lands.
 3. It handles an enemy calling an ally.
 4. It applies the added effects that change the damage step.
@@ -542,7 +542,7 @@ target only while it still has an entry in the round's action list:
 target that has already acted is left alone.
 
 Phase 3 handles Ally Search, Search for Help and Speed Surge. When the roll
-succeeds, a free unit id exists and the enemy sprite slots have room
+succeeds, a free unit id exists and the enemy [sprite](../../glossary.md#sprite-and-oam) slots have room
 (`Enemy_CheckRoom`), the new enemy fills an empty place or is appended, the
 enemies are laid out again, and the player reads `<unit> appears!!` or
 `It split off into <unit>!`; otherwise `But no one came!` or
@@ -637,7 +637,7 @@ effect plays.
 
 `BattleTarget_Execute` never draws or waits, and an effect never computes an
 outcome. [Battle](../../battle.md#rules-and-effects-run-together) explains how
-`BattleEvent_Playback` runs as a task while the effect's own loop waits, and
+`BattleEvent_Playback` runs as a [task](../../glossary.md#task) while the effect's own loop waits, and
 runs each target's rules once the effect calls `EFFECT_SHOW_DAMAGE`. Of the
 66 files under `../effect/parts/`, 57 call it; the rest are the effect
 system's own code (`blitter.c`, `canvas.c`, `dispatch.c`, `display.c`,
@@ -650,7 +650,7 @@ In the recording, Quake plays for about two seconds before its blow lands
 and starts playback. Playback then resolves the three targets in the plan's
 order, the battlefield's (Garet, Ivan, Mia), not the aimed Ivan first, and
 each target's `BattleTarget_Execute` queues the same eight events. Only the hit
-(nine frames of flashing) and the message (until the player presses A) make
+(nine [frames](../../glossary.md#frame) of flashing) and the message (until the player presses A) make
 playback wait; the number and name it pushes before the message, and the
 name pushed for an added effect Quake doesn't have, the clear and the
 refreshes after it, all play within one frame.
@@ -671,19 +671,19 @@ is sealed or short of PP.
 
 ### Results nobody reads
 
-Some of the original's functions promise to return a value and end without
+Some of [the original](../../glossary.md#the-original)'s functions promise to return a value and end without
 one, and no caller reads it. The source keeps the promised type where
 writing `void` would change the compiled code at the function's end, and
-`UBFIX` gives the `void` form; [Matching](../MATCHING.md) explains the rule. `BattleTarget_Execute`,
+[`UBFIX`](../../glossary.md#bug-bugfix-and-ubfix) gives the `void` form; [Matching](../MATCHING.md) explains the rule. `BattleTarget_Execute`,
 `BattleEvent_DispatchQueued` and `BattleEvent_WaitForReady` are among them.
 
 ### One sprite, several structs
 
 A unit's figure is one of the object slots `Object_CreateFar` hands out. The
-battle reads it as a `struct MotionObject`, while the field's far calls take
+battle reads it as a `struct MotionObject`, while the field's [far calls](../../glossary.md#far-call) take
 it as a `struct DispatchObject` or a `struct ObjectRuntime`. They describe the
 same record, with fields at the same offsets, and a call into the field casts
-to the view its prototype names. XXX: whether these could be one struct
+to the view its prototype names. [XXX](../../glossary.md#xxx): whether these could be one struct
 depends on naming the fields only one view names so far.
 
 ## Limits
@@ -807,7 +807,7 @@ for its `struct BattleObject`, `object` for that object's
 A function that acts on one thing the engine names elsewhere keeps that
 thing's prefix (`Camera_`, `Palette_`, `Party_`, `Ability_`, `Text_` and
 others). [Matching](../MATCHING.md) explains the unusual spellings and the
-`FAKEMATCH` tags.
+[`FAKEMATCH`](../../glossary.md#fakematch) tags.
 
 ## Evidence and open questions
 

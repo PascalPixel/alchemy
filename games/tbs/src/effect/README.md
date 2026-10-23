@@ -2,14 +2,14 @@
 
 ![An effect from start to end. It sets up first: it opens the canvas, builds its blitters, loads its pictures and places its particles. Then it repeats the same frame a fixed number of times: it moves every particle one step, stamps its pictures into the canvas, and waits for the next frame while the canvas is copied to the screen and what stays on it fades a little. After its last frame it stops the copying and frees what it built.](https://alchemy.pascalpixel.com/illustrations/effect/effect-life.svg)
 
-When Isaac casts Quake or Garet summons Mars, the battle pauses its own
+When Isaac casts Quake or Garet [summons](../../glossary.md#summons) Mars, the battle pauses its own
 drawing and an animation plays over it: rock pillars rising, flames flying,
-sparks bursting. That animation is a battle effect, and every Psynergy, Djinni,
+sparks bursting. That animation is a battle effect, and every [Psynergy](../../glossary.md#psynergy-and-pp), [Djinni](../../glossary.md#djinn),
 summon, item and monster attack has one. The code for all of them is in this
 folder.
 
 Most effects work the same way. They draw into a small hidden picture, the
-canvas, which the screen shows stretched over the battle. Each frame they move
+canvas, which the screen shows stretched over the battle. Each [frame](../../glossary.md#frame) they move
 their sparks and embers a little, stamp each picture onto the canvas, and let
 what was drawn before fade, which is what leaves the glowing trails. The
 effect decides how the animation looks and when the damage numbers appear;
@@ -20,7 +20,7 @@ with a `struct BattleEffectArgument` (the effect kind, the side the targets are
 on, the user, the targets, the variant and the prelude flag). The handler draws
 a fixed number of frames and returns when the animation is over. It decides
 only when the damage appears, by calling `EFFECT_SHOW_DAMAGE`; how the battle
-shows the damage from a task while the effect is still drawing is in
+shows the damage from a [task](../../glossary.md#task) while the effect is still drawing is in
 [Battle](../../battle.md#rules-and-effects-run-together).
 
 ## How a move picks its effect
@@ -77,7 +77,7 @@ Driver.
 | `EFFECT_VARIANT_STRONGER` | 1 | Earthquake, Drench, Ply Well |
 | `EFFECT_VARIANT_STRONGEST` | 2 | Quake Sphere, Deluge, Pure Ply |
 | `EFFECT_SIDE_ENEMIES` | 0 | the targets are enemies |
-| `EFFECT_SIDE_PARTY` | 1 | the targets are the party |
+| `EFFECT_SIDE_PARTY` | 1 | the targets are the [party](../../glossary.md#the-party) |
 | `BATTLE_EFFECT_NONE` | 0 | no effect: the dispatcher only clears the variant |
 | `BATTLE_EFFECT_QUAKE` | 1 | the first kind of the handler table |
 
@@ -122,7 +122,7 @@ for the summons' big scenes, and one for plain attacks, the casting impacts
 and the beams and rings that go with them.
 Whichever door an effect comes through, the same three blocks of memory are
 waiting for it, and they are taken back when it ends. The blocks come from
-the heap, the pool of memory the game lends out in numbered slots
+the [heap](../../glossary.md#heap-and-pools), the pool of memory the game lends out in numbered slots
 ([Runtime](../runtime/README.md)).
 
 In the code, the battle's staging (`battle/battle/staging.c`) chooses the door from the
@@ -138,13 +138,13 @@ attack and Psynergy staging test only `STAGING_BY_ID_RANGE`.
   ([`positions.c`](parts/positions.c)) splits by the kind's range: 100 to 135
   are the casting impacts (`BattleEffect_RunCastingImpact`, given the kind less
   100), 200 and up the ring and spark scenes, and every other kind the beam
-  sequences. Its sheet slot is `0x60e` bytes, taken from EWRAM, the
+  sequences. Its sheet slot is `0x60e` bytes, taken from [EWRAM](../../glossary.md#iwram-and-ewram), the
   console's larger and slower work memory, first.
 - Otherwise `BattleEffect_RunTableEffect` (`dispatch.c`) sets `work->effect`
   and calls the kind's handler from the table. `BATTLE_EFFECT_NONE` plays
   nothing and only resets the variant.
 
-Each entry point allocates three heap slots, runs the effect and releases
+Each entry point allocates three [heap slots](../../glossary.md#heap-slot), runs the effect and releases
 them in reverse:
 
 | Slot | Value | Holds |
@@ -157,7 +157,7 @@ Releasing a heap block also releases every block allocated after it
 ([Runtime](../runtime/README.md)), so the three come back in the reverse of the
 order they were taken, and an effect must remove every callback (a function
 the scheduler calls once a frame) that reads them before it returns. While it runs, an effect also has the two blitter slots
-(`HEAP_SLOT_BLITTER`, `HEAP_SLOT_BLITTER_ALTERNATE`) and the map grid cell buffer
+(`HEAP_SLOT_BLITTER`, `HEAP_SLOT_BLITTER_ALTERNATE`) and the map grid [cell](../../glossary.md#cell) buffer
 (`PARTICLES`) to itself, and frees the blitters before it returns.
 
 A critical hit adds `EFFECT_KIND_CRITICAL_OFFSET` to an attack's kind in
@@ -347,7 +347,7 @@ canvas. An effect usually holds its two as a `BlitterPair`, `[0]` in
 builds the usual pair, clipped on all four sides, `[0]` in `COMPOSITE_MAX` and
 `[1]` in `COMPOSITE_ADDITIVE`, both mirrored across when it is passed the
 targets' side. The battle's star field (`battle/battle/star_field.c`) and
-`object/colorfx.c` reach the builder from other banks through
+`object/colorfx.c` reach the builder from other [banks](../../glossary.md#bank) through
 `BattleEffect_BuildBlitterFar` (`system/far_call/EFFECT.S`).
 
 ### How the builder writes a blitter
@@ -490,7 +490,7 @@ The largest:
 | `BattleEffect_RunBurstSequence` | [`burst_scene.c`](parts/burst_sequence.c) | a flurry of strikes on the first target |
 | `BattleEffect_RunGrowingColumns` | [`growth.c`](parts/growth.c) | vines or green pillars growing from the ground |
 | `BattleEffect_RunSparkGroups` | [`plasma.c`](parts/plasma.c) | flashes and bouncing sparks in one or three bursts |
-| `BattleEffect_RunDjinnBeams` | [`djinn_beams.c`](parts/djinn_beams.c) | a Djinni appears, then columns of light fall on the targets; passed an element rather than a mode |
+| `BattleEffect_RunDjinnBeams` | [`djinn_beams.c`](parts/djinn_beams.c) | a Djinni appears, then columns of light fall on the targets; passed an [element](../../glossary.md#the-four-elements) rather than a mode |
 
 Smaller runners, such as `BattleEffect_RunMirroredWall` and
 `BattleEffect_RunGatheringLights`, have two or three members each. The sections
@@ -798,7 +798,7 @@ is the rule that an effect removes its callbacks before it returns.
 
 A blitter handles one of sixteen mirror and clip combinations in one of four
 modes, at the canvas size it was built for, and an effect builds only the one
-or two it draws with. XXX: likely generated because a single routine testing
+or two it draws with. [XXX](../../glossary.md#xxx): likely generated because a single routine testing
 every option for every pixel would be too slow, and IWRAM too small to keep a
 routine for each combination; neither the code nor its comments say so.
 
@@ -916,7 +916,7 @@ lists it.
 ## Notes for contributors
 
 The tables are plain arrays, not `const`. The effect code reloads a table's
-address each time it reads it, which is what the compiler produces for a
+address each time it reads it, which is what the [compiler](../../glossary.md#the-compilers) produces for a
 plain array; with `const` it would keep the address instead, and the code
 would no longer be the game's.
 
@@ -973,7 +973,7 @@ A handler's name comes from the abilities that reach its kind, read from
 `actflags.tsv` and named as the English release names them; a runner is named
 from what it draws. The recordings come from
 [Alchemy Devtools](https://github.com/PascalPixel/alchemy-devtools#pictures),
-which plays an ability in a built tbs-en edition over a plain grey backdrop.
+which plays an ability in a built tbs-en [edition](../../glossary.md#editions) over a plain grey backdrop.
 The game pictures inside the illustrations are crops of those recordings and
 of renders of Quake, Heat Wave, Debilitate, Twin Beaks and Acid Bite over the
 battle's own background, and the small Djinn are their pictures in
@@ -989,7 +989,7 @@ only with a kind from an `actflags.tsv` row, through the plan's
 `presentationFlags`: the plan changes only the variant and the staging bits,
 the auto battle passes kind 0, and a critical hit's offset applies only to
 plain attacks, which are dispatched by id range. No row names any of the three
-kinds. The Lost Age keeps the same three handlers at the same kinds, and its
+kinds. [The Lost Age](../../glossary.md#the-two-games) keeps the same three handlers at the same kinds, and its
 row for Severe Blow names `BATTLE_EFFECT_UNUSED_SEVERE_BLOW_LEAP`: there Severe Blow
 is the leap, where here it plays a casting impact.
 

@@ -2,19 +2,19 @@
 
 ![What can stop the walk, in the order the game deals with it. Twelve things can interrupt the walk, and the game checks them from the top of the list down, dealing with the first one it finds and then starting again from the top. Leaving the map comes first, then a script that something asked for, then a battle. Then the ground: the cell the leader stepped onto, and a ledge or climbing spot pushed against. Then the buttons: A, which becomes talking to someone, searching the spot ahead or the menu; the menu; talking; searching; Psynergy; an item; and Start. When nothing is left, walking resumes.](https://alchemy.pascalpixel.com/illustrations/object/requests.svg)
 
-While the party is in a town, a dungeon or on the world map, this code runs
-the map from the moment it loads until the party leaves. It sets the map
+While the [party](../../glossary.md#the-party) is in a town, a dungeon or on the world map, this code runs
+the [map](../../glossary.md#map) from the moment it loads until the party leaves. It sets the map
 up, hands the leader to the player, and deals with whatever stops the walk:
 a doorway, a random battle, the A button, the menu. Around that loop sit the
 things a map needs from one moment to the next: random battles, the people
-a map puts in it and what they say, items and Psynergy used outside a
-battle, the commands cutscenes are written in, Djinn joining the party, and
+a map puts in it and what they say, items and [Psynergy](../../glossary.md#psynergy-and-pp) used outside a
+battle, the commands cutscenes are written in, [Djinn](../../glossary.md#djinn) joining the party, and
 the world map screen R brings up. The slot machine at Tolbi's spring is here
-too, in another bank.
+too, in another [bank](../../glossary.md#bank).
 
 The engine underneath, which moves everything and draws the maps, is
-[Field](../field/README.md); the field objects themselves, the 64 slots for
-everything that moves and the scripts they run, are described there under
+[Field](../field/README.md); the [field objects](../../glossary.md#field-object) themselves, the 64 slots for
+everything that moves and the [scripts](../../glossary.md#script) they run, are described there under
 [everything that moves runs a
 script](../field/README.md#everything-that-moves-runs-a-script). What happens
 in each map comes from its own code in [Maps](../map/README.md).
@@ -24,7 +24,7 @@ folder is.
 
 ## The map loop handles requests, not scripts
 
-While the party walks, the game asks once a frame whether something should
+While the party walks, the game asks once a [frame](../../glossary.md#frame) whether something should
 happen, and when something should, it stops the walk and deals with one
 thing at a time until nothing is left.
 
@@ -34,18 +34,18 @@ doorway, pressing A or a script asking for a battle only raises its flag.
 The game then works down the list in a fixed order, the order in the picture
 above, deals with the first raised flag it finds, and starts again from the
 top. Leaving always comes first, so when a script both asks for a battle and
-takes a warp, the party simply leaves the map. Raising a flag that is already raised
+takes a [warp](../../glossary.md#warp), the party simply leaves the map. Raising a flag that is already raised
 changes nothing, and a request a script raises waits until the script has
 finished, so a battle a cutscene asks for starts only after its last line.
 
 In the code, `Field_RunMap` ([`object/run_map.c`](object/run_map.c))
 runs one map. Before the loop it allocates the field work (`struct
 FieldWork`, the block of memory that holds the running map's state: its
-object events, its event table and the requests below), loads the layout,
-picks the encounter zones, takes the overlay's events, warp destination and
+[object events](../../glossary.md#object-event), its event table and the requests below), loads the [layout](../../glossary.md#layout),
+picks the encounter zones, takes the [overlay](../../glossary.md#overlay)'s events, [warp destination](../../glossary.md#warp-destination) and
 object event templates, restores the object events after a battle, and calls
 the map's initialization, which may take a warp at once. Otherwise it fades
-the map in, shows the area name if the map section changed, and gives a
+the map in, shows the area name if the [map section](../../glossary.md#map-section) changed, and gives a
 Djinni or item left pending by the map before. Then it alternates between walking and handling
 requests, as [Field](../field/README.md#the-walk-and-what-interrupts-it)
 describes. These are the request fields, in the order the loop tests them:
@@ -55,7 +55,7 @@ describes. These are the request fields, in the order the loop tests them:
 | 1 | `exit` | leave the map; its kind is `Field_RunMap`'s result |
 | 2 | `event` | run a raised event, or one of the codes below |
 | 3 | `battle` | a random or requested battle against this enemy group |
-| 4 | `action` | a coord event or warp on the cell stepped onto (`MB_EVENT_FIRST` to `MB_EVENT_LAST`) |
+| 4 | `action` | a [coord event](../../glossary.md#coord-event) or warp on the [cell](../../glossary.md#cell) stepped onto (`MB_EVENT_FIRST` to `MB_EVENT_LAST`) |
 | 5 | `pushTile` | a ledge, climbing spot or jump the leader pushes against (`Field_RunPushTileEvent`) |
 | 6 | `examine` | the A button: becomes `talk` for an object event ahead with a talk event, else `tile` for a searchable cell ahead, else `menu` |
 | 7 | `menu` | the main menu |
@@ -65,7 +65,7 @@ describes. These are the request fields, in the order the loop tests them:
 | 11 | `item` | use an item (`Field_UseItem`) |
 | 12 | `start` | the pause menu |
 
-An `event` is either a map event to run (`Map_RunRaisedEvent`) or a
+An `event` is either a [map event](../../glossary.md#map-event) to run (`Map_RunRaisedEvent`) or a
 negative code from `enum FieldEventCode` that the loop handles itself:
 `FIELD_EVENT_PARTY_FELL` when characters fell to poison or hazardous ground
 (when no one survives, the party goes back to the last saved point with the
@@ -84,7 +84,7 @@ then loads the map again with `FLAG_KEEP_PARTY_POSITION`, and
 The snapshot (`ObjectTableSnapshot` in
 [`object_runtime.h`](../../include/object_runtime.h)) keeps up to
 `OBJECT_SNAPSHOT_CAPACITY` (32) object events in parallel arrays of slots, runtime
-copies, animations, sprite flags and priorities, its slot list ending at an
+copies, animations, [sprite](../../glossary.md#sprite-and-oam) flags and priorities, its slot list ending at an
 empty entry. The map's object event templates have already made new
 sprites when the restore runs, and each saved object event still points at
 its old one. So `ObjectTable_Restore` keeps each object event's new sprite
@@ -92,7 +92,7 @@ aside, copies the saved object event back, sets the saved animation and sprite f
 to the new sprite and puts the new sprite's pointer back.
 
 The requests are fields of the field work, `struct FieldWork`
-(`field_runtime.h`). It is a block borrowed from the heap, the memory the
+(`field_runtime.h`). It is a block borrowed from the [heap](../../glossary.md#heap-and-pools), the memory the
 engine lends out to whatever runs, under the numbered slot
 `HEAP_SLOT_EVENT`, and is reached as `gEventWork`.
 
@@ -230,7 +230,7 @@ each phase: `PSYNERGY_PHASE_BEFORE_CAST`, `PSYNERGY_PHASE_AFTER_CAST` and
 `PSYNERGY_PHASE_EFFECT_ACTS`. It runs the before event, plays the effect, and
 runs the after event. Two flags the before event's script can still change
 decide how the effect plays: `FLAG_PSYNERGY_EFFECT` whether it plays at all
-(an after event whose trigger has bit `0x400` set clears it and plays the
+(an after event whose [trigger](../../glossary.md#trigger) has bit `0x400` set clears it and plays the
 effect itself, as two of Altin Peak's Mind Read events do), and `FLAG_PSYNERGY_TARGET` whether it plays on the object event ahead.
 `FLAG_PSYNERGY_TARGET` stays set only when the map has one of the three
 events. The `PSYNERGY_PHASE_EFFECT_ACTS` event is never run here: it only makes
@@ -316,7 +316,7 @@ scratch memory, and copies it to VRAM, the console's video memory; only then
 does
 [`psynergy_effects/world_map.c`](psynergy_effects/world_map.c) reuse that
 buffer for its own work: the cursor, the markers and the name window. The
-marker task releases its window and VRAM before `WorldMap_LoadAreaGraphics`
+marker [task](../../glossary.md#task) releases its window and VRAM before `WorldMap_LoadAreaGraphics`
 restores the field graphics into the same buffer.
 
 `gWorldMap_MapSecMarkers` (`scripts.s`) has a row for each place: its visited
@@ -330,7 +330,7 @@ ends the table. Markers take sprite entries one after another rather than one
 per object event, so a place not yet visited costs no sprite; the frame comes after
 them and the cursor last.
 
-`TBS_PATCH_2` editions (German, French, Spanish and Italian) also glide the
+`TBS_PATCH_2` [editions](../../glossary.md#editions) (German, French, Spanish and Italian) also glide the
 cursor onto the nearest place when the d-pad is released, and show a place's
 name from a shorter distance (`WORLD_MAP_NAME_RANGE`). The edition block of
 `psynergy_effects/world_map.c` chooses these values.
@@ -349,7 +349,7 @@ page](../../README.md#the-main-loop) describes it. For a map it calls
 `Map_ResetFlagsOnEnter`, loads the overlay (`Map_LoadOverlay`) and runs
 `Field_RunMap`; for a battle or minigame it runs that and calls
 `Map_ReturnFromBattle`. The overlay supplies the map's tables and
-initialization, and calls back into this folder through its import table for
+initialization, and calls back into this folder through its [import table](../../glossary.md#entry-table-and-import-table) for
 the commands of `script_layer.h` and `field_service.h`.
 
 Entering a new map section (the maps that share an area name) also resets
@@ -375,7 +375,7 @@ effect scene's work serves the Djinn joining effects as well as Psynergy.
 | `object.c`, `object/*.c` | the field object, in 16 parts: the main loop and map changes, the map loop and its requests, random encounters, a map's object events, its events, items and Psynergy used on the field, the map's markers, the debug palette editor, and the window transitions and colour buffer the field shares with battles |
 | `psynergy_effects.c`, `psynergy_effects/*.c` | the field Psynergy and script object, in 37 parts: the commands map scripts run, the script camera, jumping and climbing, the field's weather and wavy backgrounds, Djinn joining the party, the effect of each field kind, the effect slots and the world map screen |
 | `object_internal.h`, `psynergy_effects_internal.h` | each object's private header |
-| `colorfx.c` | the slot machine, and an LZ packer nothing calls (`LzPack_PackStream` is `UNUSED`); linked in `rom_main_12`, where the rest of the folder is in `rom_main_04` |
+| `colorfx.c` | the slot machine, and an LZ packer nothing calls (`LzPack_PackStream` is [`UNUSED`](../../glossary.md#unused)); linked in `rom_main_12`, where the rest of the folder is in `rom_main_04` |
 | `fxdata.c` | constant tables: object scripts, curves and lookups |
 | `battle_cue.c` | `gEncounter_BattleMusic`, the battle music of each encounter |
 | `zonedata.c` | the world map's encounter rules, and the zone and slot of each Djinni battle |
@@ -395,11 +395,11 @@ Prototypes are in `games/tbs/include/unit/object/`.
 
 - **field work**: `struct FieldWork` (`field_runtime.h`), the state of the
   running map: its object event slots, markers, event table and requests. It is
-  heap slot `HEAP_SLOT_EVENT`, reached as `gEventWork`; overlays read the same
+  [heap slot](../../glossary.md#heap-slot) `HEAP_SLOT_EVENT`, reached as `gEventWork`; overlays read the same
   block as `struct EventWork`. Local name `work`.
 - **object event**: an object in one of the field work's 66 object event
   slots. Slots 0 to 7 are the party, 8 on the object events the map places; an
-  object event's local id is its slot. Local names `objectEvent`, `actor`,
+  object event's [local id](../../glossary.md#local-id) is its slot. Local names `objectEvent`, `actor`,
   `object`, `leader`.
 - **request**: a field of the field work that something sets to interrupt the
   walk (above).
@@ -459,16 +459,16 @@ computes with them; the zone names in `encounter.tsv` from the maps whose
 rules select them.
 
 Random battles stop while Jenna is in the party with more than 130
-experience points. XXX: likely a cap on how strong the party can grow before
+experience points. [XXX](../../glossary.md#xxx): likely a cap on how strong the party can grow before
 the journey begins, because the rule can act nowhere else.
 
 `Field_CountRequests` adds the requests together (`talk` twice) and tests the
 sum, so a negative event code raised with a positive request can hide both.
 It can happen: `Field_ProcessStep` raises `FIELD_EVENT_PARTY_FELL` (-1) on
 the frame a member falls to poison, and the `action` request is the cell's
-metatile behavior, 1 on the cells of coord event 1, which 154 maps have. Both
+[metatile behavior](../../glossary.md#metatile-behavior), 1 on the cells of coord event 1, which 154 maps have. Both
 then wait until another request makes the sum non-zero, by which time a later
-cell's behavior may have replaced the action. It is marked `// BUG:`, and
+cell's behavior may have replaced the action. It is marked [`// BUG:`](../../glossary.md#bug-bugfix-and-ubfix), and
 `BUGFIX` tests each request instead.
 
 `Map_ResetFlagsOnEnter` clears flags `0x80` to `0xdf` on every ordinary
@@ -479,7 +479,7 @@ that nothing else uses.
 
 `FieldScript_ShowSpeakerMessage`, `FieldScript_ShowMessageAtPosition` and
 `FieldScript_ForwardShowMessageAtPosition` are unused: each is reached only through
-a bare veneer in `system/far_call/OBJECT.S`, which has no symbol for code to
+a bare [veneer](../../glossary.md#veneer) in `system/far_call/OBJECT.S`, which has no symbol for code to
 call ([`psynergy_effects/messages.c`](psynergy_effects/messages.c)).
 
 - XXX (no evidence): what units `FieldScript_ShowSpeakerMessage` and

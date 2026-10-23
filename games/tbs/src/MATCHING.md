@@ -2,10 +2,10 @@
 
 ![How a function is matched. Write it in plain C. Build all twelve editions and compare each one's fingerprint with the one recorded for the original cartridge. If all twelve match, the C is the original game, byte for byte, and it is kept. If one does not, find the instructions that differ, by comparing the compiler's output with the original, and reshape the C: another plain way of writing the same thing, or an equivalent spelling. Then build and compare again. Only when no plain form matches is a steering device kept, tagged FAKEMATCH with how far the plain form is from matching.](https://alchemy.pascalpixel.com/illustrations/matching/loop.svg)
 
-Alchemy's C has to compile, with an old compiler, into exactly the
-instructions Camelot shipped.
+Alchemy's C has to compile, with an old [compiler](../glossary.md#the-compilers), into exactly the
+instructions [Camelot](../glossary.md#camelot) shipped.
 
-A decompilation is a program written by hand, in readable C, that a compiler
+A [decompilation](../glossary.md#matching-decompilation) is a program written by hand, in readable C, that a compiler
 turns back into the very bytes on the cartridge. Matching is the work of
 getting there one function at a time: write the function the way a person
 would, build the game, and compare. That takes some care. Two ways of writing
@@ -16,7 +16,7 @@ reason is usually written down here.
 
 ## How a build is judged
 
-Each built edition is compared with the original cartridge by its
+Each built [edition](../glossary.md#editions) is compared with the original cartridge by its
 fingerprint, and twelve matching fingerprints are a pass.
 
 ![The build never sees the original cartridge, only its fingerprint: a SHA-1 hash, 40 characters long, recorded in rom.sha1. Each built edition is hashed the same way. When the English build of The Broken Seal comes out byte for byte the same as the cartridge, its fingerprint is identical, starting 5c4695205413, and the edition prints OK. Changing a single bit anywhere in its 8 MB, as a test, gives a completely different fingerprint, starting c214a5f65e8b. The fingerprint says whether the build is exact, never where it differs.](https://alchemy.pascalpixel.com/illustrations/matching/fingerprint.svg)
@@ -36,14 +36,14 @@ is. To find it, compile the one object you changed to assembly with the
 `Makefile`'s own command and diff it against a baseline with the `.L` label
 numbers ignored, or run the optional `alchemy-devtools diff` on the function.
 
-The Broken Seal's editions need no ROM at all. The Lost Age's need your own ROMs under
+[The Broken Seal](../glossary.md#the-two-games)'s editions need no ROM at all. The Lost Age's need your own ROMs under
 `roms/`, because the parts of The Lost Age that aren't C yet still come from
 `.incbin "baserom.gba"` scaffolds under `recon/tla`, which never count.
 
-A change made on purpose, such as a mod or a fix for one of the original's
+A change made on purpose, such as a mod or a fix for one of [the original](../glossary.md#the-original)'s
 bugs, changes the bytes, so it fails the comparison. That's expected: the
 comparison only tells you whether a tree is still the original game. So that
-kind of work lives apart from the matching tree, or behind `BUGFIX`, which is
+kind of work lives apart from the matching tree, or behind [`BUGFIX`](../glossary.md#bug-bugfix-and-ubfix), which is
 off.
 
 ## What the markers mean
@@ -72,7 +72,7 @@ edition named. The kind says which device it is:
   all is not (see Runtime below).
 - `volatile` is a qualifier that forces a load or store to stay where it's
   written. One that is part of a macro's own form, such as the fill word of
-  `Dma_Fill32` (pret's `DmaFill32`), is no device. Nor is one on memory an
+  `Dma_Fill32` ([pret](../glossary.md#pret)'s `DmaFill32`), is no device. Nor is one on memory an
   interrupt handler shares with the main loop, such as `gVBlankDone` and
   `gFrameCount` (`include/frame.h`): there the C needs it to be correct.
 - `temporary` is a variable holding a value the plain form wouldn't name.
@@ -113,7 +113,7 @@ both turn on.
 `MulQ16`, and the `swi 2` and `swi 3` BIOS calls. It expands to nothing. It's
 there to be read, and its proof says what no C compiles to.
 
-`UNUSED` marks a function nothing calls, kept because its bytes are in the
+[`UNUSED`](../glossary.md#unused) marks a function nothing calls, kept because its bytes are in the
 ROM. It's GCC's `unused` attribute, so a current GCC doesn't warn about it.
 
 An assembly file in `games/` has to show why it is assembly at all: that no
@@ -122,8 +122,8 @@ proof, written as comment lines (`@` starts a comment in assembly) that begin
 `@ C2:`, after the project's counting rule, under which assembly counts as
 done only with such a proof. In a handwritten file the
 proof names the instruction, frame or pattern alchemy-gcc can't emit. The
-far-call tables, such as the `entry/` and `import/` files of the debug rooms,
-the menus and the maps, carry one too. Each of their entries is a veneer,
+[far-call](../glossary.md#far-call) tables, such as the `entry/` and `import/` files of the debug rooms,
+the menus and the [maps](../glossary.md#map), carry one too. Each of their entries is a [veneer](../glossary.md#veneer),
 a tiny piece of code that only jumps on: 8 bytes holding an `ldr r4` (load
 the target's address), a `bx r4` (jump to it) and that address, which the
 `overlay_veneer` macro writes out whole.
@@ -163,7 +163,7 @@ These turn up all over the game.
   `Menu_RunCommandRow` writes the command icons' tiles through
   `volatile u16 *vram`, because a plain pointer moves the address adds (18 of
   1037 instructions differ in mode 1, 19 in mode 0).
-- A work slot is written `WORK_SLOT(n)`, `gWorkSlot[n]`, or through a named
+- A [work slot](../glossary.md#heap-slot) is written `WORK_SLOT(n)`, `gWorkSlot[n]`, or through a named
   pointer indexed past it (`(void **)&gCameraWork`). The last is undefined
   behaviour, with its defined form behind `UBFIX`.
 - A member can be reached through a pointer to its own type, or to its own
@@ -202,7 +202,7 @@ These turn up all over the game.
     hooks `AltmillerCave_Initialize` stores as `s32` (as `->update`, one store
     moves: 1 of 403 instructions in tbs-en); and the hooks the Goma stump
     turns clear as integers (otherwise the pointer store swaps with the
-    sprite-pointer load);
+    [sprite](../glossary.md#sprite-and-oam)-pointer load);
   - a member stored as a pointer of another type:
     `*(struct UiWindow **)&entry->attributes` and `*(void **)&entry->tile`
     for the unions' `.word` and `.value`, which keep the stores around them in
@@ -275,21 +275,21 @@ The field engine's spellings are about its map state and a few of its loops.
 - Three loops are written with `goto` (`Sprite_ComposeAnimationFrame`,
   `AnimationObject_SelectAnimation`), and the comments beside them give the
   measured cost of their loop forms. The other `goto`s (the wander retries,
-  the step searches, the map effects' script loops and the debug loops) stay
+  the step searches, the map effects' [script](../glossary.md#script) loops and the debug loops) stay
   until someone finds their loops.
-- A field object's 112 bytes are read through several structs, as Field's
+- A [field object](../glossary.md#field-object)'s 112 bytes are read through several structs, as Field's
   [one object, many views](field/README.md#one-object-many-views) lists. They
   stay apart because the compiler addresses a field differently by its
   declared type and by whether it is reached through a union (the
   `ObjectEvent` union moves a load), so one merged struct would change the
-  bytes at sites each view now matches. XXX: likely one struct in Camelot's
+  bytes at sites each view now matches. [XXX](../glossary.md#xxx): likely one struct in Camelot's
   source, because every view describes the same 112 bytes; merging them
   waits until every field has one name and type that every site matches
   with.
 
 ### Running a map
 
-The engine keeps each system's working state in a heap block whose pointer
+The engine keeps each system's working state in a [heap](../glossary.md#heap-and-pools) block whose pointer
 sits in a numbered slot of `gWorkSlot`, and many of those slots also have a
 name of their own (`gEventWork`, `gEffectWork` and so on), so the same block
 can be reached two or three ways. Not all of these sites have been measured;
@@ -343,7 +343,7 @@ come down to how a struct's member is addressed.
   [`map/common/mercury_lighthouse_pillar.h`](map/common/mercury_lighthouse_pillar.h),
   [`map/crossbone_isle_stepping_stones.c`](map/crossbone_isle_stepping_stones.c),
   and `Imil_MiaSaysFarewellToApprentices` in [`map/imil.c`](map/imil.c)).
-- An object event is read as `struct FieldEffect`, union FieldObject's effect view of
+- An [object event](../glossary.md#object-event) is read as `struct FieldEffect`, union FieldObject's effect view of
   the same object, whose sprite pointer is a plain member. Through
   ObjectEvent's sprite union, the flags address moves after the next store
   (`SolSanctum_StartFloatingLights` in
@@ -493,9 +493,9 @@ macros whose exact shape decides the code.
 
 ### Game rules
 
-The rules code reads party members and element tables in two ways each.
+The rules code reads [party](../glossary.md#the-party) members and [element](../glossary.md#the-four-elements) tables in two ways each.
 
-- A unit is `Unit_Get(owner)`, or from other banks `Unit_GetFar(owner)`, the
+- A unit is `Unit_Get(owner)`, or from other [banks](../glossary.md#bank) `Unit_GetFar(owner)`, the
   far call that reaches it.
 - An element pair array is `s16 [4][2]` where the matching code indexes it,
   or goes through `struct BattleElementStats` with `UBFIX`.

@@ -7,11 +7,11 @@ screen and their words appear in it a few letters at a time, with a little
 voice blip as they go. Every box of text in the game works this way: the
 messages people say, the menus, the shop counters, the battle commands.
 The window code draws those boxes, unpacks the game's stored messages, types
-them out over several frames and moves the small pictures a box carries:
+them out over several [frames](../../glossary.md#frame) and moves the small pictures a box carries:
 letters, icons, portraits and the page arrow.
 
 It also builds the screens that are made directly from windows: the rows of
-command icons, the option and system menus, the party status window, the
+command icons, the option and system menus, the [party](../../glossary.md#the-party) status window, the
 save file menu, name entry, the status screen, the battle menus and the
 debug menus. [Menus, windows and shops](../../menus.md#windows) gives the
 whole layer in brief. The field menu's four screens are in
@@ -21,18 +21,18 @@ whole layer in brief. The field menu's four screens are in
 ## The work block
 
 Everything the window system keeps between frames lives in one block of
-memory, set up with each map and gone at the next.
+memory, set up with each [map](../../glossary.md#map) and gone at the next.
 
 ![Everything the window system keeps is in one block of memory, set up with each map. In it: the windows' tilemap, a picture of the screen 32 tiles wide and 20 tall that every window is drawn into; 8 window slots, 12 in the Japanese edition; 3 typists, each typing one message into one window; 64 sprites that windows carry, such as letters, icons, portraits and the page arrow; the ring of unpacked messages, 512 codes, 256 in Japanese; 8 blanks for names and numbers a message will fill in; and 2 portrait slots.](https://alchemy.pascalpixel.com/illustrations/window/work-block.svg)
 
 The block holds the picture of the screen that every window is drawn into,
 a slot for each window that can be open, three typists (one per message
-being typed), the pool of small sprites the windows carry, the ring of
+being typed), the pool of small [sprites](../../glossary.md#sprite-and-oam) the windows carry, the ring of
 unpacked messages and the blanks a message fills in. Because all of it is in
-one place, the code that reads it is the same in every edition even though
+one place, the code that reads it is the same in every [edition](../../glossary.md#editions) even though
 the Japanese edition has more window slots and a shorter ring.
 
-In the code the block is `struct UiRenderWork`, borrowed from the heap (the
+In the code the block is `struct UiRenderWork`, borrowed from the [heap](../../glossary.md#heap-and-pools) (the
 memory the engine lends out to whatever runs) under the numbered slot
 `HEAP_SLOT_WINDOW` by `UiWork_InitializeWithResourceCounters` for the field
 and by `UiWork_Initialize` for battle; it lasts until the next map change
@@ -65,7 +65,7 @@ is decoded it is 2. `mode` is set while Mind Read shows someone's thoughts.
 
 | Name | Value | Meaning |
 | --- | --- | --- |
-| `HEAP_SLOT_WINDOW` | 15 | the heap slot that holds the work block |
+| `HEAP_SLOT_WINDOW` | 15 | the [heap slot](../../glossary.md#heap-slot) that holds the work block |
 | `RENDER_WORK_SIZE` | `0x118C` (4,492) in Japanese, `0x12FC` (4,860) in the others | the work block's size in bytes |
 | `WINDOW_COUNT` | 12 in Japanese, 8 in the others | window slots |
 | `UI_OUTPUT_COUNT` | 64 | render outputs in the pool |
@@ -87,7 +87,7 @@ frames, and the slot stays taken until the window has gone, so a closing
 window still counts against the 8 slots.
 
 The frame and the blue filling are tiles of the windows' tilemap, which the
-console shows on the one background layer in front of the map's three. A
+console shows on the one [background layer](../../glossary.md#background-layer) in front of the map's three. A
 message's letters, its portrait and its page arrow are sprites riding on the
 window, in front of everything. Taken apart, a message in Vale shows the split:
 
@@ -118,7 +118,7 @@ in.
 
 Where the editions lay a screen out differently, the value is a named macro
 chosen in one `#if` block at the top of the private header or of the part.
-The battle summon list, for one, is `SUMMON_MENU_WINDOW_WIDTH` 17 tiles wide
+The battle [summon](../../glossary.md#summons) list, for one, is `SUMMON_MENU_WINDOW_WIDTH` 17 tiles wide
 at `SUMMON_MENU_WINDOW_X` 13 outside Japan, and 14 tiles wide at 16 in
 Japanese, so both end at the screen's right edge.
 
@@ -149,7 +149,7 @@ typed it is unpacked, whole, into plain letter codes.
 Each stored letter is a short run of bits, and which run stands for which
 letter depends on the letter before it, so the pairs that are common in the
 game's text cost very little room. A message can also hold blanks: a party
-member's name, a number, the name of an item or a Psynergy, each filled in
+member's name, a number, the name of an item or a [Psynergy](../../glossary.md#psynergy-and-pp), each filled in
 as the message is unpacked, with "a" or "an" and the other small words each
 language puts in front of a name. The marks that say where a line or a page
 ends, where to pause and which colour to use are kept as they are, for the
@@ -257,7 +257,7 @@ three are busy; the channel stays taken until its window closes.
 `UiText_StartBattleMessage` also reuses a channel whose window has finished,
 continuing below its last line and scrolling once both lines are used.
 
-`UiWork_ProcessAll` is the window system's task. Both setups schedule it in
+`UiWork_ProcessAll` is the window system's [task](../../glossary.md#task). Both setups schedule it in
 the main loop's pass, and it runs every frame: the windows' zoom
 (`UiWork_ProcessDirectWork`), then the channels, then the render outputs
 (`UiWork_AnimateSpriteSlots`). Code that shows a message waits on its window
@@ -405,7 +405,7 @@ text.
 | `articles.c` | each edition's articles and possessives, the kana marks and the sprite motion curves |
 | `scales.c` | sprite scales, motion curves and the lookup tables of the window and menu code |
 | `text_speed.c` | the three message speed tables |
-| `windata.s` | glyph widths, kana mark ranges, the party and Djinni sprites, the growing bar and the cursor stops |
+| `windata.s` | glyph widths, kana mark ranges, the party and [Djinni](../../glossary.md#djinn) sprites, the growing bar and the cursor stops |
 | [`keyboard.s`](keyboard.s) | the name entry screen's keyboard tilemaps |
 | [`cursor.s`](cursor.s), `cursor_frame.s`, `fixed_block.s`, `slider.s`, `slidpal.s` | sprite tiles and palettes, built from the PNGs beside them or under `../menu` and `../graphics` |
 
@@ -464,7 +464,7 @@ in `include/tbs_edition.h`.
 | `Resource_`, `RenderResource_`, `Graphics_`, `GraphicsPalette_`, `Vram_` | things the engine names elsewhere: VRAM cache entries, pictures, palettes and video registers |
 
 The `Ui_` functions that remain have no family yet. Many of these names are
-shared with The Lost Age's twins and with the far-call table
+shared with [The Lost Age](../../glossary.md#the-two-games)'s twins and with the [far-call](../../glossary.md#far-call) table
 `system/far_call/WINDOW.S`, so renaming one changes other folders too.
 [Matching](../MATCHING.md) explains the spellings some sites keep and the
 comment markers.
@@ -480,7 +480,7 @@ and the pairing rule in `UiWork_StepChannelScript`, and agree with a
 recording of the window opening (`guides/window/window-open.png`), whose
 first typed frame shows "Yo".
 
-XXX: likely the canvas renderer and the tree walker are ARM code run from
+[XXX](../../glossary.md#xxx): likely the canvas renderer and the tree walker are ARM code run from
 RAM for speed, because ARM code fetched from the cartridge's 16-bit bus is
 slow; nothing in the code says so. XXX: the likely reason the ring was
 doubled outside Japan is the longer European text; the bytes show only the

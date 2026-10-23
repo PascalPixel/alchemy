@@ -2,21 +2,21 @@
 
 ![The console's two kinds of working memory, drawn to scale. EWRAM, 256 KB and slower, holds from the bottom up: the game's variables, flags and save buffer; the overlay, the code of the current map; the map grid's cells; battle sprite pictures; space to unpack into; the layout's metatiles, layers and shapes; the EWRAM heap; and background tiles at the top. IWRAM, 32 KB and fast, holds the fast routines copied from the cartridge, the variables the engine uses most, the IWRAM heap, the sound mixer's code and the stacks at the top. The program itself, the pictures, maps and music stay on the cartridge, which can only be read.](https://alchemy.pascalpixel.com/illustrations/system/memory-map.svg)
 
-Every map the party visits needs its own code, its own layout and its own
+Every [map](../../glossary.md#map) the [party](../../glossary.md#the-party) visits needs its own code, its own [layout](../../glossary.md#layout) and its own
 pictures, and a Game Boy Advance has little room for any of it: 288 KB of
 working memory, against a cartridge that holds the whole game. The system
 folder holds what makes that fit. It lays out which part of memory holds
-what, splits the program into banks that can call one another through fixed
+what, splits the program into [banks](../../glossary.md#bank) that can call one another through fixed
 tables, swaps each map's code in and out of one small area as the party
 moves, and finds every picture, layout and piece of code on the cartridge by
 number.
 
 In more detail, the folder holds the cartridge header and `System_Entry`, the
-RAM variables in their fixed order, the resident code copied into IWRAM, the
-far-call tables that join the banks of the main image, the overlays that hold
+RAM variables in their fixed order, the resident code copied into [IWRAM](../../glossary.md#iwram-and-ewram), the
+[far-call](../../glossary.md#far-call) tables that join the banks of the [main image](../../glossary.md#main-image), the [overlays](../../glossary.md#overlay) that hold
 each map's code, the resource directory every picture, table and overlay is
 found through, and the flash library that writes saves. Nearly all of it is
-assembly: code no C compiler emits, each file saying in its header what proves
+assembly: code no C [compiler](../../glossary.md#the-compilers) emits, each file saying in its header what proves
 it, and tables the linker lays out. [Runtime](../runtime/README.md) builds
 directly on it, and [Maps](../map/README.md) are the main users of its
 overlays.
@@ -28,7 +28,7 @@ at the top of this page shows.
 
 The console has two kinds of working memory. EWRAM, 256 KB, is large but
 slower, and holds most of the game's data: its variables, the current map's
-code, the map grid and the heap. IWRAM, 32 KB, is fast, and holds what has to run
+code, the map grid and the [heap](../../glossary.md#heap-and-pools). IWRAM, 32 KB, is fast, and holds what has to run
 or be read quickly: routines copied from the cartridge at power-on, the
 engine's busiest variables, a second heap and the stacks. Separately, video
 memory (VRAM) holds the tiles and maps the screen is drawn from, and the
@@ -47,12 +47,12 @@ IWRAM variables ([below](#the-addresses-that-never-move)).
 
 | Starts at | Address | Size | What | Named in |
 | --- | --- | --- | --- | --- |
-| 0 KB | `0x02000000` | 32 KB | the main image's variables: the save buffer, the game flags (`gGameFlagBytes`), the game state (`gGameState`), the sound driver's work and the flash library's | `ewram.s` |
+| 0 KB | `0x02000000` | 32 KB | the main image's variables: the save buffer, the [game flags](../../glossary.md#game-flag) (`gGameFlagBytes`), the game state (`gGameState`), the sound driver's work and the flash library's | `ewram.s` |
 | 32 KB | `0x02008000` | 32 KB | `gOverlayArea`, the loaded map or screen overlay | `ewram.s`, `overlay/overlay.ld` |
 | 64 KB | `0x02010000` | 32 KB | `gMapGridCellBuffer`; battle effects also use it for particles | `Ram_MapGridCellBuffer` |
 | 96 KB | `0x02018000` | 16 KB | `gActorSpriteSlots` | `Ram_ActorSpriteSlots` |
 | 112 KB | `0x0201c000` | 16 KB | `gDecodeBuffer` | `Ram_DecodeBuffer` |
-| 128 KB | `0x02020000` | 32 KB | `gMetatiles`, the layout's metatiles (`games/tbs/src/field/field/map_grid.c`) | `Ram_Metatiles` |
+| 128 KB | `0x02020000` | 32 KB | `gMetatiles`, the layout's [metatiles](../../glossary.md#metatile) (`games/tbs/src/field/field/map_grid.c`) | `Ram_Metatiles` |
 | 160 KB | `0x02028000` | 16 KB | `gMapGridLayerData` | `ewram.s` |
 | 176 KB | `0x0202c000` | 16 KB | `gMapGridCollision` | `Ram_MapGridCollision` |
 | 192 KB | `0x02030000` | 32 KB | `gEwramHeap`; `heap.c` allocates from it up to `0x02040000`, the end of EWRAM, so past its 32 KB it runs into `gBgTileBuffer` | `ewram.s`, `games/tbs/src/runtime/runtime/heap.c` |
@@ -63,7 +63,7 @@ IWRAM variables ([below](#the-addresses-that-never-move)).
 | Starts at | Address | What | Named in |
 | --- | --- | --- | --- |
 | 0 KB | `0x03000000` | the resident runtime, 5 KB copied from the ROM: the dispatcher `IwramIrqMain`, the handler table `gIrqHandlers`, the resident sound mixing code and the small routines the rest of the game calls | `main.ld` (`.iwram_runtime`), `runtime*.s` |
-| 5 KB | `0x03001400` | the main image's IWRAM variables, among them the heap slots `gWorkSlot` (`0x03001e50`) | `iwram.s`, `Ram_WorkSlot` |
+| 5 KB | `0x03001400` | the main image's IWRAM variables, among them the [heap slots](../../glossary.md#heap-slot) `gWorkSlot` (`0x03001e50`) | `iwram.s`, `Ram_WorkSlot` |
 | 8 KB | `0x03002000` | `gIwramHeap`, which `heap.c` allocates from below `Ram_IwramHeapEnd` | `iwram.s` |
 | 28 KB | `0x03007000` | the sound driver's mixer, `SoundDriver_Mixer`, 932 bytes copied from the ROM by `Audio_Initialize` | `Ram_SoundMixer`, `main.ld` (`.iwram_mixer`), `games/tbs/src/sound/audio.c` |
 | 30 KB | `0x03007800` | `Ram_IwramHeapEnd`, the end of the IWRAM heap, where `gCartridgeResetMarker` sits | `iwram_hi.s` |
@@ -78,9 +78,9 @@ it with its own.
 
 ![The console's 96 KB of video memory as a map fills it, drawn to scale from the start at the top. The first 8 KB holds the windows' tiles, the frame pieces and letters every text box is built from. Next come the windows' own screen map, then the screen maps of the layout's three layers, ground, middle and overhead, which say which tile goes where. The next 48 KB holds the layout's three sheets of tiles. The last 32 KB is for sprites: the tiles of the people and things that move, handed out in small blocks as they appear.](https://alchemy.pascalpixel.com/illustrations/system/vram.svg)
 
-The screen is built from tiles, small 8-by-8 pictures. A background layer is
+The screen is built from tiles, small 8-by-8 pictures. A [background layer](../../glossary.md#background-layer) is
 a sheet of tiles plus a screen map that says which tile goes in each place on
-screen; a sprite draws its own tiles wherever it is put. Video memory is
+screen; a [sprite](../../glossary.md#sprite-and-oam) draws its own tiles wherever it is put. Video memory is
 split accordingly. On a map, the windows' tiles come first, then the
 windows' screen map and the three map grid layers' screen maps, then the
 layout's three sheets of tiles, and the last 32 KB holds the sprites' tiles.
@@ -120,7 +120,7 @@ function. When a bank's code grows or shrinks, its functions move, but the
 table and every entry in it stay where they were, so no other bank has to
 change.
 
-`main.ld` puts each bank at an address of its own, written per edition (the
+`main.ld` puts each bank at an address of its own, written per [edition](../../glossary.md#editions) (the
 `. = ABSOLUTE(...)` before each `rom_main_NN` from 01 on, and before the later
 `rom_tail` places), and leaves the space up to that address empty.
 
@@ -177,9 +177,9 @@ An overlay is linked on its own at the overlay area (`overlay/overlay.ld`),
 after the main image and against its symbols (`-R` in the `Makefile`'s overlay
 rule). It is three objects:
 
-- The entry table (`map/entry/<map>.s`) opens it: six 8-byte stubs whose
+- The [entry table](../../glossary.md#entry-table-and-import-table) (`map/entry/<map>.s`) opens it: six 8-byte stubs whose
   words hold the map's start-up function and the functions that return its
-  warp destinations, warps, object event templates, events and regions. The field code reads them
+  [warp destinations](../../glossary.md#warp-destination), [warps](../../glossary.md#warp), [object event](../../glossary.md#object-event) templates, events and regions. The field code reads them
   through `struct MapEntries` (`include/field_runtime.h`), calling
   `gOverlayArea.initialize()`, `gOverlayArea.events()` and so on.
 - The overlay's code and data.
@@ -214,7 +214,7 @@ compression, which replaces a run of bytes seen before with a pointer back
 to it) shrinks best.
 
 The entry table's members, as `struct MapEntries` lays them out, each
-behind its veneer word:
+behind its [veneer](../../glossary.md#veneer) word:
 
 | Member | Offset | What it returns |
 | --- | --- | --- |
@@ -265,7 +265,7 @@ gives each map its overlay as a resource number, and the first column of
 (`games/tbs/src/field/layouts.tsv`) holds numbers counted from
 `ResourceId_Layout001` (`MapGrid_LoadLayout`), so the rows after that one keep
 their order. Code also adds to an id to reach the rows after it: the option
-menu's marker steps through eight frames from `ResourceId_ShopCursorFrames`
+menu's marker steps through eight [frames](../../glossary.md#frame) from `ResourceId_ShopCursorFrames`
 (`window/window/options.c`), so a run like that stays together. The directory
 ends with 25 unused rows (`unused 25`), where a row fits without renumbering
 any other.
@@ -285,8 +285,8 @@ through names the linker fills in, so the layout must keep each one exactly
 where the code expects it.
 
 A fixed address is the code saying "the overlay area is at this address",
-rather than "the overlay area is wherever the linker put `gOverlayArea`". The
-original program holds 27 of them, and the matching build has to
+rather than "the overlay area is wherever the linker put `gOverlayArea`". [The
+original](../../glossary.md#the-original) program holds 27 of them, and the matching build has to
 compile the same numbers, so the memory map cannot move anything they point
 at. Each is written down once, beside the name it stands for.
 
@@ -301,10 +301,10 @@ itself, the layout has to keep every one:
 | The cartridge restart entry, `Cart_Restart` | `0x08000000`, the start of the ROM | The soft reset in `WaitFrames` jumps there, and `SerialTest_Run`, a link cable test nothing reaches, sends the first 640 bytes from there over the cable. So the header and `System_Entry` stay at the start of the ROM. |
 | The resident runtime, `.iwram_runtime` (5 KB, copied by `Runtime_InstallIwramAndIrqs`) | `0x03000000`, the start of IWRAM | C calls its routines at their addresses (`IwramSqrt` and the rest), and the ARM code that runs from RAM reaches them as offsets from `IwramIrqMain` (`IWRAM_ENTRY`, `games/tbs/src/field/update.c`). |
 | The overlay area, `gOverlayArea` | `0x02008000`, 32 KB of EWRAM | Every overlay is linked to run there and has to fit. Its first 48 bytes are the entry table, which the field object calls by member. |
-| The map and decode buffers: `Ram_MapGridCellBuffer`, `Ram_ActorSpriteSlots`, `Ram_DecodeBuffer`, `Ram_Metatiles`, `Ram_MapGridCollision`, `Ram_BgTileBuffer` | after the overlay area, as the EWRAM table lists | Code reaches across their boundaries by arithmetic: the map grid's cells fill 64 KB from the start of `Ram_MapGridCellBuffer`, through the sprite slots and the decode buffer, and the tile animation reads tiles from `Ram_DecodeBuffer` that land in `gMapGridLayerData` ([Layouts](../layout/README.md)). So `ewram.s` can't reorder or resize them. |
+| The map and decode buffers: `Ram_MapGridCellBuffer`, `Ram_ActorSpriteSlots`, `Ram_DecodeBuffer`, `Ram_Metatiles`, `Ram_MapGridCollision`, `Ram_BgTileBuffer` | after the overlay area, as the EWRAM table lists | Code reaches across their boundaries by arithmetic: the map grid's [cells](../../glossary.md#cell) fill 64 KB from the start of `Ram_MapGridCellBuffer`, through the sprite slots and the decode buffer, and the tile animation reads tiles from `Ram_DecodeBuffer` that land in `gMapGridLayerData` ([Layouts](../layout/README.md)). So `ewram.s` can't reorder or resize them. |
 | The ends of the two heaps | `0x03007800` in IWRAM and `0x02040000`, the end of EWRAM | The allocators test against these numbers (`heap.c`). `gCartridgeResetMarker` sits at the first, and the system stack lives above it. |
 | The sound driver's mixer, `SoundDriver_Mixer` (932 bytes) | `0x03007000`, inside the IWRAM heap's range | `Audio_Initialize` copies 1 KB at once (`SOUND_MIXER_CODE_SIZE`), so the 92 bytes after the mixer in the ROM land just after it. `Sound_LoadPresetParameters` copies its 152-byte presets elsewhere, into the resident code at `IwramSoundPresetCode`. |
-| The frame wait's stack top, `Ram_FrameWaitStackTop` | `0x03007a00` | The 512 bytes between it and the heap's end are what the frame loop, its tasks and the VBlank work always have ([Runtime](../runtime/README.md)). |
+| The frame wait's stack top, `Ram_FrameWaitStackTop` | `0x03007a00` | The 512 bytes between it and the heap's end are what the frame loop, its [tasks](../../glossary.md#task) and the VBlank work always have ([Runtime](../runtime/README.md)). |
 | The stacks and the interrupt vector, `gIrqVector` | the top of IWRAM | `System_Entry` sets the system and IRQ stacks there, and the BIOS jumps through `gIrqVector` on an interrupt. |
 | `gBgScroll`, `gVramBlockCache` and `gWorkSlot` (`Ram_WorkSlot`) | among the main image's IWRAM variables | The code reaches them as constants. German moves all three 16 bytes up, so `ram_buffer.h` chooses them per edition. |
 
@@ -315,7 +315,7 @@ Thumb `bl` reaches 4 MB either way, and the main image, a little over 1.5 MB
 from the start of the ROM to the last bank's table, is within reach of every
 bank. Another bank knows only where a bank starts and the place of each export
 in its table, so a bank can grow or shrink inside its gap without moving any
-address other code holds. How Camelot built them is an open question (at
+address other code holds. How [Camelot](../../glossary.md#camelot) built them is an open question (at
 the end of this page).
 
 Overlays depend on the main image through the same tables. An import stub
@@ -366,7 +366,7 @@ the flash library in `save/`.
   while the still map picture is open. These marks come from tbs-en played
   in libmgba, the heap's next addresses read at every frame and every free:
   a Goma Cave battle fought with A, and the field menu, the Item screen,
-  field Psynergy cast from the menu and directly, a shop, an inn, a talk,
+  field [Psynergy](../../glossary.md#psynergy-and-pp) cast from the menu and directly, a shop, an inn, a talk,
   the world map and its still picture, the credits and sleep mode.
 - A far-call table's entries keep their order, because code in other banks
   and overlays calls them by place.
@@ -390,7 +390,7 @@ the flash library in `save/`.
 | `overlay/` | `overlays.s` places each overlay's packed stream as a directory resource, `overlay.ld` links each at `gOverlayArea`, and the `ovl_*.s` hold the RAM variables of the overlays that have them |
 | `resource/directory.s` | the resource directory, each row defining its `ResourceId_` name |
 | `resource/*.s`, `resource/metadata_get_record.c`, `resource/colconv*.tsv` | the resource decoders; beside them the OAM build kernel and colour-buffer kernels other code copies into RAM to run, the colour conversion tables, the sprites' shadow and the animation metadata lookup |
-| `save/` | the flash library: the drivers for Atmel, Macronix and SST chips (`FLASH_C`, compiled with pret's `old_agbcc`), and the save record signature, `CAMELOT` (`savedata.c`) |
+| `save/` | the flash library: the drivers for Atmel, Macronix and SST chips (`FLASH_C`, compiled with [pret](../../glossary.md#pret)'s `old_agbcc`), and the save record signature, `CAMELOT` (`savedata.c`) |
 
 The unit headers are in `games/tbs/include/unit/system/`, the far-call
 prototypes in `games/tbs/include/farcall/`. Link order, overlays included, is
@@ -435,7 +435,7 @@ the overlays by their directory number. `IwramIrqMain` and the other resident
 routines are named from their code. The fixed addresses come from the literals
 in the ROM's code.
 
-XXX: likely the overlay packer stores each call's target as an offset from
+[XXX](../../glossary.md#xxx): likely the overlay packer stores each call's target as an offset from
 the overlay's start so the overlays compress better under LZ, because that is
 what the filter achieves; nothing in the ROM says so. XXX: likely Camelot
 linked each bank on its own against the others' tables, because fixed starts

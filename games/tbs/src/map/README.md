@@ -2,14 +2,14 @@
 
 ![Six questions a map answers. The field engine knows a map only through six questions it asks the map's own code. When the party arrives it asks, in order: what happens here (the map events, kept for the whole visit), where the party arrives (the warp destinations), who stands where (the object event templates), and whether anything needs setting up first (the initialization, which can play an arrival cutscene). At every step it asks whether the leader stands in a warp area. As the party leaves it asks where the warp leads. Each answer comes from a function, so a map can answer differently as the story goes on.](https://alchemy.pascalpixel.com/illustrations/scene/entries.svg)
 
-Everything that makes a map itself is in its own code here: who stands
-where, what each person says, what happens when the party steps on a
-doorstep, searches a jar, or uses an item or Psynergy, and the cutscenes the
-map plays. That code is a map overlay, loaded when the party arrives and
+Everything that makes a [map](../../glossary.md#map) itself is in its own code here: who stands
+where, what each person says, what happens when the [party](../../glossary.md#the-party) steps on a
+doorstep, searches a jar, or uses an item or [Psynergy](../../glossary.md#psynergy-and-pp), and the cutscenes the
+map plays. That code is a map [overlay](../../glossary.md#overlay), loaded when the party arrives and
 replaced when it leaves. [Running a map](../object/README.md) runs the map
 and asks the overlay what to do; the overlay drives the engine back through
-its import table. Each overlay has a generated page of its own, listed in
-[Maps](../field/maps.s) in story order, with its layout and its map events.
+its [import table](../../glossary.md#entry-table-and-import-table). Each overlay has a generated page of its own, listed in
+[Maps](../field/maps.s) in [story order](../../glossary.md#the-places-in-story-order), with its [layout](../../glossary.md#layout) and its [map events](../../glossary.md#map-event).
 
 ## The entry table
 
@@ -17,10 +17,10 @@ The engine knows nothing about any one map. It asks the map's code six
 questions, always the same ones, and the answers are the map.
 
 When the party arrives, the engine asks what can happen here (the map
-events, kept for the whole visit), where the party arrives (the warp
-destinations), who stands where (the object event templates), and whether
+events, kept for the whole visit), where the party arrives (the [warp
+destinations](../../glossary.md#warp-destination)), who stands where (the [object event](../../glossary.md#object-event) templates), and whether
 anything needs setting up (the initialization). At every step it asks
-whether the leader is standing in a warp area, and as the party leaves,
+whether the leader is standing in a [warp](../../glossary.md#warp) area, and as the party leaves,
 where the warp leads. Each answer comes from a function rather than a fixed
 table, so a map can answer differently as the story goes on
 ([World](../../world.md#map-entries) gives Vault's example), and an overlay
@@ -33,7 +33,7 @@ returning to where it stood, as after a battle.
 
 In the code, the six are `struct MapEntries` in `field_runtime.h`, in a
 fixed order at the start of every overlay, `entry/<map>.s`: 48 bytes, each
-entry a veneer, a tiny piece of code that only jumps on: one word holding
+entry a [veneer](../../glossary.md#veneer), a tiny piece of code that only jumps on: one word holding
 two instructions (load the address that follows, jump to it), then the
 address of the function. `Field_RunMap` calls
 `Map_GetEvents`, then places the party at its warp destination
@@ -68,14 +68,14 @@ in pixels (x east, y up, z south) and a facing one of eight headings
   destination named in `map_warps.h`, ended by `MAP_WARPS_END`.
   `MAP_WARP_IF` adds a flag, and the row is taken only while that flag is
   clear. `WARP_TO_BATTLE` leads into a battle.
-- **Object event templates** (`struct ObjectEventTemplate`): a sprite, a
+- **Object event templates** (`struct ObjectEventTemplate`): a [sprite](../../glossary.md#sprite-and-oam), a
   condition, a behaviour (an `enum MovementType` such as `MOVEMENT_TYPE_STAND`
-  or `MOVEMENT_TYPE_WANDER`, or an object script), a position, a facing and
+  or `MOVEMENT_TYPE_WANDER`, or an object [script](../../glossary.md#script)), a position, a facing and
   how the object event turns when spoken to.
 - **Regions** (`struct MapWarpRegion`): boxes in which the leader takes a warp
   kind, each with a condition. Most maps have none.
 - **Map events** (`struct MapEvent`): a control word (the kind and its
-  detail), a trigger, a condition and a value, ended by `MAP_EVENTS_END`.
+  detail), a [trigger](../../glossary.md#trigger), a condition and a value, ended by `MAP_EVENTS_END`.
 
 ### Who stands where
 
@@ -85,9 +85,9 @@ numbered place for it in the map's state, whether or not it appears.
 
 ![Every object event template owns a slot. The blue statue as the game shows it, on its ledge under a jet of water and fallen to the floor below, then the object event templates of Mercury Lighthouse's upper floor, row by row, and the object event slot each row fills before and after the blue statue falls from its ledge. The party's eight slots come first. The first row, the statue fallen to the floor below, appears only once it has fallen; the second, the statue on its ledge, only until then. The rows after them, two pipe sections, three pipe ends and six stone statues, always appear. A row whose condition fails leaves its slot empty rather than handing it to the next row, so every object event keeps the same slot whatever the story has done, and the pipes are always the third and fourth placed object events.](https://alchemy.pascalpixel.com/illustrations/scene/placements.svg)
 
-A row can carry a condition, a story flag that must be set or clear, and a
+A row can carry a condition, a [story flag](../../glossary.md#game-flag) that must be set or clear, and a
 row whose condition fails puts nobody on the map. Its slot stays empty
-rather than going to the next row, so every object event keeps one local id
+rather than going to the next row, so every object event keeps one [local id](../../glossary.md#local-id)
 all game and the map's code can name it once: on Mercury Lighthouse's upper floor
 the blue statue has one row for its place on the ledge and another for where
 it lands after it falls, and only one of the two appears.
@@ -106,12 +106,12 @@ an enum in row order (`LOCALID_FALLEN_STATUE = LOCALID_FIRST_PLACED`).
 Some spots on a map do something when the leader reaches them: a doorstep
 leads into a house when the leader walks into it, the edge of a village
 leads on to the next map, a ladder climbs to a roof, and a chest or a
-bookcase answers the A button. The layout marks each spot by the metatile
-behavior of its cell, and the map's event table says what that behavior
+bookcase answers the A button. The layout marks each spot by the [metatile
+behavior](../../glossary.md#metatile-behavior) of its [cell](../../glossary.md#cell), and the map's event table says what that behavior
 does. The same behavior means different things on different maps.
 
 On the screen of Vale below, on the day the story begins, each door is a
-coord event rather than a warp: walking north into the doorstep runs a
+[coord event](../../glossary.md#coord-event) rather than a warp: walking north into the doorstep runs a
 script, `EventScript_EnterIsaacsHouse` for Isaac's house, that opens the door,
 walks the leader in and only then asks for the warp, and that can refuse
 instead, as Dora does once the party has left Vale. Coord events also climb
@@ -125,7 +125,7 @@ cells of the path at the top carry a behavior no row answers.
 Stepping on or walking into a cell runs the first coord event whose trigger
 is its metatile behavior and whose condition holds, or failing one the first
 such warp (`Map_RunCoordEventOrWarp`); pressing A facing it runs the first
-such bg event. A behavior with no row does nothing. The map's own behaviors
+such [bg event](../../glossary.md#bg-event). A behavior with no row does nothing. The map's own behaviors
 are `MB_EVENT_FIRST` to `MB_EVENT_LAST`; the behaviors above them mean
 the same on every map ([Layouts](../layout/README.md#cells)).
 
@@ -206,7 +206,7 @@ fit. A bg event on a named target (everything but `BG_EVENT_UNNAMED`) is
 returned whatever its condition, unless it finds a mimic, and
 `Field_SearchTile` tests the condition afterwards, so that an opened chest
 still says it is empty. Rows these rules make unreachable keep a
-`// Unused:` tag in their table, and [Unused](../../unused.md) describes every
+[`// Unused:`](../../glossary.md#unused) tag in their table, and [Unused](../../unused.md) describes every
 such case.
 
 | Name | Value | Meaning |
@@ -224,7 +224,7 @@ game plays it from top to bottom while the party waits.
 A step that takes time, such as a wait, a line of dialogue or someone
 walking somewhere, waits inside itself, so the next line starts only when it
 is done, and the walk resumes only after the last line. Steps that take no
-time, such as starting the shake, follow each other within one frame.
+time, such as starting the shake, follow each other within one [frame](../../glossary.md#frame).
 Whatever has to keep moving during a cutscene, like a villager walking past,
 runs on its own: as an object script (the steps an object event runs each
 frame), a callback (a function the map adds to run once a frame) or an
@@ -260,7 +260,7 @@ game flags, and `SE(n)` plays a sound from `songs.h`. Callbacks are added with
 
 | Name | Value | Meaning |
 | --- | --- | --- |
-| `TASK_PRIORITY_MAP` | 3200 | the task priority a map's callbacks run at |
+| `TASK_PRIORITY_MAP` | 3200 | the [task](../../glossary.md#task) priority a map's callbacks run at |
 
 ## State that cleans itself up
 
@@ -271,7 +271,7 @@ flags for maps to use, and forgets them for it as the party moves on.
 
 Map temp flags last until the party next enters a map, so a map keeps a
 pushed stone pillar or an opened door in one and finds it back in place next
-time. Map-section temp flags last while the party stays anywhere in the map
+time. [Map-section](../../glossary.md#map-section) temp flags last while the party stays anywhere in the map
 section, so they hold what must survive moving between its rooms, as Fuchin
 Falls Cave keeps where its logs float. Coming back from a battle forgets
 neither.
@@ -343,8 +343,8 @@ is the name the map writes (`MsgVaultWelcomeToVaultTheTownAt`).
 ## Limits
 
 - An overlay's code, tables and RAM variables must fit in `gOverlayArea`,
-  32 KB of EWRAM.
-- An overlay calls the main image only through its import table, never another
+  32 KB of [EWRAM](../../glossary.md#iwram-and-ewram).
+- An overlay calls the [main image](../../glossary.md#main-image) only through its import table, never another
   overlay.
 - 66 object event slots: the party's 8, then the placed object events.
 - 256 map temp flags and 256 map-section temp flags, reused by every map and

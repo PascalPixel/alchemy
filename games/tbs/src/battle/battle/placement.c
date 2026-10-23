@@ -294,7 +294,7 @@ void BattlePlacement_GetStepPair(s32 partyPlace, s32 *x, s32 *y) {
 /// first. The column starts from an estimate of its length, 30 pixels an
 /// enemy (27 for more than four), so it sits only roughly centred. The
 /// Kraken and the Fusion Dragon would stand nearer, 50 pixels left, past the
-/// first place; each is fought alone (formations.tsv rows 213 and 347), so
+/// first place; each is fought alone (formations.c rows 213 and 347), so
 /// neither does. Called by BattleUnit_RefreshPlacement and
 /// BattlePlacement_RelayoutEnemies; writes only xPositions and zPositions, in
 /// pixels.

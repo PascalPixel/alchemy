@@ -6,6 +6,12 @@
 
 #include "types.h"
 
+/// Formation.layout and BattleWork.layout (BattleFormation_BuildEnemyList):
+/// the random formations stand left to right in the order they were drawn,
+/// any other is laid out from the centre.
+#define FORMATION_LAYOUT_SHUFFLED 0
+#define FORMATION_LAYOUT_INTERLEAVED 1
+
 /// An enemy formation: its battle type and up to five kinds of enemy, each
 /// with the fewest and most of it that appear. BattleFormation_BuildEnemyList
 /// draws a battle's enemies from it.
@@ -20,7 +26,7 @@ struct Formation {
   u8 maximumCounts[5];
 };
 
-/// The 380 formations, by formation id (battle/formations.tsv).
-extern struct Formation gFormations[];
+/// The 380 formations, by formation id (battle/formations.c).
+extern const struct Formation gFormations[];
 
 #endif

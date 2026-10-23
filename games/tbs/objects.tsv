@@ -124,7 +124,10 @@ main	rom_main_07	games/tbs/src/battle/battle_data
 main	rom_main_07	games/tbs/src/battle/ability_staging
 main	rom_main_07	games/tbs/src/battle/battle_data_tail
 main	rom_main_07	games/tbs/src/battle/advarrow
+main	rom_main_07	games/tbs/src/battle/debug_presets
 main	rom_main_07	games/tbs/src/battle/battle_vars
+main	rom_main_07	games/tbs/src/battle/formations
+main	rom_main_07	games/tbs/src/battle/battle_sprites
 main	rom_main_08	games/tbs/src/system/far_call/BATTLE_ANIM
 main	rom_main_08	games/tbs/src/battle_anim/battle_anim	.text .data
 main	rom_main_08	games/tbs/src/battle_anim/battle_anim_composite

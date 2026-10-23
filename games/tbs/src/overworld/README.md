@@ -186,7 +186,7 @@ zone to ground 1. A map no rule matches has no battles. The world map takes its 
 leader, which also pick the battle background.
 
 A zone is a row of `encounter.tsv`: `rate` (0 for none), `level`, the
-formations `group0` to `group7` (rows of `games/tbs/src/battle/formations.tsv`), their
+formations `group0` to `group7` (rows of `games/tbs/src/battle/formations.c`), their
 relative chances `weight0` to `weight7`, and `zone`, the map whose rules
 select it. Zones with rate 0 are fought only by slot, through
 `Field_RequestBattleFromEncounterTable` (the scripted battles, such as

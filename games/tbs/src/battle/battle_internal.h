@@ -91,6 +91,7 @@
 #include "unit/overworld/field_services.h"
 #include "macros.h"
 #include "enemy_ids.h"
+#include "debug_party.h"
 
 /// The battle's windows: window 0 shows BG0 to BG2, sprites and blending,
 /// window 1 BG0, BG2, sprites and blending, and outside them only BG0 and
@@ -154,18 +155,12 @@
 /// the sync or transfer under way (link.c, round.c).
 #define LINK_MAX_MISSED_FRAMES 24
 
-/// BattleWork.layout, from the enemy formation
-/// (BattleFormation_BuildEnemyList): the random formations stand left to right
-/// in the order they were drawn, any other is laid out from the centre.
-#define FORMATION_LAYOUT_SHUFFLED 0
-#define FORMATION_LAYOUT_INTERLEAVED 1
-
 /// The two battle sprites drawn in two parts: the sprite after each is its
 /// second part, which EnemySprite_LoadIntoSlots loads into further
 /// enemy sprite slots and BattleObject_SpawnObjectsForList shows as the
 /// object's second sprite.
 #define SPRITE_WITH_SECOND_PART_A                                              \
-  476 ///< the Kraken's (ENEMY_KRAKEN, sprites.tsv)
+  476 ///< the Kraken's (ENEMY_KRAKEN, battle_sprites.c)
 #define SPRITE_WITH_SECOND_PART_B                                              \
   483 ///< the Fusion Dragon's (ENEMY_FUSION_DRAGON)
 

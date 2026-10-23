@@ -4,6 +4,11 @@
 
 #include "../battle_internal.h"
 
+// Declared here without const, as Camelot's code read it: with const,
+// alchemy-gcc compiles BattleFormation_SelectLevelMatchedCandidate differently.
+// formations.c defines it, const, in ROM.
+extern u16 gBattleFormation_LevelMatchedEnemies[];
+
 /// The rows of gFormations.
 #define FORMATION_COUNT 380
 

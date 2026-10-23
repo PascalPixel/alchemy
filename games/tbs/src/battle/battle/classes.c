@@ -16,7 +16,7 @@ u32 BattleSprite_GetDefeatSound(s32 index) {
   return kind;
 }
 
-/// The last class with a row in gBattleSprites (sprites.tsv).
+/// The last class with a row in gBattleSprites (battle_sprites.c).
 #define ENEMY_CLASS_LAST 171
 
 /// Returns the class's battle sprite, row 0's for a class out of range.
@@ -82,7 +82,7 @@ u32 BattleSprite_GetAttackHop(u32 index) {
 
 /// Returns 1 for a class whose blow lands with SE_HEAVY_IMPACT instead of
 /// SE_IMPACT; 0 out of range. Only the Venus Lighthouse aerie bosses set it in
-/// sprites.tsv: ENEMY_SATUROS_VENUS_LIGHTHOUSE, ENEMY_MENARDI and
+/// battle_sprites.c: ENEMY_SATUROS_VENUS_LIGHTHOUSE, ENEMY_MENARDI and
 /// ENEMY_FUSION_DRAGON.
 /// Called by the beam animations (beams.c) through its far stub.
 s32 BattleSprite_HasHeavyImpact(s32 index) {

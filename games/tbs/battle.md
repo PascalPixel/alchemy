@@ -47,7 +47,7 @@ The debug battle menu (`DebugBattle_RunMenu`) is the only other way in.
 battle's [heap slots](glossary.md#heap-slot), `gBattleWork` among them, and sets `FLAG_IN_BATTLE`
 while it runs. Its result is the number of enemies defeated,
 `BATTLE_OUTCOME_FLED` or `BATTLE_OUTCOME_LOST`. The formation is a row of
-`src/battle/formations.tsv`, the enemy formations, which
+`src/battle/formations.c`, the enemy formations, which
 `src/battle/battle/formation.c` turns into enemy units; the encounter zones
 in `src/overworld/encounter.tsv` choose the row.
 
@@ -403,7 +403,7 @@ takes one target's queue apart, entry by entry.
 - A turn reaches at most `TARGET_MAX` (14) targets.
 - The party fights four at a time and the enemies six at most
   (`PARTY_BATTLE_SIZE`, `ENEMY_BATTLE_SIZE`).
-- `formations.tsv` has 380 formations, each of up to five kinds of enemy.
+- `formations.c` has 380 formations, each of up to five kinds of enemy.
 - The playback queue holds `BATTLE_PLAYBACK_CAPACITY` (64) entries; `BattlePlayback_Push`
   doesn't check it.
 - The canvas is 128 by 128 pixels, the work block holds 64 particles, and

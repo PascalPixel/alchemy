@@ -35,9 +35,10 @@ struct BattleSpriteDefinition {
 };
 
 STATIC_ASSERT(sizeof(struct BattleSpriteDefinition) == 8);
-/// The enemies' battle sprites, one row per enemy id 0 to 171 (sprites.tsv),
-/// read by the BattleSprite_ getters; row 0 stands in for an id out of range.
-extern struct BattleSpriteDefinition gBattleSprites[];
+/// The enemies' battle sprites, one row per enemy id 0 to 171
+/// (battle_sprites.c), read by the BattleSprite_ getters; row 0 stands in for
+/// an id out of range.
+extern const struct BattleSpriteDefinition gBattleSprites[];
 
 /// A summon: its name's message and the Djinn of each element it needs.
 struct SummonDefinition {

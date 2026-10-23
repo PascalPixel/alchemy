@@ -719,7 +719,7 @@ keeps that thing's prefix (`Transform_`, `Palette_`, `Party_`, `Ability_`,
 - The party fights `PARTY_BATTLE_SIZE` at a time and the enemies
   `ENEMY_BATTLE_SIZE` at most; in a link battle each console sends
   `LINK_PARTY_SIZE`.
-- `formations.tsv` has 380 formations, each of up to five kinds of enemy with
+- `formations.c` has 380 formations, each of up to five kinds of enemy with
   the least and most of each (`member0` to `member4`, `minimum0` to
   `minimum4`, `maximum0` to `maximum4`). The encounter zones in
   `../overworld/encounter.tsv` choose among them.

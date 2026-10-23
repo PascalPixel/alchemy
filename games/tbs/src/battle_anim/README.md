@@ -1016,7 +1016,7 @@ row for Severe Blow names `BATTLE_ANIM_UNUSED_SEVERE_BLOW_LEAP`: there Severe Bl
 is the leap, where here it plays a casting impact.
 
 A plain attack's kind is 1 or 4 for the party (`BattleTurn_Build`) and
-1 to 5 for an enemy (`sprites.tsv`), all by id range, so the beam
+1 to 5 for an enemy (`battle_sprites.c`), all by id range, so the beam
 sequences play them. No ability uses the critical-hit effects
 (`ABILITY_EFFECT_CRITICAL_1_IN_64` to `ABILITY_EFFECT_CRITICAL_1_IN_4`), so
 only plain attacks score critical hits, and `ANIM_ID_CRITICAL_OFFSET`

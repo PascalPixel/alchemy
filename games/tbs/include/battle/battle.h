@@ -178,9 +178,6 @@ extern const u8 gObjectMotion_LinkedActionScript[];
 extern const s16 gParty_PairResolveRules[];
 /// Isaac's weapon sprite by weapon kind (BattleUnit_LookupWeaponValueByClass).
 extern u16 gBattleUnit_WeaponAnimationsIsaac[];
-/// The 20 enemies whose defeated flags a monster battle clears before it
-/// picks a formation (BattleFormation_SelectLevelMatchedCandidate).
-extern u16 gBattleFormation_LevelMatchedEnemies[];
 /// Battle backgrounds by map: a background word (bit 31 set, resource id below)
 /// and then its maps, ended by 0; a map not listed takes the last background
 /// (BattleBackground_SelectForMap).

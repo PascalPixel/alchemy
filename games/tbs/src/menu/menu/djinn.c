@@ -612,14 +612,14 @@ void DjinnMenu_DrawElementList(struct DjinnListTable *table) {
   s32 listIndex;
   s32 row;
   s32 element;
-  struct UiWork *ui;
+  struct WindowWork *windowWork;
   s32 lineIndex;
   s32 canChangeState;
   u16 *entries;
 
   menu = HEAP_SLOT_BLOCK(HEAP_SLOT_MENU);
-  ui = HEAP_SLOT_BLOCK(HEAP_SLOT_WINDOW);
-  ui->holdTilemapUpload = 1;
+  windowWork = HEAP_SLOT_BLOCK(HEAP_SLOT_WINDOW);
+  windowWork->holdTilemapUpload = 1;
   listIndex = 0;
   if (menu->ownerCount != 0) {
     do {
@@ -668,8 +668,8 @@ void DjinnMenu_DrawElementList(struct DjinnListTable *table) {
     }
   }
   Window_DrawDividerLineFar(menu->listWindow, 0, 10, 28, 10);
-  ((struct UiWork *)HEAP_SLOT_BLOCK(HEAP_SLOT_WINDOW))->dirty = 1;
-  ui->holdTilemapUpload = 0;
+  ((struct WindowWork *)HEAP_SLOT_BLOCK(HEAP_SLOT_WINDOW))->dirty = 1;
+  windowWork->holdTilemapUpload = 0;
 }
 
 /// Sets the palette of a rectangle of window's interior, (x, y) and its size in
@@ -1129,7 +1129,7 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
         Window_SetInteriorPaletteBitRect(menu->listWindow, ownerColumn * 7 + 1,
                                          djinnRow + 2, DJINN_CURSOR_WIDTH, 1,
                                          14);
-      ((struct UiWork *)gWindowWork[0])->dirty = 1;
+      ((struct WindowWork *)gWindowWork[0])->dirty = 1;
     }
     if (columnFlags[ownerColumn] & DJINN_COLUMN_ON_HEADER)
       MenuCursor_Position(ownerColumn * 56 - 8, 52);
@@ -1911,7 +1911,7 @@ s32 DjinnMenu_DrawStatPreview(struct Window *window, s32 x, s32 y, s32 ownerId,
       Text_SetColorFar(TEXT_COLOR_NORMAL);
       Window_DrawDividerLineFar(window, 0, 11, 13, 11);
     }
-    ((struct UiWork *)gWindowWork[0])->dirty = 1;
+    ((struct WindowWork *)gWindowWork[0])->dirty = 1;
   }
 
   if (page == 0)

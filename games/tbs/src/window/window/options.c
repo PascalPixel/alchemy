@@ -61,9 +61,9 @@ UNUSED void WindowColor_CalculateTint(struct OptionMenuWork *work) {
 
   phase = (gGameState.windowColor[0] + 12) % 24 * 4;
   bias = gGameState.windowColor[1] - 7;
-  red = gPaletteGlow_WaveTable[(phase % 96)];
-  green = gPaletteGlow_WaveTable[(phase + 32) % 96];
-  blue = gPaletteGlow_WaveTable[(phase + 64) % 96];
+  red = gWindowColor_WaveTable[(phase % 96)];
+  green = gWindowColor_WaveTable[(phase + 32) % 96];
+  blue = gWindowColor_WaveTable[(phase + 64) % 96];
   red += bias;
   green += bias;
   blue += bias;
@@ -171,9 +171,9 @@ void WindowColor_Apply(s32 phase, s32 brightness) {
   // every channel.
   step = ((phase + 12) % 24) * 4;
   offset = brightness - 7;
-  red = gPaletteGlow_WaveTable[(step % 96)] + offset;
-  green = gPaletteGlow_WaveTable[(step + 32) % 96] + offset;
-  blue = gPaletteGlow_WaveTable[(step + 64) % 96] + offset;
+  red = gWindowColor_WaveTable[(step % 96)] + offset;
+  green = gWindowColor_WaveTable[(step + 32) % 96] + offset;
+  blue = gWindowColor_WaveTable[(step + 64) % 96] + offset;
   CLAMP(red, 0, 31);
   CLAMP(green, 0, 31);
   CLAMP(blue, 0, 31);

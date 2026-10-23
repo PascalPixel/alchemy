@@ -377,7 +377,7 @@ s32 DjinnMenu_ShowCurrentList(void) {
       }
     }
   }
-  ((struct UiWork *)gWindowWork[0])->dirty = 1;
+  ((struct WindowWork *)gWindowWork[0])->dirty = 1;
   for (;;) {
     if (GameFlag_TestFar(FLAG_MENU_START_PRESSED))
       break;

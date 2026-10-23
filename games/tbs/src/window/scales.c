@@ -34,7 +34,7 @@ const s8 gMenuCursor_BobOffsets[16] = {
 /// steps. Red reads it at the hue, green 32 steps later and blue 64 steps
 /// later (WindowColor_Apply); a channel falls from 31 over 32 steps, stays
 /// 0 for 34 and climbs back. Nothing reads the 25 entries after the first 96.
-const u8 gPaletteGlow_WaveTable[121] = {
+const u8 gWindowColor_WaveTable[121] = {
     31, 30, 29, 28, 27, 26, 25, 24, 23, 22, 21, 20, 19, 18, 17, 16,
     15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0,
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,

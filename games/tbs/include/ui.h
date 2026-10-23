@@ -2,23 +2,12 @@
 #define ALCHEMY_UI_H
 
 /// @file
-/// UiWork, the window system's work, and the summary screen's cursors.
+/// The summary screen's cursors and the party status window's flags.
 
 #include "types.h"
 #include "tbs_edition.h"
 #include "static_assert.h"
 #include "farcall.h"
-
-/// A view of the window system's work (struct WindowWork) that names only
-/// its dirty bits and its menu busy flag.
-struct UiWork {
-  u8 beforeDirty[WINDOW_WORK_DIRTY_OFFSET]; ///< WindowWork up to its dirty bits
-  unsigned dirty : 8;                       ///< WindowWork.dirty
-  /// WindowWork's mode and battleMode.
-  u8 mindReadAndBattleMode[WINDOW_WORK_HOLD_UPLOAD_OFFSET -
-                           WINDOW_WORK_DIRTY_OFFSET - 1];
-  unsigned holdTilemapUpload : 8; ///< WindowWork.holdTilemapUpload
-};
 
 /// A cursor stop among the summary screen's stats: its help entry, where the
 /// cursor points and the run of the row it highlights.

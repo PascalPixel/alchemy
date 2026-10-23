@@ -124,7 +124,7 @@ void FieldEffect_RunVenusDjinnCapture(s32 djinniId) {
   }
 
   WaitFrames(100);
-  Sound_PlaySongFar(SE_STOP_SLOT3);
+  Sound_PlaySongFar(SE_STOP_ACTION_SE);
   WaitFrames(1);
   Sound_PlaySongFar(SE_151);
   position.x = leader->x;

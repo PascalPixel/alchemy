@@ -395,7 +395,7 @@ static void EventScript_PushStumpOver(void) {
     // It tips over the edge.
     ObjectMotion_SetSpeedParameters(LOCALID_STUMP, 5 * PIXELS(1) / 2,
                                     PIXELS(1) / 4);
-    Sound_PlaySong(SE_STOP_SLOT3);
+    Sound_PlaySong(SE_STOP_ACTION_SE);
     ObjectMotion_ResetAndSetPosition(LOCALID_STUMP, 416, 200);
     movedObjectEvent = ObjectEvent_GetById(LOCALID_STUMP);
     ObjectEvent_SetSpriteFlags(movedObjectEvent, 0);

@@ -418,8 +418,8 @@ s32 MapSec_GetNameIndexFar(s32 mapId, s32 warpDest);
 /// Starts an object event's action script: an enum MovementType, or the script
 /// itself.
 void ObjectEvent_SetMovementTypeFar(struct Object *object, s32 kind);
-/// Plays SE_STOP_SLOT5 and then sound_id (SONG_FADE_OUT_ACTION_SE for -1), and
-/// remembers sound_id to play again later.
+/// Plays SE_STOP_MUSIC_PLAYER_5 and then sound_id (SONG_FADE_OUT_ACTION_SE for
+/// -1), and remembers sound_id to play again later.
 void Map_QueueMusicFar(s32 sound_id);
 /// Plays the sound Map_QueueMusic remembered, if any.
 void Map_PlayQueuedMusicFar(void);

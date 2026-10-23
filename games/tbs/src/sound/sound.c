@@ -25,8 +25,8 @@ enum {
   BGM_DEFAULT_RAMP_STEP = 4,
   /// The track mask of every music command here. It selects tracks 0 to 7
   /// only, though the music player has 10 (sound/music_player_table.s) and
-  /// MUS_006,
-  /// MUS_022, MUS_028, MUS_029, MUS_040, MUS_041, MUS_WORLD_MAP,
+  /// MUS_KALAY,
+  /// MUS_022, MUS_028, MUS_029, MUS_040, MUS_TOLBI_BOUND_SHIP, MUS_WORLD_MAP,
   /// MUS_VENUS_LIGHTHOUSE and MUS_074 use 9 or more: their tracks 8 and 9
   /// keep their volume and pitch through the ramps and under a fanfare.
   TRACKS_ALL = 0xff,

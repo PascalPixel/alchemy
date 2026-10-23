@@ -579,7 +579,7 @@ static void ColosseumSatrageMatch_MovePusherAndLog(s32 logId, s32 offsetX,
   }
   Sound_PlaySong(SE_226);
   Object_WaitForMove(pusher);
-  Sound_PlaySong(SE_STOP_SLOT3);
+  Sound_PlaySong(SE_STOP_ACTION_SE);
   Object_SelectAnimation(log, 2);
   FieldScript_End();
 }
@@ -660,7 +660,7 @@ static void ColosseumSatrageMatch_RollLogToCell(s32 logId, s32 halfCellX,
   Object_WaitForMove(pusherObjectEvent);
   Object_SelectAnimation(pusherObjectEvent, 1);
   Object_WaitForMove(log);
-  Sound_PlaySong(SE_STOP_SLOT3);
+  Sound_PlaySong(SE_STOP_ACTION_SE);
   Sound_PlaySong(SE_HEAVY_STOP);
   Object_SelectAnimation(log, 1);
   FieldScript_WaitFrames(15);
@@ -1510,7 +1510,7 @@ static void ColosseumSatrageMatch_PushObstacleToCell(s32 obstacleId, s32 column,
   Object_SelectAnimation(pusherObjectEvent, 1);
   Object_WaitForMove(obstacle);
   Object_SelectAnimation(obstacle, 1);
-  Sound_PlaySong(SE_STOP_SLOT3);
+  Sound_PlaySong(SE_STOP_ACTION_SE);
   Sound_PlaySong(SE_HEAVY_STOP);
   FieldScript_WaitFrames(15);
 }
@@ -2001,7 +2001,7 @@ static void ColosseumSatrageMatch_PushAdjacentObstacle(void) {
 
   Sound_PlaySong(SE_238);
   Object_WaitForMove(obstacle);
-  Sound_PlaySong(SE_STOP_SLOT3);
+  Sound_PlaySong(SE_STOP_ACTION_SE);
 
   obstacle->x.fixed = destination.x;
   obstacle->z.fixed = destination.z;

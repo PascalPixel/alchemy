@@ -39,7 +39,7 @@
 #define FLAG_SYSTEM_FIRST 0x100
 #define FLAG_SYSTEM_LAST 0x1ff ///< the last of the 256 system flags
 /// The next map change is silent: the map loader clears it in place of
-/// playing SE_STOP_SLOT3, once. The world map sets it after its lighthouse
+/// playing SE_STOP_ACTION_SE, once. The world map sets it after its lighthouse
 /// transition.
 #define FLAG_SKIP_MAP_CHANGE_SOUND 0x101
 /// Set as a battle starts, cleared as a field map starts.
@@ -1227,9 +1227,9 @@
 /// (MsgTolbiShipReachedIslandRowers)
 #define FLAG_TOLBI_SHIP_AT_ISLAND 0x8a0
 /// The lookout has sighted the monsters of one of the ship's attacks, and the
-/// ship's map section plays MUS_029, the monsters' theme, instead of MUS_041.
-/// It is cleared when the party fights them on the rowing deck. ★ Named from
-/// the game: "Monsters sighted!" (MsgTolbiShipAvast)
+/// ship's map section plays MUS_029, the monsters' theme, instead of
+/// MUS_TOLBI_BOUND_SHIP. It is cleared when the party fights them on the rowing
+/// deck. ★ Named from the game: "Monsters sighted!" (MsgTolbiShipAvast)
 #define FLAG_TOLBI_SHIP_MONSTERS_SIGHTED 0x8f0
 /// At anchor off the island, the party has agreed to Sean and Ouranos' request
 /// to scout it for monsters, so the tour group can know whether it is safe to

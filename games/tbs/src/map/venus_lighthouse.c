@@ -1877,7 +1877,7 @@ static void EventScript_StepOnWallSwitch(void) {
       layer->offsetX = layer->offsetX / PIXELS(1) << 16;
       MapGrid_CopyCellAttributes(15, 32, 3, 1, 9, 32);
       MapGrid_CopyCellAttributes(12, 32, 3, 1, 15, 32);
-      Sound_PlaySong(SE_STOP_SLOT3);
+      Sound_PlaySong(SE_STOP_ACTION_SE);
       Sound_PlaySong(SE_188);
       MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
       MapGrid_WaitForShakeToSettle();
@@ -2430,7 +2430,7 @@ static void EventScript_StepOnWestWallSwitch(void) {
       }
       layer->offsetX += PIXELS(1) / 2;
       layer->offsetX = layer->offsetX / PIXELS(1) << 16;
-      Sound_PlaySong(SE_STOP_SLOT3);
+      Sound_PlaySong(SE_STOP_ACTION_SE);
       Sound_PlaySong(SE_188);
       MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
       MapGrid_WaitForShakeToSettle();
@@ -2503,7 +2503,7 @@ static void EventScript_StepOnEastWallSwitch(void) {
       }
       layer->offsetX += PIXELS(1) / 2;
       layer->offsetX = layer->offsetX / PIXELS(1) << 16;
-      Sound_PlaySong(SE_STOP_SLOT3);
+      Sound_PlaySong(SE_STOP_ACTION_SE);
       Sound_PlaySong(SE_188);
       MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
       MapGrid_WaitForShakeToSettle();

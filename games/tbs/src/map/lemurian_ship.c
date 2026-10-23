@@ -677,7 +677,7 @@ static void EventScript_RaiseTheShip(void) {
   REG_BG2CNT = cnt = (REG_BG2CNT & ~BGCNT_PRIORITY(3)) | BGCNT_PRIORITY(3);
   REG_BG1CNT = cnt = (REG_BG1CNT & ~BGCNT_PRIORITY(3)) | BGCNT_PRIORITY(2);
   gOrbGlowActive = 0;
-  Script_PlaySong(SE_STOP_SLOT3);
+  Script_PlaySong(SE_STOP_ACTION_SE);
   Task_Wait(1);
   // A flash of white; the swell starts as it clears.
   Script_PlaySong(SE_145);

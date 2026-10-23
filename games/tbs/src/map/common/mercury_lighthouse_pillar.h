@@ -384,7 +384,7 @@ void MercuryLighthouse_HopAcrossPool(void) {
         break;
       WaitFrames(1);
     }
-    Sound_PlaySong(SE_STOP_SLOT3);
+    Sound_PlaySong(SE_STOP_ACTION_SE);
     WaitFrames(1);
     objectEvent->x.fixed = state->targetX;
     objectEvent->z.fixed = state->targetZ;

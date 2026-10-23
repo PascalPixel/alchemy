@@ -814,7 +814,7 @@ static void CrossboneIsle_MoveSelectedObjectEventAndLog(s32 localId,
   }
   Sound_PlaySong(SE_226);
   Object_WaitForMove(selectedObjectEvent);
-  Sound_PlaySong(SE_STOP_SLOT3);
+  Sound_PlaySong(SE_STOP_ACTION_SE);
   SCRIPT_END();
 }
 

@@ -401,9 +401,9 @@ found:
 /// Rolls the large thing to the position probe found: the leader pushes
 /// (animation 8), the thing rolls (animation 3 or 2 by the direction) with
 /// SE_HEAVY_MOVE while the leader follows half a cell, and it stops with
-/// SE_STOP_SLOT3 and SE_HEAVY_STOP. Its cells are blocked (metatile behavior
-/// 255) at its new place, through the map grid's layer 1 offset, and its old
-/// place is given back what was under it.
+/// SE_STOP_ACTION_SE and SE_HEAVY_STOP. Its cells are blocked (metatile
+/// behavior 255) at its new place, through the map grid's layer 1 offset, and
+/// its old place is given back what was under it.
 UNUSED static void ObjectEvent_MoveAndRedraw(struct PushedObjectProbe probe) {
   struct MapGridScrollWork *workspace;
   struct ObjectEvent *objectEvent;
@@ -511,7 +511,7 @@ UNUSED static void ObjectEvent_MoveAndRedraw(struct PushedObjectProbe probe) {
   Import_ObjectEventSetAnimation(0, 1);
   ObjectEvent_GetById(0)->update = NULL;
   Object_WaitForMove(objectEvent);
-  Sound_PlaySong(SE_STOP_SLOT3);
+  Sound_PlaySong(SE_STOP_ACTION_SE);
   Sound_PlaySong(SE_HEAVY_STOP);
 
   objectEvent->x.fixed = probe.position.x;

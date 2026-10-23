@@ -447,7 +447,7 @@ static void ColosseumAzartMatch_MoveObjectEventPairByOffset(s32 localId, s32 dx,
   Sound_PlaySong(SE_226);
   Object_WaitForMove(leader);
   Object_SelectAnimation(objectEvent, 2);
-  Sound_PlaySong(SE_STOP_SLOT3);
+  Sound_PlaySong(SE_STOP_ACTION_SE);
   FieldScript_End();
 }
 
@@ -566,7 +566,7 @@ static void EventScript_PushPipeworksPillar(void) {
   Import_ObjectEventSetAnimation(leaderId, ANIM_STAND);
   Object_WaitForMove(objectEvent);
   Object_SelectAnimation(objectEvent, 1);
-  Script_PlaySong(SE_STOP_SLOT3);
+  Script_PlaySong(SE_STOP_ACTION_SE);
   Script_PlaySong(SE_HEAVY_STOP);
   FieldScript_WaitFrames(15);
   FieldScript_End();
@@ -1618,7 +1618,7 @@ static void ColosseumAzartMatch_PushObjectAhead(void) {
 
   Sound_PlaySong(SE_238);
   Object_WaitForMove(target);
-  Sound_PlaySong(SE_STOP_SLOT3);
+  Sound_PlaySong(SE_STOP_ACTION_SE);
 
   target->x.fixed = position.x;
   target->z.fixed = position.z;

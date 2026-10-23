@@ -1287,7 +1287,7 @@ static void Sanctum_ReceiveWiseOnesMission(void) {
   ObjectEvent_SetPosition(LOCALID_WISE_ONE, PIXELS(200), PIXELS(8));
   ObjectEvent_SetSpeed(LOCALID_WISE_ONE, PIXELS(2) / 5, PIXELS(1) / 5);
   ObjectEvent_MoveToAndWait(LOCALID_WISE_ONE, 200, 72);
-  Script_PlaySong(SE_STOP_SLOT3);
+  Script_PlaySong(SE_STOP_ACTION_SE);
   FieldScript_WaitFrames(30);
   ObjectMotion_SetVarCbAndRefresh(LOCALID_HEALER, 2);
   Import_ObjectEventSetAnimation(LOCALID_HEALER, 0);
@@ -1322,7 +1322,7 @@ static void Sanctum_ReceiveWiseOnesMission(void) {
     wiseOne = ObjectEvent_GetById(LOCALID_WISE_ONE);
     wiseOne->scaleY += -Q16_ONE / 100;
   }
-  Script_PlaySong(SE_STOP_SLOT3);
+  Script_PlaySong(SE_STOP_ACTION_SE);
   ObjectEvent_SetSpriteColorById(LOCALID_WISE_ONE, 0);
   ObjectEvent_SetPosition(LOCALID_WISE_ONE, 0, 0);
   FieldScript_WaitFrames(40);

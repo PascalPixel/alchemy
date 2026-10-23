@@ -398,7 +398,7 @@ static void VaultCave_PushPillarAhead(void) {
   leader->acceleration = 0x3333;
   Object_SetPosition(leader, destination.x, destination.y, destination.z);
   Object_WaitForMove(pillar);
-  Sound_PlaySong(SE_STOP_SLOT3);
+  Sound_PlaySong(SE_STOP_ACTION_SE);
   pillar->x.fixed = destination.x;
   pillar->z.fixed = destination.z;
   pillar->velocityX = 0;
@@ -740,7 +740,7 @@ static void VaultCave_RunRumble(void) {
   } while (frame <= 69);
   // Replace the mechanism's map cells after the fade completes.
   MapGrid_CopyCells(19, 83, 15, 8, 19, 91);
-  Script_PlaySong(SE_STOP_SLOT3);
+  Script_PlaySong(SE_STOP_ACTION_SE);
   MapGrid_CenterOnFollowedPoint();
   MapGrid_WaitForShakeToSettle();
   FieldScript_End();

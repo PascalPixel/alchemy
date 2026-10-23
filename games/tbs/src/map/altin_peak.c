@@ -2106,7 +2106,7 @@ static void AltinPeak_BeastFreezesSecondPuddle(void) {
   FieldEffect_StopCasterHook();
   ObjectEvent_ConfigureSpriteColor(LOCALID_FIRST_WATER_BEAST, SPRITE_COLOR_RBG);
   FieldEffect_End();
-  Sound_PlaySong(SE_STOP_SLOT3);
+  Sound_PlaySong(SE_STOP_ACTION_SE);
   ObjectEvent_ConfigureSpriteColor(LOCALID_FIRST_WATER_BEAST, SPRITE_COLOR_RBG);
 }
 
@@ -2406,7 +2406,7 @@ static void AltinPeak_StopCartAndJumpOff(struct ObjectEvent *objectEvent) {
   struct Sprite *sprite;
   struct ObjectEvent *leader;
 
-  Sound_PlaySong(SE_STOP_SLOT3);
+  Sound_PlaySong(SE_STOP_ACTION_SE);
   Sound_PlaySong(SE_232);
   x = objectEvent->x.fixed & 0xfff00000;
   centerZ = PIXELS(8);
@@ -2516,11 +2516,11 @@ static void AltinPeak_TurnCartLeft(struct ObjectEvent *objectEvent) {
   Sound_PlaySong(SE_CART_ROLL);
 }
 
-/// The cart rolls over a marked cell: SE_STOP_SLOT3 plays, and SE_184 and
+/// The cart rolls over a marked cell: SE_STOP_ACTION_SE plays, and SE_184 and
 /// SE_CART_ROLL follow as its countdown runs out.
 static void AltinPeak_StartCartCountdown(struct ObjectEvent *objectEvent) {
   objectEvent->work = 33;
-  Sound_PlaySong(SE_STOP_SLOT3);
+  Sound_PlaySong(SE_STOP_ACTION_SE);
 }
 
 /// Rolls the cart on by a frame and picks its animation from the terrain ahead

@@ -366,7 +366,7 @@ static void KolimaForestFloodgate_PushShortLogWest(void) {
   Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_STAND);
   ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_SHORT_LOG);
   Import_ObjectEventSetAnimation(LOCALID_SHORT_LOG, 1);
-  Sound_PlaySong(SE_STOP_SLOT3);
+  Sound_PlaySong(SE_STOP_ACTION_SE);
   Sound_PlaySong(SE_HEAVY_STOP);
   MapGrid_CopyCellAttributes(5, 9, 1, 4, 6, 9);
   MapGrid_CopyCellAttributes(0, 0, 1, 4, 4, 9);
@@ -393,7 +393,7 @@ static void KolimaForestFloodgate_PushShortLogEast(void) {
   Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_STAND);
   ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_SHORT_LOG);
   Import_ObjectEventSetAnimation(LOCALID_SHORT_LOG, 1);
-  Sound_PlaySong(SE_STOP_SLOT3);
+  Sound_PlaySong(SE_STOP_ACTION_SE);
   Sound_PlaySong(SE_HEAVY_STOP);
   MapGrid_CopyCellAttributes(5, 9, 1, 4, 4, 9);
   MapGrid_CopyCellAttributes(0, 0, 1, 4, 6, 9);
@@ -613,7 +613,7 @@ static void KolimaForestFloodgate_RollLog(struct FloodgateLog *runs) {
   Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_STAND);
   Object_WaitForMove(objectEvent);
   Object_SelectAnimation(objectEvent, 1);
-  Script_PlaySong(SE_STOP_SLOT3);
+  Script_PlaySong(SE_STOP_ACTION_SE);
   Script_PlaySong(SE_HEAVY_STOP);
   FieldScript_WaitFrames(15);
   FieldScript_End();

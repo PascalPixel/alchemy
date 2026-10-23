@@ -702,7 +702,7 @@ static void EventScript_PushLogOffLedge(void) {
   FieldScript_WaitFrames(15);
   ObjectMotion_OffsetPositionAndResetMotion(LOCALID_PARTY_LEADER, 8, 0);
   FieldScript_WaitFrames(4);
-  Script_PlaySong(SE_STOP_SLOT3);
+  Script_PlaySong(SE_STOP_ACTION_SE);
   Script_PlaySong(SE_HEAVY_MOVE);
   ObjectEvent_SetSpeed(LOCALID_WEST_LOG, PIXELS(1) / 2, PIXELS(1) / 10);
   Import_ObjectEventSetAnimation(LOCALID_WEST_LOG, 2);
@@ -714,7 +714,7 @@ static void EventScript_PushLogOffLedge(void) {
   ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_PARTY_LEADER);
   Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, 1);
   ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_WEST_LOG);
-  Script_PlaySong(SE_STOP_SLOT3);
+  Script_PlaySong(SE_STOP_ACTION_SE);
   Script_PlaySong(SE_HEAVY_STOP);
   Import_ObjectEventSetAnimation(LOCALID_WEST_LOG, 3);
   ObjectEvent_GetById(LOCALID_WEST_LOG)->motionFlags =

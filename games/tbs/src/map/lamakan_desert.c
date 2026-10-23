@@ -683,7 +683,7 @@ static void LamakanDesert_BatheInOasis(void) {
                           EFFECT_SCALE_TO_TARGET,
                       &puff);
   }
-  Script_PlaySong(SE_STOP_SLOT3);
+  Script_PlaySong(SE_STOP_ACTION_SE);
   Script_PlaySong(SE_JUMP);
   ObjectEvent_Get(LOCALID_PARTY_LEADER)->velocityY = 0x60000;
   ObjectEvent_SetAnimation(LOCALID_PARTY_LEADER, ANIM_STAND);

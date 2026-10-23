@@ -785,11 +785,11 @@ static void EventScript_RollLongLog(void) {
     column = 84;
     MapGrid_CopyCellAttributes(86, 10, 1, 2, column, 10);
     MapGrid_CopyCellAttributes(86, 9, 1, 1, column, 12);
-    Script_PlaySong(SE_STOP_SLOT3);
+    Script_PlaySong(SE_STOP_ACTION_SE);
     Script_PlaySong(SE_240);
   } else {
     Object_SelectAnimation(log, 1);
-    Script_PlaySong(SE_STOP_SLOT3);
+    Script_PlaySong(SE_STOP_ACTION_SE);
     Script_PlaySong(SE_HEAVY_STOP);
     column = x >> 20;
     MapGrid_CopyCellAttributes(85, 9, 1, 4, column, 9);
@@ -808,7 +808,7 @@ static s32
 ColosseumNavampaMatch_ShowActivatedSidewalkLayer(struct Object *interpreter) {
   TilesetAnim_Pause(1);
   TilesetAnim_Resume(2);
-  Sound_PlaySong(SE_STOP_SLOT3);
+  Sound_PlaySong(SE_STOP_ACTION_SE);
   Sound_PlaySong(SE_217);
   return 0;
 }
@@ -2362,7 +2362,7 @@ static void ColosseumNavampaMatch_PushObjectEventAhead(void) {
 
   Sound_PlaySong(SE_238);
   Object_WaitForMove(target);
-  Sound_PlaySong(SE_STOP_SLOT3);
+  Sound_PlaySong(SE_STOP_ACTION_SE);
 
   target->x.fixed = position.x;
   target->z.fixed = position.z;

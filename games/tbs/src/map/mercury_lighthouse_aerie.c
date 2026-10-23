@@ -991,7 +991,7 @@ static void MercuryLighthouseAerie_AlexAppears(void) {
   FieldScript_WaitFrames(20);
   Script_ShowMessageAndWait(LOCALID_SATUROS, 0, 30);
   ObjectEvent_SetPosition(LOCALID_ALEX, PIXELS(312), PIXELS(112));
-  Script_PlaySong(SE_STOP_SLOT3);
+  Script_PlaySong(SE_STOP_ACTION_SE);
   Script_ShowMessageAndWait(LOCALID_ALEX, 0, 20);
   ObjectEvent_ShowEmote(LOCALID_MIA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 60);
   Script_ShowMessageAndWait(LOCALID_MIA, 0, 30);

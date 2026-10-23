@@ -564,7 +564,7 @@ static void VenusLighthouseAerie_OverhearSaturosAndMenardi(void) {
   ObjectEvent_SetSpriteFlags(ObjectEvent_GetById(LOCALID_RISING_PLATFORM), 1);
   ObjectEvent_SetDestination(LOCALID_RISING_PLATFORM, 515, 171);
   ObjectMotion_SetPositionAndCommit(LOCALID_PARTY_LEADER, 516, 121);
-  Sound_PlaySong(SE_STOP_SLOT3);
+  Sound_PlaySong(SE_STOP_ACTION_SE);
   FieldScript_WaitFrames(20);
   Import_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_LEADER_SPRING);
   ObjectMotion_WaitForAnimationChange(0);
@@ -2474,7 +2474,7 @@ static void VenusLighthouseAerie_EruptBeacon(void) {
   struct ObjectEvent *objectEvent;
 
   Sound_PlaySong(MUS_SILENCE);
-  Sound_PlaySong(SE_STOP_SLOT3);
+  Sound_PlaySong(SE_STOP_ACTION_SE);
   MapGrid_SetShake(PIXELS(3), PIXELS(3), Q16_ONE);
   ObjectEvent_ShowEmote(LOCALID_PARTY_LEADER,
                         EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);

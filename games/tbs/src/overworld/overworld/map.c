@@ -233,12 +233,12 @@ void Game_Run(s32 mode) {
   Task_ResetAll();
   Task_ResetAll();
   for (;;) {
-    // FLAG_SKIP_MAP_CHANGE_SOUND skips SE_STOP_SLOT3 for one map
+    // FLAG_SKIP_MAP_CHANGE_SOUND skips SE_STOP_ACTION_SE for one map
     // change, then clears itself.
     if (GameFlag_GetFar(FLAG_SKIP_MAP_CHANGE_SOUND))
       GameFlag_ClearFar(FLAG_SKIP_MAP_CHANGE_SOUND);
     else
-      Sound_PlaySongFar(SE_STOP_SLOT3);
+      Sound_PlaySongFar(SE_STOP_ACTION_SE);
     record = &table[gSaveBlock.mapId];
     warpDest = gSaveBlock.warpDest;
 

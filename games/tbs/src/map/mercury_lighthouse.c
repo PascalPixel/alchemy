@@ -791,7 +791,7 @@ static void MercuryLighthouse_RestoreFountainTiles(s32 delayFrames) {
     destinationColumn += 2;
     sourceColumn += 2;
   } while (step <= 2);
-  Sound_PlaySong(SE_STOP_SLOT3);
+  Sound_PlaySong(SE_STOP_ACTION_SE);
   MapGrid_CopyCellAttributes(106, 33, 4, 5, 42, 33);
   MapGrid_WaitForShakeToSettle();
 }

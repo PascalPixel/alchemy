@@ -68,7 +68,7 @@ s32 Field_StartEncounterTransition(s32 unused) {
   s32 level;
 
   Sound_PlaySongFar(gSaveBlock.battleMusic);
-  Sound_PlaySongFar(SE_STOP_SLOT3);
+  Sound_PlaySongFar(SE_STOP_ACTION_SE);
   Sound_PlaySongFar(SE_147);
   if (work->mode == OBJECT_SYSTEM_WORLD_MAP) {
     // On the world map the flash colours BG palette colour 243 instead, and

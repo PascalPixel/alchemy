@@ -835,7 +835,7 @@ s32 Map_Initialize(void) {
   } else if (gSaveBlock.mapId == (s32)&MapId_SuhallaDesertSouth) {
     SuhallaDesert_SetUpSecondMapStorms();
   } else {
-    Sound_PlaySong(SE_STOP_SLOT3);
+    Sound_PlaySong(SE_STOP_ACTION_SE);
   }
   if (gSaveBlock.warpDest == WARP_DEST_DEFAULT) {
     gridState->flags &= ~DISPCNT_BG1_ON;

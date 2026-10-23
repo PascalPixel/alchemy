@@ -476,12 +476,14 @@ s32 Field_SearchTile(s32 tile) {
       s32 flags = event->control;
 
       // Bits 8 to 4, the search target (enum BgEventTarget), choose what the
-      // leader checks ("checked the chest...") unless trigger bit 10 says the
-      // event has its own message; if the event leaves FLAG_NOTHING_HAPPENS
-      // set, the matching result line follows ("but the chest was empty.").
+      // leader checks ("checked the chest...") unless
+      // MAP_EVENT_TRIGGER_OWN_EFFECT says the event has its own message; if the
+      // event leaves FLAG_NOTHING_HAPPENS set, the matching result line follows
+      // ("but the chest was empty.").
       condition = event->condition;
       messageOffset = (flags >> 4) & 31;
-      if ((event->trigger & 0x400) == 0 && messageOffset != 0) {
+      if ((event->trigger & MAP_EVENT_TRIGGER_OWN_EFFECT) == 0 &&
+          messageOffset != 0) {
         Leader_StopMoving();
         UiText_ShowPositionedMessageAndWaitFar(MsgTileChecked + messageOffset,
                                                1);

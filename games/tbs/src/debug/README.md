@@ -65,11 +65,12 @@ again.
 The Djinn room's (`Map_RunEmpty`) does nothing. The level room's
 (`Map_RunLevelRoomSetup`) draws the person who runs the level editor (object
 event 11) 1.6 times as large as the others, by its sprite's scale (1.7 in
-Japanese), and, outside Japanese, starts the emote testers' animations. The menu
+Japanese), and, in the [international editions](../../glossary.md#editions), starts the emote testers'
+animations. The menu
 test room's (`CommandTable_ConfigureCommandList`) builds a test party: Jenna
 leaves, Garet, Mia and Ivan join, the shops' counters for their rare weapons
-and armour go up, and everyone is raised to level 30, Isaac to 50 outside
-Japanese; in Japanese the coins are set to 777777. Each visit therefore adds to
+and armour go up, and everyone is raised to level 30, Isaac to 50 in the
+international editions; in Japanese the coins are set to 777777. Each visit therefore adds to
 the shops' stock again, but changes a level only if it is still below the
 target, because `Unit_LevelUpTo` only ever raises one. None of the rooms has
 warp regions, so each answers that entry with `MapData_ReturnZero`.
@@ -77,8 +78,8 @@ warp regions, so each answers that entry with `MapData_ReturnZero`.
 | Room | Setup entry | What it does |
 | --- | --- | --- |
 | Djinn room | `Map_RunEmpty` | nothing |
-| Level room | `Map_RunLevelRoomSetup` | draws the level editor's person at 1.6 times the size (1.7 in Japanese); outside Japanese, starts the emote testers |
-| Menu test room | `CommandTable_ConfigureCommandList` | builds the test party at level 30 (Isaac 50 outside Japanese) and raises the shops' rare-item counters |
+| Level room | `Map_RunLevelRoomSetup` | draws the level editor's person at 1.6 times the size (1.7 in Japanese); in the international editions, starts the emote testers |
+| Menu test room | `CommandTable_ConfigureCommandList` | builds the test party at level 30 (Isaac 50 in the international editions) and raises the shops' rare-item counters |
 
 ## The Djinn room
 
@@ -144,7 +145,7 @@ few test the emotes and Force, the [Psynergy](../../glossary.md#psynergy-and-pp)
 distance.
 
 Object event 8 is the item browser, 9 the icon browser, 10 the portrait browser and 11
-the level editor; outside Japanese, 12 is the ability browser and 13 and 14
+the level editor; in the international editions, 12 is the ability browser and 13 and 14
 test emotes. The level editor shows the leader's name and level under
 `Raise everyone's level.`, and raises the party five levels with Start or
 Select, one with A. The item browser steps through `ITEM_COUNT` item numbers,
@@ -152,7 +153,7 @@ Select, one with A. The item browser steps through `ITEM_COUNT` item numbers,
 and `BROWSER_PAGE_STEP` with R and L, skips numbers whose item has no
 icon, and gives the chosen item to the first member with room.
 
-The room's event table differs by [edition](../../glossary.md#editions). The ability browser has an event
+The room's event table differs by edition. The ability browser has an event
 only in English and German (`TBS_PATCH_1` without `TBS_PATCH_3`); French,
 Spanish and Italian keep its code and its object event. Force cast at the portrait
 browser runs a motion test in Japanese and shows the three character-set
@@ -171,7 +172,7 @@ mode, so Force's shot leaves the portrait browser where it stands.
 The menu test room's people run the shop, message and inventory tests with a
 ready-made party.
 
-![The menu test room, where most of the people placed run a test when spoken to, among them two Felixes. Outside the Japanese edition, Felix gives a different test depending on which way the leader faces when talking to him. Facing north, from below him, Isaac, the leader, gets the weapon shop's lines; facing west, from his right, the armour shop's; facing east, from his left, the item shop's; facing south, from above, the Sanctum's. Each is a separate talk event that names the facing it needs. A second Felix does the same with the Warrior's shops.](https://alchemy.pascalpixel.com/illustrations/debug/facing.svg)
+![The menu test room, where most of the people placed run a test when spoken to, among them two Felixes. In the international editions, Felix gives a different test depending on which way the leader faces when talking to him. Facing north, from below him, Isaac, the leader, gets the weapon shop's lines; facing west, from his right, the armour shop's; facing east, from his left, the item shop's; facing south, from above, the Sanctum's. Each is a separate talk event that names the facing it needs. A second Felix does the same with the Warrior's shops.](https://alchemy.pascalpixel.com/illustrations/debug/facing.svg)
 
 Talking to someone on a map runs that map's talk event for them, and an
 event can also ask which way the leader is facing. The menu test room uses

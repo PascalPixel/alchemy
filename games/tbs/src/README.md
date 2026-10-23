@@ -67,8 +67,8 @@ address fixed per [edition](../glossary.md#editions) and opening with a far-call
 glossary's [bank](../glossary.md#bank) entry says why. Code in another bank calls a function
 through its table entry, by its name with `Far` added
 (`Battle_RunEncounterFar`); inside a bank, functions call each other
-directly. The runtime bank is the exception: every bank calls its functions
-directly, and its table serves only the overlays
+directly. Every bank calls the runtime bank's functions directly instead,
+and its table serves only the overlays
 ([Engine](../engine.md#banks-and-far-calls)).
 
 | Place | Bank | Code | Folder |
@@ -158,8 +158,9 @@ code and loads none.
 In the source an overlay is three files in its folder:
 
 - `entry/<map>.s`, the [entry table](../glossary.md#entry-table-and-import-table): six [veneers](../glossary.md#veneer) the field code
-  calls to start the map and to get its [warp destinations](../glossary.md#warp-destination), warps,
-  object event templates, map events and warp regions.
+  calls to start the map and to ask it its questions, such as where its
+  [warp destinations](../glossary.md#warp-destination) are ([System](system/README.md#how-an-overlay-reaches-the-rest-of-the-game)
+  lists them).
 - `<map>.c`, the map's code and tables.
 - `import/<map>.s`, the import table: the veneers the overlay calls the main
   image through, chosen from the list in `system/overlay.inc`.

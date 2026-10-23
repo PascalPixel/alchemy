@@ -27,7 +27,9 @@ struct BattlePromptSprite {
   u16 tile : 10; ///< the arrow frame's VRAM tile, reloaded each frame
   /// Attribute 2's priority (bits 1..0) and palette (bits 5..2); 0 here.
   u16 palette : 6;
-  u16 unk0a; ///< cleared with the tile word each frame; not named
+  /// OAM's fourth halfword, the affine parameter slot; cleared with the tile
+  /// word each frame.
+  u16 affineParam;
 };
 
 struct UiWindow;
@@ -35,9 +37,9 @@ struct UiWindow;
 /// The battle message's text channel, as far as its offset in the window:
 /// the advance arrow is drawn at the window's corner plus this offset.
 struct BattleDisplayOffset {
-  s32 unk00; ///< not named by TBS code
-  u16 x;     ///< 1/256 pixels
-  u16 y;     ///< 1/256 pixels
+  struct UiWindow *window; ///< UiChannelSlot.work; not named here
+  u16 x;                   ///< 1/256 pixels
+  u16 y;                   ///< 1/256 pixels
 };
 
 /// The battle message display: its window, its text channel and whether the
@@ -92,7 +94,7 @@ struct BattleWork {
   u32 summonMasks[6];
   /// The letter each class in enemyClasses gave out last; -1 for none yet.
   s8 summonChannels[6];
-  u8 unk03a[2]; ///< not named by TBS code
+  u8 unusedAfterChannels[2]; ///< no code names it
   /// The enemyClasses index of the first class to fall; 6 for none.
   u16 firstDefeated;
   u16 defeatState; ///< DEFEAT_ONE, DEFEAT_SEVERAL or DEFEAT_BY_PARTY_MEMBER
@@ -107,14 +109,14 @@ struct BattleWork {
   u8 encounterMode; ///< BATTLE_ENCOUNTER_: who strikes first
   /// Failed attempts to run; each adds 2000 to the base chance of 5000.
   u8 escapeFailures;
-  u8 unk047; ///< not named by TBS code
+  u8 unusedAfterEscapes; ///< no code names it
   /// For each party unit, its slot as a link opponent's enemy, minus
   /// FIRST_ENEMY_UNIT; 0xff for none.
   u8 ownerSlots[8];
-  u8 linkSide;    ///< this console's multiplayer id
-  u8 linkMisses;  ///< frames the link has been down
-  u8 linkPaused;  ///< set when the link drops or the console's id changes
-  u8 unk053;      ///< not named by TBS code
+  u8 linkSide;         ///< this console's multiplayer id
+  u8 linkMisses;       ///< frames the link has been down
+  u8 linkPaused;       ///< set when the link drops or the console's id changes
+  u8 paddingAfterLink; ///< up to the word promptSlot starts on
   s32 promptSlot; ///< resource entry of the advance arrow's tiles; -1 for none
   s16 partyUnits[7];                       ///< ends with BATTLE_UNIT_LIST_END
   s16 enemyIds[BATTLE_ENEMY_CAPACITY + 1]; ///< ends with BATTLE_UNIT_LIST_END
@@ -124,20 +126,20 @@ struct BattleWork {
   /// for enemy unit 0x80 + n: a party unit's place in the active party, an
   /// enemy's own 8 + n; 0xff for a party unit with no object.
   u8 placement[14];
-  u8 unk2ea[2]; ///< not named by TBS code
+  u8 unusedAfterPlacement[2]; ///< no code names it
   /// The actions chosen for the turn.
   struct BattleActionRecord actions[BATTLE_ACTION_CAPACITY];
-  u8 unk42c[0x104]; ///< not named by TBS code
+  u8 unusedAfterActions[0x104]; ///< no code names it
   /// What the defeated enemies leave; spoils.defeated, their count, is also
   /// what Battle_RunEncounter returns after a win or a broken link.
   struct BattleSpoils spoils;
-  u16 palette[128];  ///< the backdrop's colours, before scaling
-  s32 brightness;    ///< the backdrop's brightness, 16.16, 0x10000 full
-  u16 background;    ///< the battle background's id
-  u8 unk64a[4];      ///< not named by TBS code
+  u16 palette[128]; ///< the backdrop's colours, before scaling
+  s32 brightness;   ///< the backdrop's brightness, 16.16, 0x10000 full
+  u16 background;   ///< the battle background's id
+  u8 unusedAfterBackground[4]; ///< no code names it
   u16 highlightStep; ///< index into gBattlePresentation_HighlightBlendRamp
   u16 highlightMode; ///< nonzero while the units are highlighted
-  u8 unk652[2];      ///< not named by TBS code
+  u8 paddingAfterHighlight[2]; ///< up to the word plan starts on
   /// The action being carried out, as BattleCommand_BuildPlan lays it out.
   struct BattlePlan plan;
   struct BattleEventState events;

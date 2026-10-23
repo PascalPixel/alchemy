@@ -29,7 +29,7 @@ struct BattleEffectArgument {
   s32 count;       ///< targets in actors, at least 1
   s32 variant;     ///< the ability's size, from 0 (Quake, then Earthquake)
   s32 prelude;     ///< 1 plays a prelude: in some effects a Djinni appears
-  s32 unk0020;     ///< not named by TBS code
+  s32 unused;      ///< no code names it
   s16 actors[8];   ///< the targets' unit ids, count of them
 };
 

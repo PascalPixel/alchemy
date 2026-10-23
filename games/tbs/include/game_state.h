@@ -63,14 +63,16 @@ struct GameState {
   /// half goes into the file's summary.
   u32 buildStamp;
   u32 playTime; ///< frames, copied from gPlayTimeFrames when saving
-  /// Not named by TBS code. The party's struct DjinnRecoveryTable
-  /// (Djinn_GetRecoveryTable) starts at byte 4, its first 8 bytes running
+  u8 unused[4]; ///< no code names it
+  /// The summons the party can call, bit n for summon n: the first word of
+  /// the party's struct DjinnRecoveryTable (BattleSummonState.availableMask),
+  /// which Djinn_GetRecoveryTable returns from here, its next word running
   /// over coins.
-  u8 unk008[8];
+  u32 summonMask;
   s32 coins; ///< 0 to 999999 (Party_AdjustCoins)
   /// The party's Djinn recovery list (struct DjinnRecoveryList), read through
   /// Djinn_GetRecoveryTable; not named by TBS code.
-  u8 unk014[0x104];
+  u8 djinnRecovery[0x104];
   s32 shopCredit; ///< spent on a Game Ticket; not written by name in TBS
   s8 shopGifts;   ///< indexes the Game Ticket's credit cost
   /// The slot machine's prize weights, three prizes to each of 4, 8, 16, 32
@@ -79,7 +81,7 @@ struct GameState {
   /// Lucky Wheels: 0 to 7 the prize categories won, ended by -1 (-2 once
   /// awarded); 8 on the last variant given of each category.
   s8 wonPrizes[0x10];
-  u8 unk13c[0x84]; ///< not named by TBS code
+  u8 unusedAfterPrizes[0x84]; ///< no code names it
   /// The map being played: its index in gField_MapTable (a MapId_
   /// symbol), or RUN_BATTLE or another number above the field maps.
   s16 mapId;
@@ -94,7 +96,7 @@ struct GameState {
   s16 defeatMap;      ///< where a defeat returns to; -1 for none
   s16 defeatWarpDest; ///< where a defeat returns to; -1 for none
   s16 special;        ///< the battle backdrop chosen for the map or terrain
-  u8 unk1d8[2];       ///< not named by TBS code
+  u8 unusedAfterSpecial[2]; ///< no code names it
   /// The map record's layout (layoutIndex); the world map's is 1, which the
   /// code compares as (s32)&MapId_Clear.
   s16 layoutId;
@@ -106,21 +108,22 @@ struct GameState {
   s16 battleCue;           ///< the battle music chosen for the encounter
   s16 cue;                 ///< the current map's field music
   u8 movementMode;         ///< 1 while the leader is climbing, 0 otherwise
-  u8 unk1f3;               ///< not named by TBS code
+  u8 paddingAfterMovement; ///< up to the word selectedObjectEvent starts on
   s32 selectedObjectEvent; ///< the leader: its unit and its object event
   u8 activeOwners[8];      ///< the party in order
-  u8 unk200[5];            ///< not named by TBS code
+  u8 unusedAfterOwners[5]; ///< no code names it
   u8 paletteGlow[2];       ///< window hue (0 to 23), brightness (0 to 14)
-  u8 unk207[3];            ///< not named by TBS code
+  u8 unusedAfterGlow[3];   ///< no code names it
   /// The voice sound option: 1, as on a new game, plays each speaker's voice
   /// sound as their message types (FieldEffect_GetResourceId).
   u8 speech;
-  u8 unk20b;       ///< 1 on a new game; not read by name in TBS
-  u8 messageSpeed; ///< 0 to 2; 1 on a new game
-  u8 unk20d[2];    ///< not named by TBS code
-  /// Set on saving at the end of the game; copied to the file's summary as
-  /// sendFlag.
-  u8 unk20f;
+  /// XXX: 1 on a new game and never read (see the game README).
+  u8 unk20b;
+  u8 messageSpeed;               ///< 0 to 2; 1 on a new game
+  u8 unusedAfterMessageSpeed[2]; ///< no code names it
+  /// Set on saving at the end of the game, marking the file cleared: its data
+  /// can be sent. Copied to the file's summary as sendFlag.
+  u8 sendFlag;
   /// The buttons for each field command, as KEY_ masks; read with gKeysPressed
   /// except dashKeys, held.
   ///@{
@@ -139,10 +142,10 @@ struct GameState {
   u16 firstShortcut;
   u16 secondShortcut;
   ///@}
-  u8 perspectiveMap;   ///< set to 1 on the world map; not read by name in TBS
-  u8 unk225[5];        ///< not named by TBS code
-  u8 idleSleepEnabled; ///< the option, saved from gIdleSleepEnabled
-  u8 battleStart;      ///< an enum BattleStart
+  u8 perspectiveMap; ///< set to 1 on the world map; not read by name in TBS
+  u8 unusedAfterPerspective[5]; ///< no code names it
+  u8 idleSleepEnabled;          ///< the option, saved from gIdleSleepEnabled
+  u8 battleStart;               ///< an enum BattleStart
   /// Hazardous ground (the Lamakan Desert's heat): when hazardSteps reaches
   /// hazardLimit the party takes hazardDamage and the count starts again. A
   /// fresh entry into a map, not a return from battle, resets them to 1 HP
@@ -164,23 +167,23 @@ struct GameState {
   s16 mapType;     ///< the current map's variant from its record
   s16 retreatMap;  ///< where Retreat goes; the map section's first warp
                    ///< destination
-  s16 retreatWarpDest; ///< where Retreat goes; the map section's first warp
-                       ///< destination
-  s32 avoidDistance;   ///< distance left of Avoid, 16.16 pixels; 0 when off
-  s8 avoidByItem;      ///< Avoid came from an item (the Sacred Feather)
-  s8 pausedPose;       ///< Halt: the stopped object's first animation param
-  s16 pausedObject;    ///< Halt: the stopped object; -1 for none
-  s16 cloaked;         ///< 1 under Cloak, which prevents battles
-  u8 unk24e[2];        ///< not named by TBS code
-  u32 pausedUpdate;    ///< Halt: the stopped object's update; not read by name
-  u8 unk254[0x50];     ///< not named by TBS code
+  s16 retreatWarpDest;     ///< where Retreat goes; the map section's first warp
+                           ///< destination
+  s32 avoidDistance;       ///< distance left of Avoid, 16.16 pixels; 0 when off
+  s8 avoidByItem;          ///< Avoid came from an item (the Sacred Feather)
+  s8 pausedPose;           ///< Halt: the stopped object's first animation param
+  s16 pausedObject;        ///< Halt: the stopped object; -1 for none
+  s16 cloaked;             ///< 1 under Cloak, which prevents battles
+  u8 paddingAfterCloak[2]; ///< up to the word pausedUpdate starts on
+  u32 pausedUpdate; ///< Halt: the stopped object's update; not read by name
+  u8 unusedAfterHalt[0x50]; ///< no code names it
   /// The link lobby's tallies: 4 the total wins and 7 the consecutive wins it
   /// reports, 3 cleared on choosing a monster battle; the others not named by
   /// TBS code.
   u16 linkTallies[8];
-  u8 unk2b4[4];   ///< not named by TBS code
-  u32 startStamp; ///< Runtime_GetBuildStampTime's value at a new game
-  u8 unk2bc[4];   ///< not named by TBS code
+  u8 unusedAfterTallies[4]; ///< no code names it
+  u32 startStamp;           ///< Runtime_GetBuildStampTime's value at a new game
+  u8 unusedAfterStartStamp[4]; ///< no code names it
   struct BattleUnit owners[8]; ///< the characters
 };
 

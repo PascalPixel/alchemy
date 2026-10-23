@@ -461,7 +461,7 @@ s32 SaveMenu_Run(void) {
       UiText_ShowPositionedMessageAndWait(MsgSaveAdventureQuestion + 1, 1);
       // Marks the file cleared (SaveSummary's sendFlag): its data can be
       // sent, and the message says it cannot be continued.
-      gGameState.unk20f = 1;
+      gGameState.sendFlag = 1;
       v7 = SaveMenu_WriteSelectedSlot();
       if (v7 == -1) {
         goto L_ask;
@@ -1028,7 +1028,7 @@ struct PasswordOwner {
   u8 regenToActions[0xb8]; ///< BattleUnit's baseHpRegen to actionSlots
   /// bits: 15..11 quantity | 10 broken | 9 equipped | 8..0 item
   u16 inventory[15];
-  u8 padding[2];         ///< BattleUnit's padding
+  u8 padding[2];         ///< BattleUnit's paddingBeforeDjinn
   u32 djinnAvailable[4]; ///< the Djinn held, a bit per Djinni, by element
 };
 

@@ -370,3 +370,7 @@ scripts name no item past `ITEM_CLERICS_RING` (268), no enemy in
 `enemies.tsv` carries or drops one, and the debug item browser covers 0 to 269
 and skips items without an icon. They are filler to 324 rows.
 
+
+- XXX: what `GameState.unk20b` holds; a new game sets it to 1 and no C reads
+  it, so a read in a map overlay or The Lost Age's use of the save's byte
+  would settle it.

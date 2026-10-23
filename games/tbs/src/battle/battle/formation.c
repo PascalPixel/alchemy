@@ -83,11 +83,11 @@ struct BattleBaseStats {
   u16 baseAttack;
   u16 baseDefense;
   u16 baseAgility;
-  u8 baseLuck;    ///< copied, not read
-  u8 actionCount; ///< copied, not read
-  u8 hpRegen;     ///< copied, not read
-  u8 ppRegen;     ///< copied, not read
-  u8 unk12[2];
+  u8 baseLuck;                                      ///< copied, not read
+  u8 actionCount;                                   ///< copied, not read
+  u8 hpRegen;                                       ///< copied, not read
+  u8 ppRegen;                                       ///< copied, not read
+  u8 unused[2];                                     ///< BattleUnit's baseUnused
   struct BattleElementStats element[ELEMENT_COUNT]; ///< the base power is read
 };
 

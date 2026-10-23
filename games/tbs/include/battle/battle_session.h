@@ -65,7 +65,7 @@ struct BattleActionRecord {
   s16 parameter; ///< an ability id, or COMMAND_ITEM's inventory index (-1 gone)
   s16 target;    ///< the aimed unit's id
   s16 range;     ///< the action's range
-  s16 unk0e;     ///< not named by TBS code
+  s16 unused;    ///< no code names it
 };
 
 /// A battle's spoils so far: coins, experience, enemies defeated and up to

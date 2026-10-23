@@ -28,7 +28,10 @@ struct BattleSpriteDefinition {
   u8 layoutBits1 : 4; ///< the sprite's palette
   u8 layoutKind : 3;  ///< the defeat-sound kind; above 4 reads as none
   ///@}
-  u8 unk04[4]; ///< [0] is the effect height (BattleClass_GetEffectHeight)
+  /// The height an effect is drawn at over the class, in pixels; 0 for its
+  /// size's default.
+  u8 effectHeight;
+  u8 reserved[3]; ///< 0 in every row
 };
 
 STATIC_ASSERT(sizeof(struct BattleSpriteDefinition) == 8);

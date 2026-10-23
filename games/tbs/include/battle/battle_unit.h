@@ -23,7 +23,7 @@ struct OwnerActionSlot {
   /// bits: 15 from the class | 14 from an equipped item | 13..0 action id.
   /// Entries with neither mark were taught for good; 0 is empty.
   u16 encodedAction;
-  u16 unk02; ///< Not named by any TBS code.
+  u16 unused; ///< no code names it
 };
 
 /// A unit's elemental power and resistance in one element.
@@ -202,10 +202,10 @@ struct BattleAct {
   /// bits: 7 usable in battle | 6 usable in the field | 5..4 clear in every
   /// row | 3..0 ability kind (ABILITY_KIND_MASK).
   u8 flags;
-  u8 element; ///< enum Element
-  u8 effect;  ///< enum AbilityEffect
-  /// [0] the icon the menus draw; [1] to [3] are 0 in every row.
-  u8 unk04[4];
+  u8 element;              ///< enum Element
+  u8 effect;               ///< enum AbilityEffect
+  u8 icon;                 ///< the icon the menus draw
+  u8 reservedAfterIcon[3]; ///< 0 in every row
   u8 range;  ///< the aimed unit and range - 1 either side, or ABILITY_RANGE_ALL
   u8 ppCost; ///< PP the ability costs
   /// The ability's power, as its ability kind reads it: for damage, about what
@@ -220,7 +220,7 @@ struct BattleAct {
   /// none. The field effects branch on it, and the status screen counts it as
   /// usable in the field.
   u8 type0c;
-  u8 unk0d[3]; ///< 0 in every row.
+  u8 reservedAfterType[3]; ///< 0 in every row
 };
 
 /// BattleAct.flags: where an ability can be used.
@@ -265,7 +265,7 @@ struct BattleUnit {
   u8 baseActionCount;
   u8 baseHpRegen; ///< HP regained each turn before equipment; 0 for a character
   u8 basePpRegen; ///< PP regained each turn before equipment and lighthouses
-  u8 unk022[2];   ///< Not named by any TBS code.
+  u8 baseUnused[2]; ///< no code names it
   /// Power and resistance before equipment and stages: an enemy's from its
   /// element preset, a character's from its element levels
   /// (Unit_CalculateBaseElements).
@@ -286,7 +286,7 @@ struct BattleUnit {
   /// PP regained at each turn's end, 0 to 200 (Unit_Calculate): 4 more once the
   /// lighthouse of the character's element is lit.
   u8 ppRegen;
-  u8 unk046[2]; ///< Not named by any TBS code.
+  u8 unused[2]; ///< no code names it, as baseUnused
   /// Power and resistance in each element, 0 to 200, after equipment, a
   /// summon's boost and Resistance stages (Unit_Calculate).
   struct BattleElementStats element[ELEMENT_COUNT];
@@ -296,7 +296,7 @@ struct BattleUnit {
   /// Items held, one entry each: bits 15..11 quantity | 10 broken |
   /// 9 equipped | 8..0 item id (INVENTORY_*). An empty entry is 0.
   u16 inventory[15];
-  u8 unk0f6[2]; ///< Not named by any TBS code.
+  u8 paddingBeforeDjinn[2]; ///< up to the word djinnAvailable starts on
   /// The Djinn held, one bit per Djinni (by its index) in each element's word.
   u32 djinnAvailable[ELEMENT_COUNT];
   /// The Djinn set, one bit per Djinni; only these add their stat bonuses.
@@ -378,7 +378,7 @@ struct BattleUnit {
   s8 agilityStage;
   /// Set by the challenge effect: an enemy with it never chooses to flee.
   s8 challenge;
-  u8 unk149;   ///< Not named by any TBS code.
+  u8 paddingBeforeEnemyId; ///< up to the halfword enemyId starts on
   u16 enemyId; ///< Not named by any TBS code; TLA reads it as the unit's id.
 };
 

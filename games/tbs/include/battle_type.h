@@ -46,7 +46,7 @@ struct BattlePlan {
   s8 targetCritical[BATTLE_TARGET_CAPACITY]; ///< enum BattleCritical
   s8 targetHit[BATTLE_TARGET_CAPACITY];      ///< 1, 0 or HIT_NOT_ROLLED
   s16 command;                               ///< enum BattleCommand
-  u8 unk4a[2];                               ///< not named by TBS code
+  u8 padding[2]; ///< up to the word abilityId starts on
   s32 abilityId;
   s32 element; ///< enum Element
   s32 outcome; ///< enum BattlePlanStaging: how the action is shown

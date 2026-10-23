@@ -14,7 +14,7 @@
 /// An object event's animated sprite (struct AnimationObject), as far as the
 /// pointer to its sprite id.
 struct FieldEffectSpeakerSprite {
-  u8 unk00[0x28]; ///< AnimationObject's fields before its layers
+  u8 beforeEntries[0x28]; ///< AnimationObject's fields before its layers
   /// AnimationObject.entries[0], its first layer, whose first halfword is the
   /// sprite id it shows (AnimationEntry.animationId); null for none.
   s16 *value28;
@@ -23,16 +23,22 @@ struct FieldEffectSpeakerSprite {
 /// An object event as the speaker lookup reads it: its kind (1 for an animated
 /// sprite) and that sprite.
 struct FieldEffectSpeakerObject {
-  u8 unk00[0x24];
-  s32 unk24;
-  u8 unk28[4];
-  s32 unk2c;
-  s32 unk30;
-  s32 unk34;
-  s32 unk38;
-  u8 unk3c[4];
-  s32 unk40;
-  u8 unk44[0x0c];
+  u8 beforeVelocity[0x24]; ///< ObjectRuntime's fields before velocityX
+  /// ObjectRuntime's motion, target, bounce, gravity and riseBaseY; not named
+  /// through this view.
+  ///@{
+  s32 velocityX;
+  s32 velocityY;
+  s32 velocityZ;
+  s32 speedLimit;
+  s32 acceleration;
+  s32 targetX;
+  s32 targetY;
+  s32 targetZ;
+  s32 bounce;
+  s32 gravity;
+  s32 riseBaseY;
+  ///@}
   struct FieldEffectSpeakerSprite *animation; ///< ObjectRuntime.animation
   u8 kind; ///< ObjectRuntime.animationKind: 1 for one animated sprite
 };

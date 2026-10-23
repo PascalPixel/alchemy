@@ -68,7 +68,9 @@ struct DjinnRecoveryList {
 /// party's inside gGameState from its byte 12, the enemies' over battle unit
 /// 0x83's record.
 struct DjinnRecoveryTable {
-  u8 unk00[8]; ///< its first word is BattleSummonState's availableMask
+  u32 summonMask; ///< BattleSummonState's availableMask; not named here
+  /// In the party's table, gGameState.coins; not named here.
+  u32 partyCoins;
   struct DjinnRecoveryList list;
 };
 

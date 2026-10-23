@@ -32,7 +32,8 @@ place again with everyone put back.
 In the code, `Field_RunScene` runs one field scene: it loads the map, calls
 the overlay's entries, then lets the leader walk, calling `Field_ProcessStep`
 once a frame, until `Field_CountRequests` finds a request. The requests are
-fields of the field work, so each kind holds at most one. A battle request
+fields of the field work, the block of memory that holds the running
+scene's state (`struct FieldWork`), so each kind holds at most one. A battle request
 saves the actors with `ObjectTable_Snapshot`, sets the next scene to
 `SCENE_BATTLE` and raises `EXIT_NONE`; afterwards `Scene_ReturnFromBattle`
 loads the field scene again with `FLAG_KEEP_PARTY_POSITION` set, and
@@ -40,12 +41,12 @@ loads the field scene again with `FLAG_KEEP_PARTY_POSITION` set, and
 
 | Name | Value | Meaning |
 | --- | --- | --- |
-| `SCENE_BATTLE` | `0x1fe` | the next scene a battle request writes |
+| `SCENE_BATTLE` | 510 (`0x1fe`) | the next scene a battle request writes |
 | `EXIT_NONE` | 999 | the exit result that means the next scene is already set |
-| `FLAG_KEEP_PARTY_POSITION` | `0x109` | the next field scene starts where the party was |
+| `FLAG_KEEP_PARTY_POSITION` | 265 (`0x109`) | the next field scene starts where the party was |
 
 [Field](src/field/README.md#the-walk-and-what-interrupts-it) explains the
-walk, and [Field objects](src/object/README.md#the-scene-loop-handles-requests-not-events)
+walk, and [Running a place](src/object/README.md#the-scene-loop-handles-requests-not-events)
 lists all twelve requests in the order they are handled and goes through
 each one.
 
@@ -95,10 +96,10 @@ returning from a battle restores the room as it was left.
 
 | Name | Value | Meaning |
 | --- | --- | --- |
-| `FLAG_SCENE_FIRST` | `0x200` | the first of the scene's 256 flags |
-| `FLAG_SCENE_LAST` | `0x2ff` | the last of them |
-| `FLAG_PLACE_FIRST` | `0x300` | the first of the place's 256 flags |
-| `FLAG_PLACE_LAST` | `0x3ff` | the last of them |
+| `FLAG_SCENE_FIRST` | 512 (`0x200`) | the first of the scene's 256 flags |
+| `FLAG_SCENE_LAST` | 767 (`0x2ff`) | the last of them |
+| `FLAG_PLACE_FIRST` | 768 (`0x300`) | the first of the place's 256 flags |
+| `FLAG_PLACE_LAST` | 1,023 (`0x3ff`) | the last of them |
 
 [Scenes](src/scene/README.md#state-that-cleans-itself-up) says how a scene
 uses them.
@@ -129,11 +130,10 @@ stores no offset: `Script_FindLabel` searches the script for the matching
 `SC_LABEL` word. `SC_END` leaves the object idling on `gScript_MainScript`;
 only `SC_FREE` frees the slot.
 
-The same 112 bytes are read through several structs (`ObjectRuntime`,
-`ScriptMotionObject`, `FieldActor` and others), kept apart because the
-compiler addresses a field by its declared type and each view is what its
-sites match with. XXX: likely one struct in Camelot's source, because every
-view describes the same block.
+Different parts of the code read an object's 112 bytes through different
+structs (`ObjectRuntime`, `ScriptMotionObject`, `FieldActor` and others),
+each naming the fields that part uses; [Matching](src/MATCHING.md) says why
+they are kept apart.
 
 | Name | Value | Meaning |
 | --- | --- | --- |
@@ -159,7 +159,10 @@ checks 8 pixels away: the way the pad points and 22.5 and 45 degrees either
 side. When one fails, `FieldObject_UpdatePlayerControl` tries headings 22.5,
 45 and 67.5 degrees off, nearest first, each with five checks of its own, and
 takes the first that passes. `Map_CheckObjectStep` decides each check from
-the cell there:
+the cell there. Speeds are in 16.16 fixed point, the engine's way of
+holding fractions of a pixel in a whole number: the upper 16 bits count
+whole pixels and the lower 16 bits sixty-five-thousandths of one, so
+`0x10000` is one pixel and `0x18000` one and a half.
 
 | Name | Value | Meaning |
 | --- | --- | --- |
@@ -167,7 +170,7 @@ the cell there:
 | `MAP_STEP_OPEN` | 0 | the object can step there |
 | `MAP_STEP_TOO_HIGH` | 1 | the ground there is more than 8 pixels higher |
 | `MAP_STEP_WALL` | 2 | the cell there is a wall (`MAP_CELL_WALL`) |
-| `FIELD_WALK_SPEED` | `0x10000` | 1 pixel a frame, in 16.16 fixed point |
+| `FIELD_WALK_SPEED` | `0x10000` | 1 pixel a frame |
 | `FIELD_RUN_SPEED` | `0x18000` | 1.5 pixels a frame, with a dash button held |
 
 [Field](src/field/README.md#walking-and-running) has the speeds on each kind of
@@ -179,7 +182,7 @@ object](src/field/README.md#how-high-a-step-can-go).
 A map is a grid of 16-pixel squares, cells, and each cell says three things:
 what is drawn there, how high its ground is, and what standing there does.
 
-![What one cell of a map says. A map is a grid of square cells, 16 pixels on a side. Each cell says what is drawn there, one block of four tiles; how high its ground is, flat, a slope or a step; and what standing there does: nothing, a wall, a spot this place's events name such as a door, a chest or a ladder, ground where battles start, or a ledge to jump down. The engine reads the ground to decide where the leader can step; the place's events read what standing there does to decide what happens.](https://alchemy.pascalpixel.com/illustrations/world/cell-word.svg)
+![What one cell of a map says. A map is a grid of square cells, 16 pixels on a side. Each cell says what is drawn there, one block, a 16-pixel picture made of 2 by 2 tiles, each tile an 8-pixel square; how high its ground is, flat, a slope or a step; and what standing there does: nothing, a wall, a spot this place's events name such as a door, a chest or a ladder, ground where battles start, or a ledge to jump down. The engine reads the ground to decide where the leader can step; the place's events read what standing there does to decide what happens.](https://alchemy.pascalpixel.com/illustrations/world/cell-word.svg)
 
 What standing on a cell does is its collision code, and it is what walls
 and events are keyed on. Some codes mean the same on every map: a wall,
@@ -192,10 +195,10 @@ wall. Goma Cave has no wall-coded cells at all; a rim of ground 32 pixels
 high runs along the foot of each cliff.
 
 The three layers of a map are windows onto one grid of 128 by 128 cells,
-decoded into the 64 KB at `Ram_MapCellBuffer`. A cell is one 32-bit word: its
-low halfword holds the block (a 2 by 2 group of 8-pixel tiles) in its low 12
-bits and the layer and priority an object standing there takes above it; its
-third byte is the collision code and its fourth its ground shape, from which
+decoded into the 64 KB at `Ram_MapCellBuffer`. A cell is one 32-bit word,
+four bytes: its first two bytes (a halfword) hold the block in their low 12
+bits and, above it, the layer and priority an object standing there takes;
+its third byte is the collision code and its fourth its ground shape, from which
 `Map_GetTerrainHeight` computes the height. `MAP_CELL_WALL` is a wall; the
 codes from `MAP_CELL_EVENT_FIRST` to `MAP_CELL_EVENT_LAST` belong to the
 scene.
@@ -256,18 +259,26 @@ are farther away and wider, so together they show a trapezoid around the
 party, and the land seems to tilt away. When the player holds L to zoom out,
 the lines spread so far apart that some strips of the map are never drawn.
 
-`BG2` and `BG3` are affine backgrounds in display mode 2: the ground is
-`BG3`, the middle map layer of mountains and forest is `BG2`, and the towns
-and the party are sprites drawn flat over both.
-`WorldMap_BuildScanlineTable` gives each screen line a width scale and a
-ground distance when the world map is set up, and again only if the camera's
-pitch changes, which nothing in the game does. Each frame
-`Transform_UpdateVertices`, an ARM routine run from IWRAM, turns them into a
-page of affine values, and `MapAnimation_ApplyAffineFrame` sets the first
-line's values and starts an HBlank DMA that feeds each following line its
-own. There are two pages, and alternate frames use them: the HBlank DMA
-reads one page throughout a frame while `Transform_UpdateVertices` builds
-the other.
+In the code, a background the console can scale and rotate is an affine
+background: for each screen line it takes a starting point on the map and a
+step to move by for each pixel, its affine values, and draws what it finds
+along that line. In display mode 2, the screen setting the world map uses,
+`BG2` and `BG3` are both affine: the ground is `BG3`, the middle map layer of
+mountains and forest is `BG2`, and the towns and the party are sprites drawn
+flat over both.
+
+`WorldMap_BuildScanlineTable` gives each screen line (scanline) a width
+scale and a ground distance when the world map is set up, and again only if
+the camera's pitch changes, which nothing in the game does. Each frame
+`Transform_UpdateVertices` turns them into a page of affine values. It is ARM
+code, the processor's full 32-bit instructions, run from IWRAM, its fast
+internal memory, since that is where such code runs quickest; the rest of
+the game is in the compact 16-bit Thumb form. `MapAnimation_ApplyAffineFrame`
+sets the first line's values and starts an HBlank DMA: a copy the console
+makes by itself in the HBlank, the pause after each line is drawn, here
+feeding each following line its own values. There are two pages, and
+alternate frames use them: the DMA reads one page throughout a frame while
+`Transform_UpdateVertices` builds the other.
 
 When a menu or event starts on the world map, `WorldMap_StartStillView` draws
 the current affine frame into ordinary tiles on `BG1` and switches the display
@@ -277,29 +288,33 @@ undoes it. The world map's own scene, its places and events, is described on
 
 [Field](src/field/README.md#the-world-map-in-perspective) works through the
 scanline table, [Maps](src/map/README.md#the-world-maps-data) the world map's
-data, and [Field objects](src/object/README.md#the-world-map-screen) the still
+data, and [Running a place](src/object/README.md#the-world-map-screen) the still
 picture R brings up.
 
 ## Random encounters
 
 As the party walks, a counter fills, faster on some ground than on other,
-and a battle starts when it is full.
+and a battle starts when it is full. A party that has outgrown a place meets
+its battles less often there.
 
-![How a random battle starts. Each frame the leader moves, a counter fills by a step, and a battle starts when it is full. The step is bigger on ground whose zone has a higher rate, bigger when the party's level is above the zone's, and varies by a random amount drawn again after each battle. There are no battles at all while Cloak is active, on ground with no zone, while a flag turns them off, or with Avoid active where the party's level is above the zone's. When the counter is full, one of the zone's enemy groups is drawn by weight.](https://alchemy.pascalpixel.com/illustrations/object/encounter-roll.svg)
+![How a random battle starts. Each frame the leader moves, a counter fills by a step, and a battle starts when it is full. Each zone sets how far the party walks between battles: the higher its rate, the smaller the steps. A party above the zone's level adds to the rate, so it meets fewer battles. A random part, drawn again after each battle, varies the gap. There are no battles at all while Cloak is active, on ground with no zone, while a flag turns them off, or with Avoid active where the party's level is above the zone's. When the counter is full, one of the zone's enemy groups is drawn by weight.](https://alchemy.pascalpixel.com/illustrations/object/encounter-roll.svg)
 
-Each kind of ground belongs to a zone, and the zone decides how fast the
-counter fills and which enemies can appear. Each frame the leader walks,
+Each kind of ground belongs to a zone, and the zone decides how far apart
+its battles are and which enemies can appear. Each frame the leader walks,
 `Encounter_SelectEnemyGroup` adds to `gGameState.encounterSteps` an amount
-that grows with the zone's rate and a random bias redrawn after each battle,
-scaled by the leader's speed limit. A battle starts when the counter reaches
-`work->encounterThreshold`, 16 in 16.16 fixed point, and one of the zone's
-eight enemy groups is drawn by weight. A field scene's zones come from the
+scaled by the leader's speed limit that shrinks as the zone's rate grows, so
+a higher rate means a longer walk between battles. Each level, up to five,
+by which the party's average level is above the zone's adds 5 to the rate,
+and with Avoid active such a zone has no battles at all. A random bias,
+redrawn after each battle, varies the amount. A battle starts when the
+counter reaches `work->encounterThreshold`, 16 in 16.16 fixed point, and one
+of the zone's eight enemy groups is drawn by weight. A field scene's zones come from the
 first matching rule in `gBattle_LocationRules`, which assigns zones to the
 encounter grounds its cells mark; the world map's come from
 `gWorldMap_EncounterRules`, by the terrain under the leader. Each zone is a
 row of `src/object/encounter.tsv`.
 
-[Field objects](src/object/README.md#random-battles) has the roll step by
+[Running a place](src/object/README.md#random-battles) has the roll step by
 step, and [Battle](battle.md#starting-a-battle) what happens once it starts.
 
 ## Field Psynergy
@@ -326,7 +341,7 @@ Force strikes or Frost freezes.
 | `PSYNERGY_PHASE_BEFORE_CAST` | 1 | once the PP is paid, before the effect |
 | `PSYNERGY_PHASE_EFFECT_ACTS` | 5 | from inside the effect, where it acts on the place |
 
-[Field objects](src/object/README.md#how-field-psynergy-reaches-its-effect)
+[Running a place](src/object/README.md#how-field-psynergy-reaches-its-effect)
 covers the dispatch, every phase and each field kind's effect.
 
 ## Limits

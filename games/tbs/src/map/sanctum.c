@@ -579,8 +579,8 @@ static s32 Sanctum_MatchLeaderPriority(union FieldObject *fieldObject) {
 /// Has Isaac, Garet, Dora, the Mayor and the two healers nod, waiting for the
 /// last of them.
 static inline void Sanctum_NodAll(void) {
-  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIMATION_NOD);
-  Engine_ObjectEventSetAnimation(GARET, ANIMATION_NOD);
+  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
+  Engine_ObjectEventSetAnimation(GARET, ANIM_NOD);
   Engine_ObjectEventSetAnimation(LOCALID_DORA, 3);
   Engine_ObjectEventSetAnimation(LOCALID_GARETS_GRANDFATHER, 3);
   Engine_ObjectEventSetAnimation(LOCALID_WEST_HEALER, 3);
@@ -649,8 +649,8 @@ static void Sanctum_RequestQuestAcceptance(void) {
     PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_ALL);
     Engine_ColorBufferInterpolate(60);
     Engine_ScriptWait(100);
-    Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIMATION_STAND);
-    Engine_ObjectEventSetAnimation(GARET, ANIMATION_STAND);
+    Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_STAND);
+    Engine_ObjectEventSetAnimation(GARET, ANIM_STAND);
     Engine_ScriptWait(30);
     ObjectEvent_FaceObjectEvent(LOCALID_PARTY_LEADER,
                                 LOCALID_GARETS_GRANDFATHER, 0);
@@ -672,8 +672,8 @@ static void Sanctum_RequestQuestAcceptance(void) {
     Engine_ScriptSetMessage(MsgSanctumWeHadIdeaTrueSanctum);
     Script_ShowMessage(LOCALID_GARETS_GRANDFATHER, 0);
     Engine_ScriptWait(10);
-    Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIMATION_NOD);
-    Engine_ObjectEventSetAnimationAndWait(GARET, ANIMATION_NOD);
+    Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
+    Engine_ObjectEventSetAnimationAndWait(GARET, ANIM_NOD);
     Engine_ScriptWait(30);
     Engine_ObjectEventSetAnimationAndWait(LOCALID_GARETS_GRANDFATHER, 3);
     Engine_ScriptWait(20);
@@ -718,8 +718,8 @@ static void Sanctum_RequestQuestAcceptance(void) {
       Script_ShowMessage(LOCALID_WEST_HEALER, 0);
     }
     Engine_ScriptWait(20);
-    Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIMATION_NOD);
-    Engine_ObjectEventSetAnimation(GARET, ANIMATION_NOD);
+    Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
+    Engine_ObjectEventSetAnimation(GARET, ANIM_NOD);
     Engine_ObjectEventSetAnimation(LOCALID_DORA, 3);
     Engine_ObjectEventSetAnimation(LOCALID_GARETS_GRANDFATHER, 3);
     Engine_ObjectEventSetAnimation(LOCALID_WEST_HEALER, 3);
@@ -898,8 +898,8 @@ static void Sanctum_RequestQuestAcceptance(void) {
     Engine_ScriptWait(30);
     Engine_ObjectEventFaceEachOther(LOCALID_PARTY_LEADER, GARET, 0);
     Engine_ScriptWait(20);
-    Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIMATION_NOD);
-    Engine_ObjectEventSetAnimation(GARET, ANIMATION_NOD);
+    Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
+    Engine_ObjectEventSetAnimation(GARET, ANIM_NOD);
     Engine_ObjectEventFaceEachOther(LOCALID_WEST_HEALER, LOCALID_EAST_HEALER,
                                     0);
     Engine_ScriptWait(20);
@@ -910,9 +910,9 @@ static void Sanctum_RequestQuestAcceptance(void) {
     Engine_ObjectEventFaceEachOther(LOCALID_PARTY_LEADER, LOCALID_DORA, 0);
     Engine_ObjectEventFaceEachOther(GARET, LOCALID_GARETS_GRANDFATHER, 0);
     Engine_ScriptWait(20);
-    Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIMATION_NOD);
+    Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
     Engine_ObjectEventSetAnimation(LOCALID_DORA, 3);
-    Engine_ObjectEventSetAnimation(GARET, ANIMATION_NOD);
+    Engine_ObjectEventSetAnimation(GARET, ANIM_NOD);
     Engine_ObjectEventSetAnimation(LOCALID_GARETS_GRANDFATHER, 3);
     ObjectMotion_WaitForAnimationChange(LOCALID_GARETS_GRANDFATHER);
     Engine_ScriptWait(60);
@@ -1005,8 +1005,8 @@ static void Sanctum_RequestQuestAcceptance(void) {
     Engine_ScriptWait(20);
     Script_ShowMessage(LOCALID_HEALER, 0);
     Engine_ScriptWait(20);
-    Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIMATION_NOD);
-    Engine_ObjectEventSetAnimation(GARET, ANIMATION_NOD);
+    Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
+    Engine_ObjectEventSetAnimation(GARET, ANIM_NOD);
     Engine_ObjectEventSetAnimation(LOCALID_DORA, 3);
     Engine_ObjectEventSetAnimation(LOCALID_GARETS_GRANDFATHER, 3);
     Engine_ObjectEventSetAnimation(LOCALID_WEST_HEALER, 3);
@@ -1226,7 +1226,7 @@ static void Sanctum_ReceiveWiseOnesMission(void) {
   ObjectEvent_FaceObjectEvent(LOCALID_EAST_HEALER, LOCALID_PARTY_LEADER, 0);
   Engine_ObjectEventFaceEachOther(LOCALID_PARTY_LEADER, LOCALID_DORA, 0);
   Engine_ScriptWait(10);
-  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIMATION_NOD);
+  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
   Engine_ObjectEventSetAnimationAndWait(LOCALID_DORA, 3);
   Engine_ScriptWait(60);
   Engine_ObjectEventSetAnimation(LOCALID_HEALER, 3);
@@ -1240,7 +1240,7 @@ static void Sanctum_ReceiveWiseOnesMission(void) {
   ObjectEvent_FaceObjectEvent(LOCALID_WEST_HEALER, LOCALID_HEALER, 0);
   ObjectEvent_FaceObjectEvent(LOCALID_EAST_HEALER, LOCALID_HEALER, 0);
   Engine_ScriptWait(30);
-  Engine_ObjectEventSetAnimationAndWait(GARET, ANIMATION_SHAKE_HEAD);
+  Engine_ObjectEventSetAnimationAndWait(GARET, ANIM_SHAKE_HEAD);
   Engine_ScriptWait(20);
   // Garet and the Mayor react to Isaac accepting the burden.
   Engine_ScriptSetMessage(MsgSanctumAcceptIsaacCantMean);
@@ -1257,7 +1257,7 @@ static void Sanctum_ReceiveWiseOnesMission(void) {
   Engine_ScriptWait(20);
   ObjectEvent_FaceObjectEvent(GARET, LOCALID_GARETS_GRANDFATHER, 0);
   Engine_ScriptWait(20);
-  Engine_ObjectEventSetAnimationAndWait(GARET, ANIMATION_NOD);
+  Engine_ObjectEventSetAnimationAndWait(GARET, ANIM_NOD);
   Engine_ScriptWait(40);
   ObjectEvent_FaceObjectEvent(GARET, LOCALID_HEALER, 0);
   ObjectEvent_FaceObjectEvent(LOCALID_GARETS_GRANDFATHER, LOCALID_HEALER, 0);
@@ -1354,8 +1354,8 @@ static void Sanctum_ReceiveWiseOnesMission(void) {
   Engine_ScriptWait(20);
   Engine_ObjectEventSetAnimationAndWait(LOCALID_HEALER, 3);
   Engine_ScriptWait(20);
-  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIMATION_NOD);
-  Engine_ObjectEventSetAnimationAndWait(GARET, ANIMATION_NOD);
+  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
+  Engine_ObjectEventSetAnimationAndWait(GARET, ANIM_NOD);
   Engine_ScriptWait(20);
   ObjectEvent_FaceObjectEvent(LOCALID_HEALER, LOCALID_PARTY_LEADER, 0);
   Engine_ScriptWait(20);
@@ -1544,8 +1544,8 @@ static void Sanctum_ReceiveWiseOnesMission(void) {
   Engine_ScriptWait(20);
   Script_ShowMessage(LOCALID_GARETS_GRANDFATHER, 0);
   Engine_ScriptWait(30);
-  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIMATION_NOD);
-  Engine_ObjectEventSetAnimationAndWait(GARET, ANIMATION_NOD);
+  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
+  Engine_ObjectEventSetAnimationAndWait(GARET, ANIM_NOD);
   Engine_ScriptWait(20);
   Script_ShowMessage(LOCALID_DORA, 0);
   Engine_ScriptWait(20);
@@ -1787,7 +1787,7 @@ static void Sanctum_ReenactSolSanctum(void) {
   Engine_ScriptWait(10);
   Engine_ObjectEventSetAnimationAndWait(LOCALID_GARETS_GRANDFATHER, 3);
   Engine_ScriptWait(10);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_PARTY_LEADER, ANIMATION_NOD);
+  Engine_ObjectEventSetAnimationAndWait(LOCALID_PARTY_LEADER, ANIM_NOD);
   Engine_ScriptWait(15);
   Engine_ObjectEventFaceObjectEvent(LOCALID_PARTY_LEADER, GARET, 0);
   Engine_ObjectEventStartRepeatedMotion(LOCALID_PARTY_LEADER, 1);
@@ -1799,7 +1799,7 @@ static void Sanctum_ReenactSolSanctum(void) {
   Engine_ScriptWait(1);
   ObjectEvent_GetById(GARET)->steeringFlags |= OBJ_EVENT_FACES_MOTION;
   Engine_ObjectEventWaitForMove(LOCALID_PARTY_LEADER);
-  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIMATION_STAND);
+  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_STAND);
   ObjectEvent_GetById(LOCALID_PARTY_LEADER)->steeringFlags |=
       OBJ_EVENT_FACES_MOTION;
   ObjectEvent_GetById(GARET)->steeringFlags |= OBJ_EVENT_FACES_MOTION;
@@ -1812,15 +1812,15 @@ static void Sanctum_ReenactSolSanctum(void) {
   Engine_ObjectEventRunRepeatedMotion(GARET, 2);
   Engine_ObjectEventFaceObjectEvent(GARET, LOCALID_GARETS_GRANDFATHER, 0);
   Engine_ScriptWait(5);
-  Engine_ObjectEventSetAnimationAndWait(GARET, ANIMATION_NOD);
+  Engine_ObjectEventSetAnimationAndWait(GARET, ANIM_NOD);
   Engine_ScriptWait(10);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_PARTY_LEADER, ANIMATION_NOD);
+  Engine_ObjectEventSetAnimationAndWait(LOCALID_PARTY_LEADER, ANIM_NOD);
   Engine_ScriptWait(5);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_PARTY_LEADER, ANIMATION_NOD);
+  Engine_ObjectEventSetAnimationAndWait(LOCALID_PARTY_LEADER, ANIM_NOD);
   Engine_ScriptWait(10);
   Engine_ObjectEventFaceObjectEvent(GARET, LOCALID_PARTY_LEADER, 0);
   Engine_ScriptWait(10);
-  Engine_ObjectEventSetAnimationAndWait(GARET, ANIMATION_NOD);
+  Engine_ObjectEventSetAnimationAndWait(GARET, ANIM_NOD);
   Engine_ScriptWait(15);
   Engine_ObjectEventSetAnimation(LOCALID_DORA, 3);
   Engine_ObjectEventSetAnimation(LOCALID_GARETS_GRANDFATHER, 3);
@@ -1832,14 +1832,14 @@ static void Sanctum_ReenactSolSanctum(void) {
                                     LOCALID_GARETS_GRANDFATHER, 0);
   Engine_ObjectEventFaceObjectEvent(GARET, LOCALID_GARETS_GRANDFATHER, 0);
   Engine_ScriptWait(10);
-  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIMATION_NOD);
-  Engine_ObjectEventSetAnimationAndWait(GARET, ANIMATION_NOD);
+  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
+  Engine_ObjectEventSetAnimationAndWait(GARET, ANIM_NOD);
   Engine_ScriptWait(20);
   Engine_ObjectEventFaceObjectEvent(LOCALID_PARTY_LEADER, LOCALID_DORA, 0);
   Engine_ObjectEventFaceObjectEvent(GARET, LOCALID_DORA, 0);
   Engine_ScriptWait(10);
-  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIMATION_NOD);
-  Engine_ObjectEventSetAnimationAndWait(GARET, ANIMATION_NOD);
+  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
+  Engine_ObjectEventSetAnimationAndWait(GARET, ANIM_NOD);
   Engine_ScriptWait(20);
   Engine_ObjectEventFaceDirection(LOCALID_PARTY_LEADER, FACING_EAST, 0);
   Engine_ScriptWait(15);
@@ -1881,7 +1881,7 @@ static void Sanctum_ReenactSolSanctum(void) {
   Engine_ScriptWait(60);
   Engine_ObjectEventFaceObjectEvent(GARET, LOCALID_GARETS_GRANDFATHER, 0);
   Engine_ScriptWait(10);
-  Engine_ObjectEventSetAnimationAndWait(GARET, ANIMATION_NOD);
+  Engine_ObjectEventSetAnimationAndWait(GARET, ANIM_NOD);
   Engine_ScriptWait(10);
   ObjectEvent_GetById(LOCALID_HEALER)->timer = GARET;
 #ifdef UBFIX
@@ -1925,7 +1925,7 @@ static void Sanctum_ReenactSolSanctum(void) {
   Engine_ScriptWait(60);
   Engine_ObjectEventFaceEachOther(LOCALID_PARTY_LEADER, LOCALID_DORA, 0);
   Engine_ScriptWait(10);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_PARTY_LEADER, ANIMATION_NOD);
+  Engine_ObjectEventSetAnimationAndWait(LOCALID_PARTY_LEADER, ANIM_NOD);
   Engine_ScriptWait(10);
   Engine_ObjectEventSetAnimationAndWait(LOCALID_DORA, 3);
   Engine_ScriptWait(10);
@@ -1941,7 +1941,7 @@ static void Sanctum_ReenactSolSanctum(void) {
   Engine_ObjectEventFaceEachOther(LOCALID_PARTY_LEADER,
                                   LOCALID_GARETS_GRANDFATHER, 0);
   Engine_ScriptWait(10);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_PARTY_LEADER, ANIMATION_NOD);
+  Engine_ObjectEventSetAnimationAndWait(LOCALID_PARTY_LEADER, ANIM_NOD);
   Engine_ScriptWait(10);
   Engine_ObjectEventSetAnimationAndWait(LOCALID_GARETS_GRANDFATHER, 3);
   Engine_ScriptWait(60);
@@ -1949,15 +1949,15 @@ static void Sanctum_ReenactSolSanctum(void) {
   Engine_ObjectEventFaceObjectEvent(LOCALID_PARTY_LEADER, LOCALID_DORA, 0);
   Engine_ObjectEventFaceObjectEvent(GARET, LOCALID_GARETS_GRANDFATHER, 0);
   Engine_ScriptWait(10);
-  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIMATION_SHAKE_HEAD);
-  Engine_ObjectEventSetAnimationAndWait(GARET, ANIMATION_SHAKE_HEAD);
+  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_SHAKE_HEAD);
+  Engine_ObjectEventSetAnimationAndWait(GARET, ANIM_SHAKE_HEAD);
   Engine_ScriptWait(10);
   Engine_ObjectEventStartRepeatedMotion(LOCALID_PARTY_LEADER, 1);
   Engine_ObjectEventRunRepeatedMotion(GARET, 1);
   Engine_ScriptWait(10);
   Engine_ObjectEventFaceDirection(GARET, FACING_EAST, 0);
   Engine_ScriptWait(10);
-  Engine_ObjectEventSetAnimationAndWait(GARET, ANIMATION_NOD);
+  Engine_ObjectEventSetAnimationAndWait(GARET, ANIM_NOD);
   Engine_ScriptWait(10);
   Engine_ObjectEventFaceObjectEvent(GARET, LOCALID_GARETS_GRANDFATHER, 0);
   Engine_ScriptWait(10);
@@ -2013,21 +2013,21 @@ static void Sanctum_ReenactSolSanctum(void) {
   Engine_ObjectEventFaceObjectEvent(LOCALID_PARTY_LEADER, LOCALID_DORA, 0);
   Engine_ObjectEventFaceObjectEvent(GARET, LOCALID_GARETS_GRANDFATHER, 0);
   Engine_ScriptWait(20);
-  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIMATION_NOD);
-  Engine_ObjectEventSetAnimationAndWait(GARET, ANIMATION_NOD);
+  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
+  Engine_ObjectEventSetAnimationAndWait(GARET, ANIM_NOD);
   Engine_ScriptWait(10);
   Engine_ObjectEventSetAnimation(LOCALID_DORA, 3);
   Engine_ObjectEventSetAnimationAndWait(LOCALID_GARETS_GRANDFATHER, 3);
   Engine_ScriptWait(30);
   Engine_ObjectEventFaceEachOther(LOCALID_PARTY_LEADER, GARET, 0);
   Engine_ScriptWait(20);
-  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIMATION_NOD);
-  Engine_ObjectEventSetAnimationAndWait(GARET, ANIMATION_NOD);
+  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
+  Engine_ObjectEventSetAnimationAndWait(GARET, ANIM_NOD);
   Engine_ScriptWait(10);
   Engine_ObjectEventFaceDirection(GARET, FACING_EAST, 0);
   Engine_ScriptWait(10);
-  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIMATION_WALK);
-  Engine_ObjectEventSetAnimation(GARET, ANIMATION_WALK);
+  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_WALK);
+  Engine_ObjectEventSetAnimation(GARET, ANIM_WALK);
   Engine_ScriptWait(60);
 }
 

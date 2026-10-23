@@ -166,8 +166,8 @@ void FieldEffect_SpawnBurstParticleField(void) {
       particle->acceleration = 0x18000;
       particle->speed = 0x18000;
       particle->motionFlags = 0;
-      Animation_ApplyChildValuesFar((struct DispatchObject *)particle,
-                                    SPRITE_COLOR_GREEN_TINT);
+      Anim_ApplyChildValuesFar((struct DispatchObject *)particle,
+                               SPRITE_COLOR_GREEN_TINT);
       ObjectDispatch_SelectAnimationFar(particle, 7);
       ObjectDispatch_InitializeFar((struct DispatchObject *)particle,
                                    gFieldEffect_CommonParticleScript + 1);

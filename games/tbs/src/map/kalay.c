@@ -506,13 +506,12 @@ static void Kalay_AskAboutCaveAccess(void) {
     Engine_ScriptOpenMessage(LOCALID_TUNNEL_GUARD, 0);
     if (Engine_ScriptChooseYesNo(0, 0) == 0) {
       Engine_ObjectEventSetAnimationAndWait(LOCALID_TUNNEL_GUARD,
-                                            ANIMATION_SHAKE_HEAD);
+                                            ANIM_SHAKE_HEAD);
       Engine_ScriptShowMessage(LOCALID_TUNNEL_GUARD, 0);
     } else {
       message = &gFieldWork->message;
       *message = *message + 1;
-      Engine_ObjectEventSetAnimationAndWait(LOCALID_TUNNEL_GUARD,
-                                            ANIMATION_NOD);
+      Engine_ObjectEventSetAnimationAndWait(LOCALID_TUNNEL_GUARD, ANIM_NOD);
       Engine_ScriptShowMessage(LOCALID_TUNNEL_GUARD, 0);
     }
     Engine_ScriptEnd();
@@ -615,7 +614,7 @@ static void Kalay_OpenDoorAndExit(void) {
   Engine_ObjectEventSetSpeed(LOCALID_PARTY_LEADER, PIXELS(1) / 2,
                              PIXELS(1) / 4);
   ObjectEvent_GetById(LOCALID_PARTY_LEADER)->motionFlags = 0;
-  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIMATION_WALK);
+  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_WALK);
   ObjectEvent_CenterAndWalk(LOCALID_PARTY_LEADER, 2, -8);
   Engine_ScriptWait(10);
   Engine_ScriptRequestWarp(*trigger);
@@ -640,7 +639,7 @@ static void Kalay_EnterPalace(void) {
   Kalay_AnimatePalaceDoor();
   ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(1) / 2, PIXELS(1) / 4);
   ObjectEvent_GetById(LOCALID_PARTY_LEADER)->motionFlags = 0;
-  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIMATION_WALK);
+  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_WALK);
   ObjectEvent_SetDestinationOffset(LOCALID_PARTY_LEADER, 0, -8);
   Engine_ScriptWait(10);
   Engine_ScriptRequestWarp(HAMMET_PALACE_GROUNDS_TO_HAMMET_PALACE);
@@ -756,7 +755,7 @@ static void Kalay_WatchTourGroupDeparture(void) {
     Engine_ObjectEventRunRepeatedMotion(LOCALID_FIRST_TOURIST + 1, 2);
     ObjectEvent_FaceDirection(LOCALID_FIRST_TOURIST + 1,
                               FACING_NORTHWEST + FACING_STEP, 10);
-    Engine_ObjectEventSetAnimation(LOCALID_FIRST_TOURIST + 1, ANIMATION_NOD);
+    Engine_ObjectEventSetAnimation(LOCALID_FIRST_TOURIST + 1, ANIM_NOD);
     Script_ShowMessageAndWait(LOCALID_FIRST_TOURIST + 1, 0, 10);
     ObjectEvent_SetAttachedEffect(LOCALID_FIRST_TOURIST + 5,
                                   ATTACHED_EFFECT_IN_FRONT |
@@ -770,16 +769,14 @@ static void Kalay_WatchTourGroupDeparture(void) {
     Script_ShowMessageAndWait(LOCALID_FIRST_TOURIST + 4, 0, 10);
     ObjectEvent_FaceDirection(LOCALID_FIRST_TOURIST + 4, FACING_WEST, 10);
     Engine_ObjectEventRunRepeatedMotion(LOCALID_FIRST_TOURIST + 4, 2);
-    Engine_ObjectEventSetAnimation(LOCALID_FIRST_TOURIST + 4,
-                                   ANIMATION_SHAKE_HEAD);
+    Engine_ObjectEventSetAnimation(LOCALID_FIRST_TOURIST + 4, ANIM_SHAKE_HEAD);
     Script_ShowMessageAndWait(LOCALID_FIRST_TOURIST + 4, 0, 10);
     ObjectEvent_FaceDirection(LOCALID_FIRST_TOURIST + 4,
                               FACING_NORTHWEST + FACING_STEP, 0);
     ObjectEvent_FaceDirection(LOCALID_FIRST_TOURIST + 5,
                               FACING_SOUTH + FACING_STEP, 20);
-    Engine_ObjectEventSetAnimation(LOCALID_FIRST_TOURIST + 4, ANIMATION_NOD);
-    Engine_ObjectEventSetAnimationAndWait(LOCALID_FIRST_TOURIST + 5,
-                                          ANIMATION_NOD);
+    Engine_ObjectEventSetAnimation(LOCALID_FIRST_TOURIST + 4, ANIM_NOD);
+    Engine_ObjectEventSetAnimationAndWait(LOCALID_FIRST_TOURIST + 5, ANIM_NOD);
     Engine_ObjectEventRunRepeatedMotion(LOCALID_HEAD_GUIDE, 2);
     ObjectEvent_SetAttachedEffect(LOCALID_HEAD_GUIDE, ATTACHED_EFFECT_IN_FRONT |
                                                           ATTACHED_EFFECT_ONCE);
@@ -796,7 +793,7 @@ static void Kalay_WatchTourGroupDeparture(void) {
     ObjectEvent_FaceDirection(LOCALID_FIRST_TOURIST + 1, FACING_WEST, 0);
     ObjectEvent_FaceDirection(LOCALID_FIRST_TOURIST + 5, FACING_WEST, 0);
     ObjectEvent_FaceDirection(LOCALID_FIRST_TOURIST + 4, FACING_WEST, 20);
-    Engine_ObjectEventSetAnimationAndWait(LOCALID_HEAD_GUIDE, ANIMATION_NOD);
+    Engine_ObjectEventSetAnimationAndWait(LOCALID_HEAD_GUIDE, ANIM_NOD);
     Engine_ScriptWait(20);
     headAgain = ObjectEvent_Get(LOCALID_HEAD_GUIDE);
     headAgain->steeringFlags &= ~OBJ_EVENT_FACES_MOTION;
@@ -809,12 +806,11 @@ static void Kalay_WatchTourGroupDeparture(void) {
     Script_ShowMessageAndWait(LOCALID_HEAD_GUIDE, 0, 10);
     ObjectEvent_ShowEmote(LOCALID_OURANOS, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
     Engine_ObjectEventRunRepeatedMotion(LOCALID_OURANOS, 1);
-    Engine_ObjectEventSetAnimationAndWait(LOCALID_OURANOS, ANIMATION_NOD);
+    Engine_ObjectEventSetAnimationAndWait(LOCALID_OURANOS, ANIM_NOD);
     Script_ShowMessageAndWait(LOCALID_OURANOS, 0, 10);
     Engine_ObjectEventRunRepeatedMotion(LOCALID_FIRST_TOURIST + 6, 1);
     Script_ShowMessageAndWait(LOCALID_FIRST_TOURIST + 6, 0, 10);
-    Engine_ObjectEventSetAnimation(LOCALID_FIRST_TOURIST + 6,
-                                   ANIMATION_SHAKE_HEAD);
+    Engine_ObjectEventSetAnimation(LOCALID_FIRST_TOURIST + 6, ANIM_SHAKE_HEAD);
     Script_ShowMessageAndWait(LOCALID_FIRST_TOURIST + 6, 0, 10);
     Engine_ObjectEventRunRepeatedMotion(LOCALID_SECOND_GUIDE, 2);
     ObjectEvent_ShowEmote(LOCALID_SECOND_GUIDE, EMOTE_IN_FRONT | EMOTE_WINCE,
@@ -851,10 +847,10 @@ static void Kalay_WatchTourGroupDeparture(void) {
         LOCALID_SECOND_GUIDE, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
     Engine_ScriptWait(40);
     Engine_ObjectEventSetAnimationAndWait(LOCALID_SECOND_GUIDE,
-                                          ANIMATION_SHAKE_HEAD);
+                                          ANIM_SHAKE_HEAD);
     ObjectEvent_ShowEmote(LOCALID_HEAD_GUIDE, EMOTE_IN_FRONT | EMOTE_QUESTION,
                           40);
-    Engine_ObjectEventSetAnimationAndWait(LOCALID_HEAD_GUIDE, ANIMATION_NOD);
+    Engine_ObjectEventSetAnimationAndWait(LOCALID_HEAD_GUIDE, ANIM_NOD);
     Engine_ObjectEventRunRepeatedMotion(LOCALID_HEAD_GUIDE, 2);
     ObjectEvent_FaceDirection(LOCALID_HEAD_GUIDE, FACING_EAST, 0);
     ObjectEvent_FaceDirection(LOCALID_SECOND_GUIDE, FACING_EAST, 60);
@@ -862,8 +858,8 @@ static void Kalay_WatchTourGroupDeparture(void) {
                               FACING_SOUTHEAST + FACING_STEP, 0);
     ObjectEvent_FaceDirection(LOCALID_SECOND_GUIDE,
                               FACING_NORTHWEST + FACING_STEP, 10);
-    Engine_ObjectEventSetAnimationAndWait(LOCALID_HEAD_GUIDE, ANIMATION_NOD);
-    Engine_ObjectEventSetAnimationAndWait(LOCALID_SECOND_GUIDE, ANIMATION_NOD);
+    Engine_ObjectEventSetAnimationAndWait(LOCALID_HEAD_GUIDE, ANIM_NOD);
+    Engine_ObjectEventSetAnimationAndWait(LOCALID_SECOND_GUIDE, ANIM_NOD);
     ObjectEvent_FaceDirection(LOCALID_SECOND_GUIDE, FACING_EAST, 0);
     ObjectEvent_SetSpeed(LOCALID_HEAD_GUIDE, PIXELS(8) / 5, PIXELS(4) / 5);
     ObjectEvent_RunActionScriptAndWait(LOCALID_HEAD_GUIDE,
@@ -881,8 +877,7 @@ static void Kalay_WatchTourGroupDeparture(void) {
     ObjectEvent_SetAttachedEffect(LOCALID_HEAD_GUIDE, ATTACHED_EFFECT_IN_FRONT |
                                                           ATTACHED_EFFECT_ONCE);
     Engine_ScriptWait(60);
-    Engine_ObjectEventSetAnimationAndWait(LOCALID_HEAD_GUIDE,
-                                          ANIMATION_SHAKE_HEAD);
+    Engine_ObjectEventSetAnimationAndWait(LOCALID_HEAD_GUIDE, ANIM_SHAKE_HEAD);
     message = MsgKalayShortOnePerson;
     Engine_ScriptSetMessage(message);
     Script_ShowMessageAndWait(LOCALID_HEAD_GUIDE, 0, 40);
@@ -960,7 +955,7 @@ static void Kalay_WatchTourGroupDeparture(void) {
                               FACING_SOUTH + FACING_STEP, 10);
     Engine_ObjectEventRunRepeatedMotion(LOCALID_FIRST_TOURIST + 4, 1);
     Engine_ObjectEventSetAnimationAndWait(LOCALID_FIRST_TOURIST + 4,
-                                          ANIMATION_SHAKE_HEAD);
+                                          ANIM_SHAKE_HEAD);
     message = MsgKalayDecideEnteringColosso;
     Engine_ScriptSetMessage(message);
     Script_ShowMessageAndWait(LOCALID_FIRST_TOURIST + 4, 0, 10);
@@ -976,13 +971,11 @@ static void Kalay_WatchTourGroupDeparture(void) {
     ObjectEvent_FaceDirection(LOCALID_FIRST_TOURIST + 6,
                               FACING_SOUTH + FACING_STEP, 10);
     message += 3;
-    Engine_ObjectEventSetAnimationAndWait(LOCALID_OURANOS,
-                                          ANIMATION_SHAKE_HEAD);
+    Engine_ObjectEventSetAnimationAndWait(LOCALID_OURANOS, ANIM_SHAKE_HEAD);
     Engine_ScriptSetMessage(message);
     Script_ShowMessageAndWait(LOCALID_OURANOS, 0, 10);
     Engine_ObjectEventRunRepeatedMotion(LOCALID_FIRST_TOURIST + 6, 1);
-    Engine_ObjectEventSetAnimation(LOCALID_FIRST_TOURIST + 6,
-                                   ANIMATION_SHAKE_HEAD);
+    Engine_ObjectEventSetAnimation(LOCALID_FIRST_TOURIST + 6, ANIM_SHAKE_HEAD);
     Script_ShowMessageAndWait(LOCALID_FIRST_TOURIST + 6, 0, 10);
     ObjectEvent_ShowEmote(LOCALID_OURANOS, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
     ObjectEvent_ShowEmote(LOCALID_HEAD_GUIDE, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN,
@@ -1022,9 +1015,9 @@ static void Kalay_WatchTourGroupDeparture(void) {
     Script_ShowMessageAndWait(LOCALID_SECOND_GUIDE, 0, 10);
     Engine_ObjectEventRunRepeatedMotion(LOCALID_HEAD_GUIDE, 1);
     Script_ShowMessageAndWait(LOCALID_HEAD_GUIDE, 0, 10);
-    Engine_ObjectEventSetAnimationAndWait(LOCALID_SECOND_GUIDE, ANIMATION_NOD);
+    Engine_ObjectEventSetAnimationAndWait(LOCALID_SECOND_GUIDE, ANIM_NOD);
     Script_ShowMessageAndWait(LOCALID_SECOND_GUIDE, 0, 10);
-    Engine_ObjectEventSetAnimationAndWait(LOCALID_HEAD_GUIDE, ANIMATION_NOD);
+    Engine_ObjectEventSetAnimationAndWait(LOCALID_HEAD_GUIDE, ANIM_NOD);
     Script_ShowMessageAndWait(LOCALID_HEAD_GUIDE, 0, 10);
     ObjectEvent_ShowEmote(LOCALID_FIRST_TOURIST, EMOTE_IN_FRONT | EMOTE_WINCE,
                           40);
@@ -1034,11 +1027,11 @@ static void Kalay_WatchTourGroupDeparture(void) {
                           EMOTE_IN_FRONT | EMOTE_WINCE, 40);
     Script_ShowMessageAndWait(LOCALID_FIRST_TOURIST + 1, 0, 10);
     Engine_ObjectEventSetAnimationAndWait(LOCALID_SECOND_GUIDE,
-                                          ANIMATION_SHAKE_HEAD);
+                                          ANIM_SHAKE_HEAD);
     Engine_ScriptWait(40);
-    Engine_ObjectEventSetAnimationAndWait(LOCALID_SECOND_GUIDE, ANIMATION_NOD);
+    Engine_ObjectEventSetAnimationAndWait(LOCALID_SECOND_GUIDE, ANIM_NOD);
     Script_ShowMessageAndWait(LOCALID_SECOND_GUIDE, 0, 20);
-    Engine_ObjectEventSetAnimationAndWait(LOCALID_HEAD_GUIDE, ANIMATION_NOD);
+    Engine_ObjectEventSetAnimationAndWait(LOCALID_HEAD_GUIDE, ANIM_NOD);
     Script_ShowMessageAndWait(LOCALID_HEAD_GUIDE, 0, 10);
     ObjectEvent_FaceDirection(LOCALID_FIRST_TOURIST, FACING_SOUTH + FACING_STEP,
                               0);
@@ -1056,17 +1049,14 @@ static void Kalay_WatchTourGroupDeparture(void) {
                               FACING_SOUTH + FACING_STEP, 0);
     ObjectEvent_FaceDirection(LOCALID_OURANOS, FACING_NORTHWEST + FACING_STEP,
                               4);
-    Engine_ObjectEventSetAnimation(LOCALID_FIRST_TOURIST, ANIMATION_NOD);
-    Engine_ObjectEventSetAnimationAndWait(LOCALID_FIRST_TOURIST + 1,
-                                          ANIMATION_NOD);
-    Engine_ObjectEventSetAnimation(LOCALID_FIRST_TOURIST + 2, ANIMATION_NOD);
-    Engine_ObjectEventSetAnimationAndWait(LOCALID_FIRST_TOURIST + 3,
-                                          ANIMATION_NOD);
-    Engine_ObjectEventSetAnimation(LOCALID_FIRST_TOURIST + 5, ANIMATION_NOD);
-    Engine_ObjectEventSetAnimationAndWait(LOCALID_FIRST_TOURIST + 4,
-                                          ANIMATION_NOD);
-    Engine_ObjectEventSetAnimation(LOCALID_FIRST_TOURIST + 6, ANIMATION_NOD);
-    Engine_ObjectEventSetAnimationAndWait(LOCALID_OURANOS, ANIMATION_NOD);
+    Engine_ObjectEventSetAnimation(LOCALID_FIRST_TOURIST, ANIM_NOD);
+    Engine_ObjectEventSetAnimationAndWait(LOCALID_FIRST_TOURIST + 1, ANIM_NOD);
+    Engine_ObjectEventSetAnimation(LOCALID_FIRST_TOURIST + 2, ANIM_NOD);
+    Engine_ObjectEventSetAnimationAndWait(LOCALID_FIRST_TOURIST + 3, ANIM_NOD);
+    Engine_ObjectEventSetAnimation(LOCALID_FIRST_TOURIST + 5, ANIM_NOD);
+    Engine_ObjectEventSetAnimationAndWait(LOCALID_FIRST_TOURIST + 4, ANIM_NOD);
+    Engine_ObjectEventSetAnimation(LOCALID_FIRST_TOURIST + 6, ANIM_NOD);
+    Engine_ObjectEventSetAnimationAndWait(LOCALID_OURANOS, ANIM_NOD);
     Engine_ObjectEventJump(LOCALID_HEAD_GUIDE, 2, 40);
     Script_ShowMessageAndWait(LOCALID_HEAD_GUIDE, 0, 10);
     ObjectEvent_FaceDirection(LOCALID_FIRST_TOURIST, FACING_WEST, 0);
@@ -1688,21 +1678,19 @@ static void Kalay_IvanMeetsPalaceGuards(void) {
       ~OBJ_EVENT_FACES_MOTION;
   ObjectEvent_WalkTo(LOCALID_PALACE_GUARD, 184, 232);
   ObjectEvent_WalkToAndWait(LOCALID_SECOND_PALACE_GUARD, 198, 232);
-  Engine_ObjectEventSetAnimation(LOCALID_PALACE_GUARD, ANIMATION_STAND);
+  Engine_ObjectEventSetAnimation(LOCALID_PALACE_GUARD, ANIM_STAND);
   Engine_ScriptWait(20);
   ObjectEvent_Get(LOCALID_PALACE_GUARD)->steeringFlags |=
       OBJ_EVENT_FACES_MOTION;
   ObjectEvent_Get(LOCALID_SECOND_PALACE_GUARD)->steeringFlags |=
       OBJ_EVENT_FACES_MOTION;
   Engine_ScriptWait(20);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_PALACE_GUARD,
-                                        ANIMATION_SHAKE_HEAD);
+  Engine_ObjectEventSetAnimationAndWait(LOCALID_PALACE_GUARD, ANIM_SHAKE_HEAD);
   Engine_ScriptSetMessage(MsgKalayLordHammetsPalaceLordAway);
   Script_ShowMessageAndWait(LOCALID_PALACE_GUARD, 0, 10);
   ObjectEvent_FaceDirection(LOCALID_SECOND_PALACE_GUARD,
                             FACING_SOUTH + FACING_STEP, 10);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_SECOND_PALACE_GUARD,
-                                        ANIMATION_NOD);
+  Engine_ObjectEventSetAnimationAndWait(LOCALID_SECOND_PALACE_GUARD, ANIM_NOD);
   Script_ShowMessageAndWait(LOCALID_SECOND_PALACE_GUARD, 0, 10);
   ObjectEvent_SetAttachedEffect(LOCALID_PARTY_LEADER, ATTACHED_EFFECT_IN_FRONT |
                                                           ATTACHED_EFFECT_ONCE);
@@ -1719,7 +1707,7 @@ static void Kalay_IvanMeetsPalaceGuards(void) {
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_NORTH, 0);
   ObjectEvent_WalkToAndWait(IVAN, 202, 254);
   Engine_ScriptWait(20);
-  Engine_ObjectEventSetAnimationAndWait(IVAN, ANIMATION_NOD);
+  Engine_ObjectEventSetAnimationAndWait(IVAN, ANIM_NOD);
   Engine_ScriptWait(10);
   Script_ShowMessageAndWait(IVAN, 0, 10);
   ObjectEvent_ShowEmote(LOCALID_PALACE_GUARD, EMOTE_IN_FRONT | EMOTE_QUESTION,
@@ -1749,14 +1737,12 @@ static void Kalay_IvanMeetsPalaceGuards(void) {
   Script_AskYesNo(SPEAKER_WINDOW_ABOVE | IVAN, 0);
   Engine_ScriptWait(10);
   Engine_ObjectEventRunRepeatedMotion(LOCALID_PALACE_GUARD, 1);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_PALACE_GUARD,
-                                        ANIMATION_SHAKE_HEAD);
+  Engine_ObjectEventSetAnimationAndWait(LOCALID_PALACE_GUARD, ANIM_SHAKE_HEAD);
   Script_ShowMessageAndWait(LOCALID_PALACE_GUARD, 0, 10);
   ObjectEvent_ShowEmote(IVAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
   ObjectEvent_FaceDirection(IVAN, FACING_NORTHWEST, 20);
   Engine_ObjectEventRunRepeatedMotion(LOCALID_SECOND_PALACE_GUARD, 1);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_SECOND_PALACE_GUARD,
-                                        ANIMATION_NOD);
+  Engine_ObjectEventSetAnimationAndWait(LOCALID_SECOND_PALACE_GUARD, ANIM_NOD);
   ObjectEvent_FaceDirection(IVAN, FACING_NORTH, 0);
   Script_ShowMessageAndWait(LOCALID_SECOND_PALACE_GUARD, 0, 10);
   ObjectEvent_FaceDirection(IVAN, FACING_SOUTHWEST, 60);
@@ -1777,20 +1763,20 @@ static void Kalay_IvanMeetsPalaceGuards(void) {
     gFieldWork->message++;
   } else {
     gFieldWork->message++;
-    Engine_ObjectEventSetAnimationAndWait(IVAN, ANIMATION_SHAKE_HEAD);
+    Engine_ObjectEventSetAnimationAndWait(IVAN, ANIM_SHAKE_HEAD);
     Script_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | IVAN, 0, 10);
   }
   Engine_ObjectEventRunRepeatedMotion(LOCALID_SECOND_PALACE_GUARD, 2);
   Script_ShowMessageAndWait(LOCALID_SECOND_PALACE_GUARD, 0, 10);
   ObjectEvent_FaceDirection(IVAN, FACING_NORTH, 10);
-  Engine_ObjectEventSetAnimationAndWait(IVAN, ANIMATION_SHAKE_HEAD);
+  Engine_ObjectEventSetAnimationAndWait(IVAN, ANIM_SHAKE_HEAD);
   Script_ShowMessageAndWait(IVAN, 0, 10);
   ObjectEvent_SetAttachedEffect(LOCALID_PALACE_GUARD, ATTACHED_EFFECT_IN_FRONT |
                                                           ATTACHED_EFFECT_ONCE);
   Engine_ScriptWait(60);
   Script_ShowMessageAndWait(LOCALID_PALACE_GUARD, 0, 10);
   ObjectEvent_FaceDirection(IVAN, FACING_NORTHWEST, 10);
-  Engine_ObjectEventSetAnimationAndWait(IVAN, ANIMATION_NOD);
+  Engine_ObjectEventSetAnimationAndWait(IVAN, ANIM_NOD);
   Script_ShowMessageAndWait(IVAN, 0, 10);
   ObjectEvent_SetAttachedEffect(LOCALID_PALACE_GUARD, ATTACHED_EFFECT_IN_FRONT |
                                                           ATTACHED_EFFECT_ONCE);
@@ -1804,22 +1790,22 @@ static void Kalay_IvanMeetsPalaceGuards(void) {
   ObjectEvent_FaceDirection(LOCALID_SECOND_PALACE_GUARD, FACING_WEST, 10);
   Script_ShowMessageAndWait(LOCALID_SECOND_PALACE_GUARD, 0, 10);
   ObjectEvent_FaceDirection(LOCALID_PALACE_GUARD, FACING_EAST, 10);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_PALACE_GUARD, ANIMATION_NOD);
+  Engine_ObjectEventSetAnimationAndWait(LOCALID_PALACE_GUARD, ANIM_NOD);
   ObjectEvent_FaceDirection(LOCALID_PALACE_GUARD,
                             FACING_SOUTHEAST + FACING_STEP, 10);
   Script_ShowMessage(LOCALID_PALACE_GUARD, 0);
   ObjectEvent_FaceDirection(LOCALID_SECOND_PALACE_GUARD,
                             FACING_SOUTHEAST + FACING_STEP, 10);
-  Engine_ObjectEventSetAnimationAndWait(IVAN, ANIMATION_NOD);
+  Engine_ObjectEventSetAnimationAndWait(IVAN, ANIM_NOD);
   ObjectEvent_FaceDirection(IVAN, FACING_SOUTHWEST, 10);
   Script_AskYesNo(SPEAKER_WINDOW_ABOVE | IVAN, 0);
   Engine_ScriptWait(10);
   Engine_ObjectEventRunRepeatedMotion(IVAN, 1);
   Script_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | IVAN, 0, 10);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_PARTY_LEADER, ANIMATION_NOD);
-  Engine_ObjectEventSetAnimationAndWait(IVAN, ANIMATION_NOD);
+  Engine_ObjectEventSetAnimationAndWait(LOCALID_PARTY_LEADER, ANIM_NOD);
+  Engine_ObjectEventSetAnimationAndWait(IVAN, ANIM_NOD);
   ObjectEvent_FaceDirection(IVAN, FACING_NORTH, 10);
-  Engine_ObjectEventSetAnimationAndWait(IVAN, ANIMATION_NOD);
+  Engine_ObjectEventSetAnimationAndWait(IVAN, ANIM_NOD);
   ObjectEvent_SetSpeed(LOCALID_PALACE_GUARD, PIXELS(4) / 5, PIXELS(2) / 5);
   Engine_ObjectEventSetSpeed(LOCALID_SECOND_PALACE_GUARD, PIXELS(4) / 5,
                              PIXELS(2) / 5);
@@ -1833,7 +1819,7 @@ static void Kalay_IvanMeetsPalaceGuards(void) {
       ~OBJ_EVENT_FACES_MOTION;
   ObjectEvent_WalkTo(LOCALID_PALACE_GUARD, 168, 232);
   ObjectEvent_WalkToAndWait(LOCALID_SECOND_PALACE_GUARD, 212, 232);
-  Engine_ObjectEventSetAnimation(LOCALID_PALACE_GUARD, ANIMATION_STAND);
+  Engine_ObjectEventSetAnimation(LOCALID_PALACE_GUARD, ANIM_STAND);
   Engine_ScriptWait(20);
   ObjectEvent_Get(LOCALID_PALACE_GUARD)->steeringFlags |=
       OBJ_EVENT_FACES_MOTION;
@@ -1848,9 +1834,8 @@ static void Kalay_IvanMeetsPalaceGuards(void) {
   ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(6) / 5, PIXELS(3) / 5);
   ObjectEvent_WalkToAndWait(LOCALID_PARTY_LEADER, 192, 222);
   ObjectEvent_SetPosition(LOCALID_PARTY_LEADER, 0, 0);
-  Engine_ObjectEventSetAnimation(LOCALID_PALACE_GUARD, ANIMATION_NOD);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_SECOND_PALACE_GUARD,
-                                        ANIMATION_NOD);
+  Engine_ObjectEventSetAnimation(LOCALID_PALACE_GUARD, ANIM_NOD);
+  Engine_ObjectEventSetAnimationAndWait(LOCALID_SECOND_PALACE_GUARD, ANIM_NOD);
   ObjectEvent_WalkTo(LOCALID_PALACE_GUARD, 184, 232);
   ObjectEvent_WalkToAndWait(LOCALID_SECOND_PALACE_GUARD, 198, 232);
   ObjectEvent_WalkTo(LOCALID_PALACE_GUARD, 188, 212);
@@ -1937,10 +1922,10 @@ static void Kalay_HammetReturnsToPalace(void) {
   *(u16 *)leaderPhase = motionPhase >> 12;
   ObjectEvent_SetActionScript(LOCALID_PARTY_LEADER, motionActions);
   Engine_ObjectEventJump(LOCALID_BUNZA, 2, 20);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_BUNZA, ANIMATION_NOD);
+  Engine_ObjectEventSetAnimationAndWait(LOCALID_BUNZA, ANIM_NOD);
   Engine_ScriptSetMessage(MsgKalayWeveArrivedHammet);
   Script_ShowMessageAndWait(LOCALID_BUNZA, 0, 10);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_HAMMET, ANIMATION_NOD);
+  Engine_ObjectEventSetAnimationAndWait(LOCALID_HAMMET, ANIM_NOD);
   objectEvent = ObjectEvent_Get(LOCALID_PARTY_LEADER);
   if (objectEvent != 0) {
     ObjectEvent_SetPosition(GARET, objectEvent->x.fixed, objectEvent->z.fixed);
@@ -1959,8 +1944,8 @@ static void Kalay_HammetReturnsToPalace(void) {
   ObjectEvent_WalkTo(GARET, 378, 310);
   ObjectEvent_WalkTo(IVAN, 400, 288);
   ObjectEvent_WalkToAndWait(MIA, 410, 308);
-  Engine_ObjectEventSetAnimation(GARET, ANIMATION_STAND);
-  Engine_ObjectEventSetAnimation(IVAN, ANIMATION_STAND);
+  Engine_ObjectEventSetAnimation(GARET, ANIM_STAND);
+  Engine_ObjectEventSetAnimation(IVAN, ANIM_STAND);
   ObjectEvent_FaceDirection(GARET, FACING_NORTH, 0);
   ObjectEvent_FaceDirection(IVAN, FACING_NORTH, 0);
   ObjectEvent_FaceDirection(MIA, FACING_NORTH, 40);
@@ -1990,15 +1975,15 @@ static void Kalay_HammetReturnsToPalace(void) {
   Engine_ObjectEventStop(MIA);
   Engine_TaskWait(1);
   ObjectEvent_FaceDirection(IVAN, FACING_NORTH, 10);
-  Engine_ObjectEventSetAnimationAndWait(IVAN, ANIMATION_NOD);
+  Engine_ObjectEventSetAnimationAndWait(IVAN, ANIM_NOD);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_NORTH, 0);
   ObjectEvent_FaceDirection(GARET, FACING_NORTH, 0);
   ObjectEvent_FaceDirection(MIA, FACING_NORTH, 20);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_HAMMET, ANIMATION_NOD);
+  Engine_ObjectEventSetAnimationAndWait(LOCALID_HAMMET, ANIM_NOD);
   Script_ShowMessageAndWait(LOCALID_HAMMET, 0, 10);
   ObjectEvent_ShowEmote(MIA, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
   Script_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | 3, 0, 10);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_HAMMET, ANIMATION_NOD);
+  Engine_ObjectEventSetAnimationAndWait(LOCALID_HAMMET, ANIM_NOD);
   Script_ShowMessageAndWait(LOCALID_HAMMET, 0, 10);
   ObjectEvent_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
   Script_ShowMessageAndWait(GARET, 0, 10);
@@ -2009,26 +1994,26 @@ static void Kalay_HammetReturnsToPalace(void) {
   ObjectEvent_FaceDirection(GARET, FACING_NORTHEAST, 0);
   ObjectEvent_FaceDirection(IVAN, FACING_SOUTHEAST, 0);
   ObjectEvent_FaceDirection(MIA, FACING_NORTHWEST, 20);
-  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIMATION_NOD);
-  Engine_ObjectEventSetAnimation(GARET, ANIMATION_NOD);
-  Engine_ObjectEventSetAnimation(IVAN, ANIMATION_NOD);
-  Engine_ObjectEventSetAnimationAndWait(MIA, ANIMATION_NOD);
+  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
+  Engine_ObjectEventSetAnimation(GARET, ANIM_NOD);
+  Engine_ObjectEventSetAnimation(IVAN, ANIM_NOD);
+  Engine_ObjectEventSetAnimationAndWait(MIA, ANIM_NOD);
   Engine_ScriptWait(10);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_NORTH, 0);
   ObjectEvent_FaceDirection(GARET, FACING_NORTH, 0);
   ObjectEvent_FaceDirection(IVAN, FACING_NORTH, 0);
   ObjectEvent_FaceDirection(MIA, FACING_NORTH, 10);
   ObjectEvent_FaceDirection(LOCALID_HAMMET, FACING_NORTH + FACING_STEP, 10);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_HAMMET, ANIMATION_NOD);
+  Engine_ObjectEventSetAnimationAndWait(LOCALID_HAMMET, ANIM_NOD);
   Script_ShowMessageAndWait(LOCALID_HAMMET, 0, 10);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_BUNZA, ANIMATION_NOD);
+  Engine_ObjectEventSetAnimationAndWait(LOCALID_BUNZA, ANIM_NOD);
   ObjectEvent_SetAttachedEffect(IVAN, ATTACHED_EFFECT_IN_FRONT |
                                           ATTACHED_EFFECT_ONCE);
   Engine_ScriptWait(40);
   Engine_ObjectEventStartRepeatedMotion(IVAN, 2);
   Script_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | 2, 0, 10);
   ObjectEvent_FaceDirection(LOCALID_BUNZA, FACING_SOUTHEAST + FACING_STEP, 10);
-  Engine_ObjectEventSetAnimation(LOCALID_BUNZA, ANIMATION_SHAKE_HEAD);
+  Engine_ObjectEventSetAnimation(LOCALID_BUNZA, ANIM_SHAKE_HEAD);
   Script_ShowMessageAndWait(LOCALID_BUNZA, 0, 10);
   ObjectEvent_ShowEmote(MIA, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
   Script_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | 3, 0, 10);
@@ -2039,15 +2024,15 @@ static void Kalay_HammetReturnsToPalace(void) {
   Script_ShowMessageAndWait(GARET, 0, 10);
   ObjectEvent_FaceDirection(LOCALID_BUNZA, FACING_SOUTH + FACING_STEP, 0);
   ObjectEvent_FaceDirection(LOCALID_HAMMET, FACING_SOUTH + FACING_STEP, 10);
-  Engine_ObjectEventSetAnimation(LOCALID_BUNZA, ANIMATION_SHAKE_HEAD);
+  Engine_ObjectEventSetAnimation(LOCALID_BUNZA, ANIM_SHAKE_HEAD);
   Script_ShowMessageAndWait(LOCALID_BUNZA, 0, 10);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_SOUTHWEST, 0);
   ObjectEvent_FaceDirection(GARET, FACING_NORTHEAST, 40);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_NORTH, 0);
   ObjectEvent_FaceDirection(GARET, FACING_NORTH, 10);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_BUNZA, ANIMATION_SHAKE_HEAD);
+  Engine_ObjectEventSetAnimationAndWait(LOCALID_BUNZA, ANIM_SHAKE_HEAD);
   Script_ShowMessageAndWait(LOCALID_BUNZA, 0, 10);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_HAMMET, ANIMATION_SHAKE_HEAD);
+  Engine_ObjectEventSetAnimationAndWait(LOCALID_HAMMET, ANIM_SHAKE_HEAD);
   Script_ShowMessageAndWait(LOCALID_HAMMET, 0, 10);
   ObjectEvent_ShowEmote(LOCALID_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_ELLIPSIS,
                         0);
@@ -2055,7 +2040,7 @@ static void Kalay_HammetReturnsToPalace(void) {
   ObjectEvent_ShowEmote(IVAN, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
   ObjectEvent_ShowEmote(MIA, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
   ObjectEvent_FaceDirection(LOCALID_HAMMET, FACING_SOUTHEAST + FACING_STEP, 10);
-  Engine_ObjectEventSetAnimation(LOCALID_HAMMET, ANIMATION_NOD);
+  Engine_ObjectEventSetAnimation(LOCALID_HAMMET, ANIM_NOD);
   Script_OpenMessage(LOCALID_HAMMET, 0);
   ObjectEvent_FaceDirection(GARET, FACING_NORTHEAST, 0);
   ObjectEvent_FaceDirection(IVAN, FACING_SOUTHWEST, 0);
@@ -2075,21 +2060,21 @@ static void Kalay_HammetReturnsToPalace(void) {
   ObjectEvent_FaceDirection(GARET, FACING_NORTH, 0);
   ObjectEvent_FaceDirection(IVAN, FACING_NORTH, 0);
   ObjectEvent_FaceDirection(MIA, FACING_NORTH, 10);
-  Engine_ObjectEventSetAnimation(GARET, ANIMATION_NOD);
-  Engine_ObjectEventSetAnimation(IVAN, ANIMATION_NOD);
-  Engine_ObjectEventSetAnimationAndWait(MIA, ANIMATION_NOD);
+  Engine_ObjectEventSetAnimation(GARET, ANIM_NOD);
+  Engine_ObjectEventSetAnimation(IVAN, ANIM_NOD);
+  Engine_ObjectEventSetAnimationAndWait(MIA, ANIM_NOD);
   Engine_ScriptWait(20);
   ObjectEvent_FaceDirection(LOCALID_TUNNEL_GUARD,
                             FACING_SOUTHEAST + FACING_STEP, 0);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_HAMMET, ANIMATION_NOD);
+  Engine_ObjectEventSetAnimationAndWait(LOCALID_HAMMET, ANIM_NOD);
   FieldCamera_SetSpeed(PIXELS(1), PIXELS(1) / 8);
   FieldCamera_MoveTo(PIXELS(280), -1, PIXELS(200), 1);
   ObjectEvent_WalkToAndWait(LOCALID_HAMMET, 333, 222);
   ObjectEvent_WalkToAndWait(LOCALID_HAMMET, 284, 198);
   ObjectEvent_FaceDirection(LOCALID_HAMMET, FACING_WEST, 10);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_HAMMET, ANIMATION_NOD);
+  Engine_ObjectEventSetAnimationAndWait(LOCALID_HAMMET, ANIM_NOD);
   ObjectEvent_FaceDirection(LOCALID_TUNNEL_GUARD, 0, 10);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_TUNNEL_GUARD, ANIMATION_NOD);
+  Engine_ObjectEventSetAnimationAndWait(LOCALID_TUNNEL_GUARD, ANIM_NOD);
   ObjectEvent_SetSpeed(LOCALID_TUNNEL_GUARD, PIXELS(4) / 5, PIXELS(2) / 5);
   ObjectEvent_WalkToAndWait(LOCALID_TUNNEL_GUARD, 268, 198);
   ObjectEvent_FaceDirection(LOCALID_TUNNEL_GUARD, FACING_NORTH, 10);
@@ -2125,12 +2110,12 @@ static void Kalay_HammetReturnsToPalace(void) {
   Engine_ScriptOpenScreen();
   Engine_ScriptWaitForScreen();
   Engine_ScriptWait(40);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_BUNZA, ANIMATION_NOD);
+  Engine_ObjectEventSetAnimationAndWait(LOCALID_BUNZA, ANIM_NOD);
   Engine_ScriptWait(20);
-  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIMATION_NOD);
-  Engine_ObjectEventSetAnimation(GARET, ANIMATION_NOD);
-  Engine_ObjectEventSetAnimation(IVAN, ANIMATION_NOD);
-  Engine_ObjectEventSetAnimationAndWait(MIA, ANIMATION_NOD);
+  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
+  Engine_ObjectEventSetAnimation(GARET, ANIM_NOD);
+  Engine_ObjectEventSetAnimation(IVAN, ANIM_NOD);
+  Engine_ObjectEventSetAnimationAndWait(MIA, ANIM_NOD);
   ObjectEvent_WalkToAndWait(LOCALID_BUNZA, 420, 282);
   ObjectEvent_WalkToAndWait(LOCALID_BUNZA, 420, 312);
   ObjectEvent_WalkToAndWait(LOCALID_BUNZA, 439, 312);
@@ -2197,7 +2182,7 @@ static void Kalay_PushTunnelStatue(void) {
     SET_POSITION(target, statue->x.fixed + (moveStep & -0x10000),
                  statue->y.fixed, statue->z.fixed + (moveStep << 16));
     if (FieldObject_CheckMovementCollision(statue, target) <= 0) {
-      ObjectEvent_SetMode(leader, ANIMATION_PUSH);
+      ObjectEvent_SetMode(leader, ANIM_PUSH);
       pushSpeed = PIXELS(1) / 5;
       Engine_TaskWait(15);
       Engine_AudioPlayCue(SE_PUSH);
@@ -2213,7 +2198,7 @@ static void Kalay_PushTunnelStatue(void) {
       statue->z.fixed = target->z;
       statue->velocityX = stoppedVelocity;
       statue->velocityZ = stoppedVelocity;
-      ObjectEvent_SetMode(leader, ANIMATION_STAND);
+      ObjectEvent_SetMode(leader, ANIM_STAND);
       Kalay_UpdateTunnelPassages();
     }
   }

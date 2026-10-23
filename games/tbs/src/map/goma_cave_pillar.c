@@ -517,10 +517,10 @@ static void EventScript_JumpGapWest(void) {
   destination->z = ObjectEvent_GetById(LOCALID_PARTY_LEADER)->z.fixed;
   if (FieldObject_CheckMovementCollision(leader, destination) == 0) {
     SCRIPT_START();
-    ObjectEvent_SetMode(leader, ANIMATION_LEADER_SPRING);
+    ObjectEvent_SetMode(leader, ANIM_LEADER_SPRING);
     Engine_TaskWait(6);
     Engine_AudioPlayCue(SE_JUMP);
-    ObjectEvent_SetMode(leader, ANIMATION_LEADER_LEAP);
+    ObjectEvent_SetMode(leader, ANIM_LEADER_LEAP);
     leader->speed = PIXELS(3);
     leader->acceleration = PIXELS(2);
     leader->velocityY = PIXELS(4);
@@ -529,7 +529,7 @@ static void EventScript_JumpGapWest(void) {
     Engine_ObjectEventMoveToAndWait(LOCALID_PARTY_LEADER,
                                     *(s16 *)((u8 *)destination + 2),
                                     *(s16 *)((u8 *)destination + 10));
-    ObjectEvent_SetMode(leader, ANIMATION_LEADER_SPRING);
+    ObjectEvent_SetMode(leader, ANIM_LEADER_SPRING);
     Engine_ObjectEventSetSpriteFlags(leader, 1);
     *motionFlags = savedMotionFlags;
     SCRIPT_END();
@@ -561,7 +561,7 @@ static void GomaCavePillar_FidgetWhileForgeFights(void) {
     Engine_ObjectEventJump(LOCALID_WITNESS, 4, 0);
     break;
   case 480:
-    OBJECT_ANIMATION(LOCALID_WITNESS, ANIMATION_SHAKE_HEAD);
+    OBJECT_ANIMATION(LOCALID_WITNESS, ANIM_SHAKE_HEAD);
     break;
   }
   if (gGameState.pendingDjinnEvent == 0)
@@ -579,7 +579,7 @@ static void EventScript_WitnessCheersForgeCaught(void) {
   OBJECT_DIR(LOCALID_PARTY_LEADER, FACING_NORTHWEST, 0);
   MESSAGE_SET(MsgGomaGotWowThatsPrettyImpressive);
   Script_ShowMessage(LOCALID_WITNESS, 0);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_WITNESS, ANIMATION_NOD);
+  Engine_ObjectEventSetAnimationAndWait(LOCALID_WITNESS, ANIM_NOD);
   WAIT(30);
   ObjectEvent_GetById(LOCALID_EAST_PILLAR)->priorityFlags &=
       ~OBJ_EVENT_PRIORITY_UNDERFOOT;

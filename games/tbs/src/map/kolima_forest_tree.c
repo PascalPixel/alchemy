@@ -216,7 +216,7 @@ static void KolimaForestTree_TalkToLaurel(void) {
     Engine_ScriptWait(60);
     KolimaForestTree_PlayGesture(LOCALID_LAUREL_BLANK, FACE_GESTURE_OPEN_EYES);
     Engine_ScriptShowMessageAndWait(LOCALID_LAUREL, 0, 10);
-    Engine_ObjectEventSetAnimationAndWait(LOCALID_PARTY_LEADER, ANIMATION_NOD);
+    Engine_ObjectEventSetAnimationAndWait(LOCALID_PARTY_LEADER, ANIM_NOD);
     Engine_ScriptWait(40);
     Engine_ScriptShowMessage(LOCALID_LAUREL, 0);
     KolimaForestTree_PlayGesture(LOCALID_LAUREL_BLANK, FACE_GESTURE_CLOSE_EYES);
@@ -344,7 +344,7 @@ static void KolimaForestTree_RejectHermesWater(void) {
   Engine_ObjectEventSetSpritePriority(LOCALID_PARTY_LEADER, 1);
   ObjectEvent_GetById(LOCALID_PARTY_LEADER)->steeringFlags &=
       ~OBJ_EVENT_FACES_MOTION;
-  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIMATION_LEADER_STRIDE);
+  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_LEADER_STRIDE);
   ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(2), PIXELS(2));
   Script_PlaySong(SE_IMPACT);
   leader->velocityY = PIXELS(5);
@@ -358,7 +358,7 @@ static void KolimaForestTree_RejectHermesWater(void) {
     Engine_TaskWait(1);
   } while (leader->velocityY <= 0);
   Script_PlaySong(SE_161);
-  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIMATION_COLLAPSE);
+  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_COLLAPSE);
   Engine_ScriptWait(120);
   Engine_TaskRemoveCallback(KolimaForestTree_SpawnRejectionSpark);
   Engine_TaskWait(40);
@@ -389,16 +389,16 @@ static void KolimaForestTree_RejectHermesWater(void) {
   Engine_ObjectEventRunRepeatedMotion(LOCALID_PARTY_LEADER, 2);
   Engine_ScriptWait(40);
   Engine_ObjectEventJump(LOCALID_PARTY_LEADER, 4, 0);
-  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIMATION_STAND);
+  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_STAND);
   Engine_ScriptWait(20);
 }
 
 /// Gives all four companions the same nod, waiting on Ivan's animation.
 static __inline__ void KolimaForestTree_NodTogether(void) {
-  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIMATION_NOD);
-  Engine_ObjectEventSetAnimation(GARET, ANIMATION_NOD);
-  Engine_ObjectEventSetAnimation(MIA, ANIMATION_NOD);
-  Engine_ObjectEventSetAnimationAndWait(IVAN, ANIMATION_NOD);
+  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
+  Engine_ObjectEventSetAnimation(GARET, ANIM_NOD);
+  Engine_ObjectEventSetAnimation(MIA, ANIM_NOD);
+  Engine_ObjectEventSetAnimationAndWait(IVAN, ANIM_NOD);
 }
 
 /// Turns the companions together and pauses after the final facing change.
@@ -565,7 +565,7 @@ static void KolimaForestTree_RestoreTret(void) {
     ObjectEvent_ShowEmote(MIA, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 0);
     ObjectEvent_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 0);
     ObjectEvent_ShowEmote(IVAN, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 40);
-    Engine_ObjectEventSetAnimation(GARET, ANIMATION_SHAKE_HEAD);
+    Engine_ObjectEventSetAnimation(GARET, ANIM_SHAKE_HEAD);
     Script_ShowMessage(GARET, 0);
     if (includeMia != 0) {
       Engine_ObjectEventRunRepeatedMotion(MIA, 2);
@@ -573,7 +573,7 @@ static void KolimaForestTree_RestoreTret(void) {
     } else {
       gFieldWork->message += 1;
     }
-    Engine_ObjectEventSetAnimationAndWait(IVAN, ANIMATION_NOD);
+    Engine_ObjectEventSetAnimationAndWait(IVAN, ANIM_NOD);
     Script_ShowMessage(IVAN, 0);
     Script_ShowMessage(SPEAKER_WINDOW_ABOVE | LOCALID_LAUREL, 0);
     Script_ShowMessage(SPEAKER_WINDOW_BELOW | LOCALID_TRET, 0);
@@ -622,7 +622,7 @@ static void KolimaForestTree_RestoreTret(void) {
   if (Engine_ScriptChooseYesNo(0, 0) == 0) {
     ObjectEvent_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
   } else {
-    Engine_ObjectEventSetAnimationAndWait(GARET, ANIMATION_SHAKE_HEAD);
+    Engine_ObjectEventSetAnimationAndWait(GARET, ANIM_SHAKE_HEAD);
     gFieldWork->message += 1;
   }
   Script_ShowMessage(GARET, 0);
@@ -703,7 +703,7 @@ static void KolimaForestTree_RestoreTret(void) {
   Script_ShowMessageAndWait(SPEAKER_WINDOW_BELOW | IVAN, 0, 10);
   Engine_ObjectEventRunRepeatedMotion(LOCALID_PARTY_LEADER, 2);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_SOUTHEAST, 10);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_PARTY_LEADER, ANIMATION_NOD);
+  Engine_ObjectEventSetAnimationAndWait(LOCALID_PARTY_LEADER, ANIM_NOD);
   KolimaForestTree_PlayGesture(LOCALID_TRET_BLANK, FACE_GESTURE_BLINK);
   Engine_ScriptWait(20);
   Script_ShowMessage(SPEAKER_WINDOW_BELOW | LOCALID_TRET, 0);
@@ -773,7 +773,7 @@ static void KolimaForestTree_RestoreTret(void) {
   KolimaForestTree_PlayGesture(LOCALID_LAUREL_BLANK, FACE_GESTURE_BLINK);
   Engine_ScriptWait(20);
   Script_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | LOCALID_LAUREL, 0, 10);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_PARTY_LEADER, ANIMATION_NOD);
+  Engine_ObjectEventSetAnimationAndWait(LOCALID_PARTY_LEADER, ANIM_NOD);
   GameFlag_Set(FLAG_KOLIMA_CURSE_LIFTED);
   Script_PlaySong(MUS_001);
   KolimaForestTree_ReplaceInventoryItem(ITEM_HERMES_WATER, ITEM_EMPTY_BOTTLE);

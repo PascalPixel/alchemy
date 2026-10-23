@@ -320,13 +320,13 @@ static void EventScript_WatchWoundedSoldiers(void) {
   Engine_ObjectEventRunRepeatedMotion(LOCALID_IODEM, 2);
   Engine_ScriptWait(20);
   Script_ShowMessage(LOCALID_IODEM, 0);
-  Engine_ObjectEventSetAnimation(LOCALID_WEST_SOLDIER, ANIMATION_STAND);
+  Engine_ObjectEventSetAnimation(LOCALID_WEST_SOLDIER, ANIM_STAND);
   Engine_ScriptWait(20);
   Engine_ObjectEventRunRepeatedMotion(LOCALID_WEST_SOLDIER, 2);
   Engine_ScriptWait(30);
   Script_ShowMessage(LOCALID_WEST_SOLDIER, 0);
   Engine_ScriptWait(10);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_IODEM, ANIMATION_NOD);
+  Engine_ObjectEventSetAnimationAndWait(LOCALID_IODEM, ANIM_NOD);
   Engine_ScriptWait(20);
   Script_ShowMessage(LOCALID_IODEM, 0);
   Engine_ScriptWait(10);
@@ -336,12 +336,12 @@ static void EventScript_WatchWoundedSoldiers(void) {
   Engine_ScriptWait(10);
   ObjectEvent_FaceObjectEvent(LOCALID_IODEM, LOCALID_EAST_SOLDIER, 0);
   ObjectEvent_FaceObjectEvent(LOCALID_PARTY_LEADER, LOCALID_EAST_SOLDIER, 30);
-  Engine_ObjectEventSetAnimation(LOCALID_EAST_SOLDIER, ANIMATION_STAND);
+  Engine_ObjectEventSetAnimation(LOCALID_EAST_SOLDIER, ANIM_STAND);
   Engine_ScriptWait(10);
   ObjectEvent_ShowEmote(LOCALID_IODEM, EMOTE_IN_FRONT | EMOTE_SMILE, 40);
   Script_ShowMessage(LOCALID_IODEM, 0);
   Engine_ScriptWait(10);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_PARTY_LEADER, ANIMATION_NOD);
+  Engine_ObjectEventSetAnimationAndWait(LOCALID_PARTY_LEADER, ANIM_NOD);
   Engine_ScriptWait(20);
   Engine_ScriptWait(10);
   ObjectEvent_FaceDirection(LOCALID_IODEM, FACING_SOUTH, 0);
@@ -366,7 +366,7 @@ static void EventScript_WatchWoundedSoldiers(void) {
   Engine_ScriptWait(30);
   Script_ShowMessage(LOCALID_IODEM, 0);
   Engine_ScriptWait(10);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_PARTY_LEADER, ANIMATION_NOD);
+  Engine_ObjectEventSetAnimationAndWait(LOCALID_PARTY_LEADER, ANIM_NOD);
   Engine_ScriptWait(20);
   Engine_ScriptWait(20);
   // Iodem paces while they tell where the attackers went.
@@ -391,7 +391,7 @@ static void EventScript_WatchWoundedSoldiers(void) {
   Engine_ScriptWait(20);
   Script_ShowMessage(LOCALID_IODEM, 0);
   Engine_ScriptWait(10);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_EAST_SOLDIER, ANIMATION_NOD);
+  Engine_ObjectEventSetAnimationAndWait(LOCALID_EAST_SOLDIER, ANIM_NOD);
   Engine_ScriptWait(30);
   Script_ShowMessage(LOCALID_EAST_SOLDIER, 0);
   Engine_ScriptWait(20);
@@ -409,7 +409,7 @@ static void EventScript_WatchWoundedSoldiers(void) {
   Engine_ScriptWait(10);
   ObjectEvent_FaceDirection(LOCALID_IODEM, FACING_WEST, 0);
   Engine_ScriptWait(40);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_IODEM, ANIMATION_NOD);
+  Engine_ObjectEventSetAnimationAndWait(LOCALID_IODEM, ANIM_NOD);
   Engine_ScriptWait(20);
   Script_ShowMessage(LOCALID_IODEM, 0);
   Engine_ScriptWait(10);
@@ -450,13 +450,13 @@ static void EventScript_WatchWoundedSoldiers(void) {
   Engine_ScriptWait(20);
   Script_ShowMessage(LOCALID_IODEM, 0);
   Engine_ScriptWait(10);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_PARTY_LEADER, ANIMATION_NOD);
+  Engine_ObjectEventSetAnimationAndWait(LOCALID_PARTY_LEADER, ANIM_NOD);
   Engine_ScriptWait(20);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_IODEM, ANIMATION_NOD);
+  Engine_ObjectEventSetAnimationAndWait(LOCALID_IODEM, ANIM_NOD);
   Engine_ScriptWait(30);
   // Iodem walks back into the leader.
   ObjectEvent_SetSpeed(LOCALID_IODEM, 0x13333, 0x9999);
-  Engine_ObjectEventSetAnimation(LOCALID_IODEM, ANIMATION_WALK);
+  Engine_ObjectEventSetAnimation(LOCALID_IODEM, ANIM_WALK);
   leader = ObjectEvent_Get(LOCALID_PARTY_LEADER);
   if (leader != 0) {
     ObjectEvent_SetDestination(LOCALID_IODEM, leader->x.part.pixel,
@@ -496,13 +496,13 @@ static void EventScript_IodemGivesBlackOrb(void) {
   Engine_ScriptWait(10);
   if (Engine_ScriptChooseYesNo(LOCALID_PARTY_LEADER, 0) == 0) {
     Engine_ScriptWait(20);
-    Engine_ObjectEventSetAnimationAndWait(MIA, ANIMATION_SHAKE_HEAD);
+    Engine_ObjectEventSetAnimationAndWait(MIA, ANIM_SHAKE_HEAD);
     Engine_ScriptWait(20);
     Script_ShowMessage(MIA, 0);
     gFieldWork->message += 1;
   } else {
     Engine_ScriptWait(20);
-    Engine_ObjectEventSetAnimationAndWait(MIA, ANIMATION_SHAKE_HEAD);
+    Engine_ObjectEventSetAnimationAndWait(MIA, ANIM_SHAKE_HEAD);
     Engine_ScriptWait(20);
     gFieldWork->message += 1;
     Script_ShowMessage(MIA, 0);
@@ -511,19 +511,19 @@ static void EventScript_IodemGivesBlackOrb(void) {
   ObjectEvent_ShowEmote(IVAN, EMOTE_IN_FRONT | EMOTE_SMILE, 40);
   Script_ShowMessage(IVAN, 0);
   Engine_ScriptWait(10);
-  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIMATION_NOD);
+  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
   Engine_ScriptWait(40);
-  Engine_ObjectEventSetAnimation(GARET, ANIMATION_NOD);
-  Engine_ObjectEventSetAnimation(IVAN, ANIMATION_NOD);
-  Engine_ObjectEventSetAnimationAndWait(MIA, ANIMATION_NOD);
+  Engine_ObjectEventSetAnimation(GARET, ANIM_NOD);
+  Engine_ObjectEventSetAnimation(IVAN, ANIM_NOD);
+  Engine_ObjectEventSetAnimationAndWait(MIA, ANIM_NOD);
   Engine_ScriptWait(30);
   // The party lines up facing Iodem's door.
   ObjectEvent_WalkByAndWait(LOCALID_PARTY_LEADER, -16, 0);
   ObjectEvent_WalkBy(IVAN, 0, -16);
   ObjectEvent_WalkBy(MIA, 0, -8);
   ObjectEvent_WalkByAndWait(LOCALID_PARTY_LEADER, 0, -16);
-  Engine_ObjectEventSetAnimation(MIA, ANIMATION_STAND);
-  Engine_ObjectEventSetAnimation(IVAN, ANIMATION_STAND);
+  Engine_ObjectEventSetAnimation(MIA, ANIM_STAND);
+  Engine_ObjectEventSetAnimation(IVAN, ANIM_STAND);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_NORTH, 0);
   ObjectEvent_FaceDirection(GARET, FACING_NORTH, 0);
   ObjectEvent_FaceDirection(MIA, FACING_NORTH, 0);
@@ -555,20 +555,20 @@ static void EventScript_IodemGivesBlackOrb(void) {
   Engine_ScriptWait(20);
   Script_ShowMessage(LOCALID_IODEM, 0);
   Engine_ScriptWait(10);
-  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIMATION_NOD);
-  Engine_ObjectEventSetAnimation(GARET, ANIMATION_NOD);
-  Engine_ObjectEventSetAnimation(IVAN, ANIMATION_NOD);
-  Engine_ObjectEventSetAnimationAndWait(MIA, ANIMATION_NOD);
+  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
+  Engine_ObjectEventSetAnimation(GARET, ANIM_NOD);
+  Engine_ObjectEventSetAnimation(IVAN, ANIM_NOD);
+  Engine_ObjectEventSetAnimationAndWait(MIA, ANIM_NOD);
   Engine_ScriptWait(40);
   ObjectEvent_WalkByAndWait(LOCALID_IODEM, 16, 0);
   ObjectEvent_FaceDirection(LOCALID_IODEM, FACING_SOUTH, 0);
   Engine_ScriptWait(20);
   Engine_ScriptWait(10);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_IODEM, ANIMATION_NOD);
+  Engine_ObjectEventSetAnimationAndWait(LOCALID_IODEM, ANIM_NOD);
   Engine_ScriptWait(30);
   Script_ShowMessage(LOCALID_IODEM, 0);
   Engine_ScriptWait(10);
-  Engine_ObjectEventSetAnimationAndWait(MIA, ANIMATION_NOD);
+  Engine_ObjectEventSetAnimationAndWait(MIA, ANIM_NOD);
   Engine_ScriptWait(30);
   Script_ShowMessage(MIA, 0);
   Engine_ScriptWait(10);
@@ -586,7 +586,7 @@ static void EventScript_IodemGivesBlackOrb(void) {
   ObjectEvent_ShowEmote(IVAN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
   Script_ShowMessage(IVAN, 0);
   Engine_ScriptWait(10);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_IODEM, ANIMATION_NOD);
+  Engine_ObjectEventSetAnimationAndWait(LOCALID_IODEM, ANIM_NOD);
   Engine_ScriptWait(30);
   Script_ShowMessage(LOCALID_IODEM, 0);
   Engine_ScriptWait(10);
@@ -599,14 +599,14 @@ static void EventScript_IodemGivesBlackOrb(void) {
   ObjectEvent_FaceDirection(MIA, FACING_NORTH, 0);
   Engine_ScriptWait(40);
   Engine_ScriptWait(10);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_IODEM, ANIMATION_NOD);
+  Engine_ObjectEventSetAnimationAndWait(LOCALID_IODEM, ANIM_NOD);
   Engine_ScriptWait(30);
   Script_ShowMessage(LOCALID_IODEM, 0);
   Engine_ScriptWait(10);
   ObjectEvent_ShowEmote(MIA, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
   Script_ShowMessage(MIA, 0);
   Engine_ScriptWait(10);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_IODEM, ANIMATION_NOD);
+  Engine_ObjectEventSetAnimationAndWait(LOCALID_IODEM, ANIM_NOD);
   Engine_ScriptWait(20);
   Script_ShowMessage(LOCALID_IODEM, 0);
   Engine_ScriptWait(10);
@@ -615,13 +615,13 @@ static void EventScript_IodemGivesBlackOrb(void) {
   Script_OpenMessage(GARET, 0);
   if (Engine_ScriptChooseYesNo(LOCALID_PARTY_LEADER, 0) == 0) {
     Engine_ScriptWait(20);
-    Engine_ObjectEventSetAnimationAndWait(LOCALID_IODEM, ANIMATION_SHAKE_HEAD);
+    Engine_ObjectEventSetAnimationAndWait(LOCALID_IODEM, ANIM_SHAKE_HEAD);
     Engine_ScriptWait(20);
     Script_ShowMessage(LOCALID_IODEM, 0);
     gFieldWork->message += 1;
   } else {
     Engine_ScriptWait(20);
-    Engine_ObjectEventSetAnimationAndWait(LOCALID_IODEM, ANIMATION_SHAKE_HEAD);
+    Engine_ObjectEventSetAnimationAndWait(LOCALID_IODEM, ANIM_SHAKE_HEAD);
     Engine_ScriptWait(20);
     gFieldWork->message += 1;
     Script_ShowMessage(LOCALID_IODEM, 0);
@@ -643,7 +643,7 @@ static void EventScript_IodemGivesBlackOrb(void) {
   Engine_ObjectEventJump(MIA, 4, 30);
   Script_ShowMessage(MIA, 0);
   Engine_ScriptWait(10);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_IODEM, ANIMATION_NOD);
+  Engine_ObjectEventSetAnimationAndWait(LOCALID_IODEM, ANIM_NOD);
   Engine_ScriptWait(30);
   Script_ShowMessage(LOCALID_IODEM, 0);
   // Arriving through the aerie, the party also talks about the ship they saw
@@ -657,7 +657,7 @@ static void EventScript_IodemGivesBlackOrb(void) {
   Engine_ScriptWait(20);
   Script_ShowMessage(LOCALID_IODEM, 0);
   Engine_ScriptWait(10);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_IODEM, ANIMATION_NOD);
+  Engine_ObjectEventSetAnimationAndWait(LOCALID_IODEM, ANIM_NOD);
   Engine_ScriptWait(30);
   Script_ShowMessage(LOCALID_IODEM, 0);
   Engine_ScriptWait(10);
@@ -668,11 +668,11 @@ static void EventScript_IodemGivesBlackOrb(void) {
   Engine_ScriptWait(20);
   Script_ShowMessage(LOCALID_IODEM, 0);
   Engine_ScriptWait(20);
-  Engine_ObjectEventSetAnimationAndWait(IVAN, ANIMATION_NOD);
+  Engine_ObjectEventSetAnimationAndWait(IVAN, ANIM_NOD);
   Engine_ScriptWait(30);
   Script_ShowMessage(IVAN, 0);
   Engine_ScriptWait(10);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_IODEM, ANIMATION_NOD);
+  Engine_ObjectEventSetAnimationAndWait(LOCALID_IODEM, ANIM_NOD);
   Engine_ScriptWait(30);
   // He holds the orb out, the leader takes it, and he steps back.
   ObjectEvent_SetSpeed(LOCALID_BLACK_ORB, 0xcccc, 0x6666);
@@ -692,17 +692,17 @@ static void EventScript_IodemGivesBlackOrb(void) {
   ObjectEvent_ShowEmote(LOCALID_IODEM, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
   Script_ShowMessage(LOCALID_IODEM, 0);
   Engine_ScriptWait(10);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_IODEM, ANIMATION_NOD);
+  Engine_ObjectEventSetAnimationAndWait(LOCALID_IODEM, ANIM_NOD);
   Engine_ScriptWait(30);
   Script_ShowMessage(LOCALID_IODEM, 0);
   Engine_ScriptWait(20);
-  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIMATION_NOD);
-  Engine_ObjectEventSetAnimation(GARET, ANIMATION_NOD);
-  Engine_ObjectEventSetAnimation(IVAN, ANIMATION_NOD);
-  Engine_ObjectEventSetAnimationAndWait(MIA, ANIMATION_NOD);
+  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
+  Engine_ObjectEventSetAnimation(GARET, ANIM_NOD);
+  Engine_ObjectEventSetAnimation(IVAN, ANIM_NOD);
+  Engine_ObjectEventSetAnimationAndWait(MIA, ANIM_NOD);
   Engine_ScriptWait(50);
   Engine_ScriptWait(10);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_IODEM, ANIMATION_NOD);
+  Engine_ObjectEventSetAnimationAndWait(LOCALID_IODEM, ANIM_NOD);
   Engine_ScriptWait(30);
   // Iodem goes back inside.
   ObjectEvent_WalkByAndWait(LOCALID_IODEM, -16, 0);
@@ -729,20 +729,20 @@ static void EventScript_IodemGivesBlackOrb(void) {
   Engine_ScriptWait(20);
   Script_ShowMessage(MIA, 0);
   Engine_ScriptWait(10);
-  Engine_ObjectEventSetAnimationAndWait(IVAN, ANIMATION_NOD);
+  Engine_ObjectEventSetAnimationAndWait(IVAN, ANIM_NOD);
   Engine_ScriptWait(30);
   Script_ShowMessage(IVAN, 0);
   Engine_ScriptWait(10);
-  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIMATION_NOD);
+  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
   Engine_ScriptWait(40);
-  Engine_ObjectEventSetAnimation(GARET, ANIMATION_NOD);
-  Engine_ObjectEventSetAnimation(IVAN, ANIMATION_NOD);
-  Engine_ObjectEventSetAnimationAndWait(MIA, ANIMATION_NOD);
+  Engine_ObjectEventSetAnimation(GARET, ANIM_NOD);
+  Engine_ObjectEventSetAnimation(IVAN, ANIM_NOD);
+  Engine_ObjectEventSetAnimationAndWait(MIA, ANIM_NOD);
   Engine_ScriptWait(30);
   ObjectEvent_SetSpeed(GARET, 0x13333, 0x9999);
   ObjectEvent_SetSpeed(MIA, 0x13333, 0x9999);
   ObjectEvent_SetSpeed(IVAN, 0x13333, 0x9999);
-  Engine_ObjectEventSetAnimation(GARET, ANIMATION_WALK);
+  Engine_ObjectEventSetAnimation(GARET, ANIM_WALK);
   leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   if (leader != 0) {
     ObjectEvent_SetDestination(GARET, leader->x.part.pixel,
@@ -750,14 +750,14 @@ static void EventScript_IodemGivesBlackOrb(void) {
   }
   Engine_ObjectEventWaitForMove(GARET);
   ObjectEvent_SetPosition(GARET, 0, 0);
-  Engine_ObjectEventSetAnimation(MIA, ANIMATION_WALK);
+  Engine_ObjectEventSetAnimation(MIA, ANIM_WALK);
   leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   if (leader != 0) {
     ObjectEvent_SetDestination(MIA, leader->x.part.pixel, leader->z.part.pixel);
   }
   Engine_ObjectEventWaitForMove(MIA);
   ObjectEvent_SetPosition(MIA, 0, 0);
-  Engine_ObjectEventSetAnimation(IVAN, ANIMATION_WALK);
+  Engine_ObjectEventSetAnimation(IVAN, ANIM_WALK);
   leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   if (leader != 0) {
     ObjectEvent_SetDestination(IVAN, leader->x.part.pixel,
@@ -778,7 +778,7 @@ static void Lalivero_TalkAboutIdejimaShip(void) {
   Engine_ScriptWait(20);
   Script_ShowMessage(LOCALID_IODEM, 0);
   Engine_ScriptWait(10);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_IODEM, ANIMATION_SHAKE_HEAD);
+  Engine_ObjectEventSetAnimationAndWait(LOCALID_IODEM, ANIM_SHAKE_HEAD);
   Engine_ScriptWait(20);
   Script_ShowMessage(LOCALID_IODEM, 0);
   Engine_ScriptWait(10);
@@ -792,14 +792,14 @@ static void Lalivero_TalkAboutIdejimaShip(void) {
   Engine_ScriptWait(20);
   Script_ShowMessage(GARET, 0);
   Engine_ScriptWait(10);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_IODEM, ANIMATION_SHAKE_HEAD);
+  Engine_ObjectEventSetAnimationAndWait(LOCALID_IODEM, ANIM_SHAKE_HEAD);
   Engine_ScriptWait(20);
   Script_ShowMessage(LOCALID_IODEM, 0);
   Engine_ScriptWait(10);
   ObjectEvent_ShowEmote(MIA, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
   Script_ShowMessage(MIA, 0);
   Engine_ScriptWait(10);
-  Engine_ObjectEventSetAnimationAndWait(GARET, ANIMATION_NOD);
+  Engine_ObjectEventSetAnimationAndWait(GARET, ANIM_NOD);
   Engine_ScriptWait(30);
   Script_ShowMessage(GARET, 0);
   Engine_ScriptWait(10);
@@ -807,7 +807,7 @@ static void Lalivero_TalkAboutIdejimaShip(void) {
   Engine_ScriptWait(65);
   ObjectEvent_FaceDirection(IVAN, FACING_NORTH, 0);
   Engine_ScriptWait(40);
-  Engine_ObjectEventSetAnimationAndWait(IVAN, ANIMATION_NOD);
+  Engine_ObjectEventSetAnimationAndWait(IVAN, ANIM_NOD);
   Engine_ScriptWait(30);
   Script_ShowMessage(IVAN, 0);
 }

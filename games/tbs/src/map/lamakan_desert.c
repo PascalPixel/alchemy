@@ -642,7 +642,7 @@ static void LamakanDesert_BatheInOasis(void) {
         &options);
   }
   ObjectEvent_ShowEmote(LOCALID_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_HEART, 0);
-  ObjectEvent_SetAnimation(LOCALID_PARTY_LEADER, ANIMATION_LEADER_BATHE);
+  ObjectEvent_SetAnimation(LOCALID_PARTY_LEADER, ANIM_LEADER_BATHE);
   revealFrames = (u16 *)&((struct FieldWork *)work)->revealFrames;
   progress = &gGameState.hazardSteps;
   zero = 0;
@@ -680,7 +680,7 @@ static void LamakanDesert_BatheInOasis(void) {
   Script_PlaySong(SE_STOP_SLOT3);
   Script_PlaySong(SE_JUMP);
   ObjectEvent_Get(LOCALID_PARTY_LEADER)->velocityY = 0x60000;
-  ObjectEvent_SetAnimation(LOCALID_PARTY_LEADER, ANIMATION_STAND);
+  ObjectEvent_SetAnimation(LOCALID_PARTY_LEADER, ANIM_STAND);
   Script_Wait(10);
   // frames is 0 here, so a running Reveal ends as the leader gets up.
   *(u16 *)&((struct FieldWork *)work)->revealFrames = frames;
@@ -782,7 +782,7 @@ static void LamakanDesert_FallIntoPit(void) {
       }
     }
   }
-  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIMATION_STAND);
+  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_STAND);
   // Face the pit, then reverse the walking direction while being pulled in.
   ObjectEvent_GetById(LOCALID_PARTY_LEADER)->steeringFlags &=
       ~OBJ_EVENT_FACES_MOTION;
@@ -797,7 +797,7 @@ static void LamakanDesert_FallIntoPit(void) {
   objectEvent = ObjectEvent_Get(LOCALID_PARTY_LEADER);
   record = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   objectEvent->facing = (record->facing + 0x8000) & -0x1000;
-  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIMATION_LEADER_RUN);
+  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_LEADER_RUN);
   ObjectEvent_SetActionById(LOCALID_PARTY_LEADER, 24);
   ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, 0x1999, 0xccc);
   record = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
@@ -866,12 +866,12 @@ static void LamakanDesert_SlideDownDune(void) {
     Engine_ObjectSetPosition(objectEvent, objectEvent->x.fixed,
                              objectEvent->y.fixed,
                              objectEvent->z.fixed + 0x80000);
-    ObjectEvent_SetMode(objectEvent, ANIMATION_LEADER_LEAP);
+    ObjectEvent_SetMode(objectEvent, ANIM_LEADER_LEAP);
     Object_WaitForMove(objectEvent);
     do {
       Engine_TaskWait(1);
     } while (objectEvent->y.fixed != objectEvent->groundHeight);
-    ObjectEvent_SetMode(objectEvent, ANIMATION_LEADER_SPRING);
+    ObjectEvent_SetMode(objectEvent, ANIM_LEADER_SPRING);
     Engine_TaskWait(3);
     return;
   }
@@ -933,7 +933,7 @@ static void LamakanDesert_MeetManticore(void) {
       record->targetX = OBJ_EVENT_NO_TARGET;
       record = ObjectEvent_Get(LOCALID_PARTY_LEADER);
       record->targetZ = OBJ_EVENT_NO_TARGET;
-      Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIMATION_STAND);
+      Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_STAND);
       ObjectEvent_FaceObjectEvent(LOCALID_PARTY_LEADER, LOCALID_MANTICORE, 0);
       Engine_ScriptWait(40);
       Engine_ObjectEventStartRepeatedMotion(LOCALID_PARTY_LEADER, 2);
@@ -950,7 +950,7 @@ static void LamakanDesert_MeetManticore(void) {
       record = ObjectEvent_Get(LOCALID_PARTY_LEADER);
       FieldVector_AddPolarOffset(-0x100000, record->facing, &backwardOffset);
       ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, 0x20000, 0x10000);
-      Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIMATION_WALK);
+      Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_WALK);
       ObjectEvent_SetDestinationOffset(LOCALID_PARTY_LEADER,
                                        backwardOffset.x / 0x10000,
                                        backwardOffset.z / 0x10000);

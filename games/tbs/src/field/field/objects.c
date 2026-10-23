@@ -432,8 +432,8 @@ void ObjectDispatch_SetChildRotation(struct DispatchObject *object,
 /// Gives a one-sprite object's first anim animation id animationId and
 /// restarts its anims.
 /// A negative animationId does nothing.
-void Animation_SetIndexAndInitializeObjects(void *rawDispatchObject,
-                                            s32 animationId) {
+void Anim_SetIndexAndInitializeObjects(void *rawDispatchObject,
+                                       s32 animationId) {
   struct DispatchObject *object = rawDispatchObject;
   struct Sprite *sprite;
 
@@ -565,7 +565,7 @@ void ObjectDispatch_SetChildFixedScale(struct DispatchObject *object,
 
 /// Sets the colour mode (SpriteColorMode) of a one-sprite object's anims,
 /// except those drawn hidden (see Sprite_SetAnimColorModes).
-void Animation_ApplyChildValues(struct DispatchObject *object, u32 param) {
+void Anim_ApplyChildValues(struct DispatchObject *object, u32 param) {
   if (object != NULL && object->kind == OBJECT_SPRITE_ONE)
     Sprite_SetAnimColorModes(object->target.child, param);
 }

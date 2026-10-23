@@ -133,21 +133,21 @@ void Warp_PrepareExitAnimation(s32 animation) {
   WaitFrames(18);
 }
 
-/// Leaves through a WARP_STYLE_STAIRS_UP warp (ANIMATION_LEADER_LEAVE);
+/// Leaves through a WARP_STYLE_STAIRS_UP warp (ANIM_LEADER_LEAVE);
 /// FLAG_WARP_ARRIVAL_STAIRS_UP makes the next map play the matching arrival
 /// (Warp_PlayArrival). Called by the warp handling in
 /// overworld/events.c, after it plays SE_STAIRS_UP.
 void Warp_StartStairsUpExit(void) {
-  Warp_PrepareExitAnimation(ANIMATION_LEADER_LEAVE);
+  Warp_PrepareExitAnimation(ANIM_LEADER_LEAVE);
   GameFlag_SetBitFar(FLAG_WARP_ARRIVAL_STAIRS_UP);
 }
 
 /// Leaves through a WARP_STYLE_STAIRS_DOWN warp
-/// (ANIMATION_LEADER_LEAVE_ALTERNATE), recorded in
+/// (ANIM_LEADER_LEAVE_ALTERNATE), recorded in
 /// FLAG_WARP_ARRIVAL_STAIRS_DOWN. Called by the warp handling in
 /// overworld/events.c, after it plays SE_STAIRS_DOWN.
 void Warp_StartStairsDownExit(void) {
-  Warp_PrepareExitAnimation(ANIMATION_LEADER_LEAVE_ALTERNATE);
+  Warp_PrepareExitAnimation(ANIM_LEADER_LEAVE_ALTERNATE);
   GameFlag_SetBitFar(FLAG_WARP_ARRIVAL_STAIRS_DOWN);
 }
 
@@ -186,8 +186,8 @@ void Warp_EndArrivalAnimation(s32 animation) {
 
 /// Plays the leader's arrival for the way the last map was left: through a
 /// WARP_STYLE_STAIRS_UP warp (FLAG_WARP_ARRIVAL_STAIRS_UP,
-/// ANIMATION_LEADER_ARRIVE, returns 1) or a WARP_STYLE_STAIRS_DOWN one
-/// (FLAG_WARP_ARRIVAL_STAIRS_DOWN, ANIMATION_LEADER_ARRIVE_ALTERNATE, returns
+/// ANIM_LEADER_ARRIVE, returns 1) or a WARP_STYLE_STAIRS_DOWN one
+/// (FLAG_WARP_ARRIVAL_STAIRS_DOWN, ANIM_LEADER_ARRIVE_ALTERNATE, returns
 /// 2), or falling in from 160 pixels above (FLAG_ARRIVE_FALLING, returns 3).
 /// Returns 0 when there is nothing to play. Called by Map_Run as the
 /// map fades in, which waits out the fade itself only when this returns 0.
@@ -197,13 +197,13 @@ s32 Warp_PlayArrival(void) {
   s32 flag = FLAG_WARP_ARRIVAL_STAIRS_UP;
 
   if (GameFlag_TestFar(flag) != 0) {
-    Warp_EndArrivalAnimation(ANIMATION_LEADER_ARRIVE);
+    Warp_EndArrivalAnimation(ANIM_LEADER_ARRIVE);
     GameFlag_ClearBitFar(flag);
     result = 1;
   } else {
     flag = FLAG_WARP_ARRIVAL_STAIRS_DOWN;
     if (GameFlag_TestFar(flag) != 0) {
-      Warp_EndArrivalAnimation(ANIMATION_LEADER_ARRIVE_ALTERNATE);
+      Warp_EndArrivalAnimation(ANIM_LEADER_ARRIVE_ALTERNATE);
       GameFlag_ClearBitFar(flag);
       result = 2;
     } else {

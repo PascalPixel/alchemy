@@ -357,10 +357,10 @@ static void SolSanctumEruption_PlayHostageScene(void) {
   Script_ShowMessage(LOCALID_FELIX, 0);
   Engine_ObjectEventRunRepeatedMotion(LOCALID_MENARDI, 2);
   Script_ShowMessageAndWait(LOCALID_MENARDI, 0, 10);
-  Engine_ObjectEventSetAnimation(LOCALID_ALEX, ANIMATION_SHAKE_HEAD);
+  Engine_ObjectEventSetAnimation(LOCALID_ALEX, ANIM_SHAKE_HEAD);
   Script_ShowMessageAndWait(LOCALID_ALEX, 0, 20);
   Engine_ObjectEventFaceEachOther(LOCALID_SATUROS, LOCALID_MENARDI, 40);
-  Engine_ObjectEventSetAnimation(LOCALID_SATUROS, ANIMATION_SHAKE_HEAD);
+  Engine_ObjectEventSetAnimation(LOCALID_SATUROS, ANIM_SHAKE_HEAD);
   Script_ShowMessageAndWait(LOCALID_SATUROS, 0, 10);
   // Jenna: "What about Isaac and Garet? You can't just leave them here!"
   ObjectEvent_ShowEmote(JENNA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
@@ -379,10 +379,10 @@ static void SolSanctumEruption_PlayHostageScene(void) {
   ObjectEvent_FaceDirection(LOCALID_SATUROS, FACING_WEST, 10);
   Engine_ObjectEventRunRepeatedMotion(LOCALID_MENARDI, 2);
   Script_ShowMessageAndWait(LOCALID_MENARDI, 0, 10);
-  Engine_ObjectEventSetAnimation(LOCALID_SATUROS, ANIMATION_NOD);
+  Engine_ObjectEventSetAnimation(LOCALID_SATUROS, ANIM_NOD);
   Script_ShowMessageAndWait(LOCALID_SATUROS, 0, 40);
   ObjectEvent_FaceDirection(LOCALID_ALEX, FACING_NORTHWEST + FACING_STEP, 60);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_ALEX, ANIMATION_NOD);
+  Engine_ObjectEventSetAnimationAndWait(LOCALID_ALEX, ANIM_NOD);
   Script_ShowMessageAndWait(LOCALID_ALEX, 0, 10);
   ObjectEvent_FaceDirection(LOCALID_FELIX, FACING_SOUTHEAST + FACING_STEP, 0);
   ObjectEvent_FaceDirection(JENNA, FACING_SOUTHEAST + FACING_STEP, 0);
@@ -391,7 +391,7 @@ static void SolSanctumEruption_PlayHostageScene(void) {
   ObjectEvent_FaceDirection(LOCALID_SATUROS, FACING_SOUTH + FACING_STEP, 20);
   ObjectEvent_FaceDirection(LOCALID_ALEX, FACING_NORTH + FACING_STEP, 20);
   // Alex: "Regardless, Kraden must come with us."
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_ALEX, ANIMATION_SHAKE_HEAD);
+  Engine_ObjectEventSetAnimationAndWait(LOCALID_ALEX, ANIM_SHAKE_HEAD);
   Script_ShowMessageAndWait(LOCALID_ALEX, 0, 10);
   ObjectEvent_ShowEmote(LOCALID_FELIX, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 0);
   // Felix steps forward: Alex is breaking their promise. Alex: conditions
@@ -402,7 +402,7 @@ static void SolSanctumEruption_PlayHostageScene(void) {
   Engine_ObjectEventStartRepeatedMotion(LOCALID_FELIX, 3);
   Script_ShowMessageAndWait(LOCALID_FELIX, 0, 10);
   ObjectEvent_FaceDirection(LOCALID_ALEX, FACING_NORTHWEST + FACING_STEP, 10);
-  Engine_ObjectEventSetAnimation(LOCALID_ALEX, ANIMATION_SHAKE_HEAD);
+  Engine_ObjectEventSetAnimation(LOCALID_ALEX, ANIM_SHAKE_HEAD);
   Script_ShowMessageAndWait(LOCALID_ALEX, 0, 10);
   Engine_ObjectEventStartRepeatedMotion(LOCALID_FELIX, 3);
   Script_ShowMessageAndWait(LOCALID_FELIX, 0, 10);
@@ -416,10 +416,10 @@ static void SolSanctumEruption_PlayHostageScene(void) {
   ObjectEvent_FaceDirection(LOCALID_MENARDI, FACING_EAST, 20);
   Engine_ObjectEventRunRepeatedMotion(LOCALID_MENARDI, 2);
   Engine_ScriptWait(30);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_MENARDI, ANIMATION_NOD);
+  Engine_ObjectEventSetAnimationAndWait(LOCALID_MENARDI, ANIM_NOD);
   Engine_ScriptWait(30);
   ObjectEvent_FaceDirection(LOCALID_MENARDI, FACING_NORTH + FACING_STEP, 30);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_MENARDI, ANIMATION_SHAKE_HEAD);
+  Engine_ObjectEventSetAnimationAndWait(LOCALID_MENARDI, ANIM_SHAKE_HEAD);
   Engine_ScriptWait(10);
   Script_ShowMessageAndWait(LOCALID_MENARDI, 0, 10);
   ObjectEvent_FaceDirection(LOCALID_FELIX, FACING_SOUTH + FACING_STEP, 20);
@@ -427,8 +427,8 @@ static void SolSanctumEruption_PlayHostageScene(void) {
   Engine_ScriptWait(20);
   Engine_ObjectEventFaceEachOther(LOCALID_SATUROS, LOCALID_MENARDI, 0);
   Engine_ScriptWait(30);
-  Engine_ObjectEventSetAnimation(LOCALID_SATUROS, ANIMATION_NOD);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_MENARDI, ANIMATION_NOD);
+  Engine_ObjectEventSetAnimation(LOCALID_SATUROS, ANIM_NOD);
+  Engine_ObjectEventSetAnimationAndWait(LOCALID_MENARDI, ANIM_NOD);
   ObjectEvent_FaceDirection(LOCALID_MENARDI, FACING_NORTH + FACING_STEP, 0);
   ObjectEvent_FaceDirection(LOCALID_SATUROS, FACING_NORTHWEST + FACING_STEP, 0);
   Engine_ScriptWait(40);
@@ -442,7 +442,7 @@ static void SolSanctumEruption_PlayHostageScene(void) {
   Engine_ScriptWait(30);
   // Alex: "Perhaps we ought to continue this elsewhere, Felix." Jenna:
   // "Felix..." Alex: "Please...can we go now?"
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_ALEX, ANIMATION_SHAKE_HEAD);
+  Engine_ObjectEventSetAnimationAndWait(LOCALID_ALEX, ANIM_SHAKE_HEAD);
   Script_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | LOCALID_ALEX, 0, 30);
   ObjectEvent_FaceDirection(LOCALID_KRADEN, FACING_NORTHWEST + FACING_STEP, 0);
   ObjectEvent_FaceDirection(JENNA, FACING_NORTHWEST + FACING_STEP, 0);
@@ -450,18 +450,18 @@ static void SolSanctumEruption_PlayHostageScene(void) {
   ObjectEvent_ShowEmote(JENNA, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
   Script_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | JENNA, 0, 40);
   ObjectEvent_ShowEmote(LOCALID_FELIX, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_FELIX, ANIMATION_NOD);
+  Engine_ObjectEventSetAnimationAndWait(LOCALID_FELIX, ANIM_NOD);
   ObjectEvent_ShowEmote(LOCALID_SATUROS, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
   ObjectEvent_ShowEmote(LOCALID_MENARDI, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
   Engine_ObjectEventRunRepeatedMotion(LOCALID_ALEX, 2);
   Script_ShowMessageAndWait(LOCALID_ALEX, 0, 60);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_FELIX, ANIMATION_NOD);
+  Engine_ObjectEventSetAnimationAndWait(LOCALID_FELIX, ANIM_NOD);
   Engine_ScriptWait(40);
   ObjectEvent_ShowEmote(JENNA, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
   ObjectEvent_ShowEmote(LOCALID_KRADEN, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
   Engine_ObjectEventFaceEachOther(LOCALID_SATUROS, LOCALID_MENARDI, 20);
-  Engine_ObjectEventSetAnimation(LOCALID_SATUROS, ANIMATION_NOD);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_MENARDI, ANIMATION_NOD);
+  Engine_ObjectEventSetAnimation(LOCALID_SATUROS, ANIM_NOD);
+  Engine_ObjectEventSetAnimationAndWait(LOCALID_MENARDI, ANIM_NOD);
   Engine_ScriptWait(20);
   ObjectEvent_SetSpeed(LOCALID_SATUROS, PIXELS(3) / 5, PIXELS(3) / 10);
   ObjectEvent_SetSpeed(LOCALID_MENARDI, PIXELS(3) / 5, PIXELS(3) / 10);
@@ -469,8 +469,8 @@ static void SolSanctumEruption_PlayHostageScene(void) {
   ObjectEvent_WalkTo(LOCALID_SATUROS, 491, 348);
   Engine_ObjectEventWaitForMove(LOCALID_MENARDI);
   Engine_ObjectEventWaitForMove(LOCALID_SATUROS);
-  Engine_ObjectEventSetAnimation(LOCALID_MENARDI, ANIMATION_STAND);
-  Engine_ObjectEventSetAnimation(LOCALID_SATUROS, ANIMATION_STAND);
+  Engine_ObjectEventSetAnimation(LOCALID_MENARDI, ANIM_STAND);
+  Engine_ObjectEventSetAnimation(LOCALID_SATUROS, ANIM_STAND);
   ObjectEvent_FaceDirection(LOCALID_MENARDI, FACING_NORTH + FACING_STEP, 0);
   ObjectEvent_FaceDirection(LOCALID_SATUROS, FACING_NORTHWEST + FACING_STEP, 0);
   ObjectEvent_FaceDirection(LOCALID_FELIX, FACING_SOUTHEAST + FACING_STEP, 10);
@@ -508,16 +508,16 @@ static void SolSanctumEruption_PlayHostageScene(void) {
   ObjectEvent_FaceDirection(JENNA, FACING_SOUTHEAST + FACING_STEP, 0);
   ObjectEvent_FaceDirection(LOCALID_MENARDI, FACING_SOUTHEAST + FACING_STEP,
                             20);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_SATUROS, ANIMATION_SHAKE_HEAD);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_MENARDI, ANIMATION_NOD);
+  Engine_ObjectEventSetAnimationAndWait(LOCALID_SATUROS, ANIM_SHAKE_HEAD);
+  Engine_ObjectEventSetAnimationAndWait(LOCALID_MENARDI, ANIM_NOD);
   ObjectEvent_FaceDirection(LOCALID_MENARDI, FACING_NORTHWEST + FACING_STEP,
                             20);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_MENARDI, ANIMATION_NOD);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_FELIX, ANIMATION_NOD);
+  Engine_ObjectEventSetAnimationAndWait(LOCALID_MENARDI, ANIM_NOD);
+  Engine_ObjectEventSetAnimationAndWait(LOCALID_FELIX, ANIM_NOD);
   Engine_ScriptWait(20);
   ObjectEvent_WalkTo(JENNA, 432, 316);
   ObjectEvent_WalkToAndWait(LOCALID_FELIX, 422, 311);
-  Engine_ObjectEventSetAnimation(JENNA, ANIMATION_STAND);
+  Engine_ObjectEventSetAnimation(JENNA, ANIM_STAND);
   ObjectEvent_FaceDirection(JENNA, FACING_SOUTHEAST + FACING_STEP, 0);
   ObjectEvent_FaceDirection(LOCALID_FELIX, FACING_SOUTHEAST + FACING_STEP, 20);
   // Felix leads Jenna aside. Saturos: "Master Kraden, you will be joining us,
@@ -556,11 +556,11 @@ static void SolSanctumEruption_PlayHostageScene(void) {
   ObjectEvent_SetSpeed(LOCALID_SATUROS, PIXELS(1) / 2, PIXELS(1) / 4);
   ObjectEvent_SetSpeed(LOCALID_MENARDI, PIXELS(1) / 2, PIXELS(1) / 4);
   ObjectEvent_SetSpeed(LOCALID_ALEX, PIXELS(1) / 2, PIXELS(1) / 4);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_SATUROS, ANIMATION_NOD);
+  Engine_ObjectEventSetAnimationAndWait(LOCALID_SATUROS, ANIM_NOD);
   SolSanctumEruption_RaiseAndShrinkObjectEvent(LOCALID_SATUROS);
   Engine_ObjectEventRunRepeatedMotion(LOCALID_KRADEN, 2);
   SolSanctumEruption_RaiseAndShrinkObjectEvent(LOCALID_KRADEN);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_MENARDI, ANIMATION_NOD);
+  Engine_ObjectEventSetAnimationAndWait(LOCALID_MENARDI, ANIM_NOD);
   SolSanctumEruption_RaiseAndShrinkObjectEvent(LOCALID_MENARDI);
   ObjectEvent_FaceDirection(JENNA, FACING_WEST + FACING_STEP, 40);
   Engine_ObjectEventStartRepeatedMotion(JENNA, 2);
@@ -572,7 +572,7 @@ static void SolSanctumEruption_PlayHostageScene(void) {
   SolSanctumEruption_RaiseAndShrinkObjectEvent(LOCALID_FELIX);
   ObjectEvent_FaceDirection(LOCALID_ALEX, FACING_SOUTHWEST + FACING_STEP, 40);
   Script_ShowMessageAndWait(LOCALID_ALEX, 0, 30);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_ALEX, ANIMATION_SHAKE_HEAD);
+  Engine_ObjectEventSetAnimationAndWait(LOCALID_ALEX, ANIM_SHAKE_HEAD);
   Engine_ScriptWait(20);
   Script_ShowMessageAndWait(LOCALID_ALEX, 0, 30);
   SolSanctumEruption_RaiseAndShrinkObjectEvent(LOCALID_ALEX);
@@ -966,7 +966,7 @@ static void SolSanctumEruption_PlayWiseOneRescue(void) {
   Engine_ScriptSetMessage(MsgSolSanctumWellTurnedBadly);
   Script_OpenMessage(GARET, 0);
   if (Engine_ScriptChooseYesNo(0, 0) == 0) {
-    Engine_ObjectEventSetAnimationAndWait(GARET, ANIMATION_NOD);
+    Engine_ObjectEventSetAnimationAndWait(GARET, ANIM_NOD);
     Engine_ScriptSetMessage(MsgSolSanctumWellTurnedBadly + 1);
   } else {
     Engine_ObjectEventRunRepeatedMotion(GARET, 1);
@@ -1001,7 +1001,7 @@ static void SolSanctumEruption_PlayWiseOneRescue(void) {
     Engine_ScriptWait(60);
     ObjectEvent_FaceDirection(GARET, FACING_EAST + FACING_STEP, 0);
     Engine_ScriptWait(10);
-    Engine_ObjectEventSetAnimation(GARET, ANIMATION_SHAKE_HEAD);
+    Engine_ObjectEventSetAnimation(GARET, ANIM_SHAKE_HEAD);
     Engine_ScriptSetMessage(MsgSolSanctumThanksALot);
   } else {
     Engine_ScriptWait(10);
@@ -1011,12 +1011,12 @@ static void SolSanctumEruption_PlayWiseOneRescue(void) {
     Engine_ScriptWait(60);
     ObjectEvent_FaceDirection(GARET, FACING_EAST + FACING_STEP, 0);
     Engine_ScriptWait(10);
-    Engine_ObjectEventSetAnimation(GARET, ANIMATION_SHAKE_HEAD);
+    Engine_ObjectEventSetAnimation(GARET, ANIM_SHAKE_HEAD);
     Engine_ScriptSetMessage(MsgSolSanctumTheyllBeSafe);
   }
   Script_ShowMessageAndWait(GARET, 0, 40);
-  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIMATION_NOD);
-  Engine_ObjectEventSetAnimationAndWait(GARET, ANIMATION_NOD);
+  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
+  Engine_ObjectEventSetAnimationAndWait(GARET, ANIM_NOD);
   Engine_ScriptWait(40);
 
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_WEST, 0);
@@ -1063,7 +1063,7 @@ static void SolSanctumEruption_PlayWiseOneRescue(void) {
   ObjectEvent_FaceDirection(GARET, FACING_NORTHEAST + FACING_STEP, 0);
   Engine_ScriptWait(10);
   Script_ShowMessageAndWait(GARET, 0, 10);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_PARTY_LEADER, ANIMATION_NOD);
+  Engine_ObjectEventSetAnimationAndWait(LOCALID_PARTY_LEADER, ANIM_NOD);
   Engine_ScriptWait(10);
 
   // A violent tremor throws them aside.
@@ -1091,7 +1091,7 @@ static void SolSanctumEruption_PlayWiseOneRescue(void) {
   ObjectEvent_SetSpeed(GARET, PIXELS(2) / 5, PIXELS(1) / 5);
   ObjectEvent_WalkTo(GARET, 220, 150);
   Engine_ObjectEventWalkToAndWait(LOCALID_PARTY_LEADER, 246, 150);
-  Engine_ObjectEventSetAnimation(GARET, ANIMATION_STAND);
+  Engine_ObjectEventSetAnimation(GARET, ANIM_STAND);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_WEST, 0);
   ObjectEvent_FaceDirection(GARET, FACING_SOUTHWEST + FACING_STEP, 0);
   Engine_ScriptWait(60);
@@ -1105,11 +1105,11 @@ static void SolSanctumEruption_PlayWiseOneRescue(void) {
   if (Engine_ScriptChooseYesNo(0, 0) == 0) {
     ObjectEvent_FaceDirection(GARET, FACING_EAST + FACING_STEP, 0);
     Engine_ScriptWait(10);
-    Engine_ObjectEventSetAnimationAndWait(GARET, ANIMATION_NOD);
+    Engine_ObjectEventSetAnimationAndWait(GARET, ANIM_NOD);
   } else {
     ObjectEvent_FaceDirection(GARET, FACING_EAST + FACING_STEP, 0);
     Engine_ScriptWait(10);
-    Engine_ObjectEventSetAnimation(GARET, ANIMATION_SHAKE_HEAD);
+    Engine_ObjectEventSetAnimation(GARET, ANIM_SHAKE_HEAD);
     Engine_ScriptSetMessage(MsgSolSanctumQuitActingTough);
   }
   Engine_ScriptWait(20);
@@ -1140,7 +1140,7 @@ static void SolSanctumEruption_PlayWiseOneRescue(void) {
   Engine_ObjectEventJump(LOCALID_PARTY_LEADER, 4, 0);
   Engine_ScriptWait(30);
   ObjectEvent_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
-  Engine_ObjectEventSetAnimation(GARET, ANIMATION_STAND);
+  Engine_ObjectEventSetAnimation(GARET, ANIM_STAND);
   Engine_ScriptWait(40);
   ObjectEvent_FaceDirection(GARET, FACING_SOUTHEAST, 0);
   Engine_ScriptWait(4);
@@ -1325,10 +1325,10 @@ static void SolSanctumEruption_PlayWiseOneRescue(void) {
     Engine_VramLoad(starSprite->slot, 128, iconPixels + 0x400);
     Engine_HeapRelease(17);
     Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER,
-                                   ANIMATION_LEADER_ARMS_RAISED);
+                                   ANIM_LEADER_ARMS_RAISED);
     Engine_ItemShowPicture(star, 3);
     Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER,
-                                   ANIMATION_LEADER_ARMS_RAISED);
+                                   ANIM_LEADER_ARMS_RAISED);
   }
   SolSanctumEruption_SetMaterializationTint(1, 20, 0);
   for (frame = 0; frame < 24; frame++) {
@@ -1354,7 +1354,7 @@ static void SolSanctumEruption_PlayWiseOneRescue(void) {
   if (star != NULL) {
     Engine_ObjectDispatchRelease(star);
   }
-  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIMATION_STAND);
+  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_STAND);
   Engine_ScriptWait(20);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_WEST, 0);
   ObjectEvent_FaceDirection(GARET, FACING_NORTHWEST, 60);

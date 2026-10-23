@@ -306,8 +306,7 @@ static void EventScript_IodemQuestionsWoundedSoldiers(void) {
     Script_Wait(10);
     ObjectEvent_RunRepeatedMotion(LOCALID_SOLDIER_NORTH, 2);
     Script_Wait(20);
-    ObjectEvent_SetAnimationAndWait(LOCALID_SOLDIER_NORTH,
-                                    ANIMATION_SHAKE_HEAD);
+    ObjectEvent_SetAnimationAndWait(LOCALID_SOLDIER_NORTH, ANIM_SHAKE_HEAD);
     Script_Wait(20);
     Script_ShowMessage(LOCALID_SOLDIER_NORTH, 0);
     Script_Wait(10);
@@ -325,7 +324,7 @@ static void EventScript_IodemQuestionsWoundedSoldiers(void) {
     ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_EAST, 0);
     Script_Wait(20);
     Script_Wait(10);
-    ObjectEvent_SetAnimationAndWait(LOCALID_IODEM, ANIMATION_SHAKE_HEAD);
+    ObjectEvent_SetAnimationAndWait(LOCALID_IODEM, ANIM_SHAKE_HEAD);
     Script_Wait(20);
     Script_ShowMessage(LOCALID_IODEM, 0);
     Script_Wait(20);
@@ -348,14 +347,13 @@ static void EventScript_IodemQuestionsWoundedSoldiers(void) {
     ObjectEvent_FaceObjectEvent(LOCALID_PARTY_LEADER, LOCALID_SOLDIER_NORTH, 0);
     ObjectEvent_FaceDirection(LOCALID_IODEM, FACING_NORTH, 0);
     Script_Wait(40);
-    ObjectEvent_SetAnimationAndWait(LOCALID_IODEM, ANIMATION_NOD);
+    ObjectEvent_SetAnimationAndWait(LOCALID_IODEM, ANIM_NOD);
     Script_Wait(30);
     Script_ShowMessage(LOCALID_IODEM, 0);
     Script_Wait(10);
     ObjectEvent_RunRepeatedMotion(LOCALID_SOLDIER_NORTH, 2);
     Script_Wait(20);
-    ObjectEvent_SetAnimationAndWait(LOCALID_SOLDIER_NORTH,
-                                    ANIMATION_SHAKE_HEAD);
+    ObjectEvent_SetAnimationAndWait(LOCALID_SOLDIER_NORTH, ANIM_SHAKE_HEAD);
     Script_Wait(20);
     Script_ShowMessage(LOCALID_SOLDIER_NORTH, 0);
     Script_Wait(10);
@@ -377,12 +375,11 @@ static void EventScript_IodemQuestionsWoundedSoldiers(void) {
     ObjectEvent_FaceObjectEvent(LOCALID_PARTY_LEADER, LOCALID_SOLDIER_NORTH, 0);
     ObjectEvent_FaceDirection(LOCALID_IODEM, FACING_NORTH, 0);
     Script_Wait(40);
-    ObjectEvent_SetAnimation(LOCALID_PARTY_LEADER, ANIMATION_NOD);
-    ObjectEvent_SetAnimationAndWait(LOCALID_IODEM, ANIMATION_NOD);
+    ObjectEvent_SetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
+    ObjectEvent_SetAnimationAndWait(LOCALID_IODEM, ANIM_NOD);
     Script_Wait(30);
     Script_Wait(10);
-    ObjectEvent_SetAnimationAndWait(LOCALID_SOLDIER_SOUTH,
-                                    ANIMATION_SHAKE_HEAD);
+    ObjectEvent_SetAnimationAndWait(LOCALID_SOLDIER_SOUTH, ANIM_SHAKE_HEAD);
     Script_Wait(20);
     Script_ShowMessage(LOCALID_SOLDIER_SOUTH, 0);
     Script_Wait(10);
@@ -412,14 +409,13 @@ static void EventScript_IodemQuestionsWoundedSoldiers(void) {
     Script_Wait(10);
     ObjectEvent_RunRepeatedMotion(LOCALID_SOLDIER_NORTH, 2);
     Script_Wait(20);
-    ObjectEvent_SetAnimationAndWait(LOCALID_SOLDIER_NORTH, ANIMATION_NOD);
+    ObjectEvent_SetAnimationAndWait(LOCALID_SOLDIER_NORTH, ANIM_NOD);
     Script_Wait(30);
     Script_Wait(10);
     ObjectEvent_ShowEmote(LOCALID_IODEM, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
     Script_ShowMessage(LOCALID_IODEM, 0);
     Script_Wait(10);
-    ObjectEvent_SetAnimationAndWait(LOCALID_SOLDIER_SOUTH,
-                                    ANIMATION_SHAKE_HEAD);
+    ObjectEvent_SetAnimationAndWait(LOCALID_SOLDIER_SOUTH, ANIM_SHAKE_HEAD);
     Script_Wait(20);
     Script_ShowMessage(LOCALID_SOLDIER_SOUTH, 0);
     Script_Wait(10);
@@ -447,8 +443,7 @@ static void EventScript_IodemQuestionsWoundedSoldiers(void) {
     Script_Wait(30);
     Script_ShowMessage(LOCALID_IODEM, 0);
     Script_Wait(10);
-    ObjectEvent_SetAnimationAndWait(LOCALID_SOLDIER_SOUTH,
-                                    ANIMATION_SHAKE_HEAD);
+    ObjectEvent_SetAnimationAndWait(LOCALID_SOLDIER_SOUTH, ANIM_SHAKE_HEAD);
     Script_Wait(20);
     Script_ShowMessage(LOCALID_SOLDIER_SOUTH, 0);
     Script_Wait(10);
@@ -478,7 +473,7 @@ static void EventScript_IodemQuestionsWoundedSoldiers(void) {
     ObjectEvent_FaceObjectEvent(LOCALID_PARTY_LEADER, LOCALID_SOLDIER_SOUTH, 0);
     ObjectEvent_FaceDirection(LOCALID_IODEM, FACING_SOUTHEAST, 0);
     Script_Wait(30);
-    ObjectEvent_SetAnimationAndWait(LOCALID_IODEM, ANIMATION_NOD);
+    ObjectEvent_SetAnimationAndWait(LOCALID_IODEM, ANIM_NOD);
     Script_Wait(30);
     Script_ShowMessage(LOCALID_IODEM, 0);
     Script_Wait(10);
@@ -508,13 +503,13 @@ static void EventScript_IodemQuestionsWoundedSoldiers(void) {
     ObjectEvent_ShowEmote(LOCALID_IODEM, EMOTE_IN_FRONT | EMOTE_WINCE, 50);
     Script_ShowMessage(LOCALID_IODEM, 0);
     Script_Wait(10);
-    ObjectEvent_SetAnimationAndWait(LOCALID_PARTY_LEADER, ANIMATION_NOD);
+    ObjectEvent_SetAnimationAndWait(LOCALID_PARTY_LEADER, ANIM_NOD);
     Script_Wait(20);
-    ObjectEvent_SetAnimationAndWait(LOCALID_IODEM, ANIMATION_NOD);
+    ObjectEvent_SetAnimationAndWait(LOCALID_IODEM, ANIM_NOD);
     Script_Wait(30);
     Script_PlaySong(MUS_030);
     ObjectEvent_SetSpeed(LOCALID_IODEM, PIXELS(6) / 5, PIXELS(3) / 5);
-    ObjectEvent_SetAnimation(LOCALID_IODEM, ANIMATION_WALK);
+    ObjectEvent_SetAnimation(LOCALID_IODEM, ANIM_WALK);
     // Iodem walks into the leader and is hidden: he travels in the party.
     leader = ObjectEvent_Get(LOCALID_PARTY_LEADER);
     if (leader != 0) {

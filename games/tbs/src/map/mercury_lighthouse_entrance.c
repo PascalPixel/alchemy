@@ -257,7 +257,7 @@ MercuryLighthouseEntrance_GetObjectEventTemplates(void) {
 /// at the center of all..."
 static void MercuryLighthouseEntrance_ReadHeartInscription(void) {
   Engine_ScriptStart();
-  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIMATION_STAND);
+  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_STAND);
   Engine_MessageShowCentered(MsgMercuryWhoHonorsHeart, 1);
   Engine_ScriptEnd();
 }
@@ -531,8 +531,7 @@ s32 MercuryLighthouseEntrance_Initialize(void) {
     ObjectEvent_SetAttachedEffect(LOCALID_PARTY_LEADER,
                                   ATTACHED_EFFECT_IN_FRONT |
                                       ATTACHED_EFFECT_ATTACH);
-    Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER,
-                                   ANIMATION_LEADER_LEAN_BACK);
+    Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_LEADER_LEAN_BACK);
     MapGrid_SetShake(PIXELS(5), PIXELS(5), Q16_ONE);
     MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
     Engine_MapGridRenderWaitForValues();
@@ -546,7 +545,7 @@ s32 MercuryLighthouseEntrance_Initialize(void) {
       PaletteFade_ApplyTarget(PALETTE_TINT_WARM, 1);
       Engine_ColorBufferInterpolate(30);
       Engine_ScriptWaitForScreen();
-      Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIMATION_STAND);
+      Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_STAND);
       Engine_ScriptWait(30);
       FieldMessage_ShowCentered(MsgMercuryWhoHonorsHeart, 0, 0);
       PaletteFade_ApplyTarget(PALETTE_TINT_NONE, 0);
@@ -700,7 +699,7 @@ static void MercuryLighthouseEntrance_MiaEntersLighthouse(void) {
     Engine_ScriptWaitForScreen();
     Engine_ScriptWait(60);
     ObjectEvent_FaceObjectEvent(MIA, LOCALID_PARTY_LEADER, 0);
-    Engine_ObjectEventSetAnimationAndWait(MIA, ANIMATION_NOD);
+    Engine_ObjectEventSetAnimationAndWait(MIA, ANIM_NOD);
     Engine_ScriptWait(30);
     ObjectEvent_WalkTo(MIA, 136, 72);
     Engine_ScriptWait(40);

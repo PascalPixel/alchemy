@@ -180,7 +180,7 @@ const struct ObjectEventTemplate *Map_GetObjectEventTemplates(void) {
 /// Stands the object event still while showing the message already selected.
 static void VaultRevisit_ShowStandingObjectEventMessage(s32 localId) {
   Engine_ScriptStart();
-  Engine_ObjectEventSetAnimation(localId, ANIMATION_STAND);
+  Engine_ObjectEventSetAnimation(localId, ANIM_STAND);
   Engine_ScriptShowMessage(localId, 0);
   Engine_ScriptEnd();
 }
@@ -394,7 +394,7 @@ static void EventScript_ReadMindOnJailKey(void) {
   if (requestHeard == 0) {
     Engine_ScriptStart();
     ObjectEvent_Get(LOCALID_STRONGMAN_ON_WATCH)->paused = 1;
-    Engine_ObjectEventSetAnimation(LOCALID_STRONGMAN_ON_WATCH, ANIMATION_STAND);
+    Engine_ObjectEventSetAnimation(LOCALID_STRONGMAN_ON_WATCH, ANIM_STAND);
     Engine_ObjectEventRunRepeatedMotion(LOCALID_STRONGMAN_ON_WATCH, 1);
     Engine_ScriptWait(20);
     Engine_ScriptSetMessage(MsgVaultGuysCheckJail);
@@ -632,7 +632,7 @@ static void EventScript_TalkToDog(void) {
   Engine_ObjectEventFaceEachOther(LOCALID_VAULT_DOG, LOCALID_PARTY_LEADER, 0);
   Engine_ScriptWait(2);
   Engine_ScriptShowMessage(LOCALID_VAULT_DOG, 0);
-  Engine_ObjectEventSetAnimation(LOCALID_VAULT_DOG, ANIMATION_STAND);
+  Engine_ObjectEventSetAnimation(LOCALID_VAULT_DOG, ANIM_STAND);
 
   if (PartyInventory_FindMember(ITEM_BONE) != -1 &&
       Engine_GameFlagIsSet(FLAG_VAULT_DOG_SHOWN_PASSAGE) == 0) {

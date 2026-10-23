@@ -200,7 +200,7 @@ s32 Field_FindNearbyTalkTarget(s32 id);
 s32 Field_FindNearbyPsynergyTarget(s32 id, s32 kind);
 s32 FieldEffect_PlayCueAndStartEmitterOnTarget(s32 localId, s32 target,
                                                s32 itemId);
-void Animation_ApplyChildPalette(struct MotionObject *object, s32 palette);
+void Anim_ApplyChildPalette(struct MotionObject *object, s32 palette);
 void Field_EndBusyAndReveal(void);
 s32 Field_FindItemEvent(s32 item);
 s32 Field_UseItem(s32 packedItem, s32 slot);

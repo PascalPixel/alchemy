@@ -12,7 +12,7 @@ static void Vault_ShowThought(s32 localId) {
 
   *paused = 1;
   Engine_ScriptStart();
-  Engine_ObjectEventSetAnimation(localId, ANIMATION_STAND);
+  Engine_ObjectEventSetAnimation(localId, ANIM_STAND);
   Engine_ScriptWait(2);
   Engine_ScriptShowMessage(localId, 0);
   Engine_ScriptEnd();

@@ -286,7 +286,7 @@ static void EventScript_OpenDoorAndEnter(void) {
   Engine_ObjectEventSetSpritePriority(LOCALID_PARTY_LEADER, 2);
   ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(3) / 5, PIXELS(3) / 10);
   ObjectEvent_WalkToAndWait(LOCALID_PARTY_LEADER, 120, 98);
-  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIMATION_WALK);
+  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_WALK);
   ObjectEvent_SetDestinationOffset(LOCALID_PARTY_LEADER, 0, -8);
   Engine_ScriptWait(10);
   Engine_ScriptCloseScreen();
@@ -606,7 +606,7 @@ static void EventScript_PushStatue(void) {
                  statue->y.fixed, statue->z.fixed + (packedStep << 16));
     // Move only after the statue's proposed position passes collision.
     if (FieldObject_CheckMovementCollision(statue, destination) <= 0) {
-      ObjectEvent_SetMode(leader, ANIMATION_PUSH);
+      ObjectEvent_SetMode(leader, ANIM_PUSH);
       Engine_TaskWait(15);
       Engine_AudioPlayCue(SE_PUSH);
       statue->speed = PIXELS(1) / 5;
@@ -622,7 +622,7 @@ static void EventScript_PushStatue(void) {
       statue->z.fixed = destination->z;
       statue->velocityX = stoppedVelocity;
       statue->velocityZ = stoppedVelocity;
-      ObjectEvent_SetMode(leader, ANIMATION_STAND);
+      ObjectEvent_SetMode(leader, ANIM_STAND);
       // Save the moved statue in the flag set belonging to this room.
       switch (gGameState.warpDest) {
       case SOL_SANCTUM_RELIEFS_FIRST_RELIEF_ROOM_FROM_CHEST_ROOM:
@@ -837,9 +837,9 @@ static void SolSanctumEntrance_IntroduceSanctum(void) {
   ObjectEvent_SetSpeed(LOCALID_KRADEN, PIXELS(3) / 5, PIXELS(3) / 10);
   ObjectEvent_SetSpeed(JENNA, PIXELS(3) / 5, PIXELS(3) / 10);
   ObjectEvent_SetSpeed(GARET, PIXELS(3) / 5, PIXELS(3) / 10);
-  Engine_ObjectEventSetAnimation(GARET, ANIMATION_WALK);
-  Engine_ObjectEventSetAnimation(JENNA, ANIMATION_WALK);
-  Engine_ObjectEventSetAnimation(LOCALID_KRADEN, ANIMATION_WALK);
+  Engine_ObjectEventSetAnimation(GARET, ANIM_WALK);
+  Engine_ObjectEventSetAnimation(JENNA, ANIM_WALK);
+  Engine_ObjectEventSetAnimation(LOCALID_KRADEN, ANIM_WALK);
   ObjectEvent_SetDestinationOffset(GARET, -16, 0);
   ObjectEvent_SetDestinationOffset(JENNA, 16, 0);
   ObjectEvent_SetDestinationOffset(LOCALID_KRADEN, 0, -32);
@@ -849,7 +849,7 @@ static void SolSanctumEntrance_IntroduceSanctum(void) {
   ObjectEvent_FaceDirection(GARET, FACING_NORTH, 0);
   ObjectEvent_FaceDirection(JENNA, FACING_NORTH, 0);
   Engine_ObjectEventWaitForMove(LOCALID_KRADEN);
-  Engine_ObjectEventSetAnimation(LOCALID_KRADEN, ANIMATION_STAND);
+  Engine_ObjectEventSetAnimation(LOCALID_KRADEN, ANIM_STAND);
   Engine_ScriptWait(40);
   Engine_ObjectEventRunRepeatedMotion(LOCALID_KRADEN, 2);
   Engine_ScriptWait(20);
@@ -863,19 +863,19 @@ static void SolSanctumEntrance_IntroduceSanctum(void) {
   Script_AskYesNo(SPEAKER_WINDOW_ABOVE | LOCALID_KRADEN, 0);
   Engine_ScriptWait(20);
   FieldCamera_MoveTo(PIXELS(1224), -1, PIXELS(148), 1);
-  Engine_ObjectEventSetAnimation(GARET, ANIMATION_WALK);
+  Engine_ObjectEventSetAnimation(GARET, ANIM_WALK);
   leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   if (leader != NULL) {
     ObjectEvent_SetDestination(GARET, leader->x.part.pixel,
                                leader->z.part.pixel);
   }
-  Engine_ObjectEventSetAnimation(JENNA, ANIMATION_WALK);
+  Engine_ObjectEventSetAnimation(JENNA, ANIM_WALK);
   leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   if (leader != NULL) {
     ObjectEvent_SetDestination(JENNA, leader->x.part.pixel,
                                leader->z.part.pixel);
   }
-  Engine_ObjectEventSetAnimation(LOCALID_KRADEN, ANIMATION_WALK);
+  Engine_ObjectEventSetAnimation(LOCALID_KRADEN, ANIM_WALK);
   leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   if (leader != NULL) {
     ObjectEvent_SetDestination(LOCALID_KRADEN, leader->x.part.pixel,
@@ -886,9 +886,9 @@ static void SolSanctumEntrance_IntroduceSanctum(void) {
   ObjectEvent_SetPosition(JENNA, 0, 0);
   Engine_ObjectEventWaitForMove(LOCALID_KRADEN);
   ObjectEvent_SetPosition(LOCALID_KRADEN, 0, 0);
-  Engine_ObjectEventSetAnimation(GARET, ANIMATION_STAND);
-  Engine_ObjectEventSetAnimation(JENNA, ANIMATION_STAND);
-  Engine_ObjectEventSetAnimation(LOCALID_KRADEN, ANIMATION_STAND);
+  Engine_ObjectEventSetAnimation(GARET, ANIM_STAND);
+  Engine_ObjectEventSetAnimation(JENNA, ANIM_STAND);
+  Engine_ObjectEventSetAnimation(LOCALID_KRADEN, ANIM_STAND);
   GameFlag_Set(FLAG_SOL_SANCTUM_ENTERED);
   gFieldWork->transition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
@@ -926,14 +926,14 @@ static void SolSanctumEntrance_KradenSuspectsHiddenPassage(void) {
   ObjectEvent_SetSpeed(LOCALID_KRADEN, PIXELS(3) / 5, PIXELS(3) / 10);
   ObjectEvent_SetSpeed(JENNA, PIXELS(3) / 5, PIXELS(3) / 10);
   ObjectEvent_SetSpeed(GARET, PIXELS(3) / 5, PIXELS(3) / 10);
-  Engine_ObjectEventSetAnimation(GARET, ANIMATION_WALK);
-  Engine_ObjectEventSetAnimation(JENNA, ANIMATION_WALK);
-  Engine_ObjectEventSetAnimation(LOCALID_KRADEN, ANIMATION_WALK);
+  Engine_ObjectEventSetAnimation(GARET, ANIM_WALK);
+  Engine_ObjectEventSetAnimation(JENNA, ANIM_WALK);
+  Engine_ObjectEventSetAnimation(LOCALID_KRADEN, ANIM_WALK);
   ObjectEvent_SetDestinationOffset(GARET, -16, 0);
   ObjectEvent_SetDestinationOffset(JENNA, 16, 0);
   ObjectEvent_SetDestinationOffset(LOCALID_KRADEN, 0, -16);
   Engine_ObjectEventWaitForMove(LOCALID_KRADEN);
-  Engine_ObjectEventSetAnimation(LOCALID_KRADEN, ANIMATION_STAND);
+  Engine_ObjectEventSetAnimation(LOCALID_KRADEN, ANIM_STAND);
   Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, 0);
   Engine_ObjectEventSetAnimation(GARET, 0);
   Engine_ObjectEventSetAnimation(JENNA, 0);
@@ -954,20 +954,20 @@ static void SolSanctumEntrance_KradenSuspectsHiddenPassage(void) {
   ObjectEvent_FaceDirection(LOCALID_KRADEN, FACING_NORTH, 40);
   Engine_ObjectEventRunRepeatedMotion(LOCALID_KRADEN, 2);
   Engine_ScriptWait(10);
-  Engine_ObjectEventSetAnimation(LOCALID_KRADEN, ANIMATION_WALK);
+  Engine_ObjectEventSetAnimation(LOCALID_KRADEN, ANIM_WALK);
   Engine_ObjectEventSetDestinationOffset(LOCALID_KRADEN, 0, -16);
   Engine_ObjectEventWaitForMove(LOCALID_KRADEN);
-  Engine_ObjectEventSetAnimation(LOCALID_KRADEN, ANIMATION_STAND);
+  Engine_ObjectEventSetAnimation(LOCALID_KRADEN, ANIM_STAND);
   Engine_ScriptWait(6);
   ObjectEvent_FaceDirection(LOCALID_KRADEN, FACING_WEST, 20);
   ObjectEvent_FaceDirection(LOCALID_KRADEN, FACING_EAST, 20);
   ObjectEvent_FaceDirection(LOCALID_KRADEN, FACING_NORTH, 40);
   Engine_ObjectEventRunRepeatedMotion(LOCALID_KRADEN, 2);
   Engine_ScriptWait(20);
-  Engine_ObjectEventSetAnimation(LOCALID_KRADEN, ANIMATION_WALK);
+  Engine_ObjectEventSetAnimation(LOCALID_KRADEN, ANIM_WALK);
   Engine_ObjectEventSetDestinationOffset(LOCALID_KRADEN, 0, -32);
   Engine_ObjectEventWaitForMove(LOCALID_KRADEN);
-  Engine_ObjectEventSetAnimation(LOCALID_KRADEN, ANIMATION_STAND);
+  Engine_ObjectEventSetAnimation(LOCALID_KRADEN, ANIM_STAND);
 
   // Survey both sides of the room before returning to Kraden.
   FieldCamera_SetSpeed(PIXELS(2), PIXELS(1) / 4);
@@ -979,14 +979,14 @@ static void SolSanctumEntrance_KradenSuspectsHiddenPassage(void) {
   Engine_CameraWaitForMove();
   FieldCamera_MoveTo(PIXELS(1718), -1, PIXELS(100), 1);
   Engine_CameraWaitForMove();
-  Engine_ObjectEventSetAnimation(LOCALID_KRADEN, ANIMATION_STAND);
+  Engine_ObjectEventSetAnimation(LOCALID_KRADEN, ANIM_STAND);
   FieldCamera_MoveTo(PIXELS(1752), -1, PIXELS(150), 1);
   Engine_CameraWaitForMove();
   Engine_ScriptWait(40);
   FieldCamera_SetSpeed(PIXELS(12) / 5, PIXELS(3) / 10);
   FieldCamera_MoveTo(PIXELS(1668), -1, PIXELS(256), 1);
   Engine_CameraWaitForMove();
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_KRADEN, ANIMATION_NOD);
+  Engine_ObjectEventSetAnimationAndWait(LOCALID_KRADEN, ANIM_NOD);
   Engine_ScriptWait(10);
 
   ObjectEvent_FaceDirection(GARET, FACING_NORTHEAST, 0);
@@ -1014,7 +1014,7 @@ static void SolSanctumEntrance_KradenSuspectsHiddenPassage(void) {
   Engine_ScriptWait(20);
   // Kraden: the sanctum always looked strange to him, not as he imagined.
   Script_ShowMessage(LOCALID_KRADEN, 0);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_KRADEN, ANIMATION_SHAKE_HEAD);
+  Engine_ObjectEventSetAnimationAndWait(LOCALID_KRADEN, ANIM_SHAKE_HEAD);
   Script_ShowMessageAndWait(LOCALID_KRADEN, 0, 10);
   Engine_ObjectEventFaceEachOther(LOCALID_PARTY_LEADER, 5, 0);
   Engine_ScriptWait(40);
@@ -1026,7 +1026,7 @@ static void SolSanctumEntrance_KradenSuspectsHiddenPassage(void) {
   Engine_ObjectEventRunRepeatedMotion(JENNA, 2);
   // Jenna: "What do you mean?"
   Script_ShowMessageAndWait(JENNA, 0, 10);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_KRADEN, ANIMATION_SHAKE_HEAD);
+  Engine_ObjectEventSetAnimationAndWait(LOCALID_KRADEN, ANIM_SHAKE_HEAD);
   // Kraden: a sanctum built in honour of the sun ought to show it somewhere.
   Script_ShowMessageAndWait(LOCALID_KRADEN, 0, 10);
   ObjectEvent_FaceDirection(LOCALID_KRADEN, FACING_SOUTHEAST + FACING_STEP, 10);
@@ -1069,7 +1069,7 @@ static void SolSanctumEntrance_KradenSuspectsHiddenPassage(void) {
                           40);
     Engine_ObjectEventRunRepeatedMotion(GARET, 1);
     Engine_ScriptWait(10);
-    Engine_ObjectEventSetAnimationAndWait(GARET, ANIMATION_NOD);
+    Engine_ObjectEventSetAnimationAndWait(GARET, ANIM_NOD);
     Engine_ScriptWait(10);
     ObjectEvent_FaceDirection(GARET, FACING_EAST, 0);
     ObjectEvent_FaceDirection(JENNA, FACING_WEST, 30);
@@ -1080,32 +1080,32 @@ static void SolSanctumEntrance_KradenSuspectsHiddenPassage(void) {
 
   // Bring Kraden back and return the followers to the party.
   ObjectEvent_SetSpeed(LOCALID_KRADEN, PIXELS(3) / 5, PIXELS(3) / 10);
-  Engine_ObjectEventSetAnimation(LOCALID_KRADEN, ANIMATION_WALK);
+  Engine_ObjectEventSetAnimation(LOCALID_KRADEN, ANIM_WALK);
   Engine_ObjectEventSetDestinationOffset(LOCALID_KRADEN, 0, 48);
   Engine_ObjectEventWaitForMove(LOCALID_KRADEN);
-  Engine_ObjectEventSetAnimation(LOCALID_KRADEN, ANIMATION_STAND);
+  Engine_ObjectEventSetAnimation(LOCALID_KRADEN, ANIM_STAND);
   Engine_ScriptWait(6);
   ObjectEvent_FaceDirection(GARET, FACING_NORTHEAST, 0);
   Engine_ObjectEventFaceDirection(JENNA, FACING_NORTHWEST, 0);
   Engine_ObjectEventWaitForMove(LOCALID_KRADEN);
-  Engine_ObjectEventSetAnimation(LOCALID_KRADEN, ANIMATION_STAND);
+  Engine_ObjectEventSetAnimation(LOCALID_KRADEN, ANIM_STAND);
   Engine_ScriptWait(20);
-  Engine_ObjectEventSetAnimation(GARET, ANIMATION_NOD);
-  Engine_ObjectEventSetAnimation(JENNA, ANIMATION_NOD);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_PARTY_LEADER, ANIMATION_NOD);
+  Engine_ObjectEventSetAnimation(GARET, ANIM_NOD);
+  Engine_ObjectEventSetAnimation(JENNA, ANIM_NOD);
+  Engine_ObjectEventSetAnimationAndWait(LOCALID_PARTY_LEADER, ANIM_NOD);
   Engine_ScriptWait(6);
-  Engine_ObjectEventSetAnimation(GARET, ANIMATION_WALK);
+  Engine_ObjectEventSetAnimation(GARET, ANIM_WALK);
 
   leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   if (leader != NULL)
     Engine_ObjectEventSetDestination(GARET, leader->x.part.pixel,
                                      leader->z.part.pixel);
-  Engine_ObjectEventSetAnimation(JENNA, ANIMATION_WALK);
+  Engine_ObjectEventSetAnimation(JENNA, ANIM_WALK);
   leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   if (leader != NULL)
     Engine_ObjectEventSetDestination(JENNA, leader->x.part.pixel,
                                      leader->z.part.pixel);
-  Engine_ObjectEventSetAnimation(LOCALID_KRADEN, ANIMATION_WALK);
+  Engine_ObjectEventSetAnimation(LOCALID_KRADEN, ANIM_WALK);
   leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   if (leader != NULL)
     Engine_ObjectEventSetDestination(LOCALID_KRADEN, leader->x.part.pixel,
@@ -1115,9 +1115,9 @@ static void SolSanctumEntrance_KradenSuspectsHiddenPassage(void) {
   ObjectEvent_SetPosition(GARET, 0, 0);
   ObjectEvent_SetPosition(JENNA, 0, 0);
   ObjectEvent_SetPosition(LOCALID_KRADEN, 0, 0);
-  Engine_ObjectEventSetAnimation(LOCALID_KRADEN, ANIMATION_STAND);
-  Engine_ObjectEventSetAnimation(GARET, ANIMATION_STAND);
-  Engine_ObjectEventSetAnimation(JENNA, ANIMATION_STAND);
+  Engine_ObjectEventSetAnimation(LOCALID_KRADEN, ANIM_STAND);
+  Engine_ObjectEventSetAnimation(GARET, ANIM_STAND);
+  Engine_ObjectEventSetAnimation(JENNA, ANIM_STAND);
   GameFlag_Set(FLAG_SEARCHING_FOR_HIDDEN_PASSAGE);
   Engine_GameFlagClear(FLAG_SHOW_LOCATION_NAME);
   Engine_ScriptEnd();
@@ -1142,10 +1142,10 @@ static void SolSanctumEntrance_KradenSeesStatuesOutOfReach(void) {
     ObjectEvent_SetPosition(LOCALID_KRADEN, leader->x.fixed, leader->z.fixed);
   }
   ObjectEvent_SetSpeed(LOCALID_KRADEN, PIXELS(1), PIXELS(1) / 2);
-  Engine_ObjectEventSetAnimation(LOCALID_KRADEN, ANIMATION_WALK);
+  Engine_ObjectEventSetAnimation(LOCALID_KRADEN, ANIM_WALK);
   ObjectEvent_SetDestinationOffset(LOCALID_KRADEN, 24, -10);
   Engine_ObjectEventWaitForMove(LOCALID_KRADEN);
-  Engine_ObjectEventSetAnimation(LOCALID_KRADEN, ANIMATION_STAND);
+  Engine_ObjectEventSetAnimation(LOCALID_KRADEN, ANIM_STAND);
   Engine_ScriptWait(6);
   ObjectEvent_FaceDirection(LOCALID_KRADEN, FACING_NORTHWEST + FACING_STEP, 0);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_NORTH, 40);
@@ -1172,7 +1172,7 @@ static void SolSanctumEntrance_KradenSeesStatuesOutOfReach(void) {
   ObjectEvent_FaceDirection(LOCALID_KRADEN, FACING_SOUTH + FACING_STEP, 20);
   // Kraden: "Perhaps Psynergy is the key..."
   Script_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | LOCALID_KRADEN, 0, 10);
-  Engine_ObjectEventSetAnimation(LOCALID_KRADEN, ANIMATION_WALK);
+  Engine_ObjectEventSetAnimation(LOCALID_KRADEN, ANIM_WALK);
   leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   if (leader != NULL) {
     ObjectEvent_SetDestination(LOCALID_KRADEN, leader->x.part.pixel,

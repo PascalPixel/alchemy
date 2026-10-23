@@ -426,7 +426,7 @@ s32 PartyStatus_HighlightMembers(u16 *ids) {
   s32 i;
   s32 j;
 
-  count = BattleUnits_ListIdsFar(1, 0);
+  count = BattleUnit_ListIdsFar(1, 0);
   Ui_SetRectHighlight(29 - count * 6, 0, 25, 5, 15);
   i = 0;
   // The loop over ids is written with goto (MATCHING.md): as

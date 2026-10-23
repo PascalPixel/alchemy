@@ -100,7 +100,7 @@ void Djinn_RunBattleStartHop(s32 djinniId) {
       copy->update = ObjectMotion_MoveHalfwayTowardTarget;
       copy->facing = djinni->facing;
       copy->sprite->image.priority = 0;
-      Animation_ApplyChildValuesFar((struct DispatchObject *)copy, tint);
+      Anim_ApplyChildValuesFar((struct DispatchObject *)copy, tint);
       ObjectDispatch_SelectAnimationFar(copy, 0);
       ObjectDispatch_SetSingleChildFlagsFar((struct DispatchObject *)copy, 0);
       sharedSprite = Sprite_ShareVramCacheEntry(copy->sprite, sharedSprite);

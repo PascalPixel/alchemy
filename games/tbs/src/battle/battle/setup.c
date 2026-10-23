@@ -136,7 +136,7 @@ void BattleIntro_AnnounceEncounter(s32 enemyCount) {
 /// (gBattleParty_CenterOrderOffsets). Called by Battle_Run as the
 /// battle is set up. Writes gBattleWork->partyUnits and enemyIds, and marks
 /// each party member's side.
-void BattleUnits_Collect(void) {
+void BattleUnit_Collect(void) {
   u16 unitIds[14];
   struct BattleWork *battle;
   s32 count;

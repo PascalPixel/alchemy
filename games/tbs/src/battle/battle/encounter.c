@@ -162,7 +162,7 @@ s32 Battle_Run(s32 enemyGroup) {
   }
 
   // The units, the windows and the background.
-  BattleUnits_Collect();
+  BattleUnit_Collect();
   BattleUnit_RefreshPlacement();
   DjinnRecovery_Reconcile();
   BattleSummon_UpdateAvailability();
@@ -261,9 +261,9 @@ s32 Battle_Run(s32 enemyGroup) {
       }
       Runtime_GetRemainingIwram();
       Runtime_GetRemainingEwram();
-      if (BattleUnits_ListLiving(BATTLE_SIDES_PARTY, 0) == 0)
+      if (BattleUnit_ListLiving(BATTLE_SIDES_PARTY, 0) == 0)
         goto party_lost;
-      if (BattleUnits_ListLiving(BATTLE_SIDES_ENEMIES, 0) == 0) {
+      if (BattleUnit_ListLiving(BATTLE_SIDES_ENEMIES, 0) == 0) {
         // Unit ids 0 to 7 are party members.
         if (actingUnit <= ALLY_MAX && battle->spoils.defeated == 1)
           battle->defeatState = DEFEAT_BY_PARTY_MEMBER;
@@ -411,7 +411,7 @@ s32 BattleParty_PrepareMembers(u16 *owners) {
 /// Lists the enemy units present, ended by BATTLE_UNIT_LIST_END, and returns
 /// how many there are (0 when unitIds is null). A link battle looks only at
 /// the opponent's three places. Called by BattleIntro_AnnounceEncounter,
-/// BattleUnits_Collect and BattleAbility_ApplyToTarget.
+/// BattleUnit_Collect and BattleAbility_ApplyToTarget.
 s32 BattleEnemy_List(s16 *unitIds) {
   s16 *output;
   s32 count;
@@ -448,7 +448,7 @@ s32 BattleEnemy_List(s16 *unitIds) {
 /// many there are. Called across the battle parts (the round, staging, auto
 /// battle, turn end and spoils) to test whether a side still stands and to
 /// pick targets.
-s32 BattleUnits_ListLiving(s32 sideMask, u16 *unitIds) {
+s32 BattleUnit_ListLiving(s32 sideMask, u16 *unitIds) {
   u16 activeMembers[8];
   u16 *base;
   s32 remaining;
@@ -518,10 +518,10 @@ s32 BattleUnits_ListLiving(s32 sideMask, u16 *unitIds) {
 /// Lists the units in the battle's unit lists on the sides in sideMask,
 /// party first, skipping those removed from the battle. unitIds, if not
 /// null, receives them ended by BATTLE_UNIT_LIST_END. Returns how many
-/// there are. Unlike BattleUnits_ListLiving, it does not test HP.
+/// there are. Unlike BattleUnit_ListLiving, it does not test HP.
 /// Called across the battle parts that draw or target units, and through
 /// its far stub by the command windows (command_row.c, party_commands.c).
-s32 BattleUnits_ListIds(s32 sideMask, u16 *unitIds) {
+s32 BattleUnit_ListIds(s32 sideMask, u16 *unitIds) {
   struct BattleWork *battle;
   s32 count;
   s32 i;

@@ -10,11 +10,11 @@ void FieldEffect_UpdateOrbitingParticleMain(union FieldObject *fieldObject) {
   struct ObjectEvent *particle = (struct ObjectEvent *)fieldObject;
   s32 frame = gFrameCount & 7;
   if (frame == 0) {
-    Animation_ApplyChildValuesFar((struct DispatchObject *)particle,
-                                  SPRITE_COLOR_RBG);
+    Anim_ApplyChildValuesFar((struct DispatchObject *)particle,
+                             SPRITE_COLOR_RBG);
   } else if (frame == 2) {
-    Animation_ApplyChildValuesFar((struct DispatchObject *)particle,
-                                  SPRITE_COLOR_NORMAL);
+    Anim_ApplyChildValuesFar((struct DispatchObject *)particle,
+                             SPRITE_COLOR_NORMAL);
   }
 }
 
@@ -145,8 +145,8 @@ void FieldEffect_RunFrost(void) {
       particle->facing = Random16();
       particle->timer = 60;
       particle->work = Random16();
-      Animation_ApplyChildValuesFar((struct DispatchObject *)particle,
-                                    SPRITE_COLOR_BLUE_TINT);
+      Anim_ApplyChildValuesFar((struct DispatchObject *)particle,
+                               SPRITE_COLOR_BLUE_TINT);
 
       SET_POSITION(p, effectWork->x, effectWork->y, effectWork->z);
       radius = (Random16() << 2) + (2 << 16);
@@ -170,11 +170,11 @@ void FieldEffect_RunFrost(void) {
     // Flash for 1 frame in every 5.
     remainingCycles = 15;
     do {
-      Animation_ApplyChildValuesFar((struct DispatchObject *)target,
-                                    SPRITE_COLOR_WHITE);
+      Anim_ApplyChildValuesFar((struct DispatchObject *)target,
+                               SPRITE_COLOR_WHITE);
       WaitFrames(1);
-      Animation_ApplyChildValuesFar((struct DispatchObject *)target,
-                                    SPRITE_COLOR_NORMAL);
+      Anim_ApplyChildValuesFar((struct DispatchObject *)target,
+                               SPRITE_COLOR_NORMAL);
       WaitFrames(4);
       remainingCycles--;
     } while (remainingCycles >= 0);

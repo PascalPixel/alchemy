@@ -286,7 +286,7 @@ static void EventScript_GuardsBlockPassage(void) {
   ObjectEvent_WalkToAndWait(LOCALID_EAST_GUARD, 152, 384);
   ObjectEvent_FaceDirection(LOCALID_WEST_GUARD, FACING_SOUTH, 0);
   ObjectEvent_FaceDirection(LOCALID_EAST_GUARD, FACING_SOUTH, 0);
-  Engine_ObjectEventSetAnimation(LOCALID_WEST_GUARD, ANIMATION_STAND);
+  Engine_ObjectEventSetAnimation(LOCALID_WEST_GUARD, ANIM_STAND);
   MapGrid_CopyCellAttributes(6, 27, 1, 1, 7, 27);
 #if TBS_PATCH_3
   MapGrid_CopyCellAttributes(11, 26, 1, 1, 7, 26);
@@ -398,7 +398,7 @@ static void EventScript_IodemQuestionsGuards(void) {
   Script_ShowMessageAndWait(LOCALID_IODEM, 0, 20);
   ObjectEvent_FaceDirection(LOCALID_IODEM, FACING_SOUTH + FACING_STEP, 10);
   Script_ShowMessageAndWait(LOCALID_IODEM, 0, 10);
-  Engine_ObjectEventSetAnimation(LOCALID_IODEM, ANIMATION_WALK);
+  Engine_ObjectEventSetAnimation(LOCALID_IODEM, ANIM_WALK);
   leader = ObjectEvent_Get(LOCALID_PARTY_LEADER);
   if (leader != 0) {
     ObjectEvent_SetDestination(LOCALID_IODEM, leader->x.part.pixel,
@@ -442,7 +442,7 @@ static void EventScript_TalkToEastGuard(void) {
     if (Engine_ScriptChooseYesNo(LOCALID_PARTY_LEADER, 0) == 0) {
       Engine_ScriptShowMessage(LOCALID_EAST_GUARD, 0);
       Engine_ObjectEventSetAnimationAndWait(LOCALID_EAST_GUARD,
-                                            ANIMATION_SHAKE_HEAD);
+                                            ANIM_SHAKE_HEAD);
       Engine_ScriptShowMessage(LOCALID_EAST_GUARD, 0);
     } else {
       gFieldWork->message += 2;

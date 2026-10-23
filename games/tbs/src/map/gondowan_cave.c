@@ -253,7 +253,7 @@ static void EventScript_IodemAsksWhyTurningBack(void) {
       OBJECT_WALK(LOCALID_IODEM, 152, 232);
       GameFlag_Clear(FLAG_IODEM_FOLLOWING_PARTY);
       Engine_ObjectEventWaitForMove(LOCALID_IODEM);
-      OBJECT_ANIMATION(LOCALID_IODEM, ANIMATION_STAND);
+      OBJECT_ANIMATION(LOCALID_IODEM, ANIM_STAND);
       gGameState.savedMap = (s32)&MapId_TolbiInteriors;
       gGameState.savedWarpDest = TOLBI_INTERIORS_SANCTUM_NORTH;
     } else {
@@ -261,7 +261,7 @@ static void EventScript_IodemAsksWhyTurningBack(void) {
       // the party, and Isaac steps away from the coord event.
       gFieldWork->message += 1;
       Script_ShowMessage(LOCALID_IODEM, 0);
-      OBJECT_ANIMATION(LOCALID_IODEM, ANIMATION_WALK);
+      OBJECT_ANIMATION(LOCALID_IODEM, ANIM_WALK);
       leader = ObjectEvent_Get(LOCALID_PARTY_LEADER);
       if (leader != 0) {
         ObjectEvent_SetDestination(LOCALID_IODEM, leader->x.part.pixel,
@@ -270,10 +270,10 @@ static void EventScript_IodemAsksWhyTurningBack(void) {
       Engine_ObjectEventWaitForMove(LOCALID_IODEM);
       OBJECT_POSITION_SET(LOCALID_IODEM, 0, 0);
       WAIT(30);
-      OBJECT_ANIMATION(LOCALID_PARTY_LEADER, ANIMATION_WALK);
+      OBJECT_ANIMATION(LOCALID_PARTY_LEADER, ANIM_WALK);
       Engine_ObjectEventSetDestinationOffset(LOCALID_PARTY_LEADER, 0, 16);
       Engine_ObjectEventWaitForMove(LOCALID_PARTY_LEADER);
-      OBJECT_ANIMATION(LOCALID_PARTY_LEADER, ANIMATION_STAND);
+      OBJECT_ANIMATION(LOCALID_PARTY_LEADER, ANIM_STAND);
     }
     SCRIPT_END();
   }
@@ -287,12 +287,12 @@ static void EventScript_IodemRejoins(void) {
   SCRIPT_START();
   OBJECT_FACE(LOCALID_IODEM, LOCALID_PARTY_LEADER, 0);
   OBJECT_FACE(LOCALID_PARTY_LEADER, LOCALID_IODEM, 0);
-  OBJECT_ANIMATION(LOCALID_PARTY_LEADER, ANIMATION_STAND);
+  OBJECT_ANIMATION(LOCALID_PARTY_LEADER, ANIM_STAND);
   WAIT(10);
   Engine_ObjectEventFaceEachOther(LOCALID_PARTY_LEADER, LOCALID_IODEM, 0);
   MESSAGE_SET(MsgKaragolIveBeenWaitingForIsaac);
   MESSAGE_PUT(LOCALID_IODEM, 0);
-  OBJECT_ANIMATION(LOCALID_IODEM, ANIMATION_WALK);
+  OBJECT_ANIMATION(LOCALID_IODEM, ANIM_WALK);
   {
     struct ObjectEvent *leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
 

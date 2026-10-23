@@ -1,10 +1,10 @@
 .syntax unified
 	.section .rodata,"a",%progbits
 	.align 2
-	.global Animation_SelfSlots0
-	.type Animation_SelfSlots0, %object
-Animation_SelfSlots0:
+	.global Anim_SelfSlots0
+	.type Anim_SelfSlots0, %object
+Anim_SelfSlots0:
 	.rept 4
-	.4byte Animation_SelfSlots0
+	.4byte Anim_SelfSlots0
 	.endr
-	.size Animation_SelfSlots0, .-Animation_SelfSlots0
+	.size Anim_SelfSlots0, .-Anim_SelfSlots0

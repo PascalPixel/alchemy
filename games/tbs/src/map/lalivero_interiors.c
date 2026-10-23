@@ -189,7 +189,7 @@ enum LaliveroInteriorsLocalId {
 
 /// The napping worker's pose, from his sprite's animation table
 /// (graphics/sprite/spr_114.tsv): one frame held, lying asleep on his side.
-enum { ANIMATION_WORKER_LIE_ASLEEP = 6 };
+enum { ANIM_WORKER_LIE_ASLEEP = 6 };
 
 /// The map-section temp flag FLAG_MAPSEC_TEMP_00, which lasts until the party
 /// enters another map section: the inn worker has apologized. ★ Named from the
@@ -340,8 +340,7 @@ static void EventScript_TalkToInnWorker(void) {
   ObjectEvent_FaceObjectEvent(LOCALID_INN_WORKER, LOCALID_PARTY_LEADER, 20);
   Script_ShowMessage(LOCALID_INN_WORKER, 0);
   Engine_ScriptWait(10);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_INN_WORKER,
-                                        ANIMATION_SHAKE_HEAD);
+  Engine_ObjectEventSetAnimationAndWait(LOCALID_INN_WORKER, ANIM_SHAKE_HEAD);
   Engine_ScriptWait(30);
   Script_ShowMessage(LOCALID_INN_WORKER, 0);
   Engine_ScriptWait(10);
@@ -349,7 +348,7 @@ static void EventScript_TalkToInnWorker(void) {
   Engine_ScriptWait(30);
   Script_ShowMessage(LOCALID_INN_WORKER, 0);
   Engine_ScriptWait(10);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_INN_WORKER, ANIMATION_NOD);
+  Engine_ObjectEventSetAnimationAndWait(LOCALID_INN_WORKER, ANIM_NOD);
   Engine_ScriptWait(20);
   Script_ShowMessage(LOCALID_INN_WORKER, 0);
   if ((u16)side == FACING_WEST) {
@@ -378,7 +377,7 @@ static void EventScript_IodemCallsOut(void) {
   Engine_ScriptWait(10);
   Engine_ObjectEventFaceObjectEvent(LOCALID_PARTY_LEADER, LOCALID_IODEM, 0);
   Engine_ScriptWait(30);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_PARTY_LEADER, ANIMATION_NOD);
+  Engine_ObjectEventSetAnimationAndWait(LOCALID_PARTY_LEADER, ANIM_NOD);
   Engine_ScriptWait(30);
   Engine_ScriptEnd();
 }
@@ -457,7 +456,7 @@ static void EventScript_ReportToFaran(void) {
   ObjectEvent_ShowEmote(LOCALID_FARAN, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 70);
   Engine_ScriptShowMessage(LOCALID_FARAN, 0);
   Engine_ScriptWait(10);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_FARAN, ANIMATION_SHAKE_HEAD);
+  Engine_ObjectEventSetAnimationAndWait(LOCALID_FARAN, ANIM_SHAKE_HEAD);
   Engine_ScriptWait(20);
   Engine_ScriptShowMessage(LOCALID_FARAN, 0);
   Engine_ScriptWait(20);
@@ -468,7 +467,7 @@ static void EventScript_ReportToFaran(void) {
   ObjectEvent_ShowEmote(LOCALID_IODEM, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
   Engine_ScriptShowMessage(LOCALID_IODEM, 0);
   Engine_ScriptWait(10);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_IODEM, ANIMATION_SHAKE_HEAD);
+  Engine_ObjectEventSetAnimationAndWait(LOCALID_IODEM, ANIM_SHAKE_HEAD);
   Engine_ScriptWait(20);
   Engine_ScriptShowMessage(LOCALID_IODEM, 0);
   Engine_ScriptWait(20);
@@ -493,7 +492,7 @@ static void EventScript_ReportToFaran(void) {
     Engine_ScriptWait(20);
     Engine_ScriptShowMessage(GARET, 0);
     Engine_ScriptWait(10);
-    Engine_ObjectEventSetAnimationAndWait(MIA, ANIMATION_SHAKE_HEAD);
+    Engine_ObjectEventSetAnimationAndWait(MIA, ANIM_SHAKE_HEAD);
     Engine_ScriptWait(20);
     Engine_ScriptShowMessage(MIA, 0);
     Engine_ScriptWait(10);
@@ -509,18 +508,18 @@ static void EventScript_ReportToFaran(void) {
     Engine_ScriptWait(20);
     Engine_ScriptShowMessage(LOCALID_IODEM, 0);
     Engine_ScriptWait(20);
-    Engine_ObjectEventSetAnimationAndWait(LOCALID_PARTY_LEADER, ANIMATION_NOD);
+    Engine_ObjectEventSetAnimationAndWait(LOCALID_PARTY_LEADER, ANIM_NOD);
     Engine_ScriptWait(30);
     Engine_ScriptWait(10);
     Engine_ObjectEventRunRepeatedMotion(GARET, 2);
     Engine_ScriptWait(20);
     Engine_ScriptShowMessage(GARET, 0);
     Engine_ScriptWait(10);
-    Engine_ObjectEventSetAnimationAndWait(MIA, ANIMATION_SHAKE_HEAD);
+    Engine_ObjectEventSetAnimationAndWait(MIA, ANIM_SHAKE_HEAD);
     Engine_ScriptWait(20);
     Engine_ScriptShowMessage(MIA, 0);
     Engine_ScriptWait(10);
-    Engine_ObjectEventSetAnimationAndWait(IVAN, ANIMATION_NOD);
+    Engine_ObjectEventSetAnimationAndWait(IVAN, ANIM_NOD);
     Engine_ScriptWait(30);
     Engine_ScriptShowMessage(IVAN, 0);
     Engine_ScriptWait(10);
@@ -539,7 +538,7 @@ static void EventScript_ReportToFaran(void) {
     Engine_ObjectEventFaceDirection(IVAN, FACING_NORTH, 0);
     Engine_ScriptWait(30);
     Engine_ScriptWait(10);
-    Engine_ObjectEventSetAnimationAndWait(LOCALID_FARAN, ANIMATION_NOD);
+    Engine_ObjectEventSetAnimationAndWait(LOCALID_FARAN, ANIM_NOD);
     Engine_ScriptWait(30);
     Engine_ScriptShowMessage(LOCALID_FARAN, 0);
     (gFieldWork->message)++;
@@ -550,7 +549,7 @@ static void EventScript_ReportToFaran(void) {
     Engine_ObjectEventFaceDirection(IVAN, FACING_NORTH, 0);
     Engine_ScriptWait(30);
     Engine_ScriptWait(10);
-    Engine_ObjectEventSetAnimationAndWait(LOCALID_FARAN, ANIMATION_SHAKE_HEAD);
+    Engine_ObjectEventSetAnimationAndWait(LOCALID_FARAN, ANIM_SHAKE_HEAD);
     Engine_ScriptWait(20);
     (gFieldWork->message)++;
     Script_ShowMessage(LOCALID_FARAN, 0);
@@ -574,7 +573,7 @@ static void EventScript_ReportToFaran(void) {
   ObjectEvent_FaceDirection(MIA, FACING_NORTH, 0);
   Engine_ScriptWait(50);
   Engine_ScriptWait(10);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_FARAN, ANIMATION_NOD);
+  Engine_ObjectEventSetAnimationAndWait(LOCALID_FARAN, ANIM_NOD);
   Engine_ScriptWait(30);
   Engine_ScriptShowMessage(LOCALID_FARAN, 0);
   Engine_ScriptWait(10);
@@ -595,7 +594,7 @@ static void EventScript_ReportToFaran(void) {
   Engine_ScriptWait(20);
   Engine_ScriptShowMessage(LOCALID_IODEM, 0);
   Engine_ScriptWait(10);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_FARAN, ANIMATION_SHAKE_HEAD);
+  Engine_ObjectEventSetAnimationAndWait(LOCALID_FARAN, ANIM_SHAKE_HEAD);
   Engine_ScriptWait(20);
   Engine_ScriptShowMessage(LOCALID_FARAN, 0);
   Engine_ScriptWait(10);
@@ -627,7 +626,7 @@ static void EventScript_ReportToFaran(void) {
   ObjectEvent_ShowEmote(LOCALID_FARAN, EMOTE_IN_FRONT | EMOTE_LIGHT_BULB, 60);
   Engine_ScriptShowMessage(LOCALID_FARAN, 0);
   Engine_ScriptWait(10);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_FARAN, ANIMATION_NOD);
+  Engine_ObjectEventSetAnimationAndWait(LOCALID_FARAN, ANIM_NOD);
   Engine_ScriptWait(30);
   Engine_ScriptShowMessage(LOCALID_FARAN, 0);
   Engine_ScriptWait(10);
@@ -651,7 +650,7 @@ static void EventScript_ReportToFaran(void) {
   Engine_ScriptWait(10);
   ObjectEvent_FaceDirection(GARET, FACING_NORTHEAST, 0);
   Engine_ScriptWait(30);
-  Engine_ObjectEventSetAnimationAndWait(GARET, ANIMATION_SHAKE_HEAD);
+  Engine_ObjectEventSetAnimationAndWait(GARET, ANIM_SHAKE_HEAD);
   Engine_ScriptWait(20);
   Engine_ScriptShowMessage(GARET, 0);
   Engine_ScriptWait(10);
@@ -674,11 +673,11 @@ static void EventScript_ReportToFaran(void) {
   ObjectEvent_ShowEmote(IVAN, EMOTE_IN_FRONT | EMOTE_SCOWL, 60);
   Engine_ObjectEventFaceDirection(IVAN, FACING_NORTH, 0);
   Engine_ScriptWait(30);
-  Engine_ObjectEventSetAnimationAndWait(IVAN, ANIMATION_SHAKE_HEAD);
+  Engine_ObjectEventSetAnimationAndWait(IVAN, ANIM_SHAKE_HEAD);
   Engine_ScriptWait(20);
   Engine_ScriptShowMessage(IVAN, 0);
   Engine_ScriptWait(10);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_FARAN, ANIMATION_SHAKE_HEAD);
+  Engine_ObjectEventSetAnimationAndWait(LOCALID_FARAN, ANIM_SHAKE_HEAD);
   Engine_ScriptWait(20);
   Engine_ScriptShowMessage(LOCALID_FARAN, 0);
   Engine_ScriptWait(10);
@@ -689,14 +688,14 @@ static void EventScript_ReportToFaran(void) {
   Engine_ObjectEventRunRepeatedMotion(IVAN, 2);
   Engine_ScriptWait(30);
   Engine_ScriptWait(10);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_FARAN, ANIMATION_NOD);
+  Engine_ObjectEventSetAnimationAndWait(LOCALID_FARAN, ANIM_NOD);
   Engine_ScriptWait(30);
   Engine_ScriptShowMessage(LOCALID_FARAN, 0);
   Engine_ScriptWait(20);
-  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIMATION_NOD);
-  Engine_ObjectEventSetAnimation(GARET, ANIMATION_NOD);
-  Engine_ObjectEventSetAnimation(MIA, ANIMATION_NOD);
-  Engine_ObjectEventSetAnimationAndWait(IVAN, ANIMATION_NOD);
+  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
+  Engine_ObjectEventSetAnimation(GARET, ANIM_NOD);
+  Engine_ObjectEventSetAnimation(MIA, ANIM_NOD);
+  Engine_ObjectEventSetAnimationAndWait(IVAN, ANIM_NOD);
   Engine_ScriptWait(30);
   Engine_ScriptWait(10);
   Engine_ObjectEventRunRepeatedMotion(LOCALID_FARAN, 2);
@@ -707,11 +706,11 @@ static void EventScript_ReportToFaran(void) {
   Engine_ScriptWait(20);
   Engine_ScriptShowMessage(GARET, 0);
   Engine_ScriptWait(10);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_FARAN, ANIMATION_NOD);
+  Engine_ObjectEventSetAnimationAndWait(LOCALID_FARAN, ANIM_NOD);
   Engine_ScriptWait(30);
   Engine_ScriptShowMessage(LOCALID_FARAN, 0);
   Engine_ScriptWait(20);
-  Engine_ObjectEventSetAnimationAndWait(MIA, ANIMATION_NOD);
+  Engine_ObjectEventSetAnimationAndWait(MIA, ANIM_NOD);
   Engine_ScriptWait(30);
   Engine_ScriptShowMessage(MIA, 0);
   Engine_ScriptWait(20);
@@ -719,17 +718,17 @@ static void EventScript_ReportToFaran(void) {
   ObjectEvent_FaceDirection(GARET, FACING_NORTHEAST, 0);
   Engine_ObjectEventFaceDirection(IVAN, FACING_NORTHWEST, 0);
   Engine_ScriptWait(30);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_PARTY_LEADER, ANIMATION_NOD);
+  Engine_ObjectEventSetAnimationAndWait(LOCALID_PARTY_LEADER, ANIM_NOD);
   Engine_ScriptWait(10);
-  Engine_ObjectEventSetAnimation(GARET, ANIMATION_NOD);
-  Engine_ObjectEventSetAnimation(IVAN, ANIMATION_NOD);
-  Engine_ObjectEventSetAnimationAndWait(MIA, ANIMATION_NOD);
+  Engine_ObjectEventSetAnimation(GARET, ANIM_NOD);
+  Engine_ObjectEventSetAnimation(IVAN, ANIM_NOD);
+  Engine_ObjectEventSetAnimationAndWait(MIA, ANIM_NOD);
   Engine_ScriptWait(30);
   // The others walk back into the leader.
   ObjectEvent_SetSpeed(GARET, 0x13333, 0x9999);
   ObjectEvent_SetSpeed(MIA, 0x13333, 0x9999);
   ObjectEvent_SetSpeed(IVAN, 0x13333, 0x9999);
-  Engine_ObjectEventSetAnimation(GARET, ANIMATION_WALK);
+  Engine_ObjectEventSetAnimation(GARET, ANIM_WALK);
   leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   if (leader != NULL) {
     Engine_ObjectEventSetDestination(GARET, leader->x.part.pixel,
@@ -737,7 +736,7 @@ static void EventScript_ReportToFaran(void) {
   }
   Engine_ObjectEventWaitForMove(GARET);
   ObjectEvent_SetPosition(GARET, 0, 0);
-  Engine_ObjectEventSetAnimation(MIA, ANIMATION_WALK);
+  Engine_ObjectEventSetAnimation(MIA, ANIM_WALK);
   leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   if (leader != NULL) {
     Engine_ObjectEventSetDestination(MIA, leader->x.part.pixel,
@@ -745,7 +744,7 @@ static void EventScript_ReportToFaran(void) {
   }
   Engine_ObjectEventWaitForMove(MIA);
   ObjectEvent_SetPosition(MIA, 0, 0);
-  Engine_ObjectEventSetAnimation(IVAN, ANIMATION_WALK);
+  Engine_ObjectEventSetAnimation(IVAN, ANIM_WALK);
   leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   if (leader != NULL) {
     Engine_ObjectEventSetDestination(IVAN, leader->x.part.pixel,
@@ -778,7 +777,7 @@ static void LaliveroInteriors_TellFaranAboutJenna(void) {
   Engine_ScriptShowMessage(GARET, 0);
   Engine_ScriptWait(10);
 
-  Engine_ObjectEventSetAnimationAndWait(MIA, ANIMATION_SHAKE_HEAD);
+  Engine_ObjectEventSetAnimationAndWait(MIA, ANIM_SHAKE_HEAD);
   Engine_ScriptWait(20);
   Engine_ScriptShowMessage(MIA, 0);
   Engine_ScriptWait(10);
@@ -802,17 +801,17 @@ static void LaliveroInteriors_TellFaranAboutJenna(void) {
   Engine_ScriptShowMessage(GARET, 0);
   Engine_ScriptWait(30);
 
-  Engine_ObjectEventSetAnimationAndWait(GARET, ANIMATION_SHAKE_HEAD);
+  Engine_ObjectEventSetAnimationAndWait(GARET, ANIM_SHAKE_HEAD);
   Engine_ScriptWait(20);
   Engine_ScriptShowMessage(GARET, 0);
   Engine_ScriptWait(10);
 
-  Engine_ObjectEventSetAnimationAndWait(MIA, ANIMATION_SHAKE_HEAD);
+  Engine_ObjectEventSetAnimationAndWait(MIA, ANIM_SHAKE_HEAD);
   Engine_ScriptWait(20);
   Engine_ScriptShowMessage(MIA, 0);
   Engine_ScriptWait(10);
 
-  Engine_ObjectEventSetAnimationAndWait(IVAN, ANIMATION_NOD);
+  Engine_ObjectEventSetAnimationAndWait(IVAN, ANIM_NOD);
   Engine_ScriptWait(30);
   Engine_ScriptShowMessage(IVAN, 0);
   Engine_ScriptWait(10);
@@ -853,7 +852,7 @@ s32 Map_Initialize(void) {
     objectEvent->priorityFlags = 0;
     objectEvent->sprite->image.priority = 2;
     Engine_ObjectEventSetAnimation(LOCALID_NAPPING_WORKER,
-                                   ANIMATION_WORKER_LIE_ASLEEP);
+                                   ANIM_WORKER_LIE_ASLEEP);
     warpDest = gGameState.warpDest;
     if (warpDest == LALIVERO_SHOPS_SANCTUM) {
       gGameState.savedMap = mapId;

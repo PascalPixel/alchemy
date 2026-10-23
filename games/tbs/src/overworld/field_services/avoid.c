@@ -111,7 +111,7 @@ void FieldEffect_RunAvoid(void) {
     VramCache_Load((s16)slot, 0x100, gFieldEffect_ArcSparkTiles);
     gGameState.avoidDistance = 0x09600000;
     gGameState.avoidByItem = GameFlag_TestFar(FLAG_ITEM_USE);
-    Animation_ApplyChildValuesFar((struct DispatchObject *)object, zero);
+    Anim_ApplyChildValuesFar((struct DispatchObject *)object, zero);
     object->callback = FieldEffect_UpdatePairedArcSpawner;
     object->phase = zero;
     object->step = zero;
@@ -145,8 +145,8 @@ void FieldEffect_RunAvoid(void) {
   else
     ObjectDispatch_SetSingleChildFlagsFar((struct DispatchObject *)object,
                                           SPRITE_FLAG_SHADOW);
-  Animation_ApplyChildValuesFar((struct DispatchObject *)object,
-                                SPRITE_COLOR_NORMAL);
+  Anim_ApplyChildValuesFar((struct DispatchObject *)object,
+                           SPRITE_COLOR_NORMAL);
   VramCache_FreeEntry(effectWork->arcTileSlot);
   FieldMessage_ShowFar(MsgMonstersAttackLess, 1);
 }

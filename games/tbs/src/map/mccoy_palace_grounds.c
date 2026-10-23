@@ -261,8 +261,8 @@ static void EventScript_TalkToEastGuard(void) {
                             60);
       Engine_ObjectEventStartRepeatedMotion(LOCALID_EAST_GUARD, 1);
       Engine_ScriptShowMessageAndWait(LOCALID_EAST_GUARD, 0, 20);
-      Engine_ObjectEventSetAnimation(LOCALID_WEST_GUARD, ANIMATION_NOD);
-      Engine_ObjectEventSetAnimationAndWait(LOCALID_EAST_GUARD, ANIMATION_NOD);
+      Engine_ObjectEventSetAnimation(LOCALID_WEST_GUARD, ANIM_NOD);
+      Engine_ObjectEventSetAnimationAndWait(LOCALID_EAST_GUARD, ANIM_NOD);
       ObjectEvent_FaceDirection(LOCALID_WEST_GUARD,
                                 FACING_SOUTHEAST + FACING_STEP, 0);
       ObjectEvent_FaceDirection(LOCALID_EAST_GUARD, FACING_SOUTH + FACING_STEP,
@@ -315,7 +315,7 @@ static void EventScript_EnterPalace(void) {
   }
   ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, 0x8000, 0x4000);
   gFieldWork->transition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
-  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIMATION_WALK);
+  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_WALK);
   ObjectEvent_CenterAndWalk(LOCALID_PARTY_LEADER, 2, -16);
   Engine_ScriptWait(16);
   Engine_ScriptRequestWarp(MCCOY_PALACE_GROUNDS_TO_MCCOY_PALACE);
@@ -428,8 +428,8 @@ static void EventScript_GuardsArrestParty(void) {
   ObjectEvent_FaceDirection(LOCALID_WEST_GUARD, FACING_SOUTHEAST + FACING_STEP,
                             0);
   ObjectEvent_FaceDirection(LOCALID_EAST_GUARD, FACING_SOUTH + FACING_STEP, 20);
-  Engine_ObjectEventSetAnimation(LOCALID_WEST_GUARD, ANIMATION_NOD);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_EAST_GUARD, ANIMATION_NOD);
+  Engine_ObjectEventSetAnimation(LOCALID_WEST_GUARD, ANIM_NOD);
+  Engine_ObjectEventSetAnimationAndWait(LOCALID_EAST_GUARD, ANIM_NOD);
   Engine_ScriptWait(20);
   Engine_ObjectEventRunRepeatedMotion(LOCALID_WEST_GUARD, 1);
   Engine_ScriptSetMessage(MsgBilibinUnderArrest);
@@ -458,7 +458,7 @@ static void EventScript_GuardsArrestParty(void) {
   ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, 0xcccc, 0x6666);
   ObjectEvent_WalkTo(LOCALID_WEST_GUARD, 328, 262);
   ObjectEvent_WalkToAndWait(LOCALID_PARTY_LEADER, 328, 278);
-  Engine_ObjectEventSetAnimation(LOCALID_WEST_GUARD, ANIMATION_STAND);
+  Engine_ObjectEventSetAnimation(LOCALID_WEST_GUARD, ANIM_STAND);
   McCoyPalaceGrounds_OpenGate();
   Engine_ScriptWait(40);
   ObjectEvent_WalkTo(LOCALID_PARTY_LEADER, 328, 242);

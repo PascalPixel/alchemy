@@ -94,7 +94,7 @@ struct ScatterPosition {
   s32 y; ///< 16.16 fixed-point pixels
   s32 z; ///< 16.16 fixed-point pixels
 };
-extern u8 gAnimation_ChildPaletteCycle[];
+extern u8 gAnim_ChildPaletteCycle[];
 /// The weights an enemy picks among its eight actions by, one table for each
 /// weighted action strategy (enum EnemyActionStrategy, battle_internal.h):
 /// even, falling by 6, or falling steeply from 113 to 5.
@@ -214,7 +214,7 @@ u32 __udivsi3(u32 numerator, u32 denominator);
 #ifndef OWN__call_via_r0
 void _call_via_r0(u32 routine);
 #endif
-void Animation_ApplyChildArgumentFar(void *, s32);
+void Anim_ApplyChildArgumentFar(void *, s32);
 void BitDecoder_DecodeImage(void);
 void FarCall_WindowTable(void);
 struct Sprite *GetBattleEffectObject(s32 kind);

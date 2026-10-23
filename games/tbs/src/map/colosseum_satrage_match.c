@@ -469,7 +469,7 @@ static void EventScript_KnockDownObstacle(void) {
 
     sprite->rotation = rotation;
   }
-  Engine_ObjectEventSetAnimation(LOCALID_FALLING_LOG, ANIMATION_SHAKE_HEAD);
+  Engine_ObjectEventSetAnimation(LOCALID_FALLING_LOG, ANIM_SHAKE_HEAD);
   obstacle->x.fixed = PIXELS(336);
   obstacle->y.fixed = -PIXELS(8);
   obstacle->z.fixed = PIXELS(264);
@@ -645,7 +645,7 @@ static void ColosseumSatrageMatch_RollLogToCell(s32 logId, s32 halfCellX,
                       gColosseumSatrageMatch_RollLogScript[heading / 0x4000]);
   Engine_ObjectSetPosition(log, halfCellX, 0, halfCellZ);
   Engine_ScriptWait(6);
-  Engine_ObjectEventSetAnimation(pusher, ANIMATION_WALK);
+  Engine_ObjectEventSetAnimation(pusher, ANIM_WALK);
   // Follow halfway behind the rolling log while its finish effect runs.
   ObjectDispatch_StartCamera(
       (struct DispatchObject *)((struct EventWork *)AllocHeapSlotEwram(
@@ -926,17 +926,17 @@ static void EventScript_ReachArena(void) {
   ObjectEvent_WalkTo(LOCALID_OPPONENT, 88, 256);
   ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(1), PIXELS(1) / 2);
   ObjectEvent_WalkToAndWait(LOCALID_PARTY_LEADER, 120, 256);
-  Engine_ObjectEventSetAnimation(LOCALID_OPPONENT, ANIMATION_STAND);
+  Engine_ObjectEventSetAnimation(LOCALID_OPPONENT, ANIM_STAND);
   Engine_ObjectEventFaceEachOther(LOCALID_PARTY_LEADER, LOCALID_OPPONENT, 0);
   Engine_ScriptWait(10);
-  Engine_ObjectEventSetAnimation(LOCALID_OPPONENT, ANIMATION_NOD);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_PARTY_LEADER, ANIMATION_NOD);
+  Engine_ObjectEventSetAnimation(LOCALID_OPPONENT, ANIM_NOD);
+  Engine_ObjectEventSetAnimationAndWait(LOCALID_PARTY_LEADER, ANIM_NOD);
   Engine_ScriptWait(20);
   ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(2), PIXELS(1));
   ObjectEvent_SetSpeed(LOCALID_OPPONENT, PIXELS(2), PIXELS(1));
   ObjectEvent_WalkTo(LOCALID_PARTY_LEADER, 112, 256);
   Engine_ObjectEventWalkToAndWait(LOCALID_OPPONENT, 96, 0x100);
-  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIMATION_LEADER_STRIDE);
+  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_LEADER_STRIDE);
   Engine_ObjectEventSetAnimation(LOCALID_OPPONENT,
                                  WARRIOR_ANIMATION_FIGHTING_STANCE);
   Engine_ScriptWait(10);
@@ -982,13 +982,12 @@ static void ColosseumSatrageMatch_StageBattleResult(s32 result) {
   if (result < 0) {
     Engine_ObjectEventSetAnimation(LOCALID_OPPONENT,
                                    WARRIOR_ANIMATION_ARMS_RAISED);
-    Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER,
-                                   ANIMATION_LEADER_CROUCH);
+    Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_LEADER_CROUCH);
   } else {
     Engine_ObjectEventSetAnimation(LOCALID_OPPONENT,
                                    WARRIOR_ANIMATION_DEFEATED);
     Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER,
-                                   ANIMATION_LEADER_ARMS_RAISED);
+                                   ANIM_LEADER_ARMS_RAISED);
   }
   Engine_TaskWait(1);
   FieldCamera_MoveTo(PIXELS(104), 0, PIXELS(192), 0);
@@ -1045,7 +1044,7 @@ s32 ColosseumSatrageMatch_Initialize(void) {
     MapGrid_CopyCellAttributes(35, 78, 1, 1, 35, 77);
   }
   if (Engine_GameFlagIsSet(FLAG_PLANT_GROWN)) {
-    Engine_ObjectEventSetAnimation(LOCALID_GROWTH_PLANT, ANIMATION_SHAKE_HEAD);
+    Engine_ObjectEventSetAnimation(LOCALID_GROWTH_PLANT, ANIM_SHAKE_HEAD);
     MapGrid_CopyCellAttributes(32, 37, 1, 4, 32, 77);
   }
   if (Engine_GameFlagIsSet(FLAG_WEST_TARGET_FROZEN)) {
@@ -1221,7 +1220,7 @@ static void ColosseumSatrageMatch_IntroduceSecondFinals(s32 attendantId) {
   Engine_ScriptOpenScreen();
   Engine_ScriptWaitForScreen();
   Engine_ScriptSetMessage(MsgColossoSiteSecondFinals);
-  Engine_ObjectEventSetAnimationAndWait(attendantId, ANIMATION_NOD);
+  Engine_ObjectEventSetAnimationAndWait(attendantId, ANIM_NOD);
   Engine_ScriptShowMessage(attendantId, 0);
   Engine_ObjectEventRunRepeatedMotion(attendantId, 2);
   Engine_ScriptShowMessage(attendantId, 0);
@@ -1230,24 +1229,24 @@ static void ColosseumSatrageMatch_IntroduceSecondFinals(s32 attendantId) {
   Engine_ObjectEventRunRepeatedMotion(attendantId, 2);
   Engine_ScriptShowMessage(attendantId, 0);
   // Gather the companions into Isaac before the attendant returns to his post.
-  Engine_ObjectEventSetAnimation(MIA, ANIMATION_NOD);
-  Engine_ObjectEventSetAnimation(GARET, ANIMATION_NOD);
-  Engine_ObjectEventSetAnimation(IVAN, ANIMATION_NOD);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_PARTY_LEADER, ANIMATION_NOD);
+  Engine_ObjectEventSetAnimation(MIA, ANIM_NOD);
+  Engine_ObjectEventSetAnimation(GARET, ANIM_NOD);
+  Engine_ObjectEventSetAnimation(IVAN, ANIM_NOD);
+  Engine_ObjectEventSetAnimationAndWait(LOCALID_PARTY_LEADER, ANIM_NOD);
   Engine_ScriptWait(6);
-  Engine_ObjectEventSetAnimation(GARET, ANIMATION_WALK);
+  Engine_ObjectEventSetAnimation(GARET, ANIM_WALK);
   objectEvent = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   if (objectEvent != 0) {
     Engine_ObjectEventSetDestination(GARET, objectEvent->x.part.pixel,
                                      objectEvent->z.part.pixel);
   }
-  Engine_ObjectEventSetAnimation(IVAN, ANIMATION_WALK);
+  Engine_ObjectEventSetAnimation(IVAN, ANIM_WALK);
   objectEvent = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   if (objectEvent != 0) {
     Engine_ObjectEventSetDestination(IVAN, objectEvent->x.part.pixel,
                                      objectEvent->z.part.pixel);
   }
-  Engine_ObjectEventSetAnimation(MIA, ANIMATION_WALK);
+  Engine_ObjectEventSetAnimation(MIA, ANIM_WALK);
   objectEvent = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   if (objectEvent != 0) {
     Engine_ObjectEventSetDestination(MIA, objectEvent->x.part.pixel,
@@ -1297,7 +1296,7 @@ static void EventScript_TalkToMiniMazeAttendant(s32 attendant) {
       objectEvent = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
       objectEvent->velocityY = 0x40000;
       Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER,
-                                     ANIMATION_LEADER_ARMS_RAISED);
+                                     ANIM_LEADER_ARMS_RAISED);
       Engine_ObjectEventSetAttachedEffect(LOCALID_PARTY_LEADER,
                                           ATTACHED_EFFECT_IN_FRONT |
                                               ATTACHED_EFFECT_ONCE);
@@ -1396,7 +1395,7 @@ static void EventScript_TalkToLogRollingAttendant(s32 attendant) {
       COLOSSEUM_SATRAGE_MATCH_MOVE_OBJ_EVENT_PAIR(LOCALID_RIDING_LOG_SOUTH, -64,
                                                   0);
       FieldCamera_MoveTo(PIXELS(752), -1, PIXELS(216), 1);
-      Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIMATION_STAND);
+      Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_STAND);
       Engine_ScriptWait(10);
       ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(1), PIXELS(1) / 2);
       ObjectEvent_WalkToAndWait(LOCALID_PARTY_LEADER, 760, 232);
@@ -1450,8 +1449,7 @@ static void EventScript_TalkToWallAttendant(s32 attendant) {
     FieldCamera_SetSpeed(0x4000, 0x800);
     FieldCamera_MoveTo(PIXELS(536), -1, PIXELS(160), 1);
     ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(1) / 2, PIXELS(1) / 4);
-    Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER,
-                                   ANIMATION_LEADER_CLIMB);
+    Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_LEADER_CLIMB);
     objectEvent = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
     Engine_ObjectSetPosition(objectEvent, objectEvent->x.fixed,
                              objectEvent->y.fixed + 0x400000,
@@ -1505,7 +1503,7 @@ static void ColosseumSatrageMatch_PushObstacleToCell(s32 obstacleId, s32 column,
   ObjectEvent_SetMode(obstacle, 3);
   Engine_ObjectSetPosition(obstacle, column, 0, row);
   Engine_ScriptWait(6);
-  Engine_ObjectEventSetAnimation(pusher, ANIMATION_WALK);
+  Engine_ObjectEventSetAnimation(pusher, ANIM_WALK);
   Engine_ObjectEventSetSpeed(pusher, PIXELS(1) / 2, PIXELS(1) / 5);
   ObjectEvent_SetMode(pusherObjectEvent, 2);
   Engine_ObjectSetPosition(pusherObjectEvent,

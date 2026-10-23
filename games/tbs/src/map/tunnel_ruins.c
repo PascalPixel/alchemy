@@ -275,10 +275,10 @@ static s32 TunnelRuins_HopLeaderTo(struct FieldPosition *target) {
   if (FieldObject_CheckMovementCollision(objectEvent, &adjacentTile) != 1 &&
       FieldObject_CheckMovementCollision(objectEvent, target) == 0) {
     SCRIPT_START();
-    ObjectEvent_SetMode(objectEvent, ANIMATION_LEADER_SPRING);
+    ObjectEvent_SetMode(objectEvent, ANIM_LEADER_SPRING);
     Engine_TaskWait(6);
     Engine_AudioPlayCue(SE_JUMP);
-    ObjectEvent_SetMode(objectEvent, ANIMATION_LEADER_LEAP);
+    ObjectEvent_SetMode(objectEvent, ANIM_LEADER_LEAP);
 
     objectEvent->speed = PIXELS(3);
     objectEvent->acceleration = PIXELS(2);
@@ -289,7 +289,7 @@ static s32 TunnelRuins_HopLeaderTo(struct FieldPosition *target) {
     Engine_ObjectEventMoveToAndWait(LOCALID_PARTY_LEADER,
                                     TunnelRuins_GetLandingPixel(target->x),
                                     TunnelRuins_GetLandingPixel(target->z));
-    ObjectEvent_SetMode(objectEvent, ANIMATION_LEADER_SPRING);
+    ObjectEvent_SetMode(objectEvent, ANIM_LEADER_SPRING);
     Engine_ObjectEventSetSpriteFlags(objectEvent, 1);
     Engine_TaskWait(6);
 
@@ -476,7 +476,7 @@ static void EventScript_HopDownStep(void) {
   u32 i;
 
   SCRIPT_START();
-  ObjectEvent_SetMode(leader, ANIMATION_LEADER_SPRING);
+  ObjectEvent_SetMode(leader, ANIM_LEADER_SPRING);
   ObjectMotion_WaitForAnimationChange(0);
   ObjectEvent_SetMode(leader, 1);
   Engine_ObjectEventSetSpriteFlags(leader, 0);
@@ -915,7 +915,7 @@ static void EventScript_FreezeSoutheastPillarPuddle(void) {
 /// Reached by searching metatile behavior 40 in TunnelRuinsGreatStatue.
 static void EventScript_ReadFirstStatue(void) {
   SCRIPT_START();
-  OBJECT_ANIMATION(LOCALID_PARTY_LEADER, ANIMATION_STAND);
+  OBJECT_ANIMATION(LOCALID_PARTY_LEADER, ANIM_STAND);
   if (FLAG_CHECK(FLAG_VENUS_LIGHTHOUSE_FIRST_PATH) != 0 ||
       FLAG_CHECK(FLAG_VENUS_LIGHTHOUSE_SECOND_PATH) != 0) {
     Engine_MessageShowCentered(MSGNO(MsgTunnelRuinsStatueSpeaksAfterAnswer), 1);
@@ -1403,7 +1403,7 @@ static void EventScript_PushLadyStatue(void) {
 /// metatile behavior 42 in TunnelRuinsLadyStatues.
 static void EventScript_ReadSecondStatue(void) {
   SCRIPT_START();
-  OBJECT_ANIMATION(LOCALID_PARTY_LEADER, ANIMATION_STAND);
+  OBJECT_ANIMATION(LOCALID_PARTY_LEADER, ANIM_STAND);
   Engine_MessageShowCentered(MSGNO(MsgTunnelRuinsStatueSeemsSpeakYourSoul), 1);
   SCRIPT_END();
 }

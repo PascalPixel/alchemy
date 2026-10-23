@@ -351,16 +351,15 @@ static void MercuryLighthouseAerie_PartyArrives(void) {
   Engine_ScriptWait(80);
   Engine_ObjectEventSetSpriteFlags(ObjectEvent_GetById(LOCALID_PARTY_LEADER),
                                    SPRITE_FLAG_SHADOW);
-  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIMATION_STAND);
+  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_STAND);
   Engine_ScriptWait(30);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_PARTY_LEADER,
-                                        ANIMATION_SHAKE_HEAD);
+  Engine_ObjectEventSetAnimationAndWait(LOCALID_PARTY_LEADER, ANIM_SHAKE_HEAD);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_NORTH, 20);
   Engine_ObjectEventStartRepeatedMotion(LOCALID_PARTY_LEADER, 2);
   Engine_ScriptWait(60);
   Engine_ObjectEventSetSpriteFlags(ObjectEvent_GetById(GARET),
                                    SPRITE_FLAG_SHADOW);
-  Engine_ObjectEventSetAnimation(GARET, ANIMATION_STAND);
+  Engine_ObjectEventSetAnimation(GARET, ANIM_STAND);
   Engine_ScriptWait(20);
   ObjectEvent_FaceDirection(GARET, FACING_SOUTHEAST, 0);
   Engine_ScriptWait(20);
@@ -369,21 +368,21 @@ static void MercuryLighthouseAerie_PartyArrives(void) {
   ObjectEvent_FaceDirection(GARET, FACING_EAST, 0);
   Engine_ObjectEventSetSpriteFlags(ObjectEvent_GetById(IVAN),
                                    SPRITE_FLAG_SHADOW);
-  Engine_ObjectEventSetAnimation(IVAN, ANIMATION_STAND);
+  Engine_ObjectEventSetAnimation(IVAN, ANIM_STAND);
   ObjectEvent_FaceDirection(GARET, FACING_SOUTHWEST, 0);
   Engine_ScriptWait(40);
   Engine_ObjectEventSetSpriteFlags(ObjectEvent_GetById(MIA),
                                    SPRITE_FLAG_SHADOW);
-  Engine_ObjectEventSetAnimation(MIA, ANIMATION_STAND);
+  Engine_ObjectEventSetAnimation(MIA, ANIM_STAND);
   Engine_ScriptWait(20);
-  Engine_ObjectEventSetAnimationAndWait(MIA, ANIMATION_NOD);
+  Engine_ObjectEventSetAnimationAndWait(MIA, ANIM_NOD);
   Engine_ScriptWait(20);
   ObjectEvent_SetSpeed(GARET, PIXELS(4) / 5, PIXELS(2) / 5);
   ObjectEvent_SetSpeed(IVAN, PIXELS(4) / 5, PIXELS(2) / 5);
   ObjectEvent_SetSpeed(MIA, PIXELS(4) / 5, PIXELS(2) / 5);
-  Engine_ObjectEventSetAnimation(GARET, ANIMATION_WALK);
-  Engine_ObjectEventSetAnimation(IVAN, ANIMATION_WALK);
-  Engine_ObjectEventSetAnimation(MIA, ANIMATION_WALK);
+  Engine_ObjectEventSetAnimation(GARET, ANIM_WALK);
+  Engine_ObjectEventSetAnimation(IVAN, ANIM_WALK);
+  Engine_ObjectEventSetAnimation(MIA, ANIM_WALK);
   leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   if (leader != 0)
     ObjectEvent_SetDestination(GARET, leader->x.part.pixel,
@@ -549,7 +548,7 @@ static void MercuryLighthouseAerie_ConfrontSaturos(void) {
   FieldCamera_MoveTo(PIXELS(344), PIXELS(24), PIXELS(232), 1);
   ObjectEvent_FaceDirection(GARET, FACING_SOUTHEAST, 20);
   Engine_CameraWaitForMove();
-  Engine_ObjectEventSetAnimationAndWait(GARET, ANIMATION_SHAKE_HEAD);
+  Engine_ObjectEventSetAnimationAndWait(GARET, ANIM_SHAKE_HEAD);
   Engine_ScriptSetMessage(MsgMercuryLighthouseAlreadyLit);
   Script_ShowMessageAndWait(GARET, 0, 20);
   ObjectEvent_SetAttachedEffect(MIA, ATTACHED_EFFECT_IN_FRONT |
@@ -559,7 +558,7 @@ static void MercuryLighthouseAerie_ConfrontSaturos(void) {
   ObjectEvent_WalkToAndWait(MIA, 328, 232);
   Engine_ScriptWait(10);
   Script_ShowMessageAndWait(MIA, 0, 20);
-  Engine_ObjectEventSetAnimationAndWait(MIA, ANIMATION_SHAKE_HEAD);
+  Engine_ObjectEventSetAnimationAndWait(MIA, ANIM_SHAKE_HEAD);
   Engine_ScriptWait(20);
   Script_ShowMessageAndWait(MIA, 0, 30);
   Engine_ObjectEventFaceEachOther(IVAN, LOCALID_PARTY_LEADER, 0);
@@ -575,10 +574,10 @@ static void MercuryLighthouseAerie_ConfrontSaturos(void) {
     Engine_ScriptWait(20);
     ObjectEvent_ShowEmote(MIA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 60);
     ObjectEvent_FaceDirection(GARET, FACING_SOUTH, 10);
-    Engine_ObjectEventSetAnimationAndWait(GARET, ANIMATION_NOD);
+    Engine_ObjectEventSetAnimationAndWait(GARET, ANIM_NOD);
     Script_ShowMessageAndWait(GARET, 0, 20);
     ObjectEvent_FaceDirection(MIA, FACING_NORTH, 0);
-    Engine_ObjectEventSetAnimationAndWait(GARET, ANIMATION_SHAKE_HEAD);
+    Engine_ObjectEventSetAnimationAndWait(GARET, ANIM_SHAKE_HEAD);
     Engine_ScriptWait(20);
     Script_ShowMessageAndWait(GARET, 0, 20);
     gFieldWork->message += 2;
@@ -587,7 +586,7 @@ static void MercuryLighthouseAerie_ConfrontSaturos(void) {
     Engine_ScriptWait(20);
     ObjectEvent_ShowEmote(MIA, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
     ObjectEvent_FaceDirection(GARET, FACING_SOUTH, 10);
-    Engine_ObjectEventSetAnimationAndWait(GARET, ANIMATION_SHAKE_HEAD);
+    Engine_ObjectEventSetAnimationAndWait(GARET, ANIM_SHAKE_HEAD);
     Script_ShowMessageAndWait(GARET, 0, 20);
     ObjectEvent_FaceDirection(MIA, FACING_NORTH, 0);
     Engine_ObjectEventRunRepeatedMotion(GARET, 2);
@@ -600,17 +599,17 @@ static void MercuryLighthouseAerie_ConfrontSaturos(void) {
   Engine_ScriptWait(60);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_WEST, 0);
   ObjectEvent_FaceDirection(GARET, FACING_SOUTH, 20);
-  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIMATION_NOD);
-  Engine_ObjectEventSetAnimationAndWait(GARET, ANIMATION_NOD);
+  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
+  Engine_ObjectEventSetAnimationAndWait(GARET, ANIM_NOD);
   Engine_ScriptWait(20);
   Script_ShowMessageAndWait(GARET, 0, 20);
   Engine_ObjectEventRunRepeatedMotion(MIA, 2);
   Script_ShowMessageAndWait(MIA, 0, 20);
-  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIMATION_NOD);
-  Engine_ObjectEventSetAnimation(GARET, ANIMATION_NOD);
-  Engine_ObjectEventSetAnimationAndWait(IVAN, ANIMATION_NOD);
+  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
+  Engine_ObjectEventSetAnimation(GARET, ANIM_NOD);
+  Engine_ObjectEventSetAnimationAndWait(IVAN, ANIM_NOD);
   Engine_ScriptWait(20);
-  Engine_ObjectEventSetAnimationAndWait(MIA, ANIMATION_SHAKE_HEAD);
+  Engine_ObjectEventSetAnimationAndWait(MIA, ANIM_SHAKE_HEAD);
   Engine_ScriptWait(10);
   ObjectEvent_FaceDirection(MIA, FACING_EAST, 10);
   Engine_ObjectEventSetAnimation(MIA, 0x10);
@@ -621,7 +620,7 @@ static void MercuryLighthouseAerie_ConfrontSaturos(void) {
   Script_ShowMessageAndWait(JENNA, 0, 20);
   ObjectEvent_SetPosition(JENNA, PIXELS(120), PIXELS(160));
   ObjectEvent_FaceDirection(JENNA, FACING_EAST, 0);
-  Engine_ObjectEventSetAnimation(MIA, ANIMATION_STAND);
+  Engine_ObjectEventSetAnimation(MIA, ANIM_STAND);
   Engine_ObjectEventStartRepeatedMotion(LOCALID_PARTY_LEADER, 1);
   Engine_ObjectEventRunRepeatedMotion(GARET, 1);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_EAST, 10);
@@ -889,12 +888,12 @@ static void MercuryLighthouseAerie_ConfrontSaturos(void) {
   Script_ShowMessageAndWait(LOCALID_SATUROS, 0, 20);
   Engine_ObjectEventRunRepeatedMotion(GARET, 2);
   Engine_ScriptWait(10);
-  Engine_ObjectEventSetAnimationAndWait(GARET, ANIMATION_SHAKE_HEAD);
+  Engine_ObjectEventSetAnimationAndWait(GARET, ANIM_SHAKE_HEAD);
   Engine_ScriptWait(10);
   Script_ShowMessageAndWait(GARET, 0, 20);
   Engine_ObjectEventRunRepeatedMotion(IVAN, 1);
   Engine_ScriptWait(10);
-  Engine_ObjectEventSetAnimationAndWait(IVAN, ANIMATION_NOD);
+  Engine_ObjectEventSetAnimationAndWait(IVAN, ANIM_NOD);
   Engine_ScriptWait(20);
   Script_ShowMessageAndWait(IVAN, 0, 20);
   ObjectEvent_ShowEmote(LOCALID_SATUROS, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
@@ -977,7 +976,7 @@ static void MercuryLighthouseAerie_AlexAppears(void) {
   Engine_ScriptSetMessage(MsgMercuryGot);
   Script_ShowMessageAndWait(GARET, 0, 20);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_WEST, 20);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_PARTY_LEADER, ANIMATION_NOD);
+  Engine_ObjectEventSetAnimationAndWait(LOCALID_PARTY_LEADER, ANIM_NOD);
   Engine_ScriptWait(20);
   Engine_ObjectEventRunRepeatedMotion(LOCALID_SATUROS, 2);
   Engine_ScriptWait(20);
@@ -1031,7 +1030,7 @@ static void MercuryLighthouseAerie_AlexAppears(void) {
   ObjectEvent_FaceDirection(IVAN, FACING_NORTHWEST, 0);
   ObjectEvent_FaceDirection(MIA, FACING_NORTH, 20);
   Script_ShowMessageAndWait(LOCALID_ALEX, 0, 20);
-  Engine_ObjectEventSetAnimationAndWait(MIA, ANIMATION_SHAKE_HEAD);
+  Engine_ObjectEventSetAnimationAndWait(MIA, ANIM_SHAKE_HEAD);
   Engine_ScriptWait(20);
   Script_ShowMessageAndWait(MIA, 0, 20);
   Engine_ObjectEventStartRepeatedMotion(LOCALID_ALEX, 2);
@@ -1236,7 +1235,7 @@ static void MercuryLighthouseAerie_AlexAppears(void) {
   Engine_ObjectEventRunRepeatedMotion(IVAN, 1);
   ObjectEvent_FaceDirection(IVAN, FACING_SOUTHWEST, 20);
   Script_ShowMessageAndWait(IVAN, 0, 20);
-  Engine_ObjectEventSetAnimationAndWait(MIA, ANIMATION_SHAKE_HEAD);
+  Engine_ObjectEventSetAnimationAndWait(MIA, ANIM_SHAKE_HEAD);
   Engine_ScriptWait(20);
   Script_ShowMessageAndWait(MIA, 0, 20);
   ObjectEvent_FaceDirection(IVAN, FACING_WEST, 20);
@@ -1356,7 +1355,7 @@ static void MercuryLighthouseAerie_AlexAppears(void) {
   Script_PlaySong(SONG_FADE_OUT_BGM);
   FieldCamera_MoveTo(PIXELS(336), -1, PIXELS(216), 1);
   Engine_CameraWaitForMove();
-  Engine_ObjectEventSetAnimationAndWait(IVAN, ANIMATION_SHAKE_HEAD);
+  Engine_ObjectEventSetAnimationAndWait(IVAN, ANIM_SHAKE_HEAD);
   Engine_ScriptWait(20);
   Map_PlayMusic();
   Script_ShowMessageAndWait(IVAN, 0, 20);
@@ -1377,16 +1376,16 @@ static void MercuryLighthouseAerie_AlexAppears(void) {
   Engine_ObjectEventRunRepeatedMotion(IVAN, 2);
   Engine_ScriptWait(20);
   ObjectEvent_FaceDirection(IVAN, FACING_NORTHWEST, 20);
-  Engine_ObjectEventSetAnimationAndWait(IVAN, ANIMATION_SHAKE_HEAD);
+  Engine_ObjectEventSetAnimationAndWait(IVAN, ANIM_SHAKE_HEAD);
   Engine_ScriptWait(20);
   Engine_ScriptOpenMessage(IVAN, 0);
-  Engine_ObjectEventSetAnimation(MIA, ANIMATION_STAND);
+  Engine_ObjectEventSetAnimation(MIA, ANIM_STAND);
   ObjectEvent_Get(MIA)->scaleX = Q16_ONE;
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_SOUTH, 0);
   ObjectEvent_FaceDirection(GARET, FACING_NORTHEAST, 0);
   ObjectEvent_FaceDirection(MIA, FACING_NORTH, 20);
   if (Engine_ScriptChooseYesNo(0, 0) == 0) {
-    Engine_ObjectEventSetAnimationAndWait(IVAN, ANIMATION_NOD);
+    Engine_ObjectEventSetAnimationAndWait(IVAN, ANIM_NOD);
     Engine_ScriptWait(20);
     Script_ShowMessageAndWait(IVAN, 0, 20);
     gFieldWork->message++;
@@ -1397,7 +1396,7 @@ static void MercuryLighthouseAerie_AlexAppears(void) {
     Script_ShowMessageAndWait(IVAN, 0, 20);
   }
   ObjectEvent_FaceDirection(IVAN, FACING_SOUTHWEST, 20);
-  Engine_ObjectEventSetAnimationAndWait(IVAN, ANIMATION_NOD);
+  Engine_ObjectEventSetAnimationAndWait(IVAN, ANIM_NOD);
   Engine_ScriptWait(20);
   Script_ShowMessageAndWait(IVAN, 0, 20);
   ObjectEvent_FaceDirection(MIA, FACING_NORTHEAST, 30);
@@ -1406,7 +1405,7 @@ static void MercuryLighthouseAerie_AlexAppears(void) {
   Engine_ScriptWait(10);
   Script_ShowMessageAndWait(GARET, 0, 20);
   ObjectEvent_FaceDirection(MIA, FACING_NORTHWEST, 20);
-  Engine_ObjectEventSetAnimationAndWait(MIA, ANIMATION_NOD);
+  Engine_ObjectEventSetAnimationAndWait(MIA, ANIM_NOD);
   Engine_ScriptWait(20);
   Script_ShowMessageAndWait(MIA, 0, 20);
   Engine_ObjectEventRunRepeatedMotion(MIA, 1);
@@ -1433,7 +1432,7 @@ static void MercuryLighthouseAerie_AlexAppears(void) {
   Engine_ObjectEventRunRepeatedMotion(GARET, 1);
   Engine_ScriptWait(20);
   Script_ShowMessageAndWait(GARET, 0, 20);
-  Engine_ObjectEventSetAnimationAndWait(MIA, ANIMATION_NOD);
+  Engine_ObjectEventSetAnimationAndWait(MIA, ANIM_NOD);
   Engine_ObjectEventStartRepeatedMotion(LOCALID_PARTY_LEADER, 2);
   Engine_ObjectEventStartRepeatedMotion(IVAN, 2);
   Engine_ObjectEventStartRepeatedMotion(GARET, 2);
@@ -1445,29 +1444,29 @@ static void MercuryLighthouseAerie_AlexAppears(void) {
                                           ATTACHED_EFFECT_ONCE);
   Engine_ScriptWait(60);
   Script_ShowMessageAndWait(IVAN, 0, 20);
-  Engine_ObjectEventSetAnimationAndWait(MIA, ANIMATION_SHAKE_HEAD);
+  Engine_ObjectEventSetAnimationAndWait(MIA, ANIM_SHAKE_HEAD);
   Engine_ScriptWait(20);
   Script_ShowMessageAndWait(MIA, 0, 20);
   ObjectEvent_FaceDirection(MIA, FACING_NORTHEAST, 20);
   Script_ShowMessageAndWait(MIA, 0, 20);
   ObjectEvent_FaceDirection(MIA, FACING_EAST, 20);
-  Engine_ObjectEventSetAnimationAndWait(MIA, ANIMATION_SHAKE_HEAD);
+  Engine_ObjectEventSetAnimationAndWait(MIA, ANIM_SHAKE_HEAD);
   Engine_ScriptWait(20);
   Script_ShowMessageAndWait(MIA, 0, 30);
   ObjectEvent_FaceDirection(GARET, FACING_SOUTHEAST, 0);
   ObjectEvent_FaceDirection(IVAN, FACING_NORTHWEST, 20);
-  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIMATION_NOD);
-  Engine_ObjectEventSetAnimation(GARET, ANIMATION_NOD);
-  Engine_ObjectEventSetAnimationAndWait(IVAN, ANIMATION_NOD);
+  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
+  Engine_ObjectEventSetAnimation(GARET, ANIM_NOD);
+  Engine_ObjectEventSetAnimationAndWait(IVAN, ANIM_NOD);
   Engine_ScriptWait(30);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_SOUTHWEST, 0);
   ObjectEvent_FaceDirection(GARET, FACING_SOUTHWEST, 0);
   ObjectEvent_FaceDirection(IVAN, FACING_SOUTHWEST, 40);
-  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIMATION_NOD);
-  Engine_ObjectEventSetAnimation(GARET, ANIMATION_NOD);
-  Engine_ObjectEventSetAnimationAndWait(IVAN, ANIMATION_NOD);
+  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
+  Engine_ObjectEventSetAnimation(GARET, ANIM_NOD);
+  Engine_ObjectEventSetAnimationAndWait(IVAN, ANIM_NOD);
   Engine_ScriptWait(20);
-  Engine_ObjectEventSetAnimationAndWait(MIA, ANIMATION_NOD);
+  Engine_ObjectEventSetAnimationAndWait(MIA, ANIM_NOD);
   Engine_ScriptWait(20);
   Script_ShowMessageAndWait(MIA, 0, 20);
   ObjectEvent_WalkTo(LOCALID_PARTY_LEADER, 312, 216);

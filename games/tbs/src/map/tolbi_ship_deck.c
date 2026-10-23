@@ -2118,9 +2118,9 @@ static void TolbiShipDeck_JumpIntoKrakenBattle(void) {
   ObjectEvent_WalkTo(GARET, 240, 600);
   ObjectEvent_WalkTo(IVAN, 254, 600);
   Engine_ObjectEventWalkToAndWait(MIA, 248, 616);
-  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIMATION_STAND);
-  Engine_ObjectEventSetAnimation(GARET, ANIMATION_STAND);
-  Engine_ObjectEventSetAnimation(IVAN, ANIMATION_STAND);
+  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_STAND);
+  Engine_ObjectEventSetAnimation(GARET, ANIM_STAND);
+  Engine_ObjectEventSetAnimation(IVAN, ANIM_STAND);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_NORTH, 0);
   ObjectEvent_FaceDirection(GARET, FACING_NORTH, 0);
   ObjectEvent_FaceDirection(IVAN, FACING_NORTH, 0);
@@ -2189,14 +2189,14 @@ static void TolbiShipDeck_ThankForKraken(void) {
   Engine_ObjectEventRunRepeatedMotion(LOCALID_SEA_KAJA, 1);
   Engine_ScriptSetMessage(MsgTolbiShipThankIsaacDidGoodAgainst);
   TolbiShipDeck_Say(LOCALID_SEA_KAJA);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_PARTY_LEADER, ANIMATION_NOD);
+  Engine_ObjectEventSetAnimationAndWait(LOCALID_PARTY_LEADER, ANIM_NOD);
   Engine_ScriptWait(40);
   ObjectEvent_FaceDirection(LOCALID_SEA_KAJA, FACING_SOUTH + FACING_STEP, 20);
   ObjectEvent_ShowEmote(LOCALID_SEA_KAJA, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
   Script_ShowMessageAndWait(LOCALID_SEA_KAJA, 0, 40);
   TolbiShipDeck_Turn(LOCALID_SEA_KAJA, FACING_EAST);
   TolbiShipDeck_Say(LOCALID_SEA_KAJA);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_PARTY_LEADER, ANIMATION_NOD);
+  Engine_ObjectEventSetAnimationAndWait(LOCALID_PARTY_LEADER, ANIM_NOD);
   Engine_ObjectEventSetAnimationAndWait(LOCALID_SEA_KAJA, 3);
   ObjectEvent_WalkToAndWait(LOCALID_SEA_KAJA, 182, 0x258);
   ObjectEvent_WalkToAndWait(LOCALID_SEA_KAJA, 216, 0x258);
@@ -2971,8 +2971,8 @@ static void TolbiShipDeck_OfferToScoutIsland(void) {
   ObjectEvent_WalkTo(GARET, 194, 0x280);
   ObjectEvent_WalkTo(IVAN, 198, 0x28e);
   ObjectEvent_WalkToAndWait(MIA, 194, 0x2a0);
-  Engine_ObjectEventSetAnimation(GARET, ANIMATION_STAND);
-  Engine_ObjectEventSetAnimation(IVAN, ANIMATION_STAND);
+  Engine_ObjectEventSetAnimation(GARET, ANIM_STAND);
+  Engine_ObjectEventSetAnimation(IVAN, ANIM_STAND);
   Engine_ScriptWait(10);
   ObjectEvent_FaceDirection(GARET, FACING_WEST, 0);
   ObjectEvent_FaceDirection(IVAN, FACING_WEST, 0);
@@ -2987,10 +2987,10 @@ static void TolbiShipDeck_OfferToScoutIsland(void) {
   Engine_ObjectEventRunRepeatedMotion(LOCALID_SEA_SEAN, 1);
   Script_OpenMessage(LOCALID_SEA_SEAN, 0);
   if (Engine_ScriptChooseYesNo(0, 0) == 1) {
-    Engine_ObjectEventSetAnimationAndWait(IVAN, ANIMATION_SHAKE_HEAD);
+    Engine_ObjectEventSetAnimationAndWait(IVAN, ANIM_SHAKE_HEAD);
     TolbiShipDeck_Say(IVAN);
     TolbiShipDeck_Turn(MIA, FACING_NORTHWEST);
-    Engine_ObjectEventSetAnimation(MIA, ANIMATION_NOD);
+    Engine_ObjectEventSetAnimation(MIA, ANIM_NOD);
     TolbiShipDeck_Say(MIA);
     TolbiShipDeck_Turn(GARET, FACING_SOUTHWEST);
     Engine_ObjectEventRunRepeatedMotion(GARET, 1);
@@ -3125,7 +3125,7 @@ static void TolbiShipDeck_ReturnFromIsland(void) {
   TolbiShipDeck_Turn(LOCALID_SEA_KAJA, FACING_WEST);
   TolbiShipDeck_Say(SPEAKER(LOCALID_SEA_KAJA, 2));
   TolbiShipDeck_Turn(LOCALID_PARTY_LEADER, FACING_NORTHEAST);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_PARTY_LEADER, ANIMATION_NOD);
+  Engine_ObjectEventSetAnimationAndWait(LOCALID_PARTY_LEADER, ANIM_NOD);
   Engine_ObjectEventSetAnimationAndWait(LOCALID_SEA_KAJA, 3);
   gFieldWork->transition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_SHAPE);

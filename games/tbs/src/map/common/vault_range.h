@@ -26,12 +26,12 @@ s32 Vault_StopIfFacingNear(struct ObjectEvent *objectEvent,
     u32 facing = objectEvent->facing & 0xf000;
     if (forward == facing || right == facing || left == facing || force != 0) {
       objectEvent->paused = 1;
-      ObjectEvent_SetMode(objectEvent, ANIMATION_STAND);
+      ObjectEvent_SetMode(objectEvent, ANIM_STAND);
       result = 1;
     }
   } else {
     objectEvent->paused = 0;
-    ObjectEvent_SetMode(objectEvent, ANIMATION_WALK);
+    ObjectEvent_SetMode(objectEvent, ANIM_WALK);
   }
   return result;
 }

@@ -82,8 +82,8 @@ void FieldEffect_RunForce(void) {
   projectile->acceleration = 4 << 16;
   projectile->motionFlags = 0;
   ObjectDispatch_SelectAnimationFar(projectile, 5);
-  Animation_ApplyChildValuesFar((struct DispatchObject *)projectile,
-                                SPRITE_COLOR_BGR);
+  Anim_ApplyChildValuesFar((struct DispatchObject *)projectile,
+                           SPRITE_COLOR_BGR);
   scale = projectile->scaleX;
   if (scale < 0x10000) {
     do {
@@ -109,8 +109,7 @@ void FieldEffect_RunForce(void) {
       copy->acceleration = 4 << 16;
       copy->motionFlags = 0;
       ObjectDispatch_SelectAnimationFar(copy, 5);
-      Animation_ApplyChildValuesFar((struct DispatchObject *)copy,
-                                    SPRITE_COLOR_RBG);
+      Anim_ApplyChildValuesFar((struct DispatchObject *)copy, SPRITE_COLOR_RBG);
       sharedAnimation = Sprite_ShareVramCacheEntry(
           (struct Sprite *)copy->sprite, sharedAnimation);
     }

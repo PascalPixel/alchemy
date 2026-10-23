@@ -418,7 +418,7 @@ static void Xian_TalkToWaterCarrier(void) {
   carrier->targetZ = OBJ_EVENT_NO_TARGET;
   ObjectEvent_SetBuiltinAction(LOCALID_WOMAN_CARRYING_WATER,
                                OBJ_EVENT_ACTION_IDLE);
-  Engine_ObjectEventSetAnimation(LOCALID_WOMAN_CARRYING_WATER, ANIMATION_STAND);
+  Engine_ObjectEventSetAnimation(LOCALID_WOMAN_CARRYING_WATER, ANIM_STAND);
   Engine_ObjectEventRunRepeatedMotion(LOCALID_WOMAN_CARRYING_WATER, 2);
   Engine_ScriptWait(10);
   Script_PlaySong(SE_228);
@@ -469,10 +469,10 @@ static void Xian_TalkToWaterCarrier(void) {
     ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_NORTH, 10);
     ObjectEvent_GetById(LOCALID_PARTY_LEADER)->steeringFlags &=
         ~OBJ_EVENT_FACES_MOTION;
-    Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIMATION_WALK);
+    Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_WALK);
     ObjectEvent_SetDestinationOffset(LOCALID_PARTY_LEADER, 0, 16);
     Engine_ObjectEventWaitForMove(LOCALID_PARTY_LEADER);
-    Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIMATION_STAND);
+    Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_STAND);
   }
   ObjectEvent_SetSpeed(LOCALID_WOMAN_CARRYING_WATER, 0xcccc, 0x6666);
   carrier = ObjectEvent_GetById(LOCALID_WOMAN_CARRYING_WATER);
@@ -553,7 +553,7 @@ static void Xian_TalkToKungFuStudent(void) {
     leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
     FieldVector_AddPolarOffset(-PIXELS(8), leader->facing,
                                (struct FieldPosition *)stepBackOffset);
-    Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIMATION_WALK);
+    Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_WALK);
     Engine_ObjectEventSetDestinationOffset(LOCALID_PARTY_LEADER,
                                            stepBackOffset[0] / 0x10000,
                                            stepBackOffset[2] / 0x10000);
@@ -652,10 +652,10 @@ static void Xian_JumpOverSpilledWater(void) {
                                landing);
     if (FieldObject_CheckMovementCollision(leader, landing) == 0) {
       Engine_ScriptStart();
-      ObjectEvent_SetMode(leader, ANIMATION_LEADER_SPRING);
+      ObjectEvent_SetMode(leader, ANIM_LEADER_SPRING);
       Engine_TaskWait(6);
       Engine_AudioPlayCue(SE_JUMP);
-      ObjectEvent_SetMode(leader, ANIMATION_LEADER_LEAP);
+      ObjectEvent_SetMode(leader, ANIM_LEADER_LEAP);
       leader->speed = PIXELS(3);
       leader->acceleration = PIXELS(2);
       leader->velocityY = PIXELS(4);
@@ -663,7 +663,7 @@ static void Xian_JumpOverSpilledWater(void) {
       Engine_ObjectEventSetSpriteFlags(leader, 0);
       Engine_ObjectMotionSetPositionAndCommit(
           LOCALID_PARTY_LEADER, landing->x >> 16, landing->z >> 16);
-      ObjectEvent_SetMode(leader, ANIMATION_LEADER_SPRING);
+      ObjectEvent_SetMode(leader, ANIM_LEADER_SPRING);
       Engine_ObjectEventSetSpriteFlags(leader, 1);
       leader->motionFlags = savedMotionFlags;
       Engine_ScriptEnd();
@@ -677,7 +677,7 @@ static void Xian_WalkThroughExit(s32 warpNumber) {
   ObjectEvent_GetById(LOCALID_PARTY_LEADER)->motionFlags = 0;
   ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, 0x8000, 0x4000);
   if (warpNumber == XIAN_TO_SANCTUM) {
-    Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIMATION_WALK);
+    Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_WALK);
     ObjectEvent_SetDestinationOffset(LOCALID_PARTY_LEADER, 0, -16);
   } else {
     ObjectEvent_CenterAndWalk(LOCALID_PARTY_LEADER, 2, -16);

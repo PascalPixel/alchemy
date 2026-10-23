@@ -313,7 +313,7 @@ camera to it. `WAIT(n)` waits `n` frames, about 59.73 a second.
 `MESSAGE_SET` chooses a message and `MESSAGE_PUT` shows it spoken by an object event.
 `OBJECT_POSITION_SET`, `OBJECT_WALK`, `OBJECT_SPEED`, `OBJECT_DIR`, `OBJECT_FACE` and `OBJECT_ANIMATION`
 move, turn and animate object events by local id (`OBJECT_ANIMATION` takes an `enum
-ObjectEventAnimation` such as `ANIMATION_NOD`). `FLAG_CHECK` and `FLAG_SET` test and set
+ObjectEventAnimation` such as `ANIM_NOD`). `FLAG_CHECK` and `FLAG_SET` test and set
 game flags, and `SE(n)` plays a sound from `songs.h`. Callbacks are added with
 `FieldScheduler_AddCallback` at `TASK_PRIORITY_MAP`.
 

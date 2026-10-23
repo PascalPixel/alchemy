@@ -68,7 +68,7 @@ FarCall_FieldTable:
 	export ObjectDispatch_SetChildBlendModeFar, ObjectDispatch_SetChildBlendMode
 	export MapGrid_SetScreenShakeFar, MapGrid_SetScreenShake
 	export MapGrid_WaitForShakeToSettleFar, MapGrid_WaitForShakeToSettle
-	overlay_veneer Animation_SetIndexAndInitializeObjects
+	overlay_veneer Anim_SetIndexAndInitializeObjects
 	export ObjectSystem_SuspendProjectionAndShowSpritesFar, ObjectSystem_SuspendProjectionAndShowSprites
 	export ObjectSystem_ResumeProjectionAndHideLayersFar, ObjectSystem_ResumeProjectionAndHideLayers
 	overlay_veneer ObjectDispatch_SetChildFixedScale
@@ -76,7 +76,7 @@ FarCall_FieldTable:
 	export ObjectDispatch_RegisterChildMetadataFar, ObjectDispatch_RegisterChildMetadata
 	export WorldMap_StartStillViewFar, WorldMap_StartStillView
 	export WorldMap_LoadAreaGraphicsFar, WorldMap_LoadAreaGraphics
-	export Animation_ApplyChildValuesFar, Animation_ApplyChildValues
+	export Anim_ApplyChildValuesFar, Anim_ApplyChildValues
 	export Sprite_SetAnimColorModesFar, Sprite_SetAnimColorModes
 	export ObjectScript_CheckOverlapFar, ObjectScript_CheckOverlap
 	export MapGrid_SetShownLayersFar, MapGrid_SetShownLayers

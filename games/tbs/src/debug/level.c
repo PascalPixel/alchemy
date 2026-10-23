@@ -500,13 +500,13 @@ s32 IncreaseItemAndLevel_Initialize(void) {
 #if !TBS_PATCH_1
 /// Runs the Japanese animation test, then moves LOCALID_LEVEL_EDITOR to its
 /// test position. Force cast at LOCALID_PORTRAIT_BROWSER: it takes
-/// ANIMATION_WALK and LOCALID_LEVEL_EDITOR ANIMATION_SHAKE_HEAD; once
+/// ANIM_WALK and LOCALID_LEVEL_EDITOR ANIM_SHAKE_HEAD; once
 /// LOCALID_PORTRAIT_BROWSER's animation has changed, LOCALID_LEVEL_EDITOR moves
 /// to (312, 416).
 static void IncreaseItemAndLevel_RunMotionTest(void) {
   Engine_ScriptStart();
-  Engine_ObjectEventSetAnimation(LOCALID_PORTRAIT_BROWSER, ANIMATION_WALK);
-  Engine_ObjectEventSetAnimation(LOCALID_LEVEL_EDITOR, ANIMATION_SHAKE_HEAD);
+  Engine_ObjectEventSetAnimation(LOCALID_PORTRAIT_BROWSER, ANIM_WALK);
+  Engine_ObjectEventSetAnimation(LOCALID_LEVEL_EDITOR, ANIM_SHAKE_HEAD);
   ObjectMotion_WaitForAnimationChange(LOCALID_PORTRAIT_BROWSER);
   ObjectEvent_SetPosition(LOCALID_LEVEL_EDITOR, PIXELS(312), PIXELS(416));
   Engine_ScriptEnd();

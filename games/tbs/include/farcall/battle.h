@@ -37,7 +37,7 @@ void BattleMotion_ApproachTargetFar(s32 actorId, s32 targetId,
 void BattleMotion_ApplyKnockbackFar(s32 id, s32 variant);
 /// Lists the units still in the battle on the sides in `groups`, party first,
 /// into `dst` if it's not null, and returns how many; HP isn't tested.
-s32 BattleUnits_ListIdsFar(s32 groups, u16 *dst);
+s32 BattleUnit_ListIdsFar(s32 groups, u16 *dst);
 /// Returns a unit's battle object, or null for a unit with no place
 /// (BattleObject_Get); the animations find the sprites they move through it.
 struct BattleObject *GetBattleObjectSlotFar(s32 objectId);

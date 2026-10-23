@@ -382,7 +382,7 @@ static void EventScript_KradenFindsHeartOfSanctum(void) {
     ObjectEvent_SetSpeed(JENNA, PIXELS(1) / 2, PIXELS(1) / 4);
     ObjectEvent_WalkTo(GARET, 280, 248);
     ObjectEvent_WalkToAndWait(JENNA, 296, 248);
-    Engine_ObjectEventSetAnimation(GARET, ANIMATION_STAND);
+    Engine_ObjectEventSetAnimation(GARET, ANIM_STAND);
     ObjectEvent_FaceDirection(GARET, FACING_NORTH + FACING_STEP, 0);
     ObjectEvent_FaceDirection(JENNA, FACING_NORTHWEST + FACING_STEP, 30);
     Engine_CameraSetSpeed(PIXELS(3) / 5, PIXELS(3) / 40);
@@ -397,10 +397,10 @@ static void EventScript_KradenFindsHeartOfSanctum(void) {
     ObjectEvent_FaceDirection(LOCALID_KRADEN, FACING_SOUTH, 60);
     SolSanctumLunaSolRooms_ShowMessageAndWait(LOCALID_KRADEN, 20);
     Engine_ObjectEventFaceDirection(LOCALID_KRADEN, FACING_EAST, 40);
-    Engine_ObjectEventSetAnimationAndWait(LOCALID_KRADEN, ANIMATION_NOD);
+    Engine_ObjectEventSetAnimationAndWait(LOCALID_KRADEN, ANIM_NOD);
     Engine_ScriptWait(10);
     ObjectEvent_FaceDirection(LOCALID_KRADEN, FACING_WEST, 40);
-    Engine_ObjectEventSetAnimationAndWait(LOCALID_KRADEN, ANIMATION_NOD);
+    Engine_ObjectEventSetAnimationAndWait(LOCALID_KRADEN, ANIM_NOD);
     Engine_ScriptWait(20);
     Engine_ObjectEventRunRepeatedMotion(JENNA, 2);
     ObjectEvent_FaceDirection(JENNA, FACING_WEST + FACING_STEP, 10);
@@ -430,12 +430,12 @@ static void EventScript_KradenFindsHeartOfSanctum(void) {
     // three wonder at turning back from the heart of the sanctum.
     Engine_ScriptShowMessage(GARET, 0);
     Engine_ScriptWait(60);
-    Engine_ObjectEventSetAnimationAndWait(LOCALID_KRADEN, ANIMATION_SHAKE_HEAD);
+    Engine_ObjectEventSetAnimationAndWait(LOCALID_KRADEN, ANIM_SHAKE_HEAD);
     Engine_ScriptWait(40);
     SolSanctumLunaSolRooms_ShowMessageAndWait(LOCALID_KRADEN, 20);
     ObjectEvent_ShowEmote(JENNA, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
     SolSanctumLunaSolRooms_ShowMessageAndWait(JENNA, 60);
-    Engine_ObjectEventSetAnimationAndWait(LOCALID_KRADEN, ANIMATION_NOD);
+    Engine_ObjectEventSetAnimationAndWait(LOCALID_KRADEN, ANIM_NOD);
     SolSanctumLunaSolRooms_ShowMessageAndWait(LOCALID_KRADEN, 10);
     ObjectEvent_ShowEmote(LOCALID_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_ELLIPSIS,
                           0);
@@ -444,7 +444,7 @@ static void EventScript_KradenFindsHeartOfSanctum(void) {
     Engine_ObjectEventRunRepeatedMotion(GARET, 2);
     Engine_ScriptWait(20);
     SolSanctumLunaSolRooms_ShowMessageAndWait(GARET, 10);
-    Engine_ObjectEventSetAnimationAndWait(LOCALID_KRADEN, ANIMATION_NOD);
+    Engine_ObjectEventSetAnimationAndWait(LOCALID_KRADEN, ANIM_NOD);
     Engine_ScriptWait(20);
     ObjectEvent_ShowEmote(LOCALID_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_WINCE,
                           0);
@@ -476,25 +476,25 @@ static void EventScript_KradenFindsHeartOfSanctum(void) {
     // delighted: "Good! It's decided. Let's move ahead!"
     Engine_ScriptSetMessage(MsgSolSanctumPutWayDont);
     Engine_ScriptWait(30);
-    Engine_ObjectEventSetAnimationAndWait(JENNA, ANIMATION_SHAKE_HEAD);
+    Engine_ObjectEventSetAnimationAndWait(JENNA, ANIM_SHAKE_HEAD);
     SolSanctumLunaSolRooms_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | JENNA,
                                               6);
-    Engine_ObjectEventSetAnimationAndWait(GARET, ANIMATION_NOD);
+    Engine_ObjectEventSetAnimationAndWait(GARET, ANIM_NOD);
     SolSanctumLunaSolRooms_ShowMessageAndWait(GARET, 20);
     Engine_ObjectEventJump(LOCALID_KRADEN, 6, 20);
     ObjectEvent_ShowEmote(LOCALID_KRADEN, EMOTE_IN_FRONT | EMOTE_HEART, 20);
     SolSanctumLunaSolRooms_ShowMessageAndWait(LOCALID_KRADEN, 30);
-    Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIMATION_NOD);
-    Engine_ObjectEventSetAnimation(GARET, ANIMATION_NOD);
-    Engine_ObjectEventSetAnimationAndWait(JENNA, ANIMATION_NOD);
+    Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
+    Engine_ObjectEventSetAnimation(GARET, ANIM_NOD);
+    Engine_ObjectEventSetAnimationAndWait(JENNA, ANIM_NOD);
     Engine_ScriptWait(20);
-    Engine_ObjectEventSetAnimationAndWait(LOCALID_KRADEN, ANIMATION_NOD);
+    Engine_ObjectEventSetAnimationAndWait(LOCALID_KRADEN, ANIM_NOD);
     SolSanctumLunaSolRooms_ShowMessageAndWait(LOCALID_KRADEN, 6);
     // End the discussion and return the followers to Isaac.
     ObjectEvent_SetSpeed(GARET, PIXELS(1), PIXELS(1) / 2);
     ObjectEvent_SetSpeed(JENNA, PIXELS(1), PIXELS(1) / 2);
     ObjectEvent_SetSpeed(LOCALID_KRADEN, PIXELS(2), PIXELS(1));
-    Engine_ObjectEventSetAnimation(LOCALID_KRADEN, ANIMATION_WALK);
+    Engine_ObjectEventSetAnimation(LOCALID_KRADEN, ANIM_WALK);
     leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
     if (leader != 0) {
       Engine_ObjectEventSetDestination(LOCALID_KRADEN, leader->x.part.pixel,
@@ -502,7 +502,7 @@ static void EventScript_KradenFindsHeartOfSanctum(void) {
     }
     Engine_ObjectEventWaitForMove(LOCALID_KRADEN);
     Engine_ObjectEventSetPosition(LOCALID_KRADEN, 0, 0);
-    Engine_ObjectEventSetAnimation(GARET, ANIMATION_WALK);
+    Engine_ObjectEventSetAnimation(GARET, ANIM_WALK);
     leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
     if (leader != 0) {
       Engine_ObjectEventSetDestination(GARET, leader->x.part.pixel,
@@ -510,7 +510,7 @@ static void EventScript_KradenFindsHeartOfSanctum(void) {
     }
     Engine_ObjectEventWaitForMove(GARET);
     Engine_ObjectEventSetPosition(GARET, 0, 0);
-    Engine_ObjectEventSetAnimation(JENNA, ANIMATION_WALK);
+    Engine_ObjectEventSetAnimation(JENNA, ANIM_WALK);
     leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
     if (leader != 0) {
       Engine_ObjectEventSetDestination(JENNA, leader->x.part.pixel,
@@ -581,9 +581,9 @@ static void SolSanctumLunaSolRooms_IntroduceSolAndLunaRooms(void) {
   Engine_ScriptSetMessage(request);
   ObjectEvent_FaceDirection(LOCALID_KRADEN, FACING_EAST, 40);
   ObjectEvent_ShowEmote(LOCALID_KRADEN, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 40);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_KRADEN, ANIMATION_SHAKE_HEAD);
+  Engine_ObjectEventSetAnimationAndWait(LOCALID_KRADEN, ANIM_SHAKE_HEAD);
   ObjectEvent_FaceDirection(LOCALID_KRADEN, FACING_SOUTHEAST + FACING_STEP, 10);
-  Engine_ObjectEventSetAnimation(LOCALID_KRADEN, ANIMATION_SHAKE_HEAD);
+  Engine_ObjectEventSetAnimation(LOCALID_KRADEN, ANIM_SHAKE_HEAD);
   Script_OpenMessage(SPEAKER_WINDOW_ABOVE | LOCALID_KRADEN, 0);
   if (Engine_ScriptChooseYesNo(0, 0) == 0) {
     Engine_ScriptSetMessage((request + 1));
@@ -650,10 +650,10 @@ static void EventScript_KradenStopsPartyLeaving(void) {
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_NORTH, 0);
   ObjectEvent_FaceDirection(LOCALID_KRADEN, FACING_SOUTH, 10);
   Script_ShowMessageAndWait(LOCALID_KRADEN, 0, 10);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_PARTY_LEADER, ANIMATION_NOD);
+  Engine_ObjectEventSetAnimationAndWait(LOCALID_PARTY_LEADER, ANIM_NOD);
   if (GameFlag_IsSet(FLAG_SOL_SANCTUM_LUNA_PICTURE_CHANGED) != 0 ||
       GameFlag_IsSet(FLAG_SOL_SANCTUM_LUNA_SOL_ROOMS_SEEN) == 0) {
-    Engine_ObjectEventSetAnimation(LOCALID_KRADEN, ANIMATION_WALK);
+    Engine_ObjectEventSetAnimation(LOCALID_KRADEN, ANIM_WALK);
     destinationObjectEvent = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
     if (destinationObjectEvent != 0) {
       ObjectEvent_SetDestination(LOCALID_KRADEN,
@@ -1091,7 +1091,7 @@ static void SolSanctumLunaSolRooms_UnusedAnimateSavedStatueLights(void) {
     speaker = SPEAKER_WINDOW_BELOW | LOCALID_KRADEN;
     Engine_ScriptSetMessage(MsgSolSanctumYouFoundIt);
     SolSanctumLunaSolRooms_ShowMessageAndWait(speaker, 6);
-    Engine_ObjectEventSetAnimationAndWait(LOCALID_KRADEN, ANIMATION_NOD);
+    Engine_ObjectEventSetAnimationAndWait(LOCALID_KRADEN, ANIM_NOD);
     SolSanctumLunaSolRooms_ShowMessageAndWait(speaker, 6);
   }
   gFieldWork->transition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
@@ -1130,11 +1130,9 @@ static void EventScript_KradenSeesLunaPictureChange(void) {
       Engine_ScriptWait(6);
       Engine_ObjectEventJump(LOCALID_KRADEN, 6, 30);
       SolSanctumLunaSolRooms_ShowMessageAndWait(LOCALID_KRADEN, 6);
-      Engine_ObjectEventSetAnimationAndWait(LOCALID_PARTY_LEADER,
-                                            ANIMATION_NOD);
+      Engine_ObjectEventSetAnimationAndWait(LOCALID_PARTY_LEADER, ANIM_NOD);
       Engine_ScriptWait(2);
-      Engine_ObjectEventSetAnimationAndWait(LOCALID_KRADEN,
-                                            ANIMATION_SHAKE_HEAD);
+      Engine_ObjectEventSetAnimationAndWait(LOCALID_KRADEN, ANIM_SHAKE_HEAD);
       // Kraden: "But other than that, nothing looks different..."
       SolSanctumLunaSolRooms_ShowMessageAndWait(LOCALID_KRADEN, 6);
       ObjectEvent_SetAttachedEffect(LOCALID_PARTY_LEADER, 0x102);
@@ -1143,8 +1141,7 @@ static void EventScript_KradenSeesLunaPictureChange(void) {
       Engine_ScriptWait(30);
       // Kraden: a trap here, and this is all that happens?
       SolSanctumLunaSolRooms_ShowMessageAndWait(LOCALID_KRADEN, 6);
-      Engine_ObjectEventSetAnimationAndWait(LOCALID_PARTY_LEADER,
-                                            ANIMATION_NOD);
+      Engine_ObjectEventSetAnimationAndWait(LOCALID_PARTY_LEADER, ANIM_NOD);
       ObjectEvent_WalkToAndWait(LOCALID_KRADEN, 576, 184);
       Engine_ScriptWait(6);
       Engine_ObjectEventRunRepeatedMotion(LOCALID_KRADEN, 2);
@@ -1155,11 +1152,10 @@ static void EventScript_KradenSeesLunaPictureChange(void) {
           SPEAKER_WINDOW_ABOVE | LOCALID_KRADEN, 6);
       ObjectEvent_WalkToAndWait(LOCALID_KRADEN, 576, 208);
       Engine_ScriptWait(40);
-      Engine_ObjectEventSetAnimationAndWait(LOCALID_PARTY_LEADER,
-                                            ANIMATION_NOD);
+      Engine_ObjectEventSetAnimationAndWait(LOCALID_PARTY_LEADER, ANIM_NOD);
       Engine_ScriptWait(6);
       ObjectEvent_SetSpeed(LOCALID_KRADEN, PIXELS(1) / 2, PIXELS(1) / 4);
-      Engine_ObjectEventSetAnimation(LOCALID_KRADEN, ANIMATION_WALK);
+      Engine_ObjectEventSetAnimation(LOCALID_KRADEN, ANIM_WALK);
       leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
       if (leader != 0) {
         ObjectEvent_SetDestination(LOCALID_KRADEN, leader->x.part.pixel,
@@ -1185,13 +1181,13 @@ static void SolSanctumLunaSolRooms_DiscussFloorSymbolChangingToLuna(void) {
   ObjectEvent_SetSpeed(LOCALID_KRADEN, PIXELS(1), PIXELS(1) / 2);
   ObjectEvent_WalkToAndWait(LOCALID_KRADEN, 392, 168);
   ObjectEvent_FaceDirection(LOCALID_KRADEN, FACING_WEST, 30);
-  Engine_ObjectEventSetAnimation(LOCALID_KRADEN, ANIMATION_STAND);
+  Engine_ObjectEventSetAnimation(LOCALID_KRADEN, ANIM_STAND);
   Engine_ScriptSetMessage(MsgSolSanctumLookSymbolFloor);
   Engine_ObjectEventJump(LOCALID_KRADEN, 4, 30);
   SolSanctumLunaSolRooms_ShowMessageAndWait(LOCALID_KRADEN, 6);
   Engine_ObjectEventRunRepeatedMotion(LOCALID_PARTY_LEADER, 2);
   Engine_ScriptWait(6);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_KRADEN, ANIMATION_NOD);
+  Engine_ObjectEventSetAnimationAndWait(LOCALID_KRADEN, ANIM_NOD);
   SolSanctumLunaSolRooms_ShowMessageAndWait(LOCALID_KRADEN, 6);
   ObjectEvent_WalkToAndWait(LOCALID_KRADEN, 376, 184);
   ObjectEvent_SetPosition(LOCALID_KRADEN, PIXELS(1608), PIXELS(1608));
@@ -1225,8 +1221,8 @@ static void EventScript_RiseToElementalStarRoom(void) {
     ObjectEvent_WalkToAndWait(LOCALID_KRADEN, 276, 136);
     ObjectEvent_WalkTo(LOCALID_KRADEN, 264, 136);
     ObjectEvent_WalkToAndWait(LOCALID_PARTY_LEADER, 312, 136);
-    Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIMATION_STAND);
-    Engine_ObjectEventSetAnimation(LOCALID_KRADEN, ANIMATION_STAND);
+    Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_STAND);
+    Engine_ObjectEventSetAnimation(LOCALID_KRADEN, ANIM_STAND);
     ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER,
                               FACING_NORTHWEST + FACING_STEP, 0);
     Engine_ObjectEventFaceDirection(LOCALID_KRADEN, FACING_NORTH + FACING_STEP,
@@ -1266,18 +1262,18 @@ static void EventScript_RiseToElementalStarRoom(void) {
       Engine_GameFlagSet(FLAG_SOL_SANCTUM_STAR_ROOM_PASSAGE_OPEN);
     }
     ObjectEvent_LinkPair(LOCALID_KRADEN, LOCALID_PARTY_LEADER, 30);
-    Engine_ObjectEventSetAnimation(LOCALID_KRADEN, ANIMATION_NOD);
-    Engine_ObjectEventSetAnimationAndWait(LOCALID_PARTY_LEADER, ANIMATION_NOD);
-    Engine_ObjectEventSetAnimation(LOCALID_KRADEN, ANIMATION_STAND);
+    Engine_ObjectEventSetAnimation(LOCALID_KRADEN, ANIM_NOD);
+    Engine_ObjectEventSetAnimationAndWait(LOCALID_PARTY_LEADER, ANIM_NOD);
+    Engine_ObjectEventSetAnimation(LOCALID_KRADEN, ANIM_STAND);
     Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, 0);
     // Kraden: "Ah ha! This has to be it." and "Let's go, Isaac!"
     Engine_ScriptSetMessage(MsgSolSanctumHa);
     SolSanctumLunaSolRooms_ShowMessageAndWait(
         SPEAKER_WINDOW_BELOW | LOCALID_KRADEN, 6);
-    Engine_ObjectEventSetAnimationAndWait(LOCALID_KRADEN, ANIMATION_NOD);
-    Engine_ObjectEventSetAnimation(LOCALID_KRADEN, ANIMATION_STAND);
+    Engine_ObjectEventSetAnimationAndWait(LOCALID_KRADEN, ANIM_NOD);
+    Engine_ObjectEventSetAnimation(LOCALID_KRADEN, ANIM_STAND);
     Engine_ScriptShowMessage(SPEAKER_WINDOW_BELOW | LOCALID_KRADEN, 0);
-    Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIMATION_NOD);
+    Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
     Engine_ScriptWait(60);
     // Raise Isaac first, then shrink his sprite into the passage.
     objectEvent = ObjectEvent_Get(LOCALID_PARTY_LEADER);
@@ -1614,7 +1610,7 @@ static void SolSanctumLunaSolRooms_ArriveAfterWiseOnesRescue(void) {
   Engine_ScriptSetMessage(MsgSolSanctumFloatingEyeThing);
   Engine_ScriptOpenMessage(1, 0);
   Engine_ScriptChooseYesNo(0, 0);
-  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIMATION_STAND);
+  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_STAND);
   Engine_ScriptWait(40);
   Engine_AudioPlayCue(SE_107);
   MapGrid_SetShake(PIXELS(4), PIXELS(4), Q16_ONE);
@@ -1639,9 +1635,9 @@ static void SolSanctumLunaSolRooms_ArriveAfterWiseOnesRescue(void) {
   Engine_ObjectEventRunRepeatedMotion(GARET, 2);
   // Garet: "Yeah, right! Let's get out of here..."
   SolSanctumLunaSolRooms_ShowMessageAndWait(GARET, 10);
-  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIMATION_NOD);
-  Engine_ObjectEventSetAnimationAndWait(GARET, ANIMATION_NOD);
-  Engine_ObjectEventSetAnimation(GARET, ANIMATION_WALK);
+  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
+  Engine_ObjectEventSetAnimationAndWait(GARET, ANIM_NOD);
+  Engine_ObjectEventSetAnimation(GARET, ANIM_WALK);
   leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   if (leader != NULL) {
     Engine_ObjectEventSetDestination(GARET, leader->x.part.pixel,

@@ -95,7 +95,7 @@ Unit	struct	common	include/battle/battle_unit.h:249 (the character and enemy rec
 unit id	word	common	Unit_Get takes ids 0-7 characters, 128-133 enemies (battle.h:167)
 CLASS_NONE	constant	common	mechanism: Unit.classId of an enemy, which has no class (battle_unit.h), not a class
 party member	word	game	en.po party; pret party (Party_AddMember)
-BattleUnits_	prefix	common	encounter.c:518 lists of the units in a battle
+BattleUnit_ (ListLiving, ListIds, Collect, IsListed)	prefix	common	one family for a unit and for the lists of a battle's units (encounter.c), not BattleUnits_
 BattleSide	enum	pret	pret B_SIDE_PLAYER/B_SIDE_OPPONENT (include/constants/battle.h)
 AbilityDefinition	struct	common	abilities.tsv rows; *Definition form as ItemDefinition
 ability	word	game	the game's Psynergy, Djinn, summons and items all act as abilities; pret's move is the Psynergy Move
@@ -260,6 +260,7 @@ OamMatrix, gOamMatrices, OamMatrix_	struct	pret	the 32 OAM affine matrices (pret
 Oam_, gOamDepthLists	prefix	pret	building the OAM buffer from 256 depth lists each frame (pret oam buffer)
 Sprite, gSprites, Sprite_	struct	pret	an animated field or battle sprite (pret struct Sprite, gSprites)
 SpriteAnim, gSpriteAnims, SpriteAnim_, ANIMCMD_	struct	pret	one of up to four animations a sprite plays (pret anim, ANIMCMD_)
+ANIM_	prefix	pret	animation constants, field (pret ANIM_STD_*) and battle (pret ANIM_TARGET, gBattleAnimArgs): one spelling, never ANIMATION_
 SpriteFrameCache, SpriteFrameCache_	struct	common	eight tagged buffers of decoded sprite frames; 'resource' is the directory's, 'slot' the arrays'
 gSpriteColorTables	global	common	the SpriteColorMode recolouring tables
 VramCache_, VramCacheEntry, gVramCacheBlockOwners	prefix	common	96 entries of OBJ VRAM blocks; block = memory

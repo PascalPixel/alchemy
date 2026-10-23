@@ -5,11 +5,11 @@
 #include "../field_internal.h"
 
 enum {
-  ANIMATION_SHADOW_CACHE_ENTRY = 93,
-  ANIMATION_SHADOW_TILE_BYTES = 16 * 8, ///< 16x8 pixels, 256 colours
-  ANIMATION_OAM_FULL_COLOR = 1 << 13,
-  ANIMATION_OAM_PRIORITY_2 = 2 << 10,
-  ANIMATION_OAM_WIDE = 1 << 14
+  ANIM_SHADOW_CACHE_ENTRY = 93,
+  ANIM_SHADOW_TILE_BYTES = 16 * 8, ///< 16x8 pixels, 256 colours
+  ANIM_OAM_FULL_COLOR = 1 << 13,
+  ANIM_OAM_PRIORITY_2 = 2 << 10,
+  ANIM_OAM_WIDE = 1 << 14
 };
 
 /// A row of gSpriteFrameCache_Sources: the packed resource that holds an
@@ -118,7 +118,7 @@ s32 SpriteFrameCache_FindByTag(s32 tag) {
 /// Resets each anim of a sprite from its animation's metadata: its facing
 /// kind, frames, scripts and codec, with no frame shown and no script
 /// running. The first anim also sets the sprite's size, scale and offsets.
-/// Returns 0. Called by Animation_SetIndexAndInitializeObjects.
+/// Returns 0. Called by Anim_SetIndexAndInitializeObjects.
 s32 Sprite_ResetAnims(struct Sprite *sprite) {
   s32 i;
 
@@ -205,13 +205,13 @@ s32 Sprite_AddAnim(struct Sprite *sprite, s32 id) {
     entry = &sprite->entries[0];
     do {
       freeIndex++;
-      if (freeIndex >= ANIMATION_LAYER_COUNT)
+      if (freeIndex >= ANIM_LAYER_COUNT)
         break;
       entry++;
       layerHandle = (s32)*entry;
     } while (layerHandle != 0);
   }
-  if (freeIndex == ANIMATION_LAYER_COUNT)
+  if (freeIndex == ANIM_LAYER_COUNT)
     return -1;
   layerHandle = (s32)SpriteAnim_Alloc(id);
   if (layerHandle == 0)
@@ -242,14 +242,14 @@ void Sprite_RemoveAnim(struct Sprite *sprite, s32 layer) {
   if (sprite != NULL && layer != 0) {
     SpriteAnim_Clear((struct SpriteAnim *)layer);
     // Locate the handle, then trim only empty slots at the end of the list.
-    for (index = 0; index < ANIMATION_LAYER_COUNT; index++) {
+    for (index = 0; index < ANIM_LAYER_COUNT; index++) {
       if (layer == (s32)sprite->entries[index])
         break;
     }
-    if (index != ANIMATION_LAYER_COUNT) {
+    if (index != ANIM_LAYER_COUNT) {
       sprite->entries[index] = 0;
       laterLayers = 0;
-      for (i = index + 1; i < ANIMATION_LAYER_COUNT; i++) {
+      for (i = index + 1; i < ANIM_LAYER_COUNT; i++) {
         if (sprite->entries[i] != 0)
           laterLayers++;
       }
@@ -266,14 +266,14 @@ void Sprite_RemoveAnimAt(struct Sprite *sprite, u32 index) {
   s32 laterLayers;
   u32 i;
 
-  if (sprite != NULL && index < ANIMATION_LAYER_COUNT) {
+  if (sprite != NULL && index < ANIM_LAYER_COUNT) {
     layer = sprite->entries[index];
     if (layer != NULL) {
       SpriteAnim_Clear(layer);
       sprite->entries[index] = NULL;
       laterLayers = 0;
       // Interior holes stay available; only trailing holes reduce the count.
-      for (i = index + 1; i < ANIMATION_LAYER_COUNT; i++) {
+      for (i = index + 1; i < ANIM_LAYER_COUNT; i++) {
         if (sprite->entries[i] != NULL)
           laterLayers++;
       }
@@ -304,7 +304,7 @@ void SpriteAnim_Start(struct SpriteAnim *layer, s32 animation) {
       scriptAddress = (s32)layer->scripts[animation];
       layer->kind = metadata->drawKind;
       layer->script = (u8 *)scriptAddress;
-      layer->step = ANIMATION_NORMAL_STEP;
+      layer->step = ANIM_NORMAL_STEP;
       if (keepPlace == 0) {
         layer->scriptOffset = keepPlace;
         layer->timer = keepPlace;
@@ -346,7 +346,7 @@ s32 Sprite_StartAnim(struct Sprite *sprite, s32 animation) {
           selectedAnimation = (s32)layer->scripts[animation];
           layer->kind = metadata->drawKind;
           layer->script = (u8 *)selectedAnimation;
-          layer->step = ANIMATION_NORMAL_STEP;
+          layer->step = ANIM_NORMAL_STEP;
           if (keepPlace == 0) {
             layer->scriptOffset = 0;
             layer->timer = 0;
@@ -424,26 +424,24 @@ void ObjectSystem_Configure(s32 mode) {
   // EWRAM first; elsewhere from IWRAM first, though a battle has already taken
   // both from EWRAM.
   if (mode == 3) {
-    sprites = AllocHeapSlotEwram(HEAP_SLOT_SPRITES, ANIMATION_OBJECT_COUNT *
-                                                        sizeof(struct Sprite));
-    layers =
-        AllocHeapSlotEwram(HEAP_SLOT_SPRITE_ANIMS,
-                           ANIMATION_OBJECT_COUNT * sizeof(struct SpriteAnim));
+    sprites = AllocHeapSlotEwram(HEAP_SLOT_SPRITES,
+                                 ANIM_OBJECT_COUNT * sizeof(struct Sprite));
+    layers = AllocHeapSlotEwram(HEAP_SLOT_SPRITE_ANIMS,
+                                ANIM_OBJECT_COUNT * sizeof(struct SpriteAnim));
   } else {
     sprites = AllocHeapSlot(HEAP_SLOT_SPRITES,
-                            ANIMATION_OBJECT_COUNT * sizeof(struct Sprite));
+                            ANIM_OBJECT_COUNT * sizeof(struct Sprite));
     layers = AllocHeapSlot(HEAP_SLOT_SPRITE_ANIMS,
-                           ANIMATION_OBJECT_COUNT * sizeof(struct SpriteAnim));
+                           ANIM_OBJECT_COUNT * sizeof(struct SpriteAnim));
   }
   // Load the sprites' basic colours, clear both pools, then load the shared
   // shadow (128 bytes: the two 8x8 tiles of a 16x8, 256-colour sprite) and
   // the tile uploader.
   Palette_LoadBasicSpriteColors();
-  Dma_Fill32Cell(zero, 0, sprites,
-                 ANIMATION_OBJECT_COUNT * sizeof(struct Sprite));
+  Dma_Fill32Cell(zero, 0, sprites, ANIM_OBJECT_COUNT * sizeof(struct Sprite));
   Dma_Fill32Cell(zero, 0, layers,
-                 ANIMATION_OBJECT_COUNT * sizeof(struct SpriteAnim));
-  VramCache_Load(ANIMATION_SHADOW_CACHE_ENTRY, ANIMATION_SHADOW_TILE_BYTES,
+                 ANIM_OBJECT_COUNT * sizeof(struct SpriteAnim));
+  VramCache_Load(ANIM_SHADOW_CACHE_ENTRY, ANIM_SHADOW_TILE_BYTES,
                  gObject_ShadowTiles);
   RamCode_LoadSlot(HEAP_SLOT_FRAME_UPLOADER, Tile_CopyStrided,
                    Tile_CopyStridedCodeSize);
@@ -468,7 +466,7 @@ struct SpriteAnim *SpriteAnim_Alloc(s32 id) {
 
   if (metadata->width != 0) {
     // A zero facing kind marks a free sprite anim.
-    for (i = 0; i < ANIMATION_OBJECT_COUNT; i++, candidate++) {
+    for (i = 0; i < ANIM_OBJECT_COUNT; i++, candidate++) {
       if (candidate->kind == 0) {
         found = candidate;
         break;
@@ -542,7 +540,7 @@ struct Sprite *Sprite_Create(s32 id) {
   if (metadata->width == 0)
     return NULL;
   // A width of 0 marks a free sprite.
-  for (i = 0; i < ANIMATION_OBJECT_COUNT; i++, sprite++) {
+  for (i = 0; i < ANIM_OBJECT_COUNT; i++, sprite++) {
     if (sprite->width == 0) {
       freeSprite = sprite;
       break;
@@ -607,23 +605,22 @@ struct Sprite *Sprite_Create(s32 id) {
   // UBFIX copies the same representation from an actual word array.
 #ifdef UBFIX
   attributes[0] = 0;
-  attributes[1] = shape | ANIMATION_OAM_FULL_COLOR;
-  attributes[2] = tile | ANIMATION_OAM_PRIORITY_2;
+  attributes[1] = shape | ANIM_OAM_FULL_COLOR;
+  attributes[2] = tile | ANIM_OAM_PRIORITY_2;
   attributes[3] = 0;
-  attributes[4] = ANIMATION_OAM_FULL_COLOR | ANIMATION_OAM_WIDE;
-  attributes[5] =
-      (gVramCacheEntries[ANIMATION_SHADOW_CACHE_ENTRY].offset >> 5) |
-      ANIMATION_OAM_PRIORITY_2;
+  attributes[4] = ANIM_OAM_FULL_COLOR | ANIM_OAM_WIDE;
+  attributes[5] = (gVramCacheEntries[ANIM_SHADOW_CACHE_ENTRY].offset >> 5) |
+                  ANIM_OAM_PRIORITY_2;
   memcpy(freeSprite, attributes, sizeof(attributes));
 #else
   attribute = (u32 *)freeSprite;
   *attribute++ = 0;
-  *attribute++ = shape | ANIMATION_OAM_FULL_COLOR;
-  *attribute++ = tile | ANIMATION_OAM_PRIORITY_2;
+  *attribute++ = shape | ANIM_OAM_FULL_COLOR;
+  *attribute++ = tile | ANIM_OAM_PRIORITY_2;
   *attribute++ = 0;
-  *attribute++ = ANIMATION_OAM_FULL_COLOR | ANIMATION_OAM_WIDE;
-  *attribute = (gVramCacheEntries[ANIMATION_SHADOW_CACHE_ENTRY].offset >> 5) |
-               ANIMATION_OAM_PRIORITY_2;
+  *attribute++ = ANIM_OAM_FULL_COLOR | ANIM_OAM_WIDE;
+  *attribute = (gVramCacheEntries[ANIM_SHADOW_CACHE_ENTRY].offset >> 5) |
+               ANIM_OAM_PRIORITY_2;
 #endif
   if (Sprite_AddAnim(sprite, id) == -1) {
     /* FAKEMATCH(dead): a store of the byte it reloads keeps the -1 the native
@@ -647,7 +644,7 @@ void Sprite_Destroy(struct Sprite *sprite) {
     if (!sprite->retainCacheEntry)
       VramCache_FreeEntry(sprite->slot);
     layer = sprite->entries;
-    remaining = ANIMATION_LAYER_COUNT - 1;
+    remaining = ANIM_LAYER_COUNT - 1;
     do {
       SpriteAnim_Clear(*layer++);
     } while (--remaining >= 0);

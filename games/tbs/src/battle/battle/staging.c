@@ -108,7 +108,7 @@ s32 BattleStaging_DispatchAction(struct BattleAction *request, s32 delay) {
   BattleObject_DestroyAll();
   BattleUnit_ProcessTurnEnd(&battle->turn);
   BattleObject_Put();
-  unitCount = BattleUnits_ListIds(BATTLE_SIDES_BOTH, unitIds);
+  unitCount = BattleUnit_ListIds(BATTLE_SIDES_BOTH, unitIds);
   for (unitIndex = 0; unitIndex < unitCount; unitIndex++)
     BattleMotion_ReturnToSpot(unitIds[unitIndex]);
   request->unitId = BATTLE_UNIT_LIST_END;
@@ -211,8 +211,7 @@ s32 BattleStaging_RunFlee(struct BattleTurn *plan) {
       BattleMessage_WaitForAdvance();
     } else {
       s16 unitIds[14];
-      s32 index =
-          BattleUnits_ListLiving(BATTLE_SIDES_PARTY, (u16 *)unitIds) - 1;
+      s32 index = BattleUnit_ListLiving(BATTLE_SIDES_PARTY, (u16 *)unitIds) - 1;
 
       while (index != -1) {
         struct Unit *unit = Unit_GetFar(unitIds[index]);
@@ -312,7 +311,7 @@ s32 BattleStaging_HideField(struct BattleTurn *plan, s32 mode) {
   PartyStatus_DrawFar(gBattleWork->partyStatus & ~PARTY_STATUS_SHOW_PP);
   object = BattleObject_Get(actor)->object;
   REG_BLDCNT = BLEND_SPRITES_OVER_ALL;
-  count = BattleUnits_ListIds(BATTLE_SIDES_BOTH, units);
+  count = BattleUnit_ListIds(BATTLE_SIDES_BOTH, units);
   for (i = 0; i != count; i++) {
     if (units[i] == BATTLE_UNIT_REMOVED)
       continue;
@@ -406,7 +405,7 @@ s32 BattleStaging_HideField(struct BattleTurn *plan, s32 mode) {
   // Everyone back: the faded units fade in over 16 frames and every colour
   // mode is cleared.
   BattleObject_Put();
-  count = BattleUnits_ListIds(BATTLE_SIDES_BOTH, units);
+  count = BattleUnit_ListIds(BATTLE_SIDES_BOTH, units);
   REG_BLDCNT = BLEND_SPRITES_OVER_ALL;
   for (i = 0; i != count; i++) {
     if (units[i] == BATTLE_UNIT_REMOVED || units[i] == actor)
@@ -608,7 +607,7 @@ s32 BattleStaging_RunAttack(struct BattleTurn *plan, s32 mode) {
     // After a critical hit every unit is shown again and the zoom ends.
     if (critical != 0) {
       transition->flag = 0;
-      BattleUnits_ListAllAndSubmit();
+      BattleUnit_ListAllAndSubmit();
       BattleCamera_SetView(0, 0, 0, 100);
     }
     BattleMotion_ReturnToSpot(work.effect.targets[0]);

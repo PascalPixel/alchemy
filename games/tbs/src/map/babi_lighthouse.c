@@ -271,8 +271,7 @@ static void BabiLighthouse_LandWithParticles(void) {
   Engine_AudioPlayCue(SE_188);
   ObjectEvent_SetAttachedEffect(
       LOCALID_PARTY_LEADER, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ATTACH);
-  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER,
-                                 ANIMATION_LEADER_LEAN_BACK);
+  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_LEADER_LEAN_BACK);
   MapGrid_SetShake(0x50000, 0x50000, 0x10000);
   MapGrid_SetShake(-1, -1, 0xe666);
   Engine_MapGridRenderWaitForValues();
@@ -480,7 +479,7 @@ static void BabiLighthouse_DropFromWestRoomNorthwestPit(void) {
 /// Searching the locked door in BabiLighthouseLuff. "It seems to be locked."
 static void BabiLighthouse_InspectLockedDoor(void) {
   Engine_ScriptStart();
-  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIMATION_STAND);
+  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_STAND);
   Engine_MessageShowCentered(MsgBabiSeemsLocked, 1);
   Engine_ScriptEnd();
 }
@@ -490,7 +489,7 @@ static void BabiLighthouse_InspectLockedDoor(void) {
 static inline void BabiLighthouse_WalkBackToLeader(s32 localId) {
   struct ObjectEvent *leader;
 
-  Engine_ObjectEventSetAnimation(localId, ANIMATION_WALK);
+  Engine_ObjectEventSetAnimation(localId, ANIM_WALK);
   leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   if (leader != 0) {
     ObjectEvent_SetDestination(localId, leader->x.part.pixel,
@@ -527,7 +526,7 @@ static void BabiLighthouse_FaranAsksPartyToOpenDoor(void) {
   FieldCamera_MoveTo(PIXELS(280), -1, PIXELS(288), 1);
   Engine_CameraWaitForMove();
   Engine_ScriptWait(20);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_WITNESS, ANIMATION_NOD);
+  Engine_ObjectEventSetAnimationAndWait(LOCALID_WITNESS, ANIM_NOD);
   Engine_ScriptWait(30);
   Script_ShowMessage(LOCALID_WITNESS, 0);
   Engine_ScriptWait(10);
@@ -562,11 +561,11 @@ static void BabiLighthouse_FaranAsksPartyToOpenDoor(void) {
   ObjectEvent_FaceDirection(LOCALID_DOUBTING_THE_DOOR, FACING_WEST, 0);
   Engine_ScriptWait(20);
   Engine_ObjectEventSetAnimationAndWait(LOCALID_WORRIED_FOR_SHEBA,
-                                        ANIMATION_SHAKE_HEAD);
+                                        ANIM_SHAKE_HEAD);
   Engine_ScriptWait(20);
   Script_ShowMessage(LOCALID_WORRIED_FOR_SHEBA, 0);
   Engine_ScriptWait(10);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_WITNESS, ANIMATION_SHAKE_HEAD);
+  Engine_ObjectEventSetAnimationAndWait(LOCALID_WITNESS, ANIM_SHAKE_HEAD);
   Engine_ScriptWait(20);
   Script_ShowMessage(LOCALID_WITNESS, 0);
   Engine_ScriptWait(20);
@@ -591,18 +590,18 @@ static void BabiLighthouse_FaranAsksPartyToOpenDoor(void) {
   Engine_CameraWaitForMove();
   Engine_ScriptWait(20);
   // The party learns where the kidnappers went and is asked to pursue them.
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_IODEM, ANIMATION_NOD);
+  Engine_ObjectEventSetAnimationAndWait(LOCALID_IODEM, ANIM_NOD);
   Engine_ScriptWait(30);
   Script_ShowMessage(LOCALID_IODEM, 0);
   Engine_ScriptWait(10);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_IODEM, ANIMATION_SHAKE_HEAD);
+  Engine_ObjectEventSetAnimationAndWait(LOCALID_IODEM, ANIM_SHAKE_HEAD);
   Engine_ScriptWait(20);
   Script_ShowMessage(LOCALID_IODEM, 0);
   Engine_ScriptWait(20);
   ObjectEvent_ShowEmote(LOCALID_FARAN, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
   Script_ShowMessage(LOCALID_FARAN, 0);
   Engine_ScriptWait(10);
-  Engine_ObjectEventSetAnimationAndWait(MIA, ANIMATION_SHAKE_HEAD);
+  Engine_ObjectEventSetAnimationAndWait(MIA, ANIM_SHAKE_HEAD);
   Engine_ScriptWait(20);
   Script_ShowMessage(MIA, 0);
   Engine_ScriptWait(10);
@@ -617,7 +616,7 @@ static void BabiLighthouse_FaranAsksPartyToOpenDoor(void) {
     Engine_ScriptWait(30);
     ObjectEvent_FaceDirection(LOCALID_IODEM, FACING_WEST, 0);
     Engine_ScriptWait(30);
-    Engine_ObjectEventSetAnimationAndWait(LOCALID_IODEM, ANIMATION_NOD);
+    Engine_ObjectEventSetAnimationAndWait(LOCALID_IODEM, ANIM_NOD);
     Engine_ScriptWait(30);
     Script_ShowMessage(LOCALID_IODEM, 0);
     gFieldWork->message++;
@@ -625,7 +624,7 @@ static void BabiLighthouse_FaranAsksPartyToOpenDoor(void) {
     Engine_ScriptWait(30);
     ObjectEvent_FaceDirection(LOCALID_IODEM, FACING_WEST, 0);
     Engine_ScriptWait(30);
-    Engine_ObjectEventSetAnimationAndWait(LOCALID_IODEM, ANIMATION_SHAKE_HEAD);
+    Engine_ObjectEventSetAnimationAndWait(LOCALID_IODEM, ANIM_SHAKE_HEAD);
     Engine_ScriptWait(20);
     gFieldWork->message++;
     Script_ShowMessage(LOCALID_IODEM, 0);
@@ -652,7 +651,7 @@ static void BabiLighthouse_FaranAsksPartyToOpenDoor(void) {
   Engine_ScriptWait(20);
   Script_ShowMessage(IVAN, 0);
   Engine_ScriptWait(10);
-  Engine_ObjectEventSetAnimationAndWait(GARET, ANIMATION_NOD);
+  Engine_ObjectEventSetAnimationAndWait(GARET, ANIM_NOD);
   Engine_ScriptWait(30);
   Script_ShowMessage(GARET, 0);
   Engine_ScriptWait(20);
@@ -660,13 +659,13 @@ static void BabiLighthouse_FaranAsksPartyToOpenDoor(void) {
   Script_OpenMessage(LOCALID_FARAN, 0);
   if (Engine_ScriptChooseYesNo(LOCALID_PARTY_LEADER, 0) == 0) {
     Engine_ScriptWait(30);
-    Engine_ObjectEventSetAnimationAndWait(LOCALID_FARAN, ANIMATION_SHAKE_HEAD);
+    Engine_ObjectEventSetAnimationAndWait(LOCALID_FARAN, ANIM_SHAKE_HEAD);
     Engine_ScriptWait(20);
     Script_ShowMessage(LOCALID_FARAN, 0);
     gFieldWork->message++;
   } else {
     Engine_ScriptWait(30);
-    Engine_ObjectEventSetAnimationAndWait(LOCALID_FARAN, ANIMATION_SHAKE_HEAD);
+    Engine_ObjectEventSetAnimationAndWait(LOCALID_FARAN, ANIM_SHAKE_HEAD);
     Engine_ScriptWait(20);
     gFieldWork->message++;
     Script_ShowMessage(LOCALID_FARAN, 0);
@@ -689,7 +688,7 @@ static void BabiLighthouse_FaranAsksPartyToOpenDoor(void) {
                         50);
   Script_ShowMessage(LOCALID_DOUBTING_THE_DOOR, 0);
   Engine_ScriptWait(10);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_FARAN, ANIMATION_NOD);
+  Engine_ObjectEventSetAnimationAndWait(LOCALID_FARAN, ANIM_NOD);
   Engine_ScriptWait(30);
   Engine_ScriptWait(10);
   ObjectEvent_ShowEmote(LOCALID_IODEM, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
@@ -702,13 +701,13 @@ static void BabiLighthouse_FaranAsksPartyToOpenDoor(void) {
   Script_OpenMessage(LOCALID_IODEM, 0);
   if (Engine_ScriptChooseYesNo(LOCALID_PARTY_LEADER, 0) == 0) {
     Engine_ScriptWait(30);
-    Engine_ObjectEventSetAnimationAndWait(LOCALID_IODEM, ANIMATION_NOD);
+    Engine_ObjectEventSetAnimationAndWait(LOCALID_IODEM, ANIM_NOD);
     Engine_ScriptWait(30);
     Script_ShowMessage(LOCALID_IODEM, 0);
     gFieldWork->message++;
   } else {
     Engine_ScriptWait(30);
-    Engine_ObjectEventSetAnimationAndWait(LOCALID_IODEM, ANIMATION_SHAKE_HEAD);
+    Engine_ObjectEventSetAnimationAndWait(LOCALID_IODEM, ANIM_SHAKE_HEAD);
     Engine_ScriptWait(20);
     gFieldWork->message++;
     Script_ShowMessage(LOCALID_IODEM, 0);
@@ -716,7 +715,7 @@ static void BabiLighthouse_FaranAsksPartyToOpenDoor(void) {
   Engine_ScriptWait(10);
   ObjectEvent_FaceDirection(LOCALID_IODEM, FACING_NORTH, 0);
   Engine_ScriptWait(35);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_FARAN, ANIMATION_NOD);
+  Engine_ObjectEventSetAnimationAndWait(LOCALID_FARAN, ANIM_NOD);
   Engine_ScriptWait(30);
   ObjectEvent_FaceDirection(LOCALID_FARAN, FACING_NORTHWEST + FACING_STEP, 0);
   Engine_ScriptWait(40);
@@ -724,16 +723,14 @@ static void BabiLighthouse_FaranAsksPartyToOpenDoor(void) {
   Engine_ScriptWait(10);
   Engine_ObjectEventFaceEachOther(LOCALID_DOUBTING_THE_DOOR,
                                   LOCALID_WORRIED_FOR_SHEBA, 50);
-  Engine_ObjectEventSetAnimation(LOCALID_DOUBTING_THE_DOOR, ANIMATION_NOD);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_WORRIED_FOR_SHEBA,
-                                        ANIMATION_NOD);
+  Engine_ObjectEventSetAnimation(LOCALID_DOUBTING_THE_DOOR, ANIM_NOD);
+  Engine_ObjectEventSetAnimationAndWait(LOCALID_WORRIED_FOR_SHEBA, ANIM_NOD);
   Engine_ScriptWait(30);
   ObjectEvent_FaceDirection(LOCALID_DOUBTING_THE_DOOR, FACING_SOUTH, 0);
   ObjectEvent_FaceDirection(LOCALID_WORRIED_FOR_SHEBA, FACING_SOUTH, 0);
   Engine_ScriptWait(20);
-  Engine_ObjectEventSetAnimation(LOCALID_DOUBTING_THE_DOOR, ANIMATION_NOD);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_WORRIED_FOR_SHEBA,
-                                        ANIMATION_NOD);
+  Engine_ObjectEventSetAnimation(LOCALID_DOUBTING_THE_DOOR, ANIM_NOD);
+  Engine_ObjectEventSetAnimationAndWait(LOCALID_WORRIED_FOR_SHEBA, ANIM_NOD);
   Engine_ScriptWait(30);
   ObjectEvent_SetSpeed(LOCALID_DOUBTING_THE_DOOR, 0x10000, 0x8000);
   ObjectEvent_SetSpeed(LOCALID_WORRIED_FOR_SHEBA, 0x10000, 0x8000);
@@ -743,7 +740,7 @@ static void BabiLighthouse_FaranAsksPartyToOpenDoor(void) {
   ObjectEvent_WalkByAndWait(LOCALID_WORRIED_FOR_SHEBA, 16, 0);
   ObjectEvent_WalkTo(LOCALID_WORRIED_FOR_SHEBA, 344, 312);
   ObjectEvent_WalkToAndWait(LOCALID_DOUBTING_THE_DOOR, 344, 336);
-  Engine_ObjectEventSetAnimation(LOCALID_WORRIED_FOR_SHEBA, ANIMATION_STAND);
+  Engine_ObjectEventSetAnimation(LOCALID_WORRIED_FOR_SHEBA, ANIM_STAND);
   ObjectEvent_FaceDirection(LOCALID_DOUBTING_THE_DOOR, FACING_WEST, 0);
   ObjectEvent_FaceDirection(LOCALID_WORRIED_FOR_SHEBA, FACING_WEST, 0);
   Engine_ScriptWait(10);
@@ -845,7 +842,7 @@ static void BabiLighthouse_ExplainTruthDoor(void) {
   ObjectEvent_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
   Script_ShowMessage(GARET, 0);
   Engine_ScriptWait(20);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_IODEM, ANIMATION_SHAKE_HEAD);
+  Engine_ObjectEventSetAnimationAndWait(LOCALID_IODEM, ANIM_SHAKE_HEAD);
   Engine_ScriptWait(20);
   Script_ShowMessage(LOCALID_IODEM, 0);
   Engine_ScriptWait(10);
@@ -861,20 +858,19 @@ static void BabiLighthouse_ExplainTruthDoor(void) {
   Engine_ScriptWait(20);
   Script_ShowMessage(LOCALID_IODEM, 0);
   Engine_ScriptWait(10);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_FARAN, ANIMATION_NOD);
+  Engine_ObjectEventSetAnimationAndWait(LOCALID_FARAN, ANIM_NOD);
   Engine_ScriptWait(30);
   Engine_ScriptWait(10);
   ObjectEvent_FaceDirection(LOCALID_WORRIED_FOR_SHEBA, FACING_SOUTH, 0);
   ObjectEvent_FaceDirection(LOCALID_DOUBTING_THE_DOOR, FACING_NORTH, 0);
   Engine_ScriptWait(30);
-  Engine_ObjectEventSetAnimation(LOCALID_DOUBTING_THE_DOOR, ANIMATION_NOD);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_WORRIED_FOR_SHEBA,
-                                        ANIMATION_NOD);
+  Engine_ObjectEventSetAnimation(LOCALID_DOUBTING_THE_DOOR, ANIM_NOD);
+  Engine_ObjectEventSetAnimationAndWait(LOCALID_WORRIED_FOR_SHEBA, ANIM_NOD);
   Engine_ScriptWait(30);
   ObjectEvent_FaceDirection(LOCALID_WORRIED_FOR_SHEBA, FACING_WEST, 0);
   ObjectEvent_FaceDirection(LOCALID_DOUBTING_THE_DOOR, FACING_WEST, 0);
   Engine_ScriptWait(20);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_IODEM, ANIMATION_NOD);
+  Engine_ObjectEventSetAnimationAndWait(LOCALID_IODEM, ANIM_NOD);
   Engine_ScriptWait(30);
   Engine_CameraFollowObjectEvent(LOCALID_IODEM, 1);
   ObjectEvent_WalkByAndWait(LOCALID_IODEM, 0, -32);
@@ -912,7 +908,7 @@ static void BabiLighthouse_ExplainTruthDoor(void) {
   Script_ShowMessage(LOCALID_DOUBTING_THE_DOOR, 0);
   Engine_ScriptWait(10);
   Engine_ObjectEventSetAnimationAndWait(LOCALID_WORRIED_FOR_SHEBA,
-                                        ANIMATION_SHAKE_HEAD);
+                                        ANIM_SHAKE_HEAD);
   Engine_ScriptWait(20);
   Script_ShowMessage(LOCALID_WORRIED_FOR_SHEBA, 0);
   Engine_ScriptWait(10);
@@ -932,7 +928,7 @@ static void BabiLighthouse_ExplainTruthDoor(void) {
   Engine_ScriptWait(20);
   Script_ShowMessage(MIA, 0);
   Engine_ScriptWait(10);
-  Engine_ObjectEventSetAnimationAndWait(GARET, ANIMATION_SHAKE_HEAD);
+  Engine_ObjectEventSetAnimationAndWait(GARET, ANIM_SHAKE_HEAD);
   Engine_ScriptWait(20);
   Script_ShowMessage(GARET, 0);
   Engine_ScriptWait(20);
@@ -970,12 +966,12 @@ static void BabiLighthouse_ExplainTruthDoor(void) {
   Engine_ScriptWait(10);
   ObjectEvent_FaceDirection(LOCALID_FARAN, FACING_NORTHWEST, 0);
   Engine_ScriptWait(20);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_FARAN, ANIMATION_SHAKE_HEAD);
+  Engine_ObjectEventSetAnimationAndWait(LOCALID_FARAN, ANIM_SHAKE_HEAD);
   Engine_ScriptWait(20);
   Script_ShowMessage(LOCALID_FARAN, 0);
   Engine_ScriptWait(10);
   // Iodem and Faran agree to stay behind and leave the rescue to the party.
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_IODEM, ANIMATION_NOD);
+  Engine_ObjectEventSetAnimationAndWait(LOCALID_IODEM, ANIM_NOD);
   Engine_ScriptWait(30);
   Script_ShowMessage(LOCALID_IODEM, 0);
   Engine_ScriptWait(10);
@@ -990,7 +986,7 @@ static void BabiLighthouse_ExplainTruthDoor(void) {
     Engine_ScriptWait(30);
     ObjectEvent_FaceDirection(LOCALID_IODEM, FACING_SOUTHEAST, 0);
     Engine_ScriptWait(20);
-    Engine_ObjectEventSetAnimationAndWait(LOCALID_IODEM, ANIMATION_NOD);
+    Engine_ObjectEventSetAnimationAndWait(LOCALID_IODEM, ANIM_NOD);
     Engine_ScriptWait(30);
     Script_ShowMessage(LOCALID_IODEM, 0);
     gFieldWork->message++;
@@ -998,7 +994,7 @@ static void BabiLighthouse_ExplainTruthDoor(void) {
     Engine_ScriptWait(30);
     ObjectEvent_FaceDirection(LOCALID_IODEM, FACING_SOUTHEAST, 0);
     Engine_ScriptWait(20);
-    Engine_ObjectEventSetAnimationAndWait(LOCALID_IODEM, ANIMATION_SHAKE_HEAD);
+    Engine_ObjectEventSetAnimationAndWait(LOCALID_IODEM, ANIM_SHAKE_HEAD);
     Engine_ScriptWait(20);
     gFieldWork->message++;
     Script_ShowMessage(LOCALID_IODEM, 0);
@@ -1007,7 +1003,7 @@ static void BabiLighthouse_ExplainTruthDoor(void) {
   ObjectEvent_ShowEmote(LOCALID_FARAN, EMOTE_IN_FRONT | EMOTE_WINCE, 50);
   Script_ShowMessage(LOCALID_FARAN, 0);
   Engine_ScriptWait(15);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_IODEM, ANIMATION_NOD);
+  Engine_ObjectEventSetAnimationAndWait(LOCALID_IODEM, ANIM_NOD);
   Engine_ScriptWait(30);
   Engine_ScriptWait(20);
   Engine_ObjectEventRunRepeatedMotion(LOCALID_FARAN, 2);
@@ -1016,7 +1012,7 @@ static void BabiLighthouse_ExplainTruthDoor(void) {
   Engine_ScriptWait(20);
   Script_ShowMessage(LOCALID_FARAN, 0);
   Engine_ScriptWait(10);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_FARAN, ANIMATION_NOD);
+  Engine_ObjectEventSetAnimationAndWait(LOCALID_FARAN, ANIM_NOD);
   Engine_ScriptWait(30);
   Script_ShowMessage(LOCALID_FARAN, 0);
   Engine_ScriptWait(10);
@@ -1033,10 +1029,10 @@ static void BabiLighthouse_ExplainTruthDoor(void) {
   Engine_ObjectEventFaceEachOther(LOCALID_PARTY_LEADER, GARET, 0);
   Engine_ObjectEventFaceEachOther(MIA, IVAN, 0);
   Engine_ScriptWait(30);
-  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIMATION_NOD);
-  Engine_ObjectEventSetAnimation(GARET, ANIMATION_NOD);
-  Engine_ObjectEventSetAnimation(MIA, ANIMATION_NOD);
-  Engine_ObjectEventSetAnimationAndWait(IVAN, ANIMATION_NOD);
+  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
+  Engine_ObjectEventSetAnimation(GARET, ANIM_NOD);
+  Engine_ObjectEventSetAnimation(MIA, ANIM_NOD);
+  Engine_ObjectEventSetAnimationAndWait(IVAN, ANIM_NOD);
   Engine_ScriptWait(30);
   // The companions walk back into the leader.
   ObjectEvent_SetSpeed(GARET, 0x13333, 0x9999);

@@ -19,7 +19,7 @@
 /// from the school (FUCHIN_TEMPLE_INTERIORS_FEHS_SCHOOL_TO_HOUSE, in
 /// fuchin_temple.c) and has its own tables (XianInteriors_GetEvents). Once Xian
 /// has heard of Hsu, Master Feh, Feizhi and Hsu are there, Hsu lying in the bed
-/// (ANIMATION_HSU_IN_BED; the room's render with Hsu placed).
+/// (ANIM_HSU_IN_BED; the room's render with Hsu placed).
 /// FLAG_HSU_RESCUED_WITHOUT_PARTY, set when the party left the desert with Hsu
 /// still trapped (lamakan_desert.c), picks whether Feizhi thanks the party and
 /// Master Hama or Hama alone, and what Mind Read hears from each of them.
@@ -131,7 +131,7 @@ enum {
 
 /// Hsu on his back with his arms at his sides, as he lies in the bed in the
 /// room behind the school (spr_041.png's frame 36; the room's render).
-enum { ANIMATION_HSU_IN_BED = 6 };
+enum { ANIM_HSU_IN_BED = 6 };
 
 #include "common/effect_create.h"
 #include "common/effect_spawn.h"
@@ -317,7 +317,7 @@ s32 XianInteriors_Initialize(void) {
   } else if (warpDest ==
              XIAN_INTERIORS_FROM_FUCHIN_TEMPLE_INTERIORS_FEHS_SCHOOL) {
     Engine_GameFlagClear(FLAG_SHOW_LOCATION_NAME);
-    Engine_ObjectEventSetAnimation(LOCALID_HSU, ANIMATION_HSU_IN_BED);
+    Engine_ObjectEventSetAnimation(LOCALID_HSU, ANIM_HSU_IN_BED);
   }
   return 0;
 }

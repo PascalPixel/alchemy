@@ -545,7 +545,7 @@ static void EventScript_PushPipeworksPillar(void) {
   objectEvent = ObjectEvent_GetById(LOCALID_PIPEWORKS_PIPE);
   GameFlag_Set(FLAG_PIPEWORKS_PIPE_PUSHED);
   Engine_ScriptStart();
-  Engine_ObjectEventSetAnimation(leaderId, ANIMATION_PUSH);
+  Engine_ObjectEventSetAnimation(leaderId, ANIM_PUSH);
   Engine_ScriptWait(6);
   objectEvent->speed = PIXELS(1) / 2;
   objectEvent->acceleration = PIXELS(1) / 5;
@@ -554,7 +554,7 @@ static void EventScript_PushPipeworksPillar(void) {
   Engine_ObjectSetPosition(objectEvent, objectEvent->x.fixed - PIXELS(48), 0,
                            objectEvent->z.fixed);
   Engine_ScriptWait(6);
-  Engine_ObjectEventSetAnimation(leaderId, ANIMATION_WALK);
+  Engine_ObjectEventSetAnimation(leaderId, ANIM_WALK);
   ObjectDispatch_StartCamera(
       (struct DispatchObject *)((struct EventWork *)AllocHeapSlotEwram(
                                     HEAP_SLOT_FIELD, sizeof(struct FieldWork)))
@@ -564,7 +564,7 @@ static void EventScript_PushPipeworksPillar(void) {
   Engine_ObjectSetPosition(leader, leader->x.fixed - PIXELS(24), 0,
                            leader->z.fixed);
   Engine_ObjectEventWaitForMove(leaderId);
-  Engine_ObjectEventSetAnimation(leaderId, ANIMATION_STAND);
+  Engine_ObjectEventSetAnimation(leaderId, ANIM_STAND);
   Object_WaitForMove(objectEvent);
   ObjectEvent_SetMode(objectEvent, 1);
   Script_PlaySong(SE_STOP_SLOT3);
@@ -641,17 +641,17 @@ static void EventScript_ReachArena(void) {
   ObjectEvent_WalkTo(LOCALID_OPPONENT, 1320, 192);
   ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(1), PIXELS(1) / 2);
   ObjectEvent_WalkToAndWait(LOCALID_PARTY_LEADER, 1288, 192);
-  Engine_ObjectEventSetAnimation(LOCALID_OPPONENT, ANIMATION_STAND);
+  Engine_ObjectEventSetAnimation(LOCALID_OPPONENT, ANIM_STAND);
   Engine_ObjectEventFaceEachOther(LOCALID_PARTY_LEADER, LOCALID_OPPONENT, 0);
   Engine_ScriptWait(10);
-  Engine_ObjectEventSetAnimation(LOCALID_OPPONENT, ANIMATION_NOD);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_PARTY_LEADER, ANIMATION_NOD);
+  Engine_ObjectEventSetAnimation(LOCALID_OPPONENT, ANIM_NOD);
+  Engine_ObjectEventSetAnimationAndWait(LOCALID_PARTY_LEADER, ANIM_NOD);
   Engine_ScriptWait(20);
   ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(2), PIXELS(1));
   ObjectEvent_SetSpeed(LOCALID_OPPONENT, PIXELS(2), PIXELS(1));
   ObjectEvent_WalkTo(LOCALID_PARTY_LEADER, 1296, 192);
   ObjectEvent_WalkToAndWait(LOCALID_OPPONENT, 1312, 192);
-  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIMATION_LEADER_STRIDE);
+  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_LEADER_STRIDE);
   Engine_ObjectEventSetAnimation(LOCALID_OPPONENT,
                                  WARRIOR_ANIMATION_FIGHTING_STANCE);
   Engine_ScriptWait(10);
@@ -705,13 +705,12 @@ static void ColosseumAzartMatch_RestoreMatchResult(s32 result) {
   if (result < 0) {
     Engine_ObjectEventSetAnimation(LOCALID_OPPONENT,
                                    WARRIOR_ANIMATION_ARMS_RAISED);
-    Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER,
-                                   ANIMATION_LEADER_CROUCH);
+    Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_LEADER_CROUCH);
   } else {
     Engine_ObjectEventSetAnimation(LOCALID_OPPONENT,
                                    WARRIOR_ANIMATION_DEFEATED);
     Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER,
-                                   ANIMATION_LEADER_ARMS_RAISED);
+                                   ANIM_LEADER_ARMS_RAISED);
   }
   Engine_TaskWait(1);
   FieldCamera_MoveTo(PIXELS(1304), 0, PIXELS(128), 0);
@@ -903,7 +902,7 @@ static void ColosseumAzartMatch_ExplainFinalsRules(s32 guide) {
   Script_ShowMessage(IVAN, 0);
   ObjectEvent_FaceObjectEvent(guide, IVAN, 0);
   Engine_ScriptWait(20);
-  Engine_ObjectEventSetAnimationAndWait(guide, ANIMATION_NOD);
+  Engine_ObjectEventSetAnimationAndWait(guide, ANIM_NOD);
   Script_ShowMessage(guide, 0);
   ObjectEvent_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
   Script_ShowMessage(GARET, 0);
@@ -914,15 +913,14 @@ static void ColosseumAzartMatch_ExplainFinalsRules(s32 guide) {
   if (Script_AskYesNo(guide, 0) == 0) {
     do {
       Engine_ScriptSetMessage(MsgColossoWarriorsEnterFinalsWithoutAny);
-      Engine_ObjectEventSetAnimation(IVAN, ANIMATION_NOD);
+      Engine_ObjectEventSetAnimation(IVAN, ANIM_NOD);
       Engine_ScriptWait(2);
-      Engine_ObjectEventSetAnimation(GARET, ANIMATION_NOD);
+      Engine_ObjectEventSetAnimation(GARET, ANIM_NOD);
       Engine_ScriptWait(2);
-      Engine_ObjectEventSetAnimation(MIA, ANIMATION_NOD);
+      Engine_ObjectEventSetAnimation(MIA, ANIM_NOD);
       Engine_ScriptWait(1);
-      Engine_ObjectEventSetAnimationAndWait(LOCALID_PARTY_LEADER,
-                                            ANIMATION_NOD);
-      Engine_ObjectEventSetAnimationAndWait(guide, ANIMATION_NOD);
+      Engine_ObjectEventSetAnimationAndWait(LOCALID_PARTY_LEADER, ANIM_NOD);
+      Engine_ObjectEventSetAnimationAndWait(guide, ANIM_NOD);
       Script_ShowMessage(guide, 0);
       ObjectEvent_FaceDirection(guide, FACING_NORTHWEST, 0);
       Engine_ScriptWait(20);
@@ -965,29 +963,29 @@ static void ColosseumAzartMatch_ExplainFinalsRules(s32 guide) {
   Script_ShowMessage(GARET, 0);
   Engine_ObjectEventRunRepeatedMotion(IVAN, 2);
   Script_ShowMessage(IVAN, 0);
-  Engine_ObjectEventSetAnimationAndWait(MIA, ANIMATION_NOD);
+  Engine_ObjectEventSetAnimationAndWait(MIA, ANIM_NOD);
   Script_ShowMessage(MIA, 0);
-  Engine_ObjectEventSetAnimation(MIA, ANIMATION_NOD);
+  Engine_ObjectEventSetAnimation(MIA, ANIM_NOD);
   Engine_ScriptWait(1);
-  Engine_ObjectEventSetAnimation(GARET, ANIMATION_NOD);
+  Engine_ObjectEventSetAnimation(GARET, ANIM_NOD);
   Engine_ScriptWait(2);
-  Engine_ObjectEventSetAnimation(IVAN, ANIMATION_NOD);
+  Engine_ObjectEventSetAnimation(IVAN, ANIM_NOD);
   Engine_ScriptWait(1);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_PARTY_LEADER, ANIMATION_NOD);
+  Engine_ObjectEventSetAnimationAndWait(LOCALID_PARTY_LEADER, ANIM_NOD);
   Engine_ScriptWait(6);
-  Engine_ObjectEventSetAnimation(GARET, ANIMATION_WALK);
+  Engine_ObjectEventSetAnimation(GARET, ANIM_WALK);
   objectEvent = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   if (objectEvent != 0) {
     ObjectEvent_SetDestination(GARET, objectEvent->x.part.pixel,
                                objectEvent->z.part.pixel);
   }
-  Engine_ObjectEventSetAnimation(IVAN, ANIMATION_WALK);
+  Engine_ObjectEventSetAnimation(IVAN, ANIM_WALK);
   objectEvent = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   if (objectEvent != 0) {
     ObjectEvent_SetDestination(IVAN, objectEvent->x.part.pixel,
                                objectEvent->z.part.pixel);
   }
-  Engine_ObjectEventSetAnimation(MIA, ANIMATION_WALK);
+  Engine_ObjectEventSetAnimation(MIA, ANIM_WALK);
   objectEvent = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   if (objectEvent != 0) {
     ObjectEvent_SetDestination(MIA, objectEvent->x.part.pixel,
@@ -1052,7 +1050,7 @@ static void EventScript_TalkToRockAttendant(s32 scene) {
       ObjectEvent_ResetMotionFields(LOCALID_PARTY_LEADER);
       ColosseumAzartMatch_PushObjectAhead();
       ObjectEvent_ResetMotionFields(LOCALID_PARTY_LEADER);
-      Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIMATION_STAND);
+      Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_STAND);
       Engine_ScriptShowMessage(scene, 0);
       Colosso_RestoreWarrior(LOCALID_PARTY_LEADER);
       Engine_CameraFollowObjectEvent(LOCALID_PARTY_LEADER, 0);
@@ -1224,7 +1222,7 @@ static void EventScript_TalkToLumberAttendant(s32 scene) {
      * in tbs-en. */
     COLOSSEUM_AZART_MATCH_PLACE_STAGED_PAIR(LOCALID_LOG_EAST_WEST, 160, 0);
     FieldCamera_MoveTo(PIXELS(1088), -1, PIXELS(168), 1);
-    Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIMATION_STAND);
+    Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_STAND);
     Engine_ScriptWait(10);
     ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(1), PIXELS(1) / 2);
     ObjectEvent_WalkToAndWait(LOCALID_PARTY_LEADER, 1192, 168);

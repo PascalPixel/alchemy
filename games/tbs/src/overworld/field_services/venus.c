@@ -120,8 +120,8 @@ void FieldEffect_RunVenusDjinnCapture(s32 djinniId) {
       djinni->callback = FieldEffect_UpdateDescendingOrbitObject;
       djinni->mode = 0;
       ObjectDispatch_SelectAnimationFar(djinni, 7);
-      Animation_ApplyChildValuesFar((struct DispatchObject *)djinni,
-                                    SPRITE_COLOR_GREEN_TINT);
+      Anim_ApplyChildValuesFar((struct DispatchObject *)djinni,
+                               SPRITE_COLOR_GREEN_TINT);
     }
   }
 
@@ -149,8 +149,8 @@ void FieldEffect_RunVenusDjinnCapture(s32 djinniId) {
     djinni->speed = Random16() + 0x16666;
     ObjectMotion_SetTargetPositionFromMagnitudeAngle((struct Object *)djinni,
                                                      0x200000, Random16());
-    Animation_ApplyChildValuesFar((struct DispatchObject *)djinni,
-                                  SPRITE_COLOR_GREEN_TINT);
+    Anim_ApplyChildValuesFar((struct DispatchObject *)djinni,
+                             SPRITE_COLOR_GREEN_TINT);
     djinni->lifetime = 8;
     ObjectDispatch_InitializeFar((struct DispatchObject *)djinni,
                                  gFieldEffect_CommonParticleScript);

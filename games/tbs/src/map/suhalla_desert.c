@@ -272,7 +272,7 @@ static void SuhallaDesert_CatchInStorm(s32 stormId) {
     Engine_ScriptStart();
     ObjectEvent_SetAttachedEffect(leaderLocalId, ATTACHED_EFFECT_IN_FRONT |
                                                      ATTACHED_EFFECT_ATTACH);
-    Engine_ObjectEventSetAnimation(leaderLocalId, ANIMATION_LEADER_LOOK_AROUND);
+    Engine_ObjectEventSetAnimation(leaderLocalId, ANIM_LEADER_LOOK_AROUND);
     storm = ObjectEvent_GetById(stormIdCopy);
     if (storm != 0) {
       ObjectEvent_SetDestination(leaderLocalId, storm->x.part.pixel,
@@ -400,7 +400,7 @@ static void SuhallaDesert_RaiseStorm(s32 stormId) {
     Engine_ScriptWait(1);
     ObjectEvent_GetById(LOCALID_PARTY_LEADER)->steeringFlags |=
         OBJ_EVENT_FACES_MOTION;
-    Engine_ObjectEventSetAnimation(LOCALID_IODEM, ANIMATION_STAND);
+    Engine_ObjectEventSetAnimation(LOCALID_IODEM, ANIM_STAND);
     Engine_ObjectEventFaceDirection(LOCALID_PARTY_LEADER, FACING_SOUTH, 0);
     Engine_ScriptSetMessage(MsgSuhallaSandstorm);
     ObjectEvent_ShowEmote(LOCALID_IODEM, EMOTE_IN_FRONT | EMOTE_LIGHT_BULB, 60);
@@ -414,10 +414,10 @@ static void SuhallaDesert_RaiseStorm(s32 stormId) {
     ObjectEvent_FaceDirection(LOCALID_IODEM, FACING_NORTH, 30);
     Engine_ObjectEventRunRepeatedMotion(LOCALID_IODEM, 2);
     Engine_ScriptShowMessage(LOCALID_IODEM, 0);
-    Engine_ObjectEventSetAnimationAndWait(LOCALID_IODEM, ANIMATION_NOD);
+    Engine_ObjectEventSetAnimationAndWait(LOCALID_IODEM, ANIM_NOD);
     Engine_ScriptShowMessage(LOCALID_IODEM, 0);
     ObjectEvent_SetSpeed(LOCALID_IODEM, PIXELS(1), PIXELS(1) / 2);
-    Engine_ObjectEventSetAnimation(LOCALID_IODEM, ANIMATION_WALK);
+    Engine_ObjectEventSetAnimation(LOCALID_IODEM, ANIM_WALK);
     leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
     if ((s32)leader != 0) {
       Engine_ObjectEventSetDestination(LOCALID_IODEM, leader->x.part.pixel,
@@ -493,7 +493,7 @@ static void EventScript_IodemAsksWhetherToPressOn(void) {
     ObjectEvent_ShowEmote(LOCALID_PARTY_LEADER,
                           EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
     ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_SOUTH, 30);
-    Engine_ObjectEventSetAnimationAndWait(LOCALID_IODEM, ANIMATION_SHAKE_HEAD);
+    Engine_ObjectEventSetAnimationAndWait(LOCALID_IODEM, ANIM_SHAKE_HEAD);
     Script_ShowMessage(LOCALID_IODEM, 0);
     ObjectEvent_ShowEmote(LOCALID_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_ELLIPSIS,
                           60);
@@ -507,13 +507,13 @@ static void EventScript_IodemAsksWhetherToPressOn(void) {
     Engine_ScriptWait(30);
     ObjectEvent_ShowEmote(LOCALID_IODEM, EMOTE_IN_FRONT | EMOTE_LIGHT_BULB, 60);
     Script_ShowMessage(LOCALID_IODEM, 0);
-    Engine_ObjectEventSetAnimationAndWait(LOCALID_IODEM, ANIMATION_NOD);
+    Engine_ObjectEventSetAnimationAndWait(LOCALID_IODEM, ANIM_NOD);
     Script_ShowMessage(LOCALID_IODEM, 0);
     ObjectEvent_SetSpeed(LOCALID_IODEM, PIXELS(7) / 10, PIXELS(7) / 20);
     ObjectEvent_WalkToAndWait(LOCALID_IODEM, 440, 1256);
     Script_ShowMessage(LOCALID_IODEM, 0);
-    Engine_ObjectEventSetAnimationAndWait(LOCALID_PARTY_LEADER, ANIMATION_NOD);
-    Engine_ObjectEventSetAnimation(LOCALID_IODEM, ANIMATION_WALK);
+    Engine_ObjectEventSetAnimationAndWait(LOCALID_PARTY_LEADER, ANIM_NOD);
+    Engine_ObjectEventSetAnimation(LOCALID_IODEM, ANIM_WALK);
     leader = ObjectEvent_Get(LOCALID_PARTY_LEADER);
     if (leader != 0) {
       ObjectEvent_SetDestination(LOCALID_IODEM, leader->x.part.pixel,

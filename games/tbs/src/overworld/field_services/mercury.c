@@ -75,8 +75,8 @@ void FieldEffect_RunMercuryDjinnCapture(s32 djinniId) {
       copy->steeringFlags |= 1;
       copy->update = FieldEffect_HalveDistanceToTarget;
       copy->facing = djinni->facing;
-      Animation_ApplyChildValuesFar((struct DispatchObject *)copy,
-                                    SPRITE_COLOR_BLUE_TINT);
+      Anim_ApplyChildValuesFar((struct DispatchObject *)copy,
+                               SPRITE_COLOR_BLUE_TINT);
       ObjectDispatch_SelectAnimationFar(copy, 0);
       ObjectDispatch_SetSingleChildFlagsFar((struct DispatchObject *)copy, 0);
       resource = Sprite_ShareVramCacheEntry(copy->sprite, resource);

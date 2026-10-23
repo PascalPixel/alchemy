@@ -33,7 +33,7 @@ s32 Sprite_ComposeFrame(struct Sprite *animation, u16 dir) {
   u8 *pixels;
   u8 *unpacked;
   void *decoded;
-  u16 drawOrder[ANIMATION_LAYER_COUNT];
+  u16 drawOrder[ANIM_LAYER_COUNT];
   s32 i;
   s32 k;
   s32 drawCount;
@@ -150,33 +150,33 @@ s32 Sprite_ComposeFrame(struct Sprite *animation, u16 dir) {
     // The facing table of the anim's kind gives an offset from the base
     // frame (low three bits) and whether to mirror it (bit 7).
     switch (layer->kind) {
-    case ANIMATION_FACING_ONE_FRAME:
+    case ANIM_FACING_ONE_FRAME:
       facing = gAnimationFacing_OneFrame[dir >> 13];
       break;
-    case ANIMATION_FACING_FRONT_BACK:
-    case ANIMATION_FACING_TWO_PART:
+    case ANIM_FACING_FRONT_BACK:
+    case ANIM_FACING_TWO_PART:
       facing = gAnimationFacing_FrontBack[dir >> 13];
       break;
-    case ANIMATION_FACING_FRONT_BACK_SWAPPED:
+    case ANIM_FACING_FRONT_BACK_SWAPPED:
       facing = gAnimationFacing_FrontBackSwapped[dir >> 13];
       break;
-    case ANIMATION_FACING_THREE_FRAMES:
+    case ANIM_FACING_THREE_FRAMES:
       facing = gAnimationFacing_ThreeFrames[dir >> 12];
       break;
-    case ANIMATION_FACING_FOUR_FRAMES:
+    case ANIM_FACING_FOUR_FRAMES:
       facing = gAnimationFacing_FourFrames[dir >> 10];
       break;
-    case ANIMATION_FACING_FIVE_FRAMES:
+    case ANIM_FACING_FIVE_FRAMES:
       facing = gAnimationFacing_FiveFrames[dir >> 12];
       break;
-    case ANIMATION_FACING_SIX_FRAMES:
+    case ANIM_FACING_SIX_FRAMES:
       facing = gAnimationFacing_SixFrames[dir >> 10];
       break;
-    case ANIMATION_FACING_EIGHT_FRAMES:
+    case ANIM_FACING_EIGHT_FRAMES:
       facing =
           gAnimationFacing_EightFrames[((u32)(dir << 16) + 0x10000000) >> 29];
       break;
-    case ANIMATION_FACING_EIGHT_FRAMES_MIRRORED:
+    case ANIM_FACING_EIGHT_FRAMES_MIRRORED:
       facing = gAnimationFacing_EightFramesMirrored[((u32)(dir << 16) +
                                                      0x10000000) >>
                                                     29];
@@ -605,7 +605,7 @@ void Render_PlaceProjectedSprite(struct Sprite *sprite, s32 *point, s32 *scale,
 /// value, except anims drawn hidden (SPRITE_COLOR_HIDDEN), and marks the
 /// sprite for redrawing. The sprite's first count anims must all be present:
 /// it does not test them for null.
-/// Called by Animation_ApplyChildValues and, as
+/// Called by Anim_ApplyChildValues and, as
 /// Sprite_SetAnimColorModesFar, by the Psynergy effects, the
 /// Sanctum and the Altmiller Cave map.
 void Sprite_SetAnimColorModes(void *rawSprite, u32 value) {

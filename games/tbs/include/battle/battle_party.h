@@ -20,7 +20,7 @@ enum BattleUnitListMark {
   BATTLE_UNIT_LIST_END = 0xff ///< ends the list
 };
 
-/// Which sides a unit list takes, as BattleUnits_ListLiving reads it.
+/// Which sides a unit list takes, as BattleUnit_ListLiving reads it.
 enum BattleSides {
   BATTLE_SIDES_PARTY = 1,
   BATTLE_SIDES_ENEMIES = 2,

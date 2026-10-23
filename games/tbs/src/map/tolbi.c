@@ -119,18 +119,18 @@ static s32 Tolbi_KidStopForTarget(struct ObjectEvent *kid,
 
     if (ahead == facing || right == facing || left == facing || force != 0) {
       kid->paused = 1;
-      ObjectEvent_SetMode(kid, ANIMATION_STAND);
+      ObjectEvent_SetMode(kid, ANIM_STAND);
       stopped = 1;
     }
     if (target == ObjectEvent_GetById(LOCALID_PARTY_LEADER) &&
         (farRight == facing || farLeft == facing)) {
       kid->paused = 1;
-      ObjectEvent_SetMode(kid, ANIMATION_STAND);
+      ObjectEvent_SetMode(kid, ANIM_STAND);
       stopped = 1;
     }
   } else {
     kid->paused = 0;
-    ObjectEvent_SetMode(kid, ANIMATION_WALK);
+    ObjectEvent_SetMode(kid, ANIM_WALK);
   }
   return stopped;
 }
@@ -398,7 +398,7 @@ static void Tolbi_TalkToSnackVendor(void) {
     Engine_ScriptShowMessage(LOCALID_TOLBI_SNACK_VENDOR, 0);
     Engine_ItemShowFound(ITEM_CORN, 3);
     Engine_ScriptShowMessage(LOCALID_TOLBI_SNACK_VENDOR, 0);
-    Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIMATION_STAND);
+    Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_STAND);
     Engine_PartyGiveItem(ITEM_CORN, 0);
   } else {
     Engine_ScriptSetMessage(MsgTolbiFestivalLongerUsual);
@@ -428,7 +428,7 @@ static void Tolbi_EnterDoor(void) {
                        gTolbiDoors[door].y);
   ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(1) / 2, PIXELS(1) / 4);
   ObjectEvent_GetById(LOCALID_PARTY_LEADER)->motionFlags = 0;
-  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIMATION_WALK);
+  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_WALK);
   if (door != TOLBI_TO_WEAPON_AND_ARMOR_SHOP - 1) {
     ObjectEvent_CenterAndWalk(LOCALID_PARTY_LEADER, 2, -8);
     Engine_ScriptWait(10);
@@ -519,7 +519,7 @@ s32 Tolbi_ApplyEntryState(s32 unused) {
     if (Engine_GameFlagIsSet(FLAG_BABI_SAVED) != 0) {
       ObjectEvent_SetPosition(LOCALID_TOLBI_SCALPER, PIXELS(280), PIXELS(80));
       ObjectEvent_FaceDirection(LOCALID_TOLBI_SCALPER, FACING_SOUTHEAST, 0);
-      Engine_ObjectEventSetAnimation(LOCALID_TOLBI_SCALPER, ANIMATION_STAND);
+      Engine_ObjectEventSetAnimation(LOCALID_TOLBI_SCALPER, ANIM_STAND);
     }
   }
   return 0;
@@ -594,9 +594,9 @@ static void Tolbi_MeetSearchingSoldiers(void) {
   ObjectEvent_WalkToAndWait(LOCALID_PARTY_LEADER, 64, 264);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_NORTH, 0);
   Engine_ObjectEventWaitForMove(LOCALID_TOLBI_SOLDIER_A);
-  Engine_ObjectEventSetAnimation(LOCALID_TOLBI_SOLDIER_A, ANIMATION_STAND);
-  Engine_ObjectEventSetAnimation(LOCALID_TOLBI_SOLDIER_B, ANIMATION_STAND);
-  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIMATION_STAND);
+  Engine_ObjectEventSetAnimation(LOCALID_TOLBI_SOLDIER_A, ANIM_STAND);
+  Engine_ObjectEventSetAnimation(LOCALID_TOLBI_SOLDIER_B, ANIM_STAND);
+  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_STAND);
   Engine_ObjectEventFaceObjectEvent(LOCALID_TOLBI_SOLDIER_A,
                                     LOCALID_PARTY_LEADER, 0);
   Engine_ObjectEventFaceObjectEvent(LOCALID_TOLBI_SOLDIER_B,
@@ -626,8 +626,7 @@ static void Tolbi_MeetSearchingSoldiers(void) {
     Engine_ObjectEventFaceDirection(LOCALID_TOLBI_SOLDIER_B, FACING_EAST, 0);
     Engine_ScriptWait(30);
     Engine_ScriptWait(10);
-    Engine_ObjectEventSetAnimationAndWait(LOCALID_TOLBI_SOLDIER_A,
-                                          ANIMATION_NOD);
+    Engine_ObjectEventSetAnimationAndWait(LOCALID_TOLBI_SOLDIER_A, ANIM_NOD);
     Engine_ScriptWait(20);
     Engine_ObjectEventFaceDirection(LOCALID_TOLBI_SOLDIER_A, FACING_EAST, 0);
     Engine_ScriptWait(30);
@@ -636,9 +635,8 @@ static void Tolbi_MeetSearchingSoldiers(void) {
     ObjectEvent_FaceDirection(LOCALID_TOLBI_SOLDIER_A, FACING_SOUTH, 0);
     Engine_ObjectEventFaceDirection(LOCALID_TOLBI_SOLDIER_B, FACING_SOUTH, 0);
     Engine_ScriptWait(30);
-    Engine_ObjectEventSetAnimation(LOCALID_TOLBI_SOLDIER_A, ANIMATION_NOD);
-    Engine_ObjectEventSetAnimationAndWait(LOCALID_TOLBI_SOLDIER_B,
-                                          ANIMATION_NOD);
+    Engine_ObjectEventSetAnimation(LOCALID_TOLBI_SOLDIER_A, ANIM_NOD);
+    Engine_ObjectEventSetAnimationAndWait(LOCALID_TOLBI_SOLDIER_B, ANIM_NOD);
     Engine_ScriptWait(20);
     ObjectEvent_SetSpeed(LOCALID_TOLBI_SOLDIER_A, PIXELS(9) / 5,
                          PIXELS(9) / 10);
@@ -660,7 +658,7 @@ static void Tolbi_MeetSearchingSoldiers(void) {
     Engine_ScriptWait(30);
     Engine_ScriptWait(10);
     Engine_ObjectEventSetAnimationAndWait(LOCALID_TOLBI_SOLDIER_A,
-                                          ANIMATION_SHAKE_HEAD);
+                                          ANIM_SHAKE_HEAD);
     Engine_ScriptWait(20);
     Engine_ObjectEventFaceDirection(LOCALID_TOLBI_SOLDIER_A, FACING_EAST, 0);
     Engine_ScriptWait(30);
@@ -670,9 +668,8 @@ static void Tolbi_MeetSearchingSoldiers(void) {
     ObjectEvent_FaceDirection(LOCALID_TOLBI_SOLDIER_A, FACING_SOUTH, 0);
     ObjectEvent_FaceDirection(LOCALID_TOLBI_SOLDIER_B, FACING_SOUTH, 0);
     Engine_ScriptWait(30);
-    Engine_ObjectEventSetAnimation(LOCALID_TOLBI_SOLDIER_A, ANIMATION_NOD);
-    Engine_ObjectEventSetAnimationAndWait(LOCALID_TOLBI_SOLDIER_B,
-                                          ANIMATION_NOD);
+    Engine_ObjectEventSetAnimation(LOCALID_TOLBI_SOLDIER_A, ANIM_NOD);
+    Engine_ObjectEventSetAnimationAndWait(LOCALID_TOLBI_SOLDIER_B, ANIM_NOD);
     Engine_ScriptWait(20);
     ObjectEvent_SetSpeed(LOCALID_TOLBI_SOLDIER_A, PIXELS(8) / 5, PIXELS(4) / 5);
     ObjectEvent_SetSpeed(LOCALID_TOLBI_SOLDIER_B, PIXELS(8) / 5, PIXELS(4) / 5);

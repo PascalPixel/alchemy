@@ -2350,7 +2350,7 @@ static void TolbiShipInteriors_ReturnLuckyAnchor(void) {
     gFieldWork->message += 1;
     TolbiShipInteriors_Say(SPEAKER(LOCALID_QUARTERS_CAPTAIN, 1));
   }
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_PARTY_LEADER, ANIMATION_NOD);
+  Engine_ObjectEventSetAnimationAndWait(LOCALID_PARTY_LEADER, ANIM_NOD);
   Engine_ObjectEventSetAnimationAndWait(LOCALID_QUARTERS_CAPTAIN, 3);
   TolbiShipInteriors_Say(SPEAKER(LOCALID_QUARTERS_CAPTAIN, 1));
   TolbiShipInteriors_Turn(LOCALID_QUARTERS_CAPTAIN, FACING_WEST);
@@ -2371,7 +2371,7 @@ static void TolbiShipInteriors_ReturnLuckyAnchor(void) {
   ObjectEvent_SetActionScript(LOCALID_QUARTERS_SEAN, action);
   Engine_ScriptWait(4);
   ObjectEvent_SetActionScript(LOCALID_QUARTERS_KAJA, action);
-  Engine_ObjectEventSetAnimation(MIA, ANIMATION_WALK);
+  Engine_ObjectEventSetAnimation(MIA, ANIM_WALK);
   objectEvent = ObjectEvent_GetById(IVAN);
   if (objectEvent != 0) {
     ObjectEvent_SetDestination(MIA, objectEvent->x.part.pixel,
@@ -2379,7 +2379,7 @@ static void TolbiShipInteriors_ReturnLuckyAnchor(void) {
   }
   Engine_ObjectEventWaitForMove(MIA);
   ObjectEvent_SetPosition(MIA, 0, 0);
-  Engine_ObjectEventSetAnimation(IVAN, ANIMATION_WALK);
+  Engine_ObjectEventSetAnimation(IVAN, ANIM_WALK);
   objectEvent = ObjectEvent_GetById(GARET);
   if (objectEvent != 0) {
     ObjectEvent_SetDestination(IVAN, objectEvent->x.part.pixel,
@@ -2387,7 +2387,7 @@ static void TolbiShipInteriors_ReturnLuckyAnchor(void) {
   }
   Engine_ObjectEventWaitForMove(IVAN);
   ObjectEvent_SetPosition(IVAN, 0, 0);
-  Engine_ObjectEventSetAnimation(GARET, ANIMATION_WALK);
+  Engine_ObjectEventSetAnimation(GARET, ANIM_WALK);
   objectEvent = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   if (objectEvent != 0) {
     ObjectEvent_SetDestination(GARET, objectEvent->x.part.pixel,
@@ -3172,7 +3172,7 @@ static void TolbiShipInteriors_IntroduceReplacementOarsman(s32 seat) {
                                     10);
     Engine_ScriptSetMessage(MsgTolbiShipBackBroughtOarsman);
     TolbiShipInteriors_Say(KAJA_ROWING_SPEAKER);
-    Engine_ObjectEventSetAnimationAndWait(LOCALID_PARTY_LEADER, ANIMATION_NOD);
+    Engine_ObjectEventSetAnimationAndWait(LOCALID_PARTY_LEADER, ANIM_NOD);
     leftSeat = 0;
     ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(1), halfStep);
     Engine_ObjectEventWalkToAndWait(LOCALID_PARTY_LEADER, x, 168);
@@ -3228,7 +3228,7 @@ static void TolbiShipInteriors_IntroduceReplacementOarsman(s32 seat) {
     Engine_ObjectEventFaceEachOther(LOCALID_ROWING_KAJA, LOCALID_PARTY_LEADER,
                                     20);
     TolbiShipInteriors_Say(SPEAKER(LOCALID_ROWING_KAJA, 2));
-    Engine_ObjectEventSetAnimationAndWait(LOCALID_PARTY_LEADER, ANIMATION_NOD);
+    Engine_ObjectEventSetAnimationAndWait(LOCALID_PARTY_LEADER, ANIM_NOD);
     Engine_ObjectEventSetAnimationAndWait(LOCALID_ROWING_KAJA, 3);
     ObjectEvent_SetSpeed(LOCALID_ROWING_KAJA, PIXELS(1), PIXELS(1) / 2);
     if (leftSeat != 0) {
@@ -3257,7 +3257,7 @@ static void TolbiShipInteriors_IntroduceReplacementOarsman(s32 seat) {
     TolbiShipInteriors_Say(KAJA_ROWING_SPEAKER);
     Engine_ObjectEventSetAnimationAndWait(LOCALID_ROWING_KAJA, 4);
     TolbiShipInteriors_Say(KAJA_ROWING_SPEAKER);
-    Engine_ObjectEventSetAnimationAndWait(LOCALID_PARTY_LEADER, ANIMATION_NOD);
+    Engine_ObjectEventSetAnimationAndWait(LOCALID_PARTY_LEADER, ANIM_NOD);
     Engine_ScriptWait(20);
     Engine_ScriptRequestWarp(
         TOLBI_SHIP_INTERIORS_ROWING_DECK_TO_PASSENGER_HOLD);
@@ -3435,10 +3435,10 @@ static void TolbiShipInteriors_RunSceneCommand(s32 step, u32 arg, u32 opt) {
     ObjectEvent_FaceDirection(MIA, arg, opt);
     break;
   case SHIP_PLAY_PARTY_ANIMATION:
-    Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIMATION_NOD);
-    Engine_ObjectEventSetAnimation(GARET, ANIMATION_NOD);
-    Engine_ObjectEventSetAnimation(IVAN, ANIMATION_NOD);
-    Engine_ObjectEventSetAnimation(MIA, ANIMATION_NOD);
+    Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
+    Engine_ObjectEventSetAnimation(GARET, ANIM_NOD);
+    Engine_ObjectEventSetAnimation(IVAN, ANIM_NOD);
+    Engine_ObjectEventSetAnimation(MIA, ANIM_NOD);
     if (arg != 0) {
       ObjectMotion_WaitForAnimationChange(3);
     }
@@ -3823,7 +3823,7 @@ static void TolbiShipInteriors_ReportMonstersBelowdecks(void) {
   ObjectEvent_MoveToAndWait(LOCALID_PARTY_LEADER, 0x198, 134);
   ObjectEvent_MoveToAndWait(LOCALID_PARTY_LEADER, 0x198, 152);
   ObjectEvent_MoveToAndWait(LOCALID_PARTY_LEADER, 0x1b0, 166);
-  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIMATION_STAND);
+  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_STAND);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_SOUTH, 0);
   objectEvent = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   if (objectEvent != 0) {
@@ -3844,8 +3844,8 @@ static void TolbiShipInteriors_ReportMonstersBelowdecks(void) {
   ObjectEvent_WalkTo(GARET, 448, 168);
   ObjectEvent_SetSpeed(MIA, PIXELS(2), PIXELS(1));
   ObjectEvent_WalkToAndWait(MIA, 458, 152);
-  Engine_ObjectEventSetAnimation(GARET, ANIMATION_STAND);
-  Engine_ObjectEventSetAnimation(IVAN, ANIMATION_STAND);
+  Engine_ObjectEventSetAnimation(GARET, ANIM_STAND);
+  Engine_ObjectEventSetAnimation(IVAN, ANIM_STAND);
   ObjectEvent_FaceDirection(IVAN, FACING_SOUTH, 0);
   ObjectEvent_FaceDirection(GARET, FACING_SOUTH, 0);
   ObjectEvent_FaceDirection(MIA, FACING_SOUTH, 40);
@@ -4149,10 +4149,10 @@ static void TolbiShipInteriors_NoticeShipRocking(void) {
   TolbiShipInteriors_Say(GARET);
   ObjectEvent_FaceDirection(IVAN, FACING_EAST, 0);
   TolbiShipInteriors_Turn(MIA, FACING_WEST);
-  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIMATION_NOD);
-  Engine_ObjectEventSetAnimation(GARET, ANIMATION_NOD);
-  Engine_ObjectEventSetAnimation(IVAN, ANIMATION_NOD);
-  Engine_ObjectEventSetAnimationAndWait(MIA, ANIMATION_NOD);
+  Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
+  Engine_ObjectEventSetAnimation(GARET, ANIM_NOD);
+  Engine_ObjectEventSetAnimation(IVAN, ANIM_NOD);
+  Engine_ObjectEventSetAnimationAndWait(MIA, ANIM_NOD);
   ObjectEvent_SetSpeed(GARET, PIXELS(1), PIXELS(1) / 2);
   ObjectEvent_SetSpeed(IVAN, PIXELS(1), PIXELS(1) / 2);
   ObjectEvent_SetSpeed(MIA, PIXELS(1), PIXELS(1) / 2);
@@ -4409,7 +4409,7 @@ static void TolbiShipInteriors_DismissReplacementRowers(void) {
   Engine_ObjectEventSetAnimationAndWait(fourthRower, 3);
   ObjectEvent_FaceDirection(LOCALID_ROWING_KAJA, FACING_EAST, 0);
   TolbiShipInteriors_Turn(LOCALID_PARTY_LEADER, FACING_WEST);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_PARTY_LEADER, ANIMATION_NOD);
+  Engine_ObjectEventSetAnimationAndWait(LOCALID_PARTY_LEADER, ANIM_NOD);
   Engine_ObjectEventSetAnimationAndWait(LOCALID_ROWING_KAJA, 3);
   ObjectEvent_SetSpeed(LOCALID_ROWING_KAJA, PIXELS(1), PIXELS(1) / 2);
   ObjectEvent_WalkToAndWait(LOCALID_ROWING_KAJA, 408, 132);

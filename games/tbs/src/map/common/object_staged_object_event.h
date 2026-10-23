@@ -460,7 +460,7 @@ UNUSED static void ObjectEvent_MoveAndRedraw(struct PushedObjectProbe probe) {
   PushedObject_FillGridAttributeRectangle(0, tilePosition.x, tilePosition.z,
                                           horizontalExtent, verticalExtent, 0);
   Engine_ObjectEventSetSpeed(0, 0x8000, 0x1999);
-  Engine_ObjectEventSetAnimation(0, ANIMATION_PUSH);
+  Engine_ObjectEventSetAnimation(0, ANIM_PUSH);
   Engine_ScriptWait(15);
 
   {

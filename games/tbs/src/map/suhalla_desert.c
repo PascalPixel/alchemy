@@ -169,7 +169,7 @@ static u16 sSuhallaDesertSavedColor;
 #include "common/effect_create.h"
 #include "common/effect_spawn.h"
 
-void QueueMapSound(s32 cue);
+void Map_QueueMusic(s32 cue);
 
 /// In SuhallaDesertSouth, talking to Flash, a Mars Djinni, starts its battle.
 static void EventScript_FightDjinni(void) {
@@ -181,7 +181,7 @@ static void EventScript_FightDjinni(void) {
 static s32 SuhallaDesert_ClearObjectEventSpriteAndCollisionFlags(
     struct ObjectScriptContext *interpreter) {
   struct ObjectEvent *objectEvent = (struct ObjectEvent *)interpreter;
-  Engine_ObjectEventSetSpriteFlags(objectEvent, 0);
+  ObjectEvent_SetSpriteFlags(objectEvent, 0);
   objectEvent->collisionFlags = 0;
   return 0;
 }
@@ -245,7 +245,7 @@ static void SuhallaDesert_UpdateCaptureTimer(void) {
   if (remainingFrames != 0) {
     if (remainingFrames == 1) {
       requests->raisedEvent = RAISED_STORM_CARRIES_PARTY_AWAY;
-    } else if (Engine_GameFlagIsSet(FLAG_MENU_OPEN) == 0) {
+    } else if (GameFlag_Test(FLAG_MENU_OPEN) == 0) {
       remainingFrames -= 1;
     }
   }
@@ -269,7 +269,7 @@ static void SuhallaDesert_CatchInStorm(s32 stormId) {
   ObjectEvent_Get(stormIdCopy);
   captureActive = GameFlag_IsSet(FLAG_MAP_TEMP_0F);
   if (captureActive == 0) {
-    Engine_ScriptStart();
+    FieldScript_Start();
     ObjectEvent_SetAttachedEffect(leaderLocalId, ATTACHED_EFFECT_IN_FRONT |
                                                      ATTACHED_EFFECT_ATTACH);
     Engine_ObjectEventSetAnimation(leaderLocalId, ANIM_LEADER_LOOK_AROUND);
@@ -278,23 +278,23 @@ static void SuhallaDesert_CatchInStorm(s32 stormId) {
       ObjectEvent_SetDestination(leaderLocalId, storm->x.part.pixel,
                                  storm->z.part.pixel);
     }
-    Engine_ObjectEventWaitForMove(leaderLocalId);
+    ObjectMotion_CommitCurrentPositionAndActivate(leaderLocalId);
     // Start the capture countdown once the approach finishes.
     Script_PlaySong(SE_SANDSTORM);
     FieldScheduler_AddCallback(SuhallaDesert_UpdateCaptureTimer,
                                TASK_PRIORITY_MAP);
     selectedObjectEvent->motionFlags = captureActive;
-    Engine_ObjectSetPosition(selectedObjectEvent, selectedObjectEvent->x.fixed,
-                             selectedObjectEvent->y.fixed + PIXELS(32),
-                             selectedObjectEvent->z.fixed);
-    Engine_ObjectEventWaitForMove(leaderLocalId);
+    Object_SetPosition(selectedObjectEvent, selectedObjectEvent->x.fixed,
+                       selectedObjectEvent->y.fixed + PIXELS(32),
+                       selectedObjectEvent->z.fixed);
+    ObjectMotion_CommitCurrentPositionAndActivate(leaderLocalId);
     selectedObjectEvent->velocityY = captureActive;
     selectedObjectEvent->motionFlags = OBJ_EVENT_FLOATS;
     gGameState.movementMode = LEADER_MOVEMENT_AIRBORNE;
     GameFlag_Set(FLAG_MAP_TEMP_0F);
     FieldGameFlag_SetByte(FLAG_MAP_TEMP_18, stormIdCopy);
     FieldGameFlag_SetByte(FLAG_MAP_TEMP_10, STORM_CAPTURE_FRAMES);
-    Engine_ScriptEnd();
+    FieldScript_End();
     gFieldWork->battle = 0; // drop any battle this step rolled
   }
 }
@@ -352,11 +352,11 @@ static void SuhallaDesert_RaiseStorm(s32 stormId) {
   stormIdCopy = stormId;
   selectedObjectEvent = ObjectEvent_GetById(gGameState.leaderLocalId);
   storm = ObjectEvent_GetById(stormIdCopy);
-  appearanceRestored = Engine_GameFlagIsSet(FLAG_STORMS_RISEN);
+  appearanceRestored = GameFlag_Test(FLAG_STORMS_RISEN);
   leaderX = selectedObjectEvent->x.part.pixel;
   leaderZ = selectedObjectEvent->z.part.pixel;
-  Engine_ScriptStart();
-  Engine_AudioPlayCue(SE_SANDSTORM);
+  FieldScript_Start();
+  Sound_PlaySong(SE_SANDSTORM);
   // Grow over 16 frames and, the first time, fade the haze in with it.
   frame = 0;
   do {
@@ -369,12 +369,12 @@ static void SuhallaDesert_RaiseStorm(s32 stormId) {
     } else {
       nextFrame = frame + 1;
     }
-    Engine_TaskWait(1);
+    WaitFrames(1);
     frame = nextFrame;
   } while (frame <= 15);
   Engine_GameFlagSet((FLAG_MAP_TEMP_06 - LOCALID_FIRST_STORM + stormIdCopy));
   Engine_GameFlagSet(FLAG_STORMS_RISEN);
-  if (Engine_GameFlagIsSet(FLAG_IODEM_FOLLOWING_PARTY) != 0 &&
+  if (GameFlag_Test(FLAG_IODEM_FOLLOWING_PARTY) != 0 &&
       GameFlag_IsSet(FLAG_SUHALLA_DESERT_IODEM_WARNED) == 0) {
     Engine_GameFlagSet(FLAG_SUHALLA_DESERT_IODEM_WARNED);
     ObjectEvent_SetSpeed(LOCALID_IODEM, PIXELS(1), PIXELS(1) / 2);
@@ -392,41 +392,42 @@ static void SuhallaDesert_RaiseStorm(s32 stormId) {
 #endif
     ObjectEvent_GetById(LOCALID_IODEM)->steeringFlags &=
         ~OBJ_EVENT_FACES_MOTION;
-    Engine_ObjectEventWalkTo(LOCALID_IODEM, leaderX, (leaderZ - 16));
+    ObjectMotion_ResetAndSetPositionInMode2(LOCALID_IODEM, leaderX,
+                                            (leaderZ - 16));
     ObjectEvent_GetById(LOCALID_PARTY_LEADER)->steeringFlags &=
         ~OBJ_EVENT_FACES_MOTION;
-    Engine_ObjectEventWalkToAndWait(LOCALID_PARTY_LEADER, (leaderX + 8),
-                                    (leaderZ - 40));
-    Engine_ScriptWait(1);
+    ObjectMotion_SetPositionAndReset(LOCALID_PARTY_LEADER, (leaderX + 8),
+                                     (leaderZ - 40));
+    FieldScript_WaitFrames(1);
     ObjectEvent_GetById(LOCALID_PARTY_LEADER)->steeringFlags |=
         OBJ_EVENT_FACES_MOTION;
     Engine_ObjectEventSetAnimation(LOCALID_IODEM, ANIM_STAND);
-    Engine_ObjectEventFaceDirection(LOCALID_PARTY_LEADER, FACING_SOUTH, 0);
-    Engine_ScriptSetMessage(MsgSuhallaSandstorm);
+    ObjectMotion_ArmCallback(LOCALID_PARTY_LEADER, FACING_SOUTH, 0);
+    FieldScript_SetMessageId(MsgSuhallaSandstorm);
     ObjectEvent_ShowEmote(LOCALID_IODEM, EMOTE_IN_FRONT | EMOTE_LIGHT_BULB, 60);
-    Engine_ScriptShowMessage(LOCALID_IODEM, 0);
+    FieldScript_ShowMessageAndWait(LOCALID_IODEM, 0);
     ObjectEvent_ShowEmote(LOCALID_IODEM, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
-    Engine_ScriptShowMessage(LOCALID_IODEM, 0);
+    FieldScript_ShowMessageAndWait(LOCALID_IODEM, 0);
     ObjectEvent_FaceDirection(LOCALID_IODEM, FACING_SOUTHEAST, 0);
     ObjectEvent_ShowEmote(LOCALID_IODEM, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
-    Engine_ScriptShowMessage(LOCALID_IODEM, 0);
-    Engine_ScriptWait(10);
+    FieldScript_ShowMessageAndWait(LOCALID_IODEM, 0);
+    FieldScript_WaitFrames(10);
     ObjectEvent_FaceDirection(LOCALID_IODEM, FACING_NORTH, 30);
-    Engine_ObjectEventRunRepeatedMotion(LOCALID_IODEM, 2);
-    Engine_ScriptShowMessage(LOCALID_IODEM, 0);
-    Engine_ObjectEventSetAnimationAndWait(LOCALID_IODEM, ANIM_NOD);
-    Engine_ScriptShowMessage(LOCALID_IODEM, 0);
+    ObjectMotion_SetVarCbAndRefresh(LOCALID_IODEM, 2);
+    FieldScript_ShowMessageAndWait(LOCALID_IODEM, 0);
+    ObjectMotion_SetAnimationAndWait(LOCALID_IODEM, ANIM_NOD);
+    FieldScript_ShowMessageAndWait(LOCALID_IODEM, 0);
     ObjectEvent_SetSpeed(LOCALID_IODEM, PIXELS(1), PIXELS(1) / 2);
     Engine_ObjectEventSetAnimation(LOCALID_IODEM, ANIM_WALK);
     leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
     if ((s32)leader != 0) {
-      Engine_ObjectEventSetDestination(LOCALID_IODEM, leader->x.part.pixel,
+      ObjectMotion_ResetAndSetPosition(LOCALID_IODEM, leader->x.part.pixel,
                                        leader->z.part.pixel);
     }
-    Engine_ObjectEventWaitForMove(LOCALID_IODEM);
+    ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_IODEM);
     Engine_ObjectEventSetPosition(LOCALID_IODEM, 0, 0);
   }
-  Engine_ScriptEnd();
+  FieldScript_End();
 }
 
 /// In Suhalla Desert (MapId_SuhallaDesertNorth and
@@ -475,8 +476,8 @@ static void EventScript_IodemAsksWhetherToPressOn(void) {
       GameFlag_IsSet(0x1b7) == 0 &&
       GameFlag_IsSet(FLAG_IODEM_MET_WOUNDED_SOLDIERS) != 0) {
     GameFlag_Set(FLAG_SUHALLA_DESERT_TALKED_OF_SHEBA);
-    Engine_ScriptStart();
-    Engine_ScriptSetMessage(MsgSuhallaNowhereFound);
+    FieldScript_Start();
+    FieldScript_SetMessageId(MsgSuhallaNowhereFound);
     leader = ObjectEvent_Get(LOCALID_PARTY_LEADER);
     if (leader != 0) {
       ObjectEvent_SetPosition(LOCALID_IODEM, leader->x.fixed, leader->z.fixed);
@@ -493,35 +494,35 @@ static void EventScript_IodemAsksWhetherToPressOn(void) {
     ObjectEvent_ShowEmote(LOCALID_PARTY_LEADER,
                           EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
     ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_SOUTH, 30);
-    Engine_ObjectEventSetAnimationAndWait(LOCALID_IODEM, ANIM_SHAKE_HEAD);
+    ObjectMotion_SetAnimationAndWait(LOCALID_IODEM, ANIM_SHAKE_HEAD);
     Script_ShowMessage(LOCALID_IODEM, 0);
     ObjectEvent_ShowEmote(LOCALID_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_ELLIPSIS,
                           60);
     ObjectEvent_ShowEmote(LOCALID_IODEM, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
     Script_ShowMessage(LOCALID_IODEM, 0);
-    Engine_ScriptWait(30);
-    Engine_ObjectEventRunRepeatedMotion(LOCALID_IODEM, 2);
+    FieldScript_WaitFrames(30);
+    ObjectMotion_SetVarCbAndRefresh(LOCALID_IODEM, 2);
     Script_ShowMessage(LOCALID_IODEM, 0);
     ObjectEvent_FaceDirection(LOCALID_IODEM, FACING_NORTH, 30);
     Script_AskYesNo(LOCALID_IODEM, 0);
-    Engine_ScriptWait(30);
+    FieldScript_WaitFrames(30);
     ObjectEvent_ShowEmote(LOCALID_IODEM, EMOTE_IN_FRONT | EMOTE_LIGHT_BULB, 60);
     Script_ShowMessage(LOCALID_IODEM, 0);
-    Engine_ObjectEventSetAnimationAndWait(LOCALID_IODEM, ANIM_NOD);
+    ObjectMotion_SetAnimationAndWait(LOCALID_IODEM, ANIM_NOD);
     Script_ShowMessage(LOCALID_IODEM, 0);
     ObjectEvent_SetSpeed(LOCALID_IODEM, PIXELS(7) / 10, PIXELS(7) / 20);
     ObjectEvent_WalkToAndWait(LOCALID_IODEM, 440, 1256);
     Script_ShowMessage(LOCALID_IODEM, 0);
-    Engine_ObjectEventSetAnimationAndWait(LOCALID_PARTY_LEADER, ANIM_NOD);
+    ObjectMotion_SetAnimationAndWait(LOCALID_PARTY_LEADER, ANIM_NOD);
     Engine_ObjectEventSetAnimation(LOCALID_IODEM, ANIM_WALK);
     leader = ObjectEvent_Get(LOCALID_PARTY_LEADER);
     if (leader != 0) {
       ObjectEvent_SetDestination(LOCALID_IODEM, leader->x.part.pixel,
                                  leader->z.part.pixel);
     }
-    Engine_ObjectEventWaitForMove(LOCALID_IODEM);
+    ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_IODEM);
     ObjectEvent_SetPosition(LOCALID_IODEM, 0, 0);
-    Engine_ScriptEnd();
+    FieldScript_End();
   }
 }
 
@@ -540,9 +541,9 @@ static s32 SuhallaDesert_ChaseLeader(struct ObjectScriptContext *interpreter) {
   objectEvent->acceleration = PIXELS(1) / 4;
   objectEvent->speed = PIXELS(3) / 2;
   objectEvent->motionFlags = 0;
-  Engine_ObjectEventSetSpriteFlags(objectEvent, 0);
+  ObjectEvent_SetSpriteFlags(objectEvent, 0);
   objectEvent->spriteStorageKind ^= 1;
-  if (Engine_GameFlagIsSet(FLAG_FIELD_HANDLING_REQUESTS)) {
+  if (GameFlag_Test(FLAG_FIELD_HANDLING_REQUESTS)) {
     objectEvent->targetX = OBJ_EVENT_NO_TARGET;
     objectEvent->targetY = OBJ_EVENT_NO_TARGET;
     objectEvent->targetZ = OBJ_EVENT_NO_TARGET;
@@ -616,7 +617,7 @@ static void EventScript_DouseStorm(s32 unused, s32 stormId) {
   if (gFieldWork->raisedEvent == RAISED_STORM_CARRIES_PARTY_AWAY) {
     gFieldWork->raisedEvent = 0;
   }
-  Engine_GameFlagClear(FLAG_MAP_TEMP_0F);
+  GameFlag_ClearBit(FLAG_MAP_TEMP_0F);
   if (gGameState.mapId == (s32)&MapId_SuhallaDesertNorth) {
     Engine_GameFlagSet(
         (stormId + FLAG_FIRST_MAP_STORM_DOUSED - LOCALID_FIRST_STORM));
@@ -636,7 +637,7 @@ static void EventScript_DouseStorm(s32 unused, s32 stormId) {
     } else {
       if (stormId == LOCALID_CHASING_STORM) {
         Field_RequestBattleFromEncounterTable(ENCOUNTER_ZONE_SCRIPTED, 6);
-        Engine_ObjectEventStop(LOCALID_CHASING_STORM);
+        ObjectMotion_EnableActionAndResetMotion(LOCALID_CHASING_STORM);
         Engine_ObjectEventSetPosition(LOCALID_CHASING_STORM, 0, 0);
       }
     }
@@ -659,15 +660,14 @@ static void EventScript_StormCarriesPartyAway(void) {
   stormId = FieldGameFlag_GetByte(FLAG_MAP_TEMP_18);
   selectedObjectEvent = ObjectEvent_GetById(gGameState.leaderLocalId);
   storm = ObjectEvent_GetById(stormId);
-  Engine_ScriptStart();
+  FieldScript_Start();
   FieldCamera_MoveTo(-1, -1, -1, 0);
-  Engine_AudioPlayCue(SE_219);
+  Sound_PlaySong(SE_219);
   // BUG: the native passes a local id where the sprite helper needs a pointer.
 #ifdef BUGFIX
-  Engine_ObjectEventSetSpriteFlags(selectedObjectEvent, 0);
+  ObjectDispatch_SetSingleChildFlags(selectedObjectEvent, 0);
 #else
-  Engine_ObjectEventSetSpriteFlags(
-      (struct ObjectEvent *)gGameState.leaderLocalId, 0);
+  ObjectEvent_SetSpriteFlags((struct ObjectEvent *)gGameState.leaderLocalId, 0);
 #endif
   storm->motionFlags = 0;
   selectedObjectEvent->motionFlags = 0;
@@ -678,11 +678,11 @@ static void EventScript_StormCarriesPartyAway(void) {
   for (frame = 0; frame < 60; frame++) {
     selectedObjectEvent->velocityY += PIXELS(1) / 5;
     storm->velocityY += PIXELS(1) / 5;
-    Engine_TaskWait(1);
+    WaitFrames(1);
   }
-  Engine_ScriptCloseScreen();
-  Engine_ScriptWaitForScreen();
-  Engine_ScriptEnd();
+  FieldScript_FinishScreenTransition();
+  FieldScript_WaitTransitionFrames();
+  FieldScript_End();
   Engine_GameFlagSet(FLAG_ARRIVE_FALLING);
   if (gGameState.mapId == (s32)&MapId_SuhallaDesertSouth &&
       FieldGameFlag_GetByte(FLAG_MAP_TEMP_18) == LOCALID_FOURTH_STORM) {
@@ -730,9 +730,9 @@ static s32 EventScript_RevealEnds(void) {
     MapGrid_CopyCellAttributes(12, 71, 1, 1, 127, 127);
     MapGrid_CopyCellAttributes(11, 71, 1, 1, 12, 71);
 #ifdef UBFIX
-    Engine_TaskRemoveCallback(SuhallaDesert_PulseRevealPalette);
+    Task_Remove(SuhallaDesert_PulseRevealPalette);
 #else
-    removalResult = Engine_TaskRemoveCallback(SuhallaDesert_PulseRevealPalette);
+    removalResult = Task_Remove(SuhallaDesert_PulseRevealPalette);
 #endif
     Io_Write16(sSuhallaDesertSavedColor, &SUHALLA_REVEAL_PALETTE_COLOR);
 #ifndef UBFIX
@@ -803,7 +803,7 @@ s32 Map_Initialize(void) {
   } else if (gGameState.mapId == (s32)&MapId_SuhallaDesertSouth) {
     SuhallaDesert_SetUpSecondMapStorms();
   } else {
-    Engine_AudioPlayCue(SE_STOP_SLOT3);
+    Sound_PlaySong(SE_STOP_SLOT3);
   }
   if (gGameState.warpDest == WARP_DEST_DEFAULT) {
     gridState->flags &= ~DISPCNT_BG1_ON;
@@ -821,26 +821,26 @@ static void SuhallaDesert_SetUpFirstMapStorms(void) {
   s32 stormId;
   s32 stormAlpha = 0;
 
-  if (Engine_GameFlagIsSet(FLAG_FIRST_MAP_STORM_DOUSED)) {
+  if (GameFlag_Test(FLAG_FIRST_MAP_STORM_DOUSED)) {
     Engine_GameFlagSet(FLAG_MAP_TEMP_06);
   }
-  if (Engine_GameFlagIsSet(FLAG_FIRST_MAP_STORM_DOUSED + 1)) {
+  if (GameFlag_Test(FLAG_FIRST_MAP_STORM_DOUSED + 1)) {
     Engine_GameFlagSet(FLAG_MAP_TEMP_07);
   }
-  if (Engine_GameFlagIsSet(FLAG_FIRST_MAP_STORM_DOUSED + 2)) {
+  if (GameFlag_Test(FLAG_FIRST_MAP_STORM_DOUSED + 2)) {
     Engine_GameFlagSet(FLAG_MAP_TEMP_08);
   }
-  if (Engine_GameFlagIsSet(FLAG_FIRST_MAP_STORM_DOUSED + 3)) {
+  if (GameFlag_Test(FLAG_FIRST_MAP_STORM_DOUSED + 3)) {
     Engine_GameFlagSet(FLAG_MAP_TEMP_09);
   }
-  if (Engine_GameFlagIsSet(FLAG_FIRST_MAP_STORM_DOUSED + 4)) {
+  if (GameFlag_Test(FLAG_FIRST_MAP_STORM_DOUSED + 4)) {
     Engine_GameFlagSet(FLAG_MAP_TEMP_0A);
   }
   for (stormId = LOCALID_FIRST_STORM; stormId <= LOCALID_LAST_STORM;
        stormId++) {
     objectEvent = ObjectEvent_GetById(stormId);
     if (objectEvent != 0) {
-      if (!Engine_GameFlagIsSet(FLAG_KEEP_PARTY_POSITION)) {
+      if (!GameFlag_Test(FLAG_KEEP_PARTY_POSITION)) {
         objectEvent->scaleX = Q16_ONE / 32;
         objectEvent->scaleY = Q16_ONE / 32;
       }
@@ -848,9 +848,9 @@ static void SuhallaDesert_SetUpFirstMapStorms(void) {
     }
   }
   IO_WRITE_QUEUE_PUSH((u32)&REG_BLDCNT, SUHALLA_DESERT_HAZE_BLEND, 0x20000);
-  if (Engine_GameFlagIsSet(FLAG_STORMS_RISEN)) {
+  if (GameFlag_Test(FLAG_STORMS_RISEN)) {
     stormAlpha = 16;
-    QueueMapSound(SE_SANDSTORM);
+    Map_QueueMusic(SE_SANDSTORM);
   }
   IO_WRITE_QUEUE_PUSH((u32)&REG_BLDALPHA, ((16 - stormAlpha) << 8) | stormAlpha,
                       0x20000);
@@ -867,20 +867,20 @@ static void SuhallaDesert_SetUpSecondMapStorms(void) {
   s32 stormId;
   s32 stormAlpha = 0;
 
-  if (Engine_GameFlagIsSet(FLAG_SECOND_MAP_STORM_DOUSED)) {
+  if (GameFlag_Test(FLAG_SECOND_MAP_STORM_DOUSED)) {
     Engine_GameFlagSet(FLAG_MAP_TEMP_06);
   }
-  if (Engine_GameFlagIsSet(FLAG_SECOND_MAP_STORM_DOUSED + 1)) {
+  if (GameFlag_Test(FLAG_SECOND_MAP_STORM_DOUSED + 1)) {
     Engine_GameFlagSet(FLAG_MAP_TEMP_07);
   }
-  if (Engine_GameFlagIsSet(FLAG_SECOND_MAP_STORM_DOUSED + 2)) {
+  if (GameFlag_Test(FLAG_SECOND_MAP_STORM_DOUSED + 2)) {
     Engine_GameFlagSet(FLAG_MAP_TEMP_08);
   }
   for (stormId = LOCALID_FIRST_STORM; stormId < LOCALID_FOURTH_STORM;
        stormId++) {
     objectEvent = ObjectEvent_GetById(stormId);
     if (objectEvent != 0) {
-      if (!Engine_GameFlagIsSet(FLAG_KEEP_PARTY_POSITION)) {
+      if (!GameFlag_Test(FLAG_KEEP_PARTY_POSITION)) {
         objectEvent->scaleX = Q16_ONE / 32;
         objectEvent->scaleY = Q16_ONE / 32;
       }
@@ -900,13 +900,13 @@ static void SuhallaDesert_SetUpSecondMapStorms(void) {
     sprite->dirty = 1;
     sprite->flags = 0;
   }
-  if (Engine_GameFlagIsSet(FLAG_SECOND_MAP_STORM_DOUSED + 4)) {
+  if (GameFlag_Test(FLAG_SECOND_MAP_STORM_DOUSED + 4)) {
     Engine_GameFlagSet(FLAG_SUHALLA_DESERT_CHASING_STORM_DOUSED);
   }
   IO_WRITE_QUEUE_PUSH((u32)&REG_BLDCNT, SUHALLA_DESERT_HAZE_BLEND, 0x20000);
-  if (Engine_GameFlagIsSet(FLAG_STORMS_RISEN)) {
+  if (GameFlag_Test(FLAG_STORMS_RISEN)) {
     stormAlpha = 16;
-    QueueMapSound(SE_SANDSTORM);
+    Map_QueueMusic(SE_SANDSTORM);
   }
   IO_WRITE_QUEUE_PUSH((u32)&REG_BLDALPHA, ((16 - stormAlpha) << 8) | stormAlpha,
                       0x20000);

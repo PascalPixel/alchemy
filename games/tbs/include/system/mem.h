@@ -8,7 +8,6 @@
 #include "types.h"
 
 void FreeHeapSlot(s32 slot);
-void Runtime_BumpFree(void *buffer);
 void Free(void *buffer);
 void Runtime_FillFreeHeapWords(u32 value);
 

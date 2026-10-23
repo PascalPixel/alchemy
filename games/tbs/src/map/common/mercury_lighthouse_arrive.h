@@ -19,7 +19,7 @@ static void MercuryLighthouse_ArriveWithSparks(void) {
   objectEvent = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   flag = GameFlag_IsSet(FLAG_KEEP_PARTY_POSITION);
   if (flag == 0) {
-    Engine_ScriptStart();
+    FieldScript_Start();
     FieldCamera_MoveTo(-1, -1, -1, 0);
     objectEvent->motionFlags = 0;
     Engine_ObjectEventSetPosition(0, objectEvent->x.part.pixel << 16,
@@ -27,10 +27,10 @@ static void MercuryLighthouse_ArriveWithSparks(void) {
                                       -0x100000);
     ObjectEvent_SetChildValue(LOCALID_PARTY_LEADER, 15);
     record = ObjectEvent_Get(LOCALID_PARTY_LEADER);
-    Engine_ObjectEventSetSpriteFlags(record, 0);
-    Engine_ScriptOpenScreen();
-    Engine_ScriptWaitForScreen();
-    Engine_AudioPlayCue(SE_228);
+    ObjectEvent_SetSpriteFlags(record, 0);
+    FieldScript_StartScreenTransition();
+    FieldScript_WaitTransitionFrames();
+    Sound_PlaySong(SE_228);
 #ifdef UBFIX
     objectEvent->update = MercuryLighthouse_TrailSparks;
 #else
@@ -41,13 +41,13 @@ static void MercuryLighthouse_ArriveWithSparks(void) {
     ObjectEvent_WalkByAndWait(LOCALID_PARTY_LEADER, 0, 8);
     ObjectEvent_SetChildValue(LOCALID_PARTY_LEADER, 0);
     record = ObjectEvent_Get(LOCALID_PARTY_LEADER);
-    Engine_ObjectEventSetSpriteFlags(record, SPRITE_FLAG_SHADOW);
+    ObjectEvent_SetSpriteFlags(record, SPRITE_FLAG_SHADOW);
     sprite = objectEvent->sprite;
     sprite->image.priority = 1;
     ObjectEvent_WalkByAndWait(LOCALID_PARTY_LEADER, 0, 10);
     objectEvent->motionFlags = 3;
     objectEvent->update = NULL;
     Map_PlayQueuedMusic();
-    Engine_ScriptEnd();
+    FieldScript_End();
   }
 }

@@ -1,22 +1,22 @@
 @ C2: aligned 8-byte veneers: overlay_veneer emits ldr r4, bx r4 and a target word.
 	.set overlay_imports, 1
-	.set import.Engine_GameFlagIsSet, 1
+	.set import.GameFlag_Test, 1
 	.set import.Engine_GameFlagSet, 1
-	.set import.Engine_ScriptWait, 1
-	.set import.Engine_ScriptStart, 1
-	.set import.Engine_ScriptEnd, 1
-	.set import.ObjectEventTemplate_ClipToView, 1
-	.set import.Engine_ScriptChooseYesNo, 1
+	.set import.FieldScript_WaitFrames, 1
+	.set import.FieldScript_Start, 1
+	.set import.FieldScript_End, 1
+	.set import.Map_AssignViewFlags, 1
+	.set import.FieldScript_AskYesNoWithObjectEventAnimation, 1
 	.set import.ObjectEvent_GetById, 1
-	.set import.Engine_ObjectEventStartRepeatedMotion, 1
-	.set import.Engine_ObjectEventFaceObjectEvent, 1
-	.set import.Engine_ScriptSetMessage, 1
-	.set import.Engine_ScriptOpenMessage, 1
-	.set import.Engine_ScriptShowMessage, 1
-	.set import.Engine_ScriptShowMessageAndWait, 1
-	.set import.Engine_ScriptAskYesNo, 1
-	.set import.Engine_ObjectEventFaceDirection, 1
-	.set import.Engine_ObjectEventSetAttachedEffect, 1
-	.set import.Engine_ShopOpen, 1
-	.set import.Engine_InnOpen, 1
+	.set import.ObjectMotion_SetVariantCallback, 1
+	.set import.ObjectMotion_SetAngleToward, 1
+	.set import.FieldScript_SetMessageId, 1
+	.set import.FieldMessage_ShowAtObject, 1
+	.set import.FieldScript_ShowMessageAndWait, 1
+	.set import.FieldScript_ShowMessageThenWait, 1
+	.set import.FieldScript_AskYesNoAndShowResponse, 1
+	.set import.ObjectMotion_ArmCallback, 1
+	.set import.FieldEffect_ConfigureLinkedObject, 1
+	.set import.Shop_Run, 1
+	.set import.Inn_CheckIn, 1
 	.include "games/tbs/src/system/overlay.inc"

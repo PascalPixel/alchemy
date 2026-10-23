@@ -315,14 +315,14 @@ const struct ObjectEventTemplate *Map_GetObjectEventTemplates(void) {
     table = gVaultInteriors_ObjectEventTemplates;
     break;
   }
-  Map_PrepareObjectEvents(table);
+  Map_AssignViewFlags(table);
   return table;
 }
 
 #if !TBS_PATCH_1
 /// Jumps the leader to the requested destination when nothing blocks it there;
 /// returns 1 when it jumped. Only the editions before the first patch have it;
-/// the patched ones look ahead instead (Engine_LeaderCheckAhead).
+/// the patched ones look ahead instead (Field_TryJumpForward).
 static s32 VaultInteriors_TryJumpTo(struct FieldPosition *position) {
   struct ObjectEvent *leader;
   u8 *flags;
@@ -332,25 +332,25 @@ static s32 VaultInteriors_TryJumpTo(struct FieldPosition *position) {
   flags = &leader->motionFlags;
   savedMotionFlags = *flags;
   if (FieldObject_CheckMovementCollision(leader, position) == 0) {
-    Engine_ScriptStart();
-    ObjectEvent_SetMode(leader, 6);
-    Engine_TaskWait(6);
-    Engine_AudioPlayCue(SE_JUMP);
-    ObjectEvent_SetMode(leader, 7);
+    FieldScript_Start();
+    ObjectDispatch_SelectAnimation(leader, 6);
+    WaitFrames(6);
+    Sound_PlaySong(SE_JUMP);
+    ObjectDispatch_SelectAnimation(leader, 7);
     leader->speed = PIXELS(3);
     leader->acceleration = PIXELS(2);
     leader->velocityY = PIXELS(4);
     *flags &= 0x7e;
-    Engine_ObjectEventSetSpriteFlags(leader, 0);
-    Engine_ObjectEventMoveToAndWait(
+    ObjectEvent_SetSpriteFlags(leader, 0);
+    ObjectMotion_SetPositionAndCommit(
         LOCALID_PARTY_LEADER,
         ((union FieldCoordinate *)&position->x)->part.pixel,
         ((union FieldCoordinate *)&position->z)->part.pixel);
-    ObjectEvent_SetMode(leader, 6);
-    Engine_ObjectEventSetSpriteFlags(leader, SPRITE_FLAG_SHADOW);
-    Engine_TaskWait(6);
+    ObjectDispatch_SelectAnimation(leader, 6);
+    ObjectEvent_SetSpriteFlags(leader, SPRITE_FLAG_SHADOW);
+    WaitFrames(6);
     *flags = savedMotionFlags;
-    Engine_ScriptEnd();
+    FieldScript_End();
     return 1;
   }
   return 0;
@@ -375,7 +375,7 @@ static void EventScript_JumpAcrossRoofGap(void) {
   if (ObjectEvent_GetById(LOCALID_PARTY_LEADER)->facing >= 0xa000 &&
       ObjectEvent_GetById(LOCALID_PARTY_LEADER)->facing <= 0xe000) {
 #if TBS_PATCH_1
-    Engine_LeaderCheckAhead();
+    Field_TryJumpForward();
 #else
     leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
     position = &target;
@@ -391,7 +391,7 @@ static void EventScript_JumpAcrossRoofGap(void) {
   } else if (ObjectEvent_GetById(LOCALID_PARTY_LEADER)->facing >= 0x2000 &&
              ObjectEvent_GetById(LOCALID_PARTY_LEADER)->facing <= 0x6000) {
 #if TBS_PATCH_1
-    Engine_LeaderCheckAhead();
+    Field_TryJumpForward();
 #else
     leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
     position = &target;
@@ -416,13 +416,13 @@ static void EventScript_JumpAcrossRoofGap(void) {
 static void EventScript_CheckCrateMoved(void) {
   struct ObjectEvent *crate;
 
-  Engine_ScriptStart();
+  FieldScript_Start();
   crate = ObjectEvent_GetById(LOCALID_CRATE);
   if ((crate->x.fixed >> 20) == 42) {
     MapGrid_CopyCellAttributes(101, 24, 3, 4, 41, 24);
     Engine_GameFlagSet(FLAG_VAULT_CRATE_MOVED);
   }
-  Engine_ScriptEnd();
+  FieldScript_End();
 }
 
 /// In Vault's weapon and armor shop, across the counter the weapon shop opens;
@@ -436,18 +436,18 @@ static void EventScript_CheckCrateMoved(void) {
 static void EventScript_TalkToWeaponMerchant(void) {
   s32 leaderFacing = ObjectEvent_GetById(LOCALID_PARTY_LEADER)->facing;
 
-  Engine_ScriptStart();
+  FieldScript_Start();
   if (leaderFacing >= 0xa001 && leaderFacing <= 0xdfff) {
-    Engine_ShopOpen(4, LOCALID_WEAPON_MERCHANT);
+    Shop_Run(4, LOCALID_WEAPON_MERCHANT);
   } else {
-    if (Engine_GameFlagIsSet(FLAG_VAULT_THIEVES_JAILED) == 0) {
-      Engine_ScriptSetMessage(MsgVaultMasterHammetIsntOnlyOne);
+    if (GameFlag_Test(FLAG_VAULT_THIEVES_JAILED) == 0) {
+      FieldScript_SetMessageId(MsgVaultMasterHammetIsntOnlyOne);
     } else {
-      Engine_ScriptSetMessage(MsgVaultWeFoundOurStolenWeapons);
+      FieldScript_SetMessageId(MsgVaultWeFoundOurStolenWeapons);
     }
-    Engine_ScriptShowMessage(LOCALID_WEAPON_MERCHANT, 0);
+    FieldScript_ShowMessageAndWait(LOCALID_WEAPON_MERCHANT, 0);
   }
-  Engine_ScriptEnd();
+  FieldScript_End();
 }
 
 /// In Vault's weapon and armor shop, across the counter the armor shop opens;
@@ -458,18 +458,18 @@ static void EventScript_TalkToWeaponMerchant(void) {
 static void EventScript_TalkToArmorMerchant(void) {
   s32 leaderFacing = ObjectEvent_GetById(LOCALID_PARTY_LEADER)->facing;
 
-  Engine_ScriptStart();
+  FieldScript_Start();
   if (leaderFacing >= 0xa001 && leaderFacing <= 0xdfff) {
-    Engine_ShopOpen(5, LOCALID_ARMOR_MERCHANT);
+    Shop_Run(5, LOCALID_ARMOR_MERCHANT);
   } else {
-    if (Engine_GameFlagIsSet(FLAG_VAULT_THIEVES_JAILED) == 0) {
-      Engine_ScriptSetMessage(MsgVaultThievesDidntHitOurHouse);
+    if (GameFlag_Test(FLAG_VAULT_THIEVES_JAILED) == 0) {
+      FieldScript_SetMessageId(MsgVaultThievesDidntHitOurHouse);
     } else {
-      Engine_ScriptSetMessage(MsgVaultIfYoureGonnaHeadInto);
+      FieldScript_SetMessageId(MsgVaultIfYoureGonnaHeadInto);
     }
-    Engine_ScriptShowMessage(LOCALID_ARMOR_MERCHANT, 0);
+    FieldScript_ShowMessageAndWait(LOCALID_ARMOR_MERCHANT, 0);
   }
-  Engine_ScriptEnd();
+  FieldScript_End();
 }
 
 /// At Vault's inn, across the counter the inn opens; otherwise the innkeeper
@@ -480,18 +480,18 @@ static void EventScript_TalkToArmorMerchant(void) {
 static void EventScript_TalkToInnkeeper(void) {
   s32 leaderFacing = ObjectEvent_GetById(LOCALID_PARTY_LEADER)->facing;
 
-  Engine_ScriptStart();
+  FieldScript_Start();
   if (leaderFacing >= 0xa001 && leaderFacing <= 0xdfff) {
-    Engine_InnOpen(1, LOCALID_INNKEEPER);
+    Inn_CheckIn(1, LOCALID_INNKEEPER);
   } else {
-    if (Engine_GameFlagIsSet(FLAG_VAULT_THIEVES_JAILED) == 0) {
-      Engine_ScriptSetMessage(MsgVaultEveryoneThinksOurGuestsThieves);
+    if (GameFlag_Test(FLAG_VAULT_THIEVES_JAILED) == 0) {
+      FieldScript_SetMessageId(MsgVaultEveryoneThinksOurGuestsThieves);
     } else {
-      Engine_ScriptSetMessage(MsgVaultTheyHidThoseStolenGoods);
+      FieldScript_SetMessageId(MsgVaultTheyHidThoseStolenGoods);
     }
-    Engine_ScriptShowMessage(LOCALID_INNKEEPER, 0);
+    FieldScript_ShowMessageAndWait(LOCALID_INNKEEPER, 0);
   }
-  Engine_ScriptEnd();
+  FieldScript_End();
 }
 
 #include "common/vault_bone.h"
@@ -505,8 +505,8 @@ static void EventScript_GaretRefusesToLeave(void) {
 #if TBS_PATCH_1
   Leader_StopMoving();
 #endif
-  Engine_ScriptSetMessage(MsgVaultWeDontHaveTimeFor);
-  Engine_ScriptShowMessage(GARET, 0);
+  FieldScript_SetMessageId(MsgVaultWeDontHaveTimeFor);
+  FieldScript_ShowMessageAndWait(GARET, 0);
 }
 
 /// At Vault's inn, Isaac checks the barrel but doesn't find anything.
@@ -514,10 +514,10 @@ static void EventScript_GaretRefusesToLeave(void) {
 /// Reached by searching VAULT_INTERIORS_CELL_INN_BARREL before the thieves are
 /// jailed; after, the same spot holds the Bone (Vault_FindBone).
 static void EventScript_SearchEmptyBarrel(void) {
-  Engine_ScriptStart();
-  Engine_MessageShowCentered(MsgVaultIsaacCheckedBarrel, 1);
-  Engine_MessageShowCentered(MsgVaultButDidntFindAnything, 1);
-  Engine_ScriptEnd();
+  FieldScript_Start();
+  FieldMessage_Show(MsgVaultIsaacCheckedBarrel, 1);
+  FieldMessage_Show(MsgVaultButDidntFindAnything, 1);
+  FieldScript_End();
 }
 
 /// In the inn's loft in Vault, Isaac checks the chest, but it is empty.
@@ -525,10 +525,10 @@ static void EventScript_SearchEmptyBarrel(void) {
 /// Reached by talking to one of the loft's three chests (LOCALID_FIRST_CHEST to
 /// LOCALID_THIRD_CHEST).
 static void EventScript_SearchEmptyChest(void) {
-  Engine_ScriptStart();
-  Engine_MessageShowCentered(MsgVaultIsaacCheckedChest, 1);
-  Engine_MessageShowCentered(MsgVaultButChestWasEmpty, 1);
-  Engine_ScriptEnd();
+  FieldScript_Start();
+  FieldMessage_Show(MsgVaultIsaacCheckedChest, 1);
+  FieldMessage_Show(MsgVaultButChestWasEmpty, 1);
+  FieldScript_End();
 }
 
 /// Returns the loft's events for the loft's three warp destinations, else the
@@ -540,7 +540,7 @@ const struct MapEvent *Map_GetEvents(void) {
   case VAULT_INTERIORS_LOFT_AFTER_THIEVES_DEFEATED:
     return gVaultInteriors_LoftEvents;
   }
-  if (Engine_GameFlagIsSet(FLAG_VAULT_THIEVES_JAILED) != 0) {
+  if (GameFlag_Test(FLAG_VAULT_THIEVES_JAILED) != 0) {
     return gVaultInteriors_EventsAfterThieves;
   }
   return gVaultInteriors_Events;
@@ -550,7 +550,7 @@ const struct MapEvent *Map_GetEvents(void) {
 static void VaultInteriors_StandAndShowMessage(s32 x) {
   Engine_ObjectEventSetAnimation(x, ANIM_STAND);
   VaultInteriors_FaceEachOtherAndWait(x, 0, 2);
-  Engine_ScriptShowMessage(x, 0);
+  FieldScript_ShowMessageAndWait(x, 0);
 }
 
 #include "common/vault_talk.h"
@@ -558,11 +558,11 @@ static void VaultInteriors_StandAndShowMessage(s32 x) {
 /// Faces the leader and selects the next reply when the answer is no.
 static void VaultInteriors_AskYesNoAndShowReply(s32 x) {
   VaultInteriors_FaceEachOtherAndWait(x, 0, 2);
-  Engine_ScriptOpenMessage(x, 0);
-  if (Engine_ScriptChooseYesNo(0, 0) != 0) {
+  FieldMessage_ShowAtObject(x, 0);
+  if (FieldScript_AskYesNoWithObjectEventAnimation(0, 0) != 0) {
     gFieldWork->message++;
   }
-  Engine_ScriptShowMessage(x, 0);
+  FieldScript_ShowMessageAndWait(x, 0);
 }
 
 /// In a house of Vault, the small boy asks about travel.
@@ -571,11 +571,11 @@ static void VaultInteriors_AskYesNoAndShowReply(s32 x) {
 /// Reached by talking to the boy (LOCALID_BOY_ASKING_ABOUT_TRAVEL) before the
 /// thieves are jailed.
 static void EventScript_BoyAsksAboutTravel(void) {
-  Engine_ScriptStart();
-  Engine_ScriptSetMessage(MsgVaultMisterFunSeeStrangeNew);
+  FieldScript_Start();
+  FieldScript_SetMessageId(MsgVaultMisterFunSeeStrangeNew);
   Engine_ObjectEventSetAnimation(LOCALID_BOY_ASKING_ABOUT_TRAVEL, ANIM_STAND);
   VaultInteriors_AskYesNoAndShowReply(LOCALID_BOY_ASKING_ABOUT_TRAVEL);
-  Engine_ScriptEnd();
+  FieldScript_End();
 }
 
 /// At the mayor's in Vault, a little girl offers to tell Ivan's secret.
@@ -585,11 +585,11 @@ static void EventScript_BoyAsksAboutTravel(void) {
 /// FLAG_VAULT_IVAN_JOINED_ROD_SEARCH is set; then the row after it tells the
 /// secret: Ivan can talk with animals.
 static void EventScript_OfferIvansSecret(void) {
-  Engine_ScriptStart();
-  Engine_ScriptSetMessage(MsgVaultIvanHasGreatPowersWouldnt);
+  FieldScript_Start();
+  FieldScript_SetMessageId(MsgVaultIvanHasGreatPowersWouldnt);
   VaultInteriors_AskYesNoAndShowReply(LOCALID_GIRL_TELLING_A_SECRET);
   ObjectEvent_FaceDirection(LOCALID_GIRL_TELLING_A_SECRET, FACING_WEST, 0);
-  Engine_ScriptEnd();
+  FieldScript_End();
 }
 
 /// In Vault's item shop, across the counter the shop opens; otherwise a
@@ -600,17 +600,17 @@ static void EventScript_OfferIvansSecret(void) {
 static void EventScript_TalkToItemMerchant(void) {
   s32 leaderFacing = ObjectEvent_GetById(LOCALID_PARTY_LEADER)->facing;
 
-  Engine_ScriptStart();
+  FieldScript_Start();
   if (leaderFacing >= 0xa001 && leaderFacing <= 0xdfff) {
-    Engine_ShopOpen(6, LOCALID_ITEM_MERCHANT);
-  } else if (Engine_GameFlagIsSet(FLAG_VAULT_THIEVES_JAILED) == 0) {
-    Engine_ScriptSetMessage(MsgVaultDidJustArriveInTown);
+    Shop_Run(6, LOCALID_ITEM_MERCHANT);
+  } else if (GameFlag_Test(FLAG_VAULT_THIEVES_JAILED) == 0) {
+    FieldScript_SetMessageId(MsgVaultDidJustArriveInTown);
     VaultInteriors_AskYesNoAndShowReply(LOCALID_ITEM_MERCHANT);
   } else {
-    Engine_ScriptSetMessage(MsgVaultWithBridgeOutWillQuite);
-    Engine_ScriptShowMessage(LOCALID_ITEM_MERCHANT, 0);
+    FieldScript_SetMessageId(MsgVaultWithBridgeOutWillQuite);
+    FieldScript_ShowMessageAndWait(LOCALID_ITEM_MERCHANT, 0);
   }
-  Engine_ScriptEnd();
+  FieldScript_End();
 }
 
 /// The wife of the man with the sparkling rock talks about their rocks.
@@ -619,14 +619,14 @@ static void EventScript_TalkToItemMerchant(void) {
 ///
 /// Reached by talking to the gem owner's wife (LOCALID_GEM_OWNERS_WIFE).
 static void EventScript_TalkAboutRocks(void) {
-  Engine_ScriptStart();
-  if (Engine_GameFlagIsSet(FLAG_VAULT_THIEVES_JAILED) == 0) {
-    Engine_ScriptSetMessage(MsgVaultIfOnlyTheseRocksWere);
+  FieldScript_Start();
+  if (GameFlag_Test(FLAG_VAULT_THIEVES_JAILED) == 0) {
+    FieldScript_SetMessageId(MsgVaultIfOnlyTheseRocksWere);
   } else {
-    Engine_ScriptSetMessage(MsgVaultThankGoodnessThoseThievesWere);
+    FieldScript_SetMessageId(MsgVaultThankGoodnessThoseThievesWere);
   }
   VaultInteriors_StandAndShowMessage(LOCALID_GEM_OWNERS_WIFE);
-  Engine_ScriptEnd();
+  FieldScript_End();
 }
 
 /// Grandpa in the item shop talks about missing things.
@@ -636,14 +636,14 @@ static void EventScript_TalkAboutRocks(void) {
 ///
 /// Reached by talking to Grandpa (LOCALID_GRANDPA).
 static void EventScript_TalkAboutMissingThings(void) {
-  Engine_ScriptStart();
-  if (Engine_GameFlagIsSet(FLAG_VAULT_THIEVES_JAILED) != 0) {
-    Engine_ScriptSetMessage(MsgVaultThievesHidStolenTreasureIn);
+  FieldScript_Start();
+  if (GameFlag_Test(FLAG_VAULT_THIEVES_JAILED) != 0) {
+    FieldScript_SetMessageId(MsgVaultThievesHidStolenTreasureIn);
   } else {
-    Engine_ScriptSetMessage(MsgVaultJustMeOrAmMissing);
+    FieldScript_SetMessageId(MsgVaultJustMeOrAmMissing);
   }
   VaultInteriors_StandAndShowMessage(LOCALID_GRANDPA);
-  Engine_ScriptEnd();
+  FieldScript_End();
 }
 
 /// At his house in Vault, the mayor asks for someone to help Ivan; once the
@@ -655,22 +655,22 @@ static void EventScript_TalkAboutMissingThings(void) {
 static void EventScript_MayorAsksHelpForIvan(void) {
   s32 thankedForHelpingFlag;
   thankedForHelpingFlag = FLAG_VAULT_MAYOR_THANKED_PARTY;
-  Engine_ScriptStart();
-  if (Engine_GameFlagIsSet(FLAG_VAULT_IVAN_JOINED_ROD_SEARCH) != 0) {
-    if (Engine_GameFlagIsSet(thankedForHelpingFlag) == 0) {
-      Engine_ScriptSetMessage(MsgVaultYoureGoingHelpIvan);
+  FieldScript_Start();
+  if (GameFlag_Test(FLAG_VAULT_IVAN_JOINED_ROD_SEARCH) != 0) {
+    if (GameFlag_Test(thankedForHelpingFlag) == 0) {
+      FieldScript_SetMessageId(MsgVaultYoureGoingHelpIvan);
       VaultInteriors_StandAndShowMessage(LOCALID_MAYOR);
-      Engine_ScriptWait(10);
+      FieldScript_WaitFrames(10);
       VaultInteriors_PlayAnimationAndWait(LOCALID_MAYOR, ANIM_NOD, 20);
       Engine_GameFlagSet(thankedForHelpingFlag);
     } else {
-      Engine_ScriptSetMessage(MsgVaultPleaseLookAfterIvan);
+      FieldScript_SetMessageId(MsgVaultPleaseLookAfterIvan);
     }
   } else {
-    Engine_ScriptSetMessage(MsgVaultCouldSomeonePleaseHelpIvan);
+    FieldScript_SetMessageId(MsgVaultCouldSomeonePleaseHelpIvan);
   }
   VaultInteriors_StandAndShowMessage(LOCALID_MAYOR);
-  Engine_ScriptEnd();
+  FieldScript_End();
 }
 
 /// At Vault's inn, the girl at the inn says the three strangers have fooled
@@ -679,10 +679,10 @@ static void EventScript_MayorAsksHelpForIvan(void) {
 /// Reached by talking to the girl at the inn (LOCALID_GIRL_AT_THE_INN) before
 /// the thieves are jailed.
 static void EventScript_WarnAboutThreeStrangers(void) {
-  Engine_ScriptStart();
-  Engine_ScriptSetMessage(MsgVaultThoseThreeStrangersSureHave);
+  FieldScript_Start();
+  FieldScript_SetMessageId(MsgVaultThoseThreeStrangersSureHave);
   VaultInteriors_StandAndShowMessage(LOCALID_GIRL_AT_THE_INN);
-  Engine_ScriptEnd();
+  FieldScript_End();
 }
 
 /// The suspected leader cries out and runs to his next spot.
@@ -701,11 +701,12 @@ static void EventScript_SuspectedLeaderDodges(void) {
   s32 nextRoute;
 
   suspect = ObjectEvent_GetById(LOCALID_SUSPECTED_LEADER);
-  Engine_ScriptStart();
-  Engine_ObjectEventRunRepeatedMotion(LOCALID_SUSPECTED_LEADER, 2);
-  Engine_ScriptSetMessage(MsgVaultOwStop);
-  Engine_ScriptShowMessage(LOCALID_SUSPECTED_LEADER, 0);
-  Engine_ObjectEventSetSpeed(LOCALID_SUSPECTED_LEADER, PIXELS(4), PIXELS(2));
+  FieldScript_Start();
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_SUSPECTED_LEADER, 2);
+  FieldScript_SetMessageId(MsgVaultOwStop);
+  FieldScript_ShowMessageAndWait(LOCALID_SUSPECTED_LEADER, 0);
+  ObjectMotion_SetSpeedParameters(LOCALID_SUSPECTED_LEADER, PIXELS(4),
+                                  PIXELS(2));
   if ((u32)((suspect->facing & 0xf000) - 0x5000) <= 0x6000) {
     routeState = (s16 *)&suspect->timer;
     routeIndex = *routeState;
@@ -742,7 +743,7 @@ static void EventScript_SuspectedLeaderDodges(void) {
     *(u16 *)routeState = nextRoute;
   }
   ObjectEvent_RefreshSelectorById(LOCALID_SUSPECTED_LEADER);
-  Engine_ScriptEnd();
+  FieldScript_End();
 }
 
 /// Selects a response script and advances the second suspect's route state.
@@ -769,12 +770,12 @@ static void EventScript_SuspectedThiefDodges(void) {
   objectEvent = ObjectEvent_GetById(LOCALID_SUSPECTED_THIEF);
   facing = objectEvent->facing & 0xf000;
   routePair = objectEvent->timer >> 1;
-  Engine_ScriptStart();
-  Engine_ObjectEventRunRepeatedMotion(LOCALID_SUSPECTED_THIEF, 2);
-  Engine_ScriptSetMessage(MsgVaultNoLeaveAlone);
-  Engine_ScriptShowMessage(LOCALID_SUSPECTED_THIEF, 0);
-  Engine_ObjectEventSetSpeed(LOCALID_SUSPECTED_THIEF, PIXELS(7) / 2,
-                             PIXELS(7) / 4);
+  FieldScript_Start();
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_SUSPECTED_THIEF, 2);
+  FieldScript_SetMessageId(MsgVaultNoLeaveAlone);
+  FieldScript_ShowMessageAndWait(LOCALID_SUSPECTED_THIEF, 0);
+  ObjectMotion_SetSpeedParameters(LOCALID_SUSPECTED_THIEF, PIXELS(7) / 2,
+                                  PIXELS(7) / 4);
   switch (objectEvent->timer) {
   case 4:
     if (facing > 0x2000 && facing < 0xa000) {
@@ -812,7 +813,7 @@ static void EventScript_SuspectedThiefDodges(void) {
   }
   objectEvent->timer &= 3;
   ObjectEvent_RefreshSelectorById(LOCALID_SUSPECTED_THIEF);
-  Engine_ScriptEnd();
+  FieldScript_End();
 }
 
 /// The villager suspecting the neighbor asks whether the thieves came from
@@ -824,28 +825,28 @@ static void EventScript_SuspectedThiefDodges(void) {
 /// (LOCALID_VILLAGER_SUSPECTING_THE_NEIGHBOR) after the thieves are jailed; the
 /// boy and LOCALID_BOY_WISHING_TO_BE_OLDER below are reached the same way.
 static void EventScript_AskWhetherThievesCameFromLunpa(void) {
-  Engine_ScriptStart();
-  Engine_ScriptSetMessage(MsgVaultDidThoseThievesComeFrom);
+  FieldScript_Start();
+  FieldScript_SetMessageId(MsgVaultDidThoseThievesComeFrom);
   VaultInteriors_AskYesNoAndShowReply(LOCALID_VILLAGER_SUSPECTING_THE_NEIGHBOR);
-  Engine_ScriptEnd();
+  FieldScript_End();
 }
 
 /// The boy says Father worries about the prisoners from Lunpa.
 /// He's in a house of Vault, and says it after the thieves are jailed.
 static void EventScript_BoyWorriesAboutFather(void) {
-  Engine_ScriptStart();
-  Engine_ScriptSetMessage(MsgVaultMyFatherWorriedAboutThose);
+  FieldScript_Start();
+  FieldScript_SetMessageId(MsgVaultMyFatherWorriedAboutThose);
   VaultInteriors_StandAndShowMessage(LOCALID_BOY_ASKING_ABOUT_TRAVEL);
-  Engine_ScriptEnd();
+  FieldScript_End();
 }
 
 /// At the mayor's in Vault after the thieves are jailed, a villager asks about
 /// defeating them. "I heard you defeated those thieves!"
 static void EventScript_AskAboutDefeatingThieves(void) {
-  Engine_ScriptStart();
-  Engine_ScriptSetMessage(MsgVaultHeardDefeatedThoseThieves);
+  FieldScript_Start();
+  FieldScript_SetMessageId(MsgVaultHeardDefeatedThoseThieves);
   VaultInteriors_AskYesNoAndShowReply(LOCALID_BOY_WISHING_TO_BE_OLDER);
-  Engine_ScriptEnd();
+  FieldScript_End();
 }
 
 /// The mayor thanks Isaac and gives the promised Water of Life.
@@ -857,37 +858,37 @@ static void EventScript_AskAboutDefeatingThieves(void) {
 /// jailed. Gives the Water of Life and sets FLAG_VAULT_WATER_OF_LIFE_RECEIVED,
 /// once; with a full bag he says to come back for it.
 static void EventScript_MayorGivesWaterOfLife(void) {
-  Engine_ScriptStart();
+  FieldScript_Start();
   if (GameFlag_IsSet(FLAG_VAULT_WATER_OF_LIFE_RECEIVED) == 0) {
-    Engine_ScriptSetMessage(MsgVaultYouWereSuchGreatHelp);
+    FieldScript_SetMessageId(MsgVaultYouWereSuchGreatHelp);
     VaultInteriors_ShowMessageAndWait(LOCALID_MAYOR, 20);
     VaultInteriors_PlayAnimationAndWait(LOCALID_MAYOR, ANIM_NOD, 20);
     VaultInteriors_ShowMessageAndWait(LOCALID_MAYOR, 30);
     ObjectEvent_FaceDirection(LOCALID_MAYOR, FACING_EAST, 0);
-    Engine_ScriptWait(30);
-    Engine_ObjectEventRunRepeatedMotion(LOCALID_MAYOR, 2);
-    Engine_ScriptWait(30);
+    FieldScript_WaitFrames(30);
+    ObjectMotion_SetVarCbAndRefresh(LOCALID_MAYOR, 2);
+    FieldScript_WaitFrames(30);
     VaultInteriors_FaceEachOtherAndWait(LOCALID_PARTY_LEADER, LOCALID_MAYOR,
                                         20);
     VaultInteriors_PlayAnimationAndWait(LOCALID_MAYOR, ANIM_NOD, 20);
     gFieldWork->message++;
     if (PartyInventory_HasSpace() == 0) {
-      Engine_ScriptSetMessage(MsgVaultYouWereSuchGreatHelp + 3);
+      FieldScript_SetMessageId(MsgVaultYouWereSuchGreatHelp + 3);
       VaultInteriors_ShowMessageAndWait(LOCALID_MAYOR, 20);
-      Engine_ScriptEnd();
+      FieldScript_End();
       return;
     }
     GameFlag_Set(FLAG_VAULT_WATER_OF_LIFE_RECEIVED);
-    Engine_PartyGiveItem(ITEM_WATER_OF_LIFE, 0);
+    PartyInventory_GiveItem(ITEM_WATER_OF_LIFE, 0);
   }
-  Engine_ScriptSetMessage(MsgVaultHeadingOutBeyondGomaRange);
+  FieldScript_SetMessageId(MsgVaultHeadingOutBeyondGomaRange);
   Script_OpenMessage(LOCALID_MAYOR, 0);
-  Engine_ScriptWait(20);
-  if (Engine_ScriptChooseYesNo(0, 0) != 0) {
+  FieldScript_WaitFrames(20);
+  if (FieldScript_AskYesNoWithObjectEventAnimation(0, 0) != 0) {
     gFieldWork->message++;
   }
   Script_ShowMessage(LOCALID_MAYOR, 0);
-  Engine_ScriptEnd();
+  FieldScript_End();
 }
 
 /// At Vault's inn after the thieves are jailed, the girl at the inn offers
@@ -897,42 +898,42 @@ static void EventScript_MayorGivesWaterOfLife(void) {
 /// the thieves are jailed, while the leader is not beside the Bone on the floor
 /// (FLAG_MAP_TEMP_50 clear). Gives a Bone and sets FLAG_VAULT_BONE_RECEIVED.
 static void EventScript_OfferBones(void) {
-  Engine_ScriptStart();
+  FieldScript_Start();
   VaultInteriors_FaceEachOtherAndWait(LOCALID_GIRL_AT_THE_INN,
                                       LOCALID_PARTY_LEADER, 2);
   if (GameFlag_IsSet(FLAG_VAULT_BONE_RECEIVED) == 0) {
-    Engine_ScriptSetMessage(MsgVaultHaveLotLeftoverBonesFrom);
+    FieldScript_SetMessageId(MsgVaultHaveLotLeftoverBonesFrom);
     Script_OpenMessage(LOCALID_GIRL_AT_THE_INN, 0);
   } else {
-    Engine_ScriptSetMessage(MsgVaultWantMoreBones);
+    FieldScript_SetMessageId(MsgVaultWantMoreBones);
     Script_OpenMessage(LOCALID_GIRL_AT_THE_INN, 0);
   }
-  if (Engine_ScriptChooseYesNo(0, 0) == 0) {
-    Engine_ScriptWait(20);
+  if (FieldScript_AskYesNoWithObjectEventAnimation(0, 0) == 0) {
+    FieldScript_WaitFrames(20);
     Script_ShowMessage(LOCALID_GIRL_AT_THE_INN, 0);
-    Engine_ScriptWait(20);
-    Engine_ObjectEventRunRepeatedMotion(LOCALID_GIRL_AT_THE_INN, 2);
-    Engine_ScriptWait(20);
+    FieldScript_WaitFrames(20);
+    ObjectMotion_SetVarCbAndRefresh(LOCALID_GIRL_AT_THE_INN, 2);
+    FieldScript_WaitFrames(20);
     if (PartyInventory_HasSpace() == 0) {
-      Engine_ObjectEventSetAnimationAndWait(LOCALID_GIRL_AT_THE_INN,
-                                            ANIM_SHAKE_HEAD);
-      Engine_ScriptWait(20);
-      Engine_ScriptSetMessage(MsgVaultWowHaveManyThingsArent);
+      ObjectMotion_SetAnimationAndWait(LOCALID_GIRL_AT_THE_INN,
+                                       ANIM_SHAKE_HEAD);
+      FieldScript_WaitFrames(20);
+      FieldScript_SetMessageId(MsgVaultWowHaveManyThingsArent);
       Script_ShowMessage(LOCALID_GIRL_AT_THE_INN, 0);
     } else {
-      Engine_ItemShowFound(ITEM_BONE, 3);
-      Engine_PartyGiveItem(ITEM_BONE, 0);
+      FieldEffect_StartEffectObject22(ITEM_BONE, 3);
+      PartyInventory_GiveItem(ITEM_BONE, 0);
       GameFlag_Set(FLAG_VAULT_BONE_RECEIVED);
     }
   } else {
     gFieldWork->message++;
-    Engine_ScriptWait(20);
-    Engine_ObjectEventSetAnimationAndWait(LOCALID_GIRL_AT_THE_INN, ANIM_NOD);
-    Engine_ScriptWait(20);
+    FieldScript_WaitFrames(20);
+    ObjectMotion_SetAnimationAndWait(LOCALID_GIRL_AT_THE_INN, ANIM_NOD);
+    FieldScript_WaitFrames(20);
     Script_ShowMessage(LOCALID_GIRL_AT_THE_INN, 0);
   }
   ObjectEvent_FaceDirection(LOCALID_GIRL_AT_THE_INN, FACING_SOUTH, 0);
-  Engine_ScriptEnd();
+  FieldScript_End();
 }
 
 /// In a house of Vault, Mind Read on the wife of the man with the sparkling
@@ -943,69 +944,69 @@ static void EventScript_OfferBones(void) {
 /// names, before and after the thieves are jailed (FLAG_VAULT_THIEVES_JAILED
 /// picks the thought).
 static void EventScript_ReadMindOnRock(void) {
-  Engine_ScriptStart();
-  if (Engine_GameFlagIsSet(FLAG_VAULT_THIEVES_JAILED) == 0) {
-    Engine_ScriptSetMessage(MsgVaultOkMisterLetMeSee);
+  FieldScript_Start();
+  if (GameFlag_Test(FLAG_VAULT_THIEVES_JAILED) == 0) {
+    FieldScript_SetMessageId(MsgVaultOkMisterLetMeSee);
   } else {
-    Engine_ScriptSetMessage(MsgVaultIfRockWorthlessMaybeThats);
+    FieldScript_SetMessageId(MsgVaultIfRockWorthlessMaybeThats);
   }
   Vault_ShowThought(LOCALID_GEM_OWNERS_WIFE);
-  Engine_ScriptEnd();
+  FieldScript_End();
 }
 
 /// In a house of Vault, Mind Read on the boy: what is the outside world
 /// like, or Father looks sad.
 static void EventScript_ReadBoysMind(void) {
-  Engine_ScriptStart();
-  if (Engine_GameFlagIsSet(FLAG_VAULT_THIEVES_JAILED) == 0) {
-    Engine_ScriptSetMessage(MsgVaultWonderOutsideWorldLike);
+  FieldScript_Start();
+  if (GameFlag_Test(FLAG_VAULT_THIEVES_JAILED) == 0) {
+    FieldScript_SetMessageId(MsgVaultWonderOutsideWorldLike);
   } else {
-    Engine_ScriptSetMessage(MsgVaultFatherLooksSadWorryingLike);
+    FieldScript_SetMessageId(MsgVaultFatherLooksSadWorryingLike);
   }
   Vault_ShowThought(LOCALID_BOY_ASKING_ABOUT_TRAVEL);
-  Engine_ScriptEnd();
+  FieldScript_End();
 }
 
 /// In Vault's item shop, Mind Read on Grandpa: could they be thieves? Who can
 /// be trusted? Or nothing in the house was worth stealing.
 static void EventScript_ReadMindOnThieves(void) {
-  Engine_ScriptStart();
-  if (Engine_GameFlagIsSet(FLAG_VAULT_THIEVES_JAILED) == 0) {
-    Engine_ScriptSetMessage(MsgVaultCouldTheyThievesGoodDont);
+  FieldScript_Start();
+  if (GameFlag_Test(FLAG_VAULT_THIEVES_JAILED) == 0) {
+    FieldScript_SetMessageId(MsgVaultCouldTheyThievesGoodDont);
   } else {
-    Engine_ScriptSetMessage(MsgVaultGuessNothingInOurHouse);
+    FieldScript_SetMessageId(MsgVaultGuessNothingInOurHouse);
   }
   Vault_ShowThought(LOCALID_GRANDPA);
-  Engine_ScriptEnd();
+  FieldScript_End();
 }
 
 /// At the mayor's in Vault, Mind Read on the mayor: a laugh, or the cave in
 /// the Goma Range is dangerous, but the party will be okay. "That tickles..."
 static void EventScript_ReadMayorMind(void) {
-  Engine_ScriptStart();
-  if (Engine_GameFlagIsSet(FLAG_VAULT_THIEVES_JAILED) == 0) {
-    Engine_ScriptSetMessage(MsgVaultTicklesBeingTickledByBoy);
+  FieldScript_Start();
+  if (GameFlag_Test(FLAG_VAULT_THIEVES_JAILED) == 0) {
+    FieldScript_SetMessageId(MsgVaultTicklesBeingTickledByBoy);
   } else {
-    Engine_ScriptSetMessage(MsgVaultCaveInGomaRangeDangerous);
+    FieldScript_SetMessageId(MsgVaultCaveInGomaRangeDangerous);
   }
   Vault_ShowThought(LOCALID_MAYOR);
-  Engine_ScriptEnd();
+  FieldScript_End();
 }
 
 /// At Vault's inn, Mind Read on the girl at the inn: the master and his wife
 /// are blinded by money; after the thieves are jailed, hungry while cooking,
 /// or, once a Bone was given, wondering about calcium.
 static void EventScript_ReadBoneGiverMind(void) {
-  Engine_ScriptStart();
-  if (Engine_GameFlagIsSet(FLAG_VAULT_THIEVES_JAILED) == 0) {
-    Engine_ScriptSetMessage(MsgVaultMasterHisWifeBlindedBy);
-  } else if (Engine_GameFlagIsSet(FLAG_VAULT_BONE_RECEIVED) == 0) {
-    Engine_ScriptSetMessage(MsgVaultGeeAlwaysGetHungryWhen);
+  FieldScript_Start();
+  if (GameFlag_Test(FLAG_VAULT_THIEVES_JAILED) == 0) {
+    FieldScript_SetMessageId(MsgVaultMasterHisWifeBlindedBy);
+  } else if (GameFlag_Test(FLAG_VAULT_BONE_RECEIVED) == 0) {
+    FieldScript_SetMessageId(MsgVaultGeeAlwaysGetHungryWhen);
   } else {
-    Engine_ScriptSetMessage(MsgVaultHeReallyLikesBonesWonder);
+    FieldScript_SetMessageId(MsgVaultHeReallyLikesBonesWonder);
   }
   Vault_ShowThought(LOCALID_GIRL_AT_THE_INN);
-  Engine_ScriptEnd();
+  FieldScript_End();
 }
 
 /// At the mayor's in Vault, talking to Ivan: the first time, he reads Isaac's
@@ -1020,7 +1021,7 @@ static void EventScript_MeetIvan(void) {
 
   struct ObjectEvent *objectEvent;
 
-  Engine_ScriptStart();
+  FieldScript_Start();
   ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(4) / 5, PIXELS(2) / 5);
   ObjectEvent_SetSpeed(GARET, PIXELS(4) / 5, PIXELS(2) / 5);
   ObjectEvent_SetSpeed(IVAN, PIXELS(4) / 5, PIXELS(2) / 5);
@@ -1036,63 +1037,63 @@ static void EventScript_MeetIvan(void) {
     GameFlag_Set(FLAG_VAULT_MET_IVAN);
     // Ivan reads Isaac's mind and admits his strange powers.
     VaultInteriors_StartMindRead(IVAN, LOCALID_PARTY_LEADER);
-    Engine_ScriptWait(40);
+    FieldScript_WaitFrames(40);
     VaultInteriors_EndMindRead();
-    Engine_ScriptSetMessage(MsgVaultDoPossessStrangePowers);
+    FieldScript_SetMessageId(MsgVaultDoPossessStrangePowers);
     Script_PlaySong(MUS_060);
-    Engine_ScriptWait(30);
+    FieldScript_WaitFrames(30);
     VaultInteriors_PlayAnimationAndWait(IVAN, ANIM_NOD, 30);
     VaultInteriors_ShowMessageAndWait(IVAN, 30);
     // The two start; he reads again: "You have them, too, don't you?"
-    Engine_ObjectEventStartRepeatedMotion(LOCALID_PARTY_LEADER, 1);
-    Engine_ObjectEventRunRepeatedMotion(GARET, 1);
-    Engine_ScriptWait(20);
+    ObjectMotion_SetVariantCallback(LOCALID_PARTY_LEADER, 1);
+    ObjectMotion_SetVarCbAndRefresh(GARET, 1);
+    FieldScript_WaitFrames(20);
     VaultInteriors_StartMindRead(IVAN, LOCALID_PARTY_LEADER);
-    Engine_ScriptWait(40);
+    FieldScript_WaitFrames(40);
     VaultInteriors_EndMindRead();
     VaultInteriors_ShowMessageAndWait(IVAN, 30);
     VaultInteriors_FaceEachOtherAndWait(LOCALID_PARTY_LEADER, GARET, 50);
     ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_NORTH, 0);
     ObjectEvent_FaceDirection(GARET, FACING_NORTH + FACING_STEP, 0);
-    Engine_ScriptWait(20);
+    FieldScript_WaitFrames(20);
     // A third reading: his power is called Psynergy; then they have so much
     // in common he can trust them.
     VaultInteriors_StartMindRead(IVAN, LOCALID_PARTY_LEADER);
-    Engine_ScriptWait(40);
+    FieldScript_WaitFrames(40);
     VaultInteriors_EndMindRead();
-    Engine_ObjectEventRunRepeatedMotion(IVAN, 1);
+    ObjectMotion_SetVarCbAndRefresh(IVAN, 1);
     VaultInteriors_ShowMessageAndWait(IVAN, 50);
     Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
     VaultInteriors_PlayAnimationAndWait(GARET, ANIM_NOD, 20);
     VaultInteriors_PlayAnimationAndWait(IVAN, ANIM_NOD, 20);
     VaultInteriors_ShowMessageAndWait(IVAN, 40);
     // He walks off a step, turns back and tells of Hammet's stolen rod.
-    Engine_ObjectEventRunRepeatedMotion(IVAN, 1);
-    Engine_ScriptWait(30);
+    ObjectMotion_SetVarCbAndRefresh(IVAN, 1);
+    FieldScript_WaitFrames(30);
     ObjectEvent_FaceDirection(IVAN, FACING_NORTH, 0);
-    Engine_ScriptWait(30);
+    FieldScript_WaitFrames(30);
     ObjectEvent_WalkToAndWait(IVAN, 376, 376);
-    Engine_ScriptWait(40);
+    FieldScript_WaitFrames(40);
     VaultInteriors_FaceEachOtherAndWait(LOCALID_PARTY_LEADER, GARET, 50);
     ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_NORTH, 0);
     ObjectEvent_FaceDirection(GARET, FACING_NORTH + FACING_STEP, 0);
-    Engine_ObjectEventRunRepeatedMotion(IVAN, 1);
-    Engine_ScriptWait(50);
+    ObjectMotion_SetVarCbAndRefresh(IVAN, 1);
+    FieldScript_WaitFrames(50);
     VaultInteriors_PlayAnimationAndWait(IVAN, ANIM_NOD, 30);
     ObjectEvent_FaceDirection(IVAN, FACING_SOUTH, 0);
-    Engine_ScriptWait(10);
+    FieldScript_WaitFrames(10);
     Script_ShowMessage(IVAN, 0);
     // "Would you please help me get my master's rod back?"
     Script_OpenMessage(IVAN, 0);
   } else {
     // Asked again: "Would you really? Would you help me find the rod?"
     Script_PlaySong(MUS_060);
-    Engine_ScriptSetMessage(MsgVaultWouldReallyWouldHelpMe);
+    FieldScript_SetMessageId(MsgVaultWouldReallyWouldHelpMe);
     Script_OpenMessage(IVAN, 0);
   }
   // Accepting the search lets Ivan merge into the leader's position; a no gets
   // his apology for asking.
-  if (Engine_ScriptChooseYesNo(0, 0) == 0) {
+  if (FieldScript_AskYesNoWithObjectEventAnimation(0, 0) == 0) {
     VaultInteriors_IvanJoinsRodSearch();
     GameFlag_Set(FLAG_VAULT_IVAN_JOINED_ROD_SEARCH);
     Engine_ObjectEventSetAnimation(IVAN, ANIM_WALK);
@@ -1101,7 +1102,7 @@ static void EventScript_MeetIvan(void) {
       ObjectEvent_SetDestination(IVAN, objectEvent->x.part.pixel,
                                  objectEvent->z.part.pixel);
     }
-    Engine_ObjectEventWaitForMove(IVAN);
+    ObjectMotion_CommitCurrentPositionAndActivate(IVAN);
     ObjectEvent_SetPosition(IVAN, 0, 0);
   } else {
     Script_ShowMessage(IVAN, 0);
@@ -1113,10 +1114,10 @@ static void EventScript_MeetIvan(void) {
     ObjectEvent_SetDestination(GARET, objectEvent->x.part.pixel,
                                objectEvent->z.part.pixel);
   }
-  Engine_ObjectEventWaitForMove(GARET);
+  ObjectMotion_CommitCurrentPositionAndActivate(GARET);
   ObjectEvent_SetPosition(GARET, 0, 0);
   Map_PlayMusic();
-  Engine_ScriptEnd();
+  FieldScript_End();
 }
 
 /// Ivan thanks them, they exchange names, and he shows Isaac and Garet Mind
@@ -1129,156 +1130,156 @@ static void VaultInteriors_IvanJoinsRodSearch(void) {
 
   // Ivan jumps for joy: "Thank you. With your help, I believe we can recover
   // the rod." Then he asks their names.
-  Engine_ScriptWait(20);
+  FieldScript_WaitFrames(20);
   ObjectEvent_GetById(IVAN)->paused = 0;
-  Engine_ObjectEventJump(IVAN, 4, 0);
-  Engine_ScriptWait(40);
+  ObjectMotion_Launch(IVAN, 4, 0);
+  FieldScript_WaitFrames(40);
   message = MsgVaultThankHelpBelieve;
-  Engine_ScriptSetMessage(message);
-  Engine_ScriptWait(20);
+  FieldScript_SetMessageId(message);
+  FieldScript_WaitFrames(20);
   VaultInteriors_ShowMessageAndWait(IVAN, 20);
   ObjectEvent_ShowEmote(IVAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
-  Engine_ScriptWait(50);
+  FieldScript_WaitFrames(50);
   VaultInteriors_ShowMessageAndWait(IVAN, 30);
   // He reads their names from Isaac's mind; Isaac backs away from him.
   ObjectEvent_WalkToAndWait(IVAN, 376, 392);
   VaultInteriors_StartMindRead(IVAN, LOCALID_PARTY_LEADER);
-  Engine_ScriptWait(40);
+  FieldScript_WaitFrames(40);
   VaultInteriors_EndMindRead();
-  Engine_ObjectEventRunRepeatedMotion(LOCALID_PARTY_LEADER, 1);
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_PARTY_LEADER, 1);
   ObjectEvent_GetById(LOCALID_PARTY_LEADER)->steeringFlags &=
       ~OBJ_EVENT_FACES_MOTION;
   ObjectEvent_WalkToAndWait(LOCALID_PARTY_LEADER, 384, 424);
-  Engine_ScriptWait(1);
+  FieldScript_WaitFrames(1);
   ObjectEvent_GetById(LOCALID_PARTY_LEADER)->steeringFlags |=
       OBJ_EVENT_FACES_MOTION;
-  Engine_ScriptWait(30);
-  Engine_ScriptShowMessage(IVAN, 0);
+  FieldScript_WaitFrames(30);
+  FieldScript_ShowMessageAndWait(IVAN, 0);
   // Demonstrate Mind Read and let Garet and Isaac react to Ivan's explanation.
   ObjectEvent_SetAttachedEffect(LOCALID_PARTY_LEADER, ATTACHED_EFFECT_IN_FRONT |
                                                           ATTACHED_EFFECT_ONCE);
   ObjectEvent_SetAttachedEffect(GARET, ATTACHED_EFFECT_IN_FRONT |
                                            ATTACHED_EFFECT_ONCE);
-  Engine_ScriptWait(60);
+  FieldScript_WaitFrames(60);
   Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
   VaultInteriors_PlayAnimationAndWait(GARET, ANIM_NOD, 30);
   ObjectEvent_ShowEmote(IVAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
-  Engine_ScriptWait(60);
-  Engine_ObjectEventRunRepeatedMotion(IVAN, 1);
-  Engine_ScriptWait(10);
+  FieldScript_WaitFrames(60);
+  ObjectMotion_SetVarCbAndRefresh(IVAN, 1);
+  FieldScript_WaitFrames(10);
   VaultInteriors_PlayAnimationAndWait(IVAN, ANIM_NOD, 20);
-  Engine_ScriptShowMessage(IVAN, 0);
-  Engine_ObjectEventRunRepeatedMotion(GARET, 2);
-  Engine_ScriptWait(10);
+  FieldScript_ShowMessageAndWait(IVAN, 0);
+  ObjectMotion_SetVarCbAndRefresh(GARET, 2);
+  FieldScript_WaitFrames(10);
   VaultInteriors_FaceObjectEventAndWait(GARET, LOCALID_PARTY_LEADER, 30);
-  Engine_ObjectEventRunRepeatedMotion(LOCALID_PARTY_LEADER, 2);
-  Engine_ScriptWait(10);
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_PARTY_LEADER, 2);
+  FieldScript_WaitFrames(10);
   VaultInteriors_FaceObjectEventAndWait(LOCALID_PARTY_LEADER, GARET, 40);
   ObjectEvent_ShowEmote(LOCALID_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
   ObjectEvent_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
-  Engine_ScriptWait(60);
+  FieldScript_WaitFrames(60);
   // "Is my Mind Read so frightening?": either answer goes on the same way.
   ObjectEvent_ShowEmote(IVAN, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
-  Engine_ScriptWait(60);
-  Engine_ScriptOpenMessage(IVAN, 0);
-  Engine_ObjectEventFaceObjectEvent(LOCALID_PARTY_LEADER, IVAN, 0);
-  Engine_ObjectEventFaceObjectEvent(GARET, IVAN, 0);
-  Engine_ScriptChooseYesNo(0, 0);
-  Engine_ScriptWait(30);
+  FieldScript_WaitFrames(60);
+  FieldMessage_ShowAtObject(IVAN, 0);
+  ObjectMotion_SetAngleToward(LOCALID_PARTY_LEADER, IVAN, 0);
+  ObjectMotion_SetAngleToward(GARET, IVAN, 0);
+  FieldScript_AskYesNoWithObjectEventAnimation(0, 0);
+  FieldScript_WaitFrames(30);
   // Ivan and Isaac clasp hands, and Garet cries out that his mind is read.
   VaultInteriors_PlayAnimationAndWait(IVAN, ANIM_NOD, 10);
   ObjectEvent_WalkToAndWait(IVAN, 384, 408);
-  Engine_ScriptWait(10);
-  Engine_MessageShowCentered(message + 5, 1);
-  Engine_ScriptSetMessage(message + 6);
-  Engine_ObjectEventFaceEachOther(IVAN, GARET, 0);
+  FieldScript_WaitFrames(10);
+  FieldMessage_Show(message + 5, 1);
+  FieldScript_SetMessageId(message + 6);
+  ObjectEvent_LinkPair(IVAN, GARET, 0);
   VaultInteriors_FaceObjectEventAndWait(LOCALID_PARTY_LEADER, GARET, 20);
   ObjectEvent_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
-  Engine_ScriptWait(60);
-  Engine_ObjectEventRunRepeatedMotion(GARET, 1);
+  FieldScript_WaitFrames(60);
+  ObjectMotion_SetVarCbAndRefresh(GARET, 1);
   ObjectEvent_GetById(GARET)->steeringFlags &= ~OBJ_EVENT_FACES_MOTION;
   ObjectEvent_WalkToAndWait(GARET, 352, 408);
-  Engine_ScriptWait(1);
+  FieldScript_WaitFrames(1);
   ObjectEvent_GetById(GARET)->steeringFlags |= OBJ_EVENT_FACES_MOTION;
-  Engine_ScriptWait(10);
+  FieldScript_WaitFrames(10);
   // Garet backs off; Ivan asks whether Isaac could read Garet's mind, and the
   // two read it together. "Just as I thought."
   ObjectEvent_WalkTo(IVAN, 368, 408);
-  Engine_ScriptWait(20);
+  FieldScript_WaitFrames(20);
   ObjectEvent_WalkToAndWait(LOCALID_PARTY_LEADER, 368, 424);
-  Engine_ObjectEventFaceObjectEvent(LOCALID_PARTY_LEADER, GARET, 0);
-  Engine_ObjectEventWaitForMove(IVAN);
+  ObjectMotion_SetAngleToward(LOCALID_PARTY_LEADER, GARET, 0);
+  ObjectMotion_CommitCurrentPositionAndActivate(IVAN);
   VaultInteriors_StartMindRead(IVAN, GARET);
   VaultInteriors_PlayAnimationAndWait(GARET, ANIM_SHAKE_HEAD, 10);
-  Engine_ScriptShowMessage(GARET, 0);
+  FieldScript_ShowMessageAndWait(GARET, 0);
   VaultInteriors_EndMindRead();
   VaultInteriors_FaceEachOtherAndWait(IVAN, LOCALID_PARTY_LEADER, 30);
-  Engine_ScriptShowMessage(IVAN, 0);
-  Engine_ObjectEventRunRepeatedMotion(LOCALID_PARTY_LEADER, 1);
-  Engine_ScriptWait(30);
+  FieldScript_ShowMessageAndWait(IVAN, 0);
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_PARTY_LEADER, 1);
+  FieldScript_WaitFrames(30);
   VaultInteriors_PlayAnimationAndWait(LOCALID_PARTY_LEADER, ANIM_NOD, 30);
   VaultInteriors_PlayAnimationAndWait(IVAN, ANIM_NOD, 10);
-  Engine_ScriptShowMessage(IVAN, 0);
-  Engine_ObjectEventRunRepeatedMotion(GARET, 2);
-  Engine_ObjectEventFaceObjectEvent(GARET, LOCALID_PARTY_LEADER, 0);
-  Engine_ScriptShowMessage(GARET, 0);
-  Engine_ObjectEventFaceObjectEvent(LOCALID_PARTY_LEADER, GARET, 0);
+  FieldScript_ShowMessageAndWait(IVAN, 0);
+  ObjectMotion_SetVarCbAndRefresh(GARET, 2);
+  ObjectMotion_SetAngleToward(GARET, LOCALID_PARTY_LEADER, 0);
+  FieldScript_ShowMessageAndWait(GARET, 0);
+  ObjectMotion_SetAngleToward(LOCALID_PARTY_LEADER, GARET, 0);
   VaultInteriors_PlayAnimationAndWait(LOCALID_PARTY_LEADER, ANIM_NOD, 40);
-  Engine_ObjectEventFaceObjectEvent(LOCALID_PARTY_LEADER, IVAN, 0);
+  ObjectMotion_SetAngleToward(LOCALID_PARTY_LEADER, IVAN, 0);
   VaultInteriors_FaceObjectEventAndWait(GARET, IVAN, 30);
   ObjectEvent_ShowEmote(LOCALID_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_QUESTION,
                         0);
   ObjectEvent_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
-  Engine_ScriptWait(60);
+  FieldScript_WaitFrames(60);
   // Sharing their Psynergy let Isaac read minds too; Garet protests that it
   // isn't fair, and Ivan agrees it is one-way.
   VaultInteriors_PlayAnimationAndWait(IVAN, ANIM_NOD, 20);
-  Engine_ScriptShowMessage(IVAN, 0);
-  Engine_ObjectEventShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 0);
-  Engine_ScriptWait(60);
+  FieldScript_ShowMessageAndWait(IVAN, 0);
+  FieldEffect_SpawnLinked(GARET, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 0);
+  FieldScript_WaitFrames(60);
   VaultInteriors_FaceObjectEventAndWait(GARET, LOCALID_PARTY_LEADER, 10);
-  Engine_ScriptShowMessage(GARET, 0);
-  Engine_ObjectEventShowEmote(IVAN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
-  Engine_ScriptWait(60);
-  Engine_ScriptShowMessage(IVAN, 0);
+  FieldScript_ShowMessageAndWait(GARET, 0);
+  FieldEffect_SpawnLinked(IVAN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
+  FieldScript_WaitFrames(60);
+  FieldScript_ShowMessageAndWait(IVAN, 0);
   ObjectEvent_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
-  Engine_ScriptWait(60);
+  FieldScript_WaitFrames(60);
   // Ivan and Garet clasp hands, and Garet reads Isaac's mind.
-  Engine_MessageShowCentered(message + 13, 1);
-  Engine_ScriptSetMessage(message + 14);
-  Engine_ObjectEventFaceEachOther(IVAN, LOCALID_PARTY_LEADER, 0);
-  Engine_ObjectEventFaceObjectEvent(GARET, LOCALID_PARTY_LEADER, 0);
-  Engine_ObjectEventShowEmote(LOCALID_PARTY_LEADER,
-                              EMOTE_IN_FRONT | EMOTE_WINCE, 0);
-  Engine_ScriptWait(60);
+  FieldMessage_Show(message + 13, 1);
+  FieldScript_SetMessageId(message + 14);
+  ObjectEvent_LinkPair(IVAN, LOCALID_PARTY_LEADER, 0);
+  ObjectMotion_SetAngleToward(GARET, LOCALID_PARTY_LEADER, 0);
+  FieldEffect_SpawnLinked(LOCALID_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_WINCE,
+                          0);
+  FieldScript_WaitFrames(60);
   VaultInteriors_StartMindRead(IVAN, LOCALID_PARTY_LEADER);
   Ui_SetBank15PaletteAndClearRenderMode();
   VaultInteriors_ShowMessageAndWait(GARET, 30);
   VaultInteriors_EndMindRead();
-  Engine_ObjectEventFaceEachOther(IVAN, GARET, 0);
+  ObjectEvent_LinkPair(IVAN, GARET, 0);
   VaultInteriors_PlayAnimationAndWait(IVAN, ANIM_NOD, 10);
   VaultInteriors_ShowMessageAndWait(IVAN, 20);
-  Engine_ObjectEventFaceEachOther(IVAN, LOCALID_PARTY_LEADER, 0);
+  ObjectEvent_LinkPair(IVAN, LOCALID_PARTY_LEADER, 0);
   VaultInteriors_PlayAnimationAndWait(LOCALID_PARTY_LEADER, ANIM_NOD, 20);
-  Engine_ObjectEventRunRepeatedMotion(GARET, 1);
-  Engine_ScriptWait(20);
+  ObjectMotion_SetVarCbAndRefresh(GARET, 1);
+  FieldScript_WaitFrames(20);
   // "Let's use Mind Read to find the thieves!" Garet worries people will
   // notice.
   VaultInteriors_PlayAnimationAndWait(GARET, ANIM_SHAKE_HEAD, 10);
   VaultInteriors_ShowMessageAndWait(GARET, 30);
-  Engine_ObjectEventFaceObjectEvent(IVAN, GARET, 0);
+  ObjectMotion_SetAngleToward(IVAN, GARET, 0);
   ObjectEvent_ShowEmote(IVAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
-  Engine_ScriptWait(30);
+  FieldScript_WaitFrames(30);
   VaultInteriors_FaceEachOtherAndWait(LOCALID_PARTY_LEADER, GARET, 10);
   Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
   VaultInteriors_PlayAnimationAndWait(GARET, ANIM_NOD, 30);
-  Engine_ObjectEventFaceObjectEvent(LOCALID_PARTY_LEADER, IVAN, 0);
-  Engine_ObjectEventFaceObjectEvent(GARET, IVAN, 0);
-  Engine_ObjectEventFaceObjectEvent(IVAN, LOCALID_PARTY_LEADER, 0);
+  ObjectMotion_SetAngleToward(LOCALID_PARTY_LEADER, IVAN, 0);
+  ObjectMotion_SetAngleToward(GARET, IVAN, 0);
+  ObjectMotion_SetAngleToward(IVAN, LOCALID_PARTY_LEADER, 0);
   // Only Adepts can tell when Ivan uses Psynergy; ordinary people see
   // nothing, and he promises not to read their minds again.
-  Engine_ObjectEventShowEmote(IVAN, EMOTE_IN_FRONT | EMOTE_LIGHT_BULB, 0);
-  Engine_ScriptWait(60);
+  FieldEffect_SpawnLinked(IVAN, EMOTE_IN_FRONT | EMOTE_LIGHT_BULB, 0);
+  FieldScript_WaitFrames(60);
   VaultInteriors_ShowMessageAndWait(IVAN, 10);
   Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
   VaultInteriors_PlayAnimationAndWait(GARET, ANIM_NOD, 20);
@@ -1286,13 +1287,13 @@ static void VaultInteriors_IvanJoinsRodSearch(void) {
   VaultInteriors_ShowMessageAndWait(IVAN, 20);
   ObjectEvent_ShowEmote(LOCALID_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_QUESTION,
                         0);
-  Engine_ObjectEventShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
-  Engine_ScriptWait(60);
+  FieldEffect_SpawnLinked(GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
+  FieldScript_WaitFrames(60);
   VaultInteriors_PlayAnimationAndWait(IVAN, ANIM_NOD, 10);
   VaultInteriors_ShowMessageAndWait(IVAN, 30);
-  Engine_ObjectEventShowEmote(LOCALID_PARTY_LEADER,
-                              EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
-  Engine_ScriptWait(60);
+  FieldEffect_SpawnLinked(LOCALID_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_ELLIPSIS,
+                          0);
+  FieldScript_WaitFrames(60);
   VaultInteriors_PlayAnimationAndWait(IVAN, ANIM_SHAKE_HEAD, 10);
   VaultInteriors_ShowMessageAndWait(IVAN, 30);
   VaultInteriors_PlayAnimationAndWait(IVAN, ANIM_NOD, 10);
@@ -1300,9 +1301,9 @@ static void VaultInteriors_IvanJoinsRodSearch(void) {
   VaultInteriors_PlayAnimationAndWait(GARET, ANIM_NOD, 20);
   // "Ivan joined your party!", then he will read the townspeople's minds.
   FieldScript_PrepareObjectAndApplyValue(IVAN, 1);
-  Engine_ScriptSetMessage(message + 22);
-  Engine_ObjectEventRunRepeatedMotion(IVAN, 1);
-  Engine_ScriptShowMessage(IVAN, 0);
+  FieldScript_SetMessageId(message + 22);
+  ObjectMotion_SetVarCbAndRefresh(IVAN, 1);
+  FieldScript_ShowMessageAndWait(IVAN, 0);
 }
 
 /// In the inn's loft in Vault, Isaac cuts the tied-up villager free; the three
@@ -1318,20 +1319,20 @@ static void VaultInteriors_IvanJoinsRodSearch(void) {
 static void EventScript_FreeRooferAndConfrontThieves(void) {
   s32 base;
 
-  Engine_ScriptStart();
+  FieldScript_Start();
   ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(4) / 5, PIXELS(2) / 5);
   ObjectEvent_SetSpeed(GARET, PIXELS(4) / 5, PIXELS(2) / 5);
   ObjectEvent_SetSpeed(IVAN, PIXELS(4) / 5, PIXELS(2) / 5);
   // Isaac cuts the tied-up villager free from the ropes; he gets up and nods.
-  Engine_ObjectEventRunRepeatedMotion(LOCALID_PARTY_LEADER, 3);
-  Engine_ScriptWait(20);
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_PARTY_LEADER, 3);
+  FieldScript_WaitFrames(20);
   base = MsgVaultVaultCutFree;
-  Engine_MessageShowCentered(base, 1);
+  FieldMessage_Show(base, 1);
   base++;
-  Engine_ScriptSetMessage(base);
-  Engine_ScriptWait(30);
+  FieldScript_SetMessageId(base);
+  FieldScript_WaitFrames(30);
   Engine_ObjectEventSetAnimation(LOCALID_TIED_UP_VILLAGER, ANIM_STAND);
-  Engine_ScriptWait(60);
+  FieldScript_WaitFrames(60);
   VaultInteriors_PlayAnimationAndWait(LOCALID_TIED_UP_VILLAGER, ANIM_NOD, 40);
   // Garet and Ivan come out of the leader around the tied-up villager.
   ObjectEvent_WalkToAndWait(LOCALID_PARTY_LEADER, 792, 440);
@@ -1341,63 +1342,62 @@ static void EventScript_FreeRooferAndConfrontThieves(void) {
   ObjectEvent_SetPosition(IVAN, PIXELS(792), PIXELS(440));
   ObjectEvent_WalkTo(GARET, 808, 432);
   ObjectEvent_WalkTo(IVAN, 792, 456);
-  Engine_ObjectEventWaitForMove(GARET);
-  Engine_ObjectEventFaceObjectEvent(GARET, LOCALID_TIED_UP_VILLAGER, 0);
-  Engine_ObjectEventWaitForMove(IVAN);
+  ObjectMotion_CommitCurrentPositionAndActivate(GARET);
+  ObjectMotion_SetAngleToward(GARET, LOCALID_TIED_UP_VILLAGER, 0);
+  ObjectMotion_CommitCurrentPositionAndActivate(IVAN);
   VaultInteriors_FaceObjectEventAndWait(IVAN, LOCALID_TIED_UP_VILLAGER, 60);
   // The tied-up villager tells how he came up to fix the roof, was whacked from
   // behind and woke up tied.
   ObjectEvent_ShowEmote(LOCALID_TIED_UP_VILLAGER, EMOTE_IN_FRONT | EMOTE_WINCE,
                         0);
-  Engine_ScriptWait(60);
+  FieldScript_WaitFrames(60);
   VaultInteriors_ShowMessageAndWait(LOCALID_TIED_UP_VILLAGER, 20);
   Engine_ObjectEventSetAnimation(IVAN, ANIM_NOD);
   VaultInteriors_PlayAnimationAndWait(GARET, ANIM_NOD, 30);
-  Engine_ObjectEventRunRepeatedMotion(LOCALID_TIED_UP_VILLAGER, 2);
-  Engine_ScriptWait(20);
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_TIED_UP_VILLAGER, 2);
+  FieldScript_WaitFrames(20);
   VaultInteriors_ShowMessageAndWait(LOCALID_TIED_UP_VILLAGER, 20);
   ObjectEvent_ShowEmote(IVAN, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
   ObjectEvent_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
-  Engine_ScriptWait(60);
+  FieldScript_WaitFrames(60);
   ObjectEvent_FaceDirection(LOCALID_TIED_UP_VILLAGER,
                             FACING_SOUTHEAST + FACING_STEP, 0);
-  Engine_ScriptWait(10);
+  FieldScript_WaitFrames(10);
   VaultInteriors_ShowMessageAndWait(LOCALID_TIED_UP_VILLAGER, 30);
   // He looks around at chests he doesn't remember; Ivan guesses the stolen
   // goods are in them.
   ObjectEvent_FaceDirection(LOCALID_TIED_UP_VILLAGER,
                             FACING_NORTH + FACING_STEP, 0);
-  Engine_ScriptWait(30);
+  FieldScript_WaitFrames(30);
   ObjectEvent_ShowEmote(LOCALID_TIED_UP_VILLAGER,
                         EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
-  Engine_ScriptWait(60);
+  FieldScript_WaitFrames(60);
   ObjectEvent_FaceDirection(LOCALID_TIED_UP_VILLAGER,
                             FACING_NORTHWEST + FACING_STEP, 0);
-  Engine_ScriptWait(40);
+  FieldScript_WaitFrames(40);
   ObjectEvent_FaceDirection(LOCALID_TIED_UP_VILLAGER,
                             FACING_NORTH + FACING_STEP, 0);
-  Engine_ScriptWait(40);
+  FieldScript_WaitFrames(40);
   VaultInteriors_FaceObjectEventAndWait(LOCALID_TIED_UP_VILLAGER,
                                         LOCALID_PARTY_LEADER, 20);
   VaultInteriors_PlayAnimationAndWait(LOCALID_TIED_UP_VILLAGER, ANIM_SHAKE_HEAD,
                                       30);
   VaultInteriors_ShowMessageAndWait(LOCALID_TIED_UP_VILLAGER, 20);
-  Engine_ObjectEventRunRepeatedMotion(IVAN, 1);
+  ObjectMotion_SetVarCbAndRefresh(IVAN, 1);
   VaultInteriors_ShowMessageAndWait(IVAN, 40);
   // The thieves' leader appears at the ladder to MUS_061: "Looks like we've
   // been found out!" Everyone turns.
   ObjectEvent_SetPosition(LOCALID_THIEF_LEADER, PIXELS(744), PIXELS(408));
-  Engine_AudioPlayCue(MUS_061);
+  Sound_PlaySong(MUS_061);
   VaultInteriors_ShowMessageAndWait(LOCALID_THIEF_LEADER, 20);
-  Engine_ObjectEventStartRepeatedMotion(LOCALID_PARTY_LEADER, 1);
-  Engine_ObjectEventStartRepeatedMotion(GARET, 1);
-  Engine_ObjectEventStartRepeatedMotion(IVAN, 1);
-  Engine_ObjectEventRunRepeatedMotion(LOCALID_TIED_UP_VILLAGER, 1);
-  Engine_ScriptWait(30);
-  Engine_ObjectEventFaceObjectEvent(LOCALID_PARTY_LEADER, LOCALID_THIEF_LEADER,
-                                    0);
-  Engine_ObjectEventFaceObjectEvent(GARET, LOCALID_THIEF_LEADER, 0);
-  Engine_ObjectEventFaceObjectEvent(IVAN, LOCALID_THIEF_LEADER, 0);
+  ObjectMotion_SetVariantCallback(LOCALID_PARTY_LEADER, 1);
+  ObjectMotion_SetVariantCallback(GARET, 1);
+  ObjectMotion_SetVariantCallback(IVAN, 1);
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_TIED_UP_VILLAGER, 1);
+  FieldScript_WaitFrames(30);
+  ObjectMotion_SetAngleToward(LOCALID_PARTY_LEADER, LOCALID_THIEF_LEADER, 0);
+  ObjectMotion_SetAngleToward(GARET, LOCALID_THIEF_LEADER, 0);
+  ObjectMotion_SetAngleToward(IVAN, LOCALID_THIEF_LEADER, 0);
   VaultInteriors_FaceObjectEventAndWait(LOCALID_TIED_UP_VILLAGER,
                                         LOCALID_THIEF_LEADER, 40);
   // He walks up and his two men run in behind him.
@@ -1409,72 +1409,70 @@ static void EventScript_FreeRooferAndConfrontThieves(void) {
   ObjectEvent_WalkToAndWait(LOCALID_THIEF_LEADER, 792, 416);
   ObjectEvent_FaceDirection(LOCALID_THIEF_LEADER,
                             FACING_SOUTHEAST + FACING_STEP, 0);
-  Engine_ScriptWait(70);
-  Engine_ObjectEventFaceObjectEvent(LOCALID_PARTY_LEADER, LOCALID_THIEF_LEADER,
-                                    0);
+  FieldScript_WaitFrames(70);
+  ObjectMotion_SetAngleToward(LOCALID_PARTY_LEADER, LOCALID_THIEF_LEADER, 0);
   ObjectEvent_FaceObjectEvent(GARET, LOCALID_THIEF_LEADER, 0);
-  Engine_ObjectEventFaceObjectEvent(IVAN, LOCALID_THIEF_LEADER, 0);
-  Engine_ObjectEventFaceObjectEvent(LOCALID_TIED_UP_VILLAGER,
-                                    LOCALID_THIEF_LEADER, 0);
+  ObjectMotion_SetAngleToward(IVAN, LOCALID_THIEF_LEADER, 0);
+  ObjectMotion_SetAngleToward(LOCALID_TIED_UP_VILLAGER, LOCALID_THIEF_LEADER,
+                              0);
   ObjectEvent_SetActionScript(LOCALID_FIRST_THIEF,
                               gVaultInteriors_FirstThiefEntryScript);
-  Engine_ScriptWait(40);
+  FieldScript_WaitFrames(40);
   ObjectEvent_SetActionScript(LOCALID_SECOND_THIEF,
                               gVaultInteriors_SecondThiefEntryScript);
   ObjectEvent_RefreshSelectorById(LOCALID_SECOND_THIEF);
   ObjectEvent_FaceDirection(LOCALID_FIRST_THIEF, FACING_SOUTHEAST, 0);
   ObjectEvent_FaceDirection(LOCALID_SECOND_THIEF, FACING_SOUTHEAST, 0);
-  Engine_ScriptWait(40);
+  FieldScript_WaitFrames(40);
   // The three taunt Hammet's whelp and say Hammet was caught by worse thieves
   // after fleeing to Lunpa.
   VaultInteriors_PlayAnimationAndWait(LOCALID_THIEF_LEADER, ANIM_SHAKE_HEAD,
                                       20);
   VaultInteriors_ShowMessageAndWait(LOCALID_THIEF_LEADER, 20);
-  Engine_ObjectEventRunRepeatedMotion(LOCALID_FIRST_THIEF, 1);
-  Engine_ScriptWait(10);
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_FIRST_THIEF, 1);
+  FieldScript_WaitFrames(10);
   VaultInteriors_ShowMessageAndWait(LOCALID_FIRST_THIEF, 20);
-  Engine_ObjectEventRunRepeatedMotion(LOCALID_SECOND_THIEF, 1);
-  Engine_ScriptWait(10);
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_SECOND_THIEF, 1);
+  FieldScript_WaitFrames(10);
   VaultInteriors_ShowMessageAndWait(LOCALID_SECOND_THIEF, 40);
   ObjectEvent_ShowEmote(IVAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
-  Engine_ScriptWait(60);
+  FieldScript_WaitFrames(60);
   VaultInteriors_PlayAnimationAndWait(LOCALID_THIEF_LEADER, ANIM_SHAKE_HEAD,
                                       20);
   VaultInteriors_ShowMessageAndWait(LOCALID_THIEF_LEADER, 20);
   ObjectEvent_ShowEmote(LOCALID_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_QUESTION,
                         0);
   ObjectEvent_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
-  Engine_ScriptWait(60);
+  FieldScript_WaitFrames(60);
   // The tied-up villager is alarmed at the name Lunpa; Garet asks what kind of
   // place it is, and the tied-up villager and the thieves tell of Lunpa, Donpa
   // and Dodonpa.
   ObjectEvent_ShowEmote(LOCALID_TIED_UP_VILLAGER,
                         EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
-  Engine_ScriptWait(40);
-  Engine_ObjectEventRunRepeatedMotion(LOCALID_TIED_UP_VILLAGER, 2);
-  Engine_ScriptWait(20);
+  FieldScript_WaitFrames(40);
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_TIED_UP_VILLAGER, 2);
+  FieldScript_WaitFrames(20);
   VaultInteriors_ShowMessageAndWait(LOCALID_TIED_UP_VILLAGER, 20);
   ObjectEvent_FaceObjectEvent(LOCALID_PARTY_LEADER, LOCALID_TIED_UP_VILLAGER,
                               0);
-  Engine_ObjectEventFaceObjectEvent(GARET, LOCALID_TIED_UP_VILLAGER, 0);
+  ObjectMotion_SetAngleToward(GARET, LOCALID_TIED_UP_VILLAGER, 0);
   VaultInteriors_FaceObjectEventAndWait(IVAN, LOCALID_TIED_UP_VILLAGER, 20);
   VaultInteriors_PlayAnimationAndWait(LOCALID_TIED_UP_VILLAGER, ANIM_SHAKE_HEAD,
                                       30);
   VaultInteriors_ShowMessageAndWait(LOCALID_TIED_UP_VILLAGER, 20);
-  Engine_ObjectEventRunRepeatedMotion(IVAN, 2);
-  Engine_ScriptWait(20);
-  Engine_ObjectEventFaceObjectEvent(LOCALID_PARTY_LEADER, IVAN, 0);
+  ObjectMotion_SetVarCbAndRefresh(IVAN, 2);
+  FieldScript_WaitFrames(20);
+  ObjectMotion_SetAngleToward(LOCALID_PARTY_LEADER, IVAN, 0);
   VaultInteriors_FaceObjectEventAndWait(GARET, IVAN, 30);
   VaultInteriors_ShowMessageAndWait(GARET, 20);
   ObjectEvent_ShowEmote(LOCALID_TIED_UP_VILLAGER, EMOTE_IN_FRONT | EMOTE_WINCE,
                         0);
-  Engine_ScriptWait(60);
+  FieldScript_WaitFrames(60);
   VaultInteriors_ShowMessageAndWait(LOCALID_TIED_UP_VILLAGER, 20);
-  Engine_ObjectEventRunRepeatedMotion(LOCALID_THIEF_LEADER, 1);
-  Engine_ScriptWait(10);
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_THIEF_LEADER, 1);
+  FieldScript_WaitFrames(10);
   VaultInteriors_ShowMessageAndWait(LOCALID_THIEF_LEADER, 20);
-  Engine_ObjectEventFaceObjectEvent(LOCALID_PARTY_LEADER, LOCALID_THIEF_LEADER,
-                                    0);
+  ObjectMotion_SetAngleToward(LOCALID_PARTY_LEADER, LOCALID_THIEF_LEADER, 0);
   ObjectEvent_FaceObjectEvent(GARET, LOCALID_THIEF_LEADER, 0);
   VaultInteriors_FaceObjectEventAndWait(IVAN, LOCALID_THIEF_LEADER, 20);
   VaultInteriors_PlayAnimationAndWait(LOCALID_FIRST_THIEF, ANIM_NOD, 20);
@@ -1485,39 +1483,39 @@ static void EventScript_FreeRooferAndConfrontThieves(void) {
   ObjectEvent_ShowEmote(LOCALID_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
   ObjectEvent_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
   ObjectEvent_ShowEmote(IVAN, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
-  Engine_ScriptWait(60);
+  FieldScript_WaitFrames(60);
   // "See, we're not so bad. How about it? Will you let us go?" Yes: if they
   // return the goods and repent? No: even returning everything is a crime?
   VaultInteriors_PlayAnimationAndWait(LOCALID_THIEF_LEADER, ANIM_NOD, 20);
-  Engine_ScriptOpenMessage(LOCALID_THIEF_LEADER, 0);
-  Engine_ScriptWait(50);
-  Engine_ObjectEventFaceObjectEvent(IVAN, LOCALID_PARTY_LEADER, 0);
+  FieldMessage_ShowAtObject(LOCALID_THIEF_LEADER, 0);
+  FieldScript_WaitFrames(50);
+  ObjectMotion_SetAngleToward(IVAN, LOCALID_PARTY_LEADER, 0);
   VaultInteriors_FaceObjectEventAndWait(GARET, LOCALID_PARTY_LEADER, 30);
-  if (Engine_ScriptChooseYesNo(0, 0) == 0) {
-    Engine_ScriptWait(40);
-    Engine_ObjectEventFaceObjectEvent(GARET, LOCALID_THIEF_LEADER, 0);
+  if (FieldScript_AskYesNoWithObjectEventAnimation(0, 0) == 0) {
+    FieldScript_WaitFrames(40);
+    ObjectMotion_SetAngleToward(GARET, LOCALID_THIEF_LEADER, 0);
     ObjectEvent_FaceObjectEvent(IVAN, LOCALID_THIEF_LEADER, 0);
-    Engine_ObjectEventRunRepeatedMotion(LOCALID_THIEF_LEADER, 2);
-    Engine_ScriptWait(20);
-    Engine_ScriptShowMessage(LOCALID_THIEF_LEADER, 0);
+    ObjectMotion_SetVarCbAndRefresh(LOCALID_THIEF_LEADER, 2);
+    FieldScript_WaitFrames(20);
+    FieldScript_ShowMessageAndWait(LOCALID_THIEF_LEADER, 0);
   } else {
-    Engine_ScriptWait(40);
-    Engine_ObjectEventFaceObjectEvent(GARET, LOCALID_THIEF_LEADER, 0);
-    Engine_ObjectEventFaceObjectEvent(IVAN, LOCALID_THIEF_LEADER, 0);
+    FieldScript_WaitFrames(40);
+    ObjectMotion_SetAngleToward(GARET, LOCALID_THIEF_LEADER, 0);
+    ObjectMotion_SetAngleToward(IVAN, LOCALID_THIEF_LEADER, 0);
     base = MsgVaultVaultThievesCaught;
-    Engine_ScriptSetMessage(base);
-    Engine_ObjectEventRunRepeatedMotion(LOCALID_THIEF_LEADER, 2);
-    Engine_ScriptWait(20);
-    Engine_ScriptShowMessage(LOCALID_THIEF_LEADER, 0);
+    FieldScript_SetMessageId(base);
+    ObjectMotion_SetVarCbAndRefresh(LOCALID_THIEF_LEADER, 2);
+    FieldScript_WaitFrames(20);
+    FieldScript_ShowMessageAndWait(LOCALID_THIEF_LEADER, 0);
     // Both answers go on with the same refusal.
     base -= 3;
-    Engine_ScriptSetMessage(base);
+    FieldScript_SetMessageId(base);
   }
   // "We stole this stuff fair and square!" They agree to keep the party quiet,
   // and the leader cries "Get 'em!!!"
   ObjectEvent_ShowEmote(LOCALID_FIRST_THIEF, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN,
                         0);
-  Engine_ScriptWait(60);
+  FieldScript_WaitFrames(60);
   VaultInteriors_ShowMessageAndWait(LOCALID_FIRST_THIEF, 20);
   VaultInteriors_PlayAnimationAndWait(LOCALID_SECOND_THIEF, ANIM_SHAKE_HEAD,
                                       20);
@@ -1536,10 +1534,10 @@ static void EventScript_FreeRooferAndConfrontThieves(void) {
                             0);
   ObjectEvent_FaceDirection(LOCALID_SECOND_THIEF,
                             FACING_SOUTHEAST + FACING_STEP, 0);
-  Engine_ScriptWait(20);
+  FieldScript_WaitFrames(20);
   VaultInteriors_PlayAnimationAndWait(LOCALID_THIEF_LEADER, ANIM_SHAKE_HEAD,
                                       20);
-  Engine_ScriptShowMessage(LOCALID_THIEF_LEADER, 0);
+  FieldScript_ShowMessageAndWait(LOCALID_THIEF_LEADER, 0);
   // Preserve the return destinations before requesting the thieves' encounter.
   GameFlag_Set(FLAG_VAULT_THIEVES_ATTACKED);
   gFieldWork->transition =
@@ -1549,7 +1547,7 @@ static void EventScript_FreeRooferAndConfrontThieves(void) {
   FieldScript_SetDefeatDestination(base, 16);
   Battle_SetType(BATTLE_TYPE_SCRIPTED);
   Field_RequestBattleFromEncounterTable(ENCOUNTER_ZONE_SCRIPTED_VALE_VAULT, 5);
-  Engine_ScriptEnd();
+  FieldScript_End();
 }
 
 /// At Vault's inn, the party leaves the guests' room for the floor below
@@ -1559,7 +1557,7 @@ static void EventScript_FreeRooferAndConfrontThieves(void) {
 /// thieves are jailed (after, the same cell is a plain warp); takes
 /// VAULT_INTERIORS_INN_UPSTAIRS_TO_INN.
 static void EventScript_LeaveGuestsRoom(void) {
-  Engine_AudioPlayCue(SE_MAP_EXIT);
+  Sound_PlaySong(SE_MAP_EXIT);
   Engine_ScriptRequestWarp(VAULT_INTERIORS_INN_UPSTAIRS_TO_INN);
 }
 
@@ -1586,13 +1584,13 @@ static void EventScript_LeaveLoft(void) {
   ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(1) / 2, PIXELS(1) / 4);
   ObjectEvent_WalkToAndWait(LOCALID_PARTY_LEADER, 744, 408);
   if (GameFlag_IsSet(FLAG_VAULT_THIEVES_ATTACKED) == 0) {
-    Engine_ScriptStart();
-    Engine_ScriptSetMessage(MsgVaultUhnnUhnn);
+    FieldScript_Start();
+    FieldScript_SetMessageId(MsgVaultUhnnUhnn);
     Script_ShowMessage(LOCALID_TIED_UP_VILLAGER, 0);
-    Engine_ScriptEnd();
+    FieldScript_End();
   }
   gFieldWork->transitionFrames = 16;
-  Engine_AudioPlayCue(SE_MAP_EXIT);
+  Sound_PlaySong(SE_MAP_EXIT);
   Engine_ScriptRequestWarp(VAULT_INTERIORS_LOFT_TO_CRATE_ROOM);
 }
 
@@ -1612,7 +1610,7 @@ static void EventScript_ApproachSuspects(void) {
 
   suspectedLeader = ObjectEvent_GetById(LOCALID_SUSPECTED_LEADER);
   suspectedThief = ObjectEvent_GetById(LOCALID_SUSPECTED_THIEF);
-  Engine_ScriptStart();
+  FieldScript_Start();
   ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(4) / 5, PIXELS(2) / 5);
   ObjectEvent_SetSpeed(GARET, PIXELS(4) / 5, PIXELS(2) / 5);
   ObjectEvent_SetSpeed(IVAN, PIXELS(4) / 5, PIXELS(2) / 5);
@@ -1620,23 +1618,23 @@ static void EventScript_ApproachSuspects(void) {
   // weird kid is with them!"
   ObjectEvent_WalkToAndWait(LOCALID_PARTY_LEADER, 232, 696);
   ObjectEvent_WalkToAndWait(LOCALID_PARTY_LEADER, 200, 696);
-  Engine_ScriptWait(10);
+  FieldScript_WaitFrames(10);
   ObjectEvent_ShowEmote(LOCALID_SUSPECTED_THIEF,
                         EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   ObjectEvent_ShowEmote(LOCALID_SUSPECTED_LEADER,
                         EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
-  Engine_ScriptWait(60);
+  FieldScript_WaitFrames(60);
   VaultInteriors_FaceObjectEventAndWait(LOCALID_SUSPECTED_THIEF,
                                         LOCALID_PARTY_LEADER, 10);
-  Engine_ObjectEventRunRepeatedMotion(LOCALID_SUSPECTED_LEADER, 2);
-  Engine_ScriptWait(20);
-  Engine_ScriptSetMessage(MsgVaultWant);
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_SUSPECTED_LEADER, 2);
+  FieldScript_WaitFrames(20);
+  FieldScript_SetMessageId(MsgVaultWant);
   VaultInteriors_ShowMessageAndWait(LOCALID_SUSPECTED_LEADER, 20);
   ObjectEvent_SetAttachedEffect(
       LOCALID_SUSPECTED_THIEF, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-  Engine_ScriptWait(60);
+  FieldScript_WaitFrames(60);
   VaultInteriors_ShowMessageAndWait(LOCALID_SUSPECTED_THIEF, 20);
-  Engine_ObjectEventRunRepeatedMotion(LOCALID_SUSPECTED_LEADER, 1);
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_SUSPECTED_LEADER, 1);
   VaultInteriors_ShowMessageAndWait(LOCALID_SUSPECTED_LEADER, 30);
   // "Don't let him near me!" They run off to their routes' first spots.
   ObjectEvent_SetSpeed(LOCALID_SUSPECTED_LEADER, PIXELS(4), PIXELS(2));
@@ -1653,7 +1651,7 @@ static void EventScript_ApproachSuspects(void) {
                              TASK_PRIORITY_MAP);
   suspectedLeader->timer = 1;
   suspectedThief->timer = 3;
-  Engine_ScriptEnd();
+  FieldScript_End();
 }
 
 /// Stepping out of the guests' room at Vault's inn, the party talks it over:
@@ -1670,7 +1668,7 @@ static void EventScript_DiscussSuspiciousGuests(void) {
 
   suspectedLeader = ObjectEvent_GetById(LOCALID_SUSPECTED_LEADER);
   suspectedThief = ObjectEvent_GetById(LOCALID_SUSPECTED_THIEF);
-  Engine_ScriptStart();
+  FieldScript_Start();
   Task_Remove(VaultInteriors_FaceSuspectsTowardLeader);
   GameFlag_Clear(FLAG_SUSPECTS_FLEEING);
   if (suspectedLeader->timer <= 3) {
@@ -1696,14 +1694,14 @@ static void EventScript_DiscussSuspiciousGuests(void) {
   ObjectEvent_SetPosition(GARET, PIXELS(248), PIXELS(728));
   ObjectEvent_WalkTo(IVAN, 264, 744);
   ObjectEvent_WalkToAndWait(GARET, 232, 744);
-  Engine_ObjectEventWaitForMove(IVAN);
+  ObjectMotion_CommitCurrentPositionAndActivate(IVAN);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_SOUTH, 0);
   ObjectEvent_FaceObjectEvent(GARET, LOCALID_PARTY_LEADER, 0);
   VaultInteriors_FaceObjectEventAndWait(IVAN, LOCALID_PARTY_LEADER, 30);
   // Ivan: they're acting suspicious.
-  Engine_ObjectEventRunRepeatedMotion(IVAN, 1);
+  ObjectMotion_SetVarCbAndRefresh(IVAN, 1);
   base = MsgVaultTheyreActingSuspiciousSomethingsNot;
-  Engine_ScriptSetMessage(base);
+  FieldScript_SetMessageId(base);
   Script_ShowMessage(IVAN, 0);
   ObjectEvent_FaceObjectEvent(LOCALID_PARTY_LEADER, IVAN, 0);
   VaultInteriors_FaceObjectEventAndWait(GARET, IVAN, 20);
@@ -1713,16 +1711,16 @@ static void EventScript_DiscussSuspiciousGuests(void) {
   // Garet: "But you can't use Mind Read if they keep running away, can you?"
   // Yes: Ivan asks how he can catch them; no: there must be a way.
   Script_OpenMessage(GARET, 0);
-  if (Engine_ScriptChooseYesNo(0, 0) != 0) {
+  if (FieldScript_AskYesNoWithObjectEventAnimation(0, 0) != 0) {
     gFieldWork->message++;
   }
   VaultInteriors_ShowMessageAndWait(GARET, 30);
   // Garet's plan: the three of them surround one of the two.
-  Engine_ScriptSetMessage((base + 4));
+  FieldScript_SetMessageId((base + 4));
   ObjectEvent_FaceObjectEvent(LOCALID_PARTY_LEADER, IVAN, 0);
   VaultInteriors_FaceObjectEventAndWait(GARET, IVAN, 50);
   ObjectEvent_ShowEmote(IVAN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
-  Engine_ScriptWait(60);
+  FieldScript_WaitFrames(60);
   VaultInteriors_FaceEachOtherAndWait(LOCALID_PARTY_LEADER, GARET, 50);
   ObjectEvent_FaceObjectEvent(LOCALID_PARTY_LEADER, IVAN, 0);
   VaultInteriors_FaceObjectEventAndWait(GARET, IVAN, 30);
@@ -1730,15 +1728,15 @@ static void EventScript_DiscussSuspiciousGuests(void) {
   VaultInteriors_ShowMessageAndWait(IVAN, 20);
   ObjectEvent_ShowEmote(LOCALID_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
   ObjectEvent_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
-  Engine_ScriptWait(60);
+  FieldScript_WaitFrames(60);
   VaultInteriors_PlayAnimationAndWait(IVAN, ANIM_NOD, 20);
   VaultInteriors_ShowMessageAndWait(IVAN, 30);
   // "Isaac, you take the lead." The two walk back into him, and the suspects
   // are put back at their table.
-  Engine_ScriptSetMessage(MsgVaultIsaacTakeLead);
+  FieldScript_SetMessageId(MsgVaultIsaacTakeLead);
   Script_ShowMessage(GARET, 0);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_SOUTH, 0);
-  Engine_ScriptWait(40);
+  FieldScript_WaitFrames(40);
   Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
   Engine_ObjectEventSetAnimation(GARET, ANIM_NOD);
   VaultInteriors_PlayAnimationAndWait(IVAN, ANIM_NOD, 50);
@@ -1751,7 +1749,7 @@ static void EventScript_DiscussSuspiciousGuests(void) {
   ObjectEvent_FaceDirection(LOCALID_SUSPECTED_LEADER, FACING_EAST, 0);
   ObjectEvent_FaceDirection(LOCALID_SUSPECTED_THIEF, FACING_WEST, 0);
   MapGrid_CopyCellAttributes(14, 50, 3, 1, 14, 44);
-  Engine_ScriptEnd();
+  FieldScript_End();
 }
 
 /// In the guests' room at Vault's inn, the party sets out to corner the two
@@ -1773,19 +1771,18 @@ static void EventScript_StartCorneringSuspects(void) {
 ///
 /// Called by VaultInteriors_StartObjectEventStops.
 static void VaultInteriors_ResetSuspectRoutes(void) {
-  Engine_ScriptWait(30);
-  Engine_ObjectEventRunRepeatedMotion(LOCALID_SUSPECTED_LEADER, 1);
-  Engine_ScriptWait(20);
-  Engine_ScriptSetMessage(MsgVaultTheyreBack);
+  FieldScript_WaitFrames(30);
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_SUSPECTED_LEADER, 1);
+  FieldScript_WaitFrames(20);
+  FieldScript_SetMessageId(MsgVaultTheyreBack);
   VaultInteriors_ShowMessageAndWait(LOCALID_SUSPECTED_LEADER, 20);
   ObjectEvent_FaceDirection(LOCALID_SUSPECTED_THIEF, FACING_EAST, 20);
   ObjectEvent_SetAttachedEffect(
       LOCALID_SUSPECTED_THIEF, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-  Engine_ObjectEventRunRepeatedMotion(LOCALID_SUSPECTED_THIEF, 2);
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_SUSPECTED_THIEF, 2);
   VaultInteriors_ShowMessageAndWait(LOCALID_SUSPECTED_THIEF, 20);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_SUSPECTED_LEADER,
-                                        ANIM_SHAKE_HEAD);
-  Engine_ScriptWait(20);
+  ObjectMotion_SetAnimationAndWait(LOCALID_SUSPECTED_LEADER, ANIM_SHAKE_HEAD);
+  FieldScript_WaitFrames(20);
   VaultInteriors_ShowMessageAndWait(LOCALID_SUSPECTED_LEADER, 20);
   ObjectEvent_SetSpeed(LOCALID_SUSPECTED_LEADER, PIXELS(4), PIXELS(2));
   ObjectEvent_SetSpeed(LOCALID_SUSPECTED_THIEF, PIXELS(7) / 2, PIXELS(7) / 4);
@@ -1841,7 +1838,7 @@ static void EventScript_ReadCorneredSuspectsMinds(void) {
   struct EventWork *work;
 
   work = gFieldWork;
-  Engine_ScriptStart();
+  FieldScript_Start();
   Task_Remove(VaultInteriors_UpdateObjectEventStops);
   GameFlag_Clear(FLAG_MENUS_RAISE_EVENT);
   GameFlag_Clear(FLAG_MAP_TEMP_50);
@@ -1851,20 +1848,20 @@ static void EventScript_ReadCorneredSuspectsMinds(void) {
   Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_STAND);
   Engine_ObjectEventSetAnimation(GARET, ANIM_STAND);
   ObjectEvent_FaceObjectEvent(GARET, IVAN, 0);
-  Engine_ObjectEventFaceEachOther(LOCALID_PARTY_LEADER, IVAN, 0);
+  ObjectEvent_LinkPair(LOCALID_PARTY_LEADER, IVAN, 0);
   ObjectEvent_FaceObjectEvent(LOCALID_SUSPECTED_LEADER, IVAN, 0);
   ObjectEvent_FaceObjectEvent(LOCALID_SUSPECTED_THIEF, IVAN, 0);
-  Engine_ScriptWait(10);
+  FieldScript_WaitFrames(10);
   localId = LOCALID_SUSPECTED_LEADER;
   // The event identifies the suspects blocked on the last frame of the wait.
   switch (work->raisedEvent) {
   case VAULT_INTERIORS_THIEF_CORNERED:
   case VAULT_INTERIORS_BOTH_CORNERED:
-    Engine_ScriptSetMessage(MsgVaultImSurrounded);
+    FieldScript_SetMessageId(MsgVaultImSurrounded);
     ObjectEvent_SetAttachedEffect(LOCALID_SUSPECTED_THIEF,
                                   ATTACHED_EFFECT_IN_FRONT |
                                       ATTACHED_EFFECT_ONCE);
-    Engine_ObjectEventRunRepeatedMotion(LOCALID_SUSPECTED_THIEF, 2);
+    ObjectMotion_SetVarCbAndRefresh(LOCALID_SUSPECTED_THIEF, 2);
     VaultInteriors_ShowMessageAndWait(LOCALID_SUSPECTED_THIEF, 20);
     if (work->raisedEvent == VAULT_INTERIORS_THIEF_CORNERED) {
       localId = LOCALID_SUSPECTED_THIEF;
@@ -1873,11 +1870,11 @@ static void EventScript_ReadCorneredSuspectsMinds(void) {
     // When both are cornered, the leader's reaction follows the thief's.
     // fall through
   case VAULT_INTERIORS_LEADER_CORNERED:
-    Engine_ScriptSetMessage(MsgVaultTheresNowhereRun);
+    FieldScript_SetMessageId(MsgVaultTheresNowhereRun);
     ObjectEvent_SetAttachedEffect(LOCALID_SUSPECTED_LEADER,
                                   ATTACHED_EFFECT_IN_FRONT |
                                       ATTACHED_EFFECT_ONCE);
-    Engine_ObjectEventRunRepeatedMotion(LOCALID_SUSPECTED_LEADER, 2);
+    ObjectMotion_SetVarCbAndRefresh(LOCALID_SUSPECTED_LEADER, 2);
     localId = LOCALID_SUSPECTED_LEADER;
     VaultInteriors_ShowMessageAndWait(LOCALID_SUSPECTED_LEADER, 20);
     break;
@@ -1885,39 +1882,39 @@ static void EventScript_ReadCorneredSuspectsMinds(void) {
   Engine_ObjectEventSetAnimation(IVAN, ANIM_STAND);
   ObjectEvent_FaceObjectEvent(IVAN, localId, 0);
   ObjectEvent_FaceObjectEvent(GARET, IVAN, 0);
-  Engine_ObjectEventRunRepeatedMotion(GARET, 2);
-  Engine_ScriptWait(20);
+  ObjectMotion_SetVarCbAndRefresh(GARET, 2);
+  FieldScript_WaitFrames(20);
   // "Now, Ivan!" "A-All right!" Ivan reads the cornered one's mind while the
   // two wonder what he is doing.
-  Engine_ScriptSetMessage(MsgVaultNowIvan);
+  FieldScript_SetMessageId(MsgVaultNowIvan);
   VaultInteriors_ShowMessageAndWait(GARET, 20);
-  Engine_ObjectEventRunRepeatedMotion(IVAN, 2);
-  Engine_ScriptWait(20);
+  ObjectMotion_SetVarCbAndRefresh(IVAN, 2);
+  FieldScript_WaitFrames(20);
   VaultInteriors_ShowMessageAndWait(IVAN, 20);
   VaultInteriors_StartMindRead(IVAN, localId);
   Ui_SetBank15PaletteAndClearRenderMode();
-  Engine_ScriptWait(60);
-  Engine_ObjectEventRunRepeatedMotion(LOCALID_SUSPECTED_LEADER, 2);
+  FieldScript_WaitFrames(60);
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_SUSPECTED_LEADER, 2);
   VaultInteriors_ShowMessageAndWait(LOCALID_SUSPECTED_LEADER, 20);
-  Engine_ObjectEventRunRepeatedMotion(LOCALID_SUSPECTED_THIEF, 2);
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_SUSPECTED_THIEF, 2);
   VaultInteriors_ShowMessageAndWait(LOCALID_SUSPECTED_THIEF, 20);
   // "Are you done, Ivan?" He nods, and the window closes.
   ObjectEvent_ShowEmote(IVAN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 60);
   VaultInteriors_EndMindRead();
-  Engine_ObjectEventStartRepeatedMotion(GARET, 2);
-  Engine_ObjectEventRunRepeatedMotion(LOCALID_PARTY_LEADER, 2);
-  Engine_ScriptWait(20);
+  ObjectMotion_SetVariantCallback(GARET, 2);
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_PARTY_LEADER, 2);
+  FieldScript_WaitFrames(20);
   VaultInteriors_ShowMessageAndWait(GARET, 20);
   ObjectEvent_FaceObjectEvent(IVAN, GARET, 0);
-  Engine_ScriptWait(20);
-  Engine_ObjectEventSetAnimationAndWait(IVAN, ANIM_NOD);
-  Engine_ScriptWait(40);
+  FieldScript_WaitFrames(20);
+  ObjectMotion_SetAnimationAndWait(IVAN, ANIM_NOD);
+  FieldScript_WaitFrames(40);
   VaultInteriors_SetPartyImagePriority();
   gFieldWork->transitionFrames = 24;
   gFieldWork->transition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_SHAPE);
-  Engine_ScriptCloseScreen();
-  Engine_ScriptWaitForScreen();
+  FieldScript_FinishScreenTransition();
+  FieldScript_WaitTransitionFrames();
   // Move the discussion away from the suspects while the screen is closed.
   VaultInteriors_DiscussMindReading();
   // The suspects stay at their table, turned toward the leader from now on.
@@ -1939,7 +1936,7 @@ static void EventScript_ReadCorneredSuspectsMinds(void) {
                              TASK_PRIORITY_MAP);
   gFieldWork->transition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
-  Engine_ScriptEnd();
+  FieldScript_End();
 }
 
 /// Shows the party's branching conversation about what Ivan learned: the
@@ -1952,7 +1949,7 @@ static void VaultInteriors_DiscussMindReading(void) {
 
   // Move the party outside the room and the suspects back to their table.
   Map_PlayMusic();
-  Engine_ObjectEventSetSpritePriority(LOCALID_PARTY_LEADER, 1);
+  ObjectMotion_SetActionVariant(LOCALID_PARTY_LEADER, 1);
   {
     struct ObjectEvent *leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
 
@@ -1967,16 +1964,15 @@ static void VaultInteriors_DiscussMindReading(void) {
   ObjectEvent_SetPosition(IVAN, PIXELS(264), PIXELS(744));
   Engine_ObjectEventSetPosition(GARET, PIXELS(232), PIXELS(744));
   VaultInteriors_SetPartyImagePriority();
-  Engine_ObjectEventFaceEachOther(LOCALID_PARTY_LEADER, IVAN, 0);
+  ObjectEvent_LinkPair(LOCALID_PARTY_LEADER, IVAN, 0);
   VaultInteriors_FaceObjectEventAndWait(GARET, IVAN, 30);
   ObjectEvent_SetPosition(LOCALID_SUSPECTED_LEADER, PIXELS(104), PIXELS(696));
   ObjectEvent_SetPosition(LOCALID_SUSPECTED_THIEF, PIXELS(120), PIXELS(696));
-  Engine_ObjectEventFaceEachOther(LOCALID_SUSPECTED_LEADER,
-                                  LOCALID_SUSPECTED_THIEF, 0);
-  Engine_CameraFollowObjectEvent(LOCALID_PARTY_LEADER, 0);
-  Engine_CameraWaitForMove();
-  Engine_MapGridRedraw();
-  Engine_ScriptWait(30);
+  ObjectEvent_LinkPair(LOCALID_SUSPECTED_LEADER, LOCALID_SUSPECTED_THIEF, 0);
+  FieldCamera_FollowObjectEvent(LOCALID_PARTY_LEADER, 0);
+  FieldCamera_WaitForArrival();
+  MapGrid_CenterOnFollowedPoint();
+  FieldScript_WaitFrames(30);
   {
     struct EventWork *work = gFieldWork;
 
@@ -1984,61 +1980,61 @@ static void VaultInteriors_DiscussMindReading(void) {
     work->transition =
         MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_SHAPE);
   }
-  Engine_ScriptOpenScreen();
-  Engine_ScriptWaitForScreen();
-  Engine_ScriptWait(40);
+  FieldScript_StartScreenTransition();
+  FieldScript_WaitTransitionFrames();
+  FieldScript_WaitFrames(40);
   // "What did you learn, Ivan?" It is them: they hid the stolen goods
   // somewhere in this inn, but won't let him near again.
-  Engine_ObjectEventRunRepeatedMotion(GARET, 1);
-  Engine_ScriptWait(10);
-  Engine_ScriptSetMessage(MsgVaultLearn);
+  ObjectMotion_SetVarCbAndRefresh(GARET, 1);
+  FieldScript_WaitFrames(10);
+  FieldScript_SetMessageId(MsgVaultLearn);
   VaultInteriors_ShowMessageAndWait(GARET, 20);
   VaultInteriors_PlayAnimationAndWait(IVAN, ANIM_NOD, 20);
   VaultInteriors_ShowMessageAndWait(IVAN, 20);
   VaultInteriors_FaceEachOtherAndWait(LOCALID_PARTY_LEADER, GARET, 50);
-  Engine_ObjectEventFaceObjectEvent(LOCALID_PARTY_LEADER, IVAN, 0);
+  ObjectMotion_SetAngleToward(LOCALID_PARTY_LEADER, IVAN, 0);
   VaultInteriors_FaceObjectEventAndWait(GARET, IVAN, 20);
   VaultInteriors_PlayAnimationAndWait(IVAN, ANIM_SHAKE_HEAD, 20);
-  Engine_ScriptShowMessage(IVAN, 0);
+  FieldScript_ShowMessageAndWait(IVAN, 0);
   ObjectEvent_ShowEmote(LOCALID_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
   ObjectEvent_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
-  Engine_ScriptWait(60);
+  FieldScript_WaitFrames(60);
   VaultInteriors_PlayAnimationAndWait(IVAN, ANIM_NOD, 20);
   VaultInteriors_ShowMessageAndWait(IVAN, 30);
-  Engine_ObjectEventRunRepeatedMotion(GARET, 1);
-  Engine_ScriptWait(20);
+  ObjectMotion_SetVarCbAndRefresh(GARET, 1);
+  FieldScript_WaitFrames(20);
   VaultInteriors_FaceEachOtherAndWait(LOCALID_PARTY_LEADER, GARET, 20);
   // Garet: they have to search the inn. Each no leads to another plea, from
   // Garet and then Ivan; three noes and Garet vouches for Isaac's sense of
   // duty, while any yes gets "Leave it to us!"
-  Engine_ScriptOpenMessage(GARET, 0);
+  FieldMessage_ShowAtObject(GARET, 0);
   persistedWithQuestions = 0;
-  if (Engine_ScriptChooseYesNo(0, 0) != 0) {
-    Engine_ScriptWait(20);
-    Engine_ObjectEventStartRepeatedMotion(IVAN, 2);
+  if (FieldScript_AskYesNoWithObjectEventAnimation(0, 0) != 0) {
+    FieldScript_WaitFrames(20);
+    ObjectMotion_SetVariantCallback(IVAN, 2);
     VaultInteriors_PlayAnimationAndWait(GARET, ANIM_SHAKE_HEAD, 30);
-    Engine_ScriptOpenMessage(GARET, 0);
+    FieldMessage_ShowAtObject(GARET, 0);
     persistedWithQuestions = 0;
-    if (Engine_ScriptChooseYesNo(0, 0) != 0) {
-      Engine_ScriptWait(20);
-      Engine_ObjectEventShowEmote(IVAN, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
-      Engine_ScriptWait(60);
-      Engine_ObjectEventRunRepeatedMotion(IVAN, 2);
+    if (FieldScript_AskYesNoWithObjectEventAnimation(0, 0) != 0) {
+      FieldScript_WaitFrames(20);
+      FieldEffect_SpawnLinked(IVAN, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
+      FieldScript_WaitFrames(60);
+      ObjectMotion_SetVarCbAndRefresh(IVAN, 2);
       VaultInteriors_FaceEachOtherAndWait(LOCALID_PARTY_LEADER, IVAN, 20);
-      Engine_ScriptOpenMessage(IVAN, 0);
+      FieldMessage_ShowAtObject(IVAN, 0);
       persistedWithQuestions = 0;
-      if (Engine_ScriptChooseYesNo(2, 0) != 0) {
-        Engine_ScriptWait(20);
-        Engine_ObjectEventShowEmote(IVAN, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
-        Engine_ScriptWait(60);
+      if (FieldScript_AskYesNoWithObjectEventAnimation(2, 0) != 0) {
+        FieldScript_WaitFrames(20);
+        FieldEffect_SpawnLinked(IVAN, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
+        FieldScript_WaitFrames(60);
         VaultInteriors_ShowMessageAndWait(IVAN, 20);
         VaultInteriors_FaceObjectEventAndWait(GARET, IVAN, 10);
-        Engine_ObjectEventRunRepeatedMotion(GARET, 1);
-        Engine_ScriptWait(10);
+        ObjectMotion_SetVarCbAndRefresh(GARET, 1);
+        FieldScript_WaitFrames(10);
         VaultInteriors_ShowMessageAndWait(GARET, 10);
         VaultInteriors_FaceObjectEventAndWait(IVAN, GARET, 20);
-        Engine_ObjectEventShowEmote(IVAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
-        Engine_ScriptWait(60);
+        FieldEffect_SpawnLinked(IVAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
+        FieldScript_WaitFrames(60);
         VaultInteriors_PlayAnimationAndWait(IVAN, ANIM_SHAKE_HEAD, 20);
         VaultInteriors_ShowMessageAndWait(GARET, 10);
         VaultInteriors_FaceEachOtherAndWait(GARET, LOCALID_PARTY_LEADER, 20);
@@ -2049,21 +2045,21 @@ static void VaultInteriors_DiscussMindReading(void) {
     }
   }
   if (persistedWithQuestions == 0) {
-    Engine_ScriptSetMessage(MsgVaultLeave);
+    FieldScript_SetMessageId(MsgVaultLeave);
     VaultInteriors_ShowMessageAndWait(GARET, 20);
     VaultInteriors_FaceEachOtherAndWait(GARET, LOCALID_PARTY_LEADER, 20);
     VaultInteriors_ShowMessageAndWait(GARET, 20);
   }
   // "Let's go, Ivan." Garet and Ivan walk back into the leader.
-  Engine_ObjectEventShowEmote(LOCALID_PARTY_LEADER,
-                              EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
-  Engine_ScriptWait(60);
-  Engine_ObjectEventRunRepeatedMotion(GARET, 1);
+  FieldEffect_SpawnLinked(LOCALID_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_ELLIPSIS,
+                          0);
+  FieldScript_WaitFrames(60);
+  ObjectMotion_SetVarCbAndRefresh(GARET, 1);
   VaultInteriors_ShowMessageAndWait(GARET, 10);
   VaultInteriors_PlayAnimationAndWait(GARET, ANIM_NOD, 10);
-  Engine_ObjectEventFaceEachOther(GARET, IVAN, 0);
+  ObjectEvent_LinkPair(GARET, IVAN, 0);
   VaultInteriors_FaceEachOtherAndWait(LOCALID_PARTY_LEADER, IVAN, 10);
-  Engine_ScriptShowMessage(GARET, 0);
+  FieldScript_ShowMessageAndWait(GARET, 0);
   VaultInteriors_PlayAnimationAndWait(IVAN, ANIM_NOD, 10);
   ObjectEvent_WalkTo(IVAN, 248, 728);
   ObjectEvent_WalkToAndWait(GARET, 248, 728);
@@ -2188,14 +2184,14 @@ s32 Map_Initialize(void) {
   case VAULT_INTERIORS_FROM_VAULT_NORTHWEST:
     // The mayor's house: Ivan waits a step back once met and is gone once he
     // has joined; after the thieves are jailed, the mayor stands by the door.
-    if (Engine_GameFlagIsSet(FLAG_VAULT_MET_IVAN) != 0) {
+    if (GameFlag_Test(FLAG_VAULT_MET_IVAN) != 0) {
       ObjectEvent_SetPosition(IVAN, PIXELS(376), PIXELS(376));
       ObjectEvent_FaceDirection(IVAN, FACING_SOUTH, 0);
     }
-    if (Engine_GameFlagIsSet(FLAG_VAULT_IVAN_JOINED_ROD_SEARCH) != 0) {
+    if (GameFlag_Test(FLAG_VAULT_IVAN_JOINED_ROD_SEARCH) != 0) {
       Engine_ObjectEventSetPosition(IVAN, 0, 0);
     }
-    if (Engine_GameFlagIsSet(FLAG_VAULT_THIEVES_JAILED) != 0) {
+    if (GameFlag_Test(FLAG_VAULT_THIEVES_JAILED) != 0) {
       ObjectEvent_SetPosition(LOCALID_MAYOR, PIXELS(536),
                               VAULT_INTERIORS_ENTRY_OBJ_EVENT_Z);
       ObjectEvent_SetBuiltinAction(LOCALID_MAYOR, OBJ_EVENT_ACTION_IDLE);
@@ -2207,7 +2203,7 @@ s32 Map_Initialize(void) {
     // The inn: once the thieves are jailed, the Bone lies on the floor beside
     // the girl at the inn; after the mind reading and before that, she is
     // out.
-    if (Engine_GameFlagIsSet(FLAG_VAULT_THIEVES_JAILED) != 0) {
+    if (GameFlag_Test(FLAG_VAULT_THIEVES_JAILED) != 0) {
       ObjectEvent_SetPosition(LOCALID_GIRL_AT_THE_INN, PIXELS(568),
                               PIXELS(648));
       ObjectEvent_SetBuiltinAction(LOCALID_GIRL_AT_THE_INN,
@@ -2215,32 +2211,32 @@ s32 Map_Initialize(void) {
       ObjectEvent_FaceDirection(LOCALID_GIRL_AT_THE_INN, FACING_SOUTH, 0);
       Vault_PlaceItemIcon(ITEM_BONE, PIXELS(568), PIXELS(16), PIXELS(672));
       Task_AddCallback(Vault_UpdateBoneProximityFlag, TASK_PRIORITY_MAP);
-    } else if (Engine_GameFlagIsSet(FLAG_VAULT_SUSPECTS_MIND_READ) != 0) {
+    } else if (GameFlag_Test(FLAG_VAULT_SUSPECTS_MIND_READ) != 0) {
       Engine_ObjectEventSetPosition(LOCALID_GIRL_AT_THE_INN, 0, 0);
     }
     break;
   case VAULT_INTERIORS_INN_UPSTAIRS_FROM_INN:
     // The guests' room upstairs at the inn: back from a battle mid-chase, the
     // suspects keep running.
-    if (Engine_GameFlagIsSet(FLAG_KEEP_PARTY_POSITION) != 0 &&
-        Engine_GameFlagIsSet(FLAG_VAULT_SUSPECTS_APPROACHED) != 0 &&
-        Engine_GameFlagIsSet(FLAG_VAULT_SUSPECTS_MIND_READ) == 0 &&
-        Engine_GameFlagIsSet(FLAG_SUSPECTS_FLEEING) != 0) {
+    if (GameFlag_Test(FLAG_KEEP_PARTY_POSITION) != 0 &&
+        GameFlag_Test(FLAG_VAULT_SUSPECTS_APPROACHED) != 0 &&
+        GameFlag_Test(FLAG_VAULT_SUSPECTS_MIND_READ) == 0 &&
+        GameFlag_Test(FLAG_SUSPECTS_FLEEING) != 0) {
       MapGrid_CopyCellAttributes(14, 45, 3, 1, 14, 44);
       Task_AddCallback(VaultInteriors_FaceSuspectsTowardLeader,
                        TASK_PRIORITY_MAP);
       break;
     }
-    if (Engine_GameFlagIsSet(FLAG_VAULT_IVAN_JOINED_ROD_SEARCH) != 0) {
+    if (GameFlag_Test(FLAG_VAULT_IVAN_JOINED_ROD_SEARCH) != 0) {
       ObjectEvent_SetPosition(LOCALID_SUSPECTED_THIEF, PIXELS(120),
                               PIXELS(696));
       ObjectEvent_FaceDirection(LOCALID_SUSPECTED_THIEF, FACING_WEST, 0);
     }
     // Once approached, the room's doorway metatile behavior changes; after the
     // mind reading the suspects sit turned toward the leader.
-    if (Engine_GameFlagIsSet(FLAG_VAULT_SUSPECTS_APPROACHED) != 0) {
+    if (GameFlag_Test(FLAG_VAULT_SUSPECTS_APPROACHED) != 0) {
       MapGrid_CopyCellAttributes(14, 45, 3, 1, 14, 44);
-      if (Engine_GameFlagIsSet(FLAG_VAULT_SUSPECTS_MIND_READ) == 0) {
+      if (GameFlag_Test(FLAG_VAULT_SUSPECTS_MIND_READ) == 0) {
         MapGrid_CopyCellAttributes(14, 50, 3, 1, 14, 44);
         break;
       }
@@ -2254,47 +2250,47 @@ s32 Map_Initialize(void) {
   case VAULT_INTERIORS_CRATE_ROOM_FROM_LOFT:
     // The room with the crate: the crate keeps its place once moved, and the
     // passage behind it stays open.
-    Engine_ScriptWait(2);
+    FieldScript_WaitFrames(2);
     MapGrid_CopyCellsTo(54, 2, 35, 20, 2, 10);
     MapGrid_CopyCellsTo(54, 2, 95, 20, 2, 10);
     MapGrid_CopyCellsTo(54, 2, 35, 80, 2, 10);
     MapGrid_CopyCellsTo(54, 2, 46, 21, 4, 8);
     MapGrid_CopyCellsTo(54, 2, 46, 81, 4, 8);
     ObjectEvent_GetById(LOCALID_CRATE)->collisionFlags |= 4;
-    Engine_ObjectEventSetSpriteFlags(ObjectEvent_GetById(LOCALID_CRATE), 0);
-    if (Engine_GameFlagIsSet(FLAG_VAULT_CRATE_MOVED) != 0) {
+    ObjectEvent_SetSpriteFlags(ObjectEvent_GetById(LOCALID_CRATE), 0);
+    if (GameFlag_Test(FLAG_VAULT_CRATE_MOVED) != 0) {
       ObjectEvent_SetPosition(LOCALID_CRATE, PIXELS(676), PIXELS(411));
       MapGrid_CopyCellAttributes(101, 24, 3, 4, 41, 24);
     }
     break;
   case VAULT_INTERIORS_LOFT_FROM_CRATE_ROOM:
-    Engine_ScriptWait(2);
+    FieldScript_WaitFrames(2);
     MapGrid_CopyCellsTo(54, 2, 44, 21, 2, 8);
     MapGrid_CopyCellsTo(54, 2, 44, 81, 2, 8);
-    Engine_ScriptStart();
+    FieldScript_Start();
     // The loft: emptied chests after the thieves are jailed; else the tied-up
     // villager lies tied, groaning to SONG_FADE_OUT_BGM, or the thieves wait
     // for a rematch.
-    if (Engine_GameFlagIsSet(FLAG_VAULT_THIEVES_JAILED) != 0) {
+    if (GameFlag_Test(FLAG_VAULT_THIEVES_JAILED) != 0) {
       Engine_ObjectEventSetAnimation(LOCALID_FIRST_CHEST, ANIM_WALK);
       Engine_ObjectEventSetAnimation(LOCALID_SECOND_CHEST, ANIM_WALK);
-      Engine_ScriptWait(1);
+      FieldScript_WaitFrames(1);
       Engine_ObjectEventSetAnimation(LOCALID_THIRD_CHEST, ANIM_WALK);
       break;
     }
     Engine_ObjectEventSetPosition(LOCALID_TIED_UP_VILLAGER, PIXELS(824),
                                   PIXELS(456));
-    if (Engine_GameFlagIsSet(FLAG_VAULT_THIEVES_ATTACKED) != 0) {
+    if (GameFlag_Test(FLAG_VAULT_THIEVES_ATTACKED) != 0) {
       VaultInteriors_ConfrontThievesAgain();
-      Engine_ScriptEnd();
+      FieldScript_End();
       break;
     }
     Engine_ObjectEventSetAnimation(LOCALID_TIED_UP_VILLAGER, 7);
     VaultInteriors_OpenWindowTransition();
-    Engine_AudioPlayCue(SONG_FADE_OUT_BGM);
-    Engine_ScriptSetMessage(MsgVaultUhnnUhnn);
+    Sound_PlaySong(SONG_FADE_OUT_BGM);
+    FieldScript_SetMessageId(MsgVaultUhnnUhnn);
     VaultInteriors_ShowMessageAndWait(LOCALID_TIED_UP_VILLAGER, 10);
-    Engine_ScriptEnd();
+    FieldScript_End();
     break;
   case VAULT_INTERIORS_LOFT_AFTER_LOSING_TO_THIEVES:
     // Lost to the thieves: they gloat, and the party wakes up elsewhere.
@@ -2309,7 +2305,7 @@ s32 Map_Initialize(void) {
     // Won: the thieves are caught and the stolen goods handed back.
     MapGrid_CopyCells(54, 2, 2, 8, 44, 21);
     MapGrid_CopyCells(54, 2, 2, 8, 44, 81);
-    if (Engine_GameFlagIsSet(FLAG_KEEP_PARTY_POSITION) == 0) {
+    if (GameFlag_Test(FLAG_KEEP_PARTY_POSITION) == 0) {
       ObjectEvent_SetPosition(LOCALID_TIED_UP_VILLAGER, PIXELS(824),
                               PIXELS(456));
       VaultInteriors_DefeatThieves();
@@ -2318,7 +2314,7 @@ s32 Map_Initialize(void) {
     }
     Engine_ObjectEventSetAnimation(LOCALID_FIRST_CHEST, ANIM_WALK);
     Engine_ObjectEventSetAnimation(LOCALID_SECOND_CHEST, ANIM_WALK);
-    Engine_ScriptWait(1);
+    FieldScript_WaitFrames(1);
     Engine_ObjectEventSetAnimation(LOCALID_THIRD_CHEST, ANIM_WALK);
     break;
   }
@@ -2352,7 +2348,7 @@ static void VaultInteriors_LoseToThieves(void) {
   s32 priorityFlags;
 
   // The party lies on the floor (animation 19) before the three thieves.
-  Engine_ScriptStart();
+  FieldScript_Start();
   ObjectEvent_SetPosition(LOCALID_THIEF_LEADER, PIXELS(792), PIXELS(416));
   ObjectEvent_SetPosition(LOCALID_FIRST_THIEF, PIXELS(800), PIXELS(400));
   ObjectEvent_SetPosition(LOCALID_SECOND_THIEF, PIXELS(776), PIXELS(416));
@@ -2375,39 +2371,39 @@ static void VaultInteriors_LoseToThieves(void) {
   ObjectEvent_GetById(GARET)->priorityFlags = priorityFlags;
   ObjectEvent_GetById(IVAN)->priorityFlags = priorityFlags;
   objectEvent = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
-  Engine_ObjectEventSetSpriteFlags(objectEvent, 0);
+  ObjectEvent_SetSpriteFlags(objectEvent, 0);
   objectEvent = ObjectEvent_GetById(IVAN);
-  Engine_ObjectEventSetSpriteFlags(objectEvent, 0);
+  ObjectEvent_SetSpriteFlags(objectEvent, 0);
   objectEvent = ObjectEvent_GetById(GARET);
-  Engine_ObjectEventSetSpriteFlags(objectEvent, 0);
+  ObjectEvent_SetSpriteFlags(objectEvent, 0);
   ObjectEvent_FaceDirection(LOCALID_TIED_UP_VILLAGER,
                             FACING_NORTHWEST + FACING_STEP, 0);
   gFieldWork->transition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
-  Engine_CameraFollowObjectEvent(LOCALID_PARTY_LEADER, 0);
-  Engine_CameraWaitForMove();
-  Engine_MapGridRedraw();
+  FieldCamera_FollowObjectEvent(LOCALID_PARTY_LEADER, 0);
+  FieldCamera_WaitForArrival();
+  MapGrid_CenterOnFollowedPoint();
   VaultInteriors_OpenWindowTransition();
-  Engine_ScriptWait(60);
+  FieldScript_WaitFrames(60);
   // "These kids are nothing to worry about." The tied-up villager groans.
   VaultInteriors_PlayAnimationAndWait(LOCALID_THIEF_LEADER, ANIM_NOD, 20);
-  Engine_ScriptSetMessage(MsgVaultTheseKidsNothingWorryAbout);
+  FieldScript_SetMessageId(MsgVaultTheseKidsNothingWorryAbout);
   VaultInteriors_ShowMessageAndWait(LOCALID_THIEF_LEADER, 30);
   VaultInteriors_ShowMessageAndWait(LOCALID_TIED_UP_VILLAGER, 30);
   // The two men step to the tied-up villager: he stays as their hostage.
   ObjectEvent_WalkTo(LOCALID_FIRST_THIEF, 808, 456);
   ObjectEvent_WalkTo(LOCALID_SECOND_THIEF, 792, 456);
-  Engine_ObjectEventWaitForMove(LOCALID_SECOND_THIEF);
+  ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_SECOND_THIEF);
   ObjectEvent_FaceDirection(LOCALID_SECOND_THIEF, FACING_EAST, 0);
-  Engine_ObjectEventWaitForMove(LOCALID_FIRST_THIEF);
+  ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_FIRST_THIEF);
   ObjectEvent_FaceDirection(LOCALID_FIRST_THIEF, FACING_EAST, 0);
-  Engine_ScriptWait(30);
+  FieldScript_WaitFrames(30);
   VaultInteriors_PlayAnimationAndWait(LOCALID_FIRST_THIEF, ANIM_NOD, 20);
   VaultInteriors_ShowMessageAndWait(LOCALID_FIRST_THIEF, 20);
   VaultInteriors_FaceObjectEventAndWait(LOCALID_SECOND_THIEF,
                                         LOCALID_PARTY_LEADER, 30);
   VaultInteriors_ShowMessageAndWait(LOCALID_SECOND_THIEF, 60);
-  Engine_ScriptEnd();
+  FieldScript_End();
 }
 
 /// Arranges the loft confrontation and restarts the thieves' battle. "They
@@ -2438,19 +2434,19 @@ static void VaultInteriors_ConfrontThievesAgain(void) {
                               0);
   gFieldWork->transition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
-  Engine_CameraFollowObjectEvent(LOCALID_PARTY_LEADER, 0);
-  Engine_CameraWaitForMove();
-  Engine_MapGridRedraw();
-  Engine_TaskWait(1);
+  FieldCamera_FollowObjectEvent(LOCALID_PARTY_LEADER, 0);
+  FieldCamera_WaitForArrival();
+  MapGrid_CenterOnFollowedPoint();
+  WaitFrames(1);
   gFieldWork->transitionFrames = 32;
   VaultInteriors_OpenWindowTransition();
-  Engine_ScriptWait(60);
-  Engine_ScriptSetMessage(MsgVaultWontGoAway);
-  Engine_ObjectEventRunRepeatedMotion(LOCALID_FIRST_THIEF, 1);
-  Engine_ScriptWait(20);
+  FieldScript_WaitFrames(60);
+  FieldScript_SetMessageId(MsgVaultWontGoAway);
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_FIRST_THIEF, 1);
+  FieldScript_WaitFrames(20);
   VaultInteriors_ShowMessageAndWait(LOCALID_FIRST_THIEF, 30);
-  Engine_ObjectEventRunRepeatedMotion(LOCALID_SECOND_THIEF, 1);
-  Engine_ScriptWait(20);
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_SECOND_THIEF, 1);
+  FieldScript_WaitFrames(20);
   Script_ShowMessage(LOCALID_SECOND_THIEF, 0);
   VaultInteriors_FaceEachOtherAndWait(LOCALID_THIEF_LEADER, LOCALID_FIRST_THIEF,
                                       30);
@@ -2466,7 +2462,7 @@ static void VaultInteriors_ConfrontThievesAgain(void) {
                             0);
   ObjectEvent_FaceDirection(LOCALID_SECOND_THIEF,
                             FACING_SOUTHEAST + FACING_STEP, 0);
-  Engine_ScriptWait(20);
+  FieldScript_WaitFrames(20);
   // "We'll make you sorry you were ever born! Get 'em!!" and the battle.
   VaultInteriors_PlayAnimationAndWait(LOCALID_THIEF_LEADER, ANIM_SHAKE_HEAD,
                                       20);
@@ -2502,16 +2498,16 @@ static void VaultInteriors_DefeatThieves(void) {
   thirdThiefSprite = objectEvent->sprite;
   // The beaten thieves lie heaving (animation 9 and the action table's
   // squash) before the party.
-  Engine_ScriptStart();
+  FieldScript_Start();
   ObjectEvent_SetPosition(LOCALID_THIEF_LEADER, PIXELS(792), PIXELS(416));
   ObjectEvent_SetPosition(LOCALID_FIRST_THIEF, PIXELS(800), PIXELS(400));
   ObjectEvent_SetPosition(LOCALID_SECOND_THIEF, PIXELS(776), PIXELS(392));
   objectEvent = ObjectEvent_GetById(LOCALID_THIEF_LEADER);
-  Engine_ObjectEventSetSpriteFlags(objectEvent, 0);
+  ObjectEvent_SetSpriteFlags(objectEvent, 0);
   objectEvent = ObjectEvent_GetById(LOCALID_FIRST_THIEF);
-  Engine_ObjectEventSetSpriteFlags(objectEvent, 0);
+  ObjectEvent_SetSpriteFlags(objectEvent, 0);
   objectEvent = ObjectEvent_GetById(LOCALID_SECOND_THIEF);
-  Engine_ObjectEventSetSpriteFlags(objectEvent, 0);
+  ObjectEvent_SetSpriteFlags(objectEvent, 0);
   Engine_ObjectEventSetAnimation(LOCALID_THIEF_LEADER, 9);
   Engine_ObjectEventSetAnimation(LOCALID_FIRST_THIEF, 9);
   Engine_ObjectEventSetAnimation(LOCALID_SECOND_THIEF, 9);
@@ -2530,21 +2526,21 @@ static void VaultInteriors_DefeatThieves(void) {
                             FACING_NORTHWEST + FACING_STEP, 0);
   gFieldWork->transition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
-  Engine_CameraFollowObjectEvent(LOCALID_PARTY_LEADER, 0);
-  Engine_CameraWaitForMove();
-  Engine_MapGridRedraw();
+  FieldCamera_FollowObjectEvent(LOCALID_PARTY_LEADER, 0);
+  FieldCamera_WaitForArrival();
+  MapGrid_CenterOnFollowedPoint();
   VaultInteriors_OpenWindowTransition();
   ObjectEvent_SetActionScript(LOCALID_FIRST_THIEF, actions);
-  Engine_ScriptWait(30);
+  FieldScript_WaitFrames(30);
   ObjectEvent_SetActionScript(LOCALID_SECOND_THIEF, actions);
-  Engine_ScriptWait(30);
+  FieldScript_WaitFrames(30);
   // "They... They got us..." The tied-up villager thought they were goners; he
   // slips past Garet, cheers the win and runs for the mayor.
-  Engine_ScriptSetMessage(MsgVaultTheyTheyGotUs);
+  FieldScript_SetMessageId(MsgVaultTheyTheyGotUs);
   VaultInteriors_ShowMessageAndWait(LOCALID_THIEF_LEADER, 20);
   ObjectEvent_ShowEmote(LOCALID_TIED_UP_VILLAGER, EMOTE_IN_FRONT | EMOTE_WINCE,
                         0);
-  Engine_ScriptWait(60);
+  FieldScript_WaitFrames(60);
   VaultInteriors_ShowMessageAndWait(LOCALID_TIED_UP_VILLAGER, 20);
   ObjectEvent_WalkToAndWait(LOCALID_TIED_UP_VILLAGER, 808, 456);
   ObjectEvent_SetSpeed(GARET, PIXELS(4) / 5, PIXELS(2) / 5);
@@ -2554,11 +2550,11 @@ static void VaultInteriors_DefeatThieves(void) {
   ObjectEvent_FaceDirection(LOCALID_TIED_UP_VILLAGER, FACING_WEST, 0);
   ObjectEvent_WalkToAndWait(GARET, 808, 432);
   ObjectEvent_FaceDirection(GARET, FACING_NORTH, 0);
-  Engine_ScriptWait(20);
+  FieldScript_WaitFrames(20);
   VaultInteriors_PlayAnimationAndWait(LOCALID_TIED_UP_VILLAGER, ANIM_NOD, 20);
   VaultInteriors_ShowMessageAndWait(LOCALID_TIED_UP_VILLAGER, 20);
   ObjectEvent_WalkToAndWait(LOCALID_TIED_UP_VILLAGER, 768, 408);
-  Engine_ScriptWait(20);
+  FieldScript_WaitFrames(20);
   ObjectEvent_FaceObjectEvent(LOCALID_TIED_UP_VILLAGER, LOCALID_PARTY_LEADER,
                               0);
   ObjectEvent_FaceObjectEvent(LOCALID_PARTY_LEADER, LOCALID_TIED_UP_VILLAGER,
@@ -2570,22 +2566,22 @@ static void VaultInteriors_DefeatThieves(void) {
   Engine_ObjectEventSetAnimation(GARET, ANIM_NOD);
   VaultInteriors_PlayAnimationAndWait(IVAN, ANIM_NOD, 20);
   ObjectEvent_WalkToAndWait(LOCALID_TIED_UP_VILLAGER, 744, 408);
-  Engine_ScriptWait(50);
+  FieldScript_WaitFrames(50);
   // The thieves grumble; Garet: stealing is wrong, evil never prevails.
-  Engine_ObjectEventRunRepeatedMotion(LOCALID_FIRST_THIEF, 2);
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_FIRST_THIEF, 2);
   VaultInteriors_ShowMessageAndWait(LOCALID_FIRST_THIEF, 20);
   ObjectEvent_SetActionScript(LOCALID_FIRST_THIEF, actions);
-  Engine_ObjectEventRunRepeatedMotion(GARET, 1);
-  Engine_ScriptWait(20);
+  ObjectMotion_SetVarCbAndRefresh(GARET, 1);
+  FieldScript_WaitFrames(20);
   ObjectEvent_FaceObjectEvent(LOCALID_PARTY_LEADER, LOCALID_FIRST_THIEF, 0);
   ObjectEvent_FaceObjectEvent(GARET, LOCALID_FIRST_THIEF, 0);
   VaultInteriors_FaceObjectEventAndWait(IVAN, LOCALID_FIRST_THIEF, 20);
   VaultInteriors_ShowMessageAndWait(GARET, 20);
-  Engine_ObjectEventRunRepeatedMotion(LOCALID_SECOND_THIEF, 2);
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_SECOND_THIEF, 2);
   VaultInteriors_ShowMessageAndWait(LOCALID_SECOND_THIEF, 30);
   ObjectEvent_SetActionScript(LOCALID_SECOND_THIEF, actions);
   ObjectEvent_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 0);
-  Engine_ScriptWait(60);
+  FieldScript_WaitFrames(60);
   VaultInteriors_ShowMessageAndWait(GARET, 30);
   // Ivan will take the rod to Hammet in Lunpa, and asks what the two will do:
   // go after Saturos and the others.
@@ -2597,10 +2593,10 @@ static void VaultInteriors_DefeatThieves(void) {
   VaultInteriors_PlayAnimationAndWait(LOCALID_PARTY_LEADER, ANIM_NOD, 30);
   VaultInteriors_ShowMessageAndWait(IVAN, 20);
   ObjectEvent_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
-  Engine_ScriptWait(60);
+  FieldScript_WaitFrames(60);
   VaultInteriors_ShowMessageAndWait(GARET, 30);
   ObjectEvent_ShowEmote(IVAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
-  Engine_ScriptWait(60);
+  FieldScript_WaitFrames(60);
   VaultInteriors_FaceEachOtherAndWait(LOCALID_PARTY_LEADER, GARET, 20);
   Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
   VaultInteriors_PlayAnimationAndWait(GARET, ANIM_NOD, 20);
@@ -2610,53 +2606,53 @@ static void VaultInteriors_DefeatThieves(void) {
   Ui_SetBank15PaletteAndClearRenderMode();
   ObjectEvent_FaceObjectEvent(LOCALID_PARTY_LEADER, IVAN, 0);
   VaultInteriors_FaceObjectEventAndWait(GARET, IVAN, 10);
-  Engine_ObjectEventStartRepeatedMotion(LOCALID_PARTY_LEADER, 1);
-  Engine_ObjectEventRunRepeatedMotion(GARET, 1);
-  Engine_ScriptWait(20);
+  ObjectMotion_SetVariantCallback(LOCALID_PARTY_LEADER, 1);
+  ObjectMotion_SetVarCbAndRefresh(GARET, 1);
+  FieldScript_WaitFrames(20);
   ObjectEvent_SetAttachedEffect(GARET, ATTACHED_EFFECT_IN_FRONT |
                                            ATTACHED_EFFECT_ONCE);
-  Engine_ScriptWait(60);
+  FieldScript_WaitFrames(60);
   VaultInteriors_FaceObjectEventAndWait(LOCALID_PARTY_LEADER, GARET, 10);
   Script_OpenMessage(GARET, 0);
-  if (Engine_ScriptChooseYesNo(0, 0) == 0) {
-    Engine_ScriptWait(20);
+  if (FieldScript_AskYesNoWithObjectEventAnimation(0, 0) == 0) {
+    FieldScript_WaitFrames(20);
     ObjectEvent_FaceObjectEvent(LOCALID_PARTY_LEADER, IVAN, 0);
     VaultInteriors_FaceObjectEventAndWait(GARET, IVAN, 20);
     VaultInteriors_EndMindRead();
-    Engine_ObjectEventStartRepeatedMotion(LOCALID_PARTY_LEADER, 1);
-    Engine_ObjectEventRunRepeatedMotion(GARET, 1);
-    Engine_ScriptWait(20);
+    ObjectMotion_SetVariantCallback(LOCALID_PARTY_LEADER, 1);
+    ObjectMotion_SetVarCbAndRefresh(GARET, 1);
+    FieldScript_WaitFrames(20);
     VaultInteriors_ShowMessageAndWait(GARET, 20);
   } else {
     gFieldWork->message++;
     ObjectEvent_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
-    Engine_ScriptWait(60);
+    FieldScript_WaitFrames(60);
     VaultInteriors_ShowMessageAndWait(GARET, 20);
     ObjectEvent_FaceObjectEvent(LOCALID_PARTY_LEADER, IVAN, 0);
     VaultInteriors_FaceObjectEventAndWait(GARET, IVAN, 20);
     VaultInteriors_EndMindRead();
-    Engine_ObjectEventStartRepeatedMotion(LOCALID_PARTY_LEADER, 1);
-    Engine_ObjectEventRunRepeatedMotion(GARET, 1);
-    Engine_ScriptWait(20);
+    ObjectMotion_SetVariantCallback(LOCALID_PARTY_LEADER, 1);
+    ObjectMotion_SetVarCbAndRefresh(GARET, 1);
+    FieldScript_WaitFrames(20);
   }
   // "I see... So that's what happened..." The tied-up villager comes back with
   // the mayor and two townsmen.
   ObjectEvent_ShowEmote(IVAN, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
-  Engine_ScriptWait(60);
+  FieldScript_WaitFrames(60);
   VaultInteriors_PlayAnimationAndWait(IVAN, ANIM_SHAKE_HEAD, 20);
-  Engine_ScriptSetMessage(MsgVaultSeeThatsHappened);
+  FieldScript_SetMessageId(MsgVaultSeeThatsHappened);
   VaultInteriors_ShowMessageAndWait(IVAN, 20);
   Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
   VaultInteriors_PlayAnimationAndWait(GARET, ANIM_NOD, 40);
   ObjectEvent_WalkToAndWait(LOCALID_TIED_UP_VILLAGER, 808, 408);
   ObjectEvent_FaceDirection(LOCALID_TIED_UP_VILLAGER, FACING_WEST, 0);
-  Engine_ScriptWait(30);
+  FieldScript_WaitFrames(30);
   ObjectEvent_FaceObjectEvent(LOCALID_PARTY_LEADER, LOCALID_TIED_UP_VILLAGER,
                               0);
   ObjectEvent_FaceObjectEvent(GARET, LOCALID_TIED_UP_VILLAGER, 0);
   VaultInteriors_FaceObjectEventAndWait(IVAN, LOCALID_TIED_UP_VILLAGER, 20);
-  Engine_ObjectEventRunRepeatedMotion(LOCALID_TIED_UP_VILLAGER, 1);
-  Engine_ScriptWait(20);
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_TIED_UP_VILLAGER, 1);
+  FieldScript_WaitFrames(20);
   VaultInteriors_ShowMessageAndWait(LOCALID_TIED_UP_VILLAGER, 20);
   ObjectEvent_SetSpeed(LOCALID_LOFT_MAYOR, PIXELS(4) / 5, PIXELS(2) / 5);
   ObjectEvent_SetSpeed(LOCALID_LOFT_ESCORT, PIXELS(4) / 5, PIXELS(2) / 5);
@@ -2672,7 +2668,8 @@ static void VaultInteriors_DefeatThieves(void) {
                           PIXELS(408));
   ObjectEvent_WalkTo(LOCALID_STRONGMAN_OPENING_THE_CHESTS, 784, 400);
   ObjectEvent_WalkToAndWait(LOCALID_LOFT_ESCORT, 776, 424);
-  Engine_ObjectEventWaitForMove(LOCALID_STRONGMAN_OPENING_THE_CHESTS);
+  ObjectMotion_CommitCurrentPositionAndActivate(
+      LOCALID_STRONGMAN_OPENING_THE_CHESTS);
   ObjectEvent_FaceObjectEvent(LOCALID_LOFT_ESCORT, LOCALID_THIEF_LEADER, 0);
   VaultInteriors_FaceObjectEventAndWait(LOCALID_STRONGMAN_OPENING_THE_CHESTS,
                                         LOCALID_THIEF_LEADER, 20);
@@ -2688,8 +2685,8 @@ static void VaultInteriors_DefeatThieves(void) {
   // townsmen rouse the thieves to tie them up.
   VaultInteriors_FaceEachOtherAndWait(LOCALID_LOFT_MAYOR, LOCALID_LOFT_ESCORT,
                                       20);
-  Engine_ObjectEventRunRepeatedMotion(LOCALID_LOFT_ESCORT, 1);
-  Engine_ScriptWait(20);
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_LOFT_ESCORT, 1);
+  FieldScript_WaitFrames(20);
   VaultInteriors_ShowMessageAndWait(LOCALID_LOFT_ESCORT, 20);
   VaultInteriors_PlayAnimationAndWait(LOCALID_LOFT_MAYOR, ANIM_NOD, 30);
   VaultInteriors_FaceEachOtherAndWait(LOCALID_LOFT_MAYOR,
@@ -2709,11 +2706,12 @@ static void VaultInteriors_DefeatThieves(void) {
   ObjectEvent_WalkTo(LOCALID_STRONGMAN_OPENING_THE_CHESTS, 792, 392);
   ObjectEvent_WalkToAndWait(LOCALID_LOFT_ESCORT, 784, 400);
   ObjectEvent_FaceObjectEvent(LOCALID_LOFT_ESCORT, LOCALID_SECOND_THIEF, 0);
-  Engine_ObjectEventWaitForMove(LOCALID_STRONGMAN_OPENING_THE_CHESTS);
+  ObjectMotion_CommitCurrentPositionAndActivate(
+      LOCALID_STRONGMAN_OPENING_THE_CHESTS);
   VaultInteriors_FaceObjectEventAndWait(LOCALID_STRONGMAN_OPENING_THE_CHESTS,
                                         LOCALID_FIRST_THIEF, 20);
-  Engine_ObjectEventRunRepeatedMotion(LOCALID_LOFT_ESCORT, 1);
-  Engine_ScriptWait(20);
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_LOFT_ESCORT, 1);
+  FieldScript_WaitFrames(20);
   VaultInteriors_ShowMessageAndWait(LOCALID_LOFT_ESCORT, 20);
   VaultInteriors_PlayAnimationAndWait(LOCALID_STRONGMAN_OPENING_THE_CHESTS,
                                       ANIM_SHAKE_HEAD, 20);
@@ -2728,10 +2726,10 @@ static void VaultInteriors_DefeatThieves(void) {
   work = gFieldWork;
   work->transitionFrames = 30;
   work->transition = MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_SHAPE);
-  Engine_ScriptCloseScreen();
-  Engine_ScriptWaitForScreen();
-  Engine_ScriptWait(60);
-  Engine_ScriptEnd();
+  FieldScript_FinishScreenTransition();
+  FieldScript_WaitTransitionFrames();
+  FieldScript_WaitFrames(60);
+  FieldScript_End();
 }
 
 /// Returns the stolen goods and rod, thanks the party, and clears the loft.
@@ -2752,7 +2750,7 @@ static void VaultInteriors_ReturnStolenGoods(void) {
   GameFlag_Set(FLAG_VAULT_THIEVES_JAILED);
   // With the screen still closed, the chests go back along the wall and the
   // thieves stand tied before the mayor.
-  Engine_ScriptStart();
+  FieldScript_Start();
   {
     struct ObjectEvent *objectEvent = ObjectEvent_GetById(LOCALID_SECOND_THIEF);
 
@@ -2772,11 +2770,11 @@ static void VaultInteriors_ReturnStolenGoods(void) {
   ObjectEvent_FaceObjectEvent(LOCALID_THIEF_LEADER, LOCALID_PARTY_LEADER, 0);
   ObjectEvent_FaceObjectEvent(LOCALID_SECOND_THIEF, LOCALID_PARTY_LEADER, 0);
   objectEvent = ObjectEvent_GetById(LOCALID_THIEF_LEADER);
-  Engine_ObjectEventSetSpriteFlags(objectEvent, SPRITE_FLAG_SHADOW);
+  ObjectEvent_SetSpriteFlags(objectEvent, SPRITE_FLAG_SHADOW);
   objectEvent = ObjectEvent_GetById(LOCALID_FIRST_THIEF);
-  Engine_ObjectEventSetSpriteFlags(objectEvent, SPRITE_FLAG_SHADOW);
+  ObjectEvent_SetSpriteFlags(objectEvent, SPRITE_FLAG_SHADOW);
   objectEvent = ObjectEvent_GetById(LOCALID_SECOND_THIEF);
-  Engine_ObjectEventSetSpriteFlags(objectEvent, SPRITE_FLAG_SHADOW);
+  ObjectEvent_SetSpriteFlags(objectEvent, SPRITE_FLAG_SHADOW);
   ObjectEvent_SetPosition(LOCALID_LOFT_ESCORT, PIXELS(768), PIXELS(408));
   ObjectEvent_SetPosition(LOCALID_STRONGMAN_OPENING_THE_CHESTS, PIXELS(768),
                           PIXELS(424));
@@ -2796,23 +2794,23 @@ static void VaultInteriors_ReturnStolenGoods(void) {
   gFieldWork->transitionFrames = 30;
   gFieldWork->transition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_SHAPE);
-  Engine_ScriptOpenScreen();
-  Engine_ScriptWaitForScreen();
-  Engine_ScriptWait(40);
+  FieldScript_StartScreenTransition();
+  FieldScript_WaitTransitionFrames();
+  FieldScript_WaitFrames(40);
   // "Isaac, right? I won't forget this!" "Take them away!"
-  Engine_ObjectEventRunRepeatedMotion(LOCALID_THIEF_LEADER, 2);
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_THIEF_LEADER, 2);
   aftermath = MsgVaultYouIsaacRightWontForget;
-  Engine_ScriptSetMessage(aftermath);
+  FieldScript_SetMessageId(aftermath);
   VaultInteriors_ShowMessageAndWait(LOCALID_THIEF_LEADER, 20);
-  Engine_ObjectEventRunRepeatedMotion(LOCALID_LOFT_MAYOR, 1);
-  Engine_ScriptWait(20);
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_LOFT_MAYOR, 1);
+  FieldScript_WaitFrames(20);
   VaultInteriors_PlayAnimationAndWait(LOCALID_LOFT_MAYOR, ANIM_SHAKE_HEAD, 20);
   VaultInteriors_ShowMessageAndWait(LOCALID_LOFT_MAYOR, 20);
   Engine_ObjectEventSetAnimation(LOCALID_LOFT_ESCORT, ANIM_NOD);
   VaultInteriors_PlayAnimationAndWait(LOCALID_TIED_UP_VILLAGER, ANIM_NOD, 20);
-  Engine_ObjectEventStartRepeatedMotion(LOCALID_FIRST_THIEF, 2);
-  Engine_ObjectEventStartRepeatedMotion(LOCALID_SECOND_THIEF, 2);
-  Engine_ScriptWait(60);
+  ObjectMotion_SetVariantCallback(LOCALID_FIRST_THIEF, 2);
+  ObjectMotion_SetVariantCallback(LOCALID_SECOND_THIEF, 2);
+  FieldScript_WaitFrames(60);
   // The escort leads the three thieves down the ladder, the tied-up villager
   // after them.
   ObjectEvent_SetSpeed(LOCALID_LOFT_ESCORT, PIXELS(4) / 5, PIXELS(2) / 5);
@@ -2823,19 +2821,19 @@ static void VaultInteriors_ReturnStolenGoods(void) {
                             FACING_NORTHWEST + FACING_STEP, 0);
   ObjectEvent_SetActionScript(LOCALID_FIRST_THIEF,
                               gVaultInteriors_VaultScriptB);
-  Engine_ScriptWait(20);
+  FieldScript_WaitFrames(20);
   ObjectEvent_SetActionScript(LOCALID_THIEF_LEADER,
                               gVaultInteriors_VaultScriptB);
-  Engine_ScriptWait(15);
+  FieldScript_WaitFrames(15);
   ObjectEvent_SetActionScript(LOCALID_SECOND_THIEF,
                               gVaultInteriors_VaultScriptB);
-  Engine_ScriptWait(35);
+  FieldScript_WaitFrames(35);
   ObjectEvent_SetActionScript(LOCALID_TIED_UP_VILLAGER,
                               gVaultInteriors_VaultScriptA);
-  Engine_ScriptWait(20);
-  Engine_ObjectEventWaitForMove(LOCALID_LOFT_ESCORT);
+  FieldScript_WaitFrames(20);
+  ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_LOFT_ESCORT);
   ObjectEvent_SetPosition(LOCALID_LOFT_ESCORT, 0, 0);
-  Engine_ScriptWait(40);
+  FieldScript_WaitFrames(40);
   // The mayor and the villager opening the chests thank the party.
   ObjectEvent_SetSpeed(LOCALID_LOFT_MAYOR, PIXELS(4) / 5, PIXELS(2) / 5);
   ObjectEvent_SetSpeed(LOCALID_STRONGMAN_OPENING_THE_CHESTS, PIXELS(4) / 5,
@@ -2861,47 +2859,47 @@ static void VaultInteriors_ReturnStolenGoods(void) {
   Engine_ObjectEventSetAnimation(GARET, ANIM_NOD);
   VaultInteriors_PlayAnimationAndWait(IVAN, ANIM_NOD, 50);
   // "Let's take a look at what they stole." The two go round to the chests.
-  Engine_ObjectEventFaceEachOther(LOCALID_LOFT_MAYOR,
-                                  LOCALID_STRONGMAN_OPENING_THE_CHESTS, 0);
+  ObjectEvent_LinkPair(LOCALID_LOFT_MAYOR, LOCALID_STRONGMAN_OPENING_THE_CHESTS,
+                       0);
   VaultInteriors_PlayAnimationAndWait(LOCALID_LOFT_MAYOR, ANIM_NOD, 20);
   VaultInteriors_ShowMessageAndWait(LOCALID_LOFT_MAYOR, 20);
   ObjectEvent_SetActionScript(LOCALID_STRONGMAN_OPENING_THE_CHESTS,
                               gVaultInteriors_VaultScriptC);
-  Engine_ScriptWait(50);
+  FieldScript_WaitFrames(50);
   ObjectEvent_SetActionScript(LOCALID_LOFT_MAYOR, gVaultInteriors_VaultScriptD);
   ObjectEvent_SetSpeed(GARET, PIXELS(4) / 5, PIXELS(2) / 5);
   ObjectEvent_SetSpeed(IVAN, PIXELS(4) / 5, PIXELS(2) / 5);
   ObjectEvent_WalkToAndWait(GARET, 792, 456);
   ObjectEvent_FaceDirection(GARET, FACING_NORTH + FACING_STEP, 0);
-  Engine_ScriptWait(30);
+  FieldScript_WaitFrames(30);
   ObjectEvent_WalkToAndWait(IVAN, 792, 408);
   ObjectEvent_FaceDirection(IVAN, FACING_EAST, 0);
   ObjectEvent_WalkToAndWait(GARET, 808, 456);
   ObjectEvent_FaceDirection(GARET, FACING_NORTH + FACING_STEP, 0);
-  Engine_ScriptWait(100);
+  FieldScript_WaitFrames(100);
   VaultInteriors_FaceObjectEventAndWait(LOCALID_STRONGMAN_OPENING_THE_CHESTS,
                                         LOCALID_LOFT_MAYOR, 60);
   VaultInteriors_FaceObjectEventAndWait(
       LOCALID_LOFT_MAYOR, LOCALID_STRONGMAN_OPENING_THE_CHESTS, 40);
   VaultInteriors_PlayAnimationAndWait(LOCALID_LOFT_MAYOR, ANIM_NOD, 40);
   ObjectEvent_FaceDirection(LOCALID_LOFT_MAYOR, FACING_EAST, 0);
-  Engine_ScriptWait(20);
+  FieldScript_WaitFrames(20);
   // The mayor opens the first chest and his urn rises out of it.
-  Engine_ObjectEventRunRepeatedMotion(LOCALID_LOFT_MAYOR, 2);
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_LOFT_MAYOR, 2);
   Script_PlaySong(SE_124);
   Engine_ObjectEventSetAnimation(LOCALID_FIRST_CHEST, ANIM_SHAKE_HEAD);
   ObjectEvent_SetPosition(LOCALID_FOUND_URN, PIXELS(872), PIXELS(424));
-  Engine_ObjectEventSetSpritePriority(LOCALID_FOUND_URN, 1);
+  ObjectMotion_SetActionVariant(LOCALID_FOUND_URN, 1);
   ObjectEvent_SetSpeed(LOCALID_FOUND_URN, PIXELS(4) / 5, PIXELS(2) / 5);
   ObjectEvent_SetDestinationOffset(LOCALID_FOUND_URN, 0, -8);
-  Engine_ObjectEventWaitForMove(LOCALID_FOUND_URN);
-  Engine_ObjectEventRunRepeatedMotion(LOCALID_FOUND_URN, 2);
-  Engine_ScriptWait(60);
-  Engine_MessageShowCentered((aftermath + 5), 1);
+  ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_FOUND_URN);
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_FOUND_URN, 2);
+  FieldScript_WaitFrames(60);
+  FieldMessage_Show((aftermath + 5), 1);
   Engine_ObjectEventSetAnimation(LOCALID_FIRST_CHEST, ANIM_WALK);
   ObjectEvent_SetPosition(LOCALID_FOUND_URN, 0, 0);
   gFieldWork->message++;
-  Engine_ObjectEventRunRepeatedMotion(LOCALID_STRONGMAN_OPENING_THE_CHESTS, 1);
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_STRONGMAN_OPENING_THE_CHESTS, 1);
   VaultInteriors_ShowMessageAndWait(LOCALID_STRONGMAN_OPENING_THE_CHESTS, 20);
   VaultInteriors_FaceEachOtherAndWait(LOCALID_PARTY_LEADER, GARET, 40);
   VaultInteriors_FaceObjectEventAndWait(
@@ -2914,31 +2912,31 @@ static void VaultInteriors_ReturnStolenGoods(void) {
       GARET, LOCALID_STRONGMAN_OPENING_THE_CHESTS, 40);
   ObjectEvent_FaceDirection(LOCALID_STRONGMAN_OPENING_THE_CHESTS, FACING_EAST,
                             0);
-  Engine_ScriptWait(40);
+  FieldScript_WaitFrames(40);
   // The villager opening the chests opens the second: the gold statue stolen
   // from the Sanctum.
-  Engine_ObjectEventRunRepeatedMotion(LOCALID_STRONGMAN_OPENING_THE_CHESTS, 2);
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_STRONGMAN_OPENING_THE_CHESTS, 2);
   Script_PlaySong(SE_124);
   Engine_ObjectEventSetAnimation(LOCALID_SECOND_CHEST, ANIM_SHAKE_HEAD);
   ObjectEvent_GetById(LOCALID_FOUND_STATUE)->motionFlags = 0;
-  Engine_ObjectEventSetSpritePriority(LOCALID_FOUND_STATUE, 1);
+  ObjectMotion_SetActionVariant(LOCALID_FOUND_STATUE, 1);
   ObjectEvent_SetPosition(LOCALID_FOUND_STATUE, PIXELS(872), PIXELS(408));
   ObjectEvent_SetSpeed(LOCALID_FOUND_STATUE, PIXELS(4) / 5, PIXELS(2) / 5);
   ObjectEvent_SetDestinationOffset(LOCALID_FOUND_STATUE, 0, -8);
-  Engine_ObjectEventWaitForMove(LOCALID_FOUND_STATUE);
-  Engine_ObjectEventRunRepeatedMotion(LOCALID_FOUND_STATUE, 2);
-  Engine_ScriptWait(60);
-  Engine_MessageShowCentered((aftermath + 8), 1);
+  ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_FOUND_STATUE);
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_FOUND_STATUE, 2);
+  FieldScript_WaitFrames(60);
+  FieldMessage_Show((aftermath + 8), 1);
   Engine_ObjectEventSetAnimation(LOCALID_SECOND_CHEST, ANIM_WALK);
   ObjectEvent_SetPosition(LOCALID_FOUND_STATUE, 0, 0);
   gFieldWork->message++;
   ObjectEvent_ShowEmote(LOCALID_LOFT_MAYOR, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
-  Engine_ScriptWait(60);
+  FieldScript_WaitFrames(60);
   VaultInteriors_ShowMessageAndWait(LOCALID_LOFT_MAYOR, 20);
-  Engine_ObjectEventStartRepeatedMotion(LOCALID_PARTY_LEADER, 2);
-  Engine_ObjectEventStartRepeatedMotion(GARET, 2);
-  Engine_ObjectEventRunRepeatedMotion(IVAN, 2);
-  Engine_ScriptWait(20);
+  ObjectMotion_SetVariantCallback(LOCALID_PARTY_LEADER, 2);
+  ObjectMotion_SetVariantCallback(GARET, 2);
+  ObjectMotion_SetVarCbAndRefresh(IVAN, 2);
+  FieldScript_WaitFrames(20);
   VaultInteriors_PlayAnimationAndWait(LOCALID_STRONGMAN_OPENING_THE_CHESTS,
                                       ANIM_NOD, 50);
   VaultInteriors_FaceObjectEventAndWait(LOCALID_LOFT_MAYOR,
@@ -2948,19 +2946,19 @@ static void VaultInteriors_ReturnStolenGoods(void) {
   // it is what Ivan was looking for, and he can return to Master Hammet.
   ObjectEvent_FaceDirection(LOCALID_STRONGMAN_OPENING_THE_CHESTS,
                             FACING_NORTH + FACING_STEP, 0);
-  Engine_ScriptWait(30);
+  FieldScript_WaitFrames(30);
   ObjectEvent_ShowEmote(LOCALID_STRONGMAN_OPENING_THE_CHESTS,
                         EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
-  Engine_ScriptWait(60);
+  FieldScript_WaitFrames(60);
   ObjectEvent_WalkToAndWait(LOCALID_STRONGMAN_OPENING_THE_CHESTS, 856, 376);
-  Engine_ScriptWait(20);
+  FieldScript_WaitFrames(20);
   VaultInteriors_FaceObjectEventAndWait(LOCALID_STRONGMAN_OPENING_THE_CHESTS,
                                         LOCALID_LOFT_MAYOR, 20);
   VaultInteriors_ShowMessageAndWait(LOCALID_STRONGMAN_OPENING_THE_CHESTS, 20);
   ObjectEvent_FaceObjectEvent(LOCALID_LOFT_MAYOR,
                               LOCALID_STRONGMAN_OPENING_THE_CHESTS, 0);
   ObjectEvent_ShowEmote(IVAN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
-  Engine_ScriptWait(60);
+  FieldScript_WaitFrames(60);
   VaultInteriors_FaceObjectEventAndWait(
       IVAN, LOCALID_STRONGMAN_OPENING_THE_CHESTS, 30);
   VaultInteriors_FaceObjectEventAndWait(LOCALID_LOFT_MAYOR, IVAN, 20);
@@ -2968,43 +2966,43 @@ static void VaultInteriors_ReturnStolenGoods(void) {
   Script_ShowMessage(LOCALID_LOFT_MAYOR, 0);
   ObjectEvent_FaceDirection(LOCALID_STRONGMAN_OPENING_THE_CHESTS,
                             FACING_SOUTH + FACING_STEP, 0);
-  Engine_ScriptWait(30);
+  FieldScript_WaitFrames(30);
   VaultInteriors_FaceObjectEventAndWait(IVAN, LOCALID_LOFT_MAYOR, 20);
   VaultInteriors_PlayAnimationAndWait(IVAN, ANIM_NOD, 20);
   VaultInteriors_ShowMessageAndWait(LOCALID_LOFT_MAYOR, 20);
-  Engine_ObjectEventFaceEachOther(LOCALID_PARTY_LEADER, IVAN, 0);
+  ObjectEvent_LinkPair(LOCALID_PARTY_LEADER, IVAN, 0);
   VaultInteriors_FaceObjectEventAndWait(GARET, IVAN, 20);
   Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
   VaultInteriors_PlayAnimationAndWait(GARET, ANIM_NOD, 40);
   VaultInteriors_PlayAnimationAndWait(IVAN, ANIM_NOD, 30);
   // Hammet was seen heading toward Lunpa: Dodonpa must have kidnapped him.
-  Engine_ObjectEventRunRepeatedMotion(LOCALID_LOFT_MAYOR, 1);
-  Engine_ScriptWait(20);
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_LOFT_MAYOR, 1);
+  FieldScript_WaitFrames(20);
   VaultInteriors_PlayAnimationAndWait(LOCALID_LOFT_MAYOR, ANIM_SHAKE_HEAD, 20);
   VaultInteriors_ShowMessageAndWait(LOCALID_LOFT_MAYOR, 20);
   ObjectEvent_FaceObjectEvent(LOCALID_PARTY_LEADER, LOCALID_LOFT_MAYOR, 0);
   ObjectEvent_FaceObjectEvent(GARET, LOCALID_LOFT_MAYOR, 0);
   VaultInteriors_FaceObjectEventAndWait(IVAN, LOCALID_LOFT_MAYOR, 20);
-  Engine_ObjectEventStartRepeatedMotion(LOCALID_PARTY_LEADER, 1);
-  Engine_ObjectEventStartRepeatedMotion(GARET, 1);
+  ObjectMotion_SetVariantCallback(LOCALID_PARTY_LEADER, 1);
+  ObjectMotion_SetVariantCallback(GARET, 1);
   ObjectEvent_ShowEmote(IVAN, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
-  Engine_ScriptWait(60);
+  FieldScript_WaitFrames(60);
   VaultInteriors_ShowMessageAndWait(IVAN, 40);
   VaultInteriors_PlayAnimationAndWait(LOCALID_LOFT_MAYOR, ANIM_NOD, 20);
   Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_SHAKE_HEAD);
-  Engine_ObjectEventSetAnimationAndWait(GARET, ANIM_SHAKE_HEAD);
-  Engine_ObjectEventRunRepeatedMotion(IVAN, 3);
-  Engine_ScriptWait(30);
+  ObjectMotion_SetAnimationAndWait(GARET, ANIM_SHAKE_HEAD);
+  ObjectMotion_SetVarCbAndRefresh(IVAN, 3);
+  FieldScript_WaitFrames(30);
   VaultInteriors_PlayAnimationAndWait(LOCALID_LOFT_MAYOR, ANIM_SHAKE_HEAD, 20);
   VaultInteriors_ShowMessageAndWait(LOCALID_LOFT_MAYOR, 20);
   VaultInteriors_FaceEachOtherAndWait(LOCALID_PARTY_LEADER, GARET, 20);
   // Ivan rushes forward: what will happen to Hammet? The mayor calms him:
   // Dodonpa wants a ransom, so Hammet is safe for now.
-  Engine_ObjectEventRunRepeatedMotion(IVAN, 2);
+  ObjectMotion_SetVarCbAndRefresh(IVAN, 2);
   VaultInteriors_PlayAnimationAndWait(IVAN, ANIM_SHAKE_HEAD, 30);
   ObjectEvent_SetSpeed(IVAN, PIXELS(3) / 2, PIXELS(3) / 4);
   ObjectEvent_WalkToAndWait(IVAN, 800, 408);
-  Engine_ObjectEventRunRepeatedMotion(IVAN, 2);
+  ObjectMotion_SetVarCbAndRefresh(IVAN, 2);
   Script_ShowMessage(IVAN, 0);
   ObjectEvent_FaceObjectEvent(LOCALID_PARTY_LEADER, LOCALID_LOFT_MAYOR, 0);
   VaultInteriors_FaceObjectEventAndWait(GARET, LOCALID_LOFT_MAYOR, 30);
@@ -3016,38 +3014,38 @@ static void VaultInteriors_ReturnStolenGoods(void) {
                                            ATTACHED_EFFECT_ONCE);
   ObjectEvent_SetAttachedEffect(IVAN, ATTACHED_EFFECT_IN_FRONT |
                                           ATTACHED_EFFECT_ONCE);
-  Engine_ScriptWait(60);
+  FieldScript_WaitFrames(60);
   VaultInteriors_ShowMessageAndWait(IVAN, 20);
-  Engine_ObjectEventRunRepeatedMotion(LOCALID_LOFT_MAYOR, 1);
-  Engine_ScriptWait(20);
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_LOFT_MAYOR, 1);
+  FieldScript_WaitFrames(20);
   VaultInteriors_ShowMessageAndWait(LOCALID_LOFT_MAYOR, 20);
   ObjectEvent_ShowEmote(LOCALID_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_QUESTION,
                         0);
   ObjectEvent_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
   ObjectEvent_ShowEmote(IVAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
-  Engine_ScriptWait(60);
+  FieldScript_WaitFrames(60);
   VaultInteriors_PlayAnimationAndWait(LOCALID_LOFT_MAYOR, ANIM_SHAKE_HEAD, 20);
   VaultInteriors_ShowMessageAndWait(LOCALID_LOFT_MAYOR, 20);
-  Engine_ObjectEventStartRepeatedMotion(LOCALID_PARTY_LEADER, 1);
-  Engine_ObjectEventStartRepeatedMotion(GARET, 1);
-  Engine_ObjectEventRunRepeatedMotion(IVAN, 1);
-  Engine_ScriptWait(20);
+  ObjectMotion_SetVariantCallback(LOCALID_PARTY_LEADER, 1);
+  ObjectMotion_SetVariantCallback(GARET, 1);
+  ObjectMotion_SetVarCbAndRefresh(IVAN, 1);
+  FieldScript_WaitFrames(20);
   VaultInteriors_PlayAnimationAndWait(LOCALID_LOFT_MAYOR, ANIM_NOD, 20);
   VaultInteriors_ShowMessageAndWait(LOCALID_LOFT_MAYOR, 40);
   // The mayor asks the two their names, thanks them, and asks them to come
   // see him before they leave town.
   ObjectEvent_ShowEmote(IVAN, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
-  Engine_ScriptWait(60);
+  FieldScript_WaitFrames(60);
   ObjectEvent_WalkToAndWait(LOCALID_LOFT_MAYOR, 840, 424);
   VaultInteriors_FaceEachOtherAndWait(LOCALID_LOFT_MAYOR, LOCALID_PARTY_LEADER,
                                       20);
   VaultInteriors_ShowMessageAndWait(LOCALID_LOFT_MAYOR, 20);
   VaultInteriors_PlayAnimationAndWait(LOCALID_PARTY_LEADER, ANIM_NOD, 20);
   ObjectEvent_FaceDirection(LOCALID_LOFT_MAYOR, FACING_SOUTH + FACING_STEP, 0);
-  Engine_ScriptWait(20);
+  FieldScript_WaitFrames(20);
   VaultInteriors_ShowMessageAndWait(LOCALID_LOFT_MAYOR, 20);
-  Engine_ObjectEventRunRepeatedMotion(GARET, 1);
-  Engine_ScriptWait(20);
+  ObjectMotion_SetVarCbAndRefresh(GARET, 1);
+  FieldScript_WaitFrames(20);
   VaultInteriors_ShowMessageAndWait(GARET, 20);
   VaultInteriors_PlayAnimationAndWait(LOCALID_LOFT_MAYOR, ANIM_NOD, 20);
   VaultInteriors_ShowMessageAndWait(LOCALID_LOFT_MAYOR, 30);
@@ -3062,9 +3060,9 @@ static void VaultInteriors_ReturnStolenGoods(void) {
   ObjectEvent_WalkTo(GARET, 792, 456);
   ObjectEvent_SetSpeed(IVAN, PIXELS(4) / 5, PIXELS(2) / 5);
   ObjectEvent_WalkTo(IVAN, 776, 432);
-  Engine_ObjectEventWaitForMove(GARET);
+  ObjectMotion_CommitCurrentPositionAndActivate(GARET);
   ObjectEvent_FaceDirection(GARET, FACING_NORTH + FACING_STEP, 0);
-  Engine_ObjectEventWaitForMove(IVAN);
+  ObjectMotion_CommitCurrentPositionAndActivate(IVAN);
   ObjectEvent_FaceDirection(IVAN, FACING_NORTH + FACING_STEP, 0);
   ObjectEvent_RefreshSelectorById(LOCALID_LOFT_MAYOR);
   ObjectEvent_FaceObjectEvent(LOCALID_PARTY_LEADER, LOCALID_LOFT_MAYOR, 0);
@@ -3083,11 +3081,11 @@ static void VaultInteriors_ReturnStolenGoods(void) {
                         0);
   Engine_ObjectEventSetAnimation(LOCALID_STRONGMAN_OPENING_THE_CHESTS,
                                  ANIM_STAND);
-  Engine_ScriptWait(50);
+  FieldScript_WaitFrames(50);
   ObjectEvent_FaceObjectEvent(LOCALID_LOFT_MAYOR, LOCALID_PARTY_LEADER, 0);
   ObjectEvent_WalkToAndWait(GARET, 808, 440);
   ObjectEvent_FaceDirection(GARET, FACING_NORTHWEST + FACING_STEP, 0);
-  Engine_ScriptWait(20);
+  FieldScript_WaitFrames(20);
   VaultInteriors_ShowMessageAndWait(LOCALID_LOFT_MAYOR, 20);
   VaultInteriors_FaceEachOtherAndWait(LOCALID_PARTY_LEADER, GARET, 50);
   ObjectEvent_FaceObjectEvent(LOCALID_PARTY_LEADER, LOCALID_LOFT_MAYOR, 0);
@@ -3095,19 +3093,20 @@ static void VaultInteriors_ReturnStolenGoods(void) {
   VaultInteriors_PlayAnimationAndWait(LOCALID_LOFT_MAYOR, ANIM_NOD, 20);
   ObjectEvent_WalkTo(LOCALID_LOFT_MAYOR, 744, 408);
   ObjectEvent_WalkTo(LOCALID_STRONGMAN_OPENING_THE_CHESTS, 744, 408);
-  Engine_ObjectEventWaitForMove(LOCALID_LOFT_MAYOR);
-  Engine_ObjectEventWaitForMove(LOCALID_STRONGMAN_OPENING_THE_CHESTS);
-  Engine_ScriptWait(30);
+  ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_LOFT_MAYOR);
+  ObjectMotion_CommitCurrentPositionAndActivate(
+      LOCALID_STRONGMAN_OPENING_THE_CHESTS);
+  FieldScript_WaitFrames(30);
   // Alone, Garet tries to cheer Ivan up; Ivan only wants to rescue Hammet,
   // but has seen the two's mission in their minds and won't ask their help.
   ObjectEvent_WalkToAndWait(LOCALID_PARTY_LEADER, 792, 408);
   VaultInteriors_FaceEachOtherAndWait(LOCALID_PARTY_LEADER, GARET, 30);
   ObjectEvent_ShowEmote(IVAN, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
-  Engine_ScriptWait(50);
+  FieldScript_WaitFrames(50);
   ObjectEvent_FaceObjectEvent(LOCALID_PARTY_LEADER, IVAN, 0);
   VaultInteriors_FaceObjectEventAndWait(GARET, IVAN, 20);
-  Engine_ObjectEventRunRepeatedMotion(GARET, 1);
-  Engine_ScriptWait(20);
+  ObjectMotion_SetVarCbAndRefresh(GARET, 1);
+  FieldScript_WaitFrames(20);
   VaultInteriors_ShowMessageAndWait(GARET, 40);
   VaultInteriors_PlayAnimationAndWait(IVAN, ANIM_NOD, 30);
   VaultInteriors_FaceEachOtherAndWait(LOCALID_PARTY_LEADER, GARET, 40);
@@ -3115,11 +3114,11 @@ static void VaultInteriors_ReturnStolenGoods(void) {
   VaultInteriors_PlayAnimationAndWait(GARET, ANIM_SHAKE_HEAD, 30);
   ObjectEvent_FaceObjectEvent(LOCALID_PARTY_LEADER, IVAN, 0);
   VaultInteriors_FaceObjectEventAndWait(GARET, IVAN, 20);
-  Engine_ObjectEventRunRepeatedMotion(GARET, 1);
-  Engine_ScriptWait(20);
+  ObjectMotion_SetVarCbAndRefresh(GARET, 1);
+  FieldScript_WaitFrames(20);
   VaultInteriors_ShowMessageAndWait(GARET, 40);
-  Engine_ObjectEventRunRepeatedMotion(IVAN, 2);
-  Engine_ScriptWait(20);
+  ObjectMotion_SetVarCbAndRefresh(IVAN, 2);
+  FieldScript_WaitFrames(20);
   VaultInteriors_ShowMessageAndWait(IVAN, 20);
   Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
   VaultInteriors_PlayAnimationAndWait(GARET, ANIM_NOD, 20);
@@ -3128,18 +3127,18 @@ static void VaultInteriors_ReturnStolenGoods(void) {
   ObjectEvent_ShowEmote(LOCALID_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_QUESTION,
                         0);
   ObjectEvent_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
-  Engine_ScriptWait(60);
+  FieldScript_WaitFrames(60);
   VaultInteriors_PlayAnimationAndWait(IVAN, ANIM_NOD, 20);
   VaultInteriors_ShowMessageAndWait(IVAN, 20);
   ObjectEvent_ShowEmote(LOCALID_PARTY_LEADER,
                         EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   ObjectEvent_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
-  Engine_ScriptWait(60);
+  FieldScript_WaitFrames(60);
   VaultInteriors_PlayAnimationAndWait(IVAN, ANIM_NOD, 20);
   VaultInteriors_ShowMessageAndWait(IVAN, 20);
   ObjectEvent_ShowEmote(LOCALID_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
   ObjectEvent_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
-  Engine_ScriptWait(60);
+  FieldScript_WaitFrames(60);
   VaultInteriors_PlayAnimationAndWait(IVAN, ANIM_SHAKE_HEAD, 20);
   VaultInteriors_ShowMessageAndWait(IVAN, 20);
   VaultInteriors_PlayAnimationAndWait(GARET, ANIM_NOD, 20);
@@ -3147,10 +3146,10 @@ static void VaultInteriors_ReturnStolenGoods(void) {
   // "Then, I suppose this is good-bye." A no has Garet say Isaac would help,
   // and Ivan decline.
   Script_OpenMessage(IVAN, 0);
-  if (Engine_ScriptChooseYesNo(0, 0) != 0) {
-    Engine_ScriptWait(20);
-    Engine_ObjectEventRunRepeatedMotion(GARET, 1);
-    Engine_ScriptWait(20);
+  if (FieldScript_AskYesNoWithObjectEventAnimation(0, 0) != 0) {
+    FieldScript_WaitFrames(20);
+    ObjectMotion_SetVarCbAndRefresh(GARET, 1);
+    FieldScript_WaitFrames(20);
     VaultInteriors_ShowMessageAndWait(GARET, 20);
     VaultInteriors_PlayAnimationAndWait(IVAN, ANIM_SHAKE_HEAD, 20);
     VaultInteriors_ShowMessageAndWait(IVAN, 20);
@@ -3167,17 +3166,17 @@ static void VaultInteriors_ReturnStolenGoods(void) {
   ObjectEvent_FaceObjectEvent(LOCALID_PARTY_LEADER, IVAN, 0);
   ObjectEvent_FaceObjectEvent(GARET, IVAN, 0);
   ObjectEvent_FaceDirection(IVAN, FACING_EAST, 0);
-  Engine_ScriptWait(20);
-  Engine_ObjectEventRunRepeatedMotion(IVAN, 2);
+  FieldScript_WaitFrames(20);
+  ObjectMotion_SetVarCbAndRefresh(IVAN, 2);
   temporaryObjectEvent =
       (struct ObjectEvent *)FieldEffect_PlayCueAndStartEmitterOnTarget(
           IVAN, LOCALID_THIRD_CHEST, ITEM_SHAMANS_ROD);
-  Engine_ScriptWait(60);
+  FieldScript_WaitFrames(60);
   rod = MsgVaultIvanGotShamansRod;
-  Engine_MessageShowCentered(rod, 1);
-  Engine_ObjectDispatchRelease(temporaryObjectEvent);
+  FieldMessage_Show(rod, 1);
+  ObjectEvent_Release(temporaryObjectEvent);
   Engine_ObjectEventSetAnimation(LOCALID_THIRD_CHEST, ANIM_WALK);
-  Engine_ScriptWait(20);
+  FieldScript_WaitFrames(20);
   VaultInteriors_PlayAnimationAndWait(IVAN, ANIM_NOD, 20);
   ObjectEvent_WalkToAndWait(IVAN, 856, 456);
   ObjectEvent_FaceObjectEvent(LOCALID_PARTY_LEADER, IVAN, 0);
@@ -3186,11 +3185,11 @@ static void VaultInteriors_ReturnStolenGoods(void) {
   ObjectEvent_FaceObjectEvent(LOCALID_PARTY_LEADER, IVAN, 0);
   ObjectEvent_FaceObjectEvent(GARET, IVAN, 0);
   ObjectEvent_WalkToAndWait(IVAN, 776, 424);
-  Engine_ObjectEventFaceEachOther(LOCALID_PARTY_LEADER, IVAN, 0);
+  ObjectEvent_LinkPair(LOCALID_PARTY_LEADER, IVAN, 0);
   VaultInteriors_FaceObjectEventAndWait(GARET, IVAN, 30);
   // He thanks the town, hands back any Venus Djinni and leaves the party.
   VaultInteriors_PlayAnimationAndWait(IVAN, ANIM_NOD, 20);
-  Engine_ScriptSetMessage((rod + 1));
+  FieldScript_SetMessageId((rod + 1));
   VaultInteriors_ShowMessageAndWait(IVAN, 20);
   Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
   {
@@ -3198,7 +3197,7 @@ static void VaultInteriors_ReturnStolenGoods(void) {
     s32 saved = (s16)*slot;
 
     if (VaultInteriors_GetIvanVenusDjinnCount() != 0) {
-      Engine_ScriptSetMessage(MsgVaultWaitDontWantTakeYour);
+      FieldScript_SetMessageId(MsgVaultWaitDontWantTakeYour);
       Script_ShowMessage(IVAN, 0);
       Vault_ReturnIsaacsDjinni();
     }
@@ -3211,10 +3210,10 @@ static void VaultInteriors_ReturnStolenGoods(void) {
   ObjectEvent_FaceObjectEvent(GARET, IVAN, 0);
   // Ivan goes down the ladder; Garet: they'd better get moving too.
   ObjectEvent_WalkToAndWait(IVAN, 744, 408);
-  Engine_ScriptWait(40);
+  FieldScript_WaitFrames(40);
   VaultInteriors_FaceEachOtherAndWait(LOCALID_PARTY_LEADER, GARET, 20);
-  Engine_ObjectEventRunRepeatedMotion(GARET, 1);
-  Engine_ScriptWait(20);
+  ObjectMotion_SetVarCbAndRefresh(GARET, 1);
+  FieldScript_WaitFrames(20);
   VaultInteriors_ShowMessageAndWait(GARET, 20);
   VaultInteriors_PlayAnimationAndWait(LOCALID_PARTY_LEADER, ANIM_NOD, 20);
   Engine_ObjectEventSetAnimation(GARET, ANIM_WALK);
@@ -3223,9 +3222,9 @@ static void VaultInteriors_ReturnStolenGoods(void) {
     ObjectEvent_SetDestination(GARET, objectEvent->x.part.pixel,
                                objectEvent->z.part.pixel);
   }
-  Engine_ObjectEventWaitForMove(GARET);
+  ObjectMotion_CommitCurrentPositionAndActivate(GARET);
   ObjectEvent_SetPosition(GARET, 0, 0);
-  Engine_ScriptWait(30);
+  FieldScript_WaitFrames(30);
   // Clear the loft of everyone the cutscene used.
   ObjectEvent_SetPosition(LOCALID_TIED_UP_VILLAGER, 0, 0);
   ObjectEvent_SetPosition(LOCALID_LOFT_MAYOR, 0, 0);
@@ -3237,7 +3236,7 @@ static void VaultInteriors_ReturnStolenGoods(void) {
   ObjectEvent_SetPosition(IVAN, 0, 0);
   gFieldWork->transition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
-  Engine_ScriptEnd();
+  FieldScript_End();
 }
 
 /// Opens the window transition and waits one frame after it finishes.
@@ -3247,26 +3246,26 @@ static void VaultInteriors_OpenWindowTransition(void) {
   state = gFieldWork;
   state->transition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
-  Engine_ScriptOpenScreen();
-  Engine_ScriptWaitForScreen();
-  Engine_ScriptWait(1);
+  FieldScript_StartScreenTransition();
+  FieldScript_WaitTransitionFrames();
+  FieldScript_WaitFrames(1);
 }
 
 static void VaultInteriors_ShowMessageAndWait(s32 localId, s32 waitFrames) {
-  Engine_ScriptShowMessage(localId, 0);
-  Engine_ScriptWait(waitFrames);
+  FieldScript_ShowMessageAndWait(localId, 0);
+  FieldScript_WaitFrames(waitFrames);
 }
 
 static void VaultInteriors_FaceObjectEventAndWait(s32 localId, s32 targetId,
                                                   s32 waitFrames) {
-  Engine_ObjectEventFaceObjectEvent(localId, targetId, 0);
-  Engine_ScriptWait(waitFrames);
+  ObjectMotion_SetAngleToward(localId, targetId, 0);
+  FieldScript_WaitFrames(waitFrames);
 }
 
 static void VaultInteriors_FaceEachOtherAndWait(s32 firstId, s32 secondId,
                                                 s32 waitFrames) {
-  Engine_ObjectEventFaceEachOther(firstId, secondId, 0);
-  Engine_ScriptWait(waitFrames);
+  ObjectEvent_LinkPair(firstId, secondId, 0);
+  FieldScript_WaitFrames(waitFrames);
 }
 
 /// Waits for the animation to change before the following pause.
@@ -3274,22 +3273,22 @@ static void VaultInteriors_PlayAnimationAndWait(s32 localId, s32 animation,
                                                 s32 waitFrames) {
   Engine_ObjectEventSetAnimation(localId, animation, waitFrames);
   ObjectMotion_WaitForAnimationChange(localId);
-  Engine_ScriptWait(waitFrames);
+  FieldScript_WaitFrames(waitFrames);
 }
 
 /// Begins Mind Read, chooses its target, and shows its opening effect.
 static void VaultInteriors_StartMindRead(s32 casterId, s32 targetId) {
-  Engine_PsynergyStart(ABILITY_MIND_READ, 1);
-  Engine_PsynergySetTarget(casterId, targetId);
-  Engine_PsynergyRaiseHands();
-  Engine_PsynergyPlayEffect(1);
-  Engine_TaskWait(1);
+  FieldEffect_LoadActionEffectResources(ABILITY_MIND_READ, 1);
+  FieldEffect_SetupObjectPair(casterId, targetId);
+  FieldEffect_StartCast();
+  Field_DispatchTypeHandler(1);
+  WaitFrames(1);
 }
 
 /// Finishes Mind Read and releases its scene effect objects.
 static void VaultInteriors_EndMindRead(void) {
-  Engine_PsynergyPlayEffect(2);
-  Engine_PsynergyLowerHands();
+  Field_DispatchTypeHandler(2);
+  FieldEffect_StopCasterHook();
   FieldEffect_End();
 }
 
@@ -3361,7 +3360,7 @@ VaultInteriors_SnapToNearestStop(struct VaultInteriorsStop *node,
 /// Checks whether an object event's destination or current position lies within
 /// eight pixels.
 static s32 VaultInteriors_IsObjectEventWithinEightPixels(s32 x, s32 z, s32 id) {
-  struct ObjectEvent *objectEvent = Engine_ObjectEventLookup(id);
+  struct ObjectEvent *objectEvent = ObjectEvent_GetByLocalId(id);
   s32 targetX = objectEvent->targetX;
   s32 targetZ;
 
@@ -3384,7 +3383,7 @@ static s32 VaultInteriors_IsObjectEventWithinEightPixels(s32 x, s32 z, s32 id) {
 /// sixteen pixels.
 static s32 VaultInteriors_IsObjectEventWithinSixteenPixels(s32 x, s32 z,
                                                            s32 id) {
-  struct ObjectEvent *objectEvent = Engine_ObjectEventLookup(id);
+  struct ObjectEvent *objectEvent = ObjectEvent_GetByLocalId(id);
   s32 ax;
   s32 az;
 
@@ -3429,8 +3428,8 @@ static s32 VaultInteriors_CheckStopOccupancy(struct VaultInteriorsStop *stop) {
 static void
 VaultInteriors_MoveObjectEventToStop(struct ObjectEvent *objectEvent,
                                      struct VaultInteriorsStop *stop) {
-  Engine_ObjectSetPosition(objectEvent, (stop->gridX << 19) + PIXELS(72), 0,
-                           (stop->gridZ << 19) + PIXELS(632));
+  Object_SetPosition(objectEvent, (stop->gridX << 19) + PIXELS(72), 0,
+                     (stop->gridZ << 19) + PIXELS(632));
 }
 
 /// Steers Ivan and both suspects through the graph and detects a sustained
@@ -3454,10 +3453,10 @@ static void VaultInteriors_UpdateObjectEventStops(void) {
   s16 facing;
   s16 facingDifference;
 
-  leader = Engine_ObjectEventLookup(LOCALID_PARTY_LEADER);
+  leader = ObjectEvent_GetByLocalId(LOCALID_PARTY_LEADER);
   blocked = 0;
   work = gFieldWork;
-  objectEvent = Engine_ObjectEventLookup(IVAN);
+  objectEvent = ObjectEvent_GetByLocalId(IVAN);
   entry = VaultInteriors_FindStopAtPosition(&objectEvent->x.fixed);
   if (entry != NULL && objectEvent->targetX == OBJ_EVENT_NO_TARGET) {
     dx = objectEvent->x.fixed - leader->x.fixed;
@@ -3483,15 +3482,15 @@ static void VaultInteriors_UpdateObjectEventStops(void) {
     destination = VaultInteriors_SnapToNearestStop(entry, &facing);
     if (VaultInteriors_CheckStopOccupancy(destination) == 0) {
       VaultInteriors_MoveObjectEventToStop(objectEvent, destination);
-      ObjectEvent_SetMode(objectEvent, 2);
+      ObjectDispatch_SelectAnimation(objectEvent, 2);
     } else {
-      ObjectEvent_SetMode(objectEvent, 1);
+      ObjectDispatch_SelectAnimation(objectEvent, 1);
     }
   }
 
   // Each suspect tries a random turn, then reverses when that route is
   // occupied.
-  objectEvent = Engine_ObjectEventLookup(LOCALID_SUSPECTED_LEADER);
+  objectEvent = ObjectEvent_GetByLocalId(LOCALID_SUSPECTED_LEADER);
   entry = VaultInteriors_FindStopAtPosition(&objectEvent->x.fixed);
   if (entry != NULL && objectEvent->targetX == OBJ_EVENT_NO_TARGET) {
     u32 turn = (u32)Engine_RandomNext() * 2 >> 16;
@@ -3505,20 +3504,20 @@ static void VaultInteriors_UpdateObjectEventStops(void) {
       facing = objectEvent->facing + 0x8000;
       destination = VaultInteriors_SnapToNearestStop(entry, &facing);
       if (VaultInteriors_CheckStopOccupancy(destination) == 0) {
-        Engine_ObjectEventSetAttachedEffect(LOCALID_SUSPECTED_LEADER,
-                                            ATTACHED_EFFECT_ONCE);
+        FieldEffect_ConfigureLinkedObject(LOCALID_SUSPECTED_LEADER,
+                                          ATTACHED_EFFECT_ONCE);
         goto move_first;
       }
-      ObjectEvent_SetMode(objectEvent, 4);
+      ObjectDispatch_SelectAnimation(objectEvent, 4);
       blocked = 1;
     } else {
     move_first:
       VaultInteriors_MoveObjectEventToStop(objectEvent, destination);
-      ObjectEvent_SetMode(objectEvent, 2);
+      ObjectDispatch_SelectAnimation(objectEvent, 2);
     }
   }
 
-  objectEvent = Engine_ObjectEventLookup(LOCALID_SUSPECTED_THIEF);
+  objectEvent = ObjectEvent_GetByLocalId(LOCALID_SUSPECTED_THIEF);
   entry = VaultInteriors_FindStopAtPosition(&objectEvent->x.fixed);
   if (entry != NULL && objectEvent->targetX == OBJ_EVENT_NO_TARGET) {
     u32 turn = (u32)Engine_RandomNext() * 3 >> 16;
@@ -3532,16 +3531,16 @@ static void VaultInteriors_UpdateObjectEventStops(void) {
       facing = objectEvent->facing + 0x8000;
       destination = VaultInteriors_SnapToNearestStop(entry, &facing);
       if (VaultInteriors_CheckStopOccupancy(destination) == 0) {
-        Engine_ObjectEventSetAttachedEffect(LOCALID_SUSPECTED_THIEF,
-                                            ATTACHED_EFFECT_ONCE);
+        FieldEffect_ConfigureLinkedObject(LOCALID_SUSPECTED_THIEF,
+                                          ATTACHED_EFFECT_ONCE);
         goto move_second;
       }
-      ObjectEvent_SetMode(objectEvent, 4);
+      ObjectDispatch_SelectAnimation(objectEvent, 4);
       blocked += 2;
     } else {
     move_second:
       VaultInteriors_MoveObjectEventToStop(objectEvent, destination);
-      ObjectEvent_SetMode(objectEvent, 2);
+      ObjectDispatch_SelectAnimation(objectEvent, 2);
     }
   }
   // A failed route choice alone is not enough to end the chase.
@@ -3558,7 +3557,7 @@ static void VaultInteriors_UpdateObjectEventStops(void) {
 /// Called by EventScript_StartCorneringSuspects. Starts
 /// VaultInteriors_UpdateObjectEventStops and the chase music, MUS_009.
 static void VaultInteriors_StartObjectEventStops(void) {
-  Engine_ScriptStart();
+  FieldScript_Start();
   FieldCamera_MoveTo(PIXELS(168), -1, PIXELS(656), 1);
   ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(4) / 5, PIXELS(2) / 5);
   ObjectEvent_SetSpeed(GARET, PIXELS(4) / 5, PIXELS(2) / 5);
@@ -3569,10 +3568,10 @@ static void VaultInteriors_StartObjectEventStops(void) {
   ObjectEvent_WalkTo(LOCALID_PARTY_LEADER, 200, 696);
   ObjectEvent_WalkTo(GARET, 248, 712);
   ObjectEvent_WalkToAndWait(IVAN, 232, 696);
-  Engine_ObjectEventWaitForMove(GARET);
+  ObjectMotion_CommitCurrentPositionAndActivate(GARET);
   ObjectEvent_FaceDirection(GARET, FACING_NORTH, 0);
   ObjectEvent_FaceDirection(IVAN, FACING_WEST, 0);
-  Engine_ObjectEventWaitForMove(LOCALID_PARTY_LEADER);
+  ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_PARTY_LEADER);
   Engine_ObjectEventSetAnimation(GARET, 12);
   VaultInteriors_ResetSuspectRoutes();
   Field_SetViewBounds(PIXELS(48), PIXELS(576), PIXELS(288), PIXELS(736));
@@ -3587,8 +3586,8 @@ static void VaultInteriors_StartObjectEventStops(void) {
   // and render probe flag-reads sees no read of it, so clearing it changes
   // nothing.
   GameFlag_Clear(0x1ff);
-  Engine_ScriptEnd();
-  Engine_AudioPlayCue(MUS_009);
+  FieldScript_End();
+  Sound_PlaySong(MUS_009);
 }
 
 // clang-format off

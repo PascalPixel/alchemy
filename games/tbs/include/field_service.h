@@ -4,7 +4,7 @@
 /// @file
 /// The map service layer: one typed inline for each engine service a map
 /// calls by its own name, passing it on to the main image's import
-/// (ObjectEvent_Jump calls Engine_ObjectEventJump).
+/// (ObjectEvent_Jump calls ObjectMotion_Launch).
 ///
 /// It is a habit of the whole game written once: a layer, not a
 /// compiler-steering device (AGENTS.md S2). A map writes
@@ -23,19 +23,19 @@
 /// begins.
 static inline void ObjectEvent_FaceEachOther(s32 localId, s32 other,
                                              s32 frames) {
-  Engine_ObjectEventFaceEachOther(localId, other, frames);
+  ObjectEvent_LinkPair(localId, other, frames);
 }
 
 /// Makes an object event hop, height being its launch speed in pixels a frame,
 /// and lets frames pass while it comes down.
 static inline void ObjectEvent_Jump(s32 localId, s32 height, s32 frames) {
-  Engine_ObjectEventJump(localId, height, frames);
+  ObjectMotion_Launch(localId, height, frames);
 }
 
 /// Makes an object event bob, squashing and springing back a few times, and
 /// waits for it to finish.
 static inline void ObjectEvent_RunRepeatedMotion(s32 localId, s32 repeats) {
-  Engine_ObjectEventRunRepeatedMotion(localId, repeats);
+  ObjectMotion_SetVarCbAndRefresh(localId, repeats);
 }
 
 /// Switches an object event to an ObjectEventAnimation, such as ANIM_NOD.
@@ -45,64 +45,61 @@ static inline void ObjectEvent_SetAnimation(s32 localId, s32 animation) {
 
 /// Plays an object event's animation through before the script goes on.
 static inline void ObjectEvent_SetAnimationAndWait(s32 localId, s32 animation) {
-  Engine_ObjectEventSetAnimationAndWait(localId, animation);
-}
-
-/// Turns a one-sprite object event's shadow on or off, bit 0 of its sprite's
-/// flags.
-static inline void ObjectEvent_SetSpriteFlags(struct ObjectEvent *objectEvent,
-                                              s32 flags) {
-  Engine_ObjectEventSetSpriteFlags(objectEvent, flags);
+  ObjectMotion_SetAnimationAndWait(localId, animation);
 }
 
 /// Draws an object event at a fixed priority against the scenery instead of by
 /// its depth.
 static inline void ObjectEvent_SetSpritePriority(s32 localId, s32 priority) {
-  Engine_ObjectEventSetSpritePriority(localId, priority);
+  ObjectMotion_SetActionVariant(localId, priority);
 }
 
 /// Starts an object event bobbing while the script carries on.
 static inline void ObjectEvent_StartRepeatedMotion(s32 localId, s32 repeats) {
-  Engine_ObjectEventStartRepeatedMotion(localId, repeats);
+  ObjectMotion_SetVariantCallback(localId, repeats);
 }
 
 /// Stops whatever an object event is doing and hands it to the script.
 static inline void ObjectEvent_Stop(s32 localId) {
-  Engine_ObjectEventStop(localId);
+  ObjectMotion_EnableActionAndResetMotion(localId);
 }
 
 /// Holds the script until an object event has reached where it was sent.
 static inline void ObjectEvent_WaitForMove(s32 localId) {
-  Engine_ObjectEventWaitForMove(localId);
+  ObjectMotion_CommitCurrentPositionAndActivate(localId);
 }
 
 /// Holds the script until the camera's pan is done.
-static inline void FieldCamera_WaitForMove(void) { Engine_CameraWaitForMove(); }
+static inline void FieldCamera_WaitForMove(void) {
+  FieldCamera_WaitForArrival();
+}
 
 /// Runs a script's palette fade, from the source colours to the target ones,
 /// over frames.
 static inline void PaletteFade_Interpolate(s32 frames) {
-  Engine_ColorBufferInterpolate(frames);
+  PaletteFade_StartInterpolation(frames);
 }
 
 /// Starts a scripted scene, taking the field out of the player's hands.
-static inline void Script_Start(void) { Engine_ScriptStart(); }
+static inline void Script_Start(void) { FieldScript_Start(); }
 
 /// Lets the player answer yes or no to the line on screen; 0 means yes.
 static inline s32 Script_ChooseYesNo(s32 localId, s32 flags) {
-  return Engine_ScriptChooseYesNo(localId, flags);
+  return FieldScript_AskYesNoWithObjectEventAnimation(localId, flags);
 }
 
 /// Ends a scripted scene and gives the field back to the player.
-static inline void Script_End(void) { Engine_ScriptEnd(); }
+static inline void Script_End(void) { FieldScript_End(); }
 
 /// Returns the camera object, for a script that moves the view itself.
 static inline struct ObjectEvent *Script_GetViewCenter(void) {
-  return Engine_ScriptGetViewCenter();
+  return FieldCamera_GetScriptObject();
 }
 
 /// Starts the script's screen transition, which Script_WaitForScreen waits out.
-static inline void Script_OpenScreen(void) { Engine_ScriptOpenScreen(); }
+static inline void Script_OpenScreen(void) {
+  FieldScript_StartScreenTransition();
+}
 
 /// Sends the party out of the room by one of its warps, as a door would.
 static inline void Script_RequestWarp(s32 warp) {
@@ -111,62 +108,60 @@ static inline void Script_RequestWarp(s32 warp) {
 
 /// Picks the line of dialogue the script's next message shows.
 static inline void Script_SetMessage(s32 message) {
-  Engine_ScriptSetMessage(message);
+  FieldScript_SetMessageId(message);
 }
 
 /// Pauses the script for frames, a pause debug fast-forward skips.
-static inline void Script_Wait(s32 frames) { Engine_ScriptWait(frames); }
+static inline void Script_Wait(s32 frames) { FieldScript_WaitFrames(frames); }
 
 /// Holds the script until its screen transition is over.
-static inline void Script_WaitForScreen(void) { Engine_ScriptWaitForScreen(); }
-
-/// Sends an object toward a point, where it coasts to a stop.
-static inline void Object_SetPosition(struct ObjectEvent *objectEvent,
-                                      s32 fixed_x, s32 fixed_y, s32 fixed_z) {
-  Engine_ObjectSetPosition(objectEvent, fixed_x, fixed_y, fixed_z);
+static inline void Script_WaitForScreen(void) {
+  FieldScript_WaitTransitionFrames();
 }
 
 /// Takes a work block for a map from its heap slot, or returns the block the
 /// slot already holds.
 static inline void *Heap_Allocate(s32 slot, s32 size) {
-  return Engine_HeapAllocate(slot, size);
+  return AllocHeapSlot(slot, size);
 }
 
 /// Frees a map's work block once the map is done with it.
-static inline void Heap_Release(s32 slot) { Engine_HeapRelease(slot); }
+static inline void Heap_Release(s32 slot) { FreeHeapSlot(slot); }
 
 /// Draws an item's icon, ready for a script to show it.
-static inline void Item_LoadIcon(s32 item) { Engine_ItemLoadIcon(item); }
+static inline void Item_LoadIcon(s32 item) { Ui_PrepareTransferForItem(item); }
 
 /// Holds an item's picture up over the leader, as when the party finds it.
 static inline void Item_ShowFound(s32 item, s32 height) {
-  Engine_ItemShowFound(item, height);
+  FieldEffect_StartEffectObject22(item, height);
 }
 
 /// Redraws the room around the point the camera follows, after a script has
 /// moved it.
-static inline void MapGrid_Redraw(void) { Engine_MapGridRedraw(); }
+static inline void MapGrid_Redraw(void) { MapGrid_CenterOnFollowedPoint(); }
 
 /// The cosine of an angle, a full turn being 0x10000, in 16.16, for a script's
 /// circling motion.
-static inline s32 Math_Cos(s32 angle) { return Engine_MathCos(angle); }
+static inline s32 Math_Cos(s32 angle) { return Trig_Cos(angle); }
 
 /// The sine of an angle in 16.16, as Math_Cos takes it.
-static inline s32 Math_Sin(s32 angle) { return Engine_MathSin(angle); }
+static inline s32 Math_Sin(s32 angle) { return Trig_Sin(angle); }
 
 /// Shows a message in the middle of the screen rather than in a speech window.
 static inline void Message_ShowCentered(s32 message, s32 flags) {
-  Engine_MessageShowCentered(message, flags);
+  FieldMessage_Show(message, flags);
 }
 
 /// Gives the party an item from a script and says who got it; -1 when it was
 /// left behind.
 static inline s32 Party_GiveItem(s32 item, s32 flags) {
-  return Engine_PartyGiveItem(item, flags);
+  return PartyInventory_GiveItem(item, flags);
 }
 
 /// Ends a script's wave effect and restores the colours it changed.
-static inline void Psynergy_Cancel(void) { Engine_PsynergyCancel(); }
+static inline void Psynergy_Cancel(void) {
+  FieldEffect_FinishWaveAndReleaseHeapBlock();
+}
 
 /// FieldScheduler_AddCallback (engine_call.h) under the map service layer's
 /// name.
@@ -176,30 +171,28 @@ static inline s32 Task_AddCallback(void (*callback)(void), s32 priority) {
 
 /// Lets frames go by even under debug fast-forward, where Script_Wait would
 /// skip them.
-static inline void Task_Wait(s32 frames) { Engine_TaskWait(frames); }
+static inline void Task_Wait(s32 frames) { WaitFrames(frames); }
 
 /// Loads a map's sprite picture into VRAM; returns its first tile number, 0
 /// when there's no room.
 static inline s32 Vram_Load(s32 block, s32 size, const void *data) {
-  return Engine_VramLoad(block, size, data);
+  return VramCache_Load(block, size, data);
 }
 
-/// The walk and wait of ObjectEvent_WalkByAndWait, through the import named
-/// after the routine itself (ObjectMotion_CommitPositionAndActivate).
+/// The walk and wait of ObjectEvent_WalkByAndWait, by a second inline over the
+/// same routine.
 static inline void FieldObjectMotion_CommitPositionAndActivate(s32 a0, s32 a1,
                                                                s32 a2) {
   ObjectMotion_CommitPositionAndActivate(a0, a1, a2);
 }
 
-/// ObjectEvent_SetDestinationOffset under its main-image routine's name,
-/// ObjectMotion_OffsetPositionAndResetMotion.
+/// ObjectEvent_SetDestinationOffset, by a second inline over the same routine.
 static inline void
 FieldObjectMotion_OffsetPositionAndResetMotion(s32 a0, s32 a1, s32 a2) {
-  Engine_ObjectEventSetDestinationOffset(a0, a1, a2);
+  ObjectMotion_OffsetPositionAndResetMotion(a0, a1, a2);
 }
 
-/// ObjectEvent_CenterAndWalk by the import that bears
-/// ObjectMotion_CenterOnColumn's own name.
+/// ObjectEvent_CenterAndWalk, by a second inline over the same routine.
 static inline void FieldObjectMotion_CenterOnColumn(s32 a0, s32 a1, s32 a2) {
   ObjectMotion_CenterOnColumn(a0, a1, a2);
 }
@@ -208,14 +201,14 @@ static inline void FieldObjectMotion_CenterOnColumn(s32 a0, s32 a1, s32 a2) {
 /// the routine behind it.
 static inline void FieldObjectMotion_ResetAndSetPosition(s32 a0, s32 a1,
                                                          s32 a2) {
-  Engine_ObjectEventSetDestination(a0, a1, a2);
+  ObjectMotion_ResetAndSetPosition(a0, a1, a2);
 }
 
 /// ObjectEvent_MoveToAndWait, written with ObjectMotion_SetPositionAndCommit's
 /// name.
 static inline void Object_MotionSetPositionAndCommit(s32 localId, s32 x,
                                                      s32 z) {
-  Engine_ObjectMotionSetPositionAndCommit(localId, x, z);
+  ObjectMotion_SetPositionAndCommit(localId, x, z);
 }
 
 /// FieldScheduler_AddCallback (engine_call.h) under a second name.

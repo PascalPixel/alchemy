@@ -144,7 +144,7 @@ const u32 *Map_GetWarps(void) { return gSuhallaInteriorsWarps; }
 /// Suhalla's people, joined after Babi's audience by Iodem, the wounded
 /// soldiers and the travelers the sandstorms brought.
 const struct ObjectEventTemplate *Map_GetObjectEventTemplates(void) {
-  if (Engine_GameFlagIsSet(FLAG_BABI_SPOKE_AFTER_COLOSSO) != 0) {
+  if (GameFlag_Test(FLAG_BABI_SPOKE_AFTER_COLOSSO) != 0) {
     return gSuhallaInteriorsObjectEventTemplatesAfterAudience;
   }
   return gSuhallaInteriorsObjectEventTemplates;
@@ -158,21 +158,22 @@ static void EventScript_TalkToMerchant(s32 localId) {
   u16 facing =
       (ObjectEvent_GetById(LOCALID_PARTY_LEADER)->facing + 0x2000) & ~0x3fff;
   if (facing == FACING_NORTH) {
-    Engine_ShopOpen(SHOP_SUHALLA, localId);
-  } else if (Engine_GameFlagIsSet(FLAG_BABI_SPOKE_AFTER_COLOSSO)) {
+    Shop_Run(SHOP_SUHALLA, localId);
+  } else if (GameFlag_Test(FLAG_BABI_SPOKE_AFTER_COLOSSO)) {
     s32 question = MsgSuhallaArentSurprisedFind;
-    Engine_ScriptSetMessage(question);
-    Engine_ScriptOpenMessage(localId, 0);
-    if (Engine_ScriptChooseYesNo(LOCALID_PARTY_LEADER, 0) == 0) {
-      Engine_ScriptWait(10);
-      Engine_ScriptSetMessage(question + 1);
+    FieldScript_SetMessageId(question);
+    FieldMessage_ShowAtObject(localId, 0);
+    if (FieldScript_AskYesNoWithObjectEventAnimation(LOCALID_PARTY_LEADER, 0) ==
+        0) {
+      FieldScript_WaitFrames(10);
+      FieldScript_SetMessageId(question + 1);
     } else {
-      Engine_ScriptSetMessage(question + 2);
+      FieldScript_SetMessageId(question + 2);
     }
-    Engine_ScriptShowMessage(localId, 0);
+    FieldScript_ShowMessageAndWait(localId, 0);
   } else {
-    Engine_ScriptSetMessage(MsgSuhallaOursOnlyStore);
-    Engine_ScriptShowMessage(localId, 0);
+    FieldScript_SetMessageId(MsgSuhallaOursOnlyStore);
+    FieldScript_ShowMessageAndWait(localId, 0);
   }
 }
 
@@ -183,13 +184,13 @@ static void EventScript_TalkToInnkeeper(s32 localId) {
   u16 facing =
       (ObjectEvent_GetById(LOCALID_PARTY_LEADER)->facing + 0x2000) & ~0x3fff;
   if (facing == FACING_NORTH) {
-    Engine_InnCheckIn(INN_SUHALLA, localId);
-  } else if (Engine_GameFlagIsSet(FLAG_BABI_SPOKE_AFTER_COLOSSO)) {
-    Engine_ScriptSetMessage(MsgSuhallaBusyEverSince);
-    Engine_ScriptShowMessage(localId, 0);
+    Inn_CheckIn(INN_SUHALLA, localId);
+  } else if (GameFlag_Test(FLAG_BABI_SPOKE_AFTER_COLOSSO)) {
+    FieldScript_SetMessageId(MsgSuhallaBusyEverSince);
+    FieldScript_ShowMessageAndWait(localId, 0);
   } else {
-    Engine_ScriptSetMessage(MsgSuhallaSighNothinMaybe);
-    Engine_ScriptShowMessage(localId, 0);
+    FieldScript_SetMessageId(MsgSuhallaSighNothinMaybe);
+    FieldScript_ShowMessageAndWait(localId, 0);
   }
 }
 
@@ -201,13 +202,13 @@ static void EventScript_TalkToHealer(s32 localId) {
   u16 facing =
       (ObjectEvent_GetById(LOCALID_PARTY_LEADER)->facing + 0x2000) & ~0x3fff;
   if (facing == FACING_NORTH) {
-    Engine_ShopConfirmAct(localId);
-  } else if (Engine_GameFlagIsSet(FLAG_BABI_SPOKE_AFTER_COLOSSO)) {
-    Engine_ScriptSetMessage(MsgSuhallaWonderWhySandstorms);
-    Engine_ScriptShowMessage(localId, 0);
+    Sanctum_Run(localId);
+  } else if (GameFlag_Test(FLAG_BABI_SPOKE_AFTER_COLOSSO)) {
+    FieldScript_SetMessageId(MsgSuhallaWonderWhySandstorms);
+    FieldScript_ShowMessageAndWait(localId, 0);
   } else {
-    Engine_ScriptSetMessage(MsgSuhallaGetSickThinkingAboutLalivero);
-    Engine_ScriptShowMessage(localId, 0);
+    FieldScript_SetMessageId(MsgSuhallaGetSickThinkingAboutLalivero);
+    FieldScript_ShowMessageAndWait(localId, 0);
   }
 }
 
@@ -218,15 +219,16 @@ static void EventScript_TalkToHealer(s32 localId) {
 /// out to open a business at the lighthouse.
 static void EventScript_AskIfBlownHere(s32 localId) {
   s32 question = MsgSuhallaSupposeFolkBlown;
-  Engine_ScriptSetMessage(question);
-  Engine_ScriptOpenMessage(localId, 0);
-  if (Engine_ScriptChooseYesNo(LOCALID_PARTY_LEADER, 0) == 0) {
-    Engine_ScriptWait(10);
-    Engine_ScriptSetMessage(question + 1);
+  FieldScript_SetMessageId(question);
+  FieldMessage_ShowAtObject(localId, 0);
+  if (FieldScript_AskYesNoWithObjectEventAnimation(LOCALID_PARTY_LEADER, 0) ==
+      0) {
+    FieldScript_WaitFrames(10);
+    FieldScript_SetMessageId(question + 1);
   } else {
-    Engine_ScriptSetMessage(question + 2);
+    FieldScript_SetMessageId(question + 2);
   }
-  Engine_ScriptShowMessage(localId, 0);
+  FieldScript_ShowMessageAndWait(localId, 0);
 }
 
 /// The doors of Suhalla and Suhalla Sanctum, and the doors between the inn and
@@ -236,7 +238,7 @@ static void EventScript_LeaveByWarp(void) {
   s16 *touchedTrigger = (s16 *)&state->coordEvent;
 
   Engine_ScriptRequestWarp(*touchedTrigger);
-  Engine_AudioPlayCue(SE_MAP_EXIT);
+  Sound_PlaySong(SE_MAP_EXIT);
 }
 
 /// In Suhalla after Babi's audience, stepping into the house where the two
@@ -528,7 +530,7 @@ static void EventScript_IodemQuestionsWoundedSoldiers(void) {
 /// The doors and inner warps, people and ovens of Suhalla's buildings and
 /// Suhalla Sanctum, before or after Babi's audience.
 const struct MapEvent *Map_GetEvents(void) {
-  if (Engine_GameFlagIsSet(FLAG_BABI_SPOKE_AFTER_COLOSSO) != 0) {
+  if (GameFlag_Test(FLAG_BABI_SPOKE_AFTER_COLOSSO) != 0) {
     return gSuhallaInteriorsEventsAfterAudience;
   }
   return gSuhallaInteriorsEvents;

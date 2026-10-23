@@ -398,7 +398,7 @@ s32 MapGrid_LoadLayout(s32 index) {
 /// or on (0, 0) when there is none, and scrolls the layers there. Called
 /// through MapGrid_CenterOnFollowedPointFar when a layered map starts, by the
 /// camera script commands after they move the camera, and by about 35 map
-/// scripts through Engine_MapGridRedraw.
+/// scripts.
 void MapGrid_CenterOnFollowedPoint(void) {
   struct MapGridScrollWork *grid = gMapGridWork[0];
   s32 x;
@@ -663,7 +663,7 @@ struct MapGridTilePosition {
 /// MapGrid_CopyCellIndexRect does, with the destination before the size.
 ///
 /// Called by MapGrid_PlayMetatileCopySequence, and by about 40 map scripts
-/// through MapGrid_CopyMetatileIndicesRectFar (Engine_MapGridCopyCellsTo).
+/// through MapGrid_CopyMetatileIndicesRectFar.
 void MapGrid_CopyMetatileIndicesRect(s32 sourceX, s32 sourceY, u32 dstX,
                                      u32 dstY, u32 width, u32 height) {
   /* FAKEMATCH(temporary): the chains of temporaries set the registers and the
@@ -771,9 +771,9 @@ typedef char MapGridCopyCommandSize
 /// (destinationX, destinationY) and waits its delay in frames. Doors and
 /// other changing scenery are drawn this way.
 ///
-/// Called by about 30 map scripts through MapGrid_PlayMetatileCopySequenceFar
-/// (Engine_MapGridAnimateCells); it returns only when the sequence ends, so it
-/// blocks the script that calls it.
+/// Called by about 30 map scripts through MapGrid_PlayMetatileCopySequenceFar;
+/// it returns only when the sequence ends, so it blocks the script that calls
+/// it.
 void MapGrid_PlayMetatileCopySequence(u16 *sequence, s32 destinationX,
                                       u32 destinationY) {
   struct MapGridCellAnimationStep *copyCommand =
@@ -829,7 +829,7 @@ void MapGrid_PlayMetatileCopySequence(u16 *sequence, s32 destinationX,
 /// (sourceX, sourceY) to (dstX, dstY), width by height cells. Where a copied
 /// cell lies in a layer's visible area (16x12 cells), its metatile's 2x2 tiles
 /// go to that layer's BG map in VRAM too. Called by about 15 map scripts
-/// through MapGrid_CopyMetatileCellsRectFar (Engine_MapGridCopyCells).
+/// through MapGrid_CopyMetatileCellsRectFar.
 void MapGrid_CopyMetatileCellsRect(s32 sourceX, s32 sourceY, s32 width,
                                    s32 height, s32 dstX, s32 dstY) {
   s32 y = dstY;
@@ -950,7 +950,7 @@ void MapGrid_CopyMetatileCellsRect(s32 sourceX, s32 sourceY, s32 width,
 /// to (dstX, dstY), width by height cells, keeping each destination cell's
 /// metatile number. Nothing is redrawn: the attributes (flags, metatile
 /// behavior and shape) do not show. Called by about 65 map scripts through
-/// MapGrid_CopyCellAttributeRectFar (Engine_MapGridCopyCellAttributes).
+/// MapGrid_CopyCellAttributeRectFar.
 void MapGrid_CopyCellAttributeRect(s32 sourceX, s32 sourceY, s32 width,
                                    s32 height, s32 dstX, s32 dstY) {
   u32 *destinationCells = MAPGRID_CELLS;
@@ -976,8 +976,7 @@ void MapGrid_CopyCellAttributeRect(s32 sourceX, s32 sourceY, s32 width,
 /// Copies only the metatile numbers of a rectangle of cells, from (sourceX,
 /// sourceY) to (dstX, dstY), width by height cells, keeping each destination
 /// cell's attributes; cells in a visible area update the BG maps too. Called by
-/// seven map scripts through MapGrid_CopyCellIndexRectFar
-/// (Engine_MapGridCopyCellsLayered).
+/// seven map scripts through MapGrid_CopyCellIndexRectFar.
 void MapGrid_CopyCellIndexRect(s32 sourceX, s32 sourceY, s32 width, s32 height,
                                s32 dstX, s32 dstY) {
   /* FAKEMATCH(temporary): the word and index temporaries set the registers and
@@ -1077,8 +1076,7 @@ void MapGrid_CopyCellIndexRect(s32 sourceX, s32 sourceY, s32 width, s32 height,
 
 /// Sets which of BG1-BG3 the map shows (bits 9-11 of its display flags, as in
 /// REG_DISPCNT) from layerFlags, keeping its other flags. Called by Lunpa
-/// Fortress's map script through MapGrid_SetShownLayersFar
-/// (Engine_MapGridSetShownLayers).
+/// Fortress's map script through MapGrid_SetShownLayersFar.
 void MapGrid_SetShownLayers(u32 layerFlags) {
   struct MapGridState *gridState = gMapGridWork[0];
   u32 mask = layerFlags & (DISPCNT_BG1_ON | DISPCNT_BG2_ON | DISPCNT_BG3_ON);

@@ -117,7 +117,7 @@ const u32 *Map_GetWarps(void) { return gSuhallaWarps; }
 
 /// Suhalla's people, who stand elsewhere after Babi's audience.
 const struct ObjectEventTemplate *Map_GetObjectEventTemplates(void) {
-  if (Engine_GameFlagIsSet(FLAG_BABI_SPOKE_AFTER_COLOSSO) != 0) {
+  if (GameFlag_Test(FLAG_BABI_SPOKE_AFTER_COLOSSO) != 0) {
     return gSuhallaObjectEventTemplatesLater;
   }
   return gSuhallaObjectEventTemplates;
@@ -130,15 +130,16 @@ const struct ObjectEventTemplate *Map_GetObjectEventTemplates(void) {
 /// going to Lalivero.
 static void EventScript_AskIfGoingToLalivero(s32 localId) {
   s32 firstMessage = MsgSuhallaTryingGetLalivero;
-  Engine_ScriptSetMessage(firstMessage);
-  Engine_ScriptOpenMessage(localId, 0);
-  if (Engine_ScriptChooseYesNo(LOCALID_PARTY_LEADER, 0) == 0) {
-    Engine_ScriptWait(10);
-    Engine_ScriptSetMessage(firstMessage + 1);
+  FieldScript_SetMessageId(firstMessage);
+  FieldMessage_ShowAtObject(localId, 0);
+  if (FieldScript_AskYesNoWithObjectEventAnimation(LOCALID_PARTY_LEADER, 0) ==
+      0) {
+    FieldScript_WaitFrames(10);
+    FieldScript_SetMessageId(firstMessage + 1);
   } else {
-    Engine_ScriptSetMessage(firstMessage + 2);
+    FieldScript_SetMessageId(firstMessage + 2);
   }
-  Engine_ScriptShowMessage(localId, 0);
+  FieldScript_ShowMessageAndWait(localId, 0);
 }
 
 /// An old woman asks whether the sandstorm brought the party to Suhalla. She's
@@ -147,15 +148,16 @@ static void EventScript_AskIfGoingToLalivero(s32 localId) {
 /// why there are so many storms.
 static void EventScript_AskIfBroughtBySandstorm(s32 localId) {
   s32 firstMessage = MsgSuhallaBroughtSuhallaSandstorm;
-  Engine_ScriptSetMessage(firstMessage);
-  Engine_ScriptOpenMessage(localId, 0);
-  if (Engine_ScriptChooseYesNo(LOCALID_PARTY_LEADER, 0) == 0) {
-    Engine_ScriptWait(10);
-    Engine_ScriptSetMessage(firstMessage + 1);
+  FieldScript_SetMessageId(firstMessage);
+  FieldMessage_ShowAtObject(localId, 0);
+  if (FieldScript_AskYesNoWithObjectEventAnimation(LOCALID_PARTY_LEADER, 0) ==
+      0) {
+    FieldScript_WaitFrames(10);
+    FieldScript_SetMessageId(firstMessage + 1);
   } else {
-    Engine_ScriptSetMessage(firstMessage + 2);
+    FieldScript_SetMessageId(firstMessage + 2);
   }
-  Engine_ScriptShowMessage(localId, 0);
+  FieldScript_ShowMessageAndWait(localId, 0);
 }
 
 /// Growth on Suhalla's sprout: the plant grows, and its cell takes the
@@ -201,7 +203,7 @@ static void EventScript_EnterWideDoor(void) {
 /// Suhalla's doors, people, treasure and sprout, before or after Babi's
 /// audience.
 const struct MapEvent *Map_GetEvents(void) {
-  if (Engine_GameFlagIsSet(FLAG_BABI_SPOKE_AFTER_COLOSSO) != 0) {
+  if (GameFlag_Test(FLAG_BABI_SPOKE_AFTER_COLOSSO) != 0) {
     return gSuhallaEventsLater;
   }
   return gSuhallaEvents;
@@ -222,7 +224,7 @@ s32 Map_Initialize(void) {
   work->transition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   work->transitionFrames = 24;
 
-  if (Engine_GameFlagIsSet(FLAG_MAP_TEMP_01) != 0) {
+  if (GameFlag_Test(FLAG_MAP_TEMP_01) != 0) {
     EventScript_GrowSprout();
     Engine_ObjectEventSetAnimation(LOCALID_SPROUT, SPROUT_ANIMATION_GROWN);
   }

@@ -237,21 +237,21 @@ static void BabiLighthouse_LandWithParticles(void) {
   s32 velocity[3];
 
   // Start above the room with movement disabled until the fall begins.
-  Engine_ScriptStart();
+  FieldScript_Start();
   FieldCamera_MoveTo(-1, -1, -1, 0);
-  Engine_MapGridRedraw();
-  Engine_TaskWait(1);
+  MapGrid_CenterOnFollowedPoint();
+  WaitFrames(1);
   ObjectEvent_GetById(LOCALID_PARTY_LEADER)->y.fixed = PIXELS(130);
   ObjectEvent_GetById(LOCALID_PARTY_LEADER)->gravity = 0x8000;
   ObjectEvent_GetById(LOCALID_PARTY_LEADER)->bounce = 0;
   ObjectEvent_GetById(LOCALID_PARTY_LEADER)->motionFlags = 0;
-  Engine_ScriptOpenScreen();
-  Engine_ScriptWaitForScreen();
-  Engine_ScriptWait(30);
-  Engine_AudioPlayCue(SE_204);
+  FieldScript_StartScreenTransition();
+  FieldScript_WaitTransitionFrames();
+  FieldScript_WaitFrames(30);
+  Sound_PlaySong(SE_204);
   ObjectEvent_GetById(LOCALID_PARTY_LEADER)->motionFlags =
       OBJ_EVENT_FOLLOWS_TERRAIN | OBJ_EVENT_FALLS;
-  Engine_ScriptWait(24);
+  FieldScript_WaitFrames(24);
   leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   // Spread the landing particles around the leader before restoring bounce.
   options.palette = 7;
@@ -259,8 +259,7 @@ static void BabiLighthouse_LandWithParticles(void) {
   options.startScaleX = 0xcccc;
   options.startScaleY = 0xcccc;
   for (particle = 0; particle < 17; particle++) {
-    SET_VECTOR(velocity, Engine_MathCos(particle << 12), 0,
-               Engine_MathSin(particle << 12));
+    SET_VECTOR(velocity, Trig_Cos(particle << 12), 0, Trig_Sin(particle << 12));
     velocity[0] += velocity[0] / 2;
     FieldEffect_Spawn(leader->x.fixed, leader->y.fixed, leader->z.fixed,
                       velocity[0], velocity[1], velocity[2],
@@ -268,18 +267,18 @@ static void BabiLighthouse_LandWithParticles(void) {
                           EFFECT_USE_PALETTE | EFFECT_SCRIPT_MEDIUM,
                       &options);
   }
-  Engine_AudioPlayCue(SE_188);
+  Sound_PlaySong(SE_188);
   ObjectEvent_SetAttachedEffect(
       LOCALID_PARTY_LEADER, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ATTACH);
   Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_LEADER_LEAN_BACK);
   MapGrid_SetShake(0x50000, 0x50000, 0x10000);
   MapGrid_SetShake(-1, -1, 0xe666);
-  Engine_MapGridRenderWaitForValues();
+  MapGrid_WaitForShakeToSettle();
   ObjectEvent_SetAttachedEffect(
       LOCALID_PARTY_LEADER, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_REMOVE);
   ObjectEvent_GetById(LOCALID_PARTY_LEADER)->gravity = 0x10000;
   ObjectEvent_GetById(LOCALID_PARTY_LEADER)->bounce = 0x4000;
-  Engine_ScriptEnd();
+  FieldScript_End();
 }
 
 /// Arriving at one of the drop warp destinations of BabiLighthouseLuff: the
@@ -288,10 +287,10 @@ static void BabiLighthouse_FallToWarp(s32 warp) {
   struct ObjectEvent *leader;
 
   // Start above the room with movement disabled until the fall begins.
-  Engine_ScriptStart();
+  FieldScript_Start();
   FieldCamera_MoveTo(-1, -1, -1, 0);
-  Engine_MapGridRedraw();
-  Engine_TaskWait(1);
+  MapGrid_CenterOnFollowedPoint();
+  WaitFrames(1);
   leader = ObjectEvent_Get(LOCALID_PARTY_LEADER);
   leader->y.fixed = PIXELS(130);
   leader = ObjectEvent_Get(LOCALID_PARTY_LEADER);
@@ -299,11 +298,11 @@ static void BabiLighthouse_FallToWarp(s32 warp) {
   leader = ObjectEvent_Get(LOCALID_PARTY_LEADER);
   leader->bounce = 0;
   ObjectEvent_GetById(LOCALID_PARTY_LEADER)->motionFlags = 0;
-  Engine_ObjectEventSetSpriteFlags(ObjectEvent_Get(LOCALID_PARTY_LEADER), 0);
-  Engine_ScriptOpenScreen();
-  Engine_ScriptWaitForScreen();
-  Engine_ScriptWait(10);
-  Engine_AudioPlayCue(SE_204);
+  ObjectEvent_SetSpriteFlags(ObjectEvent_Get(LOCALID_PARTY_LEADER), 0);
+  FieldScript_StartScreenTransition();
+  FieldScript_WaitTransitionFrames();
+  FieldScript_WaitFrames(10);
+  Sound_PlaySong(SE_204);
   ObjectEvent_GetById(LOCALID_PARTY_LEADER)->motionFlags =
       OBJ_EVENT_FOLLOWS_TERRAIN | OBJ_EVENT_FALLS;
   leader = ObjectEvent_Get(LOCALID_PARTY_LEADER);
@@ -311,7 +310,7 @@ static void BabiLighthouse_FallToWarp(s32 warp) {
   ObjectEvent_WaitUntilIdle(ObjectEvent_Get(LOCALID_PARTY_LEADER));
   ObjectEvent_SetChildValue(LOCALID_PARTY_LEADER, 15);
   Engine_ScriptRequestWarp(warp);
-  Engine_ScriptEnd();
+  FieldScript_End();
 }
 
 const struct MapWarpDest *Map_GetWarpDests(void) {
@@ -363,7 +362,7 @@ static void BabiLighthouse_JumpFromLedge(void) {
   struct ObjectEvent *leader;
 
   leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
-  Engine_ScriptStart();
+  FieldScript_Start();
   if (((leader->x.fixed >> 20) == 6 || (leader->x.fixed >> 20) == 18) &&
       (leader->z.fixed >> 20) == 20) {
     leader->targetX = OBJ_EVENT_NO_TARGET;
@@ -371,32 +370,32 @@ static void BabiLighthouse_JumpFromLedge(void) {
     ObjectEvent_ShowEmote(LOCALID_PARTY_LEADER,
                           EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
     ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, 0x20000, 0x10000);
-    Engine_ObjectEventJump(LOCALID_PARTY_LEADER, 4, 0);
+    ObjectMotion_Launch(LOCALID_PARTY_LEADER, 4, 0);
     {
       u16 facing = leader->facing;
       if ((u16)(facing + 0x4fff) <= 0x1fff ||
           (u16)(facing - 0x3001) <= 0x1fff) {
-        Engine_ObjectEventSetDestinationOffset(LOCALID_PARTY_LEADER, 16, 0);
-        Engine_ObjectEventWaitForMove(LOCALID_PARTY_LEADER);
+        ObjectMotion_OffsetPositionAndResetMotion(LOCALID_PARTY_LEADER, 16, 0);
+        ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_PARTY_LEADER);
         ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_WEST, 20);
       } else {
         FieldObjectMotion_OffsetPositionAndResetMotion(LOCALID_PARTY_LEADER, 0,
                                                        -16);
-        Engine_ObjectEventWaitForMove(LOCALID_PARTY_LEADER);
+        ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_PARTY_LEADER);
         ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_SOUTH, 20);
       }
     }
   }
   BabiLighthouse_RedrawLedgePillarCells();
-  Engine_ScriptEnd();
+  FieldScript_End();
 }
 
 /// Walking into one of the pillars at the Babi Lighthouse Entry pushes it.
 static void BabiLighthouse_PushLedgePillar(void) {
-  Engine_ScriptStart();
+  FieldScript_Start();
   PushedObject_AdvancePair();
   BabiLighthouse_JumpFromLedge();
-  Engine_ScriptEnd();
+  FieldScript_End();
 }
 
 /// Walking south off the ledge at the Babi Lighthouse Entry: pushes the pillar
@@ -429,59 +428,59 @@ static void BabiLighthouse_PushLedgePillarOrClimbDown(void) {
 static void BabiLighthouse_JumpIntoPit(void) {
   FieldCamera_MoveTo(-1, -1, -1, 0);
   FieldObjectEvent_JumpDownLedge(LOCALID_PARTY_LEADER, 6, 0);
-  Engine_ScriptCloseScreen();
-  Engine_ScriptWaitForScreen();
+  FieldScript_FinishScreenTransition();
+  FieldScript_WaitTransitionFrames();
 }
 
 /// Walking south into the east pit of BabiLighthouseLuff's west room: the
 /// leader jumps in and drops into the east room.
 static void BabiLighthouse_DropFromWestRoomEastPit(void) {
-  Engine_ScriptStart();
+  FieldScript_Start();
   BabiLighthouse_JumpIntoPit();
   Engine_ScriptRequestWarp(
       BABI_LIGHTHOUSE_LUFF_WEST_ROOM_TO_EAST_ROOM_PIT_EAST);
-  Engine_ScriptEnd();
+  FieldScript_End();
 }
 
 /// Walking south into the pit of BabiLighthouseLuff's east room: the pit mask
 /// is placed by it, and the leader jumps in and drops into the south room.
 static void BabiLighthouse_DropFromEastRoomPit(void) {
-  Engine_ScriptStart();
+  FieldScript_Start();
   ObjectEvent_PrepareObject(PIXELS(464), 0, PIXELS(290), PIT_MASK);
   BabiLighthouse_JumpIntoPit();
   Engine_ScriptRequestWarp(BABI_LIGHTHOUSE_LUFF_EAST_ROOM_TO_SOUTH_ROOM_PIT);
-  Engine_ScriptEnd();
+  FieldScript_End();
 }
 
 /// Walking south into the southwest pit of BabiLighthouseLuff's west room:
 /// the pit mask and a capped pillar are placed by it, and the leader jumps in
 /// and drops into the east room.
 static void BabiLighthouse_DropFromWestRoomSouthwestPit(void) {
-  Engine_ScriptStart();
+  FieldScript_Start();
   ObjectEvent_PrepareObject(PIXELS(143), 0, PIXELS(290), PIT_MASK);
   ObjectEvent_PrepareObject(PIXELS(121), 0, PIXELS(286), SPRITE_CAPPED_PILLAR);
   BabiLighthouse_JumpIntoPit();
   Engine_ScriptRequestWarp(
       BABI_LIGHTHOUSE_LUFF_WEST_ROOM_TO_EAST_ROOM_PIT_SOUTHWEST);
-  Engine_ScriptEnd();
+  FieldScript_End();
 }
 
 /// Walking south into the northwest pit of BabiLighthouseLuff's west room: the
 /// leader jumps in and drops into the east room.
 static void BabiLighthouse_DropFromWestRoomNorthwestPit(void) {
-  Engine_ScriptStart();
+  FieldScript_Start();
   BabiLighthouse_JumpIntoPit();
   Engine_ScriptRequestWarp(
       BABI_LIGHTHOUSE_LUFF_WEST_ROOM_TO_EAST_ROOM_PIT_NORTHWEST);
-  Engine_ScriptEnd();
+  FieldScript_End();
 }
 
 /// Searching the locked door in BabiLighthouseLuff. "It seems to be locked."
 static void BabiLighthouse_InspectLockedDoor(void) {
-  Engine_ScriptStart();
+  FieldScript_Start();
   Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_STAND);
-  Engine_MessageShowCentered(MsgBabiSeemsLocked, 1);
-  Engine_ScriptEnd();
+  FieldMessage_Show(MsgBabiSeemsLocked, 1);
+  FieldScript_End();
 }
 
 /// A companion walks back to the leader and is moved out of sight to the map's
@@ -495,7 +494,7 @@ static inline void BabiLighthouse_WalkBackToLeader(s32 localId) {
     ObjectEvent_SetDestination(localId, leader->x.part.pixel,
                                leader->z.part.pixel);
   }
-  Engine_ObjectEventWaitForMove(localId);
+  ObjectMotion_CommitCurrentPositionAndActivate(localId);
   ObjectEvent_SetPosition(localId, 0, 0);
 }
 
@@ -507,231 +506,233 @@ static void BabiLighthouse_FaranAsksPartyToOpenDoor(void) {
   // Bring the party to the witnesses gathered around the sealed door.
   GameFlag_Set(FLAG_BABI_LIGHTHOUSE_ASKED_TO_FOLLOW);
   GameFlag_Set(FLAG_BABI_LIGHTHOUSE_IODEM_ARRIVED);
-  Engine_ScriptStart();
+  FieldScript_Start();
   Field_EndBusyAndReveal();
-  Engine_ScriptSetMessage(MsgBabiYoureSureTheyWentThrough);
+  FieldScript_SetMessageId(MsgBabiYoureSureTheyWentThrough);
   ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, 0x10000, 0x8000);
   ObjectEvent_WalkToAndWait(LOCALID_PARTY_LEADER, 296, 352);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_NORTH, 0);
-  Engine_ScriptWait(10);
+  FieldScript_WaitFrames(10);
   FieldMotion_LaunchFromFocusedObject(LOCALID_IODEM, 16, 0, FACING_NORTH);
   FieldMotion_LaunchFromFocusedObject(GARET, -8, 16, FACING_NORTH);
   FieldMotion_LaunchFromFocusedObject(IVAN, 8, 16, FACING_NORTH);
   FieldMotion_LaunchFromFocusedObject(MIA, 24, 16, FACING_NORTH);
-  Engine_ObjectEventWaitForMove(MIA);
-  Engine_ScriptWait(20);
+  ObjectMotion_CommitCurrentPositionAndActivate(MIA);
+  FieldScript_WaitFrames(20);
   Script_ShowMessage(LOCALID_FARAN, 0);
-  Engine_ScriptWait(10);
+  FieldScript_WaitFrames(10);
   FieldCamera_SetSpeed(0x30000, 0x6000);
   FieldCamera_MoveTo(PIXELS(280), -1, PIXELS(288), 1);
-  Engine_CameraWaitForMove();
-  Engine_ScriptWait(20);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_WITNESS, ANIM_NOD);
-  Engine_ScriptWait(30);
+  FieldCamera_WaitForArrival();
+  FieldScript_WaitFrames(20);
+  ObjectMotion_SetAnimationAndWait(LOCALID_WITNESS, ANIM_NOD);
+  FieldScript_WaitFrames(30);
   Script_ShowMessage(LOCALID_WITNESS, 0);
-  Engine_ScriptWait(10);
+  FieldScript_WaitFrames(10);
   ObjectEvent_FaceDirection(LOCALID_FARAN, FACING_NORTH, 0);
   ObjectEvent_FaceDirection(LOCALID_WITNESS, FACING_NORTH, 0);
-  Engine_ScriptWait(30);
-  Engine_ScriptWait(10);
-  Engine_ObjectEventRunRepeatedMotion(LOCALID_FARAN, 2);
-  Engine_ScriptWait(20);
+  FieldScript_WaitFrames(30);
+  FieldScript_WaitFrames(10);
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_FARAN, 2);
+  FieldScript_WaitFrames(20);
   Script_ShowMessage(LOCALID_FARAN, 0);
-  Engine_ScriptWait(10);
+  FieldScript_WaitFrames(10);
   // The witnesses try the stone door and disagree about who passed through it.
-  Engine_ObjectEventStartRepeatedMotion(LOCALID_WORRIED_FOR_SHEBA, 2);
-  Engine_ObjectEventRunRepeatedMotion(LOCALID_DOUBTING_THE_DOOR, 2);
-  Engine_ScriptWait(40);
-  Engine_ObjectEventStartRepeatedMotion(LOCALID_WORRIED_FOR_SHEBA, 2);
-  Engine_ObjectEventRunRepeatedMotion(LOCALID_DOUBTING_THE_DOOR, 2);
-  Engine_ScriptWait(40);
-  Engine_ObjectEventStartRepeatedMotion(LOCALID_WORRIED_FOR_SHEBA, 2);
-  Engine_ObjectEventRunRepeatedMotion(LOCALID_DOUBTING_THE_DOOR, 2);
-  Engine_ScriptWait(40);
+  ObjectMotion_SetVariantCallback(LOCALID_WORRIED_FOR_SHEBA, 2);
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_DOUBTING_THE_DOOR, 2);
+  FieldScript_WaitFrames(40);
+  ObjectMotion_SetVariantCallback(LOCALID_WORRIED_FOR_SHEBA, 2);
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_DOUBTING_THE_DOOR, 2);
+  FieldScript_WaitFrames(40);
+  ObjectMotion_SetVariantCallback(LOCALID_WORRIED_FOR_SHEBA, 2);
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_DOUBTING_THE_DOOR, 2);
+  FieldScript_WaitFrames(40);
   ObjectEvent_ShowEmote(LOCALID_DOUBTING_THE_DOOR, EMOTE_IN_FRONT | EMOTE_WINCE,
                         50);
   Script_ShowMessage(LOCALID_DOUBTING_THE_DOOR, 0);
-  Engine_ScriptWait(10);
+  FieldScript_WaitFrames(10);
   ObjectEvent_FaceDirection(LOCALID_WORRIED_FOR_SHEBA, FACING_EAST, 0);
-  Engine_ScriptWait(25);
-  Engine_ObjectEventRunRepeatedMotion(LOCALID_WORRIED_FOR_SHEBA, 2);
-  Engine_ScriptWait(20);
+  FieldScript_WaitFrames(25);
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_WORRIED_FOR_SHEBA, 2);
+  FieldScript_WaitFrames(20);
   Script_ShowMessage(LOCALID_WORRIED_FOR_SHEBA, 0);
-  Engine_ScriptWait(10);
+  FieldScript_WaitFrames(10);
   ObjectEvent_FaceDirection(LOCALID_DOUBTING_THE_DOOR, FACING_WEST, 0);
-  Engine_ScriptWait(20);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_WORRIED_FOR_SHEBA,
-                                        ANIM_SHAKE_HEAD);
-  Engine_ScriptWait(20);
+  FieldScript_WaitFrames(20);
+  ObjectMotion_SetAnimationAndWait(LOCALID_WORRIED_FOR_SHEBA, ANIM_SHAKE_HEAD);
+  FieldScript_WaitFrames(20);
   Script_ShowMessage(LOCALID_WORRIED_FOR_SHEBA, 0);
-  Engine_ScriptWait(10);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_WITNESS, ANIM_SHAKE_HEAD);
-  Engine_ScriptWait(20);
+  FieldScript_WaitFrames(10);
+  ObjectMotion_SetAnimationAndWait(LOCALID_WITNESS, ANIM_SHAKE_HEAD);
+  FieldScript_WaitFrames(20);
   Script_ShowMessage(LOCALID_WITNESS, 0);
-  Engine_ScriptWait(20);
+  FieldScript_WaitFrames(20);
   ObjectEvent_ShowEmote(LOCALID_WORRIED_FOR_SHEBA, EMOTE_IN_FRONT | EMOTE_SCOWL,
                         40);
-  Engine_ScriptWait(10);
+  FieldScript_WaitFrames(10);
   ObjectEvent_FaceDirection(LOCALID_WORRIED_FOR_SHEBA, FACING_SOUTH, 0);
-  Engine_ScriptWait(20);
+  FieldScript_WaitFrames(20);
   Script_ShowMessage(LOCALID_WORRIED_FOR_SHEBA, 0);
-  Engine_ScriptWait(20);
+  FieldScript_WaitFrames(20);
   ObjectEvent_ShowEmote(LOCALID_WORRIED_FOR_SHEBA,
                         EMOTE_IN_FRONT | EMOTE_QUESTION, 75);
   ObjectEvent_ShowEmote(LOCALID_FARAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
   ObjectEvent_FaceDirection(LOCALID_DOUBTING_THE_DOOR, FACING_SOUTH, 0);
-  Engine_ScriptWait(20);
+  FieldScript_WaitFrames(20);
   ObjectEvent_FaceDirection(LOCALID_WITNESS, FACING_SOUTH, 0);
-  Engine_ScriptWait(20);
+  FieldScript_WaitFrames(20);
   ObjectEvent_FaceDirection(LOCALID_FARAN, FACING_SOUTH, 0);
-  Engine_ScriptWait(30);
+  FieldScript_WaitFrames(30);
   Script_ShowMessage(LOCALID_FARAN, 0);
   FieldCamera_MoveTo(PIXELS(280), -1, PIXELS(320), 1);
-  Engine_CameraWaitForMove();
-  Engine_ScriptWait(20);
+  FieldCamera_WaitForArrival();
+  FieldScript_WaitFrames(20);
   // The party learns where the kidnappers went and is asked to pursue them.
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_IODEM, ANIM_NOD);
-  Engine_ScriptWait(30);
+  ObjectMotion_SetAnimationAndWait(LOCALID_IODEM, ANIM_NOD);
+  FieldScript_WaitFrames(30);
   Script_ShowMessage(LOCALID_IODEM, 0);
-  Engine_ScriptWait(10);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_IODEM, ANIM_SHAKE_HEAD);
-  Engine_ScriptWait(20);
+  FieldScript_WaitFrames(10);
+  ObjectMotion_SetAnimationAndWait(LOCALID_IODEM, ANIM_SHAKE_HEAD);
+  FieldScript_WaitFrames(20);
   Script_ShowMessage(LOCALID_IODEM, 0);
-  Engine_ScriptWait(20);
+  FieldScript_WaitFrames(20);
   ObjectEvent_ShowEmote(LOCALID_FARAN, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 60);
   Script_ShowMessage(LOCALID_FARAN, 0);
-  Engine_ScriptWait(10);
-  Engine_ObjectEventSetAnimationAndWait(MIA, ANIM_SHAKE_HEAD);
-  Engine_ScriptWait(20);
+  FieldScript_WaitFrames(10);
+  ObjectMotion_SetAnimationAndWait(MIA, ANIM_SHAKE_HEAD);
+  FieldScript_WaitFrames(20);
   Script_ShowMessage(MIA, 0);
-  Engine_ScriptWait(10);
-  Engine_ObjectEventRunRepeatedMotion(IVAN, 2);
-  Engine_ScriptWait(20);
+  FieldScript_WaitFrames(10);
+  ObjectMotion_SetVarCbAndRefresh(IVAN, 2);
+  FieldScript_WaitFrames(20);
   Script_ShowMessage(IVAN, 0);
-  Engine_ScriptWait(10);
-  Engine_ObjectEventRunRepeatedMotion(GARET, 2);
-  Engine_ScriptWait(20);
+  FieldScript_WaitFrames(10);
+  ObjectMotion_SetVarCbAndRefresh(GARET, 2);
+  FieldScript_WaitFrames(20);
   Script_OpenMessage(GARET, 0);
-  if (Engine_ScriptChooseYesNo(LOCALID_PARTY_LEADER, 0) == 0) {
-    Engine_ScriptWait(30);
+  if (FieldScript_AskYesNoWithObjectEventAnimation(LOCALID_PARTY_LEADER, 0) ==
+      0) {
+    FieldScript_WaitFrames(30);
     ObjectEvent_FaceDirection(LOCALID_IODEM, FACING_WEST, 0);
-    Engine_ScriptWait(30);
-    Engine_ObjectEventSetAnimationAndWait(LOCALID_IODEM, ANIM_NOD);
-    Engine_ScriptWait(30);
+    FieldScript_WaitFrames(30);
+    ObjectMotion_SetAnimationAndWait(LOCALID_IODEM, ANIM_NOD);
+    FieldScript_WaitFrames(30);
     Script_ShowMessage(LOCALID_IODEM, 0);
     gFieldWork->message++;
   } else {
-    Engine_ScriptWait(30);
+    FieldScript_WaitFrames(30);
     ObjectEvent_FaceDirection(LOCALID_IODEM, FACING_WEST, 0);
-    Engine_ScriptWait(30);
-    Engine_ObjectEventSetAnimationAndWait(LOCALID_IODEM, ANIM_SHAKE_HEAD);
-    Engine_ScriptWait(20);
+    FieldScript_WaitFrames(30);
+    ObjectMotion_SetAnimationAndWait(LOCALID_IODEM, ANIM_SHAKE_HEAD);
+    FieldScript_WaitFrames(20);
     gFieldWork->message++;
     Script_ShowMessage(LOCALID_IODEM, 0);
   }
-  Engine_ScriptWait(10);
+  FieldScript_WaitFrames(10);
   ObjectEvent_ShowEmote(LOCALID_FARAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
   ObjectEvent_SetSpeed(LOCALID_FARAN, 0x10000, 0x8000);
   ObjectEvent_WalkByAndWait(LOCALID_FARAN, 0, 16);
-  Engine_ScriptWait(20);
+  FieldScript_WaitFrames(20);
   Script_ShowMessage(LOCALID_FARAN, 0);
-  Engine_ScriptWait(10);
+  FieldScript_WaitFrames(10);
   ObjectEvent_FaceDirection(LOCALID_IODEM, FACING_NORTH, 0);
-  Engine_ScriptWait(35);
+  FieldScript_WaitFrames(35);
   Script_ShowMessage(LOCALID_IODEM, 0);
-  Engine_ScriptWait(10);
-  Engine_ObjectEventRunRepeatedMotion(LOCALID_FARAN, 2);
-  Engine_ScriptWait(20);
+  FieldScript_WaitFrames(10);
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_FARAN, 2);
+  FieldScript_WaitFrames(20);
   Script_ShowMessage(LOCALID_FARAN, 0);
-  Engine_ScriptWait(20);
+  FieldScript_WaitFrames(20);
   ObjectEvent_ShowEmote(MIA, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
   Script_ShowMessage(MIA, 0);
-  Engine_ScriptWait(10);
-  Engine_ObjectEventRunRepeatedMotion(IVAN, 2);
-  Engine_ScriptWait(20);
+  FieldScript_WaitFrames(10);
+  ObjectMotion_SetVarCbAndRefresh(IVAN, 2);
+  FieldScript_WaitFrames(20);
   Script_ShowMessage(IVAN, 0);
-  Engine_ScriptWait(10);
-  Engine_ObjectEventSetAnimationAndWait(GARET, ANIM_NOD);
-  Engine_ScriptWait(30);
+  FieldScript_WaitFrames(10);
+  ObjectMotion_SetAnimationAndWait(GARET, ANIM_NOD);
+  FieldScript_WaitFrames(30);
   Script_ShowMessage(GARET, 0);
-  Engine_ScriptWait(20);
+  FieldScript_WaitFrames(20);
   ObjectEvent_ShowEmote(LOCALID_FARAN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
   Script_OpenMessage(LOCALID_FARAN, 0);
-  if (Engine_ScriptChooseYesNo(LOCALID_PARTY_LEADER, 0) == 0) {
-    Engine_ScriptWait(30);
-    Engine_ObjectEventSetAnimationAndWait(LOCALID_FARAN, ANIM_SHAKE_HEAD);
-    Engine_ScriptWait(20);
+  if (FieldScript_AskYesNoWithObjectEventAnimation(LOCALID_PARTY_LEADER, 0) ==
+      0) {
+    FieldScript_WaitFrames(30);
+    ObjectMotion_SetAnimationAndWait(LOCALID_FARAN, ANIM_SHAKE_HEAD);
+    FieldScript_WaitFrames(20);
     Script_ShowMessage(LOCALID_FARAN, 0);
     gFieldWork->message++;
   } else {
-    Engine_ScriptWait(30);
-    Engine_ObjectEventSetAnimationAndWait(LOCALID_FARAN, ANIM_SHAKE_HEAD);
-    Engine_ScriptWait(20);
+    FieldScript_WaitFrames(30);
+    ObjectMotion_SetAnimationAndWait(LOCALID_FARAN, ANIM_SHAKE_HEAD);
+    FieldScript_WaitFrames(20);
     gFieldWork->message++;
     Script_ShowMessage(LOCALID_FARAN, 0);
   }
-  Engine_ScriptWait(10);
+  FieldScript_WaitFrames(10);
   ObjectEvent_ShowEmote(LOCALID_IODEM, EMOTE_IN_FRONT | EMOTE_WINCE, 50);
   Script_ShowMessage(LOCALID_IODEM, 0);
-  Engine_ScriptWait(10);
-  Engine_ObjectEventRunRepeatedMotion(LOCALID_WORRIED_FOR_SHEBA, 2);
-  Engine_ScriptWait(20);
+  FieldScript_WaitFrames(10);
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_WORRIED_FOR_SHEBA, 2);
+  FieldScript_WaitFrames(20);
   ObjectEvent_SetSpeed(LOCALID_WORRIED_FOR_SHEBA, 0x14ccc, 0xa666);
   ObjectEvent_WalkByAndWait(LOCALID_WORRIED_FOR_SHEBA, 0, 16);
-  Engine_ScriptWait(20);
+  FieldScript_WaitFrames(20);
   Script_ShowMessage(LOCALID_WORRIED_FOR_SHEBA, 0);
-  Engine_ScriptWait(10);
+  FieldScript_WaitFrames(10);
   ObjectEvent_SetSpeed(LOCALID_DOUBTING_THE_DOOR, 0x14ccc, 0xa666);
   ObjectEvent_WalkByAndWait(LOCALID_DOUBTING_THE_DOOR, 0, 16);
-  Engine_ScriptWait(20);
+  FieldScript_WaitFrames(20);
   ObjectEvent_ShowEmote(LOCALID_DOUBTING_THE_DOOR, EMOTE_IN_FRONT | EMOTE_SCOWL,
                         50);
   Script_ShowMessage(LOCALID_DOUBTING_THE_DOOR, 0);
-  Engine_ScriptWait(10);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_FARAN, ANIM_NOD);
-  Engine_ScriptWait(30);
-  Engine_ScriptWait(10);
+  FieldScript_WaitFrames(10);
+  ObjectMotion_SetAnimationAndWait(LOCALID_FARAN, ANIM_NOD);
+  FieldScript_WaitFrames(30);
+  FieldScript_WaitFrames(10);
   ObjectEvent_ShowEmote(LOCALID_IODEM, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
   ObjectEvent_FaceDirection(LOCALID_IODEM, FACING_WEST, 0);
-  Engine_ScriptWait(25);
+  FieldScript_WaitFrames(25);
   Script_ShowMessage(LOCALID_IODEM, 0);
-  Engine_ScriptWait(10);
-  Engine_ObjectEventRunRepeatedMotion(LOCALID_IODEM, 2);
-  Engine_ScriptWait(20);
+  FieldScript_WaitFrames(10);
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_IODEM, 2);
+  FieldScript_WaitFrames(20);
   Script_OpenMessage(LOCALID_IODEM, 0);
-  if (Engine_ScriptChooseYesNo(LOCALID_PARTY_LEADER, 0) == 0) {
-    Engine_ScriptWait(30);
-    Engine_ObjectEventSetAnimationAndWait(LOCALID_IODEM, ANIM_NOD);
-    Engine_ScriptWait(30);
+  if (FieldScript_AskYesNoWithObjectEventAnimation(LOCALID_PARTY_LEADER, 0) ==
+      0) {
+    FieldScript_WaitFrames(30);
+    ObjectMotion_SetAnimationAndWait(LOCALID_IODEM, ANIM_NOD);
+    FieldScript_WaitFrames(30);
     Script_ShowMessage(LOCALID_IODEM, 0);
     gFieldWork->message++;
   } else {
-    Engine_ScriptWait(30);
-    Engine_ObjectEventSetAnimationAndWait(LOCALID_IODEM, ANIM_SHAKE_HEAD);
-    Engine_ScriptWait(20);
+    FieldScript_WaitFrames(30);
+    ObjectMotion_SetAnimationAndWait(LOCALID_IODEM, ANIM_SHAKE_HEAD);
+    FieldScript_WaitFrames(20);
     gFieldWork->message++;
     Script_ShowMessage(LOCALID_IODEM, 0);
   }
-  Engine_ScriptWait(10);
+  FieldScript_WaitFrames(10);
   ObjectEvent_FaceDirection(LOCALID_IODEM, FACING_NORTH, 0);
-  Engine_ScriptWait(35);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_FARAN, ANIM_NOD);
-  Engine_ScriptWait(30);
+  FieldScript_WaitFrames(35);
+  ObjectMotion_SetAnimationAndWait(LOCALID_FARAN, ANIM_NOD);
+  FieldScript_WaitFrames(30);
   ObjectEvent_FaceDirection(LOCALID_FARAN, FACING_NORTHWEST + FACING_STEP, 0);
-  Engine_ScriptWait(40);
+  FieldScript_WaitFrames(40);
   Script_ShowMessage(LOCALID_FARAN, 0);
-  Engine_ScriptWait(10);
-  Engine_ObjectEventFaceEachOther(LOCALID_DOUBTING_THE_DOOR,
-                                  LOCALID_WORRIED_FOR_SHEBA, 50);
+  FieldScript_WaitFrames(10);
+  ObjectEvent_LinkPair(LOCALID_DOUBTING_THE_DOOR, LOCALID_WORRIED_FOR_SHEBA,
+                       50);
   Engine_ObjectEventSetAnimation(LOCALID_DOUBTING_THE_DOOR, ANIM_NOD);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_WORRIED_FOR_SHEBA, ANIM_NOD);
-  Engine_ScriptWait(30);
+  ObjectMotion_SetAnimationAndWait(LOCALID_WORRIED_FOR_SHEBA, ANIM_NOD);
+  FieldScript_WaitFrames(30);
   ObjectEvent_FaceDirection(LOCALID_DOUBTING_THE_DOOR, FACING_SOUTH, 0);
   ObjectEvent_FaceDirection(LOCALID_WORRIED_FOR_SHEBA, FACING_SOUTH, 0);
-  Engine_ScriptWait(20);
+  FieldScript_WaitFrames(20);
   Engine_ObjectEventSetAnimation(LOCALID_DOUBTING_THE_DOOR, ANIM_NOD);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_WORRIED_FOR_SHEBA, ANIM_NOD);
-  Engine_ScriptWait(30);
+  ObjectMotion_SetAnimationAndWait(LOCALID_WORRIED_FOR_SHEBA, ANIM_NOD);
+  FieldScript_WaitFrames(30);
   ObjectEvent_SetSpeed(LOCALID_DOUBTING_THE_DOOR, 0x10000, 0x8000);
   ObjectEvent_SetSpeed(LOCALID_WORRIED_FOR_SHEBA, 0x10000, 0x8000);
   ObjectEvent_WalkBy(LOCALID_DOUBTING_THE_DOOR, 32, 0);
@@ -743,19 +744,19 @@ static void BabiLighthouse_FaranAsksPartyToOpenDoor(void) {
   Engine_ObjectEventSetAnimation(LOCALID_WORRIED_FOR_SHEBA, ANIM_STAND);
   ObjectEvent_FaceDirection(LOCALID_DOUBTING_THE_DOOR, FACING_WEST, 0);
   ObjectEvent_FaceDirection(LOCALID_WORRIED_FOR_SHEBA, FACING_WEST, 0);
-  Engine_ScriptWait(10);
+  FieldScript_WaitFrames(10);
   ObjectEvent_FaceDirection(LOCALID_FARAN, FACING_SOUTH, 0);
-  Engine_ScriptWait(20);
+  FieldScript_WaitFrames(20);
   Script_ShowMessage(LOCALID_FARAN, 0);
-  Engine_ScriptWait(10);
+  FieldScript_WaitFrames(10);
   ObjectEvent_SetSpeed(LOCALID_FARAN, 0x10000, 0x8000);
   ObjectEvent_WalkToAndWait(LOCALID_FARAN, 328, 312);
   ObjectEvent_FaceDirection(LOCALID_FARAN, FACING_WEST, 0);
-  Engine_ScriptWait(30);
+  FieldScript_WaitFrames(30);
   ObjectEvent_SetSpeed(LOCALID_WITNESS, 0x10000, 0x8000);
   ObjectEvent_WalkToAndWait(LOCALID_WITNESS, 328, 328);
   ObjectEvent_FaceDirection(LOCALID_WITNESS, FACING_WEST, 0);
-  Engine_ScriptWait(20);
+  FieldScript_WaitFrames(20);
   // The companions walk back into the leader.
   ObjectEvent_SetSpeed(GARET, 0x13333, 0x9999);
   ObjectEvent_SetSpeed(IVAN, 0x13333, 0x9999);
@@ -763,8 +764,8 @@ static void BabiLighthouse_FaranAsksPartyToOpenDoor(void) {
   BabiLighthouse_WalkBackToLeader(GARET);
   BabiLighthouse_WalkBackToLeader(IVAN);
   BabiLighthouse_WalkBackToLeader(MIA);
-  Engine_ScriptWait(10);
-  Engine_ScriptEnd();
+  FieldScript_WaitFrames(10);
+  FieldScript_End();
 }
 
 /// The stone door of BabiLighthouseStoneDoor opens before Iodem and Faran the
@@ -774,115 +775,115 @@ static void BabiLighthouse_FaranAsksPartyToOpenDoor(void) {
 static void BabiLighthouse_ExplainTruthDoor(void) {
   // Everyone reacts to the opened door before trying to follow the party.
   GameFlag_Set(FLAG_BABI_LIGHTHOUSE_DOOR_SHOWN);
-  Engine_ScriptStart();
+  FieldScript_Start();
   Field_EndBusyAndReveal();
-  Engine_ScriptSetMessage(MsgBabiTheDoor);
+  FieldScript_SetMessageId(MsgBabiTheDoor);
   ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, 0x10000, 0x8000);
   ObjectEvent_WalkToAndWait(LOCALID_PARTY_LEADER, 296, 312);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_EAST, 0);
-  Engine_ScriptWait(10);
+  FieldScript_WaitFrames(10);
   ObjectMotion_LaunchFromFocusedObject(GARET, 0, 16, FACING_EAST);
   FieldMotion_LaunchFromFocusedObject(IVAN, -16, -8, FACING_EAST);
   ObjectMotion_LaunchFromFocusedObject(MIA, -16, 24, FACING_EAST);
-  Engine_ObjectEventWaitForMove(MIA);
-  Engine_ScriptWait(20);
+  ObjectMotion_CommitCurrentPositionAndActivate(MIA);
+  FieldScript_WaitFrames(20);
   FieldCamera_SetSpeed(0x30000, 0x6000);
   FieldCamera_MoveTo(PIXELS(280), -1, PIXELS(328), 1);
-  Engine_CameraWaitForMove();
-  Engine_ScriptWait(10);
-  Engine_ScriptWait(10);
+  FieldCamera_WaitForArrival();
+  FieldScript_WaitFrames(10);
+  FieldScript_WaitFrames(10);
   ObjectEvent_FaceDirection(LOCALID_IODEM, FACING_NORTHWEST + FACING_STEP, 0);
-  Engine_ScriptWait(10);
+  FieldScript_WaitFrames(10);
   ObjectEvent_ShowEmote(LOCALID_IODEM, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
   Script_ShowMessage(LOCALID_IODEM, 0);
-  Engine_ObjectEventJump(LOCALID_IODEM, 4, 13);
-  Engine_ObjectEventJump(LOCALID_IODEM, 4, 30);
-  Engine_ScriptWait(10);
+  ObjectMotion_Launch(LOCALID_IODEM, 4, 13);
+  ObjectMotion_Launch(LOCALID_IODEM, 4, 30);
+  FieldScript_WaitFrames(10);
   ObjectEvent_ShowEmote(LOCALID_WITNESS, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   ObjectEvent_ShowEmote(LOCALID_DOUBTING_THE_DOOR,
                         EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   ObjectEvent_ShowEmote(LOCALID_WORRIED_FOR_SHEBA,
                         EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   ObjectEvent_ShowEmote(LOCALID_FARAN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
-  Engine_ScriptWait(10);
+  FieldScript_WaitFrames(10);
   ObjectEvent_FaceDirection(LOCALID_FARAN, FACING_NORTHWEST + FACING_STEP, 0);
   ObjectEvent_FaceDirection(LOCALID_WITNESS, FACING_NORTHWEST + FACING_STEP, 0);
   ObjectEvent_FaceDirection(LOCALID_DOUBTING_THE_DOOR,
                             FACING_NORTHWEST + FACING_STEP, 0);
   ObjectEvent_FaceDirection(LOCALID_WORRIED_FOR_SHEBA,
                             FACING_NORTHWEST + FACING_STEP, 0);
-  Engine_ScriptWait(30);
-  Engine_ObjectEventRunRepeatedMotion(LOCALID_FARAN, 2);
-  Engine_ScriptWait(20);
+  FieldScript_WaitFrames(30);
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_FARAN, 2);
+  FieldScript_WaitFrames(20);
   Script_ShowMessage(LOCALID_FARAN, 0);
-  Engine_ScriptWait(20);
+  FieldScript_WaitFrames(20);
   ObjectEvent_ShowEmote(LOCALID_WORRIED_FOR_SHEBA, EMOTE_IN_FRONT | EMOTE_WINCE,
                         40);
   Script_ShowMessage(LOCALID_WORRIED_FOR_SHEBA, 0);
-  Engine_ScriptWait(20);
+  FieldScript_WaitFrames(20);
   ObjectEvent_ShowEmote(LOCALID_DOUBTING_THE_DOOR,
                         EMOTE_IN_FRONT | EMOTE_QUESTION, 50);
   ObjectEvent_FaceDirection(LOCALID_DOUBTING_THE_DOOR, FACING_WEST, 0);
-  Engine_ScriptWait(25);
+  FieldScript_WaitFrames(25);
   Script_ShowMessage(LOCALID_DOUBTING_THE_DOOR, 0);
-  Engine_ScriptWait(10);
+  FieldScript_WaitFrames(10);
   ObjectEvent_FaceDirection(LOCALID_FARAN, FACING_WEST, 0);
   ObjectEvent_FaceDirection(LOCALID_WITNESS, FACING_WEST, 0);
   ObjectEvent_FaceDirection(LOCALID_WORRIED_FOR_SHEBA, FACING_WEST, 0);
-  Engine_ScriptWait(30);
-  Engine_ScriptWait(10);
-  Engine_ObjectEventRunRepeatedMotion(MIA, 2);
-  Engine_ScriptWait(20);
+  FieldScript_WaitFrames(30);
+  FieldScript_WaitFrames(10);
+  ObjectMotion_SetVarCbAndRefresh(MIA, 2);
+  FieldScript_WaitFrames(20);
   Script_ShowMessage(MIA, 0);
-  Engine_ScriptWait(10);
-  Engine_ObjectEventRunRepeatedMotion(IVAN, 2);
-  Engine_ScriptWait(20);
+  FieldScript_WaitFrames(10);
+  ObjectMotion_SetVarCbAndRefresh(IVAN, 2);
+  FieldScript_WaitFrames(20);
   Script_ShowMessage(IVAN, 0);
-  Engine_ScriptWait(10);
+  FieldScript_WaitFrames(10);
   ObjectEvent_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
   Script_ShowMessage(GARET, 0);
-  Engine_ScriptWait(20);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_IODEM, ANIM_SHAKE_HEAD);
-  Engine_ScriptWait(20);
+  FieldScript_WaitFrames(20);
+  ObjectMotion_SetAnimationAndWait(LOCALID_IODEM, ANIM_SHAKE_HEAD);
+  FieldScript_WaitFrames(20);
   Script_ShowMessage(LOCALID_IODEM, 0);
-  Engine_ScriptWait(10);
-  Engine_ObjectEventRunRepeatedMotion(LOCALID_FARAN, 2);
-  Engine_ScriptWait(25);
+  FieldScript_WaitFrames(10);
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_FARAN, 2);
+  FieldScript_WaitFrames(25);
   Script_ShowMessage(LOCALID_FARAN, 0);
-  Engine_ScriptWait(10);
-  Engine_ObjectEventRunRepeatedMotion(LOCALID_IODEM, 2);
-  Engine_ScriptWait(20);
+  FieldScript_WaitFrames(10);
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_IODEM, 2);
+  FieldScript_WaitFrames(20);
   ObjectEvent_SetSpeed(LOCALID_IODEM, 0x10000, 0x8000);
   ObjectEvent_WalkByAndWait(LOCALID_IODEM, 0, -40);
   ObjectEvent_FaceDirection(LOCALID_IODEM, FACING_EAST, 0);
-  Engine_ScriptWait(20);
+  FieldScript_WaitFrames(20);
   Script_ShowMessage(LOCALID_IODEM, 0);
-  Engine_ScriptWait(10);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_FARAN, ANIM_NOD);
-  Engine_ScriptWait(30);
-  Engine_ScriptWait(10);
+  FieldScript_WaitFrames(10);
+  ObjectMotion_SetAnimationAndWait(LOCALID_FARAN, ANIM_NOD);
+  FieldScript_WaitFrames(30);
+  FieldScript_WaitFrames(10);
   ObjectEvent_FaceDirection(LOCALID_WORRIED_FOR_SHEBA, FACING_SOUTH, 0);
   ObjectEvent_FaceDirection(LOCALID_DOUBTING_THE_DOOR, FACING_NORTH, 0);
-  Engine_ScriptWait(30);
+  FieldScript_WaitFrames(30);
   Engine_ObjectEventSetAnimation(LOCALID_DOUBTING_THE_DOOR, ANIM_NOD);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_WORRIED_FOR_SHEBA, ANIM_NOD);
-  Engine_ScriptWait(30);
+  ObjectMotion_SetAnimationAndWait(LOCALID_WORRIED_FOR_SHEBA, ANIM_NOD);
+  FieldScript_WaitFrames(30);
   ObjectEvent_FaceDirection(LOCALID_WORRIED_FOR_SHEBA, FACING_WEST, 0);
   ObjectEvent_FaceDirection(LOCALID_DOUBTING_THE_DOOR, FACING_WEST, 0);
-  Engine_ScriptWait(20);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_IODEM, ANIM_NOD);
-  Engine_ScriptWait(30);
-  Engine_CameraFollowObjectEvent(LOCALID_IODEM, 1);
+  FieldScript_WaitFrames(20);
+  ObjectMotion_SetAnimationAndWait(LOCALID_IODEM, ANIM_NOD);
+  FieldScript_WaitFrames(30);
+  FieldCamera_FollowObjectEvent(LOCALID_IODEM, 1);
   ObjectEvent_WalkByAndWait(LOCALID_IODEM, 0, -32);
   // Demonstrate that the door closes again when someone without Psynergy
   // enters.
   BabiLighthouse_CloseTruthDoor();
   GameFlag_Clear(FLAG_BEYOND_DOOR);
   FieldCamera_MoveTo(-1, -1, -1, 0);
-  Engine_ScriptStart();
+  FieldScript_Start();
   ObjectEvent_ShowEmote(LOCALID_IODEM, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
   Script_ShowMessage(LOCALID_IODEM, 0);
-  Engine_ScriptWait(10);
+  FieldScript_WaitFrames(10);
   ObjectEvent_FaceDirection(LOCALID_FARAN, FACING_NORTHWEST + FACING_STEP, 0);
   ObjectEvent_FaceDirection(LOCALID_WITNESS, FACING_NORTHWEST + FACING_STEP, 0);
   ObjectEvent_FaceDirection(LOCALID_DOUBTING_THE_DOOR,
@@ -893,7 +894,7 @@ static void BabiLighthouse_ExplainTruthDoor(void) {
   ObjectEvent_FaceDirection(GARET, FACING_NORTH, 0);
   ObjectEvent_FaceDirection(IVAN, FACING_NORTH, 0);
   ObjectEvent_FaceDirection(MIA, FACING_NORTH, 0);
-  Engine_ScriptWait(30);
+  FieldScript_WaitFrames(30);
   ObjectEvent_ShowEmote(LOCALID_WITNESS, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   ObjectEvent_ShowEmote(LOCALID_DOUBTING_THE_DOOR,
                         EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
@@ -901,40 +902,39 @@ static void BabiLighthouse_ExplainTruthDoor(void) {
                         EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   ObjectEvent_ShowEmote(LOCALID_FARAN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 70);
   FieldCamera_MoveTo(PIXELS(280), -1, PIXELS(312), 1);
-  Engine_CameraWaitForMove();
-  Engine_ScriptWait(10);
+  FieldCamera_WaitForArrival();
+  FieldScript_WaitFrames(10);
   ObjectEvent_ShowEmote(LOCALID_DOUBTING_THE_DOOR, EMOTE_IN_FRONT | EMOTE_WINCE,
                         40);
   Script_ShowMessage(LOCALID_DOUBTING_THE_DOOR, 0);
-  Engine_ScriptWait(10);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_WORRIED_FOR_SHEBA,
-                                        ANIM_SHAKE_HEAD);
-  Engine_ScriptWait(20);
+  FieldScript_WaitFrames(10);
+  ObjectMotion_SetAnimationAndWait(LOCALID_WORRIED_FOR_SHEBA, ANIM_SHAKE_HEAD);
+  FieldScript_WaitFrames(20);
   Script_ShowMessage(LOCALID_WORRIED_FOR_SHEBA, 0);
-  Engine_ScriptWait(10);
-  Engine_ObjectEventRunRepeatedMotion(IVAN, 2);
-  Engine_ScriptWait(30);
+  FieldScript_WaitFrames(10);
+  ObjectMotion_SetVarCbAndRefresh(IVAN, 2);
+  FieldScript_WaitFrames(30);
   ObjectEvent_FaceDirection(IVAN, FACING_SOUTHEAST, 0);
-  Engine_ScriptWait(20);
+  FieldScript_WaitFrames(20);
   Script_ShowMessage(IVAN, 0);
-  Engine_ScriptWait(10);
+  FieldScript_WaitFrames(10);
   ObjectEvent_FaceDirection(LOCALID_IODEM, FACING_SOUTH, 0);
-  Engine_ScriptWait(30);
+  FieldScript_WaitFrames(30);
   ObjectEvent_FaceDirection(MIA, FACING_NORTHEAST, 0);
-  Engine_ScriptWait(30);
+  FieldScript_WaitFrames(30);
   ObjectEvent_ShowEmote(MIA, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER,
                             FACING_SOUTHEAST + FACING_STEP, 0);
-  Engine_ScriptWait(20);
+  FieldScript_WaitFrames(20);
   Script_ShowMessage(MIA, 0);
-  Engine_ScriptWait(10);
-  Engine_ObjectEventSetAnimationAndWait(GARET, ANIM_SHAKE_HEAD);
-  Engine_ScriptWait(20);
+  FieldScript_WaitFrames(10);
+  ObjectMotion_SetAnimationAndWait(GARET, ANIM_SHAKE_HEAD);
+  FieldScript_WaitFrames(20);
   Script_ShowMessage(GARET, 0);
-  Engine_ScriptWait(20);
+  FieldScript_WaitFrames(20);
   ObjectEvent_ShowEmote(LOCALID_FARAN, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 50);
   ObjectEvent_FaceDirection(LOCALID_FARAN, FACING_WEST, 0);
-  Engine_ScriptWait(20);
+  FieldScript_WaitFrames(20);
   // Explain the restriction and ask the onlookers to leave the pursuit to us.
   Script_OpenMessage(LOCALID_FARAN, 0);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_EAST, 0);
@@ -943,97 +943,99 @@ static void BabiLighthouse_ExplainTruthDoor(void) {
   ObjectEvent_FaceDirection(LOCALID_WORRIED_FOR_SHEBA, FACING_WEST, 0);
   ObjectEvent_FaceDirection(IVAN, FACING_EAST + FACING_STEP, 0);
   ObjectEvent_FaceDirection(MIA, FACING_NORTHEAST, 0);
-  if (Engine_ScriptChooseYesNo(LOCALID_PARTY_LEADER, 0) == 0) {
-    Engine_ScriptWait(30);
-    Engine_ObjectEventRunRepeatedMotion(LOCALID_FARAN, 2);
-    Engine_ScriptWait(20);
+  if (FieldScript_AskYesNoWithObjectEventAnimation(LOCALID_PARTY_LEADER, 0) ==
+      0) {
+    FieldScript_WaitFrames(30);
+    ObjectMotion_SetVarCbAndRefresh(LOCALID_FARAN, 2);
+    FieldScript_WaitFrames(20);
     Script_ShowMessage(LOCALID_FARAN, 0);
     gFieldWork->message++;
   } else {
-    Engine_ScriptWait(30);
-    Engine_ObjectEventRunRepeatedMotion(LOCALID_FARAN, 2);
-    Engine_ScriptWait(20);
+    FieldScript_WaitFrames(30);
+    ObjectMotion_SetVarCbAndRefresh(LOCALID_FARAN, 2);
+    FieldScript_WaitFrames(20);
     gFieldWork->message++;
     Script_ShowMessage(LOCALID_FARAN, 0);
   }
-  Engine_ScriptWait(10);
-  Engine_ObjectEventRunRepeatedMotion(LOCALID_IODEM, 2);
-  Engine_ScriptWait(20);
+  FieldScript_WaitFrames(10);
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_IODEM, 2);
+  FieldScript_WaitFrames(20);
   ObjectEvent_WalkByAndWait(LOCALID_IODEM, 0, 16);
   ObjectEvent_FaceDirection(LOCALID_IODEM, FACING_SOUTHEAST, 0);
-  Engine_ScriptWait(20);
+  FieldScript_WaitFrames(20);
   Script_ShowMessage(LOCALID_IODEM, 0);
-  Engine_ScriptWait(10);
+  FieldScript_WaitFrames(10);
   ObjectEvent_FaceDirection(LOCALID_FARAN, FACING_NORTHWEST, 0);
-  Engine_ScriptWait(20);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_FARAN, ANIM_SHAKE_HEAD);
-  Engine_ScriptWait(20);
+  FieldScript_WaitFrames(20);
+  ObjectMotion_SetAnimationAndWait(LOCALID_FARAN, ANIM_SHAKE_HEAD);
+  FieldScript_WaitFrames(20);
   Script_ShowMessage(LOCALID_FARAN, 0);
-  Engine_ScriptWait(10);
+  FieldScript_WaitFrames(10);
   // Iodem and Faran agree to stay behind and leave the rescue to the party.
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_IODEM, ANIM_NOD);
-  Engine_ScriptWait(30);
+  ObjectMotion_SetAnimationAndWait(LOCALID_IODEM, ANIM_NOD);
+  FieldScript_WaitFrames(30);
   Script_ShowMessage(LOCALID_IODEM, 0);
-  Engine_ScriptWait(10);
-  Engine_ObjectEventRunRepeatedMotion(LOCALID_FARAN, 2);
-  Engine_ScriptWait(20);
+  FieldScript_WaitFrames(10);
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_FARAN, 2);
+  FieldScript_WaitFrames(20);
   Script_OpenMessage(LOCALID_FARAN, 0);
-  Engine_ScriptWait(40);
+  FieldScript_WaitFrames(40);
   ObjectEvent_FaceDirection(LOCALID_IODEM, FACING_SOUTH + FACING_STEP, 0);
-  Engine_ScriptWait(20);
+  FieldScript_WaitFrames(20);
   ObjectEvent_ShowEmote(LOCALID_IODEM, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
-  if (Engine_ScriptChooseYesNo(LOCALID_PARTY_LEADER, 0) == 0) {
-    Engine_ScriptWait(30);
+  if (FieldScript_AskYesNoWithObjectEventAnimation(LOCALID_PARTY_LEADER, 0) ==
+      0) {
+    FieldScript_WaitFrames(30);
     ObjectEvent_FaceDirection(LOCALID_IODEM, FACING_SOUTHEAST, 0);
-    Engine_ScriptWait(20);
-    Engine_ObjectEventSetAnimationAndWait(LOCALID_IODEM, ANIM_NOD);
-    Engine_ScriptWait(30);
+    FieldScript_WaitFrames(20);
+    ObjectMotion_SetAnimationAndWait(LOCALID_IODEM, ANIM_NOD);
+    FieldScript_WaitFrames(30);
     Script_ShowMessage(LOCALID_IODEM, 0);
     gFieldWork->message++;
   } else {
-    Engine_ScriptWait(30);
+    FieldScript_WaitFrames(30);
     ObjectEvent_FaceDirection(LOCALID_IODEM, FACING_SOUTHEAST, 0);
-    Engine_ScriptWait(20);
-    Engine_ObjectEventSetAnimationAndWait(LOCALID_IODEM, ANIM_SHAKE_HEAD);
-    Engine_ScriptWait(20);
+    FieldScript_WaitFrames(20);
+    ObjectMotion_SetAnimationAndWait(LOCALID_IODEM, ANIM_SHAKE_HEAD);
+    FieldScript_WaitFrames(20);
     gFieldWork->message++;
     Script_ShowMessage(LOCALID_IODEM, 0);
   }
-  Engine_ScriptWait(10);
+  FieldScript_WaitFrames(10);
   ObjectEvent_ShowEmote(LOCALID_FARAN, EMOTE_IN_FRONT | EMOTE_WINCE, 50);
   Script_ShowMessage(LOCALID_FARAN, 0);
-  Engine_ScriptWait(15);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_IODEM, ANIM_NOD);
-  Engine_ScriptWait(30);
-  Engine_ScriptWait(20);
-  Engine_ObjectEventRunRepeatedMotion(LOCALID_FARAN, 2);
-  Engine_ScriptWait(40);
+  FieldScript_WaitFrames(15);
+  ObjectMotion_SetAnimationAndWait(LOCALID_IODEM, ANIM_NOD);
+  FieldScript_WaitFrames(30);
+  FieldScript_WaitFrames(20);
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_FARAN, 2);
+  FieldScript_WaitFrames(40);
   ObjectEvent_FaceDirection(LOCALID_FARAN, FACING_WEST, 0);
-  Engine_ScriptWait(20);
+  FieldScript_WaitFrames(20);
   Script_ShowMessage(LOCALID_FARAN, 0);
-  Engine_ScriptWait(10);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_FARAN, ANIM_NOD);
-  Engine_ScriptWait(30);
+  FieldScript_WaitFrames(10);
+  ObjectMotion_SetAnimationAndWait(LOCALID_FARAN, ANIM_NOD);
+  FieldScript_WaitFrames(30);
   Script_ShowMessage(LOCALID_FARAN, 0);
-  Engine_ScriptWait(10);
+  FieldScript_WaitFrames(10);
   ObjectEvent_FaceDirection(LOCALID_IODEM, FACING_SOUTH + FACING_STEP, 0);
-  Engine_ScriptWait(25);
-  Engine_ObjectEventRunRepeatedMotion(LOCALID_IODEM, 2);
-  Engine_ScriptWait(20);
+  FieldScript_WaitFrames(25);
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_IODEM, 2);
+  FieldScript_WaitFrames(20);
   ObjectEvent_WalkToAndWait(LOCALID_IODEM, 312, 312);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_EAST, 0);
   ObjectEvent_FaceDirection(LOCALID_IODEM, FACING_WEST, 0);
-  Engine_ScriptWait(25);
+  FieldScript_WaitFrames(25);
   Script_ShowMessage(LOCALID_IODEM, 0);
-  Engine_ScriptWait(10);
-  Engine_ObjectEventFaceEachOther(LOCALID_PARTY_LEADER, GARET, 0);
-  Engine_ObjectEventFaceEachOther(MIA, IVAN, 0);
-  Engine_ScriptWait(30);
+  FieldScript_WaitFrames(10);
+  ObjectEvent_LinkPair(LOCALID_PARTY_LEADER, GARET, 0);
+  ObjectEvent_LinkPair(MIA, IVAN, 0);
+  FieldScript_WaitFrames(30);
   Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
   Engine_ObjectEventSetAnimation(GARET, ANIM_NOD);
   Engine_ObjectEventSetAnimation(MIA, ANIM_NOD);
-  Engine_ObjectEventSetAnimationAndWait(IVAN, ANIM_NOD);
-  Engine_ScriptWait(30);
+  ObjectMotion_SetAnimationAndWait(IVAN, ANIM_NOD);
+  FieldScript_WaitFrames(30);
   // The companions walk back into the leader.
   ObjectEvent_SetSpeed(GARET, 0x13333, 0x9999);
   ObjectEvent_SetSpeed(IVAN, 0x13333, 0x9999);
@@ -1041,7 +1043,7 @@ static void BabiLighthouse_ExplainTruthDoor(void) {
   BabiLighthouse_WalkBackToLeader(GARET);
   BabiLighthouse_WalkBackToLeader(IVAN);
   BabiLighthouse_WalkBackToLeader(MIA);
-  Engine_ScriptWait(10);
+  FieldScript_WaitFrames(10);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_NORTH, 0);
   ObjectEvent_FaceDirection(LOCALID_IODEM, FACING_NORTHWEST + FACING_STEP, 0);
   ObjectEvent_FaceDirection(LOCALID_FARAN, FACING_NORTHWEST + FACING_STEP, 0);
@@ -1050,14 +1052,14 @@ static void BabiLighthouse_ExplainTruthDoor(void) {
                             FACING_NORTHWEST + FACING_STEP, 0);
   ObjectEvent_FaceDirection(LOCALID_WORRIED_FOR_SHEBA,
                             FACING_NORTHWEST + FACING_STEP, 0);
-  Engine_ScriptWait(30);
-  Engine_ScriptEnd();
+  FieldScript_WaitFrames(30);
+  FieldScript_End();
 }
 
 /// Reveal at BabiLighthouseStoneDoor shows the stone door's switch, flipped one
 /// way or the other as the door stands.
 static void BabiLighthouse_ShowTruthDoorSwitch(void) {
-  if (Engine_GameFlagIsSet(FLAG_BABI_LIGHTHOUSE_DOOR_OPEN) == 0) {
+  if (GameFlag_Test(FLAG_BABI_LIGHTHOUSE_DOOR_OPEN) == 0) {
     MapGrid_CopyCellsLayered(36, 78, 1, 2, 17, 78);
   } else {
     MapGrid_CopyCellsLayered(34, 78, 1, 2, 17, 78);
@@ -1075,14 +1077,14 @@ static void BabiLighthouse_HideTruthDoorSwitch(void) {
 static void BabiLighthouse_OpenTruthDoor(void) {
   if (GameFlag_IsSet(FLAG_BABI_LIGHTHOUSE_DOOR_OPEN) == 0) {
     GameFlag_Set(FLAG_BABI_LIGHTHOUSE_DOOR_OPEN);
-    Engine_AudioPlayCue(SE_GATE_MOVE);
-    Engine_ScriptStart();
+    Sound_PlaySong(SE_GATE_MOVE);
+    FieldScript_Start();
     ObjectEvent_SetDestination(LOCALID_LEFT_DOOR, 280, 240);
     ObjectEvent_SetDestination(LOCALID_RIGHT_DOOR, 328, 240);
-    Engine_ObjectEventWaitForMove(LOCALID_LEFT_DOOR);
-    Engine_ObjectEventWaitForMove(LOCALID_RIGHT_DOOR);
+    ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_LEFT_DOOR);
+    ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_RIGHT_DOOR);
     MapGrid_CopyCellAttributes(81, 14, 4, 1, 17, 14);
-    Engine_ScriptEnd();
+    FieldScript_End();
     if (GameFlag_IsSet(FLAG_BABI_LIGHTHOUSE_DOOR_SHOWN) == 0) {
       BabiLighthouse_ExplainTruthDoor();
     }
@@ -1094,14 +1096,14 @@ static void BabiLighthouse_OpenTruthDoor(void) {
 static void BabiLighthouse_CloseTruthDoor(void) {
   if (GameFlag_IsSet(FLAG_BABI_LIGHTHOUSE_DOOR_OPEN) != 0) {
     GameFlag_Clear(FLAG_BABI_LIGHTHOUSE_DOOR_OPEN);
-    Engine_AudioPlayCue(SE_GATE_MOVE);
-    Engine_ScriptStart();
+    Sound_PlaySong(SE_GATE_MOVE);
+    FieldScript_Start();
     ObjectEvent_SetDestination(LOCALID_LEFT_DOOR, 296, 240);
     ObjectEvent_SetDestination(LOCALID_RIGHT_DOOR, 312, 240);
-    Engine_ObjectEventWaitForMove(LOCALID_LEFT_DOOR);
-    Engine_ObjectEventWaitForMove(LOCALID_RIGHT_DOOR);
+    ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_LEFT_DOOR);
+    ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_RIGHT_DOOR);
     MapGrid_CopyCellAttributes(0, 14, 4, 1, 17, 14);
-    Engine_ScriptEnd();
+    FieldScript_End();
     if (GameFlag_IsSet(FLAG_BEYOND_DOOR) != 0) {
       GameFlag_Clear(FLAG_BEYOND_DOOR);
     } else {
@@ -1116,23 +1118,23 @@ static void BabiLighthouse_CloseTruthDoor(void) {
 static void BabiLighthouse_InspectTruthDoorSwitch(void) {
   struct FieldWork *work = (struct FieldWork *)gFieldWork;
 
-  Engine_ScriptStart();
+  FieldScript_Start();
   if (work->revealActive != 0) {
-    if (Engine_GameFlagIsSet(FLAG_BABI_LIGHTHOUSE_DOOR_OPEN) == 0) {
+    if (GameFlag_Test(FLAG_BABI_LIGHTHOUSE_DOOR_OPEN) == 0) {
 
-      Engine_MessageShowCentered(MsgFieldFlippedSwitch, 1);
-      Engine_AudioPlayCue(SE_155);
+      FieldMessage_Show(MsgFieldFlippedSwitch, 1);
+      Sound_PlaySong(SE_155);
       MapGrid_CopyCellsLayered(35, 78, 1, 2, 17, 78);
-      Engine_ScriptWait(10);
+      FieldScript_WaitFrames(10);
       MapGrid_CopyCellsLayered(34, 78, 1, 2, 17, 78);
-      Engine_ScriptWait(10);
+      FieldScript_WaitFrames(10);
       BabiLighthouse_OpenTruthDoor();
     }
   } else {
-    Engine_ScriptSetMessage(MsgBabiTruthDoorOpenThoseSeeing);
-    Engine_ScriptShowMessage(-1, 0);
+    FieldScript_SetMessageId(MsgBabiTruthDoorOpenThoseSeeing);
+    FieldScript_ShowMessageAndWait(-1, 0);
   }
-  Engine_ScriptEnd();
+  FieldScript_End();
 }
 
 /// Finds the pushed object one direction-table step ahead, including
@@ -1262,7 +1264,7 @@ const struct MapEvent *Map_GetEvents(void) {
 static void BabiLighthouse_OpenGrowthPassage(void) {
 
   MapGrid_CopyCellAttributes(82, 7, 1, 2, 18, 7);
-  Engine_TaskWait(1);
+  WaitFrames(1);
   Engine_GameFlagSet(FLAG_GROWTH_PASSAGE_OPEN);
 }
 
@@ -1271,8 +1273,8 @@ static void BabiLighthouse_OpenGrowthPassage(void) {
 static void BabiLighthouse_RedrawLedgePillarCells(void) {
   struct ObjectEvent *leftPillar = ObjectEvent_GetById(LOCALID_LEFT_PILLAR);
 
-  Engine_ObjectEventSetSpritePriority(LOCALID_LEFT_PILLAR, 1);
-  Engine_ObjectEventSetSpritePriority(LOCALID_RIGHT_PILLAR, 1);
+  ObjectMotion_SetActionVariant(LOCALID_LEFT_PILLAR, 1);
+  ObjectMotion_SetActionVariant(LOCALID_RIGHT_PILLAR, 1);
   MapGrid_CopyCellAttributes(69, 19, 3, 3, 5, 19);
   MapGrid_CopyCellAttributes(69, 19, 3, 3, 17, 19);
   {
@@ -1301,26 +1303,24 @@ static void BabiLighthouse_MatchLeaderPriority(union FieldObject *fieldObject) {
   objectEvent = ObjectEvent_GetById(LOCALID_LEFT_PILLAR);
   if (objectEvent->z.fixed <
       ObjectEvent_GetById(LOCALID_PARTY_LEADER)->z.fixed) {
-    Engine_ObjectEventSetSpritePriority(LOCALID_LEFT_PILLAR,
-                                        sprite->image.priority);
+    ObjectMotion_SetActionVariant(LOCALID_LEFT_PILLAR, sprite->image.priority);
   } else {
     priority = sprite->image.priority;
     if (priority != 1)
       priority--;
-    Engine_ObjectEventSetSpritePriority(LOCALID_LEFT_PILLAR, priority);
+    ObjectMotion_SetActionVariant(LOCALID_LEFT_PILLAR, priority);
     ObjectEvent_GetById(LOCALID_LEFT_PILLAR)->priorityFlags |=
         OBJ_EVENT_PRIORITY_AUTOMATIC;
   }
   objectEvent = ObjectEvent_GetById(LOCALID_RIGHT_PILLAR);
   if (objectEvent->z.fixed <
       ObjectEvent_GetById(LOCALID_PARTY_LEADER)->z.fixed) {
-    Engine_ObjectEventSetSpritePriority(LOCALID_RIGHT_PILLAR,
-                                        sprite->image.priority);
+    ObjectMotion_SetActionVariant(LOCALID_RIGHT_PILLAR, sprite->image.priority);
   } else {
     priority = sprite->image.priority;
     if (priority != 1)
       priority--;
-    Engine_ObjectEventSetSpritePriority(LOCALID_RIGHT_PILLAR, priority);
+    ObjectMotion_SetActionVariant(LOCALID_RIGHT_PILLAR, priority);
     ObjectEvent_GetById(LOCALID_RIGHT_PILLAR)->priorityFlags |=
         OBJ_EVENT_PRIORITY_AUTOMATIC;
   }
@@ -1341,7 +1341,7 @@ s32 BabiLighthouse_SetupMap(void) {
   s32 z;
   u8 zero;
 
-  Engine_TaskWait(1);
+  WaitFrames(1);
   gFieldWork->transition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   state = &gGameState;
@@ -1491,7 +1491,7 @@ s32 BabiLighthouse_SetupMap(void) {
       ObjectEvent_FaceDirection(LOCALID_DOUBTING_THE_DOOR, FACING_NORTH, 0);
       ObjectEvent_FaceDirection(LOCALID_WORRIED_FOR_SHEBA, FACING_NORTH, 0);
       ObjectEvent_FaceDirection(LOCALID_FARAN, FACING_WEST, 0);
-      Engine_ScriptWait(5);
+      FieldScript_WaitFrames(5);
     } else if (GameFlag_IsSet(FLAG_BABI_LIGHTHOUSE_DOOR_SHOWN) != 0) {
       ObjectEvent_SetPosition(LOCALID_IODEM, PIXELS(312), PIXELS(312));
       ObjectEvent_FaceDirection(LOCALID_IODEM, FACING_NORTHWEST + FACING_STEP,
@@ -1504,7 +1504,7 @@ s32 BabiLighthouse_SetupMap(void) {
                                 FACING_NORTHWEST + FACING_STEP, 0);
       ObjectEvent_FaceDirection(LOCALID_FARAN, FACING_NORTHWEST + FACING_STEP,
                                 0);
-      Engine_ScriptWait(5);
+      FieldScript_WaitFrames(5);
     }
     if (GameFlag_IsSet(FLAG_BABI_LIGHTHOUSE_DOOR_OPEN) != 0) {
       ObjectEvent_SetPosition(LOCALID_LEFT_DOOR, PIXELS(280), PIXELS(240));

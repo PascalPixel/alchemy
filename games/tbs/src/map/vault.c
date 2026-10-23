@@ -212,7 +212,7 @@ const struct MapWarpRegion *Map_GetWarpRegions(void) { return NULL; }
 const u32 *Map_GetWarps(void) { return gVault_Warps; }
 
 const struct ObjectEventTemplate *Map_GetObjectEventTemplates(void) {
-  if (Engine_GameFlagIsSet(FLAG_VAULT_THIEVES_JAILED) != 0)
+  if (GameFlag_Test(FLAG_VAULT_THIEVES_JAILED) != 0)
     return gVault_ObjectEventTemplatesAfterThieves;
   return gVault_ObjectEventTemplates;
 }
@@ -241,7 +241,7 @@ static void EventScript_IvanStaysBehind(void) {
     return;
   }
   // Bring Ivan out beside the party at the warp they are using.
-  Engine_ScriptStart();
+  FieldScript_Start();
   objectEvent = ObjectEvent_Get(LOCALID_PARTY_LEADER);
   if (objectEvent != 0) {
     ObjectEvent_SetPosition(IVAN, objectEvent->x.fixed, objectEvent->z.fixed);
@@ -253,70 +253,70 @@ static void EventScript_IvanStaysBehind(void) {
     FieldCamera_SetSpeed(PIXELS(4) / 5, PIXELS(1) / 10);
     FieldCamera_MoveTo(PIXELS(224), -1, PIXELS(162), 1);
     ObjectEvent_WalkToAndWait(IVAN, 224, 162);
-    Engine_CameraWaitForMove();
+    FieldCamera_WaitForArrival();
   }
-  Engine_ObjectEventFaceEachOther(LOCALID_PARTY_LEADER, IVAN, 0);
-  Engine_ScriptWait(20);
-  Engine_ScriptSetMessage(MsgVaultLeavingImStillWorriedAbout);
+  ObjectEvent_LinkPair(LOCALID_PARTY_LEADER, IVAN, 0);
+  FieldScript_WaitFrames(20);
+  FieldScript_SetMessageId(MsgVaultLeavingImStillWorriedAbout);
   Script_ShowMessageAndWait(SPEAKER_WINDOW_BELOW | SPEAKER_PORTRAIT_LEFT | IVAN,
                             0, 20);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_PARTY_LEADER, ANIM_NOD);
+  ObjectMotion_SetAnimationAndWait(LOCALID_PARTY_LEADER, ANIM_NOD);
   // Return any Djinn before removing Ivan from the party.
   if (Vault_GetIvanVenusDjinnCount() != 0) {
-    Engine_ScriptSetMessage(MsgVaultWaitDontWantTakeYour);
+    FieldScript_SetMessageId(MsgVaultWaitDontWantTakeYour);
     Script_ShowMessage(IVAN, 0);
     Vault_ReturnIsaacsDjinni();
-    Engine_TaskWait(20);
+    WaitFrames(20);
   }
   Party_RemoveMemberRestored(IVAN);
   Engine_ScriptRequestWarp(work->coordEvent -
                            (VAULT_CELL_SOUTH_GATE - VAULT_TO_WORLD_MAP_SOUTH));
-  Engine_ScriptCloseScreen();
-  Engine_ScriptWaitForScreen();
-  Engine_ScriptEnd();
+  FieldScript_FinishScreenTransition();
+  FieldScript_WaitTransitionFrames();
+  FieldScript_End();
 }
 
 /// In Vault, Isaac peers into the well and hears water rumbling down there.
 static void EventScript_PeerIntoWell(void) {
-  Engine_ScriptStart();
-  Engine_MessageShowCentered(MsgFieldPeeredWell, 1);
-  Engine_MessageShowCentered(MsgVaultCanHearWaterRumblingDown, 1);
-  Engine_ScriptEnd();
+  FieldScript_Start();
+  FieldMessage_Show(MsgFieldPeeredWell, 1);
+  FieldMessage_Show(MsgVaultCanHearWaterRumblingDown, 1);
+  FieldScript_End();
 }
 
 const struct MapEvent *Map_GetEvents(void) {
-  if (Engine_GameFlagIsSet(FLAG_VAULT_THIEVES_JAILED) != 0)
+  if (GameFlag_Test(FLAG_VAULT_THIEVES_JAILED) != 0)
     return gVault_EventsAfterThieves;
   return gVault_Events;
 }
 
 /// Asks the current question and selects its ordinary or alternate reply.
 static inline void Vault_AskYesNoAndShowReply(s32 speaker) {
-  Engine_ScriptOpenMessage(speaker, 0);
-  if (Engine_ScriptChooseYesNo(0, 0) != 0) {
+  FieldMessage_ShowAtObject(speaker, 0);
+  if (FieldScript_AskYesNoWithObjectEventAnimation(0, 0) != 0) {
     struct EventWork *work = gFieldWork;
 
     ++work->message;
   }
-  Engine_ScriptShowMessage(speaker, 0);
+  FieldScript_ShowMessageAndWait(speaker, 0);
 }
 
 /// In Vault while the rod is missing, a townsperson asks about the eruption.
 /// "Wasn't the eruption of Mt. Aleph incredible?" Yes: too terrified to sleep
 /// for days. No: aren't you courageous!
 static void EventScript_AskAboutEruption(void) {
-  Engine_ScriptStart();
-  Engine_ScriptSetMessage(MsgVaultWasntEruptionMtAlephIncredible);
+  FieldScript_Start();
+  FieldScript_SetMessageId(MsgVaultWasntEruptionMtAlephIncredible);
   Vault_FaceObjectEventAndWait(LOCALID_ERUPTION_WITNESS, LOCALID_PARTY_LEADER,
                                2);
   Script_OpenMessage(LOCALID_ERUPTION_WITNESS, 0);
-  if (Engine_ScriptChooseYesNo(0, 0) != 0) {
+  if (FieldScript_AskYesNoWithObjectEventAnimation(0, 0) != 0) {
     gFieldWork->message++;
   }
   Script_ShowMessage(LOCALID_ERUPTION_WITNESS, 0);
   ObjectEvent_FaceDirection(LOCALID_ERUPTION_WITNESS,
                             FACING_SOUTH + FACING_STEP, 0);
-  Engine_ScriptEnd();
+  FieldScript_End();
 }
 
 /// In Vault while the rod is missing, a townsperson says travelers left town
@@ -324,14 +324,14 @@ static void EventScript_AskAboutEruption(void) {
 /// girl and old man unhappy to be there. No: maybe they left earlier.
 static void EventScript_AskAboutFleeingTravelers(void) {
 
-  Engine_ScriptStart();
-  Engine_ScriptSetMessage(MsgVaultThoseTravelersLeftInBig);
+  FieldScript_Start();
+  FieldScript_SetMessageId(MsgVaultThoseTravelersLeftInBig);
   Engine_ObjectEventSetAnimation(LOCALID_OLD_WOMAN_ON_THE_TRAVELERS,
                                  ANIM_STAND);
   Vault_FaceObjectEventAndWait(LOCALID_OLD_WOMAN_ON_THE_TRAVELERS,
                                LOCALID_PARTY_LEADER, 2);
   Vault_AskYesNoAndShowReply(LOCALID_OLD_WOMAN_ON_THE_TRAVELERS);
-  Engine_ScriptEnd();
+  FieldScript_End();
 }
 
 /// In Vault, one of the thieves loitering in town asks whether the party
@@ -339,11 +339,11 @@ static void EventScript_AskAboutFleeingTravelers(void) {
 /// "Are you accusing us of stealing Hammet's treasured Shaman's Rod?"
 static void EventScript_ThiefDeniesTheft(void) {
 
-  Engine_ScriptStart();
-  Engine_ScriptSetMessage(MsgVaultAccusingUsStealingHammetsTreasured);
+  FieldScript_Start();
+  FieldScript_SetMessageId(MsgVaultAccusingUsStealingHammetsTreasured);
   Vault_FaceObjectEventAndWait(LOCALID_THIEF_IN_TOWN, LOCALID_PARTY_LEADER, 2);
   Vault_AskYesNoAndShowReply(LOCALID_THIEF_IN_TOWN);
-  Engine_ScriptEnd();
+  FieldScript_End();
 }
 
 /// A stranded traveler asks whether the party is off on an adventure.
@@ -353,40 +353,40 @@ static void EventScript_ThiefDeniesTheft(void) {
 /// Yes: impressive for youngsters. No: see the Sanctum while you're here.
 static void EventScript_AskAboutAdventure(void) {
 
-  Engine_ScriptStart();
-  Engine_ScriptSetMessage(MsgVaultOffOnAdventure);
+  FieldScript_Start();
+  FieldScript_SetMessageId(MsgVaultOffOnAdventure);
   Vault_FaceObjectEventAndWait(LOCALID_STRANDED_TRAVELER, LOCALID_PARTY_LEADER,
                                2);
   Vault_AskYesNoAndShowReply(LOCALID_STRANDED_TRAVELER);
-  Engine_ScriptEnd();
+  FieldScript_End();
 }
 
 /// A townsperson says some folks got robbed in the chaos of the eruption.
 /// She says it while the rod is missing.
 static void EventScript_TalkOfEruptionThefts(void) {
-  Engine_ScriptStart();
-  Engine_ScriptSetMessage(MsgVaultGuessFolksGot);
+  FieldScript_Start();
+  FieldScript_SetMessageId(MsgVaultGuessFolksGot);
   Vault_ShowStandingObjectEventMessage(LOCALID_WOMAN_ON_STEALING);
-  Engine_ScriptEnd();
+  FieldScript_End();
 }
 
 /// In Vault while the rod is missing, the strongman on watch: nobody steals on
 /// his watch, the thieves must be from out of town.
 static void EventScript_StrongmanOnWatchSuspectsOutsiders(void) {
-  Engine_ScriptStart();
-  Engine_ScriptSetMessage(MsgVaultNobodysStealingAnything);
+  FieldScript_Start();
+  FieldScript_SetMessageId(MsgVaultNobodysStealingAnything);
   Vault_ShowStandingObjectEventMessage(LOCALID_STRONGMAN_ON_WATCH);
-  Engine_ScriptEnd();
+  FieldScript_End();
 }
 
 /// In Vault while the rod is missing, the dog stops and barks.
 static void EventScript_TalkToDog(void) {
-  Engine_ScriptStart();
-  Engine_ScriptSetMessage(MsgVaultRuffRrruff);
+  FieldScript_Start();
+  FieldScript_SetMessageId(MsgVaultRuffRrruff);
   Engine_ObjectEventSetAnimation(LOCALID_VAULT_DOG, 0);
   Vault_FaceObjectEventAndWait(LOCALID_VAULT_DOG, LOCALID_PARTY_LEADER, 2);
-  Engine_ScriptShowMessage(LOCALID_VAULT_DOG, 0);
-  Engine_ScriptEnd();
+  FieldScript_ShowMessageAndWait(LOCALID_VAULT_DOG, 0);
+  FieldScript_End();
 }
 
 /// In Vault while the rod is missing, the boy round the well stops: poor Ivan
@@ -397,15 +397,15 @@ static void EventScript_PityIvan(void) {
   s16 savedFacing = objectEvent->facing;
 
   objectEvent->timer |= 2;
-  Engine_ScriptStart();
-  Engine_ScriptSetMessage(MsgVaultPoorGuyLeft);
+  FieldScript_Start();
+  FieldScript_SetMessageId(MsgVaultPoorGuyLeft);
   Engine_ObjectEventSetAnimation(LOCALID_BOY_ROUND_THE_WELL, 0);
   Vault_FaceObjectEventAndWait(LOCALID_BOY_ROUND_THE_WELL, LOCALID_PARTY_LEADER,
                                2);
   Vault_ShowMessageAndWait(LOCALID_BOY_ROUND_THE_WELL, 10);
   objectEvent->facing = savedFacing;
-  Engine_TaskWait(1);
-  Engine_ScriptEnd();
+  WaitFrames(1);
+  FieldScript_End();
   objectEvent->timer &= 1;
 }
 
@@ -417,15 +417,15 @@ static void EventScript_TalkOfHammetsCaravan(void) {
   s16 savedFacing = objectEvent->facing;
 
   objectEvent->timer |= 2;
-  Engine_ScriptStart();
-  Engine_ScriptSetMessage(MsgVaultMasterHammetsCaravan);
+  FieldScript_Start();
+  FieldScript_SetMessageId(MsgVaultMasterHammetsCaravan);
   Engine_ObjectEventSetAnimation(LOCALID_GIRL_ROUND_THE_WELL, 0);
   Vault_FaceObjectEventAndWait(LOCALID_GIRL_ROUND_THE_WELL,
                                LOCALID_PARTY_LEADER, 2);
   Vault_ShowMessageAndWait(LOCALID_GIRL_ROUND_THE_WELL, 10);
   objectEvent->facing = savedFacing;
-  Engine_TaskWait(1);
-  Engine_ScriptEnd();
+  WaitFrames(1);
+  FieldScript_End();
   objectEvent->timer &= 1;
 }
 
@@ -433,24 +433,24 @@ static void EventScript_TalkOfHammetsCaravan(void) {
 /// the roof fixed: the man who should be fixing it is probably in back
 /// slacking off.
 static void EventScript_LookForRoofer(void) {
-  Engine_ScriptStart();
-  Engine_ScriptSetMessage(MsgVaultFixingRoofCant);
+  FieldScript_Start();
+  FieldScript_SetMessageId(MsgVaultFixingRoofCant);
   Vault_FaceObjectEventAndWait(LOCALID_WOMAN_WANTING_THE_ROOF_FIXED,
                                LOCALID_PARTY_LEADER, 2);
-  Engine_ObjectEventShowEmote(LOCALID_WOMAN_WANTING_THE_ROOF_FIXED,
-                              EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 0);
-  Engine_ScriptWait(30);
-  Engine_ScriptOpenMessage(LOCALID_WOMAN_WANTING_THE_ROOF_FIXED, 0);
-  Engine_ScriptEnd();
+  FieldEffect_SpawnLinked(LOCALID_WOMAN_WANTING_THE_ROOF_FIXED,
+                          EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 0);
+  FieldScript_WaitFrames(30);
+  FieldMessage_ShowAtObject(LOCALID_WOMAN_WANTING_THE_ROOF_FIXED, 0);
+  FieldScript_End();
 }
 
 /// Stops an object event, faces the leader and shows the current message.
 static void Vault_ShowStandingObjectEventMessage(s32 localId) {
-  Engine_ScriptStart();
+  FieldScript_Start();
   Engine_ObjectEventSetAnimation(localId, ANIM_STAND);
   Vault_FaceObjectEventAndWait(localId, LOCALID_PARTY_LEADER, 2);
-  Engine_ScriptShowMessage(localId, 0);
-  Engine_ScriptEnd();
+  FieldScript_ShowMessageAndWait(localId, 0);
+  FieldScript_End();
 }
 
 #include "common/vault_talk.h"
@@ -458,21 +458,21 @@ static void Vault_ShowStandingObjectEventMessage(s32 localId) {
 /// The welcoming young man asks whether the party is leaving again.
 /// He asks after the thieves are jailed. "So, you're hitting the road again?"
 static void EventScript_AskAboutLeavingAgain(void) {
-  Engine_ScriptStart();
-  Engine_ScriptSetMessage(MsgVaultYoureHittingRoadAgain);
+  FieldScript_Start();
+  FieldScript_SetMessageId(MsgVaultYoureHittingRoadAgain);
   Vault_FaceObjectEventAndWait(LOCALID_WELCOMING_YOUNG_MAN,
                                LOCALID_PARTY_LEADER, 2);
   Vault_AskYesNoAndShowReply(LOCALID_WELCOMING_YOUNG_MAN);
-  Engine_ScriptEnd();
+  FieldScript_End();
 }
 
 /// In Vault after the thieves are jailed, a townsperson praises their capture.
 /// "It's great that you caught those thieves!"
 static void EventScript_PraiseThievesCapture(void) {
-  Engine_ScriptStart();
-  Engine_ScriptSetMessage(MsgVaultGreatCaughtThieves);
+  FieldScript_Start();
+  FieldScript_SetMessageId(MsgVaultGreatCaughtThieves);
   Vault_ShowStandingObjectEventMessage(LOCALID_WOMAN_ON_STEALING);
-  Engine_ScriptEnd();
+  FieldScript_End();
 }
 
 /// An old man talks about Ivan, Hammet's servant.
@@ -480,24 +480,24 @@ static void EventScript_PraiseThievesCapture(void) {
 /// in the party, that rescuing Hammet must have been impossible.
 static void EventScript_TalkAboutIvan(void) {
   struct EventWork *workspace;
-  Engine_ScriptStart();
-  Engine_ScriptSetMessage(MsgVaultTalkingAboutHammetsServantIvan);
-  if (Engine_GameFlagIsSet(FLAG_IN_PARTY(IVAN)) != 0) {
+  FieldScript_Start();
+  FieldScript_SetMessageId(MsgVaultTalkingAboutHammetsServantIvan);
+  if (GameFlag_Test(FLAG_IN_PARTY(IVAN)) != 0) {
     workspace = gFieldWork;
     ++workspace->message;
   }
   Vault_ShowStandingObjectEventMessage(LOCALID_OLD_MAN_ON_HAMMETS_SERVANT);
-  Engine_ScriptEnd();
+  FieldScript_End();
 }
 
 /// In Vault after the thieves are jailed, a townsperson says the eruption
 /// devastated the roads; once the southern bridge is repaired, you can head
 /// toward Kalay.
 static void EventScript_TalkOfDamagedRoads(void) {
-  Engine_ScriptStart();
-  Engine_ScriptSetMessage(MsgVaultEruptionDevastatedRoads);
+  FieldScript_Start();
+  FieldScript_SetMessageId(MsgVaultEruptionDevastatedRoads);
   Vault_ShowStandingObjectEventMessage(LOCALID_OLD_WOMAN_ON_THE_TRAVELERS);
-  Engine_ScriptEnd();
+  FieldScript_End();
 }
 
 /// The boy round the well asks after Ivan.
@@ -509,17 +509,17 @@ static void EventScript_AskWhetherIvanWentToLunpa(void) {
   s16 savedFacing = objectEvent->facing;
 
   objectEvent->timer |= 2;
-  Engine_ScriptStart();
-  Engine_ScriptSetMessage(MsgVaultDidntGoLunpa);
-  if (Engine_GameFlagIsSet(FLAG_IN_PARTY(IVAN)) != 0)
+  FieldScript_Start();
+  FieldScript_SetMessageId(MsgVaultDidntGoLunpa);
+  if (GameFlag_Test(FLAG_IN_PARTY(IVAN)) != 0)
     ++gFieldWork->message;
   Engine_ObjectEventSetAnimation(LOCALID_BOY_ROUND_THE_WELL, 0);
   Vault_FaceObjectEventAndWait(LOCALID_BOY_ROUND_THE_WELL, LOCALID_PARTY_LEADER,
                                2);
   Vault_ShowMessageAndWait(LOCALID_BOY_ROUND_THE_WELL, 10);
   objectEvent->facing = savedFacing;
-  Engine_TaskWait(1);
-  Engine_ScriptEnd();
+  WaitFrames(1);
+  FieldScript_End();
   objectEvent->timer &= 1;
 }
 
@@ -531,15 +531,15 @@ static void EventScript_ThankForCapturingThieves(void) {
   s16 savedFacing = objectEvent->facing;
 
   objectEvent->timer |= 2;
-  Engine_ScriptStart();
-  Engine_ScriptSetMessage(MsgVaultEveryoneGratefulCaptured);
+  FieldScript_Start();
+  FieldScript_SetMessageId(MsgVaultEveryoneGratefulCaptured);
   Engine_ObjectEventSetAnimation(LOCALID_GIRL_ROUND_THE_WELL, 0);
   Vault_FaceObjectEventAndWait(LOCALID_GIRL_ROUND_THE_WELL,
                                LOCALID_PARTY_LEADER, 2);
   Vault_ShowMessageAndWait(LOCALID_GIRL_ROUND_THE_WELL, 10);
   objectEvent->facing = savedFacing;
-  Engine_TaskWait(1);
-  Engine_ScriptEnd();
+  WaitFrames(1);
+  FieldScript_End();
   objectEvent->timer &= 1;
 }
 
@@ -548,44 +548,44 @@ static void EventScript_ThankForCapturingThieves(void) {
 /// prison hadn't been used in a long time. No: they're upset; maybe go see
 /// them.
 static void EventScript_AskAboutPrisoners(void) {
-  Engine_ScriptStart();
-  Engine_ScriptSetMessage(MsgVaultThoseMenCapturedTheyreIn);
+  FieldScript_Start();
+  FieldScript_SetMessageId(MsgVaultThoseMenCapturedTheyreIn);
   Engine_ObjectEventSetAnimation(LOCALID_STRONGMAN_ON_WATCH, ANIM_STAND);
   Vault_FaceObjectEventAndWait(LOCALID_STRONGMAN_ON_WATCH, LOCALID_PARTY_LEADER,
                                2);
   Vault_AskYesNoAndShowReply(LOCALID_STRONGMAN_ON_WATCH);
-  Engine_ScriptEnd();
+  FieldScript_End();
 }
 
 /// In Vault after the thieves are jailed, the traveler asks who captured the
 /// thieves; either answer is praised.
 /// "Are you the ones who captured the thieves?"
 static void EventScript_AskWhoCapturedThieves(void) {
-  Engine_ScriptStart();
-  Engine_ScriptSetMessage(MsgVaultOnesWhoCapturedThieves);
+  FieldScript_Start();
+  FieldScript_SetMessageId(MsgVaultOnesWhoCapturedThieves);
   Vault_FaceObjectEventAndWait(LOCALID_STRANDED_TRAVELER, LOCALID_PARTY_LEADER,
                                2);
   Vault_AskYesNoAndShowReply(LOCALID_STRANDED_TRAVELER);
-  Engine_ScriptEnd();
+  FieldScript_End();
 }
 
 /// In Vault after the thieves are jailed, the dog barks; carrying a Bone
 /// before it has shown the passage lets the party give it one.
 static void EventScript_TalkToDogAfterCapture(void) {
-  Engine_ScriptStart();
-  Engine_ScriptSetMessage(MsgVaultRuffRrruff2);
+  FieldScript_Start();
+  FieldScript_SetMessageId(MsgVaultRuffRrruff2);
   Engine_ObjectEventSetAnimation(LOCALID_VAULT_DOG, 0);
   Vault_FaceObjectEventAndWait(LOCALID_VAULT_DOG, LOCALID_PARTY_LEADER, 2);
-  Engine_ScriptShowMessage(LOCALID_VAULT_DOG, 0);
+  FieldScript_ShowMessageAndWait(LOCALID_VAULT_DOG, 0);
   Engine_ObjectEventSetAnimation(LOCALID_VAULT_DOG, ANIM_STAND);
   if (PartyInventory_FindMember(ITEM_BONE) != -1 &&
-      Engine_GameFlagIsSet(FLAG_VAULT_DOG_SHOWN_PASSAGE) == 0) {
+      GameFlag_Test(FLAG_VAULT_DOG_SHOWN_PASSAGE) == 0) {
     u16 *menuRequest = &gFieldWork->menu;
     u16 open = 1;
 
     *menuRequest = open;
   }
-  Engine_ScriptEnd();
+  FieldScript_End();
 }
 
 /// The young man fixing the roof thanks the party before it leaves.
@@ -593,41 +593,40 @@ static void EventScript_TalkToDogAfterCapture(void) {
 /// "Thank you for the other day.
 /// Are you leaving town already?"
 static void EventScript_ThankBeforeDeparture(void) {
-  Engine_ScriptStart();
-  Engine_ScriptSetMessage(MsgVaultThankForOtherDayLeaving);
+  FieldScript_Start();
+  FieldScript_SetMessageId(MsgVaultThankForOtherDayLeaving);
   Vault_FaceObjectEventAndWait(LOCALID_YOUNG_MAN_FIXING_THE_ROOF,
                                LOCALID_PARTY_LEADER, 2);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_YOUNG_MAN_FIXING_THE_ROOF,
-                                        ANIM_NOD);
-  Engine_ScriptWait(20);
-  Engine_ScriptShowMessage(LOCALID_YOUNG_MAN_FIXING_THE_ROOF, 0);
-  Engine_ScriptEnd();
+  ObjectMotion_SetAnimationAndWait(LOCALID_YOUNG_MAN_FIXING_THE_ROOF, ANIM_NOD);
+  FieldScript_WaitFrames(20);
+  FieldScript_ShowMessageAndWait(LOCALID_YOUNG_MAN_FIXING_THE_ROOF, 0);
+  FieldScript_End();
 }
 
 /// In Vault, Mind Read on a townsperson: stealing during an eruption is
 /// unforgivable, or how should the prisoners be punished?
 static void EventScript_ReadMindOnTheft(void) {
-  Engine_ScriptStart();
-  if (Engine_GameFlagIsSet(FLAG_VAULT_THIEVES_JAILED) == 0)
-    Engine_ScriptSetMessage(MsgVaultManShouldStealFromAnother);
+  FieldScript_Start();
+  if (GameFlag_Test(FLAG_VAULT_THIEVES_JAILED) == 0)
+    FieldScript_SetMessageId(MsgVaultManShouldStealFromAnother);
   else
-    Engine_ScriptSetMessage(MsgVaultHowPunishPrisoners);
+    FieldScript_SetMessageId(MsgVaultHowPunishPrisoners);
   Vault_ShowThought(LOCALID_WOMAN_ON_STEALING);
-  Engine_ScriptEnd();
+  FieldScript_End();
 }
 
 /// In Vault, Mind Read on a townsperson: the strange travelers headed for the
 /// northeast of the Goma Range, or the only way out is the cave in the Goma
 /// Range.
 static void EventScript_ReadMindOnTravelers(void) {
-  Engine_ScriptStart();
-  if (Engine_GameFlagIsSet(FLAG_VAULT_THIEVES_JAILED) == 0) {
-    Engine_ScriptSetMessage(MsgVaultGroupTravelersWasStrangeBunch);
+  FieldScript_Start();
+  if (GameFlag_Test(FLAG_VAULT_THIEVES_JAILED) == 0) {
+    FieldScript_SetMessageId(MsgVaultGroupTravelersWasStrangeBunch);
   } else {
-    Engine_ScriptSetMessage(MsgVaultWithRoadOutOnlyWay);
+    FieldScript_SetMessageId(MsgVaultWithRoadOutOnlyWay);
   }
   Vault_ShowThought(LOCALID_OLD_WOMAN_ON_THE_TRAVELERS);
-  Engine_ScriptEnd();
+  FieldScript_End();
 }
 
 /// In Vault, Mind Read on the boy round the well: the three creeps at the inn
@@ -635,16 +634,16 @@ static void EventScript_ReadMindOnTravelers(void) {
 /// the party)?
 static void EventScript_ReadMindOnIvan(void) {
   ObjectEvent_GetById(LOCALID_BOY_ROUND_THE_WELL)->timer |= 2;
-  Engine_ScriptStart();
-  if (Engine_GameFlagIsSet(FLAG_VAULT_THIEVES_JAILED) == 0) {
-    Engine_ScriptSetMessage(MsgVaultBetWasThoseThreeCreeps);
+  FieldScript_Start();
+  if (GameFlag_Test(FLAG_VAULT_THIEVES_JAILED) == 0) {
+    FieldScript_SetMessageId(MsgVaultBetWasThoseThreeCreeps);
   } else {
-    Engine_ScriptSetMessage(MsgVaultWhereDidIvanGoBy);
-    if (Engine_GameFlagIsSet(FLAG_IN_PARTY(IVAN)) != 0)
+    FieldScript_SetMessageId(MsgVaultWhereDidIvanGoBy);
+    if (GameFlag_Test(FLAG_IN_PARTY(IVAN)) != 0)
       ++gFieldWork->message;
   }
   Vault_ShowThought(LOCALID_BOY_ROUND_THE_WELL);
-  Engine_ScriptEnd();
+  FieldScript_End();
   ObjectEvent_GetById(LOCALID_BOY_ROUND_THE_WELL)->timer &= 1;
 }
 
@@ -652,26 +651,26 @@ static void EventScript_ReadMindOnIvan(void) {
 /// volcano, or the party must be stronger than they look.
 static void EventScript_ReadMindOnWealth(void) {
   ObjectEvent_GetById(LOCALID_GIRL_ROUND_THE_WELL)->timer |= 2;
-  Engine_ScriptStart();
-  if (Engine_GameFlagIsSet(FLAG_VAULT_THIEVES_JAILED) == 0)
-    Engine_ScriptSetMessage(MsgVaultSupposeDoesntMatterHowRich);
+  FieldScript_Start();
+  if (GameFlag_Test(FLAG_VAULT_THIEVES_JAILED) == 0)
+    FieldScript_SetMessageId(MsgVaultSupposeDoesntMatterHowRich);
   else
-    Engine_ScriptSetMessage(MsgVaultMustStrongerThanLookHave);
+    FieldScript_SetMessageId(MsgVaultMustStrongerThanLookHave);
   Vault_ShowThought(LOCALID_GIRL_ROUND_THE_WELL);
-  Engine_ScriptEnd();
+  FieldScript_End();
   ObjectEvent_GetById(LOCALID_GIRL_ROUND_THE_WELL)->timer &= 1;
 }
 
 /// In Vault, Mind Read on the strongman on watch: everyone knows the three at
 /// the inn stole the rod, or he feels much better with them behind bars.
 static void EventScript_ReadMindOnSuspects(void) {
-  Engine_ScriptStart();
-  if (Engine_GameFlagIsSet(FLAG_VAULT_THIEVES_JAILED) == 0)
-    Engine_ScriptSetMessage(MsgVaultEveryoneKnowsThoseThreeAt);
+  FieldScript_Start();
+  if (GameFlag_Test(FLAG_VAULT_THIEVES_JAILED) == 0)
+    FieldScript_SetMessageId(MsgVaultEveryoneKnowsThoseThreeAt);
   else
-    Engine_ScriptSetMessage(MsgVaultFeelMuchBetter);
+    FieldScript_SetMessageId(MsgVaultFeelMuchBetter);
   Vault_ShowThought(LOCALID_STRONGMAN_ON_WATCH);
-  Engine_ScriptEnd();
+  FieldScript_End();
 }
 
 /// In Vault, Mind Read on the dog: humans value money over their lives; after
@@ -680,28 +679,28 @@ static void EventScript_ReadMindOnSuspects(void) {
 static void EventScript_ReadDogMind(void) {
   struct ObjectEvent *objectEvent = ObjectEvent_GetById(LOCALID_VAULT_DOG);
   objectEvent->paused = 1;
-  Engine_ScriptStart();
-  if (Engine_GameFlagIsSet(FLAG_VAULT_THIEVES_JAILED) == 0) {
-    Engine_ScriptSetMessage(MsgVaultStealingInMidstVolcanicEruption);
+  FieldScript_Start();
+  if (GameFlag_Test(FLAG_VAULT_THIEVES_JAILED) == 0) {
+    FieldScript_SetMessageId(MsgVaultStealingInMidstVolcanicEruption);
     Engine_ObjectEventSetAnimation(LOCALID_VAULT_DOG, 0);
-    Engine_ScriptWait(2);
-  } else if (Engine_GameFlagIsSet(FLAG_VAULT_DOG_SHOWN_PASSAGE) != 0) {
-    Engine_ScriptSetMessage(MsgVaultCarefulSearchWillRevealPassage);
+    FieldScript_WaitFrames(2);
+  } else if (GameFlag_Test(FLAG_VAULT_DOG_SHOWN_PASSAGE) != 0) {
+    FieldScript_SetMessageId(MsgVaultCarefulSearchWillRevealPassage);
   } else {
-    Engine_ScriptSetMessage(MsgVaultIfBringMeBoneIll);
+    FieldScript_SetMessageId(MsgVaultIfBringMeBoneIll);
   }
-  Engine_ScriptShowMessage(LOCALID_VAULT_DOG, 0);
-  Engine_ScriptEnd();
+  FieldScript_ShowMessageAndWait(LOCALID_VAULT_DOG, 0);
+  FieldScript_End();
   objectEvent->paused = 0;
 }
 
 /// In Vault, Mind Read on the woman wanting the roof fixed: that sneak is
 /// wasting time instead of fixing the roof.
 static void EventScript_ReadWomanWantingTheRoofFixedMind(void) {
-  Engine_ScriptStart();
-  Engine_ScriptSetMessage(MsgVaultSneakWastingTime);
+  FieldScript_Start();
+  FieldScript_SetMessageId(MsgVaultSneakWastingTime);
   Vault_ShowThought(LOCALID_WOMAN_WANTING_THE_ROOF_FIXED);
-  Engine_ScriptEnd();
+  FieldScript_End();
 }
 
 #include "common/vault_toggle.h"
@@ -718,8 +717,8 @@ static void Vault_WalkThroughExit(s32 x, s32 y, s32 continuation) {
 /// It's VAULT_TO_VAULT_INTERIORS_EAST_SOUTHEAST, into the house where a man
 /// keeps a sparkling rock the volcano threw.
 static void EventScript_EnterGemOwnersHouse(void) {
-  Engine_AudioPlayCue(SE_DOOR_OPEN);
-  Engine_MapGridAnimateCells(gVault_GemOwnersHouseDoorCells, 56, 19);
+  Sound_PlaySong(SE_DOOR_OPEN);
+  MapGrid_PlayMetatileCopySequence(gVault_GemOwnersHouseDoorCells, 56, 19);
   Vault_WalkThroughExit(408, 320, VAULT_TO_VAULT_INTERIORS_EAST_SOUTHEAST);
 }
 
@@ -727,8 +726,8 @@ static void EventScript_EnterGemOwnersHouse(void) {
 /// It's VAULT_TO_VAULT_INTERIORS_SOUTHEAST, into the house east of the town's
 /// centre.
 static void EventScript_EnterChildsHouse(void) {
-  Engine_AudioPlayCue(SE_DOOR_OPEN);
-  Engine_MapGridAnimateCells(gVault_ChildsHouseDoorCells, 50, 18);
+  Sound_PlaySong(SE_DOOR_OPEN);
+  MapGrid_PlayMetatileCopySequence(gVault_ChildsHouseDoorCells, 50, 18);
   Vault_WalkThroughExit(312, 304, VAULT_TO_VAULT_INTERIORS_SOUTHEAST);
 }
 
@@ -736,8 +735,8 @@ static void EventScript_EnterChildsHouse(void) {
 /// It's VAULT_TO_VAULT_INTERIORS_SOUTHWEST, into the inn where the three
 /// suspects stay.
 static void EventScript_EnterInn(void) {
-  Engine_AudioPlayCue(SE_DOOR_OPEN);
-  Engine_MapGridAnimateCells(gVault_InnDoorCells, 44, 17);
+  Sound_PlaySong(SE_DOOR_OPEN);
+  MapGrid_PlayMetatileCopySequence(gVault_InnDoorCells, 44, 17);
   Vault_WalkThroughExit(216, 288, VAULT_TO_VAULT_INTERIORS_SOUTHWEST);
 }
 
@@ -748,8 +747,8 @@ static void EventScript_EnterItemShop(void) {
   struct ObjectEvent *objectEvent = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   struct Sprite *sprite = objectEvent->sprite;
 
-  Engine_AudioPlayCue(SE_DOOR_OPEN);
-  Engine_MapGridAnimateCells(gVault_ItemShopDoorCells, 54, 13);
+  Sound_PlaySong(SE_DOOR_OPEN);
+  MapGrid_PlayMetatileCopySequence(gVault_ItemShopDoorCells, 54, 13);
   MapGrid_CopyCellAttributes(33, 20, 1, 3, 23, 12);
   objectEvent->priorityFlags &= ~OBJ_EVENT_PRIORITY_AUTOMATIC;
   sprite->image.priority = 3;
@@ -762,8 +761,8 @@ static void EventScript_EnterWeaponAndArmorShop(void) {
   struct ObjectEvent *objectEvent = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   struct Sprite *sprite = objectEvent->sprite;
 
-  Engine_AudioPlayCue(SE_DOOR_OPEN);
-  Engine_MapGridAnimateCells(gVault_WeaponAndArmorShopDoorCells, 49, 10);
+  Sound_PlaySong(SE_DOOR_OPEN);
+  MapGrid_PlayMetatileCopySequence(gVault_WeaponAndArmorShopDoorCells, 49, 10);
   MapGrid_CopyCellAttributes(33, 20, 1, 3, 18, 10);
   objectEvent->priorityFlags &= ~OBJ_EVENT_PRIORITY_AUTOMATIC;
   sprite->image.priority = 3;
@@ -773,8 +772,8 @@ static void EventScript_EnterWeaponAndArmorShop(void) {
 /// In Vault, the door VAULT_TO_VAULT_INTERIORS_NORTHWEST opens into the
 /// mayor's house, where Ivan waits.
 static void EventScript_EnterMayorsHouse(void) {
-  Engine_AudioPlayCue(SE_DOOR_OPEN);
-  Engine_MapGridAnimateCells(gVault_MayorsHouseDoorCells, 38, 6);
+  Sound_PlaySong(SE_DOOR_OPEN);
+  MapGrid_PlayMetatileCopySequence(gVault_MayorsHouseDoorCells, 38, 6);
   Vault_WalkThroughExit(120, 144, VAULT_TO_VAULT_INTERIORS_NORTHWEST);
 }
 
@@ -786,8 +785,8 @@ static void EventScript_EnterJail(void) {
   struct ObjectEvent *objectEvent = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   struct Sprite *sprite = objectEvent->sprite;
 
-  Engine_AudioPlayCue(SE_DOOR_OPEN);
-  Engine_MapGridAnimateCells(gVault_JailDoorCells, 35, 9);
+  Sound_PlaySong(SE_DOOR_OPEN);
+  MapGrid_PlayMetatileCopySequence(gVault_JailDoorCells, 35, 9);
   MapGrid_CopyCellAttributes(33, 20, 1, 3, 4, 10);
   objectEvent->priorityFlags &= ~OBJ_EVENT_PRIORITY_AUTOMATIC;
   sprite->image.priority = 3;
@@ -797,7 +796,7 @@ static void EventScript_EnterJail(void) {
 /// In Vault, the party walks through a doorless entrance into the room with
 /// the crate (VAULT_TO_VAULT_INTERIORS_WEST).
 static void EventScript_EnterPassage(void) {
-  Engine_AudioPlayCue(SE_MAP_EXIT);
+  Sound_PlaySong(SE_MAP_EXIT);
   Vault_WalkThroughExit(152, 264, VAULT_TO_VAULT_INTERIORS_WEST);
 }
 
@@ -807,19 +806,19 @@ static void Vault_JumpObjectEventToAndWait(s32 localId, s32 x, s32 z,
                                            s32 verticalSpeed) {
   struct ObjectEvent *objectEvent = ObjectEvent_GetById(localId);
   int frames;
-  Engine_ObjectEventSetSpeed(localId, PIXELS(3), PIXELS(3) / 2);
+  ObjectMotion_SetSpeedParameters(localId, PIXELS(3), PIXELS(3) / 2);
   objectEvent->gravity = PIXELS(1) / 2;
   objectEvent->bounce = 0;
   objectEvent->velocityY = verticalSpeed;
-  Engine_ObjectEventSetSpriteFlags(objectEvent, 0);
-  Engine_ObjectEventMoveToAndWait(localId, x, z);
+  ObjectEvent_SetSpriteFlags(objectEvent, 0);
+  ObjectMotion_SetPositionAndCommit(localId, x, z);
   Engine_ObjectEventSetPosition(localId, x << 16, z << 16);
   for (frames = 60; frames != 0; --frames) {
-    Engine_TaskWait(1);
+    WaitFrames(1);
     if ((objectEvent->velocityY >> 16) == 0)
       break;
   }
-  Engine_ObjectEventSetSpriteFlags(objectEvent, 1);
+  ObjectEvent_SetSpriteFlags(objectEvent, 1);
   objectEvent->gravity = PIXELS(1);
 }
 
@@ -828,23 +827,23 @@ static void Vault_JumpObjectEventToAndWait(s32 localId, s32 x, s32 z,
 /// (FLAG_VAULT_SAP_CALLED_BY_BELL). No event here lets the party talk to
 /// it; it joins in the town's later map (vault_revisit.c).
 static void EventScript_RingBell(void) {
-  Engine_ScriptStart();
+  FieldScript_Start();
   Script_PlaySong(SE_100);
-  Engine_ScriptWait(40);
+  FieldScript_WaitFrames(40);
   if (GameFlag_IsSet(FLAG_VAULT_SAP_CALLED_BY_BELL) == 0) {
     ObjectEvent_SetAttachedEffect(LOCALID_SAP, ATTACHED_EFFECT_IN_FRONT |
                                                    ATTACHED_EFFECT_ONCE);
-    Engine_ObjectEventJump(LOCALID_SAP, 4, 0);
-    Engine_ScriptWait(12);
-    Engine_ObjectEventJump(LOCALID_SAP, 4, 0);
-    Engine_ScriptWait(20);
+    ObjectMotion_Launch(LOCALID_SAP, 4, 0);
+    FieldScript_WaitFrames(12);
+    ObjectMotion_Launch(LOCALID_SAP, 4, 0);
+    FieldScript_WaitFrames(20);
     Vault_JumpObjectEventToAndWait(LOCALID_SAP, 392, 104, PIXELS(7));
-    Engine_ScriptWait(20);
+    FieldScript_WaitFrames(20);
     ObjectEvent_WalkToAndWait(LOCALID_SAP, 408, 104);
     ObjectEvent_WalkToAndWait(LOCALID_SAP, 408, 120);
     GameFlag_Set(FLAG_VAULT_SAP_CALLED_BY_BELL);
   }
-  Engine_ScriptEnd();
+  FieldScript_End();
 }
 
 /// Given a Bone, the dog runs to the hidden passage and jumps there.
@@ -852,24 +851,24 @@ static void EventScript_RingBell(void) {
 /// (FLAG_VAULT_DOG_SHOWN_PASSAGE).
 static void EventScript_GiveBoneToDog(void) {
   PartyInventory_Discard(ITEM_BONE);
-  Engine_ScriptStart();
-  Engine_ScriptWait(10);
-  Engine_ObjectEventRunRepeatedMotion(LOCALID_VAULT_DOG, 2);
+  FieldScript_Start();
+  FieldScript_WaitFrames(10);
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_VAULT_DOG, 2);
   ObjectEvent_SetSpeed(LOCALID_VAULT_DOG, PIXELS(4) / 5, PIXELS(2) / 5);
   ObjectEvent_WalkToAndWait(LOCALID_VAULT_DOG, 216, 408);
-  Engine_ScriptWait(10);
+  FieldScript_WaitFrames(10);
   ObjectEvent_FaceDirection(LOCALID_VAULT_DOG, FACING_SOUTH, 20);
-  Engine_ObjectEventJump(LOCALID_VAULT_DOG, 6, 0);
-  Engine_ScriptWait(30);
-  Engine_ObjectEventJump(LOCALID_VAULT_DOG, 6, 0);
-  Engine_ScriptWait(30);
-  Engine_ObjectEventJump(LOCALID_VAULT_DOG, 6, 0);
-  Engine_ScriptWait(30);
+  ObjectMotion_Launch(LOCALID_VAULT_DOG, 6, 0);
+  FieldScript_WaitFrames(30);
+  ObjectMotion_Launch(LOCALID_VAULT_DOG, 6, 0);
+  FieldScript_WaitFrames(30);
+  ObjectMotion_Launch(LOCALID_VAULT_DOG, 6, 0);
+  FieldScript_WaitFrames(30);
   ObjectEvent_WalkToAndWait(LOCALID_VAULT_DOG, 216, 392);
-  Engine_ScriptWait(10);
+  FieldScript_WaitFrames(10);
   ObjectEvent_FaceDirection(LOCALID_VAULT_DOG, FACING_SOUTH, 20);
   GameFlag_Set(FLAG_VAULT_DOG_SHOWN_PASSAGE);
-  Engine_ScriptEnd();
+  FieldScript_End();
 }
 
 /// Arriving in Vault: restores the dog's and Sap's places, sets the two
@@ -884,12 +883,12 @@ s32 Map_Initialize(void) {
 
   // Once the party has reached Kalay (FLAG_KALAY_REACHED), the town is its
   // later map, MapId_VaultRevisit (vault_revisit.c).
-  if (Engine_GameFlagIsSet(FLAG_KALAY_REACHED) != 0) {
+  if (GameFlag_Test(FLAG_KALAY_REACHED) != 0) {
     Engine_ScriptRequestWarp(VAULT_TO_VAULT_REVISIT);
   }
   // Keep the bridge deck after a battle, and restore the two children's
   // proximity callbacks.
-  if (Engine_GameFlagIsSet(FLAG_MAP_TEMP_00) != 0) {
+  if (GameFlag_Test(FLAG_MAP_TEMP_00) != 0) {
     MapGrid_CopyCellAttributes(55, 26, 4, 2, 23, 26);
   }
   // A still object on the well that shows nothing (vault_revisit.c's open
@@ -913,11 +912,11 @@ s32 Map_Initialize(void) {
   objectEvent->update =
       (void (*)(union FieldObject *))Vault_UpdateWalkingVillager;
 #endif
-  if (Engine_GameFlagIsSet(FLAG_VAULT_DOG_SHOWN_PASSAGE) != 0) {
+  if (GameFlag_Test(FLAG_VAULT_DOG_SHOWN_PASSAGE) != 0) {
     ObjectEvent_SetPosition(LOCALID_VAULT_DOG, PIXELS(216), PIXELS(392));
   }
-  suspectsMindRead = Engine_GameFlagIsSet(FLAG_VAULT_SUSPECTS_MIND_READ);
-  if (Engine_GameFlagIsSet(FLAG_VAULT_THIEVES_JAILED) == 0) {
+  suspectsMindRead = GameFlag_Test(FLAG_VAULT_SUSPECTS_MIND_READ);
+  if (GameFlag_Test(FLAG_VAULT_THIEVES_JAILED) == 0) {
     if ((lowBit & suspectsMindRead) != 0) {
       objectEvent = ObjectEvent_GetById(LOCALID_WOMAN_WANTING_THE_ROOF_FIXED);
 #ifdef UBFIX
@@ -931,11 +930,11 @@ s32 Map_Initialize(void) {
   // Back through the gates while Ivan waits in Vault: "Welcome back, you two!
   // Let's go find the rod!"
   if (gGameState.warpDest <= VAULT_NORTH_UNUSED) {
-    if (Engine_GameFlagIsSet(FLAG_KEEP_PARTY_POSITION) == 0) {
-      Engine_GameFlagClear(FLAG_VAULT_SAP_CALLED_BY_BELL);
-      if (Engine_GameFlagIsSet(FLAG_VAULT_THIEVES_JAILED) == 0) {
-        if (Engine_GameFlagIsSet(FLAG_VAULT_IVAN_JOINED_ROD_SEARCH) != 0) {
-          Engine_ScriptStart();
+    if (GameFlag_Test(FLAG_KEEP_PARTY_POSITION) == 0) {
+      GameFlag_ClearBit(FLAG_VAULT_SAP_CALLED_BY_BELL);
+      if (GameFlag_Test(FLAG_VAULT_THIEVES_JAILED) == 0) {
+        if (GameFlag_Test(FLAG_VAULT_IVAN_JOINED_ROD_SEARCH) != 0) {
+          FieldScript_Start();
           objectEvent = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
           if (objectEvent != 0) {
             Engine_ObjectEventSetPosition(IVAN, objectEvent->x.fixed,
@@ -946,65 +945,65 @@ s32 Map_Initialize(void) {
           } else {
             ObjectEvent_SetPosition(IVAN, PIXELS(224), PIXELS(162));
           }
-          Engine_ObjectEventFaceEachOther(IVAN, LOCALID_PARTY_LEADER, 0);
-          Engine_ScriptOpenScreen();
-          Engine_ScriptWaitForScreen();
-          Engine_ScriptWait(30);
-          Engine_ObjectEventRunRepeatedMotion(IVAN, 2);
-          Engine_ScriptSetMessage(MsgVaultWelcomeBackTwo);
-          Engine_ScriptShowMessageAndWait(IVAN, 0, 20);
-          Engine_ObjectEventSetAnimationAndWait(LOCALID_PARTY_LEADER, ANIM_NOD);
+          ObjectEvent_LinkPair(IVAN, LOCALID_PARTY_LEADER, 0);
+          FieldScript_StartScreenTransition();
+          FieldScript_WaitTransitionFrames();
+          FieldScript_WaitFrames(30);
+          ObjectMotion_SetVarCbAndRefresh(IVAN, 2);
+          FieldScript_SetMessageId(MsgVaultWelcomeBackTwo);
+          FieldScript_ShowMessageThenWait(IVAN, 0, 20);
+          ObjectMotion_SetAnimationAndWait(LOCALID_PARTY_LEADER, ANIM_NOD);
           ObjectEvent_SetSpeed(IVAN, PIXELS(4) / 5, PIXELS(2) / 5);
           Engine_ObjectEventSetAnimation(IVAN, ANIM_WALK);
           objectEvent = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
           if (objectEvent != 0) {
-            Engine_ObjectEventSetDestination(IVAN, objectEvent->x.part.pixel,
+            ObjectMotion_ResetAndSetPosition(IVAN, objectEvent->x.part.pixel,
                                              objectEvent->z.part.pixel);
           }
-          Engine_ObjectEventWaitForMove(IVAN);
+          ObjectMotion_CommitCurrentPositionAndActivate(IVAN);
           Engine_ObjectEventSetPosition(IVAN, 0, 0);
           FieldScript_PrepareObjectAndApplyValue(IVAN, 0);
-          Engine_ScriptEnd();
+          FieldScript_End();
         }
       }
     }
   }
-  if (Engine_GameFlagIsSet(FLAG_VAULT_SAP_CALLED_BY_BELL) != 0) {
+  if (GameFlag_Test(FLAG_VAULT_SAP_CALLED_BY_BELL) != 0) {
     ObjectEvent_SetPosition(LOCALID_SAP, PIXELS(408), PIXELS(120));
   }
   // The same welcome out of the Vault Sanctum while Ivan is out of the party.
   if (gGameState.warpDest == VAULT_FROM_SANCTUM) {
-    if (Engine_GameFlagIsSet(FLAG_VAULT_THIEVES_JAILED) == 0) {
-      if (Engine_GameFlagIsSet(FLAG_VAULT_IVAN_JOINED_ROD_SEARCH) != 0) {
-        if (Engine_GameFlagIsSet(FLAG_IN_PARTY(IVAN)) == 0) {
-          Engine_ScriptStart();
+    if (GameFlag_Test(FLAG_VAULT_THIEVES_JAILED) == 0) {
+      if (GameFlag_Test(FLAG_VAULT_IVAN_JOINED_ROD_SEARCH) != 0) {
+        if (GameFlag_Test(FLAG_IN_PARTY(IVAN)) == 0) {
+          FieldScript_Start();
           ObjectEvent_SetPosition(IVAN, PIXELS(40), PIXELS(310));
-          Engine_ObjectEventFaceEachOther(IVAN, LOCALID_PARTY_LEADER, 0);
-          Engine_ScriptOpenScreen();
-          Engine_ScriptWaitForScreen();
-          Engine_ScriptWait(30);
-          Engine_ObjectEventRunRepeatedMotion(IVAN, 2);
-          Engine_ScriptSetMessage(MsgVaultWelcomeBackTwo);
-          Engine_ScriptShowMessageAndWait(IVAN, 0, 20);
-          Engine_ObjectEventSetAnimationAndWait(LOCALID_PARTY_LEADER, ANIM_NOD);
+          ObjectEvent_LinkPair(IVAN, LOCALID_PARTY_LEADER, 0);
+          FieldScript_StartScreenTransition();
+          FieldScript_WaitTransitionFrames();
+          FieldScript_WaitFrames(30);
+          ObjectMotion_SetVarCbAndRefresh(IVAN, 2);
+          FieldScript_SetMessageId(MsgVaultWelcomeBackTwo);
+          FieldScript_ShowMessageThenWait(IVAN, 0, 20);
+          ObjectMotion_SetAnimationAndWait(LOCALID_PARTY_LEADER, ANIM_NOD);
           ObjectEvent_SetSpeed(IVAN, PIXELS(4) / 5, PIXELS(2) / 5);
           Engine_ObjectEventSetAnimation(IVAN, ANIM_WALK);
           objectEvent = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
           if (objectEvent != 0) {
-            Engine_ObjectEventSetDestination(IVAN, objectEvent->x.part.pixel,
+            ObjectMotion_ResetAndSetPosition(IVAN, objectEvent->x.part.pixel,
                                              objectEvent->z.part.pixel);
           }
-          Engine_ObjectEventWaitForMove(IVAN);
+          ObjectMotion_CommitCurrentPositionAndActivate(IVAN);
           Engine_ObjectEventSetPosition(IVAN, 0, 0);
           FieldScript_PrepareObjectAndApplyValue(IVAN, 0);
-          Engine_ScriptEnd();
+          FieldScript_End();
         }
       }
     }
-    Engine_GameFlagClear(FLAG_SHOW_LOCATION_NAME);
+    GameFlag_ClearBit(FLAG_SHOW_LOCATION_NAME);
   } else {
     if (gGameState.warpDest == VAULT_FROM_VAULT_INTERIORS_WEST) {
-      if (Engine_GameFlagIsSet(FLAG_VAULT_THIEVES_JAILED) != 0) {
+      if (GameFlag_Test(FLAG_VAULT_THIEVES_JAILED) != 0) {
         Engine_ObjectEventSetPosition(LOCALID_YOUNG_MAN_FIXING_THE_ROOF, 0, 0);
       }
     }
@@ -1016,13 +1015,13 @@ s32 Map_Initialize(void) {
 #include "common/vault_range.h"
 
 static void Vault_ShowMessageAndWait(s32 localId, s32 delay) {
-  Engine_ScriptShowMessage(localId, 0);
-  Engine_ScriptWait(delay);
+  FieldScript_ShowMessageAndWait(localId, 0);
+  FieldScript_WaitFrames(delay);
 }
 
 static void Vault_FaceObjectEventAndWait(s32 localId, s32 other, s32 delay) {
-  Engine_ObjectEventFaceEachOther(localId, other, 0);
-  Engine_ScriptWait(delay);
+  ObjectEvent_LinkPair(localId, other, 0);
+  FieldScript_WaitFrames(delay);
 }
 
 /// Applies drift and gradually damps both rates toward zero.
@@ -1084,19 +1083,19 @@ UNUSED static void Vault_SpawnDriftingEffect(s32 flags) {
     x += baseX;
     baseY = anchor->y.fixed;
     z += baseZ;
-    effect = (struct ObjectEvent *)Engine_ObjectCreate(0xac, x, baseY, z);
+    effect = (struct ObjectEvent *)Object_CreateField(0xac, x, baseY, z);
   }
   if (effect == NULL)
     return;
   sprite = effect->sprite;
   switch (Engine_RandomNext() & 1) {
   case 1:
-    ObjectEvent_SetMode(effect, 3);
-    Engine_ObjectSetScript(effect, gVault_DriftScriptA);
+    ObjectDispatch_SelectAnimation(effect, 3);
+    ObjectEvent_SetScript(effect, gVault_DriftScriptA);
     break;
   default:
-    ObjectEvent_SetMode(effect, 2);
-    Engine_ObjectSetScript(effect, gVault_DriftScriptB);
+    ObjectDispatch_SelectAnimation(effect, 2);
+    ObjectEvent_SetScript(effect, gVault_DriftScriptB);
     break;
   }
   {

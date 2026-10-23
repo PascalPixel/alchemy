@@ -61,14 +61,14 @@
 #include "ability_ids.h"
 #include "item_ids.h"
 
-/// Bilibin's shops, as Engine_ShopOpen numbers the shops.
+/// Bilibin's shops, as Shop_Run numbers the shops.
 enum {
   SHOP_BILIBIN_WEAPONS = 7,
   SHOP_BILIBIN_ARMOR = 8,
   SHOP_BILIBIN_ITEMS = 9
 };
 
-/// Bilibin's inn, as Engine_InnOpen numbers the inns.
+/// Bilibin's inn, as Inn_CheckIn numbers the inns.
 enum { BILIBIN_INN = 2 };
 
 /// The placed object events, numbered in the order of
@@ -179,7 +179,7 @@ const u32 *BilibinInteriors_GetWarps(void) { return gBilibinInteriorsWarps; }
 /// events are spawned.
 const struct ObjectEventTemplate *
 BilibinInteriors_GetObjectEventTemplates(void) {
-  ObjectEventTemplate_ClipToView(gBilibinInteriorsObjectEventTemplates);
+  Map_AssignViewFlags(gBilibinInteriorsObjectEventTemplates);
   return gBilibinInteriorsObjectEventTemplates;
 }
 
@@ -190,20 +190,20 @@ static void EventScript_TalkToWeaponMerchant(void) {
   u32 leaderFacing;
 
   leaderFacing = ObjectEvent_GetById(LOCALID_PARTY_LEADER)->facing;
-  Engine_ScriptStart();
+  FieldScript_Start();
 
   if (FACING_IS_NORTH(leaderFacing)) {
-    Engine_ShopOpen(SHOP_BILIBIN_WEAPONS, LOCALID_BILIBIN_WEAPON_MERCHANT);
+    Shop_Run(SHOP_BILIBIN_WEAPONS, LOCALID_BILIBIN_WEAPON_MERCHANT);
   } else {
-    if (Engine_GameFlagIsSet(FLAG_KOLIMA_CURSE_LIFTED) == 0) {
-      Engine_ScriptSetMessage(MsgBilibinThereWasAbleHealerIn);
+    if (GameFlag_Test(FLAG_KOLIMA_CURSE_LIFTED) == 0) {
+      FieldScript_SetMessageId(MsgBilibinThereWasAbleHealerIn);
     } else {
-      Engine_ScriptSetMessage(MsgBilibinOurWeaponsBestCanFind);
+      FieldScript_SetMessageId(MsgBilibinOurWeaponsBestCanFind);
     }
-    Engine_ScriptShowMessage(LOCALID_BILIBIN_WEAPON_MERCHANT, 0);
+    FieldScript_ShowMessageAndWait(LOCALID_BILIBIN_WEAPON_MERCHANT, 0);
   }
 
-  Engine_ScriptEnd();
+  FieldScript_End();
 }
 
 /// Bilibin's item merchant: across the counter the shop opens; otherwise,
@@ -213,20 +213,20 @@ static void EventScript_TalkToItemMerchant(void) {
   u32 leaderFacing;
 
   leaderFacing = ObjectEvent_GetById(LOCALID_PARTY_LEADER)->facing;
-  Engine_ScriptStart();
+  FieldScript_Start();
 
   if (FACING_IS_NORTH(leaderFacing)) {
-    Engine_ShopOpen(SHOP_BILIBIN_ITEMS, LOCALID_BILIBIN_ITEM_MERCHANT);
+    Shop_Run(SHOP_BILIBIN_ITEMS, LOCALID_BILIBIN_ITEM_MERCHANT);
   } else {
-    if (Engine_GameFlagIsSet(FLAG_KOLIMA_CURSE_LIFTED) == 0) {
-      Engine_ScriptSetMessage(MsgBilibinMustUsedTypesDangerBeing);
+    if (GameFlag_Test(FLAG_KOLIMA_CURSE_LIFTED) == 0) {
+      FieldScript_SetMessageId(MsgBilibinMustUsedTypesDangerBeing);
     } else {
-      Engine_ScriptSetMessage(MsgBilibinTurnedOutWarriorsHiredBy);
+      FieldScript_SetMessageId(MsgBilibinTurnedOutWarriorsHiredBy);
     }
-    Engine_ScriptShowMessage(LOCALID_BILIBIN_ITEM_MERCHANT, 0);
+    FieldScript_ShowMessageAndWait(LOCALID_BILIBIN_ITEM_MERCHANT, 0);
   }
 
-  Engine_ScriptEnd();
+  FieldScript_End();
 }
 
 /// Returns both story stages' map events; conditions choose the current
@@ -242,89 +242,90 @@ static void EventScript_TalkToArmorMerchant(void) {
   u32 leaderFacing;
 
   leaderFacing = ObjectEvent_GetById(LOCALID_PARTY_LEADER)->facing;
-  Engine_ScriptStart();
+  FieldScript_Start();
   if (FACING_IS_NORTH(leaderFacing)) {
-    Engine_ShopOpen(SHOP_BILIBIN_ARMOR, LOCALID_BILIBIN_ARMOR_MERCHANT);
+    Shop_Run(SHOP_BILIBIN_ARMOR, LOCALID_BILIBIN_ARMOR_MERCHANT);
   } else {
     if (GameFlag_IsSet(FLAG_KOLIMA_CURSE_LIFTED) == 0) {
-      Engine_ScriptSetMessage(MsgBilibinHaveEverHeardOcean);
+      FieldScript_SetMessageId(MsgBilibinHaveEverHeardOcean);
       ObjectEvent_FaceObjectEvent(LOCALID_BILIBIN_ARMOR_MERCHANT,
                                   LOCALID_PARTY_LEADER, 0);
-      Engine_ScriptWait(10);
+      FieldScript_WaitFrames(10);
       Script_AskYesNo(LOCALID_BILIBIN_ARMOR_MERCHANT, 0);
       ObjectEvent_FaceDirection(LOCALID_BILIBIN_ARMOR_MERCHANT,
                                 FACING_SOUTHEAST + FACING_STEP, 10);
     } else {
-      Engine_ScriptSetMessage(MsgBilibinForSomeReasonOceanFills);
+      FieldScript_SetMessageId(MsgBilibinForSomeReasonOceanFills);
       Script_ShowMessage(LOCALID_BILIBIN_ARMOR_MERCHANT, 0);
     }
   }
-  Engine_ScriptEnd();
+  FieldScript_End();
 }
 
 /// The head chef in Bilibin's restaurant, before the curse is lifted: born in
 /// Kolima, he is too worried to focus on his cooking.
 static void EventScript_TalkToWorriedChef(void) {
-  Engine_ScriptStart();
-  Engine_ScriptSetMessage(MsgBilibinImReallyWorriedAboutKolima);
+  FieldScript_Start();
+  FieldScript_SetMessageId(MsgBilibinImReallyWorriedAboutKolima);
   ObjectEvent_FaceObjectEvent(LOCALID_BILIBIN_CHEF, LOCALID_PARTY_LEADER, 0);
   Script_ShowMessage(LOCALID_BILIBIN_CHEF, 0);
   ObjectEvent_FaceDirection(LOCALID_BILIBIN_CHEF, FACING_NORTH, 10);
-  Engine_ScriptEnd();
+  FieldScript_End();
 }
 
 /// A diner in Bilibin's restaurant, before the curse is lifted, still waiting
 /// for his dinner: his stomach growls, and he asks whether the party heard it.
 static void EventScript_TalkToHungryDiner(void) {
-  Engine_ScriptStart();
-  Engine_ScriptSetMessage(MsgBilibinGrrr);
+  FieldScript_Start();
+  FieldScript_SetMessageId(MsgBilibinGrrr);
   Script_ShowMessageAndWait(LOCALID_BILIBIN_HUNGRY_DINER, 0, 20);
   ObjectEvent_FaceObjectEvent(LOCALID_BILIBIN_HUNGRY_DINER,
                               LOCALID_PARTY_LEADER, 0);
-  Engine_ScriptWait(10);
+  FieldScript_WaitFrames(10);
   Script_OpenMessage(LOCALID_BILIBIN_HUNGRY_DINER, 0);
-  if (Engine_ScriptChooseYesNo(0, 0) != 0) {
+  if (FieldScript_AskYesNoWithObjectEventAnimation(0, 0) != 0) {
     gFieldWork->message++;
   }
   Script_ShowMessage(LOCALID_BILIBIN_HUNGRY_DINER, 0);
   ObjectEvent_FaceDirection(LOCALID_BILIBIN_HUNGRY_DINER, FACING_SOUTH, 10);
-  Engine_ScriptEnd();
+  FieldScript_End();
 }
 
 /// A diner asks whether a tree spirit can curse a man. The diner sits in
 /// Bilibin's restaurant before the curse is lifted; on yes, sends the party to
 /// hear Lord McCoy's story. Then the diner turns back to the table.
 static void EventScript_AskAboutTreeSpirit(void) {
-  Engine_ScriptStart();
-  Engine_ScriptSetMessage(MsgBilibinDoBelieveTreeSpiritCan);
+  FieldScript_Start();
+  FieldScript_SetMessageId(MsgBilibinDoBelieveTreeSpiritCan);
   ObjectEvent_FaceObjectEvent(LOCALID_BILIBIN_DINER, LOCALID_PARTY_LEADER, 0);
-  Engine_ScriptWait(10);
+  FieldScript_WaitFrames(10);
   Script_OpenMessage(LOCALID_BILIBIN_DINER, 0);
-  if (Engine_ScriptChooseYesNo(0, 0) != 0) {
+  if (FieldScript_AskYesNoWithObjectEventAnimation(0, 0) != 0) {
     gFieldWork->message++;
   }
   Script_ShowMessage(LOCALID_BILIBIN_DINER, 0);
   ObjectEvent_FaceDirection(LOCALID_BILIBIN_DINER, FACING_SOUTH, 10);
-  Engine_ScriptEnd();
+  FieldScript_End();
 }
 
 /// A young man asks whether Kolima Forest's holy tree survived. He's in Bilibin
 /// once the curse is lifted.
 static void EventScript_AskAboutHolyTree(void) {
-  Engine_ScriptStart();
-  Engine_ScriptSetMessage(MsgBilibinDoKnowIfHolyTree);
-  Engine_ScriptAskYesNo(LOCALID_BILIBIN_YOUNG_MAN_ON_THE_CURSED_MAN, 0);
-  Engine_ScriptEnd();
+  FieldScript_Start();
+  FieldScript_SetMessageId(MsgBilibinDoKnowIfHolyTree);
+  FieldScript_AskYesNoAndShowResponse(
+      LOCALID_BILIBIN_YOUNG_MAN_ON_THE_CURSED_MAN, 0);
+  FieldScript_End();
 }
 
 /// A little girl in Bilibin, once the curse is lifted, asks whether the party
 /// knows what silk is; on yes, that Xian, across the river, makes it, at the
 /// start of Silk Road.
 static void EventScript_AskAboutSilk(void) {
-  Engine_ScriptStart();
-  Engine_ScriptSetMessage(MsgBilibinDoKnowSilk);
-  Engine_ScriptAskYesNo(LOCALID_BILIBIN_GIRL_SILK, 0);
-  Engine_ScriptEnd();
+  FieldScript_Start();
+  FieldScript_SetMessageId(MsgBilibinDoKnowSilk);
+  FieldScript_AskYesNoAndShowResponse(LOCALID_BILIBIN_GIRL_SILK, 0);
+  FieldScript_End();
 }
 
 /// Bilibin's innkeeper: across the counter the inn opens; otherwise, before
@@ -334,83 +335,82 @@ static void EventScript_TalkToInnkeeper(void) {
   u32 leaderFacing;
 
   leaderFacing = ObjectEvent_GetById(LOCALID_PARTY_LEADER)->facing;
-  Engine_ScriptStart();
+  FieldScript_Start();
 
   if (FACING_IS_NORTH(leaderFacing)) {
-    Engine_InnOpen(BILIBIN_INN, LOCALID_BILIBIN_INNKEEPER);
-  } else if (Engine_GameFlagIsSet(FLAG_KOLIMA_CURSE_LIFTED) != 0) {
-    Engine_ScriptSetMessage(MsgBilibinWasntCurseInKolimaHorrifying);
-    Engine_ScriptAskYesNo(LOCALID_BILIBIN_INNKEEPER, 0);
+    Inn_CheckIn(BILIBIN_INN, LOCALID_BILIBIN_INNKEEPER);
+  } else if (GameFlag_Test(FLAG_KOLIMA_CURSE_LIFTED) != 0) {
+    FieldScript_SetMessageId(MsgBilibinWasntCurseInKolimaHorrifying);
+    FieldScript_AskYesNoAndShowResponse(LOCALID_BILIBIN_INNKEEPER, 0);
   } else {
-    Engine_ScriptSetMessage(MsgBilibinCurseOnKolimaScaryDevelopment);
-    Engine_ScriptShowMessage(LOCALID_BILIBIN_INNKEEPER, 0);
+    FieldScript_SetMessageId(MsgBilibinCurseOnKolimaScaryDevelopment);
+    FieldScript_ShowMessageAndWait(LOCALID_BILIBIN_INNKEEPER, 0);
   }
 
-  Engine_ScriptEnd();
+  FieldScript_End();
 }
 
 /// The head chef in Bilibin's restaurant, once the curse is lifted: he calls
 /// out orders once, then sends the party to the waitress.
 static void EventScript_TalkToBusyChef(void) {
-  Engine_ScriptStart();
+  FieldScript_Start();
   if (GameFlag_IsSet(FLAG_MAPSEC_TEMP_00) == 0) {
     // The first time (FLAG_MAPSEC_TEMP_00, kept until the party leaves
     // Bilibin), the chef shouts orders and the kitchen worker answers.
-    Engine_ScriptSetMessage(MsgBilibinTwoSpecialsOneDinnerOne);
+    FieldScript_SetMessageId(MsgBilibinTwoSpecialsOneDinnerOne);
     Script_ShowMessage(LOCALID_BILIBIN_CHEF, 0);
     ObjectEvent_FaceDirection(LOCALID_BILIBIN_CHEF, FACING_WEST, 20);
     Script_ShowMessage(LOCALID_BILIBIN_CHEF, 0);
-    Engine_ObjectEventStartRepeatedMotion(LOCALID_BILIBIN_KITCHEN_WORKER, 2);
+    ObjectMotion_SetVariantCallback(LOCALID_BILIBIN_KITCHEN_WORKER, 2);
     ObjectEvent_SetAttachedEffect(LOCALID_BILIBIN_KITCHEN_WORKER,
                                   ATTACHED_EFFECT_IN_FRONT |
                                       ATTACHED_EFFECT_ONCE);
-    Engine_ScriptWait(60);
+    FieldScript_WaitFrames(60);
     Script_ShowMessage(LOCALID_BILIBIN_KITCHEN_WORKER, 0);
-    Engine_ScriptWait(10);
+    FieldScript_WaitFrames(10);
     GameFlag_Set(FLAG_MAPSEC_TEMP_00);
   }
   // Then, as every later time, he sends the party to the waitress.
   ObjectEvent_FaceObjectEvent(LOCALID_BILIBIN_CHEF, LOCALID_PARTY_LEADER, 0);
-  Engine_ScriptSetMessage(MsgBilibinIfWantMealSpeakWaitress);
+  FieldScript_SetMessageId(MsgBilibinIfWantMealSpeakWaitress);
   Script_ShowMessage(LOCALID_BILIBIN_CHEF, 0);
   ObjectEvent_FaceDirection(LOCALID_BILIBIN_CHEF, FACING_NORTH, 10);
-  Engine_ScriptEnd();
+  FieldScript_End();
 }
 
 /// The kitchen worker can't keep up with the head chef's energy. This is in
 /// Bilibin's restaurant once the curse is lifted.
 static void EventScript_TalkToKitchenWorker(void) {
-  Engine_ScriptStart();
-  Engine_ScriptSetMessage(MsgBilibinReallyThinkHeadChefHas);
-  Engine_ScriptShowMessage(LOCALID_BILIBIN_KITCHEN_WORKER, 0);
-  Engine_ObjectEventFaceObjectEvent(LOCALID_BILIBIN_KITCHEN_WORKER,
-                                    LOCALID_PARTY_LEADER, 0);
-  Engine_ScriptShowMessage(LOCALID_BILIBIN_KITCHEN_WORKER, 0);
-  Engine_ObjectEventFaceDirection(LOCALID_BILIBIN_KITCHEN_WORKER, FACING_EAST,
-                                  10);
-  Engine_ScriptEnd();
+  FieldScript_Start();
+  FieldScript_SetMessageId(MsgBilibinReallyThinkHeadChefHas);
+  FieldScript_ShowMessageAndWait(LOCALID_BILIBIN_KITCHEN_WORKER, 0);
+  ObjectMotion_SetAngleToward(LOCALID_BILIBIN_KITCHEN_WORKER,
+                              LOCALID_PARTY_LEADER, 0);
+  FieldScript_ShowMessageAndWait(LOCALID_BILIBIN_KITCHEN_WORKER, 0);
+  ObjectMotion_ArmCallback(LOCALID_BILIBIN_KITCHEN_WORKER, FACING_EAST, 10);
+  FieldScript_End();
 }
 
 /// The waitress hurries through her work before the head chef yells. She works
 /// in Bilibin's restaurant once the curse is lifted.
 static void EventScript_TalkToWaitress(void) {
-  Engine_ScriptStart();
-  Engine_ScriptSetMessage(MsgBilibinLetsSeeServeThemWater);
+  FieldScript_Start();
+  FieldScript_SetMessageId(MsgBilibinLetsSeeServeThemWater);
   Script_ShowMessage(LOCALID_BILIBIN_WAITRESS, 0);
   ObjectEvent_FaceObjectEvent(LOCALID_BILIBIN_WAITRESS, LOCALID_PARTY_LEADER,
                               0);
   Script_ShowMessage(LOCALID_BILIBIN_WAITRESS, 0);
   ObjectEvent_FaceDirection(LOCALID_BILIBIN_WAITRESS, FACING_NORTH, 10);
-  Engine_ScriptEnd();
+  FieldScript_End();
 }
 
 /// A diner loves the meal and asks whether the party does too. The diner is in
 /// Bilibin's restaurant once the curse is lifted and the food flows.
 static void EventScript_TalkAboutMeal(void) {
-  Engine_ScriptStart();
-  Engine_ScriptSetMessage(MsgBilibinWasSomeMealDontJust);
-  Engine_ScriptAskYesNo(LOCALID_BILIBIN_DINER, 0);
-  Engine_ScriptEnd();
+  FieldScript_Start();
+  FieldScript_SetMessageId(MsgBilibinWasSomeMealDontJust);
+  FieldScript_AskYesNoAndShowResponse(LOCALID_BILIBIN_DINER, 0);
+  FieldScript_End();
 }
 
 /// Mind Read on the burly man in Bilibin who admires Mia, before the curse is
@@ -418,14 +418,14 @@ static void EventScript_TalkAboutMeal(void) {
 /// must feel warm with her around; without her, he hopes to see her
 /// again in spring.
 static void EventScript_ReadMiaAdmirersMind(void) {
-  Engine_ScriptStart();
-  if (Engine_GameFlagIsSet(FLAG_IN_PARTY(MIA)) != 0) {
-    Engine_ScriptSetMessage(MsgBilibinEvenFrozenImilMustFeel);
+  FieldScript_Start();
+  if (GameFlag_Test(FLAG_IN_PARTY(MIA)) != 0) {
+    FieldScript_SetMessageId(MsgBilibinEvenFrozenImilMustFeel);
   } else {
-    Engine_ScriptSetMessage(MsgBilibinWhenSpringComesWantGo);
+    FieldScript_SetMessageId(MsgBilibinWhenSpringComesWantGo);
   }
-  Engine_ScriptShowMessage(LOCALID_BILIBIN_MIA_ADMIRER, 0);
-  Engine_ScriptEnd();
+  FieldScript_ShowMessageAndWait(LOCALID_BILIBIN_MIA_ADMIRER, 0);
+  FieldScript_End();
 }
 
 /// Sets up Bilibin's buildings: the rooms open through a window, and the diner

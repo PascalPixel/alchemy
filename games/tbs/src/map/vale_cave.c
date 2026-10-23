@@ -224,7 +224,7 @@ ValeCave_WaitForObjectEventLanding(struct ObjectEvent *objectEvent) {
   s32 framesRemaining = 60;
 
   while (framesRemaining != 0) {
-    Engine_TaskWait(1);
+    WaitFrames(1);
     framesRemaining--;
     if (objectEvent->y.fixed <= objectEvent->groundHeight)
       break;
@@ -335,7 +335,7 @@ ValeCave_SinkObjectWithParticles(s32 localId, s32 baseX, s32 baseZ,
                       EFFECT_USE_START_SCALE | EFFECT_USE_PALETTE,
                       particleOptions);
     ObjectEvent_GetById(localId)->y.fixed -= PIXELS(1) / 2;
-    Engine_ScriptWait(1);
+    FieldScript_WaitFrames(1);
   }
 }
 
@@ -352,11 +352,11 @@ static void EventScript_MoveWestCratesIntoHole(void) {
   struct ObjectEvent *leftEffect;
   struct ObjectEvent *rightEffect;
 
-  Engine_ScriptStart();
+  FieldScript_Start();
   if (ObjectEvent_GetById(LOCALID_WEST_CRATES)->x.fixed >> 20 == 23) {
     // Move the leader aside before the crates start sinking.
     ObjectEvent_MoveToAndWait(LOCALID_PARTY_LEADER, 360, 664);
-    Engine_ObjectEventFaceDirection(LOCALID_PARTY_LEADER, FACING_NORTHEAST, 10);
+    ObjectMotion_ArmCallback(LOCALID_PARTY_LEADER, FACING_NORTHEAST, 10);
     ObjectEvent_GetById(LOCALID_WEST_CRATES)->x.fixed += PIXELS(2);
     leftEffect = ObjectEvent_PrepareObject(
         ObjectEvent_GetById(LOCALID_WEST_CRATES)->x.fixed, 0,
@@ -370,7 +370,7 @@ static void EventScript_MoveWestCratesIntoHole(void) {
     particleOptions->startScaleX = 3 * Q16_ONE / 5;
     particleOptions->startScaleY = 3 * Q16_ONE / 5;
     particleOptions->palette = 7;
-    Engine_AudioPlayCue(SE_216);
+    Sound_PlaySong(SE_216);
     ValeCave_SinkObjectWithParticles(LOCALID_WEST_CRATES, PIXELS(368),
                                      PIXELS(624), particleOptions);
     MapGrid_CopyCellAttributes(23, 41, 1, 1, 23, 39);
@@ -379,11 +379,11 @@ static void EventScript_MoveWestCratesIntoHole(void) {
     Engine_GameFlagSet(FLAG_MAP_TEMP_00);
     ObjectEvent_GetById(LOCALID_WEST_CRATES)->y.fixed = -PIXELS(8);
     Engine_ObjectEventSetAnimation(LOCALID_WEST_CRATES, 2);
-    Engine_ObjectDispatchRelease(leftEffect);
-    Engine_ObjectDispatchRelease(rightEffect);
-    Engine_ScriptWait(30);
+    ObjectEvent_Release(leftEffect);
+    ObjectEvent_Release(rightEffect);
+    FieldScript_WaitFrames(30);
   }
-  Engine_ScriptEnd();
+  FieldScript_End();
 }
 
 /// In Vale Cave's second room, Move on the eastern crates: once they are over
@@ -399,7 +399,7 @@ static void EventScript_MoveEastCratesIntoHole(void) {
   struct ObjectEvent *leftEffect;
   struct ObjectEvent *rightEffect;
 
-  Engine_ScriptStart();
+  FieldScript_Start();
   if (ObjectEvent_GetById(LOCALID_EAST_CRATES)->x.fixed >> 20 == 27) {
     leftEffect = ObjectEvent_PrepareObject(
         ObjectEvent_GetById(LOCALID_EAST_CRATES)->x.fixed - PIXELS(8), 0,
@@ -416,7 +416,7 @@ static void EventScript_MoveEastCratesIntoHole(void) {
     particleOptions->startScaleX = 3 * Q16_ONE / 5;
     particleOptions->startScaleY = 3 * Q16_ONE / 5;
     particleOptions->palette = 7;
-    Engine_AudioPlayCue(SE_216);
+    Sound_PlaySong(SE_216);
     ValeCave_SinkObjectWithParticles(LOCALID_EAST_CRATES, PIXELS(432),
                                      PIXELS(656), particleOptions);
     MapGrid_CopyCellAttributes(31, 39, 2, 1, 27, 41);
@@ -425,11 +425,11 @@ static void EventScript_MoveEastCratesIntoHole(void) {
     Engine_GameFlagSet(FLAG_MAP_TEMP_01);
     ObjectEvent_GetById(LOCALID_EAST_CRATES)->y.fixed = -PIXELS(8);
     Engine_ObjectEventSetAnimation(LOCALID_EAST_CRATES, 2);
-    Engine_ObjectDispatchRelease(leftEffect);
-    Engine_ObjectDispatchRelease(rightEffect);
-    Engine_ScriptWait(30);
+    ObjectEvent_Release(leftEffect);
+    ObjectEvent_Release(rightEffect);
+    FieldScript_WaitFrames(30);
   }
-  Engine_ScriptEnd();
+  FieldScript_End();
 }
 
 /// In Vale Cave's second room, pushing the eastern crates: they move a cell,
@@ -438,9 +438,9 @@ static void EventScript_MoveEastCratesIntoHole(void) {
 /// Reached by walking into metatile behavior 24 in the second room, until
 /// FLAG_MAP_TEMP_01 is set.
 static void EventScript_PushEastCratesIntoHole(void) {
-  Engine_ScriptStart();
+  FieldScript_Start();
   PushedObject_AdvancePair();
-  Engine_ScriptEnd();
+  FieldScript_End();
   EventScript_MoveEastCratesIntoHole();
 }
 
@@ -471,23 +471,23 @@ static s32 EventScript_HopDownLedge(s32 unusedArgument) {
   // Keep the normal motion flags while staging the hop.
   if (FieldObject_CheckMovementCollision(
           leader, (struct FieldPosition *)landingPosition) == 0) {
-    Engine_ScriptStart();
-    ObjectEvent_SetMode(leader, 6);
-    Engine_TaskWait(6);
-    Engine_AudioPlayCue(SE_JUMP);
-    ObjectEvent_SetMode(leader, 7);
+    FieldScript_Start();
+    ObjectDispatch_SelectAnimation(leader, 6);
+    WaitFrames(6);
+    Sound_PlaySong(SE_JUMP);
+    ObjectDispatch_SelectAnimation(leader, 7);
     leader->speed = PIXELS(3);
     leader->acceleration = PIXELS(2);
     leader->velocityY = PIXELS(4);
     *motionFlags &= 126;
-    Engine_ObjectEventSetSpriteFlags(leader, 0);
-    Engine_ObjectEventMoveToAndWait(LOCALID_PARTY_LEADER,
-                                    landingPosition[0].part.pixel,
-                                    landingPosition[2].part.pixel);
-    ObjectEvent_SetMode(leader, 6);
-    Engine_ObjectEventSetSpriteFlags(leader, SPRITE_FLAG_SHADOW);
+    ObjectEvent_SetSpriteFlags(leader, 0);
+    ObjectMotion_SetPositionAndCommit(LOCALID_PARTY_LEADER,
+                                      landingPosition[0].part.pixel,
+                                      landingPosition[2].part.pixel);
+    ObjectDispatch_SelectAnimation(leader, 6);
+    ObjectEvent_SetSpriteFlags(leader, SPRITE_FLAG_SHADOW);
     *motionFlags = savedMotionFlags;
-    Engine_ScriptEnd();
+    FieldScript_End();
     return 1;
   }
   return 0;
@@ -504,26 +504,26 @@ static void EventScript_KiteRunsOff(void) {
 
   if (GameFlag_IsSet(FLAG_MAP_TEMP_00) == 0) {
     GameFlag_Set(FLAG_MAP_TEMP_00);
-    Engine_ScriptStart();
+    FieldScript_Start();
     FieldCamera_SetSpeed(PIXELS(1), PIXELS(1) / 8);
-    Engine_CameraFollowObjectEvent(LOCALID_KITE, 1);
-    Engine_CameraWaitForMove();
-    Engine_ScriptWait(60);
+    FieldCamera_FollowObjectEvent(LOCALID_KITE, 1);
+    FieldCamera_WaitForArrival();
+    FieldScript_WaitFrames(60);
     ObjectEvent_FaceDirection(LOCALID_KITE, FACING_NORTH, 20);
     ObjectEvent_SetAttachedEffect(LOCALID_KITE, ATTACHED_EFFECT_IN_FRONT |
                                                     ATTACHED_EFFECT_ONCE);
-    Engine_ObjectEventRunRepeatedMotion(LOCALID_KITE, 2);
-    Engine_ScriptWait(20);
+    ObjectMotion_SetVarCbAndRefresh(LOCALID_KITE, 2);
+    FieldScript_WaitFrames(20);
     ObjectEvent_SetSpeed(LOCALID_KITE, PIXELS(1), PIXELS(1) / 2);
     ObjectEvent_WalkToAndWait(LOCALID_KITE, 792, 248);
-    Engine_AudioPlayCue(SE_JUMP);
+    Sound_PlaySong(SE_JUMP);
     djinni = ObjectEvent_Get(LOCALID_KITE);
     djinni->velocityY = PIXELS(8);
     ObjectEvent_WalkToAndWait(LOCALID_KITE, 792, 280);
-    Engine_ScriptWait(20);
+    FieldScript_WaitFrames(20);
     ObjectEvent_FaceDirection(LOCALID_KITE, FACING_NORTH, 20);
-    Engine_ScriptWait(30);
-    Engine_ScriptEnd();
+    FieldScript_WaitFrames(30);
+    FieldScript_End();
   }
 }
 
@@ -542,20 +542,20 @@ static void EventScript_KiteRunsBehindLedge(void) {
     if (GameFlag_IsSet(FLAG_MAP_TEMP_01) == 0) {
       GameFlag_Set(FLAG_MAP_TEMP_01);
       GameFlag_Set(FLAG_VALE_CAVE_KITE_BEHIND_LEDGE);
-      Engine_ScriptStart();
+      FieldScript_Start();
       ObjectEvent_SetAttachedEffect(LOCALID_KITE, ATTACHED_EFFECT_IN_FRONT |
                                                       ATTACHED_EFFECT_ONCE);
-      Engine_ObjectEventRunRepeatedMotion(LOCALID_KITE, 2);
-      Engine_ScriptWait(20);
+      ObjectMotion_SetVarCbAndRefresh(LOCALID_KITE, 2);
+      FieldScript_WaitFrames(20);
       ObjectEvent_SetSpeed(LOCALID_KITE, PIXELS(2), PIXELS(1));
       ObjectEvent_WalkToAndWait(LOCALID_KITE, 760, 280);
       ObjectEvent_WalkToAndWait(LOCALID_KITE, 760, 312);
       ObjectEvent_WalkToAndWait(LOCALID_KITE, 792, 312);
-      Engine_ScriptWait(10);
+      FieldScript_WaitFrames(10);
       ObjectEvent_FaceDirection(LOCALID_KITE, FACING_NORTH, 20);
       djinni = ObjectEvent_Get(LOCALID_KITE);
       djinni->update = VALE_CAVE_FACE_LEADER_CALLBACK;
-      Engine_ScriptEnd();
+      FieldScript_End();
     }
   }
 }
@@ -575,7 +575,7 @@ static void EventScript_KiteKeepsAway(void) {
   struct EventWork *work;
 
   work = gFieldWork;
-  if (Engine_GameFlagIsSet(FLAG_VALE_CAVE_KITE_BEHIND_LEDGE) != 0) {
+  if (GameFlag_Test(FLAG_VALE_CAVE_KITE_BEHIND_LEDGE) != 0) {
     if (gGameState.pausedObject != LOCALID_KITE) {
       // Preserve the speed reads before resolving this route point.
       routeIndex = work->coordEvent;
@@ -591,9 +591,9 @@ static void EventScript_KiteKeepsAway(void) {
       walkTargetBytes = (const u8 *)gValeCave_WalkTargets;
       routeIndex <<= 3;
       targetZOffset = routeIndex + sizeof(s32);
-      Engine_ObjectEventWalkTo(LOCALID_KITE,
-                               *(const s32 *)(walkTargetBytes + routeIndex),
-                               *(const s32 *)(walkTargetBytes + targetZOffset));
+      ObjectMotion_ResetAndSetPositionInMode2(
+          LOCALID_KITE, *(const s32 *)(walkTargetBytes + routeIndex),
+          *(const s32 *)(walkTargetBytes + targetZOffset));
     }
   }
 }
@@ -603,9 +603,9 @@ static void EventScript_KiteKeepsAway(void) {
 ///
 /// Reached by Halt on Kite in the second room.
 static void EventScript_HaltKite(void) {
-  Engine_ScriptStart();
+  FieldScript_Start();
   Engine_ObjectEventSetAnimation(LOCALID_KITE, 0);
-  Engine_ScriptEnd();
+  FieldScript_End();
 }
 
 /// In Vale Cave's third room, pushing the eastern log along the ledge: at its
@@ -619,7 +619,7 @@ static void EventScript_PushLogOverEdge(void) {
   s32 clearedRows;
   struct PushedObjectProbe probe;
 
-  Engine_ScriptStart();
+  FieldScript_Start();
   if (PushedObject_FindClearPosition(&probe) != 0) {
     ObjectEvent_MoveAndRedraw(probe);
     // At the ledge's edge (column 17) the log slides west and drops.
@@ -630,13 +630,13 @@ static void EventScript_PushLogOverEdge(void) {
           stationaryMotion;
       movedLog = ObjectEvent_GetById(probe.objectEventSlot);
       movedLog->bounce = stationaryMotion;
-      Engine_ObjectEventSetDestinationOffset(probe.objectEventSlot, -12, 0);
-      Engine_ObjectEventWaitForMove(probe.objectEventSlot);
+      ObjectMotion_OffsetPositionAndResetMotion(probe.objectEventSlot, -12, 0);
+      ObjectMotion_CommitCurrentPositionAndActivate(probe.objectEventSlot);
       Engine_ObjectEventSetAnimation(probe.objectEventSlot, 3);
-      Engine_ObjectEventSetSpritePriority(LOCALID_EAST_LOG, 3);
+      ObjectMotion_SetActionVariant(LOCALID_EAST_LOG, 3);
       ObjectEvent_GetById(probe.objectEventSlot)->motionFlags =
           OBJ_EVENT_FOLLOWS_TERRAIN | OBJ_EVENT_FALLS;
-      Engine_ObjectEventSetDestinationOffset(probe.objectEventSlot, -6, 0);
+      ObjectMotion_OffsetPositionAndResetMotion(probe.objectEventSlot, -6, 0);
       ValeCave_WaitForObjectEventLanding(
           ObjectEvent_GetById(probe.objectEventSlot));
       Engine_ObjectEventSetAnimation(probe.objectEventSlot, 8);
@@ -659,10 +659,10 @@ static void EventScript_PushLogOverEdge(void) {
       PushedObject_FillGridAttributeRectangle(0, 16, 16, 1, clearedRows,
                                               stationaryMotion);
       Engine_GameFlagSet(FLAG_MAP_TEMP_03);
-      Engine_AudioPlayCue(SE_240);
+      Sound_PlaySong(SE_240);
     }
   }
-  Engine_ScriptEnd();
+  FieldScript_End();
 }
 
 /// In Vale Cave's third room, pushing the western log east: it falls off
@@ -675,13 +675,13 @@ static void EventScript_PushLogOffLedge(void) {
   struct ObjectEvent *pushedLog;
   s32 stationaryMotion;
 
-  Engine_ScriptStart();
-  Engine_ScriptWait(10);
+  FieldScript_Start();
+  FieldScript_WaitFrames(10);
   ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(1) / 2, PIXELS(1) / 10);
   Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_PUSH);
-  Engine_ScriptWait(15);
-  Engine_ObjectEventSetDestinationOffset(LOCALID_PARTY_LEADER, 8, 0);
-  Engine_ScriptWait(4);
+  FieldScript_WaitFrames(15);
+  ObjectMotion_OffsetPositionAndResetMotion(LOCALID_PARTY_LEADER, 8, 0);
+  FieldScript_WaitFrames(4);
   Script_PlaySong(SE_STOP_SLOT3);
   Script_PlaySong(SE_HEAVY_MOVE);
   ObjectEvent_SetSpeed(LOCALID_WEST_LOG, PIXELS(1) / 2, PIXELS(1) / 10);
@@ -690,26 +690,26 @@ static void EventScript_PushLogOffLedge(void) {
   ObjectEvent_GetById(LOCALID_WEST_LOG)->motionFlags = stationaryMotion;
   pushedLog = ObjectEvent_Get(LOCALID_WEST_LOG);
   pushedLog->bounce = stationaryMotion;
-  Engine_ObjectEventSetDestinationOffset(LOCALID_WEST_LOG, 12, 0);
-  Engine_ObjectEventWaitForMove(LOCALID_PARTY_LEADER);
+  ObjectMotion_OffsetPositionAndResetMotion(LOCALID_WEST_LOG, 12, 0);
+  ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_PARTY_LEADER);
   Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, 1);
-  Engine_ObjectEventWaitForMove(LOCALID_WEST_LOG);
+  ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_WEST_LOG);
   Script_PlaySong(SE_STOP_SLOT3);
   Script_PlaySong(SE_HEAVY_STOP);
   Engine_ObjectEventSetAnimation(LOCALID_WEST_LOG, 3);
   ObjectEvent_GetById(LOCALID_WEST_LOG)->motionFlags =
       OBJ_EVENT_FOLLOWS_TERRAIN | OBJ_EVENT_FALLS;
-  Engine_ObjectEventSetDestinationOffset(LOCALID_WEST_LOG, 6, 0);
+  ObjectMotion_OffsetPositionAndResetMotion(LOCALID_WEST_LOG, 6, 0);
   ValeCave_WaitForObjectEventLanding(ObjectEvent_Get(LOCALID_WEST_LOG));
   Engine_ObjectEventSetAnimation(LOCALID_WEST_LOG, 8);
-  Engine_ObjectEventSetSpritePriority(LOCALID_WEST_LOG, 3);
+  ObjectMotion_SetActionVariant(LOCALID_WEST_LOG, 3);
   ObjectEvent_GetById(LOCALID_WEST_LOG)->priorityFlags =
       OBJ_EVENT_PRIORITY_UNDERFOOT;
   PushedObject_FillGridAttributeRectangle(0, 12, 16, 1, 4, 0);
   PushedObject_FillGridAttributeRectangle(0, 13, 16, 1, 4, 0);
   GameFlag_Set(FLAG_MAP_TEMP_02);
   Script_PlaySong(SE_240);
-  Engine_ScriptEnd();
+  FieldScript_End();
 }
 
 /// In Vale Cave's third room, pushing the southern log north: it slides a cell,
@@ -721,15 +721,15 @@ static void EventScript_PushLogOffLedge(void) {
 static void EventScript_PushLogNorth(void) {
   struct PushedObjectProbe probe;
 
-  Engine_ScriptStart();
+  FieldScript_Start();
   if (PushedObject_FindClearPosition(&probe) != 0) {
     ObjectEvent_MoveAndRedraw(probe);
     // Slide into the new cell before replacing the metatile behavior footprint.
     Engine_ObjectEventSetAnimation(LOCALID_SOUTH_LOG, 3);
     ObjectEvent_SetSpeed(LOCALID_SOUTH_LOG, PIXELS(1) / 4, PIXELS(1) / 2);
-    Engine_ObjectEventSetDestinationOffset(LOCALID_SOUTH_LOG, 0, -16);
-    Engine_ScriptWait(45);
-    Engine_AudioPlayCue(SE_240);
+    ObjectMotion_OffsetPositionAndResetMotion(LOCALID_SOUTH_LOG, 0, -16);
+    FieldScript_WaitFrames(45);
+    Sound_PlaySong(SE_240);
     Engine_ObjectEventSetAnimation(LOCALID_SOUTH_LOG, 8);
     {
       struct ObjectEvent *slidingLog = ObjectEvent_GetById(LOCALID_SOUTH_LOG);
@@ -751,7 +751,7 @@ static void EventScript_PushLogNorth(void) {
       }
     }
   }
-  Engine_ScriptEnd();
+  FieldScript_End();
 }
 
 /// Selects the current room's coord, Psynergy and bg events.
@@ -783,10 +783,10 @@ s32 ValeCave_Initialize(void) {
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   if (gGameState.mapId == (s32)&MapId_ValeCaveMouth) {
     *request = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
-    Engine_TaskWait(1);
-    Engine_ObjectEventSetSpritePriority(LOCALID_VALE_CAVE_MOUTH_FIRST_LOG, 3);
-    Engine_ObjectEventSetSpritePriority(LOCALID_VALE_CAVE_MOUTH_SECOND_LOG, 3);
-    Engine_GameFlagClear(FLAG_SHOW_LOCATION_NAME);
+    WaitFrames(1);
+    ObjectMotion_SetActionVariant(LOCALID_VALE_CAVE_MOUTH_FIRST_LOG, 3);
+    ObjectMotion_SetActionVariant(LOCALID_VALE_CAVE_MOUTH_SECOND_LOG, 3);
+    GameFlag_ClearBit(FLAG_SHOW_LOCATION_NAME);
   }
   ValeCave_ApplyEntryState();
   return 0;
@@ -801,7 +801,7 @@ s32 ValeCave_Initialize(void) {
 static void EventScript_LeaveRoom(void) {
   s32 warpNumber = gFieldWork->coordEvent;
 
-  Engine_AudioPlayCue(SE_MAP_EXIT);
+  Sound_PlaySong(SE_MAP_EXIT);
   Engine_ScriptRequestWarp(warpNumber);
 }
 
@@ -809,7 +809,7 @@ static void EventScript_LeaveRoom(void) {
 static void ValeCave_UpdateRidingLogPassage(void) {
   MapGrid_CopyCellAttributes(0, 34, 13, 3, 23, 34);
 
-  if (Engine_GameFlagIsSet(FLAG_VALE_CAVE_RIDING_LOG_EAST) != 0) {
+  if (GameFlag_Test(FLAG_VALE_CAVE_RIDING_LOG_EAST) != 0) {
     ValeCave_CenterObjectEventOnCell(LOCALID_RIDING_LOG, 35, 35);
     MapGrid_CopyCellAttributes(24, 34, 1, 3, 23, 34);
   } else {
@@ -827,13 +827,13 @@ static void ValeCave_UpdateRidingLogPassage(void) {
 /// FLAG_VALE_CAVE_RIDING_LOG_EAST.
 static void EventScript_RideLogEast(void) {
 
-  Engine_AudioPlayCue(SE_WATER_MOVE);
+  Sound_PlaySong(SE_WATER_MOVE);
   ObjectEvent_PlacePairAtOffset(LOCALID_RIDING_LOG, 112, 0);
   ObjectEvent_PlacePairAtOffset(LOCALID_RIDING_LOG, 80, 0);
   Engine_GameFlagSet(FLAG_VALE_CAVE_RIDING_LOG_EAST);
-  Engine_TaskWait(2);
+  WaitFrames(2);
   ValeCave_UpdateRidingLogPassage();
-  Engine_AudioPlayCue(SONG_FADE_OUT_ACTION_SE);
+  Sound_PlaySong(SONG_FADE_OUT_ACTION_SE);
 }
 
 /// In Vale Cave's second room, walking west onto the riding log: it carries
@@ -843,13 +843,13 @@ static void EventScript_RideLogEast(void) {
 /// FLAG_VALE_CAVE_RIDING_LOG_EAST.
 static void EventScript_RideLogWest(void) {
 
-  Engine_AudioPlayCue(SE_WATER_MOVE);
+  Sound_PlaySong(SE_WATER_MOVE);
   ObjectEvent_PlacePairAtOffset(LOCALID_RIDING_LOG, -112, 0);
   ObjectEvent_PlacePairAtOffset(LOCALID_RIDING_LOG, -80, 0);
-  Engine_GameFlagClear(FLAG_VALE_CAVE_RIDING_LOG_EAST);
-  Engine_TaskWait(2);
+  GameFlag_ClearBit(FLAG_VALE_CAVE_RIDING_LOG_EAST);
+  WaitFrames(2);
   ValeCave_UpdateRidingLogPassage();
-  Engine_AudioPlayCue(SONG_FADE_OUT_ACTION_SE);
+  Sound_PlaySong(SONG_FADE_OUT_ACTION_SE);
 }
 
 /// Centers an object event on a map cell and gives it underfoot priority.
@@ -857,7 +857,7 @@ static void ValeCave_CenterObjectEventOnCell(s32 localId, s32 column, s32 row) {
   struct ObjectEvent *objectEvent = ObjectEvent_GetById(localId);
 
   if (objectEvent != 0) {
-    Engine_ObjectEventSetSpritePriority(localId, 3);
+    ObjectMotion_SetActionVariant(localId, 3);
     objectEvent->layer = 2;
     objectEvent->priorityFlags |= OBJ_EVENT_PRIORITY_UNDERFOOT;
     objectEvent->x.fixed = (column << 20) + PIXELS(8);
@@ -883,8 +883,8 @@ static void ValeCave_ApplyEntryState(void) {
     case VALE_CAVE_KITE_WEST_FROM_EAST:
     case VALE_CAVE_KITE_WEST_FROM_SOUTH:
     case VALE_CAVE_KITE_FROM_VALE_CAVE_LOGS_WEST:
-      Engine_ObjectEventSetSpritePriority(LOCALID_SECOND_STANDING_LOG, 3);
-      Engine_ObjectEventSetSpritePriority(LOCALID_SECOND_STANDING_CRATES, 3);
+      ObjectMotion_SetActionVariant(LOCALID_SECOND_STANDING_LOG, 3);
+      ObjectMotion_SetActionVariant(LOCALID_SECOND_STANDING_CRATES, 3);
       // A still object of sprite 223 (spr_223.png, a wooden crate) that shows
       // nothing (an open question).
       ObjectEvent_CreateConfiguredObject(PIXELS(120), 0, PIXELS(232), 223);
@@ -892,18 +892,18 @@ static void ValeCave_ApplyEntryState(void) {
     case VALE_CAVE_KITE_EAST_FROM_WEST:
     case VALE_CAVE_KITE_EAST_FROM_SOUTH:
     case VALE_CAVE_KITE_FROM_VALE_CAVE_LOGS_EAST:
-      if (Engine_GameFlagIsSet(FLAG_KITE) != 0) {
+      if (GameFlag_Test(FLAG_KITE) != 0) {
         break;
       }
-      if (Engine_GameFlagIsSet(FLAG_VALE_CAVE_KITE_BEHIND_LEDGE) == 0) {
+      if (GameFlag_Test(FLAG_VALE_CAVE_KITE_BEHIND_LEDGE) == 0) {
         break;
       }
       Engine_GameFlagSet(FLAG_MAP_TEMP_00);
       if (gGameState.warpDest == VALE_CAVE_KITE_EAST_FROM_WEST) {
         Engine_GameFlagSet(FLAG_MAP_TEMP_01);
       }
-      Engine_TaskWait(1);
-      if (Engine_GameFlagIsSet(FLAG_KEEP_PARTY_POSITION) != 0) {
+      WaitFrames(1);
+      if (GameFlag_Test(FLAG_KEEP_PARTY_POSITION) != 0) {
         break;
       }
       // Kite waits behind the ledge, watching the leader.
@@ -920,10 +920,10 @@ static void ValeCave_ApplyEntryState(void) {
                                          SPRITE_CHEST);
       MapGrid_CopyCellAttributes(23, 34, 13, 3, 0, 34);
       ValeCave_UpdateRidingLogPassage();
-      if (Engine_GameFlagIsSet(FLAG_MAP_TEMP_00) != 0) {
+      if (GameFlag_Test(FLAG_MAP_TEMP_00) != 0) {
         MapGrid_CopyCellAttributes(23, 41, 1, 1, 23, 39);
       }
-      if (Engine_GameFlagIsSet(FLAG_MAP_TEMP_01) != 0) {
+      if (GameFlag_Test(FLAG_MAP_TEMP_01) != 0) {
         MapGrid_CopyCellAttributes(31, 39, 2, 1, 27, 41);
       }
       break;
@@ -935,29 +935,29 @@ static void ValeCave_ApplyEntryState(void) {
     case VALE_CAVE_LOGS_FROM_VALE_CAVE_KITE_EAST:
       // Each log already pushed leaves open floor; else its footprint
       // blocks its cells again.
-      if (Engine_GameFlagIsSet(FLAG_MAP_TEMP_02) != 0) {
+      if (GameFlag_Test(FLAG_MAP_TEMP_02) != 0) {
         PushedObject_FillGridAttributeRectangle(0, 12, 16, 1, 4, 0);
         PushedObject_FillGridAttributeRectangle(0, 13, 16, 1, 4, 0);
       } else {
         Map_RedrawObjectEventFootprint(LOCALID_WEST_LOG);
       }
-      if (Engine_GameFlagIsSet(FLAG_MAP_TEMP_03) != 0) {
+      if (GameFlag_Test(FLAG_MAP_TEMP_03) != 0) {
         PushedObject_FillGridAttributeRectangle(2, 16, 16, 1, 4, 0);
         PushedObject_FillGridAttributeRectangle(0, 16, 16, 1, 4, 0);
       } else {
         Map_RedrawObjectEventFootprint(LOCALID_EAST_LOG);
       }
-      southLogOnSouthernRow = Engine_GameFlagIsSet(FLAG_MAP_TEMP_05);
+      southLogOnSouthernRow = GameFlag_Test(FLAG_MAP_TEMP_05);
       if (southLogOnSouthernRow != 0) {
         PushedObject_FillGridAttributeRectangle(0, 13, 19, 4, 2, 0);
-      } else if (Engine_GameFlagIsSet(FLAG_MAP_TEMP_04) != 0) {
+      } else if (GameFlag_Test(FLAG_MAP_TEMP_04) != 0) {
         PushedObject_FillGridAttributeRectangle(0, 13, 15, 4, 2,
                                                 southLogOnSouthernRow);
         MapGrid_CopyCellAttributes(14, 17, 2, 1, 14, 16);
         MapGrid_CopyCellAttributes(14, 13, 1, 1, 14, 15);
       } else {
         Map_RedrawObjectEventFootprint(LOCALID_SOUTH_LOG);
-        Engine_ObjectEventSetSpritePriority(LOCALID_SOUTH_LOG, 3);
+        ObjectMotion_SetActionVariant(LOCALID_SOUTH_LOG, 3);
       }
       break;
     }

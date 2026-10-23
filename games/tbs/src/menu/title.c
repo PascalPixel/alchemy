@@ -86,13 +86,13 @@ s32 Title_Run(void) {
   // press.
   if (gGameState.warpDest == 10) {
     ObjectEvent_GetById(gGameState.leaderLocalId)->motionFlags = 0;
-    Engine_AudioPlayCue(MUS_ENDING_LOGO);
+    Sound_PlaySong(MUS_ENDING_LOGO);
     Title_RevealScreen(0);
-    Engine_TaskWait(120);
+    WaitFrames(120);
     waitFrames = 0;
     if (gKeysPressed == 0) {
       do {
-        Engine_TaskWait(1);
+        WaitFrames(1);
         if (++waitFrames > 3599)
           break;
       } while (gKeysPressed == 0);
@@ -101,15 +101,15 @@ s32 Title_Run(void) {
     return 0;
   }
   if (gGameState.warpDest == 9) {
-    Engine_AudioPlayCue(MUS_ENDING);
+    Sound_PlaySong(MUS_ENDING);
     // The credits: Credits_Run, through the scroll far-call
     // table.
     CreditsFar_Entry00(0);
-    Engine_AudioPlayCue(SONG_FADE_OUT_BGM);
+    Sound_PlaySong(SONG_FADE_OUT_BGM);
     ScreenFade_ToBlack(60);
     ScreenFade_Wait();
-    Engine_ScriptWait(240);
-    Engine_AudioPlayCue(MUS_SILENCE);
+    FieldScript_WaitFrames(240);
+    Sound_PlaySong(MUS_SILENCE);
     FieldScript_SetDestination((s32)&MapId_MainMenu, MAIN_MENU_FROM_TITLE);
     return 0;
   }
@@ -120,23 +120,23 @@ s32 Title_Run(void) {
   RuntimeDispatch_NoOpHook((s32)&ResourceId_TitleFarCalls);
   if (gGameState.warpDest == 2) {
     for (;;) {
-      Engine_AudioPlayCue(MUS_SILENCE);
+      Sound_PlaySong(MUS_SILENCE);
       // The Nintendo logo, then the Camelot logo (Title_ShowCamelotLogo).
       Title_ShowNintendoLogo(0);
       TitleFar_Entry20(0);
       // With no save file (or no backup memory) there is no title intro.
       if (Save_ScanRecordFlags() > 0) {
-        Engine_AudioPlayCue(MUS_TITLE);
+        Sound_PlaySong(MUS_TITLE);
         // Title_ShowIntro with its prompt returns 0 when a minute passes
         // without A or Start: fade out and start again from the logos.
-        if (TitleFar_Entry00(1) == 0) {
-          Engine_AudioPlayCue(SONG_FADE_OUT_BGM);
+        if (Title_ShowIntro(1) == 0) {
+          Sound_PlaySong(SONG_FADE_OUT_BGM);
           ScreenFade_ToBlack(30);
           ScreenFade_Wait();
           waitFrames = 0;
           if (gKeysHeld == 0) {
             do {
-              Engine_TaskWait(1);
+              WaitFrames(1);
               if (++waitFrames > 119)
                 break;
             } while (gKeysHeld == 0);
@@ -149,17 +149,17 @@ s32 Title_Run(void) {
     FieldScript_SetDestination((s32)&MapId_MainMenu, MAIN_MENU_FROM_SANCTUM);
   } else {
     // The intro without its prompt holds the title five seconds.
-    Engine_AudioPlayCue(MUS_TITLE_AFTER_PROLOGUE);
-    TitleFar_Entry00(0);
+    Sound_PlaySong(MUS_TITLE_AFTER_PROLOGUE);
+    Title_ShowIntro(0);
     Party_EndChildhood();
     FieldScript_SetDestination((s32)&MapId_Vale, VALE_FROM_TITLE);
-    Engine_AudioPlayCue(SONG_FADE_OUT_BGM);
+    Sound_PlaySong(SONG_FADE_OUT_BGM);
   }
-  Engine_AudioPlayCue(SONG_FADE_OUT_BGM);
+  Sound_PlaySong(SONG_FADE_OUT_BGM);
   ScreenFade_ToBlack(30);
   ScreenFade_Wait();
-  Engine_ScriptWait(60);
-  Engine_AudioPlayCue(MUS_SILENCE);
+  FieldScript_WaitFrames(60);
+  Sound_PlaySong(MUS_SILENCE);
   return 0;
 }
 
@@ -298,7 +298,7 @@ static void Title_RevealScreen(s32 unused) {
 
   // Load while dark, then let the sprite callback reveal the lettering.
   Title_LoadBackground();
-  Engine_ScriptWait(30);
+  FieldScript_WaitFrames(30);
   gTitleRevealFrame = 0;
   Title_LoadSprites(0);
   FieldScheduler_AddCallback(Title_UpdateSpriteReveal, 0xc80);
@@ -317,18 +317,18 @@ static void Title_RevealScreen(s32 unused) {
                       0x20000);
   IO_WRITE_QUEUE_PUSH((u32)&REG_BLDY, 16, 0x20000);
   IO_WRITE_QUEUE_PUSH((u32)&REG_BLDALPHA, BLEND_ALPHA(16, 16), 0x20000);
-  Engine_ScriptWait(120);
+  FieldScript_WaitFrames(120);
   // Lift the darkening in 17 steps of three frames, down to BLDY 0.
   for (brightnessStep = 0; brightnessStep <= 16; brightnessStep++) {
     IO_WRITE_QUEUE_PUSH((u32)&REG_BLDY, 16 - brightnessStep, 0x20000);
-    Engine_TaskWait(3);
+    WaitFrames(3);
   }
   // Open the screen in one frame, then set 60-frame transitions for what
   // follows.
   gFieldWork->transition = 0;
   gFieldWork->transitionFrames = 1;
-  Engine_ScriptOpenScreen();
-  Engine_ScriptWaitForScreen();
+  FieldScript_StartScreenTransition();
+  FieldScript_WaitTransitionFrames();
   gFieldWork->transitionFrames = 60;
 }
 

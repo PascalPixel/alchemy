@@ -45,38 +45,38 @@ void Colosso_FadeInWarrior(s32 id, s32 x, s32 z) {
   gColosso_WarriorStartZ = objectEvent->z.fixed;
   sprite = (struct Sprite *)objectEvent->sprite;
   gColosso_WarriorStartAngle = objectEvent->facing;
-  Engine_ObjectEventSetSpritePriority(id, 2);
+  ObjectMotion_SetActionVariant(id, 2);
   objectEvent->priorityFlags |= OBJ_EVENT_PRIORITY_AUTOMATIC;
   objectEvent->facing = FACING_SOUTH;
-  Engine_ObjectEventSetSpriteFlags(objectEvent, 3);
-  ObjectEvent_SetMode(objectEvent, 0);
-  ObjectEvent_SetMode(objectEvent, 1);
+  ObjectEvent_SetSpriteFlags(objectEvent, 3);
+  ObjectDispatch_SelectAnimation(objectEvent, 0);
+  ObjectDispatch_SelectAnimation(objectEvent, 1);
   Engine_ObjectEventSetPosition(id, x << 16, z << 16);
-  Engine_ObjectEventFaceObjectEvent(0, 0x4000, 0);
+  ObjectMotion_SetAngleToward(0, 0x4000, 0);
   IO_WRITE_QUEUE_PUSH((u32)&REG_BLDCNT,
                       BLDCNT_TGT2_BG0 | BLDCNT_TGT2_BG1 | BLDCNT_TGT2_BG2 |
                           BLDCNT_TGT2_BG3,
                       0x20000);
   sprite->image.objectMode = 1;
   sprite->shadow.objectMode = 1;
-  Engine_AudioPlayCue(SE_COLOSSO_WARRIOR_APPEAR);
+  Sound_PlaySong(SE_COLOSSO_WARRIOR_APPEAR);
   for (i = 0; i <= 15; i += 2) {
     objectEvent->scaleX = (i << 12) + 0x1000;
     objectEvent->scaleY = 0x1f000 - (i << 12);
     IO_WRITE_QUEUE_PUSH((u32)&REG_BLDALPHA, ((15 - i) << 8) | (i + 1), 0x20000);
-    Engine_TaskWait(1);
+    WaitFrames(1);
   }
   IO_WRITE_QUEUE_PUSH((u32)&REG_BLDALPHA, BLEND_ALPHA(16, 0), 0x20000);
   objectEvent->scaleX = 0x11000;
   objectEvent->scaleY = 0xf000;
-  Engine_ScriptWait(1);
+  FieldScript_WaitFrames(1);
   objectEvent->scaleX = 0x10000;
   objectEvent->scaleY = 0x10000;
-  Engine_ScriptWait(13);
+  FieldScript_WaitFrames(13);
   sprite->image.objectMode = 0;
   sprite->shadow.objectMode = 0;
-  Engine_ObjectEventSetAnimationAndWait(id, 3);
-  Engine_ScriptWait(20);
+  ObjectMotion_SetAnimationAndWait(id, 3);
+  FieldScript_WaitFrames(20);
 }
 
 /// Puts Isaac (id) back where Colosso_FadeInWarrior found him: he stands
@@ -97,7 +97,7 @@ void Colosso_RestoreWarrior(s32 id) {
   } else {
     ObjectEvent_FaceDirection(id, FACING_SOUTH, 30);
     Engine_ObjectEventSetAnimation(id, 3);
-    Engine_ScriptWait(30);
+    FieldScript_WaitFrames(30);
   }
   zero = 0;
   // Stored as bytes through a pointer, the plain-C form of system->fill and
@@ -119,10 +119,10 @@ void Colosso_RestoreWarrior(s32 id) {
   objectEvent->layer = 0;
   objectEvent->y.fixed = zero;
   ((struct Object *)objectEvent)->groundHeight = zero;
-  Engine_ObjectEventSetSpriteFlags(objectEvent, SPRITE_FLAG_SHADOW);
-  ObjectEvent_SetMode(objectEvent, 0);
-  ObjectEvent_SetMode(objectEvent, 1);
-  Engine_TaskWait(1);
+  ObjectEvent_SetSpriteFlags(objectEvent, SPRITE_FLAG_SHADOW);
+  ObjectDispatch_SelectAnimation(objectEvent, 0);
+  ObjectDispatch_SelectAnimation(objectEvent, 1);
+  WaitFrames(1);
 }
 
 /// Stops the object event where it is: no velocity and no destination.
@@ -245,7 +245,7 @@ void Colosso_MovePointer(u32 x, u32 y, u32 duration) {
 /// Hides the pointer and frees its VRAM block.
 void Colosso_HidePointer(void) {
 
-  Engine_TaskRemoveCallback(Colosso_UpdateMarker);
+  Task_Remove(Colosso_UpdateMarker);
   VramCache_FreeEntry(gColosso_MarkerSlot);
   gColosso_MarkerSlot = -1;
 }
@@ -253,7 +253,7 @@ void Colosso_HidePointer(void) {
 /// Walks the object event at 2 pixels a frame towards pixel (x, z) and returns
 /// at once.
 void Colosso_WalkObjectEventTo(s32 localId, s32 x, s32 z) {
-  struct ObjectEvent *objectEvent = Engine_ObjectEventLookup(localId);
+  struct ObjectEvent *objectEvent = ObjectEvent_GetByLocalId(localId);
 
   if (objectEvent != 0) {
     s32 speed = 0x20000;
@@ -263,16 +263,16 @@ void Colosso_WalkObjectEventTo(s32 localId, s32 x, s32 z) {
     objectEvent->acceleration = speed >> 1;
     objectEvent->paused = zero;
     ObjectDispatch_StartIdle((struct DispatchObject *)objectEvent);
-    ObjectEvent_SetMode(objectEvent, 5);
-    Engine_ObjectSetPosition(objectEvent, x << 16, objectEvent->y.fixed,
-                             z << 16);
+    ObjectDispatch_SelectAnimation(objectEvent, 5);
+    Object_SetMoveTarget((struct Object *)objectEvent, x << 16,
+                         objectEvent->y.fixed, z << 16);
   }
 }
 
 /// Walks the object event at 1.25 pixels a frame to pixel (x, z), waits until
 /// it arrives and stands it there.
 void Colosso_WalkObjectEventToAndStand(s32 localId, s32 x, s32 z) {
-  struct ObjectEvent *objectEvent = Engine_ObjectEventLookup(localId);
+  struct ObjectEvent *objectEvent = ObjectEvent_GetByLocalId(localId);
 
   if (objectEvent != 0) {
     s32 speed = 0x14000;
@@ -282,10 +282,10 @@ void Colosso_WalkObjectEventToAndStand(s32 localId, s32 x, s32 z) {
     objectEvent->acceleration = speed >> 1;
     objectEvent->paused = zero;
     ObjectDispatch_StartIdle((struct DispatchObject *)objectEvent);
-    ObjectEvent_SetMode(objectEvent, 5);
-    Engine_ObjectSetPosition(objectEvent, x << 16, objectEvent->y.fixed,
-                             z << 16);
+    ObjectDispatch_SelectAnimation(objectEvent, 5);
+    Object_SetMoveTarget((struct Object *)objectEvent, x << 16,
+                         objectEvent->y.fixed, z << 16);
     Object_WaitForMove(objectEvent);
-    ObjectEvent_SetMode(objectEvent, 1);
+    ObjectDispatch_SelectAnimation(objectEvent, 1);
   }
 }

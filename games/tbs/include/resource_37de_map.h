@@ -8,7 +8,4 @@
 #include "heap_slots.h"
 #include "static_assert.h"
 
-void QueueMapSound(s32);
-void InitializeSparkleRecordBuffer(void);
-
 #endif

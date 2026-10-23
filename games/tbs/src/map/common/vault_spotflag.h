@@ -27,6 +27,6 @@ static void Vault_UpdateBoneProximityFlag(void) {
   if ((u32)column <= 1 && row > 40 && row <= 42) {
     Engine_GameFlagSet(FLAG_MAP_TEMP_50);
   } else {
-    Engine_GameFlagClear(FLAG_MAP_TEMP_50);
+    GameFlag_ClearBit(FLAG_MAP_TEMP_50);
   }
 }

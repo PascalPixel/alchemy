@@ -256,8 +256,8 @@ void ItemDisplay_RaiseAboveLeader(struct Object *object) {
 
 /// Shows a found item's picture: flags bit 0 adds sparkles and bit 1 raises it
 /// above the leader, with waits of 60 and 80 frames around that when both are
-/// set. The leader then returns to animation 1. Map overlays call it as
-/// Engine_ItemShowPicture (six of them).
+/// set. The leader then returns to animation 1. Map overlays call it (six of
+/// them).
 void ItemDisplay_ShowPicture(void *object, s32 flags) {
   void *leader;
 
@@ -286,9 +286,9 @@ void ItemDisplay_ShowPicture(void *object, s32 flags) {
 /// Shows the picture of item 36 pixels above the party leader for 80 frames;
 /// flags bit 0 adds sparkles and bit 1 raises it as a found item. Then it
 /// releases the picture and the leader returns to animation 1. Map overlays
-/// call it as Engine_ItemShowFound (41 of them). When no object is free, heap
-/// block 17, taken for the icon, is not released (the map change's heap
-/// reset frees it).
+/// call it (41 of them). When no object is
+/// free, heap block 17, taken for the icon, is not released (the map change's
+/// heap reset frees it).
 void FieldEffect_StartEffectObject22(s32 item, s32 flags) {
   struct ObjectEvent *leader =
       ObjectEvent_GetByLocalId(gGameState.leaderLocalId);

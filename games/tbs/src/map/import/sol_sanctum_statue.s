@@ -1,57 +1,57 @@
 @ C2: aligned 8-byte veneers: overlay_veneer emits ldr r4, bx r4 and a target word.
 	.set overlay_imports, 1
-	.set import.Engine_TaskWait, 1
+	.set import.WaitFrames, 1
 	.set import.Task_Add, 1
 	.set import.AllocHeapSlotEwram, 1
-	.set import.Engine_HeapRelease, 1
+	.set import.FreeHeapSlot, 1
 	.set import.Decompress_ByteLz, 1
-	.set import.Engine_VramLoad, 1
+	.set import.VramCache_Load, 1
 	.set import.VramCache_FindFreeEntry, 1
 	.set import.Oam_AddSpriteAtDepth, 1
-	.set import.Engine_MapGridRedraw, 1
-	.set import.Engine_MapGridCopyCellsTo, 1
-	.set import.Engine_MapGridCopyCellAttributes, 1
-	.set import.Engine_ObjectEventSetSpriteFlags, 1
-	.set import.Engine_WorkSetValuesIfNonNegative, 1
+	.set import.MapGrid_CenterOnFollowedPoint, 1
+	.set import.MapGrid_CopyMetatileIndicesRect, 1
+	.set import.MapGrid_CopyCellAttributeRect, 1
+	.set import.ObjectDispatch_SetSingleChildFlags, 1
+	.set import.MapGrid_SetScreenShake, 1
 	.set import.MapGrid_SetMetatileBehaviorAt, 1
-	.set import.Engine_MessageShowCentered, 1
-	.set import.Engine_GameFlagIsSet, 1
+	.set import.FieldMessage_Show, 1
+	.set import.GameFlag_Test, 1
 	.set import.Engine_GameFlagSet, 1
-	.set import.Engine_GameFlagClear, 1
-	.set import.Engine_ScriptWait, 1
-	.set import.Engine_ScriptStart, 1
-	.set import.Engine_ScriptEnd, 1
-	.set import.Engine_ScriptChooseYesNo, 1
+	.set import.GameFlag_ClearBit, 1
+	.set import.FieldScript_WaitFrames, 1
+	.set import.FieldScript_Start, 1
+	.set import.FieldScript_End, 1
+	.set import.FieldScript_AskYesNoWithObjectEventAnimation, 1
 	.set import.ObjectEvent_GetById, 1
-	.set import.Engine_ObjectEventSetSpeed, 1
-	.set import.Engine_ObjectEventSetDestination, 1
-	.set import.Engine_ObjectMotionSetPositionAndCommit, 1
-	.set import.Engine_ObjectEventWalkTo, 1
-	.set import.Engine_ObjectEventWalkToAndWait, 1
-	.set import.Engine_ObjectEventWaitForMove, 1
+	.set import.ObjectMotion_SetSpeedParameters, 1
+	.set import.ObjectMotion_ResetAndSetPosition, 1
+	.set import.ObjectMotion_SetPositionAndCommit, 1
+	.set import.ObjectMotion_ResetAndSetPositionInMode2, 1
+	.set import.ObjectMotion_SetPositionAndReset, 1
+	.set import.ObjectMotion_CommitCurrentPositionAndActivate, 1
 	.set import.Engine_ObjectEventSetPosition, 1
 	.set import.Engine_ObjectEventSetAnimation, 1
-	.set import.Engine_ObjectEventSetAnimationAndWait, 1
-	.set import.Engine_ObjectEventJump, 1
-	.set import.Engine_ObjectEventRunRepeatedMotion, 1
-	.set import.Engine_ObjectEventFaceObjectEvent, 1
-	.set import.Engine_ObjectEventFaceEachOther, 1
-	.set import.Engine_ScriptSetMessage, 1
+	.set import.ObjectMotion_SetAnimationAndWait, 1
+	.set import.ObjectMotion_Launch, 1
+	.set import.ObjectMotion_SetVarCbAndRefresh, 1
+	.set import.ObjectMotion_SetAngleToward, 1
+	.set import.ObjectEvent_LinkPair, 1
+	.set import.FieldScript_SetMessageId, 1
 	.set import.FieldMessage_ShowAtObject, 1
-	.set import.Engine_ScriptShowMessage, 1
-	.set import.Engine_ObjectEventFaceDirection, 1
-	.set import.Engine_ObjectEventSetSpritePriority, 1
-	.set import.Engine_ObjectEventShowEmote, 1
-	.set import.Engine_CameraFollowObjectEvent, 1
-	.set import.Engine_CameraSetSpeed, 1
-	.set import.Engine_CameraMoveTo, 1
-	.set import.Engine_CameraWaitForMove, 1
+	.set import.FieldScript_ShowMessageAndWait, 1
+	.set import.ObjectMotion_ArmCallback, 1
+	.set import.ObjectMotion_SetActionVariant, 1
+	.set import.FieldEffect_SpawnLinked, 1
+	.set import.FieldCamera_FollowObjectEvent, 1
+	.set import.FieldCamera_SetSpeedParameters, 1
+	.set import.FieldCamera_MoveWithinMapBounds, 1
+	.set import.FieldCamera_WaitForArrival, 1
 	.set import.Engine_ScriptRequestWarp, 1
-	.set import.Engine_LeaderCheckAhead, 1
-	.set import.InitializeSparkleRecordBuffer, 1
-	.set import.Engine_ScriptOpenScreen, 1
-	.set import.Engine_ScriptCloseScreen, 1
-	.set import.Engine_ScriptWaitForScreen, 1
+	.set import.Field_TryJumpForward, 1
+	.set import.FieldEffect_InitializeSparkles, 1
+	.set import.FieldScript_StartScreenTransition, 1
+	.set import.FieldScript_FinishScreenTransition, 1
+	.set import.FieldScript_WaitTransitionFrames, 1
 	.set import.Map_QueueMusic, 1
-	.set import.Engine_AudioPlayCue, 1
+	.set import.Sound_PlaySong, 1
 	.include "games/tbs/src/system/overlay.inc"

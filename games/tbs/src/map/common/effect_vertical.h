@@ -23,11 +23,11 @@ FieldEffect_AnimateVerticalPositive(union FieldObject *fieldObject) {
   frame = self->timer;
 
   if (frame > 31) {
-    Engine_ObjectDispatchRelease(self);
+    ObjectEvent_Release(self);
     return;
   }
 
-  amplitude = Engine_MathSin(frame << 10);
+  amplitude = Trig_Sin(frame << 10);
   self->scaleX = amplitude;
   self->scaleY = amplitude;
   self->x.fixed = anchor->x.fixed;
@@ -49,11 +49,11 @@ FieldEffect_AnimateVerticalNegative(union FieldObject *fieldObject) {
   frame = self->timer;
 
   if (frame > 31) {
-    Engine_ObjectDispatchRelease(self);
+    ObjectEvent_Release(self);
     return;
   }
 
-  amplitude = Engine_MathSin(frame << 10);
+  amplitude = Trig_Sin(frame << 10);
   self->scaleX = amplitude;
   self->scaleY = -amplitude;
   self->x.fixed = anchor->x.fixed;

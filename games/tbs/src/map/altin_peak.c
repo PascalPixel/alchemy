@@ -459,33 +459,33 @@ static void AltinPeak_RideCart(s32 log) {
   leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   logObjectEvent = ObjectEvent_GetById(LOCALID_CART);
   Field_EndBusyAndReveal();
-  Engine_ScriptStart();
+  FieldScript_Start();
   Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_LEADER_LEAN_BACK);
-  Engine_ScriptWait(10);
-  Engine_AudioPlayCue(SE_JUMP);
-  Engine_ObjectEventSetSpeed(LOCALID_PARTY_LEADER, PIXELS(16) / 5,
-                             PIXELS(8) / 5);
+  FieldScript_WaitFrames(10);
+  Sound_PlaySong(SE_JUMP);
+  ObjectMotion_SetSpeedParameters(LOCALID_PARTY_LEADER, PIXELS(16) / 5,
+                                  PIXELS(8) / 5);
   // Leap by the height between leader and cart, in quarter pixels, plus 4.
   leader->velocityY =
       ((ABS(logObjectEvent->y.fixed - leader->y.fixed) >> 14) << 14) +
       PIXELS(4);
   Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_LEADER_LEAP);
-  Engine_ObjectSetPosition(leader, logObjectEvent->x.fixed,
-                           logObjectEvent->y.fixed, logObjectEvent->z.fixed);
-  Engine_TaskWait(10);
+  Object_SetPosition(leader, logObjectEvent->x.fixed, logObjectEvent->y.fixed,
+                     logObjectEvent->z.fixed);
+  WaitFrames(10);
   leader->sprite->image.priority = 3;
-  Engine_ObjectEventWaitForMove(LOCALID_PARTY_LEADER);
+  ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_PARTY_LEADER);
 
   // Wait until the leader has come down into the cart.
   for (;;) {
     if (!((logObjectEvent->y.fixed >> 14) < (leader->y.fixed >> 14)))
       break;
-    Engine_TaskWait(1);
+    WaitFrames(1);
   }
-  Engine_ScriptEnd();
-  Engine_AudioPlayCue(SE_159);
+  FieldScript_End();
+  Sound_PlaySong(SE_159);
   AltinPeak_RollCart(log, 0);
-  Engine_TaskWait(20);
+  WaitFrames(20);
   Map_PlayQueuedMusic();
 }
 
@@ -536,10 +536,10 @@ static void AltinPeak_SettleSpritzRoomPillar(void) {
     } else {
       MapGrid_CopyCellAttributes(0, 0, 1, 1, 24, 26);
     }
-    Engine_ObjectEventSetSpriteFlags(pillar, 0);
+    ObjectEvent_SetSpriteFlags(pillar, 0);
     pillar->motionFlags = 0;
-    Engine_MapGridRedraw();
-    Engine_TaskWait(1);
+    MapGrid_CenterOnFollowedPoint();
+    WaitFrames(1);
   }
 }
 
@@ -553,7 +553,7 @@ static void AltinPeak_FreezeFirstWaterBeastRoomPuddle(void) {
   puddle = ObjectEvent_GetById(LOCALID_FIRST_WATER_BEAST_ROOM_PUDDLE);
   MapGrid_CopyCellAttributes(7, 13, 1, 1, 9, 13);
   if (puddle != 0) {
-    Engine_ObjectEventSetSpriteFlags(puddle, 0);
+    ObjectEvent_SetSpriteFlags(puddle, 0);
     puddle->y.fixed -= PIXELS(32);
     puddle->priorityFlags = OBJ_EVENT_PRIORITY_UNDERFOOT;
   }
@@ -580,7 +580,7 @@ static void AltinPeak_FreezeSpritzRoomPuddle(void) {
   puddle = ObjectEvent_GetById(LOCALID_SPRITZ_ROOM_PUDDLE);
   MapGrid_CopyCellAttributes(0, 0, 1, 1, 26, 26);
   if (puddle != 0) {
-    Engine_ObjectEventSetSpriteFlags(puddle, 0);
+    ObjectEvent_SetSpriteFlags(puddle, 0);
     puddle->y.fixed -= PIXELS(32);
     puddle->priorityFlags = OBJ_EVENT_PRIORITY_UNDERFOOT;
   }
@@ -594,7 +594,7 @@ static void AltinPeak_FreezeThirdWaterBeastRoomPuddle(void) {
   puddle = ObjectEvent_GetById(LOCALID_THIRD_WATER_BEAST_ROOM_PUDDLE);
   MapGrid_CopyCellAttributes(23, 13, 1, 1, 25, 13);
   if (puddle != 0) {
-    Engine_ObjectEventSetSpriteFlags(puddle, 0);
+    ObjectEvent_SetSpriteFlags(puddle, 0);
     puddle->y.fixed -= PIXELS(32);
     puddle->priorityFlags = OBJ_EVENT_PRIORITY_UNDERFOOT;
   }
@@ -608,7 +608,7 @@ static void AltinPeak_FreezePoolRoomPuddle(void) {
   puddle = ObjectEvent_GetById(LOCALID_POOL_ROOM_PUDDLE);
   MapGrid_CopyCellAttributes(45, 41, 1, 1, 43, 41);
   if (puddle != 0) {
-    Engine_ObjectEventSetSpriteFlags(puddle, 0);
+    ObjectEvent_SetSpriteFlags(puddle, 0);
     puddle->y.fixed -= PIXELS(32);
     puddle->priorityFlags = OBJ_EVENT_PRIORITY_UNDERFOOT;
   }
@@ -622,7 +622,7 @@ static void AltinPeak_FreezeSpritzRoomSecondPuddle(void) {
   puddle = ObjectEvent_GetById(LOCALID_SPRITZ_ROOM_SECOND_PUDDLE);
   MapGrid_CopyCellAttributes(1, 0, 1, 1, 17, 10);
   if (puddle != 0) {
-    Engine_ObjectEventSetSpriteFlags(puddle, 0);
+    ObjectEvent_SetSpriteFlags(puddle, 0);
     puddle->y.fixed -= PIXELS(32);
     puddle->priorityFlags = OBJ_EVENT_PRIORITY_UNDERFOOT;
   }
@@ -636,7 +636,7 @@ static void AltinPeak_FreezeSpritzRoomThirdPuddle(void) {
   puddle = ObjectEvent_GetById(LOCALID_SPRITZ_ROOM_THIRD_PUDDLE);
   MapGrid_CopyCellAttributes(1, 0, 1, 1, 26, 15);
   if (puddle != 0) {
-    Engine_ObjectEventSetSpriteFlags(puddle, 0);
+    ObjectEvent_SetSpriteFlags(puddle, 0);
     puddle->y.fixed -= PIXELS(32);
     puddle->priorityFlags = OBJ_EVENT_PRIORITY_UNDERFOOT;
   }
@@ -676,12 +676,12 @@ static void AltinPeak_DrainFirstWater(void) {
   gridWork = gMapGridWork[0];
   Script_PlaySong(SE_230);
   MapGrid_SetShake(PIXELS(2), PIXELS(2), Q16_ONE);
-  Engine_ScriptWait(10);
+  FieldScript_WaitFrames(10);
   // Sink the water layer one pixel every 4 frames, 24 in all.
   waterLayer = gridWork + 356;
   for (step = 0; step <= 23; step++) {
     *(s32 *)(waterLayer + 12) -= PIXELS(1);
-    Engine_TaskWait(4);
+    WaitFrames(4);
     if (step == 8) {
       puddle = ObjectEvent_GetById(LOCALID_FIRST_WATER_BEAST_ROOM_PUDDLE);
       puddle->scaleX = Q16_ONE / 10;
@@ -697,15 +697,15 @@ static void AltinPeak_DrainFirstWater(void) {
   Runtime_SetIrqHandler(1, 0, Water_FlickerOut);
   gAltinPeak_FlickerTimer = 0;
   do {
-    Engine_TaskWait(1);
+    WaitFrames(1);
     timer = gAltinPeak_FlickerTimer + 1;
     gAltinPeak_FlickerTimer = timer;
   } while ((u32)(timer << 16) <= 0x640000);
-  Engine_TaskWait(1);
+  WaitFrames(1);
   Runtime_SetIrqHandler(1, 0, 0);
   Script_PlaySong(SONG_FADE_OUT_ACTION_SE);
   MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
-  Engine_ScriptWait(30);
+  FieldScript_WaitFrames(30);
   MapGrid_CopyCellAttributes(0, 0, 1, 2, 3, 14);
   GameFlag_Set(FLAG_ALTIN_MINE_FIRST_DRAIN);
 }
@@ -722,26 +722,26 @@ static void AltinPeak_DrainSecondWater(void) {
   MapGrid_CopyCells(93, 41, 16, 4, 77, 28);
   Script_PlaySong(SE_230);
   MapGrid_SetShake(PIXELS(2), PIXELS(2), Q16_ONE);
-  Engine_ScriptWait(10);
+  FieldScript_WaitFrames(10);
   // Sink the water layer one pixel every 4 frames, 24 in all.
   waterLayer = gridWork + 356;
   for (step = 23; step >= 0; step--) {
     *(s32 *)(waterLayer + 12) -= PIXELS(1);
-    Engine_TaskWait(4);
+    WaitFrames(4);
   }
   // Flicker the water away while the timer counts to 100.
   Runtime_SetIrqHandler(1, 0, Water_FlickerOut);
   gAltinPeak_FlickerTimer = 0;
   do {
-    Engine_TaskWait(1);
+    WaitFrames(1);
     timer = gAltinPeak_FlickerTimer + 1;
     gAltinPeak_FlickerTimer = timer;
   } while ((u32)(timer << 16) <= 0x640000);
-  Engine_TaskWait(1);
+  WaitFrames(1);
   Runtime_SetIrqHandler(1, 0, 0);
   Script_PlaySong(SONG_FADE_OUT_ACTION_SE);
   MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
-  Engine_ScriptWait(30);
+  FieldScript_WaitFrames(30);
   MapGrid_CopyCells(77, 41, 16, 4, 77, 28);
   GameFlag_Set(FLAG_ALTIN_MINE_SECOND_DRAIN);
 }
@@ -759,26 +759,26 @@ static void AltinPeak_DrainThirdWater(void) {
   MapGrid_CopyCellsTo(64, 32, 103, 18, 1, 2);
   Script_PlaySong(SE_230);
   MapGrid_SetShake(PIXELS(2), PIXELS(2), Q16_ONE);
-  Engine_ScriptWait(10);
+  FieldScript_WaitFrames(10);
   // Sink the water layer one pixel every 4 frames, 24 in all.
   waterLayer = gridWork + 356;
   for (step = 23; step >= 0; step--) {
     *(s32 *)(waterLayer + 12) -= PIXELS(1);
-    Engine_TaskWait(4);
+    WaitFrames(4);
   }
   // Flicker the water away while the timer counts to 100.
   Runtime_SetIrqHandler(1, 0, Water_FlickerOut);
   gAltinPeak_FlickerTimer = 0;
   do {
-    Engine_TaskWait(1);
+    WaitFrames(1);
     timer = gAltinPeak_FlickerTimer + 1;
     gAltinPeak_FlickerTimer = timer;
   } while ((u32)(timer << 16) <= 0x640000);
-  Engine_TaskWait(1);
+  WaitFrames(1);
   Runtime_SetIrqHandler(1, 0, 0);
   Script_PlaySong(SONG_FADE_OUT_ACTION_SE);
   MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
-  Engine_ScriptWait(30);
+  FieldScript_WaitFrames(30);
   MapGrid_CopyCellsTo(103, 14, 103, 17, 4, 3);
   GameFlag_Set(FLAG_ALTIN_MINE_THIRD_DRAIN);
 }
@@ -800,13 +800,13 @@ static void AltinPeak_ToggleSecondWaterBeastRoomSwitchCells(void) {
 /// Searching AltinPeakSecondWaterBeast's switch flips it. "You flipped the
 /// switch."
 static void AltinPeak_FlipSecondWaterBeastRoomSwitch(void) {
-  Engine_ScriptStart();
-  Engine_MessageShowCentered(MsgFieldFlippedSwitch, 1);
-  Engine_AudioPlayCue(SE_125);
+  FieldScript_Start();
+  FieldMessage_Show(MsgFieldFlippedSwitch, 1);
+  Sound_PlaySong(SE_125);
   AltinPeak_ToggleSecondWaterBeastRoomSwitchCells();
-  Engine_TaskWait(20);
+  WaitFrames(20);
   Map_PlayQueuedMusic();
-  Engine_ScriptEnd();
+  FieldScript_End();
 }
 
 /// Flips AltinPeakThirdWaterBeast's switch, the same way.
@@ -824,19 +824,19 @@ static void AltinPeak_ToggleThirdWaterBeastRoomSwitchCells(void) {
 
 /// Searching AltinPeakThirdWaterBeast's switch flips it.
 static void AltinPeak_FlipThirdWaterBeastRoomSwitch(void) {
-  Engine_ScriptStart();
-  Engine_MessageShowCentered(MsgFieldFlippedSwitch, 1);
-  Engine_AudioPlayCue(SE_125);
+  FieldScript_Start();
+  FieldMessage_Show(MsgFieldFlippedSwitch, 1);
+  Sound_PlaySong(SE_125);
   AltinPeak_ToggleThirdWaterBeastRoomSwitchCells();
-  Engine_TaskWait(20);
+  WaitFrames(20);
   Map_PlayQueuedMusic();
-  Engine_ScriptEnd();
+  FieldScript_End();
 }
 
 /// Searching AltinPeakPool's switch flips it.
 static void AltinPeak_FlipPoolRoomSwitch(void) {
-  Engine_ScriptStart();
-  Engine_MessageShowCentered(MsgFieldFlippedSwitch, 1);
+  FieldScript_Start();
+  FieldMessage_Show(MsgFieldFlippedSwitch, 1);
   Script_PlaySong(SE_125);
   if (GameFlag_IsSet(FLAG_ALTIN_PEAK_POOL_ROOM_SWITCH) != 0) {
     MapGrid_CopyCellAttributes(15, 93, 1, 1, 16, 92);
@@ -847,15 +847,15 @@ static void AltinPeak_FlipPoolRoomSwitch(void) {
     MapGrid_CopyCellsTo(46, 29, 16, 28, 1, 2);
     GameFlag_Set(FLAG_ALTIN_PEAK_POOL_ROOM_SWITCH);
   }
-  Engine_TaskWait(20);
+  WaitFrames(20);
   Map_PlayQueuedMusic();
-  Engine_ScriptEnd();
+  FieldScript_End();
 }
 
 /// Searching AltinPeakSpritz's switch flips it.
 static void AltinPeak_FlipSpritzRoomSwitch(void) {
-  Engine_ScriptStart();
-  Engine_MessageShowCentered(MsgFieldFlippedSwitch, 1);
+  FieldScript_Start();
+  FieldMessage_Show(MsgFieldFlippedSwitch, 1);
   Script_PlaySong(SE_125);
   if (GameFlag_IsSet(FLAG_ALTIN_PEAK_SPRITZ_ROOM_SWITCH) != 0) {
     MapGrid_CopyCellAttributes(28, 82, 1, 1, 29, 81);
@@ -866,9 +866,9 @@ static void AltinPeak_FlipSpritzRoomSwitch(void) {
     MapGrid_CopyCellsTo(46, 28, 29, 17, 1, 2);
     GameFlag_Set(FLAG_ALTIN_PEAK_SPRITZ_ROOM_SWITCH);
   }
-  Engine_TaskWait(20);
+  WaitFrames(20);
   Map_PlayQueuedMusic();
-  Engine_ScriptEnd();
+  FieldScript_End();
 }
 
 /// Stepping onto AltinPeakSpritz's pillar: it is drawn under the party leader.
@@ -886,7 +886,7 @@ static void AltinPeak_RestorePillarAutomaticPriority(void) {
 /// Walking east into AltinPeakSpritz's pillar pushes it one cell along with a
 /// scrape; the leader follows it and its cells are settled as after Move.
 static void AltinPeak_PushSpritzRoomPillar(void) {
-  Engine_ScriptStart();
+  FieldScript_Start();
   MapGrid_CopyCellAttributes(24, 27, 2, 1, 24, 26);
   Script_PlaySong(SE_PUSH);
   ObjectEvent_SetSpeed(LOCALID_SPRITZ_ROOM_PILLAR, PIXELS(1) / 5,
@@ -897,10 +897,10 @@ static void AltinPeak_PushSpritzRoomPillar(void) {
   Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_PUSH);
   ObjectEvent_SetDestination(LOCALID_PARTY_LEADER, 400, 424);
   ObjectEvent_SetDestination(LOCALID_SPRITZ_ROOM_PILLAR, 408, 424);
-  Engine_ObjectEventWaitForMove(LOCALID_SPRITZ_ROOM_PILLAR);
+  ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_SPRITZ_ROOM_PILLAR);
   Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_STAND);
   AltinPeak_SettleSpritzRoomPillar();
-  Engine_ScriptEnd();
+  FieldScript_End();
 }
 
 /// Force on AltinPeakFallingRocks's wall: it rumbles, the log by it rocks one
@@ -995,7 +995,7 @@ static void AltinPeak_RunBoulderChase(s32 boulderDelay) {
   rock = ObjectEvent_Get(LOCALID_STANDING_LOG);
   ObjectEvent_SetAttachedEffect(LOCALID_PARTY_LEADER, ATTACHED_EFFECT_IN_FRONT |
                                                           ATTACHED_EFFECT_ONCE);
-  Engine_ScriptWait(40);
+  FieldScript_WaitFrames(40);
   FieldCamera_SetSpeed(PIXELS(1), PIXELS(1) / 8);
   FieldCamera_MoveTo(PIXELS(784), -1, PIXELS(116), 1);
   ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(2), PIXELS(1));
@@ -1007,7 +1007,7 @@ static void AltinPeak_RunBoulderChase(s32 boulderDelay) {
                         60);
   Script_PlaySong(SE_183);
   MapGrid_SetShake(PIXELS(3), PIXELS(3), Q16_ONE);
-  Engine_ScriptWait(20);
+  FieldScript_WaitFrames(20);
   // Stage the rolling object and its follower for the escape route.
   shadow->scaleX = 6 * Q16_ONE / 5;
   shadow->scaleY = 6 * Q16_ONE / 5;
@@ -1024,10 +1024,10 @@ static void AltinPeak_RunBoulderChase(s32 boulderDelay) {
   boulder->z.fixed = PIXELS(90);
   boulder->scaleX = 2 * Q16_ONE;
   boulder->scaleY = 2 * Q16_ONE;
-  Engine_ScriptWait(10);
+  FieldScript_WaitFrames(10);
   Script_PlaySong(SE_183);
   MapGrid_SetShake(PIXELS(4), PIXELS(2), Q16_ONE);
-  Engine_ScriptWait(20);
+  FieldScript_WaitFrames(20);
   rock->x.fixed += PIXELS(14);
   rock->y.fixed += -PIXELS(8);
   rock->sprite->rotation = 0xc000;
@@ -1036,8 +1036,8 @@ static void AltinPeak_RunBoulderChase(s32 boulderDelay) {
   ObjectEvent_ShowEmote(LOCALID_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_WINCE, 80);
   Script_PlaySong(MUS_055);
   MapGrid_SetShake(PIXELS(1), PIXELS(3), Q16_ONE);
-  Engine_ObjectEventSetSpritePriority(LOCALID_FALLING_BOULDER, 0);
-  Engine_ObjectEventSetSpritePriority(LOCALID_PARTY_LEADER, 0);
+  ObjectMotion_SetActionVariant(LOCALID_FALLING_BOULDER, 0);
+  ObjectMotion_SetActionVariant(LOCALID_PARTY_LEADER, 0);
   ObjectEvent_SetAttachedEffect(
       LOCALID_PARTY_LEADER, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ATTACH);
   // Send the leader first, then release the rolling object after its delay.
@@ -1051,20 +1051,20 @@ static void AltinPeak_RunBoulderChase(s32 boulderDelay) {
   }
   FieldCamera_SetSpeed(PIXELS(5) / 4, PIXELS(5) / 32);
   FieldCamera_MoveTo(PIXELS(786), -1, PIXELS(556), 1);
-  Engine_ScriptWait(boulderDelay);
-  Engine_ObjectEventSetSpritePriority(LOCALID_FALLING_BOULDER, 1);
+  FieldScript_WaitFrames(boulderDelay);
+  ObjectMotion_SetActionVariant(LOCALID_FALLING_BOULDER, 1);
   ObjectEvent_SetSpeed(LOCALID_FALLING_BOULDER, PIXELS(317) / 200,
                        PIXELS(275) / 347);
   boulder->timer = 0;
   ObjectEvent_SetActionScript(LOCALID_FALLING_BOULDER, gAltinPeak_BoulderPath);
   do {
-    Engine_TaskWait(1);
+    WaitFrames(1);
   } while (leader->timer == 0);
   ObjectEvent_SetAttachedEffect(LOCALID_PARTY_LEADER, 0);
   do {
-    Engine_TaskWait(1);
+    WaitFrames(1);
   } while (boulder->timer == 0);
-  Engine_ObjectEventSetSpritePriority(LOCALID_PARTY_LEADER, 2);
+  ObjectMotion_SetActionVariant(LOCALID_PARTY_LEADER, 2);
   ObjectEvent_Get(LOCALID_PARTY_LEADER)->priorityFlags |=
       OBJ_EVENT_PRIORITY_AUTOMATIC;
   Script_PlaySong(SONG_FADE_OUT_ACTION_SE);
@@ -1081,7 +1081,7 @@ static void AltinPeak_RunBoulderChase(s32 boulderDelay) {
   ObjectEvent_MoveToAndWait(LOCALID_FALLING_BOULDER, 786, 604);
   ObjectEvent_SetSpeed(LOCALID_FALLING_BOULDER, PIXELS(16) / 5, PIXELS(8) / 5);
   ObjectEvent_SetDestination(LOCALID_FALLING_BOULDER, 786, 644);
-  Engine_ScriptWait(15);
+  FieldScript_WaitFrames(15);
   MapGrid_SetShake(PIXELS(5), PIXELS(7), Q16_ONE);
   MapGrid_CopyCellsTo(25, 36, 43, 36, 11, 9);
   MapGrid_CopyCellAttributes(25, 35, 10, 5, 43, 35);
@@ -1089,13 +1089,13 @@ static void AltinPeak_RunBoulderChase(s32 boulderDelay) {
   ObjectEvent_SetPosition(LOCALID_BOULDER_SHADOW, 0, 0);
   // Hide the rolling object events and animate the falling debris.
   FieldScheduler_AddCallback(AltinPeak_SpawnDebris, TASK_PRIORITY_MAP);
-  Engine_ScriptWait(80);
-  Engine_TaskRemoveCallback(AltinPeak_SpawnDebris);
-  Engine_ScriptWait(60);
+  FieldScript_WaitFrames(80);
+  Task_Remove(AltinPeak_SpawnDebris);
+  FieldScript_WaitFrames(60);
   Script_PlaySong(SONG_FADE_OUT_BGM);
   MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
   // Return Garet to the party if the warning sign brought him into the scene.
-  Engine_ScriptWait(120);
+  FieldScript_WaitFrames(120);
   if (GameFlag_IsSet(FLAG_GARET_WATCHING_ROCKS) != 0) {
     ObjectEvent_SetSpeed(GARET, PIXELS(1), PIXELS(1) / 2);
     ObjectEvent_WalkTo(GARET, 824, 558);
@@ -1110,13 +1110,13 @@ static void AltinPeak_RunBoulderChase(s32 boulderDelay) {
   ObjectEvent_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
   ObjectEvent_ShowEmote(LOCALID_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
   FieldCamera_MoveTo(PIXELS(788), -PIXELS(64), PIXELS(610), 1);
-  Engine_CameraWaitForMove();
+  FieldCamera_WaitForArrival();
   Script_PlaySong(SE_148);
-  Engine_ScriptWait(240);
+  FieldScript_WaitFrames(240);
   if (GameFlag_IsSet(FLAG_GARET_WATCHING_ROCKS) != 0) {
     FieldCamera_SetSpeed(PIXELS(4), PIXELS(1) / 2);
     FieldCamera_MoveTo(PIXELS(854), 0, PIXELS(584), 1);
-    Engine_CameraWaitForMove();
+    FieldCamera_WaitForArrival();
     ObjectEvent_WalkToAndWait(GARET, 840, 552);
     ObjectEvent_WalkToAndWait(GARET, 854, 562);
     Engine_ObjectEventSetAnimation(GARET, ANIM_WALK);
@@ -1125,7 +1125,7 @@ static void AltinPeak_RunBoulderChase(s32 boulderDelay) {
       ObjectEvent_SetDestination(GARET, objectEvent->x.part.pixel,
                                  objectEvent->z.part.pixel);
     }
-    Engine_ObjectEventWaitForMove(GARET);
+    ObjectMotion_CommitCurrentPositionAndActivate(GARET);
     ObjectEvent_SetPosition(GARET, 0, 0);
   }
   Map_PlayMusic();
@@ -1141,9 +1141,9 @@ static void AltinPeak_ReadFallingRockSign(void) {
   struct ObjectEvent *objectEvent;
   s32 message;
 
-  Engine_ScriptStart();
+  FieldScript_Start();
   message = MsgAltinWatchFallingRocks;
-  Engine_MessageShowCentered(message, 1);
+  FieldMessage_Show(message, 1);
   if (GameFlag_IsSet(FLAG_ALTIN_PEAK_BOULDER_FALLEN) == 0 &&
       GameFlag_IsSet(FLAG_FUCHIN_FALLS_ORB_OF_FORCE_FOUND) == 0) {
     // Bring Garet out to inspect the warning and demonstrate the danger.
@@ -1160,21 +1160,21 @@ static void AltinPeak_ReadFallingRockSign(void) {
     ObjectEvent_SetSpeed(GARET, PIXELS(4) / 5, PIXELS(2) / 5);
     ObjectEvent_WalkToAndWait(GARET, 800, 140);
     ObjectEvent_FaceDirection(GARET, FACING_NORTH, 20);
-    Engine_ScriptSetMessage(message + 1);
+    FieldScript_SetMessageId(message + 1);
     Engine_ObjectEventSetAnimation(GARET, ANIM_SHAKE_HEAD);
-    Engine_ScriptWait(20);
+    FieldScript_WaitFrames(20);
     Script_ShowMessageAndWait(GARET, 0, 10);
-    Engine_ObjectEventJump(GARET, 6, 0);
+    ObjectMotion_Launch(GARET, 6, 0);
     ObjectEvent_SetSpeed(GARET, PIXELS(8) / 5, PIXELS(4) / 5);
     ObjectEvent_GetById(GARET)->steeringFlags &= ~OBJ_EVENT_FACES_MOTION;
     ObjectEvent_WalkToAndWait(GARET, 792, 110);
-    Engine_ScriptWait(1);
+    FieldScript_WaitFrames(1);
     ObjectEvent_GetById(GARET)->steeringFlags |= OBJ_EVENT_FACES_MOTION;
     Script_PlaySong(SE_161);
     MapGrid_SetShake(PIXELS(2), PIXELS(1), Q16_ONE);
     ObjectEvent_GetById(GARET)->steeringFlags &= ~OBJ_EVENT_FACES_MOTION;
     ObjectEvent_WalkToAndWait(GARET, 792, 120);
-    Engine_ScriptWait(1);
+    FieldScript_WaitFrames(1);
     {
       struct ObjectEvent *objectEvent = ObjectEvent_Get(GARET);
 
@@ -1182,10 +1182,10 @@ static void AltinPeak_ReadFallingRockSign(void) {
           OBJ_EVENT_FACES_MOTION | objectEvent->steeringFlags;
     }
     MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
-    Engine_ScriptWait(80);
+    FieldScript_WaitFrames(80);
     Script_PlaySong(SE_RUMBLE);
     MapGrid_SetShake(PIXELS(1), PIXELS(1), Q16_ONE);
-    Engine_ScriptWait(40);
+    FieldScript_WaitFrames(40);
     ObjectEvent_ShowEmote(LOCALID_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_QUESTION,
                           0);
     ObjectEvent_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
@@ -1199,7 +1199,7 @@ static void AltinPeak_ReadFallingRockSign(void) {
     ObjectEvent_FaceDirection(GARET, FACING_NORTH, 40);
     ObjectEvent_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
     ObjectEvent_FaceDirection(GARET, FACING_SOUTH, 20);
-    Engine_ObjectEventStartRepeatedMotion(GARET, 2);
+    ObjectMotion_SetVariantCallback(GARET, 2);
     Script_ShowMessageAndWait(GARET, 0, 10);
     ObjectEvent_SetSpeed(GARET, PIXELS(5) / 2, PIXELS(5) / 4);
     Engine_ObjectEventSetAnimation(GARET, 5);
@@ -1216,10 +1216,10 @@ static void AltinPeak_ReadFallingRockSign(void) {
     ObjectEvent_MoveToAndWait(GARET, 786, 246);
     Engine_ObjectEventSetAnimation(GARET, ANIM_STAND);
     ObjectEvent_SetPosition(GARET, 0, 0);
-    Engine_ScriptWait(40);
+    FieldScript_WaitFrames(40);
     AltinPeak_RunBoulderChase(10);
   }
-  Engine_ScriptEnd();
+  FieldScript_End();
 }
 
 /// AltinPeakFirstWaterBeast has its own map events once the first drain has
@@ -1228,7 +1228,7 @@ const struct MapEvent *Map_GetEvents(void) {
   const struct MapEvent *table;
 
   if (gGameState.mapId == (s32)&MapId_AltinPeakFirstWaterBeast) {
-    if (Engine_GameFlagIsSet(FLAG_ALTIN_MINE_FIRST_DRAIN) != 0) {
+    if (GameFlag_Test(FLAG_ALTIN_MINE_FIRST_DRAIN) != 0) {
       table = gAltinPeak_FirstWaterBeastEventsDrained;
     } else {
       table = gAltinPeak_FirstWaterBeastEvents;
@@ -1272,11 +1272,11 @@ static void AltinPeak_UpdateBeastHops(union FieldObject *fieldObject) {
       MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
   }
   if (beast->velocityY == 0) {
-    ObjectEvent_SetMode(&fieldObject->objectEvent, 1);
+    ObjectDispatch_SelectAnimation(&fieldObject->objectEvent, 1);
     beast->y.fixed -= PIXELS(3) / 2;
     if (beast->y.fixed < beast->groundHeight) {
       if (fieldObject->effect.countdown != 0) {
-        Engine_AudioPlayCue(SE_SPLASH);
+        Sound_PlaySong(SE_SPLASH);
         fieldObject->effect.countdown = 0;
         beast->work = 4;
         MapGrid_SetShake(PIXELS(1), 0, Q16_ONE);
@@ -1288,9 +1288,9 @@ static void AltinPeak_UpdateBeastHops(union FieldObject *fieldObject) {
     beast->paused = 0;
   }
   if (beast->timer == 0) {
-    Engine_AudioPlayCue(SE_JUMP);
+    Sound_PlaySong(SE_JUMP);
     fieldObject->effect.countdown = 1;
-    ObjectEvent_SetMode(&fieldObject->objectEvent, 2);
+    ObjectDispatch_SelectAnimation(&fieldObject->objectEvent, 2);
     beast->velocityY = PIXELS(3);
   }
   if (++beast->timer == 60)
@@ -1300,9 +1300,9 @@ static void AltinPeak_UpdateBeastHops(union FieldObject *fieldObject) {
 /// The beast lands with a splash, shaking the screen for holdFrames.
 static __inline__ void AltinPeak_PlayLandingShake(s32 amplitude,
                                                   s32 holdFrames) {
-  Engine_AudioPlayCue(SE_SPLASH);
+  Sound_PlaySong(SE_SPLASH);
   MapGrid_SetShake(amplitude, 0, Q16_ONE);
-  Engine_ScriptWait(holdFrames);
+  FieldScript_WaitFrames(holdFrames);
   MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
 }
 
@@ -1317,15 +1317,15 @@ static void AltinPeak_ShowFirstBeastRoute(void) {
   s32 jumpSpeed;
 
   beast = (union FieldObject *)ObjectEvent_GetById(LOCALID_FIRST_WATER_BEAST);
-  Engine_ScriptStart();
-  Engine_CameraSetSpeed(PIXELS(12) / 5, PIXELS(3) / 10);
+  FieldScript_Start();
+  FieldCamera_SetSpeedParameters(PIXELS(12) / 5, PIXELS(3) / 10);
   FieldCamera_MoveTo(PIXELS(298), -1, PIXELS(337), 1);
-  Engine_CameraWaitForMove();
-  Engine_AudioPlayCue(SE_147);
-  Engine_ObjectEventRunRepeatedMotion(LOCALID_FIRST_WATER_BEAST, 2);
-  Engine_ScriptWait(40);
-  Engine_CameraSetSpeed(PIXELS(4) / 5, PIXELS(1) / 10);
-  Engine_CameraMoveTo(PIXELS(295), PIXELS(32), PIXELS(212), 1);
+  FieldCamera_WaitForArrival();
+  Sound_PlaySong(SE_147);
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_FIRST_WATER_BEAST, 2);
+  FieldScript_WaitFrames(40);
+  FieldCamera_SetSpeedParameters(PIXELS(4) / 5, PIXELS(1) / 10);
+  FieldCamera_MoveWithinMapBounds(PIXELS(295), PIXELS(32), PIXELS(212), 1);
   // Run the timed hopping callback while the beast moves along its route.
   beast->effect.countdown = 0;
   beast->objectEvent.timer = 0;
@@ -1334,19 +1334,19 @@ static void AltinPeak_ShowFirstBeastRoute(void) {
   beast->objectEvent.update = AltinPeak_UpdateBeastHops;
   ObjectEvent_SetSpeed(LOCALID_FIRST_WATER_BEAST, PIXELS(6) / 5, PIXELS(3) / 5);
   ObjectEvent_MoveToAndWait(LOCALID_FIRST_WATER_BEAST, 308, 291);
-  Engine_ObjectEventMoveToAndWait(LOCALID_FIRST_WATER_BEAST, 311, 215);
+  ObjectMotion_SetPositionAndCommit(LOCALID_FIRST_WATER_BEAST, 311, 215);
   beast->objectEvent.update = 0;
   beast->objectEvent.paused = 0;
-  Engine_ScriptWait(16);
+  FieldScript_WaitFrames(16);
   Engine_ObjectEventSetAnimation(LOCALID_FIRST_WATER_BEAST, ANIM_STAND);
   AltinPeak_PlayLandingShake(PIXELS(1), 4);
-  Engine_ScriptWait(40);
+  FieldScript_WaitFrames(40);
   ObjectEvent_FaceDirection(LOCALID_FIRST_WATER_BEAST,
                             FACING_NORTHWEST + FACING_STEP, 20);
   ObjectEvent_FaceDirection(LOCALID_FIRST_WATER_BEAST, FACING_WEST, 40);
   // Demonstrate Frost between the hopping sections.
   AltinPeak_BeastFreezesSecondPuddle();
-  Engine_ScriptWait(40);
+  FieldScript_WaitFrames(40);
   ObjectEvent_FaceDirection(LOCALID_FIRST_WATER_BEAST,
                             FACING_SOUTH + FACING_STEP, 20);
   ObjectEvent_FaceDirection(LOCALID_FIRST_WATER_BEAST,
@@ -1358,27 +1358,27 @@ static void AltinPeak_ShowFirstBeastRoute(void) {
   beast->objectEvent.update = AltinPeak_UpdateBeastHops;
   ObjectEvent_MoveToAndWait(LOCALID_FIRST_WATER_BEAST, 320, 232);
   ObjectEvent_MoveToAndWait(LOCALID_FIRST_WATER_BEAST, 340, 262);
-  Engine_ObjectEventMoveToAndWait(LOCALID_FIRST_WATER_BEAST, 374, 262);
+  ObjectMotion_SetPositionAndCommit(LOCALID_FIRST_WATER_BEAST, 374, 262);
   beast->objectEvent.update = 0;
-  Engine_ScriptWait(16);
+  FieldScript_WaitFrames(16);
   Engine_ObjectEventSetAnimation(LOCALID_FIRST_WATER_BEAST, ANIM_STAND);
   AltinPeak_PlayLandingShake(PIXELS(1), 4);
-  Engine_ScriptWait(20);
+  FieldScript_WaitFrames(20);
   ObjectEvent_FaceDirection(LOCALID_FIRST_WATER_BEAST,
                             FACING_NORTHEAST + FACING_STEP, 20);
-  Engine_ObjectEventFaceDirection(LOCALID_FIRST_WATER_BEAST,
-                                  FACING_NORTH + FACING_STEP, 40);
-  Engine_AudioPlayCue(SE_HIGH_JUMP);
+  ObjectMotion_ArmCallback(LOCALID_FIRST_WATER_BEAST,
+                           FACING_NORTH + FACING_STEP, 40);
+  Sound_PlaySong(SE_HIGH_JUMP);
   objectEvent = ObjectEvent_GetById(LOCALID_FIRST_WATER_BEAST);
   objectEvent->velocityY = PIXELS(4);
   Engine_ObjectEventSetAnimation(LOCALID_FIRST_WATER_BEAST,
                                  WATER_BEAST_ANIMATION_LEAP);
-  Engine_ObjectEventMoveToAndWait(LOCALID_FIRST_WATER_BEAST, 380, 248);
-  Engine_ScriptWait(10);
+  ObjectMotion_SetPositionAndCommit(LOCALID_FIRST_WATER_BEAST, 380, 248);
+  FieldScript_WaitFrames(10);
   AltinPeak_PlayLandingShake(PIXELS(1), 4);
-  Engine_ScriptWait(6);
+  FieldScript_WaitFrames(6);
   Engine_ObjectEventSetAnimation(LOCALID_FIRST_WATER_BEAST, ANIM_STAND);
-  Engine_ScriptWait(40);
+  FieldScript_WaitFrames(40);
   ObjectEvent_FaceDirection(LOCALID_FIRST_WATER_BEAST,
                             FACING_NORTHWEST + FACING_STEP, 20);
   ObjectEvent_FaceDirection(LOCALID_FIRST_WATER_BEAST, FACING_WEST, 40);
@@ -1390,21 +1390,21 @@ static void AltinPeak_ShowFirstBeastRoute(void) {
   ObjectEvent_MoveToAndWait(LOCALID_FIRST_WATER_BEAST, 329, 219);
   beast->objectEvent.update = 0;
   Engine_ObjectEventSetAnimation(LOCALID_FIRST_WATER_BEAST, ANIM_STAND);
-  Engine_ScriptWait(16);
+  FieldScript_WaitFrames(16);
   AltinPeak_PlayLandingShake(PIXELS(1), 4);
-  Engine_ScriptWait(40);
-  Engine_ObjectEventFaceDirection(LOCALID_FIRST_WATER_BEAST, FACING_WEST, 40);
+  FieldScript_WaitFrames(40);
+  ObjectMotion_ArmCallback(LOCALID_FIRST_WATER_BEAST, FACING_WEST, 40);
   ObjectEvent_GetById(LOCALID_FIRST_WATER_BEAST_ROOM_SECOND_PUDDLE)
       ->motionFlags = 0;
   // Open the route for the final two beast jumps.
   MapGrid_CopyCellAttributes(3, 0, 1, 1, 17, 13);
   MapGrid_CopyCellAttributes(3, 0, 1, 1, 18, 13);
   MapGrid_CopyCellAttributes(3, 0, 1, 1, 19, 13);
-  Engine_ObjectEventSetSpeed(LOCALID_FIRST_WATER_BEAST, PIXELS(7) / 5,
-                             PIXELS(7) / 10);
+  ObjectMotion_SetSpeedParameters(LOCALID_FIRST_WATER_BEAST, PIXELS(7) / 5,
+                                  PIXELS(7) / 10);
   objectEvent = ObjectEvent_GetById(LOCALID_FIRST_WATER_BEAST);
-  Engine_ObjectEventSetSpriteFlags(objectEvent, 0);
-  Engine_AudioPlayCue(SE_HIGH_JUMP);
+  ObjectEvent_SetSpriteFlags(objectEvent, 0);
+  Sound_PlaySong(SE_HIGH_JUMP);
   jumpSpeed = PIXELS(5);
   objectEvent = ObjectEvent_GetById(LOCALID_FIRST_WATER_BEAST);
   objectEvent->velocityY = jumpSpeed;
@@ -1413,10 +1413,10 @@ static void AltinPeak_ShowFirstBeastRoute(void) {
   ObjectEvent_MoveToAndWait(LOCALID_FIRST_WATER_BEAST, 295, 215);
   Engine_ObjectEventSetAnimation(LOCALID_FIRST_WATER_BEAST, ANIM_STAND);
   objectEvent = ObjectEvent_GetById(LOCALID_FIRST_WATER_BEAST);
-  Engine_ObjectEventSetSpriteFlags(objectEvent, 1);
+  ObjectEvent_SetSpriteFlags(objectEvent, 1);
   AltinPeak_PlayLandingShake(PIXELS(1), 4);
-  Engine_ScriptWait(40);
-  Engine_AudioPlayCue(SE_HIGH_JUMP);
+  FieldScript_WaitFrames(40);
+  Sound_PlaySong(SE_HIGH_JUMP);
   objectEvent = ObjectEvent_GetById(LOCALID_FIRST_WATER_BEAST);
   objectEvent->velocityY = jumpSpeed;
   Engine_ObjectEventSetAnimation(LOCALID_FIRST_WATER_BEAST,
@@ -1424,26 +1424,27 @@ static void AltinPeak_ShowFirstBeastRoute(void) {
   ObjectEvent_MoveToAndWait(LOCALID_FIRST_WATER_BEAST, 260, 215);
   Engine_ObjectEventSetAnimation(LOCALID_FIRST_WATER_BEAST, ANIM_STAND);
   AltinPeak_PlayLandingShake(PIXELS(1), 4);
-  Engine_ScriptWait(40);
+  FieldScript_WaitFrames(40);
   ObjectEvent_FaceDirection(LOCALID_FIRST_WATER_BEAST,
                             FACING_SOUTH + FACING_STEP, 20);
-  Engine_ObjectEventFaceDirection(LOCALID_FIRST_WATER_BEAST,
-                                  FACING_SOUTHEAST + FACING_STEP, 20);
-  Engine_AudioPlayCue(SE_147);
-  Engine_ObjectEventRunRepeatedMotion(LOCALID_FIRST_WATER_BEAST, 2);
-  Engine_ScriptWait(40);
+  ObjectMotion_ArmCallback(LOCALID_FIRST_WATER_BEAST,
+                           FACING_SOUTHEAST + FACING_STEP, 20);
+  Sound_PlaySong(SE_147);
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_FIRST_WATER_BEAST, 2);
+  FieldScript_WaitFrames(40);
   MapGrid_CopyCellAttributes(4, 0, 1, 1, 17, 13);
   MapGrid_CopyCellAttributes(2, 0, 1, 1, 18, 13);
   MapGrid_CopyCellAttributes(4, 0, 1, 1, 19, 13);
   leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
-  Engine_CameraSetSpeed(PIXELS(24) / 5, PIXELS(3) / 5);
-  Engine_CameraMoveTo(leader->x.fixed, leader->y.fixed, leader->z.fixed, 1);
-  Engine_CameraWaitForMove();
+  FieldCamera_SetSpeedParameters(PIXELS(24) / 5, PIXELS(3) / 5);
+  FieldCamera_MoveWithinMapBounds(leader->x.fixed, leader->y.fixed,
+                                  leader->z.fixed, 1);
+  FieldCamera_WaitForArrival();
   Object_SetTargetAndCallback(LOCALID_FIRST_WATER_BEAST,
                               OBJ_EVENT_LINK_KEEP_MOTION | LOCALID_PARTY_LEADER,
                               gAltinPeak_FaceLeaderScript);
   Engine_GameFlagSet(FLAG_ALTIN_PEAK_FIRST_BEAST_ROUTE_SEEN);
-  Engine_ScriptEnd();
+  FieldScript_End();
 }
 
 /// Stepping near the beast again: it hops back over the ice and settles down,
@@ -1455,14 +1456,14 @@ static void AltinPeak_ShowSecondBeastRoute(void) {
 
   objectEvent =
       (union FieldObject *)ObjectEvent_GetById(LOCALID_FIRST_WATER_BEAST);
-  Engine_ScriptStart();
+  FieldScript_Start();
   ObjectMotion_EnableActionAndResetMotion(LOCALID_FIRST_WATER_BEAST);
   FieldCamera_SetSpeed(PIXELS(12) / 5, PIXELS(3) / 10);
   FieldCamera_MoveTo(PIXELS(279), PIXELS(64), PIXELS(216), 1);
-  Engine_CameraWaitForMove();
-  Engine_AudioPlayCue(SE_147);
-  Engine_ObjectEventRunRepeatedMotion(LOCALID_FIRST_WATER_BEAST, 2);
-  Engine_ScriptWait(40);
+  FieldCamera_WaitForArrival();
+  Sound_PlaySong(SE_147);
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_FIRST_WATER_BEAST, 2);
+  FieldScript_WaitFrames(40);
   ObjectEvent_FaceDirection(LOCALID_FIRST_WATER_BEAST,
                             FACING_SOUTHEAST + FACING_STEP, 20);
   ObjectEvent_FaceDirection(LOCALID_FIRST_WATER_BEAST,
@@ -1480,34 +1481,34 @@ static void AltinPeak_ShowSecondBeastRoute(void) {
   ObjectEvent_MoveToAndWait(LOCALID_FIRST_WATER_BEAST, 103, 200);
   objectEvent->objectEvent.update = NULL;
   objectEvent->objectEvent.paused = 0;
-  Engine_ScriptWait(10);
+  FieldScript_WaitFrames(10);
   Engine_ObjectEventSetAnimation(LOCALID_FIRST_WATER_BEAST, ANIM_STAND);
   AltinPeak_PlayLandingShake(PIXELS(1), 4);
-  Engine_ScriptWait(20);
+  FieldScript_WaitFrames(20);
   ObjectEvent_FaceDirection(LOCALID_FIRST_WATER_BEAST,
                             FACING_SOUTH + FACING_STEP, 40);
   ObjectEvent_GetById(LOCALID_FIRST_WATER_BEAST)->steeringFlags &=
       ~OBJ_EVENT_FACES_MOTION;
   ObjectEvent_SetSpeed(LOCALID_FIRST_WATER_BEAST, PIXELS(6) / 5, PIXELS(3) / 5);
   movingObjectEvent = ObjectEvent_GetById(LOCALID_FIRST_WATER_BEAST);
-  Engine_ObjectEventSetSpriteFlags(movingObjectEvent, 0);
-  Engine_AudioPlayCue(SE_HIGH_JUMP);
+  ObjectEvent_SetSpriteFlags(movingObjectEvent, 0);
+  Sound_PlaySong(SE_HIGH_JUMP);
   movingObjectEvent = ObjectEvent_GetById(LOCALID_FIRST_WATER_BEAST);
   movingObjectEvent->velocityY = PIXELS(4);
   ObjectEvent_SetAnimation(LOCALID_FIRST_WATER_BEAST,
                            WATER_BEAST_ANIMATION_SPIT);
-  Engine_ObjectEventMoveToAndWait(LOCALID_FIRST_WATER_BEAST, 86, 214);
+  ObjectMotion_SetPositionAndCommit(LOCALID_FIRST_WATER_BEAST, 86, 214);
   Engine_ObjectEventSetAnimation(LOCALID_FIRST_WATER_BEAST, ANIM_STAND);
   movingObjectEvent = ObjectEvent_GetById(LOCALID_FIRST_WATER_BEAST);
-  Engine_ObjectEventSetSpriteFlags(movingObjectEvent, 1);
-  Engine_ScriptWait(10);
+  ObjectEvent_SetSpriteFlags(movingObjectEvent, 1);
+  FieldScript_WaitFrames(10);
   AltinPeak_PlayLandingShake(PIXELS(2), 8);
-  Engine_ScriptWait(40);
+  FieldScript_WaitFrames(40);
   ObjectEvent_GetById(LOCALID_FIRST_WATER_BEAST)->steeringFlags |=
       OBJ_EVENT_FACES_MOTION;
   ObjectEvent_FaceDirection(LOCALID_FIRST_WATER_BEAST,
                             FACING_SOUTHEAST + FACING_STEP, 20);
-  Engine_ObjectEventFaceDirection(LOCALID_FIRST_WATER_BEAST, 0, 40);
+  ObjectMotion_ArmCallback(LOCALID_FIRST_WATER_BEAST, 0, 40);
   objectEvent->effect.countdown = 0;
   objectEvent->objectEvent.timer = 0;
   objectEvent->objectEvent.work = 0;
@@ -1517,30 +1518,30 @@ static void AltinPeak_ShowSecondBeastRoute(void) {
   objectEvent->objectEvent.update = NULL;
   objectEvent->objectEvent.paused = 0;
   Engine_ObjectEventSetAnimation(LOCALID_FIRST_WATER_BEAST, ANIM_STAND);
-  Engine_ScriptWait(16);
+  FieldScript_WaitFrames(16);
   AltinPeak_PlayLandingShake(PIXELS(1), 4);
-  Engine_ScriptWait(40);
-  Engine_ObjectEventFaceDirection(LOCALID_FIRST_WATER_BEAST, 0, 10);
-  Engine_AudioPlayCue(SE_147);
-  Engine_ObjectEventRunRepeatedMotion(LOCALID_FIRST_WATER_BEAST, 2);
-  Engine_ScriptWait(80);
+  FieldScript_WaitFrames(40);
+  ObjectMotion_ArmCallback(LOCALID_FIRST_WATER_BEAST, 0, 10);
+  Sound_PlaySong(SE_147);
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_FIRST_WATER_BEAST, 2);
+  FieldScript_WaitFrames(80);
   Engine_ObjectEventSetAnimation(LOCALID_FIRST_WATER_BEAST,
                                  WATER_BEAST_ANIMATION_SPIT);
   // End the route with a spray gust and a short skippable wait.
   AltinPeak_StartSpitting(PIXELS(130), 0, PIXELS(168), 0);
-  Engine_ScriptWait(60);
+  FieldScript_WaitFrames(60);
   for (waitedFrames = 0; waitedFrames < 60 && gKeysPressed == 0;
        waitedFrames++) {
-    Engine_ScriptWait(1);
+    FieldScript_WaitFrames(1);
   }
   objectEvent = (union FieldObject *)ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   FieldCamera_SetSpeed(PIXELS(24) / 5, PIXELS(3) / 5);
-  Engine_CameraMoveTo(objectEvent->objectEvent.x.fixed,
-                      objectEvent->objectEvent.y.fixed,
-                      objectEvent->objectEvent.z.fixed, 1);
-  Engine_CameraWaitForMove();
+  FieldCamera_MoveWithinMapBounds(objectEvent->objectEvent.x.fixed,
+                                  objectEvent->objectEvent.y.fixed,
+                                  objectEvent->objectEvent.z.fixed, 1);
+  FieldCamera_WaitForArrival();
   GameFlag_Set(FLAG_ALTIN_PEAK_SECOND_BEAST_ROUTE_SEEN);
-  Engine_ScriptEnd();
+  FieldScript_End();
 }
 
 /// Sets up the room being entered: puzzles already solved and the water
@@ -1579,32 +1580,32 @@ static void AltinPeak_RestoreFirstWaterBeastRoom(void) {
   struct ObjectEvent *objectEvent;
   struct MapGridScrollWork *grid;
 
-  if (Engine_GameFlagIsSet(FLAG_KEEP_PARTY_POSITION) == 0) {
+  if (GameFlag_Test(FLAG_KEEP_PARTY_POSITION) == 0) {
     if (gGameState.warpDest == WARP_DEST_AFTER_BATTLE) {
       AltinPeak_AwardFrostJewelAndDrain();
     }
   }
   AltinPeak_StartPaletteAnimation();
-  if (Engine_GameFlagIsSet(FLAG_ALTIN_MINE_FIRST_DRAIN) == 0) {
+  if (GameFlag_Test(FLAG_ALTIN_MINE_FIRST_DRAIN) == 0) {
     Engine_ObjectEventSetPosition(LOCALID_FIRST_WATER_BEAST_ROOM_PUDDLE, 0, 0);
   } else {
     objectEvent = ObjectEvent_GetById(LOCALID_FIRST_WATER_BEAST_ROOM_PUDDLE);
     if (objectEvent != 0) {
       objectEvent->priorityFlags = OBJ_EVENT_PRIORITY_UNDERFOOT;
-      Engine_ObjectEventSetSpriteFlags(objectEvent, 0);
+      ObjectEvent_SetSpriteFlags(objectEvent, 0);
     }
   }
   objectEvent =
       ObjectEvent_GetById(LOCALID_FIRST_WATER_BEAST_ROOM_SECOND_PUDDLE);
   if (objectEvent != 0) {
     objectEvent->priorityFlags = OBJ_EVENT_PRIORITY_UNDERFOOT;
-    Engine_ObjectEventSetSpriteFlags(objectEvent, 0);
+    ObjectEvent_SetSpriteFlags(objectEvent, 0);
   }
-  opened = Engine_GameFlagIsSet(FLAG_ALTIN_MINE_FIRST_DRAIN);
+  opened = GameFlag_Test(FLAG_ALTIN_MINE_FIRST_DRAIN);
   if (opened == 0) {
-    Engine_ObjectEventSetChildValue(LOCALID_FIRST_WATER_BEAST,
+    ObjectGroup_ConfigureChildValue(LOCALID_FIRST_WATER_BEAST,
                                     SPRITE_COLOR_RBG);
-    flag = Engine_GameFlagIsSet(FLAG_ALTIN_PEAK_SECOND_BEAST_ROUTE_SEEN);
+    flag = GameFlag_Test(FLAG_ALTIN_PEAK_SECOND_BEAST_ROUTE_SEEN);
     if (flag != 0) {
       Engine_ObjectEventSetAnimation(
           LOCALID_FIRST_WATER_BEAST_ROOM_SECOND_PUDDLE, 0);
@@ -1626,7 +1627,7 @@ static void AltinPeak_RestoreFirstWaterBeastRoom(void) {
       AltinPeak_StartSpitting(PIXELS(130), 0, PIXELS(168), 0);
       return;
     }
-    if (Engine_GameFlagIsSet(FLAG_ALTIN_PEAK_FIRST_BEAST_ROUTE_SEEN) == 0) {
+    if (GameFlag_Test(FLAG_ALTIN_PEAK_FIRST_BEAST_ROUTE_SEEN) == 0) {
       return;
     }
     Engine_ObjectEventSetAnimation(LOCALID_FIRST_WATER_BEAST_ROOM_SECOND_PUDDLE,
@@ -1651,7 +1652,7 @@ static void AltinPeak_RestoreFirstWaterBeastRoom(void) {
     MapGrid_CopyCellAttributes(0, 0, 1, 2, 3, 14);
     grid->flags &= 0xfdff;
     AltinPeak_MarkObjectEventTerrainCell(LOCALID_FIRST_WATER_BEAST_ROOM_PUDDLE);
-    if (Engine_GameFlagIsSet(FLAG_PUDDLE_FROZEN) != 0) {
+    if (GameFlag_Test(FLAG_PUDDLE_FROZEN) != 0) {
       Engine_ObjectEventSetAnimation(LOCALID_FIRST_WATER_BEAST_ROOM_PUDDLE,
                                      PUDDLE_ANIMATION_FROZEN);
       MapGrid_CopyCellAttributes(7, 13, 1, 1, 9, 13);
@@ -1661,7 +1662,7 @@ static void AltinPeak_RestoreFirstWaterBeastRoom(void) {
     }
     AltinPeak_MarkObjectEventTerrainCell(
         LOCALID_FIRST_WATER_BEAST_ROOM_SECOND_PUDDLE);
-    if (Engine_GameFlagIsSet(FLAG_SECOND_PUDDLE_FROZEN) != 0) {
+    if (GameFlag_Test(FLAG_SECOND_PUDDLE_FROZEN) != 0) {
       Engine_ObjectEventSetAnimation(
           LOCALID_FIRST_WATER_BEAST_ROOM_SECOND_PUDDLE,
           PUDDLE_ANIMATION_FROZEN);
@@ -1809,7 +1810,7 @@ static void AltinPeak_RestoreSpritzRoom(void) {
   struct ObjectEvent *objectEvent;
 
   objectEvent = ObjectEvent_Get(LOCALID_SPRITZ_ROOM_PUDDLE);
-  Engine_ObjectEventSetSpriteFlags(objectEvent, 0);
+  ObjectEvent_SetSpriteFlags(objectEvent, 0);
   AltinPeak_SettleSpritzRoomPillar();
   AltinPeak_MarkObjectEventTerrainCell(LOCALID_SPRITZ_ROOM_PUDDLE);
   if (GameFlag_IsSet(FLAG_PUDDLE_FROZEN) != 0) {
@@ -1869,8 +1870,7 @@ static void AltinPeak_RestoreFallingRocksRoom(void) {
   objectEvent = ObjectEvent_GetById(LOCALID_STANDING_LOG);
   Engine_ObjectEventSetPosition(LOCALID_FALLING_BOULDER, 0, 0);
   Engine_ObjectEventSetPosition(LOCALID_BOULDER_SHADOW, 0, 0);
-  Engine_ObjectEventSetSpriteFlags(ObjectEvent_GetById(LOCALID_BOULDER_SHADOW),
-                                   0);
+  ObjectEvent_SetSpriteFlags(ObjectEvent_GetById(LOCALID_BOULDER_SHADOW), 0);
   objectEvent->motionFlags = 0;
   objectEvent->scaleX = 9 * Q16_ONE / 10;
   objectEvent->scaleY = 3 * Q16_ONE / 5;
@@ -1882,21 +1882,21 @@ static void AltinPeak_RestoreFallingRocksRoom(void) {
     objectEvent->y.fixed += -PIXELS(8);
     objectEvent->sprite->rotation = 0xc000;
   }
-  if (Engine_GameFlagIsSet(FLAG_ALTIN_PEAK_BOULDER_FALLEN)) {
+  if (GameFlag_Test(FLAG_ALTIN_PEAK_BOULDER_FALLEN)) {
     MapGrid_CopyCellsTo(25, 36, 43, 36, 11, 9);
     MapGrid_CopyCellAttributes(25, 35, 10, 5, 43, 35);
-    Engine_MapGridRedraw();
-    Engine_TaskWait(1);
+    MapGrid_CenterOnFollowedPoint();
+    WaitFrames(1);
   }
   if (gGameState.warpDest ==
           ALTIN_PEAK_FALLING_ROCKS_FROM_ALTIN_PEAK_HYDROS_STATUE &&
-      !Engine_GameFlagIsSet(FLAG_KEEP_PARTY_POSITION)) {
-    Engine_ScriptStart();
+      !GameFlag_Test(FLAG_KEEP_PARTY_POSITION)) {
+    FieldScript_Start();
     ObjectEvent_GetById(LOCALID_PARTY_LEADER)->y.fixed = -PIXELS(88);
-    Engine_CameraMoveTo(PIXELS(792), -PIXELS(88), PIXELS(577), 0);
-    Engine_MapGridRedraw();
-    Engine_TaskWait(1);
-    Engine_ScriptEnd();
+    FieldCamera_MoveWithinMapBounds(PIXELS(792), -PIXELS(88), PIXELS(577), 0);
+    MapGrid_CenterOnFollowedPoint();
+    WaitFrames(1);
+    FieldScript_End();
   }
 }
 
@@ -1908,30 +1908,30 @@ static void AltinPeak_RestoreHydrosStatueRoom(void) {
   struct ObjectEvent *objectEvent;
   s16 warpDest;
 
-  statuesDefeated = Engine_GameFlagIsSet(FLAG_HYDROS_STATUES_DEFEATED);
+  statuesDefeated = GameFlag_Test(FLAG_HYDROS_STATUES_DEFEATED);
   if (statuesDefeated != 0) {
     Engine_ObjectEventSetPosition(LOCALID_STATUE, 0, 0);
     Engine_ObjectEventSetPosition(LOCALID_STATUE_SHADOW, 0, 0);
   } else {
     objectEvent = ObjectEvent_GetById(LOCALID_STATUE);
-    Engine_ObjectEventSetSpriteFlags(objectEvent, 0);
-    Engine_ObjectEventSetSpritePriority(LOCALID_STATUE_SHADOW, 3);
+    ObjectEvent_SetSpriteFlags(objectEvent, 0);
+    ObjectMotion_SetActionVariant(LOCALID_STATUE_SHADOW, 3);
     objectEvent = ObjectEvent_GetById(LOCALID_STATUE_SHADOW);
-    Engine_ObjectEventSetSpriteFlags(objectEvent, 0);
+    ObjectEvent_SetSpriteFlags(objectEvent, 0);
     ObjectEvent_GetById(LOCALID_STATUE_SHADOW)->collisionFlags =
         statuesDefeated;
   }
   warpDest = gGameState.warpDest;
   if (warpDest == ALTIN_PEAK_HYDROS_STATUE_FROM_ALTIN_PEAK_FALLING_ROCKS ||
       warpDest == 98) {
-    if (Engine_GameFlagIsSet(FLAG_KEEP_PARTY_POSITION) == 0) {
+    if (GameFlag_Test(FLAG_KEEP_PARTY_POSITION) == 0) {
       leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
-      Engine_ScriptStart();
+      FieldScript_Start();
       leader->y.fixed = PIXELS(16);
-      Engine_ScriptEnd();
+      FieldScript_End();
     }
   } else if (warpDest == WARP_DEST_AFTER_BATTLE) {
-    if (Engine_GameFlagIsSet(FLAG_KEEP_PARTY_POSITION) == 0) {
+    if (GameFlag_Test(FLAG_KEEP_PARTY_POSITION) == 0) {
       AltinPeak_CelebrateHydrosVictory();
     }
   }
@@ -1943,7 +1943,7 @@ static void AltinPeak_RestoreWestExitRoom(void) {
   struct ObjectEvent *objectEvent;
 
   objectEvent = ObjectEvent_Get(LOCALID_WEST_EXIT_ROOM_PILLAR);
-  Engine_ObjectEventSetSpriteFlags(objectEvent, 0);
+  ObjectEvent_SetSpriteFlags(objectEvent, 0);
   if (gGameState.warpDest == ALTIN_PEAK_WEST_EXIT_TUNNEL_FROM_CHEST_ROOM) {
     ObjectEvent_SetPosition(LOCALID_WEST_EXIT_ROOM_PILLAR, PIXELS(184),
                             PIXELS(328));
@@ -1956,7 +1956,7 @@ static void AltinPeak_InitializeSpray(struct ObjectEvent *spray) {
   spray->motionFlags = 0;
   spray->sprite->image.priority = 1;
   ObjectGroup_SetChildValue(spray, SPRITE_COLOR_BGR);
-  Engine_ObjectEventSetSpriteFlags(spray, 0);
+  ObjectEvent_SetSpriteFlags(spray, 0);
   spray->scaleX = 3 * Q16_ONE / 10;
   spray->scaleY = 3 * Q16_ONE / 10;
 }
@@ -2002,7 +2002,7 @@ static void AltinPeak_DriftSpray(union FieldObject *fieldObject) {
   else
     spray->timer = ((u32)(Engine_RandomNext() * 5) >> 16) * 2 + 2;
   if (--fieldObject->effect.countdown == 0)
-    Engine_ObjectDispatchRelease(spray);
+    ObjectEvent_Release(spray);
 }
 
 /// Task while a beast spits: every fourth frame a spray particle
@@ -2012,7 +2012,7 @@ static void AltinPeak_SpawnSpray(void) {
 
   if ((gFrameCount & 3) != 0)
     return;
-  spray = (union FieldObject *)Engine_ObjectCreate(
+  spray = (union FieldObject *)Object_CreateField(
       SPRITE_DUST_PUFF, gAltinPeak_SprayOrigin[0], gAltinPeak_SprayOrigin[1],
       gAltinPeak_SprayOrigin[2]);
   if (spray == NULL)
@@ -2022,7 +2022,7 @@ static void AltinPeak_SpawnSpray(void) {
   spray->effect.countdown = 20;
   AltinPeak_InitializeSpray(&spray->objectEvent);
   spray->effect.update = AltinPeak_DriftSpray;
-  ObjectEvent_SetMode(&spray->objectEvent, 1);
+  ObjectDispatch_SelectAnimation(&spray->objectEvent, 1);
 }
 
 /// A water beast starts spitting water from (x, y, z) toward facing (east, 0,
@@ -2050,9 +2050,9 @@ static void AltinPeak_SpawnDebris(void) {
     if (debris != NULL) {
       if (gFrameCount % 9 == 0) {
         if ((u32)(Engine_RandomNext() << 1) >> 16 != 0)
-          Engine_AudioPlayCue(SE_145);
+          Sound_PlaySong(SE_145);
         else
-          Engine_AudioPlayCue(SE_144);
+          Sound_PlaySong(SE_144);
       }
       debris->motionFlags = 0;
       scale = ((u32)(Engine_RandomNext() << 15) >> 16) + 3 * Q16_ONE / 10;
@@ -2060,11 +2060,11 @@ static void AltinPeak_SpawnDebris(void) {
       debris->scaleY = scale;
       debris->scaleX = scale;
       debris->frozen = 1;
-      Engine_ObjectEventSetSpriteFlags(debris, 0);
+      ObjectEvent_SetSpriteFlags(debris, 0);
       debris->priorityFlags &= ~OBJ_EVENT_PRIORITY_AUTOMATIC;
       debris->sprite->image.priority = 1;
-      ObjectEvent_SetMode(debris, 1);
-      Engine_ObjectSetScript(debris, gAltinPeak_DebrisScript);
+      ObjectDispatch_SelectAnimation(debris, 1);
+      ObjectEvent_SetScript(debris, gAltinPeak_DebrisScript);
       SET_VELOCITY(debris, (((u32)(Engine_RandomNext() * 6) >> 16) - 3) << 16,
                    PIXELS(8),
                    ((u32)(Engine_RandomNext() * 0x600) >> 16) - 0x300);
@@ -2088,18 +2088,18 @@ static void AltinPeak_SparkleIce(union FieldObject *fieldObject) {
 
 /// AltinPeakFirstWaterBeast's water beast casts Frost on the second puddle.
 static void AltinPeak_BeastFreezesSecondPuddle(void) {
-  Engine_PsynergyStart(ABILITY_FROST, 1);
-  Engine_PsynergySetTarget(LOCALID_FIRST_WATER_BEAST,
-                           LOCALID_FIRST_WATER_BEAST_ROOM_SECOND_PUDDLE);
-  Engine_PsynergyRaiseHands();
-  Engine_ObjectEventSetChildValue(LOCALID_FIRST_WATER_BEAST, SPRITE_COLOR_RBG);
-  Engine_PsynergyPlayEffect(1);
-  Engine_ObjectEventSetChildValue(LOCALID_FIRST_WATER_BEAST, SPRITE_COLOR_RBG);
-  Engine_PsynergyLowerHands();
-  Engine_ObjectEventSetChildValue(LOCALID_FIRST_WATER_BEAST, SPRITE_COLOR_RBG);
+  FieldEffect_LoadActionEffectResources(ABILITY_FROST, 1);
+  FieldEffect_SetupObjectPair(LOCALID_FIRST_WATER_BEAST,
+                              LOCALID_FIRST_WATER_BEAST_ROOM_SECOND_PUDDLE);
+  FieldEffect_StartCast();
+  ObjectGroup_ConfigureChildValue(LOCALID_FIRST_WATER_BEAST, SPRITE_COLOR_RBG);
+  Field_DispatchTypeHandler(1);
+  ObjectGroup_ConfigureChildValue(LOCALID_FIRST_WATER_BEAST, SPRITE_COLOR_RBG);
+  FieldEffect_StopCasterHook();
+  ObjectGroup_ConfigureChildValue(LOCALID_FIRST_WATER_BEAST, SPRITE_COLOR_RBG);
   FieldEffect_End();
-  Engine_AudioPlayCue(SE_STOP_SLOT3);
-  Engine_ObjectEventSetChildValue(LOCALID_FIRST_WATER_BEAST, SPRITE_COLOR_RBG);
+  Sound_PlaySong(SE_STOP_SLOT3);
+  ObjectGroup_ConfigureChildValue(LOCALID_FIRST_WATER_BEAST, SPRITE_COLOR_RBG);
 }
 
 /// Back from AltinPeakFirstWaterBeast's beast battle: the beast is gone and the
@@ -2109,76 +2109,76 @@ static void AltinPeak_AwardFrostJewelAndDrain(void) {
   struct ObjectEvent *leader;
 
   leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
-  Engine_ScriptStart();
+  FieldScript_Start();
   ObjectEvent_SetPosition(LOCALID_FIRST_WATER_BEAST, 0, 0);
   ObjectEvent_SetPosition(LOCALID_FIRST_WATER_BEAST_ROOM_PUDDLE, 0, 0);
   gFieldWork->transition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_SHAPE);
-  Engine_ScriptOpenScreen();
-  Engine_ScriptWaitForScreen();
-  Engine_ScriptWait(20);
-  Engine_ItemShowFound(ITEM_FROST_JEWEL, 3);
-  Engine_PartyGiveItem(ITEM_FROST_JEWEL, 0);
+  FieldScript_StartScreenTransition();
+  FieldScript_WaitTransitionFrames();
+  FieldScript_WaitFrames(20);
+  FieldEffect_StartEffectObject22(ITEM_FROST_JEWEL, 3);
+  PartyInventory_GiveItem(ITEM_FROST_JEWEL, 0);
   FieldCamera_GetScriptObject()->motionFlags = 0;
   FieldCamera_SetSpeed(PIXELS(8) / 5, PIXELS(1) / 5);
   FieldCamera_MoveTo(PIXELS(100), 0, PIXELS(249), 1);
-  Engine_CameraWaitForMove();
-  Engine_ScriptWait(20);
+  FieldCamera_WaitForArrival();
+  FieldScript_WaitFrames(20);
   AltinPeak_DrainFirstWater();
   FieldCamera_MoveTo(leader->x.fixed, leader->y.fixed, leader->z.fixed, 1);
-  Engine_CameraWaitForMove();
-  FieldScript_LoadAreaScript(gAltinPeak_FirstWaterBeastEventsDrained);
+  FieldCamera_WaitForArrival();
+  FieldScript_SetMapEvents(gAltinPeak_FirstWaterBeastEventsDrained);
   gFieldWork->transition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
-  Engine_ScriptEnd();
+  FieldScript_End();
 }
 
 /// Back from AltinPeakSecondWaterBeast's beast battle: the beast is gone, the
 /// mine cart waits at (328, 424), the switch is back in its first position, and
 /// the second drain runs.
 static void AltinPeak_DrainAfterSecondBeast(void) {
-  Engine_ScriptStart();
+  FieldScript_Start();
   Engine_ObjectEventSetPosition(LOCALID_SECOND_WATER_BEAST, 0, 0);
   Engine_ObjectEventSetPosition(LOCALID_CART, PIXELS(328), PIXELS(424));
   Engine_GameFlagSet(FLAG_ALTIN_PEAK_SECOND_WATER_BEAST_ROOM_SWITCH);
   AltinPeak_ToggleSecondWaterBeastRoomSwitchCells();
-  Engine_MapGridRedraw();
-  Engine_TaskWait(1);
+  MapGrid_CenterOnFollowedPoint();
+  WaitFrames(1);
   gFieldWork->transition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_SHAPE);
-  Engine_ScriptOpenScreen();
-  Engine_ScriptWaitForScreen();
+  FieldScript_StartScreenTransition();
+  FieldScript_WaitTransitionFrames();
   AltinPeak_DrainSecondWater();
   gFieldWork->transition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
-  Engine_ScriptEnd();
+  FieldScript_End();
 }
 
 /// Back from AltinPeakThirdWaterBeast's beast battle, the same way, with the
 /// third drain.
 static void AltinPeak_DrainAfterThirdBeast(void) {
-  Engine_ScriptStart();
+  FieldScript_Start();
   Engine_ObjectEventSetPosition(LOCALID_THIRD_WATER_BEAST, 0, 0);
   Engine_ObjectEventSetPosition(LOCALID_CART, PIXELS(488), PIXELS(138));
   Engine_GameFlagSet(FLAG_ALTIN_PEAK_THIRD_WATER_BEAST_ROOM_SWITCH);
   AltinPeak_ToggleThirdWaterBeastRoomSwitchCells();
-  Engine_MapGridRedraw();
-  Engine_TaskWait(1);
+  MapGrid_CenterOnFollowedPoint();
+  WaitFrames(1);
   gFieldWork->transition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_SHAPE);
-  Engine_ScriptOpenScreen();
-  Engine_ScriptWaitForScreen();
+  FieldScript_StartScreenTransition();
+  FieldScript_WaitTransitionFrames();
   AltinPeak_DrainThirdWater();
   gFieldWork->transition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
-  Engine_ScriptEnd();
+  FieldScript_End();
 }
 
 /// Task while the statue wakes: a rumble (SE_183) every second.
 static void AltinPeak_PlayHydrosRumble(void) {
   gAltinPeak_RumbleTicks++;
   if (gAltinPeak_RumbleTicks == 60) {
-    Engine_AudioPlayCue(SE_183);
+    Sound_PlaySong(SE_183);
     gAltinPeak_RumbleTicks = 0;
   }
 }
@@ -2187,7 +2187,7 @@ static void AltinPeak_PlayHydrosRumble(void) {
 /// to it, it rumbles and slides forward, and the battle with the Hydros statues
 /// starts.
 static void AltinPeak_StartHydrosBattle(void) {
-  Engine_ScriptStart();
+  FieldScript_Start();
   FieldCamera_SetSpeed(PIXELS(3) / 5, PIXELS(3) / 40);
   FieldCamera_MoveTo(PIXELS(328), -1, PIXELS(87), 1);
   ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(3) / 5, PIXELS(3) / 10);
@@ -2200,11 +2200,11 @@ static void AltinPeak_StartHydrosBattle(void) {
   Engine_ObjectEventSetAnimation(LOCALID_STATUE, 2);
   ObjectEvent_SetDestination(LOCALID_STATUE, 328, 104);
   ObjectEvent_SetDestination(LOCALID_STATUE_SHADOW, 328, 108);
-  Engine_ScriptWait(60);
+  FieldScript_WaitFrames(60);
   ObjectEvent_ShowEmote(LOCALID_PARTY_LEADER,
                         EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
-  Engine_ObjectEventStartRepeatedMotion(LOCALID_PARTY_LEADER, 2);
-  Engine_ObjectEventWaitForMove(LOCALID_STATUE);
+  ObjectMotion_SetVariantCallback(LOCALID_PARTY_LEADER, 2);
+  ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_STATUE);
   Battle_SetType(BATTLE_TYPE_SCRIPTED);
   FieldScript_SetNextDestination((s32)&MapId_AltinPeakHydrosStatue,
                                  WARP_DEST_AFTER_BATTLE);
@@ -2215,9 +2215,9 @@ static void AltinPeak_StartHydrosBattle(void) {
 /// Task while the statue sinks: it flickers every other frame.
 static void AltinPeak_FlickerStatue(void) {
   if (((gFrameCount >> 1) & 1) != 0) {
-    Engine_ObjectEventSetChildValue(LOCALID_STATUE, SPRITE_COLOR_WHITE);
+    ObjectGroup_ConfigureChildValue(LOCALID_STATUE, SPRITE_COLOR_WHITE);
   } else {
-    Engine_ObjectEventSetChildValue(LOCALID_STATUE, SPRITE_COLOR_GREY);
+    ObjectGroup_ConfigureChildValue(LOCALID_STATUE, SPRITE_COLOR_GREY);
   }
 }
 
@@ -2232,16 +2232,16 @@ static void AltinPeak_CelebrateHydrosVictory(void) {
   const s32 *celebrate;
   const s32 *party;
 
-  Engine_ScriptStart();
+  FieldScript_Start();
   ObjectEvent_SetPosition(LOCALID_STATUE, PIXELS(328), PIXELS(88));
   ObjectEvent_SetPosition(LOCALID_STATUE_SHADOW, PIXELS(328), PIXELS(88));
   Engine_ObjectEventSetAnimation(LOCALID_STATUE, 0);
   work = gFieldWork;
   work->transition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   work->transitionFrames = 40;
-  Engine_ScriptOpenScreen();
-  Engine_ScriptWaitForScreen();
-  Engine_ScriptWait(20);
+  FieldScript_StartScreenTransition();
+  FieldScript_WaitTransitionFrames();
+  FieldScript_WaitFrames(20);
   // Bring the party out for the victory conversation.
   leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   if (leader != 0) {
@@ -2264,28 +2264,28 @@ static void AltinPeak_CelebrateHydrosVictory(void) {
   ObjectEvent_FaceDirection(GARET, FACING_NORTH, 0);
   ObjectEvent_FaceDirection(IVAN, FACING_NORTH, 0);
   ObjectEvent_FaceDirection(MIA, FACING_NORTH, 40);
-  Engine_ObjectEventRunRepeatedMotion(GARET, 1);
+  ObjectMotion_SetVarCbAndRefresh(GARET, 1);
   ObjectEvent_FaceDirection(GARET, FACING_NORTHEAST, 10);
-  Engine_ScriptSetMessage(MsgAltinWeDidIsaacWeBeat);
+  FieldScript_SetMessageId(MsgAltinWeDidIsaacWeBeat);
   Script_ShowMessageAndWait(GARET, 0, 10);
-  Engine_ObjectEventRunRepeatedMotion(IVAN, 1);
+  ObjectMotion_SetVarCbAndRefresh(IVAN, 1);
   ObjectEvent_FaceDirection(IVAN, FACING_NORTHWEST, 10);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_SOUTHEAST, 0);
   Script_OpenMessage(IVAN, 0);
-  if (Engine_ScriptChooseYesNo(0, 0) == 0) {
-    Engine_ObjectEventSetAnimationAndWait(IVAN, ANIM_NOD);
+  if (FieldScript_AskYesNoWithObjectEventAnimation(0, 0) == 0) {
+    ObjectMotion_SetAnimationAndWait(IVAN, ANIM_NOD);
   } else {
-    Engine_ObjectEventSetAnimationAndWait(IVAN, ANIM_SHAKE_HEAD);
+    ObjectMotion_SetAnimationAndWait(IVAN, ANIM_SHAKE_HEAD);
     Script_SkipMessages(1);
   }
   Script_ShowMessageAndWait(IVAN, 0, 20);
   Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
   Engine_ObjectEventSetAnimation(GARET, ANIM_NOD);
   Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_PARTY_LEADER, ANIM_NOD);
-  Engine_ScriptWait(20);
-  Engine_ObjectEventRunRepeatedMotion(MIA, 2);
-  Engine_ScriptSetMessage(MsgAltinGuardianStatuesWereCreatedLong);
+  ObjectMotion_SetAnimationAndWait(LOCALID_PARTY_LEADER, ANIM_NOD);
+  FieldScript_WaitFrames(20);
+  ObjectMotion_SetVarCbAndRefresh(MIA, 2);
+  FieldScript_SetMessageId(MsgAltinGuardianStatuesWereCreatedLong);
   Script_ShowMessage(MIA, 0);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_SOUTH, 10);
   ObjectEvent_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
@@ -2299,7 +2299,7 @@ static void AltinPeak_CelebrateHydrosVictory(void) {
   ObjectEvent_ShowEmote(MIA, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
   Script_PlaySong(SE_190);
   ObjectEvent_SetChildValue(LOCALID_STATUE, SPRITE_COLOR_WHITE);
-  Engine_ScriptWait(10);
+  FieldScript_WaitFrames(10);
   Script_PlaySong(SONG_FADE_OUT_ACTION_SE);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_NORTH, 0);
   ObjectEvent_FaceDirection(GARET, FACING_NORTH, 0);
@@ -2317,40 +2317,40 @@ static void AltinPeak_CelebrateHydrosVictory(void) {
   celebrate = gAltinPeak_StatueSinkScript;
   ObjectEvent_SetActionScript(LOCALID_STATUE_SHADOW, celebrate);
   ObjectEvent_RunActionScriptAndWait(LOCALID_STATUE, celebrate);
-  Engine_TaskRemoveCallback(update);
-  Engine_ScriptWait(60);
-  Engine_ObjectEventRunRepeatedMotion(IVAN, 2);
-  Engine_ScriptWait(20);
+  Task_Remove(update);
+  FieldScript_WaitFrames(60);
+  ObjectMotion_SetVarCbAndRefresh(IVAN, 2);
+  FieldScript_WaitFrames(20);
   Script_ShowMessage(IVAN, 0);
   ObjectEvent_FaceDirection(GARET, FACING_NORTHEAST, 0);
   ObjectEvent_FaceDirection(IVAN, FACING_NORTHWEST, 20);
   Engine_ObjectEventSetAnimation(GARET, ANIM_NOD);
   Engine_ObjectEventSetAnimation(IVAN, ANIM_NOD);
-  Engine_ObjectEventSetAnimationAndWait(MIA, ANIM_NOD);
-  Engine_ScriptWait(20);
-  Engine_ObjectEventRunRepeatedMotion(MIA, 1);
+  ObjectMotion_SetAnimationAndWait(MIA, ANIM_NOD);
+  FieldScript_WaitFrames(20);
+  ObjectMotion_SetVarCbAndRefresh(MIA, 1);
   Script_ShowMessageAndWait(MIA, 0, 20);
   ObjectEvent_FaceDirection(GARET, FACING_NORTHEAST, 0);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_SOUTHWEST, 40);
-  Engine_ObjectEventSetAnimationAndWait(GARET, ANIM_NOD);
+  ObjectMotion_SetAnimationAndWait(GARET, ANIM_NOD);
   Script_ShowMessageAndWait(GARET, 0, 10);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_PARTY_LEADER, ANIM_NOD);
+  ObjectMotion_SetAnimationAndWait(LOCALID_PARTY_LEADER, ANIM_NOD);
   Engine_ObjectEventSetAnimation(GARET, ANIM_NOD);
   Engine_ObjectEventSetAnimation(IVAN, ANIM_NOD);
-  Engine_ObjectEventSetAnimationAndWait(MIA, ANIM_NOD);
-  Engine_ScriptWait(20);
+  ObjectMotion_SetAnimationAndWait(MIA, ANIM_NOD);
+  FieldScript_WaitFrames(20);
   // Return the companions and save the completed Hydros battle.
   party = gAltinPeak_RejoinScript;
   ObjectEvent_SetActionScript(GARET, party);
   ObjectEvent_SetActionScript(IVAN, party);
   ObjectEvent_RunActionScriptAndWait(MIA, party);
-  Engine_ScriptWait(20);
+  FieldScript_WaitFrames(20);
   gFieldWork->transition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   GameFlag_Clear(FLAG_SHOW_LOCATION_NAME);
   gFieldWork->transitionFrames = 16;
   GameFlag_Set(FLAG_HYDROS_STATUES_DEFEATED);
-  Engine_ScriptEnd();
+  FieldScript_End();
 }
 
 /// Unused: asks the field to use Frost (psynergy 0x1018, member 4 and
@@ -2372,9 +2372,9 @@ static void AltinPeak_UpdateFrostPillarPriority(void) {
       bit |= *flag;
       *flag = bit;
     }
-    Engine_ObjectEventSetSpritePriority(LOCALID_SPRITZ_ROOM_THIRD_PUDDLE, 3);
+    ObjectMotion_SetActionVariant(LOCALID_SPRITZ_ROOM_THIRD_PUDDLE, 3);
   } else {
-    Engine_ObjectEventSetSpritePriority(LOCALID_SPRITZ_ROOM_THIRD_PUDDLE, 2);
+    ObjectMotion_SetActionVariant(LOCALID_SPRITZ_ROOM_THIRD_PUDDLE, 2);
   }
 }
 
@@ -2398,43 +2398,43 @@ static void AltinPeak_StopCartAndJumpOff(struct ObjectEvent *objectEvent) {
   struct Sprite *sprite;
   struct ObjectEvent *leader;
 
-  Engine_AudioPlayCue(SE_STOP_SLOT3);
-  Engine_AudioPlayCue(SE_232);
+  Sound_PlaySong(SE_STOP_SLOT3);
+  Sound_PlaySong(SE_232);
   x = objectEvent->x.fixed & 0xfff00000;
   centerZ = PIXELS(8);
   z = objectEvent->z.fixed & 0xfff00000;
   objectEvent->acceleration = PIXELS(2);
   x += centerZ;
   centerZ += z;
-  Engine_ObjectSetPosition(objectEvent, x, objectEvent->y.fixed, centerZ);
+  Object_SetPosition(objectEvent, x, objectEvent->y.fixed, centerZ);
   Object_WaitForMove(objectEvent);
   objectEvent->layer = 0;
   objectEvent->x.fixed = x;
   objectEvent->z.fixed = centerZ;
   objectEvent->velocityX = 0;
   objectEvent->velocityZ = 0;
-  ObjectEvent_SetMode(objectEvent, 2);
-  Engine_TaskWait(15);
-  ObjectEvent_SetMode(objectEvent, 1);
-  Engine_TaskWait(30);
+  ObjectDispatch_SelectAnimation(objectEvent, 2);
+  WaitFrames(15);
+  ObjectDispatch_SelectAnimation(objectEvent, 1);
+  WaitFrames(30);
   sprite = objectEvent->sprite;
   sprite->count = 1;
   SpriteAnim_Clear(sprite->entries[1]);
   sprite->entries[1] = NULL;
   sprite->dirty = 1;
-  leader = Engine_ObjectEventLookup(gGameState.leaderLocalId);
-  Engine_AudioPlayCue(SE_JUMP);
+  leader = ObjectEvent_GetByLocalId(gGameState.leaderLocalId);
+  Sound_PlaySong(SE_JUMP);
   leader->x.fixed = x;
   leader->velocityY = PIXELS(6);
   leader->gravity = PIXELS(1);
   leader->z.fixed = centerZ;
   leader->sprite->image.priority = 0;
-  ObjectEvent_SetMode(leader, 7);
-  Engine_ObjectSetPosition(leader, x, leader->y.fixed, z + PIXELS(24));
+  ObjectDispatch_SelectAnimation(leader, 7);
+  Object_SetPosition(leader, x, leader->y.fixed, z + PIXELS(24));
   leader->facing = FACING_SOUTH;
-  Engine_TaskWait(20);
+  WaitFrames(20);
   leader->sprite->image.priority = 2;
-  Engine_AudioPlayCue(SE_159);
+  Sound_PlaySong(SE_159);
 }
 
 /// Unused: an empty function nothing calls.
@@ -2457,9 +2457,9 @@ static void AltinPeak_TurnCartRight(struct ObjectEvent *objectEvent) {
   x = (point->x + PIXELS(8)) & 0xfff00000;
   z = (point->z + PIXELS(8)) & 0xfff00000;
   angle += 0x8000;
-  ObjectEvent_SetMode(objectEvent, 5);
+  ObjectDispatch_SelectAnimation(objectEvent, 5);
   turnFrame = 0;
-  Engine_AudioPlayCue(SE_184);
+  Sound_PlaySong(SE_184);
   while (turnFrame < 16) {
     angle += 0x400;
     point->x = x;
@@ -2468,10 +2468,10 @@ static void AltinPeak_TurnCartRight(struct ObjectEvent *objectEvent) {
     objectEvent->x.fixed = point->x;
     objectEvent->z.fixed = point->z;
     objectEvent->facing = angle + 0x4000;
-    Engine_TaskWait(1);
+    WaitFrames(1);
     turnFrame++;
   }
-  Engine_AudioPlayCue(SE_CART_ROLL);
+  Sound_PlaySong(SE_CART_ROLL);
 }
 
 /// The cart turns a quarter turn left.
@@ -2491,9 +2491,9 @@ static void AltinPeak_TurnCartLeft(struct ObjectEvent *objectEvent) {
   x = (point->x + PIXELS(8)) & 0xfff00000;
   z = (point->z + PIXELS(8)) & 0xfff00000;
   angle += 0x8000;
-  ObjectEvent_SetMode(objectEvent, 6);
+  ObjectDispatch_SelectAnimation(objectEvent, 6);
   turnFrame = 0;
-  Engine_AudioPlayCue(SE_184);
+  Sound_PlaySong(SE_184);
   while (turnFrame < 16) {
     angle -= 0x400;
     point->x = x;
@@ -2502,17 +2502,17 @@ static void AltinPeak_TurnCartLeft(struct ObjectEvent *objectEvent) {
     objectEvent->x.fixed = point->x;
     objectEvent->z.fixed = point->z;
     objectEvent->facing = angle - 0x4000;
-    Engine_TaskWait(1);
+    WaitFrames(1);
     turnFrame++;
   }
-  Engine_AudioPlayCue(SE_CART_ROLL);
+  Sound_PlaySong(SE_CART_ROLL);
 }
 
 /// The cart rolls over a marked cell: SE_STOP_SLOT3 plays, and SE_184 and
 /// SE_CART_ROLL follow as its countdown runs out.
 static void AltinPeak_StartCartCountdown(struct ObjectEvent *objectEvent) {
   objectEvent->work = 33;
-  Engine_AudioPlayCue(SE_STOP_SLOT3);
+  Sound_PlaySong(SE_STOP_SLOT3);
 }
 
 /// Rolls the cart on by a frame and picks its animation from the terrain ahead
@@ -2532,10 +2532,10 @@ static void AltinPeak_AdvanceCart(struct ObjectEvent *objectEvent) {
   timer = (s16 *)&objectEvent->work;
   if (*timer != 0) {
     if (--*timer == 20) {
-      Engine_AudioPlayCue(SE_184);
+      Sound_PlaySong(SE_184);
     }
     if (*timer == 0) {
-      Engine_AudioPlayCue(SE_CART_ROLL);
+      Sound_PlaySong(SE_CART_ROLL);
     }
   }
   point = &position;
@@ -2551,11 +2551,11 @@ static void AltinPeak_AdvanceCart(struct ObjectEvent *objectEvent) {
   behind = MapGrid_GetTerrainHeight(2, point->x, point->z);
   if (*timer <= 20) {
     if (ahead == behind) {
-      ObjectEvent_SetMode(objectEvent, 2);
+      ObjectDispatch_SelectAnimation(objectEvent, 2);
     } else if (ahead > behind) {
-      ObjectEvent_SetMode(objectEvent, 3);
+      ObjectDispatch_SelectAnimation(objectEvent, 3);
     } else {
-      ObjectEvent_SetMode(objectEvent, 4);
+      ObjectDispatch_SelectAnimation(objectEvent, 4);
     }
   }
 }
@@ -2575,11 +2575,11 @@ enum AltinPeakCartCell {
 static void AltinPeak_RollCart(s32 id, s32 heading) {
   struct ObjectEvent *objectEvent = ObjectEvent_GetById(id);
   struct ObjectEvent *leader =
-      Engine_ObjectEventLookup(gGameState.leaderLocalId);
+      ObjectEvent_GetByLocalId(gGameState.leaderLocalId);
   struct FieldPosition position;
   s32 directionIndex;
 
-  Engine_ScriptStart();
+  FieldScript_Start();
   if (heading == -1) {
     heading = objectEvent->facing;
   }
@@ -2601,8 +2601,8 @@ static void AltinPeak_RollCart(s32 id, s32 heading) {
   leader->x.fixed = 0;
   leader->z.fixed = 0;
   Sprite_AddAnim(objectEvent->sprite, 16);
-  Engine_CameraFollowObjectEvent(id, 1);
-  Engine_CameraWaitForMove();
+  FieldCamera_FollowObjectEvent(id, 1);
+  FieldCamera_WaitForArrival();
   FieldCamera_SetSpeed(PIXELS(16), PIXELS(2));
   objectEvent->facing = heading;
   objectEvent->speed = PIXELS(2);
@@ -2614,10 +2614,9 @@ static void AltinPeak_RollCart(s32 id, s32 heading) {
   position.y = objectEvent->y.fixed;
   position.z = objectEvent->z.fixed;
   FieldVector_AddPolarOffset(PIXELS(24), heading, &position);
-  Engine_ObjectSetPosition(objectEvent, position.x, objectEvent->y.fixed,
-                           position.z);
+  Object_SetPosition(objectEvent, position.x, objectEvent->y.fixed, position.z);
   Object_WaitForMove(objectEvent);
-  Engine_AudioPlayCue(SE_CART_ROLL);
+  Sound_PlaySong(SE_CART_ROLL);
   // The route cells select turns, a countdown sound, and the destination.
   for (;;) {
     switch (MapGrid_GetMetatileBehaviorAt(2, objectEvent->x.fixed,
@@ -2635,11 +2634,11 @@ static void AltinPeak_RollCart(s32 id, s32 heading) {
       goto arrived;
     }
     AltinPeak_AdvanceCart(objectEvent);
-    Engine_TaskWait(1);
+    WaitFrames(1);
   }
 arrived:
   AltinPeak_StopCartAndJumpOff(objectEvent);
-  Engine_ScriptEnd();
+  FieldScript_End();
 }
 
 /// Task that cycles the water's palette colors through

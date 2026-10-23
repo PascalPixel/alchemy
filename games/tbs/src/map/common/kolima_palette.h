@@ -37,7 +37,7 @@ void KolimaPalette_Curse(s32 strength) {
   }
   KolimaPalette_Capture();
   KolimaPalette_SaveSecond();
-  Engine_ColorBufferApplyTarget(0x10000, 0);
+  PaletteFade_SetTarget(0x10000, 0);
 }
 
 /// One cursed colour: red gains a 4 * adj'th of itself (up to 31), and green
@@ -83,11 +83,12 @@ static void KolimaPalette_Capture(void) {
           REG_DMA3);
   Dma_Set((const void *)OBJ_PLTT, buf + 0xe0,
           (DMA_ENABLE | DMA_32BIT) << 16 | 0x70, REG_DMA3);
-  Engine_ColorBufferApplySource(0x10000, 0);
+  PaletteFade_SetSource(0x10000, 0);
 }
 
 /// Makes the healthy colours (second 0) or the cursed ones (second 1) the
-/// colours to fade to; the scene then fades with Engine_ColorBufferInterpolate.
+/// colours to fade to; the scene then fades with
+/// PaletteFade_StartInterpolation.
 void KolimaPalette_Restore(s32 second) {
   u16 *buf = gPaletteFadeWork->palette;
 
@@ -97,6 +98,6 @@ void KolimaPalette_Restore(s32 second) {
   else
     Dma_Set(gKolimaPalette_First, buf, (DMA_ENABLE | DMA_32BIT) << 16 | 0xe0,
             REG_DMA3);
-  Engine_ColorBufferApplyTarget(0x10000, 0);
+  PaletteFade_SetTarget(0x10000, 0);
   KolimaPalette_Capture();
 }

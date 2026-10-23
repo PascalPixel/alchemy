@@ -286,8 +286,7 @@ void TreasureSpot_Hide(s32 id) {
 }
 
 /// Moves the object of treasure spot id to (x, z) on the ground; -1 keeps the
-/// centre of its cell on that axis. Positions are 16.16. Map overlays call it
-/// as Engine_MarkerSetPosition.
+/// centre of its cell on that axis. Positions are 16.16. Map overlays call it.
 void TreasureSpot_SetObjectEventPosition(s32 id, s32 x, s32 z) {
   s32 slotIndex;
   s32 groundHeight;

@@ -167,6 +167,4 @@ STATIC_ASSERT(offsetof(struct ItemDefinition, element) == 0x14);
 STATIC_ASSERT(offsetof(struct ItemDefinition, effects) == 0x18);
 STATIC_ASSERT(offsetof(struct ItemDefinition, abilityId) == 0x28);
 
-struct ItemDefinition *Item_Get(s32 item);
-
 #endif

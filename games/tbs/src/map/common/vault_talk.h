@@ -11,10 +11,10 @@ static void Vault_ShowThought(s32 localId) {
   s32 zero = 0;
 
   *paused = 1;
-  Engine_ScriptStart();
+  FieldScript_Start();
   Engine_ObjectEventSetAnimation(localId, ANIM_STAND);
-  Engine_ScriptWait(2);
-  Engine_ScriptShowMessage(localId, 0);
-  Engine_ScriptEnd();
+  FieldScript_WaitFrames(2);
+  FieldScript_ShowMessageAndWait(localId, 0);
+  FieldScript_End();
   *paused = zero;
 }

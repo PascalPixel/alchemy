@@ -122,16 +122,16 @@ UNUSED static void PushedObject_AdvancePair(void) {
   if (next->riseCounter != 0)
     return;
 
-  ObjectEvent_SetMode(lead, 8);
+  ObjectDispatch_SelectAnimation(lead, 8);
   rate = 0x3333;
-  Engine_TaskWait(15);
-  Engine_AudioPlayCue(SE_PUSH);
+  WaitFrames(15);
+  Sound_PlaySong(SE_PUSH);
   next->speed = rate;
   next->acceleration = rate;
-  Engine_ObjectSetPosition(next, dst.x, dst.y, dst.z);
+  Object_SetPosition(next, dst.x, dst.y, dst.z);
   lead->speed = rate;
   lead->acceleration = rate;
-  Engine_ObjectSetPosition(lead, dst.x, dst.y, dst.z);
+  Object_SetPosition(lead, dst.x, dst.y, dst.z);
   Object_WaitForMove(next);
   Map_PlayQueuedMusic();
   next->x.fixed = dst.x;
@@ -144,7 +144,7 @@ UNUSED static void PushedObject_AdvancePair(void) {
   lead->velocityZ = 0;
   lead->x.fixed = lead->x.part.pixel << 16;
   lead->z.fixed = lead->z.part.pixel << 16;
-  ObjectEvent_SetMode(lead, 1);
+  ObjectDispatch_SelectAnimation(lead, 1);
 }
 
 /// Sets the metatile behavior of a width by height rectangle of cells, from
@@ -459,9 +459,9 @@ UNUSED static void ObjectEvent_MoveAndRedraw(struct PushedObjectProbe probe) {
 
   PushedObject_FillGridAttributeRectangle(0, tilePosition.x, tilePosition.z,
                                           horizontalExtent, verticalExtent, 0);
-  Engine_ObjectEventSetSpeed(0, 0x8000, 0x1999);
+  ObjectMotion_SetSpeedParameters(0, 0x8000, 0x1999);
   Engine_ObjectEventSetAnimation(0, ANIM_PUSH);
-  Engine_ScriptWait(15);
+  FieldScript_WaitFrames(15);
 
   {
     s32 horizontalDelta = probe.position.x - originalPosition.x;
@@ -473,7 +473,8 @@ UNUSED static void ObjectEvent_MoveAndRedraw(struct PushedObjectProbe probe) {
       if (verticalDelta < 0)
         verticalDelta += 0x1ffff;
       verticalDelta >>= 17;
-      Engine_ObjectEventSetDestinationOffset(0, horizontalDelta, verticalDelta);
+      ObjectMotion_OffsetPositionAndResetMotion(0, horizontalDelta,
+                                                verticalDelta);
     }
   }
 
@@ -483,39 +484,39 @@ UNUSED static void ObjectEvent_MoveAndRedraw(struct PushedObjectProbe probe) {
   ObjectEvent_GetById(0)->update =
       (void (*)(union FieldObject *))PushedObject_StopBlockedMotion;
 #endif
-  Engine_ScriptWait(4);
+  FieldScript_WaitFrames(4);
   if ((u32)(direction - 6) <= 7)
-    ObjectEvent_SetMode(objectEvent, 3);
+    ObjectDispatch_SelectAnimation(objectEvent, 3);
   else
-    ObjectEvent_SetMode(objectEvent, 2);
+    ObjectDispatch_SelectAnimation(objectEvent, 2);
 
-  Engine_AudioPlayCue(SE_HEAVY_MOVE);
-  Engine_ObjectSetPosition(objectEvent, probe.position.x, probe.position.y,
-                           probe.position.z);
-  Engine_ObjectEventWaitForMove(0);
+  Sound_PlaySong(SE_HEAVY_MOVE);
+  Object_SetPosition(objectEvent, probe.position.x, probe.position.y,
+                     probe.position.z);
+  ObjectMotion_CommitCurrentPositionAndActivate(0);
   Engine_ObjectEventSetAnimation(0, 2);
   ObjectEvent_SetSpeed(0, 0x4ccc, 0x1999);
 
   {
     s32 packedOrientation = gPushedObject_DirectionSteps[direction];
-    Engine_ObjectEventSetDestinationOffset(
+    ObjectMotion_OffsetPositionAndResetMotion(
         0, ((s16)(packedOrientation >> 16)) / 2, ((s16)packedOrientation) / 2);
   }
   if (probe.callback != 0)
     probe.callback();
 
-  Engine_ObjectEventWaitForMove(0);
+  ObjectMotion_CommitCurrentPositionAndActivate(0);
   Engine_ObjectEventSetAnimation(0, 1);
   ObjectEvent_GetById(0)->update = NULL;
   Object_WaitForMove(objectEvent);
-  Engine_AudioPlayCue(SE_STOP_SLOT3);
-  Engine_AudioPlayCue(SE_HEAVY_STOP);
+  Sound_PlaySong(SE_STOP_SLOT3);
+  Sound_PlaySong(SE_HEAVY_STOP);
 
   objectEvent->x.fixed = probe.position.x;
   objectEvent->z.fixed = probe.position.z;
   objectEvent->velocityX = 0;
   objectEvent->velocityZ = 0;
-  ObjectEvent_SetMode(objectEvent, 1);
+  ObjectDispatch_SelectAnimation(objectEvent, 1);
 
   {
     u8 *table = (u8 *)gPushedObject_FootprintBounds;
@@ -558,9 +559,9 @@ UNUSED static void ObjectEvent_MoveAndRedraw(struct PushedObjectProbe probe) {
     horizontalOrigin += originalPosition.x;
     verticalOrigin += originalPosition.z;
 
-    Engine_MapGridCopyCellAttributes(horizontalOrigin, verticalOrigin,
-                                     horizontalExtent, verticalExtent,
-                                     originalPosition.x, originalPosition.z);
+    MapGrid_CopyCellAttributeRect(horizontalOrigin, verticalOrigin,
+                                  horizontalExtent, verticalExtent,
+                                  originalPosition.x, originalPosition.z);
     PushedObject_FillGridAttributeRectangle(
         2, originalPosition.x, originalPosition.z, horizontalExtent,
         verticalExtent, 0);
@@ -620,9 +621,9 @@ UNUSED static s32 Map_RedrawObjectEventFootprint(s32 id) {
   probe.position.z >>= 20;
   idx = grid->layers[1].offsetX >> 20;
   dstZ = grid->layers[1].offsetY >> 20;
-  Engine_MapGridCopyCellAttributes(probe.position.x, probe.position.z, width,
-                                   height, idx + probe.position.x,
-                                   dstZ + probe.position.z);
+  MapGrid_CopyCellAttributeRect(probe.position.x, probe.position.z, width,
+                                height, idx + probe.position.x,
+                                dstZ + probe.position.z);
   PushedObject_FillGridAttributeRectangle(0, probe.position.x, probe.position.z,
                                           width, height, 255);
   PushedObject_FillGridAttributeRectangle(2, probe.position.x, probe.position.z,

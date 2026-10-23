@@ -9,7 +9,7 @@
 /// storm's lightning while the storm rages (FLAG_VALE_STORM).
 static void Vale_RequestBackdropWarp(s32 no) {
   struct EventWork *p;
-  if (Engine_GameFlagIsSet(FLAG_VALE_STORM) != 0) {
+  if (GameFlag_Test(FLAG_VALE_STORM) != 0) {
     Weather_StopLightning();
   }
   p = gFieldWork;

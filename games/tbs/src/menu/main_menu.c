@@ -164,11 +164,11 @@ static void MainMenu_LoadBackground(void) {
   s32 blankTile;
 
   resourceId = (s32)&ResourceId_GoldenSunLogo;
-  Engine_BlendSetDarkenTarget16(0);
+  ScreenFade_ToBlack(0);
   REG_BG2CNT = LOGO_BGCNT;
   gBgScroll[2].y = 0;
   blankTile = LOGO_BLANK_TILE;
-  resource = Engine_ResourceGetTableEntry(resourceId);
+  resource = Resource_GetTableEntry(resourceId);
   Dma_Set(resource, (void *)BG_PLTT, (DMA_ENABLE | DMA_32BIT) << 16 | 0x70,
           REG_DMA3);
   resource += 0x1c0;
@@ -222,7 +222,7 @@ static void MainMenu_UpdateBlend(void) {
   IO_WRITE_QUEUE_PUSH((u32)&REG_BLDALPHA,
                       BLEND_ALPHA((u16)level, 16 - (u16)level), 0x20000);
   if ((u16)level > 15)
-    Engine_TaskRemoveCallback(MainMenu_UpdateBlend);
+    Task_Remove(MainMenu_UpdateBlend);
 }
 
 // clang-format off
@@ -268,7 +268,7 @@ static void MainMenu_CheckButtonCodes(void) {
         if (MAIN_MENU_SEQUENCE_KEYS(
                 gMainMenu_CodeSequence)[gMainMenu_CodeProgress] == 0) {
           gMainMenu_CodeUnlocked = 1;
-          Engine_AudioPlayCue(SE_110);
+          Sound_PlaySong(SE_110);
         }
       } else {
         gMainMenu_CodeProgress = 0;
@@ -289,7 +289,7 @@ static void MainMenu_CheckButtonCodes(void) {
                 gMainMenu_ExtraCodeSequence)[gMainMenu_ExtraCodeProgress] ==
             0) {
           gMainMenu_ExtraCodeUnlocked = 1;
-          Engine_AudioPlayCue(SE_110);
+          Sound_PlaySong(SE_110);
         }
       } else {
         gMainMenu_ExtraCodeProgress = 0;
@@ -371,7 +371,7 @@ static void MainMenu_NamingScreenCharacter(s32 cell, u8 *text) {
 static s32 MainMenu_GetSaveRecoveryBlockMask(void) {
   s32 mapDifference;
 
-  if (Engine_GameFlagIsSet(FLAG_RETREAT_BLOCKED) == 0) {
+  if (GameFlag_Test(FLAG_RETREAT_BLOCKED) == 0) {
     return 0;
   }
   if (gGameState.mapType == MAP_TYPE_TOWN) {
@@ -446,8 +446,8 @@ s32 MainMenu_Run(void) {
   MainMenu_LoadBackground();
   FieldScheduler_AddCallback(MainMenu_CheckButtonCodes, 0xc80);
   gFieldWork->transition = blendStarted;
-  Engine_ScriptOpenScreen();
-  Engine_ScriptWaitForScreen();
+  FieldScript_StartScreenTransition();
+  FieldScript_WaitTransitionFrames();
   // Warp destination 2, after the credits (Title_Run): save the cleared game,
   // then the world map's warp destination 72. Cancelling the file choice asks
   // again.
@@ -466,10 +466,10 @@ s32 MainMenu_Run(void) {
         goto L_ask;
       }
     }
-    Engine_ScriptWait(60);
-    Engine_ScriptCloseScreen();
-    Engine_AudioPlayCue(SONG_FADE_OUT_BGM);
-    Engine_ScriptWait(0x12c);
+    FieldScript_WaitFrames(60);
+    FieldScript_FinishScreenTransition();
+    Sound_PlaySong(SONG_FADE_OUT_BGM);
+    FieldScript_WaitFrames(0x12c);
     FieldScript_SetDestination((s32)&MapId_WorldMap, WORLD_MAP_FROM_MAIN_MENU);
     return 0;
   }
@@ -492,9 +492,9 @@ menu_top:;
   // No save file: fade the menu layers in, once, and start a new game.
   if (v6 == 0) {
     if (blendStarted == 0) {
-      Engine_TaskWait(30);
+      WaitFrames(30);
       FieldScheduler_AddCallback(MainMenu_UpdateBlend, 0xc80);
-      Engine_TaskWait(1);
+      WaitFrames(1);
       blendStarted = 1;
     }
   }
@@ -515,7 +515,7 @@ menu_top:;
     v5 = 1;
     v7 = 0;
     for (;;) {
-      Engine_TaskWait(6);
+      WaitFrames(6);
       v6 = NamingScreen_EditMemberName(v7);
       if (v6 == -1) {
         if (v7 == 0) {
@@ -655,7 +655,7 @@ menu_top:;
       Text_DrawMessage((linkMessage + 1), (struct Window *)v6, 0, 16);
       Text_DrawMessage((linkMessage + 3), (struct Window *)v6, 0, 36);
       SerialRuntime_Initialize();
-      Engine_TaskWait(10);
+      WaitFrames(10);
       {
         u16 *sync = (u16 *)gSerialTransfer.payload;
 
@@ -677,7 +677,7 @@ menu_top:;
       }
       for (;;) {
         if ((gKeysPressed & KEY_B) != 0) {
-          Engine_AudioPlayCue(SE_MENU_CANCEL);
+          Sound_PlaySong(SE_MENU_CANCEL);
           break;
         }
         if ((v5 & gLinkStatus) == v5) {
@@ -697,7 +697,7 @@ menu_top:;
             }
           }
         }
-        Engine_TaskWait(1);
+        WaitFrames(1);
       }
       Window_Close((struct Window *)v6, 2);
       if (v7 == 0) {
@@ -707,9 +707,9 @@ menu_top:;
                               MAIN_MENU_LINK_ERROR_WINDOW_WIDTH, 4, 2);
 
       Text_DrawMessage(MsgClearSendingData, (struct Window *)v6, 0, 4);
-      Engine_TaskWait(10);
+      WaitFrames(10);
       SerialRuntime_StartSend(gSaveBuffer, 0x1004);
-      Engine_TaskWait(10);
+      WaitFrames(10);
       // Wait for the send to finish, at most 600000 frames (about 2.8
       // hours); ten frames in a row without both consoles is an error.
       v5 = 0;
@@ -727,7 +727,7 @@ menu_top:;
         if (gSerialSendSource == 0) {
           break;
         }
-        Engine_TaskWait(1);
+        WaitFrames(1);
       }
       if (linkConnectionOk == 0) {
         WindowSprite_PrepareForRedraw((struct Window *)v6);
@@ -735,15 +735,15 @@ menu_top:;
         // Wait for A: v5 is KEY_A here.
         v5 = 1;
         do {
-          Engine_TaskWait(1);
+          WaitFrames(1);
         } while ((gKeysPressed & v5) == 0);
       }
-      Engine_TaskWait(10);
+      WaitFrames(10);
       SerialRuntime_RemoveIrqHandlers();
-      Engine_TaskWait(10);
+      WaitFrames(10);
 #if TBS_PATCH_4
       Window_Close((struct Window *)v6, 2);
-      Engine_TaskWait(1);
+      WaitFrames(1);
 #else
       WindowSprite_PrepareForRedraw((struct Window *)v6);
       Window_Close((struct Window *)v6, 2);
@@ -806,7 +806,7 @@ menu_top:;
       for (;;) {
         Link_DrawShiftedTilePair(PAGE_ARROW_VRAM);
         if ((gKeysPressed & KEY_B) != 0) {
-          Engine_AudioPlayCue(SE_MENU_CANCEL);
+          Sound_PlaySong(SE_MENU_CANCEL);
           WindowSprite_PrepareForRedraw(pageWindow);
           Window_Close(pageWindow, 2);
           Window_Close(helpWindow, 2);
@@ -817,25 +817,25 @@ menu_top:;
           pageIndex = (pageIndex + 1);
           v7 = 1;
           if (pageIndex == pageCount) {
-            Engine_AudioPlayCue(SE_MENU_CONFIRM);
+            Sound_PlaySong(SE_MENU_CONFIRM);
             WindowSprite_PrepareForRedraw(pageWindow);
             Window_Close(pageWindow, 2);
             Window_Close(helpWindow, 2);
             Window_Close(headingWindow, 2);
-            Engine_TaskWait(1);
+            WaitFrames(1);
             goto menu_top;
           }
-          Engine_AudioPlayCue(SE_MENU_CURSOR_MOVE);
+          Sound_PlaySong(SE_MENU_CURSOR_MOVE);
         } else {
           // Left and Right share the wrap: with a copy in each arm, the
           // copies are not folded back and 210 of 920 instructions differ in
           // tbs-en.
           if ((gKeysPressed & KEY_LEFT) != 0 && pageCount > 1) {
-            Engine_AudioPlayCue(SE_MENU_CURSOR_MOVE);
+            Sound_PlaySong(SE_MENU_CURSOR_MOVE);
             wrappedPage = pageIndex + pageCount;
             wrappedPage--;
           } else if ((gKeysPressed & KEY_RIGHT) != 0 && pageCount > 1) {
-            Engine_AudioPlayCue(SE_MENU_CURSOR_MOVE);
+            Sound_PlaySong(SE_MENU_CURSOR_MOVE);
             wrappedPage = pageIndex + pageCount;
             wrappedPage++;
           } else {
@@ -920,19 +920,19 @@ menu_top:;
           }
           v7 = 0;
         }
-        Engine_TaskWait(1);
+        WaitFrames(1);
       }
     }
-    Engine_TaskWait(0x12c);
+    WaitFrames(0x12c);
     goto menu_top;
   }
 leave:;
   gFieldWork->warp = 0x3e7;
-  Engine_ScriptWait(30);
-  Engine_AudioPlayCue(SONG_FADE_OUT_BGM);
-  Engine_ScriptCloseScreen();
-  Engine_ScriptWaitForScreen();
-  Engine_ScriptWait(60);
+  FieldScript_WaitFrames(30);
+  Sound_PlaySong(SONG_FADE_OUT_BGM);
+  FieldScript_FinishScreenTransition();
+  FieldScript_WaitTransitionFrames();
+  FieldScript_WaitFrames(60);
   return 0;
 }
 
@@ -963,7 +963,7 @@ UNUSED static void FileMenu_FillTileGrid(struct Window *window,
     vram += 16;
     shadow += 16;
   }
-  Runtime_BumpFree(decodedTiles);
+  Free(decodedTiles);
 }
 
 /// UNUSED: fills a 16-by-eight region with palette 15 tiles beginning at
@@ -1000,7 +1000,7 @@ UNUSED static void FileMenu_FillTileBlock(const struct Window *window) {
     mirror += 16;
     base += 16;
   } while (row <= 7);
-  Runtime_BumpFree(buffer);
+  Free(buffer);
 }
 
 /// A party member's base stats, which the password clamps and packs: struct
@@ -1087,7 +1087,7 @@ static s32 MainMenu_PackPasswordData(s32 unused, s32 mode, u8 *out) {
 
   // Preserve the selected story flags and four heroes' transfer data.
   for (i = 0; i != 6; i++) {
-    if (Engine_GameFlagIsSet(((const u16 *)gMainMenu_PasswordFlags)[i])) {
+    if (GameFlag_Test(((const u16 *)gMainMenu_PasswordFlags)[i])) {
       flagBits |= 1 << i;
     }
   }
@@ -1161,8 +1161,8 @@ static s32 MainMenu_PackPasswordData(s32 unused, s32 mode, u8 *out) {
       for (n = 0; n != 15; n++) {
         u16 item;
 
-        // Item_Get only looks the definition up; its result is not used.
-        Item_Get(owner->inventory[n]);
+        // Item_GetDirect only looks the definition up; its result is not used.
+        Item_GetDirect(owner->inventory[n]);
         item = owner->inventory[n] & 0x1ff;
         out[outputIndex] += item >> (bitOffset + 1);
         out[outputIndex + 1] += item << (7 - bitOffset);

@@ -160,7 +160,6 @@ extern const u8 gOptionMenu_SliderTiles[];
 struct AbilityDefinition *Ability_GetData(s32 actionId);
 #endif
 s32 Item_FindSlot(s32 unitId, s32 item_id);
-s32 TitleFar_Entry00(s32 mode);
 void TitleFar_Entry20(s32 mode);
 void CreditsFar_Entry00(s32 mode);
 void Text_DrawAt(s32, s32, s32, s32);

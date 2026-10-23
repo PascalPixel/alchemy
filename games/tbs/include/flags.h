@@ -167,7 +167,7 @@
 /// With FLAG_DJINN_LESSON set, these two choose the part of the lesson the
 /// Djinn menu plays: neither, DJINN_TUTORIAL_GIVE; only the second,
 /// DJINN_TUTORIAL_POWERS; only the first, DJINN_TUTORIAL_RECOVERY; both,
-/// DJINN_TUTORIAL_CLOSE (DjinnMenu_Open). With only the first, Flint says
+/// DJINN_TUTORIAL_CLOSE (DjinnMenu_Run). With only the first, Flint says
 /// "After a Djinni has been used to summon, it must spend time in recovery."
 /// ★ Named from the game: "it must spend time in recovery"
 /// (MsgDjinnTutorialRecovery)

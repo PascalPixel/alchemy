@@ -118,7 +118,7 @@ void Sanctum_ShowKeeperMessageHidingCursor(s32 messageId) {
 /// Runs a sanctum: the keeper's welcome, then the service menu (revive, cure
 /// poison, exorcise, remove a curse) until B, and the farewell. `unitId` is
 /// the keeper's object, whose portrait the lines show. Holds the shop work
-/// block while it runs; returns 0. Called through Engine_SanctumOpen by the
+/// block while it runs; returns 0. Called by the
 /// maps' sanctum keepers and the Battle Arena, and by the debug test.
 s32 Sanctum_Run(s32 unitId) {
   s32 serviceSelection = 0;

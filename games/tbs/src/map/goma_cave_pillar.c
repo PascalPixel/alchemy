@@ -151,7 +151,7 @@ enum { TRIGGER_FORGE_JOINED = 99 };
 /// surprise, and the battle with the Djinni begins.
 static void EventScript_FightForge(void) {
   OBJECT_EMOTE(LOCALID_WITNESS, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
-  Engine_ObjectEventJump(LOCALID_WITNESS, 2, 0);
+  ObjectMotion_Launch(LOCALID_WITNESS, 2, 0);
   Field_RequestDjinnBattle(LOCALID_FORGE, DJINNI_FORGE);
 }
 
@@ -206,12 +206,12 @@ static void GomaCavePillar_SpawnFragment(s32 x, s32 y, s32 z, s32 firstRate,
 
   leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   table = gGomaCavePillar_FragmentScripts;
-  fragment = Engine_ObjectCreate(SPRITE_DUST_PUFF, x, y, z);
+  fragment = ObjectEvent_Create(SPRITE_DUST_PUFF, x, y, z);
   if (fragment == 0)
     return;
   sprite = fragment->sprite;
-  ObjectEvent_SetMode(fragment, (scriptAndChildValue + 1) & 15);
-  Engine_ObjectSetScript(fragment, table.script[scriptAndChildValue & 15]);
+  ObjectDispatch_SelectAnimation(fragment, (scriptAndChildValue + 1) & 15);
+  ObjectEvent_SetScript(fragment, table.script[scriptAndChildValue & 15]);
   ObjectGroup_SetChildValue(fragment, ((u32)scriptAndChildValue >> 16) & 15);
   fragment->motionFlags = 0;
   sprite->flags = 0;
@@ -264,7 +264,7 @@ static void EventScript_MoveWestPillar(void) {
   SCRIPT_START();
   if (x == 20) {
     GomaCavePillar_CopyWestPillarCells(18);
-    Engine_GameFlagClear(FLAG_GOMA_CAVE_WEST_PILLAR_MOVED);
+    GameFlag_ClearBit(FLAG_GOMA_CAVE_WEST_PILLAR_MOVED);
   } else {
     GomaCavePillar_CopyWestPillarCells(24);
     Engine_GameFlagSet(FLAG_GOMA_CAVE_WEST_PILLAR_MOVED);
@@ -368,36 +368,37 @@ static void EventScript_PushStumpOver(void) {
     zero = 0;
     overlayObjectEvent->layer = 1;
     spriteObjectEvent = ObjectEvent_GetById(LOCALID_MASK_FOR_STUMP);
-    Engine_ObjectEventSetSpriteFlags(spriteObjectEvent, 0);
-    Engine_ObjectEventSetChildValue(LOCALID_MASK_FOR_STUMP, SPRITE_COLOR_BLACK);
+    ObjectEvent_SetSpriteFlags(spriteObjectEvent, 0);
+    ObjectGroup_ConfigureChildValue(LOCALID_MASK_FOR_STUMP, SPRITE_COLOR_BLACK);
     blendObjectEvent = ObjectEvent_GetById(LOCALID_MASK_FOR_STUMP);
-    Engine_ObjectSetBlendMode(blendObjectEvent, OBJECT_BLEND_TRANSLUCENT);
+    ObjectEvent_SetBlendMode(blendObjectEvent, OBJECT_BLEND_TRANSLUCENT);
     Engine_ObjectEventSetPosition(LOCALID_MASK_FOR_STUMP, PIXELS(414),
                                   PIXELS(240));
     WAIT(10);
     // Dust falls while the stump rocks on the edge.
     fragmentCallback = GomaCavePillar_SpawnStumpDust;
     FieldScheduler_AddCallback(fragmentCallback, 3200);
-    Engine_AudioPlayCue(SE_RUMBLE);
-    Engine_ObjectEventSetDestinationOffset(LOCALID_STUMP, 1, 0);
-    Engine_ObjectEventWaitForMove(LOCALID_STUMP);
+    Sound_PlaySong(SE_RUMBLE);
+    ObjectMotion_OffsetPositionAndResetMotion(LOCALID_STUMP, 1, 0);
+    ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_STUMP);
     WAIT(10);
-    Engine_ObjectEventSetDestinationOffset(LOCALID_STUMP, 2, 0);
-    Engine_ObjectEventWaitForMove(LOCALID_STUMP);
+    ObjectMotion_OffsetPositionAndResetMotion(LOCALID_STUMP, 2, 0);
+    ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_STUMP);
     bounceObjectEvent = ObjectEvent_GetById(LOCALID_STUMP);
     bounceObjectEvent->bounce = zero;
     gravityObjectEvent = ObjectEvent_GetById(LOCALID_STUMP);
     gravityObjectEvent->gravity = PIXELS(3) / 5;
     WAIT(3);
     // It tips over the edge.
-    Engine_ObjectEventSetSpeed(LOCALID_STUMP, 5 * PIXELS(1) / 2, PIXELS(1) / 4);
-    Engine_AudioPlayCue(SE_STOP_SLOT3);
-    Engine_ObjectEventSetDestination(LOCALID_STUMP, 416, 200);
+    ObjectMotion_SetSpeedParameters(LOCALID_STUMP, 5 * PIXELS(1) / 2,
+                                    PIXELS(1) / 4);
+    Sound_PlaySong(SE_STOP_SLOT3);
+    ObjectMotion_ResetAndSetPosition(LOCALID_STUMP, 416, 200);
     movedObjectEvent = ObjectEvent_GetById(LOCALID_STUMP);
-    Engine_ObjectEventSetSpriteFlags(movedObjectEvent, 0);
-    Engine_TaskRemoveCallback(fragmentCallback);
+    ObjectEvent_SetSpriteFlags(movedObjectEvent, 0);
+    Task_Remove(fragmentCallback);
     WAIT(12);
-    Engine_AudioPlayCue(SE_189);
+    Sound_PlaySong(SE_189);
     xSource = ObjectEvent_GetById(LOCALID_STUMP);
     randomX = Engine_RandomNext();
     fixedX = xSource->x.fixed;
@@ -420,10 +421,10 @@ static void EventScript_PushStumpOver(void) {
                                  fallingSpeed, style, zero);
     WAIT(20);
     // It lands below; the shake dies down before the map grid cells change.
-    Engine_AudioPlayCue(SE_CAST);
+    Sound_PlaySong(SE_CAST);
     MapGrid_SetShake(PIXELS(5), PIXELS(5), Q16_ONE);
     MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
-    Engine_MapGridRenderWaitForValues();
+    MapGrid_WaitForShakeToSettle();
     Engine_ObjectEventSetPosition(LOCALID_STUMP, 0, 0);
     Engine_ObjectEventSetPosition(LOCALID_MASK_FOR_STUMP, 0, 0);
     Engine_GameFlagSet(FLAG_GOMA_CAVE_STUMP_FELL);
@@ -444,7 +445,7 @@ static void GomaCavePillar_SettleEastPillar(void) {
     ObjectEvent_GetById(LOCALID_EAST_PILLAR)->y.fixed = -PIXELS(2);
     ObjectEvent_GetById(LOCALID_EAST_PILLAR)->targetY =
         ObjectEvent_GetById(LOCALID_EAST_PILLAR)->y.fixed;
-    Engine_AudioPlayCue(SE_188);
+    Sound_PlaySong(SE_188);
     GomaCavePillar_SpawnFragment(
         ObjectEvent_GetById(LOCALID_EAST_PILLAR)->x.fixed,
         ObjectEvent_GetById(LOCALID_EAST_PILLAR)->y.fixed,
@@ -517,20 +518,20 @@ static void EventScript_JumpGapWest(void) {
   destination->z = ObjectEvent_GetById(LOCALID_PARTY_LEADER)->z.fixed;
   if (FieldObject_CheckMovementCollision(leader, destination) == 0) {
     SCRIPT_START();
-    ObjectEvent_SetMode(leader, ANIM_LEADER_SPRING);
-    Engine_TaskWait(6);
-    Engine_AudioPlayCue(SE_JUMP);
-    ObjectEvent_SetMode(leader, ANIM_LEADER_LEAP);
+    ObjectDispatch_SelectAnimation(leader, ANIM_LEADER_SPRING);
+    WaitFrames(6);
+    Sound_PlaySong(SE_JUMP);
+    ObjectDispatch_SelectAnimation(leader, ANIM_LEADER_LEAP);
     leader->speed = PIXELS(3);
     leader->acceleration = PIXELS(2);
     leader->velocityY = PIXELS(4);
     *motionFlags &= 0x7e;
-    Engine_ObjectEventSetSpriteFlags(leader, 0);
-    Engine_ObjectEventMoveToAndWait(LOCALID_PARTY_LEADER,
-                                    *(s16 *)((u8 *)destination + 2),
-                                    *(s16 *)((u8 *)destination + 10));
-    ObjectEvent_SetMode(leader, ANIM_LEADER_SPRING);
-    Engine_ObjectEventSetSpriteFlags(leader, 1);
+    ObjectEvent_SetSpriteFlags(leader, 0);
+    ObjectMotion_SetPositionAndCommit(LOCALID_PARTY_LEADER,
+                                      *(s16 *)((u8 *)destination + 2),
+                                      *(s16 *)((u8 *)destination + 10));
+    ObjectDispatch_SelectAnimation(leader, ANIM_LEADER_SPRING);
+    ObjectEvent_SetSpriteFlags(leader, 1);
     *motionFlags = savedMotionFlags;
     SCRIPT_END();
   }
@@ -551,14 +552,14 @@ static void GomaCavePillar_FidgetWhileForgeFights(void) {
   switch (frame) {
   case 60:
     OBJECT_DIR(LOCALID_WITNESS, FACING_SOUTHEAST, 0);
-    Engine_ObjectEventShowEmote(LOCALID_WITNESS, EMOTE_WINCE, 0);
+    FieldEffect_SpawnLinked(LOCALID_WITNESS, EMOTE_WINCE, 0);
     break;
   case 180:
-    Engine_ObjectEventStartRepeatedMotion(LOCALID_WITNESS, 3);
+    ObjectMotion_SetVariantCallback(LOCALID_WITNESS, 3);
     break;
   case 240:
   case 270:
-    Engine_ObjectEventJump(LOCALID_WITNESS, 4, 0);
+    ObjectMotion_Launch(LOCALID_WITNESS, 4, 0);
     break;
   case 480:
     OBJECT_ANIMATION(LOCALID_WITNESS, ANIM_SHAKE_HEAD);
@@ -572,14 +573,14 @@ static void GomaCavePillar_FidgetWhileForgeFights(void) {
 /// is amazed, `You got it? Wow, that's pretty impressive!`, then walks off for
 /// good.
 static void EventScript_WitnessCheersForgeCaught(void) {
-  Engine_TaskRemoveCallback(GomaCavePillar_FidgetWhileForgeFights);
+  Task_Remove(GomaCavePillar_FidgetWhileForgeFights);
   SCRIPT_START();
   OBJECT_EMOTE(LOCALID_WITNESS, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
-  Engine_ObjectEventRunRepeatedMotion(LOCALID_WITNESS, 2);
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_WITNESS, 2);
   OBJECT_DIR(LOCALID_PARTY_LEADER, FACING_NORTHWEST, 0);
   MESSAGE_SET(MsgGomaGotWowThatsPrettyImpressive);
   Script_ShowMessage(LOCALID_WITNESS, 0);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_WITNESS, ANIM_NOD);
+  ObjectMotion_SetAnimationAndWait(LOCALID_WITNESS, ANIM_NOD);
   WAIT(30);
   ObjectEvent_GetById(LOCALID_EAST_PILLAR)->priorityFlags &=
       ~OBJ_EVENT_PRIORITY_UNDERFOOT;
@@ -629,8 +630,8 @@ s32 Map_Initialize(void) {
     }
   }
   if (gGameState.warpDest == WARP_DEST_STUMP_FALL) {
-    Engine_ScriptOpenScreen();
-    Engine_ScriptWaitForScreen();
+    FieldScript_StartScreenTransition();
+    FieldScript_WaitTransitionFrames();
     OBJECT_POSITION_SET(LOCALID_STUMP, 384, 192);
     WAIT(60);
     ObjectEvent_GetById(LOCALID_STUMP)->layer = 2;

@@ -37,7 +37,7 @@ void Colosso_StartRaceGauge(s32 playerLocalId, s32 opponentLocalId,
   player = ObjectEvent_GetById(playerLocalId);
   opponent = ObjectEvent_GetById(opponentLocalId);
 
-  if (Engine_GameFlagIsSet(FLAG_KEEP_PARTY_POSITION) == 0) {
+  if (GameFlag_Test(FLAG_KEEP_PARTY_POSITION) == 0) {
     opponent->x.fixed = (finishX << 1) - player->x.fixed;
     opponent->z.fixed = player->z.fixed;
   }
@@ -49,7 +49,7 @@ void Colosso_StartRaceGauge(s32 playerLocalId, s32 opponentLocalId,
 
   pal = VramCache_FindFreeEntry();
   work->gauge.vramBlock = pal;
-  Engine_VramLoad((s16)pal, 512, (const void *)handle);
+  VramCache_Load((s16)pal, 512, (const void *)handle);
 
   // The native object stores this local Thumb symbol with an even value and
   // adds the state bit here. Modern GCC already includes that bit in a
@@ -60,7 +60,7 @@ void Colosso_StartRaceGauge(s32 playerLocalId, s32 opponentLocalId,
   FieldScheduler_AddCallback((TaskFunc)((s32)Colosso_DrawGauge + 1), 0xc76);
 #endif
 
-  Runtime_BumpFree((void *)handle);
+  Free((void *)handle);
 }
 
 /// Decodes the opponent's recorded path (resource) after the gauge's work and,
@@ -71,7 +71,7 @@ void Colosso_StartOpponent(s32 resource) {
   struct PathRecorder *recorder = (struct PathRecorder *)gMapLocalState;
 
   FieldResource_DecodeType01(Resource_GetTableEntry(resource), work->path);
-  if (Engine_GameFlagIsSet(FLAG_KEEP_PARTY_POSITION) == 0) {
+  if (GameFlag_Test(FLAG_KEEP_PARTY_POSITION) == 0) {
     recorder->mode = PATH_RECORDER_PLAY;
     recorder->mirror = 1;
     recorder->localId = work->gauge.opponentLocalId;

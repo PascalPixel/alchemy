@@ -13,6 +13,4 @@
 
 #include "heap_slots.h"
 
-void Engine_TaskWait(s32 frames);
-
 #endif

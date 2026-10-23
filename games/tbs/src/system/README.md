@@ -193,7 +193,7 @@ rule). It is three objects:
 - The import table (`map/import/<map>.s`). EWRAM is out of `bl` range of
   the ROM, so the overlay's code makes a short `bl` to a local stub, and the
   stub's word holds the address of the main-image function's far-call entry,
-  never the function itself: `Engine_TaskWait` goes to `WaitFramesFar`, which
+  never the function itself: `WaitFrames` goes to `WaitFramesFar`, which
   goes to `WaitFrames`.
 
 The rows an overlay may import, and their order, are fixed in `overlay.inc`:
@@ -201,10 +201,11 @@ the four IWRAM divide routines first (`IwramSignedDivide` and the rest), which
 the stubs reach directly, then the far-call entries in the order of the main
 image. Each import table sets `import.NAME` for the stubs its overlay calls
 and includes that list, so every overlay keeps its imports in the same
-relative order. Several local names can lead to one target (`ArcTan2`,
-`Math_Atan2`, `CalculateFacingAngle` and `CalculateAngleFromCoordinateDelta`
-all reach `ArcTan2Far`), because different overlays' code calls the same
-routine by different names.
+relative order. A stub takes the name of the routine it reaches, so an
+overlay calls `WaitFrames` or `ArcTan2` as the main image does. A few keep a
+name of their own, where the maps' calls differ from the routine's prototype
+(`Engine_RandomNext` reaches `Random16`, but the maps read its result as an
+`int`); `script_layer.h` lists them.
 
 Only one overlay is loaded at a time, since all are linked to the same 32 KB,
 so an overlay never calls another. Code several maps need is copied into

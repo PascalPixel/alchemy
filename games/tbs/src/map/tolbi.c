@@ -119,18 +119,18 @@ static s32 Tolbi_KidStopForTarget(struct ObjectEvent *kid,
 
     if (ahead == facing || right == facing || left == facing || force != 0) {
       kid->paused = 1;
-      ObjectEvent_SetMode(kid, ANIM_STAND);
+      ObjectDispatch_SelectAnimation(kid, ANIM_STAND);
       stopped = 1;
     }
     if (target == ObjectEvent_GetById(LOCALID_PARTY_LEADER) &&
         (farRight == facing || farLeft == facing)) {
       kid->paused = 1;
-      ObjectEvent_SetMode(kid, ANIM_STAND);
+      ObjectDispatch_SelectAnimation(kid, ANIM_STAND);
       stopped = 1;
     }
   } else {
     kid->paused = 0;
-    ObjectEvent_SetMode(kid, ANIM_WALK);
+    ObjectDispatch_SelectAnimation(kid, ANIM_WALK);
   }
   return stopped;
 }
@@ -208,7 +208,7 @@ static void Tolbi_GrowSprout(void) {
     sprout->collisionFlags = 0;
   }
   sprout = ObjectEvent_GetById(LOCALID_TOLBI_SPROUT);
-  Engine_ObjectEventSetSpriteFlags(sprout, 0);
+  ObjectEvent_SetSpriteFlags(sprout, 0);
   Field_SetMetatileBehaviorAt(0, PIXELS(544), PIXELS(288), 253);
   Engine_GameFlagSet(FLAG_MAP_TEMP_00);
 }
@@ -229,14 +229,14 @@ static void Tolbi_HideRevealedChest(void) {
 
 /// The first sign at Tolbi Spring: face away and toss a coin in.
 static void Tolbi_ReadSpringSign(void) {
-  Engine_ScriptSetMessage(MsgTolbiFaceAwayTolbi);
-  Engine_ScriptShowMessage(-1, 0);
+  FieldScript_SetMessageId(MsgTolbiFaceAwayTolbi);
+  FieldScript_ShowMessageAndWait(-1, 0);
 }
 
 /// The second sign at Tolbi Spring: a Lucky Medal wins better prizes.
 static void Tolbi_ReadLuckyMedalSign(void) {
-  Engine_ScriptSetMessage(MsgTolbiTossLuckyMedal);
-  Engine_ScriptShowMessage(-1, 0);
+  FieldScript_SetMessageId(MsgTolbiTossLuckyMedal);
+  FieldScript_ShowMessageAndWait(-1, 0);
 }
 
 /// Talking to the older brother, or reading his mind. He stops running while
@@ -249,34 +249,33 @@ static void Tolbi_TalkToOlderBrother(void) {
 
   kid = ObjectEvent_GetById(LOCALID_TOLBI_OLDER_BROTHER);
   facing = kid->facing;
-  Engine_ScriptStart();
+  FieldScript_Start();
   kid->timer |= KID_TALKING;
   if (work->psynergy == 0) {
-    if (Engine_GameFlagIsSet(FLAG_COLOSSO_OVER) != 0) {
+    if (GameFlag_Test(FLAG_COLOSSO_OVER) != 0) {
       msg = MsgTolbiYayEasyRun;
-    } else if (Engine_GameFlagIsSet(FLAG_BABI_SAVED) != 0) {
+    } else if (GameFlag_Test(FLAG_BABI_SAVED) != 0) {
       msg = MsgTolbiHoorayFinalsSeven;
     } else {
       msg = MsgTolbiWheeFestivalColosso;
     }
   } else {
-    if (Engine_GameFlagIsSet(FLAG_COLOSSO_OVER) != 0) {
+    if (GameFlag_Test(FLAG_COLOSSO_OVER) != 0) {
       msg = MsgTolbiMainStreetTolbi;
-    } else if (Engine_GameFlagIsSet(FLAG_BABI_SAVED) != 0) {
+    } else if (GameFlag_Test(FLAG_BABI_SAVED) != 0) {
       msg = MsgTolbiWinBigUsed;
     } else {
       msg = MsgTolbiOldestShouldntShare;
     }
   }
-  Engine_ScriptSetMessage(msg);
+  FieldScript_SetMessageId(msg);
   Engine_ObjectEventSetAnimation(LOCALID_TOLBI_OLDER_BROTHER, 0);
-  Engine_ObjectEventFaceEachOther(LOCALID_TOLBI_OLDER_BROTHER,
-                                  LOCALID_PARTY_LEADER, 2);
-  Engine_ScriptShowMessageAndWait(LOCALID_TOLBI_OLDER_BROTHER, 0, 10);
+  ObjectEvent_LinkPair(LOCALID_TOLBI_OLDER_BROTHER, LOCALID_PARTY_LEADER, 2);
+  FieldScript_ShowMessageThenWait(LOCALID_TOLBI_OLDER_BROTHER, 0, 10);
   kid->facing = facing;
-  Engine_TaskWait(1);
+  WaitFrames(1);
   kid->timer &= KID_CHASES_YOUNGER;
-  Engine_ScriptEnd();
+  FieldScript_End();
 }
 
 /// Talking to the younger sister, or reading her mind, as above.
@@ -288,42 +287,41 @@ static void Tolbi_TalkToYoungerSister(void) {
 
   kid = ObjectEvent_GetById(LOCALID_TOLBI_YOUNGER_SISTER);
   facing = kid->facing;
-  Engine_ScriptStart();
+  FieldScript_Start();
   kid->timer |= KID_TALKING;
   if (work->psynergy == 0) {
-    if (Engine_GameFlagIsSet(FLAG_COLOSSO_OVER) != 0) {
+    if (GameFlag_Test(FLAG_COLOSSO_OVER) != 0) {
       msg = MsgTolbiHaHaHa;
-    } else if (Engine_GameFlagIsSet(FLAG_BABI_SAVED) != 0) {
+    } else if (GameFlag_Test(FLAG_BABI_SAVED) != 0) {
       msg = MsgTolbiWaahBigBrother;
     } else {
       msg = MsgTolbiWaahSaidMoney;
     }
   } else {
-    if (Engine_GameFlagIsSet(FLAG_COLOSSO_OVER) != 0) {
+    if (GameFlag_Test(FLAG_COLOSSO_OVER) != 0) {
       msg = MsgTolbiBrotherMeanDuring;
-    } else if (Engine_GameFlagIsSet(FLAG_BABI_SAVED) != 0) {
+    } else if (GameFlag_Test(FLAG_BABI_SAVED) != 0) {
       msg = MsgTolbiMamaWhyListen;
     } else {
       msg = MsgTolbiMamaToldShare;
     }
   }
-  Engine_ScriptSetMessage(msg);
+  FieldScript_SetMessageId(msg);
   Engine_ObjectEventSetAnimation(LOCALID_TOLBI_YOUNGER_SISTER, 0);
-  Engine_ObjectEventFaceEachOther(LOCALID_TOLBI_YOUNGER_SISTER,
-                                  LOCALID_PARTY_LEADER, 2);
-  Engine_ScriptShowMessageAndWait(LOCALID_TOLBI_YOUNGER_SISTER, 0, 10);
+  ObjectEvent_LinkPair(LOCALID_TOLBI_YOUNGER_SISTER, LOCALID_PARTY_LEADER, 2);
+  FieldScript_ShowMessageThenWait(LOCALID_TOLBI_YOUNGER_SISTER, 0, 10);
   kid->facing = facing;
-  Engine_TaskWait(1);
+  WaitFrames(1);
   kid->timer &= KID_CHASES_YOUNGER;
-  Engine_ScriptEnd();
+  FieldScript_End();
 }
 
 /// Picks the event table for Tolbi's current mood.
 const struct MapEvent *Tolbi_SelectEvents(void) {
-  if (Engine_GameFlagIsSet(FLAG_COLOSSO_OVER) != 0) {
+  if (GameFlag_Test(FLAG_COLOSSO_OVER) != 0) {
     return gTolbiEventsAfterColosso;
   }
-  if (Engine_GameFlagIsSet(FLAG_BABI_SAVED) != 0) {
+  if (GameFlag_Test(FLAG_BABI_SAVED) != 0) {
     return gTolbiEventsFinalsDay;
   }
   return gTolbiEventsFestival;
@@ -334,77 +332,77 @@ const struct MapEvent *Tolbi_SelectEvents(void) {
 /// asks whether someone can live to be more than 100 years old; either way the
 /// talk turns to Babi, who is older still.
 static void Tolbi_AskAboutLivingPastHundred(void) {
-  Engine_ScriptStart();
-  Engine_ScriptSetMessage(MsgTolbiSomeoneLiveMore);
-  Engine_ScriptAskYesNo(LOCALID_TOLBI_SUSPICIOUS_OLD_WOMAN, 0);
-  Engine_ScriptEnd();
+  FieldScript_Start();
+  FieldScript_SetMessageId(MsgTolbiSomeoneLiveMore);
+  FieldScript_AskYesNoAndShowResponse(LOCALID_TOLBI_SUSPICIOUS_OLD_WOMAN, 0);
+  FieldScript_End();
 }
 
 /// The father asks whether children really do love souvenirs, and owns up to
 /// loving them himself.
 static void Tolbi_TalkToFather(void) {
-  Engine_ScriptStart();
-  Engine_ScriptSetMessage(MsgTolbiChildrenLoveSouvenirs);
-  Engine_ScriptAskYesNo(LOCALID_TOLBI_FATHER, 0);
-  Engine_ScriptEnd();
+  FieldScript_Start();
+  FieldScript_SetMessageId(MsgTolbiChildrenLoveSouvenirs);
+  FieldScript_AskYesNoAndShowResponse(LOCALID_TOLBI_FATHER, 0);
+  FieldScript_End();
 }
 
 /// The mother turns to her crying boy, then back to promise better sweets
 /// later on. "Be patient, little guy."
 static void Tolbi_TalkToMother(void) {
-  Engine_ScriptStart();
-  Engine_ScriptSetMessage(MsgTolbiPatientLittleGuy);
+  FieldScript_Start();
+  FieldScript_SetMessageId(MsgTolbiPatientLittleGuy);
   ObjectEvent_FaceDirection(LOCALID_TOLBI_MOTHER, FACING_NORTH, 0);
-  Engine_ScriptShowMessage(LOCALID_TOLBI_MOTHER, 0);
+  FieldScript_ShowMessageAndWait(LOCALID_TOLBI_MOTHER, 0);
   ObjectEvent_FaceDirection(LOCALID_TOLBI_MOTHER, FACING_WEST, 0);
-  Engine_ScriptShowMessage(LOCALID_TOLBI_MOTHER, 0);
-  Engine_ScriptEnd();
+  FieldScript_ShowMessageAndWait(LOCALID_TOLBI_MOTHER, 0);
+  FieldScript_End();
 }
 
 /// The crying boy turns, stamps twice and wails for sweets.
 static void Tolbi_TalkToCryingBoy(void) {
-  Engine_ScriptStart();
+  FieldScript_Start();
   ObjectEvent_FaceDirection(LOCALID_TOLBI_CRYING_BOY, FACING_SOUTH, 0);
-  Engine_ObjectEventStartRepeatedMotion(LOCALID_TOLBI_CRYING_BOY, 2);
-  Engine_ScriptSetMessage(MsgTolbiWaahBuySweets);
-  Engine_ScriptShowMessage(LOCALID_TOLBI_CRYING_BOY, 0);
-  Engine_ScriptEnd();
+  ObjectMotion_SetVariantCallback(LOCALID_TOLBI_CRYING_BOY, 2);
+  FieldScript_SetMessageId(MsgTolbiWaahBuySweets);
+  FieldScript_ShowMessageAndWait(LOCALID_TOLBI_CRYING_BOY, 0);
+  FieldScript_End();
 }
 
 /// During the festival the scalper sleeps under the archway: the inns are
 /// full.
 static void Tolbi_TalkToSleepingScalper(void) {
-  Engine_ScriptStart();
-  Engine_ScriptSetMessage(MsgTolbiInnsFullStaying);
-  Engine_ScriptShowMessage(LOCALID_TOLBI_SCALPER, 0);
-  Engine_ScriptEnd();
+  FieldScript_Start();
+  FieldScript_SetMessageId(MsgTolbiInnsFullStaying);
+  FieldScript_ShowMessageAndWait(LOCALID_TOLBI_SCALPER, 0);
+  FieldScript_End();
 }
 
 /// After Colosso, LOCALID_TOLBI_FINALS_FAN asks whether the party was in the
 /// finals. The question is anchored to the father, who has left town by then.
 static void Tolbi_AskWhetherPartyWasInFinals(void) {
-  Engine_ScriptStart();
-  Engine_ScriptSetMessage(MsgTolbiFinalsWerent);
-  Engine_ScriptAskYesNo(LOCALID_TOLBI_FATHER, 0);
-  Engine_ScriptEnd();
+  FieldScript_Start();
+  FieldScript_SetMessageId(MsgTolbiFinalsWerent);
+  FieldScript_AskYesNoAndShowResponse(LOCALID_TOLBI_FATHER, 0);
+  FieldScript_End();
 }
 
 /// After Colosso, the snack vendor gives the party his leftover corn, once.
 static void Tolbi_TalkToSnackVendor(void) {
-  Engine_ScriptStart();
+  FieldScript_Start();
   if (GameFlag_IsSet(FLAG_TOLBI_CORN_GIVEN) == 0) {
     Engine_GameFlagSet(FLAG_TOLBI_CORN_GIVEN);
-    Engine_ScriptSetMessage(MsgTolbiLeftovers);
-    Engine_ScriptShowMessage(LOCALID_TOLBI_SNACK_VENDOR, 0);
-    Engine_ItemShowFound(ITEM_CORN, 3);
-    Engine_ScriptShowMessage(LOCALID_TOLBI_SNACK_VENDOR, 0);
+    FieldScript_SetMessageId(MsgTolbiLeftovers);
+    FieldScript_ShowMessageAndWait(LOCALID_TOLBI_SNACK_VENDOR, 0);
+    FieldEffect_StartEffectObject22(ITEM_CORN, 3);
+    FieldScript_ShowMessageAndWait(LOCALID_TOLBI_SNACK_VENDOR, 0);
     Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_STAND);
-    Engine_PartyGiveItem(ITEM_CORN, 0);
+    PartyInventory_GiveItem(ITEM_CORN, 0);
   } else {
-    Engine_ScriptSetMessage(MsgTolbiFestivalLongerUsual);
-    Engine_ScriptShowMessage(LOCALID_TOLBI_SNACK_VENDOR, 0);
+    FieldScript_SetMessageId(MsgTolbiFestivalLongerUsual);
+    FieldScript_ShowMessageAndWait(LOCALID_TOLBI_SNACK_VENDOR, 0);
   }
-  Engine_ScriptEnd();
+  FieldScript_End();
 }
 
 /// Walking into one of the town's doors: the door opens, the leader steps in
@@ -415,7 +413,7 @@ static void Tolbi_EnterDoor(void) {
   u32 localId;
   s32 door;
 
-  Engine_ScriptStart();
+  FieldScript_Start();
   for (localId = LOCALID_FIRST_PLACED; localId <= 65; localId++) {
     struct ObjectEvent *objectEvent = ObjectEvent_GetById(localId);
     if (objectEvent != NULL) {
@@ -423,7 +421,7 @@ static void Tolbi_EnterDoor(void) {
     }
   }
   door = work->coordEvent - 1;
-  Engine_AudioPlayCue(SE_DOOR_OPEN);
+  Sound_PlaySong(SE_DOOR_OPEN);
   MapGrid_AnimateCells(gTolbiDoors[door].steps, gTolbiDoors[door].x,
                        gTolbiDoors[door].y);
   ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(1) / 2, PIXELS(1) / 4);
@@ -431,12 +429,12 @@ static void Tolbi_EnterDoor(void) {
   Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_WALK);
   if (door != TOLBI_TO_WEAPON_AND_ARMOR_SHOP - 1) {
     ObjectEvent_CenterAndWalk(LOCALID_PARTY_LEADER, 2, -8);
-    Engine_ScriptWait(10);
+    FieldScript_WaitFrames(10);
   }
   Engine_ScriptRequestWarp(work->coordEvent);
-  Engine_ScriptCloseScreen();
-  Engine_ScriptWaitForScreen();
-  Engine_ScriptEnd();
+  FieldScript_FinishScreenTransition();
+  FieldScript_WaitTransitionFrames();
+  FieldScript_End();
 }
 
 /// The update of LOCALID_TOLBI_OLD_MAN, who during the festival says he is 65
@@ -488,23 +486,23 @@ s32 Tolbi_ApplyEntryState(s32 unused) {
   objectEvent->update = Tolbi_CopyLeaderPriority;
 
   // What the party has already done here.
-  if (Engine_GameFlagIsSet(FLAG_TOLBI_SPRING_OPENED) != 0) {
+  if (GameFlag_Test(FLAG_TOLBI_SPRING_OPENED) != 0) {
     ObjectEvent_SetPosition(LOCALID_TOLBI_SPRING_VISITOR, PIXELS(316),
                             PIXELS(328));
   }
   // The puddle is frozen.
-  if (Engine_GameFlagIsSet(FLAG_MAP_TEMP_01) != 0) {
+  if (GameFlag_Test(FLAG_MAP_TEMP_01) != 0) {
     Tolbi_FreezePuddle();
   }
   // The sprout has grown.
-  if (Engine_GameFlagIsSet(FLAG_MAP_TEMP_00) != 0) {
+  if (GameFlag_Test(FLAG_MAP_TEMP_00) != 0) {
     Tolbi_GrowSprout();
     Engine_ObjectEventSetAnimation(LOCALID_TOLBI_SPROUT, 4);
   }
 
   // After Colosso the crowd has gone home and is moved off the map. On finals
   // day the scalper waits by the gate.
-  if (Engine_GameFlagIsSet(FLAG_COLOSSO_OVER) != 0) {
+  if (GameFlag_Test(FLAG_COLOSSO_OVER) != 0) {
     ObjectEvent_SetPosition(LOCALID_TOLBI_WOULD_BE_FIGHTER, PIXELS(520),
                             PIXELS(560));
     ObjectEvent_SetPosition(LOCALID_TOLBI_XIAN_VISITOR, PIXELS(520),
@@ -516,7 +514,7 @@ s32 Tolbi_ApplyEntryState(s32 unused) {
     ObjectEvent_SetPosition(LOCALID_TOLBI_CRYING_BOY, PIXELS(520), PIXELS(560));
     ObjectEvent_SetPosition(LOCALID_TOLBI_SCALPER, PIXELS(520), PIXELS(560));
   } else {
-    if (Engine_GameFlagIsSet(FLAG_BABI_SAVED) != 0) {
+    if (GameFlag_Test(FLAG_BABI_SAVED) != 0) {
       ObjectEvent_SetPosition(LOCALID_TOLBI_SCALPER, PIXELS(280), PIXELS(80));
       ObjectEvent_FaceDirection(LOCALID_TOLBI_SCALPER, FACING_SOUTHEAST, 0);
       Engine_ObjectEventSetAnimation(LOCALID_TOLBI_SCALPER, ANIM_STAND);
@@ -528,36 +526,35 @@ s32 Tolbi_ApplyEntryState(s32 unused) {
 /// The visitor at the spring's gate asks whether the party wants to test its
 /// luck. On yes he steps aside for good and the way to Tolbi Spring opens.
 static void Tolbi_TalkToSpringVisitor(void) {
-  Engine_ScriptStart();
+  FieldScript_Start();
   ObjectEvent_WalkToAndWait(LOCALID_PARTY_LEADER, 304, 312);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_NORTH, 0);
-  Engine_ObjectEventFaceDirection(LOCALID_TOLBI_SPRING_VISITOR, FACING_SOUTH,
-                                  0);
-  Engine_ScriptWait(20);
-  Engine_ScriptSetMessage(MsgTolbiWantTestLuck);
+  ObjectMotion_ArmCallback(LOCALID_TOLBI_SPRING_VISITOR, FACING_SOUTH, 0);
+  FieldScript_WaitFrames(20);
+  FieldScript_SetMessageId(MsgTolbiWantTestLuck);
   Script_OpenMessage(LOCALID_TOLBI_SPRING_VISITOR, 0);
-  if (Engine_ScriptChooseYesNo(LOCALID_PARTY_LEADER, 0) == 0) {
+  if (FieldScript_AskYesNoWithObjectEventAnimation(LOCALID_PARTY_LEADER, 0) ==
+      0) {
     // Yes: "I'll give you the chance to go first."
     gFieldWork->message++;
-    Engine_ScriptShowMessage(LOCALID_TOLBI_SPRING_VISITOR, 0);
+    FieldScript_ShowMessageAndWait(LOCALID_TOLBI_SPRING_VISITOR, 0);
     ObjectEvent_SetSpeed(LOCALID_TOLBI_SPRING_VISITOR, PIXELS(1),
                          PIXELS(1) / 2);
     ObjectEvent_WalkToAndWait(LOCALID_TOLBI_SPRING_VISITOR, 320, 304);
     ObjectEvent_WalkToAndWait(LOCALID_TOLBI_SPRING_VISITOR, 316, 328);
-    Engine_ObjectEventFaceDirection(LOCALID_TOLBI_SPRING_VISITOR,
-                                    FACING_NORTHWEST, 0);
+    ObjectMotion_ArmCallback(LOCALID_TOLBI_SPRING_VISITOR, FACING_NORTHWEST, 0);
     Engine_GameFlagSet(FLAG_TOLBI_SPRING_OPENED);
   } else {
-    Engine_ScriptShowMessage(LOCALID_TOLBI_SPRING_VISITOR, 0);
+    FieldScript_ShowMessageAndWait(LOCALID_TOLBI_SPRING_VISITOR, 0);
   }
-  Engine_ScriptEnd();
+  FieldScript_End();
 }
 
 /// The gate to Tolbi Spring (TOLBI_CELL_SPRING_GATE), once the visitor at the
 /// gate has stepped aside.
 static void Tolbi_EnterSpring(void) {
   Engine_ScriptRequestWarp(TOLBI_TO_TOLBI_SPRING);
-  Engine_ScriptEnd();
+  FieldScript_End();
 }
 
 /// Leaves by the warp numbered as the metatile behavior the party walked into.
@@ -574,113 +571,112 @@ static void Tolbi_RequestTouchedWarp(void) {
 static void Tolbi_MeetSearchingSoldiers(void) {
   s32 firstMsg;
 
-  Engine_ScriptStart();
+  FieldScript_Start();
   FieldCamera_MoveTo(-1, -1, -1, 0);
   ObjectEvent_SetSpeed(LOCALID_TOLBI_SOLDIER_A, PIXELS(1), PIXELS(1) / 2);
-  Engine_ObjectEventSetSpeed(LOCALID_TOLBI_SOLDIER_B, PIXELS(1), PIXELS(1) / 2);
+  ObjectMotion_SetSpeedParameters(LOCALID_TOLBI_SOLDIER_B, PIXELS(1),
+                                  PIXELS(1) / 2);
   firstMsg = MsgTolbiSeenAnyoneWho;
-  Engine_ScriptSetMessage(firstMsg);
+  FieldScript_SetMessageId(firstMsg);
 
   // The soldiers come up to the party; the poster waits off to the side.
   ObjectEvent_SetPosition(LOCALID_TOLBI_SOLDIER_A, PIXELS(72), PIXELS(208));
   ObjectEvent_SetPosition(LOCALID_TOLBI_SOLDIER_B, PIXELS(56), PIXELS(208));
-  Engine_ObjectEventSetChildValue(LOCALID_TOLBI_MISSING_PERSON_POSTER, 15);
-  Engine_ObjectEventSetSpriteFlags(
+  ObjectGroup_ConfigureChildValue(LOCALID_TOLBI_MISSING_PERSON_POSTER, 15);
+  ObjectEvent_SetSpriteFlags(
       ObjectEvent_GetById(LOCALID_TOLBI_MISSING_PERSON_POSTER), 0);
   ObjectEvent_SetPosition(LOCALID_TOLBI_MISSING_PERSON_POSTER, PIXELS(95),
                           PIXELS(40));
-  Engine_ObjectEventWalkTo(LOCALID_TOLBI_SOLDIER_A, 72, 248);
-  Engine_ObjectEventWalkTo(LOCALID_TOLBI_SOLDIER_B, 56, 248);
+  ObjectMotion_ResetAndSetPositionInMode2(LOCALID_TOLBI_SOLDIER_A, 72, 248);
+  ObjectMotion_ResetAndSetPositionInMode2(LOCALID_TOLBI_SOLDIER_B, 56, 248);
   ObjectEvent_WalkToAndWait(LOCALID_PARTY_LEADER, 64, 264);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_NORTH, 0);
-  Engine_ObjectEventWaitForMove(LOCALID_TOLBI_SOLDIER_A);
+  ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_TOLBI_SOLDIER_A);
   Engine_ObjectEventSetAnimation(LOCALID_TOLBI_SOLDIER_A, ANIM_STAND);
   Engine_ObjectEventSetAnimation(LOCALID_TOLBI_SOLDIER_B, ANIM_STAND);
   Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_STAND);
-  Engine_ObjectEventFaceObjectEvent(LOCALID_TOLBI_SOLDIER_A,
-                                    LOCALID_PARTY_LEADER, 0);
-  Engine_ObjectEventFaceObjectEvent(LOCALID_TOLBI_SOLDIER_B,
-                                    LOCALID_PARTY_LEADER, 0);
-  Engine_ScriptWait(20);
+  ObjectMotion_SetAngleToward(LOCALID_TOLBI_SOLDIER_A, LOCALID_PARTY_LEADER, 0);
+  ObjectMotion_SetAngleToward(LOCALID_TOLBI_SOLDIER_B, LOCALID_PARTY_LEADER, 0);
+  FieldScript_WaitFrames(20);
   ObjectEvent_SetAttachedEffect(
       LOCALID_TOLBI_SOLDIER_A, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   ObjectEvent_SetAttachedEffect(
       LOCALID_TOLBI_SOLDIER_B, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
-  Engine_ObjectEventStartRepeatedMotion(LOCALID_TOLBI_SOLDIER_A, 2);
-  Engine_ObjectEventRunRepeatedMotion(LOCALID_TOLBI_SOLDIER_B, 2);
-  Engine_ScriptWait(20);
+  ObjectMotion_SetVariantCallback(LOCALID_TOLBI_SOLDIER_A, 2);
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_TOLBI_SOLDIER_B, 2);
+  FieldScript_WaitFrames(20);
 
   // "Have you seen anyone who looks like this?", under a "Missing Person"
   // window showing Babi's portrait. The poster, placed with Babi's sprite,
   // becomes the speaker so that answering closes that portrait window.
   Script_OpenMessage(LOCALID_TOLBI_SOLDIER_A, 0);
-  Engine_ScriptWait(25);
+  FieldScript_WaitFrames(25);
   Portrait_OpenWindow(SPRITE_BABI, 0, 12, 7);
   Message_OpenWindow((firstMsg + 3), 11, 12, 2);
   gFieldWork->speaker = LOCALID_TOLBI_MISSING_PERSON_POSTER;
-  if (Engine_ScriptChooseYesNo(LOCALID_PARTY_LEADER, 0) == 0) {
+  if (FieldScript_AskYesNoWithObjectEventAnimation(LOCALID_PARTY_LEADER, 0) ==
+      0) {
     // Yes: "Babi must be nearby!!!" They nod and run east.
-    Engine_ScriptWait(20);
-    Engine_ObjectEventRunRepeatedMotion(LOCALID_TOLBI_SOLDIER_B, 2);
-    Engine_ScriptWait(30);
-    Engine_ObjectEventFaceDirection(LOCALID_TOLBI_SOLDIER_B, FACING_EAST, 0);
-    Engine_ScriptWait(30);
-    Engine_ScriptWait(10);
-    Engine_ObjectEventSetAnimationAndWait(LOCALID_TOLBI_SOLDIER_A, ANIM_NOD);
-    Engine_ScriptWait(20);
-    Engine_ObjectEventFaceDirection(LOCALID_TOLBI_SOLDIER_A, FACING_EAST, 0);
-    Engine_ScriptWait(30);
-    Engine_ScriptShowMessage(LOCALID_TOLBI_SOLDIER_A, 0);
-    Engine_ScriptWait(20);
+    FieldScript_WaitFrames(20);
+    ObjectMotion_SetVarCbAndRefresh(LOCALID_TOLBI_SOLDIER_B, 2);
+    FieldScript_WaitFrames(30);
+    ObjectMotion_ArmCallback(LOCALID_TOLBI_SOLDIER_B, FACING_EAST, 0);
+    FieldScript_WaitFrames(30);
+    FieldScript_WaitFrames(10);
+    ObjectMotion_SetAnimationAndWait(LOCALID_TOLBI_SOLDIER_A, ANIM_NOD);
+    FieldScript_WaitFrames(20);
+    ObjectMotion_ArmCallback(LOCALID_TOLBI_SOLDIER_A, FACING_EAST, 0);
+    FieldScript_WaitFrames(30);
+    FieldScript_ShowMessageAndWait(LOCALID_TOLBI_SOLDIER_A, 0);
+    FieldScript_WaitFrames(20);
     ObjectEvent_FaceDirection(LOCALID_TOLBI_SOLDIER_A, FACING_SOUTH, 0);
-    Engine_ObjectEventFaceDirection(LOCALID_TOLBI_SOLDIER_B, FACING_SOUTH, 0);
-    Engine_ScriptWait(30);
+    ObjectMotion_ArmCallback(LOCALID_TOLBI_SOLDIER_B, FACING_SOUTH, 0);
+    FieldScript_WaitFrames(30);
     Engine_ObjectEventSetAnimation(LOCALID_TOLBI_SOLDIER_A, ANIM_NOD);
-    Engine_ObjectEventSetAnimationAndWait(LOCALID_TOLBI_SOLDIER_B, ANIM_NOD);
-    Engine_ScriptWait(20);
+    ObjectMotion_SetAnimationAndWait(LOCALID_TOLBI_SOLDIER_B, ANIM_NOD);
+    FieldScript_WaitFrames(20);
     ObjectEvent_SetSpeed(LOCALID_TOLBI_SOLDIER_A, PIXELS(9) / 5,
                          PIXELS(9) / 10);
     ObjectEvent_SetSpeed(LOCALID_TOLBI_SOLDIER_B, PIXELS(9) / 5,
                          PIXELS(9) / 10);
     ObjectEvent_WalkTo(LOCALID_TOLBI_SOLDIER_A, 232, 248);
-    Engine_ScriptWait(2);
+    FieldScript_WaitFrames(2);
     ObjectEvent_WalkTo(LOCALID_TOLBI_SOLDIER_B, 232, 248);
-    Engine_ObjectEventWaitForMove(LOCALID_TOLBI_SOLDIER_A);
-    Engine_ObjectEventWalkTo(LOCALID_TOLBI_SOLDIER_A, 248, 248);
-    Engine_ObjectEventWalkToAndWait(LOCALID_TOLBI_SOLDIER_B, 248, 248);
+    ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_TOLBI_SOLDIER_A);
+    ObjectMotion_ResetAndSetPositionInMode2(LOCALID_TOLBI_SOLDIER_A, 248, 248);
+    ObjectMotion_SetPositionAndReset(LOCALID_TOLBI_SOLDIER_B, 248, 248);
   } else {
     // No: "He doesn't seem to be here. Let's look over there." They shake
     // their heads and go back north.
-    Engine_ScriptWait(20);
-    Engine_ObjectEventRunRepeatedMotion(LOCALID_TOLBI_SOLDIER_B, 2);
-    Engine_ScriptWait(30);
-    Engine_ObjectEventFaceDirection(LOCALID_TOLBI_SOLDIER_B, FACING_EAST, 0);
-    Engine_ScriptWait(30);
-    Engine_ScriptWait(10);
-    Engine_ObjectEventSetAnimationAndWait(LOCALID_TOLBI_SOLDIER_A,
-                                          ANIM_SHAKE_HEAD);
-    Engine_ScriptWait(20);
-    Engine_ObjectEventFaceDirection(LOCALID_TOLBI_SOLDIER_A, FACING_EAST, 0);
-    Engine_ScriptWait(30);
+    FieldScript_WaitFrames(20);
+    ObjectMotion_SetVarCbAndRefresh(LOCALID_TOLBI_SOLDIER_B, 2);
+    FieldScript_WaitFrames(30);
+    ObjectMotion_ArmCallback(LOCALID_TOLBI_SOLDIER_B, FACING_EAST, 0);
+    FieldScript_WaitFrames(30);
+    FieldScript_WaitFrames(10);
+    ObjectMotion_SetAnimationAndWait(LOCALID_TOLBI_SOLDIER_A, ANIM_SHAKE_HEAD);
+    FieldScript_WaitFrames(20);
+    ObjectMotion_ArmCallback(LOCALID_TOLBI_SOLDIER_A, FACING_EAST, 0);
+    FieldScript_WaitFrames(30);
     gFieldWork->message += 1;
-    Engine_ScriptShowMessage(LOCALID_TOLBI_SOLDIER_A, 0);
-    Engine_ScriptWait(20);
+    FieldScript_ShowMessageAndWait(LOCALID_TOLBI_SOLDIER_A, 0);
+    FieldScript_WaitFrames(20);
     ObjectEvent_FaceDirection(LOCALID_TOLBI_SOLDIER_A, FACING_SOUTH, 0);
     ObjectEvent_FaceDirection(LOCALID_TOLBI_SOLDIER_B, FACING_SOUTH, 0);
-    Engine_ScriptWait(30);
+    FieldScript_WaitFrames(30);
     Engine_ObjectEventSetAnimation(LOCALID_TOLBI_SOLDIER_A, ANIM_NOD);
-    Engine_ObjectEventSetAnimationAndWait(LOCALID_TOLBI_SOLDIER_B, ANIM_NOD);
-    Engine_ScriptWait(20);
+    ObjectMotion_SetAnimationAndWait(LOCALID_TOLBI_SOLDIER_B, ANIM_NOD);
+    FieldScript_WaitFrames(20);
     ObjectEvent_SetSpeed(LOCALID_TOLBI_SOLDIER_A, PIXELS(8) / 5, PIXELS(4) / 5);
     ObjectEvent_SetSpeed(LOCALID_TOLBI_SOLDIER_B, PIXELS(8) / 5, PIXELS(4) / 5);
-    Engine_ObjectEventWalkTo(LOCALID_TOLBI_SOLDIER_A, 72, 184);
-    Engine_ObjectEventWalkToAndWait(LOCALID_TOLBI_SOLDIER_B, 56, 184);
+    ObjectMotion_ResetAndSetPositionInMode2(LOCALID_TOLBI_SOLDIER_A, 72, 184);
+    ObjectMotion_SetPositionAndReset(LOCALID_TOLBI_SOLDIER_B, 56, 184);
   }
   Engine_ObjectEventSetPosition(LOCALID_TOLBI_SOLDIER_A, 0, 0);
   Engine_ObjectEventSetPosition(LOCALID_TOLBI_SOLDIER_B, 0, 0);
   Engine_ObjectEventSetPosition(LOCALID_TOLBI_MISSING_PERSON_POSTER, 0, 0);
   Engine_GameFlagSet(FLAG_TOLBI_SOLDIERS_ASKED_ABOUT_BABI);
-  Engine_ScriptEnd();
+  FieldScript_End();
 }
 
 /// Frost on the puddle: the frozen pillar is drawn underfoot and stops
@@ -688,7 +684,7 @@ static void Tolbi_MeetSearchingSoldiers(void) {
 static void Tolbi_FreezePuddle(void) {
   struct ObjectEvent *puddle = ObjectEvent_GetById(LOCALID_TOLBI_PUDDLE);
   if (puddle != 0) {
-    Engine_ObjectEventSetSpriteFlags(puddle, 0);
+    ObjectEvent_SetSpriteFlags(puddle, 0);
     puddle->priorityFlags = OBJ_EVENT_PRIORITY_UNDERFOOT;
     puddle->motionFlags = 0;
   }

@@ -189,7 +189,7 @@ const struct ObjectEventTemplate *Map_GetObjectEventTemplates(void) {
   s16 mapId = gGameState.mapId;
 
   if (mapId == (s32)&MapId_GondowanPassage) {
-    if (Engine_GameFlagIsSet(FLAG_BABI_SPOKE_AFTER_COLOSSO) != 0) {
+    if (GameFlag_Test(FLAG_BABI_SPOKE_AFTER_COLOSSO) != 0) {
       return gGondowanPassageObjectEventTemplatesWithIodem;
     }
     return gGondowanPassageObjectEventTemplates;
@@ -209,7 +209,7 @@ const struct MapEvent *Map_GetEvents(void) {
   s16 mapId = gGameState.mapId;
 
   if (mapId == (s32)&MapId_GondowanPassage) {
-    if (Engine_GameFlagIsSet(FLAG_BABI_SPOKE_AFTER_COLOSSO) != 0) {
+    if (GameFlag_Test(FLAG_BABI_SPOKE_AFTER_COLOSSO) != 0) {
       return gGondowanPassageEventsWithIodem;
     }
     return gGondowanPassageEvents;
@@ -234,25 +234,25 @@ static void EventScript_IodemAsksWhyTurningBack(void) {
       FLAG_CHECK(FLAG_IODEM_FOLLOWING_PARTY) != 0) {
     SCRIPT_START();
     // Bring Iodem out of the party before opening his question.
-    Engine_ObjectEventSetSpeed(LOCALID_IODEM, PIXELS(1), PIXELS(1) / 2);
+    ObjectMotion_SetSpeedParameters(LOCALID_IODEM, PIXELS(1), PIXELS(1) / 2);
     leader = ObjectEvent_Get(LOCALID_PARTY_LEADER);
     if (leader != 0) {
       ObjectEvent_SetPosition(LOCALID_IODEM, leader->x.fixed, leader->z.fixed);
     }
-    Engine_ObjectEventSetDestinationOffset(LOCALID_IODEM, -8, 16);
-    Engine_ObjectEventWaitForMove(LOCALID_IODEM);
+    ObjectMotion_OffsetPositionAndResetMotion(LOCALID_IODEM, -8, 16);
+    ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_IODEM);
     OBJECT_DIR(LOCALID_IODEM, FACING_NORTH + FACING_STEP, 0);
     WAIT(10);
     ObjectEvent_FaceObjectEvent(LOCALID_PARTY_LEADER, LOCALID_IODEM, 0);
     MESSAGE_SET(MsgKaragolWhyGoingBackIsaacDo);
     Script_OpenMessage(LOCALID_IODEM, 0);
-    if (Engine_ScriptChooseYesNo(0, 0) == 0) {
+    if (FieldScript_AskYesNoWithObjectEventAnimation(0, 0) == 0) {
       // "I see... In that case, I shall wait here for you to return." The
       // saved place becomes Tolbi's.
       Script_ShowMessage(LOCALID_IODEM, 0);
       OBJECT_WALK(LOCALID_IODEM, 152, 232);
       GameFlag_Clear(FLAG_IODEM_FOLLOWING_PARTY);
-      Engine_ObjectEventWaitForMove(LOCALID_IODEM);
+      ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_IODEM);
       OBJECT_ANIMATION(LOCALID_IODEM, ANIM_STAND);
       gGameState.savedMap = (s32)&MapId_TolbiInteriors;
       gGameState.savedWarpDest = TOLBI_INTERIORS_SANCTUM_NORTH;
@@ -267,12 +267,12 @@ static void EventScript_IodemAsksWhyTurningBack(void) {
         ObjectEvent_SetDestination(LOCALID_IODEM, leader->x.part.pixel,
                                    leader->z.part.pixel);
       }
-      Engine_ObjectEventWaitForMove(LOCALID_IODEM);
+      ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_IODEM);
       OBJECT_POSITION_SET(LOCALID_IODEM, 0, 0);
       WAIT(30);
       OBJECT_ANIMATION(LOCALID_PARTY_LEADER, ANIM_WALK);
-      Engine_ObjectEventSetDestinationOffset(LOCALID_PARTY_LEADER, 0, 16);
-      Engine_ObjectEventWaitForMove(LOCALID_PARTY_LEADER);
+      ObjectMotion_OffsetPositionAndResetMotion(LOCALID_PARTY_LEADER, 0, 16);
+      ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_PARTY_LEADER);
       OBJECT_ANIMATION(LOCALID_PARTY_LEADER, ANIM_STAND);
     }
     SCRIPT_END();
@@ -289,7 +289,7 @@ static void EventScript_IodemRejoins(void) {
   OBJECT_FACE(LOCALID_PARTY_LEADER, LOCALID_IODEM, 0);
   OBJECT_ANIMATION(LOCALID_PARTY_LEADER, ANIM_STAND);
   WAIT(10);
-  Engine_ObjectEventFaceEachOther(LOCALID_PARTY_LEADER, LOCALID_IODEM, 0);
+  ObjectEvent_LinkPair(LOCALID_PARTY_LEADER, LOCALID_IODEM, 0);
   MESSAGE_SET(MsgKaragolIveBeenWaitingForIsaac);
   MESSAGE_PUT(LOCALID_IODEM, 0);
   OBJECT_ANIMATION(LOCALID_IODEM, ANIM_WALK);
@@ -297,10 +297,10 @@ static void EventScript_IodemRejoins(void) {
     struct ObjectEvent *leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
 
     if (leader != 0)
-      Engine_ObjectEventSetDestination(LOCALID_IODEM, leader->x.part.pixel,
+      ObjectMotion_ResetAndSetPosition(LOCALID_IODEM, leader->x.part.pixel,
                                        leader->z.part.pixel);
   }
-  Engine_ObjectEventWaitForMove(LOCALID_IODEM);
+  ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_IODEM);
   Engine_ObjectEventSetPosition(LOCALID_IODEM, 0, 0);
   WAIT(20);
   Engine_GameFlagSet(FLAG_IODEM_FOLLOWING_PARTY);
@@ -319,9 +319,9 @@ static void EventScript_SoldierAsksAboutCrossing(void) {
   firstMessage = MsgKaragolDoYouWishCrossInto;
   MESSAGE_SET(firstMessage);
   MESSAGE_OPEN(LOCALID_FIRST_SOLDIER, 0);
-  if (Engine_ScriptChooseYesNo(0, 0) == 0) {
-    if (Engine_GameFlagIsSet(FLAG_COLOSSO_OVER) != 0) {
-      if (Engine_GameFlagIsSet(FLAG_BABI_SPOKE_AFTER_COLOSSO) == 0) {
+  if (FieldScript_AskYesNoWithObjectEventAnimation(0, 0) == 0) {
+    if (GameFlag_Test(FLAG_COLOSSO_OVER) != 0) {
+      if (GameFlag_Test(FLAG_BABI_SPOKE_AFTER_COLOSSO) == 0) {
         // The shorter answer, without the advice to watch Colosso.
         MESSAGE_SET(firstMessage + 8);
       }
@@ -338,8 +338,8 @@ static void EventScript_SoldierAsksAboutCrossing(void) {
 /// that guard duty made him miss all of it; before, that the warriors fight
 /// while he guards the bridge.
 static void EventScript_ReadSoldierMind(void) {
-  if (Engine_GameFlagIsSet(FLAG_COLOSSO_OVER) != 0 &&
-      Engine_GameFlagIsSet(FLAG_BABI_SPOKE_AFTER_COLOSSO) == 0)
+  if (GameFlag_Test(FLAG_COLOSSO_OVER) != 0 &&
+      GameFlag_Test(FLAG_BABI_SPOKE_AFTER_COLOSSO) == 0)
     MESSAGE_SET(MsgKaragolWeMissedColossoBecauseWe);
   else
     MESSAGE_SET(MsgKaragolWarriorsHaveBeenFightingWhile);
@@ -364,15 +364,15 @@ static void EventScript_LeaveToWorldMapEast(void) {
     FLAG_SET(0x9a4);
   }
   Engine_ScriptRequestWarp(work->coordEvent);
-  Engine_ScriptCloseScreen();
-  Engine_ScriptWaitForScreen();
+  FieldScript_FinishScreenTransition();
+  FieldScript_WaitTransitionFrames();
   SCRIPT_END();
 }
 
 /// Walking west or east into coord events 10 and 11 in GondowanCave: the leader
 /// jumps two cells forward where the map allows (Field_TryJumpForward), across
 /// the stump and the pillar once they float in the water.
-static void EventScript_JumpAcross(void) { Engine_LeaderCheckAhead(); }
+static void EventScript_JumpAcross(void) { Field_TryJumpForward(); }
 
 /// Move on the stump in GondowanCave, until it has leapt: from column 30 or
 /// less it spins and leaps into the water, freeing the cell where it stood.
@@ -439,7 +439,7 @@ static void GondowanCave_WaitForDescent(struct ObjectEvent *objectEvent,
   s32 framesRemaining = 40;
 
   while (framesRemaining != 0) {
-    Engine_TaskWait(1);
+    WaitFrames(1);
     framesRemaining--;
     if (objectEvent->y.fixed <= heightLimit) {
       break;
@@ -459,29 +459,29 @@ static void GondowanCave_RunSpinningLeap(s32 localId) {
   // Wind up the spin while horizontal motion is disabled.
   objectEvent->motionFlags = 0;
   for (stepIndex = 0; stepIndex < 9; stepIndex++) {
-    Engine_TaskWait(1);
+    WaitFrames(1);
     objectEvent->sprite->rotation -= 0x100;
-    objectEvent->x.fixed -= Engine_MathCos(objectEvent->sprite->rotation) / 2;
+    objectEvent->x.fixed -= Trig_Cos(objectEvent->sprite->rotation) / 2;
     objectEvent->targetX = OBJ_EVENT_NO_TARGET;
   }
   objectEvent->update = GondowanCave_RotateLeapingObject;
   // Continue spinning through the first jump.
-  Engine_AudioPlayCue(SE_136);
+  Sound_PlaySong(SE_136);
   OBJECT_SPEED(localId, PIXELS(2), PIXELS(1));
   ObjectEvent_SetDestination(localId, 472, 288);
   objectEvent->gravity = 4 * PIXELS(1) / 5;
   objectEvent->motionFlags = OBJ_EVENT_FOLLOWS_TERRAIN | OBJ_EVENT_FALLS;
   objectEvent->layer = 0;
-  Engine_ObjectEventWaitForMove(localId);
+  ObjectMotion_CommitCurrentPositionAndActivate(localId);
   GondowanCave_WaitForDescent(objectEvent, PIXELS(32));
   MapGrid_SetShake(PIXELS(5), PIXELS(5), Q16_ONE);
   MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
   // Emit a complete particle fan, including its closing direction.
   for (stepIndex = 0; stepIndex < 17; stepIndex++) {
     angle = stepIndex << 12;
-    particleVelocity.x = Engine_MathCos(angle);
+    particleVelocity.x = Trig_Cos(angle);
     particleVelocity.y = 0;
-    particleVelocity.z = Engine_MathSin(angle);
+    particleVelocity.z = Trig_Sin(angle);
     particleVelocity.x -= particleVelocity.x / 4;
     particleVelocity.z -= particleVelocity.z / 2;
     FieldEffect_Spawn(objectEvent->x.fixed, objectEvent->y.fixed,
@@ -490,11 +490,11 @@ static void GondowanCave_RunSpinningLeap(s32 localId) {
   }
   ObjectEvent_SetDestination(localId, 440, 308);
   // Finish the second movement before restoring the resting animation.
-  Engine_ObjectEventWaitForMove(localId);
+  ObjectMotion_CommitCurrentPositionAndActivate(localId);
   GondowanCave_WaitForDescent(objectEvent, PIXELS(32));
   objectEvent->update = 0;
   objectEvent->sprite->rotation = 0x1000;
-  Engine_AudioPlayCue(SE_CAST);
+  Sound_PlaySong(SE_CAST);
   OBJECT_ANIMATION(localId, STUMP_ANIMATION_SPLASH);
   MapGrid_WaitForShakeToSettle();
   WAIT(10);
@@ -535,7 +535,7 @@ s32 Map_Initialize(void) {
       GondowanCave_PlaceDroppedPillar(STUMP_ANIMATION_SINK);
     }
     objectEvent = ObjectEvent_Get(LOCALID_BOULDER_GAP);
-    Engine_ObjectEventSetSpriteFlags(objectEvent, 0);
+    ObjectEvent_SetSpriteFlags(objectEvent, 0);
   }
   return 0;
 }

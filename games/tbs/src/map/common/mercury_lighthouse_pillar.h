@@ -42,7 +42,7 @@ static s32 MercuryLighthouse_AdvanceAnchoredRiseFrame(
     return 0;
   }
 
-  scale = Engine_MathSin(step << 10);
+  scale = Trig_Sin(step << 10);
   effect->scaleX = scale;
   effect->scaleY = scale;
   effect->x.fixed = anchor->x.fixed;
@@ -154,11 +154,11 @@ static void MercuryLighthouse_SpawnSparkPair(void) {
 
   point = gFieldWork->objectEvents[gGameState.leaderLocalId];
   spark =
-      Engine_ObjectCreate(26, point->x.fixed, point->y.fixed, point->z.fixed);
+      ObjectEvent_Create(26, point->x.fixed, point->y.fixed, point->z.fixed);
   if (spark != NULL) {
     spark->groundHeight = point->groundHeight;
     sprite = spark->sprite;
-    Engine_ObjectSetScript(spark, gMercuryLighthouse_SparkScript);
+    ObjectEvent_SetScript(spark, gMercuryLighthouse_SparkScript);
     spark->motionFlags = 0;
     spark->timer = 0;
     spark->linkedObject = point;
@@ -169,11 +169,11 @@ static void MercuryLighthouse_SpawnSparkPair(void) {
     }
   }
   spark =
-      Engine_ObjectCreate(26, point->x.fixed, point->y.fixed, point->z.fixed);
+      ObjectEvent_Create(26, point->x.fixed, point->y.fixed, point->z.fixed);
   if (spark != NULL) {
     spark->groundHeight = point->groundHeight;
     sprite = spark->sprite;
-    Engine_ObjectSetScript(spark, gMercuryLighthouse_SparkScript);
+    ObjectEvent_SetScript(spark, gMercuryLighthouse_SparkScript);
     spark->motionFlags = 0;
     spark->timer = 0;
     spark->linkedObject = point;
@@ -183,7 +183,7 @@ static void MercuryLighthouse_SpawnSparkPair(void) {
       sprite->flags = 0;
     }
   }
-  Engine_AudioPlayCue(SE_130);
+  Sound_PlaySong(SE_130);
 }
 
 /// Coord event 11, the pool's heart: the column of light appears over the
@@ -204,16 +204,16 @@ void MercuryLighthouse_ChargeLights(void) {
                ->objectEvents[gGameState.leaderLocalId];
   if ((u32)state->levels > 2)
     return;
-  Engine_ScriptStart();
+  FieldScript_Start();
   pillar = state->pillar;
   if (pillar == 0) {
-    objectEvent = Engine_ObjectCreate(
+    objectEvent = ObjectEvent_Create(
         26, leader->x.fixed, leader->y.fixed + 0x180000, leader->z.fixed);
     if (objectEvent != 0) {
       struct Sprite *sprite = objectEvent->sprite;
 
       objectEvent->groundHeight = leader->groundHeight;
-      Engine_ObjectSetScript(objectEvent, gMercuryLighthouse_PillarScript);
+      ObjectEvent_SetScript(objectEvent, gMercuryLighthouse_PillarScript);
       objectEvent->linkedObject = leader;
       objectEvent->motionFlags = 4;
       // The height is written by its offset, the plain-C form of obj->y.fixed
@@ -234,15 +234,15 @@ void MercuryLighthouse_ChargeLights(void) {
   }
   for (step = state->levels; step <= 2; step++) {
     MercuryLighthouse_SpawnSparkPair();
-    Engine_TaskWait(30);
+    WaitFrames(30);
     pillar->spriteStorageKind = 1;
-    ObjectEvent_SetMode(pillar, 5 - step);
+    ObjectDispatch_SelectAnimation(pillar, 5 - step);
   }
   state->levels = 3;
   state->targetX = (pillar->x.fixed & -0x100000) + 0x80000;
   state->targetZ = (pillar->z.fixed & -0x100000) + 0x80000;
   Engine_GameFlagSet(FLAG_NO_ENCOUNTERS_IN_MAPSEC);
-  Engine_ScriptEnd();
+  FieldScript_End();
 }
 
 #define MAPGRID_CELLS ((struct MapGridCell *)Ram_MapGridCellBuffer)
@@ -260,13 +260,13 @@ void MercuryLighthouse_LoseLights(void) {
   }
 
   state->levels = 0;
-  Engine_GameFlagClear(FLAG_NO_ENCOUNTERS_IN_MAPSEC);
+  GameFlag_ClearBit(FLAG_NO_ENCOUNTERS_IN_MAPSEC);
 
   target = state->pillar;
   if (target != 0) {
     target->timer = 0;
-    Engine_ObjectSetScript(target, gMercuryLighthouse_ScaleCounterScript);
-    ObjectEvent_SetMode(target, 7);
+    ObjectEvent_SetScript(target, gMercuryLighthouse_ScaleCounterScript);
+    ObjectDispatch_SelectAnimation(target, 7);
     state->pillar = NULL;
   }
 }
@@ -317,31 +317,31 @@ void MercuryLighthouse_HopAcrossPool(void) {
       to->behavior == state->terrainCode && state->levels == 0)
     return;
 
-  Engine_ScriptStart();
+  FieldScript_Start();
   if (FieldObject_CheckMovementCollision(objectEvent,
                                          (struct FieldPosition *)pos) != 0)
     return;
   obj = state->stepEffect;
   if (obj != NULL) {
     obj->timer = 0;
-    Engine_ObjectSetScript(obj, gMercuryLighthouse_ScaleCounterScript);
-    ObjectEvent_SetMode(obj, 7);
+    ObjectEvent_SetScript(obj, gMercuryLighthouse_ScaleCounterScript);
+    ObjectDispatch_SelectAnimation(obj, 7);
     state->stepEffect = NULL;
   }
   if (to->behavior == state->terrainCode && state->levels != 0) {
     source = state->pillar;
-    obj = Engine_ObjectCreate(26, source->x.fixed, source->y.fixed,
-                              source->z.fixed);
+    obj = ObjectEvent_Create(26, source->x.fixed, source->y.fixed,
+                             source->z.fixed);
     if (obj != NULL) {
       sprite = obj->sprite;
       obj->groundHeight = source->groundHeight;
-      Engine_ObjectSetScript(obj, gMercuryLighthouse_RampScript);
+      ObjectEvent_SetScript(obj, gMercuryLighthouse_RampScript);
       obj->motionFlags = 0;
       obj->timer = 0;
       obj->priorityFlags = 2;
       obj->speed = 0x40000;
       obj->acceleration = 0x20000;
-      Engine_ObjectSetPosition(obj, pos[0].fixed, pos[1].fixed, pos[2].fixed);
+      Object_SetPosition(obj, pos[0].fixed, pos[1].fixed, pos[2].fixed);
       if (sprite != NULL) {
         Sprite_StartAnim(sprite, 6);
         zero = 0;
@@ -352,49 +352,49 @@ void MercuryLighthouse_HopAcrossPool(void) {
     n = state->levels - 1;
     state->levels = n;
     if (n == 0) {
-      Engine_ObjectDispatchRelease(state->pillar);
+      ObjectEvent_Release(state->pillar);
       state->pillar = NULL;
-      Engine_GameFlagClear(FLAG_NO_ENCOUNTERS_IN_MAPSEC);
+      GameFlag_ClearBit(FLAG_NO_ENCOUNTERS_IN_MAPSEC);
     } else if (state->pillar != NULL) {
-      ObjectEvent_SetMode(state->pillar, 6 - n);
+      ObjectDispatch_SelectAnimation(state->pillar, 6 - n);
     }
   }
-  ObjectEvent_SetMode(objectEvent, 6);
-  Engine_TaskWait(3);
-  Engine_AudioPlayCue(SE_JUMP);
-  ObjectEvent_SetMode(objectEvent, 7);
+  ObjectDispatch_SelectAnimation(objectEvent, 6);
+  WaitFrames(3);
+  Sound_PlaySong(SE_JUMP);
+  ObjectDispatch_SelectAnimation(objectEvent, 7);
   objectEvent->speed = 0x30000;
   objectEvent->acceleration = 0x20000;
   objectEvent->velocityY = 0x40000;
   *flags &= 0x7e;
-  Engine_ObjectEventSetSpriteFlags(objectEvent, 0);
-  Engine_ObjectEventMoveToAndWait(0, pos[0].part.pixel, pos[2].part.pixel);
-  ObjectEvent_SetMode(objectEvent, 6);
-  Engine_TaskWait(2);
+  ObjectEvent_SetSpriteFlags(objectEvent, 0);
+  ObjectMotion_SetPositionAndCommit(0, pos[0].part.pixel, pos[2].part.pixel);
+  ObjectDispatch_SelectAnimation(objectEvent, 6);
+  WaitFrames(2);
   if (to->behavior != state->terrainCode)
-    Engine_ObjectEventSetSpriteFlags(objectEvent, SPRITE_FLAG_SHADOW);
+    ObjectEvent_SetSpriteFlags(objectEvent, SPRITE_FLAG_SHADOW);
   else
-    Engine_AudioPlayCue(SE_215);
-  Engine_TaskWait(1);
+    Sound_PlaySong(SE_215);
+  WaitFrames(1);
   *flags = saved;
   if (to->behavior == state->terrainCode && state->stepEffect == NULL) {
-    ObjectEvent_SetMode(objectEvent, 18);
-    Engine_AudioPlayCue(SE_WATER_MOVE);
+    ObjectDispatch_SelectAnimation(objectEvent, 18);
+    Sound_PlaySong(SE_WATER_MOVE);
     for (i = 0;; i++) {
       if ((i & 15) == 0)
         MercuryLighthouse_SpawnRipple(objectEvent);
       if (i > 31 && gKeysPressed != 0)
         break;
-      Engine_TaskWait(1);
+      WaitFrames(1);
     }
-    Engine_AudioPlayCue(SE_STOP_SLOT3);
-    Engine_TaskWait(1);
+    Sound_PlaySong(SE_STOP_SLOT3);
+    WaitFrames(1);
     objectEvent->x.fixed = state->targetX;
     objectEvent->z.fixed = state->targetZ;
-    Engine_ObjectEventSetSpriteFlags(objectEvent, SPRITE_FLAG_SHADOW);
+    ObjectEvent_SetSpriteFlags(objectEvent, SPRITE_FLAG_SHADOW);
   }
   state->rippleTimer = 0;
-  Engine_ScriptEnd();
+  FieldScript_End();
   work->walkingDistance += Iwram_MulQ16(work->walkingDistanceScale, 0x200000);
 }
 
@@ -430,6 +430,6 @@ static void MercuryLighthouse_RemoveColumnOnRetreat(void) {
   pillar = state->pillar;
   if (pillar == NULL)
     return;
-  Engine_ObjectDispatchRelease(pillar);
+  ObjectEvent_Release(pillar);
   state->pillar = NULL;
 }

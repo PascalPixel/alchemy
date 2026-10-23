@@ -18,8 +18,8 @@ void WorldMap_CreateLinkedEffects(struct ObjectEvent *parent) {
   s32 i;
 
   for (i = 0; i < 2; ++i) {
-    child = Engine_ObjectCreate(26, parent->x.fixed, parent->y.fixed,
-                                parent->z.fixed);
+    child = ObjectEvent_Create(26, parent->x.fixed, parent->y.fixed,
+                               parent->z.fixed);
     pair[i] = child;
     if (child != NULL) {
       child->groundHeight = parent->groundHeight;

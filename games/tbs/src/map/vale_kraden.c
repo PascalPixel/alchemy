@@ -160,10 +160,10 @@ const struct ObjectEventTemplate *ValeKraden_GetObjectEventTemplates(void) {
 /// (FLAG_KALAY_REACHED), on the stormy night (FLAG_VALE_STORM), else the day
 /// the story begins.
 const struct MapEvent *ValeKraden_GetEvents(void) {
-  if (Engine_GameFlagIsSet(FLAG_KALAY_REACHED) != 0) {
+  if (GameFlag_Test(FLAG_KALAY_REACHED) != 0) {
     return gValeKraden_EventsAfterKalay;
   }
-  if (Engine_GameFlagIsSet(FLAG_VALE_STORM) != 0) {
+  if (GameFlag_Test(FLAG_VALE_STORM) != 0) {
     return gValeKraden_StormEvents;
   }
   return gValeKraden_Events;
@@ -173,7 +173,7 @@ const struct MapEvent *ValeKraden_GetEvents(void) {
 static __inline__ void ValeKraden_NodTogether(void) {
   Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
   Engine_ObjectEventSetAnimation(GARET, ANIM_NOD);
-  Engine_ObjectEventSetAnimationAndWait(JENNA, ANIM_NOD);
+  ObjectMotion_SetAnimationAndWait(JENNA, ANIM_NOD);
 }
 
 /// Turns all three party members toward the strangers.
@@ -204,28 +204,28 @@ static __inline__ void ValeKraden_WalkTowardLeader(s32 companionId) {
 static void EventScript_TalkToBoyByTheFence(void) {
   s32 message;
 
-  Engine_ScriptStart();
+  FieldScript_Start();
   if (GameFlag_IsSet(FLAG_VALE_PARTY_LEFT) != 0) {
-    Engine_ScriptSetMessage(MsgValeIllClimbTheFenceSomeday);
+    FieldScript_SetMessageId(MsgValeIllClimbTheFenceSomeday);
     Script_ShowMessage(LOCALID_BOY_BY_THE_FENCE, 0);
   } else {
     message = MsgValeHearAwfulGrowls;
-    Engine_ScriptSetMessage(message);
+    FieldScript_SetMessageId(message);
     ObjectEvent_FaceObjectEvent(LOCALID_BOY_BY_THE_FENCE, LOCALID_PARTY_LEADER,
                                 10);
-    Engine_ObjectEventRunRepeatedMotion(LOCALID_BOY_BY_THE_FENCE, 2);
-    Engine_ScriptWait(6);
+    ObjectMotion_SetVarCbAndRefresh(LOCALID_BOY_BY_THE_FENCE, 2);
+    FieldScript_WaitFrames(6);
     Script_OpenMessage(LOCALID_BOY_BY_THE_FENCE, 0);
-    if (Engine_ScriptChooseYesNo(0, 0) == 0) {
-      Engine_ScriptSetMessage(message + 1);
+    if (FieldScript_AskYesNoWithObjectEventAnimation(0, 0) == 0) {
+      FieldScript_SetMessageId(message + 1);
     } else {
-      Engine_ScriptSetMessage(message + 2);
+      FieldScript_SetMessageId(message + 2);
     }
-    Engine_ObjectEventStartRepeatedMotion(LOCALID_BOY_BY_THE_FENCE, 3);
+    ObjectMotion_SetVariantCallback(LOCALID_BOY_BY_THE_FENCE, 3);
     Script_ShowMessage(LOCALID_BOY_BY_THE_FENCE, 0);
     ObjectEvent_FaceDirection(LOCALID_BOY_BY_THE_FENCE, FACING_NORTH, 10);
   }
-  Engine_ScriptEnd();
+  FieldScript_End();
 }
 
 /// In Vale, talking to Kraden outside his cottage: he talks Isaac, Garet and
@@ -244,14 +244,14 @@ static void EventScript_KradenPlansSanctumVisit(void) {
 
   if (GameFlag_IsSet(FLAG_SANCTUM_VISIT_PLANNED) == 0) {
     // Isaac walks up to Kraden, who greets him.
-    Engine_ScriptStart();
+    FieldScript_Start();
     ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(1), PIXELS(1) / 2);
-    Engine_ScriptSetMessage(MsgValeKradenOhIsaac);
-    Engine_ObjectEventRunRepeatedMotion(LOCALID_KRADEN, 1);
+    FieldScript_SetMessageId(MsgValeKradenOhIsaac);
+    ObjectMotion_SetVarCbAndRefresh(LOCALID_KRADEN, 1);
     ObjectEvent_WalkToAndWait(LOCALID_PARTY_LEADER, 232, 264);
     Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, 0);
-    Engine_ObjectEventFaceEachOther(LOCALID_PARTY_LEADER, LOCALID_KRADEN, 20);
-    Engine_ObjectEventRunRepeatedMotion(LOCALID_KRADEN, 2);
+    ObjectEvent_LinkPair(LOCALID_PARTY_LEADER, LOCALID_KRADEN, 20);
+    ObjectMotion_SetVarCbAndRefresh(LOCALID_KRADEN, 2);
     Script_ShowMessageAndWait(LOCALID_KRADEN, 0, 10);
     // Garet and Jenna step out of Isaac and stand either side of him.
     leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
@@ -266,23 +266,23 @@ static void EventScript_KradenPlansSanctumVisit(void) {
     Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_STAND);
     Engine_ObjectEventSetAnimation(JENNA, ANIM_STAND);
     Engine_ObjectEventSetAnimation(GARET, ANIM_STAND);
-    Engine_ScriptWait(4);
+    FieldScript_WaitFrames(4);
     // Jenna sees something is bothering Kraden; he hedges.
     ObjectEvent_FaceDirection(JENNA, FACING_NORTHWEST + FACING_STEP, 0);
     ObjectEvent_FaceDirection(GARET, FACING_NORTH + FACING_STEP, 20);
-    Engine_ObjectEventSetAnimationAndWait(JENNA, ANIM_SHAKE_HEAD);
-    Engine_ScriptWait(10);
+    ObjectMotion_SetAnimationAndWait(JENNA, ANIM_SHAKE_HEAD);
+    FieldScript_WaitFrames(10);
     Script_ShowMessageAndWait(JENNA, 0, 20);
-    Engine_ObjectEventRunRepeatedMotion(LOCALID_KRADEN, 1);
-    Engine_ScriptWait(10);
+    ObjectMotion_SetVarCbAndRefresh(LOCALID_KRADEN, 1);
+    FieldScript_WaitFrames(10);
     ObjectEvent_FaceDirection(LOCALID_KRADEN, FACING_SOUTHEAST + FACING_STEP,
                               10);
     Script_ShowMessageAndWait(LOCALID_KRADEN, 0, 10);
     // Garet names Saturos and Menardi; Kraden finds them persistent.
     ObjectEvent_FaceDirection(GARET, FACING_SOUTHEAST + FACING_STEP, 40);
-    Engine_ObjectEventRunRepeatedMotion(GARET, 2);
+    ObjectMotion_SetVarCbAndRefresh(GARET, 2);
     Script_ShowMessageAndWait(GARET, 0, 10);
-    Engine_ObjectEventRunRepeatedMotion(LOCALID_KRADEN, 2);
+    ObjectMotion_SetVarCbAndRefresh(LOCALID_KRADEN, 2);
     ObjectEvent_FaceDirection(LOCALID_KRADEN, FACING_SOUTH + FACING_STEP, 10);
     Engine_ObjectEventSetAnimation(LOCALID_KRADEN, ANIM_NOD);
     Script_ShowMessageAndWait(LOCALID_KRADEN, 0, 8);
@@ -291,8 +291,8 @@ static void EventScript_KradenPlansSanctumVisit(void) {
     Script_ShowMessageAndWait(JENNA, 0, 10);
     ObjectEvent_FaceDirection(LOCALID_KRADEN, FACING_SOUTHEAST + FACING_STEP,
                               10);
-    Engine_ObjectEventSetAnimationAndWait(LOCALID_KRADEN, ANIM_NOD);
-    Engine_ScriptWait(10);
+    ObjectMotion_SetAnimationAndWait(LOCALID_KRADEN, ANIM_NOD);
+    FieldScript_WaitFrames(10);
     Script_ShowMessageAndWait(LOCALID_KRADEN, 0, 6);
     // The three are puzzled, and Jenna asks what he means.
     ObjectEvent_ShowEmote(LOCALID_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_QUESTION,
@@ -301,12 +301,12 @@ static void EventScript_KradenPlansSanctumVisit(void) {
     ObjectEvent_ShowEmote(JENNA, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
     ObjectEvent_FaceDirection(GARET, FACING_NORTH + FACING_STEP, 0);
     ObjectEvent_FaceDirection(JENNA, FACING_NORTHWEST + FACING_STEP, 20);
-    Engine_ObjectEventRunRepeatedMotion(JENNA, 2);
+    ObjectMotion_SetVarCbAndRefresh(JENNA, 2);
     Script_ShowMessageAndWait(JENNA, 0, 10);
     // Kraden: they spoke of Mt. Aleph and Sol Sanctum as if they had seen
     // them.
     ObjectEvent_ShowEmote(LOCALID_KRADEN, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
-    Engine_ObjectEventSetAnimationAndWait(LOCALID_KRADEN, ANIM_SHAKE_HEAD);
+    ObjectMotion_SetAnimationAndWait(LOCALID_KRADEN, ANIM_SHAKE_HEAD);
     Script_ShowMessageAndWait(LOCALID_KRADEN, 0, 10);
     ObjectEvent_FaceDirection(GARET, FACING_EAST, 0);
     ObjectEvent_FaceDirection(JENNA, FACING_WEST, 20);
@@ -322,31 +322,31 @@ static void EventScript_KradenPlansSanctumVisit(void) {
     ObjectEvent_FaceDirection(LOCALID_KRADEN, FACING_SOUTHEAST + FACING_STEP,
                               20);
     Script_OpenMessage(LOCALID_KRADEN, 0);
-    if (Engine_ScriptChooseYesNo(0, 0) == 0) {
-      Engine_ScriptSetMessage(MsgValeYouCannotEnterMtAleph);
+    if (FieldScript_AskYesNoWithObjectEventAnimation(0, 0) == 0) {
+      FieldScript_SetMessageId(MsgValeYouCannotEnterMtAleph);
     } else {
-      Engine_ScriptSetMessage(MsgValeKradenIWaitedYearsFor);
+      FieldScript_SetMessageId(MsgValeKradenIWaitedYearsFor);
     }
-    Engine_ScriptWait(20);
-    Engine_ObjectEventSetAnimationAndWait(LOCALID_KRADEN, ANIM_NOD);
-    Engine_ScriptWait(10);
+    FieldScript_WaitFrames(20);
+    ObjectMotion_SetAnimationAndWait(LOCALID_KRADEN, ANIM_NOD);
+    FieldScript_WaitFrames(10);
     Script_ShowMessageAndWait(LOCALID_KRADEN, 0, 10);
     // Jenna fears they are thieves; Garet would tell the high elders.
-    Engine_ScriptSetMessage(MsgValeJennaTheyMightBeThieves);
-    Engine_ObjectEventRunRepeatedMotion(JENNA, 2);
+    FieldScript_SetMessageId(MsgValeJennaTheyMightBeThieves);
+    ObjectMotion_SetVarCbAndRefresh(JENNA, 2);
     ObjectEvent_FaceDirection(JENNA, FACING_WEST, 10);
     Script_ShowMessageAndWait(JENNA, 0, 6);
     ObjectEvent_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 30);
-    Engine_ObjectEventJump(GARET, 4, 30);
+    ObjectMotion_Launch(GARET, 4, 30);
     ObjectEvent_FaceDirection(GARET, FACING_EAST, 10);
     Script_ShowMessageAndWait(GARET, 0, 6);
     // The three agree and turn to go.
-    Engine_ObjectEventFaceEachOther(LOCALID_PARTY_LEADER, GARET, 10);
-    Engine_ObjectEventFaceEachOther(LOCALID_PARTY_LEADER, JENNA, 0);
+    ObjectEvent_LinkPair(LOCALID_PARTY_LEADER, GARET, 10);
+    ObjectEvent_LinkPair(LOCALID_PARTY_LEADER, JENNA, 0);
     ObjectEvent_FaceObjectEvent(LOCALID_KRADEN, GARET, 10);
     ObjectEvent_FaceObjectEvent(LOCALID_KRADEN, JENNA, 10);
     ValeKraden_NodTogether();
-    Engine_ScriptWait(10);
+    FieldScript_WaitFrames(10);
     Engine_ObjectEventSetAnimation(JENNA, ANIM_STAND);
     Engine_ObjectEventSetAnimation(GARET, ANIM_STAND);
     Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, 0);
@@ -357,40 +357,40 @@ static void EventScript_KradenPlansSanctumVisit(void) {
     // confirmed.
     ObjectEvent_SetAttachedEffect(LOCALID_KRADEN, ATTACHED_EFFECT_IN_FRONT |
                                                       ATTACHED_EFFECT_ONCE);
-    Engine_ObjectEventRunRepeatedMotion(LOCALID_KRADEN, 3);
-    Engine_ScriptWait(10);
+    ObjectMotion_SetVarCbAndRefresh(LOCALID_KRADEN, 3);
+    FieldScript_WaitFrames(10);
     Script_ShowMessageAndWait(LOCALID_KRADEN, 0, 6);
     ObjectEvent_ShowEmote(LOCALID_PARTY_LEADER,
                           EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
     ObjectEvent_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
     ObjectEvent_ShowEmote(JENNA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
-    Engine_ObjectEventSetAnimationAndWait(LOCALID_KRADEN, ANIM_SHAKE_HEAD);
-    Engine_ScriptWait(10);
+    ObjectMotion_SetAnimationAndWait(LOCALID_KRADEN, ANIM_SHAKE_HEAD);
+    FieldScript_WaitFrames(10);
     Script_ShowMessageAndWait(LOCALID_KRADEN, 0, 6);
-    Engine_ObjectEventRunRepeatedMotion(LOCALID_KRADEN, 1);
+    ObjectMotion_SetVarCbAndRefresh(LOCALID_KRADEN, 1);
     Script_ShowMessageAndWait(LOCALID_KRADEN, 0, 6);
     // Jenna asks what to do; Kraden means to go and confirm it.
     ObjectEvent_FaceDirection(JENNA, FACING_NORTHWEST + FACING_STEP, 10);
     Script_ShowMessageAndWait(JENNA, 0, 6);
     ObjectEvent_FaceDirection(LOCALID_KRADEN, FACING_SOUTHEAST + FACING_STEP,
                               10);
-    Engine_ObjectEventSetAnimationAndWait(LOCALID_KRADEN, ANIM_NOD);
-    Engine_ScriptWait(6);
+    ObjectMotion_SetAnimationAndWait(LOCALID_KRADEN, ANIM_NOD);
+    FieldScript_WaitFrames(6);
     Script_ShowMessageAndWait(LOCALID_KRADEN, 0, 10);
     // The three start; Garet asks whether he means Sol Sanctum itself, and
     // Jenna thinks it impossible.
-    Engine_ObjectEventJump(LOCALID_PARTY_LEADER, 2, 0);
-    Engine_ObjectEventJump(GARET, 2, 0);
-    Engine_ObjectEventJump(JENNA, 2, 10);
+    ObjectMotion_Launch(LOCALID_PARTY_LEADER, 2, 0);
+    ObjectMotion_Launch(GARET, 2, 0);
+    ObjectMotion_Launch(JENNA, 2, 10);
     ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_NORTH, 0);
     ObjectEvent_FaceDirection(GARET, FACING_NORTH + FACING_STEP, 20);
     Script_ShowMessageAndWait(GARET, 0, 6);
     ObjectEvent_FaceDirection(LOCALID_KRADEN, FACING_SOUTH + FACING_STEP, 10);
-    Engine_ObjectEventSetAnimationAndWait(LOCALID_KRADEN, ANIM_NOD);
-    Engine_ScriptWait(16);
-    Engine_ObjectEventFaceEachOther(LOCALID_PARTY_LEADER, JENNA, 40);
+    ObjectMotion_SetAnimationAndWait(LOCALID_KRADEN, ANIM_NOD);
+    FieldScript_WaitFrames(16);
+    ObjectEvent_LinkPair(LOCALID_PARTY_LEADER, JENNA, 40);
     Script_ShowMessageAndWait(JENNA, 0, 10);
-    Engine_ObjectEventRunRepeatedMotion(LOCALID_KRADEN, 2);
+    ObjectMotion_SetVarCbAndRefresh(LOCALID_KRADEN, 2);
     ObjectEvent_FaceDirection(LOCALID_KRADEN, FACING_SOUTHEAST + FACING_STEP,
                               10);
     Script_ShowMessageAndWait(LOCALID_KRADEN, 0, 6);
@@ -402,80 +402,80 @@ static void EventScript_KradenPlansSanctumVisit(void) {
                           0);
     ObjectEvent_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
     ObjectEvent_ShowEmote(JENNA, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 80);
-    Engine_ObjectEventSetAnimationAndWait(LOCALID_KRADEN, ANIM_SHAKE_HEAD);
+    ObjectMotion_SetAnimationAndWait(LOCALID_KRADEN, ANIM_SHAKE_HEAD);
     Script_OpenMessage(LOCALID_KRADEN, 0);
-    if (Engine_ScriptChooseYesNo(0, 0) == 0) {
-      Engine_ScriptSetMessage(MsgValeKradenWeOnlyCheckThe);
+    if (FieldScript_AskYesNoWithObjectEventAnimation(0, 0) == 0) {
+      FieldScript_SetMessageId(MsgValeKradenWeOnlyCheckThe);
     } else {
-      Engine_ScriptSetMessage(MsgValeKradenWeOnlyCheckMt);
+      FieldScript_SetMessageId(MsgValeKradenWeOnlyCheckMt);
     }
     Script_ShowMessageAndWait(LOCALID_KRADEN, 0, 20);
     // Garet asks Isaac whether it is fine if they are not seen.
     sneakingMessage = MsgValeFineIfTheyDontSee;
-    Engine_ScriptSetMessage(sneakingMessage);
+    FieldScript_SetMessageId(sneakingMessage);
     ObjectEvent_FaceDirection(GARET, FACING_EAST, 10);
-    Engine_ObjectEventRunRepeatedMotion(GARET, 2);
+    ObjectMotion_SetVarCbAndRefresh(GARET, 2);
     Script_OpenMessage(GARET, 0);
-    if (Engine_ScriptChooseYesNo(0, 0) == 0) {
-      Engine_ScriptSetMessage((sneakingMessage + 1));
+    if (FieldScript_AskYesNoWithObjectEventAnimation(0, 0) == 0) {
+      FieldScript_SetMessageId((sneakingMessage + 1));
     } else {
-      Engine_ScriptSetMessage((sneakingMessage + 2));
+      FieldScript_SetMessageId((sneakingMessage + 2));
     }
     Script_ShowMessageAndWait(GARET, 0, 6);
     // Jenna makes it their secret; a yes earns the warning not even to tell
     // Isaac's mother, a no only nods and skips it.
-    Engine_ScriptSetMessage(MsgValeJennaOurSecret);
+    FieldScript_SetMessageId(MsgValeJennaOurSecret);
     ObjectEvent_FaceDirection(JENNA, FACING_WEST, 10);
-    Engine_ObjectEventRunRepeatedMotion(JENNA, 1);
+    ObjectMotion_SetVarCbAndRefresh(JENNA, 1);
     Script_OpenMessage(JENNA, 0);
-    Engine_ScriptWait(4);
-    if (Engine_ScriptChooseYesNo(0, 0) == 1) {
-      Engine_ObjectEventJump(JENNA, 2, 20);
+    FieldScript_WaitFrames(4);
+    if (FieldScript_AskYesNoWithObjectEventAnimation(0, 0) == 1) {
+      ObjectMotion_Launch(JENNA, 2, 20);
       Script_ShowMessageAndWait(JENNA, 0, 10);
     } else {
       Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
       Engine_ObjectEventSetAnimation(GARET, ANIM_NOD);
-      Engine_ObjectEventSetAnimationAndWait(JENNA, ANIM_NOD);
-      Engine_ScriptWait(8);
+      ObjectMotion_SetAnimationAndWait(JENNA, ANIM_NOD);
+      FieldScript_WaitFrames(8);
       Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, 0);
       gFieldWork->message++;
     }
     // Kraden: then it is decided.
-    Engine_ObjectEventSetAnimationAndWait(LOCALID_KRADEN, ANIM_NOD);
-    Engine_ScriptWait(10);
+    ObjectMotion_SetAnimationAndWait(LOCALID_KRADEN, ANIM_NOD);
+    FieldScript_WaitFrames(10);
     Script_ShowMessageAndWait(LOCALID_KRADEN, 0, 10);
     ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_NORTH, 0);
     ObjectEvent_FaceDirection(GARET, FACING_NORTH + FACING_STEP, 0);
     ObjectEvent_FaceDirection(JENNA, FACING_NORTHWEST + FACING_STEP, 10);
     ValeKraden_NodTogether();
-    Engine_ScriptWait(10);
+    FieldScript_WaitFrames(10);
     Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, 0);
-    Engine_ScriptWait(20);
+    FieldScript_WaitFrames(20);
     // Kraden makes Isaac the leader; Garet and Jenna squabble over who would
     // be nervous.
-    Engine_ObjectEventRunRepeatedMotion(LOCALID_KRADEN, 2);
+    ObjectMotion_SetVarCbAndRefresh(LOCALID_KRADEN, 2);
     Script_OpenMessage(LOCALID_KRADEN, 0);
-    Engine_ScriptWait(4);
-    if (Engine_ScriptChooseYesNo(0, 0) == 0) {
-      Engine_ScriptSetMessage(MsgValeGaretYouCanHandleThe);
+    FieldScript_WaitFrames(4);
+    if (FieldScript_AskYesNoWithObjectEventAnimation(0, 0) == 0) {
+      FieldScript_SetMessageId(MsgValeGaretYouCanHandleThe);
     } else {
-      Engine_ScriptSetMessage(MsgValeGaretIllTakeOverIf);
+      FieldScript_SetMessageId(MsgValeGaretIllTakeOverIf);
     }
-    Engine_ScriptWait(10);
-    Engine_ObjectEventRunRepeatedMotion(GARET, 2);
+    FieldScript_WaitFrames(10);
+    ObjectMotion_SetVarCbAndRefresh(GARET, 2);
     ObjectEvent_FaceDirection(GARET, FACING_EAST, 10);
     Script_ShowMessageAndWait(GARET, 0, 6);
     ObjectEvent_FaceDirection(JENNA, FACING_WEST, 10);
-    Engine_ObjectEventSetAnimationAndWait(JENNA, ANIM_SHAKE_HEAD);
+    ObjectMotion_SetAnimationAndWait(JENNA, ANIM_SHAKE_HEAD);
     Script_ShowMessageAndWait(JENNA, 0, 6);
-    Engine_ObjectEventRunRepeatedMotion(GARET, 2);
+    ObjectMotion_SetVarCbAndRefresh(GARET, 2);
     ObjectEvent_FaceDirection(GARET, FACING_WEST, 10);
     ObjectEvent_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 30);
     Script_ShowMessageAndWait(GARET, 0, 10);
     // Kraden hops, eager to start.
     ObjectEvent_ShowEmote(LOCALID_KRADEN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION,
                           40);
-    Engine_ObjectEventJump(LOCALID_KRADEN, 4, 40);
+    ObjectMotion_Launch(LOCALID_KRADEN, 4, 40);
     ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_NORTH, 0);
     ObjectEvent_FaceDirection(GARET, FACING_NORTH, 0);
     ObjectEvent_FaceDirection(JENNA, FACING_NORTHWEST + FACING_STEP, 20);
@@ -494,10 +494,10 @@ static void EventScript_KradenPlansSanctumVisit(void) {
     ObjectEvent_ShowEmote(JENNA, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
     gFieldWork->transition =
         MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_NOISE);
-    Engine_ScriptCloseScreen();
-    Engine_ScriptWaitForScreen();
+    FieldScript_FinishScreenTransition();
+    FieldScript_WaitTransitionFrames();
     Engine_ScriptRequestWarp(VALE_KRADEN_TO_VALE_INTERIORS_INN_MYTHRIL_BAG);
-    Engine_ScriptEnd();
+    FieldScript_End();
   }
 }
 
@@ -513,7 +513,7 @@ static void EventScript_KradenSetsOff(void) {
   struct ObjectEvent *objectEvent;
   s32 facing;
 
-  Engine_ScriptStart();
+  FieldScript_Start();
   ObjectEvent_SetPosition(LOCALID_KRADEN, 0, 0);
   ObjectEvent_SetPosition(GARET, PIXELS(216), PIXELS(264));
   ObjectEvent_SetPosition(JENNA, PIXELS(248), PIXELS(264));
@@ -525,31 +525,31 @@ static void EventScript_KradenSetsOff(void) {
   MapGrid_AnimateCells(gValeKraden_GateCells, 43, 8);
   gFieldWork->transition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_NOISE);
-  Engine_ScriptOpenScreen();
-  Engine_ScriptWaitForScreen();
-  Engine_ScriptWait(40);
+  FieldScript_StartScreenTransition();
+  FieldScript_WaitTransitionFrames();
+  FieldScript_WaitFrames(40);
   // Kraden comes out of the gate: this is their best bet.
   ObjectEvent_SetSpeed(LOCALID_KRADEN, PIXELS(4) / 5, PIXELS(2) / 5);
   ObjectEvent_SetPosition(LOCALID_KRADEN, PIXELS(230), PIXELS(220));
   ObjectEvent_WalkToAndWait(LOCALID_KRADEN, 230, 232);
-  Engine_ScriptWait(20);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_KRADEN, ANIM_NOD);
-  Engine_ScriptSetMessage(MsgValeKradenOurBestBet);
+  FieldScript_WaitFrames(20);
+  ObjectMotion_SetAnimationAndWait(LOCALID_KRADEN, ANIM_NOD);
+  FieldScript_SetMessageId(MsgValeKradenOurBestBet);
   Script_ShowMessageAndWait(LOCALID_KRADEN, 0, 10);
-  Engine_ObjectEventRunRepeatedMotion(LOCALID_KRADEN, 2);
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_KRADEN, 2);
   ObjectEvent_FaceDirection(LOCALID_KRADEN, FACING_SOUTHEAST + FACING_STEP, 10);
   Script_ShowMessageAndWait(LOCALID_KRADEN, 0, 10);
   // Isaac nods to Garet, then to Jenna.
   ObjectEvent_FaceDirection(GARET, FACING_EAST, 0);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_WEST, 10);
   Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
-  Engine_ObjectEventSetAnimationAndWait(GARET, ANIM_NOD);
+  ObjectMotion_SetAnimationAndWait(GARET, ANIM_NOD);
   Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, 0);
-  Engine_ScriptWait(20);
+  FieldScript_WaitFrames(20);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_EAST, 0);
   ObjectEvent_FaceDirection(JENNA, FACING_WEST, 10);
   Engine_ObjectEventSetAnimation(JENNA, ANIM_NOD);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_PARTY_LEADER, ANIM_NOD);
+  ObjectMotion_SetAnimationAndWait(LOCALID_PARTY_LEADER, ANIM_NOD);
   Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, 0);
   ObjectEvent_SetSpeed(GARET, PIXELS(4) / 5, PIXELS(2) / 5);
   ObjectEvent_SetSpeed(JENNA, PIXELS(4) / 5, PIXELS(2) / 5);
@@ -559,10 +559,10 @@ static void EventScript_KradenSetsOff(void) {
   ValeKraden_WalkTowardLeader(GARET);
   ValeKraden_WalkTowardLeader(JENNA);
   ValeKraden_WalkTowardLeader(LOCALID_KRADEN);
-  Engine_ObjectEventWaitForMove(GARET);
+  ObjectMotion_CommitCurrentPositionAndActivate(GARET);
   ObjectEvent_SetPosition(GARET, 0, 0);
   ObjectEvent_SetPosition(JENNA, 0, 0);
-  Engine_ObjectEventWaitForMove(LOCALID_KRADEN);
+  ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_KRADEN);
   ObjectEvent_SetPosition(LOCALID_KRADEN, 0, 0);
   Engine_ObjectEventSetAnimation(GARET, ANIM_STAND);
   Engine_ObjectEventSetAnimation(JENNA, ANIM_STAND);
@@ -573,7 +573,7 @@ static void EventScript_KradenSetsOff(void) {
   gFieldWork->transition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   PaletteFade_ApplySource(PALETTE_TINT_NONE, PALETTES_ALL);
   GameFlag_Set(FLAG_MAP_TEMP_42);
-  Engine_ScriptEnd();
+  FieldScript_End();
 }
 
 /// In Vale, walking into Kraden's cottage: the gate opens unless Kraden left
@@ -582,11 +582,11 @@ static void EventScript_KradenSetsOff(void) {
 /// Reached by walking north into metatile behavior 3, by day and after Kalay;
 /// takes VALE_KRADEN_TO_VALE_INTERIORS_INN_NORTH into the cottage.
 static void EventScript_EnterCottage(void) {
-  if (Engine_GameFlagIsSet(FLAG_MAP_TEMP_42) == 0) {
-    Engine_AudioPlayCue(SE_DOOR_OPEN);
-    Engine_MapGridAnimateCells(gValeKraden_GateCells, 43, 8);
+  if (GameFlag_Test(FLAG_MAP_TEMP_42) == 0) {
+    Sound_PlaySong(SE_DOOR_OPEN);
+    MapGrid_PlayMetatileCopySequence(gValeKraden_GateCells, 43, 8);
   }
-  Engine_ObjectEventWalkTo(LOCALID_PARTY_LEADER, 229, 217);
+  ObjectMotion_ResetAndSetPositionInMode2(LOCALID_PARTY_LEADER, 229, 217);
   Engine_ScriptRequestWarp(VALE_KRADEN_TO_VALE_INTERIORS_INN_NORTH);
 }
 
@@ -607,13 +607,13 @@ static void EventScript_MeetSaturosAndMenardi(void) {
     return;
   }
 
-  Engine_ScriptStart();
+  FieldScript_Start();
   Script_PlaySong(SONG_FADE_OUT_BGM);
   GameFlag_Set(FLAG_MET_SATUROS_AND_MENARDI);
 
   // Saturos is overheard: the villagers know little of Sol Sanctum.
   strangersMessage = MsgValeTheyKnowLittleOfThe;
-  Engine_ScriptSetMessage(strangersMessage);
+  FieldScript_SetMessageId(strangersMessage);
   Script_ShowMessageAndWait(LOCALID_SATUROS, 0, 10);
 
   // Isaac hurries forward and Garet and Jenna step out beside him.
@@ -646,31 +646,31 @@ static void EventScript_MeetSaturosAndMenardi(void) {
   // The camera pans down to the strangers, and their theme plays.
   FieldCamera_SetSpeed(PIXELS(6), PIXELS(3) / 4);
   FieldCamera_MoveTo(PIXELS(215), -1, PIXELS(345), 1);
-  Engine_CameraWaitForMove();
-  Engine_ScriptWait(20);
+  FieldCamera_WaitForArrival();
+  FieldScript_WaitFrames(20);
   Script_PlaySong(MUS_061);
 
   // Saturos and Menardi talk of the elders and of using Kraden, stubborn
   // and cunning as he is.
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_SATUROS, ANIM_SHAKE_HEAD);
+  ObjectMotion_SetAnimationAndWait(LOCALID_SATUROS, ANIM_SHAKE_HEAD);
   Engine_ObjectEventSetAnimation(LOCALID_SATUROS, ANIM_SHAKE_HEAD);
   Script_ShowMessageAndWait(LOCALID_SATUROS, 0, 20);
   ObjectEvent_FaceDirection(LOCALID_MENARDI, FACING_EAST, 10);
   Script_ShowMessageAndWait(LOCALID_MENARDI, 0, 10);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_SATUROS, ANIM_NOD);
+  ObjectMotion_SetAnimationAndWait(LOCALID_SATUROS, ANIM_NOD);
   Script_ShowMessageAndWait(LOCALID_SATUROS, 0, 10);
   ObjectEvent_FaceDirection(LOCALID_MENARDI, FACING_SOUTH, 60);
-  Engine_ObjectEventRunRepeatedMotion(LOCALID_MENARDI, 1);
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_MENARDI, 1);
   Script_ShowMessageAndWait(LOCALID_MENARDI, 0, 20);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_SATUROS, ANIM_NOD);
+  ObjectMotion_SetAnimationAndWait(LOCALID_SATUROS, ANIM_NOD);
   Script_ShowMessageAndWait(LOCALID_SATUROS, 0, 10);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_MENARDI, ANIM_SHAKE_HEAD);
+  ObjectMotion_SetAnimationAndWait(LOCALID_MENARDI, ANIM_SHAKE_HEAD);
   Script_ShowMessageAndWait(LOCALID_MENARDI, 0, 6);
   // They sense they are watched; Saturos looks about, and both walk round to
   // face the party.
   ObjectEvent_ShowEmote(LOCALID_SATUROS, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
-  Engine_ObjectEventRunRepeatedMotion(LOCALID_SATUROS, 2);
-  Engine_ScriptWait(20);
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_SATUROS, 2);
+  FieldScript_WaitFrames(20);
   ObjectEvent_FaceDirection(LOCALID_MENARDI, FACING_EAST, 10);
   ObjectEvent_ShowEmote(LOCALID_MENARDI, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
   ObjectEvent_FaceDirection(LOCALID_SATUROS, FACING_EAST, 60);
@@ -678,8 +678,8 @@ static void EventScript_MeetSaturosAndMenardi(void) {
   ObjectEvent_FaceDirection(LOCALID_SATUROS, FACING_EAST, 40);
   ObjectEvent_WalkToAndWait(LOCALID_SATUROS, 232, 360);
   ObjectEvent_FaceDirection(LOCALID_SATUROS, FACING_EAST, 10);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_MENARDI, ANIM_NOD);
-  Engine_ScriptWait(10);
+  ObjectMotion_SetAnimationAndWait(LOCALID_MENARDI, ANIM_NOD);
+  FieldScript_WaitFrames(10);
   ObjectEvent_WalkTo(LOCALID_SATUROS, 392, 360);
   ObjectEvent_WalkToAndWait(LOCALID_MENARDI, 216, 360);
   ObjectEvent_WalkTo(LOCALID_MENARDI, 376, 360);
@@ -693,84 +693,84 @@ static void EventScript_MeetSaturosAndMenardi(void) {
   ObjectEvent_FaceDirection(LOCALID_MENARDI, FACING_NORTH + FACING_STEP, 30);
   // Saturos demands what they are doing; Garet throws it back; Menardi asks
   // whether they were eavesdropping.
-  Engine_ObjectEventRunRepeatedMotion(LOCALID_SATUROS, 2);
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_SATUROS, 2);
   Script_ShowMessageAndWait(LOCALID_SATUROS, 0, 10);
   ObjectEvent_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
-  Engine_ObjectEventRunRepeatedMotion(GARET, 1);
+  ObjectMotion_SetVarCbAndRefresh(GARET, 1);
   Script_ShowMessageAndWait(GARET, 0, 10);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_MENARDI, ANIM_SHAKE_HEAD);
+  ObjectMotion_SetAnimationAndWait(LOCALID_MENARDI, ANIM_SHAKE_HEAD);
   Script_OpenMessage(SPEAKER_PORTRAIT_LEFT | LOCALID_MENARDI, 0);
 
-  if (Engine_ScriptChooseYesNo(0, 0) == 0) {
-    Engine_ScriptSetMessage(strangersMessage + 10);
+  if (FieldScript_AskYesNoWithObjectEventAnimation(0, 0) == 0) {
+    FieldScript_SetMessageId(strangersMessage + 10);
   } else {
-    Engine_ScriptSetMessage(strangersMessage + 11);
+    FieldScript_SetMessageId(strangersMessage + 11);
   }
 
   Script_ShowMessageAndWait(SPEAKER_PORTRAIT_LEFT | LOCALID_MENARDI, 0, 10);
-  Engine_ObjectEventRunRepeatedMotion(GARET, 2);
+  ObjectMotion_SetVarCbAndRefresh(GARET, 2);
 
   // Garet accuses them of sneaking around; Menardi guesses Kraden's
   // engagement was with the children, and Jenna says they are off to meet
   // him.
   accusationMessage = MsgValeYoureTheOnesSneakingAround;
-  Engine_ScriptSetMessage(accusationMessage);
+  FieldScript_SetMessageId(accusationMessage);
   Script_ShowMessageAndWait(GARET, 0, 20);
-  Engine_ObjectEventFaceEachOther(LOCALID_SATUROS, LOCALID_MENARDI, 40);
+  ObjectEvent_LinkPair(LOCALID_SATUROS, LOCALID_MENARDI, 40);
   ObjectEvent_FaceDirection(LOCALID_SATUROS, FACING_NORTH + FACING_STEP, 0);
   ObjectEvent_FaceDirection(LOCALID_MENARDI, FACING_NORTH + FACING_STEP, 20);
   Script_ShowMessageAndWait(LOCALID_SATUROS, 0, 60);
-  Engine_ObjectEventRunRepeatedMotion(LOCALID_MENARDI, 1);
-  Engine_ScriptWait(10);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_MENARDI, ANIM_NOD);
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_MENARDI, 1);
+  FieldScript_WaitFrames(10);
+  ObjectMotion_SetAnimationAndWait(LOCALID_MENARDI, ANIM_NOD);
   Script_ShowMessageAndWait(SPEAKER_PORTRAIT_LEFT | LOCALID_MENARDI, 0, 10);
-  Engine_ObjectEventRunRepeatedMotion(JENNA, 2);
-  Engine_ObjectEventSetAnimationAndWait(JENNA, ANIM_NOD);
+  ObjectMotion_SetVarCbAndRefresh(JENNA, 2);
+  ObjectMotion_SetAnimationAndWait(JENNA, ANIM_NOD);
   Script_ShowMessageAndWait(SPEAKER_PORTRAIT_LEFT | JENNA, 0, 20);
   // Saturos asks whether their appointment is important enough to drive the
   // strangers away.
-  Engine_ObjectEventRunRepeatedMotion(LOCALID_SATUROS, 2);
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_SATUROS, 2);
   ObjectEvent_FaceDirection(LOCALID_SATUROS, FACING_NORTHWEST, 20);
   Script_OpenMessage(LOCALID_SATUROS, 0);
 
-  if (Engine_ScriptChooseYesNo(0, 0) == 0) {
-    Engine_ScriptSetMessage(accusationMessage + 5);
+  if (FieldScript_AskYesNoWithObjectEventAnimation(0, 0) == 0) {
+    FieldScript_SetMessageId(accusationMessage + 5);
   } else {
-    Engine_ScriptSetMessage(accusationMessage + 6);
+    FieldScript_SetMessageId(accusationMessage + 6);
   }
 
   ObjectEvent_FaceDirection(JENNA, FACING_EAST, 0);
   ObjectEvent_FaceDirection(GARET, FACING_WEST, 20);
-  Engine_ObjectEventRunRepeatedMotion(LOCALID_SATUROS, 2);
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_SATUROS, 2);
   Script_ShowMessageAndWait(LOCALID_SATUROS, 0, 10);
   ObjectEvent_FaceObjectEvent(LOCALID_SATUROS, GARET, 30);
   ObjectEvent_FaceObjectEvent(LOCALID_SATUROS, JENNA, 30);
   ObjectEvent_ShowEmote(LOCALID_SATUROS, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 80);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_SATUROS, ANIM_SHAKE_HEAD);
+  ObjectMotion_SetAnimationAndWait(LOCALID_SATUROS, ANIM_SHAKE_HEAD);
   // Saturos lets them go; Jenna is surprised and Menardi doubts him, but he
   // sees no reason to delay the children.
-  Engine_ScriptSetMessage(MsgValeSaturosGo);
+  FieldScript_SetMessageId(MsgValeSaturosGo);
   Script_ShowMessageAndWait(LOCALID_SATUROS, 0, 6);
   ObjectEvent_ShowEmote(LOCALID_PARTY_LEADER,
                         EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   ObjectEvent_ShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   ObjectEvent_ShowEmote(JENNA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
-  Engine_ObjectEventStartRepeatedMotion(GARET, 1);
-  Engine_ObjectEventStartRepeatedMotion(JENNA, 1);
-  Engine_ObjectEventRunRepeatedMotion(LOCALID_PARTY_LEADER, 1);
-  Engine_ScriptWait(40);
-  Engine_ObjectEventRunRepeatedMotion(JENNA, 2);
+  ObjectMotion_SetVariantCallback(GARET, 1);
+  ObjectMotion_SetVariantCallback(JENNA, 1);
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_PARTY_LEADER, 1);
+  FieldScript_WaitFrames(40);
+  ObjectMotion_SetVarCbAndRefresh(JENNA, 2);
   ObjectEvent_FaceDirection(GARET, FACING_SOUTH, 0);
   ObjectEvent_FaceDirection(JENNA, FACING_SOUTH, 10);
   Script_ShowMessageAndWait(SPEAKER_PORTRAIT_LEFT | JENNA, 0, 10);
-  Engine_ObjectEventRunRepeatedMotion(LOCALID_MENARDI, 2);
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_MENARDI, 2);
   ObjectEvent_FaceDirection(LOCALID_MENARDI, FACING_EAST, 10);
   Script_ShowMessageAndWait(SPEAKER_PORTRAIT_LEFT | LOCALID_MENARDI, 0, 10);
   ObjectEvent_FaceDirection(LOCALID_SATUROS, FACING_WEST, 20);
-  Engine_ObjectEventSetAnimationAndWait(LOCALID_SATUROS, ANIM_SHAKE_HEAD);
+  ObjectMotion_SetAnimationAndWait(LOCALID_SATUROS, ANIM_SHAKE_HEAD);
   Script_ShowMessageAndWait(LOCALID_SATUROS, 0, 10);
-  Engine_ObjectEventRunRepeatedMotion(LOCALID_MENARDI, 2);
-  Engine_ScriptWait(10);
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_MENARDI, 2);
+  FieldScript_WaitFrames(10);
   ObjectEvent_FaceDirection(LOCALID_SATUROS, FACING_NORTHWEST + FACING_STEP, 0);
   ObjectEvent_FaceDirection(LOCALID_MENARDI, FACING_NORTH + FACING_STEP, 20);
   ObjectEvent_SetSpeed(LOCALID_MENARDI, PIXELS(1) / 2, PIXELS(1) / 4);
@@ -784,7 +784,7 @@ static void EventScript_MeetSaturosAndMenardi(void) {
 
   ObjectEvent_WalkTo(LOCALID_SATUROS, 392, 376);
   ObjectEvent_WalkToAndWait(LOCALID_MENARDI, 376, 376);
-  Engine_ScriptWait(6);
+  FieldScript_WaitFrames(6);
 
   objectEvent = ObjectEvent_GetById(LOCALID_SATUROS);
   objectEvent->steeringFlags |= OBJ_EVENT_FACES_MOTION;
@@ -794,22 +794,22 @@ static void EventScript_MeetSaturosAndMenardi(void) {
 
   Engine_ObjectEventSetAnimation(LOCALID_SATUROS, 0);
   Engine_ObjectEventSetAnimation(LOCALID_MENARDI, 0);
-  Engine_ScriptWait(20);
+  FieldScript_WaitFrames(20);
   // Garet: let's go. The village music returns and Garet and Jenna walk back
   // into Isaac; the strangers keep turning to watch him.
-  Engine_ObjectEventRunRepeatedMotion(GARET, 2);
+  ObjectMotion_SetVarCbAndRefresh(GARET, 2);
   Script_ShowMessageAndWait(GARET, 0, 10);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, 1, 20);
   Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_NOD);
-  Engine_ObjectEventSetAnimationAndWait(GARET, ANIM_NOD);
+  ObjectMotion_SetAnimationAndWait(GARET, ANIM_NOD);
   Script_PlaySong(SONG_FADE_OUT_BGM);
 
   ValeKraden_WalkTowardLeader(GARET);
-  Engine_ObjectEventWaitForMove(GARET);
+  ObjectMotion_CommitCurrentPositionAndActivate(GARET);
   ObjectEvent_SetPosition(GARET, 0, 0);
 
   ValeKraden_WalkTowardLeader(JENNA);
-  Engine_ObjectEventWaitForMove(JENNA);
+  ObjectMotion_CommitCurrentPositionAndActivate(JENNA);
   ObjectEvent_SetPosition(JENNA, 0, 0);
   Object_SetTargetAndCallback(LOCALID_SATUROS,
                               OBJ_EVENT_LINK_KEEP_MOTION | LOCALID_PARTY_LEADER,
@@ -818,7 +818,7 @@ static void EventScript_MeetSaturosAndMenardi(void) {
                               OBJ_EVENT_LINK_KEEP_MOTION | LOCALID_PARTY_LEADER,
                               gValeKraden_FaceTargetActions);
   Map_PlayMusic();
-  Engine_ScriptEnd();
+  FieldScript_End();
 }
 
 /// In Vale, walking up to Kraden's cottage: Kraden paces, wondering aloud who
@@ -832,12 +832,12 @@ static void EventScript_OverhearKraden(void) {
 
   if (GameFlag_IsSet(FLAG_KRADEN_WONDERED_ABOUT_STRANGERS) != 0) {
   } else {
-    Engine_ScriptStart();
+    FieldScript_Start();
     ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(1), PIXELS(1) / 2);
     // Kraden wonders aloud who they were, while Garet and Jenna step out of
     // Isaac behind him.
-    Engine_ScriptSetMessage(MsgValeWho);
-    Engine_ScriptShowMessage(LOCALID_KRADEN, 0);
+    FieldScript_SetMessageId(MsgValeWho);
+    FieldScript_ShowMessageAndWait(LOCALID_KRADEN, 0);
     leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
     {
       s32 x = leader->x.part.pixel;
@@ -859,60 +859,60 @@ static void EventScript_OverhearKraden(void) {
                               FACING_NORTHWEST + FACING_STEP, 0);
     // The camera goes up to the gate. Pacing, Kraden says they know more of
     // Sol Sanctum than Vale's elders.
-    Engine_CameraMoveTo(PIXELS(232), -1, PIXELS(240), 1);
-    Engine_CameraWaitForMove();
+    FieldCamera_MoveWithinMapBounds(PIXELS(232), -1, PIXELS(240), 1);
+    FieldCamera_WaitForArrival();
     ObjectEvent_FaceDirection(LOCALID_KRADEN, FACING_WEST, 20);
-    Engine_ObjectEventRunRepeatedMotion(LOCALID_KRADEN, 2);
-    Engine_ScriptShowMessage(LOCALID_KRADEN, 0);
+    ObjectMotion_SetVarCbAndRefresh(LOCALID_KRADEN, 2);
+    FieldScript_ShowMessageAndWait(LOCALID_KRADEN, 0);
     ObjectEvent_SetSpeed(LOCALID_KRADEN, PIXELS(1) / 5, PIXELS(1) / 10);
-    Engine_ObjectEventWalkToAndWait(LOCALID_KRADEN, 216, 232);
-    Engine_ScriptWait(20);
-    Engine_ObjectEventRunRepeatedMotion(LOCALID_KRADEN, 1);
-    Engine_ScriptWait(10);
-    Engine_ScriptShowMessageAndWait(LOCALID_KRADEN, 0, 40);
-    Engine_ObjectEventJump(LOCALID_KRADEN, 2, 10);
-    Engine_ObjectEventFaceDirection(LOCALID_KRADEN, FACING_EAST, 10);
-    Engine_ScriptShowMessageAndWait(LOCALID_KRADEN, 0, 10);
+    ObjectMotion_SetPositionAndReset(LOCALID_KRADEN, 216, 232);
+    FieldScript_WaitFrames(20);
+    ObjectMotion_SetVarCbAndRefresh(LOCALID_KRADEN, 1);
+    FieldScript_WaitFrames(10);
+    FieldScript_ShowMessageThenWait(LOCALID_KRADEN, 0, 40);
+    ObjectMotion_Launch(LOCALID_KRADEN, 2, 10);
+    ObjectMotion_ArmCallback(LOCALID_KRADEN, FACING_EAST, 10);
+    FieldScript_ShowMessageThenWait(LOCALID_KRADEN, 0, 10);
     // He turns over what they said of the elements and the Elemental Stars,
     // things even he does not know.
-    Engine_ObjectEventWalkToAndWait(LOCALID_KRADEN, 248, 232);
-    Engine_ScriptWait(40);
-    Engine_ObjectEventRunRepeatedMotion(LOCALID_KRADEN, 2);
-    Engine_ScriptWait(20);
-    Engine_ScriptShowMessage(LOCALID_KRADEN, 0);
+    ObjectMotion_SetPositionAndReset(LOCALID_KRADEN, 248, 232);
+    FieldScript_WaitFrames(40);
+    ObjectMotion_SetVarCbAndRefresh(LOCALID_KRADEN, 2);
+    FieldScript_WaitFrames(20);
+    FieldScript_ShowMessageAndWait(LOCALID_KRADEN, 0);
     ObjectEvent_ShowEmote(LOCALID_KRADEN, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
-    Engine_ObjectEventRunRepeatedMotion(LOCALID_KRADEN, 1);
+    ObjectMotion_SetVarCbAndRefresh(LOCALID_KRADEN, 1);
     ObjectEvent_FaceDirection(LOCALID_KRADEN, FACING_WEST, 20);
-    Engine_ScriptShowMessageAndWait(LOCALID_KRADEN, 0, 2);
-    Engine_ObjectEventWalkToAndWait(LOCALID_KRADEN, 232, 232);
-    Engine_ScriptWait(2);
+    FieldScript_ShowMessageThenWait(LOCALID_KRADEN, 0, 2);
+    ObjectMotion_SetPositionAndReset(LOCALID_KRADEN, 232, 232);
+    FieldScript_WaitFrames(2);
     ObjectEvent_FaceDirection(LOCALID_KRADEN, FACING_SOUTH, 4);
-    Engine_ObjectEventRunRepeatedMotion(LOCALID_KRADEN, 2);
-    Engine_ScriptWait(4);
-    Engine_ScriptShowMessageAndWait(LOCALID_KRADEN, 0, 2);
-    Engine_ObjectEventSetAnimationAndWait(LOCALID_KRADEN, ANIM_SHAKE_HEAD);
-    Engine_ScriptWait(20);
+    ObjectMotion_SetVarCbAndRefresh(LOCALID_KRADEN, 2);
+    FieldScript_WaitFrames(4);
+    FieldScript_ShowMessageThenWait(LOCALID_KRADEN, 0, 2);
+    ObjectMotion_SetAnimationAndWait(LOCALID_KRADEN, ANIM_SHAKE_HEAD);
+    FieldScript_WaitFrames(20);
     // The camera returns to Isaac, and Garet and Jenna walk back into him.
-    Engine_CameraFollowObjectEvent(LOCALID_PARTY_LEADER, 1);
-    Engine_CameraWaitForMove();
+    FieldCamera_FollowObjectEvent(LOCALID_PARTY_LEADER, 1);
+    FieldCamera_WaitForArrival();
     Engine_ObjectEventSetAnimation(GARET, ANIM_WALK);
     leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
     if (leader != 0) {
-      Engine_ObjectEventSetDestination(GARET, leader->x.part.pixel,
+      ObjectMotion_ResetAndSetPosition(GARET, leader->x.part.pixel,
                                        leader->z.part.pixel);
     }
-    Engine_ObjectEventWaitForMove(GARET);
+    ObjectMotion_CommitCurrentPositionAndActivate(GARET);
     Engine_ObjectEventSetPosition(GARET, 0, 0);
     Engine_ObjectEventSetAnimation(JENNA, ANIM_WALK);
     leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
     if (leader != 0) {
-      Engine_ObjectEventSetDestination(JENNA, leader->x.part.pixel,
+      ObjectMotion_ResetAndSetPosition(JENNA, leader->x.part.pixel,
                                        leader->z.part.pixel);
     }
-    Engine_ObjectEventWaitForMove(JENNA);
+    ObjectMotion_CommitCurrentPositionAndActivate(JENNA);
     Engine_ObjectEventSetPosition(JENNA, 0, 0);
     Engine_GameFlagSet(FLAG_KRADEN_WONDERED_ABOUT_STRANGERS);
-    Engine_ScriptEnd();
+    FieldScript_End();
   }
 }
 
@@ -933,16 +933,16 @@ s32 ValeKraden_Initialize(void) {
 
   if (gGameState.warpDest == VALE_KRADEN_FROM_VALE_CAVE_MOUTH_UNUSED ||
       gGameState.warpDest == VALE_KRADEN_FROM_VALE_CAVE_MOUTH_EAST) {
-    Engine_GameFlagClear(FLAG_SHOW_LOCATION_NAME);
+    GameFlag_ClearBit(FLAG_SHOW_LOCATION_NAME);
   }
   if (GameFlag_IsSet(FLAG_KEEP_PARTY_POSITION) != 0) {
-    Engine_GameFlagClear(FLAG_MAP_TEMP_42);
+    GameFlag_ClearBit(FLAG_MAP_TEMP_42);
   }
   // The rockslide chapter replaces residents with debris and a survivor.
-  if (Engine_GameFlagIsSet(FLAG_VALE_STORM) != 0) {
+  if (GameFlag_Test(FLAG_VALE_STORM) != 0) {
     Weather_StartRain();
     Weather_StartLightning();
-    Engine_ScriptStart();
+    FieldScript_Start();
     Engine_ObjectEventSetPosition(LOCALID_BOY_BY_THE_FENCE, 0, 0);
     Engine_ObjectEventSetPosition(LOCALID_KRADEN, 0, 0);
     Engine_ObjectEventSetPosition(LOCALID_SATUROS, 0, 0);
@@ -956,7 +956,7 @@ s32 ValeKraden_Initialize(void) {
     }
     ObjectEvent_SetPosition(LOCALID_ROCKSLIDE_SURVIVOR, PIXELS(83),
                             PIXELS(265));
-    Engine_ObjectEventWalkToAndWait(LOCALID_ROCKSLIDE_SURVIVOR, 83, 273);
+    ObjectMotion_SetPositionAndReset(LOCALID_ROCKSLIDE_SURVIVOR, 83, 273);
     Engine_ObjectEventSetAnimation(LOCALID_ROCKSLIDE_SURVIVOR, 5);
     objectEvent = ObjectEvent_GetById(LOCALID_ROCKSLIDE_SURVIVOR);
     {
@@ -966,11 +966,11 @@ s32 ValeKraden_Initialize(void) {
     }
     ObjectEvent_SetActionScript(LOCALID_ROCKSLIDE_SURVIVOR,
                                 gValeKraden_RockslideSurvivorSquashes);
-    if (Engine_GameFlagIsSet(FLAG_VALE_ROCKSLIDE_SURVIVOR_ESCAPED) != 0) {
+    if (GameFlag_Test(FLAG_VALE_ROCKSLIDE_SURVIVOR_ESCAPED) != 0) {
       Engine_ObjectEventSetPosition(LOCALID_ROCKSLIDE_SURVIVOR, 0, 0);
     }
     debrisRow = 21;
-    Engine_ScriptEnd();
+    FieldScript_End();
     MapGrid_CopyCellAttributes(9, 24, 1, 1, 14, debrisRow);
     MapGrid_CopyCellAttributes(9, 24, 1, 1, 15, debrisRow);
     MapGrid_CopyCellAttributes(9, 24, 1, 1, 23, 19);
@@ -983,18 +983,18 @@ s32 ValeKraden_Initialize(void) {
     Engine_ObjectEventSetPosition(LOCALID_EAST_ROCK, 0, 0);
     Engine_ObjectEventSetPosition(GARET, 0, 0);
     Engine_ObjectEventSetPosition(LOCALID_ROCKSLIDE_SURVIVOR, 0, 0);
-    Engine_ScriptStart();
-    if (Engine_GameFlagIsSet(FLAG_KEEP_PARTY_POSITION) == 0) {
+    FieldScript_Start();
+    if (GameFlag_Test(FLAG_KEEP_PARTY_POSITION) == 0) {
       if (gGameState.warpDest == VALE_KRADEN_FROM_VALE_INTERIORS_INN_SOUTH) {
         EventScript_KradenSetsOff();
       }
     }
-    if (Engine_GameFlagIsSet(FLAG_SANCTUM_VISIT_PLANNED) != 0) {
+    if (GameFlag_Test(FLAG_SANCTUM_VISIT_PLANNED) != 0) {
       Engine_ObjectEventSetPosition(LOCALID_KRADEN, 0, 0);
       Engine_ObjectEventSetPosition(LOCALID_SATUROS, 0, 0);
       Engine_ObjectEventSetPosition(LOCALID_MENARDI, 0, 0);
     } else {
-      if (Engine_GameFlagIsSet(FLAG_MET_SATUROS_AND_MENARDI) != 0) {
+      if (GameFlag_Test(FLAG_MET_SATUROS_AND_MENARDI) != 0) {
         ObjectEvent_SetPosition(LOCALID_SATUROS, PIXELS(392), PIXELS(376));
         ObjectEvent_SetPosition(LOCALID_MENARDI, PIXELS(376), PIXELS(376));
         Object_SetTargetAndCallback(
@@ -1005,11 +1005,11 @@ s32 ValeKraden_Initialize(void) {
             gValeKraden_FaceTargetActions);
       }
     }
-    if (Engine_GameFlagIsSet(FLAG_KALAY_REACHED) != 0) {
+    if (GameFlag_Test(FLAG_KALAY_REACHED) != 0) {
       ObjectEvent_SetPosition(LOCALID_COTTAGE_VISITOR, PIXELS(132),
                               PIXELS(264));
     }
-    Engine_ScriptEnd();
+    FieldScript_End();
   }
   return 0;
 }
@@ -1029,23 +1029,23 @@ static void EventScript_TalkToRockslideSurvivor(void) {
 
   if (GameFlag_IsSet(FLAG_VALE_ROCKSLIDE_SURVIVOR_ESCAPED) == 0) {
     if (GameFlag_IsSet(FLAG_VALE_ROCKSLIDE_SURVIVOR_GAVE_UP) != 0) {
-      Engine_ScriptStart();
-      Engine_ObjectEventRunRepeatedMotion(LOCALID_ROCKSLIDE_SURVIVOR, 2);
-      Engine_ScriptSetMessage(MsgValeSaveYourselves);
-      Engine_ScriptShowMessage(LOCALID_ROCKSLIDE_SURVIVOR, 0);
-      Engine_ScriptEnd();
+      FieldScript_Start();
+      ObjectMotion_SetVarCbAndRefresh(LOCALID_ROCKSLIDE_SURVIVOR, 2);
+      FieldScript_SetMessageId(MsgValeSaveYourselves);
+      FieldScript_ShowMessageAndWait(LOCALID_ROCKSLIDE_SURVIVOR, 0);
+      FieldScript_End();
     } else {
-      Engine_ScriptStart();
-      Engine_ObjectEventStop(LOCALID_ROCKSLIDE_SURVIVOR);
-      Engine_ObjectEventRunRepeatedMotion(LOCALID_ROCKSLIDE_SURVIVOR, 1);
+      FieldScript_Start();
+      ObjectMotion_EnableActionAndResetMotion(LOCALID_ROCKSLIDE_SURVIVOR);
+      ObjectMotion_SetVarCbAndRefresh(LOCALID_ROCKSLIDE_SURVIVOR, 1);
       // He gasps out the rockslide and the monsters; Isaac and Garet hurry
       // over to him.
       message = MsgValeRockslideDestroyedFence;
-      Engine_ScriptSetMessage(message);
-      Engine_ScriptShowMessageAndWait(LOCALID_ROCKSLIDE_SURVIVOR, 0, 20);
+      FieldScript_SetMessageId(message);
+      FieldScript_ShowMessageThenWait(LOCALID_ROCKSLIDE_SURVIVOR, 0, 20);
       ObjectEvent_ShowEmote(LOCALID_PARTY_LEADER,
                             EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
-      Engine_CameraMoveTo(PIXELS(98), -1, PIXELS(283), 1);
+      FieldCamera_MoveWithinMapBounds(PIXELS(98), -1, PIXELS(283), 1);
       ObjectEvent_WalkToAndWait(LOCALID_PARTY_LEADER, 94, 293);
       ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_NORTHWEST, 0);
       leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
@@ -1054,39 +1054,37 @@ static void EventScript_TalkToRockslideSurvivor(void) {
       }
       ObjectEvent_WalkToAndWait(GARET, 110, 279);
       ObjectEvent_FaceDirection(GARET, FACING_NORTHWEST, 40);
-      Engine_ObjectEventRunRepeatedMotion(LOCALID_ROCKSLIDE_SURVIVOR, 2);
-      Engine_ScriptWait(40);
+      ObjectMotion_SetVarCbAndRefresh(LOCALID_ROCKSLIDE_SURVIVOR, 2);
+      FieldScript_WaitFrames(40);
       // He asks whether he will die. Yes: he gives up and tells them to save
       // themselves.
-      Engine_ScriptOpenMessage(LOCALID_ROCKSLIDE_SURVIVOR, 0);
-      if (Engine_ScriptChooseYesNo(0, 0) == 0) {
-        Engine_ObjectEventRunRepeatedMotion(LOCALID_ROCKSLIDE_SURVIVOR, 2);
-        Engine_ScriptWait(20);
-        Engine_ScriptSetMessage((message + 2));
-        Engine_ScriptShowMessage(LOCALID_ROCKSLIDE_SURVIVOR, 0);
+      FieldMessage_ShowAtObject(LOCALID_ROCKSLIDE_SURVIVOR, 0);
+      if (FieldScript_AskYesNoWithObjectEventAnimation(0, 0) == 0) {
+        ObjectMotion_SetVarCbAndRefresh(LOCALID_ROCKSLIDE_SURVIVOR, 2);
+        FieldScript_WaitFrames(20);
+        FieldScript_SetMessageId((message + 2));
+        FieldScript_ShowMessageAndWait(LOCALID_ROCKSLIDE_SURVIVOR, 0);
         Engine_GameFlagSet(FLAG_VALE_ROCKSLIDE_SURVIVOR_GAVE_UP);
       } else {
         // No: he laments, then jumps up, finds he is not hurt at all, and
         // warns them of the monsters on the way to the plaza.
-        Engine_ObjectEventRunRepeatedMotion(LOCALID_ROCKSLIDE_SURVIVOR, 2);
-        Engine_ScriptWait(20);
-        Engine_ScriptSetMessage((message + 3));
-        Engine_ScriptShowMessageAndWait(LOCALID_ROCKSLIDE_SURVIVOR, 0, 40);
-        Engine_ObjectEventFaceObjectEvent(LOCALID_ROCKSLIDE_SURVIVOR,
-                                          LOCALID_PARTY_LEADER, 0);
+        ObjectMotion_SetVarCbAndRefresh(LOCALID_ROCKSLIDE_SURVIVOR, 2);
+        FieldScript_WaitFrames(20);
+        FieldScript_SetMessageId((message + 3));
+        FieldScript_ShowMessageThenWait(LOCALID_ROCKSLIDE_SURVIVOR, 0, 40);
+        ObjectMotion_SetAngleToward(LOCALID_ROCKSLIDE_SURVIVOR,
+                                    LOCALID_PARTY_LEADER, 0);
         Engine_ObjectEventSetAnimation(LOCALID_ROCKSLIDE_SURVIVOR, ANIM_STAND);
-        Engine_ObjectEventJump(LOCALID_ROCKSLIDE_SURVIVOR, 4, 40);
+        ObjectMotion_Launch(LOCALID_ROCKSLIDE_SURVIVOR, 4, 40);
         Engine_ObjectEventSetAnimation(LOCALID_ROCKSLIDE_SURVIVOR, 6);
         ObjectEvent_ShowEmote(LOCALID_ROCKSLIDE_SURVIVOR,
                               EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
-        Engine_ScriptShowMessageAndWait(LOCALID_ROCKSLIDE_SURVIVOR, 0, 10);
+        FieldScript_ShowMessageThenWait(LOCALID_ROCKSLIDE_SURVIVOR, 0, 10);
         Engine_ObjectEventSetAnimation(LOCALID_ROCKSLIDE_SURVIVOR, ANIM_STAND);
-        Engine_ScriptWait(10);
-        Engine_ObjectEventSetAnimationAndWait(LOCALID_ROCKSLIDE_SURVIVOR,
-                                              ANIM_NOD);
-        Engine_ScriptShowMessageAndWait(LOCALID_ROCKSLIDE_SURVIVOR, 0, 10);
-        Engine_ObjectEventSetAnimationAndWait(LOCALID_ROCKSLIDE_SURVIVOR,
-                                              ANIM_NOD);
+        FieldScript_WaitFrames(10);
+        ObjectMotion_SetAnimationAndWait(LOCALID_ROCKSLIDE_SURVIVOR, ANIM_NOD);
+        FieldScript_ShowMessageThenWait(LOCALID_ROCKSLIDE_SURVIVOR, 0, 10);
+        ObjectMotion_SetAnimationAndWait(LOCALID_ROCKSLIDE_SURVIVOR, ANIM_NOD);
         // Follow his escape until the party can see that he is unharmed.
         Object_SetTargetAndCallback(LOCALID_PARTY_LEADER,
                                     OBJ_EVENT_LINK_KEEP_MOTION |
@@ -1098,26 +1096,25 @@ static void EventScript_TalkToRockslideSurvivor(void) {
         ObjectEvent_RunActionScriptAndWait(
             LOCALID_ROCKSLIDE_SURVIVOR,
             gValeKraden_RockslideSurvivorEscapeActions);
-        Engine_ObjectEventStop(LOCALID_PARTY_LEADER);
-        Engine_ObjectEventStop(GARET);
+        ObjectMotion_EnableActionAndResetMotion(LOCALID_PARTY_LEADER);
+        ObjectMotion_EnableActionAndResetMotion(GARET);
         ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_SOUTH, 0);
         ObjectEvent_FaceDirection(GARET, FACING_SOUTH, 60);
         ObjectEvent_ShowEmote(LOCALID_PARTY_LEADER,
                               EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
-        Engine_ObjectEventShowEmote(GARET, EMOTE_IN_FRONT | EMOTE_ELLIPSIS,
-                                    120);
+        FieldEffect_SpawnLinked(GARET, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 120);
         Engine_GameFlagSet(FLAG_VALE_ROCKSLIDE_SURVIVOR_ESCAPED);
       }
       // Garet walks back into Isaac.
       Engine_ObjectEventSetAnimation(GARET, ANIM_WALK);
       leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
       if (leader != 0) {
-        Engine_ObjectEventSetDestination(GARET, leader->x.part.pixel,
+        ObjectMotion_ResetAndSetPosition(GARET, leader->x.part.pixel,
                                          leader->z.part.pixel);
       }
-      Engine_ObjectEventWaitForMove(GARET);
+      ObjectMotion_CommitCurrentPositionAndActivate(GARET);
       Engine_ObjectEventSetPosition(GARET, 0, 0);
-      Engine_ScriptEnd();
+      FieldScript_End();
     }
   }
 }
@@ -1131,7 +1128,7 @@ static void EventScript_TalkToRockslideSurvivor(void) {
 static void EventScript_FightFirstMonster(void) {
   struct EventWork *work;
 
-  Engine_ScriptStart();
+  FieldScript_Start();
 
   work = gFieldWork;
   work->transition = MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_BARS);
@@ -1140,7 +1137,7 @@ static void EventScript_FightFirstMonster(void) {
   Engine_GameFlagSet(FLAG_VALE_STORM_FIRST_MONSTER_FOUGHT);
   Field_RequestBattleFromEncounterTable(ENCOUNTER_ZONE_SCRIPTED_VALE_VAULT, 0);
   Engine_GameFlagSet(FLAG_VALE_STORM_MONSTER_FOUGHT);
-  Engine_ScriptEnd();
+  FieldScript_End();
 }
 
 /// In Vale on the stormy night, a second monster attacks by the broken fence.
@@ -1151,7 +1148,7 @@ static void EventScript_FightFirstMonster(void) {
 static void EventScript_FightSecondMonster(void) {
   struct EventWork *work;
 
-  Engine_ScriptStart();
+  FieldScript_Start();
 
   work = gFieldWork;
   work->transition = MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_BARS);
@@ -1160,7 +1157,7 @@ static void EventScript_FightSecondMonster(void) {
   Engine_GameFlagSet(FLAG_VALE_STORM_SECOND_MONSTER_FOUGHT);
   Field_RequestBattleFromEncounterTable(ENCOUNTER_ZONE_SCRIPTED_VALE_VAULT, 1);
   Engine_GameFlagSet(FLAG_VALE_STORM_MONSTER_FOUGHT);
-  Engine_ScriptEnd();
+  FieldScript_End();
 }
 
 /// A villager at Kraden's cottage asks Isaac about his memories of it. This is
@@ -1169,10 +1166,10 @@ static void EventScript_FightSecondMonster(void) {
 /// Reached by talking to the cottage visitor (LOCALID_COTTAGE_VISITOR) in the
 /// events after Kalay.
 static void EventScript_TalkToCottageVisitor(void) {
-  Engine_ScriptStart();
-  Engine_ScriptSetMessage(MsgValeMemoriesOfThisCottage);
-  Engine_ScriptAskYesNo(LOCALID_COTTAGE_VISITOR, 0);
-  Engine_ScriptEnd();
+  FieldScript_Start();
+  FieldScript_SetMessageId(MsgValeMemoriesOfThisCottage);
+  FieldScript_AskYesNoAndShowResponse(LOCALID_COTTAGE_VISITOR, 0);
+  FieldScript_End();
 }
 
 /// Leads the party away from the broken fence, then leaves the map.

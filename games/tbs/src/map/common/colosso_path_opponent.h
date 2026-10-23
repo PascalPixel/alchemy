@@ -58,13 +58,13 @@ static void Colosso_UpdatePathOpponent(void) {
     if (x == 0 && z == 0) {
       s32 fz;
       rec->mode = PATH_RECORDER_FINISHED;
-      ObjectEvent_SetMode(objectEvent, 1);
+      ObjectDispatch_SelectAnimation(objectEvent, 1);
       if (work->gauge.finishX < objectEvent->x.fixed) {
         x = work->gauge.finishX + 0xc0000;
       } else {
         x = work->gauge.finishX - 0xc0000;
       }
-      if (Engine_GameFlagIsSet(FLAG_MAP_TEMP_11)) {
+      if (GameFlag_Test(FLAG_MAP_TEMP_11)) {
         fz = work->gauge.finishZ + 0x100000;
         itemLocalId = &work->gauge.finishItemLocalIdB;
       } else {
@@ -74,9 +74,9 @@ static void Colosso_UpdatePathOpponent(void) {
       objectEvent->timer = *itemLocalId;
       objectEvent->acceleration = 0x4000;
       objectEvent->speed = 0x10000;
-      Engine_ObjectSetPosition(objectEvent, x, 0, fz);
+      Object_SetPosition(objectEvent, x, 0, fz);
       Engine_GameFlagSet(FLAG_MAP_TEMP_11);
-      Engine_ObjectSetScript(objectEvent, gColosso_OpponentFinishScript);
+      ObjectEvent_SetScript(objectEvent, gColosso_OpponentFinishScript);
       return;
     }
     x <<= 16;
@@ -86,8 +86,7 @@ static void Colosso_UpdatePathOpponent(void) {
     }
     if (objectEvent->x.fixed != x || objectEvent->z.fixed != z) {
       {
-        u16 angle =
-            Math_Atan2(z - objectEvent->z.fixed, x - objectEvent->x.fixed);
+        u16 angle = ArcTan2(z - objectEvent->z.fixed, x - objectEvent->x.fixed);
         d = (s16)(angle - objectEvent->facing);
       }
       if (d > 0x1000) {
@@ -104,9 +103,9 @@ static void Colosso_UpdatePathOpponent(void) {
       rec->still++;
     }
     if (rec->still > 2) {
-      ObjectEvent_SetMode(objectEvent, 1);
+      ObjectDispatch_SelectAnimation(objectEvent, 1);
     } else {
-      ObjectEvent_SetMode(objectEvent, 5);
+      ObjectDispatch_SelectAnimation(objectEvent, 5);
     }
   } else if (rec->mode == PATH_RECORDER_RECORD) {
     x = objectEvent->x.part.pixel;
@@ -148,7 +147,7 @@ static void Colosso_DrawGauge(void) {
   segments = gauge->segments;
   if (gauge->hold != 0) {
     gauge->level = 2;
-  } else if (Engine_GameFlagIsSet(FLAG_MENU_OPEN)) {
+  } else if (GameFlag_Test(FLAG_MENU_OPEN)) {
     if (gauge->level > 0) {
       gauge->level--;
     }
@@ -158,8 +157,8 @@ static void Colosso_DrawGauge(void) {
               (DMA_ENABLE << 16) | 0x10, REG_DMA3);
       buf = Runtime_CallAlternatePool(AllocEwram, 512);
       FieldResource_DecodeType01(gColosso_GaugeGraphics, buf);
-      Engine_VramLoad(gauge->vramBlock, 512, buf);
-      Runtime_BumpFree(buf);
+      VramCache_Load(gauge->vramBlock, 512, buf);
+      Free(buf);
     }
   }
   if (gauge->level == 0) {
@@ -215,7 +214,7 @@ static void Colosso_DrawGauge(void) {
 
   if ((gFrameCount & 15) > 4) {
     shape = 0x40000000;
-    objectEvent = Engine_ObjectEventLookup(gauge->opponentLocalId);
+    objectEvent = ObjectEvent_GetByLocalId(gauge->opponentLocalId);
     if (objectEvent != 0) {
       x = ((objectEvent->x.fixed - gauge->finishX) / 0xe0000) + 112;
       y = ((objectEvent->z.fixed - gauge->finishZ) / 0xe0000) +
@@ -228,7 +227,7 @@ static void Colosso_DrawGauge(void) {
       *dst++ = (tile + 12) | 0xe400;
       Oam_AddSpriteAtDepth(entry++, 255);
     }
-    objectEvent = Engine_ObjectEventLookup(gauge->playerLocalId);
+    objectEvent = ObjectEvent_GetByLocalId(gauge->playerLocalId);
     if (objectEvent != 0) {
       x = ((objectEvent->x.fixed - gauge->finishX) / 0xe0000) + 112;
       y = ((objectEvent->z.fixed - gauge->finishZ) / 0xe0000) +

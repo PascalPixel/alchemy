@@ -66,7 +66,7 @@ static inline void FieldObjectEvent_JumpDownLedge(s32 localId, s32 mode,
 static inline s32
 FieldObject_CheckMovementCollision(struct ObjectEvent *objectEvent,
                                    struct FieldPosition *position) {
-  return Object_CheckMovementCollision((struct Object *)objectEvent, position);
+  return MapGrid_CheckCollision((struct Object *)objectEvent, position);
 }
 
 static inline s32 FieldGameFlag_GetByte(s32 flag) {
@@ -97,8 +97,7 @@ static inline s32 FieldResource_DecodeType01(const void *source,
 static inline void ScanlineEffect_StartWave(s32 mode, s32 freqX, s32 stepX,
                                             s32 ampX, s32 freqY, s32 stepY,
                                             s32 ampY) {
-  Engine_DisplayScrollStartHBlankDma(mode, freqX, stepX, ampX, freqY, stepY,
-                                     ampY);
+  ScanlineEffect_InitWave(mode, freqX, stepX, ampX, freqY, stepY, ampY);
 }
 
 #endif

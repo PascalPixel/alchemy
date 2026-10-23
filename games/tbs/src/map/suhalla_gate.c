@@ -147,7 +147,7 @@ const struct ObjectEventTemplate *Map_GetObjectEventTemplates(void) {
     return gSuhallaGateDewObjectEventTemplates;
   }
   if (mapId == (s32)&MapId_SuhallaGateCheckpoint) {
-    if (Engine_GameFlagIsSet(FLAG_BABI_SPOKE_AFTER_COLOSSO) != 0) {
+    if (GameFlag_Test(FLAG_BABI_SPOKE_AFTER_COLOSSO) != 0) {
       return gSuhallaGateCheckpointObjectEventTemplatesAfterAudience;
     }
     return gSuhallaGateCheckpointObjectEventTemplates;
@@ -182,18 +182,18 @@ const struct MapEvent *Map_GetEvents(void) {
 s32 Map_Initialize(void) {
   s32 mapId;
 
-  if (Engine_GameFlagIsSet(FLAG_SUHALLA_GATE_ATTACK_SEEN)) {
+  if (GameFlag_Test(FLAG_SUHALLA_GATE_ATTACK_SEEN)) {
     gGameState.savedMap = (s32)&MapId_LunpaInteriors;
     gGameState.savedWarpDest = LUNPA_INTERIORS_FROM_SUHALLA_GATE_CHECKPOINT;
   }
   mapId = gGameState.mapId;
   if (mapId == (s32)&MapId_SuhallaGateCheckpoint) {
-    if (Engine_GameFlagIsSet(FLAG_SUHALLA_GATE_SOLDIER_VANISHED))
+    if (GameFlag_Test(FLAG_SUHALLA_GATE_SOLDIER_VANISHED))
       Engine_ObjectEventSetPosition(LOCALID_VANISHING_SOLDIER, 0, 0);
 #if TBS_PATCH_3
-    else if (Engine_GameFlagIsSet(FLAG_BABI_SPOKE_AFTER_COLOSSO))
+    else if (GameFlag_Test(FLAG_BABI_SPOKE_AFTER_COLOSSO))
       MapGrid_CopyCellAttributes(0, 0, 2, 1, 29, 18);
-    if (Engine_GameFlagIsSet(FLAG_BABI_SPOKE_AFTER_COLOSSO)) {
+    if (GameFlag_Test(FLAG_BABI_SPOKE_AFTER_COLOSSO)) {
       MapGrid_CopyCellAttributes(0, 0, 2, 1, 8, 25);
       MapGrid_CopyCellAttributes(0, 0, 2, 1, 9, 26);
     }
@@ -201,21 +201,21 @@ s32 Map_Initialize(void) {
     // Out of the house, Retreat leads back to the side the party came in by,
     // and the map section's name is not shown again.
     if (gGameState.warpDest == SUHALLA_GATE_CHECKPOINT_FROM_LUNPA_INTERIORS) {
-      if (Engine_GameFlagIsSet(FLAG_SUHALLA_GATE_ENTERED_FROM_SOUTH)) {
+      if (GameFlag_Test(FLAG_SUHALLA_GATE_ENTERED_FROM_SOUTH)) {
         gGameState.retreatMap = SUHALLA_GATE_RETREAT_MAP(mapId);
         gGameState.retreatWarpDest =
             SUHALLA_GATE_CHECKPOINT_FROM_WORLD_MAP_SOUTH;
       }
-      if (Engine_GameFlagIsSet(FLAG_SUHALLA_GATE_ENTERED_FROM_EAST)) {
+      if (GameFlag_Test(FLAG_SUHALLA_GATE_ENTERED_FROM_EAST)) {
         gGameState.retreatMap = SUHALLA_GATE_RETREAT_MAP(mapId);
         gGameState.retreatWarpDest =
             SUHALLA_GATE_CHECKPOINT_FROM_WORLD_MAP_EAST;
       }
-      Engine_GameFlagClear(FLAG_SHOW_LOCATION_NAME);
+      GameFlag_ClearBit(FLAG_SHOW_LOCATION_NAME);
     }
     if (gGameState.warpDest == SUHALLA_GATE_CHECKPOINT_FROM_WORLD_MAP_SOUTH) {
       Engine_GameFlagSet(FLAG_SUHALLA_GATE_ENTERED_FROM_SOUTH);
-      if (!Engine_GameFlagIsSet(FLAG_BABI_SPOKE_AFTER_COLOSSO))
+      if (!GameFlag_Test(FLAG_BABI_SPOKE_AFTER_COLOSSO))
         MapGrid_CopyCellAttributes(6, 0, 2, 1, 8, 27);
     }
     if (gGameState.warpDest == SUHALLA_GATE_CHECKPOINT_FROM_WORLD_MAP_EAST)
@@ -255,9 +255,9 @@ static void EventScript_EnterHouse(void) {
   cellSize = 2;
   Script_PlaySong(SE_DOOR_OPEN);
   MapGrid_CopyCellsTo(66, 36, 71, 8, cellSize, cellSize);
-  Engine_TaskWait(4);
+  WaitFrames(4);
   MapGrid_CopyCellsTo(68, 36, 71, 8, cellSize, cellSize);
-  Engine_TaskWait(4);
+  WaitFrames(4);
   ObjectEvent_CenterAndWalk(LOCALID_PARTY_LEADER, 3, -16);
   Engine_ScriptRequestWarp(warpTrigger);
 }
@@ -269,9 +269,9 @@ static void EventScript_EnterHouse(void) {
 static void EventScript_LeaveForWorldMap(void) {
   s16 warpTrigger = gFieldWork->coordEvent;
 
-  Engine_AudioPlayCue(SE_MAP_EXIT);
-  Engine_GameFlagClear(FLAG_SUHALLA_GATE_ENTERED_FROM_SOUTH);
-  Engine_GameFlagClear(FLAG_SUHALLA_GATE_ENTERED_FROM_EAST);
+  Sound_PlaySong(SE_MAP_EXIT);
+  GameFlag_ClearBit(FLAG_SUHALLA_GATE_ENTERED_FROM_SOUTH);
+  GameFlag_ClearBit(FLAG_SUHALLA_GATE_ENTERED_FROM_EAST);
   Engine_ScriptRequestWarp(warpTrigger);
 }
 
@@ -279,7 +279,7 @@ static void EventScript_LeaveForWorldMap(void) {
 /// time the party nears the passage north (metatile behavior 10): the two
 /// guards step together in front of it, and the map cells around them change.
 static void EventScript_GuardsBlockPassage(void) {
-  Engine_ScriptStart();
+  FieldScript_Start();
   ObjectEvent_SetSpeed(LOCALID_WEST_GUARD, PIXELS(1), PIXELS(1) / 2);
   ObjectEvent_SetSpeed(LOCALID_EAST_GUARD, PIXELS(1), PIXELS(1) / 2);
   ObjectEvent_WalkTo(LOCALID_WEST_GUARD, 136, 384);
@@ -294,7 +294,7 @@ static void EventScript_GuardsBlockPassage(void) {
 #else
   MapGrid_CopyCellAttributes(9, 26, 2, 1, 7, 26);
 #endif
-  Engine_ScriptEnd();
+  FieldScript_End();
 }
 
 /// In Suhalla Gate (MapId_SuhallaGateCheckpoint) after Babi's audience, on
@@ -310,7 +310,7 @@ static void EventScript_IodemQuestionsGuards(void) {
   s32 destinationColumn;
 #endif
 
-  Engine_ScriptStart();
+  FieldScript_Start();
   ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(8) / 5, PIXELS(4) / 5);
   ObjectEvent_WalkToAndWait(LOCALID_PARTY_LEADER, 120, 438);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_NORTH, 0);
@@ -318,7 +318,7 @@ static void EventScript_IodemQuestionsGuards(void) {
   if (leader != 0) {
     ObjectEvent_SetPosition(LOCALID_IODEM, leader->x.fixed, leader->z.fixed);
   }
-  Engine_TaskWait(1);
+  WaitFrames(1);
   ObjectEvent_SetSpeed(LOCALID_IODEM, PIXELS(8) / 5, PIXELS(4) / 5);
   ObjectEvent_WalkToAndWait(LOCALID_IODEM, 108, 431);
   ObjectEvent_FaceDirection(LOCALID_IODEM, FACING_NORTH + FACING_STEP, 10);
@@ -327,35 +327,35 @@ static void EventScript_IodemQuestionsGuards(void) {
   ObjectEvent_FaceDirection(LOCALID_IODEM, FACING_EAST, 40);
   ObjectEvent_FaceDirection(LOCALID_IODEM, FACING_NORTH + FACING_STEP, 40);
   ObjectEvent_FaceDirection(LOCALID_IODEM, FACING_EAST, 20);
-  Engine_ObjectEventStartRepeatedMotion(LOCALID_IODEM, 2);
-  Engine_ScriptSetMessage(MsgSuhallaMeaning);
+  ObjectMotion_SetVariantCallback(LOCALID_IODEM, 2);
+  FieldScript_SetMessageId(MsgSuhallaMeaning);
   Script_ShowMessageAndWait(LOCALID_IODEM, 0, 40);
   // The guards describe the attack before Iodem asks who was responsible.
   ObjectEvent_ShowEmote(LOCALID_WEST_GUARD, EMOTE_IN_FRONT | EMOTE_EXCLAMATION,
                         0);
-  Engine_ObjectEventRunRepeatedMotion(LOCALID_WEST_GUARD, 2);
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_WEST_GUARD, 2);
   Script_ShowMessageAndWait(LOCALID_WEST_GUARD, 0, 10);
   ObjectEvent_WalkToAndWait(LOCALID_IODEM, 132, 420);
   ObjectEvent_FaceDirection(LOCALID_IODEM, FACING_NORTH + FACING_STEP, 0);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_NORTHEAST, 0);
   ObjectEvent_WalkToAndWait(LOCALID_IODEM, 138, 416);
   ObjectEvent_FaceDirection(LOCALID_IODEM, FACING_NORTHWEST + FACING_STEP, 10);
-  Engine_ObjectEventStartRepeatedMotion(LOCALID_IODEM, 2);
+  ObjectMotion_SetVariantCallback(LOCALID_IODEM, 2);
   Script_ShowMessageAndWait(LOCALID_IODEM, 0, 40);
-  Engine_ObjectEventRunRepeatedMotion(LOCALID_WEST_GUARD, 2);
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_WEST_GUARD, 2);
   Script_ShowMessageAndWait(LOCALID_WEST_GUARD, 0, 40);
   ObjectEvent_ShowEmote(LOCALID_EAST_GUARD, EMOTE_IN_FRONT | EMOTE_EXCLAMATION,
                         20);
-  Engine_ObjectEventRunRepeatedMotion(LOCALID_EAST_GUARD, 2);
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_EAST_GUARD, 2);
   Script_ShowMessageAndWait(LOCALID_EAST_GUARD, 0, 20);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_NORTH, 0);
   ObjectEvent_WalkToAndWait(LOCALID_IODEM, 144, 420);
-  Engine_ScriptWait(20);
-  Engine_ObjectEventRunRepeatedMotion(LOCALID_EAST_GUARD, 2);
+  FieldScript_WaitFrames(20);
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_EAST_GUARD, 2);
   Script_ShowMessageAndWait(LOCALID_EAST_GUARD, 0, 20);
   ObjectEvent_SetAttachedEffect(LOCALID_EAST_GUARD, ATTACHED_EFFECT_IN_FRONT |
                                                         ATTACHED_EFFECT_ONCE);
-  Engine_ObjectEventStartRepeatedMotion(LOCALID_EAST_GUARD, 3);
+  ObjectMotion_SetVariantCallback(LOCALID_EAST_GUARD, 3);
   Script_ShowMessageAndWait(LOCALID_EAST_GUARD, 0, 20);
   ObjectEvent_FaceDirection(LOCALID_IODEM, FACING_SOUTH + FACING_STEP, 20);
   // Iodem: "It must have been Felix!", and the party answers yes or no. Once he
@@ -366,7 +366,7 @@ static void EventScript_IodemQuestionsGuards(void) {
     ObjectEvent_FaceDirection(LOCALID_IODEM, FACING_NORTH + FACING_STEP, 40);
     ObjectEvent_SetAttachedEffect(LOCALID_IODEM, ATTACHED_EFFECT_IN_FRONT |
                                                      ATTACHED_EFFECT_ONCE);
-    Engine_ScriptWait(40);
+    FieldScript_WaitFrames(40);
     Script_ShowMessageAndWait(LOCALID_IODEM, 0, 10);
   } else {
     gFieldWork->message += 1;
@@ -378,23 +378,23 @@ static void EventScript_IodemQuestionsGuards(void) {
   Script_ShowMessageAndWait(LOCALID_IODEM, 0, 10);
   ObjectEvent_WalkToAndWait(LOCALID_IODEM, 138, 416);
   ObjectEvent_FaceDirection(LOCALID_IODEM, FACING_NORTHWEST + FACING_STEP, 20);
-  Engine_ObjectEventStartRepeatedMotion(LOCALID_WEST_GUARD, 2);
+  ObjectMotion_SetVariantCallback(LOCALID_WEST_GUARD, 2);
   Script_ShowMessageAndWait(LOCALID_WEST_GUARD, 0, 10);
   ObjectEvent_SetAttachedEffect(LOCALID_IODEM, ATTACHED_EFFECT_IN_FRONT |
                                                    ATTACHED_EFFECT_ONCE);
-  Engine_ObjectEventRunRepeatedMotion(LOCALID_IODEM, 1);
-  Engine_ScriptWait(20);
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_IODEM, 1);
+  FieldScript_WaitFrames(20);
   Script_ShowMessageAndWait(LOCALID_IODEM, 0, 20);
-  Engine_ObjectEventRunRepeatedMotion(LOCALID_EAST_GUARD, 2);
-  Engine_ScriptWait(20);
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_EAST_GUARD, 2);
+  FieldScript_WaitFrames(20);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_NORTHEAST, 10);
-  Engine_ObjectEventRunRepeatedMotion(LOCALID_EAST_GUARD, 1);
-  Engine_ScriptWait(20);
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_EAST_GUARD, 1);
+  FieldScript_WaitFrames(20);
   Script_ShowMessageAndWait(LOCALID_EAST_GUARD, 0, 10);
-  Engine_ObjectEventRunRepeatedMotion(LOCALID_WEST_GUARD, 2);
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_WEST_GUARD, 2);
   Script_ShowMessageAndWait(LOCALID_WEST_GUARD, 0, 20);
-  Engine_ObjectEventRunRepeatedMotion(LOCALID_IODEM, 1);
-  Engine_ScriptWait(20);
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_IODEM, 1);
+  FieldScript_WaitFrames(20);
   Script_ShowMessageAndWait(LOCALID_IODEM, 0, 20);
   ObjectEvent_FaceDirection(LOCALID_IODEM, FACING_SOUTH + FACING_STEP, 10);
   Script_ShowMessageAndWait(LOCALID_IODEM, 0, 10);
@@ -404,7 +404,7 @@ static void EventScript_IodemQuestionsGuards(void) {
     ObjectEvent_SetDestination(LOCALID_IODEM, leader->x.part.pixel,
                                leader->z.part.pixel);
   }
-  Engine_ObjectEventWaitForMove(LOCALID_IODEM);
+  ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_IODEM);
   ObjectEvent_SetPosition(LOCALID_IODEM, 0, 0);
 #if TBS_PATCH_3
   MapGrid_CopyCellAttributes(6, 27, 1, 1, 7, 27);
@@ -416,7 +416,7 @@ static void EventScript_IodemQuestionsGuards(void) {
   MapGrid_CopyCellAttributes(9, 26, 2, 1, destinationColumn, 26);
 #endif
   GameFlag_Set(FLAG_SUHALLA_GATE_ATTACK_SEEN);
-  Engine_ScriptEnd();
+  FieldScript_End();
 }
 
 /// In Suhalla Gate (MapId_SuhallaGateCheckpoint), talking to the east guard.
@@ -425,32 +425,32 @@ static void EventScript_IodemQuestionsGuards(void) {
 /// must show travel papers it does not have; no, and he calls them strange.
 /// Afterwards, wounded, he vows to settle the score.
 static void EventScript_TalkToEastGuard(void) {
-  Engine_ScriptStart();
+  FieldScript_Start();
 
-  if (Engine_GameFlagIsSet(FLAG_SUHALLA_GATE_ATTACK_SEEN) != 0) {
-    Engine_ScriptSetMessage(MsgSuhallaPityColossoVictor);
-    Engine_ScriptShowMessage(LOCALID_EAST_GUARD, 0);
+  if (GameFlag_Test(FLAG_SUHALLA_GATE_ATTACK_SEEN) != 0) {
+    FieldScript_SetMessageId(MsgSuhallaPityColossoVictor);
+    FieldScript_ShowMessageAndWait(LOCALID_EAST_GUARD, 0);
   } else {
-    Engine_ScriptSetMessage(MsgSuhallaWantGoBabi);
+    FieldScript_SetMessageId(MsgSuhallaWantGoBabi);
     {
       s32 mode = 0;
       s32 no = LOCALID_EAST_GUARD;
 
-      Engine_ScriptOpenMessage(no, mode);
+      FieldMessage_ShowAtObject(no, mode);
     }
 
-    if (Engine_ScriptChooseYesNo(LOCALID_PARTY_LEADER, 0) == 0) {
-      Engine_ScriptShowMessage(LOCALID_EAST_GUARD, 0);
-      Engine_ObjectEventSetAnimationAndWait(LOCALID_EAST_GUARD,
-                                            ANIM_SHAKE_HEAD);
-      Engine_ScriptShowMessage(LOCALID_EAST_GUARD, 0);
+    if (FieldScript_AskYesNoWithObjectEventAnimation(LOCALID_PARTY_LEADER, 0) ==
+        0) {
+      FieldScript_ShowMessageAndWait(LOCALID_EAST_GUARD, 0);
+      ObjectMotion_SetAnimationAndWait(LOCALID_EAST_GUARD, ANIM_SHAKE_HEAD);
+      FieldScript_ShowMessageAndWait(LOCALID_EAST_GUARD, 0);
     } else {
       gFieldWork->message += 2;
-      Engine_ScriptShowMessage(LOCALID_EAST_GUARD, 0);
+      FieldScript_ShowMessageAndWait(LOCALID_EAST_GUARD, 0);
     }
   }
 
-  Engine_ScriptEnd();
+  FieldScript_End();
 }
 
 /// The soldier east of the gate gasps out a warning and vanishes. In Suhalla
@@ -461,38 +461,34 @@ static void EventScript_TalkToEastGuard(void) {
 static void EventScript_SoldierVanishes(void) {
   unsigned int beat;
 
-  Engine_ScriptStart();
+  FieldScript_Start();
 
-  Engine_ScriptSetMessage(MsgFieldVenusLighthouseWasAttackedBy);
+  FieldScript_SetMessageId(MsgFieldVenusLighthouseWasAttackedBy);
   Script_ShowMessageAndWait(LOCALID_VANISHING_SOLDIER, 0, 10);
 
   beat = 0;
   // Six slow blinks are followed by twelve fast ones.
   do {
     ObjectEvent_SetChildValue(LOCALID_VANISHING_SOLDIER, 0);
-    Engine_ObjectEventSetSpriteFlags(ObjectEvent_Get(LOCALID_VANISHING_SOLDIER),
-                                     1);
-    Engine_TaskWait(4);
+    ObjectEvent_SetSpriteFlags(ObjectEvent_Get(LOCALID_VANISHING_SOLDIER), 1);
+    WaitFrames(4);
 
     ObjectEvent_SetChildValue(LOCALID_VANISHING_SOLDIER, 15);
-    Engine_ObjectEventSetSpriteFlags(ObjectEvent_Get(LOCALID_VANISHING_SOLDIER),
-                                     0);
+    ObjectEvent_SetSpriteFlags(ObjectEvent_Get(LOCALID_VANISHING_SOLDIER), 0);
     beat++;
-    Engine_TaskWait(4);
+    WaitFrames(4);
   } while (beat <= 5);
 
   beat = 0;
   do {
     ObjectEvent_SetChildValue(LOCALID_VANISHING_SOLDIER, 0);
-    Engine_ObjectEventSetSpriteFlags(ObjectEvent_Get(LOCALID_VANISHING_SOLDIER),
-                                     1);
-    Engine_TaskWait(2);
+    ObjectEvent_SetSpriteFlags(ObjectEvent_Get(LOCALID_VANISHING_SOLDIER), 1);
+    WaitFrames(2);
 
     ObjectEvent_SetChildValue(LOCALID_VANISHING_SOLDIER, 15);
-    Engine_ObjectEventSetSpriteFlags(ObjectEvent_Get(LOCALID_VANISHING_SOLDIER),
-                                     0);
+    ObjectEvent_SetSpriteFlags(ObjectEvent_Get(LOCALID_VANISHING_SOLDIER), 0);
     beat++;
-    Engine_TaskWait(2);
+    WaitFrames(2);
   } while (beat <= 11);
 
   ObjectEvent_SetPosition(LOCALID_VANISHING_SOLDIER, 0, 0);
@@ -502,7 +498,7 @@ static void EventScript_SoldierVanishes(void) {
 #if TBS_PATCH_3
   MapGrid_CopyCellAttributes(29, 19, 2, 1, 29, 18);
 #endif
-  Engine_ScriptEnd();
+  FieldScript_End();
 }
 
 // How the wounded soldiers lie: animation argument 5, the west guard

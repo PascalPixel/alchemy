@@ -291,9 +291,9 @@ static void CrossboneIsle_SpawnPillarMovedBurst(s32 objectId) {
   options.update = FieldEffect_AdvanceMotion;
   for (angleStep = 0; angleStep <= 16; angleStep += 2) {
     angle = angleStep << 12;
-    velocity.x = Engine_MathCos(angle);
+    velocity.x = Trig_Cos(angle);
     velocity.y = 0;
-    velocityZ = Engine_MathSin(angle);
+    velocityZ = Trig_Sin(angle);
     velocityX = velocity.x;
     velocity.z = velocityZ;
     velocityX += Math_Divide(velocityX, 3);
@@ -344,8 +344,8 @@ static void EventScript_CatchNut(void) {
   SCRIPT_START();
   Engine_ObjectEventSetPosition(LOCALID_ISLE_NUT, 0, 0);
   Engine_GameFlagSet(FLAG_CROSSBONE_ISLE_NUT_CAUGHT);
-  Engine_ItemShowFound(ITEM_NUT, 3);
-  Engine_PartyGiveItem(ITEM_NUT, 0);
+  FieldEffect_StartEffectObject22(ITEM_NUT, 3);
+  PartyInventory_GiveItem(ITEM_NUT, 0);
   SCRIPT_END();
 }
 
@@ -397,8 +397,8 @@ s32 Map_Initialize(void) {
       objectEvent = ObjectEvent_Get(LOCALID_FIRST_PLANT);
       if (objectEvent != 0) {
         objectEvent->collisionFlags = 0;
-        ObjectEvent_SetMode(objectEvent, 4);
-        Engine_ObjectEventSetSpriteFlags(objectEvent, 0);
+        ObjectDispatch_SelectAnimation(objectEvent, 4);
+        ObjectEvent_SetSpriteFlags(objectEvent, 0);
       }
       Field_SetMetatileBehaviorAt(0, PIXELS(304), PIXELS(368), 253);
     }
@@ -406,8 +406,8 @@ s32 Map_Initialize(void) {
       objectEvent = ObjectEvent_Get(LOCALID_FIRST_PLANT + 1);
       if (objectEvent != 0) {
         objectEvent->collisionFlags = 0;
-        ObjectEvent_SetMode(objectEvent, 4);
-        Engine_ObjectEventSetSpriteFlags(objectEvent, 0);
+        ObjectDispatch_SelectAnimation(objectEvent, 4);
+        ObjectEvent_SetSpriteFlags(objectEvent, 0);
       }
       Field_SetMetatileBehaviorAt(0, PIXELS(80), PIXELS(368), 253);
     }
@@ -415,8 +415,8 @@ s32 Map_Initialize(void) {
       objectEvent = ObjectEvent_Get(LOCALID_FIRST_PLANT + 2);
       if (objectEvent != 0) {
         objectEvent->collisionFlags = 0;
-        ObjectEvent_SetMode(objectEvent, 4);
-        Engine_ObjectEventSetSpriteFlags(objectEvent, 0);
+        ObjectDispatch_SelectAnimation(objectEvent, 4);
+        ObjectEvent_SetSpriteFlags(objectEvent, 0);
       }
       Field_SetMetatileBehaviorAt(0, PIXELS(96), PIXELS(336), 253);
     }
@@ -424,8 +424,8 @@ s32 Map_Initialize(void) {
       objectEvent = ObjectEvent_Get(LOCALID_FIRST_PLANT + 3);
       if (objectEvent != 0) {
         objectEvent->collisionFlags = 0;
-        ObjectEvent_SetMode(objectEvent, 4);
-        Engine_ObjectEventSetSpriteFlags(objectEvent, 0);
+        ObjectDispatch_SelectAnimation(objectEvent, 4);
+        ObjectEvent_SetSpriteFlags(objectEvent, 0);
       }
       Field_SetMetatileBehaviorAt(0, PIXELS(144), PIXELS(320), 253);
       Field_SetMetatileBehaviorAt(0, PIXELS(752), PIXELS(320), 253);
@@ -471,9 +471,8 @@ static void CrossboneIsle_RestoreSunkPillar(void) {
   if (cleared != 0) {
     OBJECT_POSITION_SET(LOCALID_SINKING_PILLAR, 650, 168);
     objectEvent->y.fixed = -PIXELS(32);
-    Engine_ObjectEventSetSpriteFlags(ObjectEvent_Get(LOCALID_SINKING_PILLAR),
-                                     0);
-    Engine_ObjectEventSetSpritePriority(LOCALID_SINKING_PILLAR, 3);
+    ObjectEvent_SetSpriteFlags(ObjectEvent_Get(LOCALID_SINKING_PILLAR), 0);
+    ObjectMotion_SetActionVariant(LOCALID_SINKING_PILLAR, 3);
     objectEvent->motionFlags = 0;
     objectEvent->priorityFlags |= OBJ_EVENT_PRIORITY_UNDERFOOT;
     MapGrid_CopyCellAttributes(42, 10, 1, 1, 40, 10);
@@ -503,9 +502,8 @@ static void EventScript_MovePillar(void) {
   // offset, as the bytes have it; &gGameState.mapId folds into one literal.
   state = &gGameState;
   mapNumber = &state->mapId;
-  if (Engine_GameFlagIsSet(*mapNumber +
-                           (FLAG_CROSSBONE_ISLE_FIRST_PASSAGE_OPENED -
-                            (s32)&MapId_CrossboneIsleFirstFloor)) != 0) {
+  if (GameFlag_Test(*mapNumber + (FLAG_CROSSBONE_ISLE_FIRST_PASSAGE_OPENED -
+                                  (s32)&MapId_CrossboneIsleFirstFloor)) != 0) {
     return;
   }
 #endif
@@ -515,12 +513,11 @@ static void EventScript_MovePillar(void) {
 
   WAIT(8);
   CrossboneIsle_SpawnPillarMovedBurst(LOCALID_SINKING_PILLAR);
-  Engine_AudioPlayCue(SE_136);
+  Sound_PlaySong(SE_136);
   WAIT(40);
 
-  Engine_ObjectEventSetSpriteFlags(ObjectEvent_GetById(LOCALID_SINKING_PILLAR),
-                                   0);
-  Engine_ObjectEventSetSpritePriority(LOCALID_SINKING_PILLAR, 3);
+  ObjectEvent_SetSpriteFlags(ObjectEvent_GetById(LOCALID_SINKING_PILLAR), 0);
+  ObjectMotion_SetActionVariant(LOCALID_SINKING_PILLAR, 3);
 
   pillar->motionFlags = 0;
   pillar->priorityFlags |= OBJ_EVENT_PRIORITY_UNDERFOOT;
@@ -548,8 +545,8 @@ static void EventScript_PushPillar(void) {
 /// Walking north into a corridor room's west door in Crossbone Isle Cave
 /// (coord event 4): it opens, and the party goes through to the side room.
 static void EventScript_OpenWestDoor(void) {
-  Engine_MapGridAnimateCells(gCrossboneIsle_EntranceCells, 37, 7);
-  Engine_AudioPlayCue(SE_183);
+  MapGrid_PlayMetatileCopySequence(gCrossboneIsle_EntranceCells, 37, 7);
+  Sound_PlaySong(SE_183);
   Engine_ScriptRequestWarp(CORRIDOR_TO_SIDE_ROOM_WEST);
 }
 
@@ -558,10 +555,9 @@ static void EventScript_OpenWestDoor(void) {
 /// back at WARP_DEST_AFTER_BATTLE; once they are beaten, the door opens onto
 /// the side room.
 static void EventScript_OpenEastDoor(void) {
-  if (Engine_GameFlagIsSet(
-          gGameState.mapId +
-          (FLAG_CROSSBONE_ISLE_FIRST_EAST_DOOR_MONSTERS_DEFEATED -
-           (s32)&MapId_CrossboneIsleFirstFloor)) == 0) {
+  if (GameFlag_Test(gGameState.mapId +
+                    (FLAG_CROSSBONE_ISLE_FIRST_EAST_DOOR_MONSTERS_DEFEATED -
+                     (s32)&MapId_CrossboneIsleFirstFloor)) == 0) {
     SCRIPT_START();
     FieldScript_SetNextDestination(gGameState.mapId, WARP_DEST_AFTER_BATTLE);
     Battle_SetType(BATTLE_TYPE_SCRIPTED);
@@ -607,8 +603,8 @@ static void EventScript_OpenEastDoor(void) {
     }
     SCRIPT_END();
   } else {
-    Engine_MapGridAnimateCells(gCrossboneIsle_EntranceCells, 44, 7);
-    Engine_AudioPlayCue(SE_183);
+    MapGrid_PlayMetatileCopySequence(gCrossboneIsle_EntranceCells, 44, 7);
+    Sound_PlaySong(SE_183);
     Engine_ScriptRequestWarp(CORRIDOR_TO_SIDE_ROOM_EAST);
   }
 }
@@ -618,8 +614,8 @@ static void EventScript_OpenEastDoor(void) {
 static void CrossboneIsle_OpenEastDoorAfterBattle(void) {
   SCRIPT_START();
   OBJECT_SPEED(LOCALID_PARTY_LEADER, PIXELS(2) / 5, PIXELS(1) / 5);
-  Engine_ScriptOpenScreen();
-  Engine_ScriptWaitForScreen();
+  FieldScript_StartScreenTransition();
+  FieldScript_WaitTransitionFrames();
   FLAG_SET((gGameState.mapId +
             (FLAG_CROSSBONE_ISLE_FIRST_EAST_DOOR_MONSTERS_DEFEATED -
              (s32)&MapId_CrossboneIsleFirstFloor)));
@@ -642,7 +638,7 @@ static void EventScript_UnusedGrowFirstPlant(s32 localId) {
   if (objectEvent != 0) {
     objectEvent->collisionFlags = 0;
   }
-  Engine_ObjectEventSetSpriteFlags(ObjectEvent_GetById(localId), 0);
+  ObjectEvent_SetSpriteFlags(ObjectEvent_GetById(localId), 0);
   MapGrid_SetMetatileBehaviorAt(0, fixedX, fixedZ, 253);
   Engine_GameFlagSet(FLAG_FIRST_PLANT_GROWN);
 }
@@ -657,7 +653,7 @@ static void EventScript_GrowSecondPlant(s32 localId) {
   if (objectEvent != 0) {
     objectEvent->collisionFlags = 0;
   }
-  Engine_ObjectEventSetSpriteFlags(ObjectEvent_GetById(localId), 0);
+  ObjectEvent_SetSpriteFlags(ObjectEvent_GetById(localId), 0);
   MapGrid_SetMetatileBehaviorAt(0, fixedX, fixedZ, 253);
   Engine_GameFlagSet(FLAG_FIRST_PLANT_GROWN + 1);
 }
@@ -672,7 +668,7 @@ static void EventScript_GrowThirdPlant(s32 localId) {
   if (objectEvent != 0) {
     objectEvent->collisionFlags = 0;
   }
-  Engine_ObjectEventSetSpriteFlags(ObjectEvent_GetById(localId), 0);
+  ObjectEvent_SetSpriteFlags(ObjectEvent_GetById(localId), 0);
   MapGrid_SetMetatileBehaviorAt(0, fixedX, fixedZ, 253);
   Engine_GameFlagSet(FLAG_FIRST_PLANT_GROWN + 2);
 }
@@ -689,7 +685,7 @@ static void EventScript_GrowFourthPlant(s32 localId) {
   if (objectEvent != 0) {
     objectEvent->collisionFlags = 0;
   }
-  Engine_ObjectEventSetSpriteFlags(ObjectEvent_GetById(localId), 0);
+  ObjectEvent_SetSpriteFlags(ObjectEvent_GetById(localId), 0);
   MapGrid_SetMetatileBehaviorAt(0, fixedX, fixedZ, 253);
   MapGrid_SetMetatileBehaviorAt(0, secondFixedX, secondFixedZ, 253);
   Engine_GameFlagSet(FLAG_FIRST_PLANT_GROWN + 3);
@@ -794,11 +790,11 @@ static void CrossboneIsle_MoveSelectedObjectEventAndLog(s32 localId,
 
     selectedObjectEvent->speed = PIXELS(1);
     selectedObjectEvent->acceleration = PIXELS(1) / 2;
-    Engine_ObjectSetPosition(selectedObjectEvent, fixedX,
-                             selectedObjectEvent->y.fixed, fixedZ);
+    Object_SetPosition(selectedObjectEvent, fixedX,
+                       selectedObjectEvent->y.fixed, fixedZ);
   }
   // Position the log on the same cell-center grid as the selected object event.
-  ObjectEvent_SetMode(selectedObjectEvent, 27);
+  ObjectDispatch_SelectAnimation(selectedObjectEvent, 27);
   {
     fixedX = ((logObjectEvent->x.fixed + (xOffset * PIXELS(1))) & 0xFFF00000) +
              PIXELS(8);
@@ -807,18 +803,17 @@ static void CrossboneIsle_MoveSelectedObjectEventAndLog(s32 localId,
 
     logObjectEvent->speed = PIXELS(1);
     logObjectEvent->acceleration = PIXELS(1) / 2;
-    Engine_ObjectSetPosition(logObjectEvent, fixedX, logObjectEvent->y.fixed,
-                             fixedZ);
+    Object_SetPosition(logObjectEvent, fixedX, logObjectEvent->y.fixed, fixedZ);
   }
   // The log's mode depends on which side of the grid it moves toward.
   if (xOffset < 0 || zOffset < 0) {
-    ObjectEvent_SetMode(logObjectEvent, 4);
+    ObjectDispatch_SelectAnimation(logObjectEvent, 4);
   } else {
-    ObjectEvent_SetMode(logObjectEvent, 3);
+    ObjectDispatch_SelectAnimation(logObjectEvent, 3);
   }
-  Engine_AudioPlayCue(SE_226);
+  Sound_PlaySong(SE_226);
   Object_WaitForMove(selectedObjectEvent);
-  Engine_AudioPlayCue(SE_STOP_SLOT3);
+  Sound_PlaySong(SE_STOP_SLOT3);
   SCRIPT_END();
 }
 
@@ -832,7 +827,7 @@ static void CrossboneIsle_DrawHorizontalLogFootprint(s32 localId,
   if (objectEvent != 0) {
     s32 priorityFlags;
 
-    Engine_ObjectEventSetSpritePriority(localId, 3);
+    ObjectMotion_SetActionVariant(localId, 3);
     priorityFlags = OBJ_EVENT_PRIORITY_UNDERFOOT;
     priorityFlags |= objectEvent->priorityFlags;
     objectEvent->priorityFlags = priorityFlags;
@@ -854,7 +849,7 @@ static void CrossboneIsle_DrawVerticalLogFootprint(s32 localId,
   if (objectEvent != 0) {
     s32 priorityFlags;
 
-    Engine_ObjectEventSetSpritePriority(localId, 3);
+    ObjectMotion_SetActionVariant(localId, 3);
     priorityFlags = OBJ_EVENT_PRIORITY_UNDERFOOT;
     priorityFlags |= objectEvent->priorityFlags;
     objectEvent->priorityFlags = priorityFlags;
@@ -980,17 +975,17 @@ static s32 CrossboneIsle_TryHop(struct ObjectEvent *objectEvent,
     s32 movingFlags;
 
     SCRIPT_START();
-    ObjectEvent_SetMode(objectEvent, 6);
-    Engine_TaskWait(6);
-    Engine_AudioPlayCue(SE_JUMP);
-    ObjectEvent_SetMode(objectEvent, 7);
+    ObjectDispatch_SelectAnimation(objectEvent, 6);
+    WaitFrames(6);
+    Sound_PlaySong(SE_JUMP);
+    ObjectDispatch_SelectAnimation(objectEvent, 7);
     objectEvent->speed = PIXELS(3);
     objectEvent->acceleration = PIXELS(2);
     objectEvent->velocityY = PIXELS(4);
     movingFlags = 126;
     movingFlags &= *motionFlags;
     *motionFlags = (u8)movingFlags;
-    Engine_ObjectEventSetSpriteFlags(objectEvent, 0);
+    ObjectEvent_SetSpriteFlags(objectEvent, 0);
     {
 #if TBS_PATCH_1
       s16 *pixelCoordinates = (s16 *)&destination;
@@ -998,11 +993,11 @@ static s32 CrossboneIsle_TryHop(struct ObjectEvent *objectEvent,
       s16 *pixelCoordinates = (s16 *)requested;
 #endif
 
-      Engine_ObjectEventMoveToAndWait(LOCALID_PARTY_LEADER, pixelCoordinates[1],
-                                      pixelCoordinates[5]);
+      ObjectMotion_SetPositionAndCommit(
+          LOCALID_PARTY_LEADER, pixelCoordinates[1], pixelCoordinates[5]);
     }
-    ObjectEvent_SetMode(objectEvent, 6);
-    Engine_ObjectEventSetSpriteFlags(objectEvent, SPRITE_FLAG_SHADOW);
+    ObjectDispatch_SelectAnimation(objectEvent, 6);
+    ObjectEvent_SetSpriteFlags(objectEvent, SPRITE_FLAG_SHADOW);
     *motionFlags = (u8)savedMotionFlags;
     SCRIPT_END();
     return 1;
@@ -1089,7 +1084,7 @@ static void EventScript_SlideFirstLogNorth(void) {
     EventScript_HopNorth();
     return;
   }
-  Engine_TaskWait(2);
+  WaitFrames(2);
   {
     s32 routeEndZ = ObjectEvent_GetById(LOCALID_FIRST_LOG)->z.fixed >> 20;
     s32 routeX = objectEventX - 1;
@@ -1103,7 +1098,7 @@ static void EventScript_SlideFirstLogNorth(void) {
 /// old row.
 static inline void CrossboneIsle_RedrawHorizontalLogRoute(s32 localId,
                                                           s32 column, s32 row) {
-  Engine_TaskWait(2);
+  WaitFrames(2);
   {
     s32 destinationRow = ObjectEvent_GetById(localId)->z.fixed >> 20;
     s32 footprintColumn = column - 1;
@@ -1118,7 +1113,7 @@ static inline void CrossboneIsle_RedrawHorizontalLogRoute(s32 localId,
 /// old one.
 static inline void CrossboneIsle_RedrawVerticalLogRoute(s32 localId, s32 column,
                                                         s32 row) {
-  Engine_TaskWait(2);
+  WaitFrames(2);
   {
     s32 destinationColumn = ObjectEvent_GetById(localId)->x.fixed >> 20;
     s32 footprintRow = row - 1;
@@ -1537,8 +1532,8 @@ static void EventScript_SlideEleventhLogNorth(void) {
   } else if (row == 9) {
     return;
   }
-  Engine_TaskWait(2);
-  Engine_MapGridCopyCellAttributes(
+  WaitFrames(2);
+  MapGrid_CopyCellAttributeRect(
       column - 1, row, 3, 1, column - 1,
       ObjectEvent_GetById(LOCALID_ELEVENTH_LOG)->z.fixed >> 20);
   MapGrid_CopyCellAttributes(0, 0, 3, 1, column - 1, row);
@@ -1595,9 +1590,9 @@ static void EventScript_SlideEleventhLogSouth(void) {
     return;
   }
 
-  Engine_TaskWait(2);
+  WaitFrames(2);
 
-  Engine_MapGridCopyCellAttributes(
+  MapGrid_CopyCellAttributeRect(
       column - 1, row, 3, 1, column - 1,
       ObjectEvent_GetById(LOCALID_ELEVENTH_LOG)->z.fixed >> 20);
   MapGrid_CopyCellAttributes(0, 0, 3, 1, column - 1, row);
@@ -1673,8 +1668,8 @@ static void EventScript_SlideSecondLogNorth(void) {
   } else if ((u32)row <= 9) {
     return;
   }
-  Engine_TaskWait(2);
-  Engine_MapGridCopyCellAttributes(
+  WaitFrames(2);
+  MapGrid_CopyCellAttributeRect(
       column - 1, row, 3, 1, column - 1,
       ObjectEvent_GetById(LOCALID_SECOND_LOG)->z.fixed >> 20);
   MapGrid_CopyCellAttributes(0, 0, 3, 1, column - 1, row);
@@ -1737,9 +1732,9 @@ static void EventScript_SlideSecondLogSouth(void) {
     CrossboneIsle_MoveSelectedObjectEventAndLog(LOCALID_SECOND_LOG, 0, 16);
   }
 
-  Engine_TaskWait(2);
+  WaitFrames(2);
 
-  Engine_MapGridCopyCellAttributes(
+  MapGrid_CopyCellAttributeRect(
       column - 1, row, 3, 1, column - 1,
       ObjectEvent_GetById(LOCALID_SECOND_LOG)->z.fixed >> 20);
   MapGrid_CopyCellAttributes(0, 0, 3, 1, column - 1, row);
@@ -1809,8 +1804,8 @@ static void EventScript_SlideTwelfthLogWest(void) {
       CrossboneIsle_MoveSelectedObjectEventAndLog(LOCALID_TWELFTH_LOG, -144, 0);
     }
   }
-  Engine_TaskWait(2);
-  Engine_MapGridCopyCellAttributes(
+  WaitFrames(2);
+  MapGrid_CopyCellAttributeRect(
       column, row - 1, 1, 3,
       ObjectEvent_GetById(LOCALID_TWELFTH_LOG)->x.fixed >> 20, row - 1);
   MapGrid_CopyCellAttributes(0, 0, 1, 3, column, row - 1);
@@ -1861,8 +1856,8 @@ static void EventScript_SlideTwelfthLogEast(void) {
   } else if (column == 12) {
     CrossboneIsle_MoveSelectedObjectEventAndLog(LOCALID_TWELFTH_LOG, 16, 0);
   }
-  Engine_TaskWait(2);
-  Engine_MapGridCopyCellAttributes(
+  WaitFrames(2);
+  MapGrid_CopyCellAttributeRect(
       column, row - 1, 1, 3,
       ObjectEvent_GetById(LOCALID_TWELFTH_LOG)->x.fixed >> 20, row - 1);
   MapGrid_CopyCellAttributes(0, 0, 1, 3, column, row - 1);
@@ -1912,10 +1907,10 @@ static void EventScript_SlideSeventhLogWest(void) {
     return;
   }
 
-  Engine_TaskWait(2);
+  WaitFrames(2);
 
   footprintRow = row - 1;
-  Engine_MapGridCopyCellAttributes(
+  MapGrid_CopyCellAttributeRect(
       column, footprintRow, 1, 3,
       ObjectEvent_GetById(LOCALID_SEVENTH_LOG)->x.fixed >> 20, footprintRow);
   MapGrid_CopyCellAttributes(0, 0, 1, 3, column, footprintRow);
@@ -1958,10 +1953,10 @@ static void EventScript_SlideSeventhLogEast(void) {
     return;
   }
 
-  Engine_TaskWait(2);
+  WaitFrames(2);
 
   footprintRow = row - 1;
-  Engine_MapGridCopyCellAttributes(
+  MapGrid_CopyCellAttributeRect(
       column, footprintRow, 1, 3,
       ObjectEvent_GetById(LOCALID_SEVENTH_LOG)->x.fixed >> 20, footprintRow);
   MapGrid_CopyCellAttributes(0, 0, 1, 3, column, footprintRow);
@@ -2008,10 +2003,10 @@ static void EventScript_SlideNinthLogWest(void) {
     return;
   }
 
-  Engine_TaskWait(2);
+  WaitFrames(2);
 
   footprintRow = row - 1;
-  Engine_MapGridCopyCellAttributes(
+  MapGrid_CopyCellAttributeRect(
       column, footprintRow, 1, 3,
       ObjectEvent_GetById(LOCALID_NINTH_LOG)->x.fixed >> 20, footprintRow);
   MapGrid_CopyCellAttributes(0, 0, 1, 3, column, footprintRow);
@@ -2046,9 +2041,9 @@ static void EventScript_SlideNinthLogEast(void) {
     return;
   }
 
-  Engine_TaskWait(2);
+  WaitFrames(2);
 
-  Engine_MapGridCopyCellAttributes(
+  MapGrid_CopyCellAttributeRect(
       column, row - 1, 1, 3,
       ObjectEvent_GetById(LOCALID_NINTH_LOG)->x.fixed >> 20, row - 1);
   MapGrid_CopyCellAttributes(0, 0, 1, 3, column, row - 1);

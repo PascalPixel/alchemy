@@ -148,7 +148,7 @@ const struct MapWarpRegion *XianInteriors_GetRegions(void) { return NULL; }
 const u32 *XianInteriors_GetWarps(void) { return gXianInteriors_Warps; }
 
 /// The room behind the school places only Master Feh, Feizhi and Hsu. Every
-/// other room shares one table, whose condition 0 ObjectEventTemplate_Prepare
+/// other room shares one table, whose condition 0 Map_AssignViewFlags
 /// replaces with whether each object event stands inside the view bounds of the
 /// room entered.
 const struct ObjectEventTemplate *XianInteriors_GetObjectEventTemplates(void) {
@@ -156,7 +156,7 @@ const struct ObjectEventTemplate *XianInteriors_GetObjectEventTemplates(void) {
       XIAN_INTERIORS_FROM_FUCHIN_TEMPLE_INTERIORS_FEHS_SCHOOL) {
     return gXianInteriors_SchoolRoomObjectEventTemplates;
   }
-  ObjectEventTemplate_Prepare(gXianInteriors_ObjectEventTemplates);
+  Map_AssignViewFlags(gXianInteriors_ObjectEventTemplates);
   return gXianInteriors_ObjectEventTemplates;
 }
 
@@ -171,19 +171,19 @@ static inline u32 XianInteriors_GetLeaderFacing(void) {
 static void XianInteriors_TalkToWeaponMerchant(void) {
   u32 leaderFacing = XianInteriors_GetLeaderFacing();
 
-  Engine_ScriptStart();
+  FieldScript_Start();
   if (leaderFacing >= FACING_NORTHWEST + 1 &&
       leaderFacing <= FACING_NORTHEAST - 1) {
-    Engine_ShopOpen(XIAN_WEAPON_STOCK, LOCALID_XIAN_WEAPON_MERCHANT);
+    Shop_Run(XIAN_WEAPON_STOCK, LOCALID_XIAN_WEAPON_MERCHANT);
   } else {
-    if (Engine_GameFlagIsSet(FLAG_XIAN_HEARD_HSU_TRAPPED) == 0) {
-      Engine_ScriptSetMessage(MsgXianXianHasMartialArtsBut);
+    if (GameFlag_Test(FLAG_XIAN_HEARD_HSU_TRAPPED) == 0) {
+      FieldScript_SetMessageId(MsgXianXianHasMartialArtsBut);
     } else {
-      Engine_ScriptSetMessage(MsgXianHsusInjuryTaughtGoodLesson);
+      FieldScript_SetMessageId(MsgXianHsusInjuryTaughtGoodLesson);
     }
-    Engine_ScriptShowMessage(LOCALID_XIAN_WEAPON_MERCHANT, 0);
+    FieldScript_ShowMessageAndWait(LOCALID_XIAN_WEAPON_MERCHANT, 0);
   }
-  Engine_ScriptEnd();
+  FieldScript_End();
 }
 
 /// Talking to Xian's armor merchant: across the counter, the armor shop;
@@ -191,19 +191,19 @@ static void XianInteriors_TalkToWeaponMerchant(void) {
 static void XianInteriors_TalkToArmorMerchant(void) {
   u32 leaderFacing = XianInteriors_GetLeaderFacing();
 
-  Engine_ScriptStart();
+  FieldScript_Start();
   if (leaderFacing >= FACING_NORTHWEST + 1 &&
       leaderFacing <= FACING_NORTHEAST - 1) {
-    Engine_ShopOpen(XIAN_ARMOR_STOCK, LOCALID_XIAN_ARMOR_MERCHANT);
+    Shop_Run(XIAN_ARMOR_STOCK, LOCALID_XIAN_ARMOR_MERCHANT);
   } else {
-    if (Engine_GameFlagIsSet(FLAG_XIAN_HEARD_HSU_TRAPPED) == 0) {
-      Engine_ScriptSetMessage(MsgXianMartialArtistsCantUseHeavy);
+    if (GameFlag_Test(FLAG_XIAN_HEARD_HSU_TRAPPED) == 0) {
+      FieldScript_SetMessageId(MsgXianMartialArtistsCantUseHeavy);
     } else {
-      Engine_ScriptSetMessage(MsgXianKungFuMakesQuickDoes);
+      FieldScript_SetMessageId(MsgXianKungFuMakesQuickDoes);
     }
-    Engine_ScriptShowMessage(LOCALID_XIAN_ARMOR_MERCHANT, 0);
+    FieldScript_ShowMessageAndWait(LOCALID_XIAN_ARMOR_MERCHANT, 0);
   }
-  Engine_ScriptEnd();
+  FieldScript_End();
 }
 
 /// Talking to Xian's item merchant: across the counter, the item shop; from
@@ -213,18 +213,18 @@ static void XianInteriors_TalkToItemMerchant(void) {
 
   u32 leaderFacing = XianInteriors_GetLeaderFacing();
 
-  Engine_ScriptStart();
+  FieldScript_Start();
   if (leaderFacing >= FACING_NORTHWEST + 1 &&
       leaderFacing <= FACING_NORTHEAST - 1) {
-    Engine_ShopOpen(XIAN_ITEM_STOCK, LOCALID_XIAN_ITEM_MERCHANT);
-  } else if (Engine_GameFlagIsSet(FLAG_XIAN_HEARD_HSU_TRAPPED) == 0) {
-    Engine_ScriptSetMessage(MsgXianXiansSpecialArmorNotSuited);
-    Engine_ScriptShowMessage(LOCALID_XIAN_ITEM_MERCHANT, 0);
+    Shop_Run(XIAN_ITEM_STOCK, LOCALID_XIAN_ITEM_MERCHANT);
+  } else if (GameFlag_Test(FLAG_XIAN_HEARD_HSU_TRAPPED) == 0) {
+    FieldScript_SetMessageId(MsgXianXiansSpecialArmorNotSuited);
+    FieldScript_ShowMessageAndWait(LOCALID_XIAN_ITEM_MERCHANT, 0);
   } else {
-    Engine_ScriptSetMessage(MsgXianDoPlanCrossDesertWarrior);
-    Engine_ScriptAskYesNo(LOCALID_XIAN_ITEM_MERCHANT, 0);
+    FieldScript_SetMessageId(MsgXianDoPlanCrossDesertWarrior);
+    FieldScript_AskYesNoAndShowResponse(LOCALID_XIAN_ITEM_MERCHANT, 0);
   }
-  Engine_ScriptEnd();
+  FieldScript_End();
 }
 
 /// Talking to Xian's innkeeper: across the counter, the inn; from elsewhere,
@@ -233,18 +233,18 @@ static void XianInteriors_TalkToInnkeeper(void) {
 
   u32 leaderFacing = XianInteriors_GetLeaderFacing();
 
-  Engine_ScriptStart();
+  FieldScript_Start();
   if (leaderFacing < FACING_SOUTHEAST || leaderFacing > FACING_NORTHEAST) {
-    Engine_InnOpen(XIAN_INN, LOCALID_XIAN_INNKEEPER);
+    Inn_CheckIn(XIAN_INN, LOCALID_XIAN_INNKEEPER);
   } else {
-    if (Engine_GameFlagIsSet(FLAG_XIAN_HEARD_HSU_TRAPPED) == 0) {
-      Engine_ScriptSetMessage(MsgXianWarriorsShouldLearnAboutTowns);
+    if (GameFlag_Test(FLAG_XIAN_HEARD_HSU_TRAPPED) == 0) {
+      FieldScript_SetMessageId(MsgXianWarriorsShouldLearnAboutTowns);
     } else {
-      Engine_ScriptSetMessage(MsgXianWeHaveFewCustomersThese);
+      FieldScript_SetMessageId(MsgXianWeHaveFewCustomersThese);
     }
-    Engine_ScriptShowMessage(LOCALID_XIAN_INNKEEPER, 0);
+    FieldScript_ShowMessageAndWait(LOCALID_XIAN_INNKEEPER, 0);
   }
-  Engine_ScriptEnd();
+  FieldScript_End();
 }
 
 /// A young man in a house in Xian asks whether something is wrong on Silk
@@ -252,20 +252,20 @@ static void XianInteriors_TalkToInnkeeper(void) {
 /// about Lamakan Desert too. A yes: no one can use Silk Road; a no: it is good
 /// to hear the desert is fine.
 static void XianInteriors_AskAboutSilkRoad(void) {
-  Engine_ScriptStart();
-  Engine_ScriptSetMessage(MsgXianSomethingWrongOnSilkRoad);
-  Engine_ScriptAskYesNo(LOCALID_YOUNG_MAN_ON_SILK_ROAD, 0);
-  Engine_ScriptEnd();
+  FieldScript_Start();
+  FieldScript_SetMessageId(MsgXianSomethingWrongOnSilkRoad);
+  FieldScript_AskYesNoAndShowResponse(LOCALID_YOUNG_MAN_ON_SILK_ROAD, 0);
+  FieldScript_End();
 }
 
 /// An old man in a house in Xian, LOCALID_OLD_MAN_ON_THE_ALTIN_ROAD, asks after
 /// the news of Hsu whether the monsters in Altin spat water. A yes: how
 /// strange; a no: but why would Feizhi lie?
 static void XianInteriors_AskAboutAltinMonsters(void) {
-  Engine_ScriptStart();
-  Engine_ScriptSetMessage(MsgXianDidMonstersInAltinSpit);
-  Engine_ScriptAskYesNo(LOCALID_OLD_MAN_ON_THE_ALTIN_ROAD, 0);
-  Engine_ScriptEnd();
+  FieldScript_Start();
+  FieldScript_SetMessageId(MsgXianDidMonstersInAltinSpit);
+  FieldScript_AskYesNoAndShowResponse(LOCALID_OLD_MAN_ON_THE_ALTIN_ROAD, 0);
+  FieldScript_End();
 }
 
 /// Feizhi thanks the party and Master Hama for freeing Hsu, in Xian. She is in
@@ -273,15 +273,15 @@ static void XianInteriors_AskAboutAltinMonsters(void) {
 /// (FLAG_HSU_RESCUED_WITHOUT_PARTY clear); she welcomes the party, looks at
 /// Hsu, then thanks the party and Master Hama. "Oh, warrior! Welcome!"
 static void XianInteriors_FeizhiThanksParty(void) {
-  Engine_ScriptStart();
-  Engine_ScriptSetMessage(MsgXianWarriorWelcome);
-  Engine_ScriptShowMessageAndWait(LOCALID_FEIZHI, 0, 20);
-  Engine_ObjectEventFaceObjectEvent(LOCALID_FEIZHI, LOCALID_HSU, 0);
-  Engine_ScriptWait(60);
-  Engine_ObjectEventFaceObjectEvent(LOCALID_FEIZHI, LOCALID_PARTY_LEADER, 0);
-  Engine_ScriptWait(20);
-  Engine_ScriptShowMessage(LOCALID_FEIZHI, 0);
-  Engine_ScriptEnd();
+  FieldScript_Start();
+  FieldScript_SetMessageId(MsgXianWarriorWelcome);
+  FieldScript_ShowMessageThenWait(LOCALID_FEIZHI, 0, 20);
+  ObjectMotion_SetAngleToward(LOCALID_FEIZHI, LOCALID_HSU, 0);
+  FieldScript_WaitFrames(60);
+  ObjectMotion_SetAngleToward(LOCALID_FEIZHI, LOCALID_PARTY_LEADER, 0);
+  FieldScript_WaitFrames(20);
+  FieldScript_ShowMessageAndWait(LOCALID_FEIZHI, 0);
+  FieldScript_End();
 }
 
 /// The room behind the school has its own map events.
@@ -316,7 +316,7 @@ s32 XianInteriors_Initialize(void) {
                                        SPRITE_CHEST);
   } else if (warpDest ==
              XIAN_INTERIORS_FROM_FUCHIN_TEMPLE_INTERIORS_FEHS_SCHOOL) {
-    Engine_GameFlagClear(FLAG_SHOW_LOCATION_NAME);
+    GameFlag_ClearBit(FLAG_SHOW_LOCATION_NAME);
     Engine_ObjectEventSetAnimation(LOCALID_HSU, ANIM_HSU_IN_BED);
   }
   return 0;

@@ -297,7 +297,7 @@ static inline void BabiPalace_WalkIntoLeader(s32 member) {
   ObjectEvent_SetAnimation(member, ANIM_WALK);
   leader = ObjectEvent_Get(LOCALID_PARTY_LEADER);
   if (leader != NULL) {
-    Engine_ObjectEventSetDestination(member, leader->x.part.pixel,
+    ObjectMotion_ResetAndSetPosition(member, leader->x.part.pixel,
                                      leader->z.part.pixel);
   }
   ObjectEvent_WaitForMove(member);
@@ -323,12 +323,12 @@ static __inline__ void BabiPalace_RestorePartyAndInventory(void) {
     state = Unit_Get(owners[i]);
     state->hp = state->hpMax;
     state->pp = state->ppMax;
-    Engine_OwnerRecalculateRatios(owners[i]);
+    Unit_RecalculateGauges(owners[i]);
   }
   Party_AddMember(GARET);
   Party_AddMember(IVAN);
   Party_AddMember(MIA);
-  Engine_InventorySnapshotRestore();
+  InventorySnapshot_Restore();
 }
 
 const struct MapWarpDest *Map_GetWarpDests(void) {
@@ -352,10 +352,10 @@ const struct ObjectEventTemplate *Map_GetObjectEventTemplates(void) {
   if (gGameState.mapId == (s32)&MapId_BabiPalaceEntrance) {
     return gBabiPalace_OutsideObjectEventTemplates;
   }
-  if (Engine_GameFlagIsSet(FLAG_COLOSSO_OVER) != 0) {
+  if (GameFlag_Test(FLAG_COLOSSO_OVER) != 0) {
     return gBabiPalace_ObjectEventTemplatesAfterColosso;
   }
-  if (Engine_GameFlagIsSet(FLAG_BABI_SAVED) != 0) {
+  if (GameFlag_Test(FLAG_BABI_SAVED) != 0) {
     return gBabiPalace_ObjectEventTemplatesFinals;
   }
   return gBabiPalace_ObjectEventTemplatesBabiMissing;
@@ -363,13 +363,14 @@ const struct ObjectEventTemplate *Map_GetObjectEventTemplates(void) {
 
 /// Asks a yes or no question; the answers are the two messages after it.
 static inline void BabiPalace_ShowQuestionAnswer(s32 localId, s32 question) {
-  Engine_ScriptSetMessage(question);
-  Engine_ScriptOpenMessage(localId, 0);
-  if (Engine_ScriptChooseYesNo(LOCALID_PARTY_LEADER, 0) == 0)
-    Engine_ScriptSetMessage(question + 1);
+  FieldScript_SetMessageId(question);
+  FieldMessage_ShowAtObject(localId, 0);
+  if (FieldScript_AskYesNoWithObjectEventAnimation(LOCALID_PARTY_LEADER, 0) ==
+      0)
+    FieldScript_SetMessageId(question + 1);
   else
-    Engine_ScriptSetMessage(question + 2);
-  Engine_ScriptShowMessage(localId, 0);
+    FieldScript_SetMessageId(question + 2);
+  FieldScript_ShowMessageAndWait(localId, 0);
 }
 
 /// An old man with a cane asks whether the party ran into Babi's soldiers. He's
@@ -484,18 +485,19 @@ static void BabiPalace_OfferRest(s32 localId) {
 static void BabiPalace_AskAboutColosso(s32 localId) {
   s32 question = MsgTolbiPlanningEnterColosso;
 
-  Engine_ScriptSetMessage(question);
-  Engine_ScriptOpenMessage(localId, 0);
-  if (Engine_ScriptChooseYesNo(LOCALID_PARTY_LEADER, 0) == 0) {
-    Engine_ScriptWait(10);
-    Engine_ObjectEventShowEmote(localId, EMOTE_IN_FRONT | EMOTE_WINCE, 0x28);
-    Engine_ScriptSetMessage(question + 1);
+  FieldScript_SetMessageId(question);
+  FieldMessage_ShowAtObject(localId, 0);
+  if (FieldScript_AskYesNoWithObjectEventAnimation(LOCALID_PARTY_LEADER, 0) ==
+      0) {
+    FieldScript_WaitFrames(10);
+    FieldEffect_SpawnLinked(localId, EMOTE_IN_FRONT | EMOTE_WINCE, 0x28);
+    FieldScript_SetMessageId(question + 1);
   } else {
-    Engine_ScriptWait(10);
-    Engine_ObjectEventShowEmote(localId, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0x28);
-    Engine_ScriptSetMessage(question + 2);
+    FieldScript_WaitFrames(10);
+    FieldEffect_SpawnLinked(localId, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0x28);
+    FieldScript_SetMessageId(question + 2);
   }
-  Engine_ScriptShowMessage(localId, 0);
+  FieldScript_ShowMessageAndWait(localId, 0);
 }
 
 /// A warrior with indigestion gives up on entering Colosso. The warrior is in
@@ -577,32 +579,33 @@ static void BabiPalace_AskAboutEasternShores(s32 localId) {
 static void BabiPalace_OfferCloakBall(void) {
   s32 msg;
 
-  Engine_ScriptStart();
+  FieldScript_Start();
   Field_EndBusyAndReveal();
   msg = MsgTolbiFoundCloakBall;
-  Engine_ScriptSetMessage(msg);
-  Engine_ScriptShowMessage(-1, 0);
-  Engine_ScriptWait(10);
-  Engine_ObjectEventRunRepeatedMotion(LOCALID_BABI, 2);
-  Engine_ScriptWait(30);
-  Engine_ObjectEventFaceObjectEvent(LOCALID_PARTY_LEADER, LOCALID_BABI, 30);
-  Engine_ScriptOpenMessage(LOCALID_BABI, 0);
-  if (Engine_ScriptChooseYesNo(LOCALID_PARTY_LEADER, 0) != 0) {
-    Engine_ScriptSetMessage(msg + 2);
-    Engine_ScriptShowMessage(LOCALID_BABI, 0);
+  FieldScript_SetMessageId(msg);
+  FieldScript_ShowMessageAndWait(-1, 0);
+  FieldScript_WaitFrames(10);
+  ObjectMotion_SetVarCbAndRefresh(LOCALID_BABI, 2);
+  FieldScript_WaitFrames(30);
+  ObjectMotion_SetAngleToward(LOCALID_PARTY_LEADER, LOCALID_BABI, 30);
+  FieldMessage_ShowAtObject(LOCALID_BABI, 0);
+  if (FieldScript_AskYesNoWithObjectEventAnimation(LOCALID_PARTY_LEADER, 0) !=
+      0) {
+    FieldScript_SetMessageId(msg + 2);
+    FieldScript_ShowMessageAndWait(LOCALID_BABI, 0);
   } else {
-    Engine_ScriptWait(20);
-    Engine_ScriptSetMessage(msg + 3);
-    Engine_ScriptShowMessage(LOCALID_BABI, 0);
-    Engine_ScriptWait(10);
-    Engine_ObjectEventSetAnimationAndWait(LOCALID_PARTY_LEADER, ANIM_NOD);
-    Engine_ScriptWait(30);
-    Engine_ObjectEventFaceDirection(LOCALID_PARTY_LEADER, FACING_SOUTH, 0);
-    Engine_ScriptWait(30);
+    FieldScript_WaitFrames(20);
+    FieldScript_SetMessageId(msg + 3);
+    FieldScript_ShowMessageAndWait(LOCALID_BABI, 0);
+    FieldScript_WaitFrames(10);
+    ObjectMotion_SetAnimationAndWait(LOCALID_PARTY_LEADER, ANIM_NOD);
+    FieldScript_WaitFrames(30);
+    ObjectMotion_ArmCallback(LOCALID_PARTY_LEADER, FACING_SOUTH, 0);
+    FieldScript_WaitFrames(30);
     Engine_ObjectEventSetPosition(LOCALID_CLOAK_BALL, 0, 0);
-    Engine_ItemShowFound(ITEM_CLOAK_BALL, 3);
+    FieldEffect_StartEffectObject22(ITEM_CLOAK_BALL, 3);
     Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_STAND);
-    Engine_PartyGiveItem(ITEM_CLOAK_BALL, 0);
+    PartyInventory_GiveItem(ITEM_CLOAK_BALL, 0);
     Engine_GameFlagSet(FLAG_BABI_PALACE_CLOAK_BALL);
   }
 }
@@ -632,8 +635,8 @@ static void BabiPalace_WakeFromFinalsDream(void) {
   ObjectEvent_FaceDirection(MIA, FACING_EAST, 0);
   ObjectEvent_FaceDirection(IVAN, FACING_NORTHEAST, 0);
   gFieldWork->transitionFrames = 60;
-  Engine_ScriptOpenScreen();
-  Engine_ScriptWaitForScreen();
+  FieldScript_StartScreenTransition();
+  FieldScript_WaitTransitionFrames();
   Script_Wait(20);
   gFieldWork->transitionFrames = 24;
   ObjectEvent_SetSpeed(MIA, PIXELS(1), PIXELS(1) / 2);
@@ -1188,8 +1191,8 @@ static void BabiPalace_WakeAfterFinals(void) {
   state->value = 0;
   state->mask = 0x1f1f;
   state->active = 1;
-  Engine_ScriptOpenScreen();
-  Engine_ScriptWaitForScreen();
+  FieldScript_StartScreenTransition();
+  FieldScript_WaitTransitionFrames();
   for (step = 1; step <= 5; step++) {
     Task_Wait(3);
     state->value = step;
@@ -1423,8 +1426,8 @@ static void BabiPalace_MeetBabiAfterColosso(void) {
   Script_PlaySong(MUS_030);
   Script_Start();
   Script_SetMessage(MsgTolbiWaitingCompanions);
-  Engine_ScriptOpenScreen();
-  Engine_ScriptWaitForScreen();
+  FieldScript_StartScreenTransition();
+  FieldScript_WaitTransitionFrames();
   FieldCamera_MoveTo(PIXELS(216), -1, PIXELS(736), 1);
   FieldCamera_WaitForMove();
   Script_Wait(20);
@@ -1439,7 +1442,7 @@ static void BabiPalace_MeetBabiAfterColosso(void) {
   Script_ShowMessage(LOCALID_BABI, 0);
   Script_Wait(20);
   Script_ShowMessage(LOCALID_IODEM, 0);
-  Engine_CameraFollowObjectEvent(LOCALID_PARTY_LEADER, 1);
+  FieldCamera_FollowObjectEvent(LOCALID_PARTY_LEADER, 1);
   FieldCamera_WaitForMove();
   Script_Wait(40);
   ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(1), PIXELS(1) / 2);
@@ -1500,7 +1503,7 @@ static void BabiPalace_MeetBabiAfterColosso(void) {
     ObjectEvent_SetSpeed(LOCALID_BABI, PIXELS(4) / 5, PIXELS(2) / 5);
     ObjectEvent_WalkByAndWait(LOCALID_BABI, 0, 16);
     Script_Wait(40);
-    Engine_UiTextDrawQuantity(ITEM_LURE_CAP, 2);
+    MessageArgument_Push(ITEM_LURE_CAP, 2);
     Script_ShowMessage(-1, 0);
     Item_ShowFound(ITEM_LURE_CAP, 3);
     Party_GiveItem(ITEM_LURE_CAP, 0);
@@ -2446,42 +2449,43 @@ static void BabiPalace_ThankForSavingBabi(void) {
 static void BabiPalace_AskAboutRemainingWarriors(s32 localId) {
   s32 question = MsgTolbiWarriorsWhoStayed;
 
-  Engine_ScriptSetMessage(question);
-  Engine_ScriptOpenMessage(localId, 0);
-  if (Engine_ScriptChooseYesNo(LOCALID_PARTY_LEADER, 0) == 0) {
-    Engine_ScriptSetMessage(question + 1);
-    Engine_ScriptShowMessage(localId, 0);
+  FieldScript_SetMessageId(question);
+  FieldMessage_ShowAtObject(localId, 0);
+  if (FieldScript_AskYesNoWithObjectEventAnimation(LOCALID_PARTY_LEADER, 0) ==
+      0) {
+    FieldScript_SetMessageId(question + 1);
+    FieldScript_ShowMessageAndWait(localId, 0);
   } else {
-    Engine_ScriptSetMessage(question + 2);
-    Engine_ScriptShowMessage(localId, 0);
+    FieldScript_SetMessageId(question + 2);
+    FieldScript_ShowMessageAndWait(localId, 0);
   }
 }
 
 /// Searching the well outside the palace. "It's filled with fresh, clean
 /// water."
 static void BabiPalace_ExamineWell(void) {
-  Engine_ScriptStart();
-  Engine_MessageShowCentered(MsgFieldPeeredWell, 1);
-  Engine_MessageShowCentered(MsgTolbiItsFilledWithFreshClean, 1);
-  Engine_ScriptEnd();
+  FieldScript_Start();
+  FieldMessage_Show(MsgFieldPeeredWell, 1);
+  FieldMessage_Show(MsgTolbiItsFilledWithFreshClean, 1);
+  FieldScript_End();
 }
 
 /// Returns the map events for the map and the story, as for the object event
 /// templates.
 const struct MapEvent *Map_GetEvents(void) {
   if (gGameState.mapId == (s32)&MapId_BabiPalaceEntrance) {
-    if (Engine_GameFlagIsSet(FLAG_COLOSSO_OVER) != 0) {
+    if (GameFlag_Test(FLAG_COLOSSO_OVER) != 0) {
       return gBabiPalace_OutsideEventsAfterColosso;
     }
-    if (Engine_GameFlagIsSet(FLAG_BABI_SAVED) != 0) {
+    if (GameFlag_Test(FLAG_BABI_SAVED) != 0) {
       return gBabiPalace_OutsideEventsFinals;
     }
     return gBabiPalace_OutsideEventsBabiMissing;
   }
-  if (Engine_GameFlagIsSet(FLAG_COLOSSO_OVER) != 0) {
+  if (GameFlag_Test(FLAG_COLOSSO_OVER) != 0) {
     return gBabiPalace_EventsAfterColosso;
   }
-  if (Engine_GameFlagIsSet(FLAG_BABI_SAVED) != 0) {
+  if (GameFlag_Test(FLAG_BABI_SAVED) != 0) {
     return gBabiPalace_EventsFinals;
   }
   return gBabiPalace_EventsBabiMissing;

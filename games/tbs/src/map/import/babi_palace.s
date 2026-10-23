@@ -1,69 +1,69 @@
 @ C2: aligned 8-byte veneers: overlay_veneer emits ldr r4, bx r4 and a target word.
 	.set overlay_imports, 1
-	.set import.Engine_TaskWait, 1
-	.set import.Engine_HeapAllocate, 1
-	.set import.Engine_HeapRelease, 1
-	.set import.Engine_VramLoad, 1
-	.set import.Engine_MapGridAnimateCells, 1
+	.set import.WaitFrames, 1
+	.set import.AllocHeapSlot, 1
+	.set import.FreeHeapSlot, 1
+	.set import.VramCache_Load, 1
+	.set import.MapGrid_PlayMetatileCopySequence, 1
 	.set import.TilesetAnim_Resume, 1
 	.set import.TilesetAnim_Pause, 1
-	.set import.Engine_ObjectEventSetSpriteFlags, 1
-	.set import.Engine_MessageShowCentered, 1
-	.set import.Engine_UiTextDrawQuantity, 1
-	.set import.Engine_ItemLoadIcon, 1
+	.set import.ObjectDispatch_SetSingleChildFlags, 1
+	.set import.FieldMessage_Show, 1
+	.set import.MessageArgument_Push, 1
+	.set import.Ui_PrepareTransferForItem, 1
 	.set import.Unit_Get, 1
-	.set import.Engine_GameFlagIsSet, 1
+	.set import.GameFlag_Test, 1
 	.set import.Engine_GameFlagSet, 1
-	.set import.Engine_GameFlagClear, 1
-	.set import.Engine_OwnerRecalculateRatios, 1
+	.set import.GameFlag_ClearBit, 1
+	.set import.Unit_RecalculateGauges, 1
 	.set import.Party_AddMember, 1
 	.set import.Party_ListMembers, 1
-	.set import.Engine_InventorySnapshotRestore, 1
-	.set import.Engine_ScriptWait, 1
-	.set import.Engine_ScriptStart, 1
-	.set import.Engine_ScriptEnd, 1
-	.set import.Engine_PartyGiveItem, 1
-	.set import.Engine_ScriptChooseYesNo, 1
+	.set import.InventorySnapshot_Restore, 1
+	.set import.FieldScript_WaitFrames, 1
+	.set import.FieldScript_Start, 1
+	.set import.FieldScript_End, 1
+	.set import.PartyInventory_GiveItem, 1
+	.set import.FieldScript_AskYesNoWithObjectEventAnimation, 1
 	.set import.ObjectEvent_GetById, 1
-	.set import.Engine_ObjectEventSetSpeed, 1
-	.set import.Engine_ObjectEventEnableActionCallback, 1
+	.set import.ObjectMotion_SetSpeedParameters, 1
+	.set import.ObjectMotion_EnableActionAndSetCallback, 1
 	.set import.ObjectEvent_RefreshSelectorById, 1
-	.set import.Engine_ObjectEventStop, 1
-	.set import.Engine_ObjectEventSetDestination, 1
-	.set import.Engine_ObjectEventWalkTo, 1
-	.set import.Engine_ObjectEventWalkToAndWait, 1
-	.set import.Engine_ObjectEventCenterAndWalk, 1
-	.set import.Engine_ObjectEventSetDestinationOffset, 1
-	.set import.Engine_ObjectEventWaitForMove, 1
+	.set import.ObjectMotion_EnableActionAndResetMotion, 1
+	.set import.ObjectMotion_ResetAndSetPosition, 1
+	.set import.ObjectMotion_ResetAndSetPositionInMode2, 1
+	.set import.ObjectMotion_SetPositionAndReset, 1
+	.set import.ObjectMotion_CenterOnColumn, 1
+	.set import.ObjectMotion_OffsetPositionAndResetMotion, 1
+	.set import.ObjectMotion_CommitCurrentPositionAndActivate, 1
 	.set import.Engine_ObjectEventSetPosition, 1
 	.set import.Engine_ObjectEventSetAnimation, 1
-	.set import.Engine_ObjectEventSetAnimationAndWait, 1
-	.set import.Engine_ObjectEventJump, 1
-	.set import.Engine_ObjectEventStartRepeatedMotion, 1
-	.set import.Engine_ObjectEventRunRepeatedMotion, 1
-	.set import.Engine_ObjectEventFaceObjectEvent, 1
-	.set import.Engine_ObjectEventFaceEachOther, 1
-	.set import.Engine_ScriptSetMessage, 1
-	.set import.Engine_ScriptOpenMessage, 1
-	.set import.Engine_ScriptShowMessage, 1
-	.set import.Engine_ObjectEventFaceDirection, 1
-	.set import.Engine_ObjectEventShowEmote, 1
-	.set import.Engine_ObjectEventSetAttachedEffect, 1
-	.set import.Engine_CameraFollowObjectEvent, 1
-	.set import.Engine_CameraMoveTo, 1
-	.set import.Engine_CameraWaitForMove, 1
+	.set import.ObjectMotion_SetAnimationAndWait, 1
+	.set import.ObjectMotion_Launch, 1
+	.set import.ObjectMotion_SetVariantCallback, 1
+	.set import.ObjectMotion_SetVarCbAndRefresh, 1
+	.set import.ObjectMotion_SetAngleToward, 1
+	.set import.ObjectEvent_LinkPair, 1
+	.set import.FieldScript_SetMessageId, 1
+	.set import.FieldMessage_ShowAtObject, 1
+	.set import.FieldScript_ShowMessageAndWait, 1
+	.set import.ObjectMotion_ArmCallback, 1
+	.set import.FieldEffect_SpawnLinked, 1
+	.set import.FieldEffect_ConfigureLinkedObject, 1
+	.set import.FieldCamera_FollowObjectEvent, 1
+	.set import.FieldCamera_MoveWithinMapBounds, 1
+	.set import.FieldCamera_WaitForArrival, 1
 	.set import.Engine_ScriptRequestWarp, 1
 	.set import.ScreenTransition_InitializeBattleEffectState, 1
-	.set import.Engine_ScriptOpenScreen, 1
-	.set import.Engine_ScriptWaitForScreen, 1
-	.set import.Engine_ItemShowFound, 1
+	.set import.FieldScript_StartScreenTransition, 1
+	.set import.FieldScript_WaitTransitionFrames, 1
+	.set import.FieldEffect_StartEffectObject22, 1
 	.set import.Field_EndBusyAndReveal, 1
-	.set import.Engine_PsynergyCancel, 1
+	.set import.FieldEffect_FinishWaveAndReleaseHeapBlock, 1
 	.set import.Map_PlayMusic, 1
 	.set import.ObjectMotion_LaunchFromFocusedObject, 1
-	.set import.Engine_ObjectEventWalkBy, 1
-	.set import.Engine_ObjectEventWalkByAndWait, 1
+	.set import.ObjectMotion_OffsetPositionAndReset, 1
+	.set import.ObjectMotion_CommitPositionAndActivate, 1
 	.set import.ObjectEvent_LinkObjectAndSetCallback, 1
 	.set import.Inn_PlaySleep, 1
-	.set import.Engine_AudioPlayCue, 1
+	.set import.Sound_PlaySong, 1
 	.include "games/tbs/src/system/overlay.inc"

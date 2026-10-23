@@ -3,6 +3,10 @@
 # out/tbs-en/tbs-en.gba; `make compare-tbs-en` also checks it against
 # rom.sha1. Every rule the ROM is built by is in this file.
 
+ifneq ($(words $(CURDIR)),1)
+$(error The checkout path "$(CURDIR)" contains a space, which make cannot build from: move or rename it so the path has none)
+endif
+
 GAMES    := tbs tla
 LANGS    := ja en de es fr it
 EDITIONS := $(foreach game,$(GAMES),$(addprefix $(game)-,$(LANGS)))
@@ -343,11 +347,16 @@ $(TOOLCHAIN)/binutils-2.10.tar.gz:
 	echo '$(GAS_SHA256)  $@.download' | $(SHA256) -c -
 	mv $@.download $@
 
+# tc-arm.c's rotate_left shifts a 32-bit value by 32 when n is 0, which is
+# undefined; Apple clang at -O2 then rejects every ARM immediate. Masking the
+# count gives the rotation the macro means and changes no output.
 # The arm-elf assembler builds no lexer, but its configure stops unless
 # running lex leaves a lex.yy.c: `touch` is the stand-in its own Makefile uses.
 $(CCAS): $(TOOLCHAIN)/binutils-2.10.tar.gz
 	rm -rf $(TOOLCHAIN)/binutils-2.10 $(TOOLCHAIN)/gas
 	tar -xzf $< -C $(TOOLCHAIN)
+	sed -i.orig 's/v >> (32 - n))/v >> ((32 - n) \& 31))/' $(TOOLCHAIN)/binutils-2.10/gas/config/tc-arm.c
+	grep -q 'v >> ((32 - n) & 31))' $(TOOLCHAIN)/binutils-2.10/gas/config/tc-arm.c
 	mkdir -p $(TOOLCHAIN)/gas
 	cd $(TOOLCHAIN)/gas && LEX='touch lex.yy.c' CC='$(CC) $(HOST_MODEL)' CFLAGS='$(GAS_CFLAGS)' \
 	    ../binutils-2.10/configure --target=arm-elf --build=i686-unknown-linux-gnu \

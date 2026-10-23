@@ -9,7 +9,7 @@ Every byte of The Broken Seal now comes from source, its pictures, music and tex
 **Linux** (Debian or Ubuntu):
 
 ```bash
-sudo apt install build-essential git curl patch xz-utils binutils-arm-none-eabi pkg-config libpng-dev libutf8proc-dev
+sudo apt install build-essential git curl patch binutils-arm-none-eabi pkg-config libpng-dev libutf8proc-dev
 ```
 
 On other distributions, install the same packages under their local names.
@@ -18,7 +18,7 @@ On other distributions, install the same packages under their local names.
 
 ```bash
 xcode-select --install
-brew install arm-none-eabi-binutils xz pkg-config libpng utf8proc
+brew install arm-none-eabi-binutils pkg-config libpng utf8proc
 ```
 
 **Windows:** open PowerShell, run `wsl --install`, restart, then open **Ubuntu** from the Start menu and follow the Linux steps inside it.

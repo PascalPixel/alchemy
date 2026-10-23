@@ -3,7 +3,7 @@
 /// ship's lookout (LOCALID_LOOKOUT) keeps watch: one of the ship's three maps
 /// on its voyage from Kalay to Tolbi, which tolbi_ship_deck.c describes. The
 /// party climbs up by the deck's ladder (TOLBI_SHIP_MAST_FROM_TOLBI_SHIP_DECK)
-/// and down again by TOLBI_SHIP_MAST_CELL_LADDER and the region of
+/// and down again by MB_TOLBI_SHIP_MAST_LADDER and the region of
 /// TOLBI_SHIP_MAST_TO_TOLBI_SHIP_DECK. The warp destinations from
 /// TOLBI_SHIP_MAST_FROM_TOLBI_SHIP_DECK_COURSE_CLEAR on are the voyage's
 /// cutscenes here, each leading on into the next; during the attacks the
@@ -15,7 +15,7 @@
 ///
 /// - At Kalay, while the ship waits for its replacement: the captain's anchor
 ///   charm, gone from his quarters, lies up here. Searching for it
-///   (TOLBI_SHIP_MAST_CELL_ANCHOR_CHARM) finds the Anchor Charm
+///   (MB_TOLBI_SHIP_MAST_ANCHOR_CHARM) finds the Anchor Charm
 ///   (FLAG_TOLBI_SHIP_ANCHOR_CHARM_FOUND), but only once the party has
 ///   confronted the crewman on deck or the warriors have gone to the captain
 ///   (FLAG_TOLBI_SHIP_CREWMAN_CAUGHT or FLAG_TOLBI_SHIP_WARRIORS_SEEK_CAPTAIN).
@@ -174,12 +174,12 @@ enum TolbiShipMastEnsembleLocalId {
 };
 
 /// The mast's coord event and bg event cells.
-enum TolbiShipMastCell {
-  TOLBI_SHIP_MAST_CELL_LADDER = 10, ///< the top of the ladder down to the deck
+enum TolbiShipMastMetatileBehavior {
+  MB_TOLBI_SHIP_MAST_LADDER = 10, ///< the top of the ladder down to the deck
   /// Where the crewman hid the captain's anchor charm.
   /// ★ Named from the game: "I hid it on top of the mast."
   /// (MsgTolbiShipInteriorsIWaitedTooLongIllGet)
-  TOLBI_SHIP_MAST_CELL_ANCHOR_CHARM = 11
+  MB_TOLBI_SHIP_MAST_ANCHOR_CHARM = 11
 };
 
 /// Keeps the effect object event relative to the saved camera origin and
@@ -327,11 +327,11 @@ const struct MapEvent *TolbiShipMast_GetEvents(void) {
 }
 
 /// Walking south onto the ladder at the mast's top
-/// (TOLBI_SHIP_MAST_CELL_LADDER): the leader climbs down.
+/// (MB_TOLBI_SHIP_MAST_LADDER): the leader climbs down.
 static void TolbiShipMast_ClimbDownLadder(void) { Field_ClimbDown(); }
 
 /// Searching the mast's top for the captain's anchor charm
-/// (TOLBI_SHIP_MAST_CELL_ANCHOR_CHARM): gives the Anchor Charm once the crewman
+/// (MB_TOLBI_SHIP_MAST_ANCHOR_CHARM): gives the Anchor Charm once the crewman
 /// has been confronted or the warriors have gone to the captain.
 static void TolbiShipMast_FindAnchorCharm(void) {
   if (GameFlag_Test(FLAG_TOLBI_SHIP_CREWMAN_CAUGHT) != 0 ||
@@ -1127,14 +1127,14 @@ struct ObjectEventTemplate gTolbiShipMast_LandingObjectEventTemplates[] = {
 };
 
 struct MapEvent gTolbiShipMast_Events[] = {
-    { COORD_EVENT_WALKING_INTO(FACING_SOUTH), TOLBI_SHIP_MAST_CELL_LADDER, CONDITION_ALWAYS, EVENT_SCRIPT(TolbiShipMast_ClimbDownLadder) },
+    { COORD_EVENT_WALKING_INTO(FACING_SOUTH), MB_TOLBI_SHIP_MAST_LADDER, CONDITION_ALWAYS, EVENT_SCRIPT(TolbiShipMast_ClimbDownLadder) },
     { MAP_EVENT_TALK, LOCALID_LOOKOUT, FLAG_TOLBI_SHIP_FIRST_ATTACK_FOUGHT_OFF, MSGNO(MsgTolbiShipWatchSeasHelpKaja) },
     { MAP_EVENT_TALK, LOCALID_LOOKOUT, FLAG_TOLBI_SHIP_AT_ISLAND, MSGNO(MsgTolbiShipLookoutCannotRow) },
     { MAP_EVENT_TALK, LOCALID_LOOKOUT, CONDITION_ALWAYS, MSGNO(MsgTolbiShipMonstersAnywhereAroundHere) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_LOOKOUT, FLAG_TOLBI_SHIP_FIRST_ATTACK_FOUGHT_OFF, MSGNO(MsgTolbiShipHiddenAnchorDiscovered) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_LOOKOUT, FLAG_TOLBI_SHIP_AT_ISLAND, MSGNO(MsgTolbiShipSeaTooVast) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_LOOKOUT, CONDITION_ALWAYS, MSGNO(MsgTolbiShipIslandTreasures) },
-    { BG_EVENT(BG_EVENT_SILENT), TOLBI_SHIP_MAST_CELL_ANCHOR_CHARM, FLAG_TOLBI_SHIP_ANCHOR_CHARM_FOUND, EVENT_SCRIPT(TolbiShipMast_FindAnchorCharm) },
+    { BG_EVENT(BG_EVENT_SILENT), MB_TOLBI_SHIP_MAST_ANCHOR_CHARM, FLAG_TOLBI_SHIP_ANCHOR_CHARM_FOUND, EVENT_SCRIPT(TolbiShipMast_FindAnchorCharm) },
     { MAP_EVENTS_END },
 };
 

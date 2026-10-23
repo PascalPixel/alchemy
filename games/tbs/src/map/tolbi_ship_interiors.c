@@ -23,11 +23,11 @@
 ///
 /// - At Kalay, while the ship waits for its replacement from Tolbi. Once the
 ///   tour group has left Kalay (FLAG_KALAY_COLOSSO_TOUR_LEFT), walking into
-///   the hold (TOLBI_SHIP_INTERIORS_CELL_HOLD_WARRIORS) has Ouranos, a warrior
+///   the hold (MB_TOLBI_SHIP_INTERIORS_HOLD_WARRIORS) has Ouranos, a warrior
 ///   bound for Colosso who "can't stand water", threaten to go ashore, and he
 ///   and his friend Sean go to make the captain sail
 ///   (FLAG_TOLBI_SHIP_WARRIORS_SEEK_CAPTAIN). The crew's talk of the delay
-///   plays here (TOLBI_SHIP_INTERIORS_CELL_QUARTERS_CREW) if it has not on
+///   plays here (MB_TOLBI_SHIP_INTERIORS_QUARTERS_CREW) if it has not on
 ///   deck. In the captain's quarters the warriors and passengers press the
 ///   captain, who has just decided to sail
 ///   (FLAG_TOLBI_SHIP_CAPTAIN_DECIDED_TO_SAIL); Ouranos and Sean offer to guard
@@ -433,17 +433,17 @@ enum TolbiShipRowingDeckLocalId {
 
 /// The coord events and searched containers below decks whose map events are
 /// more than a warp.
-enum TolbiShipInteriorsCell {
+enum TolbiShipInteriorsMetatileBehavior {
   /// The rowing deck's stairs up to the hold, barred while monsters are
   /// aboard.
-  TOLBI_SHIP_INTERIORS_CELL_ROWING_DECK_STAIRS = 4,
+  MB_TOLBI_SHIP_INTERIORS_ROWING_DECK_STAIRS = 4,
   /// In the captain's quarters, where the crew's talk of the delay plays.
-  TOLBI_SHIP_INTERIORS_CELL_QUARTERS_CREW = 10,
+  MB_TOLBI_SHIP_INTERIORS_QUARTERS_CREW = 10,
   /// Inside the hold, where Ouranos threatens to go ashore.
-  TOLBI_SHIP_INTERIORS_CELL_HOLD_WARRIORS = 11,
-  TOLBI_SHIP_INTERIORS_CRATE_HOLD_BARREL = 100,
-  TOLBI_SHIP_INTERIORS_HOLD_BARREL = 101,
-  TOLBI_SHIP_INTERIORS_QUARTERS_JAR = 102
+  MB_TOLBI_SHIP_INTERIORS_HOLD_WARRIORS = 11,
+  MB_TOLBI_SHIP_INTERIORS_CRATE_HOLD_BARREL = 100,
+  MB_TOLBI_SHIP_INTERIORS_HOLD_BARREL = 101,
+  MB_TOLBI_SHIP_INTERIORS_QUARTERS_JAR = 102
 };
 
 /// A speaker: the object event, and in the top four bits where the message
@@ -1602,7 +1602,7 @@ static void TolbiShipInteriors_TurnBackFromStairs(void) {
 }
 
 /// Below decks at Kalay, once the warriors have gone to the captain
-/// (TOLBI_SHIP_INTERIORS_CELL_QUARTERS_CREW): the captain, Kaja and the crewman
+/// (MB_TOLBI_SHIP_INTERIORS_QUARTERS_CREW): the captain, Kaja and the crewman
 /// wonder what could have happened to the replacement ship, as on deck
 /// (FLAG_TOLBI_SHIP_CREW_WONDERED_AT_DELAY).
 static void TolbiShipInteriors_WatchCrewWonderAtDelay(void) {
@@ -1641,7 +1641,7 @@ static void TolbiShipInteriors_WatchCrewWonderAtDelay(void) {
 }
 
 /// In the hold at Kalay, once the tour group has left Kalay
-/// (TOLBI_SHIP_INTERIORS_CELL_HOLD_WARRIORS): Ouranos threatens to go ashore if
+/// (MB_TOLBI_SHIP_INTERIORS_HOLD_WARRIORS): Ouranos threatens to go ashore if
 /// the ship doesn't sail. The second guide can't say when it will, so Sean and
 /// Ouranos set off to make the captain set sail, and the guide ("I don't want
 /// any violence!") hurries after them past the party.
@@ -4882,7 +4882,7 @@ struct ObjectEventTemplate gTolbiShipInteriors_ThirdAttackMonsters[] = {
 /// The cargo hold, and the cutscenes.
 struct MapEvent gTolbiShipInteriors_EventsOther[] = {
     { MAP_EVENT_WARP, 3, CONDITION_ALWAYS, TOLBI_SHIP_INTERIORS_CRATE_HOLD_TO_TOLBI_SHIP_DECK },
-    { BG_EVENT(BG_EVENT_BARREL), TOLBI_SHIP_INTERIORS_CRATE_HOLD_BARREL, FLAG_TOLBI_SHIP_CRATE_HOLD_LUCKY_MEDAL, FIND_ITEM(ITEM_LUCKY_MEDAL) },
+    { BG_EVENT(BG_EVENT_BARREL), MB_TOLBI_SHIP_INTERIORS_CRATE_HOLD_BARREL, FLAG_TOLBI_SHIP_CRATE_HOLD_LUCKY_MEDAL, FIND_ITEM(ITEM_LUCKY_MEDAL) },
     { MAP_EVENTS_END },
 };
 
@@ -4890,7 +4890,7 @@ struct MapEvent gTolbiShipInteriors_EventsOther[] = {
 struct MapEvent gTolbiShipInteriors_HoldEvents[] = {
     { MAP_EVENT_WARP, 1, CONDITION_ALWAYS, TOLBI_SHIP_INTERIORS_PASSENGER_HOLD_TO_TOLBI_SHIP_DECK },
     { MAP_EVENT_WARP, 2, CONDITION_ALWAYS, TOLBI_SHIP_INTERIORS_PASSENGER_HOLD_TO_ROWING_DECK },
-    { MAP_EVENT_COORD, TOLBI_SHIP_INTERIORS_CELL_HOLD_WARRIORS, FLAG_TOLBI_SHIP_WARRIORS_SEEK_CAPTAIN, EVENT_SCRIPT(TolbiShipInteriors_WatchWarriorsStormOff) },
+    { MAP_EVENT_COORD, MB_TOLBI_SHIP_INTERIORS_HOLD_WARRIORS, FLAG_TOLBI_SHIP_WARRIORS_SEEK_CAPTAIN, EVENT_SCRIPT(TolbiShipInteriors_WatchWarriorsStormOff) },
     { MAP_EVENT_TALK, LOCALID_HOLD_WARRIOR, CONDITION_ALWAYS, EVENT_SCRIPT(TolbiShipInteriors_TalkToWaitingWarrior) },
     { MAP_EVENT_TALK, LOCALID_HOLD_TICKET_GRUMBLER, FLAG_TOLBI_SHIP_ANCHOR_CHARM_RETURNED, MSGNO(MsgTolbiShipInteriorsApparentlyWeCantTakeSilkRoad) },
     { MAP_EVENT_TALK, LOCALID_HOLD_TICKET_GRUMBLER, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsAllThatMoneyOnTicketsAnd) },
@@ -4911,7 +4911,7 @@ struct MapEvent gTolbiShipInteriors_HoldEvents[] = {
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_HOLD_HEALER, FLAG_TOLBI_SHIP_ANCHOR_CHARM_RETURNED, MSGNO(MsgTolbiShipInteriorsEvenThoughImOpposedToViolence) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_HOLD_HEALER, FLAG_TOLBI_SHIP_REACHED_TOLBI, MSGNO(MsgTolbiShipInteriorsICantRowButIAm) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_HOLD_HEALER, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsWeMadeItToColossoIn) },
-    { BG_EVENT(BG_EVENT_BARREL), TOLBI_SHIP_INTERIORS_HOLD_BARREL, FLAG_TOLBI_SHIP_HOLD_COINS, FIND_COINS(23) },
+    { BG_EVENT(BG_EVENT_BARREL), MB_TOLBI_SHIP_INTERIORS_HOLD_BARREL, FLAG_TOLBI_SHIP_HOLD_COINS, FIND_COINS(23) },
     { MAP_EVENTS_END },
 };
 
@@ -4948,7 +4948,7 @@ struct MapEvent gTolbiShipInteriors_HoldEventsChoosingRowers[] = {
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_SEA_HOLD_OLD_MAN, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsYouCanJustMoveRightAlong) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_SEA_HOLD_SECOND_GUIDE, FLAG_TOLBI_SHIP_ROWER_CHOSEN, MSGNO(MsgTolbiShipInteriorsWeHadEnoughTroubleJustGetting) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_SEA_HOLD_SECOND_GUIDE, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsCarefulNowWatchOutDontMake) },
-    { BG_EVENT(BG_EVENT_BARREL), TOLBI_SHIP_INTERIORS_HOLD_BARREL, FLAG_TOLBI_SHIP_HOLD_COINS, FIND_COINS(23) },
+    { BG_EVENT(BG_EVENT_BARREL), MB_TOLBI_SHIP_INTERIORS_HOLD_BARREL, FLAG_TOLBI_SHIP_HOLD_COINS, FIND_COINS(23) },
     { MAP_EVENTS_END },
 };
 
@@ -4976,7 +4976,7 @@ struct MapEvent gTolbiShipInteriors_HoldEventsAtIsland[] = {
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_SEA_HOLD_TICKET_GRUMBLER, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsJustDontMakeMeFaceThat) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_SEA_HOLD_SECOND_GUIDE, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsSoAnyoneKnowIfThereAre) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_SEA_HOLD_LADY, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsOhhThatsCreepy) },
-    { BG_EVENT(BG_EVENT_BARREL), TOLBI_SHIP_INTERIORS_HOLD_BARREL, FLAG_TOLBI_SHIP_HOLD_COINS, FIND_COINS(23) },
+    { BG_EVENT(BG_EVENT_BARREL), MB_TOLBI_SHIP_INTERIORS_HOLD_BARREL, FLAG_TOLBI_SHIP_HOLD_COINS, FIND_COINS(23) },
     { MAP_EVENTS_END },
 };
 
@@ -5002,9 +5002,9 @@ struct MapEvent gTolbiShipInteriors_CaptainsQuartersEvents[] = {
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_QUARTERS_OURANOS, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsThatThingCouldntHaveGottenLost) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_QUARTERS_SECOND_GUIDE, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsIDontThinkAnyoneWouldSteal) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_QUARTERS_SEAN, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsIfTheShipDoesntLeaveSoon) },
-    { MAP_EVENT_COORD, TOLBI_SHIP_INTERIORS_CELL_QUARTERS_CREW, FLAG_TOLBI_SHIP_CREW_WONDERED_AT_DELAY, EVENT_SCRIPT(TolbiShipInteriors_WatchCrewWonderAtDelay) },
+    { MAP_EVENT_COORD, MB_TOLBI_SHIP_INTERIORS_QUARTERS_CREW, FLAG_TOLBI_SHIP_CREW_WONDERED_AT_DELAY, EVENT_SCRIPT(TolbiShipInteriors_WatchCrewWonderAtDelay) },
     { USE_ITEM_ON_OBJ_EVENT(ITEM_ANCHOR_CHARM), LOCALID_QUARTERS_CAPTAIN, FLAG_TOLBI_SHIP_ANCHOR_CHARM_RETURNED, EVENT_SCRIPT(TolbiShipInteriors_ReturnLuckyAnchor) },
-    { BG_EVENT(BG_EVENT_JAR) | MAP_EVENT_FLAG_FACING | FACING_NORTH, TOLBI_SHIP_INTERIORS_QUARTERS_JAR, FLAG_TOLBI_SHIP_QUARTERS_NUT, FIND_ITEM(ITEM_NUT) },
+    { BG_EVENT(BG_EVENT_JAR) | MAP_EVENT_FLAG_FACING | FACING_NORTH, MB_TOLBI_SHIP_INTERIORS_QUARTERS_JAR, FLAG_TOLBI_SHIP_QUARTERS_NUT, FIND_ITEM(ITEM_NUT) },
     { MAP_EVENTS_END },
 };
 
@@ -5015,7 +5015,7 @@ struct MapEvent gTolbiShipInteriors_CaptainsQuartersEventsAtIsland[] = {
     { MAP_EVENT_TALK, LOCALID_QUARTERS_KAJA, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsWereLookingIntoTheShipsPosition) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_QUARTERS_CAPTAIN, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsImReallySurprisedThatThereIs) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_QUARTERS_KAJA, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsTheWindsDirectionAndTheHigh) },
-    { BG_EVENT(BG_EVENT_JAR), TOLBI_SHIP_INTERIORS_QUARTERS_JAR, FLAG_TOLBI_SHIP_QUARTERS_NUT, FIND_ITEM(ITEM_NUT) },
+    { BG_EVENT(BG_EVENT_JAR), MB_TOLBI_SHIP_INTERIORS_QUARTERS_JAR, FLAG_TOLBI_SHIP_QUARTERS_NUT, FIND_ITEM(ITEM_NUT) },
     { MAP_EVENTS_END },
 };
 
@@ -5024,7 +5024,7 @@ struct MapEvent gTolbiShipInteriors_CaptainsQuartersEventsArrived[] = {
     { MAP_EVENT_WARP, 5, CONDITION_ALWAYS, TOLBI_SHIP_INTERIORS_CAPTAINS_ROOM_TO_TOLBI_SHIP_DECK },
     { MAP_EVENT_TALK, LOCALID_QUARTERS_CAPTAIN, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsWhenTheWatersAreThisDangerous) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_QUARTERS_CAPTAIN, CONDITION_ALWAYS, MSGNO(MsgTolbiShipInteriorsSeeOurShipSurvivedAnAttack) },
-    { BG_EVENT(BG_EVENT_JAR), TOLBI_SHIP_INTERIORS_QUARTERS_JAR, FLAG_TOLBI_SHIP_QUARTERS_NUT, FIND_ITEM(ITEM_NUT) },
+    { BG_EVENT(BG_EVENT_JAR), MB_TOLBI_SHIP_INTERIORS_QUARTERS_JAR, FLAG_TOLBI_SHIP_QUARTERS_NUT, FIND_ITEM(ITEM_NUT) },
     { MAP_EVENTS_END },
 };
 
@@ -5068,7 +5068,7 @@ struct MapEvent gTolbiShipInteriors_RowingDeckEvents[] = {
 /// The rowing deck while monsters are aboard: talking to one
 /// (LOCALID_ROWING_FIRST_MONSTER and the two after it) fights it.
 struct MapEvent gTolbiShipInteriors_RowingDeckEventsMonstersAboard[] = {
-    { MAP_EVENT_COORD, TOLBI_SHIP_INTERIORS_CELL_ROWING_DECK_STAIRS, CONDITION_ALWAYS, EVENT_SCRIPT(TolbiShipInteriors_TurnBackFromStairs) },
+    { MAP_EVENT_COORD, MB_TOLBI_SHIP_INTERIORS_ROWING_DECK_STAIRS, CONDITION_ALWAYS, EVENT_SCRIPT(TolbiShipInteriors_TurnBackFromStairs) },
     { MAP_EVENT_TALK, LOCALID_ROWING_FIRST_MONSTER, CONDITION_ALWAYS, EVENT_SCRIPT(TolbiShipInteriors_FightRowingDeckMonsters) },
     { MAP_EVENT_TALK, LOCALID_ROWING_FIRST_MONSTER + 1, CONDITION_ALWAYS, EVENT_SCRIPT(TolbiShipInteriors_FightRowingDeckMonsters) },
     { MAP_EVENT_TALK, LOCALID_ROWING_FIRST_MONSTER + 2, CONDITION_ALWAYS, EVENT_SCRIPT(TolbiShipInteriors_FightRowingDeckMonsters) },

@@ -207,8 +207,8 @@ enum TolbiSpringLocalId {
 #define TOLBI_SPRING_MEDAL_TRAIL(n) (LOCALID_TOLBI_SPRING_MEDAL_SHADOW - (n))
 
 /// What searching answers in Tolbi Spring.
-enum TolbiSpringSearchTarget {
-  TOLBI_SPRING_SPRING = 80, ///< searched to toss a coin or medal
+enum TolbiSpringMetatileBehavior {
+  MB_TOLBI_SPRING_WATER = 80, ///< searched to toss a coin or medal
 };
 
 // FLAG_MAP_TEMP_00 is set once the spring has risen and faded in.
@@ -1665,7 +1665,7 @@ const struct MapEvent gTolbiSpringEvents[] = {
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_TOLBI_SPRING_VISITOR_MYSTERIOUS_POWERS, CONDITION_ALWAYS, MSGNO(MsgTolbiSpringIGetNervousWhenIToss) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_TOLBI_SPRING_MEDAL_SEEKER, CONDITION_ALWAYS, MSGNO(MsgTolbiSpringWhyWontAnyoneGiveMeA) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_TOLBI_SPRING_VISITOR_ONE_MEDAL, CONDITION_ALWAYS, MSGNO(MsgTolbiSpringThisIsALuckyMedalSo) },
-    { BG_EVENT(BG_EVENT_SILENT), TOLBI_SPRING_SPRING, CONDITION_ALWAYS, EVENT_SCRIPT(TolbiSpring_TossCoinOrMedal) },
+    { BG_EVENT(BG_EVENT_SILENT), MB_TOLBI_SPRING_WATER, CONDITION_ALWAYS, EVENT_SCRIPT(TolbiSpring_TossCoinOrMedal) },
     { MAP_EVENTS_END },
 };
 

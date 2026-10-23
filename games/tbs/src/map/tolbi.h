@@ -132,32 +132,25 @@ enum TolbiLocalId {
   LOCALID_TOLBI_MISSING_PERSON_POSTER = 32,
 };
 
-/// The coord events that are more than a door. The doors' own cells carry
-/// the numbers of their warps (Tolbi_EnterDoor,
+/// The metatile behaviors Tolbi's coord and bg events answer besides the
+/// doors, whose own cells carry the numbers of their warps (Tolbi_EnterDoor,
 /// Tolbi_RequestTouchedWarp).
-enum TolbiCell {
+enum TolbiMetatileBehavior {
   /// Where Babi's soldiers stop the party during the festival.
-  TOLBI_CELL_SOLDIERS = 20,
-  /// The gate to Tolbi Spring, open once the visitor at the gate has stepped
-  /// aside.
-  TOLBI_CELL_SPRING_GATE = 239
-};
-
-/// The two signs beside the gate to Tolbi Spring.
-enum TolbiSign {
+  MB_TOLBI_SOLDIERS = 20,
+  /// The first of the two signs beside the gate to Tolbi Spring.
   /// ★ Named from the game: "Face away from Tolbi Spring and toss a coin into
   /// it." (MsgTolbiFaceAwayTolbi)
-  TOLBI_SPRING_SIGN = 30,
+  MB_TOLBI_SPRING_SIGN = 30,
   /// ★ Named from the game: "If you toss a Lucky Medal"
   /// (MsgTolbiTossLuckyMedal)
-  TOLBI_LUCKY_MEDAL_SIGN = 31
-};
-
-/// Map objects the party can search.
-enum TolbiMarker {
-  TOLBI_BARREL = 100,
-  TOLBI_JAR = 101,
-  TOLBI_HIDDEN_CHEST = 102,
+  MB_TOLBI_LUCKY_MEDAL_SIGN = 31,
+  MB_TOLBI_BARREL = 100,
+  MB_TOLBI_JAR = 101,
+  MB_TOLBI_HIDDEN_CHEST = 102,
+  /// The gate to Tolbi Spring, open once the visitor at the gate has stepped
+  /// aside.
+  MB_TOLBI_GATE_TO_SPRING = 239
 };
 
 /// The running children keep these flags in ObjectEvent.timer, their map

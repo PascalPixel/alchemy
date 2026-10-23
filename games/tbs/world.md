@@ -161,7 +161,7 @@ structs (`Object`, `ScriptMotionObject`, `ObjectEvent` and others),
 each naming the fields that part uses. They stay apart because the build
 must reproduce the [original](glossary.md#the-original)'s instructions, and
 reading the same bytes through one merged struct makes the compiler choose
-others; [Matching](src/MATCHING.md) gives the cases.
+others; [Matching](src/MATCHING.md#views-of-one-struct) explains the rule.
 
 | Name | Value | Meaning |
 | --- | --- | --- |

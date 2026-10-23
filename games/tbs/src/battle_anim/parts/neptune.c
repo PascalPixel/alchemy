@@ -538,6 +538,8 @@ void BattleAnim_RunNeptune(struct BattleAnimArgs *effect) {
             if (PARTICLES[j].variant == 0) {
               s32 r = 0x3ff;
               s32 a;
+              // Masked in place, the mask assigned first; as Random16() & mask,
+              // 3 instructions differ.
               r &= Random16();
               a = (Random16() & 0x7fff) - 0x4000;
               PARTICLES[j].x = sparkOriginX << 16;

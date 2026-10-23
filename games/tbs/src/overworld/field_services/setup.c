@@ -259,6 +259,8 @@ void FieldEffect_FadeToEffectColor(void) {
   // and, unless Reveal is active, the BG half at 0x236. While Reveal lasts
   // the BG target is its grey (reveal.c), and the field's own colours saved
   // before it must stay. Then show the targets at once.
+  // Both blocks are read through gHeapSlots, the spelling this site matched
+  // with; gFieldWork and gPaletteFadeWork are not measured here.
   scene = *(gHeapSlots + HEAP_SLOT_FIELD);
   work = *(gHeapSlots + HEAP_SLOT_PALETTE_FADE);
   Dma_Set(&work->target[0x2a0], scene + 0x776,

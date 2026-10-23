@@ -1652,6 +1652,8 @@ static void SolSanctumLunaSolRooms_ArriveAfterWiseOnesRescue(void) {
   }
   ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_GARET);
   Engine_ObjectEventSetPosition(LOCALID_GARET, 0, 0);
+  // Through its heap slot rather than gPaletteFadeWork, the spelling this
+  // site matched with; the other is not measured.
   palette = HEAP_SLOT_BLOCK(HEAP_SLOT_PALETTE_FADE);
   palette->target[0] = 0;
   palette->target[1] = 0;

@@ -154,6 +154,8 @@ s32 BattleCommandRow_Run(s32 mode) {
             s32 col;
             for (col = 0; col <= 2; col++) {
               s32 tmp;
+              // VRAM through a volatile pointer: a plain one moves the address
+              // adds (18 of 1037 instructions differ in tbs-en).
               /* FAKEMATCH(temporary): vram, offset and mask keep the row
                * loop's index and tile pattern; as constants in place, 6 of
                * 1037 instructions differ in tbs-en. */
@@ -194,6 +196,8 @@ s32 BattleCommandRow_Run(s32 mode) {
             s32 col;
             for (col = 0; col <= 2; col++) {
               s32 tmp;
+              // VRAM through a volatile pointer, as in the member's row (19 of
+              // 1037 instructions differ with a plain one).
               /* FAKEMATCH(temporary): vram, offset and mask, as in the member's
                * row; as constants in place, 6 of 1037 instructions differ in
                * tbs-en. */

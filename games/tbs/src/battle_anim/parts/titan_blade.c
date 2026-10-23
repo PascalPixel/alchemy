@@ -108,6 +108,8 @@ void BattleAnim_RunTitanBlade(struct BattleAnimArgs *effect) {
     s32 ang;
 
     mag = 0x1FF;
+    // Masked in place, the mask assigned first; as Random16() & mask, 3
+    // instructions differ.
     mag &= Random16();
     ang = Random16() & 0xFFFF;
     spark->x = sparkOriginX;

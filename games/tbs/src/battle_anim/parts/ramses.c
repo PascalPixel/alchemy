@@ -280,6 +280,8 @@ void BattleAnim_RunRamses(struct BattleAnimArgs *effect) {
         s32 angle;
 
         speed = 0x3ff;
+        // Masked in place, the mask assigned first; as Random16() & mask, 3
+        // instructions differ.
         speed &= Random16();
         angle = Random16() & 0xffff;
         spark->x = 0x200000;

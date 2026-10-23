@@ -836,6 +836,8 @@ static void TretPalette_UpdateMapTint(void) {
   struct PaletteFade *paletteWork;
 
   work = HEAP_SLOT_BLOCK(HEAP_SLOT_FIELD);
+  // Through its heap slot rather than gPaletteFadeWork, the spelling this
+  // site matched with; the other is not measured.
   paletteWork = HEAP_SLOT_BLOCK(HEAP_SLOT_PALETTE_FADE);
   sourceColors = paletteWork->palette;
   if (work->psynergy != 0)

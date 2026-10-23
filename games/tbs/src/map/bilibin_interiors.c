@@ -354,6 +354,9 @@ static void EventScript_TalkToInnkeeper(void) {
 /// out orders once, then sends the party to the waitress.
 static void EventScript_TalkToBusyChef(void) {
   FieldScript_Start();
+  // The test is the script layer's inline and the set below a direct call,
+  // each as it matches: an inline call's argument is a pseudo of its own,
+  // where a direct call keeps the flag number in a callee-saved register.
   if (Script_GetFlag(FLAG_MAPSEC_TEMP_00) == 0) {
     // The first time (FLAG_MAPSEC_TEMP_00, kept until the party leaves
     // Bilibin), the chef shouts orders and the kitchen worker answers.

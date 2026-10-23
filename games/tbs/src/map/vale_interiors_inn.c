@@ -562,6 +562,8 @@ s32 ValeInteriorsInn_Initialize(void) {
                 MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
             if (GameFlag_Get(FLAG_VALE_STORM) != 0) {
               Weather_StartLightning();
+              // Through its heap slot rather than gLightningWork, the spelling
+              // this site matched with; the other is not measured.
               ((struct LightningWork *)HEAP_SLOT_BLOCK(HEAP_SLOT_LIGHTNING))
                   ->loud = 1;
               Weather_LastLightning();

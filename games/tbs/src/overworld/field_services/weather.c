@@ -72,6 +72,8 @@ void Weather_UpdateRain(void) {
 /// 0 stops the lightning.
 void Weather_UpdateLightning(void) {
   struct LightningWork *work = gLightningWork[0];
+  // The palette fade is reached from the neighbouring lightning slot, the
+  // spelling this site matched with; gPaletteFadeWork is not measured here.
   struct PaletteFade *target =
       gLightningWork[HEAP_SLOT_PALETTE_FADE - HEAP_SLOT_LIGHTNING];
   s16 *timer = &work->timer;

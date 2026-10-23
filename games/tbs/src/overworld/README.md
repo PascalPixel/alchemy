@@ -372,7 +372,7 @@ name from a shorter distance (`REGION_MAP_NAME_RANGE`). The edition block of
 
 Several structures are reached by more than one spelling (the field work, the
 effect scene, the map's view, the palette fade), each site keeping the one it
-matches with; [Matching](../MATCHING.md) lists them.
+matches with; [Matching](../MATCHING.md#heap-slots) explains why.
 
 ## How it fits with the rest of the game
 

@@ -439,6 +439,8 @@ void BattleBackground_FadeAlphaOut(void) {
 
   REG_BLDCNT = BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_BD;
   for (alphaStep = 1; alphaStep <= 16; alphaStep += 2) {
+    // Arithmetic on BLEND_ALPHA, not the macro's | form, which changes the
+    // code.
     REG_BLDALPHA = BLEND_ALPHA(16, 16) - alphaStep;
     WaitFrames(1);
   }
@@ -452,6 +454,8 @@ void BattleBackground_FadeAlphaIn(void) {
   s32 step;
 
   REG_BLDCNT = BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_BD;
+  // Arithmetic on BLEND_ALPHA, not the macro's | form, which changes the
+  // code.
   for (step = 1; step <= 16; step += 2) {
     REG_BLDALPHA = step + BLEND_ALPHA(0, 16);
     WaitFrames(1);

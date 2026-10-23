@@ -2167,7 +2167,8 @@ s32 AltmillerCave_Initialize(void) {
     GameFlag_Clear(FLAG_DARK);
     AltmillerCave_RedrawObstacleFootprints();
     // UB: the callbacks are stored through an s32 view of update, which keeps
-    // the warp destination read below the last store.
+    // the warp destination read below the last store (as ->update, one store
+    // moves: 1 of 403 instructions differ in tbs-en).
 #ifdef UBFIX
     ObjectEvent_GetById(LOCALID_FIRST_OBSTACLE)->update =
         AltmillerCave_MatchLeaderPriority;

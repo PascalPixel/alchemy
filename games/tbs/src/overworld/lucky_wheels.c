@@ -1182,6 +1182,8 @@ void LuckyWheels_Run(void) {
             s32 angle;
 
             speed = 255;
+            // Masked in place, the mask assigned first; as Random16() & mask, 3
+            // instructions differ.
             speed &= Random16();
             angle = Random16() & 0xffff;
             spark->x = x << 16;

@@ -1581,6 +1581,9 @@ void ImilFuchinFalls_SpawnDust(s32 x, s32 y, s32 z, s32 velocityX,
   struct FieldEffect *effect;
   struct Sprite *sprite;
   const s32 *script;
+  // A local array: it compiles to an anonymous read-only constant copied into
+  // the frame, which lands where the object's old .data table was; a struct
+  // copy of a named table compiles to the same code.
   const s32 *scripts[3] = {
       gImilFuchinFalls_ShortDustScript,
       gImilFuchinFalls_MediumDustScript,

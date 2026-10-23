@@ -467,7 +467,7 @@ static void KolimaForestFloodgate_CreateLogs(struct FloodgateLog *entry) {
                                       objectEvent->z.part.pixel)
              << 16;
     // Through an s32 view of y, not y.fixed, the step to the next entry is
-    // scheduled before this store.
+    // scheduled before this store (1 of 82 instructions differ in tbs-en).
     *(s32 *)&objectEvent->y += height;
     objectEvent->groundHeight = height;
   }

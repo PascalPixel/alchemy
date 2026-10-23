@@ -187,6 +187,8 @@ void BattleAnim_RunPlanetDiver(struct BattleAnimArgs *effect) {
           s32 angle;
 
           speed = 0x3ff;
+          // Masked in place, the mask assigned first; as Random16() & mask, 3
+          // instructions differ.
           speed &= Random16();
           angle = Random16() & 0xffff;
           chip->x = screenPosition.x << 16;

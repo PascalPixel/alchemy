@@ -35,7 +35,8 @@ void SerialRuntime_Initialize(void) {
   struct SerialWork *state;
 
   // IRQ_LOCK written out, with the IME address set inside the save, which
-  // reads IME before the frame is made.
+  // reads IME before the frame is made (as IRQ_LOCK, 1 of 123 instructions
+  // differs).
   IME_SAVE((ime = &REG_IME), interruptEnable);
   IME_DISABLE(ime);
   // Replace both interrupt handlers before configuring multiplayer transfers.

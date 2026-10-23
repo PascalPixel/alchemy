@@ -197,6 +197,8 @@ static void GomaCavePillar_SpawnFragment(s32 x, s32 y, s32 z, s32 firstRate,
                                          s32 secondRate,
                                          s32 scriptAndChildValue,
                                          s32 planeAndPriority) {
+  // A struct copy of the named table, which sits in the middle of .data; a
+  // local array of the three scripts compiles to the same code.
   struct EffectScripts table;
   struct ObjectEvent *leader;
   struct ObjectEvent *fragment;

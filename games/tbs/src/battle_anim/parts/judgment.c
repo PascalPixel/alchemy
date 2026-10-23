@@ -647,7 +647,8 @@ void BattleAnim_RunJudgment(struct BattleAnimArgs *effect) {
     // brightens one step a channel each frame, reaching white by frame 311.
     if (frame > 279) {
       // Through palette RAM's own volatile type, which keeps red's mask 31 in
-      // the loop; a plain pointer hoists it.
+      // the loop; a plain pointer hoists it (24 of 2455 instructions differ
+      // in tbs-en).
       volatile u16 *pal = &BG_PLTT_COLOR(0, 1);
       for (i = 0; i != 63; i++, pal++) {
         s32 c = *pal;

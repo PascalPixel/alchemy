@@ -113,6 +113,8 @@ void BattleAnim_RunIce(struct BattleAnimArgs *effect) {
     ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_2, BLITTER_CLIP_Y | COMPOSITE_FLIP_X,
                       COMPOSITE_ADDITIVE);
   }
+  // One blitter read each way: both cast, 2 of 586 instructions differ; both
+  // through ANIM_BLITTERS, 3.
   draw[0] = (DrawRectangle)gHeapSlots[HEAP_SLOT_RAM_CODE];
   draw[1] = ANIM_BLITTERS[HEAP_SLOT_RAM_CODE_2];
 

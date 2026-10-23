@@ -368,6 +368,8 @@ void BattleAnim_RunMoteFountain(struct BattleAnimArgs *effect, s32 mode) {
     mote = &PARTICLES[i];
 
     speed = 0x3ff;
+    // Masked in place, the mask assigned first; as Random16() & mask, 3
+    // instructions differ.
     speed &= Random16();
     angle = Random16() & 0xffff;
     SET_POSITION(mote, source->x, source->y + 0x50000, source->z);

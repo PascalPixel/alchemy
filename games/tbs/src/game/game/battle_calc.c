@@ -300,7 +300,8 @@ s32 Battle_RollEffectSuccess(s32 caster, s32 target, s32 resistanceCategory,
                              s32 effectId, s32 successScale) {
   // Restore's psySeal and confusion reads and Cure All's haunt read go
   // through the byte view; as unit fields, each zero test merges with its
-  // neighbour's into one halfword or word load.
+  // neighbour's into one halfword or word load (30 of 204 instructions
+  // differ in tbs-en).
   struct Unit *unit = Unit_Get(target);
   s32 attempts = 1;
   s32 score;

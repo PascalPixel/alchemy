@@ -548,7 +548,7 @@ and its whole pixels, or, for an effect, as `struct FieldEffect`
 and spin in the motion words; their fields sit at `Object`'s offsets. A few views
 remain where [matching](../../glossary.md#matching-decompilation) needs
 them, each a field-for-field copy of the layout that differs only where its
-reader does, as [Matching](../MATCHING.md#field) lists:
+reader does, as [Matching](../MATCHING.md#views-of-one-struct) explains:
 
 | View | Reader | What differs |
 | --- | --- | --- |
@@ -633,7 +633,7 @@ map work (`gMapGridWork[0]`), and `perspective` the world map's.
 Because the parts compile as one file, a part's own types, macros and static
 helpers carry its family's name (`ObjectCamera`, `Layout`, `WorldMap`),
 and a part undefines its macros at its end.
-[Matching](../MATCHING.md) lists the sites that keep an unusual spelling.
+[Matching](../MATCHING.md) explains why some sites keep an unusual spelling.
 
 ## Evidence and open questions
 

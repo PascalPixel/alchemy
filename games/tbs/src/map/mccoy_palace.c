@@ -223,6 +223,8 @@ const struct ObjectEventTemplate *Map_GetObjectEventTemplates(void) {
     Map_AssignViewFlags(templates);
 
     if (GameFlag_Get(FLAG_MCCOY_PALACE_REWARD_TAKEN) != 0) {
+      // Through the global, not templates: the local splits each address into
+      // base+144 and member+22 (9 of 38 instructions differ in tbs-en).
       gMcCoyPalaceObjectEventTemplates[LOCALID_VILLAGER_IN_MILADYS_NIGHTGOWN -
                                        LOCALID_FIRST_PLACED]
           .talkFacing = TALK_FACING_KEEP;

@@ -1088,7 +1088,8 @@ static void EventScript_MovePillar(void) {
                                         objectEvent->z.fixed) == 50) {
         Sound_PlaySong(SE_189);
         // Both u8 accesses are alias set 0, and the view is no struct reference
-        // (MEM_IN_STRUCT_P); as field stores, the loop is reallocated.
+        // (MEM_IN_STRUCT_P); as field stores, the loop is reallocated (100 of
+        // 265 instructions differ in tbs-en).
         *(u8 *)&objectEvent->priorityFlags &= ~OBJ_EVENT_PRIORITY_AUTOMATIC;
         CrossboneIsleSteppingStones_LowerObjectEventToLedge(id, 1);
         *(u8 *)&objectEvent->priorityFlags |= OBJ_EVENT_PRIORITY_AUTOMATIC;
@@ -1118,6 +1119,8 @@ static void EventScript_MovePillar(void) {
       CrossboneIsleSteppingStones_SetCellAttributes(
           0, objectEvent->x.fixed >> 20, objectEvent->z.fixed >> 20, &cell);
       cell.bits.highFlags = sPillarSlots[i].cell.bits.highFlags;
+      // x and z read by their offsets: through ObjectEvent's single/group
+      // union, as objectEvent->x.fixed, a load moves.
       CrossboneIsleSteppingStones_SetCellAttributes(
           2,
           *(s32 *)((u8 *)objectEvent + offsetof(struct ObjectEvent, x)) >> 20,

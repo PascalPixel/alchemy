@@ -326,7 +326,9 @@ s32 BattleAnim_BuildBlitter(s32 slot, s32 widthShift, s32 heightShift,
 #undef PATCH
 
   // Each macro has the shape all its uses match with: PUT, COPY and PATCH as
-  // do-while statements, the others as plain statements or a block.
+  // do-while statements, the others as plain statements or a block. As plain
+  // statements, PUT, COPY and PATCH change 18, 6 and 1 of 737 instructions in
+  // tbs-en.
 #define PUT(word)                                                              \
   do {                                                                         \
     *codeWords++ = (word);                                                     \

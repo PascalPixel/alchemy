@@ -499,7 +499,8 @@ static void EventScript_MovePillar(void) {
 
 #if TBS_PATCH_1
   // Through state, the map's address is built as the save block's plus an
-  // offset, as the bytes have it; &gSaveBlock.mapId folds into one literal.
+  // offset, as the bytes have it; &gSaveBlock.mapId folds into one literal
+  // (1 of 78 instructions differ in tbs-en, 1 of 65 in tbs-ja).
   state = &gSaveBlock;
   mapNumber = &state->mapId;
   if (GameFlag_Get(*mapNumber + (FLAG_CROSSBONE_ISLE_FIRST_PASSAGE_OPENED -

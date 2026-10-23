@@ -176,6 +176,9 @@ s32 WorldMap_InitializePerspective(void) {
                BGCNT_WRAP | BGCNT_SIZE(2),
            &REG_BG2CNT);
   Io_Set16(BGCNT_PRIORITY(1) | BGCNT_SCREEN_BASE(5), &REG_BG1CNT);
+  // The identity and the REG_BG3Y clear go through Io_Write16, which keeps
+  // the 0x100 for REG_BG2PD built just before its store; as plain stores, 3
+  // of 331 instructions differ in tbs-en.
   Io_Write16(0x100, &REG_BG2PA);
   REG_BG2PB = 0;
   REG_BG2PC = 0;

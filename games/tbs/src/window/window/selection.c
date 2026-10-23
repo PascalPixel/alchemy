@@ -6,7 +6,7 @@
 
 /// Two halfwords of a selection record from its base field on, the second
 /// cleared as its cursor: SelectionScreen_Create frees records 7 and 8 through
-/// it (MATCHING.md lists the spelling).
+/// it.
 struct GlyphCursor {
   u16 unused; ///< the record's base
   u16 cursor; ///< the record's kind

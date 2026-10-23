@@ -28,7 +28,9 @@
 /// index. Each flies at angle (0 straight up, a full turn 0x10000) at a
 /// random speed of 32 to 1055 128ths of a pixel a frame across, twice that
 /// up and down, and lives 32 to 39 frames. Used for the pillar's 512 sparks
-/// and each bolt's 16; the mote's sparks are launched inline.
+/// and each bolt's 16; the mote's sparks are launched inline. The speed is
+/// masked in place, the mask assigned first; as `Random16() & 0x3ff`, 3
+/// instructions differ.
 #define THOR_LAUNCH_SPARKS(spark, index, px, py, angleExpr, max)               \
   {                                                                            \
     s32 spawned = 0;                                                           \
@@ -502,6 +504,8 @@ void BattleAnim_RunThor(struct BattleAnimArgs *effect) {
           // The mote: a random offset 8 to 15 pixels from where it rests.
           s32 radius = 7;
           s32 angle;
+          // Masked in place, the mask assigned first; as Random16() & mask, 3
+          // instructions differ.
           radius &= Random16();
           angle = Random16() & 0xffff;
           moteX = (Trig_Sin(angle) * (radius + 8)) >> 16;
@@ -539,6 +543,8 @@ void BattleAnim_RunThor(struct BattleAnimArgs *effect) {
           if (spark->variant == 0) {
             s32 speed = 63;
             s32 angle;
+            // Masked in place, the mask assigned first; as Random16() & mask, 3
+            // instructions differ.
             speed &= Random16();
             angle = Random16() & 0xffff;
             spark->x = mirrorX << 16;

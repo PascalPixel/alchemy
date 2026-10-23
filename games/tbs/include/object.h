@@ -54,8 +54,11 @@ struct Object {
   /// resting height here.
   s32 riseBaseY;
   /// Its sprite, by spriteStorageKind: with OBJECT_SPRITE_GROUP, a list of four
-  /// sprite pointers, empty ones null. Neither a union nor a void pointer:
-  /// either moves an instruction (MATCHING.md).
+  /// sprite pointers, empty ones null, read through a (void **) or (struct
+  /// Sprite **) cast. Neither a union nor a void pointer: as a union its
+  /// stores move after the next store (Object_CreateField,
+  /// ObjectEvent_Restore), and as void * the leader's sprite priority load in
+  /// FieldEffect_UpdatePhasedRadialParticle moves.
   struct Sprite *sprite;
   u8 spriteStorageKind; ///< an enum ObjectSpriteKind in its low four bits
   /// ObjectEventMotionFlag bits: 3 when created, 4 for a placed object event
@@ -73,7 +76,8 @@ struct Object {
   /// or it is off screen.
   u8 retainSpriteCache;
   u8 repeatCount; ///< the object script's SC_LOOP count
-  s16 wait;       ///< the object script's wait, in frames
+  s16 wait;       ///< the object script's wait, in frames; signed, as
+                  ///< Object_UpdateAllThumb reads it
   /// Frames in a row a solid object has refused the object's move; SC_SYNC
   /// stops waiting after 60.
   u8 refused;

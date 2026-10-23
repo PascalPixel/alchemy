@@ -46,6 +46,10 @@
 extern u8 gMapLocalState[];
 
 /// The Colosso race work, heap slot HEAP_SLOT_COLOSSO_RACE under its own name.
+/// Colosso's code reads it under either name, each site as it matched; the
+/// slot's literal is gHeapSlots+236, the same address through another
+/// relocation, so no byte differs. Where only the gauge is read, a struct
+/// ColossoGaugeWork pointer (its first member) compiles as ->gauge does.
 extern u8 *gColossoWork;
 
 #include "frame.h"

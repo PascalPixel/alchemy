@@ -429,6 +429,8 @@ void RegionMap_UpdateMarkers(void) {
 
   // Pulse the markers' transparency: they weigh blend sixteenths against
   // the picture's 16 less blend (REG_BLDALPHA's EVA and EVB).
+  // Written out: BLEND_ALPHA(blend, 16 - blend) takes its operands the other
+  // way round and changes the registers.
   IO_WRITE_QUEUE_PUSH((u32)&REG_BLDCNT, BLDCNT_TGT2_ALL, IO_WRITE_16);
   IO_WRITE_QUEUE_PUSH((u32)&REG_BLDALPHA, ((16 - blend) << 8) | blend,
                       IO_WRITE_16);

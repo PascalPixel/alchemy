@@ -1308,7 +1308,8 @@ void BattleAnim_RunCastingImpact(struct BattleAnimArgs *effect, s32 mode) {
       s32 imageY;
       if (frame <= 5) {
         // targetScreen->x / 2 is written out, so that its last shift can
-        // follow the offset.
+        // follow the offset: as / 2 in each arm, 57 of 3070 instructions
+        // differ; as imageX /= 2, 6.
         if (work->effect->side == 0) {
           imageX = targetScreen->x;
           imageX += (u32)imageX >> 31;

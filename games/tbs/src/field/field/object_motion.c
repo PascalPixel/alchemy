@@ -108,6 +108,8 @@ void Object_UpdateAllThumb(void) {
        objectsRemaining--, object++) {
     arrivedAtTarget = 0;
 
+    // The script indexed as words, which compiles as the old word-array
+    // member did.
     script = (const ScriptMotionWords *)object->script;
     if (script == NULL)
       continue;

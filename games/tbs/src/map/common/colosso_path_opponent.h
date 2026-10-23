@@ -156,7 +156,7 @@ static void Colosso_DrawGauge(void) {
       Dma_Set(gColosso_GaugePalette, (void *)&OBJ_PLTT_COLOR(14, 0),
               (DMA_ENABLE << 16) | 0x10, REG_DMA3);
       buf = Heap_CallAlternatePool(AllocEwram, 512);
-      FieldResource_DecodeType01(gColosso_GaugeGraphics, buf);
+      FieldDecompress_Type01(gColosso_GaugeGraphics, buf);
       VramCache_Load(gauge->vramBlock, 512, buf);
       Free(buf);
     }

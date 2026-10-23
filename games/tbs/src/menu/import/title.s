@@ -19,9 +19,9 @@
 	.set import.FieldScript_SetDestination, 1
 	.set import.FieldScript_StartScreenTransition, 1
 	.set import.FieldScript_WaitTransitionFrames, 1
-	.set import.CreditsFar_Entry00, 1
+	.set import.Import_CreditsRun, 1
 	.set import.Title_ShowIntro, 1
 	.set import.Title_ShowNintendoLogo, 1
-	.set import.TitleFar_Entry20, 1
+	.set import.Import_TitleShowCamelotLogo, 1
 	.set import.Sound_PlaySong, 1
 	.include "games/tbs/src/system/overlay.inc"

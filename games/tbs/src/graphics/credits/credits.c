@@ -215,7 +215,7 @@ void Credits_ScrollBackgrounds(void) {
 /// Crossfades the credits' battle backgrounds through alternating tile banks
 /// while the staff names scroll over it, then restores the display for the
 /// following screen. Reached through the scroll far-call table at the end of
-/// the game: Title_Run calls it as CreditsFar_Entry00 when the ending arrives
+/// the game: Title_Run calls it as Import_CreditsRun when the ending arrives
 /// at TITLE_FROM_LEMURIAN_SHIP, MUS_ENDING playing, before the main menu.
 /// Its waits come to 11223 frames, about 3 minutes 8 seconds, besides the
 /// loads: a 300-frame lead, then 33 slides of a 64-frame fade and a 267-frame

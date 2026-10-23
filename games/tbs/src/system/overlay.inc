@@ -362,11 +362,11 @@
 	import DjinnRecovery_TickTwenty, DjinnRecovery_TickTwentyFar
 	import DebugParty_LoadPreset, DebugParty_LoadPresetFar
 @ Credits bank (far_call/CREDITS.S)
-	import CreditsFar_Entry00, Credits_RunFar
+	import Import_CreditsRun, Credits_RunFar
 @ Title bank (far_call/TITLE.S)
 	import Title_ShowIntro, Title_ShowIntroFar
 	import Title_ShowNintendoLogo, Title_ShowNintendoLogoFar
-	import TitleFar_Entry20, Title_ShowCamelotLogoFar
+	import Import_TitleShowCamelotLogo, Title_ShowCamelotLogoFar
 @ Sound bank (far_call/SOUND.S)
 	import Sound_PlaySong, Sound_PlaySongFar
 	import Sound_SetBgmTempo, Sound_SetBgmTempoFar

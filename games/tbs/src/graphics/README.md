@@ -131,7 +131,7 @@ last entry, 0, fades the screen to black. They run at the end of the game:
 1. the ending sends the party to the title screen's [warp destination](../../glossary.md#warp-destination)
    `TITLE_FROM_LEMURIAN_SHIP`, with `MUS_ENDING` playing;
 2. `Title_Run` calls the credits through the credits bank's [far-call](../../glossary.md#far-call) table,
-   as `CreditsFar_Entry00`;
+   as `Import_CreditsRun`;
 3. after them the game goes on to `MapId_MainMenu`, the main menu.
 
 The two halves split the 256-colour background tile memory and the

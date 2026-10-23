@@ -104,7 +104,7 @@ s32 Title_Run(void) {
     Sound_PlaySong(MUS_ENDING);
     // The credits: Credits_Run, through the scroll far-call
     // table.
-    CreditsFar_Entry00(0);
+    Import_CreditsRun(0);
     Sound_PlaySong(SONG_FADE_OUT_BGM);
     ScreenFade_ToBlack(60);
     ScreenFade_Wait();
@@ -123,7 +123,7 @@ s32 Title_Run(void) {
       Sound_PlaySong(MUS_SILENCE);
       // The Nintendo logo, then the Camelot logo (Title_ShowCamelotLogo).
       Title_ShowNintendoLogo(0);
-      TitleFar_Entry20(0);
+      Import_TitleShowCamelotLogo(0);
       // With no save file (or no backup memory) there is no title intro.
       if (Save_ScanRecordFlags() > 0) {
         Sound_PlaySong(MUS_TITLE);
@@ -184,7 +184,7 @@ static void Title_LoadSprites(s32 unused) {
   Dma_Set(encodedGraphics, (void *)OBJ_PLTT,
           (DMA_ENABLE | DMA_32BIT) << 16 | 0x70, REG_DMA3);
   encodedGraphics += 0x1c0;
-  FieldResource_DecodeType01(encodedGraphics, decodedSprites);
+  FieldDecompress_Type01(encodedGraphics, decodedSprites);
   // The picture is a whole 240 x 160 screen (to_be_continued_de.png and the
   // others). The lettering is its bottom 32 rows, the last 0x1e00 bytes: 120
   // sprites of one 64-byte tile. The 0x7800 bytes before it are the 480 tiles
@@ -196,8 +196,8 @@ static void Title_LoadSprites(s32 unused) {
   decodedSprites = AllocEwram(0x520);
   if (gTitleVramBlock == -1)
     gTitleVramBlock = VramCache_FindFreeEntry();
-  FieldResource_DecodeType01(
-      Resource_GetTableEntry((s32)&ResourceId_IntroTilesB), decodedSprites);
+  FieldDecompress_Type01(Resource_GetTableEntry((s32)&ResourceId_IntroTilesB),
+                         decodedSprites);
   Dma_Set(decodedSprites, (void *)&OBJ_PLTT_COLOR(15, 0),
           (DMA_ENABLE | DMA_32BIT) << 16 | 8, REG_DMA3);
   Vram_Load(gTitleVramBlock, 0x500, decodedSprites + 32);
@@ -356,7 +356,7 @@ static void Title_LoadBackground(void) {
   Dma_Set(encodedGraphics, (void *)BG_PLTT,
           (DMA_ENABLE | DMA_32BIT) << 16 | 0x70, REG_DMA3);
   encodedGraphics += 0x1c0;
-  FieldResource_DecodeType01(encodedGraphics, Ram_MapGridCellBuffer);
+  FieldDecompress_Type01(encodedGraphics, Ram_MapGridCellBuffer);
   Dma_Set((void *)Ram_MapGridCellBuffer, LOGO_TILES,
           (DMA_ENABLE | DMA_32BIT) << 16 | 0x2580, REG_DMA3);
   // Fill the visible 30 columns and pad each 32-entry tilemap row.

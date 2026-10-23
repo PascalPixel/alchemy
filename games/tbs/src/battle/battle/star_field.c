@@ -213,7 +213,6 @@ s32 ElementGlow_InitializeStarField(s32 element) {
   struct Ring *ring;
   s32 effectIndex;
   u8 *graphics;
-  s32 zero;
   /* FAKEMATCH(dead): an unused Spark for the frame's 28 bytes; without it, 2
    * of 246 instructions differ in tbs-en. */
   UNUSED struct Spark unused;
@@ -285,14 +284,8 @@ s32 ElementGlow_InitializeStarField(s32 element) {
     break;
   }
   Dma_Set(graphics, BG_PLTT, DMA_COPY_WORDS(32), REG_DMA3);
-  /* FAKEMATCH(one-pass): the zero and its stores in a one-pass block, which
-   * keeps the zero ahead of BG2X's address; as plain stores of 0, 1 of 246
-   * instructions differ in tbs-en. */
-  do {
-    zero = 0;
-    REG_BG2X = zero;
-    REG_BG2Y = zero;
-  } while (0);
+  Io_Write32(0, &REG_BG2X);
+  Io_Write32(0, &REG_BG2Y);
   Io_Write16(Q_8_8(1), &REG_BG2PA);
   Io_Write16(0, &REG_BG2PB);
   Io_Write16(0, &REG_BG2PC);

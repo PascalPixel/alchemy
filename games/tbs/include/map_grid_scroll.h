@@ -43,11 +43,11 @@ struct MapGridScrollWork {
   /// Set while a BG1 animation runs; the tile animations are then neither
   /// suspended nor resumed.
   s8 animationActive;
-  u8 unk0fd[3]; ///< not named by TBS code
+  u8 unused[3]; ///< no code names it
   /// Each layer's BG priority, written into its BGCNT; zero hides the layer.
   u8 enabled[3];
-  u8 unk103; ///< MapGridState's blendControl, the last BLDCNT the blend script
-             ///< set
+  /// The last BLDCNT the blend script set (MapGridState.blendControl).
+  u8 blendControl;
   struct MapGridLayerScroll layers[3]; ///< BG3, BG2 and BG1, in that order
 };
 

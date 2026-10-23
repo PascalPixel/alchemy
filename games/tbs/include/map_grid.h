@@ -55,8 +55,10 @@ struct MapGridCell {
 /// A map layer's scroll record, seen from its cells.
 struct MapGridLayer {
   struct MapGridCell
-      *cells;     ///< the layer's first cell (MapGridLayerScroll's cells)
-  u8 unk04[0x2c]; ///< the next layer's scroll values; not named by TBS code
+      *cells; ///< the layer's first cell (MapGridLayerScroll's cells)
+  /// The next layer's scroll values (MapGridLayerScroll up to its cells); not
+  /// named through this view.
+  u8 nextScroll[0x2c];
 };
 
 /// The map's running blend script, which sets the blend registers over time
@@ -94,17 +96,32 @@ enum MapGridLayerIndex {
 /// The map work in HEAP_SLOT_MAP_GRID (struct MapGridScrollWork), seen as its
 /// tile animation channels, blend script and layers' cells.
 struct MapGridState {
-  u8 unk000[0x14]; ///< MapGridScrollWork's origin, shake and script
-  u16 flags;       ///< REG_DISPCNT bits; MapGrid_SetShownLayers sets BG1 to BG3
-  u8 wideTiles;    ///< nonzero: tile animations copy 64-byte tiles
-  u8 unk17;        ///< MapGridScrollWork's footprints; Bilibin Cave sets it
+  /// MapGridScrollWork's origin, shake and script; not named through this view.
+  ///@{
+  s32 *origin;
+  s32 shakeX, shakeY, shakeDecay;
+  u8 *script;
+  ///@}
+  u16 flags;     ///< REG_DISPCNT bits; MapGrid_SetShownLayers sets BG1 to BG3
+  u8 wideTiles;  ///< nonzero: tile animations copy 64-byte tiles
+  u8 footprints; ///< MapGridScrollWork's; Bilibin Cave sets it
   struct TileAnimation animations[16];
   struct BlendScriptState blend;
-  u8 unke4[0x1f]; ///< MapGridScrollWork's view, bounds and shown layers
+  /// MapGridScrollWork's view, bounds and shown layers; not named through this
+  /// view.
+  ///@{
+  s32 viewX, viewY;
+  s32 minX, minY, maxX, maxY;
+  s8 animationActive;
+  u8 unused[3];
+  u8 enabled[3];
+  ///@}
   /// The last BLDCNT the blend script wrote; with mode 1 in bits 7..6 its
   /// values go to BLDALPHA, else to BLDY.
   u8 blendControl;
-  u8 unk104[0x2c]; ///< the first layer's scroll values; not named by TBS code
+  /// The first layer's scroll values (MapGridLayerScroll up to its cells); not
+  /// named through this view.
+  u8 firstScroll[0x2c];
   /// Each layer's cells, at MapGridScrollWork's layers[i].cells; readers mask
   /// the layer with 3, and the fourth entry lies past MapGridScrollWork's end.
   struct MapGridLayer layers[4];

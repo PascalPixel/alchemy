@@ -16,7 +16,11 @@
 /// OptionMenu_Release frees it, and cancelling discards the edits. The system
 /// menu takes the same slot for its cursor, entry (page) and icons.
 struct WorkspaceWork {
-  u8 unk000[0x574];
+  u8 unused[0x400]; ///< no code names it
+  /// Seven 52-byte entries (struct MenuWorkspaceEntry in options.c), whose
+  /// state only the unused OptionMenu_ResetEntries writes.
+  u8 entries[7][52];
+  u8 unusedAfterEntries[8]; ///< no code names it
   /// The row the cursor is on: on the option screen 0 to 4, indexing option
   /// and optionCount; on the system menu its entry, indexing icon.
   u16 page;
@@ -27,15 +31,15 @@ struct WorkspaceWork {
   /// The colour preset SELECT last chose, 0 to 5, from
   /// gOptionMenu_HuePresets and gOptionMenu_BrightnessPresets.
   u16 preset;
-  u8 unk580[0x14];
+  u8 unusedAfterPreset[0x14]; ///< no code names it
   /// The settings being edited: window hue (0 to 23), window brightness (0
   /// to 14), message speed (0 to 2), voice sounds and auto-sleep (0 or 1).
   s8 option[5];
   s8 optionCount[5]; ///< each setting's values: 24, 15, 3, 2 and 2; it wraps
-  u8 unk59e[6];
+  u8 unusedAfterOptions[6]; ///< no code names it
   union MenuCursor cursor;
   union MenuCursor marker[2];
-  u8 unk5d4[0x18];
+  u8 unusedAfterMarkers[0x18]; ///< no code names it
   /// Each choice's icon for message speed, voice sounds and auto-sleep
   /// (options 2 to 4); the chosen one pulses.
   struct RenderOutput *frame[3][3];

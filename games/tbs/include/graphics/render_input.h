@@ -13,11 +13,11 @@
 /// A 16-byte record of a rectangle. In TBS it only reserves stack space in
 /// tbs-ja's glyph renderer; no TBS code reads its fields.
 struct RenderInput {
-  u8 unk00[8]; ///< not named by TBS code
-  u16 width;   ///< not named by TBS code
-  u16 height;  ///< not named by TBS code
-  u16 x;       ///< not named by TBS code
-  u16 y;       ///< not named by TBS code
+  u8 unused[8]; ///< no code names it
+  u16 width;    ///< not named by TBS code
+  u16 height;   ///< not named by TBS code
+  u16 x;        ///< not named by TBS code
+  u16 y;        ///< not named by TBS code
 };
 
 STATIC_ASSERT(sizeof(struct RenderInput) == 0x10);
@@ -77,13 +77,13 @@ struct RenderOutput {
   s8 active;                 ///< its UI_SPRITE_ motion; 0 while free
   u16 x;                     ///< screen pixels
   u16 y;                     ///< screen pixels
-  u16 unk0a;                 ///< not named by TBS code
+  u16 unused;                ///< no code names it
   u16 animationStep;         ///< step of its motion's animation
   s8 index;    ///< VRAM cache slot, or a glyph's tile after glyphTiles
   u8 sentinel; ///< depth slot it is drawn at (254 for glyphs)
   /// The depth queue's link: with oam it is the sprite entry queued each
   /// frame, read as struct CursorSprite.
-  u8 unk10[4];
+  u8 link[4];
   struct RenderOam oam;
 };
 

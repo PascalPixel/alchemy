@@ -30,7 +30,7 @@ struct WindowLine {
 /// A page of the display transition's window edges: WININ and WINOUT, then
 /// each of the 160 lines' edges.
 struct WindowBuffer {
-  u8 unk000[4]; ///< WININ and WINOUT, not touched here
+  u8 winInOut[4]; ///< WININ and WINOUT, not touched here
   struct WindowLine lines[160];
 };
 

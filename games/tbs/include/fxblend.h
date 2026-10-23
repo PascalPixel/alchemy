@@ -25,7 +25,7 @@ struct FieldBlendWork {
   s16 enabled;
   s16 loud;      ///< nonzero plays the louder thunderclap, SE_THUNDER_LOUD for
                  ///< SE_THUNDER
-  u8 unk1f86[2]; ///< not named by TBS code
+  u8 padding[2]; ///< up to the struct's word-aligned size
 };
 
 STATIC_ASSERT(sizeof(struct FieldBlendWork) == 0x1f88);

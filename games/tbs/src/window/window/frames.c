@@ -58,7 +58,7 @@ loop:
       work->height = 0;
       work->x = 0;
       work->y = 0;
-      work->unk10 = 0;
+      work->opened = 0;
       work->effect = 0;
       work->state = 0;
       work->flags = 0;

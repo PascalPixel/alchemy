@@ -321,7 +321,7 @@ struct UiWindow *UiWindow_Create(s32 x, s32 y, s32 width, s32 height,
     found->output.head = NULL;
     found->state = 0;
     found->output.tailLink = &slot->output.head;
-    found->unk10 = 1;
+    found->opened = 1;
     found->flags = UI_WINDOW_OPEN;
     // Every new window starts the shared text style afresh. The function
     // takes no arguments: x is passed and ignored.
@@ -397,7 +397,7 @@ void UiWork_Finalize(struct UiWindow *window, s32 instant) {
     window->height = zero;
     window->x = zero;
     window->y = zero;
-    window->unk10 = zero;
+    window->opened = zero;
     window->effect = zero;
     window->state = zero;
     window->flags = zero;

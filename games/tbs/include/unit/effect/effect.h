@@ -220,12 +220,12 @@ extern BattleFxHandler gBattleEffect_EffectHandlers[];
 /// What BattleEffect_BuildCenteredIndexList (unused) reads: a value to find in
 /// a list, and how many indices either side of it to keep.
 typedef struct {
-  s32 unk_00[3];    ///< not named by TBS code
-  s32 currentValue; ///< the value looked for in values
-  s32 indexRadius;  ///< indices kept either side of where it sits
-  s32 entryLimit;   ///< indices from this up are dropped
-  s32 unk_18[3];    ///< not named by TBS code
-  s16 values[1];    ///< indexRadius * 2 + 1 values, searched in order
+  s32 unused[3];           ///< no code names it
+  s32 currentValue;        ///< the value looked for in values
+  s32 indexRadius;         ///< indices kept either side of where it sits
+  s32 entryLimit;          ///< indices from this up are dropped
+  s32 unusedAfterLimit[3]; ///< no code names it
+  s16 values[1];           ///< indexRadius * 2 + 1 values, searched in order
 } BattleEffectIndexWindow;
 
 /// The map cell buffer (gMapGridCellBuffer), which the effects borrow, has two

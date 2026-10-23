@@ -318,17 +318,17 @@ void Menu_RunSelectionHook(void) { Debug_SelectAbilityPair(); }
 /// VRAM cache entries with their flags and a window, among fields nothing here
 /// uses. Only the two unused functions below touch it.
 struct SelectionWorkspace {
-  u8 unk000[0x46];
+  u8 unusedBeforeFirst[0x46]; ///< no code names it
   /// Nonzero when firstResource is a VRAM cache entry to free on release.
   u16 firstActive;
-  u16 firstResource; ///< a VRAM cache entry
-  u8 unk04a[0x352 - 0x4a];
+  u16 firstResource;                       ///< a VRAM cache entry
+  u8 unusedBetweenResources[0x352 - 0x4a]; ///< no code names it
   /// Nonzero when secondResource is a VRAM cache entry to free on release.
   u16 secondActive;
-  u16 secondResource; ///< a VRAM cache entry
-  u8 unk356[0xff4 - 0x356];
-  struct UiWindow *window; ///< closed, and waited for, on release
-  u8 unkff8[12];
+  u16 secondResource;                   ///< a VRAM cache entry
+  u8 unusedBeforeWindow[0xff4 - 0x356]; ///< no code names it
+  struct UiWindow *window;              ///< closed, and waited for, on release
+  u8 unusedAfterWindow[12];             ///< no code names it
 };
 
 /// Allocates the work block of HEAP_SLOT_SELECTION_WORKSPACE and clears its two

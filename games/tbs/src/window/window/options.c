@@ -13,9 +13,9 @@ UNUSED void GraphicsPalette_ReservedNoOpC9C4(void) {}
 /// only its state is known, and only the unused OptionMenu_ResetEntries
 /// writes it.
 struct MenuWorkspaceEntry {
-  u8 unk00[10];
-  u16 state; ///< cleared to 0 by OptionMenu_ResetEntries; nothing reads it
-  u8 unk0c[40];
+  u8 unused[10]; ///< no code names it
+  u16 state;     ///< cleared to 0 by OptionMenu_ResetEntries; nothing reads it
+  u8 unusedAfterState[40]; ///< no code names it
 };
 
 /// Clears the option screen's seven entry states, its row, its tint and its

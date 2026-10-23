@@ -1,55 +1,56 @@
 /// @file
-/// Vale Cave's overlay, which holds three rooms, each a scene of its own: the
+/// Vale Cave's overlay, which holds three rooms, each a map of its own: the
 /// way in, which the game still calls Vale, and two rooms of Vale Cave proper.
 /// Kite, a Jupiter Djinni, hides in the second. No story flag is read here
 /// and no message is shown: the cave is a side trip from the part of Vale
 /// around Kraden's cottage, a run of Psynergy puzzles whose progress lives in
-/// scene and place flags.
+/// map and map section flags.
 ///
-/// - Vale (MapId_ValeCaveMouth), the way in, a place group of its
+/// - Vale (MapId_ValeCaveMouth), the way in, a map section of its
 ///   own (29). VALE_CAVE_MOUTH_TO_VALE_KRADEN_WEST and
 ///   VALE_CAVE_MOUTH_TO_VALE_KRADEN_EAST lead back to Kraden's part of Vale
 ///   (MapId_ValeKraden), whose VALE_KRADEN_TO_VALE_CAVE_MOUTH_WEST and
 ///   VALE_KRADEN_TO_VALE_CAVE_MOUTH_EAST lead here;
-///   VALE_CAVE_MOUTH_TO_VALE_CAVE_KITE goes on into the cave. Each exit plays
-///   the exit sound first (EventScript_LeaveRoom). On arrival
+///   VALE_CAVE_MOUTH_TO_VALE_CAVE_KITE goes on into the cave. Each warp plays
+///   the warp sound first (EventScript_LeaveRoom). On arrival
 ///   ValeCave_Initialize fades the room in from the backdrop and clears
-///   FLAG_SHOW_LOCATION_NAME: entering a new place group sets that flag, but
+///   FLAG_SHOW_LOCATION_NAME: entering a new map section sets that flag, but
 ///   this is still Vale.
 /// - Vale Cave (MapId_ValeCaveKite), one map in three parts, each
-///   with its own entrances and camera box; walking south into a ledge's cells
-///   hops the leader down it (EventScript_HopDownLedge). In the first part
-///   (VALE_CAVE_KITE_FROM_VALE_CAVE_MOUTH to
+///   with its own warp destinations and camera box; walking south into a
+///   ledge's cells hops the leader down it (EventScript_HopDownLedge). In the
+///   first part (VALE_CAVE_KITE_FROM_VALE_CAVE_MOUTH to
 ///   VALE_CAVE_KITE_FROM_VALE_CAVE_LOGS_WEST) Reveal shows a hidden tile while
 ///   it lasts (EventScript_RevealHiddenTile). In Kite's part
 ///   (VALE_CAVE_KITE_EAST_FROM_WEST to
 ///   VALE_CAVE_KITE_FROM_VALE_CAVE_LOGS_EAST), coming near
 ///   makes Kite hop away (EventScript_KiteRunsOff) and then run behind a ledge
 ///   (EventScript_KiteRunsBehindLedge, setting
-///   FLAG_VALE_CAVE_KITE_BEHIND_LEDGE); from then on twelve trigger codes, 45
-///   to 56 on the 23 cells round the ledge, each send it to its point of
+///   FLAG_VALE_CAVE_KITE_BEHIND_LEDGE); from then on twelve metatile behaviors,
+///   45 to 56 on the 23 cells round the ledge, each send it to its point of
 ///   gValeCave_WalkTargets on the ledge's far side as the leader walks round
 ///   (EventScript_KiteKeepsAway), so it cannot be reached until Halt stops it
 ///   (https://alchemy.pascalpixel.com/places/vale-cave-kite/kite-ledge.gif:
-///   the leader walking the ring, twice the size, the trigger cells outlined
-///   and numbered from 0 by code, the walk targets drawn with the same
-///   numbers, and Kite boxed). A stopped Kite can be talked to and
-///   joins the party (EventScript_TalkToKite), setting FLAG_KITE, which removes
-///   it from the placements. The room's chests hold the Halt Gem, which gives
-///   Halt, and a Nut. In the holes' part (VALE_CAVE_KITE_SOUTH_FROM_WEST to
-///   VALE_CAVE_KITE_FROM_VALE_CAVE_LOGS_SOUTH) two stacks of
-///   crates sink into holes in the floor once Move or a push leaves them over
-///   one (FLAG_MAP_TEMP_00 and _01), opening the way, and a log carries
-///   the leader along the passage when walked into from the west or the east
-///   (FLAG_VALE_CAVE_RIDING_LOG_EAST). Its exits lead back to the first room,
+///   the leader walking the ring, twice the size, the cells of those metatile
+///   behaviors outlined and numbered from 0 by behavior, the walk targets drawn
+///   with the same numbers, and Kite boxed). A stopped Kite can be talked to
+///   and joins the party (EventScript_TalkToKite), setting FLAG_KITE, which
+///   removes it from the object event templates. The room's chests hold the
+///   Halt Gem, which gives Halt, and a Nut. In the holes' part
+///   (VALE_CAVE_KITE_SOUTH_FROM_WEST to
+///   VALE_CAVE_KITE_FROM_VALE_CAVE_LOGS_SOUTH) two stacks of crates sink into
+///   holes in the floor once Move or a push leaves them over one
+///   (FLAG_MAP_TEMP_00 and _01), opening the way, and a log carries the leader
+///   along the passage when walked into from the west or the east
+///   (FLAG_VALE_CAVE_RIDING_LOG_EAST). Its warps lead back to the first room,
 ///   on to the third, and between its own parts.
 /// - Vale Cave (MapId_ValeCaveLogs), the inner room, with three
 ///   logs to push: one off a ledge (EventScript_PushLogOffLedge), one along the
 ///   ledge until it drops at its edge (EventScript_PushLogOverEdge) and one
 ///   north (EventScript_PushLogNorth), each clearing the cells it held. Its
-///   exits lead back into the second room and between its own parts.
+///   warps lead back into the second room and between its own parts.
 ///
-/// Vale Cave's two rooms are one place group (30), so their place flags
+/// Vale Cave's two rooms are one map section (30), so their map section flags
 /// (0x301, 0x302) last while the party goes between them. On every arrival
 /// ValeCave_ApplyEntryState rebuilds the cells of each puzzle already solved
 /// and, once Kite has run behind its ledge, puts it back there.
@@ -59,9 +60,9 @@
 ///   sprite 223 (spr_223.png, a wooden crate) at (120, 232) and SPRITE_CHEST
 ///   at (642, 552) in the second room that show nothing: the sprites alone
 ///   hold neither (render probe vale-cave), the crates seen there are the
-///   map's, no chest is drawn at the second, and neither object is solid or a
-///   target (OBJ_EVENT_NOT_TARGETED); Vault creates the same kind of object on
-///   its well (vault_revisit.c), and nothing in the ROM says what they were
+///   layout's, no chest is drawn at the second, and neither object is solid or
+///   a target (OBJ_EVENT_NOT_TARGETED); Vault creates the same kind of object
+///   on its well (vault_revisit.c), and nothing in the ROM says what they were
 ///   meant to show.
 
 #include "game_state.h"
@@ -105,10 +106,10 @@
 #include "songs.h"
 #include "audio_engine_symbols.h"
 
-/// The way in's placements (gValeCave_MouthObjectEventTemplates), numbered from
-/// LOCALID_FIRST_PLACED: three stacks of crates (drawn as the crates of the
-/// Bilibin Barricade in bilibin.c), then two logs (as in Kolima Forest), none
-/// of which moves.
+/// The way in's object event templates (gValeCave_MouthObjectEventTemplates),
+/// numbered from LOCALID_FIRST_PLACED: three stacks of crates (drawn as the
+/// crates of the Bilibin Barricade in bilibin.c), then two logs (as in Kolima
+/// Forest), none of which moves.
 enum ValeCaveMouthLocalId {
   /// ★ Named from what the player sees: three wooden crates stacked by the
   /// cave's mouth (its render)
@@ -121,8 +122,8 @@ enum ValeCaveMouthLocalId {
   LOCALID_VALE_CAVE_MOUTH_SECOND_LOG
 };
 
-/// The second room's placements (gValeCave_KiteObjectEventTemplates), numbered
-/// from LOCALID_FIRST_PLACED.
+/// The second room's object event templates
+/// (gValeCave_KiteObjectEventTemplates), numbered from LOCALID_FIRST_PLACED.
 enum ValeCaveKiteLocalId {
   /// Kite, a Jupiter Djinni, placed until it joins (FLAG_KITE).
   /// ★ Named from the game: "Kite" (MsgDjinnName)
@@ -157,9 +158,10 @@ enum ValeCaveKiteLocalId {
   LOCALID_SECOND_STANDING_LOG
 };
 
-/// The third room's placements (gValeCave_LogsObjectEventTemplates), numbered
-/// from LOCALID_FIRST_PLACED; its first row places Kite as the second room's
-/// does. Its three logs are pushed, and lie as in Kolima Forest.
+/// The third room's object event templates
+/// (gValeCave_LogsObjectEventTemplates), numbered from LOCALID_FIRST_PLACED;
+/// its first row places Kite as the second room's does. Its three logs are
+/// pushed, and lie as in Kolima Forest.
 enum ValeCaveLogsLocalId {
   /// Lying north to south, pushed off the ledge.
   /// ★ Named from what the player sees: a log lying north to south west of the
@@ -174,7 +176,7 @@ enum ValeCaveLogsLocalId {
   LOCALID_SOUTH_LOG ///< lying west to east, pushed north
 };
 
-/// The first of the twelve cell codes that send Kite round its ledge
+/// The first of the twelve metatile behaviors that send Kite round its ledge
 /// (EventScript_KiteKeepsAway), one for each of gValeCave_WalkTargets.
 #define VALE_CAVE_FIRST_KITE_TRIGGER_CELL 45
 
@@ -182,7 +184,7 @@ enum ValeCaveLogsLocalId {
 /// ★ Named from the game: "Kite" (MsgDjinnName)
 #define FLAG_KITE (FLAG_DJINNI_0 + DJINNI_KITE)
 
-// The cave's scene flags:
+// The cave's map flags:
 // - FLAG_MAP_TEMP_00 and _01: in the second room, the western and eastern
 //   crates sunk into their holes, or, in Kite's part of it, its first and
 //   second escape.
@@ -190,8 +192,8 @@ enum ValeCaveLogsLocalId {
 //   ledge, the log pushed over its edge, and the log slid north, ending on the
 //   northern or the southern row (row 20).
 
-// The cave's place flags. The second and third rooms are one place group, so
-// these last while the party goes between them; the first room is another.
+// The cave's map section flags. The second and third rooms are one map section,
+// so these last while the party goes between them; the first room is another.
 /// The riding log of the second room is at the eastern end of its passage.
 /// ★ Named from what the player sees: the log floating in the holes' part
 /// of the second room, which carries the leader along it (its render)
@@ -212,13 +214,13 @@ static void ValeCave_ApplyEntryState(void);
 /// a Jupiter Djinni, joins the party.
 ///
 /// Map_TalkToObjectEvent selects this MAP_EVENT_TALK_HALTED event while Kite is
-/// the paused actor. Djinn_JoinParty gives the Jupiter Djinni Kite and sets
-/// FLAG_KITE, so neither room places Kite again.
+/// the paused object event. Djinn_JoinParty gives the Jupiter Djinni Kite and
+/// sets FLAG_KITE, so neither room places Kite again.
 static void EventScript_TalkToKite(void) {
   Djinn_JoinParty(LOCALID_KITE, ELEMENT_JUPITER, DJINNI_INDEX(DJINNI_KITE));
 }
 
-/// Waits for an actor to land, bounded by a one-second timeout.
+/// Waits for an object event to land, bounded by a one-second timeout.
 static void
 ValeCave_WaitForObjectEventLanding(struct ObjectEvent *objectEvent) {
   s32 framesRemaining = 60;
@@ -265,7 +267,8 @@ ValeCave_FaceObjectEventTowardLeader(union FieldObject *fieldObject) {
   ((void (*)(union FieldObject *))ValeCave_FaceObjectEventTowardLeader)
 #endif
 
-/// Selects entrance positions and camera bounds for the current cave room.
+/// Selects warp destination positions and camera bounds for the current cave
+/// room.
 const struct MapWarpDest *ValeCave_GetWarpDests(void) {
   s16 mapId = gGameState.mapId;
 
@@ -283,10 +286,11 @@ const struct MapWarpDest *ValeCave_GetWarpDests(void) {
 
 const struct MapWarpRegion *ValeCave_GetRegions(void) { return NULL; }
 
-/// Returns the shared packed exits for all cave rooms.
+/// Returns the shared packed warps for all cave rooms.
 const u32 *ValeCave_GetWarps(void) { return gValeCave_Warps; }
 
-/// Selects the current room's placements: Kite, and the crates and logs.
+/// Selects the current room's object event templates: Kite, and the crates and
+/// logs.
 const struct ObjectEventTemplate *ValeCave_GetObjectEventTemplates(void) {
   s16 mapId = gGameState.mapId;
 
@@ -433,7 +437,7 @@ static void EventScript_MoveEastCratesIntoHole(void) {
 /// In Vale Cave's second room, pushing the eastern crates: they move a cell,
 /// and sink if they are then over their hole.
 ///
-/// Reached by walking into cell code 24 in the second room, until
+/// Reached by walking into metatile behavior 24 in the second room, until
 /// FLAG_MAP_TEMP_01 is set.
 static void EventScript_PushEastCratesIntoHole(void) {
   Engine_ScriptStart();
@@ -445,8 +449,8 @@ static void EventScript_PushEastCratesIntoHole(void) {
 /// In Vale Cave's second room, walking south off a ledge: Isaac hops down if
 /// the cell below is free.
 ///
-/// Reached by walking south into cell code 21 in the second room. Returns 1
-/// when the leader hopped, 0 when the landing cell is blocked.
+/// Reached by walking south into metatile behavior 21 in the second room.
+/// Returns 1 when the leader hopped, 0 when the landing cell is blocked.
 static s32 EventScript_HopDownLedge(s32 unusedArgument) {
 
   union FieldCoordinate landingPosition[3];
@@ -494,7 +498,7 @@ static s32 EventScript_HopDownLedge(s32 unusedArgument) {
 /// In Kite's part of Vale Cave's second room, coming near Kite: the camera
 /// finds it; it notices the party and hops away up the ledge.
 ///
-/// Reached by stepping on cell code 40 in the second room until Kite is
+/// Reached by stepping on metatile behavior 40 in the second room until Kite is
 /// caught (FLAG_KITE); runs once, setting FLAG_MAP_TEMP_00.
 static void EventScript_KiteRunsOff(void) {
 
@@ -528,7 +532,7 @@ static void EventScript_KiteRunsOff(void) {
 /// In Kite's part of Vale Cave's second room, coming near again: Kite runs
 /// behind the ledge and turns to watch the party.
 ///
-/// Reached by stepping on cell code 41 in the second room until Kite is
+/// Reached by stepping on metatile behavior 41 in the second room until Kite is
 /// caught, once EventScript_KiteRunsOff has run. Sets FLAG_MAP_TEMP_01 and
 /// FLAG_VALE_CAVE_KITE_BEHIND_LEDGE, and gives Kite the update hook
 /// ValeCave_FaceObjectEventTowardLeader.
@@ -561,9 +565,9 @@ static void EventScript_KiteRunsBehindLedge(void) {
 /// In Kite's part of Vale Cave's second room, walking around the ledge: Kite
 /// keeps to the far side of it, unless Halt has stopped it.
 ///
-/// Reached by stepping on cell codes 45 to 56 in the second room until Kite is
-/// caught, once FLAG_VALE_CAVE_KITE_BEHIND_LEDGE is set; each code sends Kite
-/// to its row of gValeCave_WalkTargets at the leader's speed.
+/// Reached by stepping on metatile behaviors 45 to 56 in the second room until
+/// Kite is caught, once FLAG_VALE_CAVE_KITE_BEHIND_LEDGE is set; each behavior
+/// sends Kite to its row of gValeCave_WalkTargets at the leader's speed.
 static void EventScript_KiteKeepsAway(void) {
   struct ObjectEvent *djinni;
   struct ObjectEvent *leader;
@@ -609,7 +613,7 @@ static void EventScript_HaltKite(void) {
 /// In Vale Cave's third room, pushing the eastern log along the ledge: at its
 /// edge the log falls off, opening the way.
 ///
-/// Reached by walking into cell code 20 in the third room. When the log
+/// Reached by walking into metatile behavior 20 in the third room. When the log
 /// falls (column 17) it sets FLAG_MAP_TEMP_03 and clears the cells it held.
 static void EventScript_PushLogOverEdge(void) {
   struct ObjectEvent *movedLog;
@@ -666,7 +670,7 @@ static void EventScript_PushLogOverEdge(void) {
 /// In Vale Cave's third room, pushing the western log east: it falls off
 /// the ledge, opening the way.
 ///
-/// Reached by walking east into cell code 21 in the third room. Sets
+/// Reached by walking east into metatile behavior 21 in the third room. Sets
 /// FLAG_MAP_TEMP_02 and clears the cells the log held.
 static void EventScript_PushLogOffLedge(void) {
 
@@ -713,7 +717,7 @@ static void EventScript_PushLogOffLedge(void) {
 /// In Vale Cave's third room, pushing the southern log north: it slides a cell,
 /// opening the way.
 ///
-/// Reached by walking into cell code 22 in the third room. Sets
+/// Reached by walking into metatile behavior 22 in the third room. Sets
 /// FLAG_MAP_TEMP_05 when it stops on row 20, else FLAG_MAP_TEMP_04, and
 /// then opens the cells above it.
 static void EventScript_PushLogNorth(void) {
@@ -722,7 +726,7 @@ static void EventScript_PushLogNorth(void) {
   Engine_ScriptStart();
   if (StagedObjectEvent_FindClearPosition(&probe) != 0) {
     MapObjectEvent_MoveAndRedraw(probe);
-    // Slide into the new cell before replacing the collision footprint.
+    // Slide into the new cell before replacing the metatile behavior footprint.
     Engine_ObjectEventSetAnimation(LOCALID_SOUTH_LOG, 3);
     ObjectEvent_SetSpeed(LOCALID_SOUTH_LOG, PIXELS(1) / 4, PIXELS(1) / 2);
     Engine_ObjectEventSetDestinationOffset(LOCALID_SOUTH_LOG, 0, -16);
@@ -752,7 +756,7 @@ static void EventScript_PushLogNorth(void) {
   Engine_ScriptEnd();
 }
 
-/// Selects the current room's touch, Psynergy and search bindings.
+/// Selects the current room's coord, Psynergy and bg events.
 const struct MapEvent *ValeCave_GetEvents(void) {
   s16 mapId = gGameState.mapId;
 
@@ -771,8 +775,8 @@ const struct MapEvent *ValeCave_GetEvents(void) {
 /// Arriving in any of the three rooms: chooses the entry transition and
 /// restores the room's puzzle state.
 ///
-/// The scene's initialize entry. The first room, Vale, fades in from the
-/// backdrop and clears FLAG_SHOW_LOCATION_NAME, so the place name is not shown
+/// The map's initialize entry. The first room, Vale, fades in from the
+/// backdrop and clears FLAG_SHOW_LOCATION_NAME, so the area name is not shown
 /// again; the two rooms of Vale Cave open with the window transition.
 s32 ValeCave_Initialize(void) {
   s32 *request = &gEventWork->startTransition;
@@ -790,11 +794,11 @@ s32 ValeCave_Initialize(void) {
   return 0;
 }
 
-/// In Vale, the cave's way in (MapId_ValeCaveMouth), each exit plays the exit
+/// In Vale, the cave's way in (MapId_ValeCaveMouth), each warp plays the warp
 /// sound before leaving.
 ///
-/// Reached by stepping on cell codes 1 to 3 in the first room; takes the exit
-/// of the same number (VALE_CAVE_MOUTH_TO_VALE_KRADEN_WEST,
+/// Reached by stepping on metatile behaviors 1 to 3 in the first room; takes
+/// the warp of the same number (VALE_CAVE_MOUTH_TO_VALE_KRADEN_WEST,
 /// VALE_CAVE_MOUTH_TO_VALE_CAVE_KITE or VALE_CAVE_MOUTH_TO_VALE_KRADEN_EAST).
 static void EventScript_LeaveRoom(void) {
   s32 warpNumber = gEventWork->touchedTrigger;
@@ -821,7 +825,7 @@ static void ValeCave_UpdateRidingLogPassage(void) {
 /// In Vale Cave's second room, walking east onto the riding log: it carries
 /// the leader to the eastern end of the passage.
 ///
-/// Reached by walking east into cell code 20 in the second room. Sets
+/// Reached by walking east into metatile behavior 20 in the second room. Sets
 /// FLAG_VALE_CAVE_RIDING_LOG_EAST.
 static void EventScript_RideLogEast(void) {
 
@@ -837,7 +841,7 @@ static void EventScript_RideLogEast(void) {
 /// In Vale Cave's second room, walking west onto the riding log: it carries
 /// the leader back to the western end of the passage.
 ///
-/// Reached by walking west into cell code 21 in the second room. Clears
+/// Reached by walking west into metatile behavior 21 in the second room. Clears
 /// FLAG_VALE_CAVE_RIDING_LOG_EAST.
 static void EventScript_RideLogWest(void) {
 
@@ -850,7 +854,7 @@ static void EventScript_RideLogWest(void) {
   Engine_AudioPlayCue(AUDIO_CUE_FADE_SLOT3);
 }
 
-/// Centers an actor on a map cell and gives it underfoot priority.
+/// Centers an object event on a map cell and gives it underfoot priority.
 static void ValeCave_CenterObjectEventOnCell(s32 objectEventId, s32 column,
                                              s32 row) {
   struct ObjectEvent *objectEvent = ObjectEvent_GetById(objectEventId);
@@ -966,7 +970,7 @@ static void ValeCave_ApplyEntryState(void) {
 /// In Vale Cave's second room, touching the riding log restarts its
 /// animation.
 ///
-/// Reached by stepping on cell code 20 or 21 in the second room.
+/// Reached by stepping on metatile behavior 20 or 21 in the second room.
 static void EventScript_TouchRidingLog(void) {
   Engine_ObjectEventSetAnimation(LOCALID_RIDING_LOG, 1);
   Engine_ObjectEventSetAnimation(LOCALID_RIDING_LOG, 2);
@@ -1024,7 +1028,7 @@ s32 gStagedObjectEvent_FootprintBounds[] = {
 };
 
 /// The twelve points round the far side of Kite's ledge, x then z in pixels,
-/// one for each trigger cell from VALE_CAVE_FIRST_KITE_TRIGGER_CELL on.
+/// one for each metatile behavior from VALE_CAVE_FIRST_KITE_TRIGGER_CELL on.
 s32 gValeCave_WalkTargets[] = {
     760, 296,
     760, 280,

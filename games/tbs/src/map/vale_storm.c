@@ -6,7 +6,7 @@
 /// clears it when the night ends.
 ///
 /// The night is a chain of story flags. Each is set by one event and read by
-/// ValeStorm_Initialize, which rebuilds the scene at that stage on the next
+/// ValeStorm_Initialize, which rebuilds the map at that stage on the next
 /// arrival:
 ///
 /// - FLAG_VALE_STORM_SENT_TO_PLAZA: EventScript_DoraSendsIsaacToThePlaza,
@@ -15,12 +15,12 @@
 ///   and Kyle send Isaac on to the plaza and go to help; until the flag is set
 ///   the lightning waits for the cutscene.
 /// - FLAG_VALE_STORM_FIRST_ROCK_FELL to FLAG_VALE_STORM_FOURTH_ROCK_FELL, with
-///   the place flags FLAG_VALE_STORM_FIRST_ROCK_PASSED to
+///   the map section flags FLAG_VALE_STORM_FIRST_ROCK_PASSED to
 ///   FLAG_VALE_STORM_FOURTH_ROCK_PASSED: EventScript_FirstRockFalls to
 ///   EventScript_FourthRockFalls drop a rock across a path at four spots. The
-///   _FELL flag puts the rock and the collision cells it blocks back; the
-///   _PASSED flag, cleared once the party leaves Vale, keeps the event from
-///   running again.
+///   _FELL flag puts back the rock and the metatile behaviors of the cells it
+///   blocks; the _PASSED flag, cleared once the party leaves Vale, keeps the
+///   script from running again.
 /// - FLAG_VALE_STORM_BUMPED_INTO_VILLAGER: ValeStorm_BumpIntoShovingMan, the
 ///   first time Isaac tries the door of
 ///   VALE_STORM_TO_VALE_INTERIORS_SHOPS_SOUTH.
@@ -48,7 +48,7 @@
 ///
 /// Every way out goes through Vale_RequestBackdropWarp (common/vale.h), which
 /// stops the lightning first, and each door plays its opening cells before it;
-/// gValeStorm_Warps gives each exit's destination. Two cells start a battle
+/// gValeStorm_Warps gives each warp's destination. Two cells start a battle
 /// once each (slots 2 and 3 of ENCOUNTER_ZONE_SCRIPTED_VALE_VAULT).
 ///
 /// Open questions:
@@ -117,9 +117,9 @@ static void ValeStorm_UpdateBoulderMapEffects(void);
 static void ValeStorm_CycleBoulderPalette(void);
 static void ValeStorm_CopyLeaderSpritePriority(void);
 
-/// The placed actors, numbered in the order of gValeStorm_ObjectEventTemplates;
-/// the elders holding back the Boulder (gValeStorm_BoulderWatchers) follow
-/// them.
+/// The placed object events, numbered in the order of
+/// gValeStorm_ObjectEventTemplates; the elders holding back the Boulder
+/// (gValeStorm_BoulderWatchers) follow them.
 enum StormNightLocalId {
   /// The strongman who comes back to the river with Jenna, his Psynergy
   /// restored at the Psynergy Stone (vale_gate.c); after the Boulder has
@@ -174,12 +174,12 @@ enum StormNightLocalId {
   LOCALID_BOULDER_SHADOW,
   // The elders holding back the Boulder with their Psynergy ("Go aid the
   // elders!", vale_gate.c), from gValeStorm_BoulderWatchers, which
-  // EventScript_WatchBoulderFall places after the scene's own actors and
+  // EventScript_WatchBoulderFall places after the map's own object events and
   // removes.
-  // Two invisible actors stand on the spots of LOCALID_ELDER_EAST and
+  // Two invisible object events stand on the spots of LOCALID_ELDER_EAST and
   // LOCALID_ELDER_WEST, and some of the elders' lines come from them.
-  /// The invisible actor on LOCALID_ELDER_EAST's spot that speaks for that
-  /// elder,
+  /// The invisible object event on LOCALID_ELDER_EAST's spot that speaks for
+  /// that elder,
   /// the elders' first and third lines. "Ahhh! The Boulder! It's falling!",
   /// then "If our Psynergy runs out, Vale will be destroyed!"
   /// ★ Named from the game: "It's falling!" (MsgValeTheBoulderIsFalling)
@@ -194,8 +194,8 @@ enum StormNightLocalId {
   /// ★ Named from the game: "hold on until the villagers are safe"
   /// (MsgValeTheBoulderIsFalling)
   LOCALID_ELDER_FAR_EAST,
-  /// The invisible actor on LOCALID_ELDER_WEST's spot that speaks for that
-  /// elder,
+  /// The invisible object event on LOCALID_ELDER_WEST's spot that speaks for
+  /// that elder,
   /// the elders' second line. "It's too heavy! We can't hold it for long!"
   /// ★ Named from the game: "We can't hold it for long"
   /// (MsgValeTheBoulderIsFalling)
@@ -248,7 +248,7 @@ enum StormNightAnimation {
   ANIMATION_FELIX_CLING_STILL = 8 ///< ANIMATION_FELIX_CLING's first frame held
 };
 
-/// Vale's place flags this scene keeps while the party is in Vale.
+/// Vale's map section flags this map keeps while the party is in Vale.
 enum StormNightMapSecFlag {
   /// The strongman at the river tried to go for help and could not.
   /// ★ Named from the game: "I'll go!" (MsgValeIllGo)
@@ -260,7 +260,7 @@ enum StormNightMapSecFlag {
   /// Kyle has greeted Isaac at the river.
   /// ★ Named from the game: "Oh," (MsgValeOh)
   FLAG_VALE_STORM_KYLE_GREETED_ISAAC = 0x30d,
-  /// The party has passed each rock's spot since coming to Vale, so its event
+  /// The party has passed each rock's spot since coming to Vale, so its script
   /// does not play again.
   /// ★ Named from the game: "We can't get around this rock!"
   /// (MsgValeCantGetAroundThisRock)
@@ -276,19 +276,19 @@ enum StormNightMapSecFlag {
   FLAG_VALE_STORM_FOURTH_ROCK_PASSED = 0x313
 };
 
-// Scene flags, cleared on every ordinary entrance:
+// Map flags, cleared on every ordinary arrival:
 // - FLAG_MAP_TEMP_05: the door of Isaac's house, from which Dora and Isaac
 //   came, stands open.
 // - FLAG_MAP_TEMP_06: the stout man has run out of the door of
 //   VALE_STORM_TO_VALE_INTERIORS_SHOPS_SOUTH, leaving it open.
-// - FLAG_MAP_TEMP_10: the leader is on the upper path, whose collision cells
+// - FLAG_MAP_TEMP_10: the leader is on the upper path, whose metatile behaviors
 //   are swapped until the leader steps off it.
 
 static s32 sShakeDone;
 static s32 sShakeShift;
 
-/// The step of gValeStorm_LookAroundScript: the actor faces a random way every
-/// 20 to 39 frames, as everyone looks about once the Boulder has gone by.
+/// The step of gValeStorm_LookAroundScript: the object event faces a random way
+/// every 20 to 39 frames, as everyone looks about once the Boulder has gone by.
 static s32
 ValeStorm_RerollHeadingOnCountdown(struct ScriptInterpreter *interpreter) {
   struct ObjectEvent *objectEvent = (struct ObjectEvent *)interpreter;
@@ -324,18 +324,18 @@ const struct ObjectEventTemplate *ValeStorm_GetObjectEventTemplates(void) {
 
 const struct MapEvent *ValeStorm_GetEvents(void) { return gValeStorm_Events; }
 
-/// In Vale on the stormy night, swaps the upper path's collision cells as the
-/// leader steps onto it.
-/// Reached by stepping on cell code 15. Sets FLAG_MAP_TEMP_10,
+/// In Vale on the stormy night, swaps the upper path's metatile behaviors as
+/// the leader steps onto it.
+/// Reached by stepping on metatile behavior 15. Sets FLAG_MAP_TEMP_10,
 /// which ValeStorm_Initialize reads to swap them again.
 static void EventScript_SetPathCellOverride(void) {
   Engine_GameFlagSet(FLAG_MAP_TEMP_10);
   MapGrid_CopyCellAttributes(40, 84, 7, 4, 10, 84);
 }
 
-/// In Vale on the stormy night, restores the upper path's collision cells as
+/// In Vale on the stormy night, restores the upper path's metatile behaviors as
 /// the leader steps off it.
-/// Reached by stepping on cell code 14. Clears FLAG_MAP_TEMP_10.
+/// Reached by stepping on metatile behavior 14. Clears FLAG_MAP_TEMP_10.
 static void EventScript_ClearPathCellOverride(void) {
   Engine_GameFlagClear(FLAG_MAP_TEMP_10);
   MapGrid_CopyCellAttributes(40, 89, 7, 4, 10, 84);
@@ -349,8 +349,8 @@ static void EventScript_ClearPathCellOverride(void) {
 /// It takes VALE_STORM_TO_VALE_INTERIORS_SHOPS_WEST_SANCTUM_DOOR
 /// (MapId_ValeInteriorsShops, at VALE_INTERIORS_SHOPS_FROM_VALE_WEST, the
 /// house VALE_STORM_TO_VALE_INTERIORS_SHOPS_WEST and its second door lead to
-/// as well). No event row names it, and nothing
-/// else takes that exit.
+/// as well). No map event names it, and nothing
+/// else takes that warp.
 UNUSED static void ValeStorm_UnusedOpenSanctumDoor(void) {
   Engine_AudioPlayCue(SE_DOOR_OPEN);
   Engine_MapGridAnimateCells(gValeStorm_SanctumDoorOpens, 45, 11);
@@ -360,10 +360,10 @@ UNUSED static void ValeStorm_UnusedOpenSanctumDoor(void) {
       VALE_STORM_TO_VALE_INTERIORS_SHOPS_WEST_SANCTUM_DOOR);
 }
 
-/// Leaves through an exit the exit table doesn't list. In Vale on the stormy
-/// night, stepping on cell code 2 requests exit 1, the one number the exit
-/// table leaves out; Map_TakeWarp therefore falls back to the first exit's
-/// scene, Vale's MapId_ValeGate, at WARP_DEST_DEFAULT.
+/// Leaves through a warp the warp table doesn't list. In Vale on the stormy
+/// night, stepping on metatile behavior 2 requests warp 1, the one number the
+/// warp table leaves out; Map_TakeWarp therefore falls back to the first warp's
+/// map, Vale's MapId_ValeGate, at WARP_DEST_DEFAULT.
 static void EventScript_LeaveByMissingWarp(void) {
   Engine_AudioPlayCue(SE_MAP_EXIT);
   Vale_RequestBackdropWarp(1);
@@ -371,7 +371,8 @@ static void EventScript_LeaveByMissingWarp(void) {
 
 /// In Vale on the stormy night, leaves for the part of Vale around Kraden's
 /// cottage.
-/// Reached by stepping on cell code 3; arrives at VALE_KRADEN_FROM_VALE_NORTH.
+/// Reached by stepping on metatile behavior 3; arrives at
+/// VALE_KRADEN_FROM_VALE_NORTH.
 static void EventScript_LeaveToValeKradenNorth(void) {
   Engine_AudioPlayCue(SE_MAP_EXIT);
   Vale_RequestBackdropWarp(VALE_STORM_TO_VALE_KRADEN_NORTH);
@@ -379,7 +380,8 @@ static void EventScript_LeaveToValeKradenNorth(void) {
 
 /// In Vale on the stormy night, leaves for the part of Vale around Kraden's
 /// cottage by its second path.
-/// Reached by stepping on cell code 4; arrives at VALE_KRADEN_FROM_VALE_SOUTH.
+/// Reached by stepping on metatile behavior 4; arrives at
+/// VALE_KRADEN_FROM_VALE_SOUTH.
 static void EventScript_LeaveToValeKradenSouth(void) {
   Engine_AudioPlayCue(SE_MAP_EXIT);
   Vale_RequestBackdropWarp(VALE_STORM_TO_VALE_KRADEN_SOUTH);
@@ -387,8 +389,8 @@ static void EventScript_LeaveToValeKradenSouth(void) {
 
 /// In Vale on the stormy night, leaves for the plaza, where the villagers have
 /// gathered (MapId_ValeGate).
-/// Reached by stepping on cell code 5; arrives at VALE_GATE_FROM_VALE. After
-/// the Boulder swept them away, Garet first resolves to go after Isaac
+/// Reached by stepping on metatile behavior 5; arrives at VALE_GATE_FROM_VALE.
+/// After the Boulder swept them away, Garet first resolves to go after Isaac
 /// (ValeStorm_GaretFollowsIsaac).
 static void EventScript_LeaveToValeGate(void) {
   Engine_AudioPlayCue(SE_MAP_EXIT);
@@ -400,7 +402,7 @@ static void EventScript_LeaveToValeGate(void) {
 }
 
 /// In Vale on the stormy night, opens the door of Garet's house and goes in.
-/// Reached by walking north into cell code 6; arrives at
+/// Reached by walking north into metatile behavior 6; arrives at
 /// VALE_INTERIORS_SHOPS_FROM_VALE_EAST, the house where Garet's family lives.
 static void EventScript_LeaveToValeInteriorsShopsEast(void) {
   Engine_AudioPlayCue(SE_DOOR_OPEN);
@@ -413,8 +415,8 @@ static void EventScript_LeaveToValeInteriorsShopsEast(void) {
 /// A stout man runs out of a house and shoves Isaac. In Vale on the stormy
 /// night, this is Isaac's first time at the door of
 /// VALE_STORM_TO_VALE_INTERIORS_SHOPS_SOUTH; afterwards the door opens as
-/// usual. "Huh? Isaac?" Reached by walking north into cell code 7. The shove
-/// plays until FLAG_VALE_STORM_BUMPED_INTO_VILLAGER or
+/// usual. "Huh? Isaac?" Reached by walking north into metatile behavior 7. The
+/// shove plays until FLAG_VALE_STORM_BUMPED_INTO_VILLAGER or
 /// FLAG_VALE_STORM_SECOND_ROCK_FELL is set, and sets FLAG_MAP_TEMP_06;
 /// otherwise goes into a house of Vale (MapId_ValeInteriorsShops, at
 /// VALE_INTERIORS_SHOPS_FROM_VALE_SOUTH).
@@ -436,7 +438,7 @@ static void EventScript_LeaveToValeInteriorsShops(void) {
 
 /// Goes back into Isaac's house on the stormy night. It's the door he and Dora
 /// came out of in Vale, and it opens unless they left it open.
-/// Reached by walking north into cell code 8; takes
+/// Reached by walking north into metatile behavior 8; takes
 /// VALE_STORM_TO_VALE_INTERIORS_INN_ISAACS_HOUSE, to
 /// VALE_INTERIORS_INN_FROM_VALE in MapId_ValeInteriorsInn, where Vale's
 /// VALE_TO_VALE_INTERIORS_INN leads by day.
@@ -451,8 +453,8 @@ static void EventScript_LeaveToValeInteriorsInn(void) {
 }
 
 /// In Vale on the stormy night, opens a door and goes in.
-/// Reached by walking north into cell code 9; arrives in a house of Vale at
-/// VALE_INTERIORS_SHOPS_FROM_VALE_NORTH.
+/// Reached by walking north into metatile behavior 9; arrives in a house of
+/// Vale at VALE_INTERIORS_SHOPS_FROM_VALE_NORTH.
 static void EventScript_LeaveToValeInteriorsShopsNorth(void) {
   Engine_AudioPlayCue(SE_DOOR_OPEN);
   Engine_MapGridAnimateCells(gValeStorm_GrandparentsDoorOpens, 49, 69);
@@ -462,7 +464,7 @@ static void EventScript_LeaveToValeInteriorsShopsNorth(void) {
 }
 
 /// In Vale on the stormy night, opens a door and goes in.
-/// Reached by walking north into cell code 10; takes
+/// Reached by walking north into metatile behavior 10; takes
 /// VALE_STORM_TO_VALE_INTERIORS_SHOPS_WEST, to
 /// VALE_INTERIORS_SHOPS_FROM_VALE_WEST in MapId_ValeInteriorsShops, where
 /// Vale's VALE_TO_VALE_INTERIORS_SHOPS_WEST leads by day.
@@ -474,10 +476,10 @@ static void EventScript_LeaveToValeInteriorsShopsWest(void) {
   Vale_RequestBackdropWarp(VALE_STORM_TO_VALE_INTERIORS_SHOPS_WEST);
 }
 
-/// Unused: its row answers cell code 11, which no cell of the stormy night's
-/// map (layout/layout_000) carries. It would have opened Isaac's door, as
-/// EventScript_LeaveToValeInteriorsInnWest does for code 12, walked the leader
-/// to the same spot and taken
+/// Unused: its row answers metatile behavior 11, which no cell of the stormy
+/// night's layout (layout/layout_000) carries. It would have opened Isaac's
+/// door, as EventScript_LeaveToValeInteriorsInnWest does for behavior 12,
+/// walked the leader to the same spot and taken
 /// VALE_STORM_TO_VALE_INTERIORS_SHOPS_WEST_SECOND_DOOR into the house
 /// EventScript_LeaveToValeInteriorsShopsWest leads to
 /// (VALE_INTERIORS_SHOPS_FROM_VALE_WEST).
@@ -490,8 +492,8 @@ static void EventScript_UnusedLeaveToValeInteriorsShopsWestBySecondDoor(void) {
 }
 
 /// In Vale on the stormy night, opens a door and goes in.
-/// Reached by walking north into cell code 12; arrives in another part of Vale
-/// at VALE_INTERIORS_INN_FROM_VALE_STORM_WEST.
+/// Reached by walking north into metatile behavior 12; arrives in another part
+/// of Vale at VALE_INTERIORS_INN_FROM_VALE_STORM_WEST.
 static void EventScript_LeaveToValeInteriorsInnWest(void) {
   Script_PlayCue(SE_DOOR_OPEN);
   MapGrid_AnimateCells(gValeStorm_IsaacsDoorOpens, 35, 73);
@@ -501,8 +503,8 @@ static void EventScript_LeaveToValeInteriorsInnWest(void) {
 }
 
 /// In Vale on the stormy night, opens a door and goes in.
-/// Reached by walking north into cell code 13; arrives in another part of Vale
-/// at VALE_INTERIORS_INN_FROM_VALE_STORM_EAST.
+/// Reached by walking north into metatile behavior 13; arrives in another part
+/// of Vale at VALE_INTERIORS_INN_FROM_VALE_STORM_EAST.
 static void EventScript_LeaveToValeInteriorsInnEast(void) {
   Script_PlayCue(SE_DOOR_OPEN);
   MapGrid_AnimateCells(gValeStorm_GrandparentsDoorOpens, 38, 72);
@@ -515,7 +517,7 @@ static void EventScript_LeaveToValeInteriorsInnEast(void) {
 /// scene and the Boulder from their flags, starts the storm, and plays the
 /// scene with Dora and Kyle on the first arrival by
 /// VALE_STORM_FROM_VALE_INTERIORS_INN_WITH_DORA. Called by Field_RunMap once
-/// the actors are placed. Sets FLAG_VALE_STORM; after a battle
+/// the object events are placed. Sets FLAG_VALE_STORM; after a battle
 /// (FLAG_KEEP_PARTY_POSITION) the two doors close again. Garet, until he joins,
 /// is shown struggling with his things.
 s32 ValeStorm_Initialize(void) {
@@ -860,11 +862,11 @@ static void EventScript_DoraSendsIsaacToThePlaza(void) {
 /// In Vale on the stormy night, walking past: the first rock
 /// (LOCALID_FIRST_ROCK) falls across the path, and Garet, once with Isaac, says
 /// they cannot get around it.
-/// Reached by stepping on cell code 41 until FLAG_VALE_STORM_FIRST_ROCK_PASSED
-/// is set, which this sets. Sets FLAG_VALE_STORM_FIRST_ROCK_FELL as the rock
-/// falls; with Garet along, before the Boulder swept Felix, his parents and
-/// Kyle away, his first comment on any rock sets
-/// FLAG_VALE_STORM_GARET_SAW_BLOCKED_PATH.
+/// Reached by stepping on metatile behavior 41 until
+/// FLAG_VALE_STORM_FIRST_ROCK_PASSED is set, which this sets. Sets
+/// FLAG_VALE_STORM_FIRST_ROCK_FELL as the rock falls; with Garet along, before
+/// the Boulder swept Felix, his parents and Kyle away, his first comment on any
+/// rock sets FLAG_VALE_STORM_GARET_SAW_BLOCKED_PATH.
 static void EventScript_FirstRockFalls(void) {
   struct ObjectEvent *rock;
   struct ObjectEvent *leader;
@@ -928,7 +930,7 @@ static void EventScript_FirstRockFalls(void) {
   }
 }
 
-/// Applies the collision cells left by the first rock (LOCALID_FIRST_ROCK).
+/// Applies the metatile behaviors left by the first rock (LOCALID_FIRST_ROCK).
 /// Called by EventScript_FirstRockFalls and, once the rock has fallen, by
 /// ValeStorm_Initialize.
 static void ValeStorm_ApplyFirstRockCollision(void) {
@@ -941,8 +943,8 @@ static void ValeStorm_ApplyFirstRockCollision(void) {
 
 /// In Vale on the stormy night, walking past: the second rock
 /// (LOCALID_FIRST_ROCK + 1) falls down the path.
-/// Reached by stepping on cell code 42; as EventScript_FirstRockFalls does the
-/// first, with FLAG_VALE_STORM_SECOND_ROCK_FELL and
+/// Reached by stepping on metatile behavior 42; as EventScript_FirstRockFalls
+/// does the first, with FLAG_VALE_STORM_SECOND_ROCK_FELL and
 /// FLAG_VALE_STORM_SECOND_ROCK_PASSED.
 static void EventScript_SecondRockFalls(void) {
   struct ObjectEvent *rock;
@@ -1002,7 +1004,7 @@ static void EventScript_SecondRockFalls(void) {
   }
 }
 
-/// Applies the collision cells left by the second rock (LOCALID_FIRST_ROCK +
+/// Applies the metatile behaviors left by the second rock (LOCALID_FIRST_ROCK +
 /// 1). Called by EventScript_SecondRockFalls and, once the rock has fallen, by
 /// ValeStorm_Initialize.
 static void ValeStorm_ApplySecondRockCollision(void) {
@@ -1018,8 +1020,8 @@ static void ValeStorm_ApplySecondRockCollision(void) {
 
 /// In Vale on the stormy night, walking past: the third rock
 /// (LOCALID_FIRST_ROCK + 2) falls down the path.
-/// Reached by stepping on cell code 43; as EventScript_FirstRockFalls does the
-/// first, with FLAG_VALE_STORM_THIRD_ROCK_FELL and
+/// Reached by stepping on metatile behavior 43; as EventScript_FirstRockFalls
+/// does the first, with FLAG_VALE_STORM_THIRD_ROCK_FELL and
 /// FLAG_VALE_STORM_THIRD_ROCK_PASSED.
 static void EventScript_ThirdRockFalls(void) {
   if (GameFlag_IsSet(FLAG_VALE_STORM_THIRD_ROCK_PASSED) == 0) {
@@ -1080,8 +1082,8 @@ static void EventScript_ThirdRockFalls(void) {
   }
 }
 
-/// Applies the collision cells left by the third rock (LOCALID_FIRST_ROCK + 2).
-/// Called by EventScript_ThirdRockFalls and, once the rock has fallen, by
+/// Applies the metatile behaviors left by the third rock (LOCALID_FIRST_ROCK +
+/// 2). Called by EventScript_ThirdRockFalls and, once the rock has fallen, by
 /// ValeStorm_Initialize.
 static void ValeStorm_ApplyThirdRockCollision(void) {
   MapGrid_CopyCellAttributes(29, 22, 1, 1, 3, 42);
@@ -1092,8 +1094,8 @@ static void ValeStorm_ApplyThirdRockCollision(void) {
 
 /// In Vale on the stormy night, walking past: the fourth rock
 /// (LOCALID_FIRST_ROCK + 3) falls down the path.
-/// Reached by stepping on cell code 44; as EventScript_FirstRockFalls does the
-/// first, with FLAG_VALE_STORM_FOURTH_ROCK_FELL and
+/// Reached by stepping on metatile behavior 44; as EventScript_FirstRockFalls
+/// does the first, with FLAG_VALE_STORM_FOURTH_ROCK_FELL and
 /// FLAG_VALE_STORM_FOURTH_ROCK_PASSED.
 static void EventScript_FourthRockFalls(void) {
   struct ObjectEvent *rock;
@@ -1150,7 +1152,7 @@ static void EventScript_FourthRockFalls(void) {
   }
 }
 
-/// Applies the collision cells left by the fourth rock (LOCALID_FIRST_ROCK +
+/// Applies the metatile behaviors left by the fourth rock (LOCALID_FIRST_ROCK +
 /// 3). Called by EventScript_FourthRockFalls and, once the rock has fallen, by
 /// ValeStorm_Initialize.
 static void ValeStorm_ApplyFourthRockCollision(void) {
@@ -1200,7 +1202,7 @@ static void ValeStorm_BumpIntoShovingMan(void) {
 
 /// In Vale on the stormy night, Isaac hears Garet struggling with his things.
 /// "Ugh... Hrnghhh..."
-/// Reached by stepping on cell code 30, until Garet has joined. Sets
+/// Reached by stepping on metatile behavior 30, until Garet has joined. Sets
 /// FLAG_VALE_STORM_HEARD_GARET.
 static void EventScript_HearGaretStruggling(void) {
   if (GameFlag_IsSet(FLAG_VALE_STORM_HEARD_GARET) == 0) {
@@ -1223,8 +1225,8 @@ static void EventScript_HearGaretStruggling(void) {
 
 /// In Vale on the stormy night, walking away from him: Garet calls after
 /// Isaac, asking whether he will just leave him there.
-/// Reached by stepping on cell code 31 once Isaac has heard Garet and before
-/// Garet joins; ValeStorm_GaretLeavesHisChest brings him along.
+/// Reached by stepping on metatile behavior 31 once Isaac has heard Garet and
+/// before Garet joins; ValeStorm_GaretLeavesHisChest brings him along.
 static void EventScript_GaretCallsAfterIsaac(void) {
   if (Engine_GameFlagIsSet(FLAG_VALE_STORM_GARET_JOINED) == 0 &&
       Engine_GameFlagIsSet(FLAG_VALE_STORM_HEARD_GARET) != 0) {
@@ -1309,15 +1311,15 @@ static void ValeStorm_GaretLeavesHisChest(void) {
 /// Unused: an earlier version of Garet joining Isaac on the stormy night,
 /// which the game never plays.
 ///
-/// Its row answers cell code 32, but every way there crosses the cells where
-/// Isaac hears Garet struggling (code 30, EventScript_HearGaretStruggling) and
-/// where Garet calls after him and joins (code 31,
-/// EventScript_GaretCallsAfterIsaac), so Garet has always joined by then and
-/// the scene's first test, FLAG_VALE_STORM_GARET_JOINED, ends it. Its lines
-/// appear nowhere else: Garet runs up (gValeStorm_UnusedGaretRunsUpScript),
-/// heaves for breath, `*Hah* *Hah*`, while gValeStorm_UnusedGaretPantingScript
-/// swells and shrinks his sprite, and asks `Are you trapped, too?` before they
-/// leave together.
+/// Its row answers metatile behavior 32, but every way there crosses the cells
+/// where Isaac hears Garet struggling (behavior 30,
+/// EventScript_HearGaretStruggling) and where Garet calls after him and joins
+/// (behavior 31, EventScript_GaretCallsAfterIsaac), so Garet has always joined
+/// by then and the scene's first test, FLAG_VALE_STORM_GARET_JOINED, ends it.
+/// Its lines appear nowhere else: Garet runs up
+/// (gValeStorm_UnusedGaretRunsUpScript), heaves for breath, `*Hah* *Hah*`,
+/// while gValeStorm_UnusedGaretPantingScript swells and shrinks his sprite, and
+/// asks `Are you trapped, too?` before they leave together.
 static void EventScript_UnusedGaretJoinsIsaac(void) {
   struct ObjectEvent *objectEvent;
   s32 message;
@@ -1372,7 +1374,8 @@ static void EventScript_UnusedGaretJoinsIsaac(void) {
 
 /// In Vale on the stormy night, Garet turns Isaac back from the path north,
 /// which leads to Mt. Aleph.
-/// Reached by stepping on cell code 33, every time; Isaac is walked back south.
+/// Reached by stepping on metatile behavior 33, every time; Isaac is walked
+/// back south.
 static void EventScript_WarnAboutMtAleph(void) {
   struct ObjectEvent *leader;
   struct ObjectEvent *initialLeader;
@@ -1408,7 +1411,7 @@ static void EventScript_WarnAboutMtAleph(void) {
 }
 
 /// Brings Garet out to discuss a blocked path, then returns him to Isaac.
-/// Called by the four rock events; x and y are the pixels where Garet stands.
+/// Called by the four rock scripts; x and y are the pixels where Garet stands.
 static void ValeStorm_GaretCommentsOnBlockedPath(s32 x, s32 y) {
   struct ObjectEvent *leaderAtStart;
   s32 speed = PIXELS(1);
@@ -1446,8 +1449,8 @@ static void ValeStorm_GaretCommentsOnBlockedPath(s32 x, s32 y) {
 /// In Vale on the stormy night, the elders hold the Boulder with their
 /// Psynergy as it slips.
 /// "Ahhh! The Boulder! It's falling!"
-/// Reached by stepping on cell code 34 until FLAG_VALE_BOULDER_FELL is set,
-/// which this sets. The elders and their two stand-ins
+/// Reached by stepping on metatile behavior 34 until FLAG_VALE_BOULDER_FELL is
+/// set, which this sets. The elders and their two stand-ins
 /// (gValeStorm_BoulderWatchers, LOCALID_ELDER_EAST_STAND_IN to
 /// LOCALID_ELDER_WEST) are placed for the scene and removed after it.
 static void EventScript_WatchBoulderFall(void) {
@@ -1649,9 +1652,9 @@ static void EventScript_WatchBoulderFall(void) {
   }
 }
 
-/// Sets the animation parameter of each entry of a one-sprite actor: mode - 1,
-/// or for mode 0 a value from gValeStorm_FrameModes by the frame count. Only
-/// ValeStorm_FlashBoulderMapAnimationEntries calls it.
+/// Sets the animation parameter of each entry of a one-sprite object event:
+/// mode - 1, or for mode 0 a value from gValeStorm_FrameModes by the frame
+/// count. Only ValeStorm_FlashBoulderMapAnimationEntries calls it.
 static void ValeStorm_SetObjectEventFrameMode(struct ObjectEvent *objectEvent,
                                               s32 mode) {
   if ((objectEvent->spriteStorageKind & 0xf) == 1) {
@@ -1707,8 +1710,8 @@ UNUSED static void ValeStorm_FlashBoulderMapAnimationEntries(void) {
 /// Vale on the stormy night, her brother Felix has fallen in and clings on as
 /// Kyle and her parents try to save him. "Oh no! My brother!" The rope will not
 /// reach and no one has Psynergy left, so they send for help. Reached by
-/// stepping on cell code 35 until FLAG_VALE_STORM_SAW_FELIX_HANGING_ON is set,
-/// which this sets after ValeStorm_DoraGoesForHelp.
+/// stepping on metatile behavior 35 until FLAG_VALE_STORM_SAW_FELIX_HANGING_ON
+/// is set, which this sets after ValeStorm_DoraGoesForHelp.
 static void EventScript_WatchAttemptToSaveFelix(void) {
   const s32 *pulseScript;
 
@@ -2160,7 +2163,7 @@ static void EventScript_TalkAboutSavingFelix(void) {
 /// night, Jenna comes back to the river with Isaac, Garet and the man whose
 /// Psynergy is restored ("Mom! Dad! We're back!"), and as Dora calls everyone
 /// down to save Felix the Boulder comes down the river and sweeps away Felix,
-/// his parents and Kyle. Reached by stepping on cell code 36 once
+/// his parents and Kyle. Reached by stepping on metatile behavior 36 once
 /// FLAG_VALE_STORM_SENT_TO_AID_ELDERS is set (vale_gate.c), until
 /// FLAG_VALE_STORM_BOULDER_SWEPT_THEM_AWAY is set, which this sets.
 static void EventScript_BoulderSweepsThemAway(void) {
@@ -2293,7 +2296,7 @@ static void EventScript_BoulderSweepsThemAway(void) {
   }
 }
 
-/// Places an actor and its targets at once, x doubling as its height.
+/// Places an object event and its targets at once, x doubling as its height.
 static __inline__ void ValeStorm_PlaceObjectEvent(struct ObjectEvent *object,
                                                   s32 horizontalPosition,
                                                   s32 groundPosition) {
@@ -2608,7 +2611,7 @@ static void ValeStorm_ShowBoulderSweepingDownriver(void) {
   TileAnimation_ResumeChannel(3);
   TileAnimation_ResumeChannel(4);
   TileAnimation_ResumeChannel(5);
-  // Restore the riverbank and the idle actor scripts.
+  // Restore the riverbank and the idle object event scripts.
   ValeStorm_RebuildRiverbank();
   ObjectEvent_SetPosition(LOCALID_DORA, PIXELS(165), PIXELS(1229));
   ObjectEvent_SetAnimation(LOCALID_DORA, ANIMATION_STAND);
@@ -2892,9 +2895,9 @@ static void ValeStorm_GaretFollowsIsaac(void) {
   GameFlag_Set(FLAG_VALE_STORM_GARET_LEFT);
 }
 
-/// Redraws the riverbank as the Boulder left it, pictures and collision.
-/// Called by ValeStorm_ShowBoulderSweepingDownriver and, on later arrivals, by
-/// ValeStorm_Initialize.
+/// Redraws the riverbank as the Boulder left it, pictures and metatile
+/// behaviors. Called by ValeStorm_ShowBoulderSweepingDownriver and, on later
+/// arrivals, by ValeStorm_Initialize.
 static void ValeStorm_RebuildRiverbank(void) {
   MapGrid_CopyCellsTo(16, 96, 11, 73, 6, 3);
   MapGrid_CopyCellsTo(16, 96, 34, 68, 14, 10);
@@ -2916,7 +2919,7 @@ static void ValeStorm_RebuildRiverbank(void) {
 
 /// In Vale on the stormy night, a monster attacks on the paths (slot 2 of
 /// ENCOUNTER_ZONE_SCRIPTED_VALE_VAULT).
-/// Reached by stepping on cell code 16 until
+/// Reached by stepping on metatile behavior 16 until
 /// FLAG_VALE_STORM_THIRD_MONSTER_FOUGHT is set.
 static void EventScript_FightThirdMonster(void) {
   struct EventWork *state;
@@ -2934,7 +2937,7 @@ static void EventScript_FightThirdMonster(void) {
 
 /// In Vale on the stormy night, another monster attacks (slot 3 of
 /// ENCOUNTER_ZONE_SCRIPTED_VALE_VAULT).
-/// Reached by stepping on cell code 17 until
+/// Reached by stepping on metatile behavior 17 until
 /// FLAG_VALE_STORM_FOURTH_MONSTER_FOUGHT is set.
 static void EventScript_FightFourthMonster(void) {
   struct EventWork *state;
@@ -3121,7 +3124,7 @@ static void EventScript_SearchValuablesChest(void) {
 /// count.
 u8 gValeStorm_FrameModes[] = {7, 0, 0, 0};
 
-// The actors' object scripts, positions in pixels.
+// The object events' scripts, positions in pixels.
 
 /// The stout man runs off toward the plaza after shoving Isaac.
 s32 gValeStorm_ShovingManScript[] = {

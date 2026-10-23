@@ -1,17 +1,17 @@
 /// @file
 /// Vale (MapId_ValeInteriorsShops): the insides of the village's houses and
-/// shops, all on one map. Each room is an entrance with a camera box of its
-/// own, named for the door it is entered by
+/// shops, all on one map. Each room is a warp destination with a camera box of
+/// its own, named for the door it is entered by
 /// (VALE_INTERIORS_SHOPS_FROM_VALE_WEST and the rest), and its door takes the
-/// exit of the same number back out: four open onto the village (MapId_Vale),
+/// warp of the same number back out: four open onto the village (MapId_Vale),
 /// and four onto the part of Vale with the Psynergy Stone (MapId_ValeGate),
-/// as the exits' names say. Garet's family lives in the room entered from
+/// as the warps' names say. Garet's family lives in the room entered from
 /// VALE_INTERIORS_SHOPS_FROM_VALE_EAST: his grandfather the mayor, his
 /// grandmother and his parents. Jenna's grandparents live in the room entered
 /// from VALE_INTERIORS_SHOPS_FROM_VALE_NORTH, and the one entered from
 /// VALE_INTERIORS_SHOPS_FROM_VALE_GATE_WEST holds the item, weapon and armor
-/// shops, each opened across its counter. The placements and events follow the
-/// story:
+/// shops, each opened across its counter. The object event templates and map
+/// events follow the story:
 ///
 /// - The stormy night of the prologue (FLAG_VALE_STORM). Everyone is out:
 ///   ValeInteriorsShops_Initialize removes every resident and flashes the
@@ -74,11 +74,11 @@
 #include "flags.h"
 #include "songs.h"
 
-/// The placed actors, numbered in the order of the placement tables, which
-/// all place them alike; gValeInteriorsShops_ObjectEventTemplatesAfterKalay
-/// adds Garet, Ivan and Mia, who keep their characters' ids, and the drifting
-/// sprites. The villagers' notes quote what they say on the day the story
-/// begins.
+/// The placed object events, numbered in the order of the object event template
+/// tables, which all place them alike;
+/// gValeInteriorsShops_ObjectEventTemplatesAfterKalay adds Garet, Ivan and Mia,
+/// who keep their characters' ids, and the drifting sprites. The villagers'
+/// notes quote what they say on the day the story begins.
 enum ValeInteriorsShopsLocalId {
   /// Garet's grandfather, the mayor, an old man with white hair and a cane
   /// ("your grandpa's the mayor", vale.c). "Isaac, please take care of my
@@ -178,7 +178,7 @@ static void ValeInteriorsShops_SpawnSleepZ(void);
 
 /// Moves and grows a Z drifting up from Garet's sleeping grandfather.
 ///
-/// Called each frame by gValeInteriorsShops_SleepZScript; the actor's
+/// Called each frame by gValeInteriorsShops_SleepZScript; the object event's
 /// timer and work are its x and y steps in signed 8.8 pixels, set by
 /// ValeInteriorsShops_SpawnSleepZ.
 static s32
@@ -207,9 +207,9 @@ const u32 *ValeInteriorsShops_GetWarps(void) {
   return gValeInteriorsShops_Warps;
 }
 
-/// Selects the placements for the day the story begins, after the party has
-/// left Vale (FLAG_VALE_PARTY_LEFT), or after Kalay (FLAG_KALAY_REACHED), and
-/// marks which of their actors are in view.
+/// Selects the object event templates for the day the story begins, after the
+/// party has left Vale (FLAG_VALE_PARTY_LEFT), or after Kalay
+/// (FLAG_KALAY_REACHED), and marks which of their object events are in view.
 const struct ObjectEventTemplate *
 ValeInteriorsShops_GetObjectEventTemplates(void) {
   struct ObjectEventTemplate *table;
@@ -225,7 +225,7 @@ ValeInteriorsShops_GetObjectEventTemplates(void) {
   return table;
 }
 
-/// Selects the events for the current visit to Vale: the stormy night's
+/// Selects the map events for the current visit to Vale: the stormy night's
 /// (FLAG_VALE_STORM), after Kalay, after the party has left, or the day the
 /// story begins.
 const struct MapEvent *ValeInteriorsShops_GetEvents(void) {
@@ -330,7 +330,7 @@ static void EventScript_WorryAboutTravelersHealth(void) {
   Engine_ScriptEnd();
 }
 
-/// Leaves a house through its door: the exit sound plays and the screen
+/// Leaves a house through its door: the warp sound plays and the screen
 /// closes, stopping the lightning first on the stormy night.
 static void ValeInteriorsShops_RequestWindowWarp(s32 warpNumber) {
   if (Engine_GameFlagIsSet(FLAG_VALE_STORM) != 0)
@@ -344,9 +344,9 @@ static void ValeInteriorsShops_RequestWindowWarp(s32 warpNumber) {
   Engine_ScriptRequestWarp(warpNumber);
 }
 
-// The rooms' doors: stepping on a door's cell, whose collision code is its
-// exit's number, takes that exit back out, in every table. On the stormy night
-// the exits to MapId_Vale lead to the storm's map (MapId_ValeStorm)
+// The rooms' doors: stepping on a door's cell, whose metatile behavior is its
+// warp's number, takes that warp back out, in every table. On the stormy night
+// the warps to MapId_Vale lead to the storm's map (MapId_ValeStorm)
 // instead.
 
 /// Leaves the house where a young man dreams of leaving. It's the room entered
@@ -362,8 +362,8 @@ static void EventScript_LeaveToValeNorth(void) {
 }
 
 /// Leaves the empty house. It's the room entered from
-/// VALE_INTERIORS_SHOPS_FROM_VALE_GATE_NORTH, which no placement table puts
-/// anyone in.
+/// VALE_INTERIORS_SHOPS_FROM_VALE_GATE_NORTH, which no object event template
+/// table puts anyone in.
 static void EventScript_LeaveToValeGateWest(void) {
   ValeInteriorsShops_RequestWindowWarp(VALE_INTERIORS_SHOPS_TO_VALE_GATE_WEST);
 }
@@ -403,7 +403,7 @@ static void EventScript_LeaveToValeGateNorth(void) {
 /// lightning flashes outside; back from Kalay, entering Garet's house the first
 /// time plays his homecoming.
 ///
-/// The scene's initialize entry. Runs EventScript_GaretComesHome from
+/// The map's initialize entry. Runs EventScript_GaretComesHome from
 /// VALE_INTERIORS_SHOPS_FROM_VALE_EAST after Kalay until FLAG_GARET_CAME_HOME
 /// is set. From VALE_INTERIORS_SHOPS_FROM_VALE_NORTH, once the party has left
 /// Vale, Jenna's grandmother lies sick in bed.

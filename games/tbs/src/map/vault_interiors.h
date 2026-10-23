@@ -2,12 +2,12 @@
 #define ALCHEMY_MAP_VAULT_INTERIORS_H
 
 /// @file
-/// The collision codes of the map of Vault's houses, shops and inn, which
+/// The metatile behaviors of the layout of Vault's houses, shops and inn, which
 /// MapId_VaultInteriors (vault_interiors.c) and MapId_VaultInteriorsRevisit
 /// (vault_interiors_revisit.c) both answer.
 
-/// The cells the interiors' touch and search events answer; the exits have
-/// codes of their own.
+/// The cells the interiors' coord events and bg events answer; the warps have
+/// metatile behaviors of their own.
 enum VaultInteriorsCell {
   /// The stairs down from the inn's guests' room.
   VAULT_INTERIORS_CELL_GUESTS_ROOM_STAIRS = 7,

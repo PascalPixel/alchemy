@@ -7,8 +7,8 @@
 
 enum CollapseLocalId {
   /// The shadow on the platform under each who leaves with Saturos: a
-  /// blank actor, whose sprite draws only its shadow, shrunk with the
-  /// departing actor, whose own shadow is turned off
+  /// blank object event, whose sprite draws only its shadow, shrunk with
+  /// the departing object event, whose own shadow is turned off
   /// (SolSanctumEruption_RaiseAndShrinkObjectEvent).
   /// ★ Named from what the player sees: the shadow that shrinks on the
   /// platform as each of them rises away (its render),

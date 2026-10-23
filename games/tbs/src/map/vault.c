@@ -6,7 +6,7 @@
 /// Map_GetObjectEventTemplates and Map_GetEvents choose their tables by
 /// FLAG_VAULT_THIEVES_JAILED, and once the party has reached Kalay
 /// (FLAG_KALAY_REACHED) Map_Initialize sends it straight on to the town's
-/// later scene (VAULT_TO_VAULT_REVISIT, MapId_VaultRevisit,
+/// later map (VAULT_TO_VAULT_REVISIT, MapId_VaultRevisit,
 /// vault_revisit.c).
 ///
 /// The story flags change the streets in order:
@@ -24,16 +24,16 @@
 /// - Once the thieves are jailed, the townspeople thank the party, and the
 ///   dog, given a Bone (EventScript_GiveBoneToDog,
 ///   FLAG_VAULT_DOG_SHOWN_PASSAGE), runs to a spot and jumps there three times;
-///   the passage it shows opens only in the later scene.
+///   the passage it shows opens only in the later map.
 ///
 /// Sap, a Venus Djinni, hides near the bell, and the first ring since the party
 /// came in by a gate (FLAG_VAULT_DJINNI_CALLED_BY_BELL) calls it out to stand
-/// beside the bell; it joins only in the later scene. The well rumbles with
+/// beside the bell; it joins only in the later map. The well rumbles with
 /// water and a wooden box holds a Nut. The doors open with an animation
 /// (gVault_*DoorCells) and lead into the houses, shops and inn
 /// (MapId_VaultInteriors), the jail (MapId_VaultJail) and the Vault Sanctum
-/// (VAULT_TO_SANCTUM); the cells the events answer are enum VaultCell
-/// (vault.h).
+/// (VAULT_TO_SANCTUM); the metatile behaviors the events answer are enum
+/// VaultCell (vault.h).
 ///
 /// The rope bridge in the town's south-east spans a path that runs under it,
 /// and stepping onto either end of it or off its west end switches the cells
@@ -41,14 +41,13 @@
 ///
 /// Open questions:
 /// - XXX (no evidence): what the ivy placed at (0, 0) with
-/// MOVEMENT_TYPE_RESET_ACTION,
-///   actor 22, the row after LOCALID_WOMAN_WANTING_THE_ROOF_FIXED, was for; it
-///   is drawn above the map's top edge where no camera shows it, is not
-///   solid, and only the engine's passes over every actor touch it (render
-///   probe vault-ivy, watching ObjectTable_Get for it while the town loads,
-///   while the leader walks and while Whirlwind is cast; vault_revisit.c's
-///   table has the same row), so nothing in the ROM says what it was meant to
-///   do.
+///   MOVEMENT_TYPE_RESET_ACTION, object event 22, the row after
+///   LOCALID_WOMAN_WANTING_THE_ROOF_FIXED, was for; it is drawn above the map's
+///   top edge where no camera shows it, is not solid, and only the engine's
+///   passes over every object event touch it (render probe vault-ivy, watching
+///   ObjectTable_Get for it while the town loads, while the leader walks and
+///   while Whirlwind is cast; vault_revisit.c's table has the same row), so
+///   nothing in the ROM says what it was meant to do.
 
 #include "game_state.h"
 #include "animspr.h"
@@ -242,7 +241,7 @@ static void EventScript_IvanStaysBehind(void) {
                                                      VAULT_TO_WORLD_MAP_SOUTH));
     return;
   }
-  // Bring Ivan out beside the party at the exit they are using.
+  // Bring Ivan out beside the party at the warp they are using.
   Engine_ScriptStart();
   objectEvent = ObjectEvent_Get(LOCALID_PARTY_LEADER);
   if (objectEvent != 0) {
@@ -446,7 +445,7 @@ static void EventScript_LookForRoofer(void) {
   Engine_ScriptEnd();
 }
 
-/// Stops an actor, faces the leader and shows the current message.
+/// Stops an object event, faces the leader and shows the current message.
 static void Vault_ShowStandingObjectEventMessage(s32 objectEvent) {
   Engine_ScriptStart();
   Engine_ObjectEventSetAnimation(objectEvent, ANIMATION_STAND);
@@ -708,7 +707,7 @@ static void EventScript_ReadWomanWantingTheRoofFixedMind(void) {
 
 #include "common/vault_toggle.h"
 
-/// Walks to the exit threshold and requests the room's transition.
+/// Walks to the warp's threshold and requests the room's transition.
 static void Vault_WalkThroughExit(s32 x, s32 y, s32 continuation) {
   ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, PIXELS(1) / 2, PIXELS(1) / 4);
   ObjectEvent_WalkTo(LOCALID_PARTY_LEADER, x, y);
@@ -803,7 +802,8 @@ static void EventScript_EnterPassage(void) {
   Vault_WalkThroughExit(152, 264, VAULT_TO_VAULT_INTERIORS_WEST);
 }
 
-/// Moves an actor through a jump and waits up to sixty frames for it to settle.
+/// Moves an object event through a jump and waits up to sixty frames for it to
+/// settle.
 static void Vault_JumpObjectEventToAndWait(s32 objectEventId, s32 x, s32 z,
                                            s32 verticalSpeed) {
   struct ObjectEvent *objectEvent = ObjectEvent_GetById(objectEventId);
@@ -827,7 +827,7 @@ static void Vault_JumpObjectEventToAndWait(s32 objectEventId, s32 x, s32 z,
 /// In Vault, Isaac rings the bell; the first time since the party came in by a
 /// gate, Sap, the Venus Djinni hiding nearby, jumps out and comes to the bell
 /// (FLAG_VAULT_DJINNI_CALLED_BY_BELL). No event here lets the party talk to
-/// it; it joins in the town's later scene (vault_revisit.c).
+/// it; it joins in the town's later map (vault_revisit.c).
 static void EventScript_RingBell(void) {
   Engine_ScriptStart();
   Script_PlayCue(SE_100);
@@ -884,7 +884,7 @@ s32 Map_Initialize(void) {
   s32 zero;
 
   // Once the party has reached Kalay (FLAG_KALAY_REACHED), the town is its
-  // later scene, MapId_VaultRevisit (vault_revisit.c).
+  // later map, MapId_VaultRevisit (vault_revisit.c).
   if (Engine_GameFlagIsSet(FLAG_KALAY_REACHED) != 0) {
     Engine_ScriptRequestWarp(VAULT_TO_VAULT_REVISIT);
   }
@@ -1031,7 +1031,7 @@ static void Vault_FaceObjectEventAndWait(s32 objectEvent, s32 other,
 
 /// Applies drift and gradually damps both rates toward zero.
 /// This custom update uses speed/acceleration as its two drift rates and
-/// mirrors the resulting position into the actor's target coordinates.
+/// mirrors the resulting position into the object event's target coordinates.
 static void Vault_UpdateDriftingEffect(union FieldObject *fieldObject) {
   struct ObjectEvent *effect = (struct ObjectEvent *)fieldObject;
   s32 horizontalRate;
@@ -1180,7 +1180,7 @@ const s32 *gEffectScripts[] = {
 
 /// LOCALID_WOMAN_WANTING_THE_ROOF_FIXED's search for the young man fixing the
 /// roof: to one end of her path and the other, looking west and east at each,
-/// for as long as the scene lasts.
+/// for as long as the party stays on the map.
 s32 gVault_WomanWantingTheRoofFixedRoute[] = {
     SC_SET(SW_SPEED, PIXELS(2) / 5),
     SC_SET(SW_ACCELERATION, PIXELS(1) / 5),
@@ -1238,7 +1238,7 @@ s32 gVault_WomanWantingTheRoofFixedRoute[] = {
 };
 
 /// LOCALID_BOY_ROUND_THE_WELL's walk, round eight points for as long as the
-/// scene lasts.
+/// party stays on the map.
 s32 gVault_BoyRoundTheWellRoute[] = {
     SC_ANIMATION(2),
     SC_SET(SW_SPEED, PIXELS(4) / 5),

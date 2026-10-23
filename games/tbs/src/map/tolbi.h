@@ -16,11 +16,11 @@
 #include "common/colosso_story_flags.h"
 #include "flags.h"
 
-// Scene flags: FLAG_MAP_TEMP_00 is set once Growth has raised the sprout,
+// Map flags: FLAG_MAP_TEMP_00 is set once Growth has raised the sprout,
 // FLAG_MAP_TEMP_01 once Frost has frozen the puddle; both reset when the
 // party leaves the town.
 
-/// Actors, numbered in the order of the placement table from
+/// Object events, numbered in the order of the object event templates from
 /// LOCALID_FIRST_PLACED. The townspeople the text gives no name are named by
 /// what their sprites show and what they say or, under Mind Read, think
 /// during the festival.
@@ -113,8 +113,8 @@ enum TolbiLocalId {
   TOLBI_MISSING_PERSON_POSTER = 32,
 };
 
-/// The touch cells whose events are more than a door. The doors' own cells
-/// carry the numbers of their exits (Tolbi_EnterDoor,
+/// The coord events that are more than a door. The doors' own cells carry
+/// the numbers of their warps (Tolbi_EnterDoor,
 /// Tolbi_RequestTouchedWarp).
 enum TolbiCell {
   /// Where Babi's soldiers stop the party during the festival.
@@ -141,7 +141,7 @@ enum TolbiMarker {
   TOLBI_HIDDEN_CHEST = 102,
 };
 
-/// The running children keep these flags in ObjectEvent.timer, their scene
+/// The running children keep these flags in ObjectEvent.timer, their map
 /// scratch halfword. Bits: 1 talking | 0 chases the younger sister.
 enum {
   /// Set on the older brother, who runs after TOLBI_YOUNGER_SISTER.

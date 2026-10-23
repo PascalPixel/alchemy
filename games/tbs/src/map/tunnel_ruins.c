@@ -1,5 +1,5 @@
 /// @file
-/// The Tunnel Ruins under Babi Lighthouse, two scenes of Psynergy puzzles with
+/// The Tunnel Ruins under Babi Lighthouse, two maps of Psynergy puzzles with
 /// no story event between Babi Lighthouse and Venus Lighthouse. Both have the
 /// area name Tunnel Ruins, but for the rooms where Babi Lighthouse Entry's
 /// three drops land, which the area names call Babi Lighthouse:
@@ -17,25 +17,25 @@
 ///   coloured statues of a woman that open the door to Venus Lighthouse once
 ///   all five stand on their marks (FLAG_TUNNEL_RUINS_STATUE_DOOR_OPEN).
 ///
-/// The getters choose by gGameState.scene; the placements of
-/// TunnelRuinsLadyStatues answer any other scene number, and
-/// TunnelRuins_GetObjectEventTemplates prepares each table's actors to appear
-/// only in view. TunnelRuins_Initialize works room by room, one case for each
-/// room's entrances: it puts each puzzle back as it was left, redraws the first
-/// room and the walkways for the path the statue in Venus Lighthouse opened
-/// (FLAG_VENUS_LIGHTHOUSE_FIRST_PATH or FLAG_VENUS_LIGHTHOUSE_SECOND_PATH),
-/// sets the retreat point, and in the rooms that need it starts a fade overlay
-/// that follows the leader south of a depth set per room
-/// (TunnelRuins_UpdateTrackedObjectEvent). The walking events, keyed on the
-/// cell codes under the leader, are shared by both scenes: hops across gaps
-/// (TunnelRuins_HopLeaderTo), jumps off ledges and steps down.
+/// The getters choose by gGameState.mapId; the object event templates of
+/// TunnelRuinsLadyStatues answer any other map number, and
+/// TunnelRuins_GetObjectEventTemplates prepares each table's object events to
+/// appear only in view. TunnelRuins_Initialize works room by room, one case for
+/// each room's warp destinations: it puts each puzzle back as it was left,
+/// redraws the first room and the walkways for the path the statue in Venus
+/// Lighthouse opened (FLAG_VENUS_LIGHTHOUSE_FIRST_PATH or
+/// FLAG_VENUS_LIGHTHOUSE_SECOND_PATH), sets the retreat point, and in the rooms
+/// that need it starts a fade overlay that follows the leader south of a depth
+/// set per room (TunnelRuins_UpdateTrackedObjectEvent). The walking events,
+/// keyed on the metatile behaviors under the leader, are shared by both maps:
+/// hops across gaps (TunnelRuins_HopLeaderTo), jumps off ledges and steps down.
 ///
 /// The puzzles that must survive a visit keep story flags
 /// (FLAG_TUNNEL_RUINS_IVY_BLOWN_AWAY, FLAG_TUNNEL_RUINS_PILLAR_A_IN_FLOOR,
 /// FLAG_TUNNEL_RUINS_PILLAR_B_IN_FLOOR,
 /// FLAG_TUNNEL_RUINS_EAST_PILLAR_A_PUSHED_WEST and
-/// FLAG_TUNNEL_RUINS_EAST_PILLAR_B_PUSHED_WEST); the rest keep scene flags,
-/// which mean different things in each scene:
+/// FLAG_TUNNEL_RUINS_EAST_PILLAR_B_PUSHED_WEST); the rest keep map flags,
+/// which mean different things in each map:
 ///
 /// - TunnelRuinsGreatStatue: FLAG_MAP_TEMP_00 and FLAG_MAP_TEMP_01 are
 ///   ivy A and B blown away beside the small pillars, and in the sinking
@@ -53,8 +53,8 @@
 /// one
 /// stone on the west platform and two stacked on the east, weights 2 and 4
 /// (https://alchemy.pascalpixel.com/places/tunnel-ruins-lady-statues/balance.png:
-/// the balance as each entrance sets it up, each platform labelled with its
-/// weight and height in pixels and each stone with its letter).
+/// the balance as each warp destination sets it up, each platform labelled with
+/// its weight and height in pixels and each stone with its letter).
 ///
 /// Open questions: none.
 
@@ -100,10 +100,10 @@
 #include "script.h"
 #include "item_ids.h"
 
-/// The actors of TunnelRuinsGreatStatue, in the order of its placements: two
-/// pairs of pillars to push or Move, three small pillars, three patches of ivy
-/// for Whirlwind, two pillars that sink into the floor, and two puddles for
-/// Frost, both placed with the first sinking pillar.
+/// The object events of TunnelRuinsGreatStatue, in the order of its object
+/// event templates: two pairs of pillars to push or Move, three small pillars,
+/// three patches of ivy for Whirlwind, two pillars that sink into the floor,
+/// and two puddles for Frost, both placed with the first sinking pillar.
 enum {
   /// ★ Named from what the player sees: one of a pair of grey pillars with gold
   /// tops, side by side (its render)
@@ -158,10 +158,11 @@ enum {
   LOCALID_PUDDLE_B
 };
 
-/// The actors of TunnelRuinsLadyStatues and any other scene: a pillar for Douse
-/// with a puddle for Frost, two balance platforms with three carved stones to
-/// Carry onto them, two statues that vanish under Reveal, two pillars to push
-/// in the east, and five coloured statues of a woman to Move before the door.
+/// The object events of TunnelRuinsLadyStatues and any other map: a pillar for
+/// Douse with a puddle for Frost, two balance platforms with three carved
+/// stones to Carry onto them, two statues that vanish under Reveal, two pillars
+/// to push in the east, and five coloured statues of a woman to Move before the
+/// door.
 enum {
   /// ★ Named from what the player sees: a grey pillar with a white top on an
   /// orange base (its render)
@@ -299,7 +300,7 @@ static s32 TunnelRuins_HopLeaderTo(struct FieldPosition *target) {
 }
 
 /// Walking south into a gap: the leader hops 32 pixels across it.
-/// Reached by walking south into cell codes 29, 30 and 50 in
+/// Reached by walking south into metatile behaviors 29, 30 and 50 in
 /// TunnelRuinsGreatStatue and 29 in TunnelRuinsLadyStatues.
 static void EventScript_HopSouth(void) {
   struct FieldPosition target;
@@ -312,8 +313,8 @@ static void EventScript_HopSouth(void) {
 }
 
 /// Walking north into a gap: the leader hops 32 pixels across it.
-/// Reached by walking north into cell codes 29 and 30 in TunnelRuinsGreatStatue
-/// and 29 in TunnelRuinsLadyStatues.
+/// Reached by walking north into metatile behaviors 29 and 30 in
+/// TunnelRuinsGreatStatue and 29 in TunnelRuinsLadyStatues.
 static void EventScript_HopNorth(void) {
   struct FieldPosition target;
   struct ObjectEvent *objectEvent = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
@@ -333,7 +334,7 @@ static void TunnelRuins_UpdateTrackedObjectEvent(void) {
   leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   effectWork = gObjectEventEffectWork;
   depthLimit = 0;
-  // Each tracked entrance measures depth in eight-pixel steps.
+  // Each tracked warp destination measures depth in eight-pixel steps.
   if (gGameState.mapId == (s32)&MapId_TunnelRuinsGreatStatue) {
     switch (gGameState.warpDest) {
     case TUNNEL_RUINS_GREAT_STATUE_FIRST_PILLARS_FROM_STATUE:
@@ -462,8 +463,8 @@ TunnelRuins_WaitForObjectEventToLand(struct ObjectEvent *objectEvent) {
 
 /// Walking south off a step: the leader hops 12 pixels forward and slides 16
 /// pixels down, kicking up dust behind.
-/// Reached by walking south into cell code 25 in TunnelRuinsGreatStatue and 27
-/// in TunnelRuinsLadyStatues.
+/// Reached by walking south into metatile behavior 25 in TunnelRuinsGreatStatue
+/// and 27 in TunnelRuinsLadyStatues.
 static void EventScript_HopDownStep(void) {
   struct ObjectEvent *leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   struct EffectOptions options;
@@ -520,8 +521,8 @@ static void EventScript_HopDownStep(void) {
 
 #include "common/effect_radial.h"
 
-/// The entrances of TunnelRuinsGreatStatue, TunnelRuinsLadyStatues, or a table
-/// for any other scene number.
+/// The warp destinations of TunnelRuinsGreatStatue, TunnelRuinsLadyStatues, or
+/// a table for any other map number.
 const struct MapWarpDest *TunnelRuins_GetWarpDests(void) {
   s16 mapId = gGameState.mapId;
 
@@ -543,8 +544,8 @@ const struct MapWarpRegion *TunnelRuins_GetRegions(void) {
 
 const u32 *TunnelRuins_GetWarps(void) { return gTunnelRuinsWarps; }
 
-/// The actors of TunnelRuinsGreatStatue or of TunnelRuinsLadyStatues (the enums
-/// above), each prepared to appear only when it lies in the view.
+/// The object events of TunnelRuinsGreatStatue or of TunnelRuinsLadyStatues
+/// (the enums above), each prepared to appear only when it lies in the view.
 const struct ObjectEventTemplate *TunnelRuins_GetObjectEventTemplates(void) {
   struct ObjectEventTemplate *table;
 
@@ -558,7 +559,7 @@ const struct ObjectEventTemplate *TunnelRuins_GetObjectEventTemplates(void) {
 }
 
 /// Walking into the first pair of pillars pushes them along.
-/// Reached by walking into cell code 24 in TunnelRuinsGreatStatue.
+/// Reached by walking into metatile behavior 24 in TunnelRuinsGreatStatue.
 static void EventScript_PushFirstPillars(void) {
   EV_START();
   MapGrid_CopyCellAttributes(73, 38, 5, 5, 9, 38);
@@ -568,8 +569,8 @@ static void EventScript_PushFirstPillars(void) {
 }
 
 /// Walking west into a gap: the leader hops 32 pixels across it.
-/// Reached by walking west into the gaps' cells: codes 23, 31 and 32 in
-/// TunnelRuinsGreatStatue (31 until puddle A is frozen), 26 and 30 in
+/// Reached by walking west into the gaps' cells: metatile behaviors 23, 31 and
+/// 32 in TunnelRuinsGreatStatue (31 until puddle A is frozen), 26 and 30 in
 /// TunnelRuinsLadyStatues.
 static void EventScript_HopWest(void) {
   struct FieldPosition target;
@@ -582,7 +583,7 @@ static void EventScript_HopWest(void) {
 }
 
 /// Walking into the second pair of pillars pushes them along.
-/// Reached by walking into cell code 26 in TunnelRuinsGreatStatue.
+/// Reached by walking into metatile behavior 26 in TunnelRuinsGreatStatue.
 static void EventScript_PushSecondPillars(void) {
   EV_START();
   MapGrid_CopyCellAttributes(93, 30, 6, 5, 29, 30);
@@ -592,16 +593,16 @@ static void EventScript_PushSecondPillars(void) {
 }
 
 /// Walking south off a ledge: the leader jumps down.
-/// Reached by walking south into cell codes 23 and 27 (TunnelRuinsGreatStatue)
-/// and 26 (TunnelRuinsLadyStatues).
+/// Reached by walking south into metatile behaviors 23 and 27
+/// (TunnelRuinsGreatStatue) and 26 (TunnelRuinsLadyStatues).
 static void EventScript_JumpDownLedge(void) {
   FieldObjectEvent_JumpDownLedge(LOCALID_PARTY_LEADER, 6, 0);
 }
 
 /// Walking east into a gap: the leader hops 32 pixels across it.
-/// Reached by walking east into the gaps' cells: codes 27, 29, 31, 32 and 50
-/// in TunnelRuinsGreatStatue, some only until the puddle beside them is frozen,
-/// and 30 in TunnelRuinsLadyStatues.
+/// Reached by walking east into the gaps' cells: metatile behaviors 27, 29, 31,
+/// 32 and 50 in TunnelRuinsGreatStatue, some only until the puddle beside them
+/// is frozen, and 30 in TunnelRuinsLadyStatues.
 static void EventScript_HopEast(void) {
   struct FieldPosition target;
   struct ObjectEvent *objectEvent = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
@@ -613,7 +614,7 @@ static void EventScript_HopEast(void) {
 }
 
 /// Walking into the small pillars pushes the one in front along.
-/// Reached by walking into cell code 28 in TunnelRuinsGreatStatue.
+/// Reached by walking into metatile behavior 28 in TunnelRuinsGreatStatue.
 static void EventScript_PushSmallPillars(void) {
   EV_START();
   MapGrid_CopyCellAttributes(89, 49, 3, 2, 25, 49);
@@ -625,7 +626,7 @@ static void EventScript_PushSmallPillars(void) {
 
 /// Walking south at the small pillars: the leader hops a gap if there is one,
 /// and pushes the small pillar in front otherwise. Reached by walking south
-/// into cell code 28 in TunnelRuinsGreatStatue.
+/// into metatile behavior 28 in TunnelRuinsGreatStatue.
 static void EventScript_HopSouthOrPushSmallPillars(void) {
   struct ObjectEvent *objectEvent = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   struct FieldPosition target;
@@ -686,7 +687,7 @@ static void EventScript_BlowAwayIvyC(void) {
 }
 
 /// Hops west as EventScript_HopWest, except from cell (32, 50).
-/// Reached by walking west into cell code 50 in TunnelRuinsGreatStatue.
+/// Reached by walking west into metatile behavior 50 in TunnelRuinsGreatStatue.
 static void EventScript_HopWestUnlessAtCell32x50(void) {
   struct ObjectEvent *objectEvent = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
 
@@ -697,7 +698,8 @@ static void EventScript_HopWestUnlessAtCell32x50(void) {
 }
 
 /// Hops north as EventScript_HopNorth, except from cell (30, 52).
-/// Reached by walking north into cell code 50 in TunnelRuinsGreatStatue.
+/// Reached by walking north into metatile behavior 50 in
+/// TunnelRuinsGreatStatue.
 static void EventScript_HopNorthUnlessAtCell30x52(void) {
   struct ObjectEvent *objectEvent = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
 
@@ -776,7 +778,7 @@ static void EventScript_SinkPillarA(void) {
 
 /// Walking into sinking pillar A pushes it, and it sinks if it reaches column
 /// 46 (until FLAG_TUNNEL_RUINS_PILLAR_A_IN_FLOOR).
-/// Reached by walking into cell code 29 in TunnelRuinsGreatStatue.
+/// Reached by walking into metatile behavior 29 in TunnelRuinsGreatStatue.
 static void EventScript_PushSinkingPillarA(void) {
   EV_START();
   StagedObjectEvent_AdvancePair();
@@ -856,8 +858,8 @@ static void EventScript_SinkPillarB(void) {
 
 /// Walking into sinking pillar B pushes it, and it sinks if it is soaked and
 /// reaches column 48.
-/// Reached by walking into cell code 30, or east into 32 before Douse has
-/// soaked it, in TunnelRuinsGreatStatue.
+/// Reached by walking into metatile behavior 30, or east into 32 before Douse
+/// has soaked it, in TunnelRuinsGreatStatue.
 static void EventScript_PushSinkingPillarB(void) {
   EV_START();
   StagedObjectEvent_AdvancePair();
@@ -898,7 +900,7 @@ static void EventScript_FreezePuddleB(void) {
 /// or, once the statue in Venus Lighthouse has opened a path
 /// (FLAG_VENUS_LIGHTHOUSE_FIRST_PATH or _SECOND_PATH), that the path will not
 /// open here.
-/// Reached by searching cell code 40 in TunnelRuinsGreatStatue.
+/// Reached by searching metatile behavior 40 in TunnelRuinsGreatStatue.
 static void EventScript_ReadFirstStatue(void) {
   EV_START();
   OBJECT_MODE(LOCALID_PARTY_LEADER, ANIMATION_STAND);
@@ -920,7 +922,7 @@ static void EventScript_MoveDousePillar(void) {
 }
 
 /// Walking into the Douse pillar pushes it along.
-/// Reached by walking into cell code 25 in TunnelRuinsLadyStatues.
+/// Reached by walking into metatile behavior 25 in TunnelRuinsLadyStatues.
 static void EventScript_PushDousePillar(void) {
   EV_START();
   StagedObjectEvent_AdvancePair();
@@ -985,7 +987,7 @@ static void EventScript_FreezeDousePuddle(void) {
 // UB: calling this s32 function through a void update hook is incompatible.
 // Plain void changes 34 to 32 bytes in tbs-en.
 // A carved stone set on the balance rides 16 pixels above what it rests on,
-// whose actor its timer holds.
+// whose object event its timer holds.
 #ifdef UBFIX
 static void TunnelRuins_RideStoneBelow(union FieldObject *fieldObject) {
 #else
@@ -1191,7 +1193,8 @@ static void EventScript_SetStoneOnBalance(void) {
 }
 
 /// Walking into a pushable object pushes it along.
-/// Reached by walking into cell codes 28 and 30 in TunnelRuinsLadyStatues.
+/// Reached by walking into metatile behaviors 28 and 30 in
+/// TunnelRuinsLadyStatues.
 static void EventScript_PushObject(void) {
   EV_START();
   StagedObjectEvent_AdvancePair();
@@ -1222,7 +1225,7 @@ static void EventScript_MoveEastPillar(void) {
 }
 
 /// Walking into an east pillar pushes it along, and its place is kept.
-/// Reached by walking east into cell code 29 in TunnelRuinsLadyStatues.
+/// Reached by walking east into metatile behavior 29 in TunnelRuinsLadyStatues.
 static void EventScript_PushEastPillar(void) {
   EV_START();
   StagedObjectEvent_AdvancePair();
@@ -1370,7 +1373,7 @@ static void EventScript_MoveLadyStatue(void) {
 
 /// Walking into one of the five coloured statues pushes it along, then checks
 /// the door.
-/// Reached by walking into cell code 41 in TunnelRuinsLadyStatues.
+/// Reached by walking into metatile behavior 41 in TunnelRuinsLadyStatues.
 static void EventScript_PushLadyStatue(void) {
   EV_START();
   {
@@ -1383,7 +1386,7 @@ static void EventScript_PushLadyStatue(void) {
 
 /// Searching the statue in TunnelRuinsLadyStatues's room of the five coloured
 /// statues. "The statue seems to speak to your soul..." Reached by searching
-/// cell code 42 in TunnelRuinsLadyStatues.
+/// metatile behavior 42 in TunnelRuinsLadyStatues.
 static void EventScript_ReadSecondStatue(void) {
   EV_START();
   OBJECT_MODE(LOCALID_PARTY_LEADER, ANIMATION_STAND);
@@ -1392,15 +1395,15 @@ static void EventScript_ReadSecondStatue(void) {
 }
 
 /// Searching the door in TunnelRuinsLadyStatues: it is tightly locked.
-/// Reached by searching cell code 20 in TunnelRuinsLadyStatues.
+/// Reached by searching metatile behavior 20 in TunnelRuinsLadyStatues.
 static void EventScript_SearchLockedDoor(void) {
   EV_START();
   Engine_MessageShowCentered(MSGNO(MsgFieldDoorTightlyLocked), 1);
   EV_END();
 }
 
-/// The events of TunnelRuinsGreatStatue, or of TunnelRuinsLadyStatues and any
-/// other scene.
+/// The map events of TunnelRuinsGreatStatue, or of TunnelRuinsLadyStatues and
+/// any other map.
 const struct MapEvent *TunnelRuins_GetEvents(void) {
   if (gGameState.mapId == (s32)&MapId_TunnelRuinsGreatStatue) {
     return gTunnelRuinsGreatStatueEvents;
@@ -1504,8 +1507,8 @@ static void TunnelRuins_MarkPushPillarCells(void) {
 /// Venus Lighthouse opened (FLAG_VENUS_LIGHTHOUSE_FIRST_PATH or _SECOND_PATH).
 /// Retreat leads back to
 /// TUNNEL_RUINS_GREAT_STATUE_FROM_BABI_LIGHTHOUSE_STONE_DOOR, or, from
-/// TunnelRuinsLadyStatues's three entrances from Babi Lighthouse Entry, up
-/// there to BABI_LIGHTHOUSE_ENTRY_FROM_ROAD_TO_BABI_LIGHTHOUSE. The scene's
+/// TunnelRuinsLadyStatues's three warp destinations from Babi Lighthouse Entry,
+/// up there to BABI_LIGHTHOUSE_ENTRY_FROM_ROAD_TO_BABI_LIGHTHOUSE. The map's
 /// initialization. Entering the room of four walkways
 /// (TUNNEL_RUINS_LADY_STATUES_PATHS_SOUTHWEST and the three after it) sets
 /// FLAG_TUNNEL_RUINS_FOUR_PATHS_ROOM_ENTERED.

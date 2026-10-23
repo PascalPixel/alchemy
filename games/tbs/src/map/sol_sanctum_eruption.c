@@ -32,7 +32,7 @@
 /// walks onto it, rises 30 pixels at full size, then rises on as he shrinks
 /// away, over a shadow that shrinks with him (LOCALID_PLATFORM_SHADOW;
 /// https://alchemy.pascalpixel.com/places/sol-sanctum-eruption/departing-shadow.gif:
-/// the departures, the platform's actor boxed on the screen, beside the
+/// the departures, the platform's object event boxed on the screen, beside the
 /// sprites and the sprites without it, where the shadow is gone).
 ///
 /// Open questions: none.
@@ -101,7 +101,7 @@ static void SolSanctumEruption_FlashMaterializingObjectEvent(
 static void SolSanctumEruption_SpawnEffectPair(struct ObjectEvent *parent);
 static void SolSanctumEruption_UpdateWiseOnePalette(void);
 
-// Scene flags, cleared on every ordinary entrance:
+// Map flags, cleared on every ordinary arrival:
 // - FLAG_MAP_TEMP_46: set as Saturos's group starts to leave; from then on
 //   the embers fall without their sound (SE_246).
 
@@ -151,7 +151,7 @@ SolSanctumEruption_GetObjectEventTemplates(void) {
   return gSolSanctumEruption_ObjectEventTemplates;
 }
 
-/// Returns the empty event table: the scene is one cutscene.
+/// Returns the empty event table: the map is one cutscene.
 const struct MapEvent *SolSanctumEruption_GetEvents(void) {
   return gSolSanctumEruption_Events;
 }
@@ -581,8 +581,8 @@ static void SolSanctumEruption_PlayHostageScene(void) {
   Party_RemoveOwnerRestored(JENNA);
 }
 
-/// Lifts one departing actor and shrinks it together with its shadow on the
-/// platform (LOCALID_PLATFORM_SHADOW).
+/// Lifts one departing object event and shrinks it together with its shadow on
+/// the platform (LOCALID_PLATFORM_SHADOW).
 static void SolSanctumEruption_RaiseAndShrinkObjectEvent(s32 objectEventId) {
   struct ObjectEvent *objectEvent;
   struct ObjectEvent *shadow;
@@ -602,7 +602,7 @@ static void SolSanctumEruption_RaiseAndShrinkObjectEvent(s32 objectEventId) {
   ObjectEvent_SetChildValue(objectEventId, 0x100);
   objectEvent->motionFlags = 0;
   Script_PlayCue(SE_201);
-  // Rise at full size, then shrink the actor and its shadow together.
+  // Rise at full size, then shrink the object event and its shadow together.
   frame = 0;
   do {
     objectEvent->y.fixed += PIXELS(1) / 2;
@@ -633,7 +633,7 @@ UNUSED static void SolSanctumEruption_UnusedCallbackB(void) {}
 /// Plays the collapse after the cut from the Elemental Star Room. It plays at
 /// SOL_SANCTUM_ERUPTION_FROM_SOL_SANCTUM_ELEMENTAL_STAR_ROOM, the cut from the
 /// Elemental Star Room (MapId_SolSanctumElementalStarRoom). Called by
-/// Field_RunMap once the actors exist.
+/// Field_RunMap once the object events exist.
 s32 SolSanctumEruption_Initialize(void) {
   if (gGameState.warpDest ==
       SOL_SANCTUM_ERUPTION_FROM_SOL_SANCTUM_ELEMENTAL_STAR_ROOM) {
@@ -652,7 +652,7 @@ SolSanctumEruption_AlignEmberToHeading(struct ScriptInterpreter *interpreter) {
   return 1;
 }
 
-/// Launches sixteen crystals outward, then resets their actors for ember
+/// Launches sixteen crystals outward, then resets their object events for ember
 /// emission.
 static void SolSanctumEruption_ThrowEruptionRing(void) {
   struct ObjectEvent *objectEvent;
@@ -882,7 +882,7 @@ static void SolSanctumEruption_PlayWiseOneRescue(void) {
 
   sparkles = gParticleWork;
   wiseOne = ObjectEvent_Get(LOCALID_WISE_ONE);
-  // Clear the ember actors and bring Isaac and Garet back into view.
+  // Clear the ember object events and bring Isaac and Garet back into view.
   Engine_TaskRemoveCallback(SolSanctumEruption_UpdateEmberFrequency);
   gEmberMask = 3;
   Engine_ScriptWait(80);
@@ -1523,7 +1523,7 @@ static void SolSanctumEruption_PlayWiseOneRescue(void) {
                              TASK_PRIORITY_MAP);
   Engine_ScriptWait(20);
   ColorBuffer_ApplyTarget(0x7fff, 2);
-  // Fade the chamber away, stop its effects and leave through the rescue exit.
+  // Fade the chamber away, stop its effects and leave through the rescue warp.
   Engine_ColorBufferInterpolate(60);
   Engine_TaskWait(100);
   ColorBuffer_ApplyTarget(0x7fff, 1);
@@ -1539,12 +1539,12 @@ static void SolSanctumEruption_PlayWiseOneRescue(void) {
   Engine_ScriptRequestWarp(SOL_SANCTUM_ERUPTION_TO_SOL_SANCTUM_LUNA_SOL_ROOMS);
   // Flag 0x100 marks nothing: it is set nowhere else and read nowhere, by no
   // table, script or function, and render probe flag-reads, watching every
-  // flag test and every byte and nibble read in the scenes after the
+  // flag test and every byte and nibble read in the maps after the
   // eruption, sees none.
   GameFlag_Set(0x100);
 }
 
-/// Places an actor before the star, facing south, and draws it above the
+/// Places an object event before the star, facing south, and draws it above the
 /// chamber floor.
 static void SolSanctumEruption_PlaceBeforeStar(s32 objectEvent) {
   struct ObjectEvent *object;
@@ -1754,7 +1754,7 @@ static void SolSanctumEruption_UpdateElementalArcs(void) {
   }
 }
 
-/// Fades out, moves the camera and its focus actor, then fades back in.
+/// Fades out, moves the camera and its focus object event, then fades back in.
 static void SolSanctumEruption_FadeCameraTo(s32 x, s32 z) {
   struct ObjectEvent *center;
 
@@ -1779,7 +1779,7 @@ static void SolSanctumEruption_FadeCameraTo(s32 x, s32 z) {
   Engine_TaskWait(30);
 }
 
-/// Restores eight corner-cell attributes from the chamber templates.
+/// Restores eight corner-cell metatile behaviors from the chamber templates.
 static void SolSanctumEruption_RestoreCornerCellAttributes(void) {
 
   MapGrid_CopyCellAttributes(14, 8, 1, 1, 10, 0);
@@ -1821,7 +1821,7 @@ static void SolSanctumEruption_FlashMaterializingObjectEvent(
   }
 }
 
-/// Cycles six palettes while spawning the actor's vertical effects.
+/// Cycles six palettes while spawning the object event's vertical effects.
 static void
 SolSanctumEruption_CycleObjectEventPalette(struct ObjectEvent *objectEvent) {
   if (gFrameCount & 1) {

@@ -1,9 +1,9 @@
 /// @file
-/// Vale (MapId_ValeInteriorsInn): Isaac's house and the ground outside it,
-/// the inn and the inside of Kraden's cottage, and at
+/// Vale (MapId_ValeInteriorsInn): Isaac's house and the ground outside it, the
+/// inn and the inside of Kraden's cottage, and at
 /// VALE_INTERIORS_INN_FROM_BABI_PALACE a room of Babi's Palace: one overlay
-/// whose tables and setup choose by the entrance and the story flags. In story
-/// order:
+/// whose tables and setup choose by the warp destination and the story flags.
+/// In story order:
 ///
 /// - The stormy night, three years before the journey, when a new game begins
 ///   at VALE_INTERIORS_INN_FROM_VALE_GATE_SOUTHEAST (from menu/clear.c, or
@@ -39,8 +39,8 @@
 ///   be trusted.
 /// - Back from Kalay (FLAG_KALAY_REACHED): Dora lies ill. The innkeeper
 ///   welcomes Isaac home and a burly grey-haired man at the inn
-///   (LOCALID_MAN_ISAAC_HAS_GROWN) sees how he has grown (Vale's place flags
-///   FLAG_VALE_INNKEEPER_WELCOMED_ISAAC and
+///   (LOCALID_MAN_ISAAC_HAS_GROWN) sees how he has grown (Vale's map section
+///   flags FLAG_VALE_INNKEEPER_WELCOMED_ISAAC and
 ///   FLAG_VALE_MAN_SAW_ISAAC_GROWN); Mind Read on either tells of Dora's
 ///   illness (FLAG_READ_THOUGHTS_ABOUT_DORA). Visiting her
 ///   (FLAG_VISITED_SICK_DORA) she reminds Isaac that he promised not to come
@@ -53,20 +53,20 @@
 ///   Babi's favourite scholar, and of the Venus Ruins under Babi Lighthouse
 ///   with a long tunnel beneath them. They talk differently once the Colosso
 ///   finals are over (FLAG_COLOSSO_OVER), when one asks whether the party knows
-///   Kraden. The setup does not show the place name there.
+///   Kraden. The setup does not show the map section's name there.
 ///
-/// The exits VALE_INTERIORS_INN_TO_VALE_GATE_NORTHWEST to
-/// VALE_INTERIORS_INN_TO_VALE_STORM_EAST are taken by the cell codes of the
-/// same numbers, leading to the rest of Vale (ValeGate, ValeKraden, Vale and
-/// ValeStorm) or between this scene's own parts.
+/// The warps VALE_INTERIORS_INN_TO_VALE_GATE_NORTHWEST to
+/// VALE_INTERIORS_INN_TO_VALE_STORM_EAST are taken by the metatile behaviors of
+/// the same numbers, leading to the rest of Vale (ValeGate, ValeKraden, Vale
+/// and ValeStorm) or between this map's own parts.
 ///
 /// Open questions:
-/// - XXX (no evidence): what LOCALID_BLANK_AFTER_KALAY, the blank actor beside
-///   the burly man at the inn back from Kalay, was meant to do; it draws
+/// - XXX (no evidence): what LOCALID_BLANK_AFTER_KALAY, the blank object event
+///   beside the burly man at the inn back from Kalay, was meant to do; it draws
 ///   nothing once the setup turns off its shadow, and though it is solid it
 ///   stands where the innkeeper and the burly man already close the way (the
-///   leader walking north between them stops at the man with it and without
-///   it, render probe vale-inn), so nothing the player can do shows a use.
+///   leader walking north between them stops at the man with it and without it,
+///   render probe vale-inn), so nothing the player can do shows a use.
 /// - XXX (no evidence): whether the talk row of EventScript_RemarkIsaacHasGrown
 /// was
 ///   meant to test FLAG_VALE_MAN_SAW_ISAAC_GROWN, as its Mind Read row does;
@@ -120,7 +120,7 @@
 #include "fixed_math.h"
 #include "fx_work.h"
 
-// The arrival scenes are defined after the event handlers.
+// The arrival scenes are defined after the scripts.
 static void EventScript_DoraWakesIsaac(void);
 static void EventScript_HurryToThePlaza(void);
 static void ValeInteriorsInn_RestoreRoomPatch(void);
@@ -131,7 +131,7 @@ static void ValeInteriorsInn_DemonstrateCatch(void);
 // Shared facing code retains its position before the overlay entry points.
 #include "common/object_facing.h"
 
-/// Vale's placed actors, numbered by the rows of
+/// Vale's placed object events, numbered by the rows of
 /// gValeInteriorsInn_ObjectEventTemplates. The tables after the party leaves
 /// and after Kalay keep the rows up to the inn's, and differ after them
 /// (ValeInteriorsInnAfterKalayLocalId).
@@ -203,7 +203,7 @@ enum ValeInteriorsInnAfterKalayLocalId {
   /// illness.
   /// ★ Named from the game: "You've grown so much" (MsgValeYouveGrownSoMuch)
   LOCALID_MAN_ISAAC_HAS_GROWN = LOCALID_FIRST_PLACED + 8,
-  /// SPRITE_BLANK, a solid actor that draws nothing, beside
+  /// SPRITE_BLANK, a solid object event that draws nothing, beside
   /// LOCALID_MAN_ISAAC_HAS_GROWN; no event answers it, the setup takes away the
   /// shadow its blank sprite would draw, and it closes no way the innkeeper
   /// and the man do not (an open question).
@@ -245,7 +245,7 @@ enum ValeInteriorsInnScholarLocalId {
   LOCALID_OLD_MAN_ON_BABIS_RESEARCH
 };
 
-/// Vale's place flags this scene keeps while the party is in Vale.
+/// Vale's map section flags this map keeps while the party is in Vale.
 enum ValeInteriorsInnMapSecFlag {
   /// Back from Kalay, the innkeeper welcomed Isaac home.
   /// ★ Named from the game: "You came back, huh?" (MsgValeCameBack2)
@@ -275,12 +275,12 @@ enum ValeInteriorsInnAnimation {
 
 // FLAG_MAP_TEMP_03: Dora got out of her sickbed on this visit.
 
-/// Returns the entrances, among them the scenes played on arrival:
+/// Returns the warp destinations, among them the scenes played on arrival:
 /// VALE_INTERIORS_INN_FROM_BABI_PALACE from Babi's palace
 /// (BABI_PALACE_TO_VALE_INTERIORS_INN),
 /// VALE_INTERIORS_INN_FROM_VALE_GATE_SOUTHEAST where a new game begins
 /// (menu/clear.c, and ValeGate's VALE_GATE_TO_VALE_INTERIORS_INN_SOUTHEAST),
-/// VALE_INTERIORS_INN_ISAACS_HOUSE_FROM_UPSTAIRS_WITH_DORA from this scene's
+/// VALE_INTERIORS_INN_ISAACS_HOUSE_FROM_UPSTAIRS_WITH_DORA from this map's
 /// own VALE_INTERIORS_INN_ISAACS_HOUSE_TO_GROUND_FLOOR_WITH_DORA, and
 /// VALE_INTERIORS_INN_FROM_VALE_KRADEN_MYTHRIL_BAG from Kraden's cottage
 /// (VALE_KRADEN_TO_VALE_INTERIORS_INN_MYTHRIL_BAG).
@@ -290,7 +290,7 @@ const struct MapWarpDest *ValeInteriorsInn_GetWarpDests(void) {
 
 const struct MapWarpRegion *ValeInteriorsInn_GetRegions(void) { return NULL; }
 
-/// On the stormy night the exits lead into the storm.
+/// On the stormy night the warps lead into the storm.
 const u32 *ValeInteriorsInn_GetWarps(void) {
   if (Engine_GameFlagIsSet(FLAG_VALE_STORM) != 0) {
     return gValeInteriorsInn_StormWarps;
@@ -318,7 +318,7 @@ ValeInteriorsInn_GetObjectEventTemplates(void) {
 /// In Babi's Palace, one of Babi's scholars asks whether the party knows
 /// Kraden. Reached by talking to LOCALID_SCHOLAR_EXPERIMENT in their room
 /// (VALE_INTERIORS_INN_FROM_BABI_PALACE) once FLAG_COLOSSO_OVER is set;
-/// speakerId is the actor spoken to.
+/// speakerId is the object event spoken to.
 static void EventScript_ScholarAsksAboutKraden(s32 speakerId) {
   s32 firstMessage = MsgValeFolksSeemKnow;
 
@@ -404,8 +404,8 @@ static void EventScript_AskWhetherMaskedManWasFelix(void) {
   Engine_ScriptEnd();
 }
 
-/// Stops storm lightning before fading through the requested exit.
-/// Called by the exit events below.
+/// Stops storm lightning before fading through the requested warp.
+/// Called by the warps below.
 static void ValeInteriorsInn_CloseScreenAndExit(s32 warpNumber) {
   if (Engine_GameFlagIsSet(FLAG_VALE_STORM) != 0) {
     FieldEffect_StopLightning();
@@ -417,12 +417,12 @@ static void ValeInteriorsInn_CloseScreenAndExit(s32 warpNumber) {
   Engine_ScriptRequestWarp(warpNumber);
 }
 
-// The exit events in Vale: stepping on the cell code of the same number in
-// any of the Vale tables plays a step sound and takes that exit
+// The warps in Vale: stepping on the metatile behavior of the same number in
+// any of the Vale tables plays a step sound and takes that warp
 // (gValeInteriorsInn_Warps, or gValeInteriorsInn_StormWarps on the stormy
 // night).
 
-/// Reached by cell code 1; leads to ValeGate
+/// Reached by metatile behavior 1; leads to ValeGate
 /// (VALE_GATE_FROM_VALE_INTERIORS_INN_WEST).
 static void EventScript_WarpToValeGateNorthwest(void) {
   Engine_AudioPlayCue(SE_MAP_EXIT);
@@ -430,14 +430,14 @@ static void EventScript_WarpToValeGateNorthwest(void) {
       VALE_INTERIORS_INN_TO_VALE_GATE_NORTHWEST);
 }
 
-/// Reached by cell code 2; leads to Kraden's cottage
+/// Reached by metatile behavior 2; leads to Kraden's cottage
 /// (VALE_KRADEN_FROM_VALE_INTERIORS_INN_NORTH).
 static void EventScript_WarpToValeKradenNorth(void) {
   Engine_AudioPlayCue(SE_MAP_EXIT);
   ValeInteriorsInn_CloseScreenAndExit(VALE_INTERIORS_INN_TO_VALE_KRADEN_NORTH);
 }
 
-/// Reached by cell code 3; leads to ValeGate
+/// Reached by metatile behavior 3; leads to ValeGate
 /// (VALE_GATE_FROM_VALE_INTERIORS_INN_NORTH).
 static void EventScript_WarpToValeGateNortheast(void) {
   Engine_AudioPlayCue(SE_MAP_EXIT);
@@ -445,58 +445,59 @@ static void EventScript_WarpToValeGateNortheast(void) {
       VALE_INTERIORS_INN_TO_VALE_GATE_NORTHEAST);
 }
 
-/// Reached by cell code 4; leads to ValeGate
+/// Reached by metatile behavior 4; leads to ValeGate
 /// (VALE_GATE_FROM_VALE_INTERIORS_INN_SOUTH).
 static void EventScript_WarpToValeGateWest(void) {
   Engine_AudioPlayCue(SE_MAP_EXIT);
   ValeInteriorsInn_CloseScreenAndExit(VALE_INTERIORS_INN_TO_VALE_GATE_WEST);
 }
 
-/// Reached by cell code 5, the inn's stairs; climbs to its guest room at
-/// VALE_INTERIORS_INN_INN_FROM_GROUND_FLOOR.
+/// Reached by metatile behavior 5, the inn's stairs; climbs to its guest room
+/// at VALE_INTERIORS_INN_INN_FROM_GROUND_FLOOR.
 static void EventScript_WarpToInnUpstairs(void) {
   Engine_AudioPlayCue(SE_STAIRS_UP);
   ValeInteriorsInn_CloseScreenAndExit(VALE_INTERIORS_INN_INN_TO_UPSTAIRS);
 }
 
-/// Reached by cell code 6; leads to Vale (VALE_FROM_VALE_INTERIORS_INN), or on
-/// the stormy night to ValeStorm
+/// Reached by metatile behavior 6; leads to Vale
+/// (VALE_FROM_VALE_INTERIORS_INN), or on the stormy night to ValeStorm
 /// (VALE_STORM_FROM_VALE_INTERIORS_INN_ISAACS_HOUSE).
 static void EventScript_WarpToVale(void) {
   Engine_AudioPlayCue(SE_MAP_EXIT);
   ValeInteriorsInn_CloseScreenAndExit(VALE_INTERIORS_INN_TO_VALE);
 }
 
-/// Reached by cell code 7, the stairs of Isaac's house; climbs to its upper
-/// floor.
+/// Reached by metatile behavior 7, the stairs of Isaac's house; climbs to its
+/// upper floor.
 static void EventScript_WarpToIsaacsHouseUpstairs(void) {
   Engine_AudioPlayCue(SE_STAIRS_UP);
   ValeInteriorsInn_CloseScreenAndExit(
       VALE_INTERIORS_INN_ISAACS_HOUSE_TO_UPSTAIRS);
 }
 
-/// Reached by cell code 8, the stairs of the inn's guest room; goes back down.
+/// Reached by metatile behavior 8, the stairs of the inn's guest room; goes
+/// back down.
 static void EventScript_WarpToInnDownstairs(void) {
   Engine_AudioPlayCue(SE_STAIRS_DOWN);
   ValeInteriorsInn_CloseScreenAndExit(VALE_INTERIORS_INN_INN_TO_GROUND_FLOOR);
 }
 
-/// Reached by cell code 9, the stairs on the upper floor of Isaac's house; goes
-/// back down.
+/// Reached by metatile behavior 9, the stairs on the upper floor of Isaac's
+/// house; goes back down.
 static void EventScript_WarpToIsaacsHouseDownstairs(void) {
   Engine_AudioPlayCue(SE_STAIRS_DOWN);
   ValeInteriorsInn_CloseScreenAndExit(
       VALE_INTERIORS_INN_ISAACS_HOUSE_TO_GROUND_FLOOR);
 }
 
-/// Reached by cell code 10; leads to ValeStorm
+/// Reached by metatile behavior 10; leads to ValeStorm
 /// (VALE_STORM_FROM_VALE_INTERIORS_INN_WEST).
 static void EventScript_WarpToValeStormWest(void) {
   Engine_AudioPlayCue(SE_MAP_EXIT);
   ValeInteriorsInn_CloseScreenAndExit(VALE_INTERIORS_INN_TO_VALE_STORM_WEST);
 }
 
-/// Reached by cell code 11; leads to ValeStorm
+/// Reached by metatile behavior 11; leads to ValeStorm
 /// (VALE_STORM_FROM_VALE_INTERIORS_INN_EAST).
 static void EventScript_WarpToValeStormEast(void) {
   Engine_AudioPlayCue(SE_MAP_EXIT);
@@ -506,10 +507,10 @@ static void EventScript_WarpToValeStormEast(void) {
 /// Sets up these rooms for the stormy night or the story's villagers. It also
 /// plays the scenes of VALE_INTERIORS_INN_FROM_VALE_GATE_SOUTHEAST,
 /// VALE_INTERIORS_INN_ISAACS_HOUSE_FROM_UPSTAIRS_WITH_DORA and
-/// VALE_INTERIORS_INN_FROM_VALE_KRADEN_MYTHRIL_BAG. Called by Field_RunMap
-/// once the actors are placed. VALE_INTERIORS_INN_FROM_VALE_GATE_SOUTHEAST sets
-/// FLAG_VALE_STORM before EventScript_DoraWakesIsaac; back from Kalay, Dora is
-/// put back in her sickbed unless FLAG_MAP_TEMP_03 says she got up.
+/// VALE_INTERIORS_INN_FROM_VALE_KRADEN_MYTHRIL_BAG. Called by Field_RunMap once
+/// the object events are placed. VALE_INTERIORS_INN_FROM_VALE_GATE_SOUTHEAST
+/// sets FLAG_VALE_STORM before EventScript_DoraWakesIsaac; back from Kalay,
+/// Dora is put back in her sickbed unless FLAG_MAP_TEMP_03 says she got up.
 s32 ValeInteriorsInn_Initialize(void) {
   struct ObjectEvent *objectEvent;
 
@@ -589,7 +590,7 @@ s32 ValeInteriorsInn_Initialize(void) {
 /// VALE_INTERIORS_INN_FROM_VALE_GATE_SOUTHEAST, where a new game begins. Sets
 /// FLAG_ISAAC_WEARS_TUNIC and takes
 /// VALE_INTERIORS_INN_ISAACS_HOUSE_TO_GROUND_FLOOR_WITH_DORA, back into this
-/// scene by VALE_INTERIORS_INN_ISAACS_HOUSE_FROM_UPSTAIRS_WITH_DORA, where
+/// map by VALE_INTERIORS_INN_ISAACS_HOUSE_FROM_UPSTAIRS_WITH_DORA, where
 /// EventScript_HurryToThePlaza follows.
 static void EventScript_DoraWakesIsaac(void) {
   s32 firstMessage;
@@ -1137,7 +1138,7 @@ static void EventScript_TalkToDora(void) {
   Engine_ScriptEnd();
 }
 
-/// Restores the room's tiles and collision patch outside the storm sequence.
+/// Restores the room's tiles and metatile behaviors outside the storm sequence.
 /// Called by ValeInteriorsInn_Initialize when FLAG_VALE_STORM is clear.
 static void ValeInteriorsInn_RestoreRoomPatch(void) {
   MapGrid_CopyCellsTo(22, 85, 25, 85, 2, 2);
@@ -1173,7 +1174,8 @@ static void EventScript_ShowMythrilBag(void) {
   sprite->count = clear;
   sprite->image.fullColor = 0;
   sprite->image.palette = 0;
-  // Load the item icon into the temporary actor before animating the bag.
+  // Load the item icon into the temporary object event before animating the
+  // bag.
   glyph = Engine_HeapAllocate(17, sizeof(*glyph));
   Engine_ItemLoadIcon(ITEM_MYTHRIL_BAG);
   Engine_VramLoad(sprite->slot, 128, glyph->tiles);
@@ -1200,7 +1202,7 @@ static void EventScript_ShowMythrilBag(void) {
 }
 
 /// Unused: an update hook that flashes between two palettes and gives off a
-/// pair of effects every sixteen frames; no actor is given it.
+/// pair of effects every sixteen frames; no object event is given it.
 UNUSED static void
 ValeInteriorsInn_FlashPaletteAndSpawnPair(union FieldObject *fieldObject) {
   if ((gFrameCount & 2) != 0) {
@@ -1292,7 +1294,7 @@ static void ValeInteriorsInn_SpawnEffectPair(union FieldObject *fieldObject) {
   }
 }
 
-// Shared Psynergy setup precedes the scene's effect wrappers.
+// Shared Psynergy setup precedes the map's effect wrappers.
 #include "common/effect_psynergy.h"
 
 /// Unused: cycles Dora's palette with particles; nothing calls it.

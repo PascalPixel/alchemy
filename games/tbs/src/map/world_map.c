@@ -1,23 +1,23 @@
 /// @file
 /// The World Map (MapId_WorldMap), the one perspective map (layout/world)
-/// that joins the places, and the only scene of this overlay. Its code does
+/// that joins the map sections, and the only map of this overlay. Its code does
 /// three kinds of work.
 ///
-/// It lets the party into the places. Each place stands on the map as an
-/// actor drawn as a picture of its kind (SPRITE_WORLD_MAP_VILLAGE, _CAVE,
-/// _DOCK and the rest), turned with the map (WorldMap_AlignToMap).
-/// WorldMap_UpdateLocationContacts, run every frame, hides the actors outside
-/// a box around the view and raises the COORD_EVENT_MAPSEC of the one the
-/// leader touches, which the event table turns into that place's exit; a few
-/// ways in are cells instead, each carrying the number of its exit. The world
-/// map laid flat, with each place actor boxed and labelled by its
-/// COORD_EVENT_MAPSEC and the box kept visible around a view at Vale, is
+/// It lets the party into the map sections. Each map section stands on the map
+/// as an object event drawn as a picture of its kind (SPRITE_WORLD_MAP_VILLAGE,
+/// _CAVE, _DOCK and the rest), turned with the map (WorldMap_AlignToMap).
+/// WorldMap_UpdateLocationContacts, run every frame, hides the object events
+/// outside a box around the view and raises the COORD_EVENT_MAPSEC of the one
+/// the leader touches, which the map event table turns into that map section's
+/// warp; a few ways in are cells instead, each carrying the number of its warp.
+/// The world map laid flat, with each map section's object event boxed and
+/// labelled by its COORD_EVENT_MAPSEC and the box kept visible around a view at
+/// Vale, is
 /// https://alchemy.pascalpixel.com/places/world-map/place-triggers.png. Five
-/// places have
-/// two ways in, and their events choose the exit by the side the leader comes
-/// from: the Bilibin Barricade from the west or the east, and Kolima Bridge,
-/// Kalay Docks, Gondowan Passage and Lalivero from the north or the south.
-/// Kolima Bridge's actor shows the drawbridge let down once
+/// map sections have two ways in, and their scripts choose the warp by the side
+/// the leader comes from: the Bilibin Barricade from the west or the east, and
+/// Kolima Bridge, Kalay Docks, Gondowan Passage and Lalivero from the north or
+/// the south. Kolima Bridge's object event shows the drawbridge let down once
 /// FLAG_KOLIMA_BRIDGE_LOWERED is set.
 ///
 /// It holds what the party meets on the map itself. Vine, Corona and Hail, a
@@ -31,8 +31,8 @@
 /// in the ground (TRIGGER_TURTLE_BOOTS).
 ///
 /// And it plays the story's moments on the map, each run by
-/// WorldMap_Initialize for the entrance another scene sends the party to. In
-/// story order:
+/// WorldMap_Initialize for the warp destination another map sends the party to.
+/// In story order:
 /// - Leaving Vale (WORLD_MAP_FROM_VALE_GATE) sets FLAG_VALE_PARTY_LEFT the
 ///   first time.
 /// - Flint, the first Djinni, circles his spot until the party walks up to
@@ -52,7 +52,7 @@
 ///   (WORLD_MAP_FROM_KALAY_TUNNEL_ENTRANCE_SOUTH) it stops and the leader
 ///   steps down.
 /// - The Tolbi-bound Ship's crossing of the Karagol Sea: between the ship's
-///   scenes (WORLD_MAP_FROM_TOLBI_SHIP_INTERIORS_SAIL_TO_FIRST_ATTACK to
+///   maps (WORLD_MAP_FROM_TOLBI_SHIP_INTERIORS_SAIL_TO_FIRST_ATTACK to
 ///   _SAIL_TO_LAND) the map shows the ship sailing west and sends the party
 ///   back aboard (FLAG_TOLBI_SHIP_ROWING). A rowing off course takes it north
 ///   to anchor off the island (WORLD_MAP_FROM_TOLBI_SHIP_INTERIORS,
@@ -78,7 +78,8 @@
 ///   east, and WORLD_MAP_JENNA_AND_KRADEN_ADRIFT shows Alex leading them to
 ///   Felix and Sheba before the title screen returns.
 ///
-/// WORLD_MAP_FROM_DEBUG, the debug menus' entrance, turns encounters off.
+/// WORLD_MAP_FROM_DEBUG, the debug menus' warp destination, turns encounters
+/// off.
 ///
 /// Open questions:
 /// - XXX (no evidence): what flag 0x85c records, set the first time the party
@@ -166,15 +167,17 @@ static void WorldMap_ShowIslandDrifting(void);
 static void WorldMap_UpdateStormTimer(void);
 static void WorldMap_PlayLighthouseTransition(s32 palette);
 
-/// The actors WorldMap_UpdateLocationContacts looks at, the placed ones to the
-/// last slot, and the base of the triggers a touch raises (COORD_EVENT_MAPSEC).
+/// The object events WorldMap_UpdateLocationContacts looks at, the placed ones
+/// to the last slot, and the base of the metatile behaviors a touch raises
+/// (COORD_EVENT_MAPSEC).
 enum { CONTACT_LAST_OBJ_EVENT = 65, COORD_EVENT_PLACE_BASE = 100 };
 
-/// The world map's own actors, numbered in the order of
+/// The world map's own object events, numbered in the order of
 /// gWorldMapObjectEventTemplates from LOCALID_FIRST_PLACED: the Djinn met on
-/// the map, the places, then the Tolbi-bound Ship, the storm and Iodem. Each
-/// place is named by the scene its exit leads into (gWorldMapWarps), and
-/// touching it raises its COORD_EVENT_MAPSEC (WorldMap_UpdateLocationContacts).
+/// the map, the map sections, then the Tolbi-bound Ship, the storm and Iodem.
+/// Each map section is named by the map its warp leads into (gWorldMapWarps),
+/// and touching it raises its COORD_EVENT_MAPSEC
+/// (WorldMap_UpdateLocationContacts).
 enum WorldMapLocalId {
   /// The Venus Djinni: Flint, circling his spot until the party meets him,
   /// and later Vine.
@@ -186,7 +189,7 @@ enum WorldMapLocalId {
   /// Hail.
   /// ★ Named from the game: "The Mercury Djinni" (MsgVenusDjinnJoined)
   LOCALID_MERCURY_DJINNI,
-  /// Vale, whose exit leads to the town gate (MapId_ValeGate).
+  /// Vale, whose warp leads to the town gate (MapId_ValeGate).
   /// ★ Named from the game: "Why's everyone hanging around the town gate?"
   /// (MsgValeWhysEveryoneHanging)
   LOCALID_MAPSEC_VALE_GATE,
@@ -284,13 +287,13 @@ enum WorldMapLocalId {
   LOCALID_IODEM
 };
 
-/// The trigger raised by touching a place's actor.
+/// The metatile behavior raised by touching a map section's object event.
 #define COORD_EVENT_MAPSEC(objectEvent) (COORD_EVENT_PLACE_BASE + (objectEvent))
 
-/// The world map's own event triggers: cell codes the map's cells carry, and
-/// the value the storm raises. Each exit cell carries the number of the exit
-/// it leads to, so the exit rows of gWorldMapEvents name their trigger by that
-/// exit.
+/// The world map's own metatile behaviors: those the map's cells carry, and
+/// the value the storm raises. Each warp cell carries the number of the warp
+/// it leads to, so the warp rows of gWorldMapEvents name their metatile
+/// behavior by that warp.
 enum WorldMapTrigger {
   TRIGGER_TOLBI_SHIP = 74,     ///< the shore beside the anchored ship
   TRIGGER_CROSSBONE_ISLE = 75, ///< the island's shore, walked onto northward
@@ -317,10 +320,10 @@ enum { WORLD_MAP_BRIDGE_ANIMATION_LOWERED = 2 };
 /// shatters where it lands.
 enum { FALLING_ROCK_ANIMATION_TUMBLE = 2, FALLING_ROCK_ANIMATION_SHATTER = 3 };
 
-/// The actors of Hammet's caravan leaving Vault
+/// The object events of Hammet's caravan leaving Vault
 /// (gWorldMapObjectEventTemplatesHammetsCaravan,
 /// WORLD_MAP_HAMMETS_CARAVAN_LEAVES), numbered from LOCALID_FIRST_PLACED;
-/// Garet's row takes his own actor.
+/// Garet's row takes his own local id.
 enum WorldMapCaravanLocalId {
   /// Hammet, in his sprite, as LOCALID_HAMMET is out of West Lunpa Cave.
   /// ★ Named from the game: "Master Hammet!"
@@ -335,9 +338,9 @@ enum WorldMapCaravanLocalId {
   /// ★ Named from what the player sees: four covered wagons, each drawn by a
   /// horse (its render)
   LOCALID_CARAVAN_FIRST_WAGON,
-  /// A blank actor (SPRITE_BLANK) that the falling rock is held above as it
-  /// drops (WorldMap_UpdateFallingRock); it grows from a tenth of its size as
-  /// it moves (gCaravanRockGuideScript).
+  /// A blank object event (SPRITE_BLANK) that the falling rock is held above as
+  /// it drops (WorldMap_UpdateFallingRock); it grows from a tenth of its size
+  /// as it moves (gCaravanRockGuideScript).
   LOCALID_BLANK_ROCK_GUIDE = LOCALID_CARAVAN_FIRST_WAGON + 4,
   /// Drawn as the rocks in sol_sanctum_eruption.c; it lands by the caravan
   /// and shatters.
@@ -346,7 +349,7 @@ enum WorldMapCaravanLocalId {
   LOCALID_FALLING_ROCK
 };
 
-/// The Tolbi-bound Ship, the first actor of
+/// The Tolbi-bound Ship, the first object event of
 /// gWorldMapObjectEventTemplatesCrossingEnds and
 /// gWorldMapObjectEventTemplatesCrossing
 /// (WORLD_MAP_FROM_TOLBI_SHIP_INTERIORS_SAIL_TO_FIRST_ATTACK to
@@ -360,15 +363,15 @@ enum {
 
 /// Bunza's wagon at Kalay
 /// (gWorldMapObjectEventTemplatesFromKalayTunnelEntranceSouth), after Kalay's
-/// and the Kalay Tunnel Entrance's place actors.
+/// and the Kalay Tunnel Entrance's map section object events.
 enum {
   /// ★ Named from the game: "go back to Kalay in my wagon." (MsgLunpaBunza)
   LOCALID_KALAY_WAGON = LOCALID_FIRST_PLACED + 2
 };
 
-/// The one actor of gWorldMapObjectEventTemplatesFromClear, before the ending:
-/// the island Jenna and Kraden are adrift on ("How long will this island
-/// continue to drift?"). It drifts east trailing a wake
+/// The one object event of gWorldMapObjectEventTemplatesFromClear, before the
+/// ending: the island Jenna and Kraden are adrift on ("How long will this
+/// island continue to drift?"). It drifts east trailing a wake
 /// (WorldMap_SpawnIslandWake) until the map leads into their scene.
 enum {
   /// ★ Named from what the player sees: an island of green hills around a
@@ -376,9 +379,10 @@ enum {
   LOCALID_DRIFTING_ISLAND = LOCALID_FIRST_PLACED
 };
 
-/// The ending's actors (gWorldMapObjectEventTemplatesJennaAndKradenAdrift),
-/// numbered from LOCALID_FIRST_PLACED after the rows of Jenna and Sheba, which
-/// take their own actors.
+/// The ending's object events
+/// (gWorldMapObjectEventTemplatesJennaAndKradenAdrift), numbered from
+/// LOCALID_FIRST_PLACED after the rows of Jenna and Sheba, which take their own
+/// local ids.
 enum WorldMapEndingLocalId {
   /// Kraden, adrift with Jenna.
   /// ★ Named from the game: "Oh, Kraden... How long will this island continue
@@ -405,10 +409,10 @@ enum {
   ANIMATION_SHEBA_LIE = 8   ///< lying on her back (spr_006.tsv)
 };
 
-// The world map's scene flags:
+// The world map's map flags:
 // FLAG_MAP_TEMP_00: the falling rock has landed, in Hammet's caravan scene.
 // FLAG_MAP_TEMP_34: Iodem has handed over the Black Orb.
-// FLAG_MAP_TEMP_35: the map's ordinary placements are in use.
+// FLAG_MAP_TEMP_35: the map's ordinary object event templates are in use.
 // FLAG_MAP_TEMP_F0: the storm holds the party up in the air.
 // FLAG_MAP_TEMP_F1: the storm is done with, or put away.
 // FLAG_MAP_TEMP_F8: a byte: frames left in the air.
@@ -623,10 +627,10 @@ WorldMap_BlinkObjectEventSprite(struct ScriptInterpreter *interpreter) {
   return 1;
 }
 
-/// Chooses the actors for the entrance: each scripted moment has a table of
-/// its own while it is still to play, and every other arrival takes the
-/// places, the Djinn, the storm and Iodem (gWorldMapObjectEventTemplates) and
-/// sets FLAG_MAP_TEMP_35.
+/// Chooses the object events for the warp destination: each scripted moment has
+/// a table of its own while it is still to play, and every other arrival takes
+/// the map sections, the Djinn, the storm and Iodem
+/// (gWorldMapObjectEventTemplates) and sets FLAG_MAP_TEMP_35.
 const struct ObjectEventTemplate *WorldMap_GetObjectEventTemplates(void) {
   switch (gGameState.warpDest) {
   case WORLD_MAP_FROM_WEST_LUNPA_CAVE:
@@ -665,7 +669,8 @@ const struct ObjectEventTemplate *WorldMap_GetObjectEventTemplates(void) {
   return gWorldMapObjectEventTemplates;
 }
 
-/// Chooses a passage exit from the side of the actor the leader approaches.
+/// Chooses a passage warp from the side of the object event the leader
+/// approaches.
 static void WorldMap_SelectWarpByX(s32 trigger, s32 warpBefore, s32 warpAfter) {
   struct EventWork *work;
   struct ObjectEvent *subject;
@@ -682,7 +687,7 @@ static void WorldMap_SelectWarpByX(s32 trigger, s32 warpBefore, s32 warpAfter) {
   Engine_AudioPlayCue(SE_MAP_EXIT);
 }
 
-/// Chooses a passage exit from the leader's north-south approach.
+/// Chooses a passage warp from the leader's north-south approach.
 static void WorldMap_SelectWarpByZ(s32 trigger, s32 warpBefore, s32 warpAfter) {
   struct EventWork *work;
   struct ObjectEvent *subject;
@@ -699,8 +704,8 @@ static void WorldMap_SelectWarpByZ(s32 trigger, s32 warpBefore, s32 warpAfter) {
   Engine_AudioPlayCue(SE_MAP_EXIT);
 }
 
-/// Touching the Bilibin Barricade's actor: the side the party comes from
-/// decides the exit, from the west WORLD_MAP_TO_BILIBIN_BARRICADE_WEST, from
+/// Touching the Bilibin Barricade's object event: the side the party comes from
+/// decides the warp, from the west WORLD_MAP_TO_BILIBIN_BARRICADE_WEST, from
 /// the east WORLD_MAP_TO_BILIBIN_BARRICADE_EAST.
 static void EventScript_EnterBilibinBarricade(void) {
   WorldMap_SelectWarpByX(COORD_EVENT_MAPSEC(LOCALID_MAPSEC_BILIBIN_BARRICADE),
@@ -748,11 +753,11 @@ static void EventScript_EnterLalivero(void) {
 const struct MapEvent *WorldMap_GetEvents(void) { return gWorldMapEvents; }
 
 /// Run each frame on the map (WorldMap_Initialize adds it): it hides every
-/// placed actor outside a box around the view, 160 pixels either side, 300
-/// north and 200 south, and raises the COORD_EVENT_MAPSEC of an actor within
-/// reach of the leader, their radii scaled by their sprites, measured as the
-/// sum of the distances east-west and north-south. With the debug flag
-/// FLAG_DEBUG_STEPS_OFF it raises none.
+/// placed object event outside a box around the view, 160 pixels either side,
+/// 300 north and 200 south, and raises the COORD_EVENT_MAPSEC of an object
+/// event within reach of the leader, their radii scaled by their sprites,
+/// measured as the sum of the distances east-west and north-south. With the
+/// debug flag FLAG_DEBUG_STEPS_OFF it raises none.
 static void WorldMap_UpdateLocationContacts(void) {
   struct ObjectEvent *leader;
   struct EventWork *work;
@@ -810,7 +815,7 @@ static void WorldMap_UpdateLocationContacts(void) {
   }
 }
 
-/// Touching Vault's actor: the first time, until
+/// Touching Vault's object event: the first time, until
 /// FLAG_LUNPA_GUARDS_SUSPECT_KALAY is set, WORLD_MAP_HAMMETS_CARAVAN_LEAVES
 /// plays Hammet's caravan leaving (WORLD_MAP_TO_HAMMETS_CARAVAN_LEAVES); later
 /// it is Vault's door (WORLD_MAP_TO_VAULT_SOUTH).
@@ -834,10 +839,10 @@ static void EventScript_ReturnToTolbiShip(void) {
   Engine_ScriptRequestWarp(WORLD_MAP_TO_TOLBI_SHIP_DECK_CROSSBONE_ISLE);
 }
 
-/// The scene's initialization: it runs the moment the arrival entrance
+/// The map's initialization: it runs the moment the warp destination
 /// selects, the story's moments listed at the top of this file. The two
-/// lighthouse entrances and WORLD_MAP_AFTER_BLACK_ORB_DEFEAT leave at once;
-/// every other arrival sets FLAG_RETREAT_BLOCKED, starts
+/// lighthouse warp destinations and WORLD_MAP_AFTER_BLACK_ORB_DEFEAT leave at
+/// once; every other arrival sets FLAG_RETREAT_BLOCKED, starts
 /// WorldMap_UpdateLocationContacts, opens the screen from a centre line, and
 /// until the Manticore of the Lamakan Desert is beaten
 /// (FLAG_LAMAKAN_MANTICORE_BEATEN) swaps in the 512-pixel tile south of Vault
@@ -880,7 +885,7 @@ s32 WorldMap_Initialize(void) {
     if (Engine_GameFlagIsSet(FLAG_LAMAKAN_MANTICORE_BEATEN) == 0) {
       Field_SetWorldMapWindowCellTile(128, 256, 176, 56);
     }
-    // Each special entrance resumes its travel or story sequence.
+    // Each special warp destination resumes its travel or story sequence.
     switch (*warpDest) {
     case WORLD_MAP_FROM_VALE_GATE:
       if (GameFlag_IsSet(FLAG_VALE_PARTY_LEFT) == 0) {
@@ -967,10 +972,10 @@ s32 WorldMap_Initialize(void) {
   return 0;
 }
 
-/// The actors placed at WORLD_MAP_FROM_WEST_LUNPA_CAVE
+/// The object events placed at WORLD_MAP_FROM_WEST_LUNPA_CAVE
 /// (gWorldMapObjectEventTemplatesFromWestLunpaCave), numbered from
 /// LOCALID_FIRST_PLACED: Bunza's wagon, then, after Lunpa's and West Lunpa
-/// Cave's place actors, Bunza and Hammet.
+/// Cave's map section object events, Bunza and Hammet.
 enum {
   /// Bunza's wagon.
   /// ★ Named from the game: "go back to Kalay in my wagon." (MsgLunpaBunza)
@@ -1456,7 +1461,7 @@ static void WorldMap_SailToFirstMonsterAttack(void) {
 /// The middle legs of the crossing: the ship, seen from above, sails west
 /// across the Karagol Sea from the far east of the map until
 /// gCrossingShipSailsWest says it has gone far enough, and the party leaves
-/// by exit, back aboard. Sets FLAG_TOLBI_SHIP_ROWING.
+/// by warp, back aboard. Sets FLAG_TOLBI_SHIP_ROWING.
 static inline void WorldMap_SailCrossingLeg(s32 warp) {
   struct ObjectEvent *objectEvent;
 
@@ -1896,7 +1901,7 @@ static void WorldMap_StepDownFromBunzasWagon(void) {
 /// Called by WorldMap_Initialize at WORLD_MAP_FROM_GATEWAY_CAVE until the Black
 /// Orb is handed back and before the wounded soldiers are seen in Lalivero
 /// (FLAG_LALIVERO_WOUNDED_SOLDIERS_SEEN). Sets FLAG_MAP_TEMP_34 and
-/// FLAG_SAW_SHIP_AT_IDEJIMA, and turns Gateway Cave's exit into
+/// FLAG_SAW_SHIP_AT_IDEJIMA, and turns Gateway Cave's warp into
 /// EventScript_IodemCallsLeaderBack.
 static void WorldMap_RunBlackOrbScene(void) {
   struct ObjectEvent *leader;
@@ -1981,13 +1986,13 @@ static void WorldMap_RunBlackOrbScene(void) {
   Engine_ScriptEnd();
 }
 
-/// Turns Gateway Cave's exit (the event of LOCALID_MAPSEC_GATEWAY_CAVE's
-/// COORD_EVENT_MAPSEC) into a touch event that runs
+/// Turns Gateway Cave's warp (the map event of LOCALID_MAPSEC_GATEWAY_CAVE's
+/// COORD_EVENT_MAPSEC) into a coord event that runs
 /// EventScript_IodemCallsLeaderBack, and stands Iodem (LOCALID_IODEM, whose
-/// placement row it finds by his sprite) at pixel (6036, 3400); the actor given
-/// is not used. Called by WorldMap_RunBlackOrbScene, and by WorldMap_Initialize
-/// when the party returns to WORLD_MAP_FROM_GATEWAY_CAVE with the orb still to
-/// use.
+/// object event template row it finds by his sprite) at pixel (6036, 3400); the
+/// object event given is not used. Called by WorldMap_RunBlackOrbScene, and by
+/// WorldMap_Initialize when the party returns to WORLD_MAP_FROM_GATEWAY_CAVE
+/// with the orb still to use.
 static void WorldMap_BlockGatewayCaveWarp(s32 objectEvent) {
   s32 i;
 
@@ -2013,7 +2018,7 @@ static void WorldMap_BlockGatewayCaveWarp(s32 objectEvent) {
   }
 }
 
-/// Makes touching Gateway Cave an exit again, to WORLD_MAP_TO_GATEWAY_CAVE.
+/// Makes touching Gateway Cave a warp again, to WORLD_MAP_TO_GATEWAY_CAVE.
 /// Called by EventScript_UseBlackOrb once the orb is handed back.
 static void WorldMap_RestoreGatewayCaveWarp(void) {
   s32 i;
@@ -2049,7 +2054,7 @@ static void EventScript_TalkAboutBlackOrb(void) {
 /// leader back to the coast. "Isaac, where you going? I said to use the Orb on
 /// Babi's ship!"
 /// Reached by touching Gateway Cave while WorldMap_BlockGatewayCaveWarp has
-/// made it a touch event.
+/// made it a coord event.
 static void EventScript_IodemCallsLeaderBack(void) {
   Engine_ScriptStart();
   WorldMap_StartScript();
@@ -2867,8 +2872,8 @@ static void WorldMap_PlayLighthouseTransition(s32 palette) {
   Engine_GameFlagSet(FLAG_SKIP_MAP_CHANGE_SOUND);
 }
 
-/// Unused: an update hook that blinks an actor and now and then creates its
-/// linked effects; no actor is given it.
+/// Unused: an update hook that blinks an object event and now and then creates
+/// its linked effects; no object event is given it.
 UNUSED static void
 WorldMap_UpdateBlinkingLinkedEffects(struct ObjectEvent *objectEvent) {
   if ((gFrameCount & 2) != 0) {
@@ -2881,8 +2886,8 @@ WorldMap_UpdateBlinkingLinkedEffects(struct ObjectEvent *objectEvent) {
   }
 }
 
-/// Unused: an update hook that cycles an actor's palettes and now and then
-/// creates its linked effects; no actor is given it.
+/// Unused: an update hook that cycles an object event's palettes and now and
+/// then creates its linked effects; no object event is given it.
 UNUSED static void
 WorldMap_UpdateCyclingLinkedEffects(struct ObjectEvent *objectEvent) {
   if ((gFrameCount & 1) != 0) {
@@ -2894,8 +2899,8 @@ WorldMap_UpdateCyclingLinkedEffects(struct ObjectEvent *objectEvent) {
   }
 }
 
-/// Unused: an update hook that advances an actor's palette on odd frames; no
-/// actor is given it.
+/// Unused: an update hook that advances an object event's palette on odd
+/// frames; no object event is given it.
 UNUSED static void
 WorldMap_CycleObjectEventPalettes(struct ObjectEvent *objectEvent) {
   if ((gFrameCount & 1) != 0) {
@@ -3290,7 +3295,7 @@ struct MapWarpDest gWorldMapWarpDests[] = {
      FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {WORLD_MAP_FROM_VAULT_NORTH, CONDITION_ALWAYS, 5848, 0, 1544, FACING_NORTH,
      0, -1, -1, -1, -1, 0},
-    // Unused: no exit leads to entrance 45, 97 or 98.
+    // Unused: no warp leads to warp destination 45, 97 or 98.
     {45, CONDITION_ALWAYS, 6248, 0, 520, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {WORLD_MAP_FROM_KOLIMA_BRIDGE_WEST, CONDITION_ALWAYS, 7568, 0, 1352,
      FACING_NORTH, 0, -1, -1, -1, -1, 0},

@@ -1,19 +1,19 @@
 /// @file
 /// Tolbi-bound Ship (MapId_TolbiShipDeck), its deck: the ship that carries
 /// the party and a tour group bound for Colosso across the Karagol Sea from
-/// Kalay to Tolbi. The ship's other scenes are its mast (tolbi_ship_mast.c)
+/// Kalay to Tolbi. The ship's other maps are its mast (tolbi_ship_mast.c)
 /// and below decks (tolbi_ship_interiors.c). The voyage's stage, read from
-/// its flags, chooses the deck's placements and events: at Kalay, under sail
-/// once the first attack is fought off
+/// its flags, chooses the deck's object event templates and events: at Kalay,
+/// under sail once the first attack is fought off
 /// (FLAG_TOLBI_SHIP_FIRST_ATTACK_FOUGHT_OFF), while the oars move
 /// (FLAG_TOLBI_SHIP_ROWING), at anchor off Crossbone Isle
 /// (FLAG_TOLBI_SHIP_AT_ISLAND) and at Tolbi (FLAG_TOLBI_SHIP_REACHED_TOLBI).
 /// The setup redraws the deck's cells for the stage, rocks the view and
 /// scrolls the sea while under sail, rows the oars to the strokes of the
 /// passengers at the seats (gTolbiShipDeckRowerStrokes), and plays the
-/// cutscene its entrance names. Each cutscene leaves into the next, in another
-/// of the ship's scenes or on the world map, whose entrances sail the ship on.
-/// In story order:
+/// cutscene its warp destination names. Each cutscene leaves into the next, in
+/// another of the ship's maps or on the world map, whose warp destinations sail
+/// the ship on. In story order:
 ///
 /// - At Kalay (TOLBI_SHIP_DECK_FROM_KALAY_DOCKS), while the ship waits for
 ///   its replacement from Tolbi. Once the tour group has left Kalay
@@ -91,8 +91,9 @@
 #include "heap_state.h"
 #include "fixed_math.h"
 
-// Place flags: Map_ResetFlagsOnEnter clears 0x300 to 0x3ff when the party
-// enters another place group, and other places use the numbers for their own.
+// Map section flags: Map_ResetFlagsOnEnter clears 0x300 to 0x3ff when the party
+// enters another map section, and other map sections use the numbers for their
+// own.
 
 /// "There's a huge sea monster on the ship!": the deck shakes until the
 /// Kraken is defeated (set in tolbi_ship_interiors.c).
@@ -142,13 +143,13 @@ static void TolbiShipDeck_PlaceLeaderOnDeck(void);
 // lookups, but does not write them. Its mutable API therefore needs a cast
 // at each call; the tables themselves remain const.
 
-/// A speaker: the actor, and in the top four bits where the message window
-/// opens beside them (4, SPEAKER_WINDOW_ABOVE, is above).
+/// A speaker: the object event, and in the top four bits where the message
+/// window opens beside them (4, SPEAKER_WINDOW_ABOVE, is above).
 #define SPEAKER(objectEvent, window) ((window) << 12 | (objectEvent))
 
-/// Who is who on deck, numbering each placement table's rows from
+/// Who is who on deck, numbering each object event template table's rows from
 /// LOCALID_FIRST_PLACED. Every table starts with the same twelve rows of oars,
-/// and the cutscenes add their actors after a table's last row
+/// and the cutscenes add their object events after a table's last row
 /// (FieldScript_CallWithLastActiveObjectId), so each stage of the voyage has
 /// its own names, which carry its prefix. At Kalay
 /// (gTolbiShipDeckObjectEventTemplatesWaiting) the captain talks the delay over
@@ -260,7 +261,7 @@ enum TolbiShipDeckLocalId {
   /// ★ Named from the game: "You did good against that Kraken."
   /// (MsgTolbiShipThankIsaacDidGoodAgainst)
   SEA_KRAKEN = SEA_CREW_MEMBER + 1,
-  /// An invisible actor the camera follows across the deck.
+  /// An invisible object event the camera follows across the deck.
   SEA_CAMERA_TARGET,
   /// At anchor, back from the island
   /// (gTolbiShipDeck_TourGuideObjectEventTemplates): the
@@ -287,12 +288,12 @@ enum TolbiShipDeckLocalId {
   /// man with a cane (SPRITE_OLD_MAN_WITH_CANE): "You make an old man row the
   /// ship".
   ARRIVED_FIRST_PASSENGER,
-  /// An invisible actor the camera follows as the rowers come up.
+  /// An invisible object event the camera follows as the rowers come up.
   ARRIVED_CAMERA_TARGET = ARRIVED_FIRST_PASSENGER + 9
 };
 
-/// The deck's touch cells at Kalay, beside the ways below, whose cells carry
-/// the numbers of their exits (TolbiShipDeck_GoBelow).
+/// The deck's coord events at Kalay, beside the ways below, whose metatile
+/// behaviors carry the numbers of their warps (TolbiShipDeck_GoBelow).
 enum TolbiShipDeckCell {
   /// Beside the crew, where they talk over the delay.
   TOLBI_SHIP_DECK_CELL_BY_CREW = 10,
@@ -305,17 +306,19 @@ enum TolbiShipDeckCell {
 // Shared code, included where it sits in the ROM.
 #include "common/object_pulse.h"
 
-/// An action-script call: shows the actor's sprite. Returns 0 to end the call.
+/// An action-script call: shows the object event's sprite. Returns 0 to end the
+/// call.
 static s32 TolbiShipDeck_ShowSprite(struct ScriptInterpreter *interpreter) {
   struct ObjectEvent *a = (struct ObjectEvent *)interpreter;
   Engine_ObjectEventSetSpriteFlags(a, 1);
   return 0;
 }
 
-// The diving scripts own the actor's scratch fields: riseBaseY is sideways
-// drift in 16.16 pixels per frame, riseCounter the dive step (0 hovering),
-// riseEnabled the return side, timer the drift direction and work the bob
-// direction. Using the actor's fields keeps one layout for the whole slot.
+// The diving scripts own the object event's scratch fields: riseBaseY is
+// sideways drift in 16.16 pixels per frame, riseCounter the dive step (0
+// hovering), riseEnabled the return side, timer the drift direction and work
+// the bob direction. Using the object event's fields keeps one layout for the
+// whole slot.
 
 /// The update of a sea monster hovering by Ouranos's side of the deck while the
 /// monsters attack. It drifts and bobs at random; one frame in a hundred it
@@ -521,8 +524,9 @@ static s32 sSeaSpeed[2];
 static u32 sOarStroke[8] __attribute__((aligned(16)));
 static s32 sOarDepth[8];
 
-/// Bobs the actor between 4 and 12 pixels high by a random amount each frame;
-/// the actor's work halfword says which way it is going. Returns 1.
+/// Bobs the object event between 4 and 12 pixels high by a random amount
+/// each frame; the object event's work halfword says which way it is going.
+/// Returns 1.
 static s32 TolbiShipDeck_Bob(struct ScriptInterpreter *interpreter) {
   struct ObjectEvent *objectEvent = (struct ObjectEvent *)interpreter;
   s16 *flag = (s16 *)&objectEvent->work;
@@ -551,8 +555,8 @@ done:
   return 1;
 }
 
-/// Now and then (two chances in 32) turns the actor to look north-northeast or
-/// north-northwest. Returns 1.
+/// Now and then (two chances in 32) turns the object event to look
+/// north-northeast or north-northwest. Returns 1.
 static s32 TolbiShipDeck_LookAround(struct ScriptInterpreter *interpreter) {
   struct ObjectEvent *objectEvent = (struct ObjectEvent *)interpreter;
   u32 roll = ((u32)(Engine_RandomNext() << 5)) >> 16;
@@ -566,8 +570,8 @@ static s32 TolbiShipDeck_LookAround(struct ScriptInterpreter *interpreter) {
 
 /// The update of a monster on deck that, at random, leaps at Ouranos: it jumps
 /// to him, he turns and jumps back (sometimes with an emote), and it lands on
-/// one of two spots chosen by riseEnabled. The actor's timer holds the step.
-/// Returns 1.
+/// one of two spots chosen by riseEnabled. The object event's timer holds the
+/// step. Returns 1.
 static s32 TolbiShipDeck_LeapAtOuranos(struct ScriptInterpreter *interpreter) {
   struct ObjectEvent *obj = (struct ObjectEvent *)interpreter;
   switch (obj->timer) {
@@ -709,7 +713,7 @@ static s32 TolbiShipDeck_LeapAtSean(struct ScriptInterpreter *interpreter) {
   return 1;
 }
 
-/// Makes the actor hop at random, one frame in 40 on average. Returns 1.
+/// Makes the object event hop at random, one frame in 40 on average. Returns 1.
 static s32 TolbiShipDeck_RandomlyStartObjectEventHop(
     struct ScriptInterpreter *interpreter) {
   struct ObjectEvent *objectEvent = (struct ObjectEvent *)interpreter;
@@ -718,8 +722,8 @@ static s32 TolbiShipDeck_RandomlyStartObjectEventHop(
   return 1;
 }
 
-/// The update that shrinks an enlarged actor by 1/32 a frame until it is back
-/// to normal size.
+/// The update that shrinks an enlarged object event by 1/32 a frame until it is
+/// back to normal size.
 static void TolbiShipDeck_ShrinkToNormalSize(union FieldObject *fieldObject) {
   struct ObjectEvent *objectEvent = (struct ObjectEvent *)fieldObject;
   if (objectEvent->scaleX > Q16_ONE) {
@@ -728,8 +732,9 @@ static void TolbiShipDeck_ShrinkToNormalSize(union FieldObject *fieldObject) {
   }
 }
 
-/// Turns the actor east, northeast-by-north or southeast-by-south at random
-/// intervals of 80 to 160 frames. riseCounter counts down the wait. Returns 1.
+/// Turns the object event east, northeast-by-north or southeast-by-south at
+/// random intervals of 80 to 160 frames. riseCounter counts down the wait.
+/// Returns 1.
 static s32 TolbiShipDeck_IdleTurn(struct ScriptInterpreter *interpreter) {
   struct ObjectEvent *objectEvent = (struct ObjectEvent *)interpreter;
   if (objectEvent->riseCounter != 0) {
@@ -759,7 +764,7 @@ const struct MapWarpRegion *TolbiShipDeck_GetRegions(void) {
 
 const u32 *TolbiShipDeck_GetWarps(void) { return gTolbiShipDeckWarps; }
 
-/// The talk facing of a Kalay actor's row in
+/// The talk facing of a Kalay object event's row in
 /// gTolbiShipDeckObjectEventTemplatesWaiting.
 #define KALAY_TALK_FACING(objectEvent)                                         \
   STORE_CONST(gTolbiShipDeckObjectEventTemplatesWaiting[(objectEvent) -        \
@@ -899,10 +904,10 @@ static void TolbiShipDeck_OpenSecondDoor(void) {
   }
 }
 
-/// Walking into one of the ways below deck, whose triggers are numbered as
-/// their exits. The doors to the passengers' hold and the captain's quarters
-/// open and the leader steps through; the hatch to the cargo hold just plays
-/// its sound. Leaves by the exit numbered as the trigger.
+/// Walking into one of the ways below deck, whose metatile behaviors are
+/// numbered as their warps. The doors to the passengers' hold and the captain's
+/// quarters open and the leader steps through; the hatch to the cargo hold just
+/// plays its sound. Leaves by the warp numbered as the metatile behavior.
 static void TolbiShipDeck_GoBelow(void) {
 
   s32 throughDoor;
@@ -932,9 +937,9 @@ static void TolbiShipDeck_GoBelow(void) {
 }
 
 #if TBS_PATCH_2
-/// In the German, Spanish, French and Italian editions trigger 2 is a plain
-/// touch: the leader goes below only while facing west, after walking onto the
-/// hatch.
+/// In the German, Spanish, French and Italian editions metatile behavior 2 is a
+/// plain coord event: the leader goes below only while facing west, after
+/// walking onto the hatch.
 static void TolbiShipDeck_GoBelowWhileFacingWest(void) {
   if ((u16)(ObjectEvent_GetById(LOCALID_PARTY_LEADER)->facing - 0x6001) <=
       0x3ffe) {
@@ -1197,9 +1202,9 @@ static void TolbiShipDeck_ConfrontCrewman(void) {
   GameFlag_Set(FLAG_TOLBI_SHIP_CREWMAN_CAUGHT);
 }
 
-/// Sets up the scene on entry: clears FLAG_NOT_ON_WORLD_MAP, sets the
+/// Sets up the map on entry: clears FLAG_NOT_ON_WORLD_MAP, sets the
 /// transition, starts the deck's sway at a random angle and stops the sea's
-/// scroll, redraws the map and applies the voyage's state.
+/// scroll, redraws the map grid and applies the voyage's state.
 s32 TolbiShipDeck_Initialize(void) {
   void **base = gMapGridWork;
   struct MapGridLayerScroll *layer =
@@ -1222,9 +1227,9 @@ s32 TolbiShipDeck_Initialize(void) {
 }
 
 /// Applies the voyage's state: which cells and oars are drawn, whether the deck
-/// rocks and the sea scrolls, and which cutscene the entrance starts (the
-/// entrances from TOLBI_SHIP_DECK_FROM_TOLBI_SHIP_INTERIORS_READY on are the
-/// voyage's cutscenes, chained by their exits).
+/// rocks and the sea scrolls, and which cutscene the warp destination starts
+/// (the warp destinations from TOLBI_SHIP_DECK_FROM_TOLBI_SHIP_INTERIORS_READY
+/// on are the voyage's cutscenes, chained by their warps).
 static void TolbiShipDeck_ApplyEntryState(void) {
   s32 flag;
 
@@ -2752,7 +2757,7 @@ static void TolbiShipDeck_Say(s32 speaker) {
   Engine_ScriptWait(10);
 }
 
-/// Turns an actor to a facing over 10 frames.
+/// Turns an object event to a facing over 10 frames.
 static void TolbiShipDeck_Turn(s32 objectEventId, s32 facing) {
   Engine_ObjectEventFaceDirection(objectEventId, facing, 10);
 }

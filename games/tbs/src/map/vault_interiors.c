@@ -1,13 +1,14 @@
 /// @file
 /// Vault (MapId_VaultInteriors): the insides of the town's houses, shops and
 /// inn, and the inn's loft, while Hammet's Shaman's Rod is missing and just
-/// after it is found. Every room is on one map, each an entrance with a camera
-/// box of its own, and Vault's doors (vault.c) lead to the entrances named for
-/// them: the gem owner's house, the child's house, the inn and its guests' room
-/// upstairs, the item shop, the weapon and armor shop, the mayor's house and a
-/// room with a crate, behind which a way climbs to the inn's loft. The loft has
-/// placements and events of its own (VaultInteriors_GetObjectEventTemplates and
-/// _GetEvents), and FLAG_VAULT_THIEVES_JAILED chooses the other rooms' tables.
+/// after it is found. Every room is on one map, each a warp destination with a
+/// camera box of its own, and Vault's doors (vault.c) lead to the warp
+/// destinations named for them: the gem owner's house, the child's house, the
+/// inn and its guests' room upstairs, the item shop, the weapon and armor
+/// shop, the mayor's house and a room with a crate, behind which a way climbs
+/// to the inn's loft. The loft has object event templates and events of its
+/// own (VaultInteriors_GetObjectEventTemplates and _GetEvents), and
+/// FLAG_VAULT_THIEVES_JAILED chooses the other rooms' tables.
 ///
 /// The story flags drive the rooms in order:
 /// - At the mayor's, talking to Ivan plays EventScript_MeetIvan: he reads
@@ -198,8 +199,8 @@ enum {
   LOCALID_CRATE = 26
 };
 
-/// Place flags of Vault's group (0x300 to 0x3ff, kept while the party stays in
-/// Vault and its buildings).
+/// Map section flags of Vault's map section (0x300 to 0x3ff, kept while the
+/// party stays in Vault and its buildings).
 enum {
   /// Set while the two suspects run from the party, until the party steps
   /// aside to talk it over.
@@ -207,7 +208,7 @@ enum {
   FLAG_SUSPECTS_FLEEING = 0x300
 };
 
-// Scene flags here:
+// Map flags here:
 // - FLAG_MAP_TEMP_50: at the inn once the thieves are jailed, the leader
 //   stands beside the Bone on the floor (Vault_UpdateBoneProximityFlag); in
 //   the guests' room, set while the party corners the suspects, when talking
@@ -290,7 +291,7 @@ const struct MapWarpDest *Map_GetWarpDests(void) {
   return gVaultInteriors_WarpDests;
 }
 
-/// Returns the one exit region: the box around (648, 416) in the room with the
+/// Returns the one warp region: the box around (648, 416) in the room with the
 /// crate, which takes VAULT_INTERIORS_TO_VAULT_WEST back out to Vault.
 const struct MapWarpRegion *Map_GetWarpRegions(void) {
   return gVaultInteriors_Regions;
@@ -531,8 +532,8 @@ static void EventScript_SearchEmptyChest(void) {
   Engine_ScriptEnd();
 }
 
-/// Returns the loft's events for the loft's three entrances, else the houses'
-/// events, which change once FLAG_VAULT_THIEVES_JAILED is set.
+/// Returns the loft's events for the loft's three warp destinations, else the
+/// houses' events, which change once FLAG_VAULT_THIEVES_JAILED is set.
 const struct MapEvent *Map_GetEvents(void) {
   switch (gGameState.warpDest) {
   case VAULT_INTERIORS_LOFT_FROM_CRATE_ROOM:
@@ -941,9 +942,9 @@ static void EventScript_OfferBones(void) {
 /// rock: let me see that rock, or maybe it is worthless.
 ///
 /// Reached by Mind Read on the gem owner's wife (LOCALID_GEM_OWNERS_WIFE); the
-/// Mind Read events below are reached the same way on the actor each names,
-/// before and after the thieves are jailed (FLAG_VAULT_THIEVES_JAILED picks the
-/// thought).
+/// Mind Read events below are reached the same way on the object event each
+/// names, before and after the thieves are jailed (FLAG_VAULT_THIEVES_JAILED
+/// picks the thought).
 static void EventScript_ReadMindOnRock(void) {
   Engine_ScriptStart();
   if (Engine_GameFlagIsSet(FLAG_VAULT_THIEVES_JAILED) == 0) {
@@ -1559,7 +1560,7 @@ static void EventScript_FreeRooferAndConfrontThieves(void) {
 /// (VAULT_INTERIORS_INN_FROM_INN_UPSTAIRS).
 ///
 /// Reached by stepping on VAULT_INTERIORS_CELL_GUESTS_ROOM_STAIRS before the
-/// thieves are jailed (after, the same cell is a plain exit); takes
+/// thieves are jailed (after, the same cell is a plain warp); takes
 /// VAULT_INTERIORS_INN_UPSTAIRS_TO_INN.
 static void EventScript_LeaveGuestsRoom(void) {
   Engine_AudioPlayCue(SE_MAP_EXIT);
@@ -2170,8 +2171,8 @@ static void VaultInteriors_AdvanceSuspectRoute(s32 objectEvent, s32 expected,
 /// for the story so far, and plays the loft's scenes: the tied-up villager, the
 /// rematch, and the defeat or victory.
 ///
-/// Called by the engine once the actors are placed, by entrance. At the inn,
-/// after the thieves are jailed, places the Bone and starts
+/// Called by the engine once the object events are placed, by warp destination.
+/// At the inn, after the thieves are jailed, places the Bone and starts
 /// Vault_UpdateBoneProximityFlag. After a lost battle
 /// (VAULT_INTERIORS_LOFT_AFTER_LOSING_TO_THIEVES) takes
 /// VAULT_INTERIORS_TO_SANCTUM; after a won one (17) sets
@@ -2240,8 +2241,8 @@ s32 Map_Initialize(void) {
                               PIXELS(696));
       ObjectEvent_FaceDirection(LOCALID_SUSPECTED_THIEF, FACING_WEST, 0);
     }
-    // Once approached, the room's doorway collision changes; after the mind
-    // reading the suspects sit turned toward the leader.
+    // Once approached, the room's doorway metatile behavior changes; after the
+    // mind reading the suspects sit turned toward the leader.
     if (Engine_GameFlagIsSet(FLAG_VAULT_SUSPECTS_APPROACHED) != 0) {
       MapGrid_CopyCellAttributes(14, 45, 3, 1, 14, 44);
       if (Engine_GameFlagIsSet(FLAG_VAULT_SUSPECTS_MIND_READ) == 0) {
@@ -2331,7 +2332,7 @@ s32 Map_Initialize(void) {
 
 /// Keeps both suspects facing the leader while they evade the party.
 ///
-/// Run each frame as a scene callback, from EventScript_ApproachSuspects until
+/// Run each frame as a map callback, from EventScript_ApproachSuspects until
 /// EventScript_DiscussSuspiciousGuests, and again once their minds are read.
 static void VaultInteriors_FaceSuspectsTowardLeader(void) {
   struct ObjectEvent *origin = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
@@ -2746,8 +2747,8 @@ static void VaultInteriors_DefeatThieves(void) {
 /// Called by Map_Initialize after VaultInteriors_DefeatThieves. Sets
 /// FLAG_VAULT_THIEVES_JAILED; the thieves are led away, the mayor's urn and
 /// the Sanctum's gold statue come out of the chests, Ivan takes the Shaman's
-/// Rod, gives back any Venus Djinn and leaves the party, and every actor of
-/// the loft is cleared away.
+/// Rod, gives back any Venus Djinn and leaves the party, and every object event
+/// of the loft is cleared away.
 static void VaultInteriors_ReturnStolenGoods(void) {
   struct ObjectEvent *temporaryObjectEvent;
   struct ObjectEvent *objectEvent;
@@ -3310,8 +3311,8 @@ static void VaultInteriors_EndMindRead(void) {
 
 #include "common/vault_itemobj.h"
 
-/// Finds the route node containing the actor's position on the eight-pixel
-/// grid.
+/// Finds the route node containing the object event's position on the
+/// eight-pixel grid.
 static struct VaultInteriorsStop *
 VaultInteriors_FindStopAtPosition(s32 *position) {
   s32 gridX = (position[0] - PIXELS(64)) >> 19;
@@ -3373,8 +3374,8 @@ VaultInteriors_SnapToNearestStop(struct VaultInteriorsStop *node,
   return &gVaultInteriors_Stops[stopIndex];
 }
 
-/// Checks whether an actor's destination or current position lies within eight
-/// pixels.
+/// Checks whether an object event's destination or current position lies within
+/// eight pixels.
 static s32 VaultInteriors_IsObjectEventWithinEightPixels(s32 x, s32 z, s32 id) {
   struct ObjectEvent *objectEvent = Engine_ObjectEventLookup(id);
   s32 targetX = objectEvent->targetX;
@@ -3395,7 +3396,7 @@ static s32 VaultInteriors_IsObjectEventWithinEightPixels(s32 x, s32 z, s32 id) {
   return 0;
 }
 
-/// Checks whether an actor's destination or current position lies within
+/// Checks whether an object event's destination or current position lies within
 /// sixteen pixels.
 static s32 VaultInteriors_IsObjectEventWithinSixteenPixels(s32 x, s32 z,
                                                            s32 id) {
@@ -3416,9 +3417,9 @@ static s32 VaultInteriors_IsObjectEventWithinSixteenPixels(s32 x, s32 z,
   return 0;
 }
 
-/// Reserves a full cell around the leader and half a cell around each actor
-/// following a route. Testing destinations as well as current positions
-/// prevents two actors choosing the same stop while still walking.
+/// Reserves a full cell around the leader and half a cell around each object
+/// event following a route. Testing destinations as well as current positions
+/// prevents two object events choosing the same stop while still walking.
 static s32 VaultInteriors_CheckStopOccupancy(struct VaultInteriorsStop *stop) {
   s32 x;
   s32 z;
@@ -3440,7 +3441,7 @@ static s32 VaultInteriors_CheckStopOccupancy(struct VaultInteriorsStop *stop) {
   return 0;
 }
 
-/// Sets the actor's destination to the route stop's cell center.
+/// Sets the object event's destination to the route stop's cell center.
 static void
 VaultInteriors_MoveObjectEventToStop(struct ObjectEvent *objectEvent,
                                      struct VaultInteriorsStop *stop) {
@@ -3451,7 +3452,7 @@ VaultInteriors_MoveObjectEventToStop(struct ObjectEvent *objectEvent,
 /// Steers Ivan and both suspects through the graph and detects a sustained
 /// cornering.
 ///
-/// Run each frame as a scene callback from VaultInteriors_StartObjectEventStops
+/// Run each frame as a map callback from VaultInteriors_StartObjectEventStops
 /// until EventScript_ReadCorneredSuspectsMinds removes it. Raises event 200
 /// plus the blocked suspects (1 the leader, 2 the thief) after thirty frames
 /// with at least one suspect blocked; a frame when both can move restarts the

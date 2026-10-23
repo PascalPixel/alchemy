@@ -1,8 +1,8 @@
 /// @file
-/// Vault Cave's overlay, which holds three rooms, each a scene of its own and
+/// Vault Cave's overlay, which holds three rooms, each a map of its own and
 /// all named Vault Cave (MapId_VaultCavePassage, MapId_VaultCaveVambrace
-/// and MapId_VaultCaveMouth, place group 31). The cave opens off Vault as the
-/// party finds it on its return (MapId_VaultRevisit), whose exits
+/// and MapId_VaultCaveMouth, map section 31). The cave opens off Vault as the
+/// party finds it on its return (MapId_VaultRevisit), whose warps
 /// VAULT_REVISIT_TO_VAULT_CAVE_PASSAGE and VAULT_REVISIT_TO_VAULT_CAVE_MOUTH
 /// lead in, through the hidden passage the dog shows and through a cave mouth
 /// in the town's northeast cliff. No story flag is read here and no one speaks:
@@ -47,8 +47,8 @@
 ///   beneath him. The six frozen states are FLAG_MAP_TEMP_00 to _05, read by
 ///   index, and the room's entry code freezes again every puddle whose flag is
 ///   set. Whirlwind blows away ivy (LOCALID_IVY) for as long as the party
-///   stays in the cave (FLAG_WHIRLWIND_USED, a place flag). A chest holds the
-///   Vambrace.
+///   stays in the cave (FLAG_WHIRLWIND_USED, a map section flag). A chest holds
+///   the Vambrace.
 /// - Vault Cave (MapId_VaultCaveMouth). In its northern room four
 ///   water drops (LOCALID_FIRST_TIMED_WATER_DROP and the three after it) fall
 ///   on a fixed schedule (gVaultCave_ScheduleFrames) while the party pushes or
@@ -61,9 +61,9 @@
 ///
 /// Each room has a door that only says it is locked
 /// (EventScript_ShowLockedDoor). The pushes share VaultCave_PushPillarAhead,
-/// which moves the pillar the leader faces one cell unless another actor or the
-/// terrain is in the way, and the water drops run as scene callbacks started by
-/// Map_Initialize.
+/// which moves the pillar the leader faces one cell unless another object event
+/// or the terrain is in the way, and the water drops run as map callbacks
+/// started by Map_Initialize.
 ///
 /// Open questions:
 /// - None.
@@ -113,7 +113,7 @@ static void VaultCave_SpawnPuffs(struct ObjectEvent *source);
 
 #define TILE(position) ((position) / 0x100000)
 
-/// The collision codes of the cells the events answer.
+/// The metatile behaviors of the cells the events answer.
 enum VaultCaveCell {
   VAULT_CAVE_CELL_SWITCH = 20, ///< the switch MapId_VaultCavePassage flips
   /// The cells of MapId_VaultCaveMouth's northern pillar, pushed.
@@ -126,7 +126,7 @@ enum VaultCaveCell {
   VAULT_CAVE_CELL_CHEST = 100
 };
 
-/// Scene flags, and one place flag. The six puddles of
+/// Map flags, and one map section flag. The six puddles of
 /// MapId_VaultCaveVambrace keep their frozen state in six flags in a row,
 /// read by index as well.
 enum {
@@ -158,7 +158,7 @@ enum {
   FLAG_WHIRLWIND_USED = FLAG_MAPSEC_TEMP_00
 };
 
-/// The actors of MapId_VaultCaveVambrace, numbering the rows of
+/// The object events of MapId_VaultCaveVambrace, numbering the rows of
 /// gVaultCaveVambrace_ObjectEventTemplates.
 enum VaultCaveVambraceLocalId {
   /// A pillar, drawn as LOCALID_SOUTHERN_PILLAR is, two cells east of the
@@ -207,7 +207,7 @@ enum VaultCaveVambraceLocalId {
   LOCALID_IVY
 };
 
-/// The actors of MapId_VaultCaveMouth, numbering the rows of
+/// The object events of MapId_VaultCaveMouth, numbering the rows of
 /// gVaultCaveMouth_ObjectEventTemplates. The northern switch is map cell (16,
 /// 12).
 enum VaultCaveMouthLocalId {
@@ -246,7 +246,7 @@ const struct MapWarpDest *Map_GetWarpDests(void) {
   return gVaultCave_FallbackWarpDests;
 }
 
-/// Returns the region boxes used by the cave exits.
+/// Returns the region boxes used by the cave's warps.
 const struct MapWarpRegion *Map_GetWarpRegions(void) {
   return gVaultCave_Regions;
 }
@@ -282,11 +282,13 @@ const struct ObjectEventTemplate *Map_GetObjectEventTemplates(void) {
   return gVaultCave_FallbackObjectEventTemplates;
 }
 
-/// Finds a placed actor with collision enabled at the requested map cell.
+/// Finds a placed object event with collision enabled at the requested map
+/// cell.
 static struct ObjectEvent *VaultCave_FindCollidableObjectEventAtCell(s32 column,
                                                                      s32 row) {
-  // UB: scene creation leaves unused actor slots NULL. The plain safe lookup
-  // adds four native bytes in EN; retain the original reads for matching.
+  // UB: map creation leaves unused object event slots NULL. The plain safe
+  // lookup adds four native bytes in EN; retain the original reads for
+  // matching.
 #ifdef UBFIX
   struct FieldWork *work = (struct FieldWork *)gEventWork;
   u32 objectEventSlot;
@@ -336,7 +338,8 @@ struct DirectionSteps {
   (((struct DirectionSteps *)gVaultCave_DirectionSteps)->xz[heading])
 #endif
 
-/// Pushes the faced pillar one cell unless another actor or terrain blocks it.
+/// Pushes the faced pillar one cell unless another object event or terrain
+/// blocks it.
 static void VaultCave_PushPillarAhead(void) {
   struct ObjectEvent *leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   s32 direction = leader->facing >> 12;
@@ -405,7 +408,7 @@ static void VaultCave_PushPillarAhead(void) {
 /// Whirlwind blows the ivy away.
 /// It is cast on LOCALID_IVY in the puddle room of MapId_VaultCaveVambrace,
 /// and the ivy stays gone for as long as the party stays in the cave
-/// (FLAG_WHIRLWIND_USED is a place flag).
+/// (FLAG_WHIRLWIND_USED is a map section flag).
 static void EventScript_UseWhirlwind(void) {
   Engine_GameFlagSet(FLAG_WHIRLWIND_USED);
 }
@@ -416,7 +419,7 @@ static void EventScript_ShowLockedDoor(void) {
   Engine_MessageShowCentered(MSGNO(MsgFieldDoorTightlyLocked), 1);
 }
 
-/// Selects the cave map's searches, movement checks and Psynergy callbacks.
+/// Selects the cave map's bg events, movement checks and Psynergy callbacks.
 const struct MapEvent *Map_GetEvents(void) {
   s16 mapId = gGameState.mapId;
 
@@ -688,8 +691,8 @@ static void VaultCave_UseAutomaticFrostPriorities(void) {
   } while (remaining >= 0);
 }
 
-/// Moves the third map layer through its phases, then fades the mechanism's
-/// final map state.
+/// Moves the third layer of the map grid through its phases, then fades the
+/// mechanism's final map state.
 static void VaultCave_RunRumble(void) {
   struct MapGridLayerScroll *layer =
       &((struct MapGridScrollWork *)gMapGridWork[0])->layers[2];
@@ -907,7 +910,7 @@ static void VaultCave_UpdateFrostControlledFallingObjects(void) {
   }
 }
 
-/// Offsets an actor's current position by a polar displacement.
+/// Offsets an object event's current position by a polar displacement.
 static void VaultCave_OffsetObjectEventRadially(struct ObjectEvent *objectEvent,
                                                 s32 radius, s32 angle) {
   s32 destination[3];
@@ -993,8 +996,9 @@ static void VaultCave_StartTimedFalls(void) {
                              TASK_PRIORITY_MAP);
 }
 
-/// Arriving in any room of Vault Cave: restores the room's puzzles and actors,
-/// then sets the Retreat destination, the foot of the ladder from Vault.
+/// Arriving in any room of Vault Cave: restores the room's puzzles and object
+/// events, then sets the Retreat destination, the foot of the ladder from
+/// Vault.
 s32 Map_Initialize(void) {
   ((struct FieldWork *)gEventWork)->transition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);

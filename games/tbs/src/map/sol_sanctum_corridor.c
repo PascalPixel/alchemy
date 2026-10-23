@@ -2,7 +2,7 @@
 /// Sol Sanctum (MapId_SolSanctumCorridor), a passage that joins two rooms of
 /// MapId_SolSanctumReliefs (sol_sanctum_entrance.c).
 ///
-/// It places nobody and has no events but its two exits, one at each end:
+/// It places nobody and has no events but its two warps, one at each end:
 /// SOL_SANCTUM_CORRIDOR_TO_SOL_SANCTUM_RELIEFS_WEST leads into the room
 /// with the chest and SOL_SANCTUM_CORRIDOR_TO_SOL_SANCTUM_RELIEFS_EAST into
 /// the room with the stepping stones. Its setup, SolSanctumRooms_Initialize
@@ -45,7 +45,7 @@ const struct ObjectEventTemplate *Map_GetObjectEventTemplates(void) {
   return gSolSanctumCorridorObjectEventTemplates;
 }
 
-/// Returns the passage's two exits, its only events.
+/// Returns the passage's two warps, its only events.
 const struct MapEvent *Map_GetEvents(void) { return gSolSanctumCorridorEvents; }
 
 #include "common/sol_sanctum_init_zoom.h"

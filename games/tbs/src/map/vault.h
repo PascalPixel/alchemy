@@ -2,11 +2,11 @@
 #define ALCHEMY_MAP_VAULT_H
 
 /// @file
-/// The collision codes of Vault's map, which MapId_Vault (vault.c) and
+/// The metatile behaviors of Vault's layout, which MapId_Vault (vault.c) and
 /// MapId_VaultRevisit (vault_revisit.c) both draw and answer.
 
-/// The cells Vault's touch and search events answer; the exits have codes of
-/// their own.
+/// The metatile behaviors Vault's coord and bg events answer; the warps have
+/// behaviors of their own.
 enum VaultCell {
   /// Either end of the rope bridge in the town's south-east, where stepping
   /// on raises the path that runs under the bridge to the bridge's deck
@@ -31,9 +31,9 @@ enum VaultCell {
   VAULT_CELL_JAIL_DOOR = 12,
   /// The doorless way into the room with the crate.
   VAULT_CELL_WEST_ENTRANCE = 13,
-  /// Before the south gate's exit (VAULT_TO_WORLD_MAP_SOUTH).
+  /// Before the south gate's warp (VAULT_TO_WORLD_MAP_SOUTH).
   VAULT_CELL_SOUTH_GATE = 20,
-  /// Before the north gate's exit (VAULT_TO_WORLD_MAP_NORTH).
+  /// Before the north gate's warp (VAULT_TO_WORLD_MAP_NORTH).
   VAULT_CELL_NORTH_GATE = 21,
   VAULT_CELL_BELL = 30,
   /// The hidden passage down into Vault Cave, which Reveal shows

@@ -1,14 +1,14 @@
 /// @file
 /// Vault (MapId_VaultRevisit), the town once the party has reached Kalay, on
-/// the same map as Vault's first scene (vault.c). The world map still leads
-/// into the first scene, but once FLAG_KALAY_REACHED is set its setup sends
+/// the same layout as Vault's first map (vault.c). The world map still leads
+/// into the first map, but once FLAG_KALAY_REACHED is set its setup sends
 /// the party straight on here (VAULT_REVISIT_FROM_VAULT); Vault Sanctum, Vault
 /// Cave, the jail and the houses (vault_interiors_revisit.c) lead back here
-/// directly. This scene replaces the first for the rest of the game.
+/// directly. This map replaces the first for the rest of the game.
 ///
 /// The thieves the party caught have broken out of jail, and most townspeople
 /// say so, or speak of Hammet and Lunpa, in plain message rows. Four speak
-/// through event functions that remember who has spoken in place flags
+/// through scripts that remember who has spoken in map section flags
 /// (FLAG_WARRIOR_GUY_GREETED to FLAG_ASKED_ABOUT_JAIL), so that a Mind Read on
 /// one not yet spoken to plays the conversation first. The old man's praise
 /// also sets FLAG_VAULT_WARNED_OF_ESCAPED_THIEVES, as the mayor's welcome
@@ -29,7 +29,7 @@
 /// place.
 ///
 /// The inn's roof is mended: the 3-by-3 block of cells Map_Initialize
-/// copies from (45, 41) to (8, 45) lies under map layer 2's window, on the
+/// copies from (45, 41) to (8, 45) lies under map grid layer 2's window, on the
 /// inn's roof, and draws the thatch whole where vault.c's town shows the hole
 /// the fiery rock burnt in it (render probe vault-revisit, the town before
 /// and after).
@@ -136,7 +136,7 @@ enum VaultRevisitLocalId {
 
 enum { VAULT_PROXIMITY_REACTION_PAUSED = 2 };
 
-/// Place flags, kept while the party stays in Vault's scenes: what the
+/// Map section flags, kept while the party stays in Vault's maps: what the
 /// townspeople have already said. A Mind Read before someone has spoken plays
 /// the conversation first.
 enum {
@@ -157,7 +157,7 @@ enum {
   FLAG_ASKED_ABOUT_JAIL = FLAG_MAPSEC_TEMP_08
 };
 
-// Shared effect and proximity routines precede the scene's entry points.
+// Shared effect and proximity routines precede the map's entry points.
 #include "common/effect_create.h"
 #include "common/effect_spawn.h"
 #include "common/object_distance.h"
@@ -172,12 +172,12 @@ const struct MapWarpRegion *Map_GetWarpRegions(void) { return NULL; }
 
 const u32 *Map_GetWarps(void) { return gVaultRevisit_Warps; }
 
-/// Returns the villagers, dog, and Djinni placements.
+/// Returns the villagers, dog, and Djinni object event templates.
 const struct ObjectEventTemplate *Map_GetObjectEventTemplates(void) {
   return gVaultRevisit_ObjectEventTemplates;
 }
 
-/// Stands the actor still while showing the message already selected.
+/// Stands the object event still while showing the message already selected.
 static void VaultRevisit_ShowStandingObjectEventMessage(s32 objectEvent) {
   Engine_ScriptStart();
   Engine_ObjectEventSetAnimation(objectEvent, ANIMATION_STAND);
@@ -418,8 +418,8 @@ static void EventScript_ReadMindOnJailKey(void) {
   }
 }
 
-/// Gives the actor vertical velocity, moves it, and waits briefly for it to
-/// settle.
+/// Gives the object event vertical velocity, moves it, and waits briefly for it
+/// to settle.
 static void VaultRevisit_JumpObjectEventToAndWait(int objectEvent, int x, int z,
                                                   int velocityY) {
   struct ObjectEvent *jumpingObjectEvent = ObjectEvent_GetById(objectEvent);
@@ -464,7 +464,7 @@ static void EventScript_RingBell(void) {
   Engine_ScriptEnd();
 }
 
-/// Walks the leader into a doorway during the sixteen-frame exit delay.
+/// Walks the leader into a doorway during the sixteen-frame warp delay.
 static void Vault_WalkThroughExit(s32 x, s32 z, s32 warpNumber) {
   s32 leaderId = LOCALID_PARTY_LEADER;
 
@@ -507,8 +507,8 @@ static void EventScript_EnterInn(void) {
 /// It's VAULT_REVISIT_TO_VAULT_INTERIORS_REVISIT_EAST, into the item shop,
 /// where the couple who talk of Colosso also stand. The leader is
 /// drawn at sprite priority 3 as he walks in, as at the weapon and armor shop
-/// and the jail, and the collision of the doorway, a column of three cells at
-/// (23, 12), is replaced so he can pass.
+/// and the jail, and the metatile behavior of the doorway, a column of three
+/// cells at (23, 12), is replaced so he can pass.
 static void EventScript_EnterItemShop(void) {
   struct ObjectEvent *objectEvent = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   struct AnimationObject *sprite = objectEvent->sprite;
@@ -606,7 +606,8 @@ static void EventScript_GiveBoneToDog(void) {
   Engine_ScriptEnd();
 }
 
-/// Covers the hidden passage again, tiles and collision, when Reveal ends.
+/// Covers the hidden passage again, tiles and metatile behaviors, when Reveal
+/// ends.
 static void EventScript_HidePassage(void) {
 
   MapGrid_CopyCellAttributes(41, 43, 1, 1, 13, 25);
@@ -614,8 +615,8 @@ static void EventScript_HidePassage(void) {
 }
 
 /// Reveal shows the hidden passage where the dog jumps: its tiles, and the
-/// collision of cell (13, 25), which lets the party step onto trigger 40 and
-/// down into Vault Cave.
+/// metatile behavior of cell (13, 25), which lets the party step onto metatile
+/// behavior 40 and down into Vault Cave.
 static void EventScript_RevealPassage(void) {
 
   MapGrid_CopyCellAttributes(37, 43, 1, 1, 13, 25);
@@ -649,7 +650,7 @@ static void EventScript_PeerIntoWell(void) {
   Engine_ScriptEnd();
 }
 
-/// Returns the town's talk, search, Psynergy, and doorway events.
+/// Returns the town's talk, bg, Psynergy, and doorway events.
 const struct MapEvent *Map_GetEvents(void) { return gVaultRevisit_Events; }
 
 /// Patched editions keep Sap by the bell when the party keeps its position,
@@ -663,19 +664,18 @@ static inline s32 VaultRevisit_ShouldKeepBellDjinniPosition(void) {
 }
 
 /// Sets up Vault as the party finds it after reaching Kalay.
-/// On arrival it restores the passage's collision (common/vault_toggle.h),
-/// creates the still object of sprite 223 on the well that shows nothing (an
-/// open question), mends the inn's roof, which vault.c leaves holed, and
-/// hooks the two children round
-/// the well to Vault_UpdateWalkingVillager. The dog waits at the hidden
-/// passage once it has shown it. Coming in by a gate (WARP_DEST_DEFAULT to
+/// On arrival it restores the passage's metatile behaviors
+/// (common/vault_toggle.h), creates the still object of sprite 223 on the well
+/// that shows nothing (an open question), mends the inn's roof, which vault.c
+/// leaves holed, and hooks the two children round the well to
+/// Vault_UpdateWalkingVillager. The dog waits at the hidden passage once it has
+/// shown it. Coming in by a gate (WARP_DEST_DEFAULT to
 /// VAULT_REVISIT_NORTH_UNUSED, forwarded from vault.c) before Sap has joined
-/// clears FLAG_VAULT_DJINNI_CALLED_BY_BELL, so Sap is hidden again;
-/// while it is called and has not joined, it stands by the bell. Coming out of
-/// Vault Sanctum (VAULT_REVISIT_FROM_SANCTUM) clears FLAG_SHOW_LOCATION_NAME,
-/// and coming up from Vault Cave (VAULT_REVISIT_FROM_VAULT_CAVE_PASSAGE) clears
-/// FLAG_WARP_ARRIVAL_PENDING, so the leader's arrival animation does
-/// not play.
+/// clears FLAG_VAULT_DJINNI_CALLED_BY_BELL, so Sap is hidden again; while it is
+/// called and has not joined, it stands by the bell. Coming out of Vault
+/// Sanctum (VAULT_REVISIT_FROM_SANCTUM) clears FLAG_SHOW_LOCATION_NAME, and
+/// coming up from Vault Cave (VAULT_REVISIT_FROM_VAULT_CAVE_PASSAGE) clears
+/// FLAG_WARP_ARRIVAL_PENDING, so the leader's arrival animation does not play.
 s32 Map_Initialize(void) {
 
   struct ObjectEvent *objectEvent;

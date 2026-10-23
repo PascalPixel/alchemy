@@ -1,6 +1,6 @@
 /// @file
 /// Suhalla Gate and Gateway Cave, the pass Babi's soldiers guard on the way
-/// from the Suhalla Desert to Babi Lighthouse. Three scenes share this overlay,
+/// from the Suhalla Desert to Babi Lighthouse. Three maps share this overlay,
 /// in the order the pass is crossed:
 ///
 /// - SuhallaGateCheckpoint (MapId_SuhallaGateCheckpoint, area name Suhalla
@@ -14,16 +14,16 @@
 /// - Gateway Cave (MapId_GatewayCave, area name Gateway Cave): two caves
 ///   out onto the world map, with a Psynergy Stone.
 ///
-/// One exit table serves the three scenes; the other getters choose by
-/// gGameState.scene, and SuhallaGateCheckpoint's placements also by
-/// FLAG_BABI_SPOKE_AFTER_COLOSSO. Its event table answers any scene not
+/// One warp table serves the three maps; the other getters choose by
+/// gGameState.mapId, and SuhallaGateCheckpoint's object event templates also
+/// by FLAG_BABI_SPOKE_AFTER_COLOSSO. Its event table answers any map not
 /// otherwise named.
 ///
-/// Before Babi's audience after Colosso the guards turn the party away for
-/// want of travel papers, and touch cell 10 before the passage brings them
+/// Before Babi's audience after Colosso the guards turn the party away for want
+/// of travel papers, and metatile behavior 10 before the passage brings them
 /// together in front of it (EventScript_GuardsBlockPassage). After it they lie
 /// wounded, a third soldier lies east of the gate, and Iodem, who travels with
-/// the party, has an actor out of sight: touch cell 10 then plays
+/// the party, has an object event out of sight: metatile behavior 10 then plays
 /// EventScript_IodemQuestionsGuards once (FLAG_SUHALLA_GATE_ATTACK_SEEN), after
 /// which a defeat returns the party to the house beside the gate. The third
 /// soldier, talked to or read, warns of the attack on Venus Lighthouse and
@@ -36,8 +36,8 @@
 /// world map forgets it. From TBS_PATCH_3 on, the editions lay the wounded
 /// soldiers out without collision and patch the gate's cells around them, and
 /// Retreat always leads back to SuhallaGateCheckpoint. Gateway Cave's
-/// Psynergy Stone is kept in a place flag (FLAG_MAPSEC_TEMP_50), so it is back
-/// whenever the party returns from another place.
+/// Psynergy Stone is kept in a map section flag (FLAG_MAPSEC_TEMP_50), so it is
+/// back whenever the party returns from another map section.
 ///
 /// Open questions: none.
 
@@ -75,9 +75,9 @@
 #define SUHALLA_GATE_RETREAT_MAP(currentMap) (currentMap)
 #endif
 
-/// The actors of the gate itself (SuhallaGateCheckpoint), numbered in the order
-/// of gSuhallaGateCheckpointObjectEventTemplates and, after Babi's audience, of
-/// gSuhallaGateCheckpointObjectEventTemplatesAfterAudience.
+/// The object events of the gate itself (SuhallaGateCheckpoint), numbered in
+/// the order of gSuhallaGateCheckpointObjectEventTemplates and, after Babi's
+/// audience, of gSuhallaGateCheckpointObjectEventTemplatesAfterAudience.
 enum SuhallaGateCheckpointLocalId {
   /// The two of Babi's soldiers who keep the passage north, standing before
   /// Babi's audience and lying wounded after it.
@@ -99,8 +99,8 @@ enum SuhallaGateCheckpointLocalId {
   LOCALID_IODEM
 };
 
-/// The actors of the second scene (SuhallaGateDew), numbered in the order of
-/// gSuhallaGateDewObjectEventTemplates.
+/// The object events of the second map (SuhallaGateDew), numbered in the order
+/// of gSuhallaGateDewObjectEventTemplates.
 enum SuhallaGateDewLocalId {
   /// Five sprouts (SPRITE_SPROUT, the sprout Growth grows in Suhalla), each
   /// drawn in the frame Map_Initialize gives it.
@@ -116,7 +116,7 @@ enum SuhallaGateDewLocalId {
 /// grown (spr_238's frames 3 and 6).
 enum { SPROUT_ANIMATION_HALF_GROWN = 3, SPROUT_ANIMATION_GROWN = 4 };
 
-/// Suhalla Gate's second scene (MapId_SuhallaGateDew): talking to Dew, a
+/// Suhalla Gate's second map (MapId_SuhallaGateDew): talking to Dew, a
 /// Mercury Djinni, starts its battle.
 static void EventScript_FightDjinni(void) {
   Field_RequestDjinnBattle(LOCALID_DEW, DJINNI_DEW);
@@ -139,7 +139,7 @@ const struct MapWarpRegion *Map_GetWarpRegions(void) { return NULL; }
 const u32 *Map_GetWarps(void) { return gSuhallaGateWarps; }
 
 /// Suhalla Gate's guards, standing or, after Babi's audience, lying wounded
-/// beside the vanishing soldier and Iodem; Dew and the second scene's sprouts.
+/// beside the vanishing soldier and Iodem; Dew and the second map's sprouts.
 const struct ObjectEventTemplate *Map_GetObjectEventTemplates(void) {
   s16 mapId = gGameState.mapId;
 
@@ -155,9 +155,9 @@ const struct ObjectEventTemplate *Map_GetObjectEventTemplates(void) {
   return gSuhallaGateObjectEventTemplatesOther;
 }
 
-/// The events of Suhalla Gate's second scene (MapId_SuhallaGateDew), of
+/// The events of Suhalla Gate's second map (MapId_SuhallaGateDew), of
 /// Gateway Cave (MapId_GatewayCave), or of the gate itself
-/// (MapId_SuhallaGateCheckpoint) for any other scene.
+/// (MapId_SuhallaGateCheckpoint) for any other map.
 const struct MapEvent *Map_GetEvents(void) {
   s16 mapId = gGameState.mapId;
 
@@ -170,15 +170,15 @@ const struct MapEvent *Map_GetEvents(void) {
   return gSuhallaGateEventsOther;
 }
 
-/// Sets up whichever of the pass's scenes is entered. Once Iodem has
+/// Sets up whichever of the pass's maps is entered. Once Iodem has
 /// questioned the guards, a defeat returns the party to the house beside the
 /// gate. In Suhalla Gate (MapId_SuhallaGateCheckpoint) the vanished soldier
 /// stays hidden, the side the party came in by is remembered for Retreat, and
 /// arriving from the south before Babi's audience changes cells by the passage;
 /// the Spanish, French and Italian editions also change cells around the
-/// wounded guards. In the second scene (MapId_SuhallaGateDew) the five
-/// sprouts take their frames and one cell changes; its stretch of actor 15
-/// does nothing, as the comment at it says.
+/// wounded guards. In the second map (MapId_SuhallaGateDew) the five sprouts
+/// take their frames and one cell changes; its stretch of object event 15 does
+/// nothing, as the comment at it says.
 s32 Map_Initialize(void) {
   s32 mapId;
 
@@ -199,7 +199,7 @@ s32 Map_Initialize(void) {
     }
 #endif
     // Out of the house, Retreat leads back to the side the party came in by,
-    // and the place's name is not shown again.
+    // and the map section's name is not shown again.
     if (gGameState.warpDest == SUHALLA_GATE_CHECKPOINT_FROM_LUNPA_SUHALLA) {
       if (Engine_GameFlagIsSet(FLAG_SUHALLA_GATE_ENTERED_FROM_SOUTH)) {
         gGameState.retreatMap = SUHALLA_GATE_RETREAT_MAP(mapId);
@@ -231,10 +231,10 @@ s32 Map_Initialize(void) {
                                    SPROUT_ANIMATION_GROWN);
     Engine_ObjectEventSetAnimation(LOCALID_FIRST_SPROUT + 4,
                                    SPROUT_ANIMATION_HALF_GROWN);
-    // UB: the scene places only actors up to LOCALID_DEW, so there is no actor
-    // 15 and ObjectEvent_GetById returns NULL (watched in tbs-en as the scene
-    // loads from each of its entrances); the store goes to the BIOS, which
-    // ignores it.
+    // UB: the map places only object events up to LOCALID_DEW, so there is no
+    // object event 15 and ObjectEvent_GetById returns NULL (watched in tbs-en
+    // as the map loads from each of its warp destinations); the store goes to
+    // the BIOS, which ignores it.
 #ifndef UBFIX
     ObjectEvent_GetById(15)->scaleY = 8 * Q16_ONE / 5;
 #endif
@@ -276,8 +276,8 @@ static void EventScript_LeaveForWorldMap(void) {
 }
 
 /// In Suhalla Gate (MapId_SuhallaGateCheckpoint) before Babi's audience, each
-/// time the party nears the passage north (cell code 10): the two guards step
-/// together in front of it, and the map cells around them change.
+/// time the party nears the passage north (metatile behavior 10): the two
+/// guards step together in front of it, and the map cells around them change.
 static void EventScript_GuardsBlockPassage(void) {
   Engine_ScriptStart();
   ObjectEvent_SetSpeed(LOCALID_WEST_GUARD, PIXELS(1), PIXELS(1) / 2);
@@ -298,12 +298,12 @@ static void EventScript_GuardsBlockPassage(void) {
 }
 
 /// In Suhalla Gate (MapId_SuhallaGateCheckpoint) after Babi's audience, on
-/// reaching the passage (cell code 10), once: Iodem steps out of the party and
-/// demands to know what happened. "What is the meaning of this!?" The wounded
-/// guards tell of a strange group without papers whose strange powers beat
-/// them; Iodem asks whether it was Felix, the party's foe, and the guards send
-/// the party on after the attackers, toward Babi Lighthouse. Iodem rejoins the
-/// party. Sets FLAG_SUHALLA_GATE_ATTACK_SEEN.
+/// reaching the passage (metatile behavior 10), once: Iodem steps out of the
+/// party and demands to know what happened. "What is the meaning of this!?" The
+/// wounded guards tell of a strange group without papers whose strange powers
+/// beat them; Iodem asks whether it was Felix, the party's foe, and the guards
+/// send the party on after the attackers, toward Babi Lighthouse. Iodem rejoins
+/// the party. Sets FLAG_SUHALLA_GATE_ATTACK_SEEN.
 static void EventScript_IodemQuestionsGuards(void) {
   struct ObjectEvent *leader;
 #if !TBS_PATCH_3

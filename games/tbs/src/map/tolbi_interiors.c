@@ -1,11 +1,11 @@
 /// @file
 /// The buildings of Tolbi (MapId_TolbiInteriors): its houses, inns and
 /// shops, which the area names call Tolbi, and Tolbi Sanctum, as the same
-/// scene is named at TOLBI_INTERIORS_SANCTUM and TOLBI_INTERIORS_SANCTUM_NORTH.
+/// map is named at TOLBI_INTERIORS_SANCTUM and TOLBI_INTERIORS_SANCTUM_NORTH.
 ///
-/// - Tolbi, the rooms behind the town's doors, which Tolbi's exits
-///   TOLBI_TO_HOUSE_SOUTH to TOLBI_TO_HOUSE_SOUTHWEST lead into; this scene's
-///   exits TOLBI_INTERIORS_HOUSE_NORTHWEST_TO_TOLBI to
+/// - Tolbi, the rooms behind the town's doors, which Tolbi's warps
+///   TOLBI_TO_HOUSE_SOUTH to TOLBI_TO_HOUSE_SOUTHWEST lead into; this map's
+///   warps TOLBI_INTERIORS_HOUSE_NORTHWEST_TO_TOLBI to
 ///   TOLBI_INTERIORS_TO_TOLBI_WEST lead back out. During the festival one
 ///   household lines up beds and becomes a makeshift inn, visitors have
 ///   rented another house, and the weapon, armor and item shops
@@ -23,8 +23,8 @@
 ///
 /// The rooms' talk follows Colosso in the same three stages as the town, each
 /// with its own event table (TolbiInteriors_SelectEvents) and, after
-/// Colosso, a placement table of its own. During the festival Babi is
-/// missing and the town is full of visitors, among them a tour group from
+/// Colosso, an object event template table of its own. During the festival Babi
+/// is missing and the town is full of visitors, among them a tour group from
 /// Kalay that reserved only two rooms. On finals day (FLAG_BABI_SAVED) Babi
 /// has shown himself at the finals; the Spanish and Italian editions add a
 /// question about it (TBS_PATCH_4). After Colosso (FLAG_COLOSSO_OVER) no ship
@@ -40,10 +40,10 @@
 /// greets them, startled, and Mind Read hears her hope its owner will not ask
 /// for it back. In the southeast one stranded passengers argue that the
 /// captain will not sail although they agreed to do whatever it takes
-/// (TolbiInteriors_WatchPassengersArgue, a place flag). A man who rode the ship
-/// from Kalay with the party greets it as `the would-be warrior`, and he and
-/// TOLBI_INTERIORS_COLOSSO_FAN leave once the party has watched the passengers
-/// confront the tour guide on the Tolbi docks
+/// (TolbiInteriors_WatchPassengersArgue, a map section flag). A man who rode
+/// the ship from Kalay with the party greets it as `the would-be warrior`, and
+/// he and TOLBI_INTERIORS_COLOSSO_FAN leave once the party has watched the
+/// passengers confront the tour guide on the Tolbi docks
 /// (FLAG_TOLBI_DOCKS_TOUR_GROUP_BLAMED). Barrels hold a Vial and a Lucky
 /// Medal, and searching the ovens shows what is cooking.
 ///
@@ -65,8 +65,9 @@
 #include "objcmd.h"
 #include "songs.h"
 
-// Place flags: Map_ResetFlagsOnEnter clears 0x300 to 0x3ff when the party
-// enters another place group, and other places use the numbers for their own.
+// Map section flags: Map_ResetFlagsOnEnter clears 0x300 to 0x3ff when the
+// party enters another map section, and other map sections use the numbers for
+// their own.
 /// The stranded passengers' argument has played.
 /// ★ Named from the game: "He won't sail the ship"
 /// (MsgTolbiHeWontSailShipEven)
@@ -88,7 +89,8 @@
 #define TOLBI_INTERIORS_SOUTH_ROOM_CAMERA_MAX_Z 936
 #endif
 
-/// The shop rows and door triggers used by the room event tables below.
+/// The shop rows and door metatile behaviors used by the room event tables
+/// below.
 enum {
   TOLBI_INTERIORS_WEAPON_SHOP = 26,
   TOLBI_INTERIORS_ARMOR_SHOP = 27,
@@ -160,8 +162,9 @@ UNUSED static void TolbiInteriors_ExitThroughWindow(void) {
   Engine_ScriptRequestWarp();
 }
 
-/// In Tolbi, walking into one of the four doors at triggers 14 to 17: every
-/// placed actor stops, the door opens and the leader walks through it.
+/// In Tolbi, walking into one of the four doors at metatile behaviors 14 to 17:
+/// every placed object event stops, the door opens and the leader walks through
+/// it.
 static void TolbiInteriors_EnterDoor(void) {
   u32 objectEventId;
   struct ObjectEvent *objectEvent;
@@ -170,7 +173,7 @@ static void TolbiInteriors_EnterDoor(void) {
   s32 doorIndex;
 
   work = gEventWork;
-  // Stop the room's actors before animating the selected doorway.
+  // Stop the room's object events before animating the selected doorway.
   for (objectEventId = LOCALID_FIRST_PLACED;
        objectEventId < TOLBI_INTERIORS_OBJ_EVENT_SLOT_END; objectEventId++) {
     objectEvent = ObjectEvent_GetById(objectEventId);
@@ -309,11 +312,12 @@ static void TolbiInteriors_WatchPassengersArgue(void) {
 }
 
 /// Sets up the rooms on entry. After Colosso: a row of three map cells takes
-/// new attributes, two of the passengers are drawn at a fixed priority, the
-/// medal woman stands where she hid the medal, the two short scenes play once
-/// each on their entrances, and the passenger who rode the ship with the party
-/// and TOLBI_INTERIORS_COLOSSO_FAN have left once the party has seen the tour
-/// guide on the Tolbi docks tell a passenger his ticket was refunded.
+/// new metatile behaviors, two of the passengers are drawn at a fixed priority,
+/// the medal woman stands where she hid the medal, the two short scenes play
+/// once each on their warp destinations, and the passenger who rode the ship
+/// with the party and TOLBI_INTERIORS_COLOSSO_FAN have left once the party has
+/// seen the tour guide on the Tolbi docks tell a passenger his ticket was
+/// refunded.
 s32 TolbiInteriors_ApplyEntryState(void) {
   s32 clearedPriorityFlags;
   struct ObjectEvent *objectEvent;
@@ -515,7 +519,7 @@ static void TolbiInteriors_TalkToHealer(s32 speaker) {
   }
 }
 
-/// An actor that squashes and stretches twice, then rests 40 frames.
+/// An object event that squashes and stretches twice, then rests 40 frames.
 s32 gTolbiInteriorsSquashStretch[] = {
     SC_SET(SW_SCALE_X, 0x10000),
     SC_SET(SW_SCALE_Y, 0x10000),

@@ -5,7 +5,7 @@
 #include "script_layer.h"
 #include "map_tables.h"
 
-/// The placed actors, numbered in the order of
+/// The placed object events, numbered in the order of
 /// gSolSanctumLunaSolRoomsObjectEventTemplates; Jenna and Garet, its last rows,
 /// keep their characters' ids.
 enum SolSanctumLunaSolRoomsLocalId {

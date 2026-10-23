@@ -1,6 +1,6 @@
 /// @file
 /// Vale (MapId_ValeGate): the part of the village with the Psynergy Stone and
-/// the town gate, Vale's way out to the world. The scene sees the prologue end
+/// the town gate, Vale's way out to the world. The map sees the prologue end
 /// and the journey begin, and ValeGate_GetObjectEventTemplates and
 /// ValeGate_GetEvents pick its people and events by the time of the story. In
 /// story order:
@@ -8,7 +8,7 @@
 /// - The stormy night of the prologue (FLAG_VALE_STORM), when the villagers
 ///   have gathered in the plaza here. Isaac and Garet come from the river
 ///   (Vale, MapId_ValeStorm, by VALE_STORM_TO_VALE_GATE), where Felix has
-///   fallen in. Walking up to the villagers (cell code 20) plays
+///   fallen in. Walking up to the villagers (metatile behavior 20) plays
 ///   EventScript_SentToAidElders: Garet's grandfather, the mayor, sends two
 ///   strongmen to aid the elders holding the Boulder, then sends Isaac and
 ///   Garet back to show Jenna and a strongman whose Psynergy the Psynergy Stone
@@ -47,22 +47,23 @@
 ///   the hut's owner finds the stone gone, leaving a hole in his roof
 ///   (EventScript_PsynergyStoneIsGone), and a door in the north-east opens.
 ///
-/// The Psynergy Stone (search 100) restores the party's PP at every time but
-/// the farewell. The ivy in three places (LOCALID_FIRST_IVY to
-/// LOCALID_THIRD_IVY) can be blown away with Whirlwind, each one's flag keeping
-/// it gone. The doors lead into the houses (MapId_ValeInteriorsShops) and into
-/// another part of Vale (MapId_ValeInteriorsInn), the path west to the village
-/// (MapId_Vale) or, on the stormy night, back to the storm's map
-/// (MapId_ValeStorm), and the exit row of cell code 11 to
-/// VALE_GATE_TO_GOMA_CAVE_STREAM, which the exit table sends to Goma Cave
-/// (MapId_GomaCaveStream, GOMA_CAVE_STREAM_FROM_VALE_GATE). Code 11 lies on one
-/// cell, (11, 28), in every state of the scene, the cell north of where the
+/// The Psynergy Stone (a bg event on metatile behavior 100) restores the
+/// party's PP at every time but the farewell. The ivy in three places
+/// (LOCALID_FIRST_IVY to LOCALID_THIRD_IVY) can be blown away with Whirlwind,
+/// each one's flag keeping it gone. The doors lead into the houses
+/// (MapId_ValeInteriorsShops) and into another part of Vale
+/// (MapId_ValeInteriorsInn), the path west to the village (MapId_Vale) or, on
+/// the stormy night, back to the storm's map (MapId_ValeStorm), and the warp
+/// row of metatile behavior 11 to VALE_GATE_TO_GOMA_CAVE_STREAM, which the
+/// warp table sends to Goma Cave (MapId_GomaCaveStream,
+/// GOMA_CAVE_STREAM_FROM_VALE_GATE). Behavior 11 lies on one cell, (11, 28), in
+/// every state of the map, the cell north of where the
 /// party arrives from Goma Cave (VALE_GATE_FROM_GOMA_CAVE_STREAM, at (186,
 /// 474)), so that way back is the way in (render probe vale-gate).
 ///
-/// Three debug entrances are in no entrance table and no exit leads to them:
-/// VALE_GATE_DEBUG_BEFORE_TRAVELERS_LEAVE replays the strangers' departure,
-/// VALE_GATE_DEBUG_CHILDHOOD sets FLAG_CHILDHOOD and takes
+/// Three debug warp destinations are in no warp destination table and no warp
+/// leads to them: VALE_GATE_DEBUG_BEFORE_TRAVELERS_LEAVE replays the strangers'
+/// departure, VALE_GATE_DEBUG_CHILDHOOD sets FLAG_CHILDHOOD and takes
 /// VALE_GATE_TO_VALE_INTERIORS_INN_SOUTHEAST into Vale
 /// (MapId_ValeInteriorsInn), and VALE_GATE_DEBUG_STORY_FLAGS sets a preset
 /// of story flags and takes VALE_GATE_TO_BILIBIN
@@ -127,7 +128,7 @@
 #include "audio_engine_symbols.h"
 #include "item_ids.h"
 
-// Vale's place flags, kept while the party stays in Vale's scenes.
+// Vale's map section flags, kept while the party stays in Vale's maps.
 /// Back from Kalay, a young man has welcomed Isaac home.
 /// ★ Named from the game: "You came back home, huh?" (MsgValeYouCameBackHome)
 #define FLAG_VALE_WELCOMED_HOME 0x302
@@ -137,9 +138,10 @@
 /// (MsgValeThePsynergyStoneIsGone)
 #define FLAG_VALE_PSYNERGY_STONE_GONE_TOLD 0x306
 
-/// Each placement table numbers its own rows from LOCALID_FIRST_PLACED, Garet
-/// keeping his own party slot, and the same people stand in several tables
-/// under other numbers. The three ivy actors come first in every table.
+/// Each object event template table numbers its own rows from
+/// LOCALID_FIRST_PLACED, Garet keeping his own party slot, and the same people
+/// stand in several tables under other numbers. The three ivy object events
+/// come first in every table.
 enum ValeGateLocalId {
   /// Ivy, drawn half as tall again: the sprite of the ivy that holds the stump
   /// in goma_cave_entrance.c ("It looks like it's trapped in the ivy.").
@@ -204,9 +206,9 @@ enum ValeGateDayLocalId {
   /// ★ Named from the game: "If your Psynergy runs low, just walk around."
   /// (MsgValeWalkToRecoverPsynergy)
   LOCALID_STRONGMAN_WALK_TO_RECOVER,
-  /// An invisible actor (as in gondowan_cave.c), out of sight until the party
-  /// has left; then it stands on the large Psynergy Stone that fell on the hut,
-  /// for the hut's owner to turn to.
+  /// An invisible object event (as in gondowan_cave.c), out of sight until the
+  /// party has left; then it stands on the large Psynergy Stone that fell on
+  /// the hut, for the hut's owner to turn to.
   /// ★ Named from the game: "That large Psynergy Stone fell right on top of the
   /// hut." (MsgValeTheStoneFellOnThe)
   LOCALID_FALLEN_STONE_SPOT = LOCALID_FIRST_PLACED + 13,
@@ -276,8 +278,9 @@ enum ValeGateStormLocalId {
   /// ★ Named from what the player sees: a small rock floating beside the
   /// boy who lifts it (its render)
   LOCALID_STORM_SMALL_ROCK,
-  /// The small rock's shadow: a blank actor on LOCALID_STORM_SMALL_ROCK's spot
-  /// at three fifths of its size, whose sprite draws only its shadow, while
+  /// The small rock's shadow: a blank object event on
+  /// LOCALID_STORM_SMALL_ROCK's spot at three fifths of its size, whose sprite
+  /// draws only its shadow, while
   /// the setup turns off the rock's own. It blocks nothing the rock does not
   /// already block, and nothing moves it, so the shadow stays on the ground as
   /// the boy lifts the rock (render probe vale-gate: the sprites with it and
@@ -363,7 +366,7 @@ enum ValeGateFarewellLocalId {
   /// ★ Named from the game: "Woof! Woof!" (MsgValeRrruffRrrruff)
   LOCALID_FAREWELL_DOG = LOCALID_FAREWELL_FIRST_CROWD_VILLAGER + 10,
   /// A small cat set down where the dog stops, which runs off with the dog
-  /// after it. No other scene places its sprite.
+  /// after it. No other map places its sprite.
   /// ★ Named from what the player sees: a small white and grey cat (its
   /// render)
   LOCALID_FAREWELL_CAT
@@ -461,7 +464,7 @@ const struct MapWarpDest *ValeGate_GetWarpDests(void) {
 
 const struct MapWarpRegion *ValeGate_GetRegions(void) { return NULL; }
 
-/// Returns the stormy night's exits while FLAG_VALE_STORM is set, else the
+/// Returns the stormy night's warps while FLAG_VALE_STORM is set, else the
 /// day's.
 const u32 *ValeGate_GetWarps(void) {
   if (Engine_GameFlagIsSet(FLAG_VALE_STORM) != 0) {
@@ -470,7 +473,7 @@ const u32 *ValeGate_GetWarps(void) {
   return gValeGate_Warps;
 }
 
-/// Selects the placements: the stormy night's, the farewell's
+/// Selects the object event templates: the stormy night's, the farewell's
 /// (VALE_GATE_FROM_SANCTUM), after Kalay, else the day's.
 const struct ObjectEventTemplate *ValeGate_GetObjectEventTemplates(void) {
   if (Engine_GameFlagIsSet(FLAG_VALE_STORM) != 0) {
@@ -487,8 +490,8 @@ const struct ObjectEventTemplate *ValeGate_GetObjectEventTemplates(void) {
 
 /// In Vale, searching the Psynergy Stone restores the party's PP.
 ///
-/// Reached by searching cell code 100 in every table but the farewell's.
-/// Clears FLAG_NOTHING_HAPPENS.
+/// Reached by searching metatile behavior 100 in every table but the
+/// farewell's. Clears FLAG_NOTHING_HAPPENS.
 static void EventScript_UsePsynergyStone(void) {
   Engine_ScriptStart();
   Engine_MessageShowCentered(MsgValeCheckedThePsynergyStone, 1);
@@ -831,7 +834,7 @@ static void EventScript_PsynergyStoneIsGone(void) {
 
 #include "common/vale.h"
 
-/// Opens a door's map cells and sends the leader through its threshold.
+/// Opens a door's map grid cells and sends the leader through its threshold.
 static inline void EventScript_OpenDoorAndWalkThrough(s32 cellX, s32 cellZ,
                                                       s32 x, s32 z) {
   Script_PlayCue(SE_DOOR_OPEN);
@@ -839,9 +842,9 @@ static inline void EventScript_OpenDoorAndWalkThrough(s32 cellX, s32 cellZ,
   ObjectEvent_WalkTo(LOCALID_PARTY_LEADER, x, z);
 }
 
-// Vale's doors here: walking north into cell code n opens door n and takes exit
-// n (Vale_RequestBackdropWarp), into the houses (MapId_ValeInteriorsShops) or
-// another part of Vale (MapId_ValeInteriorsInn).
+// Vale's doors here: walking north into metatile behavior n opens door n and
+// takes warp n (Vale_RequestBackdropWarp), into the houses
+// (MapId_ValeInteriorsShops) or another part of Vale (MapId_ValeInteriorsInn).
 
 /// In Vale, opens the northwest door, into a house (MapId_ValeInteriorsShops,
 /// VALE_INTERIORS_SHOPS_FROM_VALE_GATE_EAST).
@@ -854,8 +857,8 @@ static void EventScript_OpenNorthwestDoor(void) {
 /// inside (MapId_ValeInteriorsInn,
 /// VALE_INTERIORS_INN_FROM_VALE_GATE_NORTHEAST).
 ///
-/// Reached by walking north into cell code 2 after Kalay; the other tables have
-/// no such door.
+/// Reached by walking north into metatile behavior 2 after Kalay; the other
+/// tables have no such door.
 static void EventScript_OpenNortheastDoor(void) {
   Script_PlayCue(SE_188);
   MapGrid_CopyCellsTo(0, 63, 51, 8, 2, 2);
@@ -904,8 +907,8 @@ static void EventScript_OpenSoutheastDoor(void) {
 }
 
 /// In Vale on the stormy night, leaves by the west passage, back to the
-/// storm's map: stepping on cell code 9 takes VALE_GATE_TO_VALE, to the storm's
-/// VALE_STORM_FROM_VALE_GATE.
+/// storm's map: stepping on metatile behavior 9 takes VALE_GATE_TO_VALE, to the
+/// storm's VALE_STORM_FROM_VALE_GATE.
 static void EventScript_LeaveThroughWestPassage(void) {
   Engine_AudioPlayCue(SE_MAP_EXIT);
   Vale_RequestBackdropWarp(VALE_GATE_TO_VALE);
@@ -914,10 +917,10 @@ static void EventScript_LeaveThroughWestPassage(void) {
 /// In Vale, leaves by the town gate for the world map, once the party has
 /// begun its journey.
 ///
-/// Reached by stepping on cell code 8; takes VALE_GATE_TO_WORLD_MAP once
-/// FLAG_VALE_PARTY_LEFT is set, else does nothing. The farewell
+/// Reached by stepping on metatile behavior 8; takes VALE_GATE_TO_WORLD_MAP
+/// once FLAG_VALE_PARTY_LEFT is set, else does nothing. The farewell
 /// (EventScript_DepartForQuest) shows the villagers gathered at the gate and
-/// leaves by the same exit.
+/// leaves by the same warp.
 static void EventScript_LeaveThroughTownGate(void) {
   if (Engine_GameFlagIsSet(FLAG_VALE_PARTY_LEFT) != 0) {
     Engine_AudioPlayCue(SE_MAP_EXIT);
@@ -950,10 +953,10 @@ static void EventScript_BlowAwayThirdIvy(void) {
 }
 
 /// Arriving in this part of Vale: hides the ivy Whirlwind has blown away, runs
-/// the three debug entrances (the strangers' departure and two presets), and
-/// sets up the storm, the farewell or the village after Kalay.
+/// the three debug warp destinations (the strangers' departure and two
+/// presets), and sets up the storm, the farewell or the village after Kalay.
 ///
-/// The scene's initialize entry. VALE_GATE_DEBUG_CHILDHOOD sets FLAG_CHILDHOOD
+/// The map's initialize entry. VALE_GATE_DEBUG_CHILDHOOD sets FLAG_CHILDHOOD
 /// and takes VALE_GATE_TO_VALE_INTERIORS_INN_SOUTHEAST; VALE_GATE_FROM_SANCTUM
 /// runs EventScript_DepartForQuest; VALE_GATE_AFTER_TRAVELERS_BATTLE (and
 /// VALE_GATE_DEBUG_BEFORE_TRAVELERS_LEAVE)
@@ -1077,7 +1080,7 @@ s32 ValeGate_Initialize(void) {
   return 0;
 }
 
-/// Walks a separate scene actor back to the leader, then hides it.
+/// Walks a separate map object event back to the leader, then hides it.
 static inline void ValeGate_RejoinParty(s32 objectEventId) {
   struct ObjectEvent *leader;
 
@@ -1097,7 +1100,7 @@ static inline void ValeGate_RejoinParty(s32 objectEventId) {
 /// Garet back to the river to show Jenna and a man whose Psynergy is restored
 /// the way. "Go aid the elders!"
 ///
-/// Reached by stepping on cell code 20 on the stormy night, until
+/// Reached by stepping on metatile behavior 20 on the stormy night, until
 /// FLAG_VALE_STORM_SENT_TO_AID_ELDERS is set; sets it. The flag is named for
 /// the mayor's first order, but what it records is the boys being sent back:
 /// the return to the river (vale_storm.c) waits for it.

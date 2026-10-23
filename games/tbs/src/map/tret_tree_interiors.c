@@ -1,60 +1,60 @@
 /// @file
 /// Tret Tree (MapId_TretTreeInteriors), the inside of Tret, the holy tree
-/// of Kolima Forest, and the first of Tret Tree's two scenes. The party comes
+/// of Kolima Forest, and the first of Tret Tree's two maps. The party comes
 /// in from Kolima Forest (kolima_forest_tree.c) to face Tret's wrathful side.
 /// FLAG_TRET_DEFEATED, whether that battle is won and Tret has spoken with the
-/// party since, decides most of the scene.
+/// party since, decides most of the map.
 ///
-/// The scene is six rooms, the six camera boxes of its entrance table. The
-/// party comes in from Kolima Forest (MapId_KolimaForestTree) at
+/// The map is six rooms, the six camera boxes of its warp destination table.
+/// The party comes in from Kolima Forest (MapId_KolimaForestTree) at
 /// TRET_TREE_INTERIORS_FROM_KOLIMA_FOREST_TREE and leaves by
-/// TRET_TREE_INTERIORS_TO_KOLIMA_FOREST_TREE; eight exits, from
+/// TRET_TREE_INTERIORS_TO_KOLIMA_FOREST_TREE; eight warps, from
 /// TRET_TREE_INTERIORS_TO_TRET_TREE_BRANCH_SOUTH_SOUTHWEST to _NORTH_NORTHEAST,
-/// lead out to Tret Tree's other scene (MapId_TretTreeBranch), and six more,
+/// lead out to Tret Tree's other map (MapId_TretTreeBranch), and six more,
 /// TRET_TREE_INTERIORS_ENTRANCE_TO_SECOND_FLOOR to
 /// TRET_TREE_INTERIORS_ENTRANCE_TO_TRET, lead from room to room, three of them
 /// through regions 28 to 36 pixels up (Map_GetWarpRegions).
 ///
-/// Webs hold cocoons, each a touch cell (21 to 29, 31, 32 and 50 to 59) with
-/// a temporary flag of its own (FLAG_MAP_TEMP_00 to _14). The first step on
-/// a cocoon tears it: its cell is redrawn and its flag set. The next step on a
-/// torn cocoon breaks through, and the leader spins and falls to the room
-/// below, arriving at the entrance numbered as the cocoon (FLAG_ARRIVE_FALLING
-/// plays the landing): the cocoons 21 to 29 and 31 and 32 drop the leader
-/// into one room and 50 to 59 into another
+/// Webs hold cocoons, each a coord event (metatile behaviors 21 to 29, 31, 32
+/// and 50 to 59) with a temporary flag of its own (FLAG_MAP_TEMP_00 to _14).
+/// The first step on a cocoon tears it: its cell is redrawn and its flag set.
+/// The next step on a torn cocoon breaks through, and the leader spins and
+/// falls to the room below, arriving at the warp destination numbered as the
+/// cocoon (FLAG_ARRIVE_FALLING plays the landing): the cocoons 21 to 29 and 31
+/// and 32 drop the leader into one room and 50 to 59 into another
 /// (https://alchemy.pascalpixel.com/places/tret-tree-interiors/cocoons.png:
 /// the whole map, its six rooms where the grid lays them out, each cocoon's
-/// cells labelled with its code and the entrance of the same number ringed in
-/// the same colour). The map draws four cocoons already torn (22, 52, 54 and
-/// 58) and the setup sets their flags, so they give way at the first step. A
-/// latch in the scene state (sLastCocoon) keeps a step from counting twice
-/// until the leader walks on. Cocoon 50 is the way down to Tret: entrances 50,
-/// 40, 30 and 20 each let the leader fall on to the entrance numbered ten
-/// lower, and at entrance 10 the leader lands in a ring of dust as the map
-/// shakes, in front of Tret. Torn cocoons stay torn across a battle: after one
-/// (FLAG_KEEP_PARTY_POSITION) the setup redraws them from
-/// gTretTreeInteriors_MapPatches.
+/// cells labelled with its metatile behavior and the warp destination of the
+/// same number ringed in the same colour). The layout draws four cocoons
+/// already torn (22, 52, 54 and 58) and the setup sets their flags, so they
+/// give way at the first step. A latch in the map state (sLastCocoon) keeps a
+/// step from counting twice until the leader walks on. Cocoon 50 is the way
+/// down to Tret: warp destinations 50, 40, 30 and 20 each let the leader fall
+/// on to the warp destination numbered ten lower, and at warp destination 10
+/// the leader lands in a ring of dust as the map shakes, in front of Tret. Torn
+/// cocoons stay torn across a battle: after one (FLAG_KEEP_PARTY_POSITION) the
+/// setup redraws them from gTretTreeInteriors_MapPatches.
 ///
-/// Tret's face (LOCALID_TRET) and a second Tret actor at the same spot speak
-/// his lines. Walking up to him (touch cell 40, while FLAG_TRET_DEFEATED is
-/// clear) runs EventScript_FightTret: he roars, the party gathers in front of
-/// him, and the evil within him scorns them before the battle with Tret. The
-/// battle returns to TRET_TREE_INTERIORS_AFTER_FIGHT_TRET, where the setup
-/// plays the conversation after it: a passage opens in his room, he comes to
-/// himself, thanks the party and asks whether they need something, realises
-/// that he turned the people of Kolima into trees ("I turned the people of
-/// Kolima into trees?"), tries to free them but cannot reach that far, and his
-/// face sinks away as the party resolve to heal him. Only then is
-/// FLAG_TRET_DEFEATED set; in Kolima Forest it lets Hermes' Water heal Tret and
-/// lift the curse. Once it is set, the setup moves both Tret actors away, opens
-/// that passage and redraws cells near entrance 20; before, it keeps the
-/// passage closed.
+/// Tret's face (LOCALID_TRET) and a second Tret object event at the same spot
+/// speak his lines. Walking up to him (metatile behavior 40, while
+/// FLAG_TRET_DEFEATED is clear) runs EventScript_FightTret: he roars, the party
+/// gathers in front of him, and the evil within him scorns them before the
+/// battle with Tret. The battle returns to
+/// TRET_TREE_INTERIORS_AFTER_FIGHT_TRET, where the setup plays the conversation
+/// after it: a passage opens in his room, he comes to himself, thanks the party
+/// and asks whether they need something, realises that he turned the people of
+/// Kolima into trees ("I turned the people of Kolima into trees?"), tries to
+/// free them but cannot reach that far, and his face sinks away as the party
+/// resolve to heal him. Only then is FLAG_TRET_DEFEATED set; in Kolima Forest
+/// it lets Hermes' Water heal Tret and lift the curse. Once it is set, the
+/// setup moves both Tret object events away, opens that passage and redraws
+/// cells near warp destination 20; before, it keeps the passage closed.
 ///
 /// The setup also saves the background palettes and starts a slow tint that
 /// shifts them every 32 frames (not after the battle until the conversation
-/// ends; casting Reveal stops it), and scales the first map layer to the room.
-/// Two chests hold a Healing Ring and a Nut, and a Psynergy Stone lies here
-/// (search events 100 to 102).
+/// ends; casting Reveal stops it), and scales the first layer of the map grid
+/// to the room. Two chests hold a Healing Ring and a Nut, and a Psynergy Stone
+/// lies here (bg events 100 to 102).
 ///
 /// Open questions: none.
 
@@ -99,9 +99,10 @@
 #include "audio_engine_symbols.h"
 #include "script.h"
 
-/// Tret's face (SPRITE_TRET), the first actor placed after the party, and a
-/// second Tret actor (SPRITE_TRET_RAISED) placed at the same spot. Both speak
-/// Tret's lines: the face as he attacks, the second after the battle.
+/// Tret's face (SPRITE_TRET), the first object event placed after the party,
+/// and a second Tret object event (SPRITE_TRET_RAISED) placed at the same spot.
+/// Both speak Tret's lines: the face as he attacks, the second after the
+/// battle.
 enum {
   /// ★ Named from the game: "Tret was once a kindly forest king."
   /// (MsgKolimaWatchOutItsHappeningAgain)
@@ -111,11 +112,11 @@ enum {
   LOCALID_SECOND_TRET
 };
 
-/// The speaker of a message; every speaker in this scene has
+/// The speaker of a message; every speaker on this map has
 /// SPEAKER_WINDOW_BELOW.
 #define SPEAKER(objectEvent) (SPEAKER_WINDOW_BELOW | (objectEvent))
 
-// The scene's temporary flags: FLAG_MAP_TEMP_00 to _14 are set the first
+// The map's temporary flags: FLAG_MAP_TEMP_00 to _14 are set the first
 // time each cocoon is stepped on, tearing it; the next step breaks through
 // (gTretTreeInteriors_MapPatches lists them).
 
@@ -161,12 +162,12 @@ static s16 *sLastCocoon;
 #include "item_ids.h"
 #include "objcmd.h"
 
-/// Returns the scene's entrances, the cocoons' landing spots among them.
+/// Returns the map's warp destinations, the cocoons' landing spots among them.
 const struct MapWarpDest *Map_GetWarpDests(void) {
   return gTretTreeInteriorsWarpDests;
 }
 
-/// Returns the three exit regions 28 to 36 pixels up: up to the second floor
+/// Returns the three warp regions 28 to 36 pixels up: up to the second floor
 /// (TRET_TREE_INTERIORS_ENTRANCE_TO_SECOND_FLOOR), up to the fourth
 /// (TRET_TREE_INTERIORS_THIRD_FLOOR_TO_FOURTH_FLOOR) and back from Tret
 /// (TRET_TREE_INTERIORS_TRET_TO_ENTRANCE).
@@ -177,7 +178,7 @@ const struct MapWarpRegion *Map_GetWarpRegions(void) {
 const u32 *Map_GetWarps(void) { return gTretTreeInteriorsWarps; }
 
 /// Returns the party's other slots (Garet, Ivan and, once she has joined,
-/// Mia), placed for the scripted scenes, and the two Tret actors.
+/// Mia), placed for the scripted scenes, and the two Tret object events.
 const struct ObjectEventTemplate *Map_GetObjectEventTemplates(void) {
   return gTretTreeInteriorsObjectEventTemplates;
 }
@@ -185,8 +186,8 @@ const struct ObjectEventTemplate *Map_GetObjectEventTemplates(void) {
 /// Stepping on a cocoon in Tret Tree: the first step tears it, copying its
 /// torn picture from the staging cell (row 35) and setting its temporary flag;
 /// the next step breaks through (row 36's cell), and the leader spins and
-/// falls, to land at the given entrance, numbered as the cocoon. The latch
-/// ignores the same cocoon again until the leader walks on.
+/// falls, to land at the given warp destination, numbered as the cocoon. The
+/// latch ignores the same cocoon again until the leader walks on.
 static void TretTreeInteriors_StepOnCocoon(s32 cocoonFlag, s32 sourceColumn,
                                            s32 sourceRow, s32 warpDest) {
   s32 destinationColumn;
@@ -208,7 +209,8 @@ static void TretTreeInteriors_StepOnCocoon(s32 cocoonFlag, s32 sourceColumn,
     FLAG_SET(cocoonFlag);
     return;
   }
-  // On the next touch, replace the tile and spin the actor into the fall.
+  // On the next touch, replace the tile and spin the object event into the
+  // fall.
   *sLastCocoon = -1;
   MapGrid_CopyCells(sourceColumn, sourceRow + 1, 1, 1, destinationColumn,
                     destinationRow);
@@ -238,9 +240,9 @@ static void TretTreeInteriors_StepOnCocoon(s32 cocoonFlag, s32 sourceColumn,
     FLAG_SET(FLAG_ARRIVE_FALLING);
 }
 
-// The cocoons' touch events in Tret Tree, one per cocoon: each passes its
+// The cocoons' coord events in Tret Tree, one per cocoon: each passes its
 // flag, the staging cell of its torn picture and its own number, the landing
-// entrance, to TretTreeInteriors_StepOnCocoon.
+// warp destination, to TretTreeInteriors_StepOnCocoon.
 
 /// Stepping on a cocoon tears it, and the next step drops the leader to the
 /// room below.
@@ -345,8 +347,8 @@ static void EventScript_StepOnCocoon55(void) {
 }
 
 /// Stepping on a cocoon tears it, and the next step drops the leader to the
-/// room below. Cocoon 56 lands at the same spot as cocoon 54: their entrances
-/// agree.
+/// room below. Cocoon 56 lands at the same spot as cocoon 54: their warp
+/// destinations agree.
 static void EventScript_StepOnCocoon56(void) {
   TretTreeInteriors_StepOnCocoon(FLAG_MAP_TEMP_11, 81, 35, 56);
 }
@@ -376,14 +378,14 @@ static void EventScript_ResetCocoonLatch(void) {
     *sLastCocoon = -1;
 }
 
-/// Returns the exits, the cocoons, Tret, Reveal and the chests' events.
+/// Returns the warps, the cocoons, Tret, Reveal and the chests' events.
 const struct MapEvent *Map_GetEvents(void) { return gTretTreeInteriorsEvents; }
 
-/// Walking up to Tret in Tret Tree (touch cell 40, while FLAG_TRET_DEFEATED is
-/// clear): he roars, the party gathers in front of him, and the evil within
-/// him scorns them before the battle with Tret starts. "Hm... HROOOM!!!" and
-/// "You hoped to find my kindly self?" The battle returns to
-/// TRET_TREE_INTERIORS_AFTER_FIGHT_TRET.
+/// Walking up to Tret in Tret Tree (metatile behavior 40, while
+/// FLAG_TRET_DEFEATED is clear): he roars, the party gathers in front of him,
+/// and the evil within him scorns them before the battle with Tret starts.
+/// "Hm... HROOOM!!!" and "You hoped to find my kindly self?" The battle returns
+/// to TRET_TREE_INTERIORS_AFTER_FIGHT_TRET.
 static void EventScript_FightTret(void) {
   s32 hasMia;
   struct ObjectEvent *leader;
@@ -689,8 +691,8 @@ static void TretTreeInteriors_PlayPostBattleConversation(void) {
   EV_END();
 }
 
-/// Sets the map by FLAG_TRET_DEFEATED: the passage in Tret's room closed
-/// before, open after, with cells near entrance 20 redrawn. With
+/// Sets the map grid by FLAG_TRET_DEFEATED: the passage in Tret's room closed
+/// before, open after, with cells near warp destination 20 redrawn. With
 /// playRecoveryScene it first plays the conversation after the battle, unless
 /// FLAG_KEEP_PARTY_POSITION is set.
 static void TretTreeInteriors_ApplyPostBattleState(s32 playRecoveryScene) {
@@ -715,11 +717,12 @@ static void TretTreeInteriors_ApplyPostBattleState(s32 playRecoveryScene) {
   }
 }
 
-/// Tret Tree's setup: places or removes the Tret actors, starts the tint,
-/// redraws the torn cocoons after a battle, sets the map by
-/// FLAG_TRET_DEFEATED, and plays what the entrance calls for: the falls on
-/// from entrances 50, 40, 30 and 20, the landing at entrance 10, or the
-/// conversation after the battle at TRET_TREE_INTERIORS_AFTER_FIGHT_TRET.
+/// Tret Tree's setup: places or removes the Tret object events, starts the
+/// tint, redraws the torn cocoons after a battle, sets the map grid by
+/// FLAG_TRET_DEFEATED, and plays what the warp destination calls for: the falls
+/// on from warp destinations 50, 40, 30 and 20, the landing at warp destination
+/// 10, or the conversation after the battle at
+/// TRET_TREE_INTERIORS_AFTER_FIGHT_TRET.
 s32 TretTreeInteriors_EnterRoom(void) {
   struct ObjectEvent *tret;
   struct ObjectEvent *objectEvent;
@@ -730,7 +733,7 @@ s32 TretTreeInteriors_EnterRoom(void) {
   s32 selectedObjectEventId;
 
   tret = ObjectEvent_GetById(LOCALID_TRET);
-  // Point the cocoon latch at the scene state and save the palette first.
+  // Point the cocoon latch at the map state and save the palette first.
   sLastCocoon = (s16 *)gMapLocalState;
   TretPalette_SaveMapColors();
   tret->motionFlags = 0;
@@ -758,7 +761,7 @@ s32 TretTreeInteriors_EnterRoom(void) {
   layer->offsetY += Iwram_MulQ16(grid->minY + PIXELS(136), 0x1999);
   layer->scaleX = 0xe666;
   layer->scaleY = 0xe666;
-  // The map draws four cocoons already torn: the first step on them breaks
+  // The layout draws four cocoons already torn: the first step on them breaks
   // through.
   FLAG_SET(FLAG_MAP_TEMP_01);
   FLAG_SET(FLAG_MAP_TEMP_0D);
@@ -771,9 +774,9 @@ s32 TretTreeInteriors_EnterRoom(void) {
   warpDest = gGameState.warpDest;
   selectedObjectEventId = gGameState.selectedObjectEvent;
   objectEvent = ObjectEvent_GetById(selectedObjectEventId);
-  // Entrances 20, 30, 40 and 50: the leader falls on through the room, to
-  // the entrance numbered ten lower. Entrance 10: the leader lands in a cloud
-  // of dust in front of Tret.
+  // Warp destinations 20, 30, 40 and 50: the leader falls on through the room,
+  // to the warp destination numbered ten lower. Warp destination 10: the leader
+  // lands in a cloud of dust in front of Tret.
   // TRET_TREE_INTERIORS_AFTER_FIGHT_TRET: back from the battle with Tret.
   if (warpDest == 50 || warpDest == 40 || warpDest == 30 || warpDest == 20) {
     Engine_ScriptOpenScreen();
@@ -807,7 +810,7 @@ s32 TretTreeInteriors_EnterRoom(void) {
   return 0;
 }
 
-/// Saves background palettes 0 to 13 as the base for Tret's scene tint.
+/// Saves background palettes 0 to 13 as the base for Tret's map tint.
 static void TretPalette_SaveMapColors(void) {
   Dma_Set((const void *)BG_PLTT, gPaletteBufferWork->palette,
           (DMA_ENABLE | DMA_32BIT) << 16 | 112, REG_DMA3);
@@ -1053,16 +1056,16 @@ static void TretTreeInteriors_ApplyFlaggedMapPatches(void) {
   }
 }
 
-/// Casting Reveal in Tret Tree (PSYNERGY_PHASE_EFFECT_ACTS) stops the scene
-/// tint until the scene is entered again.
+/// Casting Reveal in Tret Tree (PSYNERGY_PHASE_EFFECT_ACTS) stops the map
+/// tint until the map is entered again.
 static void EventScript_CastReveal(void) {
   Engine_TaskRemoveCallback(TretPalette_UpdateMapTint);
 }
 
 #include "common/effect_advance.h"
 
-/// Entrance 10, at the end of the fall from cocoon 50: the leader drops in
-/// from 130 pixels up in front of Tret, lands in a ring of dust and the map
+/// Warp destination 10, at the end of the fall from cocoon 50: the leader drops
+/// in from 130 pixels up in front of Tret, lands in a ring of dust and the map
 /// shakes.
 static void TretTreeInteriors_RunLandingDustScene(void) {
   struct EffectOptions options;
@@ -1140,7 +1143,7 @@ s32 gEffectScript2[] = {
 };
 
 /// The torn cocoons redrawn after a battle: the cocoon's flag, whether it is
-/// redrawn (0 for the four the map draws torn), the staging cell x/y and the
+/// redrawn (0 for the four the layout draws torn), the staging cell x/y and the
 /// cocoon's cell x/y.
 // clang-format off
 s16 gTretTreeInteriors_MapPatches[] = {

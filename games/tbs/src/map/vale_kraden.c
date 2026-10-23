@@ -2,9 +2,9 @@
 /// Vale (MapId_ValeKraden): the part of the village around Kraden's cottage,
 /// by the fence that closes off the lands beyond. Kraden, "a trained Alchemy
 /// sage" in his own words, came to Vale to study Mt. Aleph and Alchemy. One
-/// placement table serves every visit: ValeKraden_Initialize removes the people
-/// a visit does not use, and ValeKraden_GetEvents picks the events for the time
-/// of the story.
+/// object event template table serves every visit: ValeKraden_Initialize
+/// removes the people a visit does not use, and ValeKraden_GetEvents picks the
+/// events for the time of the story.
 ///
 /// - The stormy night of the prologue (FLAG_VALE_STORM). The storm's map (Vale,
 ///   MapId_ValeStorm) leads here by VALE_STORM_TO_VALE_KRADEN_NORTH and
@@ -15,12 +15,12 @@
 ///   lightning, leaves the two rocks that Isaac cannot budge across the way,
 ///   copies MB_WALL over the path's cells below the west rock and under
 ///   the east one, two of which by day hold EventScript_MeetSaturosAndMenardi's
-///   cell code 7
+///   metatile behavior 7
 ///   (https://alchemy.pascalpixel.com/places/vale-kraden/rockslide-cells.png:
 ///   the room on the stormy night and by day, the rocks boxed and the six
-///   cells outlined with their collision codes), and lays a hurt man by the
+///   cells outlined with their metatile behaviors), and lays a hurt man by the
 ///   fence. Talking to
-///   him, or walking up to him (cell code 20), plays
+///   him, or walking up to him (metatile behavior 20), plays
 ///   EventScript_TalkToRockslideSurvivor: asked whether he will die, a yes
 ///   leaves him giving up (FLAG_VALE_ROCKSLIDE_SURVIVOR_GAVE_UP), and a no has
 ///   him find he is not hurt at all, warn them of the monsters on their way to
@@ -29,17 +29,17 @@
 ///   first two slots of the encounter zone of the scripted battles of Vale,
 ///   Vault and the world map).
 /// - Three years later, the day the story begins, Isaac comes up with Garet and
-///   Jenna to find two strangers outside. Walking past them (cell code 7) plays
-///   EventScript_MeetSaturosAndMenardi: the three overhear the two speak of Sol
-///   Sanctum and of using Kraden, confront them and are let go, the two calling
-///   each other Saturos and Menardi (FLAG_MET_SATUROS_AND_MENARDI), and the
-///   strangers then stand aside, turning to watch the leader. Near the cottage
-///   (cell code 5), the party overhears Kraden wondering what the strangers
-///   know of the Elemental Stars (EventScript_OverhearKraden,
-///   FLAG_KRADEN_WONDERED_ABOUT_STRANGERS). Talking to Kraden plays
-///   EventScript_KradenPlansSanctumVisit: Garet brings up Saturos and Menardi,
-///   and Kraden talks the three into a secret look at Sol Sanctum on the
-///   forbidden mountain, then goes in to prepare, and
+///   Jenna to find two strangers outside. Walking past them (metatile behavior
+///   7) plays EventScript_MeetSaturosAndMenardi: the three overhear the two
+///   speak of Sol Sanctum and of using Kraden, confront them and are let go,
+///   the two calling each other Saturos and Menardi
+///   (FLAG_MET_SATUROS_AND_MENARDI), and the strangers then stand aside,
+///   turning to watch the leader. Near the cottage (metatile behavior 5), the
+///   party overhears Kraden wondering what the strangers know of the Elemental
+///   Stars (EventScript_OverhearKraden, FLAG_KRADEN_WONDERED_ABOUT_STRANGERS).
+///   Talking to Kraden plays EventScript_KradenPlansSanctumVisit: Garet brings
+///   up Saturos and Menardi, and Kraden talks the three into a secret look at
+///   Sol Sanctum on the forbidden mountain, then goes in to prepare, and
 ///   VALE_KRADEN_TO_VALE_INTERIORS_INN_MYTHRIL_BAG takes the party into the
 ///   cottage (MapId_ValeInteriorsInn,
 ///   VALE_INTERIORS_INN_FROM_VALE_KRADEN_MYTHRIL_BAG). Coming back out by
@@ -58,7 +58,7 @@
 /// VALE_KRADEN_TO_VALE_CAVE_MOUTH_WEST and VALE_KRADEN_TO_VALE_CAVE_MOUTH_EAST
 /// into Vale Cave's way in (MapId_ValeCaveMouth). Coming back from it by
 /// VALE_KRADEN_FROM_VALE_CAVE_MOUTH_EAST clears FLAG_SHOW_LOCATION_NAME, so the
-/// place name is not shown again. The jar's row finds nothing on the stormy
+/// area name is not shown again. The jar's row finds nothing on the stormy
 /// night, and after Kalay it is there only from the third patch on.
 ///
 /// Open questions: none.
@@ -96,7 +96,7 @@
 
 // FLAG_MAP_TEMP_42: the cottage's gate stands open since Kraden went in.
 
-/// The placed actors, numbered in the order of
+/// The placed object events, numbered in the order of
 /// gValeKraden_ObjectEventTemplates; Garet and Jenna, placed between Kraden and
 /// Saturos, keep their own slots.
 enum ValeKradenLocalId {
@@ -150,8 +150,8 @@ const struct MapWarpRegion *ValeKraden_GetRegions(void) { return NULL; }
 
 const u32 *ValeKraden_GetWarps(void) { return gValeKraden_Warps; }
 
-/// Returns the one placement table for every visit; ValeKraden_Initialize
-/// removes the actors a visit does not use.
+/// Returns the one object event template table for every visit;
+/// ValeKraden_Initialize removes the object events a visit does not use.
 const struct ObjectEventTemplate *ValeKraden_GetObjectEventTemplates(void) {
   return gValeKraden_ObjectEventTemplates;
 }
@@ -579,8 +579,8 @@ static void EventScript_KradenSetsOff(void) {
 /// In Vale, walking into Kraden's cottage: the gate opens unless Kraden left
 /// it open.
 ///
-/// Reached by walking north into cell code 3, by day and after Kalay; takes
-/// VALE_KRADEN_TO_VALE_INTERIORS_INN_NORTH into the cottage.
+/// Reached by walking north into metatile behavior 3, by day and after Kalay;
+/// takes VALE_KRADEN_TO_VALE_INTERIORS_INN_NORTH into the cottage.
 static void EventScript_EnterCottage(void) {
   if (Engine_GameFlagIsSet(FLAG_MAP_TEMP_42) == 0) {
     Engine_AudioPlayCue(SE_DOOR_OPEN);
@@ -594,9 +594,9 @@ static void EventScript_EnterCottage(void) {
 /// Isaac, Garet and Jenna overhear Saturos and Menardi, confront them and are
 /// warned off.
 ///
-/// Reached by stepping on cell code 7 in the day's events; runs once, setting
-/// FLAG_MET_SATUROS_AND_MENARDI. Saturos and Menardi are left turning to watch
-/// the leader.
+/// Reached by stepping on metatile behavior 7 in the day's events; runs once,
+/// setting FLAG_MET_SATUROS_AND_MENARDI. Saturos and Menardi are left turning
+/// to watch the leader.
 static void EventScript_MeetSaturosAndMenardi(void) {
   struct ObjectEvent *objectEvent;
   s32 x, z;
@@ -825,8 +825,8 @@ static void EventScript_MeetSaturosAndMenardi(void) {
 /// the strangers were and what they know of Sol Sanctum and the Elemental
 /// Stars.
 ///
-/// Reached by stepping on cell code 5 in the day's events; runs once, setting
-/// FLAG_KRADEN_WONDERED_ABOUT_STRANGERS.
+/// Reached by stepping on metatile behavior 5 in the day's events; runs once,
+/// setting FLAG_KRADEN_WONDERED_ABOUT_STRANGERS.
 static void EventScript_OverhearKraden(void) {
   struct ObjectEvent *leader;
 
@@ -916,10 +916,10 @@ static void EventScript_OverhearKraden(void) {
   }
 }
 
-/// Arriving in Kraden's part of Vale: places the actors for the storm or for
-/// the day, and plays the arrival from the cottage.
+/// Arriving in Kraden's part of Vale: places the object events for the storm or
+/// for the day, and plays the arrival from the cottage.
 ///
-/// The scene's initialize entry. On the stormy night (FLAG_VALE_STORM) it
+/// The map's initialize entry. On the stormy night (FLAG_VALE_STORM) it
 /// starts the lightning, removes the day's people, lays the survivor by the
 /// fence (unless FLAG_VALE_ROCKSLIDE_SURVIVOR_ESCAPED) and blocks the cells the
 /// rockslide covers. By day it removes the rocks and Garet, runs
@@ -1019,7 +1019,7 @@ s32 ValeKraden_Initialize(void) {
 /// about the monsters and runs off.
 ///
 /// Reached on the stormy night by talking to him (LOCALID_ROCKSLIDE_SURVIVOR),
-/// or by stepping on cell code 20 until he has given up. Sets
+/// or by stepping on metatile behavior 20 until he has given up. Sets
 /// FLAG_VALE_ROCKSLIDE_SURVIVOR_GAVE_UP on yes, or
 /// FLAG_VALE_ROCKSLIDE_SURVIVOR_ESCAPED on no; once he has escaped it does
 /// nothing.
@@ -1126,7 +1126,7 @@ static void EventScript_TalkToRockslideSurvivor(void) {
 
 /// In Vale on the stormy night, a monster attacks by the broken fence.
 ///
-/// Reached by stepping on cell code 10 until
+/// Reached by stepping on metatile behavior 10 until
 /// FLAG_VALE_STORM_FIRST_MONSTER_FOUGHT is set. Sets it and
 /// FLAG_VALE_STORM_MONSTER_FOUGHT, and starts the first slot of the encounter
 /// zone of the scripted battles of Vale, Vault and the world map.
@@ -1148,7 +1148,7 @@ static void EventScript_FightFirstMonster(void) {
 
 /// In Vale on the stormy night, a second monster attacks by the broken fence.
 ///
-/// Reached by stepping on cell code 11 until
+/// Reached by stepping on metatile behavior 11 until
 /// FLAG_VALE_STORM_SECOND_MONSTER_FOUGHT is set. Sets it and
 /// FLAG_VALE_STORM_MONSTER_FOUGHT, and starts its second slot.
 static void EventScript_FightSecondMonster(void) {
@@ -1209,7 +1209,7 @@ s32 gValeKraden_RockslideSurvivorSquashes[] = {
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
-/// Keeps a linked actor facing its current target.
+/// Keeps a linked object event facing its current target.
 s32 gValeKraden_FaceTargetActions[] = {
     SC_CALL(Map_TurnTowardTarget),
     SC_LOOP(SC_FOREVER, SC_TOP),

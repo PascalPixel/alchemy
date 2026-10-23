@@ -1,20 +1,20 @@
 /// @file
-/// Venus Lighthouse, six scenes in one overlay: the approach outside, the floor
+/// Venus Lighthouse, six maps in one overlay: the approach outside, the floor
 /// the front door opens onto, and the four floors of the climb that ends in the
-/// Lighthouse Aerie at the top (venus_lighthouse_aerie.c). Each scene has its
-/// own entrance, placement and event tables (VenusLighthouseGroundFloor's
-/// entrances are the fallback table), all share one exit table, and
-/// VenusLighthouse_Initialize redraws each scene's puzzles as their flags left
-/// them, case by entrance. Inside, only the actors of the room entered are
-/// placed (CONDITION_IN_VIEW).
+/// Lighthouse Aerie at the top (venus_lighthouse_aerie.c). Each map has its own
+/// warp destination, object event template and event tables
+/// (VenusLighthouseGroundFloor's warp destinations are the fallback table), all
+/// share one warp table, and VenusLighthouse_Initialize redraws each map's
+/// puzzles as their flags left them, case by warp destination. Inside, only the
+/// object events of the room entered are placed (CONDITION_IN_VIEW).
 ///
-/// - Venus Lighthouse Entry (MapId_VenusLighthouseEntry), outside. The
-///   scholars and Babi's soldiers the wanderers attacked lie hurt and say what
-///   they saw; a soldier who tells of the attack flickers and vanishes
-///   (FLAG_VENUS_LIGHTHOUSE_ATTACK_TOLD), and the collision of his spot
-///   changes. VENUS_LIGHTHOUSE_ENTRY_TO_VENUS_LIGHTHOUSE_GROUND_FLOOR, the
-///   open door, leads in.
-/// - Venus Lighthouse (MapId_VenusLighthouseGroundFloor, named by a scene
+/// - Venus Lighthouse Entry (MapId_VenusLighthouseEntry), outside. The scholars
+///   and Babi's soldiers the wanderers attacked lie hurt and say what they saw;
+///   a soldier who tells of the attack flickers and vanishes
+///   (FLAG_VENUS_LIGHTHOUSE_ATTACK_TOLD), and the metatile behavior of his spot
+///   changes. VENUS_LIGHTHOUSE_ENTRY_TO_VENUS_LIGHTHOUSE_GROUND_FLOOR, the open
+///   door, leads in.
+/// - Venus Lighthouse (MapId_VenusLighthouseGroundFloor, named by a map section
 ///   rule of its own), the floor behind the front door, with three scholars.
 ///   The great statue (TRIGGER_GREAT_STATUE) opens one of two paths
 ///   (FLAG_VENUS_LIGHTHOUSE_FIRST_PATH or _SECOND_PATH, the first time by the
@@ -68,10 +68,10 @@
 /// Locked doors stand on the second floor and above (TRIGGER_LOCKED_DOOR). The
 /// wall and gate flags (FLAG_VENUS_LIGHTHOUSE_WALL_MOVED to
 /// FLAG_VENUS_LIGHTHOUSE_PILLAR_GATE_OPEN) and the Psynergy Stones' flags are
-/// place flags: they last while the party stays in the scenes of the climb
+/// map section flags: they last while the party stays in the maps of the climb
 /// (MapId_VenusLighthouseFirstFloor to MapId_VenusLighthouseAerie, one
-/// place group), so the floors stay solved between them. The FLAG_MAP_TEMP_
-/// states last only until the next change of scene other than a return from
+/// map section), so the floors stay solved between them. The FLAG_MAP_TEMP_
+/// states last only until the next change of map other than a return from
 /// battle. Every arrival sets FLAG_VENUS_LIGHTHOUSE_LIT.
 ///
 /// Open questions: none.
@@ -121,8 +121,9 @@
 #include "audio_engine_symbols.h"
 #include "item_ids.h"
 
-// Place flags: Map_ResetFlagsOnEnter clears 0x300 to 0x3ff when the party
-// enters another place group, and other places use the numbers for their own.
+// Map section flags: Map_ResetFlagsOnEnter clears 0x300 to 0x3ff when the
+// party enters another map section, and other map sections use the numbers for
+// their own.
 
 // The floor switches have slid the walls aside.
 /// The second floor's pink floor switch has slid the wall beside it aside.
@@ -163,10 +164,10 @@
 /// ★ Named from the game: "a Psynergy Stone" (MsgGotPsynergyStone)
 #define FLAG_VENUS_LIGHTHOUSE_FOURTH_FLOOR_PSYNERGY_STONE 0x351
 
-/// The cells the floors' events answer, by floor; a number means one thing on
-/// one floor and another on the next. Each exit cell carries the number of the
-/// exit it leads by, and the event rows name it by that exit, as they do the
-/// sparkling passages, which leave by their own number
+/// The metatile behaviors the floors' events answer, by floor; a number means
+/// one thing on one floor and another on the next. Each warp cell carries the
+/// number of the warp it leads by, and the event rows name it by that warp, as
+/// they do the sparkling passages, which leave by their own number
 /// (EventScript_EnterSparklingPassage).
 enum VenusLighthouseTrigger {
   TRIGGER_LOCKED_DOOR = 25,     ///< a locked door, from the second floor up
@@ -235,18 +236,18 @@ static void VenusLighthouse_AnimateWestTileWave(void);
 static void VenusLighthouse_AnimateEastTileWave(void);
 static void VenusLighthouse_RaiseLeaderWithSpray(void);
 
-// The lighthouse's scene flags:
+// The lighthouse's map flags:
 // FLAG_MAP_TEMP_00: in the room with the floor switch, the pillar holds the
 // switch down; in the room of floating pillars, FLAG_MAP_TEMP_00 plus a
 // pillar's number (0 to 3): that pillar is set down in its place.
 // FLAG_MAP_TEMP_01: the leader stands on the floor switch.
 
-// Each scene numbers its actors by the rows of its own placement table, so
-// each has an enum of its own; a row drawn as one of the party's characters
-// (Garet in VenusLighthouseGroundFloor) is that party member in his own slot
-// and takes no number.
+// Each map numbers its object events by the rows of its own object event
+// template table, so each has an enum of its own; a row drawn as one of the
+// party's characters (Garet in VenusLighthouseGroundFloor) is that party member
+// in his own slot and takes no number.
 
-/// Venus Lighthouse Entry's actors, numbering the rows of
+/// Venus Lighthouse Entry's object events, numbering the rows of
 /// gVenusLighthouseEntryObjectEventTemplates: the scholars
 /// (SPRITE_OLD_MAN_IN_BLUE_CAP) and Babi's soldiers (SPRITE_SOLDIER) the
 /// wanderers attacked, each named by what they say.
@@ -284,7 +285,7 @@ enum VenusLighthouseEntryLocalId {
   LOCALID_SOLDIER_COLOSSO_VICTORS
 };
 
-/// VenusLighthouseGroundFloor's actors, numbering the rows of
+/// VenusLighthouseGroundFloor's object events, numbering the rows of
 /// gVenusLighthouseGroundFloorObjectEventTemplates after Garet's.
 enum VenusLighthouseGroundFloorLocalId {
   /// "Kraden told them to stop, but they attacked anyway."
@@ -303,7 +304,7 @@ enum VenusLighthouseGroundFloorLocalId {
   /// The pillar Move pushes to the wall and Carry sets down beyond it
   /// (EventScript_MovePillarTowardWall).
   /// ★ Named from what the player sees: a grey pillar carved with spirals, two
-  /// blocks tall, short of the wall (its render)
+  /// metatiles tall, short of the wall (its render)
   LOCALID_WALL_PILLAR = LOCALID_FIRST_PLACED + 4,
   /// The lady statue Move pushes onto the floor switch (SPRITE_LADY_STATUE)
   /// (EventScript_MovePillarOntoSwitch).
@@ -312,7 +313,7 @@ enum VenusLighthouseGroundFloorLocalId {
   LOCALID_FLOOR_SWITCH_STATUE
 };
 
-/// VenusLighthouseFirstFloor's actors, numbering the rows of
+/// VenusLighthouseFirstFloor's object events, numbering the rows of
 /// gVenusLighthouseFirstFloorObjectEventTemplates.
 enum VenusLighthouseFirstFloorLocalId {
   /// The three pillars, SPRITE_CAPPED_PILLAR, that Move or a push shifts, the
@@ -328,7 +329,7 @@ enum VenusLighthouseFirstFloorLocalId {
   LOCALID_FIRST_CARRY_PILLAR = LOCALID_FIRST_DEPTH_PILLAR + 3
 };
 
-/// VenusLighthouseSecondFloor's actors, numbering the rows of
+/// VenusLighthouseSecondFloor's object events, numbering the rows of
 /// gVenusLighthouseSecondFloorObjectEventTemplates.
 enum VenusLighthouseSecondFloorLocalId {
   /// A lady statue, as LOCALID_FLOOR_SWITCH_STATUE is, where
@@ -351,7 +352,7 @@ enum VenusLighthouseSecondFloorLocalId {
   LOCALID_GATE_EFFECT
 };
 
-/// VenusLighthouseThirdFloor's actors, numbering the rows of
+/// VenusLighthouseThirdFloor's object events, numbering the rows of
 /// gVenusLighthouseThirdFloorObjectEventTemplates.
 enum VenusLighthouseThirdFloorLocalId {
   /// A lady statue (SPRITE_LADY_STATUE), where the two gate effects set out
@@ -372,7 +373,7 @@ enum VenusLighthouseThirdFloorLocalId {
   LOCALID_SWITCH_GATE_EFFECT = LOCALID_FIRST_SWITCH_PILLAR + 3
 };
 
-/// VenusLighthouseFourthFloor's actors, numbering the rows of
+/// VenusLighthouseFourthFloor's object events, numbering the rows of
 /// gVenusLighthouseFourthFloorObjectEventTemplates.
 enum VenusLighthouseFourthFloorLocalId {
   /// The two platforms, SPRITE_BALANCE_PLATFORM, that rise or sink to the
@@ -447,10 +448,10 @@ enum VenusTrack {
   TRACK_SOUTH_WEST = 8
 };
 
-/// An actor's timer as gVenusGreyStatueScript and gVenusGreyPillarScript set
-/// it: a tag in the upper bits and a colour mode (enum SpriteColorMode) in the
-/// low four, so that VenusLighthouse_RestoreScriptedChildValues can draw the
-/// actor in that mode again after a battle.
+/// An object event's timer as gVenusGreyStatueScript and gVenusGreyPillarScript
+/// set it: a tag in the upper bits and a colour mode (enum SpriteColorMode) in
+/// the low four, so that VenusLighthouse_RestoreScriptedChildValues can draw
+/// the object event in that mode again after a battle.
 #define VENUS_COLOR_MARK(mode) (VENUS_COLOR_MARK_TAG << 4 | (mode))
 enum { VENUS_COLOR_MARK_TAG = 0x212 };
 
@@ -466,11 +467,11 @@ static void VenusLighthouse_ConfigurePassageEffect(struct ObjectEvent *object,
 }
 
 /// Creates a mask over a hole as the leader or a pillar falls through the
-/// floor: an object of sprite type (SPRITE_CRATE or SPRITE_CAPPED_PILLAR)
-/// drawn solid black (SPRITE_COLOR_BLACK) and translucent in front of the
-/// actors, which shows the background through whatever falls behind it, so
-/// that it vanishes below the hole's edge. Babi Lighthouse's PIT_MASK is the
-/// same object, and its render without the mask shows the leader whole.
+/// floor: an object of sprite type (SPRITE_CRATE or SPRITE_CAPPED_PILLAR) drawn
+/// solid black (SPRITE_COLOR_BLACK) and translucent in front of the object
+/// events, which shows the background through whatever falls behind it, so that
+/// it vanishes below the hole's edge. Babi Lighthouse's PIT_MASK is the same
+/// object, and its render without the mask shows the leader whole.
 static struct ObjectEvent *
 VenusLighthouse_CreateBlendedPassageEffect(s32 x, s32 y, s32 z, s32 type) {
   struct ObjectEvent *effect;
@@ -511,7 +512,7 @@ VenusLighthouse_CreateOccludingPassageEffect(s32 x, s32 y, s32 z, s32 type) {
 #include "ability_ids.h"
 #include "objcmd.h"
 
-/// The scene's names for the bytes ObjectEvent keeps for scene code: a statue
+/// The map's names for the bytes ObjectEvent keeps for map code: a statue
 /// with SW_VENUS_IMMOVABLE set cannot be pushed
 /// (VenusLighthouse_PushAdjacentPillar), and a light sets
 /// SW_VENUS_LIGHT_ARRIVED as it reaches its gate, which then opens.
@@ -607,7 +608,7 @@ static void VenusLighthouse_PushAdjacentPillar(void) {
   ObjectEvent_SetMode(leader, ANIMATION_STAND);
 }
 
-/// Unused: fills collision codes in a rectangle of the requested map layer;
+/// Unused: fills metatile behaviors in a rectangle of the requested map layer;
 /// nothing in Venus Lighthouse calls it.
 static UNUSED s32 StagedObjectEvent_FillGridAttributeRectangle(
     u32 layerIndex, s32 x, s32 z, u32 width, u32 height, s32 collisionCode) {
@@ -635,8 +636,8 @@ static UNUSED s32 StagedObjectEvent_FillGridAttributeRectangle(
   return 0;
 }
 
-/// After a battle, draws every actor whose timer holds a VENUS_COLOR_MARK in
-/// its colour mode again.
+/// After a battle, draws every object event whose timer holds a
+/// VENUS_COLOR_MARK in its colour mode again.
 static void VenusLighthouse_RestoreScriptedChildValues(void) {
   struct ObjectEvent **objectEvents = gEventWork->placedObjectEvents;
   struct ObjectEvent *objectEvent;
@@ -651,7 +652,7 @@ static void VenusLighthouse_RestoreScriptedChildValues(void) {
 }
 
 /// Called by gVenusGreyStatueScript and gVenusGreyPillarScript: draws the
-/// actor in the colour mode of its VENUS_COLOR_MARK.
+/// object event in the colour mode of its VENUS_COLOR_MARK.
 static s32
 VenusLighthouse_UpdateChildFromTimer(struct ScriptInterpreter *interpreter) {
   struct ObjectEvent *objectEvent = (struct ObjectEvent *)interpreter;
@@ -683,7 +684,7 @@ static s32 VenusLighthouse_PulseChildEffect(union FieldObject *fieldObject) {
 #endif
 }
 
-// Emit a rising particle near the actor every eight frames.
+// Emit a rising particle near the object event every eight frames.
 // UB: update hooks return void. In tbs-en venus_lighthouse, plain
 // void differs in 14 bytes of the 172-byte function. Keep the unused
 // native result in matching builds.
@@ -720,7 +721,7 @@ static s32 VenusLighthouse_EmitRisingParticles(union FieldObject *fieldObject) {
 #endif
 }
 
-/// Clears the scripted actor's sprite flags and advances its script.
+/// Clears the scripted object event's sprite flags and advances its script.
 static s32 VenusLighthouse_ClearScriptedSpriteFlags(
     struct ScriptInterpreter *interpreter) {
   void *objectEvent = (void *)interpreter;
@@ -776,7 +777,7 @@ VenusLighthouse_EmitPassageSparkTrail(union FieldObject *fieldObject) {
 
 /// Walking north into a sparkling passage, on VenusLighthouseSecondFloor or
 /// VenusLighthouseThirdFloor: the leader dissolves in sparks and leaves by the
-/// exit of the passage's own number, coming out at its far end
+/// warp of the passage's own number, coming out at its far end
 /// (VenusLighthouse_ArriveThroughSparkPassage).
 static void EventScript_EnterSparklingPassage(void) {
   struct ObjectEvent *leader;
@@ -807,7 +808,7 @@ static void EventScript_EnterSparklingPassage(void) {
   Engine_ScriptEnd();
 }
 
-/// Brings the leader out of a sparkling passage on a fresh entrance.
+/// Brings the leader out of a sparkling passage on a fresh arrival.
 static void VenusLighthouse_ArriveThroughSparkPassage(void) {
   struct ObjectEvent *leader;
 
@@ -841,9 +842,9 @@ static void VenusLighthouse_ArriveThroughSparkPassage(void) {
   }
 }
 
-/// Makes the leader the actor the fade overlay follows (struct FadeOverlayWork:
-/// two translucent marks beside him wherever the ground beside him rises above
-/// his floor). Reached by stepping onto cell code 32 of
+/// Makes the leader the object event the fade overlay follows (struct
+/// FadeOverlayWork: two translucent marks beside him wherever the ground beside
+/// him rises above his floor). Reached by stepping onto metatile behavior 32 of
 /// VenusLighthouseFirstFloor, which the map gives the rows the three capped
 /// pillars stand in; code 31, in the rows that bound them, turns the marks off
 /// again (EventScript_ClearEffectTarget), and walking into a pillar from either
@@ -853,8 +854,8 @@ static void EventScript_SetLeaderAsEffectTarget(void) {
       ObjectEvent_GetById(LOCALID_PARTY_LEADER);
 }
 
-/// Stepping onto cell code 31 of VenusLighthouseFirstFloor, in the rows that
-/// bound the capped pillars': the fade overlay follows no one.
+/// Stepping onto metatile behavior 31 of VenusLighthouseFirstFloor, in the rows
+/// that bound the capped pillars': the fade overlay follows no one.
 static void EventScript_ClearEffectTarget(void) {
   gObjectEventEffectWork->objectEvent = NULL;
 }
@@ -1076,8 +1077,8 @@ static s32 EventScript_JumpAcrossGap(void) {
   return 0;
 }
 
-/// Selects the scene's entrances; VenusLighthouseGroundFloor takes the fallback
-/// table.
+/// Selects the map's warp destinations; VenusLighthouseGroundFloor takes the
+/// fallback table.
 const struct MapWarpDest *VenusLighthouse_GetWarpDests(void) {
   s16 mapId = gGameState.mapId;
 
@@ -1099,13 +1100,13 @@ const struct MapWarpDest *VenusLighthouse_GetWarpDests(void) {
   return gVenusLighthouseWarpDestsOther;
 }
 
-/// These scenes supply no exit regions.
+/// These maps supply no warp regions.
 const struct MapWarpRegion *VenusLighthouse_GetRegions(void) { return 0; }
 
-/// Returns the packed exits shared by the six scenes.
+/// Returns the packed warps shared by the six maps.
 const u32 *VenusLighthouse_GetWarps(void) { return gVenusLighthouseWarps; }
 
-/// Selects the scene's placements. Inside the lighthouse,
+/// Selects the map's object event templates. Inside the lighthouse,
 /// Map_PrepareObjectEvents first gives each row with condition 0 whether it
 /// lies inside the view bounds, so only the room entered is populated.
 const struct ObjectEventTemplate *
@@ -1156,7 +1157,7 @@ static void EventScript_SearchLockedDoor(void) {
 /// At Venus Lighthouse Entry, talking to the soldier by the entrance (or
 /// reading his mind): "Venus Lighthouse was attacked by strange wanderers..."
 /// He flickers ten times and is gone (FLAG_VENUS_LIGHTHOUSE_ATTACK_TOLD), and
-/// the collision of his spot changes, as it does on later arrivals.
+/// the metatile behavior of his spot changes, as it does on later arrivals.
 static void EventScript_HearOfTheAttack(void) {
   u32 flickersLeft;
   u32 flickerDelay;
@@ -1212,7 +1213,7 @@ static void EventScript_CarryPillarPastWall(void) {
 }
 
 /// Searching a relief in VenusLighthouseGroundFloor shows its words, the relief
-/// trigger's own message. "There are words carved into the relief..."
+/// metatile behavior's own message. "There are words carved into the relief..."
 ///
 /// The Japanese text gives each of the six reliefs its own words; every
 /// translation joins the first five into one message and leaves the next four
@@ -1480,8 +1481,8 @@ static void EventScript_MovePillarTowardWall(void) {
   }
 }
 
-/// In VenusLighthouseGroundFloor, pushing the pillar by the wall (touch trigger
-/// 50): as Move, with Garet's remark at the wall.
+/// In VenusLighthouseGroundFloor, pushing the pillar by the wall (metatile
+/// behavior 50): as Move, with Garet's remark at the wall.
 static void EventScript_PushPillarTowardWall(void) {
 
   Engine_ScriptStart();
@@ -1562,9 +1563,9 @@ static void EventScript_TalkToScholarByDoor(void) {
   Engine_ScriptEnd();
 }
 
-/// In VenusLighthouseFirstFloor, stepping onto the hole in the floor (trigger
-/// 35): the leader looks down, falls through and lands in the room below (
-/// VENUS_LIGHTHOUSE_FIRST_FLOOR_DRIFTING_FLOOR_TO_LOWER_ROOM_HOLE).
+/// In VenusLighthouseFirstFloor, stepping onto the hole in the floor (metatile
+/// behavior 35): the leader looks down, falls through and lands in the room
+/// below (VENUS_LIGHTHOUSE_FIRST_FLOOR_DRIFTING_FLOOR_TO_LOWER_ROOM_HOLE).
 static void EventScript_FallThroughFloor(void) {
   struct ObjectEvent *leader;
   struct ObjectEvent *leaderObjectEvent;
@@ -2014,8 +2015,8 @@ static void EventScript_MoveSwitchPillar(void) {
     if (switchIndex == 5) {
       continue;
     }
-    // Preserve overlapping actors while the selected pillar sinks into its
-    // socket.
+    // Preserve overlapping object events while the selected pillar sinks into
+    // its socket.
     savedPriority = leader->sprite->image.priority;
     if (leader->z.fixed >> 20 <= gVenusThirdFloorSockets[switchIndex].z) {
       occlusionEffect = VenusLighthouse_CreateOccludingPassageEffect(
@@ -2105,7 +2106,7 @@ static void EventScript_JumpOrPushSwitchPillar(void) {
   EventScript_MoveSwitchPillar();
 }
 
-// Keep a stacked pillar sixteen pixels above its supporting actor.
+// Keep a stacked pillar sixteen pixels above its supporting object event.
 // UB: update hooks return void. In tbs-en venus_lighthouse, plain
 // void differs in 7 bytes (extent 34 to 32 bytes). Keep the
 // unused native result in matching builds.
@@ -2280,8 +2281,8 @@ static void EventScript_CarryFloatingPillar(void) {
     }
     if (pillar->z.fixed >> 20 == 19 &&
         !GameFlag_IsSet(FLAG_MAP_TEMP_00 + pillarIndex)) {
-      // Keep settled pillars at the front of the actor slots before finding
-      // their support.
+      // Keep settled pillars at the front of the object event slots before
+      // finding their support.
       FloatingPillar_Settle(pillar, 0);
       settledIndex = pillarIndex;
       for (earlierIndex = 0; earlierIndex < pillarIndex; earlierIndex++) {
@@ -2686,7 +2687,7 @@ static void EventScript_EnterRisingPassage(void) {
 }
 
 /// Selects the puzzle interactions and dialogue for the current lighthouse
-/// scene.
+/// map.
 const struct MapEvent *VenusLighthouse_GetEvents(void) {
   s32 mapId = gGameState.mapId;
 
@@ -2733,7 +2734,7 @@ static void VenusLighthouse_LayDownHurtObjectEvent(s32 objectEventId) {
   }
 }
 
-/// Visits the four pillar actors through the object lookup service.
+/// Visits the four pillar object events through the object lookup service.
 static void VenusLighthouse_VisitPillarObjectEvents(void) {
   u32 objectEventId;
 
@@ -2744,10 +2745,10 @@ static void VenusLighthouse_VisitPillarObjectEvents(void) {
   } while (objectEventId <= LOCALID_FIRST_SOCKET_PILLAR + 3);
 }
 
-/// Restores puzzle progress, actors and entrance effects for all six scenes,
-/// by scene and entrance; on every arrival it sets FLAG_VENUS_LIGHTHOUSE_LIT
-/// and, after a battle, restores the scripted actors' child values.
-/// VenusLighthouseGroundFloor's
+/// Restores puzzle progress, object events and warp destination effects for all
+/// six maps, by map and warp destination; on every arrival it sets
+/// FLAG_VENUS_LIGHTHOUSE_LIT and, after a battle, restores the scripted object
+/// events' child values. VenusLighthouseGroundFloor's
 /// VENUS_LIGHTHOUSE_GROUND_FLOOR_FROM_VENUS_LIGHTHOUSE_FIRST_FLOOR, with
 /// VENUS_LIGHTHOUSE_GROUND_FLOOR_FLOOR_SWITCH_FROM_PILLARS and
 /// _FROM_GREAT_STATUE into the same room, and VenusLighthouseFirstFloor's
@@ -2767,7 +2768,7 @@ s32 VenusLighthouse_Initialize(void) {
   gEventWork->startTransition = MAP_TRANSITION(TRANSITION_WINDOW, 4);
   mapId = gGameState.mapId;
   // Restore the scholars and soldiers outside and each interior puzzle by its
-  // entrance.
+  // warp destination.
   if (mapId == (s32)&MapId_VenusLighthouseEntry) {
     gEventWork->startTransition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
     if (!Engine_GameFlagIsSet(FLAG_VENUS_LIGHTHOUSE_ATTACK_TOLD))
@@ -2810,7 +2811,8 @@ s32 VenusLighthouse_Initialize(void) {
       break;
     case VENUS_LIGHTHOUSE_GROUND_FLOOR_FLOOR_SWITCH_FROM_GREAT_STATUE:
       Engine_GameFlagClear(FLAG_WARP_ARRIVAL_ALTERNATE);
-      // Restore the same passage tiles as the room's other two entrances.
+      // Restore the same passage tiles as the room's other two warp
+      // destinations.
       // fall through
     case VENUS_LIGHTHOUSE_GROUND_FLOOR_FLOOR_SWITCH_FROM_PILLARS:
     case VENUS_LIGHTHOUSE_GROUND_FLOOR_FROM_VENUS_LIGHTHOUSE_FIRST_FLOOR:
@@ -2947,7 +2949,7 @@ s32 VenusLighthouse_Initialize(void) {
     case VENUS_LIGHTHOUSE_SECOND_FLOOR_FROM_VENUS_LIGHTHOUSE_FIRST_FLOOR_SOUTH:
       gEventWork->startTransition = MAP_TRANSITION(TRANSITION_WINDOW, 2);
       ObjectEvent_GetById(LOCALID_PARTY_LEADER)->y.fixed = -PIXELS(2);
-      // These entrances share the tile-wave setup.
+      // These warp destinations share the tile-wave setup.
       // fall through
     case VENUS_LIGHTHOUSE_SECOND_FLOOR_FROM_VENUS_LIGHTHOUSE_FIRST_FLOOR_WEST:
     case VENUS_LIGHTHOUSE_SECOND_FLOOR_WALL_SWITCH_FROM_GATE:
@@ -3311,8 +3313,8 @@ static void EventScript_DriftEast(void) {
   VenusLighthouse_StepObjectEventWithDust(&args);
 }
 
-/// Follows the selected actor through the passage, adjusting for walls and
-/// drops.
+/// Follows the selected object event through the passage, adjusting for walls
+/// and drops.
 /// @param direction The way the drifting floor carries the party: -1, 0 or 1
 /// on x and on z; y is not read.
 static void VenusLighthouse_StepObjectEventWithDust(struct Vector3 *direction) {
@@ -3399,7 +3401,7 @@ static void VenusLighthouse_StepObjectEventWithDust(struct Vector3 *direction) {
     objectEvent->z.fixed -= VENUS_LIGHTHOUSE_FIXED_OFFSET(direction->x * 3, 15);
     return;
   }
-  // Advance the camera anchor together with an unobstructed actor.
+  // Advance the camera anchor together with an unobstructed object event.
   viewCenter->x.fixed += VENUS_LIGHTHOUSE_FIXED_OFFSET(direction->x * 3, 15);
   objectEvent->x.fixed += VENUS_LIGHTHOUSE_FIXED_OFFSET(direction->x * 3, 15);
   viewCenter->z.fixed += VENUS_LIGHTHOUSE_FIXED_OFFSET(direction->z * 3, 15);
@@ -3636,7 +3638,7 @@ static void VenusLighthouse_AnimateEastTileWave(void) {
   Engine_ScriptEnd();
 }
 
-// Emit rising particles around the actor every four frames.
+// Emit rising particles around the object event every four frames.
 // UB: update hooks return void. In tbs-en venus_lighthouse, plain
 // void differs in 14 bytes of the 196-byte function. Keep the unused
 // native result in matching builds.

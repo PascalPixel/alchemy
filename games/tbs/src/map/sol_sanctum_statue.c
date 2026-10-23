@@ -9,7 +9,7 @@
 /// two others, pushed in front of the centre statue, shine a beam at it; the
 /// last two never move. Walking into a statue pushes it a cell
 /// (SolSanctumStatue_PushStatue), and Move ends in a check of where it stands.
-/// Each move's event row carries the flag of what it achieves (a seal open, a
+/// Each move's map event carries the flag of what it achieves (a seal open, a
 /// beam shining, the centre statue moved), so a statue stops answering once it
 /// has done its part, and SolSanctumStatue_Initialize redraws the room from
 /// those story flags on every entry.
@@ -86,8 +86,9 @@
 #include "audio_engine_symbols.h"
 #include "ability_ids.h"
 
-// Place flags: Map_ResetFlagsOnEnter clears 0x300 to 0x3ff when the party
-// enters another place group, and other places use the numbers for their own.
+// Map section flags: Map_ResetFlagsOnEnter clears 0x300 to 0x3ff when the party
+// enters another map section, and other map sections use the numbers for their
+// own.
 /// Set once Kraden has found the hole and explained the disarmed trap.
 /// ★ Named from the game: "So the statue puzzle was the trap..."
 /// (MsgSolSanctumKradenYouFoundIt)
@@ -108,9 +109,9 @@
 #define SOL_SANCTUM_STATUE_ROW_SPRITE_COUNT 9
 #define SOL_SANCTUM_STATUE_SPRITE_WIDTH 32
 
-/// The collision codes of the cells the touch events answer: the jump spots,
+/// The metatile behaviors the coord events answer: the jump spots,
 /// the four seal statues' and the centre statue's cells. The beam statues'
-/// rows answer the codes of the cells each can stand in, 20 to 29.
+/// rows answer the behaviors of the cells each can stand in, 20 to 29.
 enum SolSanctumStatueCell {
   SOL_SANCTUM_STATUE_CELL_NORTHWEST_STATUE = 5,
   SOL_SANCTUM_STATUE_CELL_NORTHEAST_STATUE = 6,
@@ -121,7 +122,7 @@ enum SolSanctumStatueCell {
   SOL_SANCTUM_STATUE_CELL_CENTER_STATUE = 32
 };
 
-// Scene flags, cleared on every ordinary entrance:
+// Map flags, cleared on every ordinary arrival:
 // - FLAG_MAP_TEMP_07: both beams have opened the hole in the floor;
 //   until then, Move on the centre statue first walks the leader clear of it.
 
@@ -143,7 +144,7 @@ static void EventScript_SayThenWait(s32 speaker, s32 frames);
 
 #define NULL ((void *)0)
 
-/// A block of map cells copied from one place in the map to another.
+/// A block of cells copied from one place in the map grid to another.
 struct CellCopy {
   s32 sourceX;      ///< map cells
   s32 sourceY;      ///< map cells
@@ -173,7 +174,7 @@ struct SealScene {
 
 STATIC_ASSERT(offsetof(struct SealScene, unused) == 0xc4);
 
-/// The placed actors, numbered in the order of
+/// The placed object events, numbered in the order of
 /// gSolSanctumStatue_ObjectEventTemplates: Kraden, who stays out of sight until
 /// his two visits, the eight statues, and the centre statue in its two places;
 /// Jenna and Garet, placed after them, keep their own slots. Of the statues,
@@ -217,7 +218,7 @@ enum SolSanctumStatueLocalId {
   LOCALID_MOVED_CENTER_STATUE
 };
 
-/// The scene's bss, in this order; as commons of one object the linker would
+/// The map's bss, in this order; as commons of one object the linker would
 /// sort them itself.
 static struct SealScene sSealScene;
 /// Initialization writes each three-word OAM packet; drawing updates its
@@ -249,14 +250,14 @@ const struct MapEvent *SolSanctumStatue_GetEvents(void) {
 }
 
 /// Chooses the scripted scene in the Luna and Sol rooms that a newly opened
-/// seal leads to, and requests its exit: once the centre statue has moved,
+/// seal leads to, and requests its warp: once the centre statue has moved,
 /// the quarter it lit flashing in the Luna and Sol rooms
 /// (SOL_SANCTUM_STATUE_TO_SOL_SANCTUM_LUNA_SOL_ROOMS_TRAP_DISARMED), until
 /// FLAG_SOL_SANCTUM_KRADEN_SAID_FOUND_SOMETHING is set; before then, the
 /// falling lights
 /// (SOL_SANCTUM_STATUE_TO_SOL_SANCTUM_LUNA_SOL_ROOMS_TRAP_TRIGGERED), until
 /// FLAG_SOL_SANCTUM_FALLING_LIGHTS_SEEN is set. Returns 1 when it requests an
-/// exit, otherwise -1.
+/// warp, otherwise -1.
 static s32 SolSanctumStatue_SelectStoryWarp(void) {
   if (Engine_GameFlagIsSet(FLAG_SOL_SANCTUM_CENTER_STATUE_MOVED) != 0) {
     if (Engine_GameFlagIsSet(FLAG_SOL_SANCTUM_KRADEN_SAID_FOUND_SOMETHING) ==
@@ -847,7 +848,7 @@ UNUSED static void SolSanctumStatue_UnusedMoveNorthwestStatue(void) {
 }
 
 /// Restores the room's statues, beams and seals from their flags and plays
-/// Kraden's two visits. Called by Field_RunMap once the actors exist.
+/// Kraden's two visits. Called by Field_RunMap once the object events exist.
 /// Sets FLAG_RETREAT_BLOCKED; starts the sky's cloud rows; at
 /// SOL_SANCTUM_STATUE_FROM_SOL_SANCTUM_LUNA_SOL_ROOMS_TRAP_DISARMED plays
 /// SolSanctumStatue_ExplainTrapDisarmed and at
@@ -874,7 +875,8 @@ s32 SolSanctumStatue_Initialize(void) {
       ObjectEvent_GetById(LOCALID_MOVED_CENTER_STATUE), 0);
   ObjectEvent_GetById(LOCALID_MOVED_CENTER_STATUE)->priorityFlags &= 254;
   Engine_ObjectEventSetSpritePriority(LOCALID_MOVED_CENTER_STATUE, 1);
-  // Only arrivals 3 and 4 keep Jenna and Garet staged for their conversations.
+  // Only warp destinations 3 and 4 keep Jenna and Garet staged for their
+  // conversations.
   if ((u16)(gGameState.warpDest - 3) > 1) {
     ObjectEvent_SetPosition(JENNA, 0, 0);
     ObjectEvent_SetPosition(GARET, 0, 0);
@@ -1210,7 +1212,7 @@ static void EventScript_CenterStatueMoved(void) {
 }
 
 /// Walking into the centre statue from the south: the leader pushes it north.
-/// Reached by walking north into cell code 32 until
+/// Reached by walking north into metatile behavior 32 until
 /// FLAG_SOL_SANCTUM_CENTER_STATUE_MOVED is set.
 static void EventScript_PushCenterStatueNorth(void) {
   struct ObjectEvent *movingObjectEvent;
@@ -1238,7 +1240,7 @@ static void EventScript_PushCenterStatueNorth(void) {
 }
 
 /// Walking into the northwest statue: the leader pushes it onto its seal.
-/// Reached by walking east into cell code 5 until
+/// Reached by walking east into metatile behavior 5 until
 /// FLAG_SOL_SANCTUM_NORTHWEST_SEAL_OPEN is set.
 static void EventScript_PushNorthwestStatue(void) {
   SolSanctumStatue_PushStatue(LOCALID_NORTHWEST_STATUE, 31, 9, 30, 9);
@@ -1246,7 +1248,7 @@ static void EventScript_PushNorthwestStatue(void) {
 }
 
 /// Walking into the northeast statue: the leader pushes it onto its seal.
-/// Reached by walking west into cell code 6 until
+/// Reached by walking west into metatile behavior 6 until
 /// FLAG_SOL_SANCTUM_NORTHEAST_SEAL_OPEN is set.
 static void EventScript_PushNortheastStatue(void) {
   SolSanctumStatue_PushStatue(LOCALID_NORTHEAST_STATUE, 40, 9, 41, 9);
@@ -1254,7 +1256,7 @@ static void EventScript_PushNortheastStatue(void) {
 }
 
 /// Walking into the southwest statue: the leader pushes it onto its seal.
-/// Reached by walking east into cell code 7 until
+/// Reached by walking east into metatile behavior 7 until
 /// FLAG_SOL_SANCTUM_SOUTHWEST_SEAL_OPEN is set.
 static void EventScript_PushSouthwestStatue(void) {
   SolSanctumStatue_PushStatue(LOCALID_SOUTHWEST_STATUE, 31, 12, 30, 12);
@@ -1262,7 +1264,7 @@ static void EventScript_PushSouthwestStatue(void) {
 }
 
 /// Walking into the southeast statue: the leader pushes it onto its seal.
-/// Reached by walking west into cell code 8 until
+/// Reached by walking west into metatile behavior 8 until
 /// FLAG_SOL_SANCTUM_SOUTHEAST_SEAL_OPEN is set.
 static void EventScript_PushSoutheastStatue(void) {
   SolSanctumStatue_PushStatue(LOCALID_SOUTHEAST_STATUE, 40, 12, 41, 12);
@@ -1270,15 +1272,15 @@ static void EventScript_PushSoutheastStatue(void) {
 }
 
 /// Walking into the left beam statue from the west: it slides east in front
-/// of the centre and shines its beam. Reached by walking east into cell codes
-/// 20 and 21 until FLAG_SOL_SANCTUM_LEFT_BEAM_SHINING is set.
+/// of the centre and shines its beam. Reached by walking east into metatile
+/// behaviors 20 and 21 until FLAG_SOL_SANCTUM_LEFT_BEAM_SHINING is set.
 static void EventScript_PushLeftBeamStatueEast(void) {
   SolSanctumStatue_PushStatue(LOCALID_LEFT_BEAM_STATUE, 14, 7, 13, 7);
   SolSanctumStatue_ShineLeftBeam();
 }
 
 /// Walking into the left beam statue from the north: it slides one cell south.
-/// Reached by walking south into cell code 21 until the beam shines.
+/// Reached by walking south into metatile behavior 21 until the beam shines.
 static void EventScript_PushLeftBeamStatueSouth(void) {
   struct ObjectEvent *statue = ObjectEvent_GetById(LOCALID_LEFT_BEAM_STATUE);
   s32 row;
@@ -1292,7 +1294,8 @@ static void EventScript_PushLeftBeamStatueSouth(void) {
 }
 
 /// Walking into the left beam statue from the south: it slides one cell north.
-/// Reached by walking north into cell codes 23 and 24 until the beam shines.
+/// Reached by walking north into metatile behaviors 23 and 24 until the beam
+/// shines.
 static void EventScript_PushLeftBeamStatueNorth(void) {
   struct ObjectEvent *statue = ObjectEvent_GetById(LOCALID_LEFT_BEAM_STATUE);
   if (statue != NULL) {
@@ -1302,7 +1305,7 @@ static void EventScript_PushLeftBeamStatueNorth(void) {
 }
 
 /// Walking into the right beam statue from the east: as the left one. Reached
-/// by walking west into cell codes 25 and 26 until
+/// by walking west into metatile behaviors 25 and 26 until
 /// FLAG_SOL_SANCTUM_RIGHT_BEAM_SHINING is set.
 static void EventScript_PushRightBeamStatueWest(void) {
   SolSanctumStatue_PushStatue(LOCALID_RIGHT_BEAM_STATUE, 21, 7, 22, 7);
@@ -1310,7 +1313,7 @@ static void EventScript_PushRightBeamStatueWest(void) {
 }
 
 /// Walking into the right beam statue from the north: it slides one cell south.
-/// Reached by walking south into cell code 26 until the beam shines.
+/// Reached by walking south into metatile behavior 26 until the beam shines.
 static void EventScript_PushRightBeamStatueSouth(void) {
   struct ObjectEvent *statue = ObjectEvent_GetById(LOCALID_RIGHT_BEAM_STATUE);
   if (statue != NULL) {
@@ -1321,7 +1324,8 @@ static void EventScript_PushRightBeamStatueSouth(void) {
 }
 
 /// Walking into the right beam statue from the south: it slides one cell north.
-/// Reached by walking north into cell codes 28 and 29 until the beam shines.
+/// Reached by walking north into metatile behaviors 28 and 29 until the beam
+/// shines.
 static void EventScript_PushRightBeamStatueNorth(void) {
   struct ObjectEvent *statue = ObjectEvent_GetById(LOCALID_RIGHT_BEAM_STATUE);
   if (statue != NULL) {
@@ -1355,7 +1359,7 @@ static void SolSanctumStatue_PushStatue(s32 statueId, s32 statueColumn,
   Engine_ScriptEnd();
 }
 
-/// Returns 1 when the actor stands in the given map cell.
+/// Returns 1 when the object event stands in the given map cell.
 static s32 SolSanctumStatue_IsObjectEventAtCell(s32 objectEventId, s32 column,
                                                 s32 row) {
   struct ObjectEvent *objectEvent = ObjectEvent_GetById(objectEventId);

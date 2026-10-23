@@ -1,13 +1,13 @@
 /// @file
 /// Tolbi-bound Ship (MapId_TolbiShipMast), the top of its mast, where the
-/// ship's lookout (LOCALID_LOOKOUT) keeps watch: one of the ship's three scenes
+/// ship's lookout (LOCALID_LOOKOUT) keeps watch: one of the ship's three maps
 /// on its voyage from Kalay to Tolbi, which tolbi_ship_deck.c describes. The
 /// party climbs up by the deck's ladder (TOLBI_SHIP_MAST_FROM_TOLBI_SHIP_DECK)
 /// and down again by TOLBI_SHIP_MAST_CELL_LADDER and the region of
-/// TOLBI_SHIP_MAST_TO_TOLBI_SHIP_DECK. The entrances from
+/// TOLBI_SHIP_MAST_TO_TOLBI_SHIP_DECK. The warp destinations from
 /// TOLBI_SHIP_MAST_FROM_TOLBI_SHIP_DECK_COURSE_CLEAR on are the voyage's
 /// cutscenes here, each leading on into the next; during the attacks the
-/// scene a defeat returns to (gGameState.savedMap) is set to
+/// map a defeat returns to (gGameState.savedMap) is set to
 /// TOLBI_SHIP_INTERIORS_PASSENGER_HOLD_AFTER_DEFEAT, which starts the voyage
 /// over. While the ship is under way (rowing, or at sea after the first
 /// attack, and neither at the island nor at Tolbi) the setup sways the view.
@@ -106,7 +106,7 @@ s32 gTolbiShipMast_CameraCenter[2] __attribute__((section(".bss")));
 s32 gTolbiShipMast_CameraOrigin[2] __attribute__((section(".bss")));
 s32 gTolbiShipMast_SwayX __attribute__((section(".bss")));
 
-/// The scene's one placement row.
+/// The map's one object event template row.
 enum TolbiShipMastLocalId {
   /// The ship's lookout, a man in a blue bandana
   /// (SPRITE_MAN_IN_BLUE_BANDANA). He is the crewman who hid the captain's
@@ -118,8 +118,8 @@ enum TolbiShipMastLocalId {
   LOCALID_LOOKOUT = LOCALID_FIRST_PLACED
 };
 
-/// The first attack's actors (TOLBI_SHIP_MAST_FROM_WORLD_MAP_FIRST_ATTACK),
-/// placed after the lookout from
+/// The first attack's object events
+/// (TOLBI_SHIP_MAST_FROM_WORLD_MAP_FIRST_ATTACK), placed after the lookout from
 /// gTolbiShipMast_FirstAttackObjectEventTemplates.
 enum TolbiShipMastFirstAttackLocalId {
   /// A sparkle (graphics/sprite/spr_286.png, a four-pointed sparkle in eight
@@ -136,7 +136,7 @@ enum TolbiShipMastFirstAttackLocalId {
   LOCALID_FIRST_SIGHTED_MONSTER
 };
 
-/// The actors of the later cutscenes (from
+/// The object events of the later cutscenes (from
 /// TOLBI_SHIP_MAST_FROM_WORLD_MAP_SECOND_ATTACK on), placed after the lookout
 /// from gTolbiShipMast_BirdObjectEventTemplates and, at
 /// TOLBI_SHIP_MAST_FROM_WORLD_MAP_THIRD_ATTACK, then from
@@ -170,7 +170,7 @@ enum TolbiShipMastEnsembleLocalId {
   LOCALID_LANDING_MONSTER_SHADOW
 };
 
-/// The mast's touch and search cells.
+/// The mast's coord event and bg event cells.
 enum TolbiShipMastCell {
   TOLBI_SHIP_MAST_CELL_LADDER = 10, ///< the top of the ladder down to the deck
   /// Where the crewman hid the captain's anchor charm.
@@ -179,7 +179,8 @@ enum TolbiShipMastCell {
   TOLBI_SHIP_MAST_CELL_ANCHOR_CHARM = 11
 };
 
-/// Keeps the effect actor relative to the saved camera origin and rotates it.
+/// Keeps the effect object event relative to the saved camera origin and
+/// rotates it.
 static s32
 TolbiShipMast_FollowCameraAndRotate(struct ScriptInterpreter *interpreter) {
   struct ObjectEvent *object = (struct ObjectEvent *)interpreter;
@@ -214,7 +215,8 @@ TolbiShipMast_RandomizeLookoutFacing(struct ScriptInterpreter *interpreter) {
   return 1;
 }
 
-/// Grows both axes by the same amount until the actor reaches full scale.
+/// Grows both axes by the same amount until the object event reaches full
+/// scale.
 static void TolbiShipMast_GrowObjectEventScale(union FieldObject *fieldObject) {
   struct ObjectEvent *objectEvent = (struct ObjectEvent *)fieldObject;
   if (objectEvent->scaleX < Q16_ONE) {
@@ -223,8 +225,8 @@ static void TolbiShipMast_GrowObjectEventScale(union FieldObject *fieldObject) {
   }
 }
 
-/// Which way TolbiShipMast_SwayObjectEvent moves an actor along each axis, kept
-/// in its timer (the drift) and its work (the bob).
+/// Which way TolbiShipMast_SwayObjectEvent moves an object event along each
+/// axis, kept in its timer (the drift) and its work (the bob).
 enum TolbiShipMastSway {
   SWAY_INCREASING = 0, ///< the drift speeding up, or the bob rising
   SWAY_DECREASING = 1, ///< the drift slowing, or the bob sinking
@@ -275,7 +277,8 @@ TolbiShipMast_SwayObjectEvent(struct ScriptInterpreter *interpreter) {
   return 1;
 }
 
-/// Shrinks both axes; once small enough, clears the actor's position and speed.
+/// Shrinks both axes; once small enough, clears the object event's position and
+/// speed.
 static s32
 TolbiShipMast_ShrinkAndStopObjectEvent(struct ScriptInterpreter *interpreter) {
   struct ObjectEvent *objectEvent = (struct ObjectEvent *)interpreter;
@@ -296,7 +299,8 @@ TolbiShipMast_ShrinkAndStopObjectEvent(struct ScriptInterpreter *interpreter) {
   return 1;
 }
 
-/// Returns the entrances: from the deck's ladder, and the voyage's cutscenes.
+/// Returns the warp destinations: from the deck's ladder, and the voyage's
+/// cutscenes.
 const struct MapWarpDest *TolbiShipMast_GetWarpDests(void) {
   return gTolbiShipMast_WarpDests;
 }
@@ -306,15 +310,15 @@ const struct MapWarpRegion *TolbiShipMast_GetRegions(void) {
   return gTolbiShipMast_Regions;
 }
 
-/// Returns exits to the deck and the continuing ship scenes.
+/// Returns warps to the deck and the continuing ship maps.
 const u32 *TolbiShipMast_GetWarps(void) { return gTolbiShipMast_Warps; }
 
-/// Returns the lookout, the only actor placed.
+/// Returns the lookout, the only object event placed.
 const struct ObjectEventTemplate *TolbiShipMast_GetObjectEventTemplates(void) {
   return gTolbiShipMast_ObjectEventTemplates;
 }
 
-/// Returns the ladder, lookout dialogue and Anchor Charm search events.
+/// Returns the ladder, lookout dialogue and Anchor Charm bg events.
 const struct MapEvent *TolbiShipMast_GetEvents(void) {
   return gTolbiShipMast_Events;
 }
@@ -338,10 +342,10 @@ static void TolbiShipMast_FindAnchorCharm(void) {
 }
 
 /// The mast's setup: sways the view while the ship is under way, puts the
-/// lookout to his spot once the charm is back, and plays what the entrance
-/// calls for: the climb up from the deck (TOLBI_SHIP_MAST_FROM_TOLBI_SHIP_DECK)
-/// or a cutscene (the entrances from
-/// TOLBI_SHIP_MAST_FROM_TOLBI_SHIP_DECK_COURSE_CLEAR on).
+/// lookout to his spot once the charm is back, and plays what the warp
+/// destination calls for: the climb up from the deck
+/// (TOLBI_SHIP_MAST_FROM_TOLBI_SHIP_DECK) or a cutscene (the warp destinations
+/// from TOLBI_SHIP_MAST_FROM_TOLBI_SHIP_DECK_COURSE_CLEAR on).
 s32 TolbiShipMast_Initialize(void) {
   struct ObjectEvent *leader;
 
@@ -360,7 +364,7 @@ s32 TolbiShipMast_Initialize(void) {
       Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_REACHED_TOLBI) == 0) {
     ObjectEvent_SetPosition(LOCALID_LOOKOUT, PIXELS(164), PIXELS(328));
   }
-  // The ship's scripted entrances resume their matching lookout scenes.
+  // The ship's scripted warp destinations resume their matching lookout scenes.
   switch (gGameState.warpDest) {
   case TOLBI_SHIP_MAST_FROM_TOLBI_SHIP_DECK:
     if (Engine_GameFlagIsSet(FLAG_KEEP_PARTY_POSITION) == 0) {
@@ -689,7 +693,8 @@ static void TolbiShipMast_ShowMonsters(void) {
   Engine_ScriptEnd();
 }
 
-/// Initializes a drifting actor, retaining the random draws' original order.
+/// Initializes a drifting object event, retaining the random draws' original
+/// order.
 static void TolbiShipMast_InitializeDriftingObjectEvent(s32 objectEventId) {
   struct ObjectEvent *objectEvent;
   u32 randomValue;
@@ -826,7 +831,7 @@ static void TolbiShipMast_RunLandingSequence(void) {
 
 /// On the mast at TOLBI_SHIP_MAST_FROM_WORLD_MAP_LAND_HO: the seven birds fly
 /// off, then the lookout announces land, and the rowing balance chooses the
-/// exit.
+/// warp.
 static void TolbiShipMast_AnnounceLand(void) {
   Engine_ScriptStart();
   ObjectEvent_SetChildValue(LOCALID_PARTY_LEADER, 15);

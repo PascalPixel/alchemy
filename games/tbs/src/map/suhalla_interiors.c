@@ -1,37 +1,37 @@
 /// @file
-/// The buildings of Suhalla: one scene (MapId_SuhallaInteriors) whose rooms
-/// are told apart by the entrance the party comes in by, and whose area name
-/// follows it:
+/// The buildings of Suhalla: one map (MapId_SuhallaInteriors) whose rooms
+/// are told apart by the warp destination the party arrives at, and whose area
+/// name follows it:
 ///
 /// - Suhalla: the houses, the shop and the inn behind the village's doors,
-///   whose exits from the village (SUHALLA_TO_INN, SUHALLA_TO_HOUSE_WEST,
+///   whose warps from the village (SUHALLA_TO_INN, SUHALLA_TO_HOUSE_WEST,
 ///   SUHALLA_TO_HOUSE_NORTHEAST and SUHALLA_TO_HOUSE_EAST) lead to the
-///   entrances of the same numbers. Doorways join the inn to its two guest
-///   rooms, and a ladder to its loft, climbed through two exit regions.
+///   warp destinations of the same numbers. Doorways join the inn to its two
+///   guest rooms, and a ladder to its loft, climbed through two warp regions.
 /// - Suhalla Sanctum: behind the village's wide door (SUHALLA_TO_SANCTUM),
-///   with SUHALLA_INTERIORS_SANCTUM_NORTH as its second entrance.
+///   with SUHALLA_INTERIORS_SANCTUM_NORTH as its second warp destination.
 ///
-/// The rooms' people and talk come in two sets, each a placement table and an
-/// event table, chosen by FLAG_BABI_SPOKE_AFTER_COLOSSO. Before Babi's
-/// audience after Colosso the village talks of Lalivero across the Nol River,
-/// out of reach under Tolbi's rule; after it, two of the soldiers who were
-/// escorting Sheba home lie wounded in a house, travelers the sandstorms blew
-/// back fill the inn, and an old woman half remembers a saying about the
+/// The rooms' people and talk come in two sets, each an object event template
+/// table and a map event table, chosen by FLAG_BABI_SPOKE_AFTER_COLOSSO. Before
+/// Babi's audience after Colosso the village talks of Lalivero across the Nol
+/// River, out of reach under Tolbi's rule; after it, two of the soldiers who
+/// were escorting Sheba home lie wounded in a house, travelers the sandstorms
+/// blew back fill the inn, and an old woman half remembers a saying about the
 /// death storms. The two tables agree up to LOCALID_HEALER; the travelers stand
 /// off the map until the audience.
 ///
-/// Stepping into the wounded soldiers' house (touch cell 50) plays
-/// EventScript_IodemQuestionsWoundedSoldiers once, while Iodem travels with the
-/// party and has not yet reached Babi Lighthouse. It sets
-/// FLAG_IODEM_MET_WOUNDED_SOLDIERS either way, which Iodem's lines in the
+/// Stepping into the wounded soldiers' house (the coord event on metatile
+/// behavior 50) plays EventScript_IodemQuestionsWoundedSoldiers once, while
+/// Iodem travels with the party and has not yet reached Babi Lighthouse. It
+/// sets FLAG_IODEM_MET_WOUNDED_SOLDIERS either way, which Iodem's lines in the
 /// Suhalla Desert and at Suhalla Gate read. The merchant, the innkeeper and
 /// the Healer serve a leader who faces north across their counters, and
 /// otherwise talk by the same flag. Searching the ovens finds a Smoke Bomb
 /// once (FLAG_SUHALLA_INTERIORS_OVEN_SMOKE_BOMB) and shows what is cooking.
 ///
 /// Unused: the cactus steak line at the Smoke Bomb's oven, whose item row
-/// always answers first, and the entrance SUHALLA_INTERIORS_HOUSE_WEST_UNUSED,
-/// to which no exit leads.
+/// always answers first, and the warp destination
+/// SUHALLA_INTERIORS_HOUSE_WEST_UNUSED, to which no warp leads.
 ///
 /// Open questions:
 /// - None.
@@ -52,10 +52,12 @@
 #include "songs.h"
 #include "field_runtime.h"
 
-/// The actors, numbering the rows of gSuhallaInteriorsObjectEventTemplates and
-/// of gSuhallaInteriorsObjectEventTemplatesAfterAudience from
+/// The object events, numbering the rows of
+/// gSuhallaInteriorsObjectEventTemplates and of
+/// gSuhallaInteriorsObjectEventTemplatesAfterAudience from
 /// LOCALID_FIRST_PLACED; the two tables agree up to LOCALID_HEALER. Where an
-/// actor's talk changes after Babi's audience, the note quotes it before.
+/// object event's talk changes after Babi's audience, the note quotes it
+/// before.
 enum SuhallaInteriorsLocalId {
   /// A little girl with orange pigtails (SPRITE_GIRL_WITH_PIGTAILS), the
   /// daughter of the man who aids anyone in trouble. "My father loves people
@@ -228,7 +230,7 @@ static void EventScript_AskIfBlownHere(s32 objectEventId) {
 }
 
 /// The doors of Suhalla and Suhalla Sanctum, and the doors between the inn and
-/// its guest rooms: the party leaves by the touched exit.
+/// its guest rooms: the party leaves by the touched warp.
 static void EventScript_LeaveByWarp(void) {
   struct EventWork *state = gEventWork;
   s16 *touchedTrigger = (s16 *)&state->touchedTrigger;
@@ -238,12 +240,12 @@ static void EventScript_LeaveByWarp(void) {
 }
 
 /// In Suhalla after Babi's audience, stepping into the house where the two
-/// wounded soldiers lie (cell code 50), once: Iodem steps out of the party and
-/// questions them. "Iodem..." They were escorting Sheba to Lalivero when a
-/// sandstorm hit them, and tell of others who stopped the cyclones with water
-/// and slew the monsters causing them. Iodem asks whether these are the ones
-/// the party follows, resolves either way to search the desert for Sheba and
-/// pursue them, and rejoins the party. Sets
+/// wounded soldiers lie (metatile behavior 50), once: Iodem steps out of the
+/// party and questions them. "Iodem..." They were escorting Sheba to Lalivero
+/// when a sandstorm hit them, and tell of others who stopped the cyclones with
+/// water and slew the monsters causing them. Iodem asks whether these are the
+/// ones the party follows, resolves either way to search the desert for Sheba
+/// and pursue them, and rejoins the party. Sets
 /// FLAG_IODEM_MET_WOUNDED_SOLDIERS either way; once Iodem has reached Babi
 /// Lighthouse (FLAG_BABI_LIGHTHOUSE_IODEM_ARRIVED), the scene does not play.
 static void EventScript_IodemQuestionsWoundedSoldiers(void) {
@@ -522,13 +524,13 @@ static void EventScript_IodemQuestionsWoundedSoldiers(void) {
     ObjectEvent_WaitForMove(LOCALID_IODEM);
     ObjectEvent_SetPosition(LOCALID_IODEM, 0, 0);
     Script_Wait(10);
-    // Back to the place's own music.
+    // Back to the map section's own music.
     Audio_PlayCueFromEventWork();
     Script_End();
   }
 }
 
-/// The doors and inner exits, people and ovens of Suhalla's buildings and
+/// The doors and inner warps, people and ovens of Suhalla's buildings and
 /// Suhalla Sanctum, before or after Babi's audience.
 const struct MapEvent *Map_GetEvents(void) {
   if (Engine_GameFlagIsSet(FLAG_BABI_SPOKE_AFTER_COLOSSO) != 0) {
@@ -704,7 +706,7 @@ struct MapEvent gSuhallaInteriorsEvents[] = {
     { MAP_EVENT_TALK, LOCALID_HEALER, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkToHealer) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_HEALER, CONDITION_ALWAYS, MSGNO(MsgSuhallaInteriorsTheHolyChildActorWillSave) },
     { BG_EVENT(BG_EVENT_OVEN), 100, FLAG_SUHALLA_INTERIORS_OVEN_SMOKE_BOMB, FIND_ITEM(ITEM_SMOKE_BOMB) },
-    // Unused: this oven's item row answers first (see the scenes README).
+    // Unused: this oven's item row answers first (see the maps README).
     { BG_EVENT(BG_EVENT_OVEN), 100, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgSuhallaInteriorsItsACactusSteakIWonder)) },
     { BG_EVENT(BG_EVENT_OVEN), 101, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgSuhallaInteriorsHesMakingMulukhiyaSoupItTastes)) },
     { MAP_EVENTS_END },
@@ -748,7 +750,7 @@ struct MapEvent gSuhallaInteriorsEventsAfterAudience[] = {
     { MAP_EVENT_TALK, LOCALID_HEALER, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkToHealer) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), LOCALID_HEALER, CONDITION_ALWAYS, MSGNO(MsgSuhallaInteriorsIShudderToThinkSandstormsWill) },
     { BG_EVENT(BG_EVENT_OVEN), 100, FLAG_SUHALLA_INTERIORS_OVEN_SMOKE_BOMB, FIND_ITEM(ITEM_SMOKE_BOMB) },
-    // Unused: this oven's item row answers first (see the scenes README).
+    // Unused: this oven's item row answers first (see the maps README).
     { BG_EVENT(BG_EVENT_OVEN), 100, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgSuhallaInteriorsItsACactusSteakIWonder)) },
     { BG_EVENT(BG_EVENT_OVEN), 101, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgSuhallaInteriorsHesMakingMulukhiyaSoupItTastes)) },
     { MAP_EVENTS_END },

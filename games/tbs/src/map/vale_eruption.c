@@ -1,9 +1,9 @@
 /// @file
 /// Vale (MapId_ValeEruption) while Mt. Aleph erupts: the ground before the
-/// sanctum's door, on the village's own map (MapId_Vale's), where the
+/// sanctum's door, on the village's own layout (MapId_Vale's), where the
 /// villagers wait for Isaac and Garet.
 ///
-/// The scene falls between Sol Sanctum's eruption (sol_sanctum_eruption.c),
+/// The map falls between Sol Sanctum's eruption (sol_sanctum_eruption.c),
 /// where Jenna and Kraden are carried off, and the party's journey. The path
 /// down the mountain leads here, by VALE_ERUPTION_FROM_SOL_ENTRANCE
 /// (sol_sanctum_entrance.c's SOL_ENTRANCE_TO_VALE after the eruption).
@@ -11,20 +11,20 @@
 /// mayor, Isaac's mother Dora, Garet's sister and brother, and the guard who
 /// saw the two hanging around on his watch.
 ///
-/// The scene has no events. ValeEruption_Initialize plays the whole scene on
+/// The map has no map events. ValeEruption_Initialize plays the whole scene on
 /// arrival by VALE_ERUPTION_FROM_SOL_ENTRANCE (EventScript_ReturnFromMtAleph):
 /// the ground shakes, the villagers wonder where the two are, Isaac and Garet
 /// come down the path and are called over, and Dora's question about Jenna and
 /// Kraden is answered the same way whatever Isaac replies. The Great Healer
 /// then opens the sanctum's door (MapGrid_AnimateCells) and leads everyone in,
-/// and the scene's one exit takes the party into the Vale Sanctum
+/// and the map's one warp takes the party into the Vale Sanctum
 /// (SANCTUM_FROM_VALE_ERUPTION), where the Great Healer passes on the Wise
 /// One's quest (Sanctum_RequestQuestAcceptance). The tremors are
 /// MapGrid_SetShake calls, each with a flash (FieldEffect_LastLightning) and
 /// SE_145, over a burst of red flashes on the warm colours
-/// (FieldEffect_StartBufferBlend). The scene sets
+/// (FieldEffect_StartBufferBlend). The map sets
 /// FLAG_VALE_RETURNED_FROM_MT_ALEPH but never reads it; Sol Sanctum's entrance
-/// scene does (sol_sanctum_entrance.c).
+/// map does (sol_sanctum_entrance.c).
 ///
 /// Open questions:
 /// - None.
@@ -51,7 +51,7 @@
 #include "songs.h"
 #include "fixed_math.h"
 
-/// The placed actors, numbered in the order of
+/// The placed object events, numbered in the order of
 /// gValeEruption_ObjectEventTemplates; Garet's row places the party's Garet and
 /// takes no number.
 enum ValeEruptionLocalId {
@@ -107,7 +107,7 @@ const struct MapWarpDest *ValeEruption_GetWarpDests(void) {
 
 const struct MapWarpRegion *ValeEruption_GetRegions(void) { return NULL; }
 
-/// Returns the one exit, VALE_ERUPTION_TO_SANCTUM into the Vale Sanctum
+/// Returns the one warp, VALE_ERUPTION_TO_SANCTUM into the Vale Sanctum
 /// (SANCTUM_FROM_VALE_ERUPTION), which EventScript_ReturnFromMtAleph takes.
 const u32 *ValeEruption_GetWarps(void) { return gValeEruption_Warps; }
 
@@ -116,16 +116,16 @@ const struct ObjectEventTemplate *ValeEruption_GetObjectEventTemplates(void) {
   return gValeEruption_ObjectEventTemplates;
 }
 
-/// The scene has no events of its own: everything happens on arrival.
+/// The map has no map events of its own: everything happens on arrival.
 const struct MapEvent *ValeEruption_GetEvents(void) {
   return gValeEruption_Events;
 }
 
 /// Arriving in Vale during the eruption: plays the return from the mountain
 /// when the party comes by VALE_ERUPTION_FROM_SOL_ENTRANCE. Called by
-/// Field_RunMap once the actors are placed; VALE_ERUPTION_FROM_SOL_ENTRANCE
-/// is where Sol Sanctum's approach leads after the eruption and before the
-/// party leaves Vale.
+/// Field_RunMap once the object events are placed;
+/// VALE_ERUPTION_FROM_SOL_ENTRANCE is where Sol Sanctum's approach leads after
+/// the eruption and before the party leaves Vale.
 s32 ValeEruption_Initialize(void) {
   if (gGameState.warpDest == VALE_ERUPTION_FROM_SOL_ENTRANCE) {
     EventScript_ReturnFromMtAleph();

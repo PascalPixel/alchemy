@@ -1,12 +1,12 @@
 /// @file
 /// Mercury Lighthouse (MapId_MercuryLighthouseLower,
 /// MapId_MercuryLighthouseMiddle, MapId_MercuryLighthouseUpper and
-/// MapId_MercuryLighthouseExterior), four of the lighthouse's scenes. They
+/// MapId_MercuryLighthouseExterior), four of the lighthouse's maps. They
 /// share the game's area name Mercury Lighthouse with
 /// MapId_MercuryLighthouseEntrance (mercury_lighthouse_entrance.c), the floor
 /// inside the door; the Lighthouse Aerie at the top is
 /// MapId_MercuryLighthouseAerie (mercury_lighthouse_aerie.c). The four share
-/// one exit table.
+/// one warp table.
 ///
 /// Every entry sets FLAG_MERCURY_LIGHTHOUSE_LIT, under which Mercury Adepts
 /// regain PP faster, and Retreat leads out to MercuryLighthouseExterior's
@@ -338,7 +338,7 @@ enum {
   FLAG_PASSAGE_STATUE_MOVED = FLAG_MAPSEC_TEMP_48
 };
 
-/// Scene flags, kept while the party stays on the map.
+/// Map flags, kept while the party stays on the map.
 enum {
   /// The Empty Bottle has been filled at the Fountain of Healing this visit.
   /// ★ Named from the game: "Hermes' Water" (MsgItemName)
@@ -413,10 +413,10 @@ const struct MapWarpDest *MercuryLighthouse_GetWarpDests(void) {
 
 const struct MapWarpRegion *MercuryLighthouse_GetRegions(void) { return NULL; }
 
-/// Returns the packed exits shared by the lighthouse scenes.
+/// Returns the packed warps shared by the lighthouse maps.
 const u32 *MercuryLighthouse_GetWarps(void) { return gMercuryLighthouse_Warps; }
 
-/// Selects the actors and obstacles for the current lighthouse scene.
+/// Selects the object events and obstacles for the current lighthouse map.
 const struct ObjectEventTemplate *
 MercuryLighthouse_GetObjectEventTemplates(void) {
   s16 selector = gGameState.mapId;
@@ -437,38 +437,39 @@ MercuryLighthouse_GetObjectEventTemplates(void) {
 }
 
 /// MercuryLighthouseLower, as in MercuryLighthouseEntrance, once Ply has worked
-/// there: touching trigger 21 keeps blue ripples spreading from the leader.
+/// there: touching metatile behavior 21 keeps blue ripples spreading from the
+/// leader.
 static void MercuryLighthouse_RippleWhileInPool(void) {
   MercuryLighthouse_RippleAroundLeader();
 }
 
-/// MercuryLighthouseLower, touching trigger 31 or 32: the leader loses his
-/// lights.
+/// MercuryLighthouseLower, touching metatile behavior 31 or 32: the leader
+/// loses his lights.
 static void MercuryLighthouse_LoseLightsOnLower(void) {
   MercuryLighthouse_LoseLights();
 }
 
-/// MercuryLighthouseLower, walking into trigger 11, 21 or 31: one step across
-/// the pool, spending a light.
+/// MercuryLighthouseLower, walking into metatile behavior 11, 21 or 31: one
+/// step across the pool, spending a light.
 static void MercuryLighthouse_HopAcrossPoolOnLower(void) {
   MercuryLighthouse_HopAcrossPool();
 }
 
-/// MercuryLighthouseLower, touching trigger 11, the pool's heart: the
+/// MercuryLighthouseLower, touching metatile behavior 11, the pool's heart: the
 /// column of lights over the leader grows a stage.
 static void MercuryLighthouse_ChargeLightsOnLower(void) {
   MercuryLighthouse_ChargeLights();
 }
 
-/// MercuryLighthouseExterior, searching trigger 10. "Strange forces are at
-/// work..."
+/// MercuryLighthouseExterior, searching metatile behavior 10. "Strange forces
+/// are at work..."
 static void MercuryLighthouse_InspectBlockedPassage(void) {
   Engine_ScriptStart();
   Engine_MessageShowCentered(MsgMercuryLighthouseStrangeForcesBlockWay, 1);
   Engine_ScriptEnd();
 }
 
-/// Selects the puzzle interactions and dialogue for the current scene.
+/// Selects the puzzle interactions and dialogue for the current map.
 const struct MapEvent *MercuryLighthouse_GetEvents(void) {
   s16 selector = gGameState.mapId;
 
@@ -486,21 +487,23 @@ const struct MapEvent *MercuryLighthouse_GetEvents(void) {
 
 #include "common/mercury_lighthouse_passage.h"
 
-/// MercuryLighthouseUpper, walking north into trigger 53: the leader rises
-/// through MERCURY_LIGHTHOUSE_UPPER_TO_MERCURY_LIGHTHOUSE_MIDDLE_NORTHWEST (the
-/// trigger less 50), a sparkling passage as in MercuryLighthouseEntrance.
+/// MercuryLighthouseUpper, walking north into metatile behavior 53: the leader
+/// rises through
+/// MERCURY_LIGHTHOUSE_UPPER_TO_MERCURY_LIGHTHOUSE_MIDDLE_NORTHWEST (the
+/// metatile behavior less 50), a sparkling passage as in
+/// MercuryLighthouseEntrance.
 static void MercuryLighthouse_LeaveUpperByPassage(void) {
   MercuryLighthouse_LeaveThroughPassage(gEventWork->touchedTrigger - 50);
 }
 
-/// MercuryLighthouseUpper, walking north into trigger 63: the same, through
-/// MERCURY_LIGHTHOUSE_UPPER_WATERFALLS_TO_GAP.
+/// MercuryLighthouseUpper, walking north into metatile behavior 63: the same,
+/// through MERCURY_LIGHTHOUSE_UPPER_WATERFALLS_TO_GAP.
 static void MercuryLighthouse_LeaveUpperWaterfallsByPassage(void) {
   MercuryLighthouse_LeaveThroughPassage(gEventWork->touchedTrigger - 50);
 }
 
-/// MercuryLighthouseExterior, walking north into trigger 55: the same, through
-/// MERCURY_LIGHTHOUSE_EXTERIOR_WATERFALL_TO_UPPER_PATH.
+/// MercuryLighthouseExterior, walking north into metatile behavior 55: the
+/// same, through MERCURY_LIGHTHOUSE_EXTERIOR_WATERFALL_TO_UPPER_PATH.
 static void MercuryLighthouse_LeaveWaterfallByPassage(void) {
   MercuryLighthouse_LeaveThroughPassage(gEventWork->touchedTrigger - 50);
 }
@@ -532,9 +535,9 @@ static void MercuryLighthouse_ExitWhenChannelsOpen(void) {
   }
 }
 
-/// MercuryLighthouseLower, pushing a channel pipe (walking into trigger 25):
-/// each pipe opens one channel when it reaches its place, and the water runs
-/// on through the ones before it.
+/// MercuryLighthouseLower, pushing a channel pipe (walking into metatile
+/// behavior 25): each pipe opens one channel when it reaches its place, and the
+/// water runs on through the ones before it.
 static void MercuryLighthouse_PushChannelPipes(void) {
   struct StagedObjectEventProbe probe;
   s32 column;
@@ -599,8 +602,9 @@ static void MercuryLighthouse_PushChannelPipes(void) {
   Engine_ScriptEnd();
 }
 
-/// MercuryLighthouseMiddle, touching trigger 2, 3 or 4 once the stairs are
-/// raised, or 46: the leader is carried to the landing in a trail of sparkles.
+/// MercuryLighthouseMiddle, touching metatile behavior 2, 3 or 4 once the
+/// stairs are raised, or 46: the leader is carried to the landing in a trail of
+/// sparkles.
 static void MercuryLighthouse_WalkLeaderIn(void) {
   struct EventWork *work;
 
@@ -634,9 +638,9 @@ static void MercuryLighthouse_WalkLeaderIn(void) {
   Engine_ScriptEnd();
 }
 
-/// MercuryLighthouseMiddle, pushing the gate statue (walking into trigger 10)
-/// while the gate is shut: it moves a step, and may come to rest on the floor
-/// switch.
+/// MercuryLighthouseMiddle, pushing the gate statue (walking into metatile
+/// behavior 10) while the gate is shut: it moves a step, and may come to rest
+/// on the floor switch.
 static void MercuryLighthouse_PushGateSwitchStatue(void) {
   Engine_ScriptStart();
   StagedObjectEvent_AdvancePair();
@@ -672,8 +676,9 @@ static void MercuryLighthouse_OpenGateWithMovedStatue(void) {
   Engine_ScriptEnd();
 }
 
-/// MercuryLighthouseMiddle, touching trigger 12 while the gate is shut:
-/// standing on the floor switch sinks the leader two pixels and opens the gate.
+/// MercuryLighthouseMiddle, touching metatile behavior 12 while the gate is
+/// shut: standing on the floor switch sinks the leader two pixels and opens the
+/// gate.
 static void MercuryLighthouse_PressGateFloorSwitch(void) {
   s32 x;
   s32 z;
@@ -697,8 +702,8 @@ static void MercuryLighthouse_PressGateFloorSwitch(void) {
   }
 }
 
-/// MercuryLighthouseMiddle, touching trigger 10 or 13: stepping off the switch
-/// closes the gate again.
+/// MercuryLighthouseMiddle, touching metatile behavior 10 or 13: stepping off
+/// the switch closes the gate again.
 static void MercuryLighthouse_CloseFloorSwitch(void) {
   struct ObjectEvent *leader;
 
@@ -716,7 +721,7 @@ static void MercuryLighthouse_CloseFloorSwitch(void) {
   }
 }
 
-/// Animates the fountain's map strips between the requested steps.
+/// Animates the fountain's map grid strips between the requested steps.
 static void MercuryLighthouse_AnimateFountainTiles(s32 delayFrames,
                                                    s32 firstStep, s32 endStep) {
   u32 step;
@@ -745,7 +750,7 @@ static void MercuryLighthouse_AnimateFountainTiles(s32 delayFrames,
   MapGrid_CopyCellAttributes(42, 52, 4, 5, 42, 33);
 }
 
-/// Restores the fountain's map strips after moving its pipe away.
+/// Restores the fountain's map grid strips after moving its pipe away.
 static void MercuryLighthouse_RestoreFountainTiles(s32 delayFrames) {
   u32 step;
   s32 destinationColumn;
@@ -895,8 +900,8 @@ static void MercuryLighthouse_StopFountainSpray(void) {
   Engine_TaskRemoveCallback(MercuryLighthouse_SprayAtFountain);
 }
 
-/// MercuryLighthouseMiddle, pushing a pipe (walking into trigger 1 or 45):
-/// the stair pipe raises the stairs at column 11 and lowers them anywhere
+/// MercuryLighthouseMiddle, pushing a pipe (walking into metatile behavior 1 or
+/// 45): the stair pipe raises the stairs at column 11 and lowers them anywhere
 /// else; the fountain pipe starts the fountain at row 40, the first time with
 /// the camera watching, and stops it at row 42.
 static void MercuryLighthouse_PushStairAndFountainPipes(void) {
@@ -961,9 +966,9 @@ static void MercuryLighthouse_PushStairAndFountainPipes(void) {
   Engine_ScriptEnd();
 }
 
-/// MercuryLighthouseUpper, pushing the fallen statue (walking into trigger 10
-/// or 12) while the stair gate is shut: it moves a step and may come to rest on
-/// the floor switch.
+/// MercuryLighthouseUpper, pushing the fallen statue (walking into metatile
+/// behavior 10 or 12) while the stair gate is shut: it moves a step and may
+/// come to rest on the floor switch.
 static void MercuryLighthouse_PushStairSwitchStatue(void) {
   Engine_ScriptStart();
   StagedObjectEvent_AdvancePair();
@@ -993,8 +998,8 @@ static void MercuryLighthouse_OpenStairGateWithMovedStatue(void) {
   Engine_ScriptEnd();
 }
 
-/// MercuryLighthouseUpper, touching trigger 12 while the stair gate is shut:
-/// standing on its switch opens it.
+/// MercuryLighthouseUpper, touching metatile behavior 12 while the stair gate
+/// is shut: standing on its switch opens it.
 static void MercuryLighthouse_PressStairFloorSwitch(void) {
   s32 x;
   s32 z;
@@ -1021,8 +1026,8 @@ static void MercuryLighthouse_PressStairFloorSwitch(void) {
   Engine_ScriptEnd();
 }
 
-/// MercuryLighthouseUpper, touching trigger 10: stepping off the switch closes
-/// the stair gate.
+/// MercuryLighthouseUpper, touching metatile behavior 10: stepping off the
+/// switch closes the stair gate.
 static void MercuryLighthouse_ReleaseStairFloorSwitch(void) {
   struct ObjectEvent *leader;
 
@@ -1231,9 +1236,9 @@ static s32 MercuryLighthouse_StopStatueSpray(void) {
 }
 
 /// MercuryLighthouseUpper, pushing a pipe before the stone doors (walking
-/// into trigger 40): the door switch pipe opens a different stone door at
-/// each column, and at column 48, once the statue is in place, the statue
-/// slides out and falls to the floor below.
+/// into metatile behavior 40): the door switch pipe opens a different stone
+/// door at each column, and at column 48, once the statue is in place, the
+/// statue slides out and falls to the floor below.
 static void MercuryLighthouse_PushStoneDoorPipes(void) {
   struct StagedObjectEventProbe probe;
   s32 destinationColumn;
@@ -1332,8 +1337,8 @@ static void MercuryLighthouse_PushStoneDoorPipes(void) {
   Engine_ScriptEnd();
 }
 
-/// MercuryLighthouseUpper, pushing a crossing statue (walking into trigger 47):
-/// it moves a step and where the statues rest is saved.
+/// MercuryLighthouseUpper, pushing a crossing statue (walking into metatile
+/// behavior 47): it moves a step and where the statues rest is saved.
 static void MercuryLighthouse_PushAndSaveCrossingStatuePositions(void) {
   Engine_ScriptStart();
   StagedObjectEvent_AdvancePair();
@@ -1748,8 +1753,8 @@ static void MercuryLighthouse_FadePaletteToBlack(void) {
   } while (blackColors != 7);
 }
 
-/// Raises an actor into the passage with sparks for 48 ticks, two frames each.
-/// Its upward displacement accelerates by about 0.1 pixel per tick.
+/// Raises an object event into the passage with sparks for 48 ticks, two frames
+/// each. Its upward displacement accelerates by about 0.1 pixel per tick.
 static void MercuryLighthouse_RaiseObjectEventWithSparks(s32 objectEventId) {
   struct EffectOptions optionsStorage;
   struct EffectOptions *options;
@@ -2027,9 +2032,9 @@ static void MercuryLighthouse_PlyOpensWaterfallPassage(void) {
   }
 }
 
-/// MercuryLighthouseExterior, searching trigger 42 shows the fountain's sign.
-/// "Fountain of Healing / Water of Hermes: It brings rejuvenation to all that
-/// lives."
+/// MercuryLighthouseExterior, searching metatile behavior 42 shows the
+/// fountain's sign. "Fountain of Healing / Water of Hermes: It brings
+/// rejuvenation to all that lives."
 static void MercuryLighthouse_ReadHermesFountainInscription(void) {
   Engine_ScriptStart();
   Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIMATION_STAND);
@@ -2037,8 +2042,8 @@ static void MercuryLighthouse_ReadHermesFountainInscription(void) {
   Engine_ScriptEnd();
 }
 
-/// MercuryLighthouseMiddle or MercuryLighthouseUpper, searching trigger 20: the
-/// door is locked tight.
+/// MercuryLighthouseMiddle or MercuryLighthouseUpper, searching metatile
+/// behavior 20: the door is locked tight.
 static void MercuryLighthouse_InspectLockedDoor(void) {
   Engine_ScriptStart();
   Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIMATION_STAND);
@@ -2046,9 +2051,9 @@ static void MercuryLighthouse_InspectLockedDoor(void) {
   Engine_ScriptEnd();
 }
 
-/// MercuryLighthouseExterior, searching the Fountain of Healing (trigger 5)
-/// before taking its water: it seems dry, or once Saturos is beaten flows with
-/// water; carrying an Empty Bottle, the item menu then opens.
+/// MercuryLighthouseExterior, searching the Fountain of Healing (metatile
+/// behavior 5) before taking its water: it seems dry, or once Saturos is beaten
+/// flows with water; carrying an Empty Bottle, the item menu then opens.
 static void MercuryLighthouse_InspectHealingFountain(void) {
 
   Engine_ScriptStart();
@@ -2084,8 +2089,8 @@ static void MercuryLighthouse_FillHermesWaterBottle(void) {
 }
 
 /// MercuryLighthouseLower or MercuryLighthouseMiddle, walking south into
-/// trigger 15: on the first the leader steps to the hole and drops into
-/// MercuryLighthouseEntrance
+/// metatile behavior 15: on the first the leader steps to the hole and drops
+/// into MercuryLighthouseEntrance
 /// (MERCURY_LIGHTHOUSE_LOWER_TO_MERCURY_LIGHTHOUSE_ENTRANCE_HOLE, its
 /// MERCURY_LIGHTHOUSE_ENTRANCE_FROM_MERCURY_LIGHTHOUSE_LOWER_HOLE); on the
 /// second the motion runs alone.
@@ -2293,7 +2298,8 @@ static void MercuryLighthouse_SpawnRandomizedBurst(s32 x, s32 y, s32 z,
   } while (particleIndex <= 11);
 }
 
-/// Restores each lighthouse scene's puzzle state and entrance sequence.
+/// Restores each lighthouse map's puzzle state and its warp destination's
+/// sequence.
 s32 MercuryLighthouse_Initialize(void) {
   u32 statueIndex;
   s32 positionFlag;
@@ -2301,7 +2307,7 @@ s32 MercuryLighthouse_Initialize(void) {
   s32 keepPartyPosition;
 
   Engine_GameFlagSet(FLAG_MERCURY_LIGHTHOUSE_LIT);
-  // Set up common lighting before restoring each scene's puzzle-specific state.
+  // Set up common lighting before restoring each map's puzzle-specific state.
   gGameState.retreatWarpDest = MERCURY_LIGHTHOUSE_EXTERIOR_FROM_WORLD_MAP;
   gGameState.retreatMap = (s32)&MapId_MercuryLighthouseExterior;
   gEventWork->startTransition =
@@ -2616,7 +2622,7 @@ s32 MercuryLighthouse_Initialize(void) {
     }
   }
   if (gGameState.mapId == (s32)&MapId_MercuryLighthouseExterior) {
-    // This scene contains Mia's entrance, the lift and the healing fountain.
+    // This map contains Mia's entrance, the lift and the healing fountain.
     switch (gGameState.warpDest) {
     case MERCURY_LIGHTHOUSE_EXTERIOR_WATERFALL_FROM_UPPER_PATH:
       FieldScheduler_AddCallback(MercuryLighthouse_CycleWaterfallPalette,
@@ -2951,7 +2957,8 @@ static void MercuryLighthouse_ReplaceInventoryItem(s32 oldItem, s32 newItem) {
 
 #include "common/mercury_lighthouse_lights.h"
 
-/// Spreads one blue ripple (SPRITE_RIPPLE) from an actor, for 30 frames.
+/// Spreads one blue ripple (SPRITE_RIPPLE) from an object event, for 30
+/// frames.
 static void MercuryLighthouse_SpawnRipple(struct ObjectEvent *source) {
   struct ObjectEvent *effect;
   struct AnimationObject *sprite;

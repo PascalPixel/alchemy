@@ -14,13 +14,13 @@
 /// until she has found the road blocked at Alpine Crossing
 /// (FLAG_FEIZHI_SAW_ROCKSLIDE) or Xian has heard the news.
 ///
-/// Two small scenes run on scene flags, which last until the party next
-/// enters a scene other than by returning from a battle:
-/// - the water carrier walks her round (gXian_WaterCarrierRoute). Spoken to
-///   on its eastern part, she spills her water (FLAG_MAP_TEMP_00): a puddle
-///   spreads at her feet, its cell takes a collision that walking into jumps
-///   the leader over it (Xian_JumpOverSpilledWater), and she walks back for
-///   more. Frost freezes the puddle (FLAG_MAP_TEMP_01) into ice that can be
+/// Two small scenes run on map flags, which last until the party next
+/// enters a map other than by returning from a battle:
+/// - the water carrier walks her round (gXian_WaterCarrierRoute). Spoken to on
+///   its eastern part, she spills her water (FLAG_MAP_TEMP_00): a puddle
+///   spreads at her feet, its cell takes a metatile behavior that walking into
+///   jumps the leader over it (Xian_JumpOverSpilledWater), and she walks back
+///   for more. Frost freezes the puddle (FLAG_MAP_TEMP_01) into ice that can be
 ///   stood on. A leader who stands in her way for two seconds makes her raise
 ///   XIAN_TRIGGER_CARRIER_BLOCKED (Xian_WatchWaterCarrierPath), and both walk
 ///   back to the start of her round.
@@ -41,7 +41,7 @@
 ///
 /// Open questions:
 ///
-/// - XXX (no evidence): why Xian places three crates as actors
+/// - XXX (no evidence): why Xian places three crates as object events
 ///   (LOCALID_FIRST_CRATE on) that Xian_Initialize makes invisible
 ///   (SPRITE_COLOR_HIDDEN), not solid and never a target, so that the player
 ///   neither sees nor meets them; nothing in the ROM reads them again, so only
@@ -91,9 +91,9 @@
 //   FLAG_MAP_TEMP_02  the kung fu student has shown her strike on the tree
 //   FLAG_MAP_TEMP_03  Force has made the tree jump once
 
-/// The actors, numbering the rows of gXian_ObjectEventTemplates. Each person is
-/// named by what their sprite shows and what they talk of before Xian hears of
-/// Hsu.
+/// The object events, numbering the rows of gXian_ObjectEventTemplates. Each
+/// person is named by what their sprite shows and what they talk of before Xian
+/// hears of Hsu.
 enum XianLocalId {
   /// A young man in a blue jacket.
   /// ★ Named from the game: "This is Xian. Travelers are welcome here!"
@@ -147,8 +147,8 @@ enum XianLocalId {
   /// (MsgXianDoingMadeMeSpillMy)
   LOCALID_SPILLED_WATER,
   /// Force's mark on the training tree.
-  /// ★ Named from what the player sees: nothing of its own, a blank actor on
-  /// the bare trunk the student strikes (its render)
+  /// ★ Named from what the player sees: nothing of its own, a blank object
+  /// event on the bare trunk the student strikes (its render)
   LOCALID_FORCE_TARGET,
   /// Mist, a Mercury Djinni.
   /// ★ Named from the game: "Mist" (MsgDjinnName)
@@ -163,7 +163,7 @@ enum XianLocalId {
 /// SPRITE_PUDDLE's animation once Frost has frozen it into ice.
 enum { PUDDLE_ANIMATION_FROZEN = 5 };
 
-/// The trigger the water carrier raises when the leader has stood in her way
+/// The event the water carrier raises when the leader has stood in her way
 /// for two seconds.
 enum { XIAN_TRIGGER_CARRIER_BLOCKED = 200, XIAN_CARRIER_BLOCKED_FRAMES = 120 };
 
@@ -217,7 +217,7 @@ static void Xian_SpawnTrainingParticles(void) {
 
 #include "common/object_distance.h"
 
-/// Tracks a nearby target only within the actor's current facing sector.
+/// Tracks a nearby target only within the object event's current facing sector.
 static s32 Xian_UpdateCarrierTracking(struct ObjectEvent *objectEvent,
                                       struct ObjectEvent *target,
                                       s32 distanceLimit, s32 forceTracking) {
@@ -670,7 +670,7 @@ static void Xian_JumpOverSpilledWater(void) {
   }
 }
 
-/// Walks the leader through a doorway and leaves by its exit; through the
+/// Walks the leader through a doorway and leaves by its warp; through the
 /// Sanctum's door the leader walks straight in, without centering on it.
 static void Xian_WalkThroughExit(s32 warpNumber) {
   ObjectEvent_GetById(LOCALID_PARTY_LEADER)->motionFlags = 0;
@@ -685,10 +685,10 @@ static void Xian_WalkThroughExit(s32 warpNumber) {
   Engine_ScriptRequestWarp(warpNumber);
 }
 
-/// Walking north into one of Xian's doors: it opens and the party goes in.
-/// Each door's trigger is the number of the exit it leads by: five lead into
-/// the houses, shops and inn, XIAN_TO_SANCTUM into Xian Sanctum (SE_188) and
-/// XIAN_TO_FUCHIN_TEMPLE_INTERIORS into Master Feh's school.
+/// Walking north into one of Xian's doors: it opens and the party goes in. Each
+/// door's metatile behavior is the number of the warp it leads by: five lead
+/// into the houses, shops and inn, XIAN_TO_SANCTUM into Xian Sanctum (SE_188)
+/// and XIAN_TO_FUCHIN_TEMPLE_INTERIORS into Master Feh's school.
 static void Xian_OpenDoorAndLeave(void) {
   struct EventWork *work = gEventWork;
 
@@ -816,7 +816,7 @@ const struct MapEvent *Xian_GetEvents(void) { return gXian_Events; }
 /// after the news or once she has seen the rockslide; back from a battle, the
 /// frozen puddle keeps its ice; the water carrier is hooked to
 /// Xian_WatchWaterCarrierPath; and the training tree, its Force mark and the
-/// three crates are drawn under the actors.
+/// three crates are drawn under the object events.
 s32 Xian_Initialize(void) {
   struct ObjectEvent *objectEvent;
   u32 crateIndex;
@@ -824,7 +824,8 @@ s32 Xian_Initialize(void) {
   gEventWork->startTransition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   FieldEffect_SetQueuedSoundAndPlay(SE_169);
   // Back from the school (XIAN_FROM_FUCHIN_TEMPLE_INTERIORS) or the Sanctum
-  // (XIAN_FROM_SANCTUM_WEST), the last two entrances, the name is not shown.
+  // (XIAN_FROM_SANCTUM_WEST), the last two warp destinations, the name is not
+  // shown.
   if (gGameState.warpDest >= XIAN_FROM_FUCHIN_TEMPLE_INTERIORS) {
     Engine_GameFlagClear(FLAG_SHOW_LOCATION_NAME);
   }

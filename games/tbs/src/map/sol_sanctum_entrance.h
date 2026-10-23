@@ -13,11 +13,11 @@ enum {
   LOCALID_KRADEN = LOCALID_FIRST_PLACED
 };
 
-/// At Sol Entrance (MapId_SolEntrance), the one placed actor is a man with
-/// long brown hair and a beard in a long robe, who stands in the path once the
-/// party has left Vale and warns everyone away while Mt. Aleph is active; read
-/// with Mind Read, he is all alone in this dangerous place and asks how the
-/// Great Healer can treat him like this.
+/// At Sol Entrance (MapId_SolEntrance), the one placed object event is a man
+/// with long brown hair and a beard in a long robe, who stands in the path once
+/// the party has left Vale and warns everyone away while Mt. Aleph is active;
+/// read with Mind Read, he is all alone in this dangerous place and asks how
+/// the Great Healer can treat him like this.
 enum {
   /// ★ Named from the game: "It is very dangerous to go beyond here when Mt.
   /// Aleph is active!" (MsgValeItIsVeryDangerousToGo)

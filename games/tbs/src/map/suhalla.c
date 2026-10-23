@@ -3,22 +3,22 @@
 /// Gondowan at the edge of the Suhalla Desert, on the way from Gondowan
 /// Passage to Lalivero.
 ///
-/// Its people come in two sets, each a placement table and an event table,
-/// chosen by FLAG_BABI_SPOKE_AFTER_COLOSSO: before Babi's audience after
-/// Colosso the village talks of the sandstorms that close the desert, of its
-/// distrust of Angara and of Sheba, the hostage; after it, of the soldiers the
-/// storms caught on the way to Babi Lighthouse, who lie in one of its houses
-/// (suhalla_interiors.c). The same people stand in the same rows of both
-/// placement tables, so one enum names them; the woman the sandstorms brought
-/// stands off the map until the audience.
+/// Its people come in two sets, each an object event template table and a map
+/// event table, chosen by FLAG_BABI_SPOKE_AFTER_COLOSSO: before Babi's audience
+/// after Colosso the village talks of the sandstorms that close the desert, of
+/// its distrust of Angara and of Sheba, the hostage; after it, of the soldiers
+/// the storms caught on the way to Babi Lighthouse, who lie in one of its
+/// houses (suhalla_interiors.c). The same people stand in the same rows of both
+/// object event template tables, so one enum names them; the woman the
+/// sandstorms brought stands off the map until the audience.
 ///
-/// Five doors, whose cell codes are their exits' numbers (SUHALLA_TO_INN to
-/// SUHALLA_TO_HOUSE_EAST), open as the leader walks north into them
-/// (EventScript_EnterDoor, EventScript_EnterWideDoor) and lead into the
-/// village's buildings. Three ways lead out onto the world map, and the
+/// Five doors, whose metatile behaviors are their warps' numbers
+/// (SUHALLA_TO_INN to SUHALLA_TO_HOUSE_EAST), open as the leader walks north
+/// into them (EventScript_EnterDoor, EventScript_EnterWideDoor) and lead into
+/// the village's buildings. Three ways lead out onto the world map, and the
 /// desert's sandstorms drop a caught party at WORLD_MAP_FROM_SUHALLA. A chest
 /// and two jars hold a Hard Nut, a Lucky Medal and coins, and Growth grows a
-/// sprout and changes its cell. Its scene flag:
+/// sprout and changes its cell. Its map flag:
 ///
 /// - FLAG_MAP_TEMP_01: Growth has grown the sprout; a return that keeps the
 ///   party's position, as after a battle, draws it grown again.
@@ -51,10 +51,10 @@
 /// The sprout's animation once Growth has grown it.
 enum { SPROUT_ANIMATION_GROWN = 4 };
 
-/// Suhalla's people and its sprout, numbering the rows of both placement
-/// tables from LOCALID_FIRST_PLACED: gSuhallaObjectEventTemplatesLater places
-/// the same people, by sprite, in the same rows. Each note gives what they say
-/// before Babi's audience, then after it.
+/// Suhalla's people and its sprout, numbering the rows of both object event
+/// template tables from LOCALID_FIRST_PLACED: gSuhallaObjectEventTemplatesLater
+/// places the same people, by sprite, in the same rows. Each note gives what
+/// they say before Babi's audience, then after it.
 enum SuhallaLocalId {
   /// A man with brown hair (SPRITE_YOUNG_MAN_WITH_BROWN_HAIR), who warns the
   /// party
@@ -158,8 +158,8 @@ static void EventScript_AskIfBroughtBySandstorm(s32 objectEventId) {
   Engine_ScriptShowMessage(objectEventId, 0);
 }
 
-/// Growth on Suhalla's sprout: the plant grows, and its map cell takes the
-/// attributes of the grown plant's cell. Sets FLAG_MAP_TEMP_01.
+/// Growth on Suhalla's sprout: the plant grows, and its cell takes the
+/// metatile behavior of the grown plant's cell. Sets FLAG_MAP_TEMP_01.
 static void EventScript_GrowSprout(void) {
   MapGrid_CopyCellAttributes(25, 9, 1, 1, 4, 9);
   Engine_GameFlagSet(FLAG_MAP_TEMP_01);
@@ -167,8 +167,8 @@ static void EventScript_GrowSprout(void) {
 
 /// Walking north into one of Suhalla's doors (SUHALLA_TO_INN,
 /// SUHALLA_TO_HOUSE_WEST, SUHALLA_TO_HOUSE_NORTHEAST and SUHALLA_TO_HOUSE_EAST,
-/// whose cell codes are their exits' numbers): the door opens, the leader
-/// steps through and the party leaves by that exit into the village's
+/// whose metatile behaviors are their warps' numbers): the door opens, the
+/// leader steps through and the party leaves by that warp into the village's
 /// buildings.
 static void EventScript_EnterDoor(void) {
   struct EventWork *work = gEventWork;
@@ -178,7 +178,7 @@ static void EventScript_EnterDoor(void) {
 
   Script_PlayCue(SE_DOOR_OPEN);
   MapGrid_AnimateCells(gSuhallaDoorOpenSteps, cellX, cellZ);
-  // Walk through the opening while the exit transition counts down.
+  // Walk through the opening while the warp transition counts down.
   ObjectEvent_WalkBy(LOCALID_PARTY_LEADER, 0, -16);
   gEventWork->transitionFrames = 16;
   Engine_ScriptRequestWarp(warpTrigger);
@@ -311,7 +311,7 @@ struct ObjectEventTemplate gSuhallaObjectEventTemplatesLater[] = {
     { MAP_TABLE_END },
 };
 
-/// The cell each door's opening is drawn at, by trigger.
+/// The cell each door's opening is drawn at, by metatile behavior.
 s16 gSuhallaDoorCells[][2] = {
     { 0, 0 }, { 8, 7 }, { 15, 5 }, { 5, 16 }, { 13, 15 }, { 18, 16 },
 };

@@ -7,9 +7,9 @@
 #include "common/colosso_story_flags.h"
 #include "flags.h"
 
-/// The placed actors, numbering the rows of the placement table from
-/// LOCALID_FIRST_PLACED. Both tables hold the same people in the same order up
-/// to the healer, except that after Colosso
+/// The placed object events, numbering the rows of the object event template
+/// table from LOCALID_FIRST_PLACED. Both tables hold the same people in the
+/// same order up to the healer, except that after Colosso
 /// (gTolbiInteriorsObjectEventTemplatesAfterColosso) two others stand in the
 /// rows of TOLBI_INTERIORS_SLEEPLESS_GUEST and
 /// TOLBI_INTERIORS_CROWD_SICK_GUEST, and six more rows follow the healer.
@@ -133,7 +133,7 @@ enum TolbiInteriorsLocalId {
   TOLBI_INTERIORS_CAVE_RUMOR_GUEST = TOLBI_INTERIORS_CROWD_SICK_GUEST
 };
 
-/// Map objects the party can search.
+/// The things the party can search, which its bg events answer.
 enum TolbiInteriorsMarker {
   /// The inn's sign.
   /// ★ Named from the game: "checked the sign."

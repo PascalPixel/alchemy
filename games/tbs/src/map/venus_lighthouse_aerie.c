@@ -1,11 +1,11 @@
 /// @file
 /// Lighthouse Aerie (MapId_VenusLighthouseAerie), the top of Venus
-/// Lighthouse and the only scene of this overlay: one scripted sequence cut by
+/// Lighthouse and the only map of this overlay: one scripted sequence cut by
 /// two battles and two trips to the world map. Each part starts in
-/// VenusLighthouseAerie_Initialize from the entrance the part before sent the
-/// party to, and every arrival blocks Retreat and sets
-/// FLAG_VENUS_LIGHTHOUSE_LIT. The parts, in the order the entrances chain
-/// them:
+/// VenusLighthouseAerie_Initialize from the warp destination the part before
+/// sent the party to, and every arrival blocks Retreat and sets
+/// FLAG_VENUS_LIGHTHOUSE_LIT. The parts, in the order the warp destinations
+/// chain them:
 /// - The arrival (VENUS_LIGHTHOUSE_AERIE_FROM_VENUS_LIGHTHOUSE_FOURTH_FLOOR,
 ///   VenusLighthouseAerie_OverhearSaturosAndMenardi): a platform carries the
 ///   leader up and a conversation plays, with one yes-or-no question that
@@ -32,7 +32,7 @@
 ///   statues move apart, and the light lifts the party away to the world map's
 ///   lighthouse transition (WORLD_MAP_AFTER_VENUS_LIGHTHOUSE_LIT). The beam's
 ///   five segments are sprites stacked over the beacon, with particles
-///   rising round them, and the split is drawn by copying the map's cells
+///   rising round them, and the split is drawn by copying the map grid's cells
 ///   (MapGrid_CopyCellsTo in VenusLighthouseAerie_EruptBeacon)
 ///   (https://alchemy.pascalpixel.com/places/venus-lighthouse-aerie/eruption.gif:
 ///   eight seconds from just before the segments stack, each numbered 1 to 5
@@ -116,19 +116,20 @@
 #include "flags.h"
 #include "item_ids.h"
 
-// Place flags: Map_ResetFlagsOnEnter clears 0x300 to 0x3ff when the party
-// enters another place group, and other places use the numbers for their own.
+// Map section flags: Map_ResetFlagsOnEnter clears 0x300 to 0x3ff when the
+// party enters another map section, and other map sections use the numbers for
+// their own.
 
 /// Plus the party member (0 to 3) who carried the Shaman's Rod when it was
 /// handed over before the aerie's first battle; a defeat gives it back.
 /// ★ Named from the game: "Shaman's Rod" (MsgItemName)
 #define FLAG_SHAMANS_ROD_OWNER 0x345
 
-/// Place flags that choose the aerie's field music after each battle, by the
-/// scene's field music rules (gMap_InteractionRuleTable,
+/// Map section flags that choose the aerie's field music after each battle, by
+/// the map's field music rules (gMap_InteractionRuleTable,
 /// object/map_rules.s): MUS_019 before the first battle, MUS_030 once the
 /// first has begun and MUS_022 once the second has. VenusLighthouseFirstFloor
-/// and VenusLighthouseFourthFloor, in the same place group, keep their Psynergy
+/// and VenusLighthouseFourthFloor, in the same map section, keep their Psynergy
 /// Stones in the same two flags, which no one goes back down to see.
 enum {
   /// ★ Named from its area name: Lighthouse Aerie
@@ -167,7 +168,7 @@ static void VenusLighthouseAerie_SpawnSideOrbitParticles(void);
 static void
 VenusLighthouseAerie_UpdateOrbitingEffect(union FieldObject *fieldObject);
 
-/// The aerie's event cells.
+/// The metatile behaviors the aerie's coord events answer.
 enum VenusLighthouseAerieTrigger {
   TRIGGER_BEFORE_BEACON = 5, ///< where the party confronts Saturos and Menardi
   TRIGGER_PLATFORM = 10,     ///< a floating platform's cells
@@ -176,8 +177,8 @@ enum VenusLighthouseAerieTrigger {
   TRIGGER_FLOOR_BY_PLATFORMS = 11
 };
 
-/// A child value that makes an actor blink rather than set its colour mode
-/// (Engine_ObjectEventSetChildValue).
+/// A child value that makes an object event blink rather than set its colour
+/// mode (Engine_ObjectEventSetChildValue).
 enum { CHILD_VALUE_BLINK = 0x100 };
 
 /// Animations the aerie plays by number beyond enum ObjectEventAnimation, from
@@ -213,7 +214,7 @@ enum {
   SHEBA_ANIMATION_SLIP = 7
 };
 
-// The aerie's scene flags:
+// The aerie's map flags:
 // FLAG_MAP_TEMP_34: Saturos and Menardi slide together as they fuse.
 // FLAG_MAP_TEMP_35: they grow as they fuse.
 // FLAG_MAP_TEMP_36: the beacon has erupted; its particles rise higher.
@@ -223,7 +224,8 @@ enum {
 #include "common/effect_create.h"
 #include "common/effect_spawn.h"
 
-/// Pulses the actor scale around the countdown, then chooses its next pause.
+/// Pulses the object event scale around the countdown, then chooses its next
+/// pause.
 static s32 VenusLighthouseAerie_PulseObjectEventScale(
     struct ScriptInterpreter *interpreter) {
   struct ObjectEvent *objectEvent = (struct ObjectEvent *)interpreter;
@@ -274,7 +276,7 @@ VenusLighthouseAerie_UpdateDriftingParticle(union FieldObject *fieldObject) {
   fieldObject->effect.sprite->rotation += fieldObject->effect.spin;
 }
 
-/// Turns the falling actor sprite until its rotation leaves the negative
+/// Turns the falling object event sprite until its rotation leaves the negative
 /// half-turn.
 static void
 VenusLighthouseAerie_StepSpriteRotation(union FieldObject *fieldObject) {
@@ -410,16 +412,16 @@ static void EventScript_FloatPlatforms(void) {
   ObjectEvent_GetById(LOCALID_LAST_PLATFORM)->motionFlags = flags;
 }
 
-/// Returns the platform and confrontation triggers.
+/// Returns the platform and confrontation coord events.
 const struct MapEvent *VenusLighthouseAerie_GetEvents(void) {
   return gVenusLighthouseAerieEvents;
 }
 
 /// Sets up the beacon's statues and the six platforms.
-/// It then runs the part of the sequence the entrance selects (the arrival only
-/// when not back from a battle), or, after a lost battle, gives back the
-/// Shaman's Rod and leaves for Lalivero Sanctum. Back from a battle, the
-/// platform nearest the leader stands still.
+/// It then runs the part of the sequence the warp destination selects (the
+/// arrival only when not back from a battle), or, after a lost battle, gives
+/// back the Shaman's Rod and leaves for Lalivero Sanctum. Back from a battle,
+/// the platform nearest the leader stands still.
 s32 VenusLighthouseAerie_Initialize(void) {
   s32 mirroredScale;
   u32 platformId;
@@ -506,7 +508,7 @@ static void VenusLighthouseAerie_ShowMessage(s32 speaker) {
   Engine_ScriptWait(10);
 }
 
-/// Turns one actor and waits ten frames.
+/// Turns one object event and waits ten frames.
 static void VenusLighthouseAerie_FaceObjectEvent(s32 objectEvent, s32 facing) {
   Engine_ObjectEventFaceDirection(objectEvent, facing, 10);
 }
@@ -1282,7 +1284,8 @@ static void EventScript_ConfrontSaturosAndMenardi(void) {
   GameFlag_Set(FLAG_AERIE_FIRST_BATTLE_BEGUN);
 }
 
-/// Flashes an actor palette and emits paired effects every fifteenth frame.
+/// Flashes an object event palette and emits paired effects every fifteenth
+/// frame.
 static void
 VenusLighthouseAerie_FlashObjectEventPalette(struct ObjectEvent *objectEvent) {
   if (*(s32 *)&gFrameCount & 2) {
@@ -1295,7 +1298,8 @@ VenusLighthouseAerie_FlashObjectEventPalette(struct ObjectEvent *objectEvent) {
   }
 }
 
-/// Cycles the actor palette and emits paired effects every fifteenth frame.
+/// Cycles the object event palette and emits paired effects every fifteenth
+/// frame.
 static void
 VenusLighthouseAerie_CycleObjectEventPalette(struct ObjectEvent *objectEvent) {
   if (gFrameCount & 1) {
@@ -1941,7 +1945,8 @@ static void VenusLighthouseAerie_CombineSaturosAndMenardi(void) {
   ObjectEvent_Get(LOCALID_MENARDI)->steeringFlags &= ~OBJ_EVENT_FACES_MOTION;
   ObjectEvent_SetDestination(LOCALID_SATUROS, 294, 196);
   ObjectEvent_SetDestination(LOCALID_MENARDI, 294, 196);
-  // Slide the two transformed actors together, then start the fusion battle.
+  // Slide the two transformed object events together, then start the fusion
+  // battle.
   Task_AddCallback(VenusLighthouseAerie_UpdateBeamObjectEvents,
                    TASK_PRIORITY_MAP);
   ObjectEvent_StartRepeatedMotion(GARET, 2);
@@ -2078,8 +2083,8 @@ static void VenusLighthouseAerie_UpdateBeamObjectEvents(void) {
   saturos = ObjectEvent_GetById(LOCALID_SATUROS);
   menardi = ObjectEvent_GetById(LOCALID_MENARDI);
   pairParked =
-      ObjectEvent_IsParked(saturos); // Overwritten; only the saturos actor's
-                                     // test loads remain in the ROM.
+      ObjectEvent_IsParked(saturos); // Overwritten; only Saturos's object
+                                     // event's test loads remain in the ROM.
   pairParked = ObjectEvent_IsParked(menardi);
   if (pairParked != 0) {
     saturos->facing = 0;
@@ -3103,7 +3108,8 @@ static void VenusLighthouseAerie_PlayShebasFall(void) {
   Engine_ScriptWait(80);
 }
 
-/// Clears all movement targets and velocities and resets the actor timer.
+/// Clears all movement targets and velocities and resets the object event
+/// timer.
 static void
 VenusLighthouseAerie_StopObjectEventMotion(struct ObjectEvent *objectEvent) {
   objectEvent->targetX = OBJ_EVENT_NO_TARGET;
@@ -3235,7 +3241,7 @@ static void VenusLighthouseAerie_UpdateBeaconRise(void) {
   VenusLighthouseAerie_AdvanceObjectEventRise(ObjectEvent_Get(SHEBA));
 }
 
-/// Raises an enabled actor according to its gated rise counter.
+/// Raises an enabled object event according to its gated rise counter.
 static void
 VenusLighthouseAerie_AdvanceObjectEventRise(struct ObjectEvent *objectEvent) {
   if (objectEvent->riseEnabled != 0) {
@@ -3253,7 +3259,8 @@ VenusLighthouseAerie_AdvanceObjectEventRise(struct ObjectEvent *objectEvent) {
   }
 }
 
-/// Emits particles beside the lower beam and links each to its source actor.
+/// Emits particles beside the lower beam and links each to its source object
+/// event.
 static void VenusLighthouseAerie_SpawnSideOrbitParticles(void) {
   union FieldObject *center;
   struct ObjectEvent *effect;

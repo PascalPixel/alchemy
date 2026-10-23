@@ -1,28 +1,28 @@
 
 /// @file
 /// Vault's jail (MapId_VaultJail), one map of two rooms whose area names
-/// differ by entrance. The entrance also picks the tables: the thieves' for
-/// VAULT_JAIL_FROM_VAULT and VAULT_JAIL_FROM_LUNPA, the prisoner's for
-/// VAULT_JAIL_FROM_VAULT_REVISIT.
+/// differ by warp destination. The warp destination also picks the tables: the
+/// thieves' for VAULT_JAIL_FROM_VAULT and VAULT_JAIL_FROM_LUNPA, the prisoner's
+/// for VAULT_JAIL_FROM_VAULT_REVISIT.
 ///
 /// - Vault (VAULT_JAIL_FROM_VAULT and VAULT_JAIL_FROM_VAULT_REVISIT), the cell
 ///   behind Vault's jail door. Once the party has beaten the three thieves in
 ///   the inn's loft (FLAG_VAULT_THIEVES_JAILED, vault_interiors.c), coming in
 ///   from Vault finds them behind the bars, each with his own talk and Mind
-///   Read. Once Vault has become its later scene (vault_revisit.c), whose
+///   Read. Once Vault has become its later map (vault_revisit.c), whose
 ///   villagers say the thieves have broken out, its jail door comes in by
 ///   VAULT_JAIL_FROM_VAULT_REVISIT and finds a lone prisoner instead.
 /// - Lunpa (VAULT_JAIL_FROM_LUNPA), the map's other room, which Lunpa's hidden
 ///   passage reaches (lunpa.c). Its six chests are each opened once
 ///   (FLAG_JAIL_CHEST_*), TRIGGER_LUNPA_DOOR leads back up into Lunpa, and
-///   arriving this way clears FLAG_SHOW_LOCATION_NAME, so no place name is
-///   shown. The room uses the thieves' tables, so its chests and exit sit in
-///   the same event table as the thieves' talk and the Vault door.
+///   arriving this way clears FLAG_SHOW_LOCATION_NAME, so no area name is
+///   shown. The room uses the thieves' tables, so its chests and warp sit in
+///   the same map event table as the thieves' talk and the Vault door.
 ///
 /// Open questions:
-/// - XXX (no evidence): why arriving from Lunpa hides the place name, which
-///   gMapSec_NameRules gives as "Lunpa" for that entrance; the code shows
-///   only that it does.
+/// - XXX (no evidence): why arriving from Lunpa hides the area name, which
+///   gMapSec_NameRules gives as "Lunpa" for that warp destination; the code
+///   shows only that it does.
 
 #include "game_state.h"
 #include "unit/map/vault_jail.h"
@@ -57,7 +57,7 @@ enum JailTrigger {
   TRIGGER_CHEST_ELIXIR
 };
 
-/// The placed actors, numbering the rows of the table
+/// The placed object events, numbering the rows of the table
 /// Map_GetObjectEventTemplates returns: the three thieves of
 /// gVaultJail_ThiefObjectEventTemplates, or the prisoner of
 /// gVaultJail_PrisonerObjectEventTemplates in the same first slot.
@@ -86,20 +86,21 @@ enum JailLocalId {
 /// 10/13), so the party reaches them across the bars.
 enum { JAIL_REACH_ACROSS_BARS = OBJ_EVENT_NEAR_TALK | OBJ_EVENT_NEAR_PSYNERGY };
 
-/// Returns the entrances from Vault, from Lunpa and from Vault's revisit scene.
+/// Returns the warp destinations from Vault, from Lunpa and from Vault's
+/// revisit map.
 const struct MapWarpDest *Map_GetWarpDests(void) {
   return gVaultJail_WarpDests;
 }
 
 const struct MapWarpRegion *Map_GetWarpRegions(void) { return NULL; }
 
-/// Returns the exits to Vault, to Vault's revisit scene and to Lunpa, each to
-/// the entrance that scene names for the jail (VAULT_FROM_VAULT_JAIL,
+/// Returns the warps to Vault, to Vault's revisit map and to Lunpa, each to
+/// the warp destination that map names for the jail (VAULT_FROM_VAULT_JAIL,
 /// VAULT_REVISIT_FROM_VAULT_JAIL and LUNPA_FROM_VAULT_JAIL).
 const u32 *Map_GetWarps(void) { return gVaultJail_Warps; }
 
 /// Places the three jailed thieves (each only once FLAG_VAULT_THIEVES_JAILED
-/// is set), or, entered from Vault's revisit scene
+/// is set), or, entered from Vault's revisit map
 /// (VAULT_JAIL_FROM_VAULT_REVISIT, after they have broken out), the lone
 /// prisoner.
 const struct ObjectEventTemplate *Map_GetObjectEventTemplates(void) {
@@ -109,8 +110,8 @@ const struct ObjectEventTemplate *Map_GetObjectEventTemplates(void) {
   return gVaultJail_ThiefObjectEventTemplates;
 }
 
-/// Returns the thieves' events, which also hold the Lunpa room's chests and
-/// exit, or the prisoner's when the party came in from Vault's revisit scene,
+/// Returns the thieves' map events, which also hold the Lunpa room's chests and
+/// warp, or the prisoner's when the party came in from Vault's revisit map,
 /// matching Map_GetObjectEventTemplates.
 const struct MapEvent *Map_GetEvents(void) {
   if (gGameState.warpDest == VAULT_JAIL_FROM_VAULT_REVISIT) {
@@ -216,24 +217,24 @@ static void EventScript_ReadRightThiefMind(void) {
   Engine_ScriptEnd();
 }
 
-/// The party steps out of Vault's jail into Vault, with the exit sound.
+/// The party steps out of Vault's jail into Vault, with the warp sound.
 ///
 /// Reached by stepping on the door's cell (TRIGGER_VAULT_DOOR) under the
 /// thieves' table, that is, entered from Vault or Lunpa; takes
 /// VAULT_JAIL_TO_VAULT to VAULT_FROM_VAULT_JAIL. The prisoner's table leaves by
-/// a plain exit instead, VAULT_JAIL_TO_VAULT_REVISIT.
+/// a plain warp instead, VAULT_JAIL_TO_VAULT_REVISIT.
 static void EventScript_LeaveForVault(void) {
   Engine_AudioPlayCue(SE_MAP_EXIT);
   Engine_ScriptRequestWarp(VAULT_JAIL_TO_VAULT);
 }
 
-/// Opens the scene through a window transition and lets the party reach the
+/// Opens the map through a window transition and lets the party reach the
 /// jail's occupants across the bars.
 ///
-/// Called by the engine once the actors are placed. Coming in through Lunpa's
-/// hidden passage (VAULT_JAIL_FROM_LUNPA) clears FLAG_SHOW_LOCATION_NAME, so no
-/// place name is shown; otherwise it adds JAIL_REACH_ACROSS_BARS to the
-/// prisoner or to the three thieves.
+/// Called by the engine once the object events are placed. Coming in through
+/// Lunpa's hidden passage (VAULT_JAIL_FROM_LUNPA) clears
+/// FLAG_SHOW_LOCATION_NAME, so no area name is shown; otherwise it adds
+/// JAIL_REACH_ACROSS_BARS to the prisoner or to the three thieves.
 s32 Map_Initialize(void) {
   s16 warpDest;
 

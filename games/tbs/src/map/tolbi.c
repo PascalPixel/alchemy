@@ -3,8 +3,9 @@
 /// warriors, is held each year in the colosseum. The party comes to Tolbi
 /// across the Karagol Sea from Kalay while the festival is on, and the town's
 /// talk follows the Colosso story in three stages. Tolbi_SelectEvents gives
-/// each stage its own event table; one placement table serves all three, and
-/// Tolbi_ApplyEntryState moves the actors whose places change:
+/// each stage its own event table; one object event template table serves all
+/// three, and Tolbi_ApplyEntryState moves the object events whose places
+/// change:
 ///
 /// - The festival (neither story flag set). The trials have begun at the
 ///   colosseum, but Babi is not there, and his soldiers are searching the
@@ -33,13 +34,13 @@
 /// FLAG_TOLBI_SPRING_OPENED), and the gate (TOLBI_CELL_SPRING_GATE) leads into
 /// Tolbi Spring (TOLBI_TO_TOLBI_SPRING). Ember, a Mars Djinni, joins the party
 /// when spoken to. Growth raises a sprout and Frost freezes a puddle, each a
-/// scene flag kept only through a return that keeps the party's position;
+/// map flag kept only through a return that keeps the party's position;
 /// Reveal uncovers a chest with Power Bread, and a barrel and a jar hold 9
 /// coins and a Lucky Medal (during the festival, the editions from TBS_PATCH_1
 /// on find the jar only when the party faces north).
 ///
 /// The doors from TOLBI_TO_HOUSE_SOUTH to TOLBI_TO_SANCTUM, whose cells carry
-/// their exits' numbers, lead into Tolbi's houses, inns and shops and into
+/// their warps' numbers, lead into Tolbi's houses, inns and shops and into
 /// Tolbi Sanctum (all MapId_TolbiInteriors), but for TOLBI_TO_LUCKY_WHEELS,
 /// which with TOLBI_TO_LUCKY_DICE leads into the Lucky Dice and Lucky Wheels
 /// rooms (MapId_TolbiGameRooms, whose area name is also Tolbi).
@@ -405,8 +406,8 @@ static void Tolbi_TalkToSnackVendor(void) {
 }
 
 /// Walking into one of the town's doors: the door opens, the leader steps in
-/// (except at TOLBI_TO_WEAPON_AND_ARMOR_SHOP) and the scene changes to the
-/// door's exit, numbered as its trigger.
+/// (except at TOLBI_TO_WEAPON_AND_ARMOR_SHOP) and the map changes through the
+/// door's warp, numbered as its metatile behavior.
 static void Tolbi_EnterDoor(void) {
   struct EventWork *work = gEventWork;
   u32 objectEventId;
@@ -452,7 +453,7 @@ static void Tolbi_CopyLeaderPriority(union FieldObject *fieldObject) {
   }
 }
 
-/// Sets up the scene on entry: the running children, TOLBI_OLD_MAN's update,
+/// Sets up the map on entry: the running children, TOLBI_OLD_MAN's update,
 /// and everything the flags have already changed.
 s32 Tolbi_ApplyEntryState(s32 unused) {
   struct ObjectEvent *objectEvent;
@@ -547,7 +548,7 @@ static void Tolbi_EnterSpring(void) {
   Engine_ScriptEnd();
 }
 
-/// Leaves by the exit numbered as the trigger the party walked into.
+/// Leaves by the warp numbered as the metatile behavior the party walked into.
 static void Tolbi_RequestTouchedWarp(void) {
   s16 *trigger = &gEventWork->touchedTrigger;
 
@@ -681,7 +682,8 @@ static void Tolbi_FreezePuddle(void) {
   Engine_GameFlagSet(FLAG_MAP_TEMP_01);
 }
 
-/// The action script of a mirrored actor: flips its sprite and passes 7 on.
+/// The action script of a mirrored object event: flips its sprite and passes 7
+/// on.
 s32 gTolbiMirroredObjectEvent[] = {
     SC_SET(SW_SCALE_X, -Q16_ONE),
     SC_ANIMATION(7),
@@ -1055,7 +1057,7 @@ u16 gTolbiDoorOpening[] = {
     MAPGRID_ANIM_STEPS_END,
 };
 
-/// The doors, in the order of their triggers 1 to 9, by map cell.
+/// The doors, in the order of their metatile behaviors 1 to 9, by map cell.
 struct MapGridCellAnimation gTolbiDoors[] = {
     {gTolbiDoorOpening, 48, 6},  {gTolbiDoorOpening, 63, 4},
     {gTolbiDoorOpening, 71, 8},  {gTolbiDoorOpening, 71, 4},

@@ -23,7 +23,7 @@
 ///   eruption (EventScript_TakeMarsStar, MapId_SolSanctumEruption,
 ///   sol_sanctum_eruption.c).
 ///
-/// Each pedestal's search row holds only until its flag is set, so a star is
+/// Each pedestal's bg event row holds only until its flag is set, so a star is
 /// taken once. On every entry SolSanctumElementalStarRoom_Initialize redraws
 /// the crossings each bagged star opened and, once Alex holds the stars, lines
 /// up the captors again (SolSanctumElementalStarRoom_LineUpCaptors), so a
@@ -35,7 +35,7 @@
 /// grows with him
 /// (LOCALID_PLATFORM_SHADOW;
 /// https://alchemy.pascalpixel.com/places/sol-sanctum-elemental-star-room/rising-shadow.gif:
-/// Isaac's arrival, the platform's actor boxed on the screen, beside the
+/// Isaac's arrival, the platform's object event boxed on the screen, beside the
 /// sprites and the sprites without it, where the shadow is gone).
 ///
 /// Open questions: none.
@@ -96,15 +96,15 @@ static s32 SolSanctumElementalStarRoom_PresentStar(s32 item, s32 x, s32 y,
 static void SolSanctumElementalStarRoom_GiveMythrilBags(void);
 static void SolSanctumElementalStarRoom_AnimateAlexReappearing(void);
 
-/// The placed actors, numbered in the order of
+/// The placed object events, numbered in the order of
 /// gSolSanctumElementalStarRoom_ObjectEventTemplates; Garet and Jenna, placed
 /// first, keep their own slots.
 enum StarRoomLocalId {
   /// The shadow on the arrival platform under whoever appears there: a blank
-  /// actor, whose sprite draws only its shadow, set at (471, 290) and grown
-  /// from a tenth of its size with the arriving actor, whose own shadow is
-  /// turned off while he floats above the platform (Isaac and Kraden in
-  /// SolSanctumElementalStarRoom_EnterStarRoom, Felix in
+  /// object event, whose sprite draws only its shadow, set at (471, 290) and
+  /// grown from a tenth of its size with the arriving object event, whose own
+  /// shadow is turned off while he floats above the platform (Isaac and Kraden
+  /// in SolSanctumElementalStarRoom_EnterStarRoom, Felix in
   /// SolSanctumElementalStarRoom_DemandElementalStars).
   /// ★ Named from what the player sees: the shadow that grows on the platform
   /// as Isaac comes in (its render),
@@ -135,7 +135,7 @@ enum StarRoomLocalId {
   LOCALID_LAST_FLOATING_LIGHT = LOCALID_FIRST_FLOATING_LIGHT + 9
 };
 
-/// The collision codes of the cells the events answer.
+/// The metatile behaviors the events answer.
 enum SolSanctumStarRoomCell {
   /// The way back down to the Luna and Sol rooms.
   SOL_SANCTUM_STAR_ROOM_CELL_WAY_BACK = 1,
@@ -178,7 +178,7 @@ SolSanctumElementalStarRoom_GetObjectEventTemplates(void) {
   return gSolSanctumElementalStarRoom_ObjectEventTemplates;
 }
 
-/// Returns the pedestals' searches, the talk and Mind Read rows, and the cells
+/// Returns the pedestals' bg events, the talk and Mind Read rows, and the cells
 /// that call the party back or check the way ahead.
 const struct MapEvent *SolSanctumElementalStarRoom_GetEvents(void) {
   return gSolSanctumElementalStarRoom_Events;

@@ -2,10 +2,10 @@
 /// MapId_Vale, Isaac's village by day, outside the houses: the door of
 /// Isaac's house, the houses of Garet's family and of Jenna's grandparents,
 /// the Sanctum and the paths out to Mt. Aleph and Kraden's cottage. The
-/// placements and events come in three sets, chosen by the story flags: before
-/// the party leaves Vale, after it has left (FLAG_VALE_PARTY_LEFT) and back
-/// from Kalay (FLAG_KALAY_REACHED); VALE_FROM_TITLE has a set of its own. In
-/// story order:
+/// object event templates and map events come in three sets, chosen by the
+/// story flags: before the party leaves Vale, after it has left
+/// (FLAG_VALE_PARTY_LEFT) and back from Kalay (FLAG_KALAY_REACHED);
+/// VALE_FROM_TITLE has a set of its own. In story order:
 ///
 /// - The day the story begins, three years after the storm
 ///   (vale_interiors_inn.c), which took Jenna's family and Isaac's father,
@@ -15,19 +15,19 @@
 ///   him, trains his Psynergy nearby, and Jenna comes by, and the two speak of
 ///   that day before going to fetch Isaac to go to Kraden's.
 ///   VALE_TO_ROOF_MENDED brings the party back in at VALE_FROM_ROOF_MENDED,
-///   where EventScript_RoofMended plays once (group flag FLAG_MAPSEC_TEMP_08):
-///   Dora praises the roof, remembers Kyle, and sends the three off on their
-///   climb of Mt. Aleph with Kraden, the scholar who teaches them Alchemy
-///   (FLAG_MAP_TEMP_02); for the rest of that visit Dora frets about the hole
-///   clumsy Garet left.
+///   where EventScript_RoofMended plays once (map section flag
+///   FLAG_MAPSEC_TEMP_08): Dora praises the roof, remembers Kyle, and sends the
+///   three off on their climb of Mt. Aleph with Kraden, the scholar who teaches
+///   them Alchemy (FLAG_MAP_TEMP_02); for the rest of that visit Dora frets
+///   about the hole clumsy Garet left.
 /// - Vale before the party leaves. Until Kraden has planned the visit to Sol
 ///   Sanctum (FLAG_SANCTUM_VISIT_PLANNED), Jenna stops Isaac on the path to Mt.
 ///   Aleph; a bearded man in a long robe jumps out to warn him against sneaking
 ///   up the sacred peak (FLAG_VALE_WARNED_AGAINST_MT_ALEPH) and then keeps
-///   watching him, asking again whenever he comes near (touch cells 51 to 53).
-///   Three puppies (from LOCALID_FIRST_PUPPY) play; walking up to them from
-///   either side (touch cells 20 and 21) sets them barking, until the party has
-///   met Saturos and Menardi, of the strangers staying at the inn
+///   watching him, asking again whenever he comes near (metatile behaviors 51
+///   to 53). Three puppies (from LOCALID_FIRST_PUPPY) play; walking up to them
+///   from either side (metatile behaviors 20 and 21) sets them barking, until
+///   the party has met Saturos and Menardi, of the strangers staying at the inn
 ///   (FLAG_MET_SATUROS_AND_MENARDI); then the setup removes them. Villagers
 ///   talk of the mayor, Garet's grandfather, and of not going beyond Kraden's
 ///   cottage, Garet's sister scolds him, and Dora says Isaac can fix the hole
@@ -36,9 +36,9 @@
 ///   the door of Isaac's house to him ("My Isaac would keep his promise... Go
 ///   away."), and the villagers speak of the tremors and of Kraden, who has
 ///   not come back.
-/// - Back from Kalay (FLAG_KALAY_REACHED): Garet meets his sister (group flag
-///   FLAG_MAPSEC_TEMP_03) and asks one of his family to protect it while he is
-///   gone (FLAG_MAPSEC_TEMP_04), a young man asks whether Jenna is back
+/// - Back from Kalay (FLAG_KALAY_REACHED): Garet meets his sister (map section
+///   flag FLAG_MAPSEC_TEMP_03) and asks one of his family to protect it while
+///   he is gone (FLAG_MAPSEC_TEMP_04), a young man asks whether Jenna is back
 ///   (FLAG_VALE_ASKED_IF_JENNA_IS_BACK), another feels a tremor, another asks
 ///   about the lack of travellers since the eruption (FLAG_MAPSEC_TEMP_07).
 ///   Isaac's house opens again: Dora lies ill inside (vale_interiors_inn.c).
@@ -46,10 +46,10 @@
 /// In every set: a Nut to catch with Catch (FLAG_VALE_NUT_CAUGHT; LOCALID_NUT,
 /// or LOCALID_NUT_AFTER_KALAY), a pillar to push or Move, whose column the
 /// setup restores from FLAG_MAPSEC_TEMP_14 to _16, a ladder up onto the roof of
-/// Isaac's house, climbed on touch cells 100 and 101 (FLAG_MAP_TEMP_04 while
-/// on the roof), and cells of
+/// Isaac's house, climbed on metatile behaviors 100 and 101 (FLAG_MAP_TEMP_04
+/// while on the roof), and cells of
 /// an upper path that change while the leader is on it (FLAG_MAP_TEMP_10);
-/// after a battle (FLAG_KEEP_PARTY_POSITION) the setup restores both. Exits:
+/// after a battle (FLAG_KEEP_PARTY_POSITION) the setup restores both. Warps:
 /// VALE_TO_SOL_ENTRANCE up Mt. Aleph to Sol Entrance (MapId_SolEntrance),
 /// VALE_TO_VALE_GATE to MapId_ValeGate, VALE_TO_VALE_KRADEN_NORTH and
 /// VALE_TO_VALE_KRADEN_SOUTH to MapId_ValeKraden, the doors
@@ -60,7 +60,7 @@
 /// VALE_TO_VALE_INTERIORS_INN into Isaac's house (MapId_ValeInteriorsInn) and
 /// VALE_TO_SANCTUM into MapId_Sanctum. Two scenes no table reaches remain:
 /// EventScript_UnusedRoofMended, a copy of the roof's end, and
-/// EventScript_UnusedWaterBurstsByTheRiver, which sets group flag
+/// EventScript_UnusedWaterBurstsByTheRiver, which sets map section flag
 /// FLAG_MAPSEC_TEMP_05. FLAG_MAP_TEMP_41 pauses the man who watches Isaac while
 /// a menu is open. The TBS_PATCH_4 editions also set Dora's sprite priority
 /// before Kalay.
@@ -174,10 +174,10 @@ static void
 Vale_CycleObjectEventPaletteAndSpawnEffects(struct ObjectEvent *objectEvent);
 static void Vale_CycleObjectEventPalette(struct ObjectEvent *objectEvent);
 
-/// The placed actors of Vale by day, numbered in the order of
+/// The placed object events of Vale by day, numbered in the order of
 /// gVale_ObjectEventTemplates and gVale_ObjectEventTemplatesAfterLeaving, which
 /// place the same people in the same rows. A row whose sprite is a party
-/// member's (Garet's, Jenna's) takes that member's actor id instead
+/// member's (Garet's, Jenna's) takes that member's local id instead
 /// (FieldScript_SpawnObjectTable), so the numbering skips it.
 enum ValeLocalId {
   /// An old woman: "Mt. Aleph looks beautiful today. It's so peaceful."; after
@@ -267,8 +267,8 @@ enum ValeLocalId {
   LOCALID_NUT ///< the Nut for Catch, until FLAG_VALE_NUT_CAUGHT is set
 };
 
-/// Back from Kalay, the placed actors of gVale_ObjectEventTemplatesAfterKalay;
-/// Garet's row takes his own actor id.
+/// Back from Kalay, the placed object events of
+/// gVale_ObjectEventTemplatesAfterKalay; Garet's row takes his own local id.
 enum ValeAfterKalayLocalId {
   /// Garet's sister. "Ah! It's been a while... You're back?"
   /// (EventScript_GaretMeetsHisSister)
@@ -324,9 +324,9 @@ enum ValeAfterKalayLocalId {
   LOCALID_PILLAR_AFTER_KALAY ///< the pillar of LOCALID_PILLAR
 };
 
-/// The game's opening (EventScript_MendingTheRoof), the placed actors of
+/// The game's opening (EventScript_MendingTheRoof), the placed object events of
 /// gVale_RepairObjectEventTemplates; Jenna's and Garet's rows take their own
-/// actor ids.
+/// local ids.
 enum ValeOpeningLocalId {
   /// A woman in a green dress who meets Jenna on her way.
   /// ★ Named from what the player sees: a woman with brown hair in a green
@@ -412,8 +412,8 @@ static void EventScript_CatchNutAfterKalay(void) {
   Engine_ScriptEnd();
 }
 
-/// Vale's events for the story so far: before leaving, after leaving, or back
-/// from Kalay.
+/// Vale's map events for the story so far: before leaving, after leaving, or
+/// back from Kalay.
 const struct MapEvent *Vale_GetEvents(void) {
   if (Engine_GameFlagIsSet(FLAG_KALAY_REACHED) != 0)
     return gVale_EventsAfterKalay;
@@ -536,7 +536,7 @@ static void EventScript_ReactToAnotherTremor(void) {
 
 /// A burly grey-haired man asks about the lack of travellers since the
 /// eruption. He (LOCALID_MAN_MISSING_TRAVELERS) is in Vale back from Kalay, and
-/// the talk sets group flag FLAG_MAPSEC_TEMP_07.
+/// the talk sets map section flag FLAG_MAPSEC_TEMP_07.
 static void EventScript_AskAboutTheLackOfTravelers(void) {
   Engine_ScriptStart();
   Engine_ObjectEventRunRepeatedMotion(LOCALID_MAN_MISSING_TRAVELERS, 2);
@@ -549,22 +549,22 @@ static void EventScript_AskAboutTheLackOfTravelers(void) {
   Engine_ScriptEnd();
 }
 
-/// Walking onto the upper path in Vale (touch cell 15): its collision cells
-/// change, remembered in FLAG_MAP_TEMP_10.
+/// Walking onto the upper path in Vale (metatile behavior 15): its cells'
+/// metatile behaviors change, remembered in FLAG_MAP_TEMP_10.
 static void EventScript_SetPathCellOverride(void) {
   Engine_GameFlagSet(FLAG_MAP_TEMP_10);
   MapGrid_CopyCellAttributes(40, 84, 7, 4, 10, 84);
 }
 
-/// Walking off the upper path in Vale (touch cell 14) restores its collision
-/// cells.
+/// Walking off the upper path in Vale (metatile behavior 14) restores its
+/// cells' metatile behaviors.
 static void EventScript_ClearPathCellOverride(void) {
   Engine_GameFlagClear(FLAG_MAP_TEMP_10);
   MapGrid_CopyCellAttributes(40, 89, 7, 4, 10, 84);
 }
 
-/// The door of Vale Sanctum (touch cell 1): it opens, the leader walks in, and
-/// VALE_TO_SANCTUM leads into the Sanctum.
+/// The door of Vale Sanctum (metatile behavior 1): it opens, the leader walks
+/// in, and VALE_TO_SANCTUM leads into the Sanctum.
 static void EventScript_EnterSanctum(void) {
   Script_PlayCue(SE_188);
   MapGrid_AnimateCells(gVale_SanctumDoorOpens, 45, 11);
@@ -572,7 +572,7 @@ static void EventScript_EnterSanctum(void) {
   Engine_ScriptRequestWarp(VALE_TO_SANCTUM);
 }
 
-/// The path to Mt. Aleph in Vale (touch cell 2): Jenna stops Isaac until
+/// The path to Mt. Aleph in Vale (metatile behavior 2): Jenna stops Isaac until
 /// Kraden has planned the visit (FLAG_SANCTUM_VISIT_PLANNED); then
 /// VALE_TO_SOL_ENTRANCE leads up to Sol Entrance. Jenna says "Kraden is waiting
 /// for us".
@@ -585,26 +585,26 @@ static void EventScript_ApproachMtAleph(void) {
   }
 }
 
-/// Touch cell 3 in Vale takes the northern way out to MapId_ValeKraden.
+/// Metatile behavior 3 in Vale takes the northern way out to MapId_ValeKraden.
 static void EventScript_WarpToValeKradenNorth(void) {
   Engine_AudioPlayCue(SE_MAP_EXIT);
   Engine_ScriptRequestWarp(VALE_TO_VALE_KRADEN_NORTH);
 }
 
-/// Touch cell 4 in Vale takes the southern way out to MapId_ValeKraden.
+/// Metatile behavior 4 in Vale takes the southern way out to MapId_ValeKraden.
 static void EventScript_WarpToValeKradenSouth(void) {
   Engine_AudioPlayCue(SE_MAP_EXIT);
   Engine_ScriptRequestWarp(VALE_TO_VALE_KRADEN_SOUTH);
 }
 
-/// Touch cell 5 in Vale takes the way out to MapId_ValeGate.
+/// Metatile behavior 5 in Vale takes the way out to MapId_ValeGate.
 static void EventScript_WarpToValeGate(void) {
   Engine_AudioPlayCue(SE_MAP_EXIT);
   Engine_ScriptRequestWarp(VALE_TO_VALE_GATE);
 }
 
-/// The door of the house of Garet's family in Vale (touch cell 6): it opens and
-/// VALE_TO_VALE_INTERIORS_SHOPS_EAST leads in.
+/// The door of the house of Garet's family in Vale (metatile behavior 6): it
+/// opens and VALE_TO_VALE_INTERIORS_SHOPS_EAST leads in.
 static void EventScript_EnterGaretsHouse(void) {
   Script_PlayCue(SE_DOOR_OPEN);
   MapGrid_AnimateCells(gVale_IsaacsDoorOpens, 54, 32);
@@ -612,7 +612,7 @@ static void EventScript_EnterGaretsHouse(void) {
   Engine_ScriptRequestWarp(VALE_TO_VALE_INTERIORS_SHOPS_EAST);
 }
 
-/// A house door in Vale (touch cell 7): it opens and
+/// A house door in Vale (metatile behavior 7): it opens and
 /// VALE_TO_VALE_INTERIORS_SHOPS_SOUTH leads in, to the room ValeInteriorsShops
 /// enters from VALE_INTERIORS_SHOPS_FROM_VALE_SOUTH.
 static void EventScript_EnterValeInteriorsShops(void) {
@@ -622,9 +622,9 @@ static void EventScript_EnterValeInteriorsShops(void) {
   Engine_ScriptRequestWarp(VALE_TO_VALE_INTERIORS_SHOPS_SOUTH);
 }
 
-/// The door of Isaac's house in Vale (touch cell 8): after the party has left
-/// and before Kalay, Dora will not open. "My Isaac would keep his promise...
-/// Go away." Otherwise VALE_TO_VALE_INTERIORS_INN leads in.
+/// The door of Isaac's house in Vale (metatile behavior 8): after the party has
+/// left and before Kalay, Dora will not open. "My Isaac would keep his
+/// promise... Go away." Otherwise VALE_TO_VALE_INTERIORS_INN leads in.
 static void EventScript_EnterIsaacsHouse(void) {
   if (Engine_GameFlagIsSet(FLAG_VALE_PARTY_LEFT) != 0 &&
       Engine_GameFlagIsSet(FLAG_KALAY_REACHED) == 0) {
@@ -650,8 +650,8 @@ static void EventScript_EnterIsaacsHouse(void) {
   }
 }
 
-/// The door of the house of Jenna's grandparents in Vale (touch cell 9): it
-/// opens and VALE_TO_VALE_INTERIORS_SHOPS_NORTH leads in.
+/// The door of the house of Jenna's grandparents in Vale (metatile behavior 9):
+/// it opens and VALE_TO_VALE_INTERIORS_SHOPS_NORTH leads in.
 static void EventScript_EnterJennasGrandparentsHouse(void) {
   Script_PlayCue(SE_DOOR_OPEN);
   MapGrid_AnimateCells(gVale_GrandparentsDoorOpens, 49, 69);
@@ -659,7 +659,7 @@ static void EventScript_EnterJennasGrandparentsHouse(void) {
   Engine_ScriptRequestWarp(VALE_TO_VALE_INTERIORS_SHOPS_NORTH);
 }
 
-/// A house door in Vale (touch cell 10): it opens and
+/// A house door in Vale (metatile behavior 10): it opens and
 /// VALE_TO_VALE_INTERIORS_SHOPS_WEST leads in, to the room ValeInteriorsShops
 /// enters from VALE_INTERIORS_SHOPS_FROM_VALE_WEST.
 static void EventScript_EnterValeInteriorsShopsWest(void) {
@@ -669,7 +669,7 @@ static void EventScript_EnterValeInteriorsShopsWest(void) {
   Engine_ScriptRequestWarp(VALE_TO_VALE_INTERIORS_SHOPS_WEST);
 }
 
-/// Unused: its row answers cell code 11, which no cell of Vale's map
+/// Unused: its row answers metatile behavior 11, which no cell of Vale's layout
 /// (layout/layout_000, the stormy night's too) carries, as
 /// EventScript_UnusedLeaveToValeInteriorsShopsWestBySecondDoor in vale_storm.c.
 /// It would have opened Isaac's door, walked the leader to the spot before it
@@ -725,9 +725,9 @@ static void Vale_HaveJennaStopTheAlephDetour(void) {
   Engine_ScriptEnd();
 }
 
-/// The puppies in Vale (touch cell 20), until the party has met Saturos and
-/// Menardi: they bark, the camera pans down to them and back, and the leader
-/// turns away.
+/// The puppies in Vale (metatile behavior 20), until the party has met Saturos
+/// and Menardi: they bark, the camera pans down to them and back, and the
+/// leader turns away.
 static void EventScript_WatchThePuppies(void) {
   struct MapGridScrollWork *grid;
   s32 *savedOrigin;
@@ -775,8 +775,8 @@ static void EventScript_WatchThePuppies(void) {
   }
 }
 
-/// The puppies in Vale from the other side (touch cell 21): the same barking,
-/// without the camera pan.
+/// The puppies in Vale from the other side (metatile behavior 21): the same
+/// barking, without the camera pan.
 static void EventScript_TurnBackFromThePuppies(void) {
   s32 msg;
 
@@ -794,8 +794,8 @@ static void EventScript_TurnBackFromThePuppies(void) {
   }
 }
 
-/// Touch cell 100 in Vale, at the foot of the ladder beside Isaac's house:
-/// walking north into it climbs the leader up onto the roof, whose cells
+/// Metatile behavior 100 in Vale, at the foot of the ladder beside Isaac's
+/// house: walking north into it climbs the leader up onto the roof, whose cells
 /// change so it can be walked (FLAG_MAP_TEMP_04 set while there).
 static void EventScript_ClimbLadderOntoRoof(void) {
   Engine_ScriptStart();
@@ -805,9 +805,9 @@ static void EventScript_ClimbLadderOntoRoof(void) {
   Engine_ScriptEnd();
 }
 
-/// Touch cell 101 in Vale, at the top of the ladder beside Isaac's house:
-/// walking south into it climbs the leader back down, and the roof's cells
-/// are put back (FLAG_MAP_TEMP_04 cleared).
+/// Metatile behavior 101 in Vale, at the top of the ladder beside Isaac's
+/// house: walking south into it climbs the leader back down, and the roof's
+/// cells are put back (FLAG_MAP_TEMP_04 cleared).
 static void EventScript_ClimbDownFromRoof(void) {
   Engine_ScriptStart();
   Vale_MoveObjectEventAlongHigherZPath(LOCALID_PARTY_LEADER, 13, 10, 1);
@@ -816,10 +816,10 @@ static void EventScript_ClimbDownFromRoof(void) {
   Engine_ScriptEnd();
 }
 
-/// A bearded man in a long robe in Vale (LOCALID_MAN_GUARDING_MT_ALEPH, touch
-/// cell 50) jumps out in front of Isaac, then keeps watching him; sets
-/// FLAG_VALE_WARNED_AGAINST_MT_ALEPH. "You're not planning on sneaking up to
-/// Mt. Aleph...?"
+/// A bearded man in a long robe in Vale (LOCALID_MAN_GUARDING_MT_ALEPH,
+/// metatile behavior 50) jumps out in front of Isaac, then keeps watching him;
+/// sets FLAG_VALE_WARNED_AGAINST_MT_ALEPH. "You're not planning on sneaking up
+/// to Mt. Aleph...?"
 static void EventScript_WarnAgainstSneakingUpMtAleph(void) {
   struct ObjectEvent *guard;
   struct ObjectEvent *objectEvent;
@@ -893,7 +893,8 @@ static void EventScript_RepeatMtAlephWarningFromFirstApproach(void) {
   }
 }
 
-/// Asks about the Aleph detour, then resumes each actor's response actions.
+/// Asks about the Aleph detour, then resumes each object event's response
+/// actions.
 static void Vale_AskAboutSneakingToAleph(const s32 *leaderActions,
                                          const s32 *guardActions) {
   const s32 *replyActions;
@@ -970,8 +971,8 @@ static void EventScript_RepeatMtAlephWarningAtEitherPause(void) {
 ///
 /// No table names it. It plays the same lines as the scene the game uses,
 /// `Good job, Garet.` and `I was devastated when Kyle died...` among them, but
-/// frames them with its own camera and map cells, and sets FLAG_MAP_TEMP_02
-/// as that scene does.
+/// frames them with its own camera and map grid cells, and sets
+/// FLAG_MAP_TEMP_02 as that scene does.
 UNUSED static void EventScript_UnusedRoofMended(void) {
   struct ObjectEvent *leader;
   struct ObjectEvent *objectEvent;
@@ -1533,9 +1534,9 @@ UNUSED static void EventScript_UnusedRoofMended(void) {
   Engine_ScriptEnd();
 }
 
-/// Vale's setup: plays the roof mending (VALE_FROM_TITLE) or its end (entrance
-/// 17, once), floats the Nut, places the pillar by its column, sets the
-/// watching man going, removes the puppies once Saturos and Menardi have
+/// Vale's setup: plays the roof mending (VALE_FROM_TITLE) or its end (warp
+/// destination 17, once), floats the Nut, places the pillar by its column, sets
+/// the watching man going, removes the puppies once Saturos and Menardi have
 /// been met, and after a battle restores the roof's and the upper path's
 /// cells.
 s32 Vale_Initialize(void) {
@@ -1664,7 +1665,7 @@ s32 Vale_Initialize(void) {
   return 0;
 }
 
-/// Back from Kalay, Garet meets his sister in Vale; sets group flag
+/// Back from Kalay, Garet meets his sister in Vale; sets map section flag
 /// FLAG_MAPSEC_TEMP_03. "Ah! It's been a while... You're back?" ("Sis...").
 static void EventScript_GaretMeetsHisSister(void) {
   struct ObjectEvent *record;
@@ -1759,7 +1760,7 @@ static void EventScript_GaretMeetsHisSister(void) {
 
 /// Back from Kalay, Garet asks one of his family in Vale
 /// (LOCALID_GARETS_BROTHER_AFTER_KALAY) to protect it while he is gone; sets
-/// group flag FLAG_MAPSEC_TEMP_04. "WHATEVER YOU DO, you must protect the
+/// map section flag FLAG_MAPSEC_TEMP_04. "WHATEVER YOU DO, you must protect the
 /// family while I'm gone."
 static void EventScript_GaretAsksToProtectFamily(void) {
   struct ObjectEvent *record;
@@ -1854,8 +1855,9 @@ static void EventScript_GaretAsksToProtectFamily(void) {
 ///
 /// No table names it. He would have started, sniffled through
 /// `I still remember when Felix and I used to play here...*Sniff*`, turned to
-/// the leader to say that Felix must be protecting Jenna, and set group flag
-/// FLAG_MAPSEC_TEMP_05. His talk and Mind Read rows show the same two lines.
+/// the leader to say that Felix must be protecting Jenna, and set map section
+/// flag FLAG_MAPSEC_TEMP_05. His talk and Mind Read rows show the same two
+/// lines.
 UNUSED static void EventScript_UnusedWaterBurstsByTheRiver(void) {
   struct ObjectEvent *objectEvent;
   const s32 *actions;
@@ -1895,8 +1897,8 @@ UNUSED static void EventScript_UnusedWaterBurstsByTheRiver(void) {
   Engine_ScriptEnd();
 }
 
-/// Walks an actor to the foot of the ladder beside Isaac's house and climbs
-/// it onto the roof, in `approachAnimationId` on the rungs and
+/// Walks an object event to the foot of the ladder beside Isaac's house and
+/// climbs it onto the roof, in `approachAnimationId` on the rungs and
 /// `departureAnimationId` over the eaves.
 static void Vale_MoveObjectEventAlongLowerZPath(s32 objectEventId,
                                                 s32 approachAnimationId,
@@ -1933,8 +1935,8 @@ static void Vale_MoveObjectEventAlongLowerZPath(s32 objectEventId,
   Engine_ObjectEventSetAnimation(objectEventId, ANIMATION_STAND);
 }
 
-/// Climbs an actor down the ladder beside Isaac's house from the roof, and
-/// restores falling motion if requested.
+/// Climbs an object event down the ladder beside Isaac's house from the roof,
+/// and restores falling motion if requested.
 static void Vale_MoveObjectEventAlongHigherZPath(s32 objectEventId,
                                                  s32 approachAnimationId,
                                                  s32 departureAnimationId,
@@ -3197,7 +3199,7 @@ static void Vale_UpdateParticlePosition(struct ObjectEvent *particle,
   }
 }
 
-/// Pushing the pillar in Vale (touch cells 30 and 31) moves it a cell.
+/// Pushing the pillar in Vale (metatile behaviors 30 and 31) moves it a cell.
 static void EventScript_PushPillar(void) {
 #if !TBS_PATCH_1
   // Japanese edition only: look up the pillar but do not use the return value.
@@ -3248,7 +3250,7 @@ static void Vale_PlayStepSound(void) {
     Engine_AudioPlayCue(SE_131);
 }
 
-/// Searching a locked door in Vale (search code 24).
+/// Searching a locked door in Vale (metatile behavior 24).
 static void EventScript_SearchTheLockedDoor(void) {
   Engine_ScriptStart();
   Engine_MessageShowCentered(MsgValeDoorWontOpen, 1);
@@ -3354,7 +3356,7 @@ s32 gStagedObjectEvent_FootprintBounds[] = {
 
 /// The man guarding Mt. Aleph walks his beat below the path once he has warned
 /// Isaac, looking about at each stop. SW_TIMER says which stretch he is on,
-/// 1 to 3, of which the warning events act on the two pauses, 1 and 2.
+/// 1 to 3, of which the warning scripts act on the two pauses, 1 and 2.
 s32 gVale_AlephGuardPatrol[] = {
     SC_SET(SW_SPEED, PIXELS(1) / 2),
     SC_SET(SW_ACCELERATION, PIXELS(1) / 4),
@@ -3831,7 +3833,7 @@ struct MapEvent gVale_EventsAfterKalay[] = {
 };
 // clang-format on
 
-// The doors' cell animations, from the map's cells below the village, each
+// The doors' cell animations, from the layout's cells below the village, each
 // picture shown for two frames; vale_storm.c has the same four kinds. Each
 // table takes the name of a door it opens. The two of Jenna's grandparents'
 // kind and the west house's show their one open picture twice, where the

@@ -1,12 +1,12 @@
 /// @file
-/// Two scenes of Tolbi where the party plays for prizes whenever it is in
-/// town; neither has a story event.
+/// Two maps of Tolbi where the party plays for prizes whenever it is in
+/// town; neither has a story script.
 ///
 /// - Tolbi (MapId_TolbiGameRooms), the rooms of Lucky Dice and Lucky
 ///   Wheels; TOLBI_GAME_ROOMS_LUCKY_DICE_TO_TOLBI and
 ///   TOLBI_GAME_ROOMS_LUCKY_WHEELS_TO_TOLBI lead back into MapId_Tolbi.
 ///   The Lucky Dice attendant asks ten coins for each level of the party's
-///   average level: the coin total is saved in the scene state and the party
+///   average level: the coin total is saved in the game state and the party
 ///   goes to the Lucky Dice game, which returns to
 ///   TOLBI_GAME_ROOMS_AFTER_OFFER_LUCKY_DICE, where the setup has the attendant
 ///   announce the coins won or lost, with a fanfare by the size of the win. The
@@ -92,7 +92,7 @@ static s32 TolbiSpring_RunToss(s32 tossKind);
 
 enum SpringTossKind { SPRING_TOSS_COIN, SPRING_TOSS_MEDAL };
 
-/// The actors of the Lucky Dice and Lucky Wheels rooms (TolbiGameRooms),
+/// The object events of the Lucky Dice and Lucky Wheels rooms (TolbiGameRooms),
 /// numbered in the order of gTolbiSpringObjectEventTemplatesOther from
 /// LOCALID_FIRST_PLACED.
 enum TolbiSpringGameRoomLocalId {
@@ -133,7 +133,7 @@ enum TolbiSpringGameRoomLocalId {
   TOLBI_SPRING_DICE_PAIRS_SIGN
 };
 
-/// Tolbi Spring's own actors (TolbiSpring), numbered in the order of
+/// Tolbi Spring's own object events (TolbiSpring), numbered in the order of
 /// gTolbiSpringObjectEventTemplates from LOCALID_FIRST_PLACED. The toss draws
 /// the coin or the medal with its shadow and three trailing copies, which
 /// TOLBI_SPRING_COIN_TRAIL and TOLBI_SPRING_MEDAL_TRAIL number.
@@ -173,8 +173,8 @@ enum TolbiSpringLocalId {
   TOLBI_SPRING_VISITOR_ONE_MEDAL
 };
 
-/// The actor that draws toss->trail[n] of a tossed coin or medal, n from 1 to
-/// 3: the rows before each shadow, the oldest copy first.
+/// The object event that draws toss->trail[n] of a tossed coin or medal, n from
+/// 1 to 3: the rows before each shadow, the oldest copy first.
 #define TOLBI_SPRING_COIN_TRAIL(n) (TOLBI_SPRING_COIN_SHADOW - (n))
 #define TOLBI_SPRING_MEDAL_TRAIL(n) (TOLBI_SPRING_MEDAL_SHADOW - (n))
 
@@ -244,8 +244,8 @@ const struct MapWarpRegion *TolbiSpring_GetRegions(void) { return NULL; }
 
 const u32 *TolbiSpring_GetWarps(void) { return gTolbiSpring_Warps; }
 
-/// Selects the actors of Tolbi Spring or of the Lucky Dice and Lucky Wheels
-/// rooms.
+/// Selects the object events of Tolbi Spring or of the Lucky Dice and Lucky
+/// Wheels rooms.
 const struct ObjectEventTemplate *TolbiSpring_GetObjectEventTemplates(void) {
   if (gGameState.mapId == (s32)&MapId_TolbiSpring) {
     return gTolbiSpringObjectEventTemplates;
@@ -319,7 +319,7 @@ static void TolbiSpring_TalkToWheelsAttendant(void) {
   TolbiSpring_OfferLuckyWheels(0);
 }
 
-/// Selects the events of Tolbi Spring or of the Lucky Dice and Lucky Wheels
+/// Selects the map events of Tolbi Spring or of the Lucky Dice and Lucky Wheels
 /// rooms.
 const struct MapEvent *TolbiSpring_GetEvents(void) {
   if (gGameState.mapId == (s32)&MapId_TolbiSpring) {
@@ -328,7 +328,7 @@ const struct MapEvent *TolbiSpring_GetEvents(void) {
   return gTolbiSpringEventsOther;
 }
 
-/// The setup of both scenes. Tolbi Spring: the blend, the two mirrored props
+/// The setup of both maps. Tolbi Spring: the blend, the two mirrored props
 /// drawn underfoot and, from Tolbi (TOLBI_SPRING_FROM_TOLBI), the toss's
 /// obstacles, with the spring shown at once if it has risen in this visit. The
 /// Lucky Dice and Lucky Wheels rooms: the soldier removed after
@@ -894,7 +894,7 @@ static s32 TolbiSpring_SelectLuckyWheelsPrize(s32 category) {
   return gTolbiSpring_LuckyWheelsPrizeItems[category * 3 + variant];
 }
 
-/// Copies three coordinates and sets the actor's facing, child value and
+/// Copies three coordinates and sets the object event's facing, child value and
 /// colors.
 static void TolbiSpring_SetObjectEventAppearance(s32 objectEventId,
                                                  const s32 *coordinate,
@@ -914,7 +914,8 @@ static void TolbiSpring_SetObjectEventAppearance(s32 objectEventId,
     ObjectDispatch_SetAnimationSpeed((struct DispatchObject *)objectEvent,
                                      childValue);
   }
-  // BUG: the original still dereferences actor here when lookup returned NULL.
+  // BUG: the original still dereferences objectEvent here when lookup returned
+  // NULL.
   sprite = objectEvent->sprite;
   entryCount = sprite->count;
   if (entryCount != 0) {
@@ -939,7 +940,7 @@ static void TolbiSpring_SetObjectEventAppearance(s32 objectEventId,
   }
 }
 
-/// Sets whether the specified actor draws its sprite.
+/// Sets whether the specified object event draws its sprite.
 static void TolbiSpring_SetSpriteStorageKind(s32 objectEventId,
                                              s32 storageKind) {
   struct ObjectEvent *objectEvent = ObjectEvent_GetById(objectEventId);

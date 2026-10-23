@@ -8,14 +8,15 @@
 /// - The first arrival (MERCURY_LIGHTHOUSE_AERIE_AFTER_BEACON_LIT,
 ///   MercuryLighthouseAerie_PartyArrives): the Adepts of the lit element
 ///   regain their PP, the aerie shakes, and in a flash the party stands at the
-///   top. Touching cell code 5 (MercuryLighthouseAerie_ConfrontSaturos), Garet
-///   sees `It's too late! The lighthouse has already been lit!` Mia learns that
-///   the party came from Vale to recover the Elemental Stars, and that Vale
-///   protected Sol Sanctum as her clan protects the lighthouse; Jenna calls
-///   out, and Felix, Menardi and Saturos face the party. Saturos sends Menardi
-///   on to the next lighthouse with Jenna, Kraden and Felix, and fights the
-///   party alone (ENCOUNTER_ZONE_SCRIPTED_TRET_MERCURY, slot 2), the light of
-///   Mercury weakening his Psynergy.
+///   top. Touching metatile behavior 5
+///   (MercuryLighthouseAerie_ConfrontSaturos), Garet sees `It's too late! The
+///   lighthouse has already been lit!` Mia learns that the party came from Vale
+///   to recover the Elemental Stars, and that Vale protected Sol Sanctum as her
+///   clan protects the lighthouse; Jenna calls out, and Felix, Menardi and
+///   Saturos face the party. Saturos sends Menardi on to the next lighthouse
+///   with Jenna, Kraden and Felix, and fights the party alone
+///   (ENCOUNTER_ZONE_SCRIPTED_TRET_MERCURY, slot 2), the light of Mercury
+///   weakening his Psynergy.
 /// - Back from the battle (MERCURY_LIGHTHOUSE_AERIE_AFTER_SATUROS_BATTLE,
 ///   MercuryLighthouseAerie_AlexAppears): `Isaac, we got him!` Alex, the
 ///   apprentice Mia lost, appears and explains that Saturos, aligned with
@@ -29,16 +30,16 @@
 ///   FLAG_SATUROS_BEATEN_AT_MERCURY, which Imil, Bilibin and the lighthouse
 ///   test).
 /// - Getting about. Six platforms dip under the leader, who jumps two cells
-///   from one to the next (cell codes 10 and 11;
+///   from one to the next (metatile behaviors 10 and 11;
 ///   places/mercury-lighthouse-aerie/events/MercuryLighthouseAerie_StepOntoPlatform.gif);
 ///   the lift leads down to
 ///   Mercury Lighthouse's MapId_MercuryLighthouseExterior
 ///   (mercury_lighthouse.c), arriving at
 ///   MERCURY_LIGHTHOUSE_EXTERIOR_FROM_MERCURY_LIGHTHOUSE_AERIE by the Fountain
-///   of Healing: cell code 6 calls it up, cell code 12 rides it down
-///   (MERCURY_LIGHTHOUSE_AERIE_TO_MERCURY_LIGHTHOUSE_EXTERIOR), and arriving by
-///   it (MERCURY_LIGHTHOUSE_AERIE_FROM_MERCURY_LIGHTHOUSE_EXTERIOR) leaves it
-///   up
+///   of Healing: metatile behavior 6 calls it up, metatile behavior 12 rides it
+///   down (MERCURY_LIGHTHOUSE_AERIE_TO_MERCURY_LIGHTHOUSE_EXTERIOR), and
+///   arriving by it (MERCURY_LIGHTHOUSE_AERIE_FROM_MERCURY_LIGHTHOUSE_EXTERIOR)
+///   leaves it up
 ///   (places/mercury-lighthouse-aerie/events/MercuryLighthouseAerie_RideLiftDown.gif).
 ///   A Psynergy Stone can be found here.
 ///
@@ -47,13 +48,14 @@
 /// flickers and sheds sparks by callback
 /// (MercuryLighthouseAerie_FlickerBeacon), and the platforms start 50 pixels
 /// down. Jenna, Kraden, Felix and Menardi are placed only on the first arrival:
-/// every other entrance sets FLAG_HOSTAGES_GONE before the placements are read.
+/// every other warp destination sets FLAG_HOSTAGES_GONE before the object event
+/// templates are read.
 ///
 /// Unused: MapId_UnusedMercuryLighthouseAerieCopy, which the area
-/// names call Mercury Lighthouse and the debug scene list labels `MTO07NG`,
+/// names call Mercury Lighthouse and the debug map list labels `MTO07NG`,
 /// loads this overlay and the same map. The setup does nothing for it, and no
-/// exit, table or code leads there; only the debug scene selector, which
-/// reaches every scene, can.
+/// warp, table or code leads there; only the debug map selector, which
+/// reaches every map, can.
 ///
 /// Open questions:
 /// - XXX (no evidence): what MercuryLighthouseAerie_UnusedAlexCastsPly was
@@ -97,7 +99,7 @@
 #include "io_reg.h"
 #include "ability_ids.h"
 
-/// The aerie's actors. The party and Jenna stand in their own slots. The
+/// The aerie's object events. The party and Jenna stand in their own slots. The
 /// speakers are known from the text: Kraden ("It's all right, Jenna."), Felix
 /// ("Jenna, please... Just do as she says"), Saturos (Menardi: "Oh,
 /// Saturos..."), Menardi (Saturos: "Menardi... Wait!") and Alex (Mia:
@@ -141,7 +143,7 @@ enum MercuryLighthouseAerieLocalId {
   LOCALID_ALEX
 };
 
-/// Scene flags, kept while the party stays on the aerie.
+/// Map flags, kept while the party stays on the aerie.
 enum {
   /// The leader stands on a platform, which has dipped under the weight.
   /// ★ Named from what the player sees: the round platforms floating in the
@@ -186,14 +188,14 @@ const struct MapWarpRegion *MercuryLighthouseAerie_GetRegions(void) {
   return 0;
 }
 
-/// Returns the one exit: the lift down to MapId_MercuryLighthouseExterior's
+/// Returns the one warp: the lift down to MapId_MercuryLighthouseExterior's
 /// MERCURY_LIGHTHOUSE_EXTERIOR_FROM_MERCURY_LIGHTHOUSE_AERIE, by the Fountain
 /// of Healing.
 const u32 *MercuryLighthouseAerie_GetWarps(void) {
   return gMercuryLighthouseAerieWarps;
 }
 
-/// Returns the actors; only the first arrival
+/// Returns the object events; only the first arrival
 /// (MERCURY_LIGHTHOUSE_AERIE_AFTER_BEACON_LIT) places Jenna, Kraden, Felix
 /// and Menardi.
 const struct ObjectEventTemplate *
@@ -405,8 +407,9 @@ static void MercuryLighthouseAerie_PartyArrives(void) {
 #include "common/object_distance.h"
 #include "common/object_nearest.h"
 
-/// Lighthouse Aerie: walking into cell code 10 or 11. If nothing is in the way
-/// the leader jumps two cells ahead, off any platform and onto the next.
+/// Lighthouse Aerie: walking into metatile behavior 10 or 11. If nothing is in
+/// the way the leader jumps two cells ahead, off any platform and onto the
+/// next.
 static void MercuryLighthouseAerie_JumpToPlatform(void) {
   struct ObjectEvent *objectEvent;
   struct FieldPosition position;
@@ -440,8 +443,8 @@ static void MercuryLighthouseAerie_JumpToPlatform(void) {
   }
 }
 
-/// Lighthouse Aerie: touching cell code 10 when not already on a platform.
-/// The platform underfoot dips with the leader and bobs back up.
+/// Lighthouse Aerie: touching metatile behavior 10 when not already on a
+/// platform. The platform underfoot dips with the leader and bobs back up.
 static void MercuryLighthouseAerie_StepOntoPlatform(void) {
   struct ObjectEvent *leader;
   struct ObjectEvent *objectEvent;
@@ -480,8 +483,8 @@ static void MercuryLighthouseAerie_StepOntoPlatform(void) {
   Engine_ScriptEnd();
 }
 
-/// Lighthouse Aerie: touching cell code 11, off the platforms. The leader walks
-/// normally again and the platforms stop following.
+/// Lighthouse Aerie: touching metatile behavior 11, off the platforms. The
+/// leader walks normally again and the platforms stop following.
 static void MercuryLighthouseAerie_SettlePlatforms(void) {
   ObjectEvent_GetById(LOCALID_PARTY_LEADER)->motionFlags = 3;
   ObjectEvent_GetById(LOCALID_FIRST_PLATFORM)->motionFlags = 4;
@@ -492,9 +495,9 @@ static void MercuryLighthouseAerie_SettlePlatforms(void) {
   ObjectEvent_GetById(LOCALID_FIRST_PLATFORM + 5)->motionFlags = 4;
 }
 
-/// Lighthouse Aerie: touching cell code 5 before the confrontation. Garet sees
-/// the lighthouse is lit: "It's too late! The lighthouse has already been
-/// lit!" Mia learns the party is from Vale; Jenna calls out, and Felix,
+/// Lighthouse Aerie: touching metatile behavior 5 before the confrontation.
+/// Garet sees the lighthouse is lit: "It's too late! The lighthouse has already
+/// been lit!" Mia learns the party is from Vale; Jenna calls out, and Felix,
 /// Menardi and Saturos face the party. Menardi leaves with Jenna, Kraden and
 /// Felix for the next lighthouse, and Saturos fights alone
 /// (ENCOUNTER_ZONE_SCRIPTED_TRET_MERCURY, slot 2).
@@ -1492,8 +1495,8 @@ static void MercuryLighthouseAerie_AlexAppears(void) {
   Engine_ScriptEnd();
 }
 
-/// Lighthouse Aerie: touching cell code 6 while the lift is down. The camera
-/// watches it rise with its statue.
+/// Lighthouse Aerie: touching metatile behavior 6 while the lift is down. The
+/// camera watches it rise with its statue.
 static void MercuryLighthouseAerie_CallLift(void) {
   struct MapGridLayerScroll *lift;
 
@@ -1522,8 +1525,8 @@ static void MercuryLighthouseAerie_CallLift(void) {
   Engine_ScriptEnd();
 }
 
-/// Lighthouse Aerie: touching cell code 12. The leader steps onto the lift and
-/// rides it down to MapId_MercuryLighthouseExterior, arriving at
+/// Lighthouse Aerie: touching metatile behavior 12. The leader steps onto the
+/// lift and rides it down to MapId_MercuryLighthouseExterior, arriving at
 /// MERCURY_LIGHTHOUSE_EXTERIOR_FROM_MERCURY_LIGHTHOUSE_AERIE by the Fountain of
 /// Healing.
 static void MercuryLighthouseAerie_RideLiftDown(void) {

@@ -22,7 +22,7 @@
 ///   Kraden runs off to the statue room
 ///   (SolSanctumLunaSolRooms_FlashLightsWithTrapDisarmed,
 ///   FLAG_SOL_SANCTUM_KRADEN_SAID_FOUND_SOMETHING). Both take the party back
-///   to the statue room by the exit named for the scene.
+///   to the statue room by the warp named for the scene.
 /// - With all four quarters lit, Kraden sees that the picture of Luna has
 ///   become Sol (EventScript_KradenSeesLunaPictureChange,
 ///   FLAG_SOL_SANCTUM_LUNA_PICTURE_CHANGED) and that the floor's symbol has
@@ -39,14 +39,14 @@
 ///
 /// The rooms' colours follow the party: cells on the floor between them fade
 /// the palette to a tint or back to plain colours (enum
-/// SolSanctumLunaSolRoomsCell), and one of three scene flags remembers which
+/// SolSanctumLunaSolRoomsCell), and one of three map flags remembers which
 /// colours show, so a return after a battle keeps them. On entry
 /// SolSanctumLunaSolRooms_Initialize copies each lit quarter into its
 /// FLAG_SOL_SANCTUM_*_LIGHT_SHOWN and redraws the pictures, the floor and the
-/// open way up from the story flags, unless the entrance's own scene draws
-/// them. The falling lights are four callbacks, each with a random timer of its
-/// own, that the trap adds and removes. A third statue-room scene, the lit
-/// quarters flashing for Kraden
+/// open way up from the story flags, unless the warp destination's own scene
+/// draws them. The falling lights are four callbacks, each with a random timer
+/// of its own, that the trap adds and removes. A third statue-room scene, the
+/// lit quarters flashing for Kraden
 /// (SolSanctumLunaSolRooms_UnusedAnimateSavedStatueLights), is never reached.
 ///
 /// Open questions:
@@ -83,8 +83,9 @@
 #include "audio_engine_symbols.h"
 #include "item_ids.h"
 
-// Place flags: Map_ResetFlagsOnEnter clears 0x300 to 0x3ff when the party
-// enters another place group, and other places use the numbers for their own.
+// Map section flags: Map_ResetFlagsOnEnter clears 0x300 to 0x3ff when the
+// party enters another map section, and other map sections use the numbers for
+// their own.
 /// Set once Isaac and Garet's arrival after the Wise One's rescue has played.
 /// ★ Named from the game: "Did that floating eye thing save us?"
 /// (MsgSolSanctumFloatingEyeThing)
@@ -95,8 +96,8 @@
 /// The dim red tint the rooms fade to.
 #define SOL_SANCTUM_WARM_TINT (PALETTE_TRANSFORM_TINT | RGB(17, 13, 11))
 
-/// The collision codes of the floor cells the events answer; codes 1 and 2
-/// are the exits.
+/// The metatile behaviors of the floor cells the events answer; behaviors 1
+/// and 2 are the warps.
 enum SolSanctumLunaSolRoomsCell {
   /// Before Kraden in the Luna room.
   SOL_SANCTUM_CELL_BEFORE_KRADEN = 8,
@@ -119,9 +120,9 @@ enum SolSanctumLunaSolRoomsCell {
   SOL_SANCTUM_CELL_CHEST = 100
 };
 
-// Scene flags, cleared on every ordinary entrance; one of the three is set at
-// a time, for the colours the rooms show, so a return after a battle keeps
-// them:
+// Map flags, cleared at every ordinary warp destination; one of the three is
+// set at a time, for the colours the rooms show, so a return after a battle
+// keeps them:
 // - FLAG_MAP_TEMP_00: the plain colours (PALETTE_TRANSFORM_PLAIN);
 // - FLAG_MAP_TEMP_01: SOL_SANCTUM_BLUE_TINT;
 // - FLAG_MAP_TEMP_02: SOL_SANCTUM_WARM_TINT.
@@ -154,8 +155,8 @@ SolSanctumLunaSolRooms_GetObjectEventTemplates(void) {
   return gSolSanctumLunaSolRoomsObjectEventTemplates;
 }
 
-/// Returns the floor's cell codes that tint the rooms, Kraden's talk and
-/// cutscenes, the floor symbol and the Herb's chest.
+/// Returns the floor's metatile behaviors that tint the rooms, Kraden's talk
+/// and cutscenes, the floor symbol and the Herb's chest.
 const struct MapEvent *SolSanctumLunaSolRooms_GetEvents(void) {
   return gSolSanctumLunaSolRoomsEvents;
 }
@@ -1364,12 +1365,12 @@ static void EventScript_RiseToElementalStarRoom(void) {
   }
 }
 
-/// Sets up Sol Sanctum's rooms of Sol and Luna and plays the scene this
-/// entrance calls for. Called by Field_RunMap once the actors exist. Blocks
-/// Retreat (FLAG_RETREAT_BLOCKED) from Kraden's find until the way up opens,
-/// before the eruption; sets FLAG_MAP_TEMP_00 on an ordinary entrance; copies
-/// each lit quarter into its FLAG_SOL_SANCTUM_*_LIGHT_SHOWN; plays the disarmed
-/// trap's flash at
+/// Sets up Sol Sanctum's rooms of Sol and Luna and plays the scene this warp
+/// destination calls for. Called by Field_RunMap once the object events exist.
+/// Blocks Retreat (FLAG_RETREAT_BLOCKED) from Kraden's find until the way up
+/// opens, before the eruption; sets FLAG_MAP_TEMP_00 at an ordinary warp
+/// destination; copies each lit quarter into its
+/// FLAG_SOL_SANCTUM_*_LIGHT_SHOWN; plays the disarmed trap's flash at
 /// SOL_SANCTUM_LUNA_SOL_ROOMS_FROM_SOL_SANCTUM_STATUE_TRAP_DISARMED, the trap
 /// at SOL_SANCTUM_LUNA_SOL_ROOMS_FROM_SOL_SANCTUM_STATUE_TRAP_TRIGGERED (then
 /// darkening the four quarters), the newly lit quarters at
@@ -1409,7 +1410,7 @@ s32 SolSanctumLunaSolRooms_Initialize(void) {
       ObjectEvent_SetPosition(LOCALID_KRADEN, PIXELS(576), PIXELS(120));
     }
   }
-  // Play the one-time scene this entrance comes back from
+  // Play the one-time scene this warp destination comes back from
   // MapId_SolSanctumStatue for.
   if (gGameState.warpDest ==
       SOL_SANCTUM_LUNA_SOL_ROOMS_FROM_SOL_SANCTUM_STATUE_TRAP_DISARMED) {
@@ -1451,7 +1452,8 @@ s32 SolSanctumLunaSolRooms_Initialize(void) {
     Engine_GameFlagSet(FLAG_SOL_SANCTUM_SOUTHEAST_LIGHT_SHOWN);
   }
   Engine_TaskWait(4);
-  // Restore completed puzzle tiles without replaying the entrance scene.
+  // Restore completed puzzle tiles without replaying the warp
+  // destination's scene.
   if (playedEntrySequence == 0) {
     if (SolSanctumLunaSolRooms_AreAllStatueLightsLit() != 0) {
       MapGrid_CopyCellsTo(30, 44, 30, 38, 12, 5);
@@ -1574,7 +1576,7 @@ static void SolSanctumLunaSolRooms_ArriveAfterWiseOnesRescue(void) {
   Engine_TaskWait(1);
   ObjectEvent_SetPosition(GARET, PIXELS(280), PIXELS(134));
   ObjectEvent_FaceDirection(GARET, FACING_NORTHWEST, 0);
-  // This event reads its work slots from one address: HEAP_SLOT_PALETTE_BUFFER
+  // This script reads its work slots from one address: HEAP_SLOT_PALETTE_BUFFER
   // is reached from HEAP_SLOT_EVENT's slot. As gEventWork and
   // gPaletteBufferWork they would load two.
   ((struct EventWork *)WORK_SLOT(HEAP_SLOT_EVENT))->transitionFrames = 1;

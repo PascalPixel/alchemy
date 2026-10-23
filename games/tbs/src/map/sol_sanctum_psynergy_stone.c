@@ -2,12 +2,12 @@
 /// Sol Sanctum (MapId_SolSanctumPsynergyStone), a room off the statue room
 /// (MapId_SolSanctumStatue) that holds a Psynergy Stone.
 ///
-/// Its one exit, SOL_SANCTUM_PSYNERGY_STONE_TO_SOL_SANCTUM_STATUE, leads back
+/// Its one warp, SOL_SANCTUM_PSYNERGY_STONE_TO_SOL_SANCTUM_STATUE, leads back
 /// to the statue room, and it places nobody. Searching in it finds the
-/// Psynergy Stone, which restores all PP. The stone is kept by a place flag
-/// (FLAG_SOL_SANCTUM_PSYNERGY_STONE_TAKEN) rather than a story flag, so
+/// Psynergy Stone, which restores all PP. The stone is kept by a map section
+/// flag (FLAG_SOL_SANCTUM_PSYNERGY_STONE_TAKEN) rather than a story flag, so
 /// Map_ResetFlagsOnEnter puts it back whenever the party enters another
-/// place group. Retreat does not work here, and once Mt. Aleph has erupted the
+/// map section. Retreat does not work here, and once Mt. Aleph has erupted the
 /// room rumbles and shakes, as the rest of the sanctum does.
 ///
 /// Open questions:
@@ -34,8 +34,9 @@
 #include "songs.h"
 #include "fixed_math.h"
 
-// Place flags: Map_ResetFlagsOnEnter clears 0x300 to 0x3ff when the party
-// enters another place group, and other places use the numbers for their own.
+// Map section flags: Map_ResetFlagsOnEnter clears 0x300 to 0x3ff when the party
+// enters another map section, and other map sections use the numbers for their
+// own.
 /// ★ Named from the game: "a Psynergy Stone" (MsgGotPsynergyStone)
 #define FLAG_SOL_SANCTUM_PSYNERGY_STONE_TAKEN 0x350
 
@@ -51,12 +52,12 @@ const struct ObjectEventTemplate *Map_GetObjectEventTemplates(void) {
   return gSolSanctumPsynergyStoneObjectEventTemplates;
 }
 
-/// The exit and the Psynergy Stone.
+/// The warp and the Psynergy Stone.
 const struct MapEvent *Map_GetEvents(void) {
   return gSolSanctumPsynergyStoneEvents;
 }
 
-/// Opens the scene with the window transition and blocks Retreat. Once Mt.
+/// Opens the map with the window transition and blocks Retreat. Once Mt.
 /// Aleph has erupted (FLAG_SOL_SANCTUM_ERUPTED), the room rumbles (SE_141)
 /// and shakes gently, as the rest of the sanctum does.
 s32 Map_Initialize(void) {

@@ -55,7 +55,7 @@
 #include "object_event.h"
 #include "flags.h"
 
-/// The actors of the houses, shops and inn, numbered by the rows of
+/// The object events of the houses, shops and inn, numbered by the rows of
 /// gXianInteriors_ObjectEventTemplates. Each villager is named by what they
 /// talk of before Xian hears of Hsu.
 enum XianInteriorsLocalId {
@@ -112,7 +112,7 @@ enum {
   XIAN_INN = 5
 };
 
-/// The actors placed in the room behind Master Feh's school
+/// The object events placed in the room behind Master Feh's school
 /// (XIAN_INTERIORS_FROM_FUCHIN_TEMPLE_INTERIORS), where they stand once Xian
 /// has heard of Hsu, as its dialogue shows them: Master Feh says Feizhi's
 /// prediction came true, Feizhi welcomes the party, and Hsu was injured on his
@@ -149,7 +149,8 @@ const u32 *XianInteriors_GetWarps(void) { return gXianInteriors_Warps; }
 
 /// The room behind the school places only Master Feh, Feizhi and Hsu. Every
 /// other room shares one table, whose condition 0 MapTable_Prepare replaces
-/// with whether each actor stands inside the view bounds of the room entered.
+/// with whether each object event stands inside the view bounds of the room
+/// entered.
 const struct ObjectEventTemplate *XianInteriors_GetObjectEventTemplates(void) {
   if (gGameState.warpDest == XIAN_INTERIORS_FROM_FUCHIN_TEMPLE_INTERIORS) {
     return gXianInteriors_SchoolRoomObjectEventTemplates;
@@ -158,7 +159,7 @@ const struct ObjectEventTemplate *XianInteriors_GetObjectEventTemplates(void) {
   return gXianInteriors_ObjectEventTemplates;
 }
 
-/// Reads the leader's facing before a conversation changes actor state.
+/// Reads the leader's facing before a conversation changes object event state.
 static inline u32 XianInteriors_GetLeaderFacing(void) {
   struct ObjectEvent *leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
   return leader->facing;
@@ -282,7 +283,7 @@ static void XianInteriors_FeizhiThanksParty(void) {
   Engine_ScriptEnd();
 }
 
-/// The room behind the school has its own events.
+/// The room behind the school has its own map events.
 const struct MapEvent *XianInteriors_GetEvents(void) {
   if (gGameState.warpDest == XIAN_INTERIORS_FROM_FUCHIN_TEMPLE_INTERIORS) {
     return gXianInteriors_SchoolRoomEvents;

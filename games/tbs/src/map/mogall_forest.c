@@ -7,13 +7,13 @@
 /// the world map, through the second (MapId_MogallForestQuartz) to the third
 /// (MapId_MogallForestKillerApe), which leaves for the world map by
 /// MOGALL_FOREST_KILLER_APE_TO_WORLD_MAP. Apes hide in hollow purple stumps,
-/// each stump holding a blank actor on its spot, and Force on a stump brings
-/// its ape out. Most turn to the leader, point the way on and leave; two first
-/// bolt to a second hiding place; and one in the first area and one in the
-/// third leap at the leader instead, starting a battle with an Ape
+/// each stump holding a blank object event on its spot, and Force on a stump
+/// brings its ape out. Most turn to the leader, point the way on and leave; two
+/// first bolt to a second hiding place; and one in the first area and one in
+/// the third leap at the leader instead, starting a battle with an Ape
 /// (ENCOUNTER_ZONE_SCRIPTED_MOGALL_ALTIN_LAMAKAN, slot 0). An ape stays gone
 /// once out, and logs pushed into the river stay there, for as long as the
-/// party is in the forest (place flags from FLAG_MAPSEC_TEMP_00).
+/// party is in the forest (map section flags from FLAG_MAPSEC_TEMP_00).
 ///
 /// - First area (MapId_MogallForestSign). Arriving the first time, an ape
 ///   peeks out at the leader and hides (FLAG_MOGALL_FOREST_FIRST_APE_SEEN). A
@@ -26,9 +26,9 @@
 ///   Apple.
 /// - Third area (MapId_MogallForestKillerApe). Two logs roll into the river,
 ///   two rocks settle with Move, and a chest holds an Elven Shirt. Touching
-///   cell code 22 the first time, the east ape leads the party south to a
-///   hiding place (FLAG_MOGALL_FOREST_LED_TO_KILLER_APE); there (cell code 23)
-///   the Killer Ape bursts out to fight
+///   metatile behavior 22 the first time, the east ape leads the party south to
+///   a hiding place (FLAG_MOGALL_FOREST_LED_TO_KILLER_APE); there (metatile
+///   behavior 23) the Killer Ape bursts out to fight
 ///   (ENCOUNTER_ZONE_SCRIPTED_MOGALL_ALTIN_LAMAKAN, slot 1), and coming back at
 ///   MOGALL_FOREST_KILLER_APE_AFTER_KILLER_APE_ATTACKS marks it beaten
 ///   (FLAG_MOGALL_FOREST_KILLER_APE_BEATEN). Entering at
@@ -37,16 +37,16 @@
 ///   Killer Ape beaten sets FLAG_NYUNPA_ENLIGHTENED: back at Fuchin Temple the
 ///   monks say that Nyunpa has reached enlightenment and passed away.
 /// - MapId_MogallForestSidePaths, also named Mogall Forest: side paths that
-///   the three areas' exits lead into and back out of, some of them leading
-///   back into the scene itself; a Psynergy Stone lies there.
+///   the three areas' warps lead into and back out of, some of them leading
+///   back into the map itself; a Psynergy Stone lies there.
 ///
-/// One overlay serves all four scenes: MogallForest_GetWarpDests,
-/// _GetObjectEventTemplates and _GetEvents choose each scene's tables, and
+/// One overlay serves all four maps: MogallForest_GetWarpDests,
+/// _GetObjectEventTemplates and _GetEvents choose each map's tables, and
 /// MogallForest_Initialize puts back the apes already out, the rolled logs and
-/// the settled rocks, scene by scene and entrance by entrance. The third
-/// area's east ape is also the guide at cell code 22 and the Killer Ape, and
-/// the editions differ in how it is kept out of sight once it has come out (the
-/// #if blocks below and in MogallForest_Initialize).
+/// the settled rocks, map by map and warp destination by warp destination. The
+/// third area's east ape is also the guide at metatile behavior 22 and the
+/// Killer Ape, and the editions differ in how it is kept out of sight once it
+/// has come out (the #if blocks below and in MogallForest_Initialize).
 ///
 /// The apes and rocks are told apart by colour mode (enum SpriteColorMode):
 /// an ape in hiding is SPRITE_COLOR_HIDDEN, a guide that comes out is drawn
@@ -58,7 +58,7 @@
 /// Open questions:
 ///
 /// - XXX (no evidence): why the third area places two crates (SPRITE_CRATE's
-///   sheet) at the river on some entrances, made by
+///   sheet) at the river on some warp destinations, made by
 ///   OverlayObject_CreateConfiguredObject, which hides them
 ///   (SPRITE_COLOR_HIDDEN) and leaves them not solid and never a target; the
 ///   player neither sees nor meets them, so only the authors' intent would
@@ -107,8 +107,8 @@
 #include "item_ids.h"
 #include "songs.h"
 
-/// Actors of the first area (MapId_MogallForestSign), numbered in the order
-/// of gMogallForestSign_ObjectEventTemplates.
+/// Object events of the first area (MapId_MogallForestSign), numbered in the
+/// order of gMogallForestSign_ObjectEventTemplates.
 enum MogallForestSignLocalId {
   /// A log lying north to south at (488, 464), pushed as the river log is but
   /// with nothing happening where it stops.
@@ -138,7 +138,7 @@ enum MogallForestSignLocalId {
   LOCALID_NUT
 };
 
-/// Actors of the second area (MapId_MogallForestQuartz), numbered in the
+/// Object events of the second area (MapId_MogallForestQuartz), numbered in the
 /// order of gMogallForestQuartz_ObjectEventTemplates.
 enum MogallForestQuartzLocalId {
   /// ★ Named from what the player sees: a fallen tree trunk lying in the
@@ -178,8 +178,8 @@ enum MogallForestQuartzLocalId {
   LOCALID_SECOND_AREA_QUARTZ
 };
 
-/// Actors of the third area (MapId_MogallForestKillerApe), numbered in the
-/// order of gMogallForestKillerApe_ObjectEventTemplates.
+/// Object events of the third area (MapId_MogallForestKillerApe), numbered in
+/// the order of gMogallForestKillerApe_ObjectEventTemplates.
 enum MogallForestKillerApeLocalId {
   /// ★ Named from what the player sees: a fallen tree trunk lying in the
   /// grass (its render)
@@ -231,7 +231,7 @@ enum MogallForestKillerApeLocalId {
 };
 
 /// The animations of a river log's sprite (SPRITE_LOG_NORTH_SOUTH and
-/// SPRITE_LOG_WEST_EAST), named by when these scenes play them.
+/// SPRITE_LOG_WEST_EAST), named by when these maps play them.
 enum MogallForestLogAnimation {
   MOGALL_FOREST_LOG_ROLLING = 3,    ///< as it rolls over the bank
   MOGALL_FOREST_LOG_IN_RIVER = 4,   ///< lying in the river, set on arrival
@@ -284,7 +284,7 @@ enum {
   FLAG_PSYNERGY_STONE = FLAG_MAPSEC_TEMP_50
 };
 
-/// Scene flag, kept while the party stays in the area.
+/// Map flag, kept while the party stays in the area.
 enum {
   /// ★ Named from what the player sees: the rock beside the log, moved with
   /// Move (its render)
@@ -353,7 +353,7 @@ static s32 MogallForest_TryJumpLeaderTo(struct FieldPosition *position) {
   return 0;
 }
 
-/// Script command: draws the actor in the colour mode its timer holds.
+/// Script command: draws the object event in the colour mode its timer holds.
 static s32
 MogallForest_CopyTimerToChild(struct ScriptInterpreter *interpreter) {
   struct ObjectEvent *objectEvent = (struct ObjectEvent *)interpreter;
@@ -361,7 +361,7 @@ MogallForest_CopyTimerToChild(struct ScriptInterpreter *interpreter) {
   return 0;
 }
 
-/// Clears the actor sprite flags when its script requests it.
+/// Clears the object event's sprite flags when its script requests it.
 static s32 MogallForest_ClearObjectEventSpriteFlags(
     struct ScriptInterpreter *interpreter) {
   struct ObjectEvent *objectEvent = (struct ObjectEvent *)interpreter;
@@ -369,7 +369,8 @@ static s32 MogallForest_ClearObjectEventSpriteFlags(
   return 0;
 }
 
-/// Hops an actor to a pixel destination with the requested vertical speed.
+/// Hops an object event to a pixel destination with the requested vertical
+/// speed.
 static void MogallForest_HopObjectEventTo(s32 objectEventId, s32 targetX,
                                           s32 targetZ, s32 verticalSpeed) {
   struct ObjectEvent *objectEvent;
@@ -388,7 +389,7 @@ static void MogallForest_HopObjectEventTo(s32 objectEventId, s32 targetX,
   objectEvent->gravity = PIXELS(1);
 }
 
-/// Scatters a complete ring of rising puffs around an actor.
+/// Scatters a complete ring of rising puffs around an object event.
 static void MogallForest_SpawnPuffRing(s32 id) {
   struct Vector3 velocity;
   struct EffectOptions optionsStorage;
@@ -461,7 +462,7 @@ const struct MapWarpDest *MogallForest_GetWarpDests(void) {
 
 const struct MapWarpRegion *MogallForest_GetRegions(void) { return NULL; }
 
-/// Returns the exits, one table for all four scenes.
+/// Returns the warps, one table for all four maps.
 const u32 *MogallForest_GetWarps(void) { return gMogallForest_Warps; }
 
 const struct ObjectEventTemplate *MogallForest_GetObjectEventTemplates(void) {
@@ -479,9 +480,9 @@ const struct ObjectEventTemplate *MogallForest_GetObjectEventTemplates(void) {
   return gMogallForestSidePaths_ObjectEventTemplates;
 }
 
-/// Mogall Forest, the first area: walking into a log (cell code 20) pushes it;
-/// the river log pushed to row 26 rolls into the water and can be crossed.
-/// Sets FLAG_FIRST_AREA_LOG_ROLLED.
+/// Mogall Forest, the first area: walking into a log (metatile behavior 20)
+/// pushes it; the river log pushed to row 26 rolls into the water and can be
+/// crossed. Sets FLAG_FIRST_AREA_LOG_ROLLED.
 static void MogallForest_FirstArea_PushLog(void) {
   struct StagedObjectEventProbe probe;
 
@@ -510,8 +511,8 @@ static void MogallForest_FirstArea_PushLog(void) {
   Engine_ScriptEnd();
 }
 
-/// Mogall Forest, the first area: walking north into cell code 25 jumps the
-/// leader north across the log.
+/// Mogall Forest, the first area: walking north into metatile behavior 25 jumps
+/// the leader north across the log.
 static void MogallForest_FirstArea_JumpNorth(void) {
   struct FieldPosition position;
 #if TBS_PATCH_1
@@ -528,8 +529,8 @@ static void MogallForest_FirstArea_JumpNorth(void) {
   MogallForest_TryJumpLeaderTo(&position);
 }
 
-/// Mogall Forest, the first area: walking south into cell code 26 jumps the
-/// leader onto the log, which bobs under the weight.
+/// Mogall Forest, the first area: walking south into metatile behavior 26 jumps
+/// the leader onto the log, which bobs under the weight.
 static void MogallForest_FirstArea_JumpSouth(void) {
   struct FieldPosition position;
   struct ObjectEvent *objectEvent = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
@@ -566,8 +567,8 @@ static void MogallForest_FirstArea_JumpSouth(void) {
   }
 }
 
-/// Mogall Forest, the first area: searching the sign (cell code 27). "The
-/// broken sign reads: North: Fuchin Temple / South: Mogall Prairie..."
+/// Mogall Forest, the first area: searching the sign (metatile behavior 27).
+/// "The broken sign reads: North: Fuchin Temple / South: Mogall Prairie..."
 static void MogallForest_ReadBrokenSign(void) {
   Engine_ScriptStart();
   Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIMATION_STAND);
@@ -716,9 +717,9 @@ static void MogallForest_CatchNut(void) {
   Engine_ScriptEnd();
 }
 
-/// Mogall Forest, the second area: walking into a log (cell code 20) pushes
-/// it; the log at row 23 changes the ground beside it, and the river log pushed
-/// to column 35 rolls into the water.
+/// Mogall Forest, the second area: walking into a log (metatile behavior 20)
+/// pushes it; the log at row 23 changes the ground beside it, and the river log
+/// pushed to column 35 rolls into the water.
 static void MogallForest_SecondArea_PushLog(void) {
   struct StagedObjectEventProbe probe;
   s32 destinationColumn;
@@ -963,9 +964,9 @@ static void MogallForest_SecondArea_SouthApeShowsWay(void) {
   Engine_ScriptEnd();
 }
 
-/// Mogall Forest, the third area: walking into a log (cell code 20) pushes it;
-/// each river log rolls into the water at its column (42 and 40) and can be
-/// crossed.
+/// Mogall Forest, the third area: walking into a log (metatile behavior 20)
+/// pushes it; each river log rolls into the water at its column (42 and 40) and
+/// can be crossed.
 static void MogallForest_ThirdArea_PushLog(void) {
   struct StagedObjectEventProbe probe;
   s32 landed;
@@ -1015,8 +1016,8 @@ static void MogallForest_ThirdArea_PushLog(void) {
   Engine_ScriptEnd();
 }
 
-/// Mogall Forest, the third area: walking west into cell code 25 jumps the
-/// leader onto the second river log, which bobs under the weight.
+/// Mogall Forest, the third area: walking west into metatile behavior 25 jumps
+/// the leader onto the second river log, which bobs under the weight.
 static void MogallForest_ThirdArea_JumpWest(void) {
   struct ObjectEvent *leader;
   u8 *motionFlags;
@@ -1318,8 +1319,8 @@ static void MogallForest_ThirdArea_EastApeShowsWay(void) {
   Engine_ScriptEnd();
 }
 
-/// Mogall Forest, the third area: touching cell code 22, once. The east ape
-/// appears again, turns to the party and leads it south to a hiding place.
+/// Mogall Forest, the third area: touching metatile behavior 22, once. The east
+/// ape appears again, turns to the party and leads it south to a hiding place.
 /// Sets FLAG_MOGALL_FOREST_LED_TO_KILLER_APE.
 static void MogallForest_ApeLeadsToKillerApe(void) {
   struct ObjectEvent *creature;
@@ -1362,9 +1363,9 @@ static void MogallForest_ApeLeadsToKillerApe(void) {
   Engine_ScriptEnd();
 }
 
-/// Mogall Forest, the third area: touching cell code 23 until the Killer Ape
-/// is beaten. The hiding place shakes twice and out comes the Killer Ape, the
-/// east ape's actor a fifth again as big, to fight
+/// Mogall Forest, the third area: touching metatile behavior 23 until the
+/// Killer Ape is beaten. The hiding place shakes twice and out comes the Killer
+/// Ape, the east ape's object event a fifth again as big, to fight
 /// (ENCOUNTER_ZONE_SCRIPTED_MOGALL_ALTIN_LAMAKAN, slot 1); the party comes back
 /// at MOGALL_FOREST_KILLER_APE_AFTER_KILLER_APE_ATTACKS.
 static void MogallForest_KillerApeAttacks(void) {

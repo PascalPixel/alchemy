@@ -6,23 +6,23 @@
 /// The party comes in from the world map (WEST_LUNPA_CAVE_FROM_WORLD_MAP) and
 /// from Lunpa (WEST_LUNPA_CAVE_FROM_LUNPA); TRIGGER_WORLD_MAP_PASSAGE and
 /// TRIGGER_LUNPA_PASSAGE lead back out. WEST_LUNPA_CAVE_FROM_LUNPA_UNUSED,
-/// which no exit names, repeats WEST_LUNPA_CAVE_FROM_LUNPA with a shorter
+/// which no warp names, repeats WEST_LUNPA_CAVE_FROM_LUNPA with a shorter
 /// camera.
 ///
-/// The gate puzzle runs on scene flags, which Map_Initialize redraws: the
+/// The gate puzzle runs on map flags, which Map_Initialize redraws: the
 /// lowering switch brings the gate down and the raising switch lifts it, each
 /// doing nothing while the gate already stands where it would put it or while
 /// the gate's puddle, frozen by Frost into a pillar, props it open. Freezing
 /// that puddle with the gate down raises it onto the pillar with the
 /// puzzle-solved tune. Frost also freezes a puddle to the south into a pillar
-/// that can be climbed, and one to the north. Its scene flags:
+/// that can be climbed, and one to the north. Its map flags:
 ///
 /// - FLAG_MAP_TEMP_00: the gate's puddle is frozen, propping the gate open.
 /// - FLAG_MAP_TEMP_01: the lowering switch has lowered the gate.
 /// - FLAG_MAP_TEMP_02: the gate is raised.
 /// - FLAG_MAP_TEMP_03: the north puddle is frozen.
 /// - FLAG_MAP_TEMP_04: the south puddle is frozen into a pillar, which
-///   changes one cell's collision.
+///   changes one cell's metatile behavior.
 ///
 /// Once Donpa has let the party leave Lunpa Fortress with Hammet
 /// (FLAG_DODONPA_LOCKED_UP), stepping onto TRIGGER_BUNZA_HIDING_PLACE the
@@ -64,7 +64,7 @@ static u8 Garet_AsksAboutThingsToDo(void);
 static void Party_StaysBehind(void);
 static void Party_RidesWagon(void);
 
-// The cave's scene flags, the state of its gate puzzle:
+// The cave's map flags, the state of its gate puzzle:
 // FLAG_MAP_TEMP_00: the gate puddle is frozen, propping the gate open.
 // FLAG_MAP_TEMP_01: the lowering switch has lowered the gate.
 // FLAG_MAP_TEMP_02: the gate is raised.
@@ -75,10 +75,10 @@ const struct MapWarpDest *Map_GetWarpDests(void) { return gCaveWarpDests; }
 
 const struct MapWarpRegion *Map_GetWarpRegions(void) { return NULL; }
 
-/// Both passages and the wagon departure return through this exit table.
+/// Both passages and the wagon departure return through this warp table.
 const u32 *Map_GetWarps(void) { return gCaveWarps; }
 
-/// Only the cave scene places puddles, Hammet, Bunza and the party members.
+/// Only the cave map places puddles, Hammet, Bunza and the party members.
 const struct ObjectEventTemplate *Map_GetObjectEventTemplates(void) {
   if (gGameState.mapId == (s32)&MapId_WestLunpaCave) {
     return gCaveObjectEventTemplates;
@@ -86,7 +86,8 @@ const struct ObjectEventTemplate *Map_GetObjectEventTemplates(void) {
   return gCaveNoObjectEventTemplates;
 }
 
-/// Routes switches, Frost targets and the reunion trigger to their handlers.
+/// Routes switches, Frost targets and the reunion coord event to their
+/// handlers.
 const struct MapEvent *Map_GetEvents(void) { return gCaveEvents; }
 
 /// Unused: Frost can never target the puddle placed at (0, 0, 0), outside the
@@ -114,7 +115,8 @@ static void EventScript_FreezeSouthPuddle(void) {
   GameFlag_Set(FLAG_MAP_TEMP_04);
 }
 
-/// Animates the raised gate resting on the frozen pillar, then opens collision.
+/// Animates the raised gate resting on the frozen pillar, then opens the way
+/// through its metatile behaviors.
 static void Gate_DrawPropped(void) {
   struct ObjectEvent *pillar;
 
@@ -236,14 +238,14 @@ static void EventScript_FlipRaisingSwitch(void) {
 }
 
 /// In West Lunpa Cave, Hammet finds Bunza hiding behind a rock. It plays on
-/// stepping onto trigger 10, by the rock Bunza hides behind, after Donpa has
-/// let the party leave the fortress with Hammet (FLAG_DODONPA_LOCKED_UP). Bunza
-/// steps out, the party and Hammet gather behind the leader, Garet and Mia
-/// think they saw someone, and Ivan asks whether Dodonpa's henchmen have found
-/// them (a yes: Garet will fight; a no: Garet wonders what else it could be).
-/// Hammet calls out and names Bunza, Bunza knows Hammet's voice, and the
-/// reunion and the wagon talk follow. Sets FLAG_LUNPA_CAVE_REUNION_SEEN, so it
-/// plays once.
+/// stepping onto metatile behavior 10, by the rock Bunza hides behind, after
+/// Donpa has let the party leave the fortress with Hammet
+/// (FLAG_DODONPA_LOCKED_UP). Bunza steps out, the party and Hammet gather
+/// behind the leader, Garet and Mia think they saw someone, and Ivan asks
+/// whether Dodonpa's henchmen have found them (a yes: Garet will fight; a no:
+/// Garet wonders what else it could be). Hammet calls out and names Bunza,
+/// Bunza knows Hammet's voice, and the reunion and the wagon talk follow. Sets
+/// FLAG_LUNPA_CAVE_REUNION_SEEN, so it plays once.
 static void EventScript_HammetFindsBunza(void) {
   struct ObjectEvent *leader;
   s32 sighting;
@@ -919,7 +921,7 @@ static void Party_StaysBehind(void) {
   GameFlag_Set(FLAG_BUNZAS_WAGON_LEFT);
 }
 
-/// Leads everyone down the passage and requests the wagon departure exit.
+/// Leads everyone down the passage and requests the wagon departure warp.
 static void Party_RidesWagon(void) {
   struct ObjectEvent *leader;
   s32 departure;

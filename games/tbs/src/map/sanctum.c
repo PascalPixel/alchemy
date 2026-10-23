@@ -1,6 +1,6 @@
 /// @file
 /// The Sanctum of Vale and of four towns on the party's way, which holds six
-/// places in one scene (MapId_Sanctum): the entrance the party comes in by
+/// places in one map (MapId_Sanctum): the warp destination the party arrives at
 /// decides which, and Sanctum_GetObjectEventTemplates and Sanctum_GetEvents
 /// choose that place's tables by it. Spoken to from the front, each place's
 /// healer opens the Sanctum's services (Engine_SanctumOpen); from any other
@@ -57,8 +57,8 @@
 /// - Vault Sanctum again (SANCTUM_FROM_VAULT_REVISIT), when the party passes
 ///   through Vault later (vault_revisit.c): the statue has been polished, and
 ///   the healer worries about earthquakes on Mt. Aleph.
-/// - Sanctum, the name the game gives every other entrance, which leaves only
-///   SANCTUM_UNUSED; no exit leads there, and it places nobody.
+/// - Sanctum, the name the game gives every other warp destination, which
+///   leaves only SANCTUM_UNUSED; no warp leads there, and it places nobody.
 ///
 /// Open questions: none.
 
@@ -106,14 +106,14 @@
 #include "songs.h"
 #include "audio_engine_symbols.h"
 
-// Scene temporary flags, in Vale Sanctum: 00 is set once the Great Healer has
+// Map flags, in Vale Sanctum: 00 is set once the Great Healer has
 // warned Isaac that leaving the village cannot be undone; 01 marks the visit
 // after a refusal (SANCTUM_FROM_QUEST_RESTART), which skips the account of Sol
 // Sanctum.
 
-/// The placed actors, numbering the rows of the table
-/// Sanctum_GetObjectEventTemplates returns for the entrance; the party's rows
-/// take their own ids. Every place's first row is its healer.
+/// The placed object events, numbering the rows of the table
+/// Sanctum_GetObjectEventTemplates returns for the warp destination; the
+/// party's rows take their own ids. Every place's first row is its healer.
 enum SanctumLocalId {
   /// The place's healer: the Great Healer in Vale Sanctum, its own healer
   /// elsewhere, a man with a white beard in a tall hat and a long purple and
@@ -187,11 +187,11 @@ static void Sanctum_RestoreQuestFloor(void);
 // UB: calling this s32 function through a void update hook is incompatible.
 // Plain void changes 44 to 42 bytes in tbs-en.
 #ifdef UBFIX
-/// Faces the actor whose ID this callback stores in the timer field.
+/// Faces the object event whose ID this callback stores in the timer field.
 static void
 Sanctum_FaceObjectEventNamedByTimer(union FieldObject *fieldObject) {
 #else
-/// Faces the actor whose ID this callback stores in the timer field.
+/// Faces the object event whose ID this callback stores in the timer field.
 static s32 Sanctum_FaceObjectEventNamedByTimer(union FieldObject *fieldObject) {
 #endif
   struct ObjectEvent *objectEvent = (struct ObjectEvent *)fieldObject;
@@ -208,7 +208,7 @@ static s32 Sanctum_FaceObjectEventNamedByTimer(union FieldObject *fieldObject) {
 #endif
 }
 
-/// Returns the entrances, shared by all six places.
+/// Returns the warp destinations, shared by all six places.
 const struct MapWarpDest *Sanctum_GetWarpDests(void) {
   return gSanctum_WarpDests;
 }
@@ -217,11 +217,11 @@ const struct MapWarpRegion *Sanctum_GetRegions(void) { return NULL; }
 
 const u32 *Sanctum_GetWarps(void) { return gSanctum_Warps; }
 
-/// Chooses the actors by entrance: Vale Sanctum's Great Healer and two other
-/// healers (SANCTUM_FROM_VALE and SANCTUM_VALE_UNUSED), the quest's gathering
-/// (SANCTUM_FROM_VALE_ERUPTION and SANCTUM_FROM_QUEST_RESTART), the healer and
-/// LOCALID_SANCTUM_MEMBER of Vault Sanctum and Bilibin Sanctum
-/// (SANCTUM_FROM_VAULT, SANCTUM_FROM_VAULT_REVISIT,
+/// Chooses the object events by warp destination: Vale Sanctum's Great Healer
+/// and two other healers (SANCTUM_FROM_VALE and SANCTUM_VALE_UNUSED), the
+/// quest's gathering (SANCTUM_FROM_VALE_ERUPTION and
+/// SANCTUM_FROM_QUEST_RESTART), the healer and LOCALID_SANCTUM_MEMBER of Vault
+/// Sanctum and Bilibin Sanctum (SANCTUM_FROM_VAULT, SANCTUM_FROM_VAULT_REVISIT,
 /// SANCTUM_FROM_VAULT_INTERIORS and SANCTUM_FROM_BILIBIN), the healer alone in
 /// Altin Sanctum and Xian Sanctum (SANCTUM_FROM_ALTIN and SANCTUM_FROM_XIAN),
 /// and nobody otherwise.
@@ -250,9 +250,9 @@ const struct ObjectEventTemplate *Sanctum_GetObjectEventTemplates(void) {
   }
 }
 
-/// Chooses the events by entrance, and in Vale Sanctum before and after the
-/// quest by story flag: gSanctum_ValeEvents before the party has left Vale,
-/// gSanctum_ValeEventsAfterLeaving once it has (FLAG_VALE_PARTY_LEFT) and
+/// Chooses the map events by warp destination, and in Vale Sanctum before and
+/// after the quest by story flag: gSanctum_ValeEvents before the party has left
+/// Vale, gSanctum_ValeEventsAfterLeaving once it has (FLAG_VALE_PARTY_LEFT) and
 /// gSanctum_ValeEventsAfterKalay once it has reached Kalay
 /// (FLAG_KALAY_REACHED); gSanctum_QuestEvents for the quest's visits
 /// (SANCTUM_FROM_VALE_ERUPTION, SANCTUM_FROM_QUEST_RESTART and
@@ -446,8 +446,8 @@ static void EventScript_AskAboutPsynergyChanges(void) {
   Engine_ScriptEnd();
 }
 
-/// Sets up the place for its entrance and plays its opening scene. Vault
-/// Sanctum places LOCALID_GOLD_STATUE once the thieves are jailed; Vale
+/// Sets up the place for its warp destination and plays its opening scene.
+/// Vault Sanctum places LOCALID_GOLD_STATUE once the thieves are jailed; Vale
 /// Sanctum's quest visits (SANCTUM_FROM_VALE_ERUPTION, and
 /// SANCTUM_FROM_QUEST_RESTART after a refusal, which sets FLAG_MAP_TEMP_01)
 /// restore the floor and play the request, unless the party is returning after
@@ -490,10 +490,10 @@ s32 Sanctum_Initialize(void) {
   return 0;
 }
 
-/// Vale Sanctum: heading for the door after refusing the quest (cell code 2,
-/// until FLAG_MAP_TEMP_00 is set, which it sets). The Great Healer warns
-/// that the choice is final: "Once you step outside the village, you cannot
-/// take back your decision."
+/// Vale Sanctum: heading for the door after refusing the quest (metatile
+/// behavior 2, until FLAG_MAP_TEMP_00 is set, which it sets). The Great Healer
+/// warns that the choice is final: "Once you step outside the village, you
+/// cannot take back your decision."
 static void EventScript_WarnBeforeLeaving(void) {
   Engine_ScriptStart();
   Engine_CameraSetSpeed(PIXELS(1), PIXELS(1) / 8);
@@ -510,9 +510,9 @@ static void EventScript_WarnBeforeLeaving(void) {
   Engine_ScriptEnd();
 }
 
-/// Vale Sanctum: leaving after refusing the quest (cell code 1) ends the game.
-/// The room turns sepia: `And so the world began drifting toward its fated
-/// destruction...` Starting again from the Great Healer takes
+/// Vale Sanctum: leaving after refusing the quest (metatile behavior 1) ends
+/// the game. The room turns sepia: `And so the world began drifting toward its
+/// fated destruction...` Starting again from the Great Healer takes
 /// SANCTUM_TO_QUEST_RESTART, back to SANCTUM_FROM_QUEST_RESTART; the other
 /// choices take SANCTUM_TO_CLEAR, to MapId_Clear.
 static void EventScript_LeaveAfterRefusing(void) {
@@ -558,10 +558,10 @@ static void EventScript_LeaveAfterRefusing(void) {
 // UB: calling this s32 function through a void update hook is incompatible.
 // Plain void changes 66 to 64 bytes in tbs-en.
 #ifdef UBFIX
-/// Keeps this actor at the party leader's drawing priority.
+/// Keeps this object event at the party leader's drawing priority.
 static void Sanctum_MatchLeaderPriority(union FieldObject *fieldObject) {
 #else
-/// Keeps this actor at the party leader's drawing priority.
+/// Keeps this object event at the party leader's drawing priority.
 static s32 Sanctum_MatchLeaderPriority(union FieldObject *fieldObject) {
 #endif
   struct ObjectEvent *objectEvent = (struct ObjectEvent *)fieldObject;
@@ -1599,7 +1599,7 @@ static void Sanctum_ReceiveWiseOnesMission(void) {
   Engine_ObjectEventSetAnimation(LOCALID_GARETS_GRANDFATHER, 3);
 }
 
-/// Copies the healer into the afterimage actor.
+/// Copies the healer into the afterimage object event.
 static void Sanctum_ShowHealerAfterimage(void) {
   u32 entryIndex;
   struct ObjectEvent *afterimage;
@@ -1666,7 +1666,7 @@ static void Sanctum_UpdateHealerAfterimage(union FieldObject *fieldObject) {
   }
 }
 
-/// Advances an effect around its linked actor on an elliptical path.
+/// Advances an effect around its linked object event on an elliptical path.
 static void Sanctum_UpdateOrbitingEffect(union FieldObject *fieldObject) {
   struct ObjectEvent *effect = (struct ObjectEvent *)fieldObject;
   struct ObjectEvent *anchor = effect->linkedObject;
@@ -2094,7 +2094,7 @@ static void Sanctum_UpdateRisingSpark(union FieldObject *fieldObject) {
     Engine_ObjectSetScript(spark, gSanctum_SparkEndScript);
 }
 
-/// Creates a short-lived spark beside the specified actor.
+/// Creates a short-lived spark beside the specified object event.
 static void Sanctum_SpawnObjectEventSpark(s32 id) {
   struct ObjectEvent *objectEvent;
   struct ObjectEvent *spark;
@@ -2124,8 +2124,8 @@ static void Sanctum_SpawnObjectEventSpark(s32 id) {
   sprite->image.priority = objectEvent->sprite->image.priority;
 }
 
-/// Copies two blocks of map cells for the quest's visits, the tiles of one and
-/// the collision of the other.
+/// Copies two blocks of map grid cells for the quest's visits, the metatiles of
+/// one and the metatile behaviors of the other.
 static void Sanctum_RestoreQuestFloor(void) {
   {
     MapGrid_CopyCellsTo(0, 64, 11, 68, 3, 2);
@@ -2168,10 +2168,10 @@ static void EventScript_TalkToHealer(void) {
 
 /// Vault Sanctum: talking to the healer. From the front the healer opens the
 /// Sanctum's services; otherwise the healer speaks of the gold statue or, on
-/// the later visit, of the earthquakes. Its case for the quest's entrances
-/// (SANCTUM_FROM_VALE_ERUPTION, SANCTUM_FROM_QUEST_RESTART and
+/// the later visit, of the earthquakes. Its case for the quest's warp
+/// destinations (SANCTUM_FROM_VALE_ERUPTION, SANCTUM_FROM_QUEST_RESTART and
 /// SANCTUM_QUEST_UNUSED) passes to EventScript_ReconsiderQuest, though their
-/// events (gSanctum_QuestEvents) call that directly.
+/// map events (gSanctum_QuestEvents) call that directly.
 static void EventScript_TalkToHealerOnVisit(void) {
   s32 warpDest;
 

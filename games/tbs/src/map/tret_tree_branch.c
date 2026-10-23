@@ -1,24 +1,25 @@
 /// @file
-/// Tret Tree (MapId_TretTreeBranch), the second of Tret Tree's two scenes:
+/// Tret Tree (MapId_TretTreeBranch), the second of Tret Tree's two maps:
 /// out on Tret's branches, under open sky
 /// (places/tret-tree-branch/map-0.png), between the rooms of
 /// MapId_TretTreeInteriors (tret_tree_interiors.c), where the story is told.
-/// This scene has no story event and tests no story flag.
+/// This map has no story event and tests no story flag.
 ///
-/// Its eight exits (TRET_TREE_BRANCH_TO_TRET_TREE_INTERIORS_SOUTH_SOUTHWEST and
+/// Its eight warps (TRET_TREE_BRANCH_TO_TRET_TREE_INTERIORS_SOUTH_SOUTHWEST and
 /// the seven after it) lead back into MapId_TretTreeInteriors; walking into
-/// one for two frames (COORD_EVENT_FLAG_QUICK) plays the exit sound and leaves
-/// at once, the touch cells having the exits' own numbers. Touch cells 10 to 15
-/// lie in pairs at the top and bottom of the vines that hang from one branch
-/// to the one below (cells (7, 12) and (8, 17), (37, 11) and (36, 16), (41, 20)
-/// and (40, 26) in map_047's grid_collision.tsv): each moves the leader and the
-/// camera five or six cells north or south in one step, up or down its vine,
-/// with no walk. Each vine has codes of its own, so 12 and 13 repeat 10's and
+/// one for two frames (COORD_EVENT_FLAG_QUICK) plays the warp sound and leaves
+/// at once, the cells' metatile behaviors being the warps' own numbers.
+/// Coord events on metatile behaviors 10 to 15 lie in pairs at the top and
+/// bottom of the vines that hang from one branch to the one below (cells
+/// (7, 12) and (8, 17), (37, 11) and (36, 16), (41, 20) and (40, 26) in
+/// layout_047's grid_collision.tsv): each moves the leader and the camera five
+/// or six cells north or south in one step, up or down its vine, with no walk.
+/// Each vine has metatile behaviors of its own, so 12 and 13 repeat 10's and
 /// 11's events for the second vine. Breeze, a Jupiter Djinni, stands here until
 /// it has joined the party: its own flag (FLAG_DJINNI_0 + DJINNI_BREEZE)
-/// removes its placement. Talking to it starts a battle with it.
+/// removes its object event template. Talking to it starts a battle with it.
 ///
-/// The setup opens the scene with a backdrop fade, blends BG1 over the rest of
+/// The setup opens the map with a backdrop fade, blends BG1 over the rest of
 /// the screen and splits BG3's scroll at a scanline, 192 less the ground
 /// layer's vertical scroll (TretTreeBranch_UpdateBg3ScrollSplit). BG3 follows
 /// the map's horizontal scroll on both sides of the split, and above it its
@@ -65,8 +66,9 @@
 #include "songs.h"
 #include "script.h"
 
-/// Breeze, a Jupiter Djinni (DJINNI_BREEZE), the only placed actor; its
-/// placement is gone once its flag (FLAG_DJINNI_0 + DJINNI_BREEZE) is set.
+/// Breeze, a Jupiter Djinni (DJINNI_BREEZE), the only placed object event; its
+/// object event template is gone once its flag (FLAG_DJINNI_0 + DJINNI_BREEZE)
+/// is set.
 enum {
   /// ★ Named from the game: "Breeze" (MsgDjinnName)
   LOCALID_BREEZE = LOCALID_FIRST_PLACED
@@ -115,7 +117,7 @@ static void TretTreeBranch_ShiftLeaderAndCameraByCells(s32 cellOffsetX,
   offsetX *= PIXELS(16);
   offsetZ *= PIXELS(16);
 
-  // Shift the selected actor before the separate camera object.
+  // Shift the selected object event before the separate camera object.
   if (objectEvent != 0) {
     objectEvent->x.fixed += offsetX;
     objectEvent->z.fixed += offsetZ;
@@ -136,43 +138,46 @@ static void TretTreeBranch_ShiftLeaderAndCameraByCells(s32 cellOffsetX,
   }
 }
 
-/// Touch cell 10 in Tret Tree: the leader and camera move 80 pixels south at
-/// once.
+/// Touching metatile behavior 10 in Tret Tree: the leader and camera move 80
+/// pixels south at once.
 static void EventScript_ShiftSouthFiveCells(void) {
   TretTreeBranch_ShiftLeaderAndCameraByCells(0, 5);
 }
 
-/// Touch cell 11 in Tret Tree: the leader and camera move 80 pixels north at
-/// once.
+/// Touching metatile behavior 11 in Tret Tree: the leader and camera move 80
+/// pixels north at once.
 static void EventScript_ShiftNorthFiveCells(void) {
   TretTreeBranch_ShiftLeaderAndCameraByCells(0, -5);
 }
 
-/// Touch cell 12 in Tret Tree: the same 80-pixel move south as cell 10.
+/// Touching metatile behavior 12 in Tret Tree: the same 80-pixel move south as
+/// metatile behavior 10.
 static void EventScript_ShiftSouthFiveCellsSecond(void) {
   TretTreeBranch_ShiftLeaderAndCameraByCells(0, 5);
 }
 
-/// Touch cell 13 in Tret Tree: the same 80-pixel move north as cell 11.
+/// Touching metatile behavior 13 in Tret Tree: the same 80-pixel move north as
+/// metatile behavior 11.
 static void EventScript_ShiftNorthFiveCellsSecond(void) {
   TretTreeBranch_ShiftLeaderAndCameraByCells(0, -5);
 }
 
-/// Touch cell 14 in Tret Tree: the leader and camera move 96 pixels south at
-/// once.
+/// Touching metatile behavior 14 in Tret Tree: the leader and camera move 96
+/// pixels south at once.
 static void EventScript_ShiftSouthSixCells(void) {
   TretTreeBranch_ShiftLeaderAndCameraByCells(0, 6);
 }
 
-/// Touch cell 15 in Tret Tree: the leader and camera move 96 pixels north at
-/// once.
+/// Touching metatile behavior 15 in Tret Tree: the leader and camera move 96
+/// pixels north at once.
 static void EventScript_ShiftNorthSixCells(void) {
   TretTreeBranch_ShiftLeaderAndCameraByCells(0, -6);
 }
 
-/// Walking into one of the eight exits in Tret Tree, whose touch cells have the
-/// exits' own numbers: the exit sound plays and the party leaves by the exit
-/// touched, into Tret Tree's other scene (MapId_TretTreeInteriors).
+/// Walking into one of the eight warps in Tret Tree, whose cells' metatile
+/// behaviors are the warps' own numbers: the warp sound plays and the party
+/// leaves by the warp touched, into Tret Tree's other map
+/// (MapId_TretTreeInteriors).
 static void EventScript_TakeTouchedWarp(void) {
   struct EventWork *state = gEventWork;
   s16 *touchedWarp;
@@ -182,7 +187,7 @@ static void EventScript_TakeTouchedWarp(void) {
   Engine_ScriptRequestWarp(*touchedWarp);
 }
 
-/// Selects the same mask and window parameters for Reveal and scene entry.
+/// Selects the same mask and window parameters for Reveal and map entry.
 static inline void
 TretTreeBranch_SetRevealWindow(struct DisplayTransitionState *state) {
   state->mask = 0x3f3f;
@@ -191,7 +196,7 @@ TretTreeBranch_SetRevealWindow(struct DisplayTransitionState *state) {
 }
 
 /// Casting Reveal in Tret Tree: the window transition and BG1's blend over the
-/// rest of the screen are set again, as when the scene opened.
+/// rest of the screen are set again, as when the map opened.
 static void EventScript_CastReveal(void) {
   struct DisplayTransitionState *state;
 
@@ -204,12 +209,12 @@ static void EventScript_CastReveal(void) {
   TretTreeBranch_SetRevealWindow(state);
 }
 
-/// Returns the scene's exit, touch, talk and Reveal events.
+/// Returns the map's warp, coord, talk and Reveal events.
 const struct MapEvent *TretTreeBranch_GetEvents(void) {
   return gTretTreeBranch_Events;
 }
 
-/// Unused event hook: begins and immediately ends an event.
+/// Unused script hook: begins and immediately ends a script.
 static void UNUSED TretTreeBranch_RunEmptyEvent(void) {
   EV_START();
   EV_END();
@@ -270,8 +275,8 @@ static void TretTreeBranch_ApplyBg3ScrollAtScanline(void) {
   REG_BG3HOFS = horizontalScroll;
 }
 
-/// Updates the split from the first map layer's pixel position. Before the
-/// split, scroll subtracts one pixel for every four elapsed frames.
+/// Updates the split from the pixel position of the map grid's first layer.
+/// Before the split, scroll subtracts one pixel for every four elapsed frames.
 static void TretTreeBranch_UpdateBg3ScrollSplit(void) {
   struct MapGridLayerScroll *layer =
       &((struct MapGridScrollWork *)gMapGridWork[0])

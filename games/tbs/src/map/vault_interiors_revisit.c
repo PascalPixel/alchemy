@@ -2,18 +2,20 @@
 /// Vault (MapId_VaultInteriorsRevisit): the town's houses, shops and inn once
 /// the party has reached Kalay. They replace the first visit's interiors
 /// (vault_interiors.c) as MapId_VaultRevisit (vault_revisit.c) replaces the
-/// town: each of its six house doors leads to the entrance here named for the
-/// same door, and each room leads back out through it.
+/// town: each of its six house doors leads to the warp destination here named
+/// for the same door, and each room leads back out through it.
 ///
 /// The thieves have broken out of jail, and the talk is of them and of
-/// Colosso, the festival about to begin in Tolbi. The rooms, by entrance:
+/// Colosso, the festival about to begin in Tolbi. The rooms, by warp
+/// destination:
 /// - VAULT_INTERIORS_REVISIT_FROM_VAULT_REVISIT_SOUTHEAST, the gem owner's
 ///   house: he says a cat ate his precious stone, and his wife does not
 ///   believe him. Arriving here sets him on the floor and takes the stone off
 ///   his table: the 4-by-3 block of cells copied from (0, 120) to (8, 67)
-///   lies under map layer 2's window, at the table, and draws it bare where
-///   the first visit's house (vault_interiors.c) draws the sparkling stone on
-///   it (render probe vault-interiors-revisit, the room before and after).
+///   lies under the window of the map grid's layer 2, at the table, and draws
+///   it bare where the first visit's house (vault_interiors.c) draws the
+///   sparkling stone on it (render probe vault-interiors-revisit, the room
+///   before and after).
 /// - VAULT_INTERIORS_REVISIT_FROM_VAULT_REVISIT_SOUTH, the house of a boy who
 ///   doubts the thieves were from Lunpa.
 /// - VAULT_INTERIORS_REVISIT_FROM_VAULT_REVISIT_SOUTHWEST and
@@ -25,7 +27,7 @@
 ///   shops.
 /// - VAULT_INTERIORS_REVISIT_FROM_VAULT_REVISIT_NORTHWEST, the mayor's house,
 ///   where the mayor welcomes Isaac back and warns that the thieves have
-///   escaped (FLAG_WELCOMED_BACK, a place flag, and
+///   escaped (FLAG_WELCOMED_BACK, a map section flag, and
 ///   FLAG_VAULT_WARNED_OF_ESCAPED_THIEVES); a Mind Read on him before that
 ///   plays the welcome first.
 ///
@@ -68,8 +70,8 @@
 #include "item_ids.h"
 #include "flags.h"
 
-/// The townspeople, numbering the placement rows from LOCALID_FIRST_PLACED and
-/// named by what they say on the party's return.
+/// The townspeople, numbering the object event template rows from
+/// LOCALID_FIRST_PLACED and named by what they say on the party's return.
 enum {
   /// A young man whose precious stone, he says, a cat ate.
   /// ★ Named from the game: "I kept worrying that they would take my gem."
@@ -148,7 +150,7 @@ enum {
 /// (MsgVaultIsaacYouveComeBackVault)
 enum { FLAG_WELCOMED_BACK = FLAG_MAPSEC_TEMP_00 };
 
-// Shared scene routines stay in their linked order.
+// Shared map routines stay in their linked order.
 #include "common/vault_spotflag.h"
 
 const struct MapWarpDest *Map_GetWarpDests(void) {
@@ -159,9 +161,9 @@ const struct MapWarpRegion *Map_GetWarpRegions(void) { return NULL; }
 
 const u32 *Map_GetWarps(void) { return gVaultInteriorsRevisit_Warps; }
 
-/// Gives the placements' condition 0 whether each lies inside the view bounds
-/// of the room entered (Map_PrepareObjectEvents), so only that room's people
-/// appear.
+/// Gives the object event templates' condition 0 whether each lies inside the
+/// view bounds of the room entered (Map_PrepareObjectEvents), so only that
+/// room's people appear.
 const struct ObjectEventTemplate *Map_GetObjectEventTemplates(void) {
   struct ObjectEventTemplate *templates =
       gVaultInteriorsRevisit_ObjectEventTemplates;
@@ -170,7 +172,7 @@ const struct ObjectEventTemplate *Map_GetObjectEventTemplates(void) {
   return templates;
 }
 
-/// The actor stands still and says the selected message.
+/// The object event stands still and says the selected message.
 static void
 VaultInteriorsRevisit_ShowStandingObjectEventDialogue(s32 objectEvent) {
   Engine_ScriptStart();
@@ -291,7 +293,8 @@ static void EventScript_OfferBones(void) {
       GameFlag_Set(FLAG_VAULT_BONE_RECEIVED);
     }
   } else {
-    // Declining selects the following line and the actor's response pose.
+    // Declining selects the following line and the object event's response
+    // pose.
     gEventWork->message++;
     Engine_ScriptWait(20);
     Engine_ObjectEventSetAnimationAndWait(LOCALID_GIRL_AT_THE_INN,
@@ -312,7 +315,8 @@ static void EventScript_ReadMindAndWelcomeIsaacBack(void) {
   Engine_ScriptStart();
   Engine_ObjectEventRunRepeatedMotion(LOCALID_MAYOR, 1);
   Engine_ScriptEnd();
-  // Keep the actor paused through the conversation, then resume action 2.
+  // Keep the object event paused through the conversation, then resume
+  // action 2.
   paused = &ObjectEvent_GetById(LOCALID_MAYOR)->paused;
   *paused = 1;
   EventScript_WelcomeIsaacBack();
@@ -321,7 +325,7 @@ static void EventScript_ReadMindAndWelcomeIsaacBack(void) {
   ObjectEvent_SetBuiltinAction(LOCALID_MAYOR, 2);
 }
 
-// Shared Bone-item dialogue follows the actor conversations.
+// Shared Bone-item dialogue follows the object event conversations.
 #include "common/vault_bone.h"
 
 /// Across the counter the weapon shop opens; from elsewhere the merchant talks
@@ -409,7 +413,7 @@ static void EventScript_ReadBoneGiverMind(void) {
   Engine_ScriptEnd();
 }
 
-/// Returns the talk, Psynergy, search and exit event table.
+/// Returns the talk, Psynergy, bg event and warp table.
 const struct MapEvent *Map_GetEvents(void) {
   return gVaultInteriorsRevisit_Events;
 }
@@ -449,7 +453,7 @@ s32 Map_Initialize(void) {
   return 0;
 }
 
-// Shared item-object routines follow the scene initializer.
+// Shared item-object routines follow the map initializer.
 #include "common/vault_itemobj.h"
 
 struct MapWarpDest gVaultInteriorsRevisit_WarpDests[] = {

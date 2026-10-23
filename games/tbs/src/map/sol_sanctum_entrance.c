@@ -1,6 +1,6 @@
 /// @file
-/// Sol Entrance and the first rooms of Sol Sanctum, two scenes one overlay
-/// serves, chosen by gGameState.scene in every entry point.
+/// Sol Entrance and the first rooms of Sol Sanctum, two maps one overlay
+/// serves, chosen by gGameState.mapId in every entry point.
 ///
 /// - Sol Entrance (MapId_SolEntrance), the mountainside before the
 ///   sanctum's door, reached from Vale (VALE_TO_SOL_ENTRANCE). Walking north
@@ -14,27 +14,28 @@
 /// - Sol Sanctum (MapId_SolSanctumReliefs), the rooms inside the door, which
 ///   Isaac, Garet and Jenna explore with Kraden. Two minotaur reliefs each have
 ///   an empty eye socket, and a Small Jewel set in it opens the way on: the
-///   first from this scene's chest (FLAG_SOL_SANCTUM_FIRST_GEM_PLACED), the
+///   first from this map's chest (FLAG_SOL_SANCTUM_FIRST_GEM_PLACED), the
 ///   second from the chest in MapId_SolSanctumMaze
 ///   (FLAG_SOL_SANCTUM_SECOND_GEM_PLACED). Kraden has a scene on the first
 ///   entry at the door (SolSanctumEntrance_IntroduceSanctum), in the first
 ///   relief room (SolSanctumEntrance_KradenSuspectsHiddenPassage) and in the
 ///   second (SolSanctumEntrance_KradenSeesStatuesOutOfReach). Two statues in
 ///   the first relief room and the row of six in the second can be pushed, or
-///   moved with Move, a cell east or west. Its exits lead to
+///   moved with Move, a cell east or west. Its warps lead to
 ///   MapId_SolSanctumCorridor, MapId_SolSanctumMaze, Sol Entrance and
 ///   MapId_SolSanctumLunaSolRooms; the rest lead between its own rooms.
 ///
-/// MapId_SolSanctumReliefs is one map, but each relief room has placement
-/// and event tables of its own: SolSanctumEntrance_GetObjectEventTemplates and
-/// _GetEvents choose them by the entrance the party came in at, so a room's
-/// statues and their events exist only while the party is in it. Each pushable
-/// statue's column is kept in two place flags, one for each side, which
+/// MapId_SolSanctumReliefs is one map, but each relief room has object event
+/// template and event tables of its own:
+/// SolSanctumEntrance_GetObjectEventTemplates and _GetEvents choose them by
+/// the warp destination the party came in at, so a room's statues and their
+/// events exist only while the party is in it. Each pushable statue's column
+/// is kept in two map section flags, one for each side, which
 /// SolSanctumEntrance_RestoreInteriorState reads to put it back on entry;
-/// Map_ResetFlagsOnEnter clears them when the party enters another place
-/// group, so the statues are back at their starts on the next visit. Searching
-/// a relief while its Small Jewel is held asks for the field menu as the search
-/// ends, so that the jewel can be used on it at once.
+/// Map_ResetFlagsOnEnter clears them when the party enters another map
+/// section, so the statues are back at their starts on the next visit.
+/// Searching a relief while its Small Jewel is held asks for the field menu as
+/// the search ends, so that the jewel can be used on it at once.
 ///
 /// Once Isaac and Garet are back in Vale (FLAG_VALE_RETURNED_FROM_MT_ALEPH)
 /// the door no longer opens: Sol Entrance's setup makes the three wall cells
@@ -74,8 +75,9 @@
 #include "songs.h"
 #include "item_ids.h"
 
-// Place flags: Map_ResetFlagsOnEnter clears 0x300 to 0x3ff when the party
-// enters another place group, and other places use the numbers for their own.
+// Map section flags: Map_ResetFlagsOnEnter clears 0x300 to 0x3ff when the
+// party enters another map section, and other map sections use the numbers for
+// their own.
 
 /// The column each statue that can be pushed stands in, east or west of its
 /// start: the first relief room's west and east statues, then the row
@@ -130,20 +132,20 @@
 /// (MsgSolSanctumMoreStatuesOutOfReach)
 #define FLAG_SOL_SANCTUM_ROW_STATUE_6_AT_WEST 0x31b
 
-// Scene flags, cleared on every ordinary entrance:
+// Map flags, cleared on every ordinary arrival:
 // - FLAG_MAP_TEMP_34: set on entering the second relief room; the
 //   Move rows of the first relief room apply only while it is clear, which
-//   it always is there: only the second room's entrances set it, every
-//   ordinary entrance into the first room clears it, and a return after a
-//   battle comes back by the entrance the party last came in by, so the
-//   condition never stops a Move.
+//   it always is there: only the second room's warp destinations set it, every
+//   ordinary warp destination into the first room clears it, and a return
+//   after a battle comes back by the warp destination the party last came in
+//   by, so the condition never stops a Move.
 
-// An exit's flag word of -1 stands for no flag: GameFlag_TestFar reads it as
-// flag 0xfff, which nothing sets, so the exit is always taken.
+// A warp's flag word of -1 stands for no flag: GameFlag_TestFar reads it as
+// flag 0xfff, which nothing sets, so the warp is always taken.
 #define WARP_FLAG_NONE 0xffffffff
 
-/// The collision codes of the cells the two scenes' touch, search and item
-/// events answer; codes 1 to 16 are the exits, in the exit table's order.
+/// The metatile behaviors of the cells the two maps' coord, bg and item events
+/// answer; behaviors 1 to 16 are the warps, in the warp table's order.
 enum SolSanctumEntranceCell {
   /// ★ Named from what the player sees: the door that slides open as the
   /// leader walks into it (EventScript_OpenDoorAndEnter)
@@ -184,8 +186,8 @@ s32 gSolSanctumEntrance_RumbleTimer __attribute__((section(".bss")));
 
 void InitializeSparkleRecordBuffer();
 
-/// Returns Sol Entrance's entrances (MapId_SolEntrance) or Sol Sanctum's
-/// (MapId_SolSanctumReliefs).
+/// Returns Sol Entrance's warp destinations (MapId_SolEntrance) or Sol
+/// Sanctum's (MapId_SolSanctumReliefs).
 const struct MapWarpDest *SolSanctumEntrance_GetWarpDests(void) {
   s16 mapId = gGameState.mapId;
 
@@ -204,11 +206,11 @@ const u32 *SolSanctumEntrance_GetWarps(void) {
   return gSolSanctumEntrance_Warps;
 }
 
-/// Selects the actors for the place and, in Sol Sanctum, the room. The first
-/// relief room's entrances place Kraden and that room's eleven statues, the
-/// second relief room's Kraden and the row of six; the rest of Sol Sanctum
-/// places Kraden and one statue (LOCALID_STATUE), and Sol Entrance the man who
-/// warns everyone away (LOCALID_WARNING_MAN).
+/// Selects the object events for the map and, in Sol Sanctum, the room. The
+/// first relief room's warp destinations place Kraden and that room's eleven
+/// statues, the second relief room's Kraden and the row of six; the rest of Sol
+/// Sanctum places Kraden and one statue (LOCALID_STATUE), and Sol Entrance the
+/// man who warns everyone away (LOCALID_WARNING_MAN).
 const struct ObjectEventTemplate *
 SolSanctumEntrance_GetObjectEventTemplates(void) {
   struct ObjectEventTemplate *table;
@@ -237,7 +239,7 @@ SolSanctumEntrance_GetObjectEventTemplates(void) {
   return gSolSanctumEntrance_FallbackObjectEventTemplates;
 }
 
-/// Selects the events for the place and room, by the same entrances as
+/// Selects the events for the map and room, by the same warp destinations as
 /// SolSanctumEntrance_GetObjectEventTemplates.
 const struct MapEvent *SolSanctumEntrance_GetEvents(void) {
   s32 firstStatueRoomWarpDest =
@@ -645,7 +647,7 @@ static void EventScript_PushStatue(void) {
 }
 
 /// Sets up Sol Entrance or Sol Sanctum. Called by Field_RunMap once the
-/// actors exist.
+/// object events exist.
 s32 SolSanctumEntrance_Initialize(void) {
   s32 mapId = gGameState.mapId;
 
@@ -1183,9 +1185,9 @@ static void SolSanctumEntrance_KradenSeesStatuesOutOfReach(void) {
 }
 
 /// Sol Sanctum, the second relief room: sets the cells the six statues
-/// start on, one collision while a statue stands there and another once it has
-/// been pushed to either side, and, when placeObjectEvents is nonzero (on
-/// entry), moves the statues to their saved columns.
+/// start on, one metatile behavior while a statue stands there and another once
+/// it has been pushed to either side, and, when placeObjectEvents is nonzero
+/// (on entry), moves the statues to their saved columns.
 static void SolSanctumEntrance_RestoreRowStatueCells(s32 placeObjectEvents) {
   // Clear all six destinations before restoring occupied cells.
   MapGrid_CopyCellAttributes(122, 20, 1, 1, 100, 32);

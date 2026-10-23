@@ -32,7 +32,7 @@ void BattleAnim_RunAnnihilation(struct BattleAnimArgs *effect) {
   void *canvas;
   u8 *particleSheet;
   struct BattleCamera *camera;
-  struct MotionObject *targetObject;
+  struct Object *targetObject;
   struct Particle *shard;
   struct ScreenPoint position;
   struct ScreenPoint origin;

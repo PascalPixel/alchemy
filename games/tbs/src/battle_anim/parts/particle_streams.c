@@ -173,13 +173,13 @@ void BattleAnim_RunParticleStreams(struct BattleAnimArgs *effect, s32 mode) {
    * 1 of 1532 instructions differ in tbs-en. */
   direction = mode;
   if (direction == PARTICLE_STREAMS_OUTER_SPACE) {
-    struct MotionObject *animation =
+    struct Object *animation =
         GetBattleObjectSlotFar(work->effect->user)->object;
 
     // The leap: 10 pixels a frame upwards, against a gravity of 0x91eb, about
     // 0.57 pixels a frame lost each frame.
     animation->velocityY = 0xa0000;
-    animation->verticalMotionStrength = 0x91eb;
+    animation->gravity = 0x91eb;
     ObjectGroup_UpdateMembers(work->effect->user, -1, POSE_LEAP, -1, 0);
     Sound_PlaySongFar(SE_145);
     direction = work->effect->side == 1 ? mode : -1;

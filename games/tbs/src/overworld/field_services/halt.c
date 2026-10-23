@@ -82,8 +82,8 @@ void FieldEffect_RunHaltOnTarget(s32 unused) {
 /// Abilities: Halt (FIELD_PSYNERGY_HALT).
 void FieldEffect_RunHalt(void) {
   struct FieldEffectWork *effectWork = gFieldEffectWork;
-  struct MotionObject *caster = effectWork->mainObject;
-  struct MotionObject *orb;
+  struct Object *caster = effectWork->mainObject;
+  struct Object *orb;
   struct FieldEffectSprite *effect;
   struct EffectVector pos;
   struct EffectVector from;
@@ -92,7 +92,7 @@ void FieldEffect_RunHalt(void) {
   s32 i;
 
   effectWork->y = caster->y;
-  orb = (struct MotionObject *)Object_Spawn(250, 0, 0, 0);
+  orb = (struct Object *)Object_Spawn(250, 0, 0, 0);
   step = 0;
   ObjectDispatch_SelectAnimationFar(orb, 0);
   if (orb == 0)
@@ -154,7 +154,7 @@ void FieldEffect_RunHalt(void) {
   pos.y = orb->y + (8 << 16);
   pos.z = orb->z;
   WaitFrames(8);
-  ObjectDispatch_ReleaseFar((struct DispatchObject *)orb);
+  ObjectDispatch_ReleaseFar((struct Object *)orb);
   WaitFrames(4);
   WaitFrames(30);
   FieldEffect_FadeFromEffectColor();
@@ -195,8 +195,7 @@ void FieldEffect_PauseObject(s32 localId) {
     }
     objectEvent->update = FieldEffect_UpdatePausedObject;
     objectEvent->paused = 1;
-    ObjectDispatch_SetAnimationSpeedFar((struct DispatchObject *)objectEvent,
-                                        0);
+    ObjectDispatch_SetAnimationSpeedFar((struct Object *)objectEvent, 0);
   }
 }
 
@@ -213,12 +212,10 @@ void FieldEffect_ResumeObject(s32 localId) {
       struct SaveBlock *state = &gSaveBlock;
       objectEvent->update = (void (*)(union FieldObject *))state->pausedUpdate;
       state->pausedUpdate = 0;
-      Anim_ApplyChildValuesFar((struct DispatchObject *)objectEvent,
-                               state->pausedPose);
+      Anim_ApplyChildValuesFar((struct Object *)objectEvent, state->pausedPose);
     }
     objectEvent->paused = 0;
-    ObjectDispatch_SetAnimationSpeedFar((struct DispatchObject *)objectEvent,
-                                        16);
+    ObjectDispatch_SetAnimationSpeedFar((struct Object *)objectEvent, 16);
   }
 }
 

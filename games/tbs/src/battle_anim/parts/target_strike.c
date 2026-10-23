@@ -137,8 +137,8 @@ void BattleAnim_RunTargetStrike(struct BattleAnimArgs *effect, s32 mode) {
   s32 k;
   u8 *particleSheet;
   struct BattleCamera *camera;
-  struct MotionObject *target;
-  struct MotionObject *source;
+  struct Object *target;
+  struct Object *source;
   s32 resource;
   s32 i;
   s32 wispSheet = TARGET_STRIKE_SMOKE_CELLS;

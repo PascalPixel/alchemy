@@ -263,7 +263,7 @@ s32 BattleStaging_HideField(struct BattleTurn *plan, s32 mode) {
   s32 i;
   s32 n;
   u32 kept;
-  struct MotionObject *object;
+  struct Object *object;
   // UB: indexing past scalar gBattleWork reaches another heap slot. Named
   // slots keep the native EN size (0x3ba), but reorder address setup.
 #ifndef UBFIX
@@ -459,7 +459,7 @@ s32 BattleStaging_RunActorEntries(struct BattleTurn *plan, s32 unused) {
 /// animation.
 s32 BattleStaging_RunAttack(struct BattleTurn *plan, s32 mode) {
   struct BattleStagingWork work;
-  struct MotionObject *object;
+  struct Object *object;
   struct Sprite *animation;
   struct Unit *unit;
   s16 criticalPair[3];
@@ -528,7 +528,7 @@ s32 BattleStaging_RunAttack(struct BattleTurn *plan, s32 mode) {
   BattleMotion_ApproachTarget(work.effect.user, work.effect.targets[0], frames,
                               BattleSprite_GetAttackHop(unit->id) << 16);
   ObjectDispatch_SetAnimationSpeedFar(
-      (struct DispatchObject *)BattleObject_Get(work.effect.user)->object, 16);
+      (struct Object *)BattleObject_Get(work.effect.user)->object, 16);
   BattleObject_Get(work.effect.targets[0]);
 
   if ((u16)work.effect.targets[0] <= ALLY_MAX)
@@ -624,7 +624,7 @@ s32 BattleStaging_RunAttack(struct BattleTurn *plan, s32 mode) {
 UNUSED s32 BattleStaging_RunPlainAttack(struct BattleTurn *input, s32 flags) {
   struct BattleStagingWork work;
   struct BattleTurn *savedInput;
-  struct MotionObject *object;
+  struct Object *object;
   struct Sprite *animation;
   struct BattleViewWork *view;
   s32 angle;
@@ -667,7 +667,7 @@ UNUSED s32 BattleStaging_RunPlainAttack(struct BattleTurn *input, s32 flags) {
   BattleMotion_ApproachTarget(work.effect.user, savedInput->targetIds[0],
                               frames, 0);
   ObjectDispatch_SetAnimationSpeedFar(
-      (struct DispatchObject *)BattleObject_Get(work.effect.user)->object, 16);
+      (struct Object *)BattleObject_Get(work.effect.user)->object, 16);
   BattleObject_Get(savedInput->targetIds[0]);
 
   if (savedInput->targetIds[0] <= ALLY_MAX)
@@ -703,7 +703,7 @@ UNUSED s32 BattleStaging_RunPlainAttack(struct BattleTurn *input, s32 flags) {
 s32 BattleStaging_RunItem(struct BattleTurn *plan, s32 unused,
                           struct BattleAction *selection) {
   struct BattleStagingWork work;
-  struct MotionObject *object;
+  struct Object *object;
   s32 targetOrFadeIndex;
   s32 inventoryEntry;
   struct Unit *unit;
@@ -727,7 +727,7 @@ s32 BattleStaging_RunItem(struct BattleTurn *plan, s32 unused,
   BattleHighlight_SetModes(0, HIGHLIGHT_OFF);
   object = BattleObject_Get(work.effect.user)->object;
   ObjectDispatch_SelectAnimationFar(object, POSE_CAST);
-  ObjectDispatch_SetAnimationSpeedFar((struct DispatchObject *)object, 16);
+  ObjectDispatch_SetAnimationSpeedFar((struct Object *)object, 16);
   if (plan->targetIds[0] <= ALLY_MAX)
     work.effect.side = ANIM_SIDE_PARTY;
   else
@@ -828,9 +828,9 @@ s32 BattleStaging_RunItem(struct BattleTurn *plan, s32 unused,
 /// and a unit's redraw), with the flash's colour or the unit's own
 /// (BattleObject_GetPalette).
 #ifdef UBFIX
-void BattleObject_SetColorMode(struct MotionObject *object, s32 colorMode) {
+void BattleObject_SetColorMode(struct Object *object, s32 colorMode) {
 #else
-s32 BattleObject_SetColorMode(struct MotionObject *object, s32 colorMode) {
+s32 BattleObject_SetColorMode(struct Object *object, s32 colorMode) {
 #endif
   s32 recordIndex = 0;
   s32 childIndex;
@@ -873,7 +873,7 @@ s32 BattleObject_SetColorMode(struct MotionObject *object, s32 colorMode) {
 s32 BattleStaging_RunPsynergyCast(struct BattleTurn *plan, s32 mode) {
   struct BattleStagingWork work;
   struct BattleViewWork *view = gBattleViewWork;
-  struct MotionObject *object;
+  struct Object *object;
   s32 isDjinni;
   s32 targetIndex;
 
@@ -888,7 +888,7 @@ s32 BattleStaging_RunPsynergyCast(struct BattleTurn *plan, s32 mode) {
         plan->actorId <= ALLY_MAX ? YAW_ENEMY_TURN : YAW_BEHIND_ENEMIES;
     view->frames = 60;
   } else {
-    struct MotionObject *actor = BattleObject_Get(plan->actorId)->object;
+    struct Object *actor = BattleObject_Get(plan->actorId)->object;
     s32 angle = (u16)ArcTan2(actor->x, actor->z);
     s32 targetYaw;
 
@@ -923,7 +923,7 @@ s32 BattleStaging_RunPsynergyCast(struct BattleTurn *plan, s32 mode) {
   PartyStatus_DrawFar(gBattleWork->partyStatus & ~PARTY_STATUS_SHOW_PP);
   object = BattleObject_Get(work.effect.user)->object;
   ObjectDispatch_SelectAnimationFar(object, POSE_CAST);
-  ObjectDispatch_SetAnimationSpeedFar((struct DispatchObject *)object, 16);
+  ObjectDispatch_SetAnimationSpeedFar((struct Object *)object, 16);
   Sound_PlaySongFar(SE_CAST);
   if (mode & CAST_ENEMY)
     ElementGlow_Play(work.effect.user, plan->element, GLOW_STREAKS, 0);

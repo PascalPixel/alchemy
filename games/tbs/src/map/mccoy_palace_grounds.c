@@ -55,7 +55,6 @@
 #include "map_tables.h"
 #include "objcmd.h"
 #include "flags.h"
-#include "facing_object.h"
 #include "songs.h"
 
 // UB: this calls a void function through an s32 function type, the call the

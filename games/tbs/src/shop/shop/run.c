@@ -123,11 +123,9 @@ s32 Shop_Run(s32 stockRow, s32 keeperId) {
     shop->warriorShop = 1;
   if (stockRow == SHOP_STOCK_ROW_XIAN_ITEMS)
     shop->warriorShop = 1;
-  shop->keeperGraphics =
-      ((struct Sprite *)((struct Object *)ObjectEvent_GetByIdFar(keeperId))
-           ->animation)
-          ->entries[0]
-          ->animationId;
+  shop->keeperGraphics = ((struct Object *)ObjectEvent_GetByIdFar(keeperId))
+                             ->sprite->entries[0]
+                             ->animationId;
   // The shopkeeper's portrait window, or an empty one off the left edge when
   // there is no portrait.
   window = Portrait_OpenWindowFar(shop->keeperGraphics, 0, 0, 0);

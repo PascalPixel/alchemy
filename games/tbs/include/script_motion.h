@@ -2,7 +2,8 @@
 #define ALCHEMY_SCRIPT_MOTION_H
 
 /// @file
-/// ScriptMotionObject, an object moved by a field script.
+/// The words of an object's script as the motion loops index them, and
+/// ScriptMotionObject, struct Object as update.c reads it.
 
 #include "types.h"
 #include "static_assert.h"
@@ -22,8 +23,10 @@ struct ScriptMotionWords {
 typedef struct ScriptMotionWords ScriptMotionWords;
 #endif
 
-/// An object as the motion code sees it: its script, position, motion
-/// toward a target, bounce and gravity, motion flags and wait, and its hook.
+/// struct Object, field for field, as Object_UpdateAll (update.c) reads it.
+/// update.c is ARM code built with GCC 2.95.2, which cannot read struct
+/// Object's anonymous unions, so it keeps this copy of the layout with the
+/// script as words and the bounce as a union (MATCHING.md).
 struct ScriptMotionObject {
   const ScriptMotionWords *script; ///< null when the object is free
   u16 scriptCursor;                ///< in words; read signed
@@ -93,7 +96,7 @@ struct ScriptMotionObject {
   struct ScriptMotionObject *linkedObject;
   ///@}
   /// Called each frame before its script.
-  void (*hook)(union FieldObject *fieldObject);
+  void (*update)(union FieldObject *fieldObject);
 };
 
 STATIC_ASSERT(sizeof(struct ScriptMotionObject) == 0x70);
@@ -104,6 +107,6 @@ STATIC_ASSERT(offsetof(struct ScriptMotionObject, vertical) == 0x44);
 STATIC_ASSERT(offsetof(struct ScriptMotionObject, arrivalAxis) == 0x56);
 STATIC_ASSERT(offsetof(struct ScriptMotionObject, wait) == 0x5e);
 STATIC_ASSERT(offsetof(struct ScriptMotionObject, frozen) == 0x61);
-STATIC_ASSERT(offsetof(struct ScriptMotionObject, hook) == 0x6c);
+STATIC_ASSERT(offsetof(struct ScriptMotionObject, update) == 0x6c);
 
 #endif

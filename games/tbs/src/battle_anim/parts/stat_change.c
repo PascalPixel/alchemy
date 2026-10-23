@@ -254,7 +254,7 @@ void BattleAnim_RunStatBoost(struct BattleAnimArgs *effect, u32 mode) {
 
     // Each target's own timeline, starting 8 frames after the one before.
     ANIM_FOR_EACH_TARGET(member, work->effect) {
-      struct MotionObject *object =
+      struct Object *object =
           GetBattleObjectSlotFar(work->effect->targets[member])->object;
       s32 height =
           BattleUnit_GetEffectHeightFar(work->effect->targets[member]) * 2 / 3;
@@ -539,7 +539,7 @@ void BattleAnim_RunStatReduction(struct BattleAnimArgs *effect, s32 mode) {
     if (frame == 72)
       ANIM_SHOW_DAMAGE(0);
     ANIM_FOR_EACH_TARGET(j, work->effect) {
-      struct MotionObject *object;
+      struct Object *object;
       s32 targetFrame;
       s32 x;
       s32 y;

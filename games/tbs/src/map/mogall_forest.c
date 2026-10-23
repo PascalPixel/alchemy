@@ -353,16 +353,15 @@ static s32 MogallForest_TryJumpLeaderTo(struct FieldPosition *position) {
 }
 
 /// Script command: draws the object event in the colour mode its timer holds.
-static s32
-MogallForest_CopyTimerToChild(struct ObjectScriptContext *interpreter) {
+static s32 MogallForest_CopyTimerToChild(struct Object *interpreter) {
   struct ObjectEvent *objectEvent = (struct ObjectEvent *)interpreter;
   ObjectGroup_SetChildValue(objectEvent, objectEvent->timer);
   return 0;
 }
 
 /// Clears the object event's sprite flags when its script requests it.
-static s32 MogallForest_ClearObjectEventSpriteFlags(
-    struct ObjectScriptContext *interpreter) {
+static s32
+MogallForest_ClearObjectEventSpriteFlags(struct Object *interpreter) {
   struct ObjectEvent *objectEvent = (struct ObjectEvent *)interpreter;
   ObjectEvent_SetSpriteFlags(objectEvent, 0);
   return 0;

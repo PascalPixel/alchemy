@@ -361,8 +361,7 @@ static void EventScript_BaneSecondEscape(void) {
       spinningDjinni = ObjectEvent_GetById(LOCALID_BANE);
       spinningDjinni->sprite->rotation = 0xf800;
       spinningDjinni->facing = 0;
-      ObjectDispatch_SetAnimationSpeed((struct DispatchObject *)spinningDjinni,
-                                       0);
+      ObjectDispatch_SetAnimationSpeed((struct Object *)spinningDjinni, 0);
       ObjectEvent_SetScript(spinningDjinni,
                             gCrossboneIsleKeys_BaneSquashScript);
       SCRIPT_END();
@@ -384,7 +383,7 @@ static void EventScript_BaneLastEscape(void) {
     // Restore the sprite before the last jump and winding escape path.
     djinni = ObjectEvent_GetById(LOCALID_BANE);
     djinni->sprite->rotation = 0;
-    ObjectDispatch_SetAnimationSpeed((struct DispatchObject *)djinni, 16);
+    ObjectDispatch_SetAnimationSpeed((struct Object *)djinni, 16);
     SE(SE_JUMP);
     djinni = ObjectEvent_GetById(LOCALID_BANE);
     djinni->velocityY = PIXELS(8);
@@ -1452,7 +1451,7 @@ static void CrossboneIsleKeys_InitializeBane(void) {
       OBJECT_POSITION_SET(LOCALID_BANE, 888, 664);
       djinni = ObjectEvent_GetById(LOCALID_BANE);
       djinni->sprite->rotation = 0;
-      ObjectDispatch_SetAnimationSpeed((struct DispatchObject *)djinni, 16);
+      ObjectDispatch_SetAnimationSpeed((struct Object *)djinni, 16);
     } else if (GameFlag_Get(FLAG_CROSSBONE_ISLE_BANE_FIRST_ESCAPE) != 0) {
       OBJECT_POSITION_SET(LOCALID_BANE, 584, 680);
     } else {

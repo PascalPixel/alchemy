@@ -171,8 +171,8 @@ enum {
 
 /// Clears the scripted object event's sprite flags and completes this script
 /// command.
-static s32 BilibinCave_ClearScriptedObjectEventSpriteFlags(
-    struct ObjectScriptContext *interpreter) {
+static s32
+BilibinCave_ClearScriptedObjectEventSpriteFlags(struct Object *interpreter) {
   struct ObjectEvent *objectEvent = (struct ObjectEvent *)interpreter;
   ObjectEvent_SetSpriteFlags(objectEvent, 0);
   return 0;

@@ -13,13 +13,13 @@
 /// back at the end.
 void Djinn_RunJupiterJoinEffect(s32 djinniId) {
   struct EffectVector position;
-  struct MotionObject *djinni;
+  struct Object *djinni;
   struct FieldEffectWork *effectWork;
   struct FieldEffectSprite *effect;
   s32 scale;
   s32 remainingParticles;
 
-  djinni = (struct MotionObject *)ObjectEvent_GetById(djinniId);
+  djinni = (struct Object *)ObjectEvent_GetById(djinniId);
   if (djinni == NULL)
     return;
   FieldEffect_InitializeSlots();
@@ -46,7 +46,7 @@ void Djinn_RunJupiterJoinEffect(s32 djinniId) {
   position.y = djinni->y;
   position.z = djinni->z;
   Camera_WorldToScreen(&position);
-  ObjectDispatch_ReleaseFar((struct DispatchObject *)djinni);
+  ObjectDispatch_ReleaseFar((struct Object *)djinni);
   Sound_PlaySongFar(SE_164);
   effect = effectWork->sprites;
   remainingParticles = 23;
@@ -78,15 +78,6 @@ void Djinn_RunJupiterJoinEffect(s32 djinniId) {
   FieldEffect_ClearActiveSlotsAndScheduleUpdates();
 }
 
-/// A spinning object: its angle, and at 0x64 the frames its spin has been
-/// speeding up for (FieldEffect_AdvanceAngleWithRamp), read signed.
-struct RampedSpinObject {
-  u8 scriptAndCursor[6]; ///< ObjectEvent's script and its cursor
-  u16 angle;
-  u8 positionToRise[0x5c]; ///< ObjectEvent's x to riseEnabled
-  s16 rampFrames;
-};
-
 /// Per-frame update: makes an object pulse, switching its scale between the
 /// two values of gFieldEffect_PulseScales every 4 frames. The Mars Djinni's
 /// joining sets it on the leader, and clears it to end the pulse.
@@ -95,23 +86,23 @@ void FieldEffect_SetObjectAlternatingWords(union FieldObject *fieldObject) {
   u32 *table = gFieldEffect_PulseScales;
   u32 index = ((u32)gFrameTick >> 2) & 1;
   u32 scale = table[index];
-  ((struct MotionObject *)object)->scaleX = scale;
-  ((struct MotionObject *)object)->scaleY = scale;
+  ((struct Object *)object)->scaleX = scale;
+  ((struct Object *)object)->scaleY = scale;
 }
 
 /// Per-frame update: spins an object ever faster, from 1/16 turn a frame up to
 /// just over 1/8 (0x2040), 0x50 more each frame for 52 frames. The caller
-/// zeroes the frame count first (ObjectEvent.timer), as the Mars Djinni's
+/// zeroes the frame count first (Object.spinRampFrames), as the Mars Djinni's
 /// joining does.
 void FieldEffect_AdvanceAngleWithRamp(union FieldObject *fieldObject) {
   void *obj = (void *)fieldObject;
-  struct RampedSpinObject *spin = obj;
+  struct Object *spin = obj;
   u32 step;
 
-  step = spin->rampFrames * 0x50;
-  spin->angle = spin->angle + step + 0x1000;
+  step = spin->spinRampFrames * 0x50;
+  spin->facing = spin->facing + step + 0x1000;
   if (step < 0x1000U) {
-    spin->rampFrames = spin->rampFrames + 1;
+    spin->spinRampFrames = spin->spinRampFrames + 1;
   }
 }
 
@@ -125,12 +116,11 @@ DEFINE_SHRINK_AND_DESTROY(FieldEffect_ShrinkObjectAndDestroySlow, 0xFFFFFE40)
 /// stops where it arrives, hidden; 40 frames later it swarms to points within 4
 /// pixels of one 20 pixels over the leader, until it is freed once it arrives.
 void FieldEffect_UpdatePhasedRadialParticle(struct FieldEffectSprite *effect) {
-  struct ObjectVectorView *owner;
+  struct Object *owner;
   struct EffectVector position;
   s32 state;
 
-  owner =
-      (struct ObjectVectorView *)ObjectEvent_GetById(gSaveBlock.leaderLocalId);
+  owner = (struct Object *)ObjectEvent_GetById(gSaveBlock.leaderLocalId);
   state = effect->state;
 
   if (state == MARS_SPARK_AIM) {
@@ -179,9 +169,9 @@ void FieldEffect_UpdatePhasedRadialParticle(struct FieldEffectSprite *effect) {
     effect->render = 1;
     effect->x = effect->originX;
     effect->z = effect->originZ;
-    position.x = owner->position.x;
-    position.y = owner->position.y + 0x140000;
-    position.z = owner->position.z;
+    position.x = owner->x;
+    position.y = owner->y + 0x140000;
+    position.z = owner->z;
     Camera_WorldToScreen(&position);
     Vector_AddPolarOffset(0x40000, Random16(), &position);
     effect->targetX = position.x;

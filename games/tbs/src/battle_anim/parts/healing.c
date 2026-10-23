@@ -321,7 +321,7 @@ void BattleAnim_RunHealingMotes(struct BattleAnimArgs *effect, u32 mode) {
     }
 
     ANIM_FOR_EACH_TARGET(member, work->effect) {
-      struct MotionObject *object =
+      struct Object *object =
           GetBattleObjectSlotFar(work->effect->targets[member])->object;
       s32 start = member * HEALING_STAGGER;
 

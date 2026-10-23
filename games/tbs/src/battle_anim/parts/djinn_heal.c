@@ -26,8 +26,8 @@ UNUSED void BattleAnim_RunDjinnHeal(struct BattleAnimArgs *effect) {
   s32 member;
   u8 *sheet;
   DrawRectangle *draw;
-  struct MotionObject *actor;
-  struct MotionObject *goal;
+  struct Object *actor;
+  struct Object *goal;
   s32 frame;
   s32 i;
   s32 position[3];
@@ -168,7 +168,7 @@ UNUSED void BattleAnim_RunDjinnHeal(struct BattleAnimArgs *effect) {
     view.x >>= 1;
     callbacks[0](canvas, work->sheet, view.x - 10, view.y - 17, 20, 34);
     ANIM_FOR_EACH_TARGET(member, work->effect) {
-      struct MotionObject *object =
+      struct Object *object =
           GetBattleObjectSlotFar(work->effect->targets[member])->object;
       s32 start = member * 8;
       ANIM_VIEW_FROM_CAMERA(camera);

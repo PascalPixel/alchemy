@@ -50,7 +50,7 @@ void BattleAnim_RunBreak(struct BattleAnimArgs *effect) {
   // ellipse up to 2 pixels across the half-width canvas and 32 up and down;
   // each moves up to 1 pixel a frame sideways and jumps up at 2 to 6.
   ANIM_FOR_EACH_TARGET(member, work->effect) {
-    struct MotionObject *object;
+    struct Object *object;
     s32 offset;
     s32 height;
     struct Particle *shard;
@@ -178,7 +178,7 @@ void BattleAnim_RunDrain(struct BattleAnimArgs *effect) {
   ANIM_FREE_PARTICLES(i, PARTICLES, 8 * DRAIN_MOTES_PER_TARGET);
 
   ANIM_FOR_EACH_TARGET(member, work->effect) {
-    struct MotionObject *object;
+    struct Object *object;
     s32 halfHeight;
 
     object = GetBattleObjectSlotFar(work->effect->targets[member])->object;
@@ -206,7 +206,7 @@ void BattleAnim_RunDrain(struct BattleAnimArgs *effect) {
   // starts the user's glow and frame 64 shows the damage. The last target's
   // motes get 72 frames to reach the user.
   for (frame = 0; frame != work->effect->targetCount * 20 + 72; frame++) {
-    struct MotionObject *user;
+    struct Object *user;
     s32 halfHeight;
 
     user = GetBattleObjectSlotFar(work->effect->user)->object;

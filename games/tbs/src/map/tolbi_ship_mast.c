@@ -184,8 +184,7 @@ enum TolbiShipMastMetatileBehavior {
 
 /// Keeps the effect object event relative to the saved camera origin and
 /// rotates it.
-static s32
-TolbiShipMast_FollowCameraAndRotate(struct ObjectScriptContext *interpreter) {
+static s32 TolbiShipMast_FollowCameraAndRotate(struct Object *interpreter) {
   struct ObjectEvent *objectEvent = (struct ObjectEvent *)interpreter;
   s32 *position = ((struct MapGridScrollWork *)gMapGridWork[0])->origin;
   s32 *origin = gTolbiShipMast_CameraOrigin;
@@ -200,8 +199,7 @@ TolbiShipMast_FollowCameraAndRotate(struct ObjectScriptContext *interpreter) {
 }
 
 /// A random sample of 6 or 9 turns the lookout to either side of north.
-static s32
-TolbiShipMast_RandomizeLookoutFacing(struct ObjectScriptContext *interpreter) {
+static s32 TolbiShipMast_RandomizeLookoutFacing(struct Object *interpreter) {
   struct ObjectEvent *objectEvent = (struct ObjectEvent *)interpreter;
   u32 sample = (u32)(Engine_RandomNext() << 6) >> 16;
 
@@ -237,8 +235,7 @@ enum TolbiShipMastSway {
 };
 
 /// Randomly reverses horizontal drift and vertical bobbing at their limits.
-static s32
-TolbiShipMast_SwayObjectEvent(struct ObjectScriptContext *interpreter) {
+static s32 TolbiShipMast_SwayObjectEvent(struct Object *interpreter) {
   struct ObjectEvent *objectEvent = (struct ObjectEvent *)interpreter;
   s16 *state = &objectEvent->timer;
   s32 next;
@@ -282,8 +279,7 @@ TolbiShipMast_SwayObjectEvent(struct ObjectScriptContext *interpreter) {
 
 /// Shrinks both axes; once small enough, clears the object event's position and
 /// speed.
-static s32 TolbiShipMast_ShrinkAndStopObjectEvent(
-    struct ObjectScriptContext *interpreter) {
+static s32 TolbiShipMast_ShrinkAndStopObjectEvent(struct Object *interpreter) {
   struct ObjectEvent *objectEvent = (struct ObjectEvent *)interpreter;
   struct Sprite *sprite = objectEvent->sprite;
 

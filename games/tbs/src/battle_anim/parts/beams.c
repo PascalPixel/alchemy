@@ -46,7 +46,7 @@ void BattleAnim_RunBeamSequence(struct BattleAnimArgs *effect) {
   struct Unit *unit;
   BlitterPair draw;
   DrawRectangle *slots;
-  struct MotionObject *target;
+  struct Object *target;
   void *colors = (void *)BG_PLTT;
   s32 half;
   s32 frame;
@@ -297,8 +297,8 @@ void BattleAnim_RunRingAndSparkSequence(struct BattleAnimArgs *effect) {
   s32 strength;
   BlitterPair draw;
   DrawRectangle *slots;
-  struct MotionObject *object;
-  struct MotionObject *target;
+  struct Object *object;
+  struct Object *target;
   u16 *background;
   void *colors = (void *)BG_PLTT;
   s32 canvasBytes = CANVAS_BYTES;
@@ -377,15 +377,15 @@ void BattleAnim_RunRingAndSparkSequence(struct BattleAnimArgs *effect) {
       SET_VELOCITY(mote, Random16() & 0xffff, Random16() & 0xffff,
                    Random16() & 0xffff);
     }
-    ObjectDispatch_SetAnimationSpeedFar((struct DispatchObject *)object, 0);
+    ObjectDispatch_SetAnimationSpeedFar((struct Object *)object, 0);
     velocityX = object->velocityX;
     velocityY = object->velocityY;
     velocityZ = object->velocityZ;
-    strength = object->verticalMotionStrength;
+    strength = object->gravity;
     acceleration = object->acceleration;
     SET_VELOCITY(object, 0, 0, 0);
     object->acceleration = 0;
-    object->verticalMotionStrength = 0;
+    object->gravity = 0;
     Projection_ScaledUnit(work->effect->user, &screenPosition);
     // BG1 scrolls so the user stands at canvas x 64, where the motes are
     // centred.
@@ -423,10 +423,10 @@ void BattleAnim_RunRingAndSparkSequence(struct BattleAnimArgs *effect) {
       ANIM_PRESENT_FRAME(work);
     }
     Task_Remove(Palette_StepFadeTransfer);
-    ObjectDispatch_SetAnimationSpeedFar((struct DispatchObject *)object, 16);
+    ObjectDispatch_SetAnimationSpeedFar((struct Object *)object, 16);
     SET_VELOCITY(object, velocityX, velocityY, velocityZ);
     object->acceleration = acceleration;
-    object->verticalMotionStrength = strength;
+    object->gravity = strength;
   }
 
   // The strike: clear the canvas, scroll BG1 so the first target is on

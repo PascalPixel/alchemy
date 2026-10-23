@@ -556,8 +556,8 @@ static void EventScript_PushPipeworksPillar(void) {
   FieldScript_WaitFrames(6);
   Engine_ObjectEventSetAnimation(leaderId, ANIM_WALK);
   ObjectDispatch_StartCamera(
-      (struct DispatchObject *)((struct FieldWork *)AllocHeapSlotEwram(
-                                    HEAP_SLOT_FIELD, sizeof(struct FieldWork)))
+      (struct Object *)((struct FieldWork *)AllocHeapSlotEwram(
+                            HEAP_SLOT_FIELD, sizeof(struct FieldWork)))
           ->camera,
       (s32)objectEvent);
   ObjectEvent_SetSpeed(leaderId, PIXELS(3) / 10, PIXELS(1) / 5);
@@ -1463,7 +1463,7 @@ ColosseumAzartMatch_SpawnRandomEffect(union FieldObject *fieldObject) {
 
 /// Presents the collected item above its collector and signals completion.
 static s32 ColosseumAzartMatch_PlaceFinishItemAboveObjectEvent(
-    struct ObjectScriptContext *interpreter) {
+    struct Object *interpreter) {
   struct ObjectEvent *collector = (struct ObjectEvent *)interpreter;
   struct ObjectEvent *itemObjectEvent = ObjectEvent_GetById(collector->timer);
 

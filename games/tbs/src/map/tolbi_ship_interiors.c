@@ -503,8 +503,7 @@ static void TolbiShipInteriors_SwapRowerSelections(s32 firstSeatFlags,
 
 /// An action-script call: stands the object event still at the origin, with no
 /// velocity and no target. Returns 0.
-static s32
-TolbiShipInteriors_ResetObjectEvent(struct ObjectScriptContext *interpreter) {
+static s32 TolbiShipInteriors_ResetObjectEvent(struct Object *interpreter) {
   struct ObjectEvent *objectEvent = (struct ObjectEvent *)interpreter;
   ObjectDispatch_SelectAnimation(objectEvent, 1);
   objectEvent->x.fixed = 0;
@@ -518,7 +517,7 @@ TolbiShipInteriors_ResetObjectEvent(struct ObjectScriptContext *interpreter) {
 
 /// Bobs the object event between the floor and 8 pixels up by a random amount
 /// each frame. Returns 1.
-static s32 TolbiShipInteriors_Bob(struct ObjectScriptContext *interpreter) {
+static s32 TolbiShipInteriors_Bob(struct Object *interpreter) {
   struct ObjectEvent *objectEvent = (struct ObjectEvent *)interpreter;
   s16 verticalMotionDirection;
   s32 descendingY;
@@ -547,8 +546,7 @@ static s32 TolbiShipInteriors_Bob(struct ObjectScriptContext *interpreter) {
 
 /// Now and then (two chances in 64) turns the object event to face
 /// south-southeast or south-southwest. Returns 1.
-static s32
-TolbiShipInteriors_LookAround(struct ObjectScriptContext *interpreter) {
+static s32 TolbiShipInteriors_LookAround(struct Object *interpreter) {
   struct ObjectEvent *objectEvent = (struct ObjectEvent *)interpreter;
   u32 choice = (u32)(Engine_RandomNext(objectEvent) << 6) >> 16;
 
@@ -695,7 +693,7 @@ static void TolbiShipInteriors_WatchPacer(union FieldObject *fieldObject) {
 
 /// An action-script call: lays the object event flat on the floor, drawn
 /// underfoot at priority 1 with its parts hidden. Returns 1.
-static s32 TolbiShipInteriors_LayFlat(struct ObjectScriptContext *interpreter) {
+static s32 TolbiShipInteriors_LayFlat(struct Object *interpreter) {
   struct ObjectEvent *work = (struct ObjectEvent *)interpreter;
   struct Sprite *sprite = work->sprite;
 

@@ -17,68 +17,6 @@ enum {
   WHIRLWIND_TRAVEL_FRAMES = 10
 };
 
-/// A ObjectEvent seen with the halfword at 0x64 unsigned and the one at 0x66
-/// signed, as the bytes read them (ObjectEvent's own types change the code).
-/// Whirlwind particles (object 0xf9) use this view.
-struct WhirlwindOrbit {
-  /// ObjectEvent's script and its cursor; not named through this view.
-  ///@{
-  const s32 *script;
-  u16 scriptCursor;
-  ///@}
-  u16 angle; ///< heading or orbit angle, in 1/65536 turns
-  s32 x;     ///< 16.16 pixels
-  s32 y;     ///< 16.16 pixels
-  s32 z;     ///< 16.16 pixels
-  /// ObjectEvent's groundHeight to velocityX; not named through this view.
-  ///@{
-  s32 groundHeight;
-  s32 scaleX;
-  s32 scaleY;
-  u16 radius;
-  u8 layer;
-  u8 priorityFlags;
-  s32 velocityX;
-  ///@}
-  s32 velocityY; ///< applied by the engine, in 16.16 pixels per frame
-  /// ObjectEvent's velocityZ to bounce; not named through this view.
-  ///@{
-  s32 velocityZ;
-  s32 speed;
-  s32 acceleration;
-  s32 targetX;
-  s32 targetY;
-  s32 targetZ;
-  s32 bounce;
-  ///@}
-  s32 gravity; ///< vertical deceleration, in 16.16 pixels per frame squared
-  /// ObjectEvent's riseBaseY to riseEnabled; not named through this view.
-  ///@{
-  s32 riseBaseY;
-  void *sprite;
-  u8 spriteStorageKind;
-  u8 motionFlags;
-  u8 arrivalAxis;
-  u8 conditionResult;
-  u8 snapToTarget;
-  u8 collisionFlags;
-  u8 steeringFlags;
-  u8 paused;
-  u8 retainSpriteCache;
-  u8 repeatCount;
-  u16 wait;
-  u8 refused;
-  u8 frozen;
-  u8 riseCounter;
-  u8 riseEnabled;
-  ///@}
-  u16 timer;                     ///< frames so far
-  s16 pause;                     ///< frames left of a sharp turn
-  struct WhirlwindOrbit *anchor; ///< orb at the centre of the orbit
-  void (*update)(
-      union FieldObject *fieldObject); ///< engine's per-frame callback
-};
-
 /// The shared effect-spawning source, at its place in the ROM.
 #define EFFECT_SPAWN_RESIDENT
 #include "../../map/common/effect_spawn.h"
@@ -104,7 +42,7 @@ void FieldEffect_UpdateParticleMotionAndScale(union FieldObject *fieldObject) {
 /// velocity 1.5 times their z velocity, so the ring is wider than deep as the
 /// field is drawn. Carry's FieldEffect_SteerLiftedTarget spawns it where it
 /// sets its load down.
-void FieldEffect_SpawnRadialParticleRing(struct MotionObject *origin) {
+void FieldEffect_SpawnRadialParticleRing(struct Object *origin) {
   struct EffectOptions opt;
   s32 vel[3];
   s32 vz;
@@ -135,7 +73,7 @@ void FieldEffect_SpawnRadialParticleRing(struct MotionObject *origin) {
 /// and gravity FieldEffect_CircleAnchor gave it); this only moves it across the
 /// ground.
 void FieldEffect_WanderAroundAnchor(union FieldObject *fieldObject) {
-  struct WhirlwindOrbit *effect = (struct WhirlwindOrbit *)fieldObject;
+  struct Object *effect = (struct Object *)fieldObject;
   s32 len;
   s32 angle;
   s32 dx;
@@ -143,54 +81,53 @@ void FieldEffect_WanderAroundAnchor(union FieldObject *fieldObject) {
 
   // Random16 is 0 to 1 in 16.16, so 2 to 3 pixels.
   len = Random16() + 0x20000;
-  angle = effect->angle;
+  angle = effect->facing;
   dx = Iwram_MulQ16(len, Trig_Cos(angle));
   dz = Iwram_MulQ16(len, Trig_Sin(angle));
   effect->x += dx;
   effect->z += dz;
   // The u16 angle wraps: 0xfff0 gives a small backwards drift. A turn burst
   // adds 1/32 of a turn each frame without stopping the outward motion.
-  effect->angle += 0xfff0;
-  if (effect->pause != 0) {
-    effect->pause--;
-    effect->angle += 0x800;
+  effect->facing += 0xfff0;
+  if (effect->turnFrames != 0) {
+    effect->turnFrames--;
+    effect->facing += 0x800;
   } else if ((Random16() << 5) >> 16 == 0) // one chance in 32
   {
-    effect->pause = ((Random16() << 4) >> 16) + 8; // 8 to 23 frames
+    effect->turnFrames = ((Random16() << 4) >> 16) + 8; // 8 to 23 frames
   }
-  if (++effect->timer == WHIRLWIND_WANDER_FRAMES)
-    ObjectDispatch_InitializeFar((struct DispatchObject *)effect,
-                                 gFieldEffect_CommonParticleScript);
+  if (++effect->swirlFrames == WHIRLWIND_WANDER_FRAMES)
+    ObjectDispatch_InitializeFar(effect, gFieldEffect_CommonParticleScript);
 }
 
 /// Per-frame update: circles the anchor at 8 pixels; after 121 frames it
 /// starts to wander (FieldEffect_WanderAroundAnchor). FieldEffect_RunWhirlwind
 /// gives it to each of the 16 particles it spawns round the orb.
 void FieldEffect_CircleAnchor(union FieldObject *fieldObject) {
-  struct WhirlwindOrbit *effect = (struct WhirlwindOrbit *)fieldObject;
-  struct WhirlwindOrbit *anchor;
+  struct Object *effect = (struct Object *)fieldObject;
+  struct Object *anchor;
   s32 angle;
   s32 radius;
   s32 dx;
   s32 dz;
 
-  anchor = effect->anchor;
+  anchor = effect->linkedObject;
   radius = WHIRLWIND_ORBIT_RADIUS;
-  angle = effect->angle;
+  angle = effect->facing;
   dx = Iwram_MulQ16(radius, Trig_Cos(angle));
   dz = Iwram_MulQ16(radius, Trig_Sin(angle));
   effect->x = anchor->x + dx;
   effect->z = anchor->z + dz;
-  effect->angle += WHIRLWIND_ORBIT_ANGLE_STEP;
-  if (++effect->timer == WHIRLWIND_ORBIT_FRAMES) {
+  effect->facing += WHIRLWIND_ORBIT_ANGLE_STEP;
+  if (++effect->swirlFrames == WHIRLWIND_ORBIT_FRAMES) {
     // The engine integrates height after this callback. Supply upward speed
     // and gravity here; the wandering callback only changes x and z.
     effect->update = FieldEffect_WanderAroundAnchor;
-    effect->timer = 0;
-    effect->pause = 0;
+    effect->swirlFrames = 0;
+    effect->turnFrames = 0;
     effect->gravity = 0x1999;
     effect->velocityY = 0x30000;
-    effect->angle = Random16();
+    effect->facing = Random16();
   }
 }
 
@@ -199,7 +136,7 @@ void FieldEffect_CircleAnchor(union FieldObject *fieldObject) {
 /// The scale falls by 1/512 each frame. From unit scale the strict lower bound
 /// takes 257 updates.
 void FieldEffect_ShrinkObjectScaleUntilHalf(union FieldObject *fieldObject) {
-  struct MotionObject *object = (struct MotionObject *)fieldObject;
+  struct Object *object = (struct Object *)fieldObject;
   s32 scale;
 
   scale = object->scaleX - WHIRLWIND_TARGET_SCALE_STEP;
@@ -207,7 +144,7 @@ void FieldEffect_ShrinkObjectScaleUntilHalf(union FieldObject *fieldObject) {
   object->scaleX = scale;
   if (scale < WHIRLWIND_TARGET_MIN_SCALE) {
     Object_SetPositionAndResetMotionFar((struct Object *)object, 0, 0, 0);
-    ((struct ScriptMotionObject *)object)->hook = 0;
+    object->update = 0;
   }
 }
 
@@ -312,6 +249,6 @@ void FieldEffect_RunWhirlwind(void) {
   WaitFrames(20);
   // Every particle has left its orbit by now. Its wandering callback no
   // longer reads the anchor, so the orb can be released independently.
-  ObjectDispatch_ReleaseFar((struct DispatchObject *)ball);
+  ObjectDispatch_ReleaseFar((struct Object *)ball);
   FieldEffect_FadeFromEffectColor();
 }

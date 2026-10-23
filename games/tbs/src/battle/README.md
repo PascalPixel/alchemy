@@ -696,14 +696,13 @@ writing `void` would change the compiled code at the function's end, and
 [`UBFIX`](../../glossary.md#bug-bugfix-and-ubfix) gives the `void` form; [Matching](../MATCHING.md) explains the rule. `BattleAbility_ApplyToTarget`,
 `BattlePlayback_RunAll` and `BattlePlayback_WaitForReady` are among them.
 
-### One sprite, several structs
+### One sprite, one struct
 
-A unit's figure is one of the object slots `Object_CreateFar` hands out. The
-battle reads it as a `struct MotionObject`, while the field's [far calls](../../glossary.md#far-call) take
-it as a `struct DispatchObject` or a `struct Object`. They describe the
-same object, with fields at the same offsets, and a call into the field casts
-to the view its prototype names. [XXX](../../glossary.md#xxx): whether these could be one struct
-depends on naming the fields only one view names so far.
+A unit's figure is one of the object slots `Object_CreateFar` hands out, a
+`struct Object`, which the battle and the field's [far calls](../../glossary.md#far-call) both take.
+Only `BattleObject_SpawnObjectsForList` reads it through a copy of the layout,
+`BattleSpriteObject`, whose sprite word is untyped, since only that form
+compiles to the original's instructions ([Matching](../MATCHING.md)).
 
 ## Limits
 
@@ -792,7 +791,7 @@ form a table of contents. The functions are declared in
 The parts give the same locals the same names: `battle` or `work` for
 `gBattleWork`, `unitId`, `unit` for its `struct Unit`, `battleObject`
 for its `struct BattleObject`, `object` for that object's
-`struct MotionObject`, `record` for one of its sprites, and `plan`.
+`struct Object`, `record` for one of its sprites, and `plan`.
 
 ## Function prefixes
 

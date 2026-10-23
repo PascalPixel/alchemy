@@ -644,8 +644,7 @@ s32 SolSanctumEruption_Initialize(void) {
 
 /// Keeps a flying ember sprite rotated a quarter-turn from its facing. Run by
 /// each ember's object script, gEruption_EmberScript.
-static s32 SolSanctumEruption_AlignEmberToHeading(
-    struct ObjectScriptContext *interpreter) {
+static s32 SolSanctumEruption_AlignEmberToHeading(struct Object *interpreter) {
   struct ObjectEvent *objectEvent = (struct ObjectEvent *)interpreter;
   objectEvent->sprite->rotation = objectEvent->facing + 0x4000;
   return 1;

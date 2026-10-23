@@ -90,10 +90,8 @@ void FieldScript_RequestDestination(u16 mapId, u16 warpDest);
 void Map_QueueMusic(s32 soundId);
 void Map_PlayQueuedMusic(void);
 
-struct DispatchObject;
-struct FacingObject;
-struct ObjectEvent;
 struct Object;
+struct ObjectEvent;
 
 struct ObjectEvent *ObjectEvent_GetById(s32 localId);
 void ObjectMotion_SetSpeedParameters(u32 objectId, s32 speedLimit,
@@ -140,8 +138,8 @@ void FieldEffect_SpawnBurstParticle(struct ObjectEvent *source, s32 param);
 void ObjectEvent_JumpDownLedge(s32 localId, s32 pose, s32 param);
 void ObjectMotion_SetAngleToward(s32 firstId, s32 secondId, s32 wait);
 void ObjectEvent_LinkPair(s32 firstId, s32 secondId, s32 wait);
-void FacingObject_TurnPairToFaceEachOther(struct FacingObject *firstObject,
-                                          struct FacingObject *secondObject);
+void ObjectEvent_TurnPairToFaceEachOther(struct Object *first,
+                                         struct Object *second);
 void ObjectEvent_DestroyById(s32 index);
 void ObjectEvent_DestroyNoOp(void);
 void ObjectGroup_ConfigureChildValue(s32 objectId, s32 param);
@@ -270,9 +268,7 @@ void Weather_LastLightning(void);
 void Weather_ResumeLightning(void);
 void Weather_StartLightningFlash(s32 from, s32 to);
 
-struct DescendingOrbitObject;
 struct FieldEffectSprite;
-struct MotionObject;
 
 void ObjectMotion_MoveHalfwayTowardTarget(union FieldObject *fieldObject);
 void Djinn_RunBattleStartHop(s32 djinniId);
@@ -331,10 +327,8 @@ void FieldEffect_FadeToEffectColor(void);
 void FieldEffect_FadeFromEffectColor(void);
 void Camera_WorldToScreen(struct EffectVector *position);
 
-struct ArcEffectObject;
 struct Effect05Object;
 struct OrbitEffect;
-struct SparkObject;
 
 void FieldEffect_StartMindReadWave(s32 x, s32 y);
 void FieldEffect_FinishWaveAndReleaseHeapBlock(void);
@@ -353,7 +347,7 @@ void FieldEffect_SteerPushedTarget(s32 targetId);
 void FieldEffect_UpdateOrbitAndReturn(struct FieldEffectSprite *effect);
 void FieldEffect_RunMove(void);
 void *FieldEffect_StartItemBreak(void *object);
-void FieldEffect_SnapScaleToFull(struct MotionObject *object);
+void FieldEffect_SnapScaleToFull(struct Object *object);
 void UpdateRisingParticleBurst(void *object);
 void ObjectDispatch_ApplyValueToKind200Children(s32 value);
 void FieldEffect_WatchLeaderDistance(void);
@@ -363,10 +357,9 @@ void FieldEffect_RunGrowthOnTarget(s32 unused);
 void FieldEffect_RunGrowth(void);
 void FieldEffect_SpawnBurstParticleField(void);
 void FieldEffect_RunLiftOnTarget(s32 unused);
-struct MotionObject *FieldEffect_SpawnItemBreakMode3(s32 x, s32 y, s32 z,
-                                                     s32 angle);
+struct Object *FieldEffect_SpawnItemBreakMode3(s32 x, s32 y, s32 z, s32 angle);
 void FieldEffect_UpdateRadialBurst(struct FieldEffectSprite *effect);
-s32 SpawnHeavyImpactEffect(struct ObjectScriptContext *interpreter);
+s32 SpawnHeavyImpactEffect(struct Object *interpreter);
 void FieldEffect_RunForceOnTarget(s32 unused);
 void FieldEffect_RunForce(void);
 void FieldEffect_UpdateOrbitingParticleMain(union FieldObject *fieldObject);
@@ -390,10 +383,9 @@ void FieldEffect_RunDouseOnTarget(s32 unused);
 void FieldEffect_RunDouse(void);
 void FieldEffect_SpawnFallingParticles(void);
 void FieldEffect_SteerLiftedTarget(s32 targetId);
-struct MotionObject *FieldEffect_SpawnItemBreakMode1(s32 x, s32 y, s32 z,
-                                                     s32 angle);
+struct Object *FieldEffect_SpawnItemBreakMode1(s32 x, s32 y, s32 z, s32 angle);
 void FieldEffect_UpdateParticleMotionAndScale(union FieldObject *fieldObject);
-void FieldEffect_SpawnRadialParticleRing(struct MotionObject *origin);
+void FieldEffect_SpawnRadialParticleRing(struct Object *origin);
 void FieldEffect_WanderAroundAnchor(union FieldObject *fieldObject);
 void FieldEffect_CircleAnchor(union FieldObject *fieldObject);
 void FieldEffect_ShrinkObjectScaleUntilHalf(union FieldObject *fieldObject);

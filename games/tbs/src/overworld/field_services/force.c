@@ -82,8 +82,7 @@ void FieldEffect_RunForce(void) {
   projectile->acceleration = 4 << 16;
   projectile->motionFlags = 0;
   ObjectDispatch_SelectAnimationFar(projectile, 5);
-  Anim_ApplyChildValuesFar((struct DispatchObject *)projectile,
-                           SPRITE_COLOR_BGR);
+  Anim_ApplyChildValuesFar((struct Object *)projectile, SPRITE_COLOR_BGR);
   scale = projectile->scaleX;
   if (scale < 0x10000) {
     do {
@@ -109,7 +108,7 @@ void FieldEffect_RunForce(void) {
       copy->acceleration = 4 << 16;
       copy->motionFlags = 0;
       ObjectDispatch_SelectAnimationFar(copy, 5);
-      Anim_ApplyChildValuesFar((struct DispatchObject *)copy, SPRITE_COLOR_RBG);
+      Anim_ApplyChildValuesFar((struct Object *)copy, SPRITE_COLOR_RBG);
       sharedAnimation = Sprite_ShareVramCacheEntry(
           (struct Sprite *)copy->sprite, sharedAnimation);
     }
@@ -134,22 +133,20 @@ void FieldEffect_RunForce(void) {
     pos.z = effectWork->z;
   }
   Object_SetMoveTargetFar((struct Object *)projectile, pos.x, pos.y, pos.z);
-  ObjectDispatch_InitializeFar((struct DispatchObject *)projectile,
+  ObjectDispatch_InitializeFar((struct Object *)projectile,
                                gFieldEffect_BurstParticleObjectScript + 4);
   for (i = 0; i < 3; i++) {
     copy = copies[i];
     if (copy != NULL) {
       WaitFrames(3);
       Object_SetMoveTargetFar((struct Object *)copy, pos.x, pos.y, pos.z);
-      ObjectDispatch_InitializeFar((struct DispatchObject *)copy,
+      ObjectDispatch_InitializeFar((struct Object *)copy,
                                    gFieldEffect_CommonParticleScript + 1);
     }
   }
 
   // Wait, at most 60 frames, for the shot's script to end.
-  for (i = 0;
-       i <= 59 && ((struct ScriptMotionObject *)projectile)->script != NULL;
-       i++)
+  for (i = 0; i <= 59 && ((struct Object *)projectile)->script != NULL; i++)
     WaitFrames(1);
 
   // Push what was hit 16 pixels, at 1 pixel a frame, if nothing is in the
@@ -166,8 +163,8 @@ void FieldEffect_RunForce(void) {
     if (MapGrid_CheckCollisionFar((struct Object *)target,
                                   (struct FieldPosition *)&pos) ==
             COLLISION_NONE &&
-        ObjectScript_CheckOverlapFar((struct ScriptObjectEntry *)target,
-                                     (s32 *)&pos) == 0) {
+        ObjectScript_CheckOverlapFar((struct Object *)target, (s32 *)&pos) ==
+            0) {
       target->acceleration = 1 << 16;
       target->speed = 1 << 16;
       Object_SetMoveTargetFar((struct Object *)target, pos.x, pos.y, pos.z);

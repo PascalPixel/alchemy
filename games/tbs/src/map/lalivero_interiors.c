@@ -197,7 +197,7 @@ enum { ANIM_WORKER_LIE_ASLEEP = 6 };
 enum { FLAG_INN_WORKER_APOLOGIZED = FLAG_MAPSEC_TEMP_00 };
 
 /// LaliveroFaransHouse: the inn worker sighs between chores.
-static s32 InnWorker_Sigh(struct ObjectScriptContext *interpreter) {
+static s32 InnWorker_Sigh(struct Object *interpreter) {
   ObjectEvent_SetAttachedEffect(LOCALID_INN_WORKER, ATTACHED_EFFECT_IN_FRONT |
                                                         ATTACHED_EFFECT_ONCE);
   return 0;

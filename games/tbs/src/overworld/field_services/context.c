@@ -42,11 +42,10 @@ s32 ObjectEvent_GetScreenPosition(s32 objectId, s32 *position) {
   z = object->z - cameraZ - object->y;
   *position++ = x / 0x10000;
   *position = z / 0x10000;
-  if ((object->animationKind & 15) == OBJECT_SPRITE_ONE)
-    *position -=
-        (s8)Resource_GetMetadataRecordFar(
-            ((struct Sprite *)object->animation)->entries[0]->animationId)
-            ->boxX;
+  if ((object->spriteStorageKind & 15) == OBJECT_SPRITE_ONE)
+    *position -= (s8)Resource_GetMetadataRecordFar(
+                     object->sprite->entries[0]->animationId)
+                     ->boxX;
   return 0;
 }
 
@@ -113,7 +112,7 @@ void Warp_PrepareExitAnimation(s32 animation) {
   struct SpriteAnim *effect;
 
   object = ObjectEvent_GetByLocalId(gSaveBlock.leaderLocalId);
-  context = object->animation;
+  context = object->sprite;
   effect = (struct SpriteAnim *)Sprite_AddAnimFar(context, 27);
   zero = 0;
   param = SPRITE_COLOR_HIDDEN;
@@ -160,7 +159,7 @@ void Warp_EndArrivalAnimation(s32 animation) {
   s32 zero;
   s32 mask;
   struct Object *leader = ObjectEvent_GetByLocalId(gSaveBlock.leaderLocalId);
-  struct Sprite *spriteAnimation = leader->animation;
+  struct Sprite *spriteAnimation = leader->sprite;
   struct SpriteAnim *eff =
       (struct SpriteAnim *)Sprite_AddAnimFar(spriteAnimation, 27);
 

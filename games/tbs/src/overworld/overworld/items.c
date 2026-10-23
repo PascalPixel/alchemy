@@ -17,9 +17,9 @@ typedef s32 (*BattleItemCallback)(s32 item, s32 localId, s32 slot);
 s32 Field_FindItemEvent(s32 item) {
   struct FieldWork *work = gFieldWork;
   const struct MapEvent *event = work->events;
-  s32 facing = ((struct MotionObject *)ObjectEvent_GetByLocalId(
-                    gSaveBlock.leaderLocalId))
-                   ->angle;
+  s32 facing =
+      ((struct Object *)ObjectEvent_GetByLocalId(gSaveBlock.leaderLocalId))
+          ->facing;
   s32 objectEventAhead = Field_FindNearbyTalkTarget(gSaveBlock.leaderLocalId);
   s32 tileAhead;
 
@@ -213,9 +213,9 @@ s32 Field_UseItem(s32 packedItem, s32 slot) {
 void *Map_FindPsynergyEvent(s32 eventFlags, s32 group, void *target) {
   struct FieldWork *work = gFieldWork;
   const struct MapEvent *event = work->events;
-  s32 facing = ((struct MotionObject *)ObjectEvent_GetByLocalId(
-                    gSaveBlock.leaderLocalId))
-                   ->angle;
+  s32 facing =
+      ((struct Object *)ObjectEvent_GetByLocalId(gSaveBlock.leaderLocalId))
+          ->facing;
   s32 objectEventAhead =
       Field_FindNearbyPsynergyTarget(gSaveBlock.leaderLocalId, group);
   s32 tileAhead;

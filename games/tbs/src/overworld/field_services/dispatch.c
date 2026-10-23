@@ -136,7 +136,7 @@ void FieldEffect_DispatchRequestKind(void) {
     if (runtime->revealActive != 0)
       FieldEffect_EndReveal();
     if (gSaveBlock.pausedObject != effectWork->secondObjectId)
-      ((struct Object *)effectWork->child)->movementState = 1;
+      ((struct Object *)effectWork->child)->paused = 1;
     FieldEffect_StartMindReadWave(effectWork->firstObjectId, targetId);
     break;
   case FIELD_PSYNERGY_MOVE:
@@ -205,7 +205,7 @@ void FieldEffect_FinishMindRead(void) {
   if (effectWork->fieldPsynergy == FIELD_PSYNERGY_MIND_READ) {
     FieldEffect_FinishWaveAndReleaseHeapBlock();
     if (gSaveBlock.pausedObject != effectWork->secondObjectId) {
-      ((struct Object *)effectWork->child)->movementState = 0;
+      ((struct Object *)effectWork->child)->paused = 0;
     }
   }
 }
@@ -283,9 +283,9 @@ void ObjectGroup_ApplyRandomChildValues(union FieldObject *fieldObject) {
   volatile u32 *frameCount;
   s32 param;
 
-  kind = owner->animationKind;
+  kind = owner->spriteStorageKind;
   if (kind == OBJECT_SPRITE_ONE) {
-    animation = owner->animation;
+    animation = owner->sprite;
     if (animation != 0 && animation->retainCacheEntry == 0) {
       initialCount = animation->count;
       if (initialCount != 0) {
@@ -379,16 +379,16 @@ struct Object *Object_Spawn(s32 kind, s32 x, s32 y, s32 z) {
 
   object = Object_CreateFar(kind, x, y, z);
   if (object != NULL) {
-    if (object->animationKind == OBJECT_SPRITE_NONE) {
-      ObjectDispatch_ReleaseFar((struct DispatchObject *)object);
+    if (object->spriteStorageKind == OBJECT_SPRITE_NONE) {
+      ObjectDispatch_ReleaseFar((struct Object *)object);
       return NULL;
     }
     object->groundHeight =
         ((struct Object *)effectWork->mainObject)->groundHeight;
-    object->flags = 4;
+    object->motionFlags = 4;
     object->priorityFlags = 4;
-    ((struct Sprite *)object->animation)->image.priority = 0;
-    ObjectDispatch_SetSingleChildFlagsFar((struct DispatchObject *)object, 0);
+    object->sprite->image.priority = 0;
+    ObjectDispatch_SetSingleChildFlagsFar((struct Object *)object, 0);
     ObjectDispatch_SelectAnimationFar(object, 1);
   }
   return object;
@@ -409,9 +409,8 @@ void ObjectGroup_SetActionForOthers(struct Object *except, s32 state,
   do {
     object = ObjectEvent_GetByLocalId(localId);
     if (localId != *player && object != NULL && object != except) {
-      object->movementState = state;
-      ObjectDispatch_SetAnimationSpeedFar((struct DispatchObject *)object,
-                                          value);
+      object->paused = state;
+      ObjectDispatch_SetAnimationSpeedFar((struct Object *)object, value);
     }
     localId++;
   } while (localId <= OBJECT_LAST);

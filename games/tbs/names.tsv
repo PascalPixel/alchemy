@@ -7,7 +7,8 @@ struct FieldWork, gFieldWork, HEAP_SLOT_FIELD	struct	common	the running map's bl
 gObjectSystemWork, HEAP_SLOT_OBJECT_SYSTEM	global	common	ObjectSystem_Initialize allocates the slot (field/field/objects.c)
 gBattleEntryTimer	global	common	the battle's entry transition timer in frames (battle/battle/transition.c)
 task (struct Task, TaskFunc, gTasks, Task_, TASK_PRIORITY_*)	word	pret	pokeemerald include/task.h (gTasks, TaskFunc, priority); runtime/runtime/scheduler.c
-Object, gObjects, OBJECT_COUNT, HEAP_SLOT_OBJECTS	struct	common	the 64 records of 0x70 bytes for field and battle figures (include/object.h); pret's ObjectEvent is field-only
+Object, gObjects, OBJECT_COUNT, HEAP_SLOT_OBJECTS	struct	common	the 64 records of 0x70 bytes for field and battle figures (include/object.h), the one struct the engine reads them through: DispatchObject, ObjectScriptContext, ScriptObjectRuntime, ScriptObjectEntry, MotionObject, FacingObject, ArcEffectObject, EffectObject, ObjectVectorView, the object cameras' object and the field effects' Spark, Capture, DescendingOrbit, ItemBreakFragment, WhirlwindOrbit, RampedSpin and Speaker views fold in, their role halfwords named in an anonymous union; ObjectEvent and FieldEffect stay the maps' views, and ScriptOperands, ScriptMotionObject (update.c, GCC 2.95.2) and BattleSpriteObject stay where matching needs them (MATCHING.md); pret's ObjectEvent is field-only
+scriptCursor, sprite, spriteStorageKind, motionFlags, steeringFlags, paused (struct Object)	field	common	ObjectEvent's names for the same bytes, replacing Object's step, animation, animationKind, flags, actionFlags and movementState
 OBJECT_SYSTEM_LAYOUT, _WORLD_MAP, _BATTLE	constant	pret	enum ObjectSystemMode; layout is pret's word for what the first mode runs
 MapHeader, gMapHeaders, MAP_HEADER, map_header	struct	pret	pokeemerald include/global.fieldmap.h struct MapHeader (layout, map section, map type); field/map_headers.s
 main menu (MapId_MainMenu, MainMenu_)	word	pret	pokeemerald src/main_menu.c (New Game, Continue); the debug map list calls it "Clear data" (MsgDebugEntryName)
@@ -23,7 +24,7 @@ CreditsFar_, TitleFar_	prefix	common	the banks hold the credits and the title in
 resource, ResourceId_	word	common	only the resource directory (system/resource/directory.s)
 Save_, SaveWork, SaveSectorHeader, SaveFileSummary	prefix	pret	pokeemerald src/save.c (sectors); a flash sector holds one record, a file is two records; the game says file and Erase
 SaveBlock, gSaveBlock, SaveBlock_, save_block.h	struct	pret	pokeemerald gSaveBlock1Ptr/gSaveBlock2Ptr: saving writes the struct whole in a file's first record after the game flags, and the file checksum covers flags and struct (Save_BuildFileSummary, Save_WriteCurrentFile); was struct GameState, gGameState
-OBJECT_SPRITES_NONE, _ONE, _GROUP	constant	common	how many sprites an object has (Object.animationKind)
+OBJECT_SPRITE_NONE, _ONE, _GROUP	constant	common	enum ObjectSpriteKind: how many sprites an object has (Object.spriteStorageKind); the battle's OBJECT_SPRITES_ copies fold in
 gVBlankCallback	global	pret	pokeemerald gMain.vblankCallback
 Irq_RemoveVCountHandler	prefix	common	removes the VCount interrupt's handler (runtime/runtime/irq.c)
 Map_Run	prefix	common	runs one map until it is left (overworld/overworld/run_map.c)

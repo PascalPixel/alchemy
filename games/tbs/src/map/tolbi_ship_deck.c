@@ -342,7 +342,7 @@ enum TolbiShipDeckMetatileBehavior {
 
 /// An action-script call: shows the object event's sprite. Returns 0 to end the
 /// call.
-static s32 TolbiShipDeck_ShowSprite(struct ObjectScriptContext *interpreter) {
+static s32 TolbiShipDeck_ShowSprite(struct Object *interpreter) {
   struct ObjectEvent *a = (struct ObjectEvent *)interpreter;
   ObjectEvent_SetSpriteFlags(a, 1);
   return 0;
@@ -359,8 +359,7 @@ static s32 TolbiShipDeck_ShowSprite(struct ObjectScriptContext *interpreter) {
 /// dives at Ouranos, who turns and jumps (sometimes with an emote), then it
 /// returns to its side. riseEnabled picks which side it returns to.
 /// Returns 1 to keep running.
-static s32
-TolbiShipDeck_HoverAndDiveAtOuranos(struct ObjectScriptContext *interpreter) {
+static s32 TolbiShipDeck_HoverAndDiveAtOuranos(struct Object *interpreter) {
   struct ObjectEvent *objectEvent = (struct ObjectEvent *)interpreter;
   if (objectEvent->riseCounter != 0) {
     switch (objectEvent->riseCounter) {
@@ -456,8 +455,7 @@ TolbiShipDeck_HoverAndDiveAtOuranos(struct ObjectScriptContext *interpreter) {
 }
 
 /// The same for the monster that dives at Sean.
-static s32
-TolbiShipDeck_HoverAndDiveAtSean(struct ObjectScriptContext *interpreter) {
+static s32 TolbiShipDeck_HoverAndDiveAtSean(struct Object *interpreter) {
   struct ObjectEvent *objectEvent = (struct ObjectEvent *)interpreter;
   if (objectEvent->riseCounter != 0) {
     switch (objectEvent->riseCounter) {
@@ -574,7 +572,7 @@ static s32 sOarDepth[8];
 /// Bobs the object event between 4 and 12 pixels high by a random amount
 /// each frame; the object event's work halfword says which way it is going.
 /// Returns 1.
-static s32 TolbiShipDeck_Bob(struct ObjectScriptContext *interpreter) {
+static s32 TolbiShipDeck_Bob(struct Object *interpreter) {
   struct ObjectEvent *objectEvent = (struct ObjectEvent *)interpreter;
   s16 *flag = (s16 *)&objectEvent->work;
   s32 val;
@@ -604,7 +602,7 @@ done:
 
 /// Now and then (two chances in 32) turns the object event to look
 /// north-northeast or north-northwest. Returns 1.
-static s32 TolbiShipDeck_LookAround(struct ObjectScriptContext *interpreter) {
+static s32 TolbiShipDeck_LookAround(struct Object *interpreter) {
   struct ObjectEvent *objectEvent = (struct ObjectEvent *)interpreter;
   u32 roll = ((u32)(Engine_RandomNext() << 5)) >> 16;
 
@@ -619,8 +617,7 @@ static s32 TolbiShipDeck_LookAround(struct ObjectScriptContext *interpreter) {
 /// to him, he turns and jumps back (sometimes with an emote), and it lands on
 /// one of two spots chosen by riseEnabled. The object event's timer holds the
 /// step. Returns 1.
-static s32
-TolbiShipDeck_LeapAtOuranos(struct ObjectScriptContext *interpreter) {
+static s32 TolbiShipDeck_LeapAtOuranos(struct Object *interpreter) {
   struct ObjectEvent *objectEvent = (struct ObjectEvent *)interpreter;
   switch (objectEvent->timer) {
   case 0:
@@ -695,7 +692,7 @@ TolbiShipDeck_LeapAtOuranos(struct ObjectScriptContext *interpreter) {
 }
 
 /// The same for the monster that leaps at Sean.
-static s32 TolbiShipDeck_LeapAtSean(struct ObjectScriptContext *interpreter) {
+static s32 TolbiShipDeck_LeapAtSean(struct Object *interpreter) {
   struct ObjectEvent *objectEvent = (struct ObjectEvent *)interpreter;
   switch (objectEvent->timer) {
   case 0:
@@ -769,8 +766,8 @@ static s32 TolbiShipDeck_LeapAtSean(struct ObjectScriptContext *interpreter) {
 }
 
 /// Makes the object event hop at random, one frame in 40 on average. Returns 1.
-static s32 TolbiShipDeck_RandomlyStartObjectEventHop(
-    struct ObjectScriptContext *interpreter) {
+static s32
+TolbiShipDeck_RandomlyStartObjectEventHop(struct Object *interpreter) {
   struct ObjectEvent *objectEvent = (struct ObjectEvent *)interpreter;
   if ((((u32)(Engine_RandomNext() * 40)) >> 16) == 0)
     objectEvent->velocityY = PIXELS(4);
@@ -790,7 +787,7 @@ static void TolbiShipDeck_ShrinkToNormalSize(union FieldObject *fieldObject) {
 /// Turns the object event east, northeast-by-north or southeast-by-south at
 /// random intervals of 80 to 160 frames. riseCounter counts down the wait.
 /// Returns 1.
-static s32 TolbiShipDeck_IdleTurn(struct ObjectScriptContext *interpreter) {
+static s32 TolbiShipDeck_IdleTurn(struct Object *interpreter) {
   struct ObjectEvent *objectEvent = (struct ObjectEvent *)interpreter;
   if (objectEvent->riseCounter != 0) {
     objectEvent->riseCounter--;

@@ -12,7 +12,7 @@
 #include "menu_list.h"
 #include "farcall.h"
 
-struct DispatchObject;
+struct Object;
 struct ScreenPoint;
 
 /// An IWRAM word the scrolling camera's setup clears; nothing in the tree
@@ -34,11 +34,8 @@ struct AbilityListEntry;
 struct BattleAnimArgs;
 struct Unit;
 struct BurstParticle;
-struct DispatchObject;
-struct FieldEffectObject;
 struct ScreenPoint;
 struct Particle;
-struct FacingObject;
 struct ObjectEvent;
 struct FieldPosition;
 struct MercuryLighthouseLights;
@@ -46,8 +43,6 @@ struct MapObjectEvent;
 struct MapGridCell;
 struct MenuSprite;
 struct ModeRecord;
-struct MotionObject;
-struct Object;
 struct FieldRecord;
 struct MapWarpDest;
 struct MapEntry;

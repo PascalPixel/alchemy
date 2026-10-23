@@ -144,29 +144,27 @@ DEFINE_SHRINK_AND_DESTROY(FieldEffect_ShrinkObjectAndDestroyFast, 0xFFFFFC00)
 /// pixel a frame, and is released 20 pixels above the leader's feet. Set by
 /// FieldEffect_RunVenusDjinnCapture in venus.c.
 void FieldEffect_UpdateDescendingOrbitObject(union FieldObject *fieldObject) {
-  struct DescendingOrbitObject *mote =
-      (struct DescendingOrbitObject *)fieldObject;
+  struct Object *mote = (struct Object *)fieldObject;
   struct EffectVector position;
-  struct DescendingOrbitObject *leader;
+  struct Object *leader;
   s32 timer;
   s16 frames;
   s32 y;
 
-  leader = (struct DescendingOrbitObject *)ObjectEvent_GetById(
-      gSaveBlock.leaderLocalId);
-  timer = mote->timer - 1;
-  mote->timer = timer;
-  frames = mote->timer;
+  leader = (struct Object *)ObjectEvent_GetById(gSaveBlock.leaderLocalId);
+  timer = mote->orbitFrames - 1;
+  mote->orbitFrames = timer;
+  frames = mote->orbitFrames;
   position.x = leader->x;
   position.z = leader->z;
-  Vector_AddPolarOffset(frames * 0x6666, (frames << 11) + mote->angle,
+  Vector_AddPolarOffset(frames * 0x6666, (frames << 11) + mote->orbitAngle,
                         &position);
   mote->x = position.x;
   mote->z = position.z;
   y = mote->y + 0xFFFF0000;
   mote->y = y;
   if (y < leader->y + 0x140000)
-    ObjectDispatch_ReleaseFar((struct DispatchObject *)mote);
+    ObjectDispatch_ReleaseFar((struct Object *)mote);
 }
 
 /// Field effect sprite callback of a Venus Djinni's particles: each starts on

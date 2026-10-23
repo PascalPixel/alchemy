@@ -499,7 +499,7 @@ void WorldMap_StartScript(void) {
       state->duration = 1;
       state->step = 0;
     }
-    work->camera->movementState = 1;
+    work->camera->paused = 1;
     WorldMap_StartStillViewFar();
   }
 }
@@ -512,6 +512,6 @@ void WorldMap_EndScript(void) {
   work = AllocHeapSlotEwram(HEAP_SLOT_FIELD, sizeof(*work));
   if (work->mode == OBJECT_SYSTEM_WORLD_MAP) {
     WorldMap_LoadAreaGraphicsFar();
-    work->camera->movementState = 0;
+    work->camera->paused = 0;
   }
 }

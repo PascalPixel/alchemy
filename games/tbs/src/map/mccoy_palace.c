@@ -61,7 +61,6 @@
 #include "map_tables.h"
 #include "item_ids.h"
 #include "objcmd.h"
-#include "facing_object.h"
 #include "fixed_math.h"
 #include "songs.h"
 

@@ -2,8 +2,7 @@
 #define ALCHEMY_FX_WORK_H
 
 /// @file
-/// FieldEffectWork, the work of a field Psynergy effect scene, and its arc
-/// objects.
+/// FieldEffectWork, the work of a field Psynergy effect scene.
 
 #include "types.h"
 #include "static_assert.h"
@@ -11,28 +10,6 @@
 
 struct Sprite;
 union FieldObject;
-
-/// An object as Avoid's caster: its facing, its sprite and
-/// the phase and frame count of its per-frame callback.
-struct ArcEffectObject {
-  /// ObjectEvent's script and its cursor; not named through this view.
-  ///@{
-  const s32 *script;
-  u16 scriptCursor;
-  ///@}
-  u16 angle; ///< 1/65536 turns
-  /// ObjectEvent's x to riseBaseY; not named through this view.
-  u8 positionToRise[0x48];
-  struct Sprite *records; ///< the caster's sprite
-  /// ObjectEvent's spriteStorageKind to riseEnabled; not named through this
-  /// view.
-  u8 kindToRise[0x10];
-  s16 phase; ///< 1 spins the caster 0xc00 a frame
-  s16 step;  ///< frames since the arcs started
-  /// ObjectEvent.linkedObject; no code reads it through this view.
-  struct ObjectEvent *linkedObject;
-  void (*callback)(union FieldObject *fieldObject); ///< run each frame
-};
 
 /// The work of a Psynergy effect scene: its caster and target, where it takes
 /// place, the map state it restores and its 24 field effect sprites.

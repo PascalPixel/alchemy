@@ -39,9 +39,9 @@ void BattleAnim_RunAstralBlast(struct BattleAnimArgs *effect) {
   s32 i;
   u8 *graphics;
   struct BattleCamera *camera;
-  struct MotionObject *caster;
-  struct MotionObject *source;
-  struct MotionObject *target;
+  struct Object *caster;
+  struct Object *source;
+  struct Object *target;
   struct Particle *point;
   struct Particle *step;
   s32 start;
@@ -63,7 +63,7 @@ void BattleAnim_RunAstralBlast(struct BattleAnimArgs *effect) {
   Decompress_Type01(Resource_GetTableEntry((s32)&ResourceId_ParticleSpritesA),
                     graphics);
   ObjectDispatch_SelectAnimationFar(caster, POSE_LEAP);
-  ObjectDispatch_SetAnimationSpeedFar((struct DispatchObject *)caster, 48);
+  ObjectDispatch_SetAnimationSpeedFar((struct Object *)caster, 48);
   ANIM_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, ANIM_CLIP_BOUNDS, BLITTER_MAX);
   // Trails keep 75% of each pixel a frame.
   work->transferMode = CANVAS_COPY_AND_FADE;
@@ -175,9 +175,9 @@ void BattleAnim_RunAstralBlast(struct BattleAnimArgs *effect) {
           target->acceleration = 0x20000;
           target->speedLimit = 0x80000;
           target->velocityY = 0x50000;
-          target->verticalMotionStrength = 0xab85;
-          target->autoFaceMotion = 0;
-          ObjectDispatch_StartIdleFar((struct DispatchObject *)target);
+          target->gravity = 0xab85;
+          target->steeringFlags = 0;
+          ObjectDispatch_StartIdleFar((struct Object *)target);
           if (target->x < 0)
             Object_SetMoveTargetFar((struct Object *)target,
                                     target->x - 0x280000, 0, target->z);
@@ -224,8 +224,8 @@ void BattleAnim_RunShiningStar(struct BattleAnimArgs *effect) {
   s32 i;
   u8 *graphics;
   struct BattleCamera *camera;
-  struct MotionObject *source;
-  struct MotionObject *target;
+  struct Object *source;
+  struct Object *target;
   struct Particle *point;
   struct Particle *step;
   struct ScreenPoint screenPosition;

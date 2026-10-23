@@ -74,7 +74,6 @@
 #include "glyph.h"
 #include "ability_ids.h"
 #include "objcmd.h"
-#include "facing_object.h"
 #include "fixed_math.h"
 #include "palbuf.h"
 #include "flags.h"

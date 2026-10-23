@@ -145,7 +145,7 @@ void BattleAnim_RunBind(struct BattleAnimArgs *effect) {
   s32 shift;
   u8 *graphics;
   u8 *palette;
-  struct MotionObject *object;
+  struct Object *object;
   s32 tick;
   struct Particle *point;
   s32 size;
@@ -321,7 +321,7 @@ void BattleAnim_RunUnusedTriangleStrike(struct BattleAnimArgs *effect) {
   s32 shift;
   u8 *graphics;
   u8 *palette;
-  struct MotionObject *object;
+  struct Object *object;
   s32 tick;
   struct Particle *point;
   s32 size;

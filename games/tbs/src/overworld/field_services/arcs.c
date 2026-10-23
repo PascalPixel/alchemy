@@ -19,7 +19,7 @@ void FieldEffect_UpdateScaledArcObjectA(union FieldObject *fieldObject) {
   anchor = arc->linkedObject;
   frame = ++arc->timer;
   if (frame > 31) {
-    ObjectDispatch_InitializeFar((struct DispatchObject *)arc,
+    ObjectDispatch_InitializeFar((struct Object *)arc,
                                  gFieldEffect_CommonParticleScript);
     return;
   }
@@ -42,7 +42,7 @@ void FieldEffect_UpdateScaledArcObjectB(union FieldObject *fieldObject) {
   anchor = arc->linkedObject;
   frame = ++arc->timer;
   if (frame > 31) {
-    ObjectDispatch_InitializeFar((struct DispatchObject *)arc,
+    ObjectDispatch_InitializeFar((struct Object *)arc,
                                  gFieldEffect_CommonParticleScript);
     return;
   }
@@ -142,11 +142,9 @@ void FieldEffect_SpawnScaledArcObjects(struct ObjectEvent *linked) {
 void FieldEffect_FlickerObjectAndTick(union FieldObject *fieldObject) {
   struct ObjectEvent *objectEvent = (struct ObjectEvent *)fieldObject;
   if ((gFrameCount & 2) != 0) {
-    Anim_ApplyChildValuesFar((struct DispatchObject *)objectEvent,
-                             SPRITE_COLOR_WHITE);
+    Anim_ApplyChildValuesFar((struct Object *)objectEvent, SPRITE_COLOR_WHITE);
   } else {
-    Anim_ApplyChildValuesFar((struct DispatchObject *)objectEvent,
-                             SPRITE_COLOR_NORMAL);
+    Anim_ApplyChildValuesFar((struct Object *)objectEvent, SPRITE_COLOR_NORMAL);
   }
   if ((gFrameCount & 15) == 0) {
     FieldEffect_SpawnScaledArcObjects(objectEvent);
@@ -162,7 +160,7 @@ void FieldEffect_CycleObjectValueByCounter(union FieldObject *fieldObject) {
   if ((gFrameCount & 1) != 0) {
     s32 colorIndex = (gFrameCount >> 1) % 6;
 
-    Anim_ApplyChildValuesFar((struct DispatchObject *)objectEvent, colorIndex);
+    Anim_ApplyChildValuesFar((struct Object *)objectEvent, colorIndex);
   }
   if ((gFrameCount & 15) == 0) {
     FieldEffect_SpawnScaledArcObjects(objectEvent);

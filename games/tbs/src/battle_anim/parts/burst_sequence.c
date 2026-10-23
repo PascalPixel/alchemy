@@ -117,7 +117,7 @@ void BattleAnim_RunBurstSequence(struct BattleAnimArgs *effect, s32 mode) {
   s32 frame;
   u8 *sprites;
   struct BattleCamera *camera;
-  struct MotionObject *target;
+  struct Object *target;
   u8 *palette;
   s32 paletteId;
   s32 row;

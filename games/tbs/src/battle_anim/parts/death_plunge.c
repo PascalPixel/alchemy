@@ -44,8 +44,8 @@ void BattleAnim_RunDeathPlunge(struct BattleAnimArgs *effect) {
   BlitterPair draw;
   struct BattleObject *first;
   struct BattleObject *second;
-  struct MotionObject *user;
-  struct MotionObject *target;
+  struct Object *user;
+  struct Object *target;
   s32 x;
   s32 z;
   s32 userHeight;
@@ -78,11 +78,11 @@ void BattleAnim_RunDeathPlunge(struct BattleAnimArgs *effect) {
   z = user->z + percent * (target->z - user->z) / 100;
   userHeight = BattleUnit_GetEffectHeightFar(work->effect->user);
   targetHeight = BattleUnit_GetEffectHeightFar(work->effect->targets[0]);
-  ObjectDispatch_StartIdleFar((struct DispatchObject *)user);
+  ObjectDispatch_StartIdleFar((struct Object *)user);
   Object_SetMoveTargetFar((struct Object *)user, x, 0, z);
   ObjectDispatch_SelectAnimationFar(user, POSE_LEAP);
   user->snapToTarget = 1;
-  user->autoFaceMotion = 1;
+  user->steeringFlags = 1;
   user->acceleration = 2 << 16;
   user->speedLimit = 8 << 16;
   WaitFrames(20);
@@ -98,9 +98,9 @@ void BattleAnim_RunDeathPlunge(struct BattleAnimArgs *effect) {
     // the bounce); the object motion code that reads it would settle them.
     if (frame == 0) {
       target->velocityY = 15 << 16;
-      target->verticalMotionStrength = 0x91eb;
+      target->gravity = 0x91eb;
       user->velocityY = 15 << 16;
-      user->verticalMotionStrength = 0x91eb;
+      user->gravity = 0x91eb;
     }
     if (frame == 11) {
       target->scaleY = -target->scaleY;
@@ -115,13 +115,13 @@ void BattleAnim_RunDeathPlunge(struct BattleAnimArgs *effect) {
       ObjectGroup_UpdateMembers(work->effect->targets[0], SPRITE_COLOR_WHITE,
                                 POSE_DAMAGE, 0, 10);
       target->velocityY = 8 << 16;
-      target->verticalMotionStrength = 0xab85;
+      target->gravity = 0xab85;
       user->velocityY = 5 << 16;
-      user->verticalMotionStrength = 0x7851;
+      user->gravity = 0x7851;
       user->acceleration = 1 << 16;
       user->speedLimit = 2 << 16;
-      user->autoFaceMotion = 0;
-      ObjectDispatch_StartIdleFar((struct DispatchObject *)user);
+      user->steeringFlags = 0;
+      ObjectDispatch_StartIdleFar((struct Object *)user);
       Object_SetMoveTargetFar((struct Object *)user, 0, 0, user->z);
     }
     ANIM_VIEW_FROM_CAMERA(camera);

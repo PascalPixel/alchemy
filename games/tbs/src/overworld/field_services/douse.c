@@ -30,10 +30,10 @@ struct Effect05Object {
 /// The effect scene (struct FieldEffectWork, gFieldEffectWork) as Douse reads
 /// it; the notes give the FieldEffectWork fields at the same offsets.
 struct Effect05State {
-  s32 angle;                       ///< 1/65536 turns: the way the caster faces
-  s32 x, y, z;                     ///< the ground under the orb's destination
-  struct ObjectVectorView *target; ///< mainObject: the caster, despite the name
-  s32 initialized;                 ///< child: the target's object, 0 for none
+  s32 angle;             ///< 1/65536 turns: the way the caster faces
+  s32 x, y, z;           ///< the ground under the orb's destination
+  struct Object *target; ///< mainObject: the caster, despite the name
+  s32 initialized;       ///< child: the target's object, 0 for none
   u8 reserved18[8];
   /// enabled: set at the start, cleared when a map event names the target
   /// (FieldEffect_DispatchRequestKind). Set, 10 particles fall; cleared, 24
@@ -60,7 +60,7 @@ void FieldEffect_SpawnRandomAngleTriplet(union FieldObject *fieldObject) {
 
   if (particle->y <= particle->altitude) {
     particle->phase = phase;
-    ObjectDispatch_InitializeFar((struct DispatchObject *)particle,
+    ObjectDispatch_InitializeFar((struct Object *)particle,
                                  gFieldEffect_CommonParticleScript);
     p = NULL;
     particle->callback = NULL;
@@ -83,7 +83,7 @@ void FieldEffect_SpawnRandomAngleTriplet(union FieldObject *fieldObject) {
       pp = &p->phase;
       phase2 = 6;
       *pp = phase2;
-      ObjectDispatch_InitializeFar((struct DispatchObject *)p,
+      ObjectDispatch_InitializeFar((struct Object *)p,
                                    gFieldEffect_CommonParticleScript);
     }
   }
@@ -100,7 +100,7 @@ void FieldEffect_UpdateDriftingFallObject(union FieldObject *fieldObject) {
   drift = Random16();
   particle->x += drift - Random16();
   if (particle->y <= particle->groundHeight) {
-    ObjectDispatch_InitializeFar((struct DispatchObject *)particle,
+    ObjectDispatch_InitializeFar((struct Object *)particle,
                                  gFieldEffect_CommonParticleScript);
   }
 }
@@ -124,7 +124,7 @@ void FieldEffect_RunDouse(void) {
   struct EffectVector start;
   struct EffectVector end;
   struct Effect05State *work = gFieldEffectWork;
-  struct ObjectVectorView *target = work->target;
+  struct Object *target = work->target;
   struct Effect05Object *lightOrb;
   struct EffectVector *from;
   struct EffectVector *to;
@@ -141,15 +141,14 @@ void FieldEffect_RunDouse(void) {
   Sound_PlaySongFar(SE_ITEM_BREAK);
   // No target: 16 pixels in front of the caster, at the ground's height.
   if (work->initialized == 0) {
-    work->x = target->position.x;
-    work->z = target->position.z;
+    work->x = target->x;
+    work->z = target->z;
     Vector_AddPolarOffset(16 << 16, work->angle,
                           (struct EffectVector *)&work->x);
     work->y = MapGrid_GetTerrainHeightFar(0, work->x, work->z);
   }
   from = &start;
-  SET_POSITION(from, target->position.x, target->position.y + (16 << 16),
-               target->position.z);
+  SET_POSITION(from, target->x, target->y + (16 << 16), target->z);
   to = &end;
   to->x = work->x;
   y = work->y;
@@ -234,8 +233,7 @@ void FieldEffect_RunDouse(void) {
         particle->flag = 0;
         particle->sprite->mode = 2;
         ObjectDispatch_SelectAnimationFar(particle, 8);
-        Anim_ApplyChildValuesFar((struct DispatchObject *)particle,
-                                 SPRITE_COLOR_WHITE);
+        Anim_ApplyChildValuesFar((struct Object *)particle, SPRITE_COLOR_WHITE);
       }
       WaitFrames(6);
     }
@@ -271,6 +269,6 @@ void FieldEffect_RunDouse(void) {
     WaitFrames(1);
     step++;
   } while (step < steps);
-  ObjectDispatch_ReleaseFar((struct DispatchObject *)lightOrb);
+  ObjectDispatch_ReleaseFar((struct Object *)lightOrb);
   FieldEffect_FadeFromEffectColor();
 }

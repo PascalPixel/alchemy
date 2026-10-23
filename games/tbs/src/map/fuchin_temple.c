@@ -232,8 +232,8 @@ static void FuchinTemple_AnimateRevealLesson(void);
 
 /// Clears the scripted object event's sprite flags and completes the script
 /// command.
-static s32 FuchinTemple_ClearScriptedObjectEventSpriteFlags(
-    struct ObjectScriptContext *interpreter) {
+static s32
+FuchinTemple_ClearScriptedObjectEventSpriteFlags(struct Object *interpreter) {
   ObjectEvent_SetSpriteFlags((struct ObjectEvent *)interpreter, 0);
   return 0;
 }

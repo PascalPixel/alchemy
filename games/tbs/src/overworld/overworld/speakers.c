@@ -28,13 +28,15 @@ struct SpeakerDefinition *Speaker_FindDefinition(u32 id) {
 /// absent. The object event must exist: a NULL from ObjectEvent_GetByLocalId is
 /// read through. Called by Speaker_GetIdleFlags.
 s32 FieldEffect_GetAnimationValue(s32 id) {
-  struct SpeakerObject *object = ObjectEvent_GetByLocalId(id);
+  struct Object *object = ObjectEvent_GetByLocalId(id);
+  struct SpeakerSprite *sprite;
 
-  if (object->kind != 1 || object->animation == NULL ||
-      object->animation->value28 == NULL) {
+  if (object->spriteStorageKind != OBJECT_SPRITE_ONE ||
+      (sprite = (struct SpeakerSprite *)object->sprite) == NULL ||
+      sprite->value28 == NULL) {
     return 0;
   }
-  return *object->animation->value28;
+  return *sprite->value28;
 }
 
 /// Returns the voice of sprite id's messages: the first of its four blip

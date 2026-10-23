@@ -8,17 +8,21 @@
 #include "types.h"
 #include "static_assert.h"
 
+struct Sprite;
 union FieldObject;
 
-/// One of the 64 objects (HEAP_SLOT_OBJECTS): its
-/// script, position, motion toward a target, animation and update callback.
+/// One of the 64 objects (HEAP_SLOT_OBJECTS): its script, position, motion
+/// toward a target, sprites and update hook.
 ///
 /// ObjectSystem_Initialize takes the objects with the object system's work
-/// (HEAP_SLOT_OBJECT_SYSTEM), so it lives until the next map change. struct
-/// ObjectEvent is the same 0x70 bytes as maps see them.
+/// (HEAP_SLOT_OBJECT_SYSTEM), so it lives until the next map change. The
+/// engine reads every object through this struct; maps read the same 0x70
+/// bytes as struct ObjectEvent, or as struct FieldEffect for an effect, and
+/// the few views kept for matching are listed in the field README.
 struct Object {
-  s32 *script;      ///< the object script it runs; null when the object is free
-  s16 step;         ///< the script cursor, in words
+  const s32
+      *script;      ///< the object script it runs; null when the object is free
+  s16 scriptCursor; ///< the script cursor, in words
   u16 facing;       ///< 1/65536 turns
   s32 x;            ///< 16.16 fixed-point pixels
   s32 y;            ///< 16.16 fixed-point pixels
@@ -40,42 +44,81 @@ struct Object {
   s32 targetX; ///< 16.16 fixed-point pixels; 0x80000000 when unset
   s32 targetY; ///< 16.16 fixed-point pixels; 0x80000000 when unset
   s32 targetZ; ///< 16.16 fixed-point pixels; 0x80000000 when unset
-  /// ObjectEvent's bounce and gravity, and the word Object_CreateField zeroes
-  /// and map code keeps a resting height in; not named here.
-  ///@{
+  /// The share of its falling speed kept as it bounces on landing, 16.16
+  /// fixed point; a floating object's phase instead.
   s32 bounce;
+  /// Taken off velocityY each frame while it is above the ground, in 16.16
+  /// fixed-point pixels per frame; also scales a floating object's bob.
   s32 gravity;
+  /// Zeroed by Object_CreateField and not read by the engine; map code keeps a
+  /// resting height here.
   s32 riseBaseY;
-  ///@}
-  void *animation; ///< its sprite, or its list of four, by animationKind
-  /// Low four bits: 0 no sprite, 1 one sprite, 2 a group of up to four.
-  u8 animationKind;
-  /// ObjectEvent.motionFlags: 3 when created, 4 for a placed object event above
-  /// the ground; zero is free flight in 3D.
-  u8 flags;
+  /// Its sprite, by spriteStorageKind: with OBJECT_SPRITE_GROUP, a list of four
+  /// sprite pointers, empty ones null. Neither a union nor a void pointer:
+  /// either moves an instruction (MATCHING.md).
+  struct Sprite *sprite;
+  u8 spriteStorageKind; ///< an enum ObjectSpriteKind in its low four bits
+  /// ObjectEventMotionFlag bits: 3 when created, 4 for a placed object event
+  /// above the ground; zero is free flight in 3D.
+  u8 motionFlags;
   u8 arrivalAxis;     ///< the ARRIVAL_AXIS_* that decides arrival
   u8 conditionResult; ///< the object script's last flag test
   u8 snapToTarget;    ///< nonzero lands it exactly on its target
   /// ObjectEvent.collisionFlags: bit 0 solid, bit 1 the player pushes it,
   /// bits 2 to 4 for talk and Psynergy targets; placed object events take 1.
   u8 collisionFlags;
-  u8 actionFlags;   ///< ObjectEvent.steeringFlags: bit 0 faces its motion
-  u8 movementState; ///< nonzero skips its script and motion (paused)
+  u8 steeringFlags; ///< bit 0 faces its motion
+  u8 paused;        ///< nonzero skips its script and motion
   /// Nonzero keeps its sprite's VRAM cache entry while sprites are suspended
   /// or it is off screen.
   u8 retainSpriteCache;
   u8 repeatCount; ///< the object script's SC_LOOP count
-  u16 wait;       ///< the object script's wait, in frames
-  /// Not named by TBS code through this struct. Its bytes are the frames a
-  /// solid object has refused the object's move and the frozen flag
-  /// (ScriptMotionObject's refused and frozen), then two bytes map code
-  /// uses.
-  void *callback;
-  /// The parameter its action script reads (a follow distance or an angle),
-  /// or the player's frames to its next footprint.
-  s16 action;
-  s16 footprintSide; ///< the side of the player's next footprint (2 after a
-                     ///< stop)
+  s16 wait;       ///< the object script's wait, in frames
+  /// Frames in a row a solid object has refused the object's move; SC_SYNC
+  /// stops waiting after 60.
+  u8 refused;
+  /// Nonzero skips steering, terrain, gravity and floating; its velocity
+  /// still moves it.
+  u8 frozen;
+  u8 riseCounter; ///< not read by the engine; map code's own counter
+  u8 riseEnabled; ///< not read by the engine; map code's own state
+  /// Two halfwords whose meaning depends on what runs the object.
+  union {
+    struct {
+      /// The parameter its action script reads (a follow distance or an
+      /// angle), or the player's frames to its next footprint.
+      s16 action;
+      /// The side of the player's next footprint (2 after a stop).
+      s16 footprintSide;
+    };
+    /// Where SC_WANDER_HOME wanders around, in pixels: where it was created
+    /// or placed.
+    struct {
+      s16 homeX;
+      s16 homeZ;
+    };
+    /// Avoid's caster (FieldEffect_UpdatePairedArcSpawner).
+    struct {
+      s16 arcPhase;  ///< 1 spins the caster 0xc00 a frame
+      s16 arcFrames; ///< frames since the arcs started
+    };
+    /// A Venus Djinni's falling motes
+    /// (FieldEffect_UpdateDescendingOrbitObject).
+    struct {
+      u16 orbitFrames; ///< frames left of the spiral, 100 at the start
+      s16 orbitAngle;  ///< its start on the circle, 1/65536 turns
+    };
+    /// A Whirlwind particle (FieldEffect_CircleAnchor,
+    /// FieldEffect_WanderAroundAnchor).
+    struct {
+      u16 swirlFrames; ///< frames it has circled or wandered so far
+      s16 turnFrames;  ///< frames left of a sharp turn
+    };
+    /// A spin that speeds up (FieldEffect_AdvanceAngleWithRamp).
+    struct {
+      s16 spinRampFrames; ///< frames the spin has been speeding up for
+    };
+  };
   /// The object its action script follows or faces.
   struct Object *linkedObject;
   /// The update hook (ObjectEvent.update), which the unused

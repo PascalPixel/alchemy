@@ -59,7 +59,7 @@ void FieldEffect_FinishWaveAndReleaseHeapBlock(void) {
   work = *(void **)((u32)&gMindReadWork);
   Ui_SetBank15PaletteAndClearRenderMode();
   Task_Remove(FieldEffect_UpdateMindReadWave);
-  Anim_ApplyChildPalette((struct MotionObject *)ObjectEvent_GetById(
+  Anim_ApplyChildPalette((struct Object *)ObjectEvent_GetById(
                              ((struct MindReadWork *)work)->sourceId),
                          1);
   FieldEffect_FadeFromEffectColor();
@@ -103,8 +103,8 @@ void FieldEffect_UpdateMindReadWave(void) {
     PaletteFade_StartInterpolation(1);
     FieldEffect_AdvanceHueCycle();
   }
-  Anim_ApplyChildPalette(
-      (struct MotionObject *)ObjectEvent_GetById(work->sourceId), 0);
+  Anim_ApplyChildPalette((struct Object *)ObjectEvent_GetById(work->sourceId),
+                         0);
 
   // At steps 0, 8 and 16 of the cycle, a particle from the target to the
   // caster.
@@ -250,7 +250,7 @@ void FieldEffect_SetCallbackWhenTargetUnset(union FieldObject *fieldObject) {
   {
     targetY = object->targetY;
     if ((targetY == targetX) && (object->targetZ == targetY)) {
-      ObjectDispatch_InitializeFar((struct DispatchObject *)object,
+      ObjectDispatch_InitializeFar((struct Object *)object,
                                    gFieldEffect_UntargetedObjectScript);
     }
   }

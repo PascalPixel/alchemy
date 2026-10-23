@@ -354,7 +354,7 @@ static void Kalay_ScorchJoins(void) {
 
 /// In Kalay, while the tour waits, a tourist now and then nods, shakes his head
 /// or turns.
-static s32 Kalay_UpdateTouristFidget(struct ObjectScriptContext *interpreter) {
+static s32 Kalay_UpdateTouristFidget(struct Object *interpreter) {
   struct ObjectEvent *objectEvent = (struct ObjectEvent *)interpreter;
   u32 action;
   u32 nextTimer;
@@ -2332,10 +2332,9 @@ static void Kalay_UpdateTunnelPassages(void) {
 // destroyed, with an explicit status in the modern build.
 // Advance a particle, damp its velocity, and expire its lifetime.
 #ifdef UBFIX
-static s32 Kalay_UpdateTunnelParticle(struct ObjectScriptContext *interpreter) {
+static s32 Kalay_UpdateTunnelParticle(struct Object *interpreter) {
 #else
-static void
-Kalay_UpdateTunnelParticle(struct ObjectScriptContext *interpreter) {
+static void Kalay_UpdateTunnelParticle(struct Object *interpreter) {
 #endif
   struct ObjectEvent *particle = (struct ObjectEvent *)interpreter;
   s16 *lifetime;
@@ -2346,7 +2345,7 @@ Kalay_UpdateTunnelParticle(struct ObjectScriptContext *interpreter) {
   lifetime = &particle->timer;
   remainingFrames = *lifetime;
   if (remainingFrames == 0) {
-    ObjectDispatch_Release((struct DispatchObject *)particle);
+    ObjectDispatch_Release((struct Object *)particle);
   } else if (remainingFrames == 1) {
     particle->velocityX = 0;
     particle->velocityY = 0;

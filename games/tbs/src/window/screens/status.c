@@ -371,7 +371,8 @@ s32 BattleSummaryScreen_Run(u16 *list, s32 listCount, s32 member) {
     // The member's battle figure: its battle object's first sprite record,
     // as a 64x64, 256-colour sprite at (172, 56).
     {
-      struct MenuSprite *face = GetBattleObjectSlotFar(member)->object->records;
+      struct MenuSprite *face =
+          (struct MenuSprite *)GetBattleObjectSlotFar(member)->object->sprite;
 
       portraitSprite.oam.word.attr01 = 0xC0002400;
       portraitSprite.oam.word.attr23 = 0;

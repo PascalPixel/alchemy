@@ -194,8 +194,8 @@ void BattleAnim_RunGround(struct BattleAnimArgs *effect) {
   s32 frame;
   BlitterPair draw;
   struct BattleCamera *camera;
-  struct MotionObject *target;
-  struct MotionObject *user;
+  struct Object *target;
+  struct Object *user;
   struct ScreenPoint position;
   s32 screenX;
   s32 screenY;

@@ -100,9 +100,9 @@ void Djinn_RunBattleStartHop(s32 djinniId) {
       copy->update = ObjectMotion_MoveHalfwayTowardTarget;
       copy->facing = djinni->facing;
       copy->sprite->image.priority = 0;
-      Anim_ApplyChildValuesFar((struct DispatchObject *)copy, tint);
+      Anim_ApplyChildValuesFar((struct Object *)copy, tint);
       ObjectDispatch_SelectAnimationFar(copy, 0);
-      ObjectDispatch_SetSingleChildFlagsFar((struct DispatchObject *)copy, 0);
+      ObjectDispatch_SetSingleChildFlagsFar((struct Object *)copy, 0);
       sharedSprite = Sprite_ShareVramCacheEntry(copy->sprite, sharedSprite);
       copy->linkedObject = prev;
       prev = copy;
@@ -214,7 +214,7 @@ void ObjectEvent_PlaceMapObjectEvents(void) {
         // falling.
         if (flags == 0) {
           object->groundHeight = flags;
-          object->flags = OBJ_EVENT_FOLLOWS_TERRAIN | OBJ_EVENT_FALLS;
+          object->motionFlags = OBJ_EVENT_FOLLOWS_TERRAIN | OBJ_EVENT_FALLS;
           Object_SetPositionAndResetMotionFar(object, desc->x, desc->y,
                                               desc->z);
         } else {
@@ -331,8 +331,8 @@ void FieldEffect_ClearActiveSlotsAndScheduleUpdates(void) {
 
 /// Per-frame update: spins an object 1/8 turn a frame.
 void FieldEffect_AdvanceSpinAngle(union FieldObject *fieldObject) {
-  struct MotionObject *object = (struct MotionObject *)fieldObject;
-  object->angle += 0x2000;
+  struct Object *object = (struct Object *)fieldObject;
+  object->facing += 0x2000;
 }
 
 /// The states of a Jupiter Djinni's light particle, in order.
@@ -351,10 +351,10 @@ enum DjinniLightState {
 /// pixel a frame. The slot's origin is the centre, in screen coordinates
 /// (Camera_WorldToScreen).
 void FieldEffect_RunAngledApproachPhases(struct FieldEffectSprite *particle) {
-  struct MotionObject *target;
+  struct Object *target;
   struct EffectVector position;
 
-  target = (struct MotionObject *)ObjectEvent_GetById(gSaveBlock.leaderLocalId);
+  target = (struct Object *)ObjectEvent_GetById(gSaveBlock.leaderLocalId);
   if (particle->state == DJINNI_LIGHT_WIDENING) {
     particle->orbitRadius += 1;
     particle->orbitAngle += 1;

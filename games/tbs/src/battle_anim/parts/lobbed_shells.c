@@ -111,7 +111,7 @@ void BattleAnim_RunLobbedShells(struct BattleAnimArgs *effect, s32 mode) {
   s32 frame;
   s32 k;
   s32 total;
-  struct MotionObject *source;
+  struct Object *source;
   struct BattleCamera *camera;
   u8 *palette;
   s32 i;
@@ -158,7 +158,7 @@ void BattleAnim_RunLobbedShells(struct BattleAnimArgs *effect, s32 mode) {
   source = GetBattleObjectSlotFar(work->effect->user)->object;
   height = 0x40000;
   ANIM_FOR_EACH_TARGET(k, work->effect) {
-    struct MotionObject *target =
+    struct Object *target =
         GetBattleObjectSlotFar(work->effect->targets[k])->object;
 
     for (i = 0; i != LOBBED_SHELLS_SLOTS; i++) {

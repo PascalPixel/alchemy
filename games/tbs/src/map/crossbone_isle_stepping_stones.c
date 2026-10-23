@@ -625,8 +625,8 @@ static void CrossboneIsleSteppingStones_UpdateDampedParticle(
 
 /// Sets the object event's sprite to the colour mode (enum SpriteColorMode) in
 /// the low four bits of its timer.
-static s32 CrossboneIsleSteppingStones_SetChildValueFromTimer(
-    struct ObjectScriptContext *interpreter) {
+static s32
+CrossboneIsleSteppingStones_SetChildValueFromTimer(struct Object *interpreter) {
   struct ObjectEvent *objectEvent = (struct ObjectEvent *)interpreter;
   ObjectGroup_SetChildValue(objectEvent, objectEvent->timer & 15);
   return 0;

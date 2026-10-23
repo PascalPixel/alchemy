@@ -2,7 +2,7 @@
 #define ALCHEMY_SPEAKER_H
 
 /// @file
-/// The speaker lookup's views of an object event and its sprite, the speaker
+/// The speaker lookup's view of an object event's sprite, the speaker
 /// definitions, and the palette fade's heap slot.
 
 #include "unit/overworld/overworld.h"
@@ -17,29 +17,6 @@ struct SpeakerSprite {
   /// Sprite.entries[0], its first layer, whose first halfword is the
   /// sprite id it shows (SpriteAnim.animationId); null for none.
   s16 *value28;
-};
-
-/// An object event as the speaker lookup reads it: its kind (1 for an animated
-/// sprite) and that sprite.
-struct SpeakerObject {
-  u8 beforeVelocity[0x24]; ///< Object's fields before velocityX
-  /// Object's motion, target, bounce, gravity and riseBaseY; not named
-  /// through this view.
-  ///@{
-  s32 velocityX;
-  s32 velocityY;
-  s32 velocityZ;
-  s32 speedLimit;
-  s32 acceleration;
-  s32 targetX;
-  s32 targetY;
-  s32 targetZ;
-  s32 bounce;
-  s32 gravity;
-  s32 riseBaseY;
-  ///@}
-  struct SpeakerSprite *animation; ///< Object.animation
-  u8 kind; ///< Object.animationKind: 1 for one animated sprite
 };
 
 /// A speaker definition, a row of gSpeakerDefinitions: a sprite, its

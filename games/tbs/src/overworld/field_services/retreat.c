@@ -126,16 +126,14 @@ void FieldEffect_RunRetreat(void) {
 
   // Start spinning.
   Sound_PlaySongFar(SE_220);
-  Anim_ApplyChildValuesFar((struct DispatchObject *)objectEvent,
-                           SPRITE_COLOR_NORMAL);
+  Anim_ApplyChildValuesFar((struct Object *)objectEvent, SPRITE_COLOR_NORMAL);
   ObjectDispatch_SelectAnimationFar(objectEvent, 3);
   objectEvent->update = FieldEffect_UpdateSpinAngle;
   objectEvent->timer = 0;
   WaitFrames(70);
 
   // Start shrinking, and send particles from where it is on screen.
-  ObjectDispatch_SetSingleChildFlagsFar((struct DispatchObject *)objectEvent,
-                                        0);
+  ObjectDispatch_SetSingleChildFlagsFar((struct Object *)objectEvent, 0);
   objectEvent->motionFlags = 0;
   objectEvent->update = FieldEffect_UpdateDescendingObject;
   objectEvent->targetX = OBJ_EVENT_NO_TARGET;
@@ -194,7 +192,7 @@ void FieldEffect_UpdateDescendingParticlePositiveArc(
 
   y = particle->y.fixed;
   if (y <= limit) {
-    ObjectDispatch_ReleaseFar((struct DispatchObject *)particle);
+    ObjectDispatch_ReleaseFar((struct Object *)particle);
     return;
   }
 
@@ -225,7 +223,7 @@ void FieldEffect_UpdateDescendingParticleNegativeArc(
 
   y = particle->y.fixed;
   if (y <= limit) {
-    ObjectDispatch_ReleaseFar((struct DispatchObject *)particle);
+    ObjectDispatch_ReleaseFar((struct Object *)particle);
     return;
   }
 

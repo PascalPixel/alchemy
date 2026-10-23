@@ -648,8 +648,8 @@ static void ColosseumSatrageMatch_RollLogToCell(s32 logId, s32 halfCellX,
   Engine_ObjectEventSetAnimation(pusher, ANIM_WALK);
   // Follow halfway behind the rolling log while its finish effect runs.
   ObjectDispatch_StartCamera(
-      (struct DispatchObject *)((struct FieldWork *)AllocHeapSlotEwram(
-                                    HEAP_SLOT_FIELD, sizeof(struct FieldWork)))
+      (struct Object *)((struct FieldWork *)AllocHeapSlotEwram(
+                            HEAP_SLOT_FIELD, sizeof(struct FieldWork)))
           ->camera,
       (s32)log);
   ObjectMotion_SetSpeedParameters(pusher, PIXELS(1) / 2, PIXELS(1) / 5);
@@ -1773,8 +1773,8 @@ ColosseumSatrageMatch_SpawnRandomMapEffect(union FieldObject *fieldObject) {
 }
 
 /// Raises the linked finish effect, starts its script and clears the link.
-static s32 ColosseumSatrageMatch_RaiseLinkedMapEffect(
-    struct ObjectScriptContext *interpreter) {
+static s32
+ColosseumSatrageMatch_RaiseLinkedMapEffect(struct Object *interpreter) {
   struct ObjectEvent *source = (struct ObjectEvent *)interpreter;
   struct ObjectEvent *effect = ObjectEvent_GetById(source->timer);
 

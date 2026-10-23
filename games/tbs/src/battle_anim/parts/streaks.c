@@ -98,8 +98,8 @@ void BattleAnim_RunStreakVolley(struct BattleAnimArgs *effect, s32 mode) {
   DrawRectangle drawLower;
   DrawRectangle drawUpper;
   struct BattleCamera *camera;
-  struct MotionObject *source;
-  struct MotionObject *target;
+  struct Object *source;
+  struct Object *target;
   s32 resource;
   s32 frame;
   s32 streakIndex;
@@ -234,7 +234,7 @@ void BattleAnim_RunStreakVolley(struct BattleAnimArgs *effect, s32 mode) {
           if (STREAKS_VALUE(mode, STREAKS_SHAKE) &&
               frame >= k * STREAKS_TARGET_DELAY + 30 &&
               frame < k * STREAKS_TARGET_DELAY + 62) {
-            struct MotionObject *struck =
+            struct Object *struck =
                 GetBattleObjectSlotFar(work->effect->targets[k])->object;
 
             struck->x +=
@@ -327,7 +327,7 @@ void BattleAnim_RunMoteFountain(struct BattleAnimArgs *effect, s32 mode) {
   BlitterPair draw;
   struct BattleCamera *camera;
   u8 *sheet;
-  struct MotionObject *source;
+  struct Object *source;
   struct Particle *mote;
   s32 resource;
   s32 frame;

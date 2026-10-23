@@ -8,8 +8,7 @@
 
 /// An object script call: widen the object by 3/25 of its size a frame, and
 /// release it once it has reached its destination.
-static s32
-FieldEffect_StretchUntilArrived(struct ObjectScriptContext *interpreter) {
+static s32 FieldEffect_StretchUntilArrived(struct Object *interpreter) {
   struct ObjectEvent *streak = (struct ObjectEvent *)interpreter;
   streak->scaleX += 3 * Q16_ONE / 25;
   if (streak->targetX == OBJ_EVENT_NO_TARGET &&

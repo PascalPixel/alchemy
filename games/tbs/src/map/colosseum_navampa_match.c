@@ -760,7 +760,7 @@ static void EventScript_RollLongLog(void) {
   FieldScript_WaitFrames(6);
   Engine_ObjectEventSetAnimation(localId, ANIM_WALK);
   work = AllocHeapSlotEwram(HEAP_SLOT_FIELD, sizeof(struct FieldWork));
-  ObjectDispatch_StartCamera((struct DispatchObject *)work->camera, (s32)log);
+  ObjectDispatch_StartCamera((struct Object *)work->camera, (s32)log);
   ObjectEvent_SetSpeed(localId, PIXELS(1) / 2, acceleration);
   Script_PlaySong(SE_HEAVY_MOVE);
   ObjectDispatch_SelectAnimation(rider, 2);
@@ -800,8 +800,8 @@ far:
 }
 
 /// Displays the activated moving sidewalk and plays its arrival sounds.
-static s32 ColosseumNavampaMatch_ShowActivatedSidewalkLayer(
-    struct ObjectScriptContext *interpreter) {
+static s32
+ColosseumNavampaMatch_ShowActivatedSidewalkLayer(struct Object *interpreter) {
   TilesetAnim_Pause(1);
   TilesetAnim_Resume(2);
   Sound_PlaySong(SE_STOP_SLOT3);
@@ -1249,8 +1249,8 @@ s32 ColosseumNavampaMatch_Initialize(void) {
 
 /// Advances one of the particles that rise from the sleeping Isaac after the
 /// last match; timer and work hold signed 1/256-pixel steps.
-static s32 ColosseumNavampaMatch_AdvanceParticleMotion(
-    struct ObjectScriptContext *interpreter) {
+static s32
+ColosseumNavampaMatch_AdvanceParticleMotion(struct Object *interpreter) {
   struct ObjectEvent *particle = (struct ObjectEvent *)interpreter;
   particle->x.fixed += particle->timer * 256;
   particle->y.fixed += (s16)particle->work * 256;
@@ -1852,9 +1852,6 @@ static void EventScript_TalkToFreeClimbAttendant(s32 guideId) {
   }
 }
 
-// DispatchObject is the engine's script-control view of these same object
-// events.
-
 /// Starts a scripted pixel destination while preserving the object event's
 /// height.
 static void ColosseumNavampaMatch_PositionObjectEvent(s32 selector, s32 x,
@@ -1863,7 +1860,7 @@ static void ColosseumNavampaMatch_PositionObjectEvent(s32 selector, s32 x,
 
   objectEvent = ObjectEvent_GetByLocalId(selector);
   if (objectEvent != 0) {
-    ObjectDispatch_StartIdle((struct DispatchObject *)objectEvent);
+    ObjectDispatch_StartIdle((struct Object *)objectEvent);
     ObjectDispatch_SelectAnimation(objectEvent, 5);
     Object_SetMoveTarget((struct Object *)objectEvent, x << 16,
                          objectEvent->y.fixed, z << 16);
@@ -1877,7 +1874,7 @@ static void ColosseumNavampaMatch_PositionAndActivateObjectEvent(s32 selector,
 
   objectEvent = ObjectEvent_GetByLocalId(selector);
   if (objectEvent != 0) {
-    ObjectDispatch_StartIdle((struct DispatchObject *)objectEvent);
+    ObjectDispatch_StartIdle((struct Object *)objectEvent);
     ObjectDispatch_SelectAnimation(objectEvent, 5);
     Object_SetMoveTarget((struct Object *)objectEvent, x << 16,
                          objectEvent->y.fixed, z << 16);
@@ -2213,7 +2210,7 @@ ColosseumNavampaMatch_SpawnRandomFinishEffect(union FieldObject *fieldObject) {
 /// Presents the prize above the warrior who took it, with the treasure fanfare,
 /// and clears the link.
 static s32 ColosseumNavampaMatch_PlaceFinishItemAboveObjectEvent(
-    struct ObjectScriptContext *interpreter) {
+    struct Object *interpreter) {
   struct ObjectEvent *source = (struct ObjectEvent *)interpreter;
 
   struct ObjectEvent *effect = ObjectEvent_GetById(source->timer);

@@ -530,34 +530,38 @@ The world map's graphics sets are `gWorldMap_GraphicsResources`
 
 ## Design
 
-### One object, many views
+### One object, a few views
 
-All 64 objects are the same 112 bytes, but each family of code reads them
-through a struct of its own: `Object` (`include/object.h`),
-`DispatchObject` (`include/object_dispatch.h`), `ObjectScriptContext` and
-`ScriptOperands` (`include/field/action_script.h`), `ScriptMotionObject`
-(`include/script_motion.h`), `ScriptObjectRuntime`
-(`include/field/script_object_runtime.h`), `ScriptObjectEntry`
-(`include/script_object_entry.h`) and `ObjectEvent` (`include/object_event.h`).
-Other folders add more, such as the battle's `MotionObject` and the field
-effects' `FieldEffect`. Each view was written from the code that reads it and
-names what that code uses; the bytes it leaves alone keep ObjectEvent's
-names under a "not named here" note. `ObjectScriptContext` is 100 bytes, since
-no command reads the last 12.
+All 64 objects are the same 112 bytes, and the engine reads them as
+`struct Object` (`include/object.h`): the script commands, the object
+dispatcher, the motion loop, the cameras, the battle and the field
+effects all take an `Object *`. Two halfwords near its end mean
+different things to different code, so `Object` names each use in an
+anonymous union: an action script's parameter and the player's footprint
+side, `SC_WANDER_HOME`'s home, the Avoid caster's spin, a Venus Djinni's
+falling motes, a Whirlwind particle and a spin that speeds up.
 
-The views agree on the layout (the script first, then position, velocity and
-target) and differ in names and types where their readers differ. The wait is
-unsigned in `Object` and `ObjectEvent` and signed in
-`ScriptMotionObject`; the routine run each frame at offset 0x6c is `hook` to
-the scripts, `update` to maps and `Object`. Even
-`gObjects` is declared as an `Object *` in `include/field/field.h`
-and as a `ScriptMotionObject *` in `update.c`.
+Maps read the same object as `struct ObjectEvent`
+(`include/object_event.h`), whose coordinates are unions of a 16.16 value
+and its whole pixels, or, for an effect, as `struct FieldEffect`
+(`include/system/field_effect.h`), which keeps its own velocity, scale rates
+and spin in the motion words; their fields sit at `Object`'s offsets. A few views
+remain where [matching](../../glossary.md#matching-decompilation) needs
+them, each a field-for-field copy of the layout that differs only where its
+reader does, as [Matching](../MATCHING.md#field) lists:
 
-The several views come from the [matching](../../glossary.md#matching-decompilation):
-the code must compile to [the original](../../glossary.md#the-original)'s
-instructions, and a function sometimes matches only through a view of its
-own, as [Matching](../MATCHING.md#field) lists. [Camelot](../../glossary.md#camelot)'s source likely had one
-struct, since every view describes the same 112 bytes.
+| View | Reader | What differs |
+| --- | --- | --- |
+| `ScriptOperands` (`include/field/action_script.h`) | `SC_SET`, `SC_ADD`, `SC_CMP` | every field at the width its operand handler reads, unsigned |
+| `ScriptMotionObject` (`include/script_motion.h`) | `Object_UpdateAll` (`update.c`) | ARM code built with GCC 2.95.2, which cannot read `Object`'s anonymous unions |
+| `BattleSpriteObject` (`include/battle/motobj.h`) | `BattleObject_SpawnObjectsForList` | the sprite word untyped |
+
+The update hook at offset 0x6c takes a `union FieldObject *`, through
+which a hook reads its object as an object event or as an effect.
+`ObjectEvent`, `FieldEffect` and `union FieldObject` stay because maps are
+written through them; the views in the table stay because their readers compile to
+[the original](../../glossary.md#the-original)'s instructions only through
+them. [Camelot](../../glossary.md#camelot)'s source likely had one struct.
 
 ### Scripts without addresses
 

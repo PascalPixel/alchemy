@@ -40,7 +40,7 @@ void BattleAnim_RunRagnarok(struct BattleAnimArgs *effect) {
   void *canvas;
   s32 col;
   u8 *sheet;
-  struct MotionObject *user;
+  struct Object *user;
   DrawRectangle blit[2];
   s32 frame;
   s32 i;
@@ -60,7 +60,7 @@ void BattleAnim_RunRagnarok(struct BattleAnimArgs *effect) {
   // The user takes its leap pose and animates fast until the end: an
   // animation step of 48, three times the usual 16.
   ObjectDispatch_SelectAnimationFar(user, POSE_LEAP);
-  ObjectDispatch_SetAnimationSpeedFar((struct DispatchObject *)user, 48);
+  ObjectDispatch_SetAnimationSpeedFar((struct Object *)user, 48);
 
   Resource_LoadAndDecompress((s32)&ResourceId_FlameBladeSheet, work->sheet, 1,
                              1);
@@ -274,7 +274,7 @@ void BattleAnim_RunRagnarok(struct BattleAnimArgs *effect) {
     frame++;
   } while (frame != RAGNAROK_FRAMES);
 
-  ObjectDispatch_SetAnimationSpeedFar((struct DispatchObject *)user, 16);
+  ObjectDispatch_SetAnimationSpeedFar((struct Object *)user, 16);
   ANIM_FINISH_CANVAS();
 }
 

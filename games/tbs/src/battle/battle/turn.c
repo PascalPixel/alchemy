@@ -519,8 +519,7 @@ s32 BattleTurn_Build(struct BattleAction *request, struct BattleTurn *plan) {
         ObjectDispatch_SelectAnimationFar(
             BattleObject_Get(request->unitId)->object, POSE_CAST);
         ObjectDispatch_SetAnimationSpeedFar(
-            (struct DispatchObject *)BattleObject_Get(request->unitId)->object,
-            32);
+            (struct Object *)BattleObject_Get(request->unitId)->object, 32);
         ElementGlow_Play(request->unitId, DJINN_ELEMENT(request->parameter),
                          GLOW_BURST, 0);
         BattlePlayback_WaitForReady();

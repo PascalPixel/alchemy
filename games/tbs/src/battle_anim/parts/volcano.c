@@ -46,7 +46,7 @@ void BattleAnim_RunVolcano(struct BattleAnimArgs *effect) {
   u8 *sheet;
   struct ScreenPoint screen;
   BlitterPair draw;
-  struct MotionObject *object;
+  struct Object *object;
   struct BattleCamera *camera;
   s32 i;
 

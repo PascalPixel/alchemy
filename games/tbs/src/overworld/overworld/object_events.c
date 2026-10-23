@@ -134,12 +134,12 @@ void FieldScript_SpawnObjectEventTemplates(struct ObjectEventTemplate *entry,
       // the shared entry when either is released.
       if (entry->flags & OBJ_EVENT_TEMPLATE_SHARE_PREVIOUS_SPRITE) {
         previous = ObjectEvent_GetByLocalId(objectEventIndex - 1);
-        if (previous->animationKind == OBJECT_SPRITE_ONE &&
-            object->animationKind == OBJECT_SPRITE_ONE) {
-          sprite = previous->animation;
+        if (previous->spriteStorageKind == OBJECT_SPRITE_ONE &&
+            object->spriteStorageKind == OBJECT_SPRITE_ONE) {
+          sprite = previous->sprite;
           sprite->retainCacheEntry = 1;
           spriteSlot = sprite->slot;
-          sprite = object->animation;
+          sprite = object->sprite;
           sprite->retainCacheEntry = 1;
           VramCache_FreeEntry(sprite->slot);
           sprite->slot = spriteSlot;
@@ -148,7 +148,7 @@ void FieldScript_SpawnObjectEventTemplates(struct ObjectEventTemplate *entry,
       // Dora's tunic overlays the young sprites with its child part.
       if (GameFlag_GetFar(FLAG_ISAAC_WEARS_TUNIC) &&
           (u32)(spriteId - ISAAC_CHILD) <= GARET_CHILD - ISAAC_CHILD)
-        ObjectDispatch_RegisterChildMetadataFar((struct DispatchObject *)object,
+        ObjectDispatch_RegisterChildMetadataFar((struct Object *)object,
                                                 SPRITE_TUNIC);
     } else if (!GameFlag_GetFar(FLAG_KEEP_PARTY_POSITION)) {
       Object_SetPositionAndResetMotionFar(object, entry->x, entry->y, entry->z);
@@ -161,36 +161,36 @@ void FieldScript_SpawnObjectEventTemplates(struct ObjectEventTemplate *entry,
       // from its first frame, unless it happens to be 1. XXX: likely meant to
       // start each idle at a random frame, because the value is random; as it
       // stands it only forces the restart.
-      if (object->animationKind == OBJECT_SPRITE_ONE &&
-          (sprite = object->animation) != 0)
+      if (object->spriteStorageKind == OBJECT_SPRITE_ONE &&
+          (sprite = object->sprite) != 0)
         sprite->lastNo = ((u32)(Random16()) % (u32)30);
       object->facing = entry->facing;
       // Solid.
       object->collisionFlags = 1;
       ObjectEvent_SetMovementType(object, entry->movement);
       ObjectDispatch_SelectAnimationFar(object, 1);
-      ((struct ScriptObjectRuntime *)object)->homeX = object->x / 0x10000;
-      ((struct ScriptObjectRuntime *)object)->homeZ = object->z / 0x10000;
+      ((struct Object *)object)->homeX = object->x / 0x10000;
+      ((struct Object *)object)->homeZ = object->z / 0x10000;
       // An object event template with a height is lifted half a pixel more and
       // takes motion flags 4, floating: it neither follows the ground nor
       // falls. Outside the world map every height is then counted from the
       // ground below.
       if (object->y != 0) {
-        object->flags = 4;
+        object->motionFlags = 4;
         object->y += 0x8000;
       }
       if (work->mode == OBJECT_SYSTEM_WORLD_MAP) {
         // World-map object event templates use single sprites and do not follow
         // the ground. While the tunic flag is set, all keep their native
         // scale; otherwise they draw at 3/4 size.
-        object->flags &= 0xfe;
+        object->motionFlags &= 0xfe;
         if (!GameFlag_GetFar(FLAG_ISAAC_WEARS_TUNIC)) {
           // UB: sprite creation can fail while the object event slot stays
           // live. The native local is then indeterminate or from an earlier
           // row. Checking the sprite grows tbs-en from 608 to 628 bytes.
 #ifdef UBFIX
-          if (object->animationKind == OBJECT_SPRITE_ONE &&
-              (sprite = object->animation) != NULL)
+          if (object->spriteStorageKind == OBJECT_SPRITE_ONE &&
+              (sprite = object->sprite) != NULL)
 #endif
             sprite->scale = Iwram_MulQ16(sprite->scale, 3 * Q16_ONE / 4);
         }
@@ -285,8 +285,8 @@ void ObjectEvent_ResetForObject(struct ObjectEventTemplate *table) {
              0x200000;
     object->y += height;
     object->groundHeight = object->y;
-    object->flags = 0;
-    ObjectDispatch_SetSingleChildFlagsFar((struct DispatchObject *)object, 0);
+    object->motionFlags = 0;
+    ObjectDispatch_SetSingleChildFlagsFar((struct Object *)object, 0);
     ObjectDispatch_SelectAnimationFar(object, 12);
   } else {
     gSaveBlock.movementMode = LEADER_MOVEMENT_WALK;
@@ -297,10 +297,10 @@ void ObjectEvent_ResetForObject(struct ObjectEventTemplate *table) {
   camera = Object_CreateFar(OBJECT_CREATE_NO_SPRITE << 12, object->x, object->y,
                             object->z);
   camera->groundHeight = object->groundHeight;
-  ObjectDispatch_StartCameraFar((struct DispatchObject *)camera, (s32)object);
+  ObjectDispatch_StartCameraFar((struct Object *)camera, (s32)object);
   if (work->mode == OBJECT_SYSTEM_WORLD_MAP) {
     struct SpriteAnim *meta =
-        (struct SpriteAnim *)Sprite_AddAnimFar(object->animation, 23);
+        (struct SpriteAnim *)Sprite_AddAnimFar(object->sprite, 23);
     meta->colorMode = SPRITE_COLOR_HIDDEN;
     meta->priority = 9;
   }
@@ -434,7 +434,7 @@ void ObjectEvent_ClearOutOfBounds(void) {
           sprite = (u8 *)objectEvent->sprite;
           flags = sprite[29];
           sprite[29] = flags & releaseCacheMask;
-          ObjectDispatch_ReleaseFar((struct DispatchObject *)objectEvent);
+          ObjectDispatch_ReleaseFar((struct Object *)objectEvent);
           sprite = NULL;
           *objectEventSlot = (struct ObjectEvent *)sprite;
         }
@@ -465,7 +465,7 @@ void ObjectEvent_Respawn(void) {
       // VRAM cache entry with the object event.
       objectEvent->spriteStorageKind = OBJECT_SPRITE_ONE;
       objectEvent->sprite->retainCacheEntry = 0;
-      ObjectDispatch_ReleaseFar((struct DispatchObject *)objectEvent);
+      ObjectDispatch_ReleaseFar((struct Object *)objectEvent);
       work->objectEvents[LOCALID_FIRST_PLACED + slotIndex] = 0;
     }
   }
@@ -558,8 +558,8 @@ void ObjectEvent_Snapshot(void) {
     Dma_Set(object, snapshot,
             (DMA_ENABLE | DMA_32BIT) << 16 | (sizeof(struct Object) / 4),
             REG_DMA3);
-    if (object->animationKind == OBJECT_SPRITE_ONE) {
-      struct Sprite *sprite = object->animation;
+    if (object->spriteStorageKind == OBJECT_SPRITE_ONE) {
+      struct Sprite *sprite = object->sprite;
       animation = sprite->lastNo;
       spriteFlagBits = sprite->flags;
       priority = sprite->image.priority;
@@ -616,19 +616,19 @@ void ObjectEvent_Restore(void) {
       // event. The animation and sprite flags below are set through that
       // pointer; the priorities go to the sprite the object event has now,
       // which is then put back.
-      sprite = object->animation;
+      sprite = object->sprite;
       Dma_Set(snapshot, object,
               (DMA_ENABLE | DMA_32BIT) << 16 | (sizeof(struct Object) / 4),
               REG_DMA3);
       animation = *animations;
       if (animation != 0)
         ObjectDispatch_SelectAnimationFar(object, animation);
-      ObjectDispatch_SetSingleChildFlagsFar((struct DispatchObject *)object,
+      ObjectDispatch_SetSingleChildFlagsFar((struct Object *)object,
                                             *spriteFlags);
       priority = *priorities;
       sprite->image.priority = priority;
       sprite->shadow.priority = priority;
-      object->animation = sprite;
+      object->sprite = sprite;
       // Re-anchor the camera only when restoring the selected leader.
       if (objectEventIndex == *leaderId) {
         camera = (*fieldWork)->camera;
@@ -637,7 +637,7 @@ void ObjectEvent_Restore(void) {
         camera->groundHeight = y;
         camera->y = y;
         cameraPosition[1] = y;
-        ObjectDispatch_StartIdleFar((struct DispatchObject *)object);
+        ObjectDispatch_StartIdleFar((struct Object *)object);
       }
     }
     snapshot++;

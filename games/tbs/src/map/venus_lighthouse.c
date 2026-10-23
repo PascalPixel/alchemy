@@ -674,8 +674,7 @@ static void VenusLighthouse_RestoreScriptedChildValues(void) {
 
 /// Called by gVenusGreyStatueScript and gVenusGreyPillarScript: draws the
 /// object event in the colour mode of its VENUS_COLOR_MARK.
-static s32
-VenusLighthouse_UpdateChildFromTimer(struct ObjectScriptContext *interpreter) {
+static s32 VenusLighthouse_UpdateChildFromTimer(struct Object *interpreter) {
   struct ObjectEvent *objectEvent = (struct ObjectEvent *)interpreter;
   ObjectGroup_SetChildValue(objectEvent, objectEvent->timer & 15);
   return 0;
@@ -743,8 +742,8 @@ static s32 VenusLighthouse_EmitRisingParticles(union FieldObject *fieldObject) {
 }
 
 /// Clears the scripted object event's sprite flags and advances its script.
-static s32 VenusLighthouse_ClearScriptedSpriteFlags(
-    struct ObjectScriptContext *interpreter) {
+static s32
+VenusLighthouse_ClearScriptedSpriteFlags(struct Object *interpreter) {
   void *objectEvent = (void *)interpreter;
   ObjectDispatch_SetSingleChildFlags(objectEvent, 0);
   return 0;
@@ -2088,8 +2087,8 @@ static void EventScript_MoveSwitchPillar(void) {
         VenusLighthouse_CreateLight(888, 680, gVenusThirdFloorLightToSoutheast);
     // SC_FREE clears the script pointer; work value 0x28 signals the
     // opening sound earlier, while the gate effects are still running.
-    while (((struct ObjectScriptContext *)firstGateEffect)->script != 0 ||
-           ((struct ObjectScriptContext *)secondGateEffect)->script != 0) {
+    while (((struct Object *)firstGateEffect)->script != 0 ||
+           ((struct Object *)secondGateEffect)->script != 0) {
       if (firstGateEffect->riseEnabled != 0 ||
           secondGateEffect->riseEnabled != 0) {
         FieldScript_WaitFrames(30);
@@ -2649,8 +2648,8 @@ static void EventScript_MoveSocketPillar(void) {
       ObjectEvent_SetScript(firstGateEffect, gVenusFourthFloorLightToSoutheast);
       secondGateEffect = VenusLighthouse_CreateLight(
           216, 760, gVenusFourthFloorLightToSouthwest);
-      while (((struct ObjectScriptContext *)firstGateEffect)->script != 0 ||
-             ((struct ObjectScriptContext *)secondGateEffect)->script != 0) {
+      while (((struct Object *)firstGateEffect)->script != 0 ||
+             ((struct Object *)secondGateEffect)->script != 0) {
         if (firstGateEffect->riseEnabled != 0 ||
             secondGateEffect->riseEnabled != 0) {
           Script_Wait(30);
@@ -3784,7 +3783,7 @@ static void VenusLighthouse_RaiseLeaderWithSpray(void) {
 /// fourth floor only the
 /// middle socket has more than one piece, and only the light from the
 /// south-east socket reaches it.
-static s32 VenusLighthouse_RouteLight(struct ObjectScriptContext *interpreter) {
+static s32 VenusLighthouse_RouteLight(struct Object *interpreter) {
   struct ObjectEvent *light = (struct ObjectEvent *)interpreter;
   struct FieldPosition pillarPosition;
   struct ObjectEvent *pillar;

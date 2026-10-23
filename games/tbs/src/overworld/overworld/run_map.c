@@ -150,7 +150,7 @@ s32 Map_Run(s32 warpDest) {
       // Note where the leader is, for the requests to use.
       GameFlag_SetFar(FLAG_FIELD_HANDLING_REQUESTS);
       objectEvent = work->objectEvents[gSaveBlock.leaderLocalId];
-      ObjectDispatch_StartIdleFar((struct DispatchObject *)objectEvent);
+      ObjectDispatch_StartIdleFar((struct Object *)objectEvent);
       gSaveBlock.x = objectEvent->x.fixed;
       gSaveBlock.y = 0;
       gSaveBlock.z = objectEvent->z.fixed;
@@ -364,16 +364,13 @@ s32 Map_Run(s32 warpDest) {
       objectEvent = work->objectEvents[gSaveBlock.leaderLocalId];
       if (objectEvent != NULL) {
         if (gSaveBlock.movementMode == LEADER_MOVEMENT_AIRBORNE)
-          ObjectDispatch_StartKeyCheckFar((struct DispatchObject *)objectEvent);
+          ObjectDispatch_StartKeyCheckFar((struct Object *)objectEvent);
         else if (gSaveBlock.movementMode == LEADER_MOVEMENT_CLIMB)
-          ObjectDispatch_StartMoveByKeysFar(
-              (struct DispatchObject *)objectEvent);
+          ObjectDispatch_StartMoveByKeysFar((struct Object *)objectEvent);
         else if (work->mode == OBJECT_SYSTEM_WORLD_MAP)
-          ObjectDispatch_StartWorldMapControlFar(
-              (struct DispatchObject *)objectEvent);
+          ObjectDispatch_StartWorldMapControlFar((struct Object *)objectEvent);
         else
-          ObjectDispatch_StartPlayerControlFar(
-              (struct DispatchObject *)objectEvent);
+          ObjectDispatch_StartPlayerControlFar((struct Object *)objectEvent);
       }
       do {
         WaitFrames(1);
@@ -395,17 +392,6 @@ done:
   return result;
 }
 
-/// An object event (struct ObjectEvent), seen with its position as one vector.
-struct ObjectVectorView {
-  u8 pad0[6];
-  u16 angle;                    ///< 1/65536 turns
-  struct EffectVector position; ///< 16.16 fixed-point pixels
-  u8 pad1[14];
-  u8 kind; ///< Object's layer: the map grid layer of its ground
-  u8 pad2[0x2d];
-  struct Sprite *sprite;
-};
-
 /// Returns the metatile behavior of the map cell 16 pixels ahead of the party
 /// leader when there is something to search there: a fixed search spot
 /// (MB_JAR to MB_WELL) whose ground is level with the leader or up
@@ -418,7 +404,7 @@ struct ObjectVectorView {
 s32 ObjectEvent_GetTriggerTileAheadOfCurrent(void) {
   u8 *workBytes;
   u8 *gridBytes;
-  struct ObjectVectorView *leader;
+  struct Object *leader;
   union PolarOffsetPosition probePosition;
   u8 *cell;
   u8 *cells;
@@ -431,10 +417,10 @@ s32 ObjectEvent_GetTriggerTileAheadOfCurrent(void) {
   workBytes = *(u8 **)Ram_FieldWork;
   gridBytes = *(u8 **)Ram_MapGridWork;
   if (leader != 0) {
-    probePosition.vector.x = leader->position.x;
-    probePosition.vector.y = leader->position.y;
-    probePosition.vector.z = leader->position.z;
-    Vector_AddPolarOffset(0x100000, leader->angle, probePosition.coordinates);
+    probePosition.vector.x = leader->x;
+    probePosition.vector.y = leader->y;
+    probePosition.vector.z = leader->z;
+    Vector_AddPolarOffset(0x100000, leader->facing, probePosition.coordinates);
     // World map metatiles are 32 pixels square, 32 to a row; map cells 16
     // pixels square, 128 to a row, four bytes each.
     if (((struct FieldWork *)workBytes)->mode == OBJECT_SYSTEM_WORLD_MAP) {
@@ -452,9 +438,8 @@ s32 ObjectEvent_GetTriggerTileAheadOfCurrent(void) {
     collisionCode = cell[2];
     if (collisionCode >= MB_JAR && collisionCode <= MB_WELL) {
       groundHeight = MapGrid_GetTerrainHeightFar(
-          leader->kind, probePosition.vector.x, probePosition.vector.z);
-      if (groundHeight >= leader->position.y &&
-          groundHeight <= leader->position.y + 0x400000) {
+          leader->layer, probePosition.vector.x, probePosition.vector.z);
+      if (groundHeight >= leader->y && groundHeight <= leader->y + 0x400000) {
         result = collisionCode;
       }
     } else if (Map_FindEvent(MAP_EVENT_BG, collisionCode) != 0) {

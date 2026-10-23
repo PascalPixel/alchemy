@@ -85,7 +85,6 @@
 #include "unit/window/screens.h"
 #include "unit/runtime/runtime.h"
 #include "types.h"
-#include "facing_object.h"
 #include "battle.h"
 #include "debug.h"
 #include "field.h"
@@ -706,8 +705,7 @@ static void EventScript_DoraWakesIsaac(void) {
   FieldScript_WaitFrames(10);
   ObjectMotion_SetVarCbAndRefresh(LOCALID_DORA, 2);
   ObjectDispatch_RegisterChildMetadata(
-      (struct DispatchObject *)ObjectEvent_GetById(LOCALID_PARTY_LEADER),
-      SPRITE_TUNIC);
+      (struct Object *)ObjectEvent_GetById(LOCALID_PARTY_LEADER), SPRITE_TUNIC);
   GameFlag_Set(FLAG_ISAAC_WEARS_TUNIC);
   Sound_PlaySong(SE_RECOVERY);
   ObjectGroup_ConfigureChildValue(LOCALID_PARTY_LEADER, 7);

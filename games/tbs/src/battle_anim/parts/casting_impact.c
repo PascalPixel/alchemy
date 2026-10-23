@@ -267,12 +267,12 @@ void BattleAnim_RunCastingImpact(struct BattleAnimArgs *effect, s32 mode) {
   s32 savedVelocityZ;
   s32 savedAcceleration;
   s32 savedVerticalStrength;
-  struct MotionObject *targetActor;
+  struct Object *targetActor;
   struct FixedPointPosition *motion;
   s32 kindFromTwo;
   s32 kindFromFour;
   struct FixedPointPosition *position;
-  struct MotionObject *casterActor;
+  struct Object *casterActor;
   struct Particle *particle;
   s32 pairX;
   s32 stripX;
@@ -451,7 +451,7 @@ void BattleAnim_RunCastingImpact(struct BattleAnimArgs *effect, s32 mode) {
   }
   // Stop the acting unit, saving its motion for after the gathering, and
   // place the Djinni 80 pixels overhead.
-  ObjectDispatch_SetAnimationSpeedFar((struct DispatchObject *)casterActor, 0);
+  ObjectDispatch_SetAnimationSpeedFar((struct Object *)casterActor, 0);
   position = &djinnPos;
   SET_POSITION(position, casterActor->x, casterActor->y + 0x500000,
                casterActor->z);
@@ -459,10 +459,10 @@ void BattleAnim_RunCastingImpact(struct BattleAnimArgs *effect, s32 mode) {
   savedVelocityY = casterActor->velocityY;
   savedVelocityZ = casterActor->velocityZ;
   savedAcceleration = casterActor->acceleration;
-  savedVerticalStrength = casterActor->verticalMotionStrength;
+  savedVerticalStrength = casterActor->gravity;
   SET_VELOCITY(casterActor, 0, 0, 0);
   casterActor->acceleration = 0;
-  casterActor->verticalMotionStrength = 0;
+  casterActor->gravity = 0;
   Projection_ScaledUnit(work->effect->user, casterScreen);
   casterScreen->x = casterScreen->x / 2;
   Sound_PlaySongFar(SE_212);
@@ -591,10 +591,10 @@ void BattleAnim_RunCastingImpact(struct BattleAnimArgs *effect, s32 mode) {
     BattleAnim_RunProjectileVolley(effect, PROJECTILE_VOLLEY_IMPACT_COMETS);
     return;
   }
-  ObjectDispatch_SetAnimationSpeedFar((struct DispatchObject *)casterActor, 16);
+  ObjectDispatch_SetAnimationSpeedFar((struct Object *)casterActor, 16);
   SET_VELOCITY(casterActor, savedVelocityX, savedVelocityY, savedVelocityZ);
   casterActor->acceleration = savedAcceleration;
-  casterActor->verticalMotionStrength = savedVerticalStrength;
+  casterActor->gravity = savedVerticalStrength;
   // Severe Blow, with the caster's motion back, clears the canvas and hands
   // off to BattleAnim_RunSparkGroups' rising sparks, with
   // SPARK_GROUPS_SEVERE_BLOW.
@@ -887,7 +887,7 @@ void BattleAnim_RunCastingImpact(struct BattleAnimArgs *effect, s32 mode) {
       }
       if (frame > 11) {
         struct Particle *step = CASTING_IMPACT_IMPACT_PARTICLES;
-        struct MotionObject *caster;
+        struct Object *caster;
         s32 height;
         caster = GetBattleObjectSlotFar(work->effect->user)->object;
         height = BattleUnit_GetEffectHeightFar(work->effect->user) / 2;

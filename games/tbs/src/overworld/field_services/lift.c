@@ -14,9 +14,9 @@
 /// update set to ObjectGroup_ApplyRandomChildValues.
 void FieldEffect_RunLiftOnTarget(s32 unused) {
   struct FieldEffectWork *effectWork;
-  struct DispatchObject *caster;
+  struct Object *caster;
   struct ObjectEvent *target;
-  struct MotionObject *pair[2];
+  struct Object *pair[2];
   s32 pos[3];
   s32 x, y, z;
   s32 handIndex;
@@ -31,7 +31,7 @@ void FieldEffect_RunLiftOnTarget(s32 unused) {
   FieldEffect_FadeToEffectColor();
   // The caster's script starts 3 words into the common particle script, with
   // the target as its argument.
-  caster->argument = (s32)target;
+  caster->linkedObject = (struct Object *)target;
   ObjectDispatch_InitializeFar(caster, gFieldEffect_CommonParticleScript + 3);
 
   x = effectWork->x;
@@ -48,10 +48,10 @@ void FieldEffect_RunLiftOnTarget(s32 unused) {
   // moves 14 pixels that way.
   WaitFrames(15);
   for (handIndex = 0; handIndex < 2; handIndex++) {
-    struct MotionObject *hand = pair[handIndex];
+    struct Object *hand = pair[handIndex];
     if (hand != NULL)
       ObjectMotion_SetTargetPositionFromMagnitudeAngle((struct Object *)hand,
-                                                       0xe0000, hand->angle);
+                                                       0xe0000, hand->facing);
   }
 
   Object_WaitForMoveFar(pair[0]);
@@ -90,17 +90,16 @@ DEFINE_ITEM_BREAK_EFFECT(FieldEffect_RunLift, FieldEffect_SpawnItemBreakMode3)
 /// NULL when no object could be spawned. Unlike Carry's
 /// (FieldEffect_SpawnItemBreakMode1) it takes animation 3, not 1, and keeps
 /// autoFaceMotion as created; both are at sprite priority 0 (Object_Spawn).
-struct MotionObject *FieldEffect_SpawnItemBreakMode3(s32 x, s32 y, s32 z,
-                                                     s32 angle) {
-  struct MotionObject *fragment;
+struct Object *FieldEffect_SpawnItemBreakMode3(s32 x, s32 y, s32 z, s32 angle) {
+  struct Object *fragment;
   s32 scale;
 
   Sound_PlaySongFar(SE_ITEM_BREAK);
-  fragment = (struct MotionObject *)Object_Spawn(215, x, y, z);
+  fragment = (struct Object *)Object_Spawn(215, x, y, z);
   if (fragment != NULL) {
     fragment->scaleX = fragment->scaleY = 0x4000;
     fragment->acceleration = fragment->speedLimit = 0x30000; // 3 pixels a frame
-    ((struct Sprite *)fragment->records)->image.priority = 0;
+    ((struct Sprite *)fragment->sprite)->image.priority = 0;
     ObjectDispatch_SelectAnimationFar(fragment, 3);
     scale = fragment->scaleX;
     if (scale < 0x10000) {
@@ -108,12 +107,12 @@ struct MotionObject *FieldEffect_SpawnItemBreakMode3(s32 x, s32 y, s32 z,
         scale += 0x800;
         fragment->scaleY = scale;
         fragment->scaleX = scale;
-        fragment->angle += 0x2000; // 1/8 turn
+        fragment->facing += 0x2000; // 1/8 turn
         WaitFrames(1);
         scale = fragment->scaleX;
       } while (scale <= 0xffff);
     }
-    fragment->angle = angle;
+    fragment->facing = angle;
   }
   return fragment;
 }
@@ -157,7 +156,7 @@ again:
   if (state == OUT_AND_BACK_AIM_BACK) {
     // 8 pixels toward scene->angle from 16 pixels above the main object, on
     // screen, give or take 4 pixels.
-    struct MotionObject *caster = effectWork->mainObject;
+    struct Object *caster = effectWork->mainObject;
 
     pos.x = caster->x;
     pos.y = caster->y + (16 << 16);
@@ -183,8 +182,8 @@ again:
 /// gFieldEffect_HeavyImpactScript (fxdata.c), where the interpreter is the
 /// object running the script, which Force's thrown object runs (force.c).
 /// Returns 0, so the script moves on and frees the object.
-s32 SpawnHeavyImpactEffect(struct ObjectScriptContext *interpreter) {
-  struct MotionObject *source = (struct MotionObject *)interpreter;
+s32 SpawnHeavyImpactEffect(struct Object *interpreter) {
+  struct Object *source = interpreter;
   struct EffectVector pos;
   struct Object *impact;
   struct Object *fragment;
@@ -196,9 +195,9 @@ s32 SpawnHeavyImpactEffect(struct ObjectScriptContext *interpreter) {
   pos.z = source->z;
   impact = Object_Spawn(0x11b, pos.x, pos.y - (32 << 16), pos.z);
   if (impact != NULL) {
-    impact->flags = 0;
+    impact->motionFlags = 0;
     impact->wait = 20;
-    ObjectDispatch_InitializeFar((struct DispatchObject *)impact,
+    ObjectDispatch_InitializeFar((struct Object *)impact,
                                  gFieldEffect_CommonParticleScript);
   }
 
@@ -206,11 +205,11 @@ s32 SpawnHeavyImpactEffect(struct ObjectScriptContext *interpreter) {
   for (fragmentIndex = 0; fragmentIndex < 12; fragmentIndex++) {
     fragment = Object_Spawn(SPRITE_SPARKLE, pos.x, pos.y, pos.z);
     if (fragment != NULL) {
-      ObjectDispatch_InitializeFar((struct DispatchObject *)fragment,
+      ObjectDispatch_InitializeFar((struct Object *)fragment,
                                    gFieldEffect_FragmentScript);
       fragment->speedLimit = Random16() + (1 << 16);
       fragment->acceleration = 1 << 16;
-      fragment->flags = 0;
+      fragment->motionFlags = 0;
       ObjectMotion_SetTargetPositionFromMagnitudeAngle(
           fragment, Random16() * 24 + (8 << 16), Random16());
     }

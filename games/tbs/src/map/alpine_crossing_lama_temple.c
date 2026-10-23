@@ -208,8 +208,7 @@ enum { TREASURE_SPOT_PASSAGE = 100 };
 /// Draws the object event behind the background, on sprite priority 3 with
 /// automatic priority off. The first worker from Xian at the Alpine Crossing
 /// runs it from his object event template.
-static s32
-ObjectEvent_DrawBehindScenery(struct ObjectScriptContext *interpreter) {
+static s32 ObjectEvent_DrawBehindScenery(struct Object *interpreter) {
   union FieldObject *fieldObject = (union FieldObject *)interpreter;
   fieldObject->objectEvent.priorityFlags &= ~OBJ_EVENT_PRIORITY_AUTOMATIC;
   fieldObject->objectEvent.sprite->image.priority = 3;

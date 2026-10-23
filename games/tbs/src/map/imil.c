@@ -96,7 +96,6 @@
 #include "map_tables.h"
 #include "field_effect.h"
 #include "fx_work.h"
-#include "facing_object.h"
 #include "speaker.h"
 #include "field_service.h"
 #include "iwram_call.h"
@@ -277,7 +276,7 @@ extern s32 gImil_ArcOrigin[];
 
 /// A sick person shivers: a quick squash, then a pause, longer for
 /// LOCALID_SICK_OLD_MAN, whose work Imil_Initialize sets.
-static s32 Imil_UpdateShiver(struct ObjectScriptContext *interpreter) {
+static s32 Imil_UpdateShiver(struct Object *interpreter) {
   struct ObjectEvent *objectEvent = (struct ObjectEvent *)interpreter;
   switch (objectEvent->timer) {
   case 6:
@@ -1606,7 +1605,7 @@ static void Imil_TurnSlidingObjectEvent(union FieldObject *fieldObject) {
     d = -0x1000;
   objectEvent->facing = prev + d;
   ObjectDispatch_SelectAnimation(objectEvent, 2);
-  ObjectDispatch_SetAnimationSpeed((struct DispatchObject *)objectEvent, 0x30);
+  ObjectDispatch_SetAnimationSpeed((struct Object *)objectEvent, 0x30);
 }
 
 /// The leader slides along Imil's ice until something stops him.
@@ -1655,7 +1654,7 @@ static void Imil_RunIceSlide(void) {
     subject->timer = 0;
     Object_SetPosition(subject, x, subject->y.fixed, z);
     ObjectDispatch_SelectAnimation(subject, 2);
-    ObjectDispatch_SetAnimationSpeed((struct DispatchObject *)subject, 48);
+    ObjectDispatch_SetAnimationSpeed((struct Object *)subject, 48);
     Object_WaitForMove(subject);
     subject->update = Imil_TurnSlidingObjectEvent;
 

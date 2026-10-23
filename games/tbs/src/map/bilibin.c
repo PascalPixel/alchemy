@@ -114,7 +114,6 @@
 #include "text/msg_ids.h"
 #include "ability_ids.h"
 #include "objcmd.h"
-#include "facing_object.h"
 #include "object_event.h"
 #include "songs.h"
 #include "item_ids.h"

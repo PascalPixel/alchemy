@@ -31,8 +31,8 @@
 // removes the column.
 
 /// Raises the spark while its scale follows a half-sine pulse.
-static s32 MercuryLighthouse_AdvanceAnchoredRiseFrame(
-    struct ObjectScriptContext *interpreter) {
+static s32
+MercuryLighthouse_AdvanceAnchoredRiseFrame(struct Object *interpreter) {
   struct ObjectEvent *effect = (struct ObjectEvent *)interpreter;
   struct ObjectEvent *anchor = effect->linkedObject;
   s16 step = ++effect->timer;
@@ -52,8 +52,7 @@ static s32 MercuryLighthouse_AdvanceAnchoredRiseFrame(
 }
 
 /// Grows the moving light over the first sixteen script frames.
-static s32
-MercuryLighthouse_GrowLight(struct ObjectScriptContext *interpreter) {
+static s32 MercuryLighthouse_GrowLight(struct Object *interpreter) {
   struct ObjectEvent *objectEvent = (struct ObjectEvent *)interpreter;
   s16 frame;
 
@@ -67,8 +66,7 @@ MercuryLighthouse_GrowLight(struct ObjectScriptContext *interpreter) {
 }
 
 /// Expands the released light before its script removes it.
-static s32
-ObjectEvent_AdvanceScaleCounter(struct ObjectScriptContext *interpreter) {
+static s32 ObjectEvent_AdvanceScaleCounter(struct Object *interpreter) {
   struct ObjectEvent *objectEvent = (struct ObjectEvent *)interpreter;
   s16 frame;
 
@@ -83,8 +81,7 @@ ObjectEvent_AdvanceScaleCounter(struct ObjectScriptContext *interpreter) {
 
 /// Follows the linked object event and alternates the light's animation
 /// parameter.
-static s32
-MercuryLighthouse_FollowLeader(struct ObjectScriptContext *interpreter) {
+static s32 MercuryLighthouse_FollowLeader(struct Object *interpreter) {
   struct ObjectEvent *objectEvent = (struct ObjectEvent *)interpreter;
   struct ObjectEvent *leader;
   s32 targetZ;

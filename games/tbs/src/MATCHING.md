@@ -308,15 +308,28 @@ The field engine's spellings are about its map state and a few of its loops.
   measured cost of their loop forms. The other `goto`s (the wander retries,
   the step searches, the map effects' [script](../glossary.md#script) loops and the debug loops) stay
   until someone finds their loops.
-- An [object](../glossary.md#object)'s 112 bytes are read through several structs, as Field's
-  [one object, many views](field/README.md#one-object-many-views) lists. They
-  stay apart because the compiler addresses a field differently by its
-  declared type and by whether it is reached through a union (the
-  `ObjectEvent` union moves a load), so one merged struct would change the
-  bytes at sites each view now matches. They were likely one struct in
-  Camelot's source, because every view describes the same 112 bytes, but
-  that isn't known ([XXX](../glossary.md#xxx)); merging them waits until every field has one
-  name and type that every site matches with.
+- An [object](../glossary.md#object)'s 112 bytes are read as `struct Object`
+  almost everywhere, and the engine's other views of it have folded into it,
+  as Field's [one object, a few views](field/README.md#one-object-a-few-views)
+  lists. What the merge measured:
+  - `Object.sprite` is a plain `struct Sprite *`. As an anonymous union of a
+    sprite and a group list, its stores move after the next store
+    (`Object_CreateField`, `ObjectEvent_Restore`); as `void *`, the leader's sprite priority load in
+    `FieldEffect_UpdatePhasedRadialParticle` moves. A group's list is read
+    through a `(void **)` or `(struct Sprite **)` cast.
+  - `BattleObject_SpawnObjectsForList` matches only with the sprite word
+    untyped, and only through a field-for-field copy of the layout
+    (`BattleSpriteObject`): a view that pads the fields it does not read with
+    byte arrays moves the same store.
+  - `Object.wait` is signed, as the motion loop (`Object_UpdateAllThumb`)
+    reads it; every other site matches with either signedness.
+  - `Object_UpdateAllThumb` indexes the script as words through
+    `(const ScriptMotionWords *)object->script`, which compiles as the old
+    word-array member did.
+  - `update.c` keeps `ScriptMotionObject`: it is ARM code built with GCC
+    2.95.2, which cannot read `Object`'s anonymous unions.
+  - The operand handlers of `SC_SET`, `SC_ADD` and `SC_CMP` keep
+    `ScriptOperands`, whose fields are the unsigned widths they read.
 
 ### Running a map
 

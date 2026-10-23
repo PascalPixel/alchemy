@@ -229,17 +229,17 @@ void *ObjectDispatch_FindFreeObject(void) {
 /// again. Reached through SC_FREE (ObjectScript_FreeObject) and, as
 /// ObjectDispatch_ReleaseFar, from the battle, the Psynergy effects and the
 /// field map's objects.
-void ObjectDispatch_Release(struct DispatchObject *object) {
+void ObjectDispatch_Release(struct Object *object) {
   s32 spritesRemaining;
   void **sprites;
 
   if (object) {
-    switch (object->kind & 15) {
+    switch (object->spriteStorageKind & 15) {
     case OBJECT_SPRITE_ONE:
-      Sprite_Destroy(object->target.child);
+      Sprite_Destroy(object->sprite);
       break;
     case OBJECT_SPRITE_GROUP:
-      sprites = object->target.children;
+      sprites = (void **)object->sprite;
       spritesRemaining = 3;
       do {
         struct Sprite *sprite = *sprites++;
@@ -265,8 +265,8 @@ void ObjectDispatch_Release(struct DispatchObject *object) {
 struct Object *Object_CreateField(s32 encodedSprite, s32 x, s32 y, s32 z) {
   struct Object *object;
   struct ObjectEvent *objectEvent;
-  struct ScriptMotionObject *motion;
-  struct ScriptObjectRuntime *scripted;
+  struct Object *motion;
+  struct Object *scripted;
   struct Sprite *sprite;
   s32 spriteStorageKind;
   void **spriteSlots;
@@ -283,12 +283,12 @@ struct Object *Object_CreateField(s32 encodedSprite, s32 x, s32 y, s32 z) {
     case OBJECT_CREATE_ONE_SPRITE:
       sprite = Sprite_Create(encodedSprite);
       if (sprite != NULL) {
-        object->animationKind = OBJECT_SPRITE_ONE;
-        object->animation = sprite;
+        object->spriteStorageKind = OBJECT_SPRITE_ONE;
+        object->sprite = sprite;
         objectEvent->radius =
             Resource_GetMetadataRecordFar(encodedSprite)->boxY >> 1;
       } else {
-        object->animationKind = OBJECT_SPRITE_NONE;
+        object->spriteStorageKind = OBJECT_SPRITE_NONE;
       }
       break;
     case OBJECT_CREATE_GROUP:
@@ -298,8 +298,8 @@ struct Object *Object_CreateField(s32 encodedSprite, s32 x, s32 y, s32 z) {
       // in the tree creates a group object to show the intended spacing.
       spriteSlots =
           (void **)((u32 *)gObjectSystemWork + gObjectSystemWork->count++ + 2);
-      object->animationKind = spriteStorageKind;
-      object->animation = spriteSlots;
+      object->spriteStorageKind = spriteStorageKind;
+      object->sprite = (struct Sprite *)spriteSlots;
       Dma_Fill32(0, spriteSlots, 0x10);
       sprite = Sprite_Create(encodedSprite);
       if (sprite != NULL) {
@@ -314,8 +314,8 @@ struct Object *Object_CreateField(s32 encodedSprite, s32 x, s32 y, s32 z) {
     }
   }
   if (object != NULL) {
-    motion = (struct ScriptMotionObject *)object;
-    scripted = (struct ScriptObjectRuntime *)object;
+    motion = object;
+    scripted = (struct Object *)object;
     Object_SetPositionAndResetMotion(object, x, y, z);
     // Up to 2 pixels a frame, gaining 1 a frame; unit scale; following the
     // ground and falling; turning to face its motion; keeping a quarter of its
@@ -323,15 +323,15 @@ struct Object *Object_CreateField(s32 encodedSprite, s32 x, s32 y, s32 z) {
     // gWorldMap_KeyHeadings gives Down).
     object->script = (s32 *)gObjectDispatch_DefaultScript;
     object->speedLimit = 0x20000;
-    object->step = 0;
+    object->scriptCursor = 0;
     objectEvent->scaleX = 0x10000;
     objectEvent->scaleY = 0x10000;
     object->acceleration = 0x10000;
-    object->flags = OBJ_EVENT_FOLLOWS_TERRAIN | OBJ_EVENT_FALLS;
+    object->motionFlags = OBJ_EVENT_FOLLOWS_TERRAIN | OBJ_EVENT_FALLS;
     motion->gravity = 0x10000;
-    motion->vertical.bounce = 0x4000;
+    motion->bounce = 0x4000;
     object->collisionFlags = 0;
-    object->actionFlags = OBJ_EVENT_FACES_MOTION;
+    object->steeringFlags = OBJ_EVENT_FACES_MOTION;
     objectEvent->riseBaseY = 0;
     object->facing = 0x4000;
     // Its home position, in pixels.
@@ -346,14 +346,13 @@ struct Object *Object_CreateField(s32 encodedSprite, s32 x, s32 y, s32 z) {
 /// last flag test. Called by the Start functions below and the player
 /// control, and as ObjectDispatch_InitializeFar by the battle's placement,
 /// the Psynergy effects and the field map's scripts.
-void ObjectDispatch_Initialize(struct DispatchObject *object,
-                               const s32 *script) {
+void ObjectDispatch_Initialize(struct Object *object, const s32 *script) {
   if (object != 0) {
-    object->value04 = 0;
-    object->value00 = (u32)script;
-    object->value5b = 0;
-    object->value5d = 0;
-    object->value57 = 0;
+    object->scriptCursor = 0;
+    object->script = script;
+    object->paused = 0;
+    object->repeatCount = 0;
+    object->conditionResult = 0;
   }
 }
 
@@ -361,19 +360,19 @@ void ObjectDispatch_Initialize(struct DispatchObject *object,
 /// object's one sprite, or on each sprite of its group.
 #define OBJECT_DISPATCH_DEFINE_APPLY(name, object_type, apply)                 \
   void name(object_type rawObject, s32 value) {                                \
-    struct DispatchObject *object;                                             \
+    struct Object *object;                                                     \
     void **sprites;                                                            \
     s32 spritesRemaining;                                                      \
     void *sprite;                                                              \
                                                                                \
     object = rawObject;                                                        \
     if (object != 0) {                                                         \
-      switch (object->kind & 0xf) {                                            \
+      switch (object->spriteStorageKind & 0xf) {                               \
       case OBJECT_SPRITE_ONE:                                                  \
-        apply(object->target.child, value);                                    \
+        apply(object->sprite, value);                                          \
         break;                                                                 \
       case OBJECT_SPRITE_GROUP:                                                \
-        sprites = object->target.children;                                     \
+        sprites = (void **)object->sprite;                                     \
         spritesRemaining = 3;                                                  \
         do {                                                                   \
           sprite = *sprites++;                                                 \
@@ -391,25 +390,25 @@ OBJECT_DISPATCH_DEFINE_APPLY(ObjectDispatch_SelectAnimation, void *,
                              Sprite_StartAnim)
 
 /// Sets the animation speed (timer step) of all of an object's sprites.
-OBJECT_DISPATCH_DEFINE_APPLY(ObjectDispatch_SetAnimationSpeed,
-                             struct DispatchObject *, Sprite_SetAnimSpeed)
+OBJECT_DISPATCH_DEFINE_APPLY(ObjectDispatch_SetAnimationSpeed, struct Object *,
+                             Sprite_SetAnimSpeed)
 
 /// Both of the above: switches all of an object's sprites to animation and
 /// sets their timer step to step.
-void ObjectDispatch_SetAnimationAndSpeed(struct DispatchObject *object,
-                                         s32 animation, s32 step) {
+void ObjectDispatch_SetAnimationAndSpeed(struct Object *object, s32 animation,
+                                         s32 step) {
   void **sprites;
   void *sprite;
   s32 spritesRemaining;
 
   if (object != 0) {
-    switch (object->kind & 15) {
+    switch (object->spriteStorageKind & 15) {
     case OBJECT_SPRITE_ONE:
-      Sprite_StartAnim(object->target.child, animation);
-      Sprite_SetAnimSpeed(object->target.child, step);
+      Sprite_StartAnim(object->sprite, animation);
+      Sprite_SetAnimSpeed(object->sprite, step);
       break;
     case OBJECT_SPRITE_GROUP:
-      sprites = object->target.children;
+      sprites = (void **)object->sprite;
       for (spritesRemaining = 3; spritesRemaining >= 0; spritesRemaining--) {
         sprite = *sprites++;
         if (sprite != 0) {
@@ -423,10 +422,9 @@ void ObjectDispatch_SetAnimationAndSpeed(struct DispatchObject *object,
 }
 
 /// Sets the rotation of an object's sprite, when it has just one.
-void ObjectDispatch_SetChildRotation(struct DispatchObject *object,
-                                     u32 rotation) {
-  if (object != 0 && (object->kind & 0xf) == OBJECT_SPRITE_ONE)
-    object->target.child->rotation = rotation;
+void ObjectDispatch_SetChildRotation(struct Object *object, u32 rotation) {
+  if (object != 0 && (object->spriteStorageKind & 0xf) == OBJECT_SPRITE_ONE)
+    object->sprite->rotation = rotation;
 }
 
 /// Gives a one-sprite object's first anim animation id animationId and
@@ -434,11 +432,12 @@ void ObjectDispatch_SetChildRotation(struct DispatchObject *object,
 /// A negative animationId does nothing.
 void Anim_SetIndexAndInitializeObjects(void *rawDispatchObject,
                                        s32 animationId) {
-  struct DispatchObject *object = rawDispatchObject;
+  struct Object *object = rawDispatchObject;
   struct Sprite *sprite;
 
-  if (object != NULL && (object->kind & 0xf) == OBJECT_SPRITE_ONE) {
-    sprite = object->target.child;
+  if (object != NULL &&
+      (object->spriteStorageKind & 0xf) == OBJECT_SPRITE_ONE) {
+    sprite = object->sprite;
     if (animationId >= 0) {
       sprite->entries[0]->animationId = animationId;
       Sprite_ResetAnims(sprite);
@@ -448,10 +447,10 @@ void Anim_SetIndexAndInitializeObjects(void *rawDispatchObject,
 
 /// Adds an anim of animation id animationId to a one-sprite object's sprite.
 /// A negative animationId does nothing.
-void ObjectDispatch_RegisterChildMetadata(struct DispatchObject *object,
+void ObjectDispatch_RegisterChildMetadata(struct Object *object,
                                           s32 animationId) {
-  if (object != 0 && (object->kind & 0xf) == OBJECT_SPRITE_ONE) {
-    struct Sprite *sprite = object->target.child;
+  if (object != 0 && (object->spriteStorageKind & 0xf) == OBJECT_SPRITE_ONE) {
+    struct Sprite *sprite = object->sprite;
     if (animationId >= 0)
       Sprite_AddAnim(sprite, animationId);
   }
@@ -460,40 +459,40 @@ void ObjectDispatch_RegisterChildMetadata(struct DispatchObject *object,
 /// Starts an object on the script that approaches its linked object
 /// (SC_APPROACH_LINK), linked to linkedObjectHandle. The functions below start
 /// the engine's other scripts (object_script.c).
-void ObjectDispatch_StartApproachLink(struct DispatchObject *object,
+void ObjectDispatch_StartApproachLink(struct Object *object,
                                       s32 linkedObjectHandle) {
   ObjectDispatch_Initialize(object, gObjectDispatch_ApproachLinkScript);
-  object->argument = linkedObjectHandle;
+  object->linkedObject = (struct Object *)linkedObjectHandle;
 }
 
 /// Starts an object on the script that runs SC_KEY_COUNT every frame.
 /// The field map runner (overworld/overworld/run_map.c) gives it to the leader
 /// when gSaveBlock.movementMode is 2.
-void ObjectDispatch_StartKeyCheck(struct DispatchObject *object) {
+void ObjectDispatch_StartKeyCheck(struct Object *object) {
   ObjectDispatch_Initialize(object, gObjectDispatch_KeyCheckScript);
 }
 
 /// Starts an object on the script that moves it by the keys (SC_KEYS).
 /// The field map runner gives it to the leader when gSaveBlock.movementMode
 /// is 1.
-void ObjectDispatch_StartMoveByKeys(struct DispatchObject *object) {
+void ObjectDispatch_StartMoveByKeys(struct Object *object) {
   ObjectDispatch_Initialize(object, gObjectDispatch_KeysScript);
 }
 
 /// Starts an object on the player control script (SC_PLAYER).
 /// The field map runner's usual choice for the leader on a layered map.
-void ObjectDispatch_StartPlayerControl(struct DispatchObject *object) {
+void ObjectDispatch_StartPlayerControl(struct Object *object) {
   ObjectDispatch_Initialize(object, gObjectDispatch_PlayerScript);
 }
 
 /// Starts an object on the world map control script (SC_WORLD).
 /// The field map runner gives it to the leader on the world map.
-void ObjectDispatch_StartWorldMapControl(struct DispatchObject *object) {
+void ObjectDispatch_StartWorldMapControl(struct Object *object) {
   ObjectDispatch_Initialize(object, gObjectDispatch_WorldMapScript);
 }
 
 /// Starts an object on the idle script (a lone SC_END).
-void ObjectDispatch_StartIdle(struct DispatchObject *object) {
+void ObjectDispatch_StartIdle(struct Object *object) {
   ObjectDispatch_Initialize(object, gObjectDispatch_EndScript);
 }
 
@@ -502,14 +501,13 @@ void ObjectDispatch_StartIdle(struct DispatchObject *object) {
 /// acceleration of 0.5 (value30 and value34 are those fields). Called through
 /// ObjectDispatch_StartCameraFar by the field map's object events, the Psynergy
 /// camera and the Colosso and Kolima Forest maps.
-void ObjectDispatch_StartCamera(struct DispatchObject *object,
-                                s32 linkedObjectHandle) {
+void ObjectDispatch_StartCamera(struct Object *object, s32 linkedObjectHandle) {
   ObjectDispatch_Initialize(object, gObjectDispatch_CameraScript);
   if (linkedObjectHandle != 0) {
-    object->value34 = 0x8000;
-    object->value30 = 0x40000;
-    object->argument = linkedObjectHandle;
-    object->value64 = 0;
+    object->acceleration = 0x8000;
+    object->speedLimit = 0x40000;
+    object->linkedObject = (struct Object *)linkedObjectHandle;
+    object->action = 0;
   }
 }
 
@@ -520,54 +518,52 @@ void ObjectDispatch_StartCamera(struct DispatchObject *object,
 /// commands and by map scripts that wait for a scripted move (Colosso, Venus
 /// Lighthouse, Vale).
 void ObjectDispatch_WaitForValue16(void *rawObject) {
-  struct ObjectScriptContext *interpreter = rawObject;
+  struct Object *interpreter = rawObject;
   s32 waitedFrames;
 
   waitedFrames = 0;
-  if (interpreter->script[interpreter->cursor] != SC_END) {
+  if (interpreter->script[interpreter->scriptCursor] != SC_END) {
     do {
       WaitFrames(1);
       waitedFrames++;
       if (waitedFrames > 299)
         break;
-    } while (interpreter->script[interpreter->cursor] != SC_END);
+    } while (interpreter->script[interpreter->scriptCursor] != SC_END);
   }
 }
 
 /// Sets the flags of a one-sprite object's sprite (bit 0: draw its shadow).
-void ObjectDispatch_SetSingleChildFlags(struct DispatchObject *object,
-                                        u32 flags) {
+void ObjectDispatch_SetSingleChildFlags(struct Object *object, u32 flags) {
   if (object != NULL) {
-    if ((object->kind & 0xf) == OBJECT_SPRITE_ONE)
-      object->target.child->flags = flags;
+    if ((object->spriteStorageKind & 0xf) == OBJECT_SPRITE_ONE)
+      object->sprite->flags = flags;
   }
 }
 
 /// Sets the OAM blend mode of a one-sprite object's sprite.
 /// This one and the next two test the whole kind byte, not its low four
 /// bits, so an object with high kind bits set is left alone.
-void ObjectDispatch_SetChildBlendMode(struct DispatchObject *object, u32 mode) {
-  if (object != 0 && object->kind == OBJECT_SPRITE_ONE) {
-    struct Sprite *sprite = object->target.child;
+void ObjectDispatch_SetChildBlendMode(struct Object *object, u32 mode) {
+  if (object != 0 && object->spriteStorageKind == OBJECT_SPRITE_ONE) {
+    struct Sprite *sprite = object->sprite;
     sprite->image.objectMode = mode;
   }
 }
 
 /// Makes the fixed camera draw a one-sprite object at its own scale instead of
 /// scaling it by distance.
-void ObjectDispatch_SetChildFixedScale(struct DispatchObject *object,
-                                       u32 fixedScale) {
-  if (object != 0 && object->kind == OBJECT_SPRITE_ONE) {
-    struct Sprite *sprite = object->target.child;
+void ObjectDispatch_SetChildFixedScale(struct Object *object, u32 fixedScale) {
+  if (object != 0 && object->spriteStorageKind == OBJECT_SPRITE_ONE) {
+    struct Sprite *sprite = object->sprite;
     sprite->useOwnScale = fixedScale;
   }
 }
 
 /// Sets the colour mode (SpriteColorMode) of a one-sprite object's anims,
 /// except those drawn hidden (see Sprite_SetAnimColorModes).
-void Anim_ApplyChildValues(struct DispatchObject *object, u32 param) {
-  if (object != NULL && object->kind == OBJECT_SPRITE_ONE)
-    Sprite_SetAnimColorModes(object->target.child, param);
+void Anim_ApplyChildValues(struct Object *object, u32 param) {
+  if (object != NULL && object->spriteStorageKind == OBJECT_SPRITE_ONE)
+    Sprite_SetAnimColorModes(object->sprite, param);
 }
 
 /// Suspends the object camera updates, starts the palette back to normal and,

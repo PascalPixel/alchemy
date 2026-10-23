@@ -38,8 +38,8 @@ void ObjectMotion_EnableActionAndSetCallback(u32 objectId, s32 action) {
 
   if (object != NULL) {
     s32 value = 1;
-    value |= object->actionFlags;
-    object->actionFlags = value;
+    value |= object->steeringFlags;
+    object->steeringFlags = value;
     ObjectEvent_SetMovementType(object, action);
   }
 }
@@ -54,8 +54,8 @@ void ObjectMotion_EnableActionAndResetMotion(u32 objectId) {
 
   if (object != NULL) {
     enabled = 1;
-    object->actionFlags = enabled | object->actionFlags;
-    ObjectDispatch_StartIdleFar((struct DispatchObject *)object);
+    object->steeringFlags = enabled | object->steeringFlags;
+    ObjectDispatch_StartIdleFar((struct Object *)object);
   }
 }
 
@@ -90,8 +90,8 @@ void ObjectEvent_SetActionCallbackAndRefreshById(u32 objectId, s32 action) {
 
   if (object != NULL) {
     s32 value = 1;
-    value |= object->actionFlags;
-    object->actionFlags = value;
+    value |= object->steeringFlags;
+    object->steeringFlags = value;
     ObjectEvent_SetMovementType(object, action);
     ObjectDispatch_WaitForValue16Far(object);
   }
@@ -106,8 +106,8 @@ void ObjectMotion_ResetAndSetPosition(u32 objectId, s32 x, s32 z) {
   struct Object *object = ObjectEvent_GetByLocalId(objectId);
 
   if (object != NULL) {
-    object->movementState = 0;
-    ObjectDispatch_StartIdleFar((struct DispatchObject *)object);
+    object->paused = 0;
+    ObjectDispatch_StartIdleFar((struct Object *)object);
     Object_SetMoveTargetFar(object, x << 16, object->y, z << 16);
   }
 }
@@ -120,8 +120,8 @@ void ObjectMotion_SetPositionAndCommit(u32 objectId, s32 x, s32 z) {
   struct Object *object = ObjectEvent_GetByLocalId(objectId);
 
   if (object != NULL) {
-    object->movementState = 0;
-    ObjectDispatch_StartIdleFar((struct DispatchObject *)object);
+    object->paused = 0;
+    ObjectDispatch_StartIdleFar((struct Object *)object);
     Object_SetMoveTargetFar(object, x << 16, object->y, z << 16);
     Object_WaitForMoveFar(object);
   }
@@ -134,8 +134,8 @@ void ObjectMotion_ResetAndSetPositionInMode2(u32 objectId, s32 x, s32 z) {
   struct Object *object = ObjectEvent_GetByLocalId(objectId);
 
   if (object != NULL) {
-    object->movementState = 0;
-    ObjectDispatch_StartIdleFar((struct DispatchObject *)object);
+    object->paused = 0;
+    ObjectDispatch_StartIdleFar((struct Object *)object);
     ObjectDispatch_SelectAnimationFar(object, 2);
     Object_SetMoveTargetFar(object, x << 16, object->y, z << 16);
   }
@@ -149,8 +149,8 @@ void ObjectMotion_SetPositionAndReset(u32 objectId, s32 x, s32 z) {
   struct Object *object = ObjectEvent_GetByLocalId(objectId);
 
   if (object != NULL) {
-    object->movementState = 0;
-    ObjectDispatch_StartIdleFar((struct DispatchObject *)object);
+    object->paused = 0;
+    ObjectDispatch_StartIdleFar((struct Object *)object);
     ObjectDispatch_SelectAnimationFar(object, 2);
     Object_SetMoveTargetFar(object, x << 16, object->y, z << 16);
     Object_WaitForMoveFar(object);
@@ -181,8 +181,8 @@ void ObjectMotion_CenterOnColumn(u32 objectId, s32 priority, s32 zOffset) {
     columnX >>= 4;
     columnX *= 16;
     offsetInColumn = pixelX - columnX;
-    object->movementState = 0;
-    ObjectDispatch_StartIdleFar((struct DispatchObject *)object);
+    object->paused = 0;
+    ObjectDispatch_StartIdleFar((struct Object *)object);
     ObjectDispatch_SelectAnimationFar(object, 2);
     Object_SetMoveTargetFar(object, object->x + ((8 - offsetInColumn) << 16),
                             object->y, object->z);
@@ -202,8 +202,8 @@ void ObjectMotion_OffsetPositionAndResetMotion(u32 objectId, s32 xOffset,
   struct Object *object = ObjectEvent_GetByLocalId(objectId);
 
   if (object != NULL) {
-    object->movementState = 0;
-    ObjectDispatch_StartIdleFar((struct DispatchObject *)object);
+    object->paused = 0;
+    ObjectDispatch_StartIdleFar((struct Object *)object);
     Object_SetMoveTargetFar(object, object->x + (xOffset << 16), object->y,
                             object->z + (zOffset << 16));
   }
@@ -217,8 +217,8 @@ void ObjectMotion_OffsetPositionAndReset(u32 objectId, s32 xOffset,
   struct Object *object = ObjectEvent_GetByLocalId(objectId);
 
   if (object != NULL) {
-    object->movementState = 0;
-    ObjectDispatch_StartIdleFar((struct DispatchObject *)object);
+    object->paused = 0;
+    ObjectDispatch_StartIdleFar((struct Object *)object);
     ObjectDispatch_SelectAnimationFar(object, 2);
     Object_SetMoveTargetFar(object, object->x + (xOffset << 16), object->y,
                             object->z + (zOffset << 16));
@@ -255,10 +255,10 @@ void ObjectMotion_LaunchFromFocusedObject(u32 objectId, s32 xOffset,
     if (leader != NULL)
       ObjectMotion_SetHorizontalPositionWithTerrain(objectId, leader->x,
                                                     leader->z);
-    object->movementState = 0;
+    object->paused = 0;
     ObjectDispatch_SelectAnimationFar(object, 2);
     ObjectMotion_OffsetPositionAndResetMotion(objectId, xOffset, zOffset);
-    ObjectDispatch_InitializeFar((struct DispatchObject *)object,
+    ObjectDispatch_InitializeFar((struct Object *)object,
                                  (const s32 *)&gObjectMotion_LaunchScript);
     object->action = action;
   }
@@ -292,7 +292,7 @@ void ObjectMotion_SetHorizontalPositionWithTerrain(u32 objectId, s32 x, s32 z) {
 
   object = ObjectEvent_GetByLocalId(objectId);
   if (object != NULL) {
-    ObjectDispatch_StartIdleFar((struct DispatchObject *)object);
+    ObjectDispatch_StartIdleFar((struct Object *)object);
     SET_VELOCITY(object, 0, 0, 0);
     object->targetY = OBJ_EVENT_NO_TARGET;
     object->targetX = OBJ_EVENT_NO_TARGET;
@@ -307,7 +307,7 @@ void ObjectMotion_SetHorizontalPositionWithTerrain(u32 objectId, s32 x, s32 z) {
     // XXX: likely written for an older interface in pixels, because weather.c
     // makes the same call; a map script placing an object event this way on
     // raised ground would show what the game does.
-    if (1 & object->flags) {
+    if (1 & object->motionFlags) {
       terrainId = object->layer;
       tileX = x;
       if (tileX < 0) {
@@ -339,12 +339,12 @@ void ObjectMotion_SetPositionWithTerrain(u32 objectId, s32 x, s32 y, s32 z) {
 
   object = ObjectEvent_GetByLocalId(objectId);
   if (object != NULL) {
-    ObjectDispatch_StartIdleFar((struct DispatchObject *)object);
+    ObjectDispatch_StartIdleFar((struct Object *)object);
     SET_VELOCITY(object, 0, 0, 0);
     object->targetY = OBJ_EVENT_NO_TARGET;
     object->targetX = OBJ_EVENT_NO_TARGET;
     SET_POSITION(object, x, y, z);
-    if (1 & object->flags) {
+    if (1 & object->motionFlags) {
       s32 terrainId = object->layer;
       tileX = x;
       if (tileX < 0) {
@@ -382,7 +382,7 @@ void ObjectEvent_SetActionById(u32 objectId, s32 steps) {
   struct Object *object = ObjectEvent_GetByLocalId(objectId);
 
   if (object != NULL)
-    ObjectDispatch_SetAnimationSpeedFar((struct DispatchObject *)object, steps);
+    ObjectDispatch_SetAnimationSpeedFar((struct Object *)object, steps);
 }
 
 /// Waits, at most 90 frames, for an object event's animation to change. Only an
@@ -399,8 +399,8 @@ void ObjectMotion_WaitForAnimationChange(u32 objectId) {
   s32 elapsedFrames;
 
   object = ObjectEvent_GetByLocalId(objectId);
-  if (object != NULL && object->animationKind == OBJECT_SPRITE_ONE) {
-    sprite = object->animation;
+  if (object != NULL && object->spriteStorageKind == OBJECT_SPRITE_ONE) {
+    sprite = object->sprite;
     saved = sprite->lastNo;
     for (elapsedFrames = 0; elapsedFrames <= 89; elapsedFrames++) {
       WaitFrames(1);
@@ -437,7 +437,7 @@ void ObjectMotion_Launch(u32 objectId, s32 speed, s32 frames) {
 
   object = ObjectEvent_GetByLocalId(objectId);
   if (object != NULL) {
-    objectFlags = &object->flags;
+    objectFlags = &object->motionFlags;
     updatedFlags = *objectFlags | OBJ_EVENT_FALLS;
     verticalVelocity = speed << 16;
     *objectFlags = updatedFlags;
@@ -465,7 +465,7 @@ void ObjectMotion_SetVariantCallback(u32 objectId, s32 count) {
     }
     // Each count is 32 words of the script; start that many from its end.
     ObjectDispatch_InitializeFar(
-        (struct DispatchObject *)object,
+        (struct Object *)object,
         (const s32 *)(gObjectMotion_VariantScripts + ((3 - count) << 7)));
   }
 }
@@ -528,13 +528,13 @@ void FieldEffect_SpawnBurstParticle(struct ObjectEvent *source, s32 param) {
     case 1:
       ObjectDispatch_SelectAnimationFar(objectEvent, 2);
       ObjectDispatch_InitializeFar(
-          (struct DispatchObject *)objectEvent,
+          (struct Object *)objectEvent,
           (const s32 *)gFieldEffect_BurstParticleScriptA);
       break;
     default:
       ObjectDispatch_SelectAnimationFar(objectEvent, 1);
       ObjectDispatch_InitializeFar(
-          (struct DispatchObject *)objectEvent,
+          (struct Object *)objectEvent,
           (const s32 *)gFieldEffect_BurstParticleScriptB);
       break;
     }
@@ -580,7 +580,7 @@ void ObjectEvent_JumpDownLedge(s32 localId, s32 pose, s32 param) {
     WaitFrames(10);
 
     // Hop up and forward 12 pixels.
-    objectFlags = &object->flags;
+    objectFlags = &object->motionFlags;
     ObjectDispatch_SelectAnimationFar(object, 1);
     {
       u8 flags = 2;
@@ -649,17 +649,15 @@ void ObjectEvent_LinkPair(s32 firstId, s32 secondId, s32 wait) {
   void *second = ObjectEvent_GetByLocalId(secondId);
 
   if (first != NULL && second != NULL) {
-    FacingObject_TurnPairToFaceEachOther(first, second);
+    ObjectEvent_TurnPairToFaceEachOther(first, second);
     FieldScript_WaitFrames(wait);
   }
 }
 
 /// Turns two object events to face each other, at most 1/16 turn a frame each,
 /// until both do (at most 60 frames). Only ObjectEvent_LinkPair calls it.
-void FacingObject_TurnPairToFaceEachOther(struct FacingObject *firstObject,
-                                          struct FacingObject *secondObject) {
-  struct Object *first = (struct Object *)firstObject;
-  struct Object *second = (struct Object *)secondObject;
+void ObjectEvent_TurnPairToFaceEachOther(struct Object *first,
+                                         struct Object *second) {
   s32 firstTargetAngle;
   s32 secondTargetAngle;
   s32 frame;
@@ -735,17 +733,16 @@ UNUSED void ObjectEvent_DestroyNoOp(void) {}
 /// (ObjectEvent_SetChildValue).
 void ObjectGroup_ConfigureChildValue(s32 objectId, s32 param) {
   s32 blink;
-  struct DispatchObject *object;
+  struct Object *object;
 
   object = ObjectEvent_GetByLocalId(objectId);
   if (object != NULL) {
     blink = 0x100 & param;
     if (blink != 0) {
-      ((struct ScriptMotionObject *)object)->hook =
-          ObjectGroup_ApplyIndexedChildValue;
+      ((struct Object *)object)->update = ObjectGroup_ApplyIndexedChildValue;
       return;
     }
-    ((struct ScriptMotionObject *)object)->hook = NULL;
+    ((struct Object *)object)->update = NULL;
     ObjectGroup_SetChildValue((struct ObjectEvent *)object, param);
   }
 }
@@ -754,16 +751,16 @@ void ObjectGroup_ConfigureChildValue(s32 objectId, s32 param) {
 /// gObjectGroup_BlinkChildValues (7 for two frames out of eight, otherwise 0).
 /// ObjectGroup_ConfigureChildValue installs it.
 void ObjectGroup_ApplyIndexedChildValue(union FieldObject *fieldObject) {
-  struct DispatchObject *object = (struct DispatchObject *)fieldObject;
+  struct Object *object = (struct Object *)fieldObject;
 
-  if ((object->kind & 0xf) == 1) {
+  if ((object->spriteStorageKind & 0xf) == 1) {
     u8 param;
     struct Sprite *container;
     u8 partCount;
 
     // The table's four entries each last two frames.
     param = gObjectGroup_BlinkChildValues[(gFrameCount >> 1) & 3];
-    container = object->target.child;
+    container = object->sprite;
     partCount = container->count;
     if (partCount != 0) {
       struct SpriteAnim **entries = container->entries;
@@ -785,10 +782,10 @@ void ObjectGroup_ApplyIndexedChildValue(union FieldObject *fieldObject) {
 /// Marks the sprite dirty. Called by ObjectGroup_ConfigureChildValue,
 /// FieldEffect_SpawnBurstParticle and about 40 map script sites.
 void ObjectGroup_SetChildValue(struct ObjectEvent *objectEvent, s32 param) {
-  struct DispatchObject *object = (struct DispatchObject *)objectEvent;
+  struct Object *object = (struct Object *)objectEvent;
 
-  if ((object->kind & 0xf) == 1) {
-    struct Sprite *container = object->target.child;
+  if ((object->spriteStorageKind & 0xf) == 1) {
+    struct Sprite *container = object->sprite;
     u8 partCount = container->count;
 
     if (partCount != 0) {
@@ -826,7 +823,7 @@ void ObjectEvent_SetTargetAndCallback(u32 objectId, s32 targetId,
       follower->speedLimit = target->speedLimit;
       follower->collisionFlags = 0;
     }
-    ObjectDispatch_InitializeFar((struct DispatchObject *)follower, script);
+    ObjectDispatch_InitializeFar((struct Object *)follower, script);
   }
 }
 
@@ -863,7 +860,7 @@ void ObjectEvent_ResetTargetAndSetMode1(u32 objectId) {
     object->targetX = OBJ_EVENT_NO_TARGET;
     object->targetY = OBJ_EVENT_NO_TARGET;
     object->targetZ = OBJ_EVENT_NO_TARGET;
-    ObjectDispatch_StartIdleFar((struct DispatchObject *)object);
+    ObjectDispatch_StartIdleFar((struct Object *)object);
     ObjectDispatch_SelectAnimationFar(object, 1);
   }
 }
@@ -879,7 +876,7 @@ void ObjectMotion_ArmCallback(s32 objectId, s32 angle, s32 wait) {
 
   if (object != NULL) {
     object->action = angle;
-    ObjectDispatch_InitializeFar((struct DispatchObject *)object,
+    ObjectDispatch_InitializeFar((struct Object *)object,
                                  (const s32 *)gObjectMotion_StepAngleScript);
     FieldScript_WaitFrames(wait);
   }
@@ -892,8 +889,9 @@ void ObjectMotion_ArmCallback(s32 objectId, s32 angle, s32 wait) {
 void ObjectMotion_SetActionVariant(s32 objectId, s32 priority) {
   struct Object *object = ObjectEvent_GetByLocalId(objectId);
 
-  if (object != NULL && (object->animationKind & 0xF) == OBJECT_SPRITE_ONE) {
-    struct Sprite *sprite = object->animation;
+  if (object != NULL &&
+      (object->spriteStorageKind & 0xF) == OBJECT_SPRITE_ONE) {
+    struct Sprite *sprite = object->sprite;
 
     sprite->image.priority = priority;
     sprite->shadow.priority = priority;
@@ -911,12 +909,12 @@ void ObjectVisual_CopyAttributes(u32 targetId, u32 sourceId) {
   u32 tile;
 
   object = (struct Object *)ObjectEvent_GetById(sourceId);
-  sprite = object->animation;
+  sprite = object->sprite;
   vramBlock = sprite->slot;
   tile = sprite->image.tile;
 
   object = (struct Object *)ObjectEvent_GetById(targetId);
-  sprite = object->animation;
+  sprite = object->sprite;
   sprite->slot = vramBlock;
   sprite->image.tile = tile;
 }
@@ -951,8 +949,8 @@ s32 ObjectEvent_ReadActiveValue(s32 localId) {
   struct Object *entry = (struct Object *)state->objectEvents[localId & 0x0fff];
 #endif
 
-  if (entry != 0 && entry->animationKind == OBJECT_SPRITE_ONE)
-    sprite = ((struct Sprite *)entry->animation)->entries[0]->animationId;
+  if (entry != 0 && entry->spriteStorageKind == OBJECT_SPRITE_ONE)
+    sprite = entry->sprite->entries[0]->animationId;
   return sprite;
 }
 
@@ -967,9 +965,8 @@ s32 ObjectEvent_FindActiveByValue(s32 sprite) {
 
   for (index = 8; index <= 65; index++) {
     object = (struct Object *)state->objectEvents[index];
-    if (object != 0 && object->animationKind == OBJECT_SPRITE_ONE &&
-        ((struct Sprite *)object->animation)->entries[0]->animationId ==
-            sprite) {
+    if (object != 0 && object->spriteStorageKind == OBJECT_SPRITE_ONE &&
+        object->sprite->entries[0]->animationId == sprite) {
       result = index;
       break;
     }

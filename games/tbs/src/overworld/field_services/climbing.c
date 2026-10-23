@@ -30,7 +30,7 @@ s32 Field_TryJumpForward(void) {
       (struct Object *)ObjectEvent_GetById(gSaveBlock.leaderLocalId);
   s32 result = -1;
   s32 angle = (leader->facing + 0x2000) & 0xc000; // to the nearest quarter
-  u8 *flags = &leader->flags;
+  u8 *flags = &leader->motionFlags;
   u8 saved = *flags;
   struct FieldWork *work = gFieldWork;
   s32 spriteFlags = 1;
@@ -55,8 +55,8 @@ again:
     // Suspend ground following and the shadow (sprite flag bit 0) while
     // airborne: 4 pixels a frame up, 3 a frame across. Restore the original
     // motion and sprite flags after landing, before returning field control.
-    if (leader->animationKind == OBJECT_SPRITE_ONE)
-      spriteFlags = ((struct Sprite *)leader->animation)->flags;
+    if (leader->spriteStorageKind == OBJECT_SPRITE_ONE)
+      spriteFlags = leader->sprite->flags;
     FieldScript_Start();
     ObjectDispatch_SelectAnimationFar(leader, 6);
     WaitFrames(6);
@@ -66,15 +66,14 @@ again:
     leader->acceleration = 0x20000;
     leader->velocityY = 0x40000;
     *flags &= 0x7e;
-    ObjectDispatch_SetSingleChildFlagsFar((struct DispatchObject *)leader,
+    ObjectDispatch_SetSingleChildFlagsFar((struct Object *)leader,
                                           spriteFlags & 0xfe);
     ObjectMotion_SetPositionAndCommit(
         gSaveBlock.leaderLocalId,
         ((union FieldCoordinate *)&position->x)->part.pixel,
         ((union FieldCoordinate *)&position->z)->part.pixel);
     ObjectDispatch_SelectAnimationFar(leader, 6);
-    ObjectDispatch_SetSingleChildFlagsFar((struct DispatchObject *)leader,
-                                          spriteFlags);
+    ObjectDispatch_SetSingleChildFlagsFar((struct Object *)leader, spriteFlags);
 
     // A log underfoot dips 2 pixels with the leader and comes back up.
     if ((platform = Object_FindNearestFacingTarget(
@@ -159,9 +158,9 @@ s32 Field_ClimbDown(void) {
       object->speedLimit = 0x10000;
       ObjectMotion_ArmCallback(gSaveBlock.leaderLocalId, 0xc000, 0);
       ObjectEvent_RefreshSelectorById(gSaveBlock.leaderLocalId);
-      object->actionFlags = OBJ_EVENT_FACES_MOTION;
-      object->flags = 0;
-      ObjectDispatch_SetSingleChildFlagsFar((struct DispatchObject *)object, 0);
+      object->steeringFlags = OBJ_EVENT_FACES_MOTION;
+      object->motionFlags = 0;
+      ObjectDispatch_SetSingleChildFlagsFar((struct Object *)object, 0);
       ObjectDispatch_SelectAnimationFar(object, 13);
       Object_SetMoveTargetFar(object, gridX << 16, object->y - 0x100000,
                               (gridZ << 16) + 0x100000);
@@ -175,14 +174,14 @@ s32 Field_ClimbDown(void) {
     // after a hop of 4 pixels a frame, the ground taken as
     // where the leader is until the ground is read, and the shadow back.
     ObjectDispatch_SelectAnimationFar(object, 10);
-    object->flags = OBJ_EVENT_FOLLOWS_TERRAIN | OBJ_EVENT_FALLS;
+    object->motionFlags = OBJ_EVENT_FOLLOWS_TERRAIN | OBJ_EVENT_FALLS;
     object->velocityY = 0x40000;
     object->groundHeight = object->y;
-    ObjectDispatch_SetSingleChildFlagsFar((struct DispatchObject *)object,
+    ObjectDispatch_SetSingleChildFlagsFar((struct Object *)object,
                                           SPRITE_FLAG_SHADOW);
     FieldScript_WaitFrames(6);
     gSaveBlock.movementMode = LEADER_MOVEMENT_WALK;
-    object->actionFlags = OBJ_EVENT_FACES_MOTION;
+    object->steeringFlags = OBJ_EVENT_FACES_MOTION;
     object->facing = 0xc000;
   }
 
@@ -216,8 +215,8 @@ s32 Field_ClimbUp(void) {
 
   FieldScript_Start();
 
-  if (object->animationKind == OBJECT_SPRITE_ONE)
-    spriteFlags = ((struct Sprite *)object->animation)->flags;
+  if (object->spriteStorageKind == OBJECT_SPRITE_ONE)
+    spriteFlags = object->sprite->flags;
 
   if (gSaveBlock.movementMode == LEADER_MOVEMENT_WALK) {
     s32 index = gridX / 16 + (gridZ / 16) * 128;
@@ -237,42 +236,41 @@ s32 Field_ClimbUp(void) {
         goto failure;
 
       // Step to the middle of the cell, crouch, jump and grab the wall.
-      object->actionFlags = 0;
+      object->steeringFlags = 0;
       ObjectMotion_SetPositionAndCommit(gSaveBlock.leaderLocalId, gridX, gridZ);
       ObjectDispatch_SelectAnimationFar(object, 6);
       WaitFrames(4);
       ObjectDispatch_SelectAnimationFar(object, 7);
       object->velocityY = 0x40000;
       WaitFrames(4);
-      object->flags = 0;
+      object->motionFlags = 0;
       spriteFlags &= 0xfe;
-      ObjectDispatch_SetSingleChildFlagsFar((struct DispatchObject *)object,
+      ObjectDispatch_SetSingleChildFlagsFar((struct Object *)object,
                                             spriteFlags);
       object->speedLimit = 0x10000;
       object->velocityY = 0;
       ObjectDispatch_SelectAnimationFar(object, 12);
       WaitFrames(4);
       gSaveBlock.movementMode = LEADER_MOVEMENT_CLIMB;
-      object->actionFlags = OBJ_EVENT_FACES_MOTION;
+      object->steeringFlags = OBJ_EVENT_FACES_MOTION;
       WaitFrames(8);
     } else {
       goto failure;
     }
   } else {
     // Climb over the top: up 8 pixels and a cell north.
-    object->flags = 0;
+    object->motionFlags = 0;
     ObjectDispatch_SelectAnimationFar(object, 11);
     Object_SetMoveTargetFar(object, gridX << 16, object->y + 0x80000,
                             (gridZ << 16) - 0x100000);
     ObjectMotion_CommitCurrentPositionAndActivate(gSaveBlock.leaderLocalId);
-    object->flags = OBJ_EVENT_FOLLOWS_TERRAIN | OBJ_EVENT_FALLS;
+    object->motionFlags = OBJ_EVENT_FOLLOWS_TERRAIN | OBJ_EVENT_FALLS;
     spriteFlags |= 1;
     object->groundHeight = object->y;
-    ObjectDispatch_SetSingleChildFlagsFar((struct DispatchObject *)object,
-                                          spriteFlags);
+    ObjectDispatch_SetSingleChildFlagsFar((struct Object *)object, spriteFlags);
     FieldScript_WaitFrames(4);
     gSaveBlock.movementMode = LEADER_MOVEMENT_WALK;
-    object->actionFlags = OBJ_EVENT_FACES_MOTION;
+    object->steeringFlags = OBJ_EVENT_FACES_MOTION;
   }
 
   FieldScript_End();

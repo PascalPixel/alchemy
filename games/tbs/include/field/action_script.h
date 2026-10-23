@@ -8,39 +8,12 @@
 #include "types.h"
 #include "static_assert.h"
 
-struct ObjectScriptContext;
+struct Object;
 
-typedef s32 (*ScriptCommand)(struct ObjectScriptContext *);
-
-/// The prefix that command handlers read from an object's 0x70-byte slot.
-struct ObjectScriptContext {
-  const s32 *script;  ///< the running script; SC_END sets gScript_MainScript
-  s16 cursor;         ///< the word index of the next command in script
-  u8 padding06[0x4e]; ///< the object's own fields; not read by the commands
-  /// ObjectEvent's spriteStorageKind: SC_SHOW_SPRITE sets 1, one sprite drawn,
-  /// and SC_HIDE_SPRITES sets 0, which hides the object's sprites.
-  u8 spriteStorageKind;
-  u8 padding55[2];    ///< the object's own fields; not read by the commands
-  u8 conditionResult; ///< the last flag test, read by SC_IF and SC_IFNOT
-  u8 padding58[5];    ///< the object's own fields; not read by the commands
-  u8 repeatCount;     ///< SC_LOOP's count of jumps so far
-  /// Frames left of SC_WAIT (n - 1 when it starts); the update loops count
-  /// it down, and ObjectScript_FindLabel clears it.
-  s16 wait;
-  /// Frames in a row a solid object has refused the object's move
-  /// (ScriptMotionObject.refused); SC_SYNC stops waiting after 60 and clears
-  /// it.
-  u8 refused;
-};
-
-STATIC_ASSERT(sizeof(struct ObjectScriptContext) == 0x64);
-STATIC_ASSERT(offsetof(struct ObjectScriptContext, script) == 0x00);
-STATIC_ASSERT(offsetof(struct ObjectScriptContext, cursor) == 0x04);
-STATIC_ASSERT(offsetof(struct ObjectScriptContext, spriteStorageKind) == 0x54);
-STATIC_ASSERT(offsetof(struct ObjectScriptContext, conditionResult) == 0x57);
-STATIC_ASSERT(offsetof(struct ObjectScriptContext, repeatCount) == 0x5d);
-STATIC_ASSERT(offsetof(struct ObjectScriptContext, wait) == 0x5e);
-STATIC_ASSERT(offsetof(struct ObjectScriptContext, refused) == 0x60);
+/// An object script command's handler: it reads its operands at the object's
+/// script cursor, moves the cursor past them and returns 1 to run the next
+/// command this frame or 0 to wait.
+typedef s32 (*ScriptCommand)(struct Object *);
 
 /// The whole 0x70-byte slot as SC_SET, SC_ADD and SC_CMP see it: each field
 /// is one work value (enum ObjectScriptValue in objcmd.h), reached through
@@ -83,7 +56,7 @@ struct ScriptOperands {
   u8 byte5c;            ///< keeps the sprite's VRAM; no work value
   u8 repeatCount;       ///< SW_REPEAT, SC_LOOP's count
   u16 wait;             ///< SW_WAIT, compared as signed
-  u8 refused;           ///< ObjectScriptContext.refused; no work value
+  u8 refused;           ///< Object.refused; no work value
   u8 frozen;            ///< ScriptMotionObject.frozen; no work value
   u8 mapByte62;         ///< work value 0x27, kept by map code
   u8 mapByte63;         ///< work value 0x28, kept by map code

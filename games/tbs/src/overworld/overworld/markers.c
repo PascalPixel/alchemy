@@ -64,7 +64,7 @@ void Field_PlaceTreasureSpots(void) {
   u8 *list = grid->markers;
   struct TreasureSpot *marker = work->treasureSpots;
   const struct MapEvent *event;
-  struct ScriptObjectRuntime *markerObjectEvent;
+  struct Object *markerObjectEvent;
   u32 column;
   u32 row;
 
@@ -88,32 +88,30 @@ void Field_PlaceTreasureSpots(void) {
         if ((event->kind & 0x1ff) == BG_EVENT(BG_EVENT_CHEST)) {
           // A chest, at the centre of its cell (cells are 16 pixels, and
           // positions 16.16).
-          markerObjectEvent = (struct ScriptObjectRuntime *)Object_CreateFar(
+          markerObjectEvent = (struct Object *)Object_CreateFar(
               TREASURE_SPOT_CHEST_SPRITE, (column << 20) + 0x80000, 0,
               (row << 20) + 0x80000);
           if (markerObjectEvent == NULL)
             continue;
           ObjectMotion_SnapToTerrain(markerObjectEvent);
           ObjectDispatch_SetSingleChildFlagsFar(
-              (struct DispatchObject *)markerObjectEvent, 0);
+              (struct Object *)markerObjectEvent, 0);
           // An opened chest shows open; an opened mimic's chest
           // is not placed at all. A mimic's flag is set only after its battle,
           // when the one enemy was defeated (Djinn_ResolvePendingEvent).
           if (GameFlag_GetFar(event->condition)) {
             if ((event->value & 0xfff00000) == 0x500000) {
-              ObjectDispatch_ReleaseFar(
-                  (struct DispatchObject *)markerObjectEvent);
+              ObjectDispatch_ReleaseFar((struct Object *)markerObjectEvent);
               continue;
             }
             ObjectDispatch_SelectAnimationFar(markerObjectEvent,
                                               TREASURE_SPOT_CHEST_OPEN);
           }
-          ObjectDispatch_StartIdleFar(
-              (struct DispatchObject *)markerObjectEvent);
+          ObjectDispatch_StartIdleFar((struct Object *)markerObjectEvent);
           markerObjectEvent->homeX = markerObjectEvent->x / 0x10000;
           markerObjectEvent->homeZ = markerObjectEvent->z / 0x10000;
           markerObjectEvent->priorityFlags = 1;
-          markerObjectEvent->flags59 = 1;
+          markerObjectEvent->collisionFlags = 1;
           marker->id = event->trigger;
           marker->object = (struct Object *)markerObjectEvent;
           marker->column = markerObjectEvent->x / 0x100000;
@@ -128,20 +126,19 @@ void Field_PlaceTreasureSpots(void) {
             continue;
           if (GameFlag_GetFar(event->condition))
             continue;
-          markerObjectEvent = (struct ScriptObjectRuntime *)Object_CreateFar(
+          markerObjectEvent = (struct Object *)Object_CreateFar(
               TREASURE_SPOT_PSYNERGY_STONE_SPRITE, (column << 20) + 0x80000, 0,
               (row << 20) + 0x80000);
           if (markerObjectEvent == NULL)
             continue;
           ObjectMotion_SnapToTerrain(markerObjectEvent);
           ObjectDispatch_SetSingleChildFlagsFar(
-              (struct DispatchObject *)markerObjectEvent, 0);
-          ObjectDispatch_StartIdleFar(
-              (struct DispatchObject *)markerObjectEvent);
+              (struct Object *)markerObjectEvent, 0);
+          ObjectDispatch_StartIdleFar((struct Object *)markerObjectEvent);
           ObjectDispatch_SelectAnimationFar(markerObjectEvent, 1);
           markerObjectEvent->homeX = markerObjectEvent->x / 0x10000;
           markerObjectEvent->homeZ = markerObjectEvent->z / 0x10000;
-          markerObjectEvent->flags59 = 1;
+          markerObjectEvent->collisionFlags = 1;
           markerObjectEvent->priorityFlags = 1;
           marker->object = (struct Object *)markerObjectEvent;
           marker->id = event->trigger;
@@ -228,7 +225,7 @@ void TreasureSpot_LaunchMimic(s32 id) {
     Sound_PlaySongFar(SE_146);
     if (object != NULL) {
       object->velocityY = 8 << 16;
-      ObjectDispatch_SetSingleChildFlagsFar((struct DispatchObject *)object, 1);
+      ObjectDispatch_SetSingleChildFlagsFar((struct Object *)object, 1);
     }
   }
 }
@@ -281,7 +278,7 @@ void TreasureSpot_Hide(s32 id) {
     marker = &gFieldWork->treasureSpots[slotIndex];
     object = marker->object;
     if (object != NULL)
-      object->animationKind = OBJECT_SPRITE_NONE;
+      object->spriteStorageKind = OBJECT_SPRITE_NONE;
   }
 }
 

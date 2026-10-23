@@ -8,11 +8,11 @@
 /// frames. The update of each spark FieldEffect_RunSparkEmitter sheds; it
 /// writes the spark's x and advances its phase.
 void FieldEffect_SwayParticle(union FieldObject *fieldObject) {
-  struct SparkObject *obj = (struct SparkObject *)fieldObject;
+  struct Object *obj = (struct Object *)fieldObject;
   s16 *phase;
 
-  phase = &obj->phase;
-  obj->x = obj->anchorX + Iwram_MulQ16(4 << 16, Trig_Sin(*phase << 9));
+  phase = &obj->action;
+  obj->x = obj->targetX + Iwram_MulQ16(4 << 16, Trig_Sin(*phase << 9));
   (*phase)++;
   *phase = (*phase + 128) % 128;
 }
@@ -44,7 +44,7 @@ void FieldEffect_UpdateShrinkingOrbitObject(union FieldObject *fieldObject) {
       particle->y.fixed = pos.y;
       particle->z.fixed = pos.z;
     } else {
-      ObjectDispatch_InitializeFar((struct DispatchObject *)particle,
+      ObjectDispatch_InitializeFar((struct Object *)particle,
                                    gFieldEffect_CommonParticleScript);
     }
   }
@@ -56,13 +56,13 @@ void FieldEffect_UpdateShrinkingOrbitObject(union FieldObject *fieldObject) {
 /// FieldEffect_RunPly gives the centre particle; spawns SPRITE_SPARKLE for each
 /// spark.
 void FieldEffect_RunSparkEmitter(union FieldObject *fieldObject) {
-  struct SparkObject *emitter = (struct SparkObject *)fieldObject;
+  struct Object *emitter = (struct Object *)fieldObject;
   struct FieldEffectWork *effectWork;
   s16 *phase;
-  struct SparkObject *spark;
+  struct Object *spark;
   s32 pos[3];
 
-  phase = &emitter->phase;
+  phase = &emitter->action;
   effectWork = gFieldEffectWork;
   if (*phase != -1) {
     SET_POSITION(emitter,
@@ -75,8 +75,8 @@ void FieldEffect_RunSparkEmitter(union FieldObject *fieldObject) {
     // From 2 pixels up, 0 to 6 pixels in a random direction.
     SET_VECTOR(pos, emitter->x, emitter->y + (2 << 16), emitter->z);
     Vector_AddPolarOffset(Random16() * 6, Random16(), pos);
-    spark = (struct SparkObject *)Object_Spawn(SPRITE_SPARKLE, pos[0], pos[1],
-                                               pos[2]);
+    spark =
+        (struct Object *)Object_Spawn(SPRITE_SPARKLE, pos[0], pos[1], pos[2]);
     // Each falls under a gravity of 458 (0.007 pixels a frame, each frame)
     // and is freed after 72 frames, its script's wait (lifetime).
     if (spark != 0) {
@@ -84,12 +84,11 @@ void FieldEffect_RunSparkEmitter(union FieldObject *fieldObject) {
       spark->scaleX = spark->scaleY = 0x9999; // 0.6
       spark->motionFlags = OBJ_EVENT_FALLS;
       spark->gravity = 458;
-      spark->phase = Random16() >> 9;
-      spark->anchorX = spark->x;
-      Anim_ApplyChildValuesFar((struct DispatchObject *)spark,
-                               SPRITE_COLOR_BLUE_TINT);
-      spark->lifetime = 72;
-      ObjectDispatch_InitializeFar((struct DispatchObject *)spark,
+      spark->action = Random16() >> 9;
+      spark->targetX = spark->x;
+      Anim_ApplyChildValuesFar((struct Object *)spark, SPRITE_COLOR_BLUE_TINT);
+      spark->wait = 72;
+      ObjectDispatch_InitializeFar((struct Object *)spark,
                                    gFieldEffect_CommonParticleScript);
     }
   }
@@ -159,8 +158,7 @@ void FieldEffect_RunPly(void) {
     target->y.fixed = effectWork->y + 0x100000;
     target->z.fixed = effectWork->z;
     target->motionFlags = OBJ_EVENT_FLOATS;
-    Anim_ApplyChildValuesFar((struct DispatchObject *)target,
-                             SPRITE_COLOR_WHITE);
+    Anim_ApplyChildValuesFar((struct Object *)target, SPRITE_COLOR_WHITE);
   }
 
   Sound_PlaySongFar(SE_131);
@@ -173,18 +171,17 @@ void FieldEffect_RunPly(void) {
        * instructions differ in tbs-en. */
       target = objectEvent;
       if (i & 3)
-        Anim_ApplyChildValuesFar((struct DispatchObject *)objectEvent,
+        Anim_ApplyChildValuesFar((struct Object *)objectEvent,
                                  SPRITE_COLOR_BLUE_TINT);
       else
-        Anim_ApplyChildValuesFar((struct DispatchObject *)objectEvent,
+        Anim_ApplyChildValuesFar((struct Object *)objectEvent,
                                  SPRITE_COLOR_RED_TINT);
       WaitFrames(2);
     }
   }
 
   // Sparks.
-  Anim_ApplyChildValuesFar((struct DispatchObject *)objectEvent,
-                           SPRITE_COLOR_NORMAL);
+  Anim_ApplyChildValuesFar((struct Object *)objectEvent, SPRITE_COLOR_NORMAL);
   Sound_PlaySongFar(MUS_CURE);
   if (objectEvent != 0) {
     target->update = FieldEffect_RunSparkEmitter;
@@ -208,7 +205,7 @@ void FieldEffect_RunPly(void) {
     ObjectMotion_SetTargetPositionFromMagnitudeAngle((struct Object *)target,
                                                      0xc00000, 0xe800);
     Object_WaitForMoveFar(target);
-    ObjectDispatch_ReleaseFar((struct DispatchObject *)target);
+    ObjectDispatch_ReleaseFar((struct Object *)target);
   }
   // 0x60 is the VRAM cache's entry count, the value VramCache_FindFreeEntry
   // returns for no entry.

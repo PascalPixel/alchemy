@@ -34,7 +34,7 @@ void BattleObject_Make(struct BattleObject *actor, s32 unitId, s32 x, s32 y) {
   s32 sprite;
   s32 registeredSprite;
   struct Unit *unit;
-  struct MotionObject *object;
+  struct Object *object;
   s32 facingAngle;
   s32 weaponSprite;
   u8 classId;
@@ -45,7 +45,7 @@ void BattleObject_Make(struct BattleObject *actor, s32 unitId, s32 x, s32 y) {
   // The id 0xf000 has no sprite kind of enum ObjectCreateKind, so
   // ObjectEvent_Create makes no sprite; BattleObject_SpawnObjectsForList
   // attaches the battle sprites later.
-  object = (struct MotionObject *)Object_CreateFar(0xf000, fixedX, 0, fixedZ);
+  object = (struct Object *)Object_CreateFar(0xf000, fixedX, 0, fixedZ);
   unit = Unit_GetFar(unitId);
   palette = 0;
   registeredSprite = EnemySprite_LoadIntoSlots(unitId);
@@ -261,7 +261,7 @@ void BattleObject_Make(struct BattleObject *actor, s32 unitId, s32 x, s32 y) {
   // angle points back along the line to the origin); enemies are drawn at
   // 1.3 times their size. OBJ_EVENT_FALLS lets the object fall.
   facingAngle = ArcTan2(y / 8, x) + 0x8000;
-  object->angle = facingAngle;
+  object->facing = facingAngle;
   object->collisionFlags = 3;
   object->motionFlags = OBJ_EVENT_FALLS;
   if (unit->classId == CLASS_NONE) {
@@ -271,7 +271,7 @@ void BattleObject_Make(struct BattleObject *actor, s32 unitId, s32 x, s32 y) {
     object->scaleX = Q16_ONE;
     object->scaleY = Q16_ONE;
   }
-  ObjectDispatch_InitializeFar((struct DispatchObject *)object,
+  ObjectDispatch_InitializeFar((struct Object *)object,
                                gBattleObject_EmptyScript);
 }
 

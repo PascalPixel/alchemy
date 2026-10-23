@@ -44,8 +44,6 @@
 #include "transform.h"
 #include "action_script.h"
 #include "script_motion.h"
-#include "script_object_entry.h"
-#include "script_object_runtime.h"
 #include "object_event.h"
 #include "fixed_math.h"
 #include "keystate.h"

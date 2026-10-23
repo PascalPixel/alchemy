@@ -604,8 +604,7 @@ static void KolimaForestFloodgate_RollLog(struct FloodgateLog *runs) {
   FieldScript_WaitFrames(6);
   Engine_ObjectEventSetAnimation(LOCALID_PARTY_LEADER, ANIM_WALK);
   work = AllocHeapSlotEwram(HEAP_SLOT_FIELD, sizeof(*work));
-  ObjectDispatch_StartCamera((struct DispatchObject *)work->camera,
-                             (s32)objectEvent);
+  ObjectDispatch_StartCamera((struct Object *)work->camera, (s32)objectEvent);
   ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, 3 * PIXELS(1) / 10, PIXELS(1) / 5);
   ObjectEvent_SetDestinationOffset(LOCALID_PARTY_LEADER,
                                    gKolimaForestFloodgate_PushStepX[quarter],

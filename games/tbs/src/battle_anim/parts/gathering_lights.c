@@ -83,8 +83,7 @@ void BattleAnim_RunGatheringLights(struct BattleAnimArgs *effect, s32 mode) {
   // direction at up to 2 pixels a frame.
   ANIM_FREE_PARTICLES(i, PARTICLES, 1024);
   ANIM_FOR_EACH_TARGET(k, work->effect) {
-    struct MotionObject *src =
-        GetBattleObjectSlotFar(work->effect->user)->object;
+    struct Object *src = GetBattleObjectSlotFar(work->effect->user)->object;
     s32 height = BattleUnit_GetEffectHeightFar(work->effect->user);
 
     for (i = 0; i != GATHERING_LIGHTS_SLOTS; i++) {
@@ -127,7 +126,7 @@ void BattleAnim_RunGatheringLights(struct BattleAnimArgs *effect, s32 mode) {
       *row++ = (0x100000 - Trig_Sin((frame + i) << 10) * 16) >> 10;
 
     ANIM_FOR_EACH_TARGET(k, work->effect) {
-      struct MotionObject *target =
+      struct Object *target =
           GetBattleObjectSlotFar(work->effect->targets[k])->object;
       s32 half = BattleUnit_GetEffectHeightFar(work->effect->targets[k]) / 2;
 

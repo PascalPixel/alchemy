@@ -95,7 +95,7 @@ void BattleAnim_RunRushingStrike(struct BattleAnimArgs *effect, s32 mode) {
   struct ScreenPoint origin;
   struct ScreenPoint screen;
   struct ScreenPoint sparkScreen;
-  struct MotionObject *target;
+  struct Object *target;
   s32 frame;
   s32 i;
   s32 size;

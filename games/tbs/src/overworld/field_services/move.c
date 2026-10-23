@@ -19,7 +19,7 @@ void FieldEffect_UpdateItemBreakFragment(union FieldObject *fieldObject) {
   struct ObjectEvent *source = (struct ObjectEvent *)fieldObject;
   struct ObjectEvent *target;
   struct EffectVector position;
-  struct ItemBreakFragmentObject *fragment;
+  struct Object *fragment;
   s32 turn;
   s32 radius;
 
@@ -49,8 +49,8 @@ void FieldEffect_UpdateItemBreakFragment(union FieldObject *fieldObject) {
   radius <<= 4;
   Vector_AddPolarOffset(radius, Random16(), &position);
 
-  fragment = (struct ItemBreakFragmentObject *)Object_Spawn(
-      SPRITE_SPARKLE, position.x, position.y, position.z);
+  fragment = (struct Object *)Object_Spawn(SPRITE_SPARKLE, position.x,
+                                           position.y, position.z);
   FieldEffect_InitializeFallingFragment(fragment);
 }
 
@@ -94,7 +94,7 @@ void FieldEffect_SteerPushedTarget(s32 targetId) {
     return;
   FieldEffect_FadeToEffectColor();
   user->linkedObject = target;
-  ObjectDispatch_InitializeFar((struct DispatchObject *)user,
+  ObjectDispatch_InitializeFar((struct Object *)user,
                                gFieldEffect_SourceHoldScript);
   pusher = FieldEffect_StartItemBreak(user);
   if (pusher == NULL) {
@@ -110,7 +110,7 @@ void FieldEffect_SteerPushedTarget(s32 targetId) {
   Vector_AddPolarOffset(16 << 16, angle, candidate);
   Object_SetMoveTargetFar((struct Object *)pusher, candidate->x, candidate->y,
                           candidate->z);
-  FieldEffect_SnapScaleToFull((struct MotionObject *)pusher);
+  FieldEffect_SnapScaleToFull((struct Object *)pusher);
   // The hand floats (motion flag bit 2) at up to 4 pixels a frame. The
   // target cycles its colours, keeps its facing while it moves, and reads
   // its ground from the overhead layer.
@@ -170,7 +170,7 @@ void FieldEffect_SteerPushedTarget(s32 targetId) {
       continue;
     }
     hit = (struct ObjectEvent *)ObjectScript_FindOverlappingEntryFar(
-        (struct ScriptObjectEntry *)target, (s32 *)candidate);
+        (struct Object *)target, (s32 *)candidate);
     if (hit != NULL) {
       if (hit != user) {
         ObjectDispatch_SelectAnimationFar(pusher, 4);
@@ -243,9 +243,8 @@ void FieldEffect_SteerPushedTarget(s32 targetId) {
   }
 
   // Restore the target's colours, script and update, and remove the hand.
-  Anim_ApplyChildValuesFar((struct DispatchObject *)target,
-                           effectWork->savedPalette);
-  ObjectDispatch_InitializeFar((struct DispatchObject *)target,
+  Anim_ApplyChildValuesFar((struct Object *)target, effectWork->savedPalette);
+  ObjectDispatch_InitializeFar((struct Object *)target,
                                effectWork->savedScript);
   target->update = effectWork->savedCallback;
   FieldEffect_StopCasterHook();
@@ -340,9 +339,9 @@ void FieldEffect_RunMove(void) {
 /// turn), with 8 particles round it. Returns the hand, or 0 when it cannot be
 /// spawned (Object_Spawn); the caller releases it (UpdateRisingParticleBurst).
 void *FieldEffect_StartItemBreak(void *object) {
-  struct MotionObject *source = object;
-  struct MotionObject *parent;
-  struct MotionObject *child;
+  struct Object *source = object;
+  struct Object *parent;
+  struct Object *child;
   s32 angle;
   s32 radius;
   s32 speed;
@@ -350,9 +349,9 @@ void *FieldEffect_StartItemBreak(void *object) {
   u32 spread;
   u32 jitter;
 
-  angle = (source->angle + 0x2000) & 0xc000; // to the nearest quarter turn
-  parent = (struct MotionObject *)Object_Spawn(
-      215, source->x, source->y + (16 << 16), source->z);
+  angle = (source->facing + 0x2000) & 0xc000; // to the nearest quarter turn
+  parent = (struct Object *)Object_Spawn(215, source->x, source->y + (16 << 16),
+                                         source->z);
   if (parent == 0)
     return 0;
   parent->scaleY = 0x4000;
@@ -368,23 +367,23 @@ void *FieldEffect_StartItemBreak(void *object) {
   // Particles: 8 to 32 pixels within 1/8 turn of the way it faces, at 1 to 2
   // pixels a frame.
   for (fragmentIndex = 7; fragmentIndex >= 0; fragmentIndex--) {
-    child = (struct MotionObject *)Object_Spawn(
-        SPRITE_SPARKLE, source->x, source->y + (16 << 16), source->z);
+    child = (struct Object *)Object_Spawn(SPRITE_SPARKLE, source->x,
+                                          source->y + (16 << 16), source->z);
     if (child != 0) {
-      ObjectDispatch_InitializeFar((struct DispatchObject *)child,
+      ObjectDispatch_InitializeFar((struct Object *)child,
                                    gFieldEffect_FragmentScript);
       speed = Random16() + 0x10000;
       child->acceleration = 1 << 16;
       child->speedLimit = speed;
       child->motionFlags = 2;
-      child->verticalMotionStrength = 0x51e;
+      child->gravity = 0x51e;
       spread = Random16();
       child->velocityY = spread - Random16();
       radius = Random16() * 24 + (8 << 16);
       jitter = Random16();
       ObjectMotion_SetTargetPositionFromMagnitudeAngle(
           (struct Object *)child, radius,
-          ((jitter - Random16()) >> 3) + source->angle);
+          ((jitter - Random16()) >> 3) + source->facing);
     }
   }
   Sound_PlaySongFar(SE_ITEM_BREAK);
@@ -395,7 +394,7 @@ void *FieldEffect_StartItemBreak(void *object) {
 /// 0xffff: 0x10000 from a multiple of 1/16) when it is smaller, then waits,
 /// at most 600 frames, for it to arrive at its target. Called by both Move
 /// effects on the hand.
-void FieldEffect_SnapScaleToFull(struct MotionObject *object) {
+void FieldEffect_SnapScaleToFull(struct Object *object) {
   s32 next;
   s32 scale;
 
@@ -418,8 +417,8 @@ void FieldEffect_SnapScaleToFull(struct MotionObject *object) {
 /// released. Not a per-frame update: it waits the frames itself. Called by
 /// the Move effects and Lift.
 void UpdateRisingParticleBurst(void *object) {
-  struct MotionObject *src = object;
-  struct MotionObject *child;
+  struct Object *src = object;
+  struct Object *child;
   s32 i;
   s32 dist;
   u32 spread;
@@ -427,14 +426,14 @@ void UpdateRisingParticleBurst(void *object) {
   Sound_PlaySongFar(SE_CAST);
   for (i = 30; i >= 0; i--) {
     src->y += 1 << 16;
-    src->angle += 0x2000; // 1/8 turn
+    src->facing += 0x2000; // 1/8 turn
     src->scaleX += -0x800;
     src->scaleY += -0x800;
     WaitFrames(1);
   }
   for (i = 7; i >= 0; i--) {
-    child = (struct MotionObject *)Object_Spawn(SPRITE_SPARKLE, src->x, src->y,
-                                                src->z);
+    child =
+        (struct Object *)Object_Spawn(SPRITE_SPARKLE, src->x, src->y, src->z);
     if (child != 0) {
       s32 speed;
       /* FAKEMATCH(temporary): 1.0 in a block local set before the block's
@@ -442,13 +441,13 @@ void UpdateRisingParticleBurst(void *object) {
        * uses, 24 of 93 instructions differ in tbs-en. */
       s32 unit = 0x10000;
 
-      ObjectDispatch_InitializeFar((struct DispatchObject *)child,
+      ObjectDispatch_InitializeFar((struct Object *)child,
                                    gFieldEffect_FragmentScript);
       speed = Random16();
       child->acceleration = unit;
       child->speedLimit = speed + unit;
       child->motionFlags = 2;
-      child->verticalMotionStrength = 0xa3d;
+      child->gravity = 0xa3d;
       spread = Random16();
       child->velocityY = spread - Random16();
       dist = Random16() * 24;
@@ -458,7 +457,7 @@ void UpdateRisingParticleBurst(void *object) {
     }
   }
   Sound_PlaySongFar(SE_131);
-  ObjectDispatch_ReleaseFar((struct DispatchObject *)src);
+  ObjectDispatch_ReleaseFar((struct Object *)src);
 }
 
 #undef MOVE_CELL_MASK

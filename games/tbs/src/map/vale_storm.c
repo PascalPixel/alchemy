@@ -288,8 +288,7 @@ static s32 sShakeShift;
 
 /// The step of gValeStorm_LookAroundScript: the object event faces a random way
 /// every 20 to 39 frames, as everyone looks about once the Boulder has gone by.
-static s32
-ValeStorm_RerollHeadingOnCountdown(struct ObjectScriptContext *interpreter) {
+static s32 ValeStorm_RerollHeadingOnCountdown(struct Object *interpreter) {
   struct ObjectEvent *objectEvent = (struct ObjectEvent *)interpreter;
   s32 timer = objectEvent->timer;
   s32 countdown = (s16)timer;

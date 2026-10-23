@@ -75,10 +75,9 @@ void FieldEffect_RunMercuryDjinnCapture(s32 djinniId) {
       copy->steeringFlags |= 1;
       copy->update = FieldEffect_HalveDistanceToTarget;
       copy->facing = djinni->facing;
-      Anim_ApplyChildValuesFar((struct DispatchObject *)copy,
-                               SPRITE_COLOR_BLUE_TINT);
+      Anim_ApplyChildValuesFar((struct Object *)copy, SPRITE_COLOR_BLUE_TINT);
       ObjectDispatch_SelectAnimationFar(copy, 0);
-      ObjectDispatch_SetSingleChildFlagsFar((struct DispatchObject *)copy, 0);
+      ObjectDispatch_SetSingleChildFlagsFar((struct Object *)copy, 0);
       resource = Sprite_ShareVramCacheEntry(copy->sprite, resource);
       copy->linkedObject = previous;
       previous = copy;
@@ -95,10 +94,10 @@ void FieldEffect_RunMercuryDjinnCapture(s32 djinniId) {
     djinni->y.fixed += 8 << 16;
     WaitFrames(1);
   }
-  ObjectDispatch_ReleaseFar((struct DispatchObject *)djinni);
+  ObjectDispatch_ReleaseFar((struct Object *)djinni);
   list = copies;
   for (remaining = MERCURY_AFTERIMAGE_MAX - 1; remaining >= 0; remaining--)
-    ObjectDispatch_ReleaseFar((struct DispatchObject *)(*list++));
+    ObjectDispatch_ReleaseFar((struct Object *)(*list++));
   if (resourceId != 96)
     VramCache_FreeEntry(resourceId);
   WaitFrames(10);

@@ -13,10 +13,10 @@ void ObjectDispatch_ApplyValueToKind200Children(s32 value) {
 
   do {
     if (object->script != NULL) {
-      u8 kind = object->animationKind;
+      u8 kind = object->spriteStorageKind;
 
       if (kind == OBJECT_SPRITE_ONE) {
-        struct Sprite *animation = object->animation;
+        struct Sprite *animation = object->sprite;
         struct SpriteAnim *entry = animation->entries[0];
 
         if (entry->animationId == 200) {

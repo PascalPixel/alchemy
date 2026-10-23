@@ -58,8 +58,8 @@ void Object_UpdateAll(void) {
     nextObject = object + 1;
     if (object->script == NULL)
       continue;
-    if (object->hook != NULL)
-      object->hook((union FieldObject *)object);
+    if (object->update != NULL)
+      object->update((union FieldObject *)object);
     if (object->script == NULL)
       continue;
     if (object->paused != 0)
@@ -80,8 +80,7 @@ void Object_UpdateAll(void) {
 #endif
 
         if (command <= 63) {
-          if (gObjectScript_CommandTable[command](
-                  (struct ObjectScriptContext *)object) == 0)
+          if (gObjectScript_CommandTable[command]((struct Object *)object) == 0)
             break;
         } else {
           object->scriptCursor++;

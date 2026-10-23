@@ -367,16 +367,15 @@ static inline s32 Math_Divide(s32 dividend, s32 divisor) {
   return dividend / divisor;
 }
 
-// The main image reads an object through struct DispatchObject or struct
-// Object, where the maps read the same object through struct ObjectEvent; these
-// inlines pass a map's object event to it.
+// The main image reads an object through struct Object, where the maps read the
+// same object through struct ObjectEvent; these inlines pass a map's object
+// event to it.
 
 /// Turns a one-sprite object event's shadow on or off, bit 0 of its sprite's
 /// flags.
 static inline void ObjectEvent_SetSpriteFlags(struct ObjectEvent *objectEvent,
                                               s32 flags) {
-  ObjectDispatch_SetSingleChildFlags((struct DispatchObject *)objectEvent,
-                                     flags);
+  ObjectDispatch_SetSingleChildFlags((struct Object *)objectEvent, flags);
 }
 
 /// Sends an object toward a point, where it coasts to a stop.
@@ -388,14 +387,14 @@ static inline void Object_SetPosition(struct ObjectEvent *objectEvent,
 /// Releases an object and its sprites, and empties its place in the object
 /// table.
 static inline void ObjectEvent_Release(struct ObjectEvent *objectEvent) {
-  ObjectDispatch_Release((struct DispatchObject *)objectEvent);
+  ObjectDispatch_Release((struct Object *)objectEvent);
 }
 
 /// Sets the colour mode (SpriteColorMode) of a one-sprite object's layers,
 /// except those drawn hidden.
 static inline void ObjectEvent_SetColorMode(struct ObjectEvent *objectEvent,
                                             s32 mode) {
-  Anim_ApplyChildValues((struct DispatchObject *)objectEvent, mode);
+  Anim_ApplyChildValues((struct Object *)objectEvent, mode);
 }
 
 /// Creates a free object in the room, outside the object event table, or
@@ -409,7 +408,7 @@ static inline struct ObjectEvent *ObjectEvent_Create(s32 type, s32 fixed_x,
 /// Starts an object on a sprite script from its first command.
 static inline void ObjectEvent_SetScript(struct ObjectEvent *objectEvent,
                                          const s32 *script) {
-  ObjectDispatch_Initialize((struct DispatchObject *)objectEvent, script);
+  ObjectDispatch_Initialize((struct Object *)objectEvent, script);
 }
 
 /// OAM blend modes for ObjectDispatch_SetChildBlendMode:
@@ -419,7 +418,7 @@ enum ObjectBlendMode { OBJECT_BLEND_NORMAL = 0, OBJECT_BLEND_TRANSLUCENT = 1 };
 /// Sets a one-sprite object's OAM blend mode, an ObjectBlendMode.
 static inline void ObjectEvent_SetBlendMode(struct ObjectEvent *objectEvent,
                                             s32 mode) {
-  ObjectDispatch_SetChildBlendMode((struct DispatchObject *)objectEvent, mode);
+  ObjectDispatch_SetChildBlendMode((struct Object *)objectEvent, mode);
 }
 
 /// Plays a cell animation, such as a door opening, and holds the script until

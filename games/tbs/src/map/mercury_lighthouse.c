@@ -1228,8 +1228,7 @@ static void MercuryLighthouse_SprayAboveStatue(void) {
 }
 
 /// The slide scripts start the sparkles as the statue sets off.
-static s32
-MercuryLighthouse_StartStatueSpray(struct ObjectScriptContext *interpreter) {
+static s32 MercuryLighthouse_StartStatueSpray(struct Object *interpreter) {
   s32 priority = TASK_PRIORITY_MAP;
 
   FieldScheduler_AddCallback(MercuryLighthouse_SprayAboveStatue, priority);
@@ -1240,8 +1239,7 @@ MercuryLighthouse_StartStatueSpray(struct ObjectScriptContext *interpreter) {
 // SC_CALL passes the interpreter. The native no-argument form also has two
 // direct callers; adding NULL to those calls inserts two r0 = 0 instructions.
 #ifdef UBFIX
-static s32
-MercuryLighthouse_StopStatueSpray(struct ObjectScriptContext *interpreter) {
+static s32 MercuryLighthouse_StopStatueSpray(struct Object *interpreter) {
 #else
 static s32 MercuryLighthouse_StopStatueSpray(void) {
 #endif

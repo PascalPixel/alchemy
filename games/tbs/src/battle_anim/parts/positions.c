@@ -116,7 +116,7 @@ void Projection_Unit(s32 id, struct ScreenPoint *position) {
 /// screen: receives x and y.
 s32 BattleUnit_ProjectToScreen(s32 unit, s32 *screen) {
   struct BattleCamera *camera;
-  struct MotionObject *object;
+  struct Object *object;
   struct Sprite *info;
   s32 scale;
   /* FAKEMATCH(dead): an unused vector for the frame's 12 bytes; without it, 1

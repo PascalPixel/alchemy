@@ -84,7 +84,6 @@
 #include "text/msg_ids.h"
 #include "ability_ids.h"
 #include "objcmd.h"
-#include "facing_object.h"
 #include "fixed_math.h"
 #include "palbuf.h"
 #include "map_header.h"
@@ -196,7 +195,7 @@ enum KolimaBridgeLocalId {
 };
 
 /// Applies the deferred pose change requested by the falling-effect script.
-static s32 Kolima_ApplyPendingPose(struct ObjectScriptContext *interpreter) {
+static s32 Kolima_ApplyPendingPose(struct Object *interpreter) {
   struct ObjectEvent *objectEvent = (struct ObjectEvent *)interpreter;
   if (gKolima_PendingPose != 0) {
     ObjectDispatch_SelectAnimation(objectEvent, 2);
@@ -208,8 +207,7 @@ static s32 Kolima_ApplyPendingPose(struct ObjectScriptContext *interpreter) {
 /// Each frame of a sparkle on Kolima's ground: its timer runs on at random, and
 /// it shows its bright frame (7) past 1000 and its dim one (10) before; at
 /// 1200 the timer starts over.
-static s32
-Kolima_UpdateTimedAppearance(struct ObjectScriptContext *interpreter) {
+static s32 Kolima_UpdateTimedAppearance(struct Object *interpreter) {
   struct ObjectEvent *objectEvent = (struct ObjectEvent *)interpreter;
   s32 randomValue = Engine_RandomNext();
   s32 scaledRandom = randomValue * 100;
@@ -254,7 +252,7 @@ Kolima_InitializeCursedVillagers(struct ObjectEventTemplate *templates) {
 
 /// Each frame of a piece of Kolima Bridge as it falls: it moves, grows, and is
 /// released when its timer runs out.
-static s32 Kolima_UpdateFallingDebris(struct ObjectScriptContext *interpreter) {
+static s32 Kolima_UpdateFallingDebris(struct Object *interpreter) {
   struct ObjectEvent *debris = (struct ObjectEvent *)interpreter;
   debris->x.fixed += debris->velocityX;
   debris->z.fixed += debris->velocityZ;
@@ -1635,7 +1633,7 @@ static void Kolima_SpawnCurseSparkle(void) {
 #include "common/kolima_blink.h"
 
 /// Triggers a temporary pose when an effect enters the party's occupied area.
-static s32 Kolima_TriggerRegionScript(struct ObjectScriptContext *interpreter) {
+static s32 Kolima_TriggerRegionScript(struct Object *interpreter) {
   struct ObjectEvent *objectEvent = (struct ObjectEvent *)interpreter;
   if (gKolima_MiaInParty != 0) {
     if ((objectEvent->x.fixed > PIXELS(59) &&

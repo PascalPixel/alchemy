@@ -62,7 +62,7 @@ void FieldEffect_RunGrowthOnTarget(s32 unused) {
     FieldEffect_SpawnBurstParticleField();
     ObjectDispatch_SelectAnimationFar(target, 2);
     target->collisionFlags = 0;
-    ObjectDispatch_SetSingleChildFlagsFar((struct DispatchObject *)target, 0);
+    ObjectDispatch_SetSingleChildFlagsFar((struct Object *)target, 0);
     target->priorityFlags |= OBJ_EVENT_PRIORITY_UNDERFOOT;
     WaitFrames(10);
     Sound_PlaySongFar(SE_RECOVERY);
@@ -101,7 +101,7 @@ void FieldEffect_RunGrowth(void) {
     particle = (struct ObjectEvent *)Object_Spawn(
         GROWTH_FALL_OBJECT, p->values[0], p->values[1], p->values[2]);
     if (particle != 0) {
-      ObjectDispatch_InitializeFar((struct DispatchObject *)particle,
+      ObjectDispatch_InitializeFar((struct Object *)particle,
                                    gFieldEffect_BurstParticleObjectScript);
       particle->motionFlags = OBJ_EVENT_FALLS;
     }
@@ -166,13 +166,12 @@ void FieldEffect_SpawnBurstParticleField(void) {
       particle->acceleration = 0x18000;
       particle->speed = 0x18000;
       particle->motionFlags = 0;
-      Anim_ApplyChildValuesFar((struct DispatchObject *)particle,
+      Anim_ApplyChildValuesFar((struct Object *)particle,
                                SPRITE_COLOR_GREEN_TINT);
       ObjectDispatch_SelectAnimationFar(particle, 7);
-      ObjectDispatch_InitializeFar((struct DispatchObject *)particle,
+      ObjectDispatch_InitializeFar((struct Object *)particle,
                                    gFieldEffect_CommonParticleScript + 1);
-      ObjectDispatch_SetSingleChildFlagsFar((struct DispatchObject *)particle,
-                                            1);
+      ObjectDispatch_SetSingleChildFlagsFar((struct Object *)particle, 1);
 
       // Destination: 4 to 10 pixels from the effect's position.
       SET_VECTOR(pos, effectWork->x, effectWork->y, effectWork->z);

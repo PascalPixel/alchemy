@@ -5,29 +5,29 @@
 #include "../field_internal.h"
 
 /// SC_BASE: restarts the script at the next word, and returns 1 to run on.
-s32 ObjectScript_SetBase(struct ObjectScriptContext *interpreter) {
+s32 ObjectScript_SetBase(struct Object *interpreter) {
   s32 zero;
 
   // The word after the command becomes the script's start.
-  interpreter->script = interpreter->script + interpreter->cursor + 1;
+  interpreter->script = interpreter->script + interpreter->scriptCursor + 1;
   zero = 0;
-  interpreter->cursor = zero;
+  interpreter->scriptCursor = zero;
   return 1;
 }
 
 /// SC_HIDE_SPRITES: clears spriteStorageKind, hiding the sprites, and moves on
 /// to the next command.
-s32 ObjectScript_ClearByte54(struct ObjectScriptContext *interpreter) {
+s32 ObjectScript_ClearByte54(struct Object *interpreter) {
   interpreter->spriteStorageKind = OBJECT_SPRITE_NONE;
-  interpreter->cursor++;
+  interpreter->scriptCursor++;
   return 1;
 }
 
 /// SC_SHOW_SPRITE: sets spriteStorageKind to OBJECT_SPRITE_ONE, one sprite
 /// drawn, and moves on to the next command.
-s32 ObjectScript_SetByte54(struct ObjectScriptContext *interpreter) {
+s32 ObjectScript_SetByte54(struct Object *interpreter) {
   interpreter->spriteStorageKind = OBJECT_SPRITE_ONE;
-  interpreter->cursor++;
+  interpreter->scriptCursor++;
   return 1;
 }
 
@@ -56,7 +56,7 @@ s32 Object_IsTargetUnset(struct Object *object) {
 
   // One compare of three values: all must equal TARGET_UNSET, or with
   // motion flags only x and z.
-  if (object->flags == 0) {
+  if (object->motionFlags == 0) {
     second = object->targetX;
     if (second != TARGET_UNSET)
       return 0;
@@ -79,12 +79,8 @@ static __inline__ s32 ObjectMotion_Square(s32 value) { return value * value; }
 /// every mode but the battle's (4). Writes each live object's position,
 /// velocity, target, wait and facing.
 void Object_UpdateAllThumb(void) {
-  struct ScriptMotionObject *object;
-#ifdef UBFIX
-  const s32 *script;
-#else
-  const struct ScriptMotionWords *script;
-#endif
+  struct Object *object;
+  const ScriptMotionWords *script;
   s32 objectsRemaining;
   s32 x;
   s32 y;
@@ -107,19 +103,19 @@ void Object_UpdateAllThumb(void) {
   u32 command;
   u32 phase;
 
-  object = (struct ScriptMotionObject *)gObjects;
+  object = gObjects;
   for (objectsRemaining = OBJECT_COUNT - 1; objectsRemaining >= 0;
        objectsRemaining--, object++) {
     arrivedAtTarget = 0;
 
-    script = object->script;
+    script = (const ScriptMotionWords *)object->script;
     if (script == NULL)
       continue;
 
     // The hook runs even for a paused object, and may free it.
-    if (object->hook != NULL) {
-      object->hook((union FieldObject *)object);
-      script = object->script;
+    if (object->update != NULL) {
+      object->update((union FieldObject *)object);
+      script = (const ScriptMotionWords *)object->script;
     }
     if (script == NULL)
       continue;
@@ -139,13 +135,12 @@ void Object_UpdateAllThumb(void) {
         command = script->word[(s16)object->scriptCursor];
 #endif
         if (command <= 63) {
-          if (gObjectScript_CommandTable[command](
-                  (struct ObjectScriptContext *)object) == 0)
+          if (gObjectScript_CommandTable[command]((struct Object *)object) == 0)
             break;
         } else {
           object->scriptCursor++;
         }
-        script = object->script;
+        script = (const ScriptMotionWords *)object->script;
       }
       if (object->script == NULL)
         continue;
@@ -306,7 +301,7 @@ void Object_UpdateAllThumb(void) {
           } else if (object->velocityY < 0) {
             y = ground;
             object->velocityY =
-                -Iwram_MulQ16(object->velocityY, object->vertical.bounce);
+                -Iwram_MulQ16(object->velocityY, object->bounce);
             // A rebound no faster than one frame of gravity ends the bouncing.
             if ((object->velocityY < 0 ? -object->velocityY
                                        : object->velocityY) <= object->gravity)
@@ -321,14 +316,14 @@ void Object_UpdateAllThumb(void) {
         // gravity with OBJ_EVENT_FLOATS_HIGH (2 and 8 pixels at the default
         // gravity of 1.0).
         if ((object->motionFlags & OBJ_EVENT_FLOATS) != 0) {
-          phase = (object->vertical.phase & 0x3f);
+          phase = (object->bounce & 0x3f);
           if ((object->motionFlags & OBJ_EVENT_FLOATS_HIGH) != 0)
             object->velocityY =
                 gScriptObject_CycleTable[phase >> 1] * object->gravity / 16;
           else
             object->velocityY =
                 gScriptObject_CycleTable[phase >> 1] * object->gravity / 64;
-          object->vertical.phase++;
+          object->bounce++;
         }
       }
     }
@@ -343,8 +338,7 @@ void Object_UpdateAllThumb(void) {
     // it after 60.
     if ((object->collisionFlags & OBJ_EVENT_BLOCKED_BY_SOLID) != 0) {
       SET_VECTOR(pos, x, y, z);
-      if (ObjectScript_CheckOverlap((struct ScriptObjectEntry *)object, pos) !=
-          0) {
+      if (ObjectScript_CheckOverlap((struct Object *)object, pos) != 0) {
         object->refused++;
         continue;
       }
@@ -501,7 +495,7 @@ void Object_SetMoveTarget(struct Object *object, s32 x, s32 y, s32 z) {
     *arrivalAxis = ARRIVAL_AXIS_Z;
     dx = dz;
   }
-  if (object->flags == 0) {
+  if (object->motionFlags == 0) {
     if (dx < 0)
       dx = -dx;
     if (dx < (distance < 0 ? -distance : distance))
@@ -526,7 +520,7 @@ UNUSED void Object_RunUpdateAllFromHeap(void) {
 /// ObjectSystem_Initialize adds it as a task in place of Object_UpdateAllThumb
 /// in OBJECT_SYSTEM_BATTLE.
 void Object_UpdateAllMotion(void) {
-  struct ScriptMotionObject *object;
+  struct Object *object;
   s32 objectsRemaining;
   s32 y;
   s32 arrivedAtTarget;
@@ -541,7 +535,7 @@ void Object_UpdateAllMotion(void) {
 
   // Fourteen objects, as many as the battle has units (UNIT_MAX in
   // battle/battle/objects.c).
-  object = (struct ScriptMotionObject *)gObjects;
+  object = gObjects;
   for (objectsRemaining = 13; objectsRemaining >= 0;
        objectsRemaining--, object++) {
     if (object->script == 0)
@@ -619,8 +613,7 @@ void Object_UpdateAllMotion(void) {
           object->velocityY -= object->gravity;
         } else if (object->velocityY < 0) {
           y = object->groundHeight;
-          object->velocityY =
-              -Iwram_MulQ16(object->velocityY, object->vertical.bounce);
+          object->velocityY = -Iwram_MulQ16(object->velocityY, object->bounce);
           if ((object->velocityY < 0 ? -object->velocityY
                                      : object->velocityY) <= object->gravity)
             object->velocityY = 0;

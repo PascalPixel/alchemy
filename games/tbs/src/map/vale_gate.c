@@ -120,7 +120,6 @@
 #include "ability_ids.h"
 #include "map_tables.h"
 #include "objcmd.h"
-#include "facing_object.h"
 #include "object_event.h"
 #include "field_effect.h"
 #include "fixed_math.h"

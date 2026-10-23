@@ -5,7 +5,7 @@
 
 #include "../battle_internal.h"
 
-/// MotionObject.targetX and targetZ while the object has no move target.
+/// Object.targetX and targetZ while the object has no move target.
 #define NO_MOVE_TARGET 0x80000000
 
 // The motion values below are 16.16 fixed point, in pixels and frames:
@@ -21,26 +21,26 @@ void BattleMotion_ReturnToSpot(s32 unitId) {
   s32 z;
   s32 stopped;
   struct BattleObject *battleObject;
-  struct MotionObject *object;
+  struct Object *object;
 
   battleObject = BattleObject_Get(unitId);
   object = battleObject->object;
   stopped = 0;
   object->acceleration = 0x20000;
   object->speedLimit = 0x80000;
-  object->verticalMotionStrength = 0xab85;
+  object->gravity = 0xab85;
   object->velocityY = stopped;
-  object->verticalMotionPhase = stopped;
-  object->autoFaceMotion = stopped;
+  object->bounce = stopped;
+  object->steeringFlags = stopped;
   object->snapToTarget = 1;
-  ObjectDispatch_StartIdleFar((struct DispatchObject *)object);
+  ObjectDispatch_StartIdleFar((struct Object *)object);
   Object_SetMoveTargetFar((struct Object *)object, battleObject->anchorX, 0,
                           battleObject->anchorZ);
   // z / 8, rounded toward zero, as BattleObject_Make turns a new object.
   z = battleObject->anchorZ;
   if (z < 0)
     z += 7;
-  object->angle = ArcTan2(z >> 3, battleObject->anchorX) - 0x8000;
+  object->facing = ArcTan2(z >> 3, battleObject->anchorX) - 0x8000;
 }
 
 /// Sends unitId running off its side of the battlefield, three times
@@ -48,17 +48,17 @@ void BattleMotion_ReturnToSpot(s32 unitId) {
 /// BattleFlee_PlayRun and BattleStaging_RunFlee.
 void BattleMotion_SetupEscapeObject(s32 unitId) {
   struct BattleObject *battleObject;
-  struct MotionObject *object;
+  struct Object *object;
 
   battleObject = BattleObject_Get(unitId);
   object = battleObject->object;
   object->acceleration = 0x20000;
   object->speedLimit = 0x80000;
   object->velocityY = 0x50000;
-  object->verticalMotionStrength = 0x7851;
-  object->verticalMotionPhase = 0;
-  object->autoFaceMotion = 0;
-  ObjectDispatch_StartIdleFar((struct DispatchObject *)object);
+  object->gravity = 0x7851;
+  object->bounce = 0;
+  object->steeringFlags = 0;
+  ObjectDispatch_StartIdleFar((struct Object *)object);
   Object_SetMoveTargetFar((struct Object *)object, battleObject->anchorX * 3, 0,
                           battleObject->anchorZ);
   ObjectDispatch_SelectAnimationFar(object, POSE_STANDING);
@@ -74,8 +74,8 @@ void BattleMotion_LeapToward(struct BattleObject *startSlot,
   s32 x;
   s32 startZ;
   s32 endZ;
-  struct MotionObject *start;
-  struct MotionObject *end;
+  struct Object *start;
+  struct Object *end;
 
   start = startSlot->object;
   end = endSlot->object;
@@ -88,22 +88,22 @@ void BattleMotion_LeapToward(struct BattleObject *startSlot,
   start->acceleration = 0x20000;
   start->speedLimit = 0x80000;
   start->velocityY = 0x40000;
-  start->verticalMotionStrength = 0xab85;
-  start->verticalMotionPhase = 0;
-  start->autoFaceMotion = 1;
+  start->gravity = 0xab85;
+  start->bounce = 0;
+  start->steeringFlags = 1;
   Object_SetMoveTargetFar((struct Object *)start, x, 0, startZ + zStep);
   ObjectDispatch_SelectAnimationFar(start, POSE_LEAP);
 }
 
 /// Sends a unit's object back to its spot. Nothing in the source calls it.
 void BattleMotion_ReturnObjectToSpot(struct BattleObject *battleObject) {
-  struct MotionObject *object = battleObject->object;
+  struct Object *object = battleObject->object;
 
   object->acceleration = 0x20000;
   object->speedLimit = 0x80000;
-  object->verticalMotionStrength = 0xab85;
-  object->verticalMotionPhase = 0;
-  object->autoFaceMotion = 0;
+  object->gravity = 0xab85;
+  object->bounce = 0;
+  object->steeringFlags = 0;
   Object_SetMoveTargetFar((struct Object *)object, battleObject->anchorX, 0,
                           battleObject->anchorZ);
 }
@@ -114,17 +114,17 @@ void BattleMotion_ReturnObjectToSpot(struct BattleObject *battleObject) {
 void BattleMotion_HopBack(s32 unitId) {
   u32 scaledX;
   struct BattleObject *battleObject;
-  struct MotionObject *object;
+  struct Object *object;
 
   battleObject = BattleObject_Get(unitId);
   object = battleObject->object;
   object->acceleration = 0x10000;
   object->speedLimit = 0x40000;
   object->velocityY = 0x30000;
-  object->verticalMotionStrength = 0x9999;
-  object->verticalMotionPhase = 0;
-  object->autoFaceMotion = 0;
-  ObjectDispatch_StartIdleFar((struct DispatchObject *)object);
+  object->gravity = 0x9999;
+  object->bounce = 0;
+  object->steeringFlags = 0;
+  ObjectDispatch_StartIdleFar((struct Object *)object);
   // anchorX * 3 / 2, rounded toward zero.
   scaledX = battleObject->anchorX * 3;
   Object_SetMoveTargetFar((struct Object *)object,
@@ -137,15 +137,15 @@ void BattleMotion_HopBack(s32 unitId) {
 /// BATTLE.S reaches it, and nothing in the source calls that.
 void BattleMotion_LeapBack(s32 unitId) {
   struct BattleObject *battleObject = BattleObject_Get(unitId);
-  struct MotionObject *object = battleObject->object;
+  struct Object *object = battleObject->object;
 
   object->acceleration = 128 << 9;
   object->speedLimit = 128 << 11;
   object->velocityY = 128 << 11;
-  object->verticalMotionStrength = 0x9999;
-  object->verticalMotionPhase = 0;
-  object->autoFaceMotion = 0;
-  ObjectDispatch_StartIdleFar((struct DispatchObject *)object);
+  object->gravity = 0x9999;
+  object->bounce = 0;
+  object->steeringFlags = 0;
+  ObjectDispatch_StartIdleFar((struct Object *)object);
   Object_SetMoveTargetFar((struct Object *)object,
                           Iwram_MulQ16(battleObject->anchorX, 0x14ccc), 0,
                           battleObject->anchorZ);
@@ -159,7 +159,7 @@ void BattleMotion_LeapBack(s32 unitId) {
 /// battle_anim_internal.h and directly.
 void BattleMotion_ApplyKnockback(s32 unitId, s32 variant) {
   struct BattleObject *battleObject;
-  struct MotionObject *object;
+  struct Object *object;
   s32 targetX;
   s32 anchorX;
 
@@ -171,10 +171,10 @@ void BattleMotion_ApplyKnockback(s32 unitId, s32 variant) {
     // A unit already in the air keeps its hop, except from KNOCKBACK_SKID on.
     if (object->y == 0 || variant > KNOCKBACK_HURL)
       object->velocityY = gBattleKnockback_VelocityY[variant];
-    object->verticalMotionStrength = 0x9999;
-    object->verticalMotionPhase = 0;
-    object->autoFaceMotion = 0;
-    ObjectDispatch_StartIdleFar((struct DispatchObject *)object);
+    object->gravity = 0x9999;
+    object->bounce = 0;
+    object->steeringFlags = 0;
+    ObjectDispatch_StartIdleFar((struct Object *)object);
     anchorX = battleObject->anchorX;
     targetX = (anchorX * gBattleKnockback_DistancePercent[variant]) / 100;
     Object_SetMoveTargetFar((struct Object *)object, targetX, 0,
@@ -193,8 +193,8 @@ void BattleMotion_ApproachTarget(s32 actorId, s32 targetId, s32 travelDivisor,
                                  s32 initialVelocityY) {
   struct BattleObject *actorSlot = BattleObject_Get(actorId);
   struct BattleObject *targetSlot = BattleObject_Get(targetId);
-  struct MotionObject *object = actorSlot->object;
-  struct MotionObject *target = targetSlot->object;
+  struct Object *object = actorSlot->object;
+  struct Object *target = targetSlot->object;
   s32 percent = 75;
   s32 dx = target->x - object->x;
   s32 startX = object->x;
@@ -221,19 +221,19 @@ void BattleMotion_ApproachTarget(s32 actorId, s32 targetId, s32 travelDivisor,
   if (object->motionFlags & OBJ_EVENT_FLOATS)
     object->velocityY = initialVelocityY;
   object->velocityY = initialVelocityY;
-  object->verticalMotionStrength = 0xab85;
-  object->autoFaceMotion = 1;
-  ObjectDispatch_StartIdleFar((struct DispatchObject *)object);
+  object->gravity = 0xab85;
+  object->steeringFlags = 1;
+  ObjectDispatch_StartIdleFar((struct Object *)object);
   Object_SetMoveTargetFar((struct Object *)object, x, 0, z);
   ObjectDispatch_SelectAnimationFar(object, POSE_LEAP);
 }
 
 /// Restarts unit id's motion in POSE_LEAP. Nothing in the source calls it.
 void BattleMotion_RestartLeap(s32 unitId) {
-  struct MotionObject *object;
+  struct Object *object;
 
   object = BattleObject_Get(unitId)->object;
-  ObjectDispatch_StartIdleFar((struct DispatchObject *)object);
+  ObjectDispatch_StartIdleFar((struct Object *)object);
   ObjectDispatch_SelectAnimationFar(object, POSE_LEAP);
 }
 
@@ -246,8 +246,8 @@ void BattleMotion_ReservedNoOp83B0() {}
 /// which does nothing. Nothing in the source calls it.
 void BattleMotion_ApplyPairMidpoint(s32 firstId, s32 secondId) {
   struct BattleObject *secondSlot;
-  struct MotionObject *first;
-  struct MotionObject *second;
+  struct Object *first;
+  struct Object *second;
   s32 x1;
   s32 x2;
   s32 z1;
@@ -289,14 +289,14 @@ void BattleMotion_ApplyPairMidpoint(s32 firstId, s32 secondId) {
 /// Plays the hit flash on unit id's sprite and waits ten frames. Only a
 /// single-sprite object takes it. Nothing in the source calls it.
 void BattleMotion_PlayHitFlash(s32 unitId) {
-  struct MotionObject *object;
+  struct Object *object;
   struct SpriteAnim *effect;
   s32 effectHandle;
 
   object = BattleObject_Get(unitId)->object;
-  if ((object != NULL) && ((OBJECT_SPRITES_KIND_MASK & object->spritesKind) ==
-                           OBJECT_SPRITES_ONE)) {
-    effectHandle = Sprite_AddAnimFar(object->records, HIT_FLASH_ANIMATION);
+  if ((object != NULL) && ((OBJECT_SPRITE_KIND_MASK &
+                            object->spriteStorageKind) == OBJECT_SPRITE_ONE)) {
+    effectHandle = Sprite_AddAnimFar(object->sprite, HIT_FLASH_ANIMATION);
     if (effectHandle != 0) {
       effect = (struct SpriteAnim *)effectHandle;
       SpriteAnim_StartFar(effect, 1);
@@ -312,7 +312,7 @@ void BattleMotion_PlayHitFlash(s32 unitId) {
 /// ElementGlow_Play, and through its far stub by
 /// Projection_ScaledUnit and SelectionScreen_Draw.
 s32 BattleMotion_ProjectScaledPosition(s32 unitId, s32 *projected) {
-  struct MotionObject *object = BattleObject_Get(unitId)->object;
+  struct Object *object = BattleObject_Get(unitId)->object;
   struct Sprite *record = GetMotionRecord(object, 0);
   s32 projectionScale;
   s32 spriteScale;
@@ -334,7 +334,7 @@ s32 BattleMotion_ProjectScaledPosition(s32 unitId, s32 *projected) {
 /// Returns 0. Reached through its far stub from BattleTarget_RunSelection, to
 /// place the target cursor.
 s32 BattleMotion_ProjectConditionalPosition(s32 unitId, s32 *projected) {
-  struct MotionObject *object = BattleObject_Get(unitId)->object;
+  struct Object *object = BattleObject_Get(unitId)->object;
   struct Sprite *record = GetMotionRecord(object, 0);
   s32 projectedHeight;
   s32 spriteScale;

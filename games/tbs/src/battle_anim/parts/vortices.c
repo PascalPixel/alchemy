@@ -39,8 +39,8 @@ void BattleAnim_RunFroth(struct BattleAnimArgs *effect) {
   void *canvas;
   BlitterPair draw;
   u8 *palette;
-  struct MotionObject *source;
-  struct MotionObject *object;
+  struct Object *source;
+  struct Object *object;
   struct Particle *point;
   struct Particle *seat;
   struct Particle *target;

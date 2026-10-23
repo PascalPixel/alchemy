@@ -186,8 +186,7 @@ static void GomaCavePillar_UpdateFragment(union FieldObject *fieldObject) {
 }
 
 /// Applies child value 15 at the end of a fragment's lifetime.
-static s32
-GomaCavePillar_FinishFragment(struct ObjectScriptContext *interpreter) {
+static s32 GomaCavePillar_FinishFragment(struct Object *interpreter) {
   struct ObjectEvent *objectEvent = (struct ObjectEvent *)interpreter;
   ObjectGroup_SetChildValue(objectEvent, 15);
   return 0;

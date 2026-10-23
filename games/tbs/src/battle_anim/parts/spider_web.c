@@ -45,7 +45,7 @@ void BattleAnim_RunSpinningBeat(struct BattleAnimArgs *effect) {
 void BattleAnim_RunSwirlSwipe(struct BattleAnimArgs *effect, s32 mode) {
   struct BattleAnimWork *work;
   void *canvas;
-  struct MotionObject *object;
+  struct Object *object;
   struct ScreenPoint position;
   /* FAKEMATCH(dead): the blitter kept in a pair, whose unused second word
    * fills the frame; as one DrawRectangle, 50 of 256 instructions differ in
@@ -124,8 +124,8 @@ void BattleAnim_RunSwirlSwipe(struct BattleAnimArgs *effect, s32 mode) {
     if (mode == SWIRL_SWIPE_SPINNING_BEAT) {
       if (frame == 13) {
         object->velocityY = 0xc0000;
-        object->verticalMotionStrength = 0x7851;
-        object->verticalMotionPhase = 0x4000;
+        object->gravity = 0x7851;
+        object->bounce = 0x4000;
       }
       if (frame == 65) {
         work->shakeFrames = 4;

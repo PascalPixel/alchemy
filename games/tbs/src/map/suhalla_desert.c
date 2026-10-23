@@ -179,7 +179,7 @@ static void EventScript_FightDjinni(void) {
 /// A storm's object event template script: clears its sprite and collision
 /// flags.
 static s32 SuhallaDesert_ClearObjectEventSpriteAndCollisionFlags(
-    struct ObjectScriptContext *interpreter) {
+    struct Object *interpreter) {
   struct ObjectEvent *objectEvent = (struct ObjectEvent *)interpreter;
   ObjectEvent_SetSpriteFlags(objectEvent, 0);
   objectEvent->collisionFlags = 0;
@@ -187,8 +187,7 @@ static s32 SuhallaDesert_ClearObjectEventSpriteAndCollisionFlags(
 }
 
 /// A storm's object event template script: toggles its single-sprite storage.
-static s32
-SuhallaDesert_ToggleObjectEventActive(struct ObjectScriptContext *interpreter) {
+static s32 SuhallaDesert_ToggleObjectEventActive(struct Object *interpreter) {
   struct ObjectEvent *objectEvent = (struct ObjectEvent *)interpreter;
   objectEvent->spriteStorageKind ^= 1;
   return 1;
@@ -529,7 +528,7 @@ static void EventScript_IodemAsksWhetherToPressOn(void) {
 /// The chasing storm's script: it follows the leader, throwing up sand every
 /// eight frames, and catches a moving leader it comes within 8 pixels of
 /// (event 55).
-static s32 SuhallaDesert_ChaseLeader(struct ObjectScriptContext *interpreter) {
+static s32 SuhallaDesert_ChaseLeader(struct Object *interpreter) {
   struct ObjectEvent *objectEvent = (struct ObjectEvent *)interpreter;
   struct EffectOptions options;
   struct ObjectEvent *selectedObjectEvent;

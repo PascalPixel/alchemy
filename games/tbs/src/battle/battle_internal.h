@@ -172,13 +172,10 @@
 /// The inventory's weapon slot, for Inventory_FindEquippedFar.
 #define EQUIP_WEAPON 1
 
-// MotionObject.spritesKind's low four bits: no sprite, one sprite in
-// records, or records pointing to a table of up to four.
-#define OBJECT_SPRITES_NONE 0
-#define OBJECT_SPRITES_ONE 1
-#define OBJECT_SPRITES_GROUP 2
-#define OBJECT_SPRITES_KIND_MASK 15
-#define OBJECT_SPRITES_GROUP_SIZE 4
+// Object.spriteStorageKind holds an enum ObjectSpriteKind in its low four
+// bits; a group's sprite word points to a table of four sprites.
+#define OBJECT_SPRITE_KIND_MASK 15
+#define OBJECT_SPRITE_GROUP_SIZE 4
 
 /// BattleTurn.staging: how BattleStaging_DispatchAction shows the
 /// action, set by BattleTurn_Build from the ability

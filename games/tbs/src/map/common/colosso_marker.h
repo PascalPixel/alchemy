@@ -129,7 +129,7 @@ void Colosso_RestoreWarrior(s32 id) {
 void ObjectEvent_ResetMotionFields(s32 localId) {
   struct ObjectEvent *o = ObjectEvent_GetById(localId);
 
-  ObjectDispatch_StartIdle((struct DispatchObject *)o);
+  ObjectDispatch_StartIdle((struct Object *)o);
   o->velocityX = 0;
   o->velocityZ = 0;
   o->targetX = OBJ_EVENT_NO_TARGET;
@@ -262,7 +262,7 @@ void Colosso_WalkObjectEventTo(s32 localId, s32 x, s32 z) {
     objectEvent->speed = speed;
     objectEvent->acceleration = speed >> 1;
     objectEvent->paused = zero;
-    ObjectDispatch_StartIdle((struct DispatchObject *)objectEvent);
+    ObjectDispatch_StartIdle((struct Object *)objectEvent);
     ObjectDispatch_SelectAnimation(objectEvent, 5);
     Object_SetMoveTarget((struct Object *)objectEvent, x << 16,
                          objectEvent->y.fixed, z << 16);
@@ -281,7 +281,7 @@ void Colosso_WalkObjectEventToAndStand(s32 localId, s32 x, s32 z) {
     objectEvent->speed = speed;
     objectEvent->acceleration = speed >> 1;
     objectEvent->paused = zero;
-    ObjectDispatch_StartIdle((struct DispatchObject *)objectEvent);
+    ObjectDispatch_StartIdle((struct Object *)objectEvent);
     ObjectDispatch_SelectAnimation(objectEvent, 5);
     Object_SetMoveTarget((struct Object *)objectEvent, x << 16,
                          objectEvent->y.fixed, z << 16);

@@ -155,7 +155,7 @@ void BattleAnim_RunQuake(struct BattleAnimArgs *effect) {
         // count) and at or below its top. A target below the ground takes its
         // damage pose.
         ANIM_FOR_EACH_TARGET(member, work->effect) {
-          struct MotionObject *object;
+          struct Object *object;
 
           object =
               GetBattleObjectSlotFar(work->effect->targets[member])->object;
@@ -169,7 +169,7 @@ void BattleAnim_RunQuake(struct BattleAnimArgs *effect) {
             // 12 pixels a frame upwards, under the gravity the battle's own
             // motions use (BattleMotion_ReturnToSpot in battle/motion.c).
             object->velocityY = 12 << 16;
-            object->verticalMotionStrength = 0xab85;
+            object->gravity = 0xab85;
           }
           if (object->y < 0)
             ObjectGroup_UpdateMembers(work->effect->targets[member], 0,
@@ -180,7 +180,7 @@ void BattleAnim_RunQuake(struct BattleAnimArgs *effect) {
 
     // A target that lands flashes white for 5 frames.
     ANIM_FOR_EACH_TARGET(member, work->effect) {
-      struct MotionObject *object;
+      struct Object *object;
       struct Particle *state;
 
       object = GetBattleObjectSlotFar(work->effect->targets[member])->object;

@@ -132,9 +132,8 @@ s32 Sanctum_Run(s32 unitId) {
 
   {
     s32 keeperAnimationId =
-        (u16)((struct Sprite *)((struct Object *)ObjectEvent_GetByIdFar(unitId))
-                  ->animation)
-            ->entries[0]
+        (u16)((struct Object *)ObjectEvent_GetByIdFar(unitId))
+            ->sprite->entries[0]
             ->animationId;
     shop->keeperGraphics = keeperAnimationId;
   }

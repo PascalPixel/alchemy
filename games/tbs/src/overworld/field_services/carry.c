@@ -12,7 +12,7 @@ STATIC_ASSERT(sizeof(struct EffectVector) == 0x0c);
 void FieldEffect_SpawnFallingParticles(void) {
   struct ObjectEvent *liftedObject;
   struct EffectVector position;
-  struct ItemBreakFragmentObject *fragment;
+  struct Object *fragment;
   u32 radius;
 
   liftedObject = ((struct FieldEffectWork *)gFieldEffectWork)->child;
@@ -23,8 +23,8 @@ void FieldEffect_SpawnFallingParticles(void) {
   radius = Random16() * 3;
   Vector_AddPolarOffset(radius * 16, Random16(), &position);
 
-  fragment = (struct ItemBreakFragmentObject *)Object_Spawn(
-      SPRITE_SPARKLE, position.x, position.y, position.z);
+  fragment = (struct Object *)Object_Spawn(SPRITE_SPARKLE, position.x,
+                                           position.y, position.z);
   FieldEffect_InitializeFallingFragment(fragment);
 }
 
@@ -73,7 +73,7 @@ void FieldEffect_SteerLiftedTarget(s32 targetId) {
     return;
   FieldEffect_FadeToEffectColor();
   src->linkedObject = target;
-  ObjectDispatch_InitializeFar((struct DispatchObject *)src,
+  ObjectDispatch_InitializeFar((struct Object *)src,
                                gFieldEffect_SourceHoldScript);
 
   // The hands appear 32 pixels to either side and move to 16 pixels.
@@ -112,7 +112,7 @@ void FieldEffect_SteerLiftedTarget(s32 targetId) {
   Task_Add(FieldEffect_SpawnFallingParticles, 0xc80);
   Sound_PlaySongFar(SE_130);
   target->motionFlags = 4;
-  ObjectDispatch_SetSingleChildFlagsFar((struct DispatchObject *)target, 0);
+  ObjectDispatch_SetSingleChildFlagsFar((struct Object *)target, 0);
   if (hands[0] != NULL && hands[1] != NULL) {
     while (target->y.fixed - target->groundHeight <= 24 << 16) {
       objectEvent->y.fixed += 0x6000;
@@ -170,8 +170,7 @@ void FieldEffect_SteerLiftedTarget(s32 targetId) {
     pos.y = target->groundHeight;
     pos.z = target->z.fixed;
     Vector_AddPolarOffset(16 << 16, angle, &pos);
-    i = ObjectScript_CheckOverlapFar((struct ScriptObjectEntry *)target,
-                                     (s32 *)&pos);
+    i = ObjectScript_CheckOverlapFar((struct Object *)target, (s32 *)&pos);
     // Both tests jump into the blocked path, which keeps it ahead of the drop
     // path as the ROM lays them out; written as one || test, 407 of 531
     // instructions differ in tbs-en.
@@ -244,7 +243,7 @@ void FieldEffect_SteerLiftedTarget(s32 targetId) {
           (struct ObjectEvent *)Object_Spawn(SPRITE_SPARKLE, p->x, p->y, p->z);
       *walk++ = objectEvent;
       if (objectEvent != NULL) {
-        ObjectDispatch_InitializeFar((struct DispatchObject *)objectEvent,
+        ObjectDispatch_InitializeFar((struct Object *)objectEvent,
                                      gFieldEffect_FragmentScript);
         objectEvent->speed = Random16() + (2 << 16);
         objectEvent->acceleration = 2 << 16;
@@ -256,15 +255,14 @@ void FieldEffect_SteerLiftedTarget(s32 targetId) {
     }
   }
   Sound_PlaySongFar(SE_131);
-  ObjectDispatch_ReleaseFar((struct DispatchObject *)hands[0]);
-  ObjectDispatch_ReleaseFar((struct DispatchObject *)hands[1]);
+  ObjectDispatch_ReleaseFar((struct Object *)hands[0]);
+  ObjectDispatch_ReleaseFar((struct Object *)hands[1]);
 
   // Restore the target's look and motion, and throw it up at 10 pixels a
   // frame: it falls and follows the ground again, keeping 0.2 of its speed
   // as it bounces, and reads its ground from the ground layer.
-  Anim_ApplyChildValuesFar((struct DispatchObject *)target,
-                           effectWork->savedPalette);
-  ObjectDispatch_InitializeFar((struct DispatchObject *)target,
+  Anim_ApplyChildValuesFar((struct Object *)target, effectWork->savedPalette);
+  ObjectDispatch_InitializeFar((struct Object *)target,
                                effectWork->savedScript);
   target->update = effectWork->savedCallback;
   target->motionFlags = 3;
@@ -272,7 +270,7 @@ void FieldEffect_SteerLiftedTarget(s32 targetId) {
   target->bounce = 0x3333;
   target->layer = 0;
   src->update = 0;
-  Anim_ApplyChildValuesFar((struct DispatchObject *)src, SPRITE_COLOR_NORMAL);
+  Anim_ApplyChildValuesFar((struct Object *)src, SPRITE_COLOR_NORMAL);
   if (effectWork->childOption != 0) {
     // Wait for it to rise and land (at most 90 frames each), then a ring.
     for (i = 0; i < 90 && target->velocityY >= 0; i++)
@@ -280,7 +278,7 @@ void FieldEffect_SteerLiftedTarget(s32 targetId) {
     WaitFrames(1);
     for (i = 0; i < 90 && target->velocityY < 0; i++)
       WaitFrames(1);
-    FieldEffect_SpawnRadialParticleRing((struct MotionObject *)target);
+    FieldEffect_SpawnRadialParticleRing((struct Object *)target);
     FieldEffect_FadeFromEffectColor();
     WaitFrames(30);
   } else {
@@ -300,19 +298,18 @@ DEFINE_ITEM_BREAK_EFFECT(FieldEffect_RunCarry, FieldEffect_SpawnItemBreakMode1)
 /// frames; angle is the way it faces once grown. Returns the hand, or NULL
 /// when it cannot be spawned (Object_Spawn); Carry and its no-target effect
 /// release it.
-struct MotionObject *FieldEffect_SpawnItemBreakMode1(s32 x, s32 y, s32 z,
-                                                     s32 angle) {
-  struct MotionObject *fragment;
+struct Object *FieldEffect_SpawnItemBreakMode1(s32 x, s32 y, s32 z, s32 angle) {
+  struct Object *fragment;
   s32 scale;
 
   Sound_PlaySongFar(SE_ITEM_BREAK);
-  fragment = (struct MotionObject *)Object_Spawn(215, x, y, z);
+  fragment = (struct Object *)Object_Spawn(215, x, y, z);
   if (fragment != NULL) {
     fragment->scaleY = 0x4000;
     fragment->scaleX = 0x4000;
     fragment->speedLimit = 0x30000;
     fragment->acceleration = 0x30000;
-    fragment->autoFaceMotion = 0;
+    fragment->steeringFlags = 0;
     ObjectDispatch_SelectAnimationFar(fragment, 1);
     scale = fragment->scaleX;
     if (scale < 0x10000) {
@@ -320,12 +317,12 @@ struct MotionObject *FieldEffect_SpawnItemBreakMode1(s32 x, s32 y, s32 z,
         scale += 0x800;
         fragment->scaleY = scale;
         fragment->scaleX = scale;
-        fragment->angle += 0x2000;
+        fragment->facing += 0x2000;
         WaitFrames(1);
         scale = fragment->scaleX;
       } while (scale <= 0xffff);
     }
-    fragment->angle = angle;
+    fragment->facing = angle;
   }
   return fragment;
 }

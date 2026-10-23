@@ -226,8 +226,8 @@ enum {
 
 /// Pulses the object event scale around the countdown, then chooses its next
 /// pause.
-static s32 VenusLighthouseAerie_PulseObjectEventScale(
-    struct ObjectScriptContext *interpreter) {
+static s32
+VenusLighthouseAerie_PulseObjectEventScale(struct Object *interpreter) {
   struct ObjectEvent *objectEvent = (struct ObjectEvent *)interpreter;
   s16 *counter = &objectEvent->timer;
 

@@ -9,7 +9,7 @@
 /// once (gMovementType_ResetActionScript then ends).
 s32 Object_ClearChildAndCollisionFlags(void *obj) {
   ObjectDispatch_SetSingleChildFlagsFar(obj, 0);
-  ((struct ScriptObjectRuntime *)obj)->flags59 = 0;
+  ((struct Object *)obj)->collisionFlags = 0;
   return 0;
 }
 
@@ -69,7 +69,7 @@ s32 ObjectMotion_TurnTowardLinkedTarget(struct Object *object) {
   target = object->linkedObject;
   if (target != NULL) {
     // Clear OBJ_EVENT_FACES_MOTION, so moving does not turn it away again.
-    object->actionFlags &= 0xfe;
+    object->steeringFlags &= 0xfe;
     targetAngle = (u16)ArcTan2(target->z - object->z, target->x - object->x);
     currentAngle = object->facing;
     turnStep = targetAngle - currentAngle;
@@ -118,8 +118,7 @@ void ObjectEvent_SetMovementType(struct Object *object, s32 action) {
   default:
     break;
   }
-  ObjectDispatch_InitializeFar((struct DispatchObject *)object,
-                               (const s32 *)action);
+  ObjectDispatch_InitializeFar((struct Object *)object, (const s32 *)action);
 }
 
 /// Finds the nearest animated object to self within 40 pixels and 48 pixels of
@@ -149,7 +148,7 @@ struct Object *Object_FindNearestFacingTarget(struct Object *self, s32 sprite) {
       continue;
     if (entry == self)
       continue;
-    if (entry->animationKind != OBJECT_SPRITE_ONE)
+    if (entry->spriteStorageKind != OBJECT_SPRITE_ONE)
       continue;
     // 0x2fffff: under 48 pixels apart in height, either way.
     heightDifference = entry->y - self->y;
@@ -178,7 +177,7 @@ struct Object *Object_FindNearestFacingTarget(struct Object *self, s32 sprite) {
   }
   if (found == NULL)
     return NULL;
-  if (((struct Sprite *)found->animation)->entries[0]->animationId != sprite)
+  if (found->sprite->entries[0]->animationId != sprite)
     return NULL;
   return found;
 }

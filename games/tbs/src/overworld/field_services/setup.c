@@ -67,8 +67,8 @@ void FieldEffect_LoadActionEffectResources(s32 abilityId, s32 mode) {
 /// A target's update hook, script and first sprite's param are saved, for
 /// the effects that take it over to restore.
 void FieldEffect_SetupObjectPair(s32 userId, s32 targetId) {
-  struct ScriptMotionObject *user;
-  struct ScriptMotionObject *target;
+  struct Object *user;
+  struct Object *target;
   s32 dir;
   struct FieldEffectWork *effectWork;
 
@@ -83,10 +83,10 @@ void FieldEffect_SetupObjectPair(s32 userId, s32 targetId) {
   effectWork->angle = dir;
   if (target != NULL) {
     // Keep the target's motion and colours, to restore them later.
-    effectWork->savedCallback = target->hook;
+    effectWork->savedCallback = target->update;
     effectWork->savedScript = (const s32 *)target->script;
     {
-      struct Sprite *animation = ((struct Object *)target)->animation;
+      struct Sprite *animation = target->sprite;
       u8 pal = animation->entries[0]->colorMode;
 
       effectWork->savedPalette = pal;
@@ -106,14 +106,14 @@ void FieldEffect_SetupObjectPair(s32 userId, s32 targetId) {
 /// 0), then waits a frame.
 void FieldEffect_StopCasterHook(void) {
   struct FieldEffectWork *effectWork = gFieldEffectWork;
-  struct ScriptMotionObject *user = effectWork->mainObject;
+  struct Object *user = effectWork->mainObject;
 
-  user->hook = NULL;
-  Anim_ApplyChildValuesFar((struct DispatchObject *)user, SPRITE_COLOR_NORMAL);
+  user->update = NULL;
+  Anim_ApplyChildValuesFar((struct Object *)user, SPRITE_COLOR_NORMAL);
   WaitFrames(1);
 }
 
-#define SETUP_OBJECT_SLOTS ((struct ScriptMotionObject *)gObjects)
+#define SETUP_OBJECT_SLOTS (gObjects)
 
 /// Ends a Psynergy effect: frees the field effect sprites still in use and,
 /// unless another effect is being resolved, waits (at most 30 frames) for the
@@ -159,12 +159,12 @@ void FieldEffect_End(void) {
     s32 active;
 
     do {
-      struct ScriptMotionObject *slot = SETUP_OBJECT_SLOTS;
+      struct Object *slot = SETUP_OBJECT_SLOTS;
 
       active = 0;
       remaining = 0;
       while (remaining <= 63) {
-        void (*update)(union FieldObject *) = slot->hook;
+        void (*update)(union FieldObject *) = slot->update;
 
         if (update == firstActiveUpdate || update == secondActiveUpdate) {
           active = 1;

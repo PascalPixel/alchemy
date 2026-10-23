@@ -941,8 +941,7 @@ static void TolbiSpring_SetObjectEventAppearance(s32 localId,
     objectEvent->facing = facing;
     objectEvent->motionFlags = 0;
     objectEvent->sprite->flags = 0;
-    ObjectDispatch_SetAnimationSpeed((struct DispatchObject *)objectEvent,
-                                     childValue);
+    ObjectDispatch_SetAnimationSpeed((struct Object *)objectEvent, childValue);
   }
   // BUG: the original still dereferences objectEvent here when lookup returned
   // NULL.

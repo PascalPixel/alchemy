@@ -241,8 +241,8 @@ static void TunnelRuins_MarkPushPillarCells(void);
 /// Turns off the shadow of the Venus Lighthouse model once
 /// gTunnelRuins_ShrinkScript has shrunk it
 /// (https://alchemy.pascalpixel.com/places/tunnel-ruins-great-statue/map-1.png).
-static s32 TunnelRuins_RefreshObjectEventAfterShrinking(
-    struct ObjectScriptContext *interpreter) {
+static s32
+TunnelRuins_RefreshObjectEventAfterShrinking(struct Object *interpreter) {
   struct ObjectEvent *objectEvent = (struct ObjectEvent *)interpreter;
   ObjectEvent_SetSpriteFlags(objectEvent, 0);
   return 0;

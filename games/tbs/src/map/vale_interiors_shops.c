@@ -55,7 +55,6 @@
 #include "unit/overworld/field_services.h"
 #include "unit/field/field.h"
 #include "unit/runtime/runtime.h"
-#include "facing_object.h"
 #include "script_layer.h"
 #include "map_tables.h"
 #include "call.h"
@@ -68,7 +67,6 @@
 #include "map_tables.h"
 #include "item_ids.h"
 #include "objcmd.h"
-#include "facing_object.h"
 #include "fixed_math.h"
 #include "ram_buffer.h"
 #include "flags.h"
@@ -181,8 +179,7 @@ static void ValeInteriorsShops_SpawnSleepZ(void);
 /// Called each frame by gValeInteriorsShops_SleepZScript; the object event's
 /// timer and work are its x and y steps in signed 8.8 pixels, set by
 /// ValeInteriorsShops_SpawnSleepZ.
-static s32
-ValeInteriorsShops_AdvanceSleepZ(struct ObjectScriptContext *interpreter) {
+static s32 ValeInteriorsShops_AdvanceSleepZ(struct Object *interpreter) {
   struct ObjectEvent *objectEvent = (struct ObjectEvent *)interpreter;
 
   objectEvent->x.fixed += (s16)objectEvent->timer * 256;

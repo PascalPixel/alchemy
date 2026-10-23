@@ -8,6 +8,6 @@
 #include "edition.h"
 #include "farcall.h"
 
-struct DispatchObject;
+struct Object;
 
 #endif

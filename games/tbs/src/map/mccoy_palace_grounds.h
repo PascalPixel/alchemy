@@ -7,7 +7,6 @@
 
 #define NULL ((void *)0)
 
-#include "facing_object.h"
 #include "item_ids.h"
 
 #endif

@@ -37,8 +37,8 @@ void BattleAnim_RunDjinniEntrance(struct BattleAnimArgs *effect, s32 element,
   BlitterPair draw;
   u8 *sheet;
   s32 frameCount;
-  struct MotionObject *target;
-  struct MotionObject *user;
+  struct Object *target;
+  struct Object *user;
   u8 *palette;
   s32 sheetId;
   s32 frame;
@@ -307,9 +307,9 @@ void BattleAnim_RunWingBeat(struct BattleAnimArgs *effect) {
 /// action pose, its animation back at the usual speed.
 static inline void BattleAnim_RunVolleyWithAction(struct BattleAnimArgs *effect,
                                                   s32 mode) {
-  struct DispatchObject *user;
+  struct Object *user;
 
-  user = (struct DispatchObject *)GetBattleObjectSlotFar(effect->user)->object;
+  user = (struct Object *)GetBattleObjectSlotFar(effect->user)->object;
   ObjectDispatch_SelectAnimationFar(user, POSE_LEAP);
   ObjectDispatch_SetAnimationSpeedFar(user,
                                       PROJECTILE_VOLLEY_ANIMATION_STEP_FAST);
@@ -418,7 +418,7 @@ void BattleAnim_RunProjectileVolley(struct BattleAnimArgs *effect, s32 mode) {
   s32 comet;
   s32 shots;
   s32 steps;
-  struct MotionObject *user;
+  struct Object *user;
   s32 k;
   // The trail particles placed, and later the sparks' speed shift: one
   // local for both, as separate locals change the register allocation.
@@ -554,7 +554,7 @@ void BattleAnim_RunProjectileVolley(struct BattleAnimArgs *effect, s32 mode) {
     // Wave and h - 15 to h for Slash, Shuriken and Crazy Voice.
 
     ANIM_FOR_EACH_TARGET(i, work->effect) {
-      struct MotionObject *target =
+      struct Object *target =
           GetBattleObjectSlotFar(work->effect->targets[i])->object;
       s32 targetHeight =
           BattleUnit_GetEffectHeightFar(work->effect->targets[i]);
@@ -677,7 +677,7 @@ void BattleAnim_RunProjectileVolley(struct BattleAnimArgs *effect, s32 mode) {
       ANIM_VIEW_FROM_CAMERA(camera);
       index = 0;
       ANIM_FOR_EACH_TARGET(i, work->effect) {
-        struct MotionObject *target =
+        struct Object *target =
             GetBattleObjectSlotFar(work->effect->targets[i])->object;
 
         for (j = 0; j != shots; j++, index++) {
@@ -985,16 +985,16 @@ void BattleAnim_RunProjectileVolley(struct BattleAnimArgs *effect, s32 mode) {
 /// selects POSE_STANDING.
 UNUSED void BattleAnim_InitializeRisingObject(s32 id) {
   struct BattleObject *slot = GetBattleObjectSlotFar(id);
-  struct MotionObject *object = slot->object;
+  struct Object *object = slot->object;
 
   object->acceleration = 0x20000;
   object->speedLimit = 0x80000;
   object->velocityY = 0x40000;
-  object->verticalMotionStrength = 0xab85;
-  object->verticalMotionPhase = 0;
-  object->autoFaceMotion = 0;
+  object->gravity = 0xab85;
+  object->bounce = 0;
+  object->steeringFlags = 0;
   object->snapToTarget = 1;
-  ObjectDispatch_StartIdleFar((struct DispatchObject *)object);
+  ObjectDispatch_StartIdleFar((struct Object *)object);
   Object_SetMoveTargetFar((struct Object *)object, slot->anchorX, 0,
                           slot->anchorZ);
   ObjectDispatch_SelectAnimationFar(object, POSE_STANDING);
@@ -1010,8 +1010,8 @@ UNUSED void BattleAnim_InitializeRisingObject(s32 id) {
 void BattleAnim_SetApproachMotion(s32 id, s32 targetId, s32 frames) {
   struct BattleObject *slot = GetBattleObjectSlotFar(id);
   struct BattleObject *targetSlot = GetBattleObjectSlotFar(targetId);
-  struct MotionObject *object = slot->object;
-  struct MotionObject *target = targetSlot->object;
+  struct Object *object = slot->object;
+  struct Object *target = targetSlot->object;
   s32 rate = 80;
   s32 diffX = target->x - object->x;
   s32 startX = object->x;
@@ -1030,11 +1030,11 @@ void BattleAnim_SetApproachMotion(s32 id, s32 targetId, s32 frames) {
   object->acceleration = speed;
   object->speedLimit = speed;
   object->snapToTarget = 1;
-  object->verticalMotionStrength = 0xab85;
+  object->gravity = 0xab85;
   object->velocityY = 0;
-  object->verticalMotionPhase = 0;
-  object->autoFaceMotion = 1;
-  ObjectDispatch_StartIdleFar((struct DispatchObject *)object);
+  object->bounce = 0;
+  object->steeringFlags = 1;
+  ObjectDispatch_StartIdleFar((struct Object *)object);
   Object_SetMoveTargetFar((struct Object *)object, x, 0, z);
   ObjectDispatch_SelectAnimationFar(object, POSE_LEAP);
 }

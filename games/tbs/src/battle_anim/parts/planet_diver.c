@@ -60,9 +60,9 @@ void BattleAnim_RunPlanetDiver(struct BattleAnimArgs *effect) {
   struct BattleAnimWork *work;
   void *canvas;
   u8 *sprites;
-  struct MotionObject *target;
+  struct Object *target;
   s32 dx;
-  struct MotionObject *actor;
+  struct Object *actor;
   u8 *palette;
   s32 frame;
   s32 i;
@@ -131,8 +131,8 @@ void BattleAnim_RunPlanetDiver(struct BattleAnimArgs *effect) {
       actor->velocityY = 20 << 16;
       actor->acceleration = 1 << 16;
       actor->speedLimit = 3 << 16;
-      actor->verticalMotionStrength = 0xab85;
-      actor->autoFaceMotion = 0;
+      actor->gravity = 0xab85;
+      actor->steeringFlags = 0;
       actor->snapToTarget = 0;
       Object_SetMoveTargetFar((struct Object *)actor, actor->x * 3, 0,
                               actor->z);
@@ -148,11 +148,11 @@ void BattleAnim_RunPlanetDiver(struct BattleAnimArgs *effect) {
       Iwram_CopyWords((void *)BG_PLTT, palette, 128);
       palette += 128;
       Decompress_Type01(palette, work->sheet);
-      actor->verticalMotionStrength = 0;
+      actor->gravity = 0;
       actor->velocityX = 0;
       actor->velocityY = 0;
       actor->z = target->z;
-      ObjectDispatch_StartIdleFar((struct DispatchObject *)actor);
+      ObjectDispatch_StartIdleFar((struct Object *)actor);
     }
     // From frame 18: fall 15 pixels across and 8 down a frame; on reaching
     // the ground, throw out 256 chips, and the target recoils and flashes
@@ -320,7 +320,7 @@ void BattleAnim_RunHaunt(struct BattleAnimArgs *effect) {
     }
 
     ANIM_FOR_EACH_TARGET(k, work->effect) {
-      struct MotionObject *target =
+      struct Object *target =
           GetBattleObjectSlotFar(work->effect->targets[k])->object;
 
       // Centre on the point 20 pixels above the target and spin the group
@@ -458,7 +458,7 @@ void BattleAnim_RunUnusedOrbitingSpirals(struct BattleAnimArgs *effect) {
     member = 0;
     if (work->effect->targetCount != 0) {
       while (member != work->effect->targetCount) {
-        struct MotionObject *object;
+        struct Object *object;
 
         object = GetBattleObjectSlotFar(work->effect->targets[member])->object;
         // Target `member` has its turn from frame 16 * member, and takes

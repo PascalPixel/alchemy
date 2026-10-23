@@ -162,8 +162,8 @@ s32 Runtime_CheckRadiusOverlap(s32 *firstPosition, s32 radiusA,
 /// Sets the leader's speed, target, velocity, angle and action, moves the
 /// objects it pushes, counts gFieldWork->blockedSteps and creates the
 /// footprint objects.
-s32 Object_UpdateLeaderControl(struct ObjectScriptContext *interpreter) {
-  struct Object *object = (struct Object *)interpreter;
+s32 Object_UpdateLeaderControl(struct Object *interpreter) {
+  struct Object *object = interpreter;
 
   struct FieldPosition position;
   struct FieldPosition testPosition;
@@ -372,7 +372,7 @@ s32 Object_UpdateLeaderControl(struct ObjectScriptContext *interpreter) {
         // the player, if no solid object is there and the ground 10 pixels on,
         // straight and 22.5 degrees either side, is clear.
         if ((pushedObject->collisionFlags & OBJ_EVENT_PUSHABLE) != 0 &&
-            pushedObject->movementState == 0) {
+            pushedObject->paused == 0) {
           direction =
               ArcTan2(pushedObject->z - object->z, pushedObject->x - object->x);
           testPosition.x = pushedObject->x;
@@ -380,9 +380,8 @@ s32 Object_UpdateLeaderControl(struct ObjectScriptContext *interpreter) {
           testPosition.z = pushedObject->z;
           heading = direction;
           Vector_AddPolarOffset(0x4000, direction, &testPosition);
-          if (!ObjectScript_CheckOverlap(
-                  (struct ScriptObjectEntry *)pushedObject,
-                  (s32 *)&testPosition)) {
+          if (!ObjectScript_CheckOverlap((struct Object *)pushedObject,
+                                         (s32 *)&testPosition)) {
             testPosition.x = pushedObject->x;
             testPosition.y = pushedObject->y;
             testPosition.z = pushedObject->z;
@@ -503,11 +502,11 @@ s32 Object_UpdateLeaderControl(struct ObjectScriptContext *interpreter) {
       // any map layer of priority 0 to 2, and lies rotated a quarter turn
       // from the heading.
       effect->groundHeight = object->groundHeight;
-      animation = effect->animation;
-      ObjectDispatch_Initialize((struct DispatchObject *)effect,
+      animation = effect->sprite;
+      ObjectDispatch_Initialize((struct Object *)effect,
                                 gWorldMap_FootprintActions);
       effect->priorityFlags = OBJ_EVENT_PRIORITY_UNDERFOOT;
-      effect->flags = collision;
+      effect->motionFlags = collision;
       if (animation != 0) {
         Sprite_StartAnim(animation, 1);
         animation->flags = collision;
@@ -530,7 +529,7 @@ s32 Object_UpdateLeaderControl(struct ObjectScriptContext *interpreter) {
     }
   }
   Field_CheckConfiguredKeys();
-  object->step++;
+  object->scriptCursor++;
   return 1;
 }
 
@@ -544,8 +543,8 @@ s32 Object_UpdateLeaderControl(struct ObjectScriptContext *interpreter) {
 /// ObjectDispatch_StartWorldMapControl on the world map. Sets the leader's
 /// speed, target, velocity, angle and action, turns the perspective work's
 /// yaw, counts gFieldWork->blockedSteps and creates the ripple objects.
-s32 Object_MoveOnWorldMap(struct ObjectScriptContext *interpreter) {
-  struct Object *object = (struct Object *)interpreter;
+s32 Object_MoveOnWorldMap(struct Object *interpreter) {
+  struct Object *object = interpreter;
 
   struct FieldPosition position;
 #if TBS_PATCH_1
@@ -806,8 +805,8 @@ update_object:
     yawStep = targetCameraYaw - perspective->yaw;
   perspective->yaw += yawStep;
 
-  if (object->animationKind == OBJECT_SPRITE_ONE) {
-    playerSprite = object->animation;
+  if (object->spriteStorageKind == OBJECT_SPRITE_ONE) {
+    playerSprite = object->sprite;
     terrainCollision =
         WorldMap_GetCollision((struct WorldPosition *)&object->x);
     // In a forest the sprite's second anim is drawn (priority 1) and its
@@ -828,10 +827,10 @@ update_object:
       ripple = Object_CreateField(FIELD_SPRITE_RIPPLE, object->x, object->y,
                                   object->z);
       if (ripple != 0) {
-        rippleSprite = ripple->animation;
-        ObjectDispatch_Initialize((struct DispatchObject *)ripple,
+        rippleSprite = ripple->sprite;
+        ObjectDispatch_Initialize((struct Object *)ripple,
                                   gWorldMap_FootprintActions + 3);
-        ripple->flags = collision;
+        ripple->motionFlags = collision;
         ripple->layer = 1;
         if (rippleSprite != 0) {
           Sprite_StartAnim(rippleSprite, 1);
@@ -844,7 +843,7 @@ update_object:
     }
   }
   Field_CheckConfiguredKeys();
-  object->step++;
+  object->scriptCursor++;
   return 1;
 }
 
@@ -852,11 +851,11 @@ update_object:
 /// Returns 1. Run each frame by gObjectDispatch_KeyCheckScript, which the
 /// map loop starts on the leader in LEADER_MOVEMENT_AIRBORNE, where the pad
 /// does not move it.
-s32 Field_CheckConfiguredKeysAndCount(struct ObjectScriptContext *interpreter) {
-  struct Object *object = (struct Object *)interpreter;
+s32 Field_CheckConfiguredKeysAndCount(struct Object *interpreter) {
+  struct Object *object = interpreter;
 
   Field_CheckConfiguredKeys();
-  object->step++;
+  object->scriptCursor++;
   return 1;
 }
 
@@ -868,8 +867,8 @@ s32 Field_CheckConfiguredKeysAndCount(struct ObjectScriptContext *interpreter) {
 /// Run each frame by gObjectDispatch_KeysScript, which the map loop starts
 /// on the leader in LEADER_MOVEMENT_CLIMB. Sets the leader's speed,
 /// angle, target or velocity, and counts gFieldWork->blockedSteps.
-s32 Object_MoveByKeys(struct ObjectScriptContext *interpreter) {
-  struct Object *object = (struct Object *)interpreter;
+s32 Object_MoveByKeys(struct Object *interpreter) {
+  struct Object *object = interpreter;
 
   struct FieldPosition position;
   /* FAKEMATCH(dead): an unused local for the 68 bytes of native frame no
@@ -960,7 +959,7 @@ s32 Object_MoveByKeys(struct ObjectScriptContext *interpreter) {
   } else {
     Object_SetMoveTarget(object, position.x, position.y, position.z);
   }
-  object->step++;
+  object->scriptCursor++;
   return 1;
 }
 

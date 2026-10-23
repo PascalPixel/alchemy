@@ -89,7 +89,6 @@
 #include "animspr.h"
 #include "field_effect.h"
 #include "map_tables.h"
-#include "facing_object.h"
 #include "text/msg_ids.h"
 #include "io_reg.h"
 #include "save.h"

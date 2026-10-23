@@ -173,7 +173,7 @@ UNUSED void BattleAnim_RunOrbitingSkulls(void) {
   }
   for (frame = 0; frame != work->effect->targetCount * 16 + 64; frame++) {
     ANIM_FOR_EACH_TARGET(member, work->effect) {
-      struct MotionObject *object;
+      struct Object *object;
       u32 memberFrame;
 
       object = GetBattleObjectSlotFar(work->effect->targets[member])->object;
@@ -288,7 +288,7 @@ UNUSED void BattleAnim_RunTargetBursts(struct BattleAnimArgs *effect) {
 
     camera = gCameraWork;
     ANIM_FOR_EACH_TARGET(member, work->effect) {
-      struct MotionObject *effect;
+      struct Object *effect;
 
       effect = GetBattleObjectSlotFar(work->effect->targets[member])->object;
       ANIM_VIEW_FROM_CAMERA(camera);

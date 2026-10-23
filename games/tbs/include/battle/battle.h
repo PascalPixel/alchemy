@@ -14,9 +14,8 @@ struct BattleAction;
 struct BattleAnimArgs;
 struct BattleTurn;
 struct Unit;
-struct DispatchObject;
-struct FieldEffectSprite;
 struct Object;
+struct FieldEffectSprite;
 struct MapSecNameRule;
 
 /// Battlefield (x, y) pixel pairs by place: 0 to 3 the party's column at x 80,
@@ -33,7 +32,6 @@ struct BattleObject;
 
 struct SpriteAnim;
 struct Sprite;
-struct ArcEffectObject;
 struct ArcObject;
 struct ArcParticle;
 struct AbilityDefinition;
@@ -47,7 +45,6 @@ struct BattleTurn;
 struct BattleViewWork;
 struct BattleSummonState;
 struct Unit;
-struct DescendingOrbitObject;
 struct EffectDescriptor;
 struct FieldEffectSprite;
 struct EnemyDefinition;
@@ -56,15 +53,11 @@ struct BattleAnimObject;
 struct SpriteScale;
 struct ItemBreakFragmentSource;
 struct LinkedCaptureObject;
-struct MotionObject;
-struct Object;
 struct OrbitEffect;
 struct PolarOffsetOutput;
 struct RockWallHeights;
 struct MapMusicRule;
-struct ScriptObjectEntry;
 struct BattleSource;
-struct SparkObject;
 struct TransitionActorList;
 struct MindReadWork;
 

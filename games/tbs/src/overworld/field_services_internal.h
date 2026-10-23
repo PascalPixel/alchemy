@@ -45,7 +45,6 @@
 #include "ram_buffer.h"
 #include "heap_slots.h"
 #include "object.h"
-#include "script_object_runtime.h"
 #include "animspr.h"
 #include "object_event.h"
 #include "object_dispatch.h"
@@ -75,7 +74,6 @@
 #include "window.h"
 #include "battle_party.h"
 #include "edition.h"
-#include "facing_object.h"
 #include "script_motion.h"
 #include "tbs_edition.h"
 #include "metadata_lookup.h"
@@ -102,18 +100,6 @@
 /// battle's event is 300 plus the Djinni's number (element * 20 + index),
 /// with DJINN_NO_HOP (0x800) beside it.
 #define DJINNI_EVENT_0 300
-
-/// A ObjectEvent seen with its position as one vector, to pass it whole. The
-/// gaps are ObjectEvent fields this view does not use.
-struct ObjectVectorView {
-  u8 pad0[6];
-  u16 angle;                    ///< ObjectEvent.facing, 1/65536 turns
-  struct EffectVector position; ///< 16.16 fixed-point pixels
-  u8 pad1[14];
-  u8 kind; ///< ObjectEvent.layer; not read through this view
-  u8 pad2[0x2d];
-  struct Sprite *sprite; ///< ObjectEvent.sprite
-};
 
 /// Per-frame update of an afterimage: closes half the distance to the object
 /// it is linked to, on all three axes.
@@ -143,84 +129,6 @@ static __inline__ void FieldEffect_UpdateEffectSlots(void) {
   } while (remainingSlots >= 0);
 }
 
-/// A ObjectEvent seen with the halfword at 0x64 unsigned and the one at 0x66
-/// signed, as the bytes read them (ObjectEvent's own types change the code).
-/// A Venus Djinni's falling motes (FieldEffect_UpdateDescendingOrbitObject).
-struct DescendingOrbitObject {
-  /// ObjectEvent's script, its cursor and facing; not named through this
-  /// view.
-  ///@{
-  const s32 *script;
-  u16 scriptCursor;
-  u16 facing;
-  ///@}
-  s32 x; ///< 16.16 fixed-point pixels
-  s32 y; ///< 16.16 fixed-point pixels
-  s32 z; ///< 16.16 fixed-point pixels
-  /// ObjectEvent's groundHeight to riseEnabled; not named through this view.
-  u8 terrainToRise[80];
-  u16 timer; ///< ObjectEvent.timer: frames left of the spiral, 100 at the start
-  s16 angle; ///< ObjectEvent.work: its start on the circle, 1/65536 turns
-};
-
-/// A ObjectEvent as the Venus Djinni's joining uses the Djinni, the leader and
-/// its motes and sparks; the notes give the ObjectEvent fields at the same
-/// offsets, some under other names.
-struct CaptureObject {
-  /// ObjectEvent's script, its cursor and facing; not named through this
-  /// view.
-  ///@{
-  const s32 *script;
-  u16 scriptCursor;
-  u16 facing;
-  ///@}
-  s32 x;     ///< 16.16 fixed-point pixels
-  s32 y;     ///< 16.16 fixed-point pixels
-  s32 z;     ///< 16.16 fixed-point pixels
-  s32 baseY; ///< groundHeight: a spark's ground, set to where it starts
-  s32 scaleX;
-  s32 scaleY;
-  /// ObjectEvent's radius, layer, priorityFlags and velocityX; not named
-  /// through this view.
-  ///@{
-  u16 radius;
-  u8 layer;
-  u8 priorityFlags;
-  s32 velocityX;
-  ///@}
-  /// velocityY, despite the name: a spark is thrown up at 5 pixels a frame.
-  s32 gravity;
-  s32 velocityZ; ///< ObjectEvent's; not named through this view
-  s32 speed;     ///< speed limit, 16.16 fixed-point pixels per frame
-  /// ObjectEvent's acceleration to spriteStorageKind; not named through this
-  /// view.
-  u8 accelerationToSprite[33];
-  u8 mode; ///< motionFlags: 0 for the motes, 2 (falls) for the sparks
-  /// ObjectEvent's arrivalAxis to steeringFlags; not named through this view.
-  ///@{
-  u8 arrivalAxis;
-  u8 conditionResult;
-  u8 snapToTarget;
-  u8 collisionFlags;
-  u8 steeringFlags;
-  ///@}
-  u8 visible;           ///< paused, despite the name: 0 lets the Djinni move
-  u8 retainSpriteCache; ///< ObjectEvent's; not named through this view
-  u8 repeatCount;       ///< ObjectEvent's; not named through this view
-  u16 lifetime;         ///< wait: frames its script waits before freeing it
-  /// ObjectEvent's refused to riseEnabled; not named through this view.
-  ///@{
-  u8 refused;
-  u8 frozen;
-  u8 riseCounter;
-  u8 riseEnabled;
-  ///@}
-  u16 timer; ///< as DescendingOrbitObject.timer
-  u16 angle; ///< work: as DescendingOrbitObject.angle
-  struct ObjectEvent *linkedObject;
-  void (*callback)(union FieldObject *fieldObject); ///< update: run each frame
-};
-
 /// Defines a per-frame update that spins an object 1/8 turn a frame while its
 /// scale changes by step, releasing the object once the scale falls below
 /// 0x3000 (3/16 of full size). step is negative: from full size the object
@@ -230,12 +138,10 @@ struct CaptureObject {
     void *obj = fieldObject;                                                   \
     s32 scale;                                                                 \
                                                                                \
-    scale = ((struct MotionObject *)obj)->scaleX + step;                       \
-    ((struct MotionObject *)obj)->scaleY =                                     \
-        ((struct MotionObject *)obj)->scaleY + step;                           \
-    ((struct MotionObject *)obj)->angle =                                      \
-        ((struct MotionObject *)obj)->angle + 0x2000;                          \
-    ((struct MotionObject *)obj)->scaleX = scale;                              \
+    scale = ((struct Object *)obj)->scaleX + step;                             \
+    ((struct Object *)obj)->scaleY = ((struct Object *)obj)->scaleY + step;    \
+    ((struct Object *)obj)->facing = ((struct Object *)obj)->facing + 0x2000;  \
+    ((struct Object *)obj)->scaleX = scale;                                    \
     if (scale < 0x3000) {                                                      \
       ObjectDispatch_ReleaseFar(obj);                                          \
     }                                                                          \
@@ -254,31 +160,19 @@ struct WaveEffectSprite {
   u8 palette; ///< flags, despite the name: 0 drops shadow and outline
 };
 
-/// A ObjectEvent as the particles Move's hand and Carry shed use it; the notes
-/// give the ObjectEvent fields at the same offsets.
-struct ItemBreakFragmentObject {
-  u8 reserved00[72];
-  s32 gravity; ///< 16.16 fixed-point pixels per frame, each frame
-  u8 reserved4c[9];
-  u8 motionFlags;
-  u8 reserved56[8];
-  u16 lifetime; ///< wait: frames its script waits before freeing it
-};
-
 /// Move's hand and Carry shed the same short-lived falling particle: it falls
 /// under a gravity of 0.1 pixel a frame, each frame, and is freed after 12
 /// frames.
-static inline void FieldEffect_InitializeFallingFragment(
-    struct ItemBreakFragmentObject *fragment) {
+static inline void
+FieldEffect_InitializeFallingFragment(struct Object *fragment) {
   // Spawn and choose its position at the call site: combining the spawn here
   // moves the kind load after the coordinate loads in the native English build.
   if (fragment != NULL) {
     fragment->motionFlags = OBJ_EVENT_FALLS;
     fragment->gravity = 0x1999;
     ObjectDispatch_SelectAnimationFar(fragment, 0);
-    fragment->lifetime = 12;
-    ObjectDispatch_InitializeFar((struct DispatchObject *)fragment,
-                                 gFieldEffect_CommonParticleScript);
+    fragment->wait = 12;
+    ObjectDispatch_InitializeFar(fragment, gFieldEffect_CommonParticleScript);
   }
 }
 
@@ -292,10 +186,10 @@ static inline void FieldEffect_InitializeFallingFragment(
 #define DEFINE_ITEM_BREAK_EFFECT(name, spawn)                                  \
   void name(void) {                                                            \
     struct FieldEffectWork *effectWork;                                        \
-    struct MotionObject *obj;                                                  \
-    struct MotionObject *pair[2];                                              \
+    struct Object *obj;                                                        \
+    struct Object *pair[2];                                                    \
     struct ScatterPosition pos;                                                \
-    struct MotionObject **walk;                                                \
+    struct Object **walk;                                                      \
     s32 n;                                                                     \
     s32 dist;                                                                  \
                                                                                \
@@ -312,8 +206,8 @@ static inline void FieldEffect_InitializeFallingFragment(
     for (n = 0; n < 2; n++) {                                                  \
       obj = *walk++;                                                           \
       if (obj != 0)                                                            \
-        ObjectMotion_SetTargetPositionFromMagnitudeAngle(                      \
-            (struct Object *)obj, 0x180000, obj->angle);                       \
+        ObjectMotion_SetTargetPositionFromMagnitudeAngle(obj, 0x180000,        \
+                                                         obj->facing);         \
     }                                                                          \
                                                                                \
     Object_WaitForMoveFar(pair[0]);                                            \
@@ -322,10 +216,10 @@ static inline void FieldEffect_InitializeFallingFragment(
       pos.x = effectWork->x;                                                   \
       pos.y = effectWork->y + 0x100000;                                        \
       pos.z = effectWork->z;                                                   \
-      obj = (struct MotionObject *)Object_Spawn(SPRITE_SPARKLE, pos.x, pos.y,  \
-                                                pos.z);                        \
+      obj =                                                                    \
+          (struct Object *)Object_Spawn(SPRITE_SPARKLE, pos.x, pos.y, pos.z);  \
       if (obj != 0) {                                                          \
-        ObjectDispatch_InitializeFar((struct DispatchObject *)obj,             \
+        ObjectDispatch_InitializeFar((struct Object *)obj,                     \
                                      gFieldEffect_FragmentScript);             \
         obj->speedLimit = Random16() + 0x20000;                                \
         obj->acceleration = 0x20000;                                           \
@@ -336,83 +230,12 @@ static inline void FieldEffect_InitializeFallingFragment(
       }                                                                        \
     }                                                                          \
                                                                                \
-    ObjectDispatch_ReleaseFar((struct DispatchObject *)pair[0]);               \
-    ObjectDispatch_ReleaseFar((struct DispatchObject *)pair[1]);               \
+    ObjectDispatch_ReleaseFar((struct Object *)pair[0]);                       \
+    ObjectDispatch_ReleaseFar((struct Object *)pair[1]);                       \
     FieldEffect_FadeFromEffectColor();                                         \
   }
 
 #define ABOVE (16 << 16) ///< 16 pixels up
-
-/// A ObjectEvent as Ply's spark emitter and its sparks use it (ply.c); the
-/// notes give the ObjectEvent fields at the same offsets.
-struct SparkObject {
-  /// ObjectEvent's script, its cursor and facing; not named through this
-  /// view.
-  ///@{
-  const s32 *script;
-  u16 scriptCursor;
-  u16 facing;
-  ///@}
-  s32 x;            ///< 16.16 fixed-point pixels
-  s32 y;            ///< 16.16 fixed-point pixels
-  s32 z;            ///< 16.16 fixed-point pixels
-  s32 groundHeight; ///< ObjectEvent's; not named through this view
-  s32 scaleX;
-  s32 scaleY;
-  /// ObjectEvent's radius to acceleration; not named through this view.
-  ///@{
-  u16 radius;
-  u8 layer;
-  u8 priorityFlags;
-  s32 velocityX;
-  s32 velocityY;
-  s32 velocityZ;
-  s32 speed;
-  s32 acceleration;
-  ///@}
-  s32 anchorX; ///< centre of the sway (ObjectEvent's targetX)
-  /// ObjectEvent's targetY, targetZ and bounce; not named through this view.
-  ///@{
-  s32 targetY;
-  s32 targetZ;
-  s32 bounce;
-  ///@}
-  s32 gravity; ///< as in ObjectEvent
-  /// ObjectEvent's riseBaseY, sprite and sprite kind; not named through this
-  /// view.
-  ///@{
-  s32 riseBaseY;
-  void *sprite;
-  u8 spriteStorageKind;
-  ///@}
-  u8 motionFlags; ///< as in ObjectEvent
-  /// ObjectEvent's arrivalAxis to repeatCount; not named through this view.
-  ///@{
-  u8 arrivalAxis;
-  u8 conditionResult;
-  u8 snapToTarget;
-  u8 collisionFlags;
-  u8 steeringFlags;
-  u8 paused;
-  u8 retainSpriteCache;
-  u8 repeatCount;
-  ///@}
-  u16 lifetime; ///< wait: frames its script waits before freeing it
-  /// ObjectEvent's refused to riseEnabled; not named through this view.
-  ///@{
-  u8 refused;
-  u8 frozen;
-  u8 riseCounter;
-  u8 riseEnabled;
-  ///@}
-  /// timer: phase of the sway, 128 frames a cycle for a spark and 64 for the
-  /// emitter, which -1 holds still.
-  s16 phase;
-  u16 work; ///< ObjectEvent's; not named through this view
-  struct ObjectEvent
-      *linkedObject; ///< ObjectEvent's; not named through this view
-  void (*update)(union FieldObject *fieldObject); ///< run each frame
-};
 
 /// The states of a particle that flies out and back: Halt's,
 /// Force's and Move's (FieldEffect_UpdateRadialCamera,

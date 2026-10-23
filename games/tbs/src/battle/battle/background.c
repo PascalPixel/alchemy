@@ -418,8 +418,8 @@ void BattleCamera_SetView(s32 x, s32 depth, s32 y, s32 zoom) {
 /// animations (beams.c).
 void BattleCamera_SetViewAtPairMidpoint(s32 firstUnitId, s32 secondUnitId,
                                         s32 zoom) {
-  struct MotionObject *firstObject = BattleObject_Get(firstUnitId)->object;
-  struct MotionObject *secondObject = BattleObject_Get(secondUnitId)->object;
+  struct Object *firstObject = BattleObject_Get(firstUnitId)->object;
+  struct Object *secondObject = BattleObject_Get(secondUnitId)->object;
   s32 firstX = firstObject->x;
   s32 secondX = secondObject->x;
   s32 firstZ = firstObject->z;
@@ -526,7 +526,7 @@ s32 Runtime_AdjustDebugValueWithButtons(s32 selectedValue) {
 /// and by auto battle (auto_battle.c).
 void BattleHighlight_SetSpriteMode(s32 actorId, s32 mode) {
   struct BattleObject *slot = BattleObject_Get(actorId);
-  struct MotionObject *object;
+  struct Object *object;
   struct Sprite *record;
   struct Sprite **records;
   s32 recordIndex;
@@ -536,15 +536,15 @@ void BattleHighlight_SetSpriteMode(s32 actorId, s32 mode) {
   object = slot->object;
   if (object == 0)
     return;
-  switch (object->spritesKind & OBJECT_SPRITES_KIND_MASK) {
-  case OBJECT_SPRITES_ONE: {
-    record = object->records;
+  switch (object->spriteStorageKind & OBJECT_SPRITE_KIND_MASK) {
+  case OBJECT_SPRITE_ONE: {
+    record = object->sprite;
     record->image.objectMode = mode;
     record->shadow.objectMode = mode;
     break;
   }
-  case OBJECT_SPRITES_GROUP: {
-    records = object->records;
+  case OBJECT_SPRITE_GROUP: {
+    records = (struct Sprite **)object->sprite;
     recordIndex = 0;
     do {
       record = *records++;
@@ -553,7 +553,7 @@ void BattleHighlight_SetSpriteMode(s32 actorId, s32 mode) {
       record->image.objectMode = mode;
       record->shadow.objectMode = mode;
       recordIndex++;
-    } while (recordIndex <= OBJECT_SPRITES_GROUP_SIZE - 1);
+    } while (recordIndex <= OBJECT_SPRITE_GROUP_SIZE - 1);
     break;
   }
   }

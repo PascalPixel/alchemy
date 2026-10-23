@@ -9,13 +9,13 @@
 /// FieldEffect_RunAvoid adds it as a task (priority 0xc80) for its last 70
 /// frames and removes it again.
 void FieldEffect_BlinkAvoidCaster(void) {
-  struct ArcEffectObject *caster;
+  struct Object *caster;
   struct Sprite *rec;
   struct SpriteAnim *entry;
   s32 phase;
 
   caster = ObjectEvent_GetByLocalId(gSaveBlock.leaderLocalId);
-  rec = caster->records;
+  rec = caster->sprite;
   entry = rec->entries[0];
   phase = gFrameCount % 5;
   if (phase == 0) {
@@ -34,12 +34,12 @@ void FieldEffect_BlinkAvoidCaster(void) {
 /// step and turns its angle. The arcs draw with the tiles FieldEffect_RunAvoid
 /// loads into scene->arcTileSlot.
 void FieldEffect_UpdatePairedArcSpawner(union FieldObject *fieldObject) {
-  struct ArcEffectObject *caster = (struct ArcEffectObject *)fieldObject;
+  struct Object *caster = (struct Object *)fieldObject;
   s16 phase;
   s32 elapsedFrames;
 
-  phase = caster->phase;
-  elapsedFrames = caster->step++;
+  phase = caster->arcPhase;
+  elapsedFrames = caster->arcFrames++;
 
   // MapId_MainMenu is the world map's map (Map_Run).
   if (gSaveBlock.layoutId == (s32)&MapId_MainMenu) {
@@ -50,7 +50,7 @@ void FieldEffect_UpdatePairedArcSpawner(union FieldObject *fieldObject) {
   }
 
   if (phase == 1)
-    caster->angle += 0xc00;
+    caster->facing += 0xc00;
 }
 
 /// Avoid (or the Sacred Feather) has worn off, and the game says so.
@@ -88,7 +88,7 @@ void FieldScript_ShowStatusMessage(void) {
 /// distance down by their speed (overworld/step.c), 2,400 pixels in all.
 void FieldEffect_RunAvoid(void) {
   struct FieldEffectWork *effectWork;
-  struct ArcEffectObject *object;
+  struct Object *object;
   struct Sprite *group;
   struct SpriteAnim *entry;
   u32 angle;
@@ -97,9 +97,9 @@ void FieldEffect_RunAvoid(void) {
 
   effectWork = gFieldEffectWork;
   object = effectWork->mainObject;
-  group = object->records;
+  group = object->sprite;
   entry = group->entries[0];
-  angle = object->angle;
+  angle = object->facing;
   slot = VramCache_FindFreeEntry();
   {
     s16 *tileSlot = &effectWork->arcTileSlot;
@@ -111,14 +111,14 @@ void FieldEffect_RunAvoid(void) {
     VramCache_Load((s16)slot, 0x100, gFieldEffect_ArcSparkTiles);
     gSaveBlock.avoidDistance = 0x09600000;
     gSaveBlock.avoidByItem = GameFlag_GetFar(FLAG_ITEM_USE);
-    Anim_ApplyChildValuesFar((struct DispatchObject *)object, zero);
-    object->callback = FieldEffect_UpdatePairedArcSpawner;
-    object->phase = zero;
-    object->step = zero;
+    Anim_ApplyChildValuesFar((struct Object *)object, zero);
+    object->update = FieldEffect_UpdatePairedArcSpawner;
+    object->arcPhase = zero;
+    object->arcFrames = zero;
   }
   Sound_PlaySongFar(SE_140);
   WaitFrames(15);
-  object->phase = 1;
+  object->arcPhase = 1;
   WaitFrames(10);
   // Flash white for 2 frames in every 5.
   for (count = 0; count < 20; count++) {
@@ -130,8 +130,8 @@ void FieldEffect_RunAvoid(void) {
     group->flags = SPRITE_FLAG_SHADOW;
     WaitFrames(3);
   }
-  object->callback = NULL;
-  object->angle = angle;
+  object->update = NULL;
+  object->facing = angle;
   Task_Add(FieldEffect_BlinkAvoidCaster, 0xc80);
   WaitFrames(15);
   Sound_PlaySongFar(SE_174);
@@ -140,13 +140,12 @@ void FieldEffect_RunAvoid(void) {
   // Back to the caster's own look: outlined while Cloak is on, else with its
   // shadow.
   if (gSaveBlock.cloaked != 0)
-    ObjectDispatch_SetSingleChildFlagsFar((struct DispatchObject *)object,
+    ObjectDispatch_SetSingleChildFlagsFar((struct Object *)object,
                                           SPRITE_FLAG_OUTLINED);
   else
-    ObjectDispatch_SetSingleChildFlagsFar((struct DispatchObject *)object,
+    ObjectDispatch_SetSingleChildFlagsFar((struct Object *)object,
                                           SPRITE_FLAG_SHADOW);
-  Anim_ApplyChildValuesFar((struct DispatchObject *)object,
-                           SPRITE_COLOR_NORMAL);
+  Anim_ApplyChildValuesFar((struct Object *)object, SPRITE_COLOR_NORMAL);
   VramCache_FreeEntry(effectWork->arcTileSlot);
   FieldMessage_ShowFar(MsgMonstersAttackLess, 1);
 }

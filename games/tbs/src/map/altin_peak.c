@@ -104,7 +104,6 @@
 
 #include "types.h"
 
-#include "facing_object.h"
 #include "script_layer.h"
 #include "map_tables.h"
 #include "djinn_ids.h"
@@ -346,7 +345,7 @@ static s32 AltinPeak_ShadowFollowBoulder(union FieldObject *fieldObject) {
 
 /// Script callback for a piece of flying rock debris: it moves by its
 /// velocity, grows by its z velocity and falls under its gravity.
-static s32 AltinPeak_FlyDebris(struct ObjectScriptContext *interpreter) {
+static s32 AltinPeak_FlyDebris(struct Object *interpreter) {
   struct ObjectEvent *objectEvent = (struct ObjectEvent *)interpreter;
   s32 rise;
   s32 growth;

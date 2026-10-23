@@ -34,7 +34,7 @@ void BattleAnim_RunFire(struct BattleAnimArgs *effect) {
   s32 bodyTop;
   struct ScreenPoint screen;
   BlitterPair draw;
-  struct MotionObject *user;
+  struct Object *user;
   s32 i;
 
   slots = &gHeapSlots[HEAP_SLOT_BATTLE_ANIM];
@@ -126,7 +126,7 @@ void BattleAnim_RunFire(struct BattleAnimArgs *effect) {
       // speed to 60/64 until 85 frames after the ember appeared. Embers are
       // dealt to the targets in turn (i % count).
       if (frame > launchFrame + 48 && ember->variant == -1) {
-        struct MotionObject *target;
+        struct Object *target;
         s32 vx;
         s32 vy;
         s32 vz;

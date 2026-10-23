@@ -454,7 +454,7 @@ void RegionMap_Show(s32 picture) {
 
   if (work->mode != OBJECT_SYSTEM_WORLD_MAP)
     return;
-  work->camera->movementState = 1;
+  work->camera->paused = 1;
   savedStatus = work->transitionFrames;
   work->transitionFrames = 6;
   FieldScript_FinishScreenTransition();
@@ -505,7 +505,7 @@ void RegionMap_Show(s32 picture) {
   FieldScript_StartScreenTransition();
   FieldScript_WaitTransitionFrames();
   work->transitionFrames = savedStatus;
-  work->camera->movementState = 0;
+  work->camera->paused = 0;
 }
 
 /// On the world map, shows only the map's object events within 320 pixels
@@ -540,9 +540,9 @@ void Field_UpdateObjectVisibilityBounds(void) {
       s32 oy = object->z;
 
       if (ox < left || ox > right || oy < top || oy > bottom) {
-        object->animationKind = OBJECT_SPRITE_NONE;
+        object->spriteStorageKind = OBJECT_SPRITE_NONE;
       } else {
-        object->animationKind = OBJECT_SPRITE_ONE;
+        object->spriteStorageKind = OBJECT_SPRITE_ONE;
       }
     }
     id++;

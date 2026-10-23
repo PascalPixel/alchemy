@@ -13,8 +13,8 @@
 /// Djinni's object event slot. Uses all 24 field effect sprites, tints the
 /// field palette green and fades it back at the end.
 void FieldEffect_RunVenusDjinnCapture(s32 djinniId) {
-  struct CaptureObject *leader;
-  struct CaptureObject *djinni;
+  struct Object *leader;
+  struct Object *djinni;
   struct FieldEffectWork *effectWork;
   struct FieldEffectSprite *effect;
   s8 *slotState;
@@ -22,9 +22,8 @@ void FieldEffect_RunVenusDjinnCapture(s32 djinniId) {
   s32 scale;
   struct EffectVector position;
 
-  leader =
-      (struct CaptureObject *)ObjectEvent_GetById(gSaveBlock.leaderLocalId);
-  djinni = (struct CaptureObject *)ObjectEvent_GetById(djinniId);
+  leader = (struct Object *)ObjectEvent_GetById(gSaveBlock.leaderLocalId);
+  djinni = (struct Object *)ObjectEvent_GetById(djinniId);
   if (djinni == NULL)
     return;
 
@@ -34,20 +33,20 @@ void FieldEffect_RunVenusDjinnCapture(s32 djinniId) {
   // mercury.c spells out for its blue.
   Shop_SaveAndTintFieldPaletteFar(0x201204);
   WaitFrames(30);
-  // Unpause the Djinni (CaptureObject.visible is ObjectEvent.paused).
-  djinni->visible = 0;
+  // Unpause the Djinni (its paused flag).
+  djinni->paused = 0;
   Sound_PlaySongFar(SE_JUMP);
   ObjectMotion_Launch(djinniId, 4, 15);
   Sound_PlaySongFar(SE_JUMP);
   ObjectMotion_Launch(djinniId, 4, 15);
   // Spin and leap, then shrink away while the screen shakes (1.3 pixels).
   WaitFrames(30);
-  djinni->callback = FieldEffect_AdvanceSpinAngle;
+  djinni->update = FieldEffect_AdvanceSpinAngle;
   Sound_PlaySongFar(SE_HIGH_JUMP);
   ObjectMotion_Launch(djinniId, 8, 22);
   Sound_PlaySongFar(SE_140);
   MapGrid_SetScreenShakeFar(0x14ccc, 0x14ccc, 0x10000);
-  djinni->callback = FieldEffect_ShrinkObjectAndDestroyFast;
+  djinni->update = FieldEffect_ShrinkObjectAndDestroyFast;
   ObjectDispatch_SelectAnimationFar(djinni, 3);
   // The leader turns to face the camera (angle 0x4000).
   WaitFrames(90);
@@ -109,18 +108,18 @@ void FieldEffect_RunVenusDjinnCapture(s32 djinniId) {
     position.x = leader->x;
     position.y = leader->y + 0x780000;
     position.z = leader->z;
-    djinni = (struct CaptureObject *)Object_Spawn(SPRITE_PARTICLE, position.x,
-                                                  position.y, position.z);
+    djinni = (struct Object *)Object_Spawn(SPRITE_PARTICLE, position.x,
+                                           position.y, position.z);
     if (djinni != NULL) {
       scale = Random16() / 3 + 0x10000;
       djinni->scaleY = scale;
       djinni->scaleX = scale;
-      djinni->timer = 100;
-      djinni->angle = (remaining << 16) / 24;
-      djinni->callback = FieldEffect_UpdateDescendingOrbitObject;
-      djinni->mode = 0;
+      djinni->orbitFrames = 100;
+      djinni->orbitAngle = (remaining << 16) / 24;
+      djinni->update = FieldEffect_UpdateDescendingOrbitObject;
+      djinni->motionFlags = 0;
       ObjectDispatch_SelectAnimationFar(djinni, 7);
-      Anim_ApplyChildValuesFar((struct DispatchObject *)djinni,
+      Anim_ApplyChildValuesFar((struct Object *)djinni,
                                SPRITE_COLOR_GREEN_TINT);
     }
   }
@@ -137,22 +136,21 @@ void FieldEffect_RunVenusDjinnCapture(s32 djinniId) {
   // ObjectEvent.velocityY), falling, and freed after 8 frames; stop at the
   // first that cannot be spawned.
   for (remaining = 0; remaining <= 7; remaining++) {
-    djinni = (struct CaptureObject *)Object_Spawn(SPRITE_PARTICLE, position.x,
-                                                  position.y, position.z);
+    djinni = (struct Object *)Object_Spawn(SPRITE_PARTICLE, position.x,
+                                           position.y, position.z);
     if (djinni == NULL)
       break;
     djinni->scaleY = 0x9999;
     djinni->scaleX = 0x9999;
-    djinni->mode = 2;
-    djinni->gravity = 0x50000;
-    djinni->baseY = djinni->y;
-    djinni->speed = Random16() + 0x16666;
+    djinni->motionFlags = 2;
+    djinni->velocityY = 0x50000;
+    djinni->groundHeight = djinni->y;
+    djinni->speedLimit = Random16() + 0x16666;
     ObjectMotion_SetTargetPositionFromMagnitudeAngle((struct Object *)djinni,
                                                      0x200000, Random16());
-    Anim_ApplyChildValuesFar((struct DispatchObject *)djinni,
-                             SPRITE_COLOR_GREEN_TINT);
-    djinni->lifetime = 8;
-    ObjectDispatch_InitializeFar((struct DispatchObject *)djinni,
+    Anim_ApplyChildValuesFar((struct Object *)djinni, SPRITE_COLOR_GREEN_TINT);
+    djinni->wait = 8;
+    ObjectDispatch_InitializeFar((struct Object *)djinni,
                                  gFieldEffect_CommonParticleScript);
   }
 

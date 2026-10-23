@@ -232,7 +232,7 @@ void BattleAnim_RunTargetMotes(struct BattleAnimArgs *effect, u32 mode) {
       *row++ = (0x40000 - ((Trig_Sin((frame << 12) + i * 0x800) * 4))) >> 10;
 
     ANIM_FOR_EACH_TARGET(member, work->effect) {
-      struct MotionObject *object =
+      struct Object *object =
           GetBattleObjectSlotFar(work->effect->targets[member])->object;
 
       // Paralyze: two glints a frame, 4 to 35 pixels from the target in a
@@ -429,7 +429,7 @@ void BattleAnim_RunSleep(struct BattleAnimArgs *effect) {
     if (frame == 80)
       ANIM_SHOW_DAMAGE(0);
     ANIM_FOR_EACH_TARGET(targetIndex, work->effect) {
-      struct MotionObject *target;
+      struct Object *target;
 
       target =
           GetBattleObjectSlotFar(work->effect->targets[targetIndex])->object;

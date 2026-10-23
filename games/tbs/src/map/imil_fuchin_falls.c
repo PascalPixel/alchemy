@@ -1568,8 +1568,7 @@ static void FuchinFallsCave_UpdateDustMotion(union FieldObject *raw) {
 
 /// Hides the dust (SPRITE_COLOR_HIDDEN) when its object script finishes
 /// looping.
-static s32
-FuchinFallsCave_SetDustPalette(struct ObjectScriptContext *interpreter) {
+static s32 FuchinFallsCave_SetDustPalette(struct Object *interpreter) {
   struct ObjectEvent *objectEvent = (struct ObjectEvent *)interpreter;
   ObjectGroup_SetChildValue(objectEvent, SPRITE_COLOR_HIDDEN);
   return 0;
@@ -1793,7 +1792,7 @@ static void Imil_TurnSkaterTowardHeldDirection(union FieldObject *fieldObject) {
     direction = -0x1000;
   objectEvent->facing = facing + direction;
   ObjectDispatch_SelectAnimation(objectEvent, 2);
-  ObjectDispatch_SetAnimationSpeed((struct DispatchObject *)objectEvent,
+  ObjectDispatch_SetAnimationSpeed((struct Object *)objectEvent,
                                    IMIL_SLIDE_ANIMATION_STEP);
 }
 
@@ -1845,7 +1844,7 @@ static void Imil_SlideObjectEventAcrossIce(void) {
     Object_SetPosition(objectEvent, x, objectEvent->y.fixed, z);
 
     ObjectDispatch_SelectAnimation(objectEvent, 2);
-    ObjectDispatch_SetAnimationSpeed((struct DispatchObject *)objectEvent,
+    ObjectDispatch_SetAnimationSpeed((struct Object *)objectEvent,
                                      IMIL_SLIDE_ANIMATION_STEP);
     Object_WaitForMove(objectEvent);
     objectEvent->update = Imil_TurnSkaterTowardHeldDirection;

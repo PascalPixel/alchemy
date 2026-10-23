@@ -31,8 +31,6 @@ enum CollapseLocalId {
   LOCALID_ALEX
 };
 
-#include "facing_object.h"
-
 #include "object_effect.h"
 
 extern s32 gEmberState[16];

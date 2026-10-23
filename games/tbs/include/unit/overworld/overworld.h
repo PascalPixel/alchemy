@@ -4,24 +4,16 @@
 #include "types.h"
 #include "field_effect_sprite.h"
 
-struct ArcEffectObject;
 struct SpeakerDefinition;
-struct DescendingOrbitObject;
-struct DispatchObject;
+struct Object;
 struct ScreenTransitionState;
 struct Effect05Object;
 struct EffectDescriptor;
 struct FieldEffectSprite;
 struct EffectVector;
-struct EffectObject;
-struct FacingObject;
 struct ObjectEvent;
-struct MotionObject;
-struct Object;
 struct OrbitEffect;
 struct ObjectEventTemplate;
-struct ObjectScriptContext;
-struct SparkObject;
 struct Window;
 union FieldObject;
 
@@ -200,7 +192,7 @@ s32 Field_FindNearbyTalkTarget(s32 id);
 s32 Field_FindNearbyPsynergyTarget(s32 id, s32 kind);
 s32 FieldEffect_PlayCueAndStartEmitterOnTarget(s32 localId, s32 target,
                                                s32 itemId);
-void Anim_ApplyChildPalette(struct MotionObject *object, s32 palette);
+void Anim_ApplyChildPalette(struct Object *object, s32 palette);
 void Field_EndBusyAndReveal(void);
 s32 Field_FindItemEvent(s32 item);
 s32 Field_UseItem(s32 packedItem, s32 slot);
@@ -224,15 +216,14 @@ void TreasureSpot_SetObjectEventPosition(s32 id, s32 x, s32 z);
 
 void TreasureSpot_MoveLeaderAway(void);
 void ItemDisplay_EmitSparkles(union FieldObject *fieldObject);
-struct EffectObject *FieldEffect_StartRandomParticleEmitter(s32 localId,
-                                                            s32 item);
+struct Object *FieldEffect_StartRandomParticleEmitter(s32 localId, s32 item);
 void Object_DestroyIfPresent(void *object);
 void ItemDisplay_RaiseAboveLeader(struct Object *object);
 void ItemDisplay_ShowPicture(void *object, s32 flags);
 void FieldEffect_StartEffectObject22(s32 item, s32 flags);
 void FieldEffect_ClearRandomParticles(void);
 void Reveal_EmitSparkles(union FieldObject *fieldObject);
-s32 Field_IsRevealActive(struct ObjectScriptContext *interpreter);
+s32 Field_IsRevealActive(struct Object *interpreter);
 void FieldEffect_SpawnNearbyMarkers(void);
 
 void FieldEffect_StartWindowHBlankDma(void);

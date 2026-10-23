@@ -68,9 +68,8 @@ void BattleAnim_RunHelmSplitter(struct BattleAnimArgs *effect) {
   // the squares fit in 32 bits, and a twentieth of it is both the
   // acceleration and the top speed.
   {
-    struct MotionObject *object =
-        GetBattleObjectSlotFar(work->effect->user)->object;
-    struct MotionObject *target =
+    struct Object *object = GetBattleObjectSlotFar(work->effect->user)->object;
+    struct Object *target =
         GetBattleObjectSlotFar(work->effect->targets[0])->object;
     s32 diffX = target->x - object->x;
     s32 startX = object->x;
@@ -90,10 +89,10 @@ void BattleAnim_RunHelmSplitter(struct BattleAnimArgs *effect) {
     object->speedLimit = distance;
     object->snapToTarget = 1;
     object->velocityY = 0x70000;
-    object->verticalMotionStrength = 0xdeb8;
-    object->verticalMotionPhase = 0;
-    object->autoFaceMotion = 1;
-    ObjectDispatch_StartIdleFar((struct DispatchObject *)object);
+    object->gravity = 0xdeb8;
+    object->bounce = 0;
+    object->steeringFlags = 1;
+    ObjectDispatch_StartIdleFar((struct Object *)object);
     Object_SetMoveTargetFar((struct Object *)object, x, 0, z);
     ObjectDispatch_SelectAnimationFar(object, POSE_LEAP);
   }

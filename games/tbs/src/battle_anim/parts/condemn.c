@@ -34,7 +34,7 @@ void BattleAnim_RunCondemn(struct BattleAnimArgs *effect) {
   u8 *sheet;
   void *cells;
   BlitterPair draw;
-  struct MotionObject *target;
+  struct Object *target;
   /* FAKEMATCH(dead): a second position nothing uses gives the frame its 76
    * bytes; as one position, 2 of 580 instructions differ in tbs-en. */
   struct ScreenPoint position[2];
@@ -229,8 +229,8 @@ void BattleAnim_RunCondemn(struct BattleAnimArgs *effect) {
       target->velocityY = 0x10000;
       target->acceleration = 0x20000;
       target->speedLimit = 0x20000;
-      target->verticalMotionStrength = 0;
-      target->autoFaceMotion = 0;
+      target->gravity = 0;
+      target->steeringFlags = 0;
       target->snapToTarget = 0;
       Object_SetMoveTargetFar((struct Object *)target, target->x << 1, 0,
                               target->z);
@@ -241,8 +241,8 @@ void BattleAnim_RunCondemn(struct BattleAnimArgs *effect) {
     // frame 88, gets the battle units' usual gravity back (0xab85, as
     // battle/motion.c sets).
     if (frame == CONDEMN_BOUNCE_FRAME) {
-      GetBattleObjectSlotFar(work->effect->targets[0])
-          ->object->verticalMotionStrength = 0xAB85;
+      GetBattleObjectSlotFar(work->effect->targets[0])->object->gravity =
+          0xAB85;
     }
     ANIM_PRESENT_FRAME(work);
   }

@@ -13,34 +13,6 @@ struct ObjectCameraTile {
   u32 behaviorAndCollision : 16;
 };
 
-/// An object (one of gObjects' 64, 0x70 bytes), as the cameras read
-/// it.
-struct ObjectCameraObject {
-  u32 active;       ///< zero for a free slot
-  u16 scriptCursor; ///< ObjectEvent's; not named here
-  u16 angle;        ///< the sprite's facing, before the camera's angle is added
-  s32 x;            ///< 16.16 fixed-point pixels, across the map
-  s32 y;      ///< 16.16 fixed-point pixels, up; the on-screen test uses z - y
-  s32 z;      ///< 16.16 fixed-point pixels, down the map
-  s32 height; ///< the ground height under the object, 16.16 pixels
-  s32 scaleX; ///< Q16
-  s32 scaleY; ///< Q16
-  u16 radius; ///< ObjectEvent's; not named here
-  /// The map layer it stands on, which the cell under it may change; the
-  /// fixed camera uses it as the draw slot, 0 to sort by distance.
-  u8 layer;
-  /// bits: 2 sorted as 320 pixels lower | 1 sorted as 320 pixels higher |
-  /// 0 priority from cell
-  u8 flags;
-  u8 motionToRise[0x2c]; ///< ObjectEvent's velocityX to riseBaseY
-  /// A sprite, or for OBJECT_SPRITE_GROUP an array of four sprite pointers.
-  void *sprite;
-  u8 kind;              ///< enum ObjectSpriteKind in its low four bits
-  u8 motionToPaused[7]; ///< ObjectEvent's motionFlags to paused
-  u8 held; ///< nonzero keeps the sprite and its VRAM off screen or suspended
-  u8 repeatToUpdate[0x13]; ///< ObjectEvent's repeatCount to its update hook
-};
-
 /// A point the fixed camera looks from or at.
 struct ObjectCameraPoint {
   s32 x; ///< 16.16 fixed-point pixels
@@ -78,7 +50,7 @@ void ObjectSystem_PlaceSprites(void) {
   s32 viewX;
   s32 viewZ;
   struct ObjectSystemWork *system;
-  struct ObjectCameraObject *object;
+  struct Object *object;
   struct Sprite *sprite;
 #ifndef UBFIX
   s32 *viewCoordinates;
@@ -118,14 +90,14 @@ void ObjectSystem_PlaceSprites(void) {
   RamCode_LoadSlot(HEAP_SLOT_FRAME_SCRATCH, Render_DecodeFrame,
                    Render_DecodeFrameCodeSize);
   system->used = 0;
-  object = (struct ObjectCameraObject *)gObjects;
+  object = gObjects;
   for (objectIndex = 0; objectIndex < OBJECT_COUNT; objectIndex++, object++) {
-    if (object->active == 0)
+    if (object->script == 0)
       continue;
     // An object at (x, z) = (0, 0) is not placed; only its sprite's VRAM is
     // given up.
     if (object->x != 0 || object->z != 0) {
-      kind = object->kind & 15;
+      kind = object->spriteStorageKind & 15;
       if (kind == OBJECT_SPRITE_NONE)
         continue;
       // This camera places single sprites only; groups are left.
@@ -133,7 +105,7 @@ void ObjectSystem_PlaceSprites(void) {
         continue;
       // While a menu has sprite projection suspended, only held objects are
       // drawn.
-      if (system->suspended != 0 && object->held == 0) {
+      if (system->suspended != 0 && object->retainSpriteCache == 0) {
         struct Sprite *frozen = object->sprite;
 
         VramCache_ReleaseVram(frozen->slot);
@@ -152,7 +124,7 @@ void ObjectSystem_PlaceSprites(void) {
         // row holds 128 of them.
         tile = &((struct ObjectCameraTile *)grid->layers[object->layer]
                      .cells)[(object->x >> 20) + ((object->z >> 20) << 7)];
-        if (object->flags & OBJ_EVENT_PRIORITY_AUTOMATIC) {
+        if (object->priorityFlags & OBJ_EVENT_PRIORITY_AUTOMATIC) {
           priority = tile->priority;
           if (priority != 0) {
             sprite->image.priority = priority;
@@ -167,7 +139,7 @@ void ObjectSystem_PlaceSprites(void) {
         drawPosition.x = dx;
         drawPosition.height = object->y;
         drawPosition.y = dz;
-        drawPosition.groundHeight = object->height;
+        drawPosition.groundHeight = object->groundHeight;
         // OBJ_EVENT_PRIORITY_UNDERFOOT and bit 2 move the point 320 pixels up
         // or down the map with its height and ground height, so the sprite and
         // shadow stay where they are on screen; only the draw slot changes,
@@ -176,33 +148,33 @@ void ObjectSystem_PlaceSprites(void) {
         // footprints take, moves the slot 160 back, and an object at most 220
         // pixels up crosses that function's 100-pixel line into its lowest
         // slot; bit 2 moves it 160 on.
-        if (object->flags & OBJ_EVENT_PRIORITY_UNDERFOOT) {
+        if (object->priorityFlags & OBJ_EVENT_PRIORITY_UNDERFOOT) {
           drawPosition.height += 0xfec00000; // -320 pixels
           drawPosition.y += 0xfec00000;
           drawPosition.groundHeight += 0xfec00000;
         }
-        if (object->flags & 4) {
+        if (object->priorityFlags & 4) {
           drawPosition.height += 0x1400000; // +320 pixels
           drawPosition.y += 0x1400000;
           drawPosition.groundHeight += 0x1400000;
         }
         Render_ApplyProjectedPlacement(sprite, &drawPosition, &scale,
-                                       object->angle);
+                                       object->facing);
         continue;
       }
       // Off screen: the sprite's VRAM goes back to the cache, and dirty makes
       // it redraw when it comes back.
-      if (object->held == 0) {
+      if (object->retainSpriteCache == 0) {
         if (!sprite->retainCacheEntry) {
           VramCache_ReleaseVram(sprite->slot);
           sprite->dirty = 1;
         }
       }
     } else {
-      kind = object->kind & 15;
+      kind = object->spriteStorageKind & 15;
       if (kind == OBJECT_SPRITE_ONE) {
         sprite = object->sprite;
-        if (object->held == 0 && !sprite->retainCacheEntry) {
+        if (object->retainSpriteCache == 0 && !sprite->retainCacheEntry) {
           VramCache_ReleaseVram(sprite->slot);
           sprite->dirty = kind;
         }
@@ -229,7 +201,7 @@ void ObjectSystem_ProjectSprites(void) {
   struct ObjectSystemWork *system;
   struct ObjectCameraPoint *eye;
   struct ObjectCameraPoint *target;
-  struct ObjectCameraObject *object;
+  struct Object *object;
   s32 angle;
   s32 spritesRemaining;
   s32 kind;
@@ -278,13 +250,13 @@ void ObjectSystem_ProjectSprites(void) {
   }
   // The objects are placed from the last down. A sprite's layer byte is its
   // draw slot here: 0 sorts it by distance (Render_PlaceProjectedSprite).
-  object = (struct ObjectCameraObject *)gObjects;
+  object = gObjects;
   object += OBJECT_COUNT - 1;
   fixedScale = 0x10000;
   for (i = OBJECT_COUNT - 1; i >= 0; i--, object--) {
-    if (object->active == 0)
+    if (object->script == 0)
       continue;
-    kind = object->kind & 15;
+    kind = object->spriteStorageKind & 15;
     switch (kind) {
     case OBJECT_SPRITE_ONE:
       objectPosition = &object->x;
@@ -296,7 +268,7 @@ void ObjectSystem_ProjectSprites(void) {
         scale[1] = fixedScale;
       }
       Render_PlaceProjectedSprite(sprite, objectPosition, scale,
-                                  object->angle + angle, object->layer);
+                                  object->facing + angle, object->layer);
       break;
     case OBJECT_SPRITE_GROUP:
       groupScale[0] = object->scaleX;
@@ -307,12 +279,12 @@ void ObjectSystem_ProjectSprites(void) {
       }
       // A group's sprite field points to its four sprite pointers; empty
       // ones are null.
-      sprites = object->sprite;
+      sprites = (void **)object->sprite;
       for (spritesRemaining = 3; spritesRemaining >= 0; spritesRemaining--) {
         sprite = *sprites++;
         if (sprite != NULL)
           Render_PlaceProjectedSprite(sprite, &object->x, groupScale,
-                                      object->angle + angle, object->layer);
+                                      object->facing + angle, object->layer);
       }
       break;
     case OBJECT_SPRITE_NONE:

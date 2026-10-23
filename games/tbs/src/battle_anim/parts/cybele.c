@@ -345,7 +345,7 @@ void BattleAnim_RunCybele(struct BattleAnimArgs *effect) {
     // frames and flashes somewhere else.
     if (phase >= 0 && phase <= 172) {
       ANIM_FOR_EACH_TARGET(i, work->effect) {
-        struct MotionObject *object =
+        struct Object *object =
             GetBattleObjectSlotFar(work->effect->targets[i])->object;
 
         SET_VECTOR(point, object->x, object->y, object->z);
@@ -410,14 +410,14 @@ void BattleAnim_RunCybele(struct BattleAnimArgs *effect) {
         if (frame > i * 8 + 160) {
           struct BattleObject *slot =
               GetBattleObjectSlotFar(work->effect->targets[i]);
-          struct MotionObject *object = slot->object;
+          struct Object *object = slot->object;
           void *record;
           s32 n;
 
           object->y += 8 << 16;
           if (object->y > 128 << 16)
             object->y = 128 << 16;
-          object->verticalMotionStrength = 0;
+          object->gravity = 0;
           for (n = 0; (record = GetMotionRecordFar(slot->object, n)) != 0; n++)
             Sprite_StartAnimFar(record, 5);
         }
@@ -427,13 +427,13 @@ void BattleAnim_RunCybele(struct BattleAnimArgs *effect) {
     // frames later.
     ANIM_FOR_EACH_TARGET(i, work->effect) {
       if (frame == i * 5 + 286) {
-        struct MotionObject *object =
+        struct Object *object =
             GetBattleObjectSlotFar(work->effect->targets[i])->object;
 
         // 0xab85 is the battle units' usual gravity, which the lift
         // cleared (battle/motion.c sets the same).
         object->y = 96 << 16;
-        object->verticalMotionStrength = 0xab85;
+        object->gravity = 0xab85;
       }
       if (frame == i * 5 + 302) {
         ObjectGroup_UpdateMembers(work->effect->targets[i], SPRITE_COLOR_WHITE,
@@ -464,7 +464,7 @@ void BattleAnim_RunCybele(struct BattleAnimArgs *effect) {
       REG_BG2X = 0;
       ANIM_START_TRANSFER(work, CANVAS_COPY_AND_FADE, 75);
       ANIM_FOR_EACH_TARGET(i, work->effect) {
-        struct MotionObject *object =
+        struct Object *object =
             GetBattleObjectSlotFar(work->effect->targets[i])->object;
 
         for (j = 0; j != 10; j++) {
@@ -490,7 +490,7 @@ void BattleAnim_RunCybele(struct BattleAnimArgs *effect) {
 
         if (frame >= start && frame < i * 4 + 314) {
           s32 cellIndex = (frame - start) / 2;
-          struct MotionObject *object =
+          struct Object *object =
               GetBattleObjectSlotFar(work->effect->targets[i])->object;
 
           SET_VECTOR(point, object->x, 0, object->z);

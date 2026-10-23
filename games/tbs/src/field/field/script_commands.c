@@ -34,11 +34,11 @@ enum {
 /// SC_WAIT(n): waits n frames; this frame counts as the first. Sets
 /// interpreter->wait to n - 1, which the update loops count down, and moves
 /// past its operand. Returns 0 to end the object's commands for this frame.
-s32 ObjectScript_Wait(struct ObjectScriptContext *interpreter) {
-  s16 commandCursor = interpreter->cursor;
+s32 ObjectScript_Wait(struct Object *interpreter) {
+  s16 commandCursor = interpreter->scriptCursor;
 
   interpreter->wait = interpreter->script[commandCursor + 1] - 1;
-  interpreter->cursor += 2;
+  interpreter->scriptCursor += 2;
   return 0;
 }
 
@@ -46,14 +46,14 @@ s32 ObjectScript_Wait(struct ObjectScriptContext *interpreter) {
 /// object has blocked it for 60 frames (refused is the blocked count, which
 /// Object_UpdateAllThumb raises). Returns 1 (run on) once it has, clearing
 /// refused when it gave up, and 0 (wait) until then.
-s32 ObjectScript_WaitForArrival(struct ObjectScriptContext *interpreter) {
+s32 ObjectScript_WaitForArrival(struct Object *interpreter) {
   if (interpreter->refused > SCRIPT_BLOCKED_MOVE_FRAMES - 1) {
     interpreter->refused = 0;
-    interpreter->cursor++;
+    interpreter->scriptCursor++;
     return 1;
   }
-  if (Object_IsTargetUnset((struct Object *)interpreter) != 0) {
-    interpreter->cursor++;
+  if (Object_IsTargetUnset(interpreter) != 0) {
+    interpreter->scriptCursor++;
     return 1;
   }
   return 0;
@@ -63,15 +63,15 @@ s32 ObjectScript_WaitForArrival(struct ObjectScriptContext *interpreter) {
 /// it again next frame; zero moves on, past the command unless fn moved the
 /// cursor itself. Map scripts and the field effect scripts of fxdata.c use
 /// it to run their own per-object steps.
-s32 ObjectScript_InvokeCallback(struct ObjectScriptContext *interpreter) {
-  s16 initialCursor = interpreter->cursor;
+s32 ObjectScript_InvokeCallback(struct Object *interpreter) {
+  s16 initialCursor = interpreter->scriptCursor;
   ScriptCommand callback =
       (ScriptCommand)interpreter->script[initialCursor + 1];
 
   if (callback(interpreter) != 0)
     return 0;
-  if (interpreter->cursor == initialCursor)
-    interpreter->cursor = interpreter->cursor + 2;
+  if (interpreter->scriptCursor == initialCursor)
+    interpreter->scriptCursor = interpreter->scriptCursor + 2;
   return 1;
 }
 
@@ -80,8 +80,7 @@ s32 ObjectScript_InvokeCallback(struct ObjectScriptContext *interpreter) {
 /// words, or 0 (the start) when key is 0 or not found, so a missing label
 /// restarts the script. Clears the wait.
 /// Called by the jumps: SC_JUMP, SC_LOOP, SC_IF and SC_IFNOT.
-s32 ObjectScript_FindLabel(struct ObjectScriptContext *interpreter,
-                           u32 labelKey) {
+s32 ObjectScript_FindLabel(struct Object *interpreter, u32 labelKey) {
   u32 *scriptWords;
   s32 wordIndex;
   s16 *waitCounter = &interpreter->wait;
@@ -109,63 +108,63 @@ s32 ObjectScript_FindLabel(struct ObjectScriptContext *interpreter,
 /// interpreter->repeatCount and clears it when the loop ends, so loops do not
 /// nest. The engine's own scripts (object_script.c) end with
 /// SC_LOOP(SC_FOREVER, SC_TOP).
-s32 ObjectScript_RepeatOrJump(struct ObjectScriptContext *interpreter) {
+s32 ObjectScript_RepeatOrJump(struct Object *interpreter) {
   const s32 *arguments;
   s32 repeatLimit;
   s32 jumpKey;
   u8 *repeatCount;
   s32 nextCount;
 
-  arguments = &interpreter->script[interpreter->cursor + 1];
+  arguments = &interpreter->script[interpreter->scriptCursor + 1];
   repeatLimit = *arguments++;
   jumpKey = *arguments;
   if (repeatLimit == SC_FOREVER) {
-    interpreter->cursor = ObjectScript_FindLabel(interpreter, jumpKey);
+    interpreter->scriptCursor = ObjectScript_FindLabel(interpreter, jumpKey);
   } else {
     repeatCount = &interpreter->repeatCount;
     nextCount = *repeatCount + 1;
     *repeatCount = nextCount;
     if ((u8)nextCount < (s16)repeatLimit) {
-      interpreter->cursor = ObjectScript_FindLabel(interpreter, jumpKey);
+      interpreter->scriptCursor = ObjectScript_FindLabel(interpreter, jumpKey);
     } else {
       *repeatCount = 0;
-      interpreter->cursor += 3;
+      interpreter->scriptCursor += 3;
     }
   }
   return 1;
 }
 
 /// SC_JUMP(to): jumps to label to.
-s32 ObjectScript_JumpToLabel(struct ObjectScriptContext *interpreter) {
-  interpreter->cursor = ObjectScript_FindLabel(
-      interpreter, interpreter->script[interpreter->cursor + 1]);
+s32 ObjectScript_JumpToLabel(struct Object *interpreter) {
+  interpreter->scriptCursor = ObjectScript_FindLabel(
+      interpreter, interpreter->script[interpreter->scriptCursor + 1]);
   return 1;
 }
 
 /// SC_IF(to): jumps to label to when the last test was true.
-s32 ObjectScript_JumpIfTrue(struct ObjectScriptContext *interpreter) {
-  s32 commandCursor = interpreter->cursor;
+s32 ObjectScript_JumpIfTrue(struct Object *interpreter) {
+  s32 commandCursor = interpreter->scriptCursor;
   const s32 *script = interpreter->script;
   u32 labelKey = script[commandCursor + 1];
 
   if (interpreter->conditionResult != 0) {
-    interpreter->cursor = ObjectScript_FindLabel(interpreter, labelKey);
+    interpreter->scriptCursor = ObjectScript_FindLabel(interpreter, labelKey);
   } else {
-    interpreter->cursor += 2;
+    interpreter->scriptCursor += 2;
   }
   return 1;
 }
 
 /// SC_IFNOT(to): jumps to label to when the last test was false.
-s32 ObjectScript_JumpIfFalse(struct ObjectScriptContext *interpreter) {
-  s32 commandCursor = interpreter->cursor;
+s32 ObjectScript_JumpIfFalse(struct Object *interpreter) {
+  s32 commandCursor = interpreter->scriptCursor;
   const s32 *script = interpreter->script;
   u32 labelKey = script[commandCursor + 1];
 
   if (interpreter->conditionResult == 0) {
-    interpreter->cursor = ObjectScript_FindLabel(interpreter, labelKey);
+    interpreter->scriptCursor = ObjectScript_FindLabel(interpreter, labelKey);
   } else {
-    interpreter->cursor += 2;
+    interpreter->scriptCursor += 2;
   }
   return 1;
 }
@@ -173,32 +172,32 @@ s32 ObjectScript_JumpIfFalse(struct ObjectScriptContext *interpreter) {
 /// SC_END: hands the object back to the idle script, gScript_MainScript,
 /// whose lone SC_END runs again each frame. Returns 0. The table's unused
 /// command numbers from 0x24 also point here.
-s32 ObjectScript_End(struct ObjectScriptContext *interpreter) {
+s32 ObjectScript_End(struct Object *interpreter) {
   s32 result;
 
   interpreter->script = gScript_MainScript;
-  interpreter->cursor = (result = 0);
+  interpreter->scriptCursor = (result = 0);
   return result;
 }
 
 /// SC_FLAG_CHECK(f): tests game flag f.
-s32 ObjectScript_TestFlag(struct ObjectScriptContext *interpreter) {
+s32 ObjectScript_TestFlag(struct Object *interpreter) {
   interpreter->conditionResult =
-      GameFlag_GetFar(interpreter->script[interpreter->cursor + 1]);
-  interpreter->cursor += 2;
+      GameFlag_GetFar(interpreter->script[interpreter->scriptCursor + 1]);
+  interpreter->scriptCursor += 2;
   return 1;
 }
 
 /// Defines a flag command: stores the flag's current value in conditionResult,
 /// then changes the flag with change.
 #define SCRIPT_DEFINE_FLAG_COMMAND(name, change)                               \
-  s32 name(struct ObjectScriptContext *interpreter) {                          \
+  s32 name(struct Object *interpreter) {                                       \
     s32 flagId;                                                                \
                                                                                \
-    flagId = interpreter->script[interpreter->cursor + 1];                     \
+    flagId = interpreter->script[interpreter->scriptCursor + 1];               \
     interpreter->conditionResult = GameFlag_GetFar(flagId);                    \
     change(flagId);                                                            \
-    interpreter->cursor += 2;                                                  \
+    interpreter->scriptCursor += 2;                                            \
     return 1;                                                                  \
   }
 
@@ -207,11 +206,11 @@ SCRIPT_DEFINE_FLAG_COMMAND(ObjectScript_SetFlagAndTest, GameFlag_SetFar)
 SCRIPT_DEFINE_FLAG_COMMAND(ObjectScript_ClearFlagAndTest, GameFlag_ClearFar)
 
 /// SC_FLAG_REV(f): tests game flag f, then flips it.
-s32 ObjectScript_ToggleFlagAndTest(struct ObjectScriptContext *interpreter) {
+s32 ObjectScript_ToggleFlagAndTest(struct Object *interpreter) {
   s32 flagId;
   s32 previousFlagValue;
 
-  flagId = interpreter->script[interpreter->cursor + 1];
+  flagId = interpreter->script[interpreter->scriptCursor + 1];
   previousFlagValue = GameFlag_GetFar(flagId);
   interpreter->conditionResult = previousFlagValue;
   // The test's low byte is 1 when the flag was set.
@@ -220,36 +219,36 @@ s32 ObjectScript_ToggleFlagAndTest(struct ObjectScriptContext *interpreter) {
   } else {
     GameFlag_SetFar(flagId);
   }
-  interpreter->cursor += 2;
+  interpreter->scriptCursor += 2;
   return 1;
 }
 
 /// SC_ANIMATION(v): switches the object's sprites to animation v.
-s32 ObjectScript_SetAnimation(struct ObjectScriptContext *interpreter) {
-  ObjectDispatch_SelectAnimation(interpreter,
-                                 interpreter->script[interpreter->cursor + 1]);
-  interpreter->cursor += 2;
+s32 ObjectScript_SetAnimation(struct Object *interpreter) {
+  ObjectDispatch_SelectAnimation(
+      interpreter, interpreter->script[interpreter->scriptCursor + 1]);
+  interpreter->scriptCursor += 2;
   return 1;
 }
 
 /// SC_FREE: releases the object through ObjectDispatch_Release, which
 /// releases its sprites and zeroes its slot. Returns 0: with its script now
 /// null, the update loop skips the rest of the object's frame.
-s32 ObjectScript_FreeObject(struct ObjectScriptContext *interpreter) {
-  ObjectDispatch_Release((struct DispatchObject *)interpreter);
+s32 ObjectScript_FreeObject(struct Object *interpreter) {
+  ObjectDispatch_Release(interpreter);
   return 0;
 }
 
 /// SC_NOP(v): does nothing with its operand.
-s32 ObjectScript_Nop(struct ObjectScriptContext *interpreter) {
-  interpreter->cursor += 2;
+s32 ObjectScript_Nop(struct Object *interpreter) {
+  interpreter->scriptCursor += 2;
   return 1;
 }
 
 /// SC_SE(n): sends sound command n (a sound effect).
-s32 ObjectScript_PlaySound(struct ObjectScriptContext *interpreter) {
-  Sound_PlaySongFar(interpreter->script[interpreter->cursor + 1]);
-  interpreter->cursor += 2;
+s32 ObjectScript_PlaySound(struct Object *interpreter) {
+  Sound_PlaySongFar(interpreter->script[interpreter->scriptCursor + 1]);
+  interpreter->scriptCursor += 2;
   return 1;
 }
 
@@ -259,7 +258,7 @@ s32 ObjectScript_PlaySound(struct ObjectScriptContext *interpreter) {
 /// player's control (player_control.c), the motion loop's solid test
 /// (object_motion.c), and the carry and Force effects through
 /// ObjectScript_CheckOverlapFar.
-s32 ObjectScript_CheckOverlap(struct ScriptObjectEntry *object, s32 *values) {
+s32 ObjectScript_CheckOverlap(struct Object *object, s32 *values) {
   s32 objectIndex;
   u8 *collisionFlags;
   struct Object *candidate = gObjects;
@@ -268,10 +267,9 @@ s32 ObjectScript_CheckOverlap(struct ScriptObjectEntry *object, s32 *values) {
   for (objectIndex = 0; objectIndex < OBJECT_COUNT;
        objectIndex++, candidate++, collisionFlags += sizeof(*candidate)) {
     if (candidate->script != NULL && (OBJ_EVENT_SOLID & *collisionFlags) &&
-        candidate != (struct Object *)object) {
-      if (Runtime_CheckRadiusOverlap(
-              &candidate->x, ((struct ObjectEvent *)candidate)->radius - 2,
-              values, ((struct ObjectEvent *)object)->radius - 2) >= 0)
+        candidate != object) {
+      if (Runtime_CheckRadiusOverlap(&candidate->x, candidate->radius - 2,
+                                     values, object->radius - 2) >= 0)
         return -1;
     }
   }
@@ -281,9 +279,8 @@ s32 ObjectScript_CheckOverlap(struct ScriptObjectEntry *object, s32 *values) {
 /// Returns the first solid object that an object at position values would
 /// overlap, as ObjectScript_CheckOverlap tests, or NULL. Called by the Move
 /// effect (move.c) through ObjectScript_FindOverlappingEntryFar.
-struct ScriptObjectEntry *
-ObjectScript_FindOverlappingEntry(struct ScriptObjectEntry *object,
-                                  s32 *values) {
+struct Object *ObjectScript_FindOverlappingEntry(struct Object *object,
+                                                 s32 *values) {
   s32 objectIndex;
   u8 *collisionFlags;
   struct Object *candidate = gObjects;
@@ -292,11 +289,10 @@ ObjectScript_FindOverlappingEntry(struct ScriptObjectEntry *object,
   for (objectIndex = 0; objectIndex < OBJECT_COUNT;
        objectIndex++, candidate++, collisionFlags += sizeof(*candidate)) {
     if (candidate->script != NULL && (OBJ_EVENT_SOLID & *collisionFlags) &&
-        candidate != (struct Object *)object) {
-      if (Runtime_CheckRadiusOverlap(
-              &candidate->x, ((struct ObjectEvent *)candidate)->radius - 2,
-              values, ((struct ObjectEvent *)object)->radius - 2) >= 0)
-        return (struct ScriptObjectEntry *)candidate;
+        candidate != object) {
+      if (Runtime_CheckRadiusOverlap(&candidate->x, candidate->radius - 2,
+                                     values, object->radius - 2) >= 0)
+        return candidate;
     }
   }
   return NULL;
@@ -304,43 +300,39 @@ ObjectScript_FindOverlappingEntry(struct ScriptObjectEntry *object,
 
 /// Reads three coordinate words and applies the selected positioning operation.
 static __inline__ s32 ObjectScript_ApplyPositionCommand(
-    struct ObjectScriptContext *interpreter,
+    struct Object *interpreter,
     void (*applyPosition)(struct Object *object, s32 x, s32 y, s32 z)) {
   s32 x;
   s32 y;
   s32 z;
   const s32 *coordinates;
 
-  coordinates = interpreter->script + interpreter->cursor;
+  coordinates = interpreter->script + interpreter->scriptCursor;
   coordinates++;
   x = *coordinates;
   coordinates++;
   y = *coordinates;
   coordinates++;
   z = *coordinates;
-  applyPosition((struct Object *)interpreter, x, y, z);
-  interpreter->cursor += 4;
+  applyPosition(interpreter, x, y, z);
+  interpreter->scriptCursor += 4;
   return 1;
 }
 
 /// SC_POSITION(x, y, z): places the object at (x, y, z) and stops it.
-s32 ObjectScript_SetPositionAndResetMotion(
-    struct ObjectScriptContext *interpreter) {
+s32 ObjectScript_SetPositionAndResetMotion(struct Object *interpreter) {
   return ObjectScript_ApplyPositionCommand(interpreter,
                                            Object_SetPositionAndResetMotion);
 }
 
 /// SC_MOVE(x, y, z): sends the object towards (x, y, z).
-s32 ObjectScript_ApplyAbsolutePosition(
-    struct ObjectScriptContext *interpreter) {
+s32 ObjectScript_ApplyAbsolutePosition(struct Object *interpreter) {
   return ObjectScript_ApplyPositionCommand(interpreter, Object_SetMoveTarget);
 }
 
 /// SC_MOVE_BY(x, y, z): sends the object towards its position plus (x, y, z).
-s32 ObjectScript_ApplyRelativePosition(
-    struct ObjectScriptContext *interpreter) {
-  struct ScriptObjectRuntime *object =
-      (struct ScriptObjectRuntime *)interpreter;
+s32 ObjectScript_ApplyRelativePosition(struct Object *interpreter) {
+  struct Object *object = interpreter;
 
   u8 *commandBytes = (u8 *)(object->script + (s16)object->scriptCursor);
   s32 *arguments = (s32 *)(commandBytes + 4);
@@ -356,27 +348,22 @@ s32 ObjectScript_ApplyRelativePosition(
 
 /// SC_FACE_LINK: stores the angle from the object to its linked object in
 /// scriptValue, measured on the ground plane (x and z).
-s32 ObjectScript_StoreAngleToLinkedObject(
-    struct ObjectScriptContext *interpreter) {
-  struct ScriptObjectRuntime *object =
-      (struct ScriptObjectRuntime *)interpreter;
+s32 ObjectScript_StoreAngleToLinkedObject(struct Object *interpreter) {
+  struct Object *object = interpreter;
 
-  struct ScriptObjectRuntime *target;
+  struct Object *target;
 
   target = object->linkedObject;
-  object->scriptValue =
-      ArcTan2((target->z - object->z), (target->x - object->x));
+  object->facing = ArcTan2((target->z - object->z), (target->x - object->x));
   object->scriptCursor++;
   return 1;
 }
 
 /// SC_MOVE_LINK: sends the object towards its linked object.
-s32 ObjectScript_ApplyLinkedObjectPosition(
-    struct ObjectScriptContext *interpreter) {
-  struct ScriptObjectRuntime *object =
-      (struct ScriptObjectRuntime *)interpreter;
+s32 ObjectScript_ApplyLinkedObjectPosition(struct Object *interpreter) {
+  struct Object *object = interpreter;
 
-  struct ScriptObjectRuntime *target;
+  struct Object *target;
 
   target = object->linkedObject;
   Object_SetMoveTarget((struct Object *)object, target->x, target->y,
@@ -387,10 +374,8 @@ s32 ObjectScript_ApplyLinkedObjectPosition(
 
 /// SC_MOVE_LOCAL(a, b): sends the object towards its position plus an offset
 /// that is never filled in; the operands are skipped unread.
-s32 ObjectScript_ApplyLocalOffsetPosition(
-    struct ObjectScriptContext *interpreter) {
-  struct ScriptObjectRuntime *object =
-      (struct ScriptObjectRuntime *)interpreter;
+s32 ObjectScript_ApplyLocalOffsetPosition(struct Object *interpreter) {
+  struct Object *object = interpreter;
 
   s32 localOffset[3];
 
@@ -413,8 +398,8 @@ s32 ObjectScript_ApplyLocalOffsetPosition(
 /// Run each frame by gObjectDispatch_CameraScript, which
 /// ObjectDispatch_StartCamera starts. Clears the camera's flags and target,
 /// moves its position, and counts its step.
-s32 FieldCamera_FollowLeaderInBounds(struct ObjectScriptContext *interpreter) {
-  struct Object *cameraObject = (struct Object *)interpreter;
+s32 FieldCamera_FollowLeaderInBounds(struct Object *interpreter) {
+  struct Object *cameraObject = interpreter;
 
   struct Object *leader;
   struct MapGridScrollWork *bounds;
@@ -438,8 +423,8 @@ s32 FieldCamera_FollowLeaderInBounds(struct ObjectScriptContext *interpreter) {
   // UB: the bounds read the leader's height before the null check below.
 #ifdef UBFIX
   if (leader == NULL) {
-    cameraObject->flags = 0;
-    cameraObject->step++;
+    cameraObject->motionFlags = 0;
+    cameraObject->scriptCursor++;
     return 1;
   }
 #endif
@@ -449,7 +434,7 @@ s32 FieldCamera_FollowLeaderInBounds(struct ObjectScriptContext *interpreter) {
   minZ = bounds->minY + leader->y + FIELD_VIEW_FOCUS_Y;
   maxX = bounds->maxX - FIELD_VIEW_FOCUS_X;
   maxZ = bounds->maxY + leader->y - (FIELD_VIEW_HEIGHT - FIELD_VIEW_FOCUS_Y);
-  cameraObject->flags = 0;
+  cameraObject->motionFlags = 0;
   if (leader != NULL && leader->script != NULL) {
     x = leader->x;
     y = leader->y;
@@ -506,7 +491,7 @@ s32 FieldCamera_FollowLeaderInBounds(struct ObjectScriptContext *interpreter) {
       cameraObject->y += dy;
     }
   }
-  cameraObject->step++;
+  cameraObject->scriptCursor++;
   return 1;
 }
 
@@ -520,8 +505,8 @@ s32 _call_via_r3(s32, s32, s32, s32);
 /// Run each frame by gObjectDispatch_ApproachLinkScript, which
 /// ObjectDispatch_StartApproachLink starts. Copies the linked object's speed
 /// limit and acceleration, and sets the move target.
-s32 Object_ApproachLinkedObject(struct ObjectScriptContext *interpreter) {
-  struct Object *object = (struct Object *)interpreter;
+s32 Object_ApproachLinkedObject(struct Object *interpreter) {
+  struct Object *object = interpreter;
 
   s32 distancePixels;
   s32 moveZ;
@@ -559,7 +544,7 @@ s32 Object_ApproachLinkedObject(struct ObjectScriptContext *interpreter) {
     Object_SetMoveTarget(object, object->x + moveX, object->y,
                          object->z + moveZ);
     ObjectDispatch_SelectAnimation(object, 2);
-    object->step = (object->step + 1);
+    object->scriptCursor = (object->scriptCursor + 1);
     return 1;
   }
   ObjectDispatch_SelectAnimation(object, 1);
@@ -572,9 +557,8 @@ s32 Object_ApproachLinkedObject(struct ObjectScriptContext *interpreter) {
 /// 45 degrees either side, and within limit pixels of home. After seven
 /// failed tries it turns around (turnedBack) and waits for the next frame.
 /// No script in games/tbs names SC_WANDER; map scripts use SC_WANDER_HOME.
-s32 Object_Wander(struct ObjectScriptContext *interpreter) {
-  struct ScriptObjectRuntime *object =
-      (struct ScriptObjectRuntime *)interpreter;
+s32 Object_Wander(struct Object *interpreter) {
+  struct Object *object = interpreter;
 
   struct FieldPosition candidatePosition;
   struct FieldPosition probePosition;
@@ -607,9 +591,9 @@ retry:
     // to range. Two quarter-turn rolls give a heading within 90 degrees
     // either side; their difference falls nearer the heading more often.
     travelDistance = minimumDistance + Iwram_MulQ16(Random16(), distanceRange);
-    heading = object->scriptValue + (Random16() >> 2) - (Random16() >> 2);
+    heading = object->facing + (Random16() >> 2) - (Random16() >> 2);
     Vector_AddPolarOffset(travelDistance, heading, &candidatePosition);
-    if (ObjectScript_CheckOverlap((struct ScriptObjectEntry *)object,
+    if (ObjectScript_CheckOverlap((struct Object *)object,
                                   (s32 *)&candidatePosition) != 0 ||
         MapGrid_CheckCollision((struct Object *)object, &candidatePosition) !=
             COLLISION_NONE)
@@ -657,8 +641,8 @@ retry:
   } else {
     // Out of tries: face the other way (half a turn) and stay on this
     // command, to try again next frame.
-    object->scriptValue += SCRIPT_HALF_TURN;
-    object->turnedBack = 1;
+    object->facing += SCRIPT_HALF_TURN;
+    object->wait = 1;
     return 0;
   }
   Object_SetMoveTarget((struct Object *)object, candidatePosition.x,
@@ -674,9 +658,8 @@ retry:
 /// Used by scripts in Vault and Vale (vault.c, vale_gate.c). Sets bit 1 of
 /// flags59 while it roams and clears it on the way home, sets the move
 /// target, and always moves on to the next command.
-s32 ObjectScript_WanderNearHome(struct ObjectScriptContext *interpreter) {
-  struct ScriptObjectRuntime *object =
-      (struct ScriptObjectRuntime *)interpreter;
+s32 ObjectScript_WanderNearHome(struct Object *interpreter) {
+  struct Object *object = interpreter;
 
   struct FieldPosition candidatePosition;
   struct FieldPosition probePosition;
@@ -695,7 +678,7 @@ s32 ObjectScript_WanderNearHome(struct ObjectScriptContext *interpreter) {
   minimumDistance = *operands++;
   distanceRange = *operands++;
   homeRadiusSquared = *operands / 0x10000;
-  angle = object->scriptValue;
+  angle = object->facing;
   homeRadiusSquared *= homeRadiusSquared;
   attempts = 0;
   dx = object->x / 0x10000 - object->homeX;
@@ -713,7 +696,7 @@ s32 ObjectScript_WanderNearHome(struct ObjectScriptContext *interpreter) {
       // at 90 degrees either side.
       Vector_AddPolarOffset(SCRIPT_WANDER_PROBE_DISTANCE, heading,
                             &candidatePosition);
-      if (ObjectScript_CheckOverlap((struct ScriptObjectEntry *)object,
+      if (ObjectScript_CheckOverlap((struct Object *)object,
                                     (s32 *)&candidatePosition) != 0)
         goto roam;
       SET_POSITION(&candidatePosition, object->x, object->y, object->z);
@@ -759,7 +742,7 @@ s32 ObjectScript_WanderNearHome(struct ObjectScriptContext *interpreter) {
       dz = candidatePosition.z / 0x10000 - object->homeZ;
       if (dx * dx + dz * dz > homeRadiusSquared)
         goto roam;
-      object->flags59 |= 2;
+      object->collisionFlags |= 2;
       Object_SetMoveTarget((struct Object *)object, candidatePosition.x,
                            candidatePosition.y, candidatePosition.z);
       goto done;
@@ -779,7 +762,7 @@ back:
     SET_POSITION(&candidatePosition, object->x, object->y, object->z);
     Vector_AddPolarOffset(SCRIPT_WANDER_PROBE_DISTANCE, heading,
                           &candidatePosition);
-    if (ObjectScript_CheckOverlap((struct ScriptObjectEntry *)object,
+    if (ObjectScript_CheckOverlap((struct Object *)object,
                                   (s32 *)&candidatePosition) != 0)
       goto back;
     SET_POSITION(&candidatePosition, object->x, object->y, object->z);
@@ -787,7 +770,7 @@ back:
     if (MapGrid_CheckCollision((struct Object *)object, &candidatePosition) !=
         COLLISION_NONE)
       goto back;
-    object->flags59 &= ~2;
+    object->collisionFlags &= ~2;
     Object_SetMoveTarget((struct Object *)object, candidatePosition.x,
                          candidatePosition.y, candidatePosition.z);
   }
@@ -957,21 +940,21 @@ ObjectScript_ApplyOperandCommand(struct ScriptOperands *operands,
 }
 
 /// SC_SET(w, v): sets work value w to v.
-s32 ObjectScript_ApplyOperandSet(struct ObjectScriptContext *interpreter) {
+s32 ObjectScript_ApplyOperandSet(struct Object *interpreter) {
   struct ScriptOperands *operands = (struct ScriptOperands *)interpreter;
 
   return ObjectScript_ApplyOperandCommand(operands, SCRIPT_OPERAND_SET);
 }
 
 /// SC_ADD(w, v): adds v to work value w.
-s32 ObjectScript_ApplyOperandAdd(struct ObjectScriptContext *interpreter) {
+s32 ObjectScript_ApplyOperandAdd(struct Object *interpreter) {
   struct ScriptOperands *operands = (struct ScriptOperands *)interpreter;
 
   return ObjectScript_ApplyOperandCommand(operands, SCRIPT_OPERAND_ADD);
 }
 
 /// SC_CMP(w, v): tests whether work value w equals v.
-s32 ObjectScript_ApplyOperandCompare(struct ObjectScriptContext *interpreter) {
+s32 ObjectScript_ApplyOperandCompare(struct Object *interpreter) {
   struct ScriptOperands *operands = (struct ScriptOperands *)interpreter;
 
   return ObjectScript_ApplyOperandCommand(operands, SCRIPT_OPERAND_COMPARE);

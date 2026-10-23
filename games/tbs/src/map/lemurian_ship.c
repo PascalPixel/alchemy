@@ -288,7 +288,7 @@ static void Ship_UpdateSwell(void) {
 /// the ship.
 /// Called by gLeaderBoardsShip as he steps on deck; the other members'
 /// boarding scripts call their own copies below.
-static s32 Leader_StepOnDeck(struct ObjectScriptContext *interpreter) {
+static s32 Leader_StepOnDeck(struct Object *interpreter) {
   s32 *deckY;
   struct ObjectEvent *objectEvent;
 
@@ -299,7 +299,7 @@ static s32 Leader_StepOnDeck(struct ObjectScriptContext *interpreter) {
 }
 
 /// Remembers Garet's boarding height for the swell callback.
-static s32 Garet_StepOnDeck(struct ObjectScriptContext *interpreter) {
+static s32 Garet_StepOnDeck(struct Object *interpreter) {
   s32 *deckY;
   struct ObjectEvent *objectEvent;
 
@@ -310,7 +310,7 @@ static s32 Garet_StepOnDeck(struct ObjectScriptContext *interpreter) {
 }
 
 /// Remembers Mia's boarding height for the swell callback.
-static s32 Mia_StepOnDeck(struct ObjectScriptContext *interpreter) {
+static s32 Mia_StepOnDeck(struct Object *interpreter) {
   s32 *deckY;
   struct ObjectEvent *objectEvent;
 
@@ -321,7 +321,7 @@ static s32 Mia_StepOnDeck(struct ObjectScriptContext *interpreter) {
 }
 
 /// Remembers Ivan's boarding height for the swell callback.
-static s32 Ivan_StepOnDeck(struct ObjectScriptContext *interpreter) {
+static s32 Ivan_StepOnDeck(struct Object *interpreter) {
   s32 *deckY;
   struct ObjectEvent *objectEvent;
 

@@ -542,7 +542,8 @@ static void EventScript_TalkToAzart(void) {
   ObjectMotion_SetVarCbAndRefresh(LOCALID_AZART, 1);
   FieldScript_ShowMessageAndWait(LOCALID_AZART, 0);
   // Give his wander back its home, where he is placed: MOVEMENT_TYPE_WANDER
-  // reads timer and work as homeX and homeZ (ScriptObjectRuntime), in pixels.
+  // reads timer and work as homeX and homeZ (Object.homeX and homeZ), in
+  // pixels.
   {
     u16 *timer = (u16 *)&contestant->timer;
     u16 duration = 720;

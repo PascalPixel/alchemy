@@ -36,7 +36,7 @@ union FieldObject;
 /// toward a target, sprites and an update callback.
 struct ObjectEvent {
   const s32 *script;       ///< the object script it runs; null when it is free
-  u16 scriptCursor;        ///< in words (Object's step)
+  u16 scriptCursor;        ///< in words (Object.scriptCursor)
   u16 facing;              ///< 1/65536 turns
   union FieldCoordinate x; ///< 16.16 fixed-point pixels
   union FieldCoordinate y; ///< 16.16 fixed-point pixels
@@ -85,7 +85,7 @@ struct ObjectEvent {
   /// OBJ_EVENT_FOLLOWS_TERRAIN and OBJ_EVENT_FALLS are set on creation.
   u8 motionFlags;
   u8 arrivalAxis; ///< the ARRIVAL_AXIS_* watched for arrival
-  /// The object script's last flag test (ObjectScriptContext.conditionResult).
+  /// The object script's last flag test (Object.conditionResult).
   u8 conditionResult;
   u8 snapToTarget; ///< nonzero lands it exactly on its target on arrival
   /// ObjectEventCollisionFlag bits.
@@ -95,7 +95,7 @@ struct ObjectEvent {
   /// Nonzero keeps its sprite's VRAM cache entry while sprites are suspended
   /// or it is off screen (ObjectSystem_PlaceSprites).
   u8 retainSpriteCache;
-  u8 repeatCount; ///< the object script's SC_LOOP count (ObjectScriptContext)
+  u8 repeatCount; ///< the object script's SC_LOOP count (Object.repeatCount)
   u16 wait;       ///< the object script's wait, in frames (ScriptMotionObject)
   /// Frames a solid object has refused its move (ScriptMotionObject's
   /// refused); SC_SYNC stops waiting after 60.

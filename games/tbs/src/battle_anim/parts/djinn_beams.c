@@ -152,7 +152,7 @@ void BattleAnim_RunDjinnBeams(struct BattleAnimArgs *effect, s32 element) {
     // motes mirrored) as they sink a pixel a frame; they go out 8 pixels
     // above the ground. Each is placed relative to its target.
     ANIM_FOR_EACH_TARGET(k, work->effect) {
-      struct MotionObject *target =
+      struct Object *target =
           GetBattleObjectSlotFar(work->effect->targets[k])->object;
       s32 start = k * 16;
 
@@ -195,7 +195,7 @@ void BattleAnim_RunDjinnBeams(struct BattleAnimArgs *effect, s32 element) {
       s32 start = i * 16;
 
       if (frame >= start + 72) {
-        struct MotionObject *target =
+        struct Object *target =
             GetBattleObjectSlotFar(work->effect->targets[i])->object;
 
         ANIM_VIEW_FROM_CAMERA(camera);

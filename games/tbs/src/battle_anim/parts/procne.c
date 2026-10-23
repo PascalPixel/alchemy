@@ -49,7 +49,7 @@ void BattleAnim_RunProcne(struct BattleAnimArgs *effect) {
   u8 *graphics;
   struct Point2D wave;
   struct Point2D drift;
-  struct MotionObject *object;
+  struct Object *object;
   struct BattleObject *battleObject;
   struct Particle *point;
   struct Particle *spark;
@@ -113,13 +113,13 @@ void BattleAnim_RunProcne(struct BattleAnimArgs *effect) {
     object = battleObject->object;
     home[index].x = object->x;
     home[index].y = object->z;
-    baseAngle[index] = object->angle;
+    baseAngle[index] = object->facing;
     heading[index] = (u16)ArcTan2(object->x, object->z);
     radius[index] = Iwram_Sqrt((object->x >> 8) * (object->x >> 8) +
                                (object->z >> 8) * (object->z >> 8)) >>
                     7;
     spin[index] = 0;
-    object->verticalMotionStrength = 0;
+    object->gravity = 0;
   }
 
   // The dust: each mote starts 120 out, after a random delay (variant). z
@@ -194,11 +194,11 @@ void BattleAnim_RunProcne(struct BattleAnimArgs *effect) {
           heading[index] += spin[index];
           if (heading[index] > 0x10000)
             heading[index] -= 0x10000;
-          object->angle += spin[index] / 4;
+          object->facing += spin[index] / 4;
         }
 
         if (frame == 395)
-          object->verticalMotionStrength = 0xab85;
+          object->gravity = 0xab85;
 
         slot = 0;
         do {
@@ -581,13 +581,13 @@ void BattleAnim_RunProcne(struct BattleAnimArgs *effect) {
 
   // Put the targets back.
   ANIM_FOR_EACH_TARGET(index, work->effect) {
-    struct MotionObject *object;
+    struct Object *object;
 
     battleObject = GetBattleObjectSlotFar(work->effect->targets[index]);
     object = battleObject->object;
     object->x = home[index].x;
     object->z = home[index].y;
-    object->angle = baseAngle[index];
+    object->facing = baseAngle[index];
   }
 
   gProjection.centerX = 120;

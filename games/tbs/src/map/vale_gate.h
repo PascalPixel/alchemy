@@ -9,7 +9,6 @@
 
 #include "script_layer.h"
 #include "map_tables.h"
-#include "facing_object.h"
 #include "field_effect.h"
 
 #include "speaker.h"

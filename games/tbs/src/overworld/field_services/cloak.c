@@ -94,13 +94,13 @@ void FieldEffect_EndCloak(void) {
   u32 i;
 
   object = ObjectEvent_GetByLocalId(gSaveBlock.leaderLocalId);
-  animation = object->animation;
+  animation = object->sprite;
   entry = animation->entries[0];
 
   Sound_PlaySongFar(SE_CAST);
   Task_Remove(FieldEffect_CheckCloakTile);
   ObjectDispatch_SelectAnimationFar(object, 0);
-  ((struct ScriptMotionObject *)object)->hook = 0;
+  object->update = 0;
 
   for (i = 0; i < 5; ++i) {
     entry->colorMode = SPRITE_COLOR_WHITE;
@@ -146,14 +146,14 @@ void FieldEffect_ResumeCloakCheck(void) {
 void FieldEffect_StartCloak(void) {
   struct FieldWork *work = gFieldWork;
   struct Object *leader = ObjectEvent_GetByLocalId(gSaveBlock.leaderLocalId);
-  struct Sprite *animation = leader->animation;
+  struct Sprite *animation = leader->sprite;
   struct SpriteAnim *entry = animation->entries[0];
   u32 n;
   void (*check)(void);
 
   Sound_PlaySongFar(SE_130);
   ObjectDispatch_SelectAnimationFar(leader, 0);
-  ((struct ScriptMotionObject *)leader)->hook = 0;
+  leader->update = 0;
   n = 0;
   do {
     entry->colorMode = SPRITE_COLOR_WHITE;

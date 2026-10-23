@@ -24,7 +24,7 @@ struct AnimationMetadata {
   /// Pixels from the object's position up to the top of its sprite
   /// (ObjectEvent_GetScreenPosition).
   u8 boxX;
-  /// Pixels; half of it is a battle unit's MotionObject.height, and can be an
+  /// Pixels; half of it is a battle unit's Object.radius, and can be an
   /// object's radius (ObjectEvent.radius).
   u8 boxY;
   u8 frameCodec; ///< SpriteAnim.mode: 1 type-01, 3 LZ, anything else raw

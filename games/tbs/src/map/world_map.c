@@ -141,7 +141,7 @@
 #include "audio_engine_symbols.h"
 #include "item_ids.h"
 
-static s32 WorldMap_AlignToMap(struct ObjectScriptContext *interpreter);
+static s32 WorldMap_AlignToMap(struct Object *interpreter);
 static void WorldMap_BoardBunzasWagon(void);
 static void WorldMap_ShowHammetsCaravan(void);
 static void WorldMap_ShakeCameraOverCaravan(void);
@@ -537,7 +537,7 @@ static void WorldMap_CircleFlint(union FieldObject *fieldObject) {
 
 /// Flint's object script (gWorldMapFlintScript): until he is caught or his
 /// lesson has begun (FLAG_DJINN_LESSON), he circles his spot at half size.
-static s32 WorldMap_SetUpFlint(struct ObjectScriptContext *interpreter) {
+static s32 WorldMap_SetUpFlint(struct Object *interpreter) {
   struct ObjectEvent *objectEvent = (struct ObjectEvent *)interpreter;
   if (GameFlag_Get(FLAG_DJINNI(DJINNI_FLINT)) != 0) {
     return 0;
@@ -565,7 +565,7 @@ const u32 *WorldMap_GetWarps(void) { return gWorldMapWarps; }
 /// Kolima Bridge's object script (gWorldMapKolimaBridgeScript): it turns with
 /// the map and shows the drawbridge let down once FLAG_KOLIMA_BRIDGE_LOWERED is
 /// set.
-static s32 WorldMap_SetUpKolimaBridge(struct ObjectScriptContext *interpreter) {
+static s32 WorldMap_SetUpKolimaBridge(struct Object *interpreter) {
   struct ObjectEvent *objectEvent = (struct ObjectEvent *)interpreter;
   WorldMap_AlignToMap(interpreter);
   if (GameFlag_Get(FLAG_KOLIMA_BRIDGE_LOWERED) != 0) {
@@ -577,7 +577,7 @@ static s32 WorldMap_SetUpKolimaBridge(struct ObjectScriptContext *interpreter) {
 
 /// The object script of every picture on the map (gWorldMapAlignToMapScript):
 /// it turns the sprite with the map's rotation.
-static s32 WorldMap_AlignToMap(struct ObjectScriptContext *interpreter) {
+static s32 WorldMap_AlignToMap(struct Object *interpreter) {
   struct ObjectEvent *objectEvent = (struct ObjectEvent *)interpreter;
   struct WorldMapRenderWork *work = gMapGridWork[0];
   struct Sprite *sprite = objectEvent->sprite;
@@ -589,7 +589,7 @@ static s32 WorldMap_AlignToMap(struct ObjectScriptContext *interpreter) {
 
 /// Iodem's object script (gWorldMapIodemScript): he turns with the map and
 /// blocks the way, so the leader cannot walk through him.
-static s32 WorldMap_SetUpIodem(struct ObjectScriptContext *interpreter) {
+static s32 WorldMap_SetUpIodem(struct Object *interpreter) {
   struct ObjectEvent *objectEvent = (struct ObjectEvent *)interpreter;
   struct WorldMapRenderWork *work = gMapGridWork[0];
   struct Sprite *sprite = objectEvent->sprite;
@@ -604,7 +604,7 @@ static s32 WorldMap_SetUpIodem(struct ObjectScriptContext *interpreter) {
 /// (FLAG_TOLBI_SHIP_AT_ISLAND) it is put away at the map's origin and
 /// FLAG_MAP_TEMP_F1 keeps it from catching the party.
 /// Called by its object script.
-static s32 WorldMap_SetUpStorm(struct ObjectScriptContext *interpreter) {
+static s32 WorldMap_SetUpStorm(struct Object *interpreter) {
   struct ObjectEvent *objectEvent = (struct ObjectEvent *)interpreter;
   ObjectEvent_SetSpriteFlags(objectEvent, 0);
   ObjectEvent_SetColorMode(objectEvent, SPRITE_COLOR_RED_TINT);
@@ -620,8 +620,7 @@ static s32 WorldMap_SetUpStorm(struct ObjectScriptContext *interpreter) {
 /// Called each frame by the storm's object script (gWorldMapStormScript): it
 /// hides the storm on odd frames, and WorldMap_UpdateLocationContacts shows it
 /// again on the next, so it flickers.
-static s32
-WorldMap_BlinkObjectEventSprite(struct ObjectScriptContext *interpreter) {
+static s32 WorldMap_BlinkObjectEventSprite(struct Object *interpreter) {
   struct ObjectEvent *objectEvent = (struct ObjectEvent *)interpreter;
   if ((objectEvent->spriteStorageKind & 1) && (gFrameCount & 1))
     objectEvent->spriteStorageKind ^= 1;
@@ -2105,7 +2104,7 @@ static void EventScript_UseBlackOrb(void) {
   iodem = NULL;
   ObjectEvent_SetAnimation(LOCALID_PARTY_LEADER, ANIM_WALK);
   leader->paused = 0;
-  ObjectDispatch_StartIdle((struct DispatchObject *)leader);
+  ObjectDispatch_StartIdle((struct Object *)leader);
   if (leader->z.fixed > PIXELS(3432)) {
     if (leader->x.fixed > PIXELS(5998)) {
       Object_SetPosition(leader, PIXELS(5998), leader->y.fixed, PIXELS(3453));

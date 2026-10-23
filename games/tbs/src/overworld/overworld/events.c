@@ -250,11 +250,10 @@ s32 Map_TalkToObjectEvent(s32 id) {
     if (!objectEventPaused) {
       // Stop the object event; with talk facing 0, 1 or 3, also stop the leader
       // and link the two.
-      u8 *movementState = &objectEvent->movementState;
+      u8 *movementState = &objectEvent->paused;
 
       *movementState = 1;
-      ObjectDispatch_SetAnimationSpeedFar((struct DispatchObject *)objectEvent,
-                                          0);
+      ObjectDispatch_SetAnimationSpeedFar((struct Object *)objectEvent, 0);
       savedAngle = objectEvent->facing;
       talkFacing = (u8)template->talkFacing << 24;
       if (talkFacing <= (1 << 24) || talkFacing == (3 << 24)) {
@@ -282,23 +281,22 @@ s32 Map_TalkToObjectEvent(s32 id) {
     if (!objectEventPaused) {
       // An object event left idle (script command 16) goes back to what its
       // talk facing says: following the leader (3) or its old angle (1).
-      if (objectEvent->script[objectEvent->step] == 16) {
+      if (objectEvent->script[objectEvent->scriptCursor] == 16) {
         if ((s8)template->talkFacing == 3) {
           objectEvent->linkedObject =
               (struct Object *)ObjectEvent_GetById(gSaveBlock.leaderLocalId);
-          objectEvent->actionFlags |= 1;
+          objectEvent->steeringFlags |= 1;
           ObjectEvent_SetMovementType(objectEvent,
                                       (s32)gObjectMotion_LinkedActionScript);
         } else if ((s8)template->talkFacing == 1) {
           objectEvent->action = savedAngle;
           ObjectDispatch_InitializeFar(
-              (struct DispatchObject *)objectEvent,
+              (struct Object *)objectEvent,
               (const s32 *)gObjectMotion_StepAngleScript);
         }
       }
-      objectEvent->movementState = 0;
-      ObjectDispatch_SetAnimationSpeedFar((struct DispatchObject *)objectEvent,
-                                          16);
+      objectEvent->paused = 0;
+      ObjectDispatch_SetAnimationSpeedFar((struct Object *)objectEvent, 16);
     }
     result = 0;
   }

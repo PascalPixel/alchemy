@@ -24,9 +24,9 @@ void FieldEffect_RunCatchOnTarget(s32 unused) { FieldEffect_RunCatch(); }
 /// child to (-9, -9) when there is one, and releases object 215 at the end.
 void FieldEffect_RunCatch(void) {
   struct FieldEffectWork *effectWork = gFieldEffectWork;
-  struct MotionObject *objectEvent = effectWork->mainObject;
-  struct MotionObject *child = effectWork->child;
-  struct MotionObject *object;
+  struct Object *objectEvent = effectWork->mainObject;
+  struct Object *child = effectWork->child;
+  struct Object *object;
   struct FixedPointPosition spawn;
   struct FixedPointPosition origin;
   struct FixedPointPosition target;
@@ -50,16 +50,16 @@ void FieldEffect_RunCatch(void) {
   spawn.x = effectWork->x;
   spawn.y = effectWork->y + (32 << 16);
   spawn.z = effectWork->z;
-  object = (struct MotionObject *)Object_Spawn(215, spawn.x, spawn.y, spawn.z);
+  object = (struct Object *)Object_Spawn(215, spawn.x, spawn.y, spawn.z);
   if (object == 0)
     return;
   FieldEffect_FadeToEffectColor();
   Sound_PlaySongFar(SE_ITEM_BREAK);
-  object->angle = objectEvent->angle;
+  object->facing = objectEvent->facing;
   object->speedLimit = 0x14ccc;
   object->motionFlags = 0;
   ObjectDispatch_SelectAnimationFar(object, 5);
-  Anim_ApplyChildValuesFar((struct DispatchObject *)object, SPRITE_COLOR_GRB);
+  Anim_ApplyChildValuesFar((struct Object *)object, SPRITE_COLOR_GRB);
 
   // Reach out to the goal: steps 0 to 10 of an 11-step loop, a tenth of the
   // way each frame.
@@ -116,6 +116,6 @@ void FieldEffect_RunCatch(void) {
     WaitFrames(1);
     step++;
   } while (step < steps);
-  ObjectDispatch_ReleaseFar((struct DispatchObject *)object);
+  ObjectDispatch_ReleaseFar((struct Object *)object);
   FieldEffect_FadeFromEffectColor();
 }

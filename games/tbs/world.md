@@ -170,7 +170,7 @@ others; [Matching](src/MATCHING.md) gives the cases.
 
 [Field](src/field/README.md#everything-that-moves-runs-a-script) covers the
 scripts and their commands, the sprites and [the views of one
-object](src/field/README.md#one-object-many-views).
+object](src/field/README.md#one-object-a-few-views).
 
 ## Movement
 

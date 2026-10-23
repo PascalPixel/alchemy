@@ -227,7 +227,7 @@ void ReadFlash(u16 sector, u32 offset, u8 *destination, s32 size) {
     halfwordsRemaining--;
   }
   core = (FlashReadCore)((u8 *)code + 1);
-  core((u8 *)0x0e000000 + (sector << gFlash_ChipUnknown.type.sector.shift) +
+  core((u8 *)0x0e000000 + (sector << gFlash_ChipDefault.type.sector.shift) +
            offset,
        destination, size);
 }
@@ -274,6 +274,6 @@ s32 Flash_VerifySector(u16 sector, s32 source) {
   core = (FlashVerifyCore)((u8 *)code + 1);
   return (s32)core((u8 *)source,
                    (u8 *)0x0e000000 +
-                       (sector << gFlash_ChipUnknown.type.sector.shift),
-                   (u16)gFlash_ChipUnknown.type.sector.size);
+                       (sector << gFlash_ChipDefault.type.sector.shift),
+                   (u16)gFlash_ChipDefault.type.sector.size);
 }

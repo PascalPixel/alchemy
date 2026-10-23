@@ -64,7 +64,7 @@ extern u16 *gFlash_Handler4;
 /// unknown. Returns 0 when the chip's id is one of gFlash_Chips' SST, Atmel,
 /// Macronix and Panasonic records and 1 when not; either way it installs a
 /// record's routines, timings and type (gFlash), for an unknown chip
-/// gFlash_ChipUnknown's: SST's routines and timings. Called by
+/// gFlash_ChipDefault's: SST's routines and timings. Called by
 /// SaveState_InitializeWorkspace, up to eight times a frame apart, before
 /// each use of the save. It rewrites three of the cells the credits borrow;
 /// graphics/credits/credits.c says why that borrowing is harmless.
@@ -77,7 +77,7 @@ s32 IdentifyFlash(void) {
   id = ReadFlashId();
   chip = gFlash_Chips;
   missing = 1;
-  // Only the last record, gFlash_ChipUnknown, has a maker byte of 0.
+  // Only the last record, gFlash_ChipDefault, has a maker byte of 0.
   while (((u8 *)&(*chip)->type.id)[0] != 0) {
     if (id == (*chip)->type.id) {
       missing = 0;
@@ -249,7 +249,7 @@ typedef void (*FlashReadCore)(const u8 *source, u8 *destination, u32 size);
 /// Copies the RAM reader and reads a range using the standard sector geometry.
 /// Reads `size` bytes from `offset` in `sector` into `destination`, running
 /// ReadFlashCore from a copy in a 128-byte local. Sectors are addressed with
-/// gFlash_ChipUnknown's 4 KB geometry whatever the chip, which is the same:
+/// gFlash_ChipDefault's 4 KB geometry whatever the chip, which is the same:
 /// every record gFlash can point to has 4 KB sectors. Called by the save code
 /// for a sector's record and a file's summary (runtime/runtime/save.c).
 void ReadFlash(u16 sector, u32 offset, u8 *destination, s32 size) {
@@ -269,7 +269,7 @@ void ReadFlash(u16 sector, u32 offset, u8 *destination, s32 size) {
     halfwordsRemaining--;
   }
   core = (FlashReadCore)((u8 *)code + 1);
-  core((u8 *)0x0e000000 + (sector << gFlash_ChipUnknown.type.sector.shift) +
+  core((u8 *)0x0e000000 + (sector << gFlash_ChipDefault.type.sector.shift) +
            offset,
        destination, size);
 }
@@ -318,6 +318,6 @@ s32 Flash_VerifySector(u16 sector, s32 source) {
   core = (FlashVerifyCore)((u8 *)code + 1);
   return (s32)core((u8 *)source,
                    (u8 *)0x0e000000 +
-                       (sector << gFlash_ChipUnknown.type.sector.shift),
-                   (u16)gFlash_ChipUnknown.type.sector.size);
+                       (sector << gFlash_ChipDefault.type.sector.shift),
+                   (u16)gFlash_ChipDefault.type.sector.size);
 }

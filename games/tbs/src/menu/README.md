@@ -391,14 +391,18 @@ from renders of a tbs-en build in Xian (the Psynergy, Djinn, Status and
 status panel screens) and of Isaac's bag on the Item screen; their numbers
 are the ones those renders read from memory.
 
-Every view of the menu work names only what its own screen reads and writes;
-its `unk` byte runs are the bytes other screens' views use, and the screen
-never touches them, since `UiWindow_InitializeWork` clears the whole work as
-each screen opens. Three window handles have no window behind them: the
-Status screen's `unknownWindow028` (`struct CharacterMenuState`), which it
-only clears, and the Item screen's `unknownWindow38` and `unknownWindow40`
-(`struct InventoryMenuState`), which it only closes, so they stay NULL and
-closing them does nothing. The Djinn screen's `unknownWindow028`
+Every view of the menu work names what its own screen reads and writes, and
+keeps the bytes other screens' views use under those views' names with
+"not named here" (`moneyWindow`, ShopRuntime's) or as one run named for what
+it holds (`itemWindows`, `figureRow`), with the view that names its fields.
+`UiWindow_InitializeWork` clears the whole work as each screen opens. Bytes
+no view names are `unused` runs: the first eight, the 36 after the category
+icons and a few more. Three window handles have no window behind them: the
+Status screen's `unopenedWindow` (`struct CharacterMenuState`), which it
+only clears, and the Item screen's `unopenedWindow` and
+`secondUnopenedWindow` (`struct InventoryMenuState`), which it only closes, so
+they stay NULL and closing them does nothing. The Djinn screen's
+`unopenedWindow`
 (`struct DjinnMenuWork`) is never given a window either, but its preview
 redraws it as it closes (a `// BUG:` in `djinn_preview.c`). That reads the
 window's place through NULL, from the BIOS, which outside the BIOS returns the

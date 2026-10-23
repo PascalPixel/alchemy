@@ -43,47 +43,65 @@ struct DjinnMenuBackdrop {
 /// The Djinn menu's work, in the HEAP_SLOT_MENU work slot from the menu's
 /// opening to its closing.
 struct DjinnMenuWork {
-  u8 unk000[8]; ///< not named by TBS code
+  u8 unused[8]; ///< no view of the menu work names it (see menu/README.md)
   s32 owner;
-  u8 unk00c[4]; ///< not named by TBS code
+  struct UiWindow *moneyWindow; ///< ShopRuntime's; not named here
   struct UiWindow *statusWindow;
   struct RenderOutput *cursor;
-  u8 unk018[4];         ///< not named by TBS code
+  /// The second of InventoryMenuState's paneIcons; not named here.
+  struct RenderOutput *secondPaneIcon;
   s8 selectedColumn[2]; ///< each pane's member, in owners
-  u8 unk01e[6];         ///< not named by TBS code
+  s8 paneCount[2];      ///< InventoryMenuState's; not named here
+  /// InventoryMenuState's and ShopRuntime's itemWindow; not named here.
+  struct UiWindow *itemWindow;
   struct UiWindow *window;
   /// Never given a window, so NULL from UiWindow_InitializeWork on; the preview
   /// still redraws it, which reads the window's place from the BIOS. Outside
   /// the BIOS that returns the last BIOS instruction fetched, whose low half
   /// as a width is over 30, so UiWindow_DrawFrame draws nothing.
-  struct UiWindow *unknownWindow028;
-  u8 unk02c[4]; ///< not named by TBS code
+  struct UiWindow *unopenedWindow;
+  struct UiWindow *infoWindow; ///< InventoryMenuState's; not named here
   struct UiWindow *listWindow;
   struct UiWindow *secondWindow;
-  u8 unk038[0xd4]; ///< not named by TBS code
+  /// InventoryMenuState's last windows and its icons; not named here.
+  ///@{
+  u8 itemWindows[0x10];
+  struct RenderOutput *entryIcons[32];
+  struct RenderOutput *categoryIcons[8];
+  ///@}
+  u8 unusedAfterIcons[0x24]; ///< no view of the menu work names it
   struct UiWindow *helpWindow;
-  u8 unk110[0x24];    ///< not named by TBS code
+  /// InventoryMenuState's cursor grid, selectedColumn to rowCount; not named
+  /// here.
+  u8 cursorGrid[4];
+  /// InventoryMenuState's party figures; not named here.
+  struct AnimationObject *ownerObjects[8];
   s16 ownerX[8];      ///< screen pixels
   s16 ownerY[8];      ///< screen pixels
-  u8 unk154[0x20];    ///< not named by TBS code
+  s32 ownerScale[8];  ///< InventoryMenuState's; not named here
   u16 selection[2];   ///< each pane's Djinni row chosen
   u16 pairEntries[2]; ///< 255 at first
   struct RenderOutput *secondCursor;
-  u8 unk180[0x04]; ///< not named by TBS code
+  u8 unusedBeforeBackdrop[4]; ///< no view of the menu work names it
   struct DjinnMenuBackdrop *backdrop;
-  u8 unk188[0x80];               ///< not named by TBS code
+  u8 unusedAfterBackdrop[0x40];  ///< no view of the menu work names it
+  u16 entries[32];               ///< InventoryMenuState's items; not named here
   u16 owners[DJINN_LIST_OWNERS]; ///< the party in order
   u8 pairCount;
   u8 ownerCount;
   u8 shownOwner[2]; ///< the member giving and the one receiving
-  u8 unk21c[4];     ///< not named by TBS code
+  /// InventoryMenuState's selectedItemIcon; not named here.
+  struct RenderOutput *selectedIcon;
   /// bits: 1 a give or trade awaits its confirmation | 0 a second Djinni is
   /// to be chosen
   u16 pending;
-  u8 unk222[0x12]; ///< not named by TBS code
+  s16 completionFlag; ///< InventoryMenuState's; not named here
+  /// FourObjectMotionState's animations, the figures the Djinn screen
+  /// moves through that view.
+  struct AnimationObject *figures[4];
   u16 slotX[4];
   u16 slotY[4];
-  u8 unk244[0x10]; ///< not named by TBS code
+  s32 figurePhases[4]; ///< FourObjectMotionState's phases; not named here
   /// The Djinn chosen in each pane: index in their element, element, owner.
   ///@{
   u8 pairIndex[2];

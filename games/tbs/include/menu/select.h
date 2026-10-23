@@ -67,7 +67,7 @@ struct SelectionScreen {
   ///@}
   u16 baseX;  ///< screen pixels
   u16 baseY;  ///< screen pixels
-  u16 unk39a; ///< cleared with the list; not read by name in TBS
+  u16 unread; ///< cleared with the list and on each step down; nothing reads it
   u16 top;    ///< the first listed entry shown
   /// The entry under the hand, from top; bit 7 asks the next list to start
   /// again from its first entry.
@@ -79,7 +79,7 @@ struct SelectionScreen {
   /// 999 from setup on. While 0, kind 6 icons sit at the top of the screen and
   /// the window opens there; no TBS code clears it by name.
   u16 locked;
-  u8 unk3ba[42]; ///< not named by TBS code
+  u8 unused[42]; ///< no code names it
 };
 
 STATIC_ASSERT(sizeof(struct SelectionSprite) == 0x0c);

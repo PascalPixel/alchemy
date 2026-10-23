@@ -13,11 +13,14 @@ struct AnimationObject;
 /// The menu work (HEAP_SLOT_MENU) as the row of four figures reads it: each
 /// figure's object, screen position and scale.
 struct FourObjectMotionState {
-  u8 unk000[0x144]; ///< the menu work before the party figures' ownerY
+  /// InventoryMenuState's fields before ownerY; not named here.
+  u8 beforeOwnerY[0x144];
   /// Screen pixels: the party figures' ownerY, which moves only the depth
   /// slot.
   s16 verticalOrigins[4];
-  u8 unk14c[0xd8];
+  /// InventoryMenuState's fields from ownerY[4] to completionFlag; not
+  /// named here.
+  u8 beforeFigures[0xd8];
   struct AnimationObject *animations[4];
   s16 positionsX[4]; ///< screen pixels
   /// Screen pixels; negative marks a recovering Djinni, which faces 0x8000.

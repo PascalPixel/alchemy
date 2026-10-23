@@ -387,7 +387,7 @@ static s32 Clear_GetSaveRecoveryBlockMask(void) {
 /// A view of the map state that names its copy of the play time, checked
 /// against the loaded game's.
 struct SaveMenuMapLocalState {
-  u8 unk000[0x100]; ///< not read here
+  u8 mapAndInventory[0x100]; ///< gMapLocalState, then gInventorySnapshot
   /// The play time in frames, which SaveState_BuildSummaryHeader copies here
   /// when saving.
   s32 word100;
@@ -1010,7 +1010,8 @@ UNUSED static void SaveMenu_FillTileBlock(const struct UiWindow *window) {
 struct PasswordStats {
   s16 baseHp;      ///< clamped to 0 to 1999; 11 bits in the password
   s16 basePp;      ///< clamped to 0 to 1999; 11 bits
-  u8 unk14[4];     ///< BattleUnit's hpGauge and ppGauge
+  s16 hpGauge;     ///< BattleUnit's; not read here
+  s16 ppGauge;     ///< BattleUnit's; not read here
   u16 baseAttack;  ///< clamped to 999; 10 bits
   u16 baseDefense; ///< clamped to 999; 10 bits
   u16 baseAgility; ///< clamped to 999; 10 bits
@@ -1021,13 +1022,13 @@ struct PasswordStats {
 /// inventory and Djinn. A view of struct BattleUnit at its offsets;
 /// Clear_PackPasswordData's opening note says why it is kept.
 struct PasswordOwner {
-  u8 unk00[0x0f]; ///< BattleUnit's name
-  u8 level;       ///< clamped to 1 to 99; 7 bits
+  u8 name[0x0f]; ///< BattleUnit's; not read here
+  u8 level;      ///< clamped to 1 to 99; 7 bits
   struct PasswordStats stats;
-  u8 unk20[0xb8]; ///< BattleUnit's baseHpRegen to actionSlots
+  u8 regenToActions[0xb8]; ///< BattleUnit's baseHpRegen to actionSlots
   /// bits: 15..11 quantity | 10 broken | 9 equipped | 8..0 item
   u16 inventory[15];
-  u8 unkf6[2];           ///< BattleUnit's unk0f6
+  u8 padding[2];         ///< BattleUnit's padding
   u32 djinnAvailable[4]; ///< the Djinn held, a bit per Djinni, by element
 };
 

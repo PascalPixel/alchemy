@@ -18,10 +18,10 @@ struct ResourceMenuEntry {
   u32 attr01;
   u32 attr2;
   ///@}
-  s16 x;     ///< screen pixels; an icon at 0 is not drawn
-  s16 y;     ///< screen pixels
-  u16 unk10; ///< not named by TBS code
-  u16 slot;  ///< VRAM cache entry of the icon's picture
+  s16 x;      ///< screen pixels; an icon at 0 is not drawn
+  s16 y;      ///< screen pixels
+  u16 unused; ///< no code names it
+  u16 slot;   ///< VRAM cache entry of the icon's picture
 };
 
 /// The resource menu: up to six command icons in a row, the windows of their

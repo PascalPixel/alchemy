@@ -106,7 +106,7 @@ struct BattleMenuWork {
   /// command's icon, the chosen ability's icon and the member's portrait.
   struct MenuSprite icons[3];
   u8 iconShown[3]; ///< whether each of icons is drawn
-  u8 unk27;
+  u8 padding;      ///< up to the word targetViewOffset starts on
   /// Where the battle scene slides to (Camera_ConfigureView's vertical
   /// offset): -2 or 16 by the target menu's mode, 0 otherwise.
   s32 targetViewOffset;

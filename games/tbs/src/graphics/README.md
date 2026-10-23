@@ -112,6 +112,8 @@ apart into those layers:
 
 ![The title intro after the prologue, 140 frames after the screen first shows, pulled apart into its layers: `BG1` at the back with purple clouds, `BG2` with blue sky and clouds, `BG0` with the mountain, and in front the sprites, the sun on its patch of blue sky and the lens flares below it](https://alchemy.pascalpixel.com/guides/graphics/title-intro-layers-3d.gif)
 
+![The title intro's four planes. The title intro pulled apart into the four planes the console stacks to draw it, numbered from back to front: 1, BG1, the purple clouds; 2, BG2, the blue sky and clouds; 3, BG0, the mountain; 4, the sprites, the sun and its lens flares. BG1 and BG2 scroll at different speeds, so the sky seems deep.](https://alchemy.pascalpixel.com/illustrations/graphics/title-planes.svg)
+
 ## Two backdrops in one background memory
 
 The credits fade from one battle backdrop to the next, and to do that they

@@ -93,6 +93,8 @@ everything. Taken apart, a message in Vale shows the split:
 
 ![Garet's sister talking in Vale, pulled apart into its layers: the map's ground, middle and overhead layers at the back, the message window's frame on BG0, and the letters of `You guys are so lucky, Garet.`, her portrait and the actors as sprites in front](https://alchemy.pascalpixel.com/guides/window/layers-3d.gif)
 
+![A message's five planes. Garet's sister talking in Vale, pulled apart into the five planes the console stacks to draw it, numbered from back to front: 1, the map's ground layer, BG3; 2, its middle layer, BG2; 3, its overhead layer, BG1; 4, the window layer, BG0, with the message window's frame; 5, the sprites, the message's letters, her portrait and the actors. The window's letters and portrait are sprites, in front of everything.](https://alchemy.pascalpixel.com/illustrations/window/talk-planes.svg)
+
 A message window sizes itself to its text: it is measured first, then
 placed so that it fits on the screen.
 

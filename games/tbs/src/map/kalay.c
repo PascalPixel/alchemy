@@ -1319,9 +1319,9 @@ static void Kalay_PrepareTown(void) {
   } else {
     nut = (OrbitingMapObject *)ObjectEvent_GetById(LOCALID_TOWN_NUT);
     sprite = nut->sprite;
-    sprite->flags09Mode = 1;
-    sprite->flags05Bit5 = 0;
-    sprite->flags09High = 0;
+    sprite->priority = 1;
+    sprite->fullColor = 0;
+    sprite->paletteNumber = 0;
     sprite->state = found;
     nut->active = 1;
     nut->mode = found;

@@ -32,9 +32,9 @@ void Map_FloatNut(s32 id) {
 
   objectEvent = (OrbitingMapObject *)ObjectEvent_GetById(id);
   sprite = objectEvent->sprite;
-  sprite->flags09Mode = 1;
-  sprite->flags05Bit5 = 0;
-  sprite->flags09High = 0;
+  sprite->priority = 1;
+  sprite->fullColor = 0;
+  sprite->paletteNumber = 0;
 
   zero = 0;
   sprite->state = zero;
@@ -45,7 +45,7 @@ void Map_FloatNut(s32 id) {
   if (Engine_GameFlagIsSet(FLAG_KEEP_PARTY_POSITION) == 0)
     objectEvent->y += 0x200000;
 
-  objectEvent->flags23 &= 0xfe;
+  objectEvent->priorityFlags &= 0xfe;
   objectEvent->visible = 1;
 
   transfer = Engine_HeapAllocate(17, 0x608);

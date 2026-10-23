@@ -14,17 +14,17 @@ typedef struct OrbitingMapObjectSprite {
   /// bits: 7..6 shape | 5 full colour | 4 mosaic | 3..2 object mode |
   /// 1..0 affine
   ///@{
-  u8 flags05Low : 5;  ///< affine, object mode and mosaic; not named by maps
-  u8 flags05Bit5 : 1; ///< full colour; the Nut's maps clear it
-  u8 flags05High : 2; ///< shape; not named by maps
+  u8 affineModeMosaic : 5; ///< the maps leave these
+  u8 fullColor : 1;        ///< the Nut's maps clear it
+  u8 shape : 2;            ///< the maps leave it
   ///@}
   u8 padding06[3]; ///< attribute 1 and the low byte of attribute 2
   /// AnimationObject's attribute 2 high byte.
   /// bits: 7..4 palette | 3..2 priority | 1..0 tile bits 9..8
   ///@{
-  u8 flags09Low : 2;  ///< tile bits 9..8; not named by maps
-  u8 flags09Mode : 2; ///< priority; the Nut's maps set 1
-  u8 flags09High : 4; ///< palette; the Nut's maps set 0
+  u8 tileHigh : 2;      ///< tile number bits 9..8; the maps leave them
+  u8 priority : 2;      ///< the Nut's maps set 1
+  u8 paletteNumber : 4; ///< the Nut's maps set 0
   ///@}
   u8 padding0a[18];
   /// AnimationObject's slot: the VRAM cache entry the Nut's icon is loaded
@@ -44,7 +44,7 @@ typedef struct OrbitingMapObject {
   u8 padding14[15];
   /// ObjectEvent's priorityFlags; the Nut's maps clear bit 0,
   /// OBJ_EVENT_PRIORITY_AUTOMATIC.
-  u8 flags23;
+  u8 priorityFlags;
   u8 padding24[12];
   /// 1/65536 turns; advanced by 0x400 plus two random steps each frame.
   s32 orbitAngle;

@@ -366,15 +366,15 @@ static void EventScript_DousePipe(void) {
 }
 
 /// Moves the leader and a stage object together between cell centers.
-static void ColosseumAzartMatch_MoveObjectEventPairByOffset(s32 objectEventId,
-                                                            s32 dx, s32 dz) {
+static void ColosseumAzartMatch_MoveObjectEventPairByOffset(s32 localId, s32 dx,
+                                                            s32 dz) {
   struct ObjectEvent *leader;
   struct ObjectEvent *objectEvent;
   s32 x;
   s32 z;
 
-  leader = ObjectEvent_GetById(gGameState.selectedObjectEvent);
-  objectEvent = ObjectEvent_GetById(objectEventId);
+  leader = ObjectEvent_GetById(gGameState.selectedLocalId);
+  objectEvent = ObjectEvent_GetById(localId);
   Engine_ScriptStart();
   {
     x = ((leader->x.fixed + (dx << 16)) & 0xFFF00000) + PIXELS(8);
@@ -413,7 +413,7 @@ static void EventScript_RollLogNorthSouth(void) {
   s32 row;
   s32 offset;
 
-  objectEvent = ObjectEvent_GetById(gGameState.selectedObjectEvent);
+  objectEvent = ObjectEvent_GetById(gGameState.selectedLocalId);
   row = objectEvent->z.fixed >> 20;
   offset = -48;
   if (row <= 8) {
@@ -435,7 +435,7 @@ static void EventScript_RollLogEastWest(void) {
   s32 offset;
   s32 direction;
 
-  objectEvent = ObjectEvent_GetById(gGameState.selectedObjectEvent);
+  objectEvent = ObjectEvent_GetById(gGameState.selectedLocalId);
   column = objectEvent->x.fixed >> 20;
   if ((gKeysHeld & KEY_LEFT) != 0) {
     direction = -1;
@@ -492,7 +492,7 @@ static void EventScript_PushPipeworksPillar(void) {
   struct ObjectEvent *objectEvent;
   s32 none;
 
-  leaderId = gGameState.selectedObjectEvent;
+  leaderId = gGameState.selectedLocalId;
   leader = ObjectEvent_GetById(leaderId);
   objectEvent = ObjectEvent_GetById(PIPEWORKS_PIPE);
   GameFlag_Set(FLAG_PIPEWORKS_PIPE_PUSHED);
@@ -669,12 +669,12 @@ static void ColosseumAzartMatch_RestoreMatchResult(s32 result) {
 }
 
 /// Marks object events standing in the stages' finish terrain.
-static void ColosseumAzartMatch_MarkFinishTerrain(s32 objectEvent) {
+static void ColosseumAzartMatch_MarkFinishTerrain(s32 localId) {
   struct ObjectEvent *target;
   s32 column;
   s32 row;
 
-  target = ObjectEvent_GetById(objectEvent);
+  target = ObjectEvent_GetById(localId);
   if (target != 0) {
     column = target->x.fixed >> 19;
     row = target->z.fixed >> 19;
@@ -1199,8 +1199,8 @@ static inline void InitializeObjectEventZero(void) {
 }
 
 /// Sets an attendant's movement speed for the shared Colosso dialogue.
-static inline void InitializeSelectedObjectEvent(s32 objectEventId) {
-  Engine_ObjectEventSetSpeed(objectEventId, PIXELS(1), PIXELS(1) / 2);
+static inline void InitializeSelectedObjectEvent(s32 localId) {
+  Engine_ObjectEventSetSpeed(localId, PIXELS(1), PIXELS(1) / 2);
 }
 
 /// Advances to the next message in the current explanation.
@@ -1434,12 +1434,12 @@ static s32 ColosseumAzartMatch_CollectFinishItem(s32 firstItem,
   s32 flag;
   s32 x;
   s32 z;
-  u16 *itemObjectEvent;
-  s16 *pendingItemObjectEvent;
+  u16 *itemLocalId;
+  s16 *pendingItemLocalId;
 
   flag = Engine_GameFlagIsSet(FLAG_ARENA_REACHED);
 
-  objectEvent = ObjectEvent_GetById(gGameState.selectedObjectEvent);
+  objectEvent = ObjectEvent_GetById(gGameState.selectedLocalId);
 
   if (gauge->finishX < objectEvent->x.fixed) {
     x = gauge->finishX + PIXELS(12);
@@ -1449,14 +1449,14 @@ static s32 ColosseumAzartMatch_CollectFinishItem(s32 firstItem,
 
   if (flag != 0) {
     z = gauge->finishZ + PIXELS(16);
-    itemObjectEvent = &gauge->finishItemObjectEventB;
+    itemLocalId = &gauge->finishItemLocalIdB;
   } else {
     z = gauge->finishZ - PIXELS(16);
-    itemObjectEvent = &gauge->finishItemObjectEventA;
+    itemLocalId = &gauge->finishItemLocalIdA;
   }
 
-  pendingItemObjectEvent = &objectEvent->timer;
-  *pendingItemObjectEvent = *itemObjectEvent;
+  pendingItemLocalId = &objectEvent->timer;
+  *pendingItemLocalId = *itemLocalId;
   objectEvent->acceleration = PIXELS(1) / 4;
   objectEvent->speed = PIXELS(1);
 
@@ -1464,7 +1464,7 @@ static s32 ColosseumAzartMatch_CollectFinishItem(s32 firstItem,
   Engine_GameFlagSet(FLAG_ARENA_REACHED);
   Engine_ObjectSetScript(objectEvent, gColosseumAzartMatch_ApproachScript);
 
-  while (*pendingItemObjectEvent != 0) {
+  while (*pendingItemLocalId != 0) {
     Engine_TaskWait(1);
   }
 
@@ -1481,7 +1481,7 @@ static s32 ColosseumAzartMatch_CollectFinishItem(s32 firstItem,
     UiWork_PushValueSlot(secondItem, 2);
   }
 
-  UiWork_PushValueSlot(gGameState.selectedObjectEvent, 1);
+  UiWork_PushValueSlot(gGameState.selectedLocalId, 1);
   Engine_MessageShowCentered(MsgColossoIsaacGotItem, 3);
   ObjectDispatch_WaitForValue16(objectEvent);
 
@@ -1503,10 +1503,10 @@ static void ColosseumAzartMatch_PushObjectAhead(void) {
   u32 direction;
   struct FieldPosition position;
   s32 zero;
-  s32 objectEventId;
+  s32 localId;
 
-  objectEventId = gGameState.selectedObjectEvent;
-  subject = ObjectEvent_GetById(objectEventId);
+  localId = gGameState.selectedLocalId;
+  subject = ObjectEvent_GetById(localId);
 
   direction = subject->facing >> 12;
 

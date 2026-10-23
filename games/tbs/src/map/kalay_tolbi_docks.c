@@ -266,7 +266,7 @@ static void KalayTolbiDocks_PrepareKalayDocks(void);
 static void KalayTolbiDocks_PrepareTolbiDocks(void);
 static void KalayTolbiDocks_PrepareInterior(void);
 static void KalayTolbiDocks_UpdateCrateCells(void);
-static void KalayTolbiDocks_SettleCrates(s32 objectEventId);
+static void KalayTolbiDocks_SettleCrates(s32 localId);
 static void KalayTolbiDocks_GaretSeesTheKaragol(void);
 
 /// Kalay Docks: talking to Ground, a Venus Djinni, makes it join the party.
@@ -815,11 +815,11 @@ static void KalayTolbiDocks_UpdateCrateCells(void) {
 }
 
 /// Stops a stack of crates' idle motion and sets its sprite priority.
-static void KalayTolbiDocks_SettleCrates(s32 objectEventId) {
-  struct ObjectEvent *objectEvent = ObjectEvent_GetById(objectEventId);
+static void KalayTolbiDocks_SettleCrates(s32 localId) {
+  struct ObjectEvent *objectEvent = ObjectEvent_GetById(localId);
 
-  Engine_ObjectEventSetSpriteFlags(ObjectEvent_GetById(objectEventId), 0);
-  Engine_ObjectEventSetSpritePriority(objectEventId, 3);
+  Engine_ObjectEventSetSpriteFlags(ObjectEvent_GetById(localId), 0);
+  Engine_ObjectEventSetSpritePriority(localId, 3);
   objectEvent->motionFlags = 0;
   objectEvent->priorityFlags |= OBJ_EVENT_PRIORITY_UNDERFOOT;
 }

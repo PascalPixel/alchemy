@@ -152,7 +152,7 @@ static void MercuryLighthouse_SpawnSparkPair(void) {
   struct ObjectEvent *spark;
   struct AnimationObject *sprite;
 
-  point = gEventWork->objectEvents[gGameState.selectedObjectEvent];
+  point = gEventWork->objectEvents[gGameState.selectedLocalId];
   spark =
       Engine_ObjectCreate(26, point->x.fixed, point->y.fixed, point->z.fixed);
   if (spark != NULL) {
@@ -201,7 +201,7 @@ void MercuryLighthouse_ChargeLights(void) {
   state = *(struct MercuryLighthouseLights **)WORK_SLOT(
       HEAP_SLOT_MERCURY_LIGHTHOUSE_LIGHTS);
   leader = ((struct FieldWork *)WORK_SLOT(HEAP_SLOT_EVENT))
-               ->objectEvents[gGameState.selectedObjectEvent];
+               ->objectEvents[gGameState.selectedLocalId];
   if ((u32)state->levels > 2)
     return;
   Engine_ScriptStart();
@@ -299,7 +299,7 @@ void MercuryLighthouse_HopAcrossPool(void) {
   state = *(struct MercuryLighthouseLights **)WORK_SLOT(
       HEAP_SLOT_MERCURY_LIGHTHOUSE_LIGHTS);
   work = WORK_SLOT(HEAP_SLOT_EVENT);
-  objectEvent = work->objectEvents[gGameState.selectedObjectEvent];
+  objectEvent = work->objectEvents[gGameState.selectedLocalId];
   flags = &objectEvent->motionFlags;
   saved = *flags;
   keys = gKeysHeld;
@@ -407,7 +407,7 @@ void MercuryLighthouse_RippleAroundLeader(void) {
   state = *(struct MercuryLighthouseLights **)WORK_SLOT(
       HEAP_SLOT_MERCURY_LIGHTHOUSE_LIGHTS);
   point = ((struct FieldWork *)WORK_SLOT(HEAP_SLOT_EVENT))
-              ->objectEvents[gGameState.selectedObjectEvent];
+              ->objectEvents[gGameState.selectedLocalId];
   if (state->rippleTimer != 0) {
     state->rippleTimer--;
   } else {

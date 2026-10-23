@@ -158,7 +158,7 @@ static void ItemLevel_RunLevelEditor(void) {
   s32 redraw;
   s32 messageId;
 
-  unit = Unit_Get(gGameState.selectedObjectEvent);
+  unit = Unit_Get(gGameState.selectedLocalId);
   window = UiWindow_Create(0, 0, 30, 9, 2);
 
   messageId = MsgDebugRaiseEveryonesLevel;

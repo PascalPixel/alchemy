@@ -154,14 +154,14 @@ s32 FieldEffect_CopyLinkedObjectPosition(union FieldObject *fieldObject) {
 /// event's. The bubble rides the object event and frees itself after 46 frames
 /// (gFieldEffect_LinkedObjectScript: 16 frames of squash and stretch, then 30),
 /// whatever wait is.
-void FieldEffect_SpawnLinked(s32 objectEvent, s32 emote, s32 wait) {
+void FieldEffect_SpawnLinked(s32 localId, s32 emote, s32 wait) {
   struct ObjectEvent *target;
 
   if ((emote & 0xff) == EMOTE_LIGHT_BULB) {
     AudioCommand_PlayFar(SE_110);
   }
 
-  target = ObjectTable_Get(objectEvent);
+  target = ObjectTable_Get(localId);
   if (target != 0) {
     struct ObjectEvent *bubble = (struct ObjectEvent *)Object_CreateFar(
         21, target->x.fixed, target->y.fixed, target->z.fixed);
@@ -174,7 +174,7 @@ void FieldEffect_SpawnLinked(s32 objectEvent, s32 emote, s32 wait) {
       ObjectDispatch_SelectAnimationFar(bubble, emote & 15);
       bubble->motionFlags = 0;
       bubble->timer = 0;
-      bubble->work = objectEvent;
+      bubble->work = localId;
       sprite = bubble->sprite;
 #ifdef UBFIX
       bubble->update = FieldEffect_CopyLinkedObjectPosition;
@@ -221,8 +221,8 @@ void FieldEffect_SpawnLinked(s32 objectEvent, s32 emote, s32 wait) {
 /// does nothing while the object event has one, and ATTACHED_EFFECT_REMOVE
 /// releases whatever it is; a one-off is never recorded there. The leader's
 /// step runs all three for hazard ground (object/step.c).
-void FieldEffect_ConfigureLinkedObject(s32 objectEvent, s32 flags) {
-  struct ObjectEvent *object = ObjectTable_Get(objectEvent);
+void FieldEffect_ConfigureLinkedObject(s32 localId, s32 flags) {
+  struct ObjectEvent *objectEvent = ObjectTable_Get(localId);
   struct ObjectEvent *effect;
   struct AnimationObject *visual;
   s32 mode;
@@ -230,21 +230,21 @@ void FieldEffect_ConfigureLinkedObject(s32 objectEvent, s32 flags) {
   effect = 0;
   visual = 0;
 
-  if (object == 0)
+  if (objectEvent == 0)
     return;
 
   if ((flags & 3) != 0) {
-    if ((flags & 3) == ATTACHED_EFFECT_ONCE || object->linkedObject == 0) {
+    if ((flags & 3) == ATTACHED_EFFECT_ONCE || objectEvent->linkedObject == 0) {
       effect = (struct ObjectEvent *)Object_CreateFar(
-          SPRITE_ATTACHED_EFFECT, object->x.fixed, object->y.fixed,
-          object->z.fixed);
+          SPRITE_ATTACHED_EFFECT, objectEvent->x.fixed, objectEvent->y.fixed,
+          objectEvent->z.fixed);
     }
   } else {
-    effect = object->linkedObject;
+    effect = objectEvent->linkedObject;
     if (effect == 0)
       return;
     ObjectDispatch_ReleaseFar((struct DispatchObject *)effect);
-    object->linkedObject = 0;
+    objectEvent->linkedObject = 0;
     return;
   }
 
@@ -255,7 +255,7 @@ void FieldEffect_ConfigureLinkedObject(s32 objectEvent, s32 flags) {
   switch (mode) {
   case ATTACHED_EFFECT_ATTACH:
     ObjectDispatch_SelectAnimationFar(effect, 1);
-    object->linkedObject = effect;
+    objectEvent->linkedObject = effect;
     effect->timer = 1;
     break;
   case ATTACHED_EFFECT_ONCE:
@@ -266,7 +266,7 @@ void FieldEffect_ConfigureLinkedObject(s32 objectEvent, s32 flags) {
     break;
   }
 
-  effect->work = objectEvent;
+  effect->work = localId;
   effect->motionFlags = 0;
 #ifdef UBFIX
   effect->update = FieldEffect_CopyLinkedObjectPosition;
@@ -276,7 +276,7 @@ void FieldEffect_ConfigureLinkedObject(s32 objectEvent, s32 flags) {
 #endif
   visual = effect->sprite;
   visual->flags = 0;
-  effect->linkedObject = object;
+  effect->linkedObject = objectEvent;
 
   // Replace the effect's priority bits (2 and 3) with 1 or the object event's.
   if (flags & ATTACHED_EFFECT_IN_FRONT) {
@@ -289,7 +289,7 @@ void FieldEffect_ConfigureLinkedObject(s32 objectEvent, s32 flags) {
     SPRITE_ATTR2_HIGH(visual) = mask;
   } else {
     s32 priority = 12;
-    u8 src = SPRITE_ATTR2_HIGH(object->sprite);
+    u8 src = SPRITE_ATTR2_HIGH(objectEvent->sprite);
     u8 dst;
     s32 mask = 13;
 

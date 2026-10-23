@@ -96,7 +96,7 @@
 
 static void ColosseumEntrance_ApplyArrivalState(void);
 static void ColosseumEntrance_ShowMessageAndPause(s32 speaker);
-static void ColosseumEntrance_FaceDirection(s32 objectEvent, s32 facing);
+static void ColosseumEntrance_FaceDirection(s32 localId, s32 facing);
 static void ColosseumEntrance_UpdateEntranceCells(void);
 static void ColosseumEntrance_ExplainPartySupport(void);
 static void ColosseumEntrance_EscortToEastExit(void);
@@ -108,11 +108,11 @@ static void ColosseumEntrance_WalkToWestExit(void);
 static void ColosseumEntrance_CelebrateBothWins(void);
 static void ColosseumEntrance_InitializeContestants(void);
 
-static inline void ColosseumEntrance_Turn(s32 objectEvent, s32 facing) {
+static inline void ColosseumEntrance_Turn(s32 localId, s32 facing) {
   /* FAKEMATCH(wrapper): EventScript_CrowdRecognizesIsaac's one turn goes
    * through this helper; as a direct ColosseumEntrance_FaceDirection call, 7 of
    * 643 instructions of EventScript_CrowdRecognizesIsaac differ in tbs-en. */
-  ColosseumEntrance_FaceDirection(objectEvent, facing);
+  ColosseumEntrance_FaceDirection(localId, facing);
 }
 
 /// The Colosseum Entrance's people, numbered by the rows of
@@ -1544,8 +1544,8 @@ static void ColosseumEntrance_ShowMessageAndPause(s32 speaker) {
 }
 
 /// Turns an object event to the given facing over ten frames.
-static void ColosseumEntrance_FaceDirection(s32 objectEvent, s32 facing) {
-  Engine_ObjectEventFaceDirection(objectEvent, (u16)facing, 10);
+static void ColosseumEntrance_FaceDirection(s32 localId, s32 facing) {
+  Engine_ObjectEventFaceDirection(localId, (u16)facing, 10);
 }
 
 /// The Colosseum Entrance's setup: once Colosso is over, the tiles and cells by

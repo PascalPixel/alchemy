@@ -66,7 +66,7 @@ static void KolimaForest_HopEast(void) {
   target.y = ObjectEvent_GetById(LOCALID_PARTY_LEADER)->y.fixed;
   target.z = ObjectEvent_GetById(LOCALID_PARTY_LEADER)->z.fixed;
 #else
-  // gGameState.selectedObjectEvent
+  // gGameState.selectedLocalId
   s32 off = 500;
   struct ObjectEvent *p =
       ObjectEvent_GetById(*(s32 *)((u8 *)&gGameState + off));

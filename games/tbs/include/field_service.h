@@ -21,32 +21,31 @@
 
 /// Turns two object events toward each other, as a conversation between them
 /// begins.
-static inline void ObjectEvent_FaceEachOther(s32 objectEvent, s32 other,
+static inline void ObjectEvent_FaceEachOther(s32 localId, s32 other,
                                              s32 frames) {
-  Engine_ObjectEventFaceEachOther(objectEvent, other, frames);
+  Engine_ObjectEventFaceEachOther(localId, other, frames);
 }
 
 /// Makes an object event hop, height being its launch speed in pixels a frame,
 /// and lets frames pass while it comes down.
-static inline void ObjectEvent_Jump(s32 objectEvent, s32 height, s32 frames) {
-  Engine_ObjectEventJump(objectEvent, height, frames);
+static inline void ObjectEvent_Jump(s32 localId, s32 height, s32 frames) {
+  Engine_ObjectEventJump(localId, height, frames);
 }
 
 /// Makes an object event bob, squashing and springing back a few times, and
 /// waits for it to finish.
-static inline void ObjectEvent_RunRepeatedMotion(s32 objectEvent, s32 repeats) {
-  Engine_ObjectEventRunRepeatedMotion(objectEvent, repeats);
+static inline void ObjectEvent_RunRepeatedMotion(s32 localId, s32 repeats) {
+  Engine_ObjectEventRunRepeatedMotion(localId, repeats);
 }
 
 /// Switches an object event to an ObjectEventAnimation, such as ANIMATION_NOD.
-static inline void ObjectEvent_SetAnimation(s32 objectEvent, s32 animation) {
-  Engine_ObjectEventSetAnimation(objectEvent, animation);
+static inline void ObjectEvent_SetAnimation(s32 localId, s32 animation) {
+  Engine_ObjectEventSetAnimation(localId, animation);
 }
 
 /// Plays an object event's animation through before the script goes on.
-static inline void ObjectEvent_SetAnimationAndWait(s32 objectEvent,
-                                                   s32 animation) {
-  Engine_ObjectEventSetAnimationAndWait(objectEvent, animation);
+static inline void ObjectEvent_SetAnimationAndWait(s32 localId, s32 animation) {
+  Engine_ObjectEventSetAnimationAndWait(localId, animation);
 }
 
 /// Turns a one-sprite object event's shadow on or off, bit 0 of its sprite's
@@ -58,25 +57,23 @@ static inline void ObjectEvent_SetSpriteFlags(struct ObjectEvent *objectEvent,
 
 /// Draws an object event at a fixed priority against the scenery instead of by
 /// its depth.
-static inline void ObjectEvent_SetSpritePriority(s32 objectEvent,
-                                                 s32 priority) {
-  Engine_ObjectEventSetSpritePriority(objectEvent, priority);
+static inline void ObjectEvent_SetSpritePriority(s32 localId, s32 priority) {
+  Engine_ObjectEventSetSpritePriority(localId, priority);
 }
 
 /// Starts an object event bobbing while the script carries on.
-static inline void ObjectEvent_StartRepeatedMotion(s32 objectEvent,
-                                                   s32 repeats) {
-  Engine_ObjectEventStartRepeatedMotion(objectEvent, repeats);
+static inline void ObjectEvent_StartRepeatedMotion(s32 localId, s32 repeats) {
+  Engine_ObjectEventStartRepeatedMotion(localId, repeats);
 }
 
 /// Stops whatever an object event is doing and hands it to the script.
-static inline void ObjectEvent_Stop(s32 objectEvent) {
-  Engine_ObjectEventStop(objectEvent);
+static inline void ObjectEvent_Stop(s32 localId) {
+  Engine_ObjectEventStop(localId);
 }
 
 /// Holds the script until an object event has reached where it was sent.
-static inline void ObjectEvent_WaitForMove(s32 objectEvent) {
-  Engine_ObjectEventWaitForMove(objectEvent);
+static inline void ObjectEvent_WaitForMove(s32 localId) {
+  Engine_ObjectEventWaitForMove(localId);
 }
 
 /// Holds the script until the camera's pan is done.
@@ -92,8 +89,8 @@ static inline void ColorBuffer_Interpolate(s32 frames) {
 static inline void Script_Start(void) { Engine_ScriptStart(); }
 
 /// Lets the player answer yes or no to the line on screen; 0 means yes.
-static inline s32 Script_ChooseYesNo(s32 objectEvent, s32 flags) {
-  return Engine_ScriptChooseYesNo(objectEvent, flags);
+static inline s32 Script_ChooseYesNo(s32 localId, s32 flags) {
+  return Engine_ScriptChooseYesNo(localId, flags);
 }
 
 /// Ends a scripted scene and gives the field back to the player.
@@ -217,9 +214,9 @@ static inline void FieldObjectMotion_ResetAndSetPosition(s32 a0, s32 a1,
 
 /// ObjectEvent_MoveToAndWait, written with ObjectMotion_SetPositionAndCommit's
 /// name.
-static inline void FieldObject_MotionSetPositionAndCommit(s32 objectEvent,
-                                                          s32 x, s32 z) {
-  Engine_ObjectMotionSetPositionAndCommit(objectEvent, x, z);
+static inline void FieldObject_MotionSetPositionAndCommit(s32 localId, s32 x,
+                                                          s32 z) {
+  Engine_ObjectMotionSetPositionAndCommit(localId, x, z);
 }
 
 /// FieldScheduler_AddCallback (engine_call.h) under the scheduler's own name.
@@ -243,9 +240,9 @@ static inline void Field_SetWorldMapWindowCellTile(s32 a0, s32 a1, s32 a2,
 
 /// Puts an object event on the leader and sends it walking off by (dx, dz),
 /// then starts the action facing names (Motion_LaunchFromFocusedObject).
-static inline void FieldMotion_LaunchFromFocusedObject(s32 objectEvent, s32 dx,
+static inline void FieldMotion_LaunchFromFocusedObject(s32 localId, s32 dx,
                                                        s32 dz, s32 facing) {
-  Motion_LaunchFromFocusedObject(objectEvent, dx, dz, facing);
+  Motion_LaunchFromFocusedObject(localId, dx, dz, facing);
 }
 
 /// Makes an object event follow another and starts a script on it

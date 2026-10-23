@@ -642,11 +642,10 @@ static UNUSED s32 StagedObjectEvent_FillGridAttributeRectangle(
 static void VenusLighthouse_RestoreScriptedChildValues(void) {
   struct ObjectEvent **objectEvents = gEventWork->placedObjectEvents;
   struct ObjectEvent *objectEvent;
-  u32 objectEventId;
+  u32 localId;
 
-  for (objectEventId = LOCALID_FIRST_PLACED; objectEventId <= 65;
-       objectEventId++) {
-    objectEvent = objectEvents[objectEventId - LOCALID_FIRST_PLACED];
+  for (localId = LOCALID_FIRST_PLACED; localId <= 65; localId++) {
+    objectEvent = objectEvents[localId - LOCALID_FIRST_PLACED];
     if (objectEvent->timer >> 4 == VENUS_COLOR_MARK_TAG)
       ObjectGroup_SetChildValue(objectEvent, objectEvent->timer & 15);
   }
@@ -2716,18 +2715,18 @@ const struct MapEvent *VenusLighthouse_GetEvents(void) {
 /// Lays one of the scholars or soldiers the wanderers hurt on the ground
 /// (ANIMATION_HURT_LYING), drawn behind the backgrounds' fronts, still and
 /// without the lower two bits of its collision.
-static void VenusLighthouse_LayDownHurtObjectEvent(s32 objectEventId) {
+static void VenusLighthouse_LayDownHurtObjectEvent(s32 localId) {
   struct ObjectEvent *objectEvent;
   s32 collisionFlags;
 
-  objectEvent = ObjectEvent_GetById(objectEventId);
+  objectEvent = ObjectEvent_GetById(localId);
   objectEvent->motionFlags = 0;
   collisionFlags = 252;
   collisionFlags &= objectEvent->collisionFlags;
   objectEvent->collisionFlags = collisionFlags;
   Engine_ObjectEventSetSpriteFlags(objectEvent, 0);
   ObjectEvent_SetMode(objectEvent, ANIMATION_HURT_LYING);
-  Engine_ObjectEventSetSpritePriority(objectEventId, 3);
+  Engine_ObjectEventSetSpritePriority(localId, 3);
   {
     s32 priorityFlags = 2;
     priorityFlags |= objectEvent->priorityFlags;
@@ -2737,13 +2736,13 @@ static void VenusLighthouse_LayDownHurtObjectEvent(s32 objectEventId) {
 
 /// Visits the four pillar object events through the object lookup service.
 static void VenusLighthouse_VisitPillarObjectEvents(void) {
-  u32 objectEventId;
+  u32 localId;
 
-  objectEventId = LOCALID_FIRST_SOCKET_PILLAR;
+  localId = LOCALID_FIRST_SOCKET_PILLAR;
   do {
-    ObjectEvent_GetById(objectEventId);
-    objectEventId++;
-  } while (objectEventId <= LOCALID_FIRST_SOCKET_PILLAR + 3);
+    ObjectEvent_GetById(localId);
+    localId++;
+  } while (localId <= LOCALID_FIRST_SOCKET_PILLAR + 3);
 }
 
 /// Restores puzzle progress, object events and warp destination effects for all
@@ -3319,7 +3318,7 @@ static void EventScript_DriftEast(void) {
 /// @param direction The way the drifting floor carries the party: -1, 0 or 1
 /// on x and on z; y is not read.
 static void VenusLighthouse_StepObjectEventWithDust(struct Vector3 *direction) {
-  s32 objectEventId;
+  s32 localId;
   struct ObjectEvent *viewCenter;
   struct ObjectEvent *objectEvent;
   struct FieldPosition nextPosition;
@@ -3331,10 +3330,10 @@ static void VenusLighthouse_StepObjectEventWithDust(struct Vector3 *direction) {
   {
     struct EventWork *work = gEventWork;
 
-    objectEventId = gGameState.selectedObjectEvent;
+    localId = gGameState.selectedLocalId;
     viewCenter = work->viewCenter;
   }
-  objectEvent = ObjectEvent_GetById(objectEventId);
+  objectEvent = ObjectEvent_GetById(localId);
   nextPosition.x = objectEvent->x.fixed +
                    VENUS_LIGHTHOUSE_FIXED_OFFSET(direction->x * 3, 15);
   nextPosition.y = objectEvent->y.fixed;
@@ -3357,8 +3356,8 @@ static void VenusLighthouse_StepObjectEventWithDust(struct Vector3 *direction) {
   }
   // A drop uses the fall animation; solid terrain instead constrains each step.
   if (collision < 0) {
-    Engine_ObjectEventSetAttachedEffect(
-        objectEventId, ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+    Engine_ObjectEventSetAttachedEffect(localId, ATTACHED_EFFECT_IN_FRONT |
+                                                     ATTACHED_EFFECT_ONCE);
     Engine_ObjectSetPosition(objectEvent, objectEvent->x.fixed,
                              objectEvent->y.fixed,
                              objectEvent->z.fixed + PIXELS(8));

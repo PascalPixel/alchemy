@@ -329,7 +329,7 @@ static void Kalay_PrepareTunnelEntrance(void);
 static void Kalay_StartWindowTransition(void);
 static void Kalay_PrepareTunnel(void);
 static void Kalay_StartTouristsFidgeting(void);
-static void Kalay_StartTouristFidgeting(s32 objectEventId);
+static void Kalay_StartTouristFidgeting(s32 localId);
 static void Kalay_StartGuidesPacing(void);
 static void Kalay_AlternateGuidesPacing(void);
 static void Kalay_IvanMeetsPalaceGuards(void);
@@ -1599,12 +1599,12 @@ static void Kalay_StartTouristsFidgeting(void) {
 }
 
 /// A tourist starts fidgeting after a random pause.
-static void Kalay_StartTouristFidgeting(s32 objectEventId) {
+static void Kalay_StartTouristFidgeting(s32 localId) {
   struct ObjectEvent *objectEvent;
   u32 random;
 
-  objectEvent = ObjectEvent_GetById(objectEventId);
-  objectEvent->timer = objectEventId;
+  objectEvent = ObjectEvent_GetById(localId);
+  objectEvent->timer = localId;
   random = Engine_RandomNext();
   objectEvent->work = (random * 5) >> 12;
   Engine_ObjectSetScript(objectEvent, gKalay_TouristFidgetScript);

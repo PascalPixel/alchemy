@@ -613,13 +613,13 @@ static void EventScript_OpenFourthBlueDoor(void) {
 /// Reveal in CrossboneIsleKeys: the hidden Red Key appears on its
 /// tile.
 static void EventScript_ShowRedKey(void) {
-  s32 keyObjectEventId = LOCALID_RED_KEY;
+  s32 keyLocalId = LOCALID_RED_KEY;
   s32 x = PIXELS(408);
   s32 z = PIXELS(776);
 
   MapGrid_CopyCells(25, 45, 1, 2, 25, 48);
   if (Engine_GameFlagIsSet(FLAG_CROSSBONE_ISLE_RED_KEY) == 0)
-    Engine_ObjectEventSetPosition(keyObjectEventId, x, z);
+    Engine_ObjectEventSetPosition(keyLocalId, x, z);
   WAIT(1);
 }
 
@@ -632,12 +632,12 @@ static void EventScript_HideRedKey(void) {
 
 /// Collects the selected key, hides its object event and remembers it was
 /// taken.
-static inline void CrossboneIsleKeys_CollectKey(s32 objectEventId, s32 itemId,
+static inline void CrossboneIsleKeys_CollectKey(s32 localId, s32 itemId,
                                                 s32 collectedFlag) {
   Engine_ItemShowFound(itemId, 3);
   OBJECT_MODE(LOCALID_PARTY_LEADER, ANIMATION_STAND);
   Engine_PartyGiveItem(itemId, 0);
-  Engine_ObjectEventSetPosition(objectEventId, 0, 0);
+  Engine_ObjectEventSetPosition(localId, 0, 0);
   Engine_GameFlagSet(collectedFlag);
 }
 

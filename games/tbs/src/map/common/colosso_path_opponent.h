@@ -46,9 +46,9 @@ static void Colosso_UpdatePathOpponent(void) {
   struct PathRecorder *rec = (struct PathRecorder *)gMapLocalState;
   struct ObjectEvent *objectEvent;
   s32 x, z, d;
-  u16 *itemObjectEvent;
+  u16 *itemLocalId;
 
-  objectEvent = ObjectEvent_GetById(rec->objectEvent);
+  objectEvent = ObjectEvent_GetById(rec->localId);
   if (objectEvent == NULL) {
     return;
   }
@@ -66,12 +66,12 @@ static void Colosso_UpdatePathOpponent(void) {
       }
       if (Engine_GameFlagIsSet(FLAG_MAP_TEMP_11)) {
         fz = work->gauge.finishZ + 0x100000;
-        itemObjectEvent = &work->gauge.finishItemObjectEventB;
+        itemLocalId = &work->gauge.finishItemLocalIdB;
       } else {
         fz = work->gauge.finishZ - 0x100000;
-        itemObjectEvent = &work->gauge.finishItemObjectEventA;
+        itemLocalId = &work->gauge.finishItemLocalIdA;
       }
-      objectEvent->timer = *itemObjectEvent;
+      objectEvent->timer = *itemLocalId;
       objectEvent->acceleration = 0x4000;
       objectEvent->speed = 0x10000;
       Engine_ObjectSetPosition(objectEvent, x, 0, fz);
@@ -116,7 +116,7 @@ static void Colosso_UpdatePathOpponent(void) {
     if ((s16)rec->pathIndex == 0x383e) {
       work->path[(s16)rec->pathIndex++] = 0;
       work->path[(s16)rec->pathIndex] = 0;
-      rec->objectEvent = work->gauge.opponentObjectEvent;
+      rec->localId = work->gauge.opponentLocalId;
       rec->pathIndex = 0;
       rec->mode = PATH_RECORDER_PLAY;
     }
@@ -215,7 +215,7 @@ static void Colosso_DrawGauge(void) {
 
   if ((gFrameCount & 15) > 4) {
     shape = 0x40000000;
-    objectEvent = Engine_ObjectEventLookup(gauge->opponentObjectEvent);
+    objectEvent = Engine_ObjectEventLookup(gauge->opponentLocalId);
     if (objectEvent != 0) {
       x = ((objectEvent->x.fixed - gauge->finishX) / 0xe0000) + 112;
       y = ((objectEvent->z.fixed - gauge->finishZ) / 0xe0000) +
@@ -228,7 +228,7 @@ static void Colosso_DrawGauge(void) {
       *dst++ = (tile + 12) | 0xe400;
       Runtime_PushSlotEntry(entry++, 255);
     }
-    objectEvent = Engine_ObjectEventLookup(gauge->playerObjectEvent);
+    objectEvent = Engine_ObjectEventLookup(gauge->playerLocalId);
     if (objectEvent != 0) {
       x = ((objectEvent->x.fixed - gauge->finishX) / 0xe0000) + 112;
       y = ((objectEvent->z.fixed - gauge->finishZ) / 0xe0000) +

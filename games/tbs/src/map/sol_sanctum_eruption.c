@@ -79,13 +79,13 @@
 #include "item_ids.h"
 #include "fx_work.h"
 
-static void SolSanctumEruption_RaiseAndShrinkObjectEvent(s32 objectEventId);
+static void SolSanctumEruption_RaiseAndShrinkObjectEvent(s32 localId);
 static void SolSanctumEruption_ThrowEruptionRing(void);
 static void SolSanctumEruption_ResetEmberEmission(void);
 static void SolSanctumEruption_StepEmbers(void);
 static void SolSanctumEruption_UpdateEmberFrequency(void);
 static void SolSanctumEruption_PlayWiseOneRescue(void);
-static void SolSanctumEruption_PlaceBeforeStar(s32 objectEvent);
+static void SolSanctumEruption_PlaceBeforeStar(s32 localId);
 static void SolSanctumEruption_DrawFirstCollapseTiles(s32 alternate);
 static void SolSanctumEruption_DrawSecondCollapseTiles(s32 alternate);
 static void SolSanctumEruption_FlickerFirstCollapseTiles(void);
@@ -583,7 +583,7 @@ static void SolSanctumEruption_PlayHostageScene(void) {
 
 /// Lifts one departing object event and shrinks it together with its shadow on
 /// the platform (LOCALID_PLATFORM_SHADOW).
-static void SolSanctumEruption_RaiseAndShrinkObjectEvent(s32 objectEventId) {
+static void SolSanctumEruption_RaiseAndShrinkObjectEvent(s32 localId) {
   struct ObjectEvent *objectEvent;
   struct ObjectEvent *shadow;
   struct ObjectEvent *spriteOwner;
@@ -592,14 +592,14 @@ static void SolSanctumEruption_RaiseAndShrinkObjectEvent(s32 objectEventId) {
   shadow = ObjectEvent_GetById(LOCALID_PLATFORM_SHADOW);
   shadow->scaleX = Q16_ONE;
   shadow->scaleY = Q16_ONE;
-  Engine_ObjectEventWalkToAndWait(objectEventId, 471, 290);
-  ObjectEvent_FaceDirection(objectEventId, FACING_NORTH, 0);
+  Engine_ObjectEventWalkToAndWait(localId, 471, 290);
+  ObjectEvent_FaceDirection(localId, FACING_NORTH, 0);
   Engine_ScriptWait(10);
   ObjectEvent_SetPosition(LOCALID_PLATFORM_SHADOW, PIXELS(471), PIXELS(290));
-  objectEvent = ObjectEvent_GetById(objectEventId);
-  spriteOwner = ObjectEvent_GetById(objectEventId);
+  objectEvent = ObjectEvent_GetById(localId);
+  spriteOwner = ObjectEvent_GetById(localId);
   Engine_ObjectEventSetSpriteFlags(spriteOwner, 0);
-  ObjectEvent_SetChildValue(objectEventId, 0x100);
+  ObjectEvent_SetChildValue(localId, 0x100);
   objectEvent->motionFlags = 0;
   Script_PlayCue(SE_201);
   // Rise at full size, then shrink the object event and its shadow together.
@@ -620,7 +620,7 @@ static void SolSanctumEruption_RaiseAndShrinkObjectEvent(s32 objectEventId) {
     Engine_ScriptWait(1);
     frame++;
   } while (frame != 90);
-  ObjectEvent_SetPosition(objectEventId, 0, 0);
+  ObjectEvent_SetPosition(localId, 0, 0);
   ObjectEvent_SetPosition(LOCALID_PLATFORM_SHADOW, 0, 0);
 }
 
@@ -1546,13 +1546,13 @@ static void SolSanctumEruption_PlayWiseOneRescue(void) {
 
 /// Places an object event before the star, facing south, and draws it above the
 /// chamber floor.
-static void SolSanctumEruption_PlaceBeforeStar(s32 objectEvent) {
-  struct ObjectEvent *object;
+static void SolSanctumEruption_PlaceBeforeStar(s32 localId) {
+  struct ObjectEvent *objectEvent;
 
-  object = ObjectEvent_GetById(objectEvent);
-  Engine_ObjectEventSetPosition(objectEvent, PIXELS(232), PIXELS(125));
-  object->facing = FACING_SOUTH;
-  Engine_ObjectEventSetSpritePriority(objectEvent, 3);
+  objectEvent = ObjectEvent_GetById(localId);
+  Engine_ObjectEventSetPosition(localId, PIXELS(232), PIXELS(125));
+  objectEvent->facing = FACING_SOUTH;
+  Engine_ObjectEventSetSpritePriority(localId, 3);
 }
 
 /// Selects the first collapsing tile patch and redraws the map.

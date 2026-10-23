@@ -220,8 +220,8 @@ const struct MapEvent *MercuryLighthouseAerie_GetEvents(void) {
 /// up.
 s32 MercuryLighthouseAerie_Initialize(void) {
   u32 i;
-  s32 objectEvent;
-  struct ObjectEvent *obj;
+  s32 localId;
+  struct ObjectEvent *objectEvent;
 
   Engine_GameFlagSet(FLAG_MERCURY_LIGHTHOUSE_LIT);
   gEventWork->startTransition =
@@ -253,9 +253,9 @@ s32 MercuryLighthouseAerie_Initialize(void) {
       ObjectEvent_GetById(i)->y.fixed = -(PIXELS(50) + PIXELS(1) / 2);
     }
     if (Engine_GameFlagIsSet(FLAG_KEEP_PARTY_POSITION) &&
-        (objectEvent = MapObjectEvent_FindNearestFloatingPlatform()) != 0 &&
-        (obj = ObjectEvent_GetById(objectEvent)) != NULL) {
-      obj->motionFlags = 0;
+        (localId = MapObjectEvent_FindNearestFloatingPlatform()) != 0 &&
+        (objectEvent = ObjectEvent_GetById(localId)) != NULL) {
+      objectEvent->motionFlags = 0;
     }
     Engine_ObjectEventSetSpriteFlags(ObjectEvent_GetById(LOCALID_LIFT_STATUE),
                                      0);

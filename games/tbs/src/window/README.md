@@ -1,4 +1,4 @@
-# Windows
+#Windows
 
 ![Garet's sister's line in Vale, "You guys are so lucky, Garet.", typed into its window at the normal message speed. Each frame the window gets one more letter cell: a single letter, or two narrow letters that fit together in one cell 16 pixels wide. On the first frame "Yo" appears, on the second "You", on the fourth "You gu", and on the 18th the whole first page; a space and the line break take a frame each. Then an arrow shows and the window waits for a button before the next page. The player's message speed decides how fast the cells come: at the slow speed one cell and then a pause of 4 frames, which is skipped while a button is held; at the normal speed one cell a frame; at the fast speed up to ten a frame, but a space ends the frame's share, so about a word a frame. Above the frames, the game itself: her window opens, the line is typed into it, and the arrow bobs while the window waits.](https://alchemy.pascalpixel.com/illustrations/window/typing.svg)
 
@@ -177,8 +177,10 @@ ability name, by its `MESSAGE_ARGUMENT_` kind. Each language's articles,
 possessives and endings come from `articles.c`, chosen by the article class
 an item or name carries. Style codes (colours, pauses, page breaks) are kept
 with their operands for the channel to run. A control code in the catalogs
-is written in braces: `{end_wait}`, at the end of
-`Your game was saved.{end_wait}`, is `MESSAGE_END_WAIT`, kept as
+is written in braces: `{
+  end_wait}`, at the end of
+`Your game was saved.{
+  end_wait}`, is `MESSAGE_END_WAIT`, kept as
 `TEXT_WAIT_KEY`, which waits for a button and closes the window. The
 message in the picture is `MsgValeYouGuysAreSoLuckyGaret`, whose name blank
 is `{actor_name:2}`.
@@ -200,7 +202,7 @@ stored one above its value.
 | `MESSAGE_LINE_SPACING` | 10 | `TEXT_LINE_SPACING`, with its operand |
 | `MESSAGE_LOCALIZED_WORD` | 13 | German: a counted noun; Italian: a gender ending; Spanish and French: the plural suffix |
 | `MESSAGE_WINDOW_EFFECT` | 15 | `TEXT_WINDOW_STATE`, with its operand: the window effect to run |
-| `MESSAGE_PROTAGONIST_NAME` | 16 | the name of the unit `gGameState.selectedObjectEvent` names |
+| `MESSAGE_PROTAGONIST_NAME` | 16 | the name of the unit `gGameState.selectedLocalId` names |
 | `TEXT_WORK_BLOCK` | 50 | the heap slot the tree walker is copied into |
 
 ## The decoded-text ring

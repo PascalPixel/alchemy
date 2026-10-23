@@ -51,7 +51,7 @@ void FieldEffect_LoadActionEffectResources(s32 abilityId, s32 mode) {
     effectWork->lit = 1;
   if (gGameState.layoutId == (s32)&MapId_MercuryLighthouseMiddle)
     effectWork->lit = 1;
-  FieldEffect_SetupObjectPair(gGameState.selectedObjectEvent, -1);
+  FieldEffect_SetupObjectPair(gGameState.selectedLocalId, -1);
   // Every effect but Reveal's own pauses Reveal's countdown (running is 0
   // here) until FieldEffect_End lets it run again.
   if (effectWork->fieldKind != FIELD_KIND_REVEAL)

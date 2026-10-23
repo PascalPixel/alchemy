@@ -5,17 +5,17 @@
 #include "../psynergy_effects_internal.h"
 
 /// The script command "camera follow object event": the camera (the script's
-/// view centre) follows objectEvent. Unless keepPosition is set it jumps there
+/// view centre) follows localId. Unless keepPosition is set it jumps there
 /// at once and, off the world map, the map is redrawn around it.
 /// FieldScript_End calls it with the leader and keepPosition 1, so after a
 /// script the view follows the leader again from where it is, without a jump.
-void Camera_FollowObjectEvent(s32 objectEvent, s32 keepPosition) {
+void Camera_FollowObjectEvent(s32 localId, s32 keepPosition) {
   struct ObjectRuntime *subject;
   struct ObjectRuntime *camera;
   struct FieldWork *work;
   struct MapGridScrollWork *grid;
 
-  subject = ObjectTable_Get(objectEvent);
+  subject = ObjectTable_Get(localId);
   // The slot already holds the field work, which this returns; the camera
   // commands here all find it this way.
   work = Runtime_AllocateBlock(HEAP_SLOT_EVENT, sizeof(struct FieldWork));
@@ -117,10 +117,10 @@ void Camera_MoveWithinMapBounds(s32 requestedX, s32 requestedY, s32 requestedZ,
 
 /// The script command "camera move to object event": Camera_MoveWithinMapBounds
 /// to the object event's x and z.
-void ObjectEvent_PlaceCurrentWithinCameraBounds(s32 objectEvent, s32 glide) {
+void ObjectEvent_PlaceCurrentWithinCameraBounds(s32 localId, s32 glide) {
   struct ObjectRuntime *subject;
 
-  subject = ObjectTable_Get(objectEvent);
+  subject = ObjectTable_Get(localId);
   // The field work, looked up and not used.
   Runtime_AllocateBlock(HEAP_SLOT_EVENT, 0xCCC);
   if (subject != NULL) {

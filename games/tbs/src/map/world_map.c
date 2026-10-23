@@ -155,7 +155,7 @@ static void WorldMap_SailUntilLandSighted(void);
 static void WorldMap_SailIntoTolbi(void);
 static void WorldMap_StepDownFromBunzasWagon(void);
 static void WorldMap_RunBlackOrbScene(void);
-static void WorldMap_BlockGatewayCaveWarp(s32 objectEvent);
+static void WorldMap_BlockGatewayCaveWarp(s32 localId);
 static void EventScript_IodemCallsLeaderBack(void);
 static void WorldMap_ShowEndingScene(void);
 static void WorldMap_ShakeVenusLighthouse(void);
@@ -288,7 +288,7 @@ enum WorldMapLocalId {
 };
 
 /// The metatile behavior raised by touching a map section's object event.
-#define COORD_EVENT_MAPSEC(objectEvent) (COORD_EVENT_PLACE_BASE + (objectEvent))
+#define COORD_EVENT_MAPSEC(localId) (COORD_EVENT_PLACE_BASE + (localId))
 
 /// The world map's own metatile behaviors: those the map's cells carry, and
 /// the value the storm raises. Each warp cell carries the number of the warp
@@ -677,7 +677,7 @@ static void WorldMap_SelectWarpByX(s32 trigger, s32 warpBefore, s32 warpAfter) {
   struct ObjectEvent *other;
 
   subject = ObjectEvent_GetById(trigger - COORD_EVENT_PLACE_BASE);
-  other = ObjectEvent_GetById(gGameState.selectedObjectEvent);
+  other = ObjectEvent_GetById(gGameState.selectedLocalId);
   work = gEventWork;
   if (other->x.fixed < subject->x.fixed) {
     work->requestedWarp = warpBefore;
@@ -694,7 +694,7 @@ static void WorldMap_SelectWarpByZ(s32 trigger, s32 warpBefore, s32 warpAfter) {
   struct ObjectEvent *other;
 
   subject = ObjectEvent_GetById(trigger - COORD_EVENT_PLACE_BASE);
-  other = ObjectEvent_GetById(gGameState.selectedObjectEvent);
+  other = ObjectEvent_GetById(gGameState.selectedLocalId);
   work = gEventWork;
   if (other->z.fixed < subject->z.fixed) {
     work->requestedWarp = warpBefore;
@@ -769,7 +769,7 @@ static void WorldMap_UpdateLocationContacts(void) {
   s32 leaderReach;
   u32 i;
 
-  leader = ObjectEvent_GetById(gGameState.selectedObjectEvent);
+  leader = ObjectEvent_GetById(gGameState.selectedLocalId);
   leaderReach = leader->sprite->scale * leader->radius;
   work = gEventWork;
   objectEvent = work->viewCenter;
@@ -1993,7 +1993,7 @@ static void WorldMap_RunBlackOrbScene(void) {
 /// object event given is not used. Called by WorldMap_RunBlackOrbScene, and by
 /// WorldMap_Initialize when the party returns to WORLD_MAP_FROM_GATEWAY_CAVE
 /// with the orb still to use.
-static void WorldMap_BlockGatewayCaveWarp(s32 objectEvent) {
+static void WorldMap_BlockGatewayCaveWarp(s32 localId) {
   s32 i;
 
   i = 0;
@@ -2617,7 +2617,7 @@ static void WorldMap_UpdateStormTimer(void) {
   struct EventWork *scene;
   s32 progress;
 
-  objectEvent = ObjectEvent_GetById(gGameState.selectedObjectEvent);
+  objectEvent = ObjectEvent_GetById(gGameState.selectedLocalId);
   scene = gEventWork;
   objectEvent->facing = (gFrameCount << 12);
 
@@ -2635,13 +2635,13 @@ static void WorldMap_UpdateStormTimer(void) {
 /// Draws the leader into the storm, lifts him and starts its timer.
 /// Called by EventScript_WalkIntoStorm. Sets FLAG_MAP_TEMP_F0 and gives the
 /// party 180 frames in the air (FLAG_MAP_TEMP_F8).
-static void WorldMap_CatchInStorm(s32 targetObjectEvent) {
+static void WorldMap_CatchInStorm(s32 targetLocalId) {
   s32 alreadyTraveling;
   struct ObjectEvent *objectEvent;
   struct ObjectEvent *record;
   s32 id;
 
-  id = gGameState.selectedObjectEvent;
+  id = gGameState.selectedLocalId;
   objectEvent = ObjectEvent_GetById(id);
   alreadyTraveling = GameFlag_IsSet(FLAG_MAP_TEMP_F0);
   if (alreadyTraveling == 0) {
@@ -2649,7 +2649,7 @@ static void WorldMap_CatchInStorm(s32 targetObjectEvent) {
     ObjectEvent_SetAttachedEffect(id, ATTACHED_EFFECT_IN_FRONT |
                                           ATTACHED_EFFECT_ATTACH);
     Engine_ObjectEventSetAnimation(id, ANIMATION_LEADER_LOOK_AROUND);
-    record = ObjectEvent_GetById(targetObjectEvent);
+    record = ObjectEvent_GetById(targetLocalId);
     if (record != 0) {
       ObjectEvent_SetDestination(id, record->x.part.pixel,
                                  record->z.part.pixel);
@@ -2704,7 +2704,7 @@ static void EventScript_DouseMapStorm(void) {
   Field_RequestBattleFromEncounterTable(ENCOUNTER_ZONE_SCRIPTED, 5);
   Battle_SetStart(BATTLE_START_SCRIPTED);
   Field_RequestBattleFromEncounterTable(ENCOUNTER_ZONE_SCRIPTED, 7);
-  selectedObjectEvent = ObjectEvent_GetById(gGameState.selectedObjectEvent);
+  selectedObjectEvent = ObjectEvent_GetById(gGameState.selectedLocalId);
   selectedObjectEvent->motionFlags = OBJ_EVENT_FALLS;
 }
 
@@ -2714,8 +2714,7 @@ static void EventScript_DouseMapStorm(void) {
 /// raised as the timer runs out. Sets FLAG_ARRIVE_FALLING and sends the party
 /// to WORLD_MAP_FROM_SUHALLA.
 static void EventScript_StormDropsParty(void) {
-  struct ObjectEvent *objectEvent =
-      ObjectEvent_Get(gGameState.selectedObjectEvent);
+  struct ObjectEvent *objectEvent = ObjectEvent_Get(gGameState.selectedLocalId);
   struct ObjectEvent *other = ObjectEvent_Get(LOCALID_STORM);
   s32 frames;
 
@@ -2765,7 +2764,7 @@ static void WorldMap_JitterTransitionCamera(void) {
   s32 sy;
   u32 mode;
 
-  record = ObjectEvent_Get(gGameState.selectedObjectEvent);
+  record = ObjectEvent_Get(gGameState.selectedLocalId);
   sx = record->x.part.pixel;
   sy = record->z.part.pixel;
   if (gFrameCount % 3 == 0) {
@@ -2821,7 +2820,7 @@ static void WorldMap_PlayLighthouseTransition(s32 palette) {
   FieldScheduler_AddCallback(WorldMap_UpdateTransitionBlend, TASK_PRIORITY_MAP);
   Engine_ScriptStart();
   WORLD_MAP_QUEUE_TRANSITION_FRAME(buffer, 0x3a80);
-  ObjectEvent_GetById(gGameState.selectedObjectEvent)->spriteStorageKind = 0;
+  ObjectEvent_GetById(gGameState.selectedLocalId)->spriteStorageKind = 0;
   gEventWork->transitionFrames = 16;
   Engine_ScriptOpenScreen();
   Engine_ScriptWaitForScreen();

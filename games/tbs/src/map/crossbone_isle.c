@@ -634,7 +634,7 @@ static void CrossboneIsle_OpenEastDoorAfterBattle(void) {
 /// party climb at (304, 368), but the object event templates put that plant at
 /// the map's origin, off stage in the forest's corner, where no cast can reach
 /// it and the player never sees it (its render).
-static void EventScript_UnusedGrowFirstPlant(s32 objectEventId) {
+static void EventScript_UnusedGrowFirstPlant(s32 localId) {
   s32 fixedX = PIXELS(304);
   s32 fixedZ = PIXELS(368);
   struct ObjectEvent *objectEvent = ObjectEvent_GetById(LOCALID_FIRST_PLANT);
@@ -642,13 +642,13 @@ static void EventScript_UnusedGrowFirstPlant(s32 objectEventId) {
   if (objectEvent != 0) {
     objectEvent->collisionFlags = 0;
   }
-  Engine_ObjectEventSetSpriteFlags(ObjectEvent_GetById(objectEventId), 0);
+  Engine_ObjectEventSetSpriteFlags(ObjectEvent_GetById(localId), 0);
   MapGrid_SetMetatileBehaviorAt(0, fixedX, fixedZ, 253);
   Engine_GameFlagSet(FLAG_FIRST_PLANT_GROWN);
 }
 
 /// Growth on Crossbone Isle's second plant.
-static void EventScript_GrowSecondPlant(s32 objectEventId) {
+static void EventScript_GrowSecondPlant(s32 localId) {
   s32 fixedX = PIXELS(80);
   s32 fixedZ = PIXELS(368);
   struct ObjectEvent *objectEvent =
@@ -657,13 +657,13 @@ static void EventScript_GrowSecondPlant(s32 objectEventId) {
   if (objectEvent != 0) {
     objectEvent->collisionFlags = 0;
   }
-  Engine_ObjectEventSetSpriteFlags(ObjectEvent_GetById(objectEventId), 0);
+  Engine_ObjectEventSetSpriteFlags(ObjectEvent_GetById(localId), 0);
   MapGrid_SetMetatileBehaviorAt(0, fixedX, fixedZ, 253);
   Engine_GameFlagSet(FLAG_FIRST_PLANT_GROWN + 1);
 }
 
 /// Growth on Crossbone Isle's third plant.
-static void EventScript_GrowThirdPlant(s32 objectEventId) {
+static void EventScript_GrowThirdPlant(s32 localId) {
   s32 fixedX = PIXELS(96);
   s32 fixedZ = PIXELS(336);
   struct ObjectEvent *objectEvent =
@@ -672,13 +672,13 @@ static void EventScript_GrowThirdPlant(s32 objectEventId) {
   if (objectEvent != 0) {
     objectEvent->collisionFlags = 0;
   }
-  Engine_ObjectEventSetSpriteFlags(ObjectEvent_GetById(objectEventId), 0);
+  Engine_ObjectEventSetSpriteFlags(ObjectEvent_GetById(localId), 0);
   MapGrid_SetMetatileBehaviorAt(0, fixedX, fixedZ, 253);
   Engine_GameFlagSet(FLAG_FIRST_PLANT_GROWN + 2);
 }
 
 /// Growth on Crossbone Isle's fourth plant, which opens two cells.
-static void EventScript_GrowFourthPlant(s32 objectEventId) {
+static void EventScript_GrowFourthPlant(s32 localId) {
   s32 fixedX = PIXELS(144);
   s32 fixedZ = PIXELS(320);
   s32 secondFixedX = PIXELS(752);
@@ -689,7 +689,7 @@ static void EventScript_GrowFourthPlant(s32 objectEventId) {
   if (objectEvent != 0) {
     objectEvent->collisionFlags = 0;
   }
-  Engine_ObjectEventSetSpriteFlags(ObjectEvent_GetById(objectEventId), 0);
+  Engine_ObjectEventSetSpriteFlags(ObjectEvent_GetById(localId), 0);
   MapGrid_SetMetatileBehaviorAt(0, fixedX, fixedZ, 253);
   MapGrid_SetMetatileBehaviorAt(0, secondFixedX, secondFixedZ, 253);
   Engine_GameFlagSet(FLAG_FIRST_PLANT_GROWN + 3);
@@ -773,7 +773,7 @@ static void EventScript_PushIsleLog(void) {
 }
 
 /// Moves the selected object event and puzzle log by the same pixel offset.
-static void CrossboneIsle_MoveSelectedObjectEventAndLog(s32 objectEventId,
+static void CrossboneIsle_MoveSelectedObjectEventAndLog(s32 localId,
                                                         s32 xOffset,
                                                         s32 zOffset) {
   struct ObjectEvent *selectedObjectEvent;
@@ -781,8 +781,8 @@ static void CrossboneIsle_MoveSelectedObjectEventAndLog(s32 objectEventId,
   s32 fixedX;
   s32 fixedZ;
 
-  selectedObjectEvent = ObjectEvent_GetById(gGameState.selectedObjectEvent);
-  logObjectEvent = ObjectEvent_GetById(objectEventId);
+  selectedObjectEvent = ObjectEvent_GetById(gGameState.selectedLocalId);
+  logObjectEvent = ObjectEvent_GetById(localId);
   EV_START();
   {
     fixedX =
@@ -823,16 +823,16 @@ static void CrossboneIsle_MoveSelectedObjectEventAndLog(s32 objectEventId,
 }
 
 /// Draws the three-cell horizontal footprint centered on this log.
-static void CrossboneIsle_DrawHorizontalLogFootprint(s32 objectEventId,
+static void CrossboneIsle_DrawHorizontalLogFootprint(s32 localId,
                                                      s32 sourceColumn,
                                                      s32 sourceRow,
                                                      s32 unused) {
-  struct ObjectEvent *objectEvent = ObjectEvent_GetById(objectEventId);
+  struct ObjectEvent *objectEvent = ObjectEvent_GetById(localId);
 
   if (objectEvent != 0) {
     s32 priorityFlags;
 
-    Engine_ObjectEventSetSpritePriority(objectEventId, 3);
+    Engine_ObjectEventSetSpritePriority(localId, 3);
     priorityFlags = OBJ_EVENT_PRIORITY_UNDERFOOT;
     priorityFlags |= objectEvent->priorityFlags;
     objectEvent->priorityFlags = priorityFlags;
@@ -846,15 +846,15 @@ static void CrossboneIsle_DrawHorizontalLogFootprint(s32 objectEventId,
 }
 
 /// Draws the three-cell vertical footprint centered on this log.
-static void CrossboneIsle_DrawVerticalLogFootprint(s32 objectEventId,
+static void CrossboneIsle_DrawVerticalLogFootprint(s32 localId,
                                                    s32 sourceColumn,
                                                    s32 sourceRow, s32 unused) {
-  struct ObjectEvent *objectEvent = ObjectEvent_GetById(objectEventId);
+  struct ObjectEvent *objectEvent = ObjectEvent_GetById(localId);
 
   if (objectEvent != 0) {
     s32 priorityFlags;
 
-    Engine_ObjectEventSetSpritePriority(objectEventId, 3);
+    Engine_ObjectEventSetSpritePriority(localId, 3);
     priorityFlags = OBJ_EVENT_PRIORITY_UNDERFOOT;
     priorityFlags |= objectEvent->priorityFlags;
     objectEvent->priorityFlags = priorityFlags;
@@ -868,9 +868,9 @@ static void CrossboneIsle_DrawVerticalLogFootprint(s32 objectEventId,
 }
 
 /// Runs the two animation changes used when touching a puzzle log.
-static void CrossboneIsle_AnimateTouchedLog(int objectEventId) {
-  OBJECT_MODE(objectEventId, 1);
-  OBJECT_MODE(objectEventId, 2);
+static void CrossboneIsle_AnimateTouchedLog(int localId) {
+  OBJECT_MODE(localId, 1);
+  OBJECT_MODE(localId, 2);
 }
 
 /// Draws all twelve log footprints in Crossbone Isle Cave
@@ -1101,11 +1101,11 @@ static void EventScript_SlideFirstLogNorth(void) {
 
 /// Copies a horizontal log's old footprint to its new row, then clears the
 /// old row.
-static inline void CrossboneIsle_RedrawHorizontalLogRoute(s32 objectEventId,
+static inline void CrossboneIsle_RedrawHorizontalLogRoute(s32 localId,
                                                           s32 column, s32 row) {
   Engine_TaskWait(2);
   {
-    s32 destinationRow = ObjectEvent_GetById(objectEventId)->z.fixed >> 20;
+    s32 destinationRow = ObjectEvent_GetById(localId)->z.fixed >> 20;
     s32 footprintColumn = column - 1;
 
     MapGrid_CopyCellAttributes(footprintColumn, row, 3, 1, footprintColumn,
@@ -1116,11 +1116,11 @@ static inline void CrossboneIsle_RedrawHorizontalLogRoute(s32 objectEventId,
 
 /// Copies a vertical log's old footprint to its new column, then clears the
 /// old one.
-static inline void CrossboneIsle_RedrawVerticalLogRoute(s32 objectEventId,
-                                                        s32 column, s32 row) {
+static inline void CrossboneIsle_RedrawVerticalLogRoute(s32 localId, s32 column,
+                                                        s32 row) {
   Engine_TaskWait(2);
   {
-    s32 destinationColumn = ObjectEvent_GetById(objectEventId)->x.fixed >> 20;
+    s32 destinationColumn = ObjectEvent_GetById(localId)->x.fixed >> 20;
     s32 footprintRow = row - 1;
 
     MapGrid_CopyCellAttributes(column, footprintRow, 1, 3, destinationColumn,

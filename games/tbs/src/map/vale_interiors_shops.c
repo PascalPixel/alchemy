@@ -563,10 +563,9 @@ static inline void ValeInteriorsShops_FamilyNods(void) {
 
 /// Starts the repeated motion before waiting for the requested animation.
 static inline void
-ValeInteriorsShops_PlayRepeatedAnimationAndWait(s32 objectEventId,
-                                                s32 animation) {
-  Engine_ObjectEventStartRepeatedMotion(objectEventId, 1);
-  Engine_ObjectEventSetAnimationAndWait(objectEventId, animation);
+ValeInteriorsShops_PlayRepeatedAnimationAndWait(s32 localId, s32 animation) {
+  Engine_ObjectEventStartRepeatedMotion(localId, 1);
+  Engine_ObjectEventSetAnimationAndWait(localId, animation);
 }
 
 /// In Garet's house in Vale, back from Kalay, Garet comes home: his
@@ -947,33 +946,32 @@ static void EventScript_GaretComesHome(void) {
 ///
 /// A callback EventScript_GaretComesHome adds while the grandfather dozes.
 static void ValeInteriorsShops_SpawnSleepZ(void) {
-  s32 objectEventId;
+  s32 localId;
   u32 cycleFrame;
   struct ObjectEvent *objectEvent;
   struct ObjectEvent *origin;
 
   cycleFrame = gFrameCount % 180;
-  objectEventId = LOCALID_FIRST_SLEEP_Z;
+  localId = LOCALID_FIRST_SLEEP_Z;
   switch (cycleFrame) {
   case 10:
     break;
   case 20:
-    objectEventId = LOCALID_FIRST_SLEEP_Z + 1;
+    localId = LOCALID_FIRST_SLEEP_Z + 1;
     break;
   case 30:
-    objectEventId = LOCALID_FIRST_SLEEP_Z + 2;
+    localId = LOCALID_FIRST_SLEEP_Z + 2;
     break;
   default:
     return;
   }
-  objectEvent = ObjectEvent_GetById(objectEventId);
+  objectEvent = ObjectEvent_GetById(localId);
   if (objectEvent == NULL) {
     return;
   }
   origin = ObjectEvent_GetById(LOCALID_GARETS_GRANDFATHER);
   if (origin != NULL) {
-    Engine_ObjectEventSetPosition(objectEventId, origin->x.fixed,
-                                  origin->z.fixed);
+    Engine_ObjectEventSetPosition(localId, origin->x.fixed, origin->z.fixed);
   }
   // Restart this sprite above the origin with a small scale and 8.8 motion.
   objectEvent->scaleX = 2 * Q16_ONE / 5;
@@ -987,7 +985,7 @@ static void ValeInteriorsShops_SpawnSleepZ(void) {
     objectEvent->timer = 25; // 25/256 pixel per frame.
     objectEvent->work = 128; // 1/2 pixel per frame.
   }
-  ObjectEvent_SetActionScript(objectEventId, gValeInteriorsShops_SleepZScript);
+  ObjectEvent_SetActionScript(localId, gValeInteriorsShops_SleepZScript);
 }
 
 s32 gValeInteriorsShops_FaceTargetScript[] = {

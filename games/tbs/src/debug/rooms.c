@@ -53,9 +53,9 @@ u8 *TestRooms_GetObjectEventTemplates(void) {
 /// event, frees its slot and gives the element's first Djinni to the member
 /// with the fewest Djinn; clearing the flag the template tests lets the room
 /// place the Djinni again on the next entry.
-static __inline__ void TestRooms_GiveDjinniForTesting(s32 objectEventId,
+static __inline__ void TestRooms_GiveDjinniForTesting(s32 localId,
                                                       s32 element) {
-  Djinn_JoinParty(objectEventId, element, 0);
+  Djinn_JoinParty(localId, element, 0);
   Engine_GameFlagClear(FLAG_DJINNI_0 + element * DJINN_PER_ELEMENT);
 }
 

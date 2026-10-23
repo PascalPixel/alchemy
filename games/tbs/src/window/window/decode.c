@@ -241,7 +241,7 @@ enum {
   MESSAGE_LOCALIZED_WORD = 13,
   /// Kept with its operand as TEXT_WINDOW_STATE: the window effect to run.
   MESSAGE_WINDOW_EFFECT = 15,
-  /// The name of the unit gGameState.selectedObjectEvent names.
+  /// The name of the unit gGameState.selectedLocalId names.
   MESSAGE_PROTAGONIST_NAME = 16,
   MESSAGE_ACTOR_NAME = 17, ///< the name of the unit its operand names
   // The argument codes write out the next message argument of their kind
@@ -628,7 +628,7 @@ s32 UiText_BuildRenderEntries(s32 script, s32 clear) {
             break;
           case MESSAGE_PROTAGONIST_NAME:
             // A unit's name is 15 bytes, widened here to codes.
-            nameBytes = Unit_GetFar(gGameState.selectedObjectEvent)->name;
+            nameBytes = Unit_GetFar(gGameState.selectedLocalId)->name;
             nameOutput = name;
             i = 0;
             do {
@@ -1072,7 +1072,7 @@ s32 UiText_BuildRenderEntries(s32 script, s32 clear) {
                                                      entry, 0, 0, 0);
             break;
           case MESSAGE_PROTAGONIST_NAME:
-            nameBytes = Unit_GetFar(gGameState.selectedObjectEvent)->name;
+            nameBytes = Unit_GetFar(gGameState.selectedLocalId)->name;
             nameOutput = name;
             i = 0;
             do {

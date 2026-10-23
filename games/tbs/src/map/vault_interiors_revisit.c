@@ -173,20 +173,19 @@ const struct ObjectEventTemplate *Map_GetObjectEventTemplates(void) {
 }
 
 /// The object event stands still and says the selected message.
-static void
-VaultInteriorsRevisit_ShowStandingObjectEventDialogue(s32 objectEvent) {
+static void VaultInteriorsRevisit_ShowStandingObjectEventDialogue(s32 localId) {
   Engine_ScriptStart();
-  Engine_ObjectEventSetAnimation(objectEvent, ANIMATION_STAND);
-  Engine_ScriptShowMessage(objectEvent, 0);
+  Engine_ObjectEventSetAnimation(localId, ANIMATION_STAND);
+  Engine_ScriptShowMessage(localId, 0);
   Engine_ScriptEnd();
 }
 
 /// Faces the leader and shows this resident's dialogue while standing still.
-static inline void VaultInteriorsRevisit_FaceAndSpeak(s32 objectEvent,
+static inline void VaultInteriorsRevisit_FaceAndSpeak(s32 localId,
                                                       s32 message) {
   Engine_ScriptSetMessage(message);
-  Engine_ObjectEventFaceEachOther(objectEvent, LOCALID_PARTY_LEADER, 2);
-  VaultInteriorsRevisit_ShowStandingObjectEventDialogue(objectEvent);
+  Engine_ObjectEventFaceEachOther(localId, LOCALID_PARTY_LEADER, 2);
+  VaultInteriorsRevisit_ShowStandingObjectEventDialogue(localId);
 }
 
 /// The wife thought she saw the cat paw the gemstone on the table.

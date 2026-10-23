@@ -77,8 +77,8 @@ s32 Field_GetCollisionAheadOfLeader(void) {
   s32 fixedZ;
 
   work = WORK_SLOT(HEAP_SLOT_EVENT);
-  leader = (struct ObjectRuntime *)
-               work->objectEvents[gGameState.selectedObjectEvent];
+  leader =
+      (struct ObjectRuntime *)work->objectEvents[gGameState.selectedLocalId];
 
   gridState = WORK_SLOT(HEAP_SLOT_MAP_GRID);
 
@@ -201,7 +201,7 @@ void Field_ProcessStep(s32 layer, s32 x, s32 y, s32 z) {
    * of 472 instructions differ in tbs-en. */
   struct FieldWork *work = WORK_SLOT(HEAP_SLOT_EVENT);
   struct MapGridState *gridState = WORK_SLOT(HEAP_SLOT_MAP_GRID);
-  s32 leaderId = gGameState.selectedObjectEvent;
+  s32 leaderId = gGameState.selectedLocalId;
   struct ObjectRuntime *leader =
       (struct ObjectRuntime *)work->objectEvents[leaderId];
   s16 previousHp[8];

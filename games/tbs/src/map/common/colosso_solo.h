@@ -94,7 +94,7 @@ void Colosso_ControlCharacterAlone(s32 id) {
   Party_RemoveActiveOwner(3);
   Party_RemoveActiveOwner(5);
   Party_AddActiveOwner(id);
-  gGameState.selectedObjectEvent = id;
+  gGameState.selectedLocalId = id;
   Engine_CameraFollowObjectEvent(id, 0);
   unit = Unit_Get(id);
   unit->hp = unit->hpMax;
@@ -130,7 +130,7 @@ void Colosso_ControlCharacterAlone(s32 id) {
 /// FLAG_PSYNERGY_TARGET is set, raise map event 99, Colosso_TakePlaceForMatch.
 void Colosso_RaiseTakePlaceOnPsynergy(void) {
   struct EventWork *work = gEventWork;
-  s32 selection = gGameState.selectedObjectEvent;
+  s32 selection = gGameState.selectedLocalId;
 
   if (selection != 0 && (work->psynergyRequest >> 10) == selection &&
       Engine_GameFlagIsSet(FLAG_PSYNERGY_TARGET) != 0) {
@@ -150,16 +150,16 @@ static void Colosso_TakePlaceForMatch(void) {
   struct EventWork *work = gEventWork;
   s32 speakerId = 8;
   s32 nearestDistance = 0x100000;
-  s32 supporterId = gGameState.selectedObjectEvent;
+  s32 supporterId = gGameState.selectedLocalId;
   struct ObjectEvent *supporter = ObjectEvent_GetById(supporterId);
-  s32 objectEventId;
+  s32 localId;
   s32 *transition;
   s32 flagBase;
 
   Engine_ScriptStart();
   // Choose the nearest matching speaker whose Z is at least the supporter's.
-  for (objectEventId = 8; objectEventId <= 66; objectEventId++) {
-    struct ObjectEvent *objectEvent = ObjectEvent_GetById(objectEventId);
+  for (localId = 8; localId <= 66; localId++) {
+    struct ObjectEvent *objectEvent = ObjectEvent_GetById(localId);
 
     if (objectEvent != 0 && objectEvent->spriteStorageKind == 1 &&
         objectEvent->sprite->entries[0]->animationId == 165) {
@@ -176,7 +176,7 @@ static void Colosso_TakePlaceForMatch(void) {
           distanceZ = -distanceZ;
         distance = horizontalDistance + distanceZ;
         if (distance < nearestDistance) {
-          speakerId = objectEventId;
+          speakerId = localId;
           nearestDistance = distance;
         }
       }
@@ -228,7 +228,7 @@ void Colosso_AskDoneCheering(s32 id) {
   // Look up the speaker twice and discard both results (two original calls).
   ObjectEvent_GetById(id);
   ObjectEvent_GetById(id);
-  slot = gGameState.selectedObjectEvent;
+  slot = gGameState.selectedLocalId;
   objectEvent = ObjectEvent_GetById(slot);
   Engine_ScriptStart();
   msg = MsgColossoCheering;
@@ -271,22 +271,22 @@ void Colosso_AskDoneCheering(s32 id) {
 /// guide steps aside, Isaac walks past and the party leaves for the Colosseum.
 /// Otherwise "Wait, shouldn't you decide where the best place to cheer for
 /// Isaac is?"
-static void Colosso_AskReadyToRace(s32 objectEventId) {
+static void Colosso_AskReadyToRace(s32 localId) {
   struct ObjectEvent *objectEvent;
   s32 x;
   s32 z;
 
-  objectEvent = ObjectEvent_GetById(objectEventId);
+  objectEvent = ObjectEvent_GetById(localId);
   x = objectEvent->x.part.pixel;
   z = objectEvent->z.part.pixel;
   Engine_ScriptStart();
 
   if (GetPartyMemberCount() <= 1) {
     Engine_ScriptSetMessage(MsgColossoIsaacDidGetGoodLook);
-    if (Engine_ScriptAskYesNo(objectEventId, 0) == 0) {
+    if (Engine_ScriptAskYesNo(localId, 0) == 0) {
       InitializeObjectEventZero();
-      InitializeSelectedObjectEvent(objectEventId);
-      Engine_ObjectEventWalkTo(objectEventId, x, z + 64);
+      InitializeSelectedObjectEvent(localId);
+      Engine_ObjectEventWalkTo(localId, x, z + 64);
       Engine_ScriptWait(15);
       Engine_ObjectEventWalkToAndWait(LOCALID_PARTY_LEADER, x, z);
       Engine_ObjectEventWalkToAndWait(LOCALID_PARTY_LEADER, x, z + 32);
@@ -296,7 +296,7 @@ static void Colosso_AskReadyToRace(s32 objectEventId) {
     }
   } else {
     Engine_ScriptSetMessage(MsgColossoWaitShouldntDecideWhereBest);
-    Engine_ScriptShowMessage(objectEventId, 0);
+    Engine_ScriptShowMessage(localId, 0);
   }
 
   Engine_ScriptEnd();

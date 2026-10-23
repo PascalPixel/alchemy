@@ -70,9 +70,8 @@ s32 PartyInventory_GiveItem(s32 item, s32 unused);
 s32 Inventory_TryAddAndReturnOwner(s32 item, s32 unused, s32 unit);
 void Inventory_NoOpCallback(void);
 void Inventory_ReservedNoOp(void);
-void ObjectEvent_WaitForAnimationEnd(s32 objectEvent, s32 animation);
-s32 FieldScript_AskYesNoWithObjectEventAnimation(s32 objectEvent,
-                                                 s32 forceBottom);
+void ObjectEvent_WaitForAnimationEnd(s32 localId, s32 animation);
+s32 FieldScript_AskYesNoWithObjectEventAnimation(s32 localId, s32 forceBottom);
 s32 Menu_AskYesNo(s32 atBottom);
 void Party_LearnAbility(s32 unit, s32 ability);
 void FieldScript_StartScreenTransition(void);
@@ -96,7 +95,7 @@ struct FacingObject;
 struct ObjectEvent;
 struct ObjectRuntime;
 
-struct ObjectEvent *ObjectEvent_GetById(s32 objectEvent);
+struct ObjectEvent *ObjectEvent_GetById(s32 localId);
 void ObjectMotion_SetSpeedParameters(u32 objectId, s32 speedLimit,
                                      s32 acceleration);
 // Built-in actions selected by ObjectMotion_SetActionCallback.
@@ -138,7 +137,7 @@ void ObjectMotion_SetVariantCallback(u32 objectId, s32 count);
 void Motion_SetVarCbAndRefresh(u32 objectId, s32 count);
 void FieldEffect_UpdateParticleLinearMotion(union FieldObject *fieldObject);
 void FieldEffect_SpawnBurstParticle(struct ObjectEvent *source, s32 param);
-void ObjectEvent_JumpDownLedge(s32 objectEvent, s32 pose, s32 param);
+void ObjectEvent_JumpDownLedge(s32 localId, s32 pose, s32 param);
 void ObjectMotion_SetAngleToward(s32 firstId, s32 secondId, s32 wait);
 void ObjectEvent_LinkPair(s32 firstId, s32 secondId, s32 wait);
 void FacingObject_TurnPairToFaceEachOther(struct FacingObject *firstObject,
@@ -160,30 +159,30 @@ void ObjectVisual_ReservedNoOp(void);
 struct UiWindow;
 
 void FieldScript_SetMessageId(s32 message);
-s32 ObjectTable_ReadActiveValue(s32 objectEvent);
+s32 ObjectTable_ReadActiveValue(s32 localId);
 s32 ObjectTable_FindActiveByValue(s32 sprite);
-struct UiWindow *UiText_OpenMessageAtObject(s32 objectEvent, s32 unused);
-void FieldScript_ShowMessageAndWait(s32 objectEvent, s32 flags);
-void FieldScript_ShowMessageThenWait(s32 objectEvent, s32 flags, s32 wait);
-s32 FieldScript_AskYesNoAndShowResponse(s32 objectEvent, s32 flags);
+struct UiWindow *UiText_OpenMessageAtObject(s32 localId, s32 unused);
+void FieldScript_ShowMessageAndWait(s32 localId, s32 flags);
+void FieldScript_ShowMessageThenWait(s32 localId, s32 flags, s32 wait);
+s32 FieldScript_AskYesNoAndShowResponse(s32 localId, s32 flags);
 void FieldScript_EmptyCallback(void);
 void FieldScript_ShowSpeakerMessage(s32 speaker);
 void FieldScript_ForwardShowMessageAtPosition(s32 unused0, s32 unused1, s32 x,
                                               s32 y);
 void FieldScript_ShowMessageAtPosition(s32 unused0, s32 unused1, s32 x, s32 y);
-void ObjectTable_RunIfActive(s32 objectEvent);
+void ObjectTable_RunIfActive(s32 localId);
 void FieldScript_ShowTwoMessagesAndWait(s32 first, s32 firstX, s32 firstY,
                                         s32 firstPortraitX, s32 firstPortraitY,
                                         s32 second, s32 secondX, s32 secondY,
                                         s32 secondPortraitX,
                                         s32 secondPortraitY);
-void Ui_SetMessageVoiceFromObjectEvent(s32 objectEvent);
+void Ui_SetMessageVoiceFromObjectEvent(s32 localId);
 
-void Camera_FollowObjectEvent(s32 objectEvent, s32 keepPosition);
+void Camera_FollowObjectEvent(s32 localId, s32 keepPosition);
 void Camera_SetSpeedParameters(s32 speedLimit, s32 acceleration);
 void Camera_MoveWithinMapBounds(s32 requestedX, s32 requestedY, s32 requestedZ,
                                 s32 glide);
-void ObjectEvent_PlaceCurrentWithinCameraBounds(s32 objectEvent, s32 glide);
+void ObjectEvent_PlaceCurrentWithinCameraBounds(s32 localId, s32 glide);
 void Camera_WaitForArrival(void);
 struct ObjectEvent *Camera_GetScriptObject(void);
 void Camera_FollowObject(struct ObjectRuntime *target, s32 keepCurrentPosition);
@@ -200,7 +199,7 @@ void FieldEffect_CopyLinkedObjectPosition(union FieldObject *fieldObject);
 #else
 s32 FieldEffect_CopyLinkedObjectPosition(union FieldObject *fieldObject);
 #endif
-void FieldEffect_SpawnLinked(s32 objectEvent, s32 emote, s32 wait);
+void FieldEffect_SpawnLinked(s32 localId, s32 emote, s32 wait);
 /// FieldEffect_SpawnLinked's emote flag: the bubble takes sprite priority 1
 /// instead of its object event's. The low four bits pick the bubble (enum
 /// Emote).
@@ -233,7 +232,7 @@ enum AttachedEffectFlag {
   /// The object takes sprite priority 1, not the object event's.
   ATTACHED_EFFECT_IN_FRONT = 0x100
 };
-void FieldEffect_ConfigureLinkedObject(s32 objectEvent, s32 flags);
+void FieldEffect_ConfigureLinkedObject(s32 localId, s32 flags);
 s32 Object_ClearChildAndCollisionFlags(void *obj);
 s32 ObjectMotion_MoveTowardTarget(struct ObjectRuntime *object);
 s32 ObjectMotion_TurnTowardLinkedTarget(struct ObjectRuntime *object);
@@ -406,8 +405,8 @@ void FieldEffect_UpdateRadialCamera(struct EffectSlot *effect);
 void FieldEffect_RunHaltOnTarget(s32 unused);
 void FieldEffect_RunHalt(void);
 void FieldEffect_UpdatePausedObject(union FieldObject *fieldObject);
-void FieldEffect_PauseObject(s32 objectEventId);
-void FieldEffect_ResumeObject(s32 objectEventId);
+void FieldEffect_PauseObject(s32 localId);
+void FieldEffect_ResumeObject(s32 localId);
 s32 FieldEffect_FilterObjectIdByFlags(s32 id);
 void FieldEffect_RunCatchOnTarget(s32 unused);
 void FieldEffect_RunCatch(void);

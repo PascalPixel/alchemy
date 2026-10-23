@@ -128,34 +128,34 @@ const struct ObjectEventTemplate *Map_GetObjectEventTemplates(void) {
 /// you trying to get to Lalivero?" Yes, and the sandstorms make it impossible;
 /// no, and the woman doubts it, for Angarans who come to Suhalla are always
 /// going to Lalivero.
-static void EventScript_AskIfGoingToLalivero(s32 objectEventId) {
+static void EventScript_AskIfGoingToLalivero(s32 localId) {
   s32 firstMessage = MsgSuhallaTryingGetLalivero;
   Engine_ScriptSetMessage(firstMessage);
-  Engine_ScriptOpenMessage(objectEventId, 0);
+  Engine_ScriptOpenMessage(localId, 0);
   if (Engine_ScriptChooseYesNo(LOCALID_PARTY_LEADER, 0) == 0) {
     Engine_ScriptWait(10);
     Engine_ScriptSetMessage(firstMessage + 1);
   } else {
     Engine_ScriptSetMessage(firstMessage + 2);
   }
-  Engine_ScriptShowMessage(objectEventId, 0);
+  Engine_ScriptShowMessage(localId, 0);
 }
 
 /// An old woman asks whether the sandstorm brought the party to Suhalla. She's
 /// LOCALID_OLD_WOMAN_ON_SOUTHERN_GONDOWAN, there after Babi's audience. Yes,
 /// and everyone the storms catch winds up here; no, and the old woman wonders
 /// why there are so many storms.
-static void EventScript_AskIfBroughtBySandstorm(s32 objectEventId) {
+static void EventScript_AskIfBroughtBySandstorm(s32 localId) {
   s32 firstMessage = MsgSuhallaBroughtSuhallaSandstorm;
   Engine_ScriptSetMessage(firstMessage);
-  Engine_ScriptOpenMessage(objectEventId, 0);
+  Engine_ScriptOpenMessage(localId, 0);
   if (Engine_ScriptChooseYesNo(LOCALID_PARTY_LEADER, 0) == 0) {
     Engine_ScriptWait(10);
     Engine_ScriptSetMessage(firstMessage + 1);
   } else {
     Engine_ScriptSetMessage(firstMessage + 2);
   }
-  Engine_ScriptShowMessage(objectEventId, 0);
+  Engine_ScriptShowMessage(localId, 0);
 }
 
 /// Growth on Suhalla's sprout: the plant grows, and its cell takes the

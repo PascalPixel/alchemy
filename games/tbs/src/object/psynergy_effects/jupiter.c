@@ -67,10 +67,10 @@ void Djinn_RunJupiterJoinEffect(s32 djinniId) {
 
   // The leader turns to face south (0x4000) and plays animation 28.
   WaitFrames(60);
-  ObjectMotion_ArmCallback(gGameState.selectedObjectEvent, 0x4000, 0);
+  ObjectMotion_ArmCallback(gGameState.selectedLocalId, 0x4000, 0);
   WaitFrames(20);
   ObjectDispatch_SelectAnimationFar(
-      ObjectEvent_GetById(gGameState.selectedObjectEvent), 28);
+      ObjectEvent_GetById(gGameState.selectedLocalId), 28);
   WaitFrames(40);
   AudioCommand_PlayFar(SE_164);
   WaitFrames(100);
@@ -129,7 +129,7 @@ void FieldEffect_UpdatePhasedRadialParticle(struct EffectSlot *effect) {
   struct EffectVector position;
   s32 state;
 
-  owner = (struct Object *)ObjectEvent_GetById(gGameState.selectedObjectEvent);
+  owner = (struct Object *)ObjectEvent_GetById(gGameState.selectedLocalId);
   state = effect->state;
 
   if (state == MARS_SPARK_AIM) {

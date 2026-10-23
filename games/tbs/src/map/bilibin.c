@@ -964,7 +964,7 @@ static void EventScript_PushStatueOrCrates(void) {
 static void Bilibin_UpdateWadingRipples(void) {
   struct ObjectEvent *objectEvent;
 
-  objectEvent = ObjectEvent_GetById(gGameState.selectedObjectEvent);
+  objectEvent = ObjectEvent_GetById(gGameState.selectedLocalId);
   if (objectEvent->x.fixed < PIXELS(142)) {
     if (objectEvent->y.fixed < PIXELS(8)) {
       if (gBilibin_RippleTimer.frames == 0)

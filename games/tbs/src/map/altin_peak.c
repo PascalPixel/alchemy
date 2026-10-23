@@ -152,7 +152,7 @@ static void AltinPeak_DrainAfterSecondBeast(void);
 static void AltinPeak_DrainAfterThirdBeast(void);
 static void AltinPeak_CelebrateHydrosVictory(void);
 static void AltinPeak_UpdateFrostPillarPriority(void);
-static void AltinPeak_MarkObjectEventTerrainCell(s32 objectEventId);
+static void AltinPeak_MarkObjectEventTerrainCell(s32 localId);
 static void AltinPeak_RollCart(s32 id, s32 heading);
 static void AltinPeak_StartPaletteAnimation(void);
 
@@ -2381,10 +2381,10 @@ static void AltinPeak_UpdateFrostPillarPriority(void) {
 }
 
 /// Makes a puddle walkable to the object event checks and marks its map cell.
-static void AltinPeak_MarkObjectEventTerrainCell(s32 objectEventId) {
+static void AltinPeak_MarkObjectEventTerrainCell(s32 localId) {
   struct ObjectEvent *objectEvent;
 
-  objectEvent = ObjectEvent_GetById(objectEventId);
+  objectEvent = ObjectEvent_GetById(localId);
   objectEvent->collisionFlags &= (u8)~OBJ_EVENT_SOLID;
 
   MapGrid_SetMetatileBehaviorAt(0, objectEvent->x.fixed, objectEvent->z.fixed,
@@ -2424,7 +2424,7 @@ static void AltinPeak_StopCartAndJumpOff(struct ObjectEvent *objectEvent) {
   ResourceMetadata_ClearRecord(sprite->entries[1]);
   sprite->entries[1] = NULL;
   sprite->dirty = 1;
-  leader = Engine_ObjectEventLookup(gGameState.selectedObjectEvent);
+  leader = Engine_ObjectEventLookup(gGameState.selectedLocalId);
   Engine_AudioPlayCue(SE_JUMP);
   leader->x.fixed = x;
   leader->velocityY = PIXELS(6);
@@ -2577,7 +2577,7 @@ enum AltinPeakCartCell {
 static void AltinPeak_RollCart(s32 id, s32 heading) {
   struct ObjectEvent *objectEvent = ObjectEvent_GetById(id);
   struct ObjectEvent *leader =
-      Engine_ObjectEventLookup(gGameState.selectedObjectEvent);
+      Engine_ObjectEventLookup(gGameState.selectedLocalId);
   struct FieldPosition position;
   s32 directionIndex;
 

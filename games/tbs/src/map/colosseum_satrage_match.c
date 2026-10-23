@@ -280,8 +280,8 @@ static inline void InitializeObjectEventZero(void) {
 }
 
 /// Sets the specified object event's walking speed and acceleration.
-static inline void InitializeSelectedObjectEvent(s32 objectEventId) {
-  Engine_ObjectEventSetSpeed(objectEventId, PIXELS(1), PIXELS(1) / 2);
+static inline void InitializeSelectedObjectEvent(s32 localId) {
+  Engine_ObjectEventSetSpeed(localId, PIXELS(1), PIXELS(1) / 2);
 }
 
 const struct MapWarpDest *Map_GetWarpDests(void) {
@@ -462,7 +462,7 @@ static void EventScript_GrowPlant(void) {
 /// the field plays at any ledge (FieldObjectEvent_JumpDownLedge) for the object
 /// event touching it.
 static void EventScript_JumpDownLedge(void) {
-  FieldObjectEvent_JumpDownLedge(gGameState.selectedObjectEvent, 6, 0);
+  FieldObjectEvent_JumpDownLedge(gGameState.selectedLocalId, 6, 0);
 }
 
 /// Walking west into the obstacle at coord event 30 in Colosseum Final 2 only
@@ -478,7 +478,7 @@ static void ColosseumSatrageMatch_MovePusherAndLog(s32 logId, s32 offsetX,
   s32 destinationX;
   s32 destinationZ;
 
-  pusher = ObjectEvent_GetById(gGameState.selectedObjectEvent);
+  pusher = ObjectEvent_GetById(gGameState.selectedLocalId);
   log = ObjectEvent_GetById(logId);
   Engine_ScriptStart();
   {
@@ -526,8 +526,7 @@ static void ColosseumSatrageMatch_MovePusherAndLog(s32 logId, s32 offsetX,
 /// Standing on one of the Log-Rolling Stage's logs (coord event 22): it carries
 /// the rider across the water the way the player holds.
 static void EventScript_RideLog(void) {
-  struct ObjectEvent *pusher =
-      ObjectEvent_GetById(gGameState.selectedObjectEvent);
+  struct ObjectEvent *pusher = ObjectEvent_GetById(gGameState.selectedLocalId);
   s32 column = pusher->x.fixed >> 20;
   s32 offsetX = 0;
   s32 logId = RIDING_LOG_NORTH;
@@ -559,7 +558,7 @@ static void EventScript_RideLog(void) {
 /// Rolls a log to half-cell coordinates while its pusher follows halfway.
 static void ColosseumSatrageMatch_RollLogToCell(s32 logId, s32 halfCellX,
                                                 s32 halfCellZ) {
-  s32 pusher = gGameState.selectedObjectEvent;
+  s32 pusher = gGameState.selectedLocalId;
   struct ObjectEvent *pusherObjectEvent = ObjectEvent_GetById(pusher);
   struct ObjectEvent *log = ObjectEvent_GetById(logId);
   s32 heading = (pusherObjectEvent->facing + 0x1000) & 0xe000;
@@ -685,7 +684,7 @@ static void ColosseumSatrageMatch_UpdateLifts(void) {
   s32 deltaZ;
   struct ObjectEvent *liftObjectEvent;
 
-  rider = ObjectEvent_GetById(gGameState.selectedObjectEvent);
+  rider = ObjectEvent_GetById(gGameState.selectedLocalId);
   // Carry a rider only while both horizontal distances are less than ten
   // pixels.
   for (liftId = COLOSSEUM_SATRAGE_MATCH_FIRST_LIFT;
@@ -1411,7 +1410,7 @@ static void EventScript_TalkToWallAttendant(s32 attendant) {
 /// follows.
 static void ColosseumSatrageMatch_PushObstacleToCell(s32 obstacleId, s32 column,
                                                      s32 row) {
-  s32 pusher = gGameState.selectedObjectEvent;
+  s32 pusher = gGameState.selectedLocalId;
   struct ObjectEvent *pusherObjectEvent = ObjectEvent_GetById(pusher);
   struct ObjectEvent *obstacle = ObjectEvent_GetById(obstacleId);
   s32 alongX = (obstacle->x.fixed >> 20) != column / 2;
@@ -1594,7 +1593,7 @@ static void ColosseumSatrageMatch_ShowRoundStartLettering(s32 mode) {
 /// The result: `Won` or `Lose` in large lettering, and the loser's reaction.
 static void ColosseumSatrageMatch_ShowBattleResultLettering(s32 result) {
 
-  s32 reactingObjectEvent;
+  s32 reactingLocalId;
 
   Engine_AudioPlayCue(SE_247);
   Engine_ScriptOpenScreen();
@@ -1611,7 +1610,7 @@ static void ColosseumSatrageMatch_ShowBattleResultLettering(s32 result) {
      * differ in tbs-en. */
     COLOSSEUM_SATRAGE_MATCH_START_MODE_TASK(3, 1);
     Engine_ScriptWait(-result * 60 + 60);
-    reactingObjectEvent = 0;
+    reactingLocalId = 0;
   } else {
     Engine_ScriptWait(30);
     Engine_AudioPlayCue(result + 90);
@@ -1620,10 +1619,10 @@ static void ColosseumSatrageMatch_ShowBattleResultLettering(s32 result) {
      * r0; as a direct call, 1 of 72 instructions differ in tbs-en. */
     COLOSSEUM_SATRAGE_MATCH_START_MODE_TASK(3, 0);
     Engine_ScriptWait(result * 60 + 60);
-    reactingObjectEvent = 8;
+    reactingLocalId = 8;
   }
-  Engine_ObjectEventShowEmote(reactingObjectEvent,
-                              EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
+  Engine_ObjectEventShowEmote(reactingLocalId, EMOTE_IN_FRONT | EMOTE_ELLIPSIS,
+                              0);
   while (AudioCommand_GetStateByte() != 0) {
     Engine_TaskWait(1);
   }
@@ -1730,14 +1729,14 @@ static s32 ColosseumSatrageMatch_ApproachFinishAndTakeItem(s32 firstItem,
   s32 finishAlreadyReached;
   s32 x;
   s32 z;
-  u16 *itemObjectEvent;
+  u16 *itemLocalId;
   s16 *timer;
 
   finishAlreadyReached = Engine_GameFlagIsSet(FLAG_ARENA_REACHED);
 
   gameState = (u8 *)&gGameState;
   warrior =
-      ObjectEvent_GetById(((struct GameState *)gameState)->selectedObjectEvent);
+      ObjectEvent_GetById(((struct GameState *)gameState)->selectedLocalId);
 
   if (gauge->finishX < warrior->x.fixed) {
     x = gauge->finishX + PIXELS(12);
@@ -1747,14 +1746,14 @@ static s32 ColosseumSatrageMatch_ApproachFinishAndTakeItem(s32 firstItem,
 
   if (finishAlreadyReached != 0) {
     z = gauge->finishZ + PIXELS(16);
-    itemObjectEvent = &gauge->finishItemObjectEventB;
+    itemLocalId = &gauge->finishItemLocalIdB;
   } else {
     z = gauge->finishZ - PIXELS(16);
-    itemObjectEvent = &gauge->finishItemObjectEventA;
+    itemLocalId = &gauge->finishItemLocalIdA;
   }
 
   timer = (s16 *)&warrior->timer;
-  *timer = *itemObjectEvent;
+  *timer = *itemLocalId;
   warrior->acceleration = PIXELS(1) / 4;
   warrior->speed = PIXELS(1);
 
@@ -1781,7 +1780,7 @@ static s32 ColosseumSatrageMatch_ApproachFinishAndTakeItem(s32 firstItem,
   }
 
   gameState = (u8 *)&gGameState;
-  UiWork_PushValueSlot(((struct GameState *)gameState)->selectedObjectEvent, 1);
+  UiWork_PushValueSlot(((struct GameState *)gameState)->selectedLocalId, 1);
   Engine_MessageShowCentered(MsgColossoIsaacGotItem, 3);
   ObjectDispatch_WaitForValue16(warrior);
 
@@ -1805,10 +1804,10 @@ void Map_BuildDescriptorAndInstallTask(s32 leaderId, s32 opponentId,
                                sizeof(struct ColossoRaceWork));
   graphics = Runtime_BumpAllocateAlternatePool(512);
 
-  work->gauge.playerObjectEvent = leaderId;
-  work->gauge.opponentObjectEvent = opponentId;
-  work->gauge.finishItemObjectEventA = firstItem;
-  work->gauge.finishItemObjectEventB = secondItem;
+  work->gauge.playerLocalId = leaderId;
+  work->gauge.opponentLocalId = opponentId;
+  work->gauge.finishItemLocalIdA = firstItem;
+  work->gauge.finishItemLocalIdB = secondItem;
   work->gauge.segments = segments;
   work->gauge.finishX = finishX;
   work->gauge.finishZ = finishZ;
@@ -1848,7 +1847,7 @@ static void ColosseumSatrageMatch_StartOpponentPath(s32 pathResource) {
   if (Engine_GameFlagIsSet(FLAG_KEEP_PARTY_POSITION) == 0) {
     recorder->mode = PATH_RECORDER_PLAY;
     recorder->mirror = 1;
-    recorder->objectEvent = work->gauge.opponentObjectEvent;
+    recorder->localId = work->gauge.opponentLocalId;
     recorder->still = 0;
     recorder->pathIndex = 0;
   }
@@ -1869,10 +1868,10 @@ static void ColosseumSatrageMatch_PushAdjacentObstacle(void) {
   u32 direction;
   struct FieldPosition destination;
   s32 zero;
-  s32 objectEventId;
+  s32 localId;
 
-  objectEventId = gGameState.selectedObjectEvent;
-  pusher = ObjectEvent_GetById(objectEventId);
+  localId = gGameState.selectedLocalId;
+  pusher = ObjectEvent_GetById(localId);
 
   direction = pusher->facing >> 12;
 

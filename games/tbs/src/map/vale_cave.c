@@ -202,8 +202,7 @@ enum ValeCaveLogsLocalId {
 /// ★ Named from the game: "Kite" (MsgDjinnName)
 #define FLAG_VALE_CAVE_KITE_BEHIND_LEDGE 0x302
 
-static void ValeCave_CenterObjectEventOnCell(s32 objectEventId, s32 column,
-                                             s32 row);
+static void ValeCave_CenterObjectEventOnCell(s32 localId, s32 column, s32 row);
 static void ValeCave_ApplyEntryState(void);
 
 #include "common/effect_create.h"
@@ -325,7 +324,7 @@ static void EventScript_RevealHiddenTile(void) {
 /// Sinks a stack of crates into its hole, spawning a particle each frame around
 /// the opening.
 static inline void
-ValeCave_SinkObjectWithParticles(s32 objectEventId, s32 baseX, s32 baseZ,
+ValeCave_SinkObjectWithParticles(s32 localId, s32 baseX, s32 baseZ,
                                  struct EffectOptions *particleOptions) {
   u32 frame;
 
@@ -336,7 +335,7 @@ ValeCave_SinkObjectWithParticles(s32 objectEventId, s32 baseX, s32 baseZ,
     FieldEffect_Spawn(particleX, 0, particleZ, 0, 0, 0,
                       EFFECT_USE_START_SCALE | EFFECT_USE_PALETTE,
                       particleOptions);
-    ObjectEvent_GetById(objectEventId)->y.fixed -= PIXELS(1) / 2;
+    ObjectEvent_GetById(localId)->y.fixed -= PIXELS(1) / 2;
     Engine_ScriptWait(1);
   }
 }
@@ -855,12 +854,11 @@ static void EventScript_RideLogWest(void) {
 }
 
 /// Centers an object event on a map cell and gives it underfoot priority.
-static void ValeCave_CenterObjectEventOnCell(s32 objectEventId, s32 column,
-                                             s32 row) {
-  struct ObjectEvent *objectEvent = ObjectEvent_GetById(objectEventId);
+static void ValeCave_CenterObjectEventOnCell(s32 localId, s32 column, s32 row) {
+  struct ObjectEvent *objectEvent = ObjectEvent_GetById(localId);
 
   if (objectEvent != 0) {
-    Engine_ObjectEventSetSpritePriority(objectEventId, 3);
+    Engine_ObjectEventSetSpritePriority(localId, 3);
     objectEvent->terrainId = 2;
     objectEvent->priorityFlags |= OBJ_EVENT_PRIORITY_UNDERFOOT;
     objectEvent->x.fixed = (column << 20) + PIXELS(8);

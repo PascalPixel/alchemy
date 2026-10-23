@@ -244,8 +244,8 @@ static inline void InitializeObjectEventZero(void) {
 }
 
 /// Sets a companion speed for the shared solo-party placement routine.
-static inline void InitializeSelectedObjectEvent(s32 objectEventId) {
-  Engine_ObjectEventSetSpeed(objectEventId, PIXELS(1), PIXELS(1) / 2);
+static inline void InitializeSelectedObjectEvent(s32 localId) {
+  Engine_ObjectEventSetSpeed(localId, PIXELS(1), PIXELS(1) / 2);
 }
 
 extern s32 gColossoParticleCount;
@@ -271,7 +271,7 @@ ColosseumNavampaMatch_GetObjectEventTemplates(void) {
 static void ColosseumNavampaMatch_UpdateWallWedge(void) {
   struct EventWork *work = gEventWork;
   struct ObjectEvent *objectEvent =
-      ObjectEvent_GetById(gGameState.selectedObjectEvent);
+      ObjectEvent_GetById(gGameState.selectedLocalId);
   s32 row = objectEvent->z.fixed >> 20;
   s32 i;
   s32 kind;
@@ -353,7 +353,7 @@ static void ColosseumNavampaMatch_WaitForWallWedgeOpening(void) {
 static void EventScript_RideMovingSidewalk(void) {
   struct EventWork *work = gEventWork;
   struct GameState *state = &gGameState;
-  s32 id = state->selectedObjectEvent;
+  s32 id = state->selectedLocalId;
   struct ObjectEvent *subject = work->viewCenter;
   struct ObjectEvent *objectEvent = ObjectEvent_GetById(id);
   s32 z = objectEvent->z.part.pixel;
@@ -407,33 +407,32 @@ static void EventScript_FreezeOnScales(void) {
 /// frozen: it sinks with the rider as the eastern pan rises
 /// (FLAG_ON_SCALES).
 static void EventScript_StepOnScales(void) {
-  s32 objectEvent;
+  s32 localId;
   s32 lowered;
   struct ObjectEvent *log;
   struct ObjectEvent *rider;
   u8 *flags;
 
-  objectEvent = gGameState.selectedObjectEvent;
+  localId = gGameState.selectedLocalId;
   lowered = GameFlag_IsSet(FLAG_SCALES_FROZEN);
   if (lowered == 0) {
     log = ObjectEvent_GetById(SCALES_WEST_PAN);
     if (log != NULL) {
-      ObjectEvent_SetDestination(objectEvent, log->x.part.pixel,
-                                 log->z.part.pixel);
+      ObjectEvent_SetDestination(localId, log->x.part.pixel, log->z.part.pixel);
     }
-    Engine_ObjectEventWaitForMove(objectEvent);
+    Engine_ObjectEventWaitForMove(localId);
     log = ObjectEvent_GetById(SCALES_EAST_PAN);
     log->motionFlags = lowered;
     ColosseumNavampaMatch_MoveOnScales(log, PIXELS(32));
     log = ObjectEvent_GetById(SCALES_WEST_PAN);
     log->motionFlags = lowered;
     ColosseumNavampaMatch_MoveOnScales(log, PIXELS(4));
-    rider = ObjectEvent_GetById(objectEvent);
+    rider = ObjectEvent_GetById(localId);
     flags = &rider->motionFlags;
     *flags = lowered;
     ColosseumNavampaMatch_MoveOnScales(rider, PIXELS(4));
     Engine_ObjectEventSetSpriteFlags(rider, SPRITE_FLAG_SHADOW);
-    Engine_ObjectEventWaitForMove(objectEvent);
+    Engine_ObjectEventWaitForMove(localId);
     MapGrid_CopyCellAttributes(0, 24, 1, 1, 9, 12);
     Engine_TaskWait(2);
     Engine_ObjectEventSetSpriteFlags(rider, SPRITE_FLAG_SHADOW);
@@ -447,7 +446,7 @@ static void EventScript_StepOnScales(void) {
 static void EventScript_StepOffScales(void) {
   struct ObjectEvent *objectEvent;
 
-  Engine_ObjectEventSetAnimation(gGameState.selectedObjectEvent, 1);
+  Engine_ObjectEventSetAnimation(gGameState.selectedLocalId, 1);
 
   objectEvent = ObjectEvent_GetById(SCALES_EAST_PAN);
   objectEvent->motionFlags = 0;
@@ -564,7 +563,7 @@ static void ColosseumNavampaMatch_UpdateEastEndCollision(void) {
   s32 z;
   s32 collisionKind;
 
-  objectEvent = ObjectEvent_GetById(gGameState.selectedObjectEvent);
+  objectEvent = ObjectEvent_GetById(gGameState.selectedLocalId);
   x = objectEvent->x.fixed >> 20;
   collisionKind = 23;
   z = objectEvent->z.fixed >> 20;
@@ -622,7 +621,7 @@ static void EventScript_RollLongLog(void) {
   struct ObjectEvent *log;
   struct EventWork *work;
   s32 angle;
-  s32 objectEvent;
+  s32 localId;
   s32 x;
   s32 z;
   s32 steps;
@@ -633,11 +632,11 @@ static void EventScript_RollLongLog(void) {
   s32 step;
   s32 ahead[3];
 
-  rider = ObjectEvent_GetById(gGameState.selectedObjectEvent);
+  rider = ObjectEvent_GetById(gGameState.selectedLocalId);
   log = ObjectEvent_GetById(LONG_LOG);
   steps = 0;
   angle = gColossoEarlySequenceData[rider->facing >> 13];
-  objectEvent = gGameState.selectedObjectEvent;
+  localId = gGameState.selectedLocalId;
   SET_VECTOR(ahead, (rider->x.fixed & -0x100000) + PIXELS(8), rider->y.fixed,
              (rider->z.fixed & -0x100000) + PIXELS(8));
   Vector_AddPolarOffset(PIXELS(16), angle, ahead);
@@ -684,7 +683,7 @@ static void EventScript_RollLongLog(void) {
   MapGrid_CopyCellAttributes(74, 8, 1, 4, log->x.fixed >> 20, 9);
   MapGrid_CopyCellAttributes(120, 60, 8, 5, 74, 60);
   Engine_ScriptStart();
-  Engine_ObjectEventSetAnimation(objectEvent, 8);
+  Engine_ObjectEventSetAnimation(localId, 8);
   Engine_ScriptWait(6);
   log->speed = PIXELS(1) / 2;
   acceleration = PIXELS(1) / 5;
@@ -692,11 +691,11 @@ static void EventScript_RollLongLog(void) {
   ObjectEvent_SetMode(log, mode);
   Engine_ObjectSetPosition(log, x, 0, z);
   Engine_ScriptWait(6);
-  Engine_ObjectEventSetAnimation(objectEvent, ANIMATION_WALK);
+  Engine_ObjectEventSetAnimation(localId, ANIMATION_WALK);
   work = Runtime_AllocateBlock(HEAP_SLOT_EVENT, sizeof(struct FieldWork));
   ObjectDispatch_StartCamera((struct DispatchObject *)work->viewCenter,
                              (s32)log);
-  ObjectEvent_SetSpeed(objectEvent, PIXELS(1) / 2, acceleration);
+  ObjectEvent_SetSpeed(localId, PIXELS(1) / 2, acceleration);
   Script_PlayCue(SE_HEAVY_MOVE);
   ObjectEvent_SetMode(rider, 2);
   Engine_ObjectSetPosition(rider, (steps * step * PIXELS(1)) + rider->x.fixed,
@@ -779,23 +778,22 @@ static void EventScript_PassNorthWallOpening(void) {
 #ifndef UBFIX
   s16 *gameWords;
 #endif
-  s32 *objectEventId;
+  s32 *localId;
   s32 z;
 
 #ifdef UBFIX
-  objectEventId = &gGameState.selectedObjectEvent;
+  localId = &gGameState.selectedLocalId;
 #else
   // The original word-indexed address takes three more instructions here.
   gameWords = (s16 *)&gGameState;
-  objectEventId =
-      (s32 *)&gameWords[offsetof(struct GameState, selectedObjectEvent) /
-                        sizeof(s16)];
+  localId = (s32 *)&gameWords[offsetof(struct GameState, selectedLocalId) /
+                              sizeof(s16)];
 #endif
-  objectEvent = ObjectEvent_GetById(*objectEventId);
+  objectEvent = ObjectEvent_GetById(*localId);
   objectEvent->acceleration = PIXELS(1);
   objectEvent->speed = PIXELS(2);
-  Engine_ObjectEventSetAttachedEffect(*objectEventId, ATTACHED_EFFECT_IN_FRONT |
-                                                          ATTACHED_EFFECT_ONCE);
+  Engine_ObjectEventSetAttachedEffect(*localId, ATTACHED_EFFECT_IN_FRONT |
+                                                    ATTACHED_EFFECT_ONCE);
   ObjectEvent_SetMode(objectEvent, 5);
   z = objectEvent->z.fixed & 0xFFF00000;
   Engine_ObjectSetPosition(objectEvent, objectEvent->x.fixed,
@@ -810,19 +808,18 @@ static void EventScript_PassSouthWallOpening(void) {
 #ifndef UBFIX
   s16 *gameWords;
 #endif
-  s32 *objectEventId;
+  s32 *localId;
   s32 z;
 
 #ifdef UBFIX
-  objectEventId = &gGameState.selectedObjectEvent;
+  localId = &gGameState.selectedLocalId;
 #else
   // The original word-indexed address takes three more instructions here.
   gameWords = (s16 *)&gGameState;
-  objectEventId =
-      (s32 *)&gameWords[offsetof(struct GameState, selectedObjectEvent) /
-                        sizeof(s16)];
+  localId = (s32 *)&gameWords[offsetof(struct GameState, selectedLocalId) /
+                              sizeof(s16)];
 #endif
-  objectEvent = ObjectEvent_GetById(*objectEventId);
+  objectEvent = ObjectEvent_GetById(*localId);
   if (objectEvent->x.fixed > PIXELS(664)) {
     objectEvent->x.fixed = PIXELS(664);
   }
@@ -833,9 +830,9 @@ static void EventScript_PassSouthWallOpening(void) {
   Engine_ObjectSetPosition(objectEvent, objectEvent->x.fixed,
                            objectEvent->y.fixed, z + PIXELS(12));
   FieldObject_WaitForMove(objectEvent);
-  Engine_ObjectEventSetAttachedEffect(*objectEventId, ATTACHED_EFFECT_IN_FRONT |
-                                                          ATTACHED_EFFECT_ONCE);
-  FieldObjectEvent_JumpDownLedge(*objectEventId, 6, 0);
+  Engine_ObjectEventSetAttachedEffect(*localId, ATTACHED_EFFECT_IN_FRONT |
+                                                    ATTACHED_EFFECT_ONCE);
+  FieldObjectEvent_JumpDownLedge(*localId, 6, 0);
 }
 
 /// Unused: an empty function nothing calls.
@@ -853,19 +850,19 @@ UNUSED static void ColosseumNavampaMatch_UnusedEventHook(void) {}
 /// announcements, not this question.
 UNUSED static void ColosseumNavampaMatch_UnusedWarriorTalk(s32 warriorId) {
   struct EventWork *work;
-  s32 objectEventId;
+  s32 localId;
   s32 messageOffset;
   s32 warpDest;
 
   work = gEventWork;
-  objectEventId = gGameState.selectedObjectEvent;
+  localId = gGameState.selectedLocalId;
   warpDest = gGameState.warpDest;
   if (warpDest == COLOSSEUM_NAVAMPA_MATCH_FROM_COLOSSEUM_SOUTH) {
     Engine_ScriptStart();
     messageOffset = warriorId * 3;
     Engine_ScriptSetMessage(messageOffset + MsgColossoDidntThinkBattles);
     Engine_ScriptOpenMessage(warriorId, 0);
-    if (Engine_ScriptChooseYesNo(objectEventId, 0) == 0) {
+    if (Engine_ScriptChooseYesNo(localId, 0) == 0) {
       Engine_ScriptSetMessage(messageOffset + MsgColossoDidntThinkBattles + 1);
       Engine_ScriptShowMessage(warriorId, 0);
       work->startTransition =
@@ -1894,16 +1891,16 @@ static void EventScript_TalkToMovingSidewalkAttendant(s32 guideId) {
 /// The log-rolling area's attendant, stage 6 of Colosseum Final 3: the first
 /// time, a pointer traces the log's route; then the objective, and a place for
 /// a friend to cheer.
-static void EventScript_TalkToLogRollingAttendant(s32 objectEvent) {
+static void EventScript_TalkToLogRollingAttendant(s32 localId) {
   s32 state;
 
   if (gGameState.warpDest == COLOSSEUM_NAVAMPA_MATCH_FROM_COLOSSEUM_SOUTH) {
-    Colosso_AskDoneCheering(objectEvent);
+    Colosso_AskDoneCheering(localId);
     return;
   }
 
   Engine_ScriptStart();
-  state = Colosso_GreetAtStage(objectEvent, 6);
+  state = Colosso_GreetAtStage(localId, 6);
 
   if (state == COLOSSO_GUIDE_DESCRIBE) {
     Engine_ScriptSetMessage(MsgColossoAnotherLogRollingArea);
@@ -1911,26 +1908,26 @@ static void EventScript_TalkToLogRollingAttendant(s32 objectEvent) {
     Engine_CameraMoveTo(PIXELS(1288), -1, PIXELS(152), 1);
     Engine_CameraWaitForMove();
     Engine_ScriptWait(30);
-    Engine_ScriptShowMessage(objectEvent, 0);
+    Engine_ScriptShowMessage(localId, 0);
     Colosso_ShowPointer(180, 88, 0);
     Engine_ScriptWait(60);
-    Engine_ScriptShowMessage(objectEvent, 0);
+    Engine_ScriptShowMessage(localId, 0);
     Colosso_MovePointer(32, 84, 10);
     Engine_ScriptWait(30);
-    Engine_ScriptShowMessage(objectEvent, 0);
+    Engine_ScriptShowMessage(localId, 0);
     Colosso_MovePointer(96, 84, 30);
     Engine_ScriptWait(60);
-    Engine_ScriptShowMessage(objectEvent, 0);
+    Engine_ScriptShowMessage(localId, 0);
     Colosso_HidePointer();
     Engine_ScriptWait(2);
     Engine_CameraFollowObjectEvent(LOCALID_PARTY_LEADER, 0);
-    Colosso_RepeatStageNumber(objectEvent, 6);
+    Colosso_RepeatStageNumber(localId, 6);
   } else if (state == COLOSSO_GUIDE_OFFER_CHEERING) {
     Engine_ScriptSetMessage(MsgColossoHereMustFigureOutHow);
-    Engine_ScriptShowMessage(objectEvent, 0);
+    Engine_ScriptShowMessage(localId, 0);
   }
 
-  Colosso_OfferCheeringSpot(state, objectEvent, 6);
+  Colosso_OfferCheeringSpot(state, localId, 6);
   Engine_ScriptEnd();
 }
 
@@ -2031,7 +2028,7 @@ static void ColosseumNavampaMatch_ShowRoundStartLettering(s32 mode) {
 /// Unused: a lettering countdown before the match, for a signed number of
 /// seconds; nothing calls it.
 UNUSED static void ColosseumNavampaMatch_UnusedCountdown(s32 countdown) {
-  s32 objectEventId;
+  s32 localId;
 
   Engine_AudioPlayCue(SE_247);
   Engine_ScriptOpenScreen();
@@ -2048,7 +2045,7 @@ UNUSED static void ColosseumNavampaMatch_UnusedCountdown(s32 countdown) {
      * differ in tbs-en. */
     COLOSSEUM_NAVAMPA_MATCH_INITIALIZE_MODE_TASK(3, 1);
     Engine_ScriptWait(-countdown * 60 + 60);
-    objectEventId = LOCALID_PARTY_LEADER;
+    localId = LOCALID_PARTY_LEADER;
   } else {
     Engine_ScriptWait(30);
     Engine_AudioPlayCue(countdown + 90);
@@ -2057,10 +2054,9 @@ UNUSED static void ColosseumNavampaMatch_UnusedCountdown(s32 countdown) {
      * r0; as a direct call, 1 of 72 instructions differ in tbs-en. */
     COLOSSEUM_NAVAMPA_MATCH_INITIALIZE_MODE_TASK(3, 0);
     Engine_ScriptWait(countdown * 60 + 60);
-    objectEventId = OPPONENT;
+    localId = OPPONENT;
   }
-  Engine_ObjectEventShowEmote(objectEventId, EMOTE_IN_FRONT | EMOTE_ELLIPSIS,
-                              0);
+  Engine_ObjectEventShowEmote(localId, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
   while (AudioCommand_GetStateByte() != 0) {
     Engine_TaskWait(1);
   }
@@ -2171,11 +2167,11 @@ static s32 ColosseumNavampaMatch_CollectFinishEquipment(s32 firstItem,
   s32 opponentFinishedFirst;
   s32 x;
   s32 z;
-  u16 *itemObjectEventId;
-  s16 *linkedItemObjectEvent;
+  u16 *itemLocalId;
+  s16 *linkedItemLocalId;
 
   opponentFinishedFirst = Engine_GameFlagIsSet(FLAG_ARENA_REACHED);
-  objectEvent = ObjectEvent_GetById(gGameState.selectedObjectEvent);
+  objectEvent = ObjectEvent_GetById(gGameState.selectedLocalId);
   if (gauge->finishX < objectEvent->x.fixed) {
     x = gauge->finishX + PIXELS(12);
   } else {
@@ -2183,19 +2179,19 @@ static s32 ColosseumNavampaMatch_CollectFinishEquipment(s32 firstItem,
   }
   if (opponentFinishedFirst != 0) {
     z = gauge->finishZ + PIXELS(16);
-    itemObjectEventId = &gauge->finishItemObjectEventB;
+    itemLocalId = &gauge->finishItemLocalIdB;
   } else {
     z = gauge->finishZ - PIXELS(16);
-    itemObjectEventId = &gauge->finishItemObjectEventA;
+    itemLocalId = &gauge->finishItemLocalIdA;
   }
-  linkedItemObjectEvent = &objectEvent->timer;
-  *linkedItemObjectEvent = *itemObjectEventId;
+  linkedItemLocalId = &objectEvent->timer;
+  *linkedItemLocalId = *itemLocalId;
   objectEvent->acceleration = PIXELS(1) / 4;
   objectEvent->speed = PIXELS(1);
   Engine_ObjectSetPosition(objectEvent, x, 0, z);
   Engine_GameFlagSet(FLAG_ARENA_REACHED);
   Engine_ObjectSetScript(objectEvent, gColosseumNavampaMatch_PlaceScript);
-  while (*linkedItemObjectEvent != 0) {
+  while (*linkedItemLocalId != 0) {
     Engine_TaskWait(1);
   }
   if (opponentFinishedFirst == 0) {
@@ -2210,7 +2206,7 @@ static s32 ColosseumNavampaMatch_CollectFinishEquipment(s32 firstItem,
     COLOSSEUM_NAVAMPA_MATCH_APPLY_MATCHING_SLOT_VALUES(ISAAC, secondItem);
     UiWork_PushValueSlot(secondItem, 2);
   }
-  UiWork_PushValueSlot(gGameState.selectedObjectEvent, 1);
+  UiWork_PushValueSlot(gGameState.selectedLocalId, 1);
   Engine_MessageShowCentered(MsgColossoIsaacGotItem, 3);
   ObjectDispatch_WaitForValue16(objectEvent);
   return opponentFinishedFirst;
@@ -2233,7 +2229,7 @@ static void ColosseumNavampaMatch_PushObjectEventAhead(void) {
   s32 zero;
   s32 subjectHandle;
 
-  subjectHandle = gGameState.selectedObjectEvent;
+  subjectHandle = gGameState.selectedLocalId;
   subject = ObjectEvent_GetById(subjectHandle);
 
   direction = subject->facing >> 12;

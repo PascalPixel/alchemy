@@ -108,7 +108,7 @@ void FieldEffect_SetupResourcesAndWindow(void) {
   // unions change tbs-en setup from 368 to 364 bytes.
   oam = (u32 *)work->markers;
 #endif
-  objectEvent = ObjectEvent_GetById(gGameState.selectedObjectEvent);
+  objectEvent = ObjectEvent_GetById(gGameState.selectedLocalId);
   work->markerVramBlock = Resource_FindFreeEntry();
   Dma_Fill32(0, markerTiles, WORLD_MAP_MARKER_TILE_BYTES);
   markerTiles[0] = 255;
@@ -231,14 +231,14 @@ void WorldMap_UpdateMarkers(void) {
   s32 angle;
 
 #if WORLD_MAP_CURSOR_SNAPS
-  leader = gGameState.selectedObjectEvent;
+  leader = gGameState.selectedLocalId;
   work = (struct WorldMapWork *)Ram_MapGridCellBuffer;
   marker = work->markers;
   place = gWorldMap_MapSecMarkers;
   tileBase = gVramBlockCache[work->markerVramBlock].offset >> 5;
 #else
   work = (struct WorldMapWork *)Ram_MapGridCellBuffer;
-  leader = gGameState.selectedObjectEvent;
+  leader = gGameState.selectedLocalId;
   place = gWorldMap_MapSecMarkers;
   tileBase = gVramBlockCache[work->markerVramBlock].offset >> 5;
   marker = work->markers;
@@ -252,7 +252,7 @@ void WorldMap_UpdateMarkers(void) {
   // screen. No object event task removes it while the marker callback runs.
   if (!GameFlag_TestFar(FLAG_WORLD_MAP_LEFT) && (gKeysHeld & KEYS_SHOULDERS)) {
     // L or R: the current map section.
-    mapSecObjectEvent = ObjectTable_Get(gGameState.selectedObjectEvent);
+    mapSecObjectEvent = ObjectTable_Get(gGameState.selectedLocalId);
 #ifdef UBFIX
     // The native null branch leaves this frame's cursor coordinates unset.
     // A missing selected object event violates the screen's lifetime contract;
@@ -523,7 +523,7 @@ void Field_UpdateObjectVisibilityBounds(void) {
 
   // The selected object event lookup has no used result; the bounds follow the
   // camera.
-  ObjectEvent_GetById(gGameState.selectedObjectEvent);
+  ObjectEvent_GetById(gGameState.selectedLocalId);
   object = ((struct FieldWork *)gEventWork)->camera;
   x = object->x;
   left = x - (320 << 16);

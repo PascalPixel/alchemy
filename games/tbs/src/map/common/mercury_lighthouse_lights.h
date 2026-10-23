@@ -42,7 +42,7 @@ void MercuryLighthouse_RestoreLights(s32 region,
     st->terrainCode = region;
     return;
   }
-  objectEvent = Engine_ObjectEventLookup(gGameState.selectedObjectEvent);
+  objectEvent = Engine_ObjectEventLookup(gGameState.selectedLocalId);
   z = objectEvent->z.fixed;
   cell = (struct MapGridCell *)Ram_MapGridCellBuffer + ((z / 0x100000) << 7) +
          objectEvent->x.fixed / 0x100000;

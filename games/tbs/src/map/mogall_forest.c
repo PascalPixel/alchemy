@@ -371,20 +371,20 @@ static s32 MogallForest_ClearObjectEventSpriteFlags(
 
 /// Hops an object event to a pixel destination with the requested vertical
 /// speed.
-static void MogallForest_HopObjectEventTo(s32 objectEventId, s32 targetX,
-                                          s32 targetZ, s32 verticalSpeed) {
+static void MogallForest_HopObjectEventTo(s32 localId, s32 targetX, s32 targetZ,
+                                          s32 verticalSpeed) {
   struct ObjectEvent *objectEvent;
 
-  objectEvent = ObjectEvent_GetById(objectEventId);
-  Engine_ObjectEventSetSpritePriority(objectEventId, 1);
-  ObjectEvent_SetSpeed(objectEventId, PIXELS(3), PIXELS(3) / 2);
+  objectEvent = ObjectEvent_GetById(localId);
+  Engine_ObjectEventSetSpritePriority(localId, 1);
+  ObjectEvent_SetSpeed(localId, PIXELS(3), PIXELS(3) / 2);
   Engine_AudioPlayCue(SE_JUMP);
   objectEvent->velocityY = verticalSpeed;
   objectEvent->gravity = PIXELS(1) / 2;
   objectEvent->bounce = 0;
   Engine_ObjectEventSetSpriteFlags(objectEvent, 0);
-  ObjectEvent_MoveToAndWait(objectEventId, targetX, targetZ);
-  ObjectEvent_SetPosition(objectEventId, PIXELS(targetX), PIXELS(targetZ));
+  ObjectEvent_MoveToAndWait(localId, targetX, targetZ);
+  ObjectEvent_SetPosition(localId, PIXELS(targetX), PIXELS(targetZ));
   Engine_ObjectEventSetSpriteFlags(objectEvent, SPRITE_FLAG_SHADOW);
   objectEvent->gravity = PIXELS(1);
 }
@@ -422,16 +422,16 @@ static void MogallForest_SpawnPuffRing(s32 id) {
 /// The camera goes to the ape's hiding place, which bursts in a ring of
 /// puffs, and the ape shows itself in colour mode color: SPRITE_COLOR_GRB for
 /// a guide, SPRITE_COLOR_NORMAL for one that attacks.
-static void MogallForest_ApeComesOut(s32 objectEventId, s32 color) {
+static void MogallForest_ApeComesOut(s32 localId, s32 color) {
   s32 cameraSpeed = PIXELS(2);
   s32 cameraAcceleration = PIXELS(1) / 4;
 
   Engine_CameraSetSpeed(cameraSpeed, cameraAcceleration);
-  Engine_CameraMoveToObjectEvent(objectEventId, 1);
+  Engine_CameraMoveToObjectEvent(localId, 1);
   Engine_CameraWaitForMove();
   Engine_ScriptWait(30);
-  MogallForest_SpawnPuffRing(objectEventId);
-  Engine_ObjectEventSetChildValue(objectEventId, color);
+  MogallForest_SpawnPuffRing(localId);
+  Engine_ObjectEventSetChildValue(localId, color);
 }
 
 /// The ape turns to the leader, hops and gestures down the way to go.

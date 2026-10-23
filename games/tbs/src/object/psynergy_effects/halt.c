@@ -179,11 +179,11 @@ void FieldEffect_UpdatePausedObject(union FieldObject *fieldObject) {
 /// fields, and stops its animation. gGameState keeps one object's state, so
 /// Halt resumes the one it stopped before it stops another; the paused
 /// object flickers through random sprite params meanwhile.
-void FieldEffect_PauseObject(s32 objectEventId) {
+void FieldEffect_PauseObject(s32 localId) {
   struct ObjectEvent *objectEvent;
   struct AnimationEntry *entry;
 
-  objectEvent = ObjectTable_Get(objectEventId);
+  objectEvent = ObjectTable_Get(localId);
   if (objectEvent != NULL) {
     gGameState.pausedUpdate = (u32)objectEvent->update;
     gGameState.pausedPose = 0;
@@ -206,8 +206,8 @@ void FieldEffect_PauseObject(s32 objectEventId) {
 /// another object, and by Map_TalkToObjectEvent after talking to the paused
 /// object event. Clears gGameState.pausedUpdate and the object's paused field,
 /// and restarts its animation at speed 16.
-void FieldEffect_ResumeObject(s32 objectEventId) {
-  struct ObjectEvent *objectEvent = ObjectTable_Get(objectEventId);
+void FieldEffect_ResumeObject(s32 localId) {
+  struct ObjectEvent *objectEvent = ObjectTable_Get(localId);
   if (objectEvent != 0) {
     if (objectEvent->update == FieldEffect_UpdatePausedObject) {
       struct GameState *state = &gGameState;

@@ -46,8 +46,7 @@ STATIC_ASSERT(offsetof(struct EffectObject, updateHook) == 0x6c);
 /// it stood, and loses its move target. Only the first marker it stands on
 /// moves it. Called by two map overlays (Suhalla Desert, Lamakan Desert).
 void Marker_MoveLeaderAway(void) {
-  struct ObjectRuntime *leader =
-      ObjectTable_Get(gGameState.selectedObjectEvent);
+  struct ObjectRuntime *leader = ObjectTable_Get(gGameState.selectedLocalId);
   struct MarkerSlot *marker = ((struct FieldWork *)gEventWork)->markers;
   s32 markerIndex = 0;
   s32 x;
@@ -130,7 +129,7 @@ void ItemDisplay_EmitSparkles(union FieldObject *fieldObject) {
 }
 
 /// Shows the picture of item (0 for none) at the centre of the cell 16 pixels
-/// in front of character objectEvent, at a height of 16 pixels whatever the
+/// in front of character localId, at a height of 16 pixels whatever the
 /// object event's,
 /// with sparkles. While Reveal is active, its marks and sparkles are cleared
 /// first. Returns the picture's object event, or 0 without the object event or
@@ -140,12 +139,12 @@ void ItemDisplay_EmitSparkles(union FieldObject *fieldObject) {
 /// into VRAM. The caller owns the picture: Field_SearchTile releases it once
 /// the find is told. Called by Field_SearchTile for coins and items found, and
 /// by FieldEffect_PlayCueAndStartEmitterOnTarget.
-struct EffectObject *FieldEffect_StartRandomParticleEmitter(s32 objectEvent,
+struct EffectObject *FieldEffect_StartRandomParticleEmitter(s32 localId,
                                                             s32 item) {
   struct EffectObject *picture;
 
   s32 work = (s32)gEventWork;
-  u32 objectEventOffset = (objectEvent * 4) + 0x14; // EventWork's objectEvents
+  u32 objectEventOffset = (localId * 4) + 0x14; // EventWork's objectEvents
 
   s32 srcZ = (s32)*(struct ObjectEvent **)(work + objectEventOffset);
   union PolarOffsetPosition picturePosition;
@@ -239,7 +238,7 @@ void ItemDisplay_RaiseAboveLeader(struct ObjectRuntime *object) {
   if (object == 0)
     return;
 
-  leader = ObjectTable_Get(gGameState.selectedObjectEvent);
+  leader = ObjectTable_Get(gGameState.selectedLocalId);
   // Up to 2 pixels a frame, gaining 1 a frame, in free flight: no motion
   // flags, so no gravity and no terrain.
   object->acceleration = 1 << 16;
@@ -262,7 +261,7 @@ void ItemDisplay_ShowPicture(void *object, s32 flags) {
   void *leader;
 
   if (object != NULL) {
-    leader = ObjectTable_Get(gGameState.selectedObjectEvent);
+    leader = ObjectTable_Get(gGameState.selectedLocalId);
     if (flags & 1) {
       ObjectDispatch_SetSingleChildFlagsFar(object, 0);
       ObjectDispatch_InitializeFar(object, gFieldEffect_ParticleEmitterScript);
@@ -290,7 +289,7 @@ void ItemDisplay_ShowPicture(void *object, s32 flags) {
 /// block 17, taken for the icon, is not released (the map change's heap
 /// reset frees it).
 void FieldEffect_StartEffectObject22(s32 item, s32 flags) {
-  struct ObjectEvent *leader = ObjectTable_Get(gGameState.selectedObjectEvent);
+  struct ObjectEvent *leader = ObjectTable_Get(gGameState.selectedLocalId);
   void *iconBuffer = Runtime_AllocateHeapBlock(HEAP_SLOT_GLYPH_TRANSFER, 0x608);
   struct EffectObject *object = (struct EffectObject *)Object_CreateFar(
       22, leader->x.fixed, leader->y.fixed + (36 << 16), leader->z.fixed);
@@ -414,7 +413,7 @@ void FieldEffect_SpawnNearbyMarkers(void) {
   // The layout's marked cells: (column, row, id) triples, ended by 0xff, 0xff;
   // the same list as MapGridMarkers's markers in markers.c.
   markerData = *(u8 **)(((u8 *)gMapGridWork[0]) + 16);
-  objectEvent = ObjectTable_Get(gGameState.selectedObjectEvent);
+  objectEvent = ObjectTable_Get(gGameState.selectedLocalId);
   leaderColumn = objectEvent->x >> 20;
   leaderRow = objectEvent->z >> 20;
   if (markerData != 0) {

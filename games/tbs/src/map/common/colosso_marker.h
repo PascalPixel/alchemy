@@ -126,8 +126,8 @@ void Colosso_RestoreWarrior(s32 id) {
 }
 
 /// Stops the object event where it is: no velocity and no destination.
-void OverlayObject_ResetMotionFields(s32 objectEvent) {
-  struct ObjectEvent *o = ObjectEvent_GetById(objectEvent);
+void OverlayObject_ResetMotionFields(s32 localId) {
+  struct ObjectEvent *o = ObjectEvent_GetById(localId);
 
   ObjectDispatch_StartIdle((struct DispatchObject *)o);
   o->velocityX = 0;
@@ -252,8 +252,8 @@ void Colosso_HidePointer(void) {
 
 /// Walks the object event at 2 pixels a frame towards pixel (x, z) and returns
 /// at once.
-void Colosso_WalkObjectEventTo(s32 objectEventId, s32 x, s32 z) {
-  struct ObjectEvent *objectEvent = Engine_ObjectEventLookup(objectEventId);
+void Colosso_WalkObjectEventTo(s32 localId, s32 x, s32 z) {
+  struct ObjectEvent *objectEvent = Engine_ObjectEventLookup(localId);
 
   if (objectEvent != 0) {
     s32 speed = 0x20000;
@@ -271,8 +271,8 @@ void Colosso_WalkObjectEventTo(s32 objectEventId, s32 x, s32 z) {
 
 /// Walks the object event at 1.25 pixels a frame to pixel (x, z), waits until
 /// it arrives and stands it there.
-void Colosso_WalkObjectEventToAndStand(s32 objectEventId, s32 x, s32 z) {
-  struct ObjectEvent *objectEvent = Engine_ObjectEventLookup(objectEventId);
+void Colosso_WalkObjectEventToAndStand(s32 localId, s32 x, s32 z) {
+  struct ObjectEvent *objectEvent = Engine_ObjectEventLookup(localId);
 
   if (objectEvent != 0) {
     s32 speed = 0x14000;

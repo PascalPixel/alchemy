@@ -151,7 +151,7 @@ enum GondowanCaveLocalId {
 
 // The leap script also runs after the shared staged object event movement.
 static void EventScript_MovePillar(void);
-static void GondowanCave_RunSpinningLeap(s32 objectEventId);
+static void GondowanCave_RunSpinningLeap(s32 localId);
 
 // Shared effect routines retain their position before the map's scripts.
 #include "common/effect_create.h"
@@ -449,13 +449,13 @@ static void GondowanCave_WaitForDescent(struct ObjectEvent *objectEvent,
 
 /// The object spins in place, leaps and lands with a shake and a ring of dust,
 /// then comes to rest a little further on.
-static void GondowanCave_RunSpinningLeap(s32 objectEventId) {
+static void GondowanCave_RunSpinningLeap(s32 localId) {
   struct ObjectEvent *objectEvent;
   u32 stepIndex;
   struct Vector3 particleVelocity;
   s32 angle;
 
-  objectEvent = ObjectEvent_GetById(objectEventId);
+  objectEvent = ObjectEvent_GetById(localId);
   // Wind up the spin while horizontal motion is disabled.
   objectEvent->motionFlags = 0;
   for (stepIndex = 0; stepIndex < 9; stepIndex++) {
@@ -467,12 +467,12 @@ static void GondowanCave_RunSpinningLeap(s32 objectEventId) {
   objectEvent->update = GondowanCave_RotateLeapingObject;
   // Continue spinning through the first jump.
   Engine_AudioPlayCue(SE_136);
-  OBJECT_SPEED(objectEventId, PIXELS(2), PIXELS(1));
-  ObjectEvent_SetDestination(objectEventId, 472, 288);
+  OBJECT_SPEED(localId, PIXELS(2), PIXELS(1));
+  ObjectEvent_SetDestination(localId, 472, 288);
   objectEvent->gravity = 4 * PIXELS(1) / 5;
   objectEvent->motionFlags = OBJ_EVENT_FOLLOWS_TERRAIN | OBJ_EVENT_FALLS;
   objectEvent->terrainId = 0;
-  Engine_ObjectEventWaitForMove(objectEventId);
+  Engine_ObjectEventWaitForMove(localId);
   GondowanCave_WaitForDescent(objectEvent, PIXELS(32));
   MapGrid_SetShake(PIXELS(5), PIXELS(5), Q16_ONE);
   MapGrid_SetShake(-1, -1, 9 * Q16_ONE / 10);
@@ -488,17 +488,17 @@ static void GondowanCave_RunSpinningLeap(s32 objectEventId) {
                       objectEvent->z.fixed, particleVelocity.x,
                       particleVelocity.y, particleVelocity.z, 0, 0);
   }
-  ObjectEvent_SetDestination(objectEventId, 440, 308);
+  ObjectEvent_SetDestination(localId, 440, 308);
   // Finish the second movement before restoring the resting animation.
-  Engine_ObjectEventWaitForMove(objectEventId);
+  Engine_ObjectEventWaitForMove(localId);
   GondowanCave_WaitForDescent(objectEvent, PIXELS(32));
   objectEvent->update = 0;
   objectEvent->sprite->rotation = 0x1000;
   Engine_AudioPlayCue(SE_CAST);
-  OBJECT_MODE(objectEventId, STUMP_ANIMATION_SPLASH);
+  OBJECT_MODE(localId, STUMP_ANIMATION_SPLASH);
   MapGrid_WaitForShakeToSettle();
   WAIT(10);
-  OBJECT_MODE(objectEventId, STUMP_ANIMATION_SINK);
+  OBJECT_MODE(localId, STUMP_ANIMATION_SINK);
 }
 
 /// Unused: an empty function nothing calls.

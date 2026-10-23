@@ -154,42 +154,42 @@ const struct ObjectEventTemplate *Map_GetObjectEventTemplates(void) {
 /// merchant opens the shop; otherwise says Suhalla's is the only store, or,
 /// after Babi's audience, asks whether the party is surprised to find so few
 /// shops.
-static void EventScript_TalkToMerchant(s32 objectEventId) {
+static void EventScript_TalkToMerchant(s32 localId) {
   u16 facing =
       (ObjectEvent_GetById(LOCALID_PARTY_LEADER)->facing + 0x2000) & ~0x3fff;
   if (facing == FACING_NORTH) {
-    Engine_ShopOpen(SHOP_SUHALLA, objectEventId);
+    Engine_ShopOpen(SHOP_SUHALLA, localId);
   } else if (Engine_GameFlagIsSet(FLAG_BABI_SPOKE_AFTER_COLOSSO)) {
     s32 question = MsgSuhallaArentSurprisedFind;
     Engine_ScriptSetMessage(question);
-    Engine_ScriptOpenMessage(objectEventId, 0);
+    Engine_ScriptOpenMessage(localId, 0);
     if (Engine_ScriptChooseYesNo(LOCALID_PARTY_LEADER, 0) == 0) {
       Engine_ScriptWait(10);
       Engine_ScriptSetMessage(question + 1);
     } else {
       Engine_ScriptSetMessage(question + 2);
     }
-    Engine_ScriptShowMessage(objectEventId, 0);
+    Engine_ScriptShowMessage(localId, 0);
   } else {
     Engine_ScriptSetMessage(MsgSuhallaOursOnlyStore);
-    Engine_ScriptShowMessage(objectEventId, 0);
+    Engine_ScriptShowMessage(localId, 0);
   }
 }
 
 /// Suhalla's innkeeper. Spoken to facing north, across the counter, the
 /// innkeeper offers a room; otherwise has nothing to do until Tolbi's festival
 /// ends, or, after Babi's audience, has been busy since the sandstorms began.
-static void EventScript_TalkToInnkeeper(s32 objectEventId) {
+static void EventScript_TalkToInnkeeper(s32 localId) {
   u16 facing =
       (ObjectEvent_GetById(LOCALID_PARTY_LEADER)->facing + 0x2000) & ~0x3fff;
   if (facing == FACING_NORTH) {
-    Engine_InnCheckIn(INN_SUHALLA, objectEventId);
+    Engine_InnCheckIn(INN_SUHALLA, localId);
   } else if (Engine_GameFlagIsSet(FLAG_BABI_SPOKE_AFTER_COLOSSO)) {
     Engine_ScriptSetMessage(MsgSuhallaBusyEverSince);
-    Engine_ScriptShowMessage(objectEventId, 0);
+    Engine_ScriptShowMessage(localId, 0);
   } else {
     Engine_ScriptSetMessage(MsgSuhallaSighNothinMaybe);
-    Engine_ScriptShowMessage(objectEventId, 0);
+    Engine_ScriptShowMessage(localId, 0);
   }
 }
 
@@ -197,17 +197,17 @@ static void EventScript_TalkToInnkeeper(s32 objectEventId) {
 /// Healer offers the sanctum's services; otherwise talks of Lalivero under
 /// Tolbi's rule, or, after Babi's audience, wonders why there are so many
 /// sandstorms.
-static void EventScript_TalkToHealer(s32 objectEventId) {
+static void EventScript_TalkToHealer(s32 localId) {
   u16 facing =
       (ObjectEvent_GetById(LOCALID_PARTY_LEADER)->facing + 0x2000) & ~0x3fff;
   if (facing == FACING_NORTH) {
-    Engine_ShopConfirmAct(objectEventId);
+    Engine_ShopConfirmAct(localId);
   } else if (Engine_GameFlagIsSet(FLAG_BABI_SPOKE_AFTER_COLOSSO)) {
     Engine_ScriptSetMessage(MsgSuhallaWonderWhySandstorms);
-    Engine_ScriptShowMessage(objectEventId, 0);
+    Engine_ScriptShowMessage(localId, 0);
   } else {
     Engine_ScriptSetMessage(MsgSuhallaGetSickThinkingAboutLalivero);
-    Engine_ScriptShowMessage(objectEventId, 0);
+    Engine_ScriptShowMessage(localId, 0);
   }
 }
 
@@ -216,17 +216,17 @@ static void EventScript_TalkToHealer(s32 objectEventId) {
 /// party was on the way to Babi Lighthouse: yes, and the traveler means to give
 /// up and follow the northern mountain back to Tolbi; no, and tells of setting
 /// out to open a business at the lighthouse.
-static void EventScript_AskIfBlownHere(s32 objectEventId) {
+static void EventScript_AskIfBlownHere(s32 localId) {
   s32 question = MsgSuhallaSupposeFolkBlown;
   Engine_ScriptSetMessage(question);
-  Engine_ScriptOpenMessage(objectEventId, 0);
+  Engine_ScriptOpenMessage(localId, 0);
   if (Engine_ScriptChooseYesNo(LOCALID_PARTY_LEADER, 0) == 0) {
     Engine_ScriptWait(10);
     Engine_ScriptSetMessage(question + 1);
   } else {
     Engine_ScriptSetMessage(question + 2);
   }
-  Engine_ScriptShowMessage(objectEventId, 0);
+  Engine_ScriptShowMessage(localId, 0);
 }
 
 /// The doors of Suhalla and Suhalla Sanctum, and the doors between the inn and

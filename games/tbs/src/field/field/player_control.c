@@ -440,7 +440,7 @@ s32 FieldObject_UpdatePlayerControl(struct ScriptInterpreter *interpreter) {
     s32 action;
 
     action = 9;
-    if (Unit_GetFar(gGameState.selectedObjectEvent)->hp == 0)
+    if (Unit_GetFar(gGameState.selectedLocalId)->hp == 0)
       action = 22;
     ObjectDispatch_SelectAnimation(object, action);
   } else {

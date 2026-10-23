@@ -996,9 +996,9 @@ static void TunnelRuins_RideStoneBelow(union FieldObject *fieldObject) {
 static s32 TunnelRuins_RideStoneBelow(union FieldObject *fieldObject) {
 #endif
   struct ObjectEvent *supportedObjectEvent = (struct ObjectEvent *)fieldObject;
-  s16 *supportingObjectEventId = &supportedObjectEvent->timer;
+  s16 *supportingLocalId = &supportedObjectEvent->timer;
   struct ObjectEvent *supportingObjectEvent =
-      ObjectEvent_GetById(*supportingObjectEventId);
+      ObjectEvent_GetById(*supportingLocalId);
 
   supportedObjectEvent->y.fixed = supportingObjectEvent->y.fixed + PIXELS(16);
 #ifdef UBFIX
@@ -1057,44 +1057,44 @@ static void TunnelRuins_SettleBalance(s32 wait) {
 
 /// A carried stone drops onto the highest platform or carved stone in its cell
 /// and lands with a thud and a ring of dust.
-static void TunnelRuins_DropStoneOnStack(s32 objectEventId) {
+static void TunnelRuins_DropStoneOnStack(s32 localId) {
   s32 highestHeight = -PIXELS(80);
   u32 i;
 
   for (i = 0; i <= 4; i++) {
     s32 candidateId = i + LOCALID_BALANCE_WEST;
 
-    if (candidateId == objectEventId)
+    if (candidateId == localId)
       continue;
 
     if ((ObjectEvent_GetById(candidateId)->x.fixed >> 20) !=
-        (ObjectEvent_GetById(objectEventId)->x.fixed >> 20))
+        (ObjectEvent_GetById(localId)->x.fixed >> 20))
       continue;
     if ((ObjectEvent_GetById(candidateId)->z.fixed >> 20) !=
-        (ObjectEvent_GetById(objectEventId)->z.fixed >> 20))
+        (ObjectEvent_GetById(localId)->z.fixed >> 20))
       continue;
 
     if (highestHeight > ObjectEvent_GetById(candidateId)->y.fixed + PIXELS(16))
       continue;
 
     highestHeight = ObjectEvent_GetById(candidateId)->y.fixed + PIXELS(16);
-    ObjectEvent_GetById(objectEventId)->timer = candidateId;
+    ObjectEvent_GetById(localId)->timer = candidateId;
   }
 
-  OBJECT_SPEED(objectEventId, PIXELS(4), PIXELS(2));
+  OBJECT_SPEED(localId, PIXELS(4), PIXELS(2));
 
   {
-    struct ObjectEvent *objectEvent = ObjectEvent_GetById(objectEventId);
-    struct ObjectEvent *sourceObjectEvent = ObjectEvent_GetById(objectEventId);
-    s32 z = ObjectEvent_GetById(objectEventId)->z.fixed;
+    struct ObjectEvent *objectEvent = ObjectEvent_GetById(localId);
+    struct ObjectEvent *sourceObjectEvent = ObjectEvent_GetById(localId);
+    s32 z = ObjectEvent_GetById(localId)->z.fixed;
 
     Engine_ObjectSetPosition(objectEvent, sourceObjectEvent->x.fixed,
                              highestHeight, z);
   }
 
-  Engine_ObjectEventWaitForMove(objectEventId);
+  Engine_ObjectEventWaitForMove(localId);
   Engine_AudioPlayCue(SE_188);
-  FieldEffect_SpawnNineRadialEffects(objectEventId);
+  FieldEffect_SpawnNineRadialEffects(localId);
   WAIT(30);
 }
 

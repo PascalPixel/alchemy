@@ -254,38 +254,38 @@ const struct ObjectEventTemplate *TolbiSpring_GetObjectEventTemplates(void) {
 }
 
 /// A visitor at Tolbi Spring asks whether the party has a Lucky Medal.
-static void TolbiSpring_AskAboutLuckyMedal(s32 objectEventId) {
+static void TolbiSpring_AskAboutLuckyMedal(s32 localId) {
   s32 question = MsgTolbiLuckyMedal;
   Engine_ScriptSetMessage(question);
-  Engine_ScriptOpenMessage(objectEventId, 0);
+  Engine_ScriptOpenMessage(localId, 0);
   if (Engine_ScriptChooseYesNo(0, 0) == 0) {
     Engine_ScriptWait(10);
     Engine_ScriptSetMessage(question + 1);
   } else {
     Engine_ScriptSetMessage(question + 2);
   }
-  Engine_ScriptShowMessage(objectEventId, 0);
+  Engine_ScriptShowMessage(localId, 0);
 }
 
 /// A Lucky Dice player in Tolbi asks whether this is the party's first game.
-static void TolbiSpring_AskAboutFirstDiceGame(s32 objectEventId) {
+static void TolbiSpring_AskAboutFirstDiceGame(s32 localId) {
   s32 question = MsgTolbiYerFirstTime;
   Engine_ScriptSetMessage(question);
-  Engine_ScriptOpenMessage(objectEventId, 0);
+  Engine_ScriptOpenMessage(localId, 0);
   if (Engine_ScriptChooseYesNo(0, 0) == 0) {
     Engine_ScriptWait(10);
     Engine_ScriptSetMessage(question + 1);
   } else {
     Engine_ScriptSetMessage(question + 2);
   }
-  Engine_ScriptShowMessage(objectEventId, 0);
+  Engine_ScriptShowMessage(localId, 0);
 }
 
 /// Searching Tolbi Spring: the spring rises into view the first time in the
 /// visit, and the leader stands with their back to it to toss a coin or a
 /// Lucky Medal.
 static void TolbiSpring_TossCoinOrMedal(void) {
-  s32 leader = gGameState.selectedObjectEvent;
+  s32 leader = gGameState.selectedLocalId;
 
   if (GameFlag_IsSet(FLAG_MAP_TEMP_00) == 0) {
     Engine_GameFlagSet(FLAG_MAP_TEMP_00);
@@ -896,11 +896,11 @@ static s32 TolbiSpring_SelectLuckyWheelsPrize(s32 category) {
 
 /// Copies three coordinates and sets the object event's facing, child value and
 /// colors.
-static void TolbiSpring_SetObjectEventAppearance(s32 objectEventId,
+static void TolbiSpring_SetObjectEventAppearance(s32 localId,
                                                  const s32 *coordinate,
                                                  s32 facing, s32 colorVariant,
                                                  s32 childValue) {
-  struct ObjectEvent *objectEvent = ObjectEvent_GetById(objectEventId);
+  struct ObjectEvent *objectEvent = ObjectEvent_GetById(localId);
   struct AnimationObject *sprite;
   u32 entryCount;
 
@@ -941,9 +941,8 @@ static void TolbiSpring_SetObjectEventAppearance(s32 objectEventId,
 }
 
 /// Sets whether the specified object event draws its sprite.
-static void TolbiSpring_SetSpriteStorageKind(s32 objectEventId,
-                                             s32 storageKind) {
-  struct ObjectEvent *objectEvent = ObjectEvent_GetById(objectEventId);
+static void TolbiSpring_SetSpriteStorageKind(s32 localId, s32 storageKind) {
+  struct ObjectEvent *objectEvent = ObjectEvent_GetById(localId);
 
   if (objectEvent != 0) {
     u8 *spriteStorageKind = &objectEvent->spriteStorageKind;
@@ -1453,7 +1452,7 @@ static s32 TolbiSpring_RunToss(s32 tossKind) {
     }
     // Release the token on the leader's throw frame.
     if (sTossFrame == 16) {
-      Engine_ObjectEventSetAnimation(gGameState.selectedObjectEvent, 29);
+      Engine_ObjectEventSetAnimation(gGameState.selectedLocalId, 29);
       toss->launchFrame = 0;
       toss->velocity.x = 13 * PIXELS(1) / 10;
       toss->velocity.y = PIXELS(4);

@@ -266,7 +266,7 @@ const struct MapEvent *KolimaInteriors_GetEvents(void) {
 /// draws the father's room for the way it is entered.
 s32 KolimaInteriors_Initialize(void) {
   struct EventWork *work = gEventWork;
-  s32 objectEventId;
+  s32 localId;
   u32 warpDest;
 
   work->startTransition =
@@ -274,13 +274,13 @@ s32 KolimaInteriors_Initialize(void) {
 
   // The residents remain visible as trees, with their sprite flags cleared.
   if (Engine_GameFlagIsSet(FLAG_KOLIMA_CURSE_LIFTED) == 0) {
-    objectEventId = LOCALID_FIRST_VILLAGER;
+    localId = LOCALID_FIRST_VILLAGER;
     do {
-      struct ObjectEvent *objectEvent = ObjectEvent_GetById(objectEventId);
+      struct ObjectEvent *objectEvent = ObjectEvent_GetById(localId);
 
-      objectEventId++;
+      localId++;
       Engine_ObjectEventSetSpriteFlags(objectEvent, 0);
-    } while ((u32)objectEventId <= LOCALID_LAST_VILLAGER);
+    } while ((u32)localId <= LOCALID_LAST_VILLAGER);
   }
 
   warpDest = (u16)gGameState.warpDest;

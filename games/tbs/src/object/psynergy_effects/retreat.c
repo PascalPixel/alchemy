@@ -282,7 +282,7 @@ void FieldEffect_SpawnDescendingArcParticles(struct ObjectEvent *arc) {
   struct ObjectEvent *source = arc;
   struct FieldEffectWork *effectWork = gEffectWork;
   struct ObjectEvent *leader = effectWork->mainObject;
-  struct ObjectEvent *objects[2];
+  struct ObjectEvent *objectEvents[2];
   struct ObjectEvent *objectEvent;
   struct DescendingArcSprite *sprite;
   s32 arcIndex;
@@ -291,7 +291,7 @@ void FieldEffect_SpawnDescendingArcParticles(struct ObjectEvent *arc) {
   for (arcIndex = 0; arcIndex <= 1; arcIndex++) {
     objectEvent = (struct ObjectEvent *)Object_CreateFar(
         26, source->x.fixed, source->y.fixed + 0x400000, source->z.fixed);
-    objects[arcIndex] = objectEvent;
+    objectEvents[arcIndex] = objectEvent;
     if (objectEvent == NULL)
       continue;
     objectEvent->terrainHeight = source->terrainHeight;
@@ -317,9 +317,10 @@ void FieldEffect_SpawnDescendingArcParticles(struct ObjectEvent *arc) {
   }
   // BUG: failed allocations above leave a missing arc or sprite here.
   // Preserve the original partial-pair behavior until recovery is established.
-  objects[0]->update = FieldEffect_UpdateDescendingParticleNegativeArc;
-  ((struct DescendingArcSprite *)objects[0]->sprite)->attr.byte.variant = 0;
-  objects[1]->update = FieldEffect_UpdateDescendingParticlePositiveArc;
-  ((struct DescendingArcSprite *)objects[1]->sprite)->attr.byte.variant =
+  objectEvents[0]->update = FieldEffect_UpdateDescendingParticleNegativeArc;
+  ((struct DescendingArcSprite *)objectEvents[0]->sprite)->attr.byte.variant =
+      0;
+  objectEvents[1]->update = FieldEffect_UpdateDescendingParticlePositiveArc;
+  ((struct DescendingArcSprite *)objectEvents[1]->sprite)->attr.byte.variant =
       ((struct DescendingArcSprite *)leader->sprite)->attr.byte.variant;
 }

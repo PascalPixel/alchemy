@@ -183,7 +183,7 @@ void FieldEffect_RunForce(void) {
   event = FieldEffect_FindMatchingEvent(PSYNERGY_EV(PSYNERGY_PHASE_EFFECT_ACTS),
                                         FIELD_KIND_FORCE, &eventTarget);
   if (event != NULL)
-    Field_RunEventAction(event, gGameState.selectedObjectEvent, eventTarget);
+    Field_RunEventAction(event, gGameState.selectedLocalId, eventTarget);
   WaitFrames(10);
   FieldEffect_FadeFromEffectColor();
   WaitFrames(20);

@@ -178,10 +178,10 @@ const struct ObjectEventTemplate *Map_GetObjectEventTemplates(void) {
 }
 
 /// Stands the object event still while showing the message already selected.
-static void VaultRevisit_ShowStandingObjectEventMessage(s32 objectEvent) {
+static void VaultRevisit_ShowStandingObjectEventMessage(s32 localId) {
   Engine_ScriptStart();
-  Engine_ObjectEventSetAnimation(objectEvent, ANIMATION_STAND);
-  Engine_ScriptShowMessage(objectEvent, 0);
+  Engine_ObjectEventSetAnimation(localId, ANIMATION_STAND);
+  Engine_ScriptShowMessage(localId, 0);
   Engine_ScriptEnd();
 }
 
@@ -420,17 +420,17 @@ static void EventScript_ReadMindOnJailKey(void) {
 
 /// Gives the object event vertical velocity, moves it, and waits briefly for it
 /// to settle.
-static void VaultRevisit_JumpObjectEventToAndWait(int objectEvent, int x, int z,
+static void VaultRevisit_JumpObjectEventToAndWait(int localId, int x, int z,
                                                   int velocityY) {
-  struct ObjectEvent *jumpingObjectEvent = ObjectEvent_GetById(objectEvent);
+  struct ObjectEvent *jumpingObjectEvent = ObjectEvent_GetById(localId);
   int frames;
-  Engine_ObjectEventSetSpeed(objectEvent, PIXELS(3), PIXELS(3) / 2);
+  Engine_ObjectEventSetSpeed(localId, PIXELS(3), PIXELS(3) / 2);
   jumpingObjectEvent->gravity = PIXELS(1) / 2;
   jumpingObjectEvent->bounce = 0;
   jumpingObjectEvent->velocityY = velocityY;
   Engine_ObjectEventSetSpriteFlags(jumpingObjectEvent, 0);
-  Engine_ObjectEventMoveToAndWait(objectEvent, x, z);
-  Engine_ObjectEventSetPosition(objectEvent, x << 16, z << 16);
+  Engine_ObjectEventMoveToAndWait(localId, x, z);
+  Engine_ObjectEventSetPosition(localId, x << 16, z << 16);
   for (frames = 60; frames != 0; --frames) {
     Engine_TaskWait(1);
     if ((s16)((u32)jumpingObjectEvent->velocityY >> 16) == 0)

@@ -343,7 +343,7 @@ enum TolbiShipInteriorsCell {
 
 /// A speaker: the object event, and in the top four bits where the message
 /// window opens beside them.
-#define SPEAKER(objectEvent, window) ((window) << 12 | (objectEvent))
+#define SPEAKER(localId, window) ((window) << 12 | (localId))
 
 // Defined below, in the order of the ROM.
 static void TolbiShipInteriors_StepBesideLeader(s32 passengerId);
@@ -370,15 +370,15 @@ static void TolbiShipInteriors_IntroduceReplacementOarsman(s32 seat);
 static struct ObjectEvent *TolbiShipInteriors_PlaceAnchorCharm(void);
 static void TolbiShipInteriors_InstallRowingDeckObjectEvents(u32 action);
 static void TolbiShipInteriors_Say(s32 speaker);
-static void TolbiShipInteriors_Turn(s32 objectEventId, u16 facing);
-static void TolbiShipInteriors_PlaceObjectEvent(s32 objectEventId, s32 x, s32 z,
+static void TolbiShipInteriors_Turn(s32 localId, u16 facing);
+static void TolbiShipInteriors_PlaceObjectEvent(s32 localId, s32 x, s32 z,
                                                 s32 facing);
 static void TolbiShipInteriors_MoveCameraAndWait(s32 x, s32 y, s32 z,
                                                  u32 flags);
 static void TolbiShipInteriors_RunSceneCommand(s32 step, u32 arg, u32 opt);
 static s32 TolbiShipInteriors_FindFirstSetFlag(u32 group, s32 alternate);
 static void TolbiShipInteriors_HideSelectedPassengers(void);
-static void TolbiShipInteriors_HideSelectedPassenger(s32 objectEventId,
+static void TolbiShipInteriors_HideSelectedPassenger(s32 localId,
                                                      s32 firstFlag);
 static void TolbiShipInteriors_StartSecondAttack(void);
 static void TolbiShipInteriors_ReportMonstersBelowdecks(void);
@@ -1222,7 +1222,7 @@ static s32 TolbiShipInteriors_GetChosenOarsman(void) {
 /// they were chosen in: the first round's line, the second's, or a later
 /// one's. The TalkTo...AtOars and Read...MindAtOars functions are this, or
 /// TOLBI_SHIP_ROWER_LINE_FIRST_OR_LATER, with each passenger's lines.
-#define TOLBI_SHIP_ROWER_LINE_BY_ROUND(passenger, objectEvent, first, second,  \
+#define TOLBI_SHIP_ROWER_LINE_BY_ROUND(passenger, localId, first, second,      \
                                        later)                                  \
   Engine_ScriptStart();                                                        \
   if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_FIRST_SEAT_ROWERS + (passenger)))   \
@@ -1232,18 +1232,17 @@ static s32 TolbiShipInteriors_GetChosenOarsman(void) {
     Engine_ScriptSetMessage(second);                                           \
   else                                                                         \
     Engine_ScriptSetMessage(later);                                            \
-  Engine_ScriptShowMessage(objectEvent, 0);                                    \
+  Engine_ScriptShowMessage(localId, 0);                                        \
   Engine_ScriptEnd()
 
 /// The same with one line for the first round and one for any later.
-#define TOLBI_SHIP_ROWER_LINE_FIRST_OR_LATER(passenger, objectEvent, first,    \
-                                             later)                            \
+#define TOLBI_SHIP_ROWER_LINE_FIRST_OR_LATER(passenger, localId, first, later) \
   Engine_ScriptStart();                                                        \
   if (Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_FIRST_SEAT_ROWERS + (passenger)))   \
     Engine_ScriptSetMessage(first);                                            \
   else                                                                         \
     Engine_ScriptSetMessage(later);                                            \
-  Engine_ScriptShowMessage(objectEvent, 0);                                    \
+  Engine_ScriptShowMessage(localId, 0);                                        \
   Engine_ScriptEnd()
 
 /// The head guide at the oars: Kaja's men are worried, monsters are
@@ -2531,11 +2530,10 @@ static void TolbiShipInteriors_SetUpRowingDeck(void) {
 
 /// Sets collision bit 3 on the eight oars beside the rowing seats.
 static void TolbiShipInteriors_SetOarCollision(void) {
-  u32 objectEventId;
+  u32 localId;
 
-  for (objectEventId = ROWING_FIRST_OAR; objectEventId <= ROWING_FIRST_OAR + 7;
-       objectEventId++) {
-    struct ObjectEvent *objectEvent = ObjectEvent_GetById(objectEventId);
+  for (localId = ROWING_FIRST_OAR; localId <= ROWING_FIRST_OAR + 7; localId++) {
+    struct ObjectEvent *objectEvent = ObjectEvent_GetById(localId);
     u32 flags = objectEvent->collisionFlags;
     objectEvent->collisionFlags = flags | 0x08;
   }
@@ -2543,38 +2541,38 @@ static void TolbiShipInteriors_SetOarCollision(void) {
 
 /// Puts each recruited rower at its seat and hides the original occupant.
 static void TolbiShipInteriors_PlaceFoundObjectEvents(s32 gated) {
-  s32 objectEvent;
+  s32 localId;
 
   if (gated &&
       !Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_SECOND_ATTACK_FOUGHT_OFF)) {
     return;
   }
-  if ((objectEvent = TolbiShipInteriors_FindFirstSetFlag(0, 0)) != 0) {
-    TolbiShipInteriors_PlaceObjectEvent(objectEvent, 410, 172,
+  if ((localId = TolbiShipInteriors_FindFirstSetFlag(0, 0)) != 0) {
+    TolbiShipInteriors_PlaceObjectEvent(localId, 410, 172,
                                         FACING_NORTH + FACING_STEP);
     Engine_ObjectEventSetPosition(ROWING_FIRST_OARSMAN, 0, 0);
   }
   if (gated && !Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_THIRD_ATTACK_FOUGHT_OFF)) {
     return;
   }
-  if ((objectEvent = TolbiShipInteriors_FindFirstSetFlag(1, 0)) != 0) {
-    TolbiShipInteriors_PlaceObjectEvent(objectEvent, 470, 172,
+  if ((localId = TolbiShipInteriors_FindFirstSetFlag(1, 0)) != 0) {
+    TolbiShipInteriors_PlaceObjectEvent(localId, 470, 172,
                                         FACING_NORTHWEST + FACING_STEP);
     Engine_ObjectEventSetPosition(ROWING_FIRST_OARSMAN + 1, 0, 0);
   }
   if (gated && !Engine_GameFlagIsSet(FLAG_TOLBI_SHIP_KRAKEN_DEFEATED)) {
     return;
   }
-  if ((objectEvent = TolbiShipInteriors_FindFirstSetFlag(2, 0)) != 0) {
-    TolbiShipInteriors_PlaceObjectEvent(objectEvent, 410, 204,
+  if ((localId = TolbiShipInteriors_FindFirstSetFlag(2, 0)) != 0) {
+    TolbiShipInteriors_PlaceObjectEvent(localId, 410, 204,
                                         FACING_NORTH + FACING_STEP);
     Engine_ObjectEventSetPosition(ROWING_FIRST_OARSMAN + 2, 0, 0);
   }
   if (gated) {
     return;
   }
-  if ((objectEvent = TolbiShipInteriors_FindFirstSetFlag(3, 0)) != 0) {
-    TolbiShipInteriors_PlaceObjectEvent(objectEvent, 470, 204,
+  if ((localId = TolbiShipInteriors_FindFirstSetFlag(3, 0)) != 0) {
+    TolbiShipInteriors_PlaceObjectEvent(localId, 470, 204,
                                         FACING_NORTHWEST + FACING_STEP);
     Engine_ObjectEventSetPosition(ROWING_FIRST_OARSMAN + 3, 0, 0);
   }
@@ -3162,15 +3160,15 @@ static void TolbiShipInteriors_Say(s32 speaker) {
 }
 
 /// Turns an object event to a facing over 10 frames.
-static void TolbiShipInteriors_Turn(s32 objectEventId, u16 facing) {
-  Engine_ObjectEventFaceDirection(objectEventId, facing, 10);
+static void TolbiShipInteriors_Turn(s32 localId, u16 facing) {
+  Engine_ObjectEventFaceDirection(localId, facing, 10);
 }
 
 /// Places an object event at pixel coordinates and sets its initial heading.
-static void TolbiShipInteriors_PlaceObjectEvent(s32 objectEventId, s32 x, s32 z,
+static void TolbiShipInteriors_PlaceObjectEvent(s32 localId, s32 x, s32 z,
                                                 s32 facing) {
-  Engine_ObjectEventSetPosition(objectEventId, x << 16, z << 16, facing);
-  ObjectEvent_GetById(objectEventId)->facing = facing;
+  Engine_ObjectEventSetPosition(localId, x << 16, z << 16, facing);
+  ObjectEvent_GetById(localId)->facing = facing;
 }
 
 /// Moves the camera, optionally waits or redraws, then honors the packed delay.
@@ -3533,17 +3531,17 @@ static void TolbiShipInteriors_HideSelectedPassengers(void) {
 }
 
 /// Hides the passenger whose selection flag is set in this seat's flag group.
-static void TolbiShipInteriors_HideSelectedPassenger(s32 objectEventId,
+static void TolbiShipInteriors_HideSelectedPassenger(s32 localId,
                                                      s32 firstFlag) {
   unsigned int i = 0;
 
   do {
     if (Engine_GameFlagIsSet(firstFlag) != 0) {
-      Engine_ObjectEventSetPosition(objectEventId, 0, 0);
+      Engine_ObjectEventSetPosition(localId, 0, 0);
       break;
     }
     i++;
-    objectEventId++;
+    localId++;
     firstFlag++;
   } while (i <= 8);
 }

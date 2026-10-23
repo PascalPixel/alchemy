@@ -194,7 +194,7 @@ enum {
   FLAG_PARTY_SEEN_OFF = FLAG_MAPSEC_TEMP_33
 };
 
-static void McCoyPalace_ClaimReward(s32 chestObjectEventId, s32 itemId,
+static void McCoyPalace_ClaimReward(s32 chestLocalId, s32 itemId,
                                     s32 chestFlag);
 static void EventScript_AudienceWithMcCoy(void);
 static void EventScript_CaptainHintsAtBarricade(void);
@@ -468,26 +468,24 @@ static void EventScript_SearchWaterOfLifeChest(void) {
 
 /// The chest opens and gives its item; with no room for it, the chest
 /// closes again and the reward is still to choose.
-static void McCoyPalace_ClaimReward(s32 chestObjectEventId, s32 itemId,
+static void McCoyPalace_ClaimReward(s32 chestLocalId, s32 itemId,
                                     s32 chestFlag) {
   s32 emitterHandle;
 
   Engine_ScriptStart();
 
   emitterHandle =
-      FieldEffect_PlayCueAndStartEmitterOnTarget(0, chestObjectEventId, itemId);
+      FieldEffect_PlayCueAndStartEmitterOnTarget(0, chestLocalId, itemId);
 
   if (Engine_PartyGiveItem(itemId, 0) != -1) {
-    Engine_ObjectEventSetAnimation(chestObjectEventId,
-                                   CHEST_ANIMATION_OPEN_EMPTY);
+    Engine_ObjectEventSetAnimation(chestLocalId, CHEST_ANIMATION_OPEN_EMPTY);
     Engine_GameFlagSet(FLAG_MCCOY_PALACE_REWARD_TAKEN);
     Engine_GameFlagSet(chestFlag);
     Engine_GameFlagClear(FLAG_REWARD_OFFERED);
     Engine_GameFlagClear(FLAG_CHOOSING_REWARD);
   } else {
     Engine_AudioPlayCue(SE_125);
-    Engine_ObjectEventSetAnimation(chestObjectEventId,
-                                   CHEST_ANIMATION_PEEK_AND_SHUT);
+    Engine_ObjectEventSetAnimation(chestLocalId, CHEST_ANIMATION_PEEK_AND_SHUT);
   }
 
   Engine_ObjectDispatchRelease((struct ObjectEvent *)emitterHandle);

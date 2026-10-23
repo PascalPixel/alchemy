@@ -104,7 +104,7 @@ void Map_ReturnFromBattle(s32 result) {
   gGameState.mapChangeReason = result;
   if (result == -1) {
     // Revive the leader before choosing the defeat return point.
-    unit = Unit_GetFar(gGameState.selectedObjectEvent);
+    unit = Unit_GetFar(gGameState.selectedLocalId);
     if (unit->hp == 0) {
       unit->hp = 1;
       Unit_UpdateGauges(unit);

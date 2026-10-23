@@ -82,11 +82,10 @@ void FieldEffect_Run(void) {
     }
 
     nearestTargetId =
-        Field_FindNearbyPsynergyTarget(gGameState.selectedObjectEvent, kind);
+        Field_FindNearbyPsynergyTarget(gGameState.selectedLocalId, kind);
     nearestTargetId = FieldEffect_FilterObjectIdByFlags(nearestTargetId);
     if (Map_FindObjectEventTalkEvent(nearestTargetId) != 0) {
-      FieldEffect_SetupObjectPair(gGameState.selectedObjectEvent,
-                                  nearestTargetId);
+      FieldEffect_SetupObjectPair(gGameState.selectedLocalId, nearestTargetId);
       FieldEffect_RunHaltOnTarget(nearestTargetId);
       FieldEffect_PauseObject(nearestTargetId);
       gGameState.pausedObject = nearestTargetId;
@@ -402,17 +401,17 @@ void ObjectGroup_SetActionForOthers(struct ObjectRuntime *except, s32 state,
                                     s32 value) {
   s16 *player;
   struct ObjectRuntime *object;
-  s32 objectEventId;
+  s32 localId;
 
-  objectEventId = 0;
+  localId = 0;
   player = (s16 *)gPlayerObjectId;
   do {
-    object = ObjectTable_Get(objectEventId);
-    if (objectEventId != *player && object != NULL && object != except) {
+    object = ObjectTable_Get(localId);
+    if (localId != *player && object != NULL && object != except) {
       object->movementState = state;
       ObjectDispatch_SetAnimationSpeedFar((struct DispatchObject *)object,
                                           value);
     }
-    objectEventId++;
-  } while (objectEventId <= OBJECT_LAST);
+    localId++;
+  } while (localId <= OBJECT_LAST);
 }

@@ -590,7 +590,7 @@ static void AltmillerCave_FreezePuddle(void) {
 /// hops 32 pixels over it, if the landing is clear.
 static void AltmillerCave_HopSelectedObjectEvent(void) {
   struct ObjectEvent *objectEvent =
-      ObjectEvent_GetById(gGameState.selectedObjectEvent);
+      ObjectEvent_GetById(gGameState.selectedLocalId);
   s32 motionFlags = objectEvent->motionFlags;
   union {
     struct FieldPosition position;
@@ -654,11 +654,11 @@ static void AltmillerCave_PulseLight(union FieldObject *fieldObject) {
 
 /// Puts a light on the ring, radius pixels from its center above the rocks, at
 /// the given angle.
-static void AltmillerCave_PlaceLight(s32 objectEventId, s32 radius, s32 angle) {
+static void AltmillerCave_PlaceLight(s32 localId, s32 radius, s32 angle) {
   s32 centreX = PIXELS(504);
   s32 centreHeight = PIXELS(24);
   s32 depth = PIXELS(144);
-  struct ObjectEvent *light = ObjectEvent_GetById(objectEventId);
+  struct ObjectEvent *light = ObjectEvent_GetById(localId);
   s32 coordinates[3];
   s32 *position = coordinates;
 

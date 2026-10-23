@@ -163,7 +163,7 @@ s32 Engine_ScriptAskYesNo(s32 speaker, s32 flags);
 /// yes and shaking its head at no
 /// (FieldScript_AskYesNoWithObjectEventAnimation). Returns 0 for yes, 1 for no;
 /// flags puts the choice below the message.
-s32 Engine_ScriptChooseYesNo(s32 objectEvent, s32 flags);
+s32 Engine_ScriptChooseYesNo(s32 localId, s32 flags);
 /// Shows message in a window centred on the screen, waits until it is typed out
 /// and closes it (UiText_ShowPositionedMessageAndWait). The bits of flags zoom
 /// the window, lower it or leave it open.
@@ -192,52 +192,52 @@ u8 *Engine_ResourceGetTableEntry(s32 resource);
 void Engine_ObjectEventSetPosition();
 /// Sets an object event's top speed and acceleration, in 16.16 pixels per frame
 /// (ObjectMotion_SetSpeedParameters).
-void Engine_ObjectEventSetSpeed(s32 objectEvent, s32 speed, s32 acceleration);
+void Engine_ObjectEventSetSpeed(s32 localId, s32 speed, s32 acceleration);
 /// Sends an object event toward (x, z), in pixels, in whatever animation it has
 /// (ObjectMotion_ResetAndSetPosition).
-void Engine_ObjectEventSetDestination(s32 objectEvent, s32 x, s32 z);
+void Engine_ObjectEventSetDestination(s32 localId, s32 x, s32 z);
 /// Sends an object event (dx, dz) pixels from where it stands
 /// (ObjectMotion_OffsetPositionAndResetMotion).
-void Engine_ObjectEventSetDestinationOffset(s32 objectEvent, s32 dx, s32 dz);
+void Engine_ObjectEventSetDestinationOffset(s32 localId, s32 dx, s32 dz);
 /// Walks an object event toward (x, z), in pixels, in ANIMATION_WALK
 /// (ObjectMotion_ResetAndSetPositionInMode2).
-void Engine_ObjectEventWalkTo(s32 objectEvent, s32 x, s32 z);
+void Engine_ObjectEventWalkTo(s32 localId, s32 x, s32 z);
 /// Walks an object event (dx, dz) pixels from where it stands, in
 /// ANIMATION_WALK (ObjectMotion_OffsetPositionAndReset).
-void Engine_ObjectEventWalkBy(s32 objectEvent, s32 dx, s32 dz);
+void Engine_ObjectEventWalkBy(s32 localId, s32 dx, s32 dz);
 /// Waits for an object event to arrive, 600 frames at most, and stands it still
 /// (ObjectMotion_CommitCurrentPositionAndActivate).
-void Engine_ObjectEventWaitForMove(s32 objectEvent);
+void Engine_ObjectEventWaitForMove(s32 localId);
 /// Turns an object event toward facing, an angle where 0x10000 is a full turn,
 /// then waits frames (ObjectMotion_ArmCallback).
-void Engine_ObjectEventFaceDirection(s32 objectEvent, s32 facing, s32 frames);
+void Engine_ObjectEventFaceDirection(s32 localId, s32 facing, s32 frames);
 /// Turns object event at once to face target, then waits frames
 /// (ObjectMotion_SetAngleToward).
-void Engine_ObjectEventFaceObjectEvent(s32 objectEvent, s32 target, s32 frames);
+void Engine_ObjectEventFaceObjectEvent(s32 localId, s32 target, s32 frames);
 /// Turns two object events toward each other, then waits frames
 /// (ObjectEvent_LinkPair).
-void Engine_ObjectEventFaceEachOther(s32 objectEvent, s32 other, s32 frames);
+void Engine_ObjectEventFaceEachOther(s32 localId, s32 other, s32 frames);
 /// Switches an object event's sprite to an ObjectEventAnimation
 /// (ObjectEvent_SetModeById).
 void Engine_ObjectEventSetAnimation();
 /// Plays an ObjectEventAnimation and waits for it to end
 /// (Motion_SetModeAndWaitAnimation).
-void Engine_ObjectEventSetAnimationAndWait(s32 objectEvent, s32 animation);
+void Engine_ObjectEventSetAnimationAndWait(s32 localId, s32 animation);
 /// Starts an object event squashing and springing back repeats times, 1 to 3
 /// (ObjectMotion_SetVariantCallback).
-void Engine_ObjectEventStartRepeatedMotion(s32 objectEvent, s32 repeats);
+void Engine_ObjectEventStartRepeatedMotion(s32 localId, s32 repeats);
 /// The same squash and spring as Engine_ObjectEventStartRepeatedMotion, waiting
 /// for it to end (Motion_SetVarCbAndRefresh).
-void Engine_ObjectEventRunRepeatedMotion(s32 objectEvent, s32 repeats);
+void Engine_ObjectEventRunRepeatedMotion(s32 localId, s32 repeats);
 /// Shows an emote bubble over an object event, which frees itself after 46
 /// frames, then waits frames (FieldEffect_SpawnLinked). See EMOTE_IN_FRONT.
-void Engine_ObjectEventShowEmote(s32 objectEvent, s32 emote, s32 frames);
+void Engine_ObjectEventShowEmote(s32 localId, s32 emote, s32 frames);
 /// Attaches, removes or plays once the effect object that rides an object
 /// event, by enum AttachedEffectFlag (FieldEffect_ConfigureLinkedObject).
-void Engine_ObjectEventSetAttachedEffect(s32 objectEvent, s32 effect);
+void Engine_ObjectEventSetAttachedEffect(s32 localId, s32 effect);
 /// Fixes an object event's sprite priority, which then no longer follows its
 /// depth (ObjectMotion_SetActionVariant).
-void Engine_ObjectEventSetSpritePriority(s32 objectEvent, s32 priority);
+void Engine_ObjectEventSetSpritePriority(s32 localId, s32 priority);
 /// Sets the flags of a one-sprite object's sprite, bit 0 drawing its shadow
 /// (ObjectDispatch_SetSingleChildFlags).
 void Engine_ObjectEventSetSpriteFlags(struct ObjectEvent *objectEvent,
@@ -245,7 +245,7 @@ void Engine_ObjectEventSetSpriteFlags(struct ObjectEvent *objectEvent,
 /// Makes the camera follow object event (Camera_FollowObjectEvent). Unless
 /// keep_position is set it jumps there at once and, off the world map, the map
 /// is redrawn.
-void Engine_CameraFollowObjectEvent(s32 objectEvent, s32 keep_position);
+void Engine_CameraFollowObjectEvent(s32 localId, s32 keep_position);
 /// Sets the camera's top speed and acceleration, in 16.16 pixels per frame
 /// (Camera_SetSpeedParameters).
 void Engine_CameraSetSpeed(s32 speed, s32 acceleration);
@@ -255,7 +255,7 @@ void Engine_CameraSetSpeed(s32 speed, s32 acceleration);
 void Engine_CameraMoveTo(s32 fixed_x, s32 fixed_y, s32 fixed_z, s32 pan);
 /// Sends the camera to an object event's x and z, inside the map's edges
 /// (ObjectEvent_PlaceCurrentWithinCameraBounds).
-void Engine_CameraMoveToObjectEvent(s32 objectEvent, s32 pan);
+void Engine_CameraMoveToObjectEvent(s32 localId, s32 pan);
 /// Waits, 600 frames at most, for the camera to arrive, then two frames more
 /// (Camera_WaitForArrival).
 void Engine_CameraWaitForMove(void);
@@ -365,13 +365,13 @@ void Engine_ItemShowFound(s32 item, s32 height);
 s32 Engine_PartyGiveItem(s32 item, s32 flags);
 /// Stops an object event's action and puts it back under the script's control,
 /// on the idle script (ObjectMotion_EnableActionAndResetMotion).
-void Engine_ObjectEventStop(s32 objectEvent);
+void Engine_ObjectEventStop(s32 localId);
 /// Walks an object event to the middle of its 16-pixel column, fixes its sprite
 /// priority, then sends it dz pixels along z (ObjectMotion_CenterOnColumn).
-void Engine_ObjectEventCenterAndWalk(s32 objectEvent, s32 priority, s32 dz);
+void Engine_ObjectEventCenterAndWalk(s32 localId, s32 priority, s32 dz);
 /// Walks an object event (dx, dz) pixels, waits for it to arrive and stands it
 /// still (ObjectMotion_CommitPositionAndActivate).
-void Engine_ObjectEventWalkByAndWait(s32 objectEvent, s32 dx, s32 dz);
+void Engine_ObjectEventWalkByAndWait(s32 localId, s32 dx, s32 dz);
 /// Makes the leader jump two tiles forward where the map has a jump spot
 /// (Field_TryJumpForward). Returns 0 after a jump and -1 when it can't jump.
 s32 Engine_LeaderCheckAhead(void);
@@ -399,32 +399,31 @@ void Engine_ScriptShowMessageAndWait(s32 speaker, s32 flags, s32 frames);
 /// Returns the camera object a script moves (Camera_GetScriptObject).
 struct ObjectEvent *Engine_ScriptGetViewCenter(void);
 /// Returns the object event in a slot, or NULL (ObjectTable_Get).
-struct ObjectEvent *Engine_ObjectEventLookup(s32 objectEvent);
+struct ObjectEvent *Engine_ObjectEventLookup(s32 localId);
 /// Releases an object event and empties its place in the object event table
 /// (ObjectTable_DestroyById).
-void Engine_ObjectEventDestroy(s32 objectEvent);
+void Engine_ObjectEventDestroy(s32 localId);
 /// Gives every sprite part of an object event a sprite param; with bit 0x100
 /// the object event blinks instead (ObjectGroup_ConfigureChildValue).
-void Engine_ObjectEventSetChildValue(s32 objectEvent, s32 value);
+void Engine_ObjectEventSetChildValue(s32 localId, s32 value);
 /// Starts an object event's action, an enum MovementType or a script's address,
 /// and makes it face where it moves (ObjectMotion_EnableActionAndSetCallback).
-void Engine_ObjectEventEnableActionCallback(s32 objectEvent, s32 action);
+void Engine_ObjectEventEnableActionCallback(s32 localId, s32 action);
 /// The engine encodes either a built-in action or an action-script address.
-static inline void ObjectEvent_SetActionScript(s32 objectEvent,
-                                               const s32 *script) {
-  Engine_ObjectEventEnableActionCallback(objectEvent, (s32)script);
+static inline void ObjectEvent_SetActionScript(s32 localId, const s32 *script) {
+  Engine_ObjectEventEnableActionCallback(localId, (s32)script);
 }
 
 /// Runs a script, waiting at most 300 frames for its final command.
-static inline void ObjectEvent_RunActionScriptAndWait(s32 objectEvent,
+static inline void ObjectEvent_RunActionScriptAndWait(s32 localId,
                                                       const s32 *script) {
-  ObjectEvent_SetActionCallbackAndRefreshById(objectEvent, (s32)script);
+  ObjectEvent_SetActionCallbackAndRefreshById(localId, (s32)script);
 }
 
 /// Starts one of the engine's own actions on an object event, an enum
 /// MovementType, where ObjectEvent_SetActionScript gives it a map's script.
-static inline void ObjectEvent_SetBuiltinAction(s32 objectEvent, s32 action) {
-  Engine_ObjectEventEnableActionCallback(objectEvent, action);
+static inline void ObjectEvent_SetBuiltinAction(s32 localId, s32 action) {
+  Engine_ObjectEventEnableActionCallback(localId, action);
 }
 
 /// Starts an object event's action, an enum MovementType or a script to run,
@@ -458,13 +457,13 @@ void Engine_ColorBufferInterpolate(s32 frames);
 /// Sends an object event toward (x, z) as Engine_ObjectEventSetDestination
 /// does, then waits for it, giving up after 600 frames
 /// (ObjectMotion_SetPositionAndCommit).
-void Engine_ObjectEventMoveToAndWait(s32 objectEvent, s32 x, s32 z);
+void Engine_ObjectEventMoveToAndWait(s32 localId, s32 x, s32 z);
 /// Walks an object event to (x, z), in pixels, waits for it to arrive and
 /// stands it in ANIMATION_STAND (ObjectMotion_SetPositionAndReset).
-void Engine_ObjectEventWalkToAndWait(s32 objectEvent, s32 x, s32 z);
+void Engine_ObjectEventWalkToAndWait(s32 localId, s32 x, s32 z);
 /// Throws an object event upward at height pixels per frame with a jump sound,
 /// then waits frames while gravity brings it down (ObjectMotion_Launch).
-void Engine_ObjectEventJump(s32 objectEvent, s32 height, s32 frames);
+void Engine_ObjectEventJump(s32 localId, s32 height, s32 frames);
 /// Two object events speak at once, each message and portrait at its own tile
 /// position, until A, B, L or R closes both
 /// (FieldScript_ShowTwoMessagesAndWait). The routine takes ten arguments and
@@ -482,7 +481,7 @@ void Engine_MapGridRenderWaitForValues(void);
 
 /// The same move and wait as Engine_ObjectEventMoveToAndWait, under a second
 /// import name (ObjectMotion_SetPositionAndCommit).
-void Engine_ObjectMotionSetPositionAndCommit(s32 objectEvent, s32 x, s32 z);
+void Engine_ObjectMotionSetPositionAndCommit(s32 localId, s32 x, s32 z);
 /// Releases an object's sprites and zeroes it, so it can be handed out again
 /// (ObjectDispatch_Release).
 void Engine_ObjectDispatchRelease(struct ObjectEvent *objectEvent);
@@ -528,72 +527,71 @@ static inline s32 Script_AskYesNo(s32 speaker, s32 flags) {
 
 /// Looks up an object event for a script, NULL when it doesn't exist
 /// (ObjectEvent_GetById).
-static inline struct ObjectEvent *ObjectEvent_Get(s32 objectEvent) {
-  return ObjectEvent_GetById(objectEvent);
+static inline struct ObjectEvent *ObjectEvent_Get(s32 localId) {
+  return ObjectEvent_GetById(localId);
 }
 
 /// Places an object event at a point at once, without walking it there.
-static inline void ObjectEvent_SetPosition(s32 objectEvent, s32 fixed_x,
+static inline void ObjectEvent_SetPosition(s32 localId, s32 fixed_x,
                                            s32 fixed_z) {
-  Engine_ObjectEventSetPosition(objectEvent, fixed_x, fixed_z);
+  Engine_ObjectEventSetPosition(localId, fixed_x, fixed_z);
 }
 
 /// Sets how fast an object event moves, and how quickly it gets up to speed,
 /// for the script's next moves.
-static inline void ObjectEvent_SetSpeed(s32 objectEvent, s32 speed,
+static inline void ObjectEvent_SetSpeed(s32 localId, s32 speed,
                                         s32 acceleration) {
-  Engine_ObjectEventSetSpeed(objectEvent, speed, acceleration);
+  Engine_ObjectEventSetSpeed(localId, speed, acceleration);
 }
 
 /// Moves an object event to a point in the pose it has, without walking; the
 /// script carries on meanwhile.
-static inline void ObjectEvent_SetDestination(s32 objectEvent, s32 x, s32 z) {
-  Engine_ObjectEventSetDestination(objectEvent, x, z);
+static inline void ObjectEvent_SetDestination(s32 localId, s32 x, s32 z) {
+  Engine_ObjectEventSetDestination(localId, x, z);
 }
 
 #ifndef FIELD_STAGED_OBJ_EVENT_IMPORTS
 /// Moves an object event some distance from where it stands, without waiting
 /// for it.
-static inline void ObjectEvent_SetDestinationOffset(s32 objectEvent, s32 dx,
+static inline void ObjectEvent_SetDestinationOffset(s32 localId, s32 dx,
                                                     s32 dz) {
-  Engine_ObjectEventSetDestinationOffset(objectEvent, dx, dz);
+  Engine_ObjectEventSetDestinationOffset(localId, dx, dz);
 }
 #endif
 
 /// Walks an object event to a point; the script goes on while it walks.
-static inline void ObjectEvent_WalkTo(s32 objectEvent, s32 x, s32 z) {
-  Engine_ObjectEventWalkTo(objectEvent, x, z);
+static inline void ObjectEvent_WalkTo(s32 localId, s32 x, s32 z) {
+  Engine_ObjectEventWalkTo(localId, x, z);
 }
 
 /// Walks an object event some distance from where it stands, without waiting
 /// for it to get there.
-static inline void ObjectEvent_WalkBy(s32 objectEvent, s32 dx, s32 dz) {
-  Engine_ObjectEventWalkBy(objectEvent, dx, dz);
+static inline void ObjectEvent_WalkBy(s32 localId, s32 dx, s32 dz) {
+  Engine_ObjectEventWalkBy(localId, dx, dz);
 }
 
 /// Turns an object event to a direction and holds the script for a few frames.
-static inline void ObjectEvent_FaceDirection(s32 objectEvent, s32 facing,
+static inline void ObjectEvent_FaceDirection(s32 localId, s32 facing,
                                              s32 frames) {
-  Engine_ObjectEventFaceDirection(objectEvent, facing, frames);
+  Engine_ObjectEventFaceDirection(localId, facing, frames);
 }
 
 /// Has one object event look at another at once, then pauses the script.
-static inline void ObjectEvent_FaceObjectEvent(s32 objectEvent, s32 target,
+static inline void ObjectEvent_FaceObjectEvent(s32 localId, s32 target,
                                                s32 frames) {
-  Engine_ObjectEventFaceObjectEvent(objectEvent, target, frames);
+  Engine_ObjectEventFaceObjectEvent(localId, target, frames);
 }
 
 /// Pops an emote bubble up over an object event, then lets frames pass before
 /// the script goes on.
-static inline void ObjectEvent_ShowEmote(s32 objectEvent, s32 emote,
-                                         s32 frames) {
-  Engine_ObjectEventShowEmote(objectEvent, emote, frames);
+static inline void ObjectEvent_ShowEmote(s32 localId, s32 emote, s32 frames) {
+  Engine_ObjectEventShowEmote(localId, emote, frames);
 }
 
 /// Attaches an effect object to an object event, takes it off, or plays one
 /// over it once.
-static inline void ObjectEvent_SetAttachedEffect(s32 objectEvent, s32 effect) {
-  Engine_ObjectEventSetAttachedEffect(objectEvent, effect);
+static inline void ObjectEvent_SetAttachedEffect(s32 localId, s32 effect) {
+  Engine_ObjectEventSetAttachedEffect(localId, effect);
 }
 
 /// Sets how fast the camera pans for the script's next camera moves.
@@ -698,14 +696,14 @@ static inline void Marker_SetPosition(s32 object, s32 fixed_x, s32 fixed_z) {
 
 /// Lines an object event up with the middle of its column, then walks it
 /// straight along z.
-static inline void ObjectEvent_CenterAndWalk(s32 objectEvent, s32 priority,
+static inline void ObjectEvent_CenterAndWalk(s32 localId, s32 priority,
                                              s32 dz) {
-  Engine_ObjectEventCenterAndWalk(objectEvent, priority, dz);
+  Engine_ObjectEventCenterAndWalk(localId, priority, dz);
 }
 
 /// Walks an object event some distance and waits until it is there.
-static inline void ObjectEvent_WalkByAndWait(s32 objectEvent, s32 dx, s32 dz) {
-  Engine_ObjectEventWalkByAndWait(objectEvent, dx, dz);
+static inline void ObjectEvent_WalkByAndWait(s32 localId, s32 dx, s32 dz) {
+  Engine_ObjectEventWalkByAndWait(localId, dx, dz);
 }
 
 /// Shows a line of dialogue, then pauses before the script goes on.
@@ -716,8 +714,8 @@ static inline void Script_ShowMessageAndWait(s32 speaker, s32 flags,
 
 /// Sets a sprite param on every part of an object event's sprite, or makes it
 /// blink.
-static inline void ObjectEvent_SetChildValue(s32 objectEvent, s32 value) {
-  Engine_ObjectEventSetChildValue(objectEvent, value);
+static inline void ObjectEvent_SetChildValue(s32 localId, s32 value) {
+  Engine_ObjectEventSetChildValue(localId, value);
 }
 
 /// Not used in TBS.
@@ -752,13 +750,13 @@ static inline void ColorBuffer_ApplyTarget(s32 value, s32 mode) {
 }
 
 /// Moves an object event to a point in the pose it has and waits for it.
-static inline void ObjectEvent_MoveToAndWait(s32 objectEvent, s32 x, s32 z) {
-  Engine_ObjectEventMoveToAndWait(objectEvent, x, z);
+static inline void ObjectEvent_MoveToAndWait(s32 localId, s32 x, s32 z) {
+  Engine_ObjectEventMoveToAndWait(localId, x, z);
 }
 
 /// Walks an object event to a point and waits for it, then stands it still.
-static inline void ObjectEvent_WalkToAndWait(s32 objectEvent, s32 x, s32 z) {
-  Engine_ObjectEventWalkToAndWait(objectEvent, x, z);
+static inline void ObjectEvent_WalkToAndWait(s32 localId, s32 x, s32 z) {
+  Engine_ObjectEventWalkToAndWait(localId, x, z);
 }
 
 /// Has two object events speak at once, each window placed by the script.

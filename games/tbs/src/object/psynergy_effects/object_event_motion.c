@@ -108,8 +108,8 @@ void ObjectMotion_SetActionCallback(struct ObjectRuntime *object, s32 action) {
     action = (s32)gObjectMotion_MoveTowardTargetScript;
     break;
   case MOVEMENT_TYPE_FACE_LEADER:
-    object->linkedObject = (struct ObjectRuntime *)ObjectEvent_GetById(
-        gGameState.selectedObjectEvent);
+    object->linkedObject =
+        (struct ObjectRuntime *)ObjectEvent_GetById(gGameState.selectedLocalId);
     action = (s32)gObjectMotion_TurnTowardLinkedScript;
     break;
   case MOVEMENT_TYPE_RESET_ACTION:

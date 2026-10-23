@@ -13,10 +13,9 @@ enum PathRecorderMode {
 
 // Native calls precede this definition; see MATCHING.md.
 #ifdef UBFIX
-void Colosso_StartRaceGauge(s32 playerObjectEvent, s32 opponentObjectEvent,
+void Colosso_StartRaceGauge(s32 playerLocalId, s32 opponentLocalId,
                             s32 segments, s32 finishX, s32 finishZ,
-                            s32 finishItemObjectEventA,
-                            s32 finishItemObjectEventB);
+                            s32 finishItemLocalIdA, s32 finishItemLocalIdB);
 #endif
 void Colosso_StartOpponent(s32 resource);
 

@@ -32,7 +32,7 @@ void Djinn_RunBattleStartHop(s32 djinniId) {
 
   // The way the leader faces, to the nearest quarter turn.
   djinni = ObjectEvent_GetById(djinniId);
-  dir = (ObjectEvent_GetById(gGameState.selectedObjectEvent)->facing + 0x2000) &
+  dir = (ObjectEvent_GetById(gGameState.selectedLocalId)->facing + 0x2000) &
         0xc000;
   FieldScript_Start();
   WaitFrames(10);
@@ -218,7 +218,7 @@ void ObjectEvent_PlaceMapObjectEvents(void) {
                                               desc->z);
         } else {
           struct ObjectRuntime *leader =
-              ObjectTable_Get(gGameState.selectedObjectEvent);
+              ObjectTable_Get(gGameState.selectedLocalId);
 
           Object_SetPositionAndResetMotionFar(object, leader->x, leader->y,
                                               leader->z - (32 << 16));
@@ -274,15 +274,15 @@ void Djinn_ResolvePendingEvent(s32 shown) {
         s32 djinni = flag - DJINNI_EVENT_0;
         s32 element = djinni / 20;
         s32 index = djinni % 20;
-        s32 objectEvent;
+        s32 localId;
 
-        for (objectEvent = 8; objectEvent <= 65; objectEvent++) {
+        for (localId = 8; localId <= 65; localId++) {
           struct ObjectEventTemplate *found =
-              Map_FindObjectEventTemplate(objectEvent);
+              Map_FindObjectEventTemplate(localId);
           if (found != 0 &&
               found->condition - FLAG_DJINNI_0 == flag - DJINNI_EVENT_0) {
             WaitFrames(40);
-            Djinn_JoinParty(objectEvent, element, index);
+            Djinn_JoinParty(localId, element, index);
             break;
           }
         }
@@ -353,8 +353,8 @@ void FieldEffect_RunAngledApproachPhases(struct EffectSlot *particle) {
   struct MotionObject *target;
   struct EffectVector position;
 
-  target = (struct MotionObject *)ObjectEvent_GetById(
-      gGameState.selectedObjectEvent);
+  target =
+      (struct MotionObject *)ObjectEvent_GetById(gGameState.selectedLocalId);
   if (particle->state == DJINNI_LIGHT_WIDENING) {
     particle->orbitRadius += 1;
     particle->orbitAngle += 1;

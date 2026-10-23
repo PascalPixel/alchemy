@@ -196,7 +196,7 @@ s32 Field_SearchTile(s32 tile);
 s32 Field_GetPsynergyTargetRange(s32 kind);
 s32 Field_FindNearbyTalkTarget(s32 id);
 s32 Field_FindNearbyPsynergyTarget(s32 id, s32 kind);
-s32 FieldEffect_PlayCueAndStartEmitterOnTarget(s32 objectEvent, s32 target,
+s32 FieldEffect_PlayCueAndStartEmitterOnTarget(s32 localId, s32 target,
                                                s32 itemId);
 void Animation_ApplyChildPalette(struct MotionObject *object, s32 palette);
 void Field_EndBusyAndReveal(void);
@@ -222,7 +222,7 @@ void Marker_SetObjectEventPosition(s32 id, s32 x, s32 z);
 
 void Marker_MoveLeaderAway(void);
 void ItemDisplay_EmitSparkles(union FieldObject *fieldObject);
-struct EffectObject *FieldEffect_StartRandomParticleEmitter(s32 objectEvent,
+struct EffectObject *FieldEffect_StartRandomParticleEmitter(s32 localId,
                                                             s32 item);
 void Object_DestroyIfPresent(void *object);
 void ItemDisplay_RaiseAboveLeader(struct ObjectRuntime *object);

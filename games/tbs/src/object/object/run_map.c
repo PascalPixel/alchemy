@@ -148,7 +148,7 @@ s32 Field_RunMap(s32 warpDest) {
     for (;;) {
       // Note where the leader is, for the requests to use.
       GameFlag_SetBitFar(FLAG_FIELD_HANDLING_REQUESTS);
-      objectEvent = work->objectEvents[gGameState.selectedObjectEvent];
+      objectEvent = work->objectEvents[gGameState.selectedLocalId];
       ObjectDispatch_StartIdleFar((struct DispatchObject *)objectEvent);
       gGameState.x = objectEvent->x.fixed;
       gGameState.y = 0;
@@ -183,7 +183,7 @@ s32 Field_RunMap(s32 warpDest) {
               // The whole party fell: back to the last sanctum with 1 HP.
               struct BattleUnit *vitals;
 
-              if (gGameState.selectedObjectEvent == 0) {
+              if (gGameState.selectedLocalId == 0) {
                 if (GameFlag_TestFar(FLAG_CHILDHOOD) != 0)
                   ObjectDispatch_SelectAnimationFar(objectEvent, 21);
                 else
@@ -194,7 +194,7 @@ s32 Field_RunMap(s32 warpDest) {
               AudioCommand_PlayFar(MUS_DEFEAT);
               UiText_ShowPositionedMessageAndWaitFar(MsgFieldPartyAnnihilated,
                                                      1);
-              vitals = Unit_GetFar(gGameState.selectedObjectEvent);
+              vitals = Unit_GetFar(gGameState.selectedLocalId);
               vitals->hp = 1;
               Unit_UpdateGauges(vitals);
               gGameState.mapId = gGameState.savedMap;
@@ -243,7 +243,7 @@ s32 Field_RunMap(s32 warpDest) {
           s32 object;
 
           UiTimedNotice_CloseIfActiveFar();
-          object = Field_FindNearbyTalkTarget(gGameState.selectedObjectEvent);
+          object = Field_FindNearbyTalkTarget(gGameState.selectedLocalId);
           mode = 0;
           if (object != -1) {
             mode = Map_FindObjectEventTalkEvent(object) != 0;
@@ -363,7 +363,7 @@ s32 Field_RunMap(s32 warpDest) {
       // air (only a key check runs), on the world map or walking, and step
       // until the next request.
       GameFlag_ClearBitFar(FLAG_FIELD_HANDLING_REQUESTS);
-      objectEvent = work->objectEvents[gGameState.selectedObjectEvent];
+      objectEvent = work->objectEvents[gGameState.selectedLocalId];
       if (objectEvent != NULL) {
         if (gGameState.movementMode == LEADER_MOVEMENT_AIRBORNE)
           ObjectDispatch_StartKeyCheckFar((struct DispatchObject *)objectEvent);
@@ -379,7 +379,7 @@ s32 Field_RunMap(s32 warpDest) {
       }
       do {
         WaitFrames(1);
-        objectEvent = work->objectEvents[gGameState.selectedObjectEvent];
+        objectEvent = work->objectEvents[gGameState.selectedLocalId];
         if (gDebugMode == 0 || GameFlag_TestFar(FLAG_DEBUG_STEPS_OFF) == 0)
           Field_ProcessStep(objectEvent->terrainId, objectEvent->x.fixed,
                             objectEvent->y.fixed, objectEvent->z.fixed);
@@ -429,7 +429,7 @@ s32 ObjectEvent_GetTriggerTileAheadOfCurrent(void) {
   s32 result;
 
   result = 0;
-  leader = ObjectTable_Get(gGameState.selectedObjectEvent);
+  leader = ObjectTable_Get(gGameState.selectedLocalId);
   workBytes = *(u8 **)Ram_EventWork;
   gridBytes = *(u8 **)Ram_MapGridWork;
   if (leader != 0) {

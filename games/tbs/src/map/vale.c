@@ -138,11 +138,11 @@
 static void Vale_HaveJennaStopTheAlephDetour(void);
 static void Vale_AskAboutSneakingToAleph(const s32 *leaderActions,
                                          const s32 *guardActions);
-static void Vale_MoveObjectEventAlongLowerZPath(s32 objectEventId,
+static void Vale_MoveObjectEventAlongLowerZPath(s32 localId,
                                                 s32 approachAnimationId,
                                                 s32 departureAnimationId,
                                                 s32 resumeMotion);
-static void Vale_MoveObjectEventAlongHigherZPath(s32 objectEventId,
+static void Vale_MoveObjectEventAlongHigherZPath(s32 localId,
                                                  s32 approachAnimationId,
                                                  s32 departureAnimationId,
                                                  s32 resumeMotion);
@@ -1640,11 +1640,11 @@ s32 Vale_Initialize(void) {
       }
       {
         s32 priority;
-        s32 objectEvent;
+        s32 localId;
 
         priority = ((u32)(u8)set >> 8) + 2;
-        objectEvent = LOCALID_DORA;
-        Engine_ObjectEventSetSpritePriority(objectEvent, priority);
+        localId = LOCALID_DORA;
+        Engine_ObjectEventSetSpritePriority(localId, priority);
       }
 #endif
     }
@@ -1900,7 +1900,7 @@ UNUSED static void EventScript_UnusedWaterBurstsByTheRiver(void) {
 /// Walks an object event to the foot of the ladder beside Isaac's house and
 /// climbs it onto the roof, in `approachAnimationId` on the rungs and
 /// `departureAnimationId` over the eaves.
-static void Vale_MoveObjectEventAlongLowerZPath(s32 objectEventId,
+static void Vale_MoveObjectEventAlongLowerZPath(s32 localId,
                                                 s32 approachAnimationId,
                                                 s32 departureAnimationId,
                                                 s32 resumeMotion) {
@@ -1913,31 +1913,31 @@ static void Vale_MoveObjectEventAlongLowerZPath(s32 objectEventId,
   restoreMotion = resumeMotion;
   approachAnimation = approachAnimationId;
   departureAnimation = departureAnimationId;
-  objectEvent = ObjectEvent_GetById(objectEventId);
+  objectEvent = ObjectEvent_GetById(localId);
   sprite = objectEvent->sprite;
-  ObjectEvent_SetSpeed(objectEventId, PIXELS(1), PIXELS(1) / 2);
-  ObjectEvent_WalkToAndWait(objectEventId, 392, 886);
+  ObjectEvent_SetSpeed(localId, PIXELS(1), PIXELS(1) / 2);
+  ObjectEvent_WalkToAndWait(localId, 392, 886);
   ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_NORTH, 10);
   objectEvent->motionFlags = 0;
   sprite->flags = 0;
-  Engine_ObjectEventSetAnimation(objectEventId, approachAnimation);
-  ObjectEvent_SetSpeed(objectEventId, PIXELS(3) / 10, PIXELS(3) / 20);
-  ObjectEvent_MoveToAndWait(objectEventId, 392, 875);
+  Engine_ObjectEventSetAnimation(localId, approachAnimation);
+  ObjectEvent_SetSpeed(localId, PIXELS(3) / 10, PIXELS(3) / 20);
+  ObjectEvent_MoveToAndWait(localId, 392, 875);
   Engine_ScriptWait(10);
-  Engine_ObjectEventSetAnimation(objectEventId, departureAnimation);
-  ObjectEvent_SetSpeed(objectEventId, PIXELS(1), PIXELS(1) / 2);
-  ObjectEvent_MoveToAndWait(objectEventId, 392, 859);
+  Engine_ObjectEventSetAnimation(localId, departureAnimation);
+  ObjectEvent_SetSpeed(localId, PIXELS(1), PIXELS(1) / 2);
+  ObjectEvent_MoveToAndWait(localId, 392, 859);
   sprite->flags = 1;
   if (restoreMotion != 0) {
     objectEvent->motionFlags = 3;
   }
   Engine_ScriptWait(10);
-  Engine_ObjectEventSetAnimation(objectEventId, ANIMATION_STAND);
+  Engine_ObjectEventSetAnimation(localId, ANIMATION_STAND);
 }
 
 /// Climbs an object event down the ladder beside Isaac's house from the roof,
 /// and restores falling motion if requested.
-static void Vale_MoveObjectEventAlongHigherZPath(s32 objectEventId,
+static void Vale_MoveObjectEventAlongHigherZPath(s32 localId,
                                                  s32 approachAnimationId,
                                                  s32 departureAnimationId,
                                                  s32 resumeMotion) {
@@ -1950,26 +1950,26 @@ static void Vale_MoveObjectEventAlongHigherZPath(s32 objectEventId,
   restoreMotion = resumeMotion;
   approachAnimation = approachAnimationId;
   departureAnimation = departureAnimationId;
-  objectEvent = ObjectEvent_GetById(objectEventId);
+  objectEvent = ObjectEvent_GetById(localId);
   sprite = objectEvent->sprite;
-  ObjectEvent_SetSpeed(objectEventId, PIXELS(1), PIXELS(1) / 2);
-  ObjectEvent_WalkToAndWait(objectEventId, 392, 859);
-  ObjectEvent_FaceDirection(objectEventId, FACING_NORTH, 10);
+  ObjectEvent_SetSpeed(localId, PIXELS(1), PIXELS(1) / 2);
+  ObjectEvent_WalkToAndWait(localId, 392, 859);
+  ObjectEvent_FaceDirection(localId, FACING_NORTH, 10);
   objectEvent->motionFlags = 0;
   sprite->flags = 0;
-  Engine_ObjectEventSetAnimation(objectEventId, approachAnimation);
-  ObjectEvent_SetSpeed(objectEventId, PIXELS(1), PIXELS(1) / 2);
-  ObjectEvent_MoveToAndWait(objectEventId, 392, 875);
+  Engine_ObjectEventSetAnimation(localId, approachAnimation);
+  ObjectEvent_SetSpeed(localId, PIXELS(1), PIXELS(1) / 2);
+  ObjectEvent_MoveToAndWait(localId, 392, 875);
   Engine_ScriptWait(10);
-  ObjectEvent_SetSpeed(objectEventId, PIXELS(3) / 10, PIXELS(3) / 20);
-  Engine_ObjectEventSetAnimation(objectEventId, departureAnimation);
-  ObjectEvent_MoveToAndWait(objectEventId, 392, 890);
+  ObjectEvent_SetSpeed(localId, PIXELS(3) / 10, PIXELS(3) / 20);
+  Engine_ObjectEventSetAnimation(localId, departureAnimation);
+  ObjectEvent_MoveToAndWait(localId, 392, 890);
   objectEvent->velocityY = 0x20000;
   sprite->flags = 1;
   if (restoreMotion != 0) {
     objectEvent->motionFlags = 3;
   }
-  Engine_ObjectEventSetAnimation(objectEventId, ANIMATION_STAND);
+  Engine_ObjectEventSetAnimation(localId, ANIMATION_STAND);
 }
 
 /// Mode 0 sets count boards from first on the roof by the hole, still and

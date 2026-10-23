@@ -198,7 +198,7 @@ static void Clear_LoadBackground(void) {
   {
     struct ObjectEvent *leader;
 
-    leader = ObjectEvent_GetById(gGameState.selectedObjectEvent);
+    leader = ObjectEvent_GetById(gGameState.selectedLocalId);
     leader->motionFlags = 0;
   }
 }
@@ -609,7 +609,7 @@ menu_top:;
     if (v6 == -1) {
       goto menu_top;
     }
-    gGameState.selectedObjectEvent = 0;
+    gGameState.selectedLocalId = 0;
     if (GameFlag_IsSet(FLAG_COLOSSO_HOLDS_EQUIPMENT) != 0) {
       InventorySnapshot_Restore();
       Party_RemoveActiveOwner(0);

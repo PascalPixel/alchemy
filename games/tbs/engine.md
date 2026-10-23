@@ -33,7 +33,9 @@ sets up the interrupt and system stacks at the top of IWRAM and calls
 `System_Initialize`. That function clears IWRAM below the stacks, empties the
 heap, copies the resident runtime (the routines that must run fast) into
 IWRAM and points the interrupt vector at its dispatcher, installs `System_VBlankHandler`, starts the sound driver,
-resets the task table, waits ten frames and calls `Game_RunFar`. Neither
+resets the task table, waits ten frames and calls `Game_RunFar`, the jump in
+the object bank's far-call table that leads to `Game_Run`
+([Banks and far calls](#banks-and-far-calls) explains them). Neither
 function returns. `Game_Run` loads one map after another for as long as the
 game runs, starting with the title. A soft reset (A, B, Select and Start held
 together) sets `gResetRequested`, and the frame loop restarts the game from

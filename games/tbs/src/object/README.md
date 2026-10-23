@@ -13,7 +13,7 @@ the world map screen R brings up. The slot machine at Tolbi's spring is here
 too, in another bank.
 
 The engine underneath, which moves everything and draws the maps, is
-[Field](../field/README.md); the object events themselves, the 64 slots for
+[Field](../field/README.md); the field objects themselves, the 64 slots for
 everything that moves and the scripts they run, are described there under
 [everything that moves runs a
 script](../field/README.md#everything-that-moves-runs-a-script). What happens

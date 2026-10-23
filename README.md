@@ -1,6 +1,6 @@
 # 🌋 Alchemy
 
-Alchemy is a decompilation of the Game Boy Advance games ☀️ **[Golden Sun: The Broken Seal](games/tbs/README.md)** and ⚓️ **Golden Sun: The Lost Age**.
+Alchemy is a decompilation of the Game Boy Advance games ☀️ **[Golden Sun: The Broken Seal](games/tbs/README.md)** and ⚓️ **Golden Sun: The Lost Age**. It is a matching decompilation: a plain Makefile builds its C and assembly, with alchemy-gcc (a GCC of July 2000), GCC 2.95.2, pret’s old_agbcc and GNU’s assembler 2.10, back into the exact bytes of each cartridge.
 
 <img src="https://alchemy.pascalpixel.com/illustrations/field/layer-stack.svg" width="480" alt="A screen of Vale pulled apart into the sheets the console stacks to draw it: the ground at the back, then the middle layer, Isaac, and the overhead layer in front" />
 

@@ -1,5 +1,7 @@
 # Building Alchemy
 
+Alchemy builds the Game Boy Advance games Golden Sun: The Broken Seal (`tbs`) and Golden Sun: The Lost Age (`tla`), byte for byte, from the source in this repository.
+
 The Broken Seal builds on Linux, macOS and Windows with nothing but this repository. The Lost Age is optional and also needs your own cartridge dumps.
 
 ## 1. Install the tools

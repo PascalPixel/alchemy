@@ -66,14 +66,14 @@ to load the next map.
 
 ## Everything that moves runs a script
 
-Everything on the field that moves or changes by itself is an object event,
+Everything on the field that moves or changes by itself is a field object,
 and each one runs a small script of steps.
 
-![Three object events and their scripts. The leader moves by the direction pad, waits one frame and repeats, for good. The camera follows the leader, waits one frame and repeats. A footprint waits 120 frames and then disappears. Each frame every object runs its steps in order until one says to wait, which ends its turn until the next frame. Below, Isaac in Imil's snow as the game draws him, with the footprints his steps left beside him.](https://alchemy.pascalpixel.com/illustrations/field/object-scripts.svg)
+![Three field objects and their scripts. The leader moves by the direction pad, waits one frame and repeats, for good. The camera follows the leader, waits one frame and repeats. A footprint waits 120 frames and then disappears. Each frame every object runs its steps in order until one says to wait, which ends its turn until the next frame. Below, Isaac in Imil's snow as the game draws him, with the footprints his steps left beside him.](https://alchemy.pascalpixel.com/illustrations/field/object-scripts.svg)
 
-The object events are the party, the people and things a map places, the
-camera, even the footprints the leader leaves, and there are 64 slots for
-them. Every frame each object takes a turn: it runs its steps in order until
+The field objects are the party, the people and things a map places (its
+object events), the camera, even the footprints the leader leaves, and there
+are 64 slots for them. Every frame each object takes a turn: it runs its steps in order until
 one says to wait, which ends its turn until a later frame. A step that only
 tests something or jumps to another part of the script takes no time, so a
 script can make a decision within a single frame.
@@ -140,7 +140,7 @@ handlers are the rows of
 
 | Name | Value | Meaning |
 | --- | --- | --- |
-| `FIELD_OBJECT_COUNT` | 64 | object events, the slots of `gObjectSlots` |
+| `FIELD_OBJECT_COUNT` | 64 | field objects, the slots of `gObjectSlots` |
 | `SC_WAIT(n)` | `0x00`, n | end the turn and wait n frames |
 | `SC_SYNC` | `0x01` | wait until the object reaches its target |
 | `SC_CAMERA` | `0x0b` | follow the leader |
@@ -272,8 +272,8 @@ speeds named at the top of `field/player_control.c`. On a town or dungeon
 map, `FieldObject_UpdatePlayerControl` walks at `FIELD_WALK_SPEED` (1 pixel a
 frame) and runs at `FIELD_RUN_SPEED` (1.5) while a dash button is held,
 gaining `FIELD_ACCELERATION` (a quarter pixel) a frame. With `FLAG_FAST_WALK`
-set, holding B moves at `FIELD_FAST_WALK_SPEED` (4); no ☀️ code sets that
-flag. On the world map, `Object_MoveOnWorldMap` walks at
+set, holding B moves at `FIELD_FAST_WALK_SPEED` (4); no code in The Broken
+Seal sets that flag. On the world map, `Object_MoveOnWorldMap` walks at
 `WORLD_MAP_WALK_SPEED` (half a pixel a frame) and runs at
 `WORLD_MAP_RUN_SPEED` (1), and L raises the limit to `WORLD_MAP_FAST_SPEED`
 (4) while it repeats.
@@ -284,7 +284,7 @@ headings 22.5 and 45 degrees either side, then headings up to 67.5 degrees
 off. On the world map the test reaches `WORLD_MAP_PROBE_RADIUS`. The edition
 block at the top of `field/player_control.c` chooses what differs:
 
-| | Japanese | English on |
+| | Japanese | English and later |
 | --- | --- | --- |
 | world map probe | 8 pixels; the step and 30 degrees either side, then up to 67.5 degrees off | 7 pixels; the step and 22.5 and 45 degrees either side, then up to 90 degrees off |
 | R and L on the world map | raise their events while held | raise them once a press |
@@ -308,7 +308,7 @@ pixels and the low 16 bits a fraction, so `0x10000` is one pixel.
 | `WORLD_MAP_ACCELERATION` | `0x4000` | a quarter pixel a frame faster each frame, walking |
 | `WORLD_MAP_RUN_ACCELERATION` | `0x14000` | 1.25 pixels a frame faster each frame, running |
 | `WORLD_MAP_FAST_SPEED` | `0x40000` | 4 pixels a frame, while L repeats |
-| `WORLD_MAP_PROBE_RADIUS` | `0x80000`, `0x70000` | 8 pixels in Japanese, 7 from English on |
+| `WORLD_MAP_PROBE_RADIUS` | `0x80000`, `0x70000` | 8 pixels in Japanese, 7 in English and later |
 | `FIELD_EVENT_WORLD_MAP_PICTURE` | -888 | R on the world map: the world map screen |
 | `FIELD_EVENT_WORLD_MAP_ZOOM` | -889 | L on the world map: zoom the view out |
 
@@ -519,7 +519,7 @@ guide](../../../tla/src/field/README.md), as differences from this one.
 
 ## Limits
 
-- 64 object events; 64 sprites, sharing 64 animation layer records, up to
+- 64 field objects; 64 sprites, sharing 64 animation layer records, up to
   four each.
 - 8 resource slots, 16 tile animation channels and 4 palette cycles.
 - `gScriptObject_CommandTable` has 47 entries: 36 commands, then 11 that act
@@ -557,9 +557,10 @@ on its own.
 
 ## Words used here
 
-- An **object event** is one of the 64 slots of `gObjectSlots`, 112 bytes
-  each. The party, the people and things a map places, the camera and the
-  footprints are all object events. A slot with no script is free.
+- A **field object** is one of the 64 slots of `gObjectSlots`, 112 bytes
+  each. The party, the people and things a map places (the object events,
+  which a map knows by local id), the camera and the footprints are all
+  field objects. A slot with no script is free.
 - A **sprite** is one of the 64 `struct AnimationObject`s: an image and a
   shadow, two entries of OAM (the hardware's sprite list), and up to four
   animation **layers** (`struct AnimationEntry`) composed into one picture.

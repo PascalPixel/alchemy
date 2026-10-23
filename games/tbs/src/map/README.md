@@ -231,7 +231,7 @@ frame), a callback (a function the map adds to run once a frame) or an
 update hook (a function an object event runs each frame with itself).
 
 A function a map event names is a script: straight-line code written in the
-commands of `event.h` over the engine calls of `field_event.h`.
+commands of `script.h` over the engine calls of `script_layer.h`.
 
 ```c
 /// LunpaFortressUpperFloor, raised when the patrolling pair spots the leader:
@@ -366,7 +366,7 @@ rows' first column is the overlay's resource number. The map table,
 `gField_MapTable` in [`field/maps.s`](../field/maps.s), gives each
 map its overlay, map section, variant and layout, and names it `MapId_<Map>`;
 several maps may share one overlay, and then share its file. A map overlay
-is never split into parts (S3): its code is laid out by kind, entry points,
+is never split into parts: its code is laid out by kind, entry points,
 then handlers, then tables, not by map.
 
 The table formats are in `games/tbs/include/map_tables.h`, the script
@@ -433,7 +433,7 @@ that character's (`Garet_`, `Mia_`, `Ivan_`, `Leader_`):
 ## Evidence and open questions
 
 A map's name is its map section's area name from `gMapSec_NameRules`, or for a
-room the game leaves unnamed, what the player sees there (H3); its functions
+room the game leaves unnamed, what the player sees there; its functions
 are named for what the player sees; its messages are linker symbols made from
 their English text. Overlay numbers are their rows of the resource directory.
 

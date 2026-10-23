@@ -25,7 +25,7 @@ fingerprint, and twelve matching fingerprints are a pass.
 SHA-1 hash against its line in `rom.sha1` (the `compare-%` rule in the
 `Makefile`). Each edition that matches prints a line ending in `: OK`, and
 twelve of them is a pass. The output is long, so it's easiest to send it to a
-log file and count those lines. `make compare-tbs` checks the six ☀️ editions
+log file and count those lines. `make compare-tbs` checks the six Broken Seal editions
 on their own, and `make compare-tbs-en` just the one.
 
 The judgement is a hash of the whole image because the hash is the only thing
@@ -36,7 +36,7 @@ is. To find it, compile the one object you changed to assembly with the
 `Makefile`'s own command and diff it against a baseline with the `.L` label
 numbers ignored, or run the optional `alchemy-devtools diff` on the function.
 
-The ☀️ editions need no ROM at all. The ⚓️ editions need your own ROMs under
+The Broken Seal's editions need no ROM at all. The Lost Age's need your own ROMs under
 `roms/`, because the parts of The Lost Age that aren't C yet still come from
 `.incbin "baserom.gba"` scaffolds under `recon/tla`, which never count.
 

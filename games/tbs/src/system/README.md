@@ -444,7 +444,7 @@ tables.
 
 No build step compares a `FIXED_ADDRESS` literal with its symbol's linked
 address; `make modern` only builds with the name. A one-off comparison of all
-27 `FIXED_ADDRESS` uses with the six ☀️ linker maps found every literal equal
+27 `FIXED_ADDRESS` uses with the six Broken Seal linker maps found every literal equal
 to its symbol in each edition its `#if` selects.
 
 - XXX (no evidence): whether Camelot linked the banks separately; the fixed

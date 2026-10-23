@@ -71,8 +71,8 @@ palettes a setter changes.
 
 `Palette_Transform` builds the colours a fade starts from or heads for: one
 colour everywhere, a whole-palette filter (plain, grey, sepia and the
-others), a tint, blend or split carrying a colour, or a copy. In ☀️ only
-`Title_ShowIntro` uses the fade, for its 60-frame fade from near-black
+others), a tint, blend or split carrying a colour, or a copy. In The Broken Seal
+only `Title_ShowIntro` uses the fade, for its 60-frame fade from near-black
 (`RGB(2, 0, 0)`, a dark red) to the picture's own colours;
 `PaletteFade_Release`, `PaletteFade_SetTarget` and `PaletteFade_SetBackdrop`
 are `UNUSED`.

@@ -101,7 +101,7 @@ s32 PartyInventory_HasSpace(void) {
   s32 unitIndex;
   s16 *unitCursor;
 
-  if (Inventory_Count(gGameState.leaderLocalId) != INVENTORY_SLOTS)
+  if (Inventory_Count(gSaveBlock.leaderLocalId) != INVENTORY_SLOTS)
     return 1;
   unitCount = Party_ListMembers(unitIds);
   unitCursor = unitIds;
@@ -233,8 +233,8 @@ s32 PartyInventory_FindMember(s32 itemId) {
   s16 *unitCursor;
   s16 unitId;
 
-  if (Inventory_Find(gGameState.leaderLocalId, itemId) != -1)
-    return gGameState.leaderLocalId;
+  if (Inventory_Find(gSaveBlock.leaderLocalId, itemId) != -1)
+    return gSaveBlock.leaderLocalId;
   unitCount = Party_ListMembers(unitIds);
   unitCursor = unitIds;
   unitIndex = 0;

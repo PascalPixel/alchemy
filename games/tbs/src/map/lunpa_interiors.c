@@ -38,7 +38,7 @@
 ///   them (https://alchemy.pascalpixel.com/places/lunpa-suhalla/map-9.png), so
 ///   the map holds no room of its own for it.
 
-#include "game_state.h"
+#include "save_block.h"
 #include "script_layer.h"
 #include "unit/map/lunpa_interiors.h"
 #include "unit/overworld/overworld.h"
@@ -292,7 +292,7 @@ const struct ObjectEventTemplate *Map_GetObjectEventTemplates(void) {
 /// The map events of Gate to Suhalla, or those of Lunpa's buildings before and
 /// after Donpa's judgment.
 const struct MapEvent *Map_GetEvents(void) {
-  if (gGameState.warpDest == ROOM_GATE_TO_SUHALLA) {
+  if (gSaveBlock.warpDest == ROOM_GATE_TO_SUHALLA) {
     return gGateToSuhallaEvents;
   }
   if (GameFlag_Get(FLAG_DODONPA_LOCKED_UP) != 0) {
@@ -486,11 +486,11 @@ s32 Map_Initialize(void) {
 
   gFieldWork->transition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
-  warpDest = gGameState.warpDest;
+  warpDest = gSaveBlock.warpDest;
   if (warpDest == ROOM_GATE_TO_SUHALLA) {
     GameFlag_Clear(FLAG_SHOW_LOCATION_NAME);
-    gGameState.savedMap = (s32)&MapId_LunpaInteriors;
-    gGameState.savedWarpDest = warpDest;
+    gSaveBlock.savedMap = (s32)&MapId_LunpaInteriors;
+    gSaveBlock.savedWarpDest = warpDest;
   }
   ObjectEvent_SetSpriteFlags(ObjectEvent_GetById(LOCALID_WEAPON_COUNTER), 0);
   ObjectEvent_SetSpriteFlags(ObjectEvent_GetById(LOCALID_ARMOR_COUNTER), 0);

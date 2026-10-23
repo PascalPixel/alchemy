@@ -53,7 +53,7 @@
 ///   black and translucent (ObjectEvent_PrepareObject) over the lattice door
 ///   to Feh's house in his school; the school's renders are the same with and
 ///   without it, so nothing the player sees shows what it was for.
-#include "game_state.h"
+#include "save_block.h"
 #include "map_ids.h"
 #include "unit/map/fuchin_temple.h"
 #include "unit/map/common/effect_spawn.h"
@@ -259,7 +259,7 @@ static s32 FuchinTemple_FaceLeader(union FieldObject *fieldObject) {
 /// Chooses the outside warp destination table or the shared interior warp
 /// destinations.
 const struct MapWarpDest *Map_GetWarpDests(void) {
-  s16 mapId = gGameState.mapId;
+  s16 mapId = gSaveBlock.mapId;
 
   if (mapId == (s32)&MapId_FuchinTempleGrounds) {
     return gFuchinTempleGroundsWarpDests;
@@ -274,10 +274,10 @@ const u32 *Map_GetWarps(void) { return gFuchinTempleWarps; }
 /// Selects the room's object events and applies the post-lesson object event
 /// template changes.
 const struct ObjectEventTemplate *Map_GetObjectEventTemplates(void) {
-  if (gGameState.mapId == (s32)&MapId_FuchinTempleGrounds) {
+  if (gSaveBlock.mapId == (s32)&MapId_FuchinTempleGrounds) {
     return gFuchinTempleGroundsObjectEventTemplates;
   }
-  if (gGameState.warpDest ==
+  if (gSaveBlock.warpDest ==
       FUCHIN_TEMPLE_INTERIORS_HAMAS_ROOM_FROM_LAMA_TEMPLE) {
     return gFuchinTempleObjectEventTemplatesFromLamaTemple;
   }
@@ -1558,10 +1558,10 @@ static void EventScript_ReadNyunpasLastWish(void) {
 
 /// Selects the outdoor, school, or lesson map event table.
 const struct MapEvent *Map_GetEvents(void) {
-  if (gGameState.mapId == (s32)&MapId_FuchinTempleGrounds) {
+  if (gSaveBlock.mapId == (s32)&MapId_FuchinTempleGrounds) {
     return gFuchinTempleGroundsEvents;
   }
-  if (gGameState.warpDest ==
+  if (gSaveBlock.warpDest ==
       FUCHIN_TEMPLE_INTERIORS_HAMAS_ROOM_FROM_LAMA_TEMPLE) {
     return gFuchinTempleEventsFromLamaTemple;
   }
@@ -2373,10 +2373,10 @@ s32 Map_Initialize(void) {
   struct ObjectEvent *trainingTree;
   s32 heardHsuTrapped;
 
-  if (gGameState.mapId == (s32)&MapId_FuchinTempleInteriors) {
+  if (gSaveBlock.mapId == (s32)&MapId_FuchinTempleInteriors) {
     gFieldWork->transition =
         MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
-    if (gGameState.warpDest ==
+    if (gSaveBlock.warpDest ==
         FUCHIN_TEMPLE_INTERIORS_FROM_FUCHIN_TEMPLE_GROUNDS) {
       if (GameFlag_Get(FLAG_NYUNPA_ENLIGHTENED)) {
         OBJECT_ANIMATION(LOCALID_NYUNPA, ANIM_NYUNPA_WITHERED);
@@ -2388,9 +2388,9 @@ s32 Map_Initialize(void) {
           FuchinTemple_NyunpaTeachesKi();
         }
       }
-    } else if (gGameState.warpDest ==
+    } else if (gSaveBlock.warpDest ==
                    FUCHIN_TEMPLE_INTERIORS_FEHS_SCHOOL_FROM_XIAN ||
-               gGameState.warpDest ==
+               gSaveBlock.warpDest ==
                    FUCHIN_TEMPLE_INTERIORS_FEHS_SCHOOL_FROM_HOUSE) {
       GameFlag_Clear(FLAG_SHOW_LOCATION_NAME);
       heardHsuTrapped = GameFlag_Get(FLAG_XIAN_HEARD_HSU_TRAPPED);
@@ -2437,7 +2437,7 @@ s32 Map_Initialize(void) {
                                 SPRITE_CRATE);
       OBJECT_ANIMATION(LOCALID_KICKING_STUDENT, ANIM_STUDENT_KICKS);
       OBJECT_ANIMATION(LOCALID_PUNCHING_STUDENT, ANIM_STUDENT_PUNCHES);
-    } else if (gGameState.warpDest ==
+    } else if (gSaveBlock.warpDest ==
                FUCHIN_TEMPLE_INTERIORS_HAMAS_ROOM_FROM_LAMA_TEMPLE) {
       GameFlag_Clear(FLAG_SHOW_LOCATION_NAME);
       if (!GameFlag_Get(FLAG_XIAN_HEARD_HSU_TRAPPED)) {
@@ -2451,7 +2451,7 @@ s32 Map_Initialize(void) {
     Map_QueueMusic(SE_170);
     ObjectEvent_GetById(LOCALID_FALLS_MONK)->collisionFlags |=
         OBJ_EVENT_NEAR_PSYNERGY;
-    if (gGameState.warpDest ==
+    if (gSaveBlock.warpDest ==
             FUCHIN_TEMPLE_GROUNDS_FROM_FUCHIN_FALLS_CAVE_ENTRANCE &&
         GameFlag_Get(FLAG_FUCHIN_FALLS_ORB_OF_FORCE_FOUND) &&
         !GameFlag_Get(FLAG_FUCHIN_FALLS_MONK_ASKED_ABOUT_TEST)) {

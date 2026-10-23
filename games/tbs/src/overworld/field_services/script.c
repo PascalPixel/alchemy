@@ -72,14 +72,14 @@ void FieldScript_WaitFrames(s32 frames) {
 void Leader_StopMoving(void) {
   struct Object *object;
 
-  object = ObjectEvent_GetByLocalId(gGameState.leaderLocalId);
+  object = ObjectEvent_GetByLocalId(gSaveBlock.leaderLocalId);
   object->speedLimit = 0x10000;
   object->acceleration = 0x8000;
   object->targetX = OBJ_EVENT_NO_TARGET;
   object->targetZ = OBJ_EVENT_NO_TARGET;
   object->velocityX = 0;
   object->velocityZ = 0;
-  if (gGameState.movementMode == LEADER_MOVEMENT_CLIMB) {
+  if (gSaveBlock.movementMode == LEADER_MOVEMENT_CLIMB) {
     ObjectDispatch_SelectAnimationFar(object, 0xC);
     return;
   }
@@ -114,7 +114,7 @@ void FieldScript_Start(void) {
   // XXX: flag 0x132 is cleared at every script and nothing in ☀️ names it; the
   // map scripts or overlays that set or test 0x132 would settle its meaning.
   GameFlag_ClearFar(0x132);
-  runtime->speaker = gGameState.leaderLocalId;
+  runtime->speaker = gSaveBlock.leaderLocalId;
   runtime->messageWindow = 0;
 }
 
@@ -124,7 +124,7 @@ void FieldScript_Start(void) {
 /// opens with FieldScript_Start closes with it.
 void FieldScript_End(void) {
   Task_Remove(FieldScript_UpdateDebugSkip);
-  FieldCamera_FollowObjectEvent(gGameState.leaderLocalId, 1);
+  FieldCamera_FollowObjectEvent(gSaveBlock.leaderLocalId, 1);
   GameFlag_RefreshLureCapFar();
 }
 
@@ -144,7 +144,7 @@ void FieldScript_RunObjectHookAndWait(struct ObjectEventTemplate *table) {
   WaitFrames(1);
   // XXX: the leader's object is fetched and not used; a caller in an overlay
   // that reads the result would show whether this returned it once.
-  ObjectEvent_GetByLocalId(gGameState.leaderLocalId);
+  ObjectEvent_GetByLocalId(gSaveBlock.leaderLocalId);
 }
 
 /// Spawns the object events of an object event template table after the last
@@ -202,14 +202,14 @@ s32 FieldScript_ValidatePackedId(u32 shortcut) {
 }
 
 /// Clears each button shortcut whose Psynergy can no longer be cast: zeroes
-/// gGameState.firstShortcut or secondShortcut. Called whenever the party or
+/// gSaveBlock.firstShortcut or secondShortcut. Called whenever the party or
 /// what it knows may have changed: by Party_RemoveMemberRestored,
 /// Inventory_Discard, and the field menu's item, Psynergy and Djinn screens.
 void FieldScript_ClearInvalidPackedValues(void) {
-  if (FieldScript_ValidatePackedId(gGameState.firstShortcut) != 0)
-    gGameState.firstShortcut = 0;
-  if (FieldScript_ValidatePackedId(gGameState.secondShortcut) != 0)
-    gGameState.secondShortcut = 0;
+  if (FieldScript_ValidatePackedId(gSaveBlock.firstShortcut) != 0)
+    gSaveBlock.firstShortcut = 0;
+  if (FieldScript_ValidatePackedId(gSaveBlock.secondShortcut) != 0)
+    gSaveBlock.secondShortcut = 0;
 }
 
 /// Takes unit out of the party, fully restoring its HP and PP and curing its
@@ -233,12 +233,12 @@ void Party_RemoveMemberRestored(s32 unit) {
   survivingMembers = 0;
   partyCount = Party_CountMembersFar();
   for (partyIndex = 0; partyIndex < partyCount; partyIndex++) {
-    vitals = Unit_GetFar(gGameState.party[partyIndex]);
+    vitals = Unit_GetFar(gSaveBlock.party[partyIndex]);
     if (vitals->hp != 0)
       survivingMembers++;
   }
   if (survivingMembers == 0) {
-    vitals = Unit_GetFar(gGameState.leaderLocalId);
+    vitals = Unit_GetFar(gSaveBlock.leaderLocalId);
     vitals->hp = 1;
     Unit_UpdateGauges(vitals);
   }
@@ -248,7 +248,7 @@ void Party_RemoveMemberRestored(s32 unit) {
 /// most 30 of one item. When they are all full, says
 /// `Isaac's party cannot carry any more <item>s...` and
 /// `Isaac threw the <item> as far away as possible.` and returns -1; otherwise
-/// returns 0. Map_Run calls it before it gives gGameState.pendingItem
+/// returns 0. Map_Run calls it before it gives gSaveBlock.pendingItem
 /// with PartyInventory_GiveItem.
 s32 Party_CheckItemLimit(s32 item) {
   s32 partyCount;
@@ -257,7 +257,7 @@ s32 Party_CheckItemLimit(s32 item) {
 
   partyCount = Party_CountMembersFar();
   for (partyIndex = 0; partyIndex < partyCount; partyIndex++)
-    heldQuantity += Inventory_CountItemFar(gGameState.party[partyIndex], item);
+    heldQuantity += Inventory_CountItemFar(gSaveBlock.party[partyIndex], item);
 
   if (heldQuantity >= partyCount * 30) {
     MessageArgument_PushFar(item, 2);
@@ -348,7 +348,7 @@ s32 PartyInventory_GiveItem(s32 item, s32 unused) {
         Inventory_DiscardFar(member, slot);
       owner = PartyInventory_AddFar(item);
       Sound_PlaySongFar(MUS_TREASURE_FOUND);
-      if (owner == gGameState.leaderLocalId) {
+      if (owner == gSaveBlock.leaderLocalId) {
         ItemGift_ShowGotItem(item, 3);
       } else {
         MessageArgument_PushFar(item, 2);
@@ -363,7 +363,7 @@ s32 PartyInventory_GiveItem(s32 item, s32 unused) {
     // <member>." when someone other than the leader carries it.
     Sound_PlaySongFar(MUS_TREASURE_FOUND);
     ItemGift_ShowGotItem(item, 3);
-    if (owner != gGameState.leaderLocalId) {
+    if (owner != gSaveBlock.leaderLocalId) {
       MessageArgument_PushFar(item, 2);
       MessageArgument_PushFar(owner, 1);
       FieldMessage_ShowFar(GIFT_RECEIVED_MESSAGE, GIFT_RECEIVED_MESSAGE_MODE);
@@ -511,13 +511,13 @@ void FieldScript_WaitTransitionFrames(void) {
 }
 
 /// Makes the script leave for the given warp destination of the given map:
-/// raises the warp request 999 and writes gGameState.mapId and warpDest. Called
+/// raises the warp request 999 and writes gSaveBlock.mapId and warpDest. Called
 /// by the title, the main menu, the Battle Arena, the debug battle command
 /// and five map scripts (the Lemurian ship and the world map among them).
 void FieldScript_SetDestination(s32 mapId, s32 warpDest) {
   gFieldWork->warp = 999;
-  gGameState.mapId = mapId;
-  gGameState.warpDest = warpDest;
+  gSaveBlock.mapId = mapId;
+  gSaveBlock.warpDest = warpDest;
 }
 
 /// Makes the script leave and records map and warp destination as the saved
@@ -526,12 +526,12 @@ void FieldScript_SetDestination(s32 mapId, s32 warpDest) {
 void FieldScript_SetSavedDestination(u16 mapId, u16 warpDest) {
   struct FieldWork *state = gFieldWork;
   state->warp = 999;
-  gGameState.savedMap = mapId;
-  gGameState.savedWarpDest = warpDest;
+  gSaveBlock.savedMap = mapId;
+  gSaveBlock.savedWarpDest = warpDest;
 }
 
 /// The script command "request warp": sets the field's warp request (999 leaves
-/// for gGameState's mapId and warpDest). Map scripts reach it as
+/// for gSaveBlock's mapId and warpDest). Map scripts reach it as
 /// Engine_ScriptRequestWarp (about 61 of them).
 void FieldScript_SetWarpRequest(u16 request) {
   struct FieldWork *state = gFieldWork;

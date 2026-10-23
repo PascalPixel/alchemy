@@ -21,7 +21,7 @@
 /// warp table gives the first warp of that kind (or of any kind) whose flag, if
 /// it has one, is not set. A warp of kind 0 or the end of the map's warps
 /// falls back to the map of its first warp, at warp destination 0. Called by
-/// Game_Run with Map_Run's result; sets gGameState.mapId and
+/// Game_Run with Map_Run's result; sets gSaveBlock.mapId and
 /// .warpDest, and leaves them alone for WARP_NONE, whose destination is set
 /// already, or for a map with no header in the table.
 void Map_TakeWarp(s32 warpId) {
@@ -36,7 +36,7 @@ void Map_TakeWarp(s32 warpId) {
   s32 kind;
   s32 flag;
 
-  currentMap = gGameState.mapId;
+  currentMap = gSaveBlock.mapId;
   warpTable = gOverlayArea.warps();
   nextMap = WARP_NONE;
   nextWarpDest = 0;
@@ -80,8 +80,8 @@ void Map_TakeWarp(s32 warpId) {
 
   // Commit the chosen warp only after a matching map header was found.
   if (nextMap != WARP_NONE) {
-    gGameState.mapId = nextMap;
-    gGameState.warpDest = nextWarpDest;
+    gSaveBlock.mapId = nextMap;
+    gSaveBlock.warpDest = nextWarpDest;
   }
 }
 
@@ -94,17 +94,17 @@ void Map_TakeWarp(s32 warpId) {
 /// map (the map the battle or minigame was started from) with the
 /// party keeping its position (FLAG_KEEP_PARTY_POSITION). Called by
 /// Game_Run after each map from RUN_NONE on; stores result in
-/// gGameState.runResult and sets gGameState.mapId and .warpDest.
+/// gSaveBlock.runResult and sets gSaveBlock.mapId and .warpDest.
 void Map_ReturnFromRun(s32 result) {
   struct Unit *unit;
   s32 i;
   s32 mapId;
   s32 warpDest;
 
-  gGameState.runResult = result;
+  gSaveBlock.runResult = result;
   if (result == -1) {
     // Revive the leader before choosing the defeat return point.
-    unit = Unit_GetFar(gGameState.leaderLocalId);
+    unit = Unit_GetFar(gSaveBlock.leaderLocalId);
     if (unit->hp == 0) {
       unit->hp = 1;
       Unit_UpdateGauges(unit);
@@ -117,37 +117,37 @@ void Map_ReturnFromRun(s32 result) {
         Unit_UpdateGauges(unit);
       }
     }
-    mapId = gGameState.defeatMap;
-    warpDest = gGameState.defeatWarpDest;
+    mapId = gSaveBlock.defeatMap;
+    warpDest = gSaveBlock.defeatWarpDest;
     if (mapId == -1 && warpDest == -1) {
-      gGameState.mapId = gGameState.savedMap;
-      gGameState.warpDest = gGameState.savedWarpDest;
+      gSaveBlock.mapId = gSaveBlock.savedMap;
+      gSaveBlock.warpDest = gSaveBlock.savedWarpDest;
     } else {
       if (mapId != -1)
-        gGameState.mapId = mapId;
+        gSaveBlock.mapId = mapId;
       else
-        gGameState.mapId = gGameState.defaultMap;
+        gSaveBlock.mapId = gSaveBlock.defaultMap;
       if (warpDest != -1)
-        gGameState.warpDest = warpDest;
+        gSaveBlock.warpDest = warpDest;
       else
-        gGameState.warpDest = gGameState.defaultWarpDest;
+        gSaveBlock.warpDest = gSaveBlock.defaultWarpDest;
     }
   } else {
     // An explicit script destination overrides the map's default return.
-    mapId = gGameState.nextMap;
-    warpDest = gGameState.nextWarpDest;
+    mapId = gSaveBlock.nextMap;
+    warpDest = gSaveBlock.nextWarpDest;
     if (mapId != -1 || warpDest != -1) {
       if (mapId != -1)
-        gGameState.mapId = mapId;
+        gSaveBlock.mapId = mapId;
       else
-        gGameState.mapId = gGameState.defaultMap;
+        gSaveBlock.mapId = gSaveBlock.defaultMap;
       if (warpDest != -1)
-        gGameState.warpDest = warpDest;
+        gSaveBlock.warpDest = warpDest;
       else
-        gGameState.warpDest = gGameState.defaultWarpDest;
+        gSaveBlock.warpDest = gSaveBlock.defaultWarpDest;
     } else {
-      gGameState.mapId = gGameState.defaultMap;
-      gGameState.warpDest = gGameState.defaultWarpDest;
+      gSaveBlock.mapId = gSaveBlock.defaultMap;
+      gSaveBlock.warpDest = gSaveBlock.defaultWarpDest;
       GameFlag_SetFar(FLAG_KEEP_PARTY_POSITION);
     }
   }
@@ -217,18 +217,18 @@ void Game_Run(s32 mode) {
   table = gMapHeaders;
   // Choose the first map before initializing the per-map runtime.
   if (gDebugMode && mode == GAME_RUN_DEBUG_VALE) {
-    gGameState.mapId = (s32)&MapId_ValeGate;
-    gGameState.warpDest = mode;
+    gSaveBlock.mapId = (s32)&MapId_ValeGate;
+    gSaveBlock.warpDest = mode;
   } else if (gDebugMode && mode == GAME_RUN_DEBUG_MAIN_MENU) {
-    gGameState.mapId = (s32)&MapId_MainMenu;
-    gGameState.warpDest = MAIN_MENU_FROM_SANCTUM;
+    gSaveBlock.mapId = (s32)&MapId_MainMenu;
+    gSaveBlock.warpDest = MAIN_MENU_FROM_SANCTUM;
   } else {
-    GameState_InitializeDefaultsFar();
-    gGameState.mapId = (s32)&MapId_Title;
-    gGameState.warpDest = TITLE_AFTER_RUN;
+    SaveBlock_InitializeDefaultsFar();
+    gSaveBlock.mapId = (s32)&MapId_Title;
+    gSaveBlock.warpDest = TITLE_AFTER_RUN;
   }
   // The window colours from the options: hue, then brightness.
-  WindowColor_ApplyFar(gGameState.windowColor[0], gGameState.windowColor[1]);
+  WindowColor_ApplyFar(gSaveBlock.windowColor[0], gSaveBlock.windowColor[1]);
   VramCache_Reset();
   Task_ResetAll();
   Task_ResetAll();
@@ -239,8 +239,8 @@ void Game_Run(s32 mode) {
       GameFlag_ClearFar(FLAG_SKIP_MAP_CHANGE_SOUND);
     else
       Sound_PlaySongFar(SE_STOP_SLOT3);
-    record = &table[gGameState.mapId];
-    warpDest = gGameState.warpDest;
+    record = &table[gSaveBlock.mapId];
+    warpDest = gSaveBlock.warpDest;
 
     // Stop DMA 0, which a map may have left running for an HBlank effect.
     {
@@ -259,9 +259,9 @@ void Game_Run(s32 mode) {
     DebugText_Clear();
     VramCache_Reset();
     // A battle or minigame returns a result, not a warp: the return map is
-    // chosen from the game state, and no overlay is loaded.
-    if (gGameState.mapId >= RUN_NONE) {
-      switch (gGameState.mapId) {
+    // chosen from the save block, and no overlay is loaded.
+    if (gSaveBlock.mapId >= RUN_NONE) {
+      switch (gSaveBlock.mapId) {
       case RUN_BATTLE:
         warpDest = Battle_RunFar(warpDest);
         break;
@@ -280,7 +280,7 @@ void Game_Run(s32 mode) {
     }
 
     // A map: set its flags and music, load its code and run it.
-    Map_ResetFlagsOnEnter(gGameState.mapId,
+    Map_ResetFlagsOnEnter(gSaveBlock.mapId,
                           GameFlag_GetFar(FLAG_KEEP_PARTY_POSITION));
     Map_ChooseMusic();
     if (!GameFlag_GetFar(FLAG_KEEP_PARTY_POSITION)) {
@@ -291,15 +291,15 @@ void Game_Run(s32 mode) {
         GameFlag_ClearFar(FLAG_KEEP_MUSIC);
       else
         Map_PlayMusic();
-    } else if (gGameState.returnMusic != -1) {
+    } else if (gSaveBlock.returnMusic != -1) {
       // Back where the party was: resume the music saved when the pause menu
       // last opened (run_map.c). A random battle and every normal entry set
       // returnMusic to -1, so the map's own music plays instead.
-      Sound_PlaySongFar(gGameState.returnMusic);
+      Sound_PlaySongFar(gSaveBlock.returnMusic);
     } else {
       Map_PlayMusic();
     }
-    gGameState.layoutId = record->layoutIndex;
+    gSaveBlock.layoutId = record->layoutIndex;
     Map_LoadOverlay(0);
     Map_TakeWarp(Map_Run(warpDest));
   }
@@ -311,7 +311,7 @@ void Map_LoadOverlay(s32 unused) {
   const struct MapHeader *table;
 
   table = gMapHeaders;
-  Overlay_Load(table[gGameState.mapId].resourceId, &gOverlayArea);
+  Overlay_Load(table[gSaveBlock.mapId].resourceId, &gOverlayArea);
 }
 
 #define MAP_HEADER(id) (&gMapHeaders[id])
@@ -323,28 +323,28 @@ void Map_LoadOverlay(s32 unused) {
 /// counters, the location name is shown and the warp destination becomes the
 /// point Retreat returns to. Then the map section's visited flag
 /// (FLAG_MAPSEC_VISITED) is set. Called by Game_Run before each map, with keep
-/// from FLAG_KEEP_PARTY_POSITION; sets gGameState.mapSec and .mapType.
+/// from FLAG_KEEP_PARTY_POSITION; sets gSaveBlock.mapSec and .mapType.
 void Map_ResetFlagsOnEnter(s32 unused, s32 keep) {
-  s32 mapSec = MAP_HEADER(gGameState.mapId)->mapSec;
+  s32 mapSec = MAP_HEADER(gSaveBlock.mapId)->mapSec;
   s32 flag;
 
   if (keep == 0) {
     // Local puzzle flags expire on every normal entry to a map.
     for (flag = FLAG_MAP_TEMP_FIRST; flag <= FLAG_MAP_TEMP_LAST; flag++)
       GameFlag_ClearFar(flag);
-    if (mapSec != gGameState.mapSec) {
+    if (mapSec != gSaveBlock.mapSec) {
       // Map section state and Retreat's destination survive moves within it.
       for (flag = FLAG_MAPSEC_TEMP_FIRST; flag <= FLAG_MAPSEC_TEMP_LAST; flag++)
         GameFlag_ClearFar(flag);
       GameFlag_SetFar(FLAG_SHOW_LOCATION_NAME);
-      gGameState.encounterSteps = 0;
-      gGameState.hazardSteps = 0;
+      gSaveBlock.encounterSteps = 0;
+      gSaveBlock.hazardSteps = 0;
       GameFlag_ClearFar(FLAG_VENUS_LIGHTHOUSE_LIT);
       GameFlag_ClearFar(FLAG_MERCURY_LIGHTHOUSE_LIT);
       GameFlag_ClearFar(FLAG_MARS_LIGHTHOUSE_LIT);
       GameFlag_ClearFar(FLAG_JUPITER_LIGHTHOUSE_LIT);
-      gGameState.retreatMap = gGameState.mapId;
-      gGameState.retreatWarpDest = gGameState.warpDest;
+      gSaveBlock.retreatMap = gSaveBlock.mapId;
+      gSaveBlock.retreatWarpDest = gSaveBlock.warpDest;
     }
     // The Djinn's hiding flags last for one map, even within a map section, and
     // so do the 16 after them to 0xdf, which nothing else uses.
@@ -357,12 +357,12 @@ void Map_ResetFlagsOnEnter(s32 unused, s32 keep) {
     GameFlag_ClearFar(FLAG_NO_ENCOUNTERS_IN_MAPSEC);
     GameFlag_ClearFar(FLAG_IN_TOWN);
     GameFlag_ClearFar(FLAG_WORLD_MAP_LEFT);
-    gGameState.returnMusic = -1;
+    gSaveBlock.returnMusic = -1;
   }
-  gGameState.mapSec = mapSec;
+  gSaveBlock.mapSec = mapSec;
   GameFlag_SetFar(FLAG_MAPSEC_VISITED(mapSec & 0x7f));
-  gGameState.mapType = MAP_HEADER(gGameState.mapId)->mapType;
-  if (gGameState.mapType == MAP_TYPE_TOWN)
+  gSaveBlock.mapType = MAP_HEADER(gSaveBlock.mapId)->mapType;
+  if (gSaveBlock.mapType == MAP_TYPE_TOWN)
     GameFlag_SetFar(FLAG_IN_TOWN);
   GameFlag_RefreshLureCapFar();
 }
@@ -370,7 +370,7 @@ void Map_ResetFlagsOnEnter(s32 unused, s32 keep) {
 /// Starts the current map's field music, chosen by
 /// Map_ChooseMusic. Called by Game_Run, and by
 /// 34 map overlays through Map_PlayMusicFar.
-void Map_PlayMusic(void) { Sound_PlaySongFar(gGameState.mapMusic); }
+void Map_PlayMusic(void) { Sound_PlaySongFar(gSaveBlock.mapMusic); }
 
 #undef WARP_MAP_MASK
 #undef WARP_DEST

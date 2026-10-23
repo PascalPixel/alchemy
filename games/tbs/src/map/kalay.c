@@ -94,7 +94,7 @@
 ///   SPRITE_BUNZA, which every other map places beside Hammet as Bunza, but
 ///   his lines never name him.
 
-#include "game_state.h"
+#include "save_block.h"
 #include "unit/field/field.h"
 #include "engine_call.h"
 #include "map_ids.h"
@@ -386,7 +386,7 @@ static s32 Kalay_UpdateTouristFidget(struct ObjectScriptContext *interpreter) {
 #include "common/object_heading.h"
 
 const struct MapWarpDest *Kalay_GetWarpDests(void) {
-  s16 mapId = gGameState.mapId;
+  s16 mapId = gSaveBlock.mapId;
 
   if (mapId == (s32)&MapId_Kalay) {
     return gKalay_TownWarpDests;
@@ -417,7 +417,7 @@ const u32 *Kalay_GetWarps(void) { return gKalay_Warps; }
 /// The people of Kalay, Hammet Palace's front, the Kalay Tunnel Entrance and
 /// the Kalay Tunnel's treasure room.
 const struct ObjectEventTemplate *Kalay_GetObjectEventTemplates(void) {
-  s16 mapId = gGameState.mapId;
+  s16 mapId = gSaveBlock.mapId;
 
   if (mapId == (s32)&MapId_Kalay) {
     return gKalay_TownObjectEventTemplates;
@@ -455,7 +455,7 @@ static void Kalay_CatchTunnelEntranceNut(void) {
 
 /// The conversations, warps and Psynergy targets of each map.
 const struct MapEvent *Kalay_GetEvents(void) {
-  s16 mapId = gGameState.mapId;
+  s16 mapId = gSaveBlock.mapId;
 
   if (mapId == (s32)&MapId_Kalay) {
     return gKalay_TownEvents;
@@ -1256,7 +1256,7 @@ s32 Kalay_Initialize(void) {
   s32 mapId;
 
   GameFlag_Set(FLAG_KALAY_REACHED);
-  mapId = gGameState.mapId;
+  mapId = gSaveBlock.mapId;
   if (mapId == (s32)&MapId_Kalay) {
     Kalay_PrepareTown();
   } else if (mapId == (s32)&MapId_HammetPalaceGrounds) {
@@ -1293,7 +1293,7 @@ static void Kalay_PrepareTown(void) {
   if (GameFlag_Get(FLAG_LUNPA_HEARD_OF_PRISONER) != 0) {
     GameFlag_Set(FLAG_MAPSEC_TEMP_21);
   }
-  if (gGameState.warpDest == KALAY_FROM_KALAY_TUNNEL_TREASURE_ROOM) {
+  if (gSaveBlock.warpDest == KALAY_FROM_KALAY_TUNNEL_TREASURE_ROOM) {
     ObjectEvent_SetPosition(LOCALID_TOWN_STATUE, PIXELS(424), PIXELS(88));
   }
   // The second guide shares the first's sprite, drawn with its green and blue
@@ -1338,7 +1338,7 @@ static void Kalay_PrepareHammetPalace(void) {
   if (GameFlag_Get(FLAG_LUNPA_HEARD_OF_PRISONER) != 0) {
     GameFlag_Set(FLAG_MAPSEC_TEMP_21);
   }
-  if (gGameState.warpDest != WARP_DEST_DEFAULT) {
+  if (gSaveBlock.warpDest != WARP_DEST_DEFAULT) {
     if (GameFlag_Get(FLAG_IVAN_REPORTED_TO_LAYANA) == 0) {
       Kalay_IvanMeetsPalaceGuards();
     }
@@ -1359,7 +1359,7 @@ static void Kalay_PrepareTunnelEntrance(void) {
     guard = ObjectEvent_GetById(LOCALID_TUNNEL_GUARD);
     guard->facing = 0;
   }
-  if (gGameState.warpDest == KALAY_TUNNEL_ENTRANCE_FROM_WORLD_MAP_SOUTH) {
+  if (gSaveBlock.warpDest == KALAY_TUNNEL_ENTRANCE_FROM_WORLD_MAP_SOUTH) {
     Kalay_HammetReturnsToPalace();
   }
 }
@@ -1383,7 +1383,7 @@ static void Kalay_StartWindowTransition(void) {
     MapGrid_CenterOnFollowedPoint();
     WaitFrames(1);
   }
-  if (gGameState.warpDest <=
+  if (gSaveBlock.warpDest <=
       KALAY_TUNNEL_PASSAGE_LONG_PATH_FROM_NORTHEAST_ROOM) {
     Map_QueueMusic(SE_170);
   }
@@ -1432,7 +1432,7 @@ static void Kalay_PrepareTunnel(void) {
 #endif
   } else {
     Script_SetFlag(FLAG_TUNNEL_OVERLAY_FOLLOWS_LEADER);
-    if (gGameState.warpDest == KALAY_TUNNEL_TREASURE_ROOM_FROM_KALAY) {
+    if (gSaveBlock.warpDest == KALAY_TUNNEL_TREASURE_ROOM_FROM_KALAY) {
       ((struct FadeOverlayWork *)
            workSlots[HEAP_SLOT_FADE_OVERLAY - HEAP_SLOT_FIELD])
           ->objectEvent = NULL;
@@ -1458,7 +1458,7 @@ static void Kalay_PrepareTunnel(void) {
     }
     effectWork->objectEvent = (struct ObjectEvent *)trackingValue;
 #endif
-  } else if (gGameState.warpDest == KALAY_TUNNEL_TREASURE_ROOM_FROM_KALAY) {
+  } else if (gSaveBlock.warpDest == KALAY_TUNNEL_TREASURE_ROOM_FROM_KALAY) {
     ((struct FadeOverlayWork *)
          workSlots[HEAP_SLOT_FADE_OVERLAY - HEAP_SLOT_FIELD])
         ->objectEvent = NULL;
@@ -1532,7 +1532,7 @@ static void Kalay_PrepareTunnel(void) {
     MapGrid_CopyCellAttributes(6, 13, 12, 12, 6, 44);
     MapGrid_CopyCellAttributes(0, 1, 1, 1, 7, 44);
   } else {
-    switch (gGameState.warpDest) {
+    switch (gSaveBlock.warpDest) {
     case KALAY_TUNNEL_TREASURE_ROOM_FROM_HAMMET_PALACE:
     case KALAY_TUNNEL_TREASURE_ROOM_FROM_KALAY_TUNNEL_PASSAGE_WEST:
       Map_QueueMusic(SE_170);
@@ -1563,7 +1563,7 @@ static void Kalay_PrepareTunnel(void) {
     MapGrid_CopyCellsTo(102, 14, 102, 44, 8, 12);
     MapGrid_CopyCellAttributes(37, 13, 10, 12, 37, 43);
   } else {
-    switch (gGameState.warpDest) {
+    switch (gSaveBlock.warpDest) {
     case KALAY_TUNNEL_TREASURE_ROOM_FROM_KALAY_TUNNEL_PASSAGE_EAST:
     case KALAY_TUNNEL_TREASURE_ROOM_FROM_KALAY:
       Map_QueueMusic(SE_170);

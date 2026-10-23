@@ -178,7 +178,7 @@ void FieldEffect_RunForce(void) {
   event = Map_FindPsynergyEvent(PSYNERGY_EVENT(PSYNERGY_PHASE_EFFECT_ACTS),
                                 FIELD_PSYNERGY_FORCE, &eventTarget);
   if (event != NULL)
-    Field_RunEventAction(event, gGameState.leaderLocalId, eventTarget);
+    Field_RunEventAction(event, gSaveBlock.leaderLocalId, eventTarget);
   WaitFrames(10);
   FieldEffect_FadeFromEffectColor();
   WaitFrames(20);

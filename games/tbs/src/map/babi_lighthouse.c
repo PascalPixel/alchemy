@@ -3,7 +3,7 @@
 /// Lighthouse, entered from the world map; MapId_BabiLighthouseEntry is the
 /// Babi Lighthouse Entry; MapId_BabiLighthouseLuff and
 /// MapId_BabiLighthouseStoneDoor are both Babi Lighthouse. The four share one
-/// warp table, the other getters choose by gGameState.mapId with the road as
+/// warp table, the other getters choose by gSaveBlock.mapId with the road as
 /// the fallback, and BabiLighthouse_SetupMap restores the map being
 /// entered. Retreat anywhere but on the road leads back to the Entry.
 ///
@@ -48,7 +48,7 @@
 ///
 /// Open questions: none.
 
-#include "game_state.h"
+#include "save_block.h"
 #include "version.h"
 #include "heap_slots.h"
 #include "map_ids.h"
@@ -314,7 +314,7 @@ static void BabiLighthouse_FallToWarp(s32 warp) {
 }
 
 const struct MapWarpDest *Map_GetWarpDests(void) {
-  s16 mapId = gGameState.mapId;
+  s16 mapId = gSaveBlock.mapId;
 
   if (mapId == (s32)&MapId_BabiLighthouseEntry) {
     return gBabiLighthouse_EntryWarpDests;
@@ -331,7 +331,7 @@ const struct MapWarpDest *Map_GetWarpDests(void) {
 /// Only the Entry has regions: the three spots that drop into the Tunnel
 /// Ruins.
 const struct MapWarpRegion *Map_GetWarpRegions(void) {
-  if (gGameState.mapId == (s32)&MapId_BabiLighthouseEntry) {
+  if (gSaveBlock.mapId == (s32)&MapId_BabiLighthouseEntry) {
     return gBabiLighthouse_EntryRegions;
   }
   return 0;
@@ -341,7 +341,7 @@ const struct MapWarpRegion *Map_GetWarpRegions(void) {
 const u32 *BabiLighthouse_GetWarps(void) { return gBabiLighthouse_Warps; }
 
 const struct ObjectEventTemplate *Map_GetObjectEventTemplates(void) {
-  s16 mapId = gGameState.mapId;
+  s16 mapId = gSaveBlock.mapId;
 
   if (mapId == (s32)&MapId_BabiLighthouseEntry) {
     return gBabiLighthouse_EntryObjectEventTemplates;
@@ -1229,7 +1229,7 @@ static void BabiLighthouse_ClimbOrPushRoadPillar(void) {
   s32 climbDirection = (leader->facing + 0x2000) & 0xc000;
   s32 climbResult = -1;
 
-  if (gGameState.movementMode == LEADER_MOVEMENT_CLIMB || ahead == 0) {
+  if (gSaveBlock.movementMode == LEADER_MOVEMENT_CLIMB || ahead == 0) {
     if (climbDirection == FACING_NORTH) {
       climbResult = Field_ClimbUp();
     }
@@ -1238,14 +1238,14 @@ static void BabiLighthouse_ClimbOrPushRoadPillar(void) {
     }
   }
   if (climbResult != 0) {
-    if (gGameState.movementMode != 1) {
+    if (gSaveBlock.movementMode != 1) {
       BabiLighthouse_PushRoadPillar();
     }
   }
 }
 
 const struct MapEvent *Map_GetEvents(void) {
-  s16 mapId = gGameState.mapId;
+  s16 mapId = gSaveBlock.mapId;
 
   if (mapId == (s32)&MapId_BabiLighthouseEntry) {
     return gBabiLighthouse_EntryEvents;
@@ -1336,7 +1336,7 @@ s32 BabiLighthouse_SetupMap(void) {
   struct ObjectEvent *placedObjectEvent;
   s32 mapId;
   s32 mapCopy;
-  struct GameState *state;
+  struct SaveBlock *state;
   s32 x;
   s32 z;
   u8 zero;
@@ -1344,7 +1344,7 @@ s32 BabiLighthouse_SetupMap(void) {
   WaitFrames(1);
   gFieldWork->transition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
-  state = &gGameState;
+  state = &gSaveBlock;
   mapId = state->mapId;
   if (mapId != (s32)&MapId_RoadToBabiLighthouse) {
     state->retreatWarpDest = 1;
@@ -1513,7 +1513,7 @@ s32 BabiLighthouse_SetupMap(void) {
       ObjectEvent_FaceDirection(LOCALID_RIGHT_DOOR, FACING_EAST, 0);
       MapGrid_CopyCellAttributes(81, 14, 4, 1, 17, 14);
     }
-    if (gGameState.warpDest ==
+    if (gSaveBlock.warpDest ==
         BABI_LIGHTHOUSE_STONE_DOOR_FROM_BABI_LIGHTHOUSE_LUFF_EAST) {
       if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) == 0) {
         BabiLighthouse_LandWithParticles();

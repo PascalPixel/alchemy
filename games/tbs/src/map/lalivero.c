@@ -34,7 +34,7 @@
 ///   the same on both visits (their renders), and nothing in the ROM records
 ///   the reason.
 
-#include "game_state.h"
+#include "save_block.h"
 #include "djinn_ids.h"
 #include "unit/map/lalivero.h"
 #include "unit/overworld/overworld.h"
@@ -842,11 +842,11 @@ s32 Lalivero_Initialize(void) {
   GlyphTransfer *icon;
 
   // Coming back from the lighthouse switches the town to its later state.
-  if (gGameState.warpDest == ENTRANCE_FROM_AERIE) {
+  if (gSaveBlock.warpDest == ENTRANCE_FROM_AERIE) {
     GameFlag_Set(FLAG_VENUS_LIGHTHOUSE_PARTY_RETURNED);
     GameFlag_Set(FLAG_SAW_SHIP_AT_IDEJIMA);
   }
-  if (gGameState.warpDest == ENTRANCE_FROM_AERIE_QUIETLY) {
+  if (gSaveBlock.warpDest == ENTRANCE_FROM_AERIE_QUIETLY) {
     GameFlag_Set(FLAG_VENUS_LIGHTHOUSE_PARTY_RETURNED);
   }
   gFieldWork->transition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
@@ -910,8 +910,8 @@ s32 Lalivero_Initialize(void) {
     MapGrid_CopyCellAttributes(20, 23, 1, 1, 78, 23);
     MapGrid_CopyCellAttributes(20, 23, 1, 1, 17, 23);
     MapGrid_CopyCellAttributes(20, 23, 1, 1, 18, 23);
-    if ((gGameState.warpDest == LALIVERO_FROM_WORLD_MAP_EAST ||
-         gGameState.warpDest == LALIVERO_FROM_WORLD_MAP_WEST) &&
+    if ((gSaveBlock.warpDest == LALIVERO_FROM_WORLD_MAP_EAST ||
+         gSaveBlock.warpDest == LALIVERO_FROM_WORLD_MAP_WEST) &&
         !Script_GetFlag(FLAG_LALIVERO_WOUNDED_SOLDIERS_SEEN)) {
       GameFlag_Set(FLAG_LALIVERO_WOUNDED_SOLDIERS_SEEN);
       // The woman and the girl who wander nearest the soldiers stay put during

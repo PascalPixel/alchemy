@@ -17,7 +17,7 @@
 ///   coloured statues of a woman that open the door to Venus Lighthouse once
 ///   all five stand on their marks (FLAG_TUNNEL_RUINS_STATUE_DOOR_OPEN).
 ///
-/// The getters choose by gGameState.mapId; the object event templates of
+/// The getters choose by gSaveBlock.mapId; the object event templates of
 /// TunnelRuinsLadyStatues answer any other map number, and
 /// TunnelRuins_GetObjectEventTemplates prepares each table's object events to
 /// appear only in view. TunnelRuins_Initialize works room by room, one case for
@@ -61,7 +61,7 @@
 
 #include "action_script.h"
 #include "version.h"
-#include "game_state.h"
+#include "save_block.h"
 #include "heap_slots.h"
 #include "unit/import.h"
 #include "unit/map/tunnel_ruins.h"
@@ -336,8 +336,8 @@ static void TunnelRuins_UpdateTrackedObjectEvent(void) {
   effectWork = gObjectEventEffectWork;
   depthLimit = 0;
   // Each tracked warp destination measures depth in eight-pixel steps.
-  if (gGameState.mapId == (s32)&MapId_TunnelRuinsGreatStatue) {
-    switch (gGameState.warpDest) {
+  if (gSaveBlock.mapId == (s32)&MapId_TunnelRuinsGreatStatue) {
+    switch (gSaveBlock.warpDest) {
     case TUNNEL_RUINS_GREAT_STATUE_FIRST_PILLARS_FROM_STATUE:
     case TUNNEL_RUINS_GREAT_STATUE_FIRST_PILLARS_FROM_COLUMNS_NORTH:
       depthLimit = 94;
@@ -351,7 +351,7 @@ static void TunnelRuins_UpdateTrackedObjectEvent(void) {
       depthLimit = 118;
       break;
     }
-  } else if (gGameState.warpDest ==
+  } else if (gSaveBlock.warpDest ==
              TUNNEL_RUINS_LADY_STATUES_REVEAL_STATUE_WEST) {
     depthLimit = 93;
   }
@@ -530,7 +530,7 @@ static void EventScript_HopDownStep(void) {
 /// The warp destinations of TunnelRuinsGreatStatue, TunnelRuinsLadyStatues, or
 /// a table for any other map number.
 const struct MapWarpDest *TunnelRuins_GetWarpDests(void) {
-  s16 mapId = gGameState.mapId;
+  s16 mapId = gSaveBlock.mapId;
 
   if (mapId == (s32)&MapId_TunnelRuinsGreatStatue) {
     return gTunnelRuinsGreatStatueWarpDests;
@@ -542,7 +542,7 @@ const struct MapWarpDest *TunnelRuins_GetWarpDests(void) {
 }
 
 const struct MapWarpRegion *TunnelRuins_GetRegions(void) {
-  if (gGameState.mapId == (s32)&MapId_TunnelRuinsLadyStatues) {
+  if (gSaveBlock.mapId == (s32)&MapId_TunnelRuinsLadyStatues) {
     return gTunnelRuinsLadyStatuesRegions;
   }
   return 0;
@@ -555,7 +555,7 @@ const u32 *TunnelRuins_GetWarps(void) { return gTunnelRuinsWarps; }
 const struct ObjectEventTemplate *TunnelRuins_GetObjectEventTemplates(void) {
   struct ObjectEventTemplate *table;
 
-  if (gGameState.mapId == (s32)&MapId_TunnelRuinsGreatStatue) {
+  if (gSaveBlock.mapId == (s32)&MapId_TunnelRuinsGreatStatue) {
     table = gTunnelRuinsGreatStatueObjectEventTemplates;
   } else {
     table = gTunnelRuinsObjectEventTemplatesOther;
@@ -1419,7 +1419,7 @@ static void EventScript_SearchLockedDoor(void) {
 /// The map events of TunnelRuinsGreatStatue, or of TunnelRuinsLadyStatues and
 /// any other map.
 const struct MapEvent *TunnelRuins_GetEvents(void) {
-  if (gGameState.mapId == (s32)&MapId_TunnelRuinsGreatStatue) {
+  if (gSaveBlock.mapId == (s32)&MapId_TunnelRuinsGreatStatue) {
     return gTunnelRuinsGreatStatueEvents;
   }
   return gTunnelRuinsEventsOther;
@@ -1529,15 +1529,15 @@ static void TunnelRuins_MarkPushPillarCells(void) {
 s32 TunnelRuins_Initialize(void) {
   gFieldWork->transition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
-  if (gGameState.mapId == (s32)&MapId_TunnelRuinsGreatStatue ||
-      gGameState.mapId == (s32)&MapId_TunnelRuinsLadyStatues) {
+  if (gSaveBlock.mapId == (s32)&MapId_TunnelRuinsGreatStatue ||
+      gSaveBlock.mapId == (s32)&MapId_TunnelRuinsLadyStatues) {
     FieldEffect_StartFadeOverlay(0);
-    gGameState.retreatWarpDest =
+    gSaveBlock.retreatWarpDest =
         TUNNEL_RUINS_GREAT_STATUE_FROM_BABI_LIGHTHOUSE_STONE_DOOR;
-    gGameState.retreatMap = (s32)&MapId_TunnelRuinsGreatStatue;
+    gSaveBlock.retreatMap = (s32)&MapId_TunnelRuinsGreatStatue;
   }
-  if (gGameState.mapId == (s32)&MapId_TunnelRuinsGreatStatue) {
-    switch (gGameState.warpDest) {
+  if (gSaveBlock.mapId == (s32)&MapId_TunnelRuinsGreatStatue) {
+    switch (gSaveBlock.warpDest) {
     case TUNNEL_RUINS_GREAT_STATUE_FROM_BABI_LIGHTHOUSE_STONE_DOOR:
     case TUNNEL_RUINS_GREAT_STATUE_STATUE_FROM_FIRST_PILLARS:
       if (GameFlag_Get(FLAG_VENUS_LIGHTHOUSE_FIRST_PATH)) {
@@ -1674,15 +1674,15 @@ s32 TunnelRuins_Initialize(void) {
       break;
     }
   } else {
-    switch (gGameState.warpDest) {
+    switch (gSaveBlock.warpDest) {
     case WARP_DEST_DEFAULT:
       break;
     case TUNNEL_RUINS_LADY_STATUES_FROM_BABI_LIGHTHOUSE_ENTRY_WEST:
     case TUNNEL_RUINS_LADY_STATUES_FROM_BABI_LIGHTHOUSE_ENTRY_NORTH:
     case TUNNEL_RUINS_LADY_STATUES_FROM_BABI_LIGHTHOUSE_ENTRY_SOUTH:
-      gGameState.retreatWarpDest =
+      gSaveBlock.retreatWarpDest =
           BABI_LIGHTHOUSE_ENTRY_FROM_ROAD_TO_BABI_LIGHTHOUSE;
-      gGameState.retreatMap = (s32)&MapId_BabiLighthouseEntry;
+      gSaveBlock.retreatMap = (s32)&MapId_BabiLighthouseEntry;
       GameFlag_Clear(FLAG_SHOW_LOCATION_NAME);
       ObjectGroup_ConfigureChildValue(LOCALID_EAST_PILLAR_A, 6);
       ObjectGroup_ConfigureChildValue(LOCALID_EAST_PILLAR_B, 6);
@@ -1742,7 +1742,7 @@ s32 TunnelRuins_Initialize(void) {
         ObjectEvent_GetById(LOCALID_WEST_CARRY_STONE)->timer = 0;
         ObjectEvent_GetById(LOCALID_MIDDLE_CARRY_STONE)->timer = 0;
         ObjectEvent_GetById(LOCALID_EAST_CARRY_STONE)->timer = 0;
-        if (gGameState.warpDest != TUNNEL_RUINS_LADY_STATUES_BALANCE_SOUTH)
+        if (gSaveBlock.warpDest != TUNNEL_RUINS_LADY_STATUES_BALANCE_SOUTH)
           break;
         ObjectEvent_GetById(LOCALID_BALANCE_WEST)->y.fixed = -PIXELS(32);
         ObjectEvent_GetById(LOCALID_BALANCE_EAST)->y.fixed = -PIXELS(64);

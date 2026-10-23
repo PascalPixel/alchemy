@@ -217,7 +217,7 @@ struct LayoutHeader {
 /// they are loaded; and starts the layer scrolling. Returns 2.
 ///
 /// Called through MapGrid_LoadLayoutFar when a map with a layout
-/// starts (index is gGameState.map). Allocates and clears the map work in
+/// starts (index is gSaveBlock.map). Allocates and clears the map work in
 /// HEAP_SLOT_MAP_GRID; writes the BG palette (keeping the backdrop colour),
 /// char blocks 1 to 3, gMapGridLayerData, BG1CNT to BG3CNT, REG_MOSAIC,
 /// REG_BLDCNT and REG_DISPCNT; and adds MapGrid_UpdateLayerScroll as a

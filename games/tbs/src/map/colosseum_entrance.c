@@ -65,7 +65,7 @@
 ///   ColosseumEntrance_GetObjectEventTemplates gives warp destination 8 the
 ///   soldiers' table, as it gives the arrivals of the finals day.
 
-#include "game_state.h"
+#include "save_block.h"
 #include "map_ids.h"
 #include "unit/import.h"
 #include "unit/map/colosseum_entrance.h"
@@ -354,7 +354,7 @@ enum {
 };
 
 const struct MapWarpDest *ColosseumEntrance_GetWarpDests(void) {
-  s16 mapId = gGameState.mapId;
+  s16 mapId = gSaveBlock.mapId;
 
   if (mapId == (s32)&MapId_Colosseum) {
     return gColosseumWarpDests;
@@ -378,8 +378,8 @@ const struct ObjectEventTemplate *
 ColosseumEntrance_GetObjectEventTemplates(void) {
   const struct ObjectEventTemplate *table;
 
-  if (gGameState.mapId == (s32)&MapId_Colosseum) {
-    switch (gGameState.warpDest) {
+  if (gSaveBlock.mapId == (s32)&MapId_Colosseum) {
+    switch (gSaveBlock.warpDest) {
     case COLOSSEUM_STANDS_FROM_STONE_PASSAGE_WEST:
     case COLOSSEUM_STANDS_FROM_TRIAL_GROUNDS:
       table = gColosseumStandsObjectEventTemplates;
@@ -409,7 +409,7 @@ ColosseumEntrance_GetObjectEventTemplates(void) {
       table = gColosseumObjectEventTemplates;
       break;
     }
-  } else if (gGameState.mapId == (s32)&MapId_ColosseumEntrance) {
+  } else if (gSaveBlock.mapId == (s32)&MapId_ColosseumEntrance) {
     if (GameFlag_Get(FLAG_COLOSSO_OVER) != 0) {
       table = gColosseumEntranceObjectEventTemplatesAfterColosso;
     } else if (GameFlag_Get(FLAG_BABI_SAVED) != 0) {
@@ -424,13 +424,13 @@ ColosseumEntrance_GetObjectEventTemplates(void) {
 }
 
 const struct MapEvent *ColosseumEntrance_GetEvents(void) {
-  s16 mapId = gGameState.mapId;
+  s16 mapId = gSaveBlock.mapId;
 
   if (mapId == (s32)&MapId_ColosseumTunnel) {
     return gColosseumTunnelEvents;
   }
   if (mapId == (s32)&MapId_Colosseum) {
-    if (gGameState.warpDest == COLOSSEUM_FROM_COLOSSEUM_AZART_MATCH_WEST) {
+    if (gSaveBlock.warpDest == COLOSSEUM_FROM_COLOSSEUM_AZART_MATCH_WEST) {
       return gColosseumEventsFromColosseumAzartMatchWest;
     }
     return gColosseumEvents;
@@ -1424,7 +1424,7 @@ static void ColosseumEntrance_ShowClearedTrial(void) {
 /// set up by the warp destination the party arrives at, and the Colosseum
 /// Entrance by how far Colosso has gone.
 s32 ColosseumEntrance_Initialize(void) {
-  s32 mapId = gGameState.mapId;
+  s32 mapId = gSaveBlock.mapId;
 
   if (mapId == (s32)&MapId_Colosseum) {
     ColosseumEntrance_ApplyArrivalState();
@@ -1448,7 +1448,7 @@ static void ColosseumEntrance_ApplyArrivalState(void) {
   s32 warpDest;
 
   WaitFrames(1);
-  warpDest = gGameState.warpDest;
+  warpDest = gSaveBlock.warpDest;
   switch (warpDest) {
   case COLOSSEUM_STANDS_FROM_STONE_PASSAGE_WEST:
     Engine_ObjectEventSetAnimation(LOCALID_STANDS_WEST_TORCH, ANIM_WALK);

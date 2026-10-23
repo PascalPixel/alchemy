@@ -29,7 +29,7 @@
 ///
 /// Open questions: none.
 
-#include "game_state.h"
+#include "save_block.h"
 #include "map_ids.h"
 #include "unit/map/mccoy_palace_grounds.h"
 #include "unit/map/common/object_orbit.h"
@@ -136,7 +136,7 @@ const u32 *Map_GetWarps(void) { return gMcCoyPalaceGroundsWarps; }
 /// the east guard turns back after talking, and once the curse is lifted Lady
 /// McCoy faces the party.
 const struct ObjectEventTemplate *Map_GetObjectEventTemplates(void) {
-  if (gGameState.mapId == (s32)&MapId_McCoyPalaceGrounds) {
+  if (gSaveBlock.mapId == (s32)&MapId_McCoyPalaceGrounds) {
     if (GameFlag_Get(FLAG_MCCOY_PALACE_BARRICADE_NEEDS_NO_KEY) != 0)
       gMcCoyPalaceGroundsObjectEventTemplates[LOCALID_EAST_GUARD -
                                               LOCALID_FIRST_PLACED]
@@ -171,7 +171,7 @@ static void EventScript_SearchWell(void) {
 
 /// What the party can talk to, search and catch outside McCoy's Palace.
 const struct MapEvent *Map_GetEvents(void) {
-  if (gGameState.mapId == (s32)&MapId_McCoyPalaceGrounds) {
+  if (gSaveBlock.mapId == (s32)&MapId_McCoyPalaceGrounds) {
     return gMcCoyPalaceGroundsEvents;
   }
   return gMcCoyPalaceGroundsNoEvents;
@@ -335,7 +335,7 @@ s32 Map_Initialize(void) {
   objectEvent->priorityFlags = 0;
   objectEvent->sprite->image.priority = 1;
 
-  if (gGameState.mapId == (s32)&MapId_McCoyPalaceGrounds) {
+  if (gSaveBlock.mapId == (s32)&MapId_McCoyPalaceGrounds) {
     McCoyPalaceGrounds_RestoreStory();
   }
 

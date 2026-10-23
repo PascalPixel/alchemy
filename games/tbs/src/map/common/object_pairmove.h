@@ -1,7 +1,7 @@
 #include "unit/field/field.h"
 #include "types.h"
 #include "object_event.h"
-#include "game_state.h"
+#include "save_block.h"
 
 // Imil and Fuchin Falls, and Vale's cave.
 
@@ -14,7 +14,7 @@ static void ObjectEvent_PlacePairAtOffset(s32 id, s32 dx, s32 dz) {
   s32 x;
   s32 z;
 
-  objectEvent = ObjectEvent_GetById(gGameState.leaderLocalId);
+  objectEvent = ObjectEvent_GetById(gSaveBlock.leaderLocalId);
   other = ObjectEvent_GetById(id);
   FieldScript_Start();
   {

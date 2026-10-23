@@ -5,7 +5,7 @@
 #include "engine_call.h"
 #include "object_event.h"
 #include "map_header.h"
-#include "game_state.h"
+#include "save_block.h"
 #include "songs.h"
 
 /// Hops the leader to the pixel of the 16.16 position request, unless something
@@ -66,10 +66,10 @@ static void KolimaForest_HopEast(void) {
   target.y = ObjectEvent_GetById(LOCALID_PARTY_LEADER)->y.fixed;
   target.z = ObjectEvent_GetById(LOCALID_PARTY_LEADER)->z.fixed;
 #else
-  // gGameState.leaderLocalId
+  // gSaveBlock.leaderLocalId
   s32 off = 500;
   struct ObjectEvent *p =
-      ObjectEvent_GetById(*(s32 *)((u8 *)&gGameState + off));
+      ObjectEvent_GetById(*(s32 *)((u8 *)&gSaveBlock + off));
   u32 base = p->x.fixed & 0xfff00000;
 
   target.x = base + PIXELS(8);

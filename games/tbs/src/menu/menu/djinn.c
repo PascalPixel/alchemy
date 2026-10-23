@@ -82,8 +82,8 @@ s32 DjinnMenu_Run(void) {
   s32 zero;
 
   menu = AllocHeapSlot(HEAP_SLOT_MENU, MENU_WORK_SIZE);
-  savedMessageSpeed = gGameState.messageSpeed;
-  gGameState.messageSpeed = MESSAGE_SPEED_FAST;
+  savedMessageSpeed = gSaveBlock.messageSpeed;
+  gSaveBlock.messageSpeed = MESSAGE_SPEED_FAST;
   enabled = gObjectSystemWork->suspended = 1;
   Window_DrawFrameFar(0, 0, 30, 20);
   WaitFrames(1);
@@ -139,7 +139,7 @@ s32 DjinnMenu_Run(void) {
   Free(menu->backdrop);
   FreeHeapSlot(HEAP_SLOT_MENU);
   FieldScript_ClearInvalidPackedValuesFar();
-  gGameState.messageSpeed = savedMessageSpeed;
+  gSaveBlock.messageSpeed = savedMessageSpeed;
   return 1;
 }
 
@@ -1169,7 +1169,7 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
         if (backdrop->tutorialTimer == 60) {
           messageWindow =
               Message_OpenWindowFar(MsgDjinnTutorialRecovery, 9, 9, 1);
-          gGameState.messageSpeed = MESSAGE_SPEED_NORMAL;
+          gSaveBlock.messageSpeed = MESSAGE_SPEED_NORMAL;
           while (TextPrinter_AllFinishedFar() == 0)
             WaitFrames(1);
           Window_CloseFar(messageWindow, 1);
@@ -1177,7 +1177,7 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
           WaitFrames(1);
           messageWindow =
               Message_OpenWindowFar(MsgDjinnTutorialSetAgain, 9, 9, 1);
-          gGameState.messageSpeed = MESSAGE_SPEED_NORMAL;
+          gSaveBlock.messageSpeed = MESSAGE_SPEED_NORMAL;
           while (TextPrinter_AllFinishedFar() == 0)
             WaitFrames(1);
           Window_CloseFar(messageWindow, 1);
@@ -1196,7 +1196,7 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
       case DJINN_TUTORIAL_GIVE:
         if (backdrop->tutorialTimer == 60) {
           messageWindow = Message_OpenWindowFar(MsgDjinnTutorialGive, 9, 9, 1);
-          gGameState.messageSpeed = MESSAGE_SPEED_NORMAL;
+          gSaveBlock.messageSpeed = MESSAGE_SPEED_NORMAL;
           while (TextPrinter_AllFinishedFar() == 0)
             WaitFrames(1);
           Window_CloseFar(messageWindow, 1);
@@ -1230,7 +1230,7 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
         if (backdrop->tutorialTimer == 60) {
           messageWindow =
               Message_OpenWindowFar(MsgDjinnTutorialSetAfterGive, 9, 9, 1);
-          gGameState.messageSpeed = MESSAGE_SPEED_NORMAL;
+          gSaveBlock.messageSpeed = MESSAGE_SPEED_NORMAL;
           while (TextPrinter_AllFinishedFar() == 0)
             WaitFrames(1);
           Window_CloseFar(messageWindow, 1);
@@ -1257,7 +1257,7 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
         break;
       case 15:
         if (backdrop->tutorialTimer == 60) {
-          gGameState.messageSpeed = MESSAGE_SPEED_NORMAL;
+          gSaveBlock.messageSpeed = MESSAGE_SPEED_NORMAL;
           messageWindow =
               Message_OpenWindowFar(MsgDjinnTutorialPowers, 9, 9, 1);
           MenuCursor_Slide(2, 146);

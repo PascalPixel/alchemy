@@ -52,7 +52,7 @@
 /// Open questions:
 /// - None.
 
-#include "game_state.h"
+#include "save_block.h"
 #include "unit/map/sol_sanctum_luna_sol_rooms.h"
 #include "unit/overworld/overworld.h"
 #include "unit/overworld/field_services.h"
@@ -1412,7 +1412,7 @@ s32 SolSanctumLunaSolRooms_Initialize(void) {
   }
   // Play the one-time scene this warp destination comes back from
   // MapId_SolSanctumStatue for.
-  if (gGameState.warpDest ==
+  if (gSaveBlock.warpDest ==
       SOL_SANCTUM_LUNA_SOL_ROOMS_FROM_SOL_SANCTUM_STATUE_TRAP_DISARMED) {
     if (Script_GetFlag(FLAG_SOL_SANCTUM_KRADEN_SAID_FOUND_SOMETHING) == 0) {
       SolSanctumLunaSolRooms_FlashLightsWithTrapDisarmed();
@@ -1420,7 +1420,7 @@ s32 SolSanctumLunaSolRooms_Initialize(void) {
       playedEntrySequence = 1;
     }
   } else if (
-      gGameState.warpDest ==
+      gSaveBlock.warpDest ==
       SOL_SANCTUM_LUNA_SOL_ROOMS_FROM_SOL_SANCTUM_STATUE_TRAP_TRIGGERED) {
     if (Script_GetFlag(FLAG_SOL_SANCTUM_FALLING_LIGHTS_SEEN) == 0) {
       SolSanctumLunaSolRooms_SpringTrap();
@@ -1431,7 +1431,7 @@ s32 SolSanctumLunaSolRooms_Initialize(void) {
       GameFlag_Clear(FLAG_SOL_SANCTUM_SOUTHEAST_SEAL_OPEN);
       playedEntrySequence = 1;
     }
-  } else if (gGameState.warpDest ==
+  } else if (gSaveBlock.warpDest ==
              SOL_SANCTUM_LUNA_SOL_ROOMS_FROM_SOL_SANCTUM_STATUE_LIGHTS_SHOWN) {
     if (GameFlag_Get(FLAG_SOL_SANCTUM_FALLING_LIGHTS_SEEN) != 0) {
       SolSanctumLunaSolRooms_UnusedAnimateSavedStatueLights();
@@ -1462,7 +1462,7 @@ s32 SolSanctumLunaSolRooms_Initialize(void) {
       MapGrid_CopyCellsTo(45, 28, 34, 10, 4, 2);
       MapGrid_CopyCellsTo(45, 30, 16, 10, 4, 2);
       MapGrid_CopyCellsTo(14, 45, 14, 41, 8, 4);
-      if (gGameState.warpDest !=
+      if (gSaveBlock.warpDest !=
           SOL_SANCTUM_LUNA_SOL_ROOMS_FROM_SOL_SANCTUM_ERUPTION) {
         if (GameFlag_Get(FLAG_SOL_SANCTUM_ERUPTED) == 0) {
           if (GameFlag_Get(FLAG_SOL_SANCTUM_STAR_ROOM_PASSAGE_OPEN) != 0) {
@@ -1513,7 +1513,7 @@ s32 SolSanctumLunaSolRooms_Initialize(void) {
   }
   // The arrival after the Wise One's rescue plays only once.
   if (Script_GetFlag(FLAG_SOL_SANCTUM_RESCUE_ARRIVAL_SEEN) == 0 &&
-      gGameState.warpDest ==
+      gSaveBlock.warpDest ==
           SOL_SANCTUM_LUNA_SOL_ROOMS_FROM_SOL_SANCTUM_ERUPTION) {
     SolSanctumLunaSolRooms_ArriveAfterWiseOnesRescue();
     GameFlag_Set(FLAG_SOL_SANCTUM_RESCUE_ARRIVAL_SEEN);

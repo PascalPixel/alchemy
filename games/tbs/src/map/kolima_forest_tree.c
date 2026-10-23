@@ -48,7 +48,7 @@
 ///   version, and nothing reads the object events but that function.
 
 #include "speaker.h"
-#include "game_state.h"
+#include "save_block.h"
 #include "unit/map/kolima_forest_tree.h"
 #include "unit/map/common/kolima_palette.h"
 #include "unit/overworld/overworld.h"
@@ -795,8 +795,8 @@ s32 KolimaForestTree_Initialize(void) {
   ObjectGroup_ConfigureChildValue(LOCALID_TRETS_WRATHFUL_SIDE, 15);
   gFieldWork->transition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
-  gGameState.retreatMap = (s32)&MapId_KolimaForestEntrance;
-  gGameState.retreatWarpDest = KOLIMA_FOREST_ENTRANCE_FROM_WORLD_MAP;
+  gSaveBlock.retreatMap = (s32)&MapId_KolimaForestEntrance;
+  gSaveBlock.retreatWarpDest = KOLIMA_FOREST_ENTRANCE_FROM_WORLD_MAP;
   if (!GameFlag_Get(FLAG_KOLIMA_CURSE_LIFTED))
     KolimaPalette_Curse(3);
   ObjectEvent_GetById(LOCALID_TRET)->radius = 6;

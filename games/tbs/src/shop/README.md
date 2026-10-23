@@ -117,9 +117,9 @@ Ticket, the player chooses who carries it, and the cost comes off the credit,
 never off the coins. Each ticket costs more than the last, five at a time.
 
 **Buying** takes each item's price from the coins and adds the same amount
-to `gGameState.shopCredit`, one item at a time. After each purchase
+to `gSaveBlock.shopCredit`, one item at a time. After each purchase
 `Shop_BuySpecialItem` compares the credit with `sGameTicketCreditCosts`,
-indexed by the number of tickets already given (`gGameState.shopGifts`),
+indexed by the number of tickets already given (`gSaveBlock.shopGifts`),
 and gives at most one ticket:
 
 | Tickets | Credit each |
@@ -357,7 +357,7 @@ work block's layout, `struct ShopWork`, is in
   sells, as `Item_GetEquipmentGroup` sorts items.
 - **artifact**: a rare item, which a shop sells only while its stock counter
   (`Item_AdjustCounter`) is above zero.
-- **shop credit**: `gGameState.shopCredit`, the coins spent buying, which
+- **shop credit**: `gSaveBlock.shopCredit`, the coins spent buying, which
   earns Game Tickets.
 - **action**: what the player chose at a shop's counter (`enum ShopAction`):
   Buy, Sell, Artifacts or Repair.

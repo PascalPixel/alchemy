@@ -84,7 +84,7 @@
 ///
 /// Open questions: none.
 
-#include "game_state.h"
+#include "save_block.h"
 #include "flags.h"
 #include "character_ids.h"
 #include "version.h"
@@ -477,7 +477,7 @@ const struct ObjectEventTemplate *ValeGate_GetObjectEventTemplates(void) {
   if (GameFlag_Get(FLAG_VALE_STORM) != 0) {
     return gValeGate_StormObjectEventTemplates;
   }
-  if (gGameState.warpDest == VALE_GATE_FROM_SANCTUM) {
+  if (gSaveBlock.warpDest == VALE_GATE_FROM_SANCTUM) {
     return gValeGate_DepartureObjectEventTemplates;
   }
   if (GameFlag_Get(FLAG_KALAY_REACHED) != 0) {
@@ -511,7 +511,7 @@ const struct MapEvent *ValeGate_GetEvents(void) {
   if (GameFlag_Get(FLAG_VALE_PARTY_LEFT) != 0) {
     return gValeGate_EventsAfterLeaving;
   }
-  if (gGameState.warpDest == VALE_GATE_FROM_SANCTUM) {
+  if (gSaveBlock.warpDest == VALE_GATE_FROM_SANCTUM) {
     return gValeGate_DepartureEvents;
   }
   if (GameFlag_Get(FLAG_VALE_STORM) != 0) {
@@ -974,7 +974,7 @@ s32 ValeGate_Initialize(void) {
   if (GameFlag_Get((FLAG_VALE_THIRD_IVY_BLOWN_AWAY)) != 0) {
     Engine_ObjectEventSetPosition(LOCALID_THIRD_IVY, 0, 0);
   }
-  switch (gGameState.warpDest) {
+  switch (gSaveBlock.warpDest) {
   case VALE_GATE_DEBUG_CHILDHOOD:
     GameFlag_Set(FLAG_CHILDHOOD);
     Engine_ScriptRequestWarp(VALE_GATE_TO_VALE_INTERIORS_INN_SOUTHEAST);
@@ -1021,7 +1021,7 @@ s32 ValeGate_Initialize(void) {
         WaitFrames(1);
       }
     }
-    if (gGameState.warpDest == VALE_GATE_FROM_SANCTUM) {
+    if (gSaveBlock.warpDest == VALE_GATE_FROM_SANCTUM) {
       EventScript_DepartForQuest();
     } else {
       if (GameFlag_Get(FLAG_VALE_STORM) != 0) {
@@ -1056,7 +1056,7 @@ s32 ValeGate_Initialize(void) {
         Engine_ObjectEventSetPosition(LOCALID_STORM_JENNA, 0, 0);
         Engine_ObjectEventSetPosition(LOCALID_STORM_CHARGED_UP_STRONGMAN, 0, 0);
       }
-      if (gGameState.warpDest == VALE_GATE_AFTER_TRAVELERS_BATTLE) {
+      if (gSaveBlock.warpDest == VALE_GATE_AFTER_TRAVELERS_BATTLE) {
         EventScript_TravelersLeaveAfterBattle();
       } else {
         if (GameFlag_Get(FLAG_VALE_STORM) != 0 &&

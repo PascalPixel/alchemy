@@ -101,7 +101,7 @@
 #include "songs.h"
 #include "audio_engine_symbols.h"
 #include "macros.h"
-#include "game_state.h"
+#include "save_block.h"
 #include "unit/import.h"
 #include "unit/map/tolbi_ship_interiors.h"
 #include "unit/overworld/overworld.h"
@@ -709,7 +709,7 @@ static s32 TolbiShipInteriors_LayFlat(struct ObjectScriptContext *interpreter) {
 }
 
 const struct MapWarpDest *TolbiShipInteriors_SelectWarpDests(void) {
-  if (gGameState.mapId == (s32)&MapId_TolbiShipInteriors) {
+  if (gSaveBlock.mapId == (s32)&MapId_TolbiShipInteriors) {
     return gTolbiShipInteriors_WarpDests;
   }
   return gTolbiShipInteriors_WarpDestsOther;
@@ -734,7 +734,7 @@ const struct ObjectEventTemplate *
 TolbiShipInteriors_SelectObjectEventTemplates(void) {
   u8 *templateBytes;
 
-  switch (gGameState.warpDest) {
+  switch (gSaveBlock.warpDest) {
   case TOLBI_SHIP_INTERIORS_PASSENGER_HOLD_FROM_TOLBI_SHIP_DECK:
   case TOLBI_SHIP_INTERIORS_PASSENGER_HOLD_FROM_ROWING_DECK:
   case TOLBI_SHIP_INTERIORS_PASSENGER_HOLD_FROM_CAPTAINS_ROOM_CALL_TO_OARS:
@@ -834,7 +834,7 @@ TolbiShipInteriors_SelectObjectEventTemplates(void) {
 
 /// Chooses the room's interactions for the current stage of the voyage.
 const struct MapEvent *TolbiShipInteriors_SelectEvents(void) {
-  s32 warpDest = gGameState.warpDest;
+  s32 warpDest = gSaveBlock.warpDest;
 
   switch (warpDest) {
   case TOLBI_SHIP_INTERIORS_PASSENGER_HOLD_FROM_TOLBI_SHIP_DECK:
@@ -2402,7 +2402,7 @@ s32 TolbiShipInteriors_ApplyEntryState(void) {
   GameFlag_Set(FLAG_RETREAT_BLOCKED);
   gFieldWork->transition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
-  switch (gGameState.warpDest) {
+  switch (gSaveBlock.warpDest) {
   case TOLBI_SHIP_INTERIORS_PASSENGER_HOLD_FROM_TOLBI_SHIP_DECK:
   case TOLBI_SHIP_INTERIORS_PASSENGER_HOLD_FROM_ROWING_DECK:
   case TOLBI_SHIP_INTERIORS_PASSENGER_HOLD_FROM_CAPTAINS_ROOM_CALL_TO_OARS:
@@ -2433,7 +2433,7 @@ s32 TolbiShipInteriors_ApplyEntryState(void) {
     }
     break;
   }
-  switch (gGameState.warpDest) {
+  switch (gSaveBlock.warpDest) {
   case TOLBI_SHIP_INTERIORS_PASSENGER_HOLD_FROM_TOLBI_SHIP_DECK:
   case TOLBI_SHIP_INTERIORS_PASSENGER_HOLD_FROM_ROWING_DECK:
     TolbiShipInteriors_SetUpHold();

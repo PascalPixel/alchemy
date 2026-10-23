@@ -302,7 +302,7 @@ stockRow`, so a later visit adds nothing; buying an artifact takes one off; a
 rare item the party sells, drops or discards goes through `Inventory_Discard`,
 which adds one back.
 
-Every coin spent buying also adds to `gGameState.shopCredit`. After each
+Every coin spent buying also adds to `gSaveBlock.shopCredit`. After each
 purchase, once the credit reaches the next Game Ticket's cost
 (`sGameTicketCreditCosts`), the keeper gives a Game Ticket and the cost
 comes off the credit, never off the party's coins (`Shop_BuySpecialItem`).

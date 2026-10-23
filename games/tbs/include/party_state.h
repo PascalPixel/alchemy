@@ -3,6 +3,6 @@
 
 #include "static_assert.h"
 
-#include "game_state.h"
+#include "save_block.h"
 
 #endif

@@ -75,7 +75,7 @@
 ///
 /// Open questions: none.
 
-#include "game_state.h"
+#include "save_block.h"
 #include "vram_cache.h"
 #include "unit/import.h"
 #include "unit/map/vale.h"
@@ -382,8 +382,8 @@ const u32 *Vale_GetWarps(void) { return gVale_Warps; }
 /// Places the villagers for the story so far, or for the roof repair
 /// (VALE_FROM_TITLE).
 const struct ObjectEventTemplate *Vale_GetObjectEventTemplates(void) {
-  u8 *gameStateBytes = (u8 *)&gGameState;
-  if (((struct GameState *)gameStateBytes)->warpDest == VALE_FROM_TITLE)
+  u8 *gameStateBytes = (u8 *)&gSaveBlock;
+  if (((struct SaveBlock *)gameStateBytes)->warpDest == VALE_FROM_TITLE)
     return gVale_RepairObjectEventTemplates;
   if (GameFlag_Get(FLAG_KALAY_REACHED) != 0)
     return gVale_ObjectEventTemplatesAfterKalay;
@@ -1545,8 +1545,8 @@ s32 Vale_Initialize(void) {
   struct ObjectEvent *objectEvent;
   s32 set;
 
-  if (gGameState.warpDest == VALE_FROM_TITLE) {
-    WindowColor_Apply(((u8 *)&gGameState)[517], ((u8 *)&gGameState)[518]);
+  if (gSaveBlock.warpDest == VALE_FROM_TITLE) {
+    WindowColor_Apply(((u8 *)&gSaveBlock)[517], ((u8 *)&gSaveBlock)[518]);
     EventScript_MendingTheRoof();
   } else {
     if (!GameFlag_Get(FLAG_VALE_NUT_CAUGHT)) {
@@ -1620,14 +1620,14 @@ s32 Vale_Initialize(void) {
           ObjectEvent_GetById(LOCALID_MAN_GUARDING_MT_ALEPH)->paused = set;
           GameFlag_Clear(FLAG_MAP_TEMP_41);
         }
-        if (gGameState.warpDest != VALE_FROM_TITLE &&
+        if (gSaveBlock.warpDest != VALE_FROM_TITLE &&
             !GameFlag_Get(FLAG_KALAY_REACHED)) {
           FieldScheduler_AddCallback(Vale_SynchronizeAlephGuardPause,
                                      TASK_PRIORITY_MAP);
         }
       }
       if (!Script_GetFlag(FLAG_MAPSEC_TEMP_08) &&
-          gGameState.warpDest == VALE_FROM_ROOF_MENDED) {
+          gSaveBlock.warpDest == VALE_FROM_ROOF_MENDED) {
         EventScript_RoofMended();
         GameFlag_Set(FLAG_MAPSEC_TEMP_08);
       }

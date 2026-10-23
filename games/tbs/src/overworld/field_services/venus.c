@@ -23,7 +23,7 @@ void FieldEffect_RunVenusDjinnCapture(s32 djinniId) {
   struct EffectVector position;
 
   leader =
-      (struct CaptureObject *)ObjectEvent_GetById(gGameState.leaderLocalId);
+      (struct CaptureObject *)ObjectEvent_GetById(gSaveBlock.leaderLocalId);
   djinni = (struct CaptureObject *)ObjectEvent_GetById(djinniId);
   if (djinni == NULL)
     return;
@@ -51,10 +51,10 @@ void FieldEffect_RunVenusDjinnCapture(s32 djinniId) {
   ObjectDispatch_SelectAnimationFar(djinni, 3);
   // The leader turns to face the camera (angle 0x4000).
   WaitFrames(90);
-  ObjectMotion_ArmCallback(gGameState.leaderLocalId, 0x4000, 0);
+  ObjectMotion_ArmCallback(gSaveBlock.leaderLocalId, 0x4000, 0);
   WaitFrames(20);
   ObjectDispatch_SelectAnimationFar(
-      ObjectEvent_GetById(gGameState.leaderLocalId), 28);
+      ObjectEvent_GetById(gSaveBlock.leaderLocalId), 28);
   WaitFrames(30);
   MapGrid_SetScreenShakeFar(0x19999, 0x19999, 0x10000);
 
@@ -174,7 +174,7 @@ void FieldEffect_UpdateRandomTargetParticle(struct FieldEffectSprite *effect) {
   s8 *statePointer;
   s32 state;
 
-  source = (struct Object *)ObjectEvent_GetById(gGameState.leaderLocalId);
+  source = (struct Object *)ObjectEvent_GetById(gSaveBlock.leaderLocalId);
   statePointer = &effect->state;
   state = *statePointer;
 

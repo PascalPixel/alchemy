@@ -22,11 +22,12 @@ Overlay_Load	prefix	common	loads only overlays (system/resource)
 CreditsFar_, TitleFar_	prefix	common	the banks hold the credits and the title intro
 resource, ResourceId_	word	common	only the resource directory (system/resource/directory.s)
 Save_, SaveWork, SaveSectorHeader, SaveFileSummary	prefix	pret	pokeemerald src/save.c (sectors); a flash sector holds one record, a file is two records; the game says file and Erase
+SaveBlock, gSaveBlock, SaveBlock_, save_block.h	struct	pret	pokeemerald gSaveBlock1Ptr/gSaveBlock2Ptr: saving writes the struct whole in a file's first record after the game flags, and the file checksum covers flags and struct (Save_BuildFileSummary, Save_WriteCurrentFile); was struct GameState, gGameState
 OBJECT_SPRITES_NONE, _ONE, _GROUP	constant	common	how many sprites an object has (Object.animationKind)
 gVBlankCallback	global	pret	pokeemerald gMain.vblankCallback
 Irq_RemoveVCountHandler	prefix	common	removes the VCount interrupt's handler (runtime/runtime/irq.c)
 Map_Run	prefix	common	runs one map until it is left (overworld/overworld/run_map.c)
-runResult	field	common	what the last run returned (GameState)
+runResult	field	common	what the last run returned (SaveBlock)
 slot	word	common	only a place in a fixed array
 record	word	common	only a save record
 map (MapId_, Map_)	word	pret	pokeemerald include/constants/map_groups.h; map_ids.h
@@ -197,7 +198,7 @@ FieldMessage_	prefix	pret	pret's field message box (field_message_box.c)
 FieldMenu_	prefix	common	the field menu row (Psynergy, Djinn, Item, Status); pret's start menu combines it with the pause menu, so neither takes pret's word
 PauseMenu_	prefix	game	the menu Start opens; its heading picture reads "Pause"
 WindowColor_	prefix	game	the game's "Window color" setting (hue, brightness)
-windowColor	field	game	GameState's window hue and brightness
+windowColor	field	game	SaveBlock's window hue and brightness
 FileMenu_	prefix	game	the three-file chooser; the game says file (Copy, Erase)
 SelectionScreen_	prefix	common	the scrolling icon row; kept the word most of it already used; no pret twin
 IconMenu_	prefix	common	the row of up to six large command icons

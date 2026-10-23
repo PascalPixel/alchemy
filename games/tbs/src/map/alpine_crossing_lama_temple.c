@@ -1,7 +1,7 @@
 /// @file
 /// The Alpine Crossing (MapId_AlpineCrossing) and Lama Temple
 /// (MapId_LamaTemple), two maps on Silk Road west of Xian that share this
-/// overlay. The getters pick each map's tables by gGameState.mapId, both
+/// overlay. The getters pick each map's tables by gSaveBlock.mapId, both
 /// maps share one warp table, and Map_Initialize sets up the map being
 /// entered from the story flags of Hsu's rescue, which runs through both.
 ///
@@ -55,7 +55,7 @@
 /// Open questions: none.
 
 #include "action_script.h"
-#include "game_state.h"
+#include "save_block.h"
 #include "unit/map/alpine_crossing_lama_temple.h"
 #include "unit/overworld/overworld.h"
 #include "unit/overworld/field_services.h"
@@ -238,7 +238,7 @@ static s32 Leader_FaceFeizhi(union FieldObject *fieldObject) {
 }
 
 const struct MapWarpDest *Map_GetWarpDests(void) {
-  if (gGameState.mapId == MAP_ALPINE_CROSSING) {
+  if (gSaveBlock.mapId == MAP_ALPINE_CROSSING) {
     return gAlpineCrossing_WarpDests;
   }
   return gLamaTemple_WarpDests;
@@ -250,7 +250,7 @@ const struct MapWarpRegion *Map_GetWarpRegions(void) { return 0; }
 const u32 *Map_GetWarps(void) { return gAlpineCrossingLamaTemple_Warps; }
 
 const struct ObjectEventTemplate *Map_GetObjectEventTemplates(void) {
-  if (gGameState.mapId == MAP_ALPINE_CROSSING) {
+  if (gSaveBlock.mapId == MAP_ALPINE_CROSSING) {
     return gAlpineCrossing_ObjectEventTemplates;
   }
   return gLamaTemple_ObjectEventTemplates;
@@ -918,7 +918,7 @@ static void AlpineCrossing_GrowSprout(void) {
 }
 
 const struct MapEvent *Map_GetEvents(void) {
-  if (gGameState.mapId == MAP_ALPINE_CROSSING) {
+  if (gSaveBlock.mapId == MAP_ALPINE_CROSSING) {
     return gAlpineCrossing_Events;
   }
   return gLamaTemple_Events;
@@ -929,7 +929,7 @@ s32 Map_Initialize(void) {
   s32 warpDest;
 
   gFieldWork->transition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
-  if (gGameState.mapId == MAP_LAMA_TEMPLE) {
+  if (gSaveBlock.mapId == MAP_LAMA_TEMPLE) {
     // Lama Temple: the temple's queued sound (SE_169) plays, two monks
     // meditate and the mossy rock stands; the rock's own cell attributes are
     // saved at (21, 73) for Reveal to restore.
@@ -945,14 +945,14 @@ s32 Map_Initialize(void) {
       ObjectEvent_SetPosition(LOCALID_CHI_MONK, PIXELS(136), PIXELS(256));
       ObjectMotion_ArmCallback(LOCALID_CHI_MONK, FACING_EAST, 0);
     }
-    warpDest = gGameState.warpDest;
+    warpDest = gSaveBlock.warpDest;
     if (warpDest == LAMA_TEMPLE_FROM_FUCHIN_TEMPLE_INTERIORS_HAMAS_ROOM) {
       GameFlag_Clear(FLAG_SHOW_LOCATION_NAME);
     } else if (warpDest == LAMA_TEMPLE_FROM_ALPINE_CROSSING &&
                !GameFlag_Get(FLAG_KEEP_PARTY_POSITION)) {
       LamaTemple_RunHamasFarewell();
     }
-  } else if (gGameState.mapId == MAP_ALPINE_CROSSING) {
+  } else if (gSaveBlock.mapId == MAP_ALPINE_CROSSING) {
     // Alpine Crossing: restore the Psynergy puzzles already solved.
     ObjectEvent_SetSpriteFlags(ObjectEvent_GetById(LOCALID_WATER_FOR_FROST), 0);
     ObjectEvent_GetById(LOCALID_WATER_FOR_FROST)->priorityFlags |=
@@ -966,9 +966,9 @@ s32 Map_Initialize(void) {
       Engine_ObjectEventSetAnimation(LOCALID_PLANT, SPROUT_ANIMATION_GROWN);
       AlpineCrossing_GrowSprout();
     }
-    if (gGameState.warpDest ==
+    if (gSaveBlock.warpDest ==
             ALPINE_CROSSING_FROM_ALTIN_PEAK_SOUTH_ENTRANCE_WEST ||
-        gGameState.warpDest ==
+        gSaveBlock.warpDest ==
             ALPINE_CROSSING_FROM_ALTIN_PEAK_SOUTH_ENTRANCE_EAST) {
       GameFlag_Clear(FLAG_SHOW_LOCATION_NAME);
     }
@@ -984,7 +984,7 @@ s32 Map_Initialize(void) {
     // Hsu: he has been freed without it and the boulder is gone.
     if (!Script_GetFlag(FLAG_HSU_RESCUED) &&
         GameFlag_Get(FLAG_XIAN_HEARD_HSU_TRAPPED) &&
-        gGameState.warpDest == ALPINE_CROSSING_FROM_WORLD_MAP_NORTH) {
+        gSaveBlock.warpDest == ALPINE_CROSSING_FROM_WORLD_MAP_NORTH) {
       Engine_ObjectEventSetPosition(LOCALID_BOULDER, 0, 0);
       GameFlag_Set(FLAG_HSU_RESCUED);
       GameFlag_Set(FLAG_HSU_RESCUED_WITHOUT_PARTY);
@@ -1019,7 +1019,7 @@ s32 Map_Initialize(void) {
       ObjectEvent_SetActionScript(LOCALID_HSU, gAlpineCrossing_HsuStruggle);
       ObjectEvent_GetById(LOCALID_HSU)->scaleX = -0x10000;
     }
-    if (gGameState.warpDest ==
+    if (gSaveBlock.warpDest ==
             ALPINE_CROSSING_FROM_ALTIN_PEAK_SOUTH_ENTRANCE_EAST &&
         !GameFlag_Get(FLAG_HAMA_REACHED_HSU) &&
         !GameFlag_Get(FLAG_KEEP_PARTY_POSITION) &&

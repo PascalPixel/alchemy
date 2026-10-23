@@ -53,7 +53,7 @@
 ///   which enters any map by warp destination number, reaches them, and nothing
 ///   in the ROM says why they set the story flags they set.
 
-#include "game_state.h"
+#include "save_block.h"
 #include "heap.h"
 #include "version.h"
 #include "keystate.h"
@@ -334,7 +334,7 @@ static __inline__ void BabiPalace_RestorePartyAndInventory(void) {
 }
 
 const struct MapWarpDest *Map_GetWarpDests(void) {
-  if (gGameState.mapId == (s32)&MapId_BabiPalaceEntrance) {
+  if (gSaveBlock.mapId == (s32)&MapId_BabiPalaceEntrance) {
     return gBabiPalace_OutsideWarpDests;
   }
   return gBabiPalace_WarpDests;
@@ -351,7 +351,7 @@ const u32 *BabiPalace_GetWarps(void) { return gBabiPalace_Warps; }
 /// Returns the object event templates for the map and the story: before Babi's
 /// rescue, during the finals or after Colosso.
 const struct ObjectEventTemplate *Map_GetObjectEventTemplates(void) {
-  if (gGameState.mapId == (s32)&MapId_BabiPalaceEntrance) {
+  if (gSaveBlock.mapId == (s32)&MapId_BabiPalaceEntrance) {
     return gBabiPalace_OutsideObjectEventTemplates;
   }
   if (GameFlag_Get(FLAG_COLOSSO_OVER) != 0) {
@@ -2475,7 +2475,7 @@ static void BabiPalace_ExamineWell(void) {
 /// Returns the map events for the map and the story, as for the object event
 /// templates.
 const struct MapEvent *Map_GetEvents(void) {
-  if (gGameState.mapId == (s32)&MapId_BabiPalaceEntrance) {
+  if (gSaveBlock.mapId == (s32)&MapId_BabiPalaceEntrance) {
     if (GameFlag_Get(FLAG_COLOSSO_OVER) != 0) {
       return gBabiPalace_OutsideEventsAfterColosso;
     }
@@ -2503,15 +2503,15 @@ s32 BabiPalace_ApplyEntryState(void) {
   s32 set;
 
   BabiPalace_CloseDoors();
-  if (gGameState.warpDest == BABI_PALACE_AFTER_BABI_SAVED) {
+  if (gSaveBlock.warpDest == BABI_PALACE_AFTER_BABI_SAVED) {
     GameFlag_Set(FLAG_BABI_SAVED);
   }
-  if (gGameState.warpDest == BABI_PALACE_AFTER_COLOSSO) {
+  if (gSaveBlock.warpDest == BABI_PALACE_AFTER_COLOSSO) {
     GameFlag_Set(FLAG_BABI_SAVED);
     GameFlag_Set(FLAG_COLOSSO_OVER);
   }
-  if (gGameState.mapId != (s32)&MapId_BabiPalaceEntrance) {
-    if (gGameState.warpDest == BABI_PALACE_FROM_VALE_INTERIORS_INN) {
+  if (gSaveBlock.mapId != (s32)&MapId_BabiPalaceEntrance) {
+    if (gSaveBlock.warpDest == BABI_PALACE_FROM_VALE_INTERIORS_INN) {
       GameFlag_Clear(FLAG_SHOW_LOCATION_NAME);
     }
     if (GameFlag_Get(FLAG_COLOSSO_OVER)) {
@@ -2534,7 +2534,7 @@ s32 BabiPalace_ApplyEntryState(void) {
         Vram_Load(sprite->slot, 128, buf + 0x400);
         Heap_Release(HEAP_SLOT_GLYPH_TRANSFER);
       }
-      if (gGameState.warpDest == BABI_PALACE_MEETING_ROOM_FROM_CARPET_ROOM &&
+      if (gSaveBlock.warpDest == BABI_PALACE_MEETING_ROOM_FROM_CARPET_ROOM &&
           !Script_GetFlag(FLAG_BABI_SPOKE_AFTER_COLOSSO)) {
         GameFlag_Set(FLAG_BABI_SPOKE_AFTER_COLOSSO);
         ObjectEvent_SetPosition(LOCALID_BABI, PIXELS(208), PIXELS(704));
@@ -2555,14 +2555,14 @@ s32 BabiPalace_ApplyEntryState(void) {
     // LOCALID_FINALS_HURRYING_WARRIORS_ALONG has this number.
     ObjectEvent_Get(LOCALID_BED_ATTENDANT)->collisionFlags |=
         OBJ_EVENT_NEAR_TALK;
-    if (gGameState.warpDest == BABI_PALACE_FROM_COLOSSEUM_NAVAMPA_MATCH) {
+    if (gSaveBlock.warpDest == BABI_PALACE_FROM_COLOSSEUM_NAVAMPA_MATCH) {
       BabiPalace_RestorePartyAndInventory();
       BabiPalace_WakeAfterFinals();
       // XXX: likely so that reloading the map does not play the waking again,
       // because only this warp destination chooses it.
-      gGameState.warpDest = BABI_PALACE_BIG_BEDROOM_FROM_STATUE_ROOM_WEST;
+      gSaveBlock.warpDest = BABI_PALACE_BIG_BEDROOM_FROM_STATUE_ROOM_WEST;
     }
-    if (gGameState.warpDest == BABI_PALACE_FROM_COLOSSEUM_AZART_MATCH) {
+    if (gSaveBlock.warpDest == BABI_PALACE_FROM_COLOSSEUM_AZART_MATCH) {
       BabiPalace_RestorePartyAndInventory();
       GameFlag_Set(FLAG_BABI_PALACE_FINALS_REST_OFFERED);
       GameFlag_Set(FLAG_BABI_PALACE_FINALS_BEDS_OPEN);
@@ -2571,7 +2571,7 @@ s32 BabiPalace_ApplyEntryState(void) {
       ObjectEvent_FaceDirection(LOCALID_FINALS_ATTENDANT,
                                 FACING_NORTHEAST + FACING_STEP, 0);
       BabiPalace_WakeFromFinalsDream();
-      gGameState.warpDest = BABI_PALACE_BIG_BEDROOM_FROM_STATUE_ROOM_WEST;
+      gSaveBlock.warpDest = BABI_PALACE_BIG_BEDROOM_FROM_STATUE_ROOM_WEST;
     }
   }
   return 0;

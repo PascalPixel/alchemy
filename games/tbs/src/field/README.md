@@ -336,7 +336,7 @@ Each control sets the leader's `speedLimit` and `acceleration` from the
 speeds named at the top of `field/player_control.c`. On a town or dungeon
 map, `Object_UpdateLeaderControl` walks at `FIELD_WALK_SPEED` (1 pixel a
 frame) and runs at `FIELD_RUN_SPEED` (1.5) while a key of
-`gGameState.dashKeys` (B) is held,
+`gSaveBlock.dashKeys` (B) is held,
 gaining `FIELD_ACCELERATION` (a quarter pixel) a frame. With `FLAG_FAST_WALK`
 set, holding B moves at `FIELD_FAST_WALK_SPEED` (4); no code in [The Broken
 Seal](../../glossary.md#the-two-games) sets that flag. On the world map, `Object_MoveOnWorldMap` walks at

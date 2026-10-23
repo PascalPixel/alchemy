@@ -1,15 +1,15 @@
-#ifndef ALCHEMY_GAME_STATE_H
-#define ALCHEMY_GAME_STATE_H
+#ifndef ALCHEMY_SAVE_BLOCK_H
+#define ALCHEMY_SAVE_BLOCK_H
 
 /// @file
-/// GameState, the game's state: play time, coins, the map and the leader's
-/// position, the active party and the options.
+/// SaveBlock, the state a save file keeps: play time, coins, the map and the
+/// leader's position, the active party and the options.
 
 #include "types.h"
 #include "static_assert.h"
 #include "battle_unit.h"
 
-/// A map's type (MapHeader.mapType, copied to GameState.mapType).
+/// A map's type (MapHeader.mapType, copied to SaveBlock.mapType).
 enum MapType {
   MAP_TYPE_FIELD = 1, ///< every other map: dungeons, the world map
   /// Towns and their interiors, where walking restores no PP, recovers no
@@ -18,7 +18,7 @@ enum MapType {
   MAP_TYPE_TOWN = 2
 };
 
-/// gGameState.hazardMode: what advances the hazard count (Field_ProcessStep).
+/// gSaveBlock.hazardMode: what advances the hazard count (Field_ProcessStep).
 enum HazardMode {
   /// The distance the leader walks on MB_DESERT_SAND ground.
   HAZARD_COUNT_ON_CELLS = 0,
@@ -26,11 +26,11 @@ enum HazardMode {
   HAZARD_COUNT_FRAMES = 1
 };
 
-/// gGameState.hazardDamage's bit 8: its low byte is a percentage of maximum HP
+/// gSaveBlock.hazardDamage's bit 8: its low byte is a percentage of maximum HP
 /// rather than HP.
 #define HAZARD_DAMAGE_PERCENT 0x100
 
-/// gGameState.battleType: how the next battle starts (Battle_SetType); it is
+/// gSaveBlock.battleType: how the next battle starts (Battle_SetType); it is
 /// set back to BATTLE_TYPE_NORMAL as the battle ends. Any start but that one
 /// stops the opening's first-strike and surprise rolls (Battle_Run).
 enum BattleType {
@@ -50,15 +50,16 @@ enum BattleType {
   BATTLE_TYPE_DEBUG = 5
 };
 
-/// The game's state: play time, coins, the map and the leader's position,
-/// the active party and the options.
+/// The state a save file keeps: play time, coins, the map and the leader's
+/// position, the active party and the options.
 ///
-/// It is the one gGameState in EWRAM, right after the 0x200 bytes of game
-/// flags; a save file's checksum covers the 968 words from gGameFlagBytes to
-/// the end of this struct (Save_BuildFileSummary). A new game sets its
-/// defaults (GameState_InitializeDefaults), and the field, battle, menus and
-/// maps read and write it directly.
-struct GameState {
+/// It is the one gSaveBlock in EWRAM, right after the 0x200 bytes of game
+/// flags. Saving writes it whole in a file's first record, with the flags
+/// before it, and a file's checksum covers the 968 words from gGameFlagBytes
+/// to the end of this struct (Save_BuildFileSummary, Save_WriteCurrentFile). A
+/// new game sets its defaults (SaveBlock_InitializeDefaults), and the field,
+/// battle, menus and maps read and write it directly.
+struct SaveBlock {
   /// Runtime_GetBuildStampTime's value when the game was last saved; its low
   /// half goes into the file's summary.
   u32 buildStamp;
@@ -188,38 +189,38 @@ struct GameState {
   struct Unit units[8];        ///< the characters
 };
 
-STATIC_ASSERT(offsetof(struct GameState, buildStamp) == 0);
-STATIC_ASSERT(offsetof(struct GameState, playTime) == 4);
-STATIC_ASSERT(offsetof(struct GameState, idleSleepEnabled) == 0x22a);
-STATIC_ASSERT(offsetof(struct GameState, coins) == 0x10);
-STATIC_ASSERT(offsetof(struct GameState, shopCredit) == 0x118);
-STATIC_ASSERT(offsetof(struct GameState, shopGifts) == 0x11c);
-STATIC_ASSERT(offsetof(struct GameState, units) == 0x2c0);
-STATIC_ASSERT(sizeof(struct GameState) == 0xd20);
-STATIC_ASSERT(offsetof(struct GameState, wonPrizes) == 0x12c);
-STATIC_ASSERT(offsetof(struct GameState, mapSec) == 0x1cc);
-STATIC_ASSERT(offsetof(struct GameState, dashKeys) == 0x21c);
-STATIC_ASSERT(offsetof(struct GameState, avoidDistance) == 0x244);
-STATIC_ASSERT(offsetof(struct GameState, warpDest) == 0x1c2);
-STATIC_ASSERT(offsetof(struct GameState, special) == 0x1d6);
-STATIC_ASSERT(offsetof(struct GameState, x) == 0x1dc);
-STATIC_ASSERT(offsetof(struct GameState, movementMode) == 0x1f2);
-STATIC_ASSERT(offsetof(struct GameState, leaderLocalId) == 0x1f4);
-STATIC_ASSERT(offsetof(struct GameState, party) == 0x1f8);
-STATIC_ASSERT(offsetof(struct GameState, speech) == 0x20a);
-STATIC_ASSERT(offsetof(struct GameState, messageSpeed) == 0x20c);
-STATIC_ASSERT(offsetof(struct GameState, aKeys) == 0x210);
-STATIC_ASSERT(offsetof(struct GameState, firstShortcutKeys) == 0x218);
-STATIC_ASSERT(offsetof(struct GameState, secondShortcutKeys) == 0x21a);
-STATIC_ASSERT(offsetof(struct GameState, firstShortcut) == 0x220);
-STATIC_ASSERT(offsetof(struct GameState, retreatWarpDest) == 0x242);
-STATIC_ASSERT(offsetof(struct GameState, cloaked) == 0x24c);
-STATIC_ASSERT(offsetof(struct GameState, linkTallies) == 0x2a4);
-STATIC_ASSERT(offsetof(struct GameState, startStamp) == 0x2b8);
+STATIC_ASSERT(offsetof(struct SaveBlock, buildStamp) == 0);
+STATIC_ASSERT(offsetof(struct SaveBlock, playTime) == 4);
+STATIC_ASSERT(offsetof(struct SaveBlock, idleSleepEnabled) == 0x22a);
+STATIC_ASSERT(offsetof(struct SaveBlock, coins) == 0x10);
+STATIC_ASSERT(offsetof(struct SaveBlock, shopCredit) == 0x118);
+STATIC_ASSERT(offsetof(struct SaveBlock, shopGifts) == 0x11c);
+STATIC_ASSERT(offsetof(struct SaveBlock, units) == 0x2c0);
+STATIC_ASSERT(sizeof(struct SaveBlock) == 0xd20);
+STATIC_ASSERT(offsetof(struct SaveBlock, wonPrizes) == 0x12c);
+STATIC_ASSERT(offsetof(struct SaveBlock, mapSec) == 0x1cc);
+STATIC_ASSERT(offsetof(struct SaveBlock, dashKeys) == 0x21c);
+STATIC_ASSERT(offsetof(struct SaveBlock, avoidDistance) == 0x244);
+STATIC_ASSERT(offsetof(struct SaveBlock, warpDest) == 0x1c2);
+STATIC_ASSERT(offsetof(struct SaveBlock, special) == 0x1d6);
+STATIC_ASSERT(offsetof(struct SaveBlock, x) == 0x1dc);
+STATIC_ASSERT(offsetof(struct SaveBlock, movementMode) == 0x1f2);
+STATIC_ASSERT(offsetof(struct SaveBlock, leaderLocalId) == 0x1f4);
+STATIC_ASSERT(offsetof(struct SaveBlock, party) == 0x1f8);
+STATIC_ASSERT(offsetof(struct SaveBlock, speech) == 0x20a);
+STATIC_ASSERT(offsetof(struct SaveBlock, messageSpeed) == 0x20c);
+STATIC_ASSERT(offsetof(struct SaveBlock, aKeys) == 0x210);
+STATIC_ASSERT(offsetof(struct SaveBlock, firstShortcutKeys) == 0x218);
+STATIC_ASSERT(offsetof(struct SaveBlock, secondShortcutKeys) == 0x21a);
+STATIC_ASSERT(offsetof(struct SaveBlock, firstShortcut) == 0x220);
+STATIC_ASSERT(offsetof(struct SaveBlock, retreatWarpDest) == 0x242);
+STATIC_ASSERT(offsetof(struct SaveBlock, cloaked) == 0x24c);
+STATIC_ASSERT(offsetof(struct SaveBlock, linkTallies) == 0x2a4);
+STATIC_ASSERT(offsetof(struct SaveBlock, startStamp) == 0x2b8);
 
-#ifndef OWN_gGameState
+#ifndef OWN_gSaveBlock
 /// The game's state (system/ewram.s).
-extern struct GameState gGameState;
+extern struct SaveBlock gSaveBlock;
 #endif
 
 /// Sets the battle type.
@@ -227,7 +228,7 @@ extern struct GameState gGameState;
 // place at every use; as a plain assignment, tbs-en differs.
 #define Battle_SetType(mode)                                                   \
   do {                                                                         \
-    gGameState.battleType = (mode);                                            \
+    gSaveBlock.battleType = (mode);                                            \
   } while (0)
 
 #endif

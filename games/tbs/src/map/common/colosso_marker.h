@@ -91,8 +91,8 @@ void Colosso_RestoreWarrior(s32 id) {
 
   system = gObjectSystemWork;
   objectEvent = ObjectEvent_GetById(id);
-  if (gGameState.movementMode == 1) {
-    gGameState.movementMode = 0;
+  if (gSaveBlock.movementMode == 1) {
+    gSaveBlock.movementMode = 0;
     Engine_ObjectEventSetAnimation(id, 1);
   } else {
     ObjectEvent_FaceDirection(id, FACING_SOUTH, 30);

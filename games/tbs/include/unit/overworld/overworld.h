@@ -25,7 +25,7 @@ struct SparkObject;
 struct Window;
 union FieldObject;
 
-/// gGameState.movementMode: how the map loop hands the party leader back to
+/// gSaveBlock.movementMode: how the map loop hands the party leader back to
 /// the player (Map_Run).
 enum LeaderMovementMode {
   /// Walking: the pad moves the leader, on the world map or a layered map.
@@ -38,7 +38,7 @@ enum LeaderMovementMode {
 
 /// Game_Run's mode: where the game starts.
 enum GameRunMode {
-  GAME_RUN_TITLE = 0,          ///< the title screen, with a fresh game state
+  GAME_RUN_TITLE = 0,          ///< the title screen, with a fresh save block
   GAME_RUN_DEBUG_VALE = 1,     ///< in debug mode, MapId_ValeGate
   GAME_RUN_DEBUG_MAIN_MENU = 2 ///< in debug mode, the main menu
 };

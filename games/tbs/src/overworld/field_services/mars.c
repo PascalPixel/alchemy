@@ -22,7 +22,7 @@ void Djinn_RunMarsJoinEffect(s32 djinniId) {
   s8 *slotState;
 
   djinni = ObjectEvent_GetById(djinniId);
-  leader = ObjectEvent_GetById(gGameState.leaderLocalId);
+  leader = ObjectEvent_GetById(gSaveBlock.leaderLocalId);
   if (djinni == NULL)
     return;
 
@@ -76,10 +76,10 @@ void Djinn_RunMarsJoinEffect(s32 djinniId) {
   } while (remaining >= 0);
 
   WaitFrames(60);
-  ObjectMotion_ArmCallback(gGameState.leaderLocalId, 0x4000, 0);
+  ObjectMotion_ArmCallback(gSaveBlock.leaderLocalId, 0x4000, 0);
   WaitFrames(20);
   ObjectDispatch_SelectAnimationFar(
-      ObjectEvent_GetById(gGameState.leaderLocalId), 28);
+      ObjectEvent_GetById(gSaveBlock.leaderLocalId), 28);
 
   // Every spark still in use stops its fountain. The cursor walks
   // the slots' state bytes; a slot's active flag is 5 bytes after its state.
@@ -153,7 +153,7 @@ void FieldEffect_UpdateDescendingOrbitObject(union FieldObject *fieldObject) {
   s32 y;
 
   leader = (struct DescendingOrbitObject *)ObjectEvent_GetById(
-      gGameState.leaderLocalId);
+      gSaveBlock.leaderLocalId);
   timer = mote->timer - 1;
   mote->timer = timer;
   frames = mote->timer;
@@ -182,7 +182,7 @@ void FieldEffect_UpdateRadialSpread(struct FieldEffectSprite *effect) {
   s32 state;
   u32 random;
 
-  source = (struct Object *)ObjectEvent_GetById(gGameState.leaderLocalId);
+  source = (struct Object *)ObjectEvent_GetById(gSaveBlock.leaderLocalId);
   state = effect->state;
 
   if (state == VENUS_PARTICLE_AIM) {

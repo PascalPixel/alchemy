@@ -26,7 +26,7 @@
 /// Open questions: none.
 
 #include "action_script.h"
-#include "game_state.h"
+#include "save_block.h"
 #include "map_ids.h"
 #include "unit/import.h"
 #include "unit/map/lalivero_interiors.h"
@@ -208,7 +208,7 @@ const struct MapWarpDest *LaliveroInteriors_GetWarpDests(void) {
 }
 
 const struct MapWarpRegion *LaliveroInteriors_GetRegions(void) {
-  if (gGameState.mapId == (s32)&MapId_LaliveroShops) {
+  if (gSaveBlock.mapId == (s32)&MapId_LaliveroShops) {
     return gLaliveroInteriors_ShopsRegions;
   }
   return gLaliveroInteriors_FaransHouseRegions;
@@ -219,7 +219,7 @@ const u32 *LaliveroInteriors_GetWarps(void) { return gLaliveroInteriors_Warps; }
 /// The people of each map; Faran's house fills up after Venus Lighthouse.
 const struct ObjectEventTemplate *
 LaliveroInteriors_GetObjectEventTemplates(void) {
-  if (gGameState.mapId == (s32)&MapId_LaliveroFaransHouse) {
+  if (gSaveBlock.mapId == (s32)&MapId_LaliveroFaransHouse) {
     // Faran's house and the inn.
     if (GameFlag_Get(FLAG_VENUS_LIGHTHOUSE_PARTY_RETURNED) != 0) {
       return gLaliveroInteriors_FaransHouseObjectEventTemplatesAfterLighthouse;
@@ -405,7 +405,7 @@ static void EventScript_LeaveBuilding(void) {
 /// What the party can talk to, touch and search in each map, before and
 /// after Venus Lighthouse.
 const struct MapEvent *LaliveroInteriors_GetEvents(void) {
-  if (gGameState.mapId == (s32)&MapId_LaliveroFaransHouse) {
+  if (gSaveBlock.mapId == (s32)&MapId_LaliveroFaransHouse) {
     if (GameFlag_Get(FLAG_VENUS_LIGHTHOUSE_PARTY_RETURNED) != 0) {
       return gLaliveroInteriors_FaransHouseEventsAfterLighthouse;
     }
@@ -831,12 +831,12 @@ s32 Map_Initialize(void) {
   s16 warpDest;
   struct ObjectEvent *objectEvent;
 
-  if (gGameState.warpDest == ENTRANCE_FROM_AERIE) {
+  if (gSaveBlock.warpDest == ENTRANCE_FROM_AERIE) {
     GameFlag_Set(FLAG_VENUS_LIGHTHOUSE_PARTY_RETURNED);
   }
   gFieldWork->transition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
-  mapId = gGameState.mapId;
+  mapId = gSaveBlock.mapId;
   if (mapId == (s32)&MapId_LaliveroShops) {
     // Each shopkeeper is drawn under the counter's top, and counts as nearer
     // to talk to (OBJ_EVENT_NEAR_TALK) so that the leader reaches it across the
@@ -855,13 +855,13 @@ s32 Map_Initialize(void) {
     objectEvent->sprite->image.priority = 2;
     Engine_ObjectEventSetAnimation(LOCALID_NAPPING_WORKER,
                                    ANIM_WORKER_LIE_ASLEEP);
-    warpDest = gGameState.warpDest;
+    warpDest = gSaveBlock.warpDest;
     if (warpDest == LALIVERO_SHOPS_SANCTUM) {
-      gGameState.savedMap = mapId;
-      gGameState.savedWarpDest = warpDest;
+      gSaveBlock.savedMap = mapId;
+      gSaveBlock.savedWarpDest = warpDest;
     }
   }
-  if (gGameState.mapId == (s32)&MapId_LaliveroFaransHouse) {
+  if (gSaveBlock.mapId == (s32)&MapId_LaliveroFaransHouse) {
     objectEvent = ObjectEvent_GetById(LOCALID_INNKEEPER);
     objectEvent->collisionFlags |= OBJ_EVENT_NEAR_TALK;
     objectEvent->priorityFlags = 0;
@@ -870,7 +870,7 @@ s32 Map_Initialize(void) {
       ObjectEvent_SetActionScript(LOCALID_INN_WORKER,
                                   gLaliveroInteriors_InnWorkerChores);
     }
-    if (gGameState.warpDest ==
+    if (gSaveBlock.warpDest ==
         LALIVERO_FARANS_HOUSE_FROM_VENUS_LIGHTHOUSE_AERIE) {
       EventScript_ReportToFaran();
       // Iodem and Faran turn toward the leader, as their later object event
@@ -881,7 +881,7 @@ s32 Map_Initialize(void) {
       ObjectEvent_SetMovementType(
           (struct Object *)ObjectEvent_GetById(LOCALID_FARAN),
           MOVEMENT_TYPE_FACE_LEADER);
-      gGameState.warpDest = LALIVERO_FARANS_HOUSE_FROM_LALIVERO_SOUTHWEST;
+      gSaveBlock.warpDest = LALIVERO_FARANS_HOUSE_FROM_LALIVERO_SOUTHWEST;
     }
   }
   return 0;

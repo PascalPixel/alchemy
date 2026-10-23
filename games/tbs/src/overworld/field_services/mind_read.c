@@ -301,7 +301,7 @@ void Ui_SetBank15PaletteAndClearRenderMode(void) {
   BG_PLTT_COLOR(15, 3) = 0;
   BG_PLTT_COLOR(15, 11) = RGB(10, 10, 10);
   BG_PLTT_COLOR(15, 12) = RGB(20, 20, 20);
-  WindowColor_ApplyFar(gGameState.windowColor[0], gGameState.windowColor[1]);
+  WindowColor_ApplyFar(gSaveBlock.windowColor[0], gSaveBlock.windowColor[1]);
   ((struct WindowWork *)work)->mindRead = 0;
 }
 

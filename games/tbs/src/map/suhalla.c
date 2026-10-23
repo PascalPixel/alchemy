@@ -26,7 +26,7 @@
 /// Open questions:
 /// - None.
 
-#include "game_state.h"
+#include "save_block.h"
 #include "unit/map/suhalla.h"
 #include "unit/overworld/overworld.h"
 #include "unit/overworld/field_services.h"
@@ -216,7 +216,7 @@ const struct MapEvent *Map_GetEvents(void) {
 s32 Map_Initialize(void) {
   struct FieldWork *work;
 
-  if (gGameState.warpDest == SUHALLA_AFTER_BABI_SPOKE) {
+  if (gSaveBlock.warpDest == SUHALLA_AFTER_BABI_SPOKE) {
     GameFlag_Set(FLAG_BABI_SPOKE_AFTER_COLOSSO);
   }
 

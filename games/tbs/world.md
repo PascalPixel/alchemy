@@ -351,7 +351,7 @@ its battles less often there.
 
 Each kind of ground belongs to a zone, and the zone decides how far apart
 its battles are and which enemies can appear. Each frame the leader walks,
-`Encounter_CountStepsAndSelectFormation` adds to the counter, `gGameState.encounterSteps`;
+`Encounter_CountStepsAndSelectFormation` adds to the counter, `gSaveBlock.encounterSteps`;
 despite its name it does both jobs, filling the counter every frame and
 choosing the formation once it is full. What it adds:
 

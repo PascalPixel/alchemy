@@ -29,7 +29,7 @@ u32 BattleSpoils_RankItem(u32 inventoryEntry) {
   return priority;
 }
 
-/// Empties the battle's spoils (BattleWork.spoils) and gGameState.pendingItem.
+/// Empties the battle's spoils (BattleWork.spoils) and gSaveBlock.pendingItem.
 /// Called once by Battle_Run as the battle opens.
 void BattleSpoils_Clear(void) {
   struct BattleWork *battle = gBattleWork;
@@ -37,7 +37,7 @@ void BattleSpoils_Clear(void) {
   u16 *items;
   s32 index;
 
-  gGameState.pendingItem = 0;
+  gSaveBlock.pendingItem = 0;
   spoils->coins = 0;
   spoils->experience = 0;
   spoils->defeated = 0;

@@ -230,7 +230,7 @@ void ObjectEvent_DestroyAtIndex(s32 objectEventIndex) {
 }
 
 /// Creates a map's object events on entering it: the party leader where the
-/// game state puts it, then the map's object event template table from object
+/// save block puts it, then the map's object event template table from object
 /// event slot 8, and the camera that follows the leader. A leader entering
 /// above ground where its cell and the cell north of it are climbing spots
 /// (MB_CLIMB) is raised by the ground height of the cell north of it less 32
@@ -240,7 +240,7 @@ void ObjectEvent_DestroyAtIndex(s32 objectEventIndex) {
 /// FieldScript_RunObjectHookAndWait.
 /// Empties every object event slot and table first, without destroying the
 /// object events in them; sets work->camera, the map's origin and
-/// gGameState.movementMode.
+/// gSaveBlock.movementMode.
 void ObjectEvent_ResetForObject(struct ObjectEventTemplate *table) {
   struct FieldWork *work;
   struct ObjectEventTemplate *entry;
@@ -253,7 +253,7 @@ void ObjectEvent_ResetForObject(struct ObjectEventTemplate *table) {
   s32 height;
 
   work = gFieldWork;
-  leader = gGameState.leaderLocalId;
+  leader = gSaveBlock.leaderLocalId;
   // Build the leader's temporary object event template before the map's placed
   // object events. The two-row table, the leader's row and an end row, lives in
   // the event work at 0x200 (FieldWork's leaderTemplates) and lasts with it.
@@ -265,22 +265,22 @@ void ObjectEvent_ResetForObject(struct ObjectEventTemplate *table) {
   ObjectEvent_ClearAll();
   entry->condition = -1;
   entry->sprite = leader;
-  SET_POSITION(entry, gGameState.x, 0, gGameState.z);
-  entry->facing = gGameState.heading;
+  SET_POSITION(entry, gSaveBlock.x, 0, gSaveBlock.z);
+  entry->facing = gSaveBlock.heading;
   FieldScript_SpawnObjectEventTemplates(entry, leader);
   FieldScript_SpawnObjectEventTemplates(table, LOCALID_FIRST_PLACED);
 
   object = (struct Object *)work->objectEvents[leader];
-  // gGameState.turn keeps the leader's map grid layer (Map_Run saves its
+  // gSaveBlock.turn keeps the leader's map grid layer (Map_Run saves its
   // layer there). Its cell: 16 pixels square, 128 to a row, so above is
   // the cell north of it.
-  object->layer = gGameState.turn;
+  object->layer = gSaveBlock.turn;
   pos = (object->x / 0x100000) + (object->z / 0x100000) * 128;
   cell = &MAPGRID_CELLS[pos];
   above = &MAPGRID_CELLS[pos - 128];
-  if (gGameState.y != 0 && cell->behavior == MB_CLIMB &&
+  if (gSaveBlock.y != 0 && cell->behavior == MB_CLIMB &&
       above->behavior == MB_CLIMB) {
-    gGameState.movementMode = LEADER_MOVEMENT_CLIMB;
+    gSaveBlock.movementMode = LEADER_MOVEMENT_CLIMB;
     height = MapGrid_GetTerrainHeightFar(0, object->x, object->z - 0x100000) -
              0x200000;
     object->y += height;
@@ -289,7 +289,7 @@ void ObjectEvent_ResetForObject(struct ObjectEventTemplate *table) {
     ObjectDispatch_SetSingleChildFlagsFar((struct DispatchObject *)object, 0);
     ObjectDispatch_SelectAnimationFar(object, 12);
   } else {
-    gGameState.movementMode = LEADER_MOVEMENT_WALK;
+    gSaveBlock.movementMode = LEADER_MOVEMENT_WALK;
   }
 
   // The camera follows this leader and starts at its resolved ground height;
@@ -603,7 +603,7 @@ void ObjectEvent_Restore(void) {
   s32 animation;
   s32 priority;
   s32 y;
-  s32 *leaderId = &gGameState.leaderLocalId;
+  s32 *leaderId = &gSaveBlock.leaderLocalId;
   struct FieldWork **fieldWork = &gFieldWork;
   struct MapGridScrollWork **grid = (struct MapGridScrollWork **)gMapGridWork;
 

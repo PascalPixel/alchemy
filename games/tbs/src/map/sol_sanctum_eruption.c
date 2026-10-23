@@ -38,7 +38,7 @@
 /// Open questions: none.
 
 #include "action_script.h"
-#include "game_state.h"
+#include "save_block.h"
 #include "unit/map/sol_sanctum_eruption.h"
 #include "unit/map/common/effect_psynergy.h"
 #include "unit/map/common/sol_sanctum_elemental_star_ring_setup.h"
@@ -634,7 +634,7 @@ UNUSED static void SolSanctumEruption_UnusedCallbackB(void) {}
 /// Elemental Star Room (MapId_SolSanctumElementalStarRoom). Called by
 /// Map_Run once the object events exist.
 s32 SolSanctumEruption_Initialize(void) {
-  if (gGameState.warpDest ==
+  if (gSaveBlock.warpDest ==
       SOL_SANCTUM_ERUPTION_FROM_SOL_SANCTUM_ELEMENTAL_STAR_ROOM) {
     FieldEffect_InitializeSparkles();
     SolSanctumEruption_PlayHostageScene();

@@ -63,7 +63,7 @@
 
 #include "action_script.h"
 #include "version.h"
-#include "game_state.h"
+#include "save_block.h"
 #include "io_write_queue.h"
 #include "map_ids.h"
 #include "vram_cache.h"
@@ -419,7 +419,7 @@ static void ColosseumAzartMatch_MoveObjectEventPairByOffset(s32 localId, s32 dx,
   s32 x;
   s32 z;
 
-  leader = ObjectEvent_GetById(gGameState.leaderLocalId);
+  leader = ObjectEvent_GetById(gSaveBlock.leaderLocalId);
   objectEvent = ObjectEvent_GetById(localId);
   FieldScript_Start();
   {
@@ -459,7 +459,7 @@ static void EventScript_RollLogNorthSouth(void) {
   s32 row;
   s32 offset;
 
-  objectEvent = ObjectEvent_GetById(gGameState.leaderLocalId);
+  objectEvent = ObjectEvent_GetById(gSaveBlock.leaderLocalId);
   row = objectEvent->z.fixed >> 20;
   offset = -48;
   if (row <= 8) {
@@ -482,7 +482,7 @@ static void EventScript_RollLogEastWest(void) {
   s32 offset;
   s32 direction;
 
-  objectEvent = ObjectEvent_GetById(gGameState.leaderLocalId);
+  objectEvent = ObjectEvent_GetById(gSaveBlock.leaderLocalId);
   column = objectEvent->x.fixed >> 20;
   if ((gKeysHeld & KEY_LEFT) != 0) {
     direction = -1;
@@ -540,7 +540,7 @@ static void EventScript_PushPipeworksPillar(void) {
   struct ObjectEvent *objectEvent;
   s32 none;
 
-  leaderId = gGameState.leaderLocalId;
+  leaderId = gSaveBlock.leaderLocalId;
   leader = ObjectEvent_GetById(leaderId);
   objectEvent = ObjectEvent_GetById(LOCALID_PIPEWORKS_PIPE);
   GameFlag_Set(FLAG_PIPEWORKS_PIPE_PUSHED);
@@ -807,7 +807,7 @@ s32 ColosseumAzartMatch_Initialize(void) {
   Colosso_ShowItemIcon(LOCALID_PRIZE_A, ITEM_IRON_SHIELD);
   Colosso_ShowItemIcon(LOCALID_PRIZE_B, ITEM_PADDED_GLOVES);
   // Select competition, support, explanation, or post-battle arrival.
-  switch (gGameState.warpDest) {
+  switch (gSaveBlock.warpDest) {
   case COLOSSEUM_AZART_MATCH_RACE_FROM_LEND_A_HAND:
     Colosso_StartRaceGauge(LOCALID_PARTY_LEADER, LOCALID_OPPONENT, 4,
                            PIXELS(1304), PIXELS(192), LOCALID_PRIZE_A,
@@ -1008,7 +1008,7 @@ static void ColosseumAzartMatch_ExplainFinalsRules(s32 guide) {
 static void EventScript_TalkToRockAttendant(s32 localId) {
   s32 path;
 
-  if (gGameState.warpDest == COLOSSEUM_AZART_MATCH_FROM_COLOSSEUM_WEST) {
+  if (gSaveBlock.warpDest == COLOSSEUM_AZART_MATCH_FROM_COLOSSEUM_WEST) {
     Colosso_AskDoneCheering(localId);
   } else {
     FieldScript_Start();
@@ -1083,7 +1083,7 @@ static void EventScript_TalkToPipeworksAttendant(s32 attendant) {
   struct ObjectEvent *second;
   struct ObjectEvent *first;
 
-  if (gGameState.warpDest == COLOSSEUM_AZART_MATCH_FROM_COLOSSEUM_WEST) {
+  if (gSaveBlock.warpDest == COLOSSEUM_AZART_MATCH_FROM_COLOSSEUM_WEST) {
     Colosso_AskDoneCheering(attendant);
   } else {
     FieldScript_Start();
@@ -1144,7 +1144,7 @@ static void EventScript_TalkToPipeworksAttendant(s32 attendant) {
 static void EventScript_TalkToBridgeAttendant(s32 localId) {
   s32 path;
 
-  if (gGameState.warpDest == COLOSSEUM_AZART_MATCH_FROM_COLOSSEUM_WEST) {
+  if (gSaveBlock.warpDest == COLOSSEUM_AZART_MATCH_FROM_COLOSSEUM_WEST) {
     Colosso_AskDoneCheering(localId);
   } else {
     FieldScript_Start();
@@ -1189,7 +1189,7 @@ static void EventScript_TalkToBridgeAttendant(s32 localId) {
 static void EventScript_TalkToLumberAttendant(s32 localId) {
   s32 path;
 
-  if (gGameState.warpDest == COLOSSEUM_AZART_MATCH_FROM_COLOSSEUM_WEST) {
+  if (gSaveBlock.warpDest == COLOSSEUM_AZART_MATCH_FROM_COLOSSEUM_WEST) {
     Colosso_AskDoneCheering(localId);
     return;
   }
@@ -1489,7 +1489,7 @@ static s32 ColosseumAzartMatch_CollectFinishItem(s32 firstItem,
 
   flag = GameFlag_Get(FLAG_ARENA_REACHED);
 
-  objectEvent = ObjectEvent_GetById(gGameState.leaderLocalId);
+  objectEvent = ObjectEvent_GetById(gSaveBlock.leaderLocalId);
 
   if (gauge->finishX < objectEvent->x.fixed) {
     x = gauge->finishX + PIXELS(12);
@@ -1531,7 +1531,7 @@ static s32 ColosseumAzartMatch_CollectFinishItem(s32 firstItem,
     MessageArgument_Push(secondItem, 2);
   }
 
-  MessageArgument_Push(gGameState.leaderLocalId, 1);
+  MessageArgument_Push(gSaveBlock.leaderLocalId, 1);
   FieldMessage_Show(MsgColossoIsaacGotItem, 3);
   ObjectDispatch_WaitForValue16(objectEvent);
 
@@ -1555,7 +1555,7 @@ static void ColosseumAzartMatch_PushObjectAhead(void) {
   s32 zero;
   s32 localId;
 
-  localId = gGameState.leaderLocalId;
+  localId = gSaveBlock.leaderLocalId;
   subject = ObjectEvent_GetById(localId);
 
   direction = subject->facing >> 12;

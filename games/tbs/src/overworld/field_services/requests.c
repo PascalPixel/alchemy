@@ -8,7 +8,7 @@
 /// the world map the encounter region and battle environment under the leader
 /// pick the battle background. Sets the field work's battle request, which
 /// the map loop then handles, and the battle music; ENCOUNTER_ZONE_SCRIPTED's
-/// first slot also sets gGameState.special to the Aerie's storm battle
+/// first slot also sets gSaveBlock.special to the Aerie's storm battle
 /// background. About 35 maps reach it through
 /// Field_RequestBattleFromEncounterTableFar, and the Battle Arena calls it
 /// directly. The battle starts only once the script that asked for it has
@@ -20,9 +20,9 @@ void Field_RequestBattleFromEncounterTable(s32 zoneNo, s32 slotNo) {
 
   work->battle = Encounter_GetFormationAtSlot(zone, slot);
   if (zone == ENCOUNTER_ZONE_SCRIPTED && slot == 0)
-    gGameState.special = (s32)&ResourceId_VenusLighthouseAerieStormBackdrop;
+    gSaveBlock.special = (s32)&ResourceId_VenusLighthouseAerieStormBackdrop;
   if (work->mode == OBJECT_SYSTEM_WORLD_MAP) {
-    struct Object *leader = ObjectEvent_GetByLocalId(gGameState.leaderLocalId);
+    struct Object *leader = ObjectEvent_GetByLocalId(gSaveBlock.leaderLocalId);
 
     Encounter_ResolveWorldMapZoneAndBackdrop(&leader->x);
   }
@@ -32,13 +32,13 @@ void Field_RequestBattleFromEncounterTable(s32 zoneNo, s32 slotNo) {
 /// Sets up the battle with Djinni number `no`. The low 8 bits of flag are the
 /// Djinni's object event, which hops first unless DJINN_NO_HOP is set. Djinn
 /// are numbered 20 to an element (Djinn_ResolvePendingEvent). Sets
-/// gGameState.pendingDjinnEvent and the field work's battle request; when
+/// gSaveBlock.pendingDjinnEvent and the field work's battle request; when
 /// the map is entered again after the battle, Djinn_ResolvePendingEvent
 /// reads the pending event to make the Djinni join or hide it. About 20
 /// maps reach it through Field_RequestDjinnBattleFar.
 void Field_RequestDjinnBattle(s32 flag, s32 no) {
   struct FieldWork *work;
-  struct GameState *state;
+  struct SaveBlock *state;
   s32 skipHop;
 
   work = gFieldWork;
@@ -48,7 +48,7 @@ void Field_RequestDjinnBattle(s32 flag, s32 no) {
   if (skipHop == 0)
     Djinn_RunBattleStartHop(flag);
 
-  state = &gGameState;
+  state = &gSaveBlock;
   // DJINN_NO_HOP rides along: it tells ObjectEvent_PlaceMapObjectEvents to put
   // the Djinni back 32 pixels north of the leader, not at its template's
   // position.
@@ -65,30 +65,30 @@ void Field_RequestDjinnBattle(s32 flag, s32 no) {
 }
 
 /// Sets the map and warp destination that the field goes to next
-/// (gGameState.nextMap and nextWarpDest). About 30 maps and the Battle Arena
+/// (gSaveBlock.nextMap and nextWarpDest). About 30 maps and the Battle Arena
 /// reach it through FieldScript_SetNextDestinationFar.
 void FieldScript_SetNextDestination(s32 mapId, s32 warpDest) {
-  gGameState.nextMap = mapId;
-  gGameState.nextWarpDest = warpDest;
+  gSaveBlock.nextMap = mapId;
+  gSaveBlock.nextWarpDest = warpDest;
 }
 
 /// Sets where the party wakes up after losing a battle
-/// (gGameState.defeatMap and defeatWarpDest). The maps before scripted
+/// (gSaveBlock.defeatMap and defeatWarpDest). The maps before scripted
 /// battles (Colosso, the Vault, Vale, the Aerie) and the Battle Arena reach it
 /// through FieldScript_SetDefeatDestinationFar.
 void FieldScript_SetDefeatDestination(s32 mapId, s32 warpDest) {
-  gGameState.defeatMap = mapId;
-  gGameState.defeatWarpDest = warpDest;
+  gSaveBlock.defeatMap = mapId;
+  gSaveBlock.defeatWarpDest = warpDest;
 }
 
 /// Makes the script leave for warp destination warpDest of map mapId: sets
-/// gGameState.mapId and warpDest and raises the warp request WARP_NONE (999),
+/// gSaveBlock.mapId and warpDest and raises the warp request WARP_NONE (999),
 /// so the map loop leaves on its next pass. Only Tolbi's spring reaches it,
 /// through FieldScript_RequestDestinationFar.
 void FieldScript_RequestDestination(u16 mapId, u16 warpDest) {
   struct FieldWork *work = gFieldWork;
-  gGameState.mapId = mapId;
-  gGameState.warpDest = warpDest;
+  gSaveBlock.mapId = mapId;
+  gSaveBlock.warpDest = warpDest;
   work->warp = 999;
 }
 

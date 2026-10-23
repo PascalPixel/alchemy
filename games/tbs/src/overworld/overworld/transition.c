@@ -337,7 +337,7 @@ void ScreenTransition_UpdateScanlineTable(void) {
     cameraY = viewInverse[1] & 0xffff0000;
 #endif
     // Centred on the leader's place on screen, 16 pixels above its feet.
-    object = ObjectEvent_GetByLocalId(gGameState.leaderLocalId);
+    object = ObjectEvent_GetByLocalId(gSaveBlock.leaderLocalId);
     centerX = (object->x - ax) / 0x10000;
     centerY = ((object->z - object->y) - cameraY) / 0x10000 - 16;
     // The frame counter is read here, where WINDOW_TRANSITION_RIPPLE forms
@@ -454,7 +454,7 @@ void ScreenTransition_UpdateScanlineTable(void) {
     ax = viewLeader[0] & 0xffff0000;
     cameraY = viewLeader[1] & 0xffff0000;
 #endif
-    object = ObjectEvent_GetByLocalId(gGameState.leaderLocalId);
+    object = ObjectEvent_GetByLocalId(gSaveBlock.leaderLocalId);
     centerX = (object->x - ax) / 0x10000;
     centerY = ((object->z - object->y) - cameraY) / 0x10000 - 16;
     // As in WINDOW_TRANSITION_LEADER_INVERSE, the frame counter is read and
@@ -504,7 +504,7 @@ void ScreenTransition_UpdateScanlineTable(void) {
     ax = viewInverse7[0] & 0xffff0000;
     cameraY = viewInverse7[1] & 0xffff0000;
 #endif
-    object = ObjectEvent_GetByLocalId(gGameState.leaderLocalId);
+    object = ObjectEvent_GetByLocalId(gSaveBlock.leaderLocalId);
     centerX = (object->x - ax) / 0x10000;
     // Centred 8 pixels above the leader's feet, not 16 as in
     // WINDOW_TRANSITION_LEADER.

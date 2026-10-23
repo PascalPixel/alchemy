@@ -39,7 +39,7 @@
 #include "mem.h"
 #include "window.h"
 #include "item.h"
-#include "game_state.h"
+#include "save_block.h"
 #include "text/msg_ids.h"
 #include "songs.h"
 #include "audio_engine_symbols.h"
@@ -196,7 +196,7 @@ static void MainMenu_LoadBackground(void) {
   {
     struct ObjectEvent *leader;
 
-    leader = ObjectEvent_GetById(gGameState.leaderLocalId);
+    leader = ObjectEvent_GetById(gSaveBlock.leaderLocalId);
     leader->motionFlags = 0;
   }
 }
@@ -374,12 +374,12 @@ static s32 MainMenu_GetSaveRecoveryBlockMask(void) {
   if (GameFlag_Get(FLAG_RETREAT_BLOCKED) == 0) {
     return 0;
   }
-  if (gGameState.mapType == MAP_TYPE_TOWN) {
+  if (gSaveBlock.mapType == MAP_TYPE_TOWN) {
     return 0;
   }
   // -1 unless the map is the world map: -d | d has its top bit set for any
   // d but 0.
-  mapDifference = gGameState.mapId ^ (s32)&MapId_WorldMap;
+  mapDifference = gSaveBlock.mapId ^ (s32)&MapId_WorldMap;
   return -((u32)(-mapDifference | mapDifference) >> 31);
 }
 
@@ -451,7 +451,7 @@ s32 MainMenu_Run(void) {
   // Warp destination 2, after the credits (Title_Run): save the cleared game,
   // then the world map's warp destination 72. Cancelling the file choice asks
   // again.
-  if (gGameState.warpDest == 2) {
+  if (gSaveBlock.warpDest == 2) {
   L_ask:
     FieldMessage_Show(MsgSaveAdventureQuestion, 5);
     v7 = FieldYesNo_Ask(1);
@@ -460,7 +460,7 @@ s32 MainMenu_Run(void) {
       FieldMessage_Show(MsgSaveAdventureQuestion + 1, 1);
       // Marks the file cleared (SaveFileSummary's sendFlag): its data can be
       // sent, and the message says it cannot be continued.
-      gGameState.sendFlag = 1;
+      gSaveBlock.sendFlag = 1;
       v7 = Save_ToChosenFile();
       if (v7 == -1) {
         goto L_ask;
@@ -484,7 +484,7 @@ menu_top:;
   // No backup memory: in debug mode, say so and turn idle sleep on.
   if (v6 < 0) {
     if (gDebugMode != 0) {
-      gGameState.idleSleepEnabled = 1;
+      gSaveBlock.idleSleepEnabled = 1;
       gIdleSleepEnabled = 1;
       FieldMessage_ShowCentered(MsgNoBackupMemory, CENTERED_MESSAGE_WINDOW, 8);
     }
@@ -510,8 +510,8 @@ menu_top:;
     // Hidden button codes expand the list of names offered for a new game:
     // Isaac alone, with the first code to Mia, with the second to Sheba. B on
     // the first name goes back to the menu.
-    GameState_InitializeDefaults();
-    WindowColor_Apply(gGameState.windowColor[0], gGameState.windowColor[1]);
+    SaveBlock_InitializeDefaults();
+    WindowColor_Apply(gSaveBlock.windowColor[0], gSaveBlock.windowColor[1]);
     v5 = 1;
     v7 = 0;
     for (;;) {
@@ -535,8 +535,8 @@ menu_top:;
       }
     }
     Party_StartChildhood();
-    gGameState.mapId = (s32)&MapId_ValeInteriorsInn;
-    gGameState.warpDest = 20;
+    gSaveBlock.mapId = (s32)&MapId_ValeInteriorsInn;
+    gSaveBlock.warpDest = 20;
     goto leave;
   }
   // Continue a file where it was saved, except: a file from another build of
@@ -546,14 +546,14 @@ menu_top:;
   // the two chosen restarts. XXX: their reader is unknown; it would test them
   // by number in a map's event table or script, or read flag byte 39 whole.
   if (v6 == 1) {
-    struct GameState *state;
+    struct SaveBlock *state;
 
     v6 = Save_LoadRecordIntoWork(1);
     if (v6 == -1) {
       goto menu_top;
     }
     Script_SetFlag(FLAG_KEEP_PARTY_POSITION);
-    state = &gGameState;
+    state = &gSaveBlock;
     WindowColor_Apply(state->windowColor[0], state->windowColor[1]);
     if (state->buildStamp != Runtime_GetBuildStampTime()) {
       state->mapId = state->savedMap;
@@ -608,7 +608,7 @@ menu_top:;
     if (v6 == -1) {
       goto menu_top;
     }
-    gGameState.leaderLocalId = 0;
+    gSaveBlock.leaderLocalId = 0;
     if (Script_GetFlag(FLAG_COLOSSO_HOLDS_EQUIPMENT) != 0) {
       InventorySnapshot_Restore();
       Party_RemoveMember(0);
@@ -620,7 +620,7 @@ menu_top:;
       Party_AddMember(2);
       Party_AddMember(3);
     }
-    WindowColor_Apply(gGameState.windowColor[0], gGameState.windowColor[1]);
+    WindowColor_Apply(gSaveBlock.windowColor[0], gSaveBlock.windowColor[1]);
     GameFlag_Clear(FLAG_KEEP_PARTY_POSITION);
     GameFlag_Clear(FLAG_MENU_OPEN);
     GameFlag_Set(FLAG_IN_BATTLE_ARENA);
@@ -638,7 +638,7 @@ menu_top:;
     if (v6 == -1) {
       goto menu_top;
     }
-    WindowColor_Apply(gGameState.windowColor[0], gGameState.windowColor[1]);
+    WindowColor_Apply(gSaveBlock.windowColor[0], gSaveBlock.windowColor[1]);
   link_select:;
     v6 = IconMenu_ChooseSendOption(RESOURCE_LAYOUT_TRANSFER_METHOD);
     if (v6 == -1) {
@@ -1209,9 +1209,9 @@ static s32 MainMenu_PackPasswordData(s32 unused, s32 mode, u8 *out) {
         }
       }
     }
-    out[165] = (u32)gGameState.coins >> 16;
-    out[166] = (u32)gGameState.coins >> 8;
-    out[167] = gGameState.coins;
+    out[165] = (u32)gSaveBlock.coins >> 16;
+    out[166] = (u32)gSaveBlock.coins >> 8;
+    out[167] = gSaveBlock.coins;
   }
 
   // The two larger forms include the packed base-stat rows. Each pass packs

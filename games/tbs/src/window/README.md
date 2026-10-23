@@ -206,7 +206,7 @@ stored one above its value.
 | `MESSAGE_LINE_SPACING` | 10 | `TEXT_LINE_SPACING`, with its operand |
 | `MESSAGE_LOCALIZED_WORD` | 13 | German: a counted noun; Italian: a gender ending; Spanish and French: the plural suffix |
 | `MESSAGE_WINDOW_EFFECT` | 15 | `TEXT_WINDOW_STATE`, with its operand: the window effect to run |
-| `MESSAGE_PROTAGONIST_NAME` | 16 | the letters of the leader's name (`gGameState.leaderLocalId`) |
+| `MESSAGE_PROTAGONIST_NAME` | 16 | the letters of the leader's name (`gSaveBlock.leaderLocalId`) |
 
 ## The text buffer
 
@@ -292,7 +292,7 @@ share = 3 + 5 × min(VBlanks, 2)    → 8 on time, 13 after a late frame
 `voiceSound`, chosen by the character's code.
 
 The speed tables are in `message_speed.c`, indexed by
-`gGameState.messageSpeed`, 0 to 2 from slowest to fastest; the codes a
+`gSaveBlock.messageSpeed`, 0 to 2 from slowest to fastest; the codes a
 text printer runs are in `window_internal.h`, and codes from `TEXT_SPACE` up are
 characters.
 

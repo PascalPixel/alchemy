@@ -60,7 +60,7 @@
 ///
 /// Open questions: none.
 
-#include "game_state.h"
+#include "save_block.h"
 #include "version.h"
 #include "heap_slots.h"
 #include "unit/import.h"
@@ -235,7 +235,7 @@ static void CrossboneIsle_DrawLogPuzzleFootprints(void);
 UNUSED static void CrossboneIsle_UnusedCallback(void) {}
 
 const struct MapWarpDest *Map_GetWarpDests(void) {
-  s16 mapId = gGameState.mapId;
+  s16 mapId = gSaveBlock.mapId;
 
   if (mapId == (s32)&MapId_CrossboneIsle) {
     return gCrossboneIsle_IsleWarpDests;
@@ -260,7 +260,7 @@ const struct MapWarpRegion *Map_GetWarpRegions(void) { return NULL; }
 const u32 *Map_GetWarps(void) { return gCrossboneIsleWarps; }
 
 const struct ObjectEventTemplate *Map_GetObjectEventTemplates(void) {
-  s16 mapId = gGameState.mapId;
+  s16 mapId = gSaveBlock.mapId;
 
   if (mapId == (s32)&MapId_CrossboneIsle) {
     return gCrossboneIsle_IsleObjectEventTemplates;
@@ -310,7 +310,7 @@ static void CrossboneIsle_SpawnPillarMovedBurst(s32 objectId) {
 static void EventScript_FightDeadbeard(void) {
 
   SCRIPT_START();
-  FieldScript_SetNextDestination(gGameState.mapId, WARP_DEST_AFTER_BATTLE);
+  FieldScript_SetNextDestination(gSaveBlock.mapId, WARP_DEST_AFTER_BATTLE);
   Battle_SetType(BATTLE_TYPE_SCRIPTED);
   Field_RequestBattleFromEncounterTable(
       ENCOUNTER_ZONE_CROSSBONE_ISLE_LAST_GUARDS, 5);
@@ -318,7 +318,7 @@ static void EventScript_FightDeadbeard(void) {
 }
 
 const struct MapEvent *Map_GetEvents(void) {
-  s16 mapId = gGameState.mapId;
+  s16 mapId = gSaveBlock.mapId;
 
   if (mapId == (s32)&MapId_CrossboneIsle) {
     return gCrossboneIsle_IsleEvents;
@@ -364,7 +364,7 @@ s32 Map_Initialize(void) {
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   // CrossboneIsleFloatingLogs's sliding logs restore their map footprints
   // alone.
-  mapId = gGameState.mapId;
+  mapId = gSaveBlock.mapId;
   if (mapId == (s32)&MapId_CrossboneIsleFloatingLogs) {
     CrossboneIsle_DrawLogPuzzleFootprints();
     return 0;
@@ -375,8 +375,8 @@ s32 Map_Initialize(void) {
       MapGrid_CopyCellAttributes(0, 2, 1, 1, 15, 40);
       TreasureSpot_SetPosition(101, PIXELS(216), PIXELS(648));
     }
-    if (gGameState.mapId == mapId) {
-      if (gGameState.warpDest != WARP_DEST_AFTER_BATTLE) {
+    if (gSaveBlock.mapId == mapId) {
+      if (gSaveBlock.warpDest != WARP_DEST_AFTER_BATTLE) {
         if (GameFlag_Get(FLAG_CROSSBONE_ISLE_DEADBEARD_DEFEATED) == 0) {
           return 0;
         }
@@ -387,7 +387,7 @@ s32 Map_Initialize(void) {
       return 0;
     }
   }
-  current = gGameState.mapId;
+  current = gSaveBlock.mapId;
   if (current == (s32)&MapId_CrossboneIsle) {
     CrossboneIsle_RestoreIvy();
     ObjectEvent_Get(LOCALID_ISLE_NUT)->targetX = PIXELS(129);
@@ -446,11 +446,11 @@ s32 Map_Initialize(void) {
       TreasureSpot_SetPosition(100, PIXELS(600), PIXELS(168));
     }
   }
-  current = gGameState.mapId;
+  current = gSaveBlock.mapId;
   if (current >= first) {
     if (current <= (s32)&MapId_CrossboneIsleNinthFloor) {
       CrossboneIsle_RestoreSunkPillar();
-      if (gGameState.warpDest == WARP_DEST_AFTER_BATTLE) {
+      if (gSaveBlock.warpDest == WARP_DEST_AFTER_BATTLE) {
         CrossboneIsle_OpenEastDoorAfterBattle();
       }
     }
@@ -466,7 +466,7 @@ static void CrossboneIsle_RestoreSunkPillar(void) {
 
   objectEvent = ObjectEvent_Get(LOCALID_SINKING_PILLAR);
   cleared = GameFlag_Get(
-      (gGameState.mapId + (FLAG_CROSSBONE_ISLE_FIRST_PASSAGE_OPENED -
+      (gSaveBlock.mapId + (FLAG_CROSSBONE_ISLE_FIRST_PASSAGE_OPENED -
                            (s32)&MapId_CrossboneIsleFirstFloor)));
   if (cleared != 0) {
     OBJECT_POSITION_SET(LOCALID_SINKING_PILLAR, 650, 168);
@@ -488,7 +488,7 @@ static void CrossboneIsle_RestoreSunkPillar(void) {
 static void EventScript_MovePillar(void) {
   struct ObjectEvent *pillar;
   s16 *mapNumber;
-  struct GameState *state;
+  struct SaveBlock *state;
   s32 column;
 
   pillar = ObjectEvent_GetById(LOCALID_SINKING_PILLAR);
@@ -498,9 +498,9 @@ static void EventScript_MovePillar(void) {
   }
 
 #if TBS_PATCH_1
-  // Through state, the map's address is built as the game state's plus an
-  // offset, as the bytes have it; &gGameState.mapId folds into one literal.
-  state = &gGameState;
+  // Through state, the map's address is built as the save block's plus an
+  // offset, as the bytes have it; &gSaveBlock.mapId folds into one literal.
+  state = &gSaveBlock;
   mapNumber = &state->mapId;
   if (GameFlag_Get(*mapNumber + (FLAG_CROSSBONE_ISLE_FIRST_PASSAGE_OPENED -
                                  (s32)&MapId_CrossboneIsleFirstFloor)) != 0) {
@@ -526,7 +526,7 @@ static void EventScript_MovePillar(void) {
   MapGrid_CopyCellAttributes(42, 10, 1, 1, column, 10);
 
 #if !TBS_PATCH_1
-  state = &gGameState;
+  state = &gSaveBlock;
   mapNumber = &state->mapId;
 #endif
   GameFlag_Set(*mapNumber + (FLAG_CROSSBONE_ISLE_FIRST_PASSAGE_OPENED -
@@ -555,15 +555,15 @@ static void EventScript_OpenWestDoor(void) {
 /// back at WARP_DEST_AFTER_BATTLE; once they are beaten, the door opens onto
 /// the side room.
 static void EventScript_OpenEastDoor(void) {
-  if (GameFlag_Get(gGameState.mapId +
+  if (GameFlag_Get(gSaveBlock.mapId +
                    (FLAG_CROSSBONE_ISLE_FIRST_EAST_DOOR_MONSTERS_DEFEATED -
                     (s32)&MapId_CrossboneIsleFirstFloor)) == 0) {
     SCRIPT_START();
-    FieldScript_SetNextDestination(gGameState.mapId, WARP_DEST_AFTER_BATTLE);
+    FieldScript_SetNextDestination(gSaveBlock.mapId, WARP_DEST_AFTER_BATTLE);
     Battle_SetType(BATTLE_TYPE_SCRIPTED);
     // The first four rooms use ENCOUNTER_ZONE_CROSSBONE_ISLE_FIRST_GUARDS; the
     // next five use ENCOUNTER_ZONE_CROSSBONE_ISLE_LAST_GUARDS.
-    switch (gGameState.mapId - (s32)&MapId_CrossboneIsleFirstFloor) {
+    switch (gSaveBlock.mapId - (s32)&MapId_CrossboneIsleFirstFloor) {
     case 0:
       Field_RequestBattleFromEncounterTable(
           ENCOUNTER_ZONE_CROSSBONE_ISLE_FIRST_GUARDS, 0);
@@ -616,7 +616,7 @@ static void CrossboneIsle_OpenEastDoorAfterBattle(void) {
   OBJECT_SPEED(LOCALID_PARTY_LEADER, PIXELS(2) / 5, PIXELS(1) / 5);
   FieldScript_StartScreenTransition();
   FieldScript_WaitTransitionFrames();
-  GameFlag_Set((gGameState.mapId +
+  GameFlag_Set((gSaveBlock.mapId +
                 (FLAG_CROSSBONE_ISLE_FIRST_EAST_DOOR_MONSTERS_DEFEATED -
                  (s32)&MapId_CrossboneIsleFirstFloor)));
   WAIT(30);
@@ -777,7 +777,7 @@ static void CrossboneIsle_MoveSelectedObjectEventAndLog(s32 localId,
   s32 fixedX;
   s32 fixedZ;
 
-  selectedObjectEvent = ObjectEvent_GetById(gGameState.leaderLocalId);
+  selectedObjectEvent = ObjectEvent_GetById(gSaveBlock.leaderLocalId);
   logObjectEvent = ObjectEvent_GetById(localId);
   SCRIPT_START();
   {

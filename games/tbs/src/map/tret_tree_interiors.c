@@ -60,7 +60,7 @@
 
 #include "speaker.h"
 #include "version.h"
-#include "game_state.h"
+#include "save_block.h"
 #include "map_ids.h"
 #include "unit/map/tret_tree_interiors.h"
 #include "unit/map/common/effect_spawn.h"
@@ -196,9 +196,9 @@ static void TretTreeInteriors_StepOnCocoon(s32 cocoonFlag, s32 sourceColumn,
   struct ObjectEvent *objectEvent;
   s32 spinFrame;
 
-  destinationColumn = (gGameState.x >> 20) + 64;
-  destinationRow = gGameState.z >> 20;
-  leaderLocalId = gGameState.leaderLocalId;
+  destinationColumn = (gSaveBlock.x >> 20) + 64;
+  destinationRow = gSaveBlock.z >> 20;
+  leaderLocalId = gSaveBlock.leaderLocalId;
   objectEvent = ObjectEvent_GetById(leaderLocalId);
   if (warpDest == *sLastCocoon)
     return;
@@ -745,7 +745,7 @@ s32 TretTreeInteriors_EnterRoom(void) {
   }
   ObjectGroup_ConfigureChildValue(LOCALID_SECOND_TRET, 15);
   TretTreeInteriors_PlayGesture(TRET_GESTURE_CLOSE_EYES);
-  if (gGameState.warpDest != TRET_TREE_INTERIORS_AFTER_FIGHT_TRET)
+  if (gSaveBlock.warpDest != TRET_TREE_INTERIORS_AFTER_FIGHT_TRET)
     FieldScheduler_AddCallback(TretPalette_UpdateMapTint, TASK_PRIORITY_MAP);
   if (GameFlag_Get(FLAG_TRET_DEFEATED)) {
     Engine_ObjectEventSetPosition(LOCALID_SECOND_TRET, 0, 0);
@@ -770,8 +770,8 @@ s32 TretTreeInteriors_EnterRoom(void) {
   TretTreeInteriors_ApplyPostBattleState(0);
   work = HEAP_SLOT_BLOCK(HEAP_SLOT_FIELD);
   work->transition = MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_NOISE);
-  warpDest = gGameState.warpDest;
-  leaderLocalId = gGameState.leaderLocalId;
+  warpDest = gSaveBlock.warpDest;
+  leaderLocalId = gSaveBlock.leaderLocalId;
   objectEvent = ObjectEvent_GetById(leaderLocalId);
   // Warp destinations 20, 30, 40 and 50: the leader falls on through the room,
   // to the warp destination numbered ten lower. Warp destination 10: the leader

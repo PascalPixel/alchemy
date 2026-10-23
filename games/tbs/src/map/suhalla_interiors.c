@@ -36,7 +36,7 @@
 /// Open questions:
 /// - None.
 
-#include "game_state.h"
+#include "save_block.h"
 #include "script_layer.h"
 #include "unit/import.h"
 #include "unit/map/suhalla_interiors.h"
@@ -542,7 +542,7 @@ const struct MapEvent *Map_GetEvents(void) {
 /// FLAG_BABI_SPOKE_AFTER_COLOSSO.
 s32 Map_Initialize(void) {
   struct ObjectEvent *objectEvent;
-  if (gGameState.warpDest == SUHALLA_INTERIORS_AFTER_BABI_SPOKE)
+  if (gSaveBlock.warpDest == SUHALLA_INTERIORS_AFTER_BABI_SPOKE)
     GameFlag_Set(FLAG_BABI_SPOKE_AFTER_COLOSSO);
   gFieldWork->transition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);

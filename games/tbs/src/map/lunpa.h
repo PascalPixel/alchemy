@@ -141,7 +141,7 @@ enum GateLocalId {
 /// How the switch's sparkle is stretched while Reveal shows it.
 enum { SPARKLE_SCALE_X = 0x13333, SPARKLE_SCALE_Y = 0x18000 };
 
-/// Where Retreat at the gates sends the party (GameState.retreatWarpDest).
+/// Where Retreat at the gates sends the party (SaveBlock.retreatWarpDest).
 enum { GATE_RETREAT_WARP_DEST = 10 };
 
 enum CatchLine {

@@ -7,7 +7,7 @@
 /// TOLBI_SHIP_MAST_TO_TOLBI_SHIP_DECK. The warp destinations from
 /// TOLBI_SHIP_MAST_FROM_TOLBI_SHIP_DECK_COURSE_CLEAR on are the voyage's
 /// cutscenes here, each leading on into the next; during the attacks the
-/// map a defeat returns to (gGameState.savedMap) is set to
+/// map a defeat returns to (gSaveBlock.savedMap) is set to
 /// TOLBI_SHIP_INTERIORS_PASSENGER_HOLD_AFTER_DEFEAT, which starts the voyage
 /// over. While the ship is under way (rowing, or at sea after the first
 /// attack, and neither at the island nor at Tolbi) the setup sways the view.
@@ -53,7 +53,7 @@
 ///   as sixteen halfwords they form no table any code here indexes.
 
 #include "action_script.h"
-#include "game_state.h"
+#include "save_block.h"
 #include "map_ids.h"
 #include "unit/import.h"
 #include "unit/map/tolbi_ship_mast.h"
@@ -368,7 +368,7 @@ s32 TolbiShipMast_Initialize(void) {
     ObjectEvent_SetPosition(LOCALID_LOOKOUT, PIXELS(164), PIXELS(328));
   }
   // The ship's scripted warp destinations resume their matching lookout scenes.
-  switch (gGameState.warpDest) {
+  switch (gSaveBlock.warpDest) {
   case TOLBI_SHIP_MAST_FROM_TOLBI_SHIP_DECK:
     if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) == 0) {
       leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
@@ -391,18 +391,18 @@ s32 TolbiShipMast_Initialize(void) {
     }
     break;
   case TOLBI_SHIP_MAST_FROM_WORLD_MAP_FIRST_ATTACK:
-    gGameState.savedMap = (s32)&MapId_TolbiShipInteriors;
-    gGameState.savedWarpDest = TOLBI_SHIP_INTERIORS_PASSENGER_HOLD_AFTER_DEFEAT;
+    gSaveBlock.savedMap = (s32)&MapId_TolbiShipInteriors;
+    gSaveBlock.savedWarpDest = TOLBI_SHIP_INTERIORS_PASSENGER_HOLD_AFTER_DEFEAT;
     TolbiShipMast_RunAvastScene();
     break;
   case TOLBI_SHIP_MAST_FROM_WORLD_MAP_SECOND_ATTACK:
-    gGameState.savedMap = (s32)&MapId_TolbiShipInteriors;
-    gGameState.savedWarpDest = TOLBI_SHIP_INTERIORS_PASSENGER_HOLD_AFTER_DEFEAT;
+    gSaveBlock.savedMap = (s32)&MapId_TolbiShipInteriors;
+    gSaveBlock.savedWarpDest = TOLBI_SHIP_INTERIORS_PASSENGER_HOLD_AFTER_DEFEAT;
     TolbiShipMast_ShowMonsters();
     break;
   case TOLBI_SHIP_MAST_FROM_WORLD_MAP_THIRD_ATTACK:
-    gGameState.savedMap = (s32)&MapId_TolbiShipInteriors;
-    gGameState.savedWarpDest = TOLBI_SHIP_INTERIORS_PASSENGER_HOLD_AFTER_DEFEAT;
+    gSaveBlock.savedMap = (s32)&MapId_TolbiShipInteriors;
+    gSaveBlock.savedWarpDest = TOLBI_SHIP_INTERIORS_PASSENGER_HOLD_AFTER_DEFEAT;
     TolbiShipMast_RunLandingSequence();
     break;
   case TOLBI_SHIP_MAST_FROM_WORLD_MAP_LAND_HO:
@@ -882,8 +882,8 @@ static void TolbiShipMast_AnnounceLand(void) {
   FieldScript_WaitTransitionFrames();
   // The rowing balance picks where the ship comes in: exactly 11 takes
   // TOLBI_SHIP_MAST_TO_TOLBI_SHIP_DECK_OFF_COURSE, off course to the island.
-  gGameState.savedMap = (s32)&MapId_TolbiShipInteriors;
-  gGameState.savedWarpDest =
+  gSaveBlock.savedMap = (s32)&MapId_TolbiShipInteriors;
+  gSaveBlock.savedWarpDest =
       TOLBI_SHIP_INTERIORS_PASSENGER_HOLD_FROM_ROWING_DECK;
   if (TolbiShipMast_GetRowingBalance() == 11) {
     Engine_ScriptRequestWarp(TOLBI_SHIP_MAST_TO_TOLBI_SHIP_DECK_OFF_COURSE);

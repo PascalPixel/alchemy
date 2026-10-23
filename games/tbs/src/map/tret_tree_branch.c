@@ -52,7 +52,7 @@
 #include "task.h"
 #include "io_reg.h"
 #include "irq.h"
-#include "game_state.h"
+#include "save_block.h"
 #include "ability_ids.h"
 #include "script_layer.h"
 #include "engine_call.h"
@@ -109,7 +109,7 @@ static void TretTreeBranch_ShiftLeaderAndCameraByCells(s32 cellOffsetX,
   s32 offsetZ = cellOffsetZ;
   s32 groundHeight;
 
-  objectEvent = ObjectEvent_GetById(gGameState.leaderLocalId);
+  objectEvent = ObjectEvent_GetById(gSaveBlock.leaderLocalId);
   // Multiplication keeps negative cell offsets defined; every caller is within
   // six cells, so the fixed-point result fits in s32.
   offsetX *= PIXELS(16);

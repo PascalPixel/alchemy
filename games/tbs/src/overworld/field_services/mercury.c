@@ -102,10 +102,10 @@ void FieldEffect_RunMercuryDjinnCapture(s32 djinniId) {
   if (resourceId != 96)
     VramCache_FreeEntry(resourceId);
   WaitFrames(10);
-  ObjectMotion_ArmCallback(gGameState.leaderLocalId, 0x4000, 0);
+  ObjectMotion_ArmCallback(gSaveBlock.leaderLocalId, 0x4000, 0);
   WaitFrames(20);
   ObjectDispatch_SelectAnimationFar(
-      ObjectEvent_GetById(gGameState.leaderLocalId), 28);
+      ObjectEvent_GetById(gSaveBlock.leaderLocalId), 28);
   WaitFrames(20);
 
   // The droplets (object 240), one a frame, from where the Djinni was on

@@ -34,7 +34,7 @@
 ///
 /// Open questions: none.
 
-#include "game_state.h"
+#include "save_block.h"
 #include "map_ids.h"
 #include "unit/map/mccoy_palace.h"
 #include "unit/overworld/overworld.h"
@@ -219,7 +219,7 @@ const u32 *Map_GetWarps(void) { return gMcCoyPalaceWarps; }
 const struct ObjectEventTemplate *Map_GetObjectEventTemplates(void) {
   struct ObjectEventTemplate *templates;
 
-  if (gGameState.mapId == (s32)&MapId_McCoyPalace) {
+  if (gSaveBlock.mapId == (s32)&MapId_McCoyPalace) {
     templates = gMcCoyPalaceObjectEventTemplates;
     Map_AssignViewFlags(templates);
 
@@ -245,7 +245,7 @@ const struct ObjectEventTemplate *Map_GetObjectEventTemplates(void) {
 
 /// What the party can talk to and search in the palace.
 const struct MapEvent *Map_GetEvents(void) {
-  if (gGameState.mapId == (s32)&MapId_McCoyPalace) {
+  if (gSaveBlock.mapId == (s32)&MapId_McCoyPalace) {
     return gMcCoyPalaceEvents;
   }
   return gMcCoyPalaceNoEvents;
@@ -581,9 +581,9 @@ s32 Map_Initialize(void) {
   // A first audience and a return visit have different greetings.
   if (GameFlag_Get(FLAG_MCCOY_PALACE_BARRICADE_NEEDS_NO_KEY) == 0 &&
       GameFlag_Get(FLAG_KOLIMA_CURSE_LIFTED) == 0) {
-    if (gGameState.warpDest == MCCOY_PALACE_FROM_MCCOY_PALACE_GROUNDS_EAST) {
+    if (gSaveBlock.warpDest == MCCOY_PALACE_FROM_MCCOY_PALACE_GROUNDS_EAST) {
       EventScript_AudienceWithMcCoy();
-    } else if (gGameState.warpDest ==
+    } else if (gSaveBlock.warpDest ==
                    MCCOY_PALACE_ENTRANCE_ROOM_FROM_MCCOYS_ROOM &&
                GameFlag_Get(FLAG_CAPTAIN_SEEING_PARTY_OUT) != 0) {
       EventScript_CaptainHintsAtBarricade();
@@ -592,7 +592,7 @@ s32 Map_Initialize(void) {
     rewardTaken = GameFlag_Get(FLAG_MCCOY_PALACE_REWARD_TAKEN);
     if (rewardTaken != 0) {
     } else {
-      if (gGameState.warpDest == MCCOY_PALACE_FROM_MCCOY_PALACE_GROUNDS_EAST) {
+      if (gSaveBlock.warpDest == MCCOY_PALACE_FROM_MCCOY_PALACE_GROUNDS_EAST) {
         if (GameFlag_Get(FLAG_MCCOY_PALACE_PARTY_REWARDED) == 0) {
           curseLifted = GameFlag_Get(FLAG_KOLIMA_CURSE_LIFTED);
           if (curseLifted != 0) {
@@ -601,7 +601,7 @@ s32 Map_Initialize(void) {
         }
       } else {
         // Restore the displayed chest row after reloading the treasure room.
-        if (gGameState.warpDest ==
+        if (gSaveBlock.warpDest ==
             MCCOY_PALACE_TREASURE_ROOM_FROM_ENTRANCE_ROOM) {
           if (GameFlag_Get(FLAG_REWARD_OFFERED) != 0) {
             if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) != 0) {

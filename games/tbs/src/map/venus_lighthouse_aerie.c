@@ -57,7 +57,7 @@
 /// Open questions: none.
 
 #include "action_script.h"
-#include "game_state.h"
+#include "save_block.h"
 #include "vram_cache.h"
 #include "unit/import.h"
 #include "unit/map/venus_lighthouse_aerie.h"
@@ -455,7 +455,7 @@ s32 VenusLighthouseAerie_Initialize(void) {
     platformId++;
   } while (platformId <= LOCALID_LAST_PLATFORM);
 
-  warpDest = gGameState.warpDest;
+  warpDest = gSaveBlock.warpDest;
 
   switch (warpDest) {
   case VENUS_LIGHTHOUSE_AERIE_FROM_VENUS_LIGHTHOUSE_FOURTH_FLOOR:

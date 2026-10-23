@@ -48,7 +48,7 @@
 /// Open questions: none.
 
 #include "action_script.h"
-#include "game_state.h"
+#include "save_block.h"
 #include "unit/import.h"
 #include "unit/map/vale_interiors_shops.h"
 #include "unit/overworld/overworld.h"
@@ -441,7 +441,7 @@ s32 ValeInteriorsShops_Initialize(void) {
   }
   // The returning party gets the household reunion only on its first visit.
   if (GameFlag_Get(FLAG_KALAY_REACHED) != 0) {
-    if (gGameState.warpDest == VALE_INTERIORS_SHOPS_FROM_VALE_EAST) {
+    if (gSaveBlock.warpDest == VALE_INTERIORS_SHOPS_FROM_VALE_EAST) {
       if (GameFlag_Get(FLAG_GARET_CAME_HOME) == 0) {
         EventScript_GaretComesHome();
       }
@@ -449,7 +449,7 @@ s32 ValeInteriorsShops_Initialize(void) {
     ObjectEvent_GetById(LOCALID_GARETS_FATHER)->collisionFlags |= 0x80;
   }
   // Once Jenna is taken, her grandmother lies sick in bed.
-  if (gGameState.warpDest == VALE_INTERIORS_SHOPS_FROM_VALE_NORTH) {
+  if (gSaveBlock.warpDest == VALE_INTERIORS_SHOPS_FROM_VALE_NORTH) {
     if (GameFlag_Get(FLAG_VALE_PARTY_LEFT) != 0) {
       Engine_ObjectEventSetPosition(LOCALID_JENNAS_GRANDMOTHER, PIXELS(454),
                                     PIXELS(150));

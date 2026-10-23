@@ -41,7 +41,7 @@
 /// Open questions:
 /// - None.
 
-#include "game_state.h"
+#include "save_block.h"
 #include "map_ids.h"
 #include "script_layer.h"
 #include "unit/map/west_lunpa_cave.h"
@@ -81,7 +81,7 @@ const u32 *Map_GetWarps(void) { return gCaveWarps; }
 
 /// Only the cave map places puddles, Hammet, Bunza and the party members.
 const struct ObjectEventTemplate *Map_GetObjectEventTemplates(void) {
-  if (gGameState.mapId == (s32)&MapId_WestLunpaCave) {
+  if (gSaveBlock.mapId == (s32)&MapId_WestLunpaCave) {
     return gCaveObjectEventTemplates;
   }
   return gCaveNoObjectEventTemplates;
@@ -1029,7 +1029,7 @@ static void Party_RidesWagon(void) {
 s32 Map_Initialize(void) {
   gFieldWork->transition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
-  if (gGameState.mapId == (s32)&MapId_WestLunpaCave) {
+  if (gSaveBlock.mapId == (s32)&MapId_WestLunpaCave) {
     ObjectEvent_SetSpriteFlags(ObjectEvent_GetById(LOCALID_UNUSED_PUDDLE), 0);
     ObjectEvent_SetSpriteFlags(ObjectEvent_GetById(LOCALID_SOUTH_PUDDLE), 0);
     ObjectEvent_SetSpriteFlags(ObjectEvent_GetById(LOCALID_GATE_PUDDLE), 0);

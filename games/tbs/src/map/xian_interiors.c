@@ -33,7 +33,7 @@
 ///   solid and never a target), as Xian does its crates; nothing the player
 ///   sees or meets shows them, so only the authors' intent would explain them.
 
-#include "game_state.h"
+#include "save_block.h"
 #include "unit/map/xian_interiors.h"
 #include "unit/map/common/effect_spawn.h"
 #include "unit/overworld/overworld.h"
@@ -152,7 +152,7 @@ const u32 *XianInteriors_GetWarps(void) { return gXianInteriors_Warps; }
 /// replaces with whether each object event stands inside the view bounds of the
 /// room entered.
 const struct ObjectEventTemplate *XianInteriors_GetObjectEventTemplates(void) {
-  if (gGameState.warpDest ==
+  if (gSaveBlock.warpDest ==
       XIAN_INTERIORS_FROM_FUCHIN_TEMPLE_INTERIORS_FEHS_SCHOOL) {
     return gXianInteriors_SchoolRoomObjectEventTemplates;
   }
@@ -286,7 +286,7 @@ static void XianInteriors_FeizhiThanksParty(void) {
 
 /// The room behind the school has its own map events.
 const struct MapEvent *XianInteriors_GetEvents(void) {
-  if (gGameState.warpDest ==
+  if (gSaveBlock.warpDest ==
       XIAN_INTERIORS_FROM_FUCHIN_TEMPLE_INTERIORS_FEHS_SCHOOL) {
     return gXianInteriors_SchoolRoomEvents;
   }
@@ -304,7 +304,7 @@ s32 XianInteriors_Initialize(void) {
 
   gFieldWork->transition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
-  warpDest = gGameState.warpDest;
+  warpDest = gSaveBlock.warpDest;
   if (warpDest == XIAN_INTERIORS_INN_SOUTH ||
       warpDest == XIAN_INTERIORS_INN_FROM_INN_GUEST_ROOMS) {
     ObjectEvent_CreateConfiguredObject(PIXELS(248), 0, PIXELS(417),

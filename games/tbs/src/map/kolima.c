@@ -56,7 +56,7 @@
 #include "djinn_ids.h"
 #include "flags.h"
 #include "character_ids.h"
-#include "game_state.h"
+#include "save_block.h"
 #include "heap_slots.h"
 #include "map_ids.h"
 #include "unit/map/kolima.h"
@@ -275,7 +275,7 @@ static s32 Kolima_UpdateFallingDebris(struct ObjectScriptContext *interpreter) {
 
 /// Selects the warp destinations of Kolima, Kolima Tunnel or Kolima Bridge.
 const struct MapWarpDest *Kolima_GetWarpDests(void) {
-  s16 mapId = gGameState.mapId;
+  s16 mapId = gSaveBlock.mapId;
 
   if (mapId == (s32)&MapId_KolimaBridge) {
     return gKolimaBridgeWarpDests;
@@ -289,7 +289,7 @@ const struct MapWarpDest *Kolima_GetWarpDests(void) {
 /// Only Kolima Tunnel has regions: its two ways out,
 /// KOLIMA_TUNNEL_TO_KOLIMA_INTERIORS and KOLIMA_TUNNEL_TO_KOLIMA.
 const struct MapWarpRegion *Kolima_GetRegions(void) {
-  if (gGameState.mapId == (s32)&MapId_KolimaTunnel) {
+  if (gSaveBlock.mapId == (s32)&MapId_KolimaTunnel) {
     return gKolimaTunnelRegions;
   }
   return 0;
@@ -305,7 +305,7 @@ const u32 *Kolima_GetWarps(void) { return gKolimaWarps; }
 /// Selects the people of Kolima or Kolima Bridge; Kolima Tunnel has none. In
 /// Kolima the villagers are trees until the curse is lifted.
 const struct ObjectEventTemplate *Kolima_GetObjectEventTemplates(void) {
-  s32 mapId = gGameState.mapId;
+  s32 mapId = gSaveBlock.mapId;
 
   if (mapId == (s32)&MapId_Kolima) {
     if (GameFlag_Get(FLAG_KOLIMA_CURSE_LIFTED) == 0) {
@@ -344,7 +344,7 @@ static void Kolima_GraniteJoins(void) {
 /// Selects Kolima Bridge's map events, or the table Kolima and Kolima Tunnel
 /// share.
 const struct MapEvent *Kolima_GetEvents(void) {
-  if (gGameState.mapId == (s32)&MapId_KolimaBridge) {
+  if (gSaveBlock.mapId == (s32)&MapId_KolimaBridge) {
     return gKolimaBridgeEvents;
   }
   return gKolimaEvents;
@@ -515,7 +515,7 @@ s32 Kolima_Initialize(void) {
   u32 localId;
   const s32 *table;
 
-  mapId = gGameState.mapId;
+  mapId = gSaveBlock.mapId;
 
   if (mapId == (s32)&MapId_KolimaBridge) {
     Kolima_RestoreBridgeState();
@@ -550,7 +550,7 @@ s32 Kolima_Initialize(void) {
   }
 
   if (GameFlag_Get(FLAG_KOLIMA_CURSE_WITNESSED) == 0) {
-    if (gGameState.warpDest == KOLIMA_FROM_WORLD_MAP) {
+    if (gSaveBlock.warpDest == KOLIMA_FROM_WORLD_MAP) {
       Kolima_WitnessForestCurse();
     }
   }

@@ -56,7 +56,7 @@
 #include "action_script.h"
 #include "flags.h"
 #include "version.h"
-#include "game_state.h"
+#include "save_block.h"
 #include "engine_call.h"
 #include "unit/map/suhalla_desert.h"
 #include "unit/map/common/effect_spawn.h"
@@ -195,7 +195,7 @@ SuhallaDesert_ToggleObjectEventActive(struct ObjectScriptContext *interpreter) {
 }
 
 const struct MapWarpDest *Map_GetWarpDests(void) {
-  s16 selector = gGameState.mapId;
+  s16 selector = gSaveBlock.mapId;
 
   if (selector == (s32)&MapId_SuhallaDesertNorth) {
     return gSuhallaDesertNorthWarpDests;
@@ -216,7 +216,7 @@ const u32 *Map_GetWarps(void) { return gSuhallaDesertWarps; }
 
 /// The storms, Iodem, and in the second map Flash and what Reveal shows.
 const struct ObjectEventTemplate *Map_GetObjectEventTemplates(void) {
-  s16 selector = gGameState.mapId;
+  s16 selector = gSaveBlock.mapId;
 
   if (selector == (s32)&MapId_SuhallaDesertNorth) {
     return gSuhallaDesertNorthObjectEventTemplates;
@@ -237,7 +237,7 @@ static void SuhallaDesert_UpdateCaptureTimer(void) {
   struct FieldWork *requests;
   s32 remainingFrames;
 
-  selectedObjectEvent = ObjectEvent_GetById(gGameState.leaderLocalId);
+  selectedObjectEvent = ObjectEvent_GetById(gSaveBlock.leaderLocalId);
   requests = gFieldWork;
   selectedObjectEvent->facing = (gFrameCount << 12);
 
@@ -263,7 +263,7 @@ static void SuhallaDesert_CatchInStorm(s32 stormId) {
 
   // The event-selected object event is pulled toward the storm before being
   // lifted.
-  leaderLocalId = gGameState.leaderLocalId;
+  leaderLocalId = gSaveBlock.leaderLocalId;
   stormIdCopy = stormId;
   selectedObjectEvent = ObjectEvent_GetById(leaderLocalId);
   ObjectEvent_Get(stormIdCopy);
@@ -290,7 +290,7 @@ static void SuhallaDesert_CatchInStorm(s32 stormId) {
     ObjectMotion_CommitCurrentPositionAndActivate(leaderLocalId);
     selectedObjectEvent->velocityY = captureActive;
     selectedObjectEvent->motionFlags = OBJ_EVENT_FLOATS;
-    gGameState.movementMode = LEADER_MOVEMENT_AIRBORNE;
+    gSaveBlock.movementMode = LEADER_MOVEMENT_AIRBORNE;
     GameFlag_Set(FLAG_MAP_TEMP_0F);
     FieldGameFlag_SetByte(FLAG_MAP_TEMP_18, stormIdCopy);
     FieldGameFlag_SetByte(FLAG_MAP_TEMP_10, STORM_CAPTURE_FRAMES);
@@ -350,7 +350,7 @@ static void SuhallaDesert_RaiseStorm(s32 stormId) {
   struct ObjectEvent *leader;
 
   stormIdCopy = stormId;
-  selectedObjectEvent = ObjectEvent_GetById(gGameState.leaderLocalId);
+  selectedObjectEvent = ObjectEvent_GetById(gSaveBlock.leaderLocalId);
   storm = ObjectEvent_GetById(stormIdCopy);
   appearanceRestored = GameFlag_Get(FLAG_STORMS_RISEN);
   leaderX = selectedObjectEvent->x.part.pixel;
@@ -537,7 +537,7 @@ static s32 SuhallaDesert_ChaseLeader(struct ObjectScriptContext *interpreter) {
   s32 dz;
   s32 sparkFrame;
 
-  selectedObjectEvent = ObjectEvent_GetById(gGameState.leaderLocalId);
+  selectedObjectEvent = ObjectEvent_GetById(gSaveBlock.leaderLocalId);
   objectEvent->acceleration = PIXELS(1) / 4;
   objectEvent->speed = PIXELS(3) / 2;
   objectEvent->motionFlags = 0;
@@ -611,17 +611,17 @@ static void EventScript_DouseCastAtStorm(void) {
 /// it is doused for good, and the monster in it attacks.
 /// MapId_SuhallaDesertSouth's fourth and chasing storms hold other monsters.
 static void EventScript_DouseStorm(s32 unused, s32 stormId) {
-  struct GameState *state;
+  struct SaveBlock *state;
 
   // The storm no longer carries the party away.
   if (gFieldWork->raisedEvent == RAISED_STORM_CARRIES_PARTY_AWAY) {
     gFieldWork->raisedEvent = 0;
   }
   GameFlag_Clear(FLAG_MAP_TEMP_0F);
-  if (gGameState.mapId == (s32)&MapId_SuhallaDesertNorth) {
+  if (gSaveBlock.mapId == (s32)&MapId_SuhallaDesertNorth) {
     GameFlag_Set((stormId + FLAG_FIRST_MAP_STORM_DOUSED - LOCALID_FIRST_STORM));
   } else {
-    if (gGameState.mapId == (s32)&MapId_SuhallaDesertSouth) {
+    if (gSaveBlock.mapId == (s32)&MapId_SuhallaDesertSouth) {
       GameFlag_Set(
           (stormId + FLAG_SECOND_MAP_STORM_DOUSED - LOCALID_FIRST_STORM));
     }
@@ -629,7 +629,7 @@ static void EventScript_DouseStorm(s32 unused, s32 stormId) {
   FieldGameFlag_SetByte(FLAG_MAP_TEMP_10, 0);
   Field_RequestBattleFromEncounterTable(ENCOUNTER_ZONE_SCRIPTED, 5);
   Battle_SetType(BATTLE_TYPE_SCRIPTED);
-  state = &gGameState;
+  state = &gSaveBlock;
   if (state->mapId == (s32)&MapId_SuhallaDesertSouth) {
     if (stormId == LOCALID_FOURTH_STORM) {
       Field_RequestBattleFromEncounterTable(ENCOUNTER_ZONE_SCRIPTED, 7);
@@ -641,7 +641,7 @@ static void EventScript_DouseStorm(s32 unused, s32 stormId) {
       }
     }
   }
-  ObjectEvent_GetById(gGameState.leaderLocalId)->motionFlags =
+  ObjectEvent_GetById(gSaveBlock.leaderLocalId)->motionFlags =
       OBJ_EVENT_FOLLOWS_TERRAIN | OBJ_EVENT_FALLS;
 }
 
@@ -657,7 +657,7 @@ static void EventScript_StormCarriesPartyAway(void) {
   s32 frame;
 
   stormId = FieldGameFlag_GetByte(FLAG_MAP_TEMP_18);
-  selectedObjectEvent = ObjectEvent_GetById(gGameState.leaderLocalId);
+  selectedObjectEvent = ObjectEvent_GetById(gSaveBlock.leaderLocalId);
   storm = ObjectEvent_GetById(stormId);
   FieldScript_Start();
   FieldCamera_MoveTo(-1, -1, -1, 0);
@@ -666,7 +666,7 @@ static void EventScript_StormCarriesPartyAway(void) {
 #ifdef BUGFIX
   ObjectDispatch_SetSingleChildFlags(selectedObjectEvent, 0);
 #else
-  ObjectEvent_SetSpriteFlags((struct ObjectEvent *)gGameState.leaderLocalId, 0);
+  ObjectEvent_SetSpriteFlags((struct ObjectEvent *)gSaveBlock.leaderLocalId, 0);
 #endif
   storm->motionFlags = 0;
   selectedObjectEvent->motionFlags = 0;
@@ -683,7 +683,7 @@ static void EventScript_StormCarriesPartyAway(void) {
   FieldScript_WaitTransitionFrames();
   FieldScript_End();
   GameFlag_Set(FLAG_ARRIVE_FALLING);
-  if (gGameState.mapId == (s32)&MapId_SuhallaDesertSouth &&
+  if (gSaveBlock.mapId == (s32)&MapId_SuhallaDesertSouth &&
       FieldGameFlag_GetByte(FLAG_MAP_TEMP_18) == LOCALID_FOURTH_STORM) {
     FieldScript_SetDestination((s32)&MapId_WorldMap,
                                WORLD_MAP_FROM_SUHALLA_DESERT_STORM);
@@ -718,7 +718,7 @@ static void EventScript_RevealEnds(void) {
 static s32 EventScript_RevealEnds(void) {
   s32 removalResult;
 #endif
-  if (gGameState.mapId == (s32)&MapId_SuhallaDesertSouth) {
+  if (gSaveBlock.mapId == (s32)&MapId_SuhallaDesertSouth) {
     ObjectEvent_GetById(LOCALID_REVEALED_PILLAR)->priorityFlags =
         OBJ_EVENT_PRIORITY_UNDERFOOT;
     ObjectEvent_GetById(LOCALID_REVEALED_PILLAR)->motionFlags =
@@ -751,7 +751,7 @@ static void EventScript_RevealStarts(void) {
 /// Psynergy Stone's map object change, and a palette color pulses.
 static s32 EventScript_RevealStarts(void) {
 #endif
-  if (gGameState.mapId == (s32)&MapId_SuhallaDesertSouth) {
+  if (gSaveBlock.mapId == (s32)&MapId_SuhallaDesertSouth) {
     ObjectEvent_GetById(LOCALID_REVEALED_PILLAR)->priorityFlags =
         OBJ_EVENT_PRIORITY_UNDERFOOT;
     ObjectEvent_GetById(LOCALID_REVEALED_PILLAR)->motionFlags = 0;
@@ -773,7 +773,7 @@ static s32 EventScript_RevealStarts(void) {
 /// The third map's warps, or the storms, Iodem, treasure and Reveal of the
 /// first two.
 const struct MapEvent *Map_GetEvents(void) {
-  if (gGameState.mapId == (s32)&MapId_SuhallaDesertCaves) {
+  if (gSaveBlock.mapId == (s32)&MapId_SuhallaDesertCaves) {
     return gSuhallaDesertCavesEvents;
   }
   return gSuhallaDesertEventsOther;
@@ -788,23 +788,23 @@ s32 Map_Initialize(void) {
   ((struct FieldWork *)HEAP_SLOT_BLOCK(HEAP_SLOT_FIELD))->transition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_SHAPE);
   if (FieldGameFlag_GetByte(FLAG_MAP_TEMP_10) != 0) {
-    gGameState.movementMode = LEADER_MOVEMENT_AIRBORNE;
+    gSaveBlock.movementMode = LEADER_MOVEMENT_AIRBORNE;
     FieldScheduler_AddCallback(SuhallaDesert_UpdateCaptureTimer,
                                TASK_PRIORITY_MAP);
   }
-  if (gGameState.mapId == (s32)&MapId_SuhallaDesertNorth ||
-      gGameState.mapId == (s32)&MapId_SuhallaDesertSouth) {
+  if (gSaveBlock.mapId == (s32)&MapId_SuhallaDesertNorth ||
+      gSaveBlock.mapId == (s32)&MapId_SuhallaDesertSouth) {
     sSuhallaDesertSavedColor = SUHALLA_REVEAL_PALETTE_COLOR;
     EventScript_RevealEnds();
   }
-  if (gGameState.mapId == (s32)&MapId_SuhallaDesertNorth) {
+  if (gSaveBlock.mapId == (s32)&MapId_SuhallaDesertNorth) {
     SuhallaDesert_SetUpFirstMapStorms();
-  } else if (gGameState.mapId == (s32)&MapId_SuhallaDesertSouth) {
+  } else if (gSaveBlock.mapId == (s32)&MapId_SuhallaDesertSouth) {
     SuhallaDesert_SetUpSecondMapStorms();
   } else {
     Sound_PlaySong(SE_STOP_SLOT3);
   }
-  if (gGameState.warpDest == WARP_DEST_DEFAULT) {
+  if (gSaveBlock.warpDest == WARP_DEST_DEFAULT) {
     gridState->flags &= ~DISPCNT_BG1_ON;
   }
   return 0;

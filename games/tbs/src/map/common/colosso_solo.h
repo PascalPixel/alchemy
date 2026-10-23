@@ -10,7 +10,7 @@
 #include "minigame.h"
 #include "sound.h"
 #include "system.h"
-#include "game_state.h"
+#include "save_block.h"
 #include "battle_unit.h"
 #include "object_event.h"
 #include "animspr.h"
@@ -94,7 +94,7 @@ void Colosso_ControlCharacterAlone(s32 id) {
   Party_RemoveMember(3);
   Party_RemoveMember(5);
   Party_AddMember(id);
-  gGameState.leaderLocalId = id;
+  gSaveBlock.leaderLocalId = id;
   FieldCamera_FollowObjectEvent(id, 0);
   unit = Unit_Get(id);
   unit->hp = unit->hpMax;
@@ -130,7 +130,7 @@ void Colosso_ControlCharacterAlone(s32 id) {
 /// FLAG_PSYNERGY_TARGET is set, raise map event 99, Colosso_TakePlaceForMatch.
 void Colosso_RaiseTakePlaceOnPsynergy(void) {
   struct FieldWork *work = gFieldWork;
-  s32 selection = gGameState.leaderLocalId;
+  s32 selection = gSaveBlock.leaderLocalId;
 
   if (selection != 0 && (work->psynergy >> 10) == selection &&
       GameFlag_Get(FLAG_PSYNERGY_TARGET) != 0) {
@@ -150,7 +150,7 @@ static void Colosso_TakePlaceForMatch(void) {
   struct FieldWork *work = gFieldWork;
   s32 speakerId = 8;
   s32 nearestDistance = 0x100000;
-  s32 supporterId = gGameState.leaderLocalId;
+  s32 supporterId = gSaveBlock.leaderLocalId;
   struct ObjectEvent *supporter = ObjectEvent_GetById(supporterId);
   s32 localId;
   s32 *transition;
@@ -228,7 +228,7 @@ void Colosso_AskDoneCheering(s32 id) {
   // Look up the speaker twice and discard both results (two original calls).
   ObjectEvent_GetById(id);
   ObjectEvent_GetById(id);
-  slot = gGameState.leaderLocalId;
+  slot = gSaveBlock.leaderLocalId;
   objectEvent = ObjectEvent_GetById(slot);
   FieldScript_Start();
   msg = MsgColossoCheering;
@@ -324,7 +324,7 @@ s32 Colosso_GreetAtStage(s32 speaker, s32 warrior) {
 
   Field_EndBusyAndReveal();
   MessageArgument_Push(warrior, MESSAGE_ARGUMENT_NUMBER);
-  mapId = gGameState.mapId;
+  mapId = gSaveBlock.mapId;
   if (mapId == (s32)&MapId_ColosseumAzartMatch) {
     message = MsgColossoStageFirstFinalsMatch;
   } else if (mapId == (s32)&MapId_ColosseumSatrageMatch) {
@@ -361,7 +361,7 @@ void Colosso_RepeatStageNumber(s32 speaker, s32 warrior) {
   s32 message;
 
   MessageArgument_Push(warrior, MESSAGE_ARGUMENT_NUMBER);
-  mapId = gGameState.mapId;
+  mapId = gSaveBlock.mapId;
   if (mapId == (s32)&MapId_ColosseumAzartMatch) {
     message = MsgColossoStageFirstFinalsMatch;
   } else if (mapId == (s32)&MapId_ColosseumSatrageMatch) {
@@ -404,7 +404,7 @@ void Colosso_OfferCheeringSpot(s32 mode, s32 guide, s32 stage) {
   if (mode != COLOSSO_GUIDE_NOTHING) {
     memberCount = Party_CountMembers();
     for (i = 0; i < memberCount; i++) {
-      members[i] = gGameState.party[i];
+      members[i] = gSaveBlock.party[i];
     }
     if (memberCount <= 1) {
       FieldScript_SetMessageId(MsgColossoDoYourBest);

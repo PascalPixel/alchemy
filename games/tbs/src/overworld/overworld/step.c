@@ -77,7 +77,7 @@ s32 Field_GetCollisionAheadOfLeader(void) {
   s32 fixedZ;
 
   work = HEAP_SLOT_BLOCK(HEAP_SLOT_FIELD);
-  leader = (struct Object *)work->objectEvents[gGameState.leaderLocalId];
+  leader = (struct Object *)work->objectEvents[gSaveBlock.leaderLocalId];
 
   gridState = HEAP_SLOT_BLOCK(HEAP_SLOT_MAP_GRID);
 
@@ -192,14 +192,14 @@ void Field_CheckWarpRegions(s32 positionX, s32 positionY, s32 positionZ) {
 /// FLAG_DEBUG_STEPS_OFF skips it), so the counts below advance
 /// per frame. Sets work->action, input, battle, command and event
 /// (-1 when someone fell), work->currentCell and previousCell, walkingDistance,
-/// fallenOwners and survivorCount, and gGameState's hazard and Avoid counts.
+/// fallenOwners and survivorCount, and gSaveBlock's hazard and Avoid counts.
 void Field_ProcessStep(s32 layer, s32 x, s32 y, s32 z) {
   /* FAKEMATCH(wrapper): the party read through struct StepOwner, whose alias
    * set keeps the load order and the 44-byte frame; as struct Unit, 2
    * of 472 instructions differ in tbs-en. */
   struct FieldWork *work = HEAP_SLOT_BLOCK(HEAP_SLOT_FIELD);
   struct MapGridState *gridState = HEAP_SLOT_BLOCK(HEAP_SLOT_MAP_GRID);
-  s32 leaderId = gGameState.leaderLocalId;
+  s32 leaderId = gSaveBlock.leaderLocalId;
   struct Object *leader = (struct Object *)work->objectEvents[leaderId];
   s16 previousHp[8];
   struct MapGridCell *tile;
@@ -228,7 +228,7 @@ void Field_ProcessStep(s32 layer, s32 x, s32 y, s32 z) {
   // Note each character's HP, to see who falls.
   partyCount = Party_CountMembersFar();
   for (i = 0; i < partyCount; i++)
-    previousHp[i] = Unit_GetFar(gGameState.party[i])->hp;
+    previousHp[i] = Unit_GetFar(gSaveBlock.party[i])->hp;
 
   if (work->mode == OBJECT_SYSTEM_WORLD_MAP) {
     tile = &((struct MapGridCell *)Ram_Metatiles)[((x / 0x200000) & 31) +
@@ -253,7 +253,7 @@ void Field_ProcessStep(s32 layer, s32 x, s32 y, s32 z) {
     work->pushCell = event;
 
   // Only while walking (not climbing) towards a target.
-  if (gGameState.movementMode == LEADER_MOVEMENT_WALK && leader != NULL &&
+  if (gSaveBlock.movementMode == LEADER_MOVEMENT_WALK && leader != NULL &&
       leader->targetX != OBJ_EVENT_NO_TARGET) {
     // Encounters: the zone comes from the world map's encounter region and
     // battle environment, or from the ground the leader stands on.
@@ -297,19 +297,19 @@ void Field_ProcessStep(s32 layer, s32 x, s32 y, s32 z) {
     // frame walked on it adds the leader's speed limit in whole pixels, so
     // the count follows the distance walked there (the Lamakan Desert's
     // limit is 600).
-    if (gGameState.hazardMode == HAZARD_COUNT_ON_CELLS &&
+    if (gSaveBlock.hazardMode == HAZARD_COUNT_ON_CELLS &&
         event == MB_DESERT_SAND) {
       if (work->previousCell->behavior == MB_DESERT_SAND)
-        gGameState.hazardSteps += leader->speedLimit / 0x10000;
+        gSaveBlock.hazardSteps += leader->speedLimit / 0x10000;
       else
-        gGameState.hazardSteps = gGameState.hazardLimit / 2;
+        gSaveBlock.hazardSteps = gSaveBlock.hazardLimit / 2;
     }
 
     // Avoid wears off with distance, outside towns.
-    if (gGameState.avoidDistance != 0 && gGameState.mapType != MAP_TYPE_TOWN) {
-      gGameState.avoidDistance -= leader->speedLimit;
-      if (gGameState.avoidDistance <= 0) {
-        gGameState.avoidDistance = 1;
+    if (gSaveBlock.avoidDistance != 0 && gSaveBlock.mapType != MAP_TYPE_TOWN) {
+      gSaveBlock.avoidDistance -= leader->speedLimit;
+      if (gSaveBlock.avoidDistance <= 0) {
+        gSaveBlock.avoidDistance = 1;
         // Raise Avoid as a Psynergy request that pays no PP; Avoid's end
         // handler says it wore off.
         if (work->psynergy == 0)
@@ -323,19 +323,19 @@ void Field_ProcessStep(s32 layer, s32 x, s32 y, s32 z) {
   // SPRITE_ATTACHED_EFFECT is attached to the leader until removed (0x101, at
   // sprite priority 1); at the limit it is removed (0x100) and the party takes
   // the hazard's damage.
-  if (gGameState.hazardMode == HAZARD_COUNT_FRAMES) {
-    gGameState.hazardSteps++;
-    if (gGameState.hazardSteps == gGameState.hazardLimit / 2)
+  if (gSaveBlock.hazardMode == HAZARD_COUNT_FRAMES) {
+    gSaveBlock.hazardSteps++;
+    if (gSaveBlock.hazardSteps == gSaveBlock.hazardLimit / 2)
       FieldEffect_ConfigureLinkedObject(leaderId, ATTACHED_EFFECT_IN_FRONT |
                                                       ATTACHED_EFFECT_ATTACH);
-    if (gGameState.hazardSteps == gGameState.hazardLimit)
+    if (gSaveBlock.hazardSteps == gSaveBlock.hazardLimit)
       FieldEffect_ConfigureLinkedObject(leaderId, ATTACHED_EFFECT_IN_FRONT |
                                                       ATTACHED_EFFECT_REMOVE);
   }
-  if (gGameState.hazardSteps >= gGameState.hazardLimit) {
+  if (gSaveBlock.hazardSteps >= gSaveBlock.hazardLimit) {
     // hazardDamage: bits 7 to 0 the amount, bit 8 a percentage of maximum HP.
-    amount = gGameState.hazardDamage;
-    gGameState.hazardSteps = 0;
+    amount = gSaveBlock.hazardDamage;
+    gSaveBlock.hazardSteps = 0;
     Party_AddHp(-(amount & 255), amount & 0x100);
     partyHurt++;
   }
@@ -352,14 +352,14 @@ void Field_ProcessStep(s32 layer, s32 x, s32 y, s32 z) {
                                                     ATTACHED_EFFECT_ONCE);
     for (i = 0; i < partyCount; i++) {
 #ifdef UBFIX
-      unitVitals = Unit_GetFar(gGameState.party[i]);
+      unitVitals = Unit_GetFar(gSaveBlock.party[i]);
 #else
-      unitVitals = (struct StepOwner *)Unit_GetFar(gGameState.party[i]);
+      unitVitals = (struct StepOwner *)Unit_GetFar(gSaveBlock.party[i]);
 #endif
       if (unitVitals->hp > 0) {
         work->survivorCount++;
       } else if (previousHp[i] != 0) {
-        work->fallenOwners[work->fallenCount++] = gGameState.party[i];
+        work->fallenOwners[work->fallenCount++] = gSaveBlock.party[i];
         work->raisedEvent = -1;
         unitVitals->poison = 0;
       }
@@ -378,7 +378,7 @@ void Party_AddPp(s32 amount, s32 unused) {
   s32 partyIndex;
 
   for (partyIndex = 0; partyIndex < partyCount; partyIndex++)
-    Unit_AddPpFar(gGameState.party[partyIndex], amount);
+    Unit_AddPpFar(gSaveBlock.party[partyIndex], amount);
 }
 
 /// Changes each party member's HP by amount, or by that percentage of maximum
@@ -412,7 +412,7 @@ void Party_AddHp(s32 amount, s32 percent) {
 
   partyCount = Party_CountMembersFar();
   for (partyIndex = 0; partyIndex < partyCount; partyIndex++) {
-    unit = Unit_GetFar(gGameState.party[partyIndex]);
+    unit = Unit_GetFar(gSaveBlock.party[partyIndex]);
     if (!percent) {
       hpDelta = amount;
     } else {
@@ -423,7 +423,7 @@ void Party_AddHp(s32 amount, s32 percent) {
           hpDelta = -hpDelta;
       }
     }
-    Unit_AddHpFar(gGameState.party[partyIndex], hpDelta);
+    Unit_AddHpFar(gSaveBlock.party[partyIndex], hpDelta);
   }
 }
 
@@ -441,7 +441,7 @@ s32 Party_ApplyPoisonDamage(void) {
   s32 partyIndex;
 
   for (partyIndex = 0; partyIndex < partyCount; partyIndex++) {
-    struct Unit *unit = Unit_GetFar(gGameState.party[partyIndex]);
+    struct Unit *unit = Unit_GetFar(gSaveBlock.party[partyIndex]);
     s32 hpDelta;
 
     switch (unit->poison) {
@@ -463,7 +463,7 @@ s32 Party_ApplyPoisonDamage(void) {
       hpDelta = 0;
       break;
     }
-    Unit_AddHpFar(gGameState.party[partyIndex], hpDelta);
+    Unit_AddHpFar(gSaveBlock.party[partyIndex], hpDelta);
   }
 
   if (worstPoison != 0) {

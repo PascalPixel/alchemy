@@ -391,7 +391,7 @@ come down to how a struct's member is addressed.
 - A global's member is reached through a local pointer to the global or
   through the global's own name, each where it matches. `EventScript_MovePillar`
   ([`map/crossbone_isle.c`](map/crossbone_isle.c)) takes `&state->mapId`
-  with `state = &gGameState`, because `&gGameState.mapId` folds into one
+  with `state = &gSaveBlock`, because `&gSaveBlock.mapId` folds into one
   literal (1 of 78 instructions differ in tbs-en, 1 of 65 in tbs-ja). McCoy
   Palace's `Map_GetObjectEventTemplates` writes the reward rows as
   `gMcCoyPalaceObjectEventTemplates[6].talkFacing` and on, because the local

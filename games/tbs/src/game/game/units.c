@@ -29,10 +29,10 @@ struct StatWork {
 /// The distance between `a` and `b`, |a - b|.
 #define UNIT_STAT_DIFF(a, b) ((a) - (b) < 0 ? (b) - (a) : (a) - (b))
 
-/// Starts a new game: clears the game state and restarts at the opening.
+/// Starts a new game: clears the save block and restarts at the opening.
 /// Only GAME.S's bare veneer reaches it; nothing calls it by name.
 void Game_Restart(void) {
-  GameState_InitializeDefaults();
+  SaveBlock_InitializeDefaults();
   Game_RunFar(0);
 }
 
@@ -45,7 +45,7 @@ void *Djinn_GetRecoveryTable(s32 enemySide) {
   if (enemySide != 0) {
     return Unit_Get(0x83);
   }
-  return &gGameState.summonMask;
+  return &gSaveBlock.summonMask;
 }
 
 /// Returns the average level of the party members, rounded down (0 with no
@@ -62,14 +62,14 @@ u32 Party_GetAverageLevel(void) {
     return 0;
   }
   for (partyIndex = 0; partyIndex < partySize; partyIndex++) {
-    totalLevels += Unit_Get(gGameState.party[partyIndex])->level;
+    totalLevels += Unit_Get(gSaveBlock.party[partyIndex])->level;
   }
   totalLevels = totalLevels / partySize;
   return totalLevels;
 }
 
 /// Returns the unit of `unitId`: ISAAC to PIERS are the playable
-/// characters in the game state, 0x80 to 0x85 the enemies of the current
+/// characters in the save block, 0x80 to 0x85 the enemies of the current
 /// battle. Anything else, or an enemy outside a battle, is NULL. Nearly every
 /// bank calls it, through GAME.S as Unit_GetFar.
 struct Unit *Unit_Get(u32 unitId) {
@@ -84,7 +84,7 @@ struct Unit *Unit_Get(u32 unitId) {
      * instructions differ in tbs-en. */
     asm("" : : "l"(caller));
   }
-  states = gGameState.units;
+  states = gSaveBlock.units;
   if (unitId <= PIERS) {
     unit = &states[unitId];
     return unit;
@@ -465,7 +465,7 @@ void GameFlag_RefreshLureCap(void) {
     struct Unit *unit;
     s32 inventorySlot;
 
-    unit = Unit_Get(gGameState.party[partyIndex]);
+    unit = Unit_Get(gSaveBlock.party[partyIndex]);
     for (inventorySlot = 0; inventorySlot < INVENTORY_SLOTS; inventorySlot++) {
       if (unit->inventory[inventorySlot] & INVENTORY_EQUIPPED) {
         struct EquipEffect *effect;
@@ -488,7 +488,7 @@ void GameFlag_RefreshLureCap(void) {
 
 /// Encodes the build-stamp time as ((hours * 16 + minutes) * 64 + seconds)
 /// with bit 12 set. Debug mode also sets bits 15..31 before the halfword cast.
-/// GameState_InitializeDefaults stores it as a new game's start stamp, and the
+/// SaveBlock_InitializeDefaults stores it as a new game's start stamp, and the
 /// file menu (FileMenu_SelectFile, Save_BuildFileSummary) and the main
 /// menu compare saves with it.
 u32 Runtime_GetBuildStampTime(void) {
@@ -534,7 +534,7 @@ u32 Runtime_GetBuildStampTime(void) {
   return (u16)result;
 }
 
-/// A view of EWRAM from gMapLocalState on, which GameState_InitializeDefaults
+/// A view of EWRAM from gMapLocalState on, which SaveBlock_InitializeDefaults
 /// writes one byte through. gMapLocalState's 0x78 bytes and
 /// gInventorySnapshot's 0x8c come first, so firstSnapshotSlot is the first byte
 /// of gObjectEventSnapshot.
@@ -555,16 +555,16 @@ struct MapLocalStateTail {
 /// standard button layout, the message speed, the play time clock and the Lucky
 /// Wheels prize odds. Called by the main menu's new game, by
 /// Game_Restart and Game_Run, and by the debug battle menu.
-void GameState_InitializeDefaults(void) {
+void SaveBlock_InitializeDefaults(void) {
   volatile s32 zero;
 
   // Clear the state header, map state, flags and save metadata in DMA order:
-  // 0xb0 words are gGameState up to the characters (units, which
+  // 0xb0 words are gSaveBlock up to the characters (units, which
   // Party_InitializeCharacters sets up); 0x3e1 words run from gMapLocalState
   // through gInventorySnapshot and gObjectEventSnapshot; 0x80 words are all
   // 4096 flags.
   zero = 0;
-  START_DMA(&zero, &gGameState,
+  START_DMA(&zero, &gSaveBlock,
             (DMA_ENABLE | DMA_32BIT | DMA_SRC_FIXED) << 16 | 0xb0);
   zero = 0;
   START_DMA(&zero, gMapLocalState,
@@ -579,47 +579,47 @@ void GameState_InitializeDefaults(void) {
             (DMA_ENABLE | DMA_32BIT | DMA_SRC_FIXED) << 16 | 0x298);
   // Build the characters, then install input and message defaults.
   Party_InitializeCharacters();
-  gGameState.aKeys = KEY_A;
-  gGameState.bKeys = KEY_B;
-  gGameState.selectKeys = KEY_SELECT;
-  gGameState.startKeys = KEY_START;
-  gGameState.firstShortcutKeys = KEY_L;
-  gGameState.secondShortcutKeys = KEY_R;
-  gGameState.dashKeys = KEY_B;
-  gGameState.firstShortcut = 0;
-  gGameState.secondShortcut = 0;
-  gGameState.leaderLocalId = 0;
+  gSaveBlock.aKeys = KEY_A;
+  gSaveBlock.bKeys = KEY_B;
+  gSaveBlock.selectKeys = KEY_SELECT;
+  gSaveBlock.startKeys = KEY_START;
+  gSaveBlock.firstShortcutKeys = KEY_L;
+  gSaveBlock.secondShortcutKeys = KEY_R;
+  gSaveBlock.dashKeys = KEY_B;
+  gSaveBlock.firstShortcut = 0;
+  gSaveBlock.secondShortcut = 0;
+  gSaveBlock.leaderLocalId = 0;
   Party_AddMember(0);
-  gGameState.coins = 0;
-  gGameState.messageSpeed = 1;
-  gGameState.speech = 1;
-  gGameState.unk20b = 1;
-  gGameState.windowColor[0] = 0;
-  gGameState.windowColor[1] = 8;
-  gGameState.buildStamp = 0;
-  gGameState.startStamp = Runtime_GetBuildStampTime();
+  gSaveBlock.coins = 0;
+  gSaveBlock.messageSpeed = 1;
+  gSaveBlock.speech = 1;
+  gSaveBlock.unk20b = 1;
+  gSaveBlock.windowColor[0] = 0;
+  gSaveBlock.windowColor[1] = 8;
+  gSaveBlock.buildStamp = 0;
+  gSaveBlock.startStamp = Runtime_GetBuildStampTime();
   gPlayTimeFrames = 0;
-  gGameState.playTime = 0;
+  gSaveBlock.playTime = 0;
   gIdleSleepEnabled = 0;
-  gGameState.idleSleepEnabled = gIdleSleepEnabled;
+  gSaveBlock.idleSleepEnabled = gIdleSleepEnabled;
   gIdleFrames = 0;
   gSaveSlot = -1;
   // Three prizes share each successive slot-machine weight.
-  gGameState.prizeWeights[0] = 4;
-  gGameState.prizeWeights[1] = 4;
-  gGameState.prizeWeights[2] = 4;
-  gGameState.prizeWeights[3] = 8;
-  gGameState.prizeWeights[4] = 8;
-  gGameState.prizeWeights[5] = 8;
-  gGameState.prizeWeights[6] = 16;
-  gGameState.prizeWeights[7] = 16;
-  gGameState.prizeWeights[8] = 16;
-  gGameState.prizeWeights[9] = 32;
-  gGameState.prizeWeights[10] = 32;
-  gGameState.prizeWeights[11] = 32;
-  gGameState.prizeWeights[12] = 64;
-  gGameState.prizeWeights[13] = 64;
-  gGameState.prizeWeights[14] = 64;
+  gSaveBlock.prizeWeights[0] = 4;
+  gSaveBlock.prizeWeights[1] = 4;
+  gSaveBlock.prizeWeights[2] = 4;
+  gSaveBlock.prizeWeights[3] = 8;
+  gSaveBlock.prizeWeights[4] = 8;
+  gSaveBlock.prizeWeights[5] = 8;
+  gSaveBlock.prizeWeights[6] = 16;
+  gSaveBlock.prizeWeights[7] = 16;
+  gSaveBlock.prizeWeights[8] = 16;
+  gSaveBlock.prizeWeights[9] = 32;
+  gSaveBlock.prizeWeights[10] = 32;
+  gSaveBlock.prizeWeights[11] = 32;
+  gSaveBlock.prizeWeights[12] = 64;
+  gSaveBlock.prizeWeights[13] = 64;
+  gSaveBlock.prizeWeights[14] = 64;
 }
 
 /// Sets FLAG_CHILDHOOD and recomputes Isaac, Garet and Jenna, whose classes
@@ -677,7 +677,7 @@ void Party_EndChildhood(void) {
   Unit_LearnPsynergy(GARET, ABILITY_MOVE);
   Unit_LearnPsynergy(IVAN, ABILITY_MIND_READ);
 
-  gGameState.coins += 300;
+  gSaveBlock.coins += 300;
 }
 
 /// Restores every party member's HP and PP; with `cureConditions` 1 it also
@@ -691,7 +691,7 @@ void Party_RestoreHpPp(s32 cureConditions) {
 
   partySize = Party_CountMembers();
   for (partyIndex = 0; partyIndex < partySize; partyIndex++) {
-    unit = Unit_Get(gGameState.party[partyIndex]);
+    unit = Unit_Get(gSaveBlock.party[partyIndex]);
 
     unit->hp = unit->hpMax;
     unit->pp = unit->ppMax;
@@ -717,7 +717,7 @@ void Party_RestorePpOfLitElements(void) {
 
   partySize = Party_CountMembers();
   for (partyIndex = 0; partyIndex < partySize; partyIndex++) {
-    unitId = gGameState.party[partyIndex];
+    unitId = gSaveBlock.party[partyIndex];
     elementGroup = gCharacter_ElementGroupTable[unitId];
     restorePp = 0;
     if (elementGroup == 0) {

@@ -34,7 +34,7 @@ void Djinn_RunBattleStartHop(s32 djinniId) {
   // The way the leader faces, to the nearest quarter turn.
   djinni = ObjectEvent_GetById(djinniId);
   dir =
-      (ObjectEvent_GetById(gGameState.leaderLocalId)->facing + 0x2000) & 0xc000;
+      (ObjectEvent_GetById(gSaveBlock.leaderLocalId)->facing + 0x2000) & 0xc000;
   FieldScript_Start();
   WaitFrames(10);
   Sound_PlaySongFar(SE_173);
@@ -189,8 +189,8 @@ void Djinn_JoinParty(s32 slot, s32 element, s32 djinn) {
 /// call, that is after a won battle; the second call then makes this object
 /// event join the party.
 void ObjectEvent_PlaceMapObjectEvents(void) {
-  s32 flags = gGameState.pendingDjinnEvent & 0xf000;
-  u32 event = gGameState.pendingDjinnEvent & 0xfff;
+  s32 flags = gSaveBlock.pendingDjinnEvent & 0xf000;
+  u32 event = gSaveBlock.pendingDjinnEvent & 0xfff;
   s32 id;
 
   // Kind 0 is a Djinni battle; a mimic chest's event (0x1000) is skipped.
@@ -198,7 +198,7 @@ void ObjectEvent_PlaceMapObjectEvents(void) {
     flags = event & 0x800;
     event &= 0x7ff;
     // event is unsigned: events below DJINNI_EVENT_0 fail the range test too.
-    if (event - DJINNI_EVENT_0 <= 80 && gGameState.runResult > 0) {
+    if (event - DJINNI_EVENT_0 <= 80 && gSaveBlock.runResult > 0) {
       for (id = 8; id <= 65; id++) {
         struct ObjectEventTemplate *desc = Map_FindObjectEventTemplate(id);
         struct Object *object;
@@ -219,7 +219,7 @@ void ObjectEvent_PlaceMapObjectEvents(void) {
                                               desc->z);
         } else {
           struct Object *leader =
-              ObjectEvent_GetByLocalId(gGameState.leaderLocalId);
+              ObjectEvent_GetByLocalId(gSaveBlock.leaderLocalId);
 
           Object_SetPositionAndResetMotionFar(object, leader->x, leader->y,
                                               leader->z - (32 << 16));
@@ -244,7 +244,7 @@ void ObjectEvent_PlaceMapObjectEvents(void) {
 /// A mimic chest's event (kind 0x1000, overworld/events.c) sets the chest's
 /// flag when the battle ended with exactly one enemy defeated, and is dropped.
 void Djinn_ResolvePendingEvent(s32 shown) {
-  struct GameState *st = &gGameState;
+  struct SaveBlock *st = &gSaveBlock;
   s16 *pending = &st->pendingDjinnEvent;
   s32 kind = *pending & 0xf000;
   s32 flag = *pending & 0xfff;
@@ -290,7 +290,7 @@ void Djinn_ResolvePendingEvent(s32 shown) {
       }
     }
   }
-  gGameState.pendingDjinnEvent = 0;
+  gSaveBlock.pendingDjinnEvent = 0;
 }
 
 /// Task: updates the 24 field effect sprites.
@@ -354,7 +354,7 @@ void FieldEffect_RunAngledApproachPhases(struct FieldEffectSprite *particle) {
   struct MotionObject *target;
   struct EffectVector position;
 
-  target = (struct MotionObject *)ObjectEvent_GetById(gGameState.leaderLocalId);
+  target = (struct MotionObject *)ObjectEvent_GetById(gSaveBlock.leaderLocalId);
   if (particle->state == DJINNI_LIGHT_WIDENING) {
     particle->orbitRadius += 1;
     particle->orbitAngle += 1;

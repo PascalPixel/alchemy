@@ -55,8 +55,8 @@ s16 DebugMapSelect_Run(void) {
 
   window = 0;
   selectedField = 0;
-  mapId = gGameState.defaultMap;
-  warpDest = gGameState.defaultWarpDest;
+  mapId = gSaveBlock.defaultMap;
+  warpDest = gSaveBlock.defaultWarpDest;
   window = Window_Create(0, 7, 30, 5, 2);
   DebugMapSelect_DrawRow(window, mapId, &warpDest);
   MenuArrow_Create(&cursor, &cursorSlot);

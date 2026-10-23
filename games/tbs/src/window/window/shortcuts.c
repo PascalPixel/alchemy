@@ -29,7 +29,7 @@ void MapNamePopup_Show(void) {
   notice = (struct TimedNoticeWork *)gFieldWork;
   x = 8;
   y = 8;
-  areaMessage = MapSec_GetNameIndexFar(gGameState.mapId, gGameState.warpDest) +
+  areaMessage = MapSec_GetNameIndexFar(gSaveBlock.mapId, gSaveBlock.warpDest) +
                 RENDER_RESOURCE_BASE;
   Text_GetMessageSize(areaMessage, &x, &y, &width, &height);
   x = (30 - width) >> 1;
@@ -82,12 +82,12 @@ s32 Item_ReturnTrue(void) { return 1; }
 /// screen's 24 hues.
 /// Nothing calls it.
 UNUSED void OptionMenu_StepWindowHue(s32 keys) {
-  u8 hue = gGameState.windowColor[0];
+  u8 hue = gSaveBlock.windowColor[0];
   if (keys & KEY_LEFT)
     hue += 0xff;
   else
     hue += 1;
-  gGameState.windowColor[0] = hue;
+  gSaveBlock.windowColor[0] = hue;
 }
 
 /// A Psynergy the debug shortcut picker lists: its member and the Psynergy.
@@ -99,7 +99,7 @@ struct AbilityListEntry {
 
 /// Lets the player pick two Psynergy shortcuts from all the party's Psynergy,
 /// showing each one's cost and description, and stores them in
-/// gGameState.firstShortcut and secondShortcut (member << 10 | Psynergy).
+/// gSaveBlock.firstShortcut and secondShortcut (member << 10 | Psynergy).
 /// This debug path seeds extra Psynergy before enumerating the party's
 /// shortcuts.
 void Debug_SelectAbilityPair(void) {
@@ -235,8 +235,8 @@ void Debug_SelectAbilityPair(void) {
     // Persist both member/ability pairs before releasing the picker resources.
     // A, B and START all keep the picks. The cursor's window sprite and VRAM
     // entry go with its window.
-    gGameState.firstShortcut = (list[first].member << 10) | list[first].ability;
-    gGameState.secondShortcut =
+    gSaveBlock.firstShortcut = (list[first].member << 10) | list[first].ability;
+    gSaveBlock.secondShortcut =
         (list[second].member << 10) | list[second].ability;
     Window_Close(win, 1);
     Window_Close(title, 1);
@@ -293,16 +293,16 @@ void Menu_FindShortcutEntries(u32 *firstIndex, u32 *secondIndex,
   *secondIndex = 0;
 
   for (entryIndex = 0; entryIndex <= 447; entryIndex++) {
-    if (entries[entryIndex].ability == (gGameState.firstShortcut & 0x3ff) &&
-        entries[entryIndex].member == (gGameState.firstShortcut >> 10)) {
+    if (entries[entryIndex].ability == (gSaveBlock.firstShortcut & 0x3ff) &&
+        entries[entryIndex].member == (gSaveBlock.firstShortcut >> 10)) {
       *firstIndex = entryIndex;
       break;
     }
   }
 
   for (entryIndex = 0; entryIndex <= 447; entryIndex++) {
-    if (entries[entryIndex].ability == (gGameState.secondShortcut & 0x3ff) &&
-        entries[entryIndex].member == (gGameState.secondShortcut >> 10)) {
+    if (entries[entryIndex].ability == (gSaveBlock.secondShortcut & 0x3ff) &&
+        entries[entryIndex].member == (gSaveBlock.secondShortcut >> 10)) {
       *secondIndex = entryIndex;
       break;
     }

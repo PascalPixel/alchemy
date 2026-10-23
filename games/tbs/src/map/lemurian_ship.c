@@ -24,7 +24,7 @@
 
 #include "action_script.h"
 #include "version.h"
-#include "game_state.h"
+#include "save_block.h"
 #include "vram_cache.h"
 #include "unit/map/lemurian_ship.h"
 #include "unit/map/common/scroll_initialize_hblank_dma.h"
@@ -713,7 +713,7 @@ s32 LemurianShip_SetupMap(void) {
   volatile u16 cnt;
 
   grid = gMapGridWork[0];
-  if (gGameState.warpDest == LEMURIAN_SHIP_WITH_BLACK_ORB) {
+  if (gSaveBlock.warpDest == LEMURIAN_SHIP_WITH_BLACK_ORB) {
     Inventory_AddItem(LOCALID_PARTY_LEADER, ITEM_BLACK_ORB);
   }
   ((struct FieldWork *)gMapGridWork[19])->transition =

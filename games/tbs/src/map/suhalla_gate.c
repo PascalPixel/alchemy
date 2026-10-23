@@ -15,7 +15,7 @@
 ///   out onto the world map, with a Psynergy Stone.
 ///
 /// One warp table serves the three maps; the other getters choose by
-/// gGameState.mapId, and SuhallaGateCheckpoint's object event templates also
+/// gSaveBlock.mapId, and SuhallaGateCheckpoint's object event templates also
 /// by FLAG_BABI_SPOKE_AFTER_COLOSSO. Its event table answers any map not
 /// otherwise named.
 ///
@@ -41,7 +41,7 @@
 ///
 /// Open questions: none.
 
-#include "game_state.h"
+#include "save_block.h"
 #include "version.h"
 #include "unit/map/suhalla_gate.h"
 #include "unit/overworld/overworld.h"
@@ -123,7 +123,7 @@ static void EventScript_FightDjinni(void) {
 }
 
 const struct MapWarpDest *Map_GetWarpDests(void) {
-  s16 mapId = gGameState.mapId;
+  s16 mapId = gSaveBlock.mapId;
 
   if (mapId == (s32)&MapId_SuhallaGateDew) {
     return gSuhallaGateDewWarpDests;
@@ -141,7 +141,7 @@ const u32 *Map_GetWarps(void) { return gSuhallaGateWarps; }
 /// Suhalla Gate's guards, standing or, after Babi's audience, lying wounded
 /// beside the vanishing soldier and Iodem; Dew and the second map's sprouts.
 const struct ObjectEventTemplate *Map_GetObjectEventTemplates(void) {
-  s16 mapId = gGameState.mapId;
+  s16 mapId = gSaveBlock.mapId;
 
   if (mapId == (s32)&MapId_SuhallaGateDew) {
     return gSuhallaGateDewObjectEventTemplates;
@@ -159,7 +159,7 @@ const struct ObjectEventTemplate *Map_GetObjectEventTemplates(void) {
 /// Gateway Cave (MapId_GatewayCave), or of the gate itself
 /// (MapId_SuhallaGateCheckpoint) for any other map.
 const struct MapEvent *Map_GetEvents(void) {
-  s16 mapId = gGameState.mapId;
+  s16 mapId = gSaveBlock.mapId;
 
   if (mapId == (s32)&MapId_SuhallaGateDew) {
     return gSuhallaGateDewEvents;
@@ -183,10 +183,10 @@ s32 Map_Initialize(void) {
   s32 mapId;
 
   if (GameFlag_Get(FLAG_SUHALLA_GATE_ATTACK_SEEN)) {
-    gGameState.savedMap = (s32)&MapId_LunpaInteriors;
-    gGameState.savedWarpDest = LUNPA_INTERIORS_FROM_SUHALLA_GATE_CHECKPOINT;
+    gSaveBlock.savedMap = (s32)&MapId_LunpaInteriors;
+    gSaveBlock.savedWarpDest = LUNPA_INTERIORS_FROM_SUHALLA_GATE_CHECKPOINT;
   }
-  mapId = gGameState.mapId;
+  mapId = gSaveBlock.mapId;
   if (mapId == (s32)&MapId_SuhallaGateCheckpoint) {
     if (GameFlag_Get(FLAG_SUHALLA_GATE_SOLDIER_VANISHED))
       Engine_ObjectEventSetPosition(LOCALID_VANISHING_SOLDIER, 0, 0);
@@ -200,25 +200,25 @@ s32 Map_Initialize(void) {
 #endif
     // Out of the house, Retreat leads back to the side the party came in by,
     // and the map section's name is not shown again.
-    if (gGameState.warpDest == SUHALLA_GATE_CHECKPOINT_FROM_LUNPA_INTERIORS) {
+    if (gSaveBlock.warpDest == SUHALLA_GATE_CHECKPOINT_FROM_LUNPA_INTERIORS) {
       if (GameFlag_Get(FLAG_SUHALLA_GATE_ENTERED_FROM_SOUTH)) {
-        gGameState.retreatMap = SUHALLA_GATE_RETREAT_MAP(mapId);
-        gGameState.retreatWarpDest =
+        gSaveBlock.retreatMap = SUHALLA_GATE_RETREAT_MAP(mapId);
+        gSaveBlock.retreatWarpDest =
             SUHALLA_GATE_CHECKPOINT_FROM_WORLD_MAP_SOUTH;
       }
       if (GameFlag_Get(FLAG_SUHALLA_GATE_ENTERED_FROM_EAST)) {
-        gGameState.retreatMap = SUHALLA_GATE_RETREAT_MAP(mapId);
-        gGameState.retreatWarpDest =
+        gSaveBlock.retreatMap = SUHALLA_GATE_RETREAT_MAP(mapId);
+        gSaveBlock.retreatWarpDest =
             SUHALLA_GATE_CHECKPOINT_FROM_WORLD_MAP_EAST;
       }
       GameFlag_Clear(FLAG_SHOW_LOCATION_NAME);
     }
-    if (gGameState.warpDest == SUHALLA_GATE_CHECKPOINT_FROM_WORLD_MAP_SOUTH) {
+    if (gSaveBlock.warpDest == SUHALLA_GATE_CHECKPOINT_FROM_WORLD_MAP_SOUTH) {
       GameFlag_Set(FLAG_SUHALLA_GATE_ENTERED_FROM_SOUTH);
       if (!GameFlag_Get(FLAG_BABI_SPOKE_AFTER_COLOSSO))
         MapGrid_CopyCellAttributes(6, 0, 2, 1, 8, 27);
     }
-    if (gGameState.warpDest == SUHALLA_GATE_CHECKPOINT_FROM_WORLD_MAP_EAST)
+    if (gSaveBlock.warpDest == SUHALLA_GATE_CHECKPOINT_FROM_WORLD_MAP_EAST)
       GameFlag_Set(FLAG_SUHALLA_GATE_ENTERED_FROM_EAST);
   } else if (mapId == (s32)&MapId_SuhallaGateDew) {
     Engine_ObjectEventSetAnimation(LOCALID_FIRST_SPROUT,

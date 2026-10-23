@@ -53,7 +53,7 @@ the address words, 4 bytes into each veneer. `Map_Run` calls
 (`Map_ApplyWarpDest`), creates the object events from the object event
 templates and calls `Map_Initialize`. `Field_ProcessStep` reads the regions
 at every step, and `Map_TakeWarp` reads the warps as the party leaves. An
-overlay that serves several maps chooses by `gGameState.mapId`, as Babi Lighthouse's
+overlay that serves several maps chooses by `gSaveBlock.mapId`, as Babi Lighthouse's
 `Map_GetWarpRegions` does. Some overlays give the entries names of their own
 (`BabiLighthouse_GetWarps`); only the order is fixed.
 

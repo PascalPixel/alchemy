@@ -29,7 +29,7 @@
 ///   (GOMA_CAVE_BRIDGE_TO_WORLD_MAP).
 ///
 /// Open questions: none.
-#include "game_state.h"
+#include "save_block.h"
 #include "unit/map/goma_cave_stream.h"
 #include "unit/map/common/effect_spawn.h"
 #include "unit/overworld/overworld.h"
@@ -80,7 +80,7 @@ static void GomaCaveStream_LeapStump(s32 stumpId);
 #include "common/effect_spawn.h"
 
 const struct MapWarpDest *Map_GetWarpDests(void) {
-  if (gGameState.mapId == (s32)&MapId_GomaCaveBridge) {
+  if (gSaveBlock.mapId == (s32)&MapId_GomaCaveBridge) {
     return gGomaCaveBridgeWarpDests;
   }
   return gGomaCaveStreamWarpDests;
@@ -91,7 +91,7 @@ const struct MapWarpRegion *Map_GetWarpRegions(void) { return 0; }
 const u32 *Map_GetWarps(void) { return gGomaCaveStreamAndBridgeWarps; }
 
 const struct ObjectEventTemplate *Map_GetObjectEventTemplates(void) {
-  if (gGameState.mapId == (s32)&MapId_GomaCaveBridge) {
+  if (gSaveBlock.mapId == (s32)&MapId_GomaCaveBridge) {
     return gGomaCaveBridgeObjectEventTemplates;
   }
   return gGomaCaveStreamObjectEventTemplates;
@@ -119,7 +119,7 @@ static void EventScript_MoveStump(void) {
 }
 
 const struct MapEvent *Map_GetEvents(void) {
-  if (gGameState.mapId == (s32)&MapId_GomaCaveBridge) {
+  if (gSaveBlock.mapId == (s32)&MapId_GomaCaveBridge) {
     return gGomaCaveBridgeEvents;
   }
   return gGomaCaveStreamEvents;
@@ -134,8 +134,8 @@ s32 Map_Initialize(void) {
 
   gFieldWork->transition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
-  if (gGameState.mapId == (s32)&MapId_GomaCaveStream) {
-    if (gGameState.warpDest == GOMA_CAVE_STREAM_FROM_VALE_GATE) {
+  if (gSaveBlock.mapId == (s32)&MapId_GomaCaveStream) {
+    if (gSaveBlock.warpDest == GOMA_CAVE_STREAM_FROM_VALE_GATE) {
       GameFlag_Clear(FLAG_SHOW_LOCATION_NAME);
     } else {
       ObjectEvent_GetById(LOCALID_STUMP)->collisionFlags |=

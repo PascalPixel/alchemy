@@ -78,7 +78,7 @@
 /// Open questions: none.
 
 #include "action_script.h"
-#include "game_state.h"
+#include "save_block.h"
 #include "unit/import.h"
 #include "unit/map/venus_lighthouse.h"
 #include "unit/map/common/effect_spawn.h"
@@ -1100,7 +1100,7 @@ static s32 EventScript_JumpAcrossGap(void) {
 /// Selects the map's warp destinations; VenusLighthouseGroundFloor takes the
 /// fallback table.
 const struct MapWarpDest *VenusLighthouse_GetWarpDests(void) {
-  s16 mapId = gGameState.mapId;
+  s16 mapId = gSaveBlock.mapId;
 
   if (mapId == (s32)&MapId_VenusLighthouseEntry) {
     return gVenusLighthouseEntryWarpDests;
@@ -1134,7 +1134,7 @@ VenusLighthouse_GetObjectEventTemplates(void) {
   struct ObjectEventTemplate *templates;
   s16 mapId;
 
-  mapId = gGameState.mapId;
+  mapId = gSaveBlock.mapId;
   if (mapId == (s32)&MapId_VenusLighthouseEntry) {
     return gVenusLighthouseEntryObjectEventTemplates;
   }
@@ -2705,7 +2705,7 @@ static void EventScript_EnterRisingPassage(void) {
 /// Selects the puzzle interactions and dialogue for the current lighthouse
 /// map.
 const struct MapEvent *VenusLighthouse_GetEvents(void) {
-  s32 mapId = gGameState.mapId;
+  s32 mapId = gSaveBlock.mapId;
 
   if (mapId == (s32)&MapId_VenusLighthouseEntry) {
     return gVenusLighthouseEntryEvents;
@@ -2782,7 +2782,7 @@ s32 VenusLighthouse_Initialize(void) {
     VenusLighthouse_RestoreScriptedChildValues();
   GameFlag_Set(FLAG_VENUS_LIGHTHOUSE_LIT);
   gFieldWork->transition = MAP_TRANSITION(TRANSITION_WINDOW, 4);
-  mapId = gGameState.mapId;
+  mapId = gSaveBlock.mapId;
   // Restore the scholars and soldiers outside and each interior puzzle by its
   // warp destination.
   if (mapId == (s32)&MapId_VenusLighthouseEntry) {
@@ -2801,7 +2801,7 @@ s32 VenusLighthouse_Initialize(void) {
     VenusLighthouse_LayDownHurtObjectEvent(LOCALID_SOLDIER_HEADED_FOR_BABI);
     VenusLighthouse_LayDownHurtObjectEvent(LOCALID_SOLDIER_COLOSSO_VICTORS);
   } else if (mapId == (s32)&MapId_VenusLighthouseGroundFloor) {
-    switch (gGameState.warpDest) {
+    switch (gSaveBlock.warpDest) {
     case VENUS_LIGHTHOUSE_GROUND_FLOOR_FROM_VENUS_LIGHTHOUSE_ENTRY:
     case VENUS_LIGHTHOUSE_GROUND_FLOOR_FRONT_ROOM_FROM_RELIEFS:
       VenusLighthouse_LayDownHurtObjectEvent(LOCALID_SCHOLAR_ATTACKED_ANYWAY);
@@ -2851,7 +2851,7 @@ s32 VenusLighthouse_Initialize(void) {
     }
   } else if (mapId == (s32)&MapId_VenusLighthouseFirstFloor) {
     // Restore depth pillars, the Carry puzzle and the paired tile-wave passage.
-    switch (gGameState.warpDest) {
+    switch (gSaveBlock.warpDest) {
     case VENUS_LIGHTHOUSE_FIRST_FLOOR_FROM_VENUS_LIGHTHOUSE_GROUND_FLOOR:
       GameFlag_Clear(FLAG_SHOW_LOCATION_NAME);
       break;
@@ -2919,7 +2919,7 @@ s32 VenusLighthouse_Initialize(void) {
     }
   } else if (mapId == (s32)&MapId_VenusLighthouseSecondFloor) {
     // Restore the first sliding wall and its sunken-pillar gate.
-    switch (gGameState.warpDest) {
+    switch (gSaveBlock.warpDest) {
     case VENUS_LIGHTHOUSE_SECOND_FLOOR_SPARKLING_PASSAGE_FROM_PILLAR_PIT:
       VenusLighthouse_ArriveThroughSparkPassage();
       Map_QueueMusic(SE_170);
@@ -2988,7 +2988,7 @@ s32 VenusLighthouse_Initialize(void) {
         MapGrid_CopyCellAttributes(15, 32, 3, 1, 9, 32);
         MapGrid_CopyCellAttributes(12, 32, 3, 1, 15, 32);
       }
-      if (gGameState.warpDest !=
+      if (gSaveBlock.warpDest !=
           VENUS_LIGHTHOUSE_SECOND_FLOOR_FROM_VENUS_LIGHTHOUSE_FIRST_FLOOR_SOUTH)
         break;
       FieldScript_StartScreenTransition();
@@ -3001,7 +3001,7 @@ s32 VenusLighthouse_Initialize(void) {
     }
   } else if (mapId == (s32)&MapId_VenusLighthouseThirdFloor) {
     // Restore the two tile waves and the three-pillar socket puzzle.
-    switch (gGameState.warpDest) {
+    switch (gSaveBlock.warpDest) {
     case VENUS_LIGHTHOUSE_THIRD_FLOOR_FROM_VENUS_LIGHTHOUSE_FOURTH_FLOOR_NORTHWEST:
       VenusLighthouse_AnimateWestTileWave();
       break;
@@ -3027,11 +3027,11 @@ s32 VenusLighthouse_Initialize(void) {
         FieldScheduler_AddCallback(VenusLighthouse_EmitEastPassageParticles,
                                    TASK_PRIORITY_MAP);
       }
-      if (gGameState.warpDest ==
+      if (gSaveBlock.warpDest ==
           VENUS_LIGHTHOUSE_THIRD_FLOOR_DRIFTING_FLOOR_FROM_SOUTHWEST_ROOM)
         VenusLighthouse_ArriveThroughSparkPassage();
       else if (
-          gGameState.warpDest ==
+          gSaveBlock.warpDest ==
           VENUS_LIGHTHOUSE_THIRD_FLOOR_FROM_VENUS_LIGHTHOUSE_FOURTH_FLOOR_EAST_NORTHEAST)
         VenusLighthouse_AnimateEastTileWave();
       break;
@@ -3108,7 +3108,7 @@ s32 VenusLighthouse_Initialize(void) {
   } else if (mapId == (s32)&MapId_VenusLighthouseFourthFloor) {
     // Restore floating supports, opposing walls and the four-pillar pillar
     // puzzle.
-    switch (gGameState.warpDest) {
+    switch (gSaveBlock.warpDest) {
     case VENUS_LIGHTHOUSE_FOURTH_FLOOR_FROM_VENUS_LIGHTHOUSE_THIRD_FLOOR_WEST_NORTHWEST:
     case VENUS_LIGHTHOUSE_FOURTH_FLOOR_PILLARS_FROM_WALL_SWITCHES:
       if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION)) {
@@ -3211,15 +3211,15 @@ s32 VenusLighthouse_Initialize(void) {
         MapGrid_CopyCellsTo(63, 29, 49, 20, 1, 1);
         MapGrid_CopyCellsTo(41, 56, 44, 17, 3, 4);
       }
-      if (gGameState.warpDest ==
+      if (gSaveBlock.warpDest ==
               VENUS_LIGHTHOUSE_FOURTH_FLOOR_FROM_VENUS_LIGHTHOUSE_THIRD_FLOOR_NORTHWEST ||
-          gGameState.warpDest ==
+          gSaveBlock.warpDest ==
               VENUS_LIGHTHOUSE_FOURTH_FLOOR_FROM_VENUS_LIGHTHOUSE_THIRD_FLOOR_EAST_NORTHEAST) {
         FieldScript_StartScreenTransition();
         FieldScript_WaitTransitionFrames();
         gFieldWork->transition = MAP_TRANSITION(TRANSITION_WINDOW, 4);
       }
-      if (gGameState.warpDest ==
+      if (gSaveBlock.warpDest ==
           VENUS_LIGHTHOUSE_FOURTH_FLOOR_WALL_SWITCHES_FROM_PSYNERGY_STONE_RISING)
         VenusLighthouse_RaiseLeaderWithSpray();
       break;
@@ -3344,7 +3344,7 @@ static void VenusLighthouse_StepObjectEventWithDust(struct Vector3 *direction) {
   {
     struct FieldWork *work = gFieldWork;
 
-    localId = gGameState.leaderLocalId;
+    localId = gSaveBlock.leaderLocalId;
     viewCenter = (struct ObjectEvent *)work->camera;
   }
   objectEvent = ObjectEvent_GetById(localId);
@@ -3829,7 +3829,7 @@ static s32 VenusLighthouse_RouteLight(struct ObjectScriptContext *interpreter) {
       ObjectEvent_SetScript(light, gVenusLightGoesOut);
       return 0;
     }
-    if (gGameState.mapId == (s32)&MapId_VenusLighthouseThirdFloor) {
+    if (gSaveBlock.mapId == (s32)&MapId_VenusLighthouseThirdFloor) {
       for (socket = 0;
            socket <= 3 &&
            !(light->x.fixed >> 20 == gVenusThirdFloorSockets[socket].x &&

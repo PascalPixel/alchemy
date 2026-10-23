@@ -72,7 +72,7 @@
 #include "action_script.h"
 #include "animspr.h"
 #include "version.h"
-#include "game_state.h"
+#include "save_block.h"
 #include "keystate.h"
 #include "map_ids.h"
 #include "unit/map/imil.h"
@@ -310,7 +310,7 @@ static s32 Imil_UpdateShiver(struct ObjectScriptContext *interpreter) {
 
 /// Imil is two maps: the village, and its houses and Sanctum.
 const struct MapWarpDest *Imil_GetWarpDests(void) {
-  if (gGameState.mapId == (s32)&MapId_ImilInteriors) {
+  if (gSaveBlock.mapId == (s32)&MapId_ImilInteriors) {
     return gImil_InteriorWarpDests;
   }
   return gImil_TownWarpDests;
@@ -326,7 +326,7 @@ const u32 *Imil_GetWarps(void) { return gImil_Warps; }
 const struct ObjectEventTemplate *Imil_GetObjectEventTemplates(void) {
   struct ObjectEventTemplate *script;
 
-  if (gGameState.mapId == ((s32)&MapId_ImilInteriors)) {
+  if (gSaveBlock.mapId == ((s32)&MapId_ImilInteriors)) {
     script = gImil_InteriorObjectEventTemplates;
     Map_AssignViewFlags(script);
     if (GameFlag_Get(FLAG_SATUROS_BEATEN_AT_MERCURY) != 0) {
@@ -356,7 +356,7 @@ static void Imil_StartIceSlide(void) { Imil_RunIceSlide(); }
 /// The village's, or the houses' and the Sanctum's, conversations and
 /// Psynergy targets.
 const struct MapEvent *Imil_GetEvents(void) {
-  if (gGameState.mapId == (s32)&MapId_ImilInteriors) {
+  if (gSaveBlock.mapId == (s32)&MapId_ImilInteriors) {
     return gImil_InteriorEvents;
   }
   return gImil_TownEvents;
@@ -846,7 +846,7 @@ s32 Imil_Initialize(void) {
   struct ObjectEvent *leader;
   s32 warpDest;
 
-  if (gGameState.mapId == (s32)&MapId_Imil) {
+  if (gSaveBlock.mapId == (s32)&MapId_Imil) {
     leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
     gFieldWork->transition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
     Engine_ObjectEventSetAnimation(LOCALID_STRONGMAN_KEEPING_IN_SHAPE,
@@ -864,14 +864,14 @@ s32 Imil_Initialize(void) {
       Imil_PlaceMovedSnowman();
     }
     if (!GameFlag_Get(FLAG_KEEP_PARTY_POSITION) &&
-        gGameState.warpDest == IMIL_FROM_IMIL_FALLS_CAVE) {
+        gSaveBlock.warpDest == IMIL_FROM_IMIL_FALLS_CAVE) {
       Imil_ArriveFromFallsCave();
     }
-  } else if (gGameState.mapId == (s32)&MapId_ImilInteriors) {
+  } else if (gSaveBlock.mapId == (s32)&MapId_ImilInteriors) {
     // Restore each interior's occupants before running its arrival script.
     gFieldWork->transition =
         MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
-    warpDest = gGameState.warpDest;
+    warpDest = gSaveBlock.warpDest;
     if (warpDest == IMIL_INTERIORS_HOUSE_SOUTHWEST) {
       ObjectGroup_ConfigureChildValue(LOCALID_CRATE, 15);
       ObjectEvent_GetById(LOCALID_CRATE)->collisionFlags |= 8;
@@ -1619,7 +1619,7 @@ static void Imil_RunIceSlide(void) {
   s32 x;
   u8 *layer;
 
-  subject = ObjectEvent_GetByLocalId(gGameState.leaderLocalId);
+  subject = ObjectEvent_GetByLocalId(gSaveBlock.leaderLocalId);
 
   for (;;) {
     heading = gImil_SwayHeadings[(gKeysHeld >> 4) & 15];

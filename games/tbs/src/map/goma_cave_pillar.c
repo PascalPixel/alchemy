@@ -73,7 +73,7 @@
 #include "edition.h"
 #include "tbs_edition.h"
 #include "object_event.h"
-#include "game_state.h"
+#include "save_block.h"
 #include "field_service.h"
 #include "text/msg_ids.h"
 #include "fixed_point_position.h"
@@ -565,7 +565,7 @@ static void GomaCavePillar_FidgetWhileForgeFights(void) {
     OBJECT_ANIMATION(LOCALID_WITNESS, ANIM_SHAKE_HEAD);
     break;
   }
-  if (gGameState.pendingDjinnEvent == 0)
+  if (gSaveBlock.pendingDjinnEvent == 0)
     work->raisedEvent = RAISED_FORGE_JOINED;
 }
 
@@ -619,8 +619,8 @@ s32 Map_Initialize(void) {
   }
   if (GameFlag_Get(FLAG_GOMA_CAVE_EAST_PILLAR_IN_PLACE) != 0) {
     OBJECT_POSITION_SET(LOCALID_EAST_PILLAR, 616, 232);
-    if (gGameState.warpDest == GOMA_CAVE_PILLAR_FROM_GOMA_CAVE_STREAM_EAST ||
-        gGameState.warpDest == GOMA_CAVE_PILLAR_FROM_GOMA_CAVE_POND_EAST) {
+    if (gSaveBlock.warpDest == GOMA_CAVE_PILLAR_FROM_GOMA_CAVE_STREAM_EAST ||
+        gSaveBlock.warpDest == GOMA_CAVE_PILLAR_FROM_GOMA_CAVE_POND_EAST) {
       ObjectEvent_GetById(LOCALID_EAST_PILLAR)->layer = 2;
       objectEvent = ObjectEvent_GetById(LOCALID_EAST_PILLAR);
       objectEvent->y.fixed--;
@@ -629,7 +629,7 @@ s32 Map_Initialize(void) {
       MapGrid_CopyCellAttributes(36, 48, 5, 1, 36, 14);
     }
   }
-  if (gGameState.warpDest == WARP_DEST_STUMP_FALL) {
+  if (gSaveBlock.warpDest == WARP_DEST_STUMP_FALL) {
     FieldScript_StartScreenTransition();
     FieldScript_WaitTransitionFrames();
     OBJECT_POSITION_SET(LOCALID_STUMP, 384, 192);
@@ -640,7 +640,7 @@ s32 Map_Initialize(void) {
     EventScript_PushStumpOver();
   }
   // Coming back from a Djinni battle: the man reacts until it is over.
-  if (gGameState.pendingDjinnEvent != 0) {
+  if (gSaveBlock.pendingDjinnEvent != 0) {
     gGomaCavePillar_WitnessFrames = 0;
     Task_AddCallback(GomaCavePillar_FidgetWhileForgeFights, 3200);
   }

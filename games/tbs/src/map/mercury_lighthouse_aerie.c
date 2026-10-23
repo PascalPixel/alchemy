@@ -62,7 +62,7 @@
 ///   for, Ply cast on the lift's statue; nothing calls it, so neither the ROM
 ///   nor a render shows it in a scene.
 
-#include "game_state.h"
+#include "save_block.h"
 #include "map_ids.h"
 #include "unit/import.h"
 #include "unit/map/mercury_lighthouse_aerie.h"
@@ -200,7 +200,7 @@ const u32 *MercuryLighthouseAerie_GetWarps(void) {
 /// and Menardi.
 const struct ObjectEventTemplate *
 MercuryLighthouseAerie_GetObjectEventTemplates(void) {
-  if (gGameState.warpDest != MERCURY_LIGHTHOUSE_AERIE_AFTER_BEACON_LIT) {
+  if (gSaveBlock.warpDest != MERCURY_LIGHTHOUSE_AERIE_AFTER_BEACON_LIT) {
     GameFlag_Set(FLAG_HOSTAGES_GONE);
   }
   return gMercuryLighthouseAerieObjectEventTemplates;
@@ -226,7 +226,7 @@ s32 MercuryLighthouseAerie_Initialize(void) {
   GameFlag_Set(FLAG_MERCURY_LIGHTHOUSE_LIT);
   gFieldWork->transition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
-  if (gGameState.mapId == (s32)&MapId_MercuryLighthouseAerie) {
+  if (gSaveBlock.mapId == (s32)&MapId_MercuryLighthouseAerie) {
     GameFlag_Set(FLAG_RETREAT_BLOCKED);
     FieldScheduler_AddCallback(MercuryLighthouseAerie_FlickerBeacon,
                                TASK_PRIORITY_MAP);
@@ -268,11 +268,11 @@ s32 MercuryLighthouseAerie_Initialize(void) {
         ObjectEvent_GetById(LOCALID_FIRST_BEACON_STATUE + 3), 0);
     ObjectEvent_GetById(LOCALID_FIRST_BEACON_STATUE + 2)->scaleX = -Q16_ONE;
     ObjectEvent_GetById(LOCALID_FIRST_BEACON_STATUE + 3)->scaleX = -Q16_ONE;
-    if (gGameState.warpDest == MERCURY_LIGHTHOUSE_AERIE_AFTER_BEACON_LIT) {
+    if (gSaveBlock.warpDest == MERCURY_LIGHTHOUSE_AERIE_AFTER_BEACON_LIT) {
       if (!GameFlag_Get(FLAG_KEEP_PARTY_POSITION)) {
         MercuryLighthouseAerie_PartyArrives();
       }
-    } else if (gGameState.warpDest ==
+    } else if (gSaveBlock.warpDest ==
                MERCURY_LIGHTHOUSE_AERIE_AFTER_SATUROS_BATTLE) {
       if (!GameFlag_Get(FLAG_LIFT_UP)) {
         {
@@ -289,7 +289,7 @@ s32 MercuryLighthouseAerie_Initialize(void) {
           MercuryLighthouseAerie_AlexAppears();
         }
       }
-    } else if (gGameState.warpDest ==
+    } else if (gSaveBlock.warpDest ==
                MERCURY_LIGHTHOUSE_AERIE_FROM_MERCURY_LIGHTHOUSE_EXTERIOR) {
       GameFlag_Set(FLAG_LIFT_UP);
     }

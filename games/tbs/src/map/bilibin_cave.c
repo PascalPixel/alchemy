@@ -4,7 +4,7 @@
 /// MapId_BilibinCaveEntrance, and Bilibin Cave is MapId_BilibinCaveRapier
 /// and, beyond it, MapId_BilibinCaveIce, whose far end opens onto the world
 /// map farther north. No one speaks here: each map is a run of Psynergy
-/// puzzles, the getters pick its tables by gGameState.mapId, and
+/// puzzles, the getters pick its tables by gSaveBlock.mapId, and
 /// BilibinCave_Initialize restores what the party has already solved in the
 /// map being entered.
 ///
@@ -62,7 +62,7 @@
 /// Open questions: none.
 
 #include "action_script.h"
-#include "game_state.h"
+#include "save_block.h"
 #include "engine_call.h"
 #include "map_ids.h"
 #include "unit/import.h"
@@ -179,7 +179,7 @@ static s32 BilibinCave_ClearScriptedObjectEventSpriteFlags(
 }
 
 const struct MapWarpDest *BilibinCave_GetWarpDests(void) {
-  s16 mapId = gGameState.mapId;
+  s16 mapId = gSaveBlock.mapId;
 
   if (mapId == (s32)&MapId_BilibinCaveEntrance) {
     return gBilibinCaveEntranceWarpDests;
@@ -198,7 +198,7 @@ const struct MapWarpRegion *BilibinCave_GetRegions(void) { return NULL; }
 const u32 *BilibinCave_GetWarps(void) { return gBilibinCaveWarps; }
 
 const struct ObjectEventTemplate *BilibinCave_GetObjectEventTemplates(void) {
-  s16 mapId = gGameState.mapId;
+  s16 mapId = gSaveBlock.mapId;
 
   if (mapId == (s32)&MapId_BilibinCaveEntrance) {
     return gBilibinCaveEntranceObjectEventTemplates;
@@ -213,7 +213,7 @@ const struct ObjectEventTemplate *BilibinCave_GetObjectEventTemplates(void) {
 }
 
 const struct MapEvent *BilibinCave_GetEvents(void) {
-  s16 mapId = gGameState.mapId;
+  s16 mapId = gSaveBlock.mapId;
 
   if (mapId == (s32)&MapId_BilibinCaveEntrance) {
     return gBilibinCaveEntranceEvents;
@@ -417,7 +417,7 @@ static void EventScript_StopFootprints(void) {
 /// Sets up the map being entered, with its puzzles already solved. The map
 /// is the Bilibin Cave Entrance or one of Bilibin Cave's two.
 s32 BilibinCave_Initialize(void) {
-  s16 variant = gGameState.mapId;
+  s16 variant = gSaveBlock.mapId;
 
   if (variant == (s32)&MapId_BilibinCaveEntrance) {
     BilibinCave_RestoreEntrance();

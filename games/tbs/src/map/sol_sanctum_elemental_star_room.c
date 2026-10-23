@@ -40,7 +40,7 @@
 ///
 /// Open questions: none.
 
-#include "game_state.h"
+#include "save_block.h"
 #include "unit/import.h"
 #include "unit/map/sol_sanctum_elemental_star_room.h"
 #include "unit/map/common/effect_spawn.h"
@@ -2179,7 +2179,7 @@ s32 SolSanctumElementalStarRoom_Initialize(void) {
     SolSanctumElementalStarRoom_LineUpCaptors();
   }
   if (GameFlag_Get(FLAG_SOL_SANCTUM_STAR_ROOM_EXPLAINED) == 0) {
-    if (gGameState.warpDest ==
+    if (gSaveBlock.warpDest ==
         SOL_SANCTUM_ELEMENTAL_STAR_ROOM_FROM_SOL_SANCTUM_LUNA_SOL_ROOMS) {
       SolSanctumElementalStarRoom_EnterStarRoom();
     }

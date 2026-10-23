@@ -20,7 +20,7 @@
 ///   Donpa judges him after the battle (EventScript_DonpaJudgesDodonpa), which
 ///   sets FLAG_DODONPA_LOCKED_UP and changes all of Lunpa.
 ///
-/// The getters choose by gGameState.mapId; LunpaFortressCave and
+/// The getters choose by gSaveBlock.mapId; LunpaFortressCave and
 /// LunpaFortressToadonpa share one warp table. Every return through the Lunpa
 /// Fortress Gates (lunpa.c) clears the fortress's puzzle and beaten-guard
 /// flags, so the fortress starts over.
@@ -83,7 +83,7 @@
 ///
 /// Open questions: none.
 
-#include "game_state.h"
+#include "save_block.h"
 #include "script_layer.h"
 #include "unit/import.h"
 #include "unit/map/lunpa_fortress.h"
@@ -386,7 +386,7 @@ static void LunpaFortress_RestoreToadonpaDoors(void);
 #include "common/object_staged_object_event.h"
 
 const struct MapWarpDest *Map_GetWarpDests(void) {
-  s16 mapId = gGameState.mapId;
+  s16 mapId = gSaveBlock.mapId;
 
   if (mapId == (s32)&MapId_LunpaFortressGroundFloor) {
     return gLunpaFortressGroundFloorWarpDests;
@@ -403,7 +403,7 @@ const struct MapWarpDest *Map_GetWarpDests(void) {
 const struct MapWarpRegion *Map_GetWarpRegions(void) { return NULL; }
 
 const u32 *Map_GetWarps(void) {
-  s16 mapId = gGameState.mapId;
+  s16 mapId = gSaveBlock.mapId;
 
   if (mapId == (s32)&MapId_LunpaFortressUpperFloor) {
     return gLunpaFortressUpperFloorWarps;
@@ -417,7 +417,7 @@ const u32 *Map_GetWarps(void) {
 
 /// The guards, the other people and the objects of each map.
 const struct ObjectEventTemplate *Map_GetObjectEventTemplates(void) {
-  s16 mapId = gGameState.mapId;
+  s16 mapId = gSaveBlock.mapId;
 
   // Unused: this overlay never runs for West Lunpa Cave, which has its own.
   if (mapId == (s32)&MapId_WestLunpaCave) {
@@ -440,7 +440,7 @@ const struct ObjectEventTemplate *Map_GetObjectEventTemplates(void) {
 
 /// What the party can talk to, search and use Psynergy on, by map.
 const struct MapEvent *Map_GetEvents(void) {
-  s16 mapId = gGameState.mapId;
+  s16 mapId = gSaveBlock.mapId;
 
   if (mapId == (s32)&MapId_LunpaFortressGroundFloor) {
     return gLunpaFortressGroundFloorEvents;
@@ -823,20 +823,20 @@ static void LunpaFortress_UpdatePairedGuardDetection(void) {
       patrolLayer->phaseX = PAIRED_PATROL_LAYER_ORIGIN_X - firstGuard->x.fixed;
     }
     if (!LunpaFortress_IsLeaderInPatrolSafeZone()) {
-      if (gGameState.cloaked != 0) {
+      if (gSaveBlock.cloaked != 0) {
         if (LunpaFortress_IsLeaderNearGuard(LOCALID_UPPER_FLOOR_FIRST_PATROL) &&
-            gGameState.cloaked != 0) {
+            gSaveBlock.cloaked != 0) {
           SetFieldWorkValue(&PATROL_PSYNERGY_REQUEST(work), CLOAK_NEAR_GUARD);
           return;
         }
         if (LunpaFortress_IsLeaderNearGuard(
                 LOCALID_UPPER_FLOOR_SECOND_PATROL) &&
-            gGameState.cloaked != 0) {
+            gSaveBlock.cloaked != 0) {
           SetFieldWorkValue(&PATROL_PSYNERGY_REQUEST(work), CLOAK_NEAR_GUARD);
           return;
         }
       }
-      if (gGameState.cloaked == 0) {
+      if (gSaveBlock.cloaked == 0) {
         if (LunpaFortress_CanGuardSeeLeader(LOCALID_UPPER_FLOOR_FIRST_PATROL)) {
           GameFlag_Set(FLAG_MAP_TEMP_15);
           GameFlag_Set(FLAG_MAP_TEMP_14);
@@ -941,11 +941,11 @@ static void LunpaFortress_UpdateHallGuardDetection(void) {
     if (!LunpaFortress_IsLeaderPassingPatrollingGuard()) {
       LunpaFortress_IsGuardNearViewCenter(LOCALID_UPPER_FLOOR_HALL_PATROL);
       if (LunpaFortress_IsLeaderNearGuard(LOCALID_UPPER_FLOOR_HALL_PATROL) &&
-          gGameState.cloaked != 0) {
+          gSaveBlock.cloaked != 0) {
         SetFieldWorkValue(&PATROL_PSYNERGY_REQUEST(work), CLOAK_NEAR_GUARD);
         return;
       }
-      if (gGameState.cloaked == 0) {
+      if (gSaveBlock.cloaked == 0) {
         if (LunpaFortress_CanGuardSeeLeader(LOCALID_UPPER_FLOOR_HALL_PATROL)) {
           GameFlag_Set(FLAG_MAP_TEMP_15);
           GameFlag_Set(FLAG_MAP_TEMP_14);
@@ -1019,11 +1019,11 @@ static void LunpaFortress_UpdateGroundFloorPatrolDetection(void) {
     }
     if (!LunpaFortress_IsLeaderInGroundFloorPatrolSafeZone()) {
       if (LunpaFortress_IsLeaderNearGuard(LOCALID_GROUND_FLOOR_PATROL_GUARD) &&
-          gGameState.cloaked != 0) {
+          gSaveBlock.cloaked != 0) {
         SetFieldWorkValue(&PATROL_PSYNERGY_REQUEST(work), CLOAK_NEAR_GUARD);
         return;
       }
-      if (gGameState.cloaked == 0) {
+      if (gSaveBlock.cloaked == 0) {
         if (LunpaFortress_CanGuardSeeLeader(
                 LOCALID_GROUND_FLOOR_PATROL_GUARD)) {
           GameFlag_Set(FLAG_MAP_TEMP_15);
@@ -1067,7 +1067,7 @@ static void LunpaFortress_CheckUpperHallGuard(void) {
   fieldWork = gFieldWork;
   if (Script_GetFlag(FLAG_MAP_TEMP_14) == 0) {
     if (LunpaFortress_IsLeaderOutsideUpperHall() == 0) {
-      if (gGameState.cloaked == 0) {
+      if (gSaveBlock.cloaked == 0) {
         if (LunpaFortress_CanGuardSeeLeader(
                 LOCALID_GROUND_FLOOR_UPPER_HALL_GUARD) != 0) {
           GameFlag_Set(FLAG_MAP_TEMP_15);
@@ -1097,7 +1097,7 @@ static void LunpaFortress_CheckEntranceGuard(void) {
 
   if (LunpaFortress_CanGuardSeeLeader(LOCALID_GROUND_FLOOR_ENTRANCE_GUARD) !=
           0 &&
-      gGameState.cloaked == 0) {
+      gSaveBlock.cloaked == 0) {
     s16 *raisedTrigger;
     s32 caughtTrigger;
 
@@ -1119,7 +1119,7 @@ static void LunpaFortress_CheckFirstEntranceSentry(void) {
   if (Script_GetFlag(FLAG_MAP_TEMP_25) == 0) {
     if (LunpaFortress_CanGuardSeeLeader(LOCALID_GROUND_FLOOR_FIRST_SENTRY) !=
         0) {
-      if (gGameState.cloaked == 0) {
+      if (gSaveBlock.cloaked == 0) {
         GameFlag_Set(FLAG_MAP_TEMP_25);
         Task_Remove(LunpaFortress_CheckFirstEntranceSentry);
         Task_Remove(LunpaFortress_CheckSecondEntranceSentry);
@@ -1138,7 +1138,7 @@ static void LunpaFortress_CheckSecondEntranceSentry(void) {
   if (Script_GetFlag(FLAG_MAP_TEMP_25) == 0) {
     if (LunpaFortress_CanGuardSeeLeader(LOCALID_GROUND_FLOOR_SECOND_SENTRY) !=
         0) {
-      if (gGameState.cloaked == 0) {
+      if (gSaveBlock.cloaked == 0) {
         GameFlag_Set(FLAG_MAP_TEMP_25);
         Task_Remove(LunpaFortress_CheckSecondEntranceSentry);
         Task_Remove(LunpaFortress_CheckFirstEntranceSentry);
@@ -3148,15 +3148,15 @@ s32 Map_Initialize(void) {
   struct ObjectEvent *mapObjectEvent;
 
   gLunpaFortressRandomPick = (u32)Engine_RandomNext() * 7 >> 16;
-  if (gGameState.mapId == (s32)&MapId_LunpaFortressGroundFloor) {
+  if (gSaveBlock.mapId == (s32)&MapId_LunpaFortressGroundFloor) {
     MapGrid_SetShownLayers(LUNPA_FORTRESS_PASSAGE_LAYERS);
     LunpaFortress_InitializeGroundFloor();
   }
-  if (gGameState.mapId == (s32)&MapId_LunpaFortressUpperFloor)
+  if (gSaveBlock.mapId == (s32)&MapId_LunpaFortressUpperFloor)
     LunpaFortress_InitializeUpperFloor();
-  if (gGameState.mapId == (s32)&MapId_LunpaFortressCave)
+  if (gSaveBlock.mapId == (s32)&MapId_LunpaFortressCave)
     LunpaFortress_InitializeCave();
-  if (gGameState.mapId == (s32)&MapId_LunpaFortressToadonpa) {
+  if (gSaveBlock.mapId == (s32)&MapId_LunpaFortressToadonpa) {
     gFieldWork->transition =
         MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
     ObjectEvent_SetSpriteFlags(ObjectEvent_Get(LOCALID_TOADONPA_HAMMET), 0);
@@ -3176,11 +3176,11 @@ s32 Map_Initialize(void) {
       ObjectEvent_SetSpriteFlags(mapObjectEvent, 0);
     mapObjectEvent->priorityFlags = OBJ_EVENT_PRIORITY_UNDERFOOT;
     MapGrid_SetShownLayers(LUNPA_FORTRESS_PASSAGE_LAYERS);
-    if (gGameState.warpDest == LUNPA_FORTRESS_TOADONPA_AFTER_BATTLE) {
+    if (gSaveBlock.warpDest == LUNPA_FORTRESS_TOADONPA_AFTER_BATTLE) {
       MapGrid_SetShownLayers(LUNPA_FORTRESS_ROOM_LAYERS);
       EventScript_DonpaJudgesDodonpa();
     }
-    if (gGameState.warpDest ==
+    if (gSaveBlock.warpDest ==
         LUNPA_FORTRESS_TOADONPA_FROM_LUNPA_FORTRESS_CAVE_NORTHWEST) {
       MapGrid_SetShownLayers(LUNPA_FORTRESS_ROOM_LAYERS);
       if (GameFlag_Get(FLAG_DODONPA_LOCKED_UP) != 0) {
@@ -3207,7 +3207,7 @@ s32 Map_Initialize(void) {
 /// each part, and the cell doors already opened.
 static void LunpaFortress_InitializeGroundFloor(void) {
   LunpaFortress_RestoreGroundFloorDoors();
-  switch (gGameState.warpDest) {
+  switch (gSaveBlock.warpDest) {
   case LUNPA_FORTRESS_GROUND_FLOOR_ENTRANCE_FROM_MAIN_PASSAGE:
   case LUNPA_FORTRESS_GROUND_FLOOR_MAIN_PASSAGE_FROM_ENTRANCE:
   case LUNPA_FORTRESS_GROUND_FLOOR_MAIN_PASSAGE_FROM_NORTH_PASSAGE:
@@ -3286,7 +3286,7 @@ static void LunpaFortress_InitializeUpperFloor(void) {
   if (GameFlag_Get(FLAG_LUNPA_FORTRESS_CELL_KEY)) {
     OBJECT_POSITION_SET(LOCALID_UPPER_FLOOR_CELL_KEY, 0, 0);
   }
-  switch (gGameState.warpDest) {
+  switch (gSaveBlock.warpDest) {
   case LUNPA_FORTRESS_UPPER_FLOOR_FROM_LUNPA_FORTRESS_GROUND_FLOOR_SOUTH:
   case LUNPA_FORTRESS_UPPER_FLOOR_WEST_PASSAGE_FROM_NORTH_PASSAGE:
   case LUNPA_FORTRESS_UPPER_FLOOR_WEST_PASSAGE_FROM_MIDDLE_PASSAGE:

@@ -84,7 +84,7 @@
 /// Open questions: none.
 
 #include "action_script.h"
-#include "game_state.h"
+#include "save_block.h"
 #include "heap.h"
 #include "iwram_call.h"
 #include "keystate.h"
@@ -403,7 +403,7 @@ static void MercuryLighthouse_UpdateLeaderEffectTarget(void) {
 #include "common/mercury_lighthouse_palette_cycle.h"
 
 const struct MapWarpDest *MercuryLighthouse_GetWarpDests(void) {
-  s16 selector = gGameState.mapId;
+  s16 selector = gSaveBlock.mapId;
 
   if (selector == (s32)&MapId_MercuryLighthouseExterior) {
     return gMercuryLighthouseExteriorWarpDests;
@@ -425,7 +425,7 @@ const u32 *MercuryLighthouse_GetWarps(void) { return gMercuryLighthouse_Warps; }
 /// Selects the object events and obstacles for the current lighthouse map.
 const struct ObjectEventTemplate *
 MercuryLighthouse_GetObjectEventTemplates(void) {
-  s16 selector = gGameState.mapId;
+  s16 selector = gSaveBlock.mapId;
 
   if (selector == (s32)&MapId_MercuryLighthouseLower) {
     return gMercuryLighthouseLowerObjectEventTemplates;
@@ -477,7 +477,7 @@ static void MercuryLighthouse_InspectBlockedPassage(void) {
 
 /// Selects the puzzle interactions and dialogue for the current map.
 const struct MapEvent *MercuryLighthouse_GetEvents(void) {
-  s16 selector = gGameState.mapId;
+  s16 selector = gSaveBlock.mapId;
 
   if (selector == (s32)&MapId_MercuryLighthouseLower) {
     return gMercuryLighthouseLowerEvents;
@@ -2113,7 +2113,7 @@ static void MercuryLighthouse_FillHermesWaterBottle(void) {
 /// second the motion runs alone.
 static void MercuryLighthouse_EnterRisingPassage(void) {
   FieldScript_Start();
-  if (gGameState.mapId == (s32)&MapId_MercuryLighthouseLower) {
+  if (gSaveBlock.mapId == (s32)&MapId_MercuryLighthouseLower) {
     ObjectEvent_WalkToAndWait(LOCALID_PARTY_LEADER, 472, 600);
     ObjectEvent_FaceDirection(LOCALID_PARTY_LEADER, FACING_SOUTH, 10);
     FieldCamera_MoveTo(PIXELS(464), -1, PIXELS(656), 1);
@@ -2324,8 +2324,8 @@ s32 MercuryLighthouse_Initialize(void) {
 
   GameFlag_Set(FLAG_MERCURY_LIGHTHOUSE_LIT);
   // Set up common lighting before restoring each map's puzzle-specific state.
-  gGameState.retreatWarpDest = MERCURY_LIGHTHOUSE_EXTERIOR_FROM_WORLD_MAP;
-  gGameState.retreatMap = (s32)&MapId_MercuryLighthouseExterior;
+  gSaveBlock.retreatWarpDest = MERCURY_LIGHTHOUSE_EXTERIOR_FROM_WORLD_MAP;
+  gSaveBlock.retreatMap = (s32)&MapId_MercuryLighthouseExterior;
   gFieldWork->transition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   Io_Write16(BLDCNT_TGT2_ALL | BLDCNT_EFFECT_BLEND, &REG_BLDCNT);
@@ -2341,9 +2341,9 @@ s32 MercuryLighthouse_Initialize(void) {
                                TASK_PRIORITY_MAP);
   else
     MercuryLighthouse_ClearPalette();
-  if (gGameState.mapId == (s32)&MapId_MercuryLighthouseLower) {
+  if (gSaveBlock.mapId == (s32)&MapId_MercuryLighthouseLower) {
     // Entrance pillars, the channel puzzle and Mia's rescue share this overlay.
-    switch (gGameState.warpDest) {
+    switch (gSaveBlock.warpDest) {
     case MERCURY_LIGHTHOUSE_LOWER_FROM_MERCURY_LIGHTHOUSE_ENTRANCE_WEST:
     case MERCURY_LIGHTHOUSE_LOWER_FROM_MERCURY_LIGHTHOUSE_ENTRANCE_WEST_NORTHWEST:
     case MERCURY_LIGHTHOUSE_LOWER_POOL_FROM_STATUE:
@@ -2397,9 +2397,9 @@ s32 MercuryLighthouse_Initialize(void) {
       break;
     }
   }
-  if (gGameState.mapId == (s32)&MapId_MercuryLighthouseMiddle) {
+  if (gSaveBlock.mapId == (s32)&MapId_MercuryLighthouseMiddle) {
     // Restore stairs, the floor-switch gate and the fountain's moved pipe.
-    switch (gGameState.warpDest) {
+    switch (gSaveBlock.warpDest) {
     case MERCURY_LIGHTHOUSE_MIDDLE_FROM_MERCURY_LIGHTHOUSE_LOWER_SOUTH:
     case MERCURY_LIGHTHOUSE_MIDDLE_PIPES_FROM_GATE:
       SetEffectRecordMode(ObjectEvent_GetById(LOCALID_STAIR_PIPE), 1);
@@ -2458,9 +2458,9 @@ s32 MercuryLighthouse_Initialize(void) {
       break;
     }
   }
-  if (gGameState.mapId == (s32)&MapId_MercuryLighthouseUpper) {
+  if (gSaveBlock.mapId == (s32)&MapId_MercuryLighthouseUpper) {
     // Restore the movable pipes and the stone doors they opened.
-    switch (gGameState.warpDest) {
+    switch (gSaveBlock.warpDest) {
     case MERCURY_LIGHTHOUSE_UPPER_FIVE_PILLARS_FROM_GATE:
     case MERCURY_LIGHTHOUSE_UPPER_FROM_MERCURY_LIGHTHOUSE_MIDDLE_NORTHEAST:
     case MERCURY_LIGHTHOUSE_UPPER_FROM_MERCURY_LIGHTHOUSE_MIDDLE_EAST_NORTHEAST:
@@ -2575,7 +2575,7 @@ s32 MercuryLighthouse_Initialize(void) {
 #endif
       // Fall through.
     case MERCURY_LIGHTHOUSE_UPPER_STONE_DOORS_FROM_GATE:
-      if (gGameState.warpDest == MERCURY_LIGHTHOUSE_UPPER_STONE_DOORS_FROM_GATE)
+      if (gSaveBlock.warpDest == MERCURY_LIGHTHOUSE_UPPER_STONE_DOORS_FROM_GATE)
         Sound_PlaySong(SE_211);
       SetEffectRecordMode(ObjectEvent_GetById(LOCALID_SLIDING_STATUE), 1);
       ObjectMotion_SetActionVariant(LOCALID_DOOR_ROOM_PIPE, 2);
@@ -2588,7 +2588,7 @@ s32 MercuryLighthouse_Initialize(void) {
                           1);
       Map_RedrawObjectEventFootprint(LOCALID_DOOR_ROOM_PIPE);
       Map_RedrawObjectEventFootprint(LOCALID_DOOR_SWITCH_PIPE);
-      if (gGameState.warpDest != MERCURY_LIGHTHOUSE_UPPER_STONE_DOORS_FROM_GATE)
+      if (gSaveBlock.warpDest != MERCURY_LIGHTHOUSE_UPPER_STONE_DOORS_FROM_GATE)
         break;
       if (!GameFlag_Get(FLAG_KEEP_PARTY_POSITION)) {
         GameFlag_Clear(FLAG_DOOR_ROOM_PIPE_PUSHED);
@@ -2636,9 +2636,9 @@ s32 MercuryLighthouse_Initialize(void) {
       break;
     }
   }
-  if (gGameState.mapId == (s32)&MapId_MercuryLighthouseExterior) {
+  if (gSaveBlock.mapId == (s32)&MapId_MercuryLighthouseExterior) {
     // This map contains Mia's entrance, the lift and the healing fountain.
-    switch (gGameState.warpDest) {
+    switch (gSaveBlock.warpDest) {
     case MERCURY_LIGHTHOUSE_EXTERIOR_WATERFALL_FROM_UPPER_PATH:
       FieldScheduler_AddCallback(MercuryLighthouse_CycleWaterfallPalette,
                                  TASK_PRIORITY_MAP);

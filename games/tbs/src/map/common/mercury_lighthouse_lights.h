@@ -42,7 +42,7 @@ void MercuryLighthouse_RestoreLights(s32 region,
     st->poolBehavior = region;
     return;
   }
-  objectEvent = ObjectEvent_GetByLocalId(gGameState.leaderLocalId);
+  objectEvent = ObjectEvent_GetByLocalId(gSaveBlock.leaderLocalId);
   z = objectEvent->z.fixed;
   cell = (struct MapGridCell *)Ram_MapGridCellBuffer + ((z / 0x100000) << 7) +
          objectEvent->x.fixed / 0x100000;

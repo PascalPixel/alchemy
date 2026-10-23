@@ -15,7 +15,7 @@
 ///   cave's two halves, with a boulder for Lift and two chests.
 ///
 /// One warp table serves every map; the other getters choose by
-/// gGameState.mapId, Gondowan Passage's object event templates and map events
+/// gSaveBlock.mapId, Gondowan Passage's object event templates and map events
 /// also by FLAG_BABI_SPOKE_AFTER_COLOSSO, and an empty set answers any other
 /// map number. Every map's event table carries GondowanCaveRiver's two chests.
 ///
@@ -55,7 +55,7 @@
 ///   screen, the leader's jumps and the pillar's height are the same either
 ///   way), so neither the ROM nor a render can show what it was for.
 
-#include "game_state.h"
+#include "save_block.h"
 #include "heap_slots.h"
 #include "map_ids.h"
 #include "unit/import.h"
@@ -164,7 +164,7 @@ static void GondowanCave_RunSpinningLeap(s32 localId);
 #include "objcmd.h"
 
 const struct MapWarpDest *Map_GetWarpDests(void) {
-  s16 mapId = gGameState.mapId;
+  s16 mapId = gSaveBlock.mapId;
 
   if (mapId == (s32)&MapId_GondowanPassage) {
     return gGondowanPassageWarpDests;
@@ -186,7 +186,7 @@ const u32 *Map_GetWarps(void) { return gGondowanCaveWarps; }
 /// Iodem waits in Gondowan Passage once Babi has spoken to the party after
 /// Colosso.
 const struct ObjectEventTemplate *Map_GetObjectEventTemplates(void) {
-  s16 mapId = gGameState.mapId;
+  s16 mapId = gSaveBlock.mapId;
 
   if (mapId == (s32)&MapId_GondowanPassage) {
     if (GameFlag_Get(FLAG_BABI_SPOKE_AFTER_COLOSSO) != 0) {
@@ -206,7 +206,7 @@ const struct ObjectEventTemplate *Map_GetObjectEventTemplates(void) {
 /// The map events of each map, with Iodem's in Gondowan Passage when he is
 /// there.
 const struct MapEvent *Map_GetEvents(void) {
-  s16 mapId = gGameState.mapId;
+  s16 mapId = gSaveBlock.mapId;
 
   if (mapId == (s32)&MapId_GondowanPassage) {
     if (GameFlag_Get(FLAG_BABI_SPOKE_AFTER_COLOSSO) != 0) {
@@ -254,8 +254,8 @@ static void EventScript_IodemAsksWhyTurningBack(void) {
       Script_ClearFlag(FLAG_IODEM_FOLLOWING_PARTY);
       ObjectMotion_CommitCurrentPositionAndActivate(LOCALID_IODEM);
       OBJECT_ANIMATION(LOCALID_IODEM, ANIM_STAND);
-      gGameState.savedMap = (s32)&MapId_TolbiInteriors;
-      gGameState.savedWarpDest = TOLBI_INTERIORS_SANCTUM_NORTH;
+      gSaveBlock.savedMap = (s32)&MapId_TolbiInteriors;
+      gSaveBlock.savedWarpDest = TOLBI_INTERIORS_SANCTUM_NORTH;
     } else {
       // "Then we should continue on our way to the lighthouse." He rejoins
       // the party, and Isaac steps away from the coord event.
@@ -516,14 +516,14 @@ static void EventScript_LiftBoulder(void) {
 s32 Map_Initialize(void) {
   struct ObjectEvent *objectEvent;
 
-  if (gGameState.mapId == (s32)&MapId_GondowanPassage) {
+  if (gSaveBlock.mapId == (s32)&MapId_GondowanPassage) {
     GameFlag_Set(FLAG_RETREAT_BLOCKED);
     if (GameFlag_Get(FLAG_IODEM_FOLLOWING_PARTY) != 0) {
       OBJECT_POSITION_SET(LOCALID_IODEM, 0, 0);
     }
   }
-  if (gGameState.mapId == (s32)&MapId_GondowanCave) {
-    if (gGameState.warpDest == GONDOWAN_CAVE_FROM_WORLD_MAP_EAST) {
+  if (gSaveBlock.mapId == (s32)&MapId_GondowanCave) {
+    if (gSaveBlock.warpDest == GONDOWAN_CAVE_FROM_WORLD_MAP_EAST) {
       MapGrid_CopyCellAttributes(108, 17, 1, 1, 107, 17);
     }
     if (GameFlag_Get(FLAG_GONDOWAN_CAVE_STUMP_MOVED) != 0) {

@@ -152,7 +152,7 @@ s32 Save_ScanRecordFlags(void) {
   return fileCount;
 }
 
-/// Prepares the save buffer for writing: stamps the game state with the time
+/// Prepares the save buffer for writing: stamps the save block with the time
 /// and options, then fills the file summary shown on the file menus (the
 /// leader's name, level and class, the play time, area, coins, Djinn of each
 /// element, the party, the send flag and how many of game flags 48-127 are
@@ -170,8 +170,8 @@ u32 Save_BuildFileSummary(void) {
 
   // The summary's 16-byte header comes before the save buffer.
   summary = (struct SaveFileSummary *)((u32)gSaveBuffer - 16);
-  gGameState.buildStamp = Runtime_GetBuildStampTimeFar(0);
-  gGameState.playTime = gPlayTimeFrames;
+  gSaveBlock.buildStamp = Runtime_GetBuildStampTimeFar(0);
+  gSaveBlock.playTime = gPlayTimeFrames;
   // A second copy of the play time, 256 bytes from gMapLocalState: past its
   // 0x78 bytes, in gInventorySnapshot's last word. gMapLocalState opens the
   // save buffer's second half, so this lands at offset 0x110 of the file's
@@ -183,18 +183,18 @@ u32 Save_BuildFileSummary(void) {
     u32 *copy = (u32 *)gMapLocalState;
     copy[64] = gPlayTimeFrames;
   }
-  gGameState.idleSleepEnabled = gIdleSleepEnabled;
+  gSaveBlock.idleSleepEnabled = gIdleSleepEnabled;
 
-  leader = Unit_GetFar(gGameState.leaderLocalId);
+  leader = Unit_GetFar(gSaveBlock.leaderLocalId);
   destination = summary->name;
   source = leader->name;
   for (i = 11; i >= 0; i--)
     *destination++ = *source++;
   summary->level = leader->level;
-  summary->playTime = gGameState.playTime;
-  summary->area = MapSec_GetNameIndexFar(gGameState.mapId, gGameState.warpDest);
+  summary->playTime = gSaveBlock.playTime;
+  summary->area = MapSec_GetNameIndexFar(gSaveBlock.mapId, gSaveBlock.warpDest);
   summary->classId = leader->classId;
-  summary->coins = gGameState.coins;
+  summary->coins = gSaveBlock.coins;
   summary->djinn[0] = Party_SumDjinnCountsFar(0);
   summary->djinn[1] = Party_SumDjinnCountsFar(1);
   summary->djinn[2] = Party_SumDjinnCountsFar(2);
@@ -204,9 +204,9 @@ u32 Save_BuildFileSummary(void) {
   for (i = 0; i <= 3 && members[i] != 255; i++)
     summary->party[i] = members[i];
   summary->party[i] = -1;
-  summary->windowHue = gGameState.windowColor[0];
-  summary->windowBrightness = gGameState.windowColor[1];
-  summary->sendFlag = gGameState.sendFlag;
+  summary->windowHue = gSaveBlock.windowColor[0];
+  summary->windowBrightness = gSaveBlock.windowColor[1];
+  summary->sendFlag = gSaveBlock.sendFlag;
   summary->flagCount = 0;
   for (i = 48; i <= 127; i++) {
     if (GameFlag_GetFar(i))
@@ -215,7 +215,7 @@ u32 Save_BuildFileSummary(void) {
   summary->hasFlag20 = GameFlag_GetFar(FLAG_CHILDHOOD) != 0;
   {
     s32 n;
-    u32 *frame = &gGameState.buildStamp;
+    u32 *frame = &gSaveBlock.buildStamp;
     u32 frames;
 
     // The checksum covers 242 * 4 = 968 words (3872 bytes) from the flags.
@@ -964,7 +964,7 @@ s32 FileMenu_SelectFile(s32 selectedFile, s32 menuMode) {
       Text_DrawMessage(MsgSaveNoData, fileList, 10, y);
     } else if (summary->frames < buildStamp) {
       // Saved by an older build: "(Continue from a Sanctum)", since such a
-      // file resumes at GameState.savedMap, not where it was saved
+      // file resumes at SaveBlock.savedMap, not where it was saved
       // (menu/main_menu.c).
       Text_DrawMessage(MsgSaveContinue, fileList, 10, y);
     } else if (summary->playTime != *(u32 *)summary->secondRecordPlayTime) {
@@ -1105,7 +1105,7 @@ s32 FileMenu_SelectFile(s32 selectedFile, s32 menuMode) {
           djinnWindow = NULL;
         }
       } else {
-        WindowColor_Apply(gGameState.windowColor[0], gGameState.windowColor[1]);
+        WindowColor_Apply(gSaveBlock.windowColor[0], gSaveBlock.windowColor[1]);
         FileMenu_HideDjinnSprites();
         FileMenu_HidePartySprites();
         Window_Close(djinnWindow, 2);
@@ -1184,7 +1184,7 @@ s32 FileMenu_SelectFile(s32 selectedFile, s32 menuMode) {
 #endif
   // 55 is HEAP_SLOT_MENU, spriteWork's block.
   FreeHeapSlot(HEAP_SLOT_MENU);
-  WindowColor_Apply(gGameState.windowColor[0], gGameState.windowColor[1]);
+  WindowColor_Apply(gSaveBlock.windowColor[0], gSaveBlock.windowColor[1]);
   WaitFrames(1);
 done:
   return result;
@@ -1278,8 +1278,8 @@ s32 Save_LoadRecordIntoWork(s32 mode) {
         FieldMessage_Show(MsgLoadFailed, 1);
         result = SAVE_ERROR_READ;
       } else {
-        gPlayTimeFrames = gGameState.playTime;
-        gIdleSleepEnabled = gGameState.idleSleepEnabled;
+        gPlayTimeFrames = gSaveBlock.playTime;
+        gIdleSleepEnabled = gSaveBlock.idleSleepEnabled;
         gIdleFrames = 0;
         gSaveSlot = file;
       }

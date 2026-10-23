@@ -18,9 +18,9 @@ s32 Field_FindItemEvent(s32 item) {
   struct FieldWork *work = gFieldWork;
   const struct MapEvent *event = work->events;
   s32 facing = ((struct MotionObject *)ObjectEvent_GetByLocalId(
-                    gGameState.leaderLocalId))
+                    gSaveBlock.leaderLocalId))
                    ->angle;
-  s32 objectEventAhead = Field_FindNearbyTalkTarget(gGameState.leaderLocalId);
+  s32 objectEventAhead = Field_FindNearbyTalkTarget(gSaveBlock.leaderLocalId);
   s32 tileAhead;
 
   item &= 0x1ff;
@@ -66,7 +66,7 @@ s32 Field_FindItemEvent(s32 item) {
 /// Returns 0 when the map's event ran or Retreat was declined, else -1, the
 /// item's own action included; Map_Run ignores it.
 /// Called by Map_Run for the item request (work->item and
-/// work->itemArgument). Retreat sets gGameState.mapId and .warpDest to the
+/// work->itemArgument). Retreat sets gSaveBlock.mapId and .warpDest to the
 /// Retreat point and raises work->warp.
 s32 Field_UseItem(s32 packedItem, s32 slot) {
   s32 result;
@@ -94,7 +94,7 @@ s32 Field_UseItem(s32 packedItem, s32 slot) {
     if (localId == 15) {
       localId = 0;
       for (partyIndex = 0; partyIndex < partyCount; partyIndex++) {
-        unit = Unit_GetFar(gGameState.party[partyIndex]);
+        unit = Unit_GetFar(gSaveBlock.party[partyIndex]);
         matchingSlots = 0;
         for (inventorySlot = 0; inventorySlot < 15; inventorySlot++) {
           if ((unit->inventory[inventorySlot] & 0x1ff) == itemId)
@@ -103,7 +103,7 @@ s32 Field_UseItem(s32 packedItem, s32 slot) {
 
         if (mostMatchingSlots < matchingSlots) {
           mostMatchingSlots = matchingSlots;
-          localId = gGameState.party[partyIndex];
+          localId = gSaveBlock.party[partyIndex];
         }
       }
     } else {
@@ -133,7 +133,7 @@ s32 Field_UseItem(s32 packedItem, s32 slot) {
       FieldMessage_ShowFar(MsgActorUsesItem, 1);
     }
     if ((s32)event->value < 0x10000) {
-      s32 nearbyLocalId = Field_FindNearbyTalkTarget(gGameState.leaderLocalId);
+      s32 nearbyLocalId = Field_FindNearbyTalkTarget(gSaveBlock.leaderLocalId);
       FieldScript_Start();
       FieldScript_SetMessageId(event->value);
       FieldScript_ShowMessageAndWait(nearbyLocalId, 0);
@@ -168,8 +168,8 @@ s32 Field_UseItem(s32 packedItem, s32 slot) {
         if (partyIndex != 0)
           return 0;
 
-        gGameState.mapId = gGameState.retreatMap;
-        gGameState.warpDest = gGameState.retreatWarpDest;
+        gSaveBlock.mapId = gSaveBlock.retreatMap;
+        gSaveBlock.warpDest = gSaveBlock.retreatWarpDest;
         work->warp = WARP_RETREAT;
       }
 
@@ -214,10 +214,10 @@ void *Map_FindPsynergyEvent(s32 eventFlags, s32 group, void *target) {
   struct FieldWork *work = gFieldWork;
   const struct MapEvent *event = work->events;
   s32 facing = ((struct MotionObject *)ObjectEvent_GetByLocalId(
-                    gGameState.leaderLocalId))
+                    gSaveBlock.leaderLocalId))
                    ->angle;
   s32 objectEventAhead =
-      Field_FindNearbyPsynergyTarget(gGameState.leaderLocalId, group);
+      Field_FindNearbyPsynergyTarget(gSaveBlock.leaderLocalId, group);
   s32 tileAhead;
   s32 anyPhase = 0;
 
@@ -272,13 +272,13 @@ s32 Field_RunPsynergyEvents(s32 packed) {
   userId = ((u32)packed >> 10) & 0xF;
   group = Ability_Get(abilityId)->fieldPsynergy;
   // The leader is looked up and the result is not used.
-  ObjectEvent_GetByLocalId(gGameState.leaderLocalId);
+  ObjectEvent_GetByLocalId(gSaveBlock.leaderLocalId);
   beforeEvent = Map_FindPsynergyEvent(PSYNERGY_EVENT(PSYNERGY_PHASE_BEFORE_END),
                                       group, &target);
   afterEvent = Map_FindPsynergyEvent(PSYNERGY_EVENT(PSYNERGY_PHASE_AFTER_END),
                                      group, &target);
   FieldEffect_LoadActionEffectResources(abilityId, 0);
-  FieldEffect_SetupObjectPair(gGameState.leaderLocalId, target);
+  FieldEffect_SetupObjectPair(gSaveBlock.leaderLocalId, target);
   Field_RunEventAction(beforeEvent, userId, target);
   FieldScript_RunTypeHandler();
   FieldEffect_StopCasterHook();

@@ -2,7 +2,7 @@
 /// Altin, the mining village north of the Alpine Crossing, in two maps that
 /// share this overlay and the area name Altin: MapId_Altin, the village
 /// outdoors, and MapId_AltinInteriors, inside its houses, shops and inn.
-/// The getters pick each map's tables by gGameState.mapId, both share one
+/// The getters pick each map's tables by gSaveBlock.mapId, both share one
 /// warp table, and a third, empty set of tables serves any other map.
 ///
 /// The village is flooded by the water beasts of its mine, whose maps the
@@ -46,7 +46,7 @@
 ///
 /// Open questions: none.
 
-#include "game_state.h"
+#include "save_block.h"
 #include "version.h"
 #include "map_ids.h"
 #include "unit/map/altin.h"
@@ -292,7 +292,7 @@ static void AltinInteriors_PlaceSheltering(void);
 static void Beast_SpawnSpray(void);
 
 const struct MapWarpDest *Map_GetWarpDests(void) {
-  s16 mapId = gGameState.mapId;
+  s16 mapId = gSaveBlock.mapId;
 
   if (mapId == MAP_ALTIN_VILLAGE) {
     return gAltin_WarpDests;
@@ -311,7 +311,7 @@ const u32 *Map_GetWarps(void) { return gAltin_Warps; }
 /// Some villagers only turn back after talking once the flood is over or
 /// their family has gone home.
 const struct ObjectEventTemplate *Map_GetObjectEventTemplates(void) {
-  s32 mapId = gGameState.mapId;
+  s32 mapId = gSaveBlock.mapId;
   if (mapId == MAP_ALTIN_VILLAGE) {
     if (GameFlag_Get(FLAG_HYDROS_STATUES_DEFEATED)) {
       gAltin_ObjectEventTemplates[LOCALID_WOMAN_WATER_LUCK -
@@ -340,7 +340,7 @@ const struct ObjectEventTemplate *Map_GetObjectEventTemplates(void) {
 }
 
 const struct MapEvent *Map_GetEvents(void) {
-  s16 mapId = gGameState.mapId;
+  s16 mapId = gSaveBlock.mapId;
 
   if (mapId == MAP_ALTIN_VILLAGE) {
     return gAltin_Events;
@@ -778,7 +778,7 @@ s32 Map_Initialize(void) {
     GameFlag_Set(FLAG_WATER_DRAINED);
   }
 
-  mapId = gGameState.mapId;
+  mapId = gSaveBlock.mapId;
   if (mapId == MAP_ALTIN_VILLAGE) {
     Altin_ApplyWaterLevel();
   } else if (mapId == MAP_ALTIN_HOUSES) {
@@ -832,7 +832,7 @@ static void Altin_ApplyWaterLevel(void) {
                                    WATER_BEAST_ANIMATION_SPIT);
     FieldScheduler_AddCallback(Beast_SpawnSpray, TASK_PRIORITY_MAP);
   }
-  if (gGameState.warpDest == ALTIN_FROM_SANCTUM) {
+  if (gSaveBlock.warpDest == ALTIN_FROM_SANCTUM) {
     GameFlag_Clear(FLAG_SHOW_LOCATION_NAME);
   }
   MapGrid_CopyCellAttributes(0, 33, 4, 3, 20, 41);

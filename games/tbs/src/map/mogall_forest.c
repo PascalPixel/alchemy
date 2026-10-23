@@ -65,7 +65,7 @@
 ///   explain them.
 
 #include "action_script.h"
-#include "game_state.h"
+#include "save_block.h"
 #include "engine_call.h"
 #include "heap_slots.h"
 #include "unit/import.h"
@@ -445,7 +445,7 @@ static inline void MogallForest_ApePointsTheWay(s32 guideId) {
 }
 
 const struct MapWarpDest *MogallForest_GetWarpDests(void) {
-  s16 selector = gGameState.mapId;
+  s16 selector = gSaveBlock.mapId;
 
   if (selector == (s32)&MapId_MogallForestSign) {
     return gMogallForestSign_WarpDests;
@@ -465,7 +465,7 @@ const struct MapWarpRegion *MogallForest_GetRegions(void) { return NULL; }
 const u32 *MogallForest_GetWarps(void) { return gMogallForest_Warps; }
 
 const struct ObjectEventTemplate *MogallForest_GetObjectEventTemplates(void) {
-  s16 selector = gGameState.mapId;
+  s16 selector = gSaveBlock.mapId;
 
   if (selector == (s32)&MapId_MogallForestSign) {
     return gMogallForestSign_ObjectEventTemplates;
@@ -1457,7 +1457,7 @@ static void MogallForest_KillerApeAttacks(void) {
 }
 
 const struct MapEvent *MogallForest_GetEvents(void) {
-  s16 selector = gGameState.mapId;
+  s16 selector = gSaveBlock.mapId;
 
   if (selector == (s32)&MapId_MogallForestSign) {
     return gMogallForestSign_Events;
@@ -1487,11 +1487,11 @@ s32 MogallForest_Initialize(void) {
 
   gFieldWork->transition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
-  mapId = gGameState.mapId;
+  mapId = gSaveBlock.mapId;
   if (mapId == (s32)&MapId_MogallForestSign) {
     // Show the first guide once, or restore the first area's completed
     // crossing.
-    warpDest = gGameState.warpDest;
+    warpDest = gSaveBlock.warpDest;
     switch (warpDest) {
     case MOGALL_FOREST_SIGN_FROM_WORLD_MAP:
     case MOGALL_FOREST_SIGN_FROM_MOGALL_FOREST_SIDE_PATHS_WEST:
@@ -1584,7 +1584,7 @@ s32 MogallForest_Initialize(void) {
     }
   } else if (mapId == (s32)&MapId_MogallForestQuartz) {
     // Restore revealed guides, moved rocks and the second crossing.
-    warpDest = gGameState.warpDest;
+    warpDest = gSaveBlock.warpDest;
     switch (warpDest) {
     case MOGALL_FOREST_QUARTZ_FROM_MOGALL_FOREST_SIDE_PATHS_NORTH:
     case MOGALL_FOREST_QUARTZ_STUMPS_FROM_NORTHWEST_CLEARING:
@@ -1658,7 +1658,7 @@ s32 MogallForest_Initialize(void) {
   } else if (mapId == (s32)&MapId_MogallForestKillerApe) {
     // Restore both crossing logs and the creatures leading to the final
     // encounter.
-    warpDest = gGameState.warpDest;
+    warpDest = gSaveBlock.warpDest;
     switch (warpDest) {
     case MOGALL_FOREST_KILLER_APE_FROM_MOGALL_FOREST_SIDE_PATHS_WEST:
     case MOGALL_FOREST_KILLER_APE_STUMPS_FROM_CHEST:

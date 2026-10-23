@@ -12,7 +12,7 @@
 ///   Fortress Gates): the steps up to the fortress door, kept by two guards
 ///   whom the party gets past under Cloak.
 ///
-/// The getters choose by gGameState.mapId, and the town's map events also by
+/// The getters choose by gSaveBlock.mapId, and the town's map events also by
 /// FLAG_DODONPA_LOCKED_UP, which Donpa's judgment in the fortress sets: before
 /// it the townspeople live under Dodonpa's men (gLunpaSealedEvents), after it
 /// they talk of the intruders (gLunpaReopenedEvents). Both tables share the
@@ -56,7 +56,7 @@
 ///   sends it to LunpaFortressGroundFloor's default warp destination, and
 ///   nothing else in the ROM names a destination for it.
 
-#include "game_state.h"
+#include "save_block.h"
 #include "version.h"
 #include "map_ids.h"
 #include "unit/map/lunpa.h"
@@ -110,7 +110,7 @@ const s32 *gEffectScripts[] = {
 };
 
 const struct MapWarpDest *Map_GetWarpDests(void) {
-  s32 mapId = gGameState.mapId;
+  s32 mapId = gSaveBlock.mapId;
 
   if (mapId == (s32)&MapId_Lunpa) {
     return gLunpaWarpDests;
@@ -124,7 +124,7 @@ const struct MapWarpDest *Map_GetWarpDests(void) {
 const struct MapWarpRegion *Map_GetWarpRegions(void) { return NULL; }
 
 const u32 *Map_GetWarps(void) {
-  s32 mapId = gGameState.mapId;
+  s32 mapId = gSaveBlock.mapId;
 
   if (mapId == (s32)&MapId_Lunpa) {
     return gLunpaWarps;
@@ -137,7 +137,7 @@ const u32 *Map_GetWarps(void) {
 
 /// The townsfolk of Lunpa, or the guards of the Lunpa Fortress Gates.
 const struct ObjectEventTemplate *Map_GetObjectEventTemplates(void) {
-  s32 mapId = gGameState.mapId;
+  s32 mapId = gSaveBlock.mapId;
 
   if (mapId == (s32)&MapId_Lunpa) {
     return gLunpaObjectEventTemplates;
@@ -282,7 +282,7 @@ static void EventScript_SearchWell(void) {
 /// The map events of the Lunpa Fortress Gates, or the town's before and after
 /// Donpa's judgment.
 const struct MapEvent *Map_GetEvents(void) {
-  s32 mapId = gGameState.mapId;
+  s32 mapId = gSaveBlock.mapId;
 
   if (mapId == (s32)&MapId_LunpaFortressGates) {
     GameFlag_Get(FLAG_DODONPA_LOCKED_UP);
@@ -403,7 +403,7 @@ static void EventScript_AskAboutFortressCommotion(void) {
 static void EventScript_TalkToLeftGuard(void) {
   s32 recognitionMessageBase;
 
-  if (gGameState.cloaked != 0) {
+  if (gSaveBlock.cloaked != 0) {
     FieldScript_SetMessageId(MsgLunpaLeftGuardHearsSomeone);
   } else if (GameFlag_Get(FLAG_DODONPA_LOCKED_UP) != 0 &&
              GameFlag_Get(FLAG_LUNPA_CAVE_REUNION_SEEN) == 0) {
@@ -426,7 +426,7 @@ static void EventScript_TalkToLeftGuard(void) {
 /// the party is cloaked, and after Donpa's judgment wonders how the warriors
 /// from Kalay got in.
 static void EventScript_TalkToRightGuard(void) {
-  if (gGameState.cloaked != 0) {
+  if (gSaveBlock.cloaked != 0) {
     FieldScript_SetMessageId(MsgLunpaRightGuardFeelsCreepy);
   } else if (GameFlag_Get(FLAG_DODONPA_LOCKED_UP) != 0) {
     FieldScript_SetMessageId(MsgLunpaRightGuardWondersHow);
@@ -443,7 +443,7 @@ static void EventScript_TalkToRightGuard(void) {
 static void EventScript_ReadLeftGuardsThoughts(void) {
   s32 recognizedHammet;
 
-  if (gGameState.cloaked == 0 && GameFlag_Get(FLAG_DODONPA_LOCKED_UP) != 0 &&
+  if (gSaveBlock.cloaked == 0 && GameFlag_Get(FLAG_DODONPA_LOCKED_UP) != 0 &&
       GameFlag_Get(FLAG_LUNPA_CAVE_REUNION_SEEN) == 0) {
     recognizedHammet = Script_GetFlag(FLAG_LUNPA_GATE_GUARD_SAW_HAMMET);
     if (recognizedHammet == 0) {
@@ -624,7 +624,7 @@ static inline void Lunpa_CopyGatewayCollision(s32 sourceColumn, s32 sourceRow) {
 /// uncloaked, the guards step in front of the fortress door and the gateway
 /// closes.
 static void EventScript_GuardsBlockGate(void) {
-  if (gGameState.cloaked == 0) {
+  if (gSaveBlock.cloaked == 0) {
     FieldScript_Start();
     ObjectEvent_ShowEmote(LOCALID_LEFT_GUARD,
                           EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 2);
@@ -758,7 +758,7 @@ static void Lunpa_WatchForUncloakedParty(void) {
 
   work = gFieldWork;
   leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
-  if (gGameState.cloaked == 0 &&
+  if (gSaveBlock.cloaked == 0 &&
       (u32)(leader->x.fixed - PIXELS(144)) <= PIXELS(32) &&
       leader->z.fixed >= PIXELS(168) && leader->z.fixed < PIXELS(176)) {
     Task_Remove(Lunpa_WatchForUncloakedParty);
@@ -914,7 +914,7 @@ static void EventScript_LeaderSneaksOut(void) {
 s32 Map_Initialize(void) {
   struct ObjectEvent *puddle;
 
-  if (gGameState.mapId == (s32)&MapId_Lunpa) {
+  if (gSaveBlock.mapId == (s32)&MapId_Lunpa) {
     gFieldWork->transition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
     EventScript_HideSecrets();
     if (GameFlag_Get(FLAG_LUNPA_NUT_CAUGHT) == 0) {
@@ -927,14 +927,14 @@ s32 Map_Initialize(void) {
     GameFlag_Set(FLAG_MAP_TEMP_01);
   }
   // Restore the gate's arrival cutscene and active detection tasks separately.
-  if (gGameState.mapId == (s32)&MapId_LunpaFortressGates) {
+  if (gSaveBlock.mapId == (s32)&MapId_LunpaFortressGates) {
     gFieldWork->transition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
-    gGameState.retreatWarpDest = GATE_RETREAT_WARP_DEST;
-    if (gGameState.warpDest == LUNPA_FORTRESS_GATES_AFTER_CAUGHT &&
+    gSaveBlock.retreatWarpDest = GATE_RETREAT_WARP_DEST;
+    if (gSaveBlock.warpDest == LUNPA_FORTRESS_GATES_AFTER_CAUGHT &&
         GameFlag_Get(FLAG_KEEP_PARTY_POSITION) == 0) {
       EventScript_GuardsThrowLeaderOut();
     }
-    if (gGameState.warpDest ==
+    if (gSaveBlock.warpDest ==
             LUNPA_FORTRESS_GATES_FROM_LUNPA_FORTRESS_TOADONPA &&
         GameFlag_Get(FLAG_KEEP_PARTY_POSITION) == 0) {
       EventScript_LeaderSneaksOut();
@@ -945,7 +945,7 @@ s32 Map_Initialize(void) {
                                  TASK_PRIORITY_MAP);
     }
 #if TBS_PATCH_4
-    if (gGameState.cloaked != 0)
+    if (gSaveBlock.cloaked != 0)
       EventScript_CastCloak();
 #endif
     FieldScheduler_AddCallback(Lunpa_WatchForUncloakedParty, TASK_PRIORITY_MAP);

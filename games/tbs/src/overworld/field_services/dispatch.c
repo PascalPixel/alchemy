@@ -31,7 +31,7 @@ void _call_via_r3(s32, s32);
 /// Called by Field_UsePsynergy when no map event names a target
 /// (FLAG_PSYNERGY_TARGET clear), by Field_UseItem for an item with a field
 /// action, and by Field_DispatchTypeHandler(PSYNERGY_STEP_UNTARGETED). Halt
-/// also moves gGameState.pausedObject to the object event it stops.
+/// also moves gSaveBlock.pausedObject to the object event it stops.
 void FieldEffect_Run(void) {
   struct FieldEffectWork *effectWork;
   struct FieldWork *runtime;
@@ -77,19 +77,19 @@ void FieldEffect_Run(void) {
     return;
   case FIELD_PSYNERGY_HALT:
     // Free the object stopped before, then stop the nearest one.
-    if (gGameState.pausedObject != -1) {
-      FieldEffect_ResumeObject(gGameState.pausedObject);
-      gGameState.pausedObject = -1;
+    if (gSaveBlock.pausedObject != -1) {
+      FieldEffect_ResumeObject(gSaveBlock.pausedObject);
+      gSaveBlock.pausedObject = -1;
     }
 
     nearestTargetId =
-        Field_FindNearbyPsynergyTarget(gGameState.leaderLocalId, kind);
+        Field_FindNearbyPsynergyTarget(gSaveBlock.leaderLocalId, kind);
     nearestTargetId = FieldEffect_FilterObjectIdByFlags(nearestTargetId);
     if (Map_FindObjectEventTalkEvent(nearestTargetId) != 0) {
-      FieldEffect_SetupObjectPair(gGameState.leaderLocalId, nearestTargetId);
+      FieldEffect_SetupObjectPair(gSaveBlock.leaderLocalId, nearestTargetId);
       FieldEffect_RunHaltOnTarget(nearestTargetId);
       FieldEffect_PauseObject(nearestTargetId);
-      gGameState.pausedObject = nearestTargetId;
+      gSaveBlock.pausedObject = nearestTargetId;
     } else {
       FieldEffect_RunHalt();
     }
@@ -123,7 +123,7 @@ void FieldEffect_Run(void) {
 /// Field_DispatchTypeHandler(PSYNERGY_STEP_ON_TARGET). Clears scene->enabled
 /// first: that is how the runners FieldEffect_Run shares (Force, Frost, Ply,
 /// Whirlwind, Catch) tell that a map event decides what happens to the
-/// target. Halt also moves gGameState.pausedObject to the target.
+/// target. Halt also moves gSaveBlock.pausedObject to the target.
 void FieldEffect_DispatchRequestKind(void) {
   struct FieldEffectWork *effectWork = *(gHeapSlots + HEAP_SLOT_FIELD_EFFECT);
   struct FieldWork *runtime = *(gHeapSlots + HEAP_SLOT_FIELD);
@@ -135,7 +135,7 @@ void FieldEffect_DispatchRequestKind(void) {
   case FIELD_PSYNERGY_MIND_READ:
     if (runtime->revealActive != 0)
       FieldEffect_EndReveal();
-    if (gGameState.pausedObject != effectWork->secondObjectId)
+    if (gSaveBlock.pausedObject != effectWork->secondObjectId)
       ((struct Object *)effectWork->child)->movementState = 1;
     FieldEffect_StartMindReadWave(effectWork->firstObjectId, targetId);
     break;
@@ -162,12 +162,12 @@ void FieldEffect_DispatchRequestKind(void) {
     FieldEffect_RunGrowthOnTarget(targetId);
     break;
   case FIELD_PSYNERGY_HALT:
-    if (gGameState.pausedObject != -1) {
-      FieldEffect_ResumeObject(gGameState.pausedObject);
-      gGameState.pausedObject = -1;
+    if (gSaveBlock.pausedObject != -1) {
+      FieldEffect_ResumeObject(gSaveBlock.pausedObject);
+      gSaveBlock.pausedObject = -1;
     }
     FieldEffect_PauseObject(targetId);
-    gGameState.pausedObject = targetId;
+    gSaveBlock.pausedObject = targetId;
     FieldEffect_RunHaltOnTarget(targetId);
     break;
   case FIELD_PSYNERGY_PLY:
@@ -204,7 +204,7 @@ void FieldEffect_FinishMindRead(void) {
 
   if (effectWork->fieldPsynergy == FIELD_PSYNERGY_MIND_READ) {
     FieldEffect_FinishWaveAndReleaseHeapBlock();
-    if (gGameState.pausedObject != effectWork->secondObjectId) {
+    if (gSaveBlock.pausedObject != effectWork->secondObjectId) {
       ((struct Object *)effectWork->child)->movementState = 0;
     }
   }

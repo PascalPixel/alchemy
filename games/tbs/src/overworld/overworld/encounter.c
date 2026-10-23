@@ -54,11 +54,11 @@ struct EncounterZone {
 /// and warp destination. Ground 0 has none, and grounds 1 to 7 take consecutive
 /// zones from the rule's first one. With useRules 0, or no matching rule, no
 /// ground has encounters. Also resets the random bias and the battle threshold
-/// (the count itself, gGameState.encounterSteps, is reset only when a random
+/// (the count itself, gSaveBlock.encounterSteps, is reset only when a random
 /// battle starts or a new map section is entered) and chooses the battle
 /// background. Called by Map_Run on map load, with useRules 0 on the world
 /// map and 1 in a map; writes work->encounterZones, encounterBias and
-/// encounterThreshold, and gGameState.special.
+/// encounterThreshold, and gSaveBlock.special.
 void Encounter_SelectMapZones(s32 useRules) {
   struct FieldWork *work;
   s32 mapId;
@@ -70,8 +70,8 @@ void Encounter_SelectMapZones(s32 useRules) {
   u32 i;
 
   work = gFieldWork;
-  mapId = gGameState.mapId;
-  warpDest = gGameState.warpDest;
+  mapId = gSaveBlock.mapId;
+  warpDest = gSaveBlock.warpDest;
   groundZones = work->encounterZones;
   rule = gBattle_LocationRules;
   zone = 0;
@@ -103,14 +103,14 @@ void Encounter_SelectMapZones(s32 useRules) {
   }
   work->encounterBias = 0;
   // 16 in 16.16: Encounter_CountStepsAndSelectFormation starts a battle once
-  // gGameState.encounterSteps reaches it.
+  // gSaveBlock.encounterSteps reaches it.
   work->encounterThreshold = 16 * Q16_ONE;
   BattleBackground_SelectForMap();
 }
 
 /// Returns the world map encounter zone for the ground at pos (0 for none), and
 /// chooses the battle background for its battle environment
-/// (gGameState.special). Called by Encounter_RollWorldMap on each step, and by
+/// (gSaveBlock.special). Called by Encounter_RollWorldMap on each step, and by
 /// Field_RequestBattleFromEncounterTable and Field_RequestDjinnBattle on the
 /// world map, which use only the battle background.
 s32 Encounter_ResolveWorldMapZoneAndBackdrop(void *pos) {
@@ -136,7 +136,7 @@ s32 Encounter_ResolveWorldMapZoneAndBackdrop(void *pos) {
 /// Advances the encounter counter for zone and returns the formation to fight
 /// (a row of formations.tsv), or 0 for no battle. steps (16.16) scales how far
 /// the counter moves; a battle starts once it reaches encounterThreshold.
-/// FLAG_NO_ENCOUNTERS, FLAG_NO_ENCOUNTERS_IN_MAPSEC and gGameState.cloaked
+/// FLAG_NO_ENCOUNTERS, FLAG_NO_ENCOUNTERS_IN_MAPSEC and gSaveBlock.cloaked
 /// (Cloak) prevent battles. FLAG_NO_ENCOUNTERS_IN_MAPSEC is set by Venus
 /// Lighthouse while its Reveal path is shown (the international editions), by
 /// Mercury Lighthouse while the leader carries the pillar's lights and by the
@@ -144,8 +144,8 @@ s32 Encounter_ResolveWorldMapZoneAndBackdrop(void *pos) {
 /// not keep the party's position. Flag 351 (0x15f), which no Broken Seal C code
 /// sets, skips the checks and the counting and draws a formation at once.
 /// Called by Encounter_RollLayoutStep and Encounter_RollWorldMap; adds to
-/// gGameState.encounterSteps, sets or clears work->encounterBias, and on a
-/// battle sets gGameState.battleMusic.
+/// gSaveBlock.encounterSteps, sets or clears work->encounterBias, and on a
+/// battle sets gSaveBlock.battleMusic.
 s32 Encounter_CountStepsAndSelectFormation(s32 zone, s32 steps) {
   struct FieldWork *work;
   struct EncounterZone *entry;
@@ -171,7 +171,7 @@ s32 Encounter_CountStepsAndSelectFormation(s32 zone, s32 steps) {
       return 0;
     if (zone == 0)
       return 0;
-    if (gGameState.cloaked != 0)
+    if (gSaveBlock.cloaked != 0)
       return 0;
     entry = (struct EncounterZone *)gEncounterZones + zone;
     rate = entry->rate;
@@ -193,7 +193,7 @@ s32 Encounter_CountStepsAndSelectFormation(s32 zone, s32 steps) {
     // the rate by 5; with Avoid active such a zone has no encounters at all.
     level = Party_GetAverageLevelFar() - entry->level;
     CLAMP(level, 0, 5);
-    if (level > 0 && gGameState.avoidDistance != 0)
+    if (level > 0 && gSaveBlock.avoidDistance != 0)
       return 0;
     rate += level * 5;
 
@@ -214,7 +214,7 @@ s32 Encounter_CountStepsAndSelectFormation(s32 zone, s32 steps) {
     // not cleared here: Map_Run clears it when it starts the battle.
     step =
         Iwram_RatioMulQ14((rate << 20) + ((rate << 4) - 16) * bias, 0x100000);
-    total = gGameState.encounterSteps += Iwram_MulQ16(step, steps);
+    total = gSaveBlock.encounterSteps += Iwram_MulQ16(step, steps);
     if (total < work->encounterThreshold)
       return 0;
   }
@@ -301,15 +301,15 @@ struct MapMusicRule {
 
 extern const struct MapMusicRule gMap_MusicRules[];
 
-/// Chooses the current map's field music (gGameState.cue) from the first rule
+/// Chooses the current map's field music (gSaveBlock.cue) from the first rule
 /// matching the map or its map section and the warp destination;
 /// SONG_KEEP_BGM when none does. Called by Game_Run on entering each map,
 /// before Map_PlayMusic plays it.
 void Map_ChooseMusic(void) {
   s16 music = SONG_KEEP_BGM;
-  s16 mapId = gGameState.mapId;
-  s16 warpDest = gGameState.warpDest;
-  s16 group = gGameState.mapSec;
+  s16 mapId = gSaveBlock.mapId;
+  s16 warpDest = gSaveBlock.warpDest;
+  s16 group = gSaveBlock.mapSec;
   const struct MapMusicRule *rule = gMap_MusicRules;
 
   for (; rule->id != -1; rule++) {
@@ -333,7 +333,7 @@ void Map_ChooseMusic(void) {
     break;
   }
 
-  gGameState.mapMusic = music;
+  gSaveBlock.mapMusic = music;
 }
 
 /// A rule naming the map section a map is in (gMapSec_NameRules, map_rules.s),
@@ -382,20 +382,20 @@ s32 MapSec_GetNameIndex(s32 mapId, s32 warpDest) {
   return name;
 }
 
-/// Sets the map the party returns to after a defeat (gGameState.savedMap
+/// Sets the map the party returns to after a defeat (gSaveBlock.savedMap
 /// and savedWarpDest), from the first rule of gParty_PairResolveRules that
 /// matches the current map and warp destination: {map, warp destination (-1
 /// for any), return map, return warp destination}, ended by map -1. Without a
 /// match the return point stays as it was. Called by Map_Run on map load.
 void Map_SetDefeatReturnPoint(void) {
-  s16 mapId = gGameState.mapId;
-  s16 warpDest = gGameState.warpDest;
+  s16 mapId = gSaveBlock.mapId;
+  s16 warpDest = gSaveBlock.warpDest;
   const s16 *rule = gParty_PairResolveRules;
 
   while (rule[0] != -1) {
     if (rule[0] == mapId && (rule[1] == -1 || rule[1] == warpDest)) {
-      gGameState.savedMap = rule[2];
-      gGameState.savedWarpDest = rule[3];
+      gSaveBlock.savedMap = rule[2];
+      gSaveBlock.savedWarpDest = rule[3];
       return;
     }
     rule += 4;
@@ -405,15 +405,15 @@ void Map_SetDefeatReturnPoint(void) {
 /// Returns the battle background chosen for the current map. The battle setup
 /// (battle/encounter.c) reads it through FieldScript_GetSpecialValueFar as the
 /// battle's background.
-s16 FieldScript_GetSpecialValue(void) { return gGameState.special; }
+s16 FieldScript_GetSpecialValue(void) { return gSaveBlock.special; }
 
 /// Chooses the battle background for the current map. gBattleBackground_Maps
 /// lists each battle background (a word with bit 31 set) followed by the maps
 /// that use it, ended by 0; a map takes the one listed last before it, and a
 /// map not listed takes the last one. Called by
-/// Encounter_SelectMapZones; sets gGameState.special.
+/// Encounter_SelectMapZones; sets gSaveBlock.special.
 void BattleBackground_SelectForMap(void) {
-  s32 target = gGameState.mapId;
+  s32 target = gSaveBlock.mapId;
   s32 *table = gBattleBackground_Maps;
   s32 entry = *table++;
   // The first map_rules.s word names a battle background. It cannot match the
@@ -429,12 +429,12 @@ void BattleBackground_SelectForMap(void) {
       entry = *table++;
     } while (entry != 0 && entry != target);
   }
-  gGameState.special = backdrop;
+  gSaveBlock.special = backdrop;
 }
 
 /// Chooses the battle background for a world map battle environment (enum
 /// BattleEnvironment; any other gives Sol Sanctum's) and sets
-/// gGameState.special. Called by Encounter_ResolveWorldMapZoneAndBackdrop.
+/// gSaveBlock.special. Called by Encounter_ResolveWorldMapZoneAndBackdrop.
 void BattleBackground_SelectForEnvironment(s32 behavior) {
   u16 backdrop;
 
@@ -460,10 +460,10 @@ void BattleBackground_SelectForEnvironment(s32 behavior) {
     backdrop = (u32)&ResourceId_SolSanctumBackdrop;
     break;
   }
-  gGameState.special = backdrop;
+  gSaveBlock.special = backdrop;
 }
 
-/// Chooses the battle music for slot of zone (gGameState.battleMusic).
+/// Chooses the battle music for slot of zone (gSaveBlock.battleMusic).
 /// gEncounter_BattleMusic lists each song (with bit 15 set) followed by the
 /// (zone << 4) + slot keys that use it, ended by 0; a key takes the song listed
 /// last before it. Link battles always use SONG_KEEP_BGM. Called by
@@ -492,5 +492,5 @@ void Encounter_SelectBattleMusic(s32 zone, s32 slot) {
         music = value & 0xfff;
     }
   }
-  gGameState.battleMusic = music;
+  gSaveBlock.battleMusic = music;
 }

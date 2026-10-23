@@ -68,7 +68,7 @@ s32 Field_StartEncounterTransition(s32 unused) {
   s32 i;
   s32 level;
 
-  Sound_PlaySongFar(gGameState.battleMusic);
+  Sound_PlaySongFar(gSaveBlock.battleMusic);
   Sound_PlaySongFar(SE_STOP_SLOT3);
   Sound_PlaySongFar(SE_147);
   if (work->mode == OBJECT_SYSTEM_WORLD_MAP) {
@@ -112,7 +112,7 @@ void Warp_PrepareExitAnimation(s32 animation) {
   struct Sprite *context;
   struct SpriteAnim *effect;
 
-  object = ObjectEvent_GetByLocalId(gGameState.leaderLocalId);
+  object = ObjectEvent_GetByLocalId(gSaveBlock.leaderLocalId);
   context = object->animation;
   effect = (struct SpriteAnim *)Sprite_AddAnimFar(context, 27);
   zero = 0;
@@ -159,7 +159,7 @@ void Warp_StartStairsDownExit(void) {
 void Warp_EndArrivalAnimation(s32 animation) {
   s32 zero;
   s32 mask;
-  struct Object *leader = ObjectEvent_GetByLocalId(gGameState.leaderLocalId);
+  struct Object *leader = ObjectEvent_GetByLocalId(gSaveBlock.leaderLocalId);
   struct Sprite *spriteAnimation = leader->animation;
   struct SpriteAnim *eff =
       (struct SpriteAnim *)Sprite_AddAnimFar(spriteAnimation, 27);
@@ -213,7 +213,7 @@ s32 Warp_PlayArrival(void) {
         struct Object *leader;
 
         GameFlag_ClearFar(flag);
-        leaderId = gGameState.leaderLocalId;
+        leaderId = gSaveBlock.leaderLocalId;
         leader = ObjectEvent_GetByLocalId(leaderId);
         // FLAG_ARRIVE_FALLING is set by maps the party drops out of (the
         // Suhalla storm, a floor giving way in the Tret tree): start 160 pixels

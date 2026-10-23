@@ -28,7 +28,7 @@
 
 #include "static_assert.h"
 
-#include "game_state.h"
+#include "save_block.h"
 
 // A map stores into its own const tables: an overlay's data is in RAM.
 // The games' compiler takes the store as written; a current GCC refuses it,
@@ -42,7 +42,7 @@
 
 /// 0x78 bytes of EWRAM where map overlays keep state of their own, such as
 /// Altmiller Cave's rock puzzle. It lies outside the heap, so a map change
-/// leaves it alone; GameState_InitializeDefaults clears it for a new game.
+/// leaves it alone; SaveBlock_InitializeDefaults clears it for a new game.
 extern u8 gMapLocalState[];
 
 /// The Colosso race work, heap slot HEAP_SLOT_COLOSSO_RACE under its own name.
@@ -152,7 +152,7 @@ struct MapGridCellAnimation {
 // FieldScript_ShowTwoMessagesAndWait eleven arguments where it takes ten
 // (Engine_ScriptShowTwoMessagesAndWait).
 /// Sets the field's warp request (FieldScript_SetWarpRequest); 999 leaves for
-/// gGameState's map and warp destination.
+/// gSaveBlock's map and warp destination.
 void Engine_ScriptRequestWarp();
 /// Puts an object event at rest at (x, z), in 16.16 pixels; one that follows
 /// the ground keeps its height above the terrain

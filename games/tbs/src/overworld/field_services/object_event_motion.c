@@ -109,7 +109,7 @@ void ObjectEvent_SetMovementType(struct Object *object, s32 action) {
     break;
   case MOVEMENT_TYPE_FACE_LEADER:
     object->linkedObject =
-        (struct Object *)ObjectEvent_GetById(gGameState.leaderLocalId);
+        (struct Object *)ObjectEvent_GetById(gSaveBlock.leaderLocalId);
     action = (s32)gMovementType_FaceLeaderScript;
     break;
   case MOVEMENT_TYPE_RESET_ACTION:

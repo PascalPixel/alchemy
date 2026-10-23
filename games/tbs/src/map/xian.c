@@ -47,7 +47,7 @@
 ///   (SPRITE_COLOR_HIDDEN), not solid and never a target, so that the player
 ///   neither sees nor meets them; nothing in the ROM reads them again, so only
 ///   the authors' intent would explain them.
-#include "game_state.h"
+#include "save_block.h"
 #include "djinn_ids.h"
 #include "unit/import.h"
 #include "unit/map/xian.h"
@@ -829,7 +829,7 @@ s32 Xian_Initialize(void) {
   // Back from the school (XIAN_FROM_FUCHIN_TEMPLE_INTERIORS_FEHS_SCHOOL) or the
   // Sanctum (XIAN_FROM_SANCTUM_WEST), the last two warp destinations, the name
   // is not shown.
-  if (gGameState.warpDest >= XIAN_FROM_FUCHIN_TEMPLE_INTERIORS_FEHS_SCHOOL) {
+  if (gSaveBlock.warpDest >= XIAN_FROM_FUCHIN_TEMPLE_INTERIORS_FEHS_SCHOOL) {
     GameFlag_Clear(FLAG_SHOW_LOCATION_NAME);
   }
   if (GameFlag_Get(FLAG_XIAN_HEARD_HSU_TRAPPED)) {

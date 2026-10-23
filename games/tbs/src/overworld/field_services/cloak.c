@@ -32,7 +32,7 @@ void FieldEffect_CheckCloakTile(void) {
   slot = (u32)&gFieldWork;
 #endif
   work = gFieldWork;
-  leader = ObjectEvent_GetByLocalId(gGameState.leaderLocalId);
+  leader = ObjectEvent_GetByLocalId(gSaveBlock.leaderLocalId);
 #ifdef UBFIX
   tile = gMapGridWork[0];
 #else
@@ -93,7 +93,7 @@ void FieldEffect_EndCloak(void) {
   struct SpriteAnim *entry;
   u32 i;
 
-  object = ObjectEvent_GetByLocalId(gGameState.leaderLocalId);
+  object = ObjectEvent_GetByLocalId(gSaveBlock.leaderLocalId);
   animation = object->animation;
   entry = animation->entries[0];
 
@@ -123,13 +123,13 @@ void FieldEffect_EndCloak(void) {
   }
 
   animation->flags = SPRITE_FLAG_SHADOW;
-  gGameState.cloaked = 0;
+  gSaveBlock.cloaked = 0;
 }
 
 /// Starts the Cloak cell check if the leader is hidden. Map_Run calls
-/// it as a map loads, since gGameState.cloaked outlives the map.
+/// it as a map loads, since gSaveBlock.cloaked outlives the map.
 void FieldEffect_ResumeCloakCheck(void) {
-  if (gGameState.cloaked != 0) {
+  if (gSaveBlock.cloaked != 0) {
     Task_Add(FieldEffect_CheckCloakTile, 0xc80);
   }
 }
@@ -140,12 +140,12 @@ void FieldEffect_ResumeCloakCheck(void) {
 /// Abilities: Cloak (FIELD_PSYNERGY_CLOAK).
 ///
 /// Hidden, the leader is drawn as an outline only (SPRITE_FLAG_OUTLINED, no
-/// shadow), and while gGameState.cloaked is set no random battles come
+/// shadow), and while gSaveBlock.cloaked is set no random battles come
 /// (Encounter_CountStepsAndSelectFormation). Called by FieldEffect_Run and
 /// FieldEffect_DispatchRequestKind.
 void FieldEffect_StartCloak(void) {
   struct FieldWork *work = gFieldWork;
-  struct Object *leader = ObjectEvent_GetByLocalId(gGameState.leaderLocalId);
+  struct Object *leader = ObjectEvent_GetByLocalId(gSaveBlock.leaderLocalId);
   struct Sprite *animation = leader->animation;
   struct SpriteAnim *entry = animation->entries[0];
   u32 n;
@@ -173,7 +173,7 @@ void FieldEffect_StartCloak(void) {
   // the check just raised (n is 0 here).
   check = FieldEffect_CheckCloakTile;
   Task_Add(check, 0xc80);
-  gGameState.cloaked = 1;
+  gSaveBlock.cloaked = 1;
   check();
   if (work->psynergy == CLOAK_END) {
     FieldEffect_EndCloak();

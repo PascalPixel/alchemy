@@ -29,7 +29,7 @@
 /// Open questions:
 /// - None.
 
-#include "game_state.h"
+#include "save_block.h"
 #include "unit/map/vale_eruption.h"
 #include "unit/overworld/overworld.h"
 #include "unit/overworld/field_services.h"
@@ -127,7 +127,7 @@ const struct MapEvent *ValeEruption_GetEvents(void) {
 /// VALE_ERUPTION_FROM_SOL_ENTRANCE is where Sol Sanctum's approach leads after
 /// the eruption and before the party leaves Vale.
 s32 ValeEruption_Initialize(void) {
-  if (gGameState.warpDest == VALE_ERUPTION_FROM_SOL_ENTRANCE) {
+  if (gSaveBlock.warpDest == VALE_ERUPTION_FROM_SOL_ENTRANCE) {
     EventScript_ReturnFromMtAleph();
   }
   return 0;

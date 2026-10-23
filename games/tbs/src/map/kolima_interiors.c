@@ -34,7 +34,7 @@
 ///
 /// Open questions: none.
 
-#include "game_state.h"
+#include "save_block.h"
 #include "flags.h"
 #include "unit/map/kolima_interiors.h"
 #include "unit/overworld/overworld.h"
@@ -283,7 +283,7 @@ s32 KolimaInteriors_Initialize(void) {
     } while ((u32)localId <= LOCALID_LAST_VILLAGER);
   }
 
-  warpDest = (u16)gGameState.warpDest;
+  warpDest = (u16)gSaveBlock.warpDest;
 
   // KOLIMA_INTERIORS_HOUSE_FROM_KOLIMA_SOUTH uses one layout;
   // KOLIMA_INTERIORS_HOUSE_FROM_KOLIMA_NORTH and

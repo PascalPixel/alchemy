@@ -87,7 +87,7 @@
 
 #include "action_script.h"
 #include "version.h"
-#include "game_state.h"
+#include "save_block.h"
 #include "heap.h"
 #include "vram_cache.h"
 #include "unit/import.h"
@@ -425,14 +425,14 @@ enum {
 static void EventScript_MeetVine(void) {
   struct FieldWork *work = gFieldWork;
 
-  if (gGameState.encounterSteps >=
+  if (gSaveBlock.encounterSteps >=
       Math_Divide(work->encounterThreshold * 9, 10)) {
     if ((u32)Engine_RandomNext() < 0x8000) {
       Field_RequestDjinnBattle(DJINN_NO_HOP | LOCALID_VENUS_DJINNI,
                                DJINNI_VINE);
       work->encounterBias = 0;
     } else {
-      gGameState.encounterSteps = work->encounterThreshold;
+      gSaveBlock.encounterSteps = work->encounterThreshold;
     }
   }
 }
@@ -442,7 +442,7 @@ static void EventScript_MeetVine(void) {
 /// Reached by talking to LOCALID_CORONA, or by walking onto MB_WORLD_MAP_CORONA
 /// until Corona is caught.
 static void EventScript_MeetCorona(void) {
-  struct GameState *state = &gGameState;
+  struct SaveBlock *state = &gSaveBlock;
   s32 *steps = &state->encounterSteps;
   struct FieldWork *work = gFieldWork;
 
@@ -457,7 +457,7 @@ static void EventScript_MeetCorona(void) {
 /// Reached by talking to LOCALID_HAIL, or by walking onto
 /// MB_WORLD_MAP_HAIL until Hail is caught.
 static void EventScript_MeetHail(void) {
-  struct GameState *state = &gGameState;
+  struct SaveBlock *state = &gSaveBlock;
   s32 *steps = &state->encounterSteps;
   struct FieldWork *work = gFieldWork;
 
@@ -633,7 +633,7 @@ WorldMap_BlinkObjectEventSprite(struct ObjectScriptContext *interpreter) {
 /// the map sections, the Djinn, the storm and Iodem
 /// (gWorldMapObjectEventTemplates) and sets FLAG_MAP_TEMP_35.
 const struct ObjectEventTemplate *WorldMap_GetObjectEventTemplates(void) {
-  switch (gGameState.warpDest) {
+  switch (gSaveBlock.warpDest) {
   case WORLD_MAP_FROM_WEST_LUNPA_CAVE:
     if (GameFlag_Get(FLAG_BUNZAS_WAGON_LEFT) == 0 &&
         GameFlag_Get(FLAG_DODONPA_LOCKED_UP) != 0) {
@@ -678,7 +678,7 @@ static void WorldMap_SelectWarpByX(s32 trigger, s32 warpBefore, s32 warpAfter) {
   struct ObjectEvent *other;
 
   subject = ObjectEvent_GetById(trigger - COORD_EVENT_MAPSEC_BASE);
-  other = ObjectEvent_GetById(gGameState.leaderLocalId);
+  other = ObjectEvent_GetById(gSaveBlock.leaderLocalId);
   work = gFieldWork;
   if (other->x.fixed < subject->x.fixed) {
     work->warp = warpBefore;
@@ -695,7 +695,7 @@ static void WorldMap_SelectWarpByZ(s32 trigger, s32 warpBefore, s32 warpAfter) {
   struct ObjectEvent *other;
 
   subject = ObjectEvent_GetById(trigger - COORD_EVENT_MAPSEC_BASE);
-  other = ObjectEvent_GetById(gGameState.leaderLocalId);
+  other = ObjectEvent_GetById(gSaveBlock.leaderLocalId);
   work = gFieldWork;
   if (other->z.fixed < subject->z.fixed) {
     work->warp = warpBefore;
@@ -770,7 +770,7 @@ static void WorldMap_UpdateLocationContacts(void) {
   s32 leaderReach;
   u32 i;
 
-  leader = ObjectEvent_GetById(gGameState.leaderLocalId);
+  leader = ObjectEvent_GetById(gSaveBlock.leaderLocalId);
   leaderReach = leader->sprite->scale * leader->radius;
   work = gFieldWork;
   objectEvent = (struct ObjectEvent *)work->camera;
@@ -854,7 +854,7 @@ static void EventScript_ReturnToTolbiShip(void) {
 /// leaving Vale the first time sets FLAG_VALE_PARTY_LEFT and flag 0x85c,
 /// which nothing reads.
 s32 WorldMap_Initialize(void) {
-  struct GameState *state = &gGameState;
+  struct SaveBlock *state = &gSaveBlock;
   s16 *warpDest = &state->warpDest;
 
   if (*warpDest == WORLD_MAP_FROM_DEBUG) {
@@ -952,7 +952,7 @@ s32 WorldMap_Initialize(void) {
     case WORLD_MAP_FROM_SUHALLA_DESERT_STORM:
       GameFlag_Set(FLAG_WORLD_MAP_LEFT);
       if (FieldGameFlag_GetByte(FLAG_MAP_TEMP_F8) != 0) {
-        gGameState.movementMode = LEADER_MOVEMENT_AIRBORNE;
+        gSaveBlock.movementMode = LEADER_MOVEMENT_AIRBORNE;
         FieldScheduler_AddCallback(WorldMap_UpdateStormTimer,
                                    TASK_PRIORITY_MAP);
       }
@@ -1976,8 +1976,8 @@ static void WorldMap_RunBlackOrbScene(void) {
   FieldScript_WaitFrames(20);
   GameFlag_Set(FLAG_MAP_TEMP_34);
   GameFlag_Set(FLAG_SAW_SHIP_AT_IDEJIMA);
-  gGameState.savedMap = (s32)&MapId_WorldMap;
-  gGameState.savedWarpDest = WORLD_MAP_AFTER_BLACK_ORB_DEFEAT;
+  gSaveBlock.savedMap = (s32)&MapId_WorldMap;
+  gSaveBlock.savedWarpDest = WORLD_MAP_AFTER_BLACK_ORB_DEFEAT;
   FieldScript_End();
 }
 
@@ -2241,7 +2241,7 @@ u16 gWorldMapBlend;
 /// Felix and Sheba, and the title screen returns (TITLE_FROM_WORLD_MAP).
 /// Called by WorldMap_Initialize at WORLD_MAP_JENNA_AND_KRADEN_ADRIFT.
 static void WorldMap_ShowEndingScene(void) {
-  WindowColor_Apply(gGameState.windowColor[0], gGameState.windowColor[1]);
+  WindowColor_Apply(gSaveBlock.windowColor[0], gSaveBlock.windowColor[1]);
   FieldScript_Start();
   FieldEffect_ScheduleRatioTransition(Q16_ONE, 300);
   FieldCamera_MoveTo(-1, -1, -1, 0);
@@ -2610,7 +2610,7 @@ static void WorldMap_UpdateStormTimer(void) {
   struct FieldWork *work;
   s32 progress;
 
-  objectEvent = ObjectEvent_GetById(gGameState.leaderLocalId);
+  objectEvent = ObjectEvent_GetById(gSaveBlock.leaderLocalId);
   work = gFieldWork;
   objectEvent->facing = (gFrameCount << 12);
 
@@ -2634,7 +2634,7 @@ static void WorldMap_CatchInStorm(s32 targetLocalId) {
   struct ObjectEvent *record;
   s32 id;
 
-  id = gGameState.leaderLocalId;
+  id = gSaveBlock.leaderLocalId;
   objectEvent = ObjectEvent_GetById(id);
   alreadyTraveling = Script_GetFlag(FLAG_MAP_TEMP_F0);
   if (alreadyTraveling == 0) {
@@ -2656,7 +2656,7 @@ static void WorldMap_CatchInStorm(s32 targetLocalId) {
     ObjectMotion_CommitCurrentPositionAndActivate(id);
     objectEvent->velocityY = alreadyTraveling;
     objectEvent->motionFlags = OBJ_EVENT_FLOATS;
-    gGameState.movementMode = LEADER_MOVEMENT_AIRBORNE;
+    gSaveBlock.movementMode = LEADER_MOVEMENT_AIRBORNE;
     GameFlag_Set(FLAG_MAP_TEMP_F0);
     FieldGameFlag_SetByte(FLAG_MAP_TEMP_F8, 180);
     FieldScript_End();
@@ -2696,7 +2696,7 @@ static void EventScript_DouseMapStorm(void) {
   Field_RequestBattleFromEncounterTable(ENCOUNTER_ZONE_SCRIPTED, 5);
   Battle_SetType(BATTLE_TYPE_SCRIPTED);
   Field_RequestBattleFromEncounterTable(ENCOUNTER_ZONE_SCRIPTED, 7);
-  selectedObjectEvent = ObjectEvent_GetById(gGameState.leaderLocalId);
+  selectedObjectEvent = ObjectEvent_GetById(gSaveBlock.leaderLocalId);
   selectedObjectEvent->motionFlags = OBJ_EVENT_FALLS;
 }
 
@@ -2706,7 +2706,7 @@ static void EventScript_DouseMapStorm(void) {
 /// raised as the timer runs out. Sets FLAG_ARRIVE_FALLING and sends the party
 /// to WORLD_MAP_FROM_SUHALLA.
 static void EventScript_StormDropsParty(void) {
-  struct ObjectEvent *objectEvent = ObjectEvent_Get(gGameState.leaderLocalId);
+  struct ObjectEvent *objectEvent = ObjectEvent_Get(gSaveBlock.leaderLocalId);
   struct ObjectEvent *other = ObjectEvent_Get(LOCALID_STORM);
   s32 frames;
 
@@ -2756,7 +2756,7 @@ static void WorldMap_JitterTransitionCamera(void) {
   s32 sy;
   u32 mode;
 
-  record = ObjectEvent_Get(gGameState.leaderLocalId);
+  record = ObjectEvent_Get(gSaveBlock.leaderLocalId);
   sx = record->x.part.pixel;
   sy = record->z.part.pixel;
   if (gFrameCount % 3 == 0) {
@@ -2812,7 +2812,7 @@ static void WorldMap_PlayLighthouseTransition(s32 palette) {
   FieldScheduler_AddCallback(WorldMap_UpdateTransitionBlend, TASK_PRIORITY_MAP);
   FieldScript_Start();
   WORLD_MAP_QUEUE_TRANSITION_FRAME(buffer, 0x3a80);
-  ObjectEvent_GetById(gGameState.leaderLocalId)->spriteStorageKind = 0;
+  ObjectEvent_GetById(gSaveBlock.leaderLocalId)->spriteStorageKind = 0;
   gFieldWork->transitionFrames = 16;
   FieldScript_StartScreenTransition();
   FieldScript_WaitTransitionFrames();

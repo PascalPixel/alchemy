@@ -50,7 +50,7 @@
 /// Open questions:
 /// - None.
 
-#include "game_state.h"
+#include "save_block.h"
 #include "unit/map/tolbi_interiors.h"
 #include "unit/overworld/overworld.h"
 #include "unit/overworld/field_services.h"
@@ -341,7 +341,7 @@ s32 TolbiInteriors_ApplyEntryState(void) {
                                 FACING_WEST, 0);
     }
     // Each short scene plays once, only when entering its room.
-    if (gGameState.warpDest ==
+    if (gSaveBlock.warpDest ==
         TOLBI_INTERIORS_GUEST_ROOM_NORTHEAST_FROM_INN_PASSAGE) {
       if (Script_GetFlag(FLAG_TOLBI_INTERIORS_MEDAL_HIDDEN) == 0) {
         GameFlag_Set(FLAG_TOLBI_INTERIORS_MEDAL_HIDDEN);
@@ -349,7 +349,7 @@ s32 TolbiInteriors_ApplyEntryState(void) {
         TolbiInteriors_WatchWomanHideMedal();
       }
     }
-    if (gGameState.warpDest ==
+    if (gSaveBlock.warpDest ==
         TOLBI_INTERIORS_GUEST_ROOM_SOUTHEAST_FROM_INN_PASSAGE) {
       if (Script_GetFlag(FLAG_TOLBI_INTERIORS_PASSENGERS_SEEN) == 0) {
         GameFlag_Set(FLAG_TOLBI_INTERIORS_PASSENGERS_SEEN);

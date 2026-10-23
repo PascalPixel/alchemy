@@ -64,7 +64,7 @@
 
 #include "speaker.h"
 #include "flags.h"
-#include "game_state.h"
+#include "save_block.h"
 #include "unit/map/sanctum.h"
 #include "unit/overworld/overworld.h"
 #include "unit/overworld/field_services.h"
@@ -225,7 +225,7 @@ const u32 *Sanctum_GetWarps(void) { return gSanctum_Warps; }
 /// Altin Sanctum and Xian Sanctum (SANCTUM_FROM_ALTIN and SANCTUM_FROM_XIAN),
 /// and nobody otherwise.
 const struct ObjectEventTemplate *Sanctum_GetObjectEventTemplates(void) {
-  switch (gGameState.warpDest) {
+  switch (gSaveBlock.warpDest) {
   case SANCTUM_FROM_VALE:
   case SANCTUM_VALE_UNUSED:
     return gSanctum_ValeObjectEventTemplates;
@@ -257,7 +257,7 @@ const struct ObjectEventTemplate *Sanctum_GetObjectEventTemplates(void) {
 /// (SANCTUM_FROM_VALE_ERUPTION, SANCTUM_FROM_QUEST_RESTART and
 /// SANCTUM_QUEST_UNUSED).
 const struct MapEvent *Sanctum_GetEvents(void) {
-  switch (gGameState.warpDest) {
+  switch (gSaveBlock.warpDest) {
   case SANCTUM_FROM_VAULT:
   case SANCTUM_FROM_VAULT_INTERIORS:
     return gSanctum_VaultEvents;
@@ -299,7 +299,7 @@ static void EventScript_TalkAboutGoldenStatue(void) {
     FieldScript_SetMessageId(MsgSanctumHealerMustWorriedAboutNever);
   }
 
-  if (gGameState.warpDest == SANCTUM_FROM_VAULT_REVISIT) {
+  if (gSaveBlock.warpDest == SANCTUM_FROM_VAULT_REVISIT) {
     FieldScript_SetMessageId(MsgSanctumPolishedGoldStatueReturnedUs);
   }
 
@@ -323,7 +323,7 @@ static void EventScript_ReadMindAboutGoldenStatue(void) {
     FieldScript_SetMessageId(MsgSanctumChildHasAwakenedOurTeachings);
   }
 
-  if (gGameState.warpDest == SANCTUM_FROM_VAULT_REVISIT) {
+  if (gSaveBlock.warpDest == SANCTUM_FROM_VAULT_REVISIT) {
     FieldScript_SetMessageId(MsgSanctumDirtyGoldenStatueCleanedUp);
   }
 
@@ -457,7 +457,7 @@ s32 Sanctum_Initialize(void) {
   PaletteFade_SetTarget(PALETTE_TINT_NONE, PALETTES_ALL);
   PaletteFade_StartInterpolation(1);
   FieldScript_WaitFrames(1);
-  switch (gGameState.warpDest) {
+  switch (gSaveBlock.warpDest) {
   case SANCTUM_FROM_VAULT:
   case SANCTUM_FROM_VAULT_REVISIT:
   case SANCTUM_FROM_VAULT_INTERIORS:
@@ -2171,7 +2171,7 @@ static void EventScript_TalkToHealerOnVisit(void) {
 
   FieldScript_Start();
 
-  warpDest = gGameState.warpDest;
+  warpDest = gSaveBlock.warpDest;
 
   switch (warpDest) {
   case SANCTUM_FROM_VAULT:

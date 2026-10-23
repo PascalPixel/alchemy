@@ -58,7 +58,7 @@
 
 #include "action_script.h"
 #include "version.h"
-#include "game_state.h"
+#include "save_block.h"
 #include "io_write_queue.h"
 #include "resource_ids.h"
 #include "map_ids.h"
@@ -336,7 +336,7 @@ ColosseumNavampaMatch_GetObjectEventTemplates(void) {
 static void ColosseumNavampaMatch_UpdateWallWedge(void) {
   struct FieldWork *work = gFieldWork;
   struct ObjectEvent *objectEvent =
-      ObjectEvent_GetById(gGameState.leaderLocalId);
+      ObjectEvent_GetById(gSaveBlock.leaderLocalId);
   s32 row = objectEvent->z.fixed >> 20;
   s32 i;
   s32 kind;
@@ -417,7 +417,7 @@ static void ColosseumNavampaMatch_WaitForWallWedgeOpening(void) {
 /// controlled object event and the camera west.
 static void EventScript_RideMovingSidewalk(void) {
   struct FieldWork *work = gFieldWork;
-  struct GameState *state = &gGameState;
+  struct SaveBlock *state = &gSaveBlock;
   s32 id = state->leaderLocalId;
   struct ObjectEvent *subject = (struct ObjectEvent *)work->camera;
   struct ObjectEvent *objectEvent = ObjectEvent_GetById(id);
@@ -478,7 +478,7 @@ static void EventScript_StepOnScales(void) {
   struct ObjectEvent *rider;
   u8 *flags;
 
-  localId = gGameState.leaderLocalId;
+  localId = gSaveBlock.leaderLocalId;
   lowered = GameFlag_Get(FLAG_SCALES_FROZEN);
   if (lowered == 0) {
     log = ObjectEvent_GetById(LOCALID_SCALES_WEST_LEDGE);
@@ -511,7 +511,7 @@ static void EventScript_StepOnScales(void) {
 static void EventScript_StepOffScales(void) {
   struct ObjectEvent *objectEvent;
 
-  Engine_ObjectEventSetAnimation(gGameState.leaderLocalId, 1);
+  Engine_ObjectEventSetAnimation(gSaveBlock.leaderLocalId, 1);
 
   objectEvent = ObjectEvent_GetById(LOCALID_SCALES_EAST_LEDGE);
   objectEvent->motionFlags = 0;
@@ -630,7 +630,7 @@ static void ColosseumNavampaMatch_UpdateEastEndCollision(void) {
   s32 z;
   s32 behavior;
 
-  objectEvent = ObjectEvent_GetById(gGameState.leaderLocalId);
+  objectEvent = ObjectEvent_GetById(gSaveBlock.leaderLocalId);
   x = objectEvent->x.fixed >> 20;
   behavior = 23;
   z = objectEvent->z.fixed >> 20;
@@ -699,11 +699,11 @@ static void EventScript_RollLongLog(void) {
   s32 step;
   s32 ahead[3];
 
-  rider = ObjectEvent_GetById(gGameState.leaderLocalId);
+  rider = ObjectEvent_GetById(gSaveBlock.leaderLocalId);
   log = ObjectEvent_GetById(LOCALID_LONG_LOG);
   steps = 0;
   angle = gColossoEarlySequenceData[rider->facing >> 13];
-  localId = gGameState.leaderLocalId;
+  localId = gSaveBlock.leaderLocalId;
   SET_VECTOR(ahead, (rider->x.fixed & -0x100000) + PIXELS(8), rider->y.fixed,
              (rider->z.fixed & -0x100000) + PIXELS(8));
   Vector_AddPolarOffset(PIXELS(16), angle, ahead);
@@ -848,11 +848,11 @@ static void EventScript_PassNorthWallOpening(void) {
   s32 z;
 
 #ifdef UBFIX
-  localId = &gGameState.leaderLocalId;
+  localId = &gSaveBlock.leaderLocalId;
 #else
   // The original word-indexed address takes three more instructions here.
-  gameWords = (s16 *)&gGameState;
-  localId = (s32 *)&gameWords[offsetof(struct GameState, leaderLocalId) /
+  gameWords = (s16 *)&gSaveBlock;
+  localId = (s32 *)&gameWords[offsetof(struct SaveBlock, leaderLocalId) /
                               sizeof(s16)];
 #endif
   objectEvent = ObjectEvent_GetById(*localId);
@@ -878,11 +878,11 @@ static void EventScript_PassSouthWallOpening(void) {
   s32 z;
 
 #ifdef UBFIX
-  localId = &gGameState.leaderLocalId;
+  localId = &gSaveBlock.leaderLocalId;
 #else
   // The original word-indexed address takes three more instructions here.
-  gameWords = (s16 *)&gGameState;
-  localId = (s32 *)&gameWords[offsetof(struct GameState, leaderLocalId) /
+  gameWords = (s16 *)&gSaveBlock;
+  localId = (s32 *)&gameWords[offsetof(struct SaveBlock, leaderLocalId) /
                               sizeof(s16)];
 #endif
   objectEvent = ObjectEvent_GetById(*localId);
@@ -921,8 +921,8 @@ UNUSED static void ColosseumNavampaMatch_UnusedWarriorTalk(s32 warriorId) {
   s32 warpDest;
 
   work = gFieldWork;
-  localId = gGameState.leaderLocalId;
-  warpDest = gGameState.warpDest;
+  localId = gSaveBlock.leaderLocalId;
+  warpDest = gSaveBlock.warpDest;
   if (warpDest == COLOSSEUM_NAVAMPA_MATCH_FROM_COLOSSEUM_SOUTH) {
     FieldScript_Start();
     messageOffset = warriorId * 3;
@@ -1177,14 +1177,14 @@ s32 ColosseumNavampaMatch_Initialize(void) {
   objectEvent->priorityFlags = OBJ_EVENT_PRIORITY_UNDERFOOT;
   Engine_ObjectEventSetAnimation(LOCALID_OPPONENT,
                                  WARRIOR_ANIMATION_FIGHTING_STANCE);
-  gGameState.movementMode = LEADER_MOVEMENT_WALK;
+  gSaveBlock.movementMode = LEADER_MOVEMENT_WALK;
   Colosso_ShowItemIcon(LOCALID_PRIZE_A, ITEM_CLAYMORE);
   Colosso_ShowItemIcon(LOCALID_PRIZE_B, ITEM_HUNTERS_SWORD);
   ObjectGroup_ConfigureChildValue(LOCALID_OPPONENT, 2);
 
   // Warp destinations: the race (1), the friends' turns, the tour, and the end
   // of Colosso after a win (4) or a loss (5).
-  switch (gGameState.warpDest) {
+  switch (gSaveBlock.warpDest) {
   case COLOSSEUM_NAVAMPA_MATCH_RACE_FROM_LEND_A_HAND:
     Colosso_StartRaceGauge(LOCALID_PARTY_LEADER, LOCALID_OPPONENT, 6,
                            PIXELS(1512), PIXELS(192), LOCALID_PRIZE_A,
@@ -1611,7 +1611,7 @@ static void EventScript_TalkToScalesAttendant(s32 guideId) {
   struct ObjectEvent *eastPanAgain;
   s32 promptResult;
 
-  if (gGameState.warpDest == COLOSSEUM_NAVAMPA_MATCH_FROM_COLOSSEUM_SOUTH) {
+  if (gSaveBlock.warpDest == COLOSSEUM_NAVAMPA_MATCH_FROM_COLOSSEUM_SOUTH) {
     Colosso_AskDoneCheering(guideId);
     return;
   }
@@ -1675,7 +1675,7 @@ static void EventScript_TalkToSteppingStoneAttendant(s32 guideId) {
   s32 promptResult;
   s32 x;
 
-  if (gGameState.warpDest == COLOSSEUM_NAVAMPA_MATCH_FROM_COLOSSEUM_SOUTH) {
+  if (gSaveBlock.warpDest == COLOSSEUM_NAVAMPA_MATCH_FROM_COLOSSEUM_SOUTH) {
     Colosso_AskDoneCheering(guideId);
     return;
   }
@@ -1731,7 +1731,7 @@ static void EventScript_TalkToWallWedgeAttendant(s32 guideId) {
   struct FieldWork *work;
   s32 promptResult;
 
-  if (gGameState.warpDest == COLOSSEUM_NAVAMPA_MATCH_FROM_COLOSSEUM_SOUTH) {
+  if (gSaveBlock.warpDest == COLOSSEUM_NAVAMPA_MATCH_FROM_COLOSSEUM_SOUTH) {
     Colosso_AskDoneCheering(guideId);
   } else {
     FieldScript_Start();
@@ -1794,7 +1794,7 @@ static void EventScript_TalkToFreeClimbAttendant(s32 guideId) {
   s32 raisedHeight;
   s32 shiftedX;
 
-  if (gGameState.warpDest == COLOSSEUM_NAVAMPA_MATCH_FROM_COLOSSEUM_SOUTH) {
+  if (gSaveBlock.warpDest == COLOSSEUM_NAVAMPA_MATCH_FROM_COLOSSEUM_SOUTH) {
     Colosso_AskDoneCheering(guideId);
   } else {
     FieldScript_Start();
@@ -1893,7 +1893,7 @@ static void EventScript_TalkToMovingSidewalkAttendant(s32 guideId) {
   s32 result;
   struct ObjectEvent *objectEvent;
 
-  if (gGameState.warpDest == COLOSSEUM_NAVAMPA_MATCH_FROM_COLOSSEUM_SOUTH) {
+  if (gSaveBlock.warpDest == COLOSSEUM_NAVAMPA_MATCH_FROM_COLOSSEUM_SOUTH) {
     Colosso_AskDoneCheering(guideId);
   } else {
     FieldScript_Start();
@@ -1942,7 +1942,7 @@ static void EventScript_TalkToMovingSidewalkAttendant(s32 guideId) {
                                                 184);
       Script_ShowMessage(guideId, 0);
       ObjectEvent_ResetMotionFields(LOCALID_PARTY_LEADER);
-      gGameState.movementMode = LEADER_MOVEMENT_CLIMB;
+      gSaveBlock.movementMode = LEADER_MOVEMENT_CLIMB;
       Colosso_RestoreWarrior(LOCALID_PARTY_LEADER);
       FieldCamera_FollowObjectEvent(LOCALID_PARTY_LEADER, 0);
       Colosso_RepeatStageNumber(guideId, 5);
@@ -1961,7 +1961,7 @@ static void EventScript_TalkToMovingSidewalkAttendant(s32 guideId) {
 static void EventScript_TalkToLogRollingAttendant(s32 localId) {
   s32 state;
 
-  if (gGameState.warpDest == COLOSSEUM_NAVAMPA_MATCH_FROM_COLOSSEUM_SOUTH) {
+  if (gSaveBlock.warpDest == COLOSSEUM_NAVAMPA_MATCH_FROM_COLOSSEUM_SOUTH) {
     Colosso_AskDoneCheering(localId);
     return;
   }
@@ -2238,7 +2238,7 @@ static s32 ColosseumNavampaMatch_CollectFinishEquipment(s32 firstItem,
   s16 *linkedItemLocalId;
 
   opponentFinishedFirst = GameFlag_Get(FLAG_ARENA_REACHED);
-  objectEvent = ObjectEvent_GetById(gGameState.leaderLocalId);
+  objectEvent = ObjectEvent_GetById(gSaveBlock.leaderLocalId);
   if (gauge->finishX < objectEvent->x.fixed) {
     x = gauge->finishX + PIXELS(12);
   } else {
@@ -2273,7 +2273,7 @@ static s32 ColosseumNavampaMatch_CollectFinishEquipment(s32 firstItem,
     COLOSSEUM_NAVAMPA_MATCH_APPLY_MATCHING_SLOT_VALUES(ISAAC, secondItem);
     MessageArgument_Push(secondItem, 2);
   }
-  MessageArgument_Push(gGameState.leaderLocalId, 1);
+  MessageArgument_Push(gSaveBlock.leaderLocalId, 1);
   FieldMessage_Show(MsgColossoIsaacGotItem, 3);
   ObjectDispatch_WaitForValue16(objectEvent);
   return opponentFinishedFirst;
@@ -2296,7 +2296,7 @@ static void ColosseumNavampaMatch_PushObjectEventAhead(void) {
   s32 zero;
   s32 subjectHandle;
 
-  subjectHandle = gGameState.leaderLocalId;
+  subjectHandle = gSaveBlock.leaderLocalId;
   subject = ObjectEvent_GetById(subjectHandle);
 
   direction = subject->facing >> 12;

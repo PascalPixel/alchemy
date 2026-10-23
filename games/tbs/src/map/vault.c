@@ -49,7 +49,7 @@
 ///   walks and while Whirlwind is cast; vault_revisit.c's table has the same
 ///   row), so nothing in the ROM says what it was meant to do.
 
-#include "game_state.h"
+#include "save_block.h"
 #include "animspr.h"
 #include "window.h"
 #include "unit/map/vault.h"
@@ -929,7 +929,7 @@ s32 Map_Initialize(void) {
   }
   // Back through the gates while Ivan waits in Vault: "Welcome back, you two!
   // Let's go find the rod!"
-  if (gGameState.warpDest <= VAULT_NORTH_UNUSED) {
+  if (gSaveBlock.warpDest <= VAULT_NORTH_UNUSED) {
     if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) == 0) {
       GameFlag_Clear(FLAG_VAULT_SAP_CALLED_BY_BELL);
       if (GameFlag_Get(FLAG_VAULT_THIEVES_JAILED) == 0) {
@@ -940,7 +940,7 @@ s32 Map_Initialize(void) {
             Engine_ObjectEventSetPosition(IVAN, objectEvent->x.fixed,
                                           objectEvent->z.fixed);
           }
-          if (gGameState.warpDest == VAULT_FROM_WORLD_MAP_SOUTH) {
+          if (gSaveBlock.warpDest == VAULT_FROM_WORLD_MAP_SOUTH) {
             ObjectEvent_SetPosition(IVAN, PIXELS(400), PIXELS(448));
           } else {
             ObjectEvent_SetPosition(IVAN, PIXELS(224), PIXELS(162));
@@ -972,7 +972,7 @@ s32 Map_Initialize(void) {
     ObjectEvent_SetPosition(LOCALID_SAP, PIXELS(408), PIXELS(120));
   }
   // The same welcome out of the Vault Sanctum while Ivan is out of the party.
-  if (gGameState.warpDest == VAULT_FROM_SANCTUM) {
+  if (gSaveBlock.warpDest == VAULT_FROM_SANCTUM) {
     if (GameFlag_Get(FLAG_VAULT_THIEVES_JAILED) == 0) {
       if (GameFlag_Get(FLAG_VAULT_IVAN_JOINED_ROD_SEARCH) != 0) {
         if (GameFlag_Get(FLAG_IN_PARTY(IVAN)) == 0) {
@@ -1002,7 +1002,7 @@ s32 Map_Initialize(void) {
     }
     GameFlag_Clear(FLAG_SHOW_LOCATION_NAME);
   } else {
-    if (gGameState.warpDest == VAULT_FROM_VAULT_INTERIORS_WEST) {
+    if (gSaveBlock.warpDest == VAULT_FROM_VAULT_INTERIORS_WEST) {
       if (GameFlag_Get(FLAG_VAULT_THIEVES_JAILED) != 0) {
         Engine_ObjectEventSetPosition(LOCALID_YOUNG_MAN_FIXING_THE_ROOF, 0, 0);
       }

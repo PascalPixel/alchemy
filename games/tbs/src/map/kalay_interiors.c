@@ -28,7 +28,7 @@
 ///
 /// Open questions: none.
 
-#include "game_state.h"
+#include "save_block.h"
 #include "map_ids.h"
 #include "unit/map/kalay_interiors.h"
 #include "unit/overworld/overworld.h"
@@ -185,7 +185,7 @@ static void KalayInteriors_ApplyRoomState(void);
 /// Selects the warp destination table of Kalay's houses and inn, or of the
 /// Kalay Sanctum.
 const struct MapWarpDest *KalayInteriors_GetWarpDests(void) {
-  s16 mapId = gGameState.mapId;
+  s16 mapId = gSaveBlock.mapId;
 
   if (mapId == (s32)&MapId_KalayInteriors) {
     return gKalayInteriors_HouseWarpDests;
@@ -203,10 +203,10 @@ const u32 *KalayInteriors_GetWarps(void) { return gKalayInteriors_Warps; }
 /// The inn's rooms share one object event template table and the houses
 /// another, chosen by warp destination and clipped to the current view.
 const struct ObjectEventTemplate *KalayInteriors_GetObjectEventTemplates(void) {
-  s32 mapId = gGameState.mapId;
+  s32 mapId = gSaveBlock.mapId;
 
   if (mapId == (s32)&MapId_KalayInteriors) {
-    s32 warpDest = gGameState.warpDest;
+    s32 warpDest = gSaveBlock.warpDest;
     struct ObjectEventTemplate *table;
 
     switch (warpDest) {
@@ -236,10 +236,10 @@ const struct ObjectEventTemplate *KalayInteriors_GetObjectEventTemplates(void) {
 /// Selects room dialogue with the same warp destination grouping as the object
 /// event templates.
 const struct MapEvent *KalayInteriors_GetEvents(void) {
-  s32 mapId = gGameState.mapId;
+  s32 mapId = gSaveBlock.mapId;
 
   if (mapId == (s32)&MapId_KalayInteriors) {
-    s32 warpDest = gGameState.warpDest;
+    s32 warpDest = gSaveBlock.warpDest;
 
     switch (warpDest) {
     case KALAY_INTERIORS_INN_FROM_INN_PASSAGE:
@@ -391,7 +391,7 @@ static void KalayInteriors_OpenDoorAndExit(void) {
 s32 KalayInteriors_Initialize(void) {
   gFieldWork->transition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
-  if (gGameState.mapId == (s32)&MapId_KalayInteriors) {
+  if (gSaveBlock.mapId == (s32)&MapId_KalayInteriors) {
     KalayInteriors_ApplyRoomState();
   }
   return 0;
@@ -405,7 +405,7 @@ s32 KalayInteriors_Initialize(void) {
 /// otherwise show at the bottom edge of the view (the room's render with and
 /// without the copy).
 static void KalayInteriors_ApplyRoomState(void) {
-  s16 warpDest = gGameState.warpDest;
+  s16 warpDest = gSaveBlock.warpDest;
 
   switch (warpDest) {
   case KALAY_INTERIORS_HOUSE_NORTHEAST_LOWER: {

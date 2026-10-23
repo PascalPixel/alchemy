@@ -38,7 +38,7 @@
 /// Good Host`; a chest holds a Water Jacket and a barrel a Nut.
 ///
 /// Open questions: none.
-#include "game_state.h"
+#include "save_block.h"
 #include "map_ids.h"
 #include "unit/map/hammet_palace.h"
 #include "unit/overworld/overworld.h"
@@ -137,7 +137,7 @@ static __inline__ void HammetPalace_AdvanceMessage(s32 amount) {
 /// Selects Hammet Palace's warp destinations, or the fallback table for any
 /// other map number.
 const struct MapWarpDest *Map_GetWarpDests(void) {
-  s16 mapId = gGameState.mapId;
+  s16 mapId = gSaveBlock.mapId;
 
   if (mapId == (s32)&MapId_HammetPalace) {
     return gHammetPalaceWarpDests;
@@ -152,7 +152,7 @@ const u32 *Map_GetWarps(void) { return gHammetPalaceWarps; }
 /// Applies object event template clipping before returning Hammet Palace's
 /// object event rows.
 const struct ObjectEventTemplate *Map_GetObjectEventTemplates(void) {
-  if (gGameState.mapId == (s32)&MapId_HammetPalace) {
+  if (gSaveBlock.mapId == (s32)&MapId_HammetPalace) {
     Map_AssignViewFlags(gHammetPalaceObjectEventTemplates);
     return gHammetPalaceObjectEventTemplates;
   }
@@ -161,7 +161,7 @@ const struct ObjectEventTemplate *Map_GetObjectEventTemplates(void) {
 
 /// Selects Hammet Palace's dialogue and doorway handlers.
 const struct MapEvent *Map_GetEvents(void) {
-  s16 mapId = gGameState.mapId;
+  s16 mapId = gSaveBlock.mapId;
 
   if (mapId == (s32)&MapId_HammetPalace) {
     return gHammetPalaceEvents;
@@ -248,7 +248,7 @@ static void EventScript_LeaveThroughDoor(void) {
 s32 Map_Initialize(void) {
   gFieldWork->transition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
-  if (gGameState.mapId == (u32)&MapId_HammetPalace) {
+  if (gSaveBlock.mapId == (u32)&MapId_HammetPalace) {
     HammetPalace_SetUpWarpDest();
   }
   return 0;
@@ -272,7 +272,7 @@ static void HammetPalace_SetUpWarpDest(void) {
   TilesetAnim_Pause(1);
   TilesetAnim_Pause(2);
 
-  switch (gGameState.warpDest) {
+  switch (gSaveBlock.warpDest) {
   case HAMMET_PALACE_LAYANAS_ROOM_FROM_ENTRANCE_ROOM:
     if (GameFlag_Get(FLAG_DODONPA_LOCKED_UP) != 0) {
       // Hammet is home.

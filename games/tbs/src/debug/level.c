@@ -1,4 +1,4 @@
-#include "game_state.h"
+#include "save_block.h"
 #include "unit/debug/level.h"
 #include "unit/overworld/overworld.h"
 #include "unit/overworld/field_services.h"
@@ -166,7 +166,7 @@ static void IncreaseItemAndLevel_RunLevelEditor(void) {
   s32 redraw;
   s32 messageId;
 
-  unit = Unit_Get(gGameState.leaderLocalId);
+  unit = Unit_Get(gSaveBlock.leaderLocalId);
   window = Window_Create(0, 0, 30, 9, 2);
 
   messageId = MsgDebugRaiseEveryonesLevel;

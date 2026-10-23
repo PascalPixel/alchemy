@@ -45,7 +45,7 @@
 #include "keystate.h"
 #include "paged_list.h"
 #include "tbs_edition.h"
-#include "game_state.h"
+#include "save_block.h"
 #include "songs.h"
 #include "iwram_call.h"
 #include "heap.h"

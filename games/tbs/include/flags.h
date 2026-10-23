@@ -231,7 +231,7 @@
 #define FLAG_COLOSSO_HOLDS_EQUIPMENT 0x952
 /// The next field map starts where the party was, as after a battle: the
 /// map's flags are not reset, the object events come back from their snapshot,
-/// and the music saved in gGameState.returnMusic resumes if there is one (a
+/// and the music saved in gSaveBlock.returnMusic resumes if there is one (a
 /// random battle clears it, so the map's own music plays). Map_Run clears
 /// it once the map starts.
 #define FLAG_KEEP_PARTY_POSITION 0x109

@@ -251,7 +251,7 @@ void ObjectMotion_LaunchFromFocusedObject(u32 objectId, s32 xOffset,
     struct Object *leader;
 
     ObjectMotion_SetSpeedParameters(objectId, 0x9999, 0x4CCC);
-    leader = (struct Object *)ObjectEvent_GetById(gGameState.leaderLocalId);
+    leader = (struct Object *)ObjectEvent_GetById(gSaveBlock.leaderLocalId);
     if (leader != NULL)
       ObjectMotion_SetHorizontalPositionWithTerrain(objectId, leader->x,
                                                     leader->z);

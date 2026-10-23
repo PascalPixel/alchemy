@@ -113,7 +113,7 @@ s32 BattleUnit_Set(s32 unitId, s32 enemyId, s32 suffix) {
 }
 
 // The party: the FLAG_IN_PARTY flags say who is in it, and
-// gGameState.party lists them in order.
+// gSaveBlock.party lists them in order.
 
 /// Returns the number of party members, counted from its FLAG_IN_PARTY flags.
 s32 Party_CountMembers(void) {
@@ -131,7 +131,7 @@ s32 Party_CountMembers(void) {
 }
 
 /// Adds character `unitId` to the end of the party: sets its game flag and
-/// appends it to gGameState.party unless it is already listed.
+/// appends it to gSaveBlock.party unless it is already listed.
 /// Returns the party size. Called by the scenes where a character joins, by
 /// the member chooser and the main menu, and by the debug presets.
 s32 Party_AddMember(s32 unitId) {
@@ -141,16 +141,16 @@ s32 Party_AddMember(s32 unitId) {
   GameFlag_Set(FLAG_IN_PARTY(unitId));
   partyIndex = 0;
   while (partyIndex < partySize) {
-    if (gGameState.party[partyIndex] == unitId)
+    if (gSaveBlock.party[partyIndex] == unitId)
       return partySize;
     partyIndex++;
   }
-  gGameState.party[partyIndex] = unitId;
+  gSaveBlock.party[partyIndex] = unitId;
   return partySize + 1;
 }
 
 /// Takes character `unitId` out of the party: clears its game flag and closes
-/// the gap it leaves in gGameState.party. Returns the party size.
+/// the gap it leaves in gSaveBlock.party. Returns the party size.
 /// Called by the scenes where a character leaves, by the member chooser and
 /// the main menu, and by the debug presets.
 s32 Party_RemoveMember(s32 unitId) {
@@ -160,11 +160,11 @@ s32 Party_RemoveMember(s32 unitId) {
 
   GameFlag_Clear(FLAG_IN_PARTY(unitId));
   for (removedIndex = 0; removedIndex < partySize; removedIndex++) {
-    if (gGameState.party[removedIndex] == unitId)
+    if (gSaveBlock.party[removedIndex] == unitId)
       break;
   }
   for (partyIndex = removedIndex; partyIndex < partySize - 1; partyIndex++)
-    gGameState.party[partyIndex] = gGameState.party[partyIndex + 1];
+    gSaveBlock.party[partyIndex] = gSaveBlock.party[partyIndex + 1];
   return Party_CountMembers();
 }
 
@@ -181,7 +181,7 @@ s32 Party_ListMembers(s16 *unitIds) {
     index = 0;
     if (count != 0) {
       do {
-        *unitIds++ = gGameState.party[index];
+        *unitIds++ = gSaveBlock.party[index];
         index++;
       } while (index != count);
     }
@@ -195,10 +195,10 @@ s32 Party_ListMembers(s16 *unitIds) {
 /// by the battle spoils to pay, and by the Lucky Dice game.
 s32 Party_AdjustCoins(s32 amount) {
   s32 value;
-  struct GameState *work;
-  struct GameState *store;
+  struct SaveBlock *work;
+  struct SaveBlock *store;
 
-  work = &gGameState;
+  work = &gSaveBlock;
   value = work->coins;
   value += amount;
   store = work;
@@ -221,14 +221,14 @@ struct TradeFlags {
   u32 flags;
 };
 
-/// Each adds `amount` to a game state counter, kept between 0 and `max`, and
+/// Each adds `amount` to a save block counter, kept between 0 and `max`, and
 /// returns the new value. The shops call the two: each purchase adds its
 /// price to the credit, and each Game Ticket given spends credit and counts
 /// one more gift.
 #define PARTY_DEFINE_ADJUST(name, field, max)                                  \
   s32 name(s32 amount) {                                                       \
     s32 value;                                                                 \
-    struct GameState *progress = &gGameState;                                  \
+    struct SaveBlock *progress = &gSaveBlock;                                  \
                                                                                \
     value = progress->field;                                                   \
     value += amount;                                                           \

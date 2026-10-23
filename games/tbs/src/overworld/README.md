@@ -153,7 +153,7 @@ set, on zone 0, while Cloak is active, or on a zone with rate 0. Otherwise:
    work until the next battle, so the distance between battles varies.
 3. The step is `0x100000 * 0x10000` divided by `(rate << 20) + ((rate << 4) -
    16) * bias` (`Iwram_RatioMulQ14`), so it shrinks as the rate or the bias
-   grows; scaled by the speed, it is added to `gGameState.encounterSteps`. A
+   grows; scaled by the speed, it is added to `gSaveBlock.encounterSteps`. A
    battle starts when that reaches `work->encounterThreshold`, 16 in 16.16
    fixed point (whole pixels in the upper 16 bits, fractions in the lower),
    which gives the 16 × r frames above.
@@ -280,7 +280,7 @@ animations](../battle_anim/README.md) do:
 ```
 
 Halt is dispatched in `dispatch.c` itself: only one object event is held at a time
-(`gGameState.pausedObject`), so casting it again frees the one held before.
+(`gSaveBlock.pausedObject`), so casting it again frees the one held before.
 
 The field kind is the `type` column of `games/tbs/src/game/abilities.tsv`,
 named by `enum FieldPsynergy` (`unit/overworld/field_services.h`); the phases are

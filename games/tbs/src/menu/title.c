@@ -3,7 +3,7 @@
 /// ending, and the screens that lead from the prologue and the last scene on
 /// to Vale and the main menu. Title_Run chooses by warp destination.
 
-#include "game_state.h"
+#include "save_block.h"
 #include "vram_cache.h"
 #include "unit/menu/title.h"
 #include "unit/overworld/overworld.h"
@@ -84,8 +84,8 @@ s32 Title_Run(void) {
 
   // After 120 frames, the logo waits up to 3600 frames (a minute) for a key
   // press.
-  if (gGameState.warpDest == 10) {
-    ObjectEvent_GetById(gGameState.leaderLocalId)->motionFlags = 0;
+  if (gSaveBlock.warpDest == 10) {
+    ObjectEvent_GetById(gSaveBlock.leaderLocalId)->motionFlags = 0;
     Sound_PlaySong(MUS_ENDING_LOGO);
     Title_RevealScreen(0);
     WaitFrames(120);
@@ -100,7 +100,7 @@ s32 Title_Run(void) {
     FieldScript_SetDestination((s32)&MapId_Title, TITLE_AFTER_RUN);
     return 0;
   }
-  if (gGameState.warpDest == 9) {
+  if (gSaveBlock.warpDest == 9) {
     Sound_PlaySong(MUS_ENDING);
     // The credits: Credits_Run, through the scroll far-call
     // table.
@@ -118,7 +118,7 @@ s32 Title_Run(void) {
   // argument names that bank and the logo and intro calls below go through
   // it.
   RuntimeDispatch_NoOpHook((s32)&ResourceId_TitleFarCalls);
-  if (gGameState.warpDest == 2) {
+  if (gSaveBlock.warpDest == 2) {
     for (;;) {
       Sound_PlaySong(MUS_SILENCE);
       // The Nintendo logo, then the Camelot logo (Title_ShowCamelotLogo).

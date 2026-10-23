@@ -55,7 +55,7 @@
 /// - None.
 
 #include "action_script.h"
-#include "game_state.h"
+#include "save_block.h"
 #include "unit/import.h"
 #include "unit/map/vale_storm.h"
 #include "unit/map/common/effect_psynergy.h"
@@ -688,7 +688,7 @@ s32 ValeStorm_Initialize(void) {
     Engine_ObjectEventSetPosition(LOCALID_FIRST_ROCK + 7, 0, 0);
   }
   // The lightning starts at once, except before Dora and Kyle's scene.
-  if (gGameState.warpDest != VALE_STORM_FROM_VALE_INTERIORS_INN_WITH_DORA ||
+  if (gSaveBlock.warpDest != VALE_STORM_FROM_VALE_INTERIORS_INN_WITH_DORA ||
       GameFlag_Get(FLAG_VALE_STORM_SENT_TO_PLAZA) != 0) {
     Weather_StartRain();
     Weather_StartLightning();
@@ -713,7 +713,7 @@ s32 ValeStorm_Initialize(void) {
   }
   WaitFrames(1);
   if (GameFlag_Get(FLAG_VALE_STORM_SENT_TO_PLAZA) == 0 &&
-      gGameState.warpDest == VALE_STORM_FROM_VALE_INTERIORS_INN_WITH_DORA) {
+      gSaveBlock.warpDest == VALE_STORM_FROM_VALE_INTERIORS_INN_WITH_DORA) {
     EventScript_DoraSendsIsaacToThePlaza();
     return 0;
   }

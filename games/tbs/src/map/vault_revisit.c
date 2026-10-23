@@ -43,7 +43,7 @@
 ///   probe vault-revisit); nothing in the ROM or a render says what it was
 ///   meant to show.
 
-#include "game_state.h"
+#include "save_block.h"
 #include "djinn_ids.h"
 #include "window.h"
 #include "unit/map/vault_revisit.h"
@@ -713,16 +713,16 @@ s32 Map_Initialize(void) {
   // Restore the dog's clue position and the bell's current Djinni position.
   if (GameFlag_Get(FLAG_VAULT_DOG_SHOWN_PASSAGE))
     ObjectEvent_SetPosition(LOCALID_VAULT_DOG, PIXELS(216), PIXELS(392));
-  if (gGameState.warpDest <= VAULT_REVISIT_NORTH_UNUSED &&
+  if (gSaveBlock.warpDest <= VAULT_REVISIT_NORTH_UNUSED &&
       !GameFlag_Get(FLAG_DJINNI(DJINNI_SAP)) &&
       !VaultRevisit_ShouldKeepBellDjinniPosition())
     GameFlag_Clear(FLAG_VAULT_SAP_CALLED_BY_BELL);
   if (GameFlag_Get(FLAG_VAULT_SAP_CALLED_BY_BELL) &&
       !GameFlag_Get(FLAG_DJINNI(DJINNI_SAP)))
     ObjectEvent_SetPosition(LOCALID_SAP, PIXELS(408), PIXELS(120));
-  if (gGameState.warpDest == VAULT_REVISIT_FROM_SANCTUM)
+  if (gSaveBlock.warpDest == VAULT_REVISIT_FROM_SANCTUM)
     GameFlag_Clear(FLAG_SHOW_LOCATION_NAME);
-  if (gGameState.warpDest == VAULT_REVISIT_FROM_VAULT_CAVE_PASSAGE)
+  if (gSaveBlock.warpDest == VAULT_REVISIT_FROM_VAULT_CAVE_PASSAGE)
     GameFlag_Clear(FLAG_WARP_ARRIVAL_STAIRS_UP);
   return 0;
 }

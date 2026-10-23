@@ -1,7 +1,7 @@
 #include "types.h"
 #include "object_event.h"
 #include "map_header.h"
-#include "game_state.h"
+#include "save_block.h"
 
 // The sites of the three Colosso finals matches (Colosseum Final 1, 2 and 3).
 
@@ -14,7 +14,7 @@ void *Colosso_FindObjectEventAhead(void) {
   struct FieldPosition position;
   struct ObjectEvent *occupant;
 
-  record = ObjectEvent_GetById(gGameState.leaderLocalId);
+  record = ObjectEvent_GetById(gSaveBlock.leaderLocalId);
 
   facing = (record->facing + 0x2000) & 0xc000;
 

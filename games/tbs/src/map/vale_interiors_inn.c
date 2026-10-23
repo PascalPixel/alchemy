@@ -74,7 +74,7 @@
 ///   setting the man's flag only before the innkeeper's welcome), not what
 ///   was intended.
 
-#include "game_state.h"
+#include "save_block.h"
 #include "vram_cache.h"
 #include "unit/map/vale_interiors_inn.h"
 #include "unit/map/common/effect_psynergy.h"
@@ -302,7 +302,7 @@ const struct ObjectEventTemplate *
 ValeInteriorsInn_GetObjectEventTemplates(void) {
   struct ObjectEventTemplate *table;
 
-  if (gGameState.warpDest == VALE_INTERIORS_INN_FROM_BABI_PALACE)
+  if (gSaveBlock.warpDest == VALE_INTERIORS_INN_FROM_BABI_PALACE)
     return gValeInteriorsInn_ScholarsObjectEventTemplates;
   if (GameFlag_Get(FLAG_KALAY_REACHED) != 0)
     table = gValeInteriorsInn_ObjectEventTemplatesAfterKalay;
@@ -335,7 +335,7 @@ static void EventScript_ScholarAsksAboutKraden(s32 speakerId) {
 /// Chooses the events: Babi's scholars talk differently once the Colosso
 /// finals are over; Vale's villagers follow the storm and the story.
 const struct MapEvent *ValeInteriorsInn_GetEvents(void) {
-  if (gGameState.warpDest == VALE_INTERIORS_INN_FROM_BABI_PALACE) {
+  if (gSaveBlock.warpDest == VALE_INTERIORS_INN_FROM_BABI_PALACE) {
     if (GameFlag_Get(FLAG_COLOSSO_OVER) != 0) {
       return gValeInteriorsInn_ScholarsLaterEvents;
     }
@@ -512,7 +512,7 @@ static void EventScript_WarpToValeStormEast(void) {
 s32 ValeInteriorsInn_Initialize(void) {
   struct ObjectEvent *objectEvent;
 
-  if (gGameState.warpDest == VALE_INTERIORS_INN_FROM_BABI_PALACE) {
+  if (gSaveBlock.warpDest == VALE_INTERIORS_INN_FROM_BABI_PALACE) {
     GameFlag_Clear(FLAG_SHOW_LOCATION_NAME);
     ((struct FieldWork *)HEAP_SLOT_BLOCK(HEAP_SLOT_FIELD))->transition =
         MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
@@ -531,8 +531,8 @@ s32 ValeInteriorsInn_Initialize(void) {
     if (GameFlag_Get(FLAG_KALAY_REACHED) != 0) {
       objectEvent = ObjectEvent_GetById(LOCALID_BLANK_AFTER_KALAY);
       ObjectEvent_SetSpriteFlags(objectEvent, 0);
-      if (gGameState.warpDest == VALE_INTERIORS_INN_FROM_VALE ||
-          gGameState.warpDest ==
+      if (gSaveBlock.warpDest == VALE_INTERIORS_INN_FROM_VALE ||
+          gSaveBlock.warpDest ==
               VALE_INTERIORS_INN_ISAACS_HOUSE_FROM_UPSTAIRS) {
         if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) != 0) {
           if (GameFlag_Get(FLAG_MAP_TEMP_03) != 0) {
@@ -546,16 +546,16 @@ s32 ValeInteriorsInn_Initialize(void) {
         }
       }
     } else {
-      if (gGameState.warpDest ==
+      if (gSaveBlock.warpDest ==
           VALE_INTERIORS_INN_ISAACS_HOUSE_FROM_UPSTAIRS_WITH_DORA) {
         EventScript_HurryToThePlaza();
       } else {
-        if (gGameState.warpDest ==
+        if (gSaveBlock.warpDest ==
             VALE_INTERIORS_INN_FROM_VALE_GATE_SOUTHEAST) {
           GameFlag_Set(FLAG_VALE_STORM);
           EventScript_DoraWakesIsaac();
         } else {
-          if (gGameState.warpDest ==
+          if (gSaveBlock.warpDest ==
               VALE_INTERIORS_INN_FROM_VALE_KRADEN_MYTHRIL_BAG) {
             EventScript_ShowMythrilBag();
           } else {

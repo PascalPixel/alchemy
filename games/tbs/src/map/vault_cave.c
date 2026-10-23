@@ -68,7 +68,7 @@
 /// Open questions:
 /// - None.
 
-#include "game_state.h"
+#include "save_block.h"
 #include "unit/field/field.h"
 #include "engine_call.h"
 #include "map_ids.h"
@@ -235,7 +235,7 @@ enum VaultCaveMouthLocalId {
 };
 
 const struct MapWarpDest *Map_GetWarpDests(void) {
-  s16 mapId = gGameState.mapId;
+  s16 mapId = gSaveBlock.mapId;
 
   if (mapId == (s32)&MapId_VaultCavePassage) {
     return gVaultCavePassage_WarpDests;
@@ -255,7 +255,7 @@ const struct MapWarpRegion *Map_GetWarpRegions(void) {
 }
 
 const u32 *Map_GetWarps(void) {
-  s16 mapId = gGameState.mapId;
+  s16 mapId = gSaveBlock.mapId;
 
   if (mapId == (s32)&MapId_VaultCavePassage) {
     return gVaultCavePassage_Warps;
@@ -271,7 +271,7 @@ const u32 *Map_GetWarps(void) {
 
 /// Selects the pillars, water drops, puddles and ivy of the room.
 const struct ObjectEventTemplate *Map_GetObjectEventTemplates(void) {
-  s16 mapId = gGameState.mapId;
+  s16 mapId = gSaveBlock.mapId;
 
   if (mapId == (s32)&MapId_VaultCavePassage) {
     return gVaultCavePassage_ObjectEventTemplates;
@@ -424,7 +424,7 @@ static void EventScript_ShowLockedDoor(void) {
 
 /// Selects the cave map's bg events, movement checks and Psynergy callbacks.
 const struct MapEvent *Map_GetEvents(void) {
-  s16 mapId = gGameState.mapId;
+  s16 mapId = gSaveBlock.mapId;
 
   if (mapId == (s32)&MapId_VaultCavePassage) {
     return gVaultCavePassage_Events;
@@ -1003,8 +1003,8 @@ static void VaultCave_StartTimedFalls(void) {
 s32 Map_Initialize(void) {
   gFieldWork->transition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
-  if (gGameState.mapId == (s32)&MapId_VaultCavePassage) {
-    switch (gGameState.warpDest) {
+  if (gSaveBlock.mapId == (s32)&MapId_VaultCavePassage) {
+    switch (gSaveBlock.warpDest) {
     case VAULT_CAVE_PASSAGE_WATER_ROOM_FROM_NORTH_WEST:
     case VAULT_CAVE_PASSAGE_FROM_VAULT_CAVE_VAMBRACE_EAST:
     case VAULT_CAVE_PASSAGE_FROM_VAULT_CAVE_VAMBRACE_SOUTHEAST:
@@ -1027,11 +1027,11 @@ s32 Map_Initialize(void) {
       break;
     }
   }
-  if (gGameState.mapId == (s32)&MapId_VaultCaveVambrace) {
+  if (gSaveBlock.mapId == (s32)&MapId_VaultCaveVambrace) {
     if (GameFlag_Get(FLAG_WHIRLWIND_USED) == 0) {
       ObjectEvent_GetById(LOCALID_IVY)->scaleY = 0x18000;
     }
-    switch (gGameState.warpDest) {
+    switch (gSaveBlock.warpDest) {
     case VAULT_CAVE_VAMBRACE_FROM_VAULT_CAVE_PASSAGE_NORTH:
     case VAULT_CAVE_VAMBRACE_FROM_VAULT_CAVE_MOUTH_NORTH:
     case VAULT_CAVE_VAMBRACE_NORTH_FROM_FROST_ROOM:
@@ -1092,7 +1092,7 @@ s32 Map_Initialize(void) {
     ObjectEvent_SetSpriteFlags(ObjectEvent_GetById(LOCALID_SOUTHERN_PILLAR), 0);
     ObjectEvent_GetById(LOCALID_SOUTHERN_PILLAR)->collisionFlags = 1;
   }
-  if (gGameState.mapId == (s32)&MapId_VaultCaveMouth) {
+  if (gSaveBlock.mapId == (s32)&MapId_VaultCaveMouth) {
     Engine_ObjectEventSetAnimation(LOCALID_PILLAR_EAST_OF_NORTHERN_SWITCH, 2);
     if (GameFlag_Get(FLAG_NORTH_PILLAR_STRUCK) == 0) {
       Engine_ObjectEventSetAnimation(LOCALID_NORTHERN_PILLAR, 2);
@@ -1105,7 +1105,7 @@ s32 Map_Initialize(void) {
     ObjectEvent_GetById(LOCALID_NORTHERN_PILLAR)->collisionFlags |= 0x80;
     ObjectEvent_GetById(LOCALID_PILLAR_SOUTH_OF_NORTHERN_SWITCH)
         ->collisionFlags |= 0x80;
-    switch (gGameState.warpDest) {
+    switch (gSaveBlock.warpDest) {
     case VAULT_CAVE_MOUTH_NORTH_FROM_SOUTH:
     case VAULT_CAVE_MOUTH_FROM_VAULT_CAVE_VAMBRACE_NORTH:
       VaultCave_StartTimedFalls();
@@ -1131,8 +1131,8 @@ s32 Map_Initialize(void) {
   }
   // Retreat always returns to the foot of MapId_VaultCavePassage's ladder
   // from Vault.
-  gGameState.retreatWarpDest = VAULT_CAVE_PASSAGE_FROM_VAULT_REVISIT;
-  gGameState.retreatMap = (s32)&MapId_VaultCavePassage;
+  gSaveBlock.retreatWarpDest = VAULT_CAVE_PASSAGE_FROM_VAULT_REVISIT;
+  gSaveBlock.retreatMap = (s32)&MapId_VaultCavePassage;
   return 0;
 }
 

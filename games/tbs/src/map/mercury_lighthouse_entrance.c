@@ -86,7 +86,7 @@
 
 #include "action_script.h"
 #include "animspr.h"
-#include "game_state.h"
+#include "save_block.h"
 #include "heap_slots.h"
 #include "heap.h"
 #include "keystate.h"
@@ -443,8 +443,8 @@ s32 MercuryLighthouseEntrance_Initialize(void) {
   MercuryLighthouse_RestoreLights(
       21, (struct MercuryLighthouseLights *)gMapLocalState);
   GameFlag_Set(FLAG_MERCURY_LIGHTHOUSE_LIT);
-  gGameState.retreatWarpDest = MERCURY_LIGHTHOUSE_EXTERIOR_FROM_WORLD_MAP;
-  gGameState.retreatMap = (s32)&MapId_MercuryLighthouseExterior;
+  gSaveBlock.retreatWarpDest = MERCURY_LIGHTHOUSE_EXTERIOR_FROM_WORLD_MAP;
+  gSaveBlock.retreatMap = (s32)&MapId_MercuryLighthouseExterior;
   FieldEffect_StartFadeOverlay(0);
   if (GameFlag_Get(FLAG_MERCURY_LIGHTHOUSE_HEART_HONORED))
     FieldScheduler_AddCallback(MercuryLighthouse_CyclePalette,
@@ -454,7 +454,7 @@ s32 MercuryLighthouseEntrance_Initialize(void) {
   gFieldWork->transition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   // Each warp destination restores its route or plays its one-time arrival.
-  switch (gGameState.warpDest) {
+  switch (gSaveBlock.warpDest) {
   case MERCURY_LIGHTHOUSE_ENTRANCE_FROM_MERCURY_LIGHTHOUSE_EXTERIOR:
     // Until Mia has gone in, arriving here plays the Lizard Man scene.
     if (!GameFlag_Get(FLAG_MERCURY_LIGHTHOUSE_ENTERED_BY_MIA))
@@ -491,7 +491,7 @@ s32 MercuryLighthouseEntrance_Initialize(void) {
       WaitFrames(1);
       MapGrid_CopyCellAttributes(70, 32, 13, 7, 6, 32);
     }
-    if (gGameState.warpDest !=
+    if (gSaveBlock.warpDest !=
         MERCURY_LIGHTHOUSE_ENTRANCE_FROM_MERCURY_LIGHTHOUSE_LOWER_HOLE)
       break;
     arrivalSeen = Script_GetFlag(FLAG_DROP_FROM_ABOVE_SEEN);

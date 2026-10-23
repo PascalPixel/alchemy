@@ -44,7 +44,7 @@
 ///
 /// Open questions: none.
 
-#include "game_state.h"
+#include "save_block.h"
 #include "unit/map/vault_interiors_revisit.h"
 #include "vault_interiors.h"
 #include "unit/map/common/vault_itemobj.h"
@@ -428,7 +428,7 @@ s32 Map_Initialize(void) {
 
   gFieldWork->transition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
-  warpDest = gGameState.warpDest;
+  warpDest = gSaveBlock.warpDest;
 
   if (warpDest == VAULT_INTERIORS_REVISIT_FROM_VAULT_REVISIT_SOUTHEAST) {
     // Draw the table bare, its stone gone, and set the gem owner back on the

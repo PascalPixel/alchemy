@@ -60,7 +60,7 @@
 #include "flags.h"
 #include "songs.h"
 #include "version.h"
-#include "game_state.h"
+#include "save_block.h"
 #include "unit/map/tolbi_ship_deck.h"
 #include "unit/overworld/overworld.h"
 #include "unit/overworld/field_services.h"
@@ -1330,7 +1330,7 @@ static void TolbiShipDeck_ApplyEntryState(void) {
   if (GameFlag_Get(FLAG_TOLBI_SHIP_ROWING) == 0) {
     TolbiShipDeck_RestOars();
   }
-  switch (gGameState.warpDest) {
+  switch (gSaveBlock.warpDest) {
   case TOLBI_SHIP_DECK_FROM_TOLBI_SHIP_MAST:
     ObjectEvent_GetById(LOCALID_PARTY_LEADER)->sprite->image.priority = 1;
     break;
@@ -1565,7 +1565,7 @@ static void TolbiShipDeck_SetUpAtAnchor(void) {
     record = ObjectEvent_GetById(LOCALID_SEA_OURANOS);
     record->facing = FACING_NORTHWEST + FACING_STEP;
   }
-  if (gGameState.warpDest == TOLBI_SHIP_DECK_FROM_TOLBI_DOCKS) {
+  if (gSaveBlock.warpDest == TOLBI_SHIP_DECK_FROM_TOLBI_DOCKS) {
     TolbiShipDeck_ReturnFromIsland();
   }
   FieldScript_End();
@@ -2145,8 +2145,8 @@ static void TolbiShipDeck_JumpIntoKrakenBattle(void) {
   ObjectEvent_WalkTo(IVAN, 248, 564);
   ObjectEvent_WalkTo(MIA, 248, 564);
   FieldScript_WaitFrames(20);
-  gGameState.savedMap = (s32)&MapId_TolbiShipInteriors;
-  gGameState.savedWarpDest = TOLBI_SHIP_INTERIORS_PASSENGER_HOLD_AFTER_DEFEAT;
+  gSaveBlock.savedMap = (s32)&MapId_TolbiShipInteriors;
+  gSaveBlock.savedWarpDest = TOLBI_SHIP_INTERIORS_PASSENGER_HOLD_AFTER_DEFEAT;
   Battle_SetType(BATTLE_TYPE_SCRIPTED);
   FieldScript_SetNextDestination((s32)&MapId_TolbiShipDeck,
                                  TOLBI_SHIP_DECK_AFTER_JUMP_INTO_KRAKEN_BATTLE);

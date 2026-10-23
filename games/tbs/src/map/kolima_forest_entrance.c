@@ -35,7 +35,7 @@
 #include "action_script.h"
 #include "flags.h"
 #include "character_ids.h"
-#include "game_state.h"
+#include "save_block.h"
 #include "heap_slots.h"
 #include "unit/import.h"
 #include "unit/map/kolima_forest_entrance.h"
@@ -228,7 +228,7 @@ s32 KolimaForestEntrance_Initialize(void) {
   }
   Map_RedrawObjectEventFootprint(LOCALID_FIRST_LOG);
   Map_RedrawObjectEventFootprint(LOCALID_FIRST_LOG + 1);
-  if (gGameState.warpDest == KOLIMA_FOREST_ENTRANCE_FROM_WORLD_MAP) {
+  if (gSaveBlock.warpDest == KOLIMA_FOREST_ENTRANCE_FROM_WORLD_MAP) {
     if (GameFlag_Get(FLAG_KOLIMA_CURSE_WITNESSED) == 0) {
       KolimaForestEntrance_WitnessForestCurse();
     }

@@ -13,7 +13,7 @@
 #include "system.h"
 #include "battle_anim_work.h"
 #include "heap.h"
-#include "game_state.h"
+#include "save_block.h"
 #include "types.h"
 #include "macros.h"
 #include "dma.h"
@@ -57,7 +57,7 @@
 /// play time and runs the game. Returns 0.
 s32 LuckyWheels_Start(void) {
   REG_DISPCNT = DISPCNT_OBJ_1D_MAP;
-  gRandomSeed = gGameState.playTime;
+  gRandomSeed = gSaveBlock.playTime;
   Sound_PlaySongFar(MUS_009);
   LuckyWheels_Run();
   return 0;
@@ -336,11 +336,11 @@ struct LuckyWheelsWork {
 #endif
 };
 
-/// gGameState seen from +12, the base the bytes load: wonPrizes is
-/// gGameState.wonPrizes (through the field itself LuckyWheels_RunFrame differs
+/// gSaveBlock seen from +12, the base the bytes load: wonPrizes is
+/// gSaveBlock.wonPrizes (through the field itself LuckyWheels_RunFrame differs
 /// 12)
 struct ReelSave {
-  u8 beforeWonPrizes[0x120]; ///< gGameState from summonMask to wonPrizes
+  u8 beforeWonPrizes[0x120]; ///< gSaveBlock from summonMask to wonPrizes
   s8 wonPrizes[16];
 };
 
@@ -414,7 +414,7 @@ void LuckyWheels_RunFrame(void) {
                                  work->subWindow, LUCKY_WHEELS_COIN_X, 0);
       Text_DrawNumberInWindowFar(work->bet, 2, work->subWindow, 64, 8);
       if (work->pressed & KEY_B) {
-        struct ReelSave *save = (struct ReelSave *)((u8 *)&gGameState + 12);
+        struct ReelSave *save = (struct ReelSave *)((u8 *)&gSaveBlock + 12);
 
         work->state = LUCKY_WHEELS_DONE;
         save->wonPrizes[0] = -2;
@@ -627,7 +627,7 @@ void LuckyWheels_RunFrame(void) {
       }
 
       if (stoppedReels == 5) {
-        struct ReelSave *save = (struct ReelSave *)((u8 *)&gGameState + 12);
+        struct ReelSave *save = (struct ReelSave *)((u8 *)&gSaveBlock + 12);
         s32 hits = 0;
 
         for (col = 0; col != 7; col++) {
@@ -978,7 +978,7 @@ void LuckyWheels_Run(void) {
   state = AllocHeapSlotEwram(LUCKY_WHEELS_HEAP_SLOT,
                              sizeof(struct LuckyWheelsWork));
   tiles = Ram_MapGridCellBuffer;
-  save = (struct ReelSave *)((u8 *)&gGameState + 12);
+  save = (struct ReelSave *)((u8 *)&gSaveBlock + 12);
   RuntimeDispatch_NoOpHook((s32)&ResourceId_BattleAnimFarCalls);
   save->wonPrizes[0] = -1;
   state->repeat = 0;

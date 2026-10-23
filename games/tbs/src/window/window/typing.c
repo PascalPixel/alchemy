@@ -101,7 +101,7 @@ s32 TextPrinter_Step(struct TextPrinter *printer) {
   struct WindowWork *work = WINDOW_WORK;
   // The ROM reads gKeysHeld here once and never uses the value.
   u32 keys = gKeysHeld;
-  s32 glyphsLeft = gMessageSpeed_Steps[gGameState.messageSpeed];
+  s32 glyphsLeft = gMessageSpeed_Steps[gSaveBlock.messageSpeed];
   s32 lag;
   u32 code;
   u32 nextCode;
@@ -333,7 +333,7 @@ s32 TextPrinter_Step(struct TextPrinter *printer) {
       // A character: draw it at the pen position, rounded to whole pixels.
       pixelX = (printer->x + 128) / 256;
       pixelY = (printer->y + 128) / 256;
-      voiceGap = gMessageSpeed_VoiceGaps[gGameState.messageSpeed];
+      voiceGap = gMessageSpeed_VoiceGaps[gSaveBlock.messageSpeed];
       nextEntryIndex = printer->textIndex;
       // Under Mind Read the text starts 8 pixels further in (Japanese and
       // English), in the window Window_FitOnScreen made 2 tiles wider.
@@ -386,7 +386,7 @@ s32 TextPrinter_Step(struct TextPrinter *printer) {
 #endif
       glyphWidth = Glyph_Draw(printer->window, code, pixelX, pixelY,
                               GLYPH_DRAW_CHARACTER);
-      printer->glyphDelay = gMessageSpeed_Delays[gGameState.messageSpeed];
+      printer->glyphDelay = gMessageSpeed_Delays[gSaveBlock.messageSpeed];
       if (glyphWidth != 0) {
         // The speaker's voice blip (voiceSound, the first of four
         // sounds, one picked by the code's low two bits) every few characters

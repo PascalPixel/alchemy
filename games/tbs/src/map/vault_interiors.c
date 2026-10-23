@@ -59,7 +59,7 @@
 ///
 /// Open questions: none.
 
-#include "game_state.h"
+#include "save_block.h"
 #include "flags.h"
 #include "animspr.h"
 #include "version.h"
@@ -305,7 +305,7 @@ const u32 *Map_GetWarps(void) { return gVaultInteriors_Warps; }
 const struct ObjectEventTemplate *Map_GetObjectEventTemplates(void) {
   struct ObjectEventTemplate *table;
 
-  switch (gGameState.warpDest) {
+  switch (gSaveBlock.warpDest) {
   case VAULT_INTERIORS_LOFT_FROM_CRATE_ROOM:
   case VAULT_INTERIORS_LOFT_AFTER_LOSING_TO_THIEVES:
   case VAULT_INTERIORS_LOFT_AFTER_THIEVES_DEFEATED:
@@ -534,7 +534,7 @@ static void EventScript_SearchEmptyChest(void) {
 /// Returns the loft's events for the loft's three warp destinations, else the
 /// houses' events, which change once FLAG_VAULT_THIEVES_JAILED is set.
 const struct MapEvent *Map_GetEvents(void) {
-  switch (gGameState.warpDest) {
+  switch (gSaveBlock.warpDest) {
   case VAULT_INTERIORS_LOFT_FROM_CRATE_ROOM:
   case VAULT_INTERIORS_LOFT_AFTER_LOSING_TO_THIEVES:
   case VAULT_INTERIORS_LOFT_AFTER_THIEVES_DEFEATED:
@@ -2172,7 +2172,7 @@ static void VaultInteriors_AdvanceSuspectRoute(s32 localId, s32 expected,
 s32 Map_Initialize(void) {
   gFieldWork->transition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
-  switch (gGameState.warpDest) {
+  switch (gSaveBlock.warpDest) {
   case VAULT_INTERIORS_FROM_VAULT_EAST_SOUTHEAST: {
     s32 zero = 0;
 

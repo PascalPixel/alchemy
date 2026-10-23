@@ -27,7 +27,7 @@ s32 Field_TryJumpForward(void) {
   // A chained jump repeats both the gap and landing probes, including their
   // failure returns, before taking control of the field again.
   struct Object *leader =
-      (struct Object *)ObjectEvent_GetById(gGameState.leaderLocalId);
+      (struct Object *)ObjectEvent_GetById(gSaveBlock.leaderLocalId);
   s32 result = -1;
   s32 angle = (leader->facing + 0x2000) & 0xc000; // to the nearest quarter
   u8 *flags = &leader->flags;
@@ -69,7 +69,7 @@ again:
     ObjectDispatch_SetSingleChildFlagsFar((struct DispatchObject *)leader,
                                           spriteFlags & 0xfe);
     ObjectMotion_SetPositionAndCommit(
-        gGameState.leaderLocalId,
+        gSaveBlock.leaderLocalId,
         ((union FieldCoordinate *)&position->x)->part.pixel,
         ((union FieldCoordinate *)&position->z)->part.pixel);
     ObjectDispatch_SelectAnimationFar(leader, 6);
@@ -123,10 +123,10 @@ again:
 /// Called by Field_RunPushCellEvent for a climbing spot (0xfd) with Down held,
 /// and imported by the maps with ladders and climbable walls (Babi's
 /// Lighthouse, Crossbone Isle, Tolbi's ship and others). Sets
-/// gGameState.movementMode: 1 while the leader is on the wall, 0 off it.
+/// gSaveBlock.movementMode: 1 while the leader is on the wall, 0 off it.
 s32 Field_ClimbDown(void) {
   struct Object *object =
-      (struct Object *)ObjectEvent_GetById(gGameState.leaderLocalId);
+      (struct Object *)ObjectEvent_GetById(gSaveBlock.leaderLocalId);
   s32 gridX =
       8 + ((((union FieldCoordinate *)&object->x)->part.pixel) & 0xfff0);
   s32 gridZ =
@@ -135,7 +135,7 @@ s32 Field_ClimbDown(void) {
 
   FieldScript_Start();
 
-  if (gGameState.movementMode == LEADER_MOVEMENT_WALK) {
+  if (gSaveBlock.movementMode == LEADER_MOVEMENT_WALK) {
     s32 index = gridX / 16 + (gridZ / 16) * 128;
 
     // A wall goes down only where the cell below is the same climbing code.
@@ -155,18 +155,18 @@ s32 Field_ClimbDown(void) {
 
       // Step to the middle of the cell, face north and climb down a cell at
       // 1 pixel a frame, in free flight (no motion flags) with no shadow.
-      ObjectMotion_SetPositionAndCommit(gGameState.leaderLocalId, gridX, gridZ);
+      ObjectMotion_SetPositionAndCommit(gSaveBlock.leaderLocalId, gridX, gridZ);
       object->speedLimit = 0x10000;
-      ObjectMotion_ArmCallback(gGameState.leaderLocalId, 0xc000, 0);
-      ObjectEvent_RefreshSelectorById(gGameState.leaderLocalId);
+      ObjectMotion_ArmCallback(gSaveBlock.leaderLocalId, 0xc000, 0);
+      ObjectEvent_RefreshSelectorById(gSaveBlock.leaderLocalId);
       object->actionFlags = OBJ_EVENT_FACES_MOTION;
       object->flags = 0;
       ObjectDispatch_SetSingleChildFlagsFar((struct DispatchObject *)object, 0);
       ObjectDispatch_SelectAnimationFar(object, 13);
       Object_SetMoveTargetFar(object, gridX << 16, object->y - 0x100000,
                               (gridZ << 16) + 0x100000);
-      ObjectMotion_CommitCurrentPositionAndActivate(gGameState.leaderLocalId);
-      gGameState.movementMode = LEADER_MOVEMENT_CLIMB;
+      ObjectMotion_CommitCurrentPositionAndActivate(gSaveBlock.leaderLocalId);
+      gSaveBlock.movementMode = LEADER_MOVEMENT_CLIMB;
     } else {
       goto failure;
     }
@@ -181,7 +181,7 @@ s32 Field_ClimbDown(void) {
     ObjectDispatch_SetSingleChildFlagsFar((struct DispatchObject *)object,
                                           SPRITE_FLAG_SHADOW);
     FieldScript_WaitFrames(6);
-    gGameState.movementMode = LEADER_MOVEMENT_WALK;
+    gSaveBlock.movementMode = LEADER_MOVEMENT_WALK;
     object->actionFlags = OBJ_EVENT_FACES_MOTION;
     object->facing = 0xc000;
   }
@@ -203,10 +203,10 @@ failure:
 /// Called by Field_RunPushCellEvent for a climbing spot (0xfd) with Up held,
 /// and imported by the maps with ladders and climbable walls (Babi's
 /// Lighthouse, Colosso, Crossbone Isle and others). Sets
-/// gGameState.movementMode as Field_ClimbDown does.
+/// gSaveBlock.movementMode as Field_ClimbDown does.
 s32 Field_ClimbUp(void) {
   struct Object *object =
-      (struct Object *)ObjectEvent_GetById(gGameState.leaderLocalId);
+      (struct Object *)ObjectEvent_GetById(gSaveBlock.leaderLocalId);
   s16 spriteFlags = 1;
   s32 gridX =
       8 + ((((union FieldCoordinate *)&object->x)->part.pixel) & 0xfff0);
@@ -219,7 +219,7 @@ s32 Field_ClimbUp(void) {
   if (object->animationKind == OBJECT_SPRITE_ONE)
     spriteFlags = ((struct Sprite *)object->animation)->flags;
 
-  if (gGameState.movementMode == LEADER_MOVEMENT_WALK) {
+  if (gSaveBlock.movementMode == LEADER_MOVEMENT_WALK) {
     s32 index = gridX / 16 + (gridZ / 16) * 128;
 
     if (TILE_CELLS[index].behavior == TILE_CELLS_NORTH[index].behavior) {
@@ -238,7 +238,7 @@ s32 Field_ClimbUp(void) {
 
       // Step to the middle of the cell, crouch, jump and grab the wall.
       object->actionFlags = 0;
-      ObjectMotion_SetPositionAndCommit(gGameState.leaderLocalId, gridX, gridZ);
+      ObjectMotion_SetPositionAndCommit(gSaveBlock.leaderLocalId, gridX, gridZ);
       ObjectDispatch_SelectAnimationFar(object, 6);
       WaitFrames(4);
       ObjectDispatch_SelectAnimationFar(object, 7);
@@ -252,7 +252,7 @@ s32 Field_ClimbUp(void) {
       object->velocityY = 0;
       ObjectDispatch_SelectAnimationFar(object, 12);
       WaitFrames(4);
-      gGameState.movementMode = LEADER_MOVEMENT_CLIMB;
+      gSaveBlock.movementMode = LEADER_MOVEMENT_CLIMB;
       object->actionFlags = OBJ_EVENT_FACES_MOTION;
       WaitFrames(8);
     } else {
@@ -264,14 +264,14 @@ s32 Field_ClimbUp(void) {
     ObjectDispatch_SelectAnimationFar(object, 11);
     Object_SetMoveTargetFar(object, gridX << 16, object->y + 0x80000,
                             (gridZ << 16) - 0x100000);
-    ObjectMotion_CommitCurrentPositionAndActivate(gGameState.leaderLocalId);
+    ObjectMotion_CommitCurrentPositionAndActivate(gSaveBlock.leaderLocalId);
     object->flags = OBJ_EVENT_FOLLOWS_TERRAIN | OBJ_EVENT_FALLS;
     spriteFlags |= 1;
     object->groundHeight = object->y;
     ObjectDispatch_SetSingleChildFlagsFar((struct DispatchObject *)object,
                                           spriteFlags);
     FieldScript_WaitFrames(4);
-    gGameState.movementMode = LEADER_MOVEMENT_WALK;
+    gSaveBlock.movementMode = LEADER_MOVEMENT_WALK;
     object->actionFlags = OBJ_EVENT_FACES_MOTION;
   }
 

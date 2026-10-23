@@ -9,7 +9,7 @@
 #include "map_tables.h"
 #include "system.h"
 
-#include "game_state.h"
+#include "save_block.h"
 #include "script_layer.h"
 #include "field_service.h"
 

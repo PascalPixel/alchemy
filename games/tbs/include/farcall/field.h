@@ -55,10 +55,10 @@ void ObjectDispatch_StartPlayerControlFar(struct DispatchObject *object);
 /// Hands an object to the player's control on the world map (SC_WORLD).
 void ObjectDispatch_StartWorldMapControlFar(struct DispatchObject *object);
 /// Runs the script that walks an object wherever the keys point (SC_KEYS),
-/// which the leader gets when gGameState.movementMode is 1.
+/// which the leader gets when gSaveBlock.movementMode is 1.
 void ObjectDispatch_StartMoveByKeysFar(struct DispatchObject *object);
 /// Runs SC_KEY_COUNT on an object every frame, which the leader gets when
-/// gGameState.movementMode is 2.
+/// gSaveBlock.movementMode is 2.
 void ObjectDispatch_StartKeyCheckFar(struct DispatchObject *object);
 #ifndef OWN_Object_CreateFar
 /// Creates an object at (x, y, z) in 16.16 pixels, or returns 0 when none

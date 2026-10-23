@@ -34,7 +34,7 @@ s32 Field_UsePsynergy(u32 code) {
   abilityGroup = Ability_Get(abilityId)->fieldPsynergy;
   userId = ACT_UNIT(code);
   // The leader is looked up and the result is not used.
-  ObjectEvent_GetByLocalId(gGameState.leaderLocalId);
+  ObjectEvent_GetByLocalId(gSaveBlock.leaderLocalId);
   retreat = 0;
   Leader_StopMoving();
   GameFlag_ClearFar(FLAG_ITEM_USE);
@@ -64,7 +64,7 @@ s32 Field_UsePsynergy(u32 code) {
     if (declined != 0)
       return 0;
     {
-      struct GameState *state = &gGameState;
+      struct SaveBlock *state = &gSaveBlock;
       s32 mapId, returnWarpDest;
       mapId = (u16)state->retreatMap;
       state->mapId = mapId;
@@ -84,7 +84,7 @@ s32 Field_UsePsynergy(u32 code) {
     if (Unit_GetFar(userId)->pp < ppCost) {
       PSYNERGY_MESSAGE(userId, abilityId, MsgNotEnoughPp);
       // Retreat was already accepted: take its warp back (the map and
-      // warp destination it chose stay in the game state).
+      // warp destination it chose stay in the save block).
       if (retreat)
         work->warp = 0;
       return 0;
@@ -105,7 +105,7 @@ s32 Field_UsePsynergy(u32 code) {
   GameFlag_SetFar(FLAG_PSYNERGY_TARGET);
   if (before || after || during) {
     target =
-        Field_FindNearbyPsynergyTarget(gGameState.leaderLocalId, abilityGroup);
+        Field_FindNearbyPsynergyTarget(gSaveBlock.leaderLocalId, abilityGroup);
     // The after event plays the effect itself.
     if (after && (after->trigger & MAP_EVENT_TRIGGER_OWN_EFFECT)) {
       GameFlag_ClearFar(FLAG_PSYNERGY_EFFECT);
@@ -119,7 +119,7 @@ s32 Field_UsePsynergy(u32 code) {
     ObjectEvent_ClearOutOfBounds();
   FieldEffect_LoadActionEffectResources(abilityId, 0);
   work->psynergyActing = 1;
-  FieldEffect_SetupObjectPair(gGameState.leaderLocalId, target);
+  FieldEffect_SetupObjectPair(gSaveBlock.leaderLocalId, target);
   FieldEffect_StartCast();
 
   Field_RunEventAction(before, userId, target);

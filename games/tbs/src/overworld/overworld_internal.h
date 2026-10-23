@@ -15,7 +15,7 @@
 #include "unit/runtime/runtime.h"
 #include "types.h"
 #include "battle_type.h"
-#include "game_state.h"
+#include "save_block.h"
 #include "map_header.h"
 #include "battle_system.h"
 #include "battle.h"
@@ -97,7 +97,7 @@
 /// The speakers' definitions (fxdata.c), read by Speaker_FindDefinition.
 extern struct SpeakerDefinition gSpeakerDefinitions[];
 
-/// The warp request whose destination is already in gGameState.mapId and
+/// The warp request whose destination is already in gSaveBlock.mapId and
 /// .warpDest, so that Map_TakeWarp leaves them as they are. Random battles,
 /// Retreat and the script commands that set a destination
 /// (FieldScript_SetDestination) raise it, and Map_Run returns it when the

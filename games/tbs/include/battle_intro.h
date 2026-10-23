@@ -7,7 +7,7 @@
 #include "types.h"
 
 /// BattleWork.firstStrike: rolled as a battle opens when nothing set its
-/// start (gGameState.battleType 0), and set back to normal after the first
+/// start (gSaveBlock.battleType 0), and set back to normal after the first
 /// round (Battle_Run).
 enum BattleFirstStrike {
   FIRST_STRIKE_NONE = 0,

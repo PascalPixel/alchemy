@@ -35,7 +35,7 @@
 /// Open questions: none.
 
 #include "action_script.h"
-#include "game_state.h"
+#include "save_block.h"
 #include "map_grid_scroll.h"
 #include "map_ids.h"
 #include "unit/import.h"
@@ -545,7 +545,7 @@ static s32 CrossboneIsleSteppingStones_TryJumpAcrossPillar(void) {
 #if TBS_PATCH_1
   jumpDirection = (leader->facing + 0x2000) & 0xc000;
 #endif
-  if (gGameState.movementMode != LEADER_MOVEMENT_WALK) {
+  if (gSaveBlock.movementMode != LEADER_MOVEMENT_WALK) {
     return 0;
   }
   position = &destination;
@@ -633,7 +633,7 @@ static s32 CrossboneIsleSteppingStones_SetChildValueFromTimer(
 }
 
 const struct MapWarpDest *Map_GetWarpDests(void) {
-  s16 mapId = gGameState.mapId;
+  s16 mapId = gSaveBlock.mapId;
 
   if (mapId == (s32)&MapId_CrossboneIsleSteppingStones) {
     return gCrossboneIsleSteppingStonesWarpDests;
@@ -659,7 +659,7 @@ const struct MapWarpRegion *Map_GetWarpRegions(void) { return 0; }
 const u32 *Map_GetWarps(void) { return gCrossboneIsleSteppingStonesWarps; }
 
 const struct ObjectEventTemplate *Map_GetObjectEventTemplates(void) {
-  s16 mapId = gGameState.mapId;
+  s16 mapId = gSaveBlock.mapId;
 
   if (mapId == (s32)&MapId_CrossboneIsleSteppingStones) {
     return gCrossboneIsleSteppingStonesObjectEventTemplates;
@@ -1496,7 +1496,7 @@ static void EventScript_PushSinkingPillar(void) {
 }
 
 const struct MapEvent *Map_GetEvents(void) {
-  s16 mapId = gGameState.mapId;
+  s16 mapId = gSaveBlock.mapId;
 
   if (mapId == (s32)&MapId_CrossboneIsleSteppingStones) {
     return gCrossboneIsleSteppingStonesEvents;
@@ -1600,13 +1600,13 @@ s32 Map_Initialize(void) {
   s32 z;
 
   gFieldWork->transition = MAP_TRANSITION(TRANSITION_WINDOW, 4);
-  if (gGameState.mapId == (s32)&MapId_CrossboneIsleIcePillars) {
+  if (gSaveBlock.mapId == (s32)&MapId_CrossboneIsleIcePillars) {
     Map_RedrawObjectEventFootprint(LOCALID_FIRST_PILLAR);
     Map_RedrawObjectEventFootprint(LOCALID_FIRST_PILLAR + 1);
     Map_RedrawObjectEventFootprint(LOCALID_FIRST_PILLAR + 2);
     Map_RedrawObjectEventFootprint(LOCALID_FIRST_PILLAR + 3);
     Map_RedrawObjectEventFootprint(LOCALID_FIRST_PILLAR + 4);
-  } else if (gGameState.mapId == (s32)&MapId_CrossboneIsleFloodgate) {
+  } else if (gSaveBlock.mapId == (s32)&MapId_CrossboneIsleFloodgate) {
     // Rebuild the flooded room and float the logs again when the water stayed
     // raised through a battle.
     MapGrid_CopyCells(32, 0, 64, 32, 0, 64);
@@ -1626,7 +1626,7 @@ s32 Map_Initialize(void) {
       CrossboneIsleSteppingStones_DrawFloatingLogs();
       MapGrid_CopyCellAttributes(24, 3, 1, 1, 24, 8);
     }
-  } else if (gGameState.mapId == (s32)&MapId_CrossboneIsleStackedPillars) {
+  } else if (gSaveBlock.mapId == (s32)&MapId_CrossboneIsleStackedPillars) {
     // Restore the four movable pillars and the leader's riding overlay.
     ObjectEvent_CreateConfiguredObject(PIXELS(584), 0, PIXELS(200), 223);
     if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) == 0) {
@@ -1671,7 +1671,7 @@ s32 Map_Initialize(void) {
         }
       }
     }
-  } else if (gGameState.mapId == (s32)&MapId_CrossboneIsleDragonStatue) {
+  } else if (gSaveBlock.mapId == (s32)&MapId_CrossboneIsleDragonStatue) {
     // Restore CrossboneIsleDragonStatue's moved pillar, frozen puddles, and
     // raised pillar pair.
     OBJECT_ANIMATION(LOCALID_SINKING_BOULDER, 2);

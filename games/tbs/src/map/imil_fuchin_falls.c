@@ -80,7 +80,7 @@
 /// Open questions: none.
 
 #include "action_script.h"
-#include "game_state.h"
+#include "save_block.h"
 #include "keystate.h"
 #include "map_ids.h"
 #include "unit/import.h"
@@ -210,7 +210,7 @@ static void FuchinFallsCave_FightZephyr(void) {
 }
 
 const struct MapWarpDest *ImilFuchinFalls_GetWarpDests(void) {
-  s16 mapId = gGameState.mapId;
+  s16 mapId = gSaveBlock.mapId;
 
   if (mapId == (s32)&MapId_ImilFallsCave) {
     return gImilFuchinFalls_ImilFallsCaveWarpDests;
@@ -243,7 +243,7 @@ const u32 *ImilFuchinFalls_GetWarps(void) { return gImilFuchinFalls_Warps; }
 
 const struct ObjectEventTemplate *
 ImilFuchinFalls_GetObjectEventTemplates(void) {
-  s16 mapId = gGameState.mapId;
+  s16 mapId = gSaveBlock.mapId;
 
   if (mapId == (s32)&MapId_ImilFallsCave) {
     return gImilFuchinFalls_ImilFallsCaveObjectEventTemplates;
@@ -956,7 +956,7 @@ FuchinFallsCave_CreateForegroundObjectEvent(s32 x, s32 y, s32 z,
 }
 
 const struct MapEvent *ImilFuchinFalls_GetEvents(void) {
-  s16 mapId = gGameState.mapId;
+  s16 mapId = gSaveBlock.mapId;
 
   if (mapId == (s32)&MapId_ImilFallsCave) {
     return gImilFuchinFalls_ImilFallsCaveEvents;
@@ -1272,7 +1272,7 @@ static void FuchinFallsCave_RebuildDragonsEyeRoomLogs(void) {
 /// (MapId_FuchinFallsCaveArcticBlade), in both of its halves, at the cells
 /// their flags name.
 static void FuchinFallsCave_RebuildArcticBladeRoomLogs(void) {
-  if (((u32)((u16)gGameState.warpDest - 1) << 16) <= 0x10000) {
+  if (((u32)((u16)gSaveBlock.warpDest - 1) << 16) <= 0x10000) {
     {
       s32 column = 14;
       s32 row = 10;
@@ -1362,7 +1362,7 @@ static void FuchinFallsCave_StopLightFollowingLeader(void) {
 s32 ImilFuchinFalls_Initialize(void) {
   gFieldWork->transition = MAP_TRANSITION(TRANSITION_WINDOW, 4);
   if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) == 0 &&
-      gGameState.mapId == (s32)&MapId_ImilFallsCave) {
+      gSaveBlock.mapId == (s32)&MapId_ImilFallsCave) {
     GameFlag_Set(FLAG_RETREAT_BLOCKED);
     Imil_WalkTowardFever();
   } else {
@@ -1390,24 +1390,24 @@ static void Imil_WalkTowardFever(void) {
 static void ImilFuchinFalls_PrepareRoom(void) {
   struct ObjectEvent *objectEvent;
   /* FAKEMATCH(temporary): one variable holds the zeros and then the slot word,
-   * so case 5 stores a fresh 0 and gGameState stays in r6; as literal zeros
+   * so case 5 stores a fresh 0 and gSaveBlock stays in r6; as literal zeros
    * and the slot read in place, 51 of 144 instructions differ in tbs-en. */
   s32 value;
 
   ImilFuchinFalls_RebuildLogRoom();
-  if (gGameState.mapId == (s32)&MapId_FuchinFallsCaveDragonsEye) {
+  if (gSaveBlock.mapId == (s32)&MapId_FuchinFallsCaveDragonsEye) {
     if (!GameFlag_Get(FLAG_FUCHIN_FALLS_DRAGONS_EYE_FOUND) &&
-        gGameState.warpDest ==
+        gSaveBlock.warpDest ==
             FUCHIN_FALLS_CAVE_DRAGONS_EYE_CHAMBER_FROM_LOGS) {
       ImilFuchinFalls_PlaceDragonsEye();
     }
-    if ((u16)(gGameState.warpDest - 2) <= 3) {
+    if ((u16)(gSaveBlock.warpDest - 2) <= 3) {
       FuchinFallsCave_CreateForegroundObjectEvent(PIXELS(156), 0, PIXELS(452),
                                                   SPRITE_CRATE);
       FuchinFallsCave_CreateForegroundObjectEvent(PIXELS(188), 0, PIXELS(452),
                                                   SPRITE_CRATE);
     }
-  } else if (gGameState.mapId == (s32)&MapId_FuchinFallsCaveDragonStatue) {
+  } else if (gSaveBlock.mapId == (s32)&MapId_FuchinFallsCaveDragonStatue) {
     value = 0;
     objectEvent = ObjectEvent_Get(LOCALID_BLANK_DRAGON_ROOM_CRATE);
     gImilFuchinFalls_TrackLeader = value;
@@ -1416,7 +1416,7 @@ static void ImilFuchinFalls_PrepareRoom(void) {
     ObjectMotion_SetActionVariant(LOCALID_BLANK_DRAGON_ROOM_CRATE, 1);
     ObjectEvent_SetChildValue(LOCALID_BLANK_DRAGON_ROOM_CRATE,
                               SPRITE_COLOR_HIDDEN);
-    switch (gGameState.warpDest) {
+    switch (gSaveBlock.warpDest) {
     case FUCHIN_FALLS_CAVE_DRAGON_STATUE_FROM_FUCHIN_FALLS_CAVE_ORB_OF_FORCE_EAST:
     case FUCHIN_FALLS_CAVE_DRAGON_STATUE_FROM_FUCHIN_FALLS_CAVE_ORB_OF_FORCE_WEST:
       FieldEffect_StartFadeOverlay(0);
@@ -1429,7 +1429,7 @@ static void ImilFuchinFalls_PrepareRoom(void) {
       ((struct FadeOverlayWork *)value)->objectEvent = NULL;
       break;
     }
-    if (gGameState.warpDest <=
+    if (gSaveBlock.warpDest <=
         FUCHIN_FALLS_CAVE_DRAGON_STATUE_NORTH_HALF_FROM_SOUTH_HALF_EAST) {
       if (GameFlag_Get(FLAG_FUCHIN_FALLS_DRAGONS_EYE_SET)) {
         MapGrid_CopyCellsTo(30, 57, 19, 57, 1, 1);
@@ -1448,21 +1448,21 @@ static void ImilFuchinFalls_PrepareRoom(void) {
 /// Restores the metatile behavior templates for the current log room of Fuchin
 /// Falls Cave.
 static void ImilFuchinFalls_RebuildLogRoom(void) {
-  if (gGameState.mapId == (s32)&MapId_FuchinFallsCaveEntrance) {
+  if (gSaveBlock.mapId == (s32)&MapId_FuchinFallsCaveEntrance) {
     MapGrid_CopyCellAttributes(8, 29, 15, 5, 8, 42);
     FuchinFallsCave_RebuildEntranceLogs();
-  } else if (gGameState.mapId == (s32)&MapId_FuchinFallsCaveZephyr) {
+  } else if (gSaveBlock.mapId == (s32)&MapId_FuchinFallsCaveZephyr) {
     MapGrid_CopyCellAttributes(12, 8, 10, 18, 0, 28);
     FuchinFallsCave_RebuildZephyrRoomLogs();
-  } else if (gGameState.mapId == (s32)&MapId_FuchinFallsCaveDragonsEye &&
-             gGameState.warpDest !=
+  } else if (gSaveBlock.mapId == (s32)&MapId_FuchinFallsCaveDragonsEye &&
+             gSaveBlock.warpDest !=
                  FUCHIN_FALLS_CAVE_DRAGONS_EYE_CHAMBER_FROM_LOGS) {
     MapGrid_CopyCellAttributes(12, 21, 9, 16, 12, 3);
     FuchinFallsCave_RebuildDragonsEyeRoomLogs();
-  } else if (gGameState.mapId == (s32)&MapId_FuchinFallsCaveArcticBlade) {
-    if (gGameState.warpDest ==
+  } else if (gSaveBlock.mapId == (s32)&MapId_FuchinFallsCaveArcticBlade) {
+    if (gSaveBlock.warpDest ==
             FUCHIN_FALLS_CAVE_ARCTIC_BLADE_FROM_FUCHIN_FALLS_CAVE_DRAGON_STATUE ||
-        gGameState.warpDest ==
+        gSaveBlock.warpDest ==
             FUCHIN_FALLS_CAVE_ARCTIC_BLADE_NORTH_HALF_FROM_SOUTH_HALF) {
       MapGrid_CopyCellAttributes(14, 10, 9, 8, 22, 20);
     } else {
@@ -1478,14 +1478,14 @@ static void ImilFuchinFalls_RebuildLogRoom(void) {
 static void ImilFuchinFalls_HopOnTrigger(void) {
   s32 trigger = gFieldWork->coordEvent;
 
-  if (gGameState.mapId == (s32)&MapId_FuchinFallsCaveZephyr) {
+  if (gSaveBlock.mapId == (s32)&MapId_FuchinFallsCaveZephyr) {
     if (trigger == 17) {
       ImilFuchinFalls_HopBy(0, -32);
     } else {
       ImilFuchinFalls_HopBy(-32, 0);
     }
   }
-  if (gGameState.mapId == (s32)&MapId_FuchinFallsCaveDragonsEye &&
+  if (gSaveBlock.mapId == (s32)&MapId_FuchinFallsCaveDragonsEye &&
       trigger == 25 && GameFlag_Get(FLAG_MAPSEC_TEMP_09)) {
     ImilFuchinFalls_HopBy(0, 32);
   }
@@ -1751,7 +1751,7 @@ static void FuchinFallsCave_EndRevealLighting(void) {
   struct FieldEffectWork *effectWork;
   struct ScreenTransitionState *state;
 
-  if (gGameState.warpDest <=
+  if (gSaveBlock.warpDest <=
       FUCHIN_FALLS_CAVE_DRAGON_STATUE_NORTH_HALF_FROM_SOUTH_HALF_EAST) {
     effectWork = *(gHeapSlots + 56);
     state = *(gHeapSlots + 31);
@@ -1808,7 +1808,7 @@ static void Imil_SlideObjectEventAcrossIce(void) {
   s32 z;
   s32 x;
 
-  objectEvent = ObjectEvent_GetByLocalId(gGameState.leaderLocalId);
+  objectEvent = ObjectEvent_GetByLocalId(gSaveBlock.leaderLocalId);
 
   for (;;) {
     heading = gImilFuchinFalls_SlideHeadings[(gKeysHeld >> 4) & 15];

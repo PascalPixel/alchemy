@@ -38,7 +38,7 @@
 
 #include "pushed_object.h"
 #include "object_event.h"
-#include "game_state.h"
+#include "save_block.h"
 #include "script_layer.h"
 #include "map_tables.h"
 #include "songs.h"

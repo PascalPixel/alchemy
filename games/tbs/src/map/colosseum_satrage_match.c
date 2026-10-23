@@ -55,7 +55,7 @@
 /// Open questions: none.
 
 #include "action_script.h"
-#include "game_state.h"
+#include "save_block.h"
 #include "io_write_queue.h"
 #include "map_ids.h"
 #include "vram_cache.h"
@@ -524,7 +524,7 @@ static void EventScript_GrowPlant(void) {
 /// the field plays at any ledge (FieldObjectEvent_JumpDownLedge) for the object
 /// event touching it.
 static void EventScript_JumpDownLedge(void) {
-  FieldObjectEvent_JumpDownLedge(gGameState.leaderLocalId, 6, 0);
+  FieldObjectEvent_JumpDownLedge(gSaveBlock.leaderLocalId, 6, 0);
 }
 
 /// Walking west into the obstacle at coord event 30 in Colosseum Final 2 only
@@ -540,7 +540,7 @@ static void ColosseumSatrageMatch_MovePusherAndLog(s32 logId, s32 offsetX,
   s32 destinationX;
   s32 destinationZ;
 
-  pusher = ObjectEvent_GetById(gGameState.leaderLocalId);
+  pusher = ObjectEvent_GetById(gSaveBlock.leaderLocalId);
   log = ObjectEvent_GetById(logId);
   FieldScript_Start();
   {
@@ -587,7 +587,7 @@ static void ColosseumSatrageMatch_MovePusherAndLog(s32 logId, s32 offsetX,
 /// Standing on one of the Log-Rolling Stage's logs (coord event 22): it carries
 /// the rider across the water the way the player holds.
 static void EventScript_RideLog(void) {
-  struct ObjectEvent *pusher = ObjectEvent_GetById(gGameState.leaderLocalId);
+  struct ObjectEvent *pusher = ObjectEvent_GetById(gSaveBlock.leaderLocalId);
   s32 column = pusher->x.fixed >> 20;
   s32 offsetX = 0;
   s32 logId = LOCALID_RIDING_LOG_NORTH;
@@ -619,7 +619,7 @@ static void EventScript_RideLog(void) {
 /// Rolls a log to half-cell coordinates while its pusher follows halfway.
 static void ColosseumSatrageMatch_RollLogToCell(s32 logId, s32 halfCellX,
                                                 s32 halfCellZ) {
-  s32 pusher = gGameState.leaderLocalId;
+  s32 pusher = gSaveBlock.leaderLocalId;
   struct ObjectEvent *pusherObjectEvent = ObjectEvent_GetById(pusher);
   struct ObjectEvent *log = ObjectEvent_GetById(logId);
   s32 heading = (pusherObjectEvent->facing + 0x1000) & 0xe000;
@@ -744,7 +744,7 @@ static void ColosseumSatrageMatch_UpdateLifts(void) {
   s32 deltaZ;
   struct ObjectEvent *liftObjectEvent;
 
-  rider = ObjectEvent_GetById(gGameState.leaderLocalId);
+  rider = ObjectEvent_GetById(gSaveBlock.leaderLocalId);
   // Carry a rider only while both horizontal distances are less than ten
   // pixels.
   for (liftId = LOCALID_COLOSSEUM_SATRAGE_MATCH_FIRST_LIFT;
@@ -1129,12 +1129,12 @@ s32 ColosseumSatrageMatch_Initialize(void) {
   }
   Engine_ObjectEventSetAnimation(LOCALID_OPPONENT,
                                  WARRIOR_ANIMATION_FIGHTING_STANCE);
-  gGameState.movementMode = LEADER_MOVEMENT_WALK;
+  gSaveBlock.movementMode = LEADER_MOVEMENT_WALK;
   Colosso_ShowItemIcon(LOCALID_PRIZE_B, ITEM_COTTON_SHIRT);
   Colosso_ShowItemIcon(LOCALID_PRIZE_A, ITEM_CHAIN_MAIL);
   ObjectGroup_ConfigureChildValue(LOCALID_OPPONENT, 1);
   // The race, the friends' turns, the tour, and the battle's result.
-  switch (gGameState.warpDest) {
+  switch (gSaveBlock.warpDest) {
   case COLOSSEUM_SATRAGE_MATCH_RACE_FROM_LEND_A_HAND:
     Map_BuildDescriptorAndInstallTask(LOCALID_PARTY_LEADER, LOCALID_OPPONENT, 5,
                                       PIXELS(104), PIXELS(256), LOCALID_PRIZE_A,
@@ -1272,7 +1272,7 @@ static void EventScript_TalkToMiniMazeAttendant(s32 attendant) {
   s32 result;
   struct ObjectEvent *objectEvent;
 
-  if (gGameState.warpDest == COLOSSEUM_SATRAGE_MATCH_FROM_COLOSSEUM_EAST) {
+  if (gSaveBlock.warpDest == COLOSSEUM_SATRAGE_MATCH_FROM_COLOSSEUM_EAST) {
     Colosso_AskDoneCheering(attendant);
   } else {
     FieldScript_Start();
@@ -1319,7 +1319,7 @@ static void EventScript_TalkToMiniMazeAttendant(s32 attendant) {
 static void EventScript_TalkToShiftingFloorAttendant(s32 attendant) {
   s32 result;
 
-  if (gGameState.warpDest == COLOSSEUM_SATRAGE_MATCH_FROM_COLOSSEUM_EAST) {
+  if (gSaveBlock.warpDest == COLOSSEUM_SATRAGE_MATCH_FROM_COLOSSEUM_EAST) {
     Colosso_AskDoneCheering(attendant);
   } else {
     FieldScript_Start();
@@ -1365,7 +1365,7 @@ static void EventScript_TalkToShiftingFloorAttendant(s32 attendant) {
 static void EventScript_TalkToLogRollingAttendant(s32 attendant) {
   s32 result;
 
-  if (gGameState.warpDest == COLOSSEUM_SATRAGE_MATCH_FROM_COLOSSEUM_EAST) {
+  if (gSaveBlock.warpDest == COLOSSEUM_SATRAGE_MATCH_FROM_COLOSSEUM_EAST) {
     Colosso_AskDoneCheering(attendant);
   } else {
     FieldScript_Start();
@@ -1423,7 +1423,7 @@ static void EventScript_TalkToWallAttendant(s32 attendant) {
   struct ObjectEvent *objectEvent;
   s32 result;
 
-  if (gGameState.warpDest == COLOSSEUM_SATRAGE_MATCH_FROM_COLOSSEUM_EAST) {
+  if (gSaveBlock.warpDest == COLOSSEUM_SATRAGE_MATCH_FROM_COLOSSEUM_EAST) {
     Colosso_AskDoneCheering(attendant);
     return;
   }
@@ -1477,7 +1477,7 @@ static void EventScript_TalkToWallAttendant(s32 attendant) {
 /// follows.
 static void ColosseumSatrageMatch_PushObstacleToCell(s32 obstacleId, s32 column,
                                                      s32 row) {
-  s32 pusher = gGameState.leaderLocalId;
+  s32 pusher = gSaveBlock.leaderLocalId;
   struct ObjectEvent *pusherObjectEvent = ObjectEvent_GetById(pusher);
   struct ObjectEvent *obstacle = ObjectEvent_GetById(obstacleId);
   s32 alongX = (obstacle->x.fixed >> 20) != column / 2;
@@ -1521,7 +1521,7 @@ static void ColosseumSatrageMatch_PushObstacleToCell(s32 obstacleId, s32 column,
 static void EventScript_TalkToBoardWalkAttendant(s32 attendant) {
   s32 result;
 
-  if (gGameState.warpDest == COLOSSEUM_SATRAGE_MATCH_FROM_COLOSSEUM_EAST) {
+  if (gSaveBlock.warpDest == COLOSSEUM_SATRAGE_MATCH_FROM_COLOSSEUM_EAST) {
     Colosso_AskDoneCheering(attendant);
     return;
   }
@@ -1801,8 +1801,8 @@ static s32 ColosseumSatrageMatch_ApproachFinishAndTakeItem(s32 firstItem,
 
   finishAlreadyReached = GameFlag_Get(FLAG_ARENA_REACHED);
 
-  gameState = (u8 *)&gGameState;
-  warrior = ObjectEvent_GetById(((struct GameState *)gameState)->leaderLocalId);
+  gameState = (u8 *)&gSaveBlock;
+  warrior = ObjectEvent_GetById(((struct SaveBlock *)gameState)->leaderLocalId);
 
   if (gauge->finishX < warrior->x.fixed) {
     x = gauge->finishX + PIXELS(12);
@@ -1845,8 +1845,8 @@ static s32 ColosseumSatrageMatch_ApproachFinishAndTakeItem(s32 firstItem,
     MessageArgument_Push(secondItem, 2);
   }
 
-  gameState = (u8 *)&gGameState;
-  MessageArgument_Push(((struct GameState *)gameState)->leaderLocalId, 1);
+  gameState = (u8 *)&gSaveBlock;
+  MessageArgument_Push(((struct SaveBlock *)gameState)->leaderLocalId, 1);
   FieldMessage_Show(MsgColossoIsaacGotItem, 3);
   ObjectDispatch_WaitForValue16(warrior);
 
@@ -1936,7 +1936,7 @@ static void ColosseumSatrageMatch_PushAdjacentObstacle(void) {
   s32 zero;
   s32 localId;
 
-  localId = gGameState.leaderLocalId;
+  localId = gSaveBlock.leaderLocalId;
   pusher = ObjectEvent_GetById(localId);
 
   direction = pusher->facing >> 12;

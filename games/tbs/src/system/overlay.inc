@@ -177,7 +177,7 @@
 	import PartyInventory_Remove, PartyInventory_RemoveFar
 	import Inventory_Equip, Inventory_EquipFar
 	import Ability_GetDirect, Ability_Get
-	import GameState_InitializeDefaults, GameState_InitializeDefaultsFar
+	import SaveBlock_InitializeDefaults, SaveBlock_InitializeDefaultsFar
 	import GameFlag_Get, GameFlag_GetFar
 	import GameFlag_Set, GameFlag_SetFar
 	import Engine_GameFlagSet, GameFlag_SetFar

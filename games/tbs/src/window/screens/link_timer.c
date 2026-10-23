@@ -148,8 +148,8 @@ s32 Message_ShowLocalizedAndWait(void) {
   s32 mode;
 
   battle = gBattleWork;
-  mode = gGameState.battleType;
-  if (gGameState.battleType == 2 || mode <= 2 || (result = 1, mode > 4)) {
+  mode = gSaveBlock.battleType;
+  if (gSaveBlock.battleType == 2 || mode <= 2 || (result = 1, mode > 4)) {
     result = 0;
   }
   if (result == 0) {

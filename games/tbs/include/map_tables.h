@@ -61,7 +61,7 @@ enum { FLAG_VALE_PARTY_LEFT = 0x815 };
 /// A map's warp destination: where and facing which way the party arrives, and
 /// the camera's bounds there (-1 for none).
 struct MapWarpDest {
-  s16 warpDest; ///< the warp destination number the game state names; -1 ends
+  s16 warpDest; ///< the warp destination number the save block names; -1 ends
   s16 requiredFlag; ///< a flag that must be set, or -1 for none
   s16 x;            ///< pixels
   s16 y;            ///< pixels

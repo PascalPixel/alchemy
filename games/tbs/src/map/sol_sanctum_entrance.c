@@ -1,6 +1,6 @@
 /// @file
 /// Sol Entrance and the first rooms of Sol Sanctum, two maps one overlay
-/// serves, chosen by gGameState.mapId in every entry point.
+/// serves, chosen by gSaveBlock.mapId in every entry point.
 ///
 /// - Sol Entrance (MapId_SolEntrance), the mountainside before the
 ///   sanctum's door, reached from Vale (VALE_TO_SOL_ENTRANCE). Walking north
@@ -46,7 +46,7 @@
 ///
 /// Open questions: none.
 
-#include "game_state.h"
+#include "save_block.h"
 #include "unit/field/field.h"
 #include "unit/import.h"
 #include "unit/map/sol_sanctum_entrance.h"
@@ -196,7 +196,7 @@ void FieldEffect_InitializeSparkles();
 /// Returns Sol Entrance's warp destinations (MapId_SolEntrance) or Sol
 /// Sanctum's (MapId_SolSanctumReliefs).
 const struct MapWarpDest *SolSanctumEntrance_GetWarpDests(void) {
-  s16 mapId = gGameState.mapId;
+  s16 mapId = gSaveBlock.mapId;
 
   if (mapId == (s32)&MapId_SolEntrance) {
     return gSolEntrance_WarpDests;
@@ -224,11 +224,11 @@ SolSanctumEntrance_GetObjectEventTemplates(void) {
   s32 firstStatueRoomWarpDest =
       SOL_SANCTUM_RELIEFS_FIRST_RELIEF_ROOM_FROM_CHEST_ROOM;
 
-  if (gGameState.mapId == (s32)&MapId_SolSanctumReliefs) {
-    if (gGameState.warpDest >= firstStatueRoomWarpDest) {
-      if (gGameState.warpDest >
+  if (gSaveBlock.mapId == (s32)&MapId_SolSanctumReliefs) {
+    if (gSaveBlock.warpDest >= firstStatueRoomWarpDest) {
+      if (gSaveBlock.warpDest >
           SOL_SANCTUM_RELIEFS_FIRST_RELIEF_ROOM_FROM_STEPS_ROOM) {
-        if (gGameState.warpDest <=
+        if (gSaveBlock.warpDest <=
             SOL_SANCTUM_RELIEFS_FROM_SOL_SANCTUM_LUNA_SOL_ROOMS) {
           return gSolSanctumReliefs_SecondReliefRoomObjectEventTemplates;
         }
@@ -240,7 +240,7 @@ SolSanctumEntrance_GetObjectEventTemplates(void) {
     Map_AssignViewFlags(table);
     return table;
   }
-  if (gGameState.mapId == (s32)&MapId_SolEntrance) {
+  if (gSaveBlock.mapId == (s32)&MapId_SolEntrance) {
     return gSolEntrance_ObjectEventTemplates;
   }
   return gSolSanctumEntrance_FallbackObjectEventTemplates;
@@ -252,14 +252,14 @@ const struct MapEvent *SolSanctumEntrance_GetEvents(void) {
   s32 firstStatueRoomWarpDest =
       SOL_SANCTUM_RELIEFS_FIRST_RELIEF_ROOM_FROM_CHEST_ROOM;
 
-  if (gGameState.mapId == (s32)&MapId_SolEntrance) {
+  if (gSaveBlock.mapId == (s32)&MapId_SolEntrance) {
     return gSolEntrance_Events;
   }
-  if (gGameState.mapId == (s32)&MapId_SolSanctumReliefs) {
-    if (gGameState.warpDest >= firstStatueRoomWarpDest) {
-      if (gGameState.warpDest >
+  if (gSaveBlock.mapId == (s32)&MapId_SolSanctumReliefs) {
+    if (gSaveBlock.warpDest >= firstStatueRoomWarpDest) {
+      if (gSaveBlock.warpDest >
           SOL_SANCTUM_RELIEFS_FIRST_RELIEF_ROOM_FROM_STEPS_ROOM) {
-        if (gGameState.warpDest <=
+        if (gSaveBlock.warpDest <=
             SOL_SANCTUM_RELIEFS_FROM_SOL_SANCTUM_LUNA_SOL_ROOMS) {
           return gSolSanctumReliefs_SecondReliefRoomEvents;
         }
@@ -630,7 +630,7 @@ static void EventScript_PushStatue(void) {
       statue->velocityZ = stoppedVelocity;
       ObjectDispatch_SelectAnimation(leader, ANIM_STAND);
       // Save the moved statue in the flag set belonging to this room.
-      switch (gGameState.warpDest) {
+      switch (gSaveBlock.warpDest) {
       case SOL_SANCTUM_RELIEFS_FIRST_RELIEF_ROOM_FROM_CHEST_ROOM:
       case SOL_SANCTUM_RELIEFS_FIRST_RELIEF_ROOM_FROM_STATUE_NOOK:
       case SOL_SANCTUM_RELIEFS_FIRST_RELIEF_ROOM_FROM_STEPS_ROOM:
@@ -655,7 +655,7 @@ static void EventScript_PushStatue(void) {
 /// Sets up Sol Entrance or Sol Sanctum. Called by Map_Run once the
 /// object events exist.
 s32 SolSanctumEntrance_Initialize(void) {
-  s32 mapId = gGameState.mapId;
+  s32 mapId = gSaveBlock.mapId;
 
   if (mapId == (s32)&MapId_SolEntrance) {
     SolSanctumEntrance_ApplyEntryState();
@@ -717,7 +717,7 @@ static void SolSanctumEntrance_RestoreInteriorState(void) {
     FieldEffect_InitializeSparkles();
   }
 
-  warpDest = gGameState.warpDest;
+  warpDest = gSaveBlock.warpDest;
   switch (warpDest) {
   case SOL_SANCTUM_RELIEFS_FROM_SOL_SANCTUM_CORRIDOR_WEST:
   case SOL_SANCTUM_RELIEFS_CHEST_ROOM_FROM_FIRST_RELIEF_ROOM:
@@ -735,8 +735,8 @@ static void SolSanctumEntrance_RestoreInteriorState(void) {
     break;
 
   case SOL_SANCTUM_RELIEFS_FROM_SOL_ENTRANCE:
-    gGameState.retreatMap = (s32)&MapId_SolSanctumReliefs;
-    gGameState.retreatWarpDest = SOL_SANCTUM_RELIEFS_FROM_SOL_ENTRANCE;
+    gSaveBlock.retreatMap = (s32)&MapId_SolSanctumReliefs;
+    gSaveBlock.retreatWarpDest = SOL_SANCTUM_RELIEFS_FROM_SOL_ENTRANCE;
     if (GameFlag_Get(FLAG_SOL_SANCTUM_ENTERED) == 0)
       SolSanctumEntrance_IntroduceSanctum();
     break;

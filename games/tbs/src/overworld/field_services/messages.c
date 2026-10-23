@@ -91,14 +91,14 @@ struct Window *FieldMessage_ShowAtObject(s32 localId, s32 unused) {
       }
     } else if (localId <= 7) {
       sprite = localId;
-      object = ObjectEvent_GetByLocalId(gGameState.leaderLocalId);
+      object = ObjectEvent_GetByLocalId(gSaveBlock.leaderLocalId);
       if (work->mode == OBJECT_SYSTEM_WORLD_MAP) {
         Transform_ProjectPoint(&object->x, pos);
         x = pos[0] >> 3;
         y = pos[1] >> 3;
         found = 1;
       } else {
-        if (ObjectEvent_GetScreenPosition(gGameState.leaderLocalId, pos) != -1)
+        if (ObjectEvent_GetScreenPosition(gSaveBlock.leaderLocalId, pos) != -1)
           found = 1;
         else
           found = 0;
@@ -305,10 +305,10 @@ void FieldScript_ShowMessageThenWait(s32 localId, s32 flags, s32 wait) {
 s32 FieldScript_AskYesNoAndShowResponse(s32 localId, s32 flags) {
   s32 answer;
   struct FieldWork *runtime;
-  struct GameState *save;
+  struct SaveBlock *save;
 
   FieldMessage_ShowAtObject(localId, flags);
-  save = &gGameState;
+  save = &gSaveBlock;
   answer = FieldScript_AskYesNoWithObjectEventAnimation(save->leaderLocalId, 0);
   if (answer == 0) {
     FieldScript_ShowMessageAndWait(localId, flags);
@@ -505,7 +505,7 @@ void Message_SetVoiceFromObjectEvent(s32 localId) {
     *(s16 *)&state->voiceCountdown = rate;
   } else {
     voice = Speaker_GetVoice(ObjectEvent_ReadActiveValue(localId));
-    rate = gUi_RenderResultValues[gGameState.messageSpeed];
+    rate = gUi_RenderResultValues[gSaveBlock.messageSpeed];
     *(s16 *)&state->voiceSound = voice;
     *(s16 *)&state->voiceCountdown = rate;
   }

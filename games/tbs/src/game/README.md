@@ -286,7 +286,7 @@ and selling or discarding one puts it back (`Item_AdjustCounter`,
 Code in the other banks calls this one's functions by their far-call names,
 and a map's [overlay](../../glossary.md#overlay) through the list of
 outside functions it was built with (its [import table](../../glossary.md#entry-table-and-import-table)); some code reads
-`gGameState`, the state of the game in progress, directly, as the save
+`gSaveBlock`, the state of the game in progress, directly, as the save
 summary does. The battle folder reads `abilities.tsv` through
 `struct AbilityDefinition` beside its own `ability_anims.tsv` and `ability_staging.tsv`, which
 choose how an ability is drawn ([Battle](../../battle.md)). The flags and the
@@ -329,9 +329,9 @@ far-call table is `games/tbs/src/system/far_call/GAME.S`.
 
 - **unit id** and **unit**: a unit id is a number, and a unit the
   `struct Unit` `Unit_Get` returns for it, as the opening says. The
-  characters' units are kept in `gGameState.units` (`character_ids.h`).
+  characters' units are kept in `gSaveBlock.units` (`character_ids.h`).
 - **party**: the characters travelling together. `FLAG_IN_PARTY(character)`
-  says who is in it and `gGameState.party` lists them in order.
+  says who is in it and `gSaveBlock.party` lists them in order.
 - **inventory entry**: one of a unit's `INVENTORY_SLOTS` (15) halfwords,
   holding an item, its state and its count.
 - **ability**: a row of `abilities.tsv`. Psynergy, a Djinni's and a summon's
@@ -355,7 +355,7 @@ far-call table is `games/tbs/src/system/far_call/GAME.S`.
 | Prefix | What it acts on |
 | --- | --- |
 | `Unit_` | one unit: stats, HP and PP, Psynergy, levels, elements |
-| `Party_`, `GameState_`, `Game_` | the party and the game state |
+| `Party_`, `SaveBlock_`, `Game_` | the party and the save block |
 | `Item_`, `Inventory_`, `PartyInventory_`, `InventorySnapshot_`, `ItemCounter_`, `Equipment_` | items: one unit's inventory, the party's, the Colosso's snapshot, and the rare item counters |
 | `Character_`, `Class_`, `Enemy_`, `Summon_`, `SummonDefinition_`, `BattleAction_` | one entry of a definition table |
 | `GameFlag_` | the game flags |
@@ -387,6 +387,6 @@ Nothing gives one: the shops' stock table (`shop/artifacts.c`) and the
 and skips items without an icon. They are filler to 324 rows.
 
 
-- XXX: what `GameState.unk20b` holds; a new game sets it to 1 and no C reads
+- XXX: what `SaveBlock.unk20b` holds; a new game sets it to 1 and no C reads
   it, so a read in a map overlay or The Lost Age's use of the save's byte
   would settle it.

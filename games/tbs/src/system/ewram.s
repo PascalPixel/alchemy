@@ -5,8 +5,8 @@ gSaveBuffer:
 	.global gGameFlagBytes
 gGameFlagBytes:
 	.space 0x00000200
-	.global gGameState
-gGameState:
+	.global gSaveBlock
+gSaveBlock:
 	.space 0x00000140
 	.global gItemCounters
 gItemCounters:

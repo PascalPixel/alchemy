@@ -2,7 +2,7 @@
 /// Map events, field Psynergy, objects and effect lifecycles.
 
 /// Runs the field map the party entered by warp destination until it leaves,
-/// and returns the warp kind for Map_TakeWarp, or WARP_NONE when gGameState
+/// and returns the warp kind for Map_TakeWarp, or WARP_NONE when gSaveBlock
 /// already holds the next map.
 s32 Map_RunFar(s32 warpDest);
 /// The game's main loop, which never returns; mode, an enum GameRunMode,
@@ -194,7 +194,7 @@ void MapGrid_SetViewBoundsFar(s32 minX, s32 minY, s32 maxX, s32 maxY);
 /// Battle Arena and the debug menus use it as well as a few maps.
 void FieldScript_SetDestinationFar(s32 first, s32 second);
 /// Raises the field's warp request; 999 leaves for the map and warp destination
-/// in gGameState.
+/// in gSaveBlock.
 void FieldScript_SetWarpRequestFar(u16 value);
 /// Sets up a battle with one formation of an encounter table, which starts
 /// once the script that asked for it has returned.
@@ -399,7 +399,7 @@ void ObjectMotion_CommitPositionAndActivateFar(u32 objectId, s32 x_offset,
 /// Makes an object event follow another through the linked action script.
 void ObjectEvent_LinkObjectAndSetCallbackFar(u32 objectId,
                                              u32 linked_object_id);
-/// Pauses an object, keeping its update and pose in gGameState for later;
+/// Pauses an object, keeping its update and pose in gSaveBlock for later;
 /// Halt and the Colosso operators use it.
 void FieldEffect_PauseObjectFar(s32 id);
 /// Captures up to 32 object events into gObjectEventSnapshot, for

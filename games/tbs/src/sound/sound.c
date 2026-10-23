@@ -352,7 +352,7 @@ void Sound_UpdateCommandMask(u32 command) {
 
 /// Returns the music Sound_PlaySong last chose: 0xff before any,
 /// MUS_SILENCE after a fade, else the last music. Map_Run saves it
-/// as gGameState.returnMusic before the pause menu, so the music can be started
+/// as gSaveBlock.returnMusic before the pause menu, so the music can be started
 /// again when the party is put back where it was (Game_Run,
 /// overworld/overworld/map.c).
 s32 Sound_GetCurrentBgm(void) { return gCurrentBgm; }

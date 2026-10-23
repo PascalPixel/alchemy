@@ -23,11 +23,11 @@ struct MapHeader {
   /// and the step counters and moves Retreat's destination;
   /// FLAG_MAPSEC_VISITED(mapSec) marks it visited (Map_ResetFlagsOnEnter).
   s8 mapSec;
-  /// An enum MapType, copied to gGameState.mapType:
+  /// An enum MapType, copied to gSaveBlock.mapType:
   /// MAP_TYPE_TOWN for towns and their interiors (53 rows: Vale,
   /// Bilibin, Kalay, Tolbi and others), MAP_TYPE_FIELD for the rest.
   s8 mapType;
-  u16 layoutIndex; ///< the layout loaded for it, copied to gGameState.layoutId
+  u16 layoutIndex; ///< the layout loaded for it, copied to gSaveBlock.layoutId
   u16 reserved;    ///< 0 in every row; not read
 };
 

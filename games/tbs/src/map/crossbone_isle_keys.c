@@ -34,7 +34,7 @@
 ///
 /// Open questions: none.
 
-#include "game_state.h"
+#include "save_block.h"
 #include "djinn_ids.h"
 #include "version.h"
 #include "heap_slots.h"
@@ -229,7 +229,7 @@ static void EventScript_BaneJoins(void) {
 UNUSED static void CrossboneIsleKeys_UnusedHook(void) {}
 
 const struct MapWarpDest *Map_GetWarpDests(void) {
-  s16 selector = gGameState.mapId;
+  s16 selector = gSaveBlock.mapId;
 
   if (selector == (s32)&MapId_CrossboneIsleKeys) {
     return gCrossboneIsleKeysRoomWarpDests;
@@ -248,7 +248,7 @@ const struct MapWarpRegion *Map_GetWarpRegions(void) { return NULL; }
 const u32 *Map_GetWarps(void) { return gCrossboneIsleKeysWarps; }
 
 const struct ObjectEventTemplate *Map_GetObjectEventTemplates(void) {
-  s16 selector = gGameState.mapId;
+  s16 selector = gSaveBlock.mapId;
 
   if (selector == (s32)&MapId_CrossboneIsleKeys) {
     return gCrossboneIsleKeysRoomObjectEventTemplates;
@@ -437,7 +437,7 @@ static void EventScript_BaneKeepsAway(void) {
 
   work = gFieldWork;
   if (GameFlag_Get(FLAG_CROSSBONE_ISLE_BANE_LAST_ESCAPE) != 0) {
-    if (gGameState.pausedObject != LOCALID_BANE) {
+    if (gSaveBlock.pausedObject != LOCALID_BANE) {
       targetByteOffset = work->coordEvent;
       djinni = ObjectEvent_GetById(LOCALID_BANE);
       leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
@@ -465,7 +465,7 @@ static void EventScript_HaltBane(void) {
 }
 
 const struct MapEvent *Map_GetEvents(void) {
-  s16 selector = gGameState.mapId;
+  s16 selector = gSaveBlock.mapId;
 
   if (selector == (s32)&MapId_CrossboneIsleKeys) {
     return gCrossboneIsleKeysRoomEvents;
@@ -675,8 +675,8 @@ static void CrossboneIsleKeys_CheckFirstPursuerTrigger(void) {
   s32 row = leader->z.fixed / PIXELS(16);
   struct FieldWork *work = gFieldWork;
 
-  if (!Script_GetFlag(PURSUER_AFTER_LEADER_FLAG) && gGameState.cloaked == 0 &&
-      gGameState.pausedObject != LOCALID_FIRST_STATUE &&
+  if (!Script_GetFlag(PURSUER_AFTER_LEADER_FLAG) && gSaveBlock.cloaked == 0 &&
+      gSaveBlock.pausedObject != LOCALID_FIRST_STATUE &&
       (u32)(column - 21) <= 2 && row >= 10 && row <= 11) {
     GameFlag_Set(PURSUER_AFTER_LEADER_FLAG);
     work->raisedEvent = RAISED_FIRST_CHASE;
@@ -718,8 +718,8 @@ static void CrossboneIsleKeys_CheckSecondPursuerTrigger(void) {
   struct FieldWork *work = gFieldWork;
 
   if (Script_GetFlag(PURSUER_AFTER_LEADER_FLAG) == 0 &&
-      gGameState.cloaked == 0 &&
-      gGameState.pausedObject != LOCALID_SECOND_STATUE && column == 10 &&
+      gSaveBlock.cloaked == 0 &&
+      gSaveBlock.pausedObject != LOCALID_SECOND_STATUE && column == 10 &&
       (u32)(row - 16) <= 2) {
     Script_SetFlag(PURSUER_AFTER_LEADER_FLAG);
     MapLocalState_StoreStep(&work->raisedEvent, RAISED_SECOND_CHASE);
@@ -761,7 +761,7 @@ static void CrossboneIsleKeys_TrackPursuerColumn(s32 pursuerIndex) {
   s32 row = leader->z.fixed / PIXELS(16);
   s32 pursuerId = pursuerIndex + LOCALID_THIRD_STATUE;
 
-  if (gGameState.pausedObject == pursuerId)
+  if (gSaveBlock.pausedObject == pursuerId)
     return;
   if (column == gCrossboneIsleKeys_SlotColumns[pursuerIndex])
     return;
@@ -800,7 +800,7 @@ UNUSED static void CrossboneIsleKeys_TrackFifthPursuerColumn(void) {
 static void EventScript_DodgeThirdPursuer(void) {
   struct ObjectEvent *leader;
 
-  if (gGameState.pausedObject != LOCALID_THIRD_STATUE) {
+  if (gSaveBlock.pausedObject != LOCALID_THIRD_STATUE) {
     SCRIPT_START();
     OBJECT_SPEED(LOCALID_PARTY_LEADER, PIXELS(17) / 10, PIXELS(17) / 20);
     OBJECT_SPEED(LOCALID_THIRD_STATUE, PIXELS(17) / 10, PIXELS(17) / 20);
@@ -830,7 +830,7 @@ static void EventScript_DodgeFourthPursuer(void) {
   struct ObjectEvent *leader;
   s32 leaderColumn;
 
-  if (gGameState.pausedObject != LOCALID_FOURTH_STATUE) {
+  if (gSaveBlock.pausedObject != LOCALID_FOURTH_STATUE) {
     SCRIPT_START();
     OBJECT_SPEED(LOCALID_PARTY_LEADER, PIXELS(17) / 10, PIXELS(17) / 20);
     ObjectMotion_SetSpeedParameters(LOCALID_FOURTH_STATUE, PIXELS(17) / 10,
@@ -875,7 +875,7 @@ static void CrossboneIsleKeys_CheckFifthPursuerTrigger(void) {
   s32 column = leader->x.fixed / PIXELS(16);
   s32 row = leader->z.fixed / PIXELS(16);
   struct FieldWork *work = gFieldWork;
-  struct GameState *state = &gGameState;
+  struct SaveBlock *state = &gSaveBlock;
 
   if (state->pausedObject != LOCALID_FIFTH_STATUE &&
       Script_GetFlag(PURSUER_AFTER_LEADER_FLAG) == 0 && state->cloaked == 0 &&
@@ -1292,13 +1292,13 @@ static void CrossboneIsleKeys_UpdatePillarPriorities(void) {
 s32 Map_Initialize(void) {
   gFieldWork->transition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
-  if (gGameState.mapId == (s32)&MapId_CrossboneIsleKeys) {
+  if (gSaveBlock.mapId == (s32)&MapId_CrossboneIsleKeys) {
     CrossboneIsleKeys_InitializeKeys();
   }
-  if (gGameState.mapId == (s32)&MapId_CrossboneIsleStatues) {
+  if (gSaveBlock.mapId == (s32)&MapId_CrossboneIsleStatues) {
     CrossboneIsleKeys_InitializeStatues();
   }
-  if (gGameState.mapId == (s32)&MapId_CrossboneIsleBane) {
+  if (gSaveBlock.mapId == (s32)&MapId_CrossboneIsleBane) {
     CrossboneIsleKeys_InitializeBane();
   }
   return 0;

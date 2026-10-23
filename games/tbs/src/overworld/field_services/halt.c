@@ -172,11 +172,11 @@ void FieldEffect_UpdatePausedObject(union FieldObject *fieldObject) {
 }
 
 /// Pauses object id, keeping its per-frame update and, if it is animated, its
-/// first animation's param in gGameState. Called by FieldEffect_Run and
+/// first animation's param in gSaveBlock. Called by FieldEffect_Run and
 /// FieldEffect_DispatchRequestKind for Halt, which then record the id in
-/// gGameState.pausedObject, and by the Colosso maps to stop their operators.
-/// Sets gGameState.pausedUpdate and pausedPose, the object's update and paused
-/// fields, and stops its animation. gGameState keeps one object's state, so
+/// gSaveBlock.pausedObject, and by the Colosso maps to stop their operators.
+/// Sets gSaveBlock.pausedUpdate and pausedPose, the object's update and paused
+/// fields, and stops its animation. gSaveBlock keeps one object's state, so
 /// Halt resumes the one it stopped before it stops another; the paused
 /// object flickers through random sprite params meanwhile.
 void FieldEffect_PauseObject(s32 localId) {
@@ -185,12 +185,12 @@ void FieldEffect_PauseObject(s32 localId) {
 
   objectEvent = ObjectEvent_GetByLocalId(localId);
   if (objectEvent != NULL) {
-    gGameState.pausedUpdate = (u32)objectEvent->update;
-    gGameState.pausedPose = 0;
+    gSaveBlock.pausedUpdate = (u32)objectEvent->update;
+    gSaveBlock.pausedPose = 0;
     if (objectEvent->spriteStorageKind == 1) {
       entry = objectEvent->sprite->entries[0];
       if (entry != NULL) {
-        gGameState.pausedPose = entry->colorMode;
+        gSaveBlock.pausedPose = entry->colorMode;
       }
     }
     objectEvent->update = FieldEffect_UpdatePausedObject;
@@ -201,16 +201,16 @@ void FieldEffect_PauseObject(s32 localId) {
 }
 
 /// Resumes object id with the update and param kept by
-/// FieldEffect_PauseObject. Called for gGameState.pausedObject by
+/// FieldEffect_PauseObject. Called for gSaveBlock.pausedObject by
 /// FieldEffect_Run and FieldEffect_DispatchRequestKind before Halt stops
 /// another object, and by Map_TalkToObjectEvent after talking to the paused
-/// object event. Clears gGameState.pausedUpdate and the object's paused field,
+/// object event. Clears gSaveBlock.pausedUpdate and the object's paused field,
 /// and restarts its animation at speed 16.
 void FieldEffect_ResumeObject(s32 localId) {
   struct ObjectEvent *objectEvent = ObjectEvent_GetByLocalId(localId);
   if (objectEvent != 0) {
     if (objectEvent->update == FieldEffect_UpdatePausedObject) {
-      struct GameState *state = &gGameState;
+      struct SaveBlock *state = &gSaveBlock;
       objectEvent->update = (void (*)(union FieldObject *))state->pausedUpdate;
       state->pausedUpdate = 0;
       Anim_ApplyChildValuesFar((struct DispatchObject *)objectEvent,

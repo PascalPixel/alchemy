@@ -184,8 +184,8 @@ s32 Shop_Run(s32 stockRow, s32 keeperId) {
 /// broken equipment for repairs and poisoned or haunted members for the
 /// sanctum. Called by DebugMenu_RunPresetShop.
 s32 Shop_OpenDebugShop(s32 unused) {
-  gGameState.coins = 200000;
-  gGameState.shopGifts = 28;
+  gSaveBlock.coins = 200000;
+  gSaveBlock.shopGifts = 28;
   Inventory_EquipFar(
       GARET,
       Inventory_AddItemFar(GARET, INVENTORY_BROKEN | ITEM_VIRTUOUS_ARMLET));

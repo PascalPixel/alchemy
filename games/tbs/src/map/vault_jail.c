@@ -24,7 +24,7 @@
 ///   gMapSec_NameRules gives as "Lunpa" for that warp destination; the code
 ///   shows only that it does.
 
-#include "game_state.h"
+#include "save_block.h"
 #include "unit/map/vault_jail.h"
 #include "unit/overworld/overworld.h"
 #include "unit/overworld/field_services.h"
@@ -111,7 +111,7 @@ const u32 *Map_GetWarps(void) { return gVaultJail_Warps; }
 /// (VAULT_JAIL_FROM_VAULT_REVISIT, after they have broken out), the lone
 /// prisoner.
 const struct ObjectEventTemplate *Map_GetObjectEventTemplates(void) {
-  if (gGameState.warpDest == VAULT_JAIL_FROM_VAULT_REVISIT) {
+  if (gSaveBlock.warpDest == VAULT_JAIL_FROM_VAULT_REVISIT) {
     return gVaultJail_PrisonerObjectEventTemplates;
   }
   return gVaultJail_ThiefObjectEventTemplates;
@@ -121,7 +121,7 @@ const struct ObjectEventTemplate *Map_GetObjectEventTemplates(void) {
 /// warp, or the prisoner's when the party came in from Vault's revisit map,
 /// matching Map_GetObjectEventTemplates.
 const struct MapEvent *Map_GetEvents(void) {
-  if (gGameState.warpDest == VAULT_JAIL_FROM_VAULT_REVISIT) {
+  if (gSaveBlock.warpDest == VAULT_JAIL_FROM_VAULT_REVISIT) {
     return gVaultJail_PrisonerEvents;
   }
   return gVaultJail_ThiefEvents;
@@ -243,7 +243,7 @@ s32 Map_Initialize(void) {
 
   gFieldWork->transition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
-  warpDest = gGameState.warpDest;
+  warpDest = gSaveBlock.warpDest;
 
   if (warpDest == VAULT_JAIL_FROM_LUNPA) {
     GameFlag_Clear(FLAG_SHOW_LOCATION_NAME);

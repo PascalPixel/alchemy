@@ -26,7 +26,7 @@ afterwards.
 
 In the code, a random encounter raises a field [warp](glossary.md#warp) like any other, with
 `RUN_BATTLE` as the next map and the formation in
-`gGameState.warpDest`. `Game_Run` (`src/overworld/overworld/map.c`) clears what
+`gSaveBlock.warpDest`. `Game_Run` (`src/overworld/overworld/map.c`) clears what
 the last map left running, as it does between any two maps: the [task](glossary.md#task)
 table, the list of small jobs the game runs once a [frame](glossary.md#frame), and the [heap](glossary.md#heap-and-pools), the
 pool of memory a map borrows from. Then, instead of loading a map's

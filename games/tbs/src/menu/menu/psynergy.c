@@ -607,9 +607,9 @@ s32 PsynergyMenu_SetShortcut(s32 memberId, s32 actionId, s32 shortcutIndex) {
   s32 code = (memberId << PSYNERGY_SHORTCUT_MEMBER_SHIFT) | id;
 
   if (shortcutIndex == 0) {
-    gGameState.firstShortcut = code;
+    gSaveBlock.firstShortcut = code;
   } else {
-    gGameState.secondShortcut = code;
+    gSaveBlock.secondShortcut = code;
   }
   return 1;
 }
@@ -628,25 +628,25 @@ s32 PsynergyMenu_DrawShortcuts(struct Window *window, s32 memberId) {
   s32 height;
   s32 wide;
 
-  if (gGameState.firstShortcut != 0 && gGameState.secondShortcut != 0)
+  if (gSaveBlock.firstShortcut != 0 && gSaveBlock.secondShortcut != 0)
     Text_DrawMessageAsTilesFar(MsgShortcutChangeHelp, window, 0, -8);
   else
     Text_DrawMessageAsTilesFar(MsgShortcutLabel, window, 0, -8);
 
   Text_GetMessageSizeFar(
-      (gGameState.firstShortcut & PSYNERGY_SHORTCUT_ID_MASK) + MsgAbilityName,
+      (gSaveBlock.firstShortcut & PSYNERGY_SHORTCUT_ID_MASK) + MsgAbilityName,
       &left, &top, &width, &height);
   if (width < 0 || width > 10)
     wide = 1;
   else
     wide = 0;
-  if (gGameState.firstShortcut != 0) {
-    MessageArgument_PushFar(gGameState.firstShortcut &
+  if (gSaveBlock.firstShortcut != 0) {
+    MessageArgument_PushFar(gSaveBlock.firstShortcut &
                                 PSYNERGY_SHORTCUT_ID_MASK,
                             MESSAGE_ARGUMENT_ABILITY);
     Text_DrawMessageAsTilesFar(MsgShortcutNameL, window, 0, 0);
     if (wide == 0)
-      Text_DrawStringAtOffsetFar(Unit_GetFar(gGameState.firstShortcut >>
+      Text_DrawStringAtOffsetFar(Unit_GetFar(gSaveBlock.firstShortcut >>
                                              PSYNERGY_SHORTCUT_MEMBER_SHIFT)
                                      ->name,
                                  window, 80, 0);
@@ -655,19 +655,19 @@ s32 PsynergyMenu_DrawShortcuts(struct Window *window, s32 memberId) {
   }
 
   Text_GetMessageSizeFar(
-      (gGameState.secondShortcut & PSYNERGY_SHORTCUT_ID_MASK) + MsgAbilityName,
+      (gSaveBlock.secondShortcut & PSYNERGY_SHORTCUT_ID_MASK) + MsgAbilityName,
       &left, &top, &width, &height);
   if (width < 0 || width > 10)
     wide = 1;
   else
     wide = 0;
-  if (gGameState.secondShortcut != 0) {
-    MessageArgument_PushFar(gGameState.secondShortcut &
+  if (gSaveBlock.secondShortcut != 0) {
+    MessageArgument_PushFar(gSaveBlock.secondShortcut &
                                 PSYNERGY_SHORTCUT_ID_MASK,
                             MESSAGE_ARGUMENT_ABILITY);
     Text_DrawMessageAsTilesFar(MsgShortcutNameR, window, 0, 8);
     if (wide == 0)
-      Text_DrawStringAtOffsetFar(Unit_GetFar(gGameState.secondShortcut >>
+      Text_DrawStringAtOffsetFar(Unit_GetFar(gSaveBlock.secondShortcut >>
                                              PSYNERGY_SHORTCUT_MEMBER_SHIFT)
                                      ->name,
                                  window, 80, 8);
@@ -686,13 +686,13 @@ s32 PsynergyMenu_DrawShortcuts(struct Window *window, s32 member) {
   s32 height;
   u16 wide;
 
-  if (gGameState.firstShortcut != 0 && gGameState.secondShortcut != 0)
+  if (gSaveBlock.firstShortcut != 0 && gSaveBlock.secondShortcut != 0)
     Text_DrawMessageAsTilesFar(MsgShortcutChangeHelp, window, 0, -8);
   else
     Text_DrawMessageAsTilesFar(MsgShortcutLabel, window, 0, -8);
 
   Text_GetMessageSizeFar(
-      (gGameState.firstShortcut & PSYNERGY_SHORTCUT_ID_MASK) + MsgAbilityName,
+      (gSaveBlock.firstShortcut & PSYNERGY_SHORTCUT_ID_MASK) + MsgAbilityName,
       &left, &top, &width, &height);
   if (width < 0 || width > 11)
     wide = 1;
@@ -702,19 +702,19 @@ s32 PsynergyMenu_DrawShortcuts(struct Window *window, s32 member) {
     Text_DrawStringInWindowFar((u8 *)gMenu_ShortcutLString, window, 0, 0);
   else
     Text_DrawStringInWindowFar((u8 *)gMenu_ShortcutLColonString, window, 0, 0);
-  if (gGameState.firstShortcut != 0) {
+  if (gSaveBlock.firstShortcut != 0) {
     if (wide)
       Text_DrawMessageAsTilesFar(
-          (gGameState.firstShortcut & PSYNERGY_SHORTCUT_ID_MASK) +
+          (gSaveBlock.firstShortcut & PSYNERGY_SHORTCUT_ID_MASK) +
               MsgAbilityName,
           window, 8, 0);
     else
       Text_DrawMessageAsTilesFar(
-          (gGameState.firstShortcut & PSYNERGY_SHORTCUT_ID_MASK) +
+          (gSaveBlock.firstShortcut & PSYNERGY_SHORTCUT_ID_MASK) +
               MsgAbilityName,
           window, 16, 0);
     Text_DrawStringAtOffsetFar(
-        Unit_GetFar(gGameState.firstShortcut >> PSYNERGY_SHORTCUT_MEMBER_SHIFT)
+        Unit_GetFar(gSaveBlock.firstShortcut >> PSYNERGY_SHORTCUT_MEMBER_SHIFT)
             ->name,
         window, 80, 0);
   } else {
@@ -722,7 +722,7 @@ s32 PsynergyMenu_DrawShortcuts(struct Window *window, s32 member) {
   }
 
   Text_GetMessageSizeFar(
-      (gGameState.secondShortcut & PSYNERGY_SHORTCUT_ID_MASK) + MsgAbilityName,
+      (gSaveBlock.secondShortcut & PSYNERGY_SHORTCUT_ID_MASK) + MsgAbilityName,
       &left, &top, &width, &height);
   if (width < 0 || width > 11)
     wide = 1;
@@ -732,19 +732,19 @@ s32 PsynergyMenu_DrawShortcuts(struct Window *window, s32 member) {
     Text_DrawStringInWindowFar((u8 *)gMenu_ShortcutRString, window, 0, 8);
   else
     Text_DrawStringInWindowFar((u8 *)gMenu_ShortcutRColonString, window, 0, 8);
-  if (gGameState.secondShortcut != 0) {
+  if (gSaveBlock.secondShortcut != 0) {
     if (wide)
       Text_DrawMessageAsTilesFar(
-          (gGameState.secondShortcut & PSYNERGY_SHORTCUT_ID_MASK) +
+          (gSaveBlock.secondShortcut & PSYNERGY_SHORTCUT_ID_MASK) +
               MsgAbilityName,
           window, 8, 8);
     else
       Text_DrawMessageAsTilesFar(
-          (gGameState.secondShortcut & PSYNERGY_SHORTCUT_ID_MASK) +
+          (gSaveBlock.secondShortcut & PSYNERGY_SHORTCUT_ID_MASK) +
               MsgAbilityName,
           window, 16, 8);
     Text_DrawStringAtOffsetFar(
-        Unit_GetFar(gGameState.secondShortcut >> PSYNERGY_SHORTCUT_MEMBER_SHIFT)
+        Unit_GetFar(gSaveBlock.secondShortcut >> PSYNERGY_SHORTCUT_MEMBER_SHIFT)
             ->name,
         window, 80, 8);
     Text_SetColorFar(TEXT_COLOR_NORMAL);

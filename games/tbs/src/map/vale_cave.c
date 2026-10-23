@@ -65,7 +65,7 @@
 ///   on its well (vault_revisit.c), and nothing in the ROM says what they were
 ///   meant to show.
 
-#include "game_state.h"
+#include "save_block.h"
 #include "djinn_ids.h"
 #include "version.h"
 #include "engine_call.h"
@@ -268,7 +268,7 @@ ValeCave_FaceObjectEventTowardLeader(union FieldObject *fieldObject) {
 /// Selects warp destination positions and camera bounds for the current cave
 /// room.
 const struct MapWarpDest *ValeCave_GetWarpDests(void) {
-  s16 mapId = gGameState.mapId;
+  s16 mapId = gSaveBlock.mapId;
 
   if (mapId == (s32)&MapId_ValeCaveMouth) {
     return gValeCave_MouthWarpDests;
@@ -290,7 +290,7 @@ const u32 *ValeCave_GetWarps(void) { return gValeCave_Warps; }
 /// Selects the current room's object event templates: Kite, and the crates and
 /// logs.
 const struct ObjectEventTemplate *ValeCave_GetObjectEventTemplates(void) {
-  s16 mapId = gGameState.mapId;
+  s16 mapId = gSaveBlock.mapId;
 
   if (mapId == (s32)&MapId_ValeCaveMouth) {
     return gValeCave_MouthObjectEventTemplates;
@@ -576,7 +576,7 @@ static void EventScript_KiteKeepsAway(void) {
 
   work = gFieldWork;
   if (GameFlag_Get(FLAG_VALE_CAVE_KITE_BEHIND_LEDGE) != 0) {
-    if (gGameState.pausedObject != LOCALID_KITE) {
+    if (gSaveBlock.pausedObject != LOCALID_KITE) {
       // Preserve the speed reads before resolving this route point.
       routeIndex = work->coordEvent;
       djinni = ObjectEvent_GetById(LOCALID_KITE);
@@ -756,7 +756,7 @@ static void EventScript_PushLogNorth(void) {
 
 /// Selects the current room's coord, Psynergy and bg events.
 const struct MapEvent *ValeCave_GetEvents(void) {
-  s16 mapId = gGameState.mapId;
+  s16 mapId = gSaveBlock.mapId;
 
   if (mapId == (s32)&MapId_ValeCaveMouth) {
     return gValeCave_MouthEvents;
@@ -781,7 +781,7 @@ s32 ValeCave_Initialize(void) {
 
   *request =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
-  if (gGameState.mapId == (s32)&MapId_ValeCaveMouth) {
+  if (gSaveBlock.mapId == (s32)&MapId_ValeCaveMouth) {
     *request = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
     WaitFrames(1);
     ObjectMotion_SetActionVariant(LOCALID_VALE_CAVE_MOUTH_FIRST_LOG, 3);
@@ -877,8 +877,8 @@ static void ValeCave_ApplyEntryState(void) {
   s32 southLogOnSouthernRow;
 
   // Each room reuses the temporary flags for its own puzzle state.
-  if (gGameState.mapId == (s32)&MapId_ValeCaveKite) {
-    switch (gGameState.warpDest) {
+  if (gSaveBlock.mapId == (s32)&MapId_ValeCaveKite) {
+    switch (gSaveBlock.warpDest) {
     case VALE_CAVE_KITE_FROM_VALE_CAVE_MOUTH:
     case VALE_CAVE_KITE_WEST_FROM_EAST:
     case VALE_CAVE_KITE_WEST_FROM_SOUTH:
@@ -899,7 +899,7 @@ static void ValeCave_ApplyEntryState(void) {
         break;
       }
       GameFlag_Set(FLAG_MAP_TEMP_00);
-      if (gGameState.warpDest == VALE_CAVE_KITE_EAST_FROM_WEST) {
+      if (gSaveBlock.warpDest == VALE_CAVE_KITE_EAST_FROM_WEST) {
         GameFlag_Set(FLAG_MAP_TEMP_01);
       }
       WaitFrames(1);
@@ -928,8 +928,8 @@ static void ValeCave_ApplyEntryState(void) {
       }
       break;
     }
-  } else if (gGameState.mapId == (s32)&MapId_ValeCaveLogs) {
-    switch (gGameState.warpDest) {
+  } else if (gSaveBlock.mapId == (s32)&MapId_ValeCaveLogs) {
+    switch (gSaveBlock.warpDest) {
     case VALE_CAVE_LOGS_FROM_VALE_CAVE_KITE_WEST:
     case VALE_CAVE_LOGS_NORTH_FROM_SOUTH:
     case VALE_CAVE_LOGS_FROM_VALE_CAVE_KITE_EAST:

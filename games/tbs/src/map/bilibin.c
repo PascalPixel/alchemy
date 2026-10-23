@@ -2,7 +2,7 @@
 /// Bilibin, the Bilibin Treasury and the Bilibin Barricade, three maps that
 /// share one overlay: MapId_Bilibin,
 /// MapId_BilibinTreasury and MapId_BilibinBarricade. The getters pick
-/// each map's tables by gGameState.mapId, Bilibin_Initialize sets up the
+/// each map's tables by gSaveBlock.mapId, Bilibin_Initialize sets up the
 /// map being entered, and EventScript_PushStatueOrCrates serves all three.
 ///
 /// Bilibin (MapId_Bilibin) is the town past Goma Cave, whose chief, Lord
@@ -86,7 +86,7 @@
 ///
 /// Open questions: none.
 
-#include "game_state.h"
+#include "save_block.h"
 #include "djinn_ids.h"
 #include "flags.h"
 #include "map_ids.h"
@@ -266,7 +266,7 @@ struct SpawnCounter gBilibin_RippleTimer;
 #include "common/object_facing.h"
 
 const struct MapWarpDest *Bilibin_GetWarpDests(void) {
-  s16 mapId = gGameState.mapId;
+  s16 mapId = gSaveBlock.mapId;
 
   if (mapId == (s32)&MapId_Bilibin) {
     return gBilibinWarpDests;
@@ -282,7 +282,7 @@ const struct MapWarpDest *Bilibin_GetWarpDests(void) {
 
 /// Only the Bilibin Treasury has warp regions.
 const struct MapWarpRegion *Bilibin_GetRegions(void) {
-  if (gGameState.mapId == (s32)&MapId_BilibinTreasury) {
+  if (gSaveBlock.mapId == (s32)&MapId_BilibinTreasury) {
     return (const struct MapWarpRegion *)gBilibinTreasuryRegions;
   }
   return 0;
@@ -300,7 +300,7 @@ static void EventScript_GustJoins(void) {
 /// Selects the object events of Bilibin, the Bilibin Barricade or the Bilibin
 /// Treasury.
 const struct ObjectEventTemplate *Bilibin_GetObjectEventTemplates(void) {
-  s16 mapId = gGameState.mapId;
+  s16 mapId = gSaveBlock.mapId;
 
   if (mapId == (s32)&MapId_Bilibin) {
     return gBilibinObjectEventTemplates;
@@ -324,7 +324,7 @@ static void EventScript_InspectWell(void) {
 }
 
 const struct MapEvent *Bilibin_GetEvents(void) {
-  s16 mapId = gGameState.mapId;
+  s16 mapId = gSaveBlock.mapId;
 
   if (mapId == (s32)&MapId_Bilibin) {
     return gBilibinEvents;
@@ -673,12 +673,12 @@ static void EventScript_JillGivesHardNut(void) {
 /// and its opening transition.
 s32 Bilibin_Initialize(void) {
   gFieldWork->transition = MAP_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
-  if (gGameState.mapId == (s32)&MapId_Bilibin) {
+  if (gSaveBlock.mapId == (s32)&MapId_Bilibin) {
     Bilibin_RestoreVillageObjectEvents();
-  } else if (gGameState.mapId == (s32)&MapId_BilibinBarricade) {
+  } else if (gSaveBlock.mapId == (s32)&MapId_BilibinBarricade) {
     Bilibin_RestoreRiverObjectEvents();
     FieldScheduler_AddCallback(Bilibin_UpdateWadingRipples, TASK_PRIORITY_MAP);
-  } else if (gGameState.mapId == (s32)&MapId_BilibinTreasury) {
+  } else if (gSaveBlock.mapId == (s32)&MapId_BilibinTreasury) {
     Bilibin_SetUpTreasury();
   }
   return 0;
@@ -706,14 +706,14 @@ static void Bilibin_RestoreVillageObjectEvents(void) {
   // Apply arrival-specific changes after restoring the population.
   objectEvent = ObjectEvent_Get(LOCALID_IVY);
   objectEvent->scaleY = 3 * Q16_ONE / 2;
-  warpDest = gGameState.warpDest;
+  warpDest = gSaveBlock.warpDest;
   if (warpDest == BILIBIN_FROM_BILIBIN_TREASURY_WEST) {
     ObjectEvent_SetPosition(LOCALID_IVY, 0, 0);
   } else if (warpDest == BILIBIN_FROM_SANCTUM) {
     GameFlag_Clear(FLAG_SHOW_LOCATION_NAME);
   }
   if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) == 0) {
-    warpDest = gGameState.warpDest;
+    warpDest = gSaveBlock.warpDest;
     if (warpDest == BILIBIN_FROM_BILIBIN_TREASURY_EAST) {
       ObjectEvent_SetPosition(LOCALID_VILLAGE_STATUE, PIXELS(248), PIXELS(216));
     }
@@ -883,8 +883,8 @@ static void Bilibin_SetUpTreasury(void) {
   gFieldWork->transition =
       MAP_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   Bilibin_UpdateTreasuryStatueCells();
-  if (gGameState.warpDest == BILIBIN_TREASURY_UPPER_FROM_LOWER ||
-      gGameState.warpDest == BILIBIN_TREASURY_FROM_BILIBIN_NORTH) {
+  if (gSaveBlock.warpDest == BILIBIN_TREASURY_UPPER_FROM_LOWER ||
+      gSaveBlock.warpDest == BILIBIN_TREASURY_FROM_BILIBIN_NORTH) {
     if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) == 0) {
       leader = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
       FieldScript_Start();
@@ -940,11 +940,11 @@ static void EventScript_PushStatueOrCrates(void) {
       ObjectDispatch_SelectAnimation(leader, ANIM_STAND);
       // Each map derives its metatile behaviors from this same moved object
       // event.
-      if (gGameState.mapId == (s32)&MapId_BilibinBarricade)
+      if (gSaveBlock.mapId == (s32)&MapId_BilibinBarricade)
         Bilibin_UpdateCratesCells();
-      else if (gGameState.mapId == (s32)&MapId_Bilibin)
+      else if (gSaveBlock.mapId == (s32)&MapId_Bilibin)
         Bilibin_UpdateVillageStatueCells();
-      else if (gGameState.mapId == (s32)&MapId_BilibinTreasury)
+      else if (gSaveBlock.mapId == (s32)&MapId_BilibinTreasury)
         Bilibin_UpdateTreasuryStatueCells();
     }
   }
@@ -956,7 +956,7 @@ static void EventScript_PushStatueOrCrates(void) {
 static void Bilibin_UpdateWadingRipples(void) {
   struct ObjectEvent *objectEvent;
 
-  objectEvent = ObjectEvent_GetById(gGameState.leaderLocalId);
+  objectEvent = ObjectEvent_GetById(gSaveBlock.leaderLocalId);
   if (objectEvent->x.fixed < PIXELS(142)) {
     if (objectEvent->y.fixed < PIXELS(8)) {
       if (gBilibin_RippleTimer.frames == 0)

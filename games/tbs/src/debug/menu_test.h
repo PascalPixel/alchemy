@@ -4,7 +4,7 @@
 #include "types.h"
 #include "keystate.h"
 #include "unit.h"
-#include "game_state.h"
+#include "save_block.h"
 #include "fx_work.h"
 #include "object_event.h"
 #include "text/msg_ids.h"

@@ -31,7 +31,7 @@ stood.
 maps, and it never returns. `System_Initialize` calls it at power-on
 with `GAME_RUN_TITLE`, which makes the title screen (`MapId_Title`) the
 first map. The current map and the warp destination the party arrives by
-are `gGameState.mapId` and `gGameState.warpDest`.
+are `gSaveBlock.mapId` and `gSaveBlock.warpDest`.
 
 The title screen and the main menu are the map table's first two
 rows, `MapId_Title` and `MapId_MainMenu`, so the loop runs them with code of
@@ -89,7 +89,7 @@ hexadecimal form the source writes it in beside it.
 
 | Name | Value | Meaning |
 | --- | --- | --- |
-| `GAME_RUN_TITLE` | 0 | start at the title, with a fresh game state |
+| `GAME_RUN_TITLE` | 0 | start at the title, with a fresh save block |
 | `GAME_RUN_DEBUG_VALE` | 1 | in debug mode, start at `MapId_ValeGate` |
 | `GAME_RUN_DEBUG_MAIN_MENU` | 2 | in debug mode, start at the main menu (`MapId_MainMenu`) |
 | `RUN_NONE` | 507 (`0x1fb`) | the first map number with no row in the map table, whose rows are 0 to 200 |
@@ -270,7 +270,7 @@ that dependence takes, in [story order](glossary.md#the-places-in-story-order).
     if (GameFlag_Get(FLAG_VALE_PARTY_LEFT) != 0) {
       return gValeGate_EventsAfterLeaving;
     }
-    if (gGameState.warpDest == VALE_GATE_FROM_SANCTUM) {
+    if (gSaveBlock.warpDest == VALE_GATE_FROM_SANCTUM) {
       return gValeGate_DepartureEvents;
     }
     if (GameFlag_Get(FLAG_VALE_STORM) != 0) {

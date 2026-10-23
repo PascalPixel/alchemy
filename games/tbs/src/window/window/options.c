@@ -59,8 +59,8 @@ UNUSED void WindowColor_CalculateTint(struct OptionMenuWork *work) {
   s32 red;
   s32 green;
 
-  phase = (gGameState.windowColor[0] + 12) % 24 * 4;
-  bias = gGameState.windowColor[1] - 7;
+  phase = (gSaveBlock.windowColor[0] + 12) % 24 * 4;
+  bias = gSaveBlock.windowColor[1] - 7;
   red = gWindowColor_WaveTable[(phase % 96)];
   green = gWindowColor_WaveTable[(phase + 32) % 96];
   blue = gWindowColor_WaveTable[(phase + 64) % 96];
@@ -225,16 +225,16 @@ UNUSED void OptionMenu_NextRow(struct OptionMenuWork *work) {
 UNUSED void OptionMenu_LowerSetting(struct OptionMenuWork *work) {
   switch (work->page) {
   case OPTION_ROW_MESSAGE_SPEED:
-    if (gGameState.messageSpeed != 0)
-      gGameState.messageSpeed--;
+    if (gSaveBlock.messageSpeed != 0)
+      gSaveBlock.messageSpeed--;
     break;
   case OPTION_ROW_WINDOW_HUE:
-    if (gGameState.windowColor[0] != 0)
-      gGameState.windowColor[0]--;
+    if (gSaveBlock.windowColor[0] != 0)
+      gSaveBlock.windowColor[0]--;
     break;
   case OPTION_ROW_WINDOW_BRIGHTNESS:
-    if (gGameState.windowColor[1] != 0)
-      gGameState.windowColor[1]--;
+    if (gSaveBlock.windowColor[1] != 0)
+      gSaveBlock.windowColor[1]--;
     break;
   }
 }
@@ -245,16 +245,16 @@ UNUSED void OptionMenu_LowerSetting(struct OptionMenuWork *work) {
 UNUSED void OptionMenu_RaiseSetting(struct OptionMenuWork *work) {
   switch (work->page) {
   case OPTION_ROW_MESSAGE_SPEED:
-    if (gGameState.messageSpeed <= 1)
-      gGameState.messageSpeed++;
+    if (gSaveBlock.messageSpeed <= 1)
+      gSaveBlock.messageSpeed++;
     break;
   case OPTION_ROW_WINDOW_HUE:
-    if (gGameState.windowColor[0] <= 23)
-      gGameState.windowColor[0]++;
+    if (gSaveBlock.windowColor[0] <= 23)
+      gSaveBlock.windowColor[0]++;
     break;
   case OPTION_ROW_WINDOW_BRIGHTNESS:
-    if (gGameState.windowColor[1] <= 14)
-      gGameState.windowColor[1]++;
+    if (gSaveBlock.windowColor[1] <= 14)
+      gSaveBlock.windowColor[1]++;
     break;
   }
 }
@@ -316,15 +316,15 @@ void OptionMenu_InitializeWork(void) {
 
   work = AllocHeapSlotEwram(HEAP_SLOT_OPTION_MENU, 0x628);
   Dma_Fill32(0, work, 0x628);
-  work->option[0] = gGameState.windowColor[0];
+  work->option[0] = gSaveBlock.windowColor[0];
   work->optionCount[0] = 24;
-  work->option[1] = gGameState.windowColor[1];
+  work->option[1] = gSaveBlock.windowColor[1];
   work->optionCount[1] = 15;
-  work->option[2] = gGameState.messageSpeed;
+  work->option[2] = gSaveBlock.messageSpeed;
   work->optionCount[2] = 3;
-  work->option[3] = gGameState.speech;
+  work->option[3] = gSaveBlock.speech;
   work->optionCount[3] = 2;
-  work->option[4] = gGameState.idleSleepEnabled;
+  work->option[4] = gSaveBlock.idleSleepEnabled;
   work->optionCount[4] = 2;
   Task_Add(OptionMenu_AnimateCursors, 0xc80);
 }
@@ -625,14 +625,14 @@ s32 OptionMenu_Run(void) {
   // Keep the edits, auto-sleep also taking effect at once
   // (gIdleSleepEnabled); or put the saved window colours back.
   if (result == 0) {
-    gGameState.windowColor[0] = work->option[0];
-    gGameState.windowColor[1] = work->option[1];
-    gGameState.messageSpeed = work->option[2];
-    gGameState.speech = work->option[3];
-    gGameState.idleSleepEnabled = work->option[4];
-    gIdleSleepEnabled = gGameState.idleSleepEnabled;
+    gSaveBlock.windowColor[0] = work->option[0];
+    gSaveBlock.windowColor[1] = work->option[1];
+    gSaveBlock.messageSpeed = work->option[2];
+    gSaveBlock.speech = work->option[3];
+    gSaveBlock.idleSleepEnabled = work->option[4];
+    gIdleSleepEnabled = gSaveBlock.idleSleepEnabled;
   } else {
-    WindowColor_Apply(gGameState.windowColor[0], gGameState.windowColor[1]);
+    WindowColor_Apply(gSaveBlock.windowColor[0], gSaveBlock.windowColor[1]);
   }
   OptionMenu_Release();
   WaitFrames(1);

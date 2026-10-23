@@ -47,7 +47,7 @@ other [editions](../../glossary.md#editions) agree except that German moves thre
 
 | Starts at | Address | Size | What | Named in |
 | --- | --- | --- | --- | --- |
-| 0 KB | `0x02000000` | 32 KB | the main image's variables: the save buffer, the [game flags](../../glossary.md#game-flag) (`gGameFlagBytes`), the game state (`gGameState`), the sound driver's work and the flash library's | `ewram.s` |
+| 0 KB | `0x02000000` | 32 KB | the main image's variables: the save buffer, the [game flags](../../glossary.md#game-flag) (`gGameFlagBytes`), the save block (`gSaveBlock`), the sound driver's work and the flash library's | `ewram.s` |
 | 32 KB | `0x02008000` | 32 KB | `gOverlayArea`, the loaded map or screen overlay | `ewram.s`, `overlay/overlay.ld` |
 | 64 KB | `0x02010000` | 32 KB | `gMapGridCellBuffer`; battle animations also use it for particles | `Ram_MapGridCellBuffer` |
 | 96 KB | `0x02018000` | 16 KB | `gActorSpriteSlots` | `Ram_EnemySpriteSlots` |

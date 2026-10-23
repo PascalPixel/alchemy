@@ -63,7 +63,7 @@
 ///
 /// Open questions: none.
 
-#include "game_state.h"
+#include "save_block.h"
 #include "unit/import.h"
 #include "unit/map/vale_kraden.h"
 #include "unit/overworld/overworld.h"
@@ -931,8 +931,8 @@ s32 ValeKraden_Initialize(void) {
   struct ObjectEvent *objectEvent;
   s32 debrisRow;
 
-  if (gGameState.warpDest == VALE_KRADEN_FROM_VALE_CAVE_MOUTH_UNUSED ||
-      gGameState.warpDest == VALE_KRADEN_FROM_VALE_CAVE_MOUTH_EAST) {
+  if (gSaveBlock.warpDest == VALE_KRADEN_FROM_VALE_CAVE_MOUTH_UNUSED ||
+      gSaveBlock.warpDest == VALE_KRADEN_FROM_VALE_CAVE_MOUTH_EAST) {
     GameFlag_Clear(FLAG_SHOW_LOCATION_NAME);
   }
   if (Script_GetFlag(FLAG_KEEP_PARTY_POSITION) != 0) {
@@ -985,7 +985,7 @@ s32 ValeKraden_Initialize(void) {
     Engine_ObjectEventSetPosition(LOCALID_ROCKSLIDE_SURVIVOR, 0, 0);
     FieldScript_Start();
     if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) == 0) {
-      if (gGameState.warpDest == VALE_KRADEN_FROM_VALE_INTERIORS_INN_SOUTH) {
+      if (gSaveBlock.warpDest == VALE_KRADEN_FROM_VALE_INTERIORS_INN_SOUTH) {
         EventScript_KradenSetsOff();
       }
     }

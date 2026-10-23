@@ -2,7 +2,7 @@
 /// Kalay Docks and Tolbi Docks, the two ends of the ship's crossing of the
 /// Karagol Sea, in three maps that share one overlay: MapId_KalayDocks,
 /// MapId_KalayTolbiDocksInteriors and MapId_TolbiDocks. The getters pick
-/// each map's tables by gGameState.mapId, and three story flags choose among
+/// each map's tables by gSaveBlock.mapId, and three story flags choose among
 /// them: FLAG_TOLBI_SHIP_REACHED_TOLBI, whether the ship has made its crossing
 /// (set on the world map, WorldMap_CompleteTransfer);
 /// FLAG_KALAY_COLOSSO_TOUR_LEFT, whether the Colosso Tour's group has left
@@ -61,7 +61,7 @@
 ///
 /// Open questions: none.
 
-#include "game_state.h"
+#include "save_block.h"
 #include "djinn_ids.h"
 #include "version.h"
 #include "unit/map/kalay_tolbi_docks.h"
@@ -277,7 +277,7 @@ static void KalayTolbiDocks_GroundJoins(void) {
 /// Selects the warp destinations of Kalay Docks, Tolbi Docks or the building
 /// between.
 const struct MapWarpDest *KalayTolbiDocks_GetWarpDests(void) {
-  s16 mapId = gGameState.mapId;
+  s16 mapId = gSaveBlock.mapId;
 
   if (mapId == (s32)&MapId_KalayDocks) {
     return gKalayTolbiDocks_KalayWarpDests;
@@ -304,7 +304,7 @@ const u32 *KalayTolbiDocks_GetWarps(void) { return gKalayTolbiDocks_Warps; }
 /// passengers are stranded after Colosso (FLAG_COLOSSO_OVER).
 const struct ObjectEventTemplate *
 KalayTolbiDocks_GetObjectEventTemplates(void) {
-  s16 mapId = gGameState.mapId;
+  s16 mapId = gSaveBlock.mapId;
 
   if (mapId == (s32)&MapId_KalayDocks) {
     if (GameFlag_Get(FLAG_TOLBI_SHIP_REACHED_TOLBI) != 0) {
@@ -351,7 +351,7 @@ static void KalayTolbiDocks_GreetArrivals(void) {
 
 /// Selects each map's events for the same three times as its people.
 const struct MapEvent *KalayTolbiDocks_GetEvents(void) {
-  s16 mapId = gGameState.mapId;
+  s16 mapId = gSaveBlock.mapId;
 
   if (mapId == (s32)&MapId_KalayDocks) {
     if (GameFlag_Get(FLAG_TOLBI_SHIP_REACHED_TOLBI) != 0) {
@@ -527,7 +527,7 @@ static void KalayTolbiDocks_TalkToDockWorker(void) {
 /// pays (sets FLAG_KALAY_DOCKS_TICKET_BOUGHT).
 static void KalayTolbiDocks_TalkToTicketSeller(void) {
   struct Window *coinsWindow;
-  struct GameState *state;
+  struct SaveBlock *state;
   s32 ticketPrice;
 
 #if !TBS_PATCH_1
@@ -560,7 +560,7 @@ static void KalayTolbiDocks_TalkToTicketSeller(void) {
       coinLabel = MSGNO(MsgYourCoins);
       Text_DrawMessageAsTiles(coinLabel, coinsWindow, 0, 0);
 #endif
-      state = &gGameState;
+      state = &gSaveBlock;
 #if LANGUAGE == LANGUAGE_JAPANESE
       coinLabel += MSGNO(MsgCoins) - MSGNO(MsgYourCoins);
 #endif
@@ -672,11 +672,11 @@ static void KalayTolbiDocks_OpenDoorAndLeave(void) {
   Script_PlaySong(SE_DOOR_OPEN);
   ObjectEvent_SetSpeed(LOCALID_PARTY_LEADER, 0x8000, 0x4000);
   ObjectMotion_SetActionVariant(LOCALID_PARTY_LEADER, 3);
-  if (gGameState.mapId == (s32)&MapId_KalayDocks) {
+  if (gSaveBlock.mapId == (s32)&MapId_KalayDocks) {
     ObjectEvent_WalkTo(LOCALID_PARTY_LEADER, 304, 1392);
     MapGrid_AnimateCells(gKalayTolbiDocks_KalayDoorCells, 78, 86);
   } else {
-    if (gGameState.mapId == (s32)&MapId_TolbiDocks) {
+    if (gSaveBlock.mapId == (s32)&MapId_TolbiDocks) {
       ObjectEvent_WalkTo(LOCALID_PARTY_LEADER, 248, 192);
       MapGrid_AnimateCells(gKalayTolbiDocks_TolbiDoorCells, 74, 9);
     }
@@ -694,14 +694,14 @@ enum { KALAY_TOLBI_DOCKS_WARP_DEST_AFTER_COLOSSO = 90 };
 /// KALAY_TOLBI_DOCKS_WARP_DEST_AFTER_COLOSSO sets FLAG_COLOSSO_OVER, which
 /// leaves the tour's passengers stranded on the Tolbi Docks.
 s32 KalayTolbiDocks_Initialize(void) {
-  if (gGameState.warpDest == KALAY_TOLBI_DOCKS_WARP_DEST_AFTER_COLOSSO) {
+  if (gSaveBlock.warpDest == KALAY_TOLBI_DOCKS_WARP_DEST_AFTER_COLOSSO) {
     GameFlag_Set(FLAG_COLOSSO_OVER);
   }
-  if (gGameState.mapId == (s32)&MapId_KalayDocks) {
+  if (gSaveBlock.mapId == (s32)&MapId_KalayDocks) {
     KalayTolbiDocks_PrepareKalayDocks();
-  } else if (gGameState.mapId == (s32)&MapId_TolbiDocks) {
+  } else if (gSaveBlock.mapId == (s32)&MapId_TolbiDocks) {
     KalayTolbiDocks_PrepareTolbiDocks();
-  } else if (gGameState.mapId == (s32)&MapId_KalayTolbiDocksInteriors) {
+  } else if (gSaveBlock.mapId == (s32)&MapId_KalayTolbiDocksInteriors) {
     KalayTolbiDocks_PrepareInterior();
   }
   return 0;
@@ -712,13 +712,13 @@ s32 KalayTolbiDocks_Initialize(void) {
 /// tour's group has left Kalay the ticket taker stands at the ship's plank
 /// until the party goes ashore.
 static void KalayTolbiDocks_PrepareKalayDocks(void) {
-  if (gGameState.warpDest == KALAY_DOCKS_FROM_WORLD_MAP_SOUTH) {
+  if (gSaveBlock.warpDest == KALAY_DOCKS_FROM_WORLD_MAP_SOUTH) {
     if (Script_GetFlag(FLAG_KALAY_DOCKS_GARET_SAW_KARAGOL) == 0) {
       GameFlag_Set(FLAG_KALAY_DOCKS_GARET_SAW_KARAGOL);
       KalayTolbiDocks_GaretSeesTheKaragol();
     }
   }
-  if (gGameState.warpDest == KALAY_DOCKS_FROM_TOLBI_SHIP_DECK) {
+  if (gSaveBlock.warpDest == KALAY_DOCKS_FROM_TOLBI_SHIP_DECK) {
     if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) == 0) {
       GameFlag_Clear(FLAG_KALAY_DOCKS_WENT_ASHORE);
     }
@@ -745,10 +745,10 @@ static void KalayTolbiDocks_PrepareTolbiDocks(void) {
     ObjectGroup_ConfigureChildValue(LOCALID_SECOND_TOUR_GUIDE,
                                     SPRITE_COLOR_RBG);
   }
-  if (gGameState.warpDest == TOLBI_DOCKS_FROM_KALAY_TOLBI_DOCKS_INTERIORS) {
+  if (gSaveBlock.warpDest == TOLBI_DOCKS_FROM_KALAY_TOLBI_DOCKS_INTERIORS) {
     GameFlag_Clear(FLAG_SHOW_LOCATION_NAME);
   }
-  if (gGameState.warpDest == TOLBI_DOCKS_FROM_TOLBI_SHIP_DECK) {
+  if (gSaveBlock.warpDest == TOLBI_DOCKS_FROM_TOLBI_SHIP_DECK) {
     GameFlag_Clear(FLAG_TOLBI_DOCKS_ARRIVALS_GREETED);
   }
   if (GameFlag_Get(FLAG_TOLBI_DOCKS_ARRIVALS_GREETED)) {

@@ -47,7 +47,7 @@ STATIC_ASSERT(offsetof(struct EffectObject, updateHook) == 0x6c);
 /// it stands on moves it. Called by two map overlays (Suhalla Desert, Lamakan
 /// Desert).
 void TreasureSpot_MoveLeaderAway(void) {
-  struct Object *leader = ObjectEvent_GetByLocalId(gGameState.leaderLocalId);
+  struct Object *leader = ObjectEvent_GetByLocalId(gSaveBlock.leaderLocalId);
   struct TreasureSpot *marker = gFieldWork->treasureSpots;
   s32 markerIndex = 0;
   s32 x;
@@ -239,7 +239,7 @@ void ItemDisplay_RaiseAboveLeader(struct Object *object) {
   if (object == 0)
     return;
 
-  leader = ObjectEvent_GetByLocalId(gGameState.leaderLocalId);
+  leader = ObjectEvent_GetByLocalId(gSaveBlock.leaderLocalId);
   // Up to 2 pixels a frame, gaining 1 a frame, in free flight: no motion
   // flags, so it neither falls nor follows the ground.
   object->acceleration = 1 << 16;
@@ -262,7 +262,7 @@ void ItemDisplay_ShowPicture(void *object, s32 flags) {
   void *leader;
 
   if (object != NULL) {
-    leader = ObjectEvent_GetByLocalId(gGameState.leaderLocalId);
+    leader = ObjectEvent_GetByLocalId(gSaveBlock.leaderLocalId);
     if (flags & 1) {
       ObjectDispatch_SetSingleChildFlagsFar(object, 0);
       ObjectDispatch_InitializeFar(object, gFieldEffect_ParticleEmitterScript);
@@ -291,7 +291,7 @@ void ItemDisplay_ShowPicture(void *object, s32 flags) {
 /// heap reset frees it).
 void FieldEffect_StartEffectObject22(s32 item, s32 flags) {
   struct ObjectEvent *leader =
-      ObjectEvent_GetByLocalId(gGameState.leaderLocalId);
+      ObjectEvent_GetByLocalId(gSaveBlock.leaderLocalId);
   void *iconBuffer = AllocHeapSlot(HEAP_SLOT_GLYPH_TRANSFER, 0x608);
   struct EffectObject *object = (struct EffectObject *)Object_CreateFar(
       22, leader->x.fixed, leader->y.fixed + (36 << 16), leader->z.fixed);
@@ -415,7 +415,7 @@ void FieldEffect_SpawnNearbyMarkers(void) {
   // The layout's treasure spots: (column, row, id) triples, ended by 0xff,
   // 0xff; the same list as MapGridMarkers's markers in markers.c.
   markerData = *(u8 **)(((u8 *)gMapGridWork[0]) + 16);
-  objectEvent = ObjectEvent_GetByLocalId(gGameState.leaderLocalId);
+  objectEvent = ObjectEvent_GetByLocalId(gSaveBlock.leaderLocalId);
   leaderColumn = objectEvent->x >> 20;
   leaderRow = objectEvent->z >> 20;
   if (markerData != 0) {

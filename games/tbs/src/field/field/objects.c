@@ -468,13 +468,13 @@ void ObjectDispatch_StartApproachLink(struct DispatchObject *object,
 
 /// Starts an object on the script that runs SC_KEY_COUNT every frame.
 /// The field map runner (overworld/overworld/run_map.c) gives it to the leader
-/// when gGameState.movementMode is 2.
+/// when gSaveBlock.movementMode is 2.
 void ObjectDispatch_StartKeyCheck(struct DispatchObject *object) {
   ObjectDispatch_Initialize(object, gObjectDispatch_KeyCheckScript);
 }
 
 /// Starts an object on the script that moves it by the keys (SC_KEYS).
-/// The field map runner gives it to the leader when gGameState.movementMode
+/// The field map runner gives it to the leader when gSaveBlock.movementMode
 /// is 1.
 void ObjectDispatch_StartMoveByKeys(struct DispatchObject *object) {
   ObjectDispatch_Initialize(object, gObjectDispatch_KeysScript);

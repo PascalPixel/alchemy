@@ -117,7 +117,7 @@ struct EffectDescriptor *Map_FindEvent(s32 kind, s32 target) {
   struct EffectDescriptor *event = (struct EffectDescriptor *)work->events;
   s32 flags;
   u32 facing =
-      ((struct ObjectEvent *)ObjectEvent_GetByLocalId(gGameState.leaderLocalId))
+      ((struct ObjectEvent *)ObjectEvent_GetByLocalId(gSaveBlock.leaderLocalId))
           ->facing;
 
   flags = event->flags;
@@ -175,7 +175,7 @@ UNUSED void Runtime_CallWorkBlockEntry(void) { gOverlayArea.initialize(); }
 
 /// Returns the talk event of object event id, or 0: for the object event
 /// stopped with Halt
-/// (gGameState.pausedObject), its MAP_EVENT_TALK_HALTED event if it has one,
+/// (gSaveBlock.pausedObject), its MAP_EVENT_TALK_HALTED event if it has one,
 /// the event for talking to it while it is stopped (Crossbone Isle's Bane has
 /// one).
 ///
@@ -184,7 +184,7 @@ UNUSED void Runtime_CallWorkBlockEntry(void) { gOverlayArea.initialize(); }
 /// event with a talk event; both test the result only for non-zero.
 s32 Map_FindObjectEventTalkEvent(s32 id) {
   struct EffectDescriptor *talkEvent = Map_FindEvent(MAP_EVENT_TALK, id);
-  s32 pausedLocalId = gGameState.pausedObject;
+  s32 pausedLocalId = gSaveBlock.pausedObject;
 
   if (pausedLocalId == id) {
     struct EffectDescriptor *pausedEvent =
@@ -206,7 +206,7 @@ s32 Map_FindObjectEventTalkEvent(s32 id) {
 /// stood in for it; Map_Run ignores the result.
 ///
 /// Called by Map_Run for its talk request (work->talk). Resumes
-/// the stopped object event and sets gGameState.pausedObject back to -1
+/// the stopped object event and sets gSaveBlock.pausedObject back to -1
 /// afterwards.
 s32 Map_TalkToObjectEvent(s32 id) {
   struct ObjectEventTemplate *template = Map_FindObjectEventTemplate(id);
@@ -218,7 +218,7 @@ s32 Map_TalkToObjectEvent(s32 id) {
   u32 talkFacing;
   s32 usePausedDialogue = 0;
 
-  if (gGameState.pausedObject == id) {
+  if (gSaveBlock.pausedObject == id) {
     objectEventPaused = 1;
     event = Map_FindEvent(7, id);
     if (event == 0) {
@@ -259,13 +259,13 @@ s32 Map_TalkToObjectEvent(s32 id) {
       talkFacing = (u8)template->talkFacing << 24;
       if (talkFacing <= (1 << 24) || talkFacing == (3 << 24)) {
         struct Object *leader =
-            (struct Object *)ObjectEvent_GetById(gGameState.leaderLocalId);
+            (struct Object *)ObjectEvent_GetById(gSaveBlock.leaderLocalId);
 
         leader->targetX = leader->x;
         leader->targetY = leader->y;
         leader->targetZ = leader->z;
         SET_VELOCITY(leader, 0, 0, 0);
-        ObjectEvent_LinkPair(id, gGameState.leaderLocalId, 0);
+        ObjectEvent_LinkPair(id, gSaveBlock.leaderLocalId, 0);
       }
     }
     // A result below 0x10000 is a message; above, a function to call.
@@ -285,7 +285,7 @@ s32 Map_TalkToObjectEvent(s32 id) {
       if (objectEvent->script[objectEvent->step] == 16) {
         if ((s8)template->talkFacing == 3) {
           objectEvent->linkedObject =
-              (struct Object *)ObjectEvent_GetById(gGameState.leaderLocalId);
+              (struct Object *)ObjectEvent_GetById(gSaveBlock.leaderLocalId);
           objectEvent->actionFlags |= 1;
           ObjectEvent_SetMovementType(objectEvent,
                                       (s32)gObjectMotion_LinkedActionScript);
@@ -306,8 +306,8 @@ finish:
   // Both a normal event and the paused object event's fallback line release
   // the pause.
   if (objectEventPaused) {
-    FieldEffect_ResumeObject(gGameState.pausedObject);
-    gGameState.pausedObject = -1;
+    FieldEffect_ResumeObject(gSaveBlock.pausedObject);
+    gSaveBlock.pausedObject = -1;
   }
   return result;
 }
@@ -409,7 +409,7 @@ s32 Map_RunCoordEventOrWarp(s32 value) {
 /// Clears work->blockedSteps when it acts.
 s32 Field_RunPushCellEvent(s32 collisionCode) {
   struct FieldWork *work = gFieldWork;
-  s32 leader = gGameState.leaderLocalId;
+  s32 leader = gSaveBlock.leaderLocalId;
 
   switch (collisionCode) {
   case MB_LEDGE:
@@ -457,7 +457,7 @@ s32 Field_SearchCell(s32 tile) {
   s32 rewardType;
   s32 canOpen;
 
-  leader = gGameState.leaderLocalId;
+  leader = gSaveBlock.leaderLocalId;
   // Each fixed spot has its own pair of lines, chosen through
   // gField_BgEventMessageOffsets; the unsigned compare also rejects codes below
   // MB_JAR.
@@ -496,7 +496,7 @@ s32 Field_SearchCell(s32 tile) {
         if ((searchResult & 0x0f000000) != 0) {
           // A function.
           if (GameFlag_IsConditionActive(condition) != 0)
-            ((void (*)(s32))event->value)(gGameState.leaderLocalId);
+            ((void (*)(s32))event->value)(gSaveBlock.leaderLocalId);
           if (GameFlag_GetFar(FLAG_NOTHING_HAPPENS) != 0)
             FieldMessage_ShowFar(MsgTileResult + messageOffset, 1);
         } else {
@@ -555,7 +555,7 @@ s32 Field_SearchCell(s32 tile) {
               // which Map_Run resolves when the map is entered again
               // after the battle.
               if (condition != -1) {
-                condition = gGameState.pendingDjinnEvent = condition | 0x1000;
+                condition = gSaveBlock.pendingDjinnEvent = condition | 0x1000;
               }
               // BATTLE_TYPE_NO_ESCAPE (battle/battle/round.c): no first strike
               // or surprise, and every attempt to run fails; the command menu
@@ -566,14 +566,14 @@ s32 Field_SearchCell(s32 tile) {
               Battle_SetType(BATTLE_TYPE_NO_ESCAPE);
               Encounter_SelectBattleMusic(ENCOUNTER_ZONE_MIMIC,
                                           (u16)event->value);
-              Sound_PlaySongFar(gGameState.battleMusic);
+              Sound_PlaySongFar(gSaveBlock.battleMusic);
               FieldMessage_ShowFar(MsgChestWasMimic, 1);
             } else if (rewardType == FIND_COINS(0)) {
               // Coins.
               void *object;
 
               object = FieldEffect_StartRandomParticleEmitter(
-                  gGameState.leaderLocalId, 0);
+                  gSaveBlock.leaderLocalId, 0);
               WaitFrames(30);
               if ((event->kind & 0x1ff) == BG_EVENT(BG_EVENT_CHEST))
                 TreasureSpot_ShowOpened(tile);
@@ -591,7 +591,7 @@ s32 Field_SearchCell(s32 tile) {
               s32 recipient;
 
               object = FieldEffect_StartRandomParticleEmitter(
-                  gGameState.leaderLocalId, event->value & 0xfff);
+                  gSaveBlock.leaderLocalId, event->value & 0xfff);
               WaitFrames(30);
               recipient = PartyInventory_AddFar((u16)event->value);
               // messageOffset is reused here as the item id's 0xffff mask.
@@ -609,7 +609,7 @@ s32 Field_SearchCell(s32 tile) {
                 ItemDisplay_RaiseAboveLeader(object);
                 Sound_PlaySongFar(MUS_TREASURE_FOUND);
                 MessageArgument_PushFar(event->value & messageOffset, 2);
-                if (recipient == gGameState.leaderLocalId) {
+                if (recipient == gSaveBlock.leaderLocalId) {
                   FieldMessage_ShowFar(MsgColossoIsaacGotItem, 3);
                 } else {
                   MessageArgument_PushFar(recipient, 1);

@@ -107,19 +107,19 @@ s32 Field_CheckConfiguredKeys(void) {
 
   if (work == NULL)
     return 0;
-  if (gKeysPressed & gGameState.selectKeys) {
+  if (gKeysPressed & gSaveBlock.selectKeys) {
     work->menu = 1;
     result = 1;
-  } else if (gKeysPressed & gGameState.aKeys) {
+  } else if (gKeysPressed & gSaveBlock.aKeys) {
     work->examine = 1;
     result = 1;
-  } else if (gKeysPressed & gGameState.startKeys) {
+  } else if (gKeysPressed & gSaveBlock.startKeys) {
     work->start = 1;
     result = 1;
-  } else if (gKeysPressed & gGameState.firstShortcutKeys) {
-    result = Field_RequestShortcut(gGameState.firstShortcut);
-  } else if (gKeysPressed & gGameState.secondShortcutKeys) {
-    result = Field_RequestShortcut(gGameState.secondShortcut);
+  } else if (gKeysPressed & gSaveBlock.firstShortcutKeys) {
+    result = Field_RequestShortcut(gSaveBlock.firstShortcut);
+  } else if (gKeysPressed & gSaveBlock.secondShortcutKeys) {
+    result = Field_RequestShortcut(gSaveBlock.secondShortcut);
   }
   return result;
 }
@@ -233,7 +233,7 @@ s32 Object_UpdateLeaderControl(struct ObjectScriptContext *interpreter) {
   }
   // Walk, or run with the dash keys (animation 5 instead of 2); with
   // FLAG_FAST_WALK, B moves faster still.
-  if (gKeysHeld & gGameState.dashKeys) {
+  if (gKeysHeld & gSaveBlock.dashKeys) {
     object->speedLimit = FIELD_RUN_SPEED;
     object->acceleration = FIELD_ACCELERATION;
     movementAnimation = 5;
@@ -441,7 +441,7 @@ s32 Object_UpdateLeaderControl(struct ObjectScriptContext *interpreter) {
     s32 action;
 
     action = 9;
-    if (Unit_GetFar(gGameState.leaderLocalId)->hp == 0)
+    if (Unit_GetFar(gSaveBlock.leaderLocalId)->hp == 0)
       action = 22;
     ObjectDispatch_SelectAnimation(object, action);
   } else {
@@ -579,7 +579,7 @@ s32 Object_MoveOnWorldMap(struct ObjectScriptContext *interpreter) {
 #endif
   // Walk, or run with the dash keys. L, as it repeats, raises the limit
   // further; unlike the field's fast walk, no debug test or flag guards it.
-  if (gKeysHeld & gGameState.dashKeys) {
+  if (gKeysHeld & gSaveBlock.dashKeys) {
     object->speedLimit = WORLD_MAP_RUN_SPEED;
     object->acceleration = WORLD_MAP_RUN_ACCELERATION;
     movementAnimation = 5;

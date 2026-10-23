@@ -106,11 +106,11 @@ s32 MemberChooser_Open(void) {
   WaitFrames(1);
   Window_InitializeWork(0);
 
-  menu->partyCount = Party_ListMembersFar(menu->ownerIds);
+  menu->partyCount = Party_ListMembersFar(menu->memberIds);
   Menu_InitializeSelectorCursorAndEntries(0, 3, 0, 7);
   menu->selectorWindow = Window_CreateFar(13, 0, 17, 5, 2);
   for (index = 0; index < MEMBER_CHOOSER_MEMBER_COUNT; index++)
-    menu->ownerY[index] = 30;
+    menu->memberY[index] = 30;
   menu->page = SUMMARY_SCREEN_PAGE_CHOOSER;
 
   result = MemberChooser_Run();
@@ -163,7 +163,7 @@ s32 SummaryScreen_Run(void) {
   Menu_SuspendFieldTasks();
   Window_InitializeWork(0);
   menu->page = SUMMARY_SCREEN_PAGE_STATUS;
-  menu->partyCount = Party_ListMembersFar(menu->ownerIds);
+  menu->partyCount = Party_ListMembersFar(menu->memberIds);
   Menu_InitializeSelectorCursorAndEntries(0, 3, 0, 7);
   Iwram_CopyWords(palette, (void *)BG_PLTT, 64);
 #if !TBS_PATCH_1
@@ -188,7 +188,7 @@ s32 SummaryScreen_Run(void) {
 #endif
   menu->selectorWindow = Window_CreateFar(13, 0, 17, 5, 2);
   for (index = 0; index < MENU_ROW_COUNT; index++)
-    menu->ownerY[index] = 30;
+    menu->memberY[index] = 30;
   if (Party_SumDjinnCountsFar(-1) != 0)
     DjinnFigures_InitializeTopRow(menu->selectorWindow, 0);
   // The four Djinn figures in a row 32 pixels apart, at screen y 128.
@@ -263,19 +263,19 @@ s32 SummaryScreen_RunPages(void) {
       step = STATUS_STEP_STATUS;
       break;
     case STATUS_STEP_STATUS:
-      menu->ownerCursors[0]->motion = ICON_HIDDEN;
+      menu->memberCursors[0]->motion = ICON_HIDDEN;
       result = SummaryScreen_SelectCommand();
       step = result == -1 ? STATUS_STEP_MEMBER : STATUS_STEP_PSYNERGY;
       break;
     case STATUS_STEP_PSYNERGY:
-      menu->ownerCursors[0]->motion = ICON_HIDDEN;
+      menu->memberCursors[0]->motion = ICON_HIDDEN;
       result = PsynergyMenu_SelectAction();
       step = STATUS_STEP_MEMBER;
       if (result != -1)
         step = STATUS_STEP_EQUIPMENT;
       break;
     case STATUS_STEP_EQUIPMENT:
-      menu->ownerCursors[0]->motion = ICON_HIDDEN;
+      menu->memberCursors[0]->motion = ICON_HIDDEN;
       result = ItemMenu_SelectItem();
       // STATUS_STEP_MEMBER for -1, STATUS_STEP_STATUS otherwise.
       changed = ~result;
@@ -304,27 +304,27 @@ s32 SummaryScreen_SelectMember(s32 slot) {
   s32 index;
 
   menu = gMenuWork;
-  index = menu->ownerIndex[slot];
+  index = menu->memberIndex[slot];
   result = 0;
-  cursor = menu->ownerCursors[slot];
+  cursor = menu->memberCursors[slot];
   cursor->motion = ICON_SHOWN;
   cursor->animationStep = 0;
-  WindowSprite_RedrawSavedRectFar(menu->ownerWindow);
+  WindowSprite_RedrawSavedRectFar(menu->memberWindow);
   // FLAG_LINK_BATTLE_ARRANGED is set while a link battle is arranged in the
   // Battle Arena, in which only the first three members fight
   // (BattleArena_PartyContains); the divider falls between the third and
   // fourth figures, which stand three tiles apart.
   if (GameFlag_TestFar(FLAG_LINK_BATTLE_ARRANGED))
-    Window_DrawDividerLineFar(menu->ownerWindow, 9, 1, 9, 3);
+    Window_DrawDividerLineFar(menu->memberWindow, 9, 1, 9, 3);
   if (index == -1)
-    menu->ownerIndex[slot] = 0;
+    menu->memberIndex[slot] = 0;
   else
     MenuCursor_Slide(index * 24 - 10, 16);
   if (menu->page == SUMMARY_SCREEN_PAGE_CHOOSER)
     result = PsynergyMenu_ChooseMember();
   else
     result = MemberChooser_RunRearrange();
-  cursor = menu->ownerCursors[slot];
+  cursor = menu->memberCursors[slot];
   Icon_PrepareObject(cursor);
   WaitFrames(1);
   return result;
@@ -355,7 +355,7 @@ s32 DjinnMenu_ShowCurrentList(void) {
     for (i = 0; i < 4; i++) {
       menu->slotX[i] = 32 + i * 56;
       menu->slotY[i] = 70;
-      menu->ownerY[i] = 30;
+      menu->memberY[i] = 30;
     }
   }
   WindowSprite_RedrawSavedRectFar(window);
@@ -410,36 +410,36 @@ struct ItemMenuWork;
 /// Lowers the party figures, then raises the currently selected member.
 static __inline__ void
 SummaryScreen_SetSelectedMemberRow(struct SummaryScreenWork *menu,
-                                   s32 selectedOwner) {
+                                   s32 selectedMember) {
   s32 rowIndex;
 
   for (rowIndex = MENU_ROW_COUNT - 1; rowIndex >= 0; rowIndex--)
-    menu->ownerY[rowIndex] = 30;
-  menu->ownerY[selectedOwner] = 26;
+    menu->memberY[rowIndex] = 30;
+  menu->memberY[selectedMember] = 26;
 }
 
 /// The Status menu's party row: Left and Right choose a member, showing their
 /// status; L and R move the member one place along the party order; Select
 /// lists the Djinn found (once the first is caught, FLAG_DJINN_FIRST); A
 /// chooses the member and B backs out. Returns 1 or -1, or 0 when Start ends
-/// it, with the member in the work's ownerIndex[0] and selectedIds[0]. Moving a
-/// member changes the party order for good (MemberChooser_MoveEntry).
+/// it, with the member in the work's memberIndex[0] and selectedIds[0]. Moving
+/// a member changes the party order for good (MemberChooser_MoveEntry).
 s32 MemberChooser_RunRearrange(void) {
   struct SummaryScreenWork *menu;
-  s32 ownerIndex;
-  s32 ownerCount;
+  s32 memberIndex;
+  s32 memberCount;
   s32 page;
   s32 redraw;
   s32 result;
   s32 rowIndex;
 
   menu = gMenuWork;
-  ownerIndex = menu->ownerIndex[0];
-  ownerCount = menu->ownerCount[0];
+  memberIndex = menu->memberIndex[0];
+  memberCount = menu->memberCount[0];
   redraw = 1;
   result = 0;
   page = menu->page;
-  Unit_GetFar(menu->ownerIds[ownerIndex]);
+  Unit_GetFar(menu->memberIds[memberIndex]);
   for (rowIndex = 0; rowIndex < 4; rowIndex++) {
     menu->rowX[rowIndex] = 130 + rowIndex * 32;
     menu->rowY[rowIndex] = 128;
@@ -465,14 +465,14 @@ s32 MemberChooser_RunRearrange(void) {
                                    16);
       Text_DrawMessageAsTilesFar(MsgRearrangeHelp - 3, // "A: Details"
                                  menu->selectorWindow, 0, 8);
-      ownerIndex = (ownerIndex + ownerCount) % ownerCount;
-      Unit_GetFar(menu->ownerIds[ownerIndex]);
+      memberIndex = (memberIndex + memberCount) % memberCount;
+      Unit_GetFar(menu->memberIds[memberIndex]);
       page = (page + 3) % 3;
-      Menu_CreateWindowAndEntryObjects(menu->ownerIds[ownerIndex], page);
-      PsynergyMenu_CallIconRoutineWithValue(menu, menu->ownerIds[ownerIndex]);
-      SummaryScreen_SetSelectedMemberRow(menu, ownerIndex);
+      Menu_CreateWindowAndEntryObjects(menu->memberIds[memberIndex], page);
+      PsynergyMenu_CallIconRoutineWithValue(menu, menu->memberIds[memberIndex]);
+      SummaryScreen_SetSelectedMemberRow(menu, memberIndex);
     }
-    MenuCursor_Position(ownerIndex * 24 - 10, 16);
+    MenuCursor_Position(memberIndex * 24 - 10, 16);
     WaitFrames(1);
     if (gKeysPressed & KEY_A) {
       Sound_PlaySongFar(SE_MENU_CONFIRM);
@@ -486,23 +486,23 @@ s32 MemberChooser_RunRearrange(void) {
     }
     // L and R move the member along the party order.
     if (gKeysRepeat & KEY_R) {
-      if (MemberChooser_MoveEntry(ownerIndex, 1)) {
+      if (MemberChooser_MoveEntry(memberIndex, 1)) {
         Sound_PlaySongFar(SE_MENU_CONFIRM);
-        ownerIndex++;
+        memberIndex++;
         Menu_ReleaseEntryObjects();
-        PsynergyMenu_InitializeEntryObjects(menu->ownerWindow, 2, 2, 8, 0);
-        SummaryScreen_SetSelectedMemberRow(menu, ownerIndex);
+        PsynergyMenu_InitializeEntryObjects(menu->memberWindow, 2, 2, 8, 0);
+        SummaryScreen_SetSelectedMemberRow(menu, memberIndex);
       } else {
         Sound_PlaySongFar(SE_MENU_ERROR);
       }
       WaitFrames(1);
     } else if (gKeysRepeat & KEY_L) {
-      if (MemberChooser_MoveEntry(ownerIndex, 0)) {
+      if (MemberChooser_MoveEntry(memberIndex, 0)) {
         Sound_PlaySongFar(SE_MENU_CONFIRM);
-        ownerIndex--;
+        memberIndex--;
         Menu_ReleaseEntryObjects();
-        PsynergyMenu_InitializeEntryObjects(menu->ownerWindow, 2, 2, 8, 0);
-        SummaryScreen_SetSelectedMemberRow(menu, ownerIndex);
+        PsynergyMenu_InitializeEntryObjects(menu->memberWindow, 2, 2, 8, 0);
+        SummaryScreen_SetSelectedMemberRow(menu, memberIndex);
       } else {
         Sound_PlaySongFar(SE_MENU_ERROR);
       }
@@ -514,23 +514,23 @@ s32 MemberChooser_RunRearrange(void) {
     } else {
       if (gKeysRepeat & KEY_LEFT) {
         Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
-        if (ownerCount > 1) {
-          ownerIndex--;
+        if (memberCount > 1) {
+          memberIndex--;
           redraw = 1;
         }
       }
       if (gKeysRepeat & KEY_RIGHT) {
         Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
-        if (ownerCount > 1) {
+        if (memberCount > 1) {
           redraw = 1;
-          ownerIndex++;
+          memberIndex++;
         }
       }
     }
   }
-  menu->ownerIndex[0] = ownerIndex;
-  menu->selectedOwner = menu->ownerIds[ownerIndex];
-  menu->selectedIds[0] = menu->ownerIds[ownerIndex];
+  menu->memberIndex[0] = memberIndex;
+  menu->selectedMember = menu->memberIds[memberIndex];
+  menu->selectedIds[0] = menu->memberIds[memberIndex];
   return result;
 }
 
@@ -539,14 +539,14 @@ s32 MemberChooser_RunRearrange(void) {
 /// 1 or -1.
 s32 PsynergyMenu_ChooseMember(void) {
   struct PsynergyMenuWork *menu = gMenuWork;
-  s32 ownerIndex = menu->tabIndex[0];
-  s32 ownerCount = menu->tabCounts[0];
+  s32 memberIndex = menu->tabIndex[0];
+  s32 memberCount = menu->tabCounts[0];
   s32 redraw = 1;
   s32 page = menu->flags;
   s32 result;
   s32 rowIndex;
 
-  Unit_GetFar(menu->ownerTable[ownerIndex]);
+  Unit_GetFar(menu->memberTable[memberIndex]);
   WindowSprite_RedrawSavedRectFar(menu->messageWindow);
   Text_DrawMessageAsTilesFar(MsgChooseCharacter, menu->messageWindow, 0, 0);
   Text_DrawMessageAsTilesFar(MsgChooseCharacter + 1, menu->messageWindow, 0,
@@ -554,22 +554,23 @@ s32 PsynergyMenu_ChooseMember(void) {
   for (;;) {
     if (redraw) {
       redraw = 0;
-      ownerIndex = (ownerIndex + ownerCount) % ownerCount;
-      Unit_GetFar(menu->ownerTable[ownerIndex]);
+      memberIndex = (memberIndex + memberCount) % memberCount;
+      Unit_GetFar(menu->memberTable[memberIndex]);
       page = (page + 3) % 3;
-      Menu_CreateWindowAndEntryObjects(menu->ownerTable[ownerIndex], page);
-      PsynergyMenu_CallIconRoutineWithValue(menu, menu->ownerTable[ownerIndex]);
+      Menu_CreateWindowAndEntryObjects(menu->memberTable[memberIndex], page);
+      PsynergyMenu_CallIconRoutineWithValue(menu,
+                                            menu->memberTable[memberIndex]);
       for (rowIndex = 0; rowIndex < MENU_ROW_COUNT; rowIndex++)
         menu->rowPositions[rowIndex] = 30;
-      menu->rowPositions[ownerIndex] = 26;
+      menu->rowPositions[memberIndex] = 26;
       menu->psynergyCount = PsynergyMenu_CollectActions(
-          Unit_GetFar(menu->ownerTable[ownerIndex]), (u16 *)menu->psynergies,
+          Unit_GetFar(menu->memberTable[memberIndex]), (u16 *)menu->psynergies,
           PSYNERGY_LIST_ALL);
       PsynergyMenu_DrawPsynergyIcons(menu->psynergies);
       Menu_PlaceEntryObjectsInGrid(96, 96, 8);
       Menu_HideEmptyEntryIcons(menu->psynergies);
     }
-    MenuCursor_Position(ownerIndex * 24 - 10, 16);
+    MenuCursor_Position(memberIndex * 24 - 10, 16);
     WaitFrames(1);
     if (gKeysPressed & KEY_A) {
       Sound_PlaySongFar(SE_MENU_CONFIRM);
@@ -584,23 +585,23 @@ s32 PsynergyMenu_ChooseMember(void) {
     {
       if (gKeysRepeat & KEY_LEFT) {
         Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
-        if (ownerCount > 1) {
-          ownerIndex--;
+        if (memberCount > 1) {
+          memberIndex--;
           redraw = 1;
         }
       }
       if (gKeysRepeat & KEY_RIGHT) {
         Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
-        if (ownerCount > 1) {
-          ownerIndex++;
+        if (memberCount > 1) {
+          memberIndex++;
           redraw = 1;
         }
       }
     }
   }
-  menu->tabIndex[0] = ownerIndex;
-  menu->selectedOwner = menu->ownerTable[ownerIndex];
-  menu->ownerIds[0] = menu->ownerTable[ownerIndex];
+  menu->tabIndex[0] = memberIndex;
+  menu->selectedMember = menu->memberTable[memberIndex];
+  menu->memberIds[0] = menu->memberTable[memberIndex];
   return result;
 }
 
@@ -645,7 +646,7 @@ s32 MemberChooser_MoveEntry(s32 selectedIndex, s32 direction) {
 #endif
   }
   for (index = 0; index < menu->partyCount; index++) {
-    reordered[index] = menu->ownerIds[index];
+    reordered[index] = menu->memberIds[index];
   }
 
   if (direction == 1) {
@@ -660,12 +661,12 @@ s32 MemberChooser_MoveEntry(s32 selectedIndex, s32 direction) {
 
   // Rebuild the party in the new order.
   for (index = 0; index < menu->partyCount; index++) {
-    Party_RemoveMemberFar(menu->ownerIds[index]);
+    Party_RemoveMemberFar(menu->memberIds[index]);
   }
   for (index = 0; index < menu->partyCount; index++) {
     Party_AddMemberFar(reordered[index]);
   }
-  menu->partyCount = Party_ListMembersFar(menu->ownerIds);
+  menu->partyCount = Party_ListMembersFar(menu->memberIds);
   return 1;
 }
 
@@ -810,7 +811,7 @@ s32 SummaryScreen_SelectCommand(void) {
       }
       // The statuses are 16 pixels apart; the right pane's first four rows
       // (name to PP) are 8 apart, the rows below them 8 apart from y 112.
-      menu->ownerCursors[0]->motion = ICON_SHOWN;
+      menu->memberCursors[0]->motion = ICON_SHOWN;
       if (pane == 0)
         MenuCursor_Position(-10, selected * 16 + 88);
       else if (selected <= 3)
@@ -856,16 +857,16 @@ s32 SummaryScreen_SelectCommand(void) {
       // L and R: the previous or next member.
       if ((gKeysRepeat & KEY_R) || (gKeysRepeat & KEY_L)) {
         Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
-        member = menu->ownerIndex[0];
+        member = menu->memberIndex[0];
         if (gKeysRepeat & KEY_R)
           member++;
         else
           member--;
         member = (member + menu->partyCount) % menu->partyCount;
-        menu->selectedOwner = menu->ownerIds[member];
-        menu->selectedIds[0] = menu->ownerIds[member];
-        menu->ownerIndex[0] = member;
-        PsynergyMenu_CallIconRoutineWithValue(menu, menu->ownerIds[member]);
+        menu->selectedMember = menu->memberIds[member];
+        menu->selectedIds[0] = menu->memberIds[member];
+        menu->memberIndex[0] = member;
+        PsynergyMenu_CallIconRoutineWithValue(menu, menu->memberIds[member]);
         break;
       }
     }
@@ -977,15 +978,15 @@ void SummaryScreen_ShowMemberProgressMessage(struct Window *destination,
     messageVariant++;
   }
   if (messageVariant == 1) {
-    struct Unit *owner = Unit_GetFar(menu->selectedIds[0]);
+    struct Unit *member = Unit_GetFar(menu->selectedIds[0]);
 
-    if (owner->level == 99) {
+    if (member->level == 99) {
       messageVariant = 8; // "These are your experience points."
     } else {
       ExperienceDifference remaining =
           Unit_GetExperienceForLevelFar(menu->selectedIds[0],
-                                        owner->level + 1) -
-          owner->experience;
+                                        member->level + 1) -
+          member->experience;
       MessageArgument_PushFar(remaining, MESSAGE_ARGUMENT_NUMBER);
     }
   }
@@ -997,11 +998,12 @@ void SummaryScreen_ShowMemberProgressMessage(struct Window *destination,
   Free(buffer);
 }
 
-/// Draws member ownerId's status page into window: the top rows (ItemMenu_
-/// DrawOwnerStatus), the status list or "Normal", and except on the chooser
-/// page the Djinn counts by element and, in mode 1, the elemental levels,
-/// Power and Resist. mode's 0x100 keeps what is drawn instead of clearing it.
-void SummaryScreen_DrawStatusAilments(struct Window *window, s32 ownerId,
+/// Draws member memberId's status page into window: the top rows
+/// (ItemMenu_DrawMemberStatus), the status list or "Normal", and except on the
+/// chooser page the Djinn counts by element and, in mode 1, the elemental
+/// levels, Power and Resist. mode's 0x100 keeps what is drawn instead of
+/// clearing it.
+void SummaryScreen_DrawStatusAilments(struct Window *window, s32 memberId,
                                       s32 mode) {
   struct SummaryScreenWork *menu = gMenuWork;
   struct Unit *unit;
@@ -1015,7 +1017,7 @@ void SummaryScreen_DrawStatusAilments(struct Window *window, s32 ownerId,
     hasDjinn = 1;
   else
     hasDjinn = 0;
-  unit = Unit_GetFar(ownerId);
+  unit = Unit_GetFar(memberId);
   // The Djinn row, in tiles: higher on the full page (mode 1), which has the
   // elemental rows below it.
   if ((mode & 0xff) == 1)
@@ -1023,8 +1025,8 @@ void SummaryScreen_DrawStatusAilments(struct Window *window, s32 ownerId,
   else
     djinnRow = 10;
   menu->statusCursor->motion = ICON_SHOWN;
-  ItemMenu_DrawMemberStatus(window, ownerId, mode);
-  SummaryScreen_BuildAvailability(ailments, 1, ownerId);
+  ItemMenu_DrawMemberStatus(window, memberId, mode);
+  SummaryScreen_BuildAvailability(ailments, 1, memberId);
   SummaryScreen_UpdateSelectionIcons(ailments);
   keepDrawn = mode & 0x100;
   if (keepDrawn == 0)
@@ -1096,9 +1098,9 @@ void SummaryScreen_DrawStatusAilments(struct Window *window, s32 ownerId,
         Text_DrawStringInWindowFar(gMenu_SlashString, window,
                                    ailmentIndex * 32 + 112, djinnRow * 8 + 8);
       }
-      Text_DrawNumberInWindowFar(Unit_GetElementLevelFar(ownerId, ailmentIndex),
-                                 2, window, ailmentIndex * 32 + 112,
-                                 djinnRow * 8 + 16);
+      Text_DrawNumberInWindowFar(
+          Unit_GetElementLevelFar(memberId, ailmentIndex), 2, window,
+          ailmentIndex * 32 + 112, djinnRow * 8 + 16);
       Text_DrawNumberInWindowFar(unit->element[ailmentIndex].power, 3, window,
                                  ailmentIndex * 32 + 104, djinnRow * 8 + 24);
       Text_DrawNumberInWindowFar(unit->element[ailmentIndex].resistance, 3,
@@ -1123,15 +1125,16 @@ spin:
 
 #endif
 
-/// Draws the top rows of member ownerId's status page into window: name, class,
-/// level, experience, HP and PP on the left, Attack, Defense, Agility and Luck
-/// on the right. flags' 0x100 keeps what is drawn instead of clearing it.
-void ItemMenu_DrawMemberStatus(struct Window *window, s32 ownerId, s32 flags) {
+/// Draws the top rows of member memberId's status page into window: name,
+/// class, level, experience, HP and PP on the left, Attack, Defense, Agility
+/// and Luck on the right. flags' 0x100 keeps what is drawn instead of clearing
+/// it.
+void ItemMenu_DrawMemberStatus(struct Window *window, s32 memberId, s32 flags) {
   struct ItemMenuWork *menu;
   struct Unit *unit;
 
   menu = gMenuWork;
-  unit = Unit_GetFar(ownerId);
+  unit = Unit_GetFar(memberId);
   menu->cursor->motion = ICON_SHOWN;
   flags &= 0x100;
   if (flags == 0) {
@@ -1172,16 +1175,16 @@ void ItemMenu_DrawMemberStatus(struct Window *window, s32 ownerId, s32 flags) {
                              STATUS_STAT_X, 24);
 }
 
-/// Fills ailments[0..4] (UnitStatus) with member ownerId's statuses: down
+/// Fills ailments[0..4] (UnitStatus) with member memberId's statuses: down
 /// (only when requested is 1), poison or venom, curse and haunt. Returns how
 /// many they have.
-s32 SummaryScreen_BuildAvailability(u8 *ailments, s32 requested, s32 ownerId) {
+s32 SummaryScreen_BuildAvailability(u8 *ailments, s32 requested, s32 memberId) {
   struct Unit *unit;
   s32 ailmentIndex;
   s32 count;
   s32 poison;
 
-  unit = Unit_GetFar(ownerId);
+  unit = Unit_GetFar(memberId);
   for (ailmentIndex = 4; ailmentIndex >= 0; ailmentIndex--)
     ailments[ailmentIndex] = 0;
 
@@ -1225,7 +1228,7 @@ s32 PagedList_Build(struct PagedList *result, s32 index) {
 
   unitBits = (s32)Unit_GetFar(menu->sideMember[index]);
   itemCount = menu->itemCount;
-  selected = menu->selectedIndexByOwner[menu->sideMember[index]];
+  selected = menu->selectedIndexByMember[menu->sideMember[index]];
   if ((selected + 1) > itemCount) {
     selected = itemCount - 1;
   }
@@ -1238,7 +1241,7 @@ s32 PagedList_Build(struct PagedList *result, s32 index) {
   if (itemCount % STATUS_EQUIP_PAGE_SIZE != 0) {
     pageCount++;
   }
-  result->ownerState = unitBits;
+  result->memberState = unitBits;
   result->page = page;
   result->pageCount = pageCount;
   result->row = row;
@@ -1422,7 +1425,7 @@ s32 PsynergyMenu_DrawRangePage(struct Window *window, s32 unused,
 s32 PsynergyMenu_DrawListPage(struct Window *window, s32 unused,
                               const struct PagedList *res) {
   struct PsynergyMenuWork *menu = gMenuWork;
-  struct Unit *owner;
+  struct Unit *member;
   u32 firstEntry;
   u32 rows;
   u8 row;
@@ -1430,7 +1433,7 @@ s32 PsynergyMenu_DrawListPage(struct Window *window, s32 unused,
 
   (void)unused;
 
-  owner = Unit_GetFar(menu->ownerIds[0]);
+  member = Unit_GetFar(menu->memberIds[0]);
 
   WindowSprite_RedrawSavedRectFar(window);
 
@@ -1481,14 +1484,14 @@ s32 PsynergyMenu_DrawListPage(struct Window *window, s32 unused,
     Text_DrawMessageAsTilesFar(MsgNoPsynergy, window, 96, LIST_EMPTY_Y);
   }
 
-  Text_DrawStringAtOffsetFar(owner->name, (void *)window, 40, 0);
-  Text_DrawMessageAsTilesFar(owner->classId + MsgClassName, window, 0, 32);
+  Text_DrawStringAtOffsetFar(member->name, (void *)window, 40, 0);
+  Text_DrawMessageAsTilesFar(member->classId + MsgClassName, window, 0, 32);
 #if LANGUAGE == LANGUAGE_SPANISH || LANGUAGE == LANGUAGE_FRENCH
   Text_DrawStringAtOffsetFar(gMenu_LvString, (void *)window, 0, 48);
 #else
   Text_DrawStringInWindowFar(gMenu_LvString, window, 0, 48);
 #endif
-  Text_DrawNumberInWindowFar(owner->level, 2, window, 24, 48);
+  Text_DrawNumberInWindowFar(member->level, 2, window, 24, 48);
 
   return 1;
 }
@@ -1506,7 +1509,7 @@ s32 PsynergyMenu_SelectAction(void) {
   s32 redraw;
   s32 listNeedsRedraw;
   s32 navigationResult;
-  s32 ownerIndex;
+  s32 memberIndex;
   s32 iconIndex;
   struct PagedList state;
 
@@ -1543,11 +1546,11 @@ s32 PsynergyMenu_SelectAction(void) {
     ItemMenu_PositionCategory();
     WindowSprite_RedrawSavedRectFar(menu->statusWindow);
     menu->psynergyCount = PsynergyMenu_CollectActions(
-        Unit_GetFar(menu->ownerIds[0]), menu->psynergies, PSYNERGY_LIST_ALL);
+        Unit_GetFar(menu->memberIds[0]), menu->psynergies, PSYNERGY_LIST_ALL);
     WaitFrames(1);
     PagedList_Build(&state, 0);
     PsynergyMenu_DrawPreparedPsynergyIcons(menu->statusWindow,
-                                           menu->ownerIds[0]);
+                                           menu->memberIds[0]);
     redraw = 1;
     listNeedsRedraw = 1;
 
@@ -1590,19 +1593,19 @@ s32 PsynergyMenu_SelectAction(void) {
       }
       if ((gKeysRepeat & KEY_R) || (gKeysRepeat & KEY_L)) {
         Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
-        ownerIndex = menu->tabIndex[0];
-        menu->selectedIndexByOwner[menu->ownerTable[ownerIndex]] =
+        memberIndex = menu->tabIndex[0];
+        menu->selectedIndexByMember[menu->memberTable[memberIndex]] =
             state.selectedIndex;
         if (gKeysRepeat & KEY_R)
-          ownerIndex++;
+          memberIndex++;
         else
-          ownerIndex--;
-        ownerIndex = (ownerIndex + menu->ownerCount) % menu->ownerCount;
-        menu->selectedOwner = menu->ownerTable[ownerIndex];
-        menu->ownerIds[0] = menu->ownerTable[ownerIndex];
-        menu->tabIndex[0] = ownerIndex;
+          memberIndex--;
+        memberIndex = (memberIndex + menu->memberCount) % menu->memberCount;
+        menu->selectedMember = menu->memberTable[memberIndex];
+        menu->memberIds[0] = menu->memberTable[memberIndex];
+        menu->tabIndex[0] = memberIndex;
         PsynergyMenu_CallIconRoutineWithValue(menu,
-                                              menu->ownerTable[ownerIndex]);
+                                              menu->memberTable[memberIndex]);
         break;
       }
     }
@@ -1619,11 +1622,11 @@ s32 PsynergyMenu_SelectAction(void) {
 s32 PsynergyMenu_ActionReturnTrue(void) { return 1; }
 
 /// Hides every entry icon, then loads the icons of the Psynergy already listed
-/// in the work (psynergies) into them. ownerId is only looked up.
-void PsynergyMenu_DrawPreparedPsynergyIcons(const void *unused, s32 ownerId) {
+/// in the work (psynergies) into them. memberId is only looked up.
+void PsynergyMenu_DrawPreparedPsynergyIcons(const void *unused, s32 memberId) {
   struct PsynergyMenuWork *menu = gMenuWork;
 
-  Unit_GetFar(ownerId);
+  Unit_GetFar(memberId);
   ItemMenu_HideAllIcons();
   PsynergyMenu_DrawPsynergyIcons(menu->psynergies);
 }
@@ -1781,23 +1784,23 @@ s32 Shop_DrawItemPage(struct Window *window, s32 unused,
 s32 ItemMenu_SelectItem(void) {
 
   struct ItemMenuWork *menu;
-  struct Unit *owner;
+  struct Unit *member;
   s32 result;
   s32 done;
   s32 redraw;
   s32 listNeedsRedraw;
   s32 navigationResult;
-  s32 ownerIndex;
+  s32 memberIndex;
   s32 iconIndex;
   u16 savedInventory[15];
   struct PagedList state;
 
   menu = gMenuWork;
   {
-    s32 ownerId = menu->sideMember[0];
+    s32 memberId = menu->sideMember[0];
 
     result = 0;
-    Unit_GetFar(menu->ownerIds[ownerId]);
+    Unit_GetFar(menu->memberIds[memberId]);
   }
   Window_UpdateOrCreate(&menu->equipWindow, 0, 10, STATUS_EQUIP_WINDOW_WIDTH,
                         10, 2);
@@ -1823,10 +1826,10 @@ s32 ItemMenu_SelectItem(void) {
   while (done == 0 && GameFlag_TestFar(FLAG_MENU_START_PRESSED) == 0) {
     ItemMenu_PositionCategory();
     WindowSprite_RedrawSavedRectFar(menu->statusWindow);
-    owner = Unit_GetFar(menu->sideMember[0]);
+    member = Unit_GetFar(menu->sideMember[0]);
     for (iconIndex = 0; iconIndex <= 14; iconIndex++)
-      savedInventory[iconIndex] = owner->inventory[iconIndex];
-    menu->itemCount = ItemMenu_CollectItems(owner, menu->items, 0);
+      savedInventory[iconIndex] = member->inventory[iconIndex];
+    menu->itemCount = ItemMenu_CollectItems(member, menu->items, 0);
     ItemMenu_Sort(menu->items, LIST_SORT_EQUIPPED_THEN_ITEMS);
     PagedList_Build(&state, 0);
     WindowSprite_RedrawSavedRectFar(menu->equipWindow);
@@ -1875,22 +1878,23 @@ s32 ItemMenu_SelectItem(void) {
       }
       if ((gKeysRepeat & KEY_R) || (gKeysRepeat & KEY_L)) {
         Sound_PlaySongFar(SE_MENU_CURSOR_MOVE);
-        ownerIndex = menu->sideIndex[0];
-        menu->selectedIndexByOwner[menu->ownerIds[ownerIndex]] =
+        memberIndex = menu->sideIndex[0];
+        menu->selectedIndexByMember[menu->memberIds[memberIndex]] =
             state.selectedIndex;
         if (gKeysRepeat & KEY_R)
-          ownerIndex++;
+          memberIndex++;
         else
-          ownerIndex--;
+          memberIndex--;
         // Copy back the inventory saved as the list was built; only the list
         // was sorted, so this writes what is already there.
         for (iconIndex = 0; iconIndex <= 14; iconIndex++)
-          owner->inventory[iconIndex] = savedInventory[iconIndex];
-        ownerIndex = (ownerIndex + menu->partyCount) % menu->partyCount;
-        menu->selectedOwner = menu->ownerIds[ownerIndex];
-        menu->sideMember[0] = menu->ownerIds[ownerIndex];
-        menu->sideIndex[0] = ownerIndex;
-        PsynergyMenu_CallIconRoutineWithValue(menu, menu->ownerIds[ownerIndex]);
+          member->inventory[iconIndex] = savedInventory[iconIndex];
+        memberIndex = (memberIndex + menu->partyCount) % menu->partyCount;
+        menu->selectedMember = menu->memberIds[memberIndex];
+        menu->sideMember[0] = menu->memberIds[memberIndex];
+        menu->sideIndex[0] = memberIndex;
+        PsynergyMenu_CallIconRoutineWithValue(menu,
+                                              menu->memberIds[memberIndex]);
         break;
       }
     }
@@ -1984,11 +1988,11 @@ s32 Menu_ReservedStatusOne(void) { return 1; }
 /// also shows their icons at the right. Reads the work's items list, which the
 /// caller fills (ItemMenu_CollectItems). Used by the item screen's R view and
 /// the Status menu's equipment page.
-void ItemMenu_DrawCategory(struct Window *window, s32 ownerId, s32 mode) {
+void ItemMenu_DrawCategory(struct Window *window, s32 memberId, s32 mode) {
   struct ItemMenuWork *menu = gMenuWork;
   u16 *items;
 
-  Unit_GetFar(ownerId);
+  Unit_GetFar(memberId);
   ItemMenu_PositionCategory();
   ItemMenu_HideAllIcons();
   Text_DrawMessageAsTilesFar(MsgEquipSlotLabels, window, 0, 0);

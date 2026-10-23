@@ -474,7 +474,7 @@ Two spellings recur in the menus, one for copying a party member's unit and
 one for reaching a heap block.
 
 - A unit is copied with the resident IWRAM routine as `Iwram_CopyWords`,
-  through `_call_via_r3(..., IwramCopyWords)` (`Owner_Copy`), or through
+  through `_call_via_r3(..., IwramCopyWords)` (`StatusPanel_CopyUnit`), or through
   `Item_CopyWords` (tagged).
 - A neighbouring heap block is reached from the menu control slot as
   `cache[HEAP_SLOT_FIELD - HEAP_SLOT_OBJECT_SYSTEM]`.

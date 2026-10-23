@@ -20,15 +20,15 @@ struct Window;
 /// party figures, the items listed and the two choices a command makes. The
 /// menu takes the slot as it opens and frees it as it closes.
 struct ItemMenuWork {
-  u8 unused[8];      ///< no view of the menu work names it (see menu/README.md)
-  s32 selectedOwner; ///< the party member chosen
+  u8 unused[8]; ///< no view of the menu work names it (see menu/README.md)
+  s32 selectedMember;         ///< the party member chosen
   struct Window *moneyWindow; ///< ShopWork's; not named here
   struct Window *mainWindow;
   /// The two panes: the member whose items are shown, and the one an item is
   /// given to.
   ///@{
   struct WindowSprite *sideIcons[2];
-  s8 sideIndex[2]; ///< the member chosen, in ownerIds; -1 for none at first
+  s8 sideIndex[2]; ///< the member chosen, in memberIds; -1 for none at first
   s8 sideCount[2]; ///< members to choose from; 1 at first
   ///@}
   struct Window *itemWindow;
@@ -52,17 +52,17 @@ struct ItemMenuWork {
   u8 columnCount;
   u8 rowCount;
   ///@}
-  struct Sprite *ownerObjects[8]; ///< the party members' figures
-  s16 ownerX[8];                  ///< screen pixels
-  s16 ownerY[8];                  ///< screen pixels
-  s32 ownerScale[8];              ///< 16.16 fixed point, 0x10000 full size
-  u16 selectedSlots[2];           ///< each pane's inventory slot chosen
-  u16 selectedItems[2];           ///< each pane's inventory entry chosen
+  struct Sprite *memberObjects[8]; ///< the party members' figures
+  s16 memberX[8];                  ///< screen pixels
+  s16 memberY[8];                  ///< screen pixels
+  s32 memberScale[8];              ///< 16.16 fixed point, 0x10000 full size
+  u16 selectedSlots[2];            ///< each pane's inventory slot chosen
+  u16 selectedItems[2];            ///< each pane's inventory entry chosen
   struct WindowSprite *cursor;
   /// DjinnMenuWork's backdrop pointer at 0x184; no view names the rest.
   u8 aroundBackdrop[0x48];
-  u16 items[32];   ///< the inventory entries listed
-  u16 ownerIds[8]; ///< the party in order (Party_ListMembers)
+  u16 items[32];    ///< the inventory entries listed
+  u16 memberIds[8]; ///< the party in order (Party_ListMembers)
   u8 itemCount;
   u8 partyCount;
   u8 sideMember[2]; ///< each pane's member
@@ -75,8 +75,8 @@ struct ItemMenuWork {
   s16 messageOffset; ///< the item use's result, after MsgItemUseResult
   s8 equipPreview;   ///< 1 while the stats preview a removal, not an equip
   u8 listMode; ///< the command chosen last (ItemMenuCommand); 0xff for none
-  u8 unusedAfterListMode[2];  ///< no view of the menu work names it
-  s8 selectedIndexByOwner[8]; ///< each member's entry chosen last
+  u8 unusedAfterListMode[2];   ///< no view of the menu work names it
+  s8 selectedIndexByMember[8]; ///< each member's entry chosen last
   u8 mode;             ///< not named through this struct; PsynergyMenuWork.mode
   u8 shopStock[0x129]; ///< ShopWork's stock, party and cursor; not named
                        ///< here
@@ -96,21 +96,21 @@ STATIC_ASSERT(offsetof(struct ItemMenuWork, selectedColumn) == 0x110);
 STATIC_ASSERT(offsetof(struct ItemMenuWork, selectedRow) == 0x111);
 STATIC_ASSERT(offsetof(struct ItemMenuWork, columnCount) == 0x112);
 STATIC_ASSERT(offsetof(struct ItemMenuWork, rowCount) == 0x113);
-STATIC_ASSERT(offsetof(struct ItemMenuWork, ownerObjects) == 0x114);
-STATIC_ASSERT(offsetof(struct ItemMenuWork, ownerX) == 0x134);
-STATIC_ASSERT(offsetof(struct ItemMenuWork, ownerY) == 0x144);
-STATIC_ASSERT(offsetof(struct ItemMenuWork, ownerScale) == 0x154);
+STATIC_ASSERT(offsetof(struct ItemMenuWork, memberObjects) == 0x114);
+STATIC_ASSERT(offsetof(struct ItemMenuWork, memberX) == 0x134);
+STATIC_ASSERT(offsetof(struct ItemMenuWork, memberY) == 0x144);
+STATIC_ASSERT(offsetof(struct ItemMenuWork, memberScale) == 0x154);
 STATIC_ASSERT(offsetof(struct ItemMenuWork, selectedSlots) == 0x174);
 STATIC_ASSERT(offsetof(struct ItemMenuWork, selectedItems) == 0x178);
 STATIC_ASSERT(offsetof(struct ItemMenuWork, cursor) == 0x17c);
 STATIC_ASSERT(offsetof(struct ItemMenuWork, items) == 0x1c8);
-STATIC_ASSERT(offsetof(struct ItemMenuWork, ownerIds) == 0x208);
+STATIC_ASSERT(offsetof(struct ItemMenuWork, memberIds) == 0x208);
 STATIC_ASSERT(offsetof(struct ItemMenuWork, itemCount) == 0x218);
 STATIC_ASSERT(offsetof(struct ItemMenuWork, sideMember) == 0x21a);
 STATIC_ASSERT(offsetof(struct ItemMenuWork, selectedItemIcon) == 0x21c);
 STATIC_ASSERT(offsetof(struct ItemMenuWork, messageOffset) == 0x25a);
 STATIC_ASSERT(offsetof(struct ItemMenuWork, equipPreview) == 0x25c);
-STATIC_ASSERT(offsetof(struct ItemMenuWork, selectedIndexByOwner) == 0x260);
+STATIC_ASSERT(offsetof(struct ItemMenuWork, selectedIndexByMember) == 0x260);
 STATIC_ASSERT(offsetof(struct ItemMenuWork, mode) == 0x268);
 STATIC_ASSERT(offsetof(struct ItemMenuWork, resourceSlots) == 0x392);
 STATIC_ASSERT(sizeof(struct ItemMenuWork) == 0x398);

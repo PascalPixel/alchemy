@@ -111,12 +111,13 @@ void Window_CloseIfOpen(struct Window **handle, s32 style) {
 }
 
 /// Copies one Unit with the resident IWRAM word copy.
-static inline void Owner_Copy(struct Unit *destination, struct Unit *source) {
+static inline void StatusPanel_CopyUnit(struct Unit *destination,
+                                        struct Unit *source) {
   _call_via_r3(destination, source, sizeof(struct Unit), IwramCopyWords);
 }
 
 /// Draws the status panel of the Item and Psynergy screens for the party
-/// member owner (window at tile 0,5, 13 by 12): the name, up to two statuses
+/// member `member` (window at tile 0,5, 13 by 12): the name, up to two statuses
 /// or the level, the member's portrait, and below them what mode's panel kind
 /// asks for. slot is the inventory slot of the item the panel is about, for
 /// the equipment and Psynergy item panels. The first parameter, the status
@@ -126,7 +127,7 @@ static inline void Owner_Copy(struct Unit *destination, struct Unit *source) {
 /// unless mode has STATUS_PANEL_LOWER_ONLY, the portrait it creates replaces
 /// the work's cursor. The equipment panel equips the item on the real unit for
 /// a moment and puts the unit back from a heap copy it frees before returning.
-void StatusPanel_Draw(struct Window *unused, s32 owner, s32 slot, s32 mode) {
+void StatusPanel_Draw(struct Window *unused, s32 member, s32 slot, s32 mode) {
   s32 created;
   struct ItemDefinition *def;
   u32 item;
@@ -139,7 +140,7 @@ void StatusPanel_Draw(struct Window *unused, s32 owner, s32 slot, s32 mode) {
 
   created = 0;
   menu = gMenuWork;
-  unit = Unit_GetFar(owner);
+  unit = Unit_GetFar(member);
   item = unit->inventory[slot];
   def = Item_GetDirectFar(item & INVENTORY_ITEM_ID_MASK);
   if (!(mode & STATUS_PANEL_LOWER_ONLY))
@@ -157,7 +158,7 @@ void StatusPanel_Draw(struct Window *unused, s32 owner, s32 slot, s32 mode) {
       Window_ClearInteriorTilesFar(menu->statusWindow, 0, 0, 88, 32);
     }
     Text_DrawStringAtOffsetFar(unit->name, window, STATUS_PANEL_TEXT_X, 0);
-    SummaryScreen_BuildAvailability(ailments, 1, owner);
+    SummaryScreen_BuildAvailability(ailments, 1, member);
     ailmentRows = 0;
     if (ailments[CHARACTER_POISON]) {
       Text_DrawMessageAsTilesFar(MsgPoisonLabel, window, STATUS_PANEL_TEXT_X,
@@ -193,7 +194,7 @@ void StatusPanel_Draw(struct Window *unused, s32 owner, s32 slot, s32 mode) {
   }
   WindowSprite_ClearListFar(window);
   if (!(mode & STATUS_PANEL_LOWER_ONLY))
-    menu->cursor = SideObject_CreateFar(owner, 0, 0, window, 0, 0);
+    menu->cursor = SideObject_CreateFar(member, 0, 0, window, 0, 0);
 
   switch (mode & STATUS_PANEL_KIND_MASK) {
   case STATUS_PANEL_EXPERIENCE:
@@ -213,7 +214,7 @@ void StatusPanel_Draw(struct Window *unused, s32 owner, s32 slot, s32 mode) {
   case STATUS_PANEL_EQUIP + 1: { // draws the same panel
     struct Unit *backup;
 
-    if (!Item_CanUnitEquip(owner, item)) {
+    if (!Item_CanUnitEquip(member, item)) {
       Text_DrawMessageAsTilesFar(MsgCannotEquip, window,
                                  STATUS_PANEL_CANNOT_EQUIP_X, 48);
       break;
@@ -222,14 +223,14 @@ void StatusPanel_Draw(struct Window *unused, s32 owner, s32 slot, s32 mode) {
     // recalculate its stats, show them against the saved copy, then put the
     // unit back as it was.
     backup = Alloc(sizeof(struct Unit));
-    Owner_Copy(backup, unit);
+    StatusPanel_CopyUnit(backup, unit);
     if (menu->equipPreview)
       unit->inventory[slot] &= ~INVENTORY_EQUIPPED;
     else
-      Inventory_EquipFar(owner, slot);
-    Unit_CalculateFar(owner);
+      Inventory_EquipFar(member, slot);
+    Unit_CalculateFar(member);
     Text_DrawStatComparison(unit, backup, window);
-    Owner_Copy(unit, backup);
+    StatusPanel_CopyUnit(unit, backup);
     Free(backup);
     break;
   }
@@ -542,17 +543,17 @@ struct Window *MenuCursor_Create(void *source) {
 /// Menu_ReleaseEntryObjects frees the figures.
 void PsynergyMenu_InitializeEntryObjects(void *source, s32 originX, s32 originY,
                                          s32 spacing, s32 unused) {
-  u16 ownerIds[14];
+  u16 memberIds[14];
   struct PsynergyMenuWork *menu = gMenuWork;
   struct Window *window = source;
-  s32 ownerCount = (u16)Party_ListMembersFar(ownerIds);
+  s32 memberCount = (u16)Party_ListMembersFar(memberIds);
   s32 i;
 
-  menu->tabCounts[0] = ownerCount;
+  menu->tabCounts[0] = memberCount;
   // Create and position the figures before scheduling their updates.
-  for (i = 0; i < ownerCount; i++) {
+  for (i = 0; i < memberCount; i++) {
     struct Sprite *figure =
-        Sprite_CreateFar(Party_RemapCharacterIdByFlagsFar(ownerIds[i]));
+        Sprite_CreateFar(Party_RemapCharacterIdByFlagsFar(memberIds[i]));
     if (figure != 0) {
       s32 offsetX;
       s32 windowX;
@@ -565,7 +566,7 @@ void PsynergyMenu_InitializeEntryObjects(void *source, s32 originX, s32 originY,
       tileX = originX + windowX;
       menu->tabX[i] = tileX * 8 + offsetX;
       menu->rowPositions[i] = (originY + window->y) * 8 + 16;
-      menu->ownerScale[i] = 0x10000; // 1.0 in 16.16
+      menu->memberScale[i] = 0x10000; // 1.0 in 16.16
       figure->image.priority = 0;
       figure->flags = 0;
       Sprite_StartAnimFar(figure, 1);
@@ -587,13 +588,13 @@ void PsynergyMenu_InitializeEntryObjects(void *source, s32 originX, s32 originY,
 /// Releases the party figures PsynergyMenu_InitializeEntryObjects created and
 /// stops their placement callback.
 void Menu_ReleaseEntryObjects(void) {
-  u16 ownerIds[14];
+  u16 memberIds[14];
   struct PsynergyMenuWork *menu = gMenuWork;
   s32 count;
   struct Sprite **figures;
   s32 i;
 
-  count = (u16)Party_ListMembersFar(ownerIds);
+  count = (u16)Party_ListMembersFar(memberIds);
   if (count != 0) {
     figures = menu->tabObjects;
     i = count;
@@ -629,8 +630,8 @@ void Menu_UpdateEntryObjectTransforms(void) {
 
     if (figure != 0) {
       figure->image.priority = 0;
-      scale.x = menu->ownerScale[i];
-      scale.y = menu->ownerScale[i];
+      scale.x = menu->memberScale[i];
+      scale.y = menu->memberScale[i];
       position.x = menu->tabX[i] << 16;
       position.height = placeY;
       position.y = (menu->rowPositions[i] << 16) + placeY; // always 482

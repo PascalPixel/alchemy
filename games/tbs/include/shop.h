@@ -20,8 +20,8 @@
 /// work: Shop_InitializeWork takes and clears it as a shop, the inn,
 /// the sanctum or the item picker opens, and Shop_ReleaseWork frees it.
 struct ShopWork {
-  u8 unused[8];      ///< no view of the menu work names it (see menu/README.md)
-  s32 selectedOwner; ///< the menu screens' chosen member; not named here
+  u8 unused[8]; ///< no view of the menu work names it (see menu/README.md)
+  s32 selectedMember; ///< the menu screens' chosen member; not named here
   struct Window *moneyWindow; ///< the coins window
   /// The menu screens' first window and their two panes; not named here.
   u8 menuSides[0x10];

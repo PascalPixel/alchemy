@@ -115,7 +115,7 @@ s32 WindowSprite_CreateAbilityIcon(struct Window *window, s32 x, s32 y,
 }
 
 /// Shows what setting or removing Djinni `encodedDjinn` (element << 8 |
-/// index) would change for `owner`: closes the preview window `win`, opens a
+/// index) would change for `member`: closes the preview window `win`, opens a
 /// new one and returns it, or NULL when none could be opened. Page 0
 /// compares the class and stats, old against new, with an arrow by each stat
 /// that rises or falls; pages 1 on list, five a page, the unit's battle
@@ -125,7 +125,7 @@ s32 WindowSprite_CreateAbilityIcon(struct Window *window, s32 x, s32 y,
 /// The Djinni is toggled and the unit recalculated (Unit_CalculateFar) only to
 /// measure: the unit is restored from a copy before it returns.
 /// BattleDjinnMenu_Run calls it as the cursor moves.
-struct Window *BattleDjinnMenu_ShowChangePreview(struct Window *win, s32 owner,
+struct Window *BattleDjinnMenu_ShowChangePreview(struct Window *win, s32 member,
                                                  s32 encodedDjinn, s32 page,
                                                  s32 *pageCount) {
   struct Unit *unit;
@@ -193,7 +193,7 @@ struct Window *BattleDjinnMenu_ShowChangePreview(struct Window *win, s32 owner,
     }
   }
 
-  unit = Unit_GetFar(owner);
+  unit = Unit_GetFar(member);
   if (win != 0)
     Window_Close(win, 1);
 
@@ -217,11 +217,11 @@ struct Window *BattleDjinnMenu_ShowChangePreview(struct Window *win, s32 owner,
 
   element = (encodedDjinn >> 8) & 15;
   djinnIndex = encodedDjinn & 255;
-  if (Djinn_IsSetFar(owner, element, djinnIndex) != 0)
-    Djinn_PutOnStandbyFar(owner, element, djinnIndex);
+  if (Djinn_IsSetFar(member, element, djinnIndex) != 0)
+    Djinn_PutOnStandbyFar(member, element, djinnIndex);
   else
-    Djinn_SetFar(owner, element, djinnIndex);
-  Unit_CalculateFar(owner);
+    Djinn_SetFar(member, element, djinnIndex);
+  Unit_CalculateFar(member);
 
   abilityCount = BattleDjinnMenu_ListChangedDjinn(
       savedUnit->psynergy, unit->psynergy, changedAbilities, &gained, &lost);

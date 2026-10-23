@@ -315,9 +315,9 @@ void Menu_ReservedNoOp(void) {}
 
 /// Sets the Djinni's collected flag, then adds it to the specified member.
 /// The flag is FLAG_DJINN_FIRST + 20 * element + index. Nothing calls it.
-void Djinn_SetFoundFlagAndAdd(s32 owner, s32 element, s32 index) {
+void Djinn_SetFoundFlagAndAdd(s32 member, s32 element, s32 index) {
   GameFlag_SetBitFar((element * 0x14) + index + FLAG_DJINN_FIRST);
-  Djinn_GiveFar(owner, element, index);
+  Djinn_GiveFar(member, element, index);
 }
 
 /// Handles Save, Sleep and Options from the pause menu. A cancelled save

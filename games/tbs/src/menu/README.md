@@ -42,7 +42,7 @@ Item screen, and the pieces the screens share), `PsynergyMenuWork`,
 stay separate structs rather than one is a question of [matching](../../glossary.md#matching-decompilation): the code
 has to compile to [the original](../../glossary.md#the-original)'s instructions, and
 [Matching](../MATCHING.md) covers how. The work has room for eight party members
-(`ownerIds`) and 32 listed entries (`entryIcons`, `items`). The counters take
+(`memberIds`) and 32 listed entries (`entryIcons`, `items`). The counters take
 the same heap slot as `struct ShopWork`, and the file menu uses it for its
 [sprites](../../glossary.md#sprite-and-oam).
 
@@ -359,7 +359,7 @@ naming screen keyboard tilemap, the same as the Japanese one, that nothing reads
   `PsynergyMenuWork`, `SummaryScreenWork`, `DjinnMenuWork` and
   `DjinnFiguresWork`.
 - **member**: a party member whose items, Psynergy or Djinn a screen shows, by
-  character id; `ownerIds` lists the party.
+  character id; `memberIds` lists the party.
 - **pane** `[0]` and `[1]`: the two sides of a command, the member and item it
   starts from and the member or item it goes to (`sideMember`,
   `selectedItems`, `selectedSlots`). Giving an item uses both.
@@ -389,7 +389,7 @@ naming screen keyboard tilemap, the same as the Japanese one, that nothing reads
 | `StatusPanel_` | the member panel beside the Item and Psynergy screens: name, class, level, HP and PP |
 | `Item_`, `Ability_` | using an item or Psynergy from the menu |
 | `Title_`, `MainMenu_`, `BattleArena_`, `MapData_` | the three overlays and their map entry functions |
-| `Owner_`, `State_` | copying a unit, and the Battle Arena's unused empty callback |
+| `State_` | the Battle Arena's unused empty callback |
 | `Window_`, `Text_`, `Icon_`, `TextPrinter_`, `WindowPalette_`, `Palette_`, `Resource_`, `Render_`, `Task_` | windows, text, icons, palettes, VRAM entries and [tasks](../../glossary.md#task), whose main code is in other folders |
 | `PagedList_` | the equipment pages' item lists: building a page, its page numbers and moving through it |
 

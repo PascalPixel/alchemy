@@ -25,7 +25,7 @@
 #define DJINN_ENTRY_RECOVERY_SHIFT 17
 #define DJINN_ENTRY_END 0x80000000 ///< ends the list
 
-/// The battle Djinn menu for unit `owner`: its Djinn in element and number
+/// The battle Djinn menu for unit `member`: its Djinn in element and number
 /// order, five to a page, set ones plain, standby ones in colour 2 and
 /// recovering ones in colour 4 with their turns, the one under the cursor
 /// described above the list with its change preview beside it
@@ -36,7 +36,7 @@
 /// recovering Djinni, or one an earlier command this round chose
 /// (BattleMenuWork.chosenDjinn), is refused. Battle_CollectPartyCommands runs
 /// it for the Djinn command; the Djinn tutorial presses A every 60 frames.
-s32 BattleDjinnMenu_Run(s32 owner, s32 unused) {
+s32 BattleDjinnMenu_Run(s32 member, s32 unused) {
   struct CursorSprite cursorStorage;
   u16 messageText[64];
   struct WindowWork *work;
@@ -95,7 +95,7 @@ s32 BattleDjinnMenu_Run(s32 owner, s32 unused) {
   Text_UseExtraTiles(1);
   listWindow = Window_Create(21, 9, 9, 11, 6);
   BATTLE_MENU_GET_CURSOR(firstEntry, selectedRow, preferredRow);
-  unit = Unit_GetFar(owner);
+  unit = Unit_GetFar(member);
 
   // Pack Djinn state and recovery turns before paging the selection list.
   for (element = 0; element <= 3; element++) {
@@ -113,10 +113,10 @@ s32 BattleDjinnMenu_Run(s32 owner, s32 unused) {
         // (units above 7 are enemies). When it is not there, k ends at the
         // count and the turns read come from the first unused entry.
         list = &((struct DjinnRecoveryTable *)Djinn_GetRecoveryTableFar(
-                     (u32)owner > 7 ? 1 : 0))
+                     (u32)member > 7 ? 1 : 0))
                     ->list;
         for (k = 0; k < list->count; k++) {
-          if (list->entries[k].unitId == owner &&
+          if (list->entries[k].unitId == member &&
               list->entries[k].element == element &&
               list->entries[k].index == djinnIndex) {
             break;
@@ -216,7 +216,7 @@ s32 BattleDjinnMenu_Run(s32 owner, s32 unused) {
             }
           } else {
             previewWindow = (struct Window *)BattleDjinnMenu_ShowChangePreview(
-                previewWindow, owner, (s32)selectedDjinn, previewPage,
+                previewWindow, member, (s32)selectedDjinn, previewPage,
                 &previewPages);
             Message_CopyExpanded(MsgBattleSummonStandby, messageText,
                                  BATTLE_MENU_MESSAGE_CAPACITY);
@@ -224,7 +224,7 @@ s32 BattleDjinnMenu_Run(s32 owner, s32 unused) {
           }
         } else {
           previewWindow = (struct Window *)BattleDjinnMenu_ShowChangePreview(
-              previewWindow, owner, (s32)selectedDjinn, previewPage,
+              previewWindow, member, (s32)selectedDjinn, previewPage,
               &previewPages);
           BATTLE_MENU_MESSAGE_COPY((s32)(((selectedDjinn & 0xf00) >> 8) * 20 +
                                          (selectedDjinn & 0xff)) +

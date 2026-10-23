@@ -39,7 +39,7 @@ void Window_InitializeWork(s32 unused);
 s32 Window_UpdateOrCreate(struct Window **handle, s32 x, s32 y, s32 w, s32 h,
                           s32 flags);
 void Window_CloseIfOpen(struct Window **handle, s32 style);
-void StatusPanel_Draw(struct Window *unused, s32 owner, s32 slot, s32 mode);
+void StatusPanel_Draw(struct Window *unused, s32 member, s32 slot, s32 mode);
 void Text_DrawNumberRightAligned(s32 number, struct Window *window, s32 x,
                                  s32 y);
 void StatusPanel_DrawHpPp(struct Unit *unit, struct Window *window);
@@ -95,7 +95,7 @@ void DjinnFigures_ClearSlotsAndScheduleAlt(void);
 #define LIST_PAGE_SIZE 5
 
 s32 ItemMenu_Run(void);
-s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut);
+s32 ItemMenu_RunCommands(s32 *memberOut, s32 *targetOut, s32 *itemOut);
 s32 ItemMenu_Use(void);
 void ItemMenu_Initialize(s32 x, s32 y, s32 mode, s32 columns);
 void Menu_SpawnIconEntries(struct ItemMenuWork *menu, struct Window *window);
@@ -103,28 +103,28 @@ void ItemMenu_HideAllIcons(void);
 void ItemMenu_HidePageIcons(void);
 void ItemMenu_Close(void);
 s32 ItemMenu_SelectMember(s32 pane);
-s32 ItemMenu_RunMemberSelection(u16 *ownerIds, u16 *items);
-void ItemMenu_OpenCategory(s32 ownerId);
+s32 ItemMenu_RunMemberSelection(u16 *memberIds, u16 *items);
+void ItemMenu_OpenCategory(s32 memberId);
 s32 ItemMenu_SelectTarget(s32 mode);
 void EquipmentMenu_UpdateCompatibilityIndicators(void);
 void EquipmentMenu_StartCompatibilityIndicators(void);
 s32 ItemMenu_IsSpecial(s32 itemId);
 void ItemMenu_DrawMessage(s32 unused, s32 message);
 void Menu_HideEmptyEntryIcons(const u16 *items);
-s32 ItemMenu_CountItems(s32 ownerId);
-s32 ItemMenu_GetItemQuantity(s32 ownerId, s32 itemId);
+s32 ItemMenu_CountItems(s32 memberId);
+s32 ItemMenu_GetItemQuantity(s32 memberId, s32 itemId);
 s32 ItemMenu_CollectItems(struct Unit *unit, u16 *items, s32 mode);
 void ItemMenu_DrawIcons(u16 *inventoryEntries, s32 iconStyle);
-void ItemMenu_RefreshMember(s32 ownerId, s32 mode);
+void ItemMenu_RefreshMember(s32 memberId, s32 mode);
 void ItemMenu_NoOp(void);
-void ItemMenu_DrawEquipPreview(s32 owner, s32 slot, s32 mode, s32 target);
-s32 Inventory_RemoveFirstUnflagged(s32 ownerId);
+void ItemMenu_DrawEquipPreview(s32 member, s32 slot, s32 mode, s32 target);
+s32 Inventory_RemoveFirstUnflagged(s32 memberId);
 s32 ItemMenu_CommandCursorX(s32 column, s32 row);
 s32 ItemMenu_CommandCursorY(s32 column, s32 row);
 s32 ItemMenu_ChooseCommand(void);
 void ItemMenu_BuildCommands(s8 *commandStates);
 void ItemMenu_DrawCommands(const s8 *commandStates, struct Window *window);
-s32 Item_ClassifyUseMode(s32 ownerId, s32 inventoryEntry);
+s32 Item_ClassifyUseMode(s32 memberId, s32 inventoryEntry);
 void ItemMenu_TryBreak(void);
 s32 ItemMenu_OpenDetail(s32 itemIndex);
 s32 ItemMenu_ShowDetails(s32 value);
@@ -144,7 +144,7 @@ s32 ItemMenu_ConfirmDrop(s32 item);
 s32 ItemMenu_ConfirmEquip(s32 unused);
 void Resource_LoadPairedBlocks(void);
 s32 ItemMenu_BuildPagedList(struct PagedList *result, s32 index);
-s32 ItemMenu_DrawItemDetailPage(struct Window *window, void *ownerWork,
+s32 ItemMenu_DrawItemDetailPage(struct Window *window, void *memberWork,
                                 struct PagedList *pageState);
 s32 ItemMenu_DrawNamePage(struct Window *window, s32 unused,
                           const struct PagedList *pageState);
@@ -153,16 +153,16 @@ void ItemMenu_ItemNamePageNoOp(void);
 s32 ItemMenu_RunList(s32 sideIndex);
 
 s32 PsynergyMenu_Run(void);
-s32 PsynergyMenu_RunSteps(s32 *outOwner, s32 *unused, s32 *outAction);
+s32 PsynergyMenu_RunSteps(s32 *outMember, s32 *unused, s32 *outAction);
 s32 PsynergyMenu_ClassifySelectedPsynergy(void);
 s32 PsynergyMenu_SelectPartySlot(s32 partySlot);
-s32 PsynergyMenu_SelectMember(u16 *ownerIds, u16 *unused);
-void PsynergyMenu_RefreshMemberPsynergy(s32 ownerId);
+s32 PsynergyMenu_SelectMember(u16 *memberIds, u16 *unused);
+void PsynergyMenu_RefreshMemberPsynergy(s32 memberId);
 s32 PsynergyMenu_ReturnTrue(void);
 void PsynergyMenu_NoOp(void);
 s32 PsynergyMenu_SelectTarget(s32 targetMode);
-s32 PsynergyMenu_SetShortcut(s32 ownerId, s32 actionId, s32 shortcutIndex);
-s32 PsynergyMenu_DrawShortcuts(struct Window *window, s32 owner);
+s32 PsynergyMenu_SetShortcut(s32 memberId, s32 actionId, s32 shortcutIndex);
+s32 PsynergyMenu_DrawShortcuts(struct Window *window, s32 member);
 void PsynergyMenu_CreateEntryGrid(void);
 void PsynergyMenu_CloseWindows(void);
 void PsynergyMenu_DrawPsynergyIcons(u16 *psynergies);
@@ -195,11 +195,11 @@ void SummaryScreen_DrawSelectionLabels(struct Window *target, s32 selected,
 void SummaryScreen_ShowMemberProgressMessage(struct Window *destination,
                                              s32 messageVariant,
                                              s32 preserveVariant);
-void SummaryScreen_DrawStatusAilments(struct Window *window, s32 ownerId,
+void SummaryScreen_DrawStatusAilments(struct Window *window, s32 memberId,
                                       s32 mode);
 void Runtime_RunBusyWaitDelay(void);
-void ItemMenu_DrawMemberStatus(struct Window *window, s32 ownerId, s32 flags);
-s32 SummaryScreen_BuildAvailability(u8 *ailments, s32 requested, s32 ownerId);
+void ItemMenu_DrawMemberStatus(struct Window *window, s32 memberId, s32 flags);
+s32 SummaryScreen_BuildAvailability(u8 *ailments, s32 requested, s32 memberId);
 s32 PagedList_Build(struct PagedList *result, s32 index);
 void Menu_BuildPatternTiles(void);
 void PsynergyMenu_DrawRange(struct Window *window, s32 x, s32 y, s32 range,
@@ -210,7 +210,7 @@ s32 PsynergyMenu_DrawListPage(struct Window *window, s32 unused,
                               const struct PagedList *res);
 s32 PsynergyMenu_SelectAction(void);
 s32 PsynergyMenu_ActionReturnTrue(void);
-void PsynergyMenu_DrawPreparedPsynergyIcons(const void *unused, s32 ownerId);
+void PsynergyMenu_DrawPreparedPsynergyIcons(const void *unused, s32 memberId);
 void PsynergyMenu_PreparedIconsNoOp(void);
 void PsynergyMenu_PreparedIconsSecondNoOp(void);
 s32 ItemMenu_DrawEquipPage(struct Window *window, s32 unused,
@@ -220,7 +220,7 @@ s32 Shop_DrawItemPage(struct Window *window, s32 unused,
 s32 ItemMenu_SelectItem(void);
 s32 Menu_MoveGridCursor(s32 *columnOut, s32 *rowOut, s32 direction);
 s32 Menu_ReservedStatusOne(void);
-void ItemMenu_DrawCategory(struct Window *window, s32 ownerId, s32 mode);
+void ItemMenu_DrawCategory(struct Window *window, s32 memberId, s32 mode);
 void ItemMenu_DrawEquippedItemNames(struct Window *window, u16 *items);
 void Menu_PlaceEntryObjectsInGrid(s32 originX, s32 originY, s32 columns);
 void Menu_PlaceEntryObjectInGrid(struct WindowSprite *icon, s32 index,
@@ -234,7 +234,7 @@ s32 SummaryScreen_UpdateSelectionIcons(const u8 *enabled);
 
 void Item_PrepareUsePalette(void);
 void Item_UseNoOpCallback(void);
-s32 Item_Use(s32 slot, s32 ownerId, s32 targetId);
+s32 Item_Use(s32 slot, s32 memberId, s32 targetId);
 s32 Item_ReturnOne(void);
 s32 Ability_ApplyToTargets(s32 effectId, s32 sourceId, s32 targetId,
                            s32 fixedScale);
@@ -268,9 +268,9 @@ void Window_SetInteriorRectPalette(void *window, s32 x, s32 y, s32 width,
                                    s32 height, s32 palette);
 s32 DjinnMenu_ShowHelp(void);
 s32 DjinnMenu_SelectDjinn(s32 mode);
-s32 Djinn_ListUnitEntries(u16 *entriesOut, s32 ownerId, s32 element);
+s32 Djinn_ListUnitEntries(u16 *entriesOut, s32 memberId, s32 element);
 s32 DjinnMenu_DrawPairPreview(s32 mode, s32 pageIndex);
-s32 DjinnMenu_DrawStatPreview(struct Window *window, s32 x, s32 y, s32 ownerId,
+s32 DjinnMenu_DrawStatPreview(struct Window *window, s32 x, s32 y, s32 memberId,
                               s32 removePairSlot, s32 addPairSlot,
                               s32 previewMode, s32 page, s32 side);
 
@@ -285,8 +285,8 @@ void Menu_StartPartyFiguresWalking(void);
 
 s32 PsynergyList_RunCompareLoop(u32 mode);
 s32 DjinnMenu_ShowMemberStatus(void);
-s32 Djinn_MarkBalancedEntries(s8 *requiresTrade, s32 sourceOwnerColumn);
-s32 Djinn_CheckTurnBalance(s32 sourceOwnerColumn, s32 targetOwnerColumn);
+s32 Djinn_MarkBalancedEntries(s8 *requiresTrade, s32 sourceMemberColumn);
+s32 Djinn_CheckTurnBalance(s32 sourceMemberColumn, s32 targetMemberColumn);
 void Djinn_CountTurns(u8 *ownedCounts);
 void Resource_LoadPairedBlocksIfAvailable(void);
 void IconMenu_ReleaseArrows(void);

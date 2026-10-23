@@ -150,15 +150,15 @@ void WindowSprite_CreateAbilityIcon(struct Window *input, s32 x, s32 y,
 s32 WindowSprite_CreateAbilityIcon(struct Window *input, s32 x, s32 y,
                                    s32 ability);
 #endif
-struct Window *BattleDjinnMenu_ShowChangePreview(struct Window *win, s32 owner,
+struct Window *BattleDjinnMenu_ShowChangePreview(struct Window *win, s32 member,
                                                  s32 code, s32 page,
                                                  s32 *pageCount);
-s32 BattleSummaryScreen_Run(u16 *list, s32 listCount, s32 owner);
-s32 BattleDjinnMenu_Run(s32 owner, s32 unused);
+s32 BattleSummaryScreen_Run(u16 *list, s32 listCount, s32 member);
+s32 BattleDjinnMenu_Run(s32 member, s32 unused);
 s32 BattleSummonMenu_Run(s32 unused0, s32 unused1, const u8 *standby);
 s32 Item_ClassifyUseAbility(s32 unit, s32 item);
 void Vram_CopyTile(u32 source_tile, u32 destination_tile);
-s32 BattleItemMenu_Run(s32 owner, u16 *entries, s32 count);
+s32 BattleItemMenu_Run(s32 member, u16 *entries, s32 count);
 s32 BattlePsynergyMenu_Run(s32 unitId, u16 *actions, s32 count);
 s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind);
 void UpdateLinkSessionCountdown(void);
@@ -240,7 +240,7 @@ void String_FormatHexDigits(u32 value, u32 count, u8 *out);
 void DebugFlagEditor_DrawTable(struct Window *window, s32 start_flag);
 s32 DebugFlagEditor_HandleInput(struct Window *window, s32 *page, s32 *cursor);
 void Menu_ReservedNoOp(void);
-void Djinn_SetFoundFlagAndAdd(s32 owner, s32 element, s32 index);
+void Djinn_SetFoundFlagAndAdd(s32 member, s32 element, s32 index);
 s32 PauseMenu_Run(void);
 s32 DebugBrowser_Icons(void);
 s32 DebugBrowser_Portraits(void);

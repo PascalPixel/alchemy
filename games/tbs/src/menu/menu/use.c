@@ -15,7 +15,7 @@ void Item_PrepareUsePalette(void) {
 /// Nothing calls it.
 void Item_UseNoOpCallback(void) {}
 
-/// Uses the item in ownerId's inventory slot on targetId, or on every member
+/// Uses the item in memberId's inventory slot on targetId, or on every member
 /// when its action's range is ABILITY_RANGE_ALL: applies its action at its
 /// plain power (Ability_ApplyToTargets with fixedScale 1). When the action
 /// changed something, an item that is used up (ITEM_USE_CONSUMED) loses one
@@ -23,23 +23,23 @@ void Item_UseNoOpCallback(void) {}
 /// (ITEM_USE_EMPTIES) becomes an Empty Bottle. Returns 0, or
 /// -1 when nothing changed; the result message is left in the work's
 /// messageOffset. Called by ItemMenu_Use.
-s32 Item_Use(s32 slot, s32 ownerId, s32 targetId) {
+s32 Item_Use(s32 slot, s32 memberId, s32 targetId) {
   struct ItemMenuWork *menu;
   s32 useResult;
   s32 itemId;
   struct Unit *unit;
   struct ItemDefinition *item;
 
-  unit = Unit_GetFar(ownerId);
+  unit = Unit_GetFar(memberId);
   menu = gMenuWork;
   itemId = INVENTORY_ITEM_ID_MASK & unit->inventory[slot];
   item = Item_GetDirectFar(itemId);
   useResult = Ability_ApplyToTargets(PSYNERGY_ABILITY_MASK & item->abilityId,
-                                     ownerId, targetId, 1);
+                                     memberId, targetId, 1);
   if (useResult != -1) {
     item = Item_GetDirectFar(unit->inventory[slot]);
     if (item->useType == ITEM_USE_CONSUMED) {
-      Inventory_RemoveFar(ownerId, slot);
+      Inventory_RemoveFar(memberId, slot);
       menu->itemCount = ItemMenu_CollectItems(unit, menu->items, 0);
     }
     if (item->useType == ITEM_USE_EMPTIES) {
@@ -99,7 +99,7 @@ s32 Ability_ApplyToTargets(s32 effectId, s32 sourceId, s32 targetId,
   // A party-wide action keeps the first useful message while visiting targets.
   for (targetIndex = 0; targetIndex < menu->partyCount; targetIndex++) {
     if (effect->range == ABILITY_RANGE_ALL) {
-      targetId = menu->ownerIds[targetIndex];
+      targetId = menu->memberIds[targetIndex];
       target = Unit_GetFar(targetId);
     }
 
@@ -327,7 +327,7 @@ s32 Ability_ApplyToTargets(s32 effectId, s32 sourceId, s32 targetId,
   }
 
   for (targetIndex = 0; targetIndex < menu->partyCount; targetIndex++)
-    Unit_CalculateFar(menu->ownerIds[targetIndex]);
+    Unit_CalculateFar(menu->memberIds[targetIndex]);
   menu->messageOffset = messageOffset;
   return 0;
 }

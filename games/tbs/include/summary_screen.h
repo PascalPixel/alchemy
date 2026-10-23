@@ -19,13 +19,13 @@ struct PsynergyEntry;
 /// The work of the member chooser and the Status menu, in the HEAP_SLOT_MENU
 /// heap slot, which each takes as it opens and frees before it returns.
 struct SummaryScreenWork {
-  u8 unused[8];      ///< no view of the menu work names it (see menu/README.md)
-  s32 selectedOwner; ///< the party member chosen
+  u8 unused[8]; ///< no view of the menu work names it (see menu/README.md)
+  s32 selectedMember;         ///< the party member chosen
   struct Window *moneyWindow; ///< ShopWork's; not named here
-  struct Window *ownerWindow;
-  struct WindowSprite *ownerCursors[2];
-  s8 ownerIndex[2]; ///< each pane's member, in ownerIds
-  s8 ownerCount[2]; ///< members each pane chooses from
+  struct Window *memberWindow;
+  struct WindowSprite *memberCursors[2];
+  s8 memberIndex[2]; ///< each pane's member, in memberIds
+  s8 memberCount[2]; ///< members each pane chooses from
   struct Window *actionWindow;
   struct Window *statusWindow;
   struct Window *unopenedWindow; ///< never given a window; only cleared
@@ -40,17 +40,17 @@ struct SummaryScreenWork {
   u8 selectedRow;
   u8 columnCount;
   u8 rowCount;
-  struct Sprite *ownerObjects[8];
-  s16 ownerX[8];     ///< screen pixels
-  s16 ownerY[8];     ///< screen pixels
-  s32 ownerScale[8]; ///< 16.16 fixed point, 0x10000 full size
+  struct Sprite *memberObjects[8];
+  s16 memberX[8];     ///< screen pixels
+  s16 memberY[8];     ///< screen pixels
+  s32 memberScale[8]; ///< 16.16 fixed point, 0x10000 full size
   u16 selectedSlots[2];
   u16 selectedActions[2];
   struct WindowSprite *statusCursor;
   /// DjinnMenuWork's backdrop pointer at 0x184; no view names the rest.
   u8 aroundBackdrop[0x48];
   u16 entries[32];
-  u16 ownerIds[8]; ///< the party in order (Party_ListMembers)
+  u16 memberIds[8]; ///< the party in order (Party_ListMembers)
   u8 entryCount;
   u8 partyCount;
   u8 selectedIds[2]; ///< each pane's member
@@ -62,17 +62,17 @@ struct SummaryScreenWork {
   s16 rowY[4]; ///< screen pixels
 };
 
-STATIC_ASSERT(offsetof(struct SummaryScreenWork, ownerWindow) == 0x10);
-STATIC_ASSERT(offsetof(struct SummaryScreenWork, ownerCursors) == 0x14);
+STATIC_ASSERT(offsetof(struct SummaryScreenWork, memberWindow) == 0x10);
+STATIC_ASSERT(offsetof(struct SummaryScreenWork, memberCursors) == 0x14);
 STATIC_ASSERT(offsetof(struct SummaryScreenWork, statusWindow) == 0x24);
 STATIC_ASSERT(offsetof(struct SummaryScreenWork, entryIcons) == 0x48);
 STATIC_ASSERT(offsetof(struct SummaryScreenWork, selectorWindow) == 0x10c);
 STATIC_ASSERT(offsetof(struct SummaryScreenWork, selectedColumn) == 0x110);
-STATIC_ASSERT(offsetof(struct SummaryScreenWork, ownerObjects) == 0x114);
-STATIC_ASSERT(offsetof(struct SummaryScreenWork, ownerY) == 0x144);
+STATIC_ASSERT(offsetof(struct SummaryScreenWork, memberObjects) == 0x114);
+STATIC_ASSERT(offsetof(struct SummaryScreenWork, memberY) == 0x144);
 STATIC_ASSERT(offsetof(struct SummaryScreenWork, selectedSlots) == 0x174);
 STATIC_ASSERT(offsetof(struct SummaryScreenWork, statusCursor) == 0x17c);
-STATIC_ASSERT(offsetof(struct SummaryScreenWork, ownerIds) == 0x208);
+STATIC_ASSERT(offsetof(struct SummaryScreenWork, memberIds) == 0x208);
 STATIC_ASSERT(offsetof(struct SummaryScreenWork, selectedIds) == 0x21a);
 STATIC_ASSERT(offsetof(struct SummaryScreenWork, page) == 0x220);
 STATIC_ASSERT(offsetof(struct SummaryScreenWork, rowObjects) == 0x224);

@@ -281,8 +281,8 @@ s32 Ability_ApplyToTargets(s32 effectId, s32 sourceId, s32 targetId,
       break;
 
     // Quartz's and Dew's revivals set no change, so they would report -1
-    // after reviving; no item has either action (items.tsv), and no Djinni is
-    // used from the menus. Dew gives 7/10 of maximum HP here.
+    // after reviving; no item has either action (item_table.c), and no Djinni
+    // is used from the menus. Dew gives 7/10 of maximum HP here.
     case ABILITY_EFFECT_REVIVE_HALF:
       if (target->hp == 0) {
         target->hp = target->hpMax / 2;

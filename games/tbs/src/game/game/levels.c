@@ -240,7 +240,7 @@ struct LevelUpResult *Unit_CheckLevelUp(s32 unitId,
 struct CharacterDefinition *Character_GetDefinition(s32 index) {
   struct CharacterDefinition *base;
 
-  base = gCharacter_DefinitionTable;
+  base = (struct CharacterDefinition *)gCharacter_DefinitionTable;
   return &base[index];
 }
 

@@ -20,7 +20,7 @@ s32 Shop_ListAvailableArtifacts(void) {
   itemId = 0;
   stockItems = shop->stockItemIds;
   // The shop's type is the equipment group it sells (enum ShopType). Every
-  // 9-bit id is tried, past the 324 rows of items.tsv too.
+  // 9-bit id is tried, past the 324 rows of item_table.c too.
   do {
     equipmentGroup = shop->shopType;
     if (equipmentGroup == Item_GetEquipmentGroupFar(itemId) &&

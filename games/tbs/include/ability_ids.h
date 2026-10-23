@@ -41,7 +41,7 @@ enum AbilityId {
   ABILITY_MINT = 0x108,
   ABILITY_LUCKY_PEPPER = 0x109,
   /// The first Djinni's ability: Djinni n of element e has ability
-  /// ABILITY_DJINNI_FIRST + e * DJINN_PER_ELEMENT + n, djinn.tsv's ability
+  /// ABILITY_DJINNI_FIRST + e * DJINN_PER_ELEMENT + n, djinn_table.c's ability
   /// column, whose name is the Djinni's.
   ABILITY_DJINNI_FIRST = 0x12c,
   /// The summons: four to an element, in the order of their Djinn costs, each

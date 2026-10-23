@@ -250,8 +250,8 @@ PARTY_DEFINE_ADJUST(Party_AdjustShopGifts, shopGifts, 28)
 /// start and each round. `output` needs room for 17 bytes: up to 16 summons
 /// and SUMMON_END.
 s32 Summon_ListLearned(u8 *output) {
-  u8 *source = gSummon_OrderList;
-  u8 *end = gSummon_OrderList + 15;
+  u8 *source = (u8 *)gSummon_OrderList;
+  u8 *end = (u8 *)gSummon_OrderList + 15;
   s32 count = 0;
 
   do {

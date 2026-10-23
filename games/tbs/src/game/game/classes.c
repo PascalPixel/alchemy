@@ -4,14 +4,9 @@
 
 #include "../game_internal.h"
 
-/// The elemental power and resistance of one element level, in
-/// gElement_PowerResistByLevel, which Unit_CalculateBaseElements reads by whole
-/// level, 0 to 15.
-struct ElementLevelBonus {
-  u16 power; ///< base power, before the tenths of a level
-  u16 res;   ///< base resistance, likewise
-};
-
+// Declared here without const, as Camelot's code read it: with const,
+// alchemy-gcc orders Unit_CalculateBaseElements' loads differently in tbs-it.
+// element_table.c defines it, const, in ROM.
 extern struct ElementLevelBonus gElement_PowerResistByLevel[16];
 
 /// Returns the class series of a character whose strongest element is
@@ -231,7 +226,7 @@ s32 Class_Determine(s32 character, const u8 *djinn) {
 /// Returns class `classId`'s definition: its series, element requirements,
 /// stat multipliers and the Psynergy it teaches by level.
 struct ClassDefinition *Class_GetDefinition(s32 classId) {
-  return &gClass_DefinitionTable[classId];
+  return (struct ClassDefinition *)&gClass_DefinitionTable[classId];
 }
 
 /// Works out a character's class again after its Djinn change, then its

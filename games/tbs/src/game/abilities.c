@@ -183,37 +183,31 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
     // ?
     {
         .targetMode = ABILITY_TARGET_ONE,
-        .flags = ABILITY_FORMULA_BLANK,
         .element = ELEMENT_VENUS,
     },
     // ?
     {
         .targetMode = ABILITY_TARGET_ONE,
-        .flags = ABILITY_FORMULA_BLANK,
         .element = ELEMENT_VENUS,
     },
     // ?
     {
         .targetMode = ABILITY_TARGET_ONE,
-        .flags = ABILITY_FORMULA_BLANK,
         .element = ELEMENT_VENUS,
     },
     // ?
     {
         .targetMode = ABILITY_TARGET_ONE,
-        .flags = ABILITY_FORMULA_BLANK,
         .element = ELEMENT_VENUS,
     },
     // ?
     {
         .targetMode = ABILITY_TARGET_ONE,
-        .flags = ABILITY_FORMULA_BLANK,
         .element = ELEMENT_VENUS,
     },
     // ?
     {
         .targetMode = ABILITY_TARGET_ONE,
-        .flags = ABILITY_FORMULA_BLANK,
         .element = ELEMENT_VENUS,
     },
     // Frost
@@ -371,37 +365,31 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
     // ?
     {
         .targetMode = ABILITY_TARGET_ONE,
-        .flags = ABILITY_FORMULA_BLANK,
         .element = ELEMENT_VENUS,
     },
     // ?
     {
         .targetMode = ABILITY_TARGET_ONE,
-        .flags = ABILITY_FORMULA_BLANK,
         .element = ELEMENT_VENUS,
     },
     // ?
     {
         .targetMode = ABILITY_TARGET_ONE,
-        .flags = ABILITY_FORMULA_BLANK,
         .element = ELEMENT_VENUS,
     },
     // ?
     {
         .targetMode = ABILITY_TARGET_ONE,
-        .flags = ABILITY_FORMULA_BLANK,
         .element = ELEMENT_VENUS,
     },
     // ?
     {
         .targetMode = ABILITY_TARGET_ONE,
-        .flags = ABILITY_FORMULA_BLANK,
         .element = ELEMENT_VENUS,
     },
     // ?
     {
         .targetMode = ABILITY_TARGET_ONE,
-        .flags = ABILITY_FORMULA_BLANK,
         .element = ELEMENT_VENUS,
     },
     // Flare
@@ -557,37 +545,31 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
     // ?
     {
         .targetMode = ABILITY_TARGET_ONE,
-        .flags = ABILITY_FORMULA_BLANK,
         .element = ELEMENT_VENUS,
     },
     // ?
     {
         .targetMode = ABILITY_TARGET_ONE,
-        .flags = ABILITY_FORMULA_BLANK,
         .element = ELEMENT_VENUS,
     },
     // ?
     {
         .targetMode = ABILITY_TARGET_ONE,
-        .flags = ABILITY_FORMULA_BLANK,
         .element = ELEMENT_VENUS,
     },
     // ?
     {
         .targetMode = ABILITY_TARGET_ONE,
-        .flags = ABILITY_FORMULA_BLANK,
         .element = ELEMENT_VENUS,
     },
     // ?
     {
         .targetMode = ABILITY_TARGET_ONE,
-        .flags = ABILITY_FORMULA_BLANK,
         .element = ELEMENT_VENUS,
     },
     // ?
     {
         .targetMode = ABILITY_TARGET_ONE,
-        .flags = ABILITY_FORMULA_BLANK,
         .element = ELEMENT_VENUS,
     },
     // Bolt
@@ -744,55 +726,46 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
     // ?
     {
         .targetMode = ABILITY_TARGET_ONE,
-        .flags = ABILITY_FORMULA_BLANK,
         .element = ELEMENT_VENUS,
     },
     // ?
     {
         .targetMode = ABILITY_TARGET_ONE,
-        .flags = ABILITY_FORMULA_BLANK,
         .element = ELEMENT_VENUS,
     },
     // ?
     {
         .targetMode = ABILITY_TARGET_ONE,
-        .flags = ABILITY_FORMULA_BLANK,
         .element = ELEMENT_VENUS,
     },
     // ?
     {
         .targetMode = ABILITY_TARGET_ONE,
-        .flags = ABILITY_FORMULA_BLANK,
         .element = ELEMENT_VENUS,
     },
     // ?
     {
         .targetMode = ABILITY_TARGET_ONE,
-        .flags = ABILITY_FORMULA_BLANK,
         .element = ELEMENT_VENUS,
     },
     // ?
     {
         .targetMode = ABILITY_TARGET_ONE,
-        .flags = ABILITY_FORMULA_BLANK,
         .element = ELEMENT_VENUS,
     },
     // ?
     {
         .targetMode = ABILITY_TARGET_ONE,
-        .flags = ABILITY_FORMULA_BLANK,
         .element = ELEMENT_VENUS,
     },
     // ?
     {
         .targetMode = ABILITY_TARGET_ONE,
-        .flags = ABILITY_FORMULA_BLANK,
         .element = ELEMENT_VENUS,
     },
     // ?
     {
         .targetMode = ABILITY_TARGET_ONE,
-        .flags = ABILITY_FORMULA_BLANK,
         .element = ELEMENT_VENUS,
     },
     // Cure
@@ -1197,61 +1170,51 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
     // ?
     {
         .targetMode = ABILITY_TARGET_ONE,
-        .flags = ABILITY_FORMULA_BLANK,
         .element = ELEMENT_VENUS,
     },
     // ?
     {
         .targetMode = ABILITY_TARGET_ONE,
-        .flags = ABILITY_FORMULA_BLANK,
         .element = ELEMENT_VENUS,
     },
     // ?
     {
         .targetMode = ABILITY_TARGET_ONE,
-        .flags = ABILITY_FORMULA_BLANK,
         .element = ELEMENT_VENUS,
     },
     // ?
     {
         .targetMode = ABILITY_TARGET_ONE,
-        .flags = ABILITY_FORMULA_BLANK,
         .element = ELEMENT_VENUS,
     },
     // ?
     {
         .targetMode = ABILITY_TARGET_ONE,
-        .flags = ABILITY_FORMULA_BLANK,
         .element = ELEMENT_VENUS,
     },
     // ?
     {
         .targetMode = ABILITY_TARGET_ONE,
-        .flags = ABILITY_FORMULA_BLANK,
         .element = ELEMENT_VENUS,
     },
     // ?
     {
         .targetMode = ABILITY_TARGET_ONE,
-        .flags = ABILITY_FORMULA_BLANK,
         .element = ELEMENT_VENUS,
     },
     // ?
     {
         .targetMode = ABILITY_TARGET_ONE,
-        .flags = ABILITY_FORMULA_BLANK,
         .element = ELEMENT_VENUS,
     },
     // ?
     {
         .targetMode = ABILITY_TARGET_ONE,
-        .flags = ABILITY_FORMULA_BLANK,
         .element = ELEMENT_VENUS,
     },
     // ?
     {
         .targetMode = ABILITY_TARGET_ONE,
-        .flags = ABILITY_FORMULA_BLANK,
         .element = ELEMENT_VENUS,
     },
     // Move
@@ -1367,55 +1330,46 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
     // ?
     {
         .targetMode = ABILITY_TARGET_ONE,
-        .flags = ABILITY_FORMULA_BLANK,
         .element = ELEMENT_VENUS,
     },
     // ?
     {
         .targetMode = ABILITY_TARGET_ONE,
-        .flags = ABILITY_FORMULA_BLANK,
         .element = ELEMENT_VENUS,
     },
     // ?
     {
         .targetMode = ABILITY_TARGET_ONE,
-        .flags = ABILITY_FORMULA_BLANK,
         .element = ELEMENT_VENUS,
     },
     // ?
     {
         .targetMode = ABILITY_TARGET_ONE,
-        .flags = ABILITY_FORMULA_BLANK,
         .element = ELEMENT_VENUS,
     },
     // ?
     {
         .targetMode = ABILITY_TARGET_ONE,
-        .flags = ABILITY_FORMULA_BLANK,
         .element = ELEMENT_VENUS,
     },
     // ?
     {
         .targetMode = ABILITY_TARGET_ONE,
-        .flags = ABILITY_FORMULA_BLANK,
         .element = ELEMENT_VENUS,
     },
     // ?
     {
         .targetMode = ABILITY_TARGET_ONE,
-        .flags = ABILITY_FORMULA_BLANK,
         .element = ELEMENT_VENUS,
     },
     // ?
     {
         .targetMode = ABILITY_TARGET_ONE,
-        .flags = ABILITY_FORMULA_BLANK,
         .element = ELEMENT_VENUS,
     },
     // ?
     {
         .targetMode = ABILITY_TARGET_ONE,
-        .flags = ABILITY_FORMULA_BLANK,
         .element = ELEMENT_VENUS,
     },
     // Dragon Cloud
@@ -1796,79 +1750,66 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
     // ?
     {
         .targetMode = ABILITY_TARGET_ONE,
-        .flags = ABILITY_FORMULA_BLANK,
         .element = ELEMENT_VENUS,
     },
     // ?
     {
         .targetMode = ABILITY_TARGET_ONE,
-        .flags = ABILITY_FORMULA_BLANK,
         .element = ELEMENT_VENUS,
     },
     // ?
     {
         .targetMode = ABILITY_TARGET_ONE,
-        .flags = ABILITY_FORMULA_BLANK,
         .element = ELEMENT_VENUS,
     },
     // ?
     {
         .targetMode = ABILITY_TARGET_ONE,
-        .flags = ABILITY_FORMULA_BLANK,
         .element = ELEMENT_VENUS,
     },
     // ?
     {
         .targetMode = ABILITY_TARGET_ONE,
-        .flags = ABILITY_FORMULA_BLANK,
         .element = ELEMENT_VENUS,
     },
     // ?
     {
         .targetMode = ABILITY_TARGET_ONE,
-        .flags = ABILITY_FORMULA_BLANK,
         .element = ELEMENT_VENUS,
     },
     // ?
     {
         .targetMode = ABILITY_TARGET_ONE,
-        .flags = ABILITY_FORMULA_BLANK,
         .element = ELEMENT_VENUS,
     },
     // ?
     {
         .targetMode = ABILITY_TARGET_ONE,
-        .flags = ABILITY_FORMULA_BLANK,
         .element = ELEMENT_VENUS,
     },
     // ?
     {
         .targetMode = ABILITY_TARGET_ONE,
-        .flags = ABILITY_FORMULA_BLANK,
         .element = ELEMENT_VENUS,
     },
     // ?
     {
         .targetMode = ABILITY_TARGET_ONE,
-        .flags = ABILITY_FORMULA_BLANK,
         .element = ELEMENT_VENUS,
     },
     // ?
     {
         .targetMode = ABILITY_TARGET_ONE,
-        .flags = ABILITY_FORMULA_BLANK,
         .element = ELEMENT_VENUS,
     },
     // ?
     {
         .targetMode = ABILITY_TARGET_ONE,
-        .flags = ABILITY_FORMULA_BLANK,
         .element = ELEMENT_VENUS,
     },
     // ?
     {
         .targetMode = ABILITY_TARGET_ONE,
-        .flags = ABILITY_FORMULA_BLANK,
         .element = ELEMENT_VENUS,
     },
     // Terra Strike
@@ -2129,67 +2070,56 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
     // ?
     {
         .targetMode = ABILITY_TARGET_ONE,
-        .flags = ABILITY_FORMULA_BLANK,
         .element = ELEMENT_VENUS,
     },
     // ?
     {
         .targetMode = ABILITY_TARGET_ONE,
-        .flags = ABILITY_FORMULA_BLANK,
         .element = ELEMENT_VENUS,
     },
     // ?
     {
         .targetMode = ABILITY_TARGET_ONE,
-        .flags = ABILITY_FORMULA_BLANK,
         .element = ELEMENT_VENUS,
     },
     // ?
     {
         .targetMode = ABILITY_TARGET_ONE,
-        .flags = ABILITY_FORMULA_BLANK,
         .element = ELEMENT_VENUS,
     },
     // ?
     {
         .targetMode = ABILITY_TARGET_ONE,
-        .flags = ABILITY_FORMULA_BLANK,
         .element = ELEMENT_VENUS,
     },
     // ?
     {
         .targetMode = ABILITY_TARGET_ONE,
-        .flags = ABILITY_FORMULA_BLANK,
         .element = ELEMENT_VENUS,
     },
     // ?
     {
         .targetMode = ABILITY_TARGET_ONE,
-        .flags = ABILITY_FORMULA_BLANK,
         .element = ELEMENT_VENUS,
     },
     // ?
     {
         .targetMode = ABILITY_TARGET_ONE,
-        .flags = ABILITY_FORMULA_BLANK,
         .element = ELEMENT_VENUS,
     },
     // ?
     {
         .targetMode = ABILITY_TARGET_ONE,
-        .flags = ABILITY_FORMULA_BLANK,
         .element = ELEMENT_VENUS,
     },
     // ?
     {
         .targetMode = ABILITY_TARGET_ONE,
-        .flags = ABILITY_FORMULA_BLANK,
         .element = ELEMENT_VENUS,
     },
     // ?
     {
         .targetMode = ABILITY_TARGET_ONE,
-        .flags = ABILITY_FORMULA_BLANK,
         .element = ELEMENT_VENUS,
     },
     // Herb
@@ -2267,7 +2197,6 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
     // ?
     {
         .targetMode = ABILITY_TARGET_ONE,
-        .flags = ABILITY_FORMULA_BLANK,
         .element = ELEMENT_VENUS,
     },
     // Power Bread
@@ -2321,7 +2250,6 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
     // ?
     {
         .targetMode = ABILITY_TARGET_ONE,
-        .flags = ABILITY_FORMULA_BLANK,
         .element = ELEMENT_VENUS,
     },
     // Smoke Bomb
@@ -2359,175 +2287,146 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
     // ?
     {
         .targetMode = ABILITY_TARGET_ONE,
-        .flags = ABILITY_FORMULA_BLANK,
         .element = ELEMENT_VENUS,
     },
     // ?
     {
         .targetMode = ABILITY_TARGET_ONE,
-        .flags = ABILITY_FORMULA_BLANK,
         .element = ELEMENT_VENUS,
     },
     // ?
     {
         .targetMode = ABILITY_TARGET_ONE,
-        .flags = ABILITY_FORMULA_BLANK,
         .element = ELEMENT_VENUS,
     },
     // ?
     {
         .targetMode = ABILITY_TARGET_ONE,
-        .flags = ABILITY_FORMULA_BLANK,
         .element = ELEMENT_VENUS,
     },
     // ?
     {
         .targetMode = ABILITY_TARGET_ONE,
-        .flags = ABILITY_FORMULA_BLANK,
         .element = ELEMENT_VENUS,
     },
     // ?
     {
         .targetMode = ABILITY_TARGET_ONE,
-        .flags = ABILITY_FORMULA_BLANK,
         .element = ELEMENT_VENUS,
     },
     // ?
     {
         .targetMode = ABILITY_TARGET_ONE,
-        .flags = ABILITY_FORMULA_BLANK,
         .element = ELEMENT_VENUS,
     },
     // ?
     {
         .targetMode = ABILITY_TARGET_ONE,
-        .flags = ABILITY_FORMULA_BLANK,
         .element = ELEMENT_VENUS,
     },
     // ?
     {
         .targetMode = ABILITY_TARGET_ONE,
-        .flags = ABILITY_FORMULA_BLANK,
         .element = ELEMENT_VENUS,
     },
     // ?
     {
         .targetMode = ABILITY_TARGET_ONE,
-        .flags = ABILITY_FORMULA_BLANK,
         .element = ELEMENT_VENUS,
     },
     // ?
     {
         .targetMode = ABILITY_TARGET_ONE,
-        .flags = ABILITY_FORMULA_BLANK,
         .element = ELEMENT_VENUS,
     },
     // ?
     {
         .targetMode = ABILITY_TARGET_ONE,
-        .flags = ABILITY_FORMULA_BLANK,
         .element = ELEMENT_VENUS,
     },
     // ?
     {
         .targetMode = ABILITY_TARGET_ONE,
-        .flags = ABILITY_FORMULA_BLANK,
         .element = ELEMENT_VENUS,
     },
     // ?
     {
         .targetMode = ABILITY_TARGET_ONE,
-        .flags = ABILITY_FORMULA_BLANK,
         .element = ELEMENT_VENUS,
     },
     // ?
     {
         .targetMode = ABILITY_TARGET_ONE,
-        .flags = ABILITY_FORMULA_BLANK,
         .element = ELEMENT_VENUS,
     },
     // ?
     {
         .targetMode = ABILITY_TARGET_ONE,
-        .flags = ABILITY_FORMULA_BLANK,
         .element = ELEMENT_VENUS,
     },
     // ?
     {
         .targetMode = ABILITY_TARGET_ONE,
-        .flags = ABILITY_FORMULA_BLANK,
         .element = ELEMENT_VENUS,
     },
     // ?
     {
         .targetMode = ABILITY_TARGET_ONE,
-        .flags = ABILITY_FORMULA_BLANK,
         .element = ELEMENT_VENUS,
     },
     // ?
     {
         .targetMode = ABILITY_TARGET_ONE,
-        .flags = ABILITY_FORMULA_BLANK,
         .element = ELEMENT_VENUS,
     },
     // ?
     {
         .targetMode = ABILITY_TARGET_ONE,
-        .flags = ABILITY_FORMULA_BLANK,
         .element = ELEMENT_VENUS,
     },
     // ?
     {
         .targetMode = ABILITY_TARGET_ONE,
-        .flags = ABILITY_FORMULA_BLANK,
         .element = ELEMENT_VENUS,
     },
     // ?
     {
         .targetMode = ABILITY_TARGET_ONE,
-        .flags = ABILITY_FORMULA_BLANK,
         .element = ELEMENT_VENUS,
     },
     // ?
     {
         .targetMode = ABILITY_TARGET_ONE,
-        .flags = ABILITY_FORMULA_BLANK,
         .element = ELEMENT_VENUS,
     },
     // ?
     {
         .targetMode = ABILITY_TARGET_ONE,
-        .flags = ABILITY_FORMULA_BLANK,
         .element = ELEMENT_VENUS,
     },
     // ?
     {
         .targetMode = ABILITY_TARGET_ONE,
-        .flags = ABILITY_FORMULA_BLANK,
         .element = ELEMENT_VENUS,
     },
     // ?
     {
         .targetMode = ABILITY_TARGET_ONE,
-        .flags = ABILITY_FORMULA_BLANK,
         .element = ELEMENT_VENUS,
     },
     // ?
     {
         .targetMode = ABILITY_TARGET_ONE,
-        .flags = ABILITY_FORMULA_BLANK,
         .element = ELEMENT_VENUS,
     },
     // ?
     {
         .targetMode = ABILITY_TARGET_ONE,
-        .flags = ABILITY_FORMULA_BLANK,
         .element = ELEMENT_VENUS,
     },
     // ?
     {
         .targetMode = ABILITY_TARGET_ONE,
-        .flags = ABILITY_FORMULA_BLANK,
         .element = ELEMENT_VENUS,
     },
     // Flint
@@ -3168,13 +3067,11 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
     // ?
     {
         .targetMode = ABILITY_TARGET_ONE,
-        .flags = ABILITY_FORMULA_BLANK,
         .element = ELEMENT_VENUS,
     },
     // ?
     {
         .targetMode = ABILITY_TARGET_ONE,
-        .flags = ABILITY_FORMULA_BLANK,
         .element = ELEMENT_VENUS,
     },
     // Mercury
@@ -3216,13 +3113,11 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
     // ?
     {
         .targetMode = ABILITY_TARGET_ONE,
-        .flags = ABILITY_FORMULA_BLANK,
         .element = ELEMENT_VENUS,
     },
     // ?
     {
         .targetMode = ABILITY_TARGET_ONE,
-        .flags = ABILITY_FORMULA_BLANK,
         .element = ELEMENT_VENUS,
     },
     // Mars
@@ -3264,13 +3159,11 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
     // ?
     {
         .targetMode = ABILITY_TARGET_ONE,
-        .flags = ABILITY_FORMULA_BLANK,
         .element = ELEMENT_VENUS,
     },
     // ?
     {
         .targetMode = ABILITY_TARGET_ONE,
-        .flags = ABILITY_FORMULA_BLANK,
         .element = ELEMENT_VENUS,
     },
     // Jupiter
@@ -3312,109 +3205,91 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
     // ?
     {
         .targetMode = ABILITY_TARGET_ONE,
-        .flags = ABILITY_FORMULA_BLANK,
         .element = ELEMENT_VENUS,
     },
     // ?
     {
         .targetMode = ABILITY_TARGET_ONE,
-        .flags = ABILITY_FORMULA_BLANK,
         .element = ELEMENT_VENUS,
     },
     // ?
     {
         .targetMode = ABILITY_TARGET_ONE,
-        .flags = ABILITY_FORMULA_BLANK,
         .element = ELEMENT_VENUS,
     },
     // ?
     {
         .targetMode = ABILITY_TARGET_ONE,
-        .flags = ABILITY_FORMULA_BLANK,
         .element = ELEMENT_VENUS,
     },
     // ?
     {
         .targetMode = ABILITY_TARGET_ONE,
-        .flags = ABILITY_FORMULA_BLANK,
         .element = ELEMENT_VENUS,
     },
     // ?
     {
         .targetMode = ABILITY_TARGET_ONE,
-        .flags = ABILITY_FORMULA_BLANK,
         .element = ELEMENT_VENUS,
     },
     // ?
     {
         .targetMode = ABILITY_TARGET_ONE,
-        .flags = ABILITY_FORMULA_BLANK,
         .element = ELEMENT_VENUS,
     },
     // ?
     {
         .targetMode = ABILITY_TARGET_ONE,
-        .flags = ABILITY_FORMULA_BLANK,
         .element = ELEMENT_VENUS,
     },
     // ?
     {
         .targetMode = ABILITY_TARGET_ONE,
-        .flags = ABILITY_FORMULA_BLANK,
         .element = ELEMENT_VENUS,
     },
     // ?
     {
         .targetMode = ABILITY_TARGET_ONE,
-        .flags = ABILITY_FORMULA_BLANK,
         .element = ELEMENT_VENUS,
     },
     // ?
     {
         .targetMode = ABILITY_TARGET_ONE,
-        .flags = ABILITY_FORMULA_BLANK,
         .element = ELEMENT_VENUS,
     },
     // ?
     {
         .targetMode = ABILITY_TARGET_ONE,
-        .flags = ABILITY_FORMULA_BLANK,
         .element = ELEMENT_VENUS,
     },
     // ?
     {
         .targetMode = ABILITY_TARGET_ONE,
-        .flags = ABILITY_FORMULA_BLANK,
         .element = ELEMENT_VENUS,
     },
     // ?
     {
         .targetMode = ABILITY_TARGET_ONE,
-        .flags = ABILITY_FORMULA_BLANK,
         .element = ELEMENT_VENUS,
     },
     // ?
     {
         .targetMode = ABILITY_TARGET_ONE,
-        .flags = ABILITY_FORMULA_BLANK,
         .element = ELEMENT_VENUS,
     },
     // ?
     {
         .targetMode = ABILITY_TARGET_ONE,
-        .flags = ABILITY_FORMULA_BLANK,
         .element = ELEMENT_VENUS,
     },
     // ?
     {
         .targetMode = ABILITY_TARGET_ONE,
-        .flags = ABILITY_FORMULA_BLANK,
         .element = ELEMENT_VENUS,
     },
     // ?
     {
         .targetMode = ABILITY_TARGET_ONE,
-        .flags = ABILITY_FORMULA_BLANK,
         .element = ELEMENT_VENUS,
     },
     // Fire Blessing
@@ -3648,19 +3523,16 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
     // ?
     {
         .targetMode = ABILITY_TARGET_ONE,
-        .flags = ABILITY_FORMULA_BLANK,
         .element = ELEMENT_VENUS,
     },
     // ?
     {
         .targetMode = ABILITY_TARGET_ONE,
-        .flags = ABILITY_FORMULA_BLANK,
         .element = ELEMENT_VENUS,
     },
     // ?
     {
         .targetMode = ABILITY_TARGET_ONE,
-        .flags = ABILITY_FORMULA_BLANK,
         .element = ELEMENT_VENUS,
     },
     // Rumble

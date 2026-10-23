@@ -8,8 +8,8 @@
 /// helper); the code is in the files under game/, included here in the order
 /// it has in the ROM. Camelot's own files are not recoverable: the ROM shows
 /// one object, and these parts are ours, cut where one family ends and the
-/// next begins. Its tables are the .tsv files in this folder, built by the .s
-/// files beside them; README.md gives the words and prefixes. Where to start:
+/// next begins. Its tables are the other .c files in this folder, each its own
+/// object; README.md gives the words and prefixes. Where to start:
 ///
 ///   Units           units.c: Unit_Get, Unit_Calculate,
 ///   SaveBlock_InitializeDefaults Items           inventory.c:

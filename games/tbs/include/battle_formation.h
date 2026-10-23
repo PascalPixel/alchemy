@@ -13,7 +13,7 @@ struct Formation {
   /// FORMATION_LAYOUT_SHUFFLED, FORMATION_LAYOUT_INTERLEAVED, or any other
   /// value for the formation's own order.
   u8 layout;
-  u8 memberIds[5];     ///< rows of enemies.tsv (enemy id less ENEMY_ID_FIRST)
+  u8 memberIds[5];     ///< rows of enemies.c (enemy id less ENEMY_ID_FIRST)
   u8 minimumCounts[5]; ///< each always appears this often
   /// Each may appear up to this often while the six sprite slots hold them;
   /// 0 for a member that does not appear.

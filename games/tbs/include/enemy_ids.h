@@ -5,12 +5,12 @@
 /// Enemy ids, named from the English release.
 
 /// The first enemy id: enemy id `ENEMY_ID_FIRST + n` is the enemy in
-/// row n of enemies.tsv (Enemy_GetDefinition); the ids below it are the
+/// row n of enemies.c (Enemy_GetDefinition); the ids below it are the
 /// party's characters. A formation lists its members by row.
 #define ENEMY_ID_FIRST 8
 
 /// The enemies the code tests by id, each named by its row of
-/// enemies.tsv: an enemy id is the row plus ENEMY_ID_FIRST. Where several
+/// enemies.c: an enemy id is the row plus ENEMY_ID_FIRST. Where several
 /// rows share a name and each is fought in one place (its formation in
 /// formations.tsv, chosen from a scripted or mimic zone of encounter.tsv), each
 /// takes that place; the others take `_2` onwards in row order.

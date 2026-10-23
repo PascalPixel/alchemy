@@ -94,7 +94,7 @@ A Gryphon in battle uses Wing Flutter more often than anything else and
 Ward least often. Every enemy has a list of eight
 actions and a habit for choosing among them, and the dice do the rest.
 
-An enemy picks one of the eight abilities in its row of `../game/enemies.tsv`
+An enemy picks one of the eight abilities in its row of `../game/enemies.c`
 by its action strategy (`enum EnemyActionStrategy`). Three strategies draw at
 random by a row of `gBattleAI_ActionWeights`: evenly, falling by 6 an
 entry, or falling steeply from 113 in 256 to 5. The other four take the list
@@ -210,7 +210,7 @@ The command the actor chose decides which ability id the turn carries.
 - `COMMAND_PSYNERGY` is the ability chosen in the menu. Its PP cost is paid here,
   only when the cast goes ahead: a sealed caster, or one short of PP, pays
   nothing.
-- `COMMAND_DJINN` reads the Djinni's ability from `../game/djinn.tsv`
+- `COMMAND_DJINN` reads the Djinni's ability from `../game/djinn_table.c`
   (`Djinn_GetAbilityIdFar`). Only a set Djinni is unleashed, and it then goes
   on standby; one on standby is set again instead, and one still recovering
   says so.
@@ -218,7 +218,7 @@ The command the actor chose decides which ability id the turn carries.
   one, makes the user defend. What using it costs is the item's `use_type`
   ([Game rules](../game/README.md)), spent in `staging.c` after the
   animation.
-- `COMMAND_SUMMON` takes the summon's ability from `../game/summons.tsv` and
+- `COMMAND_SUMMON` takes the summon's ability from `../game/summons.c` and
   marks the standby Djinn it uses.
 - `COMMAND_ENEMY_ABILITY` is an enemy's ability, chosen as above.
 
@@ -457,7 +457,7 @@ Resist decides how much the element counts.
 The element bonus is the actor's Power in the ability's element less the
 target's Resist in it. `Battle_GetElementMultiplier` turns it into a
 multiplier read from the five points of `gElement_PowerResistCurve`
-(`../game/element_curve.s`), which lie on one line: 1 at an even match,
+(`../game/element_table.c`), which lie on one line: 1 at an even match,
 moving half a percent for each point, from 0 at 200 points behind to 2 at
 200 ahead. A blow feels the element at half strength, from 0.5 to 1.5. An
 ability with no element (`ELEMENT_NONE`) gets no bonus. Healing uses the

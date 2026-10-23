@@ -869,15 +869,15 @@ static void VenusLighthouse_ArriveThroughSparkPassage(void) {
 /// him rises above his floor). Reached by stepping onto metatile behavior 32 of
 /// VenusLighthouseFirstFloor, which the map gives the rows the three capped
 /// pillars stand in; code 31, in the rows that bound them, turns the marks off
-/// again (EventScript_ClearEffectTarget), and walking into a pillar from either
-/// pushes it (EventScript_PushDepthPillar).
-static void EventScript_SetLeaderAsEffectTarget(void) {
+/// again (EventScript_LeaveDepthPillarRows), and walking into a pillar from
+/// either pushes it (EventScript_PushDepthPillar).
+static void EventScript_EnterDepthPillarRows(void) {
   gFadeOverlayWork->objectEvent = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
 }
 
 /// Stepping onto metatile behavior 31 of VenusLighthouseFirstFloor, in the rows
 /// that bound the capped pillars': the fade overlay follows no one.
-static void EventScript_ClearEffectTarget(void) {
+static void EventScript_LeaveDepthPillarRows(void) {
   gFadeOverlayWork->objectEvent = NULL;
 }
 
@@ -4876,8 +4876,8 @@ struct MapEvent gVenusLighthouseFirstFloorEvents[] = {
     { MAP_EVENT_COORD, MB_VENUS_LIGHTHOUSE_HOLE, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_FallThroughFloor) },
     { MAP_EVENT_COORD | COORD_EVENT_FLAG_WALKING, 31, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_PushDepthPillar) },
     { MAP_EVENT_COORD | COORD_EVENT_FLAG_WALKING, 32, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_PushDepthPillar) },
-    { MAP_EVENT_COORD, 31, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_ClearEffectTarget) },
-    { MAP_EVENT_COORD, 32, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_SetLeaderAsEffectTarget) },
+    { MAP_EVENT_COORD, 31, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_LeaveDepthPillarRows) },
+    { MAP_EVENT_COORD, 32, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_EnterDepthPillarRows) },
     { MAP_EVENT_COORD | COORD_EVENT_FLAG_WALKING, MB_VENUS_LIGHTHOUSE_CARRY_PILLARS, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_JumpOrPushCarryPillar) },
     { BG_EVENT(BG_EVENT_CHEST), MB_VENUS_LIGHTHOUSE_CHEST, FLAG_VENUS_LIGHTHOUSE_THUNDER_CROWN, FIND_ITEM(ITEM_THUNDER_CROWN) },
     { BG_EVENT(BG_EVENT_SILENT), MB_VENUS_LIGHTHOUSE_PSYNERGY_STONE, FLAG_VENUS_LIGHTHOUSE_FIRST_FLOOR_PSYNERGY_STONE, FIND_PSYNERGY_STONE },

@@ -326,7 +326,7 @@ enum ColosseumEntranceMetatileBehavior {
 enum ColosseumMetatileBehavior {
   /// The line before the waiting room's east passage (EventScript_FinalsStart).
   MB_COLOSSEUM_FINALS_LINE = 12,
-  /// The cells behind it (EventScript_RearmFinalsStart).
+  /// The cells behind it (EventScript_StepBackFromFinalsLine).
   MB_COLOSSEUM_BEHIND_FINALS_LINE = 13
 };
 
@@ -1078,7 +1078,7 @@ static void EventScript_FinalsStart(void) {
 /// Stepping back from the line in the Colosseum's waiting room
 /// (MB_COLOSSEUM_BEHIND_FINALS_LINE) arms the question again
 /// (FLAG_FINALS_LINE_ARMED and FLAG_FINALS_LINE_REACHED).
-static void EventScript_RearmFinalsStart(void) {
+static void EventScript_StepBackFromFinalsLine(void) {
   GameFlag_Clear(FLAG_FINALS_LINE_REACHED);
   GameFlag_Set(FLAG_FINALS_LINE_ARMED);
 }
@@ -2617,6 +2617,6 @@ struct MapEvent gColosseumEventsFromColosseumAzartMatchWest[] = {
     {MAP_EVENT_COORD, MB_COLOSSEUM_FINALS_LINE, FLAG_FINALS_LINE_REACHED,
      EVENT_SCRIPT(EventScript_FinalsStart)},
     {MAP_EVENT_COORD, MB_COLOSSEUM_BEHIND_FINALS_LINE, CONDITION_ALWAYS,
-     EVENT_SCRIPT(EventScript_RearmFinalsStart)},
+     EVENT_SCRIPT(EventScript_StepBackFromFinalsLine)},
     {MAP_EVENTS_END},
 };

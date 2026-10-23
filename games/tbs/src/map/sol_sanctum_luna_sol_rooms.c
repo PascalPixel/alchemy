@@ -183,7 +183,7 @@ const struct MapEvent *SolSanctumLunaSolRooms_GetEvents(void) {
 /// FLAG_SOL_SANCTUM_LUNA_SOL_ROOMS_BLUE_TINTED, clearing the other tint flags;
 /// Kraden's scenes set FLAG_SOL_SANCTUM_LUNA_SOL_ROOMS_SEEN and
 /// FLAG_SOL_SANCTUM_FLOOR_SYMBOL_SEEN.
-static void EventScript_UpdateRoomTint(void) {
+static void EventScript_TintSolRoom(void) {
   s32 paletteActive;
 
   // Test all four quarters' flags without skipping any flag reads.
@@ -241,7 +241,7 @@ static void EventScript_RestorePlainTint(void) {
 /// Kraden sees the Luna room; afterwards back to plain colours. Sets one of
 /// FLAG_SOL_SANCTUM_LUNA_SOL_ROOMS_UNTINTED and
 /// FLAG_SOL_SANCTUM_LUNA_SOL_ROOMS_BLUE_TINTED, clearing the other tint flags.
-static void EventScript_UpdateRoomTintInverse(void) {
+static void EventScript_TintLunaRoom(void) {
   s32 paletteActive;
 
   if (SolSanctumLunaSolRooms_AreAllStatueLightsLit() != 0) {
@@ -275,7 +275,7 @@ static void EventScript_UpdateRoomTintInverse(void) {
 /// rooms to SOL_SANCTUM_WARM_TINT. Sets
 /// FLAG_SOL_SANCTUM_LUNA_SOL_ROOMS_WARM_TINTED and clears the other two tint
 /// flags.
-static void EventScript_ApplySecondRoomTint(void) {
+static void EventScript_TintPassageBetweenRooms(void) {
   if (Script_GetFlag(FLAG_SOL_SANCTUM_LUNA_SOL_ROOMS_WARM_TINTED) == 0) {
     PaletteFade_ApplyTarget(SOL_SANCTUM_WARM_TINT, 1);
     PaletteFade_StartInterpolation(20);
@@ -361,7 +361,7 @@ static void EventScript_KradenFindsHeartOfSanctum(void) {
   struct ObjectEvent *leader;
 
   if (GameFlag_Get(FLAG_SOL_SANCTUM_ERUPTED) != 0) {
-    EventScript_UpdateRoomTint();
+    EventScript_TintSolRoom();
   }
   if (GameFlag_Get(FLAG_SOL_SANCTUM_FOUND) == 0) {
     FieldScript_Start();
@@ -550,7 +550,7 @@ static void EventScript_KradenFindsHeartOfSanctum(void) {
 /// Sol Sanctum, the first time the party crosses into the Luna room: Kraden
 /// steps out beside Isaac, finds the picture of Luna, wonders how the rooms of
 /// Luna and Sol are connected, and asks Isaac to look farther up the passage.
-/// Called by EventScript_UpdateRoomTint and EventScript_UpdateRoomTintInverse
+/// Called by EventScript_TintSolRoom and EventScript_TintLunaRoom
 /// until FLAG_SOL_SANCTUM_LUNA_SOL_ROOMS_SEEN is set, which it sets; Isaac
 /// agreeing sets FLAG_SOL_SANCTUM_ISAAC_SEARCHING_FOR_KRADEN. Leaves Kraden
 /// standing by the picture on the northern wall.
@@ -1194,7 +1194,7 @@ static void EventScript_KradenSeesLunaPictureChange(void) {
 }
 
 /// Sol Sanctum: Kraden notices that the symbol on the floor has changed from
-/// Sol to Luna. Called by EventScript_UpdateRoomTint once all four quarters are
+/// Sol to Luna. Called by EventScript_TintSolRoom once all four quarters are
 /// lit, until FLAG_SOL_SANCTUM_FLOOR_SYMBOL_SEEN is set, which it sets. Leaves
 /// Kraden off the map.
 static void SolSanctumLunaSolRooms_DiscussFloorSymbolChangingToLuna(void) {
@@ -1781,13 +1781,13 @@ struct MapEvent gSolSanctumLunaSolRoomsEvents[] = {
     {MAP_EVENT_TALK, LOCALID_KRADEN, CONDITION_ALWAYS,
      EVENT_SCRIPT(EventScript_TalkToKraden)},
     {MAP_EVENT_COORD, MB_SOL_SANCTUM_LUNA_SOL_ROOMS_TINT_INVERSE,
-     CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_UpdateRoomTintInverse)},
+     CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TintLunaRoom)},
     {MAP_EVENT_COORD, MB_SOL_SANCTUM_LUNA_SOL_ROOMS_TINT, CONDITION_ALWAYS,
-     EVENT_SCRIPT(EventScript_UpdateRoomTint)},
+     EVENT_SCRIPT(EventScript_TintSolRoom)},
     {MAP_EVENT_COORD, MB_SOL_SANCTUM_LUNA_SOL_ROOMS_PLAIN, CONDITION_ALWAYS,
      EVENT_SCRIPT(EventScript_RestorePlainTint)},
     {MAP_EVENT_COORD, MB_SOL_SANCTUM_LUNA_SOL_ROOMS_WARM_TINT, CONDITION_ALWAYS,
-     EVENT_SCRIPT(EventScript_ApplySecondRoomTint)},
+     EVENT_SCRIPT(EventScript_TintPassageBetweenRooms)},
     {MAP_EVENT_COORD, MB_SOL_SANCTUM_LUNA_SOL_ROOMS_BLACK_BACKDROP,
      CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_ClearBackdropColor)},
     {BG_EVENT(BG_EVENT_SILENT), MB_SOL_SANCTUM_LUNA_SOL_ROOMS_FLOOR_SYMBOL,

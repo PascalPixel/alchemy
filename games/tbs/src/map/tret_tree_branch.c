@@ -138,37 +138,37 @@ static void TretTreeBranch_ShiftLeaderAndCameraByCells(s32 cellOffsetX,
 
 /// Touching metatile behavior 10 in Tret Tree: the leader and camera move 80
 /// pixels south at once.
-static void EventScript_ShiftSouthFiveCells(void) {
+static void EventScript_GoDownWestVine(void) {
   TretTreeBranch_ShiftLeaderAndCameraByCells(0, 5);
 }
 
 /// Touching metatile behavior 11 in Tret Tree: the leader and camera move 80
 /// pixels north at once.
-static void EventScript_ShiftNorthFiveCells(void) {
+static void EventScript_GoUpWestVine(void) {
   TretTreeBranch_ShiftLeaderAndCameraByCells(0, -5);
 }
 
 /// Touching metatile behavior 12 in Tret Tree: the same 80-pixel move south as
 /// metatile behavior 10.
-static void EventScript_ShiftSouthFiveCellsSecond(void) {
+static void EventScript_GoDownNortheastVine(void) {
   TretTreeBranch_ShiftLeaderAndCameraByCells(0, 5);
 }
 
 /// Touching metatile behavior 13 in Tret Tree: the same 80-pixel move north as
 /// metatile behavior 11.
-static void EventScript_ShiftNorthFiveCellsSecond(void) {
+static void EventScript_GoUpNortheastVine(void) {
   TretTreeBranch_ShiftLeaderAndCameraByCells(0, -5);
 }
 
 /// Touching metatile behavior 14 in Tret Tree: the leader and camera move 96
 /// pixels south at once.
-static void EventScript_ShiftSouthSixCells(void) {
+static void EventScript_GoDownSoutheastVine(void) {
   TretTreeBranch_ShiftLeaderAndCameraByCells(0, 6);
 }
 
 /// Touching metatile behavior 15 in Tret Tree: the leader and camera move 96
 /// pixels north at once.
-static void EventScript_ShiftNorthSixCells(void) {
+static void EventScript_GoUpSoutheastVine(void) {
   TretTreeBranch_ShiftLeaderAndCameraByCells(0, -6);
 }
 
@@ -176,7 +176,7 @@ static void EventScript_ShiftNorthSixCells(void) {
 /// behaviors are the warps' own numbers: the warp sound plays and the party
 /// leaves by the warp touched, into Tret Tree's other map
 /// (MapId_TretTreeInteriors).
-static void EventScript_TakeTouchedWarp(void) {
+static void EventScript_EnterTretTreeRooms(void) {
   struct FieldWork *state = gFieldWork;
   s16 *touchedWarp;
 
@@ -353,33 +353,33 @@ struct ObjectEventTemplate gTretTreeBranch_ObjectEventTemplates[] = {
 
 struct MapEvent gTretTreeBranch_Events[] = {
     {COORD_EVENT_WALKING | COORD_EVENT_FLAG_QUICK, 1, CONDITION_ALWAYS,
-     EVENT_SCRIPT(EventScript_TakeTouchedWarp)},
+     EVENT_SCRIPT(EventScript_EnterTretTreeRooms)},
     {COORD_EVENT_WALKING | COORD_EVENT_FLAG_QUICK, 2, CONDITION_ALWAYS,
-     EVENT_SCRIPT(EventScript_TakeTouchedWarp)},
+     EVENT_SCRIPT(EventScript_EnterTretTreeRooms)},
     {COORD_EVENT_WALKING | COORD_EVENT_FLAG_QUICK, 3, CONDITION_ALWAYS,
-     EVENT_SCRIPT(EventScript_TakeTouchedWarp)},
+     EVENT_SCRIPT(EventScript_EnterTretTreeRooms)},
     {COORD_EVENT_WALKING | COORD_EVENT_FLAG_QUICK, 4, CONDITION_ALWAYS,
-     EVENT_SCRIPT(EventScript_TakeTouchedWarp)},
+     EVENT_SCRIPT(EventScript_EnterTretTreeRooms)},
     {COORD_EVENT_WALKING | COORD_EVENT_FLAG_QUICK, 5, CONDITION_ALWAYS,
-     EVENT_SCRIPT(EventScript_TakeTouchedWarp)},
+     EVENT_SCRIPT(EventScript_EnterTretTreeRooms)},
     {COORD_EVENT_WALKING | COORD_EVENT_FLAG_QUICK, 6, CONDITION_ALWAYS,
-     EVENT_SCRIPT(EventScript_TakeTouchedWarp)},
+     EVENT_SCRIPT(EventScript_EnterTretTreeRooms)},
     {COORD_EVENT_WALKING | COORD_EVENT_FLAG_QUICK, 7, CONDITION_ALWAYS,
-     EVENT_SCRIPT(EventScript_TakeTouchedWarp)},
+     EVENT_SCRIPT(EventScript_EnterTretTreeRooms)},
     {COORD_EVENT_WALKING | COORD_EVENT_FLAG_QUICK, 8, CONDITION_ALWAYS,
-     EVENT_SCRIPT(EventScript_TakeTouchedWarp)},
+     EVENT_SCRIPT(EventScript_EnterTretTreeRooms)},
     {MAP_EVENT_COORD, 10, CONDITION_ALWAYS,
-     EVENT_SCRIPT(EventScript_ShiftSouthFiveCells)},
+     EVENT_SCRIPT(EventScript_GoDownWestVine)},
     {MAP_EVENT_COORD, 11, CONDITION_ALWAYS,
-     EVENT_SCRIPT(EventScript_ShiftNorthFiveCells)},
+     EVENT_SCRIPT(EventScript_GoUpWestVine)},
     {MAP_EVENT_COORD, 12, CONDITION_ALWAYS,
-     EVENT_SCRIPT(EventScript_ShiftSouthFiveCellsSecond)},
+     EVENT_SCRIPT(EventScript_GoDownNortheastVine)},
     {MAP_EVENT_COORD, 13, CONDITION_ALWAYS,
-     EVENT_SCRIPT(EventScript_ShiftNorthFiveCellsSecond)},
+     EVENT_SCRIPT(EventScript_GoUpNortheastVine)},
     {MAP_EVENT_COORD, 14, CONDITION_ALWAYS,
-     EVENT_SCRIPT(EventScript_ShiftSouthSixCells)},
+     EVENT_SCRIPT(EventScript_GoDownSoutheastVine)},
     {MAP_EVENT_COORD, 15, CONDITION_ALWAYS,
-     EVENT_SCRIPT(EventScript_ShiftNorthSixCells)},
+     EVENT_SCRIPT(EventScript_GoUpSoutheastVine)},
     {MAP_EVENT_TALK, LOCALID_BREEZE, CONDITION_ALWAYS,
      EVENT_SCRIPT(EventScript_TalkToBreeze)},
     {PSYNERGY_IN_AREA(ABILITY_REVEAL, PSYNERGY_PHASE_AFTER_END), 0,

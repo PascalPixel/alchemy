@@ -706,7 +706,7 @@ static void EventScript_BlowAwayIvyC(void) {
 
 /// Hops west as EventScript_HopWest, except from cell (32, 50).
 /// Reached by walking west into metatile behavior 50 in TunnelRuinsGreatStatue.
-static void EventScript_HopWestUnlessAtCell32x50(void) {
+static void EventScript_HopWestBySmallPillars(void) {
   struct ObjectEvent *objectEvent = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
 
   if ((objectEvent->x.fixed >> 20) != 32 ||
@@ -718,7 +718,7 @@ static void EventScript_HopWestUnlessAtCell32x50(void) {
 /// Hops north as EventScript_HopNorth, except from cell (30, 52).
 /// Reached by walking north into metatile behavior 50 in
 /// TunnelRuinsGreatStatue.
-static void EventScript_HopNorthUnlessAtCell30x52(void) {
+static void EventScript_HopNorthBySmallPillars(void) {
   struct ObjectEvent *objectEvent = ObjectEvent_GetById(LOCALID_PARTY_LEADER);
 
   if ((objectEvent->x.fixed >> 20) != 30 ||
@@ -2260,11 +2260,11 @@ struct MapEvent gTunnelRuinsGreatStatueEvents[] = {
     {COORD_EVENT_WALKING_INTO(FACING_EAST), 27, CONDITION_ALWAYS,
         EVENT_SCRIPT(EventScript_HopEast)},
     {COORD_EVENT_WALKING_INTO(FACING_WEST), 50, CONDITION_ALWAYS,
-        EVENT_SCRIPT(EventScript_HopWestUnlessAtCell32x50)},
+        EVENT_SCRIPT(EventScript_HopWestBySmallPillars)},
     {COORD_EVENT_WALKING_INTO(FACING_EAST), 50, CONDITION_ALWAYS,
         EVENT_SCRIPT(EventScript_HopEast)},
     {COORD_EVENT_WALKING_INTO(FACING_NORTH), 50, CONDITION_ALWAYS,
-        EVENT_SCRIPT(EventScript_HopNorthUnlessAtCell30x52)},
+        EVENT_SCRIPT(EventScript_HopNorthBySmallPillars)},
     {COORD_EVENT_WALKING_INTO(FACING_SOUTH), 50, CONDITION_ALWAYS,
         EVENT_SCRIPT(EventScript_HopSouth)},
     {COORD_EVENT_WALKING_INTO(FACING_SOUTH), 28, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_HopSouthOrPushSmallPillars)},

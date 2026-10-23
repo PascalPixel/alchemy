@@ -2090,7 +2090,7 @@ static void VaultInteriors_DiscussMindReading(void) {
 ///
 /// Reached by stepping on one of them while FLAG_SUSPECTS_FLEEING is
 /// set.
-static void EventScript_AdvanceSuspectRoutes(void) {
+static void EventScript_SuspectsRunFromParty(void) {
   switch (gFieldWork->coordEvent) {
   case MB_VAULT_INTERIORS_FIRST_SUSPECT_ROUTE:
     VaultInteriors_AdvanceSuspectRoute(LOCALID_SUSPECTED_LEADER, 1, 2,
@@ -3823,7 +3823,7 @@ s32 gVaultInteriors_VaultScriptE[] = {
 // south corners (render map-12 with the spots drawn on it). A Round run goes
 // about the end of the outer bed, an Across run over the beds' row, an Along
 // run past the feet of the beds. The suspects' timers number the spots
-// (EventScript_AdvanceSuspectRoutes): the leader's 1 to 3 the heads and 4 to 6 the
+// (EventScript_SuspectsRunFromParty): the leader's 1 to 3 the heads and 4 to 6 the
 // feet, west to east; the thief's 1 and 2 beside the west and east beds, 3
 // and 4 the south-west and south-east corners.
 s32 gVaultInteriors_SuspectToWestBedHead[] = {
@@ -4122,14 +4122,14 @@ struct MapEvent gVaultInteriors_Events[] = {
     { MAP_EVENT_COORD, MB_VAULT_INTERIORS_GUESTS_ROOM_STAIRS, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_LeaveGuestsRoom) },
     { MAP_EVENT_WARP, 8, CONDITION_ALWAYS, VAULT_INTERIORS_INN_TO_INN_UPSTAIRS },
     { MAP_EVENT_COORD, MB_VAULT_INTERIORS_GUESTS_ROOM, IF_FLAG_SET(FLAG_VAULT_IVAN_JOINED_ROD_SEARCH), EVENT_SCRIPT(EventScript_ApproachSuspects) },
-    { MAP_EVENT_COORD, MB_VAULT_INTERIORS_FIRST_SUSPECT_ROUTE, IF_FLAG_SET(FLAG_SUSPECTS_FLEEING), EVENT_SCRIPT(EventScript_AdvanceSuspectRoutes) },
-    { MAP_EVENT_COORD, MB_VAULT_INTERIORS_FIRST_SUSPECT_ROUTE + 1, IF_FLAG_SET(FLAG_SUSPECTS_FLEEING), EVENT_SCRIPT(EventScript_AdvanceSuspectRoutes) },
-    { MAP_EVENT_COORD, MB_VAULT_INTERIORS_FIRST_SUSPECT_ROUTE + 2, IF_FLAG_SET(FLAG_SUSPECTS_FLEEING), EVENT_SCRIPT(EventScript_AdvanceSuspectRoutes) },
-    { MAP_EVENT_COORD, MB_VAULT_INTERIORS_FIRST_SUSPECT_ROUTE + 3, IF_FLAG_SET(FLAG_SUSPECTS_FLEEING), EVENT_SCRIPT(EventScript_AdvanceSuspectRoutes) },
-    { MAP_EVENT_COORD, MB_VAULT_INTERIORS_FIRST_SUSPECT_ROUTE + 4, IF_FLAG_SET(FLAG_SUSPECTS_FLEEING), EVENT_SCRIPT(EventScript_AdvanceSuspectRoutes) },
-    { MAP_EVENT_COORD, MB_VAULT_INTERIORS_FIRST_SUSPECT_ROUTE + 5, IF_FLAG_SET(FLAG_SUSPECTS_FLEEING), EVENT_SCRIPT(EventScript_AdvanceSuspectRoutes) },
-    { MAP_EVENT_COORD, MB_VAULT_INTERIORS_FIRST_SUSPECT_ROUTE + 6, IF_FLAG_SET(FLAG_SUSPECTS_FLEEING), EVENT_SCRIPT(EventScript_AdvanceSuspectRoutes) },
-    { MAP_EVENT_COORD, MB_VAULT_INTERIORS_LAST_SUSPECT_ROUTE, IF_FLAG_SET(FLAG_SUSPECTS_FLEEING), EVENT_SCRIPT(EventScript_AdvanceSuspectRoutes) },
+    { MAP_EVENT_COORD, MB_VAULT_INTERIORS_FIRST_SUSPECT_ROUTE, IF_FLAG_SET(FLAG_SUSPECTS_FLEEING), EVENT_SCRIPT(EventScript_SuspectsRunFromParty) },
+    { MAP_EVENT_COORD, MB_VAULT_INTERIORS_FIRST_SUSPECT_ROUTE + 1, IF_FLAG_SET(FLAG_SUSPECTS_FLEEING), EVENT_SCRIPT(EventScript_SuspectsRunFromParty) },
+    { MAP_EVENT_COORD, MB_VAULT_INTERIORS_FIRST_SUSPECT_ROUTE + 2, IF_FLAG_SET(FLAG_SUSPECTS_FLEEING), EVENT_SCRIPT(EventScript_SuspectsRunFromParty) },
+    { MAP_EVENT_COORD, MB_VAULT_INTERIORS_FIRST_SUSPECT_ROUTE + 3, IF_FLAG_SET(FLAG_SUSPECTS_FLEEING), EVENT_SCRIPT(EventScript_SuspectsRunFromParty) },
+    { MAP_EVENT_COORD, MB_VAULT_INTERIORS_FIRST_SUSPECT_ROUTE + 4, IF_FLAG_SET(FLAG_SUSPECTS_FLEEING), EVENT_SCRIPT(EventScript_SuspectsRunFromParty) },
+    { MAP_EVENT_COORD, MB_VAULT_INTERIORS_FIRST_SUSPECT_ROUTE + 5, IF_FLAG_SET(FLAG_SUSPECTS_FLEEING), EVENT_SCRIPT(EventScript_SuspectsRunFromParty) },
+    { MAP_EVENT_COORD, MB_VAULT_INTERIORS_FIRST_SUSPECT_ROUTE + 6, IF_FLAG_SET(FLAG_SUSPECTS_FLEEING), EVENT_SCRIPT(EventScript_SuspectsRunFromParty) },
+    { MAP_EVENT_COORD, MB_VAULT_INTERIORS_LAST_SUSPECT_ROUTE, IF_FLAG_SET(FLAG_SUSPECTS_FLEEING), EVENT_SCRIPT(EventScript_SuspectsRunFromParty) },
     { MAP_EVENT_COORD, MB_VAULT_INTERIORS_GUESTS_ROOM_DOOR, IF_FLAG_SET(FLAG_SUSPECTS_FLEEING), EVENT_SCRIPT(EventScript_DiscussSuspiciousGuests) },
     { MAP_EVENT_COORD, MB_VAULT_INTERIORS_CORNERING_START, IF_FLAG_SET(FLAG_VAULT_SUSPECTS_APPROACHED), EVENT_SCRIPT(EventScript_StartCorneringSuspects) },
     { MAP_EVENT_RAISED, VAULT_INTERIORS_LEADER_CORNERED, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_ReadCorneredSuspectsMinds) },

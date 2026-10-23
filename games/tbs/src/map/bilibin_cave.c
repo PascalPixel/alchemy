@@ -17,8 +17,9 @@
 /// grid has one cell for both: coord event 10, the ledge cells either side of
 /// it, turns the warp off so the leader can walk the ledge across it, and coord
 /// event 11, a step further out, turns it back on
-/// (EventScript_DisableWarpToCave, EventScript_EnableWarpToCave; its recording,
-/// places/bilibin-cave-entrance/events/EventScript_DisableWarpToCave.gif).
+/// (EventScript_WalkOntoLedgeOverCaveMouth,
+/// EventScript_WalkOffLedgeOverCaveMouth; its recording,
+/// places/bilibin-cave-entrance/events/EventScript_WalkOntoLedgeOverCaveMouth.gif).
 ///
 /// In MapId_BilibinCaveRapier a fire burns between two torches, the west one
 /// cold and the east one lit (LOCALID_RAPIER_ROOM_FIRE), and Douse puts it out
@@ -243,13 +244,13 @@ const struct MapEvent *BilibinCave_GetEvents(void) {
 /// the way into Bilibin Cave: the way's cell (21, 14), the warp cell of
 /// BILIBIN_CAVE_ENTRANCE_TO_BILIBIN_CAVE_RAPIER_SOUTH, takes the
 /// metatile behavior of source cell (1, 0), which has none.
-static void EventScript_DisableWarpToCave(void) {
+static void EventScript_WalkOntoLedgeOverCaveMouth(void) {
   MapGrid_CopyCellAttributes(1, 0, 1, 1, 21, 14);
 }
 
 /// Stepping on coord event 11 at the Bilibin Cave Entrance, a cell further out:
 /// the way's cell (21, 14) takes back the warp, from source cell (0, 0).
-static void EventScript_EnableWarpToCave(void) {
+static void EventScript_WalkOffLedgeOverCaveMouth(void) {
   MapGrid_CopyCellAttributes(0, 0, 1, 1, 21, 14);
 }
 
@@ -585,7 +586,7 @@ static void BilibinCave_RestoreIceRoom(void) {
 /// Pushing one of the two movable torches in Bilibin Cave
 /// (MapId_BilibinCaveIce): it moves only when its next cell and movement
 /// probe are clear.
-static void EventScript_PushObjectEventAhead(void) {
+static void EventScript_PushTorch(void) {
   struct ObjectEvent *leader;
   struct ObjectEvent *target;
   struct ObjectEvent *blocker;
@@ -822,8 +823,8 @@ struct MapEvent gBilibinCaveEntranceEvents[] = {
     { MAP_EVENT_WARP, 1, CONDITION_ALWAYS, BILIBIN_CAVE_ENTRANCE_TO_WORLD_MAP },
     { MAP_EVENT_WARP, 2, CONDITION_ALWAYS, BILIBIN_CAVE_ENTRANCE_TO_BILIBIN_CAVE_RAPIER_SOUTH },
     { MAP_EVENT_WARP, 3, CONDITION_ALWAYS, BILIBIN_CAVE_ENTRANCE_TO_BILIBIN_CAVE_RAPIER_NORTH },
-    { MAP_EVENT_COORD, 10, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_DisableWarpToCave) },
-    { MAP_EVENT_COORD, 11, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_EnableWarpToCave) },
+    { MAP_EVENT_COORD, 10, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_WalkOntoLedgeOverCaveMouth) },
+    { MAP_EVENT_COORD, 11, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_WalkOffLedgeOverCaveMouth) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_GROWTH), LOCALID_SPROUT, FLAG_BILIBIN_CAVE_ENTRANCE_SPROUT_GROWN, EVENT_SCRIPT(EventScript_GrowPlant) },
     { MAP_EVENTS_END },
 };
@@ -856,8 +857,8 @@ struct MapEvent gBilibinCaveIceEvents[] = {
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_FROST), LOCALID_THIRD_PUDDLE, IF_FLAG_SET(FLAG_BILIBIN_CAVE_THIRD_PUDDLE_MELTED), EVENT_SCRIPT(EventScript_FreezeThirdPuddle) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MOVE), LOCALID_THIRD_TORCH, CONDITION_ALWAYS, EVENT_SCRIPT(BilibinCave_UpdateThirdPuddleFromTorches) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MOVE), LOCALID_FOURTH_TORCH, CONDITION_ALWAYS, EVENT_SCRIPT(BilibinCave_UpdateThirdPuddleFromTorches) },
-    { COORD_EVENT_WALKING, 10, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_PushObjectEventAhead) },
-    { COORD_EVENT_WALKING_INTO(FACING_WEST), 11, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_PushObjectEventAhead) },
+    { COORD_EVENT_WALKING, 10, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_PushTorch) },
+    { COORD_EVENT_WALKING_INTO(FACING_WEST), 11, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_PushTorch) },
     { BG_EVENT(BG_EVENT_CHEST), 100, 0xf5e, FIND_ITEM(ITEM_VIAL) },
     { BG_EVENT(BG_EVENT_CHEST), 101, 0xfc6, FIND_ITEM(ITEM_PSY_CRYSTAL) },
     { BG_EVENT(BG_EVENT_CHEST), 102, 0xfc7, FIND_ITEM(ITEM_WATER_OF_LIFE) },

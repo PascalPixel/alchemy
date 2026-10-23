@@ -555,11 +555,10 @@ static void EventScript_PullJillFromRiver(void) {
   }
 }
 
-/// Checks ahead before the leader takes another step. It runs on walking into
-/// the cells beside the statue in the Bilibin Treasury or the crates at the
-/// Bilibin Barricade, and checks the blocked direction before allowing another
-/// movement step.
-static void EventScript_CheckAhead(void) { Field_TryJumpForward(); }
+/// Walking into the statue in the Bilibin Treasury or the crates at the
+/// Bilibin Barricade: the leader jumps forward onto them where he can
+/// (Field_TryJumpForward).
+static void EventScript_JumpOntoStatueOrCrates(void) { Field_TryJumpForward(); }
 
 /// Jill and her friends thank the leader with a Hard Nut. It happens on
 /// stepping up to them on the bank at the Bilibin Barricade, once the curse is
@@ -1278,8 +1277,8 @@ struct MapEvent gBilibinBarricadeEvents[] = {
     { BG_EVENT(BG_EVENT_SILENT), 30, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgFieldDoorTightlyLocked)) },
     { MAP_EVENT_COORD, 13, FLAG_BILIBIN_JILL_GIFT_RECEIVED, EVENT_SCRIPT(EventScript_JillGivesHardNut) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MOVE), LOCALID_JILL_TREE, FLAG_BILIBIN_JILL_RESCUED, EVENT_SCRIPT(EventScript_PullJillFromRiver) },
-    { COORD_EVENT_WALKING_INTO(FACING_NORTH), 9, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_CheckAhead) },
-    { COORD_EVENT_WALKING_INTO(FACING_WEST), 10, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_CheckAhead) },
+    { COORD_EVENT_WALKING_INTO(FACING_NORTH), 9, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_JumpOntoStatueOrCrates) },
+    { COORD_EVENT_WALKING_INTO(FACING_WEST), 10, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_JumpOntoStatueOrCrates) },
     { COORD_EVENT_WALKING_INTO(FACING_SOUTH), 10, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_PushStatueOrCrates) },
     { COORD_EVENT_WALKING, 12, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_PushStatueOrCrates) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MOVE), LOCALID_BARRICADE_CRATES, CONDITION_ALWAYS, EVENT_SCRIPT(Bilibin_UpdateCratesCells) },
@@ -1295,9 +1294,9 @@ struct MapEvent gBilibinTreasuryEvents[] = {
     { COORD_EVENT_WALKING_INTO(FACING_SOUTH), 11, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_PushStatueOrCrates) },
     { COORD_EVENT_WALKING_INTO(FACING_NORTH), 12, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_PushStatueOrCrates) },
     { COORD_EVENT_WALKING, 13, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_PushStatueOrCrates) },
-    { COORD_EVENT_WALKING_INTO(FACING_EAST), 11, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_CheckAhead) },
-    { COORD_EVENT_WALKING_INTO(FACING_WEST), 11, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_CheckAhead) },
-    { COORD_EVENT_WALKING_INTO(FACING_SOUTH), 12, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_CheckAhead) },
+    { COORD_EVENT_WALKING_INTO(FACING_EAST), 11, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_JumpOntoStatueOrCrates) },
+    { COORD_EVENT_WALKING_INTO(FACING_WEST), 11, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_JumpOntoStatueOrCrates) },
+    { COORD_EVENT_WALKING_INTO(FACING_SOUTH), 12, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_JumpOntoStatueOrCrates) },
     { MAP_EVENTS_END },
 };
 

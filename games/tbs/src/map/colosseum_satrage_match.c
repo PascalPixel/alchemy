@@ -372,7 +372,7 @@ static void EventScript_PushPillar(void) {
 
 /// Move on the stone pillar by The Wall, and after each push: its cell is
 /// updated, and FLAG_WALL_PILLAR_MOVED keeps whether it stands at column 36.
-static void EventScript_UpdateMovedPillarCell(void) {
+static void EventScript_MoveWallPillar(void) {
   struct ObjectEvent *obstacle;
   s32 column;
   s32 row;
@@ -393,15 +393,15 @@ static void EventScript_UpdateMovedPillarCell(void) {
 
 /// Walking into the stone pillar by The Wall (coord events 20 and 26) pushes
 /// it, then updates its cell.
-static void EventScript_PushPillarAndUpdateCells(void) {
+static void EventScript_PushWallPillar(void) {
   ColosseumSatrageMatch_PushAdjacentObstacle();
-  EventScript_UpdateMovedPillarCell();
+  EventScript_MoveWallPillar();
 }
 
 /// Move on a stone pillar in the Mini-Maze, and after each push: the three
 /// pillars' columns are kept (FLAG_MINI_MAZE_FIRST_PILLAR_COLUMN and the two
 /// after it) and their cells rebuilt.
-static void EventScript_SaveMovedPillarColumns(void) {
+static void EventScript_MoveMiniMazePillar(void) {
 
   struct ObjectEvent *obstacle;
   s32 column;
@@ -527,9 +527,9 @@ static void EventScript_JumpDownLedge(void) {
   FieldObjectEvent_JumpDownLedge(gSaveBlock.leaderLocalId, 6, 0);
 }
 
-/// Walking west into the obstacle at coord event 30 in Colosseum Final 2 only
-/// checks what is ahead.
-static void EventScript_CheckAhead(void) { Field_TryJumpForward(); }
+/// Walking west into the obstacle at coord event 30 in Colosseum Final 2: the
+/// leader jumps forward where he can (Field_TryJumpForward).
+static void EventScript_JumpWestFromLedge(void) { Field_TryJumpForward(); }
 
 /// Moves a riding log and its pusher to aligned cell centers.
 static void ColosseumSatrageMatch_MovePusherAndLog(s32 logId, s32 offsetX,
@@ -2210,15 +2210,15 @@ s32 gColosseumSatrageMatch_LiftTimer = 0;
 
 struct MapEvent gColosseumSatrageMatchEvents[] = {
     { COORD_EVENT_WALKING_INTO(FACING_SOUTH), 30, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_JumpDownLedge) },
-    { COORD_EVENT_WALKING_INTO(FACING_WEST), 30, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_CheckAhead) },
+    { COORD_EVENT_WALKING_INTO(FACING_WEST), 30, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_JumpWestFromLedge) },
     { COORD_EVENT_WALKING_INTO(FACING_WEST), 28, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_RollEastLogWest) },
     { COORD_EVENT_WALKING_INTO(FACING_EAST), 27, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_RollEastLogEast) },
     { COORD_EVENT_WALKING_INTO(FACING_WEST), 24, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_RollWestLogWest) },
     { COORD_EVENT_WALKING_INTO(FACING_EAST), 25, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_RollWestLogEast) },
     { COORD_EVENT_WALKING, 22, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_RideLog) },
     { COORD_EVENT_WALKING, 21, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_PushPillar) },
-    { COORD_EVENT_WALKING, 20, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_PushPillarAndUpdateCells) },
-    { COORD_EVENT_WALKING, 26, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_PushPillarAndUpdateCells) },
+    { COORD_EVENT_WALKING, 20, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_PushWallPillar) },
+    { COORD_EVENT_WALKING, 26, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_PushWallPillar) },
     { MAP_EVENT_COORD, 50, FLAG_COLOSSEUM_ARENA_CLOSED, EVENT_SCRIPT(EventScript_ReachArena) },
     { BG_EVENT(BG_EVENT_CHEST), 101, FLAG_MAPSEC_TEMP_38, FIND_ITEM(ITEM_NUT) },
     { BG_EVENT(BG_EVENT_CHEST) | MAP_EVENT_FLAG_FACING | FACING_WEST, 102, FLAG_COLOSSEUM_SATRAGE_MATCH_SMOKE_BOMB_CHEST_OPENED, FIND_ITEM(ITEM_SMOKE_BOMB) },
@@ -2230,10 +2230,10 @@ struct MapEvent gColosseumSatrageMatchEvents[] = {
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_GROWTH), LOCALID_GROWTH_PLANT, FLAG_PLANT_GROWN, EVENT_SCRIPT(EventScript_GrowPlant) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MOVE), LOCALID_BOARD_WALK_WEST_PILLAR, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_IgnoreMove) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MOVE), LOCALID_BOARD_WALK_EAST_PILLAR, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_IgnoreMove) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MOVE), LOCALID_WALL_PILLAR, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_UpdateMovedPillarCell) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MOVE), LOCALID_MINI_MAZE_FIRST_PILLAR, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_SaveMovedPillarColumns) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MOVE), LOCALID_MINI_MAZE_FIRST_PILLAR + 1, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_SaveMovedPillarColumns) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MOVE), LOCALID_MINI_MAZE_FIRST_PILLAR + 2, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_SaveMovedPillarColumns) },
+    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MOVE), LOCALID_WALL_PILLAR, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_MoveWallPillar) },
+    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MOVE), LOCALID_MINI_MAZE_FIRST_PILLAR, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_MoveMiniMazePillar) },
+    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MOVE), LOCALID_MINI_MAZE_FIRST_PILLAR + 1, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_MoveMiniMazePillar) },
+    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MOVE), LOCALID_MINI_MAZE_FIRST_PILLAR + 2, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_MoveMiniMazePillar) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_HALT), LOCALID_LIFT_OPERATOR, FLAG_LIFTS_HALTED, EVENT_SCRIPT(EventScript_HaltLifts) },
     { MAP_EVENT_TALK, LOCALID_GUIDE, CONDITION_ALWAYS, EVENT_SCRIPT(Colosso_AskReadyToRace) },
     { MAP_EVENT_TALK, LOCALID_MINI_MAZE_ATTENDANT, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkToMiniMazeAttendant) },

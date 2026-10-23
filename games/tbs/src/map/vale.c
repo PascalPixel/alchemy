@@ -167,7 +167,7 @@ static void Vale_TrailSparkles(union ObjectEventOrEffect *fieldObject);
 static void Vale_VanishMoveHand(struct ObjectEvent *emitter);
 static void Vale_UpdateParticlePosition(struct ObjectEvent *particle,
                                         s32 distance, s32 angle);
-static void EventScript_SettleMovedPillar(void);
+static void EventScript_MovePillarBelowCliff(void);
 static void Vale_PlayStepSound(void);
 static void Vale_SynchronizeAlephGuardPause(void);
 static void Vale_AdjustPillarPriorityForLeaderHeight(void);
@@ -240,7 +240,7 @@ enum ValeLocalId {
   /// SPRITE_STONE_PILLAR, as Goma Cave's pillars: pushed
   /// (EventScript_PushPillar) or moved with Move, its column kept in
   /// FLAG_VALE_PILLAR_IN_WEST_COLUMN, _IN_MIDDLE_COLUMN and _IN_EAST_COLUMN
-  /// (EventScript_SettleMovedPillar).
+  /// (EventScript_MovePillarBelowCliff).
   /// ★ Named from what the player sees: a stone pillar of brown rock standing
   /// below the cliff north of the village (its render)
   LOCALID_PILLAR,
@@ -585,14 +585,14 @@ static void EventScript_AskAboutTheLackOfTravelers(void) {
 
 /// Walking onto the upper path in Vale (metatile behavior 15): its cells'
 /// metatile behaviors change, remembered in FLAG_VALE_ON_UPPER_PATH.
-static void EventScript_SetPathCellOverride(void) {
+static void EventScript_StepOntoUpperPath(void) {
   GameFlag_Set(FLAG_VALE_ON_UPPER_PATH);
   MapGrid_CopyCellAttributes(40, 84, 7, 4, 10, 84);
 }
 
 /// Walking off the upper path in Vale (metatile behavior 14) restores its
 /// cells' metatile behaviors.
-static void EventScript_ClearPathCellOverride(void) {
+static void EventScript_StepOffUpperPath(void) {
   GameFlag_Clear(FLAG_VALE_ON_UPPER_PATH);
   MapGrid_CopyCellAttributes(40, 89, 7, 4, 10, 84);
 }
@@ -1608,7 +1608,7 @@ s32 Vale_Initialize(void) {
     }
     objectEvent->z.fixed = PIXELS(584);
     objectEvent->y.fixed = PIXELS(192);
-    EventScript_SettleMovedPillar();
+    EventScript_MovePillarBelowCliff();
     objectEvent->layer = 3;
     objectEvent->motionFlags = 0;
     FieldScheduler_AddCallback(Vale_AdjustPillarPriorityForLeaderHeight,
@@ -1620,7 +1620,7 @@ s32 Vale_Initialize(void) {
           MapGrid_CopyCellAttributes(49, 53, 8, 4, 20, 50);
         }
         if (GameFlag_Get(FLAG_VALE_ON_UPPER_PATH)) {
-          EventScript_SetPathCellOverride();
+          EventScript_StepOntoUpperPath();
         }
       }
     } else {
@@ -1675,7 +1675,7 @@ s32 Vale_Initialize(void) {
           MapGrid_CopyCellAttributes(49, 53, 8, 4, 20, 50);
         }
         if (GameFlag_Get(FLAG_VALE_ON_UPPER_PATH)) {
-          EventScript_SetPathCellOverride();
+          EventScript_StepOntoUpperPath();
         }
       }
       {
@@ -1694,7 +1694,7 @@ s32 Vale_Initialize(void) {
         MapGrid_CopyCellAttributes(49, 53, 8, 4, 20, 50);
       }
       if (GameFlag_Get(FLAG_VALE_ON_UPPER_PATH)) {
-        EventScript_SetPathCellOverride();
+        EventScript_StepOntoUpperPath();
       }
     }
 #endif
@@ -3258,14 +3258,14 @@ static void EventScript_PushPillar(void) {
 #endif
   MapGrid_CopyCellAttributes(17, 0, 3, 1, 22, 36);
   PushedObject_AdvancePair();
-  EventScript_SettleMovedPillar();
+  EventScript_MovePillarBelowCliff();
 }
 
 /// Records where the pillar now stands and blocks its cell. After Move or a
 /// push, it records the pillar's column in FLAG_VALE_PILLAR_IN_WEST_COLUMN,
 /// _IN_MIDDLE_COLUMN and _IN_EAST_COLUMN and blocks the cell the pillar now
 /// stands on.
-static void EventScript_SettleMovedPillar(void) {
+static void EventScript_MovePillarBelowCliff(void) {
   struct ObjectEvent *objectEvent;
   s32 column;
 
@@ -3766,8 +3766,8 @@ struct MapEvent gVale_Events[] = {
     { COORD_EVENT_WALKING_INTO(FACING_NORTH), 9, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_EnterJennasGrandparentsHouse) },
     { COORD_EVENT_WALKING_INTO(FACING_NORTH), 10, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_EnterValeShopsWest) },
     { COORD_EVENT_WALKING_INTO(FACING_NORTH), 11, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_UnusedEnterJennasGrandparentsHouseBySecondDoor) },
-    { MAP_EVENT_COORD, 15, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_SetPathCellOverride) },
-    { MAP_EVENT_COORD, 14, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_ClearPathCellOverride) },
+    { MAP_EVENT_COORD, 15, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_StepOntoUpperPath) },
+    { MAP_EVENT_COORD, 14, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_StepOffUpperPath) },
     { MAP_EVENT_COORD, 20, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_WatchThePuppies) },
     { MAP_EVENT_COORD, 21, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TurnBackFromThePuppies) },
     { MAP_EVENT_COORD, 50, FLAG_VALE_WARNED_AGAINST_MT_ALEPH, EVENT_SCRIPT(EventScript_WarnAgainstSneakingUpMtAleph) },
@@ -3777,7 +3777,7 @@ struct MapEvent gVale_Events[] = {
     { COORD_EVENT_WALKING_INTO(FACING_NORTH), 100, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_ClimbLadderOntoRoof) },
     { COORD_EVENT_WALKING_INTO(FACING_SOUTH), 101, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_ClimbDownFromRoof) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_CATCH), LOCALID_NUT, FLAG_VALE_NUT_CAUGHT, EVENT_SCRIPT(EventScript_CatchNut) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MOVE), LOCALID_PILLAR, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_SettleMovedPillar) },
+    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MOVE), LOCALID_PILLAR, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_MovePillarBelowCliff) },
     { COORD_EVENT_WALKING_INTO(FACING_EAST), 30, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_PushPillar) },
     { COORD_EVENT_WALKING_INTO(FACING_WEST), 31, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_PushPillar) },
     { BG_EVENT(BG_EVENT_SILENT), 24, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_SearchTheLockedDoor) },
@@ -3816,8 +3816,8 @@ struct MapEvent gVale_EventsAfterLeaving[] = {
     { COORD_EVENT_WALKING_INTO(FACING_NORTH), 9, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_EnterJennasGrandparentsHouse) },
     { COORD_EVENT_WALKING_INTO(FACING_NORTH), 10, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_EnterValeShopsWest) },
     { COORD_EVENT_WALKING_INTO(FACING_NORTH), 11, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_UnusedEnterJennasGrandparentsHouseBySecondDoor) },
-    { MAP_EVENT_COORD, 15, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_SetPathCellOverride) },
-    { MAP_EVENT_COORD, 14, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_ClearPathCellOverride) },
+    { MAP_EVENT_COORD, 15, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_StepOntoUpperPath) },
+    { MAP_EVENT_COORD, 14, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_StepOffUpperPath) },
     { MAP_EVENT_COORD, 20, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_WatchThePuppies) },
     { MAP_EVENT_COORD, 21, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TurnBackFromThePuppies) },
     { MAP_EVENT_COORD, 50, FLAG_VALE_WARNED_AGAINST_MT_ALEPH, EVENT_SCRIPT(EventScript_WarnAgainstSneakingUpMtAleph) },
@@ -3827,7 +3827,7 @@ struct MapEvent gVale_EventsAfterLeaving[] = {
     { COORD_EVENT_WALKING_INTO(FACING_NORTH), 100, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_ClimbLadderOntoRoof) },
     { COORD_EVENT_WALKING_INTO(FACING_SOUTH), 101, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_ClimbDownFromRoof) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_CATCH), LOCALID_NUT, FLAG_VALE_NUT_CAUGHT, EVENT_SCRIPT(EventScript_CatchNut) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MOVE), LOCALID_PILLAR, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_SettleMovedPillar) },
+    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MOVE), LOCALID_PILLAR, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_MovePillarBelowCliff) },
     { COORD_EVENT_WALKING_INTO(FACING_EAST), 30, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_PushPillar) },
     { COORD_EVENT_WALKING_INTO(FACING_WEST), 31, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_PushPillar) },
     { BG_EVENT(BG_EVENT_SILENT), 24, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_SearchTheLockedDoor) },
@@ -3869,12 +3869,12 @@ struct MapEvent gVale_EventsAfterKalay[] = {
     { COORD_EVENT_WALKING_INTO(FACING_NORTH), 9, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_EnterJennasGrandparentsHouse) },
     { COORD_EVENT_WALKING_INTO(FACING_NORTH), 10, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_EnterValeShopsWest) },
     { COORD_EVENT_WALKING_INTO(FACING_NORTH), 11, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_UnusedEnterJennasGrandparentsHouseBySecondDoor) },
-    { MAP_EVENT_COORD, 15, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_SetPathCellOverride) },
-    { MAP_EVENT_COORD, 14, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_ClearPathCellOverride) },
+    { MAP_EVENT_COORD, 15, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_StepOntoUpperPath) },
+    { MAP_EVENT_COORD, 14, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_StepOffUpperPath) },
     { COORD_EVENT_WALKING_INTO(FACING_NORTH), 100, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_ClimbLadderOntoRoof) },
     { COORD_EVENT_WALKING_INTO(FACING_SOUTH), 101, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_ClimbDownFromRoof) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_CATCH), LOCALID_NUT_AFTER_KALAY, FLAG_VALE_NUT_CAUGHT, EVENT_SCRIPT(EventScript_CatchNutAfterKalay) },
-    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MOVE), LOCALID_PILLAR_AFTER_KALAY, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_SettleMovedPillar) },
+    { PSYNERGY_ON_OBJ_EVENT(ABILITY_MOVE), LOCALID_PILLAR_AFTER_KALAY, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_MovePillarBelowCliff) },
     { COORD_EVENT_WALKING_INTO(FACING_EAST), 30, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_PushPillar) },
     { COORD_EVENT_WALKING_INTO(FACING_WEST), 31, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_PushPillar) },
     { BG_EVENT(BG_EVENT_SILENT), 24, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_SearchTheLockedDoor) },

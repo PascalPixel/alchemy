@@ -121,7 +121,7 @@ two rows:
    `EventScript_OpenFourthBlueDoor`;
 2. a `COORD_EVENT_WALKING_INTO(FACING_SOUTH)` row, which would run only
    when the leader walks south into the door, running
-   `EventScript_UnusedCheckLeaderAhead`.
+   `EventScript_UnusedJumpPastBlueDoor`.
 
 The plain row always fits first. Its script checks for itself that the
 leader is pressing south against the door, so the player sees the same

@@ -344,7 +344,7 @@ const struct MapEvent *ValeStormyNight_GetEvents(void) {
 /// the leader steps onto it. Reached by stepping on metatile behavior 15. Sets
 /// FLAG_VALE_ON_UPPER_PATH, which ValeStormyNight_Initialize reads to swap them
 /// again.
-static void EventScript_SetPathCellOverride(void) {
+static void EventScript_StepOntoUpperPath(void) {
   GameFlag_Set(FLAG_VALE_ON_UPPER_PATH);
   MapGrid_CopyCellAttributes(40, 84, 7, 4, 10, 84);
 }
@@ -352,7 +352,7 @@ static void EventScript_SetPathCellOverride(void) {
 /// In Vale on the stormy night, restores the upper path's metatile behaviors as
 /// the leader steps off it. Reached by stepping on metatile behavior 14. Clears
 /// FLAG_VALE_ON_UPPER_PATH.
-static void EventScript_ClearPathCellOverride(void) {
+static void EventScript_StepOffUpperPath(void) {
   GameFlag_Clear(FLAG_VALE_ON_UPPER_PATH);
   MapGrid_CopyCellAttributes(40, 89, 7, 4, 10, 84);
 }
@@ -379,7 +379,7 @@ UNUSED static void ValeStormyNight_UnusedOpenSanctumDoor(void) {
 /// night, stepping on metatile behavior 2 requests warp 1, the one number the
 /// warp table leaves out; Map_TakeWarp therefore falls back to the first warp's
 /// map, Vale's MapId_ValePlaza, at WARP_DEST_DEFAULT.
-static void EventScript_LeaveByMissingWarp(void) {
+static void EventScript_LeaveNorthwestToValePlaza(void) {
   Sound_PlaySong(SE_MAP_EXIT);
   Vale_RequestBackdropWarp(1);
 }
@@ -713,7 +713,7 @@ s32 ValeStormyNight_Initialize(void) {
     Weather_StartLightning();
   }
   if (GameFlag_Get(FLAG_VALE_ON_UPPER_PATH) != 0) {
-    EventScript_SetPathCellOverride();
+    EventScript_StepOntoUpperPath();
   }
   GameFlag_Set(FLAG_VALE_STORM);
   MapGrid_CopyCellAttributes(29, 24, 1, 2, 26, 46);
@@ -2386,7 +2386,7 @@ static void ValeStormyNight_ShowBoulderSweepingDownriver(void) {
   Weather_StopLightning();
   ObjectEvent_SetActionScript(LOCALID_GARET_CHILD, entryActions);
   Script_Wait(128);
-  EventScript_ClearPathCellOverride();
+  EventScript_StepOffUpperPath();
   FieldCamera_MoveTo(PIXELS(174), -1, PIXELS(1428), 1);
   Script_Wait(104);
   FieldCamera_MoveTo(PIXELS(153), -1, PIXELS(1325), 1);
@@ -3533,7 +3533,7 @@ struct ObjectEventTemplate gValeStormyNight_BoulderWatchers[] = {
 
 struct MapEvent gValeStormyNight_Events[] = {
     {MAP_EVENT_COORD, 2, CONDITION_ALWAYS,
-     EVENT_SCRIPT(EventScript_LeaveByMissingWarp)},
+     EVENT_SCRIPT(EventScript_LeaveNorthwestToValePlaza)},
     {MAP_EVENT_COORD, 3, CONDITION_ALWAYS,
      EVENT_SCRIPT(EventScript_LeaveToValeKradensCottageNorth)},
     {MAP_EVENT_COORD, 4, CONDITION_ALWAYS,
@@ -3587,9 +3587,9 @@ struct MapEvent gValeStormyNight_Events[] = {
     {MAP_EVENT_TALK, LOCALID_FIRST_ROCK + 7, CONDITION_ALWAYS,
      MSGNO(MsgValeRockCannotBeMoved)},
     {MAP_EVENT_COORD, 15, CONDITION_ALWAYS,
-     EVENT_SCRIPT(EventScript_SetPathCellOverride)},
+     EVENT_SCRIPT(EventScript_StepOntoUpperPath)},
     {MAP_EVENT_COORD, 14, CONDITION_ALWAYS,
-     EVENT_SCRIPT(EventScript_ClearPathCellOverride)},
+     EVENT_SCRIPT(EventScript_StepOffUpperPath)},
     {MAP_EVENT_COORD, 41, CONDITION_ALWAYS,
      EVENT_SCRIPT(EventScript_FirstRockFalls)},
     {MAP_EVENT_COORD, 42, CONDITION_ALWAYS,

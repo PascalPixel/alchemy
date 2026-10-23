@@ -261,7 +261,7 @@ static void EventScript_EnterDoor(void) {
 
 /// Lalivero: a doorway with no door (coord events 8 and 11); leave by the
 /// touched coord event's warp.
-static void EventScript_TakeTouchedWarp(void) {
+static void EventScript_EnterDoorway(void) {
   struct FieldWork *work = gFieldWork;
   s16 *trigger = (s16 *)&work->coordEvent;
   s32 warp = *trigger;
@@ -1137,10 +1137,10 @@ struct MapEvent gLaliveroEvents[] = {
     { COORD_EVENT_WALKING_INTO(FACING_NORTH), 5, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_EnterDoor) },
     { COORD_EVENT_WALKING_INTO(FACING_NORTH), 6, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_EnterDoor) },
     { COORD_EVENT_WALKING_INTO(FACING_NORTH), 7, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_EnterDoor) },
-    { MAP_EVENT_COORD, 8, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TakeTouchedWarp) },
+    { MAP_EVENT_COORD, 8, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_EnterDoorway) },
     { COORD_EVENT_WALKING_INTO(FACING_NORTH), 9, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_EnterDoor) },
     { COORD_EVENT_WALKING_INTO(FACING_NORTH), 10, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_EnterDoor) },
-    { MAP_EVENT_COORD, 11, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TakeTouchedWarp) },
+    { MAP_EVENT_COORD, 11, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_EnterDoorway) },
     { MAP_EVENT_TALK, LOCALID_WEST_SOLDIER, CONDITION_ALWAYS, MSGNO(MsgLaliveroUhhnnWeWereTakenBySurprise) },
     { MAP_EVENT_TALK, LOCALID_EAST_SOLDIER, CONDITION_ALWAYS, MSGNO(MsgLaliveroTheyWereTerribleWeWereNo) },
     { MAP_EVENT_TALK, LOCALID_VILLAGER_THEY_TOOK_SHEBA, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TalkToVillagerTheyTookSheba) },
@@ -1180,10 +1180,10 @@ struct MapEvent gLaliveroEventsAfterLighthouse[] = {
     { COORD_EVENT_WALKING_INTO(FACING_NORTH), 5, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_EnterDoor) },
     { COORD_EVENT_WALKING_INTO(FACING_NORTH), 6, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_EnterDoor) },
     { COORD_EVENT_WALKING_INTO(FACING_NORTH), 7, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_EnterDoor) },
-    { MAP_EVENT_COORD, 8, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TakeTouchedWarp) },
+    { MAP_EVENT_COORD, 8, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_EnterDoorway) },
     { COORD_EVENT_WALKING_INTO(FACING_NORTH), 9, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_EnterDoor) },
     { COORD_EVENT_WALKING_INTO(FACING_NORTH), 10, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_EnterDoor) },
-    { MAP_EVENT_COORD, 11, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_TakeTouchedWarp) },
+    { MAP_EVENT_COORD, 11, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_EnterDoorway) },
     { MAP_EVENT_TALK, LOCALID_WHARF_GUARD, FLAG_LALIVERO_WHARF_OPEN, EVENT_SCRIPT(EventScript_WharfGuardLetsPartyThrough) },
     { PSYNERGY_ON_OBJ_EVENT(ABILITY_MIND_READ), 0x400 | LOCALID_WHARF_GUARD, FLAG_LALIVERO_WHARF_OPEN, EVENT_SCRIPT(EventScript_WharfGuardLetsPartyThrough) },
     { MAP_EVENT_TALK, LOCALID_WEST_SOLDIER, CONDITION_ALWAYS, MSGNO(MsgLaliveroHaHaIThoughtTheyHad) },

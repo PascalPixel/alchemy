@@ -1087,7 +1087,7 @@ static void EventScript_RightBeamStatueMoved(void) {
 /// Starting Move beside the centre statue: its cells are blocked while the
 /// leader stands in their row. Reached by the first phase of Move on
 /// LOCALID_CENTER_STATUE until FLAG_SOL_SANCTUM_CENTER_STATUE_MOVED is set.
-static void EventScript_BlockCenterTriggerCells(void) {
+static void EventScript_PrepareMoveOnCenterStatue(void) {
   struct ObjectEvent *leaderPosition;
   s32 column;
   struct ObjectEvent *leader;
@@ -1106,7 +1106,7 @@ static void EventScript_BlockCenterTriggerCells(void) {
 /// Starting Move beside the left beam statue: its cell is blocked while the
 /// leader stands beside it. Reached by the first phase of Move on
 /// LOCALID_LEFT_BEAM_STATUE until FLAG_SOL_SANCTUM_LEFT_BEAM_SHINING is set.
-static void EventScript_BlockLeftTriggerCell(void) {
+static void EventScript_PrepareMoveOnLeftBeamStatue(void) {
   s32 column = ObjectEvent_GetById(LOCALID_PARTY_LEADER)->x.fixed >> 20;
   s32 row = ObjectEvent_GetById(LOCALID_PARTY_LEADER)->z.fixed >> 20;
 
@@ -1117,7 +1117,7 @@ static void EventScript_BlockLeftTriggerCell(void) {
 
 /// Starting Move beside the right beam statue: as the left one, on
 /// LOCALID_RIGHT_BEAM_STATUE.
-static void EventScript_BlockRightTriggerCell(void) {
+static void EventScript_PrepareMoveOnRightBeamStatue(void) {
   s32 column = ObjectEvent_GetById(LOCALID_PARTY_LEADER)->x.fixed >> 20;
   s32 row = ObjectEvent_GetById(LOCALID_PARTY_LEADER)->z.fixed >> 20;
 
@@ -1847,13 +1847,13 @@ struct MapEvent gSolSanctumStatue_Events[] = {
      EVENT_SCRIPT(EventScript_PushSoutheastStatue)},
     {PSYNERGY_PHASE_ON_OBJ_EVENT(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST),
      LOCALID_LEFT_BEAM_STATUE, FLAG_SOL_SANCTUM_LEFT_BEAM_SHINING,
-     EVENT_SCRIPT(EventScript_BlockLeftTriggerCell)},
+     EVENT_SCRIPT(EventScript_PrepareMoveOnLeftBeamStatue)},
     {PSYNERGY_ON_OBJ_EVENT(ABILITY_MOVE), LOCALID_LEFT_BEAM_STATUE,
      FLAG_SOL_SANCTUM_LEFT_BEAM_SHINING,
      EVENT_SCRIPT(EventScript_LeftBeamStatueMoved)},
     {PSYNERGY_PHASE_ON_OBJ_EVENT(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST),
      LOCALID_RIGHT_BEAM_STATUE, FLAG_SOL_SANCTUM_RIGHT_BEAM_SHINING,
-     EVENT_SCRIPT(EventScript_BlockRightTriggerCell)},
+     EVENT_SCRIPT(EventScript_PrepareMoveOnRightBeamStatue)},
     {PSYNERGY_ON_OBJ_EVENT(ABILITY_MOVE), LOCALID_RIGHT_BEAM_STATUE,
      FLAG_SOL_SANCTUM_RIGHT_BEAM_SHINING,
      EVENT_SCRIPT(EventScript_RightBeamStatueMoved)},
@@ -1889,7 +1889,7 @@ struct MapEvent gSolSanctumStatue_Events[] = {
      EVENT_SCRIPT(EventScript_PushRightBeamStatueNorth)},
     {PSYNERGY_PHASE_ON_OBJ_EVENT(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST),
      LOCALID_CENTER_STATUE, FLAG_SOL_SANCTUM_CENTER_STATUE_MOVED,
-     EVENT_SCRIPT(EventScript_BlockCenterTriggerCells)},
+     EVENT_SCRIPT(EventScript_PrepareMoveOnCenterStatue)},
     {PSYNERGY_ON_OBJ_EVENT(ABILITY_MOVE), LOCALID_CENTER_STATUE,
      FLAG_SOL_SANCTUM_CENTER_STATUE_MOVED,
      EVENT_SCRIPT(EventScript_CenterStatueMoved)},

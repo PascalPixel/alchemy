@@ -1002,8 +1002,9 @@ static void EventScript_ReachArena(void) {
 }
 
 /// Walking into something on Colosseum Final 3's stages (coord event 90):
-/// unless it is an object event, it is checked.
-static void EventScript_CheckAhead(void) {
+/// unless it is an object event, the leader jumps forward where he can
+/// (Field_TryJumpForward).
+static void EventScript_JumpAtLogAreaEnd(void) {
   if (Colosso_FindObjectEventAhead() == 0) {
     Field_TryJumpForward();
   }
@@ -2615,7 +2616,7 @@ s32 gColosseumNavampaMatch_WallWedgePatternIndex = 0;
 s32 gColosseumNavampaMatch_WallWedgeTimer = 0;
 
 struct MapEvent gColosseumNavampaMatchEvents[] = {
-    { COORD_EVENT_WALKING, 90, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_CheckAhead) },
+    { COORD_EVENT_WALKING, 90, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_JumpAtLogAreaEnd) },
     { COORD_EVENT_WALKING, 91, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_PushWeightOrCheckAhead) },
     { MAP_EVENT_COORD, 11, FLAG_SIDEWALK_LOG_KNOCKED_OFF, EVENT_SCRIPT(EventScript_RideMovingSidewalk) },
     { COORD_EVENT_WALKING, 20, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_PushWeight) },

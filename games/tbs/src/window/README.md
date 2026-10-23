@@ -87,13 +87,11 @@ frames, and the slot stays taken until the window has gone, so a closing
 window still counts against the 8 slots.
 
 The frame and the blue filling are tiles of the windows' tilemap, which the
-console shows on the one background layer in front of the map's three. What
-a window carries, its letters and its portrait, are sprites in front of
-everything. Taken apart, a message in Vale shows the split:
+console shows on the one background layer in front of the map's three. A
+message's letters, its portrait and its page arrow are sprites riding on the
+window, in front of everything. Taken apart, a message in Vale shows the split:
 
-![Garet's sister talking in Vale, pulled apart into its layers: the map's ground, middle and overhead layers at the back, the message window's frame on BG0, and the letters of `You guys are so lucky, Garet.`, her portrait and the actors as sprites in front](https://alchemy.pascalpixel.com/guides/window/layers-3d.gif)
-
-![A message's five planes. Garet's sister talking in Vale, pulled apart into the five planes the console stacks to draw it, numbered from back to front: 1, the map's ground layer, BG3; 2, its middle layer, BG2; 3, its overhead layer, BG1; 4, the window layer, BG0, with the message window's frame; 5, the sprites, the message's letters, her portrait and the object events. The window's letters and portrait are sprites, in front of everything.](https://alchemy.pascalpixel.com/illustrations/window/talk-planes.svg)
+![A message's layers. Garet's sister talking in Vale, her first page typed, comes apart into the six sheets the console stacks to draw it, then closes again. The map keeps its three layers: the grass and cliffs on `BG3`, trees and bushes on `BG2`, and a roof and a tree top on `BG1`, with Isaac, Garet, Garet's sister, a villager and a stone pillar as sprites level with `BG2`. The message window's frame and filling are tiles of `BG0`, the one layer every window shares. The words `You guys are so lucky, Garet.`, her portrait and the page arrow are sprites at the front, riding on the window.](https://alchemy.pascalpixel.com/illustrations/window/talk-planes.svg)
 
 A message window sizes itself to its text: it is measured first, then
 placed so that it fits on the screen.

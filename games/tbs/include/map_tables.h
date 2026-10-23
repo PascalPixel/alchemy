@@ -122,9 +122,9 @@ struct ObjectEventTemplate {
   /// own object event slot, and -1 ends the table.
   s16 sprite;
   /// -1 always, a flag | 0x1000 set, else the flag clear. Off the world map,
-  /// a Djinni's flag (from FLAG_DJINNI_0) also needs its FLAG_DJINNI_HIDING_0
-  /// flag clear: the Djinni stays hidden until the map is entered normally
-  /// again.
+  /// a Djinni's flag (from FLAG_DJINN_FIRST) also needs its
+  /// FLAG_DJINN_HIDING_FIRST flag clear: the Djinni stays hidden until the map
+  /// is entered normally again.
   s16 condition;
   /// A built-in action (enum MovementType) or an action script, for
   /// ObjectMotion_SetActionCallback.

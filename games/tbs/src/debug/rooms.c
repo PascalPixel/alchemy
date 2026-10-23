@@ -21,8 +21,8 @@
 /// The placed object events, numbered in the order of
 /// gTestRooms_ObjectEventTemplates:
 /// the first Djinni of each element, which TestRooms_GiveDjinniForTesting
-/// gives, placed while its flag (FLAG_DJINNI_0 + element * DJINN_PER_ELEMENT)
-/// is clear.
+/// gives, placed while its flag (FLAG_DJINN_FIRST + element *
+/// DJINN_PER_ELEMENT) is clear.
 enum TestRoomsLocalId {
   /// ★ Named from the game: "Flint" (MsgDjinnName)
   LOCALID_FLINT = LOCALID_FIRST_PLACED,
@@ -56,7 +56,7 @@ u8 *TestRooms_GetObjectEventTemplates(void) {
 static __inline__ void TestRooms_GiveDjinniForTesting(s32 objectEventId,
                                                       s32 element) {
   Djinn_JoinParty(objectEventId, element, 0);
-  Engine_GameFlagClear(FLAG_DJINNI_0 + element * DJINN_PER_ELEMENT);
+  Engine_GameFlagClear(FLAG_DJINN_FIRST + element * DJINN_PER_ELEMENT);
 }
 
 static void TestRooms_ReceiveFlint(void) {

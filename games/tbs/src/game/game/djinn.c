@@ -23,7 +23,7 @@ const struct DjinnDefinition *Djinn_GetDefinition(u32 group, u32 index) {
 /// Called by Djinn_JoinParty when a Djinni joins in the field. Of members
 /// holding equally few, the earliest in the party order gets it.
 s32 Djinn_AddToLeastLoadedOwner(s32 element, s32 djinn) {
-  s32 flag = djinn + element * DJINN_PER_ELEMENT + FLAG_DJINNI_0;
+  s32 flag = djinn + element * DJINN_PER_ELEMENT + FLAG_DJINN_FIRST;
   s32 leastLoadedOwner = 0;
   s32 fewestDjinn = 999;
   s32 partySize;

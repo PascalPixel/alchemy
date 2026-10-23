@@ -144,7 +144,7 @@ void Djinn_JoinParty(s32 slot, s32 element, s32 djinn) {
   work = (struct FieldWork *)gEventWork;
   if (GameFlag_TestFar(FLAG_DJINN_LESSON) != 0) {
     owner = 0;
-    GameFlag_SetBitFar(djinn + element * 20 + FLAG_DJINNI_0);
+    GameFlag_SetBitFar(djinn + element * 20 + FLAG_DJINN_FIRST);
   } else {
     owner = Djinn_AddToLeastLoadedOwnerFar(element, djinn);
   }
@@ -203,7 +203,7 @@ void ObjectEvent_PlaceMapObjectEvents(void) {
         struct ObjectRuntime *object;
 
         if (desc == NULL ||
-            desc->condition - FLAG_DJINNI_0 != event - DJINNI_EVENT_0)
+            desc->condition - FLAG_DJINN_FIRST != event - DJINNI_EVENT_0)
           continue;
         object = ObjectTable_Get(id);
         if (object == NULL)
@@ -237,7 +237,7 @@ void ObjectEvent_PlaceMapObjectEvents(void) {
 ///
 /// After a won battle the first call leaves the event pending and the second
 /// makes the Djinni join the party, 40 frames in (Djinn_JoinParty).
-/// Otherwise the first call sets the Djinni's FLAG_DJINNI_HIDING_0 flag, which
+/// Otherwise the first call sets the Djinni's FLAG_DJINNI_HIDING flag, which
 /// hides the Djinni's object event until the map
 /// is entered normally again (object/object_events.c), and drops the event. A
 /// mimic chest's event (kind 0x1000, object/events.c) sets the chest's flag
@@ -256,7 +256,7 @@ void Djinn_ResolvePendingEvent(s32 shown) {
       // Won: the event waits for the call once the map is shown.
       if (st->mapChangeReason > 0 && st->mapChangeReason != 999)
         return;
-      // DJINNI_EVENT_0 + n less 172 is FLAG_DJINNI_HIDING_0 + n.
+      // DJINNI_EVENT_0 + n less 172 is FLAG_DJINN_HIDING_FIRST + n.
       GameFlag_SetBitFar(flag - 172);
       *pending = kind;
     } else if (kind == 0x1000) {
@@ -280,7 +280,7 @@ void Djinn_ResolvePendingEvent(s32 shown) {
           struct ObjectEventTemplate *found =
               Map_FindObjectEventTemplate(objectEvent);
           if (found != 0 &&
-              found->condition - FLAG_DJINNI_0 == flag - DJINNI_EVENT_0) {
+              found->condition - FLAG_DJINN_FIRST == flag - DJINNI_EVENT_0) {
             WaitFrames(40);
             Djinn_JoinParty(objectEvent, element, index);
             break;

@@ -11,7 +11,7 @@
 /// the owners' Djinn lists take it.
 #define DJINNI_INDEX(id) ((id) % DJINN_PER_ELEMENT)
 
-/// Djinn, numbered as Field_RequestDjinnBattle and FLAG_DJINNI_0 count them:
+/// Djinn, numbered as Field_RequestDjinnBattle and FLAG_DJINN_FIRST count them:
 /// DJINN_PER_ELEMENT to an element, in the order Venus, Mercury, Mars, Jupiter.
 /// A Djinni's English name is the message MsgDjinnName + its number.
 enum DjinniId {

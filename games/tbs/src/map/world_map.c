@@ -539,7 +539,7 @@ static void WorldMap_CircleFlint(union FieldObject *fieldObject) {
 /// lesson has begun (FLAG_DJINN_LESSON), he circles his spot at half size.
 static s32 WorldMap_SetUpFlint(struct ScriptInterpreter *interpreter) {
   struct ObjectEvent *objectEvent = (struct ObjectEvent *)interpreter;
-  if (Engine_GameFlagIsSet(FLAG_DJINNI_0 + DJINNI_FLINT) != 0) {
+  if (Engine_GameFlagIsSet(FLAG_DJINNI(DJINNI_FLINT)) != 0) {
     return 0;
   }
   if (Engine_GameFlagIsSet(FLAG_DJINN_LESSON) != 0) {
@@ -1613,7 +1613,7 @@ static void WorldMap_ShowDjinnTutorial(void) {
 /// Walking up to Flint: he joins the party and shows how Djinn are set and put
 /// on standby; then comes the tutorial battle.
 /// Reached by walking onto TRIGGER_FLINT until Flint is caught
-/// (FLAG_DJINNI_0 + DJINNI_FLINT). Sets FLAG_DJINN_LESSON and its two part
+/// (FLAG_DJINNI(DJINNI_FLINT)). Sets FLAG_DJINN_LESSON and its two part
 /// flags for each lesson, and clears them all after the battle.
 static void EventScript_MeetFlint(void) {
   struct ObjectEvent *djinni;
@@ -3529,11 +3529,11 @@ s32 gWorldMapStormScript[] = {
 
 // clang-format off
 struct ObjectEventTemplate gWorldMapObjectEventTemplates[] = {
-    { VENUS_DJINNI, FLAG_DJINNI_0 + DJINNI_VINE, (s32)gWorldMapFlintScript,
+    { VENUS_DJINNI, FLAG_DJINNI(DJINNI_VINE), (s32)gWorldMapFlintScript,
         0, 0, 0, FACING_SOUTH, TALK_FACE_PARTY, 0 },
-    { MARS_DJINNI, FLAG_DJINNI_0 + DJINNI_CORONA, MOVEMENT_TYPE_STAND,
+    { MARS_DJINNI, FLAG_DJINNI(DJINNI_CORONA), MOVEMENT_TYPE_STAND,
         0, 0, 0, FACING_SOUTH, TALK_FACE_PARTY, 0 },
-    { MERCURY_DJINNI, FLAG_DJINNI_0 + DJINNI_HAIL, MOVEMENT_TYPE_STAND,
+    { MERCURY_DJINNI, FLAG_DJINNI(DJINNI_HAIL), MOVEMENT_TYPE_STAND,
         0, 0, 0, FACING_EAST, TALK_FACE_PARTY, 0 },
     { SPRITE_WORLD_MAP_VILLAGE, CONDITION_ALWAYS, (s32)gWorldMapAlignToMapScript,
         PIXELS(5678), 0, PIXELS(1200), FACING_SOUTH, TALK_KEEP_FACING, 0 },
@@ -3726,14 +3726,14 @@ struct ObjectEventTemplate gWorldMapObjectEventTemplatesBeforeShebasFall[] = {
 };
 
 struct MapEvent gWorldMapEvents[] = {
-    { MAP_EVENT_COORD, TRIGGER_FLINT, FLAG_DJINNI_0 + DJINNI_FLINT, EVENT_SCRIPT(EventScript_MeetFlint) },
+    { MAP_EVENT_COORD, TRIGGER_FLINT, FLAG_DJINNI(DJINNI_FLINT), EVENT_SCRIPT(EventScript_MeetFlint) },
     { MAP_EVENT_COORD, TRIGGER_STORM, FLAG_MAP_TEMP_F1, EVENT_SCRIPT(EventScript_WalkIntoStorm) },
     { MAP_EVENT_TALK, LOCALID_VENUS_DJINNI, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_MeetVine) },
     { MAP_EVENT_TALK, LOCALID_MARS_DJINNI, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_MeetCorona) },
     { MAP_EVENT_TALK, LOCALID_MERCURY_DJINNI, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_MeetHail) },
-    { MAP_EVENT_COORD, TRIGGER_VINE, FLAG_DJINNI_0 + DJINNI_VINE, EVENT_SCRIPT(EventScript_MeetVine) },
-    { MAP_EVENT_COORD, TRIGGER_CORONA, FLAG_DJINNI_0 + DJINNI_CORONA, EVENT_SCRIPT(EventScript_MeetCorona) },
-    { MAP_EVENT_COORD, TRIGGER_HAIL, FLAG_DJINNI_0 + DJINNI_HAIL, EVENT_SCRIPT(EventScript_MeetHail) },
+    { MAP_EVENT_COORD, TRIGGER_VINE, FLAG_DJINNI(DJINNI_VINE), EVENT_SCRIPT(EventScript_MeetVine) },
+    { MAP_EVENT_COORD, TRIGGER_CORONA, FLAG_DJINNI(DJINNI_CORONA), EVENT_SCRIPT(EventScript_MeetCorona) },
+    { MAP_EVENT_COORD, TRIGGER_HAIL, FLAG_DJINNI(DJINNI_HAIL), EVENT_SCRIPT(EventScript_MeetHail) },
     { BG_EVENT(BG_EVENT_UNNAMED), TRIGGER_SHIPWRECK, CONDITION_ALWAYS, EVENT_SCRIPT(EventScript_SearchShipwreck) },
     { USE_ITEM(ITEM_BLACK_ORB), TRIGGER_SHIPWRECK, FLAG_BLACK_ORB_RETURNED, EVENT_SCRIPT(EventScript_UseBlackOrb) },
     { BG_EVENT(BG_EVENT_GROUND), TRIGGER_TURTLE_BOOTS, FLAG_WORLD_MAP_TURTLE_BOOTS, FIND_ITEM(ITEM_TURTLE_BOOTS) },

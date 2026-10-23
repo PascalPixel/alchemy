@@ -350,7 +350,7 @@ void Map_ResetFlagsOnEnter(s32 unused, s32 keep) {
     }
     // The Djinn's hiding flags last for one map, even within a map section, and
     // so do the 16 after them to 0xdf, which nothing else uses.
-    for (flag = FLAG_DJINNI_HIDING_0; flag <= 0xdf; flag++)
+    for (flag = FLAG_DJINN_HIDING_FIRST; flag <= 0xdf; flag++)
       GameFlag_ClearBitFar(flag);
     GameFlag_ClearBitFar(FLAG_LINK_BATTLE);
     GameFlag_ClearBitFar(FLAG_RETREAT_BLOCKED);

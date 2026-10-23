@@ -18,17 +18,21 @@
 /// ★ Named from the game: "Don't go out without your tunic!"
 /// (MsgValeComeOnHurry)
 #define FLAG_ISAAC_WEARS_TUNIC 0x21
-/// DJINNI_FLINT's flag, set once it is caught; each Djinni's is FLAG_DJINNI_0
-/// plus its DjinniId, and each is named by the Djinni's name in the game's
-/// table of them.
-/// ★ Named from the game: "Flint" (MsgDjinnName)
-#define FLAG_DJINNI_0 48
-/// FLAG_DJINNI_0's hiding flag; each Djinni's is this plus its DjinniId, the
-/// 80 flags after the Djinn's own. Djinn_ResolvePendingEvent sets it after a
-/// lost or fled Djinni battle, and the Djinni's object event stays away until
-/// the map is entered normally again, which clears it. ★ Named from the game:
-/// "It must be hiding somewhere again" (MsgVaultHmmmItMustBeHidingSomewhere)
-#define FLAG_DJINNI_HIDING_0 128
+/// The first of the 80 Djinn flags, DJINNI_FLINT's.
+#define FLAG_DJINN_FIRST 48
+/// Set once the party has `djinni` (djinn_ids.h), whose DjinniId counts from
+/// FLAG_DJINN_FIRST.
+/// ★ Named from the game: "You got a Djinni!" (MsgDebugGotDjinni)
+#define FLAG_DJINNI(djinni) (FLAG_DJINN_FIRST + (djinni))
+/// The first of the 80 hiding flags after the Djinn's own, DJINNI_FLINT's.
+#define FLAG_DJINN_HIDING_FIRST 128
+/// Set while `djinni` is hiding, its DjinniId counting from
+/// FLAG_DJINN_HIDING_FIRST: Djinn_ResolvePendingEvent sets it after a lost or
+/// fled Djinni battle, and the Djinni's object event stays away until the map
+/// is entered normally again, which clears it.
+/// ★ Named from the game: "It must be hiding somewhere again"
+/// (MsgVaultHmmmItMustBeHidingSomewhere)
+#define FLAG_DJINNI_HIDING(djinni) (FLAG_DJINN_HIDING_FIRST + (djinni))
 /// The system flags, after the party's and the Djinn's: what the field,
 /// battles and menus keep about their own working, shared with the maps
 /// that set or test them, rather than the story's progress.

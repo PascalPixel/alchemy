@@ -40,7 +40,7 @@ struct SaveSummary {
   /// Copied from GameState.unk20f, which saving at the end of the game sets;
   /// the file menu for cleared data lists a file without it as not cleared.
   s8 sendFlag;
-  s8 flagCount; ///< how many Djinn flags (FLAG_DJINNI_0 on) are set
+  s8 flagCount; ///< how many Djinn flags (FLAG_DJINN_FIRST on) are set
   u8 hasFlag20; ///< FLAG_CHILDHOOD is set; remaps the party's sprites
   /// bits: 15..8 paletteGlowSub | 7..0 paletteGlow
   ///@{

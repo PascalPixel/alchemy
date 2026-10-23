@@ -2813,7 +2813,7 @@ static void MercuryLighthouse_MiaJoinsAfterRescue(void) {
   FieldScript_PrepareObjectAndApplyValue(MIA, 1);
   // "The Adept Mia joined your party!" Fizz, a Mercury Djinni, comes with
   // her and is set; her stats are worked out again.
-  Engine_GameFlagSet(FLAG_DJINNI_0 + DJINNI_FIZZ);
+  Engine_GameFlagSet(FLAG_DJINNI(DJINNI_FIZZ));
   Djinn_AddToOwner(MIA, ELEMENT_MERCURY, DJINNI_INDEX(DJINNI_FIZZ));
   Djinn_Activate(MIA, ELEMENT_MERCURY, DJINNI_INDEX(DJINNI_FIZZ));
   Unit_Calculate(MIA);
@@ -3299,7 +3299,7 @@ struct ObjectEventTemplate gMercuryLighthouseMiddleObjectEventTemplates[] = {
         PIXELS(704), 0, PIXELS(672), FACING_SOUTH, TALK_KEEP_FACING, 0 },
     { SPRITE_BLUE_STATUE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         PIXELS(216), 0, PIXELS(216), FACING_SOUTH, TALK_KEEP_FACING, 0 },
-    { MERCURY_DJINNI, FLAG_DJINNI_0 + DJINNI_SLEET, MOVEMENT_TYPE_STAND,
+    { MERCURY_DJINNI, FLAG_DJINNI(DJINNI_SLEET), MOVEMENT_TYPE_STAND,
         PIXELS(888), 0, PIXELS(392), FACING_SOUTH, TALK_FACE_PARTY, 0 },
     { MAP_TABLE_END },
 };

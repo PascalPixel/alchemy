@@ -1811,8 +1811,8 @@ struct ObjectEventTemplate gBabiLighthouse_EntryObjectEventTemplates[] = {
 };
 
 struct ObjectEventTemplate gBabiLighthouse_LuffObjectEventTemplates[] = {
-    {JUPITER_DJINNI, FLAG_DJINNI_0 + DJINNI_LUFF, MOVEMENT_TYPE_STAND,
-     PIXELS(472), 0, PIXELS(184), FACING_SOUTHEAST, TALK_FACE_PARTY, 0},
+    {JUPITER_DJINNI, FLAG_DJINNI(DJINNI_LUFF), MOVEMENT_TYPE_STAND, PIXELS(472),
+     0, PIXELS(184), FACING_SOUTHEAST, TALK_FACE_PARTY, 0},
     {MAP_TABLE_END},
 };
 
